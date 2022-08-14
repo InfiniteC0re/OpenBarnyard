@@ -5,7 +5,7 @@ char* __thiscall Toshi::TClass::GetName()
 	return m_pcClassName;
 }
 
-void __thiscall Toshi::TClass::InitialsieStatic()
+void __thiscall Toshi::TClass::InitialiseStatic()
 {
 	if (m_pFunc != TNULL)
 	{
@@ -34,7 +34,7 @@ bool __thiscall Toshi::TClass::IsAttached() const
 	return false;
 }
 
-void __thiscall Toshi::TClass::DeinitialsieStatic()
+void __thiscall Toshi::TClass::DeinitialiseStatic()
 {
 	if (m_pFunc2 != TNULL)
 	{
