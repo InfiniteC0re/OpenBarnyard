@@ -3,17 +3,19 @@
 #include <string.h>
 #include "TSystem.h"
 #include "TMemory.h"
+#include "TWString.h"
 namespace Toshi
 {
 	class TCString
 	{
 		char** m_pBuffer;
-		unsigned int unk2;
+		unsigned int length;
 	private:
 		static char* m_aNull;
 	public:
 		__thiscall TCString();
 
+		void __thiscall Copy(class Toshi::TWString *, int);
 		void __thiscall Copy(class TCString const*, int);
 		void __thiscall Copy(char const*, int);
 		bool __thiscall IsIndexValid(int) const;

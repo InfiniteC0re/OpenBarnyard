@@ -150,6 +150,7 @@
     <ClCompile Include="Source\TRender.cpp" />
     <ClCompile Include="Source\TMemory.cpp" />
     <ClCompile Include="Source\TSystem.cpp" />
+    <ClCompile Include="Source\TWString.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Math\TMathInline.h" />
@@ -163,6 +164,7 @@
     <ClInclude Include="Source\Typedefs.h" />
     <ClInclude Include="Source\TMemory.h" />
     <ClInclude Include="Source\TSystem.h" />
+    <ClInclude Include="Source\TWString.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

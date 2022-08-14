@@ -1,6 +1,18 @@
 #include "TCString.h"
 
 
+void __thiscall Toshi::TCString::Copy(Toshi::TWString * param_1, int a_iLength)
+{
+    int iVar1 = param_1->Length();
+    if ((iVar1 < a_iLength) || (a_iLength == -1))
+    {
+        a_iLength = param_1->Length();
+    }
+    AllocBuffer(a_iLength, true);
+    TSystem::StringUnicodeToChar(*m_pBuffer, param_1->operator unsigned short* (), a_iLength);
+    m_pBuffer[a_iLength] = 0;
+}
+
 void __thiscall Toshi::TCString::Copy(const TCString* param_1, int param_2)
 {
     //TODO
@@ -8,21 +20,21 @@ void __thiscall Toshi::TCString::Copy(const TCString* param_1, int param_2)
 
 void __thiscall Toshi::TCString::Copy(char const* param_1, int a_iLength)
 {
-    int length;
+    int size;
 
     if (param_1 != *m_pBuffer)
     {
         if (param_1 == TNULL)
         {
-            length = 0;
+            size = 0;
         }
         else
         {
-            length = Toshi::TSystem::StringLength(param_1);
+            size = Toshi::TSystem::StringLength(param_1);
         }
-        if ((length < a_iLength) || (a_iLength == -1))
+        if ((size < a_iLength) || (a_iLength == -1))
         {
-            a_iLength = length;
+            a_iLength = size;
         }
         AllocBuffer(a_iLength, true);
         TSystem::MemCopy(m_pBuffer, param_1, a_iLength);
@@ -32,7 +44,7 @@ void __thiscall Toshi::TCString::Copy(char const* param_1, int a_iLength)
 
 bool __thiscall Toshi::TCString::IsIndexValid(int param_1) const
 {
-    if ((param_1 <= unk2 & 0xffffff) && (-1 < param_1))
+    if ((param_1 <= length & 0xffffff) && (-1 < param_1))
     {
         return true;
     }
@@ -41,7 +53,7 @@ bool __thiscall Toshi::TCString::IsIndexValid(int param_1) const
 
 int __thiscall Toshi::TCString::Find(char param_1, int param_2) const
 {
-    if ((unk2 & 0xffffff < param_2) || (param_2 < 0))
+    if ((length & 0xffffff < param_2) || (param_2 < 0))
     {
         return -1;
     }
@@ -73,7 +85,7 @@ bool __thiscall Toshi::TCString::AllocBuffer(int a_iLength, bool freeMemory)
 
     TASSERT(a_iLength >= 0);
 
-    a_iX = unk2 & 0xFFFFFF;
+    a_iX = length & 0xFFFFFF;
     TASSERT(a_iX <= TINT32_MAX);
 
     if (a_iLength == a_iX)
@@ -112,7 +124,7 @@ bool __thiscall Toshi::TCString::AllocBuffer(int a_iLength, bool freeMemory)
                 rVal = false;
             }
         }
-        unk2 = unk2 & 0xFF000000 | a_iLength & 0xFFFFFF;
+        length = length & 0xFF000000 | a_iLength & 0xFFFFFF;
     }
     if (freeMemory)
     {
@@ -124,7 +136,7 @@ bool __thiscall Toshi::TCString::AllocBuffer(int a_iLength, bool freeMemory)
 __thiscall Toshi::TCString::TCString()
 {
     m_pBuffer = &m_aNull;
-    unk2 = unk2 & 0xFF000000;
+    length = length & 0xFF000000;
     // this+7 = 0
     /*  if (param_1 == 0) {
     if ((_DAT_009b1704 == 0) && (sm_pDefaultAllocatorCB == (code *)0x0)) {
