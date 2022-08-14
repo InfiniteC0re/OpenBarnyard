@@ -20,5 +20,5 @@ void __thiscall Toshi::TMSWindow::Create(TRender* renderer, char* param_2)
 	//Destory()
 	m_pRenderer = renderer;
 	LoadIconA(0x0, (LPCSTR)0x7F00);
-	TRender::m_sClass.GetName()
+	TRender::m_sClass.GetName();
 }

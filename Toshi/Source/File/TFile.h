@@ -3,6 +3,16 @@
 #include "../Typedefs.h"
 namespace Toshi
 {
+
+	class TFileManager
+	{
+	private:
+		void __thiscall ValidateSystemPath();
+	public:
+		class TFile* __thiscall CreateFile(class TCString const*, unsigned int);
+
+	};
+
 	class TFile
 	{
 		int unk;
@@ -13,14 +23,7 @@ namespace Toshi
 		static class Toshi::TFile* __stdcall Create(class TCString const*, unsigned int);
 	};
 
-	class TFileManager
-	{
-	private:
-		void __thiscall ValidateSystemPath();
-	public:
-		class TFile* __thiscall CreateFile(class TCString const*, unsigned int);
-
-	};
+	
 }
 
 

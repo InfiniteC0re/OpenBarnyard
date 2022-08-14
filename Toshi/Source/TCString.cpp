@@ -69,7 +69,7 @@ int __thiscall Toshi::TCString::Find(char param_1, int param_2) const
     {
         return -1;
     }
-    bool isValid = IsIndexValid(0);
+    isValid = IsIndexValid(0);
     if (!isValid)
     {
         TASSERT(IsIndexValid(0));

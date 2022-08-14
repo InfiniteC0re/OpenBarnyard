@@ -15,7 +15,7 @@ namespace Toshi
 
 		void __thiscall Enable();
 		void __thiscall Disable();
-		void __thiscall Create(TRender * renderer, char * param_2)
+		void __thiscall Create(TRender* renderer, char* param_2);
 	};
 }
 

@@ -4,7 +4,7 @@
 #include "Typedefs.h"
 namespace Toshi
 {
-	class TObject : TClass
+	class TObject
 	{
 	public:
 		static class Toshi::TClass m_sClass;

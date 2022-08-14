@@ -2,9 +2,8 @@
 #include "TObject.h"
 
 namespace Toshi {
-	class TRender : TObject
+	class TRender : public TObject
 	{
-
 	};
 }
 
