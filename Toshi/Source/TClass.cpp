@@ -69,7 +69,7 @@ __thiscall Toshi::TClass::TClass(char const* a_pClassName, class Toshi::TClass* 
 	m_pFunc = param_5;
 	m_pFunc2 = param_6;
 	m_parent = param_2;
-	m_unk = param_7;
+	m_version = param_7;
 	m_tclass = nullptr;
 	AttachClassToParent();
 }
