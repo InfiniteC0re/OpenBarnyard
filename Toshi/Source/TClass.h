@@ -23,8 +23,8 @@ namespace Toshi
 		__thiscall TClass(char const *, class Toshi::TClass*, void*, void *, void*, void*, unsigned int);
 
 		char* __thiscall GetName();
-		void __thiscall InitialsieStatic();
-		void __thiscall DeinitialsieStatic();
+		void __thiscall InitialiseStatic();
+		void __thiscall DeinitialiseStatic();
 		bool __thiscall AttachClassToParent();
 		bool __thiscall IsAttached() const;
 
