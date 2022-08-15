@@ -1,6 +1,6 @@
 #include "TObject.h"
 
-// commented this because it's just a virtual constructor that is being created automatically
+// commented this because it's just a virtual destructor that is being created automatically
 // see this for more info:
 // https://stackoverflow.com/questions/8052146/whats-this-extra-parameter-passed-into-virtual-destructor
 
