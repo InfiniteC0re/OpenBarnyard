@@ -2,9 +2,27 @@
 //
 
 #include <iostream>
+#include "TMemory.h"
+
+using Toshi::tfree;
+using Toshi::tmalloc;
 
 int main()
 {
+    // initialise TMemory manager
+    Toshi::TMemory::TMemManager::Initialise(134217728);
+
+    struct Test
+    {
+		size_t Field1;
+		size_t Field2;
+    };
+
+    Test* instance = static_cast<Test*>(tmalloc(sizeof(Test)));
+	instance->Field1 = 1000;
+	instance->Field2 = 55000;
+    tfree(instance);
+
     std::cout << "Hello World!\n";
 }
 

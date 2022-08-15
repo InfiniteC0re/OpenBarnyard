@@ -1,10 +1,10 @@
 #pragma once
 #include "TObject.h"
 
-namespace Toshi {
+namespace Toshi
+{
 	class TRender : public TObject
 	{
+
 	};
 }
-
-
