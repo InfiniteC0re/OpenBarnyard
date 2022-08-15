@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "TSystem.h"
 
 int __stdcall Toshi::TSystem::StringLength(char const*)

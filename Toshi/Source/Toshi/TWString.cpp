@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "TWString.h"
 
 int __thiscall Toshi::TWString::Length()

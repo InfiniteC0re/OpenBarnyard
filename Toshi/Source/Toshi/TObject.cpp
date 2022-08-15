@@ -1,5 +1,5 @@
+#include "pch.h"
 #include "TObject.h"
-#include <iostream>
 
 namespace Toshi
 {

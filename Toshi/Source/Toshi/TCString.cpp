@@ -1,5 +1,5 @@
+#include "pch.h"
 #include "TCString.h"
-
 
 void __thiscall Toshi::TCString::Copy(Toshi::TWString * param_1, int a_iLength)
 {

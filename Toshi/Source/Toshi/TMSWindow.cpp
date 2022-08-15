@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "TMSWindow.h"
 
 void __thiscall Toshi::TMSWindow::Enable()
