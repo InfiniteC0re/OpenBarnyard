@@ -100,7 +100,7 @@ bool __thiscall Toshi::TCString::AllocBuffer(int a_iLength, bool freeMemory)
             {
                 tfree(m_pBuffer);
             }
-            m_pBuffer = &m_aNull;
+            m_pBuffer = nullptr;
             rVal = true;
             //this+7 = 0
         }
@@ -135,7 +135,7 @@ bool __thiscall Toshi::TCString::AllocBuffer(int a_iLength, bool freeMemory)
 
 __thiscall Toshi::TCString::TCString()
 {
-    m_pBuffer = &m_aNull;
+    m_pBuffer = nullptr;
     length = length & 0xFF000000;
     // this+7 = 0
     /*  if (param_1 == 0) {

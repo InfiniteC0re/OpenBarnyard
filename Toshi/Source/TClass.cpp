@@ -1,18 +1,28 @@
 #include "TClass.h"
-
-char* __thiscall Toshi::TClass::GetName()
-{
-	return m_pcClassName;
-}
+#include "Typedefs.h"
 
 void __thiscall Toshi::TClass::InitialiseStatic()
 {
-	if (m_pFunc != TNULL)
-	{
-		TASSERT(TFALSE == m_bInitialised);
-		//m_pFunc();
-		m_bInitialised = true;
-	}
+	// this is not used after JPOG and can be done using static variable
+	
+	//if (m_pFunc != TNULL)
+	//{
+	//	TASSERT(TFALSE == m_bInitialised);
+	//	//m_pFunc();
+	//	m_bInitialised = true;
+	//}
+}
+
+void __thiscall Toshi::TClass::DeinitialiseStatic()
+{
+	// this is not used after JPOG and can be done using static variable
+	
+	//if (m_pFunc2 != TNULL)
+	//{
+	//	TASSERT(TTRUE == m_bInitialised);
+	//	m_bInitialised = false;
+	//	//m_pFunc2();
+	//}
 }
 
 bool __thiscall Toshi::TClass::IsAttached() const
@@ -31,18 +41,8 @@ bool __thiscall Toshi::TClass::IsAttached() const
 			}
 		}
 	}
+
 	return false;
-}
-
-void __thiscall Toshi::TClass::DeinitialiseStatic()
-{
-	if (m_pFunc2 != TNULL)
-	{
-		TASSERT(TTRUE == m_bInitialised);
-		m_bInitialised = false;
-		//m_pFunc2();
-	}
-
 }
 
 bool __thiscall Toshi::TClass::AttachClassToParent()
@@ -61,15 +61,15 @@ bool __thiscall Toshi::TClass::AttachClassToParent()
 	return false;
 }
 
-__thiscall Toshi::TClass::TClass(char const* a_pClassName, class Toshi::TClass* param_2, void * param_3, void * param_4, void* param_5, void* param_6, unsigned int param_7)
+Toshi::TClass::TClass(const char* name, TClass* parent, t_CreateTObject create, t_CreateTObjectAtPlace createAtPlace, t_RegisterScriptingAPI scripting, void* unk, size_t size)
 {
-	m_pcClassName = (char*)a_pClassName;
-	m_pTObjectCTOR = param_3;
-	m_pTObjectDTOR = param_4;
-	m_pFunc = param_5;
-	m_pFunc2 = param_6;
-	m_parent = param_2;
-	m_version = param_7;
+	m_pcClassName = (char*)name;
+	m_pTObjectCTOR = create;
+	m_pTObjectCTORAtPlace = createAtPlace;
+	m_pRegisterScriptingAPI = scripting;
+	m_pFunc = unk;
+	m_parent = parent;
+	m_size = size;
 	m_tclass = nullptr;
 	AttachClassToParent();
 }
