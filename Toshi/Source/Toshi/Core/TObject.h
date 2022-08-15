@@ -7,7 +7,7 @@
 public: \
 	virtual Toshi::TClass* Class() { return &s_Class; } \
 	static void* CreateObject() { return new CLASSNAME; } \
-	static void* CreateObjectAtPlace(void*) { TASSERT(false, "CreateObjectAtPlace is not implemented"); return nullptr; } \
+	static void* CreateObjectAtPlace(void* block) { return new (block) CLASSNAME(); } \
 private: \
 	static Toshi::TClass s_Class;
 
@@ -24,8 +24,11 @@ namespace Toshi
 		virtual ~TObject();
 
 		// Operators
-		static void* operator new(size_t size) { return tmalloc(size); }
-		static void operator delete(void* block) { tfree(block); }
+		static inline void* operator new(size_t size) { return tmalloc(size); }
+		static inline void* operator new(size_t size, void* at) { return at; }
+
+		static inline void operator delete(void* block) { tfree(block); }
+		static inline void operator delete(void* block, void* at) { tfree(block); }
 	};
 }
 
