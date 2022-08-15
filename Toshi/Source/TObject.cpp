@@ -2,9 +2,9 @@
 
 void __thiscall Toshi::TObject::Delete()
 {
-	if (this != 0)
+	if (this != TNULL)
 	{
-		this->DestructTObject(1);
+		DestructTObject(1);
 	}
 }
 
@@ -29,7 +29,7 @@ Toshi::TObject::~TObject()
 
 }
 
-Toshi::TClass* __thiscall Toshi::TObject::GetClass()
+Toshi::TClass& __thiscall Toshi::TObject::GetClass() const
 {
-	return &m_sClass;
+	return m_sClass;
 }

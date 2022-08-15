@@ -133,6 +133,21 @@ bool __thiscall Toshi::TCString::AllocBuffer(int a_iLength, bool freeMemory)
     return rVal;
 }
 
+int Toshi::TCString::Length() const
+{
+    return length & 0xFFFFFF;
+}
+
+const char* Toshi::TCString::GetString(int param_1) const
+{
+    int valid = IsIndexValid(param_1);
+    if (valid)
+    {
+        return ((*m_pBuffer) + param_1);
+    }
+    return TNULL;
+}
+
 __thiscall Toshi::TCString::TCString()
 {
     m_pBuffer = &m_aNull;
@@ -164,4 +179,12 @@ __thiscall Toshi::TCString::TCString()
 **this = 0;
 return (undefined4*)this;
     */
+}
+
+Toshi::TCString::TCString(int param_1)
+{
+    this->m_pBuffer = &m_aNull;
+    length = length & 0xff000000;
+    //this + 7 = 0
+    //TODO
 }

@@ -10,7 +10,7 @@ void __thiscall Toshi::TClass::InitialiseStatic()
 	if (m_pFunc != TNULL)
 	{
 		TASSERT(TFALSE == m_bInitialised);
-		//m_pFunc();
+		m_pFunc();
 		m_bInitialised = true;
 	}
 }
@@ -40,7 +40,7 @@ void __thiscall Toshi::TClass::DeinitialiseStatic()
 	{
 		TASSERT(TTRUE == m_bInitialised);
 		m_bInitialised = false;
-		//m_pFunc2();
+		m_pFunc2();
 	}
 
 }
@@ -61,11 +61,11 @@ bool __thiscall Toshi::TClass::AttachClassToParent()
 	return false;
 }
 
-__thiscall Toshi::TClass::TClass(char const* a_pClassName, class Toshi::TClass* param_2, void * param_3, void * param_4, void* param_5, void* param_6, unsigned int param_7)
+__thiscall Toshi::TClass::TClass(char const* a_pClassName, class Toshi::TClass* param_2, TObjectCTOR param_3, TObjectCTOR2 param_4, Func param_5, Func param_6, unsigned int param_7)
 {
 	m_pcClassName = (char*)a_pClassName;
 	m_pTObjectCTOR = param_3;
-	m_pTObjectDTOR = param_4;
+	m_pTObjectCTOR2 = param_4;
 	m_pFunc = param_5;
 	m_pFunc2 = param_6;
 	m_parent = param_2;
