@@ -1,30 +1,6 @@
 #include "TClass.h"
 #include "Typedefs.h"
 
-void __thiscall Toshi::TClass::InitialiseStatic()
-{
-	// this is not used after JPOG and can be done using static variable
-	
-	//if (m_pFunc != TNULL)
-	//{
-	//	TASSERT(TFALSE == m_bInitialised);
-	//	//m_pFunc();
-	//	m_bInitialised = true;
-	//}
-}
-
-void __thiscall Toshi::TClass::DeinitialiseStatic()
-{
-	// this is not used after JPOG and can be done using static variable
-	
-	//if (m_pFunc2 != TNULL)
-	//{
-	//	TASSERT(TTRUE == m_bInitialised);
-	//	m_bInitialised = false;
-	//	//m_pFunc2();
-	//}
-}
-
 bool __thiscall Toshi::TClass::IsAttached() const
 {
 	if (m_parent != TNULL)
@@ -61,14 +37,14 @@ bool __thiscall Toshi::TClass::AttachClassToParent()
 	return false;
 }
 
-Toshi::TClass::TClass(const char* name, TClass* parent, t_CreateTObject create, t_CreateTObjectAtPlace createAtPlace, t_RegisterScriptingAPI scripting, uint32_t version, size_t size)
+Toshi::TClass::TClass(const char* name, TClass* parent, t_CreateTObject create, t_CreateTObjectAtPlace createAtPlace, t_RegisterScriptingAPI scripting, uint16_t verMajor, uint16_t verMinor, size_t size)
 {
 	m_pcClassName = name;
 	m_pCreateTObject = create;
 	m_pCreateTObjectAtPlace = createAtPlace;
 	m_pRegisterScriptingAPI = scripting;
 	m_parent = parent;
-	m_version = version;
+	m_version = (verMajor << 16) | verMinor;
 	m_size = size;
 	m_tclass = nullptr;
 

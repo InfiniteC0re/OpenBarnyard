@@ -15,81 +15,84 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\Toshi.cpp">
+    <ClCompile Include="Source\Toshi\TClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\TClass.cpp">
+    <ClCompile Include="Source\Toshi\TCString.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\TCString.cpp">
+    <ClCompile Include="Source\Toshi\TMemory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\File\TFile.cpp">
+    <ClCompile Include="Source\Toshi\TModel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\TModel.cpp">
+    <ClCompile Include="Source\Toshi\TMSWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\TMSWindow.cpp">
+    <ClCompile Include="Source\Toshi\TObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\TObject.cpp">
+    <ClCompile Include="Source\Toshi\TRender.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\TRender.cpp">
+    <ClCompile Include="Source\Toshi\TSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\TSystem.cpp">
+    <ClCompile Include="Source\Toshi\TWString.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\TMemory.cpp">
+    <ClCompile Include="Source\Toshi\File\TFile.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\TWString.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Toshi2\T2String8.cpp">
+    <ClCompile Include="Source\Toshi\Toshi2\T2String8.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Source\TClass.h">
+    <ClInclude Include="Source\Toshi\Core.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\TCString.h">
+    <ClInclude Include="Source\Toshi\TApplication.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\File\TFile.h">
+    <ClInclude Include="Source\Toshi\TClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\TModel.h">
+    <ClInclude Include="Source\Toshi\TCString.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\TMSWindow.h">
+    <ClInclude Include="Source\Toshi\TMemory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\TObject.h">
+    <ClInclude Include="Source\Toshi\TModel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\TRender.h">
+    <ClInclude Include="Source\Toshi\TMSWindow.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Typedefs.h">
+    <ClInclude Include="Source\Toshi\TObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Math\TMathInline.h">
+    <ClInclude Include="Source\Toshi\TRender.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\TSystem.h">
+    <ClInclude Include="Source\Toshi\TSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\TMemory.h">
+    <ClInclude Include="Source\Toshi\TWString.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\TWString.h">
+    <ClInclude Include="Source\Toshi\Typedefs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Toshi2\T2String8.h">
+    <ClInclude Include="Source\Toshi\Toshi2\T2String8.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Toshi\Math\TMathInline.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Toshi\File\TFile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

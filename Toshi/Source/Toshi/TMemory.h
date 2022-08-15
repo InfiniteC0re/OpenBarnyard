@@ -40,7 +40,7 @@ namespace Toshi
 			TMemManager(const TMemManager&) = delete;
 			~TMemManager();
 
-			static void Initialise(size_t globalBlockSize);
+			static void Initialize(size_t globalBlockSize);
 
 			MemoryBlockRegion* AddNamedBlock(void* memory, size_t size, const char* name);
 

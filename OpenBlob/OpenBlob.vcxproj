@@ -21,32 +21,32 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{1b40897d-3837-4759-8335-9ca03261352c}</ProjectGuid>
-    <RootNamespace>Toshi</RootNamespace>
+    <ProjectGuid>{3bedea9e-fc13-4d81-8edb-8eb913c24422}</ProjectGuid>
+    <RootNamespace>OpenBlob</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -92,7 +92,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>TOSHI_PLATFORM_WINDOWS;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)$(ProjectName)\Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Toshi\Source</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -107,7 +107,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>TOSHI_PLATFORM_WINDOWS;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)$(ProjectName)\Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Toshi\Source</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -122,7 +122,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>TOSHI_PLATFORM_WINDOWS;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)$(ProjectName)\Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Toshi\Source</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -137,7 +137,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>TOSHI_PLATFORM_WINDOWS;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)$(ProjectName)\Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Toshi\Source</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -147,34 +147,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Source\Toshi\File\TFile.cpp" />
-    <ClCompile Include="Source\Toshi\TClass.cpp" />
-    <ClCompile Include="Source\Toshi\TCString.cpp" />
-    <ClCompile Include="Source\Toshi\TMemory.cpp" />
-    <ClCompile Include="Source\Toshi\TModel.cpp" />
-    <ClCompile Include="Source\Toshi\TMSWindow.cpp" />
-    <ClCompile Include="Source\Toshi\TObject.cpp" />
-    <ClCompile Include="Source\Toshi\Toshi2\T2String8.cpp" />
-    <ClCompile Include="Source\Toshi\TRender.cpp" />
-    <ClCompile Include="Source\Toshi\TSystem.cpp" />
-    <ClCompile Include="Source\Toshi\TWString.cpp" />
+    <ProjectReference Include="..\Toshi\Toshi.vcxproj">
+      <Project>{1b40897d-3837-4759-8335-9ca03261352c}</Project>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Source\Toshi\Core.h" />
-    <ClInclude Include="Source\Toshi\File\TFile.h" />
-    <ClInclude Include="Source\Toshi\Math\TMathInline.h" />
-    <ClInclude Include="Source\Toshi\TApplication.h" />
-    <ClInclude Include="Source\Toshi\TClass.h" />
-    <ClInclude Include="Source\Toshi\TCString.h" />
-    <ClInclude Include="Source\Toshi\TMemory.h" />
-    <ClInclude Include="Source\Toshi\TModel.h" />
-    <ClInclude Include="Source\Toshi\TMSWindow.h" />
-    <ClInclude Include="Source\Toshi\TObject.h" />
-    <ClInclude Include="Source\Toshi\Toshi2\T2String8.h" />
-    <ClInclude Include="Source\Toshi\TRender.h" />
-    <ClInclude Include="Source\Toshi\TSystem.h" />
-    <ClInclude Include="Source\Toshi\TWString.h" />
-    <ClInclude Include="Source\Toshi\Typedefs.h" />
+    <ClCompile Include="Source\AApplication.cpp" />
+    <ClCompile Include="Source\AExampleClass.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Source\AExampleClass.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

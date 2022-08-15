@@ -3,9 +3,9 @@
 
 namespace Toshi
 {
-	typedef void(*t_CreateTObject)();
-	typedef void(*t_CreateTObjectAtPlace)();
-	typedef void(*t_RegisterScriptingAPI)();
+	typedef void* (*t_CreateTObject)();
+	typedef void* (*t_CreateTObjectAtPlace)();
+	typedef void  (*t_RegisterScriptingAPI)();
 
 	class TClass
 	{
@@ -24,12 +24,9 @@ namespace Toshi
 		void* m_unk4; // 0x28
 		bool m_bInitialised; // 0x2C
 
-		TClass(const char* name, TClass* parent, t_CreateTObject create, t_CreateTObjectAtPlace createAtPlace, t_RegisterScriptingAPI scripting, uint32_t version, size_t size);
+		TClass(const char* name, TClass* parent, t_CreateTObject create, t_CreateTObjectAtPlace createAtPlace, t_RegisterScriptingAPI scripting, uint16_t verMajor, uint16_t verMinor, size_t size);
 
-		// todo: always inline getter/small functions to optimize the code
 		inline const char* GetName() const { return m_pcClassName; }
-		void InitialiseStatic();
-		void DeinitialiseStatic();
 		bool AttachClassToParent();
 		bool IsAttached() const;
 	};

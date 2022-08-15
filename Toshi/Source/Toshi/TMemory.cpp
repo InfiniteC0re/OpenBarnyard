@@ -11,7 +11,7 @@ namespace Toshi
 		TMemManager* TMemManager::s_Class;
 		size_t TMemManager::s_GlobalBlockSize;
 
-		void TMemManager::Initialise(size_t globalBlockSize)
+		void TMemManager::Initialize(size_t globalBlockSize)
 		{
 			s_GlobalBlockSize = globalBlockSize;
 			s_Class = new TMemManager;
