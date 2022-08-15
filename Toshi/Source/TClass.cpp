@@ -61,15 +61,16 @@ bool __thiscall Toshi::TClass::AttachClassToParent()
 	return false;
 }
 
-Toshi::TClass::TClass(const char* name, TClass* parent, t_CreateTObject create, t_CreateTObjectAtPlace createAtPlace, t_RegisterScriptingAPI scripting, void* unk, size_t size)
+Toshi::TClass::TClass(const char* name, TClass* parent, t_CreateTObject create, t_CreateTObjectAtPlace createAtPlace, t_RegisterScriptingAPI scripting, uint32_t version, size_t size)
 {
-	m_pcClassName = (char*)name;
-	m_pTObjectCTOR = create;
-	m_pTObjectCTORAtPlace = createAtPlace;
+	m_pcClassName = name;
+	m_pCreateTObject = create;
+	m_pCreateTObjectAtPlace = createAtPlace;
 	m_pRegisterScriptingAPI = scripting;
-	m_pFunc = unk;
 	m_parent = parent;
+	m_version = version;
 	m_size = size;
 	m_tclass = nullptr;
+
 	AttachClassToParent();
 }
