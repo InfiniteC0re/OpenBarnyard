@@ -183,7 +183,7 @@ return (undefined4*)this;
 
 Toshi::TCString::TCString(int param_1)
 {
-    this->m_pBuffer = &m_aNull;
+    //this->m_pBuffer = &m_aNull;
     length = length & 0xff000000;
     //this + 7 = 0
     //TODO
