@@ -14,7 +14,7 @@ namespace Toshi
 		TCString str;
 		TCString str2;
 
-		TASSERT(a_sName->Length() > 0);
+		TASSERT(a_sName->Length() > 0, "Name can't be empty");
 		ValidateSystemPath();
 		int idx = a_sName->Find(':', 0);
 		if (-1 < idx)

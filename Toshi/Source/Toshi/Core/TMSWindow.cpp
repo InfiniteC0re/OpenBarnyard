@@ -1,15 +1,16 @@
 #include "pch.h"
+#include "Core.h"
 #include "TMSWindow.h"
 
 void __thiscall Toshi::TMSWindow::Enable()
 {
-	TASSERT(hwnd != TNULL);
+	TASSERT(hwnd != TNULL, "HWND shouldn't be TNULL");
 	m_bIsEnabled = 1;
 }
 
 void __thiscall Toshi::TMSWindow::Disable()
 {
-	TASSERT(hwnd != TNULL);
+	TASSERT(hwnd != TNULL, "HWND shouldn't be TNULL");
 	m_bIsEnabled = 0;
 }
 

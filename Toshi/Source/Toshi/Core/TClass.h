@@ -4,7 +4,7 @@
 namespace Toshi
 {
 	typedef void* (*t_CreateTObject)();
-	typedef void* (*t_CreateTObjectAtPlace)();
+	typedef void* (*t_CreateTObjectAtPlace)(void*);
 	typedef void  (*t_RegisterScriptingAPI)();
 
 	class TClass

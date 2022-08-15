@@ -14,7 +14,7 @@ void* __stdcall Toshi::TSystem::MemCopy(void* dst, void const* src, unsigned int
 
 char const* __stdcall Toshi::TSystem::StringUnicodeToChar(char* a_CharString, unsigned short const* a_UnicodeString, int a_iLength)
 {
-	TASSERT((a_UnicodeString != TNULL) && (a_CharString != NULL));
+	TASSERT(a_UnicodeString != TNULL && a_CharString != NULL, "Invalid string");
 	
 	int iVar2 = StringLength(a_UnicodeString);
 	if ((iVar2 < a_iLength) || (a_iLength == -1))

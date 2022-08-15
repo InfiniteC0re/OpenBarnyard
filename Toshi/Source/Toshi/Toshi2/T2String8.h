@@ -1,6 +1,6 @@
 #pragma once
-#include "../Typedefs.h"
-#include <string.h>
+#include "Toshi/Typedefs.h"
+
 namespace Toshi2
 {
 	class T2String8

@@ -1,6 +1,6 @@
 #pragma once
-#include "../TCString.h"
-#include "../Typedefs.h"
+#include "Toshi/Strings/TCString.h"
+#include "Toshi/Typedefs.h"
 
 namespace Toshi
 {
@@ -8,7 +8,6 @@ namespace Toshi
 	{
 	public:
 		TFileManager() = default;
-		// delete copy constructor since this has to be a singleton class
 		TFileManager(const TFileManager&) = delete;
 		
 		inline static TFileManager& Instance()

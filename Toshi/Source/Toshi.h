@@ -1,4 +1,7 @@
 #pragma once
-#include "Toshi/TObject.h"
-#include "Toshi/TApplication.h"
-#include "Toshi/EntryPoint.h"
+
+#include <Toshi/Core/TObject.h>
+#include <Toshi/Core/TApplication.h>
+#include <Toshi/Core/TLog.h>
+
+#include <Toshi/Core/EntryPoint.h>

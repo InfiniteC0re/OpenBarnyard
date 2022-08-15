@@ -1,14 +1,13 @@
 #pragma once
-#include <stdint.h>
 #include "TMemory.h"
 #include "TClass.h"
-#include "Typedefs.h"
+#include "Toshi/Typedefs.h"
 
 #define TOSHI_CLASS_REGISTER(CLASSNAME) \
 public: \
 	virtual Toshi::TClass* Class() { return &s_Class; } \
 	static void* CreateObject() { return new CLASSNAME; } \
-	static void* CreateObjectAtPlace() { TASSERT(false); return nullptr; } \
+	static void* CreateObjectAtPlace(void*) { TASSERT(false, "CreateObjectAtPlace is not implemented"); return nullptr; } \
 private: \
 	static Toshi::TClass s_Class;
 
@@ -25,15 +24,8 @@ namespace Toshi
 		virtual ~TObject();
 
 		// Operators
-		static void* operator new(size_t size)
-		{
-			return tmalloc(size);
-		}
-
-		static void operator delete(void* block)
-		{
-			tfree(block);
-		}
+		static void* operator new(size_t size) { return tmalloc(size); }
+		static void operator delete(void* block) { tfree(block); }
 	};
 }
 

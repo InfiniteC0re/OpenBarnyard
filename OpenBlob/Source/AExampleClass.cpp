@@ -5,10 +5,10 @@ TOSHI_CLASS_INITIALIZE(AExampleClass, nullptr, 1, 0)
 
 AExampleClass::AExampleClass()
 {
-	std::cout << "Called AExampleClass" << std::endl;
+	TOSHI_INFO("Called AExampleClass");
 }
 
 AExampleClass::~AExampleClass()
 {
-	std::cout << "Called ~AExampleClass" << std::endl;
+	TOSHI_INFO("Called ~AExampleClass");
 }

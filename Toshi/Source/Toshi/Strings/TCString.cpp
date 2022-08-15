@@ -61,7 +61,7 @@ int __thiscall Toshi::TCString::Find(char param_1, int param_2) const
     bool isValid = IsIndexValid(0);
     if (!isValid)
     {
-        TASSERT(IsIndexValid(0));
+        TASSERT(IsIndexValid(0), "Index 0 is not valid");
         return -1;
     }
     char* foundAt = strchr(m_pBuffer[param_2], param_1);
@@ -72,7 +72,7 @@ int __thiscall Toshi::TCString::Find(char param_1, int param_2) const
     isValid = IsIndexValid(0);
     if (!isValid)
     {
-        TASSERT(IsIndexValid(0));
+        TASSERT(IsIndexValid(0), "Index 0 is not valid");
         return -1;
     }
     return foundAt - *m_pBuffer;
@@ -83,10 +83,10 @@ bool __thiscall Toshi::TCString::AllocBuffer(int a_iLength, bool freeMemory)
     int a_iX;
     bool rVal;
 
-    TASSERT(a_iLength >= 0);
+    TASSERT(a_iLength >= 0, "Length can't be less than 0");
 
     a_iX = length & 0xFFFFFF;
-    TASSERT(a_iX <= TINT32_MAX);
+    TASSERT(a_iX <= TINT32_MAX, "a_iX <= TINT32_MAX");
 
     if (a_iLength == a_iX)
     {
@@ -116,7 +116,7 @@ bool __thiscall Toshi::TCString::AllocBuffer(int a_iLength, bool freeMemory)
                 void * mem = tmalloc(a_iLength + 1);
                 *m_pBuffer = (char*)mem;
                 //this + 7 = 0
-                TASSERT(m_pBuffer != TNULL);
+                TASSERT(m_pBuffer != TNULL, "Buffer can't be TNULL");
             }
             else
             {

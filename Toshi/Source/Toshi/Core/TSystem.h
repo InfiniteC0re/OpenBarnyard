@@ -1,6 +1,6 @@
 #pragma once
-#include <string.h>
-#include "Typedefs.h"
+#include "Toshi/Typedefs.h"
+
 namespace Toshi
 {
 	class TSystem

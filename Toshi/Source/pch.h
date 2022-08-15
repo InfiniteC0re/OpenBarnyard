@@ -10,6 +10,8 @@
 #include <memory>
 #include <utility>
 
+#include "Toshi/Core/TLog.h"
+
 #ifdef TOSHI_PLATFORM_WINDOWS
-#include <Windows.h>
+	#include <Windows.h>
 #endif

@@ -1,8 +1,7 @@
 #pragma once
-#include "Typedefs.h"
-#include <Windows.h>
 #include "TObject.h"
 #include "TRender.h"
+#include "Toshi/Typedefs.h"
 
 namespace Toshi
 {

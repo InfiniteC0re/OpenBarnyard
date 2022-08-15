@@ -5,7 +5,7 @@ namespace Toshi
 {
 	TObject::~TObject()
 	{
-		std::cout << "Called ~TObject" << std::endl;
+		TOSHI_CORE_INFO("Called ~TObject");
 	}
 
 	void TObject::Destroy()

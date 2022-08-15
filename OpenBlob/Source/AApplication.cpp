@@ -6,23 +6,15 @@ class AApplication : public Toshi::TApplication
 public:
 	void Start() override
 	{
-		std::cout << "The application has started" << std::endl;
+		TOSHI_INFO("The application has started");
 	}
 
 	void Run() override
 	{
-		std::cout << "Running the application..." << std::endl;
+		TOSHI_INFO("Running the application...");
 
 		AExampleClass* exampleClass = new AExampleClass();
-		
-		// `exampleClass->Destroy()` is equal to `delete exampleClass` but can be overriden
 		exampleClass->Destroy();
-		// delete exampleClass;
-
-		// while (true)
-		// {
-		// 	
-		// }
 	}
 };
 
@@ -31,7 +23,7 @@ Toshi::TApplication* Toshi::CreateApplication(int argc, char** argv)
 	Toshi::TMemory::TMemManager::Initialize(64 * 1024 * 1024);
 
 	auto application = new AApplication();
-	std::cout << "Created application with " << argc << " arguments" << std::endl << std::endl;
+	TOSHI_INFO("Created application with {0} arguments", argc);
 	
 	return application;
 }

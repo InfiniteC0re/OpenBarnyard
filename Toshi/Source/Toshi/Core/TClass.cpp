@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "TClass.h"
-#include "Typedefs.h"
+#include "Toshi/Typedefs.h"
 
 bool __thiscall Toshi::TClass::IsAttached() const
 {
