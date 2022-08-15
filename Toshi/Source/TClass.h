@@ -1,33 +1,37 @@
 #pragma once
-#include "TObject.h"
+#include <cstdint>
 
 namespace Toshi
 {
+	typedef void(*t_CreateTObject)();
+	typedef void(*t_CreateTObjectAtPlace)();
+	typedef void(*t_RegisterScriptingAPI)();
+
 	class TClass
 	{
 	public:
-		char* m_pcClassName; //0
-		void* m_pTObjectCTOR; //0x4
-		void* m_pTObjectDTOR; //0x8
-		void* m_pFunc; //0xC
-		void* m_pFunc2; //0x10
+		const char* m_pcClassName; //0
+		t_CreateTObject m_pCreateTObject; //0x4
+		t_CreateTObjectAtPlace m_pCreateTObjectAtPlace; //0x8
+		t_RegisterScriptingAPI m_pRegisterScriptingAPI; //0xC
+		void* m_pFunc; //0x10
 
-		Toshi::TClass* m_parent; //0x14
-		Toshi::TClass* m_attached; //0x18
-		Toshi::TClass* m_tclass; //0x1C
-		int m_version; //0x20
-		void* m_unk3; // 0x24
+		TClass* m_parent; //0x14
+		TClass* m_attached; //0x18
+		TClass* m_tclass; //0x1C
+		size_t m_size; //0x20
+		uint32_t m_version; // 0x24
 		void* m_unk4; // 0x28
 		bool m_bInitialised; // 0x2C
 
-		__thiscall TClass(char const *, class Toshi::TClass*, void*, void *, void*, void*, unsigned int);
+		TClass(const char* name, TClass* parent, t_CreateTObject create, t_CreateTObjectAtPlace createAtPlace, t_RegisterScriptingAPI scripting, uint32_t version, size_t size);
 
-		char* __thiscall GetName();
-		void __thiscall InitialiseStatic();
-		void __thiscall DeinitialiseStatic();
-		bool __thiscall AttachClassToParent();
-		bool __thiscall IsAttached() const;
-
+		// todo: always inline getter/small functions to optimize the code
+		inline const char* GetName() const { return m_pcClassName; }
+		void InitialiseStatic();
+		void DeinitialiseStatic();
+		bool AttachClassToParent();
+		bool IsAttached() const;
 	};
 }
 

@@ -8,10 +8,6 @@ namespace Toshi
 {
 	class TCString
 	{
-		char** m_pBuffer;
-		unsigned int length;
-	private:
-		static char* m_aNull;
 	public:
 		__thiscall TCString();
 
@@ -21,6 +17,10 @@ namespace Toshi
 		bool __thiscall IsIndexValid(int) const;
 		int __thiscall Find(char, int) const;
 		bool __thiscall AllocBuffer(int, bool);
+
+	private:
+		char** m_pBuffer;
+		unsigned int length = 0;
 	};
 }
 

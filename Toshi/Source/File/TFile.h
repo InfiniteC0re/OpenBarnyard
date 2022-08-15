@@ -1,29 +1,38 @@
 #pragma once
 #include "../TCString.h"
 #include "../Typedefs.h"
+
 namespace Toshi
 {
-
 	class TFileManager
 	{
-	private:
-		void __thiscall ValidateSystemPath();
 	public:
-		class TFile* __thiscall CreateFile(class TCString const*, unsigned int);
+		TFileManager() = default;
+		// delete copy constructor since this has to be a singleton class
+		TFileManager(const TFileManager&) = delete;
+		
+		inline static TFileManager& Instance()
+		{
+			static TFileManager instance;
+			return instance;
+		};
 
+	private:
+		void ValidateSystemPath();
+
+	public:
+		class TFile* CreateFile(class TCString const*, unsigned int);
 	};
 
 	class TFile
 	{
+	public:
+		static TFile* __stdcall Create(class TCString const*, unsigned int);
+
+	private:
 		int unk;
 		void* file;
-	private:
-		static class Toshi::TFileManager* s_pFileManager;
-	public:
-		static class Toshi::TFile* __stdcall Create(class TCString const*, unsigned int);
 	};
-
-	
 }
 
 
