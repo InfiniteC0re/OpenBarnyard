@@ -67,5 +67,5 @@ namespace Toshi
 	}
 
 	void* tmalloc(size_t size, TMemory::MemoryBlockRegion* block = nullptr);
-	bool tfree(void* ptr, TMemory::MemoryBlockRegion* block = nullptr);
+	bool tfree(void* ptr);
 }

@@ -15,6 +15,10 @@ public:
 
 		AExampleClass* exampleClass = new AExampleClass();
 		exampleClass->Destroy();
+
+		// this should break the program execution in debug mode
+		int a = 100000;
+		Toshi::tfree(&a);
 	}
 };
 

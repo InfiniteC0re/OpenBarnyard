@@ -256,27 +256,26 @@ namespace Toshi
 		return nullptr;
 	}
 
-	bool tfree(void* ptr, TMemory::MemoryBlockRegion* block)
+	bool tfree(void* ptr)
 	{
-		auto& memoryManager = TMemory::TMemManager::Instance();
+		auto chunk = (TMemory::MemoryChunk*)((char*)ptr - sizeof(TMemory::MemoryChunk));
 
-		if (block == nullptr) { block = memoryManager.GlobalBlock(); }
-		auto chunk = block->UsedChunks;
-
-		while (chunk != nullptr)
+		if (ptr == chunk->Data)
 		{
-			if (chunk->Data == ptr)
-			{
-				DeleteChunkFromList(&block->UsedChunks, chunk);
-				AddChunkToList(&block->FreeChunks, chunk);
-				DefragmentChunks(&block->FreeChunks);
+			auto block = chunk->Region;
 
-				return true;
-			}
+			DeleteChunkFromList(&block->UsedChunks, chunk);
+			AddChunkToList(&block->FreeChunks, chunk);
+			DefragmentChunks(&block->FreeChunks);
 
-			chunk = chunk->Next;
+			return true;
 		}
+		else
+		{
+			TOSHI_CORE_ERROR("Cannot free memory at 0x{0:X}", (size_t)ptr);
+			TBREAK();
 
-		return false;
+			return false;
+		}
 	}
 }
