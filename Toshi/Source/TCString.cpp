@@ -81,7 +81,7 @@ int __thiscall Toshi::TCString::Find(char param_1, int param_2) const
 bool __thiscall Toshi::TCString::AllocBuffer(int a_iLength, bool freeMemory)
 {
     int a_iX;
-    bool rVal;
+    bool rVal = false;
 
     TASSERT(a_iLength >= 0);
 
@@ -183,7 +183,7 @@ return (undefined4*)this;
 
 Toshi::TCString::TCString(int param_1)
 {
-    //this->m_pBuffer = &m_aNull;
+    this->m_pBuffer = TNULL;
     length = length & 0xff000000;
     //this + 7 = 0
     //TODO
