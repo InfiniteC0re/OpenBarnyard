@@ -188,3 +188,17 @@ Toshi::TCString::TCString(int param_1)
     //this + 7 = 0
     //TODO
 }
+
+Toshi::TCString::TCString(char* param_1)
+{
+}
+
+Toshi::TCString* Toshi::TCString::operator+=(char const*)
+{
+    return nullptr;
+}
+
+Toshi::TCString::operator const char* ()
+{
+    return (char*)m_pBuffer;
+}
