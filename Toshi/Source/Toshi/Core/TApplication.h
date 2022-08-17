@@ -40,7 +40,7 @@ namespace Toshi
 		inline bool IsDestroyed() { return m_Flags & TApplicationFlag_Destroyed; }
 
 		// Sets new state
-		void SetVerbose(bool state) { m_IsVerbose = state; }
+		inline void SetVerbose(bool state) { m_IsVerbose = state; }
 
 	private:
 		HWND CreateDebugConsole();
