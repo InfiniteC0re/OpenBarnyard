@@ -2,8 +2,6 @@
 #include "AExampleClass.h"
 #include "AApplication.h"
 
-using Toshi::TCString;
-
 Toshi::TApplication* Toshi::CreateApplication(int argc, char** argv)
 {
 	// allocate 64 mbytes for the Toshi memory block
