@@ -21,7 +21,7 @@ namespace Toshi
 
 		int Find(char substr, int pos) const;
 
-		inline uint32_t Length() const { return length & 0xFFFFFF; }
+		inline uint32_t Length() const { return length & 0x00FFFFFF; }
 		inline bool IsIndexValid(uint32_t index) const { return index <= Length() && index >= 0; }
 
 		const char* GetString(uint32_t index) const;

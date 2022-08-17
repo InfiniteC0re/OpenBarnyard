@@ -182,7 +182,7 @@ namespace Toshi
 
 	TCString* TCString::operator+=(char const* str)
 	{
-        TOSHI_CORE_ERROR("TCString::operator+= is not implemented");
+        TIMPLEMENT();
 		return nullptr;
 	}
 }
