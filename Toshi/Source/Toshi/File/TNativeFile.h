@@ -19,7 +19,7 @@ namespace Toshi
 		bool LoadBuffer(LPVOID, DWORD);
 		int FlushWriteBuffer();
 		virtual int Read(LPVOID, int);
-		inline virtual int Tell();
+		virtual int Tell();
 		virtual bool Seek(int, TFile::TSEEK);
 	//protected:
 		bool Open(const TCString*, unsigned int);

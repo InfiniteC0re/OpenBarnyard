@@ -22,6 +22,8 @@ namespace Toshi
 		int Length() const;
 		const char* GetString(int param_1) const;
 	private:
+		void Reset();
+
 		char** m_pBuffer;
 		unsigned int length = 0;
 	};

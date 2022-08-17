@@ -1,9 +1,16 @@
 #include "pch.h"
 #include "TSystem.h"
 
-int __stdcall Toshi::TSystem::StringLength(char const*)
+int __stdcall Toshi::TSystem::StringLength(char const* str)
 {
-    return 0;
+	char currentChar = *str;
+	int length = 0;
+	while (currentChar != '\0')
+	{
+		length++;
+		currentChar = str[length];
+	}
+    return length;
 }
 
 void* __stdcall Toshi::TSystem::MemCopy(void* dst, void const* src, unsigned int size)

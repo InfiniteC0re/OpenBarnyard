@@ -26,7 +26,7 @@ void __thiscall Toshi::TCString::Copy(char const* param_1, int a_iLength)
 {
     int size;
 
-    if (param_1 != *m_pBuffer)
+    if ((char**)param_1 != m_pBuffer)
     {
         if (param_1 == TNULL)
         {
@@ -106,11 +106,12 @@ bool __thiscall Toshi::TCString::AllocBuffer(int a_iLength, bool freeMemory)
             }
             m_pBuffer = nullptr;
             rVal = true;
+            length = (length & ~(0xFF << 24)) | (0 << 24);
             //this+7 = 0
         }
         else
         {
-            int iVar2 = (a_iX - a_iLength); // + this[7]
+            int iVar2 = (a_iX - a_iLength) + (length & 0x000000FF); // + this[7]
             if ((iVar2 < 0) || (0xFF < iVar2))
             {
                 if ((a_iX != 0) && freeMemory)
@@ -118,22 +119,25 @@ bool __thiscall Toshi::TCString::AllocBuffer(int a_iLength, bool freeMemory)
                     tfree(m_pBuffer);
                 }
                 void * mem = tmalloc(a_iLength + 1);
-                *m_pBuffer = (char*)mem;
+                m_pBuffer = (char**)mem;
+                length = (length & ~(0xFF << 24)) | (0 << 24);
                 //this + 7 = 0
                 TASSERT(m_pBuffer != TNULL, "Buffer can't be TNULL");
             }
             else
             {
+                length = (length & ~(0xFF << 24)) | (iVar2 << 24);
                 //this + 7 = (char) uVar1;
                 rVal = false;
             }
         }
         length = length & 0xFF000000 | a_iLength & 0xFFFFFF;
     }
+    /*
     if (freeMemory)
     {
         m_pBuffer = nullptr;
-    }
+    }*/
     return rVal;
 }
 
@@ -150,6 +154,14 @@ const char* Toshi::TCString::GetString(int param_1) const
         return ((*m_pBuffer) + param_1);
     }
     return TNULL;
+}
+
+void Toshi::TCString::Reset()
+{
+    m_pBuffer = TNULL;
+    length &= 0xFF000000;
+    length = (length & ~(0xFF << 24)) | (0 << 24);
+    // this + 7 = 0;
 }
 
 __thiscall Toshi::TCString::TCString()
@@ -195,6 +207,8 @@ Toshi::TCString::TCString(int param_1)
 
 Toshi::TCString::TCString(char* param_1)
 {
+    Reset();
+    Copy(param_1, -1);
 }
 
 Toshi::TCString* Toshi::TCString::operator+=(char const*)

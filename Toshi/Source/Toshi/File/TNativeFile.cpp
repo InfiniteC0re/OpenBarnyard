@@ -1,5 +1,8 @@
 #include "pch.h"
 #include "TNativeFile.h"
+#include <Toshi/Core/TMemory.h>
+
+//using namespace Toshi;
 
 bool Toshi::TNativeFile::LoadBuffer(LPVOID param_1, DWORD param_2)
 {
@@ -82,11 +85,12 @@ param_1 = (void*)(v3 + m_position);
     return 0;
 }
 
-inline int Toshi::TNativeFile::Tell()
+int Toshi::TNativeFile::Tell()
 {
     FlushWriteBuffer();
     return m_position;
 }
+
 
 bool Toshi::TNativeFile::Seek(int offset, TFile::TSEEK origin)
 {
