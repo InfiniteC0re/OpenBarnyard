@@ -1,6 +1,10 @@
 #include "pch.h"
 #include "TCString.h"
 
+#include "Toshi/Typedefs.h"
+#include "Toshi/Core/TMemory.h"
+#include "Toshi/Core/TSystem.h"
+
 void __thiscall Toshi::TCString::Copy(Toshi::TWString * param_1, int a_iLength)
 {
     int iVar1 = param_1->Length();
@@ -86,7 +90,7 @@ bool __thiscall Toshi::TCString::AllocBuffer(int a_iLength, bool freeMemory)
     TASSERT(a_iLength >= 0, "Length can't be less than 0");
 
     a_iX = length & 0xFFFFFF;
-    TASSERT(a_iX <= TINT32_MAX, "a_iX <= TINT32_MAX");
+    TASSERT(a_iX <= TMath::TINT32_MAX, "a_iX <= TINT32_MAX");
 
     if (a_iLength == a_iX)
     {
