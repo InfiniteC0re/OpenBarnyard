@@ -1,10 +1,6 @@
 #include "Toshi.h"
 #include "AExampleClass.h"
 #include "AApplication.h"
-#include "Toshi/Strings/TCString.h"
-
-#include <Windows.h>
-#include <timeapi.h>
 
 using Toshi::TCString;
 
