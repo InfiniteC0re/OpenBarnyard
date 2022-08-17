@@ -1,10 +1,6 @@
 #pragma once
 #include "TWString.h"
 
-#include "Toshi/Typedefs.h"
-#include "Toshi/Core/TMemory.h"
-#include "Toshi/Core/TSystem.h"
-
 namespace Toshi
 {
 	class TCString
