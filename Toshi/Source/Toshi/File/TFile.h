@@ -26,6 +26,14 @@ namespace Toshi
 	class TFile
 	{
 	public:
+
+		enum TSEEK
+		{
+			TSEEK_SET,
+			TSEEK_CUR,
+			TSEEK_END
+		};
+
 		static TFile* __stdcall Create(class TCString const*, unsigned int);
 
 	private:
