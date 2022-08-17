@@ -1,20 +1,15 @@
 #pragma once
+#include "Toshi/Core/TSingleton.h"
 #include "Toshi/Strings/TCString.h"
 #include "Toshi/Typedefs.h"
 
 namespace Toshi
 {
-	class TFileManager
+	class TFileManager : public TSingleton<TFileManager>
 	{
 	public:
 		TFileManager() = default;
 		TFileManager(const TFileManager&) = delete;
-		
-		inline static TFileManager& Instance()
-		{
-			static TFileManager instance;
-			return instance;
-		};
 
 	private:
 		void ValidateSystemPath();
@@ -26,7 +21,7 @@ namespace Toshi
 	class TFile
 	{
 	public:
-		static TFile* __stdcall Create(class TCString const*, unsigned int);
+		static TFile* Create(class TCString const*, unsigned int);
 
 	private:
 		int unk;
