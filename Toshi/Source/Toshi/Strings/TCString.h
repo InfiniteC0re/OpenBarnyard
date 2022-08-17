@@ -1,6 +1,7 @@
 #pragma once
 #include "TWString.h"
 #include "Toshi/Core/TMemory.h"
+#include "TString.h"
 
 namespace Toshi
 {
@@ -34,8 +35,8 @@ namespace Toshi
 		void Reset();
 
 	private:
-		char* m_pBuffer;
-		unsigned int length = 0;
+		char* m_pBuffer = NullString;
+		uint32_t length = 0;
 	};
 }
 

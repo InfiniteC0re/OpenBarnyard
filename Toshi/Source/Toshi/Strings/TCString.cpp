@@ -9,7 +9,7 @@ namespace Toshi
 {
     TCString::TCString()
     {
-        m_pBuffer = nullptr;
+        m_pBuffer = NullString;
         length = length & 0xFF000000;
         // this+7 = 0
         /*  if (param_1 == 0) {
@@ -42,7 +42,7 @@ namespace Toshi
 
 	TCString::TCString(uint32_t length)
 	{
-		this->m_pBuffer = TNULL;
+		this->m_pBuffer = NullString;
 		length = length & 0xff000000;
 		//this + 7 = 0
 		//TODO
@@ -113,9 +113,9 @@ namespace Toshi
         {
             if (a_iLength == 0)
             {
-                if (freeMemory) { tfree(m_pBuffer); }
+                if (freeMemory) tfree(m_pBuffer);
                 
-                m_pBuffer = nullptr;
+                m_pBuffer = NullString;
                 rVal = true;
                 length = (length & ~(0xFF << 24)) | (0 << 24);
                 //this+7 = 0
@@ -123,9 +123,10 @@ namespace Toshi
             else
             {
                 int iVar2 = (currentLength - a_iLength) + (length & 0x000000FF); // + this[7]
+                
                 if ((iVar2 < 0) || (0xFF < iVar2))
                 {
-                    if ((currentLength != 0) && freeMemory)
+                    if (currentLength != 0 && freeMemory)
                     {
                         tfree(m_pBuffer);
                     }
@@ -144,11 +145,9 @@ namespace Toshi
 
             length = length & 0xFF000000 | a_iLength & 0xFFFFFF;
         }
-        /*
-        if (freeMemory)
-        {
-            m_pBuffer = nullptr;
-        }*/
+        
+        if (freeMemory) m_pBuffer[0] = '\0';
+
         return rVal;
     }
 
@@ -157,7 +156,7 @@ namespace Toshi
         if (Length() != 0)
         {
             tfree(m_pBuffer);
-            m_pBuffer = nullptr;
+            m_pBuffer = NullString;
         }
 
         Reset();
