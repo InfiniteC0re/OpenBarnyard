@@ -1,7 +1,9 @@
 #include "pch.h"
 #include "TCString.h"
 
-
+#include "Toshi/Typedefs.h"
+#include "Toshi/Core/TMemory.h"
+#include "Toshi/Core/TSystem.h"
 
 void __thiscall Toshi::TCString::Copy(Toshi::TWString * param_1, int a_iLength)
 {
