@@ -6,10 +6,10 @@ namespace Toshi
 	class TSystem
 	{
 	public:
-		static int __stdcall StringLength(char const*);
-		static void* __stdcall MemCopy(void*, void const*, unsigned int);
-		static char const* __stdcall StringUnicodeToChar(char*, unsigned short const*, int);
-		static int __stdcall StringLength(unsigned short const*);
+		static uint32_t StringLength(const char* const& str);
+		static uint32_t StringLength(const wchar_t* const& wstr);
+		static void* MemCopy(void* dst, const void* const& src, size_t size);
+		static const char* StringUnicodeToChar(char*, wchar_t*, int);
 	};
 }
 

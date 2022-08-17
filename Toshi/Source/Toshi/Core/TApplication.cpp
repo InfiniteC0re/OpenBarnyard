@@ -82,7 +82,7 @@ namespace Toshi
     HWND TApplication::CreateDebugConsole()
     {
 #ifdef TOSHI_PLATFORM_WINDOWS
-        TCString str = TCString((char*)TDebugConsoleUUID);
+        TCString str = TCString(TDebugConsoleUUID);
 
         // timeGetTime is not precise and requires linking external library
         // so let's use performance counter for Windows and some other function
@@ -94,8 +94,8 @@ namespace Toshi
         LARGE_INTEGER time;
         QueryPerformanceCounter(&time);
         
-        char timeHex[sizeof(LARGE_INTEGER) + 1] = { 0 };
-        ultoa(time.QuadPart, timeHex, 0x10);
+        char timeHex[sizeof(time.QuadPart) + 1] = { 0 };
+        _ultoa_s((unsigned long)time.QuadPart, timeHex, 0x10);
 
         TOSHI_INFO("Debug Start Time: {0}", timeHex);
 
@@ -135,20 +135,15 @@ namespace Toshi
         str += timeHex;
         char lpConsoleTitle[0x200];
         DWORD unk3 = GetConsoleTitleA(lpConsoleTitle, 0x200);
-        
+
         if (unk3 == 0)
         {
-            //delete str;
             return TNULL;
         }
 
-        HWND consoleHWND = TNULL;
-        
-        // commented this because it crashes the program
-        //SetConsoleTitleA(str);
-        //HWND consoleHWND = FindWindowA(TNULL, str);
-        //SetConsoleTitleA(lpConsoleTitle);
-        // delete str
+        SetConsoleTitleA(str);
+        HWND consoleHWND = FindWindowA(TNULL, str);
+        SetConsoleTitleA(lpConsoleTitle);
 
         return consoleHWND;
 #else

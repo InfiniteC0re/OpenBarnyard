@@ -1,47 +1,48 @@
 #include "pch.h"
 #include "TSystem.h"
 
-int __stdcall Toshi::TSystem::StringLength(char const* str)
+namespace Toshi
 {
-	char currentChar = *str;
-	int length = 0;
-	while (currentChar != '\0')
+	uint32_t TSystem::StringLength(const char* const& str)
 	{
-		length++;
-		currentChar = str[length];
+		const char* currentChar = str;
+		while (*currentChar != 0) { currentChar++; }
+		return currentChar - str;
 	}
-    return length;
-}
 
-void* __stdcall Toshi::TSystem::MemCopy(void* dst, void const* src, unsigned int size)
-{
-	//JPOG implemented their own memcpy
-	return memcpy(dst, src, size);
-}
-
-char const* __stdcall Toshi::TSystem::StringUnicodeToChar(char* a_CharString, unsigned short const* a_UnicodeString, int a_iLength)
-{
-	TASSERT(a_UnicodeString != TNULL && a_CharString != NULL, "Invalid string");
-	
-	int iVar2 = StringLength(a_UnicodeString);
-	if ((iVar2 < a_iLength) || (a_iLength == -1))
+	uint32_t TSystem::StringLength(const wchar_t* const& wstr)
 	{
-		a_iLength = iVar2;
+		// In de Blob own StringLength func
+		return wcslen(wstr);
 	}
-	iVar2 = 0;
-	if (a_iLength > 0)
+
+	void* TSystem::MemCopy(void* dst, const void* const& src, size_t size)
 	{
-		do
+		//JPOG implemented their own memcpy
+		return memcpy(dst, src, size);
+	}
+
+	const char* TSystem::StringUnicodeToChar(char* a_CharString, wchar_t* a_UnicodeString, int a_iLength)
+	{
+		TASSERT(a_UnicodeString != TNULL && a_CharString != NULL, "Invalid string");
+
+		int strLen = StringLength(a_UnicodeString);
+		if (strLen < a_iLength || a_iLength == -1)
 		{
-			a_CharString[iVar2] = a_UnicodeString[iVar2];
-		} while (iVar2 < a_iLength);
-	}
-	a_CharString[iVar2] = '\0';
-	return a_CharString;
-}
+			a_iLength = strLen;
+		}
+		
+		int index = 0;
+		if (a_iLength > 0)
+		{
+			do
+			{
+				a_CharString[index] = a_UnicodeString[index];
+				index++;
+			} while (index < a_iLength);
+		}
 
-int __stdcall Toshi::TSystem::StringLength(unsigned short const* a_UnicodeString)
-{
-	// In de Blob own StringLength func
-	return wcslen((wchar_t*)a_UnicodeString);
+		a_CharString[index] = '\0';
+		return a_CharString;
+	}
 }

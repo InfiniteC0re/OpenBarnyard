@@ -1,6 +1,7 @@
 #pragma once
 #include "Toshi/Typedefs.h"
 #include "TFile.h"
+
 namespace Toshi
 {
 	class TNativeFile
