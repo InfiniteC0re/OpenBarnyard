@@ -1,5 +1,5 @@
 #pragma once
-#include "Toshi/Core/TSingleton.h"
+#include "Toshi/Utils/TSingleton.h"
 #include "Toshi/Strings/TCString.h"
 
 namespace Toshi
