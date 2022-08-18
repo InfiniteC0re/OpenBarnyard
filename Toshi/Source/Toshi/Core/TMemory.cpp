@@ -227,7 +227,7 @@ namespace Toshi
 
 		// set minimum size to 4
 		if (size < 4) size = 4;
-		size = TMath::AlignNum(size);
+		size = TMath::AlignNum(size + 3);
 
 		while (chunk != nullptr)
 		{

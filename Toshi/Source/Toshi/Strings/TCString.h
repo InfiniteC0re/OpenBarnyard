@@ -18,7 +18,9 @@ namespace Toshi
 		void Copy(const char* src, uint32_t size);
 
 		void FreeBuffer();
-		bool AllocBuffer(int, bool);
+
+		// Returns true if updated memory
+		bool AllocBuffer(int size, bool freeMemory);
 
 		int Find(char substr, int pos) const;
 
