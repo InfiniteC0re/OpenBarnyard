@@ -10,7 +10,7 @@ namespace Toshi
 	TCString::TCString()
 	{
 		m_pBuffer = NullString;
-		length = length & 0xFF000000;
+		m_iStrLen = m_iStrLen & 0xFF000000;
 		// this+7 = 0
 		/*  if (param_1 == 0) {
 		if ((_DAT_009b1704 == 0) && (sm_pDefaultAllocatorCB == (code *)0x0)) {
@@ -117,12 +117,13 @@ namespace Toshi
 
 				m_pBuffer = NullString;
 				rVal = true;
-				length = (length & ~(0xFF << 24)) | (0 << 24);
+				m_iExcessLen = 0;
+				//m_iStrLen = (m_iStrLen & ~(0xFF << 24)) | (0 << 24);
 				//this+7 = 0
 			}
 			else
 			{
-				int iVar2 = (currentLength - a_iLength) + (length & 0x000000FF); // + this[7]
+				int iVar2 = (currentLength - a_iLength) + m_iExcessLen; // + this[7]
 
 				if ((iVar2 < 0) || (0xFF < iVar2))
 				{
@@ -132,18 +133,20 @@ namespace Toshi
 					}
 
 					m_pBuffer = (char*)tmalloc(a_iLength + 1);
-					length = (length & ~(0xFF << 24)) | (0 << 24);
+					m_iExcessLen = 0;
+					//m_iStrLen = (m_iStrLen & ~(0xFF << 24)) | (0 << 24);
 					//this + 7 = 0
 				}
 				else
 				{
-					length = (length & ~(0xFF << 24)) | (iVar2 << 24);
+					//m_iStrLen = (m_iStrLen & ~(0xFF << 24)) | (iVar2 << 24);
+					m_iExcessLen = iVar2;
 					//this + 7 = (char) uVar1;
 					rVal = false;
 				}
 			}
 
-			length = length & 0xFF000000 | a_iLength & 0xFFFFFF;
+			m_iStrLen = m_iExcessLen | a_iLength;
 		}
 
 		if (freeMemory) m_pBuffer[0] = '\0';
@@ -162,19 +165,19 @@ namespace Toshi
 		Reset();
 	}
 
-	const char* TCString::GetString(uint32_t index) const
+	const char* TCString::GetString(uint32_t a_iIndex) const
 	{
-		if (IsIndexValid(index)) { return &m_pBuffer[index]; }
+		TASSERT(a_iIndex >= 0 && a_iIndex <= (TINT)m_iStrLen, "");
+		if (IsIndexValid(a_iIndex)) { return &m_pBuffer[a_iIndex]; }
 		return TNULL;
 	}
 
 	void TCString::Reset()
 	{
 		m_pBuffer = TNULL;
-		length &= 0xFF000000;
-		length = (length & ~(0xFF << 24)) | (0 << 24);
-
-		// this + 7 = 0;
+		m_iStrLen &= 0xFF000000;
+		m_iExcessLen = 0;
+		//m_iStrLen = (m_iStrLen & ~(0xFF << 24)) | (0 << 24); // this + 7 = 0;
 	}
 
 	/* Operators */

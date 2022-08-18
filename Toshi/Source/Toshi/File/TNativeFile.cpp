@@ -6,47 +6,47 @@
 
 bool Toshi::TNativeFile::LoadBuffer(LPVOID param_1, DWORD param_2)
 {
-    LPDWORD lpNumberOfBytesWritten;
+    DWORD lpNumberOfBytesWritten;
     FlushWriteBuffer();
     if (unk2 != m_position)
     {
-        unk2 = SetFilePointer(hnd, m_position, TNULL, 0);
-        if (unk2 == 0xFFFFFFFF && GetLastError() != 0)
+        unk2 = SetFilePointer(hnd, m_position, TNULL, FILE_BEGIN);
+        if (unk2 == INVALID_SET_FILE_POINTER && GetLastError() != NO_ERROR)
         {
-            return 0;
+            return false;
         }
         m_position = unk2;
     }
-    if (!ReadFile(hnd, param_1, param_2, lpNumberOfBytesWritten, TNULL) == 0)
+    if (ReadFile(hnd, param_1, param_2, &lpNumberOfBytesWritten, TNULL) == 0)
     {
         return false;
     }
-    unk2 += *lpNumberOfBytesWritten;
+    unk2 += lpNumberOfBytesWritten;
     m_position = unk2;
-    return false;
+    return true;
 }
 
 int Toshi::TNativeFile::FlushWriteBuffer()
 {
-    LPDWORD lpNumberOfBytesWritten;
+    DWORD lpNumberOfBytesWritten;
     if (m_position != unk2)
     {
         TASSERT(TFALSE == m_bWriteBuffered || m_iWriteBufferUsed == 0, "");
-        unk2 = SetFilePointer(hnd, m_position, TNULL, 0);
-        if (unk2 == INVALID_SET_FILE_POINTER && GetLastError() != 0)
+        unk2 = SetFilePointer(hnd, m_position, TNULL, FILE_BEGIN);
+        if (unk2 == INVALID_SET_FILE_POINTER && GetLastError() != NO_ERROR)
         {
             return 0;
         }
         m_position = unk2;
     }
-    if (!WriteFile(hnd, buffer, m_iWriteBufferUsed, lpNumberOfBytesWritten, TNULL))
+    if (WriteFile(hnd, buffer, m_iWriteBufferUsed, &lpNumberOfBytesWritten, TNULL) == 0)
     {
         return 0;
     }
-    unk2 += *lpNumberOfBytesWritten;
+    unk2 += lpNumberOfBytesWritten;
     m_position = unk2;
     m_iWriteBufferUsed = 0;
-    return *lpNumberOfBytesWritten;
+    return lpNumberOfBytesWritten;
 }
 
 int Toshi::TNativeFile::Read(LPVOID param_1, int param_2)
@@ -67,18 +67,18 @@ int Toshi::TNativeFile::Read(LPVOID param_1, int param_2)
         int v6 = 0;
         if (v2 != v3)
         {
-if (v2 == unk4)
-{
-    int v4 = unk5 - (v1 - v2);
-    if (0 < v4)
-    {
-        memcpy(param_1, ((char*)m_pBuffer - (v1 - v2)), v4);
-        m_position += v4;
-        v6 += v4;
-        v5 = v4;
-    }
-}
-param_1 = (void*)(v3 + m_position);
+            if (v2 == unk4)
+            {
+                int v4 = unk5 - (v1 - v2);
+                if (0 < v4)
+                {
+                    memcpy(param_1, ((char*)m_pBuffer - (v1 - v2)), v4);
+                    m_position += v4;
+                    v6 += v4;
+                    v5 = v4;
+                }
+            }
+            param_1 = (void*)(v3 + m_position);
         }
     }
 
@@ -117,7 +117,7 @@ bool Toshi::TNativeFile::Seek(int offset, TFile::TSEEK origin)
     {
         DWORD r = SetFilePointer(hnd, offset, TNULL, FILE_END);
         unk2 = r;
-        if (r == INVALID_SET_FILE_POINTER && GetLastError() != 0)
+        if (r == INVALID_SET_FILE_POINTER && GetLastError() != NO_ERROR)
         {
             return false;
         }

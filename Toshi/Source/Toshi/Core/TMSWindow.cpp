@@ -22,6 +22,12 @@ void __thiscall Toshi::TMSWindow::Create(TRender* renderer, char* param_2)
 	hmodule = moduleHandle;
 	//Destory()
 	m_pRenderer = renderer;
-	LoadIconA(0x0, (LPCSTR)0x7F00);
+	
+	const char* name = m_pRenderer->Class()->GetName();
 	//TRender::m_sClass.GetName();
+	TCString str = TCString(name);
+	wndClass.hIcon = LoadIconA(0x0, (LPCSTR)IDI_APPLICATION);
+
+	RegisterClassA(&wndClass);
+	CreateWindowExA(0, name, param_2, 0x80ca0000, 100, 100, 0, 0, TNULL, TNULL, hmodule, this);
 }

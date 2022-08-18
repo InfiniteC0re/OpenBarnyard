@@ -22,7 +22,7 @@ namespace Toshi
 
 		int Find(char substr, int pos) const;
 
-		inline uint32_t Length() const { return length & 0x00FFFFFF; }
+		inline uint32_t Length() const { return m_iStrLen; }
 		inline bool IsIndexValid(uint32_t index) const { return index <= Length() && index >= 0; }
 
 		const char* GetString(uint32_t index) const;
@@ -36,7 +36,8 @@ namespace Toshi
 
 	private:
 		char* m_pBuffer = NullString;
-		uint32_t length = 0;
+		int m_iExcessLen : 8;
+		int m_iStrLen : 24;
 	};
 }
 

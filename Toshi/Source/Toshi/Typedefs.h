@@ -5,6 +5,8 @@
 #include <cassert>
 
 using TBOOL = bool;
+using TINT = int;
+
 
 constexpr TBOOL TFALSE = false;
 constexpr TBOOL TTRUE = true;
