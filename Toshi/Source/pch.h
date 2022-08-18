@@ -11,7 +11,8 @@
 #include <utility>
 
 #include "Toshi/Typedefs.h"
-#include "Toshi/Core/TLog.h"
+#include "Toshi/Utils/TLog.h"
+#include "Toshi/Math/TMathInline.h"
 
 #ifdef TOSHI_PLATFORM_WINDOWS
 	#include <Windows.h>

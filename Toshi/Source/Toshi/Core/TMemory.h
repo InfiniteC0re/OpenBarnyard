@@ -1,71 +1,71 @@
 #pragma once
+#include "Toshi/Utils/TMutexLock.h"
 
 #define TOSHI_MEM_BLOCK_COUNT 128
 typedef void* HANDLE;
 
 namespace Toshi
 {
-	namespace TMemory
+	struct TMemoryBlockInfo
 	{
-		struct MemoryBlockInfo
-		{
-			MemoryBlockInfo* Container;
-			MemoryBlockInfo* Next;
-			MemoryBlockInfo* Prev;
-			size_t Count;
-		};
+		TMemoryBlockInfo* Container;
+		TMemoryBlockInfo* Next;
+		TMemoryBlockInfo* Prev;
+		size_t Count;
+	};
 
-		struct MemoryBlockRegion
-		{
-			MemoryBlockInfo* Block;
-			size_t Size;
-			char Name[32];
-			struct MemoryChunk* UsedChunks;
-			struct MemoryChunk* FreeChunks;
-		};
+	struct TMemoryBlockRegion
+	{
+		TMemoryBlockInfo* Block;
+		size_t Size;
+		char Name[32];
+		struct TMemoryChunk* UsedChunks;
+		struct TMemoryChunk* FreeChunks;
+	};
 
-		struct MemoryChunk
-		{
-			MemoryBlockRegion* Region;
-			struct MemoryChunk* Prev;
-			struct MemoryChunk* Next;
-			size_t Size;
-			void* Data;
-		};
+	struct TMemoryChunk
+	{
+		TMemoryBlockRegion* Region;
+		struct TMemoryChunk* Prev;
+		struct TMemoryChunk* Next;
+		size_t Size;
+		void* Data;
+	};
 
-		class TMemManager
-		{
-		public:
-			TMemManager(size_t memoryLimit = 0, size_t reservedSize = 0);
-			TMemManager(const TMemManager&) = delete;
-			~TMemManager();
+	class TMemory
+	{
+	public:
+		TMemory();
+		TMemory(const TMemory&) = delete;
+		~TMemory();
 
-			static void Initialize(size_t globalBlockSize);
+		TMemoryBlockRegion* AllocMem(void* memory, size_t size, const char* name);
 
-			MemoryBlockRegion* AddNamedBlock(void* memory, size_t size, const char* name);
+		TMemoryBlockInfo* TakeoutAvailableBlock();
 
-			MemoryBlockInfo* TakeoutAvailableBlock();
+		inline TMemoryBlockRegion* GlobalBlock() const { return m_GlobalBlock; }
 
-			inline static TMemManager& Instance() { return *s_Class; }
+		static void Initialize(size_t memoryLimit = 0, size_t reservedSize = 0);
+		
+		inline static TMemory& Instance() { return *s_Instance; }
+		inline static size_t GetFreePhysicalMemory() { return (64 * 1024 * 1024); }
 
-			inline MemoryBlockRegion* GlobalBlock() const { return m_GlobalBlock; }
-		private:
-			static size_t s_GlobalBlockSize;
-			static TMemManager* s_Class;
-			static HANDLE s_Mutex;
+	private:
+		static bool s_Initialized;
+		static TMemory* s_Instance;
+		static TMutex s_Mutex;
 
-			size_t m_TotalSize;
-			size_t m_ReservedSize;
-			size_t m_Size;
+		size_t m_TotalSize;
+		size_t m_ReservedSize;
+		size_t m_Size;
 
-			MemoryBlockInfo m_BlocksContainer;
-			MemoryBlockInfo m_UsedBlocksContainer;
-			MemoryBlockInfo m_Blocks[TOSHI_MEM_BLOCK_COUNT];
-			void* m_ToshiRegion;
-			MemoryBlockRegion* m_GlobalBlock;
-		};
-	}
+		TMemoryBlockInfo m_BlocksContainer;
+		TMemoryBlockInfo m_UsedBlocksContainer;
+		TMemoryBlockInfo m_Blocks[TOSHI_MEM_BLOCK_COUNT];
+		void* m_ToshiRegion;
+		TMemoryBlockRegion* m_GlobalBlock;
+	};
 
-	void* tmalloc(size_t size, TMemory::MemoryBlockRegion* block = nullptr);
+	void* tmalloc(uint32_t size, TMemoryBlockRegion* block = nullptr);
 	bool tfree(void* ptr);
 }
