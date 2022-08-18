@@ -38,7 +38,9 @@ namespace Toshi
 #endif
 
 #if defined(TOSHI_ENABLE_ASSERTS)
+	#define TIMPLEMENT(FUNC) { TOSHI_ERROR("{0} is not implemented", __FUNCTION__); }
 	#define TASSERT(x, ...) { if (!(x)) { TOSHI_CORE_ERROR(__VA_ARGS__); TBREAK(); } }
 #else
+	#define TIMPLEMENT(FUNC)
 	#define TASSERT(x, ...)
 #endif

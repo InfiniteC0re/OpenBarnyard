@@ -175,6 +175,7 @@ bool Toshi::TNativeFile::Open(const TCString* a_fileName, unsigned int param_2)
         unk2 = 0;
         unk4 = -1;
         unk5 = 0;
+
         if ((param_2 & 0x10) == 0)
         {
             void* mem = tmalloc(0x800);

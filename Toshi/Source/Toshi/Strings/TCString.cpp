@@ -5,218 +5,183 @@
 #include "Toshi/Core/TMemory.h"
 #include "Toshi/Core/TSystem.h"
 
-void __thiscall Toshi::TCString::Copy(Toshi::TWString * param_1, int a_iLength)
+namespace Toshi
 {
-    int iVar1 = param_1->Length();
-    if ((iVar1 < a_iLength) || (a_iLength == -1))
-    {
-        a_iLength = param_1->Length();
-    }
-    AllocBuffer(a_iLength, true);
-    TSystem::StringUnicodeToChar(*m_pBuffer, param_1->operator unsigned short* (), a_iLength);
-    m_pBuffer[a_iLength] = 0;
-}
+	TCString::TCString()
+	{
+		m_pBuffer = NullString;
+		length = length & 0xFF000000;
+		// this+7 = 0
+		/*  if (param_1 == 0) {
+		if ((_DAT_009b1704 == 0) && (sm_pDefaultAllocatorCB == (code *)0x0)) {
+		  puVar1 = (undefined4 *)
+				   Assert("TNULL!=sm_pDefaultAllocatorCB","..\\..\\Source\\Toshi\\TString8.cpp",100,
+						  "TASSERT");
+		  return puVar1;
+		}
+		param_1 = (*sm_pDefaultAllocatorCB)();
+	  }
+	  *(int *)((int)this + 8) = param_1;
+	  uVar2 = (*(int *)((int)this + 4) << 8) >> 8;
+	  if ((_DAT_009b1700 == 0) && (0x7fffffff < uVar2)) {
+		puVar1 = (undefined4 *)
+				 Assert("a_iX <= TINT32_MAX",
+						"E:\\src\\Development\\ToshiBranch\\Source\\Math/TMathInline.h",0x67,"TASSERT");
+		return puVar1;
+	  }
+	  if (uVar2 != 0) {
+		(**(code**)(**(int**)((int)this + 8) + 8))(*this);
+		*(undefined*)((int)this + 7) = 0;
+		*(uint*)((int)this + 4) = *(uint*)((int)this + 4) & 0xff000000;
+		*(undefined1**)this = &m_aNull;
+	}
+	**this = 0;
+	return (undefined4*)this;
+		*/
+	}
 
-void __thiscall Toshi::TCString::Copy(const TCString* param_1, int param_2)
-{
-    //TODO
-}
+	TCString::TCString(uint32_t length)
+	{
+		this->m_pBuffer = NullString;
+		length = length & 0xff000000;
+		//this + 7 = 0
+		//TODO
+	}
 
-void __thiscall Toshi::TCString::Copy(char const* param_1, int a_iLength)
-{
-    int size;
+	TCString::TCString(const char* const& src)
+	{
+		Reset();
+		Copy(src, -1);
+	}
 
-    if ((char**)param_1 != m_pBuffer)
-    {
-        if (param_1 == TNULL)
-        {
-            size = 0;
-        }
-        else
-        {
-            size = Toshi::TSystem::StringLength(param_1);
-        }
-        if ((size < a_iLength) || (a_iLength == -1))
-        {
-            a_iLength = size;
-        }
-        AllocBuffer(a_iLength, true);
-        TSystem::MemCopy(m_pBuffer, param_1, a_iLength);
-        m_pBuffer[a_iLength] = 0;
-    }
-}
+	TCString::~TCString()
+	{
+		FreeBuffer();
+	}
 
-bool __thiscall Toshi::TCString::IsIndexValid(int param_1) const
-{
-    if ((param_1 <= length & 0xffffff) && (-1 < param_1))
-    {
-        return true;
-    }
-    return false;
-}
+	void TCString::Copy(const TWString& src, uint32_t size)
+	{
+		uint32_t srcLen = src.Length();
+		if (srcLen < size || size == -1) { size = srcLen; }
 
-int __thiscall Toshi::TCString::Find(char param_1, int param_2) const
-{
-    if ((length & 0xffffff < param_2) || (param_2 < 0))
-    {
-        return -1;
-    }
-    //if (DAT_00990290 == 0)
-    bool isValid = IsIndexValid(0);
-    if (!isValid)
-    {
-        TASSERT(IsIndexValid(0), "Index 0 is not valid");
-        return -1;
-    }
-    char* foundAt = strchr(m_pBuffer[param_2], param_1);
-    if (foundAt == TNULL)
-    {
-        return -1;
-    }
-    isValid = IsIndexValid(0);
-    if (!isValid)
-    {
-        TASSERT(IsIndexValid(0), "Index 0 is not valid");
-        return -1;
-    }
-    return foundAt - *m_pBuffer;
-}
+		AllocBuffer(size, true);
+		TSystem::StringUnicodeToChar(m_pBuffer, src, size);
+		m_pBuffer[size] = 0;
+	}
 
-bool __thiscall Toshi::TCString::AllocBuffer(int a_iLength, bool freeMemory)
-{
-    int a_iX;
-    bool rVal = false;
+	void TCString::Copy(const char* src, uint32_t a_iLength)
+	{
+		if (src != m_pBuffer)
+		{
+			uint32_t strLength = src ? TSystem::StringLength(src) : 0;
 
-    TASSERT(a_iLength >= 0, "Length can't be less than 0");
+			if (strLength < a_iLength || a_iLength == -1)
+			{
+				a_iLength = strLength;
+			}
 
-    a_iX = length & 0xFFFFFF;
-    TASSERT(a_iX <= TMath::TINT32_MAX, "a_iX <= TINT32_MAX");
+			AllocBuffer(a_iLength, true);
+			TSystem::MemCopy(m_pBuffer, src, a_iLength);
 
-    if (a_iLength == a_iX)
-    {
-        rVal = false;
-    }
-    else
-    {
-        if (a_iLength == 0)
-        {
-            if (freeMemory)
-            {
-                tfree(m_pBuffer);
-            }
-            m_pBuffer = nullptr;
-            rVal = true;
-            length = (length & ~(0xFF << 24)) | (0 << 24);
-            //this+7 = 0
-        }
-        else
-        {
-            int iVar2 = (a_iX - a_iLength) + (length & 0x000000FF); // + this[7]
-            if ((iVar2 < 0) || (0xFF < iVar2))
-            {
-                if ((a_iX != 0) && freeMemory)
-                {
-                    tfree(m_pBuffer);
-                }
-                void * mem = tmalloc(a_iLength + 1);
-                m_pBuffer = (char**)mem;
-                length = (length & ~(0xFF << 24)) | (0 << 24);
-                //this + 7 = 0
-                TASSERT(m_pBuffer != TNULL, "Buffer can't be TNULL");
-            }
-            else
-            {
-                length = (length & ~(0xFF << 24)) | (iVar2 << 24);
-                //this + 7 = (char) uVar1;
-                rVal = false;
-            }
-        }
-        length = length & 0xFF000000 | a_iLength & 0xFFFFFF;
-    }
-    /*
-    if (freeMemory)
-    {
-        m_pBuffer = nullptr;
-    }*/
-    return rVal;
-}
+			m_pBuffer[a_iLength] = 0;
+		}
+	}
 
-int Toshi::TCString::Length() const
-{
-    return length & 0xFFFFFF;
-}
+	int TCString::Find(char substr, int pos) const
+	{
+		if (!IsIndexValid(0)) return -1;
+		//if (DAT_00990290 == 0)
 
-const char* Toshi::TCString::GetString(int param_1) const
-{
-    int valid = IsIndexValid(param_1);
-    if (valid)
-    {
-        return ((*m_pBuffer) + param_1);
-    }
-    return TNULL;
-}
+		char* foundAt = strchr(&m_pBuffer[pos], substr);
+		if (foundAt == TNULL) { return -1; }
 
-void Toshi::TCString::Reset()
-{
-    m_pBuffer = TNULL;
-    length &= 0xFF000000;
-    length = (length & ~(0xFF << 24)) | (0 << 24);
-    // this + 7 = 0;
-}
+		return foundAt - m_pBuffer;
+	}
 
-__thiscall Toshi::TCString::TCString()
-{
-    m_pBuffer = nullptr;
-    length = length & 0xFF000000;
-    // this+7 = 0
-    /*  if (param_1 == 0) {
-    if ((_DAT_009b1704 == 0) && (sm_pDefaultAllocatorCB == (code *)0x0)) {
-      puVar1 = (undefined4 *)
-               Assert("TNULL!=sm_pDefaultAllocatorCB","..\\..\\Source\\Toshi\\TString8.cpp",100,
-                      "TASSERT");
-      return puVar1;
-    }
-    param_1 = (*sm_pDefaultAllocatorCB)();
-  }
-  *(int *)((int)this + 8) = param_1;
-  uVar2 = (*(int *)((int)this + 4) << 8) >> 8;
-  if ((_DAT_009b1700 == 0) && (0x7fffffff < uVar2)) {
-    puVar1 = (undefined4 *)
-             Assert("a_iX <= TINT32_MAX",
-                    "E:\\src\\Development\\ToshiBranch\\Source\\Math/TMathInline.h",0x67,"TASSERT");
-    return puVar1;
-  }
-  if (uVar2 != 0) {
-    (**(code**)(**(int**)((int)this + 8) + 8))(*this);
-    *(undefined*)((int)this + 7) = 0;
-    *(uint*)((int)this + 4) = *(uint*)((int)this + 4) & 0xff000000;
-    *(undefined1**)this = &m_aNull;
-}
-**this = 0;
-return (undefined4*)this;
-    */
-}
+	bool TCString::AllocBuffer(int a_iLength, bool freeMemory)
+	{
+		bool rVal = false;
+		uint32_t currentLength = Length();
 
-Toshi::TCString::TCString(int param_1)
-{
-    this->m_pBuffer = TNULL;
-    length = length & 0xff000000;
-    //this + 7 = 0
-    //TODO
-}
+		TASSERT(a_iLength >= 0, "Length can't be less than 0");
 
-Toshi::TCString::TCString(char* param_1)
-{
-    Reset();
-    Copy(param_1, -1);
-}
+		if (a_iLength == currentLength)
+		{
+			rVal = false;
+		}
+		else
+		{
+			if (a_iLength == 0)
+			{
+				if (freeMemory) tfree(m_pBuffer);
 
-Toshi::TCString* Toshi::TCString::operator+=(char const*)
-{
-    return nullptr;
-}
+				m_pBuffer = NullString;
+				rVal = true;
+				length = (length & ~(0xFF << 24)) | (0 << 24);
+				//this+7 = 0
+			}
+			else
+			{
+				int iVar2 = (currentLength - a_iLength) + (length & 0x000000FF); // + this[7]
 
-Toshi::TCString::operator const char* ()
-{
-    return (char*)m_pBuffer;
+				if ((iVar2 < 0) || (0xFF < iVar2))
+				{
+					if (currentLength != 0 && freeMemory)
+					{
+						tfree(m_pBuffer);
+					}
+
+					m_pBuffer = (char*)tmalloc(a_iLength + 1);
+					length = (length & ~(0xFF << 24)) | (0 << 24);
+					//this + 7 = 0
+				}
+				else
+				{
+					length = (length & ~(0xFF << 24)) | (iVar2 << 24);
+					//this + 7 = (char) uVar1;
+					rVal = false;
+				}
+			}
+
+			length = length & 0xFF000000 | a_iLength & 0xFFFFFF;
+		}
+
+		if (freeMemory) m_pBuffer[0] = '\0';
+
+		return rVal;
+	}
+
+	void TCString::FreeBuffer()
+	{
+		if (Length() != 0)
+		{
+			tfree(m_pBuffer);
+			m_pBuffer = NullString;
+		}
+
+		Reset();
+	}
+
+	const char* TCString::GetString(uint32_t index) const
+	{
+		if (IsIndexValid(index)) { return &m_pBuffer[index]; }
+		return TNULL;
+	}
+
+	void TCString::Reset()
+	{
+		m_pBuffer = TNULL;
+		length &= 0xFF000000;
+		length = (length & ~(0xFF << 24)) | (0 << 24);
+
+		// this + 7 = 0;
+	}
+
+	/* Operators */
+
+	TCString* TCString::operator+=(char const* str)
+	{
+		TIMPLEMENT();
+		return nullptr;
+	}
 }

@@ -6,10 +6,18 @@ namespace Toshi
 	class TSingleton
 	{
 	public:
-		inline static T& const Instance()
+		TSingleton(const TSingleton&) = delete;
+		TSingleton(const TSingleton&&) = delete;
+		TSingleton& operator=(const TSingleton&) = delete;
+		TSingleton& operator=(const TSingleton&&) = delete;
+
+		static T& Instance()
 		{
-			static T s_Instance;
-			return s_Instance;
+			static T instance;
+			return instance;
 		}
+
+	protected:
+		TSingleton() = default;
 	};
 }

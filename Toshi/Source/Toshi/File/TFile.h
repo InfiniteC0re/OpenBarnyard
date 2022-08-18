@@ -1,7 +1,6 @@
 #pragma once
 #include "Toshi/Core/TSingleton.h"
 #include "Toshi/Strings/TCString.h"
-#include "Toshi/Typedefs.h"
 
 namespace Toshi
 {
@@ -9,13 +8,12 @@ namespace Toshi
 	{
 	public:
 		TFileManager() = default;
-		TFileManager(const TFileManager&) = delete;
 
 	private:
 		void ValidateSystemPath();
 
 	public:
-		class TFile* CreateFile(class TCString const*, unsigned int);
+		class TFile* CreateFile(const TCString&, unsigned int);
 	};
 
 	class TFile
@@ -29,7 +27,7 @@ namespace Toshi
 			TSEEK_END
 		};
 
-		static TFile* Create(class TCString const*, unsigned int);
+		static TFile* Create(const TCString&, unsigned int);
 
 	private:
 		int unk;
