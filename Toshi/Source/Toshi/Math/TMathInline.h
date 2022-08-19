@@ -1,11 +1,8 @@
 #pragma once
-#include <math.h>
-#include <float.h>
 
 namespace TMath
 {
-	constexpr size_t SIZE_T_MAX = -1;
-	constexpr size_t SIZE_T_ALIGN_VALUE = SIZE_T_MAX - (sizeof(void*) - 1);
+	constexpr size_t SIZE_T_ALIGN_VALUE = UINTPTR_MAX - (sizeof(void*) - 1);
 	constexpr size_t UINT32_ALIGN_VALUE = UINT32_MAX - (sizeof(uint32_t) - 1);
 
 	constexpr char TINT8_MAX = INT8_MAX;
@@ -31,7 +28,10 @@ namespace TMath
 	static inline float Sqrt(float fVal) { return (float)sqrt(fVal); }
 	
 	static inline void* AlignPointer(void* ptr) { return (void*)((size_t)ptr & SIZE_T_ALIGN_VALUE); }
-	static inline size_t AlignNum(size_t num) { return (num & SIZE_T_ALIGN_VALUE); }
 	
+#if INTPTR_MAX == INT64_MAX
+	// x64 only
+	static inline size_t AlignNum(size_t num) { return (num & SIZE_T_ALIGN_VALUE); }
+#endif
 	static inline uint32_t AlignNum(uint32_t num) { return (num & UINT32_ALIGN_VALUE); }
 };

@@ -257,7 +257,7 @@ namespace Toshi
 			}
 		}
 
-		assert(false && "Out of Toshi Memory on block {0}", block->Name);
+		TASSERT(false, "Out of Toshi Memory on block {0}", block->Name);
 		return nullptr;
 	}
 

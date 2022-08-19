@@ -4,8 +4,6 @@
 #include "Toshi/Core/TMemory.h"
 #include "Toshi/Strings/TCString.h"
 
-#include <timeapi.h>
-
 namespace Toshi
 {
 	TApplication::TApplication()
