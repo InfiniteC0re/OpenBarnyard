@@ -4,6 +4,15 @@
 
 namespace Toshi
 {
+	TFile::TFile(TFileSystem* param_1)
+	{
+		fileSystem = param_1;
+	}
+
+	TFile::TFile()
+	{
+	}
+
 	TFile* TFile::Create(const TCString& path, unsigned int param_2)
 	{
 		TFile* file = TFileManager::Instance().CreateFile(path, param_2);

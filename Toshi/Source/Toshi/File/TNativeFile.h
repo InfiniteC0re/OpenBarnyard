@@ -1,11 +1,14 @@
 #pragma once
-#include "TFile.h"
 #include "Toshi/Typedefs.h"
+#include "TFile.h"
+#include "TNativeFileSystem.h"
 
 namespace Toshi
 {
-	class TNativeFile
+	class TNativeFile : public TFile
 	{
+		//TFile* file; // 0x0
+		//TNativeFileSystem* fileSystem; //0x0
 		HANDLE hnd; // 0x8
 		int m_position; // 0xC
 		DWORD unk2; //0x10
@@ -24,7 +27,8 @@ namespace Toshi
 		virtual int Tell();
 		virtual bool Seek(int, TFile::TSEEK);
 	//protected:
-		bool Open(const TCString*, unsigned int);
+		TNativeFile(class TNativeFileSystem *);
+		bool Open(const TCString&, unsigned int);
 		void Close();
 	};
 }
