@@ -29,7 +29,7 @@ bool AApplication::OnCreate()
 	tObjectClass->RecurseTree(
 		[](Toshi::TClass* tClass, void* pIndex) -> bool
 		{
-			// this callback goes through every registered TClass
+			// this callback is called for every registered TClass
 			int& index = *(int*)pIndex;
 
 			if (index >= 0)
@@ -42,15 +42,15 @@ bool AApplication::OnCreate()
 		},
 		[](Toshi::TClass* tClass, void* pIndex)
 		{
-			// this callback goes through every registered base TClass
-			// called before all derrives called from the first callback
+			// this callback is called for every registered base TClass
+			// called after all the derrives got into the first callback
 			TOSHI_INFO("TClasses derrived from {0}:", tClass->GetName());
 			*(int*)pIndex = 1;
 		},
 		[](Toshi::TClass* tClass, void* pIndex)
 		{
-			// this callback goes through every registered base TClass
-			// called before all derrives called from the first callback
+			// this callback is called for every registered base TClass
+			// called before all the derrives get into the first callback
 			TOSHI_INFO("Total children: {0}", *(int*)pIndex - 1);
 			TOSHI_INFO("\\--------------------------------------------/");
 		}, &index);
