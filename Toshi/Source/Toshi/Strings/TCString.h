@@ -1,7 +1,6 @@
 #pragma once
-#include "TWString.h"
-#include "Toshi/Core/TMemory.h"
 #include "TString.h"
+#include "TWString.h"
 
 namespace Toshi
 {
@@ -9,8 +8,10 @@ namespace Toshi
 	{
 	public:
 		TCString();
-		TCString(uint32_t length);
+		TCString(const TCString& src);
+		TCString(const TWString& src);
 		TCString(const char* const& src);
+		TCString(uint32_t size);
 		~TCString();
 
 		inline void Copy(const TCString& src, uint32_t size) { Copy(src.m_pBuffer, size); }
@@ -22,12 +23,15 @@ namespace Toshi
 		// Returns true if updated memory
 		bool AllocBuffer(int size, bool freeMemory);
 
-		int Find(char substr, int pos) const;
+		// Returns position of specified substring
+		uint32_t Find(char substr, int pos) const;
+
+		// Returns string starting from specified index
+		const char* GetString(uint32_t index = 0) const;
 
 		inline uint32_t Length() const { return m_iStrLen; }
-		inline bool IsIndexValid(uint32_t index) const { return index <= Length() && index >= 0; }
-
-		const char* GetString(uint32_t index) const;
+		inline uint8_t ExcessLength() const { return m_iExcessLen; }
+		inline bool IsIndexValid(uint32_t index) const { return index >= 0 && index <= Length(); }
 
 	public:
 		TCString* operator+= (char const*);
@@ -38,8 +42,8 @@ namespace Toshi
 
 	private:
 		char* m_pBuffer = NullString;
-		int m_iExcessLen : 8 = 0;
-		int m_iStrLen : 24 = 0;
+		uint8_t m_iExcessLen : 8 = 0;
+		uint32_t m_iStrLen : 24 = 0;
 	};
 }
 

@@ -1,7 +1,9 @@
 #pragma once
+#include "Core.h"
 #include "TClass.h"
 #include "TMemory.h"
-#include "Toshi/Typedefs.h"
+
+#include "Toshi/Utils/TLog.h"
 
 #define TOSHI_CLASS_DEFINE(CLASSNAME) \
 public: \

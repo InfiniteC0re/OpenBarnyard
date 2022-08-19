@@ -3,14 +3,14 @@
 
 namespace Toshi
 {
-	uint32_t TSystem::StringLength(const char* const& str)
+	size_t TSystem::StringLength(const char* const& str)
 	{
 		const char* currentChar = str;
 		while (*currentChar != 0) { currentChar++; }
-		return currentChar - str;
+		return (uint32_t)(currentChar - str);
 	}
 
-	uint32_t TSystem::StringLength(const wchar_t* const& wstr)
+	size_t TSystem::StringLength(const wchar_t* const& wstr)
 	{
 		// In de Blob own StringLength func
 		return wcslen(wstr);
@@ -22,22 +22,19 @@ namespace Toshi
 		return memcpy(dst, src, size);
 	}
 
-	const char* TSystem::StringUnicodeToChar(char* a_CharString, wchar_t* a_UnicodeString, int a_iLength)
+	const char* TSystem::StringUnicodeToChar(char* a_CharString, wchar_t* a_UnicodeString, uint32_t a_iLength)
 	{
 		TASSERT(a_UnicodeString != TNULL && a_CharString != NULL, "Invalid string");
 
-		int strLen = StringLength(a_UnicodeString);
-		if (strLen < a_iLength || a_iLength == -1)
-		{
-			a_iLength = strLen;
-		}
+		size_t strLen = StringLength(a_UnicodeString);
+		if (strLen < a_iLength || a_iLength == -1) { a_iLength = (uint32_t)strLen; }
 		
-		int index = 0;
+		uint32_t index = 0;
 		if (a_iLength > 0)
 		{
 			do
 			{
-				a_CharString[index] = a_UnicodeString[index];
+				a_CharString[index] = (char)a_UnicodeString[index];
 				index++;
 			} while (index < a_iLength);
 		}

@@ -1,5 +1,6 @@
 #pragma once
 #include "Toshi/Core/Core.h"
+
 #include <spdlog/spdlog.h>
 
 namespace Toshi

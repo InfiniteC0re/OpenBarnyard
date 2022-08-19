@@ -1,5 +1,4 @@
 #pragma once
-#include <cstdint>
 
 typedef void* HANDLE;
 

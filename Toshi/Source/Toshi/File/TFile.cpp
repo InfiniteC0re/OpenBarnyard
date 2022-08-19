@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "TFile.h"
-#include "Toshi/Typedefs.h"
 
 namespace Toshi
 {

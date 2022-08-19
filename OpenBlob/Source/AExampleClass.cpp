@@ -10,11 +10,15 @@ AExampleClass::AExampleClass()
 
 	Toshi::TNativeFileSystem fs;
 	Toshi::TCString str = Toshi::TCString("C:\\Program Files (x86)\\Steam\\steamapps\\common\\de Blob\\Data\\BlobChar\\AssetPack.trb");
-	Toshi::TNativeFile* f = (Toshi::TNativeFile*)fs.CreateFileW(str, 1);
+	Toshi::TNativeFile* f = (Toshi::TNativeFile*)fs.CreateFile(str, 1);
 	//f.Open(str, 1);
-	f->Seek(5, Toshi::TFile::TSEEK_SET);
-	TOSHI_INFO(f->Tell());
-	f->Close();
+	
+	if (f)
+	{
+		f->Seek(5, Toshi::TFile::TSEEK_SET);
+		TOSHI_INFO(f->Tell());
+		f->Close();
+	}
 }
 
 AExampleClass::~AExampleClass()

@@ -1,5 +1,4 @@
 #pragma once
-#include "TObject.h"
 
 namespace Toshi
 {

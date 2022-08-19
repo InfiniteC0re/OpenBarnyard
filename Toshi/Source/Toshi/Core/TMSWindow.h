@@ -13,10 +13,11 @@ namespace Toshi
 		TBOOL m_bIsEnabled; // this + 0xC ; Name is a guess
 		HMODULE hmodule;
 
-		void __thiscall Enable();
-		void __thiscall Disable();
-		HWND* GetHWND() const { return hwnd; }
-		void __thiscall Create(TRender* renderer, char* param_2);
+		void Enable();
+		void Disable();
+		void Create(TRender* renderer, char* param_2);
+		
+		inline HWND* GetHWND() const { return hwnd; }
 	};
 }
 

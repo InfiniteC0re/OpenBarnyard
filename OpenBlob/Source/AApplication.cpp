@@ -1,6 +1,8 @@
 #include "Toshi.h"
 #include "AExampleClass.h"
 #include "AApplication.h"
+#include "Toshi/Core/Core.h"
+#include "Toshi/Math/TMathInline.h"
 
 Toshi::TApplication* Toshi::CreateApplication(int argc, char** argv)
 {
@@ -36,7 +38,7 @@ bool AApplication::OnCreate()
 	TOSHI_INFO("Allocated 9 ({0}) bytes at: 0x{1:X}", TMath::AlignNum((uint32_t)9 + 3), (size_t)ptr2);
 
 	void* ptr3 = Toshi::tmalloc(sizeof(float));
-	TOSHI_INFO("Allocated {0} ({1}) bytes at: 0x{2:X}", sizeof(float), TMath::AlignNum((uint32_t)sizeof(float) + 3), (size_t)ptr2);
+	TOSHI_INFO("Allocated {0} ({1}) bytes at: 0x{2:X}", sizeof(float), TMath::AlignNum((uint32_t)sizeof(float) + 3), (size_t)ptr3);
 	
 	if (ptr1 == ptr2 && ptr1 != ptr3 && status)
 	{
