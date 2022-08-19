@@ -1,6 +1,7 @@
 #pragma once
 #include "Toshi/Utils/TSingleton.h"
 #include "Toshi/Strings/TCString.h"
+#include <Toshi/File/TFileSystem.h>
 
 namespace Toshi
 {
@@ -27,11 +28,13 @@ namespace Toshi
 			TSEEK_END
 		};
 
+		TFile(TFileSystem*);
+		TFile();
+
 		static TFile* Create(const TCString&, unsigned int);
 
-	private:
-		int unk;
-		void* file;
+	public:
+		TFileSystem* fileSystem;
 	};
 }
 
