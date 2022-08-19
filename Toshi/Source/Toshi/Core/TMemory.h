@@ -47,23 +47,22 @@ namespace Toshi
 
 		static void Initialize(size_t memoryLimit = 0, size_t reservedSize = 0);
 		
-		inline static TMemory& Instance() { return *s_Instance; }
+		inline static TMemory& Instance() { return s_Instance; }
 		inline static size_t GetFreePhysicalMemory() { return (64 * 1024 * 1024); }
 
 	private:
-		static bool s_Initialized;
-		static TMemory* s_Instance;
+		static TMemory s_Instance;
 		static TMutex s_Mutex;
 
-		size_t m_TotalSize;
-		size_t m_ReservedSize;
 		size_t m_Size;
+		size_t m_ReservedSize;
+		size_t m_FreeSize;
 
 		TMemoryBlockInfo m_BlocksContainer;
 		TMemoryBlockInfo m_UsedBlocksContainer;
 		TMemoryBlockInfo m_Blocks[TOSHI_MEM_BLOCK_COUNT];
-		void* m_ToshiRegion;
 		TMemoryBlockRegion* m_GlobalBlock;
+		void* m_AllocatedMem;
 	};
 
 	void* tmalloc(uint32_t size, TMemoryBlockRegion* block = nullptr);

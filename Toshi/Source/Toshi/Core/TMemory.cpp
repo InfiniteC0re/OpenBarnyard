@@ -5,41 +5,37 @@
 
 namespace Toshi
 {
-	bool TMemory::s_Initialized = false;
 	TMutex TMemory::s_Mutex;
-	TMemory* TMemory::s_Instance;
+	TMemory TMemory::s_Instance;
 
 	void TMemory::Initialize(size_t memoryLimit, size_t reservedSize)
 	{
-		TASSERT(!s_Initialized, "Trying to initialize TMemManager twice!");
-		
-		s_Initialized = true;
-		s_Instance = new TMemory();
+		static bool s_Initialized = false;
+		TASSERT(!s_Initialized, "TMemory is already initialized");
+
+		s_Instance.m_Size = memoryLimit <= 0 ? GetFreePhysicalMemory() : memoryLimit;
 
 		s_Mutex.Create();
-
-		if (memoryLimit == 0)
-		{
-			s_Instance->m_TotalSize = GetFreePhysicalMemory();
-		}
-		else
-		{
-			s_Instance->m_TotalSize = memoryLimit;
-		}
-
-		s_Instance->m_ReservedSize = reservedSize;
-		s_Instance->m_Size = s_Instance->m_TotalSize - s_Instance->m_ReservedSize;
+		s_Instance.m_ReservedSize = reservedSize;
+		s_Instance.m_FreeSize = s_Instance.m_Size - s_Instance.m_ReservedSize;
 
 		// todo: it's better to add some kind of an auto extension of the allocated memory
 		// so we won't allocate a lot of memory at the application startup
-		s_Instance->m_ToshiRegion = new char[s_Instance->m_TotalSize];
+		s_Instance.m_AllocatedMem = new char[s_Instance.m_Size];
 
 		// add the global toshi block
-		s_Instance->m_GlobalBlock = s_Instance->AllocMem(s_Instance->m_ToshiRegion, s_Instance->m_TotalSize, "Toshi");
+		s_Instance.m_GlobalBlock = s_Instance.AllocMem(s_Instance.m_AllocatedMem, s_Instance.m_Size, "Toshi");
+		s_Initialized = true;
 	}
 
-	TMemory::TMemory() : m_BlocksContainer(), m_UsedBlocksContainer(), m_Blocks()
+	TMemory::TMemory()
 	{
+		m_AllocatedMem = nullptr;
+		m_GlobalBlock = nullptr;
+		m_Size = 0;
+		m_ReservedSize = 0;
+		m_FreeSize = 0;
+
 		m_BlocksContainer.Next = &m_BlocksContainer;
 		m_BlocksContainer.Prev = &m_BlocksContainer;
 		m_BlocksContainer.Container = nullptr;
@@ -75,7 +71,7 @@ namespace Toshi
 	TMemory::~TMemory()
 	{
 		// free the allocated memory
-		delete[] m_ToshiRegion;
+		delete[] m_AllocatedMem;
 	}
 
 	TMemoryBlockRegion* TMemory::AllocMem(void* memory, size_t size, const char* name)

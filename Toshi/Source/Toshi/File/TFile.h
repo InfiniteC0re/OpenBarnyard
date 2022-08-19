@@ -1,7 +1,11 @@
 #pragma once
+#include "Toshi/File/TFileSystem.h"
 #include "Toshi/Utils/TSingleton.h"
 #include "Toshi/Strings/TCString.h"
-#include <Toshi/File/TFileSystem.h>
+
+#ifdef CreateFile
+#undef CreateFile
+#endif
 
 namespace Toshi
 {
