@@ -128,7 +128,21 @@ bool Toshi::TNativeFile::Seek(int offset, TFile::TSEEK origin)
     return true;
 }
 
-bool Toshi::TNativeFile::Open(const TCString* a_fileName, unsigned int param_2)
+Toshi::TNativeFile::TNativeFile(class Toshi::TNativeFileSystem* param_1)
+{
+    fileSystem = (TFileSystem*)param_1;
+    hnd = TNULL;
+    m_position = -1;
+    unk2 = -1;
+    unk4 = -1;
+    unk5 = 0;
+    m_pBuffer = TNULL;
+    buffer = TNULL;
+    m_iWriteBufferUsed = 0;
+    m_bWriteBuffered = true;
+}
+
+bool Toshi::TNativeFile::Open(const TCString& a_fileName, unsigned int param_2)
 {
     DWORD dwDesiredAccess = 0;
     DWORD dwCreationDisposition = 0;
@@ -164,9 +178,9 @@ bool Toshi::TNativeFile::Open(const TCString* a_fileName, unsigned int param_2)
         }
     }
 
-    TASSERT(a_fileName->IsIndexValid(0), "");
+    TASSERT(a_fileName.IsIndexValid(0), "");
 
-    HANDLE handle = CreateFileA(a_fileName->GetString(0), dwDesiredAccess, dwShareMode, TNULL, dwCreationDisposition, 0, TNULL);
+    HANDLE handle = CreateFileA(a_fileName.GetString(0), dwDesiredAccess, dwShareMode, TNULL, dwCreationDisposition, 0, TNULL);
 
     if (handle != INVALID_HANDLE_VALUE)
     {
