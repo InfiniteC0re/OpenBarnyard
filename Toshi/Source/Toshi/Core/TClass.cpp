@@ -26,11 +26,11 @@ namespace Toshi
 		if (m_Parent)
 		{
 #ifdef TOSHI_DEBUG
+			// since static initialization occurs TLog::Init, we need to initialize it earlier
 			Toshi::TLog::Init();
 			
 			if (m_Parent->m_Name == nullptr)
 			{
-				// since static initialization occurs TLog::Init, we need to initialize it earlier
 				TOSHI_CORE_CRITICAL("Unable to initialize {0} TClass. Say hi to the static initialization order fiasco", m_Name);
 			}
 			else
