@@ -234,5 +234,4 @@ void Toshi::TNativeFile::Close()
         tfree((void*)buffer);
         buffer = TNULL;
     }
-
 }

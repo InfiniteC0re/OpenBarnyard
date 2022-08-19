@@ -27,8 +27,8 @@ namespace TMath
 	constexpr float ONEOVERTWO_PI = 1 / TWO_PI;
 
 	static inline bool IsFinite(float fVal) { return _finite(fVal) != 0; }
-	static inline float Abs(float fVal) { return fabs(fVal); }
-	static inline float Sqrt(float fVal) { return sqrt(fVal); }
+	static inline float Abs(float fVal) { return (float)fabs(fVal); }
+	static inline float Sqrt(float fVal) { return (float)sqrt(fVal); }
 	
 	static inline void* AlignPointer(void* ptr) { return (void*)((size_t)ptr & SIZE_T_ALIGN_VALUE); }
 	static inline size_t AlignNum(size_t num) { return (num & SIZE_T_ALIGN_VALUE); }

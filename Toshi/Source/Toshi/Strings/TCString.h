@@ -18,7 +18,9 @@ namespace Toshi
 		void Copy(const char* src, uint32_t size);
 
 		void FreeBuffer();
-		bool AllocBuffer(int, bool);
+
+		// Returns true if updated memory
+		bool AllocBuffer(int size, bool freeMemory);
 
 		int Find(char substr, int pos) const;
 
@@ -36,8 +38,8 @@ namespace Toshi
 
 	private:
 		char* m_pBuffer = NullString;
-		int m_iExcessLen : 8;
-		int m_iStrLen : 24;
+		int m_iExcessLen : 8 = 0;
+		int m_iStrLen : 24 = 0;
 	};
 }
 

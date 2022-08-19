@@ -100,32 +100,27 @@ namespace Toshi
 
 	bool TCString::AllocBuffer(int a_iLength, bool freeMemory)
 	{
-		bool rVal = false;
+		bool hasChanged = false;
 		uint32_t currentLength = Length();
 
 		TASSERT(a_iLength >= 0, "Length can't be less than 0");
 
-		if (a_iLength == currentLength)
-		{
-			rVal = false;
-		}
-		else
+		if (a_iLength != currentLength)
 		{
 			if (a_iLength == 0)
 			{
 				if (freeMemory) tfree(m_pBuffer);
 
 				m_pBuffer = NullString;
-				rVal = true;
 				m_iExcessLen = 0;
-				//m_iStrLen = (m_iStrLen & ~(0xFF << 24)) | (0 << 24);
-				//this+7 = 0
+
+				hasChanged = true;
 			}
 			else
 			{
-				int iVar2 = (currentLength - a_iLength) + m_iExcessLen; // + this[7]
+				int newExcessLen = (currentLength - a_iLength) + m_iExcessLen;
 
-				if ((iVar2 < 0) || (0xFF < iVar2))
+				if (newExcessLen < 0 || newExcessLen > 0xFF)
 				{
 					if (currentLength != 0 && freeMemory)
 					{
@@ -134,24 +129,21 @@ namespace Toshi
 
 					m_pBuffer = (char*)tmalloc(a_iLength + 1);
 					m_iExcessLen = 0;
-					//m_iStrLen = (m_iStrLen & ~(0xFF << 24)) | (0 << 24);
-					//this + 7 = 0
+
+					hasChanged = true;
 				}
 				else
 				{
-					//m_iStrLen = (m_iStrLen & ~(0xFF << 24)) | (iVar2 << 24);
-					m_iExcessLen = iVar2;
-					//this + 7 = (char) uVar1;
-					rVal = false;
+					m_iExcessLen = newExcessLen;
+					hasChanged = false;
 				}
 			}
 
-			m_iStrLen = m_iExcessLen | a_iLength;
+			m_iStrLen = a_iLength;
 		}
 
 		if (freeMemory) m_pBuffer[0] = '\0';
-
-		return rVal;
+		return hasChanged;
 	}
 
 	void TCString::FreeBuffer()

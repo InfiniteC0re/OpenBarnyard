@@ -12,13 +12,16 @@ namespace Toshi
 	{
 		static bool s_Initialized = false;
 
-		spdlog::set_pattern("%^[%H:%M:%S] [%n] %v%$");
+		if (!s_Initialized)
+		{
+			spdlog::set_pattern("%^[%H:%M:%S] [%n] %v%$");
 
-		s_CoreLogger = spdlog::stdout_color_mt("Toshi");
-		s_CoreLogger->set_level(spdlog::level::level_enum::trace);
+			s_CoreLogger = spdlog::stdout_color_mt("Toshi");
+			s_CoreLogger->set_level(spdlog::level::level_enum::trace);
 
-		s_AppLogger = spdlog::stdout_color_mt("App");
-		s_AppLogger->set_level(spdlog::level::level_enum::trace);
-		s_Initialized = true;
+			s_AppLogger = spdlog::stdout_color_mt("App");
+			s_AppLogger->set_level(spdlog::level::level_enum::trace);
+			s_Initialized = true;
+		}
 	}
 }

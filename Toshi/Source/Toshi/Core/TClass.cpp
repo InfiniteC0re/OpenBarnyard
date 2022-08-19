@@ -2,52 +2,91 @@
 #include "TClass.h"
 #include "Toshi/Typedefs.h"
 
-bool __thiscall Toshi::TClass::IsAttached() const
+namespace Toshi
 {
-	if (m_parent != TNULL)
+	TClass::TClass(
+		const char* name, TClassProps* parent, uint32_t version, size_t size,
+		t_CreateTObject fCreate, t_CreateTObjectInPlace fCreateInPlace,
+		t_InitializeStatic fInit, t_UninitializeStatic fUninit
+	)
 	{
-		Toshi::TClass* tclass = (Toshi::TClass*)m_parent->m_tclass;
-		bool bVar2 = tclass != TNULL;
-		if (bVar2)
+		m_Name = name;
+		m_Create = fCreate;
+		m_CreateInPlace = fCreateInPlace;
+		m_Initialize = fInit;
+		m_Uninitialize = fUninit;
+		m_Parent = parent;
+		m_Version = version;
+		m_Size = size;
+		m_LastAttached = nullptr;
+		m_Initialized = false;
+		m_Previous = nullptr;
+		m_Unk = 0;
+
+		if (m_Parent)
 		{
-			while (bVar2)
+#ifdef TOSHI_DEBUG
+			// since static initialization occurs TLog::Init, we need to initialize it earlier
+			Toshi::TLog::Init();
+			
+			if (m_Parent->m_Name == nullptr)
 			{
-				if (tclass == this) return true;
-				tclass = tclass->m_parent;
-				bVar2 = tclass != TNULL;
+				TOSHI_CORE_CRITICAL("Unable to initialize {0} TClass. Say hi to the static initialization order fiasco", m_Name);
 			}
+			else
+			{
+				TOSHI_INFO("Attaching {0} to {1}", m_Name, m_Parent->m_Name);
+			}
+#endif
+
+			// check if it's not attached yet
+			TClassProps* tClass = m_Parent->m_LastAttached;
+			while (tClass != nullptr)
+			{
+				if (tClass == this) return;
+				tClass = tClass->m_Previous;
+			}
+
+			m_Previous = m_Parent->m_LastAttached;
+			m_Parent->m_LastAttached = this;
 		}
 	}
 
-	return false;
-}
-
-bool __thiscall Toshi::TClass::AttachClassToParent()
-{
-	if (m_parent != 0)
+	TClass::~TClass()
 	{
-		bool bVar1 = IsAttached();
-		if (!bVar1)
+		m_LastAttached = nullptr;
+		m_Previous = nullptr;
+		m_Parent = nullptr;
+
+		// Uninitialize static
+		if (m_Initialized && m_Uninitialize)
 		{
-			m_attached = m_parent->m_tclass;
-			m_parent->m_tclass = this;
-			return true;
+			m_Initialized = false;
+			m_Uninitialize();
 		}
-
 	}
-	return false;
-}
 
-Toshi::TClass::TClass(const char* name, TClass* parent, t_CreateTObject create, t_CreateTObjectAtPlace createAtPlace, t_RegisterScriptingAPI scripting, uint16_t verMajor, uint16_t verMinor, size_t size)
-{
-	m_pcClassName = name;
-	m_pCreateTObject = create;
-	m_pCreateTObjectAtPlace = createAtPlace;
-	m_pRegisterScriptingAPI = scripting;
-	m_parent = parent;
-	m_version = (verMajor << 16) | verMinor;
-	m_size = size;
-	m_tclass = nullptr;
+	void TClass::Initialize()
+	{
+		if (m_Initialize)
+		{
+			m_Initialize();
+			m_Initialized = true;
+		}
+	}
 
-	AttachClassToParent();
+	void TClass::RecurseTree()
+	{
+		TIMPLEMENT();
+	}
+
+	bool TClass::TryInitialize(TClass* tClass)
+	{
+		if (!tClass->IsInitialized())
+		{
+			tClass->Initialize();
+		}
+		
+		return true;
+	}
 }
