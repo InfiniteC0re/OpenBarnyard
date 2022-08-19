@@ -16,18 +16,18 @@ namespace Toshi
 	// This is a separate struct because we want to do compile-time initialization
 	struct TClassProps
 	{
-		const char* m_Name = 0;									// 0x00
-		t_CreateTObject m_Create = 0;							// 0x04
-		t_CreateTObjectInPlace m_CreateInPlace = 0;				// 0x08
-		t_InitializeStatic m_Initialize = 0;					// 0x0C
-		t_UninitializeStatic m_Uninitialize = 0;				// 0x10
-		TClassProps* m_Parent = 0;								// 0x14
-		TClassProps* m_Previous = 0;							// 0x18
-		TClassProps* m_LastAttached = 0;						// 0x1C
-		uint32_t m_Version = 0;									// 0x20
-		size_t m_Size = 0;										// 0x24
-		uint32_t m_Unk = 0;										// 0x28
-		bool m_Initialized = 0;									// 0x2C
+		const char* m_Name = 0;                                 // 0x00
+		t_CreateTObject m_Create = 0;                           // 0x04
+		t_CreateTObjectInPlace m_CreateInPlace = 0;             // 0x08
+		t_InitializeStatic m_Initialize = 0;                    // 0x0C
+		t_UninitializeStatic m_Uninitialize = 0;                // 0x10
+		TClassProps* m_Parent = 0;                              // 0x14
+		TClassProps* m_Previous = 0;                            // 0x18
+		TClassProps* m_LastAttached = 0;                        // 0x1C
+		uint32_t m_Version = 0;                                 // 0x20
+		size_t m_Size = 0;                                      // 0x24
+		uint32_t m_Unk = 0;                                     // 0x28
+		bool m_Initialized = 0;                                 // 0x2C
 	};
 
 	class TClass : public TClassProps
