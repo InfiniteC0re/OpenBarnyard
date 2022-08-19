@@ -15,6 +15,7 @@ namespace Toshi
 		LPCVOID buffer; // 0x20
 		int m_iWriteBufferUsed; // 0x24
 		bool m_bWriteBuffered; // 0x28
+
 	public:
 	//private:
 		bool LoadBuffer(LPVOID, DWORD);

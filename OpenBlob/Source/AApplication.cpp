@@ -17,6 +17,9 @@ bool AApplication::OnCreate()
 {
 	TOSHI_INFO("The application has been created");
 
+	TTODO("Initialize static here");
+	Toshi::TClassFromProps(Toshi::TObject::s_Class)->RecurseTree();
+
 	bool status = false;
 	TOSHI_INFO("TMemory Check:");
 	TOSHI_INFO("1) The second allocation should have the same address the first one had");

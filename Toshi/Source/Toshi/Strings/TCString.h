@@ -38,8 +38,8 @@ namespace Toshi
 
 	private:
 		char* m_pBuffer = NullString;
-		int m_iExcessLen : 8;
-		int m_iStrLen : 24;
+		int m_iExcessLen : 8 = 0;
+		int m_iStrLen : 24 = 0;
 	};
 }
 

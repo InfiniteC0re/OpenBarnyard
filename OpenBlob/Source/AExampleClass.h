@@ -11,7 +11,7 @@
 
 class AExampleClass : public Toshi::TObject
 {
-	TOSHI_CLASS_REGISTER(AExampleClass)
+	TOSHI_CLASS_DEFINE(AExampleClass)
 
 public:
 	AExampleClass();
