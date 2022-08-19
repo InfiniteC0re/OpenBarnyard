@@ -28,7 +28,7 @@ namespace Toshi
 		s_Initialized = true;
 	}
 
-	TMemory::TMemory()
+	TMemory::TMemory() : m_Blocks()
 	{
 		m_AllocatedMem = nullptr;
 		m_GlobalBlock = nullptr;

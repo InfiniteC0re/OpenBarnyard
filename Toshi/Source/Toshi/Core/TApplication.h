@@ -2,7 +2,7 @@
 
 namespace Toshi
 {
-	constexpr const char* TDebugConsoleUUID = "{1B5D8052-529A-4c88-9DDE-EE523D440B00}";
+	class TDebugConsole;
 
 	enum TApplicationFlag
 	{
@@ -26,12 +26,6 @@ namespace Toshi
 		// Destroys the application and sets the flag
 		void Destroy();
 
-		// Returns true if the console was previously visible
-		bool ShowConsole(bool state);
-
-		// Returns true if the console became visible
-		bool ToggleConsole();
-
 		// Returns true if the application is created
 		inline bool IsCreated() { return m_Flags & TApplicationFlag_Created; }
 
@@ -42,14 +36,10 @@ namespace Toshi
 		inline void SetVerbose(bool state) { m_IsVerbose = state; }
 
 	private:
-		HWND CreateDebugConsole();
-
-	private:
-		uint32_t m_Unk1;		// 0x4
-		uint32_t m_Flags;		// 0x10
-		bool m_IsVerbose;		// 0x14
-		bool m_ConsoleVisible;	// 0x15
-		HWND* m_DebugConsole;	// 0x18
+		uint32_t m_Unk1;					// 0x4
+		uint32_t m_Flags;					// 0x10
+		bool m_IsVerbose;					// 0x14
+		Ref<TDebugConsole> m_DebugConsole;
 	};
 	
 	// this has to be used by application
