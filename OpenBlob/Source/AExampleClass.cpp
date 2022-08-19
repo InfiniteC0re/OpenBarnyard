@@ -2,7 +2,7 @@
 #include "Toshi/File/TNativeFile.h"
 #include "Toshi/Core/TSystem.h"
 
-TOSHI_CLASS_DERIVED_INITIALIZE(AExampleClass, Toshi::TObject, 1, 0)
+TOSHI_CLASS_DERIVED_INITIALIZE(AExampleClass, Toshi::TObject, MKVERSION(1, 0))
 
 AExampleClass::AExampleClass()
 {

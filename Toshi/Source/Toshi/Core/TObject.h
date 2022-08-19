@@ -17,11 +17,11 @@ public: \
 	static void* CreateTObjectInPlace(void* block) { return new (block) CLASSNAME(); } \
 	static constinit Toshi::TClassProps s_Class;
 
-#define TOSHI_CLASS_DERIVED_INITIALIZE(CLASSNAME, PARENT, VER_MAJOR, VER_MINOR) \
-Toshi::TClass CLASSNAME::s_Class(#CLASSNAME, &PARENT::s_Class, ((VER_MAJOR << 16) | VER_MINOR), sizeof(CLASSNAME), CLASSNAME::CreateTObject, CLASSNAME::CreateTObjectInPlace, 0, 0);
+#define TOSHI_CLASS_DERIVED_INITIALIZE(CLASSNAME, PARENT, VER) \
+Toshi::TClass CLASSNAME::s_Class(#CLASSNAME, &PARENT::s_Class, VER, sizeof(CLASSNAME), CLASSNAME::CreateTObject, CLASSNAME::CreateTObjectInPlace, 0, 0);
 
-#define TOSHI_CLASS_INITIALIZE(CLASSNAME, VER_MAJOR, VER_MINOR) \
-Toshi::TClass CLASSNAME::s_Class(#CLASSNAME, TNULL, MKVERSION(VER_MAJOR, VER_MINOR), sizeof(CLASSNAME), CLASSNAME::CreateTObject, CLASSNAME::CreateTObjectInPlace, 0, 0);
+#define TOSHI_CLASS_INITIALIZE(CLASSNAME, VER) \
+Toshi::TClass CLASSNAME::s_Class(#CLASSNAME, TNULL, VER, sizeof(CLASSNAME), CLASSNAME::CreateTObject, CLASSNAME::CreateTObjectInPlace, 0, 0);
 
 namespace Toshi
 {
