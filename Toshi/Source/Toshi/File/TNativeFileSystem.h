@@ -4,10 +4,12 @@
 
 namespace Toshi
 {
-	class TNativeFileSystem
+	class TNativeFileSystem : public TFileSystem
 	{
 	public:
+		TNativeFileSystem(const char *);
 		virtual TFile* CreateFile(TCString const&, unsigned int);
+		virtual void DestroyFile(TFile*);
 	};
 }
 
