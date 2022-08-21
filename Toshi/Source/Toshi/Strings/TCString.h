@@ -36,6 +36,7 @@ namespace Toshi
 	public:
 		TCString* operator+= (char const*);
 		inline operator const char* () const { return m_pBuffer; }
+		char& operator[](int);
 
 	private:
 		void Reset();

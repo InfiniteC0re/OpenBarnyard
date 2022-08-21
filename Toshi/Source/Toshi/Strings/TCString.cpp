@@ -187,4 +187,8 @@ namespace Toshi
 		TIMPLEMENT();
 		return nullptr;
 	}
+	char& TCString::operator[](int index)
+	{
+		return m_pBuffer[index];
+	}
 }
