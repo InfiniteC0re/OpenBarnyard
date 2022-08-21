@@ -9,8 +9,9 @@ namespace Toshi
 	typedef void  (*t_UninitializeStatic)();
 
 	// RecurseTree definitions
-	typedef void  (*t_ResurceTreeCheck)(class TClass*);
-	typedef void  (*t_ResurceTreeAction)(class TClass*);
+	typedef bool  (*t_RecurceTreeCheck)(class TClass*, void*);
+	typedef void  (*t_RecurceTreeBaseBeginCb)(class TClass*, void*);
+	typedef void  (*t_RecurceTreeBaseEndCb)(class TClass*, void*);
 
 	// This is a separate struct because we want to do compile-time initialization
 	struct TClassProps
@@ -36,8 +37,8 @@ namespace Toshi
 		~TClass();
 
 		void Initialize();
-		void RecurseTree();
-		void RecurseTree2();
+		void RecurseTree(t_RecurceTreeCheck fCheck, t_RecurceTreeBaseBeginCb fBaseBegin, t_RecurceTreeBaseEndCb fBaseEnd, void* custom);
+		void RecurseTree2(t_RecurceTreeCheck fCheck, t_RecurceTreeBaseBeginCb fBaseBegin, t_RecurceTreeBaseEndCb fBaseEnd, void* custom);
 
 		inline bool IsInitialized() { return m_Initialized; }
 		inline const char* GetName() const { return m_Name; }

@@ -75,11 +75,38 @@ namespace Toshi
 		}
 	}
 
-	void TClass::RecurseTree()
+	void TClass::RecurseTree(t_RecurceTreeCheck fCheck, t_RecurceTreeBaseBeginCb fBaseBegin, t_RecurceTreeBaseEndCb fBaseEnd, void* custom)
 	{
-		TIMPLEMENT();
+		bool valid = fCheck(this, custom);
+
+		if (valid)
+		{
+			if (fBaseBegin) fBaseBegin(this, custom);
+			RecurseTree2(fCheck, fBaseBegin, fBaseEnd, custom);
+			if (fBaseEnd) fBaseEnd(this, custom);
+		}
 	}
 
+	void TClass::RecurseTree2(t_RecurceTreeCheck fCheck, t_RecurceTreeBaseBeginCb fBaseBegin, t_RecurceTreeBaseEndCb fBaseEnd, void* custom)
+	{
+		TClassProps* tClassProps = m_LastAttached;
+		
+		while (tClassProps != nullptr)
+		{
+			TClass* tClass = TClassFromProps(*tClassProps);
+			if (fCheck) fCheck(tClass, custom);
+
+			if (tClass->m_LastAttached)
+			{
+				if (fBaseBegin) fBaseBegin(this, custom);
+				tClass->RecurseTree2(fCheck, fBaseBegin, fBaseEnd, custom);
+				if (fBaseEnd) fBaseEnd(this, custom);
+			}
+
+			tClassProps = tClassProps->m_Previous;
+		}
+	}
+		
 	bool TClass::TryInitialize(TClass* tClass)
 	{
 		if (!tClass->IsInitialized())

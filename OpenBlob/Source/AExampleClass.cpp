@@ -4,6 +4,7 @@
 #include "Toshi/File/TFileSystem.h"
 
 TOSHI_CLASS_DERIVED_INITIALIZE(AExampleClass, Toshi::TObject, MKVERSION(1, 0))
+TOSHI_CLASS_DERIVED_INITIALIZE(AExampleClass2, Toshi::TObject, MKVERSION(1, 1))
 
 AExampleClass::AExampleClass()
 {
@@ -29,4 +30,14 @@ AExampleClass::AExampleClass()
 AExampleClass::~AExampleClass()
 {
 	TOSHI_INFO("Called ~AExampleClass");
+}
+
+AExampleClass2::AExampleClass2()
+{
+	TOSHI_INFO("Called AExampleClass2");
+}
+
+AExampleClass2::~AExampleClass2()
+{
+	TOSHI_INFO("Called ~AExampleClass2");
 }

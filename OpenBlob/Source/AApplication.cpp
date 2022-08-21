@@ -20,8 +20,43 @@ bool AApplication::OnCreate()
 	TOSHI_INFO("The application has been created");
 
 	TTODO("Initialize static here");
-	Toshi::TClassFromProps(Toshi::TObject::s_Class)->RecurseTree();
+	Toshi::TClass* tObjectClass = Toshi::TClassFromProps(Toshi::TObject::s_Class);
+		
+#pragma region TClass Info
+	TOSHI_INFO("/--------------TClass Hierarchy--------------\\");
 
+	int index = -1;
+	tObjectClass->RecurseTree(
+		[](Toshi::TClass* tClass, void* pIndex) -> bool
+		{
+			// this callback is called for every registered TClass
+			int& index = *(int*)pIndex;
+
+			if (index >= 0)
+			{
+				TOSHI_INFO("{0}) {1}", index, tClass->GetName());
+			}
+
+			index++;
+			return true;
+		},
+		[](Toshi::TClass* tClass, void* pIndex)
+		{
+			// this callback is called for every registered base TClass
+			// called after all the derrives got into the first callback
+			TOSHI_INFO("TClasses derrived from {0}:", tClass->GetName());
+			*(int*)pIndex = 1;
+		},
+		[](Toshi::TClass* tClass, void* pIndex)
+		{
+			// this callback is called for every registered base TClass
+			// called before all the derrives get into the first callback
+			TOSHI_INFO("Total children: {0}", *(int*)pIndex - 1);
+			TOSHI_INFO("\\--------------------------------------------/");
+		}, &index);
+#pragma endregion
+
+#pragma region Simple TMemory Test
 	bool status = false;
 	TOSHI_INFO("TMemory Check:");
 	TOSHI_INFO("1) The second allocation should have the same address the first one had");
@@ -48,6 +83,7 @@ bool AApplication::OnCreate()
 	{
 		TOSHI_CRITICAL("TMemory check failed");
 	}
+#pragma endregion
 
 	return true;
 }

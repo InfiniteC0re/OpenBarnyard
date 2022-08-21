@@ -13,3 +13,13 @@ public:
 	AExampleClass();
 	~AExampleClass();
 };
+
+
+class AExampleClass2 : public Toshi::TObject
+{
+	TOSHI_CLASS_DEFINE(AExampleClass2)
+
+public:
+	AExampleClass2();
+	~AExampleClass2();
+};
