@@ -1,7 +1,7 @@
 # OpenBlob
 Decompilation of de Blob and Toshi engine
 
-# **SUPPORT THE DEVELOPERS OF THE Toshi ENGINE**
+# **SUPPORT THE DEVELOPERS OF THE TOSHI ENGINE**
 We do not own the Toshi Engine in any way, shape or form, and this project would not have been possible had they not developed TOSHI in the first place. The Toshi Engine is currently owned by [THQ Nordic](https://www.thqnordic.com); we highly urge you to follow & support their projects if you like this project!
 
 ## **DO NOT USE THIS DECOMPILATION PROJECT AS A MEANS TO PIRATE DE BLOB OR ANY OTHER TOSHI GAMES.**
