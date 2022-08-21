@@ -7,8 +7,6 @@ namespace Toshi
 {
 	class TNativeFile : public TFile
 	{
-		//TFile* file; // 0x0
-		//TNativeFileSystem* fileSystem; //0x0
 		HANDLE hnd; // 0x8
 		int m_position; // 0xC
 		DWORD unk2; //0x10
@@ -26,8 +24,12 @@ namespace Toshi
 		virtual int Read(LPVOID, int);
 		virtual int Tell();
 		virtual bool Seek(int, TFile::TSEEK);
+		virtual int GetCChar();
+		virtual int GetSize();
+		virtual _FILETIME GetDate();
 	//protected:
 		TNativeFile(class TNativeFileSystem *);
+		TNativeFile(const TNativeFile&);
 		bool Open(const TCString&, unsigned int);
 		void Close();
 	};

@@ -18,6 +18,8 @@ namespace Toshi
 		void ValidateSystemPath();
 
 	public:
+		void MountFileSystem(TFileSystem* a_pFileSystem);
+		class TFileSystem* FindFileSystem(const TCString&);
 		class TFile* CreateFile(const TCString&, unsigned int);
 	};
 
@@ -33,12 +35,17 @@ namespace Toshi
 		};
 
 		TFile(TFileSystem*);
-		TFile();
+		//TFile();
+		TFile(const TFile&);
 
+		virtual _FILETIME GetDate() = 0;
 		static TFile* Create(const TCString&, unsigned int);
+		inline TFileSystem* GetFileSystem() const { return m_pFileSystem; }
+		inline TFile& operator=(const TFile& a_pFile) { m_pFileSystem = a_pFile.GetFileSystem(); return *this; }
+
 
 	public:
-		TFileSystem* fileSystem;
+		TFileSystem* m_pFileSystem;
 	};
 }
 

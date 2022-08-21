@@ -29,6 +29,10 @@ namespace Toshi
 		// Returns string starting from specified index
 		const char* GetString(uint32_t index = 0) const;
 
+		TCString& Concat(const char*, int);
+		TCString& Concat(const TCString&, int);
+		TCString& Concat(const TWString&, int);
+
 		inline uint32_t Length() const { return m_iStrLen; }
 		inline uint8_t ExcessLength() const { return m_iExcessLen; }
 		inline bool IsIndexValid(uint32_t index) const { return index >= 0 && index <= Length(); }

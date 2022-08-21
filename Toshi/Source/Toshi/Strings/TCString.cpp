@@ -180,12 +180,79 @@ namespace Toshi
 		return TNULL;
 	}
 
+	TCString& TCString::Concat(const char* param_1, int param_2)
+	{
+		int len = TSystem::StringLength(param_1);
+		if ((len < param_2) || (param_2 == -1))
+		{
+			param_2 = len;
+		}
+		bool allocated = AllocBuffer(m_iStrLen + param_2, false);
+		if (allocated)
+		{
+			//?????
+			TSystem::StringCopy(m_pBuffer, m_pBuffer, -1);
+		}
+		TSystem::StringCopy(m_pBuffer + m_iStrLen, param_1, param_2);
+		m_pBuffer[m_iStrLen + param_2] = 0;
+		if (allocated && m_iStrLen != 0)
+		{
+			tfree(m_pBuffer);
+		}
+		return *this;
+	}
+
+	TCString& TCString::Concat(const TCString& param_1, int param_2)
+	{
+		if ((m_iStrLen < param_2) || (param_2 == -1))
+		{
+			param_2 = m_iStrLen;
+		}
+		bool allocated = AllocBuffer(m_iStrLen + param_2, false);
+		if (allocated)
+		{
+			//?????
+			TSystem::StringCopy(m_pBuffer, m_pBuffer, -1);
+		}
+		TSystem::StringCopy(m_pBuffer + m_iStrLen, param_1.m_pBuffer, param_2);
+		m_pBuffer[m_iStrLen + param_2] = 0;
+		if (allocated && m_iStrLen != 0)
+		{
+			tfree(m_pBuffer);
+		}
+		return *this;
+	}
+
+	TCString& TCString::Concat(const TWString& param_1, int param_2)
+	{
+		int len = param_1.Length();
+		if ((len < param_2) || (param_2 == -1))
+		{
+			param_2 = len;
+		}
+		bool allocated = AllocBuffer(m_iStrLen + param_2, false);
+		if (allocated)
+		{
+			//?????
+			TSystem::StringCopy(m_pBuffer, m_pBuffer, -1);
+		}
+		TSystem::StringUnicodeToChar(m_pBuffer + m_iStrLen, (wchar_t*)param_1.GetString(), param_2);
+		m_pBuffer[m_iStrLen + param_2] = 0;
+		if (allocated && m_iStrLen != 0)
+		{
+			tfree(m_pBuffer);
+		}
+		return *this;
+	}
+
+	
+
 	/* Operators */
 
 	TCString* TCString::operator+=(char const* str)
 	{
-		TIMPLEMENT();
-		return nullptr;
+		Concat(str, -1);
+		return this;
 	}
 	char& TCString::operator[](int index)
 	{

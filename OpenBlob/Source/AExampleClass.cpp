@@ -16,10 +16,13 @@ AExampleClass::AExampleClass()
 	Toshi::TNativeFile* f = (Toshi::TNativeFile*)fs->CreateFile(str, 1);
 	//f.Open(str, 1);
 	
+	//str.Concat(".lol", -1);
+
 	((Toshi::TFileSystem*)fs)->SetPrefix("C:/");
 
 	if (f)
 	{
+		TOSHI_INFO("File size: {0} bytes", f->GetSize());
 		f->Seek(5, Toshi::TFile::TSEEK_SET);
 		TOSHI_INFO("Seeked to offset: {0}", f->Tell());
 		f->Close();

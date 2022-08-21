@@ -3,6 +3,25 @@
 
 namespace Toshi
 {
+	const char* TSystem::StringCopy(char* dst, const char* source, int count)
+	{
+		if (count != -1)
+		{
+			return strncpy(dst, source, count);
+		}
+
+		char currentChar = '\0';
+
+		do
+		{
+			currentChar = *source;
+			source++;
+			*dst = currentChar;
+			dst++;
+		} while (currentChar != '\0');
+
+		return dst;
+	}
 	size_t TSystem::StringLength(const char* const& str)
 	{
 		const char* currentChar = str;

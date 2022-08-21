@@ -127,9 +127,53 @@ namespace Toshi
         return true;
     }
 
-    TNativeFile::TNativeFile(class TNativeFileSystem* param_1)
+    int TNativeFile::GetCChar()
     {
-        fileSystem = (TFileSystem*)param_1;
+        FlushWriteBuffer();
+        if (m_pBuffer != TNULL)
+        {
+            int unk = (m_position & 0xFFFFF800);
+            if ((unk == unk4) && (m_position - unk <= unk5-1))
+            {
+                char c = ((char*)m_pBuffer)[m_position - unk];
+                m_position++;
+                return c;
+            }
+        }
+        //   iVar3 = (*(code *)*this->field_0x0)(&stack0xfffffff4,1);
+        //   if (iVar3 != 1) {
+        //      return 0xffffffff;
+        //   }
+        //   return puVar4 & 0xFF;
+        return 0;
+    }
+
+    int TNativeFile::GetSize()
+    {
+        unk2 = SetFilePointer(hnd, 0, TNULL, TSEEK_END);
+        if (unk2 == INVALID_SET_FILE_POINTER && GetLastError() != NO_ERROR)
+        {
+            return 0;
+        }
+        return unk2;
+    }
+
+    _FILETIME TNativeFile::GetDate()
+    {
+        _FILETIME fCreationTime;
+        _FILETIME fLastAccessTime;
+        _FILETIME fLastWriteTime;
+
+        if (hnd != TNULL)
+        {
+            GetFileTime(hnd, &fCreationTime, &fLastAccessTime, &fLastWriteTime);
+        }
+        
+        return fLastWriteTime;
+    }
+
+    TNativeFile::TNativeFile(class TNativeFileSystem* param_1) : TFile(param_1)
+    {
         hnd = TNULL;
         m_position = -1;
         unk2 = -1;
@@ -139,6 +183,19 @@ namespace Toshi
         buffer = TNULL;
         m_iWriteBufferUsed = 0;
         m_bWriteBuffered = true;
+    }
+
+    TNativeFile::TNativeFile(const TNativeFile& param_1) : TFile(param_1)
+    {
+        hnd = param_1.hnd;
+        m_position = param_1.m_position;
+        unk2 = param_1.unk2;
+        unk4 = param_1.unk4;
+        unk5 = param_1.unk5;
+        m_pBuffer = param_1.m_pBuffer;
+        buffer = param_1.buffer;
+        m_iWriteBufferUsed = param_1.m_iWriteBufferUsed;
+        m_bWriteBuffered = param_1.m_bWriteBuffered;
     }
 
     bool TNativeFile::Open(const TCString& a_fileName, unsigned int param_2)
