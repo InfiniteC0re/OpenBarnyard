@@ -94,7 +94,10 @@ namespace Toshi
 			size_t srcLen = src ? TSystem::StringLength(src) : 0;
 			TASSERT(srcLen <= 0xFFFFFF, "Too big string");
 
-			if (srcLen < size || size == -1) { size = (uint32_t)srcLen; }
+			if (srcLen < size || size == -1)
+			{
+				size = (uint32_t)srcLen;
+			}
 
 			AllocBuffer(size, true);
 			TSystem::MemCopy(m_pBuffer, src, size);
