@@ -9,8 +9,8 @@ namespace Toshi
 		inline uint32_t Length() const { return m_iStrLen; }
 		
 	public:
-		inline bool IsIndexValid(int index) const { return index <= m_iStrLen && index >= 0; }
-		inline const wchar_t* GetString(int index = 0) const { if (!IsIndexValid(index)) { return 0; } return m_pBuffer + index * 2; }
+		inline bool IsIndexValid(uint32_t index) const { return index <= m_iStrLen && index >= 0; }
+		inline const wchar_t* GetString(uint32_t index = 0) const { if (!IsIndexValid(index)) { return 0; } return m_pBuffer + index * 2; }
 		inline operator wchar_t* () const { return m_pBuffer; }
 
 	private:

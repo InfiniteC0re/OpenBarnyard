@@ -41,7 +41,7 @@ namespace Toshi
 		return memcpy(dst, src, size);
 	}
 
-	const char* TSystem::StringUnicodeToChar(char* a_CharString, wchar_t* a_UnicodeString, uint32_t a_iLength)
+	const char* TSystem::StringUnicodeToChar(char* a_CharString, const wchar_t* const& a_UnicodeString, uint32_t a_iLength)
 	{
 		TASSERT(a_UnicodeString != TNULL && a_CharString != NULL, "Invalid string");
 

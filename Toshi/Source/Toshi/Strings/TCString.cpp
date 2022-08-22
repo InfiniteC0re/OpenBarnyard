@@ -179,21 +179,23 @@ namespace Toshi
 		return TNULL;
 	}
 
-	TCString& TCString::Concat(const char* param_1, int param_2)
+	TCString& TCString::Concat(const char* str, uint32_t size)
 	{
-		int len = TSystem::StringLength(param_1);
-		if ((len < param_2) || (param_2 == -1))
+		uint32_t len = (uint32_t)TSystem::StringLength(str);
+		
+		if ((len < size) || (size == -1))
 		{
-			param_2 = len;
+			size = len;
 		}
-		bool allocated = AllocBuffer(m_iStrLen + param_2, false);
+
+		bool allocated = AllocBuffer(m_iStrLen + size, false);
 		if (allocated)
 		{
 			//?????
 			TSystem::StringCopy(m_pBuffer, m_pBuffer, -1);
 		}
-		TSystem::StringCopy(m_pBuffer + m_iStrLen, param_1, param_2);
-		m_pBuffer[m_iStrLen + param_2] = 0;
+		TSystem::StringCopy(m_pBuffer + m_iStrLen, str, size);
+		m_pBuffer[m_iStrLen + size] = 0;
 		if (allocated && m_iStrLen != 0)
 		{
 			FreeBuffer();
@@ -201,50 +203,29 @@ namespace Toshi
 		return *this;
 	}
 
-	TCString& TCString::Concat(const TCString& param_1, int param_2)
+	TCString& TCString::Concat(const TWString& str, uint32_t size)
 	{
-		if ((m_iStrLen < param_2) || (param_2 == -1))
+		uint32_t len = str.Length();
+
+		if ((len < size) || (size == -1))
 		{
-			param_2 = m_iStrLen;
+			size = len;
 		}
-		bool allocated = AllocBuffer(m_iStrLen + param_2, false);
+
+		bool allocated = AllocBuffer(m_iStrLen + size, false);
 		if (allocated)
 		{
 			//?????
 			TSystem::StringCopy(m_pBuffer, m_pBuffer, -1);
 		}
-		TSystem::StringCopy(m_pBuffer + m_iStrLen, param_1.m_pBuffer, param_2);
-		m_pBuffer[m_iStrLen + param_2] = 0;
+		TSystem::StringUnicodeToChar(m_pBuffer + m_iStrLen, str.GetString(), size);
+		m_pBuffer[m_iStrLen + size] = 0;
 		if (allocated && m_iStrLen != 0)
 		{
 			FreeBuffer();
 		}
 		return *this;
 	}
-
-	TCString& TCString::Concat(const TWString& param_1, int param_2)
-	{
-		int len = param_1.Length();
-		if ((len < param_2) || (param_2 == -1))
-		{
-			param_2 = len;
-		}
-		bool allocated = AllocBuffer(m_iStrLen + param_2, false);
-		if (allocated)
-		{
-			//?????
-			TSystem::StringCopy(m_pBuffer, m_pBuffer, -1);
-		}
-		TSystem::StringUnicodeToChar(m_pBuffer + m_iStrLen, (wchar_t*)param_1.GetString(), param_2);
-		m_pBuffer[m_iStrLen + param_2] = 0;
-		if (allocated && m_iStrLen != 0)
-		{
-			FreeBuffer();
-		}
-		return *this;
-	}
-
-	
 
 	/* Operators */
 
