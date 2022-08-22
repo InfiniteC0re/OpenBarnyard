@@ -265,6 +265,25 @@ namespace Toshi
 		{
 			auto block = chunk->Region;
 
+#ifdef TOSHI_DEBUG
+			// check if the chunk isn't already freed
+			auto usedChunk = block->UsedChunks;
+			bool isValid = false;
+
+			while (usedChunk != nullptr)
+			{
+				if (usedChunk == chunk)
+				{
+					isValid = true;
+					break;
+				}
+
+				usedChunk = usedChunk->Next;
+			}
+
+			TASSERT(isValid, "Trying to tfree memory at 0x{0:X} the second time", (size_t)ptr);
+#endif
+
 			DeleteChunkFromList(&block->UsedChunks, chunk);
 			AddChunkToList(&block->FreeChunks, chunk);
 			DefragmentChunks(&block->FreeChunks);
