@@ -48,19 +48,19 @@ namespace Toshi
 	TCString::TCString(uint32_t size)
 	{
 		Reset();
-		AllocBuffer(size, true);
+		AllocBuffer(size);
 	}
 
 	TCString::TCString(const TWString& src)
 	{
 		Reset();
-		Copy(src, -1);
+		Copy(src);
 	}
 
 	TCString::TCString(const char* const& src)
 	{
 		Reset();
-		Copy(src, -1);
+		Copy(src);
 	}
 
 	TCString::~TCString()
@@ -123,6 +123,7 @@ namespace Toshi
 		uint32_t currentLength = Length();
 
 		TASSERT(a_iLength >= 0, "Length can't be less than 0");
+		TASSERT(a_iLength <= 0xFFFFFF, "Too big string");
 
 		if (a_iLength != currentLength)
 		{
@@ -167,11 +168,7 @@ namespace Toshi
 
 	void TCString::FreeBuffer()
 	{
-		if (Length() != 0)
-		{
-			tfree(m_pBuffer);
-		}
-
+		if (Length() != 0) tfree(m_pBuffer);
 		Reset();
 	}
 

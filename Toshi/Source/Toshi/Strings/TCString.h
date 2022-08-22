@@ -20,7 +20,7 @@ namespace Toshi
 
 		void FreeBuffer();
 
-		// Returns true if updated memory
+		// Returns true if allocated memory
 		bool AllocBuffer(int size, bool freeMemory = true);
 
 		// Returns position of specified character
