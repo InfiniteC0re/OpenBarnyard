@@ -6,25 +6,25 @@
 namespace Toshi
 {
 	TMutex TMemory::s_Mutex;
-	TMemory TMemory::s_Instance;
 
 	void TMemory::Initialize(size_t memoryLimit, size_t reservedSize)
 	{
 		static bool s_Initialized = false;
 		TASSERT(!s_Initialized, "TMemory is already initialized");
 
-		s_Instance.m_Size = memoryLimit <= 0 ? GetFreePhysicalMemory() : memoryLimit;
+		auto& instance = Instance();
+		instance.m_Size = memoryLimit <= 0 ? GetFreePhysicalMemory() : memoryLimit;
 
 		s_Mutex.Create();
-		s_Instance.m_ReservedSize = reservedSize;
-		s_Instance.m_FreeSize = s_Instance.m_Size - s_Instance.m_ReservedSize;
+		instance.m_ReservedSize = reservedSize;
+		instance.m_FreeSize = instance.m_Size - instance.m_ReservedSize;
 
 		// todo: it's better to add some kind of an auto extension of the allocated memory
 		// so we won't allocate a lot of memory at the application startup
-		s_Instance.m_AllocatedMem = new char[s_Instance.m_Size];
+		instance.m_AllocatedMem = new char[instance.m_Size];
 
 		// add the global toshi block
-		s_Instance.m_GlobalBlock = s_Instance.AllocMem(s_Instance.m_AllocatedMem, s_Instance.m_Size, "Toshi");
+		instance.m_GlobalBlock = instance.AllocMem(instance.m_AllocatedMem, instance.m_Size, "Toshi");
 		s_Initialized = true;
 	}
 
@@ -180,10 +180,12 @@ namespace Toshi
 	{
 		if (*list == chunk)
 		{
+			// deleting the first chunk in the list
 			*list = chunk->Next;
 		}
 		else
 		{
+			// deleting the first chunk in the list
 			chunk->Prev->Next = chunk->Next;
 			if (chunk->Next) { chunk->Next->Prev = chunk->Prev; }
 		}
