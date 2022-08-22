@@ -167,7 +167,6 @@ namespace Toshi
 		if (Length() != 0)
 		{
 			tfree(m_pBuffer);
-			m_pBuffer = NullString;
 		}
 
 		Reset();
@@ -197,7 +196,7 @@ namespace Toshi
 		m_pBuffer[m_iStrLen + param_2] = 0;
 		if (allocated && m_iStrLen != 0)
 		{
-			tfree(m_pBuffer);
+			FreeBuffer();
 		}
 		return *this;
 	}
@@ -218,7 +217,7 @@ namespace Toshi
 		m_pBuffer[m_iStrLen + param_2] = 0;
 		if (allocated && m_iStrLen != 0)
 		{
-			tfree(m_pBuffer);
+			FreeBuffer();
 		}
 		return *this;
 	}
@@ -240,7 +239,7 @@ namespace Toshi
 		m_pBuffer[m_iStrLen + param_2] = 0;
 		if (allocated && m_iStrLen != 0)
 		{
-			tfree(m_pBuffer);
+			FreeBuffer();
 		}
 		return *this;
 	}
@@ -254,6 +253,7 @@ namespace Toshi
 		Concat(str, -1);
 		return this;
 	}
+
 	char& TCString::operator[](int index)
 	{
 		return m_pBuffer[index];

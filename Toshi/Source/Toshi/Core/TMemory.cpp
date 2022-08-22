@@ -160,16 +160,20 @@ namespace Toshi
 
 	static void AddChunkToList(TMemoryChunk** list, TMemoryChunk* chunk)
 	{
-		if (*list == nullptr)
+		if (*list != nullptr)
 		{
-			*list = chunk;
+			// there is at least one element in the list
+			chunk->Next = *list;
+			chunk->Next->Prev = chunk;
 		}
 		else
 		{
-			chunk->Next = *list;
-			(*list)->Prev = chunk;
-			*list = chunk;
+			// there is no other elements in the list
+			chunk->Next = nullptr;
+			chunk->Prev = nullptr;
 		}
+
+		*list = chunk;
 	}
 
 	static void DeleteChunkFromList(TMemoryChunk** list, TMemoryChunk* chunk)
@@ -235,8 +239,6 @@ namespace Toshi
 
 				auto newChunk = (TMemoryChunk*)((char*)chunk->Data + chunk->Size);
 				newChunk->Region = chunk->Region;
-				newChunk->Prev = nullptr;
-				newChunk->Next = nullptr;
 				newChunk->Size = newSize - sizeof(TMemoryChunk);
 				newChunk->Data = (char*)newChunk + sizeof(TMemoryChunk);
 
