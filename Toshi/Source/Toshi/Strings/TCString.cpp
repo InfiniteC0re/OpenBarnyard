@@ -48,19 +48,19 @@ namespace Toshi
 	TCString::TCString(uint32_t size)
 	{
 		Reset();
-		AllocBuffer(size, true);
+		AllocBuffer(size);
 	}
 
 	TCString::TCString(const TWString& src)
 	{
 		Reset();
-		Copy(src, -1);
+		Copy(src);
 	}
 
 	TCString::TCString(const char* const& src)
 	{
 		Reset();
-		Copy(src, -1);
+		Copy(src);
 	}
 
 	TCString::~TCString()
@@ -123,6 +123,7 @@ namespace Toshi
 		uint32_t currentLength = Length();
 
 		TASSERT(a_iLength >= 0, "Length can't be less than 0");
+		TASSERT(a_iLength <= 0xFFFFFF, "Too big string");
 
 		if (a_iLength != currentLength)
 		{
@@ -167,11 +168,7 @@ namespace Toshi
 
 	void TCString::FreeBuffer()
 	{
-		if (Length() != 0)
-		{
-			tfree(m_pBuffer);
-		}
-
+		if (Length() != 0) tfree(m_pBuffer);
 		Reset();
 	}
 
@@ -191,18 +188,28 @@ namespace Toshi
 			size = len;
 		}
 
+		uint32_t oldLength = m_iStrLen;
+		char* oldString = m_pBuffer;
+
 		bool allocated = AllocBuffer(m_iStrLen + size, false);
+
 		if (allocated)
 		{
-			//?????
-			TSystem::StringCopy(m_pBuffer, m_pBuffer, -1);
+			// since it has made a new buffer
+			// it need to copy the old string
+			// to the new buffer
+
+			TSystem::StringCopy(m_pBuffer, oldString, -1);
 		}
-		TSystem::StringCopy(m_pBuffer + m_iStrLen, str, size);
-		m_pBuffer[m_iStrLen + size] = 0;
+
+		TSystem::StringCopy(m_pBuffer + oldLength, str, size);
+		m_pBuffer[m_iStrLen] = 0;
+
 		if (allocated && m_iStrLen != 0)
 		{
-			FreeBuffer();
+			tfree(oldString);
 		}
+
 		return *this;
 	}
 
@@ -215,18 +222,28 @@ namespace Toshi
 			size = len;
 		}
 
+		uint32_t oldLength = m_iStrLen;
+		char* oldString = m_pBuffer;
+		
 		bool allocated = AllocBuffer(m_iStrLen + size, false);
+		
 		if (allocated)
 		{
-			//?????
-			TSystem::StringCopy(m_pBuffer, m_pBuffer, -1);
+			// since it has made a new buffer
+			// it need to copy the old string
+			// to the new buffer
+
+			TSystem::StringCopy(m_pBuffer, oldString, -1);
 		}
-		TSystem::StringUnicodeToChar(m_pBuffer + m_iStrLen, str.GetString(), size);
-		m_pBuffer[m_iStrLen + size] = 0;
+
+		TSystem::StringUnicodeToChar(m_pBuffer + oldLength, str.GetString(), size);
+		m_pBuffer[m_iStrLen] = 0;
+		
 		if (allocated && m_iStrLen != 0)
 		{
-			FreeBuffer();
+			tfree(oldString);
 		}
+
 		return *this;
 	}
 
