@@ -1,4 +1,5 @@
 #pragma once
+#include "Toshi/Utils/TSingleton.h"
 #include "Toshi/Utils/TMutexLock.h"
 
 #define TOSHI_MEM_BLOCK_COUNT 128
@@ -32,7 +33,7 @@ namespace Toshi
 		void* Data;
 	};
 
-	class TMemory
+	class TMemory : public TSingleton<TMemory>
 	{
 	public:
 		TMemory();
@@ -47,11 +48,10 @@ namespace Toshi
 
 		static void Initialize(size_t memoryLimit = 0, size_t reservedSize = 0);
 		
-		inline static TMemory& Instance() { return s_Instance; }
+		inline static TMutex& Mutex() { return s_Mutex; }
 		inline static size_t GetFreePhysicalMemory() { return (64 * 1024 * 1024); }
 
 	private:
-		static TMemory s_Instance;
 		static TMutex s_Mutex;
 
 		size_t m_Size;

@@ -14,24 +14,24 @@ namespace Toshi
 		TCString(uint32_t size);
 		~TCString();
 
-		inline void Copy(const TCString& src, uint32_t size) { Copy(src.m_pBuffer, size); }
-		void Copy(const TWString& src, uint32_t size);
-		void Copy(const char* src, uint32_t size);
+		inline void Copy(const TCString& src, uint32_t size = -1) { Copy(src.m_pBuffer, size); }
+		void Copy(const TWString& src, uint32_t size = -1);
+		void Copy(const char* src, uint32_t size = -1);
 
 		void FreeBuffer();
 
 		// Returns true if updated memory
-		bool AllocBuffer(int size, bool freeMemory);
+		bool AllocBuffer(int size, bool freeMemory = true);
 
-		// Returns position of specified substring
-		uint32_t Find(char substr, int pos) const;
+		// Returns position of specified character
+		uint32_t Find(char substr, int pos = -1) const;
 
 		// Returns string starting from specified index
 		const char* GetString(uint32_t index = 0) const;
 
-		TCString& Concat(const char*, int);
-		TCString& Concat(const TCString&, int);
-		TCString& Concat(const TWString&, int);
+		inline TCString& Concat(const TCString& str, uint32_t size = -1) { Concat(str.m_pBuffer, size); };
+		TCString& Concat(const TWString& src, uint32_t size = -1);
+		TCString& Concat(const char* src, uint32_t size = -1);
 
 		inline uint32_t Length() const { return m_iStrLen; }
 		inline uint8_t ExcessLength() const { return m_iExcessLen; }
