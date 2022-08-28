@@ -324,9 +324,7 @@ namespace Toshi
         FlushWriteBuffer();
         CloseHandle(hnd);
 
-        // Don't know why they -1 it, that's not possible, instead TNULL
-        //*(undefined4 *)(param_1 + 8) = 0xffffffff; 
-        hnd = TNULL;
+        hnd = INVALID_HANDLE_VALUE;
         m_position = -1;
         unk2 = -1;
         unk4 = -1;
