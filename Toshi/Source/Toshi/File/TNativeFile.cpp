@@ -300,10 +300,8 @@ namespace Toshi
 
             if ((param_2 & 0x10) == 0)
             {
-                void* mem = tmalloc(0x800);
-                m_pBuffer = mem;
-                mem = tmalloc(0x800);
-                buffer = mem;
+                m_pBuffer = tmalloc(0x800);
+                buffer = tmalloc(0x800);
                 m_bWriteBuffered = true;
             }
             else
