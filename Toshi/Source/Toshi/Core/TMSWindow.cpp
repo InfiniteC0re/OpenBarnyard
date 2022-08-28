@@ -33,4 +33,23 @@ namespace Toshi
 		RegisterClassA(&wndClass);
 		CreateWindowExA(0, name, param_2, 0x80ca0000, 100, 100, 0, 0, TNULL, TNULL, hmodule, this);
 	}
+
+	void TMSWindow::Update()
+	{
+		MSG msg;
+		bool bRet;
+		if (m_bIsWindowed == 0 && ((bRet = PeekMessageA(&msg, 0, 0, 0, 0)) != 0))
+		{
+			while ((bRet = GetMessageA(&msg, 0, 0, 0)) != 0)
+			{
+				TranslateMessage(&msg);
+				DispatchMessageA(&msg);
+				if (PeekMessageA(&msg, 0, 0, 0, 0) == 0)
+				{
+					return;
+				}
+			}
+			m_bIsWindowed = 1;
+		}
+	}
 }

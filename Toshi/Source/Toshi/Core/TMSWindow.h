@@ -11,6 +11,7 @@ namespace Toshi
 		HWND* hwnd; // 0x4
 		TRender* m_pRenderer; // Name is a guess
 		TBOOL m_bIsEnabled; // this + 0xC ; Name is a guess
+		TBOOL m_bIsWindowed; // 0xD Possibly?
 		HMODULE hmodule;
 
 		void Enable();
@@ -18,6 +19,7 @@ namespace Toshi
 		void Create(TRender* renderer, char* param_2);
 		
 		inline HWND* GetHWND() const { return hwnd; }
+		void Update();
 	};
 }
 

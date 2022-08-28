@@ -6,6 +6,7 @@ namespace Toshi
 	{
 		TGenericDList();
 
+	public: 
 		class TNode
 		{
 		protected:

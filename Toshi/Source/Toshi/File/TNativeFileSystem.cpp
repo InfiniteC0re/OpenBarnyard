@@ -3,7 +3,7 @@
 
 Toshi::TNativeFileSystem::TNativeFileSystem(const char* a_name) : TFileSystem(a_name)
 {
-    m_unk3 = -1;
+    //sm_unk3 = -1;
     // Toshi::TFileManager::MountFileSystem(TFileManager::s_pFileManager, this); 
 }
 

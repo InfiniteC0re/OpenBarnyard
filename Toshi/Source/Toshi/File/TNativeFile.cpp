@@ -3,25 +3,25 @@
 
 namespace Toshi
 {
-    bool TNativeFile::LoadBuffer(LPVOID param_1, DWORD param_2)
+    bool TNativeFile::LoadBuffer(DWORD param_1)
     {
-        DWORD lpNumberOfBytesWritten;
-        FlushWriteBuffer();
-        if (unk2 != m_position)
+        DWORD lpNumberOfBytesRead;
+        TASSERT(m_pBuffer != TNULL, "");
+        if (unk4 != param_1)
         {
-            unk2 = SetFilePointer(hnd, m_position, TNULL, FILE_BEGIN);
-            if (unk2 == INVALID_SET_FILE_POINTER && GetLastError() != NO_ERROR)
+            if (unk2 != param_1)
+            {
+                unk2 = SetFilePointer(hnd, param_1, TNULL, FILE_BEGIN);
+                if (unk2 != param_1) return false;
+            }
+            if (ReadFile(hnd, m_pBuffer, 0x800, &lpNumberOfBytesRead, TNULL) == 0)
             {
                 return false;
             }
-            m_position = unk2;
+            unk2 += lpNumberOfBytesRead;
+            unk5 = lpNumberOfBytesRead;
+            unk4 = param_1;
         }
-        if (ReadFile(hnd, param_1, param_2, &lpNumberOfBytesWritten, TNULL) == 0)
-        {
-            return false;
-        }
-        unk2 += lpNumberOfBytesWritten;
-        m_position = unk2;
         return true;
     }
 
@@ -48,6 +48,28 @@ namespace Toshi
         return lpNumberOfBytesWritten;
     }
 
+    int TNativeFile::ReadUnbuffered(LPVOID buffer, int param_2)
+    {
+        DWORD lpNumberOfBytesRead;
+        FlushWriteBuffer();
+        if (m_position != unk2)
+        {
+            unk2 = SetFilePointer(hnd, m_position, TNULL, FILE_BEGIN);
+            if (unk2 == INVALID_SET_FILE_POINTER && GetLastError() != NO_ERROR)
+            {
+                return 0;
+            }
+            m_position = unk2;
+        }
+        if (ReadFile(hnd, buffer, param_2, &lpNumberOfBytesRead, TNULL) == 0)
+        {
+            return 0;
+        }
+        unk2 += lpNumberOfBytesRead;
+        m_position = unk2;
+        return lpNumberOfBytesRead;
+    }
+
     int TNativeFile::Read(LPVOID param_1, int param_2)
     {
         FlushWriteBuffer();
@@ -57,31 +79,61 @@ namespace Toshi
             return 0;
         }
 
+        if (m_pBuffer == TNULL)
+        {
+            return ReadUnbuffered(param_1, param_2);
+        }
+
         if (m_pBuffer != 0)
         {
             int v1 = m_position;
             int v2 = m_position & 0xFFFFF800;
             int v3 = m_position + param_2 & 0xFFFFF800;
+            int v4 = 0;
             int v5 = 0;
             int v6 = 0;
             if (v2 != v3)
             {
                 if (v2 == unk4)
                 {
-                    int v4 = unk5 - (v1 - v2);
+                    v4 = unk5 - (v1 - v2);
                     if (0 < v4)
                     {
-                        memcpy(param_1, ((char*)m_pBuffer - (v1 - v2)), v4);
+                        memcpy(param_1, ((char*)m_pBuffer + (v1 - v2)), v4);
                         m_position += v4;
                         v6 += v4;
                         v5 = v4;
                     }
                 }
-                param_1 = (void*)(v3 + m_position);
+                v2 = v3 - m_position;
+                if (0 < v2)
+                {
+                    int read = ReadUnbuffered((char*)param_1 + v4, v2);
+                    v5 += read;
+                    v2 += read;
+                    if (read != v2) return v5;
+                }
             }
+            if (v6 != param_2)
+            {
+                if (!LoadBuffer(v2)) return v6;
+                int iVar5 = m_position - v2;
+                int v8 = param_2 - v6;
+                int v9 = unk5 - iVar5;
+                int v10 = v9;
+                if (v8 <= v9) v10 = v8;
+
+                if (0 < v10)
+                {
+                    memcpy(param_1, ((char*)m_pBuffer + iVar5), v10);
+                    m_position += v10;
+                    v5 += v10;
+                }
+            }
+            return v5;
         }
 
-        return 0;
+        return ReadUnbuffered(buffer, param_2);
     }
 
     int TNativeFile::Tell()
@@ -172,9 +224,9 @@ namespace Toshi
         return fLastWriteTime;
     }
 
-    TNativeFile::TNativeFile(class TNativeFileSystem* param_1) : TFile(param_1)
+    TNativeFile::TNativeFile(class TNativeFileSystem* param_1) : TFile((TFileSystem*)param_1)
     {
-        hnd = TNULL;
+        hnd = INVALID_HANDLE_VALUE;
         m_position = -1;
         unk2 = -1;
         unk4 = -1;

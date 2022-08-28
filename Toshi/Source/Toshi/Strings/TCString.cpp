@@ -108,13 +108,23 @@ namespace Toshi
 
 	uint32_t TCString::Find(char substr, int pos) const
 	{
-		if (!IsIndexValid(0)) return -1;
+		if (!IsIndexValid(pos)) return -1;
 		//if (DAT_00990290 == 0)
 
-		char* foundAt = strchr(&m_pBuffer[pos], substr);
+		const char* foundAt = strchr(&GetString()[pos], substr);
 		if (foundAt == TNULL) { return -1; }
 
-		return (uint32_t)(foundAt - m_pBuffer);
+		return (uint32_t)(foundAt - GetString());
+	}
+
+	int TCString::Find(const char* param_1, int param_2) const
+	{
+		if (!IsIndexValid(param_2)) return -1;
+
+		const char* foundAt = strstr(&GetString()[param_2], param_1);
+		if (foundAt == TNULL) return -1;
+
+		return foundAt - GetString();
 	}
 
 	bool TCString::AllocBuffer(int a_iLength, bool freeMemory)
@@ -213,6 +223,53 @@ namespace Toshi
 		return *this;
 	}
 
+	int TCString::Compare(const char* a_pcString, int param_2) const
+	{
+		TASSERT(a_pcString != TNULL, "");
+		TASSERT(IsIndexValid(0), "");
+		TASSERT(GetString() != TNULL, "");
+		if (param_2 != -1)
+		{
+			TASSERT(IsIndexValid(0), "");
+			return strncmp(GetString(), a_pcString, param_2);
+		}
+		const char* str = GetString();
+		char bVar1 = 0;
+		char bVar4 = 0;
+		while (true)
+		{
+			bVar1 = *str;
+			bVar4 = bVar1 < *a_pcString;
+
+			if (bVar1 != *a_pcString) break;
+			if (bVar1 == 0) return 0;
+			
+			bVar1 = str[1];
+			bVar4 = bVar1 < a_pcString[1];
+
+			if (bVar1 != a_pcString[1]) break;
+			if (bVar1 == 0) return 0;
+
+			str += 2;
+			a_pcString += 2;
+		}
+		return bVar4 | 1;
+	}
+
+	int TCString::CompareNoCase(const char* a_pcString, int param_2) const
+	{
+		TASSERT(a_pcString != TNULL, "");
+		TASSERT(IsIndexValid(0), "");
+		TASSERT(GetString() != TNULL, "");
+		if (param_2 == -1)
+		{
+			TASSERT(IsIndexValid(0), "");
+			return stricmp(GetString(), a_pcString);
+		}
+		TASSERT(IsIndexValid(0), "");
+		return strnicmp(GetString(), a_pcString, param_2);
+	}
+
 	TCString& TCString::Concat(const TWString& str, uint32_t size)
 	{
 		uint32_t len = str.Length();
@@ -249,14 +306,22 @@ namespace Toshi
 
 	/* Operators */
 
+	TCString TCString::operator+(char const* param_1) const
+	{
+		TCString str = TCString(param_1);
+		str.Reset();
+		str.Copy(*this, -1);
+		TCString str2 = str.Concat(*this, -1);
+		return str2;
+	}
+
 	TCString* TCString::operator+=(char const* str)
 	{
 		Concat(str, -1);
 		return this;
 	}
 
-	char& TCString::operator[](int index)
-	{
-		return m_pBuffer[index];
-	}
+
+
+
 }
