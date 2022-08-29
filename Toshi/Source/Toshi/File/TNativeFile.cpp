@@ -288,7 +288,7 @@ namespace Toshi
 
         TASSERT(a_fileName.IsIndexValid(0), "");
 
-        HANDLE handle = CreateFileA(a_fileName.GetString(0), dwDesiredAccess, dwShareMode, TNULL, dwCreationDisposition, 0, TNULL);
+        HANDLE handle = CreateFileA(a_fileName.GetString(), dwDesiredAccess, dwShareMode, TNULL, dwCreationDisposition, 0, TNULL);
 
         if (handle != INVALID_HANDLE_VALUE)
         {
