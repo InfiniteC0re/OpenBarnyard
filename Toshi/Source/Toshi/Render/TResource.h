@@ -24,9 +24,10 @@ namespace Toshi
 
 		inline bool IsDying() const { return m_State & TResourceState_Dying; }
 		inline bool IsValid() const { return m_State & TResourceState_Valid; }
-		inline bool IsInvalid() const { return (m_State & TResourceState_Valid) == 0; }
 		inline bool IsCreated() const { return m_State & TResourceState_Created; }
 		inline bool IsSceneObject() const { return m_State & TResourceState_SceneObject; }
+		
+		inline bool IsInvalid() const { return ~m_State & TResourceState_Valid; }
 
 		inline TRender* GetRenderer() const { return m_pRenderer; }
 		TResource* Parent() const;
