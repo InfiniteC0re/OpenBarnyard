@@ -24,7 +24,8 @@ project "Toshi"
 	
 	defines
 	{
-		"TOSHI_USER_ENGINE"
+		"TOSHI_USER_ENGINE",
+		"_CRT_SECURE_NO_WARNINGS"
 	}
 
 	filter "system:windows"

@@ -23,6 +23,7 @@ namespace Toshi
 }
 
 #define MKVERSION(VER_MAJOR, VER_MINOR) ((VER_MAJOR << 16) | VER_MINOR)
+#define BITFIELD(x) (1 << x)
 
 #if defined(TOSHI_DEBUG)
 	#if defined(TOSHI_PLATFORM_WINDOWS)

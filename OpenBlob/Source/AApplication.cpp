@@ -23,7 +23,7 @@ bool AApplication::OnCreate()
 	Toshi::TClass* tObjectClass = Toshi::TClassFromProps(Toshi::TObject::s_Class);
 		
 #pragma region TClass Info
-	TOSHI_INFO("/--------------TClass Hierarchy--------------\\");
+	TOSHI_INFO("---------------TClass Hierarchy---------------");
 
 	int index = -1;
 	tObjectClass->RecurseTree(
@@ -52,7 +52,7 @@ bool AApplication::OnCreate()
 			// this callback is called for every registered base TClass
 			// called before all the derrives get into the first callback
 			TOSHI_INFO("Total children: {0}", *(int*)pIndex - 1);
-			TOSHI_INFO("\\--------------------------------------------/");
+			TOSHI_INFO("----------------------------------------------");
 		}, &index);
 #pragma endregion
 
