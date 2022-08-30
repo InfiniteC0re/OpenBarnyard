@@ -106,25 +106,25 @@ namespace Toshi
 		}
 	}
 
-	uint32_t TCString::Find(char substr, int pos) const
+	uint32_t TCString::Find(char character, uint32_t pos) const
 	{
 		if (!IsIndexValid(pos)) return -1;
 		//if (DAT_00990290 == 0)
 
-		const char* foundAt = strchr(&GetString()[pos], substr);
+		const char* foundAt = strchr(GetString(pos), character);
 		if (foundAt == TNULL) { return -1; }
 
 		return (uint32_t)(foundAt - GetString());
 	}
 
-	int TCString::Find(const char* param_1, int param_2) const
+	uint32_t TCString::Find(const char* substr, uint32_t pos) const
 	{
-		if (!IsIndexValid(param_2)) return -1;
+		if (!IsIndexValid(pos)) return -1;
 
-		const char* foundAt = strstr(&GetString()[param_2], param_1);
+		const char* foundAt = strstr(GetString(pos), substr);
 		if (foundAt == TNULL) return -1;
 
-		return foundAt - GetString();
+		return (uint32_t)(foundAt - GetString());
 	}
 
 	bool TCString::AllocBuffer(int a_iLength, bool freeMemory)
@@ -225,14 +225,15 @@ namespace Toshi
 
 	int TCString::Compare(const char* a_pcString, int param_2) const
 	{
-		TASSERT(a_pcString != TNULL, "");
-		TASSERT(IsIndexValid(0), "");
-		TASSERT(GetString() != TNULL, "");
+		TASSERT(a_pcString != TNULL, "TCString::CompareNoCase - Passed string cannot be TNULL");
+		TASSERT(IsIndexValid(0), "TCString::CompareNoCase - Index 0 is not valid");
+		TASSERT(GetString() != TNULL, "TCString::CompareNoCase - String cannot be TNULL");
+
 		if (param_2 != -1)
 		{
-			TASSERT(IsIndexValid(0), "");
 			return strncmp(GetString(), a_pcString, param_2);
 		}
+
 		const char* str = GetString();
 		char bVar1 = 0;
 		char bVar4 = 0;
@@ -258,16 +259,18 @@ namespace Toshi
 
 	int TCString::CompareNoCase(const char* a_pcString, int param_2) const
 	{
-		TASSERT(a_pcString != TNULL, "");
-		TASSERT(IsIndexValid(0), "");
-		TASSERT(GetString() != TNULL, "");
+		TASSERT(a_pcString != TNULL, "TCString::CompareNoCase - Passed string cannot be TNULL");
+		TASSERT(IsIndexValid(0), "TCString::CompareNoCase - Index 0 is not valid");
+		TASSERT(GetString() != TNULL, "TCString::CompareNoCase - String cannot be TNULL");
+
 		if (param_2 == -1)
 		{
-			TASSERT(IsIndexValid(0), "");
-			return stricmp(GetString(), a_pcString);
+			return _stricmp(GetString(), a_pcString);
 		}
-		TASSERT(IsIndexValid(0), "");
-		return strnicmp(GetString(), a_pcString, param_2);
+
+		TASSERT(IsIndexValid(0), "TCString::CompareNoCase - Index 0 is not valid");
+		
+		return _strnicmp(GetString(), a_pcString, param_2);
 	}
 
 	TCString& TCString::Concat(const TWString& str, uint32_t size)
@@ -320,8 +323,4 @@ namespace Toshi
 		Concat(str, -1);
 		return this;
 	}
-
-
-
-
 }

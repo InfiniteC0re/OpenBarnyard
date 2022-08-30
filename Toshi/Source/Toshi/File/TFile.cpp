@@ -89,8 +89,9 @@ namespace Toshi
 	void Toshi::TFileSystem::SetPrefix(TCString const& a_prefix)
 	{
 		m_prefix = a_prefix;
-		size_t len = m_prefix.Length();
-		size_t i = 0;
+		uint32_t len = m_prefix.Length();
+		uint32_t i = 0;
+
 		if (0 < len)
 		{
 			do

@@ -3,8 +3,9 @@
 
 bool Toshi::TResource::Create()
 {
-	TASSERT(TFALSE == IsCreated(), "");
-	m_Flags |= 2;
+	TASSERT(TFALSE == IsCreated(), "Trying to create TResource twice");
+
+	m_State |= TResourceState_Created;
 	return true;
 }
 
@@ -12,10 +13,11 @@ bool Toshi::TResource::Validate()
 {
 	// Deblob does many TASSERTS beforehand (more validation than JPOG)
 	// TASSERT(TFALSE == IsLinked(), "");
-	TASSERT(m_Flags & TResource::FLAGS_DYING, "");
+	TASSERT(m_State & TResourceState_Dying, "TResource is dying");
 	// Thats what JPOG and Deblob does
-	if (m_Flags & TResource::FLAGS_DYING) return false;
-	m_Flags |= 1;
+	if (m_State & TResourceState_Dying) return false;
+	m_State |= TResourceState_Valid;
+
 	return true;
 }
 

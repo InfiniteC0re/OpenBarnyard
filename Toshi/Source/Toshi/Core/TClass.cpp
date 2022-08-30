@@ -18,9 +18,7 @@ namespace Toshi
 		m_Parent = parent;
 		m_Version = version;
 		m_Size = size;
-		m_LastAttached = nullptr;
 		m_Initialized = false;
-		m_Previous = nullptr;
 		m_Unk = 0;
 
 		if (m_Parent)
