@@ -42,6 +42,9 @@ namespace Toshi
 
 		inline bool IsInitialized() { return m_Initialized; }
 		inline const char* GetName() const { return m_Name; }
+		inline uint32_t GetVersion() const { return m_Version; }
+		inline uint16_t GetVersionMajor() const { return m_Version >> 16; }
+		inline uint16_t GetVersionMinor() const { return m_Version & 0xFFFF; }
 		inline TClassProps& GetPropsRef() { return *this; }
 		inline TClassProps* GetProps() { return this; }
 

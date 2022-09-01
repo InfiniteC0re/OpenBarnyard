@@ -25,7 +25,7 @@ namespace Toshi
 		TOSHI_CORE_INFO("Called ~TObject");
 	}
 
-	void TObjectInterface::Destroy()
+	void TObjectInterface::Delete()
 	{
 		delete this;
 	}

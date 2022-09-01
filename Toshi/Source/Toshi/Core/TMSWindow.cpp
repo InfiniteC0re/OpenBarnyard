@@ -25,7 +25,7 @@ namespace Toshi
 		//Destory()
 		m_pRenderer = renderer;
 
-		const char* name = m_pRenderer->Class()->GetName();
+		const char* name = m_pRenderer->GetClass()->GetName();
 		//TRender::m_sClass.GetName();
 		TCString str = TCString(name);
 		wndClass.hIcon = LoadIconA(0x0, (LPCSTR)IDI_APPLICATION);
