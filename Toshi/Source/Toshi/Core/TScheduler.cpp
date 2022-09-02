@@ -9,6 +9,12 @@ namespace Toshi
 	TTask* TScheduler::CreateTask(TClass* toshiClass, TTask* task)
 	{
 		TTask* taskObject = static_cast<TTask*>(toshiClass->CreateObject());
+		
+#ifdef TOSHI_DEBUG
+		TClass* found = TClass::FindRecurse(taskObject->GetClass()->GetName(), &TTask::s_Class, true);
+		TASSERT(found != nullptr, "TScheduler::CreateTask - passed TClass isn't inherited from TTask");
+#endif
+		
 		TScheduler* taskScheduler = taskObject->GetScheduler();
 
 		if (taskScheduler != this)
@@ -16,7 +22,7 @@ namespace Toshi
 			if (taskScheduler)
 			{
 				taskScheduler->DeleteTask();
-			}
+			}	
 
 			taskObject->m_Scheduler = this;
 			m_TaskCount += 1;

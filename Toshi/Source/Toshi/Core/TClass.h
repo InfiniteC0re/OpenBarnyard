@@ -39,7 +39,6 @@ namespace Toshi
 		void Initialize();
 		void RecurseTree(t_RecurceTreeCheck fCheck, t_RecurceTreeBaseBeginCb fBaseBegin, t_RecurceTreeBaseEndCb fBaseEnd, void* custom);
 		void RecurseTree2(t_RecurceTreeCheck fCheck, t_RecurceTreeBaseBeginCb fBaseBegin, t_RecurceTreeBaseEndCb fBaseEnd, void* custom);
-		TClass* FindRecurse(const char* const& name, TClass* parent, bool hasPrevious);
 		class TObject* CreateObject();
 
 		inline bool IsInitialized() { return m_Initialized; }
@@ -52,6 +51,9 @@ namespace Toshi
 
 		// todo: move this function away from this class
 		static bool TryInitialize(TClass* tClass);
+		
+		// Looks for a class in parent
+		static TClass* FindRecurse(const char* const& name, TClass* parent, bool hasPrevious);
 
 	public:
 		inline bool operator==(const TClass* other) const { return this == other; }
