@@ -95,6 +95,26 @@ int Toshi::TRandom::GetInt(int a_iLower, int a_iUpper)
     return a_iLower + (a_iUpper - a_iLower) * (RandRaw() >> 0x20);
 }
 
+int Toshi::TRandom::GetInt(int a_iUpper)
+{
+    return a_iUpper * RandRaw() >> 0x20;
+}
+
+int Toshi::TRandom::GetInt()
+{
+    return RandRaw();
+}
+
+float Toshi::TRandom::GetFloat()
+{
+    return (RandRaw() >> 1) * (float)0x30000000;
+}
+
+float Toshi::TRandom::GetFloat2()
+{
+    return (RandRaw() >> 1) * (float)0x30800000 * -1.0f;
+}
+
 void Toshi::TRandom::SetSeed(unsigned int a_uiSeed)
 {
     m_uiSeed = a_uiSeed;

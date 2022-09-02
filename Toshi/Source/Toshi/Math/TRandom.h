@@ -71,6 +71,12 @@ namespace Toshi
 		void RandInit();
 	public:
 		int GetInt(int a_iUpper, int a_iLower);
+		int GetInt(int a_iUpper);
+		int GetInt();
+
+		float GetFloat();
+		float GetFloat2();
+
 		void SetSeed(unsigned int a_uiSeed);
 
 		unsigned int RandRaw();

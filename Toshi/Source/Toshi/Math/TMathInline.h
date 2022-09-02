@@ -34,6 +34,7 @@ namespace TMath
 	static inline float Sqrt(float fVal) { return (float)sqrt(fVal); }
 	static inline bool IsNaN(float fVal) { return isnan(fVal); }
 	static inline int FastMod(int a_iNum, int a_iModulus) { TASSERT(a_iNum >= 0, ""); TASSERT(a_iModulus > 0, ""); TASSERT(0 == (a_iModulus & (a_iModulus - 1)), ""); return a_iNum & (a_iModulus - 1); }
+	static inline void SinCos(float fVal, float& fVal1, float& fVal2) { fVal1 = cos(fVal); fVal2 = sin(fVal); }
 
 	
 	static inline void* AlignPointer(void* ptr) { return (void*)((size_t)ptr & SIZE_T_ALIGN_VALUE); }
