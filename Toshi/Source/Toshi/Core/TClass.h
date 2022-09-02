@@ -51,6 +51,9 @@ namespace Toshi
 
 		// todo: move this function away from this class
 		static bool TryInitialize(TClass* tClass);
+
+	public:
+		inline bool operator==(const TClass* other) const { return this == other; }
 	};
 
 	// TClass should be equal to TClassProps
