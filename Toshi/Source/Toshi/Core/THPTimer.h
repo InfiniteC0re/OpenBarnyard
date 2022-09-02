@@ -13,6 +13,7 @@ namespace Toshi
 	public:
 		THPTimer();
 		unsigned int GetRaw32();
+		int64_t GetRaw64();
 		void Reset();
 	};
 

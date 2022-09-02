@@ -14,8 +14,8 @@ AExampleClass::AExampleClass()
 	Toshi::TNativeFileSystem* fs = new Toshi::TNativeFileSystem(str.GetString());
 	Toshi::TNativeFile* f = (Toshi::TNativeFile*)fs->CreateFile(str, 1);
 
-	//Toshi::TRandom rnd = Toshi::TRandom();
-	//auto s = rnd.GetInt(0, 5);
+	Toshi::TRandom rnd = Toshi::TRandom();
+	auto s = rnd.GetInt();
 
 	if (f)
 	{
