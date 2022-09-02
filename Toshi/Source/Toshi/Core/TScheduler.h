@@ -8,9 +8,10 @@ namespace Toshi
 
 	class TScheduler : public TObject
 	{
-		TOSHI_CLASS_DEFINE(TScheduler)
+		TOSHI_CLASS_NO_CREATE_DEFINE(TScheduler)
 
 	public:
+		TScheduler(TKernelInterface* kernelInterface);
 		TTask* CreateTask(TClass* toshiClass, TTask* task);
 
 	public:

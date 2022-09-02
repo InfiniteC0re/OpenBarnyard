@@ -14,7 +14,7 @@ namespace Toshi
 
 	class TTask : public TObject
 	{
-		TOSHI_CLASS_DEFINE(TTask)
+		TOSHI_CLASS_NO_CREATE_DEFINE(TTask)
 
 	public:
 		friend TTask* TScheduler::CreateTask(TClass* toshiClass, TTask* task);

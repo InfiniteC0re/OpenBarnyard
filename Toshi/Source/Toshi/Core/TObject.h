@@ -12,6 +12,13 @@ public: \
 	static Toshi::TObject* CreateTObjectInPlace(void* block) { return new (block) CLASSNAME(); } \
 	static Toshi::TClass s_Class;
 
+#define TOSHI_CLASS_NO_CREATE_DEFINE(CLASSNAME) \
+public: \
+	virtual Toshi::TClass* GetClass() { return &s_Class; } \
+	static Toshi::TObject* CreateTObject() { return nullptr; } \
+	static Toshi::TObject* CreateTObjectInPlace(void* block) { return nullptr; } \
+	static Toshi::TClass s_Class;
+
 #define TOSHI_CLASS_STATIC_DEFINE(CLASSNAME) \
 public: \
 	virtual Toshi::TClass* GetClass() { return Toshi::TClassFromProps(s_Class); } \
@@ -45,6 +52,9 @@ namespace Toshi
 	class TObject : public TObjectInterface
 	{
 		TOSHI_CLASS_STATIC_DEFINE(TObject)
+
+	public:
+		inline bool IsExactly(TClass* toCompare) { return GetClass() == toCompare; }
 	};
 }
 

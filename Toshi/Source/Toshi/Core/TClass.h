@@ -41,7 +41,8 @@ namespace Toshi
 		void RecurseTree2(t_RecurceTreeCheck fCheck, t_RecurceTreeBaseBeginCb fBaseBegin, t_RecurceTreeBaseEndCb fBaseEnd, void* custom);
 		class TObject* CreateObject();
 
-		inline bool IsInitialized() { return m_Initialized; }
+		inline bool IsExactly(TClass* toCompare) const { return this == toCompare; }
+		inline bool IsInitialized() const { return m_Initialized; }
 		inline const char* GetName() const { return m_Name; }
 		inline uint32_t GetVersion() const { return m_Version; }
 		inline uint16_t GetVersionMajor() const { return m_Version >> 16; }
