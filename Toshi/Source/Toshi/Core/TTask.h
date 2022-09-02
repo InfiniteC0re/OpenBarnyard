@@ -1,5 +1,6 @@
 #pragma once
 #include "TObject.h"
+#include "TKernelInterface.h"
 #include "TScheduler.h"
 
 namespace Toshi
@@ -16,13 +17,16 @@ namespace Toshi
 		TOSHI_CLASS_DEFINE(TTask)
 
 	public:
+		friend TTask* TScheduler::CreateTask(TClass* toshiClass, TTask* task);
+
+	public:
 		TTask();
 		~TTask();
 		
 		virtual bool Create();
 		virtual bool CreateFailed();
 		virtual bool OnCreate();
-		virtual bool OnUpdate();
+		virtual bool OnUpdate(float deltaTime);
 		virtual bool OnUpdateKernelPaused();
 		virtual void OnDestroy();
 		virtual bool OnChildDying();
@@ -39,7 +43,7 @@ namespace Toshi
 		inline bool IsDying() const { return m_State & TTaskState_Dying; }
 
 	private:
-		uint8_t m_State;			// 0x1C
-		TScheduler* m_Scheduler;	// 0x20
+		uint8_t m_State;                 // 0x1C
+		TScheduler* m_Scheduler;         // 0x20
 	};
 }

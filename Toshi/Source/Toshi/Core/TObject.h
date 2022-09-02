@@ -8,15 +8,15 @@
 #define TOSHI_CLASS_DEFINE(CLASSNAME) \
 public: \
 	virtual Toshi::TClass* GetClass() { return &s_Class; } \
-	static void* CreateTObject() { return new CLASSNAME; } \
-	static void* CreateTObjectInPlace(void* block) { return new (block) CLASSNAME(); } \
+	static Toshi::TObject* CreateTObject() { return new CLASSNAME; } \
+	static Toshi::TObject* CreateTObjectInPlace(void* block) { return new (block) CLASSNAME(); } \
 	static Toshi::TClass s_Class;
 
 #define TOSHI_CLASS_STATIC_DEFINE(CLASSNAME) \
 public: \
 	virtual Toshi::TClass* GetClass() { return Toshi::TClassFromProps(s_Class); } \
-	static void* CreateTObject() { return new CLASSNAME; } \
-	static void* CreateTObjectInPlace(void* block) { return new (block) CLASSNAME(); } \
+	static Toshi::TObject* CreateTObject() { return new CLASSNAME; } \
+	static Toshi::TObject* CreateTObjectInPlace(void* block) { return new (block) CLASSNAME(); } \
 	static constinit Toshi::TClassProps s_Class;
 
 #define TOSHI_CLASS_DERIVED_INITIALIZE(CLASSNAME, PARENT, VER) \

@@ -11,14 +11,7 @@ namespace Toshi
 	{
 		if (m_Scheduler)
 		{
-			uint32_t oldTaskCount = m_Scheduler->TaskCount();
-			m_Scheduler->TaskCount(oldTaskCount - 1);
-
-			if (oldTaskCount == 1)
-			{
-				// this was the last task so deleting the scheduler
-				m_Scheduler->Delete();
-			}
+			m_Scheduler->DeleteTask();
 		}
 	}
 
@@ -61,7 +54,7 @@ namespace Toshi
 		return true;
 	}
 
-	bool TTask::OnUpdate()
+	bool TTask::OnUpdate(float deltaTime)
 	{
 		return true;
 	}

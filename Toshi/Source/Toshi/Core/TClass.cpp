@@ -104,6 +104,16 @@ namespace Toshi
 			tClassProps = tClassProps->m_Previous;
 		}
 	}
+
+	TObject* TClass::CreateObject()
+	{
+		if (m_Create != nullptr)
+		{
+			return m_Create();
+		}
+
+		return nullptr;
+	}
 		
 	bool TClass::TryInitialize(TClass* tClass)
 	{
