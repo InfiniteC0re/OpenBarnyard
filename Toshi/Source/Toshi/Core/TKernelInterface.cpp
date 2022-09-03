@@ -36,7 +36,7 @@ namespace Toshi
 		}
 		else
 		{
-			TTODO("TScheduler::UpdateKernelPaused");
+			m_Scheduler->UpdateKernelPaused();
 		}
 
 		return true;
