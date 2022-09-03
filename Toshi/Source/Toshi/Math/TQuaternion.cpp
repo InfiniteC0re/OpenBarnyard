@@ -59,12 +59,12 @@ void Toshi::TQuaternion::SetVectorDirection(const TVector3& a_rVec3, const TVect
 
 	float mag = vec3.Magnitude();
 
-	if (mag > TMath::FLOATEPSILON)
+	if (mag > TMath::TFLOAT_EPSILON)
 	{
 		vec3.Divide(mag);
 		float dotProduct = TVector3::DotProduct(a_rVec3_2, a_rVec3);
 		float rot = 0.0f;
-		if ((dotProduct <= 1.0f - TMath::FLOATEPSILON) && (rot = TMath::PI, -1.0f + TMath::FLOATEPSILON <= dotProduct))
+		if ((dotProduct <= 1.0f - TMath::TFLOAT_EPSILON) && (rot = TMath::PI, -1.0f + TMath::TFLOAT_EPSILON <= dotProduct))
 		{
 			rot = TMath::ACos(dotProduct);
 		}
