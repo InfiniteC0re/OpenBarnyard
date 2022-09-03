@@ -12,9 +12,9 @@ namespace Toshi
 
 	void TVector3::Set(TVectorNum x, TVectorNum y, TVectorNum z)
 	{
-		this->x = x;
-		this->y = y;
-		this->z = z;
+		TVector3::x = x;
+		TVector3::y = y;
+		TVector3::z = z;
 	}
 
 	void TVector3::Abs(const TVector3& a_Vec3)

@@ -20,7 +20,7 @@ bool AApplication::OnCreate()
 	TOSHI_INFO("The application has been created");
 
 	TTODO("Initialize static here");
-	Toshi::TClass* tObjectClass = Toshi::TClassFromProps(Toshi::TObject::s_Class);
+	Toshi::TClass* tObjectClass = Toshi::TObject::s_Class;
 		
 #pragma region TClass Info
 	TOSHI_INFO("---------------TClass Hierarchy---------------");

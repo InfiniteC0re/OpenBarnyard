@@ -21,7 +21,7 @@ public: \
 
 #define TOSHI_CLASS_STATIC_DEFINE(CLASSNAME) \
 public: \
-	virtual Toshi::TClass* GetClass() { return Toshi::TClassFromProps(s_Class); } \
+	virtual Toshi::TClass* GetClass() { return s_Class; } \
 	static Toshi::TObject* CreateTObject() { return new CLASSNAME; } \
 	static Toshi::TObject* CreateTObjectInPlace(void* block) { return new (block) CLASSNAME(); } \
 	static constinit Toshi::TClassProps s_Class;

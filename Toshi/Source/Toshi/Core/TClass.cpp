@@ -78,7 +78,7 @@ namespace Toshi
 		
 		while (tClassProps != nullptr)
 		{
-			TClass* tClass = TClassFromProps(*tClassProps);
+			TClass* tClass = tClassProps->operator Toshi::TClass*();
 			if (fCheck) fCheck(tClass, custom);
 
 			if (tClass->m_LastAttached)
@@ -106,7 +106,7 @@ namespace Toshi
 
 			if (parent->m_LastAttached)
 			{
-				TClass* result = FindRecurse(name, TClassFromProps(parent->m_LastAttached), true);
+				TClass* result = FindRecurse(name, parent->m_LastAttached->operator Toshi::TClass*(), true);
 
 				if (result)
 				{
@@ -114,7 +114,7 @@ namespace Toshi
 				}
 			}
 
-			parent = TClassFromProps(previous);
+			parent = previous->operator Toshi::TClass *();
 		}
 
 		return nullptr;

@@ -13,6 +13,8 @@ namespace Toshi
 	typedef void  (*t_RecurceTreeBaseBeginCb)(class TClass*, void*);
 	typedef void  (*t_RecurceTreeBaseEndCb)(class TClass*, void*);
 
+	class TClass;
+
 	// This is a separate struct because we want to do compile-time initialization
 	struct TClassProps
 	{
@@ -28,6 +30,9 @@ namespace Toshi
 		size_t m_Size = 0;                                      // 0x24
 		uint32_t m_Unk = 0;                                     // 0x28
 		bool m_Initialized = 0;                                 // 0x2C
+	
+		operator TClass* () { return reinterpret_cast<TClass*>(this); }
+		operator TClass& () { return reinterpret_cast<TClass&>(*this); }
 	};
 
 	class TClass : public TClassProps
@@ -63,16 +68,5 @@ namespace Toshi
 
 	// TClass should be equal to TClassProps
 	static_assert(sizeof(TClass) == sizeof(TClassProps));
-
-	// Helper cast function
-	inline TClass* TClassFromProps(TClassProps& props)
-	{
-		return static_cast<TClass*>(&props);
-	}
-
-	inline TClass* TClassFromProps(TClassProps* props)
-	{
-		return static_cast<TClass*>(props);
-	}
 }
 

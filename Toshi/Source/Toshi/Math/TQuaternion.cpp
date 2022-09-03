@@ -5,7 +5,7 @@ namespace Toshi
 {
 	TQuaternion::TQuaternion()
 	{
-
+		
 	}
 
 	TQuaternion::TQuaternion(const TQuaternion& a_pQuaternion)
@@ -20,10 +20,10 @@ namespace Toshi
 
 	void TQuaternion::Set(float x, float y, float z, float w)
 	{
-		this->x = x;
-		this->y = y;
-		this->z = z;
-		this->w = w;
+		TQuaternion::x = x;
+		TQuaternion::y = y;
+		TQuaternion::z = z;
+		TQuaternion::w = w;
 	}
 
 	void TQuaternion::SetIdentity()
