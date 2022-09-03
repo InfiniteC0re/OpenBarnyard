@@ -93,7 +93,7 @@ bool AApplication::OnUpdate()
 	TOSHI_INFO("AApplication::OnUpdate");
 
 	AExampleClass* exampleClass = new AExampleClass();
-	exampleClass->Destroy();
+	exampleClass->Delete();
 
 	return true;
 }

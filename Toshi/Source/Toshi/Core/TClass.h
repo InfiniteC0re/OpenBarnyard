@@ -3,8 +3,8 @@
 namespace Toshi
 {
 	// TClassProps definitions
-	typedef void* (*t_CreateTObject)();
-	typedef void* (*t_CreateTObjectInPlace)(void*);
+	typedef class TObject* (*t_CreateTObject)();
+	typedef class TObject* (*t_CreateTObjectInPlace)(void*);
 	typedef void  (*t_InitializeStatic)();
 	typedef void  (*t_UninitializeStatic)();
 
@@ -39,14 +39,25 @@ namespace Toshi
 		void Initialize();
 		void RecurseTree(t_RecurceTreeCheck fCheck, t_RecurceTreeBaseBeginCb fBaseBegin, t_RecurceTreeBaseEndCb fBaseEnd, void* custom);
 		void RecurseTree2(t_RecurceTreeCheck fCheck, t_RecurceTreeBaseBeginCb fBaseBegin, t_RecurceTreeBaseEndCb fBaseEnd, void* custom);
+		class TObject* CreateObject();
 
-		inline bool IsInitialized() { return m_Initialized; }
+		inline bool IsExactly(TClass* toCompare) const { return this == toCompare; }
+		inline bool IsInitialized() const { return m_Initialized; }
 		inline const char* GetName() const { return m_Name; }
+		inline uint32_t GetVersion() const { return m_Version; }
+		inline uint16_t GetVersionMajor() const { return m_Version >> 16; }
+		inline uint16_t GetVersionMinor() const { return m_Version & 0xFFFF; }
 		inline TClassProps& GetPropsRef() { return *this; }
 		inline TClassProps* GetProps() { return this; }
 
 		// todo: move this function away from this class
 		static bool TryInitialize(TClass* tClass);
+		
+		// Looks for a class in parent
+		static TClass* FindRecurse(const char* const& name, TClass* parent, bool hasPrevious);
+
+	public:
+		inline bool operator==(const TClass* other) const { return this == other; }
 	};
 
 	// TClass should be equal to TClassProps
@@ -56,6 +67,11 @@ namespace Toshi
 	static inline TClass* TClassFromProps(TClassProps& props)
 	{
 		return static_cast<TClass*>(&props);
+	}
+
+	static inline TClass* TClassFromProps(TClassProps* props)
+	{
+		return static_cast<TClass*>(props);
 	}
 }
 

@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "TClass.h"
+#include "TSystem.h"
 #include "Toshi/Typedefs.h"
 
 namespace Toshi
@@ -103,6 +104,44 @@ namespace Toshi
 
 			tClassProps = tClassProps->m_Previous;
 		}
+	}
+
+	TClass* TClass::FindRecurse(const char* const& name, TClass* parent, bool hasPrevious)
+	{
+		while (parent)
+		{
+			TClassProps* previous = hasPrevious ? parent->m_Previous : nullptr;
+			int difference = TSystem::StringCompareNoCase(parent->m_Name, name, -1);
+
+			if (difference == 0)
+			{
+				return parent;
+			}
+
+			if (parent->m_LastAttached)
+			{
+				TClass* result = FindRecurse(name, TClassFromProps(parent->m_LastAttached), true);
+
+				if (result)
+				{
+					return result;
+				}
+			}
+
+			parent = TClassFromProps(previous);
+		}
+
+		return nullptr;
+	}
+
+	TObject* TClass::CreateObject()
+	{
+		if (m_Create != nullptr)
+		{
+			return m_Create();
+		}
+
+		return nullptr;
 	}
 		
 	bool TClass::TryInitialize(TClass* tClass)

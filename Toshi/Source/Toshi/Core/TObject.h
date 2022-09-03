@@ -7,16 +7,23 @@
 
 #define TOSHI_CLASS_DEFINE(CLASSNAME) \
 public: \
-	virtual Toshi::TClass* Class() { return &s_Class; } \
-	static void* CreateTObject() { return new CLASSNAME; } \
-	static void* CreateTObjectInPlace(void* block) { return new (block) CLASSNAME(); } \
+	virtual Toshi::TClass* GetClass() { return &s_Class; } \
+	static Toshi::TObject* CreateTObject() { return new CLASSNAME; } \
+	static Toshi::TObject* CreateTObjectInPlace(void* block) { return new (block) CLASSNAME(); } \
+	static Toshi::TClass s_Class;
+
+#define TOSHI_CLASS_NO_CREATE_DEFINE(CLASSNAME) \
+public: \
+	virtual Toshi::TClass* GetClass() { return &s_Class; } \
+	static Toshi::TObject* CreateTObject() { return nullptr; } \
+	static Toshi::TObject* CreateTObjectInPlace(void* block) { return nullptr; } \
 	static Toshi::TClass s_Class;
 
 #define TOSHI_CLASS_STATIC_DEFINE(CLASSNAME) \
 public: \
-	virtual Toshi::TClass* Class() { return Toshi::TClassFromProps(s_Class); } \
-	static void* CreateTObject() { return new CLASSNAME; } \
-	static void* CreateTObjectInPlace(void* block) { return new (block) CLASSNAME(); } \
+	virtual Toshi::TClass* GetClass() { return Toshi::TClassFromProps(s_Class); } \
+	static Toshi::TObject* CreateTObject() { return new CLASSNAME; } \
+	static Toshi::TObject* CreateTObjectInPlace(void* block) { return new (block) CLASSNAME(); } \
 	static constinit Toshi::TClassProps s_Class;
 
 #define TOSHI_CLASS_DERIVED_INITIALIZE(CLASSNAME, PARENT, VER) \
@@ -30,8 +37,8 @@ namespace Toshi
 	class TObjectInterface
 	{
 	public:
-		virtual TClass* Class() = 0;
-		virtual void Destroy();
+		virtual TClass* GetClass() = 0;
+		virtual void Delete();
 		virtual ~TObjectInterface();
 
 		// Operators
@@ -45,6 +52,9 @@ namespace Toshi
 	class TObject : public TObjectInterface
 	{
 		TOSHI_CLASS_STATIC_DEFINE(TObject)
+
+	public:
+		inline bool IsExactly(TClass* toCompare) { return GetClass() == toCompare; }
 	};
 }
 

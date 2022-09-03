@@ -3,6 +3,15 @@
 
 namespace Toshi
 {
+	int TSystem::StringCompareNoCase(const char* const& str1, const char* const& str2, size_t size)
+	{
+		if (size != -1) {
+			return _strnicmp(str1, str2, size);
+		}
+
+		return _stricmp(str1, str2);
+	}
+
 	const char* TSystem::StringCopy(char* dst, const char* source, int count)
 	{
 		if (count != -1)
