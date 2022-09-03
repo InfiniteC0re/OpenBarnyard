@@ -5,7 +5,10 @@
 namespace Toshi
 {
 	TOSHI_CLASS_DERIVED_INITIALIZE(TScheduler, TObject, MKVERSION(1, 0))
-		
+
+	float TScheduler::s_MaxTimeDeltaAllowed = 0.01f;
+	float TScheduler::s_DebugSlowMaxTimeDeltaAllowed = 1.0f;
+
 	TScheduler::TScheduler(TKernelInterface* kernelInterface)
 	{
 		m_TaskCount = 0;
@@ -81,7 +84,7 @@ namespace Toshi
 			m_Unk4 += 1;
 		}
 
-		return nullptr;
+		return task;
 	}
 
 	void TScheduler::Update()
@@ -103,6 +106,11 @@ namespace Toshi
 
 		DestroyDyingTasks(m_LastTask);
 		UpdateActiveTasks(m_LastTask);
+	}
+
+	void TScheduler::SetDebugSlowTime(bool slowTime)
+	{
+		m_DeltaTimeLimit = slowTime ? s_DebugSlowMaxTimeDeltaAllowed : s_MaxTimeDeltaAllowed;
 	}
 	
 	void TScheduler::DestroyDyingTasks(TTask* rootTask)
@@ -153,12 +161,11 @@ namespace Toshi
 			{
 				updateResult = task->OnUpdate(m_CurrentTimeDelta);
 
-				// if ShouldSkipTasks() returns true
+				// if IsPaused() returns true
 				// then it only updates the root task
-				// and skips any other tasks including
-				// subtasks too
+				// and skips any other tasks
 
-				if (GetKernelInterface()->ShouldSkipTasks())
+				if (GetKernelInterface()->IsPaused())
 				{
 					return;
 				}
@@ -167,6 +174,35 @@ namespace Toshi
 			if (updateResult && task->m_SubTask)
 			{
 				UpdateActiveTasks(task->m_SubTask);
+			}
+
+			task = prevTask;
+		}
+	}
+
+	void TScheduler::UpdateActiveTasksKernelPaused(TTask* rootTask)
+	{
+		TTask* task = rootTask;
+
+		while (task != nullptr)
+		{
+			TTask* prevTask = task->m_Prev;
+
+			if (prevTask == rootTask)
+			{
+				prevTask = nullptr;
+			}
+
+			bool updateResult = true;
+
+			if (task->IsCreatedAndActive())
+			{
+				updateResult = task->OnUpdateKernelPaused(m_CurrentTimeDelta);
+			}
+
+			if (updateResult && task->m_SubTask)
+			{
+				UpdateActiveTasksKernelPaused(task->m_SubTask);
 			}
 
 			task = prevTask;

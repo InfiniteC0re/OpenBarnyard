@@ -1,10 +1,13 @@
 #include "AExampleClass.h"
-#include "Toshi/File/TNativeFileSystem.h"
-#include "Toshi/Core/TSystem.h"
+#include "ARootTask.h"
+
+#include <Toshi/File/TNativeFileSystem.h>
+#include <Toshi/Core/TSystem.h>
+#include <Toshi/Core/TKernelInterface.h>
+#include <Toshi/Core/TScheduler.h>
 #include <Toshi/Math/TRandom.h>
 
 TOSHI_CLASS_DERIVED_INITIALIZE(AExampleClass, Toshi::TObject, MKVERSION(1, 0))
-TOSHI_CLASS_DERIVED_INITIALIZE(AExampleClass2, Toshi::TObject, MKVERSION(1, 1))
 
 AExampleClass::AExampleClass()
 {
@@ -14,8 +17,8 @@ AExampleClass::AExampleClass()
 	Toshi::TNativeFileSystem* fs = new Toshi::TNativeFileSystem(str.GetString());
 	Toshi::TNativeFile* f = (Toshi::TNativeFile*)fs->CreateFile(str, 1);
 
-	Toshi::TRandom rnd = Toshi::TRandom();
-	auto s = rnd.GetInt();
+	//Toshi::TRandom rnd = Toshi::TRandom();
+	//auto s = rnd.GetInt();
 
 	if (f)
 	{
@@ -34,20 +37,22 @@ AExampleClass::AExampleClass()
 		TOSHI_INFO("Seeked to offset: {0}", f->Tell());
 		f->Close();
 	}
+	
+	Toshi::TKernelInterface* kernel = new Toshi::TKernelInterface;
+	
+	m_RootTask = static_cast<ARootTask*>(
+		kernel->GetScheduler().CreateTask(&ARootTask::s_Class, nullptr)
+	);
 
+	m_RootTask->Create();
+
+	while (true)
+	{
+		kernel->Update();
+	}
 }
 
 AExampleClass::~AExampleClass()
 {
 	TOSHI_INFO("Called ~AExampleClass");
-}
-
-AExampleClass2::AExampleClass2()
-{
-	TOSHI_INFO("Called AExampleClass2");
-}
-
-AExampleClass2::~AExampleClass2()
-{
-	TOSHI_INFO("Called ~AExampleClass2");
 }

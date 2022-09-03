@@ -1,4 +1,6 @@
 #pragma once
+#include "Toshi/Typedefs.h"
+
 namespace Toshi
 {
 	template <class T>

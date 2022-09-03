@@ -1,30 +1,42 @@
 #include "pch.h"
 #include "THPTimer.h"
 
-Toshi::THPTimer::THPTimer()
+namespace Toshi
 {
-	Reset();
-}
+	THPTimer::THPTimer()
+	{
+		Reset();
+	}
 
-uint32_t Toshi::THPTimer::GetRaw32()
-{
-	LARGE_INTEGER raw32;
-	QueryPerformanceCounter(&raw32);
-	return static_cast<uint32_t>(raw32.QuadPart);
-}
+	uint32_t THPTimer::GetRaw32()
+	{
+		LARGE_INTEGER raw32;
+		QueryPerformanceCounter(&raw32);
+		return static_cast<uint32_t>(raw32.QuadPart);
+	}
 
-int64_t Toshi::THPTimer::GetRaw64()
-{
-	LARGE_INTEGER raw64;
-	QueryPerformanceCounter(&raw64);
-	return raw64.QuadPart;
-}
+	int64_t THPTimer::GetRaw64()
+	{
+		LARGE_INTEGER raw64;
+		QueryPerformanceCounter(&raw64);
+		return raw64.QuadPart;
+	}
 
-void Toshi::THPTimer::Reset()
-{
-	QueryPerformanceCounter(&m_iPerformanceCount);
-	QueryPerformanceFrequency(&m_iFrequency);
-	m_iUnk = m_iPerformanceCount;
-	m_iUnk2 = m_iUnk3;
-	m_fDelta = 0;
+	void THPTimer::Reset()
+	{
+		QueryPerformanceCounter(&m_iCurrentTime);
+		QueryPerformanceFrequency(&m_iFrequency);
+		m_iOldTime = m_iCurrentTime;
+		m_fDelta = 0;
+	}
+
+	void THPTimer::Update()
+	{
+		m_iOldTime = m_iCurrentTime;
+		QueryPerformanceCounter(&m_iCurrentTime);
+
+		float ratio = 1.0f / m_iFrequency.QuadPart;
+		m_fDelta = (m_iCurrentTime.QuadPart - m_iOldTime.QuadPart) * ratio;
+		m_fCurrentSeconds = m_iCurrentTime.QuadPart * ratio;
+	}
 }

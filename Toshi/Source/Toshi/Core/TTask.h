@@ -27,7 +27,7 @@ namespace Toshi
 		virtual bool CreateFailed();
 		virtual bool OnCreate();
 		virtual bool OnUpdate(float deltaTime);
-		virtual bool OnUpdateKernelPaused();
+		virtual bool OnUpdateKernelPaused(float deltaTime);
 		virtual void OnDestroy();
 		virtual bool OnChildDying();
 		virtual void OnChildDied();
@@ -41,7 +41,7 @@ namespace Toshi
 		inline uint8_t GetFlags() const { return m_State; }
 		inline bool IsCreated() const { return m_State & TTaskState_Created; }
 		inline bool IsActive() const { return m_State & TTaskState_Active; }
-		inline bool IsCreatedAndActive() const { return m_State & (TTaskState_Created | TTaskState_Active); }
+		inline bool IsCreatedAndActive() const { return (m_State & (TTaskState_Created | TTaskState_Active)) == (TTaskState_Created | TTaskState_Active); }
 		inline bool IsDying() const { return m_State & TTaskState_Dying; }
 
 	private:

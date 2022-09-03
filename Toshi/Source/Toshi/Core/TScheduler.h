@@ -19,6 +19,9 @@ namespace Toshi
 		// Updates all of the attached TTasks
 		void Update();
 
+		// Slowdowns time
+		void SetDebugSlowTime(bool slowTime);
+
 	public:
 		inline TKernelInterface* GetKernelInterface() const { return m_KernelInterface; }
 		inline float GetCurrentTimeDelta() const { return m_CurrentTimeDelta; }
@@ -28,6 +31,11 @@ namespace Toshi
 		
 		inline uint32_t TaskCount() const { return m_TaskCount; }
 		inline void TaskCount(uint32_t count) { m_TaskCount = count; }
+
+		inline void UpdateKernelPaused()
+		{
+			UpdateActiveTasksKernelPaused(m_LastTask);
+		}
 
 		inline void DeleteTask()
 		{
@@ -44,8 +52,15 @@ namespace Toshi
 		// Updates all the active tasks from the last one to the first one
 		void UpdateActiveTasks(TTask* rootTask);
 
+		// Updates all the active tasks from the last one to the first one when the kernel is paused
+		void UpdateActiveTasksKernelPaused(TTask* rootTask);
+
 		// Deletes task recursively
 		void DeleteTask(TTask* task);
+
+	private:
+		static float s_DebugSlowMaxTimeDeltaAllowed;
+		static float s_MaxTimeDeltaAllowed;
 			
 	private:
 		uint32_t m_TaskCount;                   // 0x04

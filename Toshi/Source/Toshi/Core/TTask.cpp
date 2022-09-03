@@ -69,7 +69,7 @@ namespace Toshi
 		return true;
 	}
 
-	bool TTask::OnUpdateKernelPaused()
+	bool TTask::OnUpdateKernelPaused(float deltaTime)
 	{
 		return true;
 	}
