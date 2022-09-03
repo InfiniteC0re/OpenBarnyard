@@ -35,7 +35,7 @@ namespace Toshi
 		m_iOldTime = m_iCurrentTime;
 		QueryPerformanceCounter(&m_iCurrentTime);
 
-		float ratio = 1.0 / m_iFrequency.QuadPart;
+		float ratio = 1.0f / m_iFrequency.QuadPart;
 		m_fDelta = (m_iCurrentTime.QuadPart - m_iOldTime.QuadPart) * ratio;
 		m_fCurrentSeconds = m_iCurrentTime.QuadPart * ratio;
 	}

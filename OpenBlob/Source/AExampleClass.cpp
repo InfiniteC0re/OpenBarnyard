@@ -38,8 +38,12 @@ AExampleClass::AExampleClass()
 		f->Close();
 	}
 	
-	Toshi::TKernelInterface* kernel = static_cast<Toshi::TKernelInterface*>(Toshi::TClassFromProps(Toshi::TKernelInterface::s_Class)->CreateObject());
-	m_RootTask = static_cast<ARootTask*>(kernel->GetScheduler().CreateTask(&ARootTask::s_Class, nullptr));
+	Toshi::TKernelInterface* kernel = new Toshi::TKernelInterface;
+	
+	m_RootTask = static_cast<ARootTask*>(
+		kernel->GetScheduler().CreateTask(&ARootTask::s_Class, nullptr)
+	);
+
 	m_RootTask->Create();
 
 	while (true)

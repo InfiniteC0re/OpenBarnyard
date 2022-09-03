@@ -8,8 +8,10 @@ namespace Toshi
 	
 	TKernelInterface::TKernelInterface()
 	{
-		m_Paused = false;
 		m_Scheduler = new TScheduler(this);
+		m_Paused = false;
+		m_AverageFPS = 0;
+		m_Second = 0;
 	}
 
 	bool TKernelInterface::Update()
