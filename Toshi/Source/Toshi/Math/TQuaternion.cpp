@@ -43,6 +43,74 @@ void Toshi::TQuaternion::SetFromEulerRollPitchYaw(float a_fRoll, float a_fPitch,
 	Set(fX, fY, fZ, fW);
 }
 
+void Toshi::TQuaternion::SetRotation(const TVector3& a_rVec3, float a_fVal)
+{
+	float fVal;
+	float fVal2;
+
+	TMath::SinCos(a_fVal * 0.5f, fVal, fVal2);
+	Set(a_rVec3.x * fVal, a_rVec3.y * fVal, a_rVec3.z * fVal, fVal2);
+}
+
+void Toshi::TQuaternion::SetVectorDirection(const TVector3& a_rVec3, const TVector3& a_rVec3_2)
+{
+	TVector3 vec3;
+	vec3.CrossProduct(a_rVec3_2, a_rVec3);
+
+	float mag = vec3.Magnitude();
+
+	if (mag > TMath::FLOATEPSILON)
+	{
+		vec3.Divide(mag);
+		float dotProduct = TVector3::DotProduct(a_rVec3_2, a_rVec3);
+		float rot;
+		if ((dotProduct <= 1.0f - TMath::FLOATEPSILON) && (rot = TMath::PI, -1.0f + TMath::FLOATEPSILON <= dotProduct))
+		{
+			rot = TMath::ACos(dotProduct);
+		}
+		SetRotation(vec3, rot);
+		return;
+	}
+
+	float dotProduct = TVector3::DotProduct(a_rVec3_2, a_rVec3);
+
+	if (dotProduct < 0.0f)
+	{
+		TVector3 vec = a_rVec3_2;
+		if (TMath::Abs(a_rVec3_2.y) < 0.95f)
+		{
+			vec.RotateY(TMath::PI * 0.0055555557 * 90.0f);
+		}
+		else
+		{
+			vec.RotateX(TMath::PI * 0.0055555557 * 90.0f);
+		}
+		SetIdentity();
+		RotateAroundAxis(vec, TMath::PI * 0.0055555557 * 180.0f);
+	}
+}
+
+void Toshi::TQuaternion::RotateVector(TVector3& param_1, const TQuaternion& param_2, const TVector3 param_3)
+{
+	TQuaternion quat = param_2;
+	quat.Negate();
+	TQuaternion quat2 = TQuaternion(param_3.x, param_3.y, param_3.z, 0.0f);
+	TQuaternion quat3 = param_2;
+	quat3 *= quat2;
+	quat3 *= quat;
+	
+	param_1.Set(quat3.x, quat3.y, quat3.z);
+}
+
+void Toshi::TQuaternion::RotateAroundAxis(const TVector3& param_1, float param_2)
+{
+	float fVal;
+	float fVal2;
+
+	TMath::SinCos(param_2 * 0.5f, fVal, fVal2);
+	*this *= TQuaternion(param_1.x * fVal, param_1.y * fVal, param_1.z * fVal, fVal2);
+}
+
 void Toshi::TQuaternion::Negate()
 {
 	Set(-x, -y, -z, -w);

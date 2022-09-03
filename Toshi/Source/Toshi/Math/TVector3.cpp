@@ -17,7 +17,75 @@ void Toshi::TVector3::Set(float x, float y, float z)
 
 void Toshi::TVector3::Abs(const TVector3& a_Vec3)
 {
-	Set(abs(a_Vec3.x), abs(a_Vec3.y), abs(a_Vec3.z));
+	Set(TMath::Abs(a_Vec3.x), TMath::Abs(a_Vec3.y), TMath::Abs(a_Vec3.z));
+}
+
+void Toshi::TVector3::Abs()
+{
+	Set(TMath::Abs(x), TMath::Abs(y), TMath::Abs(z));
+}
+
+void Toshi::TVector3::Clip(float fVal, float fVal2)
+{
+	TMath::Clip(x, fVal, fVal2);
+	TMath::Clip(y, fVal, fVal2);
+	TMath::Clip(z, fVal, fVal2);
+}
+
+void Toshi::TVector3::CrossProduct(const TVector3& param_1, const TVector3& param_2)
+{
+	float fX = param_2.z * param_1.y - param_2.y * param_1.z;
+	float fY = param_1.z * param_2.x - param_2.z * param_1.x;
+	float fZ = param_1.x * param_2.y - param_1.y * param_2.x;
+	Set(fX, fY, fZ);
+}
+
+float Toshi::TVector3::Distance(const TVector3& param_1, const TVector3& param_2)
+{
+	float fVar1 = param_2.x - param_1.x;
+	float fVar2 = param_2.y - param_1.y;
+	float fVar3 = param_2.z - param_1.z;
+
+	return TMath::Sqrt(fVar1 * fVar1 + fVar2 * fVar2 + fVar3 * fVar3);
+}
+
+float Toshi::TVector3::DistanceSq(const TVector3& param_1, const TVector3& param_2)
+{
+	float fVar1 = param_2.x - param_1.x;
+	float fVar2 = param_2.y - param_1.y;
+	float fVar3 = param_2.z - param_1.z;
+
+	return fVar1 * fVar1 + fVar2 * fVar2 + fVar3 * fVar3;
+}
+
+void Toshi::TVector3::Divide(const TVector3& param_1, const TVector3& param_2)
+{
+	x = param_1.x / param_2.x;
+	y = param_1.y / param_2.y;
+	z = param_1.z / param_2.z;
+}
+
+void Toshi::TVector3::Divide(const TVector3& param_1)
+{
+	x /= param_1.x;
+	y /= param_1.y;
+	z /= param_1.z;
+}
+
+void Toshi::TVector3::Divide(float param_1)
+{
+	float ratio = 1.0f / param_1;
+	x *= ratio;
+	y *= ratio;
+	z *= ratio;
+}
+
+void Toshi::TVector3::Divide(const TVector3& param_1, float param_2)
+{
+	float ratio = 1.0f / param_2;
+	x = param_1.x * ratio;
+	y = param_1.y * ratio;
+	z = param_1.z * ratio;
 }
 
 void Toshi::TVector3::RotateX(float a_fRotation)

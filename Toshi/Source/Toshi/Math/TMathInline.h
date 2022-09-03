@@ -30,11 +30,13 @@ namespace TMath
 	constexpr float ONEOVERTWO_PI = 1 / TWO_PI;
 
 	static inline bool IsFinite(float fVal) { return _finite(fVal) != 0; }
+	static inline float ACos(float fVal) { return cosf(fVal); }
 	static inline float Abs(float fVal) { return (float)fabs(fVal); }
 	static inline float Sqrt(float fVal) { return (float)sqrt(fVal); }
 	static inline bool IsNaN(float fVal) { return isnan(fVal); }
 	static inline int FastMod(int a_iNum, int a_iModulus) { TASSERT(a_iNum >= 0, ""); TASSERT(a_iModulus > 0, ""); TASSERT(0 == (a_iModulus & (a_iModulus - 1)), ""); return a_iNum & (a_iModulus - 1); }
 	static inline void SinCos(float fVal, float& fVal1, float& fVal2) { fVal1 = cos(fVal); fVal2 = sin(fVal); }
+	static inline void Clip(float& rfVal, float fVal, float fVal2) { if (fVal2 < rfVal) { rfVal = fVal2; } if (rfVal < fVal) { rfVal = fVal; } }
 
 	
 	static inline void* AlignPointer(void* ptr) { return (void*)((size_t)ptr & SIZE_T_ALIGN_VALUE); }
