@@ -23,6 +23,7 @@ namespace TMath
 	constexpr float TFLOAT_MAX = FLT_MAX;
 	constexpr float TFLOAT_MIN = FLT_MIN;
 	constexpr float TFLOAT_EPSILON = FLT_EPSILON; // Renamed according to de Blob
+	constexpr float FLOATEPSILON = FLT_EPSILON; // Both exist for some reason
 
 	constexpr float PI = (float)3.141592653589793238462643383279502884L;
 	constexpr float TWO_PI = PI * 2;
