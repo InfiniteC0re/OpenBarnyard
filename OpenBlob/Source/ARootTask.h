@@ -9,19 +9,7 @@ public:
 	ARootTask();
 	~ARootTask();
 
-	virtual bool OnUpdate(float deltaTime) override
-	{
-		m_Seconds += deltaTime;
-
-		if (m_Seconds >= 1)
-		{
-			m_Seconds -= 1;
-			TOSHI_INFO("ARootTask: A second has passed. Deactivating...");
-			Activate(false);
-		}
-
-		return true;
-	}
+	virtual bool OnUpdate(float deltaTime) override;
 
 private:
 	double m_Seconds = 0;
