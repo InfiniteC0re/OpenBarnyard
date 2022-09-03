@@ -5,7 +5,17 @@ namespace Toshi
 {
 	TOSHI_CLASS_DERIVED_INITIALIZE(TTask, TObject, MKVERSION(1, 0))
 	
-	TTask::TTask() : m_State(0), m_Scheduler(nullptr) { }
+	TTask::TTask()
+	{
+		m_Unk1 = nullptr;
+		m_UserData = nullptr;
+		m_SubTask = nullptr;
+		m_Prev = this;
+		m_Next = this;
+		m_TaskTree = nullptr;
+		m_Scheduler = nullptr;
+		m_State = 0;
+	}
 	
 	TTask::~TTask()
 	{
@@ -92,9 +102,9 @@ namespace Toshi
 	void TTask::Activate(bool activate)
 	{
 		uint8_t oldState = m_State;
-		uint8_t newFlags = activate ? TTaskState_Activated : 0;
+		uint8_t newFlags = activate ? TTaskState_Active : 0;
 
-		m_State = (m_State & ~TTaskState_Activated) | newFlags;
+		m_State = (m_State & ~TTaskState_Active) | newFlags;
 
 		if (oldState != m_State)
 		{

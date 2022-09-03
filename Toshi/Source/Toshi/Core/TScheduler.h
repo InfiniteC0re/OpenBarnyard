@@ -12,7 +12,12 @@ namespace Toshi
 
 	public:
 		TScheduler(TKernelInterface* kernelInterface);
-		TTask* CreateTask(TClass* toshiClass, TTask* task);
+
+		// Creates task from TClass and binds it to this scheduler
+		TTask* CreateTask(TClass* toshiClass, TTask* parentTask);
+		
+		// Updates all of the attached TTasks
+		void Update();
 
 	public:
 		inline TKernelInterface* GetKernelInterface() const { return m_KernelInterface; }
@@ -31,6 +36,16 @@ namespace Toshi
 
 			if (oldTaskCount == 1) { Delete(); }
 		}
+
+	private:
+		// Destroys all the dying tasks from the first one to the last one
+		void DestroyDyingTasks(TTask* rootTask);
+
+		// Updates all the active tasks from the last one to the first one
+		void UpdateActiveTasks(TTask* rootTask);
+
+		// Deletes task recursively
+		void DeleteTask(TTask* task);
 			
 	private:
 		uint32_t m_TaskCount;                   // 0x04
@@ -39,11 +54,11 @@ namespace Toshi
 		void* m_Unk1;                           // 0x10
 		void* m_Unk2;                           // 0x14
 		uint32_t m_Unk3;                        // 0x18
-		TTask* m_SomeTask;                      // 0x1C
-		void* m_Unk4;                           // 0x20
+		TTask* m_LastTask;                      // 0x1C
+		uint32_t m_Unk4;                        // 0x20
 		float m_CurrentTimeDelta;               // 0x24
 		float m_TotalTime;                      // 0x28
-		float m_TimeDeltaLimit;                 // 0x2C
+		float m_DeltaTimeLimit;                 // 0x2C
 		uint32_t m_FrameCount;                  // 0x30
 	};
 }

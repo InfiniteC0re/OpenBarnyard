@@ -6,11 +6,11 @@ Toshi::THPTimer::THPTimer()
 	Reset();
 }
 
-unsigned int Toshi::THPTimer::GetRaw32()
+uint32_t Toshi::THPTimer::GetRaw32()
 {
 	LARGE_INTEGER raw32;
 	QueryPerformanceCounter(&raw32);
-	return static_cast<int>(raw32.QuadPart);
+	return static_cast<uint32_t>(raw32.QuadPart);
 }
 
 int64_t Toshi::THPTimer::GetRaw64()
