@@ -23,7 +23,7 @@ namespace Toshi
 		t_UninitializeStatic m_Uninitialize = 0;                // 0x10
 		TClassProps* m_Parent = 0;                              // 0x14
 		TClassProps* m_Previous = 0;                            // 0x18
-		TClassProps* m_LastAttached = 0;                        // 0x1C
+		TClassProps* m_LastAttached;                            // 0x1C
 		uint32_t m_Version = 0;                                 // 0x20
 		size_t m_Size = 0;                                      // 0x24
 		uint32_t m_Unk = 0;                                     // 0x28
@@ -43,6 +43,7 @@ namespace Toshi
 
 		inline bool IsExactly(TClass* toCompare) const { return this == toCompare; }
 		inline bool IsInitialized() const { return m_Initialized; }
+		inline TClass* GetParent() { return static_cast<TClass*>(m_Parent); }
 		inline const char* GetName() const { return m_Name; }
 		inline uint32_t GetVersion() const { return m_Version; }
 		inline uint16_t GetVersionMajor() const { return m_Version >> 16; }
@@ -64,12 +65,12 @@ namespace Toshi
 	static_assert(sizeof(TClass) == sizeof(TClassProps));
 
 	// Helper cast function
-	static inline TClass* TClassFromProps(TClassProps& props)
+	inline TClass* TClassFromProps(TClassProps& props)
 	{
 		return static_cast<TClass*>(&props);
 	}
 
-	static inline TClass* TClassFromProps(TClassProps* props)
+	inline TClass* TClassFromProps(TClassProps* props)
 	{
 		return static_cast<TClass*>(props);
 	}

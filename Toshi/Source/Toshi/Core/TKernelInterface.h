@@ -3,6 +3,8 @@
 
 namespace Toshi
 {
+	class TScheduler;
+
 	class TKernelInterface : public TObject
 	{
 		TOSHI_CLASS_DEFINE(TKernelInterface)
@@ -10,12 +12,18 @@ namespace Toshi
 	public:
 		TKernelInterface();
 
+		bool Update();
+
 	public:
+		inline TScheduler& GetScheduler() { return *m_Scheduler; }
 		inline THPTimer& GetSystemTimer() { return m_SystemTimer; }
-		inline bool ShouldSkipTasks() { return m_SkipTasks; }
+		inline bool IsPaused() { return m_Paused; }
 
 	private:
 		THPTimer m_SystemTimer;          // 0x08
-		bool m_SkipTasks;                // 0x54 (not sure)
+		TScheduler* m_Scheduler;         // 0x30
+		float m_Second;                  // 0x44
+		float m_AverageFPS;              // 0x48 (not sure)
+		bool m_Paused;                   // 0x54
 	};
 }

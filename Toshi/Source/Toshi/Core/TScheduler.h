@@ -19,6 +19,8 @@ namespace Toshi
 		// Updates all of the attached TTasks
 		void Update();
 
+		inline void UpdateKernelPaused() { UpdateActiveTasksKernelPaused(m_LastTask); }
+
 	public:
 		inline TKernelInterface* GetKernelInterface() const { return m_KernelInterface; }
 		inline float GetCurrentTimeDelta() const { return m_CurrentTimeDelta; }
@@ -43,6 +45,8 @@ namespace Toshi
 
 		// Updates all the active tasks from the last one to the first one
 		void UpdateActiveTasks(TTask* rootTask);
+
+		void UpdateActiveTasksKernelPaused(TTask* rootTask);
 
 		// Deletes task recursively
 		void DeleteTask(TTask* task);

@@ -25,35 +25,35 @@ bool AApplication::OnCreate()
 #pragma region TClass Info
 	TOSHI_INFO("---------------TClass Hierarchy---------------");
 
-	int index = -1;
 	tObjectClass->RecurseTree(
-		[](Toshi::TClass* tClass, void* pIndex) -> bool
+		[](Toshi::TClass* tClass, void* data) -> bool
 		{
 			// this callback is called for every registered TClass
-			int& index = *(int*)pIndex;
+			static int s_Index = 1;
 
-			if (index >= 0)
+			if (tClass->GetParent())
 			{
-				TOSHI_INFO("{0}) {1}", index, tClass->GetName());
+				TOSHI_INFO("{0}) {1} -> {2}", s_Index, tClass->GetParent()->GetName(), tClass->GetName());
+			}
+			else
+			{
+				TOSHI_INFO("{0}) None -> {1}", s_Index, tClass->GetName());
 			}
 
-			index++;
+			s_Index++;
 			return true;
 		},
-		[](Toshi::TClass* tClass, void* pIndex)
+		[](Toshi::TClass* tClass, void* data)
 		{
 			// this callback is called for every registered base TClass
 			// called after all the derrives got into the first callback
-			TOSHI_INFO("TClasses derrived from {0}:", tClass->GetName());
-			*(int*)pIndex = 1;
 		},
-		[](Toshi::TClass* tClass, void* pIndex)
+		[](Toshi::TClass* tClass, void* data)
 		{
 			// this callback is called for every registered base TClass
 			// called before all the derrives get into the first callback
-			TOSHI_INFO("Total children: {0}", *(int*)pIndex - 1);
-			TOSHI_INFO("----------------------------------------------");
-		}, &index);
+		}, nullptr);
+	TOSHI_INFO("----------------------------------------------");
 #pragma endregion
 
 #pragma region Simple TMemory Test

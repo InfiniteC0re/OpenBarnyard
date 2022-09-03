@@ -24,20 +24,6 @@ namespace Toshi
 
 		if (m_Parent)
 		{
-#ifdef TOSHI_DEBUG
-			// since static initialization occurs TLog::Init, we need to initialize it earlier
-			Toshi::TLog::Init();
-			
-			if (m_Parent->m_Name == nullptr)
-			{
-				TOSHI_CORE_CRITICAL("Unable to initialize {0} TClass. Say hi to the static initialization order fiasco", m_Name);
-			}
-			else
-			{
-				TOSHI_INFO("Attaching {0} to {1}", m_Name, m_Parent->m_Name);
-			}
-#endif
-
 			// check if it's not attached yet
 			TClassProps* tClass = m_Parent->m_LastAttached;
 			while (tClass != nullptr)
@@ -97,9 +83,9 @@ namespace Toshi
 
 			if (tClass->m_LastAttached)
 			{
-				if (fBaseBegin) fBaseBegin(this, custom);
+				if (fBaseBegin) fBaseBegin(tClass, custom);
 				tClass->RecurseTree2(fCheck, fBaseBegin, fBaseEnd, custom);
-				if (fBaseEnd) fBaseEnd(this, custom);
+				if (fBaseEnd) fBaseEnd(tClass, custom);
 			}
 
 			tClassProps = tClassProps->m_Previous;
