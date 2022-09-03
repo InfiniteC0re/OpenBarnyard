@@ -17,8 +17,24 @@ AExampleClass::AExampleClass()
 	Toshi::TNativeFileSystem* fs = new Toshi::TNativeFileSystem(str.GetString());
 	Toshi::TNativeFile* f = (Toshi::TNativeFile*)fs->CreateFile(str, 1);
 
-	//Toshi::TRandom rnd = Toshi::TRandom();
-	//auto s = rnd.GetInt();
+	Toshi::TRandom rnd;
+	TOSHI_INFO("TRandom test:");
+	TOSHI_INFO("Random int 1 (500, 10000): {0}", rnd.GetInt(500, 10000));
+	TOSHI_INFO("Random int 2 (500, 10000): {0}", rnd.GetInt(500, 10000));
+	TOSHI_INFO("Random int 3 (500, 10000): {0}", rnd.GetInt(500, 10000));
+	TOSHI_INFO("Random int 4 (500, 10000): {0}", rnd.GetInt(500, 10000));
+	TOSHI_INFO("Random float 1: {0}", rnd.GetFloat());
+	TOSHI_INFO("Random float 2: {0}", rnd.GetFloat());
+	TOSHI_INFO("Random float 3: {0}", rnd.GetFloat());
+	TOSHI_INFO("Random float 4: {0}", rnd.GetFloat());
+	TOSHI_INFO("Random int 1 (500): {0}", rnd.GetInt(500));
+	TOSHI_INFO("Random int 2 (500): {0}", rnd.GetInt(500));
+	TOSHI_INFO("Random int 3 (500): {0}", rnd.GetInt(500));
+	TOSHI_INFO("Random int 4 (500): {0}", rnd.GetInt(500));
+	TOSHI_INFO("Random int 1: {0}", rnd.GetInt());
+	TOSHI_INFO("Random int 2: {0}", rnd.GetInt());
+	TOSHI_INFO("Random int 3: {0}", rnd.GetInt());
+	TOSHI_INFO("Random int 4: {0}", rnd.GetInt());
 
 	if (f)
 	{
