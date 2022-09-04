@@ -15,7 +15,7 @@ AExampleClass::AExampleClass()
 	TOSHI_INFO("Called AExampleClass");
 
 	Toshi::TCString str = Toshi::TCString("C:\\Program Files (x86)\\Steam\\steamapps\\common\\de Blob\\Data\\BlobChar\\AssetPack.trb");
-	Toshi::TNativeFileSystem* fs = new Toshi::TNativeFileSystem(str.GetString());
+	Toshi::TNativeFileSystem* fs = Toshi::tnew<Toshi::TNativeFileSystem>(str);
 	Toshi::TNativeFile* f = (Toshi::TNativeFile*)fs->CreateFile(str, 1);
 
 	Toshi::TRandom rnd;
@@ -47,8 +47,8 @@ AExampleClass::AExampleClass()
 		//f.Open(str, 1);
 
 		str.Concat(".lol", -1);
-
-		((Toshi::TFileSystem*)fs)->SetPrefix("C:/");
+		
+		fs->SetPrefix("C:/");
 
 		TOSHI_INFO("File size: {0} bytes", f->GetSize());
 		f->Seek(5, Toshi::TFile::TSEEK_SET);
@@ -56,7 +56,7 @@ AExampleClass::AExampleClass()
 		f->Close();
 	}
 	
-	Toshi::TKernelInterface* kernel = new Toshi::TKernelInterface;
+	auto kernel = Toshi::tnew<Toshi::TKernelInterface>();
 	
 	m_RootTask = static_cast<ARootTask*>(
 		kernel->GetScheduler().CreateTask(&ARootTask::s_Class, nullptr)

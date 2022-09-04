@@ -122,15 +122,12 @@ namespace Toshi
 		m_prefix = TCString(param_1.GetPrefix());
 	}
 
-	Toshi::TFileSystem::TFileSystem(const char* a_name)
+	Toshi::TFileSystem::TFileSystem(const char* a_name) : m_sName(a_name), m_prefix()
 	{
 		//???
 		// m_unk = m_unk
 		m_unk = TNULL;
 		m_unk2 = m_unk;
-
-		m_sName = TCString(a_name);
-		m_prefix = TCString();
 	}
 
 	Toshi::TFileSystem::~TFileSystem()

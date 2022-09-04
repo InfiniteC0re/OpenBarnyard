@@ -137,7 +137,7 @@ namespace Toshi
 		return (uint32_t)(foundAt - GetString());
 	}
 
-	bool TCString::AllocBuffer(int a_iLength, bool freeMemory)
+	bool TCString::AllocBuffer(uint32_t a_iLength, bool freeMemory)
 	{
 		bool hasChanged = false;
 		uint32_t currentLength = Length();
@@ -254,12 +254,13 @@ namespace Toshi
 		return -1;
 	}
 
-	void TCString::Truncate(int length)
+	void TCString::Truncate(uint32_t length)
 	{
 		if (Length() < length)
 		{
 			length = Length();
 		}
+
 		char* oldBuffer = m_pBuffer;
 
 		bool allocated = AllocBuffer(length, false);
@@ -373,7 +374,7 @@ namespace Toshi
 		return _strnicmp(GetString(), a_pcString, param_2);
 	}
 
-	TCString TCString::Mid(int param_1, int param_2) const
+	TCString TCString::Mid(uint32_t param_1, uint32_t param_2) const
 	{
 		if (param_2 < 0)
 		{

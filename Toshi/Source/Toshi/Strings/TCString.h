@@ -23,7 +23,7 @@ namespace Toshi
 		void FreeBuffer();
 
 		// Returns true if allocated memory
-		bool AllocBuffer(int size, bool freeMemory = true);
+		bool AllocBuffer(uint32_t size, bool freeMemory = true);
 
 		TCString& Format(const char* a_pcFormat, ...);
 		TCString& VFormat(const char* a_pcFormat, char* a_pcArgs);
@@ -33,7 +33,7 @@ namespace Toshi
 
 		int FindReverse(char a_findChar, int pos) const;
 
-		void Truncate(int length);
+		void Truncate(uint32_t length);
 
 		// Returns position of specified character
 		uint32_t Find(char character, uint32_t pos = -1) const;
@@ -51,7 +51,7 @@ namespace Toshi
 		int Compare(const char*, int) const;
 		int CompareNoCase(const char*, int) const;
 
-		TCString Mid(int param_1, int param_2) const;
+		TCString Mid(uint32_t param_1, uint32_t param_2) const;
 		inline TCString& MakeUpper() { _strupr_s(m_pBuffer, m_iStrLen); return *this; }
 		inline TCString& MakeLower() { _strlwr_s(m_pBuffer, m_iStrLen); return *this; }
 

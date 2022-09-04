@@ -37,7 +37,7 @@ namespace Toshi
 		inline void SetVerbose(bool state) { m_IsVerbose = state; }
 
 	private:
-		uint32_t m_Unk1;					// 0x4
+		uint32_t m_Unk1;                         // 0x4
 		uint32_t m_Flags;					// 0x10
 		bool m_IsVerbose;					// 0x14
 		STL::Ref<TDebugConsole> m_DebugConsole;

@@ -168,9 +168,9 @@ namespace Toshi
 		{
 			// there is no other elements in the list
 			chunk->Next = nullptr;
-			chunk->Prev = nullptr;
 		}
 
+		chunk->Prev = nullptr;
 		*list = chunk;
 	}
 
@@ -229,18 +229,17 @@ namespace Toshi
 		if (size < 4) size = 4;
 		size = TMath::AlignNum(size + 3);
 
+		size_t totalSize = size + sizeof(TMemoryChunk);
+
 		while (chunk != nullptr)
 		{
-			if (chunk->Size >= size)
+			if (chunk->Size >= totalSize)
 			{
-				size_t oldSize = chunk->Size;
-				size_t newSize = oldSize - size;
-				chunk->Size = size;
-
-				auto newChunk = (TMemoryChunk*)((char*)chunk->Data + chunk->Size);
+				auto newChunk = (TMemoryChunk*)((size_t)chunk->Data + size);
 				newChunk->Region = chunk->Region;
-				newChunk->Size = newSize - sizeof(TMemoryChunk);
-				newChunk->Data = (char*)newChunk + sizeof(TMemoryChunk);
+				newChunk->Size = chunk->Size - totalSize;
+				newChunk->Data = newChunk + 1;
+				chunk->Size = size;
 
 				DeleteChunkFromList(&newChunk->Region->FreeChunks, chunk);
 

@@ -39,6 +39,23 @@ namespace Toshi
 	template<typename T>
 	inline T* tmalloc() { return static_cast<T*>(tmalloc(sizeof(T), nullptr)); }
 
+	template<class T, class... Args>
+	inline T* tnew(Args&& ...args)
+	{
+		return new(tmalloc<T>()) T(std::forward<Args>(args)...);
+	}
+
+	template<class T>
+	inline void tdelete(T*& ptr)
+	{
+		if (ptr)
+		{
+			ptr->~T();
+			tfree(ptr);
+			ptr = nullptr;
+		}
+	}
+
 	class TMemory : public TSingleton<TMemory>
 	{
 	public:

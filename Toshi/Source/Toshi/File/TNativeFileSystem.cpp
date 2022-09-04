@@ -9,17 +9,13 @@ Toshi::TNativeFileSystem::TNativeFileSystem(const char* a_name) : TFileSystem(a_
 
 Toshi::TFile* Toshi::TNativeFileSystem::CreateFile(TCString const& param_1, unsigned int param_2)
 {
-    TNativeFile* nativeFile = (TNativeFile*)tmalloc(0x2C);
+    TNativeFile* nativeFile = tnew<TNativeFile>(this);
 
-    if (nativeFile != TNULL)
+    if (nativeFile->Open(param_1, param_2))
     {
-        nativeFile = new TNativeFile(this);
-        if (nativeFile->Open(param_1, param_2) != false)
-        {
-            return (TFile*)nativeFile;
-        }
-
+        return nativeFile;
     }
+
     return TNULL;
 }
 
