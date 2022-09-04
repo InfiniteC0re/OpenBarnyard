@@ -39,6 +39,16 @@ namespace Toshi
 		*/
 	}
 
+	TCString::TCString(TCString&& src) noexcept
+	{
+		TCString::m_iExcessLen = src.m_iExcessLen;
+		TCString::m_iStrLen = src.m_iStrLen;
+		TCString::m_pBuffer = src.m_pBuffer;
+		src.m_iExcessLen = 0;
+		src.m_iStrLen = 0;
+		src.m_pBuffer = NullString;
+	}
+
 	TCString::TCString(const TCString& src)
 	{
 		Reset();
@@ -305,7 +315,7 @@ namespace Toshi
 		TSystem::StringCopy(m_pBuffer + oldLength, str, size);
 		m_pBuffer[m_iStrLen] = 0;
 
-		if (allocated && m_iStrLen != 0)
+		if (allocated && oldLength != 0)
 		{
 			tfree(oldString);
 		}
@@ -453,24 +463,5 @@ namespace Toshi
 		}
 
 		return true;
-	}
-
-	/* Operators */
-
-
-
-	TCString TCString::operator+(char const* param_1) const
-	{
-		TCString str = TCString(param_1);
-		str.Reset();
-		str.Copy(*this, -1);
-		TCString str2 = str.Concat(*this, -1);
-		return str2;
-	}
-
-	TCString* TCString::operator+=(char const* str)
-	{
-		Concat(str, -1);
-		return this;
 	}
 }
