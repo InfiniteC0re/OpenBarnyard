@@ -7,7 +7,7 @@ namespace Toshi
     STL::Scope<TDebugConsole> TDebugConsoleFactory::Create()
     {
 #ifdef TOSHI_PLATFORM_WINDOWS
-        return STL::CreateScope<TDebugConsoleWindows>();
+        return STL::CreateScope<TDebugConsoleWindows, TDebugConsole>();
 #else
 #error "TDebugConsole: Unsupported Platform"
 #endif

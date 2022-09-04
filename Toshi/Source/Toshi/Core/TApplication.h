@@ -1,4 +1,5 @@
 #pragma once
+#include <Toshi/Core/STL.h>
 
 namespace Toshi
 {

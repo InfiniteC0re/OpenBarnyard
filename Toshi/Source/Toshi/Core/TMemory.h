@@ -36,6 +36,9 @@ namespace Toshi
 	void* tmalloc(size_t size, TMemoryBlockRegion* block = nullptr);
 	bool tfree(void* ptr);
 
+	template<typename T>
+	inline T* tmalloc() { return static_cast<T*>(tmalloc(sizeof(T), nullptr)); }
+
 	class TMemory : public TSingleton<TMemory>
 	{
 	public:
@@ -64,12 +67,6 @@ namespace Toshi
 		TMemoryBlockInfo m_Blocks[TOSHI_MEM_BLOCK_COUNT];
 		TMemoryBlockRegion* m_GlobalBlock;
 		void* m_AllocatedMem;
-	};
-
-	class TMemoryDeleter
-	{
-	public:
-		inline void operator()(void* ptr) { tfree(ptr); }
 	};
 
 	template <class Type>

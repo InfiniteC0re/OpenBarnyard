@@ -10,11 +10,23 @@ namespace Toshi
 {
 	namespace STL
 	{
+		template <class Type>
+		class MemoryDeleter
+		{
+		public:
+			inline void operator()(Type* ptr)
+			{
+				auto allocator = Toshi::TAllocator<Type>();
+				allocator.deallocate(ptr, 1);
+				allocator.destroy<Type>(ptr);
+			}
+		};
+
 		template <typename T>
 		using Ref = std::shared_ptr<T>;
 
 		template <typename T>
-		using Scope = std::unique_ptr<T, Toshi::TMemoryDeleter>;
+		using Scope = std::unique_ptr<T, MemoryDeleter<T>>;
 
 		template <typename T>
 		using Vector = std::vector<T, Toshi::TAllocator<T>>;
@@ -36,6 +48,13 @@ namespace Toshi
 		{
 			Toshi::TAllocator<T> allocator;
 			return Scope<T>(allocator.create(std::forward<Args>(args)...));
+		}
+
+		template <typename T, typename Parent, typename ... Args>
+		constexpr Scope<Parent> CreateScope(Args&& ... args)
+		{
+			Toshi::TAllocator<T> allocator;
+			return Scope<Parent>(allocator.create(std::forward<Args>(args)...));
 		}
 	}
 }
