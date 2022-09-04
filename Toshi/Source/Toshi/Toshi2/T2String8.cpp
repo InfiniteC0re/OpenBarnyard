@@ -1,4 +1,4 @@
-#include "pch.h"
+#include "ToshiPCH.h"
 #include "T2String8.h"
 
 int Toshi2::T2String8::CompareStrings(char* a_String1, char* a_String2, int a_MaxCount)

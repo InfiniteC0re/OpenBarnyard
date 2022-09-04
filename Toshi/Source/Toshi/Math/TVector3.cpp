@@ -1,16 +1,16 @@
-#include "pch.h"
+#include "ToshiPCH.h"
 #include "TVector3.h"
 
 namespace Toshi
 {
-	void TVector3::Set(TVectorNum a_pTVectorNum[3])
+	void TVector3::Set(TMathFloating a_pTMathFloating[3])
 	{
-		x = a_pTVectorNum[0];
-		y = a_pTVectorNum[1];
-		z = a_pTVectorNum[2];
+		x = a_pTMathFloating[0];
+		y = a_pTMathFloating[1];
+		z = a_pTMathFloating[2];
 	}
 
-	void TVector3::Set(TVectorNum x, TVectorNum y, TVectorNum z)
+	void TVector3::Set(TMathFloating x, TMathFloating y, TMathFloating z)
 	{
 		TVector3::x = x;
 		TVector3::y = y;
@@ -27,7 +27,7 @@ namespace Toshi
 		Set(TMath::Abs(x), TMath::Abs(y), TMath::Abs(z));
 	}
 
-	void TVector3::Clip(TVectorNum fVal, TVectorNum fVal2)
+	void TVector3::Clip(TMathFloating fVal, TMathFloating fVal2)
 	{
 		TMath::Clip(x, fVal, fVal2);
 		TMath::Clip(y, fVal, fVal2);
@@ -36,26 +36,26 @@ namespace Toshi
 
 	void TVector3::CrossProduct(const TVector3& param_1, const TVector3& param_2)
 	{
-		TVectorNum fX = param_2.z * param_1.y - param_2.y * param_1.z;
-		TVectorNum fY = param_1.z * param_2.x - param_2.z * param_1.x;
-		TVectorNum fZ = param_1.x * param_2.y - param_1.y * param_2.x;
+		TMathFloating fX = param_2.z * param_1.y - param_2.y * param_1.z;
+		TMathFloating fY = param_1.z * param_2.x - param_2.z * param_1.x;
+		TMathFloating fZ = param_1.x * param_2.y - param_1.y * param_2.x;
 		Set(fX, fY, fZ);
 	}
 
 	float TVector3::Distance(const TVector3& param_1, const TVector3& param_2)
 	{
-		TVectorNum fVar1 = param_2.x - param_1.x;
-		TVectorNum fVar2 = param_2.y - param_1.y;
-		TVectorNum fVar3 = param_2.z - param_1.z;
+		TMathFloating fVar1 = param_2.x - param_1.x;
+		TMathFloating fVar2 = param_2.y - param_1.y;
+		TMathFloating fVar3 = param_2.z - param_1.z;
 
 		return TMath::Sqrt(fVar1 * fVar1 + fVar2 * fVar2 + fVar3 * fVar3);
 	}
 
 	float TVector3::DistanceSq(const TVector3& param_1, const TVector3& param_2)
 	{
-		TVectorNum fVar1 = param_2.x - param_1.x;
-		TVectorNum fVar2 = param_2.y - param_1.y;
-		TVectorNum fVar3 = param_2.z - param_1.z;
+		TMathFloating fVar1 = param_2.x - param_1.x;
+		TMathFloating fVar2 = param_2.y - param_1.y;
+		TMathFloating fVar3 = param_2.z - param_1.z;
 
 		return fVar1 * fVar1 + fVar2 * fVar2 + fVar3 * fVar3;
 	}
@@ -74,27 +74,27 @@ namespace Toshi
 		z /= param_1.z;
 	}
 
-	void TVector3::Divide(TVectorNum param_1)
+	void TVector3::Divide(TMathFloating param_1)
 	{
-		TVectorNum ratio = 1.0f / param_1;
+		TMathFloating ratio = 1.0f / param_1;
 		x *= ratio;
 		y *= ratio;
 		z *= ratio;
 	}
 
-	void TVector3::Divide(const TVector3& param_1, TVectorNum param_2)
+	void TVector3::Divide(const TVector3& param_1, TMathFloating param_2)
 	{
-		TVectorNum ratio = 1.0f / param_2;
+		TMathFloating ratio = 1.0f / param_2;
 		x = param_1.x * ratio;
 		y = param_1.y * ratio;
 		z = param_1.z * ratio;
 	}
 
-	void TVector3::RotateX(TVectorNum a_fRotation)
+	void TVector3::RotateX(TMathFloating a_fRotation)
 	{
-		TVectorNum f1;
-		TVectorNum f2;
-		TVectorNum oldY = y;
+		TMathFloating f1;
+		TMathFloating f2;
+		TMathFloating oldY = y;
 
 		TMath::SinCos(a_fRotation, f1, f2);
 
@@ -102,11 +102,11 @@ namespace Toshi
 		z = oldY * f1 + z * f2;
 	}
 
-	void TVector3::RotateY(TVectorNum a_fRotation)
+	void TVector3::RotateY(TMathFloating a_fRotation)
 	{
-		TVectorNum f1;
-		TVectorNum f2;
-		TVectorNum oldX = x;
+		TMathFloating f1;
+		TMathFloating f2;
+		TMathFloating oldX = x;
 
 		TMath::SinCos(a_fRotation, f1, f2);
 
@@ -114,11 +114,11 @@ namespace Toshi
 		z = z * f2 + -f1 * oldX;
 	}
 
-	void TVector3::RotateZ(TVectorNum a_fRotation)
+	void TVector3::RotateZ(TMathFloating a_fRotation)
 	{
-		TVectorNum f1;
-		TVectorNum f2;
-		TVectorNum oldX = x;
+		TMathFloating f1;
+		TMathFloating f2;
+		TMathFloating oldX = x;
 
 		TMath::SinCos(a_fRotation, f1, f2);
 

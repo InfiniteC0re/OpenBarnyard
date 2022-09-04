@@ -1,5 +1,10 @@
 #pragma once
+#include "Toshi/Core/TMemory.h"
+
 #include <memory>
+#include <vector>
+#include <unordered_map>
+#include <map>
 
 namespace Toshi
 {
@@ -7,18 +12,28 @@ namespace Toshi
 	using Ref = std::shared_ptr<T>;
 
 	template <typename T>
-	using Scope = std::unique_ptr<T>;
+	using Scope = std::unique_ptr<T, Toshi::TMemoryDeleter>;
+
+	template <typename T>
+	using TVector = std::vector<T, Toshi::TAllocator<T>>;
+
+	template <typename T>
+	using TMap = std::map<T, Toshi::TAllocator<T>>;
+
+	template <typename T>
+	using TUnorderedMap = std::unordered_map<T, Toshi::TAllocator<T>>;
 
 	template <typename T, typename ... Args>
 	constexpr Ref<T> CreateRef(Args&& ... args)
 	{
-		return std::make_shared<T>(std::forward<Args>(args)...);
+		return std::allocate_shared<T>(Toshi::TAllocator<T>(), std::forward<Args>(args)...);
 	}
 
 	template <typename T, typename ... Args>
 	constexpr Scope<T> CreateScope(Args&& ... args)
 	{
-		return std::make_unique<T>(std::forward<Args>(args)...);
+		Toshi::TAllocator<T> allocator;
+		return Scope<T>(allocator.create(std::forward<Args>(args)...));
 	}
 }
 

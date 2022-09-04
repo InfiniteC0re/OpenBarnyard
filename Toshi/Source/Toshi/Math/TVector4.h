@@ -1,5 +1,5 @@
 #pragma once
-#include <Toshi/Math/TVector3.h>
+#include "Toshi/Math/TVector3.h"
 
 namespace Toshi
 {
@@ -9,7 +9,7 @@ namespace Toshi
 	{
 		struct Vec4
 		{
-			TVectorNum x, y, z, w;
+			TMathFloating x, y, z, w;
 			operator Toshi::TVector4& () { return reinterpret_cast<Toshi::TVector4&>(*this); }
 		};
 	}

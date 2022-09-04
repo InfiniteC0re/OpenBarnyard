@@ -1,8 +1,9 @@
-#include "Toshi.h"
+#include "pch.h"
 #include "AExampleClass.h"
 #include "AApplication.h"
-#include "Toshi/Core/Core.h"
-#include "Toshi/Math/TMathInline.h"
+
+#include <Toshi/Core/Core.h>
+#include <Toshi/Math/TMathInline.h>
 
 Toshi::TApplication* Toshi::CreateApplication(int argc, char** argv)
 {

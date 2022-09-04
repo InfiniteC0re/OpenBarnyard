@@ -1,4 +1,4 @@
-#include "pch.h"
+#include "ToshiPCH.h"
 #include "TClass.h"
 #include "TSystem.h"
 #include "Toshi/Typedefs.h"

@@ -1,6 +1,4 @@
 #pragma once
-#include "TVector.h"
-#include "Toshi/Math/TMathInline.h"
 
 namespace Toshi
 {
@@ -10,7 +8,7 @@ namespace Toshi
 	{
 		struct Vec3
 		{
-			TVectorNum x, y, z;
+			TMathFloating x, y, z;
 			operator Toshi::TVector3& () { return reinterpret_cast<Toshi::TVector3&>(*this); }
 		};
 	}
@@ -19,19 +17,19 @@ namespace Toshi
 	{
 	public:
 		TVector3() { Set(0, 0, 0); }
-		TVector3(TVectorNum x, TVectorNum y, TVectorNum z) { Set(x, y, z); }
-		TVector3(TVectorNum a_pTVectorNum[3]) { Set(a_pTVectorNum); }
+		TVector3(TMathFloating x, TMathFloating y, TMathFloating z) { Set(x, y, z); }
+		TVector3(TMathFloating a_pTMathFloating[3]) { Set(a_pTMathFloating); }
 		TVector3(const TVector3& a_Vec3) { Set(a_Vec3.x, a_Vec3.y, a_Vec3.z); }
 
-		void Set(TVectorNum a_pTVectorNum[3]);
-		void Set(TVectorNum x, TVectorNum y, TVectorNum z);
+		void Set(TMathFloating a_pTMathFloating[3]);
+		void Set(TMathFloating x, TMathFloating y, TMathFloating z);
 
 		void Abs(const TVector3& a_Vec3);
 		void Abs();
 
-		void Clip(TVectorNum fVal, TVectorNum fVal2);
+		void Clip(TMathFloating fVal, TMathFloating fVal2);
 		void CrossProduct(const TVector3&, const TVector3&);
-		inline static TVectorNum DotProduct(const TVector3& param_1, const TVector3& param_2) { return param_1.x * param_2.x + param_1.y * param_2.y + param_1.z * param_2.z; }
+		inline static TMathFloating DotProduct(const TVector3& param_1, const TVector3& param_2) { return param_1.x * param_2.x + param_1.y * param_2.y + param_1.z * param_2.z; }
 
 		static float Distance(const TVector3&, const TVector3&);
 		static float DistanceSq(const TVector3&, const TVector3&);
@@ -41,12 +39,12 @@ namespace Toshi
 
 		void Divide(const TVector3& param_1, const TVector3& param_2);
 		void Divide(const TVector3& param_1);
-		void Divide(TVectorNum param_1);
-		void Divide(const TVector3& param_1, TVectorNum param_2);
+		void Divide(TMathFloating param_1);
+		void Divide(const TVector3& param_1, TMathFloating param_2);
 
-		void RotateX(TVectorNum a_fRotation);
-		void RotateY(TVectorNum a_fRotation);
-		void RotateZ(TVectorNum a_fRotation);
+		void RotateX(TMathFloating a_fRotation);
+		void RotateY(TMathFloating a_fRotation);
+		void RotateZ(TMathFloating a_fRotation);
 
 	public:
 		static inline constexpr Props::Vec3 VEC_ZERO{ 0, 0, 0 };

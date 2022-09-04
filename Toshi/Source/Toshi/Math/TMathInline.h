@@ -1,8 +1,13 @@
 #pragma once
 
+namespace Toshi
+{
+	using TMathFloating = float;
+}
+
 namespace TMath
 {
-	constexpr size_t SIZE_T_ALIGN_VALUE = UINTPTR_MAX - (sizeof(void*) - 1);
+	constexpr size_t SIZE_T_ALIGN_VALUE = UINTPTR_MAX - (sizeof(uint32_t) - 1);
 	constexpr size_t UINT32_ALIGN_VALUE = UINT32_MAX - (sizeof(uint32_t) - 1);
 
 	constexpr char TINT8_MAX = INT8_MAX;

@@ -1,4 +1,4 @@
-#include "pch.h"
+#include "ToshiPCH.h"
 #include "TApplication.h"
 #include "Toshi/Typedefs.h"
 #include "Toshi/Strings/TCString.h"

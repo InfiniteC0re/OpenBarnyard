@@ -1,4 +1,4 @@
-#include "pch.h"
+#include "ToshiPCH.h"
 #include "TThread.h"
 
 bool Toshi::TThread::GetPriority(HANDLE a_hThreadHnd, PRIORITY& a_ePriority)

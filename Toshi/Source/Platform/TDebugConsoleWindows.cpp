@@ -1,4 +1,4 @@
-#include "pch.h"
+#include "ToshiPCH.h"
 #include "TDebugConsoleWindows.h"
 #include "Toshi/Strings/TCString.h"
 

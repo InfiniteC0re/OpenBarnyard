@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "AExampleClass.h"
 #include "ARootTask.h"
 
@@ -60,6 +61,7 @@ AExampleClass::AExampleClass()
 		kernel->GetScheduler().CreateTask(&ARootTask::s_Class, nullptr)
 	);
 
+	m_RootTask->SetKernelInterface(kernel);
 	m_RootTask->Create();
 
 	while (true)

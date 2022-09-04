@@ -1,5 +1,4 @@
 #pragma once
-#include "Toshi/Math/TVector4.h"
 
 namespace Toshi
 {
@@ -9,7 +8,7 @@ namespace Toshi
 	{
 		struct Quaternion
 		{
-			TVectorNum x, y, z, w;
+			TMathFloating x, y, z, w;
 			operator Toshi::TVector4& () { return reinterpret_cast<Toshi::TVector4&>(*this); }
 			operator Toshi::TQuaternion& () { return reinterpret_cast<Toshi::TQuaternion&>(*this); }
 		};
