@@ -68,6 +68,8 @@ AExampleClass::AExampleClass()
 	{
 		kernel->Update();
 	}
+
+	kernel->Delete();
 }
 
 AExampleClass::~AExampleClass()

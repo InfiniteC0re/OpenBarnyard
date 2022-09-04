@@ -8,7 +8,7 @@ namespace Toshi
 	
 	TKernelInterface::TKernelInterface()
 	{
-		m_Scheduler = new TScheduler(this);
+		m_Scheduler = CreateRef<TScheduler>(this);
 		m_Paused = false;
 		m_AverageFPS = 0;
 		m_Second = 0;

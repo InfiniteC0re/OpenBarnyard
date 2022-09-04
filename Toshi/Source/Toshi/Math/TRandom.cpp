@@ -16,6 +16,7 @@
   *(m++) = y = cut(ind(mm,x) + a + b); \
   *(r++) = b = cut(ind(mm,y>>RANDSIZL) + x); \
 }
+
 #define mix(a,b,c,d,e,f,g,h) \
 { \
   a^=b<<11; d+=a; b+=c; \
@@ -27,6 +28,7 @@
   g^=h<<8;  b+=g; h+=a; \
   h^=a>>9;  c+=h; a+=b; \
 }
+
 #define shuffle(a, b, mm, m, m2, r, x) \
 { \
   rngstep(a<<13, a, b, mm, m, m2, r, x); \
@@ -50,14 +52,18 @@ namespace Toshi
 		r = m_pRandrsl;
 		a = m_uiRandA;
 		b = cut(m_uiRandB + (++m_uiRandC));
-		for (m = mm, mend = m2 = m + (RANDSIZ / 2); m < mend; m += 4)
-		{
+
+		m = mm;
+		mend = m2 = m + (RANDSIZ / 2);
+		while (m < mend) {
 			shuffle(a, b, mm, m, m2, r, x);
 		}
-		for (m2 = mm; m2 < m + (RANDSIZ / 2); m2 += 4)
-		{
+
+		m2 = mm;
+		while (m2 < mend) {
 			shuffle(a, b, mm, m, m2, r, x);
 		}
+
 		m_uiRandA = a;
 		m_uiRandB = b;
 	}

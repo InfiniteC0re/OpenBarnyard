@@ -22,7 +22,7 @@ namespace Toshi
 
 	private:
 		THPTimer m_SystemTimer;          // 0x08
-		TScheduler* m_Scheduler;         // 0x30
+		Ref<TScheduler> m_Scheduler;     // 0x30
 		float m_Second;                  // 0x44
 		float m_AverageFPS;              // 0x48
 		bool m_Paused;                   // 0x54
