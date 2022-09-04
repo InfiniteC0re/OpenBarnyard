@@ -1,7 +1,5 @@
-#include "pch.h"
+#include "ToshiPCH.h"
 #include "TMemory.h"
-
-#include <cassert>
 
 namespace Toshi
 {
@@ -220,7 +218,7 @@ namespace Toshi
 		}
 	}
 
-	void* tmalloc(uint32_t size, TMemoryBlockRegion* block)
+	void* tmalloc(size_t size, TMemoryBlockRegion* block)
 	{
 		auto& memoryManager = TMemory::Instance();
 

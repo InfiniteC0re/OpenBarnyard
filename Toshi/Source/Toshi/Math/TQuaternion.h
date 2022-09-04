@@ -1,15 +1,25 @@
 #pragma once
 
-#include "Toshi/Math/TVector3.h"
-#include "Toshi/Math/TVector4.h"
-
 namespace Toshi
 {
-	class TQuaternion : TVector4
+	class TQuaternion;
+
+	namespace Props
+	{
+		struct Quaternion
+		{
+			TMathFloating x, y, z, w;
+			operator Toshi::TVector4& () { return reinterpret_cast<Toshi::TVector4&>(*this); }
+			operator Toshi::TQuaternion& () { return reinterpret_cast<Toshi::TQuaternion&>(*this); }
+		};
+	}
+
+	class TQuaternion : Props::Quaternion
 	{
 	public:
-		const float DELTA = 0.001f;
-		const Toshi::TQuaternion IDENTITY = Toshi::TQuaternion(0.0f,0.0f,0.0f,1.0f);
+		TQuaternion();
+		TQuaternion(const TQuaternion& a_pQuaternion);
+		TQuaternion(float x, float y, float z, float w);
 
 		void Set(float x, float y, float z, float w);
 		void SetIdentity();
@@ -29,15 +39,15 @@ namespace Toshi
 		inline float Magnitude() const { return TMath::Sqrt(w * w + z * z + y * y + x * x); }
 		inline float MagnitudeSq() const { return w * w + z * z + y * y + x * x; }
 
-		inline const TVector4& AsVector4() const { return *static_cast<const TVector4*>(this); }
-		inline TVector4& AsVector4() { return *static_cast<TVector4*>(this); }
+		inline const TVector4& AsVector4() const { return reinterpret_cast<const TVector4&>(*this); }
+		inline TVector4& AsVector4() { return reinterpret_cast<TVector4&>(*this); }
 
 		TQuaternion& operator*=(const TQuaternion& a_Quat);
 
-		TQuaternion(const TQuaternion& a_pQuaternion);
-		TQuaternion(float x, float y, float z, float w);
-		TQuaternion();
+	public:
+		static inline constexpr float DELTA = 0.001f;
+		static inline constexpr Props::Quaternion IDENTITY{ 0.0f, 0.0f, 0.0f, 1.0f };
 	};
 
+	static_assert(sizeof(TQuaternion) == sizeof(Props::Quaternion));
 }
-

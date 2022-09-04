@@ -1,8 +1,9 @@
-#include "Toshi.h"
+#include "pch.h"
 #include "AExampleClass.h"
 #include "AApplication.h"
-#include "Toshi/Core/Core.h"
-#include "Toshi/Math/TMathInline.h"
+
+#include <Toshi/Core/Core.h>
+#include <Toshi/Math/TMathInline.h>
 
 Toshi::TApplication* Toshi::CreateApplication(int argc, char** argv)
 {
@@ -20,10 +21,10 @@ bool AApplication::OnCreate()
 	TOSHI_INFO("The application has been created");
 
 	TTODO("Initialize static here");
-	Toshi::TClass* tObjectClass = Toshi::TClassFromProps(Toshi::TObject::s_Class);
+	Toshi::TClass* tObjectClass = Toshi::TObject::s_Class;
 		
 #pragma region TClass Info
-	TOSHI_INFO("---------------TClass Hierarchy---------------");
+	TOSHI_INFO("===============TClass Hierarchy===============");
 
 	tObjectClass->RecurseTree(
 		[](Toshi::TClass* tClass, void* data) -> bool
@@ -53,7 +54,7 @@ bool AApplication::OnCreate()
 			// this callback is called for every registered base TClass
 			// called before all the derrives get into the first callback
 		}, nullptr);
-	TOSHI_INFO("----------------------------------------------");
+	TOSHI_INFO("==============================================");
 #pragma endregion
 
 #pragma region Simple TMemory Test

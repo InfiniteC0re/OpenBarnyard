@@ -1,12 +1,12 @@
-#include "pch.h"
+#include "ToshiPCH.h"
 #include "TLog.h"
 
 #include <spdlog/sinks/stdout_color_sinks.h>
 
 namespace Toshi
 {
-	Ref<spdlog::logger> TLog::s_CoreLogger;
-	Ref<spdlog::logger> TLog::s_AppLogger;
+	STL::Ref<spdlog::logger> TLog::s_CoreLogger;
+	STL::Ref<spdlog::logger> TLog::s_AppLogger;
 
 	void TLog::Init()
 	{

@@ -7,8 +7,8 @@ project "Toshi"
 	targetdir ("%{wks.location}/bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("%{wks.location}/bin-int/" .. outputdir .. "/%{prj.name}")
 
-	pchheader "pch.h"
-	pchsource "Source/pch.cpp"
+	pchheader "ToshiPCH.h"
+	pchsource "Source/ToshiPCH.cpp"
 
 	files
 	{

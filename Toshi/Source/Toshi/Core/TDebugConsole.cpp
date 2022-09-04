@@ -1,13 +1,13 @@
-#include "pch.h"
+#include "ToshiPCH.h"
 #include "TDebugConsole.h"
 #include "Platform/TDebugConsoleWindows.h"
 
 namespace Toshi
 {
-    Scope<TDebugConsole> TDebugConsoleFactory::Create()
+    STL::Scope<TDebugConsole> TDebugConsoleFactory::Create()
     {
 #ifdef TOSHI_PLATFORM_WINDOWS
-        return CreateScope<TDebugConsoleWindows>();
+        return STL::CreateScope<TDebugConsoleWindows>();
 #else
 #error "TDebugConsole: Unsupported Platform"
 #endif

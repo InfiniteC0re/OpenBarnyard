@@ -1,4 +1,4 @@
-#include "pch.h"
+#include "ToshiPCH.h"
 #include "TResource.h"
 
 bool Toshi::TResource::Create()

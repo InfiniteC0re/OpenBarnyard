@@ -1,9 +1,9 @@
-#include "pch.h"
+#include "ToshiPCH.h"
 #include "TTask.h"
 
 namespace Toshi
 {
-	TOSHI_CLASS_DERIVED_INITIALIZE(TTask, TObject, MKVERSION(1, 0))
+	TOSHI_CLASS_DERIVED_INITIALIZE(TTask, TObject, TMAKEVERSION(1, 0))
 	
 	TTask::TTask()
 	{

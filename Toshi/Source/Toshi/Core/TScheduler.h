@@ -12,6 +12,7 @@ namespace Toshi
 
 	public:
 		TScheduler(TKernelInterface* kernelInterface);
+		~TScheduler() { TTODO("Free all the TTasks"); }
 
 		// Creates task from TClass and binds it to this scheduler
 		TTask* CreateTask(TClass* toshiClass, TTask* parentTask);

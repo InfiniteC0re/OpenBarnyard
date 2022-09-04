@@ -1,10 +1,10 @@
-#include "pch.h"
+#include "ToshiPCH.h"
 #include "TScheduler.h"
 #include "TTask.h"
 
 namespace Toshi
 {
-	TOSHI_CLASS_DERIVED_INITIALIZE(TScheduler, TObject, MKVERSION(1, 0))
+	TOSHI_CLASS_DERIVED_INITIALIZE(TScheduler, TObject, TMAKEVERSION(1, 0))
 
 	float TScheduler::s_MaxTimeDeltaAllowed = 0.01f;
 	float TScheduler::s_DebugSlowMaxTimeDeltaAllowed = 1.0f;

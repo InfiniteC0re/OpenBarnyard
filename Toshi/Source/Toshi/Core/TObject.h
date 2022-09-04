@@ -1,8 +1,8 @@
 #pragma once
-#include "Core.h"
 #include "TClass.h"
-#include "TMemory.h"
 
+#include "Toshi/Core/Core.h"
+#include "Toshi/Core/TMemory.h"
 #include "Toshi/Utils/TLog.h"
 
 #define TOSHI_CLASS_DEFINE(CLASSNAME) \
@@ -21,7 +21,7 @@ public: \
 
 #define TOSHI_CLASS_STATIC_DEFINE(CLASSNAME) \
 public: \
-	virtual Toshi::TClass* GetClass() { return Toshi::TClassFromProps(s_Class); } \
+	virtual Toshi::TClass* GetClass() { return s_Class; } \
 	static Toshi::TObject* CreateTObject() { return new CLASSNAME; } \
 	static Toshi::TObject* CreateTObjectInPlace(void* block) { return new (block) CLASSNAME(); } \
 	static constinit Toshi::TClassProps s_Class;
@@ -42,7 +42,7 @@ namespace Toshi
 		virtual ~TObjectInterface();
 
 		// Operators
-		static inline void* operator new(size_t size) { return tmalloc((uint32_t)size); }
+		static inline void* operator new(size_t size) { return tmalloc(size); }
 		static inline void* operator new(size_t size, void* at) { return at; }
 
 		static inline void operator delete(void* block) { tfree(block); }

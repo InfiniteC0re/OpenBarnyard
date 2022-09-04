@@ -1,4 +1,4 @@
-#include "pch.h"
+#include "ToshiPCH.h"
 #include "TObject.h"
 
 namespace Toshi
@@ -14,7 +14,7 @@ namespace Toshi
 		nullptr,                                // m_Parent
 		nullptr,                                // m_Previous
 		nullptr,                                // m_LastAttached,
-		MKVERSION(1, 0),                        // m_Version
+		TMAKEVERSION(1, 0),                     // m_Version
 		sizeof(TObject),                        // m_Size
 		0,                                      // m_Unk
 		false                                   // m_Initialized

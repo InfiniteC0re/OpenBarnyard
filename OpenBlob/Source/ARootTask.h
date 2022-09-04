@@ -6,23 +6,14 @@ class ARootTask : public Toshi::TTask
 	TOSHI_CLASS_DEFINE(ARootTask)
 
 public:
-	ARootTask();
-	~ARootTask();
-
-	virtual bool OnUpdate(float deltaTime) override
-	{
-		m_Seconds += deltaTime;
-
-		if (m_Seconds >= 1)
-		{
-			m_Seconds -= 1;
-			TOSHI_INFO("ARootTask: A second has passed. Deactivating...");
-			Activate(false);
-		}
-
-		return true;
-	}
+	ARootTask() = default;
+	~ARootTask() = default;
+	
+	inline void SetKernelInterface(Toshi::TKernelInterface* kernel) { m_Kernel = kernel; }
+public:
+	virtual bool OnUpdate(float deltaTime) override;
 
 private:
+	Toshi::TKernelInterface* m_Kernel = nullptr;
 	double m_Seconds = 0;
 };

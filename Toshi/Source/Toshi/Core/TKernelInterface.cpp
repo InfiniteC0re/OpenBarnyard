@@ -1,14 +1,14 @@
-#include "pch.h"
+#include "ToshiPCH.h"
 #include "TKernelInterface.h"
 #include "TScheduler.h"
 
 namespace Toshi
 {
-	TOSHI_CLASS_DERIVED_INITIALIZE(TKernelInterface, TObject, MKVERSION(1, 0))
+	TOSHI_CLASS_DERIVED_INITIALIZE(TKernelInterface, TObject, TMAKEVERSION(1, 0))
 	
 	TKernelInterface::TKernelInterface()
 	{
-		m_Scheduler = new TScheduler(this);
+		m_Scheduler = STL::CreateRef<TScheduler>(this);
 		m_Paused = false;
 		m_AverageFPS = 0;
 		m_Second = 0;

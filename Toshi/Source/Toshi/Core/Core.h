@@ -1,28 +1,6 @@
 #pragma once
-#include <memory>
 
-namespace Toshi
-{
-	template <typename T>
-	using Ref = std::shared_ptr<T>;
-
-	template <typename T>
-	using Scope = std::unique_ptr<T>;
-
-	template <typename T, typename ... Args>
-	constexpr Ref<T> CreateRef(Args&& ... args)
-	{
-		return std::make_shared<T>(std::forward<Args>(args)...);
-	}
-
-	template <typename T, typename ... Args>
-	constexpr Scope<T> CreateScope(Args&& ... args)
-	{
-		return std::make_unique<T>(std::forward<Args>(args)...);
-	}
-}
-
-#define MKVERSION(VER_MAJOR, VER_MINOR) ((VER_MAJOR << 16) | VER_MINOR)
+#define TMAKEVERSION(VER_MAJOR, VER_MINOR) ((VER_MAJOR << 16) | VER_MINOR)
 #define BITFIELD(x) (1 << x)
 
 #if defined(TOSHI_DEBUG)
