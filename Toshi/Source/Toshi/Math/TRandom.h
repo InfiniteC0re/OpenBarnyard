@@ -58,8 +58,8 @@ namespace Toshi
 		TRandom();
 
 		int GetInt();
-		int GetInt(uint32_t a_iUpper);
 		int GetInt(uint32_t a_iLower, uint32_t a_iUpper);
+		inline int GetInt(uint32_t a_iUpper) { return GetInt(0, a_iUpper); };
 
 		float GetFloat();
 		float GetFloat2();

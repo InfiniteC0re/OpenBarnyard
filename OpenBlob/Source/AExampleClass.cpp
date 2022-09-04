@@ -19,10 +19,10 @@ AExampleClass::AExampleClass()
 
 	Toshi::TRandom rnd;
 	TOSHI_INFO("TRandom test:");
-	TOSHI_INFO("Random int 1 (500, 10000): {0}", rnd.GetInt(500, 10000));
-	TOSHI_INFO("Random int 2 (500, 10000): {0}", rnd.GetInt(500, 10000));
-	TOSHI_INFO("Random int 3 (500, 10000): {0}", rnd.GetInt(500, 10000));
-	TOSHI_INFO("Random int 4 (500, 10000): {0}", rnd.GetInt(500, 10000));
+	TOSHI_INFO("Random int 1 (9000, 10000): {0}", rnd.GetInt(9000, 10000));
+	TOSHI_INFO("Random int 2 (9000, 10000): {0}", rnd.GetInt(9000, 10000));
+	TOSHI_INFO("Random int 3 (9000, 10000): {0}", rnd.GetInt(9000, 10000));
+	TOSHI_INFO("Random int 4 (9000, 10000): {0}", rnd.GetInt(9000, 10000));
 	TOSHI_INFO("Random float 1: {0}", rnd.GetFloat());
 	TOSHI_INFO("Random float 2: {0}", rnd.GetFloat());
 	TOSHI_INFO("Random float 3: {0}", rnd.GetFloat());

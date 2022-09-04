@@ -30,7 +30,7 @@ namespace Toshi
 
 	void TRandom::RandInit()
 	{
-		unsigned int a, b, c, d, e, f, g, h;
+		uint32_t a, b, c, d, e, f, g, h;
 		int i;
 
 		m_uiRandA = m_uiRandB = m_uiRandC = 0;
@@ -39,12 +39,12 @@ namespace Toshi
 		a = b = c = d = e = f = g = h = 0x9e3779b9 + m_uiSeed;
 
 		/* scramble it */
-		for (i = 0; i < 4; i++) {
+		for (i = 0; i < RANDSIZL; i++) {
 			mix(a, b, c, d, e, f, g, h);
 		}
 
-		unsigned int* m = m_pRandmem;
-		unsigned int* r = m_pRandrsl;
+		uint32_t* m = m_pRandmem;
+		uint32_t* r = m_pRandrsl;
 
 		/* initialize using the contents of r[] as the seed */
 		for (i = 0; i < RANDSIZ; i += 8) {
@@ -99,15 +99,10 @@ namespace Toshi
 	int TRandom::GetInt(uint32_t a_iLower, uint32_t a_iUpper)
 	{
 		TASSERT(a_iUpper > a_iLower, "a_iLower can't be higher than a_iUpper");
-		using ulonglong = unsigned long long;
-
-		return a_iLower + (int)((ulonglong)(a_iUpper - a_iLower) * (ulonglong)RandRaw() >> 0x20);
-	}
-
-	int TRandom::GetInt(uint32_t a_iUpper)
-	{
-		using ulonglong = unsigned long long;
-		return (int)((ulonglong)a_iUpper * (ulonglong)RandRaw() >> 0x20);
+		
+		unsigned long long rand = RandRaw();
+		unsigned long long range = a_iUpper - a_iLower;
+		return a_iLower + (range * rand >> 0x20);
 	}
 
 	int TRandom::GetInt()
