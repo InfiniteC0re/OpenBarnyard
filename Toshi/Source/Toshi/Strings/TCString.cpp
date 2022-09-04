@@ -184,7 +184,9 @@ namespace Toshi
 
 		va_start(args, a_pcFormat);
 
-		_vsnprintf(buffer, sizeof(buffer), a_pcFormat, args);
+		// TASSERT is only in T2String8
+		int iResult = _vsnprintf(buffer, sizeof(buffer), a_pcFormat, args);
+		TASSERT(iResult != -1, "PS2/GC/X360 do not correctly support _vsnprintf, this code will cause memory to be clobbered on those platforms! Increase the size of the destination string to avoid this problem")
 		buffer2.Copy(buffer, -1);
 		
 		return buffer2;
@@ -194,7 +196,9 @@ namespace Toshi
 	{
 		char buffer[0x400];
 
-		_vsnprintf(buffer, sizeof(buffer), a_pcFormat, a_pcArgs);
+		// TASSERT is only in T2String8
+		int iResult = _vsnprintf(buffer, sizeof(buffer), a_pcFormat, a_pcArgs);
+		TASSERT(iResult != -1, "PS2/GC/X360 do not correctly support _vsnprintf, this code will cause memory to be clobbered on those platforms! Increase the size of the destination string to avoid this problem")
 		Copy(buffer, -1);
 
 		return *this;
