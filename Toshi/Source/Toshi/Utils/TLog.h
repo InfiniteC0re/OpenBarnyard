@@ -10,12 +10,12 @@ namespace Toshi
 	public:
 		static void Init();
 
-		static inline Ref<spdlog::logger>& GetCoreLogger() { return s_CoreLogger; };
-		static inline Ref<spdlog::logger>& GetAppLogger() { return s_AppLogger; };
+		static inline STL::Ref<spdlog::logger>& GetCoreLogger() { return s_CoreLogger; };
+		static inline STL::Ref<spdlog::logger>& GetAppLogger() { return s_AppLogger; };
 
 	private:
-		static Ref<spdlog::logger> s_CoreLogger;
-		static Ref<spdlog::logger> s_AppLogger;
+		static STL::Ref<spdlog::logger> s_CoreLogger;
+		static STL::Ref<spdlog::logger> s_AppLogger;
 	};
 }
 

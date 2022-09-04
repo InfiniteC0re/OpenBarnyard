@@ -1,4 +1,5 @@
 #pragma once
+#include <Toshi.h>
 
 class AApplication : public Toshi::TApplication
 {

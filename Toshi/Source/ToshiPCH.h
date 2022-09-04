@@ -11,6 +11,7 @@
 #include <utility>
 
 #include "Toshi/Typedefs.h"
+#include "Toshi/Core/STL.h"
 #include "Toshi/Core/Core.h"
 #include "Toshi/Core/TObject.h"
 #include "Toshi/Core/TMemory.h"

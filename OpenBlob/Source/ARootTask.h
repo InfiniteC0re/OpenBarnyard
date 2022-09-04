@@ -6,8 +6,8 @@ class ARootTask : public Toshi::TTask
 	TOSHI_CLASS_DEFINE(ARootTask)
 
 public:
-	ARootTask();
-	~ARootTask();
+	ARootTask() = default;
+	~ARootTask() = default;
 	
 	inline void SetKernelInterface(Toshi::TKernelInterface* kernel) { m_Kernel = kernel; }
 public:

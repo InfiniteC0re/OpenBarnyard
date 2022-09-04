@@ -24,7 +24,7 @@ bool AApplication::OnCreate()
 	Toshi::TClass* tObjectClass = Toshi::TObject::s_Class;
 		
 #pragma region TClass Info
-	TOSHI_INFO("---------------TClass Hierarchy---------------");
+	TOSHI_INFO("===============TClass Hierarchy===============");
 
 	tObjectClass->RecurseTree(
 		[](Toshi::TClass* tClass, void* data) -> bool
@@ -54,7 +54,7 @@ bool AApplication::OnCreate()
 			// this callback is called for every registered base TClass
 			// called before all the derrives get into the first callback
 		}, nullptr);
-	TOSHI_INFO("----------------------------------------------");
+	TOSHI_INFO("==============================================");
 #pragma endregion
 
 #pragma region Simple TMemory Test

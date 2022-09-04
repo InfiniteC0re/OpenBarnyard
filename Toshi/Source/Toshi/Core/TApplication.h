@@ -39,7 +39,7 @@ namespace Toshi
 		uint32_t m_Unk1;					// 0x4
 		uint32_t m_Flags;					// 0x10
 		bool m_IsVerbose;					// 0x14
-		Ref<TDebugConsole> m_DebugConsole;
+		STL::Ref<TDebugConsole> m_DebugConsole;
 	};
 	
 	// this has to be used by application

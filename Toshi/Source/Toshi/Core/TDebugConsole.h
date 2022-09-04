@@ -18,6 +18,6 @@ namespace Toshi
 	class TDebugConsoleFactory
 	{
 	public:
-		static Scope<TDebugConsole> Create();
+		static STL::Scope<TDebugConsole> Create();
 	};
 }

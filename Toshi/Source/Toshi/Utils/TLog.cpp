@@ -5,8 +5,8 @@
 
 namespace Toshi
 {
-	Ref<spdlog::logger> TLog::s_CoreLogger;
-	Ref<spdlog::logger> TLog::s_AppLogger;
+	STL::Ref<spdlog::logger> TLog::s_CoreLogger;
+	STL::Ref<spdlog::logger> TLog::s_AppLogger;
 
 	void TLog::Init()
 	{
