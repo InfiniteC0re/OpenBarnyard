@@ -176,6 +176,96 @@ namespace Toshi
 		return hasChanged;
 	}
 
+	TCString& TCString::Format(const char* a_pcFormat, ...)
+	{
+		char buffer[0x400];
+		TCString buffer2;
+		va_list args;
+
+		va_start(args, a_pcFormat);
+
+		_vsnprintf(buffer, sizeof(buffer), a_pcFormat, args);
+		buffer2.Copy(buffer, -1);
+		
+		return buffer2;
+	}
+
+	TCString& TCString::VFormat(const char* a_pcFormat, char* a_pcArgs)
+	{
+		char buffer[0x400];
+
+		_vsnprintf(buffer, sizeof(buffer), a_pcFormat, a_pcArgs);
+		Copy(buffer, -1);
+
+		return *this;
+	}
+
+	void TCString::UndoForceSetData()
+	{
+		Reset();
+	}
+
+	void TCString::ForceSetData(char* a_cString, int a_iLength)
+	{
+		m_pBuffer = a_cString;
+
+		if (a_iLength < 0)
+		{
+			m_iStrLen = TSystem::StringLength(a_cString);
+		}
+		else
+		{
+			m_iStrLen = a_iLength;
+		}
+
+		m_iExcessLen = 0;
+	}
+
+	int TCString::FindReverse(char a_findChar, int pos) const
+	{
+		if (pos == -1)
+		{
+			pos = m_iStrLen;
+		}
+		else
+		{
+			if (!IsIndexValid(pos)) return -1;
+		}
+
+
+		for (; pos > -1; pos--)
+		{
+			if (a_findChar == m_pBuffer[pos])
+			{
+				return pos;
+			}
+		}
+
+		return -1;
+	}
+
+	void TCString::Truncate(int length)
+	{
+		if (Length() < length)
+		{
+			length = Length();
+		}
+		char* oldBuffer = m_pBuffer;
+
+		bool allocated = AllocBuffer(length, false);
+		if (AllocBuffer(length, false))
+		{
+			TSystem::StringCopy(m_pBuffer, oldBuffer, length);
+		}
+
+		m_pBuffer[length] = 0;
+
+		if (allocated && Length() != 0)
+		{
+			tfree(oldBuffer);
+		}
+	}
+
 	void TCString::FreeBuffer()
 	{
 		if (Length() != 0) tfree(m_pBuffer);
@@ -273,6 +363,28 @@ namespace Toshi
 		return _strnicmp(GetString(), a_pcString, param_2);
 	}
 
+	TCString TCString::Mid(int param_1, int param_2) const
+	{
+		if (param_2 < 0)
+		{
+			param_2 = 0;
+		}
+		else
+		{
+			if (Length() <= param_2)
+			{
+				return TCString(param_1);
+			}
+		}
+
+		// Rewrite not correct
+		TCString str = TCString(Length() - param_2);
+		TSystem::MemCopy(str.m_pBuffer, GetString(param_2), Length() - param_2);
+		m_pBuffer[m_iStrLen - param_2] = 0;
+
+		return str;
+	}
+
 	TCString& TCString::Concat(const TWString& str, uint32_t size)
 	{
 		uint32_t len = str.Length();
@@ -307,7 +419,45 @@ namespace Toshi
 		return *this;
 	}
 
+	bool TCString::IsAllLowerCase() const
+	{
+		if (m_iStrLen != 0)
+		{
+			char* iter = m_pBuffer;
+			char* endStr = m_pBuffer + m_iStrLen;
+
+			do
+			{
+				char currentC = *iter++;
+				if (currentC > '@' && currentC < '[') return false;
+
+			} while (iter < endStr);
+		}
+
+		return true;
+	}
+
+	bool TCString::IsAllUpperCase() const
+	{
+		if (m_iStrLen != 0)
+		{
+			char* iter = m_pBuffer;
+			char* endStr = m_pBuffer + m_iStrLen;
+
+			do
+			{
+				char currentC = *iter++;
+				if (currentC > '`' && currentC < '{') return false;
+
+			} while (iter < endStr);
+		}
+
+		return true;
+	}
+
 	/* Operators */
+
+
 
 	TCString TCString::operator+(char const* param_1) const
 	{

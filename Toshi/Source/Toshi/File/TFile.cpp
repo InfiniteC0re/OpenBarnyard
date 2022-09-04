@@ -56,9 +56,62 @@ namespace Toshi
 		return nullptr;
 	}
 
+	Toshi::TFileManager::TSysPathIter::TSysPathIter(const TCString& a_sSysPath)
+	{
+		m_sSysPath = a_sSysPath;
+		m_position = -1;
+	}
+
+	bool TFileManager::TSysPathIter::Next(TCString& param_1)
+	{
+		if (m_position > -1)
+		{
+			int oldPos = m_position + 1;
+			m_position = m_sSysPath.Find(';', oldPos);
+
+			if (m_position < 0)
+			{
+				param_1.Copy(m_sSysPath.GetString(oldPos), -1);
+			}
+			else
+			{
+				param_1.Copy(m_sSysPath.GetString(oldPos), m_position - oldPos);
+			}
+			return true;
+		}
+		return false;
+	}
+
+	bool TFileManager::TSysPathIter::First(TCString& param_1)
+	{
+		int len = m_sSysPath.Length();
+		if (len > 0)
+		{
+			m_position = m_sSysPath.Find(';', 0);
+
+			if (m_position < 0)
+			{
+				param_1.Copy(m_sSysPath, -1);
+			}
+			else
+			{
+				param_1.Copy(m_sSysPath, m_position);
+			}
+			return true;
+		}
+		m_position = -1;
+		return false;
+	}
+
+	Toshi::TFileManager::TSysPathIter::TSysPathIter(const TSysPathIter& a_rSysPathIter)
+	{
+		m_sSysPath = a_rSysPathIter.m_sSysPath;
+		m_position = a_rSysPathIter.m_position;
+	}
+
 	void TFileManager::ValidateSystemPath()
 	{
-		//TODO
+		//if (t == TNULL)
 	}
 	
 	Toshi::TFileSystem::TFileSystem(TFileSystem const& param_1)
@@ -104,5 +157,13 @@ namespace Toshi
 			} while (i < len);
 		}
 
+	}
+	TFileSystem& TFileSystem::operator=(TFileSystem& a_rFileSystem)
+	{
+		m_unk = a_rFileSystem.m_unk;
+		m_unk2 = a_rFileSystem.m_unk;
+		m_sName = a_rFileSystem.GetName();
+		m_prefix = a_rFileSystem.GetPrefix();
+		return *this;
 	}
 }

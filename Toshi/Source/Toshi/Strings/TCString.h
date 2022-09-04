@@ -24,6 +24,16 @@ namespace Toshi
 		// Returns true if allocated memory
 		bool AllocBuffer(int size, bool freeMemory = true);
 
+		TCString& Format(const char* a_pcFormat, ...);
+		TCString& VFormat(const char* a_pcFormat, char* a_pcArgs);
+
+		void UndoForceSetData();
+		void ForceSetData(char* a_cString, int a_ilength);
+
+		int FindReverse(char a_findChar, int pos) const;
+
+		void Truncate(int length);
+
 		// Returns position of specified character
 		uint32_t Find(char character, uint32_t pos = -1) const;
 
@@ -40,12 +50,15 @@ namespace Toshi
 		int Compare(const char*, int) const;
 		int CompareNoCase(const char*, int) const;
 
+		TCString Mid(int param_1, int param_2) const;
 		inline TCString& MakeUpper() { _strupr_s(m_pBuffer, m_iStrLen); return *this; }
 		inline TCString& MakeLower() { _strlwr_s(m_pBuffer, m_iStrLen); return *this; }
 
 		inline uint32_t Length() const { return m_iStrLen; }
 		inline uint8_t ExcessLength() const { return m_iExcessLen; }
 
+		bool IsAllLowerCase() const;
+		bool IsAllUpperCase() const;
 		inline bool IsIndexValid(uint32_t index) const { return index >= 0 && index <= Length(); }
 		inline bool IsEmpty() { return m_iStrLen == 0; }
 		inline bool IsUnicode() { return false; } // Who would have known?
@@ -72,9 +85,9 @@ namespace Toshi
 		void Reset();
 
 	private:
-		char* m_pBuffer = NullString;
-		uint8_t m_iExcessLen = 0;
-		uint32_t m_iStrLen : 24 = 0;
+		char* m_pBuffer = NullString; // 0x0
+		uint8_t m_iExcessLen = 0;     // 0x4
+		uint32_t m_iStrLen : 24 = 0;  // 0x4
 	};
 }
 

@@ -8,7 +8,7 @@
 
 namespace Toshi
 {
-
+	// JPOG Matched
 	class TFileSystem
 	{
 	public:
@@ -25,6 +25,8 @@ namespace Toshi
 		inline TCString const& GetName() const { return m_sName; }
 		inline TCString const& GetPrefix() const { return m_prefix; }
 
+		TFileSystem& operator=(TFileSystem& a_rFileSystem);
+
 		void* m_unk; // 0x4
 		void* m_unk2; // 0x8
 
@@ -36,7 +38,25 @@ namespace Toshi
 	class TFileManager : public TSingleton<TFileManager>
 	{
 	public:
+		TCString m_sSysPath; // 0x4
+		TCString m_sWorkingDirectory; // 0xC
+		TMutex m_mMutex; // 0x24
+
+
 		TFileManager() = default;
+
+		// JPOG Matched
+		class TSysPathIter
+		{
+			TCString m_sSysPath;
+			int m_position;
+		public:
+			bool First(TCString & param_1);
+			bool Next(TCString& param_1);
+
+			TSysPathIter(const TCString&);
+			TSysPathIter(const TSysPathIter&);
+		};
 
 	private:
 		void ValidateSystemPath();
