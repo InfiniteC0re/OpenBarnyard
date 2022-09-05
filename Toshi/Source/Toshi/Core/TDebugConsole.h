@@ -6,7 +6,7 @@ namespace Toshi
 	class TDebugConsole
 	{
 	public:
-		virtual ~TDebugConsole() { };
+		virtual ~TDebugConsole() = default;
 
 		// Returns true if the console was previously visible
 		virtual bool Show(bool state) = 0;

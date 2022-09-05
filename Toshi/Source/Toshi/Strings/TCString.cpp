@@ -39,6 +39,16 @@ namespace Toshi
 		*/
 	}
 
+	TCString::TCString(TCString&& src) noexcept
+	{
+		TCString::m_iExcessLen = src.m_iExcessLen;
+		TCString::m_iStrLen = src.m_iStrLen;
+		TCString::m_pBuffer = src.m_pBuffer;
+		src.m_iExcessLen = 0;
+		src.m_iStrLen = 0;
+		src.m_pBuffer = NullString;
+	}
+
 	TCString::TCString(const TCString& src)
 	{
 		Reset();
@@ -127,7 +137,7 @@ namespace Toshi
 		return (uint32_t)(foundAt - GetString());
 	}
 
-	bool TCString::AllocBuffer(int a_iLength, bool freeMemory)
+	bool TCString::AllocBuffer(uint32_t a_iLength, bool freeMemory)
 	{
 		bool hasChanged = false;
 		uint32_t currentLength = Length();
@@ -248,12 +258,13 @@ namespace Toshi
 		return -1;
 	}
 
-	void TCString::Truncate(int length)
+	void TCString::Truncate(uint32_t length)
 	{
 		if (Length() < length)
 		{
 			length = Length();
 		}
+
 		char* oldBuffer = m_pBuffer;
 
 		bool allocated = AllocBuffer(length, false);
@@ -309,7 +320,7 @@ namespace Toshi
 		TSystem::StringCopy(m_pBuffer + oldLength, str, size);
 		m_pBuffer[m_iStrLen] = 0;
 
-		if (allocated && m_iStrLen != 0)
+		if (allocated && oldLength != 0)
 		{
 			tfree(oldString);
 		}
@@ -367,7 +378,7 @@ namespace Toshi
 		return _strnicmp(GetString(), a_pcString, param_2);
 	}
 
-	TCString TCString::Mid(int param_1, int param_2) const
+	TCString TCString::Mid(uint32_t param_1, uint32_t param_2) const
 	{
 		if (param_2 < 0)
 		{
@@ -457,24 +468,5 @@ namespace Toshi
 		}
 
 		return true;
-	}
-
-	/* Operators */
-
-
-
-	TCString TCString::operator+(char const* param_1) const
-	{
-		TCString str = TCString(param_1);
-		str.Reset();
-		str.Copy(*this, -1);
-		TCString str2 = str.Concat(*this, -1);
-		return str2;
-	}
-
-	TCString* TCString::operator+=(char const* str)
-	{
-		Concat(str, -1);
-		return this;
 	}
 }

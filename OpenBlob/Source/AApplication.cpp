@@ -10,7 +10,7 @@ Toshi::TApplication* Toshi::CreateApplication(int argc, char** argv)
 	// allocate 64 mbytes for the Toshi memory block
 	Toshi::TMemory::TMemory::Initialize(64 * 1024 * 1024);
 
-	auto application = new AApplication;
+	auto application = Toshi::tnew<AApplication>();
 	TOSHI_INFO("Created application with {0} arguments", argc);
 
 	return application;
@@ -21,7 +21,7 @@ bool AApplication::OnCreate()
 	TOSHI_INFO("The application has been created");
 
 	TTODO("Initialize static here");
-	Toshi::TClass* tObjectClass = Toshi::TObject::s_Class;
+	Toshi::TClass* tObjectClass = &Toshi::TObject::s_Class;
 		
 #pragma region TClass Info
 	TOSHI_INFO("===============TClass Hierarchy===============");
@@ -93,7 +93,7 @@ bool AApplication::OnUpdate()
 {
 	TOSHI_INFO("AApplication::OnUpdate");
 
-	AExampleClass* exampleClass = new AExampleClass();
+	AExampleClass* exampleClass = Toshi::tnew<AExampleClass>();
 	exampleClass->Delete();
 
 	return true;

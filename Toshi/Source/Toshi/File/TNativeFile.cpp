@@ -250,7 +250,7 @@ namespace Toshi
         m_bWriteBuffered = param_1.m_bWriteBuffered;
     }
 
-    bool TNativeFile::Open(const TCString& a_fileName, unsigned int param_2)
+    bool TNativeFile::Open(const TCString& a_FileName, uint32_t a_Flags)
     {
         DWORD dwDesiredAccess = 0;
         DWORD dwCreationDisposition = 0;
@@ -260,19 +260,19 @@ namespace Toshi
         // (**(code **)(**(int **)(this + 4) + 0x10))();
 
 
-        if ((param_2 & 1) != 0)
+        if (a_Flags & 1)
         {
             dwDesiredAccess = GENERIC_READ;
         }
-        if ((param_2 & 2) != 0)
+        if ((a_Flags & 2) != 0)
         {
             dwDesiredAccess |= GENERIC_WRITE;
         }
-        if ((param_2 & 4) != 0)
+        if ((a_Flags & 4) != 0)
         {
             dwDesiredAccess = GENERIC_READ | GENERIC_WRITE;
         }
-        if ((param_2 & 8) == 0)
+        if ((a_Flags & 8) == 0)
         {
             dwCreationDisposition = OPEN_EXISTING;
         }
@@ -286,9 +286,9 @@ namespace Toshi
             }
         }
 
-        TASSERT(a_fileName.IsIndexValid(0), "");
+        TASSERT(a_FileName.IsIndexValid(0), "");
 
-        HANDLE handle = CreateFileA(a_fileName.GetString(), dwDesiredAccess, dwShareMode, TNULL, dwCreationDisposition, 0, TNULL);
+        HANDLE handle = CreateFileA(a_FileName.GetString(), dwDesiredAccess, dwShareMode, TNULL, dwCreationDisposition, 0, TNULL);
 
         if (handle != INVALID_HANDLE_VALUE)
         {
@@ -298,7 +298,7 @@ namespace Toshi
             unk4 = -1;
             unk5 = 0;
 
-            if ((param_2 & 0x10) == 0)
+            if ((a_Flags & 0x10) == 0)
             {
                 m_pBuffer = tmalloc(0x800);
                 buffer = tmalloc(0x800);

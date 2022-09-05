@@ -31,7 +31,7 @@ namespace Toshi
 	//protected:
 		TNativeFile(class TNativeFileSystem *);
 		TNativeFile(const TNativeFile&);
-		bool Open(const TCString&, unsigned int);
+		bool Open(const TCString& a_FileName, uint32_t a_Flags);
 		void Close();
 	};
 }

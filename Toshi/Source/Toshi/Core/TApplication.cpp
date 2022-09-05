@@ -14,7 +14,6 @@ namespace Toshi
 
 		m_DebugConsole = TDebugConsoleFactory::Create();
 
-		// at the moment it's useless since the console is always opened
 #ifdef TOSHI_DEBUG
 		m_DebugConsole->Show(true);
 #else

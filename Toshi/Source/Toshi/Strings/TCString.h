@@ -9,6 +9,7 @@ namespace Toshi
 	{
 	public:
 		TCString();
+		TCString(TCString&& src) noexcept;
 		TCString(const TCString& src);
 		TCString(const TWString& src);
 		TCString(const char* const& src);
@@ -22,7 +23,7 @@ namespace Toshi
 		void FreeBuffer();
 
 		// Returns true if allocated memory
-		bool AllocBuffer(int size, bool freeMemory = true);
+		bool AllocBuffer(uint32_t size, bool freeMemory = true);
 
 		TCString& Format(const char* a_pcFormat, ...);
 		TCString& VFormat(const char* a_pcFormat, char* a_pcArgs);
@@ -32,7 +33,7 @@ namespace Toshi
 
 		int FindReverse(char a_findChar, int pos) const;
 
-		void Truncate(int length);
+		void Truncate(uint32_t length);
 
 		// Returns position of specified character
 		uint32_t Find(char character, uint32_t pos = -1) const;
@@ -50,7 +51,7 @@ namespace Toshi
 		int Compare(const char*, int) const;
 		int CompareNoCase(const char*, int) const;
 
-		TCString Mid(int param_1, int param_2) const;
+		TCString Mid(uint32_t param_1, uint32_t param_2) const;
 		inline TCString& MakeUpper() { _strupr_s(m_pBuffer, m_iStrLen); return *this; }
 		inline TCString& MakeLower() { _strlwr_s(m_pBuffer, m_iStrLen); return *this; }
 
@@ -64,11 +65,12 @@ namespace Toshi
 		inline bool IsUnicode() { return false; } // Who would have known?
 
 	public:
-		TCString operator+(char const*) const;
-		TCString* operator+= (char const*);
+		inline TCString operator+(char const* cstr) const { TCString str = TCString(*this); return std::move(str.Concat(cstr)); }
+		inline TCString* operator+= (char const* cstr) { Concat(cstr, -1); return this; }
+		inline TCString* operator+= (TCString& str) { Concat(str, -1); return this; }
 		inline operator const char* () const { return m_pBuffer; }
 		inline char& operator[](int index) { return m_pBuffer[index]; }
-		inline const char& operator[](int param_1) const { return *GetString(param_1); }
+		inline const char& operator[](int index) const { return *GetString(index); }
 		inline bool operator!() { return m_iStrLen == 0; }
 		inline bool operator!=(char* cstr) { return Compare(cstr, -1) != 0; }
 		inline bool operator!=(const TCString& str) { return Compare(str.GetString(), -1) != 0; }
@@ -76,10 +78,9 @@ namespace Toshi
 		inline bool operator<(const TCString& str) const { return Compare(str.GetString(), -1) > -1; };
 		inline bool operator<=(const char* cstr) const { return Compare(cstr, -1) > 0; };
 		inline bool operator<=(const TCString& str) const { return Compare(str.GetString(), -1) > 0; };
-		//inline TCString& operator=(const unsigned short* param_1) { Copy(param_1, -1); return *this; };
+		//inline TCString& operator=(const wchar_t* wcstr) { Copy(wcstr, -1); return *this; };
 		inline TCString& operator=(const char* cstr) { Copy(cstr, -1); return *this; };
-
-
+		inline TCString& operator=(const TCString& str) { Copy(str, -1); return *this; };
 
 	private:
 		void Reset();

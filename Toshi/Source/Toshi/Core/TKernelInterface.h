@@ -7,7 +7,7 @@ namespace Toshi
 
 	class TKernelInterface : public TObject
 	{
-		TOSHI_CLASS_DEFINE(TKernelInterface)
+		TOSHI_CLASS_NO_CREATE_DEFINE(TKernelInterface)
 
 	public:
 		TKernelInterface();
