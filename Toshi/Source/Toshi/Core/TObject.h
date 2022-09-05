@@ -8,15 +8,15 @@
 #define TOSHI_CLASS_DEFINE(CLASSNAME) \
 public: \
 	virtual Toshi::TClass* GetClass() { return &s_Class; } \
-	inline static Toshi::TObject* CreateTObject() { return Toshi::tnew<CLASSNAME>(); } \
-	inline static Toshi::TObject* CreateTObjectInPlace(void* ptr) { return new (ptr) CLASSNAME(); } \
+	static Toshi::TObject* CreateTObject() { return Toshi::tnew<CLASSNAME>(); } \
+	static Toshi::TObject* CreateTObjectInPlace(void* ptr) { return new (ptr) CLASSNAME(); } \
 	static Toshi::TClass s_Class;
 
 #define TOSHI_CLASS_NO_CREATE_DEFINE(CLASSNAME) \
 public: \
 	virtual Toshi::TClass* GetClass() { return &s_Class; } \
-	inline static Toshi::TObject* CreateTObject() { return nullptr; } \
-	inline static Toshi::TObject* CreateTObjectInPlace(void* ptr) { return nullptr; } \
+	static Toshi::TObject* CreateTObject() { return nullptr; } \
+	static Toshi::TObject* CreateTObjectInPlace(void* ptr) { return nullptr; } \
 	static Toshi::TClass s_Class;
 
 #define TOSHI_CLASS_STATIC_DEFINE(CLASSNAME) \
@@ -24,7 +24,7 @@ public: \
 	virtual Toshi::TClass* GetClass() { return s_Class; } \
 	inline static Toshi::TObject* CreateTObject() { return Toshi::tnew<CLASSNAME>(); } \
 	inline static Toshi::TObject* CreateTObjectInPlace(void* ptr) { return new (ptr) CLASSNAME(); } \
-	static constinit Toshi::TClassImpl s_Class;
+	static constinit Toshi::TClass s_Class;
 
 #define TOSHI_CLASS_DERIVED_INITIALIZE(CLASSNAME, PARENT, VER) \
 Toshi::TClass CLASSNAME::s_Class(#CLASSNAME, &PARENT::s_Class, VER, sizeof(CLASSNAME), CLASSNAME::CreateTObject, CLASSNAME::CreateTObjectInPlace, 0, 0);
@@ -37,7 +37,7 @@ namespace Toshi
 	class TObject
 	{
 	public:
-		virtual TClass* GetClass() { return s_Class; }
+		virtual TClass* GetClass() { return &s_Class; }
 		virtual void Delete() { tdelete(this); };
 		virtual ~TObject() = default;
 
@@ -53,7 +53,7 @@ namespace Toshi
 		inline bool IsExactly(TClass* toCompare) { return GetClass() == toCompare; }
 	
 	public:
-		static constinit Toshi::TClassImpl s_Class;
+		static constinit TClass s_Class;
 	};
 }
 
