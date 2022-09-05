@@ -1,15 +1,9 @@
 #include "ToshiPCH.h"
 #include "TTRB.h"
 
-bool Toshi::TTRB::LoadTrb(const char* param_1)
+bool Toshi::TTRB::LoadTrb(const char* fn)
 {
-	TCString str(param_1);
-
-	TFile* f = TFile::Create(str, 1);
-
-	str.~TCString();
-
-
+	TFile* f = TFile::Create(fn, 1);
 
 	return false;
 }
