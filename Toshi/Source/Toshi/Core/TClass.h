@@ -16,16 +16,16 @@ namespace Toshi
 	class TClass;
 
 	// This is a separate struct because we want to do compile-time initialization
-	struct TClassProps
+	struct TClassImpl
 	{
 		const char* m_Name = 0;                                 // 0x00
 		t_CreateTObject m_Create = 0;                           // 0x04
 		t_CreateTObjectInPlace m_CreateInPlace = 0;             // 0x08
 		t_InitializeStatic m_Initialize = 0;                    // 0x0C
 		t_UninitializeStatic m_Uninitialize = 0;                // 0x10
-		TClassProps* m_Parent = 0;                              // 0x14
-		TClassProps* m_Previous = 0;                            // 0x18
-		TClassProps* m_LastAttached;                            // 0x1C
+		TClassImpl* m_Parent = 0;                              // 0x14
+		TClassImpl* m_Previous = 0;                            // 0x18
+		TClassImpl* m_LastAttached;                            // 0x1C
 		uint32_t m_Version = 0;                                 // 0x20
 		size_t m_Size = 0;                                      // 0x24
 		uint32_t m_Unk = 0;                                     // 0x28
@@ -35,10 +35,10 @@ namespace Toshi
 		operator TClass& () { return reinterpret_cast<TClass&>(*this); }
 	};
 
-	class TClass : public TClassProps
+	class TClass : public TClassImpl
 	{
 	public:
-		TClass(const char* name, TClassProps* parent, uint32_t version, size_t size, t_CreateTObject fCreate, t_CreateTObjectInPlace m_CreateInPlace, t_InitializeStatic fInit, t_UninitializeStatic fUninit);
+		TClass(const char* name, TClassImpl* parent, uint32_t version, size_t size, t_CreateTObject fCreate, t_CreateTObjectInPlace m_CreateInPlace, t_InitializeStatic fInit, t_UninitializeStatic fUninit);
 		~TClass();
 
 		void Initialize();
@@ -53,8 +53,8 @@ namespace Toshi
 		inline uint32_t GetVersion() const { return m_Version; }
 		inline uint16_t GetVersionMajor() const { return m_Version >> 16; }
 		inline uint16_t GetVersionMinor() const { return m_Version & 0xFFFF; }
-		inline TClassProps& GetPropsRef() { return *this; }
-		inline TClassProps* GetProps() { return this; }
+		inline TClassImpl& GetPropsRef() { return *this; }
+		inline TClassImpl* GetProps() { return this; }
 
 		// todo: move this function away from this class
 		static bool TryInitialize(TClass* tClass);
@@ -67,6 +67,6 @@ namespace Toshi
 	};
 
 	// TClass should be equal to TClassProps
-	static_assert(sizeof(TClass) == sizeof(TClassProps));
+	static_assert(sizeof(TClass) == sizeof(TClassImpl));
 }
 

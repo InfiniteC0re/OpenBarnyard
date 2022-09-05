@@ -6,7 +6,7 @@
 namespace Toshi
 {
 	TClass::TClass(
-		const char* name, TClassProps* parent, uint32_t version, size_t size,
+		const char* name, TClassImpl* parent, uint32_t version, size_t size,
 		t_CreateTObject fCreate, t_CreateTObjectInPlace fCreateInPlace,
 		t_InitializeStatic fInit, t_UninitializeStatic fUninit
 	)
@@ -25,7 +25,7 @@ namespace Toshi
 		if (m_Parent)
 		{
 			// check if it's not attached yet
-			TClassProps* tClass = m_Parent->m_LastAttached;
+			TClassImpl* tClass = m_Parent->m_LastAttached;
 			while (tClass != nullptr)
 			{
 				if (tClass == this) return;
@@ -74,7 +74,7 @@ namespace Toshi
 
 	void TClass::RecurseTree2(t_RecurceTreeCheck fCheck, t_RecurceTreeBaseBeginCb fBaseBegin, t_RecurceTreeBaseEndCb fBaseEnd, void* custom)
 	{
-		TClassProps* tClassProps = m_LastAttached;
+		TClassImpl* tClassProps = m_LastAttached;
 		
 		while (tClassProps != nullptr)
 		{
@@ -96,7 +96,7 @@ namespace Toshi
 	{
 		while (parent)
 		{
-			TClassProps* previous = hasPrevious ? parent->m_Previous : nullptr;
+			TClassImpl* previous = hasPrevious ? parent->m_Previous : nullptr;
 			int difference = TSystem::StringCompareNoCase(parent->m_Name, name, -1);
 
 			if (difference == 0)

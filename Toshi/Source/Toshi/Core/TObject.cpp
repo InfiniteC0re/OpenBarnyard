@@ -4,7 +4,7 @@
 namespace Toshi
 {
 	// static initialization of TObject's TClass
-	constinit TClassProps TObject::s_Class
+	constinit TClassImpl TObject::s_Class
 	{
 		"TObject",                              // m_Name
 		TObject::CreateTObject,                 // m_Create
