@@ -257,7 +257,7 @@ namespace Toshi
 		char* oldBuffer = m_pBuffer;
 
 		bool allocated = AllocBuffer(length, false);
-		if (AllocBuffer(length, false))
+		if (allocated)
 		{
 			TSystem::StringCopy(m_pBuffer, oldBuffer, length);
 		}
