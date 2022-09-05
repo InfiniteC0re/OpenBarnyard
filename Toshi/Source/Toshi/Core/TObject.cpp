@@ -19,14 +19,4 @@ namespace Toshi
 		0,                                      // m_Unk
 		false                                   // m_Initialized
 	};
-
-	TObjectInterface::~TObjectInterface()
-	{
-		TOSHI_CORE_INFO("Called ~TObject");
-	}
-
-	void TObjectInterface::Delete()
-	{
-		delete this;
-	}
 }

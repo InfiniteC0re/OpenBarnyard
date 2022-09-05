@@ -46,13 +46,12 @@ namespace Toshi
 	}
 
 	template<class T>
-	inline void tdelete(T*& ptr)
+	inline void tdelete(T* ptr)
 	{
 		if (ptr)
 		{
 			ptr->~T();
 			tfree(ptr);
-			ptr = nullptr;
 		}
 	}
 
