@@ -1,5 +1,6 @@
 #include "ToshiPCH.h"
 #include "TFile.h"
+#include "Platform/Windows/TNativeFileSystem.h"
 
 namespace Toshi
 {
@@ -17,10 +18,9 @@ namespace Toshi
 		m_pFileSystem = a_pFile.GetFileSystem();
 	}
 
-	TFile* TFile::Create(const TCString& path, unsigned int param_2)
+	TFile* TFile::Create(const TCString& fn, uint32_t flags)
 	{
-		TFile* file = TFileManager::Instance().CreateFile(path, param_2);
-		return file;
+		return TFileManager::Instance().CreateFile(fn, flags);
 	}
 
 	void TFileManager::MountFileSystem(TFileSystem* a_pFileSystem)
@@ -40,6 +40,7 @@ namespace Toshi
 		TASSERT(a_sName.Length() > 0, "Name can't be empty");
 		ValidateSystemPath();
 		int idx = a_sName.Find(':', 0);
+
 		if (-1 < idx)
 		{
 			str.Copy(a_sName, idx);
@@ -162,5 +163,12 @@ namespace Toshi
 		m_sName = a_rFileSystem.GetName();
 		m_prefix = a_rFileSystem.GetPrefix();
 		return *this;
+	}
+
+	STL::Ref<TFileSystem> TFileSystem::CreateNative(const char* name)
+	{
+#ifdef TOSHI_PLATFORM_WINDOWS
+		return STL::CreateRef<TNativeFileSystem>(name);
+#endif
 	}
 }

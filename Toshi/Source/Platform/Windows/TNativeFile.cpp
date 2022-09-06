@@ -179,7 +179,7 @@ namespace Toshi
         return true;
     }
 
-    int TNativeFile::GetCChar()
+    char TNativeFile::GetCChar()
     {
         FlushWriteBuffer();
         if (m_pBuffer != TNULL)
@@ -259,36 +259,29 @@ namespace Toshi
         // The guess is that this + 4 is TCString maybe
         // (**(code **)(**(int **)(this + 4) + 0x10))();
 
+        dwDesiredAccess |= dwDesiredAccess & OpenFlags_Read ? GENERIC_READ : 0;
+        dwDesiredAccess |= dwDesiredAccess & OpenFlags_Write ? GENERIC_WRITE : 0;
+        dwDesiredAccess |= dwDesiredAccess & OpenFlags_ReadWrite ? (GENERIC_READ | GENERIC_WRITE) : 0;
 
-        if (a_Flags & 1)
-        {
-            dwDesiredAccess = GENERIC_READ;
-        }
-        if ((a_Flags & 2) != 0)
-        {
-            dwDesiredAccess |= GENERIC_WRITE;
-        }
-        if ((a_Flags & 4) != 0)
-        {
-            dwDesiredAccess = GENERIC_READ | GENERIC_WRITE;
-        }
-        if ((a_Flags & 8) == 0)
-        {
-            dwCreationDisposition = OPEN_EXISTING;
-        }
-        else
+        if (a_Flags & OpenFlags_CreateNew)
         {
             dwShareMode = FILE_SHARE_READ;
             dwCreationDisposition = CREATE_ALWAYS;
-            if (dwDesiredAccess == 0)
+
+            // add GENERIC_WRITE if doesn't exist
+            if (~dwDesiredAccess & GENERIC_WRITE)
             {
-                dwDesiredAccess = GENERIC_WRITE;
+                dwDesiredAccess |= GENERIC_WRITE;
             }
         }
+        else
+        {
+            dwCreationDisposition = OPEN_EXISTING;
+        }
 
-        TASSERT(a_FileName.IsIndexValid(0), "");
+        TASSERT(a_FileName.IsIndexValid(0), "TNativeFile::Open - wrong filename");
 
-        HANDLE handle = CreateFileA(a_FileName.GetString(), dwDesiredAccess, dwShareMode, TNULL, dwCreationDisposition, 0, TNULL);
+        HANDLE handle = CreateFileA(a_FileName, dwDesiredAccess, dwShareMode, NULL, dwCreationDisposition, NULL, NULL);
 
         if (handle != INVALID_HANDLE_VALUE)
         {
@@ -298,15 +291,15 @@ namespace Toshi
             unk4 = -1;
             unk5 = 0;
 
-            if ((a_Flags & 0x10) == 0)
+            if (a_Flags & OpenFlags_NoBuffer)
+            {
+                m_bWriteBuffered = false;
+            }
+            else
             {
                 m_pBuffer = tmalloc(0x800);
                 buffer = tmalloc(0x800);
                 m_bWriteBuffered = true;
-            }
-            else
-            {
-                m_bWriteBuffered = false;
             }
         }
         else

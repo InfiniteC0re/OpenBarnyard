@@ -8,6 +8,8 @@
 
 namespace Toshi
 {
+	class TFile;
+
 	// JPOG Matched
 	class TFileSystem
 	{
@@ -17,16 +19,25 @@ namespace Toshi
 		virtual ~TFileSystem();
 
 		// Override these funcs in TNativeFileSystem
+		virtual TFile* CreateFile(TCString const& fn, uint32_t flags) = 0;
+		virtual void DestroyFile(TFile*) = 0;
 		virtual bool RemoveFile(TCString const&) { return true; }
+		virtual TCString MakeInternalPath(TCString const&) = 0;
 		virtual bool GetFirstFile(TCString const&, TCString&, unsigned int) { return false; }
-		virtual bool GetNextFile(TCString&, unsigned int) { return false; }
+		virtual bool GetNextFile(TCString&, uint32_t) { return false; }
 		virtual void SetPrefix(TCString const&);
+		virtual bool MakeDirectory(TCString const&) = 0;
 
 		inline TCString const& GetName() const { return m_sName; }
 		inline TCString const& GetPrefix() const { return m_prefix; }
 
 		TFileSystem& operator=(TFileSystem& a_rFileSystem);
 
+	public:
+		// Creates native file system based on the used platform
+		static STL::Ref<TFileSystem> CreateNative(const char* name);
+	
+	protected:
 		void* m_unk; // 0x4
 		void* m_unk2; // 0x8
 
@@ -70,7 +81,6 @@ namespace Toshi
 	class TFile
 	{
 	public:
-
 		enum TSEEK
 		{
 			TSEEK_SET,
@@ -78,15 +88,35 @@ namespace Toshi
 			TSEEK_END
 		};
 
-		TFile(TFileSystem*);
+		enum OpenFlags
+		{
+			OpenFlags_Read = BITFIELD(0),
+			OpenFlags_Write = BITFIELD(1),
+			OpenFlags_ReadWrite = BITFIELD(2),
+			OpenFlags_CreateNew = BITFIELD(3),
+			OpenFlags_NoBuffer = BITFIELD(4),
+		};
+
 		//TFile();
+		TFile(TFileSystem*);
 		TFile(const TFile&);
 
-		virtual _FILETIME GetDate() = 0;
-		static TFile* Create(const TCString&, unsigned int);
+		virtual int Read(LPVOID, int) = 0;
+		virtual int Write(LPVOID, int) = 0;
+		virtual bool Seek(int, TFile::TSEEK) = 0;
+		virtual int Tell() = 0;
+		virtual int GetSize()  = 0;
+		virtual _FILETIME GetDate() { return {}; }
+		virtual char GetCChar() = 0;
+		virtual wchar_t GetWChar() = 0;
+		virtual int PutCChar(char character) = 0;
+		virtual int PutWChar(wchar_t character) = 0;
+		virtual int VCPrintf(const char* format, ...) = 0;
+		virtual int VWPrintf(const wchar_t* format, ...) = 0;
+
+		static TFile* Create(const TCString& fn, uint32_t flags = OpenFlags_Read);
 		inline TFileSystem* GetFileSystem() const { return m_pFileSystem; }
 		inline TFile& operator=(const TFile& a_pFile) { m_pFileSystem = a_pFile.GetFileSystem(); return *this; }
-
 
 	public:
 		TFileSystem* m_pFileSystem;

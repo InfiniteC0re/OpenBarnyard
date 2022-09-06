@@ -1,6 +1,6 @@
 #include "ToshiPCH.h"
 #include "TDebugConsole.h"
-#include "Platform/TDebugConsoleWindows.h"
+#include "Platform/Windows/TDebugConsoleWindows.h"
 
 namespace Toshi
 {
