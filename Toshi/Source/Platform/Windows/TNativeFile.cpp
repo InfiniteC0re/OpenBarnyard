@@ -258,6 +258,12 @@ namespace Toshi
 
         // The guess is that this + 4 is TCString maybe
         // (**(code **)(**(int **)(this + 4) + 0x10))();
+       
+        // that is probably m_pFileSystem->MakeInternalPath()
+        // since (this + 4) is TFile::m_pFileSystem
+        // and the first field of TFileSystem is a virtual
+        // functions table where MakeInternalPath is placed at
+        // offset 0x10
 
         dwDesiredAccess |= a_Flags & OpenFlags_Read ? GENERIC_READ : 0;
         dwDesiredAccess |= a_Flags & OpenFlags_Write ? GENERIC_WRITE : 0;
