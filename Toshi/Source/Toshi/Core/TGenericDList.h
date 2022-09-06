@@ -1,7 +1,7 @@
 #pragma once
 namespace Toshi
 {
-	//template <typename T, int>
+	//template <class T, int C>
 	class TGenericDList
 	{
 		TGenericDList();
@@ -10,6 +10,7 @@ namespace Toshi
 		class TNode
 		{
 		protected:
+
 			TNode();
 			// TNode(TUninitialized param1);
 

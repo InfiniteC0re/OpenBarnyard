@@ -45,7 +45,7 @@ bool ARootTask::OnUpdate(float deltaTime)
 		TOSHI_INFO("==============================================");
 
 		TOSHI_INFO("ARootTask: Five seconds has passed. Deactivating ARootTask");
-		TOSHI_INFO("Average FPS is {0}", m_Kernel->GetAverageFPS());
+		TOSHI_INFO("Average FPS is {0:f}", m_Kernel->GetAverageFPS());
 		Activate(false);
 		m_Seconds = 0;
 	}
