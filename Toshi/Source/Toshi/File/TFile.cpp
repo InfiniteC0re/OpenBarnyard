@@ -23,12 +23,20 @@ namespace Toshi
 		return TFileManager::Instance().CreateFile(fn, flags);
 	}
 
+	TCString TFile::ConcatPath(const TCString& a_rcString, const TCString& a_rcString2)
+	{
+		TIMPLEMENT();
+		return TCString();
+	}
+
 	void TFileManager::MountFileSystem(TFileSystem* a_pFileSystem)
 	{
+		TIMPLEMENT();
 	}
 
 	TFileSystem* TFileManager::FindFileSystem(const TCString&)
 	{
+		TIMPLEMENT();
 		return nullptr;
 	}
 

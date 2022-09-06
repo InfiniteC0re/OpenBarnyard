@@ -5,6 +5,7 @@
 #ifdef CreateFile
 #undef CreateFile
 #endif
+#include <Toshi/Core/TGenericDList.h>
 
 namespace Toshi
 {
@@ -46,11 +47,40 @@ namespace Toshi
 		int m_unk3; // 0x1C
 	};
 
+	class TFile
+	{
+	public:
+
+		enum TSEEK
+		{
+			TSEEK_SET,
+			TSEEK_CUR,
+			TSEEK_END
+		};
+
+		TFile(TFileSystem*);
+		//TFile();
+		TFile(const TFile&);
+
+
+		virtual _FILETIME GetDate() = 0;
+		static TCString ConcatPath(const TCString& a_rcString, const TCString& a_rcString2);
+		static TFile* Create(const TCString&, unsigned int);
+		inline TFileSystem* GetFileSystem() const { return m_pFileSystem; }
+		inline TFile& operator=(const TFile& a_pFile) { m_pFileSystem = a_pFile.GetFileSystem(); return *this; }
+
+
+	public:
+		TFileSystem* m_pFileSystem;
+	};
+
 	class TFileManager : public TSingleton<TFileManager>
 	{
 	public:
 		TCString m_sSysPath; // 0x4
 		TCString m_sWorkingDirectory; // 0xC
+		void* m_lList; // 0x14 Actually TDList but my brain can't handle it
+		void* m_lList2; // 0x1C
 		TMutex m_mMutex; // 0x24
 
 
@@ -75,12 +105,18 @@ namespace Toshi
 	public:
 		void MountFileSystem(TFileSystem* a_pFileSystem);
 		class TFileSystem* FindFileSystem(const TCString&);
+		//static TFileSystem* FindFileSystem(Toshi::TGenericDList<TFileSystem, 0>* param_1):
+
+		inline TCString MakeAbsolutePath(const TCString& a_cString) const { return TFile::ConcatPath(a_cString, m_sWorkingDirectory); }
+		inline void FileSystemRelease() { m_mMutex.Unlock(); }
+		inline void FileSystemWait() { m_mMutex.Lock(); }
 		class TFile* CreateFile(const TCString&, unsigned int);
 	};
 
 	class TFile
 	{
 	public:
+
 		enum TSEEK
 		{
 			TSEEK_SET,
@@ -88,35 +124,15 @@ namespace Toshi
 			TSEEK_END
 		};
 
-		enum OpenFlags
-		{
-			OpenFlags_Read = BITFIELD(0),
-			OpenFlags_Write = BITFIELD(1),
-			OpenFlags_ReadWrite = BITFIELD(2),
-			OpenFlags_CreateNew = BITFIELD(3),
-			OpenFlags_NoBuffer = BITFIELD(4),
-		};
-
-		//TFile();
 		TFile(TFileSystem*);
+		//TFile();
 		TFile(const TFile&);
 
-		virtual int Read(LPVOID, int) = 0;
-		virtual int Write(LPVOID, int) = 0;
-		virtual bool Seek(int, TFile::TSEEK) = 0;
-		virtual int Tell() = 0;
-		virtual int GetSize()  = 0;
-		virtual _FILETIME GetDate() { return {}; }
-		virtual char GetCChar() = 0;
-		virtual wchar_t GetWChar() = 0;
-		virtual int PutCChar(char character) = 0;
-		virtual int PutWChar(wchar_t character) = 0;
-		virtual int VCPrintf(const char* format, ...) = 0;
-		virtual int VWPrintf(const wchar_t* format, ...) = 0;
-
-		static TFile* Create(const TCString& fn, uint32_t flags = OpenFlags_Read);
+		virtual _FILETIME GetDate() = 0;
+		static TFile* Create(const TCString&, unsigned int);
 		inline TFileSystem* GetFileSystem() const { return m_pFileSystem; }
 		inline TFile& operator=(const TFile& a_pFile) { m_pFileSystem = a_pFile.GetFileSystem(); return *this; }
+
 
 	public:
 		TFileSystem* m_pFileSystem;

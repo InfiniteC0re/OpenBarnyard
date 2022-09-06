@@ -9,7 +9,6 @@ namespace Toshi
 	{
 		Reset();
 		AllocBuffer(0, true);
-
 		// this+7 = 0
 		/*  if (param_1 == 0) {
 		if ((_DAT_009b1704 == 0) && (sm_pDefaultAllocatorCB == (code *)0x0)) {
