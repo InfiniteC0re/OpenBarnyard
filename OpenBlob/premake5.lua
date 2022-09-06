@@ -1,5 +1,5 @@
 project "OpenBlob"
-	kind "ConsoleApp"
+	kind "WindowedApp"
 	language "C++"
 	cppdialect "C++20"
 	staticruntime "on"

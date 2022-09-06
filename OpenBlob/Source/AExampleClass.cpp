@@ -7,6 +7,7 @@
 #include <Toshi/Core/TKernelInterface.h>
 #include <Toshi/Core/TScheduler.h>
 #include <Toshi/Math/TRandom.h>
+#include <Toshi/File/TTRB.h>
 
 TOSHI_CLASS_DERIVED_INITIALIZE(AExampleClass, Toshi::TObject, TMAKEVERSION(1, 0))
 
@@ -55,6 +56,10 @@ AExampleClass::AExampleClass()
 		TOSHI_INFO("Seeked to offset: {0}", f->Tell());
 		f->Close();
 	}
+
+	Toshi::TTRB trb = Toshi::TTRB();
+	trb.LoadTrb("C:\\Users\\Leon\\Desktop\\CameraShakeCommon.trb");
+
 	
 	auto kernel = Toshi::tnew<Toshi::TKernelInterface>();
 	

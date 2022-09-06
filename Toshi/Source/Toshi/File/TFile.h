@@ -5,6 +5,7 @@
 #ifdef CreateFile
 #undef CreateFile
 #endif
+#include <Toshi/Core/TGenericDList.h>
 
 namespace Toshi
 {
@@ -35,11 +36,40 @@ namespace Toshi
 		int m_unk3; // 0x1C
 	};
 
+	class TFile
+	{
+	public:
+
+		enum TSEEK
+		{
+			TSEEK_SET,
+			TSEEK_CUR,
+			TSEEK_END
+		};
+
+		TFile(TFileSystem*);
+		//TFile();
+		TFile(const TFile&);
+
+
+		virtual _FILETIME GetDate() = 0;
+		static TCString ConcatPath(const TCString& a_rcString, const TCString& a_rcString2);
+		static TFile* Create(const TCString&, unsigned int);
+		inline TFileSystem* GetFileSystem() const { return m_pFileSystem; }
+		inline TFile& operator=(const TFile& a_pFile) { m_pFileSystem = a_pFile.GetFileSystem(); return *this; }
+
+
+	public:
+		TFileSystem* m_pFileSystem;
+	};
+
 	class TFileManager : public TSingleton<TFileManager>
 	{
 	public:
 		TCString m_sSysPath; // 0x4
 		TCString m_sWorkingDirectory; // 0xC
+		void* m_lList; // 0x14 Actually TDList but my brain can't handle it
+		void* m_lList2; // 0x1C
 		TMutex m_mMutex; // 0x24
 
 
@@ -64,33 +94,15 @@ namespace Toshi
 	public:
 		void MountFileSystem(TFileSystem* a_pFileSystem);
 		class TFileSystem* FindFileSystem(const TCString&);
+		//static TFileSystem* FindFileSystem(Toshi::TGenericDList<TFileSystem, 0>* param_1):
+
+		inline TCString MakeAbsolutePath(const TCString& a_cString) const { return TFile::ConcatPath(a_cString, m_sWorkingDirectory); }
+		inline void FileSystemRelease() { m_mMutex.Unlock(); }
+		inline void FileSystemWait() { m_mMutex.Lock(); }
 		class TFile* CreateFile(const TCString&, unsigned int);
 	};
 
-	class TFile
-	{
-	public:
-
-		enum TSEEK
-		{
-			TSEEK_SET,
-			TSEEK_CUR,
-			TSEEK_END
-		};
-
-		TFile(TFileSystem*);
-		//TFile();
-		TFile(const TFile&);
-
-		virtual _FILETIME GetDate() = 0;
-		static TFile* Create(const TCString&, unsigned int);
-		inline TFileSystem* GetFileSystem() const { return m_pFileSystem; }
-		inline TFile& operator=(const TFile& a_pFile) { m_pFileSystem = a_pFile.GetFileSystem(); return *this; }
-
-
-	public:
-		TFileSystem* m_pFileSystem;
-	};
+	
 }
 
 
