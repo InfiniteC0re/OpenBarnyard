@@ -1,11 +1,11 @@
 #pragma once
 #include "Toshi/Utils/TSingleton.h"
 #include "Toshi/Strings/TCString.h"
+#include "Toshi/Core/TGenericDList.h"
 
 #ifdef CreateFile
 #undef CreateFile
 #endif
-#include <Toshi/Core/TGenericDList.h>
 
 namespace Toshi
 {
@@ -37,7 +37,7 @@ namespace Toshi
 	public:
 		// Creates native file system based on the used platform
 		static STL::Ref<TFileSystem> CreateNative(const char* name);
-	
+
 	protected:
 		void* m_unk; // 0x4
 		void* m_unk2; // 0x8
@@ -50,7 +50,6 @@ namespace Toshi
 	class TFile
 	{
 	public:
-
 		enum TSEEK
 		{
 			TSEEK_SET,
@@ -58,17 +57,36 @@ namespace Toshi
 			TSEEK_END
 		};
 
-		TFile(TFileSystem*);
+		enum OpenFlags
+		{
+			OpenFlags_Read = BITFIELD(0),
+			OpenFlags_Write = BITFIELD(1),
+			OpenFlags_ReadWrite = BITFIELD(2),
+			OpenFlags_CreateNew = BITFIELD(3),
+			OpenFlags_NoBuffer = BITFIELD(4),
+		};
+
 		//TFile();
+		TFile(TFileSystem*);
 		TFile(const TFile&);
 
+		virtual int Read(LPVOID, int) = 0;
+		virtual int Write(LPVOID, int) = 0;
+		virtual bool Seek(int, TFile::TSEEK) = 0;
+		virtual int Tell() = 0;
+		virtual int GetSize() = 0;
+		virtual _FILETIME GetDate() { return {}; }
+		virtual char GetCChar() = 0;
+		virtual wchar_t GetWChar() = 0;
+		virtual int PutCChar(char character) = 0;
+		virtual int PutWChar(wchar_t character) = 0;
+		virtual int VCPrintf(const char* format, ...) = 0;
+		virtual int VWPrintf(const wchar_t* format, ...) = 0;
 
-		virtual _FILETIME GetDate() = 0;
 		static TCString ConcatPath(const TCString& a_rcString, const TCString& a_rcString2);
-		static TFile* Create(const TCString&, unsigned int);
+		static TFile* Create(const TCString& fn, uint32_t flags);
 		inline TFileSystem* GetFileSystem() const { return m_pFileSystem; }
 		inline TFile& operator=(const TFile& a_pFile) { m_pFileSystem = a_pFile.GetFileSystem(); return *this; }
-
 
 	public:
 		TFileSystem* m_pFileSystem;
@@ -77,13 +95,6 @@ namespace Toshi
 	class TFileManager : public TSingleton<TFileManager>
 	{
 	public:
-		TCString m_sSysPath; // 0x4
-		TCString m_sWorkingDirectory; // 0xC
-		void* m_lList; // 0x14 Actually TDList but my brain can't handle it
-		void* m_lList2; // 0x1C
-		TMutex m_mMutex; // 0x24
-
-
 		TFileManager() = default;
 
 		// JPOG Matched
@@ -92,16 +103,13 @@ namespace Toshi
 			TCString m_sSysPath;
 			int m_position;
 		public:
-			bool First(TCString & param_1);
+			bool First(TCString& param_1);
 			bool Next(TCString& param_1);
 
 			TSysPathIter(const TCString&);
 			TSysPathIter(const TSysPathIter&);
 		};
-
-	private:
-		void ValidateSystemPath();
-
+	
 	public:
 		void MountFileSystem(TFileSystem* a_pFileSystem);
 		class TFileSystem* FindFileSystem(const TCString&);
@@ -111,32 +119,16 @@ namespace Toshi
 		inline void FileSystemRelease() { m_mMutex.Unlock(); }
 		inline void FileSystemWait() { m_mMutex.Lock(); }
 		class TFile* CreateFile(const TCString&, unsigned int);
-	};
 
-	class TFile
-	{
-	public:
+	private:
+		void ValidateSystemPath();
 
-		enum TSEEK
-		{
-			TSEEK_SET,
-			TSEEK_CUR,
-			TSEEK_END
-		};
-
-		TFile(TFileSystem*);
-		//TFile();
-		TFile(const TFile&);
-
-		virtual _FILETIME GetDate() = 0;
-		static TFile* Create(const TCString&, unsigned int);
-		inline TFileSystem* GetFileSystem() const { return m_pFileSystem; }
-		inline TFile& operator=(const TFile& a_pFile) { m_pFileSystem = a_pFile.GetFileSystem(); return *this; }
-
-
-	public:
-		TFileSystem* m_pFileSystem;
+	private:
+		TCString m_sSysPath; // 0x4
+		TCString m_sWorkingDirectory; // 0xC
+		void* m_lList; // 0x14 Actually TDList but my brain can't handle it
+		void* m_lList2; // 0x1C
+		TMutex m_mMutex; // 0x24
 	};
 }
-
 

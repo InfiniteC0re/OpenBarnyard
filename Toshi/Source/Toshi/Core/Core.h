@@ -1,5 +1,10 @@
 #pragma once
 
+constexpr uint32_t TMAKEFOUR(const char str[4])
+{
+	return ((str[3] << 24) | (str[2] << 16) | (str[1] << 8) | str[0]);
+}
+
 #define TMAKEVERSION(VER_MAJOR, VER_MINOR) ((VER_MAJOR << 16) | VER_MINOR)
 #define BITFIELD(x) (1 << x)
 

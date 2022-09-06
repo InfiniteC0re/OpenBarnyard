@@ -259,16 +259,16 @@ namespace Toshi
         // The guess is that this + 4 is TCString maybe
         // (**(code **)(**(int **)(this + 4) + 0x10))();
 
-        dwDesiredAccess |= dwDesiredAccess & OpenFlags_Read ? GENERIC_READ : 0;
-        dwDesiredAccess |= dwDesiredAccess & OpenFlags_Write ? GENERIC_WRITE : 0;
-        dwDesiredAccess |= dwDesiredAccess & OpenFlags_ReadWrite ? (GENERIC_READ | GENERIC_WRITE) : 0;
+        dwDesiredAccess |= a_Flags & OpenFlags_Read ? GENERIC_READ : 0;
+        dwDesiredAccess |= a_Flags & OpenFlags_Write ? GENERIC_WRITE : 0;
+        dwDesiredAccess |= a_Flags & OpenFlags_ReadWrite ? (GENERIC_READ | GENERIC_WRITE) : 0;
 
         if (a_Flags & OpenFlags_CreateNew)
         {
             dwShareMode = FILE_SHARE_READ;
             dwCreationDisposition = CREATE_ALWAYS;
 
-            // add GENERIC_WRITE if doesn't exist
+            // add GENERIC_WRITE if it is not yet
             if (~dwDesiredAccess & GENERIC_WRITE)
             {
                 dwDesiredAccess |= GENERIC_WRITE;
