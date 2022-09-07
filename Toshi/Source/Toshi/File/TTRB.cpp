@@ -1,33 +1,19 @@
 #include "ToshiPCH.h"
 #include "TTRB.h"
+#include "TTSF.h"
 
-bool Toshi::TTRB::LoadTrb(const char* fn)
+namespace Toshi
 {
-	//TFile* f = TFile::Create(fn, 1);
-
-	TCString str = TCString(fn);
-	Toshi::TNativeFileSystem * fs = Toshi::tnew<Toshi::TNativeFileSystem>(str);
-	Toshi::TNativeFile* f = (Toshi::TNativeFile*)fs->CreateFile(str, 1);
-	FUN_00686920(f);
-	return false;
-}
-
-void Toshi::TTRB::FUN_00686920(TNativeFile* a_pFile)
-{
-	TSF tsf;
-	a_pFile->Read(&tsf, 8);
-
-	if (tsf.m_magic == 0x4C465354)
+	bool TTRB::LoadTrb(const char* fn)
 	{
-		m_iEndianess = Endian::LITTLE;
-	}
-	else if (tsf.m_magic == 0x42465354)
-	{
-		m_iEndianess = Endian::Big;
-	}
-	else
-	{
-		TOSHI_ERROR("Not a Toshi File");
-	}
+		TTSF ttsf;
 
+		TCString str = TCString(fn);
+		auto fs = Toshi::TFileSystem::CreateNative(str);
+		
+		Toshi::TFile* file = fs->CreateFile(str, 1);
+		ttsf.ReadFile(file);
+
+		return false;
+	}
 }

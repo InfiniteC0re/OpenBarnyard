@@ -14,12 +14,7 @@ namespace Toshi
 		class MemoryDeleter
 		{
 		public:
-			inline void operator()(Type* ptr)
-			{
-				auto allocator = Toshi::TAllocator<Type>();
-				allocator.deallocate(ptr, 1);
-				allocator.destroy<Type>(ptr);
-			}
+			inline void operator()(Type* ptr) { tdelete<Type>(ptr); }
 		};
 
 		template <typename T>
@@ -46,15 +41,13 @@ namespace Toshi
 		template <typename T, typename ... Args>
 		constexpr Scope<T> CreateScope(Args&& ... args)
 		{
-			Toshi::TAllocator<T> allocator;
-			return Scope<T>(allocator.create(std::forward<Args>(args)...));
+			return Scope<T>(tnew<T>(std::forward<Args>(args)...));
 		}
 
-		template <typename T, typename Parent, typename ... Args>
-		constexpr Scope<Parent> CreateScope(Args&& ... args)
+		template <typename T, typename Result, typename ... Args>
+		constexpr Scope<Result> CreateScope(Args&& ... args)
 		{
-			Toshi::TAllocator<T> allocator;
-			return Scope<Parent>(allocator.create(std::forward<Args>(args)...));
+			return Scope<Result>(tnew<T>(std::forward<Args>(args)...));
 		}
 	}
 }

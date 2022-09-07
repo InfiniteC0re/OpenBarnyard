@@ -23,7 +23,7 @@ namespace Toshi
 		// Tries to find handle of the debug console
 		HWND FindConsole() const;
 
-	public:
+	private:
 		/* 
 		*  The functions below are taken from
 		*  https://stackoverflow.com/a/55875595

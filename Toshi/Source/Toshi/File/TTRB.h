@@ -1,24 +1,20 @@
 #pragma once
-
 #include "Toshi/Strings/TCString.h"
 #include "Toshi/File/TFile.h"
-#include "Toshi/File/TNativeFileSystem.h"
-#include "Toshi/File/TNativeFile.h"
 
 namespace Toshi
 {
+	// sizeof(TTRB) should be equal to 292 (de Blob) in x86 mode
+
 	class TTRB
 	{
-		enum Endian
+	public:
+		enum TTRB_ERROR
 		{
-			LITTLE,
-			Big
-		};
-
-		struct TSF
-		{
-			int m_magic;
-			int size;
+			ERROR_OK = 0,
+			ERROR_WRONG_MAGIC = 4,
+			ERROR_NO_FILE = 6,
+			ERROR_NOT_TRB = 7,
 		};
 
 		struct SecInfo // Size 0x10
@@ -28,16 +24,16 @@ namespace Toshi
 
 		struct Header
 		{
-			unsigned int m_ui32Version; // 0x0
-			int m_i32SectionCount; // 0x4
+			uint32_t m_ui32Version; // 0x0
+			uint32_t m_i32SectionCount; // 0x4
 			SecInfo* m_pSecInfo; // Name not confirmed
 		};
 
-		Header* m_pHeader; // 0x0
-		Endian m_iEndianess; // 0 = Little / 1 = Big
 	public:
 		bool LoadTrb(const char*);
-		void FUN_00686920(TNativeFile* a_pFile);
+
+	private:
+		Header* m_pHeader;          // 0x0
 	};
 }
 

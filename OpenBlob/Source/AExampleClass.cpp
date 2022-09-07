@@ -2,7 +2,7 @@
 #include "AExampleClass.h"
 #include "ARootTask.h"
 
-#include <Toshi/File/TNativeFileSystem.h>
+#include <Toshi/File/TFile.h>
 #include <Toshi/Core/TSystem.h>
 #include <Toshi/Core/TKernelInterface.h>
 #include <Toshi/Core/TScheduler.h>
@@ -14,10 +14,6 @@ TOSHI_CLASS_DERIVED_INITIALIZE(AExampleClass, Toshi::TObject, TMAKEVERSION(1, 0)
 AExampleClass::AExampleClass()
 {
 	TOSHI_INFO("Called AExampleClass");
-
-	Toshi::TCString str = Toshi::TCString("C:\\Program Files (x86)\\Steam\\steamapps\\common\\de Blob\\Data\\BlobChar\\AssetPack.trb");
-	Toshi::TNativeFileSystem* fs = Toshi::tnew<Toshi::TNativeFileSystem>(str);
-	Toshi::TNativeFile* f = (Toshi::TNativeFile*)fs->CreateFile(str, 1);
 
 	Toshi::TRandom rnd;
 	TOSHI_INFO("=================TRandom Test=================");
@@ -39,22 +35,21 @@ AExampleClass::AExampleClass()
 	TOSHI_INFO("16) Random int: {0}", rnd.GetInt());
 	TOSHI_INFO("==============================================");
 
-	if (f)
+	auto fs = Toshi::TFileSystem::CreateNative("local");
+	auto file = fs->CreateFile("C:\\Program Files (x86)\\Steam\\steamapps\\common\\de Blob\\Data\\BlobChar\\AssetPack.trb", Toshi::TFile::OpenFlags_Read);
+	
+	if (file)
 	{
 		char sos[0x800]{};
-		f->Seek(5, Toshi::TNativeFile::TSEEK_SET);
-		int read = f->Read(&sos, sizeof(sos));
-
-		//f.Open(str, 1);
-
-		str.Concat(".lol", -1);
+		file->Seek(5, Toshi::TFile::TSEEK_SET);
+		int read = file->Read(&sos, sizeof(sos));
 		
 		fs->SetPrefix("C:/");
 
-		TOSHI_INFO("File size: {0} bytes", f->GetSize());
-		f->Seek(5, Toshi::TFile::TSEEK_SET);
-		TOSHI_INFO("Seeked to offset: {0}", f->Tell());
-		f->Close();
+		TOSHI_INFO("File size: {0} bytes", file->GetSize());
+		file->Seek(5, Toshi::TFile::TSEEK_SET);
+		TOSHI_INFO("Seeked to offset: {0}", file->Tell());
+		fs->DestroyFile(file);
 	}
 
 	Toshi::TTRB trb = Toshi::TTRB();

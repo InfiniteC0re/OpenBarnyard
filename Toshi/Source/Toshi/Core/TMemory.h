@@ -106,14 +106,6 @@ namespace Toshi
 		template<class U>
 		TAllocator(const TAllocator<U>& other) { }
 
-		template<class... Args>
-		inline pointer create(Args&& ...args)
-		{
-			pointer ptr = allocate(1);
-			construct(ptr, std::forward<Args>(args)...);
-			return ptr;
-		}
-
 		inline pointer allocate(size_type count)
 		{
 			return static_cast<pointer>(tmalloc(sizeof(value_type) * count));
