@@ -4,7 +4,7 @@
 
 namespace Toshi
 {
-	// sizeof(TTRB) should be equal to 276 (de Blob)
+	// sizeof(TTRB) should be equal to 292 (de Blob) in x86 mode
 
 	class TTRB
 	{
