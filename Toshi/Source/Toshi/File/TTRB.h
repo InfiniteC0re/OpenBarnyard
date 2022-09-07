@@ -33,7 +33,7 @@ namespace Toshi
 		bool LoadTrb(const char*);
 
 	private:
-		Header* m_pHeader;          // 0x0 (it's not from TTRB)
+		Header* m_pHeader;          // 0x0
 	};
 }
 
