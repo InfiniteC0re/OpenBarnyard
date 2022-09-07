@@ -136,7 +136,7 @@ namespace Toshi
         return ReadUnbuffered(buffer, param_2);
     }
 
-    int TNativeFile::Tell()
+    uint32_t TNativeFile::Tell()
     {
         FlushWriteBuffer();
         return m_position;

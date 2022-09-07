@@ -7,6 +7,8 @@
 #undef CreateFile
 #endif
 
+#define BIG_ENDIAN_TO_LITTLE_UINT32(V) (V >> 8 & 0xff | (uint32_t)(unsigned short)((short)V << 8)) << 0x10 | V >> 0x18 | (uint32_t)(unsigned short)((short)(V >> 0x10) << 8)
+
 namespace Toshi
 {
 	class TFile;
@@ -73,7 +75,7 @@ namespace Toshi
 		virtual int Read(LPVOID, int) = 0;
 		virtual int Write(LPVOID, int) = 0;
 		virtual bool Seek(int, TFile::TSEEK) = 0;
-		virtual int Tell() = 0;
+		virtual uint32_t Tell() = 0;
 		virtual int GetSize() = 0;
 		virtual _FILETIME GetDate() { return {}; }
 		virtual char GetCChar() = 0;

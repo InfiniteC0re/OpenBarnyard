@@ -13,7 +13,7 @@ namespace Toshi
 		virtual int Read(LPVOID, int) override;
 		virtual int Write(LPVOID, int) { return 0; }
 		virtual bool Seek(int, TFile::TSEEK) override;
-		virtual int Tell() override;
+		virtual uint32_t Tell() override;
 		virtual int GetSize() override;
 		virtual _FILETIME GetDate() override;
 		virtual char GetCChar() override;
@@ -37,7 +37,7 @@ namespace Toshi
 
 	private:
 		HANDLE hnd; // 0x8
-		int m_position; // 0xC
+		uint32_t m_position; // 0xC
 		DWORD unk2; //0x10
 		int unk4; // 0x14
 		int unk5; // 0x18
