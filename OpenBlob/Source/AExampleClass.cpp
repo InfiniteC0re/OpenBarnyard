@@ -61,8 +61,10 @@ AExampleClass::AExampleClass()
 	public:
 		Test(float value) : m_Value(value) { }
 
-		inline float GetValue() { return m_Value; }
-		inline Test* Next() { return static_cast<Test*>(TNode::Next()); }
+		inline Test* Next() { return TNode::Next()->As<Test>(); }
+		inline float GetValue() const { return m_Value; }
+
+		inline void Log() const { TOSHI_INFO(m_Value); }
 	private:
 		float m_Value;
 	};
@@ -70,10 +72,12 @@ AExampleClass::AExampleClass()
 	Toshi::TDList<Test> list;
 	list.InsertHead(Toshi::tnew<Test>(1.0f));
 	list.InsertHead(Toshi::tnew<Test>(5.0f));
-	TOSHI_INFO(list.GetRoot().Next()->GetValue());         // 5.0
-	TOSHI_INFO(list.GetRoot().Next()->Next()->GetValue()); // 1.0
-	Toshi::tdelete(list.GetRoot().Next()->Next());
-	Toshi::tdelete(list.GetRoot().Next());
+	
+	list.GetFirst()->Log();         // 5.0
+	list.GetFirst()->Next()->Log(); // 1.0
+
+	Toshi::tdelete(list.GetFirst()->Next());
+	Toshi::tdelete(list.GetFirst());
 
 	auto kernel = Toshi::tnew<Toshi::TKernelInterface>();
 	

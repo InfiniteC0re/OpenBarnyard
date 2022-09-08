@@ -20,7 +20,14 @@ namespace Toshi
 			void Reset();
 
 			TNode& operator=(const TNode& param_1);
+
+		public:
+			template<class T> friend class TDList;
 			friend TGenericDList;
+
+		public:
+			template<typename T>
+			inline T* As() { return static_cast<T*>(this); }
 
 		protected:
 			TNode* m_pNext;
@@ -76,7 +83,11 @@ namespace Toshi
 	public:
 		TDList() { }
 
-		inline T& GetRoot() { return static_cast<T&>(m_Root); }
+		inline bool IsLinked() { return m_Root.IsLinked(); }
+		inline T* GetFirst() { return static_cast<T*>(m_Root.Next()); }
+		inline T& GetFirstRef() { return static_cast<T&>(*m_Root.Next()); }
+		inline T* GetRoot() { return static_cast<T*>(&m_Root); }
+		inline T& GetRootRef() { return static_cast<T&>(m_Root); }
 
 	protected:
 	};
