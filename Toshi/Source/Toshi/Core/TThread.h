@@ -14,7 +14,7 @@
 
 namespace Toshi
 {
-	class TThread : TGenericDList::TNode
+	class TThread : public TDList<TThread>::TNode
 	{
 		enum PRIORITY
 		{

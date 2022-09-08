@@ -8,6 +8,7 @@
 #include <Toshi/Core/TScheduler.h>
 #include <Toshi/Math/TRandom.h>
 #include <Toshi/File/TTRB.h>
+#include <Toshi/Core/TGenericDList.h>
 
 TOSHI_CLASS_DERIVED_INITIALIZE(AExampleClass, Toshi::TObject, TMAKEVERSION(1, 0))
 
@@ -55,7 +56,25 @@ AExampleClass::AExampleClass()
 	Toshi::TTRB trb = Toshi::TTRB();
 	trb.LoadTrb("C:\\Users\\Leon\\Desktop\\CameraShakeCommon.trb");
 
-	
+	class Test : public Toshi::TDList<Test>::TNode
+	{
+	public:
+		Test(float value) : m_Value(value) { }
+
+		inline float GetValue() { return m_Value; }
+		inline Test* Next() { return static_cast<Test*>(TNode::Next()); }
+	private:
+		float m_Value;
+	};
+
+	Toshi::TDList<Test> list;
+	list.InsertHead(Toshi::tnew<Test>(1.0f));
+	list.InsertHead(Toshi::tnew<Test>(5.0f));
+	TOSHI_INFO(list.GetRoot().Next()->GetValue());         // 5.0
+	TOSHI_INFO(list.GetRoot().Next()->Next()->GetValue()); // 1.0
+	Toshi::tdelete(list.GetRoot().Next()->Next());
+	Toshi::tdelete(list.GetRoot().Next());
+
 	auto kernel = Toshi::tnew<Toshi::TKernelInterface>();
 	
 	m_RootTask = static_cast<ARootTask*>(

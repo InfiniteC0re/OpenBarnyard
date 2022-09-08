@@ -8,38 +8,38 @@ Toshi::TGenericDList::TNode::TNode()
 
 void Toshi::TGenericDList::TNode::InsertAfter(TNode* param_1)
 {
-	m_pPrevNode = param_1;
-	m_pNextNode = param_1->m_pNextNode;
-	param_1->m_pNextNode = this;
-	m_pNextNode->m_pPrevNode = this;
+	m_pPrev = param_1;
+	m_pNext = param_1->m_pNext;
+	param_1->m_pNext = this;
+	m_pNext->m_pPrev = this;
 }
 
 void Toshi::TGenericDList::TNode::InsertBefore(TNode* param_1)
 {
-	m_pNextNode = param_1;
-	m_pPrevNode = param_1->m_pPrevNode;
-	param_1->m_pPrevNode = this;
-	m_pPrevNode->m_pNextNode = this;
+	m_pNext = param_1;
+	m_pPrev = param_1->m_pPrev;
+	param_1->m_pPrev = this;
+	m_pPrev->m_pNext = this;
 }
 
 void Toshi::TGenericDList::TNode::Remove()
 {
-	m_pPrevNode->m_pNextNode = m_pNextNode;
-	m_pNextNode->m_pPrevNode = m_pPrevNode;
-	m_pNextNode = this;
-	m_pPrevNode = this;
+	m_pPrev->m_pNext = m_pNext;
+	m_pNext->m_pPrev = m_pPrev;
+	m_pNext = this;
+	m_pPrev = this;
 }
 
 void Toshi::TGenericDList::TNode::Reset()
 {
-	m_pNextNode = this;
-	m_pPrevNode = this;
+	m_pNext = this;
+	m_pPrev = this;
 }
 
 Toshi::TGenericDList::TNode& Toshi::TGenericDList::TNode::operator=(const TNode& param_1)
 {
-	m_pNextNode = param_1.m_pNextNode;
-	m_pPrevNode = param_1.m_pPrevNode;
+	m_pNext = param_1.m_pNext;
+	m_pPrev = param_1.m_pPrev;
 	return *this;
 }
 
