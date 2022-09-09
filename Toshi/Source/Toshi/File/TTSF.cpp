@@ -62,4 +62,37 @@ namespace Toshi
 
 		return TTRB::ERROR_OK;
 	}
+
+	uint8_t TTSF::FUN_006881B0()
+	{
+		if (m_FileInfoCount < 1) return TTRB::ERROR_WRONG_MAGIC;
+
+		m_FileInfoCount--;
+		m_FileSize = m_Unk[m_FileInfoCount];
+
+		m_ReadPos = m_pFile->Tell() - m_FileInfo[m_FileInfoCount].FileStartOffset;
+
+		int thing = m_FileSize + 3U & 0xfffffffc;
+
+		m_pFile->Seek(thing - m_ReadPos, TFile::TSEEK_CUR);
+		m_ReadPos += thing;
+
+		return TTRB::ERROR_OK;
+	}
+
+	uint8_t TTSF::FUN_00687FA0()
+	{
+
+		return uint8_t();
+	}
+
+	TTSF::TTSF()
+	{
+		m_pFile = TNULL;
+		m_FileInfoCount = 0;
+		m_ReadPos = 0;
+		// FUN_007EC9F0(m_FileInfo, 0, 0x100);
+		m_TRBF = 0;
+		m_FileMagic = 0;
+	}
 }

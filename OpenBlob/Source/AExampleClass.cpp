@@ -53,7 +53,7 @@ AExampleClass::AExampleClass()
 	}
 
 	Toshi::TTRB trb = Toshi::TTRB();
-	trb.LoadTrb("C:\\Users\\Leon\\Desktop\\CameraShakeCommon.trb");
+	trb.LoadTrb("C:\\Program Files (x86)\\Steam\\steamapps\\common\\de Blob\\Data\\BlobChar\\AssetPack.trb");
 
 	
 	auto kernel = Toshi::tnew<Toshi::TKernelInterface>();

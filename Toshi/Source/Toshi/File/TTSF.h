@@ -28,12 +28,17 @@ namespace Toshi
 	public:
 		uint8_t ReadFile(TFile* a_pFile);
 		uint8_t SaveFileInfo();
+		uint8_t FUN_006881B0(); // de blob address
+		uint8_t FUN_00687FA0(); // de blob address
 
-	private:
+		TTSF();
+
+	public:
 		Endianess m_iEndianess;     // 0x0
 		TFile* m_pFile;             // 0x4
 		uint32_t m_FileInfoCount;   // 0x8
 		FileInfo m_FileInfo[32];    // 0xC
+		int* m_Unk;				// 0x10
 		Header m_Header;            // 0x10C
 		uint32_t m_TRBF;            // 0x114
 		uint32_t m_FileMagic;       // 0x118

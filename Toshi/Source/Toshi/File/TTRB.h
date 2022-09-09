@@ -1,6 +1,7 @@
 #pragma once
 #include "Toshi/Strings/TCString.h"
 #include "Toshi/File/TFile.h"
+#include "Toshi/File/TTSF.h"
 
 namespace Toshi
 {
@@ -31,6 +32,7 @@ namespace Toshi
 
 	public:
 		bool LoadTrb(const char*);
+		int ReadTrb(TTSF&);
 
 	private:
 		Header* m_pHeader;          // 0x0
