@@ -8,6 +8,7 @@
 #include <Toshi/Core/TScheduler.h>
 #include <Toshi/Math/TRandom.h>
 #include <Toshi/File/TTRB.h>
+#include <Toshi/Core/TGenericDList.h>
 
 TOSHI_CLASS_DERIVED_INITIALIZE(AExampleClass, Toshi::TObject, TMAKEVERSION(1, 0))
 
@@ -55,7 +56,29 @@ AExampleClass::AExampleClass()
 	Toshi::TTRB trb = Toshi::TTRB();
 	trb.LoadTrb("C:\\Program Files (x86)\\Steam\\steamapps\\common\\de Blob\\Data\\BlobChar\\AssetPack.trb");
 
+	class Test : public Toshi::TDList<Test>::TNode
+	{
+	public:
+		Test(float value) : m_Value(value) { }
+
+		inline Test* Next() { return TNode::Next()->As<Test>(); }
+		inline float GetValue() const { return m_Value; }
+
+		inline void Log() const { TOSHI_INFO(m_Value); }
+	private:
+		float m_Value;
+	};
+
+	Toshi::TDList<Test> list;
+	list.InsertHead(Toshi::tnew<Test>(1.0f));
+	list.InsertHead(Toshi::tnew<Test>(5.0f));
 	
+	list.GetFirst()->Log();         // 5.0
+	list.GetFirst()->Next()->Log(); // 1.0
+
+	Toshi::tdelete(list.GetFirst()->Next());
+	Toshi::tdelete(list.GetFirst());
+
 	auto kernel = Toshi::tnew<Toshi::TKernelInterface>();
 	
 	m_RootTask = static_cast<ARootTask*>(
