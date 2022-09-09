@@ -91,6 +91,21 @@ namespace Toshi
 
 	protected:
 	};
+
+	template <class T>
+	class T2DList : public TGenericDList
+	{
+	public:
+		T2DList() { }
+
+		inline bool IsLinked() { return m_Root.IsLinked(); }
+		inline T* GetFirst() { return static_cast<T*>(m_Root.Next()); }
+		inline T& GetFirstRef() { return static_cast<T&>(*m_Root.Next()); }
+		inline T* GetRoot() { return static_cast<T*>(&m_Root); }
+		inline T& GetRootRef() { return static_cast<T&>(m_Root); }
+
+	protected:
+	};
 }
 
 
