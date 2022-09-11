@@ -18,3 +18,9 @@ bool Toshi::TModel::LoadTMD(const char* a_tmdPath)
 	}
 	return false;
 }
+
+bool Toshi::TModel::LoadTRBTMD(const char*)
+{
+
+	return false;
+}
