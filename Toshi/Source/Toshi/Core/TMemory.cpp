@@ -19,7 +19,9 @@ namespace Toshi
 
 		// todo: it's better to add some kind of an auto extension of the allocated memory
 		// so we won't allocate a lot of memory at the application startup
-		instance.m_AllocatedMem = new char[instance.m_Size];
+		// instance.m_AllocatedMem = new char[instance.m_Size];
+		instance.m_ProcessHeap = GetProcessHeap();
+		instance.m_AllocatedMem = HeapAlloc(instance.m_ProcessHeap, NULL, instance.m_Size);
 
 		// add the global toshi block
 		instance.m_GlobalBlock = instance.AllocMem(instance.m_AllocatedMem, instance.m_Size, "Toshi");
@@ -69,7 +71,8 @@ namespace Toshi
 	TMemory::~TMemory()
 	{
 		// free the allocated memory
-		delete[] m_AllocatedMem;
+		BOOL result = HeapFree(m_ProcessHeap, NULL, m_AllocatedMem);
+		TASSERT(result != 0, "HeapFree returned zero value");
 	}
 
 	TMemoryBlockRegion* TMemory::AllocMem(void* memory, size_t size, const char* name)
@@ -203,7 +206,7 @@ namespace Toshi
 
 		while (chunk1 != nullptr)
 		{
-			TMemoryChunk* mergeableChunk = (TMemoryChunk*)((char*)chunk1 + sizeof(TMemoryChunk) + chunk1->Size);
+			TMemoryChunk* mergeableChunk = (TMemoryChunk*)((uintptr_t)chunk1->Data + chunk1->Size);
 
 			// look for a mergeable chunk in the list
 			while (chunk2 != nullptr)

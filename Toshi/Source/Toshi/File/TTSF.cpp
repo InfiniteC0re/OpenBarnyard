@@ -109,7 +109,7 @@ namespace Toshi
 	{
 		// FUN_006880e0
 		uint32_t alignedSize = TMath::AlignNumUp(m_CurrentSection.Size);
-		m_pFile->Seek(alignedSize, TFile::TSEEK_CUR);
+		m_pFile->Seek(alignedSize - m_ReadPos, TFile::TSEEK_CUR);
 		m_ReadPos = alignedSize;
 
 		return TTRB::ERROR_OK;

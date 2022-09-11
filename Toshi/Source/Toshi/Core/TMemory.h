@@ -82,6 +82,7 @@ namespace Toshi
 		TMemoryBlockInfo m_UsedBlocksContainer;
 		TMemoryBlockInfo m_Blocks[TOSHI_MEM_BLOCK_COUNT];
 		TMemoryBlockRegion* m_GlobalBlock;
+		HANDLE m_ProcessHeap;
 		void* m_AllocatedMem;
 	};
 
