@@ -7,7 +7,10 @@ namespace Toshi
 
 namespace TMath
 {
+	// can be used to align size_t value to 4
 	constexpr size_t SIZE_T_ALIGN_VALUE = UINTPTR_MAX - (sizeof(uint32_t) - 1);
+	
+	// can be used to align uint32_t value to 4 
 	constexpr size_t UINT32_ALIGN_VALUE = UINT32_MAX - (sizeof(uint32_t) - 1);
 
 	constexpr char TINT8_MAX = INT8_MAX;
@@ -42,13 +45,22 @@ namespace TMath
 	inline int FastMod(int a_iNum, int a_iModulus) { TASSERT(a_iNum >= 0, ""); TASSERT(a_iModulus > 0, ""); TASSERT(0 == (a_iModulus & (a_iModulus - 1)), ""); return a_iNum & (a_iModulus - 1); }
 	inline void SinCos(float fVal, float& fVal1, float& fVal2) { fVal1 = cos(fVal); fVal2 = sin(fVal); }
 	inline void Clip(float& rfVal, float fVal, float fVal2) { if (fVal2 < rfVal) { rfVal = fVal2; } if (rfVal < fVal) { rfVal = fVal; } }
-
 	
-	inline void* AlignPointer(void* ptr) { return (void*)((size_t)ptr & SIZE_T_ALIGN_VALUE); }
+	inline uintptr_t AlignPointer(uintptr_t ptr) { return (ptr & SIZE_T_ALIGN_VALUE); }
+	inline uintptr_t AlignPointer(void* ptr) { return AlignPointer(reinterpret_cast<uintptr_t>(ptr)); }
 	
 #if INTPTR_MAX == INT64_MAX
 	// x64 only
+	
+	// aligns value to 4 bytes down (f.e. 7 => 4, 8 => 8, 9 => 8)
 	inline size_t AlignNum(size_t num) { return (num & SIZE_T_ALIGN_VALUE); }
+	
+	// aligns value to 4 bytes up (f.e. 7 => 8, 8 => 8, 9 => 12)
+	inline size_t AlignNumUp(size_t num) { return ((num + 3) & SIZE_T_ALIGN_VALUE); }
 #endif
+	// aligns value to 4 bytes down (f.e. 7 => 4, 8 => 8, 9 => 8)
 	inline uint32_t AlignNum(uint32_t num) { return (num & UINT32_ALIGN_VALUE); }
+	
+	// aligns value to 4 bytes up (f.e. 7 => 8, 8 => 8, 9 => 12)
+	inline uint32_t AlignNumUp(uint32_t num) { return ((num + 3) & UINT32_ALIGN_VALUE); }
 };

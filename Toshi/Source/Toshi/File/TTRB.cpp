@@ -22,18 +22,120 @@ namespace Toshi
 		return false;
 	}
 
-	int TTRB::ReadTrb(TTSF& param_1)
+	bool TTRB::ReadTrb(TTSF& ttsf)
 	{
-		int iVar11 = param_1.m_FileSize - 4;
-		const int size = 0x200;
+		static constexpr uint32_t RELCEntriesLimit = 0x200;
+		RELCEntry relcEntries[RELCEntriesLimit];
 
-		if (iVar11 < 1) 
+		int32_t fileSize = ttsf.m_CurrentSection.Size - 4;
+		int32_t leftSize = fileSize;
+		ttsf.PushFileInfo();
+
+		do
 		{
-			param_1.FUN_006881B0();
-			return 0; //idk
-		}
+			uint32_t sectionName = 0;
+			uint32_t sectionSize = 0;
 
-		param_1.SaveFileInfo();
-		return 0;
+			while (true)
+			{
+				if (fileSize < 1)
+				{
+					ttsf.PopFileInfo();
+					// FUN_007ebfbf
+					return true;
+				}
+
+				uint8_t readResult = ttsf.ReadSectionHeader();
+				if (readResult != ERROR_OK) return false;
+
+				//TASSERT(readResult == ERROR_OK, "Error in ReadSectionHeader");
+				
+				sectionName = ttsf.m_CurrentSection.Name;
+				sectionSize = ttsf.m_CurrentSection.Size;
+				leftSize -= TMath::AlignNumUp(sectionSize) + 8;
+
+				if (TMAKEFOUR("HEAD") < sectionName) break;
+
+				if (sectionName == TMAKEFOUR("HEAD"))
+				{
+					TTODO("HEAD section");
+
+					ttsf.SkipSection();
+					fileSize = leftSize;
+				}
+				else if (sectionName == TMAKEFOUR("SYMB"))
+				{
+					TTODO("SYMB section");
+					
+					char* SYMBData = (char*)tmalloc(ttsf.m_CurrentSection.Size);
+					ttsf.ReadSectionData(SYMBData);
+					tfree(SYMBData);
+
+					fileSize = leftSize;
+				}
+				else if (sectionName == TMAKEFOUR("SECC"))
+				{
+					TTODO("SECC section");
+
+					ttsf.SkipSection();
+					fileSize = leftSize;
+				}
+				else if (sectionName == TMAKEFOUR("RELC"))
+				{
+					TTODO("RELC section");
+
+					ttsf.SkipSection();
+					fileSize = leftSize;
+				}
+				else
+				{
+					// Unknown section
+					ttsf.SkipSection();
+					fileSize = leftSize;
+
+#ifdef TOSHI_DEBUG
+					ttsf.LogUnknownSection();
+#endif
+				}
+			}
+
+			if (sectionName != TMAKEFOUR("FORM"))
+			{
+				if (sectionName == TMAKEFOUR("SECT"))
+				{
+					TTODO("SECT section");
+
+					ttsf.SkipSection();
+					fileSize = leftSize;
+				}
+				else if (sectionName == TMAKEFOUR("HDRX"))
+				{
+					TTODO("HDRX section");
+
+					ttsf.SkipSection();
+					fileSize = leftSize;
+				}
+				else
+				{
+					// Unknown section
+					ttsf.SkipSection();
+					fileSize = leftSize;
+
+#ifdef TOSHI_DEBUG
+					ttsf.LogUnknownSection();
+#endif
+				}
+			}
+		} while (true);
+
+		SectionFORM form;
+		ttsf.ReadFORM(&form);
+		bool result = ReadTrb(ttsf);
+		fileSize = leftSize;
+
+		if (result == false)
+		{
+			return false;
+		}
 	}
 }

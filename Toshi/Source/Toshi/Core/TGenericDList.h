@@ -14,12 +14,12 @@ namespace Toshi
 			inline TNode* Prev() const { return m_pPrev; }
 			inline bool IsLinked() const { return this != m_pNext; }
 
-			void InsertAfter(TNode*);
-			void InsertBefore(TNode*);
+			void InsertAfter(TNode* node);
+			void InsertBefore(TNode* node);
 			void Remove();
 			void Reset();
 
-			TNode& operator=(const TNode& param_1);
+			TNode& operator=(const TNode& node);
 
 		public:
 			template<class T> friend class TDList;
@@ -83,13 +83,11 @@ namespace Toshi
 	public:
 		TDList() { }
 
-		inline bool IsLinked() { return m_Root.IsLinked(); }
-		inline T* GetFirst() { return static_cast<T*>(m_Root.Next()); }
-		inline T& GetFirstRef() { return static_cast<T&>(*m_Root.Next()); }
-		inline T* GetRoot() { return static_cast<T*>(&m_Root); }
-		inline T& GetRootRef() { return static_cast<T&>(m_Root); }
-
-	protected:
+		inline bool IsLinked()  { return m_Root.IsLinked(); }
+		inline T* GetRoot()     { return m_Root.As<T>(); }
+		inline T* GetFirst()    { return m_Root.Next()->As<T>(); }
+		inline T& GetRootRef()  { return *GetRootRef(); }
+		inline T& GetFirstRef() { return *GetFirst(); }
 	};
 
 	template <class T>
@@ -99,12 +97,10 @@ namespace Toshi
 		T2DList() { }
 
 		inline bool IsLinked() { return m_Root.IsLinked(); }
-		inline T* GetFirst() { return static_cast<T*>(m_Root.Next()); }
-		inline T& GetFirstRef() { return static_cast<T&>(*m_Root.Next()); }
-		inline T* GetRoot() { return static_cast<T*>(&m_Root); }
-		inline T& GetRootRef() { return static_cast<T&>(m_Root); }
-
-	protected:
+		inline T* GetRoot() { return m_Root.As<T>(); }
+		inline T* GetFirst() { return m_Root.Next()->As<T>(); }
+		inline T& GetRootRef() { return *GetRootRef(); }
+		inline T& GetFirstRef() { return *GetFirst(); }
 	};
 }
 
