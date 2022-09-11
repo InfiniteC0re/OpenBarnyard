@@ -61,7 +61,6 @@ namespace Toshi
 					TTODO("HEAD section");
 
 					ttsf.SkipSection();
-					fileSize = leftSize;
 				}
 				else if (sectionName == TMAKEFOUR("SYMB"))
 				{
@@ -70,33 +69,56 @@ namespace Toshi
 					char* SYMBData = (char*)tmalloc(ttsf.m_CurrentSection.Size);
 					ttsf.ReadSectionData(SYMBData);
 					tfree(SYMBData);
-
-					fileSize = leftSize;
 				}
 				else if (sectionName == TMAKEFOUR("SECC"))
 				{
 					TTODO("SECC section");
 
 					ttsf.SkipSection();
-					fileSize = leftSize;
 				}
 				else if (sectionName == TMAKEFOUR("RELC"))
 				{
 					TTODO("RELC section");
 
+					uint32_t relocCount = 0;
+					uint32_t curReloc = 0;
+					uint32_t readedRelocs = 0;
+
+					ttsf.ReadBytes(&relocCount, sizeof(relocCount));
+
+					if (relocCount < 1)
+					{
+						relocCount = 0;
+					}
+					else
+					{
+						do
+						{
+							uint32_t relocReadCount = relocCount - readedRelocs;
+
+							// limit count of RELCs to read
+							relocReadCount = TMath::Min(relocReadCount, RELCEntriesLimit);
+							ttsf.ReadBytes(relcEntries, relocReadCount << 3);
+							curReloc = readedRelocs + relocReadCount;
+
+							// TODO..... 0x0068704f
+
+						} while (curReloc < relocCount);
+					}
+
 					ttsf.SkipSection();
-					fileSize = leftSize;
 				}
 				else
 				{
 					// Unknown section
 					ttsf.SkipSection();
-					fileSize = leftSize;
 
 #ifdef TOSHI_DEBUG
 					ttsf.LogUnknownSection();
 #endif
 				}
+
+				fileSize = leftSize;
 			}
 
 			if (sectionName != TMAKEFOUR("FORM"))
@@ -106,25 +128,24 @@ namespace Toshi
 					TTODO("SECT section");
 
 					ttsf.SkipSection();
-					fileSize = leftSize;
 				}
 				else if (sectionName == TMAKEFOUR("HDRX"))
 				{
 					TTODO("HDRX section");
 
 					ttsf.SkipSection();
-					fileSize = leftSize;
 				}
 				else
 				{
 					// Unknown section
 					ttsf.SkipSection();
-					fileSize = leftSize;
 
 #ifdef TOSHI_DEBUG
 					ttsf.LogUnknownSection();
 #endif
 				}
+
+				fileSize = leftSize;
 			}
 		} while (true);
 

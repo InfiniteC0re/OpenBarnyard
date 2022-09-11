@@ -41,11 +41,14 @@ namespace Toshi
 		uint8_t PushFileInfo();
 		uint8_t PopFileInfo();
 
+		// 0x00688250
+		inline void ReadBytes(void* dest, uint32_t size) { m_ReadPos += m_pFile->Read(dest, size); }
+
 		// Sections related stuff
 		uint8_t ReadSectionHeader();
 		uint8_t SkipSection();
 		uint8_t ReadFORM(TTRB::SectionFORM* section);
-		uint8_t ReadSectionData(void* dst);
+		uint8_t ReadSectionData(void* dest);
 
 		void LogUnknownSection();
 

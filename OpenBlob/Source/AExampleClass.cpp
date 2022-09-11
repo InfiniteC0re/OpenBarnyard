@@ -54,7 +54,7 @@ AExampleClass::AExampleClass()
 	}
 
 	Toshi::TTRB trb = Toshi::TTRB();
-	trb.LoadTrb("C:\\Program Files (x86)\\Steam\\steamapps\\common\\de Blob\\Data\\BlobChar\\AssetPack.trb");
+	trb.LoadTrb("C:\\ATapperMiniGameState.trb");
 
 	class Test : public Toshi::TDList<Test>::TNode
 	{
