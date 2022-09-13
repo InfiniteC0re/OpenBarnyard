@@ -44,10 +44,10 @@ namespace Toshi
 
 	void TVector4::CrossProduct(const TVector4& a_rVec4, const TVector4& a_rVec4_2)
 	{
-		TMathFloating fX = a_rVec4_2.z * a_rVec4.y - a_rVec4_2.y * a_rVec4.z;
-		TMathFloating fY = a_rVec4.z * a_rVec4_2.x - a_rVec4_2.z * a_rVec4.x;
-		TMathFloating fZ = a_rVec4.x * a_rVec4_2.y - a_rVec4.y * a_rVec4_2.x;
-		Set(fX, fY, fZ, w);
+		x = a_rVec4_2.z * a_rVec4.y - a_rVec4_2.y * a_rVec4.z;
+		y = a_rVec4.z * a_rVec4_2.x - a_rVec4_2.z * a_rVec4.x;
+		z = a_rVec4.x * a_rVec4_2.y - a_rVec4.y * a_rVec4_2.x;
+		w = a_rVec4.w;
 	}
 
 	void TVector4::Negate3()
