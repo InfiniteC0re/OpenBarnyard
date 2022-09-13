@@ -50,6 +50,24 @@ namespace Toshi
 		w = a_rVec4.w;
 	}
 
+	float TVector4::Distance(const TVector4& a_rVec4, const TVector4& a_rVec4_2)
+	{
+		TMathFloating fVar1 = a_rVec4_2.x - a_rVec4.x;
+		TMathFloating fVar2 = a_rVec4_2.y - a_rVec4.y;
+		TMathFloating fVar3 = a_rVec4_2.z - a_rVec4.z;
+
+		return TMath::Sqrt(fVar1 * fVar1 + fVar2 * fVar2 + fVar3 * fVar3);
+	}
+
+	float TVector4::DistanceSq(const TVector4& a_rVec4, const TVector4& a_rVec4_2)
+	{
+		TMathFloating fVar1 = a_rVec4_2.x - a_rVec4.x;
+		TMathFloating fVar2 = a_rVec4_2.y - a_rVec4.y;
+		TMathFloating fVar3 = a_rVec4_2.z - a_rVec4.z;
+
+		return fVar1 * fVar1 + fVar2 * fVar2 + fVar3 * fVar3;
+	}
+
 	void TVector4::Negate3()
 	{
 		x = -x;

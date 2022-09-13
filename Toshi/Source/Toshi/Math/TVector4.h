@@ -25,6 +25,8 @@ namespace Toshi
 		inline TVector3& AsVector3() { return reinterpret_cast<TVector3&>(*this); }
 		void Cos(const TVector4& a_rVec4);
 		void CrossProduct(const TVector4& a_rVec4, const TVector4& a_rVec4_2);
+		static float Distance(const TVector4& a_rVec4, const TVector4& a_rVec4_2);
+		static float DistanceSq(const TVector4& a_rVec4, const TVector4& a_rVec4_2);
 		void Negate3();
 		void Set(const TVector3& a_rVec3);
 		void Set(float a_fVal1, float a_fVal2, float a_fVal3, float a_fVal4);
