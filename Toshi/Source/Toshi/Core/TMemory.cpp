@@ -19,7 +19,9 @@ namespace Toshi
 
 		// todo: it's better to add some kind of an auto extension of the allocated memory
 		// so we won't allocate a lot of memory at the application startup
-		instance.m_AllocatedMem = new char[instance.m_Size];
+		// instance.m_AllocatedMem = new char[instance.m_Size];
+		instance.m_ProcessHeap = GetProcessHeap();
+		instance.m_AllocatedMem = HeapAlloc(instance.m_ProcessHeap, NULL, instance.m_Size);
 
 		// add the global toshi block
 		instance.m_GlobalBlock = instance.AllocMem(instance.m_AllocatedMem, instance.m_Size, "Toshi");
@@ -69,7 +71,8 @@ namespace Toshi
 	TMemory::~TMemory()
 	{
 		// free the allocated memory
-		delete[] m_AllocatedMem;
+		BOOL result = HeapFree(m_ProcessHeap, NULL, m_AllocatedMem);
+		TASSERT(result != 0, "HeapFree returned zero value");
 	}
 
 	TMemoryBlockRegion* TMemory::AllocMem(void* memory, size_t size, const char* name)
@@ -77,16 +80,18 @@ namespace Toshi
 		TMemoryBlockRegion* result = nullptr;
 
 		// align address to the pointer size
-		void* alignedMemory = TMath::AlignPointer(memory);
-		size_t alignedSize = TMath::AlignNum((size_t)memory + size) - (size_t)alignedMemory;
+		uintptr_t alignedMemory = TMath::AlignPointer(memory);
+		size_t alignedSize = TMath::AlignNum((size_t)memory + size) - alignedMemory;
 
 		// this mutex will unlock automatically at return
 		TMutexLock mutexLock(s_Mutex);
 
-		if (size > 0 && alignedMemory != nullptr && memory != nullptr)
+		if (size > 0 && alignedMemory != 0 && memory != nullptr)
 		{
 			TMemoryBlockInfo* block = nullptr;
-			TMemoryBlockRegion* blockRegion = (TMemoryBlockRegion*)alignedMemory;
+
+			uintptr_t blockRegionPtr = alignedMemory;
+			TMemoryBlockRegion* blockRegion = reinterpret_cast<TMemoryBlockRegion*>(blockRegionPtr);
 
 			if (alignedMemory != 0)
 			{
@@ -109,13 +114,15 @@ namespace Toshi
 				strncpy_s(blockRegion->Name, name, sizeof(blockRegion->Name));
 				blockRegion->Size = alignedSize - sizeof(TMemoryBlockRegion);
 
+				uintptr_t chunkPtr = blockRegionPtr + sizeof(TMemoryBlockRegion);
+				TMemoryChunk* chunk = reinterpret_cast<TMemoryChunk*>(chunkPtr);
+				
 				// place the first empty chunk right after blockRegion
-				TMemoryChunk* chunk = (TMemoryChunk*)((char*)blockRegion + sizeof(TMemoryBlockRegion));
 				chunk->Region = blockRegion;
 				chunk->Next = nullptr;
 				chunk->Prev = nullptr;
 				chunk->Size = blockRegion->Size - sizeof(TMemoryChunk);
-				chunk->Data = (char*)chunk + sizeof(TMemoryChunk);
+				chunk->Data = reinterpret_cast<void*>(chunkPtr + sizeof(TMemoryChunk));
 
 				blockRegion->UsedChunks = nullptr;
 				blockRegion->FreeChunks = chunk;
@@ -199,7 +206,7 @@ namespace Toshi
 
 		while (chunk1 != nullptr)
 		{
-			TMemoryChunk* mergeableChunk = (TMemoryChunk*)((char*)chunk1 + sizeof(TMemoryChunk) + chunk1->Size);
+			TMemoryChunk* mergeableChunk = (TMemoryChunk*)((uintptr_t)chunk1->Data + chunk1->Size);
 
 			// look for a mergeable chunk in the list
 			while (chunk2 != nullptr)
@@ -227,7 +234,7 @@ namespace Toshi
 
 		// set minimum size to 4
 		if (size < 4) size = 4;
-		size = TMath::AlignNum(size + 3);
+		size = TMath::AlignNumUp(size);
 
 		size_t totalSize = size + sizeof(TMemoryChunk);
 
@@ -235,10 +242,12 @@ namespace Toshi
 		{
 			if (chunk->Size >= totalSize)
 			{
-				auto newChunk = (TMemoryChunk*)((size_t)chunk->Data + size);
+				uintptr_t newChunkPtr = (uintptr_t)chunk->Data + size;
+				auto newChunk = reinterpret_cast<TMemoryChunk*>(newChunkPtr);
+				
 				newChunk->Region = chunk->Region;
 				newChunk->Size = chunk->Size - totalSize;
-				newChunk->Data = newChunk + 1;
+				newChunk->Data = reinterpret_cast<void*>(newChunkPtr + sizeof(TMemoryChunk));
 				chunk->Size = size;
 
 				DeleteChunkFromList(&newChunk->Region->FreeChunks, chunk);
@@ -260,7 +269,7 @@ namespace Toshi
 
 	bool tfree(void* ptr)
 	{
-		auto chunk = (TMemoryChunk*)((char*)ptr - sizeof(TMemoryChunk));
+		auto chunk = reinterpret_cast<TMemoryChunk*>((uintptr_t)ptr - sizeof(TMemoryChunk));
 
 		if (ptr == chunk->Data)
 		{

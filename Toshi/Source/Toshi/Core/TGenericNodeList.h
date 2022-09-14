@@ -4,12 +4,8 @@ namespace Toshi
 	class TGenericNodeList
 	{
 	public:
-
-		
-
 		class TNode
 		{
-			
 			TGenericNodeList* m_pList; // 0x4
 			TNode* m_pNext; // 0x8
 			TNode* m_pPrev; // 0xC
@@ -34,15 +30,11 @@ namespace Toshi
 				m_pPrev = a_pNode.Prev();
 			}
 
-			TNode& operator=(const TNode& a_pNode) 
-			{
-				TNode(a_pNode);
-				return *this;
-			}
+			TNode operator=(const TNode& a_pNode)  { return TNode(a_pNode); }
+		
 		public:
 			template<class T> friend class TNodeList;
 			friend TGenericNodeList;
-
 		};
 
 		class Iterator
@@ -75,13 +67,13 @@ namespace Toshi
 	class TNodeList : public TGenericNodeList
 	{
 	public:
-		TDList() { }
+		TNodeList() { }
 
-		inline bool IsLinked() { return m_Root.IsLinked(); }
+		/*inline bool IsLinked() { return m_Root.IsLinked(); }
 		inline T* GetFirst() { return static_cast<T*>(m_Root.Next()); }
 		inline T& GetFirstRef() { return static_cast<T&>(*m_Root.Next()); }
 		inline T* GetRoot() { return static_cast<T*>(&m_Root); }
-		inline T& GetRootRef() { return static_cast<T&>(m_Root); }
+		inline T& GetRootRef() { return static_cast<T&>(m_Root); }*/
 
 	protected:
 	};
