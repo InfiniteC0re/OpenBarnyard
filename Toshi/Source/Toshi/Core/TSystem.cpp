@@ -31,11 +31,12 @@ namespace Toshi
 
 		return dst;
 	}
+
 	size_t TSystem::StringLength(const char* const& str)
 	{
 		const char* currentChar = str;
 		while (*currentChar != 0) { currentChar++; }
-		return (uint32_t)(currentChar - str);
+		return currentChar - str;
 	}
 
 	size_t TSystem::StringLength(const wchar_t* const& wstr)

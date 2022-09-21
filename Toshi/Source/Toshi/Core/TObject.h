@@ -5,9 +5,6 @@
 #include "Toshi/Core/TMemory.h"
 #include "Toshi/Utils/TLog.h"
 
-#define DEFINE_TYPE_NAME(TYPE) \
-template<> const char *GetTypeName<TYPE>(){ return #TYPE; }
-
 namespace Toshi
 {
 	class TObject

@@ -27,15 +27,15 @@ namespace TMath
 
 	constexpr unsigned short MAXWCHAR = WCHAR_MAX;
 
-	constexpr float TFLOAT_MAX = FLT_MAX;
-	constexpr float TFLOAT_MIN = FLT_MIN;
-	constexpr float TFLOAT_EPSILON = FLT_EPSILON; // Renamed according to de Blob
-	constexpr float FLOATEPSILON = FLT_EPSILON; // Both exist for some reason
+	constexpr Toshi::TMathFloating TFLOAT_MAX = FLT_MAX;
+	constexpr Toshi::TMathFloating TFLOAT_MIN = FLT_MIN;
+	constexpr Toshi::TMathFloating TFLOAT_EPSILON = FLT_EPSILON; // Renamed according to de Blob
+	constexpr Toshi::TMathFloating FLOATEPSILON = FLT_EPSILON; // Both exist for some reason
 
-	constexpr float PI = (float)3.141592653589793238462643383279502884L;
-	constexpr float TWO_PI = PI * 2;
-	constexpr float HALF_PI = PI / 2;
-	constexpr float ONEOVERTWO_PI = 1 / TWO_PI;
+	constexpr Toshi::TMathFloating PI = (float)3.141592653589793238462643383279502884L;
+	constexpr Toshi::TMathFloating TWO_PI = PI * 2;
+	constexpr Toshi::TMathFloating HALF_PI = PI / 2;
+	constexpr Toshi::TMathFloating ONEOVERTWO_PI = 1 / TWO_PI;
 
 	inline bool IsFinite(float fVal) { return _finite(fVal) != 0; }
 	inline float ACos(float fVal) { return cosf(fVal); }

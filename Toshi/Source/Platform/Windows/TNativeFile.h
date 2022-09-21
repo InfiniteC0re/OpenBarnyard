@@ -39,11 +39,11 @@ namespace Toshi
 		HANDLE hnd; // 0x8
 		uint32_t m_position; // 0xC
 		DWORD unk2; //0x10
-		int unk4; // 0x14
-		int unk5; // 0x18
+		uint32_t unk4; // 0x14
+		uint32_t unk5; // 0x18
 		LPVOID m_pBuffer; // 0x1C
 		LPVOID buffer; // 0x20
-		int m_iWriteBufferUsed; // 0x24
+		uint32_t m_iWriteBufferUsed; // 0x24
 		bool m_bWriteBuffered; // 0x28
 	};
 }

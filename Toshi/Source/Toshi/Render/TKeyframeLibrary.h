@@ -19,12 +19,12 @@ namespace Toshi
 		inline void SetLibrary(TKeyframeLibrary* value) { m_pKeyLibrary = value; }
 		inline TKeyframeLibrary* GetLibrary() { return m_pKeyLibrary; }
 
-		inline int GetSCount() { return m_iSCount; }
-		inline void SetSCount(int a_iSCount) { m_iSCount = a_iSCount; }
+		inline uint32_t GetSCount() { return m_iSCount; }
+		inline void SetSCount(uint32_t a_iSCount) { m_iSCount = a_iSCount; }
 
 	private:
 		TKeyframeLibrary* m_pKeyLibrary;
-		int m_iSCount; // 0x18
+		uint32_t m_iSCount; // 0x18
 	};
 }
 

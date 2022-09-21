@@ -25,7 +25,7 @@ namespace Toshi
 		// Returns true if allocated memory
 		bool AllocBuffer(uint32_t size, bool freeMemory = true);
 
-		TCString& Format(const char* a_pcFormat, ...);
+		TCString Format(const char* a_pcFormat, ...);
 		TCString& VFormat(const char* a_pcFormat, char* a_pcArgs);
 
 		void UndoForceSetData();

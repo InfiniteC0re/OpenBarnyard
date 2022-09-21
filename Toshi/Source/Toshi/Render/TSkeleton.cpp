@@ -40,15 +40,12 @@ uint32_t Toshi::TSkeleton::GetBoneID(const char* a_cBoneName, uint32_t length)
 		length = (uint32_t)Toshi::TSystem::StringLength(a_cBoneName);
 	}
 
-	for (size_t i = 0; i < m_sBoneCount; i++)
+	for (short i = 0; i < m_sBoneCount; i++)
 	{
 		if (m_Bones[i].GetResourceName().GetNameLength() == length)
 		{
 			int comp = TSystem::StringCompareNoCase(m_Bones[i].GetResourceName().GetName(), a_cBoneName, length);
-			if (comp == 0)
-			{
-				return i;
-			}
+			if (comp == 0) { return i; }
 		}
 	}
 
@@ -59,18 +56,15 @@ uint32_t Toshi::TSkeleton::GetSequenceID(const char* a_sSequenceName, uint32_t l
 {
 	if (length == 0)
 	{
-		length = Toshi::TSystem::StringLength(a_sSequenceName);
+		length = (uint32_t)Toshi::TSystem::StringLength(a_sSequenceName);
 	}
 
-	for (size_t i = 0; i < m_sBoneCount; i++)
+	for (short i = 0; i < m_sSequenceCount; i++)
 	{
 		if (m_SkeletonSequences[i]->GetResourceName().GetNameLength() == length)
 		{
 			int comp = TSystem::StringCompareNoCase(m_SkeletonSequences[i]->GetResourceName().GetName(), a_sSequenceName, length);
-			if (comp == 0)
-			{
-				return i;
-			}
+			if (comp == 0) { return i; }
 		}
 	}
 

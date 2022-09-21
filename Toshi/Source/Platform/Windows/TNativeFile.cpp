@@ -184,7 +184,7 @@ namespace Toshi
         FlushWriteBuffer();
         if (m_pBuffer != TNULL)
         {
-            int unk = (m_position & 0xFFFFF800);
+            uint32_t unk = (m_position & 0xFFFFF800);
             if ((unk == unk4) && (m_position - unk <= unk5-1))
             {
                 char c = ((char*)m_pBuffer)[m_position - unk];
