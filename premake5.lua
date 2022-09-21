@@ -1,5 +1,5 @@
 workspace "Toshi"
-	architecture "x64"
+	architecture "x86"
 	platforms "Windows"
 
 	configurations { "Debug", "Release", "Dist" }

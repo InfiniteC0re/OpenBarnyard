@@ -10,8 +10,8 @@ namespace Toshi
 	public:
 		TNativeFile(const TNativeFile&);
 
-		virtual int Read(LPVOID, int) override;
-		virtual int Write(LPVOID, int) { return 0; }
+		virtual size_t Read(LPVOID, size_t) override;
+		virtual int Write(LPVOID, size_t) { return 0; }
 		virtual bool Seek(int, TFile::TSEEK) override;
 		virtual uint32_t Tell() override;
 		virtual int GetSize() override;
@@ -23,7 +23,7 @@ namespace Toshi
 		virtual int VCPrintf(const char* format, ...) { return 0; }
 		virtual int VWPrintf(const wchar_t* format, ...) { return 0; }
 		
-		bool LoadBuffer(DWORD);
+		bool LoadBuffer(DWORD curBufferOverflow);
 		int FlushWriteBuffer();
 		int ReadUnbuffered(LPVOID, int);
 
@@ -37,12 +37,12 @@ namespace Toshi
 
 	private:
 		HANDLE hnd; // 0x8
-		uint32_t m_position; // 0xC
+		uint32_t m_Position; // 0xC
 		DWORD unk2; //0x10
-		uint32_t unk4; // 0x14
-		uint32_t unk5; // 0x18
-		LPVOID m_pBuffer; // 0x1C
-		LPVOID buffer; // 0x20
+		uint32_t m_PrevBufferPos; // 0x14
+		uint32_t m_LastBufferSize; // 0x18
+		char* m_pBuffer1; // 0x1C
+		char* m_pBuffer2; // 0x20
 		uint32_t m_iWriteBufferUsed; // 0x24
 		bool m_bWriteBuffered; // 0x28
 	};

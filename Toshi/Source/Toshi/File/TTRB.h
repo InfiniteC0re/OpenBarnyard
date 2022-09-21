@@ -25,25 +25,26 @@ namespace Toshi
 		
 		struct SecInfo
 		{
+			char m_Unused[2];  // Padding
 			short m_Unk1;      // ?
-			uint32_t m_Size;   // 
-			void* m_pData;     // 
-			uint32_t m_Unk2;   // 
-			char m_Padding[2]; // 
+			uint32_t m_Size;   // Size of section
+			void* m_pData;
+			uint32_t m_Unk2;
 		};
 		
 		struct Header
 		{
 			uint32_t m_ui32Version;     // 0x0
 			uint32_t m_i32SectionCount; // 0x4
-			char m_Unused[2];           // Padding value?
 		};
 
 #pragma pack(pop)
 
 		struct RELCEntry
 		{
-
+			short HDRX1;
+			short HDRX2;
+			uint32_t Offset;
 		};
 
 		struct SectionFORM
