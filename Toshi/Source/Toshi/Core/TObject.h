@@ -5,6 +5,9 @@
 #include "Toshi/Core/TMemory.h"
 #include "Toshi/Utils/TLog.h"
 
+#define DEFINE_TYPE_NAME(TYPE) \
+template<> const char *GetTypeName<TYPE>(){ return #TYPE; }
+
 namespace Toshi
 {
 	class TObject
@@ -29,7 +32,7 @@ namespace Toshi
 		static constinit TClass s_Class;
 	};
 
-	template<class T, class Parent, uint32_t Version, bool Instantiable>
+	template<class T, class Parent, STL::StringLiteral Name, uint32_t Version, bool Instantiable>
 	class TGenericClassDerived : public Parent
 	{
 	public:
@@ -54,7 +57,7 @@ namespace Toshi
 		static TClass s_Class;
 	};
 
-	template <class T, class Parent, uint32_t Version, bool Instantiable>
-	TClass TGenericClassDerived<T, Parent, Version, Instantiable>::s_Class = TClass(typeid(T).name(), &Parent::s_Class, Version, sizeof(T), T::CreateTObject, T::CreateTObjectInPlace, 0, 0);
+	template <class T, class Parent, STL::StringLiteral Name, uint32_t Version, bool Instantiable>
+	TClass TGenericClassDerived<T, Parent, Name, Version, Instantiable>::s_Class = TClass(Name.value, &Parent::s_Class, Version, sizeof(T), T::CreateTObject, T::CreateTObjectInPlace, 0, 0);
 }
 

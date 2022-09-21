@@ -6,7 +6,8 @@
 
 namespace Toshi
 {
-	class TMSWindow : public TGenericClassDerived<TMSWindow, TObject, TMAKEVERSION(1, 0), false>
+	class TMSWindow :
+		public TGenericClassDerived<TMSWindow, TObject, "TMSWindow", TMAKEVERSION(1, 0), false>
 	{
 		HWND* hwnd; // 0x4
 		TRender* m_pRenderer; // Name is a guess

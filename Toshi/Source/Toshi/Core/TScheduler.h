@@ -6,7 +6,8 @@ namespace Toshi
 {
 	class TTask;
 
-	class TScheduler : public TGenericClassDerived<TScheduler, TObject, TMAKEVERSION(1, 0), false>
+	class TScheduler :
+		public TGenericClassDerived<TScheduler, TObject, "TScheduler", TMAKEVERSION(1, 0), false>
 	{
 	public:
 		TScheduler(TKernelInterface* kernelInterface);

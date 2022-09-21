@@ -5,7 +5,8 @@
 
 namespace Toshi
 {
-	class TTask : public TGenericClassDerived<TTask, TObject, TMAKEVERSION(1, 0), false>
+	class TTask :
+		public TGenericClassDerived<TTask, TObject, "TTask", TMAKEVERSION(1, 0), false>
 	{
 	public:
 		friend TScheduler;

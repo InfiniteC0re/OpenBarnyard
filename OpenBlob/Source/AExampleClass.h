@@ -6,7 +6,7 @@
 //-----------------------------------------------------------
 
 class AExampleClass :
-	public Toshi::TGenericClassDerived<AExampleClass, Toshi::TObject, TMAKEVERSION(1, 0), false>
+	public Toshi::TGenericClassDerived<AExampleClass, Toshi::TObject, "AExampleClass", TMAKEVERSION(1, 0), false>
 {
 public:
 	AExampleClass();

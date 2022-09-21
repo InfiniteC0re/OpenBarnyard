@@ -2,7 +2,8 @@
 
 namespace Toshi
 {
-	class TRender : public TGenericClassDerived<TRender, TObject, TMAKEVERSION(1, 0), true>
+	class TRender :
+		public TGenericClassDerived<TRender, TObject, "TRender", TMAKEVERSION(1, 0), true>
 	{
 
 	};

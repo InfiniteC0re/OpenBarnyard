@@ -2,7 +2,7 @@
 #include <Toshi/Core/TTask.h>
 
 class ARootTask :
-	public Toshi::TGenericClassDerived<ARootTask, Toshi::TTask, TMAKEVERSION(1, 0), true>
+	public Toshi::TGenericClassDerived<ARootTask, Toshi::TTask, "ARootTask", TMAKEVERSION(1, 0), true>
 {
 public:
 	ARootTask() = default;
