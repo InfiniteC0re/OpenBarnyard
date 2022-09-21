@@ -125,15 +125,27 @@ namespace Toshi
 			{
 				if (sectionName == TMAKEFOUR("SECT"))
 				{
-					TTODO("SECT section");
+					SecInfo* section = reinterpret_cast<SecInfo*>(m_pHeader + 1);
+					for (uint32_t i = 0; i < m_pHeader->m_i32SectionCount; i++)
+					{
+						ttsf.ReadBytes(section->m_pData, section->m_Size);
+						section += 1;
+					}
 
 					ttsf.SkipSection();
 				}
 				else if (sectionName == TMAKEFOUR("HDRX"))
 				{
-					TTODO("HDRX section");
+					m_pHeader = (Header*)tmalloc(sectionSize);
+					ttsf.ReadSectionData(m_pHeader);
 
-					ttsf.SkipSection();
+					SecInfo* section = (SecInfo*)(m_pHeader + 1);
+					for (uint32_t i = 0; i < m_pHeader->m_i32SectionCount; i++)
+					{
+						section->m_Unk1 = (section->m_Unk1 == 0) ? 16 : section->m_Unk1;
+						section->m_pData = tmalloc(section->m_Size);
+						section += 1;
+					}
 				}
 				else
 				{
