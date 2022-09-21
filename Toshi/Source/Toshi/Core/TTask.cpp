@@ -3,8 +3,6 @@
 
 namespace Toshi
 {
-	TOSHI_CLASS_DERIVED_INITIALIZE(TTask, TObject, TMAKEVERSION(1, 0))
-	
 	TTask::TTask()
 	{
 		m_Unk1 = nullptr;
@@ -41,7 +39,7 @@ namespace Toshi
 				return false;
 			}
 
-			m_State |= TTaskState_Created;
+			m_State |= State_Created;
 			Activate(true);
 		}
 
@@ -102,9 +100,9 @@ namespace Toshi
 	void TTask::Activate(bool activate)
 	{
 		uint8_t oldState = m_State;
-		uint8_t newFlags = activate ? TTaskState_Active : 0;
+		uint8_t newFlags = activate ? State_Active : 0;
 
-		m_State = (m_State & ~TTaskState_Active) | newFlags;
+		m_State = (m_State & ~State_Active) | newFlags;
 
 		if (oldState != m_State)
 		{

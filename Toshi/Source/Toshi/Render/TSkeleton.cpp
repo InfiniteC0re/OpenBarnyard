@@ -19,9 +19,11 @@ void Toshi::TSkeleton::Delete()
 {
 	if (m_KeyLibraryInstance.GetLibrary() != TNULL)
 	{
-		m_KeyLibraryInstance.m_pKeyLibrary->m_iReferenceCount--;
-		m_KeyLibraryInstance.m_pKeyLibrary = TNULL;
+		auto& instance = GetKeyLibraryInstance();
+		instance.SetSCount(instance.GetSCount() - 1);
+		instance.SetLibrary(TNULL);
 	}
+
 	tfree(this);
 }
 
@@ -31,11 +33,11 @@ bool Toshi::TSkeleton::Create(uint32_t param_1)
 	return false;
 }
 
-int Toshi::TSkeleton::GetBoneID(const char* a_cBoneName, int length)
+uint32_t Toshi::TSkeleton::GetBoneID(const char* a_cBoneName, uint32_t length)
 {
 	if (length == 0)
 	{
-		length = Toshi::TSystem::StringLength(a_cBoneName);
+		length = (uint32_t)Toshi::TSystem::StringLength(a_cBoneName);
 	}
 
 	for (size_t i = 0; i < m_sBoneCount; i++)
@@ -53,7 +55,7 @@ int Toshi::TSkeleton::GetBoneID(const char* a_cBoneName, int length)
 	return -1;
 }
 
-int Toshi::TSkeleton::GetSequenceID(const char* a_sSequenceName, int length)
+uint32_t Toshi::TSkeleton::GetSequenceID(const char* a_sSequenceName, uint32_t length)
 {
 	if (length == 0)
 	{

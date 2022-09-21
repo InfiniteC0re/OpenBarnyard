@@ -4,8 +4,6 @@
 
 namespace Toshi
 {
-	TOSHI_CLASS_DERIVED_INITIALIZE(TKernelInterface, TObject, TMAKEVERSION(1, 0))
-	
 	TKernelInterface::TKernelInterface()
 	{
 		m_Scheduler = STL::CreateRef<TScheduler>(this);

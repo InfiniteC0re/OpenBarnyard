@@ -5,33 +5,6 @@
 #include "Toshi/Core/TMemory.h"
 #include "Toshi/Utils/TLog.h"
 
-#define TOSHI_CLASS_DEFINE(CLASSNAME) \
-public: \
-	virtual Toshi::TClass* GetClass() { return &s_Class; } \
-	static Toshi::TObject* CreateTObject() { return Toshi::tnew<CLASSNAME>(); } \
-	static Toshi::TObject* CreateTObjectInPlace(void* ptr) { return new (ptr) CLASSNAME(); } \
-	static Toshi::TClass s_Class;
-
-#define TOSHI_CLASS_NO_CREATE_DEFINE(CLASSNAME) \
-public: \
-	virtual Toshi::TClass* GetClass() { return &s_Class; } \
-	static Toshi::TObject* CreateTObject() { return nullptr; } \
-	static Toshi::TObject* CreateTObjectInPlace(void* ptr) { return nullptr; } \
-	static Toshi::TClass s_Class;
-
-#define TOSHI_CLASS_STATIC_DEFINE(CLASSNAME) \
-public: \
-	virtual Toshi::TClass* GetClass() { return s_Class; } \
-	inline static Toshi::TObject* CreateTObject() { return Toshi::tnew<CLASSNAME>(); } \
-	inline static Toshi::TObject* CreateTObjectInPlace(void* ptr) { return new (ptr) CLASSNAME(); } \
-	static constinit Toshi::TClass s_Class;
-
-#define TOSHI_CLASS_DERIVED_INITIALIZE(CLASSNAME, PARENT, VER) \
-Toshi::TClass CLASSNAME::s_Class(#CLASSNAME, &PARENT::s_Class, VER, sizeof(CLASSNAME), CLASSNAME::CreateTObject, CLASSNAME::CreateTObjectInPlace, 0, 0);
-
-#define TOSHI_CLASS_INITIALIZE(CLASSNAME, VER) \
-Toshi::TClass CLASSNAME::s_Class(#CLASSNAME, TNULL, VER, sizeof(CLASSNAME), CLASSNAME::CreateTObject, CLASSNAME::CreateTObjectInPlace, 0, 0);
-
 namespace Toshi
 {
 	class TObject
@@ -55,5 +28,33 @@ namespace Toshi
 	public:
 		static constinit TClass s_Class;
 	};
+
+	template<class T, class Parent, uint32_t Version, bool Instantiable>
+	class TGenericClassDerived : public Parent
+	{
+	public:
+		virtual TClass* GetClass()
+		{
+			return &s_Class;
+		}
+
+		static TObject* CreateTObject()
+		{
+			if constexpr (Instantiable) { return Toshi::tnew<T>(); }
+			else { return nullptr; }
+		}
+
+		static TObject* CreateTObjectInPlace(void* ptr)
+		{
+			if constexpr (Instantiable) { return new (ptr) T(); }
+			else { return nullptr; }
+		}
+
+	public:
+		static TClass s_Class;
+	};
+
+	template <class T, class Parent, uint32_t Version, bool Instantiable>
+	TClass TGenericClassDerived<T, Parent, Version, Instantiable>::s_Class = TClass(typeid(T).name(), &Parent::s_Class, Version, sizeof(T), T::CreateTObject, T::CreateTObjectInPlace, 0, 0);
 }
 

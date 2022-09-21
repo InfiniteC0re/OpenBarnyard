@@ -1,10 +1,9 @@
 #pragma once
 #include <Toshi/Core/TTask.h>
 
-class ARootTask : public Toshi::TTask
+class ARootTask :
+	public Toshi::TGenericClassDerived<ARootTask, Toshi::TTask, TMAKEVERSION(1, 0), true>
 {
-	TOSHI_CLASS_DEFINE(ARootTask)
-
 public:
 	ARootTask() = default;
 	~ARootTask() = default;

@@ -2,7 +2,7 @@
 
 namespace Toshi
 {
-	class TRender : public TObject
+	class TRender : public TGenericClassDerived<TRender, TObject, TMAKEVERSION(1, 0), true>
 	{
 
 	};

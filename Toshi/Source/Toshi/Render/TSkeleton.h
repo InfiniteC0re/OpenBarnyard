@@ -38,7 +38,7 @@ namespace Toshi
 	class TSkeleton
 	{
 		// Members complete
-		int m_iSize; // 0x0
+		uint32_t m_iSize; // 0x0
 		short m_sBoneCount; // 0x4
 		short m_sManualBoneCount; // 0x6
 		short m_sSequenceCount; // 0x8
@@ -57,22 +57,21 @@ namespace Toshi
 
 		TSkeleton& operator=(const TSkeleton& a_rSkeleton) { TIMPLEMENT(); }
 
-		inline int GetSize() { return m_iSize; }
-		inline TSkeletonBone* GetBone(int index) { return &m_Bones[index]; }
-		inline TSkeletonBone* GetBone(const char* a_cBoneName, int length) { return GetBone(GetBoneID(a_cBoneName, length)); }
-		int GetBoneID(const char* a_cBoneName, int length);
+		inline uint32_t GetSize() { return m_iSize; }
+		inline TSkeletonBone* GetBone(const char* a_cBoneName, uint32_t length) { return GetBone(GetBoneID(a_cBoneName, length)); }
+		uint32_t GetBoneID(const char* a_cBoneName, uint32_t length);
 
 		inline TKeyframeLibraryInstance& GetKeyLibraryInstance() { return m_KeyLibraryInstance; }
 		inline short GetAnimationMaxCount() { return m_sAnimationMaxCount; }
-		inline TSkeletonBone* GetBone(int index) { return &m_Bones[index]; }
+		inline TSkeletonBone* GetBone(uint32_t index) { return &m_Bones[index]; }
 		inline TSkeletonBone* GetBones() { return m_Bones; }
 		inline short GetInstanceCount() { return m_sInstanceCount; }
 		inline short GetAutoBoneCount() { return m_sBoneCount - m_sManualBoneCount; }
 
-		int GetSequenceID(const char* a_sSequenceName, int length);
+		uint32_t GetSequenceID(const char* a_sSequenceName, uint32_t length);
 		inline TSkeletonSequence** GetSequences() { return m_SkeletonSequences; }
-		inline TSkeletonSequence* GetSequence(int index) { return m_SkeletonSequences[index]; }
-		inline TSkeletonSequence* GetSequence(const char* a_sSequenceName, int length) { return GetSequence(GetSequenceID(a_sSequenceName, length)); }
+		inline TSkeletonSequence* GetSequence(uint32_t index) { return m_SkeletonSequences[index]; }
+		inline TSkeletonSequence* GetSequence(const char* a_sSequenceName, uint32_t length) { return GetSequence(GetSequenceID(a_sSequenceName, length)); }
 
 		inline short GetSequenceCount() { return m_sSequenceCount; }
 	};
