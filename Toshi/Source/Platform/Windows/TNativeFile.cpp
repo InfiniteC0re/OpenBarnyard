@@ -6,57 +6,66 @@
 
 namespace Toshi
 {
-    bool TNativeFile::LoadBuffer(DWORD curBufferPos)
+    bool TNativeFile::LoadBuffer(DWORD bufferPos)
     {
         // FUN_00689ff0
         DWORD lpNumberOfBytesRead;
         TASSERT(m_pBuffer1 != TNULL, "m_pBuffer1 doesn't exist");
 
-        if (m_PrevBufferPos != curBufferPos)
+        if (m_PrevBufferPos != bufferPos)
         {
-            if (unk2 != curBufferPos)
+            if (unk2 != bufferPos)
             {
-                unk2 = SetFilePointer(hnd, curBufferPos, TNULL, FILE_BEGIN);
-                if (unk2 != curBufferPos) return false;
+                unk2 = SetFilePointer(hnd, bufferPos, TNULL, FILE_BEGIN);
+                if (unk2 != bufferPos) return false;
             }
-            if (ReadFile(hnd, m_pBuffer1, 0x800, &lpNumberOfBytesRead, TNULL) == 0)
+
+            if (ReadFile(hnd, m_pBuffer1, BUFFER_SIZE, &lpNumberOfBytesRead, TNULL) == 0)
             {
                 return false;
             }
+
             unk2 += lpNumberOfBytesRead;
             m_LastBufferSize = lpNumberOfBytesRead;
-            m_PrevBufferPos = curBufferPos;
+            m_PrevBufferPos = bufferPos;
         }
+
         return true;
     }
 
     int TNativeFile::FlushWriteBuffer()
     {
         DWORD lpNumberOfBytesWritten;
+
         if (m_Position != unk2)
         {
             TASSERT(TFALSE == m_bWriteBuffered || m_iWriteBufferUsed == 0, "");
             unk2 = SetFilePointer(hnd, m_Position, TNULL, FILE_BEGIN);
+            
             if (unk2 == INVALID_SET_FILE_POINTER && GetLastError() != NO_ERROR)
             {
                 return 0;
             }
+
             m_Position = unk2;
         }
+
         if (WriteFile(hnd, m_pBuffer2, m_iWriteBufferUsed, &lpNumberOfBytesWritten, TNULL) == 0)
         {
             return 0;
         }
+
         unk2 += lpNumberOfBytesWritten;
         m_Position = unk2;
         m_iWriteBufferUsed = 0;
         return lpNumberOfBytesWritten;
     }
 
-    int TNativeFile::ReadUnbuffered(LPVOID m_pBuffer2, int param_2)
+    int TNativeFile::ReadUnbuffered(LPVOID dst, size_t size)
     {
         DWORD lpNumberOfBytesRead;
         FlushWriteBuffer();
+
         if (m_Position != unk2)
         {
             unk2 = SetFilePointer(hnd, m_Position, TNULL, FILE_BEGIN);
@@ -66,12 +75,15 @@ namespace Toshi
             }
             m_Position = unk2;
         }
-        if (ReadFile(hnd, m_pBuffer2, param_2, &lpNumberOfBytesRead, TNULL) == 0)
+
+        if (ReadFile(hnd, dst, size, &lpNumberOfBytesRead, TNULL) == 0)
         {
             return 0;
         }
+
         unk2 += lpNumberOfBytesRead;
         m_Position = unk2;
+
         return lpNumberOfBytesRead;
     }
 
@@ -336,12 +348,13 @@ namespace Toshi
 
         if (m_pBuffer1 != TNULL)
         {
-            tfree((void*)m_pBuffer1);
+            tfree(m_pBuffer1);
             m_pBuffer1 = TNULL;
         }
+
         if (m_pBuffer2 != TNULL)
         {
-            tfree((void*)m_pBuffer2);
+            tfree(m_pBuffer2);
             m_pBuffer2 = TNULL;
         }
     }

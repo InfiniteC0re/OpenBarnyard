@@ -23,9 +23,9 @@ namespace Toshi
 		virtual int VCPrintf(const char* format, ...) { return 0; }
 		virtual int VWPrintf(const wchar_t* format, ...) { return 0; }
 		
-		bool LoadBuffer(DWORD curBufferOverflow);
+		bool LoadBuffer(DWORD bufferPos);
 		int FlushWriteBuffer();
-		int ReadUnbuffered(LPVOID, int);
+		int ReadUnbuffered(LPVOID dst, size_t size);
 
 	protected:
 		TNativeFile(class TNativeFileSystem*);
@@ -37,13 +37,13 @@ namespace Toshi
 
 	private:
 		HANDLE hnd; // 0x8
-		uint32_t m_Position; // 0xC
+		DWORD m_Position; // 0xC
 		DWORD unk2; //0x10
-		uint32_t m_PrevBufferPos; // 0x14
-		uint32_t m_LastBufferSize; // 0x18
+		DWORD m_PrevBufferPos; // 0x14
+		DWORD m_LastBufferSize; // 0x18
 		char* m_pBuffer1; // 0x1C
 		char* m_pBuffer2; // 0x20
-		uint32_t m_iWriteBufferUsed; // 0x24
+		DWORD m_iWriteBufferUsed; // 0x24
 		bool m_bWriteBuffered; // 0x28
 	};
 }
