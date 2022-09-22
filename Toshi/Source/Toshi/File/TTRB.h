@@ -36,6 +36,7 @@ namespace Toshi
 		{
 			uint32_t m_ui32Version;     // 0x0
 			uint32_t m_i32SectionCount; // 0x4
+			SecInfo* m_sections;
 		};
 
 #pragma pack(pop)

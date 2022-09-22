@@ -74,7 +74,15 @@ namespace Toshi
 				}
 				else if (sectionName == TMAKEFOUR("SECC"))
 				{
-					TTODO("SECC section");
+					//TTODO("SECC section");
+
+					for (size_t i = 0; i < m_pHeader->m_i32SectionCount; i++)
+					{
+						if (m_pHeader->m_sections[i].m_pData != TNULL)
+						{
+							ttsf.DecompressSection(m_pHeader->m_sections[i].m_pData, m_pHeader->m_sections[i].m_Size);
+						}
+					}
 
 					ttsf.SkipSection();
 				}

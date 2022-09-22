@@ -1,6 +1,9 @@
 #include "ToshiPCH.h"
 #include "TTSF.h"
 #include "TTRB.h"
+#include <Toshi/File/TCompress.h>
+#include <Toshi/File/TCompress_Decompress.h>
+#include <Toshi/File/TCompress_Decompress.cpp>
 
 namespace Toshi
 {
@@ -148,6 +151,18 @@ namespace Toshi
 		}
 
 		return TTRB::ERROR_OK;
+	}
+
+	void TTSF::DecompressSection(void* buffer, int32_t size)
+	{
+		TCompress_Decompress::Header header;
+		TCompress_ERROR error = TCompress_Decompress::ReadHeader(m_pFile, header);
+
+		if (error == TCompress_ERROR::ERROR_OK)
+		{
+			TCompress_Decompress::Decompress(m_pFile, &header, buffer, size);
+			m_ReadPos += header.UncompressedSize + sizeof(TCompress_Decompress::Header);
+		}
 	}
 
 	void TTSF::LogUnknownSection()

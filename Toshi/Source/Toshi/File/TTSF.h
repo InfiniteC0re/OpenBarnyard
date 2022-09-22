@@ -50,6 +50,9 @@ namespace Toshi
 		uint8_t ReadFORM(TTRB::SectionFORM* section);
 		uint8_t ReadSectionData(void* dest);
 
+		void DecompressSection(void* buffer, int32_t size);
+
+
 		void LogUnknownSection();
 
 	public:

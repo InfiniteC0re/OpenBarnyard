@@ -52,7 +52,7 @@ AExampleClass::AExampleClass()
 	}
 
 	Toshi::TTRB trb = Toshi::TTRB();
-	trb.LoadTrb("C:\\Program Files (x86)\\Steam\\steamapps\\common\\de Blob\\Data\\BlobChar\\AssetPack.trb");
+	trb.LoadTrb("F:\\Nicktoons Battle For Volcano Island\\DATA\\MATLIBS\\BKG_FMOD_NTSC.TTL");
 
 	class Test : public Toshi::TDList<Test>::TNode
 	{
