@@ -20,21 +20,31 @@ namespace Toshi
 			ERROR_NO_FILEINFO_ON_STACK = 8,
 		};
 
-		struct SecInfo // Size 0x10
+#pragma pack(push, 1)
+		// HDRX
+		
+		struct SecInfo
 		{
-
+			char m_Unused[2];  // Padding
+			short m_Unk1;      // ?
+			uint32_t m_Size;   // Size of section
+			void* m_pData;
+			uint32_t m_Unk2;
 		};
-
+		
 		struct Header
 		{
-			uint32_t m_ui32Version; // 0x0
+			uint32_t m_ui32Version;     // 0x0
 			uint32_t m_i32SectionCount; // 0x4
-			SecInfo* m_pSecInfo; // Name not confirmed
 		};
+
+#pragma pack(pop)
 
 		struct RELCEntry
 		{
-
+			short HDRX1;
+			short HDRX2;
+			uint32_t Offset;
 		};
 
 		struct SectionFORM

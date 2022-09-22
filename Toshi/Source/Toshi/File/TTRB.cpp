@@ -12,11 +12,13 @@ namespace Toshi
 		auto fs = Toshi::TFileSystem::CreateNative(str);
 		
 		Toshi::TFile* file = fs->CreateFile(str, 1);
-		int error = ttsf.ReadFile(file);
+		uint8_t error = ttsf.ReadFile(file);
 
 		if (error == TTRB_ERROR::ERROR_OK)
 		{
 			ReadTrb(ttsf);
+
+
 		}
 
 		return false;
@@ -101,7 +103,23 @@ namespace Toshi
 							ttsf.ReadBytes(relcEntries, relocReadCount << 3);
 							curReloc = readedRelocs + relocReadCount;
 
-							// TODO..... 0x0068704f
+							SecInfo* pSects = reinterpret_cast<SecInfo*>(m_pHeader + 1);
+							for (uint32_t i = 0; i < relocReadCount; i++)
+							{
+								auto& relcEntry = relcEntries[i];
+								auto& hdrx1 = pSects[relcEntry.HDRX1];
+								auto& hdrx2 = hdrx1;
+
+								if (m_pHeader->m_ui32Version >= TMAKEVERSION(1, 0))
+								{
+									hdrx2 = pSects[relcEntry.HDRX2];
+								}
+
+								// this won't work in x64 because pointers in TRB files are always 4 bytes
+								// need some workaround to support x64 again
+								uintptr_t* ptr = reinterpret_cast<uintptr_t*>((uintptr_t)hdrx1.m_pData + relcEntry.Offset);
+								*ptr += (uintptr_t)hdrx2.m_pData;
+							}
 
 						} while (curReloc < relocCount);
 					}
@@ -125,15 +143,27 @@ namespace Toshi
 			{
 				if (sectionName == TMAKEFOUR("SECT"))
 				{
-					TTODO("SECT section");
+					SecInfo* pSect = reinterpret_cast<SecInfo*>(m_pHeader + 1);
+					for (uint32_t i = 0; i < m_pHeader->m_i32SectionCount; i++)
+					{
+						ttsf.ReadBytes(pSect->m_pData, pSect->m_Size);
+						pSect++;
+					}
 
 					ttsf.SkipSection();
 				}
 				else if (sectionName == TMAKEFOUR("HDRX"))
 				{
-					TTODO("HDRX section");
-
-					ttsf.SkipSection();
+					m_pHeader = static_cast<Header*>(tmalloc(sectionSize));
+					ttsf.ReadSectionData(m_pHeader);
+					
+					SecInfo* pSect = reinterpret_cast<SecInfo*>(m_pHeader + 1);
+					for (uint32_t i = 0; i < m_pHeader->m_i32SectionCount; i++)
+					{
+						pSect->m_Unk1 = (pSect->m_Unk1 == 0) ? 16 : pSect->m_Unk1;
+						pSect->m_pData = tmalloc(pSect->m_Size);
+						pSect++;
+					}
 				}
 				else
 				{
@@ -151,6 +181,7 @@ namespace Toshi
 
 		SectionFORM form;
 		ttsf.ReadFORM(&form);
+
 		bool result = ReadTrb(ttsf);
 		fileSize = leftSize;
 

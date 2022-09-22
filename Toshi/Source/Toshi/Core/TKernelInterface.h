@@ -5,10 +5,9 @@ namespace Toshi
 {
 	class TScheduler;
 
-	class TKernelInterface : public TObject
+	class TKernelInterface :
+		public TGenericClassDerived<TKernelInterface, TObject, "TKernelInterface", TMAKEVERSION(1, 0), false>
 	{
-		TOSHI_CLASS_NO_CREATE_DEFINE(TKernelInterface)
-
 	public:
 		TKernelInterface();
 

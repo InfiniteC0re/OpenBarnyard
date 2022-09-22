@@ -10,8 +10,6 @@
 #include <Toshi/File/TTRB.h>
 #include <Toshi/Core/TGenericDList.h>
 
-TOSHI_CLASS_DERIVED_INITIALIZE(AExampleClass, Toshi::TObject, TMAKEVERSION(1, 0))
-
 AExampleClass::AExampleClass()
 {
 	TOSHI_INFO("Called AExampleClass");

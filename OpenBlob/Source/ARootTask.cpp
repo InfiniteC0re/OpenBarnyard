@@ -1,8 +1,6 @@
 #include "pch.h"
 #include "ARootTask.h"
 
-TOSHI_CLASS_DERIVED_INITIALIZE(ARootTask, Toshi::TTask, TMAKEVERSION(1, 1))
-
 bool ARootTask::OnUpdate(float deltaTime)
 {
 	m_Seconds += deltaTime;

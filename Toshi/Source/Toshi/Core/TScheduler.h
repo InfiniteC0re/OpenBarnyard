@@ -6,10 +6,9 @@ namespace Toshi
 {
 	class TTask;
 
-	class TScheduler : public TObject
+	class TScheduler :
+		public TGenericClassDerived<TScheduler, TObject, "TScheduler", TMAKEVERSION(1, 0), false>
 	{
-		TOSHI_CLASS_NO_CREATE_DEFINE(TScheduler)
-
 	public:
 		TScheduler(TKernelInterface* kernelInterface);
 		~TScheduler() { TTODO("Free all the TTasks"); }

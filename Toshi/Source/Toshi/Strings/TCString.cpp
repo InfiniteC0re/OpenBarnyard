@@ -185,7 +185,7 @@ namespace Toshi
 		return hasChanged;
 	}
 
-	TCString& TCString::Format(const char* a_pcFormat, ...)
+	TCString TCString::Format(const char* a_pcFormat, ...)
 	{
 		char buffer[0x400];
 		TCString buffer2;

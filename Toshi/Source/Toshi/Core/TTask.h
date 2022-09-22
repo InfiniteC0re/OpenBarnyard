@@ -5,19 +5,18 @@
 
 namespace Toshi
 {
-	enum TTaskState
+	class TTask :
+		public TGenericClassDerived<TTask, TObject, "TTask", TMAKEVERSION(1, 0), false>
 	{
-		TTaskState_Created = BITFIELD(0),
-		TTaskState_Active = BITFIELD(1),
-		TTaskState_Dying = BITFIELD(2),
-	};
-
-	class TTask : public TObject
-	{
-		TOSHI_CLASS_NO_CREATE_DEFINE(TTask)
-
 	public:
 		friend TScheduler;
+
+		enum State
+		{
+			State_Created = BITFIELD(0),
+			State_Active = BITFIELD(1),
+			State_Dying = BITFIELD(2),
+		};
 
 	public:
 		TTask();
@@ -39,10 +38,10 @@ namespace Toshi
 		inline TKernelInterface* GetKernel() const { return GetScheduler()->GetKernelInterface(); }
 		inline TScheduler* GetScheduler() const { return m_Scheduler; }
 		inline uint8_t GetFlags() const { return m_State; }
-		inline bool IsCreated() const { return m_State & TTaskState_Created; }
-		inline bool IsActive() const { return m_State & TTaskState_Active; }
-		inline bool IsCreatedAndActive() const { return (m_State & (TTaskState_Created | TTaskState_Active)) == (TTaskState_Created | TTaskState_Active); }
-		inline bool IsDying() const { return m_State & TTaskState_Dying; }
+		inline bool IsCreated() const { return m_State & State_Created; }
+		inline bool IsActive() const { return m_State & State_Active; }
+		inline bool IsCreatedAndActive() const { return (m_State & (State_Created | State_Active)) == (State_Created | State_Active); }
+		inline bool IsDying() const { return m_State & State_Dying; }
 
 	private:
 		void* m_Unk1;                    // 0x04
