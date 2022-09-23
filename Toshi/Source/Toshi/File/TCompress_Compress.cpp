@@ -3,7 +3,7 @@
 
 int Toshi::TCompress_Compress::FUN_0068a830(int length, char* data, TFile* file)
 {
-    TASSERT(length <= maxlength, "");
+    //TASSERT(length <= maxlength, "");
 
     int bytesToWrite = 0;
     int lengthWritten, dataWritten = 0;

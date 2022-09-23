@@ -52,7 +52,7 @@ namespace Toshi
 		uint8_t ReadSectionData(void* dest);
 
 		void DecompressSection(void* buffer, uint32_t size);
-		inline void CompressSection(TFile* file, char* unk, uint32_t unk2, uint32_t unk3) { TCompress_Compress::Compress() }
+		inline void CompressSection(TFile* file, char* unk, uint32_t unk2, uint32_t unk3) { TCompress_Compress::Compress(file, unk, unk2, unk3, (uint8_t)m_Endianess); }
 
 		void LogUnknownSection();
 
