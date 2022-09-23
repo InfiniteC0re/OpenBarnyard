@@ -52,7 +52,7 @@ AExampleClass::AExampleClass()
 	}
 
 	Toshi::TTRB trb = Toshi::TTRB();
-	trb.LoadTrb("F:\\Nicktoons Battle For Volcano Island\\DATA\\MATLIBS\\BKG_FMOD_NTSC.TTL");
+	trb.LoadTrb("C:\\Users\\nepel\\Desktop\\BKG_CONCEPT01_NTSC_ENG.TTL");
 
 	class Test : public Toshi::TDList<Test>::TNode
 	{

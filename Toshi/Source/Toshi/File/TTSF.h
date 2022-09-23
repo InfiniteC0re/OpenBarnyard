@@ -1,6 +1,6 @@
 #pragma once
-#include "Toshi/File/TFile.h"
 #include "TTRB.h"
+#include "Toshi/File/TCompress_Decompress.h"
 
 namespace Toshi
 {

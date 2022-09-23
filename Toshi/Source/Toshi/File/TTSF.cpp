@@ -1,9 +1,5 @@
 #include "ToshiPCH.h"
 #include "TTSF.h"
-#include "TTRB.h"
-#include <Toshi/File/TCompress.h>
-#include <Toshi/File/TCompress_Decompress.h>
-#include <Toshi/File/TCompress_Decompress.cpp>
 
 namespace Toshi
 {

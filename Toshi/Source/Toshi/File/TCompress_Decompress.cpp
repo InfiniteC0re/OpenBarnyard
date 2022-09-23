@@ -3,9 +3,9 @@
 
 uintptr_t Toshi::TCompress_Decompress::Decompress(TFile* file, Header* header, void* buffer, uint32_t& size)
 {
-	if (header->Magic != TMAKEFOUR("BTEC"))    return TCOMPRESS_ERROR_WRONG_MAGIC;
-	if (header->Version != TMAKEVERSION(1, 2)) return TCOMPRESS_ERROR_WRONG_VERSION;
-	if (header->CompressedSize > size)         return TCOMPRESS_ERROR_WRONG_SIZE;
+	if (header->Magic != TMAKEFOUR("BTEC"))												return TCOMPRESS_ERROR_WRONG_MAGIC;
+	if (header->Version != TMAKEVERSION(1, 2) && header->Version != TMAKEVERSION(1, 3)) return TCOMPRESS_ERROR_WRONG_VERSION;
+	if (header->CompressedSize > size)													return TCOMPRESS_ERROR_WRONG_SIZE;
 
 	char* pBufferPos = static_cast<char*>(buffer);
 	uint32_t sizedecompressed = header->UncompressedSize;
@@ -38,6 +38,16 @@ uintptr_t Toshi::TCompress_Decompress::Decompress(TFile* file, Header* header, v
 		}
 	}
 
+	pBufferPos = static_cast<char*>(buffer);
+
+	if (header->Version == TMAKEVERSION(1, 3))
+	{
+		for (size_t i = 0; i < header->UncompressedSize; i++)
+		{
+			*pBufferPos ^= header->XorValue;
+		}
+	}
+
 	return static_cast<uintptr_t>(pBufferPos - buffer);
 }
 
@@ -45,6 +55,11 @@ int8_t Toshi::TCompress_Decompress::ReadHeader(TFile* file, Header& btecHeader)
 {
 	int pos = file->Tell();
 	int read = file->Read(&btecHeader, sizeof(Header));
+
+	if (btecHeader.Version == TMAKEVERSION(1, 2))
+	{
+		file->Seek(-4, TFile::TSEEK_CUR);
+	}
 
 	if (read != sizeof(Header))
 	{
