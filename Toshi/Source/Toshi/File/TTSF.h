@@ -1,6 +1,7 @@
 #pragma once
 #include "TTRB.h"
 #include "Toshi/File/TCompress_Decompress.h"
+#include "Toshi/File/TCompress_Compress.h"
 
 namespace Toshi
 {
@@ -51,7 +52,7 @@ namespace Toshi
 		uint8_t ReadSectionData(void* dest);
 
 		void DecompressSection(void* buffer, uint32_t size);
-
+		inline void CompressSection(TFile* file, char* unk, uint32_t unk2, uint32_t unk3) { TCompress_Compress::Compress() }
 
 		void LogUnknownSection();
 
