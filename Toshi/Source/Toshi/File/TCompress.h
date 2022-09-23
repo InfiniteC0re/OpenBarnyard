@@ -1,7 +1,7 @@
 #pragma once
 namespace Toshi
 {
-	enum class TCompress_ERROR : char
+	enum TCompress_ERROR
 	{
 		ERROR_OK = 0,
 		ERROR_WRONG_MAGIC = -1,

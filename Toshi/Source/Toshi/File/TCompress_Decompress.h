@@ -13,8 +13,8 @@ namespace Toshi
 			uint32_t CompressedSize;
 		};
 	
-		TCompress_ERROR Decompress(TFile* file, Header* header, void* buffer, uint32_t& size);
-		TCompress_ERROR ReadHeader(TFile* file, Header& btecHeader);
-		int GetReadCount(TFile* file, int& read_dst, uint32_t& size, int& offset);
+		uintptr_t Decompress(TFile* file, Header* header, void* buffer, uint32_t& size);
+		uint8_t ReadHeader(TFile* file, Header& btecHeader);
+		int GetReadCount(TFile* file, uint32_t& read_dst, uint32_t& size, int& offset);
 	};
 }
