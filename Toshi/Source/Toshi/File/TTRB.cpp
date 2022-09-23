@@ -76,6 +76,7 @@ namespace Toshi
 				{
 					//TTODO("SECC section");
 					SecInfo* pSects = reinterpret_cast<SecInfo*>(m_pHeader + 1);
+
 					for (size_t i = 0; i < m_pHeader->m_i32SectionCount; i++)
 					{
 						if (pSects[i].m_pData != TNULL)

@@ -153,7 +153,7 @@ namespace Toshi
 		return TTRB::ERROR_OK;
 	}
 
-	void TTSF::DecompressSection(void* buffer, int32_t size)
+	void TTSF::DecompressSection(void* buffer, uint32_t size)
 	{
 		TCompress_Decompress::Header header;
 		TCompress_ERROR error = TCompress_Decompress::ReadHeader(m_pFile, header);

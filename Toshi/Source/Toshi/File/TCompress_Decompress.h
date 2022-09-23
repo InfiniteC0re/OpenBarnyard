@@ -3,9 +3,8 @@
 #include "Toshi/File/TCompress.h"
 namespace Toshi
 {
-	class TCompress_Decompress
+	namespace TCompress_Decompress
 	{
-	public:
 		struct Header
 		{
 			uint32_t Magic;
@@ -14,9 +13,8 @@ namespace Toshi
 			uint32_t CompressedSize;
 		};
 	
-		static TCompress_ERROR Decompress(TFile* file, Header* header, void* buffer, uint32_t size);
-		static TCompress_ERROR ReadHeader(TFile* file, Header& btecHeader);
-	private:
-		int GetReadCount();
+		TCompress_ERROR Decompress(TFile* file, Header* header, void* buffer, uint32_t& size);
+		TCompress_ERROR ReadHeader(TFile* file, Header& btecHeader);
+		int GetReadCount(TFile* file, int& read_dst, uint32_t& size, int& offset);
 	};
 }
