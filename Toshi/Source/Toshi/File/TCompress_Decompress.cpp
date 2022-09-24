@@ -3,7 +3,7 @@
 
 uintptr_t Toshi::TCompress_Decompress::Decompress(TFile* file, Header* header, void* buffer, uint32_t& size)
 {
-	if (header->Magic != TMAKEFOUR("BTEC"))                                         return TCOMPRESS_ERROR_WRONG_MAGIC;
+	if (header->Magic != TMAKEFOUR("BTEC"))                                             return TCOMPRESS_ERROR_WRONG_MAGIC;
 	if (header->Version != TMAKEVERSION(1, 2) && header->Version != TMAKEVERSION(1, 3)) return TCOMPRESS_ERROR_WRONG_VERSION;
 	if (header->CompressedSize > size)                                                  return TCOMPRESS_ERROR_WRONG_SIZE;
 
