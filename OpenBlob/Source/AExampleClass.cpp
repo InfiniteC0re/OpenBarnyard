@@ -51,7 +51,7 @@ AExampleClass::AExampleClass()
 		fs->DestroyFile(file);
 	}
 
-	Toshi::TTRB trb = Toshi::TTRB();
+	Toshi::TTRB trb;
 	trb.LoadTrb("C:\\Users\\nepel\\Desktop\\BKG_CONCEPT01_NTSC_ENG.TTL");
 
 	class Test : public Toshi::TDList<Test>::TNode

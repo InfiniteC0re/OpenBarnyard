@@ -17,7 +17,7 @@ namespace Toshi
 		};
 	
 		static uintptr_t Decompress(TFile* file, Header* header, void* buffer, uint32_t& size);
-		static int8_t ReadHeader(TFile* file, Header& btecHeader);
-		static int GetReadCount(TFile* file, uint32_t& read_dst, uint32_t& size, int& offset);
+		static int8_t ReadHeader(TFile* file, Header& btecHeader, uint16_t& headerSize);
+		static int GetReadCount(TFile* file, bool& hasOffset, uint32_t& size, int& offset);
 	};
 }

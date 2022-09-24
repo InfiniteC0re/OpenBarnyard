@@ -3,23 +3,21 @@
 
 uintptr_t Toshi::TCompress_Decompress::Decompress(TFile* file, Header* header, void* buffer, uint32_t& size)
 {
-	if (header->Magic != TMAKEFOUR("BTEC"))												return TCOMPRESS_ERROR_WRONG_MAGIC;
+	if (header->Magic != TMAKEFOUR("BTEC"))                                         return TCOMPRESS_ERROR_WRONG_MAGIC;
 	if (header->Version != TMAKEVERSION(1, 2) && header->Version != TMAKEVERSION(1, 3)) return TCOMPRESS_ERROR_WRONG_VERSION;
-	if (header->CompressedSize > size)													return TCOMPRESS_ERROR_WRONG_SIZE;
+	if (header->CompressedSize > size)                                                  return TCOMPRESS_ERROR_WRONG_SIZE;
 
 	char* pBufferPos = static_cast<char*>(buffer);
-	uint32_t sizedecompressed = header->UncompressedSize;
+	uint32_t sizeLeft = header->UncompressedSize;
 
-	while (sizedecompressed != 0)
+	while (sizeLeft != 0)
 	{
 		int offset;
-		uint32_t read_dst;
-		uint32_t read_count;
+		bool hasOffset;
 
-		read_count = GetReadCount(file, read_dst, size, offset);
-		sizedecompressed -= read_count;
+		sizeLeft -= GetReadCount(file, hasOffset, size, offset);
 
-		if (read_dst == 0)
+		if (hasOffset)
 		{
 			char* buf = pBufferPos - offset;
 			int leftSize = size;
@@ -34,10 +32,11 @@ uintptr_t Toshi::TCompress_Decompress::Decompress(TFile* file, Header* header, v
 		{
 			size_t readedCount = file->Read(pBufferPos, size);
 			pBufferPos += readedCount;
-			sizedecompressed -= readedCount;
+			sizeLeft -= readedCount;
 		}
 	}
 
+	uint32_t sizeDecompressed = pBufferPos - static_cast<char*>(buffer);
 	pBufferPos = static_cast<char*>(buffer);
 
 	if (header->Version == TMAKEVERSION(1, 3))
@@ -48,28 +47,35 @@ uintptr_t Toshi::TCompress_Decompress::Decompress(TFile* file, Header* header, v
 		}
 	}
 
-	return static_cast<uintptr_t>(pBufferPos - buffer);
+	TASSERT(sizeDecompressed == header->CompressedSize, "TCompress_Decompress::Decompress: sizeDecompressed != header.CompressedSize");
+	
+	return static_cast<uintptr_t>(pBufferPos - static_cast<char*>(buffer));
 }
 
-int8_t Toshi::TCompress_Decompress::ReadHeader(TFile* file, Header& btecHeader)
+int8_t Toshi::TCompress_Decompress::ReadHeader(TFile* file, Header& btecHeader, uint16_t& headerSize)
 {
-	int pos = file->Tell();
-	int read = file->Read(&btecHeader, sizeof(Header));
+	int savedPos = file->Tell();
+	size_t readedSize = file->Read(&btecHeader, sizeof(Header));
 
-	if (btecHeader.Version == TMAKEVERSION(1, 2))
+	int minusSize = 0;
+	if (btecHeader.Version <= TMAKEVERSION(1, 2))
 	{
-		file->Seek(-4, TFile::TSEEK_CUR);
+		minusSize -= sizeof(btecHeader.XorValue);
 	}
 
-	if (read != sizeof(Header))
+	file->Seek(minusSize, TFile::TSEEK_CUR);
+	readedSize += minusSize;
+	headerSize = file->Tell() - savedPos;
+
+	if (readedSize != headerSize)
 	{
-		file->Seek(pos, TFile::TSEEK_SET);
+		file->Seek(savedPos, TFile::TSEEK_SET);
 		return TCOMPRESS_ERROR_WRONG_HEADERSIZE;
 	}
 
 	if (btecHeader.Magic != TMAKEFOUR("BTEC"))
 	{
-		file->Seek(pos, TFile::TSEEK_SET);
+		file->Seek(savedPos, TFile::TSEEK_SET);
 		return TCOMPRESS_ERROR_WRONG_MAGIC;
 	}
 
@@ -78,41 +84,44 @@ int8_t Toshi::TCompress_Decompress::ReadHeader(TFile* file, Header& btecHeader)
 
 // With the help of Revel8n approach
 // Could use some code cleanup
-int Toshi::TCompress_Decompress::GetReadCount(TFile* file, uint32_t& read_dst, uint32_t& size, int& offset)
+int Toshi::TCompress_Decompress::GetReadCount(TFile* file, bool& hasOffset, uint32_t& size, int& offset)
 {
-	int read_count = 0;
-	read_count += file->Read(&size, 1);
+	int read_count = file->Read(&size, 1);
+	hasOffset = (size & BTECSizeFlag_NoOffset) == 0;
+	offset = 0;
 
-	read_dst = size >> 7 & 1; // revel8n: size & 0x80 == 0
-
-	if ((size & 0x40) == 0)
+	if (size & BTECSizeFlag_BigSize)
 	{
-		size &= 0x3F;
+		// 14 bits value
+		uint8_t addValue;
+		read_count += file->Read(&addValue, sizeof(addValue));
+		size = ((size & BTECSizeFlag_SizeMask) << (sizeof(addValue) * 8)) | addValue;
 	}
 	else
 	{
-		uint8_t byte;
-		read_count += file->Read(&byte, 1);
-		size = ((size & 0x3F) << 8) + byte;
+		// 6 bits value
+		size &= BTECSizeFlag_SizeMask;
 	}
 
 	size++;
-	offset = 0;
 
-	if (read_dst == 0)
+	if (hasOffset)
 	{
 		read_count += file->Read(&offset, 1);
 
-		if ((offset & 0x80) == 0)
+		if (offset & BTECOffsetFlag_BigOffset)
 		{
-			offset & 0x7F;
+			// 15 bits value
+			uint8_t addValue;
+			read_count += file->Read(&addValue, sizeof(addValue));
+			offset = ((offset & BTECOffsetFlag_OffsetMask) << (sizeof(addValue) * 8)) | addValue;
 		}
 		else
 		{
-			uint8_t byte;
-			read_count += file->Read(&byte, 1);
-			offset = ((offset & 0x7F) << 8) + byte;
+			// 7 bits value
+			offset &= BTECOffsetFlag_OffsetMask;
 		}
+
 		offset++;
 	}
 
