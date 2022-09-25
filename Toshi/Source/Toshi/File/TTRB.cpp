@@ -62,6 +62,35 @@ namespace Toshi
 				{
 					TTODO("HEAD section");
 
+					int numsections = (sectionSize - 4) / 0xC;
+
+					m_pHeader = static_cast<Header*>(tmalloc(numsections * 0x10 + 8));
+
+					m_pHeader->m_ui32Version = 0;
+
+					ttsf.ReadBytes(&m_pHeader->m_i32SectionCount, sizeof(m_pHeader->m_i32SectionCount));
+
+					TASSERT(m_pHeader->m_ui32Version == TMAKEVERSION(0, 0), "");
+					TASSERT(m_pHeader->m_i32SectionCount == numsections, "");
+
+					char* cursor = (char*)(m_pHeader + 1);
+
+					for (size_t i = 0; i < m_pHeader->m_i32SectionCount; i++)
+					{
+						ttsf.ReadBytes(cursor, 0xC);
+						*(int*)(cursor + 0xC) = 0;
+						cursor += 0x10;
+					}
+
+					SecInfo* pSects = reinterpret_cast<SecInfo*>(m_pHeader + 1);
+
+					for (uint32_t i = 0; i < m_pHeader->m_i32SectionCount; i++)
+					{
+						pSects->m_Unk1 = (pSects->m_Unk1 == 0) ? 16 : pSects->m_Unk1;
+						pSects->m_pData = tmalloc(pSects->m_Size);
+						pSects++;
+					}
+
 					ttsf.SkipSection();
 				}
 				else if (sectionName == TMAKEFOUR("SYMB"))

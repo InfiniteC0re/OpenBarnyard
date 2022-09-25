@@ -25,18 +25,17 @@ namespace Toshi
 		
 		struct SecInfo
 		{
-			char m_Unused[2];  // Padding
-			short m_Unk1;      // ?
-			uint32_t m_Size;   // Size of section
-			void* m_pData;
-			uint32_t m_Unk2;
+			char m_Unused[2];  // Padding 0x0
+			short m_Unk1;      // ? 0x2
+			uint32_t m_Size;   // Size of section 0x4
+			void* m_pData;     // 0x8
+			uint32_t m_Unk2;   // 0xC
 		};
 		
 		struct Header
 		{
 			uint32_t m_ui32Version;     // 0x0
 			uint32_t m_i32SectionCount; // 0x4
-			//SecInfo* m_sections;
 		};
 
 #pragma pack(pop)
