@@ -17,7 +17,16 @@ namespace Toshi
 		};
 	
 		static uintptr_t Decompress(TFile* file, Header* header, void* buffer, uint32_t& size);
-		static int8_t ReadHeader(TFile* file, Header& btecHeader, uint16_t& headerSize);
+		static int8_t ReadHeader(TFile* file, Header& btecHeader);
 		static int GetReadCount(TFile* file, bool& hasOffset, uint32_t& size, int& offset);
+
+	public:
+		// Size of header that is common for any BTEC version
+		static constexpr uint32_t HEADER_SIZE_COMMON =
+			sizeof(Header) - sizeof(Header::XorValue);
+
+		// Size of header that is common for BTEC 1.3
+		static constexpr uint32_t HEADER_SIZE_13 =
+			sizeof(Header);
 	};
 }

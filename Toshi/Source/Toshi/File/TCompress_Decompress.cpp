@@ -52,20 +52,17 @@ uintptr_t Toshi::TCompress_Decompress::Decompress(TFile* file, Header* header, v
 	return static_cast<uintptr_t>(pBufferPos - static_cast<char*>(buffer));
 }
 
-int8_t Toshi::TCompress_Decompress::ReadHeader(TFile* file, Header& btecHeader, uint16_t& headerSize)
+int8_t Toshi::TCompress_Decompress::ReadHeader(TFile* file, Header& btecHeader)
 {
-	int savedPos = file->Tell();
-	size_t readedSize = file->Read(&btecHeader, sizeof(Header));
+	uint32_t headerSize = HEADER_SIZE_COMMON;
+	uint32_t savedPos = file->Tell();
+	size_t readedSize = file->Read(&btecHeader, headerSize);
 
-	int minusSize = 0;
-	if (btecHeader.Version <= TMAKEVERSION(1, 2))
+	if (btecHeader.Version == TMAKEVERSION(1, 3))
 	{
-		minusSize -= sizeof(btecHeader.XorValue);
+		readedSize += file->Read(&btecHeader.XorValue, sizeof(Header::XorValue));
+		headerSize += sizeof(Header::XorValue);
 	}
-
-	file->Seek(minusSize, TFile::TSEEK_CUR);
-	readedSize += minusSize;
-	headerSize = file->Tell() - savedPos;
 
 	if (readedSize != headerSize)
 	{

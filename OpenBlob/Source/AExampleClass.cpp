@@ -52,6 +52,7 @@ AExampleClass::AExampleClass()
 	}
 
 	Toshi::TTRB trb;
+	//trb.LoadTrb("D:\\Barnyard\\Game\\Data\\Terrain\\EnvMain\\Beady_L0Mod0.trb");
 	trb.LoadTrb("C:\\Users\\nepel\\Desktop\\BKG_CONCEPT01_NTSC_ENG.TTL");
 
 	class Test : public Toshi::TDList<Test>::TNode
