@@ -152,21 +152,26 @@ namespace Toshi
 	void TTSF::DecompressSection(void* buffer, uint32_t size)
 	{
 		TCompress_Decompress::Header header;
+		uint32_t originalPos = m_pFile->Tell();
+
 		int8_t error = TCompress_Decompress::ReadHeader(m_pFile, header);
 
 		if (error == TCOMPRESS_ERROR_OK)
 		{
+			uint32_t headerSize = m_pFile->Tell() - originalPos;
 			TCompress_Decompress::Decompress(m_pFile, &header, buffer, size);
-			m_ReadPos += header.UncompressedSize + sizeof(TCompress_Decompress::Header);
+			m_ReadPos += header.UncompressedSize + headerSize;
 		}
 	}
 
 	void TTSF::LogUnknownSection()
 	{
+#ifdef TOSHI_DEBUG
 		char charName[sizeof(m_CurrentSection.Name) + 1] = {};
 		*charName = m_CurrentSection.Name;
 
 		TOSHI_CORE_ERROR("Unknown TRB section: {0}", charName);
+#endif
 	}
 
 	TTSF::TTSF() : m_FileInfo(), m_Header()
