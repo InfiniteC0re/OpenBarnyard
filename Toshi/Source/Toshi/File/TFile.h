@@ -72,10 +72,10 @@ namespace Toshi
 		TFile(TFileSystem*);
 		TFile(const TFile&);
 
-		virtual size_t Read(LPVOID, size_t) = 0;
-		virtual int Write(LPVOID, size_t) = 0;
-		virtual bool Seek(int, TFile::TSEEK) = 0;
-		virtual uint32_t Tell() = 0;
+		virtual size_t Read(LPVOID, size_t) = 0;	//0x0
+		virtual int Write(LPVOID, size_t) = 0;		//0x4
+		virtual bool Seek(int, TFile::TSEEK) = 0;	//0x8
+		virtual uint32_t Tell() = 0;				//0xC
 		virtual int GetSize() = 0;
 		virtual _FILETIME GetDate() { return {}; }
 		virtual char GetCChar() = 0;

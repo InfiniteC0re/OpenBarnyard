@@ -16,10 +16,13 @@ namespace Toshi
 
 		if (error == TTRB_ERROR::ERROR_OK)
 		{
-			ReadTrb(ttsf);
-
-
+			if (ttsf.m_TRBF == TMAKEFOUR("TRBF"))
+			{
+				ReadTrb(ttsf);
+			}
 		}
+
+		ttsf.Destroy();
 
 		return false;
 	}
@@ -97,9 +100,8 @@ namespace Toshi
 				{
 					TTODO("SYMB section");
 					
-					char* SYMBData = (char*)tmalloc(ttsf.m_CurrentSection.Size);
-					ttsf.ReadSectionData(SYMBData);
-					tfree(SYMBData);
+					m_SYMB = static_cast<SYMB*>(tmalloc(ttsf.m_CurrentSection.Size));
+					ttsf.ReadSectionData(m_SYMB);
 				}
 				else if (sectionName == TMAKEFOUR("SECC"))
 				{
@@ -118,48 +120,48 @@ namespace Toshi
 				else if (sectionName == TMAKEFOUR("RELC"))
 				{
 					TTODO("RELC section");
+					
+					//uint32_t relocCount = 0;
+					//uint32_t curReloc = 0;
+					//uint32_t readedRelocs = 0;
 
-					uint32_t relocCount = 0;
-					uint32_t curReloc = 0;
-					uint32_t readedRelocs = 0;
+					//ttsf.ReadBytes(&relocCount, sizeof(relocCount));
 
-					ttsf.ReadBytes(&relocCount, sizeof(relocCount));
+					//if (relocCount < 1)
+					//{
+					//	relocCount = 0;
+					//}
+					//else
+					//{
+					//	do
+					//	{
+					//		uint32_t relocReadCount = relocCount - readedRelocs;
 
-					if (relocCount < 1)
-					{
-						relocCount = 0;
-					}
-					else
-					{
-						do
-						{
-							uint32_t relocReadCount = relocCount - readedRelocs;
+					//		// limit count of RELCs to read
+					//		relocReadCount = TMath::Min(relocReadCount, RELCEntriesLimit);
+					//		ttsf.ReadBytes(relcEntries, relocReadCount << 3);
+					//		curReloc = readedRelocs + relocReadCount;
 
-							// limit count of RELCs to read
-							relocReadCount = TMath::Min(relocReadCount, RELCEntriesLimit);
-							ttsf.ReadBytes(relcEntries, relocReadCount << 3);
-							curReloc = readedRelocs + relocReadCount;
+					//		SecInfo* pSects = reinterpret_cast<SecInfo*>(m_pHeader + 1);
+					//		for (uint32_t i = 0; i < relocReadCount; i++)
+					//		{
+					//			auto& relcEntry = relcEntries[i];
+					//			auto& hdrx1 = pSects[relcEntry.HDRX1];
+					//			auto& hdrx2 = hdrx1;
 
-							SecInfo* pSects = reinterpret_cast<SecInfo*>(m_pHeader + 1);
-							for (uint32_t i = 0; i < relocReadCount; i++)
-							{
-								auto& relcEntry = relcEntries[i];
-								auto& hdrx1 = pSects[relcEntry.HDRX1];
-								auto& hdrx2 = hdrx1;
+					//			if (m_pHeader->m_ui32Version >= TMAKEVERSION(1, 0))
+					//			{
+					//				hdrx2 = pSects[relcEntry.HDRX2];
+					//			}
 
-								if (m_pHeader->m_ui32Version >= TMAKEVERSION(1, 0))
-								{
-									hdrx2 = pSects[relcEntry.HDRX2];
-								}
+					//			// this won't work in x64 because pointers in TRB files are always 4 bytes
+					//			// need some workaround to support x64 again
+					//			uintptr_t* ptr = reinterpret_cast<uintptr_t*>((uintptr_t)hdrx1.m_pData + relcEntry.Offset);
+					//			*ptr += (uintptr_t)hdrx2.m_pData;
+					//		}
 
-								// this won't work in x64 because pointers in TRB files are always 4 bytes
-								// need some workaround to support x64 again
-								uintptr_t* ptr = reinterpret_cast<uintptr_t*>((uintptr_t)hdrx1.m_pData + relcEntry.Offset);
-								*ptr += (uintptr_t)hdrx2.m_pData;
-							}
-
-						} while (curReloc < relocCount);
-					}
+					//	} while (curReloc < relocCount);
+					//}
 
 					ttsf.SkipSection();
 				}
@@ -226,5 +228,50 @@ namespace Toshi
 		{
 			return false;
 		}
+	}
+
+	char* TTRB::GetSymb(const char* symbName)
+	{
+		int index = GetSymbFromSect(symbName);
+
+		SYMBEntry* pSymbEntries = reinterpret_cast<SYMBEntry*>(m_SYMB + 1);
+		SecInfo* pSects = reinterpret_cast<SecInfo*>(m_pHeader + 1);
+
+		if (index != -1 && m_SYMB != TNULL && index < m_SYMB->m_i32SymbCount && &pSymbEntries[index] != TNULL)
+		{
+			return (char*)pSects[pSymbEntries[index].HDRX].m_pData + pSymbEntries[index].Data_Offset;
+		}
+
+		return TNULL;
+	}
+
+	int TTRB::GetSymbFromSect(const char* symbName)
+	{
+		if (m_SYMB == TNULL) return -1;
+		if (m_SYMB->m_i32SymbCount < 1) return -1;
+
+		const char* iterator = symbName;
+		short type_hash = 0;
+
+		while (*iterator != '\0')
+		{
+			type_hash = ((type_hash << 5) - type_hash) + (short)*iterator++;
+		}
+
+		SYMBEntry* pSymbEntries = reinterpret_cast<SYMBEntry*>(m_SYMB + 1);
+		
+		for (size_t i = 0; i < m_SYMB->m_i32SymbCount; i++)
+		{
+			if (pSymbEntries[i].Type_Hash == type_hash)
+			{
+				char* currentTypeName = (char*)&pSymbEntries[m_SYMB->m_i32SymbCount] + pSymbEntries[i].Type_Offset;
+				if (Toshi2::T2String8::CompareStrings(symbName, currentTypeName, -1) == 0)
+				{
+					return i;
+				}
+			}
+		}
+
+		return -1;
 	}
 }

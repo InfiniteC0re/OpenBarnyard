@@ -4,7 +4,8 @@ namespace Toshi2
 {
 	class T2String8
 	{
-		int CompareStrings(char*, char*, int);
+	public:
+		static int CompareStrings(const char*, const char*, int);
 	};
 }
 

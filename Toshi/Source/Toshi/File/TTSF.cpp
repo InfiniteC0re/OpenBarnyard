@@ -149,6 +149,19 @@ namespace Toshi
 		return TTRB::ERROR_OK;
 	}
 
+	void TTSF::Destroy(bool freeFile)
+	{
+		PopFileInfo();
+
+		if (m_pFile != TNULL && freeFile)
+		{
+			TIMPLEMENT("FUN_00685f60(m_pFile)");
+		}
+
+		m_pFile = TNULL;
+		m_FileInfoCount = 0;
+	}
+
 	void TTSF::DecompressSection(void* buffer, uint32_t size)
 	{
 		TCompress_Decompress::Header header;

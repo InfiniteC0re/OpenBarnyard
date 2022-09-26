@@ -1,6 +1,7 @@
 #pragma once
 #include "Toshi/Strings/TCString.h"
 #include "Toshi/File/TFile.h"
+#include "Toshi/Toshi2/T2String8.h"
 
 namespace Toshi
 {
@@ -52,13 +53,29 @@ namespace Toshi
 			uint32_t Unk;
 		};
 
+		struct SYMBEntry
+		{
+			uint16_t HDRX;
+			uint16_t Type_Offset;
+			uint16_t padding;
+			uint16_t Type_Hash;
+			uint32_t Data_Offset;
+		};
+
+		struct SYMB
+		{
+			uint32_t m_i32SymbCount;
+		};
+
 	public:
 		bool LoadTrb(const char*);
 		bool ReadTrb(TTSF& ttsf);
+		char* GetSymb(const char* symbName);
+		int GetSymbFromSect(const char* symbName);
 
 	private:
 		Header* m_pHeader;          // 0x0
-		uint32_t m_SYMBSize;        // 0x4
+		SYMB* m_SYMB;        // 0x4
 	};
 }
 
