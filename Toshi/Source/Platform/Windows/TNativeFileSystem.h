@@ -13,6 +13,7 @@ namespace Toshi
 		virtual TCString MakeInternalPath(TCString const&) { return {}; }
 		virtual void SetPrefix(TCString const&) { };
 		virtual bool MakeDirectory(TCString const&) override;
+		virtual bool GetNextFile(TCString& fileName, uint32_t flags);
 	};
 }
 

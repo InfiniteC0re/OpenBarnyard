@@ -46,7 +46,7 @@ namespace Toshi
 
 		TCString m_sName; // 0xC
 		TCString m_prefix; // 0x14
-		int m_unk3; // 0x1C
+		HANDLE m_handle; // 0x1C
 	};
 
 	class TFile
