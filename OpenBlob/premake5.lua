@@ -18,7 +18,7 @@ project "OpenBlob"
 	files
 	{
 		"Source/**.h",
-		"Source/**.cpp"
+		"Source/**.cpp",
 	}
 
 	includedirs

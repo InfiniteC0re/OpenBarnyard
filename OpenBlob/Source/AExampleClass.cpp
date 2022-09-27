@@ -60,6 +60,8 @@ AExampleClass::AExampleClass()
 	//file->Seek(12, Toshi::TFile::TSEEK_CUR);
 	file->Read(buf, file->GetSize());//-12);
 	
+
+
 	// This is only for testing purposes
 	*(int*)(&buf[8]) = 0; // Setting the CRC to 0 so the new CRC doesn't take the old one and CRCs it
 

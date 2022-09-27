@@ -1,0 +1,332 @@
+
+
+                         Cyclic Redundancy Checks (CRCs)
+
+               Explanation of the 'polynomial division' algorithm
+                 and the possible uses of CRC implementations.
+               Includes complete routines for table driven CRC-16
+                 & CRC-32 calculation including building tables.
+
+                            Revision date 15 Jul 1993
+
+               Information collected and edited by Arjen G. Lentz
+             Sourcecode in C and 80x86 ASM written by Arjen G. Lentz
+                  COPYRIGHT (C) 1992-1993; ALL RIGHTS RESERVED
+
+
+
+  CONTACT ADDRESS
+
+  LENTZ SOFTWARE-DEVELOPMENT    Arjen Lentz @
+  Langegracht 7B                AINEX-BBS +31-33-633916
+  3811 BT  Amersfoort           FidoNet 2:283/512
+  The Netherlands               f512.n283.z2.fidonet.org
+
+
+
+  LICENCE
+
+  This package may be freely distributed provided the files remain together,
+  in their original unmodified form.
+  All files, executables and sourcecode remain the copyrighted property of
+  Arjen G. Lentz and LENTZ SOFTWARE-DEVELOPMENT.
+  Licence for any use granted, provided this notice & CRC.DOC are included.
+  For executable applications, credit should be given in the appropriate
+  places in the program and documentation.
+  These notices must be retained in any copies of any part of this
+  documentation and/or software.
+
+  Any use of, or operation on (including copying/distributing) any of
+  the above mentioned files implies full and unconditional acceptance of
+  this licence and disclaimer.
+
+
+
+  DISCLAIMER
+
+  This information is provided "as is" and comes with no warranties of any
+  kind, either expressed or implied. It's intended to be used by programmers
+  and developers. In no event shall the author be liable to you or anyone
+  else for any damages, including any lost profits, lost savings or other
+  incidental or consequential damages arising out of the use or inability
+  to use this information.
+
+
+
+  CREDITS
+
+  Stuff found on BBS, numerous files with information and implementations.
+  Comments in sources on CRC-32 calculation by Gary S. Brown.
+  All other people hereby credited anonimously, because unfortunately the
+  documents and sources encountered did not contain the name of a specific
+  person or organisation. But, each source provided a piece of the puzzle!
+  CCITT X.25 specification for the proper CRC-16 (CCITT V.41) implementation.
+
+
+
+  WHY THIS DOCUMENT AND THE ACCOMPANYING SOURCES
+
+  Like most other programmers, I utilized CRCs in my programs but never really
+  knew how they worked. I just used routines from other public domain sources,
+  those sources were also copied from somewhere else, etc.
+
+  But how does the table-driven system work compared to the classic method
+  of bit shifting everything?
+  How are those tables created, where do those generator numbers come from?
+  Notes like "Table created by John Doe, Zappy Computers Inc." in sources
+  look cute, but make me wonder "what secret trick does he know I don't?".
+  Why is one CRC implementation initialized with all ones and send as the ones
+  complement of the result, while others start as 0 and sent as is?
+
+  Finally my curiosity got the better of me......
+  This document attempts to put together all relevant information collected
+  from a myriad of sources, so in future people don't have to look all over
+  the place to find the information they need concerning CRCs.
+
+  There are a couple of questions this document does not answer:
+  How a generator polynomial is selected.
+  How the error detection capability of a specific CRC is calculated
+  I am not a mathematician, I just know how to make use of what I get.
+
+
+
+  APPLICATIONS FOR CRC
+
+  CRC provides applications with a means to detect whether a block of data has
+  been corrupted during storage or transmission accross a serial link.
+  It is used by most disk controllers, compression programs such as ARC & ZIP,
+  file transfer protocols, link protocols such as HDLC and X.25.
+  CRC calculation is sometimes implemented in hardware.
+  Error detection is not 100%, and also depends on which polynomial is used.
+  32-bit CRC provides a big improvement in error detection over 16-bit CRCs.
+  The detection is for certain kinds of bit errors.
+  See the end of this document for descriptions of different CRCs.
+
+
+
+  WHEN NOT TO USE CRC
+
+  Lately increasingly weird applications of CRCs have popped up, written by
+  people who don't understand CRCs and their limitations.
+  The CRC calculated from a block of data is NOT unique; it is highly probable
+  that a different block of data gives the same CRC value.
+  Many people respond with "yes, but do look so unique".
+  They may well look unique to us, but if you need a unique fingerprint to
+  compare two blocks of data, CRC is NOT the right method.
+  CRCs can identify certain kinds of bit-errors in a limited length data block,
+  not distinguish two or more completely different sets of data!
+
+  Mis-application of CRCs in this way has caused heaps of trouble in for
+  instance FidoNet... One program used CRCs to distinguish newsgroup names,
+  the result was a load of crosslinks. CRCs were also used for detecting
+  duplicate messages; the result was that good different messages were branded
+  as duplicates and therefore deleted.
+  All this was NOT a result of bad implementation, they were just matters
+  where an algorithm was used for something it wasn't suitable for.
+  Please don't make the same mistake, the users deserve better.....
+
+  For fingerprint purposes I strongly advise using the Message Digest algorithm
+  (MD4 and now MD5) by Donald Rivest. Specs and sources are freely available.
+  If you can't find them, contact me.
+  If you have a FidoNet mailer, you can file-request MD.ARC from my system,
+  that file contains the original specs for both MD4 and MD5, portable C/C++
+  sources, and validation/speed-check programs.
+  BUT WHATEVER YOU DO, DON'T MIS-USE CRCS!!!
+
+
+
+  CRC - POLYNOMIAL DIVISION
+
+  To calculate a CRC of a block of data, the data bits are considered to be
+  the coefficients of a polynomial. This message (data) polynomial is first
+  multiplied by the highest term in the polynomial (X^16 or X^32) then divided
+  by the generator polynomial using modulo two arithemetic. The remainder
+  left after the division is the desired CRC.
+
+  CRCs are usually expressed as an polynomial expression such as:
+
+        X^16 + X^12 + X^5 + 1
+
+  The generator polynomial number is determined by setting bits corresponding
+  to the power terms in the polynomial equation in an (unsigned) integer.
+  We do this backwards and put the highest-order term in the the lowest-order
+  bit. The highest term is implied (X^16 here, just means its's a 16-bit CRC),
+  the LSB is the X^15 term (0 here), the X^0 term (shown as + 1) results in
+  the MSB being 1.
+
+  Note that the usual hardware shift register implementation shifts bits into
+  the lowest-order term. In our implementation, that means shifting towards
+  the right. Why do we do it this way?  Because the calculated CRC must be
+  transmitted accross a serial link from highest- to lowest-order term.
+  UARTs transmit characters in order from LSB to MSB. By storing the CRC this
+  way, we hand it to the UART in the order low-byte to high-byte; the UART
+  sends each low-bit to high-bit; and the result is transmission bit by bit
+  from highest- to lowest-order term without requiring any bit shuffling.
+
+
+
+  IMPORTANT NOTE
+
+  Xmodem and all its derivates Xmodem-1K, Ymodem-Batch, etc, as well as
+  Zmodem/CRC-16 have their CRC-16 the wrong way round (bit-wise).
+  Also they're transmitted high-byte to low-byte.
+  So instead of transmitting in highest- to lowest-term order, they're
+  transmitted term 8 to 15, then term 0 to 7.
+  The person who originally added CRC-16 to the Xmodem protocol should feel
+  very ashamed. All explanations of CRC calculation I have seen specifically
+  state that the transmission should be highest- to lowest-term order.
+  Chuck Forsberg (designer of Zmodem) should also be ashamed. With Zmodem
+  being a completely new protocol, he could have corrected the mistake.
+  The incorrect order possibly degrades (I'll leave this to the mathematicians)
+  the error-detection capabilities of the CRC.
+  They also missed out on the correct pre/post-conditioning of CCITT CRC-16.
+
+
+
+  IMPLEMENTATION
+
+  This document and the accompanying sources will not go into the old-style CRC
+  calculation method, instead it provides the tools for table-driven CRC for
+  any polynomial or CRC size.
+  Described is the usual 256-entry table, but also a special version that uses
+  two tables of 16 entries each. The latter uses less memory but is slower
+  because two table lookups are required, as well as an intermediate variable.
+
+  Generating the table(s)... the feedback terms simply represent the results
+  of eight shifts/xor operations for all combinations of data and CRC register
+  values. Actually, the table generator routine uses the old-style method
+  shifting each bit.
+
+  All shift operations must be unsigned (ie. bringing in zeros).
+  If your compiler does not provide an unsigned type of the right size, make
+  sure you AND the result, ie. long x; ... ((x >> 8) & 0x00ffffffL) ...
+  During table lookup only shift operations of 8 bits at a time are used, so
+  in assembly language (especially on 80x86 CPUs) byte-move/swap instructions
+  can greatly improve the calculation speed.
+
+  Apart from the upside-down CRC-16 all CRCs basically work the same, so in
+  principle you could use the CRC-32 routines for CRC-16s, you just need to
+  make sure the top 16-bits remain 0.
+
+  See the sample sources to see exactly how the algorithm is implemented.
+
+
+
+  SOURCECODE
+
+  A number of different functions are provided in the sample sources:
+
+  ___init  (*crctab, poly)
+           Initialize 256-entry table for specified generator polynomial.
+           The table should be pre-allocated by the caller!
+           Use macro CRC_TABSIZE in CRC.H to get the required size of the
+           table, and multiply this by the size of the variable type.
+  ___block (*crctab, crc, *data, len)
+           Updates CRC with a block of databytes, returns new CRC.
+  ___upd   (*crctab, crc, c)
+           Updates CRC with a single databyte, returns new CRC.
+           Note that this is a macro, parameter CRC is referenced twice.
+
+  ___ is:  crc16 for the normal CRC-16 (both CCITT and the one used by ARC).
+           crc16r (r for reverse) for the upside-down CRC-16 implementation.
+           crc32 for CRC-32.
+
+  CRC.DOC    This document.
+  CRC.H      Gives some type definitions and function prototypes.
+  2TYPES.H   Some type definitions, included by CRC.H
+  CRC.C      Offers a C implementation of the above functions.
+  CRC.ASM    80x86 assembly alternative of init and block functions.
+             For CRC-16s, the block() function in ASM is 300% faster than in C.
+             For CRC-32s, the block() function in ASM is 450% faster than in C.
+             The functions are 100% compatible, so for instance the ASM block
+             function may be used together with the C macro in the one program.
+  CRC_TINY.C Example of alternative implementation with two 16-entry tables.
+             Just provided to satisfy your curiosity for this gimmick.
+             Doing two table-lookups takes longer than one, so while this
+             system may be smaller, it is quite a bit slower.
+             An intermediate variable is also required.
+  CRC_TEST.C Validation program, checks implementations and does speed trials.
+             Link to either CRC.C, CRC.H or CRC_TINY.C
+  NOTE: CRC.C, CRC.ASM and CRC_TINY.C contain the same functions.
+        Select which one you want, and compile & link it into your application.
+        When using CRC_TINY.C, define 'CRC_TINY' when compiling the CRC.H file.
+
+
+
+  LIST OF CRC TYPES COMMONLY USED
+
+
+  TYPE: CRC-16
+  ORIGIN: Unknown
+  GENERATOR POLYNOMIAL: X^16+X^15+X^2+1
+  GENERATOR BITS: 1010 0000 0000 0001
+  GENERATOR NUMBER: hex A001
+  ERROR DETECTION: Unknown
+  TRANSMIT: Init to all zeros, transmit CRC low-byte first following data.
+  RECEIVE: Init to all zeros, process all incoming bytes including the
+           transmitted two CRC bytes, the result is 0 for correct
+           transmissions.
+  APPLICATIONS: First seen in ARC (SEA), also used in LHA (Yoshi).
+
+
+  TYPE: CRC-16
+  ORIGIN: CCITT V.41 specification
+  GENERATOR POLYNOMIAL: X^16+X^12+X^5+1
+  GENERATOR BITS: 1000 0100 0000 1000
+  GENERATOR NUMBER: hex 8408
+  ERROR DETECTION: All single and double bit errors, all errors with an odd
+                   number of bits, all burst errors of length 16 or less,
+                   99.997% of 17-bit error bursts, and 99.998% of 18-bit and
+                   longer.
+  TRANSMIT: Init to all ones, transmit ones complement (ie all 0s become 1s,
+            all 1s become 0s) low-byte first following data.
+  RECEIVE: Init to all ones, process all incoming bytes including the
+           transmitted two CRC bytes, the result is hex F0B8 for correct
+           transmissions.
+           This magic check number is the result of the init and complement
+           operations; it can be independently calculated by intializing the
+           CRC to all ones and running through two zero-bytes (the transmitted
+           CRC of an empty datablock).
+  APPLICATIONS: CCITT X.25, 16-bit ADCCP (ANSI X3.66), HDLC, 16-bit SDLC,
+                HYDRA file transfer protocol (by A.G.Lentz & J.H.Homrighausen).
+
+
+  TYPE: CRC-16
+  ORIGIN: CCITT wrong way round
+  GENERATOR POLYNOMIAL: X^16+X^12+X^5+1
+  GENERATOR BITS: 0001 0000 0010 0001  (you see, upside down!)
+  GENERATOR NUMBER: hex 1021
+  ERROR DETECTION: Less than the correctly implemented CCITT CRC-16 because of
+                   faulty calculation, transmission, pre- and postconditioning.
+  TRANSMIT: Init to all zeros, transmit high-byte first following data.
+  RECEIVE: Init to all zeros, process all incoming bytes including the
+           transmitted two CRC bytes, the result is 0 for correct
+           transmissions.
+  APPLICATIONS: Xmodem/CRC and all derivates, Zmodem/CRC-16 (Forsberg).
+
+
+  TYPE: CRC-32
+  ORIGIN: CCITT V.41 specification
+  GENERATOR POLYNOMIAL:
+        X^32+X^26+X^23+X^22+X^16+X^12+X^11+X^10+X^8+X^7+X^5+X^4+X^2+X^1+1
+  GENERATOR BITS: 1110 1101 1011 1000 1000 0011 0010 0000
+  GENERATOR NUMBER: hex EDB88320
+  ERROR DETECTION: When correctly applied, undetected errors are reduced by a
+                   factor of 10^-5 over the CCITT CRC-16.
+  TRANSMIT: Init to all ones, transmit ones complement (ie all 0s become 1s,
+            all 1s become 0s) low-byte first following data.
+  RECEIVE: Init to all ones, process all incoming bytes including the
+           transmitted four CRC bytes, result is hex DEBB20E3 for correct
+           transmissions.
+           This magic check number is the result of the init and complement
+           operations; it can be independently calculated by intializing the
+           CRC to all ones and running through four zero-bytes (the transmitted
+           CRC of an empty datablock).
+  APPLICATIONS: American version of CCITT X.25, 32-bit ADCCP (ANSI X3.66),
+                Zmodem/CRC-32 (Forsberg), PKZIP (PKWARE),
+                HYDRA file transfer protocol (by A.G.Lentz & J.H.Homrighausen).
+
+
+
+--------------------------------End of Document--------------------------------
+
