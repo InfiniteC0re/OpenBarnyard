@@ -5,8 +5,8 @@ namespace Toshi
 {
     Toshi::TNativeFileSystem::TNativeFileSystem(const char* a_name) : TFileSystem(a_name)
     {
-        //sm_unk3 = -1;
-        // Toshi::TFileManager::MountFileSystem(TFileManager::s_pFileManager, this); 
+        m_handle = INVALID_HANDLE_VALUE;
+        TFileManager::Instance().MountFileSystem(this);
     }
 
     Toshi::TFile* Toshi::TNativeFileSystem::CreateFile(TCString const& fn, uint32_t flags)
@@ -33,7 +33,7 @@ namespace Toshi
 
     bool TNativeFileSystem::MakeDirectory(TCString const& string)
     {
-        return CreateDirectoryA(string.GetString(), NULL);
+        return CreateDirectoryA(string.GetString(), TNULL);
     }
 
     bool TNativeFileSystem::GetNextFile(TCString& fileName, uint32_t flags)

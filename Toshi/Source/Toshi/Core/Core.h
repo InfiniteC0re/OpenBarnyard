@@ -8,6 +8,8 @@ constexpr uint32_t TMAKEFOUR(const char str[4])
 #define TMAKEVERSION(VER_MAJOR, VER_MINOR) ((VER_MAJOR << 16) | VER_MINOR)
 #define BITFIELD(x) (1 << x)
 
+#define _TS16(x) return L""x
+
 #if defined(TOSHI_DEBUG)
 	#if defined(TOSHI_PLATFORM_WINDOWS)
 		#define TBREAK() __debugbreak()

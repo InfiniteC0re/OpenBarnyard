@@ -21,6 +21,7 @@ namespace Toshi2
 	public:
 		T2GUIElementNode m_children; // 0x20
 
+
 		T2GUIElement() : T2GUIElementNode()
 		{
 			TASSERT(m_children.m_next == &m_children, "");
