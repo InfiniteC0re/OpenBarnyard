@@ -11,6 +11,7 @@
 #include <Toshi/Core/TGenericDList.h>
 #include "MemoryCard/EnSaveData.h"
 #include <Toshi/Core/TMemory.cpp>
+#include "Toshi/Xui/TXUIResource.h"
 
 AExampleClass::AExampleClass()
 {
@@ -52,30 +53,35 @@ AExampleClass::AExampleClass()
 		TOSHI_INFO("Seeked to offset: {0}", file->Tell());
 		fs->DestroyFile(file);
 	}
-
-	fs = Toshi::TFileSystem::CreateNative("local");
-	file = fs->CreateFile("C:\\Program Files (x86)\\Steam\\userdata\\180297931\\532320\\remote\\SaveData.dat.old", Toshi::TFile::OpenFlags_Read);
-
-	unsigned char* buf = (unsigned char*)Toshi::tmalloc(file->GetSize());//-12);
-	//file->Seek(12, Toshi::TFile::TSEEK_CUR);
-	file->Read(buf, file->GetSize());//-12);
-	
-
-
-	// This is only for testing purposes
-	*(int*)(&buf[8]) = 0; // Setting the CRC to 0 so the new CRC doesn't take the old one and CRCs it
-
-	EnSaveData::GenerateCRC();
-	uint32_t crc = EnSaveData::CalculateCRC(buf, file->GetSize());
-
 	Toshi::TTRB trb;
-	
-	//trb.LoadTrb("D:\\Barnyard\\Game\\Data\\Terrain\\EnvMain\\Beady_L0Mod0.trb");
-	//trb.LoadTrb("F:\\Nicktoons Unite\\DATA\\MATLIBS\\BKG_LOAD_DP_NTSC.TTL");
-	//trb.GetSect("TTL");
+	trb.LoadTrb("C:\\Program Files (x86)\\Steam\\steamapps\\common\\de Blob\\Data\\XUI\\UK\\frontend.trb");
 
-	trb.LoadTrb("C:\\Program Files (x86)\\Steam\\steamapps\\common\\de Blob\\Data\\BlobChar\\AssetPack.trb");
-	trb.GetSymb("SkeletonHeader");
+	Toshi::TXUIResource xuiResource;
+	xuiResource.LoadXUIB((unsigned char*)trb.GetSymb("txui"));
+
+	//fs = Toshi::TFileSystem::CreateNative("local");
+	//file = fs->CreateFile("C:\\Program Files (x86)\\Steam\\userdata\\180297931\\532320\\remote\\SaveData.dat.old", Toshi::TFile::OpenFlags_Read);
+
+	//unsigned char* buf = (unsigned char*)Toshi::tmalloc(file->GetSize());//-12);
+	////file->Seek(12, Toshi::TFile::TSEEK_CUR);
+	//file->Read(buf, file->GetSize());//-12);
+	//
+
+
+	//// This is only for testing purposes
+	//*(int*)(&buf[8]) = 0; // Setting the CRC to 0 so the new CRC doesn't take the old one and CRCs it
+
+	//EnSaveData::GenerateCRC();
+	//uint32_t crc = EnSaveData::CalculateCRC(buf, file->GetSize());
+
+	//trb =;
+	//
+	////trb.LoadTrb("D:\\Barnyard\\Game\\Data\\Terrain\\EnvMain\\Beady_L0Mod0.trb");
+	////trb.LoadTrb("F:\\Nicktoons Unite\\DATA\\MATLIBS\\BKG_LOAD_DP_NTSC.TTL");
+	////trb.GetSect("TTL");
+
+	//trb.LoadTrb("C:\\Program Files (x86)\\Steam\\steamapps\\common\\de Blob\\Data\\BlobChar\\AssetPack.trb");
+	//trb.GetSymb("SkeletonHeader");
 	//trb.LoadTrb("C:\\Users\\nepel\\Desktop\\BKG_CONCEPT01_NTSC_ENG.TTL");
 
 	

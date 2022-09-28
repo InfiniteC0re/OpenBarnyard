@@ -53,7 +53,7 @@ namespace Toshi
 
 	const char* TSystem::StringUnicodeToChar(char* a_CharString, const wchar_t* const& a_UnicodeString, uint32_t a_iLength)
 	{
-		TASSERT(a_UnicodeString != TNULL && a_CharString != NULL, "Invalid string");
+		TASSERT(a_UnicodeString != TNULL && a_CharString != TNULL, "Invalid string");
 
 		size_t strLen = StringLength(a_UnicodeString);
 		if (strLen < a_iLength || a_iLength == -1) { a_iLength = (uint32_t)strLen; }

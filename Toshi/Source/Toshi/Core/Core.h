@@ -8,7 +8,17 @@ constexpr uint32_t TMAKEFOUR(const char str[4])
 #define TMAKEVERSION(VER_MAJOR, VER_MINOR) ((VER_MAJOR << 16) | VER_MINOR)
 #define BITFIELD(x) (1 << x)
 
-#define _TS16(x) return L""x
+#define _TS16(x) L#x
+
+constexpr uint16_t BIG_ENDIAN_BYTES_TO_UINT16(const unsigned char bytes[2])
+{
+	return bytes[1] | bytes[0] << 8;
+}
+
+constexpr uint16_t BIG_ENDIAN_TO_UINT16(const unsigned short val)
+{
+	return ((((val) >> 8) & 0xff) | (((val) & 0xff) << 8));
+}
 
 #if defined(TOSHI_DEBUG)
 	#if defined(TOSHI_PLATFORM_WINDOWS)
