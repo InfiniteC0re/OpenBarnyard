@@ -7,8 +7,6 @@
 #undef CreateFile
 #endif
 
-#define BIG_ENDIAN_TO_LITTLE_UINT32(V) (V >> 8 & 0xff | (uint32_t)(unsigned short)((short)V << 8)) << 0x10 | V >> 0x18 | (uint32_t)(unsigned short)((short)(V >> 0x10) << 8)
-
 namespace Toshi
 {
 	class TFile;

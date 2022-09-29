@@ -23,6 +23,7 @@ project "OpenBlob"
 
 	includedirs
 	{
+		"Source",
 		"%{wks.location}/Toshi/Source",
 		"%{IncludeDir.spdlog}"
 	}

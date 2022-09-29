@@ -10,12 +10,17 @@ constexpr uint32_t TMAKEFOUR(const char str[4])
 
 #define _TS16(x) L#x
 
-constexpr uint16_t BIG_ENDIAN_BYTES_TO_UINT16(const unsigned char bytes[2])
+__forceinline uint32_t BIG_ENDIAN_TO_LITTLE(uint32_t val)
+{
+	return (val >> 8 & 0xff | (uint32_t)(unsigned short)((short)val << 8)) << 0x10 | val >> 0x18 | (uint32_t)(unsigned short)((short)(val >> 0x10) << 8);
+}
+
+__forceinline uint16_t BIG_ENDIAN_TO_LITTLE(const uint8_t bytes[2])
 {
 	return bytes[1] | bytes[0] << 8;
 }
 
-constexpr uint16_t BIG_ENDIAN_TO_UINT16(const unsigned short val)
+__forceinline uint16_t BIG_ENDIAN_TO_LITTLE(uint16_t val)
 {
 	return ((((val) >> 8) & 0xff) | (((val) & 0xff) << 8));
 }
@@ -38,9 +43,11 @@ constexpr uint16_t BIG_ENDIAN_TO_UINT16(const unsigned short val)
 #if defined(TOSHI_ENABLE_ASSERTS)
 	#define TTODO(DESC) { TOSHI_ERROR("TODO: {0} ({1}, at line {2})", DESC, __FUNCTION__, __LINE__); }
 	#define TIMPLEMENT() { TOSHI_ERROR("{0} is not implemented", __FUNCTION__); }
+	#define TIMPLEMENT_D(DESC) { TOSHI_ERROR("{0} is not implemented: {1}", __FUNCTION__, DESC); }
 	#define TASSERT(x, ...) { if (!(x)) { TOSHI_CORE_ERROR(__VA_ARGS__); TBREAK(); } }
 #else
 	#define TTODO(DESC)
 	#define TIMPLEMENT()
+	#define TIMPLEMENT_D(DESC)
 	#define TASSERT(x, ...)
 #endif
