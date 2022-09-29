@@ -37,13 +37,22 @@ namespace Toshi
 		Header m_oHeader;							// 0x0
 		unsigned short** m_asStringTable = TNULL;	// 0x1C
 		unsigned char* m_pCust;						// 0x28
-		uint32_t m_uiCustSize;						// 0x3C
+		uint32_t m_uiCustDataSize;					// 0x3C
 		uint32_t m_uiStringTableCount;				// 0x30
 	public:
 		inline const wchar_t* GetString(uint16_t index) { return L""; }
 
-		bool LoadXUIB(unsigned char* buffer);
-		int ProcessSections(unsigned char* buffer);
+		bool LoadXUIBHeader(unsigned char* buffer);
+
+		// That should be the real load XUIB
+		// loadStringTables = when true load .xus/.trb files (StringTables)
+		// filename = f.e Data/XUI/%s.trb or Data/XUI/%s.xur
+		// fileNameStringTable = f.e %s/StringTables/%s/%s.xus or %s/StringTables/%s/%s.trb
+		// loadTrb = when true load .xur/.trb files (XUIB)
+		// unk3 = probably a function
+		void LoadXUIB2(bool loadStringTables, const char* filenameXUIB, const char* fileNameStringTable, bool loadTrb, void* unk3);
+
+		int GetTotalSize(unsigned char* buffer);
 		int ProcessDATA(unsigned char* buffer);
 		bool ProcessSTRN(unsigned short* pPtr, uint32_t size);
 		int GetStringTableSize(unsigned char* pPtr, uint32_t size);

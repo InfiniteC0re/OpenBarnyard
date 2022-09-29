@@ -1,7 +1,7 @@
 #include "ToshiPCH.h"
 #include "TXUIResource.h"
 
-bool Toshi::TXUIResource::LoadXUIB(unsigned char* buffer)
+bool Toshi::TXUIResource::LoadXUIBHeader(unsigned char* buffer)
 {
     m_oHeader.m_uiFileID = PARSEWORD(buffer);
 
@@ -45,11 +45,56 @@ bool Toshi::TXUIResource::LoadXUIB(unsigned char* buffer)
     return true;
 }
 
-int Toshi::TXUIResource::ProcessSections(unsigned char* buffer)
-{
-    LoadXUIB(buffer);
 
-    int smth = m_oHeader.m_uiNumSections * sizeof(Section) + 4;
+void Toshi::TXUIResource::LoadXUIB2(bool loadStringTables, const char* filenameXUIB, const char* fileNameStringTable, bool loadTrb, void* unk3)
+{
+    for (size_t i = 0; i < m_uiStringTableCount; i++)
+    {
+        tdelete(m_asStringTable[i]);
+    }
+    tdelete(m_asStringTable);
+    // tdelete(this+0x20);
+    // tdelete(this+0x24);
+    // this+2C != TNULL
+    // this+0x2C(1) probably function pointer parameter=int (value 1 in this case)
+
+    if (loadStringTables && fileNameStringTable != TNULL)
+    {
+        TTODO("Load Stringtables");
+    }
+
+    const char* extension = loadTrb ? ".trb" : ".xur";
+    const char* fullFileName = strstr(filenameXUIB, extension);
+    
+    if (!loadTrb)
+    {
+        auto fs = Toshi::TFileSystem::CreateNative("local");
+        auto file = fs->CreateFile(fullFileName, Toshi::TFile::OpenFlags_Read);
+
+        if (file != TNULL)
+        {
+            int size = file->GetSize();
+            unsigned char* buffer = (unsigned char*)tmalloc(size);
+            file->Read(buffer, size);
+            file->m_pFileSystem->DestroyFile(file);
+            bool bRes = LoadXUIBHeader(buffer);
+
+            if (bRes)
+            {
+                for (size_t i = 0; i < m_oHeader.m_uiNumSections; i++)
+                {
+                    TTODO("Finish LoadXUIB2");
+                }
+            }
+        }
+    }
+}
+
+int Toshi::TXUIResource::GetTotalSize(unsigned char* buffer)
+{
+    LoadXUIBHeader(buffer);
+
+    int totalSize = m_oHeader.m_uiNumSections * sizeof(Section) + 4;
 
     for (size_t i = 0; i < m_oHeader.m_uiNumSections; i++)
     {
@@ -57,13 +102,13 @@ int Toshi::TXUIResource::ProcessSections(unsigned char* buffer)
 
         if (m_oHeader.m_apSections[i].m_uiSectionID == IDXURQUAT)
         {
-            smth += (m_oHeader.m_apSections[i].m_uiSize >> 4) * 4 + 4;
+            totalSize += (m_oHeader.m_apSections[i].m_uiSize >> 4) * 4 + 4;
         }
         else if (m_oHeader.m_apSections[i].m_uiSectionID == IDXURCUST)
         {
             m_pCust = (unsigned char*)tmalloc(m_oHeader.m_apSections[i].m_uiSize);
             Toshi::TSystem::MemCopy(m_pCust, currentSectionBuffer, m_oHeader.m_apSections[i].m_uiSize);
-            m_uiCustSize = m_oHeader.m_apSections[i].m_uiSize;
+            m_uiCustDataSize = m_oHeader.m_apSections[i].m_uiSize;
         }
         else if (m_oHeader.m_apSections[i].m_uiSectionID == IDXURDATA)
         {
@@ -72,15 +117,15 @@ int Toshi::TXUIResource::ProcessSections(unsigned char* buffer)
         else if (m_oHeader.m_apSections[i].m_uiSectionID == IDXURSTRING)
         {
             ProcessSTRN((unsigned short*)currentSectionBuffer, m_oHeader.m_apSections[i].m_uiSize);
-            smth += GetStringTableSize(currentSectionBuffer, m_oHeader.m_apSections[i].m_uiSize);
+            totalSize += GetStringTableSize(currentSectionBuffer, m_oHeader.m_apSections[i].m_uiSize);
         }
         else if (m_oHeader.m_apSections[i].m_uiSectionID == IDXURVEC)
         {
-            smth += (m_oHeader.m_apSections[i].m_uiSize / 0xC) * 8 + 0xC;
+            totalSize += (m_oHeader.m_apSections[i].m_uiSize / 0xC) * 8 + 0xC;
         }
     }
 
-    return 0;
+    return totalSize;
 }
 
 int Toshi::TXUIResource::ProcessDATA(unsigned char* buffer)

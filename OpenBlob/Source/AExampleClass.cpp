@@ -59,7 +59,7 @@ AExampleClass::AExampleClass()
 	if (valid)
 	{
 		Toshi::TXUIResource xuiResource;
-		xuiResource.LoadXUIB((unsigned char*)trb.GetSymb("txui"));
+		xuiResource.LoadXUIBHeader((unsigned char*)trb.GetSymb("txui"));
 	}
 
 	//fs = Toshi::TFileSystem::CreateNative("local");

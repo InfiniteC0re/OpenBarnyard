@@ -74,8 +74,8 @@ namespace Toshi
 		virtual int Write(LPVOID, size_t) = 0;		//0x4
 		virtual bool Seek(int, TFile::TSEEK) = 0;	//0x8
 		virtual uint32_t Tell() = 0;				//0xC
-		virtual int GetSize() = 0;
-		virtual _FILETIME GetDate() { return {}; }
+		virtual int GetSize() = 0;					//0x10
+		virtual _FILETIME GetDate() { return {}; }	//0x14
 		virtual char GetCChar() = 0;
 		virtual wchar_t GetWChar() = 0;
 		virtual int PutCChar(char character) = 0;
