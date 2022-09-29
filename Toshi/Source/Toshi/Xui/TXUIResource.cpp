@@ -3,21 +3,23 @@
 
 bool Toshi::TXUIResource::LoadXUIB(unsigned char* buffer)
 {
-    m_oHeader.m_uiFileID = BIG_ENDIAN_TO_LITTLE(*(uint32_t*)buffer);
+    m_oHeader.m_uiFileID = PARSEWORD(buffer);
 
     TASSERT(m_oHeader.m_uiFileID == IDXUR, "Not a .xur file!");
 
-    m_oHeader.m_uiUnk = BIG_ENDIAN_TO_LITTLE(*(uint32_t*)(buffer + 0x4));
-    m_oHeader.m_uiUnk2 = BIG_ENDIAN_TO_LITTLE(*(uint32_t*)(buffer + 0xA));
-    m_oHeader.m_uiUnk3 = BIG_ENDIAN_TO_LITTLE(*(uint32_t*)(buffer + 0xE));
-    m_oHeader.m_usUnk4 = BIG_ENDIAN_TO_LITTLE(buffer + 0x8);
-    m_oHeader.m_uiNumSections = BIG_ENDIAN_TO_LITTLE(buffer + 0x12);
+    m_oHeader.m_uiUnk = PARSEWORD(buffer + 0x4);
+    m_oHeader.m_uiUnk2 = PARSEWORD(buffer + 0xA);
+    m_oHeader.m_uiUnk3 = PARSEWORD(buffer + 0xE);
+    m_oHeader.m_usUnk4 = PARSEWORD(buffer + 0x8);
+    m_oHeader.m_uiNumSections = PARSEDWORD(buffer + 0x12);
 
     TASSERT(m_oHeader.m_uiNumSections > 0, "There must be one or more Sections");
 
     m_oHeader.m_apSections = static_cast<Section*>(tmalloc(m_oHeader.m_uiNumSections * sizeof(Section)));
 
-    uint32_t sectionID = BIG_ENDIAN_TO_LITTLE(*(uint32_t*)(buffer + 0x14));
+    uint32_t sectionID = PARSEWORD(buffer + 0x14);
+
+    buffer += 0x14;
 
     if (sectionID != IDXURSTRING && sectionID != IDXURVEC && sectionID != IDXURQUAT && sectionID != IDXURCUST)
     {
@@ -26,7 +28,7 @@ bool Toshi::TXUIResource::LoadXUIB(unsigned char* buffer)
 
     for (size_t i = 0; i < m_oHeader.m_uiNumSections; i++)
     {
-        m_oHeader.m_apSections[i].m_uiSectionID = BIG_ENDIAN_TO_LITTLE(*(uint32_t*)buffer);
+        m_oHeader.m_apSections[i].m_uiSectionID = PARSEWORD(buffer);
 
         TASSERT(m_oHeader.m_apSections[i].m_uiSectionID == IDXURSTRING || 
             m_oHeader.m_apSections[i].m_uiSectionID == IDXURVEC || 
@@ -34,8 +36,8 @@ bool Toshi::TXUIResource::LoadXUIB(unsigned char* buffer)
             m_oHeader.m_apSections[i].m_uiSectionID == IDXURCUST || 
             m_oHeader.m_apSections[i].m_uiSectionID == IDXURDATA, "Invalid Section ID");
 
-        m_oHeader.m_apSections[i].m_uiOffset = BIG_ENDIAN_TO_LITTLE(*(uint32_t*)buffer + 4);
-        m_oHeader.m_apSections[i].m_uiSize = BIG_ENDIAN_TO_LITTLE(*(uint32_t*)buffer + 8);
+        m_oHeader.m_apSections[i].m_uiOffset = PARSEWORD(buffer + 4);
+        m_oHeader.m_apSections[i].m_uiSize = PARSEWORD(buffer + 8);
 
         buffer += sizeof(Section);
     }
@@ -83,7 +85,7 @@ int Toshi::TXUIResource::ProcessSections(unsigned char* buffer)
 
 int Toshi::TXUIResource::ProcessDATA(unsigned char* buffer)
 {
-    uint16_t uiType = BIG_ENDIAN_TO_LITTLE(buffer);
+    uint16_t uiType = PARSEDWORD(buffer);
     buffer += 2;
 
     TASSERT(0 == Toshi2::TStringManager::String16Compare(GetString(uiType), _TS16(XuiCanvas)), "");
@@ -100,7 +102,7 @@ bool Toshi::TXUIResource::ProcessSTRN(unsigned short* pPtr, uint32_t size)
 
     while (pPtr < pEnd)
     {
-        unsigned short stringLength = BIG_ENDIAN_TO_LITTLE(*pPtr);
+        unsigned short stringLength = PARSEDWORD(*pPtr);
         m_uiStringTableCount++;
         pPtr += stringLength + 1;
     }
@@ -114,7 +116,7 @@ bool Toshi::TXUIResource::ProcessSTRN(unsigned short* pPtr, uint32_t size)
     {
         TASSERT(pPtr < pEnd, "Pointer overflow");
 
-        unsigned short stringLength = BIG_ENDIAN_TO_LITTLE(*pPtr);
+        unsigned short stringLength = PARSEDWORD(*pPtr);
         unsigned short size = stringLength * sizeof(unsigned short) + sizeof(unsigned short);
 
         m_asStringTable[i] = (unsigned short*)tmalloc(size);

@@ -15,12 +15,17 @@ __forceinline uint32_t BIG_ENDIAN_TO_LITTLE(uint32_t val)
 	return (val >> 8 & 0xff | (uint32_t)(unsigned short)((short)val << 8)) << 0x10 | val >> 0x18 | (uint32_t)(unsigned short)((short)(val >> 0x10) << 8);
 }
 
-__forceinline uint16_t BIG_ENDIAN_TO_LITTLE(const uint8_t bytes[2])
+__forceinline uint16_t PARSEDWORD(const uint8_t bytes[2])
 {
-	return bytes[1] | bytes[0] << 8;
+	return (bytes[1] << 0) | (bytes[0] << 8);
 }
 
-__forceinline uint16_t BIG_ENDIAN_TO_LITTLE(uint16_t val)
+__forceinline uint32_t PARSEWORD(const uint8_t bytes[4])
+{
+	return (bytes[3] << 0) | (bytes[2] << 8) | (bytes[1] << 16) | (bytes[0] << 24);
+}
+
+__forceinline uint16_t PARSEDWORD(uint16_t val)
 {
 	return ((((val) >> 8) & 0xff) | (((val) & 0xff) << 8));
 }
