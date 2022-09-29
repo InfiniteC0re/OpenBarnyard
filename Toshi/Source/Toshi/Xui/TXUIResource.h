@@ -8,13 +8,12 @@ namespace Toshi
 {
 	class TXUIResource
 	{
-
-		const uint32_t IDXUR		= TMAKEFOUR("XUIB");
-		const uint32_t IDXURSTRING	= TMAKEFOUR("STRN");
-		const uint32_t IDXURVEC		= TMAKEFOUR("VECT");
-		const uint32_t IDXURQUAT	= TMAKEFOUR("QUAT");
-		const uint32_t IDXURCUST	= TMAKEFOUR("CUST");
-		const uint32_t IDXURDATA	= TMAKEFOUR("DATA");
+		static const uint32_t IDXUR			= TMAKEFOUR("XUIB");
+		static const uint32_t IDXURSTRING	= TMAKEFOUR("STRN");
+		static const uint32_t IDXURVEC		= TMAKEFOUR("VECT");
+		static const uint32_t IDXURQUAT		= TMAKEFOUR("QUAT");
+		static const uint32_t IDXURCUST		= TMAKEFOUR("CUST");
+		static const uint32_t IDXURDATA		= TMAKEFOUR("DATA");
 
 		struct Section
 		{
