@@ -54,10 +54,13 @@ AExampleClass::AExampleClass()
 		fs->DestroyFile(file);
 	}
 	Toshi::TTRB trb;
-	trb.LoadTrb("C:\\Program Files (x86)\\Steam\\steamapps\\common\\de Blob\\Data\\XUI\\UK\\frontend.trb");
+	bool valid = trb.LoadTrb("C:\\Program Files (x86)\\Steam\\steamapps\\common\\de Blob\\Data\\XUI\\UK\\frontend.trb");
 
-	Toshi::TXUIResource xuiResource;
-	xuiResource.LoadXUIB((unsigned char*)trb.GetSymb("txui"));
+	if (valid)
+	{
+		Toshi::TXUIResource xuiResource;
+		xuiResource.LoadXUIB((unsigned char*)trb.GetSymb("txui"));
+	}
 
 	//fs = Toshi::TFileSystem::CreateNative("local");
 	//file = fs->CreateFile("C:\\Program Files (x86)\\Steam\\userdata\\180297931\\532320\\remote\\SaveData.dat.old", Toshi::TFile::OpenFlags_Read);

@@ -35,8 +35,8 @@ namespace Toshi
 
 		if (m_Endianess == Endianess::Big)
 		{
-			m_Header.FileSize = BIG_ENDIAN_TO_LITTLE_UINT32(m_Header.FileSize);
-			m_TRBF = BIG_ENDIAN_TO_LITTLE_UINT32(m_TRBF);
+			m_Header.FileSize = BIG_ENDIAN_TO_LITTLE(m_Header.FileSize);
+			m_TRBF = BIG_ENDIAN_TO_LITTLE(m_TRBF);
 		}
 
 		m_CurrentSection.Name = m_Header.Magic;
@@ -95,8 +95,8 @@ namespace Toshi
 		
 		if (m_Endianess != Endianess::Little)
 		{
-			m_CurrentSection.Name = BIG_ENDIAN_TO_LITTLE_UINT32(m_CurrentSection.Name);
-			m_CurrentSection.Size = BIG_ENDIAN_TO_LITTLE_UINT32(m_CurrentSection.Size);
+			m_CurrentSection.Name = BIG_ENDIAN_TO_LITTLE(m_CurrentSection.Name);
+			m_CurrentSection.Size = BIG_ENDIAN_TO_LITTLE(m_CurrentSection.Size);
 		}
 
 		m_ReadPos = 0;
@@ -155,7 +155,7 @@ namespace Toshi
 
 		if (m_pFile != TNULL && freeFile)
 		{
-			TIMPLEMENT("FUN_00685f60(m_pFile)");
+			TIMPLEMENT_D("FUN_00685f60(m_pFile)");
 		}
 
 		m_pFile = TNULL;

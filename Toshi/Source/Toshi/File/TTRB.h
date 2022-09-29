@@ -64,7 +64,7 @@ namespace Toshi
 
 		struct SYMB
 		{
-			uint32_t m_i32SymbCount;
+			int32_t m_i32SymbCount;
 		};
 
 	public:

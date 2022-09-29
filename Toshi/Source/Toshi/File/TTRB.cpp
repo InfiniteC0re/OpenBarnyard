@@ -6,25 +6,26 @@ namespace Toshi
 {
 	bool TTRB::LoadTrb(const char* fn)
 	{
-		TTSF ttsf = TTSF();
+		TTSF ttsf;
 
-		TCString str = TCString(fn);
+		TCString str(fn);
 		auto fs = Toshi::TFileSystem::CreateNative(str);
 		
 		Toshi::TFile* file = fs->CreateFile(str, 1);
 		uint8_t error = ttsf.ReadFile(file);
 
+		bool readResult = false;
 		if (error == TTRB_ERROR::ERROR_OK)
 		{
 			if (ttsf.m_TRBF == TMAKEFOUR("TRBF"))
 			{
 				ReadTrb(ttsf);
+				readResult = true;
 			}
 		}
 
 		ttsf.Destroy();
-
-		return false;
+		return readResult;
 	}
 
 	bool TTRB::ReadTrb(TTSF& ttsf)
