@@ -214,10 +214,7 @@ namespace Toshi
 		bool result = ReadTrb(ttsf);
 		fileSize = leftSize;
 
-		if (result == false)
-		{
-			return false;
-		}
+		return result;
 	}
 
 	char* TTRB::GetSymb(const char* symbName)
