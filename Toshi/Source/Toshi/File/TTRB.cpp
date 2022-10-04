@@ -67,32 +67,22 @@ namespace Toshi
 					TTODO("HEAD section");
 
 					int numsections = (sectionSize - 4) / 0xC;
-
-					m_pHeader = static_cast<Header*>(tmalloc(numsections * 0x10 + 8));
-
+					m_pHeader = static_cast<Header*>(tmalloc(sizeof(Header) + sizeof(SecInfo) * numsections));
 					m_pHeader->m_ui32Version = 0;
 
 					ttsf.ReadBytes(&m_pHeader->m_i32SectionCount, sizeof(m_pHeader->m_i32SectionCount));
 
-					TASSERT(m_pHeader->m_ui32Version == TMAKEVERSION(0, 0), "");
-					TASSERT(m_pHeader->m_i32SectionCount == numsections, "");
+					// TASSERT(m_pHeader->m_ui32Version == TMAKEVERSION(0, 0), "HEAD section cannot have a version");
+					TASSERT(m_pHeader->m_i32SectionCount == numsections, "HEAD section has wrong num of sections");
 
-					char* cursor = (char*)(m_pHeader + 1);
-
+					SecInfo* pCur = reinterpret_cast<SecInfo*>(m_pHeader + 1);
 					for (size_t i = 0; i < m_pHeader->m_i32SectionCount; i++)
 					{
-						ttsf.ReadBytes(cursor, 0xC);
-						*(int*)(cursor + 0xC) = 0;
-						cursor += 0x10;
-					}
-
-					SecInfo* pSects = reinterpret_cast<SecInfo*>(m_pHeader + 1);
-
-					for (uint32_t i = 0; i < m_pHeader->m_i32SectionCount; i++)
-					{
-						pSects->m_Unk1 = (pSects->m_Unk1 == 0) ? 16 : pSects->m_Unk1;
-						pSects->m_pData = tmalloc(pSects->m_Size);
-						pSects++;
+						ttsf.ReadBytes(pCur, 0xC);
+						pCur->m_pData = tmalloc(pCur->m_Size);
+						pCur->m_Unk1 = (pCur->m_Unk1 == 0) ? 16 : pCur->m_Unk1;
+						pCur->m_Unk2 = 0;
+						pCur++;
 					}
 
 					ttsf.SkipSection();
@@ -120,49 +110,48 @@ namespace Toshi
 				}
 				else if (sectionName == TMAKEFOUR("RELC"))
 				{
-					TTODO("RELC section");
-					
-					//uint32_t relocCount = 0;
-					//uint32_t curReloc = 0;
-					//uint32_t readedRelocs = 0;
+					uint32_t relocCount = 0;
+					uint32_t curReloc = 0;
+					uint32_t readedRelocs = 0;
 
-					//ttsf.ReadBytes(&relocCount, sizeof(relocCount));
+					ttsf.ReadBytes(&relocCount, sizeof(relocCount));
 
-					//if (relocCount < 1)
-					//{
-					//	relocCount = 0;
-					//}
-					//else
-					//{
-					//	do
-					//	{
-					//		uint32_t relocReadCount = relocCount - readedRelocs;
+					if (relocCount < 1)
+					{
+						relocCount = 0;
+					}
+					else
+					{
+						do
+						{
+							uint32_t relocReadCount = relocCount - readedRelocs;
 
-					//		// limit count of RELCs to read
-					//		relocReadCount = TMath::Min(relocReadCount, RELCEntriesLimit);
-					//		ttsf.ReadBytes(relcEntries, relocReadCount << 3);
-					//		curReloc = readedRelocs + relocReadCount;
+							// limit count of RELCs to read
+							relocReadCount = TMath::Min(relocReadCount, RELCEntriesLimit);
+							ttsf.ReadBytes(relcEntries, relocReadCount << 3);
+							curReloc = readedRelocs + relocReadCount;
 
-					//		SecInfo* pSects = reinterpret_cast<SecInfo*>(m_pHeader + 1);
-					//		for (uint32_t i = 0; i < relocReadCount; i++)
-					//		{
-					//			auto& relcEntry = relcEntries[i];
-					//			auto& hdrx1 = pSects[relcEntry.HDRX1];
-					//			auto& hdrx2 = hdrx1;
+							SecInfo* pSects = reinterpret_cast<SecInfo*>(m_pHeader + 1);
+							for (uint32_t i = 0; i < relocReadCount; i++)
+							{
+								auto& relcEntry = relcEntries[i];
+								auto& hdrx1 = pSects[relcEntry.HDRX1];
+								auto& hdrx2 = hdrx1;
 
-					//			if (m_pHeader->m_ui32Version >= TMAKEVERSION(1, 0))
-					//			{
-					//				hdrx2 = pSects[relcEntry.HDRX2];
-					//			}
+								if (m_pHeader->m_ui32Version >= TMAKEVERSION(1, 0))
+								{
+									hdrx2 = pSects[relcEntry.HDRX2];
+								}
 
-					//			// this won't work in x64 because pointers in TRB files are always 4 bytes
-					//			// need some workaround to support x64 again
-					//			uintptr_t* ptr = reinterpret_cast<uintptr_t*>((uintptr_t)hdrx1.m_pData + relcEntry.Offset);
-					//			*ptr += (uintptr_t)hdrx2.m_pData;
-					//		}
+								// this won't work in x64 because pointers in TRB files are always 4 bytes
+								// need some workaround to support x64 again
+								uintptr_t* ptr = reinterpret_cast<uintptr_t*>((uintptr_t)hdrx1.m_pData + relcEntry.Offset);
+								*ptr += (uintptr_t)hdrx2.m_pData;
+							}
 
-					//	} while (curReloc < relocCount);
-					//}
+							readedRelocs += relocReadCount;
+						} while (curReloc < relocCount);
+					}
 
 					ttsf.SkipSection();
 				}
