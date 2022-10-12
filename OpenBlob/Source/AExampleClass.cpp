@@ -53,14 +53,14 @@ AExampleClass::AExampleClass()
 		TOSHI_INFO("Seeked to offset: {0}", file->Tell());
 		fs->DestroyFile(file);
 	}
-	Toshi::TTRB trb;
-	bool valid = trb.LoadTrb("C:\\Program Files (x86)\\Steam\\steamapps\\common\\de Blob\\Data\\XUI\\UK\\frontend.trb");
+	/*Toshi::TTRB trb;
+	bool valid = trb.Load("C:\\Program Files (x86)\\Steam\\steamapps\\common\\de Blob\\Data\\XUI\\UK\\frontend.trb");
 
 	if (valid)
 	{
 		Toshi::TXUIResource xuiResource;
-		xuiResource.LoadXUIBHeader((unsigned char*)trb.GetSymb("txui"));
-	}
+		xuiResource.LoadXUIBHeader((unsigned char*)trb.FindSymb("txui"));
+	}*/
 
 	//fs = Toshi::TFileSystem::CreateNative("local");
 	//file = fs->CreateFile("C:\\Program Files (x86)\\Steam\\userdata\\180297931\\532320\\remote\\SaveData.dat.old", Toshi::TFile::OpenFlags_Read);
@@ -86,8 +86,6 @@ AExampleClass::AExampleClass()
 	//trb.LoadTrb("C:\\Program Files (x86)\\Steam\\steamapps\\common\\de Blob\\Data\\BlobChar\\AssetPack.trb");
 	//trb.GetSymb("SkeletonHeader");
 	//trb.LoadTrb("C:\\Users\\nepel\\Desktop\\BKG_CONCEPT01_NTSC_ENG.TTL");
-
-	
 
 	class Test : public Toshi::TDList<Test>::TNode
 	{

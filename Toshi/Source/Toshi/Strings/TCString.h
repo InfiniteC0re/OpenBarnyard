@@ -14,7 +14,7 @@ namespace Toshi
 		TCString(const TWString& src);
 		TCString(const char* const& src);
 		TCString(uint32_t size);
-		~TCString();
+		inline ~TCString() { FreeBuffer(); }
 
 		inline void Copy(const TCString& src, uint32_t size = -1) { Copy(src.m_pBuffer, size); }
 		void Copy(const TWString& src, uint32_t size = -1);
@@ -28,7 +28,7 @@ namespace Toshi
 		TCString Format(const char* a_pcFormat, ...);
 		TCString& VFormat(const char* a_pcFormat, char* a_pcArgs);
 
-		void UndoForceSetData();
+		void UndoForceSetData() { Reset(); }
 		void ForceSetData(char* a_cString, int a_ilength);
 
 		int FindReverse(char a_findChar, int pos) const;
@@ -83,7 +83,12 @@ namespace Toshi
 		inline TCString& operator=(const TCString& str) { Copy(str, -1); return *this; };
 
 	private:
-		void Reset();
+		inline void Reset()
+		{
+			m_pBuffer = NullString;
+			m_iStrLen = 0;
+			m_iExcessLen = 0;
+		}
 
 	private:
 		char* m_pBuffer = NullString; // 0x0

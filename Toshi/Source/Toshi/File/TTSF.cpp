@@ -149,13 +149,13 @@ namespace Toshi
 		return TTRB::ERROR_OK;
 	}
 
-	void TTSF::Destroy(bool freeFile)
+	void TTSF::Destroy(bool free)
 	{
 		PopFileInfo();
 
-		if (m_pFile != TNULL && freeFile)
+		if (m_pFile != TNULL && free)
 		{
-			TIMPLEMENT_D("FUN_00685f60(m_pFile)");
+			m_pFile->Destroy();
 		}
 
 		m_pFile = TNULL;

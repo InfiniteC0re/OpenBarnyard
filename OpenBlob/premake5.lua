@@ -30,7 +30,13 @@ project "OpenBlob"
 	
 	defines
 	{
-		"TOSHI_USER_CLIENT"
+		"TOSHI_USER_CLIENT",
+		"SPDLOG_WCHAR_TO_UTF8_SUPPORT"
+	}
+	
+	postbuildcommands
+	{
+		"{COPYDIR} Data %{wks.location}/bin/" .. outputdir .. "/%{prj.name}/Data"
 	}
 
 	filter "system:windows"

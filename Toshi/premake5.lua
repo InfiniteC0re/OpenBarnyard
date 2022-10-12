@@ -25,6 +25,7 @@ project "Toshi"
 	defines
 	{
 		"TOSHI_USER_ENGINE",
+		"SPDLOG_WCHAR_TO_UTF8_SUPPORT",
 		"_CRT_SECURE_NO_WARNINGS"
 	}
 

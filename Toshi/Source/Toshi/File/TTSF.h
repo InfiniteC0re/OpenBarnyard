@@ -35,6 +35,7 @@ namespace Toshi
 
 	public:
 		TTSF();
+		inline ~TTSF() { Destroy(); }
 		
 		uint8_t ReadFile(TFile* a_pFile);
 		uint8_t FUN_00687FA0(); // de blob address
@@ -51,7 +52,7 @@ namespace Toshi
 		uint8_t ReadFORM(TTRB::SectionFORM* section);
 		uint8_t ReadSectionData(void* dest);
 
-		void Destroy(bool freeFile = true);
+		void Destroy(bool free = true);
 
 		void DecompressSection(void* buffer, uint32_t size);
 		inline void CompressSection(TFile* file, char* unk, uint32_t unk2, uint32_t unk3) { TCompress_Compress::Compress(file, unk, unk2, unk3, (uint8_t)m_Endianess); }

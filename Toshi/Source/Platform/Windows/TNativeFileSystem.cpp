@@ -3,13 +3,13 @@
 
 namespace Toshi
 {
-    Toshi::TNativeFileSystem::TNativeFileSystem(const char* a_name) : TFileSystem(a_name)
+    TNativeFileSystem::TNativeFileSystem(const char* a_name) : TFileSystem(a_name)
     {
         m_handle = INVALID_HANDLE_VALUE;
         TFileManager::Instance().MountFileSystem(this);
     }
 
-    Toshi::TFile* Toshi::TNativeFileSystem::CreateFile(TCString const& fn, uint32_t flags)
+    TFile* TNativeFileSystem::CreateFile(TCString const& fn, uint32_t flags)
     {
         TNativeFile* nativeFile = tmalloc<TNativeFile>();
         new (nativeFile) TNativeFile(this);
@@ -23,7 +23,7 @@ namespace Toshi
         return nativeFile;
     }
 
-    void Toshi::TNativeFileSystem::DestroyFile(TFile* file)
+    void TNativeFileSystem::DestroyFile(TFile* file)
     {
         if (file != TNULL)
         {

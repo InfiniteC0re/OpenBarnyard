@@ -92,19 +92,6 @@ namespace Toshi
 
 	template <class T>
 	using T2DList = TDList<T>;
-
-	/*template <class T>
-	class T2DList : public TGenericDList
-	{
-	public:
-		T2DList() { }
-
-		inline bool IsLinked() { return m_Root.IsLinked(); }
-		inline T* GetRoot() { return m_Root.As<T>(); }
-		inline T* GetFirst() { return m_Root.Next()->As<T>(); }
-		inline T& GetRootRef() { return *GetRootRef(); }
-		inline T& GetFirstRef() { return *GetFirst(); }
-	};*/
 }
 
 
