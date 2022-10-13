@@ -48,36 +48,6 @@ bool ARootTask::OnUpdate(float deltaTime)
 
 		TOSHI_INFO("ARootTask: Five seconds has passed. Deactivating ARootTask");
 		TOSHI_INFO("Average FPS is {0:f}", m_Kernel->GetAverageFPS());
-
-		Toshi::TTRB trb;
-		TOSHI_INFO("Trying to read Data/Barnyard_Locale/eng-uk.trb");
-		trb.Open("Data/Barnyard_Locale/eng-uk.trb");
-		
-		{
-			struct LocaleStrings
-			{
-				uint32_t Count;
-				wchar_t** Strings;
-
-				/* the fields below only exist in Barnyard */
-
-				uint16_t Unknown1; // 0
-				uint16_t Unknown2; // 57760 (0b1110000110100000)
-				uint16_t Unknown3; // 0
-				uint16_t Unknown4; // 57760 (0b1110000110100000)
-			};
-
-			LocaleStrings* localeStrings = static_cast<LocaleStrings*>(trb.FindSymb("LocaleStrings"));
-
-			for (uint32_t i = 0; i < localeStrings->Count; i++)
-			{
-				TOSHI_INFO(L"{0}", localeStrings->Strings[i]);
-			}
-		}
-		/*else
-		{
-			TOSHI_ERROR("Cannot open Data/Barnyard_Locale/eng-uk.trb");
-		}*/
 		
 		Activate(false);
 	}

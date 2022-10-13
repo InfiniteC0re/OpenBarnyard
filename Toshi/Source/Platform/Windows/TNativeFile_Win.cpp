@@ -1,11 +1,97 @@
 #include "ToshiPCH.h"
-#include "TNativeFile.h"
+#include "TNativeFile_Win.h"
 
 #define BUFFER_SIZE 0x800
 #define BUFFER_SIZE_ALIGN (0xFFFFFFFF - BUFFER_SIZE + 1)
 
 namespace Toshi
 {
+    void TFileManager::Initialize()
+    {
+        auto& fileManager = TFileManager::Instance();
+
+        CHAR currentDir[0x200];
+        DWORD dirLength = GetCurrentDirectoryA(sizeof(currentDir), currentDir);
+        TASSERT(dirLength > 0, "The directory's length is 0");
+
+        TCString prefix(currentDir);
+
+        TFileSystem* pFileSystem;
+        pFileSystem = tnew<TNativeFileSystem>("local");
+        pFileSystem->SetPrefix(prefix);
+        pFileSystem = tnew<TNativeFileSystem>("abs");
+        pFileSystem->SetPrefix(prefix);
+        pFileSystem = tnew<TNullFileSystem>("null");
+        pFileSystem->SetPrefix(prefix);
+
+        fileManager.SetSystemPath("local");
+    }
+
+#pragma region TNativeFileSystem
+
+    TNativeFileSystem::TNativeFileSystem(const char* name) : TFileSystem(name)
+    {
+        m_Handle = INVALID_HANDLE_VALUE;
+        TFileManager::Instance().MountFileSystem(this);
+    }
+
+    TFile* TNativeFileSystem::CreateFile(TCString const& fn, uint32_t flags)
+    {
+        TNativeFile* nativeFile = tmalloc<TNativeFile>();
+        new (nativeFile) TNativeFile(this);
+
+        if (!nativeFile->Open(fn, flags))
+        {
+            tdelete(nativeFile);
+            return TNULL;
+        }
+
+        return nativeFile;
+    }
+
+    void TNativeFileSystem::DestroyFile(TFile* file)
+    {
+        if (file != TNULL)
+        {
+            static_cast<TNativeFile*>(file)->Close();
+        }
+    }
+
+    bool TNativeFileSystem::MakeDirectory(TCString const& string)
+    {
+        return CreateDirectoryA(string, TNULL);
+    }
+
+    bool TNativeFileSystem::GetNextFile(TCString& fileName, uint32_t flags)
+    {
+        WIN32_FIND_DATAA findFileData;
+        if (m_Handle != INVALID_HANDLE_VALUE)
+        {
+            bool bResult = FindNextFileA(m_Handle, &findFileData);
+            if (!bResult)
+            {
+                m_Handle = INVALID_HANDLE_VALUE;
+            }
+            else if (findFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+            {
+                if ((flags & 1) != 0)
+                {
+                    fileName = findFileData.cFileName;
+                    return true;
+                }
+            }
+            else if ((flags & 2) != 0)
+            {
+                fileName = findFileData.cFileName;
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+#pragma endregion
+
     bool TNativeFile::LoadBuffer(DWORD bufferPos)
     {
         // FUN_00689ff0
@@ -243,7 +329,7 @@ namespace Toshi
         return fLastWriteTime;
     }
 
-    TNativeFile::TNativeFile(class TNativeFileSystem* param_1) : TFile((TFileSystem*)param_1)
+    TNativeFile::TNativeFile(TNativeFileSystem* pFS) : TFile(pFS)
     {
         hnd = INVALID_HANDLE_VALUE;
         m_Position = -1;
@@ -306,7 +392,7 @@ namespace Toshi
 
         TASSERT(a_FileName.IsIndexValid(0), "TNativeFile::Open - wrong filename");
 
-        HANDLE handle = CreateFileA(a_FileName, dwDesiredAccess, dwShareMode, NULL, dwCreationDisposition, NULL, NULL);
+        HANDLE handle = CreateFileA(a_FileName.GetString(), dwDesiredAccess, dwShareMode, NULL, dwCreationDisposition, NULL, NULL);
 
         if (handle != INVALID_HANDLE_VALUE)
         {

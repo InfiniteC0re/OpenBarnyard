@@ -3,6 +3,8 @@
 #include "Toshi/Toshi2/T2String8.h"
 #include "Toshi/File/TFile.h"
 
+#undef ERROR
+
 namespace Toshi
 {
 	class TTSF;
@@ -10,13 +12,18 @@ namespace Toshi
 	class TTRB
 	{
 	public:
-		enum TTRB_ERROR : uint8_t
+		typedef uint8_t ERROR;
+
+		enum ERROR_ : ERROR
 		{
-			ERROR_OK = 0,
-			ERROR_WRONG_MAGIC = 4,
-			ERROR_FORM_MAGIC = 5,
-			ERROR_NO_FILE = 6,
-			ERROR_NOT_TRB = 7,
+			ERROR_OK                   = 0,
+			ERROR_NO_HEADER            = 1,
+			ERROR_NOT_TRBF             = 2,
+			ERROR_PARSE_ERROR          = 3,
+			ERROR_WRONG_MAGIC          = 4,
+			ERROR_FORM_MAGIC           = 5,
+			ERROR_NO_FILE              = 6,
+			ERROR_NOT_TRB              = 7,
 			ERROR_NO_FILEINFO_ON_STACK = 8,
 		};
 
@@ -86,22 +93,25 @@ namespace Toshi
 		};
 
 	public:
-		TTRB() = default;
-		inline ~TTRB() { Destroy(); }
+		TTRB() : m_pHeader(nullptr), m_SYMB(nullptr) { }
+		~TTRB() { Destroy(); }
 
-		// Opens and reads trb file from path
-		void Open(const char* path);
+		// Creates TFile and reads file
+		ERROR Open(const char* path);
+
+		// Reads TRB from TFile
+		ERROR Open(TFile* file);
 
 		// Returns pointer to data if found and TNULL if not
 		void* FindSymb(const char* symbName);
+
+		template<typename T>
+		inline T* GetSymb(const char* symbName) { return static_cast<T*>(FindSymb(symbName)); }
 		
 		// Destroys TRB file and the content
 		void Destroy();
 
 	private:
-		// Reads TRB and parses it
-		void Read(TFile* file);
-
 		// Parses sections
 		bool Parse(TTSF& ttsf);
 

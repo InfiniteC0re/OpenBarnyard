@@ -8,7 +8,7 @@ namespace Toshi
 		int m_iBytesWritten;
 	protected:
 
-		inline void Close() {}
+		inline void Close() { }
 	public:
 		inline int GetBytesWritten() { return m_iBytesWritten; }
 

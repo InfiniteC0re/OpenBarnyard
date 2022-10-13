@@ -8,10 +8,12 @@ namespace Toshi
 	class TTSF
 	{
 	public:
-		enum class Endianess
+		typedef uint8_t Endianess;
+
+		enum Endianess_ : Endianess
 		{
-			Little,
-			Big,
+			Endianess_Little,
+			Endianess_Big,
 		};
 
 		struct Header
@@ -37,25 +39,24 @@ namespace Toshi
 		TTSF();
 		inline ~TTSF() { Destroy(); }
 		
-		uint8_t ReadFile(TFile* a_pFile);
-		uint8_t FUN_00687FA0(); // de blob address
+		TTRB::ERROR ReadFile(TFile* a_pFile);
 
-		uint8_t PushFileInfo();
-		uint8_t PopFileInfo();
+		TTRB::ERROR PushFileInfo();
+		TTRB::ERROR PopFileInfo();
 
 		// 0x00688250
 		inline void ReadBytes(void* dest, uint32_t size) { m_ReadPos += m_pFile->Read(dest, size); }
 
 		// Sections related stuff
-		uint8_t ReadSectionHeader();
-		uint8_t SkipSection();
-		uint8_t ReadFORM(TTRB::SectionFORM* section);
-		uint8_t ReadSectionData(void* dest);
+		TTRB::ERROR ReadSectionHeader();
+		TTRB::ERROR SkipSection();
+		TTRB::ERROR ReadFORM(TTRB::SectionFORM* section);
+		TTRB::ERROR ReadSectionData(void* dest);
 
 		void Destroy(bool free = true);
 
 		void DecompressSection(void* buffer, uint32_t size);
-		inline void CompressSection(TFile* file, char* unk, uint32_t unk2, uint32_t unk3) { TCompress_Compress::Compress(file, unk, unk2, unk3, (uint8_t)m_Endianess); }
+		inline void CompressSection(TFile* file, char* unk, uint32_t unk2, uint32_t unk3) { TCompress_Compress::Compress(file, unk, unk2, unk3, m_Endianess); }
 
 		void LogUnknownSection();
 

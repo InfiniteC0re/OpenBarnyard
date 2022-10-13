@@ -4,21 +4,44 @@
 
 namespace Toshi
 {
-	void TTRB::Read(TFile* file)
+	TTRB::ERROR TTRB::Open(const char* path)
+	{
+		// FUN_006868e0
+		TFile* pFile = TFile::Create(path, TFile::OpenFlags_Read);
+		return Open(pFile);
+	}
+
+	TTRB::ERROR TTRB::Open(TFile* file)
 	{
 		// FUN_00686920
 		TTSF ttsf;
-		auto err = ttsf.ReadFile(file);
+		ERROR error = ttsf.ReadFile(file);
 
-		if (err == TTRB_ERROR::ERROR_OK)
+		if (error == ERROR_OK)
 		{
 			if (ttsf.m_TRBF == TMAKEFOUR("TRBF"))
 			{
-				Parse(ttsf);
+				if (Parse(ttsf))
+				{
+					error = ERROR_OK;
+				}
+				else
+				{
+					error = ERROR_PARSE_ERROR;
+				}
 			}
+			else
+			{
+				error = ERROR_NOT_TRBF;
+			}
+		}
+		else
+		{
+			error = ERROR_NO_HEADER;
 		}
 
 		ttsf.Destroy();
+		return error;
 	}
 
 	bool TTRB::Parse(TTSF& ttsf)
@@ -83,7 +106,7 @@ namespace Toshi
 				}
 				else if (sectionName == TMAKEFOUR("SECC"))
 				{
-					for (size_t i = 0; i < m_pHeader->m_i32SectionCount; i++)
+					for (int i = 0; i < m_pHeader->m_i32SectionCount; i++)
 					{
 						auto& secInfo = m_pHeader->operator[](i);
 
@@ -159,7 +182,7 @@ namespace Toshi
 				if (sectionName == TMAKEFOUR("SECT"))
 				{
 					SecInfo* pSect = &m_pHeader->operator[](0);
-					for (uint32_t i = 0; i < m_pHeader->m_i32SectionCount; i++)
+					for (int i = 0; i < m_pHeader->m_i32SectionCount; i++)
 					{
 						ttsf.ReadBytes(pSect->m_pData, pSect->m_Size);
 						pSect++;
@@ -173,7 +196,7 @@ namespace Toshi
 					ttsf.ReadSectionData(m_pHeader);
 					
 					SecInfo* pSect = &m_pHeader->operator[](0);
-					for (uint32_t i = 0; i < m_pHeader->m_i32SectionCount; i++)
+					for (int i = 0; i < m_pHeader->m_i32SectionCount; i++)
 					{
 						pSect->m_Unk1 = (pSect->m_Unk1 == 0) ? 16 : pSect->m_Unk1;
 						pSect->m_pData = tmalloc(pSect->m_Size);
@@ -203,21 +226,14 @@ namespace Toshi
 		return result;
 	}
 
-	void TTRB::Open(const char* path)
-	{
-		// FUN_006868e0
-		TFile* pFile = TFile::Create(path, TFile::OpenFlags_Read);
-		Read(pFile);
-	}
-
 	void* TTRB::FindSymb(const char* symbName)
 	{
 		// FUN_00686d30
 		auto index = FindSymbIndex(symbName);
-		auto entry = &m_SYMB->operator[](index);
 
-		if (index != -1 && m_SYMB != TNULL && index < m_SYMB->m_i32SymbCount && entry != TNULL)
+		if (m_SYMB != TNULL && index != -1 && index < m_SYMB->m_i32SymbCount)
 		{
+			auto entry = &m_SYMB->operator[](index);
 			return (char*)GetSection(entry->HDRX) + entry->Data_Offset;
 		}
 
@@ -239,8 +255,7 @@ namespace Toshi
 		}
 
 		auto& symb = *m_SYMB;
-		
-		for (size_t i = 0; i < m_SYMB->m_i32SymbCount; i++)
+		for (int i = 0; i < m_SYMB->m_i32SymbCount; i++)
 		{
 			if (symb[i].Type_Hash == type_hash)
 			{

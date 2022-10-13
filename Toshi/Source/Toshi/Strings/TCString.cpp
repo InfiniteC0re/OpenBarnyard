@@ -103,26 +103,24 @@ namespace Toshi
 		}
 	}
 
-	uint32_t TCString::Find(char character, uint32_t pos) const
+	int32_t TCString::Find(char character, uint32_t pos) const
 	{
 		if (!IsIndexValid(pos)) return -1;
 
-		TASSERT(IsIndexValid(0), "IsIndexValid(0)");
-
 		const char* foundAt = strchr(&m_pBuffer[pos], character);
-		if (foundAt == TNULL) return -1;
+		if (foundAt == nullptr) return -1;
 
-		return (uint32_t)(foundAt - m_pBuffer);
+		return (int32_t)(foundAt - m_pBuffer);
 	}
 
-	uint32_t TCString::Find(const char* substr, uint32_t pos) const
+	int32_t TCString::Find(const char* substr, uint32_t pos) const
 	{
 		if (!IsIndexValid(pos)) return -1;
 
 		const char* foundAt = strstr(GetString(pos), substr);
-		if (foundAt == TNULL) return -1;
+		if (foundAt == nullptr) return -1;
 
-		return (uint32_t)(foundAt - GetString());
+		return (int32_t)(foundAt - m_pBuffer);
 	}
 
 	bool TCString::AllocBuffer(uint32_t a_iLength, bool freeMemory)

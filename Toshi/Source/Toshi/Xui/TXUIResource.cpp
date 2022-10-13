@@ -68,15 +68,14 @@ void Toshi::TXUIResource::LoadXUIB2(bool loadStringTables, const char* filenameX
     
     if (!loadTrb)
     {
-        auto fs = Toshi::TFileSystem::CreateNative("local");
-        auto file = fs->CreateFile(fullFileName, Toshi::TFile::OpenFlags_Read);
+        auto file = TFile::Create(fullFileName, Toshi::TFile::OpenFlags_Read);
 
         if (file != TNULL)
         {
             int size = file->GetSize();
             unsigned char* buffer = (unsigned char*)tmalloc(size);
             file->Read(buffer, size);
-            file->m_pFileSystem->DestroyFile(file);
+            file->Destroy();
             bool bRes = LoadXUIBHeader(buffer);
 
             if (bRes)

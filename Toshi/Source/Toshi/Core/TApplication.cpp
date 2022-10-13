@@ -4,6 +4,7 @@
 #include "Toshi/Strings/TCString.h"
 #include "Toshi/Core/TMemory.h"
 #include "Toshi/Core/TDebugConsole.h"
+#include "Toshi/File/TFile.h"
 
 namespace Toshi
 {
@@ -11,7 +12,7 @@ namespace Toshi
 	{
 		m_Unk1 = 0;
 		m_Flags = 0;
-
+		
 		m_DebugConsole = TDebugConsoleFactory::Create();
 
 #ifdef TOSHI_DEBUG
@@ -32,6 +33,8 @@ namespace Toshi
 		// TApplication.dll: 0x10001260
 
 		// temporary solution
+		TFileManager::Initialize();
+
 		OnCreate();
 		OnUpdate();
 

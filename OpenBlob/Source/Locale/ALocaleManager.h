@@ -14,16 +14,16 @@ public:
 	ALocaleManager();
 	virtual ~ALocaleManager() { };
 
-	virtual const char* GetLocaleFilePath(uint32_t langid);
+	virtual const char* GetLocaleFilePath(int32_t langid);
 
-	void Read(uint32_t langid);
+	void Read(int32_t langid);
 
 private:
 	Toshi::TTRB m_Locale;
 	uint32_t m_Unk1;
 	uint32_t m_Unk2;
-	uint32_t m_Unk3;
-	uint32_t m_LangId;
+	LocaleStrings* m_LocaleStrings;
+	int32_t m_LangId;
 	uint32_t m_Unk4;
 	uint32_t m_Unk5;
 	Toshi::TTRB m_SomeTRB;
@@ -48,6 +48,6 @@ private:
 		"Data/Locale/zh.trb",
 	};
 
-	static constexpr uint32_t LOCALE_LANG_INVALID = -1;
-	static constexpr uint32_t LOCALE_LANG_NUMOF = sizeof(s_LocaleFiles) / sizeof(*s_LocaleFiles);
+	static constexpr int32_t LOCALE_LANG_INVALID = -1;
+	static constexpr int32_t LOCALE_LANG_NUMOF = sizeof(s_LocaleFiles) / sizeof(*s_LocaleFiles);
 };

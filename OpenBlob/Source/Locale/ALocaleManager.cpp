@@ -7,7 +7,7 @@ ALocaleManager::ALocaleManager()
 	Read(LOCALE_LANG_INVALID);
 }
 
-const char* ALocaleManager::GetLocaleFilePath(uint32_t langid)
+const char* ALocaleManager::GetLocaleFilePath(int32_t langid)
 {
 	TASSERT(langid < LOCALE_LANG_NUMOF, "langid is out of LOCALE_LANG_NUMOF");
 	TASSERT(langid > LOCALE_LANG_INVALID, "langid is invalid");
@@ -15,11 +15,16 @@ const char* ALocaleManager::GetLocaleFilePath(uint32_t langid)
 	return s_LocaleFiles[langid];
 }
 
-void ALocaleManager::Read(uint32_t langid)
+void ALocaleManager::Read(int32_t langid)
 {
-	if (langid != m_LangId && (m_Locale.Destroy(), langid > LOCALE_LANG_INVALID))
+	TWIP();
+
+	if (langid != m_LangId && (m_Locale.Destroy(), LOCALE_LANG_INVALID < langid))
 	{
-		const char* localeFile = GetLocaleFilePath(langid);
+		m_Locale.Open(GetLocaleFilePath(langid));
+		m_LocaleStrings = m_Locale.GetSymb<LocaleStrings>("LocaleStrings");
+
 		m_Unk2 = m_Unk1;
+		m_LangId = langid;
 	}
 }

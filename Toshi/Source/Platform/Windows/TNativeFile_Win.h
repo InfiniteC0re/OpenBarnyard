@@ -1,14 +1,13 @@
 #pragma once
 #include "Toshi/Typedefs.h"
 #include "Toshi/File/TFile.h"
-#include "TNativeFileSystem.h"
 
 namespace Toshi
 {
 	class TNativeFile : public TFile
 	{
 	public:
-		TNativeFile(const TNativeFile&);
+		TNativeFile(const TNativeFile& other);
 
 		virtual size_t Read(LPVOID, size_t) override;
 		virtual int Write(LPVOID, size_t) { return 0; }
@@ -28,7 +27,7 @@ namespace Toshi
 		int ReadUnbuffered(LPVOID dst, size_t size);
 
 	protected:
-		TNativeFile(class TNativeFileSystem*);
+		TNativeFile(TNativeFileSystem* pFS);
 
 		bool Open(const TCString& a_FileName, uint32_t a_Flags);
 		void Close();
@@ -36,15 +35,15 @@ namespace Toshi
 		friend TNativeFileSystem;
 
 	private:
-		HANDLE hnd; // 0x8
-		DWORD m_Position; // 0xC
-		DWORD unk2; //0x10
-		DWORD m_PrevBufferPos; // 0x14
-		DWORD m_LastBufferSize; // 0x18
-		char* m_pBuffer1; // 0x1C
-		char* m_pBuffer2; // 0x20
-		DWORD m_iWriteBufferUsed; // 0x24
-		bool m_bWriteBuffered; // 0x28
+		HANDLE hnd;                  // 0x8
+		DWORD m_Position;            // 0xC
+		DWORD unk2;                  // 0x10
+		DWORD m_PrevBufferPos;       // 0x14
+		DWORD m_LastBufferSize;      // 0x18
+		char* m_pBuffer1;            // 0x1C
+		char* m_pBuffer2;            // 0x20
+		DWORD m_iWriteBufferUsed;    // 0x24
+		bool m_bWriteBuffered;       // 0x28
 	};
 }
 
