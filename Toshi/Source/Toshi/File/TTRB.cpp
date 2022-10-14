@@ -87,14 +87,14 @@ namespace Toshi
 
 					TASSERT(m_pHeader->m_i32SectionCount == numsections, "HEAD section has wrong num of sections");
 
-					SecInfo* pSect = &(*m_pHeader)[0];
 					for (int i = 0; i < m_pHeader->m_i32SectionCount; i++)
 					{
+						SecInfo* pSect = m_pHeader->GetSecInfo(i);
+						
 						ttsf.ReadBytes(pSect, 0xC);
 						pSect->m_pData = tmalloc(pSect->m_Size);
 						pSect->m_Unk1 = (pSect->m_Unk1 == 0) ? 16 : pSect->m_Unk1;
 						pSect->m_Unk2 = 0;
-						pSect++;
 					}
 
 					ttsf.SkipSection();
@@ -108,11 +108,11 @@ namespace Toshi
 				{
 					for (int i = 0; i < m_pHeader->m_i32SectionCount; i++)
 					{
-						auto& secInfo = (*m_pHeader)[i];
+						auto* secInfo = m_pHeader->GetSecInfo(i);
 
-						if (secInfo.m_pData != TNULL)
+						if (secInfo->m_pData != TNULL)
 						{
-							ttsf.DecompressSection(secInfo.m_pData, secInfo.m_Size);
+							ttsf.DecompressSection(secInfo->m_pData, secInfo->m_Size);
 						}
 					}
 
@@ -145,12 +145,12 @@ namespace Toshi
 							for (uint32_t i = 0; i < relocReadCount; i++)
 							{
 								auto& relcEntry = relcEntries[i];
-								auto& hdrx1 = header[relcEntry.HDRX1];
+								auto& hdrx1 = *m_pHeader->GetSecInfo(relcEntry.HDRX1);
 								auto& hdrx2 = hdrx1;
 
 								if (m_pHeader->m_ui32Version >= TMAKEVERSION(1, 0))
 								{
-									hdrx2 = header[relcEntry.HDRX2];
+									hdrx2 = *m_pHeader->GetSecInfo(relcEntry.HDRX2);
 								}
 
 								// this won't work in x64 because pointers in TRB files are always 4 bytes
@@ -184,8 +184,8 @@ namespace Toshi
 				{
 					for (int i = 0; i < m_pHeader->m_i32SectionCount; i++)
 					{
-						SecInfo& sect = (*m_pHeader)[i];
-						ttsf.ReadBytes(sect.m_pData, sect.m_Size);
+						SecInfo* pSect = m_pHeader->GetSecInfo(i);
+						ttsf.ReadBytes(pSect->m_pData, pSect->m_Size);
 					}
 
 					ttsf.SkipSection();
@@ -197,9 +197,9 @@ namespace Toshi
 					
 					for (int i = 0; i < m_pHeader->m_i32SectionCount; i++)
 					{
-						SecInfo& sect = (*m_pHeader)[i];
-						sect.m_Unk1 = (sect.m_Unk1 == 0) ? 16 : sect.m_Unk1;
-						sect.m_pData = tmalloc(sect.m_Size);
+						SecInfo* pSect = m_pHeader->GetSecInfo(i);
+						pSect->m_Unk1 = (pSect->m_Unk1 == 0) ? 16 : pSect->m_Unk1;
+						pSect->m_pData = tmalloc(pSect->m_Size);
 					}
 				}
 				else
@@ -297,7 +297,7 @@ namespace Toshi
 		TASSERT(index >= 0, "Index cannot be negative");
 		TASSERT(index < m_pHeader->m_i32SectionCount, "Index is out of bounds");
 
-		SecInfo* pSecInfo = &(*m_pHeader)[index];
+		SecInfo* pSecInfo = m_pHeader->GetSecInfo(index);
 		TASSERT(pSecInfo != TNULL, "pSecInfo is TNULL");
 
 		if (pSecInfo->m_pData != TNULL)

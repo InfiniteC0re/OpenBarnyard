@@ -42,10 +42,10 @@ namespace Toshi
 			uint32_t m_ui32Version;     // 0x0
 			int32_t m_i32SectionCount;  // 0x4
 
-			inline SecInfo& operator[](int index)
+			inline SecInfo* GetSecInfo(int index = 0)
 			{
 				TASSERT(index < m_i32SectionCount, "Index is out of bounds");
-				return reinterpret_cast<SecInfo*>(this + 1)[index];
+				return &reinterpret_cast<SecInfo*>(this + 1)[index];
 			}
 		};
 
@@ -122,7 +122,7 @@ namespace Toshi
 		int FindSymbIndex(const char* symbName);
 
 		// Returns pointer to section by index
-		inline void* GetSection(int index) { return m_pHeader->operator[](index).m_pData; }
+		inline void* GetSection(int index) { return m_pHeader->GetSecInfo(index)->m_pData; }
 	
 	private:
 		Header* m_pHeader;          // 0x0
