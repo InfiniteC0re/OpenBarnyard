@@ -129,7 +129,7 @@ int Toshi::TXUIResource::GetTotalSize(unsigned char* buffer)
 
 int Toshi::TXUIResource::ProcessDATA(unsigned char* buffer)
 {
-    uint16_t uiType = PARSEDWORD(buffer);
+    uint16_t uiType = PARSEWORD_BIG(buffer);
     buffer += 2;
 
     TASSERT(0 == Toshi2::TStringManager::String16Compare(GetString(uiType), _TS16(XuiCanvas)), "");
