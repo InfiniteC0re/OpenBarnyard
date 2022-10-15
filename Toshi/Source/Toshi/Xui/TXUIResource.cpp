@@ -3,21 +3,21 @@
 
 bool Toshi::TXUIResource::LoadXUIBHeader(unsigned char* buffer)
 {
-    m_oHeader.m_uiFileID = PARSEWORD(buffer);
+    m_oHeader.m_uiFileID = PARSEDWORD(buffer);
 
     TASSERT(m_oHeader.m_uiFileID == IDXUR, "Not a .xur file!");
 
-    m_oHeader.m_uiUnk = PARSEWORD(buffer + 0x4);
-    m_oHeader.m_uiUnk2 = PARSEWORD(buffer + 0xA);
-    m_oHeader.m_uiUnk3 = PARSEWORD(buffer + 0xE);
-    m_oHeader.m_usUnk4 = PARSEWORD(buffer + 0x8);
-    m_oHeader.m_uiNumSections = PARSEDWORD(buffer + 0x12);
+    m_oHeader.m_uiUnk = PARSEDWORD_BIG(buffer + 0x4);
+    m_oHeader.m_uiUnk2 = PARSEDWORD_BIG(buffer + 0xA);
+    m_oHeader.m_uiUnk3 = PARSEDWORD_BIG(buffer + 0xE);
+    m_oHeader.m_usUnk4 = PARSEDWORD_BIG(buffer + 0x8);
+    m_oHeader.m_uiNumSections = PARSEWORD_BIG(buffer + 0x12);
 
     TASSERT(m_oHeader.m_uiNumSections > 0, "There must be one or more Sections");
 
     m_oHeader.m_apSections = static_cast<Section*>(tmalloc(m_oHeader.m_uiNumSections * sizeof(Section)));
 
-    uint32_t sectionID = PARSEWORD(buffer + 0x14);
+    uint32_t sectionID = PARSEDWORD(buffer + 0x14);
 
     buffer += 0x14;
 
@@ -28,7 +28,7 @@ bool Toshi::TXUIResource::LoadXUIBHeader(unsigned char* buffer)
 
     for (size_t i = 0; i < m_oHeader.m_uiNumSections; i++)
     {
-        m_oHeader.m_apSections[i].m_uiSectionID = PARSEWORD(buffer);
+        m_oHeader.m_apSections[i].m_uiSectionID = PARSEDWORD(buffer);
 
         TASSERT(m_oHeader.m_apSections[i].m_uiSectionID == IDXURSTRING || 
             m_oHeader.m_apSections[i].m_uiSectionID == IDXURVEC || 
@@ -36,8 +36,8 @@ bool Toshi::TXUIResource::LoadXUIBHeader(unsigned char* buffer)
             m_oHeader.m_apSections[i].m_uiSectionID == IDXURCUST || 
             m_oHeader.m_apSections[i].m_uiSectionID == IDXURDATA, "Invalid Section ID");
 
-        m_oHeader.m_apSections[i].m_uiOffset = PARSEWORD(buffer + 4);
-        m_oHeader.m_apSections[i].m_uiSize = PARSEWORD(buffer + 8);
+        m_oHeader.m_apSections[i].m_uiOffset = PARSEDWORD_BIG(buffer + 4);
+        m_oHeader.m_apSections[i].m_uiSize = PARSEDWORD_BIG(buffer + 8);
 
         buffer += sizeof(Section);
     }
@@ -101,7 +101,7 @@ int Toshi::TXUIResource::GetTotalSize(unsigned char* buffer)
 
         if (m_oHeader.m_apSections[i].m_uiSectionID == IDXURQUAT)
         {
-            totalSize += (m_oHeader.m_apSections[i].m_uiSize >> 4) * 4 + 4;
+            totalSize += (m_oHeader.m_apSections[i].m_uiSize / sizeof(TQuaternion)) * 4 + 4;
         }
         else if (m_oHeader.m_apSections[i].m_uiSectionID == IDXURCUST)
         {
@@ -120,7 +120,7 @@ int Toshi::TXUIResource::GetTotalSize(unsigned char* buffer)
         }
         else if (m_oHeader.m_apSections[i].m_uiSectionID == IDXURVEC)
         {
-            totalSize += (m_oHeader.m_apSections[i].m_uiSize / 0xC) * 8 + 0xC;
+            totalSize += (m_oHeader.m_apSections[i].m_uiSize / sizeof(TVector3)) * 8 + 0xC;
         }
     }
 
@@ -146,7 +146,7 @@ bool Toshi::TXUIResource::ProcessSTRN(unsigned short* pPtr, uint32_t size)
 
     while (pPtr < pEnd)
     {
-        unsigned short stringLength = PARSEDWORD(*pPtr);
+        unsigned short stringLength = PARSEWORD(*pPtr);
         m_uiStringTableCount++;
         pPtr += stringLength + 1;
     }
@@ -160,7 +160,7 @@ bool Toshi::TXUIResource::ProcessSTRN(unsigned short* pPtr, uint32_t size)
     {
         TASSERT(pPtr < pEnd, "Pointer overflow");
 
-        unsigned short stringLength = PARSEDWORD(*pPtr);
+        unsigned short stringLength = PARSEWORD(*pPtr);
         unsigned short size = stringLength * sizeof(unsigned short) + sizeof(unsigned short);
 
         m_asStringTable[i] = (unsigned short*)tmalloc(size);
