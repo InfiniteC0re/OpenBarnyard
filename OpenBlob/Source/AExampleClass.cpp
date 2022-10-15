@@ -83,6 +83,7 @@ AExampleClass::AExampleClass()
 		TXUIResource xuiResource;
 		xuiResource.LoadXUIBHeader((unsigned char*)trb.FindSymb("txui"));
 		int size = xuiResource.GetTotalSize((unsigned char*)trb.FindSymb("txui"));
+		TOSHI_INFO(size);
 	}
 
 	trb.Open("C:\\Program Files (x86)\\Steam\\steamapps\\common\\de Blob\\Data\\BlobChar\\AssetPack.trb");

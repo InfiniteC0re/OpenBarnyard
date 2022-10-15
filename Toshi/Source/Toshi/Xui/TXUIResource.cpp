@@ -9,13 +9,13 @@ bool Toshi::TXUIResource::LoadXUIBHeader(unsigned char* buffer)
 
     m_oHeader.m_uiUnk = PARSEDWORD_BIG(buffer + 0x4);
     m_oHeader.m_uiUnk2 = PARSEDWORD_BIG(buffer + 0xA);
-    m_oHeader.m_uiUnk3 = PARSEDWORD_BIG(buffer + 0xE);
+    m_oHeader.m_uiSize = PARSEDWORD_BIG(buffer + 0xE);
     m_oHeader.m_usUnk4 = PARSEDWORD_BIG(buffer + 0x8);
-    m_oHeader.m_uiNumSections = PARSEWORD_BIG(buffer + 0x12);
+    m_oHeader.m_usNumSections = PARSEWORD_BIG(buffer + 0x12);
 
-    TASSERT(m_oHeader.m_uiNumSections > 0, "There must be one or more Sections");
+    TASSERT(m_oHeader.m_usNumSections > 0, "There must be one or more Sections");
 
-    m_oHeader.m_apSections = static_cast<Section*>(tmalloc(m_oHeader.m_uiNumSections * sizeof(Section)));
+    m_oHeader.m_apSections = static_cast<Section*>(tmalloc(m_oHeader.m_usNumSections * sizeof(Section)));
 
     uint32_t sectionID = PARSEDWORD(buffer + 0x14);
 
@@ -26,7 +26,7 @@ bool Toshi::TXUIResource::LoadXUIBHeader(unsigned char* buffer)
         buffer += 0x3C;
     }
 
-    for (size_t i = 0; i < m_oHeader.m_uiNumSections; i++)
+    for (size_t i = 0; i < m_oHeader.m_usNumSections; i++)
     {
         m_oHeader.m_apSections[i].m_uiSectionID = PARSEDWORD(buffer);
 
@@ -80,7 +80,7 @@ void Toshi::TXUIResource::LoadXUIB2(bool loadStringTables, const char* filenameX
 
             if (bRes)
             {
-                for (size_t i = 0; i < m_oHeader.m_uiNumSections; i++)
+                for (size_t i = 0; i < m_oHeader.m_usNumSections; i++)
                 {
                     TTODO("Finish LoadXUIB2");
                 }
@@ -93,9 +93,9 @@ int Toshi::TXUIResource::GetTotalSize(unsigned char* buffer)
 {
     LoadXUIBHeader(buffer);
 
-    int totalSize = m_oHeader.m_uiNumSections * sizeof(Section) + 4;
+    int totalSize = m_oHeader.m_usNumSections * sizeof(Section) + 4;
 
-    for (size_t i = 0; i < m_oHeader.m_uiNumSections; i++)
+    for (size_t i = 0; i < m_oHeader.m_usNumSections; i++)
     {
         unsigned char* currentSectionBuffer = buffer + m_oHeader.m_apSections[i].m_uiOffset;
 

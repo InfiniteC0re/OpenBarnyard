@@ -28,9 +28,9 @@ namespace Toshi
 			uint32_t m_uiFileID;		// 0x4
 			uint32_t m_uiUnk;			// 0x8
 			uint32_t m_uiUnk2;			// 0xC
-			uint32_t m_uiUnk3;			// 0x10
+			uint32_t m_uiSize;			// 0x10
 			uint16_t m_usUnk4;			// 0x14
-			uint32_t m_uiNumSections;	// 0x16
+			uint16_t m_usNumSections;	// 0x16
 		};
 
 		
