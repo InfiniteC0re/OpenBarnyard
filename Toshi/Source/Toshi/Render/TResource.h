@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Toshi/Core/TRender.h"
+#include "Toshi/Render/TRender.h"
 #include "Toshi/Core/TNodeTree.h"
 
 namespace Toshi
@@ -29,11 +29,11 @@ namespace Toshi
 		
 		inline bool IsInvalid() const { return ~m_State & TResourceState_Valid; }
 
-		inline TRender* GetRenderer() const { return m_pRenderer; }
+		inline TRenderInterface* GetRenderer() const { return m_pRenderer; }
 		TResource* Parent() const;
 
 	public:
-		TRender* m_pRenderer; // 0x18
+		TRenderInterface* m_pRenderer; // 0x18
 		char* m_cName; // 0x1C
 		// 0x20
 		// 0x24
