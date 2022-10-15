@@ -10,6 +10,14 @@ public:
 		wchar_t** Strings;
 	};
 
+	typedef int Platform;
+	enum Platform_ : Platform
+	{
+		Platform_Wii,
+		Platform_Unk,
+		Platform_PC,
+	};
+
 public:
 	ALocaleManager();
 	virtual ~ALocaleManager() { };
@@ -17,16 +25,22 @@ public:
 	virtual const char* GetLocaleFilePath(int32_t langid);
 
 	void Read(int32_t langid);
+	const wchar_t* GetString(int stringid);
+
+	static int FixStringIdPlatform(int stringid);
 
 private:
 	Toshi::TTRB m_Locale;
 	uint32_t m_Unk1;
 	uint32_t m_Unk2;
-	LocaleStrings* m_LocaleStrings;
+	LocaleStrings* m_StringTable;
 	int32_t m_LangId;
 	uint32_t m_Unk4;
 	uint32_t m_Unk5;
 	Toshi::TTRB m_SomeTRB;
+
+	// 00981a20
+	static constinit Platform s_Platform;
 
 private:
 	static constexpr const char* s_LocaleFiles[] = {
