@@ -72,18 +72,6 @@ namespace Toshi
 		Copy(src);
 	}
 
-	TCString::~TCString()
-	{
-		FreeBuffer();
-	}
-
-	void TCString::Reset()
-	{
-		m_pBuffer = NullString;
-		m_iStrLen = 0;
-		m_iExcessLen = 0;
-	}
-
 	void TCString::Copy(const TWString& src, uint32_t size)
 	{
 		uint32_t srcLen = src.Length();
@@ -115,25 +103,24 @@ namespace Toshi
 		}
 	}
 
-	uint32_t TCString::Find(char character, uint32_t pos) const
+	int32_t TCString::Find(char character, uint32_t pos) const
 	{
 		if (!IsIndexValid(pos)) return -1;
-		//if (DAT_00990290 == 0)
 
-		const char* foundAt = strchr(GetString(pos), character);
-		if (foundAt == TNULL) { return -1; }
+		const char* foundAt = strchr(&m_pBuffer[pos], character);
+		if (foundAt == nullptr) return -1;
 
-		return (uint32_t)(foundAt - GetString());
+		return (int32_t)(foundAt - m_pBuffer);
 	}
 
-	uint32_t TCString::Find(const char* substr, uint32_t pos) const
+	int32_t TCString::Find(const char* substr, uint32_t pos) const
 	{
 		if (!IsIndexValid(pos)) return -1;
 
 		const char* foundAt = strstr(GetString(pos), substr);
-		if (foundAt == TNULL) return -1;
+		if (foundAt == nullptr) return -1;
 
-		return (uint32_t)(foundAt - GetString());
+		return (int32_t)(foundAt - m_pBuffer);
 	}
 
 	bool TCString::AllocBuffer(uint32_t a_iLength, bool freeMemory)
@@ -211,11 +198,6 @@ namespace Toshi
 		Copy(buffer, -1);
 
 		return *this;
-	}
-
-	void TCString::UndoForceSetData()
-	{
-		Reset();
 	}
 
 	void TCString::ForceSetData(char* a_cString, int a_iLength)

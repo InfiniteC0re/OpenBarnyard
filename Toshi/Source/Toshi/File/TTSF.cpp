@@ -3,7 +3,7 @@
 
 namespace Toshi
 {
-	uint8_t TTSF::ReadFile(TFile* a_pFile)
+	TTRB::ERROR TTSF::ReadFile(TFile* a_pFile)
 	{
 		// FUN_00686920
 
@@ -19,7 +19,7 @@ namespace Toshi
 
 		if (m_Header.Magic == TMAKEFOUR("TSFL"))
 		{
-			m_Endianess = Endianess::Little;
+			m_Endianess = Endianess_Little;
 		}
 		else
 		{
@@ -28,12 +28,12 @@ namespace Toshi
 				return TTRB::ERROR_NOT_TRB;
 			}
 
-			m_Endianess = Endianess::Big;
+			m_Endianess = Endianess_Big;
 		}
 
 		m_ReadPos += m_pFile->Read(&m_TRBF, 4);
 
-		if (m_Endianess == Endianess::Big)
+		if (m_Endianess == Endianess_Big)
 		{
 			m_Header.FileSize = BIG_ENDIAN_TO_LITTLE(m_Header.FileSize);
 			m_TRBF = BIG_ENDIAN_TO_LITTLE(m_TRBF);
@@ -46,7 +46,7 @@ namespace Toshi
 		return TTRB::ERROR_OK;
 	}
 
-	uint8_t TTSF::PushFileInfo()
+	TTRB::ERROR TTSF::PushFileInfo()
 	{
 		// FUN_00688160
 
@@ -64,7 +64,7 @@ namespace Toshi
 		return TTRB::ERROR_OK;
 	}
 
-	uint8_t TTSF::PopFileInfo()
+	TTRB::ERROR TTSF::PopFileInfo()
 	{
 		// FUN_006881B0
 		if (m_FileInfoCount < 1) return TTRB::ERROR_NO_FILEINFO_ON_STACK;
@@ -82,18 +82,12 @@ namespace Toshi
 		return TTRB::ERROR_OK;
 	}
 
-	uint8_t TTSF::FUN_00687FA0()
-	{
-
-		return uint8_t();
-	}
-
-	uint8_t TTSF::ReadSectionHeader()
+	TTRB::ERROR TTSF::ReadSectionHeader()
 	{
 		// FUN_00687fa0
 		m_pFile->Read(&m_CurrentSection, sizeof(Section));
 		
-		if (m_Endianess != Endianess::Little)
+		if (m_Endianess != Endianess_Little)
 		{
 			m_CurrentSection.Name = BIG_ENDIAN_TO_LITTLE(m_CurrentSection.Name);
 			m_CurrentSection.Size = BIG_ENDIAN_TO_LITTLE(m_CurrentSection.Size);
@@ -104,7 +98,7 @@ namespace Toshi
 		return TTRB::ERROR_OK;
 	}
 
-	uint8_t TTSF::SkipSection()
+	TTRB::ERROR TTSF::SkipSection()
 	{
 		// FUN_006880e0
 		uint32_t alignedSize = TMath::AlignNumUp(m_CurrentSection.Size);
@@ -114,7 +108,7 @@ namespace Toshi
 		return TTRB::ERROR_OK;
 	}
 
-	uint8_t TTSF::ReadFORM(TTRB::SectionFORM* section)
+	TTRB::ERROR TTSF::ReadFORM(TTRB::SectionFORM* section)
 	{
 		// FUN_00688120
 		if (m_CurrentSection.Name != TMAKEFOUR("FORM"))
@@ -127,7 +121,7 @@ namespace Toshi
 		return TTRB::ERROR_OK;
 	}
 
-	uint8_t TTSF::ReadSectionData(void* dst)
+	TTRB::ERROR TTSF::ReadSectionData(void* dst)
 	{
 		if (m_CurrentSection.Name == TMAKEFOUR("FORM"))
 		{
@@ -149,13 +143,13 @@ namespace Toshi
 		return TTRB::ERROR_OK;
 	}
 
-	void TTSF::Destroy(bool freeFile)
+	void TTSF::Destroy(bool free)
 	{
 		PopFileInfo();
 
-		if (m_pFile != TNULL && freeFile)
+		if (m_pFile != TNULL && free)
 		{
-			TIMPLEMENT_D("FUN_00685f60(m_pFile)");
+			m_pFile->Destroy();
 		}
 
 		m_pFile = TNULL;
@@ -196,6 +190,6 @@ namespace Toshi
 		m_TRBF = 0;
 		m_CurrentSection.Name = 0;
 		m_CurrentSection.Size = 0;
-		m_Endianess = Endianess::Little;
+		m_Endianess = Endianess_Little;
 	}
 }

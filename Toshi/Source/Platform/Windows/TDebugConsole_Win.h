@@ -5,11 +5,11 @@ namespace Toshi
 {
 	constexpr const char* TDebugConsoleUUID = "{1B5D8052-529A-4c88-9DDE-EE523D440B00}";
 
-	class TDebugConsoleWindows : public TDebugConsole
+	class TDebugConsole_Win : public TDebugConsole
 	{
 	public:
-		TDebugConsoleWindows();
-		~TDebugConsoleWindows();
+		TDebugConsole_Win();
+		~TDebugConsole_Win();
 
 		virtual bool Show(bool state) override;
 		virtual bool Toggle() override;

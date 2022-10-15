@@ -46,11 +46,15 @@ __forceinline uint16_t PARSEDWORD(uint16_t val)
 #endif
 
 #if defined(TOSHI_ENABLE_ASSERTS)
+	#define TWIP() { TOSHI_ERROR("Work in progress: {0}, at line {1}", __FUNCTION__, __LINE__); }
+	#define TWIP_D(DESC) { TOSHI_ERROR("Work in progress: {0} ({1}, at line {2})", DESC, __FUNCTION__, __LINE__); }
 	#define TTODO(DESC) { TOSHI_ERROR("TODO: {0} ({1}, at line {2})", DESC, __FUNCTION__, __LINE__); }
 	#define TIMPLEMENT() { TOSHI_ERROR("{0} is not implemented", __FUNCTION__); }
 	#define TIMPLEMENT_D(DESC) { TOSHI_ERROR("{0} is not implemented: {1}", __FUNCTION__, DESC); }
 	#define TASSERT(x, ...) { if (!(x)) { TOSHI_CORE_ERROR(__VA_ARGS__); TBREAK(); } }
 #else
+	#define TWIP()
+	#define TWIP_D(DESC)
 	#define TTODO(DESC)
 	#define TIMPLEMENT()
 	#define TIMPLEMENT_D(DESC)

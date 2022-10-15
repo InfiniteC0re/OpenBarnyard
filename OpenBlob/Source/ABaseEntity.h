@@ -3,7 +3,6 @@
 #include "Toshi/Core/TObject.h"
 #include "Toshi/Core/TGenericDList.h"
 
-
 class ABaseEntity : Toshi::TObject, Toshi::T2DList<ABaseEntity>::TNode
 {
 	static constexpr int ENTITY_HASH_SIZE = 0x3FF;

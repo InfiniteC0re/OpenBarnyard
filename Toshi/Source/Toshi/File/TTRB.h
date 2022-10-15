@@ -1,30 +1,34 @@
 #pragma once
 #include "Toshi/Strings/TCString.h"
-#include "Toshi/File/TFile.h"
 #include "Toshi/Toshi2/T2String8.h"
+#include "Toshi/File/TFile.h"
+
+#undef ERROR
 
 namespace Toshi
 {
-	// sizeof(TTRB) should be equal to 292 (de Blob) in x86 mode
 	class TTSF;
 
 	class TTRB
 	{
 	public:
-		enum TTRB_ERROR : uint8_t
+		typedef uint8_t ERROR;
+
+		enum ERROR_ : ERROR
 		{
-			ERROR_OK = 0,
-			ERROR_WRONG_MAGIC = 4,
-			ERROR_FORM_MAGIC = 5,
-			ERROR_NO_FILE = 6,
-			ERROR_NOT_TRB = 7,
+			ERROR_OK                   = 0,
+			ERROR_NO_HEADER            = 1,
+			ERROR_NOT_TRBF             = 2,
+			ERROR_PARSE_ERROR          = 3,
+			ERROR_WRONG_MAGIC          = 4,
+			ERROR_FORM_MAGIC           = 5,
+			ERROR_NO_FILE              = 6,
+			ERROR_NOT_TRB              = 7,
 			ERROR_NO_FILEINFO_ON_STACK = 8,
 		};
 
 #pragma pack(push, 1)
-		// HDRX
-		
-		struct SecInfo
+		struct SecInfo         // HDRX
 		{
 			char m_Unused[2];  // Padding 0x0
 			short m_Unk1;      // ? 0x2
@@ -36,7 +40,13 @@ namespace Toshi
 		struct Header
 		{
 			uint32_t m_ui32Version;     // 0x0
-			uint32_t m_i32SectionCount; // 0x4
+			int32_t m_i32SectionCount;  // 0x4
+
+			inline SecInfo* GetSecInfo(int index = 0)
+			{
+				TASSERT(index < m_i32SectionCount, "Index is out of bounds");
+				return &reinterpret_cast<SecInfo*>(this + 1)[index];
+			}
 		};
 
 #pragma pack(pop)
@@ -65,17 +75,58 @@ namespace Toshi
 		struct SYMB
 		{
 			int32_t m_i32SymbCount;
+
+			// Returns SYMBEntry by index
+			inline SYMBEntry& operator[](int index)
+			{
+				TASSERT(index < m_i32SymbCount, "Index is out of bounds");
+				return reinterpret_cast<SYMBEntry*>(this + 1)[index];
+			}
+
+			// Returns pointer to the first SYMBEntry's name
+			inline const char* Names()
+			{
+				return reinterpret_cast<const char*>(
+					&reinterpret_cast<SYMBEntry*>(this + 1)[m_i32SymbCount]
+				);
+			}
 		};
 
 	public:
-		bool LoadTrb(const char*);
-		bool ReadTrb(TTSF& ttsf);
-		char* GetSymb(const char* symbName);
-		int GetSymbFromSect(const char* symbName);
+		TTRB() : m_pHeader(nullptr), m_SYMB(nullptr) { }
+		~TTRB() { Destroy(); }
+
+		// Creates TFile and reads file
+		ERROR Open(const char* path);
+
+		// Reads TRB from TFile
+		ERROR Open(TFile* file);
+
+		// Returns pointer to data if found and TNULL if not
+		void* FindSymb(const char* symbName);
+
+		template<typename T>
+		inline T* GetSymb(const char* symbName) { return static_cast<T*>(FindSymb(symbName)); }
+		
+		// Destroys TRB file and the content
+		void Destroy();
 
 	private:
+		// Parses sections
+		bool Parse(TTSF& ttsf);
+
+		// Destroys section by index
+		void DestroySection(int index);
+
+		// Returns index of SYMBEntry
+		int FindSymbIndex(const char* symbName);
+
+		// Returns pointer to section by index
+		inline void* GetSection(int index) { return m_pHeader->GetSecInfo(index)->m_pData; }
+	
+	private:
 		Header* m_pHeader;          // 0x0
-		SYMB* m_SYMB;        // 0x4
+		SYMB* m_SYMB;               // 0x4
 	};
 }
 

@@ -1,5 +1,5 @@
 #include "ToshiPCH.h"
-#include "TMutex.h"
+#include "Platform/Windows/TDebugConsole_Win.h"
 
 namespace Toshi
 {

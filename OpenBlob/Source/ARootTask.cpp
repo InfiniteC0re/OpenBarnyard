@@ -1,5 +1,7 @@
 #include "pch.h"
 #include "ARootTask.h"
+#include <Toshi/File/TTRB.h>
+#include <Toshi/Core/TSystem.h>
 
 bool ARootTask::OnUpdate(float deltaTime)
 {
@@ -7,6 +9,8 @@ bool ARootTask::OnUpdate(float deltaTime)
 
 	if (m_Seconds >= 5)
 	{
+		m_Seconds = 0;
+
 		TOSHI_INFO("===================STL Test===================");
 		TOSHI_INFO("----------------------------------------------");
 		TOSHI_INFO("Toshi::STL::Vector");
@@ -44,8 +48,8 @@ bool ARootTask::OnUpdate(float deltaTime)
 
 		TOSHI_INFO("ARootTask: Five seconds has passed. Deactivating ARootTask");
 		TOSHI_INFO("Average FPS is {0:f}", m_Kernel->GetAverageFPS());
+		
 		Activate(false);
-		m_Seconds = 0;
 	}
 
 	return true;

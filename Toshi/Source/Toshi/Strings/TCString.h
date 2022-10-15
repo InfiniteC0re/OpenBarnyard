@@ -14,7 +14,7 @@ namespace Toshi
 		TCString(const TWString& src);
 		TCString(const char* const& src);
 		TCString(uint32_t size);
-		~TCString();
+		inline ~TCString() { FreeBuffer(); }
 
 		inline void Copy(const TCString& src, uint32_t size = -1) { Copy(src.m_pBuffer, size); }
 		void Copy(const TWString& src, uint32_t size = -1);
@@ -28,7 +28,7 @@ namespace Toshi
 		TCString Format(const char* a_pcFormat, ...);
 		TCString& VFormat(const char* a_pcFormat, char* a_pcArgs);
 
-		void UndoForceSetData();
+		void UndoForceSetData() { Reset(); }
 		void ForceSetData(char* a_cString, int a_ilength);
 
 		int FindReverse(char a_findChar, int pos) const;
@@ -36,10 +36,10 @@ namespace Toshi
 		void Truncate(uint32_t length);
 
 		// Returns position of specified character
-		uint32_t Find(char character, uint32_t pos = -1) const;
+		int32_t Find(char character, uint32_t pos = 0) const;
 
 		// Returns position of specified substring
-		uint32_t Find(const char* substr, uint32_t pos = -1) const;
+		int32_t Find(const char* substr, uint32_t pos = 0) const;
 
 		// Returns string starting from specified index
 		const char* GetString(uint32_t index = 0) const;
@@ -68,22 +68,29 @@ namespace Toshi
 		inline TCString operator+(char const* cstr) const { TCString str = TCString(*this); return std::move(str.Concat(cstr)); }
 		inline TCString* operator+= (char const* cstr) { Concat(cstr, -1); return this; }
 		inline TCString* operator+= (TCString& str) { Concat(str, -1); return this; }
-		inline operator const char* () const { return m_pBuffer; }
 		inline char& operator[](int index) { return m_pBuffer[index]; }
 		inline const char& operator[](int index) const { return *GetString(index); }
+		inline operator const char* () const { return m_pBuffer; }
 		inline bool operator!() { return m_iStrLen == 0; }
-		inline bool operator!=(char* cstr) { return Compare(cstr, -1) != 0; }
-		inline bool operator!=(const TCString& str) { return Compare(str.GetString(), -1) != 0; }
+		inline bool operator==(char* cstr) const { return Compare(cstr, -1) == 0; }
+		inline bool operator==(const TCString& str) const { return Compare(str.m_pBuffer, -1) == 0; }
+		inline bool operator!=(char* cstr) const { return Compare(cstr, -1) != 0; }
+		inline bool operator!=(const TCString& str) const { return Compare(str.m_pBuffer, -1) != 0; }
 		inline bool operator<(const char* cstr) const { return Compare(cstr, -1) > -1; };
-		inline bool operator<(const TCString& str) const { return Compare(str.GetString(), -1) > -1; };
+		inline bool operator<(const TCString& str) const { return Compare(str.m_pBuffer, -1) > -1; };
 		inline bool operator<=(const char* cstr) const { return Compare(cstr, -1) > 0; };
-		inline bool operator<=(const TCString& str) const { return Compare(str.GetString(), -1) > 0; };
+		inline bool operator<=(const TCString& str) const { return Compare(str.m_pBuffer, -1) > 0; };
 		//inline TCString& operator=(const wchar_t* wcstr) { Copy(wcstr, -1); return *this; };
 		inline TCString& operator=(const char* cstr) { Copy(cstr, -1); return *this; };
 		inline TCString& operator=(const TCString& str) { Copy(str, -1); return *this; };
 
 	private:
-		void Reset();
+		inline void Reset()
+		{
+			m_pBuffer = NullString;
+			m_iStrLen = 0;
+			m_iExcessLen = 0;
+		}
 
 	private:
 		char* m_pBuffer = NullString; // 0x0

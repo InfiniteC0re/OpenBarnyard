@@ -1,17 +1,17 @@
 #include "ToshiPCH.h"
-#include "TDebugConsoleWindows.h"
+#include "TDebugConsole_Win.h"
 #include "Toshi/Strings/TCString.h"
 #include <conio.h>
 
 namespace Toshi
 {
-	TDebugConsoleWindows::TDebugConsoleWindows()
+	TDebugConsole_Win::TDebugConsole_Win()
 	{
 		CreateNewConsole(1024);
 		m_HWND = FindConsole();
 	}
 
-	TDebugConsoleWindows::~TDebugConsoleWindows()
+	TDebugConsole_Win::~TDebugConsole_Win()
 	{
 		if (IsCreated())
 		{
@@ -25,7 +25,7 @@ namespace Toshi
 		}
 	}
 
-	HWND TDebugConsoleWindows::FindConsole() const
+	HWND TDebugConsole_Win::FindConsole() const
 	{
 		TCString str = TCString(TDebugConsoleUUID);
 
@@ -85,7 +85,7 @@ namespace Toshi
 	  */
 	}
 
-	void TDebugConsoleWindows::CreateNewConsole(int16_t minLength)
+	void TDebugConsole_Win::CreateNewConsole(int16_t minLength)
 	{
 		// Release any current console and redirect IO to NUL
 		ReleaseConsole();
@@ -99,7 +99,7 @@ namespace Toshi
 		}
 	}
 
-	bool TDebugConsoleWindows::RedirectConsoleIO()
+	bool TDebugConsole_Win::RedirectConsoleIO()
 	{
 		bool result = true;
 		FILE* fp;
@@ -154,7 +154,7 @@ namespace Toshi
 		return result;
 	}
 
-	bool TDebugConsoleWindows::ReleaseConsole()
+	bool TDebugConsole_Win::ReleaseConsole()
 	{
 		bool result = true;
 		FILE* fp;
@@ -200,7 +200,7 @@ namespace Toshi
 		return result;
 	}
 
-	void TDebugConsoleWindows::AdjustConsoleBuffer(int16_t minLength)
+	void TDebugConsole_Win::AdjustConsoleBuffer(int16_t minLength)
 	{
 		// Set the screen buffer to be big enough to scroll some text
 		CONSOLE_SCREEN_BUFFER_INFO conInfo;
@@ -214,7 +214,7 @@ namespace Toshi
 		SetConsoleScreenBufferSize(GetStdHandle(STD_OUTPUT_HANDLE), conInfo.dwSize);
 	}
 
-	bool TDebugConsoleWindows::Show(bool state)
+	bool TDebugConsole_Win::Show(bool state)
 	{
 		bool oldState = m_Visible;
 		m_Visible = state;
@@ -225,7 +225,7 @@ namespace Toshi
 		return oldState;
 	}
 
-	bool TDebugConsoleWindows::Toggle()
+	bool TDebugConsole_Win::Toggle()
 	{
 		Show(!m_Visible);
 		return m_Visible;
