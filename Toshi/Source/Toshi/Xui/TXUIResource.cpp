@@ -141,35 +141,35 @@ bool Toshi::TXUIResource::ProcessSTRN(unsigned short* pPtr, uint32_t size)
 {
     TASSERT(TNULL == m_asStringTable, "StringTable must not be initialized");
 
-    unsigned short* pEnd = pPtr + size;
+    unsigned short* pStart = pPtr;
+    unsigned short* pEnd = pPtr + (size / 2);
     m_uiStringTableCount = 1;
 
-    while (pPtr < pEnd)
+    while (pStart < pEnd)
     {
-        unsigned short stringLength = PARSEWORD(*pPtr);
+        unsigned short stringLength = PARSEWORD_BIG((uint8_t*)pStart);
         m_uiStringTableCount++;
-        pPtr += stringLength + 1;
+        pStart += stringLength + 1;
     }
 
     m_asStringTable = (unsigned short**)tmalloc(m_uiStringTableCount * sizeof(unsigned short*));
 
     *m_asStringTable = (unsigned short*)tmalloc(2);
-    *m_asStringTable = 0;
+    **m_asStringTable = 0;
 
     for (size_t i = 1; i < m_uiStringTableCount; i++)
     {
         TASSERT(pPtr < pEnd, "Pointer overflow");
 
-        unsigned short stringLength = PARSEWORD(*pPtr);
+        unsigned short stringLength = PARSEWORD_BIG((uint8_t*)pPtr);
         unsigned short size = stringLength * sizeof(unsigned short) + sizeof(unsigned short);
 
         m_asStringTable[i] = (unsigned short*)tmalloc(size);
 
         // Blob would call FUN_006eba70 but MemCopy seems better tbh
-        Toshi::TSystem::MemCopy(m_asStringTable[i], pPtr + 1, size);
+        Toshi::TSystem::MemCopy(m_asStringTable[i], pPtr + 1, size - sizeof(unsigned short));
 
         pPtr += stringLength + 1;
-        m_asStringTable[i][stringLength] = '\0';
     }
 
     return true;
