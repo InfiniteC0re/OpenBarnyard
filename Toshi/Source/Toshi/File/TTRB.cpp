@@ -246,7 +246,7 @@ namespace Toshi
 		if (m_SYMB->m_i32SymbCount < 1) return -1;
 
 		const char* iterator = symbName;
-		short type_hash = 0;
+		uint16_t type_hash = 0;
 
 		while (*iterator != '\0')
 		{
