@@ -16,7 +16,7 @@ namespace Toshi
 		m_bIsEnabled = 0;
 	}
 
-	void TMSWindow::Create(TRender* renderer, char* param_2)
+	void TMSWindow::Create(TRenderInterface* renderer, char* param_2)
 	{
 		WNDCLASSA wndClass;
 

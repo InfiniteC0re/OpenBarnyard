@@ -21,6 +21,7 @@ bool AApplication::OnCreate()
 	TOSHI_INFO("The application has been created");
 
 	TTODO("Initialize static here");
+	m_soundSystem = Toshi::TSound();
 	Toshi::TClass* tObjectClass = &Toshi::TObject::s_Class;
 		
 #pragma region TClass Info
@@ -88,6 +89,11 @@ bool AApplication::OnCreate()
 		TOSHI_CRITICAL("TMemory check failed");
 	}
 #pragma endregion
+
+	void* mempool = Toshi::tmalloc(0x8000000);
+
+	bool bResult = m_soundSystem.Create(mempool, 0x8000000, -1, -1, 2);
+	TASSERT(TTRUE == bResult, "");
 
 	return true;
 }
