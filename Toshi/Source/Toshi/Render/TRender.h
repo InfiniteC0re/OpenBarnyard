@@ -1,14 +1,14 @@
 #pragma once
 
 #include "Toshi/Core/TRefCounted.h"
-#include "Toshi/Core/TObject.h"
-#include "Toshi/File/TFile.cpp"
+#include "Toshi/File/TFile.h"
 #include "Toshi/Render/TRenderContext.h"
 
 namespace Toshi
 {
 
 	class TRenderInterface :
+		public TGenericClassDerived<TRenderInterface, TObject, "TRenderInterface", TMAKEVERSION(1, 0), false>,
 		TRefCounted,
 		TSingleton<TRenderInterface>
 	{
@@ -22,6 +22,8 @@ namespace Toshi
 		void* m_aSysResources;		// 0x20
 		
 	public:
+
+		TRenderInterface() {}
 
 		inline TRenderContext* GetCurrentRenderContext() { return m_pRenderContext; }
 

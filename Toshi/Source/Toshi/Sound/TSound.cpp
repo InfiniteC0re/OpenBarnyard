@@ -4,7 +4,7 @@
 
 bool Toshi::TSound::Create(void* poolmem, int poollen, int maxchannels, int filebuffersize, int unk)
 {
-    if (m_pSystem == NULL)
+    if (m_pSystem != NULL)
     {
         TOSHI_ERROR("TSound::Create() - FMOD system has already been created. Only one FMOD system can be created at one time.\n");
         return false;
@@ -44,9 +44,9 @@ bool Toshi::TSound::ErrorCheck(FMOD_RESULT error)
     {
         const char* errorStr = FMOD_ErrorString(error);
         TOSHI_ERROR("TSound::ErrorCheck() - FMOD Error: %s", errorStr);
-        return true;
+        return false;
     }
-    return false;
+    return true;
 }
 
 bool Toshi::TSound::InitMem(void* poolmem, int poollen)

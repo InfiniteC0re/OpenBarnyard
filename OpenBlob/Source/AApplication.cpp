@@ -1,11 +1,8 @@
 #include "pch.h"
-#include "AExampleClass.h"
 #include "AApplication.h"
 
-#include <Toshi/Core/Core.h>
-#include <Toshi/Math/TMathInline.h>
+static Toshi::TSound m_soundSystem = Toshi::TSound();
 
-//AApplication::m_soundSystem = Toshi::TSound();
 
 Toshi::TApplication* Toshi::CreateApplication(int argc, char** argv)
 {
@@ -92,11 +89,14 @@ bool AApplication::OnCreate()
 	}
 #pragma endregion
 
-	void* mempool = Toshi::tmalloc(0x8000000);
+	Toshi::TRenderInterface renderer;
+
+	/*
+	void* mempool = malloc(0x8000000);
 
 	bool bResult = m_soundSystem.Create(mempool, 0x8000000, -1, -1, 2);
 	TASSERT(TTRUE == bResult, "");
-
+	*/
 	return true;
 }
 

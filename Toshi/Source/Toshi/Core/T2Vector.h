@@ -13,6 +13,15 @@ namespace Toshi2
 		{
 			m_array[m_iNumElements++] = item;
 		}
+
+		T pop_back()
+		{
+			T value = m_array[m_iNumElements];
+			Toshi::tfree(m_array[m_iNumElements]);
+			return value;
+		}
+
+		inline int GetCurrentSize() const { return m_iNumElements; }
 	};
 }
 
