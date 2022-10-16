@@ -1,6 +1,7 @@
 #include "ToshiPCH.h"
 #include "TSound.h"
 #include "fmod_errors.h"
+#include "Platform/Windows/TSound_Win.h"
 
 bool Toshi::TSound::Create(void* poolmem, int poollen, int maxchannels, int filebuffersize, int unk)
 {
@@ -16,7 +17,7 @@ bool Toshi::TSound::Create(void* poolmem, int poollen, int maxchannels, int file
     InitMem(poolmem, poollen);
 
     FMOD_RESULT result = FMOD::System_Create(&m_pSystem);
-    if (!ErrorCheck(result))
+    if (ErrorCheck(result))
     {
         TOSHI_ERROR("TSound::Create() - Failed to create FMOD System");
         return false;
@@ -25,9 +26,9 @@ bool Toshi::TSound::Create(void* poolmem, int poollen, int maxchannels, int file
     m_maxchannels = maxchannels;
     m_unk = unk;
 
-    //bool bInitialiseResult = ((TSound_Win*)this)->Initialise(maxchannels, unk);
+    bool bInitialiseResult = ((TSound_Win*)this)->Initialise(maxchannels, unk);
 
-    //TASSERT(TTRUE == bInitialiseResult, "");
+    TASSERT(TTRUE == bInitialiseResult, "");
     
     if (filebuffersize < 0) filebuffersize = 0x20000;
 
@@ -44,9 +45,9 @@ bool Toshi::TSound::ErrorCheck(FMOD_RESULT error)
     {
         const char* errorStr = FMOD_ErrorString(error);
         TOSHI_ERROR("TSound::ErrorCheck() - FMOD Error: %s", errorStr);
-        return false;
+        return true;
     }
-    return true;
+    return false;
 }
 
 bool Toshi::TSound::InitMem(void* poolmem, int poollen)

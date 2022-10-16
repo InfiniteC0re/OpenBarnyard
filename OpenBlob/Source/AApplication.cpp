@@ -91,12 +91,12 @@ bool AApplication::OnCreate()
 
 	Toshi::TRenderInterface renderer;
 
-	/*
+	
 	void* mempool = malloc(0x8000000);
 
 	bool bResult = m_soundSystem.Create(mempool, 0x8000000, -1, -1, 2);
 	TASSERT(TTRUE == bResult, "");
-	*/
+	
 	return true;
 }
 

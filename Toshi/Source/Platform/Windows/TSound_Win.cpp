@@ -8,36 +8,51 @@ bool Toshi::TSound_Win::Initialise(int maxchannels, int unk)
     if (unk == 0 || unk == 1)
     {
         // setspeakmode stuff??
+        // No idea if that right
+        m_pSystem->setSoftwareFormat(48000, FMOD_SPEAKERMODE_DEFAULT, 1);
     }
     else if (unk == 2)
     {
-        //m_pSystem->getDriverInfo(0, NULL, 0, NULL, NULL, NULL, NULL);
-
         int numOutputDrivers;
+
+        // No idea if that right
+        m_pSystem->setSoftwareFormat(48000, FMOD_SPEAKERMODE_DEFAULT, 1);
 
         FMOD_RESULT result = m_pSystem->getNumDrivers(&numOutputDrivers);
 
         TASSERT(!ErrorCheck(result), "");
 
-        TOSHI_ERROR("No soundcard, initializing to FMOD_OUTPUTTYPE_NOSOUND ");
-        m_pSystem->setOutput(FMOD_OUTPUTTYPE_NOSOUND);
+        /*
+        for (size_t i = 0; i < numOutputDrivers; i++)
+        {
+            char name[0xFF];
+            m_pSystem->getDriverInfo(i, name, 0xFF, NULL, NULL, NULL, NULL);
+            TOSHI_INFO(name);
+        }*/
+
+        if (numOutputDrivers == 0)
+        {
+            TOSHI_ERROR("No soundcard, initializing to FMOD_OUTPUTTYPE_NOSOUND ");
+            m_pSystem->setOutput(FMOD_OUTPUTTYPE_NOSOUND);
+        }
     }
     
     if (maxchannels < 0) maxchannels = 0x100;
 
-    FMOD_SYSTEM_CALLBACK callback;
+    //FMOD_SYSTEM_CALLBACK callback;
 
-    m_pSystem->setCallback(callback);
+    //m_pSystem->setCallback(callback);
 
     
     FMOD_RESULT result = m_pSystem->init(maxchannels, FMOD_INIT_MIX_FROM_UPDATE, NULL);
 
-    if (!ErrorCheck(result))
+    if (ErrorCheck(result))
     {
         TOSHI_ERROR("TSound::Initialise() - Failed to initialise FMOD System with error code %d", result);
+        return false;
     }
 
     m_bInitialised = true;
 
-    return false;
+    return true;
 }

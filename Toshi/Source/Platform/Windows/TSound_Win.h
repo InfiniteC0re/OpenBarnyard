@@ -1,10 +1,12 @@
 #pragma once
 
 #include "Toshi/Sound/TSound.h"
-#include "fmod.hpp"
 
 namespace Toshi
 {
+
+	class TSound;
+
 	class TSound_Win : TSound
 	{
 	public:
