@@ -9,7 +9,6 @@ namespace Toshi
 {
 
 	class TRenderInterface :
-		public TGenericClassDerived<TRenderInterface, TObject, "TRender", TMAKEVERSION(1, 0), true>,
 		TRefCounted,
 		TSingleton<TRenderInterface>
 	{

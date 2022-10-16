@@ -25,9 +25,9 @@ bool Toshi::TSound::Create(void* poolmem, int poollen, int maxchannels, int file
     m_maxchannels = maxchannels;
     m_unk = unk;
 
-    bool bInitialiseResult = ((TSound_Win*)this)->Initialise(maxchannels, unk);
+    //bool bInitialiseResult = ((TSound_Win*)this)->Initialise(maxchannels, unk);
 
-    TASSERT(TTRUE == bInitialiseResult, "");
+    //TASSERT(TTRUE == bInitialiseResult, "");
     
     if (filebuffersize < 0) filebuffersize = 0x20000;
 

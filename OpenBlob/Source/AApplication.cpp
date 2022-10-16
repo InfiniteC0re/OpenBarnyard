@@ -5,6 +5,8 @@
 #include <Toshi/Core/Core.h>
 #include <Toshi/Math/TMathInline.h>
 
+//AApplication::m_soundSystem = Toshi::TSound();
+
 Toshi::TApplication* Toshi::CreateApplication(int argc, char** argv)
 {
 	// allocate 64 mbytes for the Toshi memory block
@@ -21,7 +23,7 @@ bool AApplication::OnCreate()
 	TOSHI_INFO("The application has been created");
 
 	TTODO("Initialize static here");
-	m_soundSystem = Toshi::TSound();
+	
 	Toshi::TClass* tObjectClass = &Toshi::TObject::s_Class;
 		
 #pragma region TClass Info

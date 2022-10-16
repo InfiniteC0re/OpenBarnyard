@@ -25,13 +25,13 @@ namespace Toshi
 		//Destory()
 		m_pRenderer = renderer;
 
-		const char* name = m_pRenderer->GetClass()->GetName();
+		//const char* name = m_pRenderer->GetClass()->GetName();
 		//TRender::m_sClass.GetName();
-		TCString str = TCString(name);
+		//TCString str = TCString(name);
 		wndClass.hIcon = LoadIconA(0x0, (LPCSTR)IDI_APPLICATION);
 
 		RegisterClassA(&wndClass);
-		CreateWindowExA(0, name, param_2, 0x80ca0000, 100, 100, 0, 0, TNULL, TNULL, hmodule, this);
+		//CreateWindowExA(0, name, param_2, 0x80ca0000, 100, 100, 0, 0, TNULL, TNULL, hmodule, this);
 	}
 
 	void TMSWindow::Update()
