@@ -33,6 +33,22 @@ namespace Toshi
 	class TGenericClassDerived : public Parent
 	{
 	public:
+
+		virtual const char* GetName() const
+		{
+			return s_Class.GetName();
+		}
+
+		virtual uint16_t GetVersionMajor() const
+		{
+			return s_Class.GetVersionMajor();
+		}
+
+		virtual uint16_t GetVersionMinor() const
+		{
+			return s_Class.GetVersionMinor();
+		}
+
 		virtual TClass* GetClass()
 		{
 			return &s_Class;

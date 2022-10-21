@@ -3,7 +3,7 @@
 
 namespace Toshi
 {
-	TTRB::ERROR TTSF::ReadFile(TFile* a_pFile)
+	TTRB::ERROR TTSF::Open(TFile* a_pFile)
 	{
 		// FUN_00686920
 
@@ -17,13 +17,13 @@ namespace Toshi
 
 		m_pFile->Read(&m_Header, sizeof(TTSF::Header));
 
-		if (m_Header.Magic == TMAKEFOUR("TSFL"))
+		if (m_Header.Magic == IDMAGICL)
 		{
 			m_Endianess = Endianess_Little;
 		}
 		else
 		{
-			if (m_Header.Magic != TMAKEFOUR("TSFB"))
+			if (m_Header.Magic != IDMAGICB)
 			{
 				return TTRB::ERROR_NOT_TRB;
 			}
@@ -41,12 +41,12 @@ namespace Toshi
 
 		m_CurrentSection.Name = m_Header.Magic;
 		m_CurrentSection.Size = m_Header.FileSize;
-		PushFileInfo();
+		PushForm();
 
 		return TTRB::ERROR_OK;
 	}
 
-	TTRB::ERROR TTSF::PushFileInfo()
+	TTRB::ERROR TTSF::PushForm()
 	{
 		// FUN_00688160
 
@@ -64,7 +64,7 @@ namespace Toshi
 		return TTRB::ERROR_OK;
 	}
 
-	TTRB::ERROR TTSF::PopFileInfo()
+	TTRB::ERROR TTSF::PopForm()
 	{
 		// FUN_006881B0
 		if (m_FileInfoCount < 1) return TTRB::ERROR_NO_FILEINFO_ON_STACK;
@@ -82,7 +82,7 @@ namespace Toshi
 		return TTRB::ERROR_OK;
 	}
 
-	TTRB::ERROR TTSF::ReadSectionHeader()
+	TTRB::ERROR TTSF::ReadHunk()
 	{
 		// FUN_00687fa0
 		m_pFile->Read(&m_CurrentSection, sizeof(Section));
@@ -98,7 +98,7 @@ namespace Toshi
 		return TTRB::ERROR_OK;
 	}
 
-	TTRB::ERROR TTSF::SkipSection()
+	TTRB::ERROR TTSF::SkipHunk()
 	{
 		// FUN_006880e0
 		uint32_t alignedSize = TMath::AlignNumUp(m_CurrentSection.Size);
@@ -121,7 +121,7 @@ namespace Toshi
 		return TTRB::ERROR_OK;
 	}
 
-	TTRB::ERROR TTSF::ReadSectionData(void* dst)
+	TTRB::ERROR TTSF::ReadHunkData(void* dst)
 	{
 		if (m_CurrentSection.Name == TMAKEFOUR("FORM"))
 		{
@@ -143,9 +143,9 @@ namespace Toshi
 		return TTRB::ERROR_OK;
 	}
 
-	void TTSF::Destroy(bool free)
+	void TTSF::Close(bool free)
 	{
-		PopFileInfo();
+		PopForm();
 
 		if (m_pFile != TNULL && free)
 		{
@@ -156,12 +156,12 @@ namespace Toshi
 		m_FileInfoCount = 0;
 	}
 
-	void TTSF::DecompressSection(void* buffer, uint32_t size)
+	void TTSF::ReadCompressed(void* buffer, uint32_t size)
 	{
 		TCompress_Decompress::Header header;
 		uint32_t originalPos = m_pFile->Tell();
 
-		int8_t error = TCompress_Decompress::ReadHeader(m_pFile, header);
+		int8_t error = TCompress_Decompress::GetHeader(m_pFile, header);
 
 		if (error == TCOMPRESS_ERROR_OK)
 		{

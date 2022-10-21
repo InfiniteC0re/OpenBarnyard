@@ -6,6 +6,7 @@ namespace Toshi
 	public:
 		class TNode
 		{
+		public:
 			TGenericNodeList* m_pList; // 0x4
 			TNode* m_pNext; // 0x8
 			TNode* m_pPrev; // 0xC
@@ -15,7 +16,7 @@ namespace Toshi
 			inline TNode* Prev() const { return m_pPrev; }
 			inline bool IsLinked() const { return GetList() != TNULL; }
 			inline TGenericNodeList* SetList(TGenericNodeList* a_pList) { m_pList = a_pList; return m_pList; }
-		public:
+		
 			TNode()
 			{
 				m_pNext = this;

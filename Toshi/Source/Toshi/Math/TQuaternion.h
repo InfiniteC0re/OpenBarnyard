@@ -2,6 +2,7 @@
 
 namespace Toshi
 {
+
 	class TQuaternion;
 
 	namespace Props

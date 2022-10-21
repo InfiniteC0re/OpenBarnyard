@@ -10,6 +10,9 @@ namespace Toshi
 	public:
 		typedef uint8_t Endianess;
 
+		static const uint32_t IDMAGICB = TMAKEFOUR("TSFB");
+		static const uint32_t IDMAGICL = TMAKEFOUR("TSFL");
+
 		enum Endianess_ : Endianess
 		{
 			Endianess_Little,
@@ -37,25 +40,25 @@ namespace Toshi
 
 	public:
 		TTSF();
-		inline ~TTSF() { Destroy(); }
+		inline ~TTSF() { Close(); }
 		
-		TTRB::ERROR ReadFile(TFile* a_pFile);
+		TTRB::ERROR Open(TFile* a_pFile);
 
-		TTRB::ERROR PushFileInfo();
-		TTRB::ERROR PopFileInfo();
+		TTRB::ERROR PushForm();
+		TTRB::ERROR PopForm();
 
 		// 0x00688250
-		inline void ReadBytes(void* dest, uint32_t size) { m_ReadPos += m_pFile->Read(dest, size); }
+		inline void ReadRaw(void* dest, uint32_t size) { m_ReadPos += m_pFile->Read(dest, size); }
 
 		// Sections related stuff
-		TTRB::ERROR ReadSectionHeader();
-		TTRB::ERROR SkipSection();
+		TTRB::ERROR ReadHunk();
+		TTRB::ERROR SkipHunk();
 		TTRB::ERROR ReadFORM(TTRB::SectionFORM* section);
-		TTRB::ERROR ReadSectionData(void* dest);
+		TTRB::ERROR ReadHunkData(void* dest);
 
-		void Destroy(bool free = true);
+		void Close(bool free = true);
 
-		void DecompressSection(void* buffer, uint32_t size);
+		void ReadCompressed(void* buffer, uint32_t size);
 		inline void CompressSection(TFile* file, char* unk, uint32_t unk2, uint32_t unk3) { TCompress_Compress::Compress(file, unk, unk2, unk3, m_Endianess); }
 
 		void LogUnknownSection();

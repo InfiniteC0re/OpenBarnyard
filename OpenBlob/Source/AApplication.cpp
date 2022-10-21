@@ -1,9 +1,8 @@
 #include "pch.h"
-#include "AExampleClass.h"
 #include "AApplication.h"
 
-#include <Toshi/Core/Core.h>
-#include <Toshi/Math/TMathInline.h>
+static Toshi::TSound m_soundSystem = Toshi::TSound();
+
 
 Toshi::TApplication* Toshi::CreateApplication(int argc, char** argv)
 {
@@ -21,6 +20,7 @@ bool AApplication::OnCreate()
 	TOSHI_INFO("The application has been created");
 
 	TTODO("Initialize static here");
+	
 	Toshi::TClass* tObjectClass = &Toshi::TObject::s_Class;
 		
 #pragma region TClass Info
@@ -89,6 +89,14 @@ bool AApplication::OnCreate()
 	}
 #pragma endregion
 
+	Toshi::TRenderInterface renderer;
+
+	
+	void* mempool = malloc(0x8000000);
+
+	bool bResult = m_soundSystem.Create(mempool, 0x8000000, -1, -1, 2);
+	TASSERT(TTRUE == bResult, "");
+	
 	return true;
 }
 

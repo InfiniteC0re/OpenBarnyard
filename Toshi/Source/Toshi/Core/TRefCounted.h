@@ -6,6 +6,7 @@ namespace Toshi
 	{
 		int m_iRefCount;
 
+	public:
 		TRefCounted() { m_iRefCount = 0; }
 		TRefCounted(TRefCounted const&) { m_iRefCount = 0; }
 

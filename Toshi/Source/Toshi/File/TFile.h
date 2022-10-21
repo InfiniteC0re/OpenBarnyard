@@ -91,6 +91,7 @@ namespace Toshi
 		virtual wchar_t GetWChar() = 0;
 		virtual int PutCChar(char character) = 0;
 		virtual int PutWChar(wchar_t character) = 0;
+		virtual int CPrintf(const char* format, ...) = 0;
 		virtual int VCPrintf(const char* format, ...) = 0;
 		virtual int VWPrintf(const wchar_t* format, ...) = 0;
 
