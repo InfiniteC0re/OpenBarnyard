@@ -36,15 +36,15 @@ namespace Toshi
 		friend TNativeFileSystem;
 
 	private:
-		HANDLE hnd;                  // 0x8
+		HANDLE m_Handle;             // 0x8
 		DWORD m_Position;            // 0xC
-		DWORD unk2;                  // 0x10
+		DWORD m_RBufferPosition;     // 0x10
 		DWORD m_PrevBufferPos;       // 0x14
 		DWORD m_LastBufferSize;      // 0x18
-		char* m_pBuffer1;            // 0x1C
-		char* m_pBuffer2;            // 0x20
-		DWORD m_iWriteBufferUsed;    // 0x24
-		bool m_bWriteBuffered;       // 0x28
+		char* m_RBuffer;             // 0x1C (read buffer)
+		char* m_WBuffer;             // 0x20 (write buffer)
+		DWORD m_WBufferIterator;     // 0x24
+		bool m_UseBuffers;           // 0x28
 	};
 }
 

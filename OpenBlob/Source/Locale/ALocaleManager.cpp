@@ -7,7 +7,7 @@ constinit ALocaleManager::Platform ALocaleManager::s_Platform = 2;
 ALocaleManager::ALocaleManager()
 {
     // 005e1d30
-	m_SomeTRB.Destroy();
+	m_SomeTRB.Close();
 	Read(LOCALE_LANG_INVALID);
 }
 
@@ -23,7 +23,7 @@ const char* ALocaleManager::GetLocaleFilePath(int32_t langid)
 void ALocaleManager::Read(int32_t langid)
 {
     // 00662e30
-	if (langid != m_LangId && (m_Locale.Destroy(), LOCALE_LANG_INVALID < langid))
+	if (langid != m_LangId && (m_Locale.Close(), LOCALE_LANG_INVALID < langid))
 	{
 		m_Locale.Open(GetLocaleFilePath(langid));
 		m_StringTable = m_Locale.GetSymb<LocaleStrings>("LocaleStrings");

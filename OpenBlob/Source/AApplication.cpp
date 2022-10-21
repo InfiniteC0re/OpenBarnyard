@@ -59,7 +59,7 @@ bool AApplication::OnCreate()
 
 #pragma region TMemory Test
 	// force chunks to defragment
-	Toshi::tfree(Toshi::tmalloc(4));
+	Toshi::tfree(Toshi::tmalloc(32));
 
 	bool status = false;
 	TOSHI_INFO("TMemory Check:");

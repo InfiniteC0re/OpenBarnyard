@@ -1,7 +1,8 @@
 #include "ToshiPCH.h"
 #include "TSound.h"
-#include "fmod_errors.h"
 #include "Platform/Windows/TSound_Win.h"
+
+#include <fmod/fmod_errors.h>
 
 bool Toshi::TSound::Create(void* poolmem, int poollen, int maxchannels, int filebuffersize, int unk)
 {
