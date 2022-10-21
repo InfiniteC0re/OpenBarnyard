@@ -1,7 +1,7 @@
 #include "ToshiPCH.h"
 #include "TXUIResource.h"
 
-bool Toshi::TXUIResource::LoadXUIBHeader(unsigned char* buffer)
+bool Toshi::TXUIResource::ReadHeader(unsigned char* buffer)
 {
     m_oHeader.m_uiFileID = PARSEDWORD(buffer);
 
@@ -15,7 +15,10 @@ bool Toshi::TXUIResource::LoadXUIBHeader(unsigned char* buffer)
 
     TASSERT(m_oHeader.m_usNumSections > 0, "There must be one or more Sections");
 
-    m_oHeader.m_apSections = static_cast<Section*>(tmalloc(m_oHeader.m_usNumSections * sizeof(Section)));
+    uint8_t* memBlock = static_cast<uint8_t*>(tmalloc(m_oHeader.m_usNumSections * sizeof(Section)));
+
+    ms_pXUIMemoryBlock = memBlock;
+    m_oHeader.m_apSections = reinterpret_cast<Section*>(memBlock);
 
     uint32_t sectionID = PARSEDWORD(buffer + 0x14);
 
@@ -76,7 +79,7 @@ void Toshi::TXUIResource::LoadXUIB2(bool loadStringTables, const char* filenameX
             unsigned char* buffer = (unsigned char*)tmalloc(size);
             file->Read(buffer, size);
             file->Destroy();
-            bool bRes = LoadXUIBHeader(buffer);
+            bool bRes = ReadHeader(buffer);
 
             if (bRes)
             {
@@ -91,7 +94,7 @@ void Toshi::TXUIResource::LoadXUIB2(bool loadStringTables, const char* filenameX
 
 int Toshi::TXUIResource::GetTotalSize(unsigned char* buffer)
 {
-    LoadXUIBHeader(buffer);
+    ReadHeader(buffer);
 
     int totalSize = m_oHeader.m_usNumSections * sizeof(Section) + 4;
 

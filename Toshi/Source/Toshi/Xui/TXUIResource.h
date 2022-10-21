@@ -33,16 +33,19 @@ namespace Toshi
 			uint16_t m_usNumSections;	// 0x16
 		};
 
+		inline static uint8_t* ms_pXUIMemoryBlock = TNULL;
 		
 		Header m_oHeader;							// 0x0
 		unsigned short** m_asStringTable = TNULL;	// 0x1C
+		TQuaternion* m_pQuat;						// 0x20
 		unsigned char* m_pCust;						// 0x28
 		uint32_t m_uiCustDataSize;					// 0x3C
 		uint32_t m_uiStringTableCount;				// 0x30
 	public:
 		inline const wchar_t* GetString(uint16_t index) { return L""; }
+		//inline TQuaternion& GetQuat(int index) { return index == -1 ? TQuaternion::IDENTITY : m_pQuat; }
 
-		bool LoadXUIBHeader(unsigned char* buffer);
+		bool ReadHeader(unsigned char* buffer);
 
 		// That should be the real load XUIB
 		// loadStringTables = when true load .xus/.trb files (StringTables)

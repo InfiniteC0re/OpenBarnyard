@@ -81,7 +81,7 @@ AExampleClass::AExampleClass()
 	if (error == TTRB::ERROR_OK)
 	{
 		TXUIResource xuiResource;
-		xuiResource.LoadXUIBHeader((unsigned char*)trb.FindSymb("txui"));
+		xuiResource.ReadHeader((unsigned char*)trb.FindSymb("txui"));
 		int size = xuiResource.GetTotalSize((unsigned char*)trb.FindSymb("txui"));
 		TOSHI_INFO(size);
 	}

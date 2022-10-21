@@ -15,7 +15,7 @@ namespace Toshi
 	{
 		// FUN_00686920
 		TTSF ttsf;
-		ERROR error = ttsf.ReadFile(file);
+		ERROR error = ttsf.Open(file);
 
 		if (error == ERROR_OK)
 		{
@@ -40,7 +40,7 @@ namespace Toshi
 			error = ERROR_NO_HEADER;
 		}
 
-		ttsf.Destroy();
+		ttsf.Close();
 		return error;
 	}
 

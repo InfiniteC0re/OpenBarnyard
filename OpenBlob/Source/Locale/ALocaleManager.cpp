@@ -3,7 +3,7 @@
 
 ALocaleManager::ALocaleManager()
 {
-	m_SomeTRB.Destroy();
+	m_SomeTRB.Close();
 	Read(LOCALE_LANG_INVALID);
 }
 
@@ -19,7 +19,7 @@ void ALocaleManager::Read(int32_t langid)
 {
 	TWIP();
 
-	if (langid != m_LangId && (m_Locale.Destroy(), LOCALE_LANG_INVALID < langid))
+	if (langid != m_LangId && (m_Locale.Close(), LOCALE_LANG_INVALID < langid))
 	{
 		m_Locale.Open(GetLocaleFilePath(langid));
 		m_LocaleStrings = m_Locale.GetSymb<LocaleStrings>("LocaleStrings");

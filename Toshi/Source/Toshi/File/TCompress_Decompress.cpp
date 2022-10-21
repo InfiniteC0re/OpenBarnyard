@@ -52,7 +52,7 @@ uintptr_t Toshi::TCompress_Decompress::Decompress(TFile* file, Header* header, v
 	return static_cast<uintptr_t>(pBufferPos - static_cast<char*>(buffer));
 }
 
-int8_t Toshi::TCompress_Decompress::ReadHeader(TFile* file, Header& btecHeader)
+int8_t Toshi::TCompress_Decompress::GetHeader(TFile* file, Header& btecHeader)
 {
 	uint32_t headerSize = HEADER_SIZE_COMMON;
 	uint32_t savedPos = file->Tell();

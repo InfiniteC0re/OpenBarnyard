@@ -161,7 +161,7 @@ namespace Toshi
 		TCompress_Decompress::Header header;
 		uint32_t originalPos = m_pFile->Tell();
 
-		int8_t error = TCompress_Decompress::ReadHeader(m_pFile, header);
+		int8_t error = TCompress_Decompress::GetHeader(m_pFile, header);
 
 		if (error == TCOMPRESS_ERROR_OK)
 		{
