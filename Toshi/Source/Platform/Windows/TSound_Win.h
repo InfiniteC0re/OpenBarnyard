@@ -10,7 +10,7 @@ namespace Toshi
 	class TSound_Win : TSound
 	{
 	public:
-		bool Initialise(int maxchannels, int unk);
+		bool SetSpeakerType(int maxchannels, int unk);
 		bool m_bInitialised;
 	};
 	

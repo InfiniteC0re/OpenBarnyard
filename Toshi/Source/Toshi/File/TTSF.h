@@ -10,6 +10,9 @@ namespace Toshi
 	public:
 		typedef uint8_t Endianess;
 
+		static const uint32_t IDMAGICB = TMAKEFOUR("TSFB");
+		static const uint32_t IDMAGICL = TMAKEFOUR("TSFL");
+
 		enum Endianess_ : Endianess
 		{
 			Endianess_Little,

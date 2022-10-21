@@ -17,13 +17,13 @@ namespace Toshi
 
 		m_pFile->Read(&m_Header, sizeof(TTSF::Header));
 
-		if (m_Header.Magic == TMAKEFOUR("TSFL"))
+		if (m_Header.Magic == IDMAGICL)
 		{
 			m_Endianess = Endianess_Little;
 		}
 		else
 		{
-			if (m_Header.Magic != TMAKEFOUR("TSFB"))
+			if (m_Header.Magic != IDMAGICB)
 			{
 				return TTRB::ERROR_NOT_TRB;
 			}

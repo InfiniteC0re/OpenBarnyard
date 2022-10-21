@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "EnSaveData.h"
 
-uint32_t EnSaveData::CRCTable[0x100] = {};
+uint32_t EnSaveData::s_aiCRC32LUT[0x100] = {};
 
 bool EnSaveData::Validate()
 {
@@ -37,7 +37,7 @@ void EnSaveData::GenerateCRC()
             else
                 crc >>= 1;
         }
-        CRCTable[i] = crc;
+        s_aiCRC32LUT[i] = crc;
     }
 }
 
@@ -50,7 +50,7 @@ uint32_t EnSaveData::CalculateCRC(unsigned char* buffer, int len)
     uint32_t crc = 0;
     
     while (len--)
-        crc = crc32upd(CRCTable, crc, *buffer++);
+        crc = crc32upd(s_aiCRC32LUT, crc, *buffer++);
 
     return CRC32POST(crc);
 }

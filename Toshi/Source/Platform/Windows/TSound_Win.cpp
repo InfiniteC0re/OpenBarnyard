@@ -1,34 +1,23 @@
 #include "ToshiPCH.h"
 #include "TSound_Win.h"
 
-bool Toshi::TSound_Win::Initialise(int maxchannels, int unk)
+bool Toshi::TSound_Win::SetSpeakerType(int maxchannels, int unk)
 {
     TASSERT(!m_bInitialised, "FMOD system has already been initialised. Only one FMOD system can be initialised at one time.");
 
     if (unk == 0 || unk == 1)
     {
-        // setspeakmode stuff??
-        // No idea if that right
-        m_pSystem->setSoftwareFormat(48000, FMOD_SPEAKERMODE_DEFAULT, 1);
+        m_pSystem->setSoftwareFormat(48000, FMOD_SPEAKERMODE_7POINT1, 1);
     }
     else if (unk == 2)
     {
         int numOutputDrivers;
 
-        // No idea if that right
-        m_pSystem->setSoftwareFormat(48000, FMOD_SPEAKERMODE_DEFAULT, 1);
+        m_pSystem->setSoftwareFormat(48000, FMOD_SPEAKERMODE_RAW, 1);
 
         FMOD_RESULT result = m_pSystem->getNumDrivers(&numOutputDrivers);
 
         TASSERT(!ErrorCheck(result), "");
-
-        /*
-        for (size_t i = 0; i < numOutputDrivers; i++)
-        {
-            char name[0xFF];
-            m_pSystem->getDriverInfo(i, name, 0xFF, NULL, NULL, NULL, NULL);
-            TOSHI_INFO(name);
-        }*/
 
         if (numOutputDrivers == 0)
         {

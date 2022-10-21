@@ -63,7 +63,7 @@ public:
 
 	//=============================================================================
 
-	static uint32_t CRCTable[CRC_TABSIZE];
+	static uint32_t s_aiCRC32LUT[CRC_TABSIZE];
 
 	bool Validate();
 	static void GenerateCRC();
