@@ -21,7 +21,7 @@ namespace Toshi
 		{
 			if (ttsf.m_TRBF == TMAKEFOUR("TRBF"))
 			{
-				if (Parse(ttsf))
+				if (ProcessForm(ttsf))
 				{
 					error = ERROR_OK;
 				}
@@ -44,7 +44,7 @@ namespace Toshi
 		return error;
 	}
 
-	bool TTRB::Parse(TTSF& ttsf)
+	bool TTRB::ProcessForm(TTSF& ttsf)
 	{
 		// FUN_00686f10
 		static constexpr uint32_t s_RELCEntriesLimit = 0x200;
@@ -52,7 +52,7 @@ namespace Toshi
 
 		int32_t fileSize = ttsf.m_CurrentSection.Size - 4;
 		int32_t leftSize = fileSize;
-		ttsf.PushFileInfo();
+		ttsf.PushForm();
 
 		do
 		{
@@ -63,12 +63,12 @@ namespace Toshi
 			{
 				if (fileSize < 1)
 				{
-					ttsf.PopFileInfo();
+					ttsf.PopForm();
 					// FUN_007ebfbf
 					return true;
 				}
 
-				uint8_t readResult = ttsf.ReadSectionHeader();
+				uint8_t readResult = ttsf.ReadHunk();
 				if (readResult != ERROR_OK) return false;
 
 				sectionName = ttsf.m_CurrentSection.Name;
@@ -83,7 +83,7 @@ namespace Toshi
 					m_pHeader = static_cast<Header*>(tmalloc(sizeof(Header) + sizeof(SecInfo) * numsections));
 					m_pHeader->m_ui32Version = 0;
 
-					ttsf.ReadBytes(&m_pHeader->m_i32SectionCount, sizeof(m_pHeader->m_i32SectionCount));
+					ttsf.ReadRaw(&m_pHeader->m_i32SectionCount, sizeof(m_pHeader->m_i32SectionCount));
 
 					TASSERT(m_pHeader->m_i32SectionCount == numsections, "HEAD section has wrong num of sections");
 
@@ -91,18 +91,18 @@ namespace Toshi
 					{
 						SecInfo* pSect = m_pHeader->GetSecInfo(i);
 						
-						ttsf.ReadBytes(pSect, 0xC);
+						ttsf.ReadRaw(pSect, 0xC);
 						pSect->m_pData = tmalloc(pSect->m_Size);
 						pSect->m_Unk1 = (pSect->m_Unk1 == 0) ? 16 : pSect->m_Unk1;
 						pSect->m_Unk2 = 0;
 					}
 
-					ttsf.SkipSection();
+					ttsf.SkipHunk();
 				}
 				else if (sectionName == TMAKEFOUR("SYMB"))
 				{
 					m_SYMB = static_cast<SYMB*>(tmalloc(ttsf.m_CurrentSection.Size));
-					ttsf.ReadSectionData(m_SYMB);
+					ttsf.ReadHunkData(m_SYMB);
 				}
 				else if (sectionName == TMAKEFOUR("SECC"))
 				{
@@ -112,11 +112,11 @@ namespace Toshi
 
 						if (secInfo->m_pData != TNULL)
 						{
-							ttsf.DecompressSection(secInfo->m_pData, secInfo->m_Size);
+							ttsf.ReadCompressed(secInfo->m_pData, secInfo->m_Size);
 						}
 					}
 
-					ttsf.SkipSection();
+					ttsf.SkipHunk();
 				}
 				else if (sectionName == TMAKEFOUR("RELC"))
 				{
@@ -124,7 +124,7 @@ namespace Toshi
 					uint32_t curReloc = 0;
 					uint32_t readedRelocs = 0;
 
-					ttsf.ReadBytes(&relocCount, sizeof(relocCount));
+					ttsf.ReadRaw(&relocCount, sizeof(relocCount));
 
 					if (relocCount < 1)
 					{
@@ -138,7 +138,7 @@ namespace Toshi
 
 							// limit count of RELCs to read
 							relocReadCount = TMath::Min(relocReadCount, s_RELCEntriesLimit);
-							ttsf.ReadBytes(relcEntries, relocReadCount << 3);
+							ttsf.ReadRaw(relcEntries, relocReadCount << 3);
 							curReloc = readedRelocs + relocReadCount;
 
 							auto& header = *m_pHeader;
@@ -163,12 +163,12 @@ namespace Toshi
 						} while (curReloc < relocCount);
 					}
 
-					ttsf.SkipSection();
+					ttsf.SkipHunk();
 				}
 				else
 				{
 					// Unknown section
-					ttsf.SkipSection();
+					ttsf.SkipHunk();
 
 #ifdef TOSHI_DEBUG
 					ttsf.LogUnknownSection();
@@ -185,15 +185,15 @@ namespace Toshi
 					for (int i = 0; i < m_pHeader->m_i32SectionCount; i++)
 					{
 						SecInfo* pSect = m_pHeader->GetSecInfo(i);
-						ttsf.ReadBytes(pSect->m_pData, pSect->m_Size);
+						ttsf.ReadRaw(pSect->m_pData, pSect->m_Size);
 					}
 
-					ttsf.SkipSection();
+					ttsf.SkipHunk();
 				}
 				else if (sectionName == TMAKEFOUR("HDRX"))
 				{
 					m_pHeader = static_cast<Header*>(tmalloc(sectionSize));
-					ttsf.ReadSectionData(m_pHeader);
+					ttsf.ReadHunkData(m_pHeader);
 					
 					for (int i = 0; i < m_pHeader->m_i32SectionCount; i++)
 					{
@@ -205,7 +205,7 @@ namespace Toshi
 				else
 				{
 					// Unknown section
-					ttsf.SkipSection();
+					ttsf.SkipHunk();
 
 #ifdef TOSHI_DEBUG
 					ttsf.LogUnknownSection();
@@ -219,7 +219,7 @@ namespace Toshi
 		SectionFORM form;
 		ttsf.ReadFORM(&form);
 
-		bool result = Parse(ttsf);
+		bool result = ProcessForm(ttsf);
 		fileSize = leftSize;
 
 		return result;
@@ -270,7 +270,7 @@ namespace Toshi
 		return -1;
 	}
 
-	void TTRB::Destroy()
+	void TTRB::Close()
 	{
 		// FUN_006869d0
 		if (m_pHeader != TNULL)

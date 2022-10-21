@@ -94,7 +94,7 @@ namespace Toshi
 
 	public:
 		TTRB() : m_pHeader(nullptr), m_SYMB(nullptr) { }
-		~TTRB() { Destroy(); }
+		~TTRB() { Close(); }
 
 		// Creates TFile and reads file
 		ERROR Open(const char* path);
@@ -109,11 +109,11 @@ namespace Toshi
 		inline T* GetSymb(const char* symbName) { return static_cast<T*>(FindSymb(symbName)); }
 		
 		// Destroys TRB file and the content
-		void Destroy();
+		void Close();
 
 	private:
 		// Parses sections
-		bool Parse(TTSF& ttsf);
+		bool ProcessForm(TTSF& ttsf);
 
 		// Destroys section by index
 		void DestroySection(int index);
