@@ -37,6 +37,9 @@ project "Toshi"
 		"SPDLOG_WCHAR_TO_UTF8_SUPPORT",
 		"_CRT_SECURE_NO_WARNINGS"
 	}
+	
+	filter "files:**.c"
+		flags { "NoPCH" }
 
 	filter "system:windows"
 		systemversion "latest"

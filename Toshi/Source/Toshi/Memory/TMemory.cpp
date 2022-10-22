@@ -68,7 +68,7 @@ namespace Toshi
 		TOSHI_CORE_CRITICAL("------------------------");
 		TOSHI_CORE_CRITICAL("HEAP: {0}", heap->m_Name);
 		TOSHI_CORE_CRITICAL("------------------------");
-		TOSHI_CORE_CRITICAL("failed to allocate {0} bytes (~{1}KB, ~{2}MB)", size, size + (0x200 >> 10), size + (0x80000 >> 20));
+		TOSHI_CORE_CRITICAL("failed to allocate {0} bytes (~{1}KB, ~{2}MB)", size, size >> 10, size >> 20);
 		// FUN_006fbec0(local_e8);
 		TOSHI_CORE_CRITICAL("=========================================================================");
 		// ...
