@@ -5,7 +5,7 @@
 
 namespace Toshi
 {
-	class TTSF
+	class TTSFI
 	{
 	public:
 		typedef uint8_t Endianess;
@@ -39,8 +39,8 @@ namespace Toshi
 		};
 
 	public:
-		TTSF();
-		inline ~TTSF() { Close(); }
+		TTSFI();
+		~TTSFI() { Close(); }
 		
 		TTRB::ERROR Open(TFile* a_pFile);
 

@@ -1,15 +1,9 @@
 #pragma once
-#include <Toshi/File/TTRB.h>
+#include <Toshi/Locale/T2Locale.h>
 
-class ALocaleManager
+class ALocaleManager : public Toshi::T2Locale
 {
 public:
-	struct LocaleStrings
-	{
-		uint32_t Count;
-		wchar_t** Strings;
-	};
-
 	typedef int Platform;
 	enum Platform_ : Platform
 	{
@@ -18,50 +12,33 @@ public:
 		Platform_PC,
 	};
 
-public:
-	ALocaleManager();
-	virtual ~ALocaleManager() { };
+	struct LocaleFormat
+	{
 
-	virtual const char* GetLocaleFilePath(int32_t langid);
-
-	void Read(int32_t langid);
-	const wchar_t* GetString(int stringid);
-
-	static int FixStringIdPlatform(int stringid);
-
-private:
-	Toshi::TTRB m_Locale;
-	uint32_t m_Unk1;
-	uint32_t m_Unk2;
-	LocaleStrings* m_StringTable;
-	int32_t m_LangId;
-	uint32_t m_Unk4;
-	uint32_t m_Unk5;
-	Toshi::TTRB m_SomeTRB;
-
-	// 00981a20
-	static constinit Platform s_Platform;
-
-private:
-	static constexpr const char* s_LocaleFiles[] = {
-		"Data/Locale/eng.trb",
-		"Data/Locale/eng-uk.trb",
-		"Data/Locale/ned.trb",
-		"Data/Locale/ger.trb",
-		"Data/Locale/ita.trb",
-		"Data/Locale/spa.trb",
-		"Data/Locale/las.trb",
-		"Data/Locale/fre.trb",
-		"Data/Locale/dan.trb",
-		"Data/Locale/nor.trb",
-		"Data/Locale/swe.trb",
-		"Data/Locale/fin.trb",
-		"Data/Locale/jpn.trb",
-		"Data/Locale/kor.trb",
-		"Data/Locale/pt-br.trb",
-		"Data/Locale/zh.trb",
 	};
 
-	static constexpr int32_t LOCALE_LANG_INVALID = -1;
-	static constexpr int32_t LOCALE_LANG_NUMOF = sizeof(s_LocaleFiles) / sizeof(*s_LocaleFiles);
+public:
+	ALocaleManager();
+	ALocaleManager(const ALocaleManager&) = delete;
+	ALocaleManager(const ALocaleManager&&) = delete;
+
+	virtual ~ALocaleManager() { };
+	virtual const char* GetLanguageFilename(int32_t langid) override;
+
+	void SetLanguage(Lang langid);
+
+	static void Create();
+	static void Destroy();
+
+	static int GetOSLanguage() { return 0; }
+	static int FixStringIdPlatform(int stringid);
+	static ALocaleManager& Instance() { return *static_cast<ALocaleManager*>(s_Singleton); }
+
+private:
+	static constinit Platform s_Platform; // 00981a20
+
+private:
+	void* m_LocaleBuffer;                 // 0x2C
+	Toshi::TTRB m_Format;                 // 0x30
+	LocaleFormat* m_LocaleFormat;         // 0x44
 };

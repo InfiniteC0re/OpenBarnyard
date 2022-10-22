@@ -1,36 +1,108 @@
 #include "pch.h"
 #include "ALocaleManager.h"
 
-// 00981a20
-constinit ALocaleManager::Platform ALocaleManager::s_Platform = 2;
-
-ALocaleManager::ALocaleManager()
+static constexpr const char* s_LocaleFiles[] =
 {
-    // 005e1d30
-	m_SomeTRB.Close();
-	Read(LOCALE_LANG_INVALID);
+        "Data/Locale/eng.trb",
+        "Data/Locale/eng-uk.trb",
+        "Data/Locale/ned.trb",
+        "Data/Locale/ger.trb",
+        "Data/Locale/ita.trb",
+        "Data/Locale/spa.trb",
+        "Data/Locale/las.trb",
+        "Data/Locale/fre.trb",
+        "Data/Locale/dan.trb",
+        "Data/Locale/nor.trb",
+        "Data/Locale/swe.trb",
+        "Data/Locale/fin.trb",
+        "Data/Locale/jpn.trb",
+        "Data/Locale/kor.trb",
+        "Data/Locale/pt-br.trb",
+        "Data/Locale/zh.trb",
+};
+
+static constexpr const char* s_LocaleFormatFiles[] =
+{
+        "Data/Locale/format_eng.trb",
+        "Data/Locale/format_eng-uk.trb",
+        "Data/Locale/format_ned.trb",
+        "Data/Locale/format_ger.trb",
+        "Data/Locale/format_ita.trb",
+        "Data/Locale/format_spa.trb",
+        "Data/Locale/format_las.trb",
+        "Data/Locale/format_fre.trb",
+        "Data/Locale/format_dan.trb",
+        "Data/Locale/format_nor.trb",
+        "Data/Locale/format_swe.trb",
+        "Data/Locale/format_fin.trb",
+        "Data/Locale/format_jpn.trb",
+        "Data/Locale/format_kor.trb",
+        "Data/Locale/format_pt-br.trb",
+        "Data/Locale/format_zh.trb",
+};
+
+// 00981a20
+constinit ALocaleManager::Platform ALocaleManager::s_Platform = Platform_PC;
+
+static constexpr int32_t LOCALE_LANG_INVALID = -1;
+static constexpr int32_t LOCALE_LANG_NUMOF = sizeof(s_LocaleFiles) / sizeof(*s_LocaleFiles);
+static constexpr int32_t LOCALE_FORMAT_LANG_NUMOF = sizeof(s_LocaleFormatFiles) / sizeof(*s_LocaleFormatFiles);
+
+static_assert(LOCALE_FORMAT_LANG_NUMOF == LOCALE_LANG_NUMOF);
+
+void ALocaleManager::Create()
+{
+    TASSERT(T2Locale::s_Singleton == TNULL, "T2Locale is already created");
+
+    auto localeManager = Toshi::tnew<ALocaleManager>();
+
+    auto langid = GetOSLanguage();
+    localeManager->SetLanguage(langid);
+
+    T2Locale::s_Singleton = localeManager;
 }
 
-const char* ALocaleManager::GetLocaleFilePath(int32_t langid)
+void ALocaleManager::Destroy()
+{
+    if (T2Locale::s_Singleton != TNULL)
+    {
+        Toshi::tdelete(T2Locale::s_Singleton);
+    }
+}
+
+ALocaleManager::ALocaleManager() : T2Locale(LOCALE_LANG_NUMOF, 0x64000, nullptr)
+{
+    // 005e1ca0
+    m_LocaleBuffer = T2Locale::m_Buffer;
+    TTODO("de blob: FUN_005e2470");
+}
+
+const char* ALocaleManager::GetLanguageFilename(int32_t langid)
 {
     // 005e2190
-	TASSERT(langid < LOCALE_LANG_NUMOF, "langid is out of LOCALE_LANG_NUMOF");
-	TASSERT(langid > LOCALE_LANG_INVALID, "langid is invalid");
+    TASSERT(langid < LOCALE_LANG_NUMOF, "langid is out of LOCALE_LANG_NUMOF");
+    TASSERT(langid > LOCALE_LANG_INVALID, "langid is invalid");
 
-	return s_LocaleFiles[langid];
+    return s_LocaleFiles[langid];
 }
 
-void ALocaleManager::Read(int32_t langid)
+void ALocaleManager::SetLanguage(Lang langid)
 {
-    // 00662e30
-	if (langid != m_LangId && (m_Locale.Close(), LOCALE_LANG_INVALID < langid))
-	{
-		m_Locale.Open(GetLocaleFilePath(langid));
-		m_StringTable = m_Locale.GetSymb<LocaleStrings>("LocaleStrings");
+    bool changeLang = langid != m_LangId;
 
-		m_Unk2 = m_Unk1;
-		m_LangId = langid;
-	}
+    if (changeLang)
+    {
+        m_Format.Close();
+
+        if (langid > LOCALE_LANG_INVALID)
+        {
+            m_Format.Load(s_LocaleFormatFiles[langid]);
+            m_LocaleFormat = m_Format.CastSymbol<LocaleFormat>("LocaleFormat");
+            TTODO("reverse LocaleFormat symbol");
+        }
+    }
+
+    T2Locale::SetLanguage(langid);
 }
 
 int ALocaleManager::FixStringIdPlatform(int stringid)
@@ -131,14 +203,4 @@ int ALocaleManager::FixStringIdPlatform(int stringid)
     }
 
     return stringid;
-}
-
-const wchar_t* ALocaleManager::GetString(int stringid)
-{
-	TASSERT(stringid >= 0 && stringid < m_StringTable->Count, "stringid is out of bounds");
-    
-    stringid = FixStringIdPlatform(stringid);
-    TTODO("FUN_005e23c0");
-
-	return m_StringTable->Strings[stringid];
 }

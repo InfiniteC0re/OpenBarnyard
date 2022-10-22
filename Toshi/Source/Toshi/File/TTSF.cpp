@@ -3,7 +3,7 @@
 
 namespace Toshi
 {
-	TTRB::ERROR TTSF::Open(TFile* a_pFile)
+	TTRB::ERROR TTSFI::Open(TFile* a_pFile)
 	{
 		// FUN_00686920
 
@@ -15,7 +15,7 @@ namespace Toshi
 			return TTRB::ERROR_NO_FILE;
 		}
 
-		m_pFile->Read(&m_Header, sizeof(TTSF::Header));
+		m_pFile->Read(&m_Header, sizeof(TTSFI::Header));
 
 		if (m_Header.Magic == IDMAGICL)
 		{
@@ -46,7 +46,7 @@ namespace Toshi
 		return TTRB::ERROR_OK;
 	}
 
-	TTRB::ERROR TTSF::PushForm()
+	TTRB::ERROR TTSFI::PushForm()
 	{
 		// FUN_00688160
 
@@ -64,7 +64,7 @@ namespace Toshi
 		return TTRB::ERROR_OK;
 	}
 
-	TTRB::ERROR TTSF::PopForm()
+	TTRB::ERROR TTSFI::PopForm()
 	{
 		// FUN_006881B0
 		if (m_FileInfoCount < 1) return TTRB::ERROR_NO_FILEINFO_ON_STACK;
@@ -82,7 +82,7 @@ namespace Toshi
 		return TTRB::ERROR_OK;
 	}
 
-	TTRB::ERROR TTSF::ReadHunk()
+	TTRB::ERROR TTSFI::ReadHunk()
 	{
 		// FUN_00687fa0
 		m_pFile->Read(&m_CurrentSection, sizeof(Section));
@@ -98,7 +98,7 @@ namespace Toshi
 		return TTRB::ERROR_OK;
 	}
 
-	TTRB::ERROR TTSF::SkipHunk()
+	TTRB::ERROR TTSFI::SkipHunk()
 	{
 		// FUN_006880e0
 		uint32_t alignedSize = TMath::AlignNumUp(m_CurrentSection.Size);
@@ -108,7 +108,7 @@ namespace Toshi
 		return TTRB::ERROR_OK;
 	}
 
-	TTRB::ERROR TTSF::ReadFORM(TTRB::SectionFORM* section)
+	TTRB::ERROR TTSFI::ReadFORM(TTRB::SectionFORM* section)
 	{
 		// FUN_00688120
 		if (m_CurrentSection.Name != TMAKEFOUR("FORM"))
@@ -121,7 +121,7 @@ namespace Toshi
 		return TTRB::ERROR_OK;
 	}
 
-	TTRB::ERROR TTSF::ReadHunkData(void* dst)
+	TTRB::ERROR TTSFI::ReadHunkData(void* dst)
 	{
 		if (m_CurrentSection.Name == TMAKEFOUR("FORM"))
 		{
@@ -143,7 +143,7 @@ namespace Toshi
 		return TTRB::ERROR_OK;
 	}
 
-	void TTSF::Close(bool free)
+	void TTSFI::Close(bool free)
 	{
 		PopForm();
 
@@ -156,7 +156,7 @@ namespace Toshi
 		m_FileInfoCount = 0;
 	}
 
-	void TTSF::ReadCompressed(void* buffer, uint32_t size)
+	void TTSFI::ReadCompressed(void* buffer, uint32_t size)
 	{
 		TCompress_Decompress::Header header;
 		uint32_t originalPos = m_pFile->Tell();
@@ -171,7 +171,7 @@ namespace Toshi
 		}
 	}
 
-	void TTSF::LogUnknownSection()
+	void TTSFI::LogUnknownSection()
 	{
 #ifdef TOSHI_DEBUG
 		char charName[sizeof(m_CurrentSection.Name) + 1] = {};
@@ -181,7 +181,7 @@ namespace Toshi
 #endif
 	}
 
-	TTSF::TTSF() : m_FileInfo(), m_Header()
+	TTSFI::TTSFI() : m_FileInfo(), m_Header()
 	{
 		m_pFile = TNULL;
 		m_FileInfoCount = 0;

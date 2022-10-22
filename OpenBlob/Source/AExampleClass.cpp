@@ -76,19 +76,19 @@ AExampleClass::AExampleClass()
 	}
 
 	TTRB trb;
-	TTRB::ERROR error = trb.Open("C:\\Program Files (x86)\\Steam\\steamapps\\common\\de Blob\\Data\\XUI\\UK\\frontend.trb");
+	TTRB::ERROR error = trb.Load("C:\\Program Files (x86)\\Steam\\steamapps\\common\\de Blob\\Data\\XUI\\UK\\frontend.trb");
 
 	if (error == TTRB::ERROR_OK)
 	{
 		TXUIResource xuiResource;
-		xuiResource.ReadHeader((unsigned char*)trb.FindSymb("txui"));
-		int size = xuiResource.GetTotalSize((unsigned char*)trb.FindSymb("txui"));
+		xuiResource.ReadHeader((unsigned char*)trb.GetSymbolAddress("txui"));
+		int size = xuiResource.GetTotalSize((unsigned char*)trb.GetSymbolAddress("txui"));
 		TOSHI_INFO(size);
 	}
 
-	trb.Open("C:\\Program Files (x86)\\Steam\\steamapps\\common\\de Blob\\Data\\BlobChar\\AssetPack.trb");
-	trb.FindSymb("SkeletonHeader");
-	trb.Open("C:\\Users\\nepel\\Desktop\\BKG_CONCEPT01_NTSC_ENG.TTL");
+	trb.Load("C:\\Program Files (x86)\\Steam\\steamapps\\common\\de Blob\\Data\\BlobChar\\AssetPack.trb");
+	trb.GetSymbolAddress("SkeletonHeader");
+	trb.Load("C:\\Users\\nepel\\Desktop\\BKG_CONCEPT01_NTSC_ENG.TTL");
 
 	class Test : public TDList<Test>::TNode
 	{

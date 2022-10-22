@@ -1,8 +1,8 @@
 #include "pch.h"
-#include "AApplication.h"
+#include "AppBoot.h"
+#include "Locale/ALocaleManager.h"
 
 static Toshi::TSound m_soundSystem = Toshi::TSound();
-
 
 Toshi::TApplication* Toshi::CreateApplication(int argc, char** argv)
 {
@@ -18,15 +18,13 @@ Toshi::TApplication* Toshi::CreateApplication(int argc, char** argv)
 bool AApplication::OnCreate()
 {
 	TOSHI_INFO("The application has been created");
-
 	TTODO("Initialize static here");
 	
-	Toshi::TClass* tObjectClass = &Toshi::TObject::s_Class;
-		
+	ALocaleManager::Create();
+	
 #pragma region TClass Info
 	TOSHI_INFO("===============TClass Hierarchy===============");
-
-	tObjectClass->RecurseTree(
+	Toshi::TObject::s_Class.RecurseTree(
 		[](Toshi::TClass* tClass, void* data) -> bool
 		{
 			// this callback is called for every registered TClass
