@@ -1,12 +1,12 @@
 #pragma once
 namespace Toshi2
 {
-	template<typename T, int Capacity>
+	template<typename T, int Cap>
 	class T2Vector
 	{
 		int m_iNumElements = 0;
 
-		T m_array[Capacity];
+		T m_array[Cap];
 
 		template<typename I>
 		void push_back(I item)
@@ -21,7 +21,8 @@ namespace Toshi2
 			return value;
 		}
 
-		inline int GetCurrentSize() const { return m_iNumElements; }
+		inline int Size() const { return m_iNumElements; }
+		inline int Capacity() const { return Cap; }
 	};
 }
 
