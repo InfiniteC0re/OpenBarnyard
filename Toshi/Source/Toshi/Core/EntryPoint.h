@@ -10,7 +10,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, INT cmdSh
 	Toshi::TApplication* app = Toshi::CreateApplication(0, nullptr);
 	app->Create();
 
-	Toshi::tdelete(app);
+	delete app;
 
 	return WM_QUIT;
 }

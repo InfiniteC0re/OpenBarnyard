@@ -18,7 +18,7 @@ namespace Toshi
 		{
 			size_t symbolTableSize = TTRB::GetSymbolTableSize(1);
 			size_t headerSize = TTRB::GetHeaderSize(1);
-			m_Buffer = tmalloc(headerSize + bufferSize + symbolTableSize);
+			m_Buffer = TMalloc(headerSize + bufferSize + symbolTableSize);
 			m_BufferPos = m_Buffer;
 			m_Flag = true;
 		}

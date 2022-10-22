@@ -10,7 +10,6 @@
 #include <Toshi/File/TTRB.h>
 #include <Toshi/Core/TGenericDList.h>
 #include <MemoryCard/EnSaveData.h>
-#include <Toshi/Core/TMemory.cpp>
 #include <Toshi/Xui/TXUIResource.h>
 
 using namespace Toshi;
@@ -60,7 +59,7 @@ AExampleClass::AExampleClass()
 
 		if (file)
 		{
-			unsigned char* buf = (unsigned char*)tmalloc(file->GetSize());//-12);
+			unsigned char* buf = (unsigned char*)TMalloc(file->GetSize());//-12);
 			//file->Seek(12, TFile::TSEEK_CUR);
 			file->Read(buf, file->GetSize());//-12);
 
@@ -70,7 +69,7 @@ AExampleClass::AExampleClass()
 			EnSaveData::GenerateCRC();
 			uint32_t crc = EnSaveData::CalculateCRC(buf, file->GetSize());
 
-			tfree(buf);
+			TFree(buf);
 			file->Destroy();
 		}
 	}
@@ -105,16 +104,16 @@ AExampleClass::AExampleClass()
 	};
 
 	TDList<Test> list;
-	list.InsertHead(tnew<Test>(1.0f));
-	list.InsertHead(tnew<Test>(5.0f));
+	list.InsertHead(new Test(1.0f));
+	list.InsertHead(new Test(5.0f));
 	
 	list.Head()->Log();         // 5.0
 	list.Head()->Next()->Log(); // 1.0
 
-	tdelete(list.Head()->Next());
-	tdelete(list.Head());
+	delete list.Head()->Next();
+	delete list.Head();
 
-	auto kernel = tnew<TKernelInterface>();
+	auto kernel = new TKernelInterface();
 	
 	m_RootTask = static_cast<ARootTask*>(
 		kernel->GetScheduler().CreateTask(&ARootTask::s_Class, nullptr)

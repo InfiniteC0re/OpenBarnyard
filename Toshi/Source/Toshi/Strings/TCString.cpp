@@ -135,7 +135,7 @@ namespace Toshi
 		{
 			if (a_iLength == 0)
 			{
-				if (freeMemory) tfree(m_pBuffer);
+				if (freeMemory) TFree(m_pBuffer);
 
 				m_pBuffer = NullString;
 				m_iExcessLen = 0;
@@ -150,10 +150,10 @@ namespace Toshi
 				{
 					if (currentLength != 0 && freeMemory)
 					{
-						tfree(m_pBuffer);
+						TFree(m_pBuffer);
 					}
 
-					m_pBuffer = (char*)tmalloc(a_iLength + 1);
+					m_pBuffer = (char*)TMalloc(a_iLength + 1);
 					m_iExcessLen = 0;
 
 					hasChanged = true;
@@ -258,13 +258,13 @@ namespace Toshi
 
 		if (allocated && Length() != 0)
 		{
-			tfree(oldBuffer);
+			TFree(oldBuffer);
 		}
 	}
 
 	void TCString::FreeBuffer()
 	{
-		if (Length() != 0) tfree(m_pBuffer);
+		if (Length() != 0) TFree(m_pBuffer);
 		Reset();
 	}
 
@@ -303,7 +303,7 @@ namespace Toshi
 
 		if (allocated && oldLength != 0)
 		{
-			tfree(oldString);
+			TFree(oldString);
 		}
 
 		return *this;
@@ -409,7 +409,7 @@ namespace Toshi
 		
 		if (allocated && m_iStrLen != 0)
 		{
-			tfree(oldString);
+			TFree(oldString);
 		}
 
 		return *this;

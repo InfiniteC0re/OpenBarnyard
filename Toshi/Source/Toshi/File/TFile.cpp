@@ -57,22 +57,22 @@ namespace Toshi
 	{
 		{
 			auto pFileSystem = TFileManager::FindFileSystem("mem");
-			if (pFileSystem) tdelete(pFileSystem);
+			if (pFileSystem) delete pFileSystem;
 		}
 
 		{
 			auto pFileSystem = TFileManager::FindFileSystem("null");
-			if (pFileSystem) tdelete(pFileSystem);
+			if (pFileSystem) delete pFileSystem;
 		}
 
 		{
 			auto pFileSystem = TFileManager::FindFileSystem("abs");
-			if (pFileSystem) tdelete(pFileSystem);
+			if (pFileSystem) delete pFileSystem;
 		}
 
 		{
 			auto pFileSystem = TFileManager::FindFileSystem("local");
-			if (pFileSystem) tdelete(pFileSystem);
+			if (pFileSystem) delete pFileSystem;
 		}
 	}
 

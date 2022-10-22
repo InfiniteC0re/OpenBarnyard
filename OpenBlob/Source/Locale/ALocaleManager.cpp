@@ -54,7 +54,7 @@ void ALocaleManager::Create()
 {
     TASSERT(T2Locale::s_Singleton == TNULL, "T2Locale is already created");
 
-    auto localeManager = Toshi::tnew<ALocaleManager>();
+    auto localeManager = new ALocaleManager();
 
     auto langid = GetOSLanguage();
     localeManager->SetLanguage(langid);
@@ -66,7 +66,7 @@ void ALocaleManager::Destroy()
 {
     if (T2Locale::s_Singleton != TNULL)
     {
-        Toshi::tdelete(T2Locale::s_Singleton);
+        delete T2Locale::s_Singleton;
     }
 }
 

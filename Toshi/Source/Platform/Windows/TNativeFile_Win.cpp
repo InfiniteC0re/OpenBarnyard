@@ -16,11 +16,11 @@ namespace Toshi
         TCString prefix(currentDir);
 
         TFileSystem* pFileSystem;
-        pFileSystem = tnew<TNativeFileSystem>("local");
+        pFileSystem = new TNativeFileSystem("local");
         pFileSystem->SetPrefix(prefix);
-        pFileSystem = tnew<TNativeFileSystem>("abs");
+        pFileSystem = new TNativeFileSystem("abs");
         pFileSystem->SetPrefix(prefix);
-        pFileSystem = tnew<TNullFileSystem>("null");
+        pFileSystem = new TNativeFileSystem("null");
         pFileSystem->SetPrefix(prefix);
 
         fileManager.SetSystemPath("local");
@@ -36,12 +36,12 @@ namespace Toshi
 
     TFile* TNativeFileSystem::CreateFile(TCString const& fn, uint32_t flags)
     {
-        TNativeFile* nativeFile = tmalloc<TNativeFile>();
-        new (nativeFile) TNativeFile(this);
+        TNativeFile* nativeFile = new TNativeFile(this);
+        //new (nativeFile) TNativeFile(this);
 
         if (!nativeFile->Open(fn, flags))
         {
-            tdelete(nativeFile);
+            delete nativeFile;
             return TNULL;
         }
 
@@ -384,8 +384,8 @@ namespace Toshi
             }
             else
             {
-                m_RBuffer = (char*)tmalloc(BUFFER_SIZE);
-                m_WBuffer = (char*)tmalloc(BUFFER_SIZE);
+                m_RBuffer = (char*)TMalloc(BUFFER_SIZE);
+                m_WBuffer = (char*)TMalloc(BUFFER_SIZE);
                 m_UseBuffers = true;
             }
         }
@@ -410,13 +410,13 @@ namespace Toshi
 
         if (m_RBuffer != TNULL)
         {
-            tfree(m_RBuffer);
+            TFree(m_RBuffer);
             m_RBuffer = TNULL;
         }
 
         if (m_WBuffer != TNULL)
         {
-            tfree(m_WBuffer);
+            TFree(m_WBuffer);
             m_WBuffer = TNULL;
         }
     }

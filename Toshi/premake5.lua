@@ -15,7 +15,8 @@ project "Toshi"
 	files
 	{
 		"Source/**.h",
-		"Source/**.cpp"
+		"Source/**.cpp",
+		"Source/**.c"
 	}
 
 	includedirs

@@ -189,7 +189,7 @@ namespace Toshi
 		uint32_t m_ValidatedCount;         // 0x1C
 		TDList<TFileSystem> m_Validated;   // 0x20
 		TDList<TFileSystem> m_Invalidated; // 0x28
-		TMutex m_Mutex;                    // 0x30
+		T2Mutex m_Mutex;                   // 0x30
 	};
 
 	class TNullFileSystem : public TFileSystem, public TSingleton<TNullFileSystem>
