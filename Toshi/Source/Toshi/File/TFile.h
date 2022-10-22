@@ -73,9 +73,9 @@ namespace Toshi
 		{
 			OpenFlags_Read = BITFIELD(0),
 			OpenFlags_Write = BITFIELD(1),
-			OpenFlags_ReadWrite = BITFIELD(2),
-			OpenFlags_CreateNew = BITFIELD(3),
-			OpenFlags_NoBuffer = BITFIELD(4),
+			OpenFlags_ReadWrite = OpenFlags_Read | OpenFlags_Write,
+			OpenFlags_CreateNew = BITFIELD(2),
+			OpenFlags_NoBuffer = BITFIELD(3),
 		};
 
 		TFile(TFileSystem* pFS);

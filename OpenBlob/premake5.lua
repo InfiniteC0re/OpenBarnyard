@@ -3,9 +3,6 @@ project "OpenBlob"
 	language "C++"
 	cppdialect "C++20"
 	staticruntime "on"
-
-	targetdir ("%{wks.location}/bin/" .. outputdir .. "/%{prj.name}")
-	objdir ("%{wks.location}/bin-int/" .. outputdir .. "/%{prj.name}")
 	
 	pchheader "pch.h"
 	pchsource "Source/pch.cpp"
@@ -25,7 +22,8 @@ project "OpenBlob"
 	{
 		"Source",
 		"%{wks.location}/Toshi/Source",
-		"%{IncludeDir.spdlog}"
+		"%{IncludeDir.spdlog}",
+		"%{IncludeDir.fmod}"
 	}
 	
 	defines
@@ -36,7 +34,9 @@ project "OpenBlob"
 	
 	postbuildcommands
 	{
-		"{COPYDIR} Data %{wks.location}/bin/" .. outputdir .. "/%{prj.name}/Data"
+		"{COPYDIR} Data %{wks.location}bin/" .. outputdir .. "/%{prj.name}/Data",
+		"{COPYDIR} " .. ClientContentCommon  .. " %{wks.location}bin/" .. outputdir .. "/%{prj.name}/",
+		"{COPYDIR} " .. ClientContentArch    .. " %{wks.location}bin/" .. outputdir .. "/%{prj.name}/",
 	}
 
 	filter "system:windows"

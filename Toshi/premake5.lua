@@ -4,11 +4,13 @@ project "Toshi"
 	cppdialect "C++20"
 	staticruntime "on"
 
-	targetdir ("%{wks.location}/bin/" .. outputdir .. "/%{prj.name}")
-	objdir ("%{wks.location}/bin-int/" .. outputdir .. "/%{prj.name}")
-
 	pchheader "ToshiPCH.h"
 	pchsource "Source/ToshiPCH.cpp"
+	
+	links
+	{
+		"fmod_vc.lib"
+	}
 
 	files
 	{
@@ -19,7 +21,13 @@ project "Toshi"
 	includedirs
 	{
 		"Source",
-		"%{IncludeDir.spdlog}"
+		"%{IncludeDir.spdlog}",
+		"%{IncludeDir.fmod}"
+	}
+	
+	libdirs
+	{
+		"%{LibDir.fmod}"
 	}
 	
 	defines

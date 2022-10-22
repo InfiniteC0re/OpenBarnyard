@@ -14,6 +14,7 @@
 #include "Toshi/Core/STL.h"
 #include "Toshi/Core/Core.h"
 #include "Toshi/Core/TObject.h"
+#include "Toshi/Core/TSystem.h"
 #include "Toshi/Core/TMemory.h"
 #include "Toshi/Core/TTask.h"
 #include "Toshi/Math/TMathInline.h"

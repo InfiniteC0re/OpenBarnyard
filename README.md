@@ -28,3 +28,4 @@ Then compile the generated solution and that's it
 ## Thirdparty libraries
 - [premake](https://github.com/premake/premake-core)
 - [spdlog](https://github.com/gabime/spdlog)
+- [fmod](https://fmod.com/)

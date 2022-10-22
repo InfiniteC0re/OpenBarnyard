@@ -4,17 +4,37 @@
 
 namespace Toshi
 {
-	TTRB::ERROR TTRB::Open(const char* path)
+	TTRB::t_MemoryFuncAlloc TTRB::s_cbDefAllocator = [](AllocType alloctype, size_t size, short unk1, size_t unk2, void* userData)
+	{
+		return tmalloc(size);
+	};
+
+	TTRB::t_MemoryFuncDealloc TTRB::s_cbDefDeallocator = [](AllocType alloctype, void* ptr, short unk1, size_t unk2, void* userData)
+	{
+		tfree(ptr);
+	};
+
+	void* TTRB::s_pDefAllocatorUserData = nullptr;
+
+	TTRB::TTRB()
+	{
+		m_pHeader = TNULL;
+		m_SYMB = TNULL;
+
+		SetMemoryFunctions(s_cbDefAllocator, s_cbDefDeallocator, s_pDefAllocatorUserData);
+	}
+
+	TTRB::ERROR TTRB::Load(const char* path)
 	{
 		// FUN_006868e0
 		TFile* pFile = TFile::Create(path, TFile::OpenFlags_Read);
-		return Open(pFile);
+		return Load(pFile);
 	}
 
-	TTRB::ERROR TTRB::Open(TFile* file)
+	TTRB::ERROR TTRB::Load(TFile* file)
 	{
 		// FUN_00686920
-		TTSF ttsf;
+		TTSFI ttsf;
 		ERROR error = ttsf.Open(file);
 
 		if (error == ERROR_OK)
@@ -40,11 +60,10 @@ namespace Toshi
 			error = ERROR_NO_HEADER;
 		}
 
-		ttsf.Close();
 		return error;
 	}
 
-	bool TTRB::ProcessForm(TTSF& ttsf)
+	bool TTRB::ProcessForm(TTSFI& ttsf)
 	{
 		// FUN_00686f10
 		static constexpr uint32_t s_RELCEntriesLimit = 0x200;
@@ -80,7 +99,8 @@ namespace Toshi
 				if (sectionName == TMAKEFOUR("HEAD"))
 				{
 					int numsections = (sectionSize - 4) / 0xC;
-					m_pHeader = static_cast<Header*>(tmalloc(sizeof(Header) + sizeof(SecInfo) * numsections));
+
+					m_pHeader = static_cast<Header*>(m_MemAllocator(AllocType_Unk0, sizeof(Header) + sizeof(SecInfo) * numsections, 0, 0, m_MemUserData));
 					m_pHeader->m_ui32Version = 0;
 
 					ttsf.ReadRaw(&m_pHeader->m_i32SectionCount, sizeof(m_pHeader->m_i32SectionCount));
@@ -89,10 +109,10 @@ namespace Toshi
 
 					for (int i = 0; i < m_pHeader->m_i32SectionCount; i++)
 					{
-						SecInfo* pSect = m_pHeader->GetSecInfo(i);
+						SecInfo* pSect = GetSectionInfo(i);
 						
 						ttsf.ReadRaw(pSect, 0xC);
-						pSect->m_pData = tmalloc(pSect->m_Size);
+						pSect->m_Data = m_MemAllocator(AllocType_Unk1, pSect->m_Size, 0, 0, m_MemUserData);
 						pSect->m_Unk1 = (pSect->m_Unk1 == 0) ? 16 : pSect->m_Unk1;
 						pSect->m_Unk2 = 0;
 					}
@@ -101,18 +121,18 @@ namespace Toshi
 				}
 				else if (sectionName == TMAKEFOUR("SYMB"))
 				{
-					m_SYMB = static_cast<SYMB*>(tmalloc(ttsf.m_CurrentSection.Size));
+					m_SYMB = static_cast<SYMB*>(m_MemAllocator(AllocType_Unk2, ttsf.m_CurrentSection.Size, 0, 0, m_MemUserData));
 					ttsf.ReadHunkData(m_SYMB);
 				}
 				else if (sectionName == TMAKEFOUR("SECC"))
 				{
 					for (int i = 0; i < m_pHeader->m_i32SectionCount; i++)
 					{
-						auto* secInfo = m_pHeader->GetSecInfo(i);
+						auto* secInfo = GetSectionInfo(i);
 
-						if (secInfo->m_pData != TNULL)
+						if (secInfo->m_Data != TNULL)
 						{
-							ttsf.ReadCompressed(secInfo->m_pData, secInfo->m_Size);
+							ttsf.ReadCompressed(secInfo->m_Data, secInfo->m_Size);
 						}
 					}
 
@@ -145,18 +165,18 @@ namespace Toshi
 							for (uint32_t i = 0; i < relocReadCount; i++)
 							{
 								auto& relcEntry = relcEntries[i];
-								auto& hdrx1 = *m_pHeader->GetSecInfo(relcEntry.HDRX1);
-								auto& hdrx2 = hdrx1;
+								auto hdrx1 = GetSectionInfo(relcEntry.HDRX1);
+								auto hdrx2 = hdrx1;
 
 								if (m_pHeader->m_ui32Version >= TMAKEVERSION(1, 0))
 								{
-									hdrx2 = *m_pHeader->GetSecInfo(relcEntry.HDRX2);
+									hdrx2 = GetSectionInfo(relcEntry.HDRX2);
 								}
 
 								// this won't work in x64 because pointers in TRB files are always 4 bytes
 								// need some workaround to support x64 again
-								uintptr_t* ptr = reinterpret_cast<uintptr_t*>((uintptr_t)hdrx1.m_pData + relcEntry.Offset);
-								*ptr += (uintptr_t)hdrx2.m_pData;
+								uintptr_t* ptr = reinterpret_cast<uintptr_t*>((uintptr_t)hdrx1->m_Data + relcEntry.Offset);
+								*ptr += (uintptr_t)hdrx2->m_Data;
 							}
 
 							readedRelocs += relocReadCount;
@@ -184,22 +204,22 @@ namespace Toshi
 				{
 					for (int i = 0; i < m_pHeader->m_i32SectionCount; i++)
 					{
-						SecInfo* pSect = m_pHeader->GetSecInfo(i);
-						ttsf.ReadRaw(pSect->m_pData, pSect->m_Size);
+						SecInfo* pSect = GetSectionInfo(i);
+						ttsf.ReadRaw(pSect->m_Data, pSect->m_Size);
 					}
 
 					ttsf.SkipHunk();
 				}
 				else if (sectionName == TMAKEFOUR("HDRX"))
 				{
-					m_pHeader = static_cast<Header*>(tmalloc(sectionSize));
+					m_pHeader = static_cast<Header*>(m_MemAllocator(AllocType_Unk0, sectionSize, 0, 0, m_MemUserData));
 					ttsf.ReadHunkData(m_pHeader);
 					
 					for (int i = 0; i < m_pHeader->m_i32SectionCount; i++)
 					{
-						SecInfo* pSect = m_pHeader->GetSecInfo(i);
+						SecInfo* pSect = GetSectionInfo(i);
 						pSect->m_Unk1 = (pSect->m_Unk1 == 0) ? 16 : pSect->m_Unk1;
-						pSect->m_pData = tmalloc(pSect->m_Size);
+						pSect->m_Data = m_MemAllocator(AllocType_Unk1, pSect->m_Size, pSect->m_Unk1, pSect->m_Unk2, m_MemUserData);
 					}
 				}
 				else
@@ -225,44 +245,37 @@ namespace Toshi
 		return result;
 	}
 
-	void* TTRB::FindSymb(const char* symbName)
+	void* TTRB::GetSymbolAddress(const char* symbName)
 	{
 		// FUN_00686d30
-		auto index = FindSymbIndex(symbName);
+		auto index = GetSymbolIndex(symbName);
 
 		if (m_SYMB != TNULL && index != -1 && index < m_SYMB->m_i32SymbCount)
 		{
-			auto& entry = (*m_SYMB)[index];
-			return static_cast<char*>(GetSection(entry.HDRX)) + entry.Data_Offset;
+			auto entry = GetSymbol(index);
+			return static_cast<char*>(GetSection(entry->HDRX)) + entry->DataOffset;
 		}
 
 		return TNULL;
 	}
 
-	int TTRB::FindSymbIndex(const char* symbName)
+	int TTRB::GetSymbolIndex(const char* symbName)
 	{
-		// FUN_00686c30
-		if (m_SYMB == TNULL) return -1;
-		if (m_SYMB->m_i32SymbCount < 1) return -1;
-
-		const char* iterator = symbName;
-		uint16_t type_hash = 0;
-
-		while (*iterator != '\0')
+		// 00686c30
+		if (m_SYMB != TNULL)
 		{
-			type_hash = ((type_hash << 5) - type_hash) + (short)*iterator++;
-		}
+			short hash = HashString(symbName);
 
-		auto& symb = *m_SYMB;
-		for (int i = 0; i < m_SYMB->m_i32SymbCount; i++)
-		{
-			if (symb[i].Type_Hash == type_hash)
+			for (int i = 0; i < m_SYMB->m_i32SymbCount; i++)
 			{
-				const char* currentTypeName = symb.Names() + symb[i].Type_Offset;
-				
-				if (Toshi2::T2String8::CompareStrings(symbName, currentTypeName, -1) == 0)
+				auto symbol = GetSymbol(i);
+
+				if (symbol->NameHash == hash)
 				{
-					return i;
+					if (Toshi2::T2String8::CompareStrings(symbName, GetSymbolName(symbol), -1) == 0)
+					{
+						return i;
+					}
 				}
 			}
 		}
@@ -277,33 +290,18 @@ namespace Toshi
 		{
 			for (int i = 0; i < m_pHeader->m_i32SectionCount; i++)
 			{
-				DestroySection(i);
+				auto sec = GetSectionInfo(i);
+
+				if (sec->m_Data != TNULL)
+				{
+					m_MemDeallocator(AllocType_Unk1, sec->m_Data, sec->m_Unk1, sec->m_Unk2, m_MemUserData);
+				}
 			}
 
-			tfree(m_pHeader);
+			m_MemDeallocator(AllocType_Unk0, m_pHeader, 0, 0, m_MemUserData);
 			m_pHeader = TNULL;
 		}
 
-		if (m_SYMB != TNULL)
-		{
-			tfree(m_SYMB);
-			m_SYMB = TNULL;
-		}
-	}
-
-	void TTRB::DestroySection(int index)
-	{
-		// FUN_00686a40
-		TASSERT(index >= 0, "Index cannot be negative");
-		TASSERT(index < m_pHeader->m_i32SectionCount, "Index is out of bounds");
-
-		SecInfo* pSecInfo = m_pHeader->GetSecInfo(index);
-		TASSERT(pSecInfo != TNULL, "pSecInfo is TNULL");
-
-		if (pSecInfo->m_pData != TNULL)
-		{
-			tfree(pSecInfo->m_pData);
-			pSecInfo->m_pData = TNULL;
-		}
+		DeleteSymbolTable();
 	}
 }
