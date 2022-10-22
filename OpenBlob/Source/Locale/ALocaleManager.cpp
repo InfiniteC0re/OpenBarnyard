@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "ALocaleManager.h"
 
-static constexpr const char* s_LocaleFiles[] =
+static constexpr const char* m_pLangDataFileNames[] =
 {
         "Data/Locale/eng.trb",
         "Data/Locale/eng-uk.trb",
@@ -45,7 +45,7 @@ static constexpr const char* s_LocaleFormatFiles[] =
 constinit ALocaleManager::Platform ALocaleManager::s_Platform = Platform_PC;
 
 static constexpr int32_t LOCALE_LANG_INVALID = -1;
-static constexpr int32_t LOCALE_LANG_NUMOF = sizeof(s_LocaleFiles) / sizeof(*s_LocaleFiles);
+static constexpr int32_t LOCALE_LANG_NUMOF = sizeof(m_pLangDataFileNames) / sizeof(*m_pLangDataFileNames);
 static constexpr int32_t LOCALE_FORMAT_LANG_NUMOF = sizeof(s_LocaleFormatFiles) / sizeof(*s_LocaleFormatFiles);
 
 static_assert(LOCALE_FORMAT_LANG_NUMOF == LOCALE_LANG_NUMOF);
@@ -70,6 +70,75 @@ void ALocaleManager::Destroy()
     }
 }
 
+const char* ALocaleManager::GetLocaleCode(int code)
+{
+    switch (code)
+    {
+    case 1:
+        return "UK";
+    case 2:
+        return "NL";
+    case 3:
+        return "DE";
+    case 4:
+        return "IT";
+    case 5:
+        return "ES";
+    case 6:
+        return "LAS";
+    case 7:
+        return "FR";
+    case 8:
+        return "DA";
+    case 9:
+        return "NO";
+    case 10:
+        return "SW";
+    case 11:
+        return "FI";
+    case 12:
+        return "JP";
+    case 13:
+        return "KO";
+    case 14:
+        return "PT";
+    case 15:
+        return "ZH";
+    default:
+        return "US";
+    }
+}
+
+const char* ALocaleManager::GetVOLocaleCode(int code)
+{
+    switch (code) {
+    case 2:
+        return "NL";
+    case 3:
+        return "DE";
+    case 4:
+        return "IT";
+    case 7:
+        return "FR";
+    default:
+        return "EN";
+    }
+}
+
+int ALocaleManager::GetSoundChannel(int code)
+{
+    if (code == 2) {
+        return 3;
+    }
+    if (code != 3) {
+        if (code != 7) {
+            return 0;
+        }
+        return 2;
+    }
+    return 1;
+}
+
 ALocaleManager::ALocaleManager() : T2Locale(LOCALE_LANG_NUMOF, 0x64000, nullptr)
 {
     // 005e1ca0
@@ -83,7 +152,7 @@ const char* ALocaleManager::GetLanguageFilename(int32_t langid)
     TASSERT(langid < LOCALE_LANG_NUMOF, "langid is out of LOCALE_LANG_NUMOF");
     TASSERT(langid > LOCALE_LANG_INVALID, "langid is invalid");
 
-    return s_LocaleFiles[langid];
+    return m_pLangDataFileNames[langid];
 }
 
 void ALocaleManager::SetLanguage(Lang langid)

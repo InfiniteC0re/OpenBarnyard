@@ -17,6 +17,7 @@ public:
 
 	};
 
+
 public:
 	ALocaleManager();
 	ALocaleManager(const ALocaleManager&) = delete;
@@ -30,6 +31,13 @@ public:
 	static void Create();
 	static void Destroy();
 
+	static const char* GetLocaleCode(int code);
+	inline const char* GetCurLocaleCode(int code) { return GetLocaleCode(m_code); }
+	static const char* GetVOLocaleCode(int code);
+
+	static int GetSoundChannel(int code);
+	inline int GetCurSoundChannel(int code) { return GetSoundChannel(m_code); }
+
 	static int GetOSLanguage() { return 0; }
 	static int FixStringIdPlatform(int stringid);
 	static ALocaleManager& Instance() { return *static_cast<ALocaleManager*>(s_Singleton); }
@@ -38,6 +46,7 @@ private:
 	static constinit Platform s_Platform; // 00981a20
 
 private:
+	int m_code;							  // 0x24
 	void* m_LocaleBuffer;                 // 0x2C
 	Toshi::TTRB m_Format;                 // 0x30
 	LocaleFormat* m_LocaleFormat;         // 0x44

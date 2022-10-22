@@ -13,7 +13,7 @@ namespace Toshi
 
 		struct LocaleStrings
 		{
-			LocaleId Count;
+			LocaleId m_numstrings;
 			LocaleString* Strings;
 		};
 
@@ -31,13 +31,15 @@ namespace Toshi
 
 		LocaleString Get(LocaleId locid)
 		{
-			if (locid > -1 && locid < m_StringTable->Count)
+			if (locid > -1 && locid < m_StringTable->m_numstrings)
 			{
 				return m_StringTable->Strings[locid];
 			}
 
 			return nullptr;
 		}
+
+		inline int GetNumStrings() const { return m_StringTable->m_numstrings; }
 
 		T2Locale* Instance() const { return s_Singleton; }
 		
