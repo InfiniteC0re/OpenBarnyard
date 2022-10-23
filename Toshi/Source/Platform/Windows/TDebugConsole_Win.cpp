@@ -27,7 +27,7 @@ namespace Toshi
 
 	HWND TDebugConsole_Win::FindConsole() const
 	{
-		TCString str = TCString(TDebugConsoleUUID);
+		TString8 str = TString8(TDebugConsoleUUID);
 
 		// Generate title for the console so we can find it's HWND
 		LARGE_INTEGER time;
@@ -93,7 +93,7 @@ namespace Toshi
 		// Attempt to create new console
 		if (AllocConsole())
 		{
-			Toshi::TLog::Init();
+			Toshi::TLog::Create();
 			AdjustConsoleBuffer(minLength);
 			m_Created = RedirectConsoleIO();
 		}

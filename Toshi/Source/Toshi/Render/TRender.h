@@ -10,7 +10,7 @@ namespace Toshi
 	class TRenderInterface :
 		public TGenericClassDerived<TRenderInterface, TObject, "TRenderInterface", TMAKEVERSION(1, 0), false>,
 		TRefCounted,
-		TSingleton<TRenderInterface>
+		public TSingleton<TRenderInterface>
 	{
 
 		const int SYSRESOURCE_NUMOF = 12;

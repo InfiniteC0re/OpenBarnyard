@@ -35,7 +35,7 @@ namespace Toshi
 
 		enum Flags_ : Flags
 		{
-			Flags_None = 0,
+			Flags_Standard = 0,
 			Flags_NativeMethods = BITFIELD(1)
 		};
 
@@ -46,7 +46,7 @@ namespace Toshi
 		};
 
 	public:
-		TMemory(Flags flags = Flags_None, BlockSize blockSize = 0x28000000) :
+		TMemory(Flags flags = Flags_Standard, BlockSize blockSize = 640 * 1024 * 1024) :
 			m_Flags(flags), m_GlobalSize(blockSize) {  }
 
 		static void         dlheapfree(TMemoryHeap* heap, void* mem);
@@ -62,8 +62,7 @@ namespace Toshi
 		static TMemoryHeap* CreateHeapInPlace(void* ptr, size_t heapSize, Flags flags, const char name[15]) { return TMemory::dlheapcreateinplace(ptr, heapSize, flags, name); }
 		static void         CreateHeap(size_t size, Flags flags, const char name[15]) { TMemory::dlheapcreate(s_GlobalHeap, size, flags, name); }
 		static void         DestroyHeap(TMemoryHeap* heap) { TMemory::dlheapdestroy(heap); }
-					        
-		static void         FillMemory(void* ptr, size_t value, size_t size);
+
 		static void         OutOfMem(TMemoryHeap* heap, size_t size);
 		static void         Shutdown();
 

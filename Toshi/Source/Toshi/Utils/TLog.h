@@ -8,12 +8,14 @@ namespace Toshi
 	class TLog
 	{
 	public:
-		static void Init();
+		static void Create();
+		static void Destroy();
 
-		static inline STL::Ref<spdlog::logger>& GetCoreLogger() { return s_CoreLogger; };
-		static inline STL::Ref<spdlog::logger>& GetAppLogger() { return s_AppLogger; };
+		inline static STL::Ref<spdlog::logger>& GetCoreLogger() { return s_CoreLogger; };
+		inline static STL::Ref<spdlog::logger>& GetAppLogger() { return s_AppLogger; };
 
 	private:
+		static bool s_Created;
 		static STL::Ref<spdlog::logger> s_CoreLogger;
 		static STL::Ref<spdlog::logger> s_AppLogger;
 	};

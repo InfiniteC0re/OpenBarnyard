@@ -1,15 +1,28 @@
 #pragma once
+#include "TEvent.h"
+#include "Toshi/Utils/TSingleton.h"
+#include "Toshi/Core/THPTimer.h"
 
 namespace Toshi
 {
-	namespace TSystem
+	class TSystemManager : public TSingleton<TSystemManager>
 	{
-		int StringCompareNoCase(const char* const& str1, const char* const& str2, size_t size);
-		const char* StringCopy(char*, const char*, int);
-		size_t StringLength(const char* const& str);
-		size_t StringLength(const wchar_t* const& wstr);
-		void* MemCopy(void* dst, const void* const& src, size_t size);
-		const char* StringUnicodeToChar(char*, const wchar_t* const&, uint32_t);
+	public:
+		TSystemManager();
+
+		static bool Create();
+
+	private:
+		TGenericEmitter m_Emitter; // 0x00
+		uint32_t m_Unk1;
+		bool m_PauseManagers;
+		uint32_t m_Unk2;
+		THPTimer m_SomeTimer;
+		uint32_t m_Unk3;
+		uint32_t m_Unk4;
+		uint32_t m_Unk5;
+		uint32_t m_Unk6;
+		bool m_Unk7;
 	};
 }
 

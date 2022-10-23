@@ -1,5 +1,4 @@
 #include "ToshiPCH.h"
-#include "Toshi/Utils/TUtils.h"
 #include "Toshi/Memory/TMemory.h"
 
 #ifdef CreateMutex
@@ -22,7 +21,7 @@ namespace Toshi
 			HeapFree(TMemory::s_Context.s_Sysheap, NULL, TMemory::s_Context.s_Heap);
 		}
 
-		TMemory::FillMemory(&TMemory::s_Context, 0, sizeof(TMemory::s_Context));
+		TUtil::MemSet(&TMemory::s_Context, 0, sizeof(TMemory::s_Context));
 	}
 
 	TMemory::Error TMemory::Init()

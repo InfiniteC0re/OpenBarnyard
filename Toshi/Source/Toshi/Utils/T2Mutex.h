@@ -8,7 +8,7 @@ namespace Toshi
 		typedef uint32_t Flags;
 		enum Flags_ : Flags
 		{
-			Flags_None      = 0,
+			Flags_Standard      = 0,
 			Flags_DoNotWait = 1
 		};
 
@@ -20,7 +20,7 @@ namespace Toshi
 		bool Create();
 
 		// Returns true if the state is signaled
-		bool Lock(Flags flags = Flags_None);
+		bool Lock(Flags flags = Flags_Standard);
 
 		// Returns true if success
 		bool Unlock();

@@ -27,7 +27,7 @@ namespace Toshi
 
 		//const char* name = m_pRenderer->GetClass()->GetName();
 		//TRender::m_sClass.GetName();
-		//TCString str = TCString(name);
+		//TString8 str = TString8(name);
 		wndClass.hIcon = LoadIconA(0x0, (LPCSTR)IDI_APPLICATION);
 
 		RegisterClassA(&wndClass);

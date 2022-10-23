@@ -4,7 +4,7 @@
 
 namespace Toshi
 {
-	class ALocaleLookup : TSingleton<ALocaleLookup>
+	class ALocaleLookup : public TSingleton<ALocaleLookup>
 	{
 	public:
 		struct LocaleStrings

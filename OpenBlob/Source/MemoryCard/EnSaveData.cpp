@@ -3,7 +3,7 @@
 
 bool EnSaveData::Validate()
 {
-    int result = Toshi2::T2String8::CompareStrings(m_savedata->header.m_id, "BB", 2);
+    int result = Toshi::TStringManager::String8Compare(m_savedata->header.m_id, "BB", 2);
 
     if (result == 0 && m_savedata->header.m_size == 3208)
     {

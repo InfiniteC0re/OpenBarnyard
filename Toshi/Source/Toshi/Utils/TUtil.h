@@ -5,9 +5,32 @@
 
 namespace Toshi
 {
-	class TUtil : TSingleton<TUtil>
+	class TUtil : public TSingleton<TUtil>
 	{
 	public:
+		static bool ToshiCreate(int argc, char** argv, TMemory& memorySettings);
+		
+		static void ToshiDestroy()
+		{
+			ToshiDestroySubsystems();
+			ToshiDestroyMemory();
+		}
+		
+		static void ToshiDestroySubsystems()
+		{
+			Toshi::TLog::Destroy();
+			// ....
+		}
+
+		static void ToshiDestroyMemory()
+		{
+			TMemory::Shutdown();
+		}
+		
+		static uint64_t GetUnixSeconds(uint64_t* pOut = nullptr);
+
+		static void* MemCopy(void* dst, const void* const& src, size_t size);
+		static void  MemSet(void* ptr, size_t value, size_t size);
 		#pragma region CRC
 
 		// Source: https://lentz.com.au/blog/tag/crc-table-generator
@@ -49,6 +72,5 @@ namespace Toshi
 		static uint32_t CRC32(unsigned char* buffer, uint32_t len);
 
 		#pragma endregion
-
 	};
 }

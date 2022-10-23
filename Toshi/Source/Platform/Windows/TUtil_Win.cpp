@@ -1,9 +1,9 @@
 #include "ToshiPCH.h"
-#include "Toshi/Utils/TUtils.h"
+#include "Toshi/Utils/TUtil.h"
 
 namespace Toshi
 {
-	uint64_t TUtils::GetUnixSeconds(uint64_t* pOut)
+	uint64_t TUtil::GetUnixSeconds(uint64_t* pOut)
 	{
 		// 007f0f93
 		// https://stackoverflow.com/questions/20370920/convert-current-time-from-windows-to-unix-timestamp-in-c-or-c

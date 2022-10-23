@@ -272,7 +272,7 @@ namespace Toshi
 
 				if (symbol->NameHash == hash)
 				{
-					if (Toshi2::T2String8::CompareStrings(symbName, GetSymbolName(symbol), -1) == 0)
+					if (Toshi::TStringManager::String8Compare(symbName, GetSymbolName(symbol), -1) == 0)
 					{
 						return i;
 					}

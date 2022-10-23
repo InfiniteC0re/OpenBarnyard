@@ -15,11 +15,11 @@ namespace Toshi
 		m_pFileSystem = other.GetFileSystem();
 	}
 
-	TFile* TFile::Create(const TCString& filename, uint32_t flags)
+	TFile* TFile::Create(const TString8& filename, uint32_t flags)
 	{
 		TASSERT(filename.IsIndexValid(0), "filename is empty");
 
-		TFile* pFile = TFileManager::GetSingleton().CreateFile(filename, flags);
+		TFile* pFile = TFileManager::GetSingleton()->CreateFile(filename, flags);
 
 		if (pFile != TNULL)
 		{
@@ -33,7 +33,7 @@ namespace Toshi
 		return pFile;
 	}
 
-	TCString TFile::ConcatPath(const TCString& a_rcString, const TCString& a_rcString2)
+	TString8 TFile::ConcatPath(const TString8& a_rcString, const TString8& a_rcString2)
 	{
 		TIMPLEMENT();
 		return { };
@@ -86,7 +86,7 @@ namespace Toshi
 		InvalidateSystemPath();
 	}
 
-	TFileSystem* TFileManager::FindFileSystem(const TCString& name)
+	TFileSystem* TFileManager::FindFileSystem(const TString8& name)
 	{
 		// FUN_00685cc0
 		TFileSystem* pFileSystem = TFileManager::FindFileSystem(m_Validated, name);
@@ -99,7 +99,7 @@ namespace Toshi
 		return pFileSystem;
 	}
 
-	TFileSystem* TFileManager::FindFileSystem(TDList<TFileSystem>& list, const TCString& name)
+	TFileSystem* TFileManager::FindFileSystem(TDList<TFileSystem>& list, const TString8& name)
 	{
 		auto pNode = list.Begin();
 
@@ -112,7 +112,7 @@ namespace Toshi
 		return TNULL;
 	}
 
-	TFile* TFileManager::CreateFile(const TCString& a_sName, uint32_t flags)
+	TFile* TFileManager::CreateFile(const TString8& a_sName, uint32_t flags)
 	{
 		// FUN_006854c0
 		TASSERT(a_sName.Length() > 0, "Name can't be empty");
@@ -122,8 +122,8 @@ namespace Toshi
 
 		if (pos >= 0)
 		{
-			TCString str1;
-			TCString str2;
+			TString8 str1;
+			TString8 str2;
 
 			str1.Copy(a_sName, pos);
 			str2.Copy(a_sName.GetString(pos + 1), -1);
@@ -164,7 +164,7 @@ namespace Toshi
 
 			m_ValidatedCount = 0;
 
-			TCString fsName;
+			TString8 fsName;
 			TSysPathIter pathIter(m_SysPath);
 
 			bool hasPath = pathIter.First(fsName);
@@ -193,8 +193,8 @@ namespace Toshi
 
 	TFileSystem::TFileSystem(const TFileSystem& other)
 	{
-		m_Name = TCString(other.GetName());
-		m_Prefix = TCString(other.GetPrefix());
+		m_Name = TString8(other.GetName());
+		m_Prefix = TString8(other.GetPrefix());
 	}
 
 	TFileSystem::TFileSystem(const char* name) : m_Name(name), m_Prefix()
@@ -204,7 +204,7 @@ namespace Toshi
 		m_Handle = NULL;
 	}
 
-	void TFileSystem::SetPrefix(const TCString& prefix)
+	void TFileSystem::SetPrefix(const TString8& prefix)
 	{
 		m_Prefix = prefix;
 
@@ -225,7 +225,7 @@ namespace Toshi
 	}
 
 #pragma endregion
-	TFile* TNullFileSystem::CreateFile(TCString const& fn, uint32_t flags)
+	TFile* TNullFileSystem::CreateFile(TString8 const& fn, uint32_t flags)
 	{
 		TIMPLEMENT();
 		return nullptr;
@@ -236,13 +236,13 @@ namespace Toshi
 		TIMPLEMENT();
 	}
 
-	TCString TNullFileSystem::MakeInternalPath(TCString const&)
+	TString8 TNullFileSystem::MakeInternalPath(TString8 const&)
 	{
 		TIMPLEMENT();
-		return TCString();
+		return TString8();
 	}
 
-	bool TNullFileSystem::MakeDirectory(TCString const&)
+	bool TNullFileSystem::MakeDirectory(TString8 const&)
 	{
 		TIMPLEMENT();
 		return false;
