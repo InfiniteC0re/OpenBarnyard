@@ -17,12 +17,6 @@ namespace Toshi
 		inline static TObject* CreateTObject() { return nullptr; } 
 		inline static TObject* CreateTObjectInPlace(void* ptr) { return nullptr; }
 
-		/*static inline void* operator new(size_t size) = delete;
-		static inline void* operator new(size_t size, void* at) { return at; }
-
-		static inline void operator delete(void* block) { tfree(block); }
-		static inline void operator delete(void* block, void* at) { tfree(block); }*/
-	
 		inline bool IsExactly(TClass* toCompare) { return GetClass() == toCompare; }
 	
 	public:
@@ -33,7 +27,6 @@ namespace Toshi
 	class TGenericClassDerived : public Parent
 	{
 	public:
-
 		virtual const char* GetName() const
 		{
 			return s_Class.GetName();
@@ -51,7 +44,7 @@ namespace Toshi
 
 		virtual TClass* GetClass()
 		{
-			return &s_Class;
+			return std::addressof(s_Class);
 		}
 
 		static TObject* CreateTObject()

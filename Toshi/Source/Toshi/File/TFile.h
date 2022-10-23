@@ -20,19 +20,19 @@ namespace Toshi
 		virtual ~TFileSystem() { UnmountFileSystem(); }
 
 		// Override these funcs in TNativeFileSystem
-		virtual TFile* CreateFile(TCString const& fn, uint32_t flags) = 0;
+		virtual TFile* CreateFile(TString8 const& fn, uint32_t flags) = 0;
 		virtual void DestroyFile(TFile*) = 0;
-		virtual bool RemoveFile(TCString const&) { return true; }
-		virtual TCString MakeInternalPath(TCString const&) = 0;
-		virtual bool GetFirstFile(TCString const&, TCString&, unsigned int) { return false; }
-		virtual bool GetNextFile(TCString&, uint32_t) { return false; }
-		virtual void SetPrefix(const TCString& prefix);
-		virtual bool MakeDirectory(TCString const&) = 0;
+		virtual bool RemoveFile(TString8 const&) { return true; }
+		virtual TString8 MakeInternalPath(TString8 const&) = 0;
+		virtual bool GetFirstFile(TString8 const&, TString8&, unsigned int) { return false; }
+		virtual bool GetNextFile(TString8&, uint32_t) { return false; }
+		virtual void SetPrefix(const TString8& prefix);
+		virtual bool MakeDirectory(TString8 const&) = 0;
 
 		inline void UnmountFileSystem() { TNode::Remove(); }
 
-		inline TCString const& GetName() const { return m_Name; }
-		inline TCString const& GetPrefix() const { return m_Prefix; }
+		inline TString8 const& GetName() const { return m_Name; }
+		inline TString8 const& GetPrefix() const { return m_Prefix; }
 		
 		inline void RemoveNode()       { TNode::Remove(); }
 		inline bool IsLinked()         { return TNode::IsLinked(); }
@@ -42,8 +42,8 @@ namespace Toshi
 		TFileSystem& operator=(TFileSystem& a_rFileSystem);
 
 	protected:
-		TCString m_Name;   // 0xC
-		TCString m_Prefix; // 0x18
+		TString8 m_Name;   // 0xC
+		TString8 m_Prefix; // 0x18
 		HANDLE m_Handle;   // 0x1C
 	};
 
@@ -52,11 +52,11 @@ namespace Toshi
 	public:
 		TNativeFileSystem(const char* name);
 
-		virtual TFile* CreateFile(TCString const& fn, uint32_t flags) override;
+		virtual TFile* CreateFile(TString8 const& fn, uint32_t flags) override;
 		virtual void DestroyFile(TFile*) override;
-		virtual TCString MakeInternalPath(TCString const&) { return {}; }
-		virtual bool MakeDirectory(TCString const&) override;
-		virtual bool GetNextFile(TCString& fileName, uint32_t flags);
+		virtual TString8 MakeInternalPath(TString8 const&) { return {}; }
+		virtual bool MakeDirectory(TString8 const&) override;
+		virtual bool GetNextFile(TString8& fileName, uint32_t flags);
 	};
 
 	class TFile
@@ -95,8 +95,8 @@ namespace Toshi
 		virtual int VCPrintf(const char* format, ...) = 0;
 		virtual int VWPrintf(const wchar_t* format, ...) = 0;
 
-		static TCString ConcatPath(const TCString& a_rcString, const TCString& a_rcString2);
-		static TFile* Create(const TCString& filename, uint32_t flags);
+		static TString8 ConcatPath(const TString8& a_rcString, const TString8& a_rcString2);
+		static TFile* Create(const TString8& filename, uint32_t flags);
 		inline TFileSystem* GetFileSystem() const { return m_pFileSystem; }
 		inline TFile& operator=(const TFile& a_pFile) { m_pFileSystem = a_pFile.GetFileSystem(); return *this; }
 
@@ -113,10 +113,10 @@ namespace Toshi
 		class TSysPathIter
 		{
 		public:
-			TSysPathIter(const TCString& str) : m_String(str), m_Position(-1) { };
+			TSysPathIter(const TString8& str) : m_String(str), m_Position(-1) { };
 			TSysPathIter(const TSysPathIter& other) : m_String(other.m_String), m_Position(other.m_Position) { };
 
-			bool First(TCString& path)
+			bool First(TString8& path)
 			{
 				if (m_String.Length() > 0)
 				{
@@ -132,7 +132,7 @@ namespace Toshi
 				}
 			}
 
-			bool Next(TCString& path)
+			bool Next(TString8& path)
 			{
 				if (m_Position >= 0)
 				{
@@ -153,7 +153,7 @@ namespace Toshi
 			}
 
 		private:
-			const TCString& m_String;
+			const TString8& m_String;
 			int32_t m_Position;
 		};
 	
@@ -164,19 +164,29 @@ namespace Toshi
 		void Destroy();
 		void MountFileSystem(TFileSystem* a_pFileSystem);
 		
-		TFile* CreateFile(const TCString& a_sName, uint32_t flags);
+		TFile* CreateFile(const TString8& a_sName, uint32_t flags);
 
-		TFileSystem* FindFileSystem(const TCString& name);
-		static TFileSystem* FindFileSystem(TDList<TFileSystem>& list, const TCString& name);
+		TFileSystem* FindFileSystem(const TString8& name);
+		static TFileSystem* FindFileSystem(TDList<TFileSystem>& list, const TString8& name);
 
-		inline TCString MakeAbsolutePath(const TCString& a_cString) const { return TFile::ConcatPath(a_cString, m_WorkingDirectory); }
+		inline TString8 MakeAbsolutePath(const TString8& a_cString) const { return TFile::ConcatPath(a_cString, m_WorkingDirectory); }
 		inline void FileSystemRelease() { m_Mutex.Unlock(); }
 		inline void FileSystemWait() { m_Mutex.Lock(); }
 
-		inline void SetSystemPath(const TCString& name) { m_SysPath = name; InvalidateSystemPath(); }
+		inline void SetSystemPath(const TString8& name) { m_SysPath = name; InvalidateSystemPath(); }
 
-		// define it in TNativeFile_Platform.cpp file
-		static void Initialize();
+		static void CreateCommon()
+		{
+			auto fileManager = TFileManager::GetSingleton();
+			fileManager->m_Mutex.Create();
+		}
+	public:
+		/*
+		* Platform specific methods
+		* Define them in TNativeFile_{Platform}.cpp
+		*/
+
+		static bool Create();
 
 	private:
 		void ValidateSystemPath();
@@ -184,8 +194,8 @@ namespace Toshi
 
 	private:
 		bool m_IsValidated;                // 0x0
-		TCString m_SysPath;                // 0x4
-		TCString m_WorkingDirectory;       // 0x10
+		TString8 m_SysPath;                // 0x4
+		TString8 m_WorkingDirectory;       // 0x10
 		uint32_t m_ValidatedCount;         // 0x1C
 		TDList<TFileSystem> m_Validated;   // 0x20
 		TDList<TFileSystem> m_Invalidated; // 0x28
@@ -197,14 +207,14 @@ namespace Toshi
 	public:
 		TNullFileSystem(const char* name) : TFileSystem(name)
 		{
-			TFileManager::GetSingleton().MountFileSystem(this);
+			TFileManager::GetSingleton()->MountFileSystem(this);
 		}
 
 		// Inherited via TFileSystem
-		virtual TFile* CreateFile(TCString const& fn, uint32_t flags) override;
+		virtual TFile* CreateFile(TString8 const& fn, uint32_t flags) override;
 		virtual void DestroyFile(TFile*) override;
-		virtual TCString MakeInternalPath(TCString const&) override;
-		virtual bool MakeDirectory(TCString const&) override;
+		virtual TString8 MakeInternalPath(TString8 const&) override;
+		virtual bool MakeDirectory(TString8 const&) override;
 	};
 }
 

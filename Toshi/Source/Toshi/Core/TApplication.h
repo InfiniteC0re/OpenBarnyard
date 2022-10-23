@@ -1,5 +1,6 @@
 #pragma once
 #include <Toshi/Core/STL.h>
+#include "Toshi/Strings/TString8.h"
 
 namespace Toshi
 {
@@ -17,12 +18,12 @@ namespace Toshi
 		TApplication();
 		virtual ~TApplication();
 		
-		virtual bool OnCreate();
+		virtual bool OnCreate(int argc, char** argv);
 		virtual bool OnUpdate();
 		virtual bool OnDestroy();
 
 		// Returns true if success
-		bool Create();
+		bool Create(const char* appName, int argc, char** argv);
 
 		// Destroys the application and sets the flag
 		void Destroy();
@@ -37,9 +38,9 @@ namespace Toshi
 		inline void SetVerbose(bool state) { m_IsVerbose = state; }
 
 	private:
-		uint32_t m_Unk1;                         // 0x4
-		uint32_t m_Flags;					// 0x10
-		bool m_IsVerbose;					// 0x14
+		TString8 m_Name;                       // 0x4
+		uint32_t m_Flags;					   // 0x10
+		bool m_IsVerbose;					   // 0x14
 		STL::Ref<TDebugConsole> m_DebugConsole;
 	};
 	

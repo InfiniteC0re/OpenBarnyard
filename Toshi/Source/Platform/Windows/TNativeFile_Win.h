@@ -30,7 +30,7 @@ namespace Toshi
 	protected:
 		TNativeFile(TNativeFileSystem* pFS);
 
-		bool Open(const TCString& a_FileName, uint32_t a_Flags);
+		bool Open(const TString8& a_FileName, uint32_t a_Flags);
 		void Close();
 
 		friend TNativeFileSystem;

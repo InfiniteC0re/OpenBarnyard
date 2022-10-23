@@ -20,5 +20,7 @@
 #include <Toshi/Math/TVector3.h>
 #include <Toshi/Math/TVector4.h>
 #include <Toshi/Math/TQuaternion.h>
+#include <Toshi/Toshi2/TStringManager.h>
 #include <Toshi/Utils/TLog.h>
+#include <Toshi/Utils/TUtil.h>
 

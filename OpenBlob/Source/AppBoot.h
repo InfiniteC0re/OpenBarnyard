@@ -11,7 +11,7 @@ public:
 	AApplication() = default;
 	~AApplication() { }
 
-	virtual bool OnCreate() override;
+	virtual bool OnCreate(int argc, char** argv) override;
 	virtual bool OnUpdate() override;
 
 };

@@ -11,10 +11,10 @@ namespace Toshi
 		TSingleton& operator=(const TSingleton&) = delete;
 		TSingleton& operator=(const TSingleton&&) = delete;
 
-		static T& GetSingleton()
+		static T* GetSingleton()
 		{
 			static T instance;
-			return instance;
+			return &instance;
 		}
 
 	protected:

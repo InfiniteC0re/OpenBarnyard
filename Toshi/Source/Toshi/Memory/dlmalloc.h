@@ -414,10 +414,6 @@ malloc_getpagesize         default: derive from system includes, or 4096.
   if WIN32, where page size is determined using getSystemInfo during
   initialization.
 
-USE_DEV_RANDOM             default: 0 (i.e., not used)
-  Causes malloc to use /dev/random to initialize secure magic seed for
-  stamping footers. Otherwise, the current time is used.
-
 NO_MALLINFO                default: 0
   If defined, don't compile "mallinfo". This can be a simple way
   of dealing with mismatches between system declarations and
@@ -618,7 +614,7 @@ MAX_RELEASE_CHECK_RATE   default: 4095 unless not HAVE_MMAP
 #define MALLOC_ALIGNMENT ((size_t)(2 * sizeof(void *)))
 #endif  /* MALLOC_ALIGNMENT */
 #ifndef FOOTERS
-#define FOOTERS 0
+#define FOOTERS 1
 #endif  /* FOOTERS */
 #ifndef ABORT
 #define ABORT  abort()
@@ -699,9 +695,6 @@ MAX_RELEASE_CHECK_RATE   default: 4095 unless not HAVE_MMAP
 #ifndef USE_BUILTIN_FFS
 #define USE_BUILTIN_FFS 0
 #endif  /* USE_BUILTIN_FFS */
-#ifndef USE_DEV_RANDOM
-#define USE_DEV_RANDOM 0
-#endif  /* USE_DEV_RANDOM */
 #ifndef NO_MALLINFO
 #define NO_MALLINFO 0
 #endif  /* NO_MALLINFO */

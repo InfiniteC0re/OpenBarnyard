@@ -16,50 +16,6 @@ namespace Toshi
 	TMemoryHeap* TMemory::s_GlobalHeap         = nullptr;
 	T2Mutex TMemory::s_GlobalMutex             = T2Mutex();
 
-	void TMemory::FillMemory(void* ptr, size_t value, size_t size)
-	{
-		if (size >= sizeof(void*))
-		{
-			size_t* pos = static_cast<size_t*>(ptr);
-			size_t  stepCount = size / sizeof(void*);
-			size -= stepCount * sizeof(void*);
-
-			for (; stepCount != 0; stepCount--) *(pos++) = value;
-
-			ptr = pos;
-		}
-
-		while (size > 0)
-		{
-			uint8_t stepSize = size & 0b11;
-			if (stepSize == 0) stepSize = 4;
-
-			if (size == 1)
-			{
-				*(uint8_t*)ptr = (uint8_t)value;
-			}
-			else
-			{
-				if (size == 2)
-				{
-					*(uint16_t*)ptr = (uint16_t)value;
-				}
-				else if (size == 3)
-				{
-					*(uint16_t*)ptr = (uint16_t)value;
-					*(uint8_t*)((uintptr_t)ptr + sizeof(uint16_t)) = (uint8_t)value;
-				}
-				else if (size == 4)
-				{
-					*(uint32_t*)ptr = (uint32_t)value;
-				}
-			}
-
-			ptr = reinterpret_cast<void*>((uintptr_t)ptr + stepSize);
-			size -= stepSize;
-		}
-	}
-
 	void TMemory::OutOfMem(TMemoryHeap* heap, size_t size)
 	{
 		// 006fc7c0
@@ -212,7 +168,7 @@ namespace Toshi
 			}
 			else
 			{
-				FillMemory(&heap->m_Mutex, 0, sizeof(heap->m_Mutex));
+				TUtil::MemSet(&heap->m_Mutex, 0, sizeof(heap->m_Mutex));
 			}
 
 			return heap;

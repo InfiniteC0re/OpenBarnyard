@@ -5,15 +5,16 @@
 
 namespace Toshi
 {
-    void TFileManager::Initialize()
+    bool TFileManager::Create()
     {
-        auto& fileManager = TFileManager::GetSingleton();
+        CreateCommon();
+        auto fileManager = TFileManager::GetSingleton();
 
         CHAR currentDir[0x200];
         DWORD dirLength = GetCurrentDirectoryA(sizeof(currentDir), currentDir);
         TASSERT(dirLength > 0, "The directory's length is 0");
 
-        TCString prefix(currentDir);
+        TString8 prefix(currentDir);
 
         TFileSystem* pFileSystem;
         pFileSystem = new TNativeFileSystem("local");
@@ -23,7 +24,9 @@ namespace Toshi
         pFileSystem = new TNativeFileSystem("null");
         pFileSystem->SetPrefix(prefix);
 
-        fileManager.SetSystemPath("local");
+        fileManager->SetSystemPath("local");
+
+        return true;
     }
 
 #pragma region TNativeFileSystem
@@ -31,10 +34,10 @@ namespace Toshi
     TNativeFileSystem::TNativeFileSystem(const char* name) : TFileSystem(name)
     {
         m_Handle = INVALID_HANDLE_VALUE;
-        TFileManager::GetSingleton().MountFileSystem(this);
+        TFileManager::GetSingleton()->MountFileSystem(this);
     }
 
-    TFile* TNativeFileSystem::CreateFile(TCString const& fn, uint32_t flags)
+    TFile* TNativeFileSystem::CreateFile(TString8 const& fn, uint32_t flags)
     {
         TNativeFile* nativeFile = new TNativeFile(this);
         //new (nativeFile) TNativeFile(this);
@@ -56,12 +59,12 @@ namespace Toshi
         }
     }
 
-    bool TNativeFileSystem::MakeDirectory(TCString const& string)
+    bool TNativeFileSystem::MakeDirectory(TString8 const& string)
     {
         return CreateDirectoryA(string, TNULL);
     }
 
-    bool TNativeFileSystem::GetNextFile(TCString& fileName, uint32_t flags)
+    bool TNativeFileSystem::GetNextFile(TString8& fileName, uint32_t flags)
     {
         WIN32_FIND_DATAA findFileData;
 
@@ -351,7 +354,7 @@ namespace Toshi
         m_UseBuffers = other.m_UseBuffers;
     }
 
-    bool TNativeFile::Open(const TCString& a_FileName, uint32_t a_Flags)
+    bool TNativeFile::Open(const TString8& a_FileName, uint32_t a_Flags)
     {
         TASSERT(a_FileName.IsIndexValid(0), "TNativeFile::Open - wrong filename");
 

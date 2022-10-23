@@ -9,7 +9,6 @@ namespace Toshi
 {
 	TApplication::TApplication()
 	{
-		m_Unk1 = 0;
 		m_Flags = 0;
 		
 		m_DebugConsole = TDebugConsoleFactory::Create();
@@ -26,18 +25,12 @@ namespace Toshi
 		Destroy();
 	}
 
-	bool TApplication::Create()
+	bool TApplication::Create(const char* appName, int argc, char** argv)
 	{
-		// todo..
-		// TApplication.dll: 0x10001260
-
-		// temporary solution
-		TFileManager::Initialize();
-
-		OnCreate();
-		OnUpdate();
-
-		return true;
+		TTODO("TGenericGlobalListener<Toshi::TApplicationExitEvent>::ConnectImpl(&this->m_ExitEventListener,this,OnApplicationExitEvent);");
+		m_Name = appName;
+		
+		return OnCreate(argc, argv);
 	}
 
 	void TApplication::Destroy()
@@ -46,7 +39,7 @@ namespace Toshi
 		OnDestroy();
 	}
 
-	bool TApplication::OnCreate()
+	bool TApplication::OnCreate(int argc, char** argv)
 	{
 		m_Flags |= TApplicationFlag_Created;
 		return true;

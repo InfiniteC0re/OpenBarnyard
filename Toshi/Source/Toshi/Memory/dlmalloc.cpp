@@ -1,3 +1,4 @@
+#include "ToshiPCH.h"
 #include "dlmalloc.h"
 
 /*------------------------------ internal #includes ---------------------- */
@@ -1346,6 +1347,8 @@ static void reset_on_error(mstate m);
 
 #else /* PROCEED_ON_ERROR */
 
+#ifndef TOSHI_DEBUG
+
 #ifndef CORRUPTION_ERROR_ACTION
 #define CORRUPTION_ERROR_ACTION(m) ABORT
 #endif /* CORRUPTION_ERROR_ACTION */
@@ -1353,6 +1356,18 @@ static void reset_on_error(mstate m);
 #ifndef USAGE_ERROR_ACTION
 #define USAGE_ERROR_ACTION(m,p) ABORT
 #endif /* USAGE_ERROR_ACTION */
+
+#else /* TOSHI_DEBUG */
+
+#ifndef CORRUPTION_ERROR_ACTION
+#define CORRUPTION_ERROR_ACTION(m) TOSHI_CORE_CRITICAL("!\"TMemory: Memory system corruption detected!\"")
+#endif /* CORRUPTION_ERROR_ACTION */
+
+#ifndef USAGE_ERROR_ACTION
+#define USAGE_ERROR_ACTION(m,p) TOSHI_CORE_CRITICAL("!\"TMemory: Memory block footer corruption detected - the block being free'd was probably overrun!\"")
+#endif /* USAGE_ERROR_ACTION */
+
+#endif /* TOSHI_DEBUG */
 
 #endif /* PROCEED_ON_ERROR */
 
@@ -1727,24 +1742,7 @@ static int init_mparams(void) {
 #endif
 
     {
-#if USE_DEV_RANDOM
-      int fd;
-      unsigned char buf[sizeof(size_t)];
-      /* Try to use /dev/urandom, else fall back on using time */
-      if ((fd = open("/dev/urandom", O_RDONLY)) >= 0 &&
-          read(fd, buf, sizeof(buf)) == sizeof(buf)) {
-        magic = *((size_t *) buf);
-        close(fd);
-      }
-      else
-#endif /* USE_DEV_RANDOM */
-#ifdef WIN32
-      magic = (size_t)(GetTickCount() ^ (size_t)0x55555555U);
-#elif defined(LACKS_TIME_H)
-      magic = (size_t)&magic ^ (size_t)0x55555555U;
-#else
-      magic = (size_t)(time(0) ^ (size_t)0x55555555U);
-#endif
+      magic = (size_t)((size_t)Toshi::TUtil::GetUnixSeconds() ^ (size_t)0x55555555U);
       magic |= (size_t)8U;    /* ensure nonzero */
       magic &= ~(size_t)7U;   /* improve chances of fault for bad values */
       /* Until memory modes commonly available, use volatile-write */

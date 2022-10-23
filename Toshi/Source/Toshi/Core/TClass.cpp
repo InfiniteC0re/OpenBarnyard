@@ -96,7 +96,7 @@ namespace Toshi
 		while (parent)
 		{
 			TClass* previous = hasPrevious ? parent->m_Previous : nullptr;
-			int difference = TSystem::StringCompareNoCase(parent->m_Name, name, -1);
+			int difference = Toshi::TStringManager::String8CompareNoCase(parent->m_Name, name, -1);
 
 			if (difference == 0)
 			{
