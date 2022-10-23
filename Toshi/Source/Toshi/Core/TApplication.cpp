@@ -1,7 +1,7 @@
 #include "ToshiPCH.h"
 #include "TApplication.h"
 #include "Toshi/Typedefs.h"
-#include "Toshi/Strings/TCString.h"
+#include "Toshi/Strings/TString8.h"
 #include "Toshi/Core/TDebugConsole.h"
 #include "Toshi/File/TFile.h"
 

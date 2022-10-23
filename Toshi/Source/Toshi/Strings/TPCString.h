@@ -1,5 +1,5 @@
 #pragma once
-#include <Toshi/Strings/TCString.h>
+#include <Toshi/Strings/TString8.h>
 #include <Toshi/Strings/TCStringPool.h>
 
 namespace Toshi

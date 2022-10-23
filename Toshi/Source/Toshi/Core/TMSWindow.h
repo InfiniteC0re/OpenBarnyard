@@ -2,7 +2,7 @@
 #include "TObject.h"
 #include "Toshi/Render/TRender.h"
 #include "Toshi/Typedefs.h"
-#include "Toshi/Strings/TCString.h"
+#include "Toshi/Strings/TString8.h"
 
 namespace Toshi
 {

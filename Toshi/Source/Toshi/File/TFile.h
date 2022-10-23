@@ -1,6 +1,6 @@
 #pragma once
 #include "Toshi/Utils/TSingleton.h"
-#include "Toshi/Strings/TCString.h"
+#include "Toshi/Strings/TString8.h"
 #include "Toshi/Core/TGenericDList.h"
 
 #ifdef CreateFile
