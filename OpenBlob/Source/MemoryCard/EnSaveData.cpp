@@ -1,8 +1,6 @@
 #include "pch.h"
 #include "EnSaveData.h"
 
-uint32_t EnSaveData::s_aiCRC32LUT[0x100] = {};
-
 bool EnSaveData::Validate()
 {
     int result = Toshi2::T2String8::CompareStrings(m_savedata->header.m_id, "BB", 2);
@@ -11,7 +9,7 @@ bool EnSaveData::Validate()
     {
         uint32_t prevCRC = m_savedata->header.m_crc;
         m_savedata->header.m_crc = 0;
-        m_savedata->header.m_crc = CalculateCRC(m_buffer, m_size);
+        m_savedata->header.m_crc = Toshi::TUtil::CRC32(m_buffer, m_size);
 
         if (m_savedata->header.m_crc != prevCRC) return false;
 
@@ -19,38 +17,5 @@ bool EnSaveData::Validate()
         float fVal2 = 1.0f;
 
     }
-
-    sizeof(SaveData);
     return false;
-}
-
-// Source: https://lentz.com.au/blog/tag/crc-table-generator
-void EnSaveData::GenerateCRC()
-{
-    uint32_t crc;
-
-    for (int i = 0; i < CRC_TABSIZE; i++) {
-        crc = i;
-        for (int j = 8; j > 0; j--) {
-            if (crc & 1)
-                crc = (crc >> 1) ^ CRC32POLY;
-            else
-                crc >>= 1;
-        }
-        s_aiCRC32LUT[i] = crc;
-    }
-}
-
-
-uint32_t EnSaveData::CalculateCRC(unsigned char* buffer, int len)
-{
-    // FUN_0065d810
-    // Source: https://lentz.com.au/blog/tag/crc-table-generator
-
-    uint32_t crc = 0;
-    
-    while (len--)
-        crc = crc32upd(s_aiCRC32LUT, crc, *buffer++);
-
-    return CRC32POST(crc);
 }

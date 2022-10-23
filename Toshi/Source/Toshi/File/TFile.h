@@ -197,7 +197,7 @@ namespace Toshi
 	public:
 		TNullFileSystem(const char* name) : TFileSystem(name)
 		{
-			TFileManager::Instance().MountFileSystem(this);
+			TFileManager::GetSingleton().MountFileSystem(this);
 		}
 
 		// Inherited via TFileSystem

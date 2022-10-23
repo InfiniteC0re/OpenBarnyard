@@ -9,5 +9,7 @@ namespace Toshi
 		TUtils() = delete;
 
 		static uint64_t GetUnixSeconds(uint64_t* pOut = nullptr);
+
+
 	};
 }

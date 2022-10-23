@@ -7,7 +7,7 @@ namespace Toshi
 {
     void TFileManager::Initialize()
     {
-        auto& fileManager = TFileManager::Instance();
+        auto& fileManager = TFileManager::GetSingleton();
 
         CHAR currentDir[0x200];
         DWORD dirLength = GetCurrentDirectoryA(sizeof(currentDir), currentDir);
@@ -31,7 +31,7 @@ namespace Toshi
     TNativeFileSystem::TNativeFileSystem(const char* name) : TFileSystem(name)
     {
         m_Handle = INVALID_HANDLE_VALUE;
-        TFileManager::Instance().MountFileSystem(this);
+        TFileManager::GetSingleton().MountFileSystem(this);
     }
 
     TFile* TNativeFileSystem::CreateFile(TCString const& fn, uint32_t flags)

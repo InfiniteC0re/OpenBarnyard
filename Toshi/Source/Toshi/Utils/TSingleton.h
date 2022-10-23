@@ -11,7 +11,7 @@ namespace Toshi
 		TSingleton& operator=(const TSingleton&) = delete;
 		TSingleton& operator=(const TSingleton&&) = delete;
 
-		static T& Instance()
+		static T& GetSingleton()
 		{
 			static T instance;
 			return instance;
