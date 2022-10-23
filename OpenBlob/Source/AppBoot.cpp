@@ -7,9 +7,10 @@ static Toshi::TSound m_soundSystem = Toshi::TSound();
 Toshi::TApplication* Toshi::CreateApplication(int argc, char** argv)
 {
 	// allocate 64 mbytes for the Toshi memory block
-	Toshi::TMemory::TMemory::Initialize(64 * 1024 * 1024);
+	Toshi::TMemory memorySettings;
+	memorySettings.Init();
 
-	auto application = Toshi::tnew<AApplication>();
+	auto application = new AApplication();
 	TOSHI_INFO("Created application with {0} arguments", argc);
 
 	return application;
@@ -57,27 +58,26 @@ bool AApplication::OnCreate()
 
 #pragma region TMemory Test
 	// force chunks to defragment
-	Toshi::tfree(Toshi::tmalloc(32));
+	TFree(TMalloc(32));
 
-	bool status = false;
 	TOSHI_INFO("TMemory Check:");
 	TOSHI_INFO("1) The second allocation should have the same address the first one had");
 	TOSHI_INFO("2) Sizes of allocated chunks should be aligned to 4 bytes up");
 	TOSHI_INFO("3) The third allocation should have it's own address");
 	
-	void* ptr1 = Toshi::tmalloc(5);
+	void* ptr1 = TMalloc(5);
 	TOSHI_INFO("Allocated 5 ({0}) bytes at: 0x{1:X}", TMath::AlignNumUp(5), (size_t)ptr1);
 	
-	status = Toshi::tfree(ptr1);
-	TOSHI_INFO("Freed memory at: 0x{0:X} (Status: {1})", (size_t)ptr1, status);
+	TFree(ptr1);
+	TOSHI_INFO("Freed memory at: 0x{0:X}", (size_t)ptr1);
 	
-	void* ptr2 = Toshi::tmalloc(5);
+	void* ptr2 = TMalloc(5);
 	TOSHI_INFO("Allocated 9 ({0}) bytes at: 0x{1:X}", TMath::AlignNumUp(9), (size_t)ptr2);
 
-	void* ptr3 = Toshi::tmalloc(sizeof(float));
+	void* ptr3 = TMalloc(sizeof(float));
 	TOSHI_INFO("Allocated {0} ({1}) bytes at: 0x{2:X}", sizeof(float), TMath::AlignNumUp(sizeof(float)), (size_t)ptr3);
 	
-	if (ptr1 == ptr2 && ptr1 != ptr3 && status)
+	if (ptr1 == ptr2 && ptr1 != ptr3)
 	{
 		TOSHI_INFO("TMemory check succeeded");
 	}
@@ -102,7 +102,7 @@ bool AApplication::OnUpdate()
 {
 	TOSHI_INFO("AApplication::OnUpdate");
 
-	AExampleClass* exampleClass = Toshi::tnew<AExampleClass>();
+	AExampleClass* exampleClass = new AExampleClass();
 	exampleClass->Delete();
 
 	return true;

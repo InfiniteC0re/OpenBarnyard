@@ -12,8 +12,8 @@ namespace Toshi
 	public:
 		TInputDeviceController() : TInputDevice()
 		{
-			m_things = (uint8_t*)tmalloc(8);
-			m_things2 = (uint8_t*)tmalloc(8);
+			m_things = (uint8_t*)TMalloc(8);
+			m_things2 = (uint8_t*)TMalloc(8);
 			m_things = { 0 };
 			m_things2 = { 0 };
 		}

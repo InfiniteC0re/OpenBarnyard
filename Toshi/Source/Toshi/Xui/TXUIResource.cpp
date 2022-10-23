@@ -15,7 +15,7 @@ bool Toshi::TXUIResource::ReadHeader(unsigned char* buffer)
 
     TASSERT(m_oHeader.m_usNumSections > 0, "There must be one or more Sections");
 
-    uint8_t* memBlock = static_cast<uint8_t*>(tmalloc(m_oHeader.m_usNumSections * sizeof(Section)));
+    uint8_t* memBlock = static_cast<uint8_t*>(TMalloc(m_oHeader.m_usNumSections * sizeof(Section)));
 
     ms_pXUIMemoryBlock = memBlock;
     m_oHeader.m_apSections = reinterpret_cast<Section*>(memBlock);
@@ -53,9 +53,10 @@ void Toshi::TXUIResource::LoadXUIB2(bool loadStringTables, const char* filenameX
 {
     for (size_t i = 0; i < m_uiStringTableCount; i++)
     {
-        tdelete(m_asStringTable[i]);
+        TFree(m_asStringTable[i]);
     }
-    tdelete(m_asStringTable);
+
+    TFree(m_asStringTable);
     // tdelete(this+0x20);
     // tdelete(this+0x24);
     // this+2C != TNULL
@@ -76,7 +77,7 @@ void Toshi::TXUIResource::LoadXUIB2(bool loadStringTables, const char* filenameX
         if (file != TNULL)
         {
             int size = file->GetSize();
-            unsigned char* buffer = (unsigned char*)tmalloc(size);
+            unsigned char* buffer = (unsigned char*)TMalloc(size);
             file->Read(buffer, size);
             file->Destroy();
             bool bRes = ReadHeader(buffer);
@@ -108,7 +109,7 @@ int Toshi::TXUIResource::GetTotalSize(unsigned char* buffer)
         }
         else if (m_oHeader.m_apSections[i].m_uiSectionID == IDXURCUST)
         {
-            m_pCust = (unsigned char*)tmalloc(m_oHeader.m_apSections[i].m_uiSize);
+            m_pCust = (unsigned char*)TMalloc(m_oHeader.m_apSections[i].m_uiSize);
             Toshi::TSystem::MemCopy(m_pCust, currentSectionBuffer, m_oHeader.m_apSections[i].m_uiSize);
             m_uiCustDataSize = m_oHeader.m_apSections[i].m_uiSize;
         }
@@ -155,9 +156,9 @@ bool Toshi::TXUIResource::ProcessSTRN(unsigned short* pPtr, uint32_t size)
         pStart += stringLength + 1;
     }
 
-    m_asStringTable = (unsigned short**)tmalloc(m_uiStringTableCount * sizeof(unsigned short*));
+    m_asStringTable = (unsigned short**)TMalloc(m_uiStringTableCount * sizeof(unsigned short*));
 
-    *m_asStringTable = (unsigned short*)tmalloc(2);
+    *m_asStringTable = (unsigned short*)TMalloc(2);
     **m_asStringTable = 0;
 
     for (size_t i = 1; i < m_uiStringTableCount; i++)
@@ -167,7 +168,7 @@ bool Toshi::TXUIResource::ProcessSTRN(unsigned short* pPtr, uint32_t size)
         unsigned short stringLength = PARSEWORD_BIG((uint8_t*)pPtr);
         unsigned short size = stringLength * sizeof(unsigned short) + sizeof(unsigned short);
 
-        m_asStringTable[i] = (unsigned short*)tmalloc(size);
+        m_asStringTable[i] = (unsigned short*)TMalloc(size);
 
         // Blob would call FUN_006eba70 but MemCopy seems better tbh
         Toshi::TSystem::MemCopy(m_asStringTable[i], pPtr + 1, size - sizeof(unsigned short));

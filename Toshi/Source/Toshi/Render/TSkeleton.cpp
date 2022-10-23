@@ -24,7 +24,7 @@ void Toshi::TSkeleton::Delete()
 		instance.SetLibrary(TNULL);
 	}
 
-	tfree(this);
+	//tfree(this);
 }
 
 bool Toshi::TSkeleton::Create(uint32_t param_1)

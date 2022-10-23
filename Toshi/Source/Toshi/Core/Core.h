@@ -40,7 +40,6 @@ __forceinline uint16_t PARSEWORD(uint16_t val)
 	return ((((val) >> 8) & 0xff) | (((val) & 0xff) << 8));
 }
 
-
 #if defined(TOSHI_DEBUG)
 	#if defined(TOSHI_PLATFORM_WINDOWS)
 		#define TBREAK() __debugbreak()

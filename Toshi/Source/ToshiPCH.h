@@ -15,13 +15,14 @@
 #include "Toshi/Core/Core.h"
 #include "Toshi/Core/TObject.h"
 #include "Toshi/Core/TSystem.h"
-#include "Toshi/Core/TMemory.h"
 #include "Toshi/Core/TTask.h"
+#include "Toshi/Memory/TMemory.h"
 #include "Toshi/Math/TMathInline.h"
 #include "Toshi/Math/TVector3.h"
 #include "Toshi/Math/TVector4.h"
 #include "Toshi/Math/TQuaternion.h"
 #include "Toshi/Utils/TLog.h"
+#include "Toshi/Utils/TSingleton.h"
 
 #ifdef TOSHI_PLATFORM_WINDOWS
 	#include <Windows.h>

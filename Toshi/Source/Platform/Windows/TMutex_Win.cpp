@@ -1,4 +1,5 @@
 #include "ToshiPCH.h"
+#include "Toshi/Utils/TMutex.h"
 #include "Platform/Windows/TDebugConsole_Win.h"
 
 namespace Toshi

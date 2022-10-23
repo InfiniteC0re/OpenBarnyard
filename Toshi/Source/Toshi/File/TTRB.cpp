@@ -6,12 +6,12 @@ namespace Toshi
 {
 	TTRB::t_MemoryFuncAlloc TTRB::s_cbDefAllocator = [](AllocType alloctype, size_t size, short unk1, size_t unk2, void* userData)
 	{
-		return tmalloc(size);
+		return TMalloc(size);
 	};
 
 	TTRB::t_MemoryFuncDealloc TTRB::s_cbDefDeallocator = [](AllocType alloctype, void* ptr, short unk1, size_t unk2, void* userData)
 	{
-		tfree(ptr);
+		TFree(ptr);
 	};
 
 	void* TTRB::s_pDefAllocatorUserData = nullptr;

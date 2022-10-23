@@ -2,7 +2,7 @@
 #include "TClass.h"
 
 #include "Toshi/Core/Core.h"
-#include "Toshi/Core/TMemory.h"
+#include "Toshi/Memory/TMemory.h"
 #include "Toshi/Utils/TLog.h"
 
 namespace Toshi
@@ -11,17 +11,17 @@ namespace Toshi
 	{
 	public:
 		virtual TClass* GetClass() { return &s_Class; }
-		virtual void Delete() { tdelete(this); };
+		virtual void Delete() { delete this; };
 		virtual ~TObject() = default;
 
 		inline static TObject* CreateTObject() { return nullptr; } 
 		inline static TObject* CreateTObjectInPlace(void* ptr) { return nullptr; }
 
-		static inline void* operator new(size_t size) = delete;
+		/*static inline void* operator new(size_t size) = delete;
 		static inline void* operator new(size_t size, void* at) { return at; }
 
 		static inline void operator delete(void* block) { tfree(block); }
-		static inline void operator delete(void* block, void* at) { tfree(block); }
+		static inline void operator delete(void* block, void* at) { tfree(block); }*/
 	
 		inline bool IsExactly(TClass* toCompare) { return GetClass() == toCompare; }
 	
@@ -56,7 +56,7 @@ namespace Toshi
 
 		static TObject* CreateTObject()
 		{
-			if constexpr (Instantiable) { return Toshi::tnew<T>(); }
+			if constexpr (Instantiable) { return new T(); }
 			else { return nullptr; }
 		}
 

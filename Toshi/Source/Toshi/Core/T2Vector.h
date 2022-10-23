@@ -17,7 +17,7 @@ namespace Toshi2
 		T pop_back()
 		{
 			T value = m_array[m_iNumElements];
-			Toshi::tfree(m_array[m_iNumElements]);
+			//Toshi::tfree(m_array[m_iNumElements]);
 			return value;
 		}
 
