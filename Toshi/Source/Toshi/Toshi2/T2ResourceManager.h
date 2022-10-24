@@ -12,7 +12,7 @@ namespace Toshi
 	/*
 	class T2Resource
 	{
-		
+
 	};
 	*/
 
@@ -24,24 +24,27 @@ namespace Toshi
 
 	class T2ResourceManager
 	{
-		
+
 		T2ResourceData& GetResourceData(int a_iID);
-		void CreateResource(const char* resourceName, void* unk) { TTODO(""); };
+		void CreateResource(const char* resourceName, void* unk, t_CreateDestroyCallbk a_fnCreateDestroyCallbk, void* a_pData);
+		int FindUnusedResource();
 
 		int m_iMaxNumResources;		// 0x0
+		int m_iNumUsedResources;	// 0x4
+		int m_iUnk;					// 0x8
 		T2ResourceData* m_pData;	// 0xC
 	};
 
 	// sizeof(T2ResourceData) == 0x4C!
 	class T2ResourceData
 	{
-	public: 
+	public:
 		enum FLAG
 		{
-			FLAG_LOADING = 1,
-			FLAG_INITIALISED = 2,
-			FLAG_DESTROYED = 3,
-			FLAG_UNK = 4
+			FLAG_LOADING = BITFIELD(0),
+			FLAG_INITIALISED = BITFIELD(1),
+			FLAG_DESTROYED = BITFIELD(2),
+			FLAG_UNK = BITFIELD(3),
 		};
 
 		void Init(const char* a_pName, t_CreateDestroyCallbk a_fnCreateDestroyCallbk, void* a_pData);
