@@ -57,6 +57,16 @@ namespace Toshi2
 			return -1;
 		}
 
+		static bool IsLowerCase(const char* src)
+		{
+			int c = *src++;
+			while (c != 0 && (islower(c) != 0 || isalpha(c) == 0))
+			{
+				c = *src++;
+			}
+			return *src == 0;
+		}
+
 	public:
 		static char ms_aScratchMem[1024];
 	};

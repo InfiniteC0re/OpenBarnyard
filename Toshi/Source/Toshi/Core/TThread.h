@@ -32,8 +32,7 @@ namespace Toshi
 		static bool GetPriority(HANDLE a_hThreadHnd, PRIORITY& a_ePriority);
 		static bool SetPriority(HANDLE a_hThreadHnd, PRIORITY a_ePriority);
 		static void Exit(TThread* a_pThread);
-
-
+		//static void Sleep(int milliSeconds) { usleep(100); }
 
 		HANDLE m_hThreadHnd; // 0xC
 		int m_iThreadID; // 0x10
