@@ -13,8 +13,8 @@ namespace Toshi
 
 		static T* GetSingleton()
 		{
-			static T instance;
-			return &instance;
+			static T* m_pSingleton;
+			return m_pSingleton;
 		}
 
 	protected:

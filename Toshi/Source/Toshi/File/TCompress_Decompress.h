@@ -18,7 +18,7 @@ namespace Toshi
 	
 		static uintptr_t Decompress(TFile* file, Header* header, void* buffer, uint32_t& size);
 		static int8_t GetHeader(TFile* file, Header& btecHeader);
-		static int GetReadCount(TFile* file, bool& hasOffset, uint32_t& size, int& offset);
+		static int GetCommand(TFile* file, bool& hasOffset, uint32_t& size, int& offset);
 
 	public:
 		// Size of header that is common for any BTEC version

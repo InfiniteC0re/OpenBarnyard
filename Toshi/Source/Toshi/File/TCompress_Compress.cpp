@@ -3,15 +3,15 @@
 
 int Toshi::TCompress_Compress::FUN_0068a830(int length, char* data, TFile* file)
 {
-    //TASSERT(length <= maxlength, "");
+    TASSERT(length <= maxlength, "");
 
     int bytesToWrite = 0;
     int lengthWritten, dataWritten = 0;
     int oldLength = length;
 
-    if (length <= 64)
+    if (length <= BTECSizeFlag_BigSize)
     {
-        length &= 0xFFFFF00 | length - 1 & 0xFF | 0x80;
+        length &= 0xFFFFF00 | length - 1 & 0xFF | BTECSizeFlag_NoOffset;
         bytesToWrite = 1;
     }
     else

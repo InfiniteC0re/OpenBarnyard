@@ -32,6 +32,7 @@ namespace Toshi2
 			size = TMath::Min(size - 1, srcLen);
 			strncpy(dst, src, size);
 			dst[size] = L'\x0000';
+			return dst;
 		}
 
 		static const char* FindChar(const char* str, char character)

@@ -67,6 +67,11 @@ namespace Toshi
 		}
     }
 
+	void TUtil::MemClear(void* ptr, size_t size)
+	{
+		memset(ptr, 0, size);
+	}
+
     // Source: https://lentz.com.au/blog/tag/crc-table-generator
 	void TUtil::CRCInitialise()
 	{

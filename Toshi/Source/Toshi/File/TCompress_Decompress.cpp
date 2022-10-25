@@ -15,7 +15,7 @@ uintptr_t Toshi::TCompress_Decompress::Decompress(TFile* file, Header* header, v
 		int offset;
 		bool hasOffset;
 
-		sizeLeft -= GetReadCount(file, hasOffset, size, offset);
+		sizeLeft -= GetCommand(file, hasOffset, size, offset);
 
 		if (hasOffset)
 		{
@@ -81,7 +81,7 @@ int8_t Toshi::TCompress_Decompress::GetHeader(TFile* file, Header& btecHeader)
 
 // With the help of Revel8n approach
 // Could use some code cleanup
-int Toshi::TCompress_Decompress::GetReadCount(TFile* file, bool& hasOffset, uint32_t& size, int& offset)
+int Toshi::TCompress_Decompress::GetCommand(TFile* file, bool& hasOffset, uint32_t& size, int& offset)
 {
 	int read_count = file->Read(&size, 1);
 	hasOffset = (size & BTECSizeFlag_NoOffset) == 0;

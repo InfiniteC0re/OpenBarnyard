@@ -1,11 +1,12 @@
 #pragma once
 #include "TFile.h"
+#include "Toshi/File/TCompress.h"
 
 namespace Toshi
 {
 	class TCompress_Compress
 	{
-		const int maxlength = 0x4000;
+		static const int maxlength = 0x4000;
 		static int usemaxoffset;
 
 	public:
