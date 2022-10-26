@@ -10,6 +10,7 @@
 #include <memory>
 #include <utility>
 
+/* Toshi Header Files */
 #include <Toshi/Typedefs.h>
 #include "Toshi/Core/STL.h"
 #include <Toshi/Core/Core.h>
@@ -20,7 +21,7 @@
 #include <Toshi/Math/TVector3.h>
 #include <Toshi/Math/TVector4.h>
 #include <Toshi/Math/TQuaternion.h>
-#include <Toshi/Toshi2/TStringManager.h>
 #include <Toshi/Utils/TLog.h>
 #include <Toshi/Utils/TUtil.h>
+#include <Toshi/Strings/TStringManager.h>
 

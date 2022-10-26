@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Toshi2
+namespace Toshi
 {
 	class T2String8
 	{

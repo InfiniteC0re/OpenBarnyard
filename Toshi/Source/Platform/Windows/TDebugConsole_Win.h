@@ -24,17 +24,6 @@ namespace Toshi
 		HWND FindConsole() const;
 
 	private:
-		/* 
-		*  The functions below are taken from
-		*  https://stackoverflow.com/a/55875595
-		*/
-
-		bool RedirectConsoleIO();
-		bool ReleaseConsole();
-		void AdjustConsoleBuffer(int16_t minLength);
-		void CreateNewConsole(int16_t minLength);
-
-	private:
 		bool m_Visible = false;
 		bool m_Created = false;
 		HWND m_HWND;

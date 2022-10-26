@@ -2,7 +2,7 @@
 
 #include <Toshi/File/TFile.h>
 #include "Toshi/Core/TSystem.h"
-#include "Toshi/Toshi2/T2String16.h"
+#include "Toshi2/T2String16.h"
 
 namespace Toshi
 {

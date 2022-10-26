@@ -1,7 +1,7 @@
 #pragma once
 #include "Toshi/Math/TMathInline.h"
 
-namespace Toshi2
+namespace Toshi
 {
 	class T2String16
 	{

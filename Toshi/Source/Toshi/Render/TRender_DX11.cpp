@@ -1,5 +1,7 @@
-#include "TRender_DX11.h"
 #include "ToshiPCH.h"
+#include "TRender_DX11.h"
+
+#include <d3d11.h>
 
 namespace Toshi
 {

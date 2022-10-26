@@ -15,7 +15,7 @@ namespace Toshi
 
 	bool TSystemManager::Create()
 	{
-		TSystemManager::GetSingleton();
+		new TSystemManager();
 		return true;
 	}
 }

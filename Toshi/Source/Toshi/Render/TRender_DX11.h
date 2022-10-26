@@ -1,6 +1,5 @@
 #pragma once
 #include "Toshi/Render/TRender.h"
-#include <d3d11.h>
 
 namespace Toshi
 {
