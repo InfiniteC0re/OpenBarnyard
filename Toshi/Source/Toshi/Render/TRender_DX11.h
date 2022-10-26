@@ -1,9 +1,10 @@
 #pragma once
 #include "Toshi/Render/TRender.h"
+#include <d3d11.h>
 
 namespace Toshi
 {
-	class TRenderDX11 //: TRenderInterface
+	class TRenderDX11 : TRenderInterface
 	{
 
 		static constexpr D3D_DRIVER_TYPE m_scpDriverTypes[3]
