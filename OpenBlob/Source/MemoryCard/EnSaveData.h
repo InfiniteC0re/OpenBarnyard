@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Toshi/Toshi2/T2String8.h"
+#include "Toshi2/T2String8.h"
 #include "Toshi/Utils/TUtil.h"
 
 class EnSaveData

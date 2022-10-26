@@ -5,7 +5,13 @@ extern Toshi::TApplication* Toshi::CreateApplication(int argc, char** argv);
 #ifdef TOSHI_PLATFORM_WINDOWS
 #include <Windows.h>
 
-int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, INT cmdShow)
+#ifndef TOSHI_DIST
+#define TOSHI_ENTRY int main(int argc, char** argv)
+#else
+#define TOSHI_ENTRY int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, INT cmdShow)
+#endif
+
+TOSHI_ENTRY
 {
 	Toshi::TMemory memorySettings(Toshi::TMemory::Flags_Standard, 64 * 1024 * 1024);
 	Toshi::TUtil::ToshiCreate(0, 0, memorySettings);
@@ -19,7 +25,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, INT cmdSh
 	// because it doesn't work fine with custom allocators
 	// Toshi::TUtil::ToshiDestroy();
 
-	return WM_QUIT;
+	return 0;
 }
 
 #else

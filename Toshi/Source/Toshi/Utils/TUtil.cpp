@@ -6,11 +6,15 @@
 
 namespace Toshi
 {
-    bool Toshi::TUtil::ToshiCreate(int argc, char** argv, TMemory& memorySettings)
+    bool TUtil::ToshiCreate(int argc, char** argv, TMemory& memorySettings)
     {
         TRegion::LockRegion();
-        
+		
+		// Initialize TMemory and dlmalloc
         memorySettings.Init();
+
+		// Initialize other systems
+		TLog::Create();
         TSystemManager::Create();
         TFileManager::Create();
 

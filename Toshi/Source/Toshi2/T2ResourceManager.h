@@ -71,7 +71,7 @@ namespace Toshi
 		void SetLoadedData(void* a_pData);
 		void Unload();
 		void* GetData();
-		inline bool HasFlag(uint8_t flag) { return (m_iFlags & flag) != 0; }
+		inline bool HasFlag(uint8_t flag) { return (m_iFlags & flag) == flag; }
 	public:
 		void* m_pData;										// 0x0
 		TTRB* m_trb2;										// 0x4

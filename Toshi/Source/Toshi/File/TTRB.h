@@ -1,6 +1,5 @@
 #pragma once
 #include "Toshi/Strings/TString8.h"
-#include "Toshi/Toshi2/T2String8.h"
 #include "Toshi/File/TFile.h"
 
 #undef ERROR

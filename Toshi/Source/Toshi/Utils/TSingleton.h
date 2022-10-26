@@ -11,13 +11,31 @@ namespace Toshi
 		TSingleton& operator=(const TSingleton&) = delete;
 		TSingleton& operator=(const TSingleton&&) = delete;
 
+		// Returns pointer and asserts if it's not created
 		static T* GetSingleton()
 		{
-			static T* m_pSingleton;
-			return m_pSingleton;
+			TASSERT(ms_pSingleton != TNULL, "TSingleton::GetSingleton() - ms_pSingleton is TNULL");
+			return ms_pSingleton;
+		}
+
+		// Returns pointer even if it's not created
+		static T* GetSingletonWeak()
+		{
+			return ms_pSingleton;
 		}
 
 	protected:
-		TSingleton() = default;
+		TSingleton()
+		{
+			TASSERT(ms_pSingleton == TNULL, "Trying to create TSingleton class twice");
+			ms_pSingleton = static_cast<T*>(this);
+		}
+
+		~TSingleton() { ms_pSingleton = TNULL; }
+
+		static T* ms_pSingleton;
 	};
+
+	template<typename T>
+	T* TSingleton<T>::ms_pSingleton = TNULL;
 }

@@ -1,5 +1,4 @@
 project "OpenBlob"
-	kind "WindowedApp"
 	language "C++"
 	cppdialect "C++20"
 	staticruntime "on"
@@ -48,16 +47,19 @@ project "OpenBlob"
 		}
 
 	filter "configurations:Debug"
+		kind "ConsoleApp"
 		runtime "Debug"
 		defines "TOSHI_DEBUG"
 		symbols "On"
 
 	filter "configurations:Release"
+		kind "ConsoleApp"
 		runtime "Release"
 		defines "TOSHI_RELEASE"
 		optimize "On"
 
 	filter "configurations:Dist"
+		kind "WindowedApp"
 		runtime "Release"
 		defines "TOSHI_DIST"
 		optimize "On"

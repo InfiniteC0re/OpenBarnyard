@@ -43,18 +43,10 @@ namespace Toshi
 
 #pragma region TFileManager
 
-	TFileManager::TFileManager() : m_WorkingDirectory("/"), m_ValidatedCount(0), m_Mutex()
-	{
-		InvalidateSystemPath();
-	}
-
-	TFileManager::~TFileManager()
-	{
-		Destroy();
-	}
-
 	void TFileManager::Destroy()
 	{
+		T2MutexLock mutexLock(m_Mutex);
+
 		{
 			auto pFileSystem = TFileManager::FindFileSystem("mem");
 			if (pFileSystem) delete pFileSystem;
@@ -79,6 +71,7 @@ namespace Toshi
 	void TFileManager::MountFileSystem(TFileSystem* pFS)
 	{
 		// FUN_00685860
+		T2MutexLock mutexLock(m_Mutex);
 		TASSERT(TFileManager::FindFileSystem(pFS->GetName()) == TNULL, "This TFileSystem ({0}) is already mounted", pFS->GetName());
 		TASSERT(!pFS->IsLinked(), "TFileSystem shouldn't be linked");
 		
@@ -115,8 +108,9 @@ namespace Toshi
 	TFile* TFileManager::CreateFile(const TString8& a_sName, uint32_t flags)
 	{
 		// FUN_006854c0
+		T2MutexLock mutexLock(m_Mutex);
 		TASSERT(a_sName.Length() > 0, "Name can't be empty");
-
+		
 		ValidateSystemPath();
 		int pos = a_sName.Find(':', 0);
 

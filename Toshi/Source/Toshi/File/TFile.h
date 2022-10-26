@@ -158,8 +158,8 @@ namespace Toshi
 		};
 	
 	public:
-		TFileManager();
-		~TFileManager();
+		TFileManager() : m_WorkingDirectory("/"), m_ValidatedCount(0), m_Mutex() { InvalidateSystemPath(); }
+		~TFileManager() { Destroy(); }
 
 		void Destroy();
 		void MountFileSystem(TFileSystem* a_pFileSystem);
@@ -175,11 +175,22 @@ namespace Toshi
 
 		inline void SetSystemPath(const TString8& name) { m_SysPath = name; InvalidateSystemPath(); }
 
+		static void DestroyFile(TFile* pFile)
+		{
+			if (pFile)
+			{
+				pFile->Destroy();
+			}
+		}
+
 		static void CreateCommon()
 		{
-			auto fileManager = TFileManager::GetSingleton();
+			auto fileManager = new TFileManager;
 			fileManager->m_Mutex.Create();
 		}
+
+		static void DestroyCommon() { delete TFileManager::GetSingleton(); }
+
 	public:
 		/*
 		* Platform specific methods
