@@ -2,6 +2,7 @@
 #include "Core.h"
 #include "TMSWindow.h"
 
+
 namespace Toshi
 {
 	void TMSWindow::Enable()
@@ -16,29 +17,59 @@ namespace Toshi
 		m_bIsEnabled = 0;
 	}
 
-	void TMSWindow::Create(TRenderInterface* renderer, char* param_2)
+	bool TMSWindow::Create(TRenderInterface* renderer, const char* param_2)
 	{
-		WNDCLASSA wndClass;
+		WNDCLASSA wndClass {};
+		//ZeroMemory(&wndClass, sizeof(WNDCLASSA));
 
-		HMODULE moduleHandle = GetModuleHandleA(0x0);
-		hmodule = moduleHandle;
+		hmodule = GetModuleHandleA(NULL);
 		//Destory()
 		m_pRenderer = renderer;
-
-		//const char* name = m_pRenderer->GetClass()->GetName();
-		//TRender::m_sClass.GetName();
-		//TString8 str = TString8(name);
-		wndClass.hIcon = LoadIconA(0x0, (LPCSTR)IDI_APPLICATION);
+		
+		wndClass.hIcon = LoadIconA(hmodule, MAKEINTRESOURCEA(IDI_ICON1));
 		wndClass.hInstance = hmodule;
 		wndClass.lpfnWndProc = (WNDPROC)WndProc;
+		wndClass.lpszClassName = m_pRenderer->GetName();
+		wndClass.style = CS_VREDRAW | CS_HREDRAW;
+		wndClass.cbWndExtra = 4;
+		wndClass.hCursor = LoadCursorA(NULL, MAKEINTRESOURCEA(IDC_ARROW));
+		wndClass.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
 
 		RegisterClassA(&wndClass);
-		//CreateWindowExA(0, name, param_2, 0x80ca0000, 100, 100, 0, 0, TNULL, TNULL, hmodule, this);
+		m_pHwnd = CreateWindowExA(0, m_pRenderer->GetName(), param_2, 0x80ca0000, 100, 100, 0, 0, NULL, NULL, hmodule, this);
+
+		int error = GetLastError();
+
+		if (m_pHwnd == NULL) return false;
+		EnableWindow(m_pHwnd, true);
+		ShowWindow(m_pHwnd, SW_SHOW);
+		SetForegroundWindow(m_pHwnd);
+		
+		if (GetForegroundWindow() != m_pHwnd)
+		{
+			TOSHI_INFO("Not foreground window, Pausing Systems!\n");
+			// FUN_006616A0
+		}
+		return true;
 	}
 
-	LRESULT TMSWindow::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+	LRESULT CALLBACK TMSWindow::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
-		if (0x1c < WM_ACTIVATEAPP) {
+		
+		TMSWindow* window = reinterpret_cast<TMSWindow*>(GetWindowLongA(hWnd, GWL_USERDATA));
+
+		bool bWindowCreated = false;
+
+		if (window == NULL)
+		{
+
+		}
+		else
+		{
+			bWindowCreated = true;
+		}
+
+		if (WM_ACTIVATEAPP < uMsg) {
 			if (uMsg < WM_LBUTTONDOWN) {
 				if (uMsg != WM_MOUSEMOVE) {
 					if (uMsg == WM_SETCURSOR) {
@@ -153,6 +184,8 @@ namespace Toshi
 			return 0;
 		}
 
+		RECT rect;
+
 		switch (uMsg)
 		{
 		case WM_CREATE:
@@ -168,6 +201,11 @@ namespace Toshi
 			ms_hDeviceNotify = RegisterDeviceNotificationA(hWnd, &NotificationFilter, 0);
 			if (ms_hDeviceNotify != NULL) return 0;
 			ExitProcess(1);
+		case WM_SIZE:
+			if (bWindowCreated)
+			GetWindowRect(hWnd, &rect);
+			ClipCursor(&rect);
+			return DefWindowProcA(hWnd, uMsg, wParam, lParam);
 		case WM_ACTIVATE:
 
 			if (LOWORD(wParam) == WA_ACTIVE || LOWORD(wParam) == WA_CLICKACTIVE)
@@ -188,11 +226,10 @@ namespace Toshi
 					SystemParametersInfoA(SPI_SETSTICKYKEYS, sizeof(STICKYKEYS), &newStickyKeys, 0);
 				}
 			}
-		default:
 			break;
+		default:
+			return DefWindowProcA(hWnd, uMsg, wParam, lParam);
 		}
-
-		return LRESULT();
 	}
 
 	void TMSWindow::Update()

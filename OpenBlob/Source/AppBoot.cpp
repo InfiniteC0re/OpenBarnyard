@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "AppBoot.h"
 #include "Locale/ALocaleManager.h"
+#include <Toshi/Core/TMSWindow.h>
 
 static Toshi::TSound m_soundSystem = Toshi::TSound();
 
@@ -55,6 +56,10 @@ bool AApplication::OnCreate(int argc, char** argv)
 
 	bool bResult = m_soundSystem.Create(mempool, poolSize, -1, -1, 2);
 	TASSERT(TTRUE == bResult, "");
+
+	Toshi::TMSWindow window;
+
+	window.Create(&renderer, "le Blob");
 
 	AExampleClass* exampleClass = new AExampleClass();
 	exampleClass->Delete();

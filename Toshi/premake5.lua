@@ -30,7 +30,7 @@ project "Toshi"
 	{
 		"%{LibDir.fmod}"
 	}
-	
+
 	defines
 	{
 		"TOSHI_USER_ENGINE",
