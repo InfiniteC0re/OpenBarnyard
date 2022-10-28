@@ -301,7 +301,7 @@ namespace Toshi
         return 0;
     }
 
-    int TNativeFile::GetSize()
+    DWORD TNativeFile::GetSize()
     {
         m_RBufferPosition = SetFilePointer(m_Handle, 0, TNULL, TSEEK_END);
         

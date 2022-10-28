@@ -13,7 +13,7 @@ namespace Toshi
 		virtual int Write(LPVOID, size_t) { return 0; }
 		virtual bool Seek(int, TFile::TSEEK) override;
 		virtual uint32_t Tell() override;
-		virtual int GetSize() override;
+		virtual DWORD GetSize() override;
 		virtual _FILETIME GetDate() override;
 		virtual char GetCChar() override;
 		virtual wchar_t GetWChar() { return 0; }
