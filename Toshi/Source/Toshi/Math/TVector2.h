@@ -93,6 +93,13 @@ namespace Toshi
 		static TFloat DotProduct(const TVector2& vec1, const TVector2& vec2) { return vec1.x * vec2.x + vec1.y * vec2.y; }
 
 	public:
+		const static TVector2 VEC_ZERO;
+		const static TVector2 VEC_POSX;
+		const static TVector2 VEC_POSY;
+		const static TVector2 VEC_NEGX;
+		const static TVector2 VEC_NEGY;
+
+	public:
 		float x, y;
 	};
 }

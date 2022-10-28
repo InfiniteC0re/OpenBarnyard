@@ -15,7 +15,9 @@ namespace Toshi
 		TResourceState_SceneObject = BITFIELD(5),
 	};
 
-	class TResource : TObject, TNodeTree<TResource>::TNode
+	class TResource :
+		public TGenericClassDerived<TResource, TObject, "TResource", TMAKEVERSION(1, 0), true>,
+		public TNodeTree<TResource>::TNode
 	{
 	public:
 		virtual bool Create();

@@ -1,6 +1,5 @@
 #pragma once
 #include "Toshi/Core/TRefCounted.h"
-#include "Toshi/File/TFile.h"
 
 namespace Toshi
 {
