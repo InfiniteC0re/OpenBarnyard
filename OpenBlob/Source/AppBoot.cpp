@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "AppBoot.h"
-#include "Locale/ALocaleManager.h"
-#include <Toshi/Core/TMSWindow.h>
+
 
 static Toshi::TSound m_soundSystem = Toshi::TSound();
 
@@ -49,7 +48,7 @@ bool AApplication::OnCreate(int argc, char** argv)
 	TOSHI_INFO("==============================================");
 #pragma endregion
 
-	Toshi::TRenderInterface renderer;
+	Toshi::TRenderDX11 renderer;
 	
 	size_t poolSize = 128 * 1024 * 1024;
 	void* mempool = malloc(poolSize);
@@ -59,7 +58,8 @@ bool AApplication::OnCreate(int argc, char** argv)
 
 	Toshi::TMSWindow window;
 
-	window.Create(&renderer, "le Blob");
+	renderer.Create();
+	renderer.Update();
 
 	AExampleClass* exampleClass = new AExampleClass();
 	exampleClass->Delete();

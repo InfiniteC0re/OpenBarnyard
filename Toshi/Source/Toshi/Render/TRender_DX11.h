@@ -22,14 +22,16 @@ namespace Toshi
 			D3D_FEATURE_LEVEL_10_0
 		};
 
-		bool m_bIsCreated; //0xA
-
 		ID3D11DeviceContext* m_pDeviceContext; // 0x68C
 		ID3D11Device* m_pDevice; // 0x690
 
-		inline bool IsCreated() const { return m_bIsCreated; }
+		void BuildAdapterDatabase();
+		
+	public:
 
 		bool Create(LPCSTR a_name);
+		virtual bool Create() { return Create("de Blob"); }
 		const char* GetFeatureLevel(D3D_FEATURE_LEVEL a_featureLevel);
+		void Update();
 	};
 }

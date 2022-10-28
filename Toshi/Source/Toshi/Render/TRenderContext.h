@@ -35,7 +35,19 @@ namespace Toshi
 		inline bool IsFogEnabled() const { return (m_eFlags & FLAG_FOG) != 0; }
 		inline bool IsDirty() const { return (m_eFlags & FLAG_DIRTY) != 0; }
 	public:
+
+		TRenderContext() {}
+		TRenderContext(TRenderInterface&) {}
+
 		virtual void SetModelViewMatrix(const TMatrix44& a_rMatrix);
 		virtual void SetWorldViewMatrix(const TMatrix44& a_rMatrix);
+	};
+
+	class TRenderContextRev : public TRenderContext
+	{
+	public:
+		TRenderContextRev() : TRenderContext() {}
+		TRenderContextRev(TRenderInterface& renderer) : TRenderContext(renderer) {}
+
 	};
 }

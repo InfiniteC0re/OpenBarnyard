@@ -4,6 +4,19 @@
 
 namespace Toshi
 {
+	bool TRenderInterface::Create()
+	{
+		TASSERT(TFALSE == IsCreated(), "TRender already created");
+		TRenderContext* a_pRenderContext = CreateRenderContext();
+		if (a_pRenderContext != TNULL)
+		{
+			SetCurrentRenderContext(a_pRenderContext);
+			m_bCreated = true;
+			return true;
+		}
+		return false;
+	}
+
 	bool TRenderInterface::CreateDisplay()
 	{
 		TASSERT(TTRUE == IsCreated(), "TRender must be created");
@@ -27,5 +40,10 @@ namespace Toshi
 
 		}
 
+	}
+
+	TRenderContextRev* TRenderInterface::CreateRenderContext()
+	{
+		return new TRenderContextRev(*this);
 	}
 }

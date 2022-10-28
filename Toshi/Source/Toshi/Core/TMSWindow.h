@@ -43,7 +43,7 @@ namespace Toshi
 		static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 		
 		inline HWND GetHWND() const { return m_pHwnd; }
-		void Update();
+		
 	};
 }
 

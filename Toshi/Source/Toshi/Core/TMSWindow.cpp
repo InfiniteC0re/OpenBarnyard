@@ -232,22 +232,5 @@ namespace Toshi
 		}
 	}
 
-	void TMSWindow::Update()
-	{
-		MSG msg;
-		bool bRet;
-		if (m_bIsWindowed == 0 && ((bRet = PeekMessageA(&msg, 0, 0, 0, 0)) != 0))
-		{
-			while ((bRet = GetMessageA(&msg, 0, 0, 0)) != 0)
-			{
-				TranslateMessage(&msg);
-				DispatchMessageA(&msg);
-				if (PeekMessageA(&msg, 0, 0, 0, 0) == 0)
-				{
-					return;
-				}
-			}
-			m_bIsWindowed = 1;
-		}
-	}
+	
 }

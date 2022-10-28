@@ -20,7 +20,9 @@ namespace Toshi
 				if (D3D11CreateDevice(NULL, m_scpDriverTypes[i], NULL, 0, &m_scpFeatureLevels[1], 3, D3D11_SDK_VERSION, &m_pDevice, &featureLevel, &m_pDeviceContext) == S_OK) break;
 			}
 
-			TOSHI_INFO("FeatureLevel : %s", GetFeatureLevel(featureLevel));
+			TOSHI_INFO("FeatureLevel : {0}", GetFeatureLevel(featureLevel));
+
+			BuildAdapterDatabase();
 		}
 		return false;
 	}
@@ -45,6 +47,42 @@ namespace Toshi
 			return "D3D_FEATURE_LEVEL_11_1";
 		default:
 			return "unknown";
+		}
+	}
+
+	void TRenderDX11::BuildAdapterDatabase()
+	{
+		IDXGIFactory1* pFactory;
+
+		HRESULT hr = CreateDXGIFactory1(__uuidof(IDXGIFactory1), (void**)(&pFactory));
+		
+		if (SUCCEEDED(hr))
+		{
+			IDXGIAdapter1* pAdapter;
+
+			while (pFactory->EnumAdapters1(0, &pAdapter) != DXGI_ERROR_NOT_FOUND)
+			{
+				TTODO("Implement iterating through adapters");
+			}
+
+		}
+	}
+
+	void TRenderDX11::Update()
+	{
+		MSG msg;
+		if (m_bIsEnabled)
+		{
+			while (GetMessageA(&msg, NULL, 0, 0) != 0)
+			{
+				TranslateMessage(&msg);
+				DispatchMessageA(&msg);
+				if (PeekMessageA(&msg, NULL, 0, 0, 0) == 0)
+				{
+					return;
+				}
+			}
+			m_bIsEnabled = true;
 		}
 	}
 }
