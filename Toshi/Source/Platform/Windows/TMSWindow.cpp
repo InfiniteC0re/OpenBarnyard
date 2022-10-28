@@ -1,7 +1,5 @@
 #include "ToshiPCH.h"
-#include "Core.h"
 #include "TMSWindow.h"
-
 
 namespace Toshi
 {

@@ -1,8 +1,8 @@
 #pragma once
-#include "TObject.h"
+#include "Toshi/Core/TObject.h"
 #include "Toshi/Render/TRender.h"
-#include "Toshi/Typedefs.h"
 #include "Toshi/Strings/TString8.h"
+
 #include <dbt.h>
 #include <windowsx.h>
 #include <resource.h>

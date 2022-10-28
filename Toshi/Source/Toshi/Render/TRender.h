@@ -1,16 +1,65 @@
 #pragma once
-
 #include "Toshi/Core/TRefCounted.h"
 #include "Toshi/File/TFile.h"
-#include "Toshi/Render/TRenderContext.h"
-
+#include "Toshi/Math/Math.h"
 
 namespace Toshi
 {
+	class TRenderInterface;
+
+	class TRenderContext
+	{
+		typedef uint8_t FLAG;
+		enum FLAG_ : FLAG
+		{
+			FLAG_DIRTY = 1,
+			FLAG_FOG
+		};
+
+		struct PROJECTIONPARAMS
+		{
+			float m_fCentreX;	// 0x0
+			float m_fCentreY;	// 0x0
+			float m_fProjX;		// 0x8
+			float m_fProjY;		// 0xC
+		};
+
+		uint8_t m_eFlags;						// 0x8
+		static PROJECTIONPARAMS m_sProjParams;	// 0x30
+		TMatrix44 m_mModelViewMatrix;			// 0x40
+		TMatrix44 m_mWorldViewMatrix;			// 0x80
+
+	protected:
+		inline void SetDirty(bool enable) { enable ? m_eFlags |= FLAG_DIRTY : m_eFlags &= ~FLAG_DIRTY; }
+		inline void SetFlag(FLAG flag, bool enable) { enable ? m_eFlags |= flag : m_eFlags &= ~flag; }
+
+		inline void EnableFog(bool enable) { enable ? m_eFlags |= FLAG_FOG : m_eFlags &= ~FLAG_FOG; }
+
+		inline bool IsFogEnabled() const { return (m_eFlags & FLAG_FOG) != 0; }
+		inline bool IsDirty() const { return (m_eFlags & FLAG_DIRTY) != 0; }
+	public:
+
+		TRenderContext() {}
+		TRenderContext(TRenderInterface&) {}
+
+		virtual void SetModelViewMatrix(const TMatrix44& a_rMatrix)
+		{
+			m_eFlags |= 0x300;
+			m_mModelViewMatrix = TMatrix44(a_rMatrix);
+			m_eFlags &= ~0x300;
+		}
+
+		virtual void SetWorldViewMatrix(const TMatrix44& a_rMatrix)
+		{
+			m_eFlags |= 0x100;
+			m_mModelViewMatrix = TMatrix44(a_rMatrix);
+			m_eFlags &= ~0x100;
+		}
+	};
 
 	class TRenderInterface :
 		public TGenericClassDerived<TRenderInterface, TObject, "TRenderInterface", TMAKEVERSION(1, 0), false>,
-		TRefCounted,
+		public TRefCounted,
 		public TSingleton<TRenderInterface>
 	{
 
@@ -38,7 +87,8 @@ namespace Toshi
 		inline bool IsCreated() { return m_bCreated; }
 		inline bool IsDisplayCreated() { return m_bDisplayCreated; }
 		virtual void DumpStats();
-		TRenderContextRev* CreateRenderContext();
+
+		TRenderContext* CreateRenderContext();
 	};
 }
 

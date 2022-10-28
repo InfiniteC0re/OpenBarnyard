@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "AppBoot.h"
 
+#include <Platform/Windows/DX11/TRender_DX11.h>
 
 static Toshi::TSound m_soundSystem = Toshi::TSound();
 

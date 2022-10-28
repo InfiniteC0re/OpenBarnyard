@@ -5,6 +5,11 @@
 
 namespace Toshi
 {
+	STL::Scope<TDebugConsole> TDebugConsole::Create()
+	{
+		return STL::CreateScope<TDebugConsole_Win, TDebugConsole>();
+	}
+
 	TDebugConsole_Win::TDebugConsole_Win()
 	{
 		m_HWND = FindConsole();

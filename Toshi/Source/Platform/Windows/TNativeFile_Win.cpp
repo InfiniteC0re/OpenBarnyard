@@ -40,7 +40,6 @@ namespace Toshi
     TFile* TNativeFileSystem::CreateFile(TString8 const& fn, uint32_t flags)
     {
         TNativeFile* nativeFile = new TNativeFile(this);
-        //new (nativeFile) TNativeFile(this);
 
         if (!nativeFile->Open(fn, flags))
         {

@@ -1,13 +1,9 @@
 #pragma once
-
 #include "Toshi/Sound/TSound.h"
 
 namespace Toshi
 {
-
-	class TSound;
-
-	class TSound_Win : TSound
+	class TSound_Win : public TSound
 	{
 	public:
 		bool SetSpeakerType(int maxchannels, int unk);

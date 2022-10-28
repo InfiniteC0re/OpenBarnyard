@@ -1,12 +1,11 @@
 #pragma once
 #include "AExampleClass.h"
+#include "Locale/ALocaleManager.h"
 
 #include <Toshi.h>
 #include <Toshi/Sound/TSound.h>
 #include <Toshi/Render/TRender.h>
-#include "Locale/ALocaleManager.h"
-#include <Toshi/Core/TMSWindow.h>
-#include <Toshi/Render/TRender_DX11.h>
+#include <Platform/Windows/TMSWindow.h>
 
 class AApplication : public Toshi::TApplication
 {

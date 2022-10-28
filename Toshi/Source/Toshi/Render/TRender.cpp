@@ -1,6 +1,6 @@
 #include "ToshiPCH.h"
 #include "TRender.h"
-
+#include "Platform/Windows/DX11/TRenderContext_DX11.h"
 
 namespace Toshi
 {
@@ -39,11 +39,5 @@ namespace Toshi
 			file->CPrintf("-\r\n");
 
 		}
-
-	}
-
-	TRenderContextRev* TRenderInterface::CreateRenderContext()
-	{
-		return new TRenderContextRev(*this);
 	}
 }

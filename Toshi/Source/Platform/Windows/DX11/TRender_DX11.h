@@ -6,7 +6,6 @@ namespace Toshi
 {
 	class TRenderDX11 : TRenderInterface
 	{
-
 		static constexpr D3D_DRIVER_TYPE m_scpDriverTypes[3]
 		{
 			D3D_DRIVER_TYPE_HARDWARE,
@@ -28,7 +27,6 @@ namespace Toshi
 		void BuildAdapterDatabase();
 		
 	public:
-
 		bool Create(LPCSTR a_name);
 		virtual bool Create() { return Create("de Blob"); }
 		const char* GetFeatureLevel(D3D_FEATURE_LEVEL a_featureLevel);
