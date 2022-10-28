@@ -1,5 +1,7 @@
 #include "pch.h"
 #include "AppBoot.h"
+#include "AExampleClass.h"
+#include "Locale/ALocaleManager.h"
 
 #include <Platform/Windows/DX11/TRender_DX11.h>
 
