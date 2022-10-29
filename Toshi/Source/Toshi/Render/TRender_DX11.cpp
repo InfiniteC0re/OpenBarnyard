@@ -23,6 +23,27 @@ namespace Toshi
 			TOSHI_INFO("FeatureLevel : {0}", GetFeatureLevel(featureLevel));
 
 			BuildAdapterDatabase();
+
+			if (m_hAccel != NULL)
+			{
+				DestroyAcceleratorTable(m_hAccel);
+				m_hAccel = NULL;
+			}
+
+			ACCEL accels[2];
+			accels[0].fVirt = true;
+			accels[0].key = VK_ESCAPE;
+
+			accels[1].fVirt = FALT;
+			accels[1].key = VK_RETURN;
+
+			m_hAccel = CreateAcceleratorTableA(accels, 2);
+
+			if (GetMSWindow()->Create(this, a_name))
+			{
+				return true;
+			}
+			TOSHI_INFO("Failed to create Window");
 		}
 		return false;
 	}

@@ -42,7 +42,7 @@ namespace Toshi
 		virtual void SetModelViewMatrix(const TMatrix44& a_rMatrix);
 		virtual void SetWorldViewMatrix(const TMatrix44& a_rMatrix);
 	};
-
+	
 	class TRenderContextRev : public TRenderContext
 	{
 	public:

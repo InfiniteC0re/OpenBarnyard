@@ -1,5 +1,6 @@
 #pragma once
 #include "Toshi/Render/TRender.h"
+#include "Toshi/Core/TMSWindow.h"
 #include <d3d11.h>
 
 namespace Toshi
@@ -22,13 +23,15 @@ namespace Toshi
 			D3D_FEATURE_LEVEL_10_0
 		};
 
+		TMSWindow* m_pWindow;
 		ID3D11DeviceContext* m_pDeviceContext; // 0x68C
 		ID3D11Device* m_pDevice; // 0x690
+		HACCEL m_hAccel; // 0x694
 
 		void BuildAdapterDatabase();
 		
 	public:
-
+		TMSWindow* GetMSWindow() { return m_pWindow; }
 		bool Create(LPCSTR a_name);
 		virtual bool Create() { return Create("de Blob"); }
 		const char* GetFeatureLevel(D3D_FEATURE_LEVEL a_featureLevel);

@@ -58,6 +58,9 @@ bool AApplication::OnCreate(int argc, char** argv)
 
 	Toshi::TMSWindow window;
 
+	ALevelInformation info;
+	info.Create("C:\\Program Files (x86)\\Steam\\steamapps\\common\\de Blob\\Data\\Levels.trb");
+
 	renderer.Create();
 	renderer.Update();
 

@@ -5,8 +5,9 @@
 #include <Toshi/Sound/TSound.h>
 #include <Toshi/Render/TRender.h>
 #include "Locale/ALocaleManager.h"
-#include <Toshi/Core/TMSWindow.h>
+//#include <Toshi/Core/TMSWindow.h>
 #include <Toshi/Render/TRender_DX11.h>
+#include "../ALevelInformation.h"
 
 class AApplication : public Toshi::TApplication
 {
