@@ -3,11 +3,11 @@
 
 namespace Toshi
 {
-	class TRenderInterface;
+	class TRender;
 
 	class TRenderContext
 	{
-		typedef uint8_t FLAG;
+		typedef uint32_t FLAG;
 		enum FLAG_ : FLAG
 		{
 			FLAG_DIRTY = BITFIELD(0),
@@ -29,8 +29,8 @@ namespace Toshi
 		inline bool IsDirty() const { return m_eFlags & FLAG_DIRTY; }
 	
 	public:
-		TRenderContext() {}
-		TRenderContext(TRenderInterface&) {}
+		TRenderContext() { m_eFlags = 0; }
+		TRenderContext(TRender&) { m_eFlags = 0; }
 
 		virtual void SetModelViewMatrix(const TMatrix44& a_rMatrix)
 		{
@@ -53,10 +53,10 @@ namespace Toshi
 		TMatrix44 m_mWorldViewMatrix;           // 0x80
 	};
 
-	class TRenderInterface :
-		public TGenericClassDerived<TRenderInterface, TObject, "TRenderInterface", TMAKEVERSION(1, 0), false>,
+	class TRender :
+		public TGenericClassDerived<TRender, TObject, "TRender", TMAKEVERSION(1, 0), false>,
 		public TRefCounted,
-		public TSingleton<TRenderInterface>
+		public TSingleton<TRender>
 	{
 
 		static constexpr int SYSRESOURCE_NUMOF = 12;
@@ -71,7 +71,7 @@ namespace Toshi
 		//TNodeList
 
 	public:
-		//TRenderInterface() {}
+		//TRender() {}
 
 		bool CreateDisplay();
 		TRenderContext* CreateRenderContext();

@@ -3,19 +3,23 @@
 
 namespace Toshi
 {
+	bool TMSWindow::ms_bUnkStatic = false;
+	STICKYKEYS TMSWindow::ms_StickyKeys = { 0, 0 };
+	HDEVNOTIFY TMSWindow::ms_hDeviceNotify = { 0 };
+
 	void TMSWindow::Enable()
 	{
 		TASSERT(m_pHwnd != TNULL, "HWND shouldn't be TNULL");
-		m_bIsEnabled = 1;
+		m_bIsEnabled = true;
 	}
 
 	void TMSWindow::Disable()
 	{
 		TASSERT(m_pHwnd != TNULL, "HWND shouldn't be TNULL");
-		m_bIsEnabled = 0;
+		m_bIsEnabled = false;
 	}
 
-	bool TMSWindow::Create(TRenderInterface* renderer, const char* param_2)
+	bool TMSWindow::Create(TRender* renderer, const char* param_2)
 	{
 		WNDCLASSA wndClass {};
 		//ZeroMemory(&wndClass, sizeof(WNDCLASSA));
@@ -53,7 +57,6 @@ namespace Toshi
 
 	LRESULT CALLBACK TMSWindow::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
-		
 		TMSWindow* window = reinterpret_cast<TMSWindow*>(GetWindowLongA(hWnd, GWL_USERDATA));
 
 		bool bWindowCreated = false;
@@ -229,6 +232,4 @@ namespace Toshi
 			return DefWindowProcA(hWnd, uMsg, wParam, lParam);
 		}
 	}
-
-	
 }

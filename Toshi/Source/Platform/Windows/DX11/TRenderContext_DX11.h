@@ -7,7 +7,7 @@ namespace Toshi
 	{
 	public:
 		TRenderContextDX11() : TRenderContext() {}
-		TRenderContextDX11(TRenderInterface& renderer) : TRenderContext(renderer) {}
+		TRenderContextDX11(TRender& renderer) : TRenderContext(renderer) {}
 
 	};
 }

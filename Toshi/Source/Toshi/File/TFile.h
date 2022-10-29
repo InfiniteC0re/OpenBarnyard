@@ -185,7 +185,7 @@ namespace Toshi
 
 		static void CreateCommon()
 		{
-			auto fileManager = new TFileManager;
+			auto fileManager = TFileManager::CreateSingleton();
 			fileManager->m_Mutex.Create();
 		}
 

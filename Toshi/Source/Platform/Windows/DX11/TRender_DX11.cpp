@@ -6,7 +6,7 @@ namespace Toshi
 	bool TRenderDX11::Create(LPCSTR a_name)
 	{
 		TASSERT(TFALSE == IsCreated(), "TRenderDX11 already created");
-		bool bResult = TRenderInterface::Create();
+		bool bResult = TRender::Create();
 		if (bResult)
 		{
 			TOSHI_INFO("Creating TRenderDX11");

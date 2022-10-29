@@ -1,11 +1,13 @@
 #pragma once
 #include "Toshi/Render/TRender.h"
+#include "Platform/Windows/TMSWindow.h"
 #include <d3d11.h>
 
 namespace Toshi
 {
-	class TRenderDX11 : TRenderInterface
+	class TRenderDX11 : public TRender
 	{
+	private:
 		static constexpr D3D_DRIVER_TYPE m_scpDriverTypes[3]
 		{
 			D3D_DRIVER_TYPE_HARDWARE,
@@ -31,5 +33,8 @@ namespace Toshi
 		virtual bool Create() { return Create("de Blob"); }
 		const char* GetFeatureLevel(D3D_FEATURE_LEVEL a_featureLevel);
 		void Update();
+
+	private:
+		TMSWindow m_Window; // 0x6B0
 	};
 }

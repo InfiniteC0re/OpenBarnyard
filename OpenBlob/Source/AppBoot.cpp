@@ -3,8 +3,6 @@
 #include "AExampleClass.h"
 #include "Locale/ALocaleManager.h"
 
-#include <Platform/Windows/DX11/TRender_DX11.h>
-
 static Toshi::TSound m_soundSystem = Toshi::TSound();
 
 Toshi::TApplication* Toshi::CreateApplication(int argc, char** argv)
@@ -15,8 +13,6 @@ Toshi::TApplication* Toshi::CreateApplication(int argc, char** argv)
 bool AApplication::OnCreate(int argc, char** argv)
 {
 	TOSHI_INFO("Created application with {0} arguments", argc);
-
-	ALocaleManager::Create();
 	
 #pragma region TClass Info
 	TOSHI_INFO("===============TClass Hierarchy===============");
@@ -51,18 +47,16 @@ bool AApplication::OnCreate(int argc, char** argv)
 	TOSHI_INFO("==============================================");
 #pragma endregion
 
-	Toshi::TRenderDX11 renderer;
+	m_Renderer = ARenderer::CreateSingleton();
+	bool interfaceCreated = m_Renderer->CreateInterface();
+
+	ALocaleManager::Create();
 	
 	size_t poolSize = 128 * 1024 * 1024;
 	void* mempool = malloc(poolSize);
 
 	bool bResult = m_soundSystem.Create(mempool, poolSize, -1, -1, 2);
 	TASSERT(TTRUE == bResult, "");
-
-	Toshi::TMSWindow window;
-
-	renderer.Create();
-	renderer.Update();
 
 	AExampleClass* exampleClass = new AExampleClass();
 	exampleClass->Delete();
