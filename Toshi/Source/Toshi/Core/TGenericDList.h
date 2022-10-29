@@ -8,18 +8,47 @@ namespace Toshi
 		{
 		protected:
 			TNode() { Reset(); }
-			// TNode(TUninitialized param1);
 
-			inline TNode* Next() const { return m_Next; }
-			inline TNode* Prev() const { return m_Prev; }
+			TNode* Next() const { return m_Next; }
+			TNode* Prev() const { return m_Prev; }
+
+			TNode& operator=(const TNode& node)
+			{
+				m_Next = node.m_Next;
+				m_Prev = node.m_Prev;
+				return *this;
+			}
+
+		public:
 			inline bool IsLinked() const { return this != m_Next; }
 			inline void Reset() { m_Next = this; m_Prev = this; }
 
-			void InsertAfter(TNode* node);
-			void InsertBefore(TNode* node);
-			void Remove();
+			void InsertAfter(TNode* node)
+			{
+				TASSERT(!IsLinked(), "TNode::InsertAfter - TNode shouldn't be linked");
 
-			TNode& operator=(const TNode& node);
+				m_Prev = node;
+				m_Next = node->m_Next;
+				node->m_Next = this;
+				m_Next->m_Prev = this;
+			}
+
+			void InsertBefore(TNode* node)
+			{
+				TASSERT(!IsLinked(), "TNode::InsertBefore - TNode shouldn't be linked");
+
+				m_Next = node;
+				m_Prev = node->m_Prev;
+				node->m_Prev = this;
+				m_Prev->m_Next = this;
+			}
+
+			void Remove()
+			{
+				m_Prev->m_Next = m_Next;
+				m_Next->m_Prev = m_Prev;
+				Reset();
+			}
 
 		public:
 			template<class T> friend class TDList;
@@ -89,7 +118,7 @@ namespace Toshi
 		}
 
 	protected:
-		TGenericDList();
+		TGenericDList() = default;
 		~TGenericDList() { RemoveAll(); }
 
 	protected:

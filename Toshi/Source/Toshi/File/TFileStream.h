@@ -1,5 +1,6 @@
 #pragma once
 #include "Toshi/Core/TFifo.h"
+#include "Toshi/Core/TThread.h"
 
 namespace Toshi
 {
@@ -20,28 +21,18 @@ namespace Toshi
 		bool m_bIsProcessed;
 	};
 
-	class TFileStream
+	class TFileStream : public TThread
 	{
 	public:
-		TFileStream()
-		{
-			m_Unk1 = (int*)&m_Unk1;
-			m_Unk2 = (int*)&m_Unk1;
-			m_Unk3 = 0;
-			m_Unk4 = 0;
-		}
-
-		// This function has an infinite loop and tries to complete every job
-		virtual void Main();
+		TFileStream() = default;
+		
+		// This method will be executed by the thread
+		virtual void Main() override;
 
 		// Adds job to the FIFO
 		void AddStream(TFileStreamJob* job);
 
 	private:
-		int* m_Unk1;
-		int* m_Unk2;
-		int m_Unk3;
-		int m_Unk4;
 		TFifo<TFileStreamJob*, 32> m_Jobs;
 	};
 }

@@ -62,7 +62,7 @@ bool AApplication::OnCreate(int argc, char** argv)
 	TASSERT(TTRUE == bResult, "");
 
 	ALevelInformation info;
-	info.Create("C:\\Program Files (x86)\\Steam\\steamapps\\common\\de Blob\\Data\\Levels.trb");
+	//info.Create("C:\\Program Files (x86)\\Steam\\steamapps\\common\\de Blob\\Data\\Levels.trb");
 
 	AExampleClass* exampleClass = new AExampleClass();
 	exampleClass->Delete();

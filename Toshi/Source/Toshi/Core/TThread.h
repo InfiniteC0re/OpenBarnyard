@@ -16,7 +16,9 @@ namespace Toshi
 {
 	class TThread : public TDList<TThread>::TNode
 	{
-		enum PRIORITY
+	public:
+		typedef int PRIORITY;
+		enum PRIORITY_ : PRIORITY
 		{
 			THREAD_MODE_BACKGROUND_BEGIN = 0x00010000,
 			THREAD_MODE_BACKGROUND_END = 0x00020000,
@@ -29,27 +31,65 @@ namespace Toshi
 			THREAD_PRIORITY_TIME_CRITICAL = 15
 		};
 
-		static bool GetPriority(HANDLE a_hThreadHnd, PRIORITY& a_ePriority);
-		static bool SetPriority(HANDLE a_hThreadHnd, PRIORITY a_ePriority);
+	public:
+		virtual ~TThread() { };
+		virtual void Main() = 0;
+
+		bool Create(size_t a_iStackSize, PRIORITY a_ePriority, uint8_t flag);
+
+		static bool GetPriority(void* a_hThreadHnd, PRIORITY& a_ePriority)
+		{
+			TASSERT(a_hThreadHnd != NULL, "Thread doesn't exist");
+			int iPriority = GetThreadPriority(a_hThreadHnd);
+			TASSERT(iPriority != THREAD_PRIORITY_ERROR_RETURN, "Couldn't get thread priority");
+			a_ePriority = iPriority;
+			return true;
+		}
+
+		static bool SetPriority(void* a_hThreadHnd, PRIORITY a_ePriority)
+		{
+			TASSERT(a_hThreadHnd != NULL, "Thread doesn't exist");
+			BOOL bResult = SetThreadPriority(a_hThreadHnd, a_ePriority);
+			TASSERT(bResult != FALSE, "Couldn't set priority");
+			return true;
+		}
+
 		static void Exit(TThread* a_pThread);
 		//static void Sleep(int milliSeconds) { usleep(100); }
 
-		HANDLE m_hThreadHnd; // 0xC
-		int m_iThreadID; // 0x10
+		void* m_hThreadHnd; // 0xC
+		DWORD m_iThreadID;  // 0x10
 	};
 
-	class TThreadManager
+	class TThreadManager : public TSingleton<TThreadManager>
 	{
-
 	public:
-		static TThreadManager* s_pThreadManager;
+		TThreadManager() { Create(); }
 
-		TThreadManager();
+		void Create() { InitializeCriticalSection(&m_CriticalSection); }
+		void Delete() { DeleteCriticalSection(&m_CriticalSection); }
 
-		inline void Create() { TASSERT(s_pThreadManager == TNULL, ""); s_pThreadManager = this;  InitializeCriticalSection((LPCRITICAL_SECTION)this); }
-		inline void Delete() { TASSERT(s_pThreadManager != TNULL, ""); s_pThreadManager = TNULL; DeleteCriticalSection((LPCRITICAL_SECTION)this); }
-		inline static TThreadManager* GetThreadManager() { return s_pThreadManager; }
-		void RemoveThread(TThread* a_pThread);
+		void RemoveThread(TThread* a_pThread)
+		{
+			EnterCriticalSection(&m_CriticalSection);
+			a_pThread->Remove();
+			LeaveCriticalSection(&m_CriticalSection);
+		}
+
+		void InsertThread(TThread* a_pThread)
+		{
+			EnterCriticalSection(&m_CriticalSection);
+			a_pThread->InsertAfter(m_Threads.Begin());
+			LeaveCriticalSection(&m_CriticalSection);
+		}
+
+		friend class TThread;
+
+	private:
+#ifdef TOSHI_PLATFORM_WINDOWS
+		CRITICAL_SECTION m_CriticalSection;
+#endif
+		TDList<TThread> m_Threads;
 	};
 }
 
