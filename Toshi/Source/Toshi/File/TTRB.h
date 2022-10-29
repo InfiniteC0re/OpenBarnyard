@@ -128,7 +128,7 @@ namespace Toshi
 			{
 				return TNULL;
 			}
-			if (index < m_SYMB->m_i32SymbCount)
+			else if (index < m_SYMB->m_i32SymbCount)
 			{
 				return reinterpret_cast<TTRBSymbol*>(m_SYMB + 1) + index;
 			}

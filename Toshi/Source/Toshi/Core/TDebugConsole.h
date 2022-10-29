@@ -13,11 +13,12 @@ namespace Toshi
 
 		// Returns true if the console became visible
 		virtual bool Toggle() = 0;
-	};
 
-	class TDebugConsoleFactory
-	{
 	public:
+		/*
+		* Platform specific methods
+		* Define them in TDebugConsole_{Platform}.cpp
+		*/
 		static STL::Scope<TDebugConsole> Create();
 	};
 }

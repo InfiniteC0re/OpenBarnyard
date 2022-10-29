@@ -10,8 +10,8 @@ project "Toshi"
 	links
 	{
 		"fmod_vc.lib",
-        "d3d11.lib",
-        "dxgi.lib"
+		"d3d11.lib",
+		"dxgi.lib"
 	}
 
 	files

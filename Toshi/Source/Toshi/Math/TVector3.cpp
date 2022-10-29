@@ -3,98 +3,38 @@
 
 namespace Toshi
 {
-	void TVector3::Set(TMathFloating a_pTMathFloating[3])
-	{
-		x = a_pTMathFloating[0];
-		y = a_pTMathFloating[1];
-		z = a_pTMathFloating[2];
-	}
+	const TVector3 TVector3::VEC_ZERO = { 0, 0, 0 };
+	const TVector3 TVector3::VEC_POSX = { 1, 0, 0 };
+	const TVector3 TVector3::VEC_POSY = { 0, 1, 0 };
+	const TVector3 TVector3::VEC_POSZ = { 0, 0, 1 };
+	const TVector3 TVector3::VEC_NEGX = { -1, 0, 0 };
+	const TVector3 TVector3::VEC_NEGY = { 0, -1, 0 };
+	const TVector3 TVector3::VEC_NEGZ = { 0, 0, -1 };
+	const TVector3 TVector3::VEC_POSXPOSZ = { TMath::ONEOVER_SQRT_TWO, 0, TMath::ONEOVER_SQRT_TWO };
+	const TVector3 TVector3::VEC_POSXNEGZ = { TMath::ONEOVER_SQRT_TWO, 0, -TMath::ONEOVER_SQRT_TWO };
+	const TVector3 TVector3::VEC_NEGXPOSZ = { TVector3::VEC_POSXNEGZ.z, 0, TMath::ONEOVER_SQRT_TWO };
+	const TVector3 TVector3::VEC_NEGXNEGZ = { TVector3::VEC_POSXNEGZ.z, 0, TVector3::VEC_POSXNEGZ.z };
 
-	void TVector3::Set(TMathFloating x, TMathFloating y, TMathFloating z)
-	{
-		TVector3::x = x;
-		TVector3::y = y;
-		TVector3::z = z;
-	}
-
-	void TVector3::Abs(const TVector3& a_Vec3)
-	{
-		Set(TMath::Abs(a_Vec3.x), TMath::Abs(a_Vec3.y), TMath::Abs(a_Vec3.z));
-	}
-
-	void TVector3::Abs()
-	{
-		Set(TMath::Abs(x), TMath::Abs(y), TMath::Abs(z));
-	}
-
-	void TVector3::Clip(TMathFloating fVal, TMathFloating fVal2)
+	void TVector3::Clip(TFloat fVal, TFloat fVal2)
 	{
 		TMath::Clip(x, fVal, fVal2);
 		TMath::Clip(y, fVal, fVal2);
 		TMath::Clip(z, fVal, fVal2);
 	}
 
-	void TVector3::CrossProduct(const TVector3& param_1, const TVector3& param_2)
+	void TVector3::CrossProduct(const TVector3& vec1, const TVector3& vec2)
 	{
-		TMathFloating fX = param_2.z * param_1.y - param_2.y * param_1.z;
-		TMathFloating fY = param_1.z * param_2.x - param_2.z * param_1.x;
-		TMathFloating fZ = param_1.x * param_2.y - param_1.y * param_2.x;
+		TFloat fX = vec2.z * vec1.y - vec2.y * vec1.z;
+		TFloat fY = vec1.z * vec2.x - vec2.z * vec1.x;
+		TFloat fZ = vec1.x * vec2.y - vec1.y * vec2.x;
 		Set(fX, fY, fZ);
 	}
 
-	float TVector3::Distance(const TVector3& param_1, const TVector3& param_2)
+	void TVector3::RotateX(TFloat a_fRotation)
 	{
-		TMathFloating fVar1 = param_2.x - param_1.x;
-		TMathFloating fVar2 = param_2.y - param_1.y;
-		TMathFloating fVar3 = param_2.z - param_1.z;
-
-		return TMath::Sqrt(fVar1 * fVar1 + fVar2 * fVar2 + fVar3 * fVar3);
-	}
-
-	float TVector3::DistanceSq(const TVector3& param_1, const TVector3& param_2)
-	{
-		TMathFloating fVar1 = param_2.x - param_1.x;
-		TMathFloating fVar2 = param_2.y - param_1.y;
-		TMathFloating fVar3 = param_2.z - param_1.z;
-
-		return fVar1 * fVar1 + fVar2 * fVar2 + fVar3 * fVar3;
-	}
-
-	void TVector3::Divide(const TVector3& param_1, const TVector3& param_2)
-	{
-		x = param_1.x / param_2.x;
-		y = param_1.y / param_2.y;
-		z = param_1.z / param_2.z;
-	}
-
-	void TVector3::Divide(const TVector3& param_1)
-	{
-		x /= param_1.x;
-		y /= param_1.y;
-		z /= param_1.z;
-	}
-
-	void TVector3::Divide(TMathFloating param_1)
-	{
-		TMathFloating ratio = 1.0f / param_1;
-		x *= ratio;
-		y *= ratio;
-		z *= ratio;
-	}
-
-	void TVector3::Divide(const TVector3& param_1, TMathFloating param_2)
-	{
-		TMathFloating ratio = 1.0f / param_2;
-		x = param_1.x * ratio;
-		y = param_1.y * ratio;
-		z = param_1.z * ratio;
-	}
-
-	void TVector3::RotateX(TMathFloating a_fRotation)
-	{
-		TMathFloating f1;
-		TMathFloating f2;
-		TMathFloating oldY = y;
+		TFloat f1;
+		TFloat f2;
+		TFloat oldY = y;
 
 		TMath::SinCos(a_fRotation, f1, f2);
 
@@ -102,11 +42,11 @@ namespace Toshi
 		z = oldY * f1 + z * f2;
 	}
 
-	void TVector3::RotateY(TMathFloating a_fRotation)
+	void TVector3::RotateY(TFloat a_fRotation)
 	{
-		TMathFloating f1;
-		TMathFloating f2;
-		TMathFloating oldX = x;
+		TFloat f1;
+		TFloat f2;
+		TFloat oldX = x;
 
 		TMath::SinCos(a_fRotation, f1, f2);
 
@@ -114,11 +54,11 @@ namespace Toshi
 		z = z * f2 + -f1 * oldX;
 	}
 
-	void TVector3::RotateZ(TMathFloating a_fRotation)
+	void TVector3::RotateZ(TFloat a_fRotation)
 	{
-		TMathFloating f1;
-		TMathFloating f2;
-		TMathFloating oldX = x;
+		TFloat f1;
+		TFloat f2;
+		TFloat oldX = x;
 
 		TMath::SinCos(a_fRotation, f1, f2);
 
