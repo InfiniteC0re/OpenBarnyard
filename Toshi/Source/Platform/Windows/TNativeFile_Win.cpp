@@ -40,7 +40,6 @@ namespace Toshi
     TFile* TNativeFileSystem::CreateFile(TString8 const& fn, uint32_t flags)
     {
         TNativeFile* nativeFile = new TNativeFile(this);
-        //new (nativeFile) TNativeFile(this);
 
         if (!nativeFile->Open(fn, flags))
         {
@@ -302,7 +301,7 @@ namespace Toshi
         return 0;
     }
 
-    int TNativeFile::GetSize()
+    DWORD TNativeFile::GetSize()
     {
         m_RBufferPosition = SetFilePointer(m_Handle, 0, TNULL, TSEEK_END);
         

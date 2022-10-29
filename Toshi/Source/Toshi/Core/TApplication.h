@@ -29,13 +29,13 @@ namespace Toshi
 		void Destroy();
 
 		// Returns true if the application is created
-		inline bool IsCreated() { return m_Flags & TApplicationFlag_Created; }
+		bool IsCreated() { return m_Flags & TApplicationFlag_Created; }
 
 		// Returns true if the application is destroyed
-		inline bool IsDestroyed() { return m_Flags & TApplicationFlag_Destroyed; }
+		bool IsDestroyed() { return m_Flags & TApplicationFlag_Destroyed; }
 
 		// Sets new state
-		inline void SetVerbose(bool state) { m_IsVerbose = state; }
+		void SetVerbose(bool state) { m_IsVerbose = state; }
 
 	private:
 		TString8 m_Name;                       // 0x4

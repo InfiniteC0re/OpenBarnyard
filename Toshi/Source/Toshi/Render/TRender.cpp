@@ -1,10 +1,10 @@
 #include "ToshiPCH.h"
 #include "TRender.h"
-
+#include "Toshi/File/TFile.h"
 
 namespace Toshi
 {
-	bool TRenderInterface::Create()
+	bool TRender::Create()
 	{
 		TASSERT(TFALSE == IsCreated(), "TRender already created");
 		TRenderContext* a_pRenderContext = CreateRenderContext();
@@ -17,7 +17,7 @@ namespace Toshi
 		return false;
 	}
 
-	bool TRenderInterface::CreateDisplay()
+	bool TRender::CreateDisplay()
 	{
 		TASSERT(TTRUE == IsCreated(), "TRender must be created");
 		TASSERT(TFALSE == IsDisplayCreated(), "Display already created");
@@ -25,7 +25,7 @@ namespace Toshi
 		return true;
 	}
 
-	void TRenderInterface::DumpStats()
+	void TRender::DumpStats()
 	{
 		TFile* file = TFile::Create("TRender.txt", TFile::OpenFlags_CreateNew);
 
@@ -39,11 +39,5 @@ namespace Toshi
 			file->CPrintf("-\r\n");
 
 		}
-
-	}
-
-	TRenderContextRev* TRenderInterface::CreateRenderContext()
-	{
-		return new TRenderContextRev(*this);
 	}
 }

@@ -67,7 +67,7 @@ namespace Toshi
 		friend Toshi::TTRB;
 
 	private:
-		Endianess m_Endianess;     // 0x0
+		Endianess m_Endianess;      // 0x0
 		TFile* m_pFile;             // 0x4
 		uint32_t m_FileInfoCount;   // 0x8
 		FileInfo m_FileInfo[32];    // 0xC

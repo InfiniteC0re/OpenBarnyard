@@ -66,6 +66,8 @@ namespace Toshi
 			auto pFileSystem = TFileManager::FindFileSystem("local");
 			if (pFileSystem) delete pFileSystem;
 		}
+
+		DestroyCommon();
 	}
 
 	void TFileManager::MountFileSystem(TFileSystem* pFS)

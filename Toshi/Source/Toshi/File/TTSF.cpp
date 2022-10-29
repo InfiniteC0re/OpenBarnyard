@@ -35,8 +35,8 @@ namespace Toshi
 
 		if (m_Endianess == Endianess_Big)
 		{
-			m_Header.FileSize = BIG_ENDIAN_TO_LITTLE(m_Header.FileSize);
-			m_TRBF = BIG_ENDIAN_TO_LITTLE(m_TRBF);
+			m_Header.FileSize = PARSEDWORD_BIG(m_Header.FileSize);
+			m_TRBF = PARSEDWORD_BIG(m_TRBF);
 		}
 
 		m_CurrentSection.Name = m_Header.Magic;
@@ -89,8 +89,8 @@ namespace Toshi
 		
 		if (m_Endianess != Endianess_Little)
 		{
-			m_CurrentSection.Name = BIG_ENDIAN_TO_LITTLE(m_CurrentSection.Name);
-			m_CurrentSection.Size = BIG_ENDIAN_TO_LITTLE(m_CurrentSection.Size);
+			m_CurrentSection.Name = PARSEDWORD_BIG(m_CurrentSection.Name);
+			m_CurrentSection.Size = PARSEDWORD_BIG(m_CurrentSection.Size);
 		}
 
 		m_ReadPos = 0;

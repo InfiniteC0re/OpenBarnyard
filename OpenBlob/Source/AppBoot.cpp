@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "AppBoot.h"
-
+#include "AExampleClass.h"
+#include "Locale/ALocaleManager.h"
 
 static Toshi::TSound m_soundSystem = Toshi::TSound();
 
@@ -12,8 +13,6 @@ Toshi::TApplication* Toshi::CreateApplication(int argc, char** argv)
 bool AApplication::OnCreate(int argc, char** argv)
 {
 	TOSHI_INFO("Created application with {0} arguments", argc);
-
-	ALocaleManager::Create();
 	
 #pragma region TClass Info
 	TOSHI_INFO("===============TClass Hierarchy===============");
@@ -48,7 +47,10 @@ bool AApplication::OnCreate(int argc, char** argv)
 	TOSHI_INFO("==============================================");
 #pragma endregion
 
-	Toshi::TRenderDX11 renderer;
+	m_Renderer = ARenderer::CreateSingleton();
+	bool interfaceCreated = m_Renderer->CreateInterface();
+
+	ALocaleManager::Create();
 	
 	size_t poolSize = 128 * 1024 * 1024;
 	void* mempool = malloc(poolSize);
@@ -56,6 +58,7 @@ bool AApplication::OnCreate(int argc, char** argv)
 	bool bResult = m_soundSystem.Create(mempool, poolSize, -1, -1, 2);
 	TASSERT(TTRUE == bResult, "");
 
+<<<<<<< HEAD
 	Toshi::TMSWindow window;
 
 	ALevelInformation info;
@@ -64,6 +67,8 @@ bool AApplication::OnCreate(int argc, char** argv)
 	renderer.Create();
 	renderer.Update();
 
+=======
+>>>>>>> b19878c8db5405a44256abff728c3dce985f73ec
 	AExampleClass* exampleClass = new AExampleClass();
 	exampleClass->Delete();
 	

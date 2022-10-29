@@ -11,6 +11,12 @@ namespace Toshi
 		TSingleton& operator=(const TSingleton&) = delete;
 		TSingleton& operator=(const TSingleton&&) = delete;
 
+		// Creates Singleton instance and returns it
+		static T* CreateSingleton()
+		{
+			return new T;
+		}
+
 		// Returns pointer and asserts if it's not created
 		static T* GetSingleton()
 		{

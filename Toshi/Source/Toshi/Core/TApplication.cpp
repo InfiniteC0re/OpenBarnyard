@@ -11,7 +11,7 @@ namespace Toshi
 	{
 		m_Flags = 0;
 		
-		m_DebugConsole = TDebugConsoleFactory::Create();
+		m_DebugConsole = TDebugConsole::Create();
 
 #ifdef TOSHI_DEBUG
 		m_DebugConsole->Show(true);
