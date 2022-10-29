@@ -68,7 +68,7 @@ namespace Toshi
 			uint16_t HDRX;
 			uint16_t NameOffset;
 			uint16_t Padding;
-			uint16_t NameHash;
+			int16_t NameHash;
 			uint32_t DataOffset;
 		};
 

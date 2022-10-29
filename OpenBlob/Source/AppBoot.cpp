@@ -58,7 +58,7 @@ bool AApplication::OnCreate(int argc, char** argv)
 	bool bResult = m_soundSystem.Create(mempool, poolSize, -1, -1, 2);
 	TASSERT(TTRUE == bResult, "");
 
-	ALevelInformation info;
+	ALevelInformation info = ALevelInformation();
 	info.Create("C:\\Program Files (x86)\\Steam\\steamapps\\common\\de Blob\\Data\\Levels.trb");
 
 	AExampleClass* exampleClass = new AExampleClass();

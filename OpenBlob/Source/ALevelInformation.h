@@ -4,6 +4,13 @@
 class ALevelInformation : Toshi::TTRB
 {
 public:
+
+	ALevelInformation() : TTRB()
+	{
+		m_pData = TNULL;
+		m_pHashTable = new Toshi::THashTable;
+	}
+
 	void Create(const char* a_levelInfo);
 	void MakeStringToIDHashTable();
 	bool LevelNameHashCompareFunc(void* unk, void* unk2, int unk3);

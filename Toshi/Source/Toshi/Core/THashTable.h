@@ -11,6 +11,11 @@ namespace Toshi
 
 	public:
 
+		THashTable()
+		{
+
+		}
+
 		void Create(int capacity, int itemSize, int unk, int unk2);
 		void SetItemCompareFunction(t_HashCompareFunc a_HashCompareFunc) { m_HashCompareFunc = a_HashCompareFunc; }
 	};
