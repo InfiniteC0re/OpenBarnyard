@@ -17,9 +17,9 @@ namespace Toshi
 
 		bool bResult;
 		bResult = m_Semaphore1.Create(m_iMaxItems, m_iMaxItems);
-		TASSERT(bResult == TFALSE, "Unable to create semaphore for TGenericvFifo");
+		TASSERT(bResult != TFALSE, "Unable to create semaphore for TGenericFifo");
 		bResult = m_Semaphore2.Create(0, m_iMaxItems);
-		TASSERT(bResult == TFALSE, "Unable to create semaphore for TGenericvFifo");
+		TASSERT(bResult != TFALSE, "Unable to create semaphore for TGenericvFifo");
 
 		InitializeCriticalSection(&m_CriticalSection);
 		return true;

@@ -52,12 +52,12 @@ namespace Toshi
 
 		bool Push(T* element, Flags flags = TGenericFifo::Flags_None)
 		{
-			TGenericFifo::Push(element, flags);
+			return TGenericFifo::Push(element, flags);
 		}
 
 		bool Pop(T* out, Flags flags = TGenericFifo::Flags_None)
 		{
-			TGenericFifo::Pop(out, flags);
+			return TGenericFifo::Pop(out, flags);
 		}
 
 	private:
