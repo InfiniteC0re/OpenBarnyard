@@ -32,6 +32,7 @@ namespace Toshi
 		static void* MemCopy(void* dst, const void* const& src, size_t size);
 		static void  MemSet(void* ptr, size_t value, size_t size);
 		static void MemClear(void* ptr, size_t size);
+		static int MemCompare(void* ptr1, void* ptr2, int size);
 		
 #pragma region CRC
 

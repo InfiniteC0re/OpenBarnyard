@@ -3,11 +3,28 @@ namespace Toshi
 {
 	class THashTable
 	{
-		using t_HashCompareFunc = bool (*) (void*, void*, int);
+	public:
 
+		struct Item 
+		{
+			uint32_t key;
+			void* value;
+		};
+
+		using t_ItemCompareFunc = bool (*) (void* unk, void* unk2, int unk3);
+		using t_ItemHashFunc = uint32_t (*) (void* unk, int unk2, int unk3);
+
+		int m_iBucketSize;	// 0x0
 		int m_iItemSize; // 0x4
-		void* m_pBuckets; // 0x18
-		t_HashCompareFunc m_HashCompareFunc; // 0x28
+		int m_iItemCount; // 0x8
+		int m_iItemCountTotal; // 0xC
+		int m_iHashNodeCount; // 0x10
+		int m_iHashNodeCountTotal; // 0x14
+		int* m_pBuckets; // 0x18
+		Item* m_pSmth; // 0x1C
+		void* m_pItems; // 0x20
+		t_ItemHashFunc m_ItemHashFunc; // 0x24
+		t_ItemCompareFunc m_ItemCompareFunc; // 0x28
 
 	public:
 
@@ -16,8 +33,18 @@ namespace Toshi
 
 		}
 
-		void Create(int capacity, int itemSize, int unk, int unk2);
-		void SetItemCompareFunction(t_HashCompareFunc a_HashCompareFunc) { m_HashCompareFunc = a_HashCompareFunc; }
+		static t_ItemCompareFunc DefaultItemCompareFunc;
+		static t_ItemHashFunc DefaultItemHashFunc;
+
+		int* GetBuckets() { return m_pBuckets; }
+
+		void* Insert(void* a_pData);
+		void* Find(void* a_pData);
+		void* Append(void* a_pData);
+
+		bool Create(int a_iItemCountTotal, int a_iItemSize, int unk, int a_iHashNodeCount);
+		void SetItemCompareFunction(t_ItemCompareFunc a_HashCompareFunc) { m_ItemCompareFunc = a_HashCompareFunc; }
+		void SetItemHashFunction(t_ItemHashFunc a_HashCompareFunc) { m_ItemHashFunc = a_HashCompareFunc; }
 	};
 }
 

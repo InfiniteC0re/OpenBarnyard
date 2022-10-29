@@ -76,6 +76,11 @@ namespace Toshi
 		memset(ptr, 0, size);
 	}
 
+	int TUtil::MemCompare(void* ptr1, void* ptr2, int size)
+	{
+		return memcmp(ptr1, ptr2, size);
+	}
+
     // Source: https://lentz.com.au/blog/tag/crc-table-generator
 	void TUtil::CRCInitialise()
 	{
