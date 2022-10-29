@@ -71,20 +71,33 @@ namespace Toshi
 		//TNodeList
 
 	public:
-		//TRender() {}
+		TRender() = default;
 
+		// Creates display and returns true if success
 		bool CreateDisplay();
-		TRenderContext* CreateRenderContext();
 
-		TRenderContext* SetCurrentRenderContext(TRenderContext* a_pRenderContext) { m_pRenderContext = a_pRenderContext; return m_pRenderContext; }
-		TRenderContext* GetCurrentRenderContext() { return m_pRenderContext; }
+		// Sets new render context and returns the previous one
+		TRenderContext* SetCurrentRenderContext(TRenderContext* a_pRenderContext)
+		{
+			auto previousContext = m_pRenderContext;
+			m_pRenderContext = a_pRenderContext;
+			return previousContext;
+		}
 
-		virtual bool Create(); //{ return true; }
-		virtual void DumpStats();
+		virtual bool Create();    // 0x28
+		virtual void DumpStats(); // 0x30
 		
 		bool IsInScene() { return m_bInScene; }
 		bool IsCreated() { return m_bCreated; }
 		bool IsDisplayCreated() { return m_bDisplayCreated; }
+		TRenderContext* GetCurrentRenderContext() { return m_pRenderContext; }
+	
+	public:
+		/*
+		* Platform specific methods
+		* Define them in TRender_{Renderer}.cpp
+		*/
+		TRenderContext* CreateRenderContext();
 	};
 }
 

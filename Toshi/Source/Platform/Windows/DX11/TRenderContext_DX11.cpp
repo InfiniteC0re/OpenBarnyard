@@ -3,8 +3,5 @@
 
 namespace Toshi
 {
-	TRenderContext* TRender::CreateRenderContext()
-	{
-		return new TRenderContextDX11(*this);
-	}
+	
 }

@@ -1,10 +1,17 @@
 #include "ToshiPCH.h"
 #include "TRender_DX11.h"
+#include "TRenderContext_DX11.h"
 
 namespace Toshi
 {
+	TRenderContext* TRender::CreateRenderContext()
+	{
+		return new TRenderContextDX11(*this);
+	}
+
 	bool TRenderDX11::Create(LPCSTR a_name)
 	{
+		// 006a5e30
 		TASSERT(TFALSE == IsCreated(), "TRenderDX11 already created");
 		bool bResult = TRender::Create();
 		if (bResult)
@@ -29,6 +36,7 @@ namespace Toshi
 
 	const char* TRenderDX11::GetFeatureLevel(D3D_FEATURE_LEVEL a_featureLevel)
 	{
+		// 006a9470
 		switch (a_featureLevel)
 		{
 		case D3D_FEATURE_LEVEL_9_1:
@@ -52,6 +60,7 @@ namespace Toshi
 
 	void TRenderDX11::BuildAdapterDatabase()
 	{
+		// 006a7df0
 		IDXGIFactory1* pFactory;
 
 		HRESULT hr = CreateDXGIFactory1(__uuidof(IDXGIFactory1), (void**)(&pFactory));
@@ -73,15 +82,16 @@ namespace Toshi
 		MSG msg;
 		if (m_bIsEnabled)
 		{
-			while (GetMessageA(&msg, NULL, 0, 0) != 0)
+			while (GetMessageA(&msg, NULL, 0, 0) != FALSE)
 			{
 				TranslateMessage(&msg);
 				DispatchMessageA(&msg);
-				if (PeekMessageA(&msg, NULL, 0, 0, 0) == 0)
+				if (PeekMessageA(&msg, NULL, 0, 0, 0) == FALSE)
 				{
 					return;
 				}
 			}
+
 			m_bIsEnabled = true;
 		}
 	}
