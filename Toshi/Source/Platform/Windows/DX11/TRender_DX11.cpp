@@ -46,7 +46,7 @@ namespace Toshi
 
 			m_hAccel = CreateAcceleratorTableA(accels, 2);
 
-			if (GetMSWindow()->Create(this, a_name))
+			if ((new Toshi::TMSWindow())->Create(this, a_name))
 			{
 				return true;
 			}
@@ -93,6 +93,7 @@ namespace Toshi
 			while (pFactory->EnumAdapters1(0, &pAdapter) != DXGI_ERROR_NOT_FOUND)
 			{
 				TTODO("Implement iterating through adapters");
+				return;
 			}
 
 		}

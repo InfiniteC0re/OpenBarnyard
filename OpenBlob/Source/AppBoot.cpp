@@ -58,17 +58,9 @@ bool AApplication::OnCreate(int argc, char** argv)
 	bool bResult = m_soundSystem.Create(mempool, poolSize, -1, -1, 2);
 	TASSERT(TTRUE == bResult, "");
 
-<<<<<<< HEAD
-	Toshi::TMSWindow window;
-
 	ALevelInformation info;
 	info.Create("C:\\Program Files (x86)\\Steam\\steamapps\\common\\de Blob\\Data\\Levels.trb");
 
-	renderer.Create();
-	renderer.Update();
-
-=======
->>>>>>> b19878c8db5405a44256abff728c3dce985f73ec
 	AExampleClass* exampleClass = new AExampleClass();
 	exampleClass->Delete();
 	
