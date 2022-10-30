@@ -20,7 +20,7 @@ void ALevelInformation::Create(const char* a_trbName)
 
 void ALevelInformation::MakeStringToIDHashTable()
 {
-	int levelCount = PARSEDWORD(m_pData);
+	int levelCount = GetLevelHeader()->m_levelCount;
 	m_pHashTable->Create(levelCount, 0x80, levelCount, levelCount);
 	m_pHashTable->SetItemCompareFunction(LevelNameHashCompareFunc);
 	for (size_t i = 0; i < levelCount; i++)
