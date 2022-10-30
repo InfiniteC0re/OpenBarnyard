@@ -102,7 +102,7 @@ namespace Toshi
 	void TRenderDX11::Update()
 	{
 		MSG msg;
-		if (m_bIsEnabled)
+		if (!m_bIsEnabled && PeekMessageA(&msg, NULL, 0, 0, 0) == TRUE)
 		{
 			while (GetMessageA(&msg, NULL, 0, 0) != FALSE)
 			{
