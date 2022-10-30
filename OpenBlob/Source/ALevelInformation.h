@@ -6,16 +6,16 @@ class ALevelInformation : Toshi::TTRB
 public:
 	struct LevelProperties
 	{
-		char* levelName;
+		char* m_levelName;
 		char* levelNamePath;
 		char* levelFileName;
 		char smth[0x58];
 	};
 
-	struct LevelInformations
+	struct LevelHeader
 	{
-		int Count;
-		LevelProperties* Strings;
+		int m_levelCount;
+		LevelProperties* m_pLevelProps;
 	};
 
 	ALevelInformation() : TTRB()
@@ -26,6 +26,8 @@ public:
 
 	void Create(const char* a_levelInfo);
 	void MakeStringToIDHashTable();
+	LevelHeader* GetLevelHeader() { return reinterpret_cast<LevelHeader*>(m_pData); }
+	const char* GetLevelName(int a_iLevelIndex);
 
 
 	static Toshi::THashTable::t_ItemCompareFunc LevelNameHashCompareFunc;

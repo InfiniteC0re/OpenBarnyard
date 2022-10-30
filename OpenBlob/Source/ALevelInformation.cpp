@@ -23,13 +23,16 @@ void ALevelInformation::MakeStringToIDHashTable()
 	int levelCount = PARSEDWORD(m_pData);
 	m_pHashTable->Create(levelCount, 0x80, levelCount, levelCount);
 	m_pHashTable->SetItemCompareFunction(LevelNameHashCompareFunc);
-	LevelInformations* curLevel = reinterpret_cast<LevelInformations*>(m_pData);
 	for (size_t i = 0; i < levelCount; i++)
 	{
 		char toAddLevelName[0x80];
-		char* curLevelName = curLevel->Strings[i].levelName;
-		Toshi::TStringManager::String8Copy(toAddLevelName, curLevelName, 0x80);
+		Toshi::TStringManager::String8Copy(toAddLevelName, GetLevelName(i), 0x80);
 		m_pHashTable->Insert(toAddLevelName);
 	}
+}
 
+const char* ALevelInformation::GetLevelName(int a_iLevelIndex)
+{
+	TASSERT(a_iLevelIndex >= 0 && a_iLevelIndex < GetLevelHeader()->m_levelCount, "Level index out of bounds");
+	return GetLevelHeader()->m_pLevelProps[a_iLevelIndex].m_levelName;
 }
