@@ -3,50 +3,47 @@
 
 namespace Toshi
 {
-	bool TThread::GetPriority(HANDLE a_hThreadHnd, PRIORITY& a_ePriority)
+	static TThreadManager oThreadManager;
+
+	unsigned long __stdcall ThreadEntry(void* userParam)
 	{
-		TASSERT(a_hThreadHnd != NULL, "");
-		int iPriority = GetThreadPriority(a_hThreadHnd);
-		TASSERT(iPriority != THREAD_PRIORITY_ERROR_RETURN, "");
-		a_ePriority = static_cast<PRIORITY>(iPriority);
-		return true;
+		TThread* pThread = static_cast<TThread*>(userParam);
+		pThread->Main();
+		TThread::Exit(pThread);
+		return 0;
 	}
 
-	bool TThread::SetPriority(HANDLE a_hThreadHnd, PRIORITY a_ePriority)
+	bool TThread::Create(size_t a_iStackSize, PRIORITY a_ePriority, uint8_t flag)
 	{
-		TASSERT(a_hThreadHnd != NULL, "");
-		BOOL bResult = SetThreadPriority(a_hThreadHnd, a_ePriority);
-		TASSERT(bResult != FALSE, "");
+		m_iThreadID = -1;
+		m_hThreadHnd = CreateThread(NULL, a_iStackSize, ThreadEntry, this, CREATE_SUSPENDED, &m_iThreadID);
+		
+		TASSERT(m_hThreadHnd != NULL, "Couldn't create thread");
+		bool bResult = SetThreadPriority(m_hThreadHnd, a_ePriority);
+		TASSERT(bResult != false, "Couldn't set thread priority");
+
+		TThreadManager::GetSingleton()->InsertThread(this);
+
+		if ((flag & 1) == 0)
+		{
+			DWORD iResult = ResumeThread(m_hThreadHnd);
+			TASSERT(iResult != -1, "Couldn't resume thread");
+		}
+
 		return true;
 	}
 
 	void TThread::Exit(TThread* a_pThread)
 	{
-		TASSERT(a_pThread->m_iThreadID == GetCurrentThreadId(), "");
+		TASSERT(a_pThread->m_iThreadID == GetCurrentThreadId(), "Thread cannot be closed outside");
+		
 		BOOL bResult = CloseHandle(a_pThread->m_hThreadHnd);
-		TASSERT(bResult != FALSE, "");
-		TThreadManager::s_pThreadManager->RemoveThread(a_pThread);
-		a_pThread->m_hThreadHnd = TNULL;
+		TASSERT(bResult != FALSE, "Couldn't close thread");
+
+		TThreadManager::GetSingleton()->RemoveThread(a_pThread);
+		a_pThread->m_hThreadHnd = NULL;
 		a_pThread->m_iThreadID = -1;
+
 		_endthreadex(0);
-	}
-
-	TThreadManager::TThreadManager()
-	{
-		//   *(TThreadManager **)(this + 0x18) = this + 0x18;
-		//   *(TThreadManager**)(this + 0x1c) = this + 0x18;
-		Create();
-	}
-
-	void TThreadManager::RemoveThread(TThread* a_pThread)
-	{
-		EnterCriticalSection((LPCRITICAL_SECTION)this);
-		/*
-			  **(undefined4 **)(param_1 + 8) = *(undefined4 *)(param_1 + 4);
-	  *(undefined4 *)(*(int *)(param_1 + 4) + 4) = *(undefined4 *)(param_1 + 8);
-	  *(TThread **)(param_1 + 4) = param_1 + 4;
-	  *(TThread **)(param_1 + 8) = param_1 + 4;
-		*/
-		LeaveCriticalSection((LPCRITICAL_SECTION)this);
 	}
 }
