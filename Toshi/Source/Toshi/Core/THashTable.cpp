@@ -14,12 +14,11 @@ Toshi::THashTable::t_ItemHashFunc Toshi::THashTable::DefaultItemHashFunc = [](vo
 
 	while (unk2 != 0)
 	{
-		hash *= 0x10 + *buffer;
+		hash = (hash * 0x10) + *buffer++;
 		if ((hash & 0xF0000000) != 0)
 		{
-			hash ^= (hash & 0xF0000000) >> 24 ^ (hash & 0xF0000000);
+			hash = hash ^ (hash & 0xF0000000) >> 24 ^ (hash & 0xF0000000);
 		}
-		buffer++;
 		unk2--;
 	}
 
@@ -54,8 +53,8 @@ void* Toshi::THashTable::Find(void* a_pData)
 
 		while (a_bucket != -1)
 		{
-			Item item = m_pSmth[hash];
-			bool bRes = m_ItemCompareFunc(a_pData, (void*)(*(int*)m_pItems + m_iItemSize + (int*)item.value), m_iItemSize);
+			Item item = m_pSmth[a_bucket];
+			bool bRes = m_ItemCompareFunc(a_pData, (int*)m_pItems + m_iItemSize * (int)item.value, m_iItemSize);
 			if (bRes) return &item;
 			a_bucket = item.key;
 		}
@@ -78,7 +77,9 @@ void* Toshi::THashTable::Append(void* a_pData)
 			m_pSmth[m_iHashNodeCountTotal].key = m_pBuckets[hash];
 			m_pSmth[m_iHashNodeCountTotal].value = (void*)m_iItemCount;
 
-			TUtil::MemCopy((int*)m_pItems + m_iItemCount + m_iItemSize, a_pData, m_iItemSize);
+			TUtil::MemCopy((int*)m_pItems + m_iItemCount * m_iItemSize, a_pData, m_iItemSize);
+
+			m_pBuckets[hash] = m_iHashNodeCountTotal;
 
 			m_iItemCount++;
 			m_iHashNodeCountTotal++;
@@ -99,6 +100,7 @@ bool Toshi::THashTable::Create(int a_iItemCountTotal, int a_iItemSize, int a_iBu
 		}
 		m_iBucketSize = a_iBucketSize;
 		m_iItemSize = a_iItemSize;
+		m_iItemCount = 0;
 		m_iItemCountTotal = a_iItemCountTotal;
 		m_iHashNodeCount = a_iHashNodeCount;
 		m_pBuckets = new int[m_iBucketSize];

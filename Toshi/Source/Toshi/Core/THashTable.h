@@ -30,13 +30,42 @@ namespace Toshi
 
 		THashTable()
 		{
-
+			m_iBucketSize = 0;
+			m_iItemSize = 0;
+			m_iItemCount = 0;
+			m_iItemCountTotal = 0;
+			m_iHashNodeCount = 0;
+			m_iHashNodeCountTotal = 0;
+			m_pBuckets = TNULL;
+			m_pSmth = TNULL;
+			m_pItems = TNULL;
+			m_ItemHashFunc = TNULL;
+			m_ItemCompareFunc = TNULL;
 		}
 
 		static t_ItemCompareFunc DefaultItemCompareFunc;
 		static t_ItemHashFunc DefaultItemHashFunc;
 
-		int* GetBuckets() { return m_pBuckets; }
+		int* GetBuckets() const { return m_pBuckets; }
+		int GetItemCount() const { return m_iItemCount; }
+		void* GetItemArray() const { return m_pItems; }
+
+		void DeleteBucketMemory()
+		{
+			delete[] m_pBuckets;
+			m_pBuckets = TNULL;
+		}
+
+		void Destroy()
+		{
+			delete[] m_pBuckets;
+			m_pBuckets = TNULL;
+			delete[] m_pSmth;
+			m_pSmth = TNULL;
+			delete[] m_pItems;
+			m_pItems = TNULL;
+		}
+
 
 		void* Insert(void* a_pData);
 		void* Find(void* a_pData);
