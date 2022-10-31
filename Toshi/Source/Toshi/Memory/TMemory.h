@@ -107,6 +107,7 @@ namespace Toshi
 		void  DestroyMutex() { m_Mutex.Destroy(); }
 
 		void* Malloc(size_t size) { return TMemory::dlheapmalloc(this, size); }
+		static void* Malloc(TMemoryHeap* heap, size_t size) { return TMemory::dlheapmalloc(heap, size); }
 		void* Calloc(size_t nitems, size_t size) { return TMemory::dlheapcalloc(this, nitems, size); }
 		void* Realloc(void* mem, size_t newsize) { return TMemory::dlheaprealloc(this, mem, newsize); }
 		void* Memalign(size_t alignment, size_t size) { return TMemory::dlheapmemalign(this, alignment, size); }
@@ -156,6 +157,11 @@ inline void* operator new(size_t size)
 inline void* operator new[](size_t size)
 {
 	return TMalloc(size);
+}
+
+inline void* operator new[](size_t size, Toshi::TMemoryHeap* heap)
+{
+	return Toshi::TMemoryHeap::Malloc(heap, size);
 }
 
 inline void operator delete(void* ptr)

@@ -17,9 +17,9 @@ namespace Toshi
 
         TASSERT(m_oHeader.m_usNumSections > 0, "There must be one or more Sections");
 
-        uint8_t* memBlock = static_cast<uint8_t*>(TMalloc(m_oHeader.m_usNumSections * sizeof(Section)));
+        uint8_t* memBlock = reinterpret_cast<uint8_t*>(operator new[](m_oHeader.m_usNumSections * sizeof(Section)));
 
-        ms_pXUIMemoryBlock = memBlock;
+        //ms_pXUIMemoryBlock = memBlock;
         m_oHeader.m_apSections = reinterpret_cast<Section*>(memBlock);
 
         uint32_t sectionID = PARSEDWORD(buffer + 0x14);
@@ -51,17 +51,14 @@ namespace Toshi
     }
 
 
-    void Toshi::TXUIResource::LoadXUIB2(bool loadStringTables, const char* filenameXUIB, const char* fileNameStringTable, bool loadTrb, void* unk3)
+    void Toshi::TXUIResource::Load(bool loadStringTables, const char* filenameXUIB, const char* fileNameStringTable, bool loadTrb, void* unk3)
     {
         for (size_t i = 0; i < m_uiStringTableCount; i++)
         {
             TFree(m_asStringTable[i]);
         }
-
-        TFree(m_asStringTable);
-        // tdelete(this+0x20);
-        // tdelete(this+0x24);
-        // this+2C != TNULL
+        if (m_asStringTable != TNULL) delete[] m_asStringTable;
+        if (m_pQuat != TNULL) delete[] m_pQuat;
         // this+0x2C(1) probably function pointer parameter=int (value 1 in this case)
 
         if (loadStringTables && fileNameStringTable != TNULL)
@@ -95,8 +92,16 @@ namespace Toshi
         }
     }
 
-    int Toshi::TXUIResource::GetTotalSize(unsigned char* buffer)
+    int Toshi::TXUIResource::Load(unsigned char* buffer)
     {
+        for (size_t i = 0; i < m_uiStringTableCount; i++)
+        {
+            TFree(m_asStringTable[i]);
+        }
+        if (m_asStringTable != TNULL) delete[] m_asStringTable;
+        if (m_pQuat != TNULL) delete[] m_pQuat;
+        // this+0x2C(1) probably function pointer parameter=int (value 1 in this case)
+
         ReadHeader(buffer);
 
         int totalSize = m_oHeader.m_usNumSections * sizeof(Section) + 4;
@@ -111,17 +116,15 @@ namespace Toshi
             }
             else if (m_oHeader.m_apSections[i].m_uiSectionID == IDXURCUST)
             {
-                m_pCust = (unsigned char*)TMalloc(m_oHeader.m_apSections[i].m_uiSize);
-                TUtil::MemCopy(m_pCust, currentSectionBuffer, m_oHeader.m_apSections[i].m_uiSize);
-                m_uiCustDataSize = m_oHeader.m_apSections[i].m_uiSize;
+                ReadCustSection(currentSectionBuffer, m_oHeader.m_apSections[i].m_uiSize);
             }
             else if (m_oHeader.m_apSections[i].m_uiSectionID == IDXURDATA)
             {
-                ProcessDATA(currentSectionBuffer);
+                ReadDataSection(currentSectionBuffer);
             }
             else if (m_oHeader.m_apSections[i].m_uiSectionID == IDXURSTRING)
             {
-                ProcessSTRN((unsigned short*)currentSectionBuffer, m_oHeader.m_apSections[i].m_uiSize);
+                ReadStringSection((unsigned short*)currentSectionBuffer, m_oHeader.m_apSections[i].m_uiSize);
                 totalSize += GetStringTableSize(currentSectionBuffer, m_oHeader.m_apSections[i].m_uiSize);
             }
             else if (m_oHeader.m_apSections[i].m_uiSectionID == IDXURVEC)
@@ -133,7 +136,7 @@ namespace Toshi
         return totalSize;
     }
 
-    int Toshi::TXUIResource::ProcessDATA(unsigned char* buffer)
+    int Toshi::TXUIResource::ReadDataSection(unsigned char* buffer, uint32_t size)
     {
         uint16_t uiType = PARSEWORD_BIG(buffer);
         buffer += 2;
@@ -143,7 +146,7 @@ namespace Toshi
         return 0;
     }
 
-    bool Toshi::TXUIResource::ProcessSTRN(unsigned short* pPtr, uint32_t size)
+    bool Toshi::TXUIResource::ReadStringSection(unsigned short* pPtr, uint32_t size)
     {
         TASSERT(TNULL == m_asStringTable, "StringTable must not be initialized");
 
@@ -158,9 +161,9 @@ namespace Toshi
             pStart += stringLength + 1;
         }
 
-        m_asStringTable = (unsigned short**)TMalloc(m_uiStringTableCount * sizeof(unsigned short*));
+        m_asStringTable = reinterpret_cast<unsigned short**>(operator new[](m_uiStringTableCount * sizeof(unsigned short*), ms_pXUIMemoryBlock));
 
-        *m_asStringTable = (unsigned short*)TMalloc(2);
+        *m_asStringTable = reinterpret_cast<unsigned short*>(TMemoryHeap::Malloc(ms_pXUIMemoryBlock, 2));
         **m_asStringTable = 0;
 
         for (size_t i = 1; i < m_uiStringTableCount; i++)
@@ -170,7 +173,7 @@ namespace Toshi
             unsigned short stringLength = PARSEWORD_BIG((uint8_t*)pPtr);
             unsigned short size = stringLength * sizeof(unsigned short) + sizeof(unsigned short);
 
-            m_asStringTable[i] = (unsigned short*)TMalloc(size);
+            m_asStringTable[i] = (unsigned short*)TMemoryHeap::Malloc(ms_pXUIMemoryBlock, size);
 
             // Blob would call FUN_006eba70 but MemCopy seems better tbh
             TUtil::MemCopy(m_asStringTable[i], pPtr + 1, size - sizeof(unsigned short));
@@ -179,6 +182,14 @@ namespace Toshi
         }
 
         return true;
+    }
+
+    int TXUIResource::ReadCustSection(unsigned char* buffer, uint32_t size)
+    {
+        m_pCust = (unsigned char*)TMemoryHeap::Malloc(ms_pXUIMemoryBlock, size);
+        TUtil::MemCopy(m_pCust, buffer, size);
+        m_uiCustDataSize = size;
+        return 1;
     }
 
     int Toshi::TXUIResource::GetStringTableSize(unsigned char* pPtr, uint32_t size)

@@ -33,7 +33,7 @@ namespace Toshi
 			uint16_t m_usNumSections;	// 0x16
 		};
 
-		inline static uint8_t* ms_pXUIMemoryBlock = TNULL;
+		inline static TMemoryHeap* ms_pXUIMemoryBlock = TNULL;
 		
 		Header m_oHeader;							// 0x0
 		unsigned short** m_asStringTable = TNULL;	// 0x1C
@@ -47,18 +47,22 @@ namespace Toshi
 
 		bool ReadHeader(unsigned char* buffer);
 
-		// That should be the real load XUIB
+		// Toshi::TXUIResource::Load(const char*, const char*, bool, Toshi::TTRB*)
+		// 
 		// loadStringTables = when true load .xus/.trb files (StringTables)
 		// filename = f.e Data/XUI/%s.trb or Data/XUI/%s.xur
 		// fileNameStringTable = f.e %s/StringTables/%s/%s.xus or %s/StringTables/%s/%s.trb
 		// loadTrb = when true load .xur/.trb files (XUIB)
 		// unk3 = probably a function
-		void LoadXUIB2(bool loadStringTables, const char* filenameXUIB, const char* fileNameStringTable, bool loadTrb, void* unk3);
+		void Load(bool loadStringTables, const char* filenameXUIB, const char* fileNameStringTable, bool loadTrb, void* unk3);
 
-		int GetTotalSize(unsigned char* buffer);
-		int ProcessDATA(unsigned char* buffer);
-		bool ProcessSTRN(unsigned short* pPtr, uint32_t size);
+		int Load(unsigned char* buffer);
+		int ReadDataSection(unsigned char* buffer, uint32_t size);
+		bool ReadStringSection(unsigned short* pPtr, uint32_t size);
+		int ReadCustSection(unsigned char* buffer, uint32_t size);
 		int GetStringTableSize(unsigned char* pPtr, uint32_t size);
+
+		uint8_t* CreateObjectData(TXUIResource& a_rResource, uint16_t);
 	};
 }
 
