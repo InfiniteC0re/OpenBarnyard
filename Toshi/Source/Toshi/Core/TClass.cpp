@@ -91,7 +91,7 @@ namespace Toshi
 		}
 	}
 
-	TClass* TClass::FindRecurse(const char* const& name, TClass* parent, bool hasPrevious)
+	const TClass* TClass::FindRecurse(const char* const& name, const TClass* parent, bool hasPrevious)
 	{
 		while (parent)
 		{
@@ -105,7 +105,7 @@ namespace Toshi
 
 			if (parent->m_LastAttached)
 			{
-				TClass* result = FindRecurse(name, parent->m_LastAttached, true);
+				const TClass* result = FindRecurse(name, parent->m_LastAttached, true);
 
 				if (result)
 				{
@@ -117,6 +117,12 @@ namespace Toshi
 		}
 
 		return nullptr;
+	}
+
+	const TClass* TClass::Find(const char* name, const TClass* parent)
+	{
+		if (parent == TNULL) parent = &TObject::s_Class;
+		return FindRecurse(name, parent, false);
 	}
 
 	TObject* TClass::CreateObject()

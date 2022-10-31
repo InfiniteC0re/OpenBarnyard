@@ -52,7 +52,8 @@ namespace Toshi
 		static bool TryInitialize(TClass* tClass);
 		
 		// Looks for a class in parent
-		static TClass* FindRecurse(const char* const& name, TClass* parent, bool hasPrevious);
+		static const TClass* FindRecurse(const char* const& name, const TClass* parent, bool hasPrevious);
+		static const TClass* Find(const char* name, const TClass* parent);
 
 	public:
 		inline bool operator==(const TClass* other) const { return this == other; }

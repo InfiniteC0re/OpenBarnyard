@@ -198,4 +198,20 @@ namespace Toshi
         return 0;
     }
 
+    uint8_t* TXUIResource::CreateObjectData(TXUIResource& a_rResource, uint16_t index)
+    {
+        if (index == 0) return TNULL;
+        return CreateObjectData(a_rResource, a_rResource.m_pData[index*4]);
+    }
+
+    uint8_t* TXUIResource::CreateObjectData(TXUIResource& a_rResource, const wchar_t* objectName)
+    {
+        if (TStringManager::String16Compare(objectName, _TS16("XuiCanvas"), -1) == 0)
+        {
+            XURXUICanvasData* data = reinterpret_cast<XURXUICanvasData*>(operator new (0x54, ms_pXUIMemoryBlock));
+            if (data != TNULL) data = new XURXUICanvasData();
+        }
+        return nullptr;
+    }
+
 }

@@ -3,6 +3,7 @@
 #include <Toshi/File/TFile.h>
 #include "Toshi/Core/TSystem.h"
 #include "Toshi2/T2String16.h"
+#include "Toshi/Xui/TXUICanvas.h"
 
 namespace Toshi
 {
@@ -38,6 +39,7 @@ namespace Toshi
 		Header m_oHeader;							// 0x0
 		unsigned short** m_asStringTable = TNULL;	// 0x1C
 		TQuaternion* m_pQuat;						// 0x20
+		uint8_t* m_pData;
 		unsigned char* m_pCust;						// 0x28
 		uint32_t m_uiCustDataSize;					// 0x3C
 		uint32_t m_uiStringTableCount;				// 0x30
@@ -62,7 +64,8 @@ namespace Toshi
 		int ReadCustSection(unsigned char* buffer, uint32_t size);
 		int GetStringTableSize(unsigned char* pPtr, uint32_t size);
 
-		uint8_t* CreateObjectData(TXUIResource& a_rResource, uint16_t);
+		uint8_t* CreateObjectData(TXUIResource& a_rResource, uint16_t index);
+		uint8_t* CreateObjectData(TXUIResource& a_rResource, const wchar_t* objectName);
 	};
 }
 
