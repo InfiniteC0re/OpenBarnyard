@@ -74,9 +74,14 @@ AExampleClass::AExampleClass()
 		}
 	}
 
-	TTRB trb;
-	TTRB::ERROR error = trb.Load("C:\\Program Files (x86)\\Steam\\steamapps\\common\\de Blob\\Data\\XUI\\UK\\frontend.trb");
-
+	TFile* file = TFile::Create("C:\\Program Files (x86)\\Steam\\steamapps\\common\\de Blob\\Data\\XUI\\DE\\common.trb", TFile::OpenFlags_Read);
+	file->Seek(0x6D0, TFile::TSEEK_SET);
+	
+	uint8_t buf[0x30];
+	file->Read(buf, 0x30);
+	uint8_t* buf2 = buf;
+	XURXUIElementData* element = new XURXUIElementData();
+	element->Load(buf2);
 	/*
 	if (error == TTRB::ERROR_OK)
 	{

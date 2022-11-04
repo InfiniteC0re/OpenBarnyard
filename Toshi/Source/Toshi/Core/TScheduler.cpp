@@ -28,7 +28,7 @@ namespace Toshi
 		TTask* task = static_cast<TTask*>(toshiClass->CreateObject());
 		
 #ifdef TOSHI_DEBUG
-		TClass* found = TClass::FindRecurse(task->GetClass()->GetName(), &TTask::s_Class, true);
+		const TClass* found = TClass::FindRecurse(task->GetClass()->GetName(), &TTask::s_Class, true);
 		TASSERT(found != nullptr, "TScheduler::CreateTask - passed TClass isn't inherited from TTask");
 #endif
 		

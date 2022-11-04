@@ -1,9 +1,16 @@
-
+#include "Toshi/Xui/TXUIElement.h"
 
 namespace Toshi
 {
+	/*
+	class TXUIElement;
 
-	class XURXUICanvasData : XURXUIElementData
+	class TXUICanvas
+	{
+
+	};
+
+	class XURXUICanvasData : public XURXUIElementData
 	{
 		TClass* m_txuiCanvasClass;
 	public:
@@ -12,9 +19,6 @@ namespace Toshi
 			m_txuiCanvasClass = (TClass*)TClass::Find("TXUICanvas", &TXUIElement::s_Class);
 		}
 	};
-
-	class TXUICanvas
-	{
-
-	};
+	*/
+	
 }

@@ -1,8 +1,9 @@
 #include "pch.h"
 #include "AppBoot.h"
-#include "AExampleClass.h"
+//#include "Toshi/Xui/TXUIResource.h"
 #include "AAssetStreaming.h"
 #include "Locale/ALocaleManager.h"
+#include <AExampleClass.h>
 
 static Toshi::TSound m_soundSystem = Toshi::TSound();
 
@@ -61,8 +62,8 @@ bool AApplication::OnCreate(int argc, char** argv)
 	bool bResult = m_soundSystem.Create(mempool, poolSize, -1, -1, 2);
 	TASSERT(TTRUE == bResult, "");
 
-	ALevelInformation info = ALevelInformation();
-	info.Create("C:\\Program Files (x86)\\Steam\\steamapps\\common\\de Blob\\Data\\Levels.trb");
+	//ALevelInformation info = ALevelInformation();
+	//info.Create("C:\\Program Files (x86)\\Steam\\steamapps\\common\\de Blob\\Data\\Levels.trb");
 
 	AExampleClass* exampleClass = new AExampleClass();
 	exampleClass->Delete();

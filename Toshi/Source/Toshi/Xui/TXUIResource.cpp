@@ -120,7 +120,7 @@ namespace Toshi
             }
             else if (m_oHeader.m_apSections[i].m_uiSectionID == IDXURDATA)
             {
-                ReadDataSection(currentSectionBuffer);
+                ReadDataSection(currentSectionBuffer, m_oHeader.m_apSections[i].m_uiSize);
             }
             else if (m_oHeader.m_apSections[i].m_uiSectionID == IDXURSTRING)
             {
@@ -208,8 +208,8 @@ namespace Toshi
     {
         if (TStringManager::String16Compare(objectName, _TS16("XuiCanvas"), -1) == 0)
         {
-            XURXUICanvasData* data = reinterpret_cast<XURXUICanvasData*>(operator new (0x54, ms_pXUIMemoryBlock));
-            if (data != TNULL) data = new XURXUICanvasData();
+            //XURXUICanvasData* data = reinterpret_cast<XURXUICanvasData*>(operator new (0x54, ms_pXUIMemoryBlock));
+            //if (data != TNULL) data = new XURXUICanvasData();
         }
         return nullptr;
     }
