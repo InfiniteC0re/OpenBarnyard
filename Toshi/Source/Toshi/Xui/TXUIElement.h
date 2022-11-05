@@ -12,7 +12,7 @@ namespace Toshi
 		public TGenericClassDerived<TXUIElement, TObject, "TXUIElement", TMAKEVERSION(1, 0), false>
 	{
 		
-
+		uint32_t m_uiNumNamedFrames; // 0x10
 		uint32_t m_uiNumChildren; // 0x16
 		void* m_child;
 	};

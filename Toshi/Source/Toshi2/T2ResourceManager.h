@@ -14,8 +14,8 @@ namespace Toshi
 	class T2Resource
 	{
 		int m_iID;
-
-		void CreateResource(const char* resourceName, void* unk, t_CreateDestroyCallbk a_fnCreateDestroyCallbk, void* a_pData);
+	public:
+		static void CreateResource(const char* resourceName, void* unk, t_CreateDestroyCallbk a_fnCreateDestroyCallbk, void* a_pData);
 		void DestroyResource();
 	};
 
