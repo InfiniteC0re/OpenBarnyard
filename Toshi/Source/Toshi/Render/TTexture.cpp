@@ -68,13 +68,13 @@ namespace Toshi
 	void TTexture::Swizzle32Bit()
 	{
 		uint8_t* buf;
-		uint8_t* imgPtr3;
+		uint32_t* imgPtr3;
 		uint32_t height = m_height;
 		uint32_t width = m_width;
 		for (size_t i = 0; i < m_unk+1; i++)
 		{
 			int iVar7 = 0;
-			uint8_t* imagePtr = m_imagePtr;
+			uint32_t* imagePtr = reinterpret_cast<uint32_t*>(m_imagePtr);
 			for (size_t j = 0; j < height; j+=4)
 			{
 				TUtil::MemCopy(buf, imagePtr + (iVar7 * 2), width * 16);
