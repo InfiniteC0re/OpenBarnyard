@@ -14,13 +14,6 @@ project "Toshi"
 		"dxgi.lib"
 	}
 
-	files
-	{
-		"Source/**.h",
-		"Source/**.cpp",
-		"Source/**.c"
-	}
-
 	includedirs
 	{
 		"Source",
@@ -45,6 +38,18 @@ project "Toshi"
 
 	filter "system:windows"
 		systemversion "latest"
+		
+		files
+		{
+			"Source/ToshiPCH.h",
+			"Source/ToshiPCH.cpp",
+			"Source/Platform/Windows/**.h",
+			"Source/Platform/Windows/**.cpp",
+			"Source/Platform/Windows/**.c",
+			"Source/Toshi**/**.h",
+			"Source/Toshi**/**.cpp",
+			"Source/Toshi**/**.c"
+		}
 
 		defines
 		{
