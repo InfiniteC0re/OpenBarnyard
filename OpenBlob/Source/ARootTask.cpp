@@ -3,6 +3,9 @@
 #include <Toshi/File/TTRB.h>
 #include <Toshi/Core/TSystem.h>
 
+#define TEST_STL 1
+#define TEST_LOCALE_BARNYARD 1
+
 bool ARootTask::OnUpdate(float deltaTime)
 {
 	m_Seconds += deltaTime;
@@ -10,7 +13,12 @@ bool ARootTask::OnUpdate(float deltaTime)
 	if (m_Seconds >= 5)
 	{
 		m_Seconds = 0;
+		Activate(false);
 
+		TOSHI_INFO("ARootTask: Five seconds has passed. Deactivating ARootTask");
+		TOSHI_INFO("Average FPS is {0:f}", m_Kernel->GetAverageFPS());
+
+#if TEST_STL
 		TOSHI_INFO("===================STL Test===================");
 		TOSHI_INFO("----------------------------------------------");
 		TOSHI_INFO("Toshi::STL::Vector");
@@ -45,11 +53,26 @@ bool ARootTask::OnUpdate(float deltaTime)
 		umap[154] = 24.6f;
 		TOSHI_INFO("UnorderedMap has {0} buckets", umap.bucket_count());
 		TOSHI_INFO("==============================================");
+#endif
 
-		TOSHI_INFO("ARootTask: Five seconds has passed. Deactivating ARootTask");
-		TOSHI_INFO("Average FPS is {0:f}", m_Kernel->GetAverageFPS());
-		
-		Activate(false);
+#if TEST_LOCALE_BARNYARD
+		struct LocaleStrings
+		{
+			uint32_t Count;
+			wchar_t** Strings;
+		};
+
+		Toshi::TTRB localeFile;
+		auto result = localeFile.Load("Data/Barnyard_Locale/eng-uk.trb");
+		TASSERT(result == Toshi::TTRB::ERROR_OK, "Unable to open file");
+
+		LocaleStrings* table = localeFile.CastSymbol<LocaleStrings>("LocaleStrings");
+		TASSERT(table != TNULL, "LocaleStrings doesn't exist");
+
+		TOSHI_TRACE("Loaded Barnyard locale file");
+		TOSHI_TRACE("String count: {0}", table->Count);
+		TOSHI_TRACE(L"First string: {0}", table->Strings[0]);
+#endif
 	}
 
 	return true;

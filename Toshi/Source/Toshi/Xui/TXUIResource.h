@@ -1,6 +1,7 @@
 #pragma once
 
-#include <Toshi/File/TFile.h>
+#include "Toshi/File/TFile.h"
+#include "Toshi/Xui/TXUI.h"
 #include "Toshi/Core/TSystem.h"
 #include "Toshi2/T2String16.h"
 #include "Toshi/Xui/TXUICanvas.h"
@@ -33,16 +34,6 @@ namespace Toshi
 			uint16_t m_usUnk4;			// 0x14
 			uint16_t m_usNumSections;	// 0x16
 		};
-
-		inline static TMemoryHeap* ms_pXUIMemoryBlock = TNULL;
-		
-		Header m_oHeader;							// 0x0
-		unsigned short** m_asStringTable = TNULL;	// 0x1C
-		TQuaternion* m_pQuat;						// 0x20
-		uint8_t* m_pData;
-		unsigned char* m_pCust;						// 0x28
-		uint32_t m_uiCustDataSize;					// 0x3C
-		uint32_t m_uiStringTableCount;				// 0x30
 	public:
 		inline const wchar_t* GetString(uint16_t index) { return L""; }
 		//inline TQuaternion& GetQuat(int index) { return index == -1 ? TQuaternion::IDENTITY : m_pQuat; }
@@ -50,7 +41,7 @@ namespace Toshi
 		bool ReadHeader(unsigned char* buffer);
 
 		// Toshi::TXUIResource::Load(const char*, const char*, bool, Toshi::TTRB*)
-		// 
+		
 		// loadStringTables = when true load .xus/.trb files (StringTables)
 		// filename = f.e Data/XUI/%s.trb or Data/XUI/%s.xur
 		// fileNameStringTable = f.e %s/StringTables/%s/%s.xus or %s/StringTables/%s/%s.trb
@@ -60,12 +51,35 @@ namespace Toshi
 
 		int Load(unsigned char* buffer);
 		int ReadDataSection(unsigned char* buffer, uint32_t size);
-		bool ReadStringSection(unsigned short* pPtr, uint32_t size);
+		bool ReadStringSection(wchar_t* pPtr, uint32_t size);
 		int ReadCustSection(unsigned char* buffer, uint32_t size);
 		int GetStringTableSize(unsigned char* pPtr, uint32_t size);
 
 		uint8_t* CreateObjectData(TXUIResource& a_rResource, uint16_t index);
 		uint8_t* CreateObjectData(TXUIResource& a_rResource, const wchar_t* objectName);
+
+	private:
+		void Destroy()
+		{
+			for (size_t i = 0; i < m_uiStringTableCount; i++)
+			{
+				delete m_asStringTable[i];
+			}
+
+			if (m_asStringTable) delete[] m_asStringTable;
+			if (m_pQuat) delete[] m_pQuat;
+
+			// this+0x2C(1) probably function pointer parameter=int (value 1 in this case)
+		}
+
+	private:
+		Header m_oHeader;                           // 0x0
+		wchar_t** m_asStringTable = TNULL;          // 0x1C
+		TQuaternion* m_pQuat;						// 0x20
+		uint8_t* m_pData;
+		unsigned char* m_pCust;                     // 0x28
+		uint32_t m_uiCustDataSize;                  // 0x3C
+		uint32_t m_uiStringTableCount;              // 0x30
 	};
 }
 

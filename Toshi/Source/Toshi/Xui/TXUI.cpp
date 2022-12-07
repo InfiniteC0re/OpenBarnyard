@@ -3,5 +3,5 @@
 
 namespace Toshi
 {
-
+	TMemoryHeap* TXUI::ms_pXUIMemoryBlock = TNULL;
 }

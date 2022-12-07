@@ -10,7 +10,6 @@ void Toshi::XURXUIObjectData::Load(uint8_t*& a_pData)
 void Toshi::XURXUIObjectData::LoadChildren(uint8_t* a_pData)
 {
 	TASSERT(PARSEDWORD(a_pData) < (1 << 8), "Not a Word");
-
 }
 
 void Toshi::XURXUIElementData::Load(uint8_t*& a_pData)

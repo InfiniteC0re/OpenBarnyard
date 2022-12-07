@@ -179,10 +179,11 @@ namespace Toshi
 
 	void T2Resource::CreateResource(const char* resourceName, void* unk, t_CreateDestroyCallbk a_fnCreateDestroyCallbk, void* a_pData)
 	{
-		if (m_iID == T2ResourcePtr::IDINVALID)
-		{
-			m_iID = T2ResourceManager::GetSingleton()->CreateResource(resourceName, unk, a_fnCreateDestroyCallbk, a_pData);
-		}
+		// since CreateResource is a static function it cannot use m_iID (commented because couldn't compile)
+		//if (m_iID == T2ResourcePtr::IDINVALID)
+		//{
+		//	m_iID = T2ResourceManager::GetSingleton()->CreateResource(resourceName, unk, a_fnCreateDestroyCallbk, a_pData);
+		//}
 	}
 
 	void T2Resource::DestroyResource()

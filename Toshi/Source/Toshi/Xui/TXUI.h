@@ -5,9 +5,13 @@
 
 namespace Toshi
 {
-	class TXUI : TSingleton<TXUI>
+	class TXUI : public TSingleton<TXUI>
 	{
-		static uint8_t ms_pXUIMemoryBlock;
+	public:
+		static TMemoryHeap* MemoryBlock() { return ms_pXUIMemoryBlock; }
+	
+	private:
+		static TMemoryHeap* ms_pXUIMemoryBlock;
 		static uint8_t ms_pXUITRBMemoryBlock;
 	};
 }

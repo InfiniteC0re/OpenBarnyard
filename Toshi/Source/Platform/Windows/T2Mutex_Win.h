@@ -8,7 +8,7 @@ namespace Toshi
 		typedef uint32_t Flags;
 		enum Flags_ : Flags
 		{
-			Flags_Standard      = 0,
+			Flags_Standard = 0,
 			Flags_DoNotWait = 1
 		};
 

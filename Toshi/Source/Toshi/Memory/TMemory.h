@@ -1,6 +1,6 @@
 #pragma once
 #include "Toshi/Core/Core.h"
-#include "Toshi2/T2Mutex.h"
+#include "Toshi2/Thread/T2Mutex.h"
 
 namespace Toshi
 {
@@ -60,7 +60,7 @@ namespace Toshi
 		static TMemoryHeap* dlheapcreate(TMemoryHeap* heap, size_t size, Flags flags, const char name[15]) { return TMemory::dlheapcreatesubheap(heap, size, flags, name); }
 
 		static TMemoryHeap* CreateHeapInPlace(void* ptr, size_t heapSize, Flags flags, const char name[15]) { return TMemory::dlheapcreateinplace(ptr, heapSize, flags, name); }
-		static void         CreateHeap(size_t size, Flags flags, const char name[15]) { TMemory::dlheapcreate(s_GlobalHeap, size, flags, name); }
+		static TMemoryHeap* CreateHeap(size_t size, Flags flags, const char name[15]) { return TMemory::dlheapcreate(s_GlobalHeap, size, flags, name); }
 		static void         DestroyHeap(TMemoryHeap* heap) { TMemory::dlheapdestroy(heap); }
 
 		static void         OutOfMem(TMemoryHeap* heap, size_t size);
@@ -149,22 +149,37 @@ inline static void TFree(void* mem)
 	Toshi::TMemory::s_Context.s_cbFree(mem);
 }
 
-inline void* operator new(size_t size)
+inline void* operator new(size_t size) noexcept
 {
 	return TMalloc(size);
 }
 
-inline void* operator new[](size_t size)
-{
-	return TMalloc(size);
-}
-
-inline void* operator new[](size_t size, Toshi::TMemoryHeap* heap)
+inline void* operator new(size_t size, Toshi::TMemoryHeap* heap) noexcept
 {
 	return Toshi::TMemoryHeap::Malloc(heap, size);
 }
 
-inline void operator delete(void* ptr)
+inline void* operator new[](size_t size) noexcept
 {
-	return TFree(ptr);
+	return TMalloc(size);
+}
+
+inline void* operator new[](size_t size, Toshi::TMemoryHeap* heap) noexcept
+{
+	return Toshi::TMemoryHeap::Malloc(heap, size);
+}
+
+inline void operator delete(void* ptr) noexcept
+{
+	TFree(ptr);
+}
+
+inline void operator delete[](void* ptr) noexcept
+{
+	TFree(ptr);
+}
+
+inline void operator delete[](void* ptr, size_t _Size) noexcept
+{
+	TFree(ptr);
 }
