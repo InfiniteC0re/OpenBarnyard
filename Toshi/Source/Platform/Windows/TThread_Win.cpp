@@ -1,5 +1,5 @@
 #include "ToshiPCH.h"
-#include "TThread.h"
+#include "TThread_Win.h"
 
 namespace Toshi
 {
@@ -17,7 +17,7 @@ namespace Toshi
 	{
 		m_iThreadID = -1;
 		m_hThreadHnd = CreateThread(NULL, a_iStackSize, ThreadEntry, this, CREATE_SUSPENDED, &m_iThreadID);
-		
+
 		TASSERT(m_hThreadHnd != NULL, "Couldn't create thread");
 		bool bResult = SetThreadPriority(m_hThreadHnd, a_ePriority);
 		TASSERT(bResult != false, "Couldn't set thread priority");
@@ -36,7 +36,7 @@ namespace Toshi
 	void TThread::Exit(TThread* a_pThread)
 	{
 		TASSERT(a_pThread->m_iThreadID == GetCurrentThreadId(), "Thread cannot be closed outside");
-		
+
 		BOOL bResult = CloseHandle(a_pThread->m_hThreadHnd);
 		TASSERT(bResult != FALSE, "Couldn't close thread");
 

@@ -1,9 +1,10 @@
 #pragma once
-#include <cstdint>
 #include "Toshi/File/TTRB.h"
-#include "Toshi/Core/TThread.h"
+#include "Toshi/Thread/TThread.h"
 #include "Toshi/Render/TAssetInit.h"
 #include "Toshi/Utils/TUtil.h"
+
+#include <cstdint>
 
 namespace Toshi
 {
