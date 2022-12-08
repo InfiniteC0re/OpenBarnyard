@@ -17,14 +17,14 @@ namespace Toshi
 			return new T;
 		}
 
-		// Returns pointer and asserts if it's not created
+		// Returns pointer and asserts if it's not allocated
 		static T* GetSingleton()
 		{
 			TASSERT(ms_pSingleton != TNULL, "TSingleton::GetSingleton() - ms_pSingleton is TNULL");
 			return ms_pSingleton;
 		}
 
-		// Returns pointer even if it's not created
+		// Returns pointer even if it's not allocated
 		static T* GetSingletonWeak()
 		{
 			return ms_pSingleton;

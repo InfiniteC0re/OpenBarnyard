@@ -23,13 +23,11 @@
 #include "Toshi/Utils/TLog.h"
 #include "Toshi/Utils/TSingleton.h"
 #include "Toshi/Utils/TUtil.h"
-#include "Toshi/Utils/TMutex.h"
-#include "Toshi/Utils/TMutexLock.h"
+#include "Toshi/Thread/TMutexLock.h"
 #include "Toshi/Strings/TStringManager.h"
 
 /* Toshi 2.0 Header Files */
-#include "Toshi2/T2Mutex.h"
-#include "Toshi2/T2MutexLock.h"
+#include "Toshi2/Thread/T2MutexLock.h"
 
 /* Platform specific headers */
 #ifdef TOSHI_PLATFORM_WINDOWS
