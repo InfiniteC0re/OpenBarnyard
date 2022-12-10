@@ -22,6 +22,12 @@ bool Toshi::TModel::LoadTMD(const char* a_tmdPath)
 	return false;
 }
 
+void Toshi::TModel::CreateResource(const char* name)
+{
+	T2Resource::CreateResource(name, this, TNULL, this);
+	
+}
+
 bool Toshi::TModel::LoadTRBTMD(const char*)
 {
 

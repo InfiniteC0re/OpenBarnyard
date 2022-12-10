@@ -2,6 +2,7 @@
 
 #include "Toshi/File/TFile.h"
 #include "Toshi/Render/TSkeleton.h"
+#include "Toshi2/T2ResourceManager.h"
 
 namespace Toshi
 {
@@ -22,6 +23,7 @@ namespace Toshi
 		//int* m_pUVHashOffset; // 0x18
 		TModelLOD* m_modelLODs; // 0x18
 		void* m_pTRB; // 0xA4
+		const char* m_modelName; // 0xDC NT08, 0xAC Deblob
 
 		struct Header
 		{
@@ -34,6 +36,9 @@ namespace Toshi
 		{
 
 		};
+
+		bool Create(const char* name, bool a_bLoadImmediately);
+		void CreateResource(const char* name);
 
 		inline bool IsCreated() { return (m_Flags & 1) != 0; }
 

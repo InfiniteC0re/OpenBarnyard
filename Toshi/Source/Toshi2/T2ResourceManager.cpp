@@ -132,6 +132,7 @@ namespace Toshi
 		if (m_iMaxNumResources <= iID)
 		{
 			TOSHI_CORE_ERROR("couldnt create resource \"%s\" because we have reached our max (%d)", resourceName, m_iMaxNumResources);
+			return 0;
 		}
 		TASSERT(iID >= 0, "");
 		TASSERT(iID < m_iMaxNumResources, "");
@@ -155,6 +156,7 @@ namespace Toshi
 
 	int T2ResourceManager::FindUnusedResource()
 	{
+		TASSERT(m_iNumUsedResources < m_iMaxNumResources, "");
 		for (size_t i = m_iUnk; i < m_iMaxNumResources; i++)
 		{
 			if (m_pData[i].HasFlag(T2ResourceData::FLAG_DESTROYED | T2ResourceData::FLAG_USED) && m_pData[i].GetData() == TNULL)
