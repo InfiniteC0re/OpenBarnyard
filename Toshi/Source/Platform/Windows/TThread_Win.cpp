@@ -1,110 +1,49 @@
 #include "ToshiPCH.h"
-#include "Toshi/Core/TSemaphore.h"
-#include "Toshi/Utils/TMutex.h"
-#include "Toshi2/T2Mutex.h"
+#include "TThread_Win.h"
 
-// TSemaphore
 namespace Toshi
 {
-	bool TSemaphore::Create(size_t a_iInitCount, size_t a_iMaxCount)
+	static TThreadManager oThreadManager;
+
+	unsigned long __stdcall ThreadEntry(void* userParam)
 	{
-		TASSERT(a_iInitCount >= 0, "Init count should be greater than zero");
-		TASSERT(a_iMaxCount >= a_iInitCount, "Init count cannot be less than max count");
-		
-		m_hSemaHnd = CreateSemaphoreA(NULL, a_iInitCount, a_iMaxCount, NULL);
-		TASSERT(m_hSemaHnd != NULL, "Unable to create semaphore");
+		TThread* pThread = static_cast<TThread*>(userParam);
+		pThread->Main();
+		TThread::Exit(pThread);
+		return 0;
+	}
+
+	bool TThread::Create(size_t a_iStackSize, PRIORITY a_ePriority, uint8_t flag)
+	{
+		m_iThreadID = -1;
+		m_hThreadHnd = CreateThread(NULL, a_iStackSize, ThreadEntry, this, CREATE_SUSPENDED, &m_iThreadID);
+
+		TASSERT(m_hThreadHnd != NULL, "Couldn't create thread");
+		bool bResult = SetThreadPriority(m_hThreadHnd, a_ePriority);
+		TASSERT(bResult != false, "Couldn't set thread priority");
+
+		TThreadManager::GetSingleton()->InsertThread(this);
+
+		if ((flag & 1) == 0)
+		{
+			DWORD iResult = ResumeThread(m_hThreadHnd);
+			TASSERT(iResult != -1, "Couldn't resume thread");
+		}
 
 		return true;
 	}
 
-	bool TSemaphore::Destroy()
+	void TThread::Exit(TThread* a_pThread)
 	{
-		return false;
-	}
+		TASSERT(a_pThread->m_iThreadID == GetCurrentThreadId(), "Thread cannot be closed outside");
 
-	bool TSemaphore::Signal()
-	{
-		TASSERT(m_hSemaHnd != NULL, "Handle is NULL");
-		return ReleaseSemaphore(m_hSemaHnd, 1, NULL);
-	}
+		BOOL bResult = CloseHandle(a_pThread->m_hThreadHnd);
+		TASSERT(bResult != FALSE, "Couldn't close thread");
 
-	bool TSemaphore::Wait()
-	{
-		return WaitForSingleObject(m_hSemaHnd, INFINITE) == WAIT_OBJECT_0;
-	}
+		TThreadManager::GetSingleton()->RemoveThread(a_pThread);
+		a_pThread->m_hThreadHnd = NULL;
+		a_pThread->m_iThreadID = -1;
 
-	bool TSemaphore::Poll()
-	{
-		return WaitForSingleObject(m_hSemaHnd, 0) == WAIT_OBJECT_0;
-	}
-}
-
-// TMutex
-namespace Toshi
-{
-	TMutex::~TMutex()
-	{
-		Destroy();
-	}
-
-	bool TMutex::Create()
-	{
-		m_Handle = CreateMutexA(NULL, FALSE, NULL);
-		return true;
-	}
-
-	bool TMutex::Destroy()
-	{
-		BOOL result = CloseHandle(m_Handle);
-		m_Handle = NULL;
-
-		return result;
-	}
-
-	bool TMutex::Lock(uint32_t flags)
-	{
-		DWORD waitForMs = (flags & TMutexLockFlag_DoNotWait) ? 0 : INFINITE;
-		DWORD result = WaitForSingleObject(m_Handle, waitForMs);
-
-		return result == WAIT_OBJECT_0;
-	}
-
-	bool TMutex::Unlock()
-	{
-		return ReleaseMutex(m_Handle);
-	}
-}
-
-// T2Mutex
-namespace Toshi
-{
-	bool T2Mutex::Create()
-	{
-		Destroy();
-		m_Mutex = CreateMutexA(NULL, FALSE, NULL);
-		TASSERT(m_Mutex != NULL, "Failed to create mutex");
-		return true;
-	}
-
-	bool T2Mutex::Lock(Flags flags)
-	{
-		TASSERT(m_Mutex != NULL, "Mutex is NULL");
-
-		DWORD waitForMs = (flags & Flags_DoNotWait) ? 0 : INFINITE;
-		DWORD result = WaitForSingleObject(m_Mutex, waitForMs);
-
-		return result == WAIT_OBJECT_0;
-	}
-
-	bool T2Mutex::Unlock()
-	{
-		TASSERT(m_Mutex != NULL, "Mutex is NULL");
-		return ReleaseMutex(m_Mutex);
-	}
-
-	void T2Mutex::Destroy()
-	{
-		CloseHandle(m_Mutex);
-		m_Mutex = NULL;
+		_endthreadex(0);
 	}
 }

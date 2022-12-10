@@ -1,6 +1,6 @@
 #pragma once
 #include "Toshi/Core/TFifo.h"
-#include "Toshi/Core/TThread.h"
+#include "Toshi/Thread/TThread.h"
 
 namespace Toshi
 {

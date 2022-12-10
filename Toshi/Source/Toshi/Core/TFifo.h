@@ -1,5 +1,5 @@
 #pragma once
-#include "TSemaphore.h"
+#include "Toshi/Thread/TSemaphore.h"
 
 namespace Toshi
 {

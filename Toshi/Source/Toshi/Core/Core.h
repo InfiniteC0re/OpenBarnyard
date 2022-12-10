@@ -1,9 +1,19 @@
 #pragma once
+#include "Platform.h"
 
 constexpr uint32_t TMAKEFOUR(const char str[4])
 {
 	return ((str[3] << 24) | (str[2] << 16) | (str[1] << 8) | str[0]);
 }
+
+#define STRINGIFY(X) STRINGIFY2(X)    
+#define STRINGIFY2(X) #X
+
+#define STRCAT(X, Y) STRCAT2(X, Y)
+#define STRCAT2(X, Y) X##Y
+#define STRCAT_2 CAT
+#define STRCAT_3(X, Y, Z) STRCAT(X, STRCAT(Y, Z))
+#define STRCAT_4(A, X, Y, Z) STRCAT(A, STRCAT_3(X, Y, Z))
 
 #define TMAKEVERSION(VER_MAJOR, VER_MINOR) ((VER_MAJOR << 16) | VER_MINOR)
 #define BITFIELD(x) (1 << x)
@@ -49,10 +59,6 @@ __forceinline uint16_t PARSEWORD(uint16_t val)
 
 #ifndef TBREAK
 	#define TBREAK() 
-#endif
-
-#ifndef TOSHI_PLATFORM_WINDOWS
-	#error Unsupported platform
 #endif
 
 #if defined(TOSHI_ENABLE_ASSERTS)

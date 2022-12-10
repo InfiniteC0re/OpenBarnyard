@@ -86,9 +86,7 @@ namespace Toshi
 		friend class TThread;
 
 	private:
-#ifdef TOSHI_PLATFORM_WINDOWS
 		CRITICAL_SECTION m_CriticalSection;
-#endif
 		TDList<TThread> m_Threads;
 	};
 }
