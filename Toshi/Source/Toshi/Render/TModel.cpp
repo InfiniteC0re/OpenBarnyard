@@ -30,6 +30,26 @@ void Toshi::TModel::CreateResource(const char* name)
 
 bool Toshi::TModel::LoadTRBTMD(const char*)
 {
-
+	const char* symbol = TranslateSymbolName("SkeletonHeader");
+	m_pTRB->GetSymbolAddress(symbol);
+	symbol = TranslateSymbolName("Skeleton");
+	m_pTRB->GetSymbolAddress(symbol);
+	symbol = TranslateSymbolName("Collision");
+	m_pTRB->GetSymbolAddress(symbol);
 	return false;
+}
+
+bool Toshi::TModel::LoadTrb()
+{
+	return false;
+}
+
+const char* Toshi::TModel::TranslateSymbolName(const char* a_symbolName)
+{
+	if (sm_SymbolNamePrefix != TNULL)
+	{
+		T2String8::Format(s_TranslatedSymbol, sizeof(s_TranslatedSymbol), "%s_%s", sm_SymbolNamePrefix);
+		a_symbolName = s_TranslatedSymbol;
+	}
+	return a_symbolName;
 }
