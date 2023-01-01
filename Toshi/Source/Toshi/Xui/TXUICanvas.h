@@ -18,7 +18,9 @@ namespace Toshi
 		{
 			m_txuiCanvasClass = (TClass*)TClass::Find("TXUICanvas", &TXUIElement::s_Class);
 		}
+
+
 	};
-	*/
 	
+	*/
 }

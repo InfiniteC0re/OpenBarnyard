@@ -3,12 +3,13 @@
 
 void AEntityLoader::Update(float a_flt)
 {
+	Toshi::THPTimer timer = Toshi::THPTimer();
 	switch (m_iState)
 	{
 	case Loading:
 		break;
 	case Creating:
-		Toshi::THPTimer timer = Toshi::THPTimer();
+		
 		timer.Reset();
 		timer.Update();
 		do
