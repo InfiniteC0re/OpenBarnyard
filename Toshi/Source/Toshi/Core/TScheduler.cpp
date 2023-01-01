@@ -15,7 +15,6 @@ namespace Toshi
 		m_LastTask = nullptr;
 		m_Unk1 = &m_TaskCount;
 		m_Unk2 = &m_TaskCount;
-		m_TaskTree.m_pRoot = nullptr;
 		m_Unk4 = 0;
 		m_CurrentTimeDelta = 0.0;
 		m_TotalTime = 0.0;

@@ -25,9 +25,16 @@ namespace Toshi
 		
 		
 	public:
+		TRenderDX11() { }
+		~TRenderDX11() { }
+
 		TMSWindow* GetMSWindow() { return m_pWindow; }
 		
 	public:
+		virtual bool CreateDisplay(DisplayParams* params) override { return true; }
+		virtual bool DestroyDisplay() override { return true; }
+		virtual void* GetCurrentDevice() override { return TNULL; }
+		virtual DisplayParams* GetCurrentDisplayParams() override { return TNULL; }
 		virtual bool Create() override { return Create("de Blob"); }
 		
 		bool Create(LPCSTR a_name);
