@@ -47,8 +47,8 @@ namespace Toshi
 			m_width = 60.0f;
 			m_height = 30.0f;
 			m_positon = 1.0f;
-			m_scale = { -1.0f, -1.0f, -1.0f };
-			m_rotation = { -1.0f, 0.0f, 0.0f };
+			//m_scale = { -1.0f, -1.0f, -1.0f };
+			//m_rotation = { -1.0f, 0.0f, 0.0f };
 			m_opacity = 0;
 			m_pivot = 0;
 			m_show = 0;
@@ -58,20 +58,21 @@ namespace Toshi
 
 		~XURXUIElementData() = default;
 
+		uint16_t m_id;
 		float m_width; //0x24
 		float m_height; //0x28
 		float m_positon; //0x2C
-		TVector3 m_scale; //0x30
-		TVector3 m_rotation;
-		uint16_t m_opacity;
-		uint16_t m_anchor; 
+		float m_scale; //0x30
+		float m_rotation;
+		uint32_t m_opacity;
+		uint32_t m_anchor; 
 		uint32_t m_pivot; 
 		uint32_t m_show; 
+		uint32_t m_blendMode;
 		uint32_t m_disableTimelineRecursion;
 		bool m_colorWriteFlags;
 		bool m_clipChildren;
-
-
+		
 		bool Load(uint8_t*& a_pData);
 
 		bool TranslateTimelineProp(const char* param_1, uint32_t& param_2, uint32_t& param_3);

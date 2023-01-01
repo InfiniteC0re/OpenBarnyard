@@ -28,7 +28,7 @@ bool Toshi::XURXUIElementData::Load(uint8_t*& a_pData)
 		}
 		if ((smth2 & 1) != 0)
 		{
-			m_unk = PARSEWORD_BIG(a_pData);
+			m_id = PARSEWORD_BIG(a_pData);
 			a_pData += 2;
 		}
 		if ((smth2 & 2) != 0)
@@ -46,70 +46,71 @@ bool Toshi::XURXUIElementData::Load(uint8_t*& a_pData)
 		if ((smth2 & 8) != 0)
 		{
 			TASSERT(PARSEDWORD_BIG(a_pData) < (1 << 16), "");
-			m_unk4 = PARSEWORD_BIG(a_pData + 2);
+			m_positon = PARSEWORD_BIG(a_pData + 2);
 			a_pData += 4;
 		}
 		if ((smth2 & 0x10) != 0)
 		{
 			TASSERT(PARSEDWORD_BIG(a_pData) < (1 << 16), "");
-			m_unk5 = PARSEWORD_BIG(a_pData + 2);
+			m_rotation = PARSEWORD_BIG(a_pData + 2);
 			a_pData += 4;
 		}
 		if ((smth2 & 0x20) != 0)
 		{
 			TASSERT(PARSEDWORD_BIG(a_pData) < (1 << 16), "");
-			m_unk6 = PARSEWORD_BIG(a_pData + 2);
+			m_scale = PARSEWORD_BIG(a_pData + 2);
 			a_pData += 4;
 		}
 		if ((smth2 & 0x40) != 0)
 		{
 			float opacity = (float)PARSEDWORD_BIG(a_pData);
 			TASSERT(opacity >= 0.0f && opacity <= 1.0f, "");
-			m_fOpacity = opacity * 255.0f;
+			m_opacity = opacity * 255.0f;
 			a_pData += 4;
 		}
 		if ((smth2 & 0x80) != 0)
 		{
 			TASSERT(PARSEDWORD_BIG(a_pData) <= Flags_AnchorMask, "");
-			m_unkFlags |= PARSEWORD_BIG(a_pData + 2) * 8;
+			m_anchor |= PARSEWORD_BIG(a_pData + 2) * 8;
 			a_pData += 4;
 		}
 		if ((smth2 & 0x100) != 0)
 		{
 			TASSERT(PARSEDWORD_BIG(a_pData) < (1 << 16), "");
-			m_unk7 = PARSEWORD_BIG(a_pData + 2);
+			m_pivot = PARSEWORD_BIG(a_pData + 2);
 			a_pData += 4;
 		}
 		if ((smth2 & 0x200) != 0)
 		{
-			m_unkFlags &= ~0x1000;
+			m_show &= ~0x1000;
 			uint8_t val = *a_pData++;
 			if (val != 0) val = 0x1000;
-			m_unkFlags |= val;
+			m_show |= val;
 		}
 		if ((smth2 & 0x400) != 0)
 		{
 			TASSERT(PARSEDWORD_BIG(a_pData) <= Flags_BlendModeMask, "");
-			m_unkFlags |= PARSEWORD_BIG(a_pData + 2);
+			m_blendMode |= PARSEWORD_BIG(a_pData + 2);
 			a_pData += 4;
 		}
 		if ((smth2 & 0x800) != 0)
 		{
-			m_unkFlags &= ~0x2000;
+			m_disableTimelineRecursion &= ~0x2000;
 			uint8_t val = *a_pData++;
 			if (val != 0) val = 0x2000;
-			m_unkFlags |= val;
+			m_disableTimelineRecursion |= val;
 		}
+		// m_colorWriteFlags
 		if ((smth2 & 0x2000) != 0)
 		{
 			a_pData += 4;
 		}
 		if ((smth2 & 0x4000) != 0)
 		{
-			m_unkFlags &= ~0x800;
+			m_clipChildren &= ~0x800;
 			uint8_t val = *a_pData++;
 			if (val != 0) val = 0x800;
-			m_unkFlags |= val;
+			m_clipChildren |= val;
 		}
 	}
 	return true;
