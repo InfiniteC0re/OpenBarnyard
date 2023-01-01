@@ -25,9 +25,17 @@ namespace Toshi
 
 		}
 
+		virtual ~XURXUIObjectData() = default;
+
 		uint16_t unk; //0x12 de blob 0x1C NT08
 
-		void Load(uint8_t*& a_pData);
+		virtual bool Load(uint8_t*& a_pData);
+		virtual bool IsFloatPropType(uint32_t unused, uint32_t propType) = 0;
+		virtual bool IsColourPropType(uint32_t unused, uint32_t propType) = 0;
+		virtual uint32_t GetTimelinePropSize(uint32_t unused, uint32_t propType) = 0;
+		virtual bool TranslateTimelineProp(const char* param_1, uint32_t& param_2, uint32_t& param_3) = 0;
+		virtual bool ValidateTimelineProp(uint32_t unused, uint32_t param_2) = 0;
+
 		void LoadChildren(uint8_t* a_pData);
 	};
 
@@ -49,7 +57,29 @@ namespace Toshi
 		uint32_t m_unkFlags; //0x2A de blob
 		uint32_t m_fOpacity; //0x2C de blob
 
-		void Load(uint8_t*& a_pData);
+		bool Load(uint8_t*& a_pData);
+
+		bool TranslateTimelineProp(const char* param_1, uint32_t& param_2, uint32_t& param_3);
+
+		bool IsFloatPropType(uint32_t unused, uint32_t propType) {
+			return propType != 1 && propType != 2 && propType != 6 ? false : true;
+		}
+
+		// No it's not
+		bool IsColourPropType(uint32_t unused, uint32_t propType) {
+			return false;
+		}
+
+		uint32_t GetTimelinePropSize(uint32_t unused, uint32_t propType) {
+
+			if (propType != 11 && propType != 9 && propType != 14)
+			{
+				if (propType != 0) return 4;
+				return 2;
+			}
+			return 1;
+
+		}
 	};
 }
 

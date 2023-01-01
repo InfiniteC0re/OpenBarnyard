@@ -1,10 +1,11 @@
 #include "ToshiPCH.h"
 #include "TXUIElement.h"
 
-void Toshi::XURXUIObjectData::Load(uint8_t*& a_pData)
+bool Toshi::XURXUIObjectData::Load(uint8_t*& a_pData)
 {
 	unk = PARSEWORD_BIG(a_pData);
 	a_pData += 2;
+	return true;
 }
 
 void Toshi::XURXUIObjectData::LoadChildren(uint8_t* a_pData)
@@ -12,7 +13,7 @@ void Toshi::XURXUIObjectData::LoadChildren(uint8_t* a_pData)
 	TASSERT(PARSEDWORD(a_pData) < (1 << 8), "Not a Word");
 }
 
-void Toshi::XURXUIElementData::Load(uint8_t*& a_pData)
+bool Toshi::XURXUIElementData::Load(uint8_t*& a_pData)
 {
 	Toshi::XURXUIObjectData::Load(a_pData);
 	uint8_t smth = *a_pData++;
@@ -109,4 +110,24 @@ void Toshi::XURXUIElementData::Load(uint8_t*& a_pData)
 			m_unkFlags |= val;
 		}
 	}
+	return true;
+}
+
+
+bool Toshi::XURXUIElementData::TranslateTimelineProp(const char* param_1, uint32_t& param_2, uint32_t& param_3) // param_3 = position?
+{
+	if (TStringManager::String8Compare(param_1, "Id", -1) == 0)
+	{
+		param_3 = 0;
+		return true;
+	}
+	else
+	{
+		if (TStringManager::String8Compare(param_1, "Width", -1) == 0)
+		{
+			param_3 = 1;
+			return true;
+		}
+	}
+	return false;
 }

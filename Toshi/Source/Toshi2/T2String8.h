@@ -1,4 +1,5 @@
 #pragma once
+#include <Toshi/Strings/TString8.h>
 
 namespace Toshi
 {
