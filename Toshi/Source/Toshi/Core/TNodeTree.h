@@ -9,26 +9,61 @@ namespace Toshi
 	public:
 		class TNode
 		{
-			
 		public:
 			TNode* m_pParent;
 			TNode** m_pChildren;
-			T* m_value;
-			inline TNode* Parent() const { return m_pParent; }
-			inline TNode* Child(int param_1) const { return m_pChildren[param_1]; }
+
+			T* Parent() const
+			{
+				return m_pParent->Cast();
+			}
+
+			T* Child(int index) const
+			{
+				return m_pChildren[index]->Cast();
+			}
+
+			T* Cast()
+			{
+				return static_cast<T*>(this);
+			}
 		};
 
+		TNodeTree()
+		{
+			m_pRoot = TNULL;
+		}
+
+		T* Root() const
+		{
+			TASSERT(TTRUE == IsLinked(), "The tree doesn't have root");
+			return m_pRoot->Cast();
+		}
+		
+		bool IsLinked() const
+		{
+			return m_pRoot != TNULL;
+		}
+
+		void InsertRoot(TNode* a_pRoot)
+		{
+			m_pRoot = a_pRoot;
+			a_pRoot = TNULL;
+		}
+		
+		void RemoveRoot()
+		{
+			m_pRoot = TNULL;
+		}
+
+		TNodeTree& operator=(const TNodeTree& a_pNodeTree)
+		{
+			m_pRoot = a_pNodeTree.m_pRoot;
+			return this;
+		}
+		
+	protected:
 		TNode* m_pRoot; // 0x0
-
-		inline TNodeTree() { m_pRoot = TNULL; }
-
-		inline TNode* Root() { return m_pRoot; }
-		inline void InsertRoot(TNode* a_pRoot) { m_pRoot = a_pRoot; a_pRoot = TNULL; }
-		inline void RemoveRoot() { m_pRoot = TNULL; }
-
-		inline TNodeTree& operator=(const TNodeTree& a_pNodeTree) { m_pRoot = a_pNodeTree.m_pRoot; return this; }
-
-	
 	};
 }
 

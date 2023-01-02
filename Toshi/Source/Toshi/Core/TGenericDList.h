@@ -20,8 +20,8 @@ namespace Toshi
 			}
 
 		public:
-			inline bool IsLinked() const { return this != m_Next; }
-			inline void Reset() { m_Next = this; m_Prev = this; }
+			bool IsLinked() const { return this != m_Next; }
+			void Reset() { m_Next = this; m_Prev = this; }
 
 			void InsertAfter(TNode* node)
 			{
@@ -56,7 +56,7 @@ namespace Toshi
 
 		public:
 			template<typename T>
-			inline T* As() { return static_cast<T*>(this); }
+			T* As() { return static_cast<T*>(this); }
 
 		protected:
 			TNode* m_Next;
@@ -64,15 +64,15 @@ namespace Toshi
 		};
 
 	public:
-		inline void InsertHead(TNode* node) { node->InsertAfter(&m_Root); }
-		inline void InsertTail(TNode* node) { node->InsertBefore(&m_Root); }
-		inline void RemoveHead()            { if (!IsEmpty()) m_Root.Next()->Remove(); }
-		inline void RemoveTail()            { if (!IsEmpty()) m_Root.Prev()->Remove(); }
-		inline bool IsEmpty()               { return m_Root.Next() == &m_Root; }
-		inline TNode* Head()                { return m_Root.Next(); }
-		inline TNode* Tail()                { return m_Root.Prev(); }
-		inline TNode* Begin()               { return m_Root.Next(); }
-		inline TNode* End()                 { return &m_Root; }
+		void InsertHead(TNode* node) { node->InsertAfter(&m_Root); }
+		void InsertTail(TNode* node) { node->InsertBefore(&m_Root); }
+		void RemoveHead()            { if (!IsEmpty()) m_Root.Next()->Remove(); }
+		void RemoveTail()            { if (!IsEmpty()) m_Root.Prev()->Remove(); }
+		bool IsEmpty()               { return m_Root.Next() == &m_Root; }
+		TNode* Head()                { return m_Root.Next(); }
+		TNode* Tail()                { return m_Root.Prev(); }
+		TNode* Begin()               { return m_Root.Next(); }
+		TNode* End()                 { return &m_Root; }
 
 		static void InsertSegmentAfter(TNode* node1, TNode* node2, TNode* node3)
 		{
@@ -131,14 +131,14 @@ namespace Toshi
 	public:
 		TDList() { }
 
-		inline T* Head()         { return TGenericDList::Head()->As<T>(); }
-		inline T* Tail()         { return TGenericDList::Tail()->As<T>(); }
-		inline T* Begin()        { return TGenericDList::Begin()->As<T>(); }
-		inline T* End()          { return TGenericDList::End()->As<T>(); }
-		inline bool IsEmpty()    { return TGenericDList::IsEmpty(); }
-		inline bool IsLinked()   { return m_Root.IsLinked(); }
-		inline void RemoveHead() { TGenericDList::RemoveHead(); }
-		inline void RemoveTail() { TGenericDList::RemoveTail(); }
+		T* Head()         { return TGenericDList::Head()->As<T>(); }
+		T* Tail()         { return TGenericDList::Tail()->As<T>(); }
+		T* Begin()        { return TGenericDList::Begin()->As<T>(); }
+		T* End()          { return TGenericDList::End()->As<T>(); }
+		bool IsEmpty()    { return TGenericDList::IsEmpty(); }
+		bool IsLinked()   { return m_Root.IsLinked(); }
+		void RemoveHead() { TGenericDList::RemoveHead(); }
+		void RemoveTail() { TGenericDList::RemoveTail(); }
 	};
 
 	template <class T>

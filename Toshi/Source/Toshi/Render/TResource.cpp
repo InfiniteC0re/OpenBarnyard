@@ -1,32 +1,62 @@
 #include "ToshiPCH.h"
 #include "TResource.h"
 
-bool Toshi::TResource::Create()
+namespace Toshi
 {
-	TASSERT(TFALSE == IsCreated(), "Trying to create TResource twice");
+	TResource::~TResource()
+	{
+		m_State |= TResourceState_Dead;
+	}
 
-	m_State |= TResourceState_Created;
-	return true;
-}
+	bool TResource::Create()
+	{
+		TASSERT(TFALSE == IsCreated(), "This resource is already created");
 
-bool Toshi::TResource::Validate()
-{
-	// Deblob does many TASSERTS beforehand (more validation than JPOG)
-	// TASSERT(TFALSE == IsLinked(), "");
-	TASSERT(m_State & TResourceState_Dying, "TResource is dying");
-	// Thats what JPOG and Deblob does
-	if (m_State & TResourceState_Dying) return false;
-	m_State |= TResourceState_Valid;
+		m_State |= TResourceState_Created;
+		return true;
+	}
 
-	return true;
-}
+	bool TResource::Validate()
+	{
+		TASSERT(IsDying() == TFALSE, "Resource is dying and cannot be validated");
+		TASSERT(Parent() == TNULL || Parent()->IsDying() == TFALSE, "Parent resource is dying");
+		
+		if (IsDying()) return false;
+		
+		m_State |= TResourceState_Valid;
+		return true;
+	}
 
-void Toshi::TResource::DestroyResource()
-{
-	//GetRenderer().DestroyResource(this);
-}
+	void TResource::Invalidate()
+	{
+		m_State &= ~TResourceState_Valid;
+	}
 
-Toshi::TResource* Toshi::TResource::Parent() const
-{
-	return m_pParent == TNULL ? TNULL : m_pParent->m_value;
+	void TResource::DestroyResource()
+	{
+		GetRenderer()->DestroyResource(this);
+	}
+
+	void TResource::OnDestroy()
+	{
+		TASSERT(TTRUE == IsCreated(), "Tried to destroy resource that wasn't created");
+
+		m_State &= ~TResourceState_Created;
+		m_State |= TResourceState_Dying;
+	}
+
+	void TResource::SetName(const char* name)
+	{
+		// 006b5350
+		if (name == TNULL)
+		{
+			name = "res:";
+
+			char UIdStr[12];
+			T2String8::IntToString(m_UId, UIdStr, 0xE, 10);
+		}
+
+		TASSERT(TStringManager::String8Length(name) <= MAXNAMELEN, "Name is too long");
+		TStringManager::String8Copy(m_Name, name, -1);
+	}
 }

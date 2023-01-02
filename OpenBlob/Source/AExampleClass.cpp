@@ -100,6 +100,22 @@ AExampleClass::AExampleClass()
 	trb.GetSymbolAddress("SkeletonHeader");
 	trb.Load("C:\\Users\\nepel\\Desktop\\BKG_CONCEPT01_NTSC_ENG.TTL");
 	*/
+
+	class NodeTreeTest : public TNodeTree<NodeTreeTest>::TNode
+	{
+	public:
+		NodeTreeTest(float value) : m_Value(value) { }
+
+		float GetValue() { return m_Value; }
+
+	private:
+		float m_Value;
+	};
+
+	TNodeTree<NodeTreeTest> tree;
+	tree.InsertRoot(new NodeTreeTest(6.0f));
+	TOSHI_INFO(tree.Root()->GetValue());
+
 	class Test : public TDList<Test>::TNode
 	{
 	public:

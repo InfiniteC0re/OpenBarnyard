@@ -1,11 +1,11 @@
 #pragma once
-
 #include "Toshi/Render/TRender.h"
 #include "Toshi/Core/TNodeTree.h"
 
 namespace Toshi
 {
-	enum TResourceState
+	typedef uint8_t TResourceState;
+	enum TResourceState_ : TResourceState
 	{
 		TResourceState_Valid       = BITFIELD(0),
 		TResourceState_Created     = BITFIELD(1),
@@ -20,30 +20,71 @@ namespace Toshi
 		public TNodeTree<TResource>::TNode
 	{
 	public:
-		virtual bool Create();
-		virtual bool Validate();
-		virtual void DestroyResource();
-
-		inline bool IsDying() const { return m_State & TResourceState_Dying; }
-		inline bool IsValid() const { return m_State & TResourceState_Valid; }
-		inline bool IsCreated() const { return m_State & TResourceState_Created; }
-		inline bool IsSceneObject() const { return m_State & TResourceState_SceneObject; }
-		
-		inline bool IsInvalid() const { return ~m_State & TResourceState_Valid; }
-
-		inline TRender* GetRenderer() const { return m_pRenderer; }
-		TResource* Parent() const;
+		static constexpr size_t MAXNAMELEN = 14;
 
 	public:
-		TRender* m_pRenderer; // 0x18
-		char* m_cName; // 0x1C
-		// 0x20
-		// 0x24
-		// 0x28
-		// 0x2A
-		uint8_t m_State; // 0x2B
-		unsigned int m_uiUId; // 0x2C
-	};
+		virtual ~TResource();
+		virtual bool Create();
+		virtual bool Validate();
+		virtual void Invalidate();
+		virtual void DestroyResource();
+		virtual void OnDestroy();
 
+		bool IsDead() const { return m_State & TResourceState_Dead; }
+		bool IsDying() const { return m_State & TResourceState_Dying; }
+		bool IsValid() const { return m_State & TResourceState_Valid; }
+		bool IsCreated() const { return m_State & TResourceState_Created; }
+		bool IsSceneObject() const { return m_State & TResourceState_SceneObject; }
+		bool IsInvalid() const { return ~m_State & TResourceState_Valid; }
+
+		void SetState(TResourceState newState) { m_State = newState; }
+		void AddState(TResourceState state) { m_State |= state; }
+		
+		void SetParent(TResource* parent) { m_Parent = parent; }
+
+		const char* GetName() const { return m_Name; }
+		void SetName(const char* name);
+
+		TRender* GetRenderer() const
+		{
+			return m_Renderer;
+		}
+
+		TResource* Parent() const
+		{
+			return m_Parent == TNULL ? m_Tree.Root()->Parent() : m_Parent;
+		}
+
+		TResource* GetNextResource() const
+		{
+			return m_NextResource;
+		}
+
+		TResource* GetAttached() const
+		{
+			return m_Attached;
+		}
+
+		TResource* GetLastResource() const
+		{
+			return m_LastResource;
+		}
+
+		TNodeTree<TResource>::TNode* GetTree()
+		{
+			return m_Tree.Root();
+		}
+
+	private:
+		TNodeTree<TResource> m_Tree; // 0x04
+		TResource* m_NextResource;   // 0x08
+		TResource* m_LastResource;   // 0x0C
+		TResource* m_Parent;         // 0x10
+		TResource* m_Attached;       // 0x14
+		TRender* m_Renderer;         // 0x18
+		char m_Name[MAXNAMELEN + 1]; // 0x1C
+		TResourceState m_State;      // 0x2B
+		unsigned int m_UId;          // 0x2C
+	};
 }
 

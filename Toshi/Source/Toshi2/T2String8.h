@@ -1,4 +1,5 @@
 #pragma once
+#include <stdlib.h>
 #include <Toshi/Strings/TString8.h>
 
 namespace Toshi
@@ -80,6 +81,11 @@ namespace Toshi
 				c = *src++;
 			}
 			return *src == 0;
+		}
+
+		static void IntToString(int value, char* dst, int unused, int radix)
+		{
+			_itoa(value, dst, radix);
 		}
 
 	public:
