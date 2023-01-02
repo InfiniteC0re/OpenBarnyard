@@ -2,6 +2,7 @@
 
 #include "Toshi/File/TFile.h"
 #include "Toshi/Xui/TXUI.h"
+#include "Toshi/Xui/TXUIElement.h"
 #include "Toshi/Core/TSystem.h"
 #include "Toshi2/T2String16.h"
 #include "Toshi/Xui/TXUICanvas.h"
@@ -10,12 +11,12 @@ namespace Toshi
 {
 	class TXUIResource
 	{
-		static const uint32_t IDXUR			= TMAKEFOUR("XUIB");
-		static const uint32_t IDXURSTRING	= TMAKEFOUR("STRN");
-		static const uint32_t IDXURVEC		= TMAKEFOUR("VECT");
-		static const uint32_t IDXURQUAT		= TMAKEFOUR("QUAT");
-		static const uint32_t IDXURCUST		= TMAKEFOUR("CUST");
-		static const uint32_t IDXURDATA		= TMAKEFOUR("DATA");
+		static const uint32_t IDXUR = TMAKEFOUR("XUIB");
+		static const uint32_t IDXURSTRING = TMAKEFOUR("STRN");
+		static const uint32_t IDXURVEC = TMAKEFOUR("VECT");
+		static const uint32_t IDXURQUAT = TMAKEFOUR("QUAT");
+		static const uint32_t IDXURCUST = TMAKEFOUR("CUST");
+		static const uint32_t IDXURDATA = TMAKEFOUR("DATA");
 
 		struct Section
 		{
@@ -41,7 +42,7 @@ namespace Toshi
 		bool ReadHeader(unsigned char* buffer);
 
 		// Toshi::TXUIResource::Load(const char*, const char*, bool, Toshi::TTRB*)
-		
+
 		// loadStringTables = when true load .xus/.trb files (StringTables)
 		// filename = f.e Data/XUI/%s.trb or Data/XUI/%s.xur
 		// fileNameStringTable = f.e %s/StringTables/%s/%s.xus or %s/StringTables/%s/%s.trb
@@ -55,8 +56,8 @@ namespace Toshi
 		int ReadCustSection(unsigned char* buffer, uint32_t size);
 		int GetStringTableSize(unsigned char* pPtr, uint32_t size);
 
-		uint8_t* CreateObjectData(TXUIResource& a_rResource, uint16_t index);
-		uint8_t* CreateObjectData(TXUIResource& a_rResource, const wchar_t* objectName);
+		XURXUIObjectData* CreateObjectData(TXUIResource& a_rResource, uint16_t index);
+		XURXUIObjectData* CreateObjectData(TXUIResource& a_rResource, const wchar_t* objectName);
 
 	private:
 		void Destroy()

@@ -1,5 +1,5 @@
 #pragma once
-#include "TXUIElement.h"
+#include "Toshi/Xui/TXUIElement.h"
 
 namespace Toshi
 {
@@ -10,7 +10,7 @@ namespace Toshi
 
 	class XURXUICanvasData : public XURXUIElementData
 	{
-		bool Load(Toshi::TXUIResource& resource, uint8_t*& a_pData);
+		bool Load(TXUIResource& resource, uint8_t*& a_pData);
 	};
 }
 
