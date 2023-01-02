@@ -3,7 +3,7 @@
 
 const char* Toshi::XURXUIElementData::sm_sTypeInfo = "XURXUIElementData";
 
-bool Toshi::XURXUIObjectData::Load(Toshi::TXUIResource& resource, uint8_t*& a_pData)
+bool Toshi::XURXUIObjectData::Load(TXUIResource& resource, uint8_t*& a_pData)
 {
 	unk = PARSEWORD_BIG(a_pData);
 	a_pData += 2;
@@ -15,7 +15,7 @@ void Toshi::XURXUIObjectData::LoadChildren(uint8_t* a_pData)
 	TASSERT(PARSEDWORD(a_pData) < (1 << 8), "Not a Word");
 }
 
-bool Toshi::XURXUIElementData::Load(Toshi::TXUIResource& resource, uint8_t*& a_pData)
+bool Toshi::XURXUIElementData::Load(TXUIResource& resource, uint8_t*& a_pData)
 {
 	Toshi::XURXUIObjectData::Load(resource, a_pData);
 	uint8_t smth = *a_pData++;
@@ -35,14 +35,15 @@ bool Toshi::XURXUIElementData::Load(Toshi::TXUIResource& resource, uint8_t*& a_p
 		}
 		if ((smth2 & 2) != 0)
 		{
-			int test = PARSEDWORD_BIG(a_pData);
-			m_width = static_cast<float>(PARSEDWORD_BIG(a_pData));
+			int width = PARSEDWORD_BIG(a_pData);
+			// Funky but works
+			m_width = *((float*)&width);
 			a_pData += 4;
 		}
 		if ((smth2 & 4) != 0)
 		{
-			int test = PARSEDWORD_BIG(a_pData);
-			m_height = static_cast<float>(PARSEDWORD_BIG(a_pData));
+			int height = PARSEDWORD_BIG(a_pData);
+			m_height = *((float*)&height);
 			a_pData += 4;
 		}
 		if ((smth2 & 8) != 0)

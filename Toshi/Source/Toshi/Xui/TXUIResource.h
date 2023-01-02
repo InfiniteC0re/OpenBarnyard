@@ -2,13 +2,13 @@
 
 #include "Toshi/File/TFile.h"
 #include "Toshi/Xui/TXUI.h"
-#include "Toshi/Xui/TXUIElement.h"
 #include "Toshi/Core/TSystem.h"
 #include "Toshi2/T2String16.h"
-#include "Toshi/Xui/TXUICanvas.h"
 
 namespace Toshi
 {
+	class XURXUIObjectData;
+
 	class TXUIResource
 	{
 		static const uint32_t IDXUR = TMAKEFOUR("XUIB");
@@ -76,11 +76,10 @@ namespace Toshi
 	private:
 		Header m_oHeader;                           // 0x0
 		wchar_t** m_asStringTable = TNULL;          // 0x1C
-		TQuaternion* m_pQuat;						// 0x20
+		TQuaternion* m_pQuat;                       // 0x20
 		uint8_t* m_pData;
 		unsigned char* m_pCust;                     // 0x28
 		uint32_t m_uiCustDataSize;                  // 0x3C
 		uint32_t m_uiStringTableCount;              // 0x30
 	};
 }
-

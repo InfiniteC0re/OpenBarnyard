@@ -1,5 +1,6 @@
 #pragma once
-#include <Toshi/Xui/TXUIResource.h>
+#include "Toshi/Xui/TXUIResource.h"
+
 namespace Toshi
 {
 	enum Flags : uint8_t
@@ -11,7 +12,7 @@ namespace Toshi
 	class TXUIElement :
 		public TGenericClassDerived<TXUIElement, TObject, "TXUIElement", TMAKEVERSION(1, 0), false>
 	{
-		
+
 		uint32_t m_uiNumNamedFrames; // 0x10
 		uint32_t m_uiNumChildren; // 0x16
 		void* m_child;
@@ -65,16 +66,16 @@ namespace Toshi
 		float m_scale; //0x30
 		float m_rotation;
 		uint32_t m_opacity;
-		uint32_t m_anchor; 
-		uint32_t m_pivot; 
-		uint32_t m_show; 
+		uint32_t m_anchor;
+		uint32_t m_pivot;
+		uint32_t m_show;
 		uint32_t m_blendMode;
 		uint32_t m_disableTimelineRecursion;
 		bool m_colorWriteFlags;
 		bool m_clipChildren;
 
 		static const char* sm_sTypeInfo;
-		
+
 		virtual const char* GetTypeInfo() const { return sm_sTypeInfo; }
 
 		bool Load(TXUIResource& resource, uint8_t*& a_pData);
@@ -104,4 +105,3 @@ namespace Toshi
 		}
 	};
 }
-

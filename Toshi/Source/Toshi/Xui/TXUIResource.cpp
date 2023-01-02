@@ -1,5 +1,7 @@
 #include "ToshiPCH.h"
 #include "TXUIResource.h"
+#include "TXUIElement.h"
+#include "TXUICanvas.h"
 
 namespace Toshi
 {
@@ -34,9 +36,9 @@ namespace Toshi
 
             TASSERT(
                 m_oHeader.m_apSections[i].m_uiSectionID == IDXURSTRING ||
-                m_oHeader.m_apSections[i].m_uiSectionID == IDXURVEC    ||
-                m_oHeader.m_apSections[i].m_uiSectionID == IDXURQUAT   ||
-                m_oHeader.m_apSections[i].m_uiSectionID == IDXURCUST   ||
+                m_oHeader.m_apSections[i].m_uiSectionID == IDXURVEC ||
+                m_oHeader.m_apSections[i].m_uiSectionID == IDXURQUAT ||
+                m_oHeader.m_apSections[i].m_uiSectionID == IDXURCUST ||
                 m_oHeader.m_apSections[i].m_uiSectionID == IDXURDATA,
                 "Invalid Section ID"
             );
@@ -148,7 +150,7 @@ namespace Toshi
             pStart += stringLength + 1;
         }
 
-        m_asStringTable = new (TXUI::MemoryBlock()) wchar_t*[m_uiStringTableCount];
+        m_asStringTable = new (TXUI::MemoryBlock()) wchar_t* [m_uiStringTableCount];
         m_asStringTable[0] = new (TXUI::MemoryBlock()) wchar_t[1];
         m_asStringTable[0][0] = L'\0';
 
@@ -187,7 +189,7 @@ namespace Toshi
     XURXUIObjectData* TXUIResource::CreateObjectData(TXUIResource& a_rResource, uint16_t index)
     {
         if (index == 0) return TNULL;
-        return CreateObjectData(a_rResource, a_rResource.m_pData[index*4]);
+        return CreateObjectData(a_rResource, a_rResource.m_pData[index * 4]);
     }
 
     XURXUIObjectData* TXUIResource::CreateObjectData(TXUIResource& a_rResource, const wchar_t* objectName)
