@@ -29,7 +29,7 @@ namespace Toshi
 
 		uint16_t unk; //0x12 de blob 0x1C NT08
 
-		virtual bool Load(uint8_t*& a_pData);
+		virtual bool Load(Toshi::TXUIResource& resource, uint8_t*& a_pData);
 		virtual bool IsFloatPropType(uint32_t unused, uint32_t propType) = 0;
 		virtual bool IsColourPropType(uint32_t unused, uint32_t propType) = 0;
 		virtual uint32_t GetTimelinePropSize(uint32_t unused, uint32_t propType) = 0;
@@ -72,8 +72,12 @@ namespace Toshi
 		uint32_t m_disableTimelineRecursion;
 		bool m_colorWriteFlags;
 		bool m_clipChildren;
+
+		static const char* sm_sTypeInfo;
 		
-		bool Load(uint8_t*& a_pData);
+		virtual const char* GetTypeInfo() const { return sm_sTypeInfo; }
+
+		bool Load(Toshi::TXUIResource& resource, uint8_t*& a_pData);
 
 		bool TranslateTimelineProp(const char* param_1, uint32_t& param_2, uint32_t& param_3);
 

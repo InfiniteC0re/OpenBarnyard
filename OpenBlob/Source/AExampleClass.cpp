@@ -84,7 +84,8 @@ AExampleClass::AExampleClass()
 		file->Read(buf, 0x30);
 		uint8_t* buf2 = buf;
 		XURXUIElementData* element = new XURXUIElementData();
-		element->Load(buf2);
+		
+		//element->Load(null, buf2);
 	}
 
 	/*
