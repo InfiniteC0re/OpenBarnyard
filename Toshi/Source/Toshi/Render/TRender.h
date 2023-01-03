@@ -1,7 +1,9 @@
 #pragma once
 #include "Toshi/Math/Math.h"
+#include "Toshi/Core/TStack.h"
 #include "Toshi/Core/TRefCounted.h"
 #include "Toshi/Render/TResource.h"
+#include "Toshi/Render/TKeyframeLibrary.h"
 
 namespace Toshi
 {
@@ -61,6 +63,8 @@ namespace Toshi
 		public TSingleton<TRender>
 	{
 	public:
+		static constexpr size_t MAXNUMRESOURCES = 6000;
+		
 		typedef uint8_t SYSRESOURCE;
 		enum SYSRESOURCE_ : SYSRESOURCE
 		{
@@ -169,9 +173,11 @@ namespace Toshi
 		//TNodeList
 		void* m_DummyResource;                           // 0xE4 (idk what it is)
 		TNodeTree<TResource> m_Resources;                // 0xE8
-		size_t m_ResourceCount = 0;       // 0x100
-		uint32_t m_Unk4 = 0;              // 0x104
-		bool m_HasDyingResources;         // 0x108
+		size_t m_ResourceCount = 0;                      // 0x100
+		uint32_t m_Unk4 = 0;                             // 0x104
+		bool m_HasDyingResources;                        // 0x108
+		TKeyframeLibraryManager m_KeyframeManager;       // 0x10C
+		TStack<TMatrix44, 20> m_Transforms;              // 0x118
 	};
 }
 

@@ -1,6 +1,8 @@
 #include "ToshiPCH.h"
 #include "TRender.h"
 #include "Toshi/File/TFile.h"
+#include "Toshi2/T2ResourceManager.h"
+#include "Toshi/Render/TModelManager.h"
 
 namespace Toshi
 {
@@ -19,6 +21,13 @@ namespace Toshi
 		m_Resources = TNodeTree<TResource>(&m_DummyResource);
 		m_HasDyingResources = false;
 
+		// Initialize singletons
+		T2ResourceManager::CreateSingleton(TRender::MAXNUMRESOURCES);
+		TModelManager::CreateSingleton();
+
+		TTODO("Create TRenderParamTable");
+
+		// Reset array
 		std::memset(m_SystemResources, '\0', sizeof(m_SystemResources));
 
 		// Setting matrices up
@@ -43,6 +52,7 @@ namespace Toshi
 	{
 		TASSERT(TFALSE == IsCreated(), "TRender already created");
 		TRenderContext* a_pRenderContext = CreateRenderContext();
+		
 		if (a_pRenderContext != TNULL)
 		{
 			SetCurrentRenderContext(a_pRenderContext);
@@ -123,8 +133,8 @@ namespace Toshi
 
 			if (parent == TNULL)
 			{
-				parent = (TResource*)&m_DummyResource;
 				TIMPLEMENT_D("wtf is this?");
+				parent = (TResource*)&m_DummyResource;
 			}
 
 			m_Resources.InsertNode(parent, pResource);

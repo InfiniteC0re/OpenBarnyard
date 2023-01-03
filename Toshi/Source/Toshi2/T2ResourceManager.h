@@ -23,7 +23,6 @@ namespace Toshi
 	class T2ResourceManager : public TSingleton<T2ResourceManager>
 	{
 	public:
-
 		T2ResourceManager(int a_iMaxNumResources);
 		~T2ResourceManager();
 
