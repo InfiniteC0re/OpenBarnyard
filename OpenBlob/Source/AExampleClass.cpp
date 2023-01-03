@@ -113,8 +113,21 @@ AExampleClass::AExampleClass()
 	};
 
 	TNodeTree<NodeTreeTest> tree;
-	tree.InsertRoot(new NodeTreeTest(6.0f));
-	TOSHI_INFO(tree.Root()->GetValue());
+
+	struct DummyShit
+	{
+		TNodeTree<NodeTreeTest>* fuckthisshit1;
+		NodeTreeTest* fuckthisshit2 = 0;
+		NodeTreeTest* fuckthisshit3 = 0;
+		NodeTreeTest* fuckthisshit4 = 0;
+		NodeTreeTest* fuckthisshit5 = 0;
+	};
+
+	DummyShit dummyparent;
+	tree.InsertNode((TNodeTree<NodeTreeTest>::TNode*)&dummyparent, new NodeTreeTest(5.0f));
+	tree.InsertNode((TNodeTree<NodeTreeTest>::TNode*)&dummyparent, new NodeTreeTest(7.0f));
+	tree.InsertNode((TNodeTree<NodeTreeTest>::TNode*)&dummyparent, new NodeTreeTest(9.0f));
+	//TOSHI_INFO(tree.Root()-> ->GetValue());
 
 	class Test : public TDList<Test>::TNode
 	{

@@ -1,10 +1,44 @@
 #include "ToshiPCH.h"
 #include "TRender.h"
-#include "TResource.h"
 #include "Toshi/File/TFile.h"
 
 namespace Toshi
 {
+	TRender::TRender()
+	{
+		// 0068ff70
+		m_Unk1 = 0;
+		m_bIsEnabled = true;
+		m_ScreenOffset = { 0, 0 };
+		m_Unk2 = 0;
+		m_pRenderContext = TNULL;
+		m_Unk5 = 0;
+
+		// Dummy resource??
+		m_DummyResource = TNULL;
+		m_Resources = TNodeTree<TResource>(&m_DummyResource);
+		m_HasDyingResources = false;
+
+		std::memset(m_SystemResources, '\0', sizeof(m_SystemResources));
+
+		// Setting matrices up
+		m_LightColour = {
+			1.0, 1.0, 1.0, 0.0,
+			0.0, 0.0, 0.0, 0.0,
+			0.0, 0.0, 0.0, 0.0,
+			0.0, 0.0, 0.0, 0.0
+		};
+
+		m_LightDirection = {
+			-0.47, -0.74, 0.47, 0.0,
+			0.0, 0.0, 0.0, 0.0,
+			0.0, 0.0, 0.0, 0.0,
+			0.0, 0.0, 0.0, 0.0
+		};
+
+		TIMPLEMENT();
+	}
+
 	bool TRender::Create()
 	{
 		TASSERT(TFALSE == IsCreated(), "TRender already created");
@@ -39,7 +73,7 @@ namespace Toshi
 
 		if (resource->IsDying() == TFALSE)
 		{
-			m_UnkFlag1 = true;
+			m_HasDyingResources = true;
 			resource->AddState(TResourceState_Dying);
 			DestroyResourceRecurse(resource->GetAttached());
 			resource->Invalidate();
@@ -59,7 +93,7 @@ namespace Toshi
 
 				if (resource->IsDying() == TFALSE)
 				{
-					m_UnkFlag1 = true;
+					m_HasDyingResources = true;
 					resource->AddState(TResourceState_Dying);
 
 					if (resource->GetAttached() != TNULL)
@@ -73,6 +107,36 @@ namespace Toshi
 				resource = nextResource;
 			}
 		}
+	}
+
+	TResource* TRender::CreateResource(TClass* pClass, char* name, TResource* parent)
+	{
+		TASSERT(pClass != TNULL, "TResource class is TNULL");
+		TASSERT(pClass->IsA(TGetClass(TResource)), "TResource class is TNULL");
+
+		TResource* pResource = static_cast<TResource*>(pClass->CreateObject());
+		TASSERT(pResource != TNULL, "Couldn't create TResource");
+
+		if (pResource != TNULL)
+		{
+			m_Resources.Remove(*pResource, false);
+
+			if (parent == TNULL)
+			{
+				parent = (TResource*)&m_DummyResource;
+				TIMPLEMENT_D("wtf is this?");
+			}
+
+			m_Resources.InsertNode(parent, pResource);
+			pResource->SetUId(m_ResourceCount);
+			pResource->SetRenderer(this);
+			pResource->SetName(name);
+			m_ResourceCount += 1;
+
+			return pResource;
+		}
+
+		return pResource;
 	}
 
 	void TRender::DumpStats()

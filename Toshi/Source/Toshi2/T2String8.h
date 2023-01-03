@@ -7,7 +7,6 @@ namespace Toshi
 	class T2String8
 	{
 	public:
-
 		static void Format(char* a_pcString, int size, const char* a_pcFormat, ...)
 		{
 			TString8 buffer2;

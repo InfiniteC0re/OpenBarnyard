@@ -1,5 +1,7 @@
 #pragma once
+#include "Toshi/Math/Math.h"
 #include "Toshi/Core/TRefCounted.h"
+#include "Toshi/Render/TResource.h"
 
 namespace Toshi
 {
@@ -59,7 +61,23 @@ namespace Toshi
 		public TSingleton<TRender>
 	{
 	public:
-		static constexpr int SYSRESOURCE_NUMOF = 12;
+		typedef uint8_t SYSRESOURCE;
+		enum SYSRESOURCE_ : SYSRESOURCE
+		{
+			SYSRESOURCE_1,
+			SYSRESOURCE_2,
+			SYSRESOURCE_3,
+			SYSRESOURCE_4,
+			SYSRESOURCE_5,
+			SYSRESOURCE_6,
+			SYSRESOURCE_7,
+			SYSRESOURCE_8,
+			SYSRESOURCE_9,
+			SYSRESOURCE_10,
+			SYSRESOURCE_11,
+			SYSRESOURCE_12,
+			SYSRESOURCE_NUMOF
+		};
 
 		struct DisplayParams
 		{
@@ -67,7 +85,7 @@ namespace Toshi
 		};
 
 	public:
-		TRender() = default;
+		TRender();
 
 		virtual ~TRender() { }                                 // 0x08 at vftable
 		virtual bool CreateDisplay(DisplayParams* params) = 0; // 0x0C at vftable
@@ -91,9 +109,28 @@ namespace Toshi
 		bool CreateDisplay();
 
 		// Destroys resource
-		void DestroyResource(class TResource* resource);
-	
-		void DestroyResourceRecurse(class TResource* resource);
+		void DestroyResource(TResource* resource);
+		
+		// Destroys resource recursively
+		void DestroyResourceRecurse(TResource* resource);
+
+		// Returns system resource
+		TResource* GetSystemResource(SYSRESOURCE systemResource)
+		{
+			TASSERT(systemResource >= 0 && systemResource < SYSRESOURCE_NUMOF, "Unknown resource");
+			return m_SystemResources[systemResource];
+		}
+
+		// Sets resource explicit
+		void SetResourceExplicit(TResource* resource, SYSRESOURCE systemResource)
+		{
+			TASSERT(systemResource >= 0 && systemResource < SYSRESOURCE_NUMOF, "Unknown resource");
+			TASSERT(m_SystemResources[systemResource] == TNULL, "This resource has already been assigned!");
+			m_SystemResources[systemResource] = resource;
+		}
+
+		// Creates resource and returns it
+		TResource* CreateResource(TClass* pClass, char* name, TResource* parent);
 
 		// Sets new render context and returns the old one
 		TRenderContext* SetCurrentRenderContext(TRenderContext* a_pRenderContext)
@@ -116,19 +153,25 @@ namespace Toshi
 		TRenderContext* CreateRenderContext();
 
 	protected:
-		uint32_t m_Unk1;                  // 0x04
-		bool m_bIsEnabled;                // 0x08
-		bool m_bInScene;                  // 0x09
-		bool m_bCreated = false;          // 0x0A
-		bool m_bDisplayCreated;           // 0x0B
-		TVector2 m_ScreenOffset;          // 0x0C
-		TRenderContext* m_pRenderContext; // 0x18
-		void* m_aSysResources;            // 0x20
+		uint32_t m_Unk1;                                 // 0x04
+		bool m_bIsEnabled;                               // 0x08
+		bool m_bInScene;                                 // 0x09
+		bool m_bCreated = false;                         // 0x0A
+		bool m_bDisplayCreated;                          // 0x0B
+		TVector2 m_ScreenOffset;                         // 0x0C
+		uint32_t m_Unk2;                                 // 0x14
+		TRenderContext* m_pRenderContext;                // 0x18
+		uint32_t m_Unk5;                                 // 0x1C
+		TResource* m_SystemResources[SYSRESOURCE_NUMOF]; // 0x20
+		TMatrix44 m_LightDirection;                      // 0x50
+		TMatrix44 m_LightColour;                         // 0x90
+		//void* m_aSysResources;            // 0x20
 		//TNodeList
-		TMatrix44 m_LightDirection;       // 0x50
-		TMatrix44 m_LightColour;          // 0x90
-		//TNodeTree<TResource> m_Resources; // 0xF8
-		bool m_UnkFlag1;                  // 0x108
+		void* m_DummyResource;                           // 0xE4 (idk what it is)
+		TNodeTree<TResource> m_Resources;                // 0xE8
+		size_t m_ResourceCount = 0;       // 0x100
+		uint32_t m_Unk4 = 0;              // 0x104
+		bool m_HasDyingResources;         // 0x108
 	};
 }
 

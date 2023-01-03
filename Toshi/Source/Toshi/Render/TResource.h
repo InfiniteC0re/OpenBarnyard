@@ -1,9 +1,10 @@
 #pragma once
-#include "Toshi/Render/TRender.h"
 #include "Toshi/Core/TNodeTree.h"
 
 namespace Toshi
 {
+	class TRender;
+
 	typedef uint8_t TResourceState;
 	enum TResourceState_ : TResourceState
 	{
@@ -21,8 +22,17 @@ namespace Toshi
 	{
 	public:
 		static constexpr size_t MAXNAMELEN = 14;
+		friend TRender;
 
 	public:
+		TResource()
+		{
+			m_State = 0;
+			m_UId = 0;
+			m_Renderer = TNULL;
+			m_Name[0] = 0;
+		}
+
 		virtual ~TResource();
 		virtual bool Create();
 		virtual bool Validate();
@@ -50,41 +60,51 @@ namespace Toshi
 			return m_Renderer;
 		}
 
+		void SetRenderer(TRender* pRenderer)
+		{
+			m_Renderer = pRenderer;
+		}
+
 		TResource* Parent() const
 		{
-			return m_Parent == TNULL ? m_Tree.Root()->Parent() : m_Parent;
+			return TNode::Parent();
 		}
 
 		TResource* GetNextResource() const
 		{
-			return m_NextResource;
+			return TNode::Next();
 		}
 
 		TResource* GetAttached() const
 		{
-			return m_Attached;
+			return TNode::Attached();
 		}
 
 		TResource* GetLastResource() const
 		{
-			return m_LastResource;
+			return TNode::Last();
 		}
 
-		TNodeTree<TResource>::TNode* GetTree()
+		TNodeTree<TResource>* GetTree()
 		{
-			return m_Tree.Root();
+			return TNode::m_Root;
+		}
+
+		uint32_t GetUId() const
+		{
+			return m_UId;
+		}
+
+		void SetUId(uint32_t uid)
+		{
+			m_UId = uid;
 		}
 
 	private:
-		TNodeTree<TResource> m_Tree; // 0x04
-		TResource* m_NextResource;   // 0x08
-		TResource* m_LastResource;   // 0x0C
-		TResource* m_Parent;         // 0x10
-		TResource* m_Attached;       // 0x14
 		TRender* m_Renderer;         // 0x18
 		char m_Name[MAXNAMELEN + 1]; // 0x1C
 		TResourceState m_State;      // 0x2B
-		unsigned int m_UId;          // 0x2C
+		uint32_t m_UId;              // 0x2C
 	};
 }
 

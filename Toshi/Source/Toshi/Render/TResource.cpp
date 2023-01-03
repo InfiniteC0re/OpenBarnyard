@@ -1,5 +1,6 @@
 #include "ToshiPCH.h"
 #include "TResource.h"
+#include "TRender.h"
 
 namespace Toshi
 {
