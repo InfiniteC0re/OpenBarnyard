@@ -6,6 +6,7 @@
 #include "Toshi2/T2String16.h"
 #include "Toshi/Core/TStack.h"
 
+
 namespace Toshi
 {
 	class XURXUIObjectData;
@@ -60,8 +61,8 @@ namespace Toshi
 
 		void PushID(const wchar_t* a_wsID);
 
-		XURXUIObjectData* CreateObjectData(TXUIResource& a_rResource, uint16_t index);
-		XURXUIObjectData* CreateObjectData(TXUIResource& a_rResource, const wchar_t* objectName);
+		static XURXUIObjectData* CreateObjectData(TXUIResource& a_rResource, uint16_t index);
+		static XURXUIObjectData* CreateObjectData(TXUIResource& a_rResource, const wchar_t* objectName);
 
 	private:
 		void Destroy()
@@ -85,6 +86,8 @@ namespace Toshi
 		unsigned char* m_pCust;                     // 0x28
 		uint32_t m_uiCustDataSize;                  // 0x3C
 		uint32_t m_uiStringTableCount;              // 0x30
+
+		XURXUIObjectData* m_root;
 
 		TStack<const wchar_t*, 32> m_uIDs;
 	};

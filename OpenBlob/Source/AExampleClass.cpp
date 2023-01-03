@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "AExampleClass.h"
-
+#include "./Memory/AMemory.h"
 
 using namespace Toshi;
 
@@ -65,6 +65,16 @@ AExampleClass::AExampleClass()
 	}
 
 	TFile* file = TFile::Create("C:\\Program Files (x86)\\Steam\\steamapps\\common\\de Blob\\Data\\XUI\\DE\\common.trb", TFile::OpenFlags_Read);
+	TTRB trb;
+	trb.Load(file);
+	uint8_t* buf = (uint8_t*)trb.GetSymbolAddress("txui");
+	buf += 8;
+	buf = (uint8_t*)(*(int*)buf);
+	TXUIResource* res = new TXUIResource();
+	res->Load(buf);
+
+	/*
+	TFile* file = TFile::Create("C:\\Program Files (x86)\\Steam\\steamapps\\common\\de Blob\\Data\\XUI\\DE\\common.trb", TFile::OpenFlags_Read);
 	
 	if (file)
 	{
@@ -77,7 +87,7 @@ AExampleClass::AExampleClass()
 		TXUIResource resource;
 		element->Load(resource, buf2);
 	}
-
+	*/
 	/*
 	if (error == TTRB::ERROR_OK)
 	{

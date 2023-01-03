@@ -10,7 +10,7 @@ namespace Toshi
 	public:
 		static TMemoryHeap* MemoryBlock() { return ms_pXUIMemoryBlock; }
 
-	private:
+	public:
 		static TMemoryHeap* ms_pXUIMemoryBlock;
 		static uint8_t ms_pXUITRBMemoryBlock;
 	};
