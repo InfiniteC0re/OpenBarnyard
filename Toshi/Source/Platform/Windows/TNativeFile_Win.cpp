@@ -249,7 +249,6 @@ namespace Toshi
         return m_Position;
     }
 
-
     bool TNativeFile::Seek(int offset, TFile::TSEEK origin)
     {
         FlushWriteBuffer();

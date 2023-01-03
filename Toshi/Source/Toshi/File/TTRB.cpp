@@ -39,7 +39,7 @@ namespace Toshi
 
 		if (error == ERROR_OK)
 		{
-			if (ttsf.m_TRBF == TMAKEFOUR("TRBF"))
+			if (ttsf.m_Magic == TMAKEFOUR("TRBF"))
 			{
 				if (ProcessForm(ttsf))
 				{

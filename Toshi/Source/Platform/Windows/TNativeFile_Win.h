@@ -9,8 +9,8 @@ namespace Toshi
 	public:
 		TNativeFile(const TNativeFile& other);
 
-		virtual size_t Read(LPVOID, size_t) override;
-		virtual int Write(LPVOID, size_t) { return 0; }
+		virtual size_t Read(void*, size_t) override;
+		virtual size_t Write(const void*, size_t) { return 0; }
 		virtual bool Seek(int, TFile::TSEEK) override;
 		virtual uint32_t Tell() override;
 		virtual DWORD GetSize() override;
