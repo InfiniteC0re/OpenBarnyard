@@ -4,26 +4,26 @@
 
 namespace Toshi
 {
-	class TXUIText
+	class TXUIControl
 	{
-
 	};
 
-	class XURXUITextData : public XURXUIElementData
+	class XURXUIControlData : public XURXUIElementData
 	{
-		static constexpr uint32_t sm_uiDefaultFontSize = 14;
-		static constexpr const char* sm_sTypeInfo = "XURXUITextData";
+		static constexpr const char* sm_sTypeInfo = "XURXUIControlData";
 
-		uint16_t m_text;
-		uint32_t m_textColor;
-		uint32_t m_dropShadowColor;
-		uint32_t m_pointSize;
-		uint16_t m_font;
-		uint32_t m_textStyle;
-		uint32_t m_lineSpacingAdjust;
+		/* 0 */ uint16_t m_classOverride;
+		/* 1 */ uint16_t m_visual;
+		/* 2 */ bool m_enabled;
+		/* 3 */ bool m_unfocussedInput;
+		/* 4 */ uint16_t m_navLeft;
+		/* 5 */ uint16_t m_navRight;
+		/* 6 */ uint16_t m_navUp;
+		/* 7 */ uint16_t m_navDown;
+		/* 8 */ uint16_t m_text;
+		/* 10 */ uint16_t m_imagePath;
 
-		XURXUITextData();
-
+	public:
 		virtual const char* GetTypeInfo() const { return sm_sTypeInfo; }
 
 		virtual bool IsColourPropType(uint32_t a_uiObjectIndex, uint32_t propType);
@@ -37,5 +37,7 @@ namespace Toshi
 
 		virtual bool Load(TXUIResource& resource, uint8_t*& a_pData);
 	};
+
 }
+
 

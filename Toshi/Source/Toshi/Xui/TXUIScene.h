@@ -1,28 +1,26 @@
 #pragma once
-
-#include "Toshi/Xui/TXUIElement.h"
+#include "Toshi/Xui/TXUIControl.h"
 
 namespace Toshi
 {
-	class TXUIText
+	class TXUIScene
 	{
-
 	};
 
-	class XURXUITextData : public XURXUIElementData
+	class XURXUISceneData : public XURXUIControlData
 	{
-		static constexpr uint32_t sm_uiDefaultFontSize = 14;
-		static constexpr const char* sm_sTypeInfo = "XURXUITextData";
+		static constexpr const char* sm_sTypeInfo = "XURXUISceneData";
 
-		uint16_t m_text;
-		uint32_t m_textColor;
-		uint32_t m_dropShadowColor;
-		uint32_t m_pointSize;
-		uint16_t m_font;
-		uint32_t m_textStyle;
-		uint32_t m_lineSpacingAdjust;
+		/* 0 */ uint16_t m_defaultFocus;
+		/* 1 */ uint16_t m_transFrom;
+		/* 2 */ uint16_t m_transTo;
+		/* 3 */ uint16_t m_transBackFrom;
+		/* 4 */ uint16_t m_transBackTo;
+		/* 5 */ uint32_t m_interruptTransitions;
+		/* 6 */ bool m_ignorePresses;
 
-		XURXUITextData();
+	public:
+		XURXUISceneData();
 
 		virtual const char* GetTypeInfo() const { return sm_sTypeInfo; }
 
@@ -38,4 +36,5 @@ namespace Toshi
 		virtual bool Load(TXUIResource& resource, uint8_t*& a_pData);
 	};
 }
+
 
