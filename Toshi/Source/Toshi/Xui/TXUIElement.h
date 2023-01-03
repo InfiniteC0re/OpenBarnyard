@@ -28,16 +28,22 @@ namespace Toshi
 
 		virtual ~XURXUIObjectData() = default;
 
+		uint32_t m_index;
 		uint16_t unk; //0x12 de blob 0x1C NT08
 
-		virtual bool Load(TXUIResource& resource, uint8_t*& a_pData);
-		virtual bool IsFloatPropType(uint32_t a_uiObjectIndex, uint32_t propType) = 0;
-		virtual bool IsColourPropType(uint32_t a_uiObjectIndex, uint32_t propType) = 0;
-		virtual uint32_t GetTimelinePropSize(uint32_t a_uiObjectIndex, uint32_t propType) = 0;
-		virtual bool TranslateTimelineProp(const char* param_1, uint32_t& param_2, uint32_t& param_3) = 0;
-		virtual bool ValidateTimelineProp(uint32_t a_uiObjectIndex, uint32_t param_2) = 0;
+		uint32_t m_countOfChildren;
+		XURXUIObjectData* m_children;
 
-		void LoadChildren(uint8_t* a_pData);
+		virtual bool Load(TXUIResource& resource, uint8_t*& a_pData);
+		virtual bool IsFloatPropType(uint32_t a_uiObjectIndex, uint32_t propType) { return false; };
+		virtual bool IsColourPropType(uint32_t a_uiObjectIndex, uint32_t propType) { return false; };
+		virtual uint32_t GetTimelinePropSize(uint32_t a_uiObjectIndex, uint32_t propType) { return 0; };
+		virtual bool TranslateTimelineProp(const char* param_1, uint32_t& param_2, uint32_t& param_3) { return false; };
+		virtual bool ValidateTimelineProp(uint32_t a_uiObjectIndex, uint32_t param_2) { return false; };
+
+		void LoadChildren(TXUIResource& resource, uint8_t*& a_pData);
+		bool LoadNamedFrames(TXUIResource& resource, uint8_t*& a_pData);
+		void LoadTimelines(TXUIResource& resource, uint8_t*& a_pData);
 	};
 
 	class XURXUIElementData : public XURXUIObjectData
@@ -60,12 +66,12 @@ namespace Toshi
 		~XURXUIElementData() = default;
 
 		/* 0 */ uint16_t m_id;
-		/* 1 */ float m_width; //0x24
-		/* 2 */ float m_height; //0x28
-		/* 3 */ float m_positon; //0x2C
-		/* 4 */ float m_scale; //0x30
-		/* 5 */ float m_rotation;
-		/* 6 */ uint32_t m_opacity;
+		/* 1 */ float m_width;
+		/* 2 */ float m_height;
+		/* 3 */ uint32_t m_positon;
+		/* 4 */ uint32_t m_scale;
+		/* 5 */ uint32_t m_rotation;
+		/* 6 */ float m_opacity;
 		/* 7 */ uint32_t m_anchor;
 		/* 8 */ uint32_t m_pivot;
 		/* 9 */ bool m_show;

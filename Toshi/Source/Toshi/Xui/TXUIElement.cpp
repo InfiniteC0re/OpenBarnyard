@@ -8,9 +8,29 @@ bool Toshi::XURXUIObjectData::Load(TXUIResource& resource, uint8_t*& a_pData)
 	return true;
 }
 
-void Toshi::XURXUIObjectData::LoadChildren(uint8_t* a_pData)
+void Toshi::XURXUIObjectData::LoadChildren(TXUIResource& resource, uint8_t*& a_pData)
 {
 	TASSERT(PARSEDWORD(a_pData) < (1 << 8), "Not a Word");
+	m_countOfChildren = *(a_pData + 3);
+	a_pData += 4;
+	m_children = new (TXUI::MemoryBlock()) XURXUIObjectData[m_countOfChildren];
+
+	for (size_t i = 0; i < m_countOfChildren; i++)
+	{
+		uint16_t objectIndex = PARSEWORD_BIG(a_pData);
+		a_pData += 2;
+		m_children[i] = *TXUIResource::CreateObjectData(resource, objectIndex);
+		m_children[i].m_index = objectIndex;
+	}
+}
+
+bool Toshi::XURXUIObjectData::LoadNamedFrames(TXUIResource& resource, uint8_t*& a_pData)
+{
+	return true;
+}
+
+void Toshi::XURXUIObjectData::LoadTimelines(TXUIResource& resource, uint8_t*& a_pData)
+{
 }
 
 bool Toshi::XURXUIElementData::Load(TXUIResource& resource, uint8_t*& a_pData)
@@ -50,18 +70,18 @@ bool Toshi::XURXUIElementData::Load(TXUIResource& resource, uint8_t*& a_pData)
 		if ((smth2 & 0x10) != 0)
 		{
 			TASSERT(PARSEDWORD_BIG(a_pData) < (1 << 16), "");
-			m_rotation = PARSEWORD_BIG(a_pData + 2);
+			m_scale = PARSEWORD_BIG(a_pData + 2);
 			a_pData += 4;
 		}
 		if ((smth2 & 0x20) != 0)
 		{
 			TASSERT(PARSEDWORD_BIG(a_pData) < (1 << 16), "");
-			m_scale = PARSEWORD_BIG(a_pData + 2);
+			m_rotation = PARSEWORD_BIG(a_pData + 2);
 			a_pData += 4;
 		}
 		if ((smth2 & 0x40) != 0)
 		{
-			float opacity = (float)PARSEDWORD_BIG(a_pData);
+			float opacity = PARSEFLOAT_BIG(a_pData);
 			TASSERT(opacity >= 0.0f && opacity <= 1.0f, "");
 			m_opacity = opacity * 255.0f;
 			a_pData += 4;

@@ -2,13 +2,14 @@
 #include "TXUIResource.h"
 #include "TXUIElement.h"
 #include "TXUICanvas.h"
+#include "Toshi/Xui/TXUIScene.h"
 
 namespace Toshi
 {
     TQuaternion* TXUIResource::GetQuat(int a_iIndex)
     {
         TASSERT(a_iIndex >= -1, "");
-        return a_iIndex == -1 ? &(TQuaternion)TQuaternion::IDENTITY : &m_pQuat[a_iIndex];
+        return a_iIndex == -1 ? (TQuaternion*)&TQuaternion::IDENTITY : &m_pQuat[a_iIndex];
     }
 
     bool TXUIResource::ReadHeader(unsigned char* buffer)
@@ -138,7 +139,21 @@ namespace Toshi
 
         TASSERT(0 == TStringManager::String16Compare(GetString(uiType), _TS16(XuiCanvas)), "");
 
-        return 0;
+        m_root = CreateObjectData(*this, uiType);
+
+        uint8_t opcode = *buffer++;
+
+        m_root->Load(*this, buffer);
+
+        if ((opcode & 2) != 0)
+        {
+            m_root->LoadChildren(*this, buffer);
+        }
+        if ((opcode & 4) != 0 && m_root->LoadNamedFrames(*this, buffer) && (opcode & 2) != 0)
+        {
+            m_root->LoadTimelines(*this, buffer);
+        }
+        return true;
     }
 
     bool TXUIResource::ReadStringSection(wchar_t* pPtr, uint32_t size)
@@ -157,7 +172,9 @@ namespace Toshi
         }
 
         m_asStringTable = new (TXUI::MemoryBlock()) wchar_t* [m_uiStringTableCount];
+
         m_asStringTable[0] = new (TXUI::MemoryBlock()) wchar_t[1];
+
         m_asStringTable[0][0] = L'\0';
 
         for (size_t i = 1; i < m_uiStringTableCount; i++)
@@ -201,7 +218,7 @@ namespace Toshi
     XURXUIObjectData* TXUIResource::CreateObjectData(TXUIResource& a_rResource, uint16_t index)
     {
         if (index == 0) return TNULL;
-        return CreateObjectData(a_rResource, a_rResource.m_pData[index * 4]);
+        return CreateObjectData(a_rResource, a_rResource.m_pData[index]);
     }
 
     XURXUIObjectData* TXUIResource::CreateObjectData(TXUIResource& a_rResource, const wchar_t* objectName)
@@ -212,7 +229,7 @@ namespace Toshi
         }
         else if (TStringManager::String16Compare(objectName, _TS16("XuiScene"), -1) == 0)
         {
-            //return new (TXUI::MemoryBlock()) XURXUISceneData();
+            return new (TXUI::MemoryBlock()) XURXUISceneData();
         }
         return TNULL;
     }
