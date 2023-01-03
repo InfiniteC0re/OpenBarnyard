@@ -68,12 +68,12 @@ AExampleClass::AExampleClass()
 	
 	if (file)
 	{
-		file->Seek(0x6D0 + 2, TFile::TSEEK_SET);
+		file->Seek(0x6E1 + 2, TFile::TSEEK_SET);
 
 		uint8_t buf[0x30];
 		file->Read(buf, 0x30);
 		uint8_t* buf2 = buf;
-		XURXUIElementData* element = new XURXUIElementData();
+		XURXUISceneData* element = new XURXUISceneData();
 		TXUIResource resource;
 		element->Load(resource, buf2);
 	}

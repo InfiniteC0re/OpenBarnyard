@@ -1,8 +1,6 @@
 #include "ToshiPCH.h"
 #include "TXUIElement.h"
 
-const char* Toshi::XURXUIElementData::sm_sTypeInfo = "XURXUIElementData";
-
 bool Toshi::XURXUIObjectData::Load(TXUIResource& resource, uint8_t*& a_pData)
 {
 	unk = PARSEWORD_BIG(a_pData);
@@ -191,4 +189,10 @@ bool Toshi::XURXUIElementData::TranslateTimelineProp(const char* param_1, uint32
 		return true;
 	}
 	return false;
+}
+
+bool Toshi::XURXUIElementData::ValidateTimelineProp(uint32_t a_uiObjectIndex, uint32_t param_2)
+{
+	TASSERT(a_uiObjectIndex == 0, "");
+	return param_2 < 0xf;
 }

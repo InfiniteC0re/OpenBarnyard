@@ -4,6 +4,7 @@
 #include "Toshi/Xui/TXUI.h"
 #include "Toshi/Core/TSystem.h"
 #include "Toshi2/T2String16.h"
+#include "Toshi/Core/TStack.h"
 
 namespace Toshi
 {
@@ -37,6 +38,7 @@ namespace Toshi
 		};
 	public:
 		inline const wchar_t* GetString(uint16_t index) { return L""; }
+		TQuaternion* GetQuat(int a_iIndex = 0);
 		//inline TQuaternion& GetQuat(int index) { return index == -1 ? TQuaternion::IDENTITY : m_pQuat; }
 
 		bool ReadHeader(unsigned char* buffer);
@@ -55,6 +57,8 @@ namespace Toshi
 		bool ReadStringSection(wchar_t* pPtr, uint32_t size);
 		int ReadCustSection(unsigned char* buffer, uint32_t size);
 		int GetStringTableSize(unsigned char* pPtr, uint32_t size);
+
+		void PushID(const wchar_t* a_wsID);
 
 		XURXUIObjectData* CreateObjectData(TXUIResource& a_rResource, uint16_t index);
 		XURXUIObjectData* CreateObjectData(TXUIResource& a_rResource, const wchar_t* objectName);
@@ -81,5 +85,7 @@ namespace Toshi
 		unsigned char* m_pCust;                     // 0x28
 		uint32_t m_uiCustDataSize;                  // 0x3C
 		uint32_t m_uiStringTableCount;              // 0x30
+
+		TStack<const wchar_t*, 32> m_uIDs;
 	};
 }
