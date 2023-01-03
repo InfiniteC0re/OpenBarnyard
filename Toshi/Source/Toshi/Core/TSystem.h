@@ -10,6 +10,14 @@ namespace Toshi
 	public:
 		TSystemManager();
 
+		bool SetPaused(bool paused)
+		{
+			bool oldState = m_PauseManagers;
+			TTODO("FUN_00663190(true)");
+
+			return oldState;
+		}
+
 		static bool Create();
 
 	private:

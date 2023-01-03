@@ -4,31 +4,29 @@
 
 namespace Toshi
 {
-	class TRenderAdapter : TNodeList<TRenderAdapter>::TNode
+	class TRenderAdapter : public TNodeList<TRenderAdapter>::TNode
 	{
-		class Mode : TNodeList<Mode>::TNode
+	public:
+		class Mode : public TNodeList<Mode>::TNode
 		{
-			class Device : TNodeList<Device>::TNode
+		public:
+			class Device : public TNodeList<Device>::TNode
 			{
-
 				Device() : TNodeList<Device>::TNode() {}
-
 				Device(const Device& a_device) : TNodeList<Device>::TNode(a_device) { }
-
 			};
 
+		public:
 			Mode() : TNodeList<Mode>::TNode() {}
-
 			Mode(const Mode& a_mode) : TNodeList<Mode>::TNode(a_mode) { }
-
 		};
 
-		TNodeList<Mode> modes; // 0x10
-
+	public:
 		TRenderAdapter() : TNodeList<TRenderAdapter>::TNode(), modes() {}
 
-	public:
-		inline TNodeList<Mode>* GetModeList() { return &modes; }
+		TNodeList<Mode>* GetModeList() { return &modes; }
 		
+	private:
+		TNodeList<Mode> modes; // 0x10
 	};
 }

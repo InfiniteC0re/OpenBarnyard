@@ -14,6 +14,7 @@ namespace Toshi
 		// 006a5e30
 		TASSERT(TFALSE == IsCreated(), "TRenderDX11 already created");
 		bool bResult = TRender::Create();
+
 		if (bResult)
 		{
 			TOSHI_INFO("Creating TRenderDX11");
@@ -21,7 +22,7 @@ namespace Toshi
 
 			D3D_FEATURE_LEVEL featureLevel = D3D_FEATURE_LEVEL_9_3;
 
-			for (size_t i = 0; i < 3; i++)
+			for (size_t i = 0; i < sizeof(m_scpDriverTypes) / sizeof(*m_scpDriverTypes); i++)
 			{
 				if (D3D11CreateDevice(NULL, m_scpDriverTypes[i], NULL, 0, m_scpFeatureLevels, 4, D3D11_SDK_VERSION, &m_pDevice, &featureLevel, &m_pDeviceContext) == S_OK) break;
 				if (D3D11CreateDevice(NULL, m_scpDriverTypes[i], NULL, 0, &m_scpFeatureLevels[1], 3, D3D11_SDK_VERSION, &m_pDevice, &featureLevel, &m_pDeviceContext) == S_OK) break;
@@ -44,14 +45,17 @@ namespace Toshi
 			accels[1].fVirt = FALT;
 			accels[1].key = VK_RETURN;
 
-			m_hAccel = CreateAcceleratorTableA(accels, 2);
+			m_hAccel = CreateAcceleratorTableA(accels, sizeof(accels) / sizeof(*accels));
 
-			if ((new Toshi::TMSWindow())->Create(this, a_name))
+			if (m_Window.Create(this, a_name))
 			{
+				m_Unk2 = 1;
 				return true;
 			}
+
 			TOSHI_INFO("Failed to create Window");
 		}
+
 		return false;
 	}
 
@@ -95,7 +99,6 @@ namespace Toshi
 				TTODO("Implement iterating through adapters");
 				return;
 			}
-
 		}
 	}
 
