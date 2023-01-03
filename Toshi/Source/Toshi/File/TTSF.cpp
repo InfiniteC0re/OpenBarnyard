@@ -187,7 +187,7 @@ namespace Toshi
 
 	TTSFO::ERROR TTSFO::Create(const char* filepath, const char* magic, Endianess endianess)
 	{
-		m_pFile = TFile::Create(filepath, TFile::OpenFlags_Write | TFile::OpenFlags_NoBuffer);
+		m_pFile = TFile::Create(filepath, TFile::FileMode_CreateNew | TFile::FileMode_Write);
 
 		if (m_pFile != TNULL)
 		{

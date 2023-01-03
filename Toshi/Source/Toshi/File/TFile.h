@@ -69,24 +69,25 @@ namespace Toshi
 			TSEEK_END
 		};
 
-		enum OpenFlags
+		typedef uint16_t FileMode;
+		enum FileMode_ : FileMode
 		{
-			OpenFlags_Read = BITFIELD(0),
-			OpenFlags_Write = BITFIELD(1),
-			OpenFlags_ReadWrite = OpenFlags_Read | OpenFlags_Write,
-			OpenFlags_CreateNew = BITFIELD(2),
-			OpenFlags_NoBuffer = BITFIELD(3),
+			FileMode_Read = BITFIELD(0),
+			FileMode_Write = BITFIELD(1),
+			FileMode_ReadWrite = BITFIELD(2),
+			FileMode_CreateNew = BITFIELD(3),
+			FileMode_NoBuffer = BITFIELD(4),
 		};
 
 		TFile(TFileSystem* pFS);
 		TFile(const TFile& other);
 
-		virtual size_t Read(void*, size_t) = 0;               //0x0
-		virtual size_t Write(const void*, size_t) = 0;        //0x4
-		virtual bool Seek(int, TFile::TSEEK) = 0;             //0x8
-		virtual uint32_t Tell() = 0;                          //0xC
-		virtual DWORD GetSize() = 0;                          //0x10
-		virtual _FILETIME GetDate() { return {}; }            //0x14
+		virtual size_t Read(void* dst, size_t size) = 0;           //0x0
+		virtual size_t Write(const void* buffer, size_t size) = 0; //0x4
+		virtual bool Seek(int offset, TFile::TSEEK origin) = 0;    //0x8
+		virtual uint32_t Tell() = 0;                               //0xC
+		virtual DWORD GetSize() = 0;                               //0x10
+		virtual _FILETIME GetDate() { return {}; }                 //0x14
 		virtual char GetCChar() = 0;
 		virtual wchar_t GetWChar() = 0;
 		virtual int PutCChar(char character) = 0;
@@ -94,9 +95,10 @@ namespace Toshi
 		virtual int CPrintf(const char* format, ...) = 0;
 		virtual int VCPrintf(const char* format, ...) = 0;
 		virtual int VWPrintf(const wchar_t* format, ...) = 0;
+		virtual ~TFile() { Destroy(); }
 
 		static TString8 ConcatPath(const TString8& a_rcString, const TString8& a_rcString2);
-		static TFile* Create(const TString8& filename, uint32_t flags);
+		static TFile* Create(const TString8& filename, FileMode mode = FileMode_Read);
 		inline TFileSystem* GetFileSystem() const { return m_pFileSystem; }
 		inline TFile& operator=(const TFile& a_pFile) { m_pFileSystem = a_pFile.GetFileSystem(); return *this; }
 

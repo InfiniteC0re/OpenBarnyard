@@ -15,19 +15,19 @@ namespace Toshi
 		m_pFileSystem = other.GetFileSystem();
 	}
 
-	TFile* TFile::Create(const TString8& filename, uint32_t flags)
+	TFile* TFile::Create(const TString8& filename, FileMode mode)
 	{
 		TASSERT(filename.IsIndexValid(0), "filename is empty");
 
-		TFile* pFile = TFileManager::GetSingleton()->CreateFile(filename, flags);
+		TFile* pFile = TFileManager::GetSingleton()->CreateFile(filename, mode);
 
 		if (pFile != TNULL)
 		{
-			TOSHI_CORE_TRACE("TFile::Create - Created file {0} with mode {1}", filename, flags);
+			TOSHI_CORE_TRACE("TFile::Create - Created file {0} with mode {1}", filename, mode);
 		}
 		else
 		{
-			TOSHI_CORE_TRACE("TFile::Create - Failed to create file {0} with mode {1}", filename, flags);
+			TOSHI_CORE_TRACE("TFile::Create - Failed to create file {0} with mode {1}", filename, mode);
 		}
 
 		return pFile;

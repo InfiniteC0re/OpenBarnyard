@@ -1,8 +1,6 @@
 #include "ToshiPCH.h"
 #include "TNativeFile_Win.h"
 
-#define BUFFER_SIZE 0x800
-
 namespace Toshi
 {
     bool TFileManager::Create()
@@ -94,6 +92,32 @@ namespace Toshi
 
 #pragma endregion
 
+    TNativeFile::TNativeFile(TNativeFileSystem* pFS) : TFile(pFS)
+    {
+        m_Handle = INVALID_HANDLE_VALUE;
+        m_Position = -1;
+        m_RBufferPosition = -1;
+        m_PrevBufferPos = -1;
+        m_LastBufferSize = 0;
+        m_RBuffer = TNULL;
+        m_WBuffer = TNULL;
+        m_WriteBufferUsed = 0;
+        m_WriteBuffered = true;
+    }
+
+    TNativeFile::TNativeFile(const TNativeFile& other) : TFile(other)
+    {
+        m_Handle = other.m_Handle;
+        m_Position = other.m_Position;
+        m_RBufferPosition = other.m_RBufferPosition;
+        m_PrevBufferPos = other.m_PrevBufferPos;
+        m_LastBufferSize = other.m_LastBufferSize;
+        m_RBuffer = other.m_RBuffer;
+        m_WBuffer = other.m_WBuffer;
+        m_WriteBufferUsed = other.m_WriteBufferUsed;
+        m_WriteBuffered = other.m_WriteBuffered;
+    }
+
     bool TNativeFile::LoadBuffer(DWORD bufferPos)
     {
         // FUN_00689ff0
@@ -127,8 +151,8 @@ namespace Toshi
 
         if (m_Position != m_RBufferPosition)
         {
-            TASSERT(TFALSE == m_UseBuffers || m_WBufferIterator == 0, "");
-            m_RBufferPosition = SetFilePointer(m_Handle, m_Position, TNULL, FILE_BEGIN);
+            TASSERT(TFALSE == m_WriteBuffered || m_WriteBufferUsed == 0, "");
+            m_RBufferPosition = SetFilePointer(m_Handle, m_Position, NULL, FILE_BEGIN);
             
             if (m_RBufferPosition == INVALID_SET_FILE_POINTER && GetLastError() != NO_ERROR)
             {
@@ -138,14 +162,14 @@ namespace Toshi
             m_Position = m_RBufferPosition;
         }
 
-        if (WriteFile(m_Handle, m_WBuffer, m_WBufferIterator, &lpNumberOfBytesWritten, TNULL) == 0)
+        if (WriteFile(m_Handle, m_WBuffer, m_WriteBufferUsed, &lpNumberOfBytesWritten, TNULL) == 0)
         {
             return 0;
         }
 
         m_RBufferPosition += lpNumberOfBytesWritten;
         m_Position = m_RBufferPosition;
-        m_WBufferIterator = 0;
+        m_WriteBufferUsed = 0;
         return lpNumberOfBytesWritten;
     }
 
@@ -157,10 +181,12 @@ namespace Toshi
         if (m_Position != m_RBufferPosition)
         {
             m_RBufferPosition = SetFilePointer(m_Handle, m_Position, TNULL, FILE_BEGIN);
+
             if (m_RBufferPosition == INVALID_SET_FILE_POINTER && GetLastError() != NO_ERROR)
             {
                 return 0;
             }
+
             m_Position = m_RBufferPosition;
         }
 
@@ -175,7 +201,7 @@ namespace Toshi
         return lpNumberOfBytesRead;
     }
 
-    size_t TNativeFile::Read(LPVOID dst, size_t size)
+    size_t TNativeFile::Read(void* dst, size_t size)
     {
         FlushWriteBuffer();
 
@@ -241,6 +267,66 @@ namespace Toshi
         }
 
         return ReadUnbuffered(dst, size);;
+    }
+
+    size_t TNativeFile::Write(const void* buffer, size_t size)
+    {
+        if (m_RBufferPosition != m_Position)
+        {
+            TASSERT(TFALSE == m_WriteBuffered || m_WriteBufferUsed == 0, "");
+            m_RBufferPosition = SetFilePointer(m_Handle, m_Position, NULL, FILE_BEGIN);
+
+            if (m_RBufferPosition == INVALID_SET_FILE_POINTER && GetLastError() != NO_ERROR)
+            {
+                return 0;
+            }
+
+            m_Position = m_RBufferPosition;
+        }
+
+        if (m_WriteBuffered == false)
+        {
+            DWORD written;
+            BOOL bRes = WriteFile(m_Handle, buffer, size, &written, NULL);
+
+            if (bRes == FALSE)
+            {
+                return 0;
+            }
+
+            m_RBufferPosition += written;
+            m_Position = m_RBufferPosition;
+            return written;
+        }
+
+        // Flush write buffer if data doesn't fit it
+        if (m_WriteBufferUsed + size >= BUFFER_SIZE)
+        {
+            FlushWriteBuffer();
+        }
+
+        if (size < BUFFER_SIZE)
+        {
+            // Data fits the write buffer so append it to it
+            TUtil::MemCopy(m_WBuffer + m_WriteBufferUsed, buffer, size);
+            m_WriteBufferUsed += size;
+            return size;
+        }
+        else
+        {
+            // Data doesn't fit the write buffer at all so write it right now
+            DWORD written;
+            BOOL bRes = WriteFile(m_Handle, buffer, size, &written, NULL);
+
+            if (bRes != FALSE)
+            {
+                m_RBufferPosition += size;
+                m_Position = m_RBufferPosition;
+                return written;
+            }
+        }
+
+        return 0;
     }
 
     uint32_t TNativeFile::Tell()
@@ -326,33 +412,7 @@ namespace Toshi
         return fLastWriteTime;
     }
 
-    TNativeFile::TNativeFile(TNativeFileSystem* pFS) : TFile(pFS)
-    {
-        m_Handle = INVALID_HANDLE_VALUE;
-        m_Position = -1;
-        m_RBufferPosition = -1;
-        m_PrevBufferPos = -1;
-        m_LastBufferSize = 0;
-        m_RBuffer = TNULL;
-        m_WBuffer = TNULL;
-        m_WBufferIterator = 0;
-        m_UseBuffers = true;
-    }
-
-    TNativeFile::TNativeFile(const TNativeFile& other) : TFile(other)
-    {
-        m_Handle = other.m_Handle;
-        m_Position = other.m_Position;
-        m_RBufferPosition = other.m_RBufferPosition;
-        m_PrevBufferPos = other.m_PrevBufferPos;
-        m_LastBufferSize = other.m_LastBufferSize;
-        m_RBuffer = other.m_RBuffer;
-        m_WBuffer = other.m_WBuffer;
-        m_WBufferIterator = other.m_WBufferIterator;
-        m_UseBuffers = other.m_UseBuffers;
-    }
-
-    bool TNativeFile::Open(const TString8& a_FileName, uint32_t a_Flags)
+    bool TNativeFile::Open(const TString8& a_FileName, FileMode a_Mode)
     {
         TASSERT(a_FileName.IsIndexValid(0), "TNativeFile::Open - wrong filename");
 
@@ -360,10 +420,11 @@ namespace Toshi
         DWORD dwDesiredAccess = 0;
         DWORD dwShareMode = 0;
 
-        dwDesiredAccess |= (a_Flags & OpenFlags_Read)  ? GENERIC_READ  : dwDesiredAccess;
-        dwDesiredAccess |= (a_Flags & OpenFlags_Write) ? GENERIC_WRITE : dwDesiredAccess;
+        dwDesiredAccess |= (a_Mode & FileMode_Read)  ? GENERIC_READ  : dwDesiredAccess;
+        dwDesiredAccess |= (a_Mode & FileMode_Write) ? GENERIC_WRITE : dwDesiredAccess;
+        dwDesiredAccess |= (a_Mode & FileMode_ReadWrite) ? (GENERIC_READ | GENERIC_WRITE) : dwDesiredAccess;
 
-        if (a_Flags & OpenFlags_CreateNew)
+        if (a_Mode & FileMode_CreateNew)
         {
             dwShareMode = FILE_SHARE_READ;
             dwCreationDisposition = CREATE_ALWAYS;
@@ -379,15 +440,15 @@ namespace Toshi
             m_PrevBufferPos = -1;
             m_LastBufferSize = 0;
 
-            if (a_Flags & OpenFlags_NoBuffer)
+            if (a_Mode & FileMode_NoBuffer)
             {
-                m_UseBuffers = false;
+                m_WriteBuffered = false;
             }
             else
             {
                 m_RBuffer = (char*)TMalloc(BUFFER_SIZE);
                 m_WBuffer = (char*)TMalloc(BUFFER_SIZE);
-                m_UseBuffers = true;
+                m_WriteBuffered = true;
             }
         }
         else

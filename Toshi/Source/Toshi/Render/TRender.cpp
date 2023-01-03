@@ -151,7 +151,7 @@ namespace Toshi
 
 	void TRender::DumpStats()
 	{
-		TFile* file = TFile::Create("TRender.txt", TFile::OpenFlags_CreateNew);
+		TFile* file = TFile::Create("TRender.txt", TFile::FileMode_CreateNew);
 
 		if (file != TNULL)
 		{

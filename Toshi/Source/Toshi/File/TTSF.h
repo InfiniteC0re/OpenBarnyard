@@ -1,7 +1,7 @@
 #pragma once
-#include "TTRB.h"
 #include "Toshi/File/TCompress_Decompress.h"
 #include "Toshi/File/TCompress_Compress.h"
+#include "Toshi/File/TTRB.h"
 
 namespace Toshi
 {
@@ -116,6 +116,7 @@ namespace Toshi
 
 	public:
 		TTSFO() : m_PositionCount(0), m_Positions() { }
+		~TTSFO() { Close(); }
 
 		/**
 		* Aligns current position to 4.

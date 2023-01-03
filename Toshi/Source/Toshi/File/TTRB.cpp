@@ -27,7 +27,7 @@ namespace Toshi
 	TTRB::ERROR TTRB::Load(const char* path)
 	{
 		// FUN_006868e0
-		TFile* pFile = TFile::Create(path, TFile::OpenFlags_Read);
+		TFile* pFile = TFile::Create(path);
 		return Load(pFile);
 	}
 

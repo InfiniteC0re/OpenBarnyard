@@ -7,11 +7,14 @@ namespace Toshi
 	class TNativeFile : public TFile
 	{
 	public:
+		static constexpr uint32_t BUFFER_SIZE = 0x800;
+
+	public:
 		TNativeFile(const TNativeFile& other);
 
-		virtual size_t Read(void*, size_t) override;
-		virtual size_t Write(const void*, size_t) { return 0; }
-		virtual bool Seek(int, TFile::TSEEK) override;
+		virtual size_t Read(void* dst, size_t size) override;
+		virtual size_t Write(const void* buffer, size_t size) override;
+		virtual bool Seek(int offset, TFile::TSEEK seek) override;
 		virtual uint32_t Tell() override;
 		virtual DWORD GetSize() override;
 		virtual _FILETIME GetDate() override;
@@ -30,7 +33,7 @@ namespace Toshi
 	protected:
 		TNativeFile(TNativeFileSystem* pFS);
 
-		bool Open(const TString8& a_FileName, uint32_t a_Flags);
+		bool Open(const TString8& a_FileName, FileMode a_Mode);
 		void Close();
 
 		friend TNativeFileSystem;
@@ -43,8 +46,8 @@ namespace Toshi
 		DWORD m_LastBufferSize;      // 0x18
 		char* m_RBuffer;             // 0x1C (read buffer)
 		char* m_WBuffer;             // 0x20 (write buffer)
-		DWORD m_WBufferIterator;     // 0x24
-		bool m_UseBuffers;           // 0x28
+		DWORD m_WriteBufferUsed;     // 0x24
+		bool m_WriteBuffered;        // 0x28
 	};
 }
 
