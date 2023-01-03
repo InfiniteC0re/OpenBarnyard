@@ -144,5 +144,5 @@ bool Toshi::XURXUITextData::Load(TXUIResource& resource, uint8_t*& a_pData)
 			a_pData += 4;
 		}
 	}
-    return false;
+    return true;
 }
