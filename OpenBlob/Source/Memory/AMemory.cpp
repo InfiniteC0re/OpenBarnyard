@@ -8,6 +8,10 @@ AMemory::PoolDefinitionInfo AMemory::ms_aPoolDefinitionInfo[POOL_NumOf] = {
 
 void AMemory::CreatePool(Pool pool)
 {
+	if (pool - 1 < 2)
+	{
+
+	}
 	TIMPLEMENT();
 }
 

@@ -5,7 +5,8 @@ namespace Toshi
 {
 	class TXUICanvas
 	{
-
+	public:
+		void SetDimensions(float a_X, float a_Y);
 	};
 
 	class XURXUICanvasData : public XURXUIElementData
