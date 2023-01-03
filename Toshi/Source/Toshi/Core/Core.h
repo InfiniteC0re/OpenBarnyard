@@ -40,6 +40,12 @@ __forceinline uint32_t PARSEDWORD_BIG(const uint8_t bytes[4])
 	return (bytes[3] << 0) | (bytes[2] << 8) | (bytes[1] << 16) | (bytes[0] << 24);
 }
 
+__forceinline float PARSEFLOAT_BIG(const uint8_t bytes[4])
+{
+	uint32_t res = (bytes[3] << 0) | (bytes[2] << 8) | (bytes[1] << 16) | (bytes[0] << 24);
+	return *((float*)&res);
+}
+
 __forceinline uint32_t PARSEDWORD_BIG(uint32_t number)
 {
 	return PARSEDWORD_BIG(reinterpret_cast<uint8_t*>(&number));
