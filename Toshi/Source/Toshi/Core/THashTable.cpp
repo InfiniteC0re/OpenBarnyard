@@ -53,7 +53,7 @@ void* Toshi::THashTable::Find(void* a_pData)
 
 		while (a_bucket != -1)
 		{
-			Item item = m_pSmth[a_bucket];
+			Item& item = m_pSmth[a_bucket];
 			bool bRes = m_ItemCompareFunc(a_pData, (int*)m_pItems + m_iItemSize * (int)item.value, m_iItemSize);
 			if (bRes) return &item;
 			a_bucket = item.key;

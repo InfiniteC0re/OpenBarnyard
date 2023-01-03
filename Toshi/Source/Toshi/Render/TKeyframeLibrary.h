@@ -1,5 +1,7 @@
 #pragma once
 
+#undef LoadLibrary
+
 namespace Toshi
 {
 	class TKeyframeLibrary
@@ -25,6 +27,37 @@ namespace Toshi
 	private:
 		TKeyframeLibrary* m_pKeyLibrary;
 		uint32_t m_iSCount; // 0x18
+	};
+
+	class TKeyframeLibraryManager
+	{
+	public:
+		TKeyframeLibraryManager()
+		{
+			TIMPLEMENT();
+		}
+		
+		~TKeyframeLibraryManager()
+		{
+			TIMPLEMENT();
+		}
+
+		TKeyframeLibrary* GetLibrary(const char* name)
+		{
+			TIMPLEMENT();
+			return TNULL;
+		}
+
+		TKeyframeLibrary* LoadLibrary(class TRBHeader* trbheader)
+		{
+			TIMPLEMENT();
+			return TNULL;
+		}
+
+		void UnloadLibrary(TKeyframeLibrary* library)
+		{
+			TIMPLEMENT();
+		}
 	};
 }
 

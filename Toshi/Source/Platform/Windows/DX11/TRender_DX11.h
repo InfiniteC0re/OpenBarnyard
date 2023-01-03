@@ -1,6 +1,7 @@
 #pragma once
 #include "Toshi/Render/TRender.h"
 #include "Platform/Windows/TMSWindow.h"
+
 #include <d3d11.h>
 
 namespace Toshi
@@ -28,7 +29,7 @@ namespace Toshi
 		TRenderDX11() { }
 		~TRenderDX11() { }
 
-		TMSWindow* GetMSWindow() { return m_pWindow; }
+		TMSWindow* GetMSWindow() { return &m_Window; }
 		
 	public:
 		virtual bool CreateDisplay(DisplayParams* params) override { return true; }
@@ -49,6 +50,6 @@ namespace Toshi
 		ID3D11DeviceContext* m_pDeviceContext; // 0x68C
 		ID3D11Device* m_pDevice;               // 0x690
 		HACCEL m_hAccel;                       // 0x694
-		TMSWindow* m_pWindow;                    // 0x6B0
+		TMSWindow m_Window;                    // 0x6B0
 	};
 }

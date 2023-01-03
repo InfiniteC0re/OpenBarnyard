@@ -15,32 +15,34 @@ namespace Toshi
 	public:
 		void Enable();
 		void Disable();
-		bool Create(TRender* renderer, const char* param_2);
 
-		inline bool IsWindowed() { return m_bIsWindowed; }
-		inline bool IsEnabled() { return m_bIsEnabled; } // Not confirmed
+		void Destroy();
+		bool Create(TRender* renderer, LPCSTR title);
 
-		static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+		bool IsWindowed() { return m_IsWindowed; }
+		bool IsEnabled() { return m_IsEnabled; } // Not confirmed
+		HWND GetHWND() const { return m_HWND; }
 		
-		inline HWND GetHWND() const { return m_pHwnd; }
+		static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 	private:
 		static constexpr GUID WceusbshGUID = { 0x25dbce51, 0x6c8f, 0x4a72, 0x8a, 0x6d, 0xb5, 0x4c, 0x2b, 0x4f, 0xc8, 0x35 };
 
-		static bool ms_bUnkStatic;
+		static bool ms_bIsFocused;
 		static STICKYKEYS ms_StickyKeys;
 		static HDEVNOTIFY ms_hDeviceNotify;
 
 	private:
-		HWND m_pHwnd;         // 0x4
-		TRender* m_pRenderer; // Name is a guess
-		TBOOL m_bIsEnabled;   // this + 0xC ; Name is a guess
-		TBOOL m_bIsWindowed;  // 0xD Possibly?
-		HMODULE hmodule;
-		TBOOL m_bUnk;         // 0x14
-		int m_xPos;           // 0x18
-		int m_yPos;           // 0x1C
-		TBOOL m_bUnk2;        // 0x20
+		HWND m_HWND;               // 0x04
+		TRender* m_Render;         // 0x08
+		bool m_IsEnabled;          // this + 0xC ; Name is a guess
+		bool m_IsWindowed;         // 0x0D Possibly?
+		HMODULE m_ModuleHandle;    // 0x10
+		bool m_bUnk;               // 0x14
+		int m_xPos;                // 0x18
+		int m_yPos;                // 0x1C
+		bool m_bUnk2;              // 0x20
+		bool m_bPopupWindow;       // 0x21
 	};
 }
 

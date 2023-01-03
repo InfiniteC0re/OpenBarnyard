@@ -134,6 +134,30 @@ namespace Toshi
 
 		return nullptr;
 	}
+
+	bool TClass::IsA(TClass* cmpClass)
+	{
+		if (cmpClass->m_LastAttached == TNULL)
+		{
+			return (this == cmpClass);
+		}
+		else
+		{
+			TClass* pClass = this;
+
+			while (pClass != TNULL)
+			{
+				if (pClass == cmpClass)
+				{
+					return true;
+				}
+
+				pClass = pClass->m_Parent;
+			}
+		}
+
+		return false;
+	}
 		
 	bool TClass::TryInitialize(TClass* tClass)
 	{

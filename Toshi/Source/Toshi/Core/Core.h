@@ -68,12 +68,13 @@ __forceinline uint16_t PARSEWORD(uint16_t val)
 #endif
 
 #if defined(TOSHI_ENABLE_ASSERTS)
-	#define TWIP() { TOSHI_ERROR("Work in progress: {0}, at line {1}", __FUNCTION__, __LINE__); }
-	#define TWIP_D(DESC) { TOSHI_ERROR("Work in progress: {0} ({1}, at line {2})", DESC, __FUNCTION__, __LINE__); }
-	#define TTODO(DESC) { TOSHI_ERROR("TODO: {0} ({1}, at line {2})", DESC, __FUNCTION__, __LINE__); }
-	#define TIMPLEMENT() { TOSHI_ERROR("{0} is not implemented", __FUNCTION__); }
-	#define TIMPLEMENT_D(DESC) { TOSHI_ERROR("{0} is not implemented: {1}", __FUNCTION__, DESC); }
-	#define TASSERT(x, ...) { if (!(x)) { TOSHI_CORE_ERROR(__VA_ARGS__); TBREAK(); } }
+	#define TFIREFLAG static bool FireFlag = false; if (!FireFlag)
+	#define TWIP() { TFIREFLAG { TOSHI_ERROR("Work in progress: {0}, at line {1}", __FUNCTION__, __LINE__); FireFlag = true; } }
+	#define TWIP_D(DESC) { TFIREFLAG { TOSHI_ERROR("Work in progress: {0} ({1}, at line {2})", DESC, __FUNCTION__, __LINE__); FireFlag = true; } }
+	#define TTODO(DESC) { TFIREFLAG { TOSHI_ERROR("TODO: {0} ({1}, at line {2})", DESC, __FUNCTION__, __LINE__); FireFlag = true; } }
+	#define TIMPLEMENT() { TFIREFLAG { TOSHI_ERROR("{0} is not implemented", __FUNCTION__); FireFlag = true; } }
+	#define TIMPLEMENT_D(DESC) { TFIREFLAG { TOSHI_ERROR("{0} is not implemented: {1}", __FUNCTION__, DESC); FireFlag = true; } }
+	#define TASSERT(x, ...) { TFIREFLAG if (!(x)) { TOSHI_CORE_ERROR(__VA_ARGS__); TBREAK(); FireFlag = true; } }
 #else
 	#define TWIP()
 	#define TWIP_D(DESC)

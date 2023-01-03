@@ -59,6 +59,11 @@ namespace Toshi
 			else { return nullptr; }
 		}
 
+		static TClass* GetClassStatic()
+		{
+			return std::addressof(s_Class);
+		}
+
 	public:
 		static TClass s_Class;
 	};

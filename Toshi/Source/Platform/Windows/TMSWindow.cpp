@@ -3,55 +3,89 @@
 
 namespace Toshi
 {
-	bool TMSWindow::ms_bUnkStatic = false;
+	bool TMSWindow::ms_bIsFocused = false;
 	STICKYKEYS TMSWindow::ms_StickyKeys = { 0, 0 };
 	HDEVNOTIFY TMSWindow::ms_hDeviceNotify = { 0 };
 
 	void TMSWindow::Enable()
 	{
-		TASSERT(m_pHwnd != TNULL, "HWND shouldn't be TNULL");
-		m_bIsEnabled = true;
+		TASSERT(m_HWND != TNULL, "HWND is NULL");
+		m_IsEnabled = true;
 	}
 
 	void TMSWindow::Disable()
 	{
-		TASSERT(m_pHwnd != TNULL, "HWND shouldn't be TNULL");
-		m_bIsEnabled = false;
+		TASSERT(m_HWND != NULL, "HWND is NULL");
+		m_IsEnabled = false;
 	}
 
-	bool TMSWindow::Create(TRender* renderer, const char* param_2)
+	void TMSWindow::Destroy()
 	{
-		WNDCLASSA wndClass {};
-		//ZeroMemory(&wndClass, sizeof(WNDCLASSA));
+		if (m_HWND != NULL)
+		{
+			if (ms_bIsFocused)
+			{
+				SetThreadExecutionState(ES_CONTINUOUS);
+				ShowCursor(true);
+				TSystemManager::GetSingleton()->SetPaused(true);
+				SystemParametersInfoA(SPI_GETSTICKYKEYS, sizeof(STICKYKEYS), &ms_StickyKeys, 0);
+				ms_bIsFocused = false;
+			}
 
-		hmodule = GetModuleHandleA(NULL);
-		//Destory()
-		m_pRenderer = renderer;
+			DestroyWindow(m_HWND);
+			m_IsWindowed = true;
+			m_HWND = NULL;
+		}
+
+		if (m_Render != TNULL)
+		{
+			UnregisterClassA(m_Render->GetName(), m_ModuleHandle);
+			m_Render = TNULL;
+		}
+	}
+
+	bool TMSWindow::Create(TRender* renderer, LPCSTR title)
+	{
+		Destroy();
+
+		m_Render = renderer;
+		m_ModuleHandle = GetModuleHandleA(NULL);
 		
-		wndClass.hIcon = LoadIconA(hmodule, MAKEINTRESOURCEA(IDI_ICON1));
-		wndClass.hInstance = hmodule;
+		WNDCLASSA wndClass = { };
+		wndClass.hIcon = LoadIconA(m_ModuleHandle, MAKEINTRESOURCEA(IDI_ICON1));
+		wndClass.hInstance = m_ModuleHandle;
 		wndClass.lpfnWndProc = (WNDPROC)WndProc;
-		wndClass.lpszClassName = m_pRenderer->GetName();
+		wndClass.lpszClassName = m_Render->GetName();
 		wndClass.style = CS_VREDRAW | CS_HREDRAW;
 		wndClass.cbWndExtra = 4;
 		wndClass.hCursor = LoadCursorA(NULL, MAKEINTRESOURCEA(IDC_ARROW));
 		wndClass.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
-
 		RegisterClassA(&wndClass);
-		m_pHwnd = CreateWindowExA(0, m_pRenderer->GetName(), param_2, 0x80ca0000, 100, 100, 0, 0, NULL, NULL, hmodule, this);
 
-		int error = GetLastError();
+		DWORD dwStyle = 0;
 
-		if (m_pHwnd == NULL) return false;
-		EnableWindow(m_pHwnd, true);
-		ShowWindow(m_pHwnd, SW_SHOW);
-		SetForegroundWindow(m_pHwnd);
+		if (m_bPopupWindow)
+		{
+			dwStyle = WS_POPUP | WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU;
+		}
+
+		m_HWND = CreateWindowExA(0, m_Render->GetName(), title, dwStyle, 100, 100, 0, 0, NULL, NULL, m_ModuleHandle, this);
 		
-		if (GetForegroundWindow() != m_pHwnd)
+		if (m_HWND == NULL)
+		{
+			return false;
+		}
+
+		EnableWindow(m_HWND, TRUE);
+		ShowWindow(m_HWND, SW_SHOW);
+		SetForegroundWindow(m_HWND);
+		
+		if (GetForegroundWindow() != m_HWND)
 		{
 			TOSHI_INFO("Not foreground window, Pausing Systems!\n");
-			// FUN_006616A0
+			TSystemManager::GetSingleton()->SetPaused(true);
 		}
+
 		return true;
 	}
 
@@ -91,7 +125,7 @@ namespace Toshi
 						{
 							if ((wParam != SC_TASKLIST) && (wParam != SC_MINIMIZE)) return DefWindowProcA(hWnd, uMsg, wParam, lParam);
 							TMSWindow* window = reinterpret_cast<TMSWindow*>(GetWindowLongA(hWnd, GWL_USERDATA));
-							if (window->m_bIsEnabled)
+							if (window->m_IsEnabled)
 							{
 								ShowWindow(hWnd, SW_MINIMIZE);
 								return 0;
@@ -104,7 +138,7 @@ namespace Toshi
 				else
 				{
 					TMSWindow* window = reinterpret_cast<TMSWindow*>(GetWindowLongA(hWnd, GWL_USERDATA));
-					if (window->m_bIsEnabled)
+					if (window->m_IsEnabled)
 					{
 						if (!window->m_bUnk)
 						{
@@ -211,12 +245,12 @@ namespace Toshi
 
 			if (LOWORD(wParam) == WA_ACTIVE || LOWORD(wParam) == WA_CLICKACTIVE)
 			{
-				if (!ms_bUnkStatic)
+				if (ms_bIsFocused != true)
 				{
 					SetThreadExecutionState(ES_CONTINUOUS | ES_DISPLAY_REQUIRED | ES_SYSTEM_REQUIRED);
 					ShowCursor(false);
 					//FUN_006616a0(DAT_009a46f0, 0);
-					ms_bUnkStatic = true;
+					ms_bIsFocused = true;
 
 					SystemParametersInfoA(SPI_GETSTICKYKEYS, sizeof(STICKYKEYS), &ms_StickyKeys, 0);
 

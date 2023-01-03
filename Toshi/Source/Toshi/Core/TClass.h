@@ -1,5 +1,7 @@
 #pragma once
 
+#define TGetClass(X) X::GetClassStatic()
+
 namespace Toshi
 {
 	// TClassProps definitions
@@ -40,13 +42,14 @@ namespace Toshi
 		void RecurseTree2(t_RecurceTreeCheck fCheck, t_RecurceTreeBaseBeginCb fBaseBegin, t_RecurceTreeBaseEndCb fBaseEnd, void* custom);
 		class TObject* CreateObject();
 
-		inline bool IsExactly(TClass* toCompare) const { return this == toCompare; }
-		inline bool IsInitialized() const { return m_Initialized; }
-		inline TClass* GetParent() { return static_cast<TClass*>(m_Parent); }
-		inline const char* GetName() const { return m_Name; }
-		inline uint32_t GetVersion() const { return m_Version; }
-		inline uint16_t GetVersionMajor() const { return m_Version >> 16; }
-		inline uint16_t GetVersionMinor() const { return m_Version & 0xFFFF; }
+		bool IsA(TClass* pClass);
+		bool IsExactly(TClass* toCompare) const { return this == toCompare; }
+		bool IsInitialized() const { return m_Initialized; }
+		TClass* GetParent() { return static_cast<TClass*>(m_Parent); }
+		const char* GetName() const { return m_Name; }
+		uint32_t GetVersion() const { return m_Version; }
+		uint16_t GetVersionMajor() const { return m_Version >> 16; }
+		uint16_t GetVersionMinor() const { return m_Version & 0xFFFF; }
 
 		// todo: move this function away from this class
 		static bool TryInitialize(TClass* tClass);

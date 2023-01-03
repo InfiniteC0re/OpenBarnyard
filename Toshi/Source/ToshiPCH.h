@@ -18,6 +18,7 @@
 #include "Toshi/Core/TObject.h"
 #include "Toshi/Core/TSystem.h"
 #include "Toshi/Core/THPTimer.h"
+#include "Toshi/Core/TStack.h"
 #include "Toshi/Core/TTask.h"
 #include "Toshi/Math/Math.h"
 #include "Toshi/Utils/TLog.h"
