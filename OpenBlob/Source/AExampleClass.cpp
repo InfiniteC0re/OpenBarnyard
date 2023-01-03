@@ -1,16 +1,6 @@
 #include "pch.h"
 #include "AExampleClass.h"
-#include "ARootTask.h"
 
-#include <Toshi/File/TFile.h>
-#include <Toshi/Core/TSystem.h>
-#include <Toshi/Core/TKernelInterface.h>
-#include <Toshi/Core/TScheduler.h>
-#include <Toshi/Math/TRandom.h>
-#include <Toshi/File/TTRB.h>
-#include <Toshi/Core/TGenericDList.h>
-#include <MemoryCard/EnSaveData.h>
-#include <Toshi/Xui/TXUIResource.h>
 
 using namespace Toshi;
 
@@ -78,13 +68,14 @@ AExampleClass::AExampleClass()
 	
 	if (file)
 	{
-		file->Seek(0x6D0, TFile::TSEEK_SET);
+		file->Seek(0x6D0 + 2, TFile::TSEEK_SET);
 
 		uint8_t buf[0x30];
 		file->Read(buf, 0x30);
 		uint8_t* buf2 = buf;
 		XURXUIElementData* element = new XURXUIElementData();
-		element->Load(buf2);
+		TXUIResource resource;
+		element->Load(resource, buf2);
 	}
 
 	/*

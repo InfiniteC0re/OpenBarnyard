@@ -1,6 +1,6 @@
 #pragma once
-
 #include "Toshi/Utils/TSingleton.h"
+
 #include <cstdint>
 
 namespace Toshi
@@ -9,7 +9,7 @@ namespace Toshi
 	{
 	public:
 		static TMemoryHeap* MemoryBlock() { return ms_pXUIMemoryBlock; }
-	
+
 	private:
 		static TMemoryHeap* ms_pXUIMemoryBlock;
 		static uint8_t ms_pXUITRBMemoryBlock;

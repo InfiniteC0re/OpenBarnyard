@@ -1,5 +1,6 @@
 #pragma once
-#include <Toshi/Xui/TXUIResource.h>
+#include "Toshi/Xui/TXUIResource.h"
+
 namespace Toshi
 {
 	enum Flags : uint8_t
@@ -11,7 +12,7 @@ namespace Toshi
 	class TXUIElement :
 		public TGenericClassDerived<TXUIElement, TObject, "TXUIElement", TMAKEVERSION(1, 0), false>
 	{
-		
+
 		uint32_t m_uiNumNamedFrames; // 0x10
 		uint32_t m_uiNumChildren; // 0x16
 		void* m_child;
@@ -29,7 +30,7 @@ namespace Toshi
 
 		uint16_t unk; //0x12 de blob 0x1C NT08
 
-		virtual bool Load(uint8_t*& a_pData);
+		virtual bool Load(TXUIResource& resource, uint8_t*& a_pData);
 		virtual bool IsFloatPropType(uint32_t unused, uint32_t propType) = 0;
 		virtual bool IsColourPropType(uint32_t unused, uint32_t propType) = 0;
 		virtual uint32_t GetTimelinePropSize(uint32_t unused, uint32_t propType) = 0;
@@ -65,15 +66,19 @@ namespace Toshi
 		float m_scale; //0x30
 		float m_rotation;
 		uint32_t m_opacity;
-		uint32_t m_anchor; 
-		uint32_t m_pivot; 
-		uint32_t m_show; 
+		uint32_t m_anchor;
+		uint32_t m_pivot;
+		uint32_t m_show;
 		uint32_t m_blendMode;
 		uint32_t m_disableTimelineRecursion;
 		bool m_colorWriteFlags;
 		bool m_clipChildren;
-		
-		bool Load(uint8_t*& a_pData);
+
+		static const char* sm_sTypeInfo;
+
+		virtual const char* GetTypeInfo() const { return sm_sTypeInfo; }
+
+		bool Load(TXUIResource& resource, uint8_t*& a_pData);
 
 		bool TranslateTimelineProp(const char* param_1, uint32_t& param_2, uint32_t& param_3);
 
@@ -100,4 +105,3 @@ namespace Toshi
 		}
 	};
 }
-

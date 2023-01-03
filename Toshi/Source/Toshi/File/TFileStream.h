@@ -25,6 +25,8 @@ namespace Toshi
 	{
 	public:
 		TFileStream() = default;
+
+		virtual ~TFileStream() = default;
 		
 		// This method will be executed by the thread
 		virtual void Main() override;

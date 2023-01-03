@@ -1,10 +1,8 @@
+#pragma once
 #include "Toshi/Xui/TXUIElement.h"
 
 namespace Toshi
 {
-	/*
-	class TXUIElement;
-
 	class TXUICanvas
 	{
 
@@ -12,15 +10,8 @@ namespace Toshi
 
 	class XURXUICanvasData : public XURXUIElementData
 	{
-		TClass* m_txuiCanvasClass;
-	public:
-		XURXUICanvasData() : XURXUIElementData()
-		{
-			m_txuiCanvasClass = (TClass*)TClass::Find("TXUICanvas", &TXUIElement::s_Class);
-		}
-
-
+		bool Load(TXUIResource& resource, uint8_t*& a_pData);
 	};
-	
-	*/
 }
+
+

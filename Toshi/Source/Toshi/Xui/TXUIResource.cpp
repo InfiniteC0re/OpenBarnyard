@@ -1,5 +1,7 @@
 #include "ToshiPCH.h"
 #include "TXUIResource.h"
+#include "TXUIElement.h"
+#include "TXUICanvas.h"
 
 namespace Toshi
 {
@@ -34,9 +36,9 @@ namespace Toshi
 
             TASSERT(
                 m_oHeader.m_apSections[i].m_uiSectionID == IDXURSTRING ||
-                m_oHeader.m_apSections[i].m_uiSectionID == IDXURVEC    ||
-                m_oHeader.m_apSections[i].m_uiSectionID == IDXURQUAT   ||
-                m_oHeader.m_apSections[i].m_uiSectionID == IDXURCUST   ||
+                m_oHeader.m_apSections[i].m_uiSectionID == IDXURVEC ||
+                m_oHeader.m_apSections[i].m_uiSectionID == IDXURQUAT ||
+                m_oHeader.m_apSections[i].m_uiSectionID == IDXURCUST ||
                 m_oHeader.m_apSections[i].m_uiSectionID == IDXURDATA,
                 "Invalid Section ID"
             );
@@ -148,7 +150,7 @@ namespace Toshi
             pStart += stringLength + 1;
         }
 
-        m_asStringTable = new (TXUI::MemoryBlock()) wchar_t*[m_uiStringTableCount];
+        m_asStringTable = new (TXUI::MemoryBlock()) wchar_t* [m_uiStringTableCount];
         m_asStringTable[0] = new (TXUI::MemoryBlock()) wchar_t[1];
         m_asStringTable[0][0] = L'\0';
 
@@ -172,7 +174,7 @@ namespace Toshi
 
     int TXUIResource::ReadCustSection(unsigned char* buffer, uint32_t size)
     {
-        m_pCust = new (TXUI::MemoryBlock()) unsigned char[size];
+        m_pCust = static_cast<uint8_t*>(TMemoryHeap::Malloc(TXUI::MemoryBlock(), size));
         TUtil::MemCopy(m_pCust, buffer, size);
         m_uiCustDataSize = size;
         return 1;
@@ -184,20 +186,23 @@ namespace Toshi
         return 0;
     }
 
-    uint8_t* TXUIResource::CreateObjectData(TXUIResource& a_rResource, uint16_t index)
+    XURXUIObjectData* TXUIResource::CreateObjectData(TXUIResource& a_rResource, uint16_t index)
     {
         if (index == 0) return TNULL;
-        return CreateObjectData(a_rResource, a_rResource.m_pData[index*4]);
+        return CreateObjectData(a_rResource, a_rResource.m_pData[index * 4]);
     }
 
-    uint8_t* TXUIResource::CreateObjectData(TXUIResource& a_rResource, const wchar_t* objectName)
+    XURXUIObjectData* TXUIResource::CreateObjectData(TXUIResource& a_rResource, const wchar_t* objectName)
     {
         if (TStringManager::String16Compare(objectName, _TS16("XuiCanvas"), -1) == 0)
         {
-            //XURXUICanvasData* data = reinterpret_cast<XURXUICanvasData*>(operator new (0x54, ms_pXUIMemoryBlock));
-            //if (data != TNULL) data = new XURXUICanvasData();
+            return new (TXUI::MemoryBlock()) XURXUICanvasData();
         }
-        return nullptr;
+        else if (TStringManager::String16Compare(objectName, _TS16("XuiScene"), -1) == 0)
+        {
+            //return new (TXUI::MemoryBlock()) XURXUISceneData();
+        }
+        return TNULL;
     }
 
 }
