@@ -115,6 +115,8 @@ namespace Toshi
 			a_rWidth = m_width;
 			a_rHeight = m_height;
 		}
+
+		virtual void Tick(float a_tickrate);
 	};
 
 	

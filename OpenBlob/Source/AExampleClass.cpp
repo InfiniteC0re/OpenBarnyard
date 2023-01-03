@@ -63,7 +63,7 @@ AExampleClass::AExampleClass()
 			file->Destroy();
 		}
 	}
-
+	/*
 	TFile* file = TFile::Create("C:\\Program Files (x86)\\Steam\\steamapps\\common\\de Blob\\Data\\XUI\\DE\\common.trb", TFile::OpenFlags_Read);
 	TTRB trb;
 	trb.Load(file);
@@ -72,7 +72,7 @@ AExampleClass::AExampleClass()
 	buf = (uint8_t*)(*(int*)buf);
 	TXUIResource* res = new TXUIResource();
 	res->Load(buf);
-
+	*/
 	/*
 	TFile* file = TFile::Create("C:\\Program Files (x86)\\Steam\\steamapps\\common\\de Blob\\Data\\XUI\\DE\\common.trb", TFile::OpenFlags_Read);
 	
