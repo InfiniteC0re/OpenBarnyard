@@ -9,7 +9,7 @@
 #include <Toshi/File/TTRB.h>
 #include <Toshi/Core/TGenericDList.h>
 #include <MemoryCard/EnSaveData.h>
-#include <Toshi/Xui/TXUIElement.h>
+#include <Toshi/Xui/TXUIScene.h>
 
 //-----------------------------------------------------------
 // this is an example of registering and using TClass objects

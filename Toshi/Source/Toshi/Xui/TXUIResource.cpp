@@ -5,6 +5,12 @@
 
 namespace Toshi
 {
+    TQuaternion* TXUIResource::GetQuat(int a_iIndex)
+    {
+        TASSERT(a_iIndex >= -1, "");
+        return a_iIndex == -1 ? &(TQuaternion)TQuaternion::IDENTITY : &m_pQuat[a_iIndex];
+    }
+
     bool TXUIResource::ReadHeader(unsigned char* buffer)
     {
         m_oHeader.m_uiFileID = PARSEDWORD(buffer);
@@ -184,6 +190,12 @@ namespace Toshi
     {
         TIMPLEMENT_D("TXUIResource::GetStringTableSize");
         return 0;
+    }
+
+    void TXUIResource::PushID(const wchar_t* a_wsID)
+    {
+        m_uIDs.Push(a_wsID);
+        //if (m_pQuat >> 8 != 0)
     }
 
     XURXUIObjectData* TXUIResource::CreateObjectData(TXUIResource& a_rResource, uint16_t index)

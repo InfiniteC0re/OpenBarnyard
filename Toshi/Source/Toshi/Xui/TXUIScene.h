@@ -19,6 +19,7 @@ namespace Toshi
 		/* 5 */ uint32_t m_interruptTransitions;
 		/* 6 */ bool m_ignorePresses;
 
+	public:
 		XURXUISceneData();
 
 		virtual const char* GetTypeInfo() const { return sm_sTypeInfo; }
