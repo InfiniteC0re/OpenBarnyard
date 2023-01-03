@@ -31,12 +31,12 @@ namespace Toshi
 			m_Endianess = Endianess_Big;
 		}
 
-		m_ReadPos += m_pFile->Read(&m_TRBF, 4);
+		m_ReadPos += m_pFile->Read(&m_Magic, 4);
 
 		if (m_Endianess == Endianess_Big)
 		{
 			m_Header.FileSize = PARSEDWORD_BIG(m_Header.FileSize);
-			m_TRBF = PARSEDWORD_BIG(m_TRBF);
+			m_Magic = PARSEDWORD_BIG(m_Magic);
 		}
 
 		m_CurrentSection.Name = m_Header.Magic;
@@ -85,7 +85,7 @@ namespace Toshi
 	TTRB::ERROR TTSFI::ReadHunk()
 	{
 		// FUN_00687fa0
-		m_pFile->Read(&m_CurrentSection, sizeof(Section));
+		m_pFile->Read(&m_CurrentSection, sizeof(Hunk));
 		
 		if (m_Endianess != Endianess_Little)
 		{
@@ -130,15 +130,7 @@ namespace Toshi
 
 		TASSERT(m_ReadPos == 0, "m_ReadPos should be zero");
 		m_ReadPos += m_pFile->Read(dst, m_CurrentSection.Size);
-
-		uint32_t pos = m_pFile->Tell();
-
-		// align position to 4
-		if ((pos & 3) != 0)
-		{
-			char dummy[4];
-			m_ReadPos += m_pFile->Read(dummy, 4 - (pos & 3));
-		}
+		m_ReadPos += TTSFI::ReadAlignmentPad();
 
 		return TTRB::ERROR_OK;
 	}
@@ -187,9 +179,143 @@ namespace Toshi
 		m_FileInfoCount = 0;
 		m_ReadPos = 0;
 		// FUN_007EC9F0(m_FileInfo, 0, 0x100);
-		m_TRBF = 0;
+		m_Magic = 0;
 		m_CurrentSection.Name = 0;
 		m_CurrentSection.Size = 0;
 		m_Endianess = Endianess_Little;
+	}
+
+	TTSFO::ERROR TTSFO::Create(const char* filepath, const char* magic, Endianess endianess)
+	{
+		m_pFile = TFile::Create(filepath, TFile::FileMode_CreateNew | TFile::FileMode_Write);
+
+		if (m_pFile != TNULL)
+		{
+			TTSF::Hunk hunk{ TMAKEFOUR("TSFL"), 0 };
+			uint32_t magicValue = TMAKEFOUR(magic);
+
+			if (endianess == Endianess_Big)
+			{
+				hunk.Name = TMAKEFOUR("TSFB");
+				hunk.Size = PARSEDWORD_BIG(hunk.Size);
+			}
+
+			Write(hunk);
+			Write(magicValue);
+
+			m_Endianess = endianess;
+			m_Positions[m_PositionCount] = 0;
+			m_PositionCount += 1;
+
+			return TTRB::ERROR_OK;
+		}
+		else
+		{
+			return TTSFO::ERROR_FILE;
+		}
+	}
+
+	void TTSFO::Close()
+	{
+		if (m_pFile != TNULL)
+		{
+			EndForm();
+			m_pFile->Destroy();
+			m_pFile = TNULL;
+		}
+	}
+
+	size_t TTSFO::BeginForm(const char* name)
+	{
+		TASSERT(m_pFile != TNULL, "TTSFO is not created");
+
+		TTSF::Hunk hunk{ TMAKEFOUR("FORM"), 0 };
+		auto nameValue = TMAKEFOUR(name);
+
+		if (m_Endianess == Endianess_Big)
+		{
+			hunk.Name = PARSEDWORD_BIG(hunk.Name);
+			nameValue = PARSEDWORD_BIG(nameValue);
+		}
+
+		m_Positions[m_PositionCount++] = m_pFile->Tell();
+
+		auto written1 = Write(hunk);
+		auto written2 = Write(nameValue);
+
+		return written1 + written2;
+	}
+
+	size_t TTSFO::EndForm()
+	{
+		TASSERT(m_pFile != TNULL, "TTSFO is not created");
+
+		if (m_PositionCount > 0)
+		{
+			auto formPosition = m_Positions[--m_PositionCount];
+
+			auto oldPos = m_pFile->Tell();
+			auto formSize = (oldPos - formPosition) - 8;
+
+			if (m_Endianess == Endianess_Big)
+			{
+				formSize = PARSEDWORD_BIG(formSize);
+			}
+
+			m_pFile->Seek(formPosition + 4, TFile::TSEEK_SET);
+			Write(formSize);
+			m_pFile->Seek(oldPos, TFile::TSEEK_SET);
+
+			return formSize;
+		}
+
+		return 0;
+	}
+
+	bool TTSFO::OpenHunk(HunkMark* hunkMark, const char* hunkName)
+	{
+		TASSERT(hunkMark != TNULL, "HunkMark is TNULL");
+		hunkMark->Name = TMAKEFOUR(hunkName);
+		hunkMark->Pos = m_pFile->Tell();
+
+		WriteHunk(hunkMark->Name, TNULL, 0);
+		return true;
+	}
+
+	bool TTSFO::CloseHunk(HunkMark* hunkMark)
+	{
+		TASSERT(hunkMark != TNULL, "HunkMark is TNULL");
+		auto oldPos = m_pFile->Tell();
+
+		m_pFile->Seek(hunkMark->Pos, TFile::TSEEK_SET);
+		WriteHunk(hunkMark->Name, TNULL, (oldPos - hunkMark->Pos) - sizeof(TTSF::Hunk));
+		m_pFile->Seek(oldPos, TFile::TSEEK_SET);
+		TTSFO::WriteAlignmentPad();
+
+		return true;
+	}
+
+	size_t TTSFO::WriteHunk(uint32_t hunkName, void* buffer, size_t bufferSize)
+	{
+		TTSF::Hunk hunk{ hunkName, bufferSize };
+
+		// Convert endianess
+		if (m_Endianess == Endianess_Big)
+		{
+			hunk.Name = PARSEDWORD_BIG(hunk.Name);
+			hunk.Size = PARSEDWORD_BIG(hunk.Size);
+		}
+
+		// Write hunk
+		size_t writtenSize = Write(hunk);
+
+		// Write buffer
+		if (buffer != TNULL && bufferSize > 0)
+		{
+			writtenSize += m_pFile->Write(buffer, bufferSize);
+		}
+
+		// Return num of written bytes
+		return writtenSize + TTSFO::WriteAlignmentPad();
 	}
 }

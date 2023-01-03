@@ -28,11 +28,22 @@ namespace Toshi
 		}
 		
 		static uint64_t GetUnixSeconds(uint64_t* pOut = nullptr);
+		static void MemSet(void* ptr, size_t value, size_t size);
+		
+		static void* MemCopy(void* dst, const void* const& src, size_t size)
+		{
+			return memcpy(dst, src, size);
+		}
 
-		static void* MemCopy(void* dst, const void* const& src, size_t size);
-		static void  MemSet(void* ptr, size_t value, size_t size);
-		static void MemClear(void* ptr, size_t size);
-		static int MemCompare(void* ptr1, void* ptr2, int size);
+		static void MemClear(void* ptr, size_t size)
+		{
+			memset(ptr, 0, size);
+		}
+
+		static int MemCompare(void* ptr1, void* ptr2, int size)
+		{
+			return memcmp(ptr1, ptr2, size);
+		}
 		
 #pragma region CRC
 

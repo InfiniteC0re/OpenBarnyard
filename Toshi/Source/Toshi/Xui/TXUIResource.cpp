@@ -74,7 +74,7 @@ namespace Toshi
 
         if (!loadTrb)
         {
-            auto file = TFile::Create(fullFileName, TFile::OpenFlags_Read);
+            TFile* file = TFile::Create(fullFileName);
 
             if (file != TNULL)
             {

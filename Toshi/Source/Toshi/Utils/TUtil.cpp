@@ -21,12 +21,6 @@ namespace Toshi
         return false;
     }
 
-    void* TUtil::MemCopy(void* dst, const void* const& src, size_t size)
-    {
-        //JPOG implemented their own memcpy
-        return memcpy(dst, src, size);
-    }
-
     void TUtil::MemSet(void* ptr, size_t value, size_t size)
     {
 		if (size >= sizeof(void*))
@@ -70,16 +64,6 @@ namespace Toshi
 			size -= stepSize;
 		}
     }
-
-	void TUtil::MemClear(void* ptr, size_t size)
-	{
-		memset(ptr, 0, size);
-	}
-
-	int TUtil::MemCompare(void* ptr1, void* ptr2, int size)
-	{
-		return memcmp(ptr1, ptr2, size);
-	}
 
     // Source: https://lentz.com.au/blog/tag/crc-table-generator
 	void TUtil::CRCInitialise()

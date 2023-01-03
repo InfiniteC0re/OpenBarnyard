@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "AExampleClass.h"
-#include "./Memory/AMemory.h"
+#include "Memory/AMemory.h"
+
+#include <Toshi/File/TTSF.h>
 
 using namespace Toshi;
 
@@ -29,7 +31,7 @@ AExampleClass::AExampleClass()
 	TOSHI_INFO("==============================================");
 
 	{
-		TFile* file = TFile::Create("C:\\Program Files (x86)\\Steam\\steamapps\\common\\de Blob\\Data\\BlobChar\\AssetPack.trb", TFile::OpenFlags_Read);
+		TFile* file = TFile::Create("C:\\Program Files (x86)\\Steam\\steamapps\\common\\de Blob\\Data\\BlobChar\\AssetPack.trb");
 
 		if (file)
 		{
@@ -45,7 +47,7 @@ AExampleClass::AExampleClass()
 	}
 
 	{
-		TFile* file = TFile::Create("C:\\Program Files (x86)\\Steam\\userdata\\180297931\\532320\\remote\\SaveData.dat.old", TFile::OpenFlags_Read);
+		TFile* file = TFile::Create("C:\\Program Files (x86)\\Steam\\userdata\\180297931\\532320\\remote\\SaveData.dat.old");
 
 		if (file)
 		{
@@ -63,16 +65,20 @@ AExampleClass::AExampleClass()
 			file->Destroy();
 		}
 	}
-	/*
-	TFile* file = TFile::Create("C:\\Program Files (x86)\\Steam\\steamapps\\common\\de Blob\\Data\\XUI\\DE\\common.trb", TFile::OpenFlags_Read);
-	TTRB trb;
-	trb.Load(file);
-	uint8_t* buf = (uint8_t*)trb.GetSymbolAddress("txui");
-	buf += 8;
-	buf = (uint8_t*)(*(int*)buf);
-	TXUIResource* res = new TXUIResource();
-	res->Load(buf);
-	*/
+
+	TFile* file = TFile::Create("C:\\Program Files (x86)\\Steam\\steamapps\\common\\de Blob\\Data\\XUI\\DE\\common.trb");
+	
+	if (file)
+	{
+		TTRB trb;
+		trb.Load(file);
+		uint8_t* buf = (uint8_t*)trb.GetSymbolAddress("txui");
+		buf += 8;
+		buf = (uint8_t*)(*(int*)buf);
+		TXUIResource* res = new TXUIResource();
+		res->Load(buf);
+	}
+
 	/*
 	TFile* file = TFile::Create("C:\\Program Files (x86)\\Steam\\steamapps\\common\\de Blob\\Data\\XUI\\DE\\common.trb", TFile::OpenFlags_Read);
 	
@@ -102,34 +108,6 @@ AExampleClass::AExampleClass()
 	trb.Load("C:\\Users\\nepel\\Desktop\\BKG_CONCEPT01_NTSC_ENG.TTL");
 	*/
 
-	class NodeTreeTest : public TNodeTree<NodeTreeTest>::TNode
-	{
-	public:
-		NodeTreeTest(float value) : m_Value(value) { }
-
-		float GetValue() { return m_Value; }
-
-	private:
-		float m_Value;
-	};
-
-	TNodeTree<NodeTreeTest> tree;
-
-	struct DummyShit
-	{
-		TNodeTree<NodeTreeTest>* fuckthisshit1;
-		NodeTreeTest* fuckthisshit2 = 0;
-		NodeTreeTest* fuckthisshit3 = 0;
-		NodeTreeTest* fuckthisshit4 = 0;
-		NodeTreeTest* fuckthisshit5 = 0;
-	};
-
-	DummyShit dummyparent;
-	tree.InsertNode((TNodeTree<NodeTreeTest>::TNode*)&dummyparent, new NodeTreeTest(5.0f));
-	tree.InsertNode((TNodeTree<NodeTreeTest>::TNode*)&dummyparent, new NodeTreeTest(7.0f));
-	tree.InsertNode((TNodeTree<NodeTreeTest>::TNode*)&dummyparent, new NodeTreeTest(9.0f));
-	//TOSHI_INFO(tree.Root()-> ->GetValue());
-
 	class Test : public TDList<Test>::TNode
 	{
 	public:
@@ -153,6 +131,33 @@ AExampleClass::AExampleClass()
 
 	delete list.Head()->Next();
 	delete list.Head();
+
+	// TTSFO test (making our own trb files)
+	TTSFO ttsfo;
+	TTSFO::ERROR error = ttsfo.Create("D:\\test.trb");
+
+	if (error == TTSFO::ERROR_OK)
+	{
+		struct Something
+		{
+			int a;
+			int b;
+			int c;
+			float d;
+			char e;
+			char f;
+			char g;
+			char h;
+		};
+
+		Something smth{ 8, 1, 2, 1.69f, 'I', 'J', 'K', 'L' };
+
+		TTSFO::HunkMark mark;
+		ttsfo.OpenHunk(&mark, "HNK1");
+		ttsfo.Write(smth);
+		ttsfo.CloseHunk(&mark);
+		ttsfo.Close();
+	}
 
 	auto kernel = new TKernelInterface();
 	

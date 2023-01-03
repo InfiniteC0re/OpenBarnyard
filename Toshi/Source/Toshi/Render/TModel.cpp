@@ -3,12 +3,11 @@
 
 bool Toshi::TModel::LoadTMD(const char* a_tmdPath)
 {
-	auto file = TFile::Create(a_tmdPath, Toshi::TFile::OpenFlags_Read);
-
-	Header header;
+	TFile* file = TFile::Create(a_tmdPath);
 
 	if (file != TNULL)
 	{
+		Header header;
 		file->Read(&header, sizeof(Header));
 
 		if (header.m_magic == TMAKEFOUR("TMDL"))
