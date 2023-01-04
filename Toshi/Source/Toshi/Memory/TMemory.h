@@ -6,6 +6,13 @@ namespace Toshi
 {
 	class TMemoryHeap;
 
+	typedef uint32_t TMemoryHeapFlags;
+	enum TMemoryHeapFlags_ : TMemoryHeapFlags
+	{
+		TMemoryHeapFlags_UseMutex = BITFIELD(0),
+		TMemoryHeapFlags_AllocAsPile = BITFIELD(2),
+	};
+
 	struct TMemoryContext
 	{
 		typedef void* (*t_Malloc)(size_t size);
@@ -55,12 +62,12 @@ namespace Toshi
 		static void*        dlheapcalloc(TMemoryHeap* heap, size_t nitems, size_t size);
 		static void*        dlheaprealloc(TMemoryHeap* heap, void* mem, size_t newsize);
 		static void*        dlheapmemalign(TMemoryHeap* heap, size_t alignment, size_t size);
-		static TMemoryHeap* dlheapcreateinplace(void* ptr, size_t heapSize, Flags flags, const char name[15]);
-		static TMemoryHeap* dlheapcreatesubheap(TMemoryHeap* heap, size_t size, Flags flags, const char name[15]);
-		static TMemoryHeap* dlheapcreate(TMemoryHeap* heap, size_t size, Flags flags, const char name[15]) { return TMemory::dlheapcreatesubheap(heap, size, flags, name); }
+		static TMemoryHeap* dlheapcreateinplace(void* ptr, size_t heapSize, TMemoryHeapFlags flags, const char name[15]);
+		static TMemoryHeap* dlheapcreatesubheap(TMemoryHeap* heap, size_t size, TMemoryHeapFlags flags, const char name[15]);
+		static TMemoryHeap* dlheapcreate(TMemoryHeap* heap, size_t size, TMemoryHeapFlags flags, const char name[15]) { return TMemory::dlheapcreatesubheap(heap, size, flags, name); }
 
-		static TMemoryHeap* CreateHeapInPlace(void* ptr, size_t heapSize, Flags flags, const char name[15]) { return TMemory::dlheapcreateinplace(ptr, heapSize, flags, name); }
-		static TMemoryHeap* CreateHeap(size_t size, Flags flags, const char name[15]) { return TMemory::dlheapcreate(s_GlobalHeap, size, flags, name); }
+		static TMemoryHeap* CreateHeapInPlace(void* ptr, size_t heapSize, TMemoryHeapFlags flags, const char name[15]) { return TMemory::dlheapcreateinplace(ptr, heapSize, flags, name); }
+		static TMemoryHeap* CreateHeap(size_t size, TMemoryHeapFlags flags, const char name[15]) { return TMemory::dlheapcreate(s_GlobalHeap, size, flags, name); }
 		static void         DestroyHeap(TMemoryHeap* heap) { TMemory::dlheapdestroy(heap); }
 
 		static void         OutOfMem(TMemoryHeap* heap, size_t size);
@@ -93,19 +100,11 @@ namespace Toshi
 	class TMemoryHeap
 	{
 	public:
-		typedef uint32_t Flags;
-		enum Flags_ : Flags
-		{
-			Flags_UseMutex = BITFIELD(0),
-			Flags_AllocAsPile = BITFIELD(2),
-		};
+		static constexpr int NAMESIZE = 15;
 
 		friend class TMemory;
 
 	public:
-		void  CreateMutex() { m_Mutex.Create(); }
-		void  DestroyMutex() { m_Mutex.Destroy(); }
-
 		void* Malloc(size_t size) { return TMemory::dlheapmalloc(this, size); }
 		static void* Malloc(TMemoryHeap* heap, size_t size) { return TMemory::dlheapmalloc(heap, size); }
 		void* Calloc(size_t nitems, size_t size) { return TMemory::dlheapcalloc(this, nitems, size); }
@@ -114,13 +113,19 @@ namespace Toshi
 		void  Free(void* mem) { TMemory::dlheapfree(this, mem); }
 
 	private:
-		Flags m_Flags;
+		void  CreateMutex() { m_Mutex.Create(); }
+		void  DestroyMutex() { m_Mutex.Destroy(); }
+		
+		static void* AllocAsPile(TMemoryHeap* heap, size_t size, size_t alignment = 4);
+
+	private:
+		TMemoryHeapFlags m_Flags;
 		T2Mutex m_Mutex;
-		void* m_SubHeapBuffer;
+		char* m_SubHeapBuffer;
 		void* m_MSpace;
-		uint32_t m_Unk4;
-		uint32_t m_Unk5;
-		char m_Name[15];
+		char* m_PileData;
+		uint32_t m_PileSize;
+		char m_Name[NAMESIZE + 1];
 	};
 }
 

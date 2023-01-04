@@ -32,86 +32,85 @@ namespace Toshi
 
 	void* TMemory::dlheapmalloc(TMemoryHeap* heap, size_t size)
 	{
-		if (heap->m_Flags & TMemoryHeap::Flags_AllocAsPile)
+		// 006fc520
+		if (heap->m_Flags & TMemoryHeapFlags_AllocAsPile)
 		{
-			TTODO("Toshi::TMemoryHeap::AllocAsPile(heap, size, 4) - 0x006fc8b0");
-			return heap;
+			return TMemoryHeap::AllocAsPile(heap, size, 4);
 		}
 
-		if (heap->m_Flags & TMemoryHeap::Flags_UseMutex) TMemory::AcquireMutex();
+		if (heap->m_Flags & TMemoryHeapFlags_UseMutex) TMemory::AcquireMutex();
 
 		void* chunk = mspace_malloc(heap->m_MSpace, size);
 		if (chunk == nullptr) TMemory::OutOfMem(heap, size);
 
-		if (heap->m_Flags & TMemoryHeap::Flags_UseMutex) TMemory::ReleaseMutex();
+		if (heap->m_Flags & TMemoryHeapFlags_UseMutex) TMemory::ReleaseMutex();
 		return chunk;
 	}
 
 	void* TMemory::dlheapcalloc(TMemoryHeap* heap, size_t nitems, size_t size)
 	{
-		if (heap->m_Flags & TMemoryHeap::Flags_AllocAsPile)
+		// 006fc580
+		if (heap->m_Flags & TMemoryHeapFlags_AllocAsPile)
 		{
-			TTODO("Toshi::TMemoryHeap::AllocAsPile(heap, size, 4) - 0x006fc8b0");
-			return heap;
+			return TMemoryHeap::AllocAsPile(heap, nitems * size, 4);
 		}
 
-		if (heap->m_Flags & TMemoryHeap::Flags_UseMutex) TMemory::AcquireMutex();
+		if (heap->m_Flags & TMemoryHeapFlags_UseMutex) TMemory::AcquireMutex();
 
 		void* chunk = mspace_calloc(heap->m_MSpace, nitems, size);
 		if (chunk == nullptr) TMemory::OutOfMem(heap, size);
 
-		if (heap->m_Flags & TMemoryHeap::Flags_UseMutex) TMemory::ReleaseMutex();
+		if (heap->m_Flags & TMemoryHeapFlags_UseMutex) TMemory::ReleaseMutex();
 		return chunk;
 	}
 
 	void* TMemory::dlheapmemalign(TMemoryHeap* heap, size_t alignment, size_t size)
 	{
-		if (heap->m_Flags & TMemoryHeap::Flags_AllocAsPile)
+		// 006fc6f0
+		if (heap->m_Flags & TMemoryHeapFlags_AllocAsPile)
 		{
-			TTODO("Toshi::TMemoryHeap::AllocAsPile(heap, size, alignment) - 0x006fc8b0");
-			return heap;
+			return TMemoryHeap::AllocAsPile(heap, size, 4);
 		}
 
-		if (heap->m_Flags & TMemoryHeap::Flags_UseMutex) TMemory::AcquireMutex();
+		if (heap->m_Flags & TMemoryHeapFlags_UseMutex) TMemory::AcquireMutex();
 
 		void* chunk = mspace_memalign(heap->m_MSpace, alignment, size);
 		if (chunk == nullptr) TMemory::OutOfMem(heap, size);
 
-		if (heap->m_Flags & TMemoryHeap::Flags_UseMutex) TMemory::ReleaseMutex();
+		if (heap->m_Flags & TMemoryHeapFlags_UseMutex) TMemory::ReleaseMutex();
 		return chunk;
 	}
 
 	void* TMemory::dlheaprealloc(TMemoryHeap* heap, void* mem, size_t newsize)
 	{
-		if (heap->m_Flags & TMemoryHeap::Flags_AllocAsPile)
-		{
-			TTODO("Toshi::TMemoryHeap::AllocAsPile(heap, size, 4) - 0x006fc8b0");
-			return heap;
-		}
+		// 006fc5f0
+		TASSERT((heap->m_Flags & TMemoryHeapFlags_AllocAsPile) == 0, "Cannot realloc on pile");
 
-		if (heap->m_Flags & TMemoryHeap::Flags_UseMutex) TMemory::AcquireMutex();
+		if (heap->m_Flags & TMemoryHeapFlags_UseMutex) TMemory::AcquireMutex();
 
 		void* chunk = mspace_realloc(heap->m_MSpace, mem, newsize);
 		if (chunk == nullptr) TMemory::OutOfMem(heap, newsize);
 
-		if (heap->m_Flags & TMemoryHeap::Flags_UseMutex) TMemory::ReleaseMutex();
+		if (heap->m_Flags & TMemoryHeapFlags_UseMutex) TMemory::ReleaseMutex();
 		return chunk;
 	}
 
 	void TMemory::dlheapfree(TMemoryHeap* heap, void* mem)
 	{
-		if (heap->m_Flags & TMemoryHeap::Flags_UseMutex) TMemory::AcquireMutex();
+		TASSERT((heap->m_Flags & TMemoryHeapFlags_AllocAsPile) == 0, "Cannot free pile memory");
+
+		if (heap->m_Flags & TMemoryHeapFlags_UseMutex) TMemory::AcquireMutex();
 		
 		mspace_free(heap->m_MSpace, mem);
 		
-		if (heap->m_Flags & TMemoryHeap::Flags_UseMutex) TMemory::ReleaseMutex();
+		if (heap->m_Flags & TMemoryHeapFlags_UseMutex) TMemory::ReleaseMutex();
 	}
 
 	void TMemory::dlheapdestroy(TMemoryHeap* heap)
 	{
 		if (heap != nullptr)
 		{
-			if (heap->m_Flags & TMemoryHeap::Flags_UseMutex) heap->DestroyMutex();
+			if (heap->m_Flags & TMemoryHeapFlags_UseMutex) heap->DestroyMutex();
 			destroy_mspace(heap->m_MSpace);
 			heap->m_MSpace = nullptr;
 
@@ -123,31 +122,55 @@ namespace Toshi
 		}
 	}
 
-	TMemoryHeap* TMemory::dlheapcreatesubheap(TMemoryHeap* heap, size_t size, Flags flags, const char name[15])
+	TMemoryHeap* TMemory::dlheapcreatesubheap(TMemoryHeap* heap, size_t size, TMemoryHeapFlags flags, const char name[15])
 	{
+		// 006fc320
 		TMemoryHeap* subHeap = nullptr;
-
 		size_t subHeapSize = size + sizeof(TMemoryHeap);
 		void* mem = heap->Malloc(subHeapSize);
 
 		if (mem != nullptr)
-		{
-			subHeap = TMemory::dlheapcreateinplace(mem, subHeapSize, flags, name);
-
-			if (subHeap == nullptr)
+		{	
+			if (flags & TMemoryHeapFlags_AllocAsPile)
 			{
-				TFree(mem);
+				subHeap = static_cast<TMemoryHeap*>(mem);
+
+				subHeap->m_Flags = flags;
+				subHeap->m_MSpace = TNULL;
+				strncpy_s(subHeap->m_Name, name, TMemoryHeap::NAMESIZE);
+				subHeap->m_Name[TMemoryHeap::NAMESIZE] = '\0';
+				subHeap->m_PileData = reinterpret_cast<char*>(subHeap + 1);
+				subHeap->m_PileSize = subHeapSize;
+
+				if (flags & TMemoryHeapFlags_UseMutex)
+				{
+					subHeap->CreateMutex();
+				}
+				else
+				{
+					TUtil::MemSet(&subHeap->m_Mutex, 0, sizeof(subHeap->m_Mutex));
+				}
 			}
 			else
 			{
-				subHeap->m_SubHeapBuffer = mem;
+				subHeap = TMemory::CreateHeapInPlace(mem, subHeapSize, flags, name);
+			}
+			
+
+			if (subHeap != TNULL)
+			{
+				subHeap->m_SubHeapBuffer = static_cast<char*>(mem);
+			}
+			else
+			{
+				TFree(mem);
 			}
 		}
 		
 		return subHeap;
 	}
 
-	TMemoryHeap* TMemory::dlheapcreateinplace(void* ptr, size_t heapSize, TMemoryHeap::Flags flags, const char name[15])
+	TMemoryHeap* TMemory::dlheapcreateinplace(void* ptr, size_t heapSize, TMemoryHeapFlags flags, const char name[15])
 	{
 		TASSERT(heapSize > 0, "Allocation size is zero");
 		TASSERT((heapSize & 3) == 0, "Allocation size is not aligned to 4");
@@ -155,14 +178,15 @@ namespace Toshi
 		TMemoryHeap* heap = static_cast<TMemoryHeap*>(ptr);
 		
 		size_t capacity = heapSize - sizeof(TMemoryHeap);
-		heap->m_MSpace = create_mspace_with_base(heap + 1, capacity, 0);
+		heap->m_MSpace = create_mspace_with_base(heap + 1, capacity, 1);
 
 		if (heap->m_MSpace != nullptr)
 		{
 			heap->m_Flags = flags;
-			strncpy_s(heap->m_Name, name, sizeof(heap->m_Name));
+			strncpy_s(heap->m_Name, name, TMemoryHeap::NAMESIZE);
+			heap->m_Name[TMemoryHeap::NAMESIZE] = '\0';
 
-			if (flags & TMemoryHeap::Flags_UseMutex)
+			if (flags & TMemoryHeapFlags_UseMutex)
 			{
 				heap->CreateMutex();
 			}
@@ -177,5 +201,25 @@ namespace Toshi
 		{
 			return nullptr;
 		}
+	}
+
+	void* TMemoryHeap::AllocAsPile(TMemoryHeap* heap, size_t size, size_t alignment)
+	{
+		TASSERT(heap->m_Flags & TMemoryHeapFlags_AllocAsPile, "Can't allocate as pile on a non-pile heap");
+
+		// Align current pointer
+		heap->m_PileData = reinterpret_cast<char*>((((size_t)heap->m_PileData + (alignment - 1)) / alignment) * alignment);
+		size_t usedMemorySize = heap->m_PileData - heap->m_SubHeapBuffer;
+
+		if (usedMemorySize + size > heap->m_PileSize)
+		{
+			TOSHI_CORE_CRITICAL("Out of memory in pile '{0}' when trying to alloc {1} bytes", heap->m_Name, size);
+			TBREAK();
+		}
+
+		void* allocated = heap->m_PileData;
+		heap->m_PileData += size;
+
+		return allocated;
 	}
 }

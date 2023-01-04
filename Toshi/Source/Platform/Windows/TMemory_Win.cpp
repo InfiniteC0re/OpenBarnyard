@@ -112,7 +112,7 @@ namespace Toshi
 
 		};
 
-		s_GlobalHeap = CreateHeapInPlace(TMemory::s_Context.s_Heap, m_GlobalSize, TMemoryHeap::Flags_UseMutex, "global");
+		s_GlobalHeap = CreateHeapInPlace(TMemory::s_Context.s_Heap, m_GlobalSize, TMemoryHeapFlags_UseMutex, "global");
 		return Error_Ok;
 	}
 }

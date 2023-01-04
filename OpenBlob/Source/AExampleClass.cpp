@@ -132,6 +132,16 @@ AExampleClass::AExampleClass()
 	delete list.Head()->Next();
 	delete list.Head();
 
+	{
+		// TMemory Piles
+		auto pile = TMemory::CreateHeap(128, TMemoryHeapFlags_AllocAsPile, "test pile");
+		auto ptr1 = pile->Malloc(32);
+		auto ptr2 = pile->Malloc(32);
+		auto ptr3 = pile->Malloc(32);
+		auto ptr4 = pile->Malloc(32);
+		auto ptr5 = pile->Malloc(32);
+	}
+
 	// TTSFO test (making our own trb files)
 	TTSFO ttsfo;
 	TTSFO::ERROR error = ttsfo.Create("D:\\test.trb");
@@ -153,9 +163,9 @@ AExampleClass::AExampleClass()
 		Something smth{ 8, 1, 2, 1.69f, 'I', 'J', 'K', 'L' };
 
 		TTSFO::HunkMark mark;
-		ttsfo.OpenHunk(&mark, "HNK1");
+		ttsfo.BeginForm("frm1");
 		ttsfo.Write(smth);
-		ttsfo.CloseHunk(&mark);
+		ttsfo.EndForm();
 		ttsfo.Close();
 	}
 
