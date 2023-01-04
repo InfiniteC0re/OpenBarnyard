@@ -16,6 +16,60 @@ namespace TLib
 		public:
 			TRBF() : m_HDRX(VERSION) { }
 
+			void Reset()
+			{
+				m_SECT.Reset();
+				m_SYMB.Reset();
+			}
+
+			bool ReadFromFile(const std::string& filepath)
+			{
+				Toshi::TTSFI ttsfi;
+				auto pFile = Toshi::TFile::Create(filepath.c_str());
+				
+				if (pFile && ttsfi.Open(pFile) == Toshi::TTRB::ERROR_OK)
+				{
+					int32_t leftSize = ttsfi.GetCurrentHunk().Size - 4;
+
+					while (leftSize > sizeof(Toshi::TTSF::Hunk))
+					{
+						if (ttsfi.ReadHunk() != Toshi::TTRB::ERROR_OK) break;
+						leftSize -= ttsfi.GetCurrentHunk().Size + sizeof(Toshi::TTSF::Hunk);
+
+						switch (ttsfi.GetCurrentHunk().Name)
+						{
+						case TMAKEFOUR("HDRX"):
+							m_HDRX.Read(ttsfi, m_SECT);
+							break;
+						case TMAKEFOUR("SECT"):
+							m_SECT.Read(ttsfi);
+							break;
+						case TMAKEFOUR("SECC"):
+							m_SECT.Read(ttsfi, true);
+							break;
+						case TMAKEFOUR("RELC"):
+							m_RELC.Read(ttsfi, m_SECT);
+							break;
+						case TMAKEFOUR("SYMB"):
+							m_SYMB.Read(ttsfi, m_SECT);
+							break;
+						}
+
+						ttsfi.SkipHunk();
+					}
+
+					pFile->Destroy();
+					return true;
+				}
+
+				if (pFile != TNULL)
+				{
+					pFile->Destroy();
+				}
+
+				return false;
+			}
+
 			void WriteToFile(const std::string& filepath, Toshi::TTSF::Endianess endianess = Toshi::TTSF::Endianess_Little)
 			{
 				Toshi::TTSFO ttsfo;

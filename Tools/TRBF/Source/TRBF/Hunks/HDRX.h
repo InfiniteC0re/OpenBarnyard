@@ -37,6 +37,20 @@ namespace TLib
 				}
 			}
 
+			void Read(Toshi::TTSFI& ttsfi, SECT& sect)
+			{
+				ttsfi.Read(&m_Header);
+
+				for (size_t i = 0; i < m_Header.m_i32SectionCount; i++)
+				{
+					Toshi::TTRB::SecInfo sectionInfo;
+					ttsfi.Read(&sectionInfo);
+					
+					auto stack = sect.CreateSection();
+					stack->SetExpectedSize(sectionInfo.m_Size);
+				}
+			}
+
 		private:
 			Toshi::TTRB::Header m_Header;
 		};

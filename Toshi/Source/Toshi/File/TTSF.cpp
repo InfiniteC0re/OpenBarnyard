@@ -39,8 +39,8 @@ namespace Toshi
 			m_Magic = PARSEDWORD_BIG(m_Magic);
 		}
 
-		m_CurrentSection.Name = m_Header.Magic;
-		m_CurrentSection.Size = m_Header.FileSize;
+		m_CurrentHunk.Name = m_Header.Magic;
+		m_CurrentHunk.Size = m_Header.FileSize;
 		PushForm();
 
 		return TTRB::ERROR_OK;
@@ -50,15 +50,15 @@ namespace Toshi
 	{
 		// FUN_00688160
 
-		if (m_CurrentSection.Name != TMAKEFOUR("FORM") &&
-			m_CurrentSection.Name != TMAKEFOUR("TSFL") &&
-			m_CurrentSection.Name != TMAKEFOUR("TSFB"))
+		if (m_CurrentHunk.Name != TMAKEFOUR("FORM") &&
+			m_CurrentHunk.Name != TMAKEFOUR("TSFL") &&
+			m_CurrentHunk.Name != TMAKEFOUR("TSFB"))
 		{
 			return TTRB::ERROR_WRONG_MAGIC;
 		}
 
 		m_FileInfo[m_FileInfoCount].FileStartOffset = m_pFile->Tell() - 4;
-		m_FileInfo[m_FileInfoCount].FileSize = m_CurrentSection.Size;
+		m_FileInfo[m_FileInfoCount].FileSize = m_CurrentHunk.Size;
 		m_FileInfoCount++;
 
 		return TTRB::ERROR_OK;
@@ -72,10 +72,10 @@ namespace Toshi
 		m_FileInfoCount--;
 		auto& fileInfo = m_FileInfo[m_FileInfoCount];
 
-		m_CurrentSection.Size = fileInfo.FileSize;
+		m_CurrentHunk.Size = fileInfo.FileSize;
 		m_ReadPos = m_pFile->Tell() - fileInfo.FileStartOffset;
 
-		uint32_t alignedPos = TMath::AlignNumUp(m_CurrentSection.Size);
+		uint32_t alignedPos = TMath::AlignNumUp(m_CurrentHunk.Size);
 		m_pFile->Seek(alignedPos - m_ReadPos, TFile::TSEEK_CUR);
 		m_ReadPos = alignedPos;
 
@@ -85,12 +85,12 @@ namespace Toshi
 	TTRB::ERROR TTSFI::ReadHunk()
 	{
 		// FUN_00687fa0
-		m_pFile->Read(&m_CurrentSection, sizeof(Hunk));
+		m_pFile->Read(&m_CurrentHunk, sizeof(Hunk));
 		
 		if (m_Endianess != Endianess_Little)
 		{
-			m_CurrentSection.Name = PARSEDWORD_BIG(m_CurrentSection.Name);
-			m_CurrentSection.Size = PARSEDWORD_BIG(m_CurrentSection.Size);
+			m_CurrentHunk.Name = PARSEDWORD_BIG(m_CurrentHunk.Name);
+			m_CurrentHunk.Size = PARSEDWORD_BIG(m_CurrentHunk.Size);
 		}
 
 		m_ReadPos = 0;
@@ -101,7 +101,7 @@ namespace Toshi
 	TTRB::ERROR TTSFI::SkipHunk()
 	{
 		// FUN_006880e0
-		uint32_t alignedSize = TMath::AlignNumUp(m_CurrentSection.Size);
+		uint32_t alignedSize = TMath::AlignNumUp(m_CurrentHunk.Size);
 		m_pFile->Seek(alignedSize - m_ReadPos, TFile::TSEEK_CUR);
 		m_ReadPos = alignedSize;
 
@@ -111,7 +111,7 @@ namespace Toshi
 	TTRB::ERROR TTSFI::ReadFORM(TTRB::SectionFORM* section)
 	{
 		// FUN_00688120
-		if (m_CurrentSection.Name != TMAKEFOUR("FORM"))
+		if (m_CurrentHunk.Name != TMAKEFOUR("FORM"))
 		{
 			return TTRB::ERROR_WRONG_MAGIC;
 		}
@@ -123,13 +123,13 @@ namespace Toshi
 
 	TTRB::ERROR TTSFI::ReadHunkData(void* dst)
 	{
-		if (m_CurrentSection.Name == TMAKEFOUR("FORM"))
+		if (m_CurrentHunk.Name == TMAKEFOUR("FORM"))
 		{
 			return TTRB::ERROR_FORM_MAGIC;
 		}
 
 		TASSERT(m_ReadPos == 0, "m_ReadPos should be zero");
-		m_ReadPos += m_pFile->Read(dst, m_CurrentSection.Size);
+		m_ReadPos += m_pFile->Read(dst, m_CurrentHunk.Size);
 		m_ReadPos += TTSFI::ReadAlignmentPad();
 
 		return TTRB::ERROR_OK;
@@ -166,8 +166,8 @@ namespace Toshi
 	void TTSFI::LogUnknownSection()
 	{
 #ifdef TOSHI_DEBUG
-		char charName[sizeof(m_CurrentSection.Name) + 1] = {};
-		*charName = m_CurrentSection.Name;
+		char charName[sizeof(m_CurrentHunk.Name) + 1] = {};
+		*charName = m_CurrentHunk.Name;
 
 		TOSHI_CORE_ERROR("Unknown TRB section: {0}", charName);
 #endif
@@ -180,8 +180,8 @@ namespace Toshi
 		m_ReadPos = 0;
 		// FUN_007EC9F0(m_FileInfo, 0, 0x100);
 		m_Magic = 0;
-		m_CurrentSection.Name = 0;
-		m_CurrentSection.Size = 0;
+		m_CurrentHunk.Name = 0;
+		m_CurrentHunk.Size = 0;
 		m_Endianess = Endianess_Little;
 	}
 

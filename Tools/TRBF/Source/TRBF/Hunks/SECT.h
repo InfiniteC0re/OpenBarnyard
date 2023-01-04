@@ -11,6 +11,8 @@ namespace TLib
 			class Stack
 			{
 			public:
+				friend class RELC;
+
 				static constexpr size_t BUFFER_GROW_SIZE = 4096;
 
 				template <class T>
@@ -62,6 +64,7 @@ namespace TLib
 					m_Buffer = TNULL;
 					m_BufferPos = TNULL;
 					m_BufferSize = 0;
+					m_ExpectedSize = 0;
 					GrowBuffer(0);
 				}
 
@@ -71,6 +74,27 @@ namespace TLib
 					{
 						delete[] m_Buffer;
 					}
+				}
+
+				size_t Tell()
+				{
+					return GetUsedSize();
+				}
+
+				void Seek(size_t newPos)
+				{
+					TASSERT(newPos < m_BufferSize, "Trying to seek out of buffer");
+					m_BufferPos = m_Buffer + newPos;
+				}
+
+				void SetExpectedSize(uint32_t expectedSize)
+				{
+					m_ExpectedSize = expectedSize;
+				}
+
+				uint32_t GetExpectedSize() const
+				{
+					return m_ExpectedSize;
 				}
 
 				uint32_t GetIndex() const
@@ -138,7 +162,7 @@ namespace TLib
 					Write<T*>(outPtrOffset, allocated);
 
 					size_t absolutePos = (size_t)allocated - (size_t)m_Buffer;
-					m_PtrList.emplace_back(outPtrOffset, absolutePos);
+					AddRelocationPtr(outPtrOffset, absolutePos);
 
 					return { this, absolutePos };
 				}
@@ -157,7 +181,7 @@ namespace TLib
 					Write<T*>(outPtrOffset, allocated);
 
 					size_t absolutePos = (size_t)allocated - (size_t)m_Buffer;
-					m_PtrList.emplace_back(outPtrOffset, absolutePos);
+					AddRelocationPtr(outPtrOffset, absolutePos);
 
 					return { this, absolutePos };
 				}
@@ -188,7 +212,6 @@ namespace TLib
 					return m_PtrList.end();
 				}
 
-			private:
 				void GrowBuffer(size_t requiredSize)
 				{
 					size_t newSize = ((requiredSize / BUFFER_GROW_SIZE) + 1) * BUFFER_GROW_SIZE;
@@ -199,6 +222,7 @@ namespace TLib
 					}
 				}
 
+			private:
 				void ResizeBuffer(size_t size)
 				{
 					TASSERT(size > 0, "Size should be positive");
@@ -226,11 +250,17 @@ namespace TLib
 					Link();
 				}
 
+				void AddRelocationPtr(size_t offset, size_t dataPtr)
+				{
+					m_PtrList.emplace_back(offset, dataPtr);
+				}
+
 			private:
 				uint32_t m_Index;
 				char* m_Buffer;
 				char* m_BufferPos;
 				size_t m_BufferSize;
+				uint32_t m_ExpectedSize;
 				std::vector<RelcPtr> m_PtrList;
 			};
 
@@ -239,10 +269,17 @@ namespace TLib
 
 			~SECT()
 			{
+				Reset();
+			}
+
+			void Reset()
+			{
 				for (auto stack : m_Sections)
 				{
 					delete stack;
 				}
+
+				m_Sections.clear();
 			}
 
 			size_t GetSectionCount() const
@@ -270,6 +307,31 @@ namespace TLib
 					stack->Unlink();
 					ttsfo.WriteRaw(stack->GetBuffer(), stack->GetUsedSize());
 					stack->Link();
+				}
+			}
+
+			void Read(Toshi::TTSFI& ttsfi, bool compressed = false)
+			{
+				for (auto stack : m_Sections)
+				{
+					size_t expectedSize = stack->GetExpectedSize();
+
+					if (expectedSize > 0)
+					{
+						stack->GrowBuffer(expectedSize);
+						
+						if (compressed)
+						{
+							ttsfi.ReadCompressed(stack->GetBuffer(), expectedSize);
+						}
+						else
+						{
+							ttsfi.ReadRaw(stack->GetBuffer(), expectedSize);
+						}
+
+						stack->Seek(expectedSize);
+						stack->SetExpectedSize(0);
+					}
 				}
 			}
 

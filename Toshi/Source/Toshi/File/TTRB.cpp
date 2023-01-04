@@ -69,7 +69,7 @@ namespace Toshi
 		static constexpr uint32_t s_RELCEntriesLimit = 0x200;
 		RELCEntry relcEntries[s_RELCEntriesLimit];
 
-		int32_t fileSize = ttsf.m_CurrentSection.Size - 4;
+		int32_t fileSize = ttsf.m_CurrentHunk.Size - 4;
 		int32_t leftSize = fileSize;
 		ttsf.PushForm();
 
@@ -90,9 +90,9 @@ namespace Toshi
 				uint8_t readResult = ttsf.ReadHunk();
 				if (readResult != ERROR_OK) return false;
 
-				sectionName = ttsf.m_CurrentSection.Name;
-				sectionSize = ttsf.m_CurrentSection.Size;
-				leftSize -= TMath::AlignNumUp(sectionSize) + 8;
+				sectionName = ttsf.m_CurrentHunk.Name;
+				sectionSize = ttsf.m_CurrentHunk.Size;
+				leftSize -= TMath::AlignNumUp(sectionSize) + sizeof(Toshi::TTSF::Hunk);
 
 				if (TMAKEFOUR("HEAD") < sectionName) break;
 
@@ -121,7 +121,7 @@ namespace Toshi
 				}
 				else if (sectionName == TMAKEFOUR("SYMB"))
 				{
-					m_SYMB = static_cast<SYMB*>(m_MemAllocator(AllocType_Unk2, ttsf.m_CurrentSection.Size, 0, 0, m_MemUserData));
+					m_SYMB = static_cast<SYMB*>(m_MemAllocator(AllocType_Unk2, ttsf.m_CurrentHunk.Size, 0, 0, m_MemUserData));
 					ttsf.ReadHunkData(m_SYMB);
 				}
 				else if (sectionName == TMAKEFOUR("SECC"))

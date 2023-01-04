@@ -34,6 +34,26 @@ namespace TLib
 					}
 				}
 			}
+
+			void Read(Toshi::TTSFI& ttsfi, SECT& sect)
+			{
+				uint32_t ptrCount = 0;
+				ttsfi.Read(&ptrCount);
+
+				Toshi::TTRB::RELCEntry entry;
+				for (uint32_t i = 0; i < ptrCount; i++)
+				{
+					ttsfi.Read(&entry);
+					auto stack = sect.GetSection(entry.HDRX1);
+					uint32_t dataPtr = *(uint32_t*)(&stack->GetBuffer()[entry.Offset]);
+					stack->AddRelocationPtr(entry.Offset, dataPtr);
+				}
+
+				for (auto stack : sect)
+				{
+					stack->Link();
+				}
+			}
 		};
 	}
 }
