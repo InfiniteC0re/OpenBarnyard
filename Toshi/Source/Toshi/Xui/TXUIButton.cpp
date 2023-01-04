@@ -1,5 +1,5 @@
 #include "ToshiPCH.h"
-#include "XURXUIButtonData.h"
+#include "TXUIButton.h"
 
 bool Toshi::XURXUIButtonData::IsColourPropType(uint32_t a_uiObjectIndex, uint32_t propType)
 {
