@@ -1,5 +1,6 @@
 #pragma once
 #include "Toshi/Xui/TXUIResource.h"
+#include "Toshi/Xui/TXUINamedFrame.h"
 
 namespace Toshi
 {
@@ -13,9 +14,9 @@ namespace Toshi
 		public TGenericClassDerived<TXUIElement, TObject, "TXUIElement", TMAKEVERSION(1, 0), false>
 	{
 
-		uint32_t m_uiNumNamedFrames; // 0x10
-		uint32_t m_uiNumChildren; // 0x16
-		void* m_child;
+		//uint32_t m_uiNumNamedFrames; // 0x10
+		//uint32_t m_uiNumChildren; // 0x16
+		//void* m_child;
 	};
 
 	class XURXUIObjectData
@@ -31,8 +32,11 @@ namespace Toshi
 		uint32_t m_index;
 		uint16_t unk; //0x12 de blob 0x1C NT08
 
-		uint32_t m_countOfChildren;
-		XURXUIObjectData* m_children;
+		XURXUINamedFrameData* m_pNamedFrames; // 0x8 both
+		uint16_t m_uiNumNamedFrames; // 0x10 de blob 0x14 NT08
+
+		uint32_t m_countOfChildren; // 0x16 de blob 0x10 NT08
+		XURXUIObjectData** m_children; // 0x4 both
 
 		virtual bool Load(TXUIResource& resource, uint8_t*& a_pData);
 		virtual bool IsFloatPropType(uint32_t a_uiObjectIndex, uint32_t propType) { return false; };
@@ -44,6 +48,7 @@ namespace Toshi
 		void LoadChildren(TXUIResource& resource, uint8_t*& a_pData);
 		bool LoadNamedFrames(TXUIResource& resource, uint8_t*& a_pData);
 		void LoadTimelines(TXUIResource& resource, uint8_t*& a_pData);
+		XURXUIObjectData* FindChildElementData(uint32_t index);
 	};
 
 	class XURXUIElementData : public XURXUIObjectData

@@ -104,8 +104,7 @@ bool Toshi::XURXUISceneData::Load(TXUIResource& resource, uint8_t*& a_pData)
 		int smth2 = 0;
 		if (unk != 0)
 		{
-			smth2 = *(a_pData + 1);
-			a_pData += 2;
+			smth2 = *a_pData++;
 		}
 		if ((smth2 & 1) != 0)
 		{
