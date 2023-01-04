@@ -1,6 +1,7 @@
 #pragma once
 #include "TRBF/Hunks/HDRX.h"
 #include "TRBF/Hunks/SECT.h"
+#include "TRBF/Hunks/RELC.h"
 
 class TRBF
 {
@@ -30,6 +31,11 @@ public:
 		m_SECT.Write(ttsfo);
 		ttsfo.CloseHunk(&mark);
 
+		// RELC
+		ttsfo.OpenHunk(&mark, "RELC");
+		m_RELC.Write(ttsfo, m_SECT);
+		ttsfo.CloseHunk(&mark);
+
 		ttsfo.Close();
 	}
 
@@ -41,4 +47,5 @@ public:
 private:
 	HDRX m_HDRX;
 	SECT m_SECT;
+	RELC m_RELC;
 };

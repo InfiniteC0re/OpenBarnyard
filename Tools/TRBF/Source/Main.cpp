@@ -38,6 +38,10 @@ int TMain(int argc, char** argv)
 	ptr2->pStruct->b = 12;
 	ptr2->pStruct->pStruct = TNULL;
 
+	auto ptr3 = pStack->Alloc<float>();
+	*ptr3 = 1.69f;
+	ptr2->pStruct->b = 19;
+
 	trbf.WriteToFile("D:\\test.trb");
 
 	return 0;

@@ -20,6 +20,16 @@ public:
 				return reinterpret_cast<T*>(m_Stack->GetBuffer() + m_Offset);
 			}
 
+			SECT::Stack* stack()
+			{
+				return m_Stack;
+			}
+
+			size_t offset()
+			{
+				return m_Offset;
+			}
+
 			T& operator*()
 			{
 				return *reinterpret_cast<T*>(m_Stack->GetBuffer() + m_Offset);
@@ -33,6 +43,12 @@ public:
 		private:
 			SECT::Stack* m_Stack;
 			size_t m_Offset;
+		};
+
+		struct RelcPtr
+		{
+			size_t Offset;
+			size_t DataPtr;
 		};
 
 	public:
@@ -52,12 +68,17 @@ public:
 			}
 		}
 
-		char* GetBuffer()
+		size_t GetPointerCount() const
+		{
+			return m_PtrList.size();
+		}
+
+		char* GetBuffer() const
 		{
 			return m_Buffer;
 		}
 
-		char* GetBufferPos()
+		char* GetBufferPos() const
 		{
 			return m_BufferPos;
 		}
@@ -74,7 +95,7 @@ public:
 		}
 
 		template <class T>
-		T* Write(size_t offset, T& value)
+		T* Write(size_t offset, const T& value)
 		{
 			TASSERT(offset >= 0 && offset < m_BufferSize, "Offset is out of buffer");
 			*(T*)(&m_Buffer[offset]) = value;
@@ -107,9 +128,35 @@ public:
 			Write<T*>(outPtrOffset, allocated);
 
 			size_t absolutePos = (size_t)allocated - (size_t)m_Buffer;
-			m_PtrList.emplace_back(this, absolutePos);
+			m_PtrList.emplace_back(outPtrOffset, absolutePos);
 
 			return { this, absolutePos };
+		}
+
+		void Link()
+		{
+			for (auto& ptr : m_PtrList)
+			{
+				Write<void*>(ptr.Offset, GetBuffer() + ptr.DataPtr);
+			}
+		}
+
+		void Unlink()
+		{
+			for (auto& ptr : m_PtrList)
+			{
+				Write<void*>(ptr.Offset, (void*)ptr.DataPtr);
+			}
+		}
+
+		std::vector<RelcPtr>::iterator begin()
+		{
+			return m_PtrList.begin();
+		}
+
+		std::vector<RelcPtr>::iterator end()
+		{
+			return m_PtrList.end();
 		}
 
 	private:
@@ -127,7 +174,7 @@ public:
 		{
 			TASSERT(size > 0, "Size should be positive");
 			TASSERT(size != m_BufferSize, "Size is the same");
-			TASSERT(size > m_BufferSize, "Buffer can only grow");
+			TASSERT(size > m_BufferSize, "Buffer can't shrink");
 			
 			char* oldBuffer = m_Buffer;
 			size_t usedSize = GetUsedSize();
@@ -146,13 +193,15 @@ public:
 			{
 				m_BufferPos = m_Buffer;
 			}
+
+			Link();
 		}
 
 	private:
 		char* m_Buffer;
 		char* m_BufferPos;
 		size_t m_BufferSize;
-		std::vector<Ptr<void*>> m_PtrList;
+		std::vector<RelcPtr> m_PtrList;
 	};
 
 public:
@@ -191,7 +240,9 @@ public:
 	{
 		for (auto stack : m_Sections)
 		{
+			stack->Unlink();
 			ttsfo.WriteRaw(stack->GetBuffer(), stack->GetUsedSize());
+			stack->Link();
 		}
 	}
 
