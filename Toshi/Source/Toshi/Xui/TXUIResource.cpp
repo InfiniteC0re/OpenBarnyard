@@ -3,6 +3,7 @@
 #include "TXUIElement.h"
 #include "TXUICanvas.h"
 #include "Toshi/Xui/TXUIScene.h"
+#include "Toshi/Xui/TXUI.h"
 
 namespace Toshi
 {
