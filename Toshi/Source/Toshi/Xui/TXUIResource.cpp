@@ -3,6 +3,7 @@
 #include "TXUIElement.h"
 #include "TXUICanvas.h"
 #include "Toshi/Xui/TXUIScene.h"
+#include "Toshi/Xui/TXUI.h"
 
 namespace Toshi
 {
@@ -134,24 +135,26 @@ namespace Toshi
 
     int TXUIResource::ReadDataSection(unsigned char* buffer, uint32_t size)
     {
+        
         uint16_t uiType = PARSEWORD_BIG(buffer);
         buffer += 2;
+        uint8_t* orgBuffer = buffer;
 
-        TASSERT(0 == TStringManager::String16Compare(GetString(uiType), _TS16(XuiCanvas)), "");
+        TASSERT(0 == TStringManager::String16Compare(GetString(uiType), _TS16("XuiCanvas")), "");
 
         m_root = CreateObjectData(*this, uiType);
 
         uint8_t opcode = *buffer++;
 
-        m_root->Load(*this, buffer);
+        m_root->Load(*this, orgBuffer);
 
         if ((opcode & 2) != 0)
         {
-            m_root->LoadChildren(*this, buffer);
+            m_root->LoadChildren(*this, orgBuffer);
         }
         if ((opcode & 4) != 0 && m_root->LoadNamedFrames(*this, buffer) && (opcode & 2) != 0)
         {
-            m_root->LoadTimelines(*this, buffer);
+            m_root->LoadTimelines(*this, orgBuffer);
         }
         return true;
     }
@@ -184,10 +187,15 @@ namespace Toshi
             uint16_t stringLength = PARSEWORD_BIG((uint8_t*)pPtr);
             uint16_t size = stringLength * sizeof(wchar_t) + sizeof(wchar_t);
 
+            wchar_t* pPtr2 = pPtr;
+            pPtr2++;
+
             m_asStringTable[i] = new (TXUI::MemoryBlock()) wchar_t[size];
 
-            // Blob would call FUN_006eba70 but MemCopy seems better tbh
-            TUtil::MemCopy(m_asStringTable[i], pPtr + 1, size - sizeof(wchar_t));
+            for (size_t j = 0; j < stringLength; j++)
+            {
+                m_asStringTable[i][j] = PARSEWORD_BIG((uint8_t*)pPtr2++);
+            }
 
             pPtr += stringLength + 1;
         }
@@ -218,7 +226,7 @@ namespace Toshi
     XURXUIObjectData* TXUIResource::CreateObjectData(TXUIResource& a_rResource, uint16_t index)
     {
         if (index == 0) return TNULL;
-        return CreateObjectData(a_rResource, a_rResource.m_pData[index]);
+        return CreateObjectData(a_rResource, a_rResource.m_asStringTable[index]);
     }
 
     XURXUIObjectData* TXUIResource::CreateObjectData(TXUIResource& a_rResource, const wchar_t* objectName)

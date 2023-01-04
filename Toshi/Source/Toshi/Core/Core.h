@@ -18,7 +18,7 @@ constexpr uint32_t TMAKEFOUR(const char str[4])
 #define TMAKEVERSION(VER_MAJOR, VER_MINOR) ((VER_MAJOR << 16) | VER_MINOR)
 #define BITFIELD(x) (1 << x)
 
-#define _TS16(x) L#x
+#define _TS16(x) L##x
 
 __forceinline uint16_t PARSEWORD(const uint8_t bytes[2])
 {

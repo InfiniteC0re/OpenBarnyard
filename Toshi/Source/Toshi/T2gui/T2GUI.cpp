@@ -6,7 +6,7 @@ Toshi::TMemoryHeap* Toshi::T2GUI::s_memheap = TNULL;
 Toshi::T2GUI::T2GUI()
 {
 	m_renderer = TNULL;
-	T2GUIContext* context = new T2GUIContext();
+	T2GUIContext* context = new T2GUIContext(this);
 }
 
 void Toshi::T2GUI::Open(TMemoryHeap* a_memheap)

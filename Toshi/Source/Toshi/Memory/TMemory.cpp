@@ -35,6 +35,7 @@ namespace Toshi
 		// 006fc520
 		if (heap->m_Flags & TMemoryHeapFlags_AllocAsPile)
 		{
+
 			return TMemoryHeap::AllocAsPile(heap, size, 4);
 		}
 
