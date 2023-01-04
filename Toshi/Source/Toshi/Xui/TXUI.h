@@ -27,7 +27,6 @@ namespace Toshi
 		TTRB* m_trb2; // 0x94
 
 		TXUICanvas* m_canvas; // 0x134
-		TXUICanvas* m_canvas; // 0x134
 
 		// TDList at 0x160
 	};

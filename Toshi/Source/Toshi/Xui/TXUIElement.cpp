@@ -1,5 +1,6 @@
 #include "ToshiPCH.h"
 #include "TXUIElement.h"
+#include "Toshi/Xui/TXUI.h"
 
 bool Toshi::XURXUIObjectData::Load(TXUIResource& resource, uint8_t*& a_pData)
 {

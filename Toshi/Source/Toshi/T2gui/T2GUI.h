@@ -32,6 +32,7 @@ namespace Toshi
 
 	class T2GUIContext : public T2GUIElement
 	{
+	public:
 		T2GUIContext(T2GUI* a_gui);
 	};
 }
