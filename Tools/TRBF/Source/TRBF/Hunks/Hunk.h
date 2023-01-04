@@ -2,11 +2,17 @@
 #include <Toshi/File/TTRB.h>
 #include <Toshi/File/TTSF.h>
 
-class Hunk
+namespace TTool
 {
-public:
-	void Write(Toshi::TTSFO& ttsfo)
+	namespace TRBF
 	{
-		TOSHI_ERROR("This hunk doesn't support writing");
+		class Hunk
+		{
+		public:
+			void Write(Toshi::TTSFO& ttsfo)
+			{
+				TOSHI_ERROR("This hunk doesn't support writing");
+			}
+		};
 	}
-};
+}

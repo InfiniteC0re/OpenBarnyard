@@ -201,7 +201,7 @@ namespace Toshi
 			return m_pFile->Write(&value, sizeof(T));
 		}
 		
-		size_t WriteRaw(void* buffer, size_t size)
+		size_t WriteRaw(const void* buffer, size_t size)
 		{
 			TASSERT(m_pFile != TNULL, "TTSFO is not created");
 			return m_pFile->Write(buffer, size);
