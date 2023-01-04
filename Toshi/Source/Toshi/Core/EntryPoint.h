@@ -22,10 +22,12 @@ delete app;
 
 #else
 
+#define TOSHI_ENTRY int main(int argc, char** argv)
+
 #ifndef TOSHI_APP
 #define TOSHI_APP \
 extern int TMain(int argc, char** argv); \
-return TMain(argc, argv);
+return TMain(__argc, __argv);
 #endif
 
 #endif
