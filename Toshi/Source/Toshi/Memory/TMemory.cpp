@@ -35,7 +35,7 @@ namespace Toshi
 		if (heap->m_Flags & TMemoryHeap::Flags_AllocAsPile)
 		{
 			TTODO("Toshi::TMemoryHeap::AllocAsPile(heap, size, 4) - 0x006fc8b0");
-			return heap;
+			//return heap;
 		}
 
 		if (heap->m_Flags & TMemoryHeap::Flags_UseMutex) TMemory::AcquireMutex();

@@ -27,7 +27,7 @@ namespace Toshi
 			uint32_t m_uiSize;			// 0x8
 		};
 
-		struct Header
+		struct XURHeader
 		{
 			Section* m_apSections;		// 0x0
 			uint32_t m_uiFileID;		// 0x4
@@ -38,7 +38,7 @@ namespace Toshi
 			uint16_t m_usNumSections;	// 0x16
 		};
 	public:
-		inline const wchar_t* GetString(uint16_t index) { return L""; }
+		inline const wchar_t* GetString(uint16_t index) { return m_asStringTable[index]; }
 		TQuaternion* GetQuat(int a_iIndex = 0);
 		//inline TQuaternion& GetQuat(int index) { return index == -1 ? TQuaternion::IDENTITY : m_pQuat; }
 
@@ -79,7 +79,7 @@ namespace Toshi
 		}
 
 	private:
-		Header m_oHeader;                           // 0x0
+		XURHeader m_oHeader;                           // 0x0
 		wchar_t** m_asStringTable = TNULL;          // 0x1C
 		TQuaternion* m_pQuat;                       // 0x20
 		uint8_t* m_pData;

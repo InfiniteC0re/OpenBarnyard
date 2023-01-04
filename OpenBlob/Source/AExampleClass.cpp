@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "AExampleClass.h"
 #include "Memory/AMemory.h"
+#include "Toshi/Xui/TXUI.h"
+#include "Toshi/Memory/TMemory.h"
 
 #include <Toshi/File/TTSF.h>
 
@@ -75,6 +77,7 @@ AExampleClass::AExampleClass()
 		uint8_t* buf = (uint8_t*)trb.GetSymbolAddress("txui");
 		buf += 8;
 		buf = (uint8_t*)(*(int*)buf);
+		TXUI::ms_pXUIMemoryBlock = TMemory::CreateHeap(0x10000, 4, "xui pile");
 		TXUIResource* res = new TXUIResource();
 		res->Load(buf);
 	}

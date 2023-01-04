@@ -35,5 +35,5 @@ bool Toshi::XURXUIBackButtonData::ValidateTimelineProp(uint32_t a_uiObjectIndex,
 bool Toshi::XURXUIBackButtonData::Load(TXUIResource& resource, uint8_t*& a_pData)
 {
 	a_pData++;
-	XURXUIButtonData::Load(resource, a_pData);
+	return XURXUIButtonData::Load(resource, a_pData);
 }
