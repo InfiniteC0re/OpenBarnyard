@@ -4,7 +4,7 @@
 #include "TRBF/Hunks/RELC.h"
 #include "TRBF/Hunks/SYMB.h"
 
-namespace TTool
+namespace TLib
 {
 	namespace TRBF
 	{

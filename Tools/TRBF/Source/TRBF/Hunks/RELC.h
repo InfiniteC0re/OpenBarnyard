@@ -1,7 +1,7 @@
 #pragma once
 #include "SECT.h"
 
-namespace TTool
+namespace TLib
 {
 	namespace TRBF
 	{

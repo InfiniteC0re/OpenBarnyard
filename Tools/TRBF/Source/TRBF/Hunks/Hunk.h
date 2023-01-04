@@ -2,7 +2,7 @@
 #include <Toshi/File/TTRB.h>
 #include <Toshi/File/TTSF.h>
 
-namespace TTool
+namespace TLib
 {
 	namespace TRBF
 	{

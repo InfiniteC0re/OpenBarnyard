@@ -1,7 +1,7 @@
 #pragma once
 #include "Hunk.h"
 
-namespace TTool
+namespace TLib
 {
 	namespace TRBF
 	{

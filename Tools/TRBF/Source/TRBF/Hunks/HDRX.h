@@ -2,7 +2,7 @@
 #include "Hunk.h"
 #include "SECT.h"
 
-namespace TTool
+namespace TLib
 {
 	namespace TRBF
 	{

@@ -31,7 +31,7 @@ const wchar_t* g_Strings[] = {
 
 int TMain(int argc, char** argv)
 {
-	TTool::TRBF::TRBF trbf;
+	TLib::TRBF::TRBF trbf;
 
 	auto pSect = trbf.GetSECT();
 	auto pSymb = trbf.GetSYMB();
