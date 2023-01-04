@@ -21,6 +21,32 @@ namespace TLib
 				m_SymbolNames.reserve(5);
 			}
 
+			template <class T>
+			SECT::Stack::Ptr<T> Find(SECT& sect, const char* name)
+			{
+				auto hash = Toshi::TTRB::HashString(name);
+
+				for (size_t i = 0; i < m_Symbols.size(); i++)
+				{
+					if (m_Symbols[i].NameHash == hash)
+					{
+						if (m_SymbolNames[i] == name)
+						{
+							auto stack = sect.GetSection(m_Symbols[i].HDRX);
+							return { stack, m_Symbols[i].DataOffset };
+						}
+					}
+				}
+
+				return { TNULL, 0 };
+			}
+
+			template <class T>
+			SECT::Stack::Ptr<T> Find(SECT* sect, const char* name)
+			{
+				return Find<T>(*sect, name);
+			}
+
 			void Add(SECT::Stack* stack, const char* name, void* ptr)
 			{
 				m_Symbols.emplace_back(stack->GetIndex(), 0, 0, 0, stack->GetOffset(ptr));

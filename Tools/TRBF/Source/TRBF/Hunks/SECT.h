@@ -23,6 +23,7 @@ namespace TLib
 
 					T* get()
 					{
+						TASSERT(this->operator bool() == TTRUE, "Pointer is null");
 						return reinterpret_cast<T*>(m_Stack->GetBuffer() + m_Offset);
 					}
 
@@ -38,12 +39,19 @@ namespace TLib
 
 					T& operator*()
 					{
+						TASSERT(this->operator bool() == TTRUE, "Pointer is null");
 						return *reinterpret_cast<T*>(m_Stack->GetBuffer() + m_Offset);
 					}
 
 					T* operator->()
 					{
+						TASSERT(this->operator bool() == TTRUE, "Pointer is null");
 						return reinterpret_cast<T*>(m_Stack->GetBuffer() + m_Offset);
+					}
+
+					operator bool() const
+					{
+						return m_Stack != TNULL;
 					}
 
 				private:
