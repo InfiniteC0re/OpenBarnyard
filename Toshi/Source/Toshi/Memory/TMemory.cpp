@@ -137,10 +137,9 @@ namespace Toshi
 
 				subHeap->m_Flags = flags;
 				subHeap->m_MSpace = TNULL;
-				strncpy_s(subHeap->m_Name, name, TMemoryHeap::NAMESIZE);
-				subHeap->m_Name[TMemoryHeap::NAMESIZE] = '\0';
 				subHeap->m_PileData = reinterpret_cast<char*>(subHeap + 1);
 				subHeap->m_PileSize = subHeapSize;
+				subHeap->SetName(name);
 
 				if (flags & TMemoryHeapFlags_UseMutex)
 				{
@@ -183,8 +182,7 @@ namespace Toshi
 		if (heap->m_MSpace != nullptr)
 		{
 			heap->m_Flags = flags;
-			strncpy_s(heap->m_Name, name, TMemoryHeap::NAMESIZE);
-			heap->m_Name[TMemoryHeap::NAMESIZE] = '\0';
+			heap->SetName(name);
 
 			if (flags & TMemoryHeapFlags_UseMutex)
 			{

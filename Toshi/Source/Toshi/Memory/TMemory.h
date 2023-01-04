@@ -36,6 +36,8 @@ namespace Toshi
 	class TMemory
 	{
 	public:
+		static constexpr int HEAP_MAXNAME = 15;
+		
 		typedef uint32_t Flags;
 		typedef uint32_t Error;
 		typedef uint32_t BlockSize;
@@ -62,12 +64,12 @@ namespace Toshi
 		static void*        dlheapcalloc(TMemoryHeap* heap, size_t nitems, size_t size);
 		static void*        dlheaprealloc(TMemoryHeap* heap, void* mem, size_t newsize);
 		static void*        dlheapmemalign(TMemoryHeap* heap, size_t alignment, size_t size);
-		static TMemoryHeap* dlheapcreateinplace(void* ptr, size_t heapSize, TMemoryHeapFlags flags, const char name[15]);
-		static TMemoryHeap* dlheapcreatesubheap(TMemoryHeap* heap, size_t size, TMemoryHeapFlags flags, const char name[15]);
-		static TMemoryHeap* dlheapcreate(TMemoryHeap* heap, size_t size, TMemoryHeapFlags flags, const char name[15]) { return TMemory::dlheapcreatesubheap(heap, size, flags, name); }
+		static TMemoryHeap* dlheapcreateinplace(void* ptr, size_t heapSize, TMemoryHeapFlags flags, const char name[HEAP_MAXNAME]);
+		static TMemoryHeap* dlheapcreatesubheap(TMemoryHeap* heap, size_t size, TMemoryHeapFlags flags, const char name[HEAP_MAXNAME]);
+		static TMemoryHeap* dlheapcreate(TMemoryHeap* heap, size_t size, TMemoryHeapFlags flags, const char name[HEAP_MAXNAME]) { return TMemory::dlheapcreatesubheap(heap, size, flags, name); }
 
-		static TMemoryHeap* CreateHeapInPlace(void* ptr, size_t heapSize, TMemoryHeapFlags flags, const char name[15]) { return TMemory::dlheapcreateinplace(ptr, heapSize, flags, name); }
-		static TMemoryHeap* CreateHeap(size_t size, TMemoryHeapFlags flags, const char name[15]) { return TMemory::dlheapcreate(s_GlobalHeap, size, flags, name); }
+		static TMemoryHeap* CreateHeapInPlace(void* ptr, size_t heapSize, TMemoryHeapFlags flags, const char name[HEAP_MAXNAME]) { return TMemory::dlheapcreateinplace(ptr, heapSize, flags, name); }
+		static TMemoryHeap* CreateHeap(size_t size, TMemoryHeapFlags flags, const char name[HEAP_MAXNAME]) { return TMemory::dlheapcreate(s_GlobalHeap, size, flags, name); }
 		static void         DestroyHeap(TMemoryHeap* heap) { TMemory::dlheapdestroy(heap); }
 
 		static void         OutOfMem(TMemoryHeap* heap, size_t size);
@@ -100,8 +102,6 @@ namespace Toshi
 	class TMemoryHeap
 	{
 	public:
-		static constexpr int NAMESIZE = 15;
-
 		friend class TMemory;
 
 	public:
@@ -111,6 +111,12 @@ namespace Toshi
 		void* Realloc(void* mem, size_t newsize) { return TMemory::dlheaprealloc(this, mem, newsize); }
 		void* Memalign(size_t alignment, size_t size) { return TMemory::dlheapmemalign(this, alignment, size); }
 		void  Free(void* mem) { TMemory::dlheapfree(this, mem); }
+
+		void SetName(const char* name)
+		{
+			strncpy_s(m_Name, name, TMemory::HEAP_MAXNAME);
+			m_Name[TMemory::HEAP_MAXNAME] = '\0';
+		}
 
 	private:
 		void  CreateMutex() { m_Mutex.Create(); }
@@ -125,7 +131,7 @@ namespace Toshi
 		void* m_MSpace;
 		char* m_PileData;
 		uint32_t m_PileSize;
-		char m_Name[NAMESIZE + 1];
+		char m_Name[TMemory::HEAP_MAXNAME + 1];
 	};
 }
 
