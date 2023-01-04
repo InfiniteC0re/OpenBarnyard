@@ -20,6 +20,7 @@ namespace TLib
 				{
 				public:
 					Ptr(SECT::Stack* stack, size_t offset) : m_Stack(stack), m_Offset(offset) { }
+					Ptr(SECT::Stack* stack, void* ptr) : m_Stack(stack), m_Offset(stack->GetOffset(ptr)) { }
 
 					T* get()
 					{
@@ -73,6 +74,7 @@ namespace TLib
 					m_BufferPos = TNULL;
 					m_BufferSize = 0;
 					m_ExpectedSize = 0;
+					m_PtrList.reserve(32);
 					GrowBuffer(0);
 				}
 
@@ -153,7 +155,7 @@ namespace TLib
 					T* allocated = reinterpret_cast<T*>(m_BufferPos);
 					m_BufferPos += TSize;
 
-					return { this, (size_t)allocated - (size_t)m_Buffer };
+					return { this, allocated };
 				}
 
 				template <class T>
@@ -167,12 +169,11 @@ namespace TLib
 
 					T* allocated = reinterpret_cast<T*>(m_BufferPos);
 					m_BufferPos += TSize;
+
 					Write<T*>(outPtrOffset, allocated);
+					AddRelocationPtr(outPtrOffset, GetOffset(allocated));
 
-					size_t absolutePos = (size_t)allocated - (size_t)m_Buffer;
-					AddRelocationPtr(outPtrOffset, absolutePos);
-
-					return { this, absolutePos };
+					return { this, allocated };
 				}
 
 				template <class T, size_t Count = 1>
@@ -186,12 +187,11 @@ namespace TLib
 
 					T* allocated = reinterpret_cast<T*>(m_BufferPos);
 					m_BufferPos += TSize;
+
 					Write<T*>(outPtrOffset, allocated);
+					AddRelocationPtr(outPtrOffset, GetOffset(allocated));
 
-					size_t absolutePos = (size_t)allocated - (size_t)m_Buffer;
-					AddRelocationPtr(outPtrOffset, absolutePos);
-
-					return { this, absolutePos };
+					return { this, allocated };
 				}
 
 				void Link()

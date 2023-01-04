@@ -101,6 +101,16 @@ namespace TLib
 				delete[] namesBuffer;
 			}
 
+			std::vector<std::string>::iterator begin()
+			{
+				return m_SymbolNames.begin();
+			}
+
+			std::vector<std::string>::iterator end()
+			{
+				return m_SymbolNames.end();
+			}
+
 		private:
 			std::vector<Toshi::TTRB::TTRBSymbol> m_Symbols;
 			std::vector<std::string> m_SymbolNames;
