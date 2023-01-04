@@ -1,6 +1,7 @@
 IncludeDir = {}
 IncludeDir.spdlog = "%{wks.location}/Toshi/Vendor/spdlog/include"
 IncludeDir.fmod = "%{wks.location}/Toshi/Vendor/fmod/include"
+IncludeDir.trbf = "%{wks.location}/Tools/TRBF/Include"
 
 LibDir = {}
 LibDir.fmod = "%{wks.location}/Toshi/Vendor/fmod/lib"
