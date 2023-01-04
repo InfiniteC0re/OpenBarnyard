@@ -17,3 +17,6 @@ workspace "Toshi"
 
 include "Toshi"
 include "OpenBlob"
+
+group "Tools"
+	include "Tools/TRBF"
