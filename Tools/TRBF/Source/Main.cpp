@@ -16,6 +16,28 @@
 int TMain(int argc, char** argv)
 {
 	TRBF trbf;
+
+	SECT* pSect = trbf.GetSECT();
+	SECT::Stack* pStack = pSect->CreateSection();
+
+	struct MyStruct
+	{
+		int a = 6;
+		int b = 6;
+		MyStruct* pStruct = TNULL;
+	};
+
+	auto ptr1 = pStack->Alloc<float>();
+	auto ptr2 = pStack->Alloc<MyStruct>();
+	
+	ptr2->a = 9;
+	ptr2->b = 10;
+	pStack->Alloc<MyStruct>(&ptr2->pStruct);
+	
+	ptr2->pStruct->a = 11;
+	ptr2->pStruct->b = 12;
+	ptr2->pStruct->pStruct = TNULL;
+
 	trbf.WriteToFile("D:\\test.trb");
 
 	return 0;

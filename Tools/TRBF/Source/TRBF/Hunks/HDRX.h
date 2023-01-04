@@ -1,8 +1,6 @@
 #pragma once
 #include "Hunk.h"
-
-#include <Toshi/File/TTRB.h>
-#include <Toshi/File/TTSF.h>
+#include "SECT.h"
 
 class HDRX : public Hunk
 {
@@ -23,9 +21,16 @@ public:
 		m_Header.m_i32SectionCount = count;
 	}
 
-	void Write(Toshi::TTSFO& ttsfo)
+	void Write(Toshi::TTSFO& ttsfo, SECT& sect)
 	{
 		ttsfo.Write(m_Header);
+		
+		for (SECT::Stack* stack : sect)
+		{
+			Toshi::TTRB::SecInfo sectionInfo = { };
+			sectionInfo.m_Size = stack->GetUsedSize();
+			ttsfo.Write(sectionInfo);
+		}
 	}
 
 private:

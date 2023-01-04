@@ -1,4 +1,5 @@
 #pragma once
+#include <Toshi/File/TTRB.h>
 #include <Toshi/File/TTSF.h>
 
 class Hunk
