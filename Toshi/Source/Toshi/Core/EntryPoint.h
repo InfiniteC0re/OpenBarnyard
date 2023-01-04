@@ -11,15 +11,39 @@ extern Toshi::TApplication* Toshi::CreateApplication(int argc, char** argv);
 #define TOSHI_ENTRY int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, INT cmdShow)
 #endif
 
+#ifndef TOSHI_CONSOLE
+
+#ifndef TOSHI_APP
+#define TOSHI_APP \
+Toshi::TApplication* app = Toshi::CreateApplication(0, nullptr); \
+app->Create("Blob07 - (c) Blue Tongue Software", 0, 0); \
+delete app;
+#endif
+
+#else
+
+#ifndef TOSHI_APP
+#define TOSHI_APP \
+extern int TMain(int argc, char** argv); \
+return TMain(argc, argv);
+#endif
+
+#endif
+
+#ifndef TOSHI_TMEMORY_FLAGS
+#define TOSHI_TMEMORY_FLAGS Toshi::TMemory::Flags_Standard
+#endif
+
+#ifndef TOSHI_TMEMORY_SIZE
+#define TOSHI_TMEMORY_SIZE 64 * 1024 * 1024
+#endif
+
 TOSHI_ENTRY
 {
-	Toshi::TMemory memorySettings(Toshi::TMemory::Flags_Standard, 64 * 1024 * 1024);
+	Toshi::TMemory memorySettings(TOSHI_TMEMORY_FLAGS, TOSHI_TMEMORY_SIZE);
 	Toshi::TUtil::ToshiCreate(0, 0, memorySettings);
 	
-	Toshi::TApplication* app = Toshi::CreateApplication(0, nullptr);
-	
-	app->Create("Blob07 - (c) Blue Tongue Software", 0, 0);
-	delete app;
+	TOSHI_APP
 
 	// spdlog needs to be replaced with own Log system
 	// because it doesn't work fine with custom allocators

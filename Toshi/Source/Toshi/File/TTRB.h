@@ -47,7 +47,7 @@ namespace Toshi
 		
 		struct Header
 		{
-			uint32_t m_ui32Version;
+			TVersion m_ui32Version;
 			int32_t m_i32SectionCount;
 		};
 

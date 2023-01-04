@@ -101,7 +101,7 @@ namespace Toshi
 					int numsections = (sectionSize - 4) / 0xC;
 
 					m_pHeader = static_cast<Header*>(m_MemAllocator(AllocType_Unk0, sizeof(Header) + sizeof(SecInfo) * numsections, 0, 0, m_MemUserData));
-					m_pHeader->m_ui32Version = 0;
+					m_pHeader->m_ui32Version = { 0 };
 
 					ttsf.ReadRaw(&m_pHeader->m_i32SectionCount, sizeof(m_pHeader->m_i32SectionCount));
 
@@ -168,7 +168,7 @@ namespace Toshi
 								auto hdrx1 = GetSectionInfo(relcEntry.HDRX1);
 								auto hdrx2 = hdrx1;
 
-								if (m_pHeader->m_ui32Version >= TMAKEVERSION(1, 0))
+								if (m_pHeader->m_ui32Version.Value >= TMAKEVERSION(1, 0))
 								{
 									hdrx2 = GetSectionInfo(relcEntry.HDRX2);
 								}
