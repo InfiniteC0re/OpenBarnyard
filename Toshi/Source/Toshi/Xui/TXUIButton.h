@@ -11,6 +11,7 @@ namespace Toshi
 
 		static constexpr const char* sm_sTypeInfo = "XURXUIButtonData";
 
+	public:
 		virtual const char* GetTypeInfo() const { return sm_sTypeInfo; }
 
 		virtual bool IsColourPropType(uint32_t a_uiObjectIndex, uint32_t propType);
