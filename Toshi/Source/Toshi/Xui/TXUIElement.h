@@ -40,6 +40,7 @@ namespace Toshi
 		uint16_t m_uiNumNamedFrames; // 0x10 de blob 0x14 NT08
 
 		XURXUITimelineData* m_timelinesData; // 0xC NT08
+		uint8_t m_NumTimelines;
 
 		uint32_t m_countOfChildren; // 0x16 de blob 0x10 NT08
 		XURXUIObjectData** m_children; // 0x4 both

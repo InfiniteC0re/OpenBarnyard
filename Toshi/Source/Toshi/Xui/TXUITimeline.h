@@ -28,6 +28,8 @@ namespace Toshi
 		uint16_t m_uiNumKeyframes; // 0x12 de blob
 		uint16_t m_uiNumUnk; // 0x14 de blob
 
+	public:
+
 		void Load(Toshi::TXUIResource& a_rXur, unsigned char*& a_pData);
 	};
 

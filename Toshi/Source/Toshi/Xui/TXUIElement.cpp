@@ -66,16 +66,31 @@ bool Toshi::XURXUIObjectData::LoadNamedFrames(TXUIResource& resource, uint8_t*& 
 
 void Toshi::XURXUIObjectData::LoadTimelines(TXUIResource& resource, uint8_t*& a_pData)
 {
-	TIMPLEMENT();
+	TASSERT(PARSEDWORD_BIG(a_pData) < (1 << 8), "");
+	m_NumTimelines = *(a_pData + 3);
+
+	if (m_NumTimelines != 0)
+	{
+		m_timelinesData = new (TXUI::MemoryBlock()) XURXUITimelineData();
+
+		for (size_t i = 0; i < m_NumTimelines; i++)
+		{
+			//m_timelinesData[i] = *this;
+			m_timelinesData[i].Load(resource, a_pData);
+		}
+	}
 }
 
 Toshi::XURXUIObjectData* Toshi::XURXUIObjectData::FindChildElementData(uint32_t index)
 {
 	for (size_t i = 0; i < m_countOfChildren; i++)
 	{
-
+		if (((XURXUIElementData*)m_children[m_countOfChildren])->m_id == index)
+		{
+			return m_children[m_countOfChildren];
+		}
 	}
-	return nullptr;
+	return TNULL;
 }
 
 bool Toshi::XURXUIElementData::Load(TXUIResource& resource, uint8_t*& a_pData)
@@ -260,5 +275,5 @@ bool Toshi::XURXUIElementData::TranslateTimelineProp(const char* param_1, uint32
 bool Toshi::XURXUIElementData::ValidateTimelineProp(uint32_t a_uiObjectIndex, uint32_t param_2)
 {
 	TASSERT(a_uiObjectIndex == 0, "");
-	return param_2 < 0xf;
+	return param_2 < 15;
 }
