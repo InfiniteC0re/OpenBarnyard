@@ -14,13 +14,13 @@ namespace Toshi
 		static constexpr uint32_t sm_uiDefaultFontSize = 14;
 		static constexpr const char* sm_sTypeInfo = "XURXUITextData";
 
-		uint16_t m_text;
-		uint32_t m_textColor;
-		uint32_t m_dropShadowColor;
-		uint32_t m_pointSize;
-		uint16_t m_font;
-		uint32_t m_textStyle;
-		uint32_t m_lineSpacingAdjust;
+		/* 0 */ uint16_t m_text;
+		/* 1 */ uint32_t m_textColor;
+		/* 2 */ uint32_t m_dropShadowColor;
+		/* 3 */ uint32_t m_pointSize;
+		/* 4 */ uint16_t m_font;
+		/* 5 */ uint32_t m_textStyle;
+		/* 6 */ uint32_t m_lineSpacingAdjust;
 
 	public:
 		XURXUITextData();

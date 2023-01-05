@@ -198,7 +198,7 @@ bool Toshi::XURXUIStrokeData::Load(TXUIResource& resource, uint8_t*& a_pData)
 		}
 		if ((smth2 & 2) != 0)
 		{
-			m_strokeColor = PARSEFLOAT_BIG(a_pData);
+			m_strokeColor = PARSEDWORD_BIG(a_pData);
 			a_pData += 4;
 		}
 	}
