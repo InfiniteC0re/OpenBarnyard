@@ -1,6 +1,5 @@
 #pragma once
 #include "Toshi/Xui/TXUIResource.h"
-#include "Toshi/Xui/TXUINamedFrame.h"
 #include "Toshi/Xui/TXUITimeline.h"
 
 namespace Toshi
