@@ -22,6 +22,7 @@ namespace Toshi
 		uint32_t m_textStyle;
 		uint32_t m_lineSpacingAdjust;
 
+	public:
 		XURXUITextData();
 
 		virtual const char* GetTypeInfo() const { return sm_sTypeInfo; }

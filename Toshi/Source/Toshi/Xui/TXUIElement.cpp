@@ -4,7 +4,7 @@
 
 bool Toshi::XURXUIObjectData::Load(TXUIResource& resource, uint8_t*& a_pData)
 {
-	unk = PARSEWORD_BIG(a_pData);
+	m_index = PARSEWORD_BIG(a_pData);
 	a_pData += 2;
 	return true;
 }
@@ -22,7 +22,7 @@ void Toshi::XURXUIObjectData::LoadChildren(TXUIResource& resource, uint8_t*& a_p
 		a_pData += 2;
 
 		m_children[i] = TXUIResource::CreateObjectData(resource, objectIndex);
-		m_children[i]->m_index = objectIndex;
+		m_children[i]->m_index2 = objectIndex;
 		uint8_t opcode = *a_pData++;
 
 		m_children[i]->Load(resource, a_pData);
@@ -51,21 +51,22 @@ bool Toshi::XURXUIObjectData::LoadNamedFrames(TXUIResource& resource, uint8_t*& 
 
 		for (size_t i = 0; i < m_uiNumNamedFrames; i++)
 		{
-			m_pNamedFrames[i].m_unk = PARSEWORD_BIG(a_pData + 2);
-			a_pData += 4;
 			m_pNamedFrames[i].m_unk2 = PARSEWORD_BIG(a_pData);
 			a_pData += 2;
+			TASSERT(PARSEDWORD_BIG(a_pData) < (1 << 16), "");
+			m_pNamedFrames[i].m_unk = PARSEWORD_BIG(a_pData + 2);
+			a_pData += 4;
+			m_pNamedFrames[i].m_unk4 = *a_pData++;
 			m_pNamedFrames[i].m_unk3 = PARSEWORD_BIG(a_pData);
 			a_pData += 2;
-			m_pNamedFrames[i].m_unk4 = *a_pData++;
 		}
 	}
-
 	return true;
 }
 
 void Toshi::XURXUIObjectData::LoadTimelines(TXUIResource& resource, uint8_t*& a_pData)
 {
+	TIMPLEMENT();
 }
 
 Toshi::XURXUIObjectData* Toshi::XURXUIObjectData::FindChildElementData(uint32_t index)
@@ -85,7 +86,7 @@ bool Toshi::XURXUIElementData::Load(TXUIResource& resource, uint8_t*& a_pData)
 	if (smth != 0)
 	{
 		int smth2 = 0;
-		if (unk != 0)
+		if (m_index != 0)
 		{
 			smth2 = PARSEWORD_BIG(a_pData);
 			a_pData += 2;
@@ -165,6 +166,7 @@ bool Toshi::XURXUIElementData::Load(TXUIResource& resource, uint8_t*& a_pData)
 		// m_colorWriteFlags
 		if ((smth2 & 0x2000) != 0)
 		{
+			m_colorWriteFlags = PARSEDWORD_BIG(a_pData);
 			a_pData += 4;
 		}
 		if ((smth2 & 0x4000) != 0)

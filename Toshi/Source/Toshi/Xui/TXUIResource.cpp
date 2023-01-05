@@ -6,6 +6,8 @@
 #include "Toshi/Xui/TXUI.h"
 #include "TXUIGroup.h"
 #include "TXUIBackButton.h"
+#include "TXUIText.h"
+#include "TXUIFigure.h"
 
 namespace Toshi
 {
@@ -245,7 +247,7 @@ namespace Toshi
         }
         else if (TStringManager::String16Compare(objectName, _TS16("XuiFigure"), -1) == 0)
         {
-            return TNULL;
+            return new (TXUI::MemoryBlock()) XURXUIFigureData();
         }
         else if (TStringManager::String16Compare(objectName, _TS16("XuiVisual"), -1) == 0)
         {
@@ -257,11 +259,11 @@ namespace Toshi
         }
         else if (TStringManager::String16Compare(objectName, _TS16("XuiText"), -1) == 0)
         {
-            return TNULL;
+            return new (TXUI::MemoryBlock()) XURXUITextData();
         }
         else if (TStringManager::String16Compare(objectName, _TS16("XuiButton"), -1) == 0)
         {
-            return TNULL;
+            return new (TXUI::MemoryBlock()) XURXUIButtonData();
         }
         else if (TStringManager::String16Compare(objectName, _TS16("XuiGroup"), -1) == 0)
         {

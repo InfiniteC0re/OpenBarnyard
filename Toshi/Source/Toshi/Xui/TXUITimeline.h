@@ -5,7 +5,7 @@
 
 namespace Toshi
 {
-	class TXUITimeline
+	class XURXUITimelineData
 	{
 		class TimelineProp
 		{

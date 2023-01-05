@@ -48,7 +48,7 @@ bool Toshi::XURXUIButtonData::Load(TXUIResource& resource, uint8_t*& a_pData)
 	if (smth != 0)
 	{
 		int smth2 = 0;
-		if (unk != 0)
+		if (m_index != 0)
 		{
 			smth2 = *a_pData++;
 		}
