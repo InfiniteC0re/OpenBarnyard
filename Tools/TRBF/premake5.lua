@@ -20,6 +20,7 @@ project "TRBF"
 	includedirs
 	{
 		"Source",
+		"Include",
 		"%{wks.location}/Toshi/Source",
 		"%{IncludeDir.spdlog}"
 	}

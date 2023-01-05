@@ -1,126 +1,125 @@
 #include "ToshiPCH.h"
 #include "TCompress_Decompress.h"
 
-uintptr_t Toshi::TCompress_Decompress::Decompress(TFile* file, Header* header, void* buffer, uint32_t& size)
+namespace Toshi
 {
-	if (header->Magic != TMAKEFOUR("BTEC"))                                             return TCOMPRESS_ERROR_WRONG_MAGIC;
-	if (header->Version != TMAKEVERSION(1, 2) && header->Version != TMAKEVERSION(1, 3)) return TCOMPRESS_ERROR_WRONG_VERSION;
-	if (header->CompressedSize > size)                                                  return TCOMPRESS_ERROR_WRONG_SIZE;
-
-	char* pBufferPos = static_cast<char*>(buffer);
-	uint32_t sizeLeft = header->UncompressedSize;
-
-	while (sizeLeft != 0)
+	uintptr_t TCompress_Decompress::Decompress(TFile* file, TCompress::Header* header, char* buffer, uint32_t bufferSize)
 	{
-		int offset;
-		bool hasOffset;
+		if (header->Magic != TMAKEFOUR("BTEC"))
+			return TCOMPRESS_ERROR_WRONG_MAGIC;
+		if (header->Version != TMAKEVERSION(1, 2) && header->Version != TMAKEVERSION(1, 3))
+			return TCOMPRESS_ERROR_WRONG_VERSION;
+		if (header->Size > bufferSize)
+			return TCOMPRESS_ERROR_WRONG_SIZE;
 
-		sizeLeft -= GetCommand(file, hasOffset, size, offset);
+		char* pBufferPos = buffer;
+		uint32_t compressedLeft = header->CompressedSize;
 
-		if (hasOffset)
+		while (compressedLeft > 0)
 		{
-			char* buf = pBufferPos - offset;
-			int leftSize = size;
+			uint32_t chunkSize;
+			bool noOffset;
+			int offset;
 
-			while (leftSize != 0)
+			compressedLeft -= GetCommand(file, noOffset, chunkSize, offset);
+
+			if (!noOffset)
 			{
-				*(pBufferPos++) = *(buf++);
-				leftSize--;
+				// The data is already unpacked so just copy it
+				char* unpackedData = pBufferPos - offset;
+				Toshi::TUtil::MemCopy(pBufferPos, unpackedData, chunkSize);
+				pBufferPos += chunkSize;
+			}
+			else
+			{
+				// The data wasn't previously unpacked, read it from file
+				size_t readedCount = file->Read(pBufferPos, chunkSize);
+				pBufferPos += readedCount;
+				compressedLeft -= readedCount;
 			}
 		}
-		else
+
+		if (header->Version == TMAKEVERSION(1, 3))
 		{
-			size_t readedCount = file->Read(pBufferPos, size);
-			pBufferPos += readedCount;
-			sizeLeft -= readedCount;
+			pBufferPos = buffer;
+			for (size_t i = 0; i < header->Size; i++, pBufferPos++)
+			{
+				*pBufferPos ^= header->XorValue;
+			}
 		}
+
+		uintptr_t sizeDecompressed = pBufferPos - buffer;
+		TASSERT(sizeDecompressed == header->Size, "Wrong decompressed size");
+
+		return sizeDecompressed;
 	}
 
-	uint32_t sizeDecompressed = pBufferPos - static_cast<char*>(buffer);
-	pBufferPos = static_cast<char*>(buffer);
-
-	if (header->Version == TMAKEVERSION(1, 3))
+	int8_t TCompress_Decompress::GetHeader(TFile* file, TCompress::Header& btecHeader)
 	{
-		for (size_t i = 0; i < header->UncompressedSize; i++)
+		uint32_t headerSize = TCompress::HEADER_SIZE_12;
+		uint32_t savedPos = file->Tell();
+		size_t readedSize = file->Read(&btecHeader, headerSize);
+
+		if (btecHeader.Version == TMAKEVERSION(1, 3))
 		{
-			*pBufferPos ^= header->XorValue;
+			readedSize += file->Read(&btecHeader.XorValue, sizeof(TCompress::Header::XorValue));
+			headerSize += sizeof(TCompress::Header::XorValue);
 		}
+
+		if (readedSize != headerSize)
+		{
+			file->Seek(savedPos, TFile::TSEEK_SET);
+			return TCOMPRESS_ERROR_WRONG_HEADERSIZE;
+		}
+
+		if (btecHeader.Magic != TMAKEFOUR("BTEC"))
+		{
+			file->Seek(savedPos, TFile::TSEEK_SET);
+			return TCOMPRESS_ERROR_WRONG_MAGIC;
+		}
+
+		return TCOMPRESS_ERROR_OK;
 	}
 
-	TASSERT(sizeDecompressed == header->CompressedSize, "TCompress_Decompress::Decompress: sizeDecompressed != header.CompressedSize");
-	
-	return static_cast<uintptr_t>(pBufferPos - static_cast<char*>(buffer));
-}
-
-int8_t Toshi::TCompress_Decompress::GetHeader(TFile* file, Header& btecHeader)
-{
-	uint32_t headerSize = HEADER_SIZE_COMMON;
-	uint32_t savedPos = file->Tell();
-	size_t readedSize = file->Read(&btecHeader, headerSize);
-
-	if (btecHeader.Version == TMAKEVERSION(1, 3))
+	// With the help of Revel8n approach
+	// Could use some code cleanup
+	int TCompress_Decompress::GetCommand(TFile* file, bool& noOffset, uint32_t& size, int& offset)
 	{
-		readedSize += file->Read(&btecHeader.XorValue, sizeof(Header::XorValue));
-		headerSize += sizeof(Header::XorValue);
-	}
+		int read_count = file->Read(&size, 1);
+		bool isBigSize = size & BTECSizeFlag_BigSize;
+		noOffset = size & BTECSizeFlag_NoOffset;
+		offset = -1;
 
-	if (readedSize != headerSize)
-	{
-		file->Seek(savedPos, TFile::TSEEK_SET);
-		return TCOMPRESS_ERROR_WRONG_HEADERSIZE;
-	}
-
-	if (btecHeader.Magic != TMAKEFOUR("BTEC"))
-	{
-		file->Seek(savedPos, TFile::TSEEK_SET);
-		return TCOMPRESS_ERROR_WRONG_MAGIC;
-	}
-
-	return TCOMPRESS_ERROR_OK;
-}
-
-// With the help of Revel8n approach
-// Could use some code cleanup
-int Toshi::TCompress_Decompress::GetCommand(TFile* file, bool& hasOffset, uint32_t& size, int& offset)
-{
-	int read_count = file->Read(&size, 1);
-	hasOffset = (size & BTECSizeFlag_NoOffset) == 0;
-	offset = 0;
-
-	if (size & BTECSizeFlag_BigSize)
-	{
-		// 14 bits value
-		uint8_t addValue;
-		read_count += file->Read(&addValue, sizeof(addValue));
-		size = ((size & BTECSizeFlag_SizeMask) << (sizeof(addValue) * 8)) | addValue;
-	}
-	else
-	{
-		// 6 bits value
+		// by default size is 6 bits long
 		size &= BTECSizeFlag_SizeMask;
-	}
 
-	size++;
-
-	if (hasOffset)
-	{
-		read_count += file->Read(&offset, 1);
-
-		if (offset & BTECOffsetFlag_BigOffset)
+		if (isBigSize)
 		{
-			// 15 bits value
-			uint8_t addValue;
-			read_count += file->Read(&addValue, sizeof(addValue));
-			offset = ((offset & BTECOffsetFlag_OffsetMask) << (sizeof(addValue) * 8)) | addValue;
+			// now the size is 14 bits long
+			uint8_t secondByte;
+			read_count += file->Read(&secondByte, 1);
+			size = (size << 8) | secondByte;
 		}
-		else
+
+		if (!noOffset)
 		{
-			// 7 bits value
+			// by default offset is 7 bits long
+			read_count += file->Read(&offset, 1);
+			bool bigOffset = offset & BTECOffsetFlag_BigOffset;
 			offset &= BTECOffsetFlag_OffsetMask;
+
+			if (bigOffset)
+			{	
+				// now the offset is 15 bits long
+				uint8_t secondByte;
+				read_count += file->Read(&secondByte, 1);
+				offset = (offset << 8) | secondByte;
+			}
 		}
 
-		offset++;
-	}
+		size += 1;
+		offset += 1;
 
-	return read_count;
+		return read_count;
+	}
 }

@@ -16,4 +16,14 @@ union TVersion {
 		uint16_t Minor;
 		uint16_t Major;
 	} Parts;
+
+	void operator=(uint32_t version)
+	{
+		Value = version;
+	}
+
+	operator uint32_t&()
+	{
+		return Value;
+	}
 };

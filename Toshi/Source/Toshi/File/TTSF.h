@@ -72,8 +72,16 @@ namespace Toshi
 		TTRB::ERROR PushForm();
 		TTRB::ERROR PopForm();
 
-		// 0x00688250
-		inline void ReadRaw(void* dest, uint32_t size) { m_ReadPos += m_pFile->Read(dest, size); }
+		template<class T>
+		void Read(T* dst)
+		{
+			m_ReadPos += m_pFile->Read(dst, sizeof(T));
+		}
+
+		void ReadRaw(void* dst, uint32_t size)
+		{
+			m_ReadPos += m_pFile->Read(dst, size);
+		}
 
 		// Sections related stuff
 		TTRB::ERROR ReadHunk();
@@ -84,16 +92,18 @@ namespace Toshi
 		void Close(bool free = true);
 
 		void ReadCompressed(void* buffer, uint32_t size);
-		inline void CompressSection(TFile* file, char* unk, uint32_t unk2, uint32_t unk3) { TCompress_Compress::Compress(file, unk, unk2, unk3, m_Endianess); }
+		void CompressSection(TFile* file, char* unk, uint32_t unk2, uint32_t unk3) { TCompress_Compress::Compress(file, unk, unk2, unk3, m_Endianess); }
 
 		void LogUnknownSection();
+
+		const Hunk& GetCurrentHunk() { return m_CurrentHunk; }
 
 	private:
 		uint32_t m_FileInfoCount; // 0x8
 		FileInfo m_FileInfo[32];  // 0xC
 		Header m_Header;          // 0x10C
 		uint32_t m_Magic;         // 0x114
-		Hunk m_CurrentSection;    // 0x118
+		Hunk m_CurrentHunk;       // 0x118
 		uint32_t m_ReadPos;       // 0x120
 	};
 
@@ -201,7 +211,7 @@ namespace Toshi
 			return m_pFile->Write(&value, sizeof(T));
 		}
 		
-		size_t WriteRaw(void* buffer, size_t size)
+		size_t WriteRaw(const void* buffer, size_t size)
 		{
 			TASSERT(m_pFile != TNULL, "TTSFO is not created");
 			return m_pFile->Write(buffer, size);

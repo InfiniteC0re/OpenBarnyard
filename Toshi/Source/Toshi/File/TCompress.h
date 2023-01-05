@@ -23,4 +23,24 @@ namespace Toshi
         BTECOffsetFlag_BigOffset = BITFIELD(7),
         BTECOffsetFlag_OffsetMask = BTECOffsetFlag_BigOffset - 1,
     };
+
+    class TCompress
+    {
+    public:
+        struct Header
+        {
+            uint32_t Magic;
+            TVersion Version;
+            uint32_t CompressedSize;
+            uint32_t Size;
+            uint32_t XorValue;
+        };
+
+    public:
+        // Size of header that is common for any BTEC version
+        static constexpr uint32_t HEADER_SIZE_12 = sizeof(Header) - sizeof(Header::XorValue);
+
+        // Size of header that is common for BTEC 1.3
+        static constexpr uint32_t HEADER_SIZE_13 = sizeof(Header);
+    };
 }
