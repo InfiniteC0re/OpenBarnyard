@@ -23,4 +23,9 @@ namespace Toshi
         BTECOffsetFlag_BigOffset = BITFIELD(7),
         BTECOffsetFlag_OffsetMask = BTECOffsetFlag_BigOffset - 1,
     };
+
+    class TCompress
+    {
+	
+    };
 }

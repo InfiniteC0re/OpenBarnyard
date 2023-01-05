@@ -16,4 +16,9 @@ union TVersion {
 		uint16_t Minor;
 		uint16_t Major;
 	} Parts;
+
+	bool operator==(uint32_t val)
+	{
+		return Value == val;
+	}
 };

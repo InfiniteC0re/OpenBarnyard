@@ -151,15 +151,15 @@ namespace Toshi
 	void TTSFI::ReadCompressed(void* buffer, uint32_t size)
 	{
 		TCompress_Decompress::Header header;
-		uint32_t originalPos = m_pFile->Tell();
 
+		uint32_t headerStart = m_pFile->Tell();
 		int8_t error = TCompress_Decompress::GetHeader(m_pFile, header);
 
 		if (error == TCOMPRESS_ERROR_OK)
 		{
-			uint32_t headerSize = m_pFile->Tell() - originalPos;
-			TCompress_Decompress::Decompress(m_pFile, &header, buffer, size);
-			m_ReadPos += header.UncompressedSize + headerSize;
+			uint32_t headerSize = m_pFile->Tell() - headerStart;
+			TCompress_Decompress::Decompress(m_pFile, &header, (char*)buffer, size);
+			m_ReadPos += header.CompressedSize + headerSize;
 		}
 	}
 
