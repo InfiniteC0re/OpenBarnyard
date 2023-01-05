@@ -24,4 +24,14 @@ namespace Toshi
 		m_canvas->SetDimensions(176.0f, 176.0f);
 		//TRender::GetSingleton()->
 	}
+
+	void TXUIResourceTRB::Init()
+	{
+		if (m_resource == TNULL)
+		{
+			m_resource = new (TXUI::MemoryBlock()) TXUIResource();
+			m_resource->Load(m_trbBuffer);
+			TXUI::GetSingleton()->AddResource(this);
+		}
+	}
 }
