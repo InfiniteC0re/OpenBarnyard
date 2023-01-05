@@ -1,10 +1,9 @@
 #include "ToshiPCH.h"
-#include "TCompress.h"
 #include "TCompress_Decompress.h"
 
 namespace Toshi
 {
-	uintptr_t TCompress_Decompress::Decompress(TFile* file, Header* header, char* buffer, uint32_t bufferSize)
+	uintptr_t TCompress_Decompress::Decompress(TFile* file, TCompress::Header* header, char* buffer, uint32_t bufferSize)
 	{
 		if (header->Magic != TMAKEFOUR("BTEC"))
 			return TCOMPRESS_ERROR_WRONG_MAGIC;
@@ -55,16 +54,16 @@ namespace Toshi
 		return sizeDecompressed;
 	}
 
-	int8_t TCompress_Decompress::GetHeader(TFile* file, Header& btecHeader)
+	int8_t TCompress_Decompress::GetHeader(TFile* file, TCompress::Header& btecHeader)
 	{
-		uint32_t headerSize = HEADER_SIZE_COMMON;
+		uint32_t headerSize = TCompress::HEADER_SIZE_12;
 		uint32_t savedPos = file->Tell();
 		size_t readedSize = file->Read(&btecHeader, headerSize);
 
 		if (btecHeader.Version == TMAKEVERSION(1, 3))
 		{
-			readedSize += file->Read(&btecHeader.XorValue, sizeof(Header::XorValue));
-			headerSize += sizeof(Header::XorValue);
+			readedSize += file->Read(&btecHeader.XorValue, sizeof(TCompress::Header::XorValue));
+			headerSize += sizeof(TCompress::Header::XorValue);
 		}
 
 		if (readedSize != headerSize)

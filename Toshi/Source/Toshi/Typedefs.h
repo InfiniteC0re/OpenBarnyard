@@ -17,8 +17,13 @@ union TVersion {
 		uint16_t Major;
 	} Parts;
 
-	bool operator==(uint32_t val)
+	void operator=(uint32_t version)
 	{
-		return Value == val;
+		Value = version;
+	}
+
+	operator uint32_t&()
+	{
+		return Value;
 	}
 };

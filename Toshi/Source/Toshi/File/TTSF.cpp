@@ -150,7 +150,7 @@ namespace Toshi
 
 	void TTSFI::ReadCompressed(void* buffer, uint32_t size)
 	{
-		TCompress_Decompress::Header header;
+		TCompress::Header header;
 
 		uint32_t headerStart = m_pFile->Tell();
 		int8_t error = TCompress_Decompress::GetHeader(m_pFile, header);
