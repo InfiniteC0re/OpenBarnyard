@@ -62,6 +62,7 @@ namespace Toshi
             auto len = length;
             LOWBYTE(length) = HIGHBYTE(length) | BTECSizeFlag_BigSize;
             BYTE1(length) = len;
+            bytesToWrite = 2;
         }
 
         int writtenSize = 0;

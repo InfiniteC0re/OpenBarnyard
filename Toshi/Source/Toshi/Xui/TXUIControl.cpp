@@ -109,10 +109,10 @@ bool Toshi::XURXUIControlData::Load(TXUIResource& resource, uint8_t*& a_pData)
 	if (smth != 0)
 	{
 		int smth2 = 0;
-		if (unk != 0)
+		if (m_index != 0)
 		{
-			smth2 = PARSEWORD_BIG(a_pData + 1);
-			a_pData += 3;
+			smth2 = PARSEWORD_BIG(a_pData);
+			a_pData += 2;
 		}
 		if ((smth2 & 1) != 0)
 		{

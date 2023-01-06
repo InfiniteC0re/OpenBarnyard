@@ -4,6 +4,10 @@
 #include "TXUICanvas.h"
 #include "Toshi/Xui/TXUIScene.h"
 #include "Toshi/Xui/TXUI.h"
+#include "TXUIGroup.h"
+#include "TXUIBackButton.h"
+#include "TXUIText.h"
+#include "TXUIFigure.h"
 
 namespace Toshi
 {
@@ -135,10 +139,8 @@ namespace Toshi
 
     int TXUIResource::ReadDataSection(unsigned char* buffer, uint32_t size)
     {
-        
         uint16_t uiType = PARSEWORD_BIG(buffer);
         buffer += 2;
-        uint8_t* orgBuffer = buffer;
 
         TASSERT(0 == TStringManager::String16Compare(GetString(uiType), _TS16("XuiCanvas")), "");
 
@@ -146,15 +148,15 @@ namespace Toshi
 
         uint8_t opcode = *buffer++;
 
-        m_root->Load(*this, orgBuffer);
+        m_root->Load(*this, buffer);
 
         if ((opcode & 2) != 0)
         {
-            m_root->LoadChildren(*this, orgBuffer);
+            m_root->LoadChildren(*this, buffer);
         }
         if ((opcode & 4) != 0 && m_root->LoadNamedFrames(*this, buffer) && (opcode & 2) != 0)
         {
-            m_root->LoadTimelines(*this, orgBuffer);
+            m_root->LoadTimelines(*this, buffer);
         }
         return true;
     }
@@ -238,6 +240,134 @@ namespace Toshi
         else if (TStringManager::String16Compare(objectName, _TS16("XuiScene"), -1) == 0)
         {
             return new (TXUI::MemoryBlock()) XURXUISceneData();
+        }
+        else if (TStringManager::String16Compare(objectName, _TS16("XuiTabScene"), -1) == 0)
+        {
+            return TNULL;
+        }
+        else if (TStringManager::String16Compare(objectName, _TS16("XuiFigure"), -1) == 0)
+        {
+            return new (TXUI::MemoryBlock()) XURXUIFigureData();
+        }
+        else if (TStringManager::String16Compare(objectName, _TS16("XuiVisual"), -1) == 0)
+        {
+            return TNULL;
+        }
+        else if (TStringManager::String16Compare(objectName, _TS16("XuiImage"), -1) == 0)
+        {
+            return TNULL;
+        }
+        else if (TStringManager::String16Compare(objectName, _TS16("XuiText"), -1) == 0)
+        {
+            return new (TXUI::MemoryBlock()) XURXUITextData();
+        }
+        else if (TStringManager::String16Compare(objectName, _TS16("XuiButton"), -1) == 0)
+        {
+            return new (TXUI::MemoryBlock()) XURXUIButtonData();
+        }
+        else if (TStringManager::String16Compare(objectName, _TS16("XuiGroup"), -1) == 0)
+        {
+            return new (TXUI::MemoryBlock()) XURXUIGroupData();
+        }
+        else if (TStringManager::String16Compare(objectName, _TS16("XuiImagePresenter"), -1) == 0)
+        {
+            return TNULL;
+        }
+        else if (TStringManager::String16Compare(objectName, _TS16("XuiTextPresenter"), -1) == 0)
+        {
+            return TNULL;
+        }
+        else if (TStringManager::String16Compare(objectName, _TS16("XuiNineGrid"), -1) == 0)
+        {
+            return TNULL;
+        }
+        else if (TStringManager::String16Compare(objectName, _TS16("XuiSoundXAudio"), -1) == 0)
+        {
+            return TNULL;
+        }
+        else if (TStringManager::String16Compare(objectName, _TS16("XuiSoundXAct"), -1) == 0)
+        {
+            return TNULL;
+        }
+        else if (TStringManager::String16Compare(objectName, _TS16("XuiLabel"), -1) == 0)
+        {
+            return TNULL;
+        }
+        else if (TStringManager::String16Compare(objectName, _TS16("XuiEdit"), -1) == 0)
+        {
+            return TNULL;
+        }
+        else if (TStringManager::String16Compare(objectName, _TS16("XuiMessageBoxButton"), -1) == 0)
+        {
+            return TNULL;
+        }
+        else if (TStringManager::String16Compare(objectName, _TS16("XuiNavButton"), -1) == 0)
+        {
+            return TNULL;
+        }
+        else if (TStringManager::String16Compare(objectName, _TS16("XuiBackButton"), -1) == 0)
+        {
+            return new (TXUI::MemoryBlock()) XURXUIBackButtonData();
+        }
+        else if (TStringManager::String16Compare(objectName, _TS16("XuiRadioButton"), -1) == 0)
+        {
+            return TNULL;
+        }
+        else if (TStringManager::String16Compare(objectName, _TS16("XuiCheckbox"), -1) == 0)
+        {
+            return TNULL;
+        }
+        else if (TStringManager::String16Compare(objectName, _TS16("XuiProgressbar"), -1) == 0)
+        {
+            return TNULL;
+        }
+        else if (TStringManager::String16Compare(objectName, _TS16("XuiSlider"), -1) == 0)
+        {
+            return TNULL;
+        }
+        else if (TStringManager::String16Compare(objectName, _TS16("XuiList"), -1) == 0)
+        {
+            return TNULL;
+        }
+        else if (TStringManager::String16Compare(objectName, _TS16("XuiCommonList"), -1) == 0)
+        {
+            return TNULL;
+        }
+        else if (TStringManager::String16Compare(objectName, _TS16("XuiRadioGroup"), -1) == 0)
+        {
+            return TNULL;
+        }
+        else if (TStringManager::String16Compare(objectName, _TS16("XuiScrollEnd"), -1) == 0)
+        {
+            return TNULL;
+        }
+        else if (TStringManager::String16Compare(objectName, _TS16("XuiCaret"), -1) == 0)
+        {
+            return TNULL;
+        }
+        else if (TStringManager::String16Compare(objectName, _TS16("XuiListItem"), -1) == 0)
+        {
+            return TNULL;
+        }
+        else if (TStringManager::String16Compare(objectName, _TS16("XuiHtmlPresenter"), -1) == 0)
+        {
+            return TNULL;
+        }
+        else if (TStringManager::String16Compare(objectName, _TS16("XuiHtmlElement"), -1) == 0)
+        {
+            return TNULL;
+        }
+        else if (TStringManager::String16Compare(objectName, _TS16("XuiHtmlControl"), -1) == 0)
+        {
+            return TNULL;
+        }
+        else if (TStringManager::String16Compare(objectName, _TS16("XuiControl"), -1) == 0)
+        {
+            return TNULL;
+        }
+        else if (TStringManager::String16Compare(objectName, _TS16("XuiVideo"), -1) == 0)
+        {
+            return TNULL;
         }
         return TNULL;
     }

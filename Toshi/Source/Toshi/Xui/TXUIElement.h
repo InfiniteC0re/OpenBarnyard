@@ -1,5 +1,6 @@
 #pragma once
 #include "Toshi/Xui/TXUIResource.h"
+#include "Toshi/Xui/TXUITimeline.h"
 
 namespace Toshi
 {
@@ -13,9 +14,6 @@ namespace Toshi
 		public TGenericClassDerived<TXUIElement, TObject, "TXUIElement", TMAKEVERSION(1, 0), false>
 	{
 
-		uint32_t m_uiNumNamedFrames; // 0x10
-		uint32_t m_uiNumChildren; // 0x16
-		void* m_child;
 	};
 
 	class XURXUIObjectData
@@ -23,16 +21,28 @@ namespace Toshi
 	public:
 		XURXUIObjectData()
 		{
-
+			m_index = 0;
+			m_index2 = 0;
+			m_uiNumNamedFrames = 0;
+			m_pNamedFrames = TNULL;
+			m_timelinesData = TNULL;
+			m_children = TNULL;
+			m_countOfChildren = 0;
 		}
 
 		virtual ~XURXUIObjectData() = default;
 
-		uint32_t m_index;
-		uint16_t unk; //0x12 de blob 0x1C NT08
+		uint16_t m_index; //0x12 de blob 0x1C NT08
+		uint32_t m_index2; // 0x14 de blob 1E NT08
 
-		uint32_t m_countOfChildren;
-		XURXUIObjectData* m_children;
+		XURXUINamedFrameData* m_pNamedFrames; // 0x8 both
+		uint16_t m_uiNumNamedFrames; // 0x10 de blob 0x14 NT08
+
+		XURXUITimelineData* m_timelinesData; // 0xC NT08
+		uint8_t m_NumTimelines;
+
+		uint32_t m_countOfChildren; // 0x16 de blob 0x10 NT08
+		XURXUIObjectData** m_children; // 0x4 both
 
 		virtual bool Load(TXUIResource& resource, uint8_t*& a_pData);
 		virtual bool IsFloatPropType(uint32_t a_uiObjectIndex, uint32_t propType) { return false; };
@@ -44,6 +54,7 @@ namespace Toshi
 		void LoadChildren(TXUIResource& resource, uint8_t*& a_pData);
 		bool LoadNamedFrames(TXUIResource& resource, uint8_t*& a_pData);
 		void LoadTimelines(TXUIResource& resource, uint8_t*& a_pData);
+		XURXUIObjectData* FindChildElementData(uint32_t index);
 	};
 
 	class XURXUIElementData : public XURXUIObjectData
@@ -53,14 +64,18 @@ namespace Toshi
 		{
 			m_width = 60.0f;
 			m_height = 30.0f;
-			m_positon = 1.0f;
-			//m_scale = { -1.0f, -1.0f, -1.0f };
-			//m_rotation = { -1.0f, 0.0f, 0.0f };
-			m_opacity = 0;
-			m_pivot = 0;
-			m_show = 0;
-			m_disableTimelineRecursion = true;
-			m_clipChildren = true;
+			m_opacity = 1.0f;
+			m_positon = -1;
+			m_scale = -1;
+			m_rotation = -1;
+			m_pivot = -1;
+			m_anchor = 0;
+			m_blendMode = 0;
+			m_colorWriteFlags = 0;
+			m_clipChildren = false;
+			m_id = 0;
+			m_show = true;
+			m_disableTimelineRecursion = false;
 		}
 
 		~XURXUIElementData() = default;
@@ -68,13 +83,13 @@ namespace Toshi
 		/* 0 */ uint16_t m_id;
 		/* 1 */ float m_width;
 		/* 2 */ float m_height;
-		/* 3 */ uint32_t m_positon;
-		/* 4 */ uint32_t m_scale;
-		/* 5 */ uint32_t m_rotation;
+		/* 3 */ int32_t m_positon;
+		/* 4 */ int32_t m_scale;
+		/* 5 */ int32_t m_rotation;
 		/* 6 */ float m_opacity;
 		/* 7 */ uint32_t m_anchor;
-		/* 8 */ uint32_t m_pivot;
-		/* 9 */ bool m_show;
+		/* 8 */ int32_t m_pivot;
+		/* 9 */ bool m_show; 
 		/* 10 */ uint32_t m_blendMode;
 		/* 11 */ bool m_disableTimelineRecursion;
 		/* 13 */ uint32_t m_colorWriteFlags;

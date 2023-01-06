@@ -102,10 +102,9 @@ bool Toshi::XURXUITextData::Load(TXUIResource& resource, uint8_t*& a_pData)
 	if (smth != 0)
 	{
 		int smth2 = 0;
-		if (unk != 0)
+		if (m_index != 0)
 		{
-			smth2 = *(a_pData + 1);
-			a_pData += 2;
+			smth2 = *a_pData++;
 		}
 		if ((smth2 & 1) != 0)
 		{
@@ -114,18 +113,18 @@ bool Toshi::XURXUITextData::Load(TXUIResource& resource, uint8_t*& a_pData)
 		}
 		if ((smth2 & 2) != 0)
 		{
-			m_textColor = PARSEWORD_BIG(a_pData + 2);
+			m_textColor = PARSEDWORD_BIG(a_pData);
 			a_pData += 4;
 		}
 		if ((smth2 & 4) != 0)
 		{
-			m_dropShadowColor = PARSEWORD_BIG(a_pData + 2);
+			m_dropShadowColor = PARSEDWORD_BIG(a_pData);
 			a_pData += 4;
 		}
 		if ((smth2 & 8) != 0)
 		{
 			// This might be an half float but assembly looks weird so -.-
-			m_pointSize = PARSEFLOAT_BIG(a_pData + 2);
+			m_pointSize = PARSEFLOAT_BIG(a_pData);
 			a_pData += 4;
 		}
 		if ((smth2 & 0x10) != 0)

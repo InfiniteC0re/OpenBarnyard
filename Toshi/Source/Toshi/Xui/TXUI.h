@@ -8,6 +8,16 @@
 
 namespace Toshi
 {
+
+	class TXUIResourceTRB
+	{
+		uint8_t* m_trbBuffer; // 0x8
+		TXUIResource* m_resource; // 0xC
+	public:
+		void Init();
+		void Deinit();
+	};
+
 	class TXUI : public TSingleton<TXUI>
 	{
 	public:
@@ -15,6 +25,10 @@ namespace Toshi
 		TXUI();
 
 		static TMemoryHeap* MemoryBlock() { return ms_pXUIMemoryBlock; }
+
+		void AddResource(TXUIResourceTRB* a_resourceTrb) {};
+		void RemoveResource(TXUIResourceTRB* a_resourceTrb) {};
+		void SetDefaultFont(const char* a_pData);
 
 	public:
 		static TMemoryHeap* ms_pXUIMemoryBlock;

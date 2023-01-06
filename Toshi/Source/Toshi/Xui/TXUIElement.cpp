@@ -4,34 +4,93 @@
 
 bool Toshi::XURXUIObjectData::Load(TXUIResource& resource, uint8_t*& a_pData)
 {
-	unk = PARSEWORD_BIG(a_pData);
+	m_index = PARSEWORD_BIG(a_pData);
 	a_pData += 2;
 	return true;
 }
 
 void Toshi::XURXUIObjectData::LoadChildren(TXUIResource& resource, uint8_t*& a_pData)
 {
-	TASSERT(PARSEDWORD(a_pData) < (1 << 8), "Not a Word");
+	TASSERT(PARSEDWORD_BIG(a_pData) < (1 << 8), "Not a Word");
 	m_countOfChildren = *(a_pData + 3);
 	a_pData += 4;
-	m_children = new (TXUI::MemoryBlock()) XURXUIObjectData[m_countOfChildren];
+	m_children = new (TXUI::MemoryBlock()) XURXUIObjectData*[m_countOfChildren];
 
 	for (size_t i = 0; i < m_countOfChildren; i++)
 	{
 		uint16_t objectIndex = PARSEWORD_BIG(a_pData);
 		a_pData += 2;
-		m_children[i] = *TXUIResource::CreateObjectData(resource, objectIndex);
-		m_children[i].m_index = objectIndex;
+
+		m_children[i] = TXUIResource::CreateObjectData(resource, objectIndex);
+		m_children[i]->m_index2 = objectIndex;
+		uint8_t opcode = *a_pData++;
+
+		m_children[i]->Load(resource, a_pData);
+
+		if ((opcode & 2) != 0)
+		{
+			m_children[i]->LoadChildren(resource, a_pData);
+		}
+		if ((opcode & 4) != 0 && m_children[i]->LoadNamedFrames(resource, a_pData) && (opcode & 2) != 0)
+		{
+			m_children[i]->LoadTimelines(resource, a_pData);
+		}
 	}
 }
 
 bool Toshi::XURXUIObjectData::LoadNamedFrames(TXUIResource& resource, uint8_t*& a_pData)
 {
+	TASSERT(PARSEDWORD_BIG(a_pData) < (1 << 16), "");
+	m_uiNumNamedFrames = PARSEWORD_BIG(a_pData + 2);
+	TASSERT(m_uiNumNamedFrames < 1000, "Max of named Frames reached");
+	a_pData += 4;
+
+	if (m_uiNumNamedFrames != 0)
+	{
+		m_pNamedFrames = new (TXUI::MemoryBlock()) XURXUINamedFrameData();
+
+		for (size_t i = 0; i < m_uiNumNamedFrames; i++)
+		{
+			m_pNamedFrames[i].m_unk2 = PARSEWORD_BIG(a_pData);
+			a_pData += 2;
+			TASSERT(PARSEDWORD_BIG(a_pData) < (1 << 16), "");
+			m_pNamedFrames[i].m_unk = PARSEWORD_BIG(a_pData + 2);
+			a_pData += 4;
+			m_pNamedFrames[i].m_unk4 = *a_pData++;
+			m_pNamedFrames[i].m_unk3 = PARSEWORD_BIG(a_pData);
+			a_pData += 2;
+		}
+	}
 	return true;
 }
 
 void Toshi::XURXUIObjectData::LoadTimelines(TXUIResource& resource, uint8_t*& a_pData)
 {
+	TASSERT(PARSEDWORD_BIG(a_pData) < (1 << 8), "");
+	m_NumTimelines = *(a_pData + 3);
+
+	if (m_NumTimelines != 0)
+	{
+		m_timelinesData = new (TXUI::MemoryBlock()) XURXUITimelineData();
+
+		for (size_t i = 0; i < m_NumTimelines; i++)
+		{
+			//m_timelinesData[i] = *this;
+			m_timelinesData[i].Load(resource, a_pData);
+		}
+	}
+}
+
+Toshi::XURXUIObjectData* Toshi::XURXUIObjectData::FindChildElementData(uint32_t index)
+{
+	for (size_t i = 0; i < m_countOfChildren; i++)
+	{
+		if (((XURXUIElementData*)m_children[m_countOfChildren])->m_id == index)
+		{
+			return m_children[m_countOfChildren];
+		}
+	}
+	return TNULL;
 }
 
 bool Toshi::XURXUIElementData::Load(TXUIResource& resource, uint8_t*& a_pData)
@@ -42,10 +101,10 @@ bool Toshi::XURXUIElementData::Load(TXUIResource& resource, uint8_t*& a_pData)
 	if (smth != 0)
 	{
 		int smth2 = 0;
-		if (unk != 0)
+		if (m_index != 0)
 		{
-			smth2 = PARSEWORD_BIG(a_pData + 1);
-			a_pData += 3;
+			smth2 = PARSEWORD_BIG(a_pData);
+			a_pData += 2;
 		}
 		if ((smth2 & 1) != 0)
 		{
@@ -122,6 +181,7 @@ bool Toshi::XURXUIElementData::Load(TXUIResource& resource, uint8_t*& a_pData)
 		// m_colorWriteFlags
 		if ((smth2 & 0x2000) != 0)
 		{
+			m_colorWriteFlags = PARSEDWORD_BIG(a_pData);
 			a_pData += 4;
 		}
 		if ((smth2 & 0x4000) != 0)
@@ -215,5 +275,5 @@ bool Toshi::XURXUIElementData::TranslateTimelineProp(const char* param_1, uint32
 bool Toshi::XURXUIElementData::ValidateTimelineProp(uint32_t a_uiObjectIndex, uint32_t param_2)
 {
 	TASSERT(a_uiObjectIndex == 0, "");
-	return param_2 < 0xf;
+	return param_2 < 15;
 }

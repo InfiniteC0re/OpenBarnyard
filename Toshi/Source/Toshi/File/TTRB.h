@@ -92,6 +92,7 @@ namespace Toshi
 
 		// Returns pointer to data if found and TNULL if not
 		void* GetSymbolAddress(const char* symbName);
+		void* GetSymbolAddress(TTRBSymbol& symb) { return static_cast<char*>(GetSection(symb.HDRX)) + symb.DataOffset; }
 
 		// Destroys TRB file and the content
 		void Close();
@@ -136,6 +137,17 @@ namespace Toshi
 			return TNULL;
 		}
 
+		TTRBSymbol* GetSymbol(char const* a_symbolName)
+		{
+			int index = GetSymbolIndex(a_symbolName);
+			if (index == -1)
+			{
+				return TNULL;
+			}
+
+			return GetSymbol(index);
+		}
+
 		const char* GetSymbolName(int index) const
 		{
 			if (m_SYMB == TNULL)
@@ -159,6 +171,8 @@ namespace Toshi
 				symbol->NameOffset
 			);
 		}
+
+		SYMB* GetSymbolTable() const { return m_SYMB; }
 
 		static short HashString(const char* str)
 		{

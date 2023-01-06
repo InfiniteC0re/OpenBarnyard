@@ -1,29 +1,18 @@
 #pragma once
 
-#include "Toshi/Xui/TXUIElement.h"
+#include "TXUIControl.h"
 
 namespace Toshi
 {
-	class TXUIText
+	class TXUILabel
 	{
-
 	};
 
-	class XURXUITextData : public XURXUIElementData
+	class XURXUILabelData : public XURXUIControlData
 	{
-		static constexpr uint32_t sm_uiDefaultFontSize = 14;
-		static constexpr const char* sm_sTypeInfo = "XURXUITextData";
-
-		/* 0 */ uint16_t m_text;
-		/* 1 */ uint32_t m_textColor;
-		/* 2 */ uint32_t m_dropShadowColor;
-		/* 3 */ uint32_t m_pointSize;
-		/* 4 */ uint16_t m_font;
-		/* 5 */ uint32_t m_textStyle;
-		/* 6 */ uint32_t m_lineSpacingAdjust;
+		static constexpr const char* sm_sTypeInfo = "XURXUILabelData";
 
 	public:
-		XURXUITextData();
 
 		virtual const char* GetTypeInfo() const { return sm_sTypeInfo; }
 
@@ -39,4 +28,3 @@ namespace Toshi
 		virtual bool Load(TXUIResource& resource, uint8_t*& a_pData);
 	};
 }
-
