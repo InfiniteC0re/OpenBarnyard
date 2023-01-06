@@ -72,7 +72,7 @@ namespace TLib
 				return false;
 			}
 
-			void WriteToFile(const std::string& filepath, Toshi::TTSF::Endianess endianess = Toshi::TTSF::Endianess_Little, bool compress = false)
+			void WriteToFile(const std::string& filepath, bool compress = false, Toshi::TTSF::Endianess endianess = Toshi::TTSF::Endianess_Little)
 			{
 				Toshi::TTSFO ttsfo;
 				Toshi::TTSFO::HunkMark mark;

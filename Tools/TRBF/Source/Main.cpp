@@ -50,13 +50,11 @@ int TMain(int argc, char** argv)
 	}
 
 	pSymb->Add(pStack, "LocaleStrings", pLocale.get());
-	trbf.WriteToFile("D:\\TestLocaleFile.trb", Toshi::TTSF::Endianess_Little, false);
-	trbf.WriteToFile("D:\\TestLocaleFile_Compressed.trb", Toshi::TTSF::Endianess_Little, true);
+	trbf.WriteToFile("D:\\TestLocaleFile.trb", false);
+	trbf.WriteToFile("D:\\TestLocaleFile_Compressed.trb", true);
 
 	trbf.ReadFromFile("D:\\TestLocaleFile_Compressed.trb");
 	auto pLocaleStrings = pSymb->Find<LocaleStrings>(pSect, "LocaleStrings");
-
-	wchar_t* str = pLocaleStrings->Strings[0];
 
 	TOSHI_INFO("String count: {0}", pLocaleStrings->Count);
 	TOSHI_INFO(L"First string: {0}", pLocaleStrings->Strings[0]);
