@@ -38,6 +38,9 @@ namespace Toshi
 			uint16_t m_usNumSections;	// 0x16
 		};
 	public:
+
+		~TXUIResource() = default;
+
 		inline const wchar_t* GetString(uint16_t index) { return m_asStringTable[index]; }
 		TQuaternion* GetQuat(int a_iIndex = 0);
 		//inline TQuaternion& GetQuat(int index) { return index == -1 ? TQuaternion::IDENTITY : m_pQuat; }

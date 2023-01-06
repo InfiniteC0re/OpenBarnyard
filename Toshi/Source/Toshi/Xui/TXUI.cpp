@@ -1,5 +1,6 @@
 #include "ToshiPCH.h"
 #include "Toshi/Xui/TXUI.h"
+#include <Toshi/Render/TAssetInit.h>
 
 namespace Toshi
 {
@@ -25,6 +26,12 @@ namespace Toshi
 		//TRender::GetSingleton()->
 	}
 
+	void TXUI::SetDefaultFont(const char* a_pData)
+	{
+		m_trb->Load(a_pData);
+		//TAssetInit::InitAssets();
+	}
+
 	void TXUIResourceTRB::Init()
 	{
 		if (m_resource == TNULL)
@@ -33,5 +40,11 @@ namespace Toshi
 			m_resource->Load(m_trbBuffer);
 			TXUI::GetSingleton()->AddResource(this);
 		}
+	}
+
+	void TXUIResourceTRB::Deinit()
+	{
+		m_resource->~TXUIResource();
+		TXUI::GetSingleton()->RemoveResource(this);
 	}
 }
