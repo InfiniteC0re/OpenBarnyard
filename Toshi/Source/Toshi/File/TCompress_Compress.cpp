@@ -1,8 +1,13 @@
 #include "ToshiPCH.h"
 #include "TCompress_Compress.h"
+#include "BTECCompressor.h"
+
+#include "Toshi/Typedefs.h"
 
 namespace Toshi
 {
+    int TCompress_Compress::usemaxoffset;
+
     int TCompress_Compress::Write(uint32_t length, char*& data, TFile* file)
     {
         // 0068a830
@@ -16,12 +21,16 @@ namespace Toshi
 
         if (length <= BTECSizeFlag_BigSize)
         {
-            length = (length & 0xFF) | (BTECSizeFlag_NoOffset);
+            // 6 bits value
+            LOWBYTE(length) = length | BTECSizeFlag_NoOffset;
             bytesToWrite = 1;
         }
         else
         {
-            length = (length & 0xFFFF) | (BTECSizeFlag_NoOffset | BTECSizeFlag_BigSize);
+            // 14 bits value
+            auto len = length;
+            LOWBYTE(length) = HIGHBYTE(length) | (BTECSizeFlag_NoOffset | BTECSizeFlag_BigSize);
+            BYTE1(length) = len;
             bytesToWrite = 2;
         }
 
@@ -40,7 +49,6 @@ namespace Toshi
         TASSERT(offset <= usemaxoffset, "Offset is greater than {0}", usemaxoffset);
 
         int bytesToWrite = 0;
-        int writtenSize = 0;
         uint32_t dataSize = length;
 
         length -= 1;
@@ -48,36 +56,42 @@ namespace Toshi
 
         if (length <= BTECSizeFlag_BigSize)
         {
-            length = length & 0xFF;
+            LOWBYTE(length) = length;
             bytesToWrite = 1;
         }
         else
         {
-            length = (length & 0xFFFF) | BTECSizeFlag_BigSize;
-            bytesToWrite = 2;
+            auto len = length;
+            LOWBYTE(length) = HIGHBYTE(length) | BTECSizeFlag_BigSize;
+            BYTE1(length) = len;
         }
 
+        int writtenSize = 0;
         writtenSize += file->Write(&length, bytesToWrite);
 
         if (offset <= BTECOffsetFlag_BigOffset)
         {
-            offset = offset & 0xFF;
+            LOWBYTE(offset) = offset;
         }
         else
         {
-            offset = (offset & 0xFFFF) | BTECOffsetFlag_BigOffset;
+            auto _offset = offset;
+            LOWBYTE(offset) = HIGHBYTE(offset) | BTECOffsetFlag_BigOffset;
+            BYTE1(offset) = _offset;
         }
 
         writtenSize += file->Write(&offset, bytesToWrite);
         data += dataSize;
 
-        return 0;
+        return writtenSize;
     }
 
     void TCompress_Compress::Compress(TFile* file, char* buffer, uint32_t size, uint32_t unused, bool isBigEndian)
     {
+        BTECCompressor compressor;
+
         usemaxoffset = 0x8000;
-        TTODO("Implement FUN_0068AC60, parameters: local_490, param_2, param_3, 0x8000, 3");
+        compressor.Initialize(buffer, size, usemaxoffset, 3);
 
         char* bufferPos = buffer;
         char* bufferEnd = buffer + size;
@@ -93,12 +107,11 @@ namespace Toshi
         {
             size_t uncompressedLeft = TMath::Min(size - (bufferPos - buffer), maxlength);
 
-            bool hasOffset = false;
-            size_t offset = 0;
+            char* offset = TNULL;
             size_t dataSize = 0;
-            TTODO("hasOffset = FUN_0068af10(&s1,bufferPos,toUncompressSize,&offset,&dataSize)");
+            bool hasOffset = compressor.FUN_0068af10(bufferPos, uncompressedLeft, offset, dataSize);
 
-            if (!hasOffset || dataSize < 3)
+            if (hasOffset == false || dataSize < 3)
             {
                 dataSize = 1;
                 
@@ -113,6 +126,8 @@ namespace Toshi
                     chunkStart = TNULL;
                     chunkSize = 0;
                 }
+
+                bufferPos += 1;
             }
             else
             {
@@ -124,19 +139,16 @@ namespace Toshi
                     chunkSize = 0;
                 }
 
-                compressedSize += TCompress_Compress::WriteOffset(dataSize, (size_t)bufferPos - offset, bufferPos, file);
+                compressedSize += TCompress_Compress::WriteOffset(dataSize, bufferPos - offset, bufferPos, file);
             }
 
-            bufferPos += 1;
-            TTODO("FUN_0068ae40(&s1,dataSize)");
+            compressor.FUN_0068ae40(dataSize);
         }
 
         if (chunkStart != TNULL)
         {
             // We are out of the while loop but still have some chunk of data that should be written
             compressedSize += TCompress_Compress::Write(chunkSize, chunkStart, file);
-            chunkStart = TNULL;
-            chunkSize = 0;
         }
 
         TCompress::Header btecHeader;
