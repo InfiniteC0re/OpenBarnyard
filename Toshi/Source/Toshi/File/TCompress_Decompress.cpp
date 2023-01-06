@@ -27,8 +27,12 @@ namespace Toshi
 			{
 				// The data is already unpacked so just copy it
 				char* unpackedData = pBufferPos - offset;
-				Toshi::TUtil::MemCopy(pBufferPos, unpackedData, chunkSize);
-				pBufferPos += chunkSize;
+				
+				while (chunkSize > 0)
+				{
+					*(pBufferPos++) = *(unpackedData++);
+					chunkSize--;
+				}
 			}
 			else
 			{

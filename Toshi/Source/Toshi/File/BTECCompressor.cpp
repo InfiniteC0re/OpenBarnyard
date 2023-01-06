@@ -33,7 +33,7 @@ namespace Toshi
 
     void BTECCompressor::Initialize(char* buffer, size_t bufferSize, int maxoffset, int unk)
     {
-        // 0068ac60
+        // 0068ac60 +++
         m_DataEnd = buffer + bufferSize;
         m_Buffer1 = buffer;
         m_Buffer2 = buffer;
@@ -55,13 +55,13 @@ namespace Toshi
             m_SomeArray1[i].m_Ptr2->m_Ptr1 = &m_SomeArray1[i];
         }
 
-        TUtil::MemSet(m_Offsets, '\0', sizeof(m_Offsets));
+        TUtil::MemClear(m_Offsets, sizeof(m_Offsets));
 
-        m_Buckets = (Node***)TMemalign(16, m_BucketCount * sizeof(Node**));
+        m_Buckets = (Bucket*)TMemalign(16, m_BucketCount * sizeof(Bucket));
 
         for (size_t i = 0; i < m_BucketCount; i++)
         {
-            m_Buckets[i] = (Node**)TMemalign(16, 256 * sizeof(Node*));
+            m_Buckets[i] = (Bucket)TMemalign(16, 256 * sizeof(Node*));
 
             for (size_t k = 0; k < 256; k++)
             {
@@ -75,11 +75,11 @@ namespace Toshi
 
     void BTECCompressor::FUN_0068ae40(size_t dataSize)
     {
-        // 0068ae40
+        // 0068ae40 
         auto oldBuffer3 = m_Buffer3;
         auto newBuffer3 = m_Buffer3 + dataSize;
 
-        if (m_DataEnd <= newBuffer3 && newBuffer3 != m_Buffer3)
+        if (m_DataEnd <= newBuffer3 && newBuffer3 != m_DataEnd)
         {
             newBuffer3 = m_DataEnd;
         }
@@ -94,7 +94,7 @@ namespace Toshi
             {
                 if (m_Offsets[i] < m_Buffer2)
                 {
-                    m_Offsets[i] = 0;
+                    m_Offsets[i] = TNULL;
                 }
             }
 
@@ -128,10 +128,11 @@ namespace Toshi
 
     bool BTECCompressor::FUN_0068af10(char* buffer, size_t bufferSize, char*& offset, size_t& dataSize)
     {
-        offset = 0;
+        // +++
+        offset = TNULL;
         dataSize = 0;
 
-        if (bufferSize < 1 || m_Offsets[*buffer] == TNULL)
+        if (bufferSize < 1 || m_Offsets[(BYTE)*buffer] == TNULL)
         {
             return false;
         }
@@ -141,16 +142,22 @@ namespace Toshi
             size_t size = 0;
             Node* node1 = TNULL;
             Node* node2 = TNULL;
-            Bucket bucket;
+            Bucket bucket = TNULL;
 
             for (size_t i = 0; i < m_BucketCount; i++)
             {
-                size = 2 << (i % 32);
-                if (bufferSize < size) break;
-                bucket = m_Buckets[i];
+                size_t localSize = 2 << (i % 32);
+                if (bufferSize < localSize) break;
                 
-                bool bRes = FUN_0068b300(buffer, bucket, size, node1, node2);
+                Node* localNode1;
+                Node* localNode2;
+                bool bRes = FUN_0068b300(buffer, m_Buckets[i], localSize, localNode1, localNode2);
                 if (bRes == false) break;
+
+                size = localSize;
+                node1 = localNode1;
+                node2 = localNode2;
+                bucket = m_Buckets[i];
             }
 
             if (node1 != TNULL)
@@ -202,7 +209,7 @@ namespace Toshi
             }
         }
 
-        offset = m_Offsets[*buffer];
+        offset = m_Offsets[(BYTE)*buffer];
         dataSize = 1;
 
         return true;
@@ -210,12 +217,11 @@ namespace Toshi
 
     void BTECCompressor::AllocSubstring(char* buffer)
     {
-        // 0068b180
-        m_Offsets[*buffer] = buffer;
+        // 0068b180 +++
+        m_Offsets[(BYTE)*buffer] = buffer;
         
         for (size_t i = 0; i < m_BucketCount; i++)
         {
-            auto node = m_Root1.m_Ptr1;
             size_t unknown = 2 << (i % 32);
 
             if (m_DataEnd - buffer < unknown)
@@ -223,6 +229,7 @@ namespace Toshi
                 return;
             }
 
+            auto node = m_Root1.m_Ptr1;
             if (node == &m_Root1)
             {
                 TOSHI_CORE_ERROR("SlidingWindow::AllocSubstring: No free substrings!");
@@ -233,7 +240,7 @@ namespace Toshi
             node->m_Ptr1->m_Ptr2 = node->m_Ptr2;
             node->m_Ptr2->m_Ptr1 = node->m_Ptr1;
             node->m_Ptr1 = &m_Root2;
-            node->m_Ptr2 = (m_Root2).m_Ptr2;
+            node->m_Ptr2 = m_Root2.m_Ptr2;
             m_Root2.m_Ptr2 = node;
             node->m_Ptr2->m_Ptr1 = node;
             node->m_Unk4 = (void*)(m_DataEnd - buffer);
@@ -255,14 +262,16 @@ namespace Toshi
         auto hashedNode = nodeBucket[hash % 256];
 
         out2 = hashedNode;
-        out1 = hashedNode->m_Unk1;
+        hashedNode = hashedNode->m_Unk1;
+        out1 = hashedNode;
 
-        while (out1 != out2)
+        while (hashedNode != out2)
         {
-            int difference = T2String8::Compare((const char*)out1->m_Unk3, buffer, bufferSize);
+            int difference = Toshi::TUtil::MemCompare(out1->m_Unk3, buffer, bufferSize);
             if (difference == 0) break;
 
-            out1 = out1->m_Unk1;
+            hashedNode = hashedNode->m_Unk1;
+            out1 = hashedNode;
         }
 
         return out1 != out2;

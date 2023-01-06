@@ -310,11 +310,10 @@ namespace TLib
 
 			void Write(Toshi::TTSFO& ttsfo, bool compress)
 			{
-				if (compress && m_Sections.size() > 1)
-				{
-					TOSHI_WARN("TRBF doesn't support compressing files with more than 1 section, disabling compression");
-					compress = false;
-				}
+				size_t ready = 0;
+				size_t count = m_Sections.size();
+				
+				TOSHI_CORE_TRACE("Compressing progress: 0%");
 
 				for (auto stack : m_Sections)
 				{
@@ -323,6 +322,8 @@ namespace TLib
 					if (compress)
 					{
 						ttsfo.WriteCompressed(stack->GetBuffer(), stack->GetUsedSize());
+						ready += 1;
+						TOSHI_CORE_TRACE("Compressing progress: {0:.1f}%", (double)ready / count * 100);
 					}
 					else
 					{
@@ -330,6 +331,7 @@ namespace TLib
 					}
 
 					stack->Link();
+
 				}
 			}
 
