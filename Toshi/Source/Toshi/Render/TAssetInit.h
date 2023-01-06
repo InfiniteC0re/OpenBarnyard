@@ -84,6 +84,66 @@ namespace Toshi
 
 		};
 
+		static t_fourCCFunction constexpr DeinitParticleEffect = [](void* a_pData)
+		{
+
+		};
+
+		static t_fourCCFunction constexpr DeinitParticleSettings = [](void* a_pData)
+		{
+
+		};
+
+		static t_fourCCFunction constexpr DeinitParticleMaterial = [](void* a_pData)
+		{
+
+		};
+
+		static t_fourCCFunction constexpr DeinitWorld = [](void* a_pData)
+		{
+
+		};
+
+		static t_fourCCFunction constexpr DeinitFont = [](void* a_pData)
+		{
+
+		};
+
+		static t_fourCCFunction constexpr DeinitXUI = [](void* a_pData)
+		{
+
+		};
+
+		static t_fourCCFunction constexpr DeinitModel = [](void* a_pData)
+		{
+
+		};
+
+		static t_fourCCFunction constexpr DeinitKeyframes = [](void* a_pData)
+		{
+
+		};
+
+		static t_fourCCFunction constexpr DeinitMaterial = [](void* a_pData)
+		{
+
+		};
+
+		static t_fourCCFunction constexpr DeinitFXLite = [](void* a_pData)
+		{
+
+		};
+
+		static t_fourCCFunction constexpr DeinitVertexDecleration = [](void* a_pData)
+		{
+
+		};
+
+		static t_fourCCFunction constexpr DeinitTex = [](void* a_pData)
+		{
+
+		};
+
 		static FourCCFunction constexpr g_FourCCReloadFunctions[5] = {
 			{ { 't', 't', 'e', 'x'}, InitTex},
 			{ { 't', 'f', 'x', 'l'}, InitFXLite},
@@ -107,7 +167,24 @@ namespace Toshi
 			{ { 't', 'p', 'e', 'f'}, InitParticleEffect },
 		};
 
+		static FourCCFunction constexpr g_FourCCDeinitFunctions[12] = {
+			{ { 't', 'p', 'e', 'f'}, DeinitParticleEffect },
+			{ { 't', 'p', 's', 'e'}, DeinitParticleSettings },
+			{ { 't', 'p', 'm', 'a'}, DeinitParticleMaterial },
+			{ { 't', 'w', 'l', 'd'}, DeinitWorld },
+			{ { 't', 'f', 'n', 't'}, DeinitFont },
+			{ { 't', 'x', 'u', 'i'}, DeinitXUI },
+			{ { 't', 'm', 'o', 'd'}, DeinitModel },
+			{ { 't', 'k', 'e', 'y'}, DeinitKeyframes},
+			{ { 't', 'm', 'a', 't'}, DeinitMaterial},
+			{ { 't', 'f', 'x', 'l'}, DeinitFXLite},
+			{ { 't', 'v', 'd', 'c'}, DeinitVertexDecleration},
+			{ { 't', 't', 'e', 'x'}, DeinitTex},
+		};
+
+	public:
 		static void InitAssets(TTRB& a_trb, bool createResources, bool allowCrossTRBReferences);
+		static void DeinitAssets(TTRB& a_trb);
 		static void Init(TTRB& a_trb, uint32_t a_unk, t_fourCCFunction a_fourCCFunc);
 		
 
@@ -115,5 +192,6 @@ namespace Toshi
 		static bool g_bCreateResources;
 		static bool g_bAllowCrossTRBReferences;
 		static TTRB* g_pCurrentTRB;
+		static TMemoryHeap* g_pMemHeap;
 	};
 }

@@ -5,6 +5,7 @@
 #include "Toshi/Memory/TMemory.h"
 
 #include <Toshi/File/TTSF.h>
+#include <Toshi/Render/TAssetInit.h>
 
 using namespace Toshi;
 
@@ -74,6 +75,8 @@ AExampleClass::AExampleClass()
 	{
 		TTRB trb;
 		trb.Load(file);
+		TAssetInit assetInit;
+		assetInit.InitAssets(trb, true, false);
 		uint8_t* buf = (uint8_t*)trb.GetSymbolAddress("txui");
 		buf += 8;
 		buf = (uint8_t*)(*(int*)buf);
