@@ -28,10 +28,9 @@ namespace Toshi
         else
         {
             // 14 bits value
-            //length = (length & 0xFFFF) | (BTECSizeFlag_NoOffset | BTECSizeFlag_BigSize);
-            auto originalLength = length;
+            auto len = length;
             LOWBYTE(length) = HIGHBYTE(length) | (BTECSizeFlag_NoOffset | BTECSizeFlag_BigSize);
-            BYTE1(length) = originalLength;
+            BYTE1(length) = len;
             bytesToWrite = 2;
         }
 
@@ -57,13 +56,14 @@ namespace Toshi
 
         if (length <= BTECSizeFlag_BigSize)
         {
-            length = length & 0xFF;
+            LOWBYTE(length) = length;
             bytesToWrite = 1;
         }
         else
         {
-            length = (length & 0xFFFF) | BTECSizeFlag_BigSize;
-            bytesToWrite = 2;
+            auto len = length;
+            LOWBYTE(length) = HIGHBYTE(length) | BTECSizeFlag_BigSize;
+            BYTE1(length) = len;
         }
 
         int writtenSize = 0;
@@ -71,11 +71,13 @@ namespace Toshi
 
         if (offset <= BTECOffsetFlag_BigOffset)
         {
-            offset = offset & 0xFF;
+            LOWBYTE(offset) = offset;
         }
         else
         {
-            offset = (offset & 0xFFFF) | BTECOffsetFlag_BigOffset;
+            auto _offset = offset;
+            LOWBYTE(offset) = HIGHBYTE(offset) | BTECOffsetFlag_BigOffset;
+            BYTE1(offset) = _offset;
         }
 
         writtenSize += file->Write(&offset, bytesToWrite);
