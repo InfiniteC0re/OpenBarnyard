@@ -26,8 +26,8 @@ namespace Toshi
 
 		static TMemoryHeap* MemoryBlock() { return ms_pXUIMemoryBlock; }
 
-		void AddResource(TXUIResourceTRB* a_resourceTrb);
-		void RemoveResource(TXUIResourceTRB* a_resourceTrb);
+		void AddResource(TXUIResourceTRB* a_resourceTrb) {};
+		void RemoveResource(TXUIResourceTRB* a_resourceTrb) {};
 		void SetDefaultFont(const char* a_pData);
 
 	public:

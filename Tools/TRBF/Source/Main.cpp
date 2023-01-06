@@ -74,17 +74,17 @@ int TMain(int argc, char** argv)
 	pSymb->Add(pStack, "LocaleStrings", pLocale.get());
 
 	// BTEC test
-	auto file = Toshi::TFile::Create("D:\\BTEC_ORIGINAL", Toshi::TFile::FileMode_CreateNew);
+	auto file = Toshi::TFile::Create("F:\\BTEC_ORIGINAL", Toshi::TFile::FileMode_CreateNew);
 	pStack->Unlink();
 	file->Write(pStack->GetBuffer(), pStack->GetUsedSize());
 	file->Destroy();
 
-	file = Toshi::TFile::Create("D:\\BTEC_TEST", Toshi::TFile::FileMode_CreateNew);
+	file = Toshi::TFile::Create("F:\\BTEC_TEST", Toshi::TFile::FileMode_CreateNew);
 	Toshi::TCompress_Compress::Compress(file, pStack->GetBuffer(), pStack->GetUsedSize(), 0, false);
 	file->Destroy();
 
-	file = Toshi::TFile::Create("D:\\BTEC_TEST", Toshi::TFile::FileMode_Read);
-	auto file2 = Toshi::TFile::Create("D:\\BTEC_DECOMPRESSED", Toshi::TFile::FileMode_CreateNew);
+	file = Toshi::TFile::Create("F:\\BTEC_TEST", Toshi::TFile::FileMode_Read);
+	auto file2 = Toshi::TFile::Create("F:\\BTEC_DECOMPRESSED", Toshi::TFile::FileMode_CreateNew);
 
 	Toshi::TCompress::Header header;
 	Toshi::TCompress_Decompress::GetHeader(file, header);

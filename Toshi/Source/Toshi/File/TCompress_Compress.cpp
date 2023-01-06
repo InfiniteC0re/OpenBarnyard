@@ -64,6 +64,7 @@ namespace Toshi
             auto len = length;
             LOWBYTE(length) = HIGHBYTE(length) | BTECSizeFlag_BigSize;
             BYTE1(length) = len;
+            bytesToWrite = 2;
         }
 
         int writtenSize = 0;
@@ -72,12 +73,14 @@ namespace Toshi
         if (offset <= BTECOffsetFlag_BigOffset)
         {
             LOWBYTE(offset) = offset;
+            bytesToWrite = 1;
         }
         else
         {
             auto _offset = offset;
             LOWBYTE(offset) = HIGHBYTE(offset) | BTECOffsetFlag_BigOffset;
             BYTE1(offset) = _offset;
+            bytesToWrite = 2;
         }
 
         writtenSize += file->Write(&offset, bytesToWrite);
