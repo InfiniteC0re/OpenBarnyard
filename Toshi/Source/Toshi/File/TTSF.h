@@ -216,6 +216,14 @@ namespace Toshi
 			TASSERT(m_pFile != TNULL, "TTSFO is not created");
 			return m_pFile->Write(buffer, size);
 		}
+
+		size_t WriteCompressed(const void* buffer, size_t size)
+		{
+			TASSERT(m_pFile != TNULL, "TTSFO is not created");
+			size_t writtenSize = TCompress_Compress::Compress(m_pFile, (char*)buffer, size, 0, m_Endianess == Endianess_Big);
+			WriteAlignmentPad();
+			return writtenSize;
+		}
 		
 		void WriteBool(bool value)               { Write(value); }
 		void WriteInt8(int8_t value)             { Write(value); }

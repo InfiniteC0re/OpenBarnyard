@@ -20,7 +20,7 @@ struct LocaleStrings
 };
 
 const wchar_t* g_Strings[] = {
-	L"String 1 2 3 4 5",
+	L"String 1",
 	L"String 2",
 	L"String 3",
 	L"String 4",
@@ -29,30 +29,8 @@ const wchar_t* g_Strings[] = {
 	L"1234567",
 };
 
-static uint8_t g_Func1[] = {
-	0xc7, 0x01, 0x00, 0x00, 0x00, 0x00,
-	0xc7, 0x41, 0x08, 0x00, 0x00, 0x00, 0x00,
-	0xc7, 0x41, 0x0c, 0x00, 0x00, 0x00, 0x00,
-	0xc7, 0x41, 0x10, 0x00, 0x00, 0x00, 0x00,
-	0xc7, 0x41, 0x14, 0x00, 0x00, 0x00, 0x00,
-	0xc7, 0x81, 0x48, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0xc7, 0x81, 0x4C, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0xc3
-};
-
-typedef void(__thiscall *t_Func1)(void* pThis);
-
 int TMain(int argc, char** argv)
 {
-	/*DWORD oldProtect;
-	VirtualProtect(g_Func1, sizeof(g_Func1), PAGE_EXECUTE_READWRITE, &oldProtect);
-	t_Func1 func1 = (t_Func1)(&g_Func1[0]);
-
-	char a[1104];
-	func1((void*)a);
-
-	return 0;*/
-
 	TLib::TRBF::TRBF trbf;
 
 	auto pSect = trbf.GetSECT();
@@ -72,7 +50,20 @@ int TMain(int argc, char** argv)
 	}
 
 	pSymb->Add(pStack, "LocaleStrings", pLocale.get());
+	trbf.WriteToFile("D:\\TestLocaleFile.trb", Toshi::TTSF::Endianess_Little, false);
+	trbf.WriteToFile("D:\\TestLocaleFile_Compressed.trb", Toshi::TTSF::Endianess_Little, true);
 
+	trbf.ReadFromFile("D:\\TestLocaleFile_Compressed.trb");
+	auto pLocaleStrings = pSymb->Find<LocaleStrings>(pSect, "LocaleStrings");
+
+	wchar_t* str = pLocaleStrings->Strings[0];
+
+	TOSHI_INFO("String count: {0}", pLocaleStrings->Count);
+	TOSHI_INFO(L"First string: {0}", pLocaleStrings->Strings[0]);
+
+	return 0;
+
+#if 0
 	// BTEC test
 	auto file = Toshi::TFile::Create("D:\\BTEC_ORIGINAL", Toshi::TFile::FileMode_CreateNew);
 	pStack->Unlink();
@@ -97,4 +88,5 @@ int TMain(int argc, char** argv)
 	file2->Destroy();
 
 	return 0;
+#endif
 }

@@ -24,6 +24,8 @@ namespace TLib
 
 			bool ReadFromFile(const std::string& filepath)
 			{
+				Reset();
+
 				Toshi::TTSFI ttsfi;
 				auto pFile = Toshi::TFile::Create(filepath.c_str());
 				
@@ -70,7 +72,7 @@ namespace TLib
 				return false;
 			}
 
-			void WriteToFile(const std::string& filepath, Toshi::TTSF::Endianess endianess = Toshi::TTSF::Endianess_Little)
+			void WriteToFile(const std::string& filepath, Toshi::TTSF::Endianess endianess = Toshi::TTSF::Endianess_Little, bool compress = false)
 			{
 				Toshi::TTSFO ttsfo;
 				Toshi::TTSFO::HunkMark mark;
@@ -83,8 +85,8 @@ namespace TLib
 				ttsfo.CloseHunk(&mark);
 
 				// SECT
-				ttsfo.OpenHunk(&mark, "SECT");
-				m_SECT.Write(ttsfo);
+				ttsfo.OpenHunk(&mark, compress ? "SECC" : "SECT");
+				m_SECT.Write(ttsfo, compress);
 				ttsfo.CloseHunk(&mark);
 
 				// RELC

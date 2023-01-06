@@ -308,12 +308,21 @@ namespace TLib
 				return m_Sections[index];
 			}
 
-			void Write(Toshi::TTSFO& ttsfo)
+			void Write(Toshi::TTSFO& ttsfo, bool compress)
 			{
 				for (auto stack : m_Sections)
 				{
 					stack->Unlink();
-					ttsfo.WriteRaw(stack->GetBuffer(), stack->GetUsedSize());
+					
+					if (compress)
+					{
+						ttsfo.WriteCompressed(stack->GetBuffer(), stack->GetUsedSize());
+					}
+					else
+					{
+						ttsfo.WriteRaw(stack->GetBuffer(), stack->GetUsedSize());
+					}
+
 					stack->Link();
 				}
 			}

@@ -2,8 +2,6 @@
 #include "TCompress_Compress.h"
 #include "BTECCompressor.h"
 
-#include "Toshi/Typedefs.h"
-
 namespace Toshi
 {
     int TCompress_Compress::usemaxoffset;
@@ -72,12 +70,14 @@ namespace Toshi
         if (offset <= BTECOffsetFlag_BigOffset)
         {
             LOWBYTE(offset) = offset;
+            bytesToWrite = 1;
         }
         else
         {
             auto _offset = offset;
             LOWBYTE(offset) = HIGHBYTE(offset) | BTECOffsetFlag_BigOffset;
             BYTE1(offset) = _offset;
+            bytesToWrite = 2;
         }
 
         writtenSize += file->Write(&offset, bytesToWrite);
@@ -86,7 +86,7 @@ namespace Toshi
         return writtenSize;
     }
 
-    void TCompress_Compress::Compress(TFile* file, char* buffer, uint32_t size, uint32_t unused, bool isBigEndian)
+    size_t TCompress_Compress::Compress(TFile* file, char* buffer, uint32_t size, uint32_t unused, bool isBigEndian)
     {
         BTECCompressor compressor;
 
@@ -168,5 +168,7 @@ namespace Toshi
         file->Seek(initialPos, TFile::TSEEK_SET);
         file->Write(&btecHeader, TCompress::HEADER_SIZE_12);
         file->Seek(compressedSize, TFile::TSEEK_CUR);
+
+        return compressedSize;
     }
 }
