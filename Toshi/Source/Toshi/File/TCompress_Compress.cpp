@@ -111,8 +111,9 @@ namespace Toshi
             char* offset = TNULL;
             size_t dataSize = 0;
             bool hasOffset = compressor.FUN_0068af10(bufferPos, uncompressedLeft, offset, dataSize);
+            size_t offsetNum = bufferPos - offset;
 
-            if (hasOffset == false || dataSize < 3)
+            if (hasOffset == false || dataSize < 3 || offsetNum > usemaxoffset)
             {
                 dataSize = 1;
                 
@@ -140,7 +141,7 @@ namespace Toshi
                     chunkSize = 0;
                 }
 
-                compressedSize += TCompress_Compress::WriteOffset(dataSize, bufferPos - offset, bufferPos, file);
+                compressedSize += TCompress_Compress::WriteOffset(dataSize, offsetNum, bufferPos, file);
             }
 
             compressor.FUN_0068ae40(dataSize);

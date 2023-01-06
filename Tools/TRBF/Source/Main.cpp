@@ -31,6 +31,23 @@ const wchar_t* g_Strings[] = {
 
 int TMain(int argc, char** argv)
 {
+	argv++;
+
+	if (*argv != TNULL)
+	{
+		TLib::TRBF::TRBF trbf;
+		trbf.ReadFromFile(*argv);
+		trbf.WriteToFile(*argv, true);
+		TOSHI_INFO("Done!");
+	}
+	else
+	{
+		TOSHI_TRACE("Drag'n drop a file you want to compress on this exe or specify path as the first argument");
+	}
+
+	system("pause");
+	return 0;
+
 	TLib::TRBF::TRBF trbf;
 
 	auto pSect = trbf.GetSECT();
@@ -63,17 +80,17 @@ int TMain(int argc, char** argv)
 
 #if 0
 	// BTEC test
-	auto file = Toshi::TFile::Create("F:\\BTEC_ORIGINAL", Toshi::TFile::FileMode_CreateNew);
+	auto file = Toshi::TFile::Create("D:\\BTEC_ORIGINAL", Toshi::TFile::FileMode_CreateNew);
 	pStack->Unlink();
 	file->Write(pStack->GetBuffer(), pStack->GetUsedSize());
 	file->Destroy();
 
-	file = Toshi::TFile::Create("F:\\BTEC_TEST", Toshi::TFile::FileMode_CreateNew);
+	file = Toshi::TFile::Create("D:\\BTEC_TEST", Toshi::TFile::FileMode_CreateNew);
 	Toshi::TCompress_Compress::Compress(file, pStack->GetBuffer(), pStack->GetUsedSize(), 0, false);
 	file->Destroy();
 
-	file = Toshi::TFile::Create("F:\\BTEC_TEST", Toshi::TFile::FileMode_Read);
-	auto file2 = Toshi::TFile::Create("F:\\BTEC_DECOMPRESSED", Toshi::TFile::FileMode_CreateNew);
+	file = Toshi::TFile::Create("D:\\BTEC_TEST", Toshi::TFile::FileMode_Read);
+	auto file2 = Toshi::TFile::Create("D:\\BTEC_DECOMPRESSED", Toshi::TFile::FileMode_CreateNew);
 
 	Toshi::TCompress::Header header;
 	Toshi::TCompress_Decompress::GetHeader(file, header);

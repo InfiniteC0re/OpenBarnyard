@@ -310,6 +310,12 @@ namespace TLib
 
 			void Write(Toshi::TTSFO& ttsfo, bool compress)
 			{
+				if (compress && m_Sections.size() > 1)
+				{
+					TOSHI_WARN("TRBF doesn't support compressing files with more than 1 section, disabling compression");
+					compress = false;
+				}
+
 				for (auto stack : m_Sections)
 				{
 					stack->Unlink();

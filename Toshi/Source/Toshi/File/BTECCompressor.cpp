@@ -16,7 +16,19 @@ namespace Toshi
 
     BTECCompressor::~BTECCompressor()
     {
-        //TFree(m_SomeArray1);
+        TFree(m_SomeArray1);
+
+        for (size_t i = 0; i < m_BucketCount; i++)
+        {
+            for (size_t k = 0; k < 256; k++)
+            {
+                TFree(m_Buckets[i][k]);
+            }
+
+            TFree(m_Buckets[i]);
+        }
+
+        TFree(m_Buckets);
     }
 
     void BTECCompressor::Initialize(char* buffer, size_t bufferSize, int maxoffset, int unk)
