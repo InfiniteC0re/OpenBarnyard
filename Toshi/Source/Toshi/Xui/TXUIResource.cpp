@@ -142,7 +142,7 @@ namespace Toshi
         uint16_t uiType = PARSEWORD_BIG(buffer);
         buffer += 2;
 
-        TASSERT(0 == TStringManager::String16Compare(GetString(uiType), _TS16("XuiCanvas")), "");
+        TASSERT(0 == TStringManager::String16Compare(GetString(uiType), _TS16("XuiCanvas")), "First Element is not XuiCanvas!");
 
         m_root = CreateObjectData(*this, uiType);
 

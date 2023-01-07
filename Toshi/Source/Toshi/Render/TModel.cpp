@@ -1,6 +1,6 @@
 #include "ToshiPCH.h"
 #include "TModel.h"
-
+/*
 bool Toshi::TModel::LoadTMD(const char* a_tmdPath)
 {
 	TFile* file = TFile::Create(a_tmdPath);
@@ -52,3 +52,4 @@ const char* Toshi::TModel::TranslateSymbolName(const char* a_symbolName)
 	}
 	return a_symbolName;
 }
+*/

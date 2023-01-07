@@ -29,7 +29,8 @@ namespace Toshi
 	void TXUI::SetDefaultFont(const char* a_pData)
 	{
 		m_trb->Load(a_pData);
-		//TAssetInit::InitAssets();
+		TAssetInit::InitAssets(*m_trb, true, false);
+
 	}
 
 	void TXUIResourceTRB::Init()

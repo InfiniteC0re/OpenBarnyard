@@ -1,7 +1,7 @@
 #pragma once
 #include "Toshi/File/TTRB.h"
 #include "Toshi/Xui/TXUI.h"
-
+#include "Toshi/Render/TModel.h"
 #include "Toshi/Render/TTexture.h"
 
 
@@ -9,10 +9,13 @@ namespace Toshi
 {
 	class TAssetInit
 	{
-		
-
 	public:
+		static bool g_bCreateResources;
+		static bool g_bAllowCrossTRBReferences;
+		static TTRB* g_pCurrentTRB;
+		static TMemoryHeap* g_pMemHeap;
 
+	private:
 		using t_fourCCFunction = void (*)(void* a_pData);
 
 		struct FourCCFunction
@@ -21,6 +24,7 @@ namespace Toshi
 			t_fourCCFunction func;
 		};
 
+	public:
 		static t_fourCCFunction constexpr InitTex = [](void* a_pData)
 		{
 			reinterpret_cast<TTexture*>(a_pData)->Init();
@@ -48,7 +52,18 @@ namespace Toshi
 
 		static t_fourCCFunction constexpr InitModel = [](void* a_pData)
 		{
+			TModelHAL* a_modelHal;
 
+			if (g_pMemHeap == TNULL)
+			{
+				a_modelHal = new TModelHAL();
+			}
+			else
+			{
+				a_modelHal = new (g_pMemHeap) TModelHAL();
+			}
+
+			a_modelHal->Create((TTMDWin::TTRBWinHeader*)a_pData);
 		};
 
 		// Empty ( de blob only calls a func where TASSERT("TFALSE","..\\..\\Source\\Render\\TVertexDecl_DX11.cpp",0x1f,"TASSERT"); gets called
@@ -191,10 +206,6 @@ namespace Toshi
 		static void Init(TTRB& a_trb, uint32_t a_unk, t_fourCCFunction a_fourCCFunc);
 		
 
-	public:
-		static bool g_bCreateResources;
-		static bool g_bAllowCrossTRBReferences;
-		static TTRB* g_pCurrentTRB;
-		static TMemoryHeap* g_pMemHeap;
+
 	};
 }

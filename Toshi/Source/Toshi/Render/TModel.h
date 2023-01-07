@@ -1,9 +1,13 @@
 #pragma once
 
+#include TOSHI_MULTIRENDER(TModel);
+
+/*
 #include "Toshi/File/TFile.h"
 #include "Toshi/Render/TSkeleton.h"
 #include "Toshi2/T2ResourceManager.h"
-
+*/
+/*
 namespace Toshi
 {
 
@@ -64,8 +68,7 @@ namespace Toshi
 		bool LoadTrb();
 		const char* TranslateSymbolName(const char* a_symbolName);
 	};
-
 	
 }
 
-
+*/

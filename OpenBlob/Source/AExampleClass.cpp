@@ -68,7 +68,7 @@ AExampleClass::AExampleClass()
 			file->Destroy();
 		}
 	}
-
+	/*
 	TFile* file = TFile::Create("C:\\Program Files (x86)\\Steam\\steamapps\\common\\de Blob\\Data\\XUI\\DE\\common.trb");
 	
 	if (file)
@@ -76,6 +76,15 @@ AExampleClass::AExampleClass()
 		TTRB trb;
 		trb.Load(file);
 		TXUI::ms_pXUIMemoryBlock = TMemory::CreateHeap(0x10000, 4, "xui pile");
+		TAssetInit::InitAssets(trb, true, false);
+	}
+	*/
+	TFile* file = TFile::Create("C:\\Program Files (x86)\\Steam\\steamapps\\common\\de Blob\\Data\\BlobChar\\AssetPack.trb");
+
+	if (file)
+	{
+		TTRB trb;
+		trb.Load(file);
 		TAssetInit::InitAssets(trb, true, false);
 	}
 
