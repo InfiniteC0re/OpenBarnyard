@@ -2,6 +2,9 @@
 #include "Toshi/File/TTRB.h"
 #include "Toshi/Xui/TXUI.h"
 
+#include TOSHI_MULTIRENDER(TTexture)
+
+
 namespace Toshi
 {
 	class TAssetInit
@@ -20,7 +23,7 @@ namespace Toshi
 
 		static t_fourCCFunction constexpr InitTex = [](void* a_pData)
 		{
-
+			reinterpret_cast<TTexture*>(a_pData)->Init();
 		};
 
 		static t_fourCCFunction constexpr InitFXLite = [](void* a_pData)

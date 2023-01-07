@@ -61,7 +61,7 @@ namespace Toshi
 		// unk3 = probably a function
 		void Load(bool loadStringTables, const char* filenameXUIB, const char* fileNameStringTable, bool loadTrb, void* unk3);
 
-		int Load(unsigned char* buffer);
+		bool Load(unsigned char* buffer);
 		int ReadDataSection(unsigned char* buffer, uint32_t size);
 		bool ReadStringSection(wchar_t* pPtr, uint32_t size);
 		int ReadCustSection(unsigned char* buffer, uint32_t size);

@@ -1,5 +1,5 @@
 #pragma once
-#include "Toshi/Render/TKeyframeLibrary.h"
+#include "Toshi/Render/TAnimation.h"
 #include "Toshi/Core/TSystem.h"
 #include "Toshi/Render/ResourceName.h"
 

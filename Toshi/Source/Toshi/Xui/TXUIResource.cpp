@@ -100,7 +100,7 @@ namespace Toshi
         }
     }
 
-    int TXUIResource::Load(unsigned char* buffer)
+    bool TXUIResource::Load(unsigned char* buffer)
     {
         Destroy();
         ReadHeader(buffer);
@@ -134,7 +134,7 @@ namespace Toshi
             }
         }
 
-        return totalSize;
+        return true;
     }
 
     int TXUIResource::ReadDataSection(unsigned char* buffer, uint32_t size)
