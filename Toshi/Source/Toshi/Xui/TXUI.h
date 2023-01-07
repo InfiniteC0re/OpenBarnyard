@@ -11,7 +11,9 @@ namespace Toshi
 
 	class TXUIResourceTRB
 	{
-		uint8_t* m_trbBuffer; // 0x8
+		uint8_t* m_unk;
+		uint8_t* m_fileName;
+		uint8_t* m_xurBuffer; // 0x8
 		TXUIResource* m_resource; // 0xC
 	public:
 		void Init();

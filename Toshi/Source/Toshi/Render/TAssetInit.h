@@ -2,6 +2,9 @@
 #include "Toshi/File/TTRB.h"
 #include "Toshi/Xui/TXUI.h"
 
+#include TOSHI_MULTIRENDER(TTexture)
+
+
 namespace Toshi
 {
 	class TAssetInit
@@ -14,13 +17,13 @@ namespace Toshi
 
 		struct FourCCFunction
 		{
-			const char name[4];
+			uint32_t name;
 			t_fourCCFunction func;
 		};
 
 		static t_fourCCFunction constexpr InitTex = [](void* a_pData)
 		{
-
+			reinterpret_cast<TTexture*>(a_pData)->Init();
 		};
 
 		static t_fourCCFunction constexpr InitFXLite = [](void* a_pData)
@@ -84,30 +87,107 @@ namespace Toshi
 
 		};
 
+		static t_fourCCFunction constexpr DeinitParticleEffect = [](void* a_pData)
+		{
+
+		};
+
+		static t_fourCCFunction constexpr DeinitParticleSettings = [](void* a_pData)
+		{
+
+		};
+
+		static t_fourCCFunction constexpr DeinitParticleMaterial = [](void* a_pData)
+		{
+
+		};
+
+		static t_fourCCFunction constexpr DeinitWorld = [](void* a_pData)
+		{
+
+		};
+
+		static t_fourCCFunction constexpr DeinitFont = [](void* a_pData)
+		{
+
+		};
+
+		static t_fourCCFunction constexpr DeinitXUI = [](void* a_pData)
+		{
+
+		};
+
+		static t_fourCCFunction constexpr DeinitModel = [](void* a_pData)
+		{
+
+		};
+
+		static t_fourCCFunction constexpr DeinitKeyframes = [](void* a_pData)
+		{
+
+		};
+
+		static t_fourCCFunction constexpr DeinitMaterial = [](void* a_pData)
+		{
+
+		};
+
+		static t_fourCCFunction constexpr DeinitFXLite = [](void* a_pData)
+		{
+
+		};
+
+		static t_fourCCFunction constexpr DeinitVertexDecleration = [](void* a_pData)
+		{
+
+		};
+
+		static t_fourCCFunction constexpr DeinitTex = [](void* a_pData)
+		{
+
+		};
+
 		static FourCCFunction constexpr g_FourCCReloadFunctions[5] = {
-			{ { 't', 't', 'e', 'x'}, InitTex},
-			{ { 't', 'f', 'x', 'l'}, InitFXLite},
-			{ { 't', 'm', 'a', 't'}, ReloadMaterial},
-			{ { 't', 'k', 'e', 'y'}, InitKeyframes},
-			{ { 't', 'm', 'o', 'd'}, InitModel}
+			{ TMAKEFOUR("ttex"), InitTex},
+			{ TMAKEFOUR("tfxl"), InitFXLite},
+			{ TMAKEFOUR("tmat"), ReloadMaterial},
+			{ TMAKEFOUR("tkey"), InitKeyframes},
+			{ TMAKEFOUR("tmod"), InitModel}
 		};
 
 		static FourCCFunction constexpr g_FourCCInitFunctions[12] = {
-			{ { 't', 't', 'e', 'x'}, InitTex},
-			{ { 't', 'v', 'd', 'c'}, InitVertexDecleration},
-			{ { 't', 'f', 'x', 'l'}, InitFXLite},
-			{ { 't', 'm', 'a', 't'}, InitMaterial},
-			{ { 't', 'k', 'e', 'y'}, InitKeyframes},
-			{ { 't', 'm', 'o', 'd'}, InitModel },
-			{ { 't', 'x', 'u', 'i'}, InitXUI },
-			{ { 't', 'f', 'n', 't'}, InitFont },
-			{ { 't', 'w', 'l', 'd'}, InitWorld },
-			{ { 't', 'p', 'm', 'a'}, InitParticleMaterial },
-			{ { 't', 'p', 's', 'e'}, InitParticleSettings },
-			{ { 't', 'p', 'e', 'f'}, InitParticleEffect },
+			{ TMAKEFOUR("ttex"), InitTex},
+			{ TMAKEFOUR("tvdc"), InitVertexDecleration},
+			{ TMAKEFOUR("tfxl"), InitFXLite},
+			{ TMAKEFOUR("tmat"), InitMaterial},
+			{ TMAKEFOUR("tkey"), InitKeyframes},
+			{ TMAKEFOUR("tmod"), InitModel },
+			{ TMAKEFOUR("txui"), InitXUI },
+			{ TMAKEFOUR("tfnt"), InitFont },
+			{ TMAKEFOUR("twld"), InitWorld },
+			{ TMAKEFOUR("tpma"), InitParticleMaterial },
+			{ TMAKEFOUR("tpse"), InitParticleSettings },
+			{ TMAKEFOUR("tpef"), InitParticleEffect },
 		};
 
+		static FourCCFunction constexpr g_FourCCDeinitFunctions[12] = {
+			{ TMAKEFOUR("tpef"), DeinitParticleEffect },
+			{ TMAKEFOUR("tpse"), DeinitParticleSettings },
+			{ TMAKEFOUR("tpma"), DeinitParticleMaterial },
+			{ TMAKEFOUR("twld"), DeinitWorld },
+			{ TMAKEFOUR("tfnt"), DeinitFont },
+			{ TMAKEFOUR("txui"), DeinitXUI },
+			{ TMAKEFOUR("tmod"), DeinitModel },
+			{ TMAKEFOUR("tkey"), DeinitKeyframes},
+			{ TMAKEFOUR("tmat"), DeinitMaterial},
+			{ TMAKEFOUR("tfxl"), DeinitFXLite},
+			{ TMAKEFOUR("tvdc"), DeinitVertexDecleration},
+			{ TMAKEFOUR("ttex"), DeinitTex},
+		};
+
+	public:
 		static void InitAssets(TTRB& a_trb, bool createResources, bool allowCrossTRBReferences);
+		static void DeinitAssets(TTRB& a_trb);
 		static void Init(TTRB& a_trb, uint32_t a_unk, t_fourCCFunction a_fourCCFunc);
 		
 
@@ -115,5 +195,6 @@ namespace Toshi
 		static bool g_bCreateResources;
 		static bool g_bAllowCrossTRBReferences;
 		static TTRB* g_pCurrentTRB;
+		static TMemoryHeap* g_pMemHeap;
 	};
 }

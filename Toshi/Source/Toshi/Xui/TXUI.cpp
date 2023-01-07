@@ -37,7 +37,8 @@ namespace Toshi
 		if (m_resource == TNULL)
 		{
 			m_resource = new (TXUI::MemoryBlock()) TXUIResource();
-			m_resource->Load(m_trbBuffer);
+			bool bRes = m_resource->Load(m_xurBuffer);
+			TASSERT(TTRUE == bRes, "Could not load XUR");
 			TXUI::GetSingleton()->AddResource(this);
 		}
 	}

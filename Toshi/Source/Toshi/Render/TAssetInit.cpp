@@ -6,11 +6,7 @@ namespace Toshi
 	bool TAssetInit::g_bCreateResources = true;
 	bool TAssetInit::g_bAllowCrossTRBReferences;
 	TTRB* TAssetInit::g_pCurrentTRB;
-
-	//TAssetInit::t_fourCCFunction TAssetInit::InitTex = [](void* a_pData)
-	//{
-	//	TIMPLEMENT();
-	//};
+	TMemoryHeap* TAssetInit::g_pMemHeap = TNULL;
 
 	void TAssetInit::InitAssets(TTRB& a_trb, bool createResources, bool allowCrossTRBReferences)
 	{
@@ -34,9 +30,18 @@ namespace Toshi
 
 		for (size_t i = 0; i < count; i++)
 		{
-			Init(a_trb, TMAKEFOUR(functions[i].name), functions[i].func);
+			Init(a_trb, functions[i].name, functions[i].func);
 		}
 		g_pCurrentTRB = TNULL;
+	}
+
+	void TAssetInit::DeinitAssets(TTRB& a_trb)
+	{
+		const FourCCFunction* functions = g_FourCCDeinitFunctions;
+		for (size_t i = 0; i < 12; i++)
+		{
+			TAssetInit::Init(a_trb, functions[i].name, functions[i].func);
+		}
 	}
 
 	void TAssetInit::Init(TTRB& a_trb, uint32_t a_unk, t_fourCCFunction a_fourCCFunc)

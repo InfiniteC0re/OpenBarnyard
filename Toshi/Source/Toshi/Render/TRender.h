@@ -3,7 +3,7 @@
 #include "Toshi/Core/TStack.h"
 #include "Toshi/Core/TRefCounted.h"
 #include "Toshi/Render/TResource.h"
-#include "Toshi/Render/TKeyframeLibrary.h"
+#include "Toshi/Render/TAnimation.h"
 
 namespace Toshi
 {
