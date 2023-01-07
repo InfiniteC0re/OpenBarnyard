@@ -1,11 +1,10 @@
 #pragma once
 
 #include "Toshi/Strings/TStringManager.h"
-#include "Toshi/Render/TTexture.h"
 
 namespace Toshi
 {
-	class TTextureDX11 : TTexture
+	class TTexture
 	{
 		char* m_unk; //0x0
 		char* m_imageName; //0x4

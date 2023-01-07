@@ -2,7 +2,7 @@
 #include "Toshi/File/TTRB.h"
 #include "Toshi/Xui/TXUI.h"
 
-#include TOSHI_MULTIRENDER(TTexture)
+#include "Toshi/Render/TTexture.h"
 
 
 namespace Toshi

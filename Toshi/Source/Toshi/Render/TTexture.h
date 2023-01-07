@@ -1,8 +1,3 @@
 #pragma once
 
-namespace Toshi
-{
-	class TTexture
-	{
-	};
-}
+#include TOSHI_MULTIRENDER(TTexture)
