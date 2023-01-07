@@ -14,7 +14,7 @@ namespace Toshi
 
 		struct FourCCFunction
 		{
-			const char name[4];
+			uint32_t name;
 			t_fourCCFunction func;
 		};
 
@@ -145,41 +145,41 @@ namespace Toshi
 		};
 
 		static FourCCFunction constexpr g_FourCCReloadFunctions[5] = {
-			{ { 't', 't', 'e', 'x'}, InitTex},
-			{ { 't', 'f', 'x', 'l'}, InitFXLite},
-			{ { 't', 'm', 'a', 't'}, ReloadMaterial},
-			{ { 't', 'k', 'e', 'y'}, InitKeyframes},
-			{ { 't', 'm', 'o', 'd'}, InitModel}
+			{ TMAKEFOUR("ttex"), InitTex},
+			{ TMAKEFOUR("tfxl"), InitFXLite},
+			{ TMAKEFOUR("tmat"), ReloadMaterial},
+			{ TMAKEFOUR("tkey"), InitKeyframes},
+			{ TMAKEFOUR("tmod"), InitModel}
 		};
 
 		static FourCCFunction constexpr g_FourCCInitFunctions[12] = {
-			{ { 't', 't', 'e', 'x'}, InitTex},
-			{ { 't', 'v', 'd', 'c'}, InitVertexDecleration},
-			{ { 't', 'f', 'x', 'l'}, InitFXLite},
-			{ { 't', 'm', 'a', 't'}, InitMaterial},
-			{ { 't', 'k', 'e', 'y'}, InitKeyframes},
-			{ { 't', 'm', 'o', 'd'}, InitModel },
-			{ { 't', 'x', 'u', 'i'}, InitXUI },
-			{ { 't', 'f', 'n', 't'}, InitFont },
-			{ { 't', 'w', 'l', 'd'}, InitWorld },
-			{ { 't', 'p', 'm', 'a'}, InitParticleMaterial },
-			{ { 't', 'p', 's', 'e'}, InitParticleSettings },
-			{ { 't', 'p', 'e', 'f'}, InitParticleEffect },
+			{ TMAKEFOUR("ttex"), InitTex},
+			{ TMAKEFOUR("tvdc"), InitVertexDecleration},
+			{ TMAKEFOUR("tfxl"), InitFXLite},
+			{ TMAKEFOUR("tmat"), InitMaterial},
+			{ TMAKEFOUR("tkey"), InitKeyframes},
+			{ TMAKEFOUR("tmod"), InitModel },
+			{ TMAKEFOUR("txui"), InitXUI },
+			{ TMAKEFOUR("tfnt"), InitFont },
+			{ TMAKEFOUR("twld"), InitWorld },
+			{ TMAKEFOUR("tpma"), InitParticleMaterial },
+			{ TMAKEFOUR("tpse"), InitParticleSettings },
+			{ TMAKEFOUR("tpef"), InitParticleEffect },
 		};
 
 		static FourCCFunction constexpr g_FourCCDeinitFunctions[12] = {
-			{ { 't', 'p', 'e', 'f'}, DeinitParticleEffect },
-			{ { 't', 'p', 's', 'e'}, DeinitParticleSettings },
-			{ { 't', 'p', 'm', 'a'}, DeinitParticleMaterial },
-			{ { 't', 'w', 'l', 'd'}, DeinitWorld },
-			{ { 't', 'f', 'n', 't'}, DeinitFont },
-			{ { 't', 'x', 'u', 'i'}, DeinitXUI },
-			{ { 't', 'm', 'o', 'd'}, DeinitModel },
-			{ { 't', 'k', 'e', 'y'}, DeinitKeyframes},
-			{ { 't', 'm', 'a', 't'}, DeinitMaterial},
-			{ { 't', 'f', 'x', 'l'}, DeinitFXLite},
-			{ { 't', 'v', 'd', 'c'}, DeinitVertexDecleration},
-			{ { 't', 't', 'e', 'x'}, DeinitTex},
+			{ TMAKEFOUR("tpef"), DeinitParticleEffect },
+			{ TMAKEFOUR("tpse"), DeinitParticleSettings },
+			{ TMAKEFOUR("tpma"), DeinitParticleMaterial },
+			{ TMAKEFOUR("twld"), DeinitWorld },
+			{ TMAKEFOUR("tfnt"), DeinitFont },
+			{ TMAKEFOUR("txui"), DeinitXUI },
+			{ TMAKEFOUR("tmod"), DeinitModel },
+			{ TMAKEFOUR("tkey"), DeinitKeyframes},
+			{ TMAKEFOUR("tmat"), DeinitMaterial},
+			{ TMAKEFOUR("tfxl"), DeinitFXLite},
+			{ TMAKEFOUR("tvdc"), DeinitVertexDecleration},
+			{ TMAKEFOUR("ttex"), DeinitTex},
 		};
 
 	public:

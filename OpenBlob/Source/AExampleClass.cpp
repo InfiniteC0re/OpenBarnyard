@@ -75,14 +75,8 @@ AExampleClass::AExampleClass()
 	{
 		TTRB trb;
 		trb.Load(file);
-		TAssetInit assetInit;
-		assetInit.InitAssets(trb, true, false);
-		uint8_t* buf = (uint8_t*)trb.GetSymbolAddress("txui");
-		buf += 8;
-		buf = (uint8_t*)(*(int*)buf);
 		TXUI::ms_pXUIMemoryBlock = TMemory::CreateHeap(0x10000, 4, "xui pile");
-		TXUIResource* res = new TXUIResource();
-		res->Load(buf);
+		TAssetInit::InitAssets(trb, true, false);
 	}
 
 	/*
@@ -138,6 +132,7 @@ AExampleClass::AExampleClass()
 	delete list.Head()->Next();
 	delete list.Head();
 
+	/*
 	{
 		// TMemory Piles
 		auto pile = TMemory::CreateHeap(128, TMemoryHeapFlags_AllocAsPile, "test pile");
@@ -147,7 +142,7 @@ AExampleClass::AExampleClass()
 		auto ptr4 = pile->Malloc(32);
 		auto ptr5 = pile->Malloc(32);
 	}
-
+	*/
 	// TTSFO test (making our own trb files)
 	TTSFO ttsfo;
 	TTSFO::ERROR error = ttsfo.Create("D:\\test.trb");

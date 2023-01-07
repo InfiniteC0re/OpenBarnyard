@@ -30,7 +30,7 @@ namespace Toshi
 
 		for (size_t i = 0; i < count; i++)
 		{
-			Init(a_trb, TMAKEFOUR(functions[i].name), functions[i].func);
+			Init(a_trb, functions[i].name, functions[i].func);
 		}
 		g_pCurrentTRB = TNULL;
 	}
@@ -40,7 +40,7 @@ namespace Toshi
 		const FourCCFunction* functions = g_FourCCDeinitFunctions;
 		for (size_t i = 0; i < 12; i++)
 		{
-			TAssetInit::Init(a_trb, TMAKEFOUR(functions[i].name), functions[i].func);
+			TAssetInit::Init(a_trb, functions[i].name, functions[i].func);
 		}
 	}
 
