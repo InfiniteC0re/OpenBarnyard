@@ -1,6 +1,7 @@
 #include "ToshiPCH.h"
 #include "TXUIElement.h"
 #include "Toshi/Xui/TXUI.h"
+#include <Toshi/Xui/TXUIListItem.h>
 
 bool Toshi::XURXUIObjectData::Load(TXUIResource& resource, uint8_t*& a_pData)
 {
@@ -276,4 +277,22 @@ bool Toshi::XURXUIElementData::ValidateTimelineProp(uint32_t a_uiObjectIndex, ui
 {
 	TASSERT(a_uiObjectIndex == 0, "");
 	return param_2 < 15;
+}
+
+// TXUIElement
+
+void Toshi::TXUIElement::Create(TXUIResource& a_rResource, XURXUIObjectData* a_pObjectData, bool a_bool)
+{
+	if (GetClass() == TXUICanvas::GetClassStatic())
+	{
+		//a_rResource.PushID(a_pObjectData->id);
+	}
+	if (TXUIResource::s_bGenerateUIDs) //&& TStringManager::String16Length(a_pObjectData->id)) != 0
+	{
+		if (GetClass()->IsA(TXUIListItem::GetClassStatic()))
+		{
+			m_iUIDCount = TXUIResource::s_iUIDCount;
+			TXUIResource::s_iUIDCount++;
+		}
+	}
 }

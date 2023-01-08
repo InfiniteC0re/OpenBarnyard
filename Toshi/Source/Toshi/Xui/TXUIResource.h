@@ -48,6 +48,7 @@ namespace Toshi
 
 		inline const wchar_t* GetString(uint16_t index) { return m_asStringTable[index]; }
 		TQuaternion* GetQuat(int a_iIndex = 0);
+		TVector4* GetVector(int a_iIndex = 0);
 		//inline TQuaternion& GetQuat(int index) { return index == -1 ? TQuaternion::IDENTITY : m_pQuat; }
 
 		bool ReadHeader(unsigned char* buffer);
@@ -89,14 +90,18 @@ namespace Toshi
 	private:
 		XURHeader m_oHeader;                           // 0x0
 		wchar_t** m_asStringTable = TNULL;          // 0x1C
-		TQuaternion* m_pQuat;                       // 0x20
 		uint8_t* m_pData;
-		unsigned char* m_pCust;                     // 0x28
+		TVector4* m_pVect; // 0x1C globs
+		TQuaternion* m_pQuat;                       // 0x20 both
+		unsigned char* m_pCust;                     // 0x28 / 0x24 globs
 		uint32_t m_uiCustDataSize;                  // 0x3C
 		uint32_t m_uiStringTableCount;              // 0x30
 
 		XURXUIObjectData* m_root;
 
 		TStack<const wchar_t*, 32> m_uIDs;
+	public:
+		static inline int s_iUIDCount = 0;
+		static inline bool s_bGenerateUIDs = false;
 	};
 }

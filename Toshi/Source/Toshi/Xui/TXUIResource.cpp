@@ -17,6 +17,12 @@ namespace Toshi
         return a_iIndex == -1 ? (TQuaternion*)&TQuaternion::IDENTITY : &m_pQuat[a_iIndex];
     }
 
+    TVector4* TXUIResource::GetVector(int a_iIndex)
+    {
+        TASSERT(a_iIndex >= -1, "");
+        return a_iIndex == -1 ? (TVector4*)&TVector4::VEC_ZERO : &m_pVect[a_iIndex];
+    }
+
     bool TXUIResource::ReadHeader(unsigned char* buffer)
     {
         m_oHeader.m_uiFileID = PARSEDWORD(buffer);

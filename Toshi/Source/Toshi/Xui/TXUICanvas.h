@@ -3,7 +3,7 @@
 
 namespace Toshi
 {
-	class TXUICanvas
+	class TXUICanvas : TXUIElement
 	{
 	public:
 		void SetDimensions(float a_X, float a_Y);

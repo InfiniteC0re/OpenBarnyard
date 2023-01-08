@@ -1,6 +1,7 @@
 #pragma once
 #include "Toshi/Xui/TXUIResource.h"
 #include "Toshi/Xui/TXUITimeline.h"
+#include "Toshi/T2gui/T2GUIElement.h"
 
 namespace Toshi
 {
@@ -10,11 +11,7 @@ namespace Toshi
 		Flags_AnchorMask = BITFIELD(6)
 	};
 
-	class TXUIElement :
-		public TGenericClassDerived<TXUIElement, TObject, "TXUIElement", TMAKEVERSION(1, 0), false>
-	{
 
-	};
 
 	class XURXUIObjectData
 	{
@@ -39,7 +36,7 @@ namespace Toshi
 		uint16_t m_uiNumNamedFrames; // 0x10 de blob 0x14 NT08
 
 		XURXUITimelineData* m_timelinesData; // 0xC NT08
-		uint8_t m_NumTimelines;
+		uint8_t m_NumTimelines; // 0x20?? NT08
 
 		uint32_t m_countOfChildren; // 0x16 de blob 0x10 NT08
 		XURXUIObjectData** m_children; // 0x4 both
@@ -124,5 +121,14 @@ namespace Toshi
 			return 1;
 
 		}
+	};
+
+	class TXUIElement :
+		public TGenericClassDerived<TXUIElement, TObject, "TXUIElement", TMAKEVERSION(1, 0), false>, T2GUIElement
+	{
+
+		int m_iUIDCount; // 0xB4 globs
+
+		void Create(TXUIResource& a_rResource, XURXUIObjectData* a_pObjectData, bool a_bool);
 	};
 }
