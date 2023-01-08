@@ -11,12 +11,12 @@ namespace Toshi
 
 	class XURXUICanvasData : public XURXUIElementData
 	{
-	
+	public:
 		static constexpr const char* sm_sTypeInfo = "XURXUIControlData";
 	
-		virtual ~XURXUICanvasData() = default;
-
 	public:
+		virtual ~XURXUICanvasData() = default;
+		
 		virtual const char* GetTypeInfo() const { return sm_sTypeInfo; }
 
 		virtual bool Load(TXUIResource& resource, uint8_t*& a_pData);

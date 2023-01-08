@@ -3,6 +3,39 @@
 #include "Toshi/Xui/TXUITimeline.h"
 #include "Toshi/T2gui/T2GUIElement.h"
 
+#define TXUI_TRANSLATE_TIMELINE_PROP(propName1, propName2, typeOut) \
+if (TStringManager::String8Compare(propName1, #propName2, -1) == 0) \
+{ \
+	typeOut = PropType_##propName2; \
+	return true; \
+}
+
+#define TXUI_TRANSLATE_TIMELINE_PROP_MANUAL(propName1, propName2, typeOut, flag) \
+if (TStringManager::String8Compare(propName1, propName2, -1) == 0) \
+{ \
+	typeOut = flag; \
+	return true; \
+}
+
+#define TXUI_PROPTYPE_TO_READFLAG(propType) (1 << propType)
+#define TXUI_CHECK_READFLAG(flag, propType) (flag & TXUI_PROPTYPE_TO_READFLAG(propType))
+
+#define TXUI_READ_BYTE(buffer, out) out = *buffer; buffer += 1;
+#define TXUI_READ_WORD(buffer, out) out = PARSEWORD_BIG(buffer); buffer += 2;
+#define TXUI_READ_DWORD(buffer, out) out = PARSEDWORD_BIG(buffer); buffer += 4;
+#define TXUI_READ_FLOAT(buffer, out) out = PARSEFLOAT_BIG(buffer); buffer += 4;
+#define TXUI_READ_COLOUR(buffer, out) TASSERT(PARSEDWORD_BIG(buffer) < (1 << 16)); out = PARSEWORD_BIG(buffer + 2); buffer += 4;
+
+#define TXUI_READ_PROP_BYTE(buffer, flag, propType) if (TXUI_CHECK_READFLAG(flag, PropType_##propType)) { TXUI_READ_BYTE(buffer, m_##propType); }
+#define TXUI_READ_PROP_WORD(buffer, flag, propType) if (TXUI_CHECK_READFLAG(flag, PropType_##propType)) { TXUI_READ_WORD(buffer, m_##propType); }
+#define TXUI_READ_PROP_DWORD(buffer, flag, propType) if (TXUI_CHECK_READFLAG(flag, PropType_##propType)) { TXUI_READ_DWORD(buffer, m_##propType); }
+#define TXUI_READ_PROP_FLOAT(buffer, flag, propType) if (TXUI_CHECK_READFLAG(flag, PropType_##propType)) { TXUI_READ_FLOAT(buffer, m_##propType); }
+
+#define TXUI_READ_PROP_BYTE_MANUAL(buffer, flag, propType, out) if (TXUI_CHECK_READFLAG(flag, propType)) { TXUI_READ_BYTE(buffer, out); }
+#define TXUI_READ_PROP_WORD_MANUAL(buffer, flag, propType, out) if (TXUI_CHECK_READFLAG(flag, propType)) { TXUI_READ_WORD(buffer, out); }
+#define TXUI_READ_PROP_DWORD_MANUAL(buffer, flag, propType, out) if (TXUI_CHECK_READFLAG(flag, propType)) { TXUI_READ_DWORD(buffer, out); }
+#define TXUI_READ_PROP_FLOAT_MANUAL(buffer, flag, propType, out) if (TXUI_CHECK_READFLAG(flag, propType)) { TXUI_READ_FLOAT(buffer, out); }
+
 namespace Toshi
 {
 	enum Flags : uint8_t
@@ -11,10 +44,11 @@ namespace Toshi
 		Flags_AnchorMask = BITFIELD(6)
 	};
 
-
-
 	class XURXUIObjectData
 	{
+	public:
+		typedef uint32_t PropType;
+
 	public:
 		XURXUIObjectData()
 		{
@@ -29,6 +63,19 @@ namespace Toshi
 
 		virtual ~XURXUIObjectData() = default;
 
+		virtual bool Load(TXUIResource& resource, uint8_t*& a_pData);
+		virtual bool IsFloatPropType(uint32_t a_uiObjectIndex, PropType propType) { return false; };
+		virtual bool IsColourPropType(uint32_t a_uiObjectIndex, PropType propType) { return false; };
+		virtual uint32_t GetTimelinePropSize(uint32_t a_uiObjectIndex, PropType propType) { return 0; };
+		virtual bool TranslateTimelineProp(const char* name, uint32_t& param_2, PropType& propType) { return false; };
+		virtual bool ValidateTimelineProp(uint32_t a_uiObjectIndex, PropType propType) { return false; };
+
+		void LoadChildren(TXUIResource& resource, uint8_t*& a_pData);
+		bool LoadNamedFrames(TXUIResource& resource, uint8_t*& a_pData);
+		void LoadTimelines(TXUIResource& resource, uint8_t*& a_pData);
+		XURXUIObjectData* FindChildElementData(uint32_t index);
+
+	protected:
 		uint16_t m_index; //0x12 de blob 0x1C NT08
 		uint32_t m_index2; // 0x14 de blob 1E NT08
 
@@ -40,95 +87,109 @@ namespace Toshi
 
 		uint32_t m_countOfChildren; // 0x16 de blob 0x10 NT08
 		XURXUIObjectData** m_children; // 0x4 both
-
-		virtual bool Load(TXUIResource& resource, uint8_t*& a_pData);
-		virtual bool IsFloatPropType(uint32_t a_uiObjectIndex, uint32_t propType) { return false; };
-		virtual bool IsColourPropType(uint32_t a_uiObjectIndex, uint32_t propType) { return false; };
-		virtual uint32_t GetTimelinePropSize(uint32_t a_uiObjectIndex, uint32_t propType) { return 0; };
-		virtual bool TranslateTimelineProp(const char* param_1, uint32_t& param_2, uint32_t& param_3) { return false; };
-		virtual bool ValidateTimelineProp(uint32_t a_uiObjectIndex, uint32_t param_2) { return false; };
-
-		void LoadChildren(TXUIResource& resource, uint8_t*& a_pData);
-		bool LoadNamedFrames(TXUIResource& resource, uint8_t*& a_pData);
-		void LoadTimelines(TXUIResource& resource, uint8_t*& a_pData);
-		XURXUIObjectData* FindChildElementData(uint32_t index);
 	};
 
 	class XURXUIElementData : public XURXUIObjectData
 	{
 	public:
+		static constexpr const char* sm_sTypeInfo = "XURXUIElementData";
+
+		enum PropType_ : PropType
+		{
+			PropType_Id,
+			PropType_Width,
+			PropType_Height,
+			PropType_Position,
+			PropType_Scale,
+			PropType_Rotation,
+			PropType_Opacity,
+			PropType_Anchor,
+			PropType_Pivot,
+			PropType_Show,
+			PropType_BlendMode,
+			PropType_DisableTimelineRecursion,
+			PropType_Unknown,
+			PropType_ColorWriteFlags,
+			PropType_ClipChildren,
+			PropType_NUMOF,
+		};
+
+		friend XURXUIObjectData;
+
+	public:
 		XURXUIElementData() : XURXUIObjectData()
 		{
-			m_width = 60.0f;
-			m_height = 30.0f;
-			m_opacity = 1.0f;
-			m_positon = -1;
-			m_scale = -1;
-			m_rotation = -1;
-			m_pivot = -1;
-			m_anchor = 0;
-			m_blendMode = 0;
-			m_colorWriteFlags = 0;
-			m_clipChildren = false;
-			m_id = 0;
-			m_show = true;
-			m_disableTimelineRecursion = false;
+			m_Width = 60.0f;
+			m_Height = 30.0f;
+			m_Opacity = 1.0f;
+			m_Position = -1;
+			m_Scale = -1;
+			m_Rotation = -1;
+			m_Pivot = -1;
+			m_Anchor = 0;
+			m_BlendMode = 0;
+			m_ColorWriteFlags = 0;
+			m_ClipChildren = false;
+			m_Id = 0;
+			m_Show = true;
+			m_DisableTimelineRecursion = false;
 		}
 
 		~XURXUIElementData() = default;
-
-		/* 0 */ uint16_t m_id;
-		/* 1 */ float m_width;
-		/* 2 */ float m_height;
-		/* 3 */ int32_t m_positon;
-		/* 4 */ int32_t m_scale;
-		/* 5 */ int32_t m_rotation;
-		/* 6 */ float m_opacity;
-		/* 7 */ uint32_t m_anchor;
-		/* 8 */ int32_t m_pivot;
-		/* 9 */ bool m_show; 
-		/* 10 */ uint32_t m_blendMode;
-		/* 11 */ bool m_disableTimelineRecursion;
-		/* 13 */ uint32_t m_colorWriteFlags;
-		/* 14 */ bool m_clipChildren;
-
-		static constexpr const char* sm_sTypeInfo = "XURXUIElementData";
 
 		virtual const char* GetTypeInfo() const { return sm_sTypeInfo; }
 
 		bool Load(TXUIResource& resource, uint8_t*& a_pData);
 
-		bool TranslateTimelineProp(const char* param_1, uint32_t& param_2, uint32_t& param_3);
+		bool TranslateTimelineProp(const char* name, uint32_t& param_2, PropType& propType);
 
 		bool ValidateTimelineProp(uint32_t a_uiObjectIndex, uint32_t param_2);
 
-		bool IsFloatPropType(uint32_t a_uiObjectIndex, uint32_t propType) {
+		bool IsFloatPropType(uint32_t a_uiObjectIndex, uint32_t propType)
+		{
 			return propType != 1 && propType != 2 && propType != 6 ? false : true;
 		}
 
 		// No it's not
-		bool IsColourPropType(uint32_t a_uiObjectIndex, uint32_t propType) {
+		bool IsColourPropType(uint32_t a_uiObjectIndex, uint32_t propType)
+		{
 			return false;
 		}
 
-		uint32_t GetTimelinePropSize(uint32_t a_uiObjectIndex, uint32_t propType) {
-
+		uint32_t GetTimelinePropSize(uint32_t a_uiObjectIndex, uint32_t propType)
+		{
 			if (propType != 11 && propType != 9 && propType != 14)
 			{
 				if (propType != 0) return 4;
 				return 2;
 			}
 			return 1;
-
 		}
+
+	protected:
+		/* 0 */ uint16_t m_Id;
+		/* 1 */ float m_Width;
+		/* 2 */ float m_Height;
+		/* 3 */ int32_t m_Position;
+		/* 4 */ int32_t m_Scale;
+		/* 5 */ int32_t m_Rotation;
+		/* 6 */ float m_Opacity;
+		/* 7 */ uint32_t m_Anchor;
+		/* 8 */ int32_t m_Pivot;
+		/* 9 */ bool m_Show;
+		/* 10 */ uint32_t m_BlendMode;
+		/* 11 */ bool m_DisableTimelineRecursion;
+		/* 13 */ uint32_t m_ColorWriteFlags;
+		/* 14 */ bool m_ClipChildren;
 	};
 
 	class TXUIElement :
 		public TGenericClassDerived<TXUIElement, TObject, "TXUIElement", TMAKEVERSION(1, 0), false>, T2GUIElement
 	{
-
-		int m_iUIDCount; // 0xB4 globs
-
+	public:
 		void Create(TXUIResource& a_rResource, XURXUIObjectData* a_pObjectData, bool a_bool);
+	
+	private:
+		int m_iUIDCount; // 0xB4 globs
 	};
 }

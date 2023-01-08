@@ -1,333 +1,257 @@
 #include "ToshiPCH.h"
 #include "TXUIFigure.h"
 
-
-bool Toshi::XURXUIFillData::IsColourPropType(uint32_t propType)
+namespace Toshi
 {
-	return propType == 1;
-}
-
-bool Toshi::XURXUIFillData::IsFloatPropType(uint32_t propType)
-{
-	return propType == 6;
-}
-
-uint32_t Toshi::XURXUIFillData::GetTimelinePropSize(uint32_t propType)
-{
-	return propType != 2 ? 4 : 2;
-}
-
-bool Toshi::XURXUIFillData::TranslateTimelineProp(const char* param_1, uint32_t& param_2, uint32_t& param_3)
-{
-	if (TStringManager::String8Compare(param_1, "Fill.FillType", -1) == 0)
+	bool XURXUIFillData::IsColourPropType(uint32_t propType)
 	{
-		param_3 = 0;
-		return true;
+		return propType == PropType_FillType;
 	}
-	else if (TStringManager::String8Compare(param_1, "Fill.FillColor", -1) == 0)
+
+	bool XURXUIFillData::IsFloatPropType(uint32_t propType)
 	{
-		param_3 = 1;
-		return true;
+		return propType == PropType_FillRotation;
 	}
-	else if (TStringManager::String8Compare(param_1, "Fill.TextureFileName", -1) == 0)
+
+	uint32_t XURXUIFillData::GetTimelinePropSize(uint32_t propType)
 	{
-		param_3 = 2;
-		return true;
+		return propType != 2 ? 4 : 2;
 	}
-	else if (TStringManager::String8Compare(param_1, "Fill.Translation", -1) == 0)
+
+	bool XURXUIFillData::TranslateTimelineProp(const char* name, uint32_t& param_2, PropType& propType)
 	{
-		param_3 = 4;
-		return true;
+		TXUI_TRANSLATE_TIMELINE_PROP_MANUAL(name, "Fill.FillType", propType, PropType_FillType);
+		TXUI_TRANSLATE_TIMELINE_PROP_MANUAL(name, "Fill.FillColor", propType, PropType_FillColor);
+		TXUI_TRANSLATE_TIMELINE_PROP_MANUAL(name, "Fill.TextureFileName", propType, PropType_FillTextureFileName);
+		TXUI_TRANSLATE_TIMELINE_PROP_MANUAL(name, "Fill.Translation", propType, PropType_FillTranslation);
+		TXUI_TRANSLATE_TIMELINE_PROP_MANUAL(name, "Fill.Scale", propType, PropType_FillScale);
+		TXUI_TRANSLATE_TIMELINE_PROP_MANUAL(name, "Fill.Rotation", propType, PropType_FillRotation);
+		TXUI_TRANSLATE_TIMELINE_PROP_MANUAL(name, "Fill.WrapX", propType, PropType_FillWrapX);
+		TXUI_TRANSLATE_TIMELINE_PROP_MANUAL(name, "Fill.WrapY", propType, PropType_FillWrapY);
+		TXUI_TRANSLATE_TIMELINE_PROP_MANUAL(name, "Fill.BrushFlags", propType, PropType_FillBrushFlags);
+
+		return false;
 	}
-	else if (TStringManager::String8Compare(param_1, "Fill.Scale", -1) == 0)
+
+	bool XURXUIFillData::ValidateTimelineProp(uint32_t param_2)
 	{
-		param_3 = 5;
-		return true;
+		return param_2 < PropType_NUMOF;
 	}
-	else if (TStringManager::String8Compare(param_1, "Fill.Rotation", -1) == 0)
+
+	bool XURXUIFillData::Load(TXUIResource& resource, uint8_t*& a_pData)
 	{
-		param_3 = 6;
-		return true;
-	}
-	else if (TStringManager::String8Compare(param_1, "Fill.WrapX", -1) == 0)
-	{
-		param_3 = 7;
-		return true;
-	}
-	else if (TStringManager::String8Compare(param_1, "Fill.WrapY", -1) == 0)
-	{
-		param_3 = 8;
-		return true;
-	}
-	else if (TStringManager::String8Compare(param_1, "Fill.BrushFlags", -1) == 0)
-	{
-		param_3 = 9;
-		return true;
-	}
-	return false;
-}
+		XURXUIObjectData::Load(resource, a_pData);
+		uint8_t smth = *a_pData++;
 
-bool Toshi::XURXUIFillData::ValidateTimelineProp(uint32_t param_2)
-{
-	return param_2 < 11;
-}
+		// TODO:!!!!! NOT FINISHED !!!!!!
 
-bool Toshi::XURXUIFillData::Load(TXUIResource& resource, uint8_t*& a_pData)
-{
-	XURXUIObjectData::Load(resource, a_pData);
-	uint8_t smth = *a_pData++;
-
-	// TODO:!!!!! NOT FINISHED !!!!!!
-
-	if (smth != 0)
-	{
-		int smth2 = 0;
-		if (m_index != 0)
+		if (smth != 0)
 		{
-			smth2 = PARSEWORD_BIG(a_pData);
-			a_pData += 2;
-		}
-		if ((smth2 & 1) != 0)
-		{
-			TASSERT(PARSEDWORD_BIG(a_pData) < (1 << 16));
-			m_fillType = PARSEWORD_BIG(a_pData + 2);
-			a_pData += 4;
-		}
-		if ((smth2 & 2) != 0)
-		{
-			m_fillColor = PARSEDWORD_BIG(a_pData);
-			a_pData += 4;
-		}
-		if ((smth2 & 4) != 0)
-		{
-			m_fillTextureFileName = PARSEWORD_BIG(a_pData);
-			a_pData += 2;
-		}
-		if ((smth2 & 0x8) != 0)
-		{
-			// TODO XURXUIGradientData
-		}
-		if ((smth2 & 0x10) != 0)
-		{
-			TASSERT(PARSEDWORD_BIG(a_pData) < (1 << 15)); // 15 is probably a typo they did?
-			m_fillTranslation = PARSEDWORD_BIG(a_pData);
-			a_pData += 4;
-		}
-		if ((smth2 & 0x20) != 0)
-		{
-			m_fillRotation = *a_pData++;
-		}
-		if ((smth2 & 0x40) != 0)
-		{
-			m_fillRotation = *a_pData++;
-		}
-		if ((smth2 & 0x80) != 0)
-		{
-			m_fillRotation = *a_pData++;
-		}
-		if ((smth2 & 0x100) != 0)
-		{
-			m_fillRotation = *a_pData++;
-		}
-		if ((smth2 & 0x200) != 0)
-		{
-			m_fillRotation = *a_pData++;
-		}
-		if ((smth2 & 0x400) != 0)
-		{
-			m_fillRotation = *a_pData++;
-		}
-	}
-	return true;
-}
+			int flag = 0;
+			if (m_index != 0) TXUI_READ_WORD(a_pData, flag);
 
-// StrokeData
-
-bool Toshi::XURXUIStrokeData::IsColourPropType(uint32_t propType)
-{
-	return propType == 1;
-}
-
-bool Toshi::XURXUIStrokeData::IsFloatPropType(uint32_t propType)
-{
-	return propType == 0;
-}
-
-uint32_t Toshi::XURXUIStrokeData::GetTimelinePropSize(uint32_t propType)
-{
-	return 4;
-}
-
-bool Toshi::XURXUIStrokeData::TranslateTimelineProp(const char* param_1, uint32_t& param_2, uint32_t& param_3)
-{
-	if (TStringManager::String8Compare(param_1, "Stroke.StrokeWidth", -1) == 0)
-	{
-		param_3 = 0;
-		return true;
-	}
-	else if (TStringManager::String8Compare(param_1, "Stroke.StrokeColor", -1) == 0)
-	{
-		param_3 = 1;
-		return true;
-	}
-	return false;
-}
-
-bool Toshi::XURXUIStrokeData::ValidateTimelineProp(uint32_t param_2)
-{
-	return param_2 < 2;
-}
-
-bool Toshi::XURXUIStrokeData::Load(TXUIResource& resource, uint8_t*& a_pData)
-{
-	XURXUIObjectData::Load(resource, a_pData);
-
-	uint8_t smth = *a_pData++;
-
-	if (smth != 0)
-	{
-		int smth2 = 0;
-		if (m_index != 0)
-		{
-			smth2 = *a_pData++;
-		}
-		if ((smth2 & 1) != 0)
-		{
-			m_strokeWidth = PARSEFLOAT_BIG(a_pData);
-			a_pData += 4;
-		}
-		if ((smth2 & 2) != 0)
-		{
-			m_strokeColor = PARSEDWORD_BIG(a_pData);
-			a_pData += 4;
-		}
-	}
-	return true;
-}
-
-// GradientData
-
-bool Toshi::XURXUIGradientData::IsColourPropType(uint32_t propType)
-{
-	return propType == 2;
-}
-
-bool Toshi::XURXUIGradientData::IsFloatPropType(uint32_t propType)
-{
-	return propType == 3;
-}
-
-uint32_t Toshi::XURXUIGradientData::GetTimelinePropSize(uint32_t propType)
-{
-	return propType == 0 ? 1 : 4;
-}
-
-bool Toshi::XURXUIGradientData::TranslateTimelineProp(const char* param_1, uint32_t& param_2, uint32_t& param_3)
-{
-	if (TStringManager::String8Compare(param_1, "Fill.Gradient.Radial", -1) == 0)
-	{
-		param_3 = 0;
-		return true;
-	}
-	else if (TStringManager::String8Compare(param_1, "Fill.Gradient.NumStops", -1) == 0)
-	{
-		param_3 = 1;
-		return true;
-	}
-	else if (TStringManager::String8Compare(param_1, "Fill.Gradient.StopPos", -1) == 0)
-	{
-		param_3 = 2;
-		return true;
-	}
-	else if (TStringManager::String8Compare(param_1, "Fill.Gradient.StopColor", -1) == 0)
-	{
-		param_3 = 3;
-		return true;
-	}
-	return false;
-}
-
-bool Toshi::XURXUIGradientData::ValidateTimelineProp(uint32_t param_2)
-{
-	return param_2 < 4;
-}
-
-bool Toshi::XURXUIGradientData::Load(TXUIResource& resource, uint8_t*& a_pData)
-{
-	XURXUIObjectData::Load(resource, a_pData);
-
-	uint8_t smth = *a_pData++;
-
-	if (smth != 0)
-	{
-		int smth2 = 0;
-		if (m_index != 0)
-		{
-			smth2 = *a_pData++;
-		}
-		if ((smth2 & 1) != 0)
-		{
-			m_radial = *a_pData++;
-		}
-		if ((smth2 & 2) != 0)
-		{
-			TASSERT(PARSEDWORD_BIG(a_pData) < (1 << 16));
-			m_numStops = PARSEWORD_BIG(a_pData + 2);
-			a_pData += 4;
-		}
-		if ((smth2 & 4) != 0)
-		{
-			uint32_t count = *a_pData++;
-			m_stops = new uint32_t[count];
-
-			for (size_t i = 0; i < count; i++)
+			if (TXUI_CHECK_READFLAG(flag, PropType_FillType))
 			{
-				m_stops[i] = PARSEDWORD_BIG(a_pData);
+				TASSERT(PARSEDWORD_BIG(a_pData) < (1 << 16));
+				m_FillType = PARSEWORD_BIG(a_pData + 2);
 				a_pData += 4;
 			}
 
-		}
-		if ((smth2 & 8) != 0)
-		{
-			uint32_t count = *a_pData++;
-			m_stops2 = new uint32_t[count];
+			TXUI_READ_PROP_DWORD(a_pData, flag, FillColor);
+			TXUI_READ_PROP_WORD(a_pData, flag, FillTextureFileName);
 
-			for (size_t i = 0; i < count; i++)
+			if (TXUI_CHECK_READFLAG(flag, PropType_Unknown))
 			{
-				m_stops2[i] = PARSEDWORD_BIG(a_pData);
+				TTODO("XURXUIGradientData");
+				// TODO XURXUIGradientData
+			}
+
+			if (TXUI_CHECK_READFLAG(flag, PropType_FillTranslation))
+			{
+				TASSERT(PARSEDWORD_BIG(a_pData) < (1 << 15)); // 15 is probably a typo they did?
+				m_FillTranslation = PARSEDWORD_BIG(a_pData + 2);
 				a_pData += 4;
 			}
+
+			if (TXUI_CHECK_READFLAG(flag, PropType_FillScale))
+			{
+				TASSERT(PARSEDWORD_BIG(a_pData) < (1 << 15)); // 15 is probably a typo they did?
+				m_FillScale = PARSEDWORD_BIG(a_pData + 2);
+				a_pData += 4;
+			}
+
+			TXUI_READ_PROP_FLOAT(a_pData, flag, FillRotation);
+			TXUI_READ_PROP_DWORD(a_pData, flag, FillWrapX);
+			TXUI_READ_PROP_DWORD(a_pData, flag, FillWrapY);
+
+			if (TXUI_CHECK_READFLAG(flag, PropType_FillBrushFlags))
+			{
+				// there's nothing here in globs and de blob
+			}
+
+			if (TXUI_CHECK_READFLAG(flag, PropType_Unknown2))
+			{
+				// there's nothing here in globs and de blob
+				// m_FillRotation = *a_pData++;
+			}
 		}
+		return true;
 	}
-	return true;
-}
 
-bool Toshi::XURXUIFigureData::IsColourPropType(uint32_t propType)
-{
-	return false;
-}
+	// StrokeData
 
-bool Toshi::XURXUIFigureData::IsFloatPropType(uint32_t propType)
-{
-	return false;
-}
+	bool XURXUIStrokeData::IsColourPropType(uint32_t propType)
+	{
+		return propType == 1;
+	}
 
-uint32_t Toshi::XURXUIFigureData::GetTimelinePropSize(uint32_t propType)
-{
-	return uint32_t();
-}
+	bool XURXUIStrokeData::IsFloatPropType(uint32_t propType)
+	{
+		return propType == 0;
+	}
 
-bool Toshi::XURXUIFigureData::TranslateTimelineProp(const char* param_1, uint32_t& param_2, uint32_t& param_3)
-{
-	return false;
-}
+	uint32_t XURXUIStrokeData::GetTimelinePropSize(uint32_t propType)
+	{
+		return 4;
+	}
 
-bool Toshi::XURXUIFigureData::ValidateTimelineProp(uint32_t param_2)
-{
-	return false;
-}
+	bool XURXUIStrokeData::TranslateTimelineProp(const char* name, uint32_t& param_2, PropType& propType)
+	{
+		TXUI_TRANSLATE_TIMELINE_PROP_MANUAL(name, "Stroke.StrokeWidth", propType, PropType_StrokeWidth);
+		TXUI_TRANSLATE_TIMELINE_PROP_MANUAL(name, "Stroke.StrokeColor", propType, PropType_StrokeColor);
 
-bool Toshi::XURXUIFigureData::Load(TXUIResource& resource, uint8_t*& a_pData)
-{
-	return false;
+		return false;
+	}
+
+	bool XURXUIStrokeData::ValidateTimelineProp(uint32_t param_2)
+	{
+		return param_2 < 2;
+	}
+
+	bool XURXUIStrokeData::Load(TXUIResource& resource, uint8_t*& a_pData)
+	{
+		XURXUIObjectData::Load(resource, a_pData);
+
+		uint8_t smth = *a_pData++;
+
+		if (smth != 0)
+		{
+			int flag = 0;
+			if (m_index != 0) TXUI_READ_BYTE(a_pData, flag);
+
+			TXUI_READ_PROP_FLOAT(a_pData, flag, StrokeWidth);
+			TXUI_READ_PROP_DWORD(a_pData, flag, StrokeColor);
+		}
+		return true;
+	}
+
+	// GradientData
+
+	bool XURXUIGradientData::IsColourPropType(uint32_t propType)
+	{
+		return propType == 2;
+	}
+
+	bool XURXUIGradientData::IsFloatPropType(uint32_t propType)
+	{
+		return propType == 3;
+	}
+
+	uint32_t XURXUIGradientData::GetTimelinePropSize(uint32_t propType)
+	{
+		return propType == 0 ? 1 : 4;
+	}
+
+	bool XURXUIGradientData::TranslateTimelineProp(const char* name, uint32_t& param_2, PropType& propType)
+	{
+		TXUI_TRANSLATE_TIMELINE_PROP_MANUAL(name, "Fill.Gradient.Radial", propType, PropType_FillGradientRadial);
+		TXUI_TRANSLATE_TIMELINE_PROP_MANUAL(name, "Fill.Gradient.NumStops", propType, PropType_FillGradientNumStops);
+		TXUI_TRANSLATE_TIMELINE_PROP_MANUAL(name, "Fill.Gradient.StopPos", propType, PropType_FillGradientStopPos);
+		TXUI_TRANSLATE_TIMELINE_PROP_MANUAL(name, "Fill.Gradient.StopColor", propType, PropType_FillGradientStopColor);
+
+		return false;
+	}
+
+	bool XURXUIGradientData::ValidateTimelineProp(uint32_t param_2)
+	{
+		return param_2 < PropType_NUMOF;
+	}
+
+	bool XURXUIGradientData::Load(TXUIResource& resource, uint8_t*& a_pData)
+	{
+		XURXUIObjectData::Load(resource, a_pData);
+
+		uint8_t smth = *a_pData++;
+
+		if (smth != 0)
+		{
+			int flag = 0;
+			if (m_index != 0) TXUI_READ_BYTE(a_pData, flag);
+
+			TXUI_READ_PROP_BYTE_MANUAL(a_pData, flag, PropType_FillGradientRadial, m_Radial);
+			
+			if (TXUI_CHECK_READFLAG(flag, PropType_FillGradientNumStops))
+			{
+				TASSERT(PARSEDWORD_BIG(a_pData) < (1 << 16));
+				m_NumStops = PARSEWORD_BIG(a_pData + 2);
+				a_pData += 4;
+			}
+
+			if (TXUI_CHECK_READFLAG(flag, PropType_FillGradientStopPos))
+			{
+				uint32_t count = 0;
+				TXUI_READ_BYTE(a_pData, count);
+				m_Stops = new uint32_t[count];
+
+				for (size_t i = 0; i < count; i++)
+				{
+					TXUI_READ_DWORD(a_pData, m_Stops[i]);
+				}
+
+			}
+			if (TXUI_CHECK_READFLAG(flag, PropType_FillGradientStopColor))
+			{
+				uint32_t count = 0;
+				TXUI_READ_BYTE(a_pData, count);
+				m_Stops2 = new uint32_t[count];
+
+				for (size_t i = 0; i < count; i++)
+				{
+					TXUI_READ_DWORD(a_pData, m_Stops2[i]);
+				}
+			}
+		}
+		return true;
+	}
+
+	bool XURXUIFigureData::IsColourPropType(uint32_t propType)
+	{
+		return false;
+	}
+
+	bool XURXUIFigureData::IsFloatPropType(uint32_t propType)
+	{
+		return false;
+	}
+
+	uint32_t XURXUIFigureData::GetTimelinePropSize(uint32_t propType)
+	{
+		return uint32_t();
+	}
+
+	bool XURXUIFigureData::TranslateTimelineProp(const char* name, uint32_t& param_2, PropType& propType)
+	{
+		return false;
+	}
+
+	bool XURXUIFigureData::ValidateTimelineProp(uint32_t param_2)
+	{
+		return false;
+	}
+
+	bool XURXUIFigureData::Load(TXUIResource& resource, uint8_t*& a_pData)
+	{
+		return false;
+	}
+
 }

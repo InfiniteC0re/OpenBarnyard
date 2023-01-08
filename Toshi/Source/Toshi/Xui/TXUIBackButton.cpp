@@ -20,10 +20,10 @@ uint32_t Toshi::XURXUIBackButtonData::GetTimelinePropSize(uint32_t a_uiObjectInd
 	return 4;
 }
 
-bool Toshi::XURXUIBackButtonData::TranslateTimelineProp(const char* param_1, uint32_t& param_2, uint32_t& param_3)
+bool Toshi::XURXUIBackButtonData::TranslateTimelineProp(const char* name, uint32_t& param_2, PropType& propType)
 {
-	param_1++;
-	return XURXUIBackButtonData::TranslateTimelineProp(param_1, param_2, param_3);
+	name++;
+	return XURXUIBackButtonData::TranslateTimelineProp(name, param_2, propType);
 }
 
 bool Toshi::XURXUIBackButtonData::ValidateTimelineProp(uint32_t a_uiObjectIndex, uint32_t param_2)

@@ -9,15 +9,20 @@ namespace Toshi
 
 	class XURXUISceneData : public XURXUIControlData
 	{
+	public:
 		static constexpr const char* sm_sTypeInfo = "XURXUISceneData";
 
-		/* 0 */ uint16_t m_defaultFocus;
-		/* 1 */ uint16_t m_transFrom;
-		/* 2 */ uint16_t m_transTo;
-		/* 3 */ uint16_t m_transBackFrom;
-		/* 4 */ uint16_t m_transBackTo;
-		/* 5 */ uint32_t m_interruptTransitions;
-		/* 6 */ bool m_ignorePresses;
+		enum PropType_ : PropType
+		{
+			PropType_DefaultFocus,
+			PropType_TransFrom,
+			PropType_TransTo,
+			PropType_TransBackFrom,
+			PropType_TransBackTo,
+			PropType_InterruptTransitions,
+			PropType_IgnorePresses,
+			PropType_NUMOF,
+		};
 
 	public:
 		XURXUISceneData();
@@ -30,10 +35,19 @@ namespace Toshi
 
 		virtual uint32_t GetTimelinePropSize(uint32_t a_uiObjectIndex, uint32_t propType);
 
-		virtual bool TranslateTimelineProp(const char* param_1, uint32_t& param_2, uint32_t& param_3);
+		virtual bool TranslateTimelineProp(const char* name, uint32_t& param_2, PropType& propType);
 		virtual bool ValidateTimelineProp(uint32_t a_uiObjectIndex, uint32_t param_2);
 
 		virtual bool Load(TXUIResource& resource, uint8_t*& a_pData);
+
+	private:
+		/* 0 */ uint16_t m_DefaultFocus;
+		/* 1 */ uint16_t m_TransFrom;
+		/* 2 */ uint16_t m_TransTo;
+		/* 3 */ uint16_t m_TransBackFrom;
+		/* 4 */ uint16_t m_TransBackTo;
+		/* 5 */ uint32_t m_InterruptTransitions;
+		/* 6 */ bool m_IgnorePresses;
 	};
 }
 

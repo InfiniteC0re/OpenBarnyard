@@ -11,16 +11,21 @@ namespace Toshi
 
 	class XURXUITextData : public XURXUIElementData
 	{
+	public:
 		static constexpr uint32_t sm_uiDefaultFontSize = 14;
 		static constexpr const char* sm_sTypeInfo = "XURXUITextData";
 
-		/* 0 */ uint16_t m_text;
-		/* 1 */ uint32_t m_textColor;
-		/* 2 */ uint32_t m_dropShadowColor;
-		/* 3 */ uint32_t m_pointSize;
-		/* 4 */ uint16_t m_font;
-		/* 5 */ uint32_t m_textStyle;
-		/* 6 */ uint32_t m_lineSpacingAdjust;
+		enum PropType_ : PropType
+		{
+			PropType_Text,
+			PropType_TextColor,
+			PropType_DropShadowColor,
+			PropType_PointSize,
+			PropType_Font,
+			PropType_TextStyle,
+			PropType_LineSpacingAdjust,
+			PropType_NUMOF,
+		};
 
 	public:
 		XURXUITextData();
@@ -33,10 +38,19 @@ namespace Toshi
 
 		virtual uint32_t GetTimelinePropSize(uint32_t a_uiObjectIndex, uint32_t propType);
 
-		virtual bool TranslateTimelineProp(const char* param_1, uint32_t& param_2, uint32_t& param_3);
+		virtual bool TranslateTimelineProp(const char* name, uint32_t& param_2, PropType& propType);
 		virtual bool ValidateTimelineProp(uint32_t a_uiObjectIndex, uint32_t param_2);
 
 		virtual bool Load(TXUIResource& resource, uint8_t*& a_pData);
+
+	private:
+		/* 0 */ uint16_t m_Text;
+		/* 1 */ uint32_t m_TextColor;
+		/* 2 */ uint32_t m_DropShadowColor;
+		/* 3 */ uint32_t m_PointSize;
+		/* 4 */ uint16_t m_Font;
+		/* 5 */ uint32_t m_TextStyle;
+		/* 6 */ uint32_t m_LineSpacingAdjust;
 	};
 }
 
