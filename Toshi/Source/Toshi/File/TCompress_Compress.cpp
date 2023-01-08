@@ -2,8 +2,6 @@
 #include "TCompress_Compress.h"
 #include "BTECCompressor.h"
 
-#include "Toshi/Typedefs.h"
-
 namespace Toshi
 {
     int TCompress_Compress::usemaxoffset;
@@ -13,17 +11,16 @@ namespace Toshi
         // 0068a830
         TASSERT(length <= maxlength, "");
 
-        int bytesToWrite = 0;
-        int lengthWritten, dataWritten = 0;
+        int writtenSize = 0;
         uint32_t dataSize = length;
 
         length -= 1;
 
-        if (length <= BTECSizeFlag_BigSize)
+        if (length < BTECSizeFlag_BigSize)
         {
             // 6 bits value
             LOWBYTE(length) = length | BTECSizeFlag_NoOffset;
-            bytesToWrite = 1;
+            writtenSize += file->Write(&length, 1);
         }
         else
         {
@@ -31,15 +28,13 @@ namespace Toshi
             auto len = length;
             LOWBYTE(length) = HIGHBYTE(length) | (BTECSizeFlag_NoOffset | BTECSizeFlag_BigSize);
             BYTE1(length) = len;
-            bytesToWrite = 2;
+            writtenSize += file->Write(&length, 2);
         }
 
-        lengthWritten = file->Write(&length, bytesToWrite);
-        dataWritten = file->Write(data, dataSize);
-
+        writtenSize += file->Write(data, dataSize);
         data += dataSize;
 
-        return lengthWritten + dataWritten;
+        return writtenSize;
     }
 
     int TCompress_Compress::WriteOffset(uint32_t length, int offset, char*& data, TFile* file)
@@ -48,48 +43,44 @@ namespace Toshi
         TASSERT(length <= maxlength, "Length is greater than {0}", maxlength);
         TASSERT(offset <= usemaxoffset, "Offset is greater than {0}", usemaxoffset);
 
-        int bytesToWrite = 0;
+        int writtenSize = 0;
         uint32_t dataSize = length;
 
         length -= 1;
         offset -= 1;
 
-        if (length <= BTECSizeFlag_BigSize)
+        if (length < BTECSizeFlag_BigSize)
         {
             LOWBYTE(length) = length;
-            bytesToWrite = 1;
+            writtenSize += file->Write(&length, 1);
         }
         else
         {
             auto len = length;
             LOWBYTE(length) = HIGHBYTE(length) | BTECSizeFlag_BigSize;
             BYTE1(length) = len;
-            bytesToWrite = 2;
+            writtenSize += file->Write(&length, 2);
         }
-
-        int writtenSize = 0;
-        writtenSize += file->Write(&length, bytesToWrite);
 
         if (offset <= BTECOffsetFlag_BigOffset)
         {
             LOWBYTE(offset) = offset;
-            bytesToWrite = 1;
+            writtenSize += file->Write(&offset, 1);
         }
         else
         {
             auto _offset = offset;
             LOWBYTE(offset) = HIGHBYTE(offset) | BTECOffsetFlag_BigOffset;
             BYTE1(offset) = _offset;
-            bytesToWrite = 2;
+            writtenSize += file->Write(&offset, 2);
         }
 
-        writtenSize += file->Write(&offset, bytesToWrite);
         data += dataSize;
 
         return writtenSize;
     }
 
-    void TCompress_Compress::Compress(TFile* file, char* buffer, uint32_t size, uint32_t unused, bool isBigEndian)
+    size_t TCompress_Compress::Compress(TFile* file, char* buffer, uint32_t size, uint32_t unused, bool isBigEndian)
     {
         BTECCompressor compressor;
 
@@ -122,7 +113,7 @@ namespace Toshi
                 if (chunkStart == TNULL) chunkStart = bufferPos;
                 chunkSize += 1;
 
-                if (chunkSize >= maxlength)
+                if (maxlength <= chunkSize)
                 {
                     // Write a chunk of data
                     compressedSize += TCompress_Compress::Write(chunkSize, chunkStart, file);
@@ -171,5 +162,7 @@ namespace Toshi
         file->Seek(initialPos, TFile::TSEEK_SET);
         file->Write(&btecHeader, TCompress::HEADER_SIZE_12);
         file->Seek(compressedSize, TFile::TSEEK_CUR);
+
+        return compressedSize;
     }
 }

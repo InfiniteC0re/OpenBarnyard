@@ -30,7 +30,7 @@ namespace Toshi
 		static uint64_t GetUnixSeconds(uint64_t* pOut = nullptr);
 		static void MemSet(void* ptr, size_t value, size_t size);
 		
-		static void* MemCopy(void* dst, const void* const& src, size_t size)
+		static void* MemCopy(void* dst, const void* src, size_t size)
 		{
 			return memcpy(dst, src, size);
 		}

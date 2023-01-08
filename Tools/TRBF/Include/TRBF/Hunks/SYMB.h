@@ -1,5 +1,6 @@
 #pragma once
 #include "Hunk.h"
+#include "SECT.h"
 
 namespace TLib
 {
@@ -38,7 +39,7 @@ namespace TLib
 					}
 				}
 
-				return { TNULL, 0 };
+				return { TNULL, (size_t)0 };
 			}
 
 			template <class T>

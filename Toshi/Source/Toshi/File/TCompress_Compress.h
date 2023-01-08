@@ -11,10 +11,11 @@ namespace Toshi
 		static int usemaxoffset;
 
 	public:
-		static int Write(uint32_t length, char*& data, TFile* file);
-		static int WriteOffset(uint32_t length, int offset, char*& data, TFile* file);
+		static size_t Compress(TFile* file, char* data, uint32_t size, uint32_t unused, bool isBigEndian);
 
-		static void Compress(TFile* file, char* data, uint32_t size, uint32_t unused, bool isBigEndian);
+	private:
+		static int WriteOffset(uint32_t length, int offset, char*& data, TFile* file);
+		static int Write(uint32_t length, char*& data, TFile* file);
 	};
 }
 

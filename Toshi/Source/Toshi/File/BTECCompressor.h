@@ -11,7 +11,11 @@ namespace Toshi
             friend BTECCompressor;
 
         public:
-            Node() { }
+            Node() = default;
+            /*{
+                m_Ptr1 = this;
+                m_Ptr2 = this;
+            }*/
 
             void Reset()
             {
