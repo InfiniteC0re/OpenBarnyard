@@ -308,13 +308,30 @@ namespace TLib
 				return m_Sections[index];
 			}
 
-			void Write(Toshi::TTSFO& ttsfo)
+			void Write(Toshi::TTSFO& ttsfo, bool compress)
 			{
+				size_t ready = 0;
+				size_t count = m_Sections.size();
+				
+				TOSHI_CORE_TRACE("Compressing progress: 0%");
+
 				for (auto stack : m_Sections)
 				{
 					stack->Unlink();
-					ttsfo.WriteRaw(stack->GetBuffer(), stack->GetUsedSize());
+					
+					if (compress)
+					{
+						ttsfo.WriteCompressed(stack->GetBuffer(), stack->GetUsedSize());
+						ready += 1;
+						TOSHI_CORE_TRACE("Compressing progress: {0:.1f}%", (double)ready / count * 100);
+					}
+					else
+					{
+						ttsfo.WriteRaw(stack->GetBuffer(), stack->GetUsedSize());
+					}
+
 					stack->Link();
+
 				}
 			}
 
