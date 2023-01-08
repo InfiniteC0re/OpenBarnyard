@@ -17,7 +17,7 @@ namespace Toshi
 		
 		inline FMOD::System* GetSystem()
 		{
-			TASSERT(TNULL != m_pSystem, "");
+			TASSERT(TNULL != m_pSystem);
 			return m_pSystem;
 		}
 

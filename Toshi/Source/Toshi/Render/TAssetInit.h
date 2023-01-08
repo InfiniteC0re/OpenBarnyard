@@ -4,7 +4,6 @@
 #include "Toshi/Render/TModel.h"
 #include "Toshi/Render/TTexture.h"
 
-
 namespace Toshi
 {
 	class TAssetInit

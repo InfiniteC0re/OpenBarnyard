@@ -30,7 +30,7 @@ namespace Toshi
 
 			int GetMagnitudeInt(int a_iAxis)
 			{
-				TASSERT(a_iAxis >= 0 && a_iAxis < GetAxisCount(), "");
+				TASSERT(a_iAxis >= 0 && a_iAxis < GetAxisCount());
 				if (IsMagnitudeInt()) return m_magnitude[a_iAxis];
 				if (m_magnitude[a_iAxis] < -0.5) return -1;
 				return 0.5 < m_magnitude[a_iAxis];
@@ -38,7 +38,7 @@ namespace Toshi
 
 			float GetMagnitudeFloat(int a_iAxis)
 			{
-				TASSERT(a_iAxis >= 0 && a_iAxis < GetAxisCount(), "");
+				TASSERT(a_iAxis >= 0 && a_iAxis < GetAxisCount());
 				if (IsMagnitudeFloat()) return m_magnitude[a_iAxis];
 				return *(float*)(int*)m_magnitude[a_iAxis];
 			}

@@ -89,7 +89,7 @@ bool Toshi::XURXUIFillData::Load(TXUIResource& resource, uint8_t*& a_pData)
 		}
 		if ((smth2 & 1) != 0)
 		{
-			TASSERT(PARSEDWORD_BIG(a_pData) < (1 << 16), "");
+			TASSERT(PARSEDWORD_BIG(a_pData) < (1 << 16));
 			m_fillType = PARSEWORD_BIG(a_pData + 2);
 			a_pData += 4;
 		}
@@ -109,7 +109,7 @@ bool Toshi::XURXUIFillData::Load(TXUIResource& resource, uint8_t*& a_pData)
 		}
 		if ((smth2 & 0x10) != 0)
 		{
-			TASSERT(PARSEDWORD_BIG(a_pData) < (1 << 15), ""); // 15 is probably a typo they did?
+			TASSERT(PARSEDWORD_BIG(a_pData) < (1 << 15)); // 15 is probably a typo they did?
 			m_fillTranslation = PARSEDWORD_BIG(a_pData);
 			a_pData += 4;
 		}
@@ -271,7 +271,7 @@ bool Toshi::XURXUIGradientData::Load(TXUIResource& resource, uint8_t*& a_pData)
 		}
 		if ((smth2 & 2) != 0)
 		{
-			TASSERT(PARSEDWORD_BIG(a_pData) < (1 << 16), "");
+			TASSERT(PARSEDWORD_BIG(a_pData) < (1 << 16));
 			m_numStops = PARSEWORD_BIG(a_pData + 2);
 			a_pData += 4;
 		}

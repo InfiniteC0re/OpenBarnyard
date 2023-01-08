@@ -151,7 +151,7 @@ namespace Toshi
 
         if (m_Position != m_RBufferPosition)
         {
-            TASSERT(TFALSE == m_WriteBuffered || m_WriteBufferUsed == 0, "");
+            TASSERT(TFALSE == m_WriteBuffered || m_WriteBufferUsed == 0);
             m_RBufferPosition = SetFilePointer(m_Handle, m_Position, NULL, FILE_BEGIN);
             
             if (m_RBufferPosition == INVALID_SET_FILE_POINTER && GetLastError() != NO_ERROR)
@@ -273,7 +273,7 @@ namespace Toshi
     {
         if (m_RBufferPosition != m_Position)
         {
-            TASSERT(TFALSE == m_WriteBuffered || m_WriteBufferUsed == 0, "");
+            TASSERT(TFALSE == m_WriteBuffered || m_WriteBufferUsed == 0);
             m_RBufferPosition = SetFilePointer(m_Handle, m_Position, NULL, FILE_BEGIN);
 
             if (m_RBufferPosition == INVALID_SET_FILE_POINTER && GetLastError() != NO_ERROR)

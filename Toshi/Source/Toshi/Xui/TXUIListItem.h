@@ -3,7 +3,7 @@
 
 namespace Toshi
 {
-	class TXUIListItem : TXUIElement
+	class TXUIListItem : public TXUIElement
 	{
 	};
 }

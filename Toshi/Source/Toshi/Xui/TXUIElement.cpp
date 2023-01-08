@@ -41,7 +41,7 @@ void Toshi::XURXUIObjectData::LoadChildren(TXUIResource& resource, uint8_t*& a_p
 
 bool Toshi::XURXUIObjectData::LoadNamedFrames(TXUIResource& resource, uint8_t*& a_pData)
 {
-	TASSERT(PARSEDWORD_BIG(a_pData) < (1 << 16), "");
+	TASSERT(PARSEDWORD_BIG(a_pData) < (1 << 16));
 	m_uiNumNamedFrames = PARSEWORD_BIG(a_pData + 2);
 	TASSERT(m_uiNumNamedFrames < 1000, "Max of named Frames reached");
 	a_pData += 4;
@@ -54,7 +54,7 @@ bool Toshi::XURXUIObjectData::LoadNamedFrames(TXUIResource& resource, uint8_t*& 
 		{
 			m_pNamedFrames[i].m_unk2 = PARSEWORD_BIG(a_pData);
 			a_pData += 2;
-			TASSERT(PARSEDWORD_BIG(a_pData) < (1 << 16), "");
+			TASSERT(PARSEDWORD_BIG(a_pData) < (1 << 16));
 			m_pNamedFrames[i].m_unk = PARSEWORD_BIG(a_pData + 2);
 			a_pData += 4;
 			m_pNamedFrames[i].m_unk4 = *a_pData++;
@@ -67,7 +67,7 @@ bool Toshi::XURXUIObjectData::LoadNamedFrames(TXUIResource& resource, uint8_t*& 
 
 void Toshi::XURXUIObjectData::LoadTimelines(TXUIResource& resource, uint8_t*& a_pData)
 {
-	TASSERT(PARSEDWORD_BIG(a_pData) < (1 << 8), "");
+	TASSERT(PARSEDWORD_BIG(a_pData) < (1 << 8));
 	m_NumTimelines = *(a_pData + 3);
 
 	if (m_NumTimelines != 0)
@@ -124,38 +124,38 @@ bool Toshi::XURXUIElementData::Load(TXUIResource& resource, uint8_t*& a_pData)
 		}
 		if ((smth2 & 8) != 0)
 		{
-			TASSERT(PARSEDWORD_BIG(a_pData) < (1 << 16), "");
+			TASSERT(PARSEDWORD_BIG(a_pData) < (1 << 16));
 			m_positon = PARSEWORD_BIG(a_pData + 2);
 			a_pData += 4;
 		}
 		if ((smth2 & 0x10) != 0)
 		{
-			TASSERT(PARSEDWORD_BIG(a_pData) < (1 << 16), "");
+			TASSERT(PARSEDWORD_BIG(a_pData) < (1 << 16));
 			m_scale = PARSEWORD_BIG(a_pData + 2);
 			a_pData += 4;
 		}
 		if ((smth2 & 0x20) != 0)
 		{
-			TASSERT(PARSEDWORD_BIG(a_pData) < (1 << 16), "");
+			TASSERT(PARSEDWORD_BIG(a_pData) < (1 << 16));
 			m_rotation = PARSEWORD_BIG(a_pData + 2);
 			a_pData += 4;
 		}
 		if ((smth2 & 0x40) != 0)
 		{
 			float opacity = PARSEFLOAT_BIG(a_pData);
-			TASSERT(opacity >= 0.0f && opacity <= 1.0f, "");
+			TASSERT(opacity >= 0.0f && opacity <= 1.0f);
 			m_opacity = opacity * 255.0f;
 			a_pData += 4;
 		}
 		if ((smth2 & 0x80) != 0)
 		{
-			TASSERT(PARSEDWORD_BIG(a_pData) <= Flags_AnchorMask, "");
+			TASSERT(PARSEDWORD_BIG(a_pData) <= Flags_AnchorMask);
 			m_anchor |= PARSEWORD_BIG(a_pData + 2) * 8;
 			a_pData += 4;
 		}
 		if ((smth2 & 0x100) != 0)
 		{
-			TASSERT(PARSEDWORD_BIG(a_pData) < (1 << 16), "");
+			TASSERT(PARSEDWORD_BIG(a_pData) < (1 << 16));
 			m_pivot = PARSEWORD_BIG(a_pData + 2);
 			a_pData += 4;
 		}
@@ -168,7 +168,7 @@ bool Toshi::XURXUIElementData::Load(TXUIResource& resource, uint8_t*& a_pData)
 		}
 		if ((smth2 & 0x400) != 0)
 		{
-			TASSERT(PARSEDWORD_BIG(a_pData) <= Flags_BlendModeMask, "");
+			TASSERT(PARSEDWORD_BIG(a_pData) <= Flags_BlendModeMask);
 			m_blendMode |= PARSEWORD_BIG(a_pData + 2);
 			a_pData += 4;
 		}
@@ -275,7 +275,7 @@ bool Toshi::XURXUIElementData::TranslateTimelineProp(const char* param_1, uint32
 
 bool Toshi::XURXUIElementData::ValidateTimelineProp(uint32_t a_uiObjectIndex, uint32_t param_2)
 {
-	TASSERT(a_uiObjectIndex == 0, "");
+	TASSERT(a_uiObjectIndex == 0);
 	return param_2 < 15;
 }
 

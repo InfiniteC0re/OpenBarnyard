@@ -4,14 +4,14 @@
 bool Toshi::XURXUIControlData::IsColourPropType(uint32_t a_uiObjectIndex, uint32_t propType)
 {
 	if (a_uiObjectIndex == 0) return false;
-	TASSERT(a_uiObjectIndex > 0, "");
+	TASSERT(a_uiObjectIndex > 0);
 	return XURXUIElementData::IsColourPropType(a_uiObjectIndex - 1, propType);
 }
 
 bool Toshi::XURXUIControlData::IsFloatPropType(uint32_t a_uiObjectIndex, uint32_t propType)
 {
 	if (a_uiObjectIndex == 0) return false;
-	TASSERT(a_uiObjectIndex > 0, "");
+	TASSERT(a_uiObjectIndex > 0);
 	return XURXUIElementData::IsFloatPropType(a_uiObjectIndex - 1, propType);
 }
 
@@ -19,7 +19,7 @@ uint32_t Toshi::XURXUIControlData::GetTimelinePropSize(uint32_t a_uiObjectIndex,
 {
 	if (a_uiObjectIndex != 0)
 	{
-		TASSERT(a_uiObjectIndex > 0, "");
+		TASSERT(a_uiObjectIndex > 0);
 		return XURXUIElementData::GetTimelinePropSize(a_uiObjectIndex - 1, propType);
 	}
 	if (propType != 2 && propType != 3) 
@@ -97,7 +97,7 @@ bool Toshi::XURXUIControlData::TranslateTimelineProp(const char* param_1, uint32
 bool Toshi::XURXUIControlData::ValidateTimelineProp(uint32_t a_uiObjectIndex, uint32_t param_2)
 {
 	if (a_uiObjectIndex == 0) return param_2 < 11;
-	TASSERT(a_uiObjectIndex > 0, "");
+	TASSERT(a_uiObjectIndex > 0);
 	return XURXUIElementData::ValidateTimelineProp(a_uiObjectIndex - 1, param_2);
 }
 

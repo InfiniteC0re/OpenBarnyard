@@ -97,6 +97,8 @@ namespace Toshi
 		// Destroys TRB file and the content
 		void Close();
 
+		static void SetDefaultMemoryFuncs(t_MemoryFuncAlloc allocator, t_MemoryFuncDealloc deallocator, void* allocatorUserData);
+
 		template<typename T>
 		T* CastSymbol(const char* symbName)
 		{

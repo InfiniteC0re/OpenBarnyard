@@ -27,7 +27,7 @@ Toshi::THashTable::t_ItemHashFunc Toshi::THashTable::DefaultItemHashFunc = [](vo
 
 void* Toshi::THashTable::Insert(void* a_pData)
 {
-	TASSERT(0 != m_iItemSize, "");
+	TASSERT(0 != m_iItemSize);
 
 	void* a_pBuckets = GetBuckets();
 	if (a_pBuckets == TNULL) return TNULL;
@@ -43,7 +43,7 @@ void* Toshi::THashTable::Insert(void* a_pData)
 
 void* Toshi::THashTable::Find(void* a_pData)
 {
-	TASSERT(0 != m_iItemSize, "");
+	TASSERT(0 != m_iItemSize);
 	int* a_pBuckets = GetBuckets();
 
 	if (a_pBuckets != TNULL)
@@ -65,11 +65,11 @@ void* Toshi::THashTable::Find(void* a_pData)
 
 void* Toshi::THashTable::Append(void* a_pData)
 {
-	TASSERT(0 != m_iItemSize, "");
+	TASSERT(0 != m_iItemSize);
 
 	if (m_pBuckets != TNULL)
 	{
-		TASSERT(!((m_iHashNodeCount == m_iHashNodeCountTotal) || (m_iItemCount == m_iItemCountTotal)), "");
+		TASSERT(!((m_iHashNodeCount == m_iHashNodeCountTotal) || (m_iItemCount == m_iItemCountTotal)));
 		if (!((m_iHashNodeCount == m_iHashNodeCountTotal) || (m_iItemCount == m_iItemCountTotal)))
 		{
 			uint32_t hash = m_ItemHashFunc(a_pData, m_iItemSize, m_iBucketSize);

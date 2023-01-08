@@ -16,7 +16,7 @@ void Toshi::TTexture::Init()
 		else
 		{
 			file->Destroy();
-			TASSERT(a_Path.IsIndexValid(0), "");
+			TASSERT(a_Path.IsIndexValid(0));
 		}
 	}
 }

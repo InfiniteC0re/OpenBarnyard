@@ -304,4 +304,12 @@ namespace Toshi
 
 		DeleteSymbolTable();
 	}
+
+	void TTRB::SetDefaultMemoryFuncs(t_MemoryFuncAlloc allocator, t_MemoryFuncDealloc deallocator, void* allocatorUserData)
+	{
+		if (allocator != TNULL)
+		{
+			TASSERT(deallocator != TNULL);
+		}
+	}
 }
