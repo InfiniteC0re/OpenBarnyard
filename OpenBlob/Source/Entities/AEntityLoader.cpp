@@ -16,7 +16,7 @@ void AEntityLoader::Update(float a_flt)
 		{
 			//bool bRes = AAssetStreaming::GetSingleton()->HasActiveJobs();
 			//if (bRes) break;
-			TASSERT(m_iCurEnt < m_pParamList->m_iEntityCount, "");
+			TASSERT(m_iCurEnt < m_pParamList->m_iEntityCount);
 			m_iCurEnt++;
 		} while (true);
 		

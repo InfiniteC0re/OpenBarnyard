@@ -21,7 +21,7 @@ namespace Toshi
 
 		virtual uint32_t GetTimelinePropSize(uint32_t a_uiObjectIndex, uint32_t propType);
 
-		virtual bool TranslateTimelineProp(const char* param_1, uint32_t& param_2, uint32_t& param_3);
+		virtual bool TranslateTimelineProp(const char* name, uint32_t& param_2, PropType& propType);
 		virtual bool ValidateTimelineProp(uint32_t a_uiObjectIndex, uint32_t param_2);
 
 		virtual bool Load(TXUIResource& resource, uint8_t*& a_pData);

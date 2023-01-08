@@ -21,7 +21,7 @@ namespace Toshi
 
 		void LinkBefore(T2GUIElementNode* next)
 		{
-			TASSERT(next->m_parent == this, "");
+			TASSERT(next->m_parent == this);
 			T2GUIElementNode* nodeNext = next->m_next;
 			m_next = nodeNext;
 			m_parent = next;
@@ -31,7 +31,7 @@ namespace Toshi
 
 		void LinkAfter(T2GUIElementNode* previous)
 		{
-			TASSERT(previous->m_parent == this, "");
+			TASSERT(previous->m_parent == this);
 			m_next = previous;
 			m_parent = previous->m_parent;
 			previous->m_parent = this;
@@ -77,7 +77,7 @@ namespace Toshi
 
 		T2GUIElement() : T2GUIElementNode()
 		{
-			TASSERT(m_children.m_next == &m_children, "");
+			TASSERT(m_children.m_next == &m_children);
 			m_children = T2GUIElementNode();
 			m_width = 1.0f;
 			m_height = 1.0f;

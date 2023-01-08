@@ -9,7 +9,7 @@ namespace Toshi
     int TCompress_Compress::Write(uint32_t length, char*& data, TFile* file)
     {
         // 0068a830
-        TASSERT(length <= maxlength, "");
+        TASSERT(length <= maxlength);
 
         int writtenSize = 0;
         uint32_t dataSize = length;

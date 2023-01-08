@@ -14,40 +14,7 @@ Toshi::TApplication* Toshi::CreateApplication(int argc, char** argv)
 
 bool AApplication::OnCreate(int argc, char** argv)
 {
-	TOSHI_INFO("Created application with {0} arguments", argc);
-	
-#pragma region TClass Info
-	TOSHI_INFO("===============TClass Hierarchy===============");
-	Toshi::TObject::s_Class.RecurseTree(
-		[](Toshi::TClass* tClass, void* data) -> bool
-		{
-			// this callback is called for every registered TClass
-			static int s_Index = 1;
-
-			if (tClass->GetParent())
-			{
-				TOSHI_INFO("{0}) {1} -> {2}", s_Index, tClass->GetParent()->GetName(), tClass->GetName());
-			}
-			else
-			{
-				TOSHI_INFO("{0}) None -> {1}", s_Index, tClass->GetName());
-			}
-
-			s_Index++;
-			return true;
-		},
-		[](Toshi::TClass* tClass, void* data)
-		{
-			// this callback is called for every registered base TClass
-			// called after all the derrives got into the first callback
-		},
-		[](Toshi::TClass* tClass, void* data)
-		{
-			// this callback is called for every registered base TClass
-			// called before all the derrives get into the first callback
-		}, nullptr);
-	TOSHI_INFO("==============================================");
-#pragma endregion
+	TOSHI_INFO("Starting Blob...");
 
 	ARenderer::CreateSingleton();
 	AAssetStreaming::CreateSingleton();
@@ -60,7 +27,7 @@ bool AApplication::OnCreate(int argc, char** argv)
 	void* mempool = malloc(poolSize);
 
 	bool bResult = m_soundSystem.Create(mempool, poolSize, -1, -1, 2);
-	TASSERT(TTRUE == bResult, "");
+	TASSERT(TTRUE == bResult);
 
 	//ALevelInformation info = ALevelInformation();
 	//info.Create("C:\\Program Files (x86)\\Steam\\steamapps\\common\\de Blob\\Data\\Levels.trb");

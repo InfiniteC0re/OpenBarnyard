@@ -270,7 +270,7 @@ namespace Toshi
 
 	const char* TString8::GetString(uint32_t a_iIndex) const
 	{
-		TASSERT(a_iIndex >= 0 && a_iIndex <= (TINT)m_iStrLen, "");
+		TASSERT(a_iIndex >= 0 && a_iIndex <= (TINT)m_iStrLen);
 		if (IsIndexValid(a_iIndex)) { return &m_pBuffer[a_iIndex]; }
 		return TNULL;
 	}

@@ -17,7 +17,7 @@ bool Toshi::TSound_Win::SetSpeakerType(int maxchannels, int unk)
 
         FMOD_RESULT result = m_pSystem->getNumDrivers(&numOutputDrivers);
 
-        TASSERT(!ErrorCheck(result), "");
+        TASSERT(!ErrorCheck(result));
 
         if (numOutputDrivers == 0)
         {

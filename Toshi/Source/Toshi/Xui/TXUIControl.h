@@ -10,18 +10,23 @@ namespace Toshi
 
 	class XURXUIControlData : public XURXUIElementData
 	{
+	public:
 		static constexpr const char* sm_sTypeInfo = "XURXUIControlData";
 
-		/* 0 */ uint16_t m_classOverride;
-		/* 1 */ uint16_t m_visual;
-		/* 2 */ bool m_enabled;
-		/* 3 */ bool m_unfocussedInput;
-		/* 4 */ uint16_t m_navLeft;
-		/* 5 */ uint16_t m_navRight;
-		/* 6 */ uint16_t m_navUp;
-		/* 7 */ uint16_t m_navDown;
-		/* 8 */ uint16_t m_text;
-		/* 10 */ uint16_t m_imagePath;
+		enum PropType_ : PropType
+		{
+			PropType_ClassOverride,
+			PropType_Visual,
+			PropType_Enabled,
+			PropType_UnfocussedInput,
+			PropType_NavLeft,
+			PropType_NavRight,
+			PropType_NavUp,
+			PropType_NavDown,
+			PropType_Text,
+			PropType_Unknown,
+			PropType_ImagePath,
+		};
 
 	public:
 		virtual const char* GetTypeInfo() const { return sm_sTypeInfo; }
@@ -32,10 +37,22 @@ namespace Toshi
 
 		virtual uint32_t GetTimelinePropSize(uint32_t a_uiObjectIndex, uint32_t propType);
 
-		virtual bool TranslateTimelineProp(const char* param_1, uint32_t& param_2, uint32_t& param_3);
+		virtual bool TranslateTimelineProp(const char* name, uint32_t& param_2, PropType& propType);
 		virtual bool ValidateTimelineProp(uint32_t a_uiObjectIndex, uint32_t param_2);
 
 		virtual bool Load(TXUIResource& resource, uint8_t*& a_pData);
+
+	protected:
+		/* 0 */ uint16_t m_ClassOverride;
+		/* 1 */ uint16_t m_Visual;
+		/* 2 */ bool m_Enabled;
+		/* 3 */ bool m_UnfocussedInput;
+		/* 4 */ uint16_t m_NavLeft;
+		/* 5 */ uint16_t m_NavRight;
+		/* 6 */ uint16_t m_NavUp;
+		/* 7 */ uint16_t m_NavDown;
+		/* 8 */ uint16_t m_Text;
+		/* 10 */ uint16_t m_ImagePath;
 	};
 
 }

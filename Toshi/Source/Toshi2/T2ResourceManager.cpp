@@ -25,14 +25,14 @@ namespace Toshi
 
 	void T2ResourceData::Init(const char* a_pName, t_CreateDestroyCallbk a_fnCreateDestroyCallbk, void* a_pData)
 	{
-		TASSERT(m_fnCreateDestroyCallbk == TNULL, "");
-		TASSERT(m_pResourceName[0] == '\0', "");
-		TASSERT(m_pData == TNULL, "");
-		TASSERT(m_iFlags == 0, "");
-		TASSERT(m_iRefCount == 0, "");
-		TASSERT(a_fnCreateDestroyCallbk != TNULL, "");
-		TASSERT(T2String8::IsLowerCase(a_pName), "");
-		TASSERT(T2String8::Length(a_pName) < MAX_RESOURCE_NAME, "");
+		TASSERT(m_fnCreateDestroyCallbk == TNULL);
+		TASSERT(m_pResourceName[0] == '\0');
+		TASSERT(m_pData == TNULL);
+		TASSERT(m_iFlags == 0);
+		TASSERT(m_iRefCount == 0);
+		TASSERT(a_fnCreateDestroyCallbk != TNULL);
+		TASSERT(T2String8::IsLowerCase(a_pName));
+		TASSERT(T2String8::Length(a_pName) < MAX_RESOURCE_NAME);
 
 		T2String8::CopySafe(m_pResourceName, a_pName, MAX_RESOURCE_NAME);
 
@@ -72,7 +72,7 @@ namespace Toshi
 			m_iFlags &= ~(FLAG_LOADING | FLAG_INITIALISED);
 			if (m_trb != TNULL)
 			{
-				TASSERT(TNULL != m_fnCreateDestroyCallbk, "");
+				TASSERT(TNULL != m_fnCreateDestroyCallbk);
 
 				m_fnCreateDestroyCallbk(m_unk, m_trb, false);
 
@@ -112,18 +112,18 @@ namespace Toshi
 	{
 		TASSERT(a_iID != T2ResourcePtr::IDINVALID, "Invalid ID");
 		TASSERT(a_iID >= 0, "ID must be greater than 0");
-		TASSERT(a_iID < m_iMaxNumResources, "");
-		TASSERT(TFALSE == m_pData[a_iID].HasFlag(T2ResourceData::FLAG_DESTROYED), "");
-		TASSERT(TTRUE == m_pData[a_iID].HasFlag(T2ResourceData::FLAG_INITIALISED), "");
+		TASSERT(a_iID < m_iMaxNumResources);
+		TASSERT(TFALSE == m_pData[a_iID].HasFlag(T2ResourceData::FLAG_DESTROYED));
+		TASSERT(TTRUE == m_pData[a_iID].HasFlag(T2ResourceData::FLAG_INITIALISED));
 		return m_pData[a_iID];
 	}
 
 	void* T2ResourceManager::GetData(int a_iID)
 	{
 		TASSERT(a_iID >= 0, "ID must be greater than 0");
-		TASSERT(a_iID < m_iMaxNumResources, "");
-		TASSERT(TFALSE == m_pData[a_iID].HasFlag(T2ResourceData::FLAG_DESTROYED), "");
-		TASSERT(TTRUE == m_pData[a_iID].HasFlag(T2ResourceData::FLAG_INITIALISED), "");
+		TASSERT(a_iID < m_iMaxNumResources);
+		TASSERT(TFALSE == m_pData[a_iID].HasFlag(T2ResourceData::FLAG_DESTROYED));
+		TASSERT(TTRUE == m_pData[a_iID].HasFlag(T2ResourceData::FLAG_INITIALISED));
 		return a_iID == T2ResourcePtr::IDINVALID ? TNULL : m_pData[a_iID].GetData();
 	}
 
@@ -135,9 +135,9 @@ namespace Toshi
 			TOSHI_CORE_ERROR("couldnt create resource \"%s\" because we have reached our max (%d)", resourceName, m_iMaxNumResources);
 			return 0;
 		}
-		TASSERT(iID >= 0, "");
-		TASSERT(iID < m_iMaxNumResources, "");
-		TASSERT(TFALSE == m_pData[iID].HasFlag(T2ResourceData::FLAG_INITIALISED), "");
+		TASSERT(iID >= 0);
+		TASSERT(iID < m_iMaxNumResources);
+		TASSERT(TFALSE == m_pData[iID].HasFlag(T2ResourceData::FLAG_INITIALISED));
 		m_iNumUsedResources++;
 		m_pData[iID].Init(resourceName, a_fnCreateDestroyCallbk, a_pData);
 		m_pData[iID].SetLoadedData(unk);
@@ -157,7 +157,7 @@ namespace Toshi
 
 	int T2ResourceManager::FindUnusedResource()
 	{
-		TASSERT(m_iNumUsedResources < m_iMaxNumResources, "");
+		TASSERT(m_iNumUsedResources < m_iMaxNumResources);
 		for (size_t i = m_iUnk; i < m_iMaxNumResources; i++)
 		{
 			if (m_pData[i].HasFlag(T2ResourceData::FLAG_DESTROYED | T2ResourceData::FLAG_USED) && m_pData[i].GetData() == TNULL)
@@ -176,7 +176,7 @@ namespace Toshi
 			}
 		}
 
-		TASSERT(!"Should never get here", "");
+		TASSERT(!"Should never get here");
 		return T2ResourcePtr::IDINVALID;
 	}
 
