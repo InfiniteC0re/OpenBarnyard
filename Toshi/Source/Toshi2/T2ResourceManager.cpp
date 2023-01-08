@@ -1,5 +1,6 @@
 #include "ToshiPCH.h"
 #include "T2ResourceManager.h"
+#include "Toshi/Render/TAssetInit.h"
 
 const int MAX_RESOURCE_NAME = 48;
 
