@@ -228,7 +228,30 @@ namespace Toshi
     void TXUIResource::PushID(const wchar_t* a_wsID)
     {
         m_uIDs.Push(a_wsID);
-        //if (m_pQuat >> 8 != 0)
+        if (m_uIDStrLength >> 8 != 0)
+        {
+            m_uIDStr->Concat(_TS16("."), -1);
+        }
+        m_uIDStr->Concat(a_wsID, -1);
+    }
+
+    void TXUIResource::PopID()
+    {
+        const wchar_t* top = m_uIDs.Top();
+        m_uIDs.Pop();
+        *m_uIDStr = m_uIDStr->Left(m_uIDStrLength - TStringManager::String16Length(top));
+    }
+
+    TXUIStringTable& TXUIResource::LookupStringTable()
+    {
+        if (m_uiStringTableCount != 0)
+        {
+            //TXUIStringTable::Lookup()
+        }
+        auto lal = TXUIStringTable();
+
+        return lal;
+        // TODO: insert return statement here
     }
 
     XURXUIObjectData* TXUIResource::CreateObjectData(TXUIResource& a_rResource, uint16_t index)

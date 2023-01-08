@@ -184,7 +184,7 @@ namespace Toshi
 	};
 
 	class TXUIElement :
-		public TGenericClassDerived<TXUIElement, TObject, "TXUIElement", TMAKEVERSION(1, 0), false>, T2GUIElement
+		public TGenericClassDerived<TXUIElement, TObject, "TXUIElement", TMAKEVERSION(1, 0), false>, public T2GUIElement
 	{
 	public:
 		void Create(TXUIResource& a_rResource, XURXUIObjectData* a_pObjectData, bool a_bool);
