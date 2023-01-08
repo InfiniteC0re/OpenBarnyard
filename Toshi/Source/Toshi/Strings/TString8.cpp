@@ -60,7 +60,7 @@ namespace Toshi
 		AllocBuffer(size);
 	}
 
-	TString8::TString8(const TWString& src)
+	TString8::TString8(const TString16& src)
 	{
 		Reset();
 		Copy(src);
@@ -72,7 +72,7 @@ namespace Toshi
 		Copy(src);
 	}
 
-	void TString8::Copy(const TWString& src, uint32_t size)
+	void TString8::Copy(const TString16& src, uint32_t size)
 	{
 		uint32_t srcLen = src.Length();
 		TASSERT(srcLen <= 0xFFFFFF, "Too big string");
@@ -381,7 +381,7 @@ namespace Toshi
 		return str;
 	}
 
-	TString8& TString8::Concat(const TWString& str, uint32_t size)
+	TString8& TString8::Concat(const TString16& str, uint32_t size)
 	{
 		uint32_t len = str.Length();
 

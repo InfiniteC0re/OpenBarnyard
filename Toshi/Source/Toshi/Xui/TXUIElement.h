@@ -124,7 +124,7 @@ namespace Toshi
 	};
 
 	class TXUIElement :
-		public TGenericClassDerived<TXUIElement, TObject, "TXUIElement", TMAKEVERSION(1, 0), false>, T2GUIElement
+		public TGenericClassDerived<TXUIElement, TObject, "TXUIElement", TMAKEVERSION(1, 0), false>, public T2GUIElement
 	{
 
 		int m_iUIDCount; // 0xB4 globs
