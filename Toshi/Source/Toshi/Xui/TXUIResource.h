@@ -98,14 +98,14 @@ namespace Toshi
 		TVector4* m_pVect; // 0x1C globs
 		TQuaternion* m_pQuat;                       // 0x20 both
 		unsigned char* m_pCust;                     // 0x28 / 0x24 globs
-		uint32_t m_uiCustDataSize;                  // 0x3C / 0x38 globs
+		uint32_t m_uiCustDataSize;                  // 0x3C de blob / 0x38 globs
 		uint32_t m_uiStringTableCount;              // 0x30 / 0x3C globs
 		TString16* m_uIDStr; // 0x40
 		uint32_t m_uIDStrLength; // 0x44
 
 		XURXUIObjectData* m_root;
 
-		TStack<const wchar_t*, 32> m_uIDs;
+		TStack<const wchar_t*, 32> m_oIDComparisonStack;
 	public:
 		static inline int s_iUIDCount = 0;
 		static inline bool s_bGenerateUIDs = false;
