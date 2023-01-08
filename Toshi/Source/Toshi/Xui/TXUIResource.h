@@ -5,7 +5,8 @@
 #include "Toshi/Core/TSystem.h"
 #include "Toshi2/T2String16.h"
 #include "Toshi/Core/TStack.h"
-
+#include "Toshi/Strings/TString16.h"
+#include "TXUIStringTable.h"
 
 namespace Toshi
 {
@@ -70,6 +71,9 @@ namespace Toshi
 		int GetStringTableSize(unsigned char* pPtr, uint32_t size);
 
 		void PushID(const wchar_t* a_wsID);
+		void PopID();
+
+		TXUIStringTable& LookupStringTable();
 
 		static XURXUIObjectData* CreateObjectData(TXUIResource& a_rResource, uint16_t index);
 		static XURXUIObjectData* CreateObjectData(TXUIResource& a_rResource, const wchar_t* objectName);
@@ -95,8 +99,10 @@ namespace Toshi
 		TVector4* m_pVect; // 0x1C globs
 		TQuaternion* m_pQuat;                       // 0x20 both
 		unsigned char* m_pCust;                     // 0x28 / 0x24 globs
-		uint32_t m_uiCustDataSize;                  // 0x3C
-		uint32_t m_uiStringTableCount;              // 0x30
+		uint32_t m_uiCustDataSize;                  // 0x3C / 0x38 globs
+		uint32_t m_uiStringTableCount;              // 0x30 / 0x3C globs
+		TString16* m_uIDStr; // 0x40
+		uint32_t m_uIDStrLength; // 0x44
 
 		XURXUIObjectData* m_root;
 
