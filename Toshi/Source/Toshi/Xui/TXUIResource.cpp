@@ -8,6 +8,7 @@
 #include "TXUIBackButton.h"
 #include "TXUIText.h"
 #include "TXUIFigure.h"
+#include "TXUIReader.h"
 
 namespace Toshi
 {
@@ -145,15 +146,14 @@ namespace Toshi
 
     int TXUIResource::ReadDataSection(unsigned char* buffer, uint32_t size)
     {
-        uint16_t uiType = PARSEWORD_BIG(buffer);
-        buffer += 2;
+        TXUIReader reader(buffer);
+        uint16_t uiType = reader.ReadUInt16();
 
         TASSERT(0 == TStringManager::String16Compare(GetString(uiType), _TS16("XuiCanvas")), "First Element is not XuiCanvas!");
 
         m_root = CreateObjectData(*this, uiType);
 
-        uint8_t opcode = *buffer++;
-
+        uint8_t opcode = reader.ReadUInt8();
         m_root->Load(*this, buffer);
 
         if ((opcode & 2) != 0)

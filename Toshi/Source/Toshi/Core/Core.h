@@ -1,5 +1,6 @@
 #pragma once
 #include "Platform.h"
+#include "Endianness.h"
 
 constexpr uint32_t TMAKEFOUR(const char str[4])
 {
@@ -31,42 +32,6 @@ constexpr uint32_t TMAKEFOUR(const char str[4])
 #define OVERLOAD_MACRO(name, count) OVERLOAD_MACRO1(name, count)
 
 #define CALL_OVERLOAD(name, ...) GLUE(OVERLOAD_MACRO(name, COUNT_ARGS_MAX5(__VA_ARGS__)), (__VA_ARGS__))
-
-__forceinline uint16_t PARSEWORD(const uint8_t bytes[2])
-{
-	return (bytes[0] << 0) | (bytes[1] << 8);
-}
-
-__forceinline uint16_t PARSEWORD_BIG(const uint8_t bytes[2])
-{
-	return (bytes[1] << 0) | (bytes[0] << 8);
-}
-
-__forceinline uint32_t PARSEDWORD(const uint8_t bytes[4])
-{
-	return (bytes[0] << 0) | (bytes[1] << 8) | (bytes[2] << 16) | (bytes[3] << 24);
-}
-
-__forceinline uint32_t PARSEDWORD_BIG(const uint8_t bytes[4])
-{
-	return (bytes[3] << 0) | (bytes[2] << 8) | (bytes[1] << 16) | (bytes[0] << 24);
-}
-
-__forceinline float PARSEFLOAT_BIG(const uint8_t bytes[4])
-{
-	uint32_t res = (bytes[3] << 0) | (bytes[2] << 8) | (bytes[1] << 16) | (bytes[0] << 24);
-	return *((float*)&res);
-}
-
-__forceinline uint32_t PARSEDWORD_BIG(uint32_t number)
-{
-	return PARSEDWORD_BIG(reinterpret_cast<uint8_t*>(&number));
-}
-
-__forceinline uint16_t PARSEWORD(uint16_t val)
-{
-	return ((((val) >> 8) & 0xff) | (((val) & 0xff) << 8));
-}
 
 #if defined(TOSHI_DEBUG)
 	#if defined(TOSHI_PLATFORM_WINDOWS)
