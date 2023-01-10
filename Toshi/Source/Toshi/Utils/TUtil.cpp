@@ -18,6 +18,8 @@ namespace Toshi
         TSystemManager::Create();
         TFileManager::Create();
 
+		Create();
+
         return false;
     }
 

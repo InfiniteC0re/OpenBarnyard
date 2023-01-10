@@ -19,13 +19,6 @@ namespace Toshi
 				m_List = nullptr;
 			}
 
-			/*TNode(const TNode& other)
-			{
-				m_List = other.m_List;
-				m_Next = other.m_Next;
-				m_Prev = other.m_Prev;
-			}*/
-
 			TNode* Next()
 			{
 				return m_Next;

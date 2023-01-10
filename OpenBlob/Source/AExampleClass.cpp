@@ -61,7 +61,6 @@ AExampleClass::AExampleClass()
 			// This is only for testing purposes
 			*(int*)(&buf[8]) = 0; // Setting the CRC to 0 so the new CRC doesn't take the old one and CRCs it
 
-			TUtil::CRCInitialise();
 			uint32_t crc = TUtil::CRC32(buf, file->GetSize());
 
 			TFree(buf);

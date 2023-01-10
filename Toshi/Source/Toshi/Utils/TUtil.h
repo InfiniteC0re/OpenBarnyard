@@ -8,12 +8,25 @@ namespace Toshi
 	class TUtil : public TSingleton<TUtil>
 	{
 	public:
+		void LogInitialise()
+		{
+			// 0065d900
+			TIMPLEMENT();
+		}
+
 		static bool ToshiCreate(int argc, char** argv, TMemory& memorySettings);
 		
 		static void ToshiDestroy()
 		{
 			ToshiDestroySubsystems();
 			ToshiDestroyMemory();
+		}
+
+		static void Create()
+		{
+			TUtil::CreateSingleton();
+			TUtil::GetSingleton()->LogInitialise();
+			TUtil::CRCInitialise();
 		}
 		
 		static void ToshiDestroySubsystems()
