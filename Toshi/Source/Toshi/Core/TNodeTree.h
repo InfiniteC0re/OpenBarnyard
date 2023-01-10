@@ -97,7 +97,7 @@ namespace Toshi
 		* @param parentNode The node that is going to be a parent.
 		* @param sourceNode The node that should be linked.
 		*/
-		void InsertNode(TNode* parentNode, TNode* sourceNode)
+		void Insert(TNode* parentNode, TNode* sourceNode)
 		{
 			// Toshi::TNodeTree<Toshi::TResource>::InsertNode - 00691aa0
 			TASSERT(sourceNode->IsLinked() == TFALSE, "The source node shouldn't be linked");
@@ -159,7 +159,7 @@ namespace Toshi
 					InsertNode(node.Parent(), attachedNode);
 
 					attachedNode = node.Attached();
-					TIMPLEMENT_D("This part of the code is something I don't fucking understand but it seems not to be even used so if it is, it should be checked twice");
+					TIMPLEMENT_D("It seems to be unused and I hope it is. I don't know if it works and what it should do");
 				}
 			}
 
@@ -180,6 +180,11 @@ namespace Toshi
 			node.m_Last = &node;
 			node.m_Root = TNULL;
 			return &node;
+		}
+
+		TNode* GetRoot()
+		{
+			return &m_Root;
 		}
 		
 	protected:
