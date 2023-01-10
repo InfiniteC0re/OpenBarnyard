@@ -3,7 +3,7 @@
 //#include "Toshi/Xui/TXUIResource.h"
 #include "AAssetStreaming.h"
 #include "Locale/ALocaleManager.h"
-#include <AExampleClass.h>
+#include "AExampleClass.h"
 
 static Toshi::TSound m_soundSystem = Toshi::TSound();
 

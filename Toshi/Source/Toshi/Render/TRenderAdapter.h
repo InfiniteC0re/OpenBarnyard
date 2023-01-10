@@ -1,6 +1,5 @@
 #pragma once
-
-#include "Toshi/Core/TGenericNodeList.h"
+#include "Toshi/Core/TNodeList.h"
 
 namespace Toshi
 {
@@ -12,21 +11,31 @@ namespace Toshi
 		public:
 			class Device : public TNodeList<Device>::TNode
 			{
-				Device() : TNodeList<Device>::TNode() {}
-				Device(const Device& a_device) : TNodeList<Device>::TNode(a_device) { }
+			public:
+				Device() = default;
 			};
 
 		public:
-			Mode() : TNodeList<Mode>::TNode() {}
-			Mode(const Mode& a_mode) : TNodeList<Mode>::TNode(a_mode) { }
+			Mode() = default;
+			virtual ~Mode() = default;
+
+			virtual TRenderAdapter* GetAdapter() const = 0;
+			virtual size_t GetModeIndex() const = 0;
+			virtual uint32_t GetWidth() const = 0;
+			virtual uint32_t GetHeight() const = 0;
+			virtual bool SomeCheck1() const = 0;
+			virtual bool SomeCheck2() const = 0;
+			virtual float GetRefreshRate() const = 0;
+			virtual TRenderAdapter::Mode::Device* GetDevice(int device) = 0;
 		};
 
 	public:
-		TRenderAdapter() : TNodeList<TRenderAdapter>::TNode(), modes() {}
+		TRenderAdapter() = default;
+		virtual ~TRenderAdapter() = default;
 
-		TNodeList<Mode>* GetModeList() { return &modes; }
+		TNodeList<Mode>* GetModeList() { return &m_Modes; }
 		
 	private:
-		TNodeList<Mode> modes; // 0x10
+		TNodeList<Mode> m_Modes; // 0x10
 	};
 }
