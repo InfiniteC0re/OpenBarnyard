@@ -3,7 +3,6 @@
 
 #include <Toshi/File/TFile.h>
 #include <Toshi/Core/TSystem.h>
-#include <Toshi/Core/TKernelInterface.h>
 #include <Toshi/Core/TScheduler.h>
 #include <Toshi/Math/TRandom.h>
 #include <Toshi/File/TTRB.h>

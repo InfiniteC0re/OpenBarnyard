@@ -19,7 +19,7 @@ namespace Toshi
 		virtual ~TApplication();
 		
 		virtual bool OnCreate(int argc, char** argv);
-		virtual bool OnUpdate();
+		virtual bool OnUpdate(float deltaTime);
 		virtual bool OnDestroy();
 
 		// Returns true if success
@@ -37,11 +37,14 @@ namespace Toshi
 		// Sets new state
 		void SetVerbose(bool state) { m_IsVerbose = state; }
 
+		// Executes the application and starts the loop
+		bool Execute();
+
 	private:
 		TString8 m_Name;                       // 0x4
-		uint32_t m_Flags;					   // 0x10
-		bool m_IsVerbose;					   // 0x14
-		STL::Ref<TDebugConsole> m_DebugConsole;
+		uint32_t m_Flags;                      // 0x10
+		bool m_IsVerbose;                      // 0x14
+		TDebugConsole* m_DebugConsole;
 	};
 	
 	// this has to be used by application

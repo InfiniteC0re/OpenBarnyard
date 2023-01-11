@@ -27,7 +27,7 @@ namespace Toshi
 			{
 				SetThreadExecutionState(ES_CONTINUOUS);
 				ShowCursor(true);
-				TSystemManager::GetSingleton()->SetPaused(true);
+				TSystemManager::GetSingleton()->Pause(true);
 				SystemParametersInfoA(SPI_GETSTICKYKEYS, sizeof(STICKYKEYS), &ms_StickyKeys, 0);
 				ms_bIsFocused = false;
 			}
@@ -39,7 +39,7 @@ namespace Toshi
 
 		if (m_Render != TNULL)
 		{
-			UnregisterClassA(m_Render->GetName(), m_ModuleHandle);
+			UnregisterClassA(TMSWindow::GetClassStatic()->GetName(), m_ModuleHandle);
 			m_Render = TNULL;
 		}
 	}
@@ -55,7 +55,7 @@ namespace Toshi
 		wndClass.hIcon = LoadIconA(m_ModuleHandle, MAKEINTRESOURCEA(IDI_ICON1));
 		wndClass.hInstance = m_ModuleHandle;
 		wndClass.lpfnWndProc = (WNDPROC)WndProc;
-		wndClass.lpszClassName = m_Render->GetName();
+		wndClass.lpszClassName = TMSWindow::GetClassStatic()->GetName();
 		wndClass.style = CS_VREDRAW | CS_HREDRAW;
 		wndClass.cbWndExtra = 4;
 		wndClass.hCursor = LoadCursorA(NULL, MAKEINTRESOURCEA(IDC_ARROW));
@@ -69,7 +69,7 @@ namespace Toshi
 			dwStyle = WS_POPUP | WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU;
 		}
 
-		m_HWND = CreateWindowExA(0, m_Render->GetName(), title, dwStyle, 100, 100, 0, 0, NULL, NULL, m_ModuleHandle, this);
+		m_HWND = CreateWindowExA(0, TMSWindow::GetClassStatic()->GetName(), title, dwStyle, 100, 100, 0, 0, NULL, NULL, m_ModuleHandle, this);
 		
 		if (m_HWND == NULL)
 		{
@@ -83,7 +83,7 @@ namespace Toshi
 		if (GetForegroundWindow() != m_HWND)
 		{
 			TOSHI_INFO("Not foreground window, Pausing Systems!\n");
-			TSystemManager::GetSingleton()->SetPaused(true);
+			TSystemManager::GetSingleton()->Pause(true);
 		}
 
 		return true;

@@ -17,6 +17,7 @@ extern Toshi::TApplication* Toshi::CreateApplication(int argc, char** argv);
 #define TOSHI_APP \
 Toshi::TApplication* app = Toshi::CreateApplication(0, nullptr); \
 app->Create("Blob07 - (c) Blue Tongue Software", 0, 0); \
+app->Execute(); \
 delete app;
 #endif
 

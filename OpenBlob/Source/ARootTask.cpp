@@ -16,7 +16,7 @@ bool ARootTask::OnUpdate(float deltaTime)
 		Activate(false);
 
 		TOSHI_INFO("ARootTask: Five seconds has passed. Deactivating ARootTask");
-		TOSHI_INFO("Average FPS is {0:f}", m_Kernel->GetAverageFPS());
+		TOSHI_INFO("Average FPS is {0:f}", Toshi::TSystemManager::GetSingleton()->GetAverageFps());
 
 #if TEST_STL
 		TOSHI_INFO("===================STL Test===================");

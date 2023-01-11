@@ -194,8 +194,8 @@ namespace Toshi
 
 				TOSHI_CORE_TRACE(L"Adapter: {0}", adapterDesc->Description);
 				TOSHI_CORE_TRACE("Vendor: {0}, Device: {1}, Revision: {2}", adapterDesc->VendorId, adapterDesc->DeviceId, adapterDesc->Revision);
-				TOSHI_CORE_TRACE("DedicatedSystemMemory: {0:.2f} MB", (double)adapterDesc->DedicatedSystemMemory / 1024);
-				TOSHI_CORE_TRACE("SharedSystemMemory: {0:.2f} MB", (double)adapterDesc->SharedSystemMemory / 1024);
+				TOSHI_CORE_TRACE("DedicatedSystemMemory: {0:.2f} MB", (double)adapterDesc->DedicatedSystemMemory / 1024 / 1024);
+				TOSHI_CORE_TRACE("SharedSystemMemory: {0:.2f} MB", (double)adapterDesc->SharedSystemMemory / 1024 / 1024);
 				d3dAdapter->EnumerateOutputs(this, dxgiAdapter);
 
 				GetAdapterList()->InsertTail(d3dAdapter);

@@ -19,6 +19,6 @@ namespace Toshi
 		* Platform specific methods
 		* Define them in TDebugConsole_{Platform}.cpp
 		*/
-		static STL::Scope<TDebugConsole> Create();
+		static TDebugConsole* Create();
 	};
 }

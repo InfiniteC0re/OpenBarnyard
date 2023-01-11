@@ -151,9 +151,9 @@ namespace Toshi
 		if (file != TNULL)
 		{
 			file->CPrintf("-\r\n");
-			char const* name = GetName();
-			uint16_t versionMajor = GetVersionMajor();
-			uint16_t versionMinor = GetVersionMinor();
+			char const* name = GetClass()->GetName();
+			uint16_t versionMajor = GetClass()->GetVersionMajor();
+			uint16_t versionMinor = GetClass()->GetVersionMinor();
 			file->CPrintf("Toshi rendering interface through object[\"%s\"] Version : %u.%u\r\n", name, versionMajor, versionMinor);
 			file->CPrintf("-\r\n");
 
