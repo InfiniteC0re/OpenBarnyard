@@ -5,6 +5,8 @@
 #include "Locale/ALocaleManager.h"
 #include "AExampleClass.h"
 
+#include TOSHI_MULTIRENDER(TRender)
+
 static Toshi::TSound m_soundSystem = Toshi::TSound();
 
 Toshi::TApplication* Toshi::CreateApplication(int argc, char** argv)
@@ -41,5 +43,7 @@ bool AApplication::OnCreate(int argc, char** argv)
 
 bool AApplication::OnUpdate(float deltaTime)
 {
+	auto window = static_cast<Toshi::TRenderDX11*>(Toshi::TRender::GetSingleton())->GetMSWindow();
+	window->Update();
 	return true;
 }

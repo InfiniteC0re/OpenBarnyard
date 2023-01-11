@@ -19,6 +19,25 @@ namespace Toshi
 		m_IsEnabled = false;
 	}
 
+	void TMSWindow::Update()
+	{
+		MSG msg;
+		if (!m_Flag1 && PeekMessageA(&msg, NULL, 0, 0, 0) == TRUE)
+		{
+			while (GetMessageA(&msg, NULL, 0, 0) != FALSE)
+			{
+				TranslateMessage(&msg);
+				DispatchMessageA(&msg);
+				if (PeekMessageA(&msg, NULL, 0, 0, 0) == FALSE)
+				{
+					return;
+				}
+			}
+
+			m_Flag1 = true;
+		}
+	}
+
 	void TMSWindow::Destroy()
 	{
 		if (m_HWND != NULL)
@@ -33,7 +52,7 @@ namespace Toshi
 			}
 
 			DestroyWindow(m_HWND);
-			m_IsWindowed = true;
+			m_Flag1 = true;
 			m_HWND = NULL;
 		}
 
@@ -116,6 +135,7 @@ namespace Toshi
 					else if (uMsg == WM_SYSCOMMAND) {
 						if (wParam == SC_CLOSE) {
 							TMSWindow* window = reinterpret_cast<TMSWindow*>(GetWindowLongA(hWnd, GWL_USERDATA));
+							
 							/*if ((window != 0) && (*(char*)(window + 0x21) != '\0')) {
 								*(undefined*)(window + 0x22) = 1;
 								FUN_006b17e0(&local_39);
@@ -191,7 +211,7 @@ namespace Toshi
 			}
 			*/
 			TMSWindow* window = reinterpret_cast<TMSWindow*>(GetWindowLongA(hWnd, GWL_USERDATA));
-			if (window->IsWindowed()) return 0;
+			if (window->Flag1()) return 0;
 			if (!window->IsEnabled())
 			{
 				// if (DAT_009a46f0 == (void*)0x0) return 0;

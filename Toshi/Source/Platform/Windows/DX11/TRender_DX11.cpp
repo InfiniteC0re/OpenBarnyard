@@ -206,25 +206,6 @@ namespace Toshi
 		}
 	}
 
-	void TRenderDX11::Update()
-	{
-		MSG msg;
-		if (!m_bIsEnabled && PeekMessageA(&msg, NULL, 0, 0, 0) == TRUE)
-		{
-			while (GetMessageA(&msg, NULL, 0, 0) != FALSE)
-			{
-				TranslateMessage(&msg);
-				DispatchMessageA(&msg);
-				if (PeekMessageA(&msg, NULL, 0, 0, 0) == FALSE)
-				{
-					return;
-				}
-			}
-
-			m_bIsEnabled = true;
-		}
-	}
-
 	void TD3DAdapter::EnumerateOutputs(TRenderDX11* render, IDXGIAdapter* dxgiAdapter)
 	{
 		IDXGIOutput* dxgiOutput;

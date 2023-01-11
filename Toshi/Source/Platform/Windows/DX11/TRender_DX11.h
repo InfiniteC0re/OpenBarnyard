@@ -145,7 +145,6 @@ namespace Toshi
 		virtual bool Create() override { return Create("de Blob"); }
 		
 		bool Create(LPCSTR a_name);
-		void Update();
 
 		static const char* GetFeatureLevel(D3D_FEATURE_LEVEL a_featureLevel);
 

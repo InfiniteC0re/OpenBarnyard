@@ -13,13 +13,17 @@ namespace Toshi
 		public TGenericClassDerived<TMSWindow, TObject, "TMSWindow", TMAKEVERSION(1, 0), false>
 	{
 	public:
+		TMSWindow() = default;
+		TMSWindow(const TMSWindow&) = default;
+
 		void Enable();
 		void Disable();
 
+		void Update();
 		void Destroy();
 		bool Create(TRender* renderer, LPCSTR title);
 
-		bool IsWindowed() { return m_IsWindowed; }
+		bool Flag1() { return m_Flag1; }
 		bool IsEnabled() { return m_IsEnabled; } // Not confirmed
 		HWND GetHWND() const { return m_HWND; }
 		
@@ -36,7 +40,7 @@ namespace Toshi
 		HWND m_HWND;               // 0x04
 		TRender* m_Render;         // 0x08
 		bool m_IsEnabled;          // this + 0xC ; Name is a guess
-		bool m_IsWindowed;         // 0x0D Possibly?
+		bool m_Flag1;              // 0x0D
 		HMODULE m_ModuleHandle;    // 0x10
 		bool m_bUnk;               // 0x14
 		int m_xPos;                // 0x18
