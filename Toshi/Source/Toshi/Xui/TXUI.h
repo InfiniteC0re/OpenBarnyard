@@ -1,29 +1,27 @@
 #pragma once
 #include "Toshi/Utils/TSingleton.h"
-
-#include <cstdint>
-#include <Toshi/File/TTRB.h>
+#include "Toshi/File/TTRB.h"
 #include "Toshi/Render/TRender.h"
 #include "Toshi/Xui/TXUICanvas.h"
 
 namespace Toshi
 {
-
 	class TXUIResourceTRB
 	{
+	public:
+		void Init();
+		void Deinit();
+
+	private:
 		uint8_t* m_unk;
 		uint8_t* m_fileName;
 		uint8_t* m_xurBuffer; // 0x8
 		TXUIResource* m_resource; // 0xC
-	public:
-		void Init();
-		void Deinit();
 	};
 
 	class TXUI : public TSingleton<TXUI>
 	{
 	public:
-
 		TXUI();
 
 		static TMemoryHeap* MemoryBlock() { return ms_pXUIMemoryBlock; }

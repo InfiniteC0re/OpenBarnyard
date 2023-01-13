@@ -1,213 +1,134 @@
 #include "ToshiPCH.h"
 #include "TScheduler.h"
+#include "TSystem.h"
 #include "TTask.h"
 
 namespace Toshi
 {
-	float TScheduler::s_MaxTimeDeltaAllowed = 0.01f;
+	float TScheduler::s_MaxTimeDeltaAllowed = 0.25f;
 	float TScheduler::s_DebugSlowMaxTimeDeltaAllowed = 1.0f;
 
-	TScheduler::TScheduler(TKernelInterface* kernelInterface)
+	TScheduler::TScheduler()
 	{
-		m_TaskCount = 0;
-		m_KernelInterface = kernelInterface;
-		m_Unk3 = 0;
-		m_LastTask = nullptr;
-		m_Unk1 = &m_TaskCount;
-		m_Unk2 = &m_TaskCount;
-		m_Unk4 = 0;
-		m_CurrentTimeDelta = 0.0;
+		m_DeltaTime = 0.0;
+		m_TasksUpdateTime = 0.0;
 		m_TotalTime = 0.0;
-		m_DeltaTimeLimit = 1.0;
+		m_MaxDeltaTime = 0.25;
 		m_FrameCount = 0;
+		m_UseFixedMaxFps = false;
+		m_FixedMaxFps = 0.0;
+		m_UseDebugDeltaTime = false;
+		m_DebugDeltaTime = 0.01;
+		m_DebugDeltaTimeMult = 1.0;
 	}
 
-	TTask* TScheduler::CreateTask(TClass* toshiClass, TTask* parentTask)
+	TTask* TScheduler::CreateTask(TClass* pClass, TTask* pParent)
 	{
-		TTask* task = static_cast<TTask*>(toshiClass->CreateObject());
+		TASSERT(pClass->IsA(TGetClass(TTask)));
 		
-#ifdef TOSHI_DEBUG
-		const TClass* found = TClass::FindRecurse(task->GetClass()->GetName(), &TTask::s_Class, true);
-		TASSERT(found != nullptr, "TScheduler::CreateTask - passed TClass isn't inherited from TTask");
-#endif
-		
-		TScheduler* taskScheduler = task->GetScheduler();
+		TTask* pTask = static_cast<TTask*>(pClass->CreateObject());
+		TASSERT(pTask != TNULL);
 
-		if (taskScheduler != this)
+		if (pParent == TNULL)
 		{
-			if (taskScheduler)
-			{
-				taskScheduler->DeleteTask();
-			}	
-
-			task->m_Scheduler = this;
-			m_TaskCount += 1;
-		}
-
-		TTODO("TKernelInterface.dll: FUN_100253f0 at 0x10024cd9");
-
-		if (m_LastTask)
-		{
-			task->m_Prev = m_LastTask;
-			task->m_Next = m_LastTask->m_Next;
-			task->m_Next->m_Prev = task;
-			m_LastTask->m_Next = task;
-		}
-
-		task->m_TaskTree = &m_TaskTree;
-		task->m_UserData = &m_TaskCount;
-		m_LastTask = task;
-		m_Unk4 += 1;
-
-		if (parentTask != nullptr)
-		{
-			TTODO("TKernelInterface.dll: FUN_100253f0 at 0x10024d1d");
-
-			TTask* subTask = parentTask->m_SubTask;
-			
-			if (subTask == nullptr)
-			{
-				parentTask->m_SubTask = task;
-			}
-			else
-			{
-				task->m_Prev = subTask;
-				task->m_Next = subTask->m_Next;
-				task->m_Next->m_Prev = task;
-				subTask->m_Next = task;
-			}
-
-			task->m_UserData = parentTask;
-			m_Unk4 += 1;
-		}
-
-		return task;
-	}
-
-	void TScheduler::Update()
-	{
-		auto& timer = GetKernelInterface()->GetSystemTimer();
-		float deltaTime = timer.GetDelta();
-
-		m_TotalTime += deltaTime;
-		m_FrameCount += 1;
-
-		if (0 <= deltaTime)
-		{
-			m_CurrentTimeDelta = deltaTime <= m_DeltaTimeLimit ? deltaTime : m_DeltaTimeLimit;
+			m_TaskTree.InsertAtRoot(pTask);
 		}
 		else
 		{
-			m_CurrentTimeDelta = 0;
+			m_TaskTree.Insert(pParent, pTask);
 		}
 
-		DestroyDyingTasks(m_LastTask);
-		UpdateActiveTasks(m_LastTask);
+		return pTask;
 	}
 
-	void TScheduler::SetDebugSlowTime(bool slowTime)
+	void TScheduler::DeleteTaskAtomic(TTask* task)
 	{
-		m_DeltaTimeLimit = slowTime ? s_DebugSlowMaxTimeDeltaAllowed : s_MaxTimeDeltaAllowed;
-	}
-	
-	void TScheduler::DestroyDyingTasks(TTask* rootTask)
-	{
-		if (rootTask)
+		if (task != TNULL)
 		{
-			TTask* task = rootTask->m_Next;
-			
-			while (task != nullptr)
+			TTask* taskParent = TNULL;
+
+			if (task->IsChildOfDefaultRoot() == TFALSE)
 			{
-				TTask* nextTask = (task != rootTask) ? task->m_Next : nullptr;
+				taskParent = task->Parent();
 
-				if (task->IsDying())
+				if (taskParent->IsDying() == TFALSE && taskParent->OnChildDying(task) == TFALSE)
 				{
-					DeleteTask(task);
-				}
-				else
-				{
-					TTask* attachedTask = task->m_SubTask;
-					
-					if (attachedTask)
-					{
-						DestroyDyingTasks(attachedTask);
-					}
-				}
-
-				task = nextTask;
-			}
-		}
-	}
-
-	void TScheduler::UpdateActiveTasks(TTask* rootTask)
-	{
-		TTask* task = rootTask;
-
-		while (task != nullptr)
-		{
-			TTask* prevTask = task->m_Prev;
-
-			if (prevTask == rootTask)
-			{
-				prevTask = nullptr;
-			}
-
-			bool updateResult = true;
-
-			if (task->IsCreatedAndActive())
-			{
-				updateResult = task->OnUpdate(m_CurrentTimeDelta);
-
-				// if IsPaused() returns true
-				// then it only updates the root task
-				// and skips any other tasks
-
-				if (GetKernelInterface()->IsPaused())
-				{
+					// The parent is not dying and doesn't allow us to kill the task
 					return;
 				}
 			}
 
-			if (updateResult && task->m_SubTask)
+			if (task->Attached() != TNULL)
 			{
-				UpdateActiveTasks(task->m_SubTask);
+				TTask* node = task->Attached()->Attached();
+
+				while (node != TNULL)
+				{
+					auto next = (node->Prev() != node) ? node->Prev() : TNULL;
+					DeleteTaskAtomic(node);
+					node = next;
+				}
 			}
 
-			task = prevTask;
+			TClass* pClass = task->GetClass();
+			task->OnDestroy();
+			m_TaskTree.Remove(task, false);
+			task->Delete();
+
+			if (taskParent != TNULL)
+			{
+				taskParent->OnChildDied(pClass, task);
+			}
 		}
 	}
 
-	void TScheduler::UpdateActiveTasksKernelPaused(TTask* rootTask)
+	void TScheduler::DestroyDyingTasks(TTask* task)
 	{
-		TTask* task = rootTask;
-
-		while (task != nullptr)
+		if (task != TNULL)
 		{
-			TTask* prevTask = task->m_Prev;
+			TTask* currentTask = task->Prev();
 
-			if (prevTask == rootTask)
+			while (currentTask != TNULL)
 			{
-				prevTask = nullptr;
+				TTask* nextTask = (currentTask->Prev() != task) ? currentTask->Prev() : TNULL;
+
+				if (!currentTask->IsDying())
+				{
+					if (currentTask->Attached() != TNULL)
+					{
+						DestroyDyingTasks(currentTask->Attached());
+					}
+				}
+				else
+				{
+					DeleteTask(currentTask);
+				}
+
+				currentTask = nextTask;
 			}
-
-			bool updateResult = true;
-
-			if (task->IsCreatedAndActive())
-			{
-				updateResult = task->OnUpdateKernelPaused(m_CurrentTimeDelta);
-			}
-
-			if (updateResult && task->m_SubTask)
-			{
-				UpdateActiveTasksKernelPaused(task->m_SubTask);
-			}
-
-			task = prevTask;
 		}
 	}
 
-	void TScheduler::DeleteTask(TTask* task)
+	void TScheduler::UpdateActiveTasks(TTask* task)
 	{
-		TIMPLEMENT();
+		TTask* currentTask = task;
+
+		while (currentTask != TNULL)
+		{
+			TTask* nextTask = (currentTask->Next() != task) ? currentTask->Next() : TNULL;
+
+			bool recurse = true;
+			if (task->IsCreated() && task->IsActive())
+			{
+				recurse = currentTask->OnUpdate(m_DeltaTime);
+			}
+
+			if (currentTask->Attached() != TNULL && recurse)
+			{
+				UpdateActiveTasks(currentTask->Attached());
+			}
+
+			currentTask = nextTask;
+		}
 	}
 }

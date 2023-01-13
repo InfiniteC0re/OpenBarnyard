@@ -1,9 +1,11 @@
 #pragma once
 #include "Toshi/Math/Math.h"
 #include "Toshi/Core/TStack.h"
+#include "Toshi/Core/TNodeList.h"
 #include "Toshi/Core/TRefCounted.h"
 #include "Toshi/Render/TResource.h"
 #include "Toshi/Render/TAnimation.h"
+#include "Toshi/Render/TRenderAdapter.h"
 
 namespace Toshi
 {
@@ -134,7 +136,7 @@ namespace Toshi
 		}
 
 		// Creates resource and returns it
-		TResource* CreateResource(TClass* pClass, char* name, TResource* parent);
+		TResource* CreateResource(TClass* pClass, char* name, TNodeTree<TResource>::TNode* parent);
 
 		// Sets new render context and returns the old one
 		TRenderContext* SetCurrentRenderContext(TRenderContext* a_pRenderContext)
@@ -148,6 +150,7 @@ namespace Toshi
 		bool IsCreated() { return m_bCreated; }
 		bool IsDisplayCreated() { return m_bDisplayCreated; }
 		TRenderContext* GetCurrentRenderContext() { return m_pRenderContext; }
+		TNodeList<TRenderAdapter>* GetAdapterList() { return &m_AdapterList; }
 	
 	public:
 		/*
@@ -170,8 +173,7 @@ namespace Toshi
 		TMatrix44 m_LightDirection;                      // 0x50
 		TMatrix44 m_LightColour;                         // 0x90
 		//void* m_aSysResources;            // 0x20
-		//TNodeList
-		void* m_DummyResource;                           // 0xE4 (idk what it is)
+		TNodeList<TRenderAdapter> m_AdapterList;         // 0xD8
 		TNodeTree<TResource> m_Resources;                // 0xE8
 		size_t m_ResourceCount = 0;                      // 0x100
 		uint32_t m_Unk4 = 0;                             // 0x104

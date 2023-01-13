@@ -1,5 +1,5 @@
 #pragma once
-#include "Toshi/Core/TGenericNodeList.h"
+#include "Toshi/Core/TNodeList.h"
 
 namespace Toshi
 {

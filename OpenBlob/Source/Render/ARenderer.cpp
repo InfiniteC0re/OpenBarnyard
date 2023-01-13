@@ -24,9 +24,7 @@ bool ARenderer::CreateTRender()
 {
 	// 005f0780
 	auto renderer = new Toshi::TRenderDX11();
-
 	renderer->Create();
-	renderer->Update();
 
 	TTODO("The whole function");
 

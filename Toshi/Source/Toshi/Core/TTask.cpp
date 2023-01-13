@@ -6,39 +6,34 @@ namespace Toshi
 	TTask::TTask()
 	{
 		m_Unk1 = nullptr;
-		m_UserData = nullptr;
-		m_SubTask = nullptr;
-		m_Prev = this;
-		m_Next = this;
-		m_TaskTree = nullptr;
-		m_Scheduler = nullptr;
-		m_State = 0;
+
 	}
 	
 	TTask::~TTask()
 	{
-		if (m_Scheduler)
+		TASSERT(IsLinked() == TFALSE);
+		/*if (m_Scheduler)
 		{
 			m_Scheduler->DeleteTask();
-		}
+		}*/
 	}
 
 	bool TTask::Create()
 	{
+		TASSERT(IsCreated() == TFALSE);
+
 		if (!IsCreated())
 		{
-			bool success = OnCreate();
-			
-			if (!success)
+			if (!OnCreate())
 			{
-				// couldn't create TTask so destroying it
 				OnDestroy();
-				// FUN_100253f0(this->field5_0x8,(int)this,'\0');
+				m_Tree->Remove(this, false);
 				Delete();
 
 				return false;
 			}
 
+			auto oldState = m_State;
 			m_State |= State_Created;
 			Activate(true);
 		}
@@ -48,13 +43,30 @@ namespace Toshi
 	
 	bool TTask::CreateFailed()
 	{
+		TASSERT(IsCreated() == TFALSE);
+
 		if (!IsCreated())
 		{
-			// FUN_100253f0(this->field5_0x8,(int)this,'\0');
+			m_Tree->Remove(this, false);
 			Delete();
 		}
 
 		return false;
+	}
+
+	bool TTask::Reset()
+	{
+		TTask* firstAttached = Attached();
+		TTask* node = firstAttached;
+		bool result = true;
+
+		while (node != TNULL && node != firstAttached)
+		{
+			result &= node->Reset();
+			node = node->Next();
+		}
+
+		return result;
 	}
 
 	bool TTask::OnCreate()
@@ -67,9 +79,9 @@ namespace Toshi
 		return true;
 	}
 
-	bool TTask::OnUpdateKernelPaused(float deltaTime)
+	void TTask::OnPreDestroy()
 	{
-		return true;
+
 	}
 
 	void TTask::OnDestroy()
@@ -77,12 +89,12 @@ namespace Toshi
 		
 	}
 
-	bool TTask::OnChildDying()
+	bool TTask::OnChildDying(TTask* child)
 	{
 		return true;
 	}
 
-	void TTask::OnChildDied()
+	void TTask::OnChildDied(TClass* pClass, TTask* deletedTask)
 	{
 
 	}

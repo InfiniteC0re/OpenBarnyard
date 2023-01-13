@@ -9,10 +9,96 @@ namespace Toshi
 		return new TRenderContextDX11(*this);
 	}
 
+	TRenderAdapter* TD3DAdapter::Mode::GetAdapter() const
+	{
+		return m_Adapter;
+	}
+
+	size_t TD3DAdapter::Mode::GetModeIndex() const
+	{
+		return m_ModeIndex;
+	}
+
+	uint32_t TD3DAdapter::Mode::GetWidth() const
+	{
+		return m_Description.Width;
+	}
+
+	uint32_t TD3DAdapter::Mode::GetHeight() const
+	{
+		return m_Description.Height;
+	}
+
+	bool TD3DAdapter::Mode::SomeCheck1() const
+	{
+		DXGI_FORMAT format = m_Description.Format;
+
+		return (
+			format == DXGI_FORMAT_B8G8R8X8_UNORM ||
+			format == DXGI_FORMAT_R8G8B8A8_UNORM
+		);
+	}
+
+	bool TD3DAdapter::Mode::SomeCheck2() const
+	{
+		DXGI_FORMAT format = m_Description.Format;
+
+		return (
+			format == DXGI_FORMAT_B5G6R5_UNORM   ||
+			format == DXGI_FORMAT_B5G5R5A1_UNORM ||
+			format == DXGI_FORMAT_B4G4R4A4_UNORM
+		);
+	}
+
+	float TD3DAdapter::Mode::GetRefreshRate() const
+	{
+		return m_Description.RefreshRate.Numerator / m_Description.RefreshRate.Denominator;
+	}
+
+	TRenderAdapter::Mode::Device* TD3DAdapter::Mode::GetDevice(int device)
+	{
+		TASSERT(device > 0 && device < NUMSUPPORTEDDEVICES);
+		return &m_Devices[device];
+	}
+
+	void TD3DAdapter::Mode::GetDisplayMode(IDXGIOutput* dxgiOutput, DXGI_MODE_DESC* modeDesc)
+	{
+		DXGI_OUTPUT_DESC outputDesc;
+		dxgiOutput->GetDesc(&outputDesc);
+
+		MONITORINFO monitorInfo;
+		monitorInfo.cbSize = sizeof(monitorInfo);
+		GetMonitorInfoA(outputDesc.Monitor, &monitorInfo);
+
+		CHAR displayName[32];
+		DEVMODEA displaySettings;
+		displaySettings.dmSize = sizeof(displaySettings);
+		EnumDisplaySettingsA(displayName, -1, &displaySettings);
+
+		bool defaultRefreshRate = false;
+
+		if (displaySettings.dmDisplayFrequency == 1 || displaySettings.dmDisplayFrequency == 0)
+		{
+			defaultRefreshRate = true;
+			displaySettings.dmDisplayFrequency = 0;
+		}
+
+		DXGI_MODE_DESC matchMode;
+		matchMode.Width = displaySettings.dmPelsWidth;
+		matchMode.Height = displaySettings.dmPelsHeight;
+		matchMode.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		matchMode.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
+		matchMode.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
+		matchMode.RefreshRate.Denominator = (defaultRefreshRate == true) ? 0 : 1;
+		matchMode.RefreshRate.Numerator = displaySettings.dmDisplayFrequency;
+
+		dxgiOutput->FindClosestMatchingMode(&matchMode, modeDesc, NULL);
+	}
+
 	bool TRenderDX11::Create(LPCSTR a_name)
 	{
 		// 006a5e30
-		TASSERT(TFALSE == IsCreated(), "TRenderDX11 already created");
+		TASSERT(TFALSE == IsCreated());
 		bool bResult = TRender::Create();
 
 		if (bResult)
@@ -92,32 +178,90 @@ namespace Toshi
 		
 		if (SUCCEEDED(hr))
 		{
-			IDXGIAdapter1* pAdapter;
+			IDXGIAdapter* dxgiAdapter;
 
-			while (pFactory->EnumAdapters1(0, &pAdapter) != DXGI_ERROR_NOT_FOUND)
+			int adapterIndex = 0;
+			HRESULT enumResult = pFactory->EnumAdapters(adapterIndex, &dxgiAdapter);
+			
+			while (enumResult != DXGI_ERROR_NOT_FOUND)
 			{
-				TTODO("Implement iterating through adapters");
-				return;
+				TD3DAdapter* d3dAdapter = new TD3DAdapter;
+				auto adapterDesc = d3dAdapter->GetAdapterDesc();
+				dxgiAdapter->GetDesc(adapterDesc);
+				
+				d3dAdapter->SetAdapterIndex(adapterIndex);
+				d3dAdapter->UpdateAdapterInfo();
+
+				TOSHI_CORE_TRACE(L"Adapter: {0}", adapterDesc->Description);
+				TOSHI_CORE_TRACE("Vendor: {0}, Device: {1}, Revision: {2}", adapterDesc->VendorId, adapterDesc->DeviceId, adapterDesc->Revision);
+				TOSHI_CORE_TRACE("DedicatedSystemMemory: {0:.2f} MB", (double)adapterDesc->DedicatedSystemMemory / 1024 / 1024);
+				TOSHI_CORE_TRACE("SharedSystemMemory: {0:.2f} MB", (double)adapterDesc->SharedSystemMemory / 1024 / 1024);
+				d3dAdapter->EnumerateOutputs(this, dxgiAdapter);
+
+				GetAdapterList()->InsertTail(d3dAdapter);
+
+				dxgiAdapter->Release();
+				enumResult = pFactory->EnumAdapters(++adapterIndex, &dxgiAdapter);
 			}
 		}
 	}
 
-	void TRenderDX11::Update()
+	void TD3DAdapter::EnumerateOutputs(TRenderDX11* render, IDXGIAdapter* dxgiAdapter)
 	{
-		MSG msg;
-		if (!m_bIsEnabled && PeekMessageA(&msg, NULL, 0, 0, 0) == TRUE)
+		IDXGIOutput* dxgiOutput;
+		bool shouldSaveMonitorData = true;
+		GetModeList()->DeleteAll();
+
+		int displayIndex = 0;
+		HRESULT enumResult = dxgiAdapter->EnumOutputs(displayIndex, &dxgiOutput);
+
+		DXGI_MODE_DESC modeDesc;
+		DXGI_OUTPUT_DESC outputDesc;
+		while (enumResult != DXGI_ERROR_NOT_FOUND)
 		{
-			while (GetMessageA(&msg, NULL, 0, 0) != FALSE)
+			dxgiOutput->GetDesc(&outputDesc);
+			LONG deviceHeight = outputDesc.DesktopCoordinates.bottom - outputDesc.DesktopCoordinates.top;
+			LONG deviceWidth = outputDesc.DesktopCoordinates.right - outputDesc.DesktopCoordinates.left;
+		
+			TOSHI_CORE_TRACE(L"Display[{0}]: {1} ({2}x{3})", displayIndex, outputDesc.DeviceName, deviceWidth, deviceHeight);
+			
+			UINT numModes;
+			dxgiOutput->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_ENUM_MODES_INTERLACED, &numModes, NULL);
+			
+			if (numModes > 0)
 			{
-				TranslateMessage(&msg);
-				DispatchMessageA(&msg);
-				if (PeekMessageA(&msg, NULL, 0, 0, 0) == FALSE)
+				TD3DAdapter::Mode::GetDisplayMode(dxgiOutput, &modeDesc);
+
+				if (shouldSaveMonitorData == true)
 				{
-					return;
+					m_Mode.SetAdapter(this);
+					m_Mode.SetDescription(modeDesc);
+					m_Mode.SetName(outputDesc.DeviceName);
+					shouldSaveMonitorData = false;
 				}
+
+				DXGI_MODE_DESC* descriptions = new DXGI_MODE_DESC[numModes];
+				DXGI_MODE_DESC* currentDesc = descriptions;
+
+				dxgiOutput->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_ENUM_MODES_INTERLACED, &numModes, descriptions);
+				
+				for (size_t i = 0; i < numModes; i++)
+				{
+					Mode* mode = new Mode;
+					mode->SetModeIndex(i);
+					mode->SetDisplayIndex(displayIndex);
+					mode->SetAdapter(this);
+					mode->SetDescription(currentDesc[i]);
+					mode->SetName(outputDesc.DeviceName);
+
+					GetModeList()->InsertTail(mode);
+				}
+
+				delete[] descriptions;
 			}
 
-			m_bIsEnabled = true;
+			displayIndex += 1;
+			enumResult = dxgiAdapter->EnumOutputs(displayIndex, &dxgiOutput);
 		}
 	}
 }

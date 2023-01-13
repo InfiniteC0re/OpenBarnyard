@@ -13,7 +13,7 @@ public:
 	~AApplication() { }
 
 	virtual bool OnCreate(int argc, char** argv) override;
-	virtual bool OnUpdate() override;
+	virtual bool OnUpdate(float deltaTime) override;
 
 private:
 	ARenderer* m_Renderer; // 0x34

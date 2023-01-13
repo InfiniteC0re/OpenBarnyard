@@ -3,7 +3,9 @@
 //#include "Toshi/Xui/TXUIResource.h"
 #include "AAssetStreaming.h"
 #include "Locale/ALocaleManager.h"
-#include <AExampleClass.h>
+#include "AExampleClass.h"
+
+#include TOSHI_MULTIRENDER(TRender)
 
 static Toshi::TSound m_soundSystem = Toshi::TSound();
 
@@ -29,6 +31,7 @@ bool AApplication::OnCreate(int argc, char** argv)
 	bool bResult = m_soundSystem.Create(mempool, poolSize, -1, -1, 2);
 	TASSERT(TTRUE == bResult);
 
+	TApplication::OnCreate(argc, argv);
 	//ALevelInformation info = ALevelInformation();
 	//info.Create("C:\\Program Files (x86)\\Steam\\steamapps\\common\\de Blob\\Data\\Levels.trb");
 
@@ -38,9 +41,9 @@ bool AApplication::OnCreate(int argc, char** argv)
 	return true;
 }
 
-bool AApplication::OnUpdate()
+bool AApplication::OnUpdate(float deltaTime)
 {
-	TOSHI_INFO("AApplication::OnUpdate");
-
+	auto window = static_cast<Toshi::TRenderDX11*>(Toshi::TRender::GetSingleton())->GetMSWindow();
+	window->Update();
 	return true;
 }

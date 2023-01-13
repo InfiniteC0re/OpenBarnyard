@@ -82,12 +82,12 @@ namespace Toshi
 
 		TResource* GetLastResource() const
 		{
-			return TNode::Last();
+			return TNode::Prev();
 		}
 
 		TNodeTree<TResource>* GetTree()
 		{
-			return TNode::m_Root;
+			return TNode::m_Tree;
 		}
 
 		uint32_t GetUId() const

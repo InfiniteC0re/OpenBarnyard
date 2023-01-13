@@ -14,10 +14,10 @@ namespace Toshi
 		virtual void Delete() { delete this; };
 		virtual ~TObject() = default;
 
-		inline static TObject* CreateTObject() { return nullptr; } 
-		inline static TObject* CreateTObjectInPlace(void* ptr) { return nullptr; }
+		static TObject* CreateTObject() { return nullptr; } 
+		static TObject* CreateTObjectInPlace(void* ptr) { return nullptr; }
 
-		inline bool IsExactly(TClass* toCompare) { return GetClass() == toCompare; }
+		bool IsExactly(TClass* toCompare) { return GetClass() == toCompare; }
 	
 	public:
 		static constinit TClass s_Class;
@@ -27,21 +27,6 @@ namespace Toshi
 	class TGenericClassDerived : public Parent
 	{
 	public:
-		virtual const char* GetName() const
-		{
-			return s_Class.GetName();
-		}
-
-		virtual uint16_t GetVersionMajor() const
-		{
-			return s_Class.GetVersionMajor();
-		}
-
-		virtual uint16_t GetVersionMinor() const
-		{
-			return s_Class.GetVersionMinor();
-		}
-
 		virtual TClass* GetClass()
 		{
 			return std::addressof(s_Class);

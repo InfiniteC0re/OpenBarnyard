@@ -19,6 +19,25 @@ namespace Toshi
 		m_IsEnabled = false;
 	}
 
+	void TMSWindow::Update()
+	{
+		MSG msg;
+		if (!m_Flag1 && PeekMessageA(&msg, NULL, 0, 0, 0) == TRUE)
+		{
+			while (GetMessageA(&msg, NULL, 0, 0) != FALSE)
+			{
+				TranslateMessage(&msg);
+				DispatchMessageA(&msg);
+				if (PeekMessageA(&msg, NULL, 0, 0, 0) == FALSE)
+				{
+					return;
+				}
+			}
+
+			m_Flag1 = true;
+		}
+	}
+
 	void TMSWindow::Destroy()
 	{
 		if (m_HWND != NULL)
@@ -27,19 +46,19 @@ namespace Toshi
 			{
 				SetThreadExecutionState(ES_CONTINUOUS);
 				ShowCursor(true);
-				TSystemManager::GetSingleton()->SetPaused(true);
+				TSystemManager::GetSingleton()->Pause(true);
 				SystemParametersInfoA(SPI_GETSTICKYKEYS, sizeof(STICKYKEYS), &ms_StickyKeys, 0);
 				ms_bIsFocused = false;
 			}
 
 			DestroyWindow(m_HWND);
-			m_IsWindowed = true;
+			m_Flag1 = true;
 			m_HWND = NULL;
 		}
 
 		if (m_Render != TNULL)
 		{
-			UnregisterClassA(m_Render->GetName(), m_ModuleHandle);
+			UnregisterClassA(TMSWindow::GetClassStatic()->GetName(), m_ModuleHandle);
 			m_Render = TNULL;
 		}
 	}
@@ -55,7 +74,7 @@ namespace Toshi
 		wndClass.hIcon = LoadIconA(m_ModuleHandle, MAKEINTRESOURCEA(IDI_ICON1));
 		wndClass.hInstance = m_ModuleHandle;
 		wndClass.lpfnWndProc = (WNDPROC)WndProc;
-		wndClass.lpszClassName = m_Render->GetName();
+		wndClass.lpszClassName = TMSWindow::GetClassStatic()->GetName();
 		wndClass.style = CS_VREDRAW | CS_HREDRAW;
 		wndClass.cbWndExtra = 4;
 		wndClass.hCursor = LoadCursorA(NULL, MAKEINTRESOURCEA(IDC_ARROW));
@@ -69,7 +88,7 @@ namespace Toshi
 			dwStyle = WS_POPUP | WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU;
 		}
 
-		m_HWND = CreateWindowExA(0, m_Render->GetName(), title, dwStyle, 100, 100, 0, 0, NULL, NULL, m_ModuleHandle, this);
+		m_HWND = CreateWindowExA(0, TMSWindow::GetClassStatic()->GetName(), title, dwStyle, 100, 100, 0, 0, NULL, NULL, m_ModuleHandle, this);
 		
 		if (m_HWND == NULL)
 		{
@@ -83,7 +102,7 @@ namespace Toshi
 		if (GetForegroundWindow() != m_HWND)
 		{
 			TOSHI_INFO("Not foreground window, Pausing Systems!\n");
-			TSystemManager::GetSingleton()->SetPaused(true);
+			TSystemManager::GetSingleton()->Pause(true);
 		}
 
 		return true;
@@ -116,6 +135,7 @@ namespace Toshi
 					else if (uMsg == WM_SYSCOMMAND) {
 						if (wParam == SC_CLOSE) {
 							TMSWindow* window = reinterpret_cast<TMSWindow*>(GetWindowLongA(hWnd, GWL_USERDATA));
+							
 							/*if ((window != 0) && (*(char*)(window + 0x21) != '\0')) {
 								*(undefined*)(window + 0x22) = 1;
 								FUN_006b17e0(&local_39);
@@ -191,7 +211,7 @@ namespace Toshi
 			}
 			*/
 			TMSWindow* window = reinterpret_cast<TMSWindow*>(GetWindowLongA(hWnd, GWL_USERDATA));
-			if (window->IsWindowed()) return 0;
+			if (window->Flag1()) return 0;
 			if (!window->IsEnabled())
 			{
 				// if (DAT_009a46f0 == (void*)0x0) return 0;

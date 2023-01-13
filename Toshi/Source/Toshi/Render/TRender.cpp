@@ -15,10 +15,6 @@ namespace Toshi
 		m_Unk2 = 0;
 		m_pRenderContext = TNULL;
 		m_Unk5 = 0;
-
-		// Dummy resource??
-		m_DummyResource = TNULL;
-		m_Resources = TNodeTree<TResource>(&m_DummyResource);
 		m_HasDyingResources = false;
 
 		// Initialize singletons
@@ -119,7 +115,7 @@ namespace Toshi
 		}
 	}
 
-	TResource* TRender::CreateResource(TClass* pClass, char* name, TResource* parent)
+	TResource* TRender::CreateResource(TClass* pClass, char* name, TNodeTree<TResource>::TNode* parent)
 	{
 		TASSERT(pClass != TNULL, "TResource class is TNULL");
 		TASSERT(pClass->IsA(TGetClass(TResource)), "TResource class is TNULL");
@@ -133,11 +129,10 @@ namespace Toshi
 
 			if (parent == TNULL)
 			{
-				TIMPLEMENT_D("wtf is this?");
-				parent = (TResource*)&m_DummyResource;
+				parent = m_Resources.GetRoot();
 			}
 
-			m_Resources.InsertNode(parent, pResource);
+			m_Resources.Insert(parent, pResource);
 			pResource->SetUId(m_ResourceCount);
 			pResource->SetRenderer(this);
 			pResource->SetName(name);
@@ -156,9 +151,9 @@ namespace Toshi
 		if (file != TNULL)
 		{
 			file->CPrintf("-\r\n");
-			char const* name = GetName();
-			uint16_t versionMajor = GetVersionMajor();
-			uint16_t versionMinor = GetVersionMinor();
+			char const* name = GetClass()->GetName();
+			uint16_t versionMajor = GetClass()->GetVersionMajor();
+			uint16_t versionMinor = GetClass()->GetVersionMinor();
 			file->CPrintf("Toshi rendering interface through object[\"%s\"] Version : %u.%u\r\n", name, versionMajor, versionMinor);
 			file->CPrintf("-\r\n");
 

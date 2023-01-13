@@ -39,13 +39,28 @@ namespace Toshi
 		OnDestroy();
 	}
 
+	bool TApplication::Execute()
+	{
+		TASSERT(TApplication::IsCreated() == TTRUE);
+		TSystemManager* pSystemManager = TSystemManager::GetSingleton();
+		
+		bool updateResult = true;
+		while (updateResult && !IsDestroyed())
+		{
+			pSystemManager->Update();
+			updateResult = OnUpdate(pSystemManager->GetTimer()->GetDelta());
+		}
+
+		return OnDestroy();
+	}
+
 	bool TApplication::OnCreate(int argc, char** argv)
 	{
 		m_Flags |= TApplicationFlag_Created;
 		return true;
 	}
 
-	bool TApplication::OnUpdate()
+	bool TApplication::OnUpdate(float deltaTime)
 	{
 		return (m_Flags & TApplicationFlag_Destroyed) == 0;
 	}
