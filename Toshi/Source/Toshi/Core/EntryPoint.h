@@ -4,6 +4,7 @@ extern Toshi::TApplication* Toshi::CreateApplication(int argc, char** argv);
 
 #ifdef TOSHI_PLATFORM_WINDOWS
 #include <Windows.h>
+#include "../Utils/TRegion.h"
 
 #ifndef TOSHI_DIST
 #define TOSHI_ENTRY int main(int argc, char** argv)
@@ -37,14 +38,32 @@ return TMain(__argc, __argv);
 #endif
 
 #ifndef TOSHI_TMEMORY_SIZE
-#define TOSHI_TMEMORY_SIZE 64 * 1024 * 1024
+#define TOSHI_TMEMORY_SIZE 64 * 1024 * 1024 // deblob says 0x28000000
 #endif
+
+typedef void (WINAPI* RtlGetVersion_FUNC) (OSVERSIONINFOEX*);
 
 TOSHI_ENTRY
 {
+	Toshi::TRegion::SetRegion(0);
 	Toshi::TMemory memorySettings(TOSHI_TMEMORY_FLAGS, TOSHI_TMEMORY_SIZE);
 	Toshi::TUtil::ToshiCreate(0, 0, memorySettings);
-	
+	TOSHI_INFO("Build Version {0}", 0.28);
+
+	OSVERSIONINFOEX osVersionInfo;
+	::ZeroMemory(&osVersionInfo, sizeof(OSVERSIONINFOEX));
+	osVersionInfo.dwOSVersionInfoSize = sizeof(osVersionInfo);
+
+	RtlGetVersion_FUNC func = (RtlGetVersion_FUNC)GetProcAddress(GetModuleHandleW(L"ntdll.dll"), "RtlGetVersion");
+	if (func != 0) {
+		func(&osVersionInfo);
+	}
+
+	LPTSTR cmd = GetCommandLine();
+
+	TOSHI_INFO(L"Command Line: {0}", cmd);
+	//TOSHI_INFO("OS Name: {0}", osVersionInfo.);
+
 	TOSHI_APP
 
 	// spdlog needs to be replaced with own Log system
