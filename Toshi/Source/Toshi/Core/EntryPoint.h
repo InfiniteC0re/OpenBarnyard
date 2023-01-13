@@ -42,7 +42,40 @@ return TMain(__argc, __argv);
 #define TOSHI_TMEMORY_SIZE 64 * 1024 * 1024 // deblob says 0x28000000
 #endif
 
+const char* s_cOsNames[11] =
+{
+	"Windows 10",
+	"Windows Server 2016",
+	"Windows 8.1",
+	"Windows Server 2012 R2",
+	"Windows 8",
+	"Windows Server 2012",
+	"Windows 7",
+	"Windows Server 2008 R2",
+	"Windows Server 2008",
+	"Windows Vista",
+	"unknown"
+};
+
 typedef void (WINAPI* RtlGetVersion_FUNC) (OSVERSIONINFOEX*);
+
+//const char* GetOSName()
+//{
+//	OSVERSIONINFOEX osVersionInfo;
+//	::ZeroMemory(&osVersionInfo, sizeof(OSVERSIONINFOEX));
+//	osVersionInfo.dwOSVersionInfoSize = sizeof(osVersionInfo);
+//
+//	RtlGetVersion_FUNC func = (RtlGetVersion_FUNC)GetProcAddress(GetModuleHandleW(L"ntdll.dll"), "RtlGetVersion");
+//	if (func != 0) {
+//		func(&osVersionInfo);
+//	}
+//
+//	int index = 0;
+//
+//	//while (osVersionInfo.dwMajorVersion != 0xA || osVersionInfo.dwMinorVersion != 0 || )
+//	return s_cOsNames[0];
+//}
+
 
 TOSHI_ENTRY
 {
@@ -62,11 +95,22 @@ TOSHI_ENTRY
 
 	LPTSTR cmd = GetCommandLine();
 
-	TOSHI_INFO(L"Command Line: {0}", cmd);
-	//TOSHI_INFO("OS Name: {0}", osVersionInfo.);
+	TOSHI_INFO(L"Command Line: {}", cmd);
+	TOSHI_INFO("OS Name: {}", "Windows 10");
+	TOSHI_INFO(L"OS Version: {}.{} Build:{} {}", osVersionInfo.dwMajorVersion, osVersionInfo.dwMinorVersion, osVersionInfo.dwBuildNumber, osVersionInfo.szCSDVersion);
+
+	HANDLE hMutex = CreateMutexA(NULL, true, "BLOB07");
+	if (GetLastError() == ERROR_ALREADY_EXISTS)
+	{
+		MessageBoxA(NULL, "Game is already running", "de Blob", MB_OK);
+		return 0;
+	}
+
+	if (IsDebuggerPresent()) TIMPLEMENT_D("SetUnhandledExceptionFilter(FUN_00576760);");
+	// de blob does steam init
 
 	TOSHI_APP
-
+		ReleaseMutex(hMutex);
 	// spdlog needs to be replaced with own Log system
 	// because it doesn't work fine with custom allocators
 	// Toshi::TUtil::ToshiDestroy();
