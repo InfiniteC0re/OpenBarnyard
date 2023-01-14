@@ -100,6 +100,11 @@ namespace Toshi
 			return &m_AdapterDesc;
 		}
 
+		Mode* GetMode()
+		{
+			return &m_Mode;
+		}
+
 	private:
 		DXGI_ADAPTER_DESC m_AdapterDesc; // 0x20
 		void* m_Unk1;                    // 0x138
@@ -138,12 +143,16 @@ namespace Toshi
 		TMSWindow* GetMSWindow() { return &m_Window; }
 		
 	public:
-		virtual bool CreateDisplay(DisplayParams* params) override { return true; }
+		virtual bool CreateDisplay(DisplayParams* params) override;
 		virtual bool DestroyDisplay() override { return true; }
 		virtual void* GetCurrentDevice() override { return TNULL; }
 		virtual DisplayParams* GetCurrentDisplayParams() override { return TNULL; }
 		virtual bool Create() override { return Create("de Blob"); }
 		
+		virtual bool RecreateDisplay(DisplayParams* pDisplayParams);
+		virtual void ShowDeviceError();
+		virtual void ShowDisplayError();
+
 		bool Create(LPCSTR a_name);
 
 		static const char* GetFeatureLevel(D3D_FEATURE_LEVEL a_featureLevel);
@@ -155,6 +164,7 @@ namespace Toshi
 		ID3D11DeviceContext* m_pDeviceContext; // 0x68C
 		ID3D11Device* m_pDevice;               // 0x690
 		HACCEL m_hAccel;                       // 0x694
+		DisplayParams m_DisplayParams;         // 0x698
 		TMSWindow m_Window;                    // 0x6B0
 	};
 }

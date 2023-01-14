@@ -70,7 +70,7 @@ namespace Toshi
 		monitorInfo.cbSize = sizeof(monitorInfo);
 		GetMonitorInfoA(outputDesc.Monitor, &monitorInfo);
 
-		CHAR displayName[32];
+		CHAR displayName[32] = { 0 };
 		DEVMODEA displaySettings;
 		displaySettings.dmSize = sizeof(displaySettings);
 		EnumDisplaySettingsA(displayName, -1, &displaySettings);
@@ -93,6 +93,82 @@ namespace Toshi
 		matchMode.RefreshRate.Numerator = displaySettings.dmDisplayFrequency;
 
 		dxgiOutput->FindClosestMatchingMode(&matchMode, modeDesc, NULL);
+	}
+
+	bool TRenderDX11::CreateDisplay(DisplayParams* pDisplayParams)
+	{
+		TASSERT(IsCreated() == TTRUE);
+		TASSERT(IsDisplayCreated() == TFALSE);
+
+		if (TRender::CreateDisplay() == TFALSE)
+		{
+			ShowDisplayError();
+			return false;
+		}
+
+		m_DisplayParams = *pDisplayParams;
+
+		auto adapterList = GetAdapterList();
+		auto adapter = adapterList->Head()->As<TD3DAdapter>();
+		auto mode = adapter->GetMode();
+
+		if (!m_DisplayParams.m_Unk5 && !m_DisplayParams.m_Unk6)
+		{
+			m_DisplayParams.m_Width = mode->GetWidth();
+			m_DisplayParams.m_Height = mode->GetHeight();
+		}
+
+		IDXGIDevice* pDevice;
+		IDXGIAdapter* pAdapter;
+		IDXGIFactory1* pFactory1;
+		m_pDevice->QueryInterface(__uuidof(IDXGIDevice), (void**)&pDevice);
+		pDevice->GetAdapter(&pAdapter);
+		pAdapter->GetParent(__uuidof(IDXGIFactory1), (void**)&pFactory1);
+
+		DisplayParams* pCurrDisplayParams = GetCurrentDisplayParams();
+
+		DXGI_MODE_DESC foundMode;
+		if (pCurrDisplayParams->m_Unk5 == TFALSE)
+		{
+			IDXGIOutput* pOutput;
+			pAdapter->EnumOutputs(0, &pOutput);
+
+			TD3DAdapter::Mode::GetDisplayMode(pOutput, &foundMode);
+			m_DisplayParams.m_Width = foundMode.Width;
+			m_DisplayParams.m_Height = foundMode.Height;
+		}
+
+		pAdapter->Release();
+		pDevice->Release();
+
+		return true;
+	}
+
+	bool TRenderDX11::RecreateDisplay(DisplayParams* pDisplayParams)
+	{
+		return false;
+	}
+
+	void TRenderDX11::ShowDeviceError()
+	{
+		CHAR caption[1024] = { 0 };
+		CHAR text[1024] = { 0 };
+
+		GetPrivateProfileStringA("Setup", "IDS_D3DDEVICEERRORTITLE", "Initialization failure", caption, sizeof(caption), ".\\Setup.ini");
+		GetPrivateProfileStringA("Setup", "IDS_D3DDEVICEERROR", "Failed to create D3D11 device", caption, sizeof(caption), ".\\Setup.ini");
+
+		MessageBoxA(NULL, text, caption, MB_OK);
+	}
+
+	void TRenderDX11::ShowDisplayError()
+	{
+		CHAR caption[1024] = { 0 };
+		CHAR text[1024] = { 0 };
+
+		GetPrivateProfileStringA("Setup", "IDS_D3DDISPLAYERRORTITLE", "Initialization failure", caption, sizeof(caption), ".\\Setup.ini");
+		GetPrivateProfileStringA("Setup", "IDS_D3DDISPLAYERROR", "Failed to create the display. Please run the Barnyard setup program and reconfigure", text, sizeof(text), ".\\Setup.ini");
+		
+		MessageBoxA(NULL, text, caption, MB_OK);
 	}
 
 	bool TRenderDX11::Create(LPCSTR a_name)
