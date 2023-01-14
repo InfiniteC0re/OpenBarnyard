@@ -4,6 +4,7 @@
 #include "AAssetStreaming.h"
 #include "Locale/ALocaleManager.h"
 #include "AExampleClass.h"
+#include "Toshi2/T2Vector.h"
 
 #include TOSHI_MULTIRENDER(TRender)
 
@@ -14,8 +15,36 @@ Toshi::TApplication* Toshi::CreateApplication(int argc, char** argv)
 	return new AApplication();
 }
 
+struct Vec2
+{
+	Vec2()
+	{
+		TOSHI_INFO("Vec2()");
+		x = 0;
+		y = 0;
+	}
+
+	Vec2(float X, float Y)
+	{
+		TOSHI_INFO("Vec2(x, y)");
+		x = X;
+		y = Y;
+	}
+
+	~Vec2()
+	{
+		TOSHI_INFO("~Vec2()");
+		x = -1;
+		y = -1;
+	}
+
+	float x, y;
+};
+
 bool AApplication::OnCreate(int argc, char** argv)
 {
+	
+
 	TOSHI_INFO("Starting Blob...");
 
 	ARenderer::CreateSingleton();
