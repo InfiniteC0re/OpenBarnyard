@@ -113,29 +113,40 @@ namespace Toshi
 		TMSWindow* window = reinterpret_cast<TMSWindow*>(GetWindowLongA(hWnd, GWL_USERDATA));
 
 		bool bWindowCreated = false;
+		auto pDisplayParams = Toshi::TRender::GetSingleton()->GetCurrentDisplayParams();
 
-		if (window == NULL)
+		if (window == NULL || pDisplayParams->m_Unk6 != false)
 		{
-
+			bWindowCreated = false;
 		}
 		else
 		{
 			bWindowCreated = true;
+
+			if (pDisplayParams->m_Unk5 != false)
+			{
+				bWindowCreated = false;
+			}
 		}
 
-		if (WM_ACTIVATEAPP < uMsg) {
-			if (uMsg < WM_LBUTTONDOWN) {
-				if (uMsg != WM_MOUSEMOVE) {
-					if (uMsg == WM_SETCURSOR) {
-						if (lParam == 1) {
+		if (WM_ACTIVATEAPP < uMsg)
+		{
+			if (uMsg < WM_LBUTTONDOWN)
+			{
+				if (uMsg != WM_MOUSEMOVE)
+				{
+					if (uMsg == WM_SETCURSOR)
+					{
+						if (lParam == 1)
+						{
 							SetCursor(0);
 							return 1;
 						}
 					}
-					else if (uMsg == WM_SYSCOMMAND) {
-						if (wParam == SC_CLOSE) {
-							TMSWindow* window = reinterpret_cast<TMSWindow*>(GetWindowLongA(hWnd, GWL_USERDATA));
-							
+					else if (uMsg == WM_SYSCOMMAND)
+					{
+						if (wParam == SC_CLOSE)
+						{
 							/*if ((window != 0) && (*(char*)(window + 0x21) != '\0')) {
 								*(undefined*)(window + 0x22) = 1;
 								FUN_006b17e0(&local_39);
@@ -144,20 +155,21 @@ namespace Toshi
 						else
 						{
 							if ((wParam != SC_TASKLIST) && (wParam != SC_MINIMIZE)) return DefWindowProcA(hWnd, uMsg, wParam, lParam);
-							TMSWindow* window = reinterpret_cast<TMSWindow*>(GetWindowLongA(hWnd, GWL_USERDATA));
+
 							if (window->m_IsEnabled)
 							{
 								ShowWindow(hWnd, SW_MINIMIZE);
 								return 0;
 							}
 						}
+
 						return 0;
 					}
+
 					return DefWindowProcA(hWnd, uMsg, wParam, lParam);
 				}
 				else
-				{
-					TMSWindow* window = reinterpret_cast<TMSWindow*>(GetWindowLongA(hWnd, GWL_USERDATA));
+				{					
 					if (window->m_IsEnabled)
 					{
 						if (!window->m_bUnk)
@@ -194,7 +206,6 @@ namespace Toshi
 			else
 			{
 				if (uMsg != WM_MOUSELEAVE) return DefWindowProcA(hWnd, uMsg, wParam, lParam);
-				TMSWindow* window = reinterpret_cast<TMSWindow*>(GetWindowLongA(hWnd, GWL_USERDATA));
 				window->m_bUnk = false;
 				window->m_bUnk2 = false;
 				ShowCursor(true);
@@ -210,8 +221,11 @@ namespace Toshi
 				ClipCursor((RECT*)local_18);
 			}
 			*/
-			TMSWindow* window = reinterpret_cast<TMSWindow*>(GetWindowLongA(hWnd, GWL_USERDATA));
-			if (window->Flag1()) return 0;
+			if (window->Flag1())
+			{
+				return 0;
+			}
+
 			if (!window->IsEnabled())
 			{
 				// if (DAT_009a46f0 == (void*)0x0) return 0;
@@ -258,11 +272,12 @@ namespace Toshi
 			ExitProcess(1);
 		case WM_SIZE:
 			if (bWindowCreated)
-			GetWindowRect(hWnd, &rect);
-			ClipCursor(&rect);
-			return DefWindowProcA(hWnd, uMsg, wParam, lParam);
+			{
+				GetWindowRect(hWnd, &rect);
+				ClipCursor(&rect);
+				return DefWindowProcA(hWnd, uMsg, wParam, lParam);
+			}
 		case WM_ACTIVATE:
-
 			if (LOWORD(wParam) == WA_ACTIVE || LOWORD(wParam) == WA_CLICKACTIVE)
 			{
 				if (ms_bIsFocused != true)
@@ -274,10 +289,7 @@ namespace Toshi
 
 					SystemParametersInfoA(SPI_GETSTICKYKEYS, sizeof(STICKYKEYS), &ms_StickyKeys, 0);
 
-					STICKYKEYS newStickyKeys{ sizeof(STICKYKEYS) , 0};
-					newStickyKeys.cbSize = sizeof(STICKYKEYS);
-					newStickyKeys.dwFlags = 0;
-
+					STICKYKEYS newStickyKeys { sizeof(STICKYKEYS), 0 };
 					SystemParametersInfoA(SPI_SETSTICKYKEYS, sizeof(STICKYKEYS), &newStickyKeys, 0);
 				}
 			}

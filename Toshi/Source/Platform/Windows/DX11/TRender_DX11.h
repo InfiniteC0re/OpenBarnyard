@@ -146,7 +146,7 @@ namespace Toshi
 		virtual bool CreateDisplay(DisplayParams* params) override;
 		virtual bool DestroyDisplay() override { return true; }
 		virtual void* GetCurrentDevice() override { return TNULL; }
-		virtual DisplayParams* GetCurrentDisplayParams() override { return TNULL; }
+		virtual DisplayParams* GetCurrentDisplayParams() override { return &m_DisplayParams; }
 		virtual bool Create() override { return Create("de Blob"); }
 		
 		virtual bool RecreateDisplay(DisplayParams* pDisplayParams);
