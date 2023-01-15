@@ -227,7 +227,7 @@ namespace Toshi
 
     void TXUIResource::PushID(const wchar_t* a_wsID)
     {
-        m_uIDs.Push(a_wsID);
+        m_oIDComparisonStack.Push(a_wsID);
         if (m_uIDStrLength >> 8 != 0)
         {
             m_uIDStr->Concat(_TS16("."), -1);
@@ -237,8 +237,8 @@ namespace Toshi
 
     void TXUIResource::PopID()
     {
-        const wchar_t* top = m_uIDs.Top();
-        m_uIDs.Pop();
+        const wchar_t* top = m_oIDComparisonStack.Top();
+        m_oIDComparisonStack.Pop();
         *m_uIDStr = m_uIDStr->Left(m_uIDStrLength - TStringManager::String16Length(top));
     }
 
