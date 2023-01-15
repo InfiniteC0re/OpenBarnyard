@@ -69,7 +69,7 @@ namespace Toshi
 		rect.right = width;
 		rect.bottom = height;
 		rect.left = 0;
-		rect.bottom = 0;
+		rect.top = 0;
 
 		DWORD dwStyle = IsPopup() ? (s_PopupStyles & (~WS_MINIMIZEBOX)) : 0;
 		
