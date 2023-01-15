@@ -10,13 +10,13 @@ namespace Toshi
 	void TMSWindow::Enable()
 	{
 		TASSERT(m_HWND != TNULL, "HWND is NULL");
-		m_IsEnabled = true;
+		m_IsWindowed = true;
 	}
 
 	void TMSWindow::Disable()
 	{
 		TASSERT(m_HWND != NULL, "HWND is NULL");
-		m_IsEnabled = false;
+		m_IsWindowed = false;
 	}
 
 	void TMSWindow::Update()
@@ -112,7 +112,8 @@ namespace Toshi
 	{
 		TMSWindow* window = reinterpret_cast<TMSWindow*>(GetWindowLongA(hWnd, GWL_USERDATA));
 
-		bool bWindowCreated = false;
+		RECT rect;
+		bool bFlag1, bWindowCreated;
 		auto pDisplayParams = Toshi::TRender::GetSingleton()->GetCurrentDisplayParams();
 
 		if (window == NULL || pDisplayParams->m_Unk6 != false)
@@ -128,6 +129,8 @@ namespace Toshi
 				bWindowCreated = false;
 			}
 		}
+
+		bFlag1 = window != NULL && pDisplayParams->m_Unk6 != false && pDisplayParams->m_Unk5 != false;
 
 		if (WM_ACTIVATEAPP < uMsg)
 		{
@@ -156,7 +159,7 @@ namespace Toshi
 						{
 							if ((wParam != SC_TASKLIST) && (wParam != SC_MINIMIZE)) return DefWindowProcA(hWnd, uMsg, wParam, lParam);
 
-							if (window->m_IsEnabled)
+							if (window->m_IsWindowed)
 							{
 								ShowWindow(hWnd, SW_MINIMIZE);
 								return 0;
@@ -170,7 +173,7 @@ namespace Toshi
 				}
 				else
 				{					
-					if (window->m_IsEnabled)
+					if (window->m_IsWindowed)
 					{
 						if (!window->m_bUnk)
 						{
@@ -215,45 +218,37 @@ namespace Toshi
 
 		if (uMsg == WM_ACTIVATEAPP)
 		{
-			/*
-			if ((bVar3) || (local_39 != '\0')) {
-				GetWindowRect(hWnd, (LPRECT)local_18);
-				ClipCursor((RECT*)local_18);
-			}
-			*/
-			if (window->Flag1())
+			auto pSystemManager = TSystemManager::GetSingletonWeak();
+
+			if (bFlag1 || bWindowCreated)
 			{
-				return 0;
+				GetWindowRect(hWnd, &rect);
+				ClipCursor(&rect);
 			}
 
-			if (!window->IsEnabled())
-			{
-				// if (DAT_009a46f0 == (void*)0x0) return 0;
+			if (window->Flag1()) return 0;
+			if (pSystemManager == TNULL) return 0;
 
-				if (wParam == 1) // This parameter is TRUE if the window is being activated; it is FALSE if the window is being deactivated.
+			if (wParam == TRUE)
+			{
+				// Window was activated
+				if (window->IsWindowed() == false)
 				{
-					//FUN_006616a0(DAT_009a46f0, 0);
-					return 0;
+					pSystemManager->Pause(false);
+				}
+				else
+				{
+					pSystemManager->Pause(false);
 				}
 			}
 			else
 			{
-				if (wParam == 1)
-				{
-					/*
-					if (DAT_009a46f0 != (void*)0x0) {
-						FUN_006616a0(DAT_009a46f0, 0);
-					}
-					*/
-					return 0;
-				}
-				// if (DAT_009a46f0 == (void*)0x0) return 0;
+				// Window was deactivated
+				pSystemManager->Pause(true);
 			}
-			//FUN_006616a0(DAT_009a46f0, 1);
+
 			return 0;
 		}
-
-		RECT rect;
 
 		switch (uMsg)
 		{

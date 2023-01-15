@@ -80,7 +80,7 @@ TOSHI_ENTRY
 	Toshi::TRegion::SetRegion(0);
 	Toshi::TMemory memorySettings(TOSHI_TMEMORY_FLAGS, TOSHI_TMEMORY_SIZE);
 	Toshi::TUtil::ToshiCreate(0, 0, memorySettings);
-	TOSHI_INFO("Build Version {0}", "0.28");
+	TOSHI_TRACE("Build Version {0}", "0.28");
 
 	OSVERSIONINFOEX osVersionInfo = { };
 	osVersionInfo.dwOSVersionInfoSize = sizeof(osVersionInfo);
@@ -101,9 +101,9 @@ TOSHI_ENTRY
 	}
 
 	LPTSTR cmd = GetCommandLine();
-	TOSHI_INFO(L"Command Line: {}", cmd);
-	TOSHI_INFO("OS Name: {}", osName);
-	TOSHI_INFO(L"OS Version: {}.{} Build:{} {}", osVersionInfo.dwMajorVersion, osVersionInfo.dwMinorVersion, osVersionInfo.dwBuildNumber, osVersionInfo.szCSDVersion);
+	TOSHI_TRACE(L"Command Line: {}", cmd);
+	TOSHI_TRACE("OS Name: {}", osName);
+	TOSHI_TRACE(L"OS Version: {}.{} Build:{} {}", osVersionInfo.dwMajorVersion, osVersionInfo.dwMinorVersion, osVersionInfo.dwBuildNumber, osVersionInfo.szCSDVersion);
 
 	HANDLE hMutex = CreateMutexA(NULL, true, "BLOB07");
 	if (GetLastError() == ERROR_ALREADY_EXISTS)

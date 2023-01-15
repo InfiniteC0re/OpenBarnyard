@@ -23,8 +23,8 @@ namespace Toshi
 		bool RegisterWindowClass(TRender* renderer, LPCSTR title);
 		void UnregisterWindowClass();
 
-		bool Flag1() { return m_Flag1; }
-		bool IsEnabled() { return m_IsEnabled; } // Not confirmed
+		bool Flag1() const { return m_Flag1; }
+		bool IsWindowed() const { return m_IsWindowed; }
 		HWND GetHWND() const { return m_HWND; }
 		
 		static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -39,7 +39,7 @@ namespace Toshi
 	private:
 		HWND m_HWND;               // 0x04
 		TRender* m_Render;         // 0x08
-		bool m_IsEnabled;          // this + 0xC ; Name is a guess
+		bool m_IsWindowed;         // 0x0C
 		bool m_Flag1;              // 0x0D
 		HMODULE m_ModuleHandle;    // 0x10
 		bool m_bUnk;               // 0x14
