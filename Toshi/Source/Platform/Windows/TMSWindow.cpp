@@ -63,6 +63,20 @@ namespace Toshi
 		}
 	}
 
+	void TMSWindow::SetPosition(UINT x, UINT y, UINT width, UINT height)
+	{
+		RECT rect;
+		rect.right = width;
+		rect.bottom = height;
+		rect.left = 0;
+		rect.bottom = 0;
+
+		DWORD dwStyle = IsPopup() ? (s_PopupStyles & (~WS_MINIMIZEBOX)) : 0;
+		
+		AdjustWindowRect(&rect, dwStyle, FALSE);
+		SetWindowPos(m_HWND, HWND_TOP, x, y, rect.right - rect.left, rect.bottom - rect.top, 0);
+	}
+
 	bool TMSWindow::RegisterWindowClass(TRender* renderer, LPCSTR title)
 	{
 		UnregisterWindowClass();
@@ -81,13 +95,7 @@ namespace Toshi
 		wndClass.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
 		RegisterClassA(&wndClass);
 
-		DWORD dwStyle = 0;
-
-		if (m_bPopupWindow)
-		{
-			dwStyle = WS_POPUP | WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU;
-		}
-
+		DWORD dwStyle = IsPopup() ? s_PopupStyles : 0;
 		m_HWND = CreateWindowExA(0, TMSWindow::GetClassStatic()->GetName(), title, dwStyle, 100, 100, 0, 0, NULL, NULL, m_ModuleHandle, this);
 		
 		if (m_HWND == NULL)
@@ -116,7 +124,7 @@ namespace Toshi
 		bool bFlag1, bWindowCreated;
 		auto pDisplayParams = Toshi::TRender::GetSingleton()->GetCurrentDisplayParams();
 
-		if (window == NULL || pDisplayParams->m_Unk6 != false)
+		if (window == NULL || pDisplayParams->IsFullscreen != false)
 		{
 			bWindowCreated = false;
 		}
@@ -124,13 +132,13 @@ namespace Toshi
 		{
 			bWindowCreated = true;
 
-			if (pDisplayParams->m_Unk5 != false)
+			if (pDisplayParams->Unk5 != false)
 			{
 				bWindowCreated = false;
 			}
 		}
 
-		bFlag1 = window != NULL && pDisplayParams->m_Unk6 != false && pDisplayParams->m_Unk5 != false;
+		bFlag1 = window != NULL && pDisplayParams->IsFullscreen != false && pDisplayParams->Unk5 != false;
 
 		if (WM_ACTIVATEAPP < uMsg)
 		{
@@ -175,11 +183,12 @@ namespace Toshi
 				{					
 					if (window->m_IsWindowed)
 					{
-						if (!window->m_bUnk)
+						if (!window->m_Flag2)
 						{
 							ShowCursor(false);
-							window->m_bUnk = true;
-							if (!window->m_bUnk2)
+							window->m_Flag2 = true;
+
+							if (!window->m_Flag3)
 							{
 								TRACKMOUSEEVENT tme;
 								tme.cbSize = sizeof(TRACKMOUSEEVENT);
@@ -188,7 +197,7 @@ namespace Toshi
 
 								if (TrackMouseEvent(&tme))
 								{
-									window->m_bUnk2 = true;
+									window->m_Flag3 = true;
 								}
 							}
 						}
@@ -203,16 +212,17 @@ namespace Toshi
 			{
 				if (wParam == DBT_DEVNODES_CHANGED)
 				{
-					// FUN_00680030
+					TTODO("Toshi::TInputDXInterface::FUN_00680030()");
 				}
 			}
 			else
 			{
 				if (uMsg != WM_MOUSELEAVE) return DefWindowProcA(hWnd, uMsg, wParam, lParam);
-				window->m_bUnk = false;
-				window->m_bUnk2 = false;
+				window->m_Flag2 = false;
+				window->m_Flag3 = false;
 				ShowCursor(true);
 			}
+
 			return 1;
 		}
 

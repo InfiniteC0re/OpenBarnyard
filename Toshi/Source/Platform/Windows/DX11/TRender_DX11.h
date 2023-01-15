@@ -38,6 +38,11 @@ namespace Toshi
 
 			static void GetDisplayMode(IDXGIOutput* dxgiOutput, DXGI_MODE_DESC* modeDesc);
 
+			DXGI_MODE_DESC* GetDescription()
+			{
+				return &m_Description;
+			}
+
 			void SetDescription(DXGI_MODE_DESC& description)
 			{
 				m_Description = description;
@@ -160,7 +165,24 @@ namespace Toshi
 	private:
 		void BuildAdapterDatabase();
 
+	public:
+		static UINT s_QualityLevel;
+
 	private:
+		DXGI_SWAP_CHAIN_DESC m_SwapChainDesc;  // 0x61C
+		ID3D11Texture2D* m_Texture2D1;         // 0x658
+		ID3D11RenderTargetView* m_RTView1;     // 0x65C
+		UINT m_UNKNOWN1;                       // 0x660
+		IDXGISwapChain* m_SwapChain;           // 0x664
+		UINT m_DisplayWidth;                   // 0x668
+		UINT m_DisplayHeight;                  // 0x66C
+		UINT m_UNKNOWN2;                       // 0x670
+		ID3D11RenderTargetView* m_RTView2;     // 0x674
+		ID3D11ShaderResourceView* m_SRView1;   // 0x678
+		ID3D11Texture2D* m_Texture2D2;         // 0x67C
+		ID3D11ShaderResourceView* m_SRView2;   // 0x680
+		UINT m_UNKNOWN3;                       // 0x684
+		bool m_IsWidescreen;                   // 0x688
 		ID3D11DeviceContext* m_pDeviceContext; // 0x68C
 		ID3D11Device* m_pDevice;               // 0x690
 		HACCEL m_hAccel;                       // 0x694

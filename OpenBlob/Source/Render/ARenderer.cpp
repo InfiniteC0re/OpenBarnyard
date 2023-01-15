@@ -26,6 +26,17 @@ bool ARenderer::CreateTRender()
 	auto renderer = new Toshi::TRenderDX11();
 	renderer->Create();
 
+	Toshi::TRender::DisplayParams displayParams;
+	displayParams.Unk3 = 32;
+	displayParams.Unk4 = 3;
+	displayParams.Unk5 = true;
+	displayParams.IsFullscreen = false;
+	displayParams.MultisampleQualityLevel = 1;
+	displayParams.Width = 800;
+	displayParams.Height = 600;
+
+	renderer->CreateDisplay(&displayParams);
+
 	TTODO("The whole function");
 
 	return true;

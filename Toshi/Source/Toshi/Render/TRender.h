@@ -87,13 +87,13 @@ namespace Toshi
 
 		struct DisplayParams
 		{
-			uint32_t m_Width;
-			uint32_t m_Height;
-			uint32_t m_Unk3;
-			uint32_t m_Unk4;
-			bool m_Unk5;
-			bool m_Unk6;
-			uint32_t m_Unk7;
+			uint32_t Width;
+			uint32_t Height;
+			uint32_t Unk3;
+			uint32_t Unk4;
+			bool Unk5;
+			bool IsFullscreen;
+			uint32_t MultisampleQualityLevel;
 		};
 
 	public:
