@@ -80,22 +80,29 @@ TOSHI_ENTRY
 	Toshi::TRegion::SetRegion(0);
 	Toshi::TMemory memorySettings(TOSHI_TMEMORY_FLAGS, TOSHI_TMEMORY_SIZE);
 	Toshi::TUtil::ToshiCreate(0, 0, memorySettings);
-	TOSHI_INFO("Build Version {0}", 0.28);
+	TOSHI_INFO("Build Version {0}", "0.28");
 
 	OSVERSIONINFOEX osVersionInfo = { };
 	osVersionInfo.dwOSVersionInfoSize = sizeof(osVersionInfo);
 
-	typedef void (WINAPI* t_RtlGetVersion) (OSVERSIONINFOEX*);
-	auto RtlGetVersion = reinterpret_cast<t_RtlGetVersion>(GetProcAddress(GetModuleHandleW(L"ntdll.dll"), "RtlGetVersion"));
-	
-	if (RtlGetVersion != NULL)
+	const char* osName = "unknown";
+	HMODULE ntdll = GetModuleHandleW(L"ntdll.dll");
+
+	if (ntdll != NULL)
 	{
-		RtlGetVersion(&osVersionInfo);
+		typedef void (WINAPI* t_RtlGetVersion) (OSVERSIONINFOEX*);
+		auto RtlGetVersion = reinterpret_cast<t_RtlGetVersion>(GetProcAddress(ntdll, "RtlGetVersion"));
+		
+		if (RtlGetVersion != NULL)
+		{
+			RtlGetVersion(&osVersionInfo);
+			osName = GetOSName(osVersionInfo);
+		}
 	}
 
 	LPTSTR cmd = GetCommandLine();
 	TOSHI_INFO(L"Command Line: {}", cmd);
-	TOSHI_INFO("OS Name: {}", GetOSName(osVersionInfo));
+	TOSHI_INFO("OS Name: {}", osName);
 	TOSHI_INFO(L"OS Version: {}.{} Build:{} {}", osVersionInfo.dwMajorVersion, osVersionInfo.dwMinorVersion, osVersionInfo.dwBuildNumber, osVersionInfo.szCSDVersion);
 
 	HANDLE hMutex = CreateMutexA(NULL, true, "BLOB07");
@@ -105,11 +112,27 @@ TOSHI_ENTRY
 		return 0;
 	}
 
-	if (IsDebuggerPresent()) TIMPLEMENT_D("SetUnhandledExceptionFilter(FUN_00576760);");
+	if (IsDebuggerPresent())
+	{
+		SetUnhandledExceptionFilter(
+			[](_EXCEPTION_POINTERS* ExceptionInfo) -> LONG
+			{
+				TOSHI_CORE_ERROR("Blob_UnhandledExceptionFilter");
+				TBREAK();
+				return EXCEPTION_EXECUTE_HANDLER;
+			}
+		);
+	}
+
 	// de blob does steam init
 
 	TOSHI_APP;
-	ReleaseMutex(hMutex);
+	
+	if (hMutex != NULL)
+	{
+		ReleaseMutex(hMutex);
+	}
+
 	// spdlog needs to be replaced with own Log system
 	// because it doesn't work fine with custom allocators
 	// Toshi::TUtil::ToshiDestroy();
