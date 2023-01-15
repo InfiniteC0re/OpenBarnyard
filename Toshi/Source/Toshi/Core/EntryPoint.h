@@ -37,7 +37,7 @@ return TMain(__argc, __argv);
 #endif
 
 #ifndef TOSHI_TMEMORY_SIZE
-#define TOSHI_TMEMORY_SIZE 64 * 1024 * 1024 // deblob says 0x28000000
+#define TOSHI_TMEMORY_SIZE 64 * 1024 * 1024
 #endif
 
 const char* GetOSName(OSVERSIONINFOEX& osVersionInfo)

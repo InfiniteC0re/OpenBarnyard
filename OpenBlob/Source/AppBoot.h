@@ -1,10 +1,9 @@
 #pragma once
-#include <Toshi.h>
-#include <Toshi/Sound/TSound.h>
-#include <Toshi/Render/TRender.h>
 #include "Locale/ALocaleManager.h"
-#include "./ALevelInformation.h"
 #include "Render/ARenderer.h"
+#include "ALevelInformation.h"
+
+#include <Toshi/Render/TRender.h>
 
 class AApplication : public Toshi::TApplication
 {
