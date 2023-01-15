@@ -18,6 +18,12 @@ namespace Toshi
 			return new T(std::forward<Args>(args)...);
 		}
 
+		static void DestroySingleton()
+		{
+			delete GetSingleton();
+			ms_pSingleton = TNULL;
+		}
+
 		// Returns pointer and asserts if it's not allocated
 		static T* GetSingleton()
 		{

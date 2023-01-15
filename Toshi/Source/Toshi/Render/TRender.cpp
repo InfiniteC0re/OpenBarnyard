@@ -41,6 +41,13 @@ namespace Toshi
 		};
 	}
 
+	TRender::~TRender()
+	{
+		delete m_ParamTable;
+		TModelManager::DestroySingleton();
+		T2ResourceManager::DestroySingleton();
+	}
+
 	bool TRender::Create()
 	{
 		TASSERT(TFALSE == IsCreated(), "TRender already created");

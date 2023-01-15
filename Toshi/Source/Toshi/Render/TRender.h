@@ -100,7 +100,7 @@ namespace Toshi
 	public:
 		TRender();
 
-		virtual ~TRender() { }                                 // 0x08 at vftable
+		virtual ~TRender();                                    // 0x08 at vftable
 		virtual bool CreateDisplay(DisplayParams* params) = 0; // 0x0C at vftable
 		virtual bool DestroyDisplay() = 0;                     // 0x10 at vftable
 		virtual float Update(float deltatime);                 // 0x14 at vftable
