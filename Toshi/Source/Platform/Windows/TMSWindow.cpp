@@ -10,13 +10,13 @@ namespace Toshi
 	void TMSWindow::Enable()
 	{
 		TASSERT(m_HWND != TNULL, "HWND is NULL");
-		m_IsEnabled = true;
+		m_IsWindowed = true;
 	}
 
 	void TMSWindow::Disable()
 	{
 		TASSERT(m_HWND != NULL, "HWND is NULL");
-		m_IsEnabled = false;
+		m_IsWindowed = false;
 	}
 
 	void TMSWindow::Update()
@@ -38,7 +38,7 @@ namespace Toshi
 		}
 	}
 
-	void TMSWindow::Destroy()
+	void TMSWindow::UnregisterWindowClass()
 	{
 		if (m_HWND != NULL)
 		{
@@ -63,9 +63,23 @@ namespace Toshi
 		}
 	}
 
-	bool TMSWindow::Create(TRender* renderer, LPCSTR title)
+	void TMSWindow::SetPosition(UINT x, UINT y, UINT width, UINT height)
 	{
-		Destroy();
+		RECT rect;
+		rect.right = width;
+		rect.bottom = height;
+		rect.left = 0;
+		rect.top = 0;
+
+		DWORD dwStyle = IsPopup() ? (s_PopupStyles & (~WS_MINIMIZEBOX)) : 0;
+		
+		AdjustWindowRect(&rect, dwStyle, FALSE);
+		SetWindowPos(m_HWND, HWND_TOP, x, y, rect.right - rect.left, rect.bottom - rect.top, 0);
+	}
+
+	bool TMSWindow::RegisterWindowClass(TRender* renderer, LPCSTR title)
+	{
+		UnregisterWindowClass();
 
 		m_Render = renderer;
 		m_ModuleHandle = GetModuleHandleA(NULL);
@@ -81,13 +95,7 @@ namespace Toshi
 		wndClass.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
 		RegisterClassA(&wndClass);
 
-		DWORD dwStyle = 0;
-
-		if (m_bPopupWindow)
-		{
-			dwStyle = WS_POPUP | WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU;
-		}
-
+		DWORD dwStyle = IsPopup() ? s_PopupStyles : 0;
 		m_HWND = CreateWindowExA(0, TMSWindow::GetClassStatic()->GetName(), title, dwStyle, 100, 100, 0, 0, NULL, NULL, m_ModuleHandle, this);
 		
 		if (m_HWND == NULL)
@@ -112,30 +120,44 @@ namespace Toshi
 	{
 		TMSWindow* window = reinterpret_cast<TMSWindow*>(GetWindowLongA(hWnd, GWL_USERDATA));
 
-		bool bWindowCreated = false;
+		RECT rect;
+		bool bFlag1, bWindowCreated;
+		auto pDisplayParams = Toshi::TRender::GetSingleton()->GetCurrentDisplayParams();
 
-		if (window == NULL)
+		if (window == NULL || pDisplayParams->IsFullscreen != false)
 		{
-
+			bWindowCreated = false;
 		}
 		else
 		{
 			bWindowCreated = true;
+
+			if (pDisplayParams->Unk5 != false)
+			{
+				bWindowCreated = false;
+			}
 		}
 
-		if (WM_ACTIVATEAPP < uMsg) {
-			if (uMsg < WM_LBUTTONDOWN) {
-				if (uMsg != WM_MOUSEMOVE) {
-					if (uMsg == WM_SETCURSOR) {
-						if (lParam == 1) {
+		bFlag1 = window != NULL && pDisplayParams->IsFullscreen != false && pDisplayParams->Unk5 != false;
+
+		if (WM_ACTIVATEAPP < uMsg)
+		{
+			if (uMsg < WM_LBUTTONDOWN)
+			{
+				if (uMsg != WM_MOUSEMOVE)
+				{
+					if (uMsg == WM_SETCURSOR)
+					{
+						if (lParam == 1)
+						{
 							SetCursor(0);
 							return 1;
 						}
 					}
-					else if (uMsg == WM_SYSCOMMAND) {
-						if (wParam == SC_CLOSE) {
-							TMSWindow* window = reinterpret_cast<TMSWindow*>(GetWindowLongA(hWnd, GWL_USERDATA));
-							
+					else if (uMsg == WM_SYSCOMMAND)
+					{
+						if (wParam == SC_CLOSE)
+						{
 							/*if ((window != 0) && (*(char*)(window + 0x21) != '\0')) {
 								*(undefined*)(window + 0x22) = 1;
 								FUN_006b17e0(&local_39);
@@ -144,27 +166,29 @@ namespace Toshi
 						else
 						{
 							if ((wParam != SC_TASKLIST) && (wParam != SC_MINIMIZE)) return DefWindowProcA(hWnd, uMsg, wParam, lParam);
-							TMSWindow* window = reinterpret_cast<TMSWindow*>(GetWindowLongA(hWnd, GWL_USERDATA));
-							if (window->m_IsEnabled)
+
+							if (window->m_IsWindowed)
 							{
 								ShowWindow(hWnd, SW_MINIMIZE);
 								return 0;
 							}
 						}
+
 						return 0;
 					}
+
 					return DefWindowProcA(hWnd, uMsg, wParam, lParam);
 				}
 				else
-				{
-					TMSWindow* window = reinterpret_cast<TMSWindow*>(GetWindowLongA(hWnd, GWL_USERDATA));
-					if (window->m_IsEnabled)
+				{					
+					if (window->m_IsWindowed)
 					{
-						if (!window->m_bUnk)
+						if (!window->m_Flag2)
 						{
 							ShowCursor(false);
-							window->m_bUnk = true;
-							if (!window->m_bUnk2)
+							window->m_Flag2 = true;
+
+							if (!window->m_Flag3)
 							{
 								TRACKMOUSEEVENT tme;
 								tme.cbSize = sizeof(TRACKMOUSEEVENT);
@@ -173,7 +197,7 @@ namespace Toshi
 
 								if (TrackMouseEvent(&tme))
 								{
-									window->m_bUnk2 = true;
+									window->m_Flag3 = true;
 								}
 							}
 						}
@@ -188,58 +212,46 @@ namespace Toshi
 			{
 				if (wParam == DBT_DEVNODES_CHANGED)
 				{
-					// FUN_00680030
+					TTODO("Toshi::TInputDXInterface::FUN_00680030()");
 				}
 			}
 			else
 			{
 				if (uMsg != WM_MOUSELEAVE) return DefWindowProcA(hWnd, uMsg, wParam, lParam);
-				TMSWindow* window = reinterpret_cast<TMSWindow*>(GetWindowLongA(hWnd, GWL_USERDATA));
-				window->m_bUnk = false;
-				window->m_bUnk2 = false;
+				window->m_Flag2 = false;
+				window->m_Flag3 = false;
 				ShowCursor(true);
 			}
+
 			return 1;
 		}
 
 		if (uMsg == WM_ACTIVATEAPP)
 		{
-			/*
-			if ((bVar3) || (local_39 != '\0')) {
-				GetWindowRect(hWnd, (LPRECT)local_18);
-				ClipCursor((RECT*)local_18);
-			}
-			*/
-			TMSWindow* window = reinterpret_cast<TMSWindow*>(GetWindowLongA(hWnd, GWL_USERDATA));
-			if (window->Flag1()) return 0;
-			if (!window->IsEnabled())
-			{
-				// if (DAT_009a46f0 == (void*)0x0) return 0;
+			auto pSystemManager = TSystemManager::GetSingletonWeak();
 
-				if (wParam == 1) // This parameter is TRUE if the window is being activated; it is FALSE if the window is being deactivated.
-				{
-					//FUN_006616a0(DAT_009a46f0, 0);
-					return 0;
-				}
+			if (bFlag1 || bWindowCreated)
+			{
+				GetWindowRect(hWnd, &rect);
+				ClipCursor(&rect);
+			}
+
+			if (window->Flag1()) return 0;
+			if (pSystemManager == TNULL) return 0;
+
+			if (wParam == TRUE)
+			{
+				// Window was activated
+				pSystemManager->Pause(false);
 			}
 			else
 			{
-				if (wParam == 1)
-				{
-					/*
-					if (DAT_009a46f0 != (void*)0x0) {
-						FUN_006616a0(DAT_009a46f0, 0);
-					}
-					*/
-					return 0;
-				}
-				// if (DAT_009a46f0 == (void*)0x0) return 0;
+				// Window was deactivated
+				pSystemManager->Pause(true);
 			}
-			//FUN_006616a0(DAT_009a46f0, 1);
+
 			return 0;
 		}
-
-		RECT rect;
 
 		switch (uMsg)
 		{
@@ -258,11 +270,12 @@ namespace Toshi
 			ExitProcess(1);
 		case WM_SIZE:
 			if (bWindowCreated)
-			GetWindowRect(hWnd, &rect);
-			ClipCursor(&rect);
-			return DefWindowProcA(hWnd, uMsg, wParam, lParam);
+			{
+				GetWindowRect(hWnd, &rect);
+				ClipCursor(&rect);
+				return DefWindowProcA(hWnd, uMsg, wParam, lParam);
+			}
 		case WM_ACTIVATE:
-
 			if (LOWORD(wParam) == WA_ACTIVE || LOWORD(wParam) == WA_CLICKACTIVE)
 			{
 				if (ms_bIsFocused != true)
@@ -274,10 +287,7 @@ namespace Toshi
 
 					SystemParametersInfoA(SPI_GETSTICKYKEYS, sizeof(STICKYKEYS), &ms_StickyKeys, 0);
 
-					STICKYKEYS newStickyKeys{ sizeof(STICKYKEYS) , 0};
-					newStickyKeys.cbSize = sizeof(STICKYKEYS);
-					newStickyKeys.dwFlags = 0;
-
+					STICKYKEYS newStickyKeys { sizeof(STICKYKEYS), 0 };
 					SystemParametersInfoA(SPI_SETSTICKYKEYS, sizeof(STICKYKEYS), &newStickyKeys, 0);
 				}
 			}

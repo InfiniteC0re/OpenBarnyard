@@ -13,95 +13,145 @@
 #include "Toshi.h"
 #include "TRBF/TRBF.h"
 
-struct LocaleStrings
+class PProperties
 {
-	uint32_t Count;
-	wchar_t** Strings;
-};
+public:
+	class PProperty
+	{
+	public:
+		typedef uint32_t Type;
+		enum Type_ : Type
+		{
+			Type_UInt,
+			Type_Unknown,
+			Type_Float,
+			Type_Bool,
+			Type_PProperty,
+			Type_Unknown2,
+			Type_Array,
+			Type_String,
+			Type_Int,
+		};
 
-const wchar_t* g_Strings[] = {
-	L"String 1",
-	L"String 2",
-	L"String 3",
-	L"String 4",
-	L"String 5",
-	L"Abcdefg",
-	L"1234567",
+		class Array
+		{
+		public:
+			class Item
+			{
+			public:
+				template<class T>
+				T* GetData()
+				{
+					return reinterpret_cast<T*>(Data);
+				}
+
+			private:
+				Type Type;
+				void* Data;
+			};
+
+		public:
+			uint32_t GetSize()
+			{
+				return m_Size;
+			}
+
+			Item* GetItem(size_t index)
+			{
+				TASSERT(index >= 0 && index <= m_Size);
+				return &m_Items[index];
+			}
+
+		private:
+			Item* m_Items;
+			uint32_t m_Size;
+		};
+
+	public:
+		const char* GetName() const
+		{
+			return *m_Name;
+		}
+
+		Type GetType() const
+		{
+			return *m_Type;
+		}
+
+		template<class T>
+		T* GetData()
+		{
+			return reinterpret_cast<T*>(m_Type + 1);
+		}
+
+	private:
+		const char** m_Name;
+		Type* m_Type;
+	};
+
+	struct Main
+	{
+		uint32_t m_Zero;
+		PProperty* m_Properties;
+		uint32_t m_PropertyCount;
+	};
+
+public:
+	PProperties(Main* header)
+	{
+		m_Header = header;
+	}
+
+	uint32_t GetPropertyCount()
+	{
+		return m_Header->m_PropertyCount;
+	}
+
+	PProperty* GetProperty(size_t index)
+	{
+		TASSERT(index >= 0 && index <= m_Header->m_PropertyCount);
+		return &m_Header->m_Properties[index];
+	}
+
+private:
+	Main* m_Header;
 };
 
 int TMain(int argc, char** argv)
 {
-	argv++;
-
-	if (*argv != TNULL)
-	{
-		TLib::TRBF::TRBF trbf;
-		trbf.ReadFromFile(*argv);
-		trbf.WriteToFile(*argv, true);
-		TOSHI_INFO("Done!");
-	}
-	else
-	{
-		TOSHI_TRACE("Drag'n drop a file you want to compress on this exe or specify path as the first argument");
-	}
-
-	system("pause");
-	return 0;
-
 	TLib::TRBF::TRBF trbf;
+	trbf.ReadFromFile("D:\\Barnyard\\Game\\Data\\AGolfMinigameState.trb");
 
 	auto pSect = trbf.GetSECT();
 	auto pSymb = trbf.GetSYMB();
-	auto pStack = pSect->CreateSection();
 
-	auto pLocale = pStack->Alloc<LocaleStrings>();
-	pLocale->Count = sizeof(g_Strings) / sizeof(*g_Strings);
-	pLocale->Strings = TNULL;
+	PProperties properties(pSymb->Find<PProperties::Main>(pSect, "Main").get());
+	TOSHI_INFO("PProperty count: {0}", properties.GetPropertyCount());
 
-	pStack->Alloc<wchar_t*>(&pLocale->Strings, pLocale->Count);
-
-	for (size_t i = 0; i < pLocale->Count; i++)
+	for (size_t i = 0; i < properties.GetPropertyCount(); i++)
 	{
-		pStack->Alloc<wchar_t>(&pLocale->Strings[i], wcslen(g_Strings[i]) + 1);
-		wcscpy(pLocale->Strings[i], g_Strings[i]);
+		auto property = properties.GetProperty(i);
+		
+		TOSHI_INFO("PProperty name: {0}", property->GetName());
+
+		switch (property->GetType())
+		{
+			case PProperties::PProperty::Type_String:
+				TOSHI_INFO("PProperty value: {0}", *property->GetData<char*>());
+				break;
+			case PProperties::PProperty::Type_Array:
+			{
+				auto array = *property->GetData<PProperties::PProperty::Array*>();
+				TOSHI_INFO("PProperty array size: {0}", array->GetSize());
+
+				for (size_t k = 0; k < array->GetSize(); k++)
+				{
+					TOSHI_INFO("{0}) {1}", k + 1, array->GetItem(k)->GetData<char>());
+				}
+				break;
+			}
+		}
 	}
 
-	pSymb->Add(pStack, "LocaleStrings", pLocale.get());
-	trbf.WriteToFile("D:\\TestLocaleFile.trb", false);
-	trbf.WriteToFile("D:\\TestLocaleFile_Compressed.trb", true);
-
-	trbf.ReadFromFile("D:\\TestLocaleFile_Compressed.trb");
-	auto pLocaleStrings = pSymb->Find<LocaleStrings>(pSect, "LocaleStrings");
-
-	TOSHI_INFO("String count: {0}", pLocaleStrings->Count);
-	TOSHI_INFO(L"First string: {0}", pLocaleStrings->Strings[0]);
-
 	return 0;
-
-#if 0
-	// BTEC test
-	auto file = Toshi::TFile::Create("D:\\BTEC_ORIGINAL", Toshi::TFile::FileMode_CreateNew);
-	pStack->Unlink();
-	file->Write(pStack->GetBuffer(), pStack->GetUsedSize());
-	file->Destroy();
-
-	file = Toshi::TFile::Create("D:\\BTEC_TEST", Toshi::TFile::FileMode_CreateNew);
-	Toshi::TCompress_Compress::Compress(file, pStack->GetBuffer(), pStack->GetUsedSize(), 0, false);
-	file->Destroy();
-
-	file = Toshi::TFile::Create("D:\\BTEC_TEST", Toshi::TFile::FileMode_Read);
-	auto file2 = Toshi::TFile::Create("D:\\BTEC_DECOMPRESSED", Toshi::TFile::FileMode_CreateNew);
-
-	Toshi::TCompress::Header header;
-	Toshi::TCompress_Decompress::GetHeader(file, header);
-	char* buffer = new char[header.Size];
-
-	Toshi::TCompress_Decompress::Decompress(file, &header, buffer, header.Size);
-	file2->Write(buffer, header.Size);
-
-	file->Destroy();
-	file2->Destroy();
-
-	return 0;
-#endif
 }

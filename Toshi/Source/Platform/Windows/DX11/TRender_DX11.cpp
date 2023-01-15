@@ -9,6 +9,8 @@ namespace Toshi
 		return new TRenderContextDX11(*this);
 	}
 
+	UINT TRenderDX11::s_QualityLevel = 1;
+
 	TRenderAdapter* TD3DAdapter::Mode::GetAdapter() const
 	{
 		return m_Adapter;
@@ -66,14 +68,13 @@ namespace Toshi
 		DXGI_OUTPUT_DESC outputDesc;
 		dxgiOutput->GetDesc(&outputDesc);
 
-		MONITORINFO monitorInfo;
+		MONITORINFOEXA monitorInfo;
 		monitorInfo.cbSize = sizeof(monitorInfo);
 		GetMonitorInfoA(outputDesc.Monitor, &monitorInfo);
 
-		CHAR displayName[32];
-		DEVMODEA displaySettings;
+		DEVMODEA displaySettings = { };
 		displaySettings.dmSize = sizeof(displaySettings);
-		EnumDisplaySettingsA(displayName, -1, &displaySettings);
+		EnumDisplaySettingsA(monitorInfo.szDevice, ENUM_CURRENT_SETTINGS, &displaySettings);
 
 		bool defaultRefreshRate = false;
 
@@ -93,6 +94,268 @@ namespace Toshi
 		matchMode.RefreshRate.Numerator = displaySettings.dmDisplayFrequency;
 
 		dxgiOutput->FindClosestMatchingMode(&matchMode, modeDesc, NULL);
+	}
+
+	bool TRenderDX11::CreateDisplay(DisplayParams* pDisplayParams)
+	{
+		TASSERT(IsCreated() == TTRUE);
+		TASSERT(IsDisplayCreated() == TFALSE);
+
+		if (TRender::CreateDisplay() == TFALSE)
+		{
+			ShowDisplayError();
+			return false;
+		}
+
+		m_DisplayParams = *pDisplayParams;
+
+		auto adapterList = GetAdapterList();
+		auto adapter = adapterList->Head()->As<TD3DAdapter>();
+		auto mode = adapter->GetMode();
+
+		if (!m_DisplayParams.Unk5 && !m_DisplayParams.IsFullscreen)
+		{
+			m_DisplayParams.Width = mode->GetWidth();
+			m_DisplayParams.Height = mode->GetHeight();
+		}
+
+		IDXGIDevice* pDevice;
+		IDXGIAdapter* pAdapter;
+		IDXGIFactory1* pFactory1;
+		m_pDevice->QueryInterface(__uuidof(IDXGIDevice), (void**)&pDevice);
+		pDevice->GetAdapter(&pAdapter);
+		pAdapter->GetParent(__uuidof(IDXGIFactory1), (void**)&pFactory1);
+
+		DisplayParams* pCurrDisplayParams = GetCurrentDisplayParams();
+
+		DXGI_MODE_DESC foundMode;
+		if (pCurrDisplayParams->Unk5 == TFALSE)
+		{
+			IDXGIOutput* pOutput;
+			pAdapter->EnumOutputs(0, &pOutput);
+
+			TD3DAdapter::Mode::GetDisplayMode(pOutput, &foundMode);
+			m_DisplayParams.Width = foundMode.Width;
+			m_DisplayParams.Height = foundMode.Height;
+		}
+
+		pAdapter->Release();
+		pDevice->Release();
+
+		Toshi::TUtil::MemClear(&m_SwapChainDesc, sizeof(m_SwapChainDesc));
+
+		DXGI_MODE_DESC* pSelectedMode;
+
+		if (m_DisplayParams.IsFullscreen == false)
+		{
+			pSelectedMode = mode->GetDescription();
+			foundMode.Format = pSelectedMode->Format;
+		}
+		else
+		{
+			pSelectedMode = &foundMode;
+		}
+
+		m_SwapChainDesc.BufferCount = 1;
+		m_SwapChainDesc.BufferDesc.Width = m_DisplayParams.Width;
+		m_SwapChainDesc.BufferDesc.Height = m_DisplayParams.Height;
+		m_SwapChainDesc.BufferDesc.Format = pSelectedMode->Format;
+		m_SwapChainDesc.BufferDesc.RefreshRate = pSelectedMode->RefreshRate;
+		m_SwapChainDesc.OutputWindow = m_Window.GetHWND();
+		m_SwapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+		m_SwapChainDesc.SampleDesc.Count = 1;
+		m_SwapChainDesc.SampleDesc.Quality = 0;
+		m_SwapChainDesc.Windowed = TRUE;
+		m_SwapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
+		m_SwapChainDesc.Flags = m_DisplayParams.IsFullscreen ? DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH : 0;
+
+		pFactory1->CreateSwapChain(m_pDevice, &m_SwapChainDesc, &m_SwapChain);
+		pFactory1->MakeWindowAssociation(m_Window.GetHWND(), DXGI_MWA_NO_ALT_ENTER);
+		pFactory1->Release();
+
+		if (m_pDeviceContext == TNULL || m_pDevice == TNULL || m_SwapChain == TNULL)
+		{
+			ShowDeviceError();
+		}
+
+		UINT refreshRateNum = m_SwapChainDesc.BufferDesc.RefreshRate.Numerator;
+		UINT refreshRateDenom = m_SwapChainDesc.BufferDesc.RefreshRate.Denominator;
+		double refreshRate = (double)refreshRateNum / refreshRateDenom;
+
+		TOSHI_CORE_TRACE(L"CurrentDisplay: {0}", mode->GetDisplayName());
+		pSelectedMode = mode->GetDescription();
+		TOSHI_CORE_TRACE("CurrentDisplayMode = {0} x {1} ({2:.4f} Hz) = [{3} / {4}]", pSelectedMode->Width, pSelectedMode->Height, refreshRate, refreshRateNum, refreshRateDenom);
+		
+		if (m_DisplayParams.IsFullscreen)
+		{
+			TOSHI_CORE_TRACE("Set Fullscreen {0} x {1} ({2:.4f} Hz) = [{3} / {4}]", m_DisplayParams.Width, m_DisplayParams.Height, refreshRate, refreshRateNum, refreshRateDenom);
+			m_Window.SetFullscreen();
+		}
+		else
+		{
+			TOSHI_CORE_TRACE("Set Windowed {0} x {1}", m_DisplayParams.Width, m_DisplayParams.Height);
+			m_Window.SetWindowed();
+		}
+
+		UINT centerX = 0;
+		UINT centerY = 0;
+
+		if (!m_DisplayParams.IsFullscreen && !m_DisplayParams.Unk5)
+		{
+			LONG style = GetWindowLongA(m_Window.GetHWND(), GWL_STYLE);
+			SetWindowLongA(m_Window.GetHWND(), GWL_STYLE, style & (WS_CHILD | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_DISABLED | WS_GROUP | WS_HSCROLL | WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_POPUP | WS_TABSTOP | WS_VISIBLE | WS_VSCROLL));
+			SetWindowPos(m_Window.GetHWND(), HWND_TOP, 0, 0, m_DisplayParams.Width, m_DisplayParams.Height, 0);
+		}
+		else
+		{
+			centerX = (mode->GetWidth() - m_DisplayParams.Width) / 2;
+			centerY = (mode->GetHeight() - m_DisplayParams.Height) / 2;
+			m_Window.SetPosition(centerX, centerY, m_DisplayParams.Width, m_DisplayParams.Height);
+		}
+
+		m_DisplayHeight = m_DisplayParams.Height;
+		m_DisplayWidth = m_DisplayParams.Width;
+		m_IsWidescreen = true;
+
+		// expectedWidth is the width expected for 16:9 screen
+		UINT expectedWidth = (m_DisplayHeight / 9) * 16;
+		
+		if (expectedWidth != m_DisplayWidth)
+		{
+			// The aspect ratio is not 16:9
+			if (expectedWidth < m_DisplayWidth)
+			{
+				m_DisplayParams.Width = expectedWidth;
+				m_SwapChainDesc.BufferDesc.Width = expectedWidth;
+			}
+			else
+			{
+				UINT expectedHeight = (m_DisplayWidth / 16) * 9;
+				m_DisplayParams.Height = expectedHeight;
+				m_SwapChainDesc.BufferDesc.Height = expectedHeight;
+			}
+		}
+
+		if (s_QualityLevel == 1)
+		{
+			UINT width = m_DisplayParams.Width / 2;
+			UINT height = m_DisplayParams.Height / 2;
+
+			if (width > 1920)
+			{
+				width = 1920;
+				height = 1080;
+			}
+
+			if (width < 1280)
+			{
+				width = 1280;
+			}
+
+			if (height < 720)
+			{
+				height = 720;
+			}
+
+			m_DisplayParams.Height = height;
+			m_DisplayParams.Width = width;
+		}
+		else if (s_QualityLevel > 0)
+		{
+			m_DisplayParams.Width = 1280;
+			m_DisplayParams.Height = 720;
+		}
+
+		m_DisplayParams.Width = TMath::Max(m_DisplayParams.Width, 1280);
+		m_DisplayParams.Height = TMath::Max(m_DisplayParams.Height, 720);
+
+		m_SwapChainDesc.BufferDesc.Width = m_DisplayParams.Width;
+		m_SwapChainDesc.BufferDesc.Height = m_DisplayParams.Height;
+		uint32_t& qualityLevel = m_DisplayParams.MultisampleQualityLevel;
+
+		if (qualityLevel < 2)
+		{
+			qualityLevel = 1;
+		}
+		else
+		{
+			if (qualityLevel != 2 && qualityLevel != 4 && qualityLevel != 8)
+			{
+				qualityLevel = 4;
+			}
+
+			bool isMultisampleSet = false;
+			for (UINT level = qualityLevel; 1 < qualityLevel; qualityLevel /= 2)
+			{
+				UINT numQualityLevels;
+				HRESULT hRes = m_pDevice->CheckMultisampleQualityLevels(DXGI_FORMAT_R8G8B8A8_UNORM, level, &numQualityLevels);
+				
+				if (hRes != S_OK && numQualityLevels != 0)
+				{
+					m_DisplayParams.MultisampleQualityLevel = level;
+					isMultisampleSet = true;
+					break;
+				}
+			}
+
+			if (!isMultisampleSet)
+			{
+				// Default value
+				m_DisplayParams.MultisampleQualityLevel = 1;
+			}
+		}
+
+		HRESULT hRes1 = m_SwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&m_Texture2D1);
+
+		if (hRes1 == S_OK)
+		{
+			HRESULT hRes2 = m_pDevice->CreateRenderTargetView(m_Texture2D1, NULL, &m_RTView1);
+
+			if (hRes2 == S_OK)
+			{
+				TOSHI_CORE_TRACE("Creating Main RT {0} x {1}", m_DisplayParams.Width, m_DisplayParams.Height);
+				TTODO("Toshi::TRenderDX11::FUN_006a6b60");
+			}
+		}
+
+		SetCursorPos(centerX + m_DisplayParams.Width / 2, centerY + m_DisplayParams.Height / 2);
+
+		if (m_DisplayParams.Unk5 == false)
+		{
+			ShowCursor(false);
+		}
+
+		TTODO("Toshi::TRenderDX11::CreateSamplerStates");
+		TTODO("Create and compile shaders");
+
+		return true;
+	}
+
+	bool TRenderDX11::RecreateDisplay(DisplayParams* pDisplayParams)
+	{
+		return false;
+	}
+
+	void TRenderDX11::ShowDeviceError()
+	{
+		CHAR caption[1024] = { 0 };
+		CHAR text[1024] = { 0 };
+
+		GetPrivateProfileStringA("Setup", "IDS_D3DDEVICEERRORTITLE", "Initialization failure", caption, sizeof(caption), ".\\Setup.ini");
+		GetPrivateProfileStringA("Setup", "IDS_D3DDEVICEERROR", "Failed to create D3D11 device", caption, sizeof(caption), ".\\Setup.ini");
+
+		MessageBoxA(NULL, text, caption, MB_OK);
+	}
+
+	void TRenderDX11::ShowDisplayError()
+	{
+		CHAR caption[1024] = { 0 };
+		CHAR text[1024] = { 0 };
+
+		GetPrivateProfileStringA("Setup", "IDS_D3DDISPLAYERRORTITLE", "Initialization failure", caption, sizeof(caption), ".\\Setup.ini");
+		GetPrivateProfileStringA("Setup", "IDS_D3DDISPLAYERROR", "Failed to create the display. Please run the Barnyard setup program and reconfigure", text, sizeof(text), ".\\Setup.ini");
+		
+		MessageBoxA(NULL, text, caption, MB_OK);
 	}
 
 	bool TRenderDX11::Create(LPCSTR a_name)
@@ -133,7 +396,7 @@ namespace Toshi
 
 			m_hAccel = CreateAcceleratorTableA(accels, sizeof(accels) / sizeof(*accels));
 
-			if (m_Window.Create(this, a_name))
+			if (m_Window.RegisterWindowClass(this, a_name))
 			{
 				m_Unk2 = 1;
 				return true;
@@ -225,7 +488,7 @@ namespace Toshi
 		
 			TOSHI_CORE_TRACE(L"Display[{0}]: {1} ({2}x{3})", displayIndex, outputDesc.DeviceName, deviceWidth, deviceHeight);
 			
-			UINT numModes;
+			UINT numModes = 0;
 			dxgiOutput->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_ENUM_MODES_INTERLACED, &numModes, NULL);
 			
 			if (numModes > 0)

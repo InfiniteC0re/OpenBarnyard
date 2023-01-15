@@ -56,7 +56,7 @@ namespace Toshi
 
 	public:
 		TMemory(Flags flags = Flags_Standard, BlockSize blockSize = 640 * 1024 * 1024) :
-			m_Flags(flags), m_GlobalSize(blockSize) {  }
+			m_Flags(flags), m_GlobalSize(blockSize) { s_Instance = this; }
 
 		static void         dlheapfree(TMemoryHeap* heap, void* mem);
 		static void         dlheapdestroy(TMemoryHeap* heap);
@@ -79,6 +79,12 @@ namespace Toshi
 		static void         AcquireMutex()          { TMemory::s_GlobalMutex.Lock(); }
 		static void         ReleaseMutex()          { TMemory::s_GlobalMutex.Unlock(); }
 
+	private:
+		static Flags GetFlags()
+		{
+			return s_Instance->m_Flags;
+		}
+
 	public:
 		/*
 		* Platform specific methods
@@ -97,6 +103,7 @@ namespace Toshi
 	private:
 		Flags m_Flags;
 		BlockSize m_GlobalSize;
+		static TMemory* s_Instance;
 	};
 
 	class TMemoryHeap
@@ -158,39 +165,4 @@ inline static void* TMemalign(size_t alignment, size_t size)
 inline static void TFree(void* mem)
 {
 	Toshi::TMemory::s_Context.s_cbFree(mem);
-}
-
-inline void* operator new(size_t size) noexcept
-{
-	return TMalloc(size);
-}
-
-inline void* operator new(size_t size, Toshi::TMemoryHeap* heap) noexcept
-{
-	return Toshi::TMemoryHeap::Malloc(heap, size);
-}
-
-inline void* operator new[](size_t size) noexcept
-{
-	return TMalloc(size);
-}
-
-inline void* operator new[](size_t size, Toshi::TMemoryHeap* heap) noexcept
-{
-	return Toshi::TMemoryHeap::Malloc(heap, size);
-}
-
-inline void operator delete(void* ptr) noexcept
-{
-	TFree(ptr);
-}
-
-inline void operator delete[](void* ptr) noexcept
-{
-	TFree(ptr);
-}
-
-inline void operator delete[](void* ptr, size_t _Size) noexcept
-{
-	TFree(ptr);
 }

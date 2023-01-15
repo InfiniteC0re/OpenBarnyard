@@ -13,19 +13,52 @@ namespace Toshi
 		public TGenericClassDerived<TMSWindow, TObject, "TMSWindow", TMAKEVERSION(1, 0), false>
 	{
 	public:
+		static constexpr UINT s_PopupStyles = WS_POPUP | WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU;
+
+	public:
 		TMSWindow() = default;
 		TMSWindow(const TMSWindow&) = default;
 
 		void Enable();
 		void Disable();
-
 		void Update();
-		void Destroy();
-		bool Create(TRender* renderer, LPCSTR title);
 
-		bool Flag1() { return m_Flag1; }
-		bool IsEnabled() { return m_IsEnabled; } // Not confirmed
-		HWND GetHWND() const { return m_HWND; }
+		bool RegisterWindowClass(TRender* renderer, LPCSTR title);
+		void UnregisterWindowClass();
+
+		void SetPosition(UINT x, UINT y, UINT width, UINT height);
+
+		void SetWindowed()
+		{
+			TASSERT(GetHWND() != TNULL);
+			m_IsWindowed = true;
+		}
+
+		void SetFullscreen()
+		{
+			TASSERT(GetHWND() != TNULL);
+			m_IsWindowed = false;
+		}
+
+		bool Flag1() const
+		{
+			return m_Flag1;
+		}
+
+		bool IsPopup() const
+		{
+			return m_IsPopup;
+		}
+
+		bool IsWindowed() const
+		{
+			return m_IsWindowed;
+		}
+
+		HWND GetHWND() const
+		{
+			return m_HWND;
+		}
 		
 		static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
@@ -39,14 +72,15 @@ namespace Toshi
 	private:
 		HWND m_HWND;               // 0x04
 		TRender* m_Render;         // 0x08
-		bool m_IsEnabled;          // this + 0xC ; Name is a guess
+		bool m_IsWindowed;         // 0x0C
 		bool m_Flag1;              // 0x0D
 		HMODULE m_ModuleHandle;    // 0x10
-		bool m_bUnk;               // 0x14
+		bool m_Flag2;              // 0x14
 		int m_xPos;                // 0x18
 		int m_yPos;                // 0x1C
-		bool m_bUnk2;              // 0x20
-		bool m_bPopupWindow;       // 0x21
+		bool m_Flag3;              // 0x20
+		bool m_IsPopup;            // 0x21
+		bool m_Flag5;              // 0x22
 	};
 }
 

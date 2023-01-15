@@ -1,10 +1,18 @@
 #include "pch.h"
+
+// Predefining Toshi initialization settings
+#define TOSHI_TMEMORY_SIZE 640 * 1024 * 1024
+#define TOSHI_TMEMORY_FLAGS Toshi::TMemory::Flags_Standard
+
+// Including the entrypoint
+#include <Toshi.h>
+
+// Including everything else
 #include "AppBoot.h"
-//#include "Toshi/Xui/TXUIResource.h"
 #include "AAssetStreaming.h"
-#include "Locale/ALocaleManager.h"
 #include "AExampleClass.h"
 
+#include <Toshi/Sound/TSound.h>
 #include TOSHI_MULTIRENDER(TRender)
 
 static Toshi::TSound m_soundSystem = Toshi::TSound();

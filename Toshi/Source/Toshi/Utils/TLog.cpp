@@ -26,7 +26,7 @@ namespace Toshi
 
 	void TLog::Destroy()
 	{
-		spdlog::drop_all();
+		spdlog::shutdown();
 		s_CoreLogger = nullptr;
 		s_AppLogger = nullptr;
 		s_Created = false;

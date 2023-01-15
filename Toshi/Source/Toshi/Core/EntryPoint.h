@@ -3,8 +3,6 @@
 extern Toshi::TApplication* Toshi::CreateApplication(int argc, char** argv);
 
 #ifdef TOSHI_PLATFORM_WINDOWS
-#include <Windows.h>
-#include "../Utils/TRegion.h"
 
 #ifndef TOSHI_DIST
 #define TOSHI_ENTRY int main(int argc, char** argv)
@@ -39,65 +37,73 @@ return TMain(__argc, __argv);
 #endif
 
 #ifndef TOSHI_TMEMORY_SIZE
-#define TOSHI_TMEMORY_SIZE 64 * 1024 * 1024 // deblob says 0x28000000
+#define TOSHI_TMEMORY_SIZE 64 * 1024 * 1024
 #endif
 
-const char* s_cOsNames[11] =
+const char* GetOSName(OSVERSIONINFOEX& osVersionInfo)
 {
-	"Windows 10",
-	"Windows Server 2016",
-	"Windows 8.1",
-	"Windows Server 2012 R2",
-	"Windows 8",
-	"Windows Server 2012",
-	"Windows 7",
-	"Windows Server 2008 R2",
-	"Windows Server 2008",
-	"Windows Vista",
-	"unknown"
-};
+	bool isWorkstation = osVersionInfo.wProductType == VER_NT_WORKSTATION;
 
-typedef void (WINAPI* RtlGetVersion_FUNC) (OSVERSIONINFOEX*);
+	if (osVersionInfo.dwMajorVersion == 10)
+	{
+		return isWorkstation ? "Windows 10" : "Windows Server 2016";
+	}
 
-//const char* GetOSName()
-//{
-//	OSVERSIONINFOEX osVersionInfo;
-//	::ZeroMemory(&osVersionInfo, sizeof(OSVERSIONINFOEX));
-//	osVersionInfo.dwOSVersionInfoSize = sizeof(osVersionInfo);
-//
-//	RtlGetVersion_FUNC func = (RtlGetVersion_FUNC)GetProcAddress(GetModuleHandleW(L"ntdll.dll"), "RtlGetVersion");
-//	if (func != 0) {
-//		func(&osVersionInfo);
-//	}
-//
-//	int index = 0;
-//
-//	//while (osVersionInfo.dwMajorVersion != 0xA || osVersionInfo.dwMinorVersion != 0 || )
-//	return s_cOsNames[0];
-//}
+	if (osVersionInfo.dwMajorVersion == 6)
+	{
+		if (osVersionInfo.dwMinorVersion == 0)
+		{
+			return isWorkstation ? "Windows Vista" : "Windows Server 2008";
+		}
 
+		if (osVersionInfo.dwMinorVersion == 1)
+		{
+			return isWorkstation ? "Windows 7" : "Windows Server 2008 R2";
+		}
+
+		if (osVersionInfo.dwMinorVersion == 2)
+		{
+			return isWorkstation ? "Windows 8" : "Windows Server 2012";
+		}
+
+		if (osVersionInfo.dwMinorVersion == 3)
+		{
+			return isWorkstation ? "Windows 8.1" : "Windows Server 2012 R2";
+		}
+	}
+
+	return "unknown";
+}
 
 TOSHI_ENTRY
 {
 	Toshi::TRegion::SetRegion(0);
 	Toshi::TMemory memorySettings(TOSHI_TMEMORY_FLAGS, TOSHI_TMEMORY_SIZE);
 	Toshi::TUtil::ToshiCreate(0, 0, memorySettings);
-	TOSHI_INFO("Build Version {0}", 0.28);
+	TOSHI_TRACE("Build Version {0}", "0.28");
 
-	OSVERSIONINFOEX osVersionInfo;
-	::ZeroMemory(&osVersionInfo, sizeof(OSVERSIONINFOEX));
+	OSVERSIONINFOEX osVersionInfo = { };
 	osVersionInfo.dwOSVersionInfoSize = sizeof(osVersionInfo);
 
-	RtlGetVersion_FUNC func = (RtlGetVersion_FUNC)GetProcAddress(GetModuleHandleW(L"ntdll.dll"), "RtlGetVersion");
-	if (func != 0) {
-		func(&osVersionInfo);
+	const char* osName = "unknown";
+	HMODULE ntdll = GetModuleHandleW(L"ntdll.dll");
+
+	if (ntdll != NULL)
+	{
+		typedef void (WINAPI* t_RtlGetVersion) (OSVERSIONINFOEX*);
+		auto RtlGetVersion = reinterpret_cast<t_RtlGetVersion>(GetProcAddress(ntdll, "RtlGetVersion"));
+		
+		if (RtlGetVersion != NULL)
+		{
+			RtlGetVersion(&osVersionInfo);
+			osName = GetOSName(osVersionInfo);
+		}
 	}
 
 	LPTSTR cmd = GetCommandLine();
-
-	TOSHI_INFO(L"Command Line: {}", cmd);
-	TOSHI_INFO("OS Name: {}", "Windows 10");
-	TOSHI_INFO(L"OS Version: {}.{} Build:{} {}", osVersionInfo.dwMajorVersion, osVersionInfo.dwMinorVersion, osVersionInfo.dwBuildNumber, osVersionInfo.szCSDVersion);
+	TOSHI_TRACE(L"Command Line: {}", cmd);
+	TOSHI_TRACE("OS Name: {}", osName);
+	TOSHI_TRACE(L"OS Version: {}.{} Build:{} {}", osVersionInfo.dwMajorVersion, osVersionInfo.dwMinorVersion, osVersionInfo.dwBuildNumber, osVersionInfo.szCSDVersion);
 
 	HANDLE hMutex = CreateMutexA(NULL, true, "BLOB07");
 	if (GetLastError() == ERROR_ALREADY_EXISTS)
@@ -106,11 +112,27 @@ TOSHI_ENTRY
 		return 0;
 	}
 
-	if (IsDebuggerPresent()) TIMPLEMENT_D("SetUnhandledExceptionFilter(FUN_00576760);");
+	if (IsDebuggerPresent())
+	{
+		SetUnhandledExceptionFilter(
+			[](_EXCEPTION_POINTERS* ExceptionInfo) -> LONG
+			{
+				TOSHI_CORE_ERROR("Blob_UnhandledExceptionFilter");
+				TBREAK();
+				return EXCEPTION_EXECUTE_HANDLER;
+			}
+		);
+	}
+
 	// de blob does steam init
 
-	TOSHI_APP
+	TOSHI_APP;
+	
+	if (hMutex != NULL)
+	{
 		ReleaseMutex(hMutex);
+	}
+
 	// spdlog needs to be replaced with own Log system
 	// because it doesn't work fine with custom allocators
 	// Toshi::TUtil::ToshiDestroy();

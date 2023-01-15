@@ -39,6 +39,12 @@ namespace Toshi
 				m_List = list;
 			}
 
+			template<class T>
+			T* As()
+			{
+				return static_cast<T*>(this);
+			}
+
 		protected:
 			TNodeList* m_List;
 			TNode* m_Next;

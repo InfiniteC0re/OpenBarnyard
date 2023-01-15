@@ -10,11 +10,62 @@
 #undef FillMemory
 #endif
 
+void* __CRTDECL operator new(size_t size)
+{
+	return TMalloc(size);
+}
+
+void* __CRTDECL operator new(size_t size, Toshi::TMemoryHeap* heap) noexcept
+{
+	return Toshi::TMemoryHeap::Malloc(heap, size);
+}
+
+void* __CRTDECL operator new[](size_t size)
+{
+	return TMalloc(size);
+}
+
+void* __CRTDECL operator new[](size_t size, ::std::nothrow_t const&) noexcept
+{
+	return TMalloc(size);
+}
+
+void* __CRTDECL operator new[](size_t size, Toshi::TMemoryHeap* heap) noexcept
+{
+	return Toshi::TMemoryHeap::Malloc(heap, size);
+}
+
+void __CRTDECL operator delete(void* ptr, ::std::nothrow_t const&) noexcept
+{
+	TFree(ptr);
+}
+
+void __CRTDECL operator delete(void* ptr) noexcept
+{
+	TFree(ptr);
+}
+
+void __CRTDECL operator delete[](void* ptr) noexcept
+{
+	TFree(ptr);
+}
+
+void __CRTDECL operator delete[](void* ptr, ::std::nothrow_t const&) noexcept
+{
+	TFree(ptr);
+}
+
+void __CRTDECL operator delete[](void* ptr, size_t _Size) noexcept
+{
+	TFree(ptr);
+}
+
 namespace Toshi
 {
 	TMemoryContext TMemory::s_Context;
-	TMemoryHeap* TMemory::s_GlobalHeap         = nullptr;
+	TMemoryHeap* TMemory::s_GlobalHeap         = TNULL;
 	T2Mutex TMemory::s_GlobalMutex             = T2Mutex();
+	TMemory* TMemory::s_Instance               = TNULL;
 
 	void TMemory::OutOfMem(TMemoryHeap* heap, size_t size)
 	{
@@ -123,7 +174,7 @@ namespace Toshi
 		}
 	}
 
-	TMemoryHeap* TMemory::dlheapcreatesubheap(TMemoryHeap* heap, size_t size, TMemoryHeapFlags flags, const char name[15])
+	TMemoryHeap* TMemory::dlheapcreatesubheap(TMemoryHeap* heap, size_t size, TMemoryHeapFlags flags, const char name[HEAP_MAXNAME])
 	{
 		// 006fc320
 		TMemoryHeap* subHeap = nullptr;
@@ -170,7 +221,7 @@ namespace Toshi
 		return subHeap;
 	}
 
-	TMemoryHeap* TMemory::dlheapcreateinplace(void* ptr, size_t heapSize, TMemoryHeapFlags flags, const char name[15])
+	TMemoryHeap* TMemory::dlheapcreateinplace(void* ptr, size_t heapSize, TMemoryHeapFlags flags, const char name[HEAP_MAXNAME])
 	{
 		TASSERT(heapSize > 0, "Allocation size is zero");
 		TASSERT((heapSize & 3) == 0, "Allocation size is not aligned to 4");
