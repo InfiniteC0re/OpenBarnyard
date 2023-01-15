@@ -21,6 +21,17 @@ namespace Toshi
 			HeapFree(TMemory::s_Context.s_Sysheap, NULL, TMemory::s_Context.s_Heap);
 		}
 
+		if (TMemory::GetFlags() & Flags_Standard)
+		{
+			// Reset callbacks so no external libraries can malloc or free anything
+			TMemory::s_Context.s_cbMalloc = [](size_t size) -> void* { return TNULL; };
+			TMemory::s_Context.s_cbCalloc = [](size_t nitems, size_t size) -> void* { return TNULL; };
+			TMemory::s_Context.s_cbRealloc = [](void* ptr, size_t size) -> void* { return TNULL; };
+			TMemory::s_Context.s_cbMemalign = [](size_t alignment, size_t size) -> void* { return TNULL; };
+			TMemory::s_Context.s_cbFree = [](void* ptr) -> void { };
+			TMemory::s_Context.s_cbIdk = [](void* ptr, size_t size) -> void { };
+		}
+
 		TUtil::MemSet(&TMemory::s_Context, 0, sizeof(TMemory::s_Context));
 	}
 

@@ -5,6 +5,8 @@ workspace "Toshi"
 	platforms "Windows"
 	configurations { "Debug", "Release", "Dist" }
 	
+	disablewarnings { "4996" }
+	
 	debugdir ("%{wks.location}/bin/" .. outputdir .. "/%{prj.name}")
 	targetdir ("%{wks.location}/bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("%{wks.location}/bin-int/" .. outputdir .. "/%{prj.name}")
