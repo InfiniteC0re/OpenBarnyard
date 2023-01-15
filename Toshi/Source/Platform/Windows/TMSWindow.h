@@ -18,10 +18,10 @@ namespace Toshi
 
 		void Enable();
 		void Disable();
-
 		void Update();
-		void Destroy();
-		bool Create(TRender* renderer, LPCSTR title);
+
+		bool RegisterWindowClass(TRender* renderer, LPCSTR title);
+		void UnregisterWindowClass();
 
 		bool Flag1() { return m_Flag1; }
 		bool IsEnabled() { return m_IsEnabled; } // Not confirmed

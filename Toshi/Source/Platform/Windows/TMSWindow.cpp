@@ -38,7 +38,7 @@ namespace Toshi
 		}
 	}
 
-	void TMSWindow::Destroy()
+	void TMSWindow::UnregisterWindowClass()
 	{
 		if (m_HWND != NULL)
 		{
@@ -63,9 +63,9 @@ namespace Toshi
 		}
 	}
 
-	bool TMSWindow::Create(TRender* renderer, LPCSTR title)
+	bool TMSWindow::RegisterWindowClass(TRender* renderer, LPCSTR title)
 	{
-		Destroy();
+		UnregisterWindowClass();
 
 		m_Render = renderer;
 		m_ModuleHandle = GetModuleHandleA(NULL);
