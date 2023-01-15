@@ -6,6 +6,7 @@
 #include "Toshi/Render/TResource.h"
 #include "Toshi/Render/TAnimation.h"
 #include "Toshi/Render/TRenderAdapter.h"
+#include "Toshi/Render/TRenderParamTable.h"
 
 namespace Toshi
 {
@@ -178,7 +179,7 @@ namespace Toshi
 		TResource* m_SystemResources[SYSRESOURCE_NUMOF]; // 0x20
 		TMatrix44 m_LightDirection;                      // 0x50
 		TMatrix44 m_LightColour;                         // 0x90
-		//void* m_aSysResources;            // 0x20
+		TRenderParamTable* m_ParamTable;                 // 0xD4
 		TNodeList<TRenderAdapter> m_AdapterList;         // 0xD8
 		TNodeTree<TResource> m_Resources;                // 0xE8
 		size_t m_ResourceCount = 0;                      // 0x100
