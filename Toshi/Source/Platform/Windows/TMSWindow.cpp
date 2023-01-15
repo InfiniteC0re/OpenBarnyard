@@ -232,14 +232,7 @@ namespace Toshi
 			if (wParam == TRUE)
 			{
 				// Window was activated
-				if (window->IsWindowed() == false)
-				{
-					pSystemManager->Pause(false);
-				}
-				else
-				{
-					pSystemManager->Pause(false);
-				}
+				pSystemManager->Pause(false);
 			}
 			else
 			{
