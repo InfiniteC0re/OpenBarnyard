@@ -1,18 +1,27 @@
 #pragma once
 
+#include "TGenericDList.h"
+
 namespace Toshi
 {
-	class TGenericEmitter
+	template <class T>
+	class TGenericEmitter : TDList<T>::TNode
 	{
 	public:
-		TGenericEmitter(void* owner) { m_Unk1 = this; m_Unk2 = this; Create(owner); }
+		TGenericEmitter() = default;
+		TGenericEmitter(void* owner) 
+		{ 
+			m_List.m_Root.m_Next = this;
+			m_List.m_Root.m_Prev = this;
+			Create(owner); 
+		}
 
 		void Create(void* owner) { m_Owner = owner; }
 		//void Destroy() { }
 
 	private:
-		void* m_Unk1;
-		void* m_Unk2;
+
+		TDList<T> m_List;
 		void* m_Owner;
 	};
 

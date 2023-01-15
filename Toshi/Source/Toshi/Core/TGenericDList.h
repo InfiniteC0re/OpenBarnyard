@@ -58,7 +58,7 @@ namespace Toshi
 			template<typename T>
 			T* As() { return static_cast<T*>(this); }
 
-		protected:
+		public:
 			TNode* m_Next;
 			TNode* m_Prev;
 		};
@@ -121,7 +121,7 @@ namespace Toshi
 		TGenericDList() = default;
 		~TGenericDList() { RemoveAll(); }
 
-	protected:
+	public:
 		TNode m_Root;
 	};
 
