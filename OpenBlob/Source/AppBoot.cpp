@@ -1,7 +1,7 @@
 #include "pch.h"
 
 // Predefining Toshi initialization settings
-#define TOSHI_TMEMORY_SIZE 64 * 1024 * 1024
+#define TOSHI_TMEMORY_SIZE 640 * 1024 * 1024
 #define TOSHI_TMEMORY_FLAGS Toshi::TMemory::Flags_Standard
 
 // Including the entrypoint
