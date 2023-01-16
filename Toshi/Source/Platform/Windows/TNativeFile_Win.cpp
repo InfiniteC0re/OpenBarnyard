@@ -12,15 +12,12 @@ namespace Toshi
         DWORD dirLength = GetCurrentDirectoryA(sizeof(currentDir), currentDir);
         TASSERT(dirLength > 0, "The directory's length is 0");
 
-        TString8 prefix(currentDir);
-
         TFileSystem* pFileSystem;
         pFileSystem = new TNativeFileSystem("local");
-        pFileSystem->SetPrefix(prefix);
+        pFileSystem->SetPrefix(currentDir);
         pFileSystem = new TNativeFileSystem("abs");
-        pFileSystem->SetPrefix(prefix);
+        pFileSystem->SetPrefix("");
         pFileSystem = new TNativeFileSystem("null");
-        pFileSystem->SetPrefix(prefix);
 
         fileManager->SetSystemPath("local");
 
