@@ -151,6 +151,8 @@ namespace Toshi
 		virtual bool CreateDisplay(DisplayParams* params) override;
 		virtual bool DestroyDisplay() override { return true; }
 		virtual void Update(float deltaTime) override;
+		virtual void BeginScene() override;
+		virtual void EndScene() override;
 		virtual void* GetCurrentDevice() override { return TNULL; }
 		virtual DisplayParams* GetCurrentDisplayParams() override { return &m_DisplayParams; }
 		virtual bool Create() override { return Create("de Blob"); }
@@ -174,6 +176,7 @@ namespace Toshi
 
 	public:
 		static UINT s_QualityLevel;
+		static bool s_bPresentTest;
 
 	private:
 		DXGI_SWAP_CHAIN_DESC m_SwapChainDesc;     // 0x61C
@@ -196,5 +199,6 @@ namespace Toshi
 		DisplayParams m_DisplayParams;            // 0x698
 		TMSWindow m_Window;                       // 0x6B0
 		FLOAT m_ClearColor[4];                    // 0x6EC
+		size_t m_NumDrawnFrames;                  // 0x72C
 	};
 }

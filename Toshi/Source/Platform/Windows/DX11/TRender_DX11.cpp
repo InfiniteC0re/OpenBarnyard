@@ -2,9 +2,12 @@
 #include "TRender_DX11.h"
 #include "TRenderContext_DX11.h"
 
+ID3D11DepthStencilView;
+
 namespace Toshi
 {
 	UINT TRenderDX11::s_QualityLevel = 1;
+	bool TRenderDX11::s_bPresentTest = TFALSE;
 
 	TRenderContext* TRender::CreateRenderContext()
 	{
@@ -98,9 +101,9 @@ namespace Toshi
 
 	TRenderDX11::TRenderDX11()
 	{
-		m_ClearColor[0] = 1.0f;
-		m_ClearColor[1] = 1.0f;
-		m_ClearColor[2] = 1.0f;
+		m_ClearColor[0] = 0.2f;
+		m_ClearColor[1] = 0.6f;
+		m_ClearColor[2] = 0.2f;
 		m_ClearColor[3] = 1.0f;
 	}
 
@@ -410,6 +413,104 @@ namespace Toshi
 		TASSERT(TTRUE == IsCreated());
 		m_Window.Update();
 		TRender::Update(deltaTime);
+	}
+
+	void TRenderDX11::BeginScene()
+	{
+		TASSERT(TTRUE == IsDisplayCreated());
+		TASSERT(TFALSE == IsInScene());
+
+		TRender::BeginScene();
+		m_pDeviceContext->OMSetRenderTargets(1, &m_RTView2, m_StencilView);
+		m_pDeviceContext->ClearRenderTargetView(m_RTView2, m_ClearColor);
+
+		D3D11_VIEWPORT viewport;
+		viewport.TopLeftX = 0.0f;
+		viewport.TopLeftY = 0.0f;
+		viewport.MinDepth = 0.0f;
+		viewport.MaxDepth = 1.0f;
+		viewport.Width = m_SwapChainDesc.BufferDesc.Width;
+		viewport.Height = m_SwapChainDesc.BufferDesc.Height;
+
+		m_pDeviceContext->RSSetViewports(1, &viewport);
+		m_bInScene = TTRUE;
+	}
+
+	void TRenderDX11::EndScene()
+	{
+		TASSERT(TTRUE == IsDisplayCreated());
+		TASSERT(TTRUE == IsInScene());
+
+		m_NumDrawnFrames += 1;
+
+		if (m_IsWidescreen == false)
+		{
+			if (m_DisplayParams.MultisampleQualityLevel < 2)
+			{
+				m_pDeviceContext->CopyResource(m_Texture2D1, m_SRView1Texture);
+			}
+			else
+			{
+				m_pDeviceContext->ResolveSubresource(m_Texture2D1, 0, m_SRView1Texture, 0, DXGI_FORMAT_R8G8B8A8_UNORM);
+			}
+		}
+		else
+		{
+			D3D11_VIEWPORT viewport;
+			viewport.TopLeftX = 0.0f;
+			viewport.TopLeftY = 0.0f;
+			viewport.MinDepth = 0.0f;
+			viewport.MaxDepth = 1.0f;
+			viewport.Width = m_DisplayWidth;
+			viewport.Height = m_DisplayHeight;
+
+			m_pDeviceContext->OMSetRenderTargets(1, &m_RTView1, NULL);
+			m_pDeviceContext->RSSetViewports(1, &viewport);
+			m_pDeviceContext->ClearRenderTargetView(m_RTView1, m_ClearColor);
+
+			UINT diff1 = m_DisplayWidth - m_DisplayParams.Width;
+			UINT diff2 = m_DisplayHeight - m_DisplayParams.Height;
+			
+			if (m_DisplayParams.MultisampleQualityLevel < 2)
+			{
+				float inAR = (float)m_DisplayParams.Width / m_DisplayParams.Height;
+				float outAR = (float)m_DisplayWidth/ m_DisplayHeight;
+				TASSERT(fabsf(inAR - 16.0f / 9.0f) < 0.01);
+
+				TTODO("FUN_006a6700");
+			}
+			else
+			{
+				m_pDeviceContext->ResolveSubresource(m_SRView2Texture, 0, m_SRView1Texture, 0, DXGI_FORMAT_R8G8B8A8_UNORM);
+				m_pDeviceContext->CopySubresourceRegion(m_Texture2D1, NULL, diff1 / 2, diff2 / 2, 0, m_SRView2Texture, 0, NULL);
+			}
+
+			ID3D11ShaderResourceView* pRV = TNULL;
+			m_pDeviceContext->PSGetShaderResources(0, 1, &pRV);
+		}
+
+		HRESULT hRes = m_SwapChain->Present(1, s_bPresentTest ? DXGI_PRESENT_TEST : 0);
+
+		if (!SUCCEEDED(hRes))
+		{
+			if (hRes == DXGI_ERROR_DEVICE_REMOVED)
+			{
+				TTODO("FUN_006a7a30");
+			}
+			else if (hRes == DXGI_ERROR_DEVICE_RESET)
+			{
+				TASSERT(TFALSE);
+			}
+			else if(hRes == DXGI_STATUS_OCCLUDED)
+			{
+				s_bPresentTest = true;
+				TOSHI_CORE_INFO("Pausing Occluded!");
+				TSystemManager::GetSingletonWeak()->Pause(true);
+			}
+		}
+
+		m_bInScene = TFALSE;
+		TRender::EndScene();
 	}
 
 	bool TRenderDX11::RecreateDisplay(DisplayParams* pDisplayParams)
