@@ -1,9 +1,10 @@
 #pragma once
 #include "Toshi/Render/TRender.h"
 #include "Toshi/Render/TRenderAdapter.h"
+#include "Toshi/Render/Shaders/TToneMap.h"
+#include "Toshi/Render/Shaders/TFXAA.h"
 #include "Platform/Windows/TMSWindow.h"
-
-#include <d3d11.h>
+#include "Includes.h"
 
 namespace Toshi
 {
@@ -126,6 +127,12 @@ namespace Toshi
 	class TRenderDX11 : public TRender
 	{
 	private:
+		friend class ARenderer;
+
+		static constexpr size_t HEAPSIZE = 0x10000;
+		static constexpr size_t VERTEX_CONSTANT_BUFFER_SIZE = 0x1000;
+		static constexpr size_t PIXEL_CONSTANT_BUFFER_SIZE = 0x400;
+
 		static constexpr D3D_DRIVER_TYPE m_scpDriverTypes[3]
 		{
 			D3D_DRIVER_TYPE_HARDWARE,
@@ -143,9 +150,27 @@ namespace Toshi
 		
 	public:
 		TRenderDX11();
-		~TRenderDX11() { }
+		~TRenderDX11() = default;
 
-		TMSWindow* GetMSWindow() { return &m_Window; }
+		TMSWindow* GetMSWindow()
+		{
+			return &m_Window;
+		}
+
+		DXGI_SWAP_CHAIN_DESC* GetSwapChainDesc()
+		{
+			return &m_SwapChainDesc;
+		}
+
+		ID3D11DeviceContext* GetDeviceContext() const
+		{
+			return m_pDeviceContext;
+		}
+
+		static TRenderDX11* Interface()
+		{
+			return static_cast<TRenderDX11*>(TRender::GetSingletonWeak());
+		}
 		
 	public:
 		virtual bool CreateDisplay(DisplayParams* params) override;
@@ -161,14 +186,17 @@ namespace Toshi
 		virtual void ShowDeviceError();
 		virtual void ShowDisplayError();
 
-		bool Create(LPCSTR a_name);
-		
 		static int GetTextureRowPitch(DXGI_FORMAT format, int width);
 		static int GetTextureDepthPitch(DXGI_FORMAT format, int width, int height);
 		static const char* GetFeatureLevel(D3D_FEATURE_LEVEL a_featureLevel);
+		static ID3DBlob* CompileShader(const char* srcData, LPCSTR pEntrypoint, LPCSTR pTarget, const D3D_SHADER_MACRO* pDefines);
 
+		bool Create(LPCSTR a_name);
+		void CreateSamplerStates();
+		void CopyToVertexConstantBuffer(int index, const void* src, int count);
+		void CopyToPixelConstantBuffer(int index, const void* src, int count);
+		HRESULT CreatePixelShader(const void* pShaderBytecode, SIZE_T BytecodeLength, ID3D11PixelShader** ppPixelShader);
 		ID3D11ShaderResourceView* CreateTexture(UINT width, UINT height, DXGI_FORMAT format, void* srcData, uint8_t flags, D3D11_USAGE usage, uint32_t cpuAccessFlags, uint32_t sampleDescCount);
-		
 		ID3D11RenderTargetView* CreateRenderTargetView(ID3D11ShaderResourceView* pShaderResourceView);
 
 	private:
@@ -177,6 +205,7 @@ namespace Toshi
 	public:
 		static UINT s_QualityLevel;
 		static bool s_bPresentTest;
+		static TMemoryHeap* s_pMemHeap;
 
 	private:
 		DXGI_SWAP_CHAIN_DESC m_SwapChainDesc;     // 0x61C
@@ -199,6 +228,12 @@ namespace Toshi
 		DisplayParams m_DisplayParams;            // 0x698
 		TMSWindow m_Window;                       // 0x6B0
 		FLOAT m_ClearColor[4];                    // 0x6EC
+		TToneMap* m_pToneMap;                     // 0x71C
+		TFXAA* m_pFXAA;                           // 0x724
 		size_t m_NumDrawnFrames;                  // 0x72C
+		void* m_pVertexConstantBuffer;            // 0x76C
+		bool m_IsVertexConstantBufferSet;         // 0x770
+		void* m_pPixelConstantBuffer;             // 0x7B8
+		bool m_IsPixelConstantBufferSet;          // 0x7BC
 	};
 }

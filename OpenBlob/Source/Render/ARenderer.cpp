@@ -16,10 +16,14 @@ ARenderer::~ARenderer()
 void ARenderer::Update(float deltaTime)
 {
 	TIMPLEMENT();
-	Toshi::TRenderDX11* pRender = static_cast<Toshi::TRenderDX11*>(Toshi::TRender::GetSingletonWeak());
+	auto pRender = Toshi::TRenderDX11::Interface();
+	auto pDisplayParams = pRender->GetCurrentDisplayParams();
 
 	pRender->Update(deltaTime);
 	pRender->BeginScene();
+
+	ID3D11ShaderResourceView* pShaderResourceView = (pDisplayParams->MultisampleQualityLevel < 2) ? pRender->m_SRView1 : pRender->m_SRView2;
+	pRender->m_pFXAA->Render(pShaderResourceView);
 
 	pRender->EndScene();
 }

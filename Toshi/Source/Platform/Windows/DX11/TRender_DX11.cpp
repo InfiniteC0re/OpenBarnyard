@@ -2,12 +2,13 @@
 #include "TRender_DX11.h"
 #include "TRenderContext_DX11.h"
 
-ID3D11DepthStencilView;
+#include <d3dcompiler.h>
 
 namespace Toshi
 {
 	UINT TRenderDX11::s_QualityLevel = 1;
 	bool TRenderDX11::s_bPresentTest = TFALSE;
+	TMemoryHeap* TRenderDX11::s_pMemHeap = TNULL;
 
 	TRenderContext* TRender::CreateRenderContext()
 	{
@@ -106,6 +107,13 @@ namespace Toshi
 		m_ClearColor[2] = 0.2f;
 		m_ClearColor[3] = 1.0f;
 		m_NumDrawnFrames = 0;
+
+		m_pVertexConstantBuffer = TNULL;
+		m_IsVertexConstantBufferSet = TFALSE;
+		m_pPixelConstantBuffer = TNULL;
+		m_IsPixelConstantBufferSet = TFALSE;
+
+		s_pMemHeap = TMemory::CreateHeap(HEAPSIZE, 0, "render states");
 	}
 
 	bool TRenderDX11::CreateDisplay(DisplayParams* pDisplayParams)
@@ -403,8 +411,11 @@ namespace Toshi
 			ShowCursor(false);
 		}
 
-		TTODO("Toshi::TRenderDX11::CreateSamplerStates");
+		CreateSamplerStates();
 		TTODO("Create and compile shaders");
+
+		m_pToneMap = new TToneMap();
+		m_pFXAA = new TFXAA();
 
 		return true;
 	}
@@ -430,8 +441,8 @@ namespace Toshi
 		viewport.TopLeftY = 0.0f;
 		viewport.MinDepth = 0.0f;
 		viewport.MaxDepth = 1.0f;
-		viewport.Width = m_SwapChainDesc.BufferDesc.Width;
-		viewport.Height = m_SwapChainDesc.BufferDesc.Height;
+		viewport.Width = (float)m_SwapChainDesc.BufferDesc.Width;
+		viewport.Height = (float)m_SwapChainDesc.BufferDesc.Height;
 
 		m_pDeviceContext->RSSetViewports(1, &viewport);
 		m_bInScene = TTRUE;
@@ -462,8 +473,8 @@ namespace Toshi
 			viewport.TopLeftY = 0.0f;
 			viewport.MinDepth = 0.0f;
 			viewport.MaxDepth = 1.0f;
-			viewport.Width = m_DisplayWidth;
-			viewport.Height = m_DisplayHeight;
+			viewport.Width = (float)m_DisplayWidth;
+			viewport.Height = (float)m_DisplayHeight;
 
 			m_pDeviceContext->OMSetRenderTargets(1, &m_RTView1, NULL);
 			m_pDeviceContext->RSSetViewports(1, &viewport);
@@ -602,6 +613,17 @@ namespace Toshi
 		return false;
 	}
 
+	void TRenderDX11::CreateSamplerStates()
+	{
+		TIMPLEMENT();
+
+		m_pVertexConstantBuffer = s_pMemHeap->Malloc(VERTEX_CONSTANT_BUFFER_SIZE);
+		m_IsVertexConstantBufferSet = TFALSE;
+
+		m_pPixelConstantBuffer = s_pMemHeap->Malloc(PIXEL_CONSTANT_BUFFER_SIZE);
+		m_IsPixelConstantBufferSet = TFALSE;
+	}
+
 	int TRenderDX11::GetTextureRowPitch(DXGI_FORMAT format, int width)
 	{
 		switch (format)
@@ -686,6 +708,59 @@ namespace Toshi
 		default:
 			return "unknown";
 		}
+	}
+
+	ID3DBlob* TRenderDX11::CompileShader(const char* srcData, LPCSTR pEntrypoint, LPCSTR pTarget, const D3D_SHADER_MACRO* pDefines)
+	{
+		size_t srcLength = T2String8::Length(srcData);
+
+		ID3DBlob* pShaderBlob = TNULL;
+		ID3DBlob* pErrorBlob = TNULL;
+		
+		HRESULT hRes = D3DCompile(srcData, srcLength, NULL, pDefines, NULL, pEntrypoint, pTarget, D3DCOMPILE_PREFER_FLOW_CONTROL, 0, &pShaderBlob, &pErrorBlob);
+
+		if (!SUCCEEDED(hRes))
+		{
+			TOSHI_CORE_CRITICAL("Shader compilation failed");
+			
+			if (pErrorBlob != TNULL)
+			{
+				TOSHI_CORE_CRITICAL((const char*)pErrorBlob->GetBufferPointer());
+				pErrorBlob->Release();
+			}
+
+			TASSERT(TFALSE);
+		}
+
+		return pShaderBlob;
+	}
+
+	void TRenderDX11::CopyToVertexConstantBuffer(int index, const void* src, int count)
+	{
+		unsigned int offset = index * 16;
+		unsigned int size = count * 16;
+
+		TASSERT(offset + size <= VERTEX_CONSTANT_BUFFER_SIZE, "Buffer size exceeded");
+		TUtil::MemCopy(m_pVertexConstantBuffer, src, size);
+		m_IsVertexConstantBufferSet = true;
+	}
+
+	void TRenderDX11::CopyToPixelConstantBuffer(int index, const void* src, int count)
+	{
+		unsigned int offset = index * 16;
+		unsigned int size = count * 16;
+
+		TASSERT(offset + size <= PIXEL_CONSTANT_BUFFER_SIZE, "Buffer size exceeded");
+		TUtil::MemCopy(m_pPixelConstantBuffer, src, size);
+		m_IsPixelConstantBufferSet = true;
+	}
+
+	HRESULT TRenderDX11::CreatePixelShader(const void* pShaderBytecode, SIZE_T BytecodeLength, ID3D11PixelShader** ppPixelShader)
+	{
+		HRESULT hRes = m_pDevice->CreatePixelShader(pShaderBytecode, BytecodeLength, NULL, ppPixelShader);
+		TASSERT(SUCCEEDED(hRes), "Couldnt Create Pixel Shader");
+
+		return hRes;
 	}
 
 	ID3D11ShaderResourceView* TRenderDX11::CreateTexture(UINT width, UINT height, DXGI_FORMAT format, void* srcData, uint8_t flags, D3D11_USAGE usage, uint32_t cpuAccessFlags, uint32_t sampleDescCount)
