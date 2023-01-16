@@ -4,12 +4,12 @@
 
 namespace Toshi
 {
+	UINT TRenderDX11::s_QualityLevel = 1;
+
 	TRenderContext* TRender::CreateRenderContext()
 	{
 		return new TRenderContextDX11(*this);
 	}
-
-	UINT TRenderDX11::s_QualityLevel = 1;
 
 	TRenderAdapter* TD3DAdapter::Mode::GetAdapter() const
 	{

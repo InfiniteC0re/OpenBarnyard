@@ -17,11 +17,10 @@ namespace Toshi
 		m_Unk5 = 0;
 		m_HasDyingResources = false;
 
-		// Initialize singletons
+		// Create things
 		T2ResourceManager::CreateSingleton(TRender::MAXNUMRESOURCES);
+		m_ParamTable = new TRenderParamTable;
 		TModelManager::CreateSingleton();
-
-		TTODO("Create TRenderParamTable");
 
 		// Reset array
 		std::memset(m_SystemResources, '\0', sizeof(m_SystemResources));
@@ -40,8 +39,13 @@ namespace Toshi
 			0.0, 0.0, 0.0, 0.0,
 			0.0, 0.0, 0.0, 0.0
 		};
+	}
 
-		TIMPLEMENT();
+	TRender::~TRender()
+	{
+		delete m_ParamTable;
+		TModelManager::DestroySingleton();
+		T2ResourceManager::DestroySingleton();
 	}
 
 	bool TRender::Create()
@@ -55,6 +59,7 @@ namespace Toshi
 			m_bCreated = true;
 			return true;
 		}
+
 		return false;
 	}
 
