@@ -13,6 +13,17 @@ ARenderer::~ARenderer()
 	// 005f0140
 }
 
+void ARenderer::Update(float deltaTime)
+{
+	TIMPLEMENT();
+	Toshi::TRenderDX11* pRender = static_cast<Toshi::TRenderDX11*>(Toshi::TRender::GetSingletonWeak());
+
+	pRender->Update(deltaTime);
+	pRender->BeginScene();
+
+	pRender->EndScene();
+}
+
 bool ARenderer::CreateInterface()
 {
 	// 005ed3b0

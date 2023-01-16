@@ -22,7 +22,7 @@ namespace Toshi
 	void TMSWindow::Update()
 	{
 		MSG msg;
-		if (!m_Flag1 && PeekMessageA(&msg, NULL, 0, 0, 0) == TRUE)
+		if (!m_IsDestroyed && PeekMessageA(&msg, NULL, 0, 0, 0) == TRUE)
 		{
 			while (GetMessageA(&msg, NULL, 0, 0) != FALSE)
 			{
@@ -34,7 +34,7 @@ namespace Toshi
 				}
 			}
 
-			m_Flag1 = true;
+			m_IsDestroyed = true;
 		}
 	}
 
@@ -52,7 +52,7 @@ namespace Toshi
 			}
 
 			DestroyWindow(m_HWND);
-			m_Flag1 = true;
+			m_IsDestroyed = true;
 			m_HWND = NULL;
 		}
 
@@ -106,6 +106,8 @@ namespace Toshi
 		EnableWindow(m_HWND, TRUE);
 		ShowWindow(m_HWND, SW_SHOW);
 		SetForegroundWindow(m_HWND);
+
+		m_IsDestroyed = false;
 		
 		if (GetForegroundWindow() != m_HWND)
 		{
@@ -236,7 +238,7 @@ namespace Toshi
 				ClipCursor(&rect);
 			}
 
-			if (window->Flag1()) return 0;
+			if (window->IsDestroyed()) return 0;
 			if (pSystemManager == TNULL) return 0;
 
 			if (wParam == TRUE)

@@ -142,7 +142,7 @@ namespace Toshi
 		};
 		
 	public:
-		TRenderDX11() { }
+		TRenderDX11();
 		~TRenderDX11() { }
 
 		TMSWindow* GetMSWindow() { return &m_Window; }
@@ -150,6 +150,7 @@ namespace Toshi
 	public:
 		virtual bool CreateDisplay(DisplayParams* params) override;
 		virtual bool DestroyDisplay() override { return true; }
+		virtual void Update(float deltaTime) override;
 		virtual void* GetCurrentDevice() override { return TNULL; }
 		virtual DisplayParams* GetCurrentDisplayParams() override { return &m_DisplayParams; }
 		virtual bool Create() override { return Create("de Blob"); }
@@ -159,8 +160,14 @@ namespace Toshi
 		virtual void ShowDisplayError();
 
 		bool Create(LPCSTR a_name);
-
+		
+		static int GetTextureRowPitch(DXGI_FORMAT format, int width);
+		static int GetTextureDepthPitch(DXGI_FORMAT format, int width, int height);
 		static const char* GetFeatureLevel(D3D_FEATURE_LEVEL a_featureLevel);
+
+		ID3D11ShaderResourceView* CreateTexture(UINT width, UINT height, DXGI_FORMAT format, void* srcData, uint8_t flags, D3D11_USAGE usage, uint32_t cpuAccessFlags, uint32_t sampleDescCount);
+		
+		ID3D11RenderTargetView* CreateRenderTargetView(ID3D11ShaderResourceView* pShaderResourceView);
 
 	private:
 		void BuildAdapterDatabase();
@@ -169,24 +176,25 @@ namespace Toshi
 		static UINT s_QualityLevel;
 
 	private:
-		DXGI_SWAP_CHAIN_DESC m_SwapChainDesc;  // 0x61C
-		ID3D11Texture2D* m_Texture2D1;         // 0x658
-		ID3D11RenderTargetView* m_RTView1;     // 0x65C
-		UINT m_UNKNOWN1;                       // 0x660
-		IDXGISwapChain* m_SwapChain;           // 0x664
-		UINT m_DisplayWidth;                   // 0x668
-		UINT m_DisplayHeight;                  // 0x66C
-		UINT m_UNKNOWN2;                       // 0x670
-		ID3D11RenderTargetView* m_RTView2;     // 0x674
-		ID3D11ShaderResourceView* m_SRView1;   // 0x678
-		ID3D11Texture2D* m_Texture2D2;         // 0x67C
-		ID3D11ShaderResourceView* m_SRView2;   // 0x680
-		UINT m_UNKNOWN3;                       // 0x684
-		bool m_IsWidescreen;                   // 0x688
-		ID3D11DeviceContext* m_pDeviceContext; // 0x68C
-		ID3D11Device* m_pDevice;               // 0x690
-		HACCEL m_hAccel;                       // 0x694
-		DisplayParams m_DisplayParams;         // 0x698
-		TMSWindow m_Window;                    // 0x6B0
+		DXGI_SWAP_CHAIN_DESC m_SwapChainDesc;     // 0x61C
+		ID3D11Texture2D* m_Texture2D1;            // 0x658
+		ID3D11RenderTargetView* m_RTView1;        // 0x65C
+		ID3D11DepthStencilView* m_StencilView;    // 0x660
+		IDXGISwapChain* m_SwapChain;              // 0x664
+		UINT m_DisplayWidth;                      // 0x668
+		UINT m_DisplayHeight;                     // 0x66C
+		ID3D11Texture2D* m_SRView1Texture;        // 0x670
+		ID3D11RenderTargetView* m_RTView2;        // 0x674
+		ID3D11ShaderResourceView* m_SRView1;      // 0x678
+		ID3D11Texture2D* m_SRView2Texture;        // 0x67C
+		ID3D11ShaderResourceView* m_SRView2;      // 0x680
+		ID3D11ShaderResourceView* m_StencilTexSR; // 0x684
+		bool m_IsWidescreen;                      // 0x688
+		ID3D11DeviceContext* m_pDeviceContext;    // 0x68C
+		ID3D11Device* m_pDevice;                  // 0x690
+		HACCEL m_hAccel;                          // 0x694
+		DisplayParams m_DisplayParams;            // 0x698
+		TMSWindow m_Window;                       // 0x6B0
+		FLOAT m_ClearColor[4];                    // 0x6EC
 	};
 }

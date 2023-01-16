@@ -40,9 +40,9 @@ namespace Toshi
 			m_IsWindowed = false;
 		}
 
-		bool Flag1() const
+		bool IsDestroyed() const
 		{
-			return m_Flag1;
+			return m_IsDestroyed;
 		}
 
 		bool IsPopup() const
@@ -73,7 +73,7 @@ namespace Toshi
 		HWND m_HWND;               // 0x04
 		TRender* m_Render;         // 0x08
 		bool m_IsWindowed;         // 0x0C
-		bool m_Flag1;              // 0x0D
+		bool m_IsDestroyed;        // 0x0D
 		HMODULE m_ModuleHandle;    // 0x10
 		bool m_Flag2;              // 0x14
 		int m_xPos;                // 0x18

@@ -7,6 +7,8 @@ public:
 	ARenderer();
 	virtual ~ARenderer();
 
+	void Update(float deltaTime);
+
 	bool CreateInterface();
 	bool CreateTRender();
 };
