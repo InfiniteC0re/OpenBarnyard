@@ -18,7 +18,15 @@ namespace Toshi
 		enum FLAG_ : FLAG
 		{
 			FLAG_DIRTY = BITFIELD(0),
-			FLAG_FOG   = BITFIELD(1)
+			FLAG_FOG = BITFIELD(1),
+			FLAG_UNK1 = BITFIELD(2),
+			FLAG_UNK2 = BITFIELD(3),
+			FLAG_UNK3 = BITFIELD(4),
+			FLAG_UNK4 = BITFIELD(5),
+			FLAG_UNK5 = BITFIELD(6),
+			FLAG_UNK6 = BITFIELD(7),
+			FLAG_HASMODELVIEWMATRIX = BITFIELD(8),
+			FLAG_HASWORLDVIEWMATRIX = BITFIELD(9),
 		};
 
 		struct PROJECTIONPARAMS
@@ -41,21 +49,23 @@ namespace Toshi
 
 		virtual void SetModelViewMatrix(const TMatrix44& a_rMatrix)
 		{
-			m_eFlags |= 0x300;
+			m_eFlags |= (FLAG_HASMODELVIEWMATRIX | FLAG_HASWORLDVIEWMATRIX);
 			m_mModelViewMatrix = a_rMatrix;
-			m_eFlags &= ~0x300;
+			m_eFlags &= ~(FLAG_UNK1 | FLAG_UNK3);
+
+			TRender::GetSingletonWeak()->GetParamTable()->SetParameterM44(TRenderParamTable::M44PARAM_MODELVIEW, a_rMatrix);
 		}
 
 		virtual void SetWorldViewMatrix(const TMatrix44& a_rMatrix)
 		{
-			m_eFlags |= 0x100;
+			m_eFlags |= FLAG_HASWORLDVIEWMATRIX;
 			m_mModelViewMatrix = a_rMatrix;
-			m_eFlags &= ~0x100;
+			m_eFlags &= ~(FLAG_UNK1 | FLAG_UNK2 | FLAG_UNK4 | FLAG_UNK5 | FLAG_UNK6);
 		}
 
 	private:
 		FLAG m_eFlags;                          // 0x8
-		static PROJECTIONPARAMS m_sProjParams;  // 0x30 (it cannot have an offset if it's static)
+		PROJECTIONPARAMS m_sProjParams;         // 0x30
 		TMatrix44 m_mModelViewMatrix;           // 0x40
 		TMatrix44 m_mWorldViewMatrix;           // 0x80
 	};
@@ -156,8 +166,9 @@ namespace Toshi
 		bool IsInScene() { return m_bInScene; }
 		bool IsCreated() { return m_bCreated; }
 		bool IsDisplayCreated() { return m_bDisplayCreated; }
-		TRenderContext* GetCurrentRenderContext() { return m_pRenderContext; }
+		TRenderContext* GetCurrentRenderContext() const { return m_pRenderContext; }
 		TNodeList<TRenderAdapter>* GetAdapterList() { return &m_AdapterList; }
+		TRenderParamTable* GetParamTable() const { return m_ParamTable; }
 	
 	public:
 		/*
