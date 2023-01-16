@@ -123,20 +123,20 @@ namespace Toshi
 		TMSWindow* window = reinterpret_cast<TMSWindow*>(GetWindowLongA(hWnd, GWL_USERDATA));
 
 		RECT rect;
-		bool bFlag1, bWindowCreated;
+		bool bFlag1, bLockCursor;
 		auto pDisplayParams = Toshi::TRender::GetSingleton()->GetCurrentDisplayParams();
 
-		if (window == NULL || pDisplayParams->IsFullscreen != false)
+		if (window == NULL || pDisplayParams->IsFullscreen)
 		{
-			bWindowCreated = false;
+			bLockCursor = false;
 		}
 		else
 		{
-			bWindowCreated = true;
+			bLockCursor = true;
 
 			if (pDisplayParams->Unk5 != false)
 			{
-				bWindowCreated = false;
+				bLockCursor = false;
 			}
 		}
 
@@ -232,7 +232,7 @@ namespace Toshi
 		{
 			auto pSystemManager = TSystemManager::GetSingletonWeak();
 
-			if (bFlag1 || bWindowCreated)
+			if (bFlag1 || bLockCursor)
 			{
 				GetWindowRect(hWnd, &rect);
 				ClipCursor(&rect);
@@ -271,7 +271,7 @@ namespace Toshi
 			if (ms_hDeviceNotify != NULL) return 0;
 			ExitProcess(1);
 		case WM_SIZE:
-			if (bWindowCreated)
+			if (bLockCursor)
 			{
 				GetWindowRect(hWnd, &rect);
 				ClipCursor(&rect);

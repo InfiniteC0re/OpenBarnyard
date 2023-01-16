@@ -99,12 +99,13 @@ namespace Toshi
 		dxgiOutput->FindClosestMatchingMode(&matchMode, modeDesc, NULL);
 	}
 
-	TRenderDX11::TRenderDX11()
+	TRenderDX11::TRenderDX11() : m_DisplayParams{ 1280, 720, 32, 3, true, false, 1 }, m_Window()
 	{
 		m_ClearColor[0] = 0.2f;
 		m_ClearColor[1] = 0.6f;
 		m_ClearColor[2] = 0.2f;
 		m_ClearColor[3] = 1.0f;
+		m_NumDrawnFrames = 0;
 	}
 
 	bool TRenderDX11::CreateDisplay(DisplayParams* pDisplayParams)
@@ -493,6 +494,8 @@ namespace Toshi
 
 		if (!SUCCEEDED(hRes))
 		{
+			TOSHI_CORE_ERROR("Present Failed !!!! {0:x}", hRes);
+
 			if (hRes == DXGI_ERROR_DEVICE_REMOVED)
 			{
 				TTODO("FUN_006a7a30");
@@ -504,7 +507,7 @@ namespace Toshi
 			else if(hRes == DXGI_STATUS_OCCLUDED)
 			{
 				s_bPresentTest = true;
-				TOSHI_CORE_INFO("Pausing Occluded!");
+				TOSHI_CORE_ERROR("Pausing Occluded!");
 				TSystemManager::GetSingletonWeak()->Pause(true);
 			}
 		}
@@ -515,7 +518,16 @@ namespace Toshi
 
 	bool TRenderDX11::RecreateDisplay(DisplayParams* pDisplayParams)
 	{
-		return false;
+		TASSERT(TTRUE == IsCreated());
+		TASSERT(TTRUE == IsDisplayCreated());
+
+		TTODO("FUN_006a7a30");
+
+		DestroyDisplay();
+		bool bRes = CreateDisplay(pDisplayParams);
+		TASSERT(bRes);
+
+		return TTRUE == bRes;
 	}
 
 	void TRenderDX11::ShowDeviceError()
