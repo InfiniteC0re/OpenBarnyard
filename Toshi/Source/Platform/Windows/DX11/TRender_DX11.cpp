@@ -1017,7 +1017,7 @@ namespace Toshi
 	{
 		if (m_IsVertexConstantBufferSet)
 		{
-			m_Unk1 += 1 & 0xF;
+			m_Unk1 = (m_Unk1 + 1) % NUMBUFFERS;
 			D3D11_MAPPED_SUBRESOURCE pMappedSubresources;
 			m_pDeviceContext->Map(m_VertexBuffers[m_Unk1], 0, D3D11_MAP_WRITE_DISCARD, 0, &pMappedSubresources);
 			memcpy(pMappedSubresources.pData, m_pVertexConstantBuffer, 0x1000);
@@ -1026,7 +1026,7 @@ namespace Toshi
 		}
 		if (m_IsPixelConstantBufferSet)
 		{
-			m_Unk2 += 1 & 0xF;
+			m_Unk2 = (m_Unk2 + 1) % NUMBUFFERS;
 			D3D11_MAPPED_SUBRESOURCE pMappedSubresources;
 			m_pDeviceContext->Map(m_PixelBuffers[m_Unk2], 0, D3D11_MAP_WRITE_DISCARD, 0, &pMappedSubresources);
 			memcpy(pMappedSubresources.pData, m_pPixelConstantBuffer, 0x400);
