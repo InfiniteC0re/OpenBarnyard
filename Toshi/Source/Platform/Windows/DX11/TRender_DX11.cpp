@@ -615,13 +615,82 @@ namespace Toshi
 
 	void TRenderDX11::CreateSamplerStates()
 	{
-		TIMPLEMENT();
+		m_SamplerState1 = CreateSamplerState(D3D11_FILTER_MIN_MAG_MIP_POINT, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_CLAMP, 0.0f, 0, 0.0f, D3D11_FLOAT32_MAX, 1);
+		m_SamplerState2 = CreateSamplerStateAutoAnisotropy(D3D11_FILTER_MIN_MAG_MIP_LINEAR, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_CLAMP, 0.0f, 0, 0.0f, D3D11_FLOAT32_MAX);
+		m_SamplerState3 = CreateSamplerState(D3D11_FILTER_MIN_MAG_MIP_POINT, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP, 0.0f, 0, 0.0f, D3D11_FLOAT32_MAX, 1);
+		m_SamplerState4 = CreateSamplerStateAutoAnisotropy(D3D11_FILTER_MIN_MAG_MIP_LINEAR, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP, 0.0f, 0, 0.0f, D3D11_FLOAT32_MAX);
+		m_SamplerState5 = CreateSamplerStateAutoAnisotropy(D3D11_FILTER_MIN_MAG_MIP_LINEAR, D3D11_TEXTURE_ADDRESS_MIRROR, D3D11_TEXTURE_ADDRESS_MIRROR, D3D11_TEXTURE_ADDRESS_MIRROR, 0.0f, 0, 0.0f, D3D11_FLOAT32_MAX);
+		m_SamplerState6 = CreateSamplerState(D3D11_FILTER_MIN_MAG_LINEAR_MIP_POINT, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_CLAMP, 0.0f, 0, 0.0f, D3D11_FLOAT32_MAX, 1);
+		m_SamplerState7 = CreateSamplerState(D3D11_FILTER_MIN_MAG_LINEAR_MIP_POINT, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP, 0.0f, 0, 0.0f, D3D11_FLOAT32_MAX, 1);
+		m_SamplerState8 = CreateSamplerState(D3D11_FILTER_MIN_MAG_LINEAR_MIP_POINT, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP, -1.0f, 0, 0.0f, D3D11_FLOAT32_MAX, 1);
+		m_SamplerState10 = CreateSamplerState(D3D11_FILTER_MIN_MAG_MIP_POINT, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_WRAP, 0.0f, 0, 0.0f, D3D11_FLOAT32_MAX, 1);
+		m_SamplerState11 = CreateSamplerStateAutoAnisotropy(D3D11_FILTER_MIN_MAG_MIP_LINEAR, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_WRAP, 0.0f, 0, 0.0f, D3D11_FLOAT32_MAX);
+		m_SamplerState12 = CreateSamplerState(D3D11_FILTER_MIN_MAG_LINEAR_MIP_POINT, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_WRAP, 0.0f, 0, 0.0f, D3D11_FLOAT32_MAX, 1);
+		m_SamplerState9 = CreateSamplerState(D3D11_FILTER_ANISOTROPIC, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_CLAMP, 0.0f, 0, 0.0f, D3D11_FLOAT32_MAX, 1);
+
+		for (size_t i = 0; i < NUMBUFFERS; i++)
+		{
+			D3D11_BUFFER_DESC bufferDesc;
+			bufferDesc.ByteWidth = VERTEX_CONSTANT_BUFFER_SIZE;
+			bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+			bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+			bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+			bufferDesc.MiscFlags = 0;
+			bufferDesc.StructureByteStride = 0;
+
+			m_pDevice->CreateBuffer(&bufferDesc, NULL, &m_VertexBuffers[i]);
+		}
 
 		m_pVertexConstantBuffer = s_pMemHeap->Malloc(VERTEX_CONSTANT_BUFFER_SIZE);
 		m_IsVertexConstantBufferSet = TFALSE;
+		m_Unk1 = 0;
+
+		for (size_t i = 0; i < NUMBUFFERS; i++)
+		{
+			D3D11_BUFFER_DESC bufferDesc;
+			bufferDesc.ByteWidth = PIXEL_CONSTANT_BUFFER_SIZE;
+			bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+			bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+			bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+			bufferDesc.MiscFlags = 0;
+			bufferDesc.StructureByteStride = 0;
+
+			m_pDevice->CreateBuffer(&bufferDesc, NULL, &m_PixelBuffers[i]);
+		}
 
 		m_pPixelConstantBuffer = s_pMemHeap->Malloc(PIXEL_CONSTANT_BUFFER_SIZE);
 		m_IsPixelConstantBufferSet = TFALSE;
+		m_Unk2 = 0;
+
+		// Main vertex buffer
+		{
+			D3D11_BUFFER_DESC bufferDesc;
+			bufferDesc.ByteWidth = VERTEX_BUFFER_SIZE;
+			bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+			bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+			bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+			bufferDesc.MiscFlags = 0;
+			bufferDesc.StructureByteStride = 0;
+
+			m_pDevice->CreateBuffer(&bufferDesc, NULL, &m_MainVertexBuffer);
+			m_Unk3 = 0;
+		}
+
+		// Main index buffer
+		{
+			D3D11_BUFFER_DESC bufferDesc;
+			bufferDesc.ByteWidth = INDEX_BUFFER_SIZE;
+			bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+			bufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+			bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+			bufferDesc.MiscFlags = 0;
+			bufferDesc.StructureByteStride = 0;
+
+			m_pDevice->CreateBuffer(&bufferDesc, NULL, &m_MainIndexBuffer);
+			m_Unk4 = 0;
+		}
+
+		TTODO("Set some flags");
 	}
 
 	int TRenderDX11::GetTextureRowPitch(DXGI_FORMAT format, int width)
@@ -872,6 +941,60 @@ namespace Toshi
 		m_pDevice->CreateRenderTargetView(pTexture, &renderTargetViewDesc, &pRenderTargetView);
 
 		return pRenderTargetView;
+	}
+
+	ID3D11SamplerState* TRenderDX11::CreateSamplerStateAutoAnisotropy(D3D11_FILTER filter, D3D11_TEXTURE_ADDRESS_MODE addressU, D3D11_TEXTURE_ADDRESS_MODE addressV, D3D11_TEXTURE_ADDRESS_MODE addressW, FLOAT mipLODBias, uint32_t borderColor, FLOAT minLOD, FLOAT maxLOD)
+	{
+		D3D11_SAMPLER_DESC samplerDesc = { };
+
+		if (filter == D3D11_FILTER_MIN_MAG_MIP_LINEAR)
+		{
+			filter = D3D11_FILTER_ANISOTROPIC;
+			samplerDesc.MaxAnisotropy = 0x10;
+		}
+		else
+		{
+			samplerDesc.MaxAnisotropy = 1;
+		}
+
+		samplerDesc.AddressU = addressU;
+		samplerDesc.AddressV = addressV;
+		samplerDesc.MipLODBias = mipLODBias;
+		samplerDesc.AddressW = addressW;
+		samplerDesc.BorderColor[0] = (float)((borderColor >> 24) & 0xFF) / 255.0f;
+		samplerDesc.BorderColor[1] = (float)((borderColor >> 16) & 0xFF) / 255.0f;
+		samplerDesc.BorderColor[2] = (float)((borderColor >> 8) & 0xFF) / 255.0f;
+		samplerDesc.BorderColor[3] = (float)((borderColor >> 0) & 0xFF) / 255.0f;
+		samplerDesc.MinLOD = minLOD;
+		samplerDesc.MaxLOD = maxLOD;
+		samplerDesc.Filter = filter;
+
+		ID3D11SamplerState* pSamplerState;
+		m_pDevice->CreateSamplerState(&samplerDesc, &pSamplerState);
+
+		return pSamplerState;
+	}
+
+	ID3D11SamplerState* TRenderDX11::CreateSamplerState(D3D11_FILTER filter, D3D11_TEXTURE_ADDRESS_MODE addressU, D3D11_TEXTURE_ADDRESS_MODE addressV, D3D11_TEXTURE_ADDRESS_MODE addressW, FLOAT mipLODBias, uint32_t borderColor, FLOAT minLOD, FLOAT maxLOD, UINT maxAnisotropy)
+	{
+		D3D11_SAMPLER_DESC samplerDesc = { };
+		samplerDesc.AddressU = addressU;
+		samplerDesc.AddressV = addressV;
+		samplerDesc.MipLODBias = mipLODBias;
+		samplerDesc.AddressW = addressW;
+		samplerDesc.BorderColor[0] = (float)((borderColor >> 24) & 0xFF) / 255.0f;
+		samplerDesc.BorderColor[1] = (float)((borderColor >> 16) & 0xFF) / 255.0f;
+		samplerDesc.BorderColor[2] = (float)((borderColor >> 8) & 0xFF) / 255.0f;
+		samplerDesc.BorderColor[3] = (float)((borderColor >> 0) & 0xFF) / 255.0f;
+		samplerDesc.MinLOD = minLOD;
+		samplerDesc.MaxLOD = maxLOD;
+		samplerDesc.Filter = filter;
+		samplerDesc.MaxAnisotropy = maxAnisotropy;
+
+		ID3D11SamplerState* pSamplerState;
+		m_pDevice->CreateSamplerState(&samplerDesc, &pSamplerState);
+
+		return pSamplerState;
 	}
 
 	void TRenderDX11::BuildAdapterDatabase()
