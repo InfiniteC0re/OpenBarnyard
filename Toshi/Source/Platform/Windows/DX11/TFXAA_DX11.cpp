@@ -20,8 +20,9 @@ namespace Toshi
 
 		TFile* pFile = TFile::Create("Data/Shaders/Other/FXAA.ps");
 		DWORD fileSize = pFile->GetSize();
-		char* srcData = new char[fileSize];
+		char* srcData = new char[fileSize + 1];
 		pFile->Read(srcData, fileSize);
+		srcData[fileSize] = '\0';
 		pFile->Destroy();
 
 		ID3DBlob* shader = TRenderDX11::CompileShader(srcData, "main", "ps_4_0", macro);
