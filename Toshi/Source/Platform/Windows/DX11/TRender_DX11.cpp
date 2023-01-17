@@ -997,6 +997,17 @@ namespace Toshi
 		return pSamplerState;
 	}
 
+	void TRenderDX11::SomeFlagsShinanigans(uint8_t flag1, uint32_t flag2, uint32_t flag3, uint32_t flag4)
+	{
+		uint16_t someFlags1 = m_someFlags1;
+		m_someFlags1 &= ~Flags_Unk7 | (flag2 & Flags_Unk7);
+		m_someFlags2 ^= (flag4 << 10) & 0x7C00 ^ ((flag1 & Flags_Unk) | (flag3 & 31) * 2) << 4 | m_someFlags2 & 0xFC0F;
+		if ((someFlags1 & 0x7C0) != 0x380)
+		{
+			m_someFlags1 = (((flag3 & 0x1F) << 3 | flag2 & Flags_Unk7) << 3) | (flag2 & Flags_Unk7) | (flag4 << 0xB);
+		}
+	}
+
 	void TRenderDX11::BuildAdapterDatabase()
 	{
 		// 006a7df0

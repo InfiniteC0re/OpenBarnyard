@@ -151,6 +151,18 @@ namespace Toshi
 			D3D_FEATURE_LEVEL_10_0
 		};
 		
+		enum Flags
+		{
+			Flags_Unk = 1,
+			Flags_Unk2,
+			Flags_Unk3,
+			Flags_Unk4,
+			Flags_Unk5,
+			Flags_Unk6,
+			Flags_Unk7,
+			Flags_Unk8,
+		};
+
 	public:
 		TRenderDX11();
 		~TRenderDX11() = default;
@@ -202,8 +214,10 @@ namespace Toshi
 		ID3D11RenderTargetView* CreateRenderTargetView(ID3D11ShaderResourceView* pShaderResourceView);
 		ID3D11SamplerState* CreateSamplerStateAutoAnisotropy(D3D11_FILTER filter, D3D11_TEXTURE_ADDRESS_MODE addressU, D3D11_TEXTURE_ADDRESS_MODE addressV, D3D11_TEXTURE_ADDRESS_MODE addressW, FLOAT mipLODBias, uint32_t borderColor, FLOAT minLOD, FLOAT maxLOD);
 		ID3D11SamplerState* CreateSamplerState(D3D11_FILTER filter, D3D11_TEXTURE_ADDRESS_MODE addressU, D3D11_TEXTURE_ADDRESS_MODE addressV, D3D11_TEXTURE_ADDRESS_MODE addressW, FLOAT mipLODBias, uint32_t borderColor, FLOAT minLOD, FLOAT maxLOD, UINT maxAnisotropy);
-
+		void SomeFlagsShinanigans(uint8_t flag1, uint32_t flag2, uint32_t flag3, uint32_t flag4);
 	private:
+
+
 		void BuildAdapterDatabase();
 
 		void CreateSamplerStates();
@@ -213,7 +227,7 @@ namespace Toshi
 		static bool s_bPresentTest;
 		static TMemoryHeap* s_pMemHeap;
 
-	private:
+	public:
 		DXGI_SWAP_CHAIN_DESC m_SwapChainDesc;      // 0x61C
 		ID3D11Texture2D* m_Texture2D1;             // 0x658
 		ID3D11RenderTargetView* m_RTView1;         // 0x65C
@@ -233,6 +247,10 @@ namespace Toshi
 		HACCEL m_hAccel;                           // 0x694
 		DisplayParams m_DisplayParams;             // 0x698
 		TMSWindow m_Window;                        // 0x6B0
+		ID3D11VertexShader* m_pVertexShader;       // 0x6D8
+		ID3D11PixelShader* m_pPixelShader1;        // 0x6DC
+		ID3D11InputLayout* m_pInputLayout;         // 0x6E4
+		ID3D11Buffer* m_pSomeBuffer;               // 0x6E8
 		FLOAT m_ClearColor[4];                     // 0x6EC
 		TToneMap* m_pToneMap;                      // 0x71C
 		TFXAA* m_pFXAA;                            // 0x724
@@ -261,5 +279,9 @@ namespace Toshi
 		size_t m_Unk3;                             // 0x808
 		ID3D11Buffer* m_MainIndexBuffer;           // 0x80C
 		size_t m_Unk4;                             // 0x810
+		uint16_t m_Flags;                          // 0x820
+		uint16_t m_Flags2;                         // 0x858
+		uint16_t m_someFlags2;                     // 0x88C
+		uint16_t m_someFlags1;                     // 0x88E
 	};
 }
