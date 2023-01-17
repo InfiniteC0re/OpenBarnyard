@@ -72,6 +72,9 @@ namespace Toshi
 			pResource->QueryInterface(_uuidof(ID3D11Texture2D), (void**)&m_pTexture);
 			pResource->Release();
 		}
+		
+		m_pTextureView->SetPrivateData(WKPDID_D3DDebugObjectName, 8, "FXAA SRV");
+		m_pRenderTarget->SetPrivateData(WKPDID_D3DDebugObjectName, 7, "FXAA RT");
 	}
 
 	void TFXAA::Render(ID3D11ShaderResourceView* pShaderResourceView)
