@@ -215,6 +215,8 @@ namespace Toshi
 		ID3D11SamplerState* CreateSamplerStateAutoAnisotropy(D3D11_FILTER filter, D3D11_TEXTURE_ADDRESS_MODE addressU, D3D11_TEXTURE_ADDRESS_MODE addressV, D3D11_TEXTURE_ADDRESS_MODE addressW, FLOAT mipLODBias, uint32_t borderColor, FLOAT minLOD, FLOAT maxLOD);
 		ID3D11SamplerState* CreateSamplerState(D3D11_FILTER filter, D3D11_TEXTURE_ADDRESS_MODE addressU, D3D11_TEXTURE_ADDRESS_MODE addressV, D3D11_TEXTURE_ADDRESS_MODE addressW, FLOAT mipLODBias, uint32_t borderColor, FLOAT minLOD, FLOAT maxLOD, UINT maxAnisotropy);
 		void SomeFlagsShinanigans(uint8_t flag1, uint32_t flag2, uint32_t flag3, uint32_t flag4);
+		void FUN_006a8d30();
+		void UnsetConstantBuffers();
 	private:
 
 

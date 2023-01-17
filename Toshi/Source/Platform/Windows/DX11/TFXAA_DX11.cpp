@@ -146,13 +146,15 @@ namespace Toshi
 		pRender->m_IsVertexConstantBufferSet = true;
 		pRender->CopyToVertexConstantBuffer(1, srcData, 1);
 
-		TTODO("FUN_006a8d30(pRender)");
+		pRender->FUN_006a8d30();
 
 		UINT stride = 20;
 		UINT offsets = 0;
 
 		pDeviceContext->IASetVertexBuffers(0, 1, &pRender->m_pSomeBuffer, &stride, &offsets);
-		TTODO("FUN_006a92F0(pRender)");
+
+		pRender->UnsetConstantBuffers();
+
 		pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 		pDeviceContext->Draw(4, 0);
 	}

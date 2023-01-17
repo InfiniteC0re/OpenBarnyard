@@ -1008,6 +1008,35 @@ namespace Toshi
 		}
 	}
 
+	void TRenderDX11::FUN_006a8d30()
+	{
+		TIMPLEMENT();
+	}
+
+	void TRenderDX11::UnsetConstantBuffers()
+	{
+		if (m_IsVertexConstantBufferSet)
+		{
+			m_Unk1 += 1 & 0xF;
+			D3D11_MAPPED_SUBRESOURCE pMappedSubresources;
+			m_pDeviceContext->Map(m_VertexBuffers[m_Unk1], 0, D3D11_MAP_WRITE_DISCARD, 0, &pMappedSubresources);
+			memcpy(pMappedSubresources.pData, m_pVertexConstantBuffer, 0x1000);
+			m_pDeviceContext->Unmap(m_VertexBuffers[m_Unk1], 0);
+			m_IsVertexConstantBufferSet = false;
+		}
+		if (m_IsPixelConstantBufferSet)
+		{
+			m_Unk2 += 1 & 0xF;
+			D3D11_MAPPED_SUBRESOURCE pMappedSubresources;
+			m_pDeviceContext->Map(m_PixelBuffers[m_Unk2], 0, D3D11_MAP_WRITE_DISCARD, 0, &pMappedSubresources);
+			memcpy(pMappedSubresources.pData, m_pPixelConstantBuffer, 0x400);
+			m_pDeviceContext->Unmap(m_PixelBuffers[m_Unk2], 0);
+			m_IsPixelConstantBufferSet = false;
+		}
+		m_pDeviceContext->VSSetConstantBuffers(0, 1, &m_VertexBuffers[m_Unk1]);
+		m_pDeviceContext->PSSetConstantBuffers(0, 1, &m_PixelBuffers[m_Unk2]);
+	}
+
 	void TRenderDX11::BuildAdapterDatabase()
 	{
 		// 006a7df0
