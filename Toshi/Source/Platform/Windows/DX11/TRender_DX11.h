@@ -228,6 +228,7 @@ namespace Toshi
 		static UINT s_QualityLevel;
 		static bool s_bPresentTest;
 		static TMemoryHeap* s_pMemHeap;
+		static ID3D11ShaderResourceView* s_pShaderResourceView;
 
 	public:
 		DXGI_SWAP_CHAIN_DESC m_SwapChainDesc;      // 0x61C

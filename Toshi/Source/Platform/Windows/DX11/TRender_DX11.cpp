@@ -9,6 +9,7 @@ namespace Toshi
 	UINT TRenderDX11::s_QualityLevel = 1;
 	bool TRenderDX11::s_bPresentTest = TFALSE;
 	TMemoryHeap* TRenderDX11::s_pMemHeap = TNULL;
+	ID3D11ShaderResourceView* TRenderDX11::s_pShaderResourceView = TNULL;
 
 	TRenderContext* TRender::CreateRenderContext()
 	{
@@ -485,11 +486,35 @@ namespace Toshi
 			
 			if (m_DisplayParams.MultisampleQualityLevel < 2)
 			{
+
+				if (s_pShaderResourceView == TNULL)
+				{
+					m_pDevice->CreateShaderResourceView(m_SRView1Texture, 0, &s_pShaderResourceView);
+				}
+
 				float inAR = (float)m_DisplayParams.Width / m_DisplayParams.Height;
 				float outAR = (float)m_DisplayWidth/ m_DisplayHeight;
 				TASSERT(fabsf(inAR - 16.0f / 9.0f) < 0.01);
 
-				TTODO("FUN_006a6700");
+				float posX, posY, width, height;
+
+				if (outAR < inAR)
+				{
+					width = m_DisplayWidth;
+					height = width / inAR;
+					posX = 0.0F;
+					posY = (m_DisplayHeight - height) * 0.5F;
+				}
+				else
+				{
+					height = m_DisplayHeight;
+					width = height * inAR;
+					posX = (m_DisplayWidth - width) * 0.5F;
+					posY = 0.0F;
+				}
+				m_someFlags2 &= ~(16);
+
+				m_pFXAA->FUN_006a6700(posX, posY, width, height, s_pShaderResourceView, NULL, NULL);
 			}
 			else
 			{
@@ -593,11 +618,11 @@ namespace Toshi
 			}
 
 			ACCEL accels[2];
-			accels[0].fVirt = true;
+			accels[0].fVirt = FVIRTKEY;
 			accels[0].key = VK_ESCAPE;
 
 			accels[1].fVirt = FALT;
-			accels[1].key = VK_RETURN;
+			accels[1].key = 0x1000D;
 
 			m_hAccel = CreateAcceleratorTableA(accels, sizeof(accels) / sizeof(*accels));
 
