@@ -51,7 +51,6 @@ bool AApplication::OnCreate(int argc, char** argv)
 
 bool AApplication::OnUpdate(float deltaTime)
 {
-	auto window = static_cast<Toshi::TRenderDX11*>(Toshi::TRender::GetSingleton())->GetMSWindow();
-	window->Update();
+	ARenderer::GetSingletonWeak()->Update(deltaTime);
 	return true;
 }

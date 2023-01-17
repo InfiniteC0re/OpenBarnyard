@@ -190,9 +190,9 @@ namespace Toshi
 	{
 	}
 
-	float TRender::Update(float deltatime)
+	void TRender::Update(float deltatime)
 	{
-		return 0.0f;
+		TTODO("FlushDyingResources");
 	}
 
 	void TRender::BeginScene()
@@ -201,5 +201,21 @@ namespace Toshi
 
 	void TRender::EndScene()
 	{
+	}
+
+	void TRenderContext::SetModelViewMatrix(const TMatrix44& a_rMatrix)
+	{
+		m_eFlags |= (FLAG_HASMODELVIEWMATRIX | FLAG_HASWORLDVIEWMATRIX);
+		m_mModelViewMatrix = a_rMatrix;
+		m_eFlags &= ~(FLAG_UNK1 | FLAG_UNK3);
+
+		TRender::GetSingletonWeak()->GetParamTable()->SetParameterM44(TRenderParamTable::M44PARAM_MODELVIEW, a_rMatrix);
+	}
+
+	void TRenderContext::SetWorldViewMatrix(const TMatrix44& a_rMatrix)
+	{
+		m_eFlags |= FLAG_HASWORLDVIEWMATRIX;
+		m_mModelViewMatrix = a_rMatrix;
+		m_eFlags &= ~(FLAG_UNK1 | FLAG_UNK2 | FLAG_UNK4 | FLAG_UNK5 | FLAG_UNK6);
 	}
 }

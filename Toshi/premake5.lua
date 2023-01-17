@@ -11,6 +11,7 @@ project "Toshi"
 	{
 		"fmod_vc.lib",
 		"d3d11.lib",
+		"d3dcompiler.lib",
 		"dxgi.lib"
 	}
 

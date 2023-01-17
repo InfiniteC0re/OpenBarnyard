@@ -1,9 +1,10 @@
 #pragma once
 #include "Toshi/Render/TRender.h"
 #include "Toshi/Render/TRenderAdapter.h"
+#include "Toshi/Render/Shaders/TToneMap.h"
+#include "Toshi/Render/Shaders/TFXAA.h"
 #include "Platform/Windows/TMSWindow.h"
-
-#include <d3d11.h>
+#include "Includes.h"
 
 namespace Toshi
 {
@@ -126,6 +127,15 @@ namespace Toshi
 	class TRenderDX11 : public TRender
 	{
 	private:
+		friend class ARenderer;
+
+		static constexpr size_t HEAPSIZE = 0x10000;
+		static constexpr size_t VERTEX_CONSTANT_BUFFER_SIZE = 0x1000;
+		static constexpr size_t PIXEL_CONSTANT_BUFFER_SIZE = 0x400;
+		static constexpr size_t NUMBUFFERS = 16;
+		static constexpr size_t VERTEX_BUFFER_SIZE = 0x100000;
+		static constexpr size_t INDEX_BUFFER_SIZE = 0x10000;
+
 		static constexpr D3D_DRIVER_TYPE m_scpDriverTypes[3]
 		{
 			D3D_DRIVER_TYPE_HARDWARE,
@@ -142,14 +152,35 @@ namespace Toshi
 		};
 		
 	public:
-		TRenderDX11() { }
-		~TRenderDX11() { }
+		TRenderDX11();
+		~TRenderDX11() = default;
 
-		TMSWindow* GetMSWindow() { return &m_Window; }
+		TMSWindow* GetMSWindow()
+		{
+			return &m_Window;
+		}
+
+		DXGI_SWAP_CHAIN_DESC* GetSwapChainDesc()
+		{
+			return &m_SwapChainDesc;
+		}
+
+		ID3D11DeviceContext* GetDeviceContext() const
+		{
+			return m_pDeviceContext;
+		}
+
+		static TRenderDX11* Interface()
+		{
+			return static_cast<TRenderDX11*>(TRender::GetSingletonWeak());
+		}
 		
 	public:
 		virtual bool CreateDisplay(DisplayParams* params) override;
 		virtual bool DestroyDisplay() override { return true; }
+		virtual void Update(float deltaTime) override;
+		virtual void BeginScene() override;
+		virtual void EndScene() override;
 		virtual void* GetCurrentDevice() override { return TNULL; }
 		virtual DisplayParams* GetCurrentDisplayParams() override { return &m_DisplayParams; }
 		virtual bool Create() override { return Create("de Blob"); }
@@ -158,35 +189,77 @@ namespace Toshi
 		virtual void ShowDeviceError();
 		virtual void ShowDisplayError();
 
-		bool Create(LPCSTR a_name);
-
+		static int GetTextureRowPitch(DXGI_FORMAT format, int width);
+		static int GetTextureDepthPitch(DXGI_FORMAT format, int width, int height);
 		static const char* GetFeatureLevel(D3D_FEATURE_LEVEL a_featureLevel);
+		static ID3DBlob* CompileShader(const char* srcData, LPCSTR pEntrypoint, LPCSTR pTarget, const D3D_SHADER_MACRO* pDefines);
+
+		bool Create(LPCSTR a_name);
+		void CopyToVertexConstantBuffer(int index, const void* src, int count);
+		void CopyToPixelConstantBuffer(int index, const void* src, int count);
+		HRESULT CreatePixelShader(const void* pShaderBytecode, SIZE_T BytecodeLength, ID3D11PixelShader** ppPixelShader);
+		ID3D11ShaderResourceView* CreateTexture(UINT width, UINT height, DXGI_FORMAT format, void* srcData, uint8_t flags, D3D11_USAGE usage, uint32_t cpuAccessFlags, uint32_t sampleDescCount);
+		ID3D11RenderTargetView* CreateRenderTargetView(ID3D11ShaderResourceView* pShaderResourceView);
+		ID3D11SamplerState* CreateSamplerStateAutoAnisotropy(D3D11_FILTER filter, D3D11_TEXTURE_ADDRESS_MODE addressU, D3D11_TEXTURE_ADDRESS_MODE addressV, D3D11_TEXTURE_ADDRESS_MODE addressW, FLOAT mipLODBias, uint32_t borderColor, FLOAT minLOD, FLOAT maxLOD);
+		ID3D11SamplerState* CreateSamplerState(D3D11_FILTER filter, D3D11_TEXTURE_ADDRESS_MODE addressU, D3D11_TEXTURE_ADDRESS_MODE addressV, D3D11_TEXTURE_ADDRESS_MODE addressW, FLOAT mipLODBias, uint32_t borderColor, FLOAT minLOD, FLOAT maxLOD, UINT maxAnisotropy);
 
 	private:
 		void BuildAdapterDatabase();
 
+		void CreateSamplerStates();
+
 	public:
 		static UINT s_QualityLevel;
+		static bool s_bPresentTest;
+		static TMemoryHeap* s_pMemHeap;
 
 	private:
-		DXGI_SWAP_CHAIN_DESC m_SwapChainDesc;  // 0x61C
-		ID3D11Texture2D* m_Texture2D1;         // 0x658
-		ID3D11RenderTargetView* m_RTView1;     // 0x65C
-		UINT m_UNKNOWN1;                       // 0x660
-		IDXGISwapChain* m_SwapChain;           // 0x664
-		UINT m_DisplayWidth;                   // 0x668
-		UINT m_DisplayHeight;                  // 0x66C
-		UINT m_UNKNOWN2;                       // 0x670
-		ID3D11RenderTargetView* m_RTView2;     // 0x674
-		ID3D11ShaderResourceView* m_SRView1;   // 0x678
-		ID3D11Texture2D* m_Texture2D2;         // 0x67C
-		ID3D11ShaderResourceView* m_SRView2;   // 0x680
-		UINT m_UNKNOWN3;                       // 0x684
-		bool m_IsWidescreen;                   // 0x688
-		ID3D11DeviceContext* m_pDeviceContext; // 0x68C
-		ID3D11Device* m_pDevice;               // 0x690
-		HACCEL m_hAccel;                       // 0x694
-		DisplayParams m_DisplayParams;         // 0x698
-		TMSWindow m_Window;                    // 0x6B0
+		DXGI_SWAP_CHAIN_DESC m_SwapChainDesc;      // 0x61C
+		ID3D11Texture2D* m_Texture2D1;             // 0x658
+		ID3D11RenderTargetView* m_RTView1;         // 0x65C
+		ID3D11DepthStencilView* m_StencilView;     // 0x660
+		IDXGISwapChain* m_SwapChain;               // 0x664
+		UINT m_DisplayWidth;                       // 0x668
+		UINT m_DisplayHeight;                      // 0x66C
+		ID3D11Texture2D* m_SRView1Texture;         // 0x670
+		ID3D11RenderTargetView* m_RTView2;         // 0x674
+		ID3D11ShaderResourceView* m_SRView1;       // 0x678
+		ID3D11Texture2D* m_SRView2Texture;         // 0x67C
+		ID3D11ShaderResourceView* m_SRView2;       // 0x680
+		ID3D11ShaderResourceView* m_StencilTexSR;  // 0x684
+		bool m_IsWidescreen;                       // 0x688
+		ID3D11DeviceContext* m_pDeviceContext;     // 0x68C
+		ID3D11Device* m_pDevice;                   // 0x690
+		HACCEL m_hAccel;                           // 0x694
+		DisplayParams m_DisplayParams;             // 0x698
+		TMSWindow m_Window;                        // 0x6B0
+		FLOAT m_ClearColor[4];                     // 0x6EC
+		TToneMap* m_pToneMap;                      // 0x71C
+		TFXAA* m_pFXAA;                            // 0x724
+		size_t m_NumDrawnFrames;                   // 0x72C
+		ID3D11SamplerState* m_SamplerState1;       // 0x73C
+		ID3D11SamplerState* m_SamplerState2;       // 0x740
+		ID3D11SamplerState* m_SamplerState3;       // 0x744
+		ID3D11SamplerState* m_SamplerState4;       // 0x748
+		ID3D11SamplerState* m_SamplerState5;       // 0x74C
+		ID3D11SamplerState* m_SamplerState6;       // 0x750
+		ID3D11SamplerState* m_SamplerState7;       // 0x754
+		ID3D11SamplerState* m_SamplerState8;       // 0x758
+		ID3D11SamplerState* m_SamplerState9;       // 0x75C
+		ID3D11SamplerState* m_SamplerState10;      // 0x760
+		ID3D11SamplerState* m_SamplerState11;      // 0x764
+		ID3D11SamplerState* m_SamplerState12;      // 0x768
+		void* m_pVertexConstantBuffer;             // 0x76C
+		bool m_IsVertexConstantBufferSet;          // 0x770
+		ID3D11Buffer* m_VertexBuffers[NUMBUFFERS]; // 0x774
+		size_t m_Unk1;                             // 0x7B4
+		void* m_pPixelConstantBuffer;              // 0x7B8
+		bool m_IsPixelConstantBufferSet;           // 0x7BC
+		ID3D11Buffer* m_PixelBuffers[NUMBUFFERS];  // 0x7C0
+		size_t m_Unk2;                             // 0x800
+		ID3D11Buffer* m_MainVertexBuffer;          // 0x804
+		size_t m_Unk3;                             // 0x808
+		ID3D11Buffer* m_MainIndexBuffer;           // 0x80C
+		size_t m_Unk4;                             // 0x810
 	};
 }

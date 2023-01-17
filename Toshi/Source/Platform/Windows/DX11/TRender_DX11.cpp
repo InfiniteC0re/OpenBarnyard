@@ -2,9 +2,13 @@
 #include "TRender_DX11.h"
 #include "TRenderContext_DX11.h"
 
+#include <d3dcompiler.h>
+
 namespace Toshi
 {
 	UINT TRenderDX11::s_QualityLevel = 1;
+	bool TRenderDX11::s_bPresentTest = TFALSE;
+	TMemoryHeap* TRenderDX11::s_pMemHeap = TNULL;
 
 	TRenderContext* TRender::CreateRenderContext()
 	{
@@ -54,7 +58,7 @@ namespace Toshi
 
 	float TD3DAdapter::Mode::GetRefreshRate() const
 	{
-		return m_Description.RefreshRate.Numerator / m_Description.RefreshRate.Denominator;
+		return (float)m_Description.RefreshRate.Numerator / m_Description.RefreshRate.Denominator;
 	}
 
 	TRenderAdapter::Mode::Device* TD3DAdapter::Mode::GetDevice(int device)
@@ -94,6 +98,22 @@ namespace Toshi
 		matchMode.RefreshRate.Numerator = displaySettings.dmDisplayFrequency;
 
 		dxgiOutput->FindClosestMatchingMode(&matchMode, modeDesc, NULL);
+	}
+
+	TRenderDX11::TRenderDX11() : m_DisplayParams{ 1280, 720, 32, 3, true, false, 1 }, m_Window()
+	{
+		m_ClearColor[0] = 0.2f;
+		m_ClearColor[1] = 0.6f;
+		m_ClearColor[2] = 0.2f;
+		m_ClearColor[3] = 1.0f;
+		m_NumDrawnFrames = 0;
+
+		m_pVertexConstantBuffer = TNULL;
+		m_IsVertexConstantBufferSet = TFALSE;
+		m_pPixelConstantBuffer = TNULL;
+		m_IsPixelConstantBufferSet = TFALSE;
+
+		s_pMemHeap = TMemory::CreateHeap(HEAPSIZE, 0, "render states");
 	}
 
 	bool TRenderDX11::CreateDisplay(DisplayParams* pDisplayParams)
@@ -307,14 +327,80 @@ namespace Toshi
 
 		HRESULT hRes1 = m_SwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&m_Texture2D1);
 
-		if (hRes1 == S_OK)
+		if (SUCCEEDED(hRes1))
 		{
 			HRESULT hRes2 = m_pDevice->CreateRenderTargetView(m_Texture2D1, NULL, &m_RTView1);
 
-			if (hRes2 == S_OK)
+			if (SUCCEEDED(hRes2))
 			{
 				TOSHI_CORE_TRACE("Creating Main RT {0} x {1}", m_DisplayParams.Width, m_DisplayParams.Height);
-				TTODO("Toshi::TRenderDX11::FUN_006a6b60");
+
+				{
+					// Texture 1
+					ID3D11Resource* pResource;
+					m_SRView1 = CreateTexture(m_DisplayParams.Width, m_DisplayParams.Height, DXGI_FORMAT_R8G8B8A8_UNORM, TNULL, 4, D3D11_USAGE_DEFAULT, 0, m_DisplayParams.MultisampleQualityLevel);
+					m_SRView1->GetResource(&pResource);
+
+					if (pResource != TNULL)
+					{
+						pResource->QueryInterface(__uuidof(ID3D11Texture2D), (void**)&m_SRView1Texture);
+						pResource->Release();
+					}
+				}
+
+				{
+					// Texture 2
+					ID3D11Resource* pResource;
+					m_SRView2 = CreateTexture(m_DisplayParams.Width, m_DisplayParams.Height, DXGI_FORMAT_R8G8B8A8_UNORM, TNULL, 4, D3D11_USAGE_DEFAULT, 0, 1);
+					m_SRView2->GetResource(&pResource);
+
+					if (pResource != TNULL)
+					{
+						pResource->QueryInterface(__uuidof(ID3D11Texture2D), (void**)&m_SRView2Texture);
+						pResource->Release();
+					}
+				}
+
+				m_RTView2 = CreateRenderTargetView(m_SRView1);
+				m_pDeviceContext->ClearRenderTargetView(m_RTView1, m_ClearColor);
+				m_pDeviceContext->ClearRenderTargetView(m_RTView2, m_ClearColor);
+
+				// Create depth stencil view
+				D3D11_TEXTURE2D_DESC texDesc = { };
+				texDesc.Width = m_DisplayParams.Width;
+				texDesc.Height = m_DisplayParams.Height;
+				texDesc.SampleDesc.Count = m_DisplayParams.MultisampleQualityLevel;
+				texDesc.SampleDesc.Quality = 0;
+				texDesc.MipLevels = 1;
+				texDesc.ArraySize = 1;
+				texDesc.Format = DXGI_FORMAT_R24G8_TYPELESS;
+				texDesc.Usage = D3D11_USAGE_DEFAULT;
+				texDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
+				texDesc.CPUAccessFlags = 0;
+				texDesc.MiscFlags = 0;
+
+				ID3D11Texture2D* pDepthStencilTex;
+				HRESULT hRes = m_pDevice->CreateTexture2D(&texDesc, 0, &pDepthStencilTex);
+
+				if (SUCCEEDED(hRes))
+				{
+					D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc = { };
+					depthStencilViewDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+					depthStencilViewDesc.Flags = 0;
+					depthStencilViewDesc.Texture2D.MipSlice = 0;
+					depthStencilViewDesc.ViewDimension = m_DisplayParams.MultisampleQualityLevel > 1 ? D3D11_DSV_DIMENSION_TEXTURE2DMS : D3D11_DSV_DIMENSION_TEXTURE2D;
+					
+					m_pDevice->CreateDepthStencilView(pDepthStencilTex, &depthStencilViewDesc, &m_StencilView);
+
+					D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc = { };
+					shaderResourceViewDesc.Format = DXGI_FORMAT_X24_TYPELESS_G8_UINT;
+					shaderResourceViewDesc.ViewDimension = m_DisplayParams.MultisampleQualityLevel > 1 ? D3D11_SRV_DIMENSION_TEXTURE2DMS : D3D11_SRV_DIMENSION_TEXTURE2D;
+					shaderResourceViewDesc.Texture2D.MostDetailedMip = 0;
+					shaderResourceViewDesc.Texture2D.MipLevels = 1;
+
+					m_pDevice->CreateShaderResourceView(pDepthStencilTex, &shaderResourceViewDesc, &m_StencilTexSR);
+					pDepthStencilTex->Release();
+				}
 			}
 		}
 
@@ -325,15 +411,134 @@ namespace Toshi
 			ShowCursor(false);
 		}
 
-		TTODO("Toshi::TRenderDX11::CreateSamplerStates");
+		CreateSamplerStates();
 		TTODO("Create and compile shaders");
+
+		m_pToneMap = new TToneMap();
+		m_pFXAA = new TFXAA();
 
 		return true;
 	}
 
+	void TRenderDX11::Update(float deltaTime)
+	{
+		TASSERT(TTRUE == IsCreated());
+		m_Window.Update();
+		TRender::Update(deltaTime);
+	}
+
+	void TRenderDX11::BeginScene()
+	{
+		TASSERT(TTRUE == IsDisplayCreated());
+		TASSERT(TFALSE == IsInScene());
+
+		TRender::BeginScene();
+		m_pDeviceContext->OMSetRenderTargets(1, &m_RTView2, m_StencilView);
+		m_pDeviceContext->ClearRenderTargetView(m_RTView2, m_ClearColor);
+
+		D3D11_VIEWPORT viewport;
+		viewport.TopLeftX = 0.0f;
+		viewport.TopLeftY = 0.0f;
+		viewport.MinDepth = 0.0f;
+		viewport.MaxDepth = 1.0f;
+		viewport.Width = (float)m_SwapChainDesc.BufferDesc.Width;
+		viewport.Height = (float)m_SwapChainDesc.BufferDesc.Height;
+
+		m_pDeviceContext->RSSetViewports(1, &viewport);
+		m_bInScene = TTRUE;
+	}
+
+	void TRenderDX11::EndScene()
+	{
+		TASSERT(TTRUE == IsDisplayCreated());
+		TASSERT(TTRUE == IsInScene());
+
+		m_NumDrawnFrames += 1;
+
+		if (m_IsWidescreen == false)
+		{
+			if (m_DisplayParams.MultisampleQualityLevel < 2)
+			{
+				m_pDeviceContext->CopyResource(m_Texture2D1, m_SRView1Texture);
+			}
+			else
+			{
+				m_pDeviceContext->ResolveSubresource(m_Texture2D1, 0, m_SRView1Texture, 0, DXGI_FORMAT_R8G8B8A8_UNORM);
+			}
+		}
+		else
+		{
+			D3D11_VIEWPORT viewport;
+			viewport.TopLeftX = 0.0f;
+			viewport.TopLeftY = 0.0f;
+			viewport.MinDepth = 0.0f;
+			viewport.MaxDepth = 1.0f;
+			viewport.Width = (float)m_DisplayWidth;
+			viewport.Height = (float)m_DisplayHeight;
+
+			m_pDeviceContext->OMSetRenderTargets(1, &m_RTView1, NULL);
+			m_pDeviceContext->RSSetViewports(1, &viewport);
+			m_pDeviceContext->ClearRenderTargetView(m_RTView1, m_ClearColor);
+
+			UINT diff1 = m_DisplayWidth - m_DisplayParams.Width;
+			UINT diff2 = m_DisplayHeight - m_DisplayParams.Height;
+			
+			if (m_DisplayParams.MultisampleQualityLevel < 2)
+			{
+				float inAR = (float)m_DisplayParams.Width / m_DisplayParams.Height;
+				float outAR = (float)m_DisplayWidth/ m_DisplayHeight;
+				TASSERT(fabsf(inAR - 16.0f / 9.0f) < 0.01);
+
+				TTODO("FUN_006a6700");
+			}
+			else
+			{
+				m_pDeviceContext->ResolveSubresource(m_SRView2Texture, 0, m_SRView1Texture, 0, DXGI_FORMAT_R8G8B8A8_UNORM);
+				m_pDeviceContext->CopySubresourceRegion(m_Texture2D1, NULL, diff1 / 2, diff2 / 2, 0, m_SRView2Texture, 0, NULL);
+			}
+
+			ID3D11ShaderResourceView* pRV = TNULL;
+			m_pDeviceContext->PSGetShaderResources(0, 1, &pRV);
+		}
+
+		HRESULT hRes = m_SwapChain->Present(1, s_bPresentTest ? DXGI_PRESENT_TEST : 0);
+
+		if (!SUCCEEDED(hRes))
+		{
+			TOSHI_CORE_ERROR("Present Failed !!!! {0:x}", hRes);
+
+			if (hRes == DXGI_ERROR_DEVICE_REMOVED)
+			{
+				TTODO("FUN_006a7a30");
+			}
+			else if (hRes == DXGI_ERROR_DEVICE_RESET)
+			{
+				TASSERT(TFALSE);
+			}
+			else if(hRes == DXGI_STATUS_OCCLUDED)
+			{
+				s_bPresentTest = true;
+				TOSHI_CORE_ERROR("Pausing Occluded!");
+				TSystemManager::GetSingletonWeak()->Pause(true);
+			}
+		}
+
+		m_bInScene = TFALSE;
+		TRender::EndScene();
+	}
+
 	bool TRenderDX11::RecreateDisplay(DisplayParams* pDisplayParams)
 	{
-		return false;
+		TASSERT(TTRUE == IsCreated());
+		TASSERT(TTRUE == IsDisplayCreated());
+
+		TTODO("FUN_006a7a30");
+
+		DestroyDisplay();
+		bool bRes = CreateDisplay(pDisplayParams);
+		TASSERT(bRes);
+
+		return TTRUE == bRes;
 	}
 
 	void TRenderDX11::ShowDeviceError()
@@ -408,6 +613,148 @@ namespace Toshi
 		return false;
 	}
 
+	void TRenderDX11::CreateSamplerStates()
+	{
+		m_SamplerState1 = CreateSamplerState(D3D11_FILTER_MIN_MAG_MIP_POINT, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_CLAMP, 0.0f, 0, 0.0f, D3D11_FLOAT32_MAX, 1);
+		m_SamplerState2 = CreateSamplerStateAutoAnisotropy(D3D11_FILTER_MIN_MAG_MIP_LINEAR, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_CLAMP, 0.0f, 0, 0.0f, D3D11_FLOAT32_MAX);
+		m_SamplerState3 = CreateSamplerState(D3D11_FILTER_MIN_MAG_MIP_POINT, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP, 0.0f, 0, 0.0f, D3D11_FLOAT32_MAX, 1);
+		m_SamplerState4 = CreateSamplerStateAutoAnisotropy(D3D11_FILTER_MIN_MAG_MIP_LINEAR, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP, 0.0f, 0, 0.0f, D3D11_FLOAT32_MAX);
+		m_SamplerState5 = CreateSamplerStateAutoAnisotropy(D3D11_FILTER_MIN_MAG_MIP_LINEAR, D3D11_TEXTURE_ADDRESS_MIRROR, D3D11_TEXTURE_ADDRESS_MIRROR, D3D11_TEXTURE_ADDRESS_MIRROR, 0.0f, 0, 0.0f, D3D11_FLOAT32_MAX);
+		m_SamplerState6 = CreateSamplerState(D3D11_FILTER_MIN_MAG_LINEAR_MIP_POINT, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_CLAMP, 0.0f, 0, 0.0f, D3D11_FLOAT32_MAX, 1);
+		m_SamplerState7 = CreateSamplerState(D3D11_FILTER_MIN_MAG_LINEAR_MIP_POINT, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP, 0.0f, 0, 0.0f, D3D11_FLOAT32_MAX, 1);
+		m_SamplerState8 = CreateSamplerState(D3D11_FILTER_MIN_MAG_LINEAR_MIP_POINT, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP, -1.0f, 0, 0.0f, D3D11_FLOAT32_MAX, 1);
+		m_SamplerState10 = CreateSamplerState(D3D11_FILTER_MIN_MAG_MIP_POINT, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_WRAP, 0.0f, 0, 0.0f, D3D11_FLOAT32_MAX, 1);
+		m_SamplerState11 = CreateSamplerStateAutoAnisotropy(D3D11_FILTER_MIN_MAG_MIP_LINEAR, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_WRAP, 0.0f, 0, 0.0f, D3D11_FLOAT32_MAX);
+		m_SamplerState12 = CreateSamplerState(D3D11_FILTER_MIN_MAG_LINEAR_MIP_POINT, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_WRAP, 0.0f, 0, 0.0f, D3D11_FLOAT32_MAX, 1);
+		m_SamplerState9 = CreateSamplerState(D3D11_FILTER_ANISOTROPIC, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_CLAMP, 0.0f, 0, 0.0f, D3D11_FLOAT32_MAX, 1);
+
+		for (size_t i = 0; i < NUMBUFFERS; i++)
+		{
+			D3D11_BUFFER_DESC bufferDesc;
+			bufferDesc.ByteWidth = VERTEX_CONSTANT_BUFFER_SIZE;
+			bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+			bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+			bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+			bufferDesc.MiscFlags = 0;
+			bufferDesc.StructureByteStride = 0;
+
+			m_pDevice->CreateBuffer(&bufferDesc, NULL, &m_VertexBuffers[i]);
+		}
+
+		m_pVertexConstantBuffer = s_pMemHeap->Malloc(VERTEX_CONSTANT_BUFFER_SIZE);
+		m_IsVertexConstantBufferSet = TFALSE;
+		m_Unk1 = 0;
+
+		for (size_t i = 0; i < NUMBUFFERS; i++)
+		{
+			D3D11_BUFFER_DESC bufferDesc;
+			bufferDesc.ByteWidth = PIXEL_CONSTANT_BUFFER_SIZE;
+			bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+			bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+			bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+			bufferDesc.MiscFlags = 0;
+			bufferDesc.StructureByteStride = 0;
+
+			m_pDevice->CreateBuffer(&bufferDesc, NULL, &m_PixelBuffers[i]);
+		}
+
+		m_pPixelConstantBuffer = s_pMemHeap->Malloc(PIXEL_CONSTANT_BUFFER_SIZE);
+		m_IsPixelConstantBufferSet = TFALSE;
+		m_Unk2 = 0;
+
+		// Main vertex buffer
+		{
+			D3D11_BUFFER_DESC bufferDesc;
+			bufferDesc.ByteWidth = VERTEX_BUFFER_SIZE;
+			bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+			bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+			bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+			bufferDesc.MiscFlags = 0;
+			bufferDesc.StructureByteStride = 0;
+
+			m_pDevice->CreateBuffer(&bufferDesc, NULL, &m_MainVertexBuffer);
+			m_Unk3 = 0;
+		}
+
+		// Main index buffer
+		{
+			D3D11_BUFFER_DESC bufferDesc;
+			bufferDesc.ByteWidth = INDEX_BUFFER_SIZE;
+			bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+			bufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+			bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+			bufferDesc.MiscFlags = 0;
+			bufferDesc.StructureByteStride = 0;
+
+			m_pDevice->CreateBuffer(&bufferDesc, NULL, &m_MainIndexBuffer);
+			m_Unk4 = 0;
+		}
+
+		TTODO("Set some flags");
+	}
+
+	int TRenderDX11::GetTextureRowPitch(DXGI_FORMAT format, int width)
+	{
+		switch (format)
+		{
+		case DXGI_FORMAT_UNKNOWN:
+			return 0;
+		case DXGI_FORMAT_R32G32B32A32_FLOAT:
+			return width << 4;
+		case DXGI_FORMAT_R16G16B16A16_FLOAT:
+			return width << 3;
+		case DXGI_FORMAT_R8G8B8A8_UNORM:
+		case DXGI_FORMAT_R8G8B8A8_UINT:
+		case DXGI_FORMAT_D32_FLOAT:
+		case DXGI_FORMAT_B8G8R8A8_UNORM:
+			return width << 2;
+		case DXGI_FORMAT_A8_UNORM:
+			return width;
+		case DXGI_FORMAT_BC1_UNORM:
+		case DXGI_FORMAT_BC4_UNORM:
+			return ((width + 3U) >> 2) << 3;
+		case DXGI_FORMAT_BC2_UNORM:
+		case DXGI_FORMAT_BC3_UNORM:
+		case DXGI_FORMAT_BC5_UNORM:
+			return ((width + 3U) >> 2) << 4;
+		case DXGI_FORMAT_B8G8R8X8_UNORM:
+			return width * 3;
+		}
+
+		TASSERT(TFALSE);
+	}
+
+	int TRenderDX11::GetTextureDepthPitch(DXGI_FORMAT format, int width, int height)
+	{
+		switch (format)
+		{
+		case DXGI_FORMAT_UNKNOWN:
+			return 0;
+		case DXGI_FORMAT_R32G32B32A32_FLOAT:
+			return width * height * 16;
+		case DXGI_FORMAT_R16G16B16A16_FLOAT:
+			return width * height * 8;
+		case DXGI_FORMAT_R8G8B8A8_UNORM:
+		case DXGI_FORMAT_R8G8B8A8_UINT:
+		case DXGI_FORMAT_D32_FLOAT:
+		case DXGI_FORMAT_B8G8R8A8_UNORM:
+			return width * height * 4;
+		case DXGI_FORMAT_A8_UNORM:
+			return width * height;
+		case DXGI_FORMAT_BC1_UNORM:
+		case DXGI_FORMAT_BC4_UNORM:
+			return ((width + 3U) >> 2) * ((height + 3U) >> 2) * 8;
+		case DXGI_FORMAT_BC2_UNORM:
+		case DXGI_FORMAT_BC3_UNORM:
+		case DXGI_FORMAT_BC5_UNORM:
+			return ((width + 3U) >> 2) * ((height + 3U) >> 2) * 16;
+		case DXGI_FORMAT_B8G8R8X8_UNORM:
+			return width * height * 3;
+		}
+
+		TASSERT(TFALSE);
+	}
+
 	const char* TRenderDX11::GetFeatureLevel(D3D_FEATURE_LEVEL a_featureLevel)
 	{
 		// 006a9470
@@ -430,6 +777,224 @@ namespace Toshi
 		default:
 			return "unknown";
 		}
+	}
+
+	ID3DBlob* TRenderDX11::CompileShader(const char* srcData, LPCSTR pEntrypoint, LPCSTR pTarget, const D3D_SHADER_MACRO* pDefines)
+	{
+		size_t srcLength = T2String8::Length(srcData);
+
+		ID3DBlob* pShaderBlob = TNULL;
+		ID3DBlob* pErrorBlob = TNULL;
+		
+		HRESULT hRes = D3DCompile(srcData, srcLength, NULL, pDefines, NULL, pEntrypoint, pTarget, D3DCOMPILE_PREFER_FLOW_CONTROL, 0, &pShaderBlob, &pErrorBlob);
+
+		if (!SUCCEEDED(hRes))
+		{
+			TOSHI_CORE_CRITICAL("Shader compilation failed");
+			
+			if (pErrorBlob != TNULL)
+			{
+				TOSHI_CORE_CRITICAL((const char*)pErrorBlob->GetBufferPointer());
+				pErrorBlob->Release();
+			}
+
+			TASSERT(TFALSE);
+		}
+
+		return pShaderBlob;
+	}
+
+	void TRenderDX11::CopyToVertexConstantBuffer(int index, const void* src, int count)
+	{
+		unsigned int offset = index * 16;
+		unsigned int size = count * 16;
+
+		TASSERT(offset + size <= VERTEX_CONSTANT_BUFFER_SIZE, "Buffer size exceeded");
+		TUtil::MemCopy(m_pVertexConstantBuffer, src, size);
+		m_IsVertexConstantBufferSet = true;
+	}
+
+	void TRenderDX11::CopyToPixelConstantBuffer(int index, const void* src, int count)
+	{
+		unsigned int offset = index * 16;
+		unsigned int size = count * 16;
+
+		TASSERT(offset + size <= PIXEL_CONSTANT_BUFFER_SIZE, "Buffer size exceeded");
+		TUtil::MemCopy(m_pPixelConstantBuffer, src, size);
+		m_IsPixelConstantBufferSet = true;
+	}
+
+	HRESULT TRenderDX11::CreatePixelShader(const void* pShaderBytecode, SIZE_T BytecodeLength, ID3D11PixelShader** ppPixelShader)
+	{
+		HRESULT hRes = m_pDevice->CreatePixelShader(pShaderBytecode, BytecodeLength, NULL, ppPixelShader);
+		TASSERT(SUCCEEDED(hRes), "Couldnt Create Pixel Shader");
+
+		return hRes;
+	}
+
+	ID3D11ShaderResourceView* TRenderDX11::CreateTexture(UINT width, UINT height, DXGI_FORMAT format, void* srcData, uint8_t flags, D3D11_USAGE usage, uint32_t cpuAccessFlags, uint32_t sampleDescCount)
+	{
+		D3D11_SUBRESOURCE_DATA subResourceData = { };
+		D3D11_TEXTURE2D_DESC textureDesc = { };
+
+		UINT mipLevels = 0;
+		bool noMipLevels;
+		bool doScaryThings = true;
+
+		if (flags & 1 || (flags & 2) == 0)
+		{
+			noMipLevels = false;
+
+			if ((flags & 1) == 0)
+			{
+				mipLevels = 1;
+				doScaryThings = false;
+			}
+		}
+		else
+		{
+			noMipLevels = true;
+		}
+
+		if (doScaryThings)
+		{
+			TASSERT(TFALSE, "Not implemented");
+		}
+
+		mipLevels = noMipLevels ? 0 : mipLevels;
+		
+		textureDesc.SampleDesc.Count = sampleDescCount;
+		textureDesc.SampleDesc.Quality = 0;
+		textureDesc.ArraySize = 1;
+		textureDesc.Usage = usage;
+		textureDesc.Width = width;
+		textureDesc.Height = height;
+		textureDesc.Format = format;
+		textureDesc.CPUAccessFlags = cpuAccessFlags;
+		textureDesc.MipLevels = mipLevels;
+		textureDesc.MiscFlags = noMipLevels ? NULL : D3D11_RESOURCE_MISC_GENERATE_MIPS;
+		textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+
+		if (flags & 4 || noMipLevels)
+		{
+			textureDesc.BindFlags |= D3D11_BIND_RENDER_TARGET;
+		}
+
+		ID3D11Texture2D* pTexture = TNULL;
+
+		if (srcData == TNULL)
+		{
+			m_pDevice->CreateTexture2D(&textureDesc, 0, &pTexture);
+		}
+		else
+		{
+			if (noMipLevels == false)
+			{
+				TASSERT(TFALSE, "Not implemented");
+			}
+			else
+			{
+				m_pDevice->CreateTexture2D(&textureDesc, 0, &pTexture);
+				if (pTexture == TNULL) return TNULL;
+
+				m_pDeviceContext->UpdateSubresource(pTexture, NULL, NULL, srcData, GetTextureRowPitch(format, width), GetTextureDepthPitch(format, width, height));
+			}
+		}
+
+		if (pTexture)
+		{
+			D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc;
+			shaderResourceViewDesc.Format = textureDesc.Format;
+			shaderResourceViewDesc.ViewDimension = sampleDescCount > 1 ? D3D_SRV_DIMENSION_TEXTURE2DMS : D3D_SRV_DIMENSION_TEXTURE2D;
+			shaderResourceViewDesc.Texture2D.MipLevels = mipLevels;
+			shaderResourceViewDesc.Texture2D.MostDetailedMip = 0;
+
+			ID3D11ShaderResourceView* pShaderResourceView = TNULL;
+			m_pDevice->CreateShaderResourceView(pTexture, &shaderResourceViewDesc, &pShaderResourceView);
+
+			if (pShaderResourceView != TNULL && noMipLevels == false)
+			{
+				m_pDeviceContext->GenerateMips(pShaderResourceView);
+			}
+
+			pTexture->Release();
+			return pShaderResourceView;
+		}
+
+		return TNULL;
+	}
+
+	ID3D11RenderTargetView* TRenderDX11::CreateRenderTargetView(ID3D11ShaderResourceView* pShaderResourceView)
+	{
+		ID3D11Texture2D* pTexture;
+		pShaderResourceView->GetResource((ID3D11Resource**)&pTexture);
+
+		D3D11_TEXTURE2D_DESC texDesc;
+		pTexture->GetDesc(&texDesc);
+
+		D3D11_RENDER_TARGET_VIEW_DESC renderTargetViewDesc;
+		renderTargetViewDesc.Format = texDesc.Format;
+		renderTargetViewDesc.Texture2D.MipSlice = 0;
+		renderTargetViewDesc.ViewDimension = texDesc.SampleDesc.Count > 1 ? D3D11_RTV_DIMENSION_TEXTURE2DMS : D3D11_RTV_DIMENSION_TEXTURE2D;
+
+		ID3D11RenderTargetView* pRenderTargetView = TNULL;
+		m_pDevice->CreateRenderTargetView(pTexture, &renderTargetViewDesc, &pRenderTargetView);
+
+		return pRenderTargetView;
+	}
+
+	ID3D11SamplerState* TRenderDX11::CreateSamplerStateAutoAnisotropy(D3D11_FILTER filter, D3D11_TEXTURE_ADDRESS_MODE addressU, D3D11_TEXTURE_ADDRESS_MODE addressV, D3D11_TEXTURE_ADDRESS_MODE addressW, FLOAT mipLODBias, uint32_t borderColor, FLOAT minLOD, FLOAT maxLOD)
+	{
+		D3D11_SAMPLER_DESC samplerDesc = { };
+
+		if (filter == D3D11_FILTER_MIN_MAG_MIP_LINEAR)
+		{
+			filter = D3D11_FILTER_ANISOTROPIC;
+			samplerDesc.MaxAnisotropy = 0x10;
+		}
+		else
+		{
+			samplerDesc.MaxAnisotropy = 1;
+		}
+
+		samplerDesc.AddressU = addressU;
+		samplerDesc.AddressV = addressV;
+		samplerDesc.MipLODBias = mipLODBias;
+		samplerDesc.AddressW = addressW;
+		samplerDesc.BorderColor[0] = (float)((borderColor >> 24) & 0xFF) / 255.0f;
+		samplerDesc.BorderColor[1] = (float)((borderColor >> 16) & 0xFF) / 255.0f;
+		samplerDesc.BorderColor[2] = (float)((borderColor >> 8) & 0xFF) / 255.0f;
+		samplerDesc.BorderColor[3] = (float)((borderColor >> 0) & 0xFF) / 255.0f;
+		samplerDesc.MinLOD = minLOD;
+		samplerDesc.MaxLOD = maxLOD;
+		samplerDesc.Filter = filter;
+
+		ID3D11SamplerState* pSamplerState;
+		m_pDevice->CreateSamplerState(&samplerDesc, &pSamplerState);
+
+		return pSamplerState;
+	}
+
+	ID3D11SamplerState* TRenderDX11::CreateSamplerState(D3D11_FILTER filter, D3D11_TEXTURE_ADDRESS_MODE addressU, D3D11_TEXTURE_ADDRESS_MODE addressV, D3D11_TEXTURE_ADDRESS_MODE addressW, FLOAT mipLODBias, uint32_t borderColor, FLOAT minLOD, FLOAT maxLOD, UINT maxAnisotropy)
+	{
+		D3D11_SAMPLER_DESC samplerDesc = { };
+		samplerDesc.AddressU = addressU;
+		samplerDesc.AddressV = addressV;
+		samplerDesc.MipLODBias = mipLODBias;
+		samplerDesc.AddressW = addressW;
+		samplerDesc.BorderColor[0] = (float)((borderColor >> 24) & 0xFF) / 255.0f;
+		samplerDesc.BorderColor[1] = (float)((borderColor >> 16) & 0xFF) / 255.0f;
+		samplerDesc.BorderColor[2] = (float)((borderColor >> 8) & 0xFF) / 255.0f;
+		samplerDesc.BorderColor[3] = (float)((borderColor >> 0) & 0xFF) / 255.0f;
+		samplerDesc.MinLOD = minLOD;
+		samplerDesc.MaxLOD = maxLOD;
+		samplerDesc.Filter = filter;
+		samplerDesc.MaxAnisotropy = maxAnisotropy;
+
+		ID3D11SamplerState* pSamplerState;
+		m_pDevice->CreateSamplerState(&samplerDesc, &pSamplerState);
+
+		return pSamplerState;
 	}
 
 	void TRenderDX11::BuildAdapterDatabase()

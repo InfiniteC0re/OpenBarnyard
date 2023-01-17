@@ -22,7 +22,7 @@ namespace Toshi
 	void TMSWindow::Update()
 	{
 		MSG msg;
-		if (!m_Flag1 && PeekMessageA(&msg, NULL, 0, 0, 0) == TRUE)
+		if (!m_IsDestroyed && PeekMessageA(&msg, NULL, 0, 0, 0) == TRUE)
 		{
 			while (GetMessageA(&msg, NULL, 0, 0) != FALSE)
 			{
@@ -34,7 +34,7 @@ namespace Toshi
 				}
 			}
 
-			m_Flag1 = true;
+			m_IsDestroyed = true;
 		}
 	}
 
@@ -52,7 +52,7 @@ namespace Toshi
 			}
 
 			DestroyWindow(m_HWND);
-			m_Flag1 = true;
+			m_IsDestroyed = true;
 			m_HWND = NULL;
 		}
 
@@ -106,6 +106,8 @@ namespace Toshi
 		EnableWindow(m_HWND, TRUE);
 		ShowWindow(m_HWND, SW_SHOW);
 		SetForegroundWindow(m_HWND);
+
+		m_IsDestroyed = false;
 		
 		if (GetForegroundWindow() != m_HWND)
 		{
@@ -121,20 +123,20 @@ namespace Toshi
 		TMSWindow* window = reinterpret_cast<TMSWindow*>(GetWindowLongA(hWnd, GWL_USERDATA));
 
 		RECT rect;
-		bool bFlag1, bWindowCreated;
+		bool bFlag1, bLockCursor;
 		auto pDisplayParams = Toshi::TRender::GetSingleton()->GetCurrentDisplayParams();
 
-		if (window == NULL || pDisplayParams->IsFullscreen != false)
+		if (window == NULL || pDisplayParams->IsFullscreen)
 		{
-			bWindowCreated = false;
+			bLockCursor = false;
 		}
 		else
 		{
-			bWindowCreated = true;
+			bLockCursor = true;
 
 			if (pDisplayParams->Unk5 != false)
 			{
-				bWindowCreated = false;
+				bLockCursor = false;
 			}
 		}
 
@@ -230,13 +232,13 @@ namespace Toshi
 		{
 			auto pSystemManager = TSystemManager::GetSingletonWeak();
 
-			if (bFlag1 || bWindowCreated)
+			if (bFlag1 || bLockCursor)
 			{
 				GetWindowRect(hWnd, &rect);
 				ClipCursor(&rect);
 			}
 
-			if (window->Flag1()) return 0;
+			if (window->IsDestroyed()) return 0;
 			if (pSystemManager == TNULL) return 0;
 
 			if (wParam == TRUE)
@@ -269,7 +271,7 @@ namespace Toshi
 			if (ms_hDeviceNotify != NULL) return 0;
 			ExitProcess(1);
 		case WM_SIZE:
-			if (bWindowCreated)
+			if (bLockCursor)
 			{
 				GetWindowRect(hWnd, &rect);
 				ClipCursor(&rect);
