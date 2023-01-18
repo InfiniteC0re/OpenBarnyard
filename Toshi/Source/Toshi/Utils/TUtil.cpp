@@ -3,6 +3,7 @@
 #include "TRegion.h"
 #include "Toshi/Core/TSystem.h"
 #include "Toshi/File/TFile.h"
+#include "Toshi/Core/TError.h"
 
 namespace Toshi
 {
@@ -20,7 +21,9 @@ namespace Toshi
 
 		Create();
 
-        return false;
+		new TError(0x1800, 0x100);
+
+        return true;
     }
 
     void TUtil::MemSet(void* ptr, size_t value, size_t size)

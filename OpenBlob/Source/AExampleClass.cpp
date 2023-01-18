@@ -6,6 +6,7 @@
 
 #include <Toshi/File/TTSF.h>
 #include <Toshi/Render/TAssetInit.h>
+#include <Toshi/Core/TError.h>
 
 using namespace Toshi;
 
@@ -78,6 +79,13 @@ AExampleClass::AExampleClass()
 		TAssetInit::InitAssets(trb, true, false);
 	}
 	*/
+
+	TError* error = TError::GetSingletonWeak();
+	error->AddError("Material \'%s\' Couldnt find texture \'%s\'", "test", "debloblol.tga");
+	error->AddError("couldnt create resource \'%s\' because we have reached our max (%d)", "Resource1", 5);
+	const char* error1 = error->GetError(0);
+	const char* error2 = error->GetError(1);
+
 	TFile* file = TFile::Create("C:\\Program Files (x86)\\Steam\\steamapps\\common\\de Blob\\Data\\BlobChar\\AssetPack.trb");
 
 	if (file)
