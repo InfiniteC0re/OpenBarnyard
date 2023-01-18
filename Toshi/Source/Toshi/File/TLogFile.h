@@ -1,27 +1,28 @@
+#pragma once
 #include "Toshi/File/TFile.h"
 
 namespace Toshi
 {
 	class TLogFile : public TSingleton<TLogFile>
 	{
-		const char* cTypeStrings[3]
+		static inline const char* cTypeStrings[3]
 		{
 			"Info",
 			"Warning",
 			"Error"
 		};
 
-		uint32_t cLevelMax = 30;
+		static constexpr uint32_t cLevelMax = 30;
 
-		TFile* m_pFile;           // 0x0
-		int m_iTotalLogCount;     // 0x4
-		bool m_bIsSimpleMode;     // 0x8
-		bool m_bAllowIndentation; // 0x9
-		char* m_LevelString;      // 0xA
-		int m_unk;                // 0x2C
-		int* m_typeCounts;        // 0x30
-		int* m_unk2;              // 0x34
-		int m_unk3;               // 0x38
+		TFile* m_pFile;                 // 0x0
+		int m_iTotalLogCount;           // 0x4
+		bool m_bIsSimpleMode;           // 0x8
+		bool m_bAllowIndentation;       // 0x9
+		char m_LevelString[cLevelMax];  // 0xA
+		int m_curLevel;                 // 0x2C
+		int m_typeCounts[3];              // 0x30
+		int* m_unk2;                    // 0x34
+		int m_unk3;                     // 0x38
 
 	public:
 
@@ -40,11 +41,15 @@ namespace Toshi
 			Close();
 		}
 
+		int Create(const char* fileName, const char* str2, bool createNew);
 		void Close();
 		void RecalcLevel();
-		void Print(const char*, ...);
+		void Print(const char* format, ...);
 
 		void Log(TYPE type, const char* str1, const char* str2, const char* format, ...);
+
+		void AllowIndentation(bool allow) { m_bAllowIndentation = allow; }
+		void SetSimpleMode(bool enable) { m_bIsSimpleMode = enable; }
 
 		int GetTypeCount(TYPE type) const { return m_typeCounts[type]; }
 		int GetTotalLogCount() const { return m_iTotalLogCount; }

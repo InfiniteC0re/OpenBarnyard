@@ -392,7 +392,9 @@ namespace Toshi
 
         int iResult = T2String8::FormatV(str, sizeof(str), format, args);
 
-        Write(str, sizeof(str));
+        Write(str, strlen(str));
+
+        va_end(args);
 
         return iResult;
     }
@@ -406,7 +408,9 @@ namespace Toshi
 
         int iResult = T2String16::FormatV(str, sizeof(str), format, args);
 
-        Write(str, sizeof(str));
+        Write(str, wcslen(str));
+
+        va_end(args);
 
         return iResult;
     }
@@ -417,7 +421,7 @@ namespace Toshi
 
         int iResult = T2String8::FormatV(str, sizeof(str), format, vargs);
 
-        Write(str, sizeof(str));
+        Write(str, strlen(str));
 
         return iResult;
     }

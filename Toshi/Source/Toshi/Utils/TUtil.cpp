@@ -9,12 +9,35 @@ namespace Toshi
 	void TUtil::LogInitialise()
 	{
 		TLogFile* logfile = new TLogFile();
-		m_pLogFile1 = logfile;
-		m_pLogFile2 = logfile;
+		Toshi::TUtil::GetSingletonWeak()->m_pLogFile1 = logfile;
+		Toshi::TUtil::GetSingletonWeak()->m_pLogFile2 = logfile;
 		TIMPLEMENT("FUN_0065db40(\" * .log\",9);");
-		time_t* seconds;
-		GetUnixSeconds((uint64_t*)seconds);
-		tm* time = gmtime(seconds);
+		time_t seconds;
+		time(&seconds);
+
+		tm* time = gmtime(&seconds);
+
+		char filename[256];
+		T2String8::Format(filename, "deblob_%d%02d%02d_%02d_%02d_%02d.log", time->tm_year + 1900, time->tm_mon + 1, time->tm_mday, time->tm_hour, time->tm_min, time->tm_sec);
+		Toshi::TUtil::GetSingletonWeak()->m_pLogFile2->Create(filename, "Toshi 2.0", false);
+		Toshi::TUtil::GetSingletonWeak()->m_pLogFile2->AllowIndentation(true);
+		Toshi::TUtil::GetSingletonWeak()->m_pLogFile2->SetSimpleMode(true);
+	}
+
+	void TUtil::Log(const char* format, ...)
+	{
+		if (Toshi::TUtil::GetSingletonWeak()->m_pLogFile2 != TNULL)
+		{
+			va_list args;
+			va_start(args, format);
+
+			char str[0x800];
+
+			T2String8::FormatV(str, sizeof(str), format, args);
+
+			Toshi::TUtil::GetSingletonWeak()->m_pLogFile2->Log(TLogFile::TYPE_Info, "Toshi", "Kernel", format, str);
+			// Throw GenericEmitter
+		}
 	}
 
 	bool TUtil::ToshiCreate(int argc, char** argv, TMemory& memorySettings)

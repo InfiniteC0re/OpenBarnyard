@@ -12,7 +12,8 @@ namespace Toshi
 		TLogFile* m_pLogFile1;
 		TLogFile* m_pLogFile2;
 
-		void LogInitialise();
+		static void LogInitialise();
+		static void Log(const char* format, ...);
 
 		static bool ToshiCreate(int argc, char** argv, TMemory& memorySettings);
 		

@@ -31,6 +31,9 @@ namespace Toshi
 
 			int iResult = _vsnprintf(a_pcString, size, a_pcFormat, args);
 			TASSERT(iResult != -1, "PS2/GC/X360 do not correctly support vsprintf, this code will cause memory to be clobbered on those platforms! Increase the size of the destination string to avoid this problem");
+			a_pcString[size - 1] = '\0';
+
+			va_end(args);
 			return iResult;
 		}
 
@@ -43,6 +46,8 @@ namespace Toshi
 
 			int iResult = vsprintf(a_pcString, a_pcFormat, args);
 			TASSERT(iResult != -1, "PS2/GC/X360 do not correctly support vsprintf, this code will cause memory to be clobbered on those platforms! Increase the size of the destination string to avoid this problem");
+			
+			va_end(args);
 			return iResult;
 		}
 
