@@ -1,6 +1,7 @@
 #include "ToshiPCH.h"
 #include "T2ResourceManager.h"
 #include "Toshi/Render/TAssetInit.h"
+#include "Toshi/Core/TError.h"
 
 const int MAX_RESOURCE_NAME = 48;
 
@@ -132,7 +133,7 @@ namespace Toshi
 		int iID = FindUnusedResource();
 		if (m_iMaxNumResources <= iID)
 		{
-			TOSHI_CORE_ERROR("couldnt create resource \"%s\" because we have reached our max (%d)", resourceName, m_iMaxNumResources);
+			TError::GetSingletonWeak()->AddError("couldnt create resource \"%s\" because we have reached our max (%d)", resourceName, m_iMaxNumResources);
 			return 0;
 		}
 		TASSERT(iID >= 0);
