@@ -2,12 +2,22 @@
 #include "TUtil.h"
 #include "TRegion.h"
 #include "Toshi/Core/TSystem.h"
-#include "Toshi/File/TFile.h"
 #include "Toshi/Core/TError.h"
 
 namespace Toshi
 {
-    bool TUtil::ToshiCreate(int argc, char** argv, TMemory& memorySettings)
+	void TUtil::LogInitialise()
+	{
+		TLogFile* logfile = new TLogFile();
+		m_pLogFile1 = logfile;
+		m_pLogFile2 = logfile;
+		TIMPLEMENT("FUN_0065db40(\" * .log\",9);");
+		time_t* seconds;
+		GetUnixSeconds((uint64_t*)seconds);
+		tm* time = gmtime(seconds);
+	}
+
+	bool TUtil::ToshiCreate(int argc, char** argv, TMemory& memorySettings)
     {
         TRegion::LockRegion();
 		

@@ -1,18 +1,18 @@
 #pragma once
-#include <cstdint>
-
 #include "Toshi/Utils/TSingleton.h"
+#include "Toshi/File/TLogFile.h"
+
 
 namespace Toshi
 {
 	class TUtil : public TSingleton<TUtil>
 	{
 	public:
-		void LogInitialise()
-		{
-			// 0065d900
-			TIMPLEMENT();
-		}
+
+		TLogFile* m_pLogFile1;
+		TLogFile* m_pLogFile2;
+
+		void LogInitialise();
 
 		static bool ToshiCreate(int argc, char** argv, TMemory& memorySettings);
 		

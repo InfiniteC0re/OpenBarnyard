@@ -383,6 +383,45 @@ namespace Toshi
         return 0;
     }
 
+    int TNativeFile::CPrintf(const char* format, ...)
+    {
+        va_list args; 
+        va_start(args, format);
+
+        char str[0x200];
+
+        int iResult = T2String8::FormatV(str, sizeof(str), format, args);
+
+        Write(str, sizeof(str));
+
+        return iResult;
+    }
+
+    int TNativeFile::WPrintf(const wchar_t* format, ...)
+    {
+        va_list args;
+        va_start(args, format);
+
+        wchar_t str[0x200];
+
+        int iResult = T2String16::FormatV(str, sizeof(str), format, args);
+
+        Write(str, sizeof(str));
+
+        return iResult;
+    }
+
+    int TNativeFile::VCPrintf(const char* format, va_list vargs)
+    {
+        char str[0x200];
+
+        int iResult = T2String8::FormatV(str, sizeof(str), format, vargs);
+
+        Write(str, sizeof(str));
+
+        return iResult;
+    }
+
     DWORD TNativeFile::GetSize()
     {
         m_RBufferPosition = SetFilePointer(m_Handle, 0, TNULL, TSEEK_END);

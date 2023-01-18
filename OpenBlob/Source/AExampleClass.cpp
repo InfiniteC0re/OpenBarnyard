@@ -80,11 +80,16 @@ AExampleClass::AExampleClass()
 	}
 	*/
 
-	TError* error = TError::GetSingletonWeak();
+	/*TError* error = TError::GetSingletonWeak();
 	error->AddError("Material \'%s\' Couldnt find texture \'%s\'", "test", "debloblol.tga");
 	error->AddError("couldnt create resource \'%s\' because we have reached our max (%d)", "Resource1", 5);
 	const char* error1 = error->GetError(0);
 	const char* error2 = error->GetError(1);
+	const char* error3 = error->GetError(2);*/
+
+	/*new Toshi::TLogFile();
+
+	Toshi::TLogFile::GetSingletonWeak()->Log(Toshi::TLogFile::TYPE_Info, "Toshi", "Kernel", "Creating AExampleClass %s", "Yes we are...");*/
 
 	TFile* file = TFile::Create("C:\\Program Files (x86)\\Steam\\steamapps\\common\\de Blob\\Data\\BlobChar\\AssetPack.trb");
 

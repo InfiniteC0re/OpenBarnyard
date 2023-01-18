@@ -22,8 +22,9 @@ namespace Toshi
 		virtual wchar_t GetWChar() { return 0; }
 		virtual int PutCChar(char character) { return 0; }
 		virtual int PutWChar(wchar_t character) { return 0; }
-		virtual int CPrintf(const char* format, ...) { va_list args; va_start(args, format); return vprintf(format, args); }
-		virtual int VCPrintf(const char* format, ...) { return 0; }
+		virtual int CPrintf(const char* format, ...);
+		virtual int WPrintf(const wchar_t* format, ...);
+		virtual int VCPrintf(const char* format, va_list vargs);
 		virtual int VWPrintf(const wchar_t* format, ...) { return 0; }
 		
 		bool LoadBuffer(DWORD bufferPos);
