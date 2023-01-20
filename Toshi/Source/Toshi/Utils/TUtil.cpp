@@ -19,14 +19,14 @@ namespace Toshi
 
 		char filename[256];
 		T2String8::Format(filename, "deblob_%d%02d%02d_%02d_%02d_%02d.log", time->tm_year + 1900, time->tm_mon + 1, time->tm_mday, time->tm_hour, time->tm_min, time->tm_sec);
-		Toshi::TUtil::GetSingletonWeak()->m_pLogFile2->Create(filename, "Toshi 2.0", false);
-		Toshi::TUtil::GetSingletonWeak()->m_pLogFile2->AllowIndentation(true);
-		Toshi::TUtil::GetSingletonWeak()->m_pLogFile2->SetSimpleMode(true);
+		GetLog()->Create(filename, "Toshi 2.0", false);
+		GetLog()->AllowIndentation(true);
+		GetLog()->SetSimpleMode(true);
 	}
 
 	void TUtil::Log(const char* format, ...)
 	{
-		if (Toshi::TUtil::GetSingletonWeak()->m_pLogFile2 != TNULL)
+		if (GetLog() != TNULL)
 		{
 			va_list args;
 			va_start(args, format);
@@ -37,9 +37,32 @@ namespace Toshi
 
 			va_end(args);
 
-			Toshi::TUtil::GetSingletonWeak()->m_pLogFile2->Log(TLogFile::TYPE_Info, "Toshi", "Kernel", format, str);
+			GetLog()->Log(TLogFile::TYPE_Info, "Toshi", "Kernel", format, str);
 			// Throw GenericEmitter
 		}
+	}
+
+	void TUtil::LogConsole(const char* format, ...)
+	{
+		if (GetLog() != TNULL)
+		{
+			va_list vargs;
+			va_start(vargs, format);
+
+			char str[0x400];
+			T2String8::FormatV(str, sizeof(str), format, &vargs);
+			OutputDebugStringA(str);
+			// printf(str);
+			TOSHI_TRACE(str);
+		}
+	}
+
+	void TUtil::LogSet(TLogFile* a_logFile)
+	{
+		Log("Changing log file.");
+		TUtil* util = Toshi::TUtil::GetSingleton();
+		GetLog()->Close();
+		util->m_pLogFile2 = a_logFile == TNULL ? util->m_pLogFile1 : a_logFile;
 	}
 
 	bool TUtil::ToshiCreate(int argc, char** argv, TMemory& memorySettings)

@@ -597,7 +597,7 @@ namespace Toshi
 		if (bResult)
 		{
 			TOSHI_INFO("Creating TRenderDX11");
-			TIMPLEMENT_D("FUN_0065d750");
+			TUtil::LogUp();
 
 			D3D_FEATURE_LEVEL featureLevel = D3D_FEATURE_LEVEL_9_3;
 

@@ -81,7 +81,7 @@ TOSHI_ENTRY
 	Toshi::TMemory memorySettings(TOSHI_TMEMORY_FLAGS, TOSHI_TMEMORY_SIZE);
 	Toshi::TUtil::ToshiCreate(0, 0, memorySettings);
 	Toshi::TUtil::Log("Build Version %s", "0.28");
-	TOSHI_TRACE("Build Version {0}", "0.28");
+	Toshi::TUtil::LogConsole("Build Version %s", "0.28");
 
 	OSVERSIONINFOEX osVersionInfo = { };
 	osVersionInfo.dwOSVersionInfoSize = sizeof(osVersionInfo);

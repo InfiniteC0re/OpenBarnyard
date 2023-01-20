@@ -14,6 +14,25 @@ namespace Toshi
 
 		static void LogInitialise();
 		static void Log(const char* format, ...);
+		static void LogConsole(const char* format, ...);
+		static void LogSet(TLogFile* a_logFile);
+
+		static TLogFile* GetLog()
+		{
+			return Toshi::TUtil::GetSingletonWeak()->m_pLogFile2;
+		}
+
+		static void LogDown()
+		{
+			TUtil* util = Toshi::TUtil::GetSingleton();
+			util->m_pLogFile2->Down();
+		}
+
+		static void LogUp()
+		{
+			TUtil* util = Toshi::TUtil::GetSingleton();
+			util->m_pLogFile2->Up();
+		}
 
 		static bool ToshiCreate(int argc, char** argv, TMemory& memorySettings);
 		

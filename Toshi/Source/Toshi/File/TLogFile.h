@@ -48,6 +48,18 @@ namespace Toshi
 
 		void Log(TYPE type, const char* str1, const char* str2, const char* format, ...);
 
+		void Down()
+		{
+			m_curLevel--;
+			RecalcLevel();
+		}
+
+		void Up()
+		{
+			m_curLevel++;
+			RecalcLevel();
+		}
+
 		void AllowIndentation(bool allow) { m_bAllowIndentation = allow; }
 		void SetSimpleMode(bool enable) { m_bIsSimpleMode = enable; }
 
