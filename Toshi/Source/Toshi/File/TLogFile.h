@@ -41,7 +41,7 @@ namespace Toshi
 			Close();
 		}
 
-		int Create(const char* fileName, const char* str2, bool createNew);
+		int Create(const char* fileName, const char* str2, bool writeExisting);
 		void Close();
 		void RecalcLevel();
 		void Print(const char* format, ...);

@@ -41,6 +41,7 @@ namespace Toshi
 			TMemory::Shutdown();
 		}
 		
+		static const char* GetTime();
 		static uint64_t GetUnixSeconds(uint64_t* pOut = nullptr);
 		static void MemSet(void* ptr, size_t value, size_t size);
 		

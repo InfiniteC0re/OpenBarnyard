@@ -33,7 +33,9 @@ namespace Toshi
 
 			char str[0x800];
 
-			T2String8::FormatV(str, sizeof(str), format, args);
+			T2String8::FormatV(str, sizeof(str), format, &args);
+
+			va_end(args);
 
 			Toshi::TUtil::GetSingletonWeak()->m_pLogFile2->Log(TLogFile::TYPE_Info, "Toshi", "Kernel", format, str);
 			// Throw GenericEmitter
