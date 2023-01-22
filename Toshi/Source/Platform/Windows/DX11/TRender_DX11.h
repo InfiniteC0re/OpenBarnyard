@@ -257,7 +257,7 @@ namespace Toshi
 		void SetColorUpdate(bool update);
 
 		void FUN_006a8d30();
-		void UnsetConstantBuffers();
+		void FlushConstantBuffers();
 
 	private:
 		void BuildAdapterDatabase();

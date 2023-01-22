@@ -1119,7 +1119,7 @@ namespace Toshi
 		TIMPLEMENT();
 	}
 
-	void TRenderDX11::UnsetConstantBuffers()
+	void TRenderDX11::FlushConstantBuffers()
 	{
 		D3D11_MAPPED_SUBRESOURCE mappedSubresources;
 
