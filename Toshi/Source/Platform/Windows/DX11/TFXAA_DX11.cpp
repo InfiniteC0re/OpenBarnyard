@@ -153,7 +153,7 @@ namespace Toshi
 
 		pDeviceContext->IASetVertexBuffers(0, 1, &pRender->m_pSomeBuffer, &stride, &offsets);
 
-		pRender->UnsetConstantBuffers();
+		pRender->FlushConstantBuffers();
 
 		pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 		pDeviceContext->Draw(4, 0);
