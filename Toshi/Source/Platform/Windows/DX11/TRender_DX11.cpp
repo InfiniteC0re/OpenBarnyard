@@ -596,7 +596,8 @@ namespace Toshi
 
 		if (bResult)
 		{
-			TOSHI_INFO("Creating TRenderDX11");
+			TUtil::Log("Creating TRenderDX11");
+			TUtil::LogConsole("Creating TRenderDX11");
 			TUtil::LogUp();
 
 			D3D_FEATURE_LEVEL featureLevel = D3D_FEATURE_LEVEL_9_3;
@@ -607,7 +608,8 @@ namespace Toshi
 				if (D3D11CreateDevice(NULL, m_scpDriverTypes[i], NULL, 0, &m_scpFeatureLevels[1], 3, D3D11_SDK_VERSION, &m_pDevice, &featureLevel, &m_pDeviceContext) == S_OK) break;
 			}
 
-			TOSHI_INFO("FeatureLevel : {0}", GetFeatureLevel(featureLevel));
+			TUtil::Log("FeatureLevel : %s", GetFeatureLevel(featureLevel));
+			TUtil::LogConsole("FeatureLevel : %s", GetFeatureLevel(featureLevel));
 
 			BuildAdapterDatabase();
 
@@ -632,7 +634,8 @@ namespace Toshi
 				return true;
 			}
 
-			TOSHI_INFO("Failed to create Window");
+			TUtil::Log("Failed to create Window");
+			TUtil::LogConsole("Failed to create Window");
 		}
 
 		return false;
@@ -1085,14 +1088,24 @@ namespace Toshi
 				d3dAdapter->SetAdapterIndex(adapterIndex);
 				d3dAdapter->UpdateAdapterInfo();
 
-				TOSHI_CORE_TRACE(L"Adapter: {0}", adapterDesc->Description);
-				TOSHI_CORE_TRACE("Vendor: {0}, Device: {1}, Revision: {2}", adapterDesc->VendorId, adapterDesc->DeviceId, adapterDesc->Revision);
-				TOSHI_CORE_TRACE("DedicatedSystemMemory: {0:.2f} MB", (double)adapterDesc->DedicatedSystemMemory / 1024 / 1024);
-				TOSHI_CORE_TRACE("SharedSystemMemory: {0:.2f} MB", (double)adapterDesc->SharedSystemMemory / 1024 / 1024);
+				char adapter[128];
+				TStringManager::StringUnicodeToChar(adapter, adapterDesc->Description, -1);
+				TUtil::Log("Adapter: %s", adapter);
+				TUtil::LogConsole("Adapter: %s", adapter);
+				TUtil::LogUp();
+				TUtil::Log("Vendor: %d, Device: %d Revision: %d", adapterDesc->VendorId, adapterDesc->DeviceId, adapterDesc->Revision);
+				TUtil::LogConsole("Vendor: %d, Device: %d Revision: %d", adapterDesc->VendorId, adapterDesc->DeviceId, adapterDesc->Revision);
+				TUtil::Log("DedicatedSystemMemory: %.2f MB", (double)adapterDesc->DedicatedSystemMemory / 1024 / 1024);
+				TUtil::LogConsole("DedicatedSystemMemory: %.2f MB", (double)adapterDesc->DedicatedSystemMemory / 1024 / 1024);
+				TUtil::Log("DedicatedVideoMemory : %.2f MB", (double)adapterDesc->DedicatedVideoMemory / 1024 / 1024);
+				TUtil::LogConsole("DedicatedVideoMemory : %.2f MB", (double)adapterDesc->DedicatedVideoMemory / 1024 / 1024);
+				TUtil::Log("SharedSystemMemory   : %.2f MB", (double)adapterDesc->SharedSystemMemory / 1024 / 1024);
+				TUtil::LogConsole("SharedSystemMemory   : %.2f MB", (double)adapterDesc->SharedSystemMemory / 1024 / 1024);
+
 				d3dAdapter->EnumerateOutputs(this, dxgiAdapter);
 
 				GetAdapterList()->InsertTail(d3dAdapter);
-
+				TUtil::LogDown();
 				dxgiAdapter->Release();
 				enumResult = pFactory->EnumAdapters(++adapterIndex, &dxgiAdapter);
 			}
@@ -1116,8 +1129,12 @@ namespace Toshi
 			LONG deviceHeight = outputDesc.DesktopCoordinates.bottom - outputDesc.DesktopCoordinates.top;
 			LONG deviceWidth = outputDesc.DesktopCoordinates.right - outputDesc.DesktopCoordinates.left;
 		
-			TOSHI_CORE_TRACE(L"Display[{0}]: {1} ({2}x{3})", displayIndex, outputDesc.DeviceName, deviceWidth, deviceHeight);
-			
+			char deviceName[128];
+			TStringManager::StringUnicodeToChar(deviceName, outputDesc.DeviceName, -1);
+
+			TUtil::Log("Display[%d]: %s (%dx%d)", displayIndex, deviceName, deviceWidth, deviceHeight);
+			TUtil::LogConsole("Display[%d]: %s (%dx%d)", displayIndex, deviceName, deviceWidth, deviceHeight);
+
 			UINT numModes = 0;
 			dxgiOutput->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_ENUM_MODES_INTERLACED, &numModes, NULL);
 			

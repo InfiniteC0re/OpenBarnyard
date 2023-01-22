@@ -101,10 +101,14 @@ TOSHI_ENTRY
 		}
 	}
 
-	LPTSTR cmd = GetCommandLine();
-	TOSHI_TRACE(L"Command Line: {}", cmd);
-	TOSHI_TRACE("OS Name: {}", osName);
-	TOSHI_TRACE(L"OS Version: {}.{} Build:{} {}", osVersionInfo.dwMajorVersion, osVersionInfo.dwMinorVersion, osVersionInfo.dwBuildNumber, osVersionInfo.szCSDVersion);
+	LPSTR cmd = GetCommandLineA();
+	Toshi::TUtil::Log("Command Line: %s", cmd);
+	Toshi::TUtil::LogConsole("Command Line: %s", cmd);
+	Toshi::TUtil::Log("OS Name: %s", osName);
+	Toshi::TUtil::LogConsole("OS Name: %s", osName);
+	Toshi::TUtil::Log("OS Version: %d.%d Build:%d %s", osVersionInfo.dwMajorVersion, osVersionInfo.dwMinorVersion, osVersionInfo.dwBuildNumber, osVersionInfo.szCSDVersion);
+	Toshi::TUtil::LogConsole("OS Version: %d.%d Build:%d %s", osVersionInfo.dwMajorVersion, osVersionInfo.dwMinorVersion, osVersionInfo.dwBuildNumber, osVersionInfo.szCSDVersion);
+
 
 	HANDLE hMutex = CreateMutexA(NULL, true, "BLOB07");
 	if (GetLastError() == ERROR_ALREADY_EXISTS)
