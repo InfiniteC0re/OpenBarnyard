@@ -619,7 +619,6 @@ namespace Toshi
 		inputDesc[1].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
 		inputDesc[1].InstanceDataStepRate = 0;
 		
-
 		m_pDevice->CreateInputLayout(inputDesc, 2, shaderVS->GetBufferPointer(), shaderVS->GetBufferSize(), &m_pInputLayout);
 		shaderVS->Release();
 
@@ -627,7 +626,7 @@ namespace Toshi
 		vertexData.pSysMem = s_vertexData;
 
 		D3D11_BUFFER_DESC desc = {};
-		desc.ByteWidth = 80;
+		desc.ByteWidth = sizeof(s_vertexData);
 		desc.Usage = D3D11_USAGE_IMMUTABLE;
 		desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 
