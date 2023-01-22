@@ -222,11 +222,12 @@ namespace Toshi
 		static const char* GetFeatureLevel(D3D_FEATURE_LEVEL a_featureLevel);
 		static ID3DBlob* CompileShader(const char* srcData, LPCSTR pEntrypoint, LPCSTR pTarget, const D3D_SHADER_MACRO* pDefines);
 
-		void CompileVSPS();
+		void CreateVSPS();
 		bool Create(LPCSTR a_name);
 		void CopyToVertexConstantBuffer(int index, const void* src, int count);
 		void CopyToPixelConstantBuffer(int index, const void* src, int count);
 		HRESULT CreatePixelShader(const void* pShaderBytecode, SIZE_T BytecodeLength, ID3D11PixelShader** ppPixelShader);
+		HRESULT CreateVertexShader(const void* pShaderBytecode, SIZE_T BytecodeLength, ID3D11VertexShader** ppVertexShader);
 		ID3D11ShaderResourceView* CreateTexture(UINT width, UINT height, DXGI_FORMAT format, void* srcData, uint8_t flags, D3D11_USAGE usage, uint32_t cpuAccessFlags, uint32_t sampleDescCount);
 		ID3D11RenderTargetView* CreateRenderTargetView(ID3D11ShaderResourceView* pShaderResourceView);
 		ID3D11SamplerState* CreateSamplerStateAutoAnisotropy(D3D11_FILTER filter, D3D11_TEXTURE_ADDRESS_MODE addressU, D3D11_TEXTURE_ADDRESS_MODE addressV, D3D11_TEXTURE_ADDRESS_MODE addressW, FLOAT mipLODBias, uint32_t borderColor, FLOAT minLOD, FLOAT maxLOD);

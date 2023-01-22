@@ -413,7 +413,7 @@ namespace Toshi
 		}
 
 		CreateSamplerStates();
-		CompileVSPS();
+		CreateVSPS();
 
 		m_pToneMap = new TToneMap();
 		m_pFXAA = new TFXAA();
@@ -588,27 +588,17 @@ namespace Toshi
 		MessageBoxA(NULL, text, caption, MB_OK);
 	}
 
-	void TRenderDX11::CompileVSPS()
+	void TRenderDX11::CreateVSPS()
 	{
 		ID3DBlob* shaderVS = CompileShader(s_defaultVertexShader, "main", "vs_4_0_level_9_3", NULL);
-		HRESULT hRes = m_pDevice->CreateVertexShader(shaderVS->GetBufferPointer(), shaderVS->GetBufferSize(), NULL, &m_pVertexShader);
-		if (!SUCCEEDED(hRes))
-		{
-			TASSERT(!"Couldnt Create Vertex Shader");
-		}
+		CreateVertexShader(shaderVS->GetBufferPointer(), shaderVS->GetBufferSize(), &m_pVertexShader);
+
 		ID3DBlob* shader = CompileShader(s_defaultPixelShader, "main", "ps_4_0_level_9_3", NULL);
-		hRes = m_pDevice->CreatePixelShader(shader->GetBufferPointer(), shader->GetBufferSize(), NULL, &m_pPixelShader1);
-		if (!SUCCEEDED(hRes))
-		{
-			TASSERT(!"Couldnt Create Pixel Shader");
-		}
+		CreatePixelShader(shader->GetBufferPointer(), shader->GetBufferSize(), &m_pPixelShader1);
 		shader->Release();
+
 		shader = CompileShader(s_defaultPixelShader2, "main", "ps_4_0_level_9_3", NULL);
-		hRes = m_pDevice->CreatePixelShader(shader->GetBufferPointer(), shader->GetBufferSize(), NULL, &m_pPixelShader2);
-		if (!SUCCEEDED(hRes))
-		{
-			TASSERT(!"Couldnt Create Pixel Shader");
-		}
+		CreatePixelShader(shader->GetBufferPointer(), shader->GetBufferSize(), &m_pPixelShader2);
 		shader->Release();
 
 		D3D11_INPUT_ELEMENT_DESC inputDesc[2];
@@ -911,6 +901,14 @@ namespace Toshi
 	HRESULT TRenderDX11::CreatePixelShader(const void* pShaderBytecode, SIZE_T BytecodeLength, ID3D11PixelShader** ppPixelShader)
 	{
 		HRESULT hRes = m_pDevice->CreatePixelShader(pShaderBytecode, BytecodeLength, NULL, ppPixelShader);
+		TASSERT(SUCCEEDED(hRes), "Couldnt Create Pixel Shader");
+
+		return hRes;
+	}
+
+	HRESULT TRenderDX11::CreateVertexShader(const void* pShaderBytecode, SIZE_T BytecodeLength, ID3D11VertexShader** ppVertexShader)
+	{
+		HRESULT hRes = m_pDevice->CreateVertexShader(pShaderBytecode, BytecodeLength, NULL, ppVertexShader);
 		TASSERT(SUCCEEDED(hRes), "Couldnt Create Pixel Shader");
 
 		return hRes;
