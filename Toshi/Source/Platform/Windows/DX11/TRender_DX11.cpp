@@ -413,7 +413,7 @@ namespace Toshi
 		}
 
 		CreateSamplerStates();
-		TTODO("Create and compile shaders");
+		CompileVSPS();
 
 		m_pToneMap = new TToneMap();
 		m_pFXAA = new TFXAA();
@@ -586,6 +586,62 @@ namespace Toshi
 		GetPrivateProfileStringA("Setup", "IDS_D3DDISPLAYERROR", "Failed to create the display. Please run the Barnyard setup program and reconfigure", text, sizeof(text), ".\\Setup.ini");
 		
 		MessageBoxA(NULL, text, caption, MB_OK);
+	}
+
+	void TRenderDX11::CompileVSPS()
+	{
+		ID3DBlob* shaderVS = CompileShader(s_defaultVertexShader, "main", "vs_4_0_level_9_3", NULL);
+		HRESULT hRes = m_pDevice->CreateVertexShader(shaderVS->GetBufferPointer(), shaderVS->GetBufferSize(), NULL, &m_pVertexShader);
+		if (!SUCCEEDED(hRes))
+		{
+			TASSERT(!"Couldnt Create Vertex Shader");
+		}
+		ID3DBlob* shader = CompileShader(s_defaultPixelShader, "main", "ps_4_0_level_9_3", NULL);
+		hRes = m_pDevice->CreatePixelShader(shader->GetBufferPointer(), shader->GetBufferSize(), NULL, &m_pPixelShader1);
+		if (!SUCCEEDED(hRes))
+		{
+			TASSERT(!"Couldnt Create Pixel Shader");
+		}
+		shader->Release();
+		shader = CompileShader(s_defaultPixelShader2, "main", "ps_4_0_level_9_3", NULL);
+		hRes = m_pDevice->CreatePixelShader(shader->GetBufferPointer(), shader->GetBufferSize(), NULL, &m_pPixelShader2);
+		if (!SUCCEEDED(hRes))
+		{
+			TASSERT(!"Couldnt Create Pixel Shader");
+		}
+		shader->Release();
+
+		D3D11_INPUT_ELEMENT_DESC inputDesc[2];
+
+		inputDesc[0].SemanticName = "POSITION";
+		inputDesc[0].SemanticIndex = 0;
+		inputDesc[0].Format = DXGI_FORMAT_R32G32B32_FLOAT;
+		inputDesc[0].InputSlot = 0;
+		inputDesc[0].AlignedByteOffset = -1;
+		inputDesc[0].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+		inputDesc[0].InstanceDataStepRate = 0;
+
+		inputDesc[1].SemanticName = "TEXCOORD";
+		inputDesc[1].SemanticIndex = 0;
+		inputDesc[1].Format = DXGI_FORMAT_R32G32_FLOAT;
+		inputDesc[1].InputSlot = 0;
+		inputDesc[1].AlignedByteOffset = -1;
+		inputDesc[1].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+		inputDesc[1].InstanceDataStepRate = 0;
+		
+
+		m_pDevice->CreateInputLayout(inputDesc, 2, shaderVS->GetBufferPointer(), shaderVS->GetBufferSize(), &m_pInputLayout);
+		shaderVS->Release();
+
+		D3D11_SUBRESOURCE_DATA vertexData = {};
+		vertexData.pSysMem = s_vertexData;
+
+		D3D11_BUFFER_DESC desc = {};
+		desc.ByteWidth = 80;
+		desc.Usage = D3D11_USAGE_IMMUTABLE;
+		desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+
+		m_pDevice->CreateBuffer(&desc, &vertexData, &m_pSomeBuffer);
 	}
 
 	bool TRenderDX11::Create(LPCSTR a_name)
@@ -814,7 +870,7 @@ namespace Toshi
 		ID3DBlob* pShaderBlob = TNULL;
 		ID3DBlob* pErrorBlob = TNULL;
 		
-		HRESULT hRes = D3DCompile(srcData, srcLength, NULL, pDefines, NULL, pEntrypoint, pTarget, D3DCOMPILE_PREFER_FLOW_CONTROL, 0, &pShaderBlob, &pErrorBlob);
+		HRESULT hRes = D3DCompile(srcData, srcLength, NULL, pDefines, NULL, pEntrypoint, pTarget, 0x1000, 0, &pShaderBlob, &pErrorBlob);
 
 		if (!SUCCEEDED(hRes))
 		{

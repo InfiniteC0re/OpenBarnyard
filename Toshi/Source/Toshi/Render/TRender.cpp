@@ -16,7 +16,9 @@ namespace Toshi
 		m_pRenderContext = TNULL;
 		m_Unk5 = 0;
 		m_HasDyingResources = false;
-
+		m_bDisplayCreated = false;
+		m_bCreated = false;
+		m_bInScene = false;
 		// Create things
 		T2ResourceManager::CreateSingleton(TRender::MAXNUMRESOURCES);
 		m_ParamTable = new TRenderParamTable;
