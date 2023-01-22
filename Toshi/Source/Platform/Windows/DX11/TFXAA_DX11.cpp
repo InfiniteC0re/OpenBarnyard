@@ -87,7 +87,7 @@ namespace Toshi
 
 		// Save current render targets
 		pDeviceContext->OMGetRenderTargets(1, &pRenderTargetViews, &pDepthStencilView);
-		pRender->SomeFlagsShinanigans(0, 1, 5, 6);
+		pRender->SetBlendMode(TFALSE, D3D11_BLEND_OP_ADD, D3D11_BLEND_SRC_ALPHA, D3D11_BLEND_INV_SRC_ALPHA);
 
 		// Set our render targets
 		pDeviceContext->OMSetRenderTargets(1, &m_pRenderTarget, NULL);

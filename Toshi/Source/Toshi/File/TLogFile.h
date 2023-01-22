@@ -1,3 +1,4 @@
+#pragma once
 #include "Toshi/File/TFile.h"
 
 namespace Toshi

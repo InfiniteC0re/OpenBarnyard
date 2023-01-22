@@ -493,7 +493,7 @@ namespace Toshi
 				}
 
 				float inAR = (float)m_DisplayParams.Width / m_DisplayParams.Height;
-				float outAR = (float)m_DisplayWidth/ m_DisplayHeight;
+				float outAR = (float)m_DisplayWidth / m_DisplayHeight;
 				TASSERT(fabsf(inAR - 16.0f / 9.0f) < 0.01);
 
 				float posX, posY, width, height;
@@ -512,8 +512,8 @@ namespace Toshi
 					posX = (m_DisplayWidth - width) * 0.5F;
 					posY = 0.0F;
 				}
-				m_someFlags2 &= ~(16);
 
+				m_SomeFlags2.bBlendEnabled = FALSE;
 				m_pFXAA->FUN_006a6700(posX, posY, width, height, s_pShaderResourceView, NULL, NULL);
 			}
 			else
@@ -668,7 +668,7 @@ namespace Toshi
 
 		m_pVertexConstantBuffer = s_pMemHeap->Malloc(VERTEX_CONSTANT_BUFFER_SIZE);
 		m_IsVertexConstantBufferSet = TFALSE;
-		m_Unk1 = 0;
+		m_VertexBufferIndex = 0;
 
 		for (size_t i = 0; i < NUMBUFFERS; i++)
 		{
@@ -685,7 +685,7 @@ namespace Toshi
 
 		m_pPixelConstantBuffer = s_pMemHeap->Malloc(PIXEL_CONSTANT_BUFFER_SIZE);
 		m_IsPixelConstantBufferSet = TFALSE;
-		m_Unk2 = 0;
+		m_PixelBufferIndex = 0;
 
 		// Main vertex buffer
 		{
@@ -1022,14 +1022,39 @@ namespace Toshi
 		return pSamplerState;
 	}
 
-	void TRenderDX11::SomeFlagsShinanigans(uint8_t flag1, uint32_t flag2, uint32_t flag3, uint32_t flag4)
+	void TRenderDX11::SetBlendMode(bool blendEnabled, D3D11_BLEND_OP blendOp, D3D11_BLEND srcBlendAlpha, D3D11_BLEND destBlendAlpha)
 	{
-		uint16_t someFlags1 = m_someFlags1;
-		m_someFlags1 &= ~Flags_Unk7 | (flag2 & Flags_Unk7);
-		m_someFlags2 ^= (flag4 << 10) & 0x7C00 ^ ((flag1 & Flags_Unk) | (flag3 & 31) * 2) << 4 | m_someFlags2 & 0xFC0F;
-		if ((someFlags1 & 0x7C0) != 0x380)
+		m_SomeFlags1.BlendOp = blendOp;
+		m_SomeFlags2.bBlendEnabled = blendEnabled;
+		m_SomeFlags2.SrcBlend = srcBlendAlpha;
+		m_SomeFlags2.DestBlend ^= destBlendAlpha;
+
+		if (m_SomeFlags1.SrcBlendAlpha != D3D11_BLEND_BLEND_FACTOR)
 		{
-			m_someFlags1 = (((flag3 & 0x1F) << 3 | flag2 & Flags_Unk7) << 3) | (flag2 & Flags_Unk7) | (flag4 << 0xB);
+			m_SomeFlags1.BlendOpAlpha = blendOp;
+			m_SomeFlags1.SrcBlendAlpha = srcBlendAlpha;
+			m_SomeFlags1.DestBlendAlpha = destBlendAlpha;
+		}
+	}
+
+	void TRenderDX11::SetAlphaUpdate(bool update)
+	{
+		m_SomeFlags2.bAlphaUpdate = update;
+	}
+
+	void TRenderDX11::SetColorUpdate(bool update)
+	{
+		if (update)
+		{
+			m_SomeFlags2.bDepthEnable = TRUE;
+			m_SomeFlags2.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+			m_SomeFlags2.DepthFunc = D3D11_COMPARISON_NEVER;
+		}
+		else
+		{
+			m_SomeFlags2.bDepthEnable = FALSE;
+			m_SomeFlags2.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
+			m_SomeFlags2.DepthFunc = NULL;
 		}
 	}
 
@@ -1040,26 +1065,28 @@ namespace Toshi
 
 	void TRenderDX11::UnsetConstantBuffers()
 	{
+		D3D11_MAPPED_SUBRESOURCE mappedSubresources;
+
 		if (m_IsVertexConstantBufferSet)
 		{
-			m_Unk1 = (m_Unk1 + 1) % NUMBUFFERS;
-			D3D11_MAPPED_SUBRESOURCE pMappedSubresources;
-			m_pDeviceContext->Map(m_VertexBuffers[m_Unk1], 0, D3D11_MAP_WRITE_DISCARD, 0, &pMappedSubresources);
-			memcpy(pMappedSubresources.pData, m_pVertexConstantBuffer, 0x1000);
-			m_pDeviceContext->Unmap(m_VertexBuffers[m_Unk1], 0);
+			m_VertexBufferIndex = (m_VertexBufferIndex + 1) % NUMBUFFERS;
+			m_pDeviceContext->Map(m_VertexBuffers[m_VertexBufferIndex], 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubresources);
+			memcpy(mappedSubresources.pData, m_pVertexConstantBuffer, VERTEX_CONSTANT_BUFFER_SIZE);
+			m_pDeviceContext->Unmap(m_VertexBuffers[m_VertexBufferIndex], 0);
 			m_IsVertexConstantBufferSet = false;
 		}
+
 		if (m_IsPixelConstantBufferSet)
 		{
-			m_Unk2 = (m_Unk2 + 1) % NUMBUFFERS;
-			D3D11_MAPPED_SUBRESOURCE pMappedSubresources;
-			m_pDeviceContext->Map(m_PixelBuffers[m_Unk2], 0, D3D11_MAP_WRITE_DISCARD, 0, &pMappedSubresources);
-			memcpy(pMappedSubresources.pData, m_pPixelConstantBuffer, 0x400);
-			m_pDeviceContext->Unmap(m_PixelBuffers[m_Unk2], 0);
+			m_PixelBufferIndex = (m_PixelBufferIndex + 1) % NUMBUFFERS;
+			m_pDeviceContext->Map(m_PixelBuffers[m_PixelBufferIndex], 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubresources);
+			memcpy(mappedSubresources.pData, m_pPixelConstantBuffer, PIXEL_CONSTANT_BUFFER_SIZE);
+			m_pDeviceContext->Unmap(m_PixelBuffers[m_PixelBufferIndex], 0);
 			m_IsPixelConstantBufferSet = false;
 		}
-		m_pDeviceContext->VSSetConstantBuffers(0, 1, &m_VertexBuffers[m_Unk1]);
-		m_pDeviceContext->PSSetConstantBuffers(0, 1, &m_PixelBuffers[m_Unk2]);
+
+		m_pDeviceContext->VSSetConstantBuffers(0, 1, &m_VertexBuffers[m_VertexBufferIndex]);
+		m_pDeviceContext->PSSetConstantBuffers(0, 1, &m_PixelBuffers[m_PixelBufferIndex]);
 	}
 
 	void TRenderDX11::BuildAdapterDatabase()
