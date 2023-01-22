@@ -94,7 +94,7 @@ namespace Toshi
 		virtual int PutWChar(wchar_t character) = 0;
 		virtual int CPrintf(const char* format, ...) = 0;
 		virtual int WPrintf(const wchar_t* format, ...) = 0;
-		virtual int VCPrintf(const char* format, va_list vargs) = 0;
+		virtual int VCPrintf(const char* format, va_list* vargs) = 0;
 		virtual int VWPrintf(const wchar_t* format, ...) = 0;
 		virtual ~TFile() { Destroy(); }
 

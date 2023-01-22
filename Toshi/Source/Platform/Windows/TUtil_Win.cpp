@@ -3,6 +3,13 @@
 
 namespace Toshi
 {
+	const char* TUtil::GetTime()
+	{
+		time_t t = time(NULL);
+		char* str = ctime(&t);
+		return strtok(str, "\n");
+	}
+
 	uint64_t TUtil::GetUnixSeconds(uint64_t* pOut)
 	{
 		// 007f0f93

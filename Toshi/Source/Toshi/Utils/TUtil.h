@@ -9,10 +9,38 @@ namespace Toshi
 	{
 	public:
 
+		enum LogType
+		{
+			LogType_Info,
+			LogType_Warning,
+			LogType_Error
+		};
+
 		TLogFile* m_pLogFile1;
 		TLogFile* m_pLogFile2;
 
-		void LogInitialise();
+		static void LogInitialise();
+		static void Log(const char* format, ...);
+		static void Log(LogType logtype, const char* format, ...);
+		static void LogConsole(const char* format, ...);
+		static void LogSet(TLogFile* a_logFile);
+
+		static TLogFile* GetLog()
+		{
+			return Toshi::TUtil::GetSingletonWeak()->m_pLogFile2;
+		}
+
+		static void LogDown()
+		{
+			TUtil* util = Toshi::TUtil::GetSingleton();
+			util->m_pLogFile2->Down();
+		}
+
+		static void LogUp()
+		{
+			TUtil* util = Toshi::TUtil::GetSingleton();
+			util->m_pLogFile2->Up();
+		}
 
 		static bool ToshiCreate(int argc, char** argv, TMemory& memorySettings);
 		
@@ -40,6 +68,7 @@ namespace Toshi
 			TMemory::Shutdown();
 		}
 		
+		static const char* GetTime();
 		static uint64_t GetUnixSeconds(uint64_t* pOut = nullptr);
 		static void MemSet(void* ptr, size_t value, size_t size);
 		

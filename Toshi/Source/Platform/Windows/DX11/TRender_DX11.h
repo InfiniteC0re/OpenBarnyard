@@ -185,6 +185,19 @@ namespace Toshi
 			uint16_t DestBlend : 6;
 		};
 
+		static inline float s_vertexData[] =
+		{
+			1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 
+			0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 
+			1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+			-1.0f, 0.0f, 0.0f, 0.0f, 0.0f
+		};
+
+
+		static inline const char* s_defaultVertexShader = " float4 ScaleTranslate : register(c0);               float4 uvST : register(c1);                                                             struct VS_IN                                                                                {                                                 float4 ObjPos   : POSITION;                   float2 UV\t\t  : TEXCOORD0;\t\t\t    };                                                                                          struct VS_OUT                                 {                                                 float4 ProjPos  : SV_POSITION;                   float2 UV\t\t  : TEXCOORD0;\t\t\t    };                                                                                          VS_OUT main( VS_IN In )                       {                                                 VS_OUT Out;                                   float4 scaledvert = In.ObjPos.xyzw * ScaleTranslate.xyzw;         scaledvert = scaledvert.xyzw + ScaleTranslate.zwzw;\t\t\t\t        scaledvert.zw = float2(0.0,1.0);\t\t\t\t\t\t\t\t     Out.ProjPos = scaledvert;\t\t\t\t        Out.UV = (In.UV*uvST.xy) + uvST.zw;           return Out;                               }                                            ";
+		static inline const char* s_defaultPixelShader = " struct PS_IN                                  {                                            \t\tfloat4 Position\t\t\t: SV_POSITION; \t\tfloat2 Tex0             : TEXCOORD0;    };                                                                                          sampler2D   diffuse_texture     : register(s0) = sampler_state { MipFilter = NONE; MinFilter = LINEAR; MagFilter = LINEAR; AddressU = WRAP; AddressV = WRAP; };   float4 main( PS_IN In )  : COLOR\t\t\t    {                                                return tex2D( diffuse_texture, In.Tex0 );        }                                            ";
+		static inline const char* s_defaultPixelShader2 = " struct PS_IN                                  {                                            \t\tfloat4 Position\t\t\t: SV_POSITION; \t\tfloat2 Tex0             : TEXCOORD0;    };                                                                                          sampler2D   diffuse_texture     : register(s0) = sampler_state { MipFilter = NONE; MinFilter = LINEAR; MagFilter = LINEAR; AddressU = WRAP; AddressV = WRAP; };   float4 main( PS_IN In )  : COLOR\t\t\t    {                                                return float4(tex2D( diffuse_texture, In.Tex0 ).xyz, 1.0);        }                                            ";
+
 	public:
 		TRenderDX11();
 		~TRenderDX11() = default;
@@ -228,10 +241,12 @@ namespace Toshi
 		static const char* GetFeatureLevel(D3D_FEATURE_LEVEL a_featureLevel);
 		static ID3DBlob* CompileShader(const char* srcData, LPCSTR pEntrypoint, LPCSTR pTarget, const D3D_SHADER_MACRO* pDefines);
 
+		void CreateVSPS();
 		bool Create(LPCSTR a_name);
 		void CopyToVertexConstantBuffer(int index, const void* src, int count);
 		void CopyToPixelConstantBuffer(int index, const void* src, int count);
 		HRESULT CreatePixelShader(const void* pShaderBytecode, SIZE_T BytecodeLength, ID3D11PixelShader** ppPixelShader);
+		HRESULT CreateVertexShader(const void* pShaderBytecode, SIZE_T BytecodeLength, ID3D11VertexShader** ppVertexShader);
 		ID3D11ShaderResourceView* CreateTexture(UINT width, UINT height, DXGI_FORMAT format, void* srcData, uint8_t flags, D3D11_USAGE usage, uint32_t cpuAccessFlags, uint32_t sampleDescCount);
 		ID3D11RenderTargetView* CreateRenderTargetView(ID3D11ShaderResourceView* pShaderResourceView);
 		ID3D11SamplerState* CreateSamplerStateAutoAnisotropy(D3D11_FILTER filter, D3D11_TEXTURE_ADDRESS_MODE addressU, D3D11_TEXTURE_ADDRESS_MODE addressV, D3D11_TEXTURE_ADDRESS_MODE addressW, FLOAT mipLODBias, uint32_t borderColor, FLOAT minLOD, FLOAT maxLOD);
@@ -277,6 +292,7 @@ namespace Toshi
 		TMSWindow m_Window;                        // 0x6B0
 		ID3D11VertexShader* m_pVertexShader;       // 0x6D8
 		ID3D11PixelShader* m_pPixelShader1;        // 0x6DC
+		ID3D11PixelShader* m_pPixelShader2;        // 0x6E0
 		ID3D11InputLayout* m_pInputLayout;         // 0x6E4
 		ID3D11Buffer* m_pSomeBuffer;               // 0x6E8
 		FLOAT m_ClearColor[4];                     // 0x6EC

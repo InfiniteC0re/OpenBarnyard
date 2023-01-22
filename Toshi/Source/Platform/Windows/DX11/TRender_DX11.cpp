@@ -413,7 +413,7 @@ namespace Toshi
 		}
 
 		CreateSamplerStates();
-		TTODO("Create and compile shaders");
+		CreateVSPS();
 
 		m_pToneMap = new TToneMap();
 		m_pFXAA = new TFXAA();
@@ -588,6 +588,51 @@ namespace Toshi
 		MessageBoxA(NULL, text, caption, MB_OK);
 	}
 
+	void TRenderDX11::CreateVSPS()
+	{
+		ID3DBlob* shaderVS = CompileShader(s_defaultVertexShader, "main", "vs_4_0_level_9_3", NULL);
+		CreateVertexShader(shaderVS->GetBufferPointer(), shaderVS->GetBufferSize(), &m_pVertexShader);
+
+		ID3DBlob* shader = CompileShader(s_defaultPixelShader, "main", "ps_4_0_level_9_3", NULL);
+		CreatePixelShader(shader->GetBufferPointer(), shader->GetBufferSize(), &m_pPixelShader1);
+		shader->Release();
+
+		shader = CompileShader(s_defaultPixelShader2, "main", "ps_4_0_level_9_3", NULL);
+		CreatePixelShader(shader->GetBufferPointer(), shader->GetBufferSize(), &m_pPixelShader2);
+		shader->Release();
+
+		D3D11_INPUT_ELEMENT_DESC inputDesc[2];
+
+		inputDesc[0].SemanticName = "POSITION";
+		inputDesc[0].SemanticIndex = 0;
+		inputDesc[0].Format = DXGI_FORMAT_R32G32B32_FLOAT;
+		inputDesc[0].InputSlot = 0;
+		inputDesc[0].AlignedByteOffset = -1;
+		inputDesc[0].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+		inputDesc[0].InstanceDataStepRate = 0;
+
+		inputDesc[1].SemanticName = "TEXCOORD";
+		inputDesc[1].SemanticIndex = 0;
+		inputDesc[1].Format = DXGI_FORMAT_R32G32_FLOAT;
+		inputDesc[1].InputSlot = 0;
+		inputDesc[1].AlignedByteOffset = -1;
+		inputDesc[1].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+		inputDesc[1].InstanceDataStepRate = 0;
+		
+		m_pDevice->CreateInputLayout(inputDesc, 2, shaderVS->GetBufferPointer(), shaderVS->GetBufferSize(), &m_pInputLayout);
+		shaderVS->Release();
+
+		D3D11_SUBRESOURCE_DATA vertexData = {};
+		vertexData.pSysMem = s_vertexData;
+
+		D3D11_BUFFER_DESC desc = {};
+		desc.ByteWidth = sizeof(s_vertexData);
+		desc.Usage = D3D11_USAGE_IMMUTABLE;
+		desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+
+		m_pDevice->CreateBuffer(&desc, &vertexData, &m_pSomeBuffer);
+	}
+
 	bool TRenderDX11::Create(LPCSTR a_name)
 	{
 		// 006a5e30
@@ -596,8 +641,9 @@ namespace Toshi
 
 		if (bResult)
 		{
-			TOSHI_INFO("Creating TRenderDX11");
-			TIMPLEMENT_D("FUN_0065d750");
+			TUtil::Log("Creating TRenderDX11");
+			TUtil::LogConsole("Creating TRenderDX11");
+			TUtil::LogUp();
 
 			D3D_FEATURE_LEVEL featureLevel = D3D_FEATURE_LEVEL_9_3;
 
@@ -607,7 +653,8 @@ namespace Toshi
 				if (D3D11CreateDevice(NULL, m_scpDriverTypes[i], NULL, 0, &m_scpFeatureLevels[1], 3, D3D11_SDK_VERSION, &m_pDevice, &featureLevel, &m_pDeviceContext) == S_OK) break;
 			}
 
-			TOSHI_INFO("FeatureLevel : {0}", GetFeatureLevel(featureLevel));
+			TUtil::Log("FeatureLevel : %s", GetFeatureLevel(featureLevel));
+			TUtil::LogConsole("FeatureLevel : %s", GetFeatureLevel(featureLevel));
 
 			BuildAdapterDatabase();
 
@@ -632,7 +679,8 @@ namespace Toshi
 				return true;
 			}
 
-			TOSHI_INFO("Failed to create Window");
+			TUtil::Log("Failed to create Window");
+			TUtil::LogConsole("Failed to create Window");
 		}
 
 		return false;
@@ -811,7 +859,7 @@ namespace Toshi
 		ID3DBlob* pShaderBlob = TNULL;
 		ID3DBlob* pErrorBlob = TNULL;
 		
-		HRESULT hRes = D3DCompile(srcData, srcLength, NULL, pDefines, NULL, pEntrypoint, pTarget, D3DCOMPILE_PREFER_FLOW_CONTROL, 0, &pShaderBlob, &pErrorBlob);
+		HRESULT hRes = D3DCompile(srcData, srcLength, NULL, pDefines, NULL, pEntrypoint, pTarget, 0x1000, 0, &pShaderBlob, &pErrorBlob);
 
 		if (!SUCCEEDED(hRes))
 		{
@@ -852,6 +900,14 @@ namespace Toshi
 	HRESULT TRenderDX11::CreatePixelShader(const void* pShaderBytecode, SIZE_T BytecodeLength, ID3D11PixelShader** ppPixelShader)
 	{
 		HRESULT hRes = m_pDevice->CreatePixelShader(pShaderBytecode, BytecodeLength, NULL, ppPixelShader);
+		TASSERT(SUCCEEDED(hRes), "Couldnt Create Pixel Shader");
+
+		return hRes;
+	}
+
+	HRESULT TRenderDX11::CreateVertexShader(const void* pShaderBytecode, SIZE_T BytecodeLength, ID3D11VertexShader** ppVertexShader)
+	{
+		HRESULT hRes = m_pDevice->CreateVertexShader(pShaderBytecode, BytecodeLength, NULL, ppVertexShader);
 		TASSERT(SUCCEEDED(hRes), "Couldnt Create Pixel Shader");
 
 		return hRes;
@@ -1112,14 +1168,24 @@ namespace Toshi
 				d3dAdapter->SetAdapterIndex(adapterIndex);
 				d3dAdapter->UpdateAdapterInfo();
 
-				TOSHI_CORE_TRACE(L"Adapter: {0}", adapterDesc->Description);
-				TOSHI_CORE_TRACE("Vendor: {0}, Device: {1}, Revision: {2}", adapterDesc->VendorId, adapterDesc->DeviceId, adapterDesc->Revision);
-				TOSHI_CORE_TRACE("DedicatedSystemMemory: {0:.2f} MB", (double)adapterDesc->DedicatedSystemMemory / 1024 / 1024);
-				TOSHI_CORE_TRACE("SharedSystemMemory: {0:.2f} MB", (double)adapterDesc->SharedSystemMemory / 1024 / 1024);
+				char adapter[128];
+				TStringManager::StringUnicodeToChar(adapter, adapterDesc->Description, -1);
+				TUtil::Log("Adapter: %s", adapter);
+				TUtil::LogConsole("Adapter: %s", adapter);
+				TUtil::LogUp();
+				TUtil::Log("Vendor: %d, Device: %d Revision: %d", adapterDesc->VendorId, adapterDesc->DeviceId, adapterDesc->Revision);
+				TUtil::LogConsole("Vendor: %d, Device: %d Revision: %d", adapterDesc->VendorId, adapterDesc->DeviceId, adapterDesc->Revision);
+				TUtil::Log("DedicatedSystemMemory: %.2f MB", (double)adapterDesc->DedicatedSystemMemory / 1024 / 1024);
+				TUtil::LogConsole("DedicatedSystemMemory: %.2f MB", (double)adapterDesc->DedicatedSystemMemory / 1024 / 1024);
+				TUtil::Log("DedicatedVideoMemory : %.2f MB", (double)adapterDesc->DedicatedVideoMemory / 1024 / 1024);
+				TUtil::LogConsole("DedicatedVideoMemory : %.2f MB", (double)adapterDesc->DedicatedVideoMemory / 1024 / 1024);
+				TUtil::Log("SharedSystemMemory   : %.2f MB", (double)adapterDesc->SharedSystemMemory / 1024 / 1024);
+				TUtil::LogConsole("SharedSystemMemory   : %.2f MB", (double)adapterDesc->SharedSystemMemory / 1024 / 1024);
+
 				d3dAdapter->EnumerateOutputs(this, dxgiAdapter);
 
 				GetAdapterList()->InsertTail(d3dAdapter);
-
+				TUtil::LogDown();
 				dxgiAdapter->Release();
 				enumResult = pFactory->EnumAdapters(++adapterIndex, &dxgiAdapter);
 			}
@@ -1143,8 +1209,12 @@ namespace Toshi
 			LONG deviceHeight = outputDesc.DesktopCoordinates.bottom - outputDesc.DesktopCoordinates.top;
 			LONG deviceWidth = outputDesc.DesktopCoordinates.right - outputDesc.DesktopCoordinates.left;
 		
-			TOSHI_CORE_TRACE(L"Display[{0}]: {1} ({2}x{3})", displayIndex, outputDesc.DeviceName, deviceWidth, deviceHeight);
-			
+			char deviceName[128];
+			TStringManager::StringUnicodeToChar(deviceName, outputDesc.DeviceName, -1);
+
+			TUtil::Log("Display[%d]: %s (%dx%d)", displayIndex, deviceName, deviceWidth, deviceHeight);
+			TUtil::LogConsole("Display[%d]: %s (%dx%d)", displayIndex, deviceName, deviceWidth, deviceHeight);
+
 			UINT numModes = 0;
 			dxgiOutput->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_ENUM_MODES_INTERLACED, &numModes, NULL);
 			

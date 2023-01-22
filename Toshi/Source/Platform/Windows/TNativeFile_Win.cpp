@@ -390,9 +390,11 @@ namespace Toshi
 
         char str[0x200];
 
-        int iResult = T2String8::FormatV(str, sizeof(str), format, args);
+        int iResult = T2String8::FormatV(str, sizeof(str), format, &args);
 
-        Write(str, sizeof(str));
+        va_end(args);
+
+        Write(str, iResult);
 
         return iResult;
     }
@@ -406,18 +408,20 @@ namespace Toshi
 
         int iResult = T2String16::FormatV(str, sizeof(str), format, args);
 
-        Write(str, sizeof(str));
+        Write(str, iResult);
+
+        va_end(args);
 
         return iResult;
     }
 
-    int TNativeFile::VCPrintf(const char* format, va_list vargs)
+    int TNativeFile::VCPrintf(const char* format, va_list* vargs)
     {
         char str[0x200];
 
         int iResult = T2String8::FormatV(str, sizeof(str), format, vargs);
 
-        Write(str, sizeof(str));
+        Write(str, iResult);
 
         return iResult;
     }
