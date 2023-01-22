@@ -37,7 +37,25 @@ namespace Toshi
 
 			va_end(args);
 
-			GetLog()->Log(TLogFile::TYPE_Info, "Toshi", "Kernel", format, str);
+			GetLog()->Log(TLogFile::TYPE_Info, "Toshi", "Kernel", str);
+			// Throw GenericEmitter
+		}
+	}
+
+	void TUtil::Log(LogType logtype, const char* format, ...)
+	{
+		if (GetLog() != TNULL)
+		{
+			va_list args;
+			va_start(args, format);
+
+			char str[0x800];
+
+			T2String8::FormatV(str, sizeof(str), format, &args);
+
+			va_end(args);
+
+			GetLog()->Log((TLogFile::TYPE)logtype, "Toshi", "Kernel", format, str);
 			// Throw GenericEmitter
 		}
 	}

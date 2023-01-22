@@ -38,7 +38,7 @@ int Toshi::TLogFile::Create(const char* fileName, const char* str2, bool writeEx
 	m_curLevel = 0;
 
 	m_pFile->CPrintf("Log created [%s]:[%s]: %s\n", fileName, str2, Toshi::TUtil::GetTime());
-	m_pFile->CPrintf("Compilation: %s", __TIMESTAMP__);
+	m_pFile->CPrintf("Compilation: %s\n", __TIMESTAMP__);
 
 	return 0;
 }
@@ -105,6 +105,7 @@ void Toshi::TLogFile::Log(TYPE type, const char* str1, const char* str2, const c
 			if (m_bAllowIndentation)
 			{
 				m_pFile->CPrintf("%d [%s]: %s", m_iTotalLogCount, cTypeStrings[type], m_LevelString);
+				
 			}
 		}
 		else
@@ -116,7 +117,6 @@ void Toshi::TLogFile::Log(TYPE type, const char* str1, const char* str2, const c
 
 		va_list args;
 		va_start(args, format);
-
 		m_pFile->VCPrintf(format, &args);
 		va_end(args);
 		m_pFile->CPrintf("\n");

@@ -9,11 +9,19 @@ namespace Toshi
 	{
 	public:
 
+		enum LogType
+		{
+			LogType_Info,
+			LogType_Warning,
+			LogType_Error
+		};
+
 		TLogFile* m_pLogFile1;
 		TLogFile* m_pLogFile2;
 
 		static void LogInitialise();
 		static void Log(const char* format, ...);
+		static void Log(LogType logtype, const char* format, ...);
 		static void LogConsole(const char* format, ...);
 		static void LogSet(TLogFile* a_logFile);
 
