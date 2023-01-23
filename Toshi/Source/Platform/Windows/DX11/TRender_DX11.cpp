@@ -513,7 +513,7 @@ namespace Toshi
 					posY = 0.0F;
 				}
 
-				m_SomeFlags2.bBlendEnabled = FALSE;
+				m_BlendState.bBlendEnabled = FALSE;
 				FUN_006a6700(posX, posY, width, height, s_pShaderResourceView, NULL, NULL);
 			}
 			else
@@ -1080,37 +1080,37 @@ namespace Toshi
 
 	void TRenderDX11::SetBlendMode(bool blendEnabled, D3D11_BLEND_OP blendOp, D3D11_BLEND srcBlendAlpha, D3D11_BLEND destBlendAlpha)
 	{
-		m_SomeFlags1.BlendOp = blendOp;
-		m_SomeFlags2.bBlendEnabled = blendEnabled;
-		m_SomeFlags2.SrcBlend = srcBlendAlpha;
-		m_SomeFlags2.DestBlend ^= destBlendAlpha;
+		m_BlendState.BlendOp = blendOp;
+		m_BlendState.bBlendEnabled = blendEnabled;
+		m_BlendState.SrcBlend = srcBlendAlpha;
+		m_BlendState.DestBlend ^= destBlendAlpha;
 
-		if (m_SomeFlags1.SrcBlendAlpha != D3D11_BLEND_BLEND_FACTOR)
+		if (m_BlendState.SrcBlendAlpha != D3D11_BLEND_BLEND_FACTOR)
 		{
-			m_SomeFlags1.BlendOpAlpha = blendOp;
-			m_SomeFlags1.SrcBlendAlpha = srcBlendAlpha;
-			m_SomeFlags1.DestBlendAlpha = destBlendAlpha;
+			m_BlendState.BlendOpAlpha = blendOp;
+			m_BlendState.SrcBlendAlpha = srcBlendAlpha;
+			m_BlendState.DestBlendAlpha = destBlendAlpha;
 		}
 	}
 
 	void TRenderDX11::SetAlphaUpdate(bool update)
 	{
-		m_SomeFlags2.bAlphaUpdate = update;
+		m_BlendState.bAlphaUpdate = update;
 	}
 
 	void TRenderDX11::SetColorUpdate(bool update)
 	{
 		if (update)
 		{
-			m_SomeFlags2.bDepthEnable = TRUE;
-			m_SomeFlags2.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-			m_SomeFlags2.DepthFunc = D3D11_COMPARISON_NEVER;
+			m_BlendState.bDepthEnable = TRUE;
+			m_BlendState.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+			m_BlendState.DepthFunc = D3D11_COMPARISON_NEVER;
 		}
 		else
 		{
-			m_SomeFlags2.bDepthEnable = FALSE;
-			m_SomeFlags2.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
-			m_SomeFlags2.DepthFunc = NULL;
+			m_BlendState.bDepthEnable = FALSE;
+			m_BlendState.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
+			m_BlendState.DepthFunc = NULL;
 		}
 	}
 

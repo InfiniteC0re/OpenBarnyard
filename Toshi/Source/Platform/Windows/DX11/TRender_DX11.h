@@ -166,23 +166,21 @@ namespace Toshi
 			BLENDMODE_MASK = BLENDMODE_NUMOF - 1,
 		};
 
-		struct Flags1
+		struct BlendState
 		{
-			uint16_t BlendOp : 3;
-			uint16_t BlendOpAlpha : 3;
-			uint16_t SrcBlendAlpha : 5;
-			uint16_t DestBlendAlpha : 5;
-		};
-
-		struct Flags2
-		{
-			uint16_t bDepthEnable : 1;
-			uint16_t DepthWriteMask : 1;
-			uint16_t DepthFunc : 1;
-			uint16_t bAlphaUpdate : 1;
-			uint16_t bBlendEnabled : 1;
-			uint16_t SrcBlend : 5;
-			uint16_t DestBlend : 6;
+			// m_BlendState1
+			uint32_t BlendOp : 3;
+			uint32_t BlendOpAlpha : 3;
+			uint32_t SrcBlendAlpha : 5;
+			uint32_t DestBlendAlpha : 5;
+			// m_BlendState2
+			uint32_t bDepthEnable : 1;
+			uint32_t DepthWriteMask : 1;
+			uint32_t DepthFunc : 1;
+			uint32_t bAlphaUpdate : 1;
+			uint32_t bBlendEnabled : 1;
+			uint32_t SrcBlend : 5;
+			uint32_t DestBlend : 6;
 		};
 
 		static inline float s_vertexData[] =
@@ -327,7 +325,6 @@ namespace Toshi
 		size_t m_Unk4;                             // 0x810
 		uint16_t m_Flags;                          // 0x820
 		uint16_t m_Flags2;                         // 0x858
-		Flags2 m_SomeFlags2;                       // 0x88C
-		Flags1 m_SomeFlags1;                       // 0x88E
+		BlendState m_BlendState;                   // 0x88C
 	};
 }
