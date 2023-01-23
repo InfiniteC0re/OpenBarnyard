@@ -3,6 +3,7 @@
 #include "Toshi/Render/TRenderAdapter.h"
 #include "Toshi/Render/Shaders/TToneMap.h"
 #include "Toshi/Render/Shaders/TFXAA.h"
+#include "Toshi2/T2RedBlackTree.h"
 #include "Platform/Windows/TMSWindow.h"
 #include "Includes.h"
 
@@ -133,8 +134,8 @@ namespace Toshi
 		static constexpr size_t VERTEX_CONSTANT_BUFFER_SIZE = 0x1000;
 		static constexpr size_t PIXEL_CONSTANT_BUFFER_SIZE = 0x400;
 		static constexpr size_t NUMBUFFERS = 16;
-		static constexpr size_t VERTEX_BUFFER_SIZE = 0x100000;
-		static constexpr size_t INDEX_BUFFER_SIZE = 0x10000;
+		static constexpr size_t IMMEDIATE_VERTEX_BUFFER_SIZE = 0x100000;
+		static constexpr size_t IMMEDIATE_INDEX_BUFFER_SIZE = 0x10000;
 
 		static constexpr D3D_DRIVER_TYPE m_scpDriverTypes[3]
 		{
@@ -298,18 +299,7 @@ namespace Toshi
 		TToneMap* m_pToneMap;                      // 0x71C
 		TFXAA* m_pFXAA;                            // 0x724
 		size_t m_NumDrawnFrames;                   // 0x72C
-		ID3D11SamplerState* m_SamplerState1;       // 0x73C
-		ID3D11SamplerState* m_SamplerState2;       // 0x740
-		ID3D11SamplerState* m_SamplerState3;       // 0x744
-		ID3D11SamplerState* m_SamplerState4;       // 0x748
-		ID3D11SamplerState* m_SamplerState5;       // 0x74C
-		ID3D11SamplerState* m_SamplerState6;       // 0x750
-		ID3D11SamplerState* m_SamplerState7;       // 0x754
-		ID3D11SamplerState* m_SamplerState8;       // 0x758
-		ID3D11SamplerState* m_SamplerState9;       // 0x75C
-		ID3D11SamplerState* m_SamplerState10;      // 0x760
-		ID3D11SamplerState* m_SamplerState11;      // 0x764
-		ID3D11SamplerState* m_SamplerState12;      // 0x768
+		ID3D11SamplerState* m_SamplerStates[12];   // 0x73C
 		void* m_pVertexConstantBuffer;             // 0x76C
 		bool m_IsVertexConstantBufferSet;          // 0x770
 		ID3D11Buffer* m_VertexBuffers[NUMBUFFERS]; // 0x774
@@ -319,11 +309,15 @@ namespace Toshi
 		ID3D11Buffer* m_PixelBuffers[NUMBUFFERS];  // 0x7C0
 		size_t m_PixelBufferIndex;                 // 0x800
 		ID3D11Buffer* m_MainVertexBuffer;          // 0x804
-		size_t m_Unk3;                             // 0x808
+		size_t m_iImmediateVertexCurrentOffset;    // 0x808
 		ID3D11Buffer* m_MainIndexBuffer;           // 0x80C
-		size_t m_Unk4;                             // 0x810
+		size_t m_iImmediateIndexCurrentOffset;     // 0x810
 		uint16_t m_Flags;                          // 0x820
+		//T2GenericRedBlackTree m_RedBlackTree1;     // 0x83C
 		uint16_t m_Flags2;                         // 0x858
+		//T2GenericRedBlackTree m_RedBlackTree2;     // 0x870
 		BlendState m_BlendState;                   // 0x88C
+		float m_fDstAlpha;                         // 0x89C
+		//T2GenericRedBlackTree m_RedBlackTree3;     // 0x8B4
 	};
 }

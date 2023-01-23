@@ -13,7 +13,7 @@ namespace Toshi
 		while (pCurrentNode != &ms_oNil)
 		{
 			pResult = pCurrentNode;
-			pCurrentNode = pResult->m_pNode2;
+			pCurrentNode = pResult->m_pLeft;
 		}
 
 		return pResult;
@@ -29,55 +29,55 @@ namespace Toshi
 		pNode->red = 1;
 		node = pNode;
 
-		while (pNode_00 = node->m_pNode3, pNode_00->red != 0)
+		while (pNode_00 = node->m_pParent, pNode_00->red != 0)
 		{
-			pTVar1 = pNode_00->m_pNode3->m_pNode2;
+			pTVar1 = pNode_00->m_pParent->m_pLeft;
 			if (pNode_00 == pTVar1)
 			{
-				pTVar1 = pNode_00->m_pNode3->m_pNode1;
+				pTVar1 = pNode_00->m_pParent->m_pRight;
 
 				if (pTVar1->red == 0)
 				{
-					if (node == pNode_00->m_pNode1)
+					if (node == pNode_00->m_pRight)
 					{
 						LeftRotate(pNode_00);
 						node = pNode_00;
 					}
 
-					node->m_pNode3->red = 0;
-					node->m_pNode3->m_pNode3->red = 1;
-					RightRotate(node->m_pNode3->m_pNode3);
+					node->m_pParent->red = 0;
+					node->m_pParent->m_pParent->red = 1;
+					RightRotate(node->m_pParent->m_pParent);
 				}
 				else
 				{
 					pNode_00->red = 0;
 					pTVar1->red = 0;
-					node->m_pNode3->m_pNode3->red = 1;
-					node = node->m_pNode3->m_pNode3;
+					node->m_pParent->m_pParent->red = 1;
+					node = node->m_pParent->m_pParent;
 				}
 			}
 			else if (pTVar1->red == 0)
 			{
-				if (node == pNode_00->m_pNode2)
+				if (node == pNode_00->m_pLeft)
 				{
 					RightRotate(pNode_00);
 					node = pNode_00;
 				}
 
-				node->m_pNode3->red = 0;
-				node->m_pNode3->m_pNode3->red = 1;
-				LeftRotate(node->m_pNode3->m_pNode3);
+				node->m_pParent->red = 0;
+				node->m_pParent->m_pParent->red = 1;
+				LeftRotate(node->m_pParent->m_pParent);
 			}
 			else
 			{
 				pNode_00->red = 0;
 				pTVar1->red = 0;
-				node->m_pNode3->m_pNode3->red = 1;
-				node = node->m_pNode3->m_pNode3;
+				node->m_pParent->m_pParent->red = 1;
+				node = node->m_pParent->m_pParent;
 			}
 		}
 
-		(m_oRoot.m_pNode2)->red = 0;
+		m_oRoot.m_pLeft->red = 0;
 		CheckValid();
 
 		return pNode;
@@ -90,46 +90,46 @@ namespace Toshi
 		T2GenericRedBlackTreeNode* pTVar3;
 		T2GenericRedBlackTreeNode* pTVar4;
 
-		pTVar4 = m_oRoot.m_pNode2;
+		pTVar4 = m_oRoot.m_pLeft;
 		while (pNode->red == 0 && pTVar4 != pNode)
 		{
-			pTVar3 = pNode->m_pNode3;
-			pTVar1 = pTVar3->m_pNode2;
+			pTVar3 = pNode->m_pParent;
+			pTVar1 = pTVar3->m_pLeft;
 
 			if (pNode == pTVar1)
 			{
-				pTVar1 = pTVar3->m_pNode1;
+				pTVar1 = pTVar3->m_pRight;
 
 				if (pTVar1->red != 0)
 				{
 					pTVar1->red = 0;
-					pNode->m_pNode3->red = 1;
-					LeftRotate(pNode->m_pNode3);
-					pTVar3 = pNode->m_pNode3;
-					pTVar1 = pTVar3->m_pNode1;
+					pNode->m_pParent->red = 1;
+					LeftRotate(pNode->m_pParent);
+					pTVar3 = pNode->m_pParent;
+					pTVar1 = pTVar3->m_pRight;
 				}
 
-				uVar2 = pTVar1->m_pNode1->red;
-				if ((uVar2 == 0) && (pTVar1->m_pNode2->red == 0))
+				uVar2 = pTVar1->m_pRight->red;
+				if ((uVar2 == 0) && (pTVar1->m_pLeft->red == 0))
 				{
 					pTVar1->red = 1;
-					pNode = pNode->m_pNode3;
+					pNode = pNode->m_pParent;
 				}
 				else
 				{
 					if (uVar2 == 0)
 					{
-						pTVar1->m_pNode2->red = 0;
+						pTVar1->m_pLeft->red = 0;
 						pTVar1->red = 1;
 						RightRotate(pTVar1);
-						pTVar3 = pNode->m_pNode3;
-						pTVar1 = pTVar3->m_pNode1;
+						pTVar3 = pNode->m_pParent;
+						pTVar1 = pTVar3->m_pRight;
 					}
 
 					pTVar1->red = pTVar3->red;
-					pNode->m_pNode3->red = 0;
-					pTVar1->m_pNode1->red = 0;
-					LeftRotate(pNode->m_pNode3);
+					pNode->m_pParent->red = 0;
+					pTVar1->m_pRight->red = 0;
+					LeftRotate(pNode->m_pParent);
 					pNode = pTVar4;
 				}
 			}
@@ -138,32 +138,32 @@ namespace Toshi
 				if (pTVar1->red != 0)
 				{
 					pTVar1->red = 0;
-					pNode->m_pNode3->red = 1;
-					RightRotate(pNode->m_pNode3);
-					pTVar3 = pNode->m_pNode3;
-					pTVar1 = pTVar3->m_pNode2;
+					pNode->m_pParent->red = 1;
+					RightRotate(pNode->m_pParent);
+					pTVar3 = pNode->m_pParent;
+					pTVar1 = pTVar3->m_pLeft;
 				}
 
-				if (pTVar1->m_pNode1->red == 0 && pTVar1->m_pNode2->red == 0)
+				if (pTVar1->m_pRight->red == 0 && pTVar1->m_pLeft->red == 0)
 				{
 					pTVar1->red = 1;
-					pNode = pNode->m_pNode3;
+					pNode = pNode->m_pParent;
 				}
 				else
 				{
-					if (pTVar1->m_pNode2->red == 0)
+					if (pTVar1->m_pLeft->red == 0)
 					{
-						pTVar1->m_pNode1->red = 0;
+						pTVar1->m_pRight->red = 0;
 						pTVar1->red = 1;
 						LeftRotate(pTVar1);
-						pTVar3 = pNode->m_pNode3;
-						pTVar1 = pTVar3->m_pNode2;
+						pTVar3 = pNode->m_pParent;
+						pTVar1 = pTVar3->m_pLeft;
 					}
 
 					pTVar1->red = pTVar3->red;
-					pNode->m_pNode3->red = 0;
-					pTVar1->m_pNode2->red = 0;
-					RightRotate(pNode->m_pNode3);
+					pNode->m_pParent->red = 0;
+					pTVar1->m_pLeft->red = 0;
+					RightRotate(pNode->m_pParent);
 					pNode = pTVar4;
 				}
 			}
@@ -180,35 +180,35 @@ namespace Toshi
 		T2GenericRedBlackTreeNode* pTVar3;
 
 		y = pNode;
-		if ((pNode->m_pNode2 != &ms_oNil) && (pNode->m_pNode1 != &ms_oNil))
+		if ((pNode->m_pLeft != &ms_oNil) && (pNode->m_pRight != &ms_oNil))
 		{
 			y = GetSuccessorOf(pNode);
 		}
 
-		pTVar3 = y->m_pNode2;
+		pTVar3 = y->m_pLeft;
 		if (pTVar3 == &ms_oNil)
 		{
-			pTVar3 = y->m_pNode1;
+			pTVar3 = y->m_pRight;
 		}
 
-		pTVar1 = y->m_pNode3;
-		pTVar3->m_pNode3 = pTVar1;
+		pTVar1 = y->m_pParent;
+		pTVar3->m_pParent = pTVar1;
 
 		if (&m_oRoot == pTVar1)
 		{
-			m_oRoot.m_pNode2 = pTVar3;
+			m_oRoot.m_pLeft = pTVar3;
 		}
 		else
 		{
-			pTVar1 = y->m_pNode3;
+			pTVar1 = y->m_pParent;
 
-			if (y == pTVar1->m_pNode2)
+			if (y == pTVar1->m_pLeft)
 			{
-				pTVar1->m_pNode2 = pTVar3;
+				pTVar1->m_pLeft = pTVar3;
 			}
 			else
 			{
-				pTVar1->m_pNode1 = pTVar3;
+				pTVar1->m_pRight = pTVar3;
 			}
 		}
 
@@ -228,20 +228,20 @@ namespace Toshi
 
 		TASSERT(y != &ms_oNil);
 
-		y->m_pNode2 = pNode->m_pNode2;
-		y->m_pNode1 = pNode->m_pNode1;
-		y->m_pNode3 = pNode->m_pNode3;
-		pNode->m_pNode1->m_pNode3 = y;
-		pNode->m_pNode2->m_pNode3 = y;
-		pTVar1 = pNode->m_pNode3;
+		y->m_pLeft = pNode->m_pLeft;
+		y->m_pRight = pNode->m_pRight;
+		y->m_pParent = pNode->m_pParent;
+		pNode->m_pRight->m_pParent = y;
+		pNode->m_pLeft->m_pParent = y;
+		pTVar1 = pNode->m_pParent;
 
-		if (pNode == pTVar1->m_pNode2)
+		if (pNode == pTVar1->m_pLeft)
 		{
-			pTVar1->m_pNode2 = y;
+			pTVar1->m_pLeft = y;
 		}
 		else
 		{
-			pTVar1->m_pNode1 = y;
+			pTVar1->m_pRight = y;
 		}
 
 		int oldRedValue = y->red;
@@ -263,28 +263,28 @@ namespace Toshi
 		T2GenericRedBlackTreeNode* pTVar1;
 		T2GenericRedBlackTreeNode* pTVar2;
 
-		pTVar2 = pNode->m_pNode1;
-		pNode->m_pNode1 = pTVar2->m_pNode2;
+		pTVar2 = pNode->m_pRight;
+		pNode->m_pRight = pTVar2->m_pLeft;
 
-		if (pTVar2->m_pNode2 != &ms_oNil)
+		if (pTVar2->m_pLeft != &ms_oNil)
 		{
-			pTVar2->m_pNode2->m_pNode3 = pNode;
+			pTVar2->m_pLeft->m_pParent = pNode;
 		}
 
-		pTVar2->m_pNode3 = pNode->m_pNode3;
-		pTVar1 = pNode->m_pNode3;
+		pTVar2->m_pParent = pNode->m_pParent;
+		pTVar1 = pNode->m_pParent;
 
-		if (pNode == pTVar1->m_pNode2)
+		if (pNode == pTVar1->m_pLeft)
 		{
-			pTVar1->m_pNode2 = pTVar2;
+			pTVar1->m_pLeft = pTVar2;
 		}
 		else
 		{
-			pTVar1->m_pNode1 = pTVar2;
+			pTVar1->m_pRight = pTVar2;
 		}
 
-		pTVar2->m_pNode2 = pNode;
-		pNode->m_pNode3 = pTVar2;
+		pTVar2->m_pLeft = pNode;
+		pNode->m_pParent = pTVar2;
 		CheckValid();
 	}
 
@@ -293,34 +293,34 @@ namespace Toshi
 		T2GenericRedBlackTreeNode* pTVar1;
 		T2GenericRedBlackTreeNode* pTVar2;
 
-		pTVar2 = pNode->m_pNode2;
-		pNode->m_pNode2 = pTVar2->m_pNode1;
+		pTVar2 = pNode->m_pLeft;
+		pNode->m_pLeft = pTVar2->m_pRight;
 
-		if (pTVar2->m_pNode1 != &ms_oNil)
+		if (pTVar2->m_pRight != &ms_oNil)
 		{
-			pTVar2->m_pNode1->m_pNode3 = pNode;
+			pTVar2->m_pRight->m_pParent = pNode;
 		}
 
-		pTVar2->m_pNode3 = pNode->m_pNode3;
-		pTVar1 = pNode->m_pNode3;
+		pTVar2->m_pParent = pNode->m_pParent;
+		pTVar1 = pNode->m_pParent;
 
-		if (pNode == pTVar1->m_pNode2)
+		if (pNode == pTVar1->m_pLeft)
 		{
-			pTVar1->m_pNode2 = pTVar2;
+			pTVar1->m_pLeft = pTVar2;
 		}
 		else
 		{
-			pTVar1->m_pNode1 = pTVar2;
+			pTVar1->m_pRight = pTVar2;
 		}
 
-		pTVar2->m_pNode1 = pNode;
-		pNode->m_pNode3 = pTVar2;
+		pTVar2->m_pRight = pNode;
+		pNode->m_pParent = pTVar2;
 		CheckValid();
 	}
 
 	T2GenericRedBlackTreeNode* T2GenericRedBlackTree::GetSuccessorOf(T2GenericRedBlackTreeNode* pNode)
 	{
-		T2GenericRedBlackTreeNode* pTVar1 = pNode->m_pNode1;
+		T2GenericRedBlackTreeNode* pTVar1 = pNode->m_pRight;
 		T2GenericRedBlackTreeNode* pTVar2;
 		T2GenericRedBlackTreeNode* pTVar3;
 		T2GenericRedBlackTreeNode* pTVar4;
@@ -330,18 +330,18 @@ namespace Toshi
 			do
 			{
 				pTVar3 = pTVar4;
-				pTVar4 = pTVar3->m_pNode2;
-			} while (pTVar3->m_pNode2 != &ms_oNil);
+				pTVar4 = pTVar3->m_pLeft;
+			} while (pTVar3->m_pLeft != &ms_oNil);
 
 			return pTVar3;
 		}
 
-		for (pTVar2 = pNode->m_pNode3; pNode == pTVar2->m_pNode1; pTVar2 = pTVar2->m_pNode3)
+		for (pTVar2 = pNode->m_pParent; pNode == pTVar2->m_pRight; pTVar2 = pTVar2->m_pParent)
 		{
 			pNode = pTVar2;
 		}
 
-		if (pTVar2->m_pNode3 != pTVar2)
+		if (pTVar2->m_pParent != pTVar2)
 		{
 			return pTVar2;
 		}
@@ -352,24 +352,24 @@ namespace Toshi
 	T2GenericRedBlackTreeNode* T2GenericRedBlackTree::GetPredecessorOf(T2GenericRedBlackTreeNode* pNode)
 	{
 		T2GenericRedBlackTreeNode* pTVar1;
-		T2GenericRedBlackTreeNode* pTVar2 = pNode->m_pNode2;
+		T2GenericRedBlackTreeNode* pTVar2 = pNode->m_pLeft;
 		bool bVar3;
 
 		if (pTVar2 == &ms_oNil)
 		{
-			pTVar2 = pNode->m_pNode3;
-			if (pNode == pTVar2->m_pNode2)
+			pTVar2 = pNode->m_pParent;
+			if (pNode == pTVar2->m_pLeft)
 			{
 				do
 				{
-					pTVar1 = pTVar2->m_pNode3;
+					pTVar1 = pTVar2->m_pParent;
 
 					if (pTVar1 == pTVar2)
 					{
 						return &ms_oNil;
 					}
 
-					bVar3 = pTVar2 == pTVar1->m_pNode2;
+					bVar3 = pTVar2 == pTVar1->m_pLeft;
 					pTVar2 = pTVar1;
 				} while (bVar3);
 
@@ -378,15 +378,15 @@ namespace Toshi
 		}
 		else
 		{
-			pTVar1 = pTVar2->m_pNode1;
+			pTVar1 = pTVar2->m_pRight;
 
-			if (pTVar2->m_pNode1 != &ms_oNil)
+			if (pTVar2->m_pRight != &ms_oNil)
 			{
 				do
 				{
 					pTVar2 = pTVar1;
-					pTVar1 = pTVar2->m_pNode1;
-				} while (pTVar2->m_pNode1 != &ms_oNil);
+					pTVar1 = pTVar2->m_pRight;
+				} while (pTVar2->m_pRight != &ms_oNil);
 			}
 		}
 

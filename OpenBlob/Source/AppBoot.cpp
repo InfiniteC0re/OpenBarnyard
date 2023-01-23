@@ -13,6 +13,7 @@
 #include "AExampleClass.h"
 
 #include <Toshi/Sound/TSound.h>
+#include <Toshi2/T2RedBlackTree.h>
 #include TOSHI_MULTIRENDER(TRender)
 
 static Toshi::TSound m_soundSystem = Toshi::TSound();
@@ -38,6 +39,14 @@ bool AApplication::OnCreate(int argc, char** argv)
 
 	bool bResult = m_soundSystem.Create(mempool, poolSize, -1, -1, 2);
 	TASSERT(TTRUE == bResult);
+
+	Toshi::T2RedBlackTree<int> RBT(&Toshi::T2Allocator::s_GlobalAllocator);
+
+	Toshi::T2RedBlackTreeNode<int>* pInsertedValue;
+	RBT.Insert(pInsertedValue, 8);
+	RBT.Insert(pInsertedValue, 9);
+	RBT.Insert(pInsertedValue, 16);
+	RBT.Insert(pInsertedValue, 7);
 
 	TApplication::OnCreate(argc, argv);
 	//ALevelInformation info = ALevelInformation();

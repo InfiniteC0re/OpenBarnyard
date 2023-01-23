@@ -101,7 +101,12 @@ namespace Toshi
 		dxgiOutput->FindClosestMatchingMode(&matchMode, modeDesc, NULL);
 	}
 
-	TRenderDX11::TRenderDX11() : m_DisplayParams{ 1280, 720, 32, 3, true, false, 1 }, m_Window()
+	TRenderDX11::TRenderDX11() :
+		m_DisplayParams{ 1280, 720, 32, 3, true, false, 1 },
+		m_Window()
+		//m_RedBlackTree1(TNULL),
+		//m_RedBlackTree2(TNULL),
+		//m_RedBlackTree3(TNULL)
 	{
 		m_ClearColor[0] = 0.2f;
 		m_ClearColor[1] = 0.6f;
@@ -109,12 +114,25 @@ namespace Toshi
 		m_ClearColor[3] = 1.0f;
 		m_NumDrawnFrames = 0;
 
+		TUtil::MemClear(m_SamplerStates, sizeof(m_SamplerStates));
+		
 		m_pVertexConstantBuffer = TNULL;
 		m_IsVertexConstantBufferSet = TFALSE;
+		TUtil::MemClear(m_PixelBuffers, sizeof(m_PixelBuffers));
+		
 		m_pPixelConstantBuffer = TNULL;
 		m_IsPixelConstantBufferSet = TFALSE;
-
+		TUtil::MemClear(m_VertexBuffers, sizeof(m_VertexBuffers));
+		
+		m_MainVertexBuffer = TNULL;
+		m_iImmediateVertexCurrentOffset = 0;
+		m_MainIndexBuffer = TNULL;
+		m_iImmediateIndexCurrentOffset = 0;
+		
 		s_pMemHeap = TMemory::CreateHeap(HEAPSIZE, 0, "render states");
+		m_fDstAlpha = 1.0f;
+
+		TTODO("Some other initializations");
 	}
 
 	bool TRenderDX11::CreateDisplay(DisplayParams* pDisplayParams)
@@ -688,18 +706,18 @@ namespace Toshi
 
 	void TRenderDX11::CreateSamplerStates()
 	{
-		m_SamplerState1 = CreateSamplerState(D3D11_FILTER_MIN_MAG_MIP_POINT, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_CLAMP, 0.0f, 0, 0.0f, D3D11_FLOAT32_MAX, 1);
-		m_SamplerState2 = CreateSamplerStateAutoAnisotropy(D3D11_FILTER_MIN_MAG_MIP_LINEAR, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_CLAMP, 0.0f, 0, 0.0f, D3D11_FLOAT32_MAX);
-		m_SamplerState3 = CreateSamplerState(D3D11_FILTER_MIN_MAG_MIP_POINT, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP, 0.0f, 0, 0.0f, D3D11_FLOAT32_MAX, 1);
-		m_SamplerState4 = CreateSamplerStateAutoAnisotropy(D3D11_FILTER_MIN_MAG_MIP_LINEAR, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP, 0.0f, 0, 0.0f, D3D11_FLOAT32_MAX);
-		m_SamplerState5 = CreateSamplerStateAutoAnisotropy(D3D11_FILTER_MIN_MAG_MIP_LINEAR, D3D11_TEXTURE_ADDRESS_MIRROR, D3D11_TEXTURE_ADDRESS_MIRROR, D3D11_TEXTURE_ADDRESS_MIRROR, 0.0f, 0, 0.0f, D3D11_FLOAT32_MAX);
-		m_SamplerState6 = CreateSamplerState(D3D11_FILTER_MIN_MAG_LINEAR_MIP_POINT, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_CLAMP, 0.0f, 0, 0.0f, D3D11_FLOAT32_MAX, 1);
-		m_SamplerState7 = CreateSamplerState(D3D11_FILTER_MIN_MAG_LINEAR_MIP_POINT, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP, 0.0f, 0, 0.0f, D3D11_FLOAT32_MAX, 1);
-		m_SamplerState8 = CreateSamplerState(D3D11_FILTER_MIN_MAG_LINEAR_MIP_POINT, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP, -1.0f, 0, 0.0f, D3D11_FLOAT32_MAX, 1);
-		m_SamplerState10 = CreateSamplerState(D3D11_FILTER_MIN_MAG_MIP_POINT, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_WRAP, 0.0f, 0, 0.0f, D3D11_FLOAT32_MAX, 1);
-		m_SamplerState11 = CreateSamplerStateAutoAnisotropy(D3D11_FILTER_MIN_MAG_MIP_LINEAR, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_WRAP, 0.0f, 0, 0.0f, D3D11_FLOAT32_MAX);
-		m_SamplerState12 = CreateSamplerState(D3D11_FILTER_MIN_MAG_LINEAR_MIP_POINT, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_WRAP, 0.0f, 0, 0.0f, D3D11_FLOAT32_MAX, 1);
-		m_SamplerState9 = CreateSamplerState(D3D11_FILTER_ANISOTROPIC, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_CLAMP, 0.0f, 0, 0.0f, D3D11_FLOAT32_MAX, 1);
+		m_SamplerStates[0] = CreateSamplerState(D3D11_FILTER_MIN_MAG_MIP_POINT, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_CLAMP, 0.0f, 0, 0.0f, D3D11_FLOAT32_MAX, 1);
+		m_SamplerStates[1] = CreateSamplerStateAutoAnisotropy(D3D11_FILTER_MIN_MAG_MIP_LINEAR, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_CLAMP, 0.0f, 0, 0.0f, D3D11_FLOAT32_MAX);
+		m_SamplerStates[2] = CreateSamplerState(D3D11_FILTER_MIN_MAG_MIP_POINT, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP, 0.0f, 0, 0.0f, D3D11_FLOAT32_MAX, 1);
+		m_SamplerStates[3] = CreateSamplerStateAutoAnisotropy(D3D11_FILTER_MIN_MAG_MIP_LINEAR, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP, 0.0f, 0, 0.0f, D3D11_FLOAT32_MAX);
+		m_SamplerStates[4] = CreateSamplerStateAutoAnisotropy(D3D11_FILTER_MIN_MAG_MIP_LINEAR, D3D11_TEXTURE_ADDRESS_MIRROR, D3D11_TEXTURE_ADDRESS_MIRROR, D3D11_TEXTURE_ADDRESS_MIRROR, 0.0f, 0, 0.0f, D3D11_FLOAT32_MAX);
+		m_SamplerStates[5] = CreateSamplerState(D3D11_FILTER_MIN_MAG_LINEAR_MIP_POINT, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_CLAMP, 0.0f, 0, 0.0f, D3D11_FLOAT32_MAX, 1);
+		m_SamplerStates[6] = CreateSamplerState(D3D11_FILTER_MIN_MAG_LINEAR_MIP_POINT, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP, 0.0f, 0, 0.0f, D3D11_FLOAT32_MAX, 1);
+		m_SamplerStates[7] = CreateSamplerState(D3D11_FILTER_MIN_MAG_LINEAR_MIP_POINT, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP, -1.0f, 0, 0.0f, D3D11_FLOAT32_MAX, 1);
+		m_SamplerStates[9] = CreateSamplerState(D3D11_FILTER_MIN_MAG_MIP_POINT, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_WRAP, 0.0f, 0, 0.0f, D3D11_FLOAT32_MAX, 1);
+		m_SamplerStates[10] = CreateSamplerStateAutoAnisotropy(D3D11_FILTER_MIN_MAG_MIP_LINEAR, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_WRAP, 0.0f, 0, 0.0f, D3D11_FLOAT32_MAX);
+		m_SamplerStates[11] = CreateSamplerState(D3D11_FILTER_MIN_MAG_LINEAR_MIP_POINT, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_WRAP, 0.0f, 0, 0.0f, D3D11_FLOAT32_MAX, 1);
+		m_SamplerStates[8] = CreateSamplerState(D3D11_FILTER_ANISOTROPIC, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_CLAMP, 0.0f, 0, 0.0f, D3D11_FLOAT32_MAX, 1);
 
 		for (size_t i = 0; i < NUMBUFFERS; i++)
 		{
@@ -738,7 +756,7 @@ namespace Toshi
 		// Main vertex buffer
 		{
 			D3D11_BUFFER_DESC bufferDesc;
-			bufferDesc.ByteWidth = VERTEX_BUFFER_SIZE;
+			bufferDesc.ByteWidth = IMMEDIATE_VERTEX_BUFFER_SIZE;
 			bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
 			bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 			bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
@@ -746,13 +764,13 @@ namespace Toshi
 			bufferDesc.StructureByteStride = 0;
 
 			m_pDevice->CreateBuffer(&bufferDesc, NULL, &m_MainVertexBuffer);
-			m_Unk3 = 0;
+			m_iImmediateVertexCurrentOffset = 0;
 		}
 
 		// Main index buffer
 		{
 			D3D11_BUFFER_DESC bufferDesc;
-			bufferDesc.ByteWidth = INDEX_BUFFER_SIZE;
+			bufferDesc.ByteWidth = IMMEDIATE_INDEX_BUFFER_SIZE;
 			bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
 			bufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 			bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
@@ -760,10 +778,9 @@ namespace Toshi
 			bufferDesc.StructureByteStride = 0;
 
 			m_pDevice->CreateBuffer(&bufferDesc, NULL, &m_MainIndexBuffer);
-			m_Unk4 = 0;
+			m_iImmediateIndexCurrentOffset = 0;
 		}
 
-		TRenderDX11::m_Unk4 = 0;
 		TTODO("this->field173_0x85c = 0;");
 		m_Flags2 = m_Flags2 & 0x8b | 0xb;
 
@@ -1142,7 +1159,7 @@ namespace Toshi
 		pRender->m_Flags2 &= 0xD0 | 16;
 
 		pDeviceContext->PSSetShaderResources(0, 1, &pShaderResourceView);
-		pDeviceContext->PSSetSamplers(0, 1, &pRender->m_SamplerState2);
+		pDeviceContext->PSSetSamplers(0, 1, &pRender->m_SamplerStates[1]);
 
 		UINT numViewports = 1;
 

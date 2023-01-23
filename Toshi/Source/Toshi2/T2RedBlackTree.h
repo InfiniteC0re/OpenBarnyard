@@ -8,35 +8,38 @@ namespace Toshi
 	public:
 		friend class T2GenericRedBlackTree;
 
-	public:
+		template<class T>
+		friend class T2RedBlackTree;
+
+	protected:
 		constexpr T2GenericRedBlackTreeNode()
 		{
 			red = 0;
-			m_pNode2 = this;
-			m_pNode1 = this;
-			m_pNode3 = this;
+			m_pLeft = this;
+			m_pRight = this;
+			m_pParent = this;
 		}
 
 		T2GenericRedBlackTreeNode(T2GenericRedBlackTreeNode* pNil)
 		{
 			red = 0;
-			m_pNode2 = pNil;
-			m_pNode1 = pNil;
-			m_pNode3 = pNil;
+			m_pLeft = pNil;
+			m_pRight = pNil;
+			m_pParent = pNil;
 		}
 
 		virtual ~T2GenericRedBlackTreeNode() = default;
 
-	private:
+	protected:
 		int red;
-		T2GenericRedBlackTreeNode* m_pNode2;
-		T2GenericRedBlackTreeNode* m_pNode1;
-		T2GenericRedBlackTreeNode* m_pNode3;
+		T2GenericRedBlackTreeNode* m_pLeft;
+		T2GenericRedBlackTreeNode* m_pRight;
+		T2GenericRedBlackTreeNode* m_pParent;
 	};
 
 	class T2GenericRedBlackTree
 	{
-	public:
+	protected:
 		T2GenericRedBlackTree(T2Allocator* pAllocator) : m_oRoot(ms_oNil)
 		{
 			m_pAllocator = pAllocator;
@@ -65,12 +68,128 @@ namespace Toshi
 			TASSERT(m_oRoot.red == 0);
 		}
 
-	private:
+	protected:
 		static constinit T2GenericRedBlackTreeNode ms_oNil;
 
-	private:
+	protected:
 		T2Allocator* m_pAllocator;
 		T2GenericRedBlackTreeNode m_oRoot;
 		size_t m_iNumElements;
+	};
+
+	template<class T>
+	class T2RedBlackTreeNode : public T2GenericRedBlackTreeNode
+	{
+	public:
+		template<class T>
+		friend class T2RedBlackTree;
+
+	public:
+		T2RedBlackTreeNode(const T& value)
+		{
+			m_Value = value;
+		}
+
+		T* As()
+		{
+			return static_cast<T*>(this);
+		}
+
+		bool IsLeftNodeNext(const T& value)
+		{
+			if (m_Value == value)
+			{
+				return false;
+			}
+			else
+			{
+				if (m_Value < value)
+				{
+					return false;
+				}
+
+				return true;
+			}
+		}
+
+		bool operator==(const T2RedBlackTreeNode<T>& other) const
+		{
+			return m_Value == other.m_Value;
+		}
+
+		bool operator>(const T2RedBlackTreeNode<T>& other) const
+		{
+			return m_Value > other.m_Value;
+		}
+
+		bool operator<(const T2RedBlackTreeNode<T>& other) const
+		{
+			return m_Value < other.m_Value;
+		}
+
+		bool operator<=(const T2RedBlackTreeNode<T>& other) const
+		{
+			return m_Value <= other.m_Value;
+		}
+
+		bool operator>=(const T2RedBlackTreeNode<T>& other) const
+		{
+			return m_Value >= other.m_Value;
+		}
+
+	private:
+		T m_Value;
+	};
+
+	template<class T>
+	class T2RedBlackTree : public T2GenericRedBlackTree
+	{
+	public:
+		using Node = T2RedBlackTreeNode<T>;
+
+	public:
+		T2RedBlackTree(T2Allocator* pAllocator) : T2GenericRedBlackTree(pAllocator)
+		{
+
+		}
+
+		void Insert(Node*& insertedNode, const T& value)
+		{
+			Node* pNode = m_pAllocator->New<Node, T>(value);
+			pNode->m_pLeft = &ms_oNil;
+			pNode->m_pRight = &ms_oNil;
+
+			Node* pCurrentNode = static_cast<Node*>(m_oRoot.m_pLeft);
+			Node* pInsertTo = static_cast<Node*>(&m_oRoot);
+
+			while (pCurrentNode != &ms_oNil)
+			{
+				pInsertTo = pCurrentNode;
+
+				if (pCurrentNode->IsLeftNodeNext(value))
+				{
+					pCurrentNode = static_cast<Node*>(pCurrentNode->m_pLeft);
+				}
+				else
+				{
+					pCurrentNode = static_cast<Node*>(pCurrentNode->m_pRight);
+				}
+			}
+
+			pNode->m_pParent = pInsertTo;
+
+			if (pInsertTo == &m_oRoot || pInsertTo->IsLeftNodeNext(value))
+			{
+				pInsertTo->m_pLeft = pNode;
+			}
+			else
+			{
+				pInsertTo->m_pRight = pNode;
+			}
+
+			TASSERT(ms_oNil.red == 0, "ms_oNil not red in T2GenericRedBlackTree::TreeInsertHelp"); // TreeInsertHelp????
+			T2GenericRedBlackTree::Insert(pNode);
+			insertedNode = pNode;
+		}
 	};
 }
