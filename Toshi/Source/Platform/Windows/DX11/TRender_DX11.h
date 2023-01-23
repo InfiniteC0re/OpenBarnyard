@@ -150,17 +150,36 @@ namespace Toshi
 			D3D_FEATURE_LEVEL_10_1,
 			D3D_FEATURE_LEVEL_10_0
 		};
-		
-		enum Flags
+
+		typedef uint8_t BlendMode;
+		enum BlendMode_ : BlendMode
 		{
-			Flags_Unk = 1,
-			Flags_Unk2,
-			Flags_Unk3,
-			Flags_Unk4,
-			Flags_Unk5,
-			Flags_Unk6,
-			Flags_Unk7,
-			Flags_Unk8,
+			BlendMode_Opaque,
+			BlendMode_Modulate,
+			BlendMode_Additive,
+			BlendMode_Subtractive,
+			BlendMode_ZPass,
+			BlendMode_NoZWrite,
+			BlendMode_NoZWriteAlpha,
+			BlendMode_Translucent,
+			BLENDMODE_NUMOF,
+			BLENDMODE_MASK = BLENDMODE_NUMOF - 1,
+		};
+
+		struct BlendState
+		{
+			// m_BlendState1
+			D3D11_BLEND_OP BlendOp : 3;
+			D3D11_BLEND_OP BlendOpAlpha : 3;
+			D3D11_BLEND SrcBlendAlpha : 5;
+			D3D11_BLEND DestBlendAlpha : 5;
+			// m_BlendState2
+			uint32_t RenderTargetWriteMask : 3;
+			BOOL bAlphaUpdate : 1;
+			BOOL bBlendEnabled : 1;
+			D3D11_BLEND SrcBlend : 5;
+			D3D11_BLEND DestBlend : 5;
+			uint32_t Unknown2 : 1;
 		};
 
 		static inline float s_vertexData[] =
@@ -229,12 +248,17 @@ namespace Toshi
 		ID3D11RenderTargetView* CreateRenderTargetView(ID3D11ShaderResourceView* pShaderResourceView);
 		ID3D11SamplerState* CreateSamplerStateAutoAnisotropy(D3D11_FILTER filter, D3D11_TEXTURE_ADDRESS_MODE addressU, D3D11_TEXTURE_ADDRESS_MODE addressV, D3D11_TEXTURE_ADDRESS_MODE addressW, FLOAT mipLODBias, uint32_t borderColor, FLOAT minLOD, FLOAT maxLOD);
 		ID3D11SamplerState* CreateSamplerState(D3D11_FILTER filter, D3D11_TEXTURE_ADDRESS_MODE addressU, D3D11_TEXTURE_ADDRESS_MODE addressV, D3D11_TEXTURE_ADDRESS_MODE addressW, FLOAT mipLODBias, uint32_t borderColor, FLOAT minLOD, FLOAT maxLOD, UINT maxAnisotropy);
-		void SomeFlagsShinanigans(uint8_t flag1, uint32_t flag2, uint32_t flag3, uint32_t flag4);
+		
+		void SetBlendMode(bool blendEnabled, D3D11_BLEND_OP blendOp, D3D11_BLEND srcBlendAlpha, D3D11_BLEND destBlendAlpha);
+		void SetAlphaUpdate(bool update);
+		void SetColorUpdate(bool update);
+
 		void FUN_006a8d30();
-		void UnsetConstantBuffers();
+		void FlushConstantBuffers();
+
+		static void FUN_006a6700(float posX, float posY, float width, float height, ID3D11ShaderResourceView* pShaderResourceView, ID3D11PixelShader* pPixelShader, const void* srcData);
+	
 	private:
-
-
 		void BuildAdapterDatabase();
 
 		void CreateSamplerStates();
@@ -289,18 +313,17 @@ namespace Toshi
 		void* m_pVertexConstantBuffer;             // 0x76C
 		bool m_IsVertexConstantBufferSet;          // 0x770
 		ID3D11Buffer* m_VertexBuffers[NUMBUFFERS]; // 0x774
-		size_t m_Unk1;                             // 0x7B4
+		size_t m_VertexBufferIndex;                // 0x7B4
 		void* m_pPixelConstantBuffer;              // 0x7B8
 		bool m_IsPixelConstantBufferSet;           // 0x7BC
 		ID3D11Buffer* m_PixelBuffers[NUMBUFFERS];  // 0x7C0
-		size_t m_Unk2;                             // 0x800
+		size_t m_PixelBufferIndex;                 // 0x800
 		ID3D11Buffer* m_MainVertexBuffer;          // 0x804
 		size_t m_Unk3;                             // 0x808
 		ID3D11Buffer* m_MainIndexBuffer;           // 0x80C
 		size_t m_Unk4;                             // 0x810
 		uint16_t m_Flags;                          // 0x820
 		uint16_t m_Flags2;                         // 0x858
-		uint16_t m_someFlags2;                     // 0x88C
-		uint16_t m_someFlags1;                     // 0x88E
+		BlendState m_BlendState;                   // 0x88C
 	};
 }

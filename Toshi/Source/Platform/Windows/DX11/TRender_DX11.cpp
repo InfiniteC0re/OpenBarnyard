@@ -493,7 +493,7 @@ namespace Toshi
 				}
 
 				float inAR = (float)m_DisplayParams.Width / m_DisplayParams.Height;
-				float outAR = (float)m_DisplayWidth/ m_DisplayHeight;
+				float outAR = (float)m_DisplayWidth / m_DisplayHeight;
 				TASSERT(fabsf(inAR - 16.0f / 9.0f) < 0.01);
 
 				float posX, posY, width, height;
@@ -512,9 +512,9 @@ namespace Toshi
 					posX = (m_DisplayWidth - width) * 0.5F;
 					posY = 0.0F;
 				}
-				m_someFlags2 &= ~(16);
 
-				m_pFXAA->FUN_006a6700(posX, posY, width, height, s_pShaderResourceView, NULL, NULL);
+				m_BlendState.bBlendEnabled = FALSE;
+				FUN_006a6700(posX, posY, width, height, s_pShaderResourceView, NULL, NULL);
 			}
 			else
 			{
@@ -716,7 +716,7 @@ namespace Toshi
 
 		m_pVertexConstantBuffer = s_pMemHeap->Malloc(VERTEX_CONSTANT_BUFFER_SIZE);
 		m_IsVertexConstantBufferSet = TFALSE;
-		m_Unk1 = 0;
+		m_VertexBufferIndex = 0;
 
 		for (size_t i = 0; i < NUMBUFFERS; i++)
 		{
@@ -733,7 +733,7 @@ namespace Toshi
 
 		m_pPixelConstantBuffer = s_pMemHeap->Malloc(PIXEL_CONSTANT_BUFFER_SIZE);
 		m_IsPixelConstantBufferSet = TFALSE;
-		m_Unk2 = 0;
+		m_PixelBufferIndex = 0;
 
 		// Main vertex buffer
 		{
@@ -763,7 +763,22 @@ namespace Toshi
 			m_Unk4 = 0;
 		}
 
-		TTODO("Set some flags");
+		TRenderDX11::m_Unk4 = 0;
+		TTODO("this->field173_0x85c = 0;");
+		m_Flags2 = m_Flags2 & 0x8b | 0xb;
+
+		m_BlendState.BlendOp = D3D11_BLEND_OP_ADD;
+		m_BlendState.BlendOpAlpha = D3D11_BLEND_OP_ADD;
+		m_BlendState.SrcBlendAlpha = D3D11_BLEND_ONE;
+		m_BlendState.DestBlendAlpha = D3D11_BLEND_ZERO;
+		m_BlendState.RenderTargetWriteMask = 0b111;
+		m_BlendState.bAlphaUpdate = TRUE;
+		m_BlendState.SrcBlend = D3D11_BLEND_ONE;
+		m_BlendState.DestBlend = D3D11_BLEND_ZERO;
+		m_BlendState.Unknown2 = 1;
+
+		TTODO("Some more flags");
+		TRenderDX11::m_Flags = 0x2F;
 	}
 
 	int TRenderDX11::GetTextureRowPitch(DXGI_FORMAT format, int width)
@@ -1078,14 +1093,35 @@ namespace Toshi
 		return pSamplerState;
 	}
 
-	void TRenderDX11::SomeFlagsShinanigans(uint8_t flag1, uint32_t flag2, uint32_t flag3, uint32_t flag4)
+	void TRenderDX11::SetBlendMode(bool blendEnabled, D3D11_BLEND_OP blendOp, D3D11_BLEND srcBlendAlpha, D3D11_BLEND destBlendAlpha)
 	{
-		uint16_t someFlags1 = m_someFlags1;
-		m_someFlags1 &= ~Flags_Unk7 | (flag2 & Flags_Unk7);
-		m_someFlags2 ^= (flag4 << 10) & 0x7C00 ^ ((flag1 & Flags_Unk) | (flag3 & 31) * 2) << 4 | m_someFlags2 & 0xFC0F;
-		if ((someFlags1 & 0x7C0) != 0x380)
+		m_BlendState.BlendOp = blendOp;
+		m_BlendState.bBlendEnabled = blendEnabled;
+		m_BlendState.SrcBlend = srcBlendAlpha;
+		m_BlendState.DestBlend = (D3D11_BLEND)(m_BlendState.DestBlend ^ destBlendAlpha);
+
+		if (m_BlendState.SrcBlendAlpha != D3D11_BLEND_BLEND_FACTOR)
 		{
-			m_someFlags1 = (((flag3 & 0x1F) << 3 | flag2 & Flags_Unk7) << 3) | (flag2 & Flags_Unk7) | (flag4 << 0xB);
+			m_BlendState.BlendOpAlpha = blendOp;
+			m_BlendState.SrcBlendAlpha = srcBlendAlpha;
+			m_BlendState.DestBlendAlpha = destBlendAlpha;
+		}
+	}
+
+	void TRenderDX11::SetAlphaUpdate(bool update)
+	{
+		m_BlendState.bAlphaUpdate = update;
+	}
+
+	void TRenderDX11::SetColorUpdate(bool update)
+	{
+		if (update)
+		{
+			m_BlendState.RenderTargetWriteMask = 0b111;
+		}
+		else
+		{
+			m_BlendState.RenderTargetWriteMask = 0b000;
 		}
 	}
 
@@ -1094,28 +1130,82 @@ namespace Toshi
 		TIMPLEMENT();
 	}
 
-	void TRenderDX11::UnsetConstantBuffers()
+	void TRenderDX11::FUN_006a6700(float posX, float posY, float width, float height, ID3D11ShaderResourceView* pShaderResourceView, ID3D11PixelShader* pPixelShader, const void* srcData)
 	{
+		auto pRender = TRenderDX11::Interface();
+		auto pDeviceContext = pRender->GetDeviceContext();
+		pDeviceContext->VSSetShader(pRender->m_pVertexShader, NULL, NULL);
+		if (pPixelShader == NULL) pPixelShader = pRender->m_pPixelShader1;
+		pDeviceContext->PSSetShader(pPixelShader, NULL, NULL);
+		pDeviceContext->IASetInputLayout(pRender->m_pInputLayout);
+		pRender->m_Flags &= 0xF7 | 4;
+		pRender->m_Flags2 &= 0xD0 | 16;
+
+		pDeviceContext->PSSetShaderResources(0, 1, &pShaderResourceView);
+		pDeviceContext->PSSetSamplers(0, 1, &pRender->m_SamplerState2);
+
+		UINT numViewports = 1;
+
+		D3D11_VIEWPORT viewPort;
+
+		pDeviceContext->RSGetViewports(&numViewports, &viewPort);
+
+		TVector4 unk;
+
+		unk.x = (width / viewPort.Width) * 2 - 1;
+		unk.y = (height / viewPort.Height) * 2 - 1;
+		unk.z = (posX / viewPort.Width) * 2;
+		unk.w = (posY / viewPort.Height) * 2;
+
+		if (srcData == TNULL)
+		{
+			srcData = &unk;
+			unk.x = 1.0F;
+			unk.y = 1.0F;
+			unk.z = 0.0F;
+			unk.w = 0.0F;
+		}
+
+		pRender->m_IsVertexConstantBufferSet = true;
+		pRender->CopyToVertexConstantBuffer(1, srcData, 1);
+
+		pRender->FUN_006a8d30();
+
+		UINT stride = 20;
+		UINT offsets = 0;
+
+		pDeviceContext->IASetVertexBuffers(0, 1, &pRender->m_pSomeBuffer, &stride, &offsets);
+
+		pRender->FlushConstantBuffers();
+
+		pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+		pDeviceContext->Draw(4, 0);
+	}
+
+	void TRenderDX11::FlushConstantBuffers()
+	{
+		D3D11_MAPPED_SUBRESOURCE mappedSubresources;
+
 		if (m_IsVertexConstantBufferSet)
 		{
-			m_Unk1 = (m_Unk1 + 1) % NUMBUFFERS;
-			D3D11_MAPPED_SUBRESOURCE pMappedSubresources;
-			m_pDeviceContext->Map(m_VertexBuffers[m_Unk1], 0, D3D11_MAP_WRITE_DISCARD, 0, &pMappedSubresources);
-			memcpy(pMappedSubresources.pData, m_pVertexConstantBuffer, 0x1000);
-			m_pDeviceContext->Unmap(m_VertexBuffers[m_Unk1], 0);
+			m_VertexBufferIndex = (m_VertexBufferIndex + 1) % NUMBUFFERS;
+			m_pDeviceContext->Map(m_VertexBuffers[m_VertexBufferIndex], 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubresources);
+			memcpy(mappedSubresources.pData, m_pVertexConstantBuffer, VERTEX_CONSTANT_BUFFER_SIZE);
+			m_pDeviceContext->Unmap(m_VertexBuffers[m_VertexBufferIndex], 0);
 			m_IsVertexConstantBufferSet = false;
 		}
+
 		if (m_IsPixelConstantBufferSet)
 		{
-			m_Unk2 = (m_Unk2 + 1) % NUMBUFFERS;
-			D3D11_MAPPED_SUBRESOURCE pMappedSubresources;
-			m_pDeviceContext->Map(m_PixelBuffers[m_Unk2], 0, D3D11_MAP_WRITE_DISCARD, 0, &pMappedSubresources);
-			memcpy(pMappedSubresources.pData, m_pPixelConstantBuffer, 0x400);
-			m_pDeviceContext->Unmap(m_PixelBuffers[m_Unk2], 0);
+			m_PixelBufferIndex = (m_PixelBufferIndex + 1) % NUMBUFFERS;
+			m_pDeviceContext->Map(m_PixelBuffers[m_PixelBufferIndex], 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubresources);
+			memcpy(mappedSubresources.pData, m_pPixelConstantBuffer, PIXEL_CONSTANT_BUFFER_SIZE);
+			m_pDeviceContext->Unmap(m_PixelBuffers[m_PixelBufferIndex], 0);
 			m_IsPixelConstantBufferSet = false;
 		}
-		m_pDeviceContext->VSSetConstantBuffers(0, 1, &m_VertexBuffers[m_Unk1]);
-		m_pDeviceContext->PSSetConstantBuffers(0, 1, &m_PixelBuffers[m_Unk2]);
+
+		m_pDeviceContext->VSSetConstantBuffers(0, 1, &m_VertexBuffers[m_VertexBufferIndex]);
+		m_pDeviceContext->PSSetConstantBuffers(0, 1, &m_PixelBuffers[m_PixelBufferIndex]);
 	}
 
 	void TRenderDX11::BuildAdapterDatabase()

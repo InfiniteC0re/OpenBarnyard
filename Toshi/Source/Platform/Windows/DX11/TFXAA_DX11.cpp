@@ -87,7 +87,7 @@ namespace Toshi
 
 		// Save current render targets
 		pDeviceContext->OMGetRenderTargets(1, &pRenderTargetViews, &pDepthStencilView);
-		pRender->SomeFlagsShinanigans(0, 1, 5, 6);
+		pRender->SetBlendMode(TFALSE, D3D11_BLEND_OP_ADD, D3D11_BLEND_SRC_ALPHA, D3D11_BLEND_INV_SRC_ALPHA);
 
 		// Set our render targets
 		pDeviceContext->OMSetRenderTargets(1, &m_pRenderTarget, NULL);
@@ -99,63 +99,10 @@ namespace Toshi
 		unk.w = 0;
 
 		pRender->CopyToPixelConstantBuffer(26, &unk, 1);
-		FUN_006a6700(0.0f, 0.0f, m_Width, m_Height, pShaderResourceView, m_pShader, NULL);
+		TRenderDX11::FUN_006a6700(0.0f, 0.0f, m_Width, m_Height, pShaderResourceView, m_pShader, NULL);
 
 		// Restore original render targets
 		pDeviceContext->OMSetRenderTargets(1, &pRenderTargetViews, pDepthStencilView);
-		FUN_006a6700(0.0f, 0.0f, m_Width, m_Height, m_pTextureView, NULL, NULL);
-	}
-
-	void TFXAA::FUN_006a6700(float posX, float posY, float width, float height, ID3D11ShaderResourceView* pShaderResourceView, ID3D11PixelShader* pPixelShader, const void* srcData)
-	{
-		auto pRender = TRenderDX11::Interface();
-		auto pDeviceContext = pRender->GetDeviceContext();
-		pDeviceContext->VSSetShader(pRender->m_pVertexShader, NULL, NULL);
-		if (pPixelShader == NULL) pPixelShader = pRender->m_pPixelShader1;
-		pDeviceContext->PSSetShader(pPixelShader, NULL, NULL);
-		pDeviceContext->IASetInputLayout(pRender->m_pInputLayout);
-		pRender->m_Flags &= 0xF7 | 4;
-		pRender->m_Flags2 &= 0xD0 | 16;
-
-
-		pDeviceContext->PSSetShaderResources(0, 1, &pShaderResourceView);
-		pDeviceContext->PSSetSamplers(0, 1, &pRender->m_SamplerState2);
-
-		UINT numViewports = 1;
-		
-		D3D11_VIEWPORT viewPort;
-
-		pDeviceContext->RSGetViewports(&numViewports, &viewPort);
-
-		TVector4 unk;
-
-		unk.x = (width / viewPort.Width) * 2 - 1;
-		unk.y = (height / viewPort.Height) * 2 - 1;
-		unk.z = (posX / viewPort.Width) * 2;
-		unk.w = (posY / viewPort.Height) * 2;
-
-		if (srcData == TNULL)
-		{
-			srcData = &unk;
-			unk.x = 1.0F;
-			unk.y = 1.0F;
-			unk.z = 0.0F;
-			unk.w = 0.0F;
-		}
-		
-		pRender->m_IsVertexConstantBufferSet = true;
-		pRender->CopyToVertexConstantBuffer(1, srcData, 1);
-
-		pRender->FUN_006a8d30();
-
-		UINT stride = 20;
-		UINT offsets = 0;
-
-		pDeviceContext->IASetVertexBuffers(0, 1, &pRender->m_pSomeBuffer, &stride, &offsets);
-
-		pRender->UnsetConstantBuffers();
-
-		pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
-		pDeviceContext->Draw(4, 0);
+		TRenderDX11::FUN_006a6700(0.0f, 0.0f, m_Width, m_Height, m_pTextureView, NULL, NULL);
 	}
 }
