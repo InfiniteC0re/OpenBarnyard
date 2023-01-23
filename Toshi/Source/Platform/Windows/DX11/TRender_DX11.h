@@ -169,18 +169,17 @@ namespace Toshi
 		struct BlendState
 		{
 			// m_BlendState1
-			uint32_t BlendOp : 3;
-			uint32_t BlendOpAlpha : 3;
-			uint32_t SrcBlendAlpha : 5;
-			uint32_t DestBlendAlpha : 5;
+			D3D11_BLEND_OP BlendOp : 3;
+			D3D11_BLEND_OP BlendOpAlpha : 3;
+			D3D11_BLEND SrcBlendAlpha : 5;
+			D3D11_BLEND DestBlendAlpha : 5;
 			// m_BlendState2
-			uint32_t bDepthEnable : 1;
-			uint32_t DepthWriteMask : 1;
-			uint32_t DepthFunc : 1;
-			uint32_t bAlphaUpdate : 1;
-			uint32_t bBlendEnabled : 1;
-			uint32_t SrcBlend : 5;
-			uint32_t DestBlend : 6;
+			uint32_t RenderTargetWriteMask : 3;
+			BOOL bAlphaUpdate : 1;
+			BOOL bBlendEnabled : 1;
+			D3D11_BLEND SrcBlend : 5;
+			D3D11_BLEND DestBlend : 5;
+			uint32_t Unknown2 : 1;
 		};
 
 		static inline float s_vertexData[] =

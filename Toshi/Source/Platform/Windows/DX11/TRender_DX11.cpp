@@ -763,7 +763,22 @@ namespace Toshi
 			m_Unk4 = 0;
 		}
 
-		TTODO("Set some flags");
+		TRenderDX11::m_Unk4 = 0;
+		TTODO("this->field173_0x85c = 0;");
+		m_Flags2 = m_Flags2 & 0x8b | 0xb;
+
+		m_BlendState.BlendOp = D3D11_BLEND_OP_ADD;
+		m_BlendState.BlendOpAlpha = D3D11_BLEND_OP_ADD;
+		m_BlendState.SrcBlendAlpha = D3D11_BLEND_ONE;
+		m_BlendState.DestBlendAlpha = D3D11_BLEND_ZERO;
+		m_BlendState.RenderTargetWriteMask = 0b111;
+		m_BlendState.bAlphaUpdate = TRUE;
+		m_BlendState.SrcBlend = D3D11_BLEND_ONE;
+		m_BlendState.DestBlend = D3D11_BLEND_ZERO;
+		m_BlendState.Unknown2 = 1;
+
+		TTODO("Some more flags");
+		TRenderDX11::m_Flags = 0x2F;
 	}
 
 	int TRenderDX11::GetTextureRowPitch(DXGI_FORMAT format, int width)
@@ -1083,7 +1098,7 @@ namespace Toshi
 		m_BlendState.BlendOp = blendOp;
 		m_BlendState.bBlendEnabled = blendEnabled;
 		m_BlendState.SrcBlend = srcBlendAlpha;
-		m_BlendState.DestBlend ^= destBlendAlpha;
+		m_BlendState.DestBlend = (D3D11_BLEND)(m_BlendState.DestBlend ^ destBlendAlpha);
 
 		if (m_BlendState.SrcBlendAlpha != D3D11_BLEND_BLEND_FACTOR)
 		{
@@ -1102,15 +1117,11 @@ namespace Toshi
 	{
 		if (update)
 		{
-			m_BlendState.bDepthEnable = TRUE;
-			m_BlendState.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-			m_BlendState.DepthFunc = D3D11_COMPARISON_NEVER;
+			m_BlendState.RenderTargetWriteMask = 0b111;
 		}
 		else
 		{
-			m_BlendState.bDepthEnable = FALSE;
-			m_BlendState.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
-			m_BlendState.DepthFunc = NULL;
+			m_BlendState.RenderTargetWriteMask = 0b000;
 		}
 	}
 
