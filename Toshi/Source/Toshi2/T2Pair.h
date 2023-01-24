@@ -18,6 +18,11 @@ namespace Toshi
 			m_First = first;
 		}
 
+		T2Pair()
+		{
+
+		}
+
 		First& GetFirst()
 		{
 			return m_First;
@@ -26,6 +31,12 @@ namespace Toshi
 		Second& GetSecond()
 		{
 			return m_Second;
+		}
+
+		void operator=(const T2Pair<First, Second, Comparator>& other)
+		{
+			m_First = other.m_First;
+			m_Second = other.m_Second;
 		}
 
 		bool operator==(const T2Pair<First, Second, Comparator>& other) const
@@ -58,7 +69,7 @@ namespace Toshi
 			return Comparator::IsLessOrEqual(m_First, other.m_First);
 		}
 
-	private:
+	public:
 		First m_First;
 		Second m_Second;
 	};

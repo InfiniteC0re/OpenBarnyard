@@ -93,8 +93,8 @@ namespace Toshi
 		pDeviceContext->OMSetRenderTargets(1, &m_pRenderTarget, NULL);
 
 		TVector4 unk;
-		unk.x = m_Width;
-		unk.y = m_Height;
+		unk.x = (float)m_Width;
+		unk.y = (float)m_Height;
 		unk.z = 0;
 		unk.w = 0;
 

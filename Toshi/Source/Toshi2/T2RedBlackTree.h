@@ -91,6 +91,11 @@ namespace Toshi
 			
 		}
 
+		T* GetValue()
+		{
+			return &m_Value;
+		}
+
 		bool IsLeftNodeNext(const T& value)
 		{
 			if (m_Value == value)
@@ -161,6 +166,11 @@ namespace Toshi
 		T2RedBlackTree(T2Allocator* pAllocator = &T2Allocator::s_GlobalAllocator) : T2GenericRedBlackTree(pAllocator)
 		{
 
+		}
+
+		bool IsRoot(Node* pNode)
+		{
+			return pNode == &m_oRoot;
 		}
 
 		void Insert(Node*& insertedNode, const T& value)

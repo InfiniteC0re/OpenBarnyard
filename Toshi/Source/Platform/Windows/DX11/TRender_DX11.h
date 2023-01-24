@@ -4,8 +4,10 @@
 #include "Toshi/Render/Shaders/TToneMap.h"
 #include "Toshi/Render/Shaders/TFXAA.h"
 #include "Toshi2/T2RedBlackTree.h"
+#include "Toshi2/T2Pair.h"
+
 #include "Platform/Windows/TMSWindow.h"
-#include "Includes.h"
+#include "Platform/Windows/DX11/Includes.h"
 
 namespace Toshi
 {
@@ -167,20 +169,102 @@ namespace Toshi
 			BLENDMODE_MASK = BLENDMODE_NUMOF - 1,
 		};
 
-		struct BlendState
+		union BlendState
 		{
-			// m_BlendState1
-			D3D11_BLEND_OP BlendOp : 3;
-			D3D11_BLEND_OP BlendOpAlpha : 3;
-			D3D11_BLEND SrcBlendAlpha : 5;
-			D3D11_BLEND DestBlendAlpha : 5;
-			// m_BlendState2
-			uint32_t RenderTargetWriteMask : 3;
-			BOOL bAlphaUpdate : 1;
-			BOOL bBlendEnabled : 1;
-			D3D11_BLEND SrcBlend : 5;
-			D3D11_BLEND DestBlend : 5;
-			uint32_t Unknown2 : 1;
+			struct
+			{
+				// m_BlendState1
+				D3D11_BLEND_OP BlendOp : 3;
+				D3D11_BLEND_OP BlendOpAlpha : 3;
+				D3D11_BLEND SrcBlendAlpha : 5;
+				D3D11_BLEND DestBlendAlpha : 5;
+				// m_BlendState2
+				uint32_t RenderTargetWriteMask : 3;
+				BOOL bAlphaUpdate : 1;
+				BOOL bBlendEnabled : 1;
+				D3D11_BLEND SrcBlend : 5;
+				D3D11_BLEND DestBlend : 5;
+				uint32_t Unknown2 : 1;
+			} Parts;
+
+			uint32_t Raw;
+		};
+
+		struct RasterizerId
+		{
+			union
+			{
+				struct
+				{
+					uint32_t FillMode : 2; // D3D11_FILL_MODE
+					uint32_t CullMode : 2; // D3D11_CULL_MODE
+					uint32_t bFrontCounterClockwise : 1; // BOOL
+					uint32_t bDepthClipEnable : 1; // BOOL
+					uint32_t bScissorEnable : 1; // BOOL
+					uint32_t bMultisampleEnable : 1; // BOOL
+				} Parts;
+
+				uint32_t Raw;
+			} Flags;
+
+			INT DepthBias;
+			FLOAT SlopeScaledDepthBias;
+
+			static bool IsEqual(const RasterizerId& a, const RasterizerId& b)
+			{
+				return a == b;
+			}
+
+			static bool IsLess(const RasterizerId& a, const RasterizerId& b)
+			{
+				return a < b;
+			}
+
+			bool operator==(const RasterizerId& other) const
+			{
+				return Flags.Raw == other.Flags.Raw && DepthBias == other.DepthBias && SlopeScaledDepthBias == other.SlopeScaledDepthBias;
+			}
+
+			bool operator!=(const RasterizerId& other) const
+			{
+				return Flags.Raw != other.Flags.Raw || DepthBias != other.DepthBias || SlopeScaledDepthBias != other.SlopeScaledDepthBias;
+			}
+
+			bool operator<(const RasterizerId & other) const
+			{
+				return Flags.Raw < other.Flags.Raw && DepthBias < other.DepthBias && SlopeScaledDepthBias < other.SlopeScaledDepthBias;
+			}
+
+			void operator=(const RasterizerId& other)
+			{
+				Flags.Raw = other.Flags.Raw;
+				DepthBias = other.DepthBias;
+				SlopeScaledDepthBias = other.SlopeScaledDepthBias;
+			}
+		};
+
+		union DepthState
+		{
+			struct
+			{
+				uint64_t bDepthEnable : 1;
+				uint64_t DepthWriteMask : 1;
+				uint64_t DepthFunc : 4;
+				uint64_t bStencilEnable : 1;
+				uint64_t PADDING : 1;
+				uint64_t StencilReadMask : 8;
+				uint64_t StencilWriteMask : 8;
+				uint64_t FrontFaceStencilFailOp : 4;
+				uint64_t FrontFaceStencilDepthFailOp : 4;
+				uint64_t FrontStencilPassOp : 4;
+				uint64_t FrontStencilFunc : 4;
+				uint64_t BackFaceStencilFailOp : 4;
+				uint64_t BackFaceStencilDepthFailOp : 4;
+				uint64_t BackStencilPassOp : 4;
+				uint64_t BackStencilFunc : 4;
+			} Parts;
+
+			uint64_t Raw;
 		};
 
 		static inline float s_vertexData[] =
@@ -191,7 +275,29 @@ namespace Toshi
 			-1.0f, 0.0f, 0.0f, 0.0f, 0.0f
 		};
 
+		struct DepthStencilComparator
+		{
+			static bool IsEqual(const DepthState& a, const DepthState& b) { return a.Raw == b.Raw; }
+			static bool IsGreater(const DepthState& a, const DepthState& b) { return a.Raw > b.Raw; }
+			static bool IsLess(const DepthState& a, const DepthState& b) { return a.Raw < b.Raw; }
+			static bool IsLessOrEqual(const DepthState& a, const DepthState& b) { return a.Raw <= b.Raw; }
+			static bool IsGreaterOrEqual(const DepthState& a, const DepthState& b) { return a.Raw >= b.Raw; }
+		};
 
+		struct BlendStateComparator
+		{
+			static bool IsEqual(const BlendState& a, const BlendState& b) { return a.Raw == b.Raw; }
+			static bool IsGreater(const BlendState& a, const BlendState& b) { return a.Raw > b.Raw; }
+			static bool IsLess(const BlendState& a, const BlendState& b) { return a.Raw < b.Raw; }
+			static bool IsLessOrEqual(const BlendState& a, const BlendState& b) { return a.Raw <= b.Raw; }
+			static bool IsGreaterOrEqual(const BlendState& a, const BlendState& b) { return a.Raw >= b.Raw; }
+		};
+
+		using BlendStatePair = T2Pair<BlendState, ID3D11BlendState*, BlendStateComparator>;
+		using RasterizerPair = T2Pair<RasterizerId, ID3D11RasterizerState*, RasterizerId>;
+		using DepthStatePair = T2Pair<DepthState, ID3D11DepthStencilState*, DepthStencilComparator>;
+		using DepthPair = T2Pair<DepthState, UINT, DepthStencilComparator>;
+		
 		static inline const char* s_defaultVertexShader = " float4 ScaleTranslate : register(c0);               float4 uvST : register(c1);                                                             struct VS_IN                                                                                {                                                 float4 ObjPos   : POSITION;                   float2 UV\t\t  : TEXCOORD0;\t\t\t    };                                                                                          struct VS_OUT                                 {                                                 float4 ProjPos  : SV_POSITION;                   float2 UV\t\t  : TEXCOORD0;\t\t\t    };                                                                                          VS_OUT main( VS_IN In )                       {                                                 VS_OUT Out;                                   float4 scaledvert = In.ObjPos.xyzw * ScaleTranslate.xyzw;         scaledvert = scaledvert.xyzw + ScaleTranslate.zwzw;\t\t\t\t        scaledvert.zw = float2(0.0,1.0);\t\t\t\t\t\t\t\t     Out.ProjPos = scaledvert;\t\t\t\t        Out.UV = (In.UV*uvST.xy) + uvST.zw;           return Out;                               }                                            ";
 		static inline const char* s_defaultPixelShader = " struct PS_IN                                  {                                            \t\tfloat4 Position\t\t\t: SV_POSITION; \t\tfloat2 Tex0             : TEXCOORD0;    };                                                                                          sampler2D   diffuse_texture     : register(s0) = sampler_state { MipFilter = NONE; MinFilter = LINEAR; MagFilter = LINEAR; AddressU = WRAP; AddressV = WRAP; };   float4 main( PS_IN In )  : COLOR\t\t\t    {                                                return tex2D( diffuse_texture, In.Tex0 );        }                                            ";
 		static inline const char* s_defaultPixelShader2 = " struct PS_IN                                  {                                            \t\tfloat4 Position\t\t\t: SV_POSITION; \t\tfloat2 Tex0             : TEXCOORD0;    };                                                                                          sampler2D   diffuse_texture     : register(s0) = sampler_state { MipFilter = NONE; MinFilter = LINEAR; MagFilter = LINEAR; AddressU = WRAP; AddressV = WRAP; };   float4 main( PS_IN In )  : COLOR\t\t\t    {                                                return float4(tex2D( diffuse_texture, In.Tex0 ).xyz, 1.0);        }                                            ";
@@ -234,6 +340,7 @@ namespace Toshi
 		virtual void ShowDeviceError();
 		virtual void ShowDisplayError();
 
+		static bool IsColorEqual(const FLOAT a_Vec41[4], const FLOAT a_Vec42[4]);
 		static int GetTextureRowPitch(DXGI_FORMAT format, int width);
 		static int GetTextureDepthPitch(DXGI_FORMAT format, int width, int height);
 		static const char* GetFeatureLevel(D3D_FEATURE_LEVEL a_featureLevel);
@@ -253,8 +360,9 @@ namespace Toshi
 		void SetBlendMode(bool blendEnabled, D3D11_BLEND_OP blendOp, D3D11_BLEND srcBlendAlpha, D3D11_BLEND destBlendAlpha);
 		void SetAlphaUpdate(bool update);
 		void SetColorUpdate(bool update);
+		void SetZMode(bool depthEnable, D3D11_COMPARISON_FUNC comparisonFunc, D3D11_DEPTH_WRITE_MASK depthWriteMask);
 
-		void FUN_006a8d30();
+		void UpdateRenderStates();
 		void FlushConstantBuffers();
 
 		static void FUN_006a6700(float posX, float posY, float width, float height, ID3D11ShaderResourceView* pShaderResourceView, ID3D11PixelShader* pPixelShader, const void* srcData);
@@ -262,7 +370,7 @@ namespace Toshi
 	private:
 		void BuildAdapterDatabase();
 
-		void CreateSamplerStates();
+		void Initialize();
 
 	public:
 		static UINT s_QualityLevel;
@@ -271,53 +379,57 @@ namespace Toshi
 		static ID3D11ShaderResourceView* s_pShaderResourceView;
 
 	public:
-		DXGI_SWAP_CHAIN_DESC m_SwapChainDesc;      // 0x61C
-		ID3D11Texture2D* m_Texture2D1;             // 0x658
-		ID3D11RenderTargetView* m_RTView1;         // 0x65C
-		ID3D11DepthStencilView* m_StencilView;     // 0x660
-		IDXGISwapChain* m_SwapChain;               // 0x664
-		UINT m_DisplayWidth;                       // 0x668
-		UINT m_DisplayHeight;                      // 0x66C
-		ID3D11Texture2D* m_SRView1Texture;         // 0x670
-		ID3D11RenderTargetView* m_RTView2;         // 0x674
-		ID3D11ShaderResourceView* m_SRView1;       // 0x678
-		ID3D11Texture2D* m_SRView2Texture;         // 0x67C
-		ID3D11ShaderResourceView* m_SRView2;       // 0x680
-		ID3D11ShaderResourceView* m_StencilTexSR;  // 0x684
-		bool m_IsWidescreen;                       // 0x688
-		ID3D11DeviceContext* m_pDeviceContext;     // 0x68C
-		ID3D11Device* m_pDevice;                   // 0x690
-		HACCEL m_hAccel;                           // 0x694
-		DisplayParams m_DisplayParams;             // 0x698
-		TMSWindow m_Window;                        // 0x6B0
-		ID3D11VertexShader* m_pVertexShader;       // 0x6D8
-		ID3D11PixelShader* m_pPixelShader1;        // 0x6DC
-		ID3D11PixelShader* m_pPixelShader2;        // 0x6E0
-		ID3D11InputLayout* m_pInputLayout;         // 0x6E4
-		ID3D11Buffer* m_pSomeBuffer;               // 0x6E8
-		FLOAT m_ClearColor[4];                     // 0x6EC
-		TToneMap* m_pToneMap;                      // 0x71C
-		TFXAA* m_pFXAA;                            // 0x724
-		size_t m_NumDrawnFrames;                   // 0x72C
-		ID3D11SamplerState* m_SamplerStates[12];   // 0x73C
-		void* m_pVertexConstantBuffer;             // 0x76C
-		bool m_IsVertexConstantBufferSet;          // 0x770
-		ID3D11Buffer* m_VertexBuffers[NUMBUFFERS]; // 0x774
-		size_t m_VertexBufferIndex;                // 0x7B4
-		void* m_pPixelConstantBuffer;              // 0x7B8
-		bool m_IsPixelConstantBufferSet;           // 0x7BC
-		ID3D11Buffer* m_PixelBuffers[NUMBUFFERS];  // 0x7C0
-		size_t m_PixelBufferIndex;                 // 0x800
-		ID3D11Buffer* m_MainVertexBuffer;          // 0x804
-		size_t m_iImmediateVertexCurrentOffset;    // 0x808
-		ID3D11Buffer* m_MainIndexBuffer;           // 0x80C
-		size_t m_iImmediateIndexCurrentOffset;     // 0x810
-		uint16_t m_Flags;                          // 0x820
-		//T2GenericRedBlackTree m_RedBlackTree1;     // 0x83C
-		uint16_t m_Flags2;                         // 0x858
-		//T2GenericRedBlackTree m_RedBlackTree2;     // 0x870
-		BlendState m_BlendState;                   // 0x88C
-		float m_fDstAlpha;                         // 0x89C
-		//T2GenericRedBlackTree m_RedBlackTree3;     // 0x8B4
+		DXGI_SWAP_CHAIN_DESC m_SwapChainDesc;             // 0x61C
+		ID3D11Texture2D* m_Texture2D1;                    // 0x658
+		ID3D11RenderTargetView* m_RTView1;                // 0x65C
+		ID3D11DepthStencilView* m_StencilView;            // 0x660
+		IDXGISwapChain* m_SwapChain;                      // 0x664
+		UINT m_DisplayWidth;                              // 0x668
+		UINT m_DisplayHeight;                             // 0x66C
+		ID3D11Texture2D* m_SRView1Texture;                // 0x670
+		ID3D11RenderTargetView* m_RTView2;                // 0x674
+		ID3D11ShaderResourceView* m_SRView1;              // 0x678
+		ID3D11Texture2D* m_SRView2Texture;                // 0x67C
+		ID3D11ShaderResourceView* m_SRView2;              // 0x680
+		ID3D11ShaderResourceView* m_StencilTexSR;         // 0x684
+		bool m_IsWidescreen;                              // 0x688
+		ID3D11DeviceContext* m_pDeviceContext;            // 0x68C
+		ID3D11Device* m_pDevice;                          // 0x690
+		HACCEL m_hAccel;                                  // 0x694
+		DisplayParams m_DisplayParams;                    // 0x698
+		TMSWindow m_Window;                               // 0x6B0
+		ID3D11VertexShader* m_pVertexShader;              // 0x6D8
+		ID3D11PixelShader* m_pPixelShader1;               // 0x6DC
+		ID3D11PixelShader* m_pPixelShader2;               // 0x6E0
+		ID3D11InputLayout* m_pInputLayout;                // 0x6E4
+		ID3D11Buffer* m_pSomeBuffer;                      // 0x6E8
+		FLOAT m_ClearColor[4];                            // 0x6EC
+		TToneMap* m_pToneMap;                             // 0x71C
+		TFXAA* m_pFXAA;                                   // 0x724
+		size_t m_NumDrawnFrames;                          // 0x72C
+		ID3D11SamplerState* m_SamplerStates[12];          // 0x73C
+		void* m_pVertexConstantBuffer;                    // 0x76C
+		bool m_IsVertexConstantBufferSet;                 // 0x770
+		ID3D11Buffer* m_VertexBuffers[NUMBUFFERS];        // 0x774
+		size_t m_VertexBufferIndex;                       // 0x7B4
+		void* m_pPixelConstantBuffer;                     // 0x7B8
+		bool m_IsPixelConstantBufferSet;                  // 0x7BC
+		ID3D11Buffer* m_PixelBuffers[NUMBUFFERS];         // 0x7C0
+		size_t m_PixelBufferIndex;                        // 0x800
+		ID3D11Buffer* m_MainVertexBuffer;                 // 0x804
+		size_t m_iImmediateVertexCurrentOffset;           // 0x808
+		ID3D11Buffer* m_MainIndexBuffer;                  // 0x80C
+		size_t m_iImmediateIndexCurrentOffset;            // 0x810
+		DepthPair m_CurrentDepth;                         // 0x820
+		DepthPair m_PreviousDepth;                        // 0x830
+		T2RedBlackTree<DepthStatePair> m_DepthStatesTree; // 0x83C
+		RasterizerId m_CurrentRasterizerId;               // 0x858
+		RasterizerId m_PreviousRasterizerId;              // 0x864
+		T2RedBlackTree<RasterizerPair> m_RasterizersTree; // 0x870
+		BlendState m_CurrentBlendState;                   // 0x88C
+		FLOAT m_CurrentBlendFactor[4];                    // 0x890
+		BlendState m_PreviousBlendState;                  // 0x8A0
+		FLOAT m_PreviousBlendFactor[4];                   // 0x8A4
+		T2RedBlackTree<BlendStatePair> m_BlendStatesTree; // 0x8B4
 	};
 }
