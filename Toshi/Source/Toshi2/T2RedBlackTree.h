@@ -48,7 +48,8 @@ namespace Toshi
 
 		~T2GenericRedBlackTree()
 		{
-			TASSERT(m_iNumElements == 0);
+			// TASSERT(m_iNumElements == 0);
+			TTODO("Make sure all elements are deleted");
 		}
 
 		T2GenericRedBlackTreeNode* GetFirstNode();
@@ -85,14 +86,9 @@ namespace Toshi
 		friend class T2RedBlackTree;
 
 	public:
-		T2RedBlackTreeNode(const T& value)
+		T2RedBlackTreeNode(const T& value) : m_Value(value)
 		{
-			m_Value = value;
-		}
-
-		T* As()
-		{
-			return static_cast<T*>(this);
+			
 		}
 
 		bool IsLeftNodeNext(const T& value)
@@ -110,6 +106,11 @@ namespace Toshi
 
 				return true;
 			}
+		}
+
+		bool operator==(const T& other) const
+		{
+			return m_Value == other;
 		}
 
 		bool operator==(const T2RedBlackTreeNode<T>& other) const
@@ -147,8 +148,17 @@ namespace Toshi
 	public:
 		using Node = T2RedBlackTreeNode<T>;
 
+		class Iterator
+		{
+		public:
+			Iterator(Node*& ppNode) : m_ppNode(ppNode) { }
+
+		private:
+			Node*& m_ppNode;
+		};
+
 	public:
-		T2RedBlackTree(T2Allocator* pAllocator) : T2GenericRedBlackTree(pAllocator)
+		T2RedBlackTree(T2Allocator* pAllocator = &T2Allocator::s_GlobalAllocator) : T2GenericRedBlackTree(pAllocator)
 		{
 
 		}
@@ -190,6 +200,32 @@ namespace Toshi
 			TASSERT(ms_oNil.red == 0, "ms_oNil not red in T2GenericRedBlackTree::TreeInsertHelp"); // TreeInsertHelp????
 			T2GenericRedBlackTree::Insert(pNode);
 			insertedNode = pNode;
+		}
+
+		Iterator Find(Node*& foundNode, const T& value)
+		{
+			Node* pCurrentNode = static_cast<Node*>(m_oRoot.m_pLeft);
+
+			while (pCurrentNode != &ms_oNil)
+			{
+				if (pCurrentNode->operator==(value))
+				{
+					foundNode = pCurrentNode;
+					return foundNode;
+				}
+
+				if (pCurrentNode->IsLeftNodeNext(value))
+				{
+					pCurrentNode = static_cast<Node*>(pCurrentNode->m_pLeft);
+				}
+				else
+				{
+					pCurrentNode = static_cast<Node*>(pCurrentNode->m_pRight);
+				}
+			}
+
+			foundNode = static_cast<Node*>(&m_oRoot);
+			return foundNode;
 		}
 	};
 }

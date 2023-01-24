@@ -14,6 +14,22 @@ namespace Toshi
 		virtual size_t Size() = 0;
 		virtual size_t Capacity() = 0;
 
+		template<class T>
+		T* New()
+		{
+			void* mem = Malloc(sizeof(T));
+			T* object = new (mem) T();
+			return object;
+		}
+
+		template<class T>
+		T* New(const T& value)
+		{
+			void* mem = Malloc(sizeof(T));
+			T* object = new (mem) T(value);
+			return object;
+		}
+
 		template<class T, class I>
 		T* New(const I& value)
 		{
