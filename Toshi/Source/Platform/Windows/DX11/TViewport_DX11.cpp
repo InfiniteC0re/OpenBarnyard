@@ -28,6 +28,9 @@ namespace Toshi
 
 	void TViewport::BeginSKU()
 	{
+		auto pRender = TRenderDX11::Interface();
+		auto pDeviceContext = pRender->GetDeviceContext();
+
 		D3D11_VIEWPORT viewport;
 		viewport.TopLeftX = GetX();
 		viewport.TopLeftY = GetY();
@@ -36,8 +39,7 @@ namespace Toshi
 		viewport.MinDepth = 0.0f;
 		viewport.MaxDepth = 1.0f;
 
-		auto pRender = TRenderDX11::Interface();
-		auto pDeviceContext = pRender->GetDeviceContext();
+		pDeviceContext->RSSetViewports(1, &viewport);
 
 		if (m_bAllowBackgroundClear || m_bAllowDepthClear)
 		{
@@ -81,7 +83,7 @@ namespace Toshi
 			m_ColorB = b;
 			m_ColorA = a;
 
-			ChangeSKU(ChangeEvent_Unk5);
+			ChangeSKU(ChangeEvent_BackgroundColor);
 		}
 	}
 

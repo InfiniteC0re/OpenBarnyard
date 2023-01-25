@@ -14,6 +14,7 @@ namespace Toshi
 
 	class TRenderContext
 	{
+	public:
 		typedef uint32_t FLAG;
 		enum FLAG_ : FLAG
 		{
@@ -27,6 +28,16 @@ namespace Toshi
 			FLAG_UNK6 = BITFIELD(7),
 			FLAG_HASMODELVIEWMATRIX = BITFIELD(8),
 			FLAG_HASWORLDVIEWMATRIX = BITFIELD(9),
+		};
+
+		struct Params
+		{
+			float fX;
+			float fY;
+			float fWidth;
+			float fHeight;
+			float fMinZ;
+			float fMaxZ;
 		};
 
 		struct PROJECTIONPARAMS
@@ -50,42 +61,50 @@ namespace Toshi
 			m_pRender = pRender;
 
 			// test values
-			m_fX = 0;
-			m_fY = 0;
-			m_fWidth = 640;
-			m_fHeight = 480;
+			m_oParams.fX = 0;
+			m_oParams.fY = 0;
+			m_oParams.fWidth = 640;
+			m_oParams.fHeight = 480;
 		}
 
 		virtual void SetModelViewMatrix(const TMatrix44& a_rMatrix);
 		virtual void SetWorldViewMatrix(const TMatrix44& a_rMatrix);
+		
+		Params& GetParams()
+		{
+			return m_oParams;
+		}
+
+		void SetParams(const Params& params)
+		{
+			m_oParams = params;
+			m_eFlags = (m_eFlags & (~(FLAG_UNK3 | FLAG_UNK4 | FLAG_UNK5 | FLAG_UNK6))) | FLAG_DIRTY;
+		}
 
 		float GetX() const
 		{
-			return m_fX;
+			return m_oParams.fX;
 		}
 
 		float GetY() const
 		{
-			return m_fY;
+			return m_oParams.fY;
 		}
 
 		float GetWidth() const
 		{
-			return m_fWidth;
+			return m_oParams.fWidth;
 		}
 
 		float GetHeight() const
 		{
-			return m_fHeight;
+			return m_oParams.fHeight;
 		}
 
 	private:
 		TRender* m_pRender;                     // 0x04
 		FLAG m_eFlags;                          // 0x08
-		float m_fX;                             // 0x18
-		float m_fY;                             // 0x1C
-		float m_fWidth;                         // 0x20
-		float m_fHeight;                        // 0x24
+		Params m_oParams;                       // 0x18
 		PROJECTIONPARAMS m_sProjParams;         // 0x30
 		TMatrix44 m_mModelViewMatrix;           // 0x40
 		TMatrix44 m_mWorldViewMatrix;           // 0x80

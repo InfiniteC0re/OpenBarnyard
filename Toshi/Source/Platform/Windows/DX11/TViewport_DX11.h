@@ -9,11 +9,16 @@ namespace Toshi
 		using ChangeEvent = uint32_t;
 		enum ChangeEvent_ : ChangeEvent
 		{
-			ChangeEvent_Unk1,
-			ChangeEvent_Unk2,
-			ChangeEvent_Unk3,
-			ChangeEvent_Unk4,
-			ChangeEvent_Unk5,
+			ChangeEvent_BackgroundColor,
+			ChangeEvent_MaxZ,
+			ChangeEvent_MinZ,
+			ChangeEvent_Height,
+			ChangeEvent_Width,
+			ChangeEvent_X,
+			ChangeEvent_Y,
+			ChangeEvent_AllocatorBlock,
+			ChangeEvent_BackgroundClear,
+			ChangeEvent_DepthClear,
 		};
 
 	public:
@@ -63,7 +68,7 @@ namespace Toshi
 		{
 			bool oldState = m_bAllowBackgroundClear;
 			m_bAllowBackgroundClear = allow;
-			ChangeSKU(ChangeEvent_Unk5);
+			ChangeSKU(ChangeEvent_BackgroundClear);
 			return oldState;
 		}
 
@@ -71,7 +76,7 @@ namespace Toshi
 		{
 			bool oldState = m_bAllowDepthClear;
 			m_bAllowDepthClear = allow;
-			ChangeSKU(ChangeEvent_Unk5);
+			ChangeSKU(ChangeEvent_DepthClear);
 			return oldState;
 		}
 
@@ -85,7 +90,84 @@ namespace Toshi
 		void SetMemoryAllocatorBlock(TMemoryHeap* pHeap)
 		{
 			m_MemAllocatorBlock = pHeap;
-			ChangeSKU(ChangeEvent_Unk5);
+			ChangeSKU(ChangeEvent_AllocatorBlock);
+		}
+
+		void SetX(float value)
+		{
+			TRenderContext::Params params = m_pRenderCtx->GetParams();
+
+			if (params.fX != value)
+			{
+				params.fX = value;
+				m_pRenderCtx->SetParams(params);
+				ChangeSKU(ChangeEvent_X);
+			}
+		}
+
+		void SetY(float value)
+		{
+			TRenderContext::Params params = m_pRenderCtx->GetParams();
+
+			if (params.fY != value)
+			{
+				params.fY = value;
+				m_pRenderCtx->SetParams(params);
+				ChangeSKU(ChangeEvent_Y);
+			}
+		}
+
+		void SetWidth(float value)
+		{
+			TRenderContext::Params params = m_pRenderCtx->GetParams();
+
+			if (params.fWidth != value)
+			{
+				params.fWidth = value;
+				m_pRenderCtx->SetParams(params);
+				ChangeSKU(ChangeEvent_Width);
+			}
+		}
+
+		void SetHeight(float value)
+		{
+			TRenderContext::Params params = m_pRenderCtx->GetParams();
+
+			if (params.fHeight != value)
+			{
+				params.fHeight = value;
+				m_pRenderCtx->SetParams(params);
+				ChangeSKU(ChangeEvent_Height);
+			}
+		}
+
+		void SetMinZ(float value)
+		{
+			TRenderContext::Params params = m_pRenderCtx->GetParams();
+
+			if (params.fMinZ != value)
+			{
+				params.fMinZ = value;
+				m_pRenderCtx->SetParams(params);
+				ChangeSKU(ChangeEvent_MinZ);
+			}
+		}
+
+		void SetMaxZ(float value)
+		{
+			TRenderContext::Params params = m_pRenderCtx->GetParams();
+
+			if (params.fMaxZ != value)
+			{
+				params.fMaxZ = value;
+				m_pRenderCtx->SetParams(params);
+				ChangeSKU(ChangeEvent_MaxZ);
+			}
+		}
+
+		TRenderContext* GetRenderContext() const
+		{
+			return m_pRenderCtx;
 		}
 
 		void BeginSKU();

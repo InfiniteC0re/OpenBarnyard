@@ -98,22 +98,37 @@ void ARenderer::SetBackgroundColour(uint32_t r, uint32_t g, uint32_t b)
 void ARenderer::RenderMainScene(float deltaTime, Toshi::TViewport* pViewport, void* unk2, void* pCameraObject, t_MainScene mainSceneCb, bool allowBackgroundClear)
 {
 	TIMPLEMENT();
+	auto pRender = Toshi::TRenderDX11::Interface();
+	
 	pViewport->AllowDepthClear(true);
+
+	auto pOriginalContext = pRender->GetCurrentRenderContext();
+	pRender->SetCurrentRenderContext(pViewport->GetRenderContext());
+
 	pViewport->AllowBackgroundClear(allowBackgroundClear);
 	pViewport->Begin();
 	// ...
 	mainSceneCb(deltaTime, pCameraObject);
 	pViewport->End();
 	// ...
-	Toshi::TRenderDX11::Interface()->FUN_00691190();
 
+	pRender->FUN_00691190();
+	pRender->SetCurrentRenderContext(pOriginalContext);
 }
 
 void ARenderer::CreateMainViewport()
 {
 	TIMPLEMENT();
+	auto pDisplayParams = Toshi::TRenderDX11::Interface()->GetCurrentDisplayParams();
+
 	m_pViewport = new Toshi::TViewport();
 	m_pViewport->SetMemoryAllocatorBlock(AMemory::ms_apMemoryBlocks[AMemory::POOL_FrequentAllocations]);
+	m_pViewport->SetX(0.0f);
+	m_pViewport->SetY(0.0f);
+	m_pViewport->SetWidth((float)pDisplayParams->Width);
+	m_pViewport->SetHeight((float)pDisplayParams->Height);
+	m_pViewport->SetMinZ(0.2f);
+	m_pViewport->SetMaxZ(1.0f);
 	m_pViewport->AllowBackgroundClear(true);
 	m_pViewport->AllowDepthClear(true);
 	m_pViewport->EnableDefaultBeginRender(true);
