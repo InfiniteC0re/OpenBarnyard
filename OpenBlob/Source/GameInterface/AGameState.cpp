@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "AGameState.h"
+#include "AGameStateController.h"
 #include "Toshi/Input/TInputInterface.h"
 
 AGameState::AGameState() :
@@ -28,7 +29,7 @@ void AGameState::Unk3(void*, void*)
 
 }
 
-int AGameState::OnUpdate(float deltaTime)
+AGameState::UpdateResult AGameState::OnUpdate(float deltaTime)
 {
 	TTODO("Something with AAssetStreaming");
 	m_InputHelper.Update();
@@ -37,8 +38,8 @@ int AGameState::OnUpdate(float deltaTime)
 	{
 		state->OnUpdate(deltaTime);
 	}
-
-	return 0;
+	
+	return UpdateResult_OK;
 }
 
 void AGameState::OnInsertion()
@@ -67,7 +68,7 @@ void AGameState::OnSuspend()
 	}
 }
 
-void AGameState::OnResume(void* unk)
+void AGameState::OnResume(AGameState* pOldState)
 {
 	for (auto state = m_GameStates.Begin(); state != m_GameStates.End(); state++)
 	{
@@ -104,4 +105,10 @@ bool AGameState::CheckForControllerRemoval()
 bool AGameState::PauseOnControllerReinserted()
 {
 	return false;
+}
+
+void AGameState::RemoveSelf()
+{
+	TASSERT(AGameStateController::GetSingletonWeak()->GetCurrentGameState() == this);
+	AGameStateController::GetSingletonWeak()->PopCurrentState();
 }

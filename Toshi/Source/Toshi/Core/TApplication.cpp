@@ -2,7 +2,6 @@
 #include "TApplication.h"
 #include "Toshi/Typedefs.h"
 #include "Toshi/Strings/TString8.h"
-#include "Toshi/Core/TDebugConsole.h"
 #include "Toshi/File/TFile.h"
 
 namespace Toshi
@@ -10,14 +9,6 @@ namespace Toshi
 	TApplication::TApplication()
 	{
 		m_Flags = 0;
-		
-		m_DebugConsole = TDebugConsole::Create();
-
-#ifdef TOSHI_DEBUG
-		m_DebugConsole->Show(true);
-#else
-		m_DebugConsole->Show(false);
-#endif
 	}
 
 	TApplication::~TApplication()
@@ -30,6 +21,14 @@ namespace Toshi
 		TTODO("TGenericGlobalListener<Toshi::TApplicationExitEvent>::ConnectImpl(&this->m_ExitEventListener,this,OnApplicationExitEvent);");
 		m_Name = appName;
 		
+		m_pDebugConsole = new TDebugConsole;
+
+#ifdef TOSHI_DEBUG
+		m_pDebugConsole->Show(true);
+#else
+		m_pDebugConsole->Show(false);
+#endif
+
 		return OnCreate(argc, argv);
 	}
 

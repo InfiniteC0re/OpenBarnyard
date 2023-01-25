@@ -56,3 +56,13 @@ bool ARenderer::CreateTRender()
 
 	return true;
 }
+
+void ARenderer::SetBackgroundColour(uint32_t r, uint32_t g, uint32_t b)
+{
+	if (m_pViewport != TNULL)
+	{
+		m_pViewport->SetBackgroundColor(r & 0xFF, g & 0xFF, b & 0xFF, 255);
+	}
+
+	m_BackgroundColor = ((r & 0xff) << 8 | g & 0xff) << 8 | b & 0xff;
+}

@@ -1,6 +1,5 @@
 #pragma once
-
-extern Toshi::TApplication* Toshi::CreateApplication(int argc, char** argv);
+#include "AppBoot.h"
 
 #ifdef TOSHI_PLATFORM_WINDOWS
 
@@ -14,10 +13,9 @@ extern Toshi::TApplication* Toshi::CreateApplication(int argc, char** argv);
 
 #ifndef TOSHI_APP
 #define TOSHI_APP \
-Toshi::TApplication* app = Toshi::CreateApplication(0, nullptr); \
-app->Create("Blob07 - (c) Blue Tongue Software", 0, 0); \
-app->Execute(); \
-delete app;
+Toshi::TApplication& app = AApplication::g_oTheApp; \
+app.Create("Blob07 - (c) Blue Tongue Software", 0, 0); \
+app.Execute();
 #endif
 
 #else

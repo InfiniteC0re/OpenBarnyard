@@ -1,5 +1,5 @@
 #pragma once
-#include <Toshi/Core/STL.h>
+#include "Toshi/Core/TDebugConsole.h"
 #include "Toshi/Strings/TString8.h"
 
 namespace Toshi
@@ -44,9 +44,6 @@ namespace Toshi
 		TString8 m_Name;                       // 0x4
 		uint32_t m_Flags;                      // 0x10
 		bool m_IsVerbose;                      // 0x14
-		TDebugConsole* m_DebugConsole;
+		TDebugConsole* m_pDebugConsole;
 	};
-	
-	// this has to be used by application
-	TApplication* CreateApplication(int argc, char** argv);
 }

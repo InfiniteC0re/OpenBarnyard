@@ -227,6 +227,7 @@ namespace Toshi
 		TASSERT((heapSize & 3) == 0, "Allocation size is not aligned to 4");
 		
 		TMemoryHeap* heap = static_cast<TMemoryHeap*>(ptr);
+		TUtil::MemClear(heap, sizeof(TMemoryHeap));
 		
 		size_t capacity = heapSize - sizeof(TMemoryHeap);
 		heap->m_MSpace = create_mspace_with_base(heap + 1, capacity, 1);

@@ -26,27 +26,27 @@ namespace Toshi
 	public:
 		T2Vector()
 		{
-			m_Size = 0;
+			m_iNumElements = 0;
 		}
 
 		T* Push()
 		{
-			return &m_Items[m_Size++];
+			return &m_Items[m_iNumElements++];
 		}
 
 		void PushBack(const T& item)
 		{
 			TASSERT(Size() < Capacity());
-			m_Items[m_Size++] = item;
+			m_Items[m_iNumElements++] = item;
 		}
 
 		void PopBack()
 		{
 			TASSERT(Size() > 0);
-			m_Size--;
+			m_iNumElements--;
 
-			m_Items[m_Size].~T();
-			new (&m_Items[m_Size]) T();
+			m_Items[m_iNumElements].~T();
+			new (&m_Items[m_iNumElements]) T();
 		}
 
 		void Clear()
@@ -57,7 +57,7 @@ namespace Toshi
 				new (&m_Items[i]) T();
 			}
 
-			m_Size = 0;
+			m_iNumElements = 0;
 		}
 
 		void Erase(Iterator it)
@@ -76,7 +76,7 @@ namespace Toshi
 				m_Items[currentIndex++] = m_Items[i];
 			}
 
-			m_Size -= 1;
+			m_iNumElements -= 1;
 		}
 
 		Iterator MakeIterator(T& item)
@@ -86,7 +86,7 @@ namespace Toshi
 
 		size_t Size() const
 		{
-			return m_Size;
+			return m_iNumElements;
 		}
 
 		size_t Capacity() const
@@ -102,7 +102,7 @@ namespace Toshi
 		T& Back()
 		{
 			TASSERT(Size() > 0);
-			return m_Items[m_Size - 1];
+			return m_Items[m_iNumElements - 1];
 		}
 
 		T* Begin()
@@ -116,7 +116,7 @@ namespace Toshi
 		}
 
 	private:
-		size_t m_Size;
+		size_t m_iNumElements;
 		T m_Items[MaxSize];
 	};
 };

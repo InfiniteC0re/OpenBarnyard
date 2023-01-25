@@ -2,22 +2,32 @@
 #include "AMemory.h"
 
 AMemory::PoolDefinitionInfo AMemory::ms_aPoolDefinitionInfo[POOL_NumOf] = {
-	{ "POOL_FrequentAllocations", 0, 0x40000, Toshi::TMemory::Flags_Standard },
-	{ "POOL_FrequentAllocators", 0, 0x40000, Toshi::TMemory::Flags_Standard },
+	{ "POOL_FrequentAllocations", POOL_FrequentAllocations, 0x300000 },
+	{ "POOL_XUI", POOL_XUI, 0x1400000 },
 };
 
 Toshi::TMemoryHeap* AMemory::ms_apMemoryBlocks[POOL_NumOf];
 
-void AMemory::CreatePool(Pool pool)
+void AMemory::CreatePools()
 {
-	if (pool - 1 < 2)
+	for (size_t i = 0; i < POOL_NumOf; i++)
 	{
-
+		CreatePool(ms_aPoolDefinitionInfo[i].Type);
 	}
-	TIMPLEMENT();
 }
 
-void AMemory::DestroyPool(Pool pool)
+void AMemory::CreatePool(Pool type)
 {
+	TASSERT(type < POOL_NumOf);
+	auto& poolDefinition = ms_aPoolDefinitionInfo[type];
+	TASSERT(IsPoolCreated(poolDefinition.Type) == TFALSE);
+
+	void* pMem = TMalloc(poolDefinition.Size);
+	ms_apMemoryBlocks[poolDefinition.Type] = Toshi::TMemory::CreateHeapInPlace(pMem, poolDefinition.Size, Toshi::TMemoryHeapFlags_UseMutex, poolDefinition.Name);
+}
+
+void AMemory::DestroyPool(Pool type)
+{
+	TASSERT(type < POOL_NumOf);
 	TIMPLEMENT();
 }

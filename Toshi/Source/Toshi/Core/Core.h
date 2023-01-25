@@ -7,6 +7,8 @@ constexpr uint32_t TMAKEFOUR(const char str[4])
 	return ((str[3] << 24) | (str[2] << 16) | (str[1] << 8) | str[0]);
 }
 
+#define ISZERO(X) ((X) == 0)
+#define HASFLAG(X) (!ISZERO(X))
 #define STRINGIFY(X) STRINGIFY2(X)    
 #define STRINGIFY2(X) #X
 
