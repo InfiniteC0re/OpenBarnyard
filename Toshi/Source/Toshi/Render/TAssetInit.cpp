@@ -10,28 +10,29 @@ namespace Toshi
 
 	void TAssetInit::InitAssets(TTRB& a_trb, bool createResources, bool allowCrossTRBReferences)
 	{
-		int count = 0;
+		int funcCount = 0;
 		const FourCCFunction* functions;
 
 		if (!createResources)
 		{
-			count = 5;
+			funcCount = sizeof(g_FourCCReloadFunctions) / sizeof(*g_FourCCReloadFunctions);
 			functions = g_FourCCReloadFunctions;
 		}
 		else
 		{
-			count = 12;
+			funcCount = sizeof(g_FourCCInitFunctions) / sizeof(*g_FourCCInitFunctions);
 			functions = g_FourCCInitFunctions;
 		}
 
+		g_bAllowCrossTRBReferences = allowCrossTRBReferences;
 		g_bCreateResources = createResources;
 		g_pCurrentTRB = &a_trb;
-		g_bAllowCrossTRBReferences = allowCrossTRBReferences;
 
-		for (size_t i = 0; i < count; i++)
+		for (size_t i = 0; i < funcCount; i++)
 		{
 			Init(a_trb, functions[i].name, functions[i].func);
 		}
+
 		g_pCurrentTRB = TNULL;
 	}
 

@@ -99,10 +99,10 @@ namespace Toshi
 		unk.w = 0;
 
 		pRender->CopyToPixelConstantBuffer(26, &unk, 1);
-		TRenderDX11::FUN_006a6700(0.0f, 0.0f, m_Width, m_Height, pShaderResourceView, m_pShader, NULL);
+		TRenderDX11::FUN_006a6700(0.0f, 0.0f, (float)m_Width, (float)m_Height, pShaderResourceView, m_pShader, NULL);
 
 		// Restore original render targets
 		pDeviceContext->OMSetRenderTargets(1, &pRenderTargetViews, pDepthStencilView);
-		TRenderDX11::FUN_006a6700(0.0f, 0.0f, m_Width, m_Height, m_pTextureView, NULL, NULL);
+		TRenderDX11::FUN_006a6700(0.0f, 0.0f, (float)m_Width, (float)m_Height, m_pTextureView, NULL, NULL);
 	}
 }

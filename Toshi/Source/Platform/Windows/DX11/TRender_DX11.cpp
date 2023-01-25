@@ -702,7 +702,8 @@ namespace Toshi
 			accels[0].key = VK_ESCAPE;
 
 			accels[1].fVirt = FALT;
-			accels[1].key = 0x1000D;
+			accels[1].key = VK_RETURN;
+			accels[1].cmd = 1;
 
 			m_hAccel = CreateAcceleratorTableA(accels, sizeof(accels) / sizeof(*accels));
 

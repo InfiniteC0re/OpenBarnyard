@@ -162,19 +162,19 @@ namespace Toshi
 		};
 
 		static FourCCFunction constexpr g_FourCCReloadFunctions[5] = {
-			{ TMAKEFOUR("ttex"), InitTex},
-			{ TMAKEFOUR("tfxl"), InitFXLite},
-			{ TMAKEFOUR("tmat"), ReloadMaterial},
-			{ TMAKEFOUR("tkey"), InitKeyframes},
-			{ TMAKEFOUR("tmod"), InitModel}
+			{ TMAKEFOUR("ttex"), InitTex },
+			{ TMAKEFOUR("tfxl"), InitFXLite },
+			{ TMAKEFOUR("tmat"), ReloadMaterial },
+			{ TMAKEFOUR("tkey"), InitKeyframes },
+			{ TMAKEFOUR("tmod"), InitModel }
 		};
 
 		static FourCCFunction constexpr g_FourCCInitFunctions[12] = {
-			{ TMAKEFOUR("ttex"), InitTex},
-			{ TMAKEFOUR("tvdc"), InitVertexDecleration},
-			{ TMAKEFOUR("tfxl"), InitFXLite},
-			{ TMAKEFOUR("tmat"), InitMaterial},
-			{ TMAKEFOUR("tkey"), InitKeyframes},
+			{ TMAKEFOUR("ttex"), InitTex },
+			{ TMAKEFOUR("tvdc"), InitVertexDecleration },
+			{ TMAKEFOUR("tfxl"), InitFXLite },
+			{ TMAKEFOUR("tmat"), InitMaterial },
+			{ TMAKEFOUR("tkey"), InitKeyframes },
 			{ TMAKEFOUR("tmod"), InitModel },
 			{ TMAKEFOUR("txui"), InitXUI },
 			{ TMAKEFOUR("tfnt"), InitFont },
@@ -192,19 +192,16 @@ namespace Toshi
 			{ TMAKEFOUR("tfnt"), DeinitFont },
 			{ TMAKEFOUR("txui"), DeinitXUI },
 			{ TMAKEFOUR("tmod"), DeinitModel },
-			{ TMAKEFOUR("tkey"), DeinitKeyframes},
-			{ TMAKEFOUR("tmat"), DeinitMaterial},
-			{ TMAKEFOUR("tfxl"), DeinitFXLite},
-			{ TMAKEFOUR("tvdc"), DeinitVertexDecleration},
-			{ TMAKEFOUR("ttex"), DeinitTex},
+			{ TMAKEFOUR("tkey"), DeinitKeyframes },
+			{ TMAKEFOUR("tmat"), DeinitMaterial },
+			{ TMAKEFOUR("tfxl"), DeinitFXLite },
+			{ TMAKEFOUR("tvdc"), DeinitVertexDecleration },
+			{ TMAKEFOUR("ttex"), DeinitTex },
 		};
 
 	public:
 		static void InitAssets(TTRB& a_trb, bool createResources, bool allowCrossTRBReferences);
 		static void DeinitAssets(TTRB& a_trb);
 		static void Init(TTRB& a_trb, uint32_t a_unk, t_fourCCFunction a_fourCCFunc);
-		
-
-
 	};
 }

@@ -1,5 +1,4 @@
 #pragma once
-#include <cstdint>
 #include "Toshi/Memory/TMemory.h"
 
 class AMemory

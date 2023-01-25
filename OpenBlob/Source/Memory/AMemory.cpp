@@ -6,6 +6,8 @@ AMemory::PoolDefinitionInfo AMemory::ms_aPoolDefinitionInfo[POOL_NumOf] = {
 	{ "POOL_FrequentAllocators", 0, 0x40000, Toshi::TMemory::Flags_Standard },
 };
 
+Toshi::TMemoryHeap* AMemory::ms_apMemoryBlocks[POOL_NumOf];
+
 void AMemory::CreatePool(Pool pool)
 {
 	if (pool - 1 < 2)

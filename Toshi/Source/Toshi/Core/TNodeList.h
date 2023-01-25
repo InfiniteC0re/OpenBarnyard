@@ -54,13 +54,50 @@ namespace Toshi
 		class Iterator
 		{
 		public:
-			Iterator(TNode* node)
+			Iterator(TNode* pPtr)
 			{
-				m_Node = node;
+				m_pPtr = pPtr;
+			}
+
+			Iterator(T* pPtr)
+			{
+				m_pPtr = static_cast<TNode*>(pPtr);
+			}
+
+			void operator=(const Iterator& other)
+			{
+				m_pPtr = other.m_pPtr;
+			}
+
+			bool operator==(const Iterator& other) const
+			{
+				return m_pPtr == other.m_pPtr;
+			}
+
+			T* operator->() const
+			{
+				return static_cast<T*>(m_pPtr);
+			}
+
+			operator T* () const
+			{
+				return static_cast<T*>(m_pPtr);
+			}
+
+			Iterator operator++()
+			{
+				m_pPtr = m_pPtr->Next();
+				return m_pPtr;
+			}
+
+			Iterator operator--()
+			{
+				m_pPtr = m_pPtr->Prev();
+				return m_pPtr;
 			}
 
 		private:
-			TNode* m_Node;
+			TNode* m_pPtr;
 		};
 
 	public:
@@ -192,12 +229,12 @@ namespace Toshi
 
 		Iterator Begin() const
 		{
-			return Iterator(m_Head.Next());
+			return m_Head.m_Next;
 		}
 
-		Iterator End() const
+		Iterator End()
 		{
-			return Iterator(&m_Head);
+			return &m_Head;
 		}
 
 	protected:
