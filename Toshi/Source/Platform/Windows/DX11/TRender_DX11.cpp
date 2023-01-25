@@ -13,7 +13,7 @@ namespace Toshi
 
 	TRenderContext* TRender::CreateRenderContext()
 	{
-		return new TRenderContextDX11(*this);
+		return new TRenderContextDX11(this);
 	}
 
 	TRenderAdapter* TD3DAdapter::Mode::GetAdapter() const
@@ -106,9 +106,9 @@ namespace Toshi
 		m_Window(),
 		m_CurrentDepth({ 0 }, 0)
 	{
-		m_ClearColor[0] = 0.2f;
-		m_ClearColor[1] = 0.6f;
-		m_ClearColor[2] = 0.2f;
+		m_ClearColor[0] = 0.0f;
+		m_ClearColor[1] = 0.0f;
+		m_ClearColor[2] = 0.0f;
 		m_ClearColor[3] = 1.0f;
 		m_NumDrawnFrames = 0;
 
@@ -1428,6 +1428,12 @@ namespace Toshi
 
 		m_pDeviceContext->VSSetConstantBuffers(0, 1, &m_VertexBuffers[m_VertexBufferIndex]);
 		m_pDeviceContext->PSSetConstantBuffers(0, 1, &m_PixelBuffers[m_PixelBufferIndex]);
+	}
+
+	void TRenderDX11::FUN_00691190()
+	{
+		TASSERT(IsInScene() == TTRUE);
+		TIMPLEMENT();
 	}
 
 	void TRenderDX11::BuildAdapterDatabase()

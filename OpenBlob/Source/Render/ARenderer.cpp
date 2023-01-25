@@ -1,7 +1,16 @@
 #include "pch.h"
 #include "ARenderer.h"
+#include "AppBoot.h"
 
 #include <Platform/Windows/DX11/TRender_DX11.h>
+#include <Toshi/Render/TAssetInit.h>
+
+Toshi::TTRB ARenderer::s_BootAssetsTRB;
+
+static void MainScene(float deltaTime, void* pCameraObject)
+{
+
+}
 
 ARenderer::ARenderer()
 {
@@ -21,6 +30,11 @@ void ARenderer::Update(float deltaTime)
 
 	pRender->Update(deltaTime);
 	pRender->BeginScene();
+
+	if (AApplication::g_oTheApp.ShouldRenderWorld())
+	{
+		RenderMainScene(deltaTime, m_pViewport, TNULL, TNULL, MainScene, true);
+	}
 
 	ID3D11ShaderResourceView* pShaderResourceView = (pDisplayParams->MultisampleQualityLevel < 2) ? pRender->m_SRView1 : pRender->m_SRView2;
 	pRender->m_pFXAA->Render(pShaderResourceView);
@@ -57,6 +71,20 @@ bool ARenderer::CreateTRender()
 	return true;
 }
 
+void ARenderer::Create()
+{
+	TIMPLEMENT();
+
+	auto error = s_BootAssetsTRB.Load("Data\\BootAssets\\BootAssets.trb");
+
+	if (error == Toshi::TTRB::ERROR_OK)
+	{
+		Toshi::TAssetInit::InitAssets(s_BootAssetsTRB, true, false);
+	}
+
+	CreateMainViewport();
+}
+
 void ARenderer::SetBackgroundColour(uint32_t r, uint32_t g, uint32_t b)
 {
 	if (m_pViewport != TNULL)
@@ -65,4 +93,29 @@ void ARenderer::SetBackgroundColour(uint32_t r, uint32_t g, uint32_t b)
 	}
 
 	m_BackgroundColor = ((r & 0xff) << 8 | g & 0xff) << 8 | b & 0xff;
+}
+
+void ARenderer::RenderMainScene(float deltaTime, Toshi::TViewport* pViewport, void* unk2, void* pCameraObject, t_MainScene mainSceneCb, bool allowBackgroundClear)
+{
+	TIMPLEMENT();
+	pViewport->AllowDepthClear(true);
+	pViewport->AllowBackgroundClear(allowBackgroundClear);
+	pViewport->Begin();
+	// ...
+	mainSceneCb(deltaTime, pCameraObject);
+	pViewport->End();
+	// ...
+	Toshi::TRenderDX11::Interface()->FUN_00691190();
+
+}
+
+void ARenderer::CreateMainViewport()
+{
+	TIMPLEMENT();
+	m_pViewport = new Toshi::TViewport();
+	m_pViewport->SetMemoryAllocatorBlock(AMemory::ms_apMemoryBlocks[AMemory::POOL_FrequentAllocations]);
+	m_pViewport->AllowBackgroundClear(true);
+	m_pViewport->AllowDepthClear(true);
+	m_pViewport->EnableDefaultBeginRender(true);
+	m_pViewport->SetBackgroundColor(64, 64, 64, 255);
 }

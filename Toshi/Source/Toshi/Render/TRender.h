@@ -36,23 +36,56 @@ namespace Toshi
 		};
 
 	protected:
-		inline void SetDirty(bool enable) { enable ? m_eFlags |= FLAG_DIRTY : m_eFlags &= ~FLAG_DIRTY; }
-		inline void SetFlag(FLAG flag, bool enable) { enable ? m_eFlags |= flag : m_eFlags &= ~flag; }
+		void SetDirty(bool enable) { enable ? m_eFlags |= FLAG_DIRTY : m_eFlags &= ~FLAG_DIRTY; }
+		void SetFlag(FLAG flag, bool enable) { enable ? m_eFlags |= flag : m_eFlags &= ~flag; }
 
-		inline void EnableFog(bool enable) { enable ? m_eFlags |= FLAG_FOG : m_eFlags &= ~FLAG_FOG; }
-		inline bool IsFogEnabled() const { return m_eFlags & FLAG_FOG; }
-		inline bool IsDirty() const { return m_eFlags & FLAG_DIRTY; }
+		void EnableFog(bool enable) { enable ? m_eFlags |= FLAG_FOG : m_eFlags &= ~FLAG_FOG; }
+		bool IsFogEnabled() const { return m_eFlags & FLAG_FOG; }
+		bool IsDirty() const { return m_eFlags & FLAG_DIRTY; }
 	
 	public:
-		TRenderContext() { m_eFlags = 0; }
-		TRenderContext(TRender&) { m_eFlags = 0; }
+		TRenderContext(TRender* pRender)
+		{
+			m_eFlags = 0;
+			m_pRender = pRender;
+
+			// test values
+			m_fX = 0;
+			m_fY = 0;
+			m_fWidth = 640;
+			m_fHeight = 480;
+		}
 
 		virtual void SetModelViewMatrix(const TMatrix44& a_rMatrix);
-
 		virtual void SetWorldViewMatrix(const TMatrix44& a_rMatrix);
 
+		float GetX() const
+		{
+			return m_fX;
+		}
+
+		float GetY() const
+		{
+			return m_fY;
+		}
+
+		float GetWidth() const
+		{
+			return m_fWidth;
+		}
+
+		float GetHeight() const
+		{
+			return m_fHeight;
+		}
+
 	private:
-		FLAG m_eFlags;                          // 0x8
+		TRender* m_pRender;                     // 0x04
+		FLAG m_eFlags;                          // 0x08
+		float m_fX;                             // 0x18
+		float m_fY;                             // 0x1C
+		float m_fWidth;                         // 0x20
+		float m_fHeight;                        // 0x24
 		PROJECTIONPARAMS m_sProjParams;         // 0x30
 		TMatrix44 m_mModelViewMatrix;           // 0x40
 		TMatrix44 m_mWorldViewMatrix;           // 0x80

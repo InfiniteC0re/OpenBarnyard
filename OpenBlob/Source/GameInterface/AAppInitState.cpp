@@ -7,7 +7,7 @@ AGameState::UpdateResult AAppInitState::OnUpdate(float deltaTime)
 {
     TIMPLEMENT();
 
-    ARenderer::GetSingletonWeak()->SetBackgroundColour(0, 0, 0);
+    ARenderer::GetSingletonWeak()->SetBackgroundColour(64, 64, 64);
     return AGameState::OnUpdate(deltaTime);
 
     return UpdateResult_Remove;

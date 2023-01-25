@@ -44,6 +44,8 @@ bool AApplication::OnCreate(int argc, char** argv)
 		bool bResult = m_soundSystem.Create(mempool, poolSize, -1, -1, 2);
 		TASSERT(TTRUE == bResult);
 
+		m_Renderer->Create();
+		SetRenderWorld(true);
 		m_pGameStateController = AGameStateController::CreateSingleton();
 		m_pGameStateController->PushState(new AAppInitState);
 
