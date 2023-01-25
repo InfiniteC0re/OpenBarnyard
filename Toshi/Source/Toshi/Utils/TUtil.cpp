@@ -11,7 +11,7 @@ namespace Toshi
 		TLogFile* logfile = new TLogFile();
 		Toshi::TUtil::GetSingletonWeak()->m_pLogFile1 = logfile;
 		Toshi::TUtil::GetSingletonWeak()->m_pLogFile2 = logfile;
-		TIMPLEMENT("FUN_0065db40(\" * .log\",9);");
+		TIMPLEMENT_D("FUN_0065db40(\" * .log\",9);");
 		time_t seconds;
 		time(&seconds);
 

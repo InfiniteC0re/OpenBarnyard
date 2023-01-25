@@ -30,6 +30,6 @@ public:
 	}
 
 private:
-	Toshi::T2DList<AGameState> m_SomeList;
+	Toshi::T2DList<AGameState> m_GameStates;
 	AInputHelperSimple m_InputHelper;
 };

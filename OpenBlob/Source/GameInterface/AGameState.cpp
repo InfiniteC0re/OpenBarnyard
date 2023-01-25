@@ -10,6 +10,7 @@ AGameState::AGameState() :
 
 AGameState::~AGameState()
 {
+	
 }
 
 void AGameState::Unk1()
@@ -29,34 +30,65 @@ void AGameState::Unk3(void*, void*)
 
 int AGameState::OnUpdate(float deltaTime)
 {
-	TIMPLEMENT();
+	TTODO("Something with AAssetStreaming");
 	m_InputHelper.Update();
+
+	for (auto state = m_GameStates.Begin(); state != m_GameStates.End(); state++)
+	{
+		state->OnUpdate(deltaTime);
+	}
 
 	return 0;
 }
 
 void AGameState::OnInsertion()
 {
+	for (auto state = m_GameStates.Begin(); state != m_GameStates.End(); state++)
+	{
+		state->OnInsertion();
+	}
 }
 
 void AGameState::OnRemoval()
 {
+	for (auto state = m_GameStates.Begin(); state != m_GameStates.End(); state++)
+	{
+		state->OnRemoval();
+	}
+
+	m_GameStates.DeleteAll();
 }
 
 void AGameState::OnSuspend()
 {
+	for (auto state = m_GameStates.Begin(); state != m_GameStates.End(); state++)
+	{
+		state->OnDeactivate();
+	}
 }
 
 void AGameState::OnResume(void* unk)
 {
+	for (auto state = m_GameStates.Begin(); state != m_GameStates.End(); state++)
+	{
+		state->OnActivate();
+	}
 }
 
 void AGameState::OnActivate()
 {
+	for (auto state = m_GameStates.Begin(); state != m_GameStates.End(); state++)
+	{
+		state->OnActivate();
+	}
 }
 
 void AGameState::OnDeactivate()
 {
+	for (auto state = m_GameStates.Begin(); state != m_GameStates.End(); state++)
+	{
+		state->OnDeactivate();
+	}
 }
 
 bool AGameState::CanActivateConsoleState()

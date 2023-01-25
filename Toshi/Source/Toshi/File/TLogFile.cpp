@@ -18,8 +18,8 @@ int Toshi::TLogFile::Create(const char* fileName, const char* str2, bool writeEx
 	TASSERT(TNULL == m_pFile);
 	if (m_pFile != TNULL) return 2;
 
-	TIMPLEMENT("uVar1 = FUN_008289A0(fileName);");
-	TIMPLEMENT("FUN_00828A40(uVar1);");
+	TIMPLEMENT_D("uVar1 = FUN_008289A0(fileName);");
+	TIMPLEMENT_D("FUN_00828A40(uVar1);");
 	
 	int flags = TFile::FileMode_CreateNew | TFile::FileMode_NoBuffer | TFile::FileMode_Write;
 

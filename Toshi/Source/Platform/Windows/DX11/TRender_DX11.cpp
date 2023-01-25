@@ -866,6 +866,7 @@ namespace Toshi
 		}
 
 		TASSERT(TFALSE);
+		return 0;
 	}
 
 	int TRenderDX11::GetTextureDepthPitch(DXGI_FORMAT format, int width, int height)
@@ -897,6 +898,7 @@ namespace Toshi
 		}
 
 		TASSERT(TFALSE);
+		return 0;
 	}
 
 	const char* TRenderDX11::GetFeatureLevel(D3D_FEATURE_LEVEL a_featureLevel)

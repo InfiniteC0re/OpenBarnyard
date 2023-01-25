@@ -54,6 +54,11 @@ namespace Toshi
 		class Iterator
 		{
 		public:
+			Iterator()
+			{
+				m_pPtr = TNULL;
+			}
+
 			Iterator(TNode* pPtr)
 			{
 				m_pPtr = pPtr;
@@ -76,22 +81,26 @@ namespace Toshi
 
 			T* operator->() const
 			{
+				TASSERT(m_pPtr != TNULL);
 				return static_cast<T*>(m_pPtr);
 			}
 
 			operator T* () const
 			{
+				TASSERT(m_pPtr != TNULL);
 				return static_cast<T*>(m_pPtr);
 			}
 
 			Iterator operator++()
 			{
+				TASSERT(m_pPtr != TNULL);
 				m_pPtr = m_pPtr->Next();
 				return m_pPtr;
 			}
 
 			Iterator operator--()
 			{
+				TASSERT(m_pPtr != TNULL);
 				m_pPtr = m_pPtr->Prev();
 				return m_pPtr;
 			}

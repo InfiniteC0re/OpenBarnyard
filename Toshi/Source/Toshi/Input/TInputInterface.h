@@ -65,7 +65,7 @@ namespace Toshi
 					return m_Magnitude.Floats[a_iAxis];
 				}
 
-				return m_Magnitude.Ints[a_iAxis];
+				return (float)m_Magnitude.Ints[a_iAxis];
 			}
 
 			bool IsMagnitudeFloat()

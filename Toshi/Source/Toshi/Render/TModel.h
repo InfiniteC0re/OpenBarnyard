@@ -1,6 +1,6 @@
 #pragma once
 
-#include TOSHI_MULTIRENDER(TModel);
+#include TOSHI_MULTIRENDER(TModel)
 
 /*
 #include "Toshi/File/TFile.h"

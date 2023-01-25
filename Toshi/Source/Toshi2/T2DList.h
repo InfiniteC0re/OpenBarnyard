@@ -137,6 +137,11 @@ namespace Toshi
 		class Iterator
 		{
 		public:
+			Iterator()
+			{
+				m_pPtr = TNULL;
+			}
+
 			Iterator(Node* pPtr)
 			{
 				m_pPtr = static_cast<T*>(pPtr);
@@ -150,6 +155,11 @@ namespace Toshi
 			bool operator==(const Iterator& other)
 			{
 				return m_pPtr == other.m_pPtr;
+			}
+
+			bool operator!=(const Iterator& other)
+			{
+				return m_pPtr != other.m_pPtr;
 			}
 
 			void operator=(const Iterator& other)
@@ -170,17 +180,36 @@ namespace Toshi
 
 			operator T* () const
 			{
+				TASSERT(m_pPtr != TNULL);
 				return static_cast<T*>(m_pPtr);
+			}
+
+			Iterator operator++(int)
+			{
+				TASSERT(m_pPtr != TNULL);
+				Iterator old = m_pPtr;
+				m_pPtr = static_cast<T*>(m_pPtr->Next());
+				return old;
+			}
+
+			Iterator operator--(int)
+			{
+				TASSERT(m_pPtr != TNULL);
+				Iterator old = m_pPtr;
+				m_pPtr = static_cast<T*>(m_pPtr->Prev());
+				return old;
 			}
 
 			Iterator operator++()
 			{
+				TASSERT(m_pPtr != TNULL);
 				m_pPtr = m_pPtr->Next();
 				return m_pPtr;
 			}
 
 			Iterator operator--()
 			{
+				TASSERT(m_pPtr != TNULL);
 				m_pPtr = m_pPtr->Prev();
 				return m_pPtr;
 			}
@@ -193,6 +222,16 @@ namespace Toshi
 		T2DList()
 		{
 			static_assert(std::is_base_of<T2GenericDList::Node, T>::value, "T must be a descendant of T2GenericDList::Node");
+		}
+
+		Iterator Begin() const
+		{
+			return m_oRoot.Next();
+		}
+
+		Iterator End() const
+		{
+			return m_oRoot.Prev();
 		}
 
 		void Begin(Iterator& begin) const
@@ -219,6 +258,14 @@ namespace Toshi
 		{
 			iter->Remove();
 			delete static_cast<T*>(iter);
+		}
+
+		void DeleteAll()
+		{
+			for (auto it = Begin(); it != End(); it++)
+			{
+				it->Delete();
+			}
 		}
 
 		void Erase(const Iterator& iter)

@@ -5,7 +5,7 @@
 
 namespace Toshi
 {
-	using t_CanBreakBetweenChars = bool (*)(wchar_t, wchar_t);
+	typedef bool(*t_CanBreakBetweenChars)(wchar_t, wchar_t);
 
 	bool CanBreakBetweenChars_Default(wchar_t, wchar_t)
 	{

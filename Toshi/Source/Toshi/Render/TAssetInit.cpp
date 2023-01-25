@@ -10,7 +10,7 @@ namespace Toshi
 
 	void TAssetInit::InitAssets(TTRB& a_trb, bool createResources, bool allowCrossTRBReferences)
 	{
-		int funcCount = 0;
+		size_t funcCount = 0;
 		const FourCCFunction* functions;
 
 		if (!createResources)
@@ -49,7 +49,7 @@ namespace Toshi
 	{
 		TTRB::SYMB* symb = a_trb.GetSymbolTable();
 
-		for (size_t i = 0; i < symb->m_i32SymbCount; i++)
+		for (int32_t i = 0; i < symb->m_i32SymbCount; i++)
 		{
 			TTRB::TTRBSymbol* index = a_trb.GetSymbol(i);
 			const char* symbName = a_trb.GetSymbolName(index);
