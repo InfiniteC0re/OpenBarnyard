@@ -24,7 +24,9 @@ project "OpenBlob"
 		"%{wks.location}/Toshi/Source",
 		"%{IncludeDir.spdlog}",
 		"%{IncludeDir.fmod}",
-		"%{IncludeDir.libtheora}"
+		"%{IncludeDir.libtheora}",
+		"%{IncludeDir.libogg}",
+		"%{IncludeDir.libvorbis}"
 	}
 	
 	defines

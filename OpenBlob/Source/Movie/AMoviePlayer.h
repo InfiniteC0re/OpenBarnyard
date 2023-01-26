@@ -15,7 +15,7 @@ public:
 	}
 
 	virtual ~AMoviePlayer() = default;
-	virtual int PlayMovie(const char* name, void* unused, uint8_t flags) = 0;
+	virtual void PlayMovie(const char* fileName, void* unused, uint8_t flags) = 0;
 	virtual void StopMovie() = 0;
 	virtual void PauseMovie() = 0;
 	virtual void Mute(bool mute = true) { m_bIsMuted = mute; }
