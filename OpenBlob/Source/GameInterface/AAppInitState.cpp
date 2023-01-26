@@ -2,13 +2,19 @@
 #include "AppBoot.h"
 #include "AAppInitState.h"
 #include "Render/ARenderer.h"
+#include "Movie/AMoviePlayer.h"
+#include "Movie/ADX11MoviePlayer.h"
+#include "GameInterface/AFrontEndMovieState.h"
 
 AGameState::UpdateResult AAppInitState::OnUpdate(float deltaTime)
 {
     TIMPLEMENT();
 
     ARenderer::GetSingletonWeak()->SetBackgroundColour(64, 64, 64);
-    return AGameState::OnUpdate(deltaTime);
+    AGameState::OnUpdate(deltaTime);
+
+    // Create singletons here
+    ADX11MoviePlayer::Create()->OnCreate();
 
     return UpdateResult_Remove;
 }
@@ -29,6 +35,7 @@ void AAppInitState::OnRemoval()
     }
     else
     {
+        AGameStateController::GetSingleton()->PushState(new AFrontEndMovieState);
         TIMPLEMENT_D("The game");
     }
 }

@@ -17,6 +17,7 @@ public:
 		return m_GameStates.Back();
 	}
 
+	void Create();
 	void Update(float deltaTime);
 	void PushState(AGameState* pGameState);
 	void PopState(AGameState* pState);

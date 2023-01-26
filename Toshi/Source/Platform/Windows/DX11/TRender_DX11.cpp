@@ -968,7 +968,7 @@ namespace Toshi
 		unsigned int size = count * 16;
 
 		TASSERT(offset + size <= VERTEX_CONSTANT_BUFFER_SIZE, "Buffer size exceeded");
-		TUtil::MemCopy(m_pVertexConstantBuffer, src, size);
+		TUtil::MemCopy((char*)m_pVertexConstantBuffer + offset, src, size);
 		m_IsVertexConstantBufferSet = true;
 	}
 
@@ -1038,11 +1038,11 @@ namespace Toshi
 		textureDesc.Format = format;
 		textureDesc.CPUAccessFlags = cpuAccessFlags;
 		textureDesc.MipLevels = mipLevels;
-		textureDesc.MiscFlags = noMipLevels ? NULL : D3D11_RESOURCE_MISC_GENERATE_MIPS;
+		textureDesc.MiscFlags = noMipLevels ? D3D11_RESOURCE_MISC_GENERATE_MIPS : NULL;
 		textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
 
 		if (flags & 4 || noMipLevels)
-		{
+		{	
 			textureDesc.BindFlags |= D3D11_BIND_RENDER_TARGET;
 		}
 
@@ -1163,6 +1163,45 @@ namespace Toshi
 		return pSamplerState;
 	}
 
+	ID3D11Buffer* TRenderDX11::CreateBuffer(UINT flags, UINT dataSize, void* data, D3D11_USAGE usage, UINT cpuAccessFlags)
+	{
+		D3D11_BUFFER_DESC bufferDesc;
+
+		bufferDesc.ByteWidth = dataSize;
+		bufferDesc.Usage = usage;
+		bufferDesc.CPUAccessFlags = cpuAccessFlags;
+		bufferDesc.MiscFlags = 0;
+		bufferDesc.StructureByteStride = 0;
+
+		if (flags == 0)
+		{
+			bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+		}
+		else
+		{
+			bufferDesc.BindFlags = (flags == 1) ? D3D11_BIND_INDEX_BUFFER : D3D11_BIND_CONSTANT_BUFFER;
+		}
+
+		ID3D11Buffer* pBuffer;
+
+		if (data != TNULL)
+		{
+			D3D11_SUBRESOURCE_DATA subData;
+			subData.pSysMem = data;
+			subData.SysMemPitch = 0;
+			subData.SysMemSlicePitch = 0;
+
+			m_pDevice->CreateBuffer(&bufferDesc, &subData, &pBuffer);
+		}
+		else
+		{
+			m_pDevice->CreateBuffer(&bufferDesc, TNULL, &pBuffer);
+		}
+		
+
+		return pBuffer;
+	}
+
 	void TRenderDX11::SetBlendMode(bool blendEnabled, D3D11_BLEND_OP blendOp, D3D11_BLEND srcBlendAlpha, D3D11_BLEND destBlendAlpha)
 	{
 		m_CurrentBlendState.Parts.BlendOp = blendOp;
@@ -1209,6 +1248,87 @@ namespace Toshi
 		FlushConstantBuffers();
 		m_pDeviceContext->IASetPrimitiveTopology(primitiveTopology);
 		m_pDeviceContext->Draw(vertexCount, startVertex);
+	}
+
+	void TRenderDX11::CopyDataToTexture(ID3D11ShaderResourceView* pSRTex, UINT dataSize, void* src, UINT rowSize)
+	{
+		UINT uVar1;
+		size_t* copySize;
+		char* _Src;
+		UINT leftSize;
+		D3D11_MAPPED_SUBRESOURCE dstPos;
+		ID3D11Texture2D* pTexture;
+
+		pTexture = (ID3D11Texture2D*)0x0;
+		pSRTex->GetResource((ID3D11Resource**)&pTexture);
+		m_pDeviceContext->Map(pTexture, 0, D3D11_MAP_WRITE_DISCARD, 0, &dstPos);
+		uVar1 = rowSize;
+		_Src = (char*)src;
+		leftSize = dataSize;
+		while (dataSize = leftSize, leftSize != 0) {
+			copySize = &dataSize;
+			if (uVar1 <= leftSize) {
+				copySize = &rowSize;
+			}
+			TUtil::MemCopy(dstPos.pData, _Src, *copySize);
+			leftSize = leftSize - uVar1;
+			dstPos.pData = (void*)((int)dstPos.pData + dstPos.RowPitch);
+			_Src = _Src + uVar1;
+			dataSize = leftSize;
+		}
+		m_pDeviceContext->Unmap(pTexture, 0);
+		pTexture->Release();
+		return;
+
+		//ID3D11Texture2D* pTexture;
+		//pSRTex->GetResource((ID3D11Resource**)&pTexture);
+
+		//D3D11_MAPPED_SUBRESOURCE mappedSubresource;
+		//m_pDeviceContext->Map(pTexture, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubresource);
+
+		//uint8_t* srcPos = (uint8_t*)src;
+		//uint8_t* dstPos = (uint8_t*)mappedSubresource.pData;
+
+		///*while (dataSize != 0)
+		//{
+		//	UINT copySize = TMath::Min(dataSize, rowSize);
+
+		//	TUtil::MemCopy(dstPos, srcPos, copySize);
+
+		//	dataSize -= rowSize;
+		//	srcPos += rowSize;
+		//	dstPos += mappedSubresource.RowPitch;
+		//}*/
+
+		//UINT leftSize = dataSize;
+		//while (dataSize = leftSize, leftSize != 0) {
+		//	UINT* copySize = &dataSize;
+		//	if (rowSize <= leftSize) {
+		//		copySize = &rowSize;
+		//	}
+		//	TUtil::MemCopy(mappedSubresource.pData, srcPos, *copySize);
+		//	leftSize = leftSize - rowSize;
+		//	mappedSubresource.pData = (void*)((int)mappedSubresource.pData + mappedSubresource.RowPitch);
+		//	srcPos = srcPos + rowSize;
+		//	dataSize = leftSize;
+		//}
+
+		//m_pDeviceContext->Unmap(pTexture, 0);
+		//pTexture->Release();
+	}
+
+	void TRenderDX11::SetSamplerState(UINT startSlot, int samplerId, BOOL SetForVS)
+	{
+		auto pSampler = m_SamplerStates[samplerId];
+
+		if (SetForVS == TRUE)
+		{
+			m_pDeviceContext->VSSetSamplers(startSlot, 1, &pSampler);
+		}
+		else
+		{
+			m_pDeviceContext->PSSetSamplers(startSlot, 1, &pSampler);
+		}
 	}
 
 	void TRenderDX11::UpdateRenderStates()
@@ -1367,21 +1487,20 @@ namespace Toshi
 	{
 		auto pRender = TRenderDX11::Interface();
 		auto pDeviceContext = pRender->GetDeviceContext();
+		pDeviceContext->VSSetShader(pRender->m_pVertexShader, NULL, NULL);
 
 		if (pPixelShader == NULL)
 		{
 			pPixelShader = pRender->m_pPixelShader1;
 		}
 
-		pDeviceContext->VSSetShader(pRender->m_pVertexShader, NULL, NULL);
 		pDeviceContext->PSSetShader(pPixelShader, NULL, NULL);
 		pDeviceContext->IASetInputLayout(pRender->m_pInputLayout);
 
 		pRender->m_CurrentRasterizerId.Flags.Parts.CullMode = D3D11_CULL_NONE;
 		
-		auto& depthFlags = pRender->m_CurrentDepth.GetFirst();
+		auto& depthFlags = pRender->m_CurrentDepth.m_First;
 		depthFlags.Parts.bDepthEnable = FALSE;
-		depthFlags.Parts.bStencilEnable = FALSE;
 		depthFlags.Parts.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
 		depthFlags.Parts.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
 

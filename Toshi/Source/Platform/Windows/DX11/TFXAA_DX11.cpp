@@ -29,6 +29,7 @@ namespace Toshi
 		delete[] srcData;
 
 		TRenderDX11::Interface()->CreatePixelShader(shader->GetBufferPointer(), shader->GetBufferSize(), &m_pShader);
+		Initialize();
 	}
 
 	TFXAA::~TFXAA()
@@ -89,7 +90,7 @@ namespace Toshi
 		pDeviceContext->OMGetRenderTargets(1, &pRenderTargetViews, &pDepthStencilView);
 		pRender->SetBlendMode(TFALSE, D3D11_BLEND_OP_ADD, D3D11_BLEND_SRC_ALPHA, D3D11_BLEND_INV_SRC_ALPHA);
 
-		// Set our render targets
+		// Set our render target
 		pDeviceContext->OMSetRenderTargets(1, &m_pRenderTarget, NULL);
 
 		TVector4 unk;

@@ -11,6 +11,7 @@
 #include "AAssetStreaming.h"
 #include "AExampleClass.h"
 #include "GameInterface/AAppInitState.h"
+#include "Movie/AMoviePlayer.h"
 #include "Locale/ALocaleManager.h"
 #include "Input/AInputManager2.h"
 #include "ALevelInformation.h"
@@ -47,6 +48,7 @@ bool AApplication::OnCreate(int argc, char** argv)
 		m_Renderer->Create();
 		SetRenderWorld(true);
 		m_pGameStateController = AGameStateController::CreateSingleton();
+		m_pGameStateController->Create();
 		m_pGameStateController->PushState(new AAppInitState);
 
 		TApplication::OnCreate(argc, argv);
@@ -62,6 +64,13 @@ bool AApplication::OnCreate(int argc, char** argv)
 
 bool AApplication::OnUpdate(float deltaTime)
 {
+	AMoviePlayer* pMoviePlayer = AMoviePlayer::GetSingletonWeak();
+
+	if (pMoviePlayer != TNULL)
+	{
+		pMoviePlayer->OnUpdate(deltaTime);
+	}
+
 	m_pGameStateController->Update(deltaTime);
 	ARenderer::GetSingletonWeak()->Update(deltaTime);
 	return true;

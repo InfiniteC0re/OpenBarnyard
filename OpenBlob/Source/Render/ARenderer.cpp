@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "ARenderer.h"
 #include "AppBoot.h"
+#include "Movie/AMoviePlayer.h"
 
 #include <Platform/Windows/DX11/TRender_DX11.h>
 #include <Toshi/Render/TAssetInit.h>
@@ -28,10 +29,24 @@ void ARenderer::Update(float deltaTime)
 	auto pRender = Toshi::TRenderDX11::Interface();
 	auto pDisplayParams = pRender->GetCurrentDisplayParams();
 
+	bool bRenderWorld = AApplication::g_oTheApp.ShouldRenderWorld();
+	bool bRenderMovie = TFALSE;
+
+	AMoviePlayer* pMoviePlayer = AMoviePlayer::GetSingletonWeak();
+
+	if (pMoviePlayer != TNULL && pMoviePlayer->IsMoviePlaying())
+	{
+		bRenderMovie = TTRUE;
+	}
+
 	pRender->Update(deltaTime);
 	pRender->BeginScene();
-
-	if (AApplication::g_oTheApp.ShouldRenderWorld())
+	
+	if (bRenderMovie)
+	{
+		pMoviePlayer->OnRender(deltaTime);
+	}
+	else if (bRenderWorld)
 	{
 		RenderMainScene(deltaTime, m_pViewport, TNULL, TNULL, MainScene, true);
 	}

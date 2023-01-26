@@ -2,6 +2,14 @@
 #include "AGameStateController.h"
 #include "AppBoot.h"
 
+void AGameStateController::Create()
+{
+	TIMPLEMENT();
+
+	AGameState* pDummyState = new AGameState;
+	PushState(pDummyState);
+}
+
 void AGameStateController::Update(float deltaTime)
 {
 	AGameState* pCurrentGameState = GetCurrentGameState();

@@ -28,9 +28,9 @@ public:
 	virtual void SetHideMovie(bool hide = true) { m_bIsHidden = hide; }
 	virtual void SetFullScreen(bool fullscreen = true) { m_bIsFullscreen = fullscreen; }
 	virtual void OnRender(float deltaTime) = 0;
-	virtual bool OnUpdate(float deltaTime) { return true; }
-	virtual bool OnCreate() { TASSERT(TFALSE == m_bInitialised); m_bInitialised = true; }
-	virtual bool OnDestroy() { TASSERT(TTRUE == m_bInitialised); m_bInitialised = false; }
+	virtual void OnUpdate(float deltaTime) { }
+	virtual void OnCreate() { TASSERT(TFALSE == m_bInitialised); m_bInitialised = true; }
+	virtual void OnDestroy() { TASSERT(TTRUE == m_bInitialised); m_bInitialised = false; }
 	virtual void OnActivate() { }
 	virtual void OnDeactivate() { }
 
