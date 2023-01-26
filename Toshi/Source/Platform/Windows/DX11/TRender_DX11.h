@@ -353,6 +353,7 @@ namespace Toshi
 		void SetAlphaUpdate(bool update);
 		void SetColorUpdate(bool update);
 		void SetZMode(bool depthEnable, D3D11_COMPARISON_FUNC comparisonFunc, D3D11_DEPTH_WRITE_MASK depthWriteMask);
+		void DrawMesh(D3D11_PRIMITIVE_TOPOLOGY primitiveTopology, ID3D11Buffer* pVertexBuffer, UINT vertexCount, UINT strides, UINT startVertex, UINT offsets);
 
 		void UpdateRenderStates();
 		void FlushConstantBuffers();

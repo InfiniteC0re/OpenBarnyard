@@ -1202,6 +1202,15 @@ namespace Toshi
 		m_CurrentDepth.m_First.Parts.DepthFunc = comparisonFunc;
 	}
 
+	void TRenderDX11::DrawMesh(D3D11_PRIMITIVE_TOPOLOGY primitiveTopology, ID3D11Buffer* pVertexBuffer, UINT vertexCount, UINT strides, UINT startVertex, UINT offsets)
+	{
+		UpdateRenderStates();
+		m_pDeviceContext->IASetVertexBuffers(0, 1, &pVertexBuffer, &strides, &offsets);
+		FlushConstantBuffers();
+		m_pDeviceContext->IASetPrimitiveTopology(primitiveTopology);
+		m_pDeviceContext->Draw(vertexCount, startVertex);
+	}
+
 	void TRenderDX11::UpdateRenderStates()
 	{
 		// Update depth state if needed
