@@ -24,6 +24,5 @@ private:
 
 private:
 	char m_CurrentFileName[MAX_FILE_NAME + 1]; // 0x047
-	//th_info m_TheoraInfo;                      // 0x164
 	FILE* m_pFile;                             // 0x16C
 };

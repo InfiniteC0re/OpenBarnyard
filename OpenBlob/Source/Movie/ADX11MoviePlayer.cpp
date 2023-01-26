@@ -27,8 +27,7 @@ void ADX11MoviePlayer::PlayMovie(const char* fileName, void* unused, uint8_t fla
 
     if (m_pFile != TNULL)
     {
-        th_info_init
-        //th_decode_alloc()
+        
     }
 }
 
