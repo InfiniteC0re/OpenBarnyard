@@ -267,14 +267,6 @@ namespace Toshi
 			uint64_t Raw;
 		};
 
-		/*static inline float s_vertexData[] =
-		{
-			1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 
-			0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 
-			1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
-			-1.0f, 0.0f, 0.0f, 0.0f, 0.0f
-		};*/
-
 		struct DepthStencilComparator
 		{
 			static bool IsEqual(const DepthState& a, const DepthState& b) { return a.Raw == b.Raw; }
@@ -298,14 +290,10 @@ namespace Toshi
 		using DepthStatePair = T2Pair<DepthState, ID3D11DepthStencilState*, DepthStencilComparator>;
 		using DepthPair = T2Pair<DepthState, UINT, DepthStencilComparator>;
 		
-		static inline const char* s_defaultVertexShader_orig = " float4 ScaleTranslate : register(c0);               float4 uvST : register(c1);                                                             struct VS_IN                                                                                {                                                 float4 ObjPos   : POSITION;                   float2 UV\t\t  : TEXCOORD0;\t\t\t    };                                                                                          struct VS_OUT                                 {                                                 float4 ProjPos  : SV_POSITION;                   float2 UV\t\t  : TEXCOORD0;\t\t\t    };                                                                                          VS_OUT main( VS_IN In )                       {                                                 VS_OUT Out;                                   float4 scaledvert = In.ObjPos.xyzw * ScaleTranslate.xyzw;         scaledvert = scaledvert.xyzw + ScaleTranslate.zwzw;\t\t\t\t        scaledvert.zw = float2(0.0,1.0);\t\t\t\t\t\t\t\t     Out.ProjPos = scaledvert;\t\t\t\t        Out.UV = (In.UV*uvST.xy) + uvST.zw;           return Out;                               }                                            ";
-		static inline const char* s_defaultPixelShader_orig = " struct PS_IN                                  {                                            \t\tfloat4 Position\t\t\t: SV_POSITION; \t\tfloat2 Tex0             : TEXCOORD0;    };                                                                                          sampler2D   diffuse_texture     : register(s0) = sampler_state { MipFilter = NONE; MinFilter = LINEAR; MagFilter = LINEAR; AddressU = WRAP; AddressV = WRAP; };   float4 main( PS_IN In )  : COLOR\t\t\t    {                                                return tex2D( diffuse_texture, In.Tex0 );        }                                            ";
+		static inline const char* s_defaultVertexShader = " float4 ScaleTranslate : register(c0);               float4 uvST : register(c1);                                                             struct VS_IN                                                                                {                                                 float4 ObjPos   : POSITION;                   float2 UV\t\t  : TEXCOORD0;\t\t\t    };                                                                                          struct VS_OUT                                 {                                                 float4 ProjPos  : SV_POSITION;                   float2 UV\t\t  : TEXCOORD0;\t\t\t    };                                                                                          VS_OUT main( VS_IN In )                       {                                                 VS_OUT Out;                                   float4 scaledvert = In.ObjPos.xyzw * ScaleTranslate.xyzw;         scaledvert = scaledvert.xyzw + ScaleTranslate.zwzw;\t\t\t\t        scaledvert.zw = float2(0.0,1.0);\t\t\t\t\t\t\t\t     Out.ProjPos = scaledvert;\t\t\t\t        Out.UV = (In.UV*uvST.xy) + uvST.zw;           return Out;                               }                                            ";
+		static inline const char* s_defaultPixelShader = " struct PS_IN                                  {                                            \t\tfloat4 Position\t\t\t: SV_POSITION; \t\tfloat2 Tex0             : TEXCOORD0;    };                                                                                          sampler2D   diffuse_texture     : register(s0) = sampler_state { MipFilter = NONE; MinFilter = LINEAR; MagFilter = LINEAR; AddressU = WRAP; AddressV = WRAP; };   float4 main( PS_IN In )  : COLOR\t\t\t    {                                                return tex2D( diffuse_texture, In.Tex0 );        }                                            ";
 		static inline const char* s_defaultPixelShader2 = " struct PS_IN                                  {                                            \t\tfloat4 Position\t\t\t: SV_POSITION; \t\tfloat2 Tex0             : TEXCOORD0;    };                                                                                          sampler2D   diffuse_texture     : register(s0) = sampler_state { MipFilter = NONE; MinFilter = LINEAR; MagFilter = LINEAR; AddressU = WRAP; AddressV = WRAP; };   float4 main( PS_IN In )  : COLOR\t\t\t    {                                                return float4(tex2D( diffuse_texture, In.Tex0 ).xyz, 1.0);        }                                            ";
 		
-		// Test shaders
-		static inline const char* s_defaultVertexShader = "struct VS_IN { float4 ObjPos : POSITION; float2 UV : TEXCOORD; }; struct VS_OUT { float4 ProjPos : POSITION; float2 UV : TEXCOORD; }; VS_OUT main( VS_IN In ) { VS_OUT Out; Out.ProjPos = In.ObjPos; Out.UV = In.UV; return Out; }";
-		static inline const char* s_defaultPixelShader = " struct PS_IN                                  {                                            \t\tfloat4 Position\t\t\t: SV_POSITION; \t\tfloat2 Tex0             : TEXCOORD0;    };                                                                                          float4 main( PS_IN In )  : COLOR\t\t\t    {                                                return float4( 1.0f, 1.0f, 0.0f, 1.0f );        }                                            ";
-
 	public:
 		TRenderDX11();
 		~TRenderDX11() = default;
