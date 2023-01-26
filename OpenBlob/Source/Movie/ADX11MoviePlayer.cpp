@@ -155,21 +155,30 @@ void ADX11MoviePlayer::OnUpdate(float deltaTime)
         TASSERT(m_TheoraDecoder && m_TheoraVideo);
         m_Position += deltaTime * 1000;
 
-        while (m_FrameMS < (m_Position - m_TheoraVideo->playms))
+        if (m_TheoraVideo->playms <= m_Position)
         {
-            THEORAPLAY_freeVideo(m_TheoraVideo);
-            
-            m_TheoraVideo = THEORAPLAY_getVideo(m_TheoraDecoder);
-            while (m_TheoraVideo == TNULL)
+            const THEORAPLAY_VideoFrame* last = m_TheoraVideo;
+            while ((m_TheoraVideo = THEORAPLAY_getVideo(m_TheoraDecoder)) != NULL)
             {
-                m_TheoraVideo = THEORAPLAY_getVideo(m_TheoraDecoder);
+                THEORAPLAY_freeVideo(last);
+                last = m_TheoraVideo;
+
+                if ((m_Position - m_TheoraVideo->playms) < m_FrameMS)
+                {
+                    break;
+                }
+            }
+
+            if (!m_TheoraVideo)
+            {
+                m_TheoraVideo = last;
             }
 
             if (m_TheoraVideo == TNULL)
             {
                 TIMPLEMENT();
                 StopMovieImpl();
-                break;
+                PauseMovie();
             }
         }
     }
@@ -240,7 +249,6 @@ void ADX11MoviePlayer::CompileShader()
         pRender->CreatePixelShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), &m_pPixelShader);
         pBlob->Release();
     }
-
 
     {
         // Vertex shader
