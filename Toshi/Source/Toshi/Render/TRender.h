@@ -55,17 +55,7 @@ namespace Toshi
 		bool IsDirty() const { return m_eFlags & FLAG_DIRTY; }
 	
 	public:
-		TRenderContext(TRender* pRender)
-		{
-			m_eFlags = 0;
-			m_pRender = pRender;
-
-			// test values
-			m_oParams.fX = 0;
-			m_oParams.fY = 0;
-			m_oParams.fWidth = 640;
-			m_oParams.fHeight = 480;
-		}
+		TRenderContext(TRender* pRender);
 
 		virtual void SetModelViewMatrix(const TMatrix44& a_rMatrix);
 		virtual void SetWorldViewMatrix(const TMatrix44& a_rMatrix);

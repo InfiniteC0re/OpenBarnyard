@@ -205,6 +205,30 @@ namespace Toshi
 	{
 	}
 
+	TRenderContext::TRenderContext(TRender* pRender)
+	{
+		TIMPLEMENT();
+		m_eFlags = 0;
+		m_pRender = pRender;
+
+		m_oParams.fX = 0;
+		m_oParams.fY = 0;
+		m_oParams.fMaxZ = 1.0f;
+		m_oParams.fMinZ = 1.0f;
+
+		auto pDevice = pRender->GetCurrentDevice();
+		
+		if (pDevice == TNULL)
+		{
+			m_oParams.fWidth = 640.0f;
+			m_oParams.fHeight = 480.0f;
+		}
+		else
+		{
+			TASSERT(TFALSE, "Not used in De blob");
+		}
+	}
+
 	void TRenderContext::SetModelViewMatrix(const TMatrix44& a_rMatrix)
 	{
 		m_eFlags |= (FLAG_HASMODELVIEWMATRIX | FLAG_HASWORLDVIEWMATRIX);

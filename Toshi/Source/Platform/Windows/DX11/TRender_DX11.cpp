@@ -519,7 +519,6 @@ namespace Toshi
 			
 			if (m_DisplayParams.MultisampleQualityLevel < 2)
 			{
-
 				if (s_pShaderResourceView == TNULL)
 				{
 					m_pDevice->CreateShaderResourceView(m_SRView1Texture, 0, &s_pShaderResourceView);
@@ -655,15 +654,28 @@ namespace Toshi
 		m_pDevice->CreateInputLayout(inputDesc, 2, shaderVS->GetBufferPointer(), shaderVS->GetBufferSize(), &m_pInputLayout);
 		shaderVS->Release();
 
-		D3D11_SUBRESOURCE_DATA vertexData = {};
-		vertexData.pSysMem = s_vertexData;
+		D3D11_SUBRESOURCE_DATA vertexData;
 
-		D3D11_BUFFER_DESC desc = {};
-		desc.ByteWidth = sizeof(s_vertexData);
-		desc.Usage = D3D11_USAGE_IMMUTABLE;
-		desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+		FLOAT vertices[20] = {
+			0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+			0.0f, -1.0f, 0.0f, 0.0f, 1.0f,
+			1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+			1.0f, -1.0f, 0.0f, 1.0f, 1.0f
+		};
 
-		m_pDevice->CreateBuffer(&desc, &vertexData, &m_pSomeBuffer);
+		vertexData.pSysMem = vertices;
+		vertexData.SysMemPitch = 0;
+		vertexData.SysMemSlicePitch = 0;
+
+		D3D11_BUFFER_DESC bufferDesc;
+		bufferDesc.ByteWidth = sizeof(vertices);
+		bufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+		bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+		bufferDesc.CPUAccessFlags = 0;
+		bufferDesc.MiscFlags = 0;
+		bufferDesc.StructureByteStride = 0;
+
+		m_pDevice->CreateBuffer(&bufferDesc, &vertexData, &m_pSomeBuffer);
 	}
 
 	bool TRenderDX11::Create(LPCSTR a_name)
@@ -1372,32 +1384,30 @@ namespace Toshi
 		D3D11_VIEWPORT viewPort;
 		pDeviceContext->RSGetViewports(&numViewports, &viewPort);
 
-		TVector4 unk;
-
-		unk.x = (width / viewPort.Width) * 2 - 1;
-		unk.y = (height / viewPort.Height) * 2 - 1;
-		unk.z = (posX / viewPort.Width) * 2;
-		unk.w = (posY / viewPort.Height) * 2;
+		TVector4 vec1;
+		vec1.x = (width / viewPort.Width) * 2.0f;
+		vec1.y = (height / viewPort.Height) * 2.0f;
+		vec1.z = (posX / viewPort.Width) * 2.0f - 1.0f;
+		vec1.w = (2.0f - (posY / viewPort.Height) * 2.0f) - 1.0f;
+		pRender->CopyToVertexConstantBuffer(0, &vec1, 1);
 
 		if (srcData == TNULL)
 		{
-			srcData = &unk;
-			unk.x = 1.0F;
-			unk.y = 1.0F;
-			unk.z = 0.0F;
-			unk.w = 0.0F;
+			srcData = &vec1;
+			vec1.x = 1.0F;
+			vec1.y = 1.0F;
+			vec1.z = 0.0F;
+			vec1.w = 0.0F;
 		}
 
 		pRender->m_IsVertexConstantBufferSet = true;
 		pRender->CopyToVertexConstantBuffer(1, srcData, 1);
 
-		pRender->UpdateRenderStates();
-
 		UINT stride = 20;
 		UINT offsets = 0;
 
+		pRender->UpdateRenderStates();
 		pDeviceContext->IASetVertexBuffers(0, 1, &pRender->m_pSomeBuffer, &stride, &offsets);
-
 		pRender->FlushConstantBuffers();
 
 		pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);

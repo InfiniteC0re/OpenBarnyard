@@ -18,12 +18,13 @@ namespace Toshi
 		m_pRenderCtx = TRender::GetSingletonWeak()->CreateRenderContext();
 		m_MemAllocatorBlock = TNULL;
 
-		TIMPLEMENT();
+		SetWidth(-1.0f);
+		SetHeight(-1.0f);
 	}
 
 	TViewport::~TViewport()
 	{
-		TFALSE;
+		TIMPLEMENT();
 	}
 
 	void TViewport::BeginSKU()
@@ -47,7 +48,7 @@ namespace Toshi
 			ID3D11DepthStencilView* pDepthStencilView;
 
 			pDeviceContext->OMGetRenderTargets(1, &pRenderTargetView, &pDepthStencilView);
-
+			
 			if (m_bAllowBackgroundClear && pRenderTargetView != TNULL)
 			{
 				uint8_t r, g, b, a;

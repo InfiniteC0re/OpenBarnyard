@@ -267,13 +267,13 @@ namespace Toshi
 			uint64_t Raw;
 		};
 
-		static inline float s_vertexData[] =
+		/*static inline float s_vertexData[] =
 		{
 			1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 
 			0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 
 			1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
 			-1.0f, 0.0f, 0.0f, 0.0f, 0.0f
-		};
+		};*/
 
 		struct DepthStencilComparator
 		{
