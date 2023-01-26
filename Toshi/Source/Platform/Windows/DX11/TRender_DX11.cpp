@@ -978,7 +978,7 @@ namespace Toshi
 		unsigned int size = count * 16;
 
 		TASSERT(offset + size <= PIXEL_CONSTANT_BUFFER_SIZE, "Buffer size exceeded");
-		TUtil::MemCopy(m_pPixelConstantBuffer, src, size);
+		TUtil::MemCopy((char*)m_pPixelConstantBuffer + offset, src, size);
 		m_IsPixelConstantBufferSet = true;
 	}
 
