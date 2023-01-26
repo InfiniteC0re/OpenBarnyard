@@ -91,6 +91,7 @@ void ADX11MoviePlayer::StopMovie()
 
 void ADX11MoviePlayer::PauseMovie()
 {
+    m_bIsPaused = TTRUE;
     TIMPLEMENT();
 }
 
@@ -169,10 +170,10 @@ void ADX11MoviePlayer::OnUpdate(float deltaTime)
                 }
             }
 
-            if (!m_TheoraVideo)
+           /* if (!m_TheoraVideo)
             {
                 m_TheoraVideo = last;
-            }
+            }*/
 
             if (m_TheoraVideo == TNULL)
             {

@@ -8,10 +8,12 @@ AGameState::UpdateResult AFrontEndMovieState::OnUpdate(float deltaTime)
     TIMPLEMENT();
     AGameState::OnUpdate(deltaTime);
 
+    AMoviePlayer* pMoviePlayer = AMoviePlayer::GetSingletonWeak();
+
     switch (m_iAssetId)
     {
     case Asset_Legal:
-        StartMovie(Asset_Intro);
+        StartMovie(Asset_THQLogo);
         break;
     }
 
