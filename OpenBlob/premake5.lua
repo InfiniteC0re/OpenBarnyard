@@ -8,7 +8,9 @@ project "OpenBlob"
 
 	links
 	{
-		"Toshi"
+		"Toshi",
+		"libtheora",
+		"theoraplay"
 	}
 
 	files
@@ -22,7 +24,11 @@ project "OpenBlob"
 		"Source",
 		"%{wks.location}/Toshi/Source",
 		"%{IncludeDir.spdlog}",
-		"%{IncludeDir.fmod}"
+		"%{IncludeDir.fmod}",
+		"%{IncludeDir.libtheora}",
+		"%{IncludeDir.libogg}",
+		"%{IncludeDir.libvorbis}",
+		"%{IncludeDir.theoraplay}"
 	}
 	
 	defines

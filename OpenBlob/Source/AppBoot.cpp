@@ -8,23 +8,25 @@
 #include <Toshi.h>
 
 // Including everything else
-#include "AppBoot.h"
 #include "AAssetStreaming.h"
 #include "AExampleClass.h"
+#include "GameInterface/AAppInitState.h"
+#include "Movie/AMoviePlayer.h"
+#include "Locale/ALocaleManager.h"
+#include "Input/AInputManager2.h"
+#include "ALevelInformation.h"
 
 #include <Toshi/Sound/TSound.h>
+#include <Toshi/Render/TRender.h>
 #include TOSHI_MULTIRENDER(TRender)
 
+AApplication AApplication::g_oTheApp;
 static Toshi::TSound m_soundSystem = Toshi::TSound();
-
-Toshi::TApplication* Toshi::CreateApplication(int argc, char** argv)
-{
-	return new AApplication();
-}
 
 bool AApplication::OnCreate(int argc, char** argv)
 {
 	TOSHI_INFO("Starting Blob...");
+	AMemory::CreatePools();
 
 	ARenderer::CreateSingleton();
 	AAssetStreaming::CreateSingleton();
@@ -33,24 +35,43 @@ bool AApplication::OnCreate(int argc, char** argv)
 	m_Renderer = ARenderer::GetSingleton();
 	bool interfaceCreated = m_Renderer->CreateInterface();
 	
-	size_t poolSize = 128 * 1024 * 1024;
-	void* mempool = malloc(poolSize);
+	if (interfaceCreated)
+	{
+		AInputManager2::CreateSingleton();
 
-	bool bResult = m_soundSystem.Create(mempool, poolSize, -1, -1, 2);
-	TASSERT(TTRUE == bResult);
+		size_t poolSize = 128 * 1024 * 1024;
+		void* mempool = malloc(poolSize);
 
-	TApplication::OnCreate(argc, argv);
-	//ALevelInformation info = ALevelInformation();
-	//info.Create("C:\\Program Files (x86)\\Steam\\steamapps\\common\\de Blob\\Data\\Levels.trb");
+		bool bResult = m_soundSystem.Create(mempool, poolSize, -1, -1, 2);
+		TASSERT(TTRUE == bResult);
 
-	AExampleClass* exampleClass = new AExampleClass();
-	exampleClass->Delete();
+		m_Renderer->Create();
+		SetRenderWorld(true);
+		m_pGameStateController = AGameStateController::CreateSingleton();
+		m_pGameStateController->Create();
+		m_pGameStateController->PushState(new AAppInitState);
+
+		TApplication::OnCreate(argc, argv);
+		//ALevelInformation info = ALevelInformation();
+		//info.Create("C:\\Program Files (x86)\\Steam\\steamapps\\common\\de Blob\\Data\\Levels.trb");
+
+		AExampleClass* exampleClass = new AExampleClass();
+		exampleClass->Delete();
+	}
 	
 	return true;
 }
 
 bool AApplication::OnUpdate(float deltaTime)
 {
+	AMoviePlayer* pMoviePlayer = AMoviePlayer::GetSingletonWeak();
+
+	if (pMoviePlayer != TNULL)
+	{
+		pMoviePlayer->OnUpdate(deltaTime);
+	}
+
+	m_pGameStateController->Update(deltaTime);
 	ARenderer::GetSingletonWeak()->Update(deltaTime);
 	return true;
 }

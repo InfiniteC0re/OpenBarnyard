@@ -1,22 +1,18 @@
 #include "ToshiPCH.h"
 #include "TDebugConsole_Win.h"
 #include "Toshi/Strings/TString8.h"
+
 #include <conio.h>
 
 namespace Toshi
 {
-	TDebugConsole* TDebugConsole::Create()
-	{
-		return new TDebugConsole_Win;
-	}
-
-	TDebugConsole_Win::TDebugConsole_Win()
+	TDebugConsole::TDebugConsole()
 	{
 		m_HWND = FindConsole();
 		m_Created = m_HWND != TNULL;
 	}
 
-	TDebugConsole_Win::~TDebugConsole_Win()
+	TDebugConsole::~TDebugConsole()
 	{
 		if (IsCreated())
 		{
@@ -28,7 +24,7 @@ namespace Toshi
 		}
 	}
 
-	bool TDebugConsole_Win::Show(bool state)
+	bool TDebugConsole::Show(bool state)
 	{
 		bool oldState = m_Visible;
 		m_Visible = state;
@@ -39,13 +35,13 @@ namespace Toshi
 		return oldState;
 	}
 
-	bool TDebugConsole_Win::Toggle()
+	bool TDebugConsole::Toggle()
 	{
 		Show(!m_Visible);
 		return m_Visible;
 	}
 
-	HWND TDebugConsole_Win::FindConsole() const
+	HWND TDebugConsole::FindConsole() const
 	{
 		TString8 str = TString8(TDebugConsoleUUID);
 

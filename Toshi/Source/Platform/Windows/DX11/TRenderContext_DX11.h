@@ -6,8 +6,12 @@ namespace Toshi
 	class TRenderContextDX11 : public TRenderContext
 	{
 	public:
-		TRenderContextDX11() : TRenderContext() {}
-		TRenderContextDX11(TRender& renderer) : TRenderContext(renderer) {}
+		TRenderContextDX11(TRender* pRender) : TRenderContext(pRender)
+		{
+
+		}
+
+	private:
 
 	};
 }

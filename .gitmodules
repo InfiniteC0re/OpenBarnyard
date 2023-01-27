@@ -1,3 +1,6 @@
 [submodule "Toshi/Vendor/spdlog"]
 	path = Toshi/Vendor/spdlog
 	url = https://github.com/gabime/spdlog
+[submodule "Toshi/Vendor/theoraplay"]
+	path = Toshi/Vendor/theoraplay
+	url = https://github.com/InfiniteC0re/theoraplay

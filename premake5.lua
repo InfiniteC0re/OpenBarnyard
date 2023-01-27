@@ -17,8 +17,15 @@ workspace "Toshi"
 	filter "options:arch=x64"
 		architecture "x64"
 
-include "Toshi"
-include "OpenBlob"
+group "Engine"
+	include "Toshi"
+	include "OpenBlob"
 
-group "Tools"
+group "Toshi Tools"
 	include "Tools/TRBF"
+	
+group "Third-Party"
+	include "Toshi/Vendor/libogg"
+	include "Toshi/Vendor/libvorbis"
+	include "Toshi/Vendor/libtheora"
+	include "Toshi/Vendor/theoraplay"

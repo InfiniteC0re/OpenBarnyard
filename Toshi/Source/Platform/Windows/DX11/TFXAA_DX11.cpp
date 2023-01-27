@@ -29,6 +29,7 @@ namespace Toshi
 		delete[] srcData;
 
 		TRenderDX11::Interface()->CreatePixelShader(shader->GetBufferPointer(), shader->GetBufferSize(), &m_pShader);
+		Initialize();
 	}
 
 	TFXAA::~TFXAA()
@@ -89,20 +90,20 @@ namespace Toshi
 		pDeviceContext->OMGetRenderTargets(1, &pRenderTargetViews, &pDepthStencilView);
 		pRender->SetBlendMode(TFALSE, D3D11_BLEND_OP_ADD, D3D11_BLEND_SRC_ALPHA, D3D11_BLEND_INV_SRC_ALPHA);
 
-		// Set our render targets
+		// Set our render target
 		pDeviceContext->OMSetRenderTargets(1, &m_pRenderTarget, NULL);
 
 		TVector4 unk;
-		unk.x = m_Width;
-		unk.y = m_Height;
+		unk.x = (float)m_Width;
+		unk.y = (float)m_Height;
 		unk.z = 0;
 		unk.w = 0;
 
 		pRender->CopyToPixelConstantBuffer(26, &unk, 1);
-		TRenderDX11::FUN_006a6700(0.0f, 0.0f, m_Width, m_Height, pShaderResourceView, m_pShader, NULL);
+		TRenderDX11::FUN_006a6700(0.0f, 0.0f, (float)m_Width, (float)m_Height, pShaderResourceView, m_pShader, NULL);
 
 		// Restore original render targets
 		pDeviceContext->OMSetRenderTargets(1, &pRenderTargetViews, pDepthStencilView);
-		TRenderDX11::FUN_006a6700(0.0f, 0.0f, m_Width, m_Height, m_pTextureView, NULL, NULL);
+		TRenderDX11::FUN_006a6700(0.0f, 0.0f, (float)m_Width, (float)m_Height, m_pTextureView, NULL, NULL);
 	}
 }

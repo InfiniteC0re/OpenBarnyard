@@ -3,7 +3,9 @@
 
 namespace Toshi
 {
-	class TInputDevice : TObject, TNodeList<TInputDevice>::TNode
+	class TInputDevice :
+		public TGenericClassDerived<TInputDevice, TObject, "TInputDevice", TMAKEVERSION(1, 0), false>,
+		public TNodeList<TInputDevice>::TNode
 	{
 	public:
 		TInputDevice()

@@ -140,9 +140,6 @@ namespace Toshi
 		void RemoveHead() { TGenericDList::RemoveHead(); }
 		void RemoveTail() { TGenericDList::RemoveTail(); }
 	};
-
-	template <class T>
-	using T2DList = TDList<T>;
 }
 
 

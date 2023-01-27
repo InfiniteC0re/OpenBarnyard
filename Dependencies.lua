@@ -2,6 +2,10 @@ IncludeDir = {}
 IncludeDir.spdlog = "%{wks.location}/Toshi/Vendor/spdlog/include"
 IncludeDir.fmod = "%{wks.location}/Toshi/Vendor/fmod/include"
 IncludeDir.trbf = "%{wks.location}/Tools/TRBF/Include"
+IncludeDir.libogg = "%{wks.location}/Toshi/Vendor/libogg/include"
+IncludeDir.libvorbis = "%{wks.location}/Toshi/Vendor/libvorbis/include"
+IncludeDir.libtheora = "%{wks.location}/Toshi/Vendor/libtheora/include"
+IncludeDir.theoraplay = "%{wks.location}/Toshi/Vendor/theoraplay/include"
 
 LibDir = {}
 LibDir.fmod = "%{wks.location}/Toshi/Vendor/fmod/lib"

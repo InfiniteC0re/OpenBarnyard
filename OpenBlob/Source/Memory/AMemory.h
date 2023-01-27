@@ -1,5 +1,4 @@
 #pragma once
-#include <cstdint>
 #include "Toshi/Memory/TMemory.h"
 
 class AMemory
@@ -16,16 +15,23 @@ public:
 	struct PoolDefinitionInfo
 	{
 		const char* Name;
-		uint32_t Index;
+		Pool Type;
 		uint32_t Size;
-		Toshi::TMemory::Flags Flags;
 	};
 
 public:
 	AMemory() = delete;
 
+	static void CreatePools();
+
 	static void CreatePool(Pool type);
 	static void DestroyPool(Pool type);
+
+	static bool IsPoolCreated(Pool type)
+	{
+		TASSERT(type < POOL_NumOf);
+		return ms_apMemoryBlocks[type] != TNULL;
+	}
 
 public:
 	static PoolDefinitionInfo ms_aPoolDefinitionInfo[POOL_NumOf];

@@ -13,7 +13,7 @@ namespace Toshi
 
 	TRenderContext* TRender::CreateRenderContext()
 	{
-		return new TRenderContextDX11(*this);
+		return new TRenderContextDX11(this);
 	}
 
 	TRenderAdapter* TD3DAdapter::Mode::GetAdapter() const
@@ -101,20 +101,53 @@ namespace Toshi
 		dxgiOutput->FindClosestMatchingMode(&matchMode, modeDesc, NULL);
 	}
 
-	TRenderDX11::TRenderDX11() : m_DisplayParams{ 1280, 720, 32, 3, true, false, 1 }, m_Window()
+	TRenderDX11::TRenderDX11() :
+		m_DisplayParams{ 1280, 720, 32, 3, true, false, 1 },
+		m_Window(),
+		m_CurrentDepth({ 0 }, 0)
 	{
-		m_ClearColor[0] = 0.2f;
-		m_ClearColor[1] = 0.6f;
-		m_ClearColor[2] = 0.2f;
+		m_ClearColor[0] = 0.0f;
+		m_ClearColor[1] = 0.0f;
+		m_ClearColor[2] = 0.0f;
 		m_ClearColor[3] = 1.0f;
 		m_NumDrawnFrames = 0;
 
+		m_CurrentRasterizerId.Flags.Raw = 0;
+		m_CurrentRasterizerId.DepthBias = 0;
+		m_CurrentRasterizerId.SlopeScaledDepthBias = 0.0f;
+
+		m_PreviousRasterizerId.Flags.Raw = 0;
+		m_PreviousRasterizerId.DepthBias = 0;
+		m_PreviousRasterizerId.SlopeScaledDepthBias = 0.0f;
+
+		TUtil::MemClear(m_SamplerStates, sizeof(m_SamplerStates));
+		
 		m_pVertexConstantBuffer = TNULL;
 		m_IsVertexConstantBufferSet = TFALSE;
+		TUtil::MemClear(m_PixelBuffers, sizeof(m_PixelBuffers));
+		
 		m_pPixelConstantBuffer = TNULL;
 		m_IsPixelConstantBufferSet = TFALSE;
-
+		TUtil::MemClear(m_VertexBuffers, sizeof(m_VertexBuffers));
+		
+		m_MainVertexBuffer = TNULL;
+		m_iImmediateVertexCurrentOffset = 0;
+		m_MainIndexBuffer = TNULL;
+		m_iImmediateIndexCurrentOffset = 0;
+		
 		s_pMemHeap = TMemory::CreateHeap(HEAPSIZE, 0, "render states");
+
+		m_CurrentBlendFactor[0] = 1.0f;
+		m_CurrentBlendFactor[1] = 1.0f;
+		m_CurrentBlendFactor[2] = 1.0f;
+		m_CurrentBlendFactor[3] = 1.0f;
+
+		m_PreviousBlendFactor[0] = 1.0f;
+		m_PreviousBlendFactor[1] = 1.0f;
+		m_PreviousBlendFactor[2] = 1.0f;
+		m_PreviousBlendFactor[3] = 1.0f;
+
+		TTODO("Some other initializations");
 	}
 
 	bool TRenderDX11::CreateDisplay(DisplayParams* pDisplayParams)
@@ -412,7 +445,7 @@ namespace Toshi
 			ShowCursor(false);
 		}
 
-		CreateSamplerStates();
+		Initialize();
 		CreateVSPS();
 
 		m_pToneMap = new TToneMap();
@@ -486,7 +519,6 @@ namespace Toshi
 			
 			if (m_DisplayParams.MultisampleQualityLevel < 2)
 			{
-
 				if (s_pShaderResourceView == TNULL)
 				{
 					m_pDevice->CreateShaderResourceView(m_SRView1Texture, 0, &s_pShaderResourceView);
@@ -500,20 +532,20 @@ namespace Toshi
 
 				if (outAR < inAR)
 				{
-					width = m_DisplayWidth;
+					width = (float)m_DisplayWidth;
 					height = width / inAR;
 					posX = 0.0F;
 					posY = (m_DisplayHeight - height) * 0.5F;
 				}
 				else
 				{
-					height = m_DisplayHeight;
+					height = (float)m_DisplayHeight;
 					width = height * inAR;
 					posX = (m_DisplayWidth - width) * 0.5F;
 					posY = 0.0F;
 				}
 
-				m_BlendState.bBlendEnabled = FALSE;
+				m_CurrentBlendState.Parts.bBlendEnabled = FALSE;
 				FUN_006a6700(posX, posY, width, height, s_pShaderResourceView, NULL, NULL);
 			}
 			else
@@ -622,15 +654,28 @@ namespace Toshi
 		m_pDevice->CreateInputLayout(inputDesc, 2, shaderVS->GetBufferPointer(), shaderVS->GetBufferSize(), &m_pInputLayout);
 		shaderVS->Release();
 
-		D3D11_SUBRESOURCE_DATA vertexData = {};
-		vertexData.pSysMem = s_vertexData;
+		D3D11_SUBRESOURCE_DATA vertexData;
 
-		D3D11_BUFFER_DESC desc = {};
-		desc.ByteWidth = sizeof(s_vertexData);
-		desc.Usage = D3D11_USAGE_IMMUTABLE;
-		desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+		FLOAT vertices[20] = {
+			0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+			0.0f, -1.0f, 0.0f, 0.0f, 1.0f,
+			1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+			1.0f, -1.0f, 0.0f, 1.0f, 1.0f
+		};
 
-		m_pDevice->CreateBuffer(&desc, &vertexData, &m_pSomeBuffer);
+		vertexData.pSysMem = vertices;
+		vertexData.SysMemPitch = 0;
+		vertexData.SysMemSlicePitch = 0;
+
+		D3D11_BUFFER_DESC bufferDesc;
+		bufferDesc.ByteWidth = sizeof(vertices);
+		bufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+		bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+		bufferDesc.CPUAccessFlags = 0;
+		bufferDesc.MiscFlags = 0;
+		bufferDesc.StructureByteStride = 0;
+
+		m_pDevice->CreateBuffer(&bufferDesc, &vertexData, &m_pSomeBuffer);
 	}
 
 	bool TRenderDX11::Create(LPCSTR a_name)
@@ -669,7 +714,8 @@ namespace Toshi
 			accels[0].key = VK_ESCAPE;
 
 			accels[1].fVirt = FALT;
-			accels[1].key = 0x1000D;
+			accels[1].key = VK_RETURN;
+			accels[1].cmd = 1;
 
 			m_hAccel = CreateAcceleratorTableA(accels, sizeof(accels) / sizeof(*accels));
 
@@ -686,20 +732,20 @@ namespace Toshi
 		return false;
 	}
 
-	void TRenderDX11::CreateSamplerStates()
+	void TRenderDX11::Initialize()
 	{
-		m_SamplerState1 = CreateSamplerState(D3D11_FILTER_MIN_MAG_MIP_POINT, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_CLAMP, 0.0f, 0, 0.0f, D3D11_FLOAT32_MAX, 1);
-		m_SamplerState2 = CreateSamplerStateAutoAnisotropy(D3D11_FILTER_MIN_MAG_MIP_LINEAR, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_CLAMP, 0.0f, 0, 0.0f, D3D11_FLOAT32_MAX);
-		m_SamplerState3 = CreateSamplerState(D3D11_FILTER_MIN_MAG_MIP_POINT, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP, 0.0f, 0, 0.0f, D3D11_FLOAT32_MAX, 1);
-		m_SamplerState4 = CreateSamplerStateAutoAnisotropy(D3D11_FILTER_MIN_MAG_MIP_LINEAR, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP, 0.0f, 0, 0.0f, D3D11_FLOAT32_MAX);
-		m_SamplerState5 = CreateSamplerStateAutoAnisotropy(D3D11_FILTER_MIN_MAG_MIP_LINEAR, D3D11_TEXTURE_ADDRESS_MIRROR, D3D11_TEXTURE_ADDRESS_MIRROR, D3D11_TEXTURE_ADDRESS_MIRROR, 0.0f, 0, 0.0f, D3D11_FLOAT32_MAX);
-		m_SamplerState6 = CreateSamplerState(D3D11_FILTER_MIN_MAG_LINEAR_MIP_POINT, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_CLAMP, 0.0f, 0, 0.0f, D3D11_FLOAT32_MAX, 1);
-		m_SamplerState7 = CreateSamplerState(D3D11_FILTER_MIN_MAG_LINEAR_MIP_POINT, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP, 0.0f, 0, 0.0f, D3D11_FLOAT32_MAX, 1);
-		m_SamplerState8 = CreateSamplerState(D3D11_FILTER_MIN_MAG_LINEAR_MIP_POINT, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP, -1.0f, 0, 0.0f, D3D11_FLOAT32_MAX, 1);
-		m_SamplerState10 = CreateSamplerState(D3D11_FILTER_MIN_MAG_MIP_POINT, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_WRAP, 0.0f, 0, 0.0f, D3D11_FLOAT32_MAX, 1);
-		m_SamplerState11 = CreateSamplerStateAutoAnisotropy(D3D11_FILTER_MIN_MAG_MIP_LINEAR, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_WRAP, 0.0f, 0, 0.0f, D3D11_FLOAT32_MAX);
-		m_SamplerState12 = CreateSamplerState(D3D11_FILTER_MIN_MAG_LINEAR_MIP_POINT, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_WRAP, 0.0f, 0, 0.0f, D3D11_FLOAT32_MAX, 1);
-		m_SamplerState9 = CreateSamplerState(D3D11_FILTER_ANISOTROPIC, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_CLAMP, 0.0f, 0, 0.0f, D3D11_FLOAT32_MAX, 1);
+		m_SamplerStates[0] = CreateSamplerState(D3D11_FILTER_MIN_MAG_MIP_POINT, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_CLAMP, 0.0f, 0, 0.0f, D3D11_FLOAT32_MAX, 1);
+		m_SamplerStates[1] = CreateSamplerStateAutoAnisotropy(D3D11_FILTER_MIN_MAG_MIP_LINEAR, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_CLAMP, 0.0f, 0, 0.0f, D3D11_FLOAT32_MAX);
+		m_SamplerStates[2] = CreateSamplerState(D3D11_FILTER_MIN_MAG_MIP_POINT, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP, 0.0f, 0, 0.0f, D3D11_FLOAT32_MAX, 1);
+		m_SamplerStates[3] = CreateSamplerStateAutoAnisotropy(D3D11_FILTER_MIN_MAG_MIP_LINEAR, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP, 0.0f, 0, 0.0f, D3D11_FLOAT32_MAX);
+		m_SamplerStates[4] = CreateSamplerStateAutoAnisotropy(D3D11_FILTER_MIN_MAG_MIP_LINEAR, D3D11_TEXTURE_ADDRESS_MIRROR, D3D11_TEXTURE_ADDRESS_MIRROR, D3D11_TEXTURE_ADDRESS_MIRROR, 0.0f, 0, 0.0f, D3D11_FLOAT32_MAX);
+		m_SamplerStates[5] = CreateSamplerState(D3D11_FILTER_MIN_MAG_LINEAR_MIP_POINT, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_CLAMP, 0.0f, 0, 0.0f, D3D11_FLOAT32_MAX, 1);
+		m_SamplerStates[6] = CreateSamplerState(D3D11_FILTER_MIN_MAG_LINEAR_MIP_POINT, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP, 0.0f, 0, 0.0f, D3D11_FLOAT32_MAX, 1);
+		m_SamplerStates[7] = CreateSamplerState(D3D11_FILTER_MIN_MAG_LINEAR_MIP_POINT, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP, -1.0f, 0, 0.0f, D3D11_FLOAT32_MAX, 1);
+		m_SamplerStates[9] = CreateSamplerState(D3D11_FILTER_MIN_MAG_MIP_POINT, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_WRAP, 0.0f, 0, 0.0f, D3D11_FLOAT32_MAX, 1);
+		m_SamplerStates[10] = CreateSamplerStateAutoAnisotropy(D3D11_FILTER_MIN_MAG_MIP_LINEAR, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_WRAP, 0.0f, 0, 0.0f, D3D11_FLOAT32_MAX);
+		m_SamplerStates[11] = CreateSamplerState(D3D11_FILTER_MIN_MAG_LINEAR_MIP_POINT, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_WRAP, 0.0f, 0, 0.0f, D3D11_FLOAT32_MAX, 1);
+		m_SamplerStates[8] = CreateSamplerState(D3D11_FILTER_ANISOTROPIC, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_CLAMP, 0.0f, 0, 0.0f, D3D11_FLOAT32_MAX, 1);
 
 		for (size_t i = 0; i < NUMBUFFERS; i++)
 		{
@@ -738,7 +784,7 @@ namespace Toshi
 		// Main vertex buffer
 		{
 			D3D11_BUFFER_DESC bufferDesc;
-			bufferDesc.ByteWidth = VERTEX_BUFFER_SIZE;
+			bufferDesc.ByteWidth = IMMEDIATE_VERTEX_BUFFER_SIZE;
 			bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
 			bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 			bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
@@ -746,13 +792,13 @@ namespace Toshi
 			bufferDesc.StructureByteStride = 0;
 
 			m_pDevice->CreateBuffer(&bufferDesc, NULL, &m_MainVertexBuffer);
-			m_Unk3 = 0;
+			m_iImmediateVertexCurrentOffset = 0;
 		}
 
 		// Main index buffer
 		{
 			D3D11_BUFFER_DESC bufferDesc;
-			bufferDesc.ByteWidth = INDEX_BUFFER_SIZE;
+			bufferDesc.ByteWidth = IMMEDIATE_INDEX_BUFFER_SIZE;
 			bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
 			bufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 			bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
@@ -760,25 +806,47 @@ namespace Toshi
 			bufferDesc.StructureByteStride = 0;
 
 			m_pDevice->CreateBuffer(&bufferDesc, NULL, &m_MainIndexBuffer);
-			m_Unk4 = 0;
+			m_iImmediateIndexCurrentOffset = 0;
 		}
 
-		TRenderDX11::m_Unk4 = 0;
-		TTODO("this->field173_0x85c = 0;");
-		m_Flags2 = m_Flags2 & 0x8b | 0xb;
+		m_CurrentDepth.m_First.Parts.bDepthEnable = TRUE;
+		m_CurrentDepth.m_First.Parts.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+		m_CurrentDepth.m_First.Parts.DepthFunc = D3D11_COMPARISON_LESS;
+		m_CurrentDepth.m_First.Parts.bStencilEnable = FALSE;
+		m_CurrentDepth.m_First.Parts.StencilReadMask = 0b11111111;
+		m_CurrentDepth.m_First.Parts.StencilWriteMask = 0b11111111;
+		m_CurrentDepth.m_First.Parts.FrontFaceStencilFailOp = D3D11_STENCIL_OP_KEEP;
+		m_CurrentDepth.m_First.Parts.FrontFaceStencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
+		m_CurrentDepth.m_First.Parts.FrontStencilPassOp = D3D11_STENCIL_OP_KEEP;
+		m_CurrentDepth.m_First.Parts.FrontStencilFunc = D3D11_COMPARISON_ALWAYS;
+		m_CurrentDepth.m_First.Parts.BackFaceStencilFailOp = D3D11_STENCIL_OP_KEEP;
+		m_CurrentDepth.m_First.Parts.BackFaceStencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
+		m_CurrentDepth.m_First.Parts.BackStencilPassOp = D3D11_STENCIL_OP_KEEP;
+		m_CurrentDepth.m_First.Parts.BackStencilFunc = D3D11_COMPARISON_ALWAYS;
 
-		m_BlendState.BlendOp = D3D11_BLEND_OP_ADD;
-		m_BlendState.BlendOpAlpha = D3D11_BLEND_OP_ADD;
-		m_BlendState.SrcBlendAlpha = D3D11_BLEND_ONE;
-		m_BlendState.DestBlendAlpha = D3D11_BLEND_ZERO;
-		m_BlendState.RenderTargetWriteMask = 0b111;
-		m_BlendState.bAlphaUpdate = TRUE;
-		m_BlendState.SrcBlend = D3D11_BLEND_ONE;
-		m_BlendState.DestBlend = D3D11_BLEND_ZERO;
-		m_BlendState.Unknown2 = 1;
+		m_CurrentBlendState.Parts.BlendOp = D3D11_BLEND_OP_ADD;
+		m_CurrentBlendState.Parts.BlendOpAlpha = D3D11_BLEND_OP_ADD;
+		m_CurrentBlendState.Parts.SrcBlendAlpha = D3D11_BLEND_ONE;
+		m_CurrentBlendState.Parts.DestBlendAlpha = D3D11_BLEND_ZERO;
+		m_CurrentBlendState.Parts.RenderTargetWriteMask = 0b111;
+		m_CurrentBlendState.Parts.bAlphaUpdate = TRUE;
+		m_CurrentBlendState.Parts.SrcBlend = D3D11_BLEND_ONE;
+		m_CurrentBlendState.Parts.DestBlend = D3D11_BLEND_ZERO;
+		m_CurrentBlendState.Parts.Unknown2 = 1;
 
-		TTODO("Some more flags");
-		TRenderDX11::m_Flags = 0x2F;
+		m_CurrentRasterizerId.Flags.Parts.FillMode = D3D11_FILL_SOLID;
+		m_CurrentRasterizerId.Flags.Parts.CullMode = D3D11_CULL_BACK;
+		m_CurrentRasterizerId.Flags.Parts.bFrontCounterClockwise = FALSE;
+		m_CurrentRasterizerId.Flags.Parts.bDepthClipEnable = TRUE;
+		m_CurrentRasterizerId.Flags.Parts.bScissorEnable = FALSE;
+		m_CurrentRasterizerId.Flags.Parts.bMultisampleEnable = FALSE;
+		m_CurrentRasterizerId.DepthBias = 0;
+		m_CurrentRasterizerId.SlopeScaledDepthBias = 0.0f;
+	}
+
+	bool TRenderDX11::IsColorEqual(const FLOAT a_Vec41[4], const FLOAT a_Vec42[4])
+	{
+		return (a_Vec41[0] == a_Vec42[0]) && (a_Vec41[1] == a_Vec42[1]) && (a_Vec41[2] == a_Vec42[2]) && (a_Vec41[3] == a_Vec42[3]);
 	}
 
 	int TRenderDX11::GetTextureRowPitch(DXGI_FORMAT format, int width)
@@ -810,6 +878,7 @@ namespace Toshi
 		}
 
 		TASSERT(TFALSE);
+		return 0;
 	}
 
 	int TRenderDX11::GetTextureDepthPitch(DXGI_FORMAT format, int width, int height)
@@ -841,6 +910,7 @@ namespace Toshi
 		}
 
 		TASSERT(TFALSE);
+		return 0;
 	}
 
 	const char* TRenderDX11::GetFeatureLevel(D3D_FEATURE_LEVEL a_featureLevel)
@@ -898,7 +968,7 @@ namespace Toshi
 		unsigned int size = count * 16;
 
 		TASSERT(offset + size <= VERTEX_CONSTANT_BUFFER_SIZE, "Buffer size exceeded");
-		TUtil::MemCopy(m_pVertexConstantBuffer, src, size);
+		TUtil::MemCopy((char*)m_pVertexConstantBuffer + offset, src, size);
 		m_IsVertexConstantBufferSet = true;
 	}
 
@@ -908,7 +978,7 @@ namespace Toshi
 		unsigned int size = count * 16;
 
 		TASSERT(offset + size <= PIXEL_CONSTANT_BUFFER_SIZE, "Buffer size exceeded");
-		TUtil::MemCopy(m_pPixelConstantBuffer, src, size);
+		TUtil::MemCopy((char*)m_pPixelConstantBuffer + offset, src, size);
 		m_IsPixelConstantBufferSet = true;
 	}
 
@@ -968,11 +1038,11 @@ namespace Toshi
 		textureDesc.Format = format;
 		textureDesc.CPUAccessFlags = cpuAccessFlags;
 		textureDesc.MipLevels = mipLevels;
-		textureDesc.MiscFlags = noMipLevels ? NULL : D3D11_RESOURCE_MISC_GENERATE_MIPS;
+		textureDesc.MiscFlags = noMipLevels ? D3D11_RESOURCE_MISC_GENERATE_MIPS : NULL;
 		textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
 
 		if (flags & 4 || noMipLevels)
-		{
+		{	
 			textureDesc.BindFlags |= D3D11_BIND_RENDER_TARGET;
 		}
 
@@ -1093,41 +1163,324 @@ namespace Toshi
 		return pSamplerState;
 	}
 
+	ID3D11Buffer* TRenderDX11::CreateBuffer(UINT flags, UINT dataSize, void* data, D3D11_USAGE usage, UINT cpuAccessFlags)
+	{
+		D3D11_BUFFER_DESC bufferDesc;
+
+		bufferDesc.ByteWidth = dataSize;
+		bufferDesc.Usage = usage;
+		bufferDesc.CPUAccessFlags = cpuAccessFlags;
+		bufferDesc.MiscFlags = 0;
+		bufferDesc.StructureByteStride = 0;
+
+		if (flags == 0)
+		{
+			bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+		}
+		else
+		{
+			bufferDesc.BindFlags = (flags == 1) ? D3D11_BIND_INDEX_BUFFER : D3D11_BIND_CONSTANT_BUFFER;
+		}
+
+		ID3D11Buffer* pBuffer;
+
+		if (data != TNULL)
+		{
+			D3D11_SUBRESOURCE_DATA subData;
+			subData.pSysMem = data;
+			subData.SysMemPitch = 0;
+			subData.SysMemSlicePitch = 0;
+
+			m_pDevice->CreateBuffer(&bufferDesc, &subData, &pBuffer);
+		}
+		else
+		{
+			m_pDevice->CreateBuffer(&bufferDesc, TNULL, &pBuffer);
+		}
+		
+
+		return pBuffer;
+	}
+
 	void TRenderDX11::SetBlendMode(bool blendEnabled, D3D11_BLEND_OP blendOp, D3D11_BLEND srcBlendAlpha, D3D11_BLEND destBlendAlpha)
 	{
-		m_BlendState.BlendOp = blendOp;
-		m_BlendState.bBlendEnabled = blendEnabled;
-		m_BlendState.SrcBlend = srcBlendAlpha;
-		m_BlendState.DestBlend = (D3D11_BLEND)(m_BlendState.DestBlend ^ destBlendAlpha);
+		m_CurrentBlendState.Parts.BlendOp = blendOp;
+		m_CurrentBlendState.Parts.bBlendEnabled = blendEnabled;
+		m_CurrentBlendState.Parts.SrcBlend = srcBlendAlpha;
+		m_CurrentBlendState.Parts.DestBlend = (D3D11_BLEND)(m_CurrentBlendState.Parts.DestBlend ^ destBlendAlpha);
 
-		if (m_BlendState.SrcBlendAlpha != D3D11_BLEND_BLEND_FACTOR)
+		if (m_CurrentBlendState.Parts.SrcBlendAlpha != D3D11_BLEND_BLEND_FACTOR)
 		{
-			m_BlendState.BlendOpAlpha = blendOp;
-			m_BlendState.SrcBlendAlpha = srcBlendAlpha;
-			m_BlendState.DestBlendAlpha = destBlendAlpha;
+			m_CurrentBlendState.Parts.BlendOpAlpha = blendOp;
+			m_CurrentBlendState.Parts.SrcBlendAlpha = srcBlendAlpha;
+			m_CurrentBlendState.Parts.DestBlendAlpha = destBlendAlpha;
 		}
 	}
 
 	void TRenderDX11::SetAlphaUpdate(bool update)
 	{
-		m_BlendState.bAlphaUpdate = update;
+		m_CurrentBlendState.Parts.bAlphaUpdate = update;
 	}
 
 	void TRenderDX11::SetColorUpdate(bool update)
 	{
 		if (update)
 		{
-			m_BlendState.RenderTargetWriteMask = 0b111;
+			m_CurrentBlendState.Parts.RenderTargetWriteMask = 0b111;
 		}
 		else
 		{
-			m_BlendState.RenderTargetWriteMask = 0b000;
+			m_CurrentBlendState.Parts.RenderTargetWriteMask = 0b000;
 		}
 	}
 
-	void TRenderDX11::FUN_006a8d30()
+	void TRenderDX11::SetZMode(bool depthEnable, D3D11_COMPARISON_FUNC comparisonFunc, D3D11_DEPTH_WRITE_MASK depthWriteMask)
 	{
-		TIMPLEMENT();
+		m_CurrentDepth.m_First.Parts.bDepthEnable = depthEnable;
+		m_CurrentDepth.m_First.Parts.DepthWriteMask = depthWriteMask;
+		m_CurrentDepth.m_First.Parts.DepthFunc = comparisonFunc;
+	}
+
+	void TRenderDX11::DrawMesh(D3D11_PRIMITIVE_TOPOLOGY primitiveTopology, ID3D11Buffer* pVertexBuffer, UINT vertexCount, UINT strides, UINT startVertex, UINT offsets)
+	{
+		UpdateRenderStates();
+		m_pDeviceContext->IASetVertexBuffers(0, 1, &pVertexBuffer, &strides, &offsets);
+		FlushConstantBuffers();
+		m_pDeviceContext->IASetPrimitiveTopology(primitiveTopology);
+		m_pDeviceContext->Draw(vertexCount, startVertex);
+	}
+
+	void TRenderDX11::CopyDataToTexture(ID3D11ShaderResourceView* pSRTex, UINT dataSize, void* src, UINT rowSize)
+	{
+		UINT uVar1;
+		size_t* copySize;
+		char* _Src;
+		UINT leftSize;
+		D3D11_MAPPED_SUBRESOURCE dstPos;
+		ID3D11Texture2D* pTexture;
+
+		pTexture = (ID3D11Texture2D*)0x0;
+		pSRTex->GetResource((ID3D11Resource**)&pTexture);
+		m_pDeviceContext->Map(pTexture, 0, D3D11_MAP_WRITE_DISCARD, 0, &dstPos);
+		uVar1 = rowSize;
+		_Src = (char*)src;
+		leftSize = dataSize;
+		while (dataSize = leftSize, leftSize != 0) {
+			copySize = &dataSize;
+			if (uVar1 <= leftSize) {
+				copySize = &rowSize;
+			}
+			TUtil::MemCopy(dstPos.pData, _Src, *copySize);
+			leftSize = leftSize - uVar1;
+			dstPos.pData = (void*)((int)dstPos.pData + dstPos.RowPitch);
+			_Src = _Src + uVar1;
+			dataSize = leftSize;
+		}
+		m_pDeviceContext->Unmap(pTexture, 0);
+		pTexture->Release();
+		return;
+
+		//ID3D11Texture2D* pTexture;
+		//pSRTex->GetResource((ID3D11Resource**)&pTexture);
+
+		//D3D11_MAPPED_SUBRESOURCE mappedSubresource;
+		//m_pDeviceContext->Map(pTexture, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubresource);
+
+		//uint8_t* srcPos = (uint8_t*)src;
+		//uint8_t* dstPos = (uint8_t*)mappedSubresource.pData;
+
+		///*while (dataSize != 0)
+		//{
+		//	UINT copySize = TMath::Min(dataSize, rowSize);
+
+		//	TUtil::MemCopy(dstPos, srcPos, copySize);
+
+		//	dataSize -= rowSize;
+		//	srcPos += rowSize;
+		//	dstPos += mappedSubresource.RowPitch;
+		//}*/
+
+		//UINT leftSize = dataSize;
+		//while (dataSize = leftSize, leftSize != 0) {
+		//	UINT* copySize = &dataSize;
+		//	if (rowSize <= leftSize) {
+		//		copySize = &rowSize;
+		//	}
+		//	TUtil::MemCopy(mappedSubresource.pData, srcPos, *copySize);
+		//	leftSize = leftSize - rowSize;
+		//	mappedSubresource.pData = (void*)((int)mappedSubresource.pData + mappedSubresource.RowPitch);
+		//	srcPos = srcPos + rowSize;
+		//	dataSize = leftSize;
+		//}
+
+		//m_pDeviceContext->Unmap(pTexture, 0);
+		//pTexture->Release();
+	}
+
+	void TRenderDX11::SetSamplerState(UINT startSlot, int samplerId, BOOL SetForVS)
+	{
+		auto pSampler = m_SamplerStates[samplerId];
+
+		if (SetForVS == TRUE)
+		{
+			m_pDeviceContext->VSSetSamplers(startSlot, 1, &pSampler);
+		}
+		else
+		{
+			m_pDeviceContext->PSSetSamplers(startSlot, 1, &pSampler);
+		}
+	}
+
+	void TRenderDX11::UpdateRenderStates()
+	{
+		// Update depth state if needed
+		if (m_CurrentDepth.GetFirst().Raw != m_PreviousDepth.GetFirst().Raw ||
+			m_CurrentDepth.GetSecond() != m_PreviousDepth.GetSecond())
+		{
+			T2RedBlackTreeNode<DepthStatePair>* pFoundNode;
+			m_DepthStatesTree.Find(pFoundNode, m_CurrentDepth.GetFirst());
+
+			ID3D11DepthStencilState* pDepthStencilState;
+
+			if (m_DepthStatesTree.IsRoot(pFoundNode))
+			{
+				// We don't have a depth stencil state with these flags yet
+				auto currentState = m_CurrentDepth.GetFirst();
+
+				D3D11_DEPTH_STENCIL_DESC depthStencilDesk;
+				depthStencilDesk.DepthEnable = currentState.Parts.bDepthEnable;
+				depthStencilDesk.DepthWriteMask = (D3D11_DEPTH_WRITE_MASK)currentState.Parts.DepthWriteMask;
+				depthStencilDesk.DepthFunc = (D3D11_COMPARISON_FUNC)currentState.Parts.DepthFunc;
+				depthStencilDesk.StencilEnable = currentState.Parts.bStencilEnable;
+				depthStencilDesk.StencilReadMask = currentState.Parts.StencilReadMask;
+				depthStencilDesk.StencilWriteMask = currentState.Parts.StencilWriteMask;
+				depthStencilDesk.FrontFace.StencilFailOp = (D3D11_STENCIL_OP)currentState.Parts.FrontFaceStencilFailOp;
+				depthStencilDesk.FrontFace.StencilDepthFailOp = (D3D11_STENCIL_OP)currentState.Parts.FrontFaceStencilDepthFailOp;
+				depthStencilDesk.FrontFace.StencilPassOp = (D3D11_STENCIL_OP)currentState.Parts.FrontStencilPassOp;
+				depthStencilDesk.FrontFace.StencilFunc = (D3D11_COMPARISON_FUNC)currentState.Parts.FrontStencilFunc;
+				depthStencilDesk.BackFace.StencilFailOp = (D3D11_STENCIL_OP)currentState.Parts.BackFaceStencilFailOp;
+				depthStencilDesk.BackFace.StencilDepthFailOp = (D3D11_STENCIL_OP)currentState.Parts.BackFaceStencilDepthFailOp;
+				depthStencilDesk.BackFace.StencilPassOp = (D3D11_STENCIL_OP)currentState.Parts.BackStencilPassOp;
+				depthStencilDesk.BackFace.StencilFunc = (D3D11_COMPARISON_FUNC)currentState.Parts.BackStencilFunc;
+				
+				HRESULT hRes = m_pDevice->CreateDepthStencilState(&depthStencilDesk, &pDepthStencilState);
+				TASSERT(SUCCEEDED(hRes));
+
+				T2RedBlackTreeNode<DepthStatePair>* pInsertedNode;
+				m_DepthStatesTree.Insert(pInsertedNode, { m_CurrentDepth.GetFirst(), pDepthStencilState });
+			}
+			else
+			{
+				// We already have a depth stencil state with these flags
+				pDepthStencilState = pFoundNode->GetValue()->GetSecond();
+			}
+			
+			m_pDeviceContext->OMSetDepthStencilState(pDepthStencilState, m_CurrentDepth.GetSecond());
+			m_PreviousDepth = m_CurrentDepth;
+		}
+
+		// Update rasterizer state if needed
+		if (m_CurrentRasterizerId != m_PreviousRasterizerId)
+		{
+			T2RedBlackTreeNode<RasterizerPair>* pFoundNode;
+			m_RasterizersTree.Find(pFoundNode, m_CurrentRasterizerId);
+
+			ID3D11RasterizerState* pRasterizerState;
+
+			if (m_RasterizersTree.IsRoot(pFoundNode))
+			{
+				// We don't have a rasterizer state with these flags yet
+				D3D11_RASTERIZER_DESC rasterizerDesc;
+				rasterizerDesc.DepthBiasClamp = 0.0f;
+				rasterizerDesc.AntialiasedLineEnable = FALSE;
+				rasterizerDesc.MultisampleEnable = m_CurrentRasterizerId.Flags.Parts.bMultisampleEnable;
+				rasterizerDesc.DepthBias = m_CurrentRasterizerId.DepthBias;
+				rasterizerDesc.DepthClipEnable = m_CurrentRasterizerId.Flags.Parts.bDepthClipEnable;
+				rasterizerDesc.ScissorEnable = m_CurrentRasterizerId.Flags.Parts.bScissorEnable;
+				rasterizerDesc.FrontCounterClockwise = m_CurrentRasterizerId.Flags.Parts.bFrontCounterClockwise;
+				rasterizerDesc.FillMode = (D3D11_FILL_MODE)m_CurrentRasterizerId.Flags.Parts.FillMode;
+				rasterizerDesc.CullMode = (D3D11_CULL_MODE)m_CurrentRasterizerId.Flags.Parts.CullMode;
+				rasterizerDesc.SlopeScaledDepthBias = m_CurrentRasterizerId.SlopeScaledDepthBias;
+
+				HRESULT hRes = m_pDevice->CreateRasterizerState(&rasterizerDesc, &pRasterizerState);
+				TASSERT(SUCCEEDED(hRes));
+
+				T2RedBlackTreeNode<RasterizerPair>* pInsertedNode;
+				m_RasterizersTree.Insert(pInsertedNode, { m_CurrentRasterizerId, pRasterizerState });
+			}
+			else
+			{
+				// We already have a rasterizer state with these flags
+				pRasterizerState = pFoundNode->GetValue()->GetSecond();
+			}
+
+			m_pDeviceContext->RSSetState(pRasterizerState);
+			m_PreviousRasterizerId = m_CurrentRasterizerId;
+		}
+
+		// Turn on blend if needed
+		if (m_CurrentBlendState.Parts.SrcBlendAlpha == D3D11_BLEND_BLEND_FACTOR && m_CurrentBlendState.Parts.bBlendEnabled == FALSE)
+		{
+			m_CurrentBlendState.Parts.bBlendEnabled = TRUE;
+			m_CurrentBlendState.Parts.BlendOp = D3D11_BLEND_OP_ADD;
+			m_CurrentBlendState.Parts.SrcBlend = D3D11_BLEND_ONE;
+			m_CurrentBlendState.Parts.DestBlend = D3D11_BLEND_ZERO;
+		}
+
+		// Update blend state if needed
+		if (m_CurrentBlendState.Raw != m_PreviousBlendState.Raw ||
+			!IsColorEqual(m_CurrentBlendFactor, m_PreviousBlendFactor))
+		{
+			T2RedBlackTreeNode<BlendStatePair>* pFoundNode;
+			m_BlendStatesTree.Find(pFoundNode, m_CurrentBlendState);
+
+			ID3D11BlendState* pBlendState;
+
+			if (m_BlendStatesTree.IsRoot(pFoundNode))
+			{
+				// We don't have a blend state with these flags yet
+				D3D11_BLEND_DESC blendDesc;
+
+				blendDesc.AlphaToCoverageEnable = FALSE;
+				blendDesc.IndependentBlendEnable = FALSE;
+
+				blendDesc.RenderTarget[0].BlendOp = m_CurrentBlendState.Parts.BlendOp;
+				blendDesc.RenderTarget[0].BlendOpAlpha = m_CurrentBlendState.Parts.BlendOpAlpha;
+				blendDesc.RenderTarget[0].RenderTargetWriteMask = m_CurrentBlendState.Parts.RenderTargetWriteMask;
+				blendDesc.RenderTarget[0].SrcBlend = m_CurrentBlendState.Parts.SrcBlend;
+				blendDesc.RenderTarget[0].SrcBlendAlpha = m_CurrentBlendState.Parts.SrcBlendAlpha;
+				blendDesc.RenderTarget[0].DestBlendAlpha = m_CurrentBlendState.Parts.DestBlendAlpha;
+				blendDesc.RenderTarget[0].BlendEnable = m_CurrentBlendState.Parts.bBlendEnabled;
+				blendDesc.RenderTarget[0].DestBlend = m_CurrentBlendState.Parts.DestBlend;
+
+				blendDesc.RenderTarget[1].BlendOp = blendDesc.RenderTarget[0].BlendOp;
+				blendDesc.RenderTarget[1].BlendOpAlpha = blendDesc.RenderTarget[0].BlendOpAlpha;
+				blendDesc.RenderTarget[1].RenderTargetWriteMask = blendDesc.RenderTarget[0].RenderTargetWriteMask;
+				blendDesc.RenderTarget[1].SrcBlend = blendDesc.RenderTarget[0].SrcBlend;
+				blendDesc.RenderTarget[1].SrcBlendAlpha = blendDesc.RenderTarget[0].SrcBlendAlpha;
+				blendDesc.RenderTarget[1].DestBlendAlpha = blendDesc.RenderTarget[0].DestBlendAlpha;
+				blendDesc.RenderTarget[1].BlendEnable = blendDesc.RenderTarget[0].BlendEnable;
+				blendDesc.RenderTarget[1].DestBlend = blendDesc.RenderTarget[0].DestBlend;
+				
+				HRESULT hRes = m_pDevice->CreateBlendState(&blendDesc, &pBlendState);
+				TASSERT(SUCCEEDED(hRes));
+
+				T2RedBlackTreeNode<BlendStatePair>* pInsertedNode;
+				m_BlendStatesTree.Insert(pInsertedNode, { m_CurrentBlendState, pBlendState });
+			}
+			else
+			{
+				// We already have a blend state with these flags
+				pBlendState = pFoundNode->GetValue()->GetSecond();
+			}
+
+			m_pDeviceContext->OMSetBlendState(pBlendState, m_CurrentBlendFactor, -1);
+			m_PreviousBlendState = m_CurrentBlendState;
+			m_PreviousBlendFactor[0] = m_CurrentBlendFactor[0];
+			m_PreviousBlendFactor[1] = m_CurrentBlendFactor[1];
+			m_PreviousBlendFactor[2] = m_CurrentBlendFactor[2];
+			m_PreviousBlendFactor[3] = m_CurrentBlendFactor[3];
+		}
 	}
 
 	void TRenderDX11::FUN_006a6700(float posX, float posY, float width, float height, ID3D11ShaderResourceView* pShaderResourceView, ID3D11PixelShader* pPixelShader, const void* srcData)
@@ -1135,47 +1488,54 @@ namespace Toshi
 		auto pRender = TRenderDX11::Interface();
 		auto pDeviceContext = pRender->GetDeviceContext();
 		pDeviceContext->VSSetShader(pRender->m_pVertexShader, NULL, NULL);
-		if (pPixelShader == NULL) pPixelShader = pRender->m_pPixelShader1;
+
+		if (pPixelShader == NULL)
+		{
+			pPixelShader = pRender->m_pPixelShader1;
+		}
+
 		pDeviceContext->PSSetShader(pPixelShader, NULL, NULL);
 		pDeviceContext->IASetInputLayout(pRender->m_pInputLayout);
-		pRender->m_Flags &= 0xF7 | 4;
-		pRender->m_Flags2 &= 0xD0 | 16;
+
+		pRender->m_CurrentRasterizerId.Flags.Parts.CullMode = D3D11_CULL_NONE;
+		
+		auto& depthFlags = pRender->m_CurrentDepth.m_First;
+		depthFlags.Parts.bDepthEnable = FALSE;
+		depthFlags.Parts.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
+		depthFlags.Parts.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
 
 		pDeviceContext->PSSetShaderResources(0, 1, &pShaderResourceView);
-		pDeviceContext->PSSetSamplers(0, 1, &pRender->m_SamplerState2);
+		pDeviceContext->PSSetSamplers(0, 1, &pRender->m_SamplerStates[1]);
 
 		UINT numViewports = 1;
 
 		D3D11_VIEWPORT viewPort;
-
 		pDeviceContext->RSGetViewports(&numViewports, &viewPort);
 
-		TVector4 unk;
-
-		unk.x = (width / viewPort.Width) * 2 - 1;
-		unk.y = (height / viewPort.Height) * 2 - 1;
-		unk.z = (posX / viewPort.Width) * 2;
-		unk.w = (posY / viewPort.Height) * 2;
+		TVector4 vec1;
+		vec1.x = (width / viewPort.Width) * 2.0f;
+		vec1.y = (height / viewPort.Height) * 2.0f;
+		vec1.z = (posX / viewPort.Width) * 2.0f - 1.0f;
+		vec1.w = (2.0f - (posY / viewPort.Height) * 2.0f) - 1.0f;
+		pRender->CopyToVertexConstantBuffer(0, &vec1, 1);
 
 		if (srcData == TNULL)
 		{
-			srcData = &unk;
-			unk.x = 1.0F;
-			unk.y = 1.0F;
-			unk.z = 0.0F;
-			unk.w = 0.0F;
+			srcData = &vec1;
+			vec1.x = 1.0F;
+			vec1.y = 1.0F;
+			vec1.z = 0.0F;
+			vec1.w = 0.0F;
 		}
 
 		pRender->m_IsVertexConstantBufferSet = true;
 		pRender->CopyToVertexConstantBuffer(1, srcData, 1);
 
-		pRender->FUN_006a8d30();
-
 		UINT stride = 20;
 		UINT offsets = 0;
 
+		pRender->UpdateRenderStates();
 		pDeviceContext->IASetVertexBuffers(0, 1, &pRender->m_pSomeBuffer, &stride, &offsets);
-
 		pRender->FlushConstantBuffers();
 
 		pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
@@ -1206,6 +1566,12 @@ namespace Toshi
 
 		m_pDeviceContext->VSSetConstantBuffers(0, 1, &m_VertexBuffers[m_VertexBufferIndex]);
 		m_pDeviceContext->PSSetConstantBuffers(0, 1, &m_PixelBuffers[m_PixelBufferIndex]);
+	}
+
+	void TRenderDX11::FUN_00691190()
+	{
+		TASSERT(IsInScene() == TTRUE);
+		TIMPLEMENT();
 	}
 
 	void TRenderDX11::BuildAdapterDatabase()
@@ -1294,7 +1660,6 @@ namespace Toshi
 				}
 
 				DXGI_MODE_DESC* descriptions = new DXGI_MODE_DESC[numModes];
-				DXGI_MODE_DESC* currentDesc = descriptions;
 
 				dxgiOutput->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_ENUM_MODES_INTERLACED, &numModes, descriptions);
 				
@@ -1304,7 +1669,7 @@ namespace Toshi
 					mode->SetModeIndex(i);
 					mode->SetDisplayIndex(displayIndex);
 					mode->SetAdapter(this);
-					mode->SetDescription(currentDesc[i]);
+					mode->SetDescription(descriptions[i]);
 					mode->SetName(outputDesc.DeviceName);
 
 					GetModeList()->InsertTail(mode);

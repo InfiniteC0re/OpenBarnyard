@@ -10,28 +10,29 @@ namespace Toshi
 
 	void TAssetInit::InitAssets(TTRB& a_trb, bool createResources, bool allowCrossTRBReferences)
 	{
-		int count = 0;
+		size_t funcCount = 0;
 		const FourCCFunction* functions;
 
 		if (!createResources)
 		{
-			count = 5;
+			funcCount = sizeof(g_FourCCReloadFunctions) / sizeof(*g_FourCCReloadFunctions);
 			functions = g_FourCCReloadFunctions;
 		}
 		else
 		{
-			count = 12;
+			funcCount = sizeof(g_FourCCInitFunctions) / sizeof(*g_FourCCInitFunctions);
 			functions = g_FourCCInitFunctions;
 		}
 
+		g_bAllowCrossTRBReferences = allowCrossTRBReferences;
 		g_bCreateResources = createResources;
 		g_pCurrentTRB = &a_trb;
-		g_bAllowCrossTRBReferences = allowCrossTRBReferences;
 
-		for (size_t i = 0; i < count; i++)
+		for (size_t i = 0; i < funcCount; i++)
 		{
 			Init(a_trb, functions[i].name, functions[i].func);
 		}
+
 		g_pCurrentTRB = TNULL;
 	}
 
@@ -48,7 +49,7 @@ namespace Toshi
 	{
 		TTRB::SYMB* symb = a_trb.GetSymbolTable();
 
-		for (size_t i = 0; i < symb->m_i32SymbCount; i++)
+		for (int32_t i = 0; i < symb->m_i32SymbCount; i++)
 		{
 			TTRB::TTRBSymbol* index = a_trb.GetSymbol(i);
 			const char* symbName = a_trb.GetSymbolName(index);

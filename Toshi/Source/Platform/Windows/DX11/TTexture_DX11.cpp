@@ -7,6 +7,7 @@ void Toshi::TTexture::Init()
 	TString8 a_Path = TString8::TString8("Data\\TextureOverride\\");
 	a_Path.Concat(m_imageName);
 	TFile* file = TFile::Create(a_Path, TFile::FileMode_Read);
+
 	if (file != TNULL)
 	{
 		if (a_Path.Find(".tga") <= 0)

@@ -14,6 +14,7 @@ namespace Toshi
 
 	class TRenderContext
 	{
+	public:
 		typedef uint32_t FLAG;
 		enum FLAG_ : FLAG
 		{
@@ -29,6 +30,16 @@ namespace Toshi
 			FLAG_HASWORLDVIEWMATRIX = BITFIELD(9),
 		};
 
+		struct Params
+		{
+			float fX;
+			float fY;
+			float fWidth;
+			float fHeight;
+			float fMinZ;
+			float fMaxZ;
+		};
+
 		struct PROJECTIONPARAMS
 		{
 			TVector2 m_Centre;  // 0x0
@@ -36,23 +47,54 @@ namespace Toshi
 		};
 
 	protected:
-		inline void SetDirty(bool enable) { enable ? m_eFlags |= FLAG_DIRTY : m_eFlags &= ~FLAG_DIRTY; }
-		inline void SetFlag(FLAG flag, bool enable) { enable ? m_eFlags |= flag : m_eFlags &= ~flag; }
+		void SetDirty(bool enable) { enable ? m_eFlags |= FLAG_DIRTY : m_eFlags &= ~FLAG_DIRTY; }
+		void SetFlag(FLAG flag, bool enable) { enable ? m_eFlags |= flag : m_eFlags &= ~flag; }
 
-		inline void EnableFog(bool enable) { enable ? m_eFlags |= FLAG_FOG : m_eFlags &= ~FLAG_FOG; }
-		inline bool IsFogEnabled() const { return m_eFlags & FLAG_FOG; }
-		inline bool IsDirty() const { return m_eFlags & FLAG_DIRTY; }
+		void EnableFog(bool enable) { enable ? m_eFlags |= FLAG_FOG : m_eFlags &= ~FLAG_FOG; }
+		bool IsFogEnabled() const { return m_eFlags & FLAG_FOG; }
+		bool IsDirty() const { return m_eFlags & FLAG_DIRTY; }
 	
 	public:
-		TRenderContext() { m_eFlags = 0; }
-		TRenderContext(TRender&) { m_eFlags = 0; }
+		TRenderContext(TRender* pRender);
 
 		virtual void SetModelViewMatrix(const TMatrix44& a_rMatrix);
-
 		virtual void SetWorldViewMatrix(const TMatrix44& a_rMatrix);
+		
+		Params& GetParams()
+		{
+			return m_oParams;
+		}
+
+		void SetParams(const Params& params)
+		{
+			m_oParams = params;
+			m_eFlags = (m_eFlags & (~(FLAG_UNK3 | FLAG_UNK4 | FLAG_UNK5 | FLAG_UNK6))) | FLAG_DIRTY;
+		}
+
+		float GetX() const
+		{
+			return m_oParams.fX;
+		}
+
+		float GetY() const
+		{
+			return m_oParams.fY;
+		}
+
+		float GetWidth() const
+		{
+			return m_oParams.fWidth;
+		}
+
+		float GetHeight() const
+		{
+			return m_oParams.fHeight;
+		}
 
 	private:
-		FLAG m_eFlags;                          // 0x8
+		TRender* m_pRender;                     // 0x04
+		FLAG m_eFlags;                          // 0x08
+		Params m_oParams;                       // 0x18
 		PROJECTIONPARAMS m_sProjParams;         // 0x30
 		TMatrix44 m_mModelViewMatrix;           // 0x40
 		TMatrix44 m_mWorldViewMatrix;           // 0x80
