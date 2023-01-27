@@ -55,7 +55,7 @@ private:
 	FILE* m_pFile;                              // 0x16C
 	THEORAPLAY_Decoder* m_TheoraDecoder;        // 0x170
 	CONST THEORAPLAY_VideoFrame* m_TheoraVideo; // 0x174
-	bool m_bUnk;                                // 0x178
+	bool m_bHasAudioStream;                                // 0x178
 	FMOD::Channel* m_pChannel;                  // 0x17C
 	THEORAPLAY_AudioPacket* m_TheoraAudio;      // 0x180
 	int m_Unk;                                  // 0x184

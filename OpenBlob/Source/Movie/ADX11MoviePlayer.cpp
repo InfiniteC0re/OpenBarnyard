@@ -57,6 +57,8 @@ void ADX11MoviePlayer::PlayMovie(const char* fileName, void* unused, uint8_t fla
             const THEORAPLAY_VideoFrame* video = NULL;
             const THEORAPLAY_AudioPacket* audio = NULL;
 
+            m_bHasAudioStream = THEORAPLAY_hasAudioStream(m_TheoraDecoder);
+
             while (!audio || !video)
             {
                 if (!audio) audio = THEORAPLAY_getAudio(m_TheoraDecoder);
@@ -92,7 +94,7 @@ void ADX11MoviePlayer::StopMovie()
 
 void ADX11MoviePlayer::StopMovieImpl()
 {
-    if (!m_bUnk && m_pChannel != TNULL)
+    if (!m_bHasAudioStream && m_pChannel != TNULL)
     {
         m_bIsPlaying = false;
         FMOD::Sound* sound;
