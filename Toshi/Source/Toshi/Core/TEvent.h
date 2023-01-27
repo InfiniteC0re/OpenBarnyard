@@ -16,6 +16,15 @@ namespace Toshi
 			Create(owner); 
 		}
 
+		void Throw(void* owner)
+		{
+			auto pTVar2 = m_List.m_Root.m_Next;
+			do
+			{
+				if (pTVar2 == this) return;
+
+			} while (true);
+		}
 		void Create(void* owner) { m_Owner = owner; }
 		//void Destroy() { }
 

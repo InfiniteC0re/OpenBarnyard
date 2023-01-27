@@ -86,7 +86,39 @@ void ADX11MoviePlayer::PlayMovie(const char* fileName, void* unused, uint8_t fla
 
 void ADX11MoviePlayer::StopMovie()
 {
-    TIMPLEMENT();
+    StopMovieImpl();
+    TIMPLEMENT_D("AMoviePlayer::ThrowPauseEvent();");
+}
+
+void ADX11MoviePlayer::StopMovieImpl()
+{
+    if (!m_bUnk && m_pChannel != TNULL)
+    {
+        m_bIsPlaying = false;
+        FMOD::Sound* sound;
+        m_pChannel->getCurrentSound(&sound);
+        m_pChannel->stop();
+        bool isPlaying;
+        do
+        {
+            m_pChannel->isPlaying(&isPlaying);
+        } while (isPlaying);
+    }
+    THEORAPLAY_stopDecode(m_TheoraDecoder);
+    m_TheoraDecoder = TNULL;
+    if (m_TheoraVideo != TNULL)
+    {
+        THEORAPLAY_freeVideo(m_TheoraVideo);
+        m_TheoraVideo = TNULL;
+    }
+    if (m_TheoraAudio != TNULL)
+    {
+        THEORAPLAY_freeAudio(m_TheoraAudio);
+        m_TheoraAudio = TNULL;
+        m_Unk = 0;
+    }
+    m_bIsPlaying = false;
+    m_bIsHidden = true;
 }
 
 void ADX11MoviePlayer::PauseMovie()
