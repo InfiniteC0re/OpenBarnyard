@@ -1,7 +1,19 @@
 #include "ToshiPCH.h"
 #include "TSound_Win.h"
 
-bool Toshi::TSound_Win::SetSpeakerType(int maxchannels, int unk)
+FMOD_SYSTEM_CALLBACK Toshi::TSound_Win::SoundCB = [](FMOD_SYSTEM* system, FMOD_SYSTEM_CALLBACK_TYPE type, void* commanddata1, void* commanddata2, void* userdata)
+{
+    switch (type)
+    {
+    case FMOD_SYSTEM_CALLBACK_DEVICELOST:
+        TOSHI_ERROR("FMOD reported a device loss. Setting system as uninitialized");
+        TSound_Win::GetSingletonWeak()->m_bInitialised = false;
+        break;
+    }
+    return FMOD_OK;
+};
+
+bool Toshi::TSound_Win::Initialise(int maxchannels, int unk)
 {
     TASSERT(!m_bInitialised, "FMOD system has already been initialised. Only one FMOD system can be initialised at one time.");
 
@@ -15,9 +27,9 @@ bool Toshi::TSound_Win::SetSpeakerType(int maxchannels, int unk)
 
         m_pSystem->setSoftwareFormat(48000, FMOD_SPEAKERMODE_RAW, 1);
 
-        FMOD_RESULT result = m_pSystem->getNumDrivers(&numOutputDrivers);
+        FMOD_RESULT eResult = m_pSystem->getNumDrivers(&numOutputDrivers);
 
-        TASSERT(!ErrorCheck(result));
+        TASSERT(!ErrorCheck(eResult));
 
         if (numOutputDrivers == 0)
         {
@@ -28,11 +40,8 @@ bool Toshi::TSound_Win::SetSpeakerType(int maxchannels, int unk)
     
     if (maxchannels < 0) maxchannels = 0x100;
 
-    //FMOD_SYSTEM_CALLBACK callback;
+    m_pSystem->setCallback(SoundCB);
 
-    //m_pSystem->setCallback(callback);
-
-    
     FMOD_RESULT result = m_pSystem->init(maxchannels, FMOD_INIT_MIX_FROM_UPDATE, NULL);
 
     if (ErrorCheck(result))

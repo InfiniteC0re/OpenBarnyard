@@ -3,31 +3,64 @@
 
 namespace Toshi
 {
-	class TSound
+	class TSound : public TSingleton<TSound>
 	{
 	public:
-		TSound() = default;
+
+		enum SpeakerType
+		{
+			SpeakerType_RAW,
+			SpeakerType_MONO,
+			SpeakerType_7POINT1,
+			SpeakerType_MAX
+		};
+
+		class SoundInitValues
+		{
+		public:
+			SoundInitValues()
+			{
+				m_pPoolmem = TNULL;
+				m_iPoolSize = -1;
+				m_iMaxChannels = -1;
+				m_ifileBufferSize = -1;
+				m_eSpeakerType = SpeakerType_MAX;
+			}
+
+			void* m_pPoolmem;           // 0x0
+			int m_iPoolSize;            // 0x4
+			int m_iMaxChannels;         // 0x8
+			int m_ifileBufferSize;      // 0xC
+			SpeakerType m_eSpeakerType; // 0x10
+		};
+
+
+		TSound()
+		{
+			m_pSystem = NULL;
+			m_bInitialised = false;
+			m_SoundInitValues = SoundInitValues();
+		}
 		
-		bool Create(void* poolmem, int poollen, int maxchannels, int filebuffersize, int unk);
+		bool Create(void* poolmem, int poollen, int maxchannels, int filebuffersize, SpeakerType speakerType);
+		FMOD::System* GetSystem()
+		{
+			TASSERT(TNULL != m_pSystem);
+			return m_pSystem;
+		}
 	
 	protected:	
 		bool ErrorCheck(FMOD_RESULT error);
 		
 		bool InitMem(void* poolmem, int poollen);
 		
-		inline FMOD::System* GetSystem()
-		{
-			TASSERT(TNULL != m_pSystem);
-			return m_pSystem;
-		}
+		
 
-	protected:
-		FMOD::System* m_pSystem = NULL;
-		void* m_poolmem;
-		int m_poollen;
-		int m_maxchannels;
-		int m_fileBufferSize;
-		int m_unk;
+	public:
+		                                     // 0x0 is m_pEventSystem which is deprecated in newer FMOD
+		FMOD::System* m_pSystem;             // 0x4
+		bool m_bInitialised;                 // 0x8
+		SoundInitValues m_SoundInitValues;   // 0xC
 	};
 }
 
