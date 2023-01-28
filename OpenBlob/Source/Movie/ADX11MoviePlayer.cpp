@@ -252,6 +252,16 @@ void ADX11MoviePlayer::OnUpdate(float deltaTime)
         TASSERT(m_TheoraDecoder && m_TheoraVideo);
         m_Position += deltaTime * 1000;
 
+        if (m_bHasAudioStream && m_pChannel == TNULL)
+        {
+            const THEORAPLAY_AudioPacket* audio = THEORAPLAY_getAudio(m_TheoraDecoder);
+            while (audio != NULL)
+            {
+                THEORAPLAY_freeAudio(audio);
+                audio = THEORAPLAY_getAudio(m_TheoraDecoder);
+            }
+        }
+
         if (m_TheoraVideo->playms <= m_Position)
         {
             const THEORAPLAY_VideoFrame* last = m_TheoraVideo;

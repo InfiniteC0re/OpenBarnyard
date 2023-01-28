@@ -19,13 +19,13 @@ bool Toshi::TSound_Win::Initialise(int maxchannels, int unk)
 
     if (unk == 0 || unk == 1)
     {
-        m_pSystem->setSoftwareFormat(48000, FMOD_SPEAKERMODE_7POINT1, 1);
+        m_pSystem->setSoftwareFormat(48000, FMOD_SPEAKERMODE_RAW, 1);
     }
     else if (unk == 2)
     {
         int numOutputDrivers;
 
-        m_pSystem->setSoftwareFormat(48000, FMOD_SPEAKERMODE_RAW, 1);
+        m_pSystem->setSoftwareFormat(48000, FMOD_SPEAKERMODE_7POINT1, 1);
 
         FMOD_RESULT eResult = m_pSystem->getNumDrivers(&numOutputDrivers);
 

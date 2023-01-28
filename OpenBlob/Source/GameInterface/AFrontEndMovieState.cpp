@@ -13,7 +13,7 @@ AGameState::UpdateResult AFrontEndMovieState::OnUpdate(float deltaTime)
     switch (m_iAssetId)
     {
     case Asset_Legal:
-        StartMovie(Asset_Intro);
+        StartMovie(Asset_LogoMovie);
         break;
     }
 
