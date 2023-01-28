@@ -170,10 +170,10 @@ void ADX11MoviePlayer::OnUpdate(float deltaTime)
                 }
             }
 
-           /* if (!m_TheoraVideo)
+            if (!m_TheoraVideo)
             {
                 m_TheoraVideo = last;
-            }*/
+            }
 
             if (m_TheoraVideo == TNULL)
             {
@@ -190,6 +190,7 @@ void ADX11MoviePlayer::OnUpdate(float deltaTime)
 void ADX11MoviePlayer::OnCreate()
 {
     CompileShader();
+    THEORAPLAY_SetMemoryFunctions(TMalloc, TFree);
     AMoviePlayer::OnCreate();
 }
 
