@@ -119,6 +119,11 @@ namespace Toshi
 			_itoa(value, dst, radix);
 		}
 
+		static int StringToInt(const char* src)
+		{
+			return atoi(src);
+		}
+
 	public:
 		static char ms_aScratchMem[1024];
 	};

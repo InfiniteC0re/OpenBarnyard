@@ -72,9 +72,9 @@ namespace Toshi
 		const char& operator[](int index) const { return *GetString(index); }
 		operator const char* () const { return m_pBuffer; }
 		bool operator!() { return m_iStrLen == 0; }
-		bool operator==(char* cstr) const { return Compare(cstr, -1) == 0; }
+		bool operator==(const char* cstr) const { return Compare(cstr, -1) == 0; }
 		bool operator==(const TString8& str) const { return Compare(str.m_pBuffer, -1) == 0; }
-		bool operator!=(char* cstr) const { return Compare(cstr, -1) != 0; }
+		bool operator!=(const char* cstr) const { return Compare(cstr, -1) != 0; }
 		bool operator!=(const TString8& str) const { return Compare(str.m_pBuffer, -1) != 0; }
 		bool operator<(const char* cstr) const { return Compare(cstr, -1) > -1; };
 		bool operator<(const TString8& str) const { return Compare(str.m_pBuffer, -1) > -1; };
