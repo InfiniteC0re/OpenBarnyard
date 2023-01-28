@@ -5,6 +5,12 @@ namespace Toshi
 {
 	class TFXAA
 	{
+	private:
+		enum PSBufferOffset
+		{
+			PSBufferOffset_V2ScreenSize = 26
+		};
+
 	public:
 		TFXAA();
 		~TFXAA();

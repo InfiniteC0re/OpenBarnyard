@@ -675,7 +675,7 @@ namespace Toshi
 		bufferDesc.MiscFlags = 0;
 		bufferDesc.StructureByteStride = 0;
 
-		m_pDevice->CreateBuffer(&bufferDesc, &vertexData, &m_pSomeBuffer);
+		m_pDevice->CreateBuffer(&bufferDesc, &vertexData, &m_pQuarterScreenQuadBuffer);
 	}
 
 	bool TRenderDX11::Create(LPCSTR a_name)
@@ -962,7 +962,7 @@ namespace Toshi
 		return pShaderBlob;
 	}
 
-	void TRenderDX11::CopyToVertexConstantBuffer(int index, const void* src, int count)
+	void TRenderDX11::SetVec4InVSBuffer(BufferOffset index, const void* src, int count)
 	{
 		unsigned int offset = index * 16;
 		unsigned int size = count * 16;
@@ -972,11 +972,11 @@ namespace Toshi
 		m_IsVertexConstantBufferSet = true;
 	}
 
-	void TRenderDX11::CopyToPixelConstantBuffer(int index, const void* src, int count)
+	void TRenderDX11::SetVec4InPSBuffer(BufferOffset index, const void* src, int count)
 	{
 		unsigned int offset = index * 16;
 		unsigned int size = count * 16;
-
+			
 		TASSERT(offset + size <= PIXEL_CONSTANT_BUFFER_SIZE, "Buffer size exceeded");
 		TUtil::MemCopy((char*)m_pPixelConstantBuffer + offset, src, size);
 		m_IsPixelConstantBufferSet = true;
@@ -1483,7 +1483,7 @@ namespace Toshi
 		}
 	}
 
-	void TRenderDX11::FUN_006a6700(float posX, float posY, float width, float height, ID3D11ShaderResourceView* pShaderResourceView, ID3D11PixelShader* pPixelShader, const void* srcData)
+	void TRenderDX11::FUN_006a6700(float posX, float posY, float width, float height, ID3D11ShaderResourceView* pShaderResourceView, ID3D11PixelShader* pPixelShader, const TVector4* uvVec)
 	{
 		auto pRender = TRenderDX11::Interface();
 		auto pDeviceContext = pRender->GetDeviceContext();
@@ -1512,30 +1512,30 @@ namespace Toshi
 		D3D11_VIEWPORT viewPort;
 		pDeviceContext->RSGetViewports(&numViewports, &viewPort);
 
-		TVector4 vec1;
-		vec1.x = (width / viewPort.Width) * 2.0f;
-		vec1.y = (height / viewPort.Height) * 2.0f;
-		vec1.z = (posX / viewPort.Width) * 2.0f - 1.0f;
-		vec1.w = (2.0f - (posY / viewPort.Height) * 2.0f) - 1.0f;
-		pRender->CopyToVertexConstantBuffer(0, &vec1, 1);
+		TVector4 scaleTranslate;
+		scaleTranslate.x = (width / viewPort.Width) * 2.0f;
+		scaleTranslate.y = (height / viewPort.Height) * 2.0f;
+		scaleTranslate.z = (posX / viewPort.Width) * 2.0f - 1.0f;
+		scaleTranslate.w = (2.0f - (posY / viewPort.Height) * 2.0f) - 1.0f;
+		pRender->SetVec4InVSBuffer(VSBufferOffset_V4ScaleTranslate, &scaleTranslate, 1);
 
-		if (srcData == TNULL)
+		if (uvVec == TNULL)
 		{
-			srcData = &vec1;
-			vec1.x = 1.0F;
-			vec1.y = 1.0F;
-			vec1.z = 0.0F;
-			vec1.w = 0.0F;
+			uvVec = &scaleTranslate;
+			scaleTranslate.x = 1.0F;
+			scaleTranslate.y = 1.0F;
+			scaleTranslate.z = 0.0F;
+			scaleTranslate.w = 0.0F;
 		}
-
+		
 		pRender->m_IsVertexConstantBufferSet = true;
-		pRender->CopyToVertexConstantBuffer(1, srcData, 1);
+		pRender->SetVec4InVSBuffer(VSBufferOffset_V4UVST, uvVec, 1);
 
 		UINT stride = 20;
 		UINT offsets = 0;
 
 		pRender->UpdateRenderStates();
-		pDeviceContext->IASetVertexBuffers(0, 1, &pRender->m_pSomeBuffer, &stride, &offsets);
+		pDeviceContext->IASetVertexBuffers(0, 1, &pRender->m_pQuarterScreenQuadBuffer, &stride, &offsets);
 		pRender->FlushConstantBuffers();
 
 		pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
