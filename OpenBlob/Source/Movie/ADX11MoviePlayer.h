@@ -25,6 +25,7 @@ public:
 	{
 		return new ADX11MoviePlayer();
 	}
+	void ReadBuffer(void* data, uint32_t datalen);
 
 private:
 	void StopMovieImpl();

@@ -1,6 +1,23 @@
 #include "pch.h"
 #include "ADX11MoviePlayer.h"
 #include "Platform/Windows/DX11/TRender_DX11.h"
+#include "Toshi/Sound/TSound.h"
+
+FMOD_RESULT F_CALLBACK pcmreadcallback(FMOD_SOUND* sound, void* data, unsigned int datalen)
+{
+    // Read from your buffer here...
+    void* moviePlayer;
+    FMOD_Sound_GetUserData(sound, &moviePlayer);
+    ((ADX11MoviePlayer*)moviePlayer)->ReadBuffer(data, datalen);
+    return FMOD_OK;
+}
+
+
+FMOD_RESULT F_CALLBACK pcmsetposcallback(FMOD_SOUND* sound, int subsound, unsigned int position, FMOD_TIMEUNIT postype)
+{
+    // Seek to a location in your data, may not be required for what you want to do
+    return FMOD_OK;
+}
 
 ADX11MoviePlayer::ADX11MoviePlayer() : m_CurrentFileName("")
 {
@@ -23,6 +40,8 @@ ADX11MoviePlayer::ADX11MoviePlayer() : m_CurrentFileName("")
     m_FrameMS = 0;
     m_bIsPlaying = TFALSE;
     m_bIsPaused = TTRUE;
+    m_Unk = 0;
+    m_TheoraAudio = TNULL;
 }
 
 void ADX11MoviePlayer::PlayMovie(const char* fileName, void* unused, uint8_t flags)
@@ -57,6 +76,13 @@ void ADX11MoviePlayer::PlayMovie(const char* fileName, void* unused, uint8_t fla
             const THEORAPLAY_VideoFrame* video = NULL;
             const THEORAPLAY_AudioPacket* audio = NULL;
 
+            int prepped = 0;
+
+            while (prepped == 0)
+            {
+                prepped = THEORAPLAY_isInitialized(m_TheoraDecoder);
+            }
+
             m_bHasAudioStream = THEORAPLAY_hasAudioStream(m_TheoraDecoder);
 
             while (!audio || !video)
@@ -74,6 +100,42 @@ void ADX11MoviePlayer::PlayMovie(const char* fileName, void* unused, uint8_t fla
                 CreateTextures(video->width, video->height);
                 m_TexturesWidth = video->width;
                 m_TexturesHeight = video->height;
+            }
+
+            if (m_bHasAudioStream)
+            {
+                FMOD::System* system = Toshi::TSound::GetSingletonWeak()->GetSystem();
+                FMOD_CREATESOUNDEXINFO soundInfo;
+                memset(&soundInfo, 0, sizeof(FMOD_CREATESOUNDEXINFO));
+                soundInfo.numchannels = audio->channels;
+                soundInfo.defaultfrequency = audio->freq;
+                soundInfo.length = ~0U;
+                soundInfo.format = FMOD_SOUND_FORMAT_PCMFLOAT;
+                soundInfo.decodebuffersize = (soundInfo.numchannels * soundInfo.defaultfrequency
+                                                + (soundInfo.numchannels * soundInfo.defaultfrequency >> 0x1F & 0xF)) >> 4;
+                soundInfo.pcmreadcallback = pcmreadcallback;
+                soundInfo.pcmsetposcallback = pcmsetposcallback;
+                soundInfo.userdata = this;
+                soundInfo.cbsize = sizeof(FMOD_CREATESOUNDEXINFO);
+                FMOD::Sound* sound;
+                
+                FMOD_RESULT eResult = system->createSound(NULL, 0x4CA, &soundInfo, &sound);
+                if (eResult == FMOD_OK)
+                {
+                    FMOD_RESULT eResult = system->playSound(sound, NULL, true, &m_pChannel);
+                    if (eResult != FMOD_OK)
+                    {
+                        m_pChannel = NULL;
+                        sound->release();
+                        sound = NULL;
+                    }
+                }
+                if (m_pChannel != NULL)
+                {
+                    m_pChannel->setPriority(0);
+                    m_pChannel->setVolume(0.5f);
+                    m_pChannel->setPaused(false);
+                }
             }
 
             Mute(flags & 0b10);
@@ -307,5 +369,41 @@ void ADX11MoviePlayer::CompileShader()
 
         pRender->m_pDevice->CreateInputLayout(&inputDesc, 1, pBlob->GetBufferPointer(), pBlob->GetBufferSize(), &m_pInputLayout);
         pBlob->Release();
+    }
+}
+
+void ADX11MoviePlayer::ReadBuffer(void* data, uint32_t datalen)
+{
+    if (datalen == 0) return;
+    while (m_bIsPlaying)
+    {
+        const THEORAPLAY_AudioPacket* audio = THEORAPLAY_getAudio(m_TheoraDecoder);
+        if (m_TheoraAudio == NULL && (THEORAPLAY_availableAudio(m_TheoraDecoder) == 0 || !m_bIsPlaying || audio == NULL))
+        {
+            memset(data, '\0', datalen);
+            return;
+        }
+        
+        int channels = audio->channels;
+        int size = (audio->frames - m_Unk) * channels;
+        if (datalen / 4 <= size && (size - (datalen / 4) != 0)) size = datalen / 4;
+
+        memcpy(data, audio->samples + channels * m_Unk, size * 4);
+        data = (char*)data + size * 4;
+        datalen = datalen + (size * -4);
+        int newUnk = m_Unk + (size / channels);
+
+        if (audio->frames <= newUnk)
+        {
+            THEORAPLAY_freeAudio(audio);
+            audio = NULL;
+            newUnk = 0;
+        }
+        m_Unk = newUnk;
+        m_TheoraAudio = (THEORAPLAY_AudioPacket*)audio;
+        if (datalen == 0)
+        {
+            return;
+        }
     }
 }

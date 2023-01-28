@@ -43,17 +43,18 @@ namespace Toshi
 		}
 		
 		bool Create(void* poolmem, int poollen, int maxchannels, int filebuffersize, SpeakerType speakerType);
+		FMOD::System* GetSystem()
+		{
+			TASSERT(TNULL != m_pSystem);
+			return m_pSystem;
+		}
 	
 	protected:	
 		bool ErrorCheck(FMOD_RESULT error);
 		
 		bool InitMem(void* poolmem, int poollen);
 		
-		inline FMOD::System* GetSystem()
-		{
-			TASSERT(TNULL != m_pSystem);
-			return m_pSystem;
-		}
+		
 
 	public:
 		                                     // 0x0 is m_pEventSystem which is deprecated in newer FMOD
