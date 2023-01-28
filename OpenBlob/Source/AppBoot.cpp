@@ -42,7 +42,7 @@ bool AApplication::OnCreate(int argc, char** argv)
 		size_t poolSize = 128 * 1024 * 1024;
 		void* mempool = malloc(poolSize);
 
-		bool bResult = m_soundSystem.Create(mempool, poolSize, -1, -1, 2);
+		bool bResult = m_soundSystem.Create(mempool, poolSize, -1, -1, Toshi::TSound::SpeakerType_7POINT1);
 		TASSERT(TTRUE == bResult);
 
 		m_Renderer->Create();

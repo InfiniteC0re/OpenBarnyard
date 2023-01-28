@@ -6,8 +6,10 @@ namespace Toshi
 	class TSound_Win : public TSound
 	{
 	public:
-		bool SetSpeakerType(int maxchannels, int unk);
-		bool m_bInitialised;
+		bool Initialise(int maxchannels, int unk);
+
+		static FMOD_SYSTEM_CALLBACK SoundCB;
+		
 	};
 	
 }

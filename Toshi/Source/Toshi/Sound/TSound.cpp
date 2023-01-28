@@ -5,16 +5,15 @@
 
 namespace Toshi
 {
-    bool TSound::Create(void* poolmem, int poollen, int maxchannels, int filebuffersize, int unk)
+    bool TSound::Create(void* poolmem, int poollen, int maxchannels, int filebuffersize, SpeakerType speakerType)
     {
         if (m_pSystem != NULL)
         {
             TOSHI_ERROR("TSound::Create() - FMOD system has already been created. Only one FMOD system can be created at one time.\n");
             return false;
         }
-
-        m_poolmem = poolmem;
-        m_poollen = poollen;
+        m_SoundInitValues.m_pPoolmem = poolmem;
+        m_SoundInitValues.m_iPoolSize = poollen;
 
         InitMem(poolmem, poollen);
 
@@ -25,16 +24,16 @@ namespace Toshi
             return false;
         }
 
-        m_maxchannels = maxchannels;
-        m_unk = unk;
+        m_SoundInitValues.m_iMaxChannels = maxchannels;
+        m_SoundInitValues.m_eSpeakerType = speakerType;
 
-        bool bInitialiseResult = ((TSound_Win*)this)->SetSpeakerType(maxchannels, unk);
+        bool bInitialiseResult = ((TSound_Win*)this)->Initialise(maxchannels, speakerType);
 
         TASSERT(TTRUE == bInitialiseResult);
 
         if (filebuffersize < 0) filebuffersize = 0x20000;
 
-        m_fileBufferSize = filebuffersize;
+        m_SoundInitValues.m_ifileBufferSize = filebuffersize;
 
         m_pSystem->setStreamBufferSize(filebuffersize, FMOD_TIMEUNIT_RAWBYTES);
 
@@ -63,9 +62,9 @@ namespace Toshi
             poolmem = malloc(poollen);
         }
 
-        FMOD_RESULT result = FMOD::Memory_Initialize(poolmem, poollen, NULL, NULL, NULL);
+        FMOD_RESULT eResult = FMOD::Memory_Initialize(poolmem, poollen, NULL, NULL, NULL);
 
-        if (result != FMOD_OK)
+        if (eResult != FMOD_OK)
         {
             TOSHI_ERROR("FMOD: Failed to Initialise Memory");
             return false;
