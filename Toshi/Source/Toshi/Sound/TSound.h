@@ -43,6 +43,11 @@ namespace Toshi
 		}
 		
 		bool Create(void* poolmem, int poollen, int maxchannels, int filebuffersize, SpeakerType speakerType);
+		bool Create(const SoundInitValues soundInitValues)
+		{
+			return Create(soundInitValues.m_pPoolmem, soundInitValues.m_iPoolSize, soundInitValues.m_iMaxChannels, soundInitValues.m_ifileBufferSize, soundInitValues.m_eSpeakerType);
+		}
+		
 		FMOD::System* GetSystem()
 		{
 			TASSERT(TNULL != m_pSystem);
