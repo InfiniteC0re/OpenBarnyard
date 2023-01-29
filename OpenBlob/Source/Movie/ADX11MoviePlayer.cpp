@@ -23,6 +23,7 @@ ADX11MoviePlayer::ADX11MoviePlayer() : m_CurrentFileName("")
 {
     m_TheoraDecoder = TNULL;
     m_TheoraVideo = TNULL;
+    m_TheoraAudio = TNULL;
     m_pFile = TNULL;
     m_TexturesWidth = 0;
     m_TexturesHeight = 0;
@@ -40,8 +41,7 @@ ADX11MoviePlayer::ADX11MoviePlayer() : m_CurrentFileName("")
     m_FrameMS = 0;
     m_bIsPlaying = TFALSE;
     m_bIsPaused = TTRUE;
-    m_Unk = 0;
-    m_TheoraAudio = TNULL;
+    m_AudioOffset = 0;
 }
 
 void ADX11MoviePlayer::PlayMovie(const char* fileName, void* unused, uint8_t flags)
@@ -76,19 +76,21 @@ void ADX11MoviePlayer::PlayMovie(const char* fileName, void* unused, uint8_t fla
             const THEORAPLAY_VideoFrame* video = NULL;
             const THEORAPLAY_AudioPacket* audio = NULL;
 
-            int prepped = 0;
+            while (!THEORAPLAY_isInitialized(m_TheoraDecoder));
 
-            while (prepped == 0)
+            if (!THEORAPLAY_hasVideoStream)
             {
-                prepped = THEORAPLAY_isInitialized(m_TheoraDecoder);
+                THEORAPLAY_stopDecode(m_TheoraDecoder);
+                m_TheoraDecoder = NULL;
+                return;
             }
 
             m_bHasAudioStream = THEORAPLAY_hasAudioStream(m_TheoraDecoder);
 
-            while (!audio || !video)
+            while ((video = THEORAPLAY_getVideo(m_TheoraDecoder)) == NULL);
+            while ((audio = THEORAPLAY_getAudio(m_TheoraDecoder)) == NULL)
             {
-                if (!audio) audio = THEORAPLAY_getAudio(m_TheoraDecoder);
-                if (!video) video = THEORAPLAY_getVideo(m_TheoraDecoder);
+                if (THEORAPLAY_availableVideo(m_TheoraDecoder) >= 30) break;
             }
 
             UINT framems = (video->fps == 0.0) ? 0 : ((UINT)(1000.0 / video->fps));
@@ -111,14 +113,12 @@ void ADX11MoviePlayer::PlayMovie(const char* fileName, void* unused, uint8_t fla
                 soundInfo.defaultfrequency = audio->freq;
                 soundInfo.length = ~0U;
                 soundInfo.format = FMOD_SOUND_FORMAT_PCMFLOAT;
-                soundInfo.decodebuffersize = (soundInfo.numchannels * soundInfo.defaultfrequency
-                                                + (soundInfo.numchannels * soundInfo.defaultfrequency >> 0x1F & 0xF)) >> 4;
+                soundInfo.decodebuffersize = soundInfo.numchannels * soundInfo.defaultfrequency / 16;
                 soundInfo.pcmreadcallback = pcmreadcallback;
                 soundInfo.pcmsetposcallback = pcmsetposcallback;
                 soundInfo.userdata = this;
                 soundInfo.cbsize = sizeof(FMOD_CREATESOUNDEXINFO);
                 FMOD::Sound* sound;
-                
                 FMOD_RESULT eResult = system->createSound(NULL, 0x4CA, &soundInfo, &sound);
                 if (eResult == FMOD_OK)
                 {
@@ -133,7 +133,7 @@ void ADX11MoviePlayer::PlayMovie(const char* fileName, void* unused, uint8_t fla
                 if (m_pChannel != NULL)
                 {
                     m_pChannel->setPriority(0);
-                    m_pChannel->setVolume(0.5f);
+                    m_pChannel->setVolume(0.3f);
                     m_pChannel->setPaused(false);
                 }
             }
@@ -156,7 +156,7 @@ void ADX11MoviePlayer::StopMovie()
 
 void ADX11MoviePlayer::StopMovieImpl()
 {
-    if (!m_bHasAudioStream && m_pChannel != TNULL)
+    if (m_bHasAudioStream && m_pChannel != TNULL)
     {
         m_bIsPlaying = false;
         FMOD::Sound* sound;
@@ -179,16 +179,22 @@ void ADX11MoviePlayer::StopMovieImpl()
     {
         THEORAPLAY_freeAudio(m_TheoraAudio);
         m_TheoraAudio = TNULL;
-        m_Unk = 0;
+        m_AudioOffset = 0;
     }
     m_bIsPlaying = false;
     m_bIsHidden = true;
 }
 
-void ADX11MoviePlayer::PauseMovie()
+void ADX11MoviePlayer::PauseMovie(bool pause)
 {
-    m_bIsPaused = TTRUE;
-    TIMPLEMENT();
+    if (pause != m_bIsPaused)
+    {
+        if (m_bIsPaused && m_pChannel != NULL)
+        {
+            m_pChannel->setPaused(pause);
+        }
+        m_bIsPaused = pause;
+    }
 }
 
 bool ADX11MoviePlayer::IsMoviePlaying()
@@ -285,7 +291,7 @@ void ADX11MoviePlayer::OnUpdate(float deltaTime)
             {
                 TIMPLEMENT();
                 StopMovieImpl();
-                PauseMovie();
+                PauseMovie(true);
             }
         }
     }
@@ -386,31 +392,30 @@ void ADX11MoviePlayer::CompileShader()
 void ADX11MoviePlayer::ReadBuffer(void* data, uint32_t datalen)
 {
     if (datalen == 0) return;
+    const THEORAPLAY_AudioPacket* audio;
     while (m_bIsPlaying)
     {
-        const THEORAPLAY_AudioPacket* audio = THEORAPLAY_getAudio(m_TheoraDecoder);
-        if (m_TheoraAudio == NULL && (THEORAPLAY_availableAudio(m_TheoraDecoder) == 0 || !m_bIsPlaying || audio == NULL))
+        if (m_TheoraAudio == NULL && (!THEORAPLAY_isDecoding(m_TheoraDecoder) || !m_bIsPlaying || (audio = THEORAPLAY_getAudio(m_TheoraDecoder)) == NULL))
         {
-            memset(data, '\0', datalen);
+            memset(data, 0, datalen);
             return;
         }
         
         int channels = audio->channels;
-        int size = (audio->frames - m_Unk) * channels;
-        if (datalen / 4 <= size && (size - (datalen / 4) != 0)) size = datalen / 4;
+        int size = (audio->frames - m_AudioOffset) * channels;
+        if (size > (datalen / sizeof(float))) size = datalen / sizeof(float);
 
-        memcpy(data, audio->samples + channels * m_Unk, size * 4);
-        data = (char*)data + size * 4;
-        datalen = datalen + (size * -4);
-        int newUnk = m_Unk + (size / channels);
+        memmove(data, audio->samples + (channels * m_AudioOffset), size * sizeof(float));
+        data = (char*)data + size * sizeof(float);
+        m_AudioOffset += (size / channels);
+        datalen -= size * sizeof(float);
 
-        if (audio->frames <= newUnk)
+        if (m_AudioOffset <= audio->frames)
         {
             THEORAPLAY_freeAudio(audio);
             audio = NULL;
-            newUnk = 0;
+            m_AudioOffset = 0;
         }
-        m_Unk = newUnk;
         m_TheoraAudio = (THEORAPLAY_AudioPacket*)audio;
         if (datalen == 0)
         {

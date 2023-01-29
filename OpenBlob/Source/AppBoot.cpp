@@ -18,6 +18,7 @@
 
 #include <Toshi/Sound/TSound.h>
 #include <Toshi/Render/TRender.h>
+#include <Platform/Windows/TSound_Win.h>
 #include TOSHI_MULTIRENDER(TRender)
 
 AApplication AApplication::g_oTheApp;
@@ -43,6 +44,9 @@ bool AApplication::OnCreate(int argc, char** argv)
 
 		bool bResult = Toshi::TSound::CreateSingleton()->Create(mempool, poolSize, -1, -1, Toshi::TSound::SpeakerType_7POINT1);
 		TASSERT(TTRUE == bResult);
+
+		FMOD::System* system = Toshi::TSound::GetSingletonWeak()->GetSystem();
+		system->setFileSystem(NULL, NULL, NULL, NULL, NULL, NULL, 0);
 
 		m_Renderer->Create();
 		SetRenderWorld(true);
@@ -70,7 +74,15 @@ bool AApplication::OnUpdate(float deltaTime)
 		pMoviePlayer->OnUpdate(deltaTime);
 	}
 
+	UpdateSound(deltaTime);
 	m_pGameStateController->Update(deltaTime);
 	ARenderer::GetSingletonWeak()->Update(deltaTime);
 	return true;
+}
+
+bool AApplication::UpdateSound(float deltaTime)
+{
+	Toshi::TSound* sound = Toshi::TSound::GetSingleton();
+	sound->Update();
+	return false;
 }

@@ -14,7 +14,7 @@ public:
 
 	virtual void PlayMovie(const char* fileName, void* unused, uint8_t flags) override;
 	virtual void StopMovie() override;
-	virtual void PauseMovie() override;
+	virtual void PauseMovie(bool pause) override;
 	virtual bool IsMoviePlaying() override;
 	virtual bool IsMoviePaused() override;
 	virtual void OnRender(float deltaTime) override;
@@ -59,6 +59,6 @@ private:
 	bool m_bHasAudioStream;                     // 0x178
 	FMOD::Channel* m_pChannel;                  // 0x17C
 	THEORAPLAY_AudioPacket* m_TheoraAudio;      // 0x180
-	int m_Unk;                                  // 0x184
+	int m_AudioOffset;                           // 0x184
 	double m_Position;                          // 0x188
 };

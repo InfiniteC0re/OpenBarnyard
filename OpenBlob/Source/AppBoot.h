@@ -11,6 +11,7 @@ public:
 
 	virtual bool OnCreate(int argc, char** argv) override;
 	virtual bool OnUpdate(float deltaTime) override;
+	bool UpdateSound(float deltaTime);
 
 	bool ShouldLoadModelViewState() const
 	{

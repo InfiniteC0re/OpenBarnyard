@@ -47,6 +47,13 @@ namespace Toshi
 		{
 			return Create(soundInitValues.m_pPoolmem, soundInitValues.m_iPoolSize, soundInitValues.m_iMaxChannels, soundInitValues.m_ifileBufferSize, soundInitValues.m_eSpeakerType);
 		}
+
+		void Update()
+		{
+			TASSERT(TNULL != m_pSystem);
+			FMOD_RESULT eResult = m_pSystem->update();
+			ErrorCheck(eResult);
+		}
 		
 		FMOD::System* GetSystem()
 		{
