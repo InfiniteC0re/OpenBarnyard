@@ -1,6 +1,7 @@
 #pragma once
 #include "Toshi/Strings/TStringManager.h"
 #include "Toshi/File/TFile.h"
+#include <d3d11.h>
 
 namespace Toshi
 {
