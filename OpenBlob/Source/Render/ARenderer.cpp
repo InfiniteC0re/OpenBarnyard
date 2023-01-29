@@ -6,7 +6,7 @@
 #include <Platform/Windows/DX11/TRender_DX11.h>
 #include <Toshi/Render/TAssetInit.h>
 
-Toshi::TTRB ARenderer::s_BootAssetsTRB;
+Toshi::TTRB ARenderer::s_BootAssetsTRB = Toshi::TTRB();
 
 static void MainScene(float deltaTime, void* pCameraObject)
 {

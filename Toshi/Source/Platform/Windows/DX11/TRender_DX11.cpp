@@ -446,10 +446,22 @@ namespace Toshi
 		}
 
 		Initialize();
-		CreateVSPS();
+		
+		TRenderContext* pContext = GetCurrentRenderContext();
+		pContext->SetParams({
+			0.0f,                                     // fX
+			0.0f,                                     // fY
+			(float)m_SwapChainDesc.BufferDesc.Width,  // fWidth
+			(float)m_SwapChainDesc.BufferDesc.Height, // fHeight
+			0.0f,                                     // fMinZ
+			1.0f                                      // fMaxZ
+		});
+
+		TTextureManager::CreateSingleton();
 
 		m_pToneMap = new TToneMap();
 		m_pFXAA = new TFXAA();
+		CreateVSPS();
 
 		return true;
 	}
@@ -998,12 +1010,12 @@ namespace Toshi
 		return hRes;
 	}
 
-	ID3D11ShaderResourceView* TRenderDX11::CreateTexture(UINT width, UINT height, DXGI_FORMAT format, void* srcData, uint8_t flags, D3D11_USAGE usage, uint32_t cpuAccessFlags, uint32_t sampleDescCount)
+	ID3D11ShaderResourceView* TRenderDX11::CreateTexture(UINT width, UINT height, DXGI_FORMAT format, const void* srcData, uint8_t flags, D3D11_USAGE usage, uint32_t cpuAccessFlags, uint32_t sampleDescCount)
 	{
 		D3D11_SUBRESOURCE_DATA subResourceData = { };
 		D3D11_TEXTURE2D_DESC textureDesc = { };
 
-		UINT mipLevels = 0;
+		UINT numberOfMipmaps = 0;
 		bool noMipLevels;
 		bool doScaryThings = true;
 
@@ -1013,7 +1025,7 @@ namespace Toshi
 
 			if ((flags & 1) == 0)
 			{
-				mipLevels = 1;
+				numberOfMipmaps = 1;
 				doScaryThings = false;
 			}
 		}
@@ -1027,7 +1039,7 @@ namespace Toshi
 			TASSERT(TFALSE, "Not implemented");
 		}
 
-		mipLevels = noMipLevels ? 0 : mipLevels;
+		numberOfMipmaps = noMipLevels ? 0 : numberOfMipmaps;
 		
 		textureDesc.SampleDesc.Count = sampleDescCount;
 		textureDesc.SampleDesc.Quality = 0;
@@ -1037,7 +1049,7 @@ namespace Toshi
 		textureDesc.Height = height;
 		textureDesc.Format = format;
 		textureDesc.CPUAccessFlags = cpuAccessFlags;
-		textureDesc.MipLevels = mipLevels;
+		textureDesc.MipLevels = numberOfMipmaps;
 		textureDesc.MiscFlags = noMipLevels ? D3D11_RESOURCE_MISC_GENERATE_MIPS : NULL;
 		textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
 
@@ -1050,13 +1062,27 @@ namespace Toshi
 
 		if (srcData == TNULL)
 		{
-			m_pDevice->CreateTexture2D(&textureDesc, 0, &pTexture);
+			m_pDevice->CreateTexture2D(&textureDesc, TNULL, &pTexture);
 		}
 		else
 		{
 			if (noMipLevels == false)
 			{
-				TASSERT(TFALSE, "Not implemented");
+				TASSERT(numberOfMipmaps <= MAXIMUM_NUMBER_OF_MIPMAPS);
+
+				if (!HASFLAG(flags & 1))
+				{
+					D3D11_SUBRESOURCE_DATA subresourceData;
+					subresourceData.pSysMem = srcData;
+					subresourceData.SysMemPitch = GetTextureRowPitch(format, width);
+					subresourceData.SysMemSlicePitch = GetTextureDepthPitch(format, width, height);
+
+					m_pDevice->CreateTexture2D(&textureDesc, &subresourceData, &pTexture);
+				}
+				else
+				{
+					TASSERT(TFALSE, "MipMap generator is not implemented");
+				}
 			}
 			else
 			{
@@ -1072,7 +1098,7 @@ namespace Toshi
 			D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc;
 			shaderResourceViewDesc.Format = textureDesc.Format;
 			shaderResourceViewDesc.ViewDimension = sampleDescCount > 1 ? D3D_SRV_DIMENSION_TEXTURE2DMS : D3D_SRV_DIMENSION_TEXTURE2D;
-			shaderResourceViewDesc.Texture2D.MipLevels = mipLevels;
+			shaderResourceViewDesc.Texture2D.MipLevels = numberOfMipmaps;
 			shaderResourceViewDesc.Texture2D.MostDetailedMip = 0;
 
 			ID3D11ShaderResourceView* pShaderResourceView = TNULL;

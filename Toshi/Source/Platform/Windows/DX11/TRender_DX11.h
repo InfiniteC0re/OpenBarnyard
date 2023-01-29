@@ -138,6 +138,7 @@ namespace Toshi
 		static constexpr size_t NUMBUFFERS = 16;
 		static constexpr size_t IMMEDIATE_VERTEX_BUFFER_SIZE = 0x100000;
 		static constexpr size_t IMMEDIATE_INDEX_BUFFER_SIZE = 0x10000;
+		static constexpr size_t MAXIMUM_NUMBER_OF_MIPMAPS = 16;
 
 		static constexpr D3D_DRIVER_TYPE m_scpDriverTypes[3]
 		{
@@ -348,11 +349,11 @@ namespace Toshi
 
 		void CreateVSPS();
 		bool Create(LPCSTR a_name);
-		void SetVec4InVSBuffer(uint32_t index, const void* src, int count = 1);
-		void SetVec4InPSBuffer(uint32_t index, const void* src, int count = 1);
+		void SetVec4InVSBuffer(BufferOffset index, const void* src, int count = 1);
+		void SetVec4InPSBuffer(BufferOffset index, const void* src, int count = 1);
 		HRESULT CreatePixelShader(const void* pShaderBytecode, SIZE_T BytecodeLength, ID3D11PixelShader** ppPixelShader);
 		HRESULT CreateVertexShader(const void* pShaderBytecode, SIZE_T BytecodeLength, ID3D11VertexShader** ppVertexShader);
-		ID3D11ShaderResourceView* CreateTexture(UINT width, UINT height, DXGI_FORMAT format, void* srcData, uint8_t flags, D3D11_USAGE usage, uint32_t cpuAccessFlags, uint32_t sampleDescCount);
+		ID3D11ShaderResourceView* CreateTexture(UINT width, UINT height, DXGI_FORMAT format, const void* srcData, uint8_t flags, D3D11_USAGE usage, uint32_t cpuAccessFlags, uint32_t sampleDescCount);
 		ID3D11RenderTargetView* CreateRenderTargetView(ID3D11ShaderResourceView* pShaderResourceView);
 		ID3D11SamplerState* CreateSamplerStateAutoAnisotropy(D3D11_FILTER filter, D3D11_TEXTURE_ADDRESS_MODE addressU, D3D11_TEXTURE_ADDRESS_MODE addressV, D3D11_TEXTURE_ADDRESS_MODE addressW, FLOAT mipLODBias, uint32_t borderColor, FLOAT minLOD, FLOAT maxLOD);
 		ID3D11SamplerState* CreateSamplerState(D3D11_FILTER filter, D3D11_TEXTURE_ADDRESS_MODE addressU, D3D11_TEXTURE_ADDRESS_MODE addressV, D3D11_TEXTURE_ADDRESS_MODE addressW, FLOAT mipLODBias, uint32_t borderColor, FLOAT minLOD, FLOAT maxLOD, UINT maxAnisotropy);
