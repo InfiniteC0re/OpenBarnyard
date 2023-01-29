@@ -55,6 +55,21 @@ namespace Toshi
 		TTODO("FUN_00693a00");
 	}
 
+	TTexture* TTexture::InitRunTime(Info* pTextureInfo)
+	{
+		TRenderDX11* pRender = TRenderDX11::Interface();
+
+		TTexture* pTexture = new TTexture;
+		TASSERT(pTexture != TNULL);
+
+		pTexture->m_TexName = "runtime";
+		pTexture->m_TexInfo = pTextureInfo;
+		pTexture->m_TexData = TNULL;
+		TTextureManager::GetSingletonWeak()->AddTexture(pTexture);
+
+		return pTexture;
+	}
+
 	TTexture* TTexture::InitRunTime(DXGI_FORMAT format, UINT width, UINT height, const void* srcData)
 	{
 		TRenderDX11* pRender = TRenderDX11::Interface();
@@ -63,6 +78,9 @@ namespace Toshi
 		TASSERT(pTexture != TNULL);
 
 		pTexture->m_TexName = "runtime";
+
+		pTexture->m_TexInfo = new TTexture::Info;
+		TASSERT(pTexture->m_TexInfo != TNULL);
 
 		pTexture->m_TexInfo->SRView = pRender->CreateTexture(width, height, format, srcData, 0, D3D11_USAGE_IMMUTABLE, 0, 1);
 		pTexture->m_TexInfo->Width = width;

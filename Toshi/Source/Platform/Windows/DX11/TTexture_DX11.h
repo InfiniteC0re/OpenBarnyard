@@ -33,10 +33,8 @@ namespace Toshi
 	public:
 		TTexture()
 		{
-			m_TexInfo = new TTexture::Info;
-			TASSERT(m_TexInfo != TNULL);
-
 			m_Unk1 = TNULL;
+			m_TexInfo = TNULL;
 			m_TexName = TNULL;
 			m_DataSize = 0;
 			m_TexData = 0;
@@ -46,6 +44,7 @@ namespace Toshi
 
 		void Init();
 
+		TTexture* InitRunTime(Info* pTextureInfo);
 		static TTexture* InitRunTime(DXGI_FORMAT format, UINT width, UINT height, const void* srcData);
 
 		void SetName(const char* name)
@@ -95,7 +94,7 @@ namespace Toshi
 		}
 
 		void AddTexture(TTexture* pTexture)
-		{
+		{	
 			pTexture->m_pPrevTexture = GetLastTexture();
 			pTexture->m_pNextTexture = TNULL;
 

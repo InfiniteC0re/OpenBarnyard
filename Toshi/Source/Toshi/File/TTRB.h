@@ -215,8 +215,6 @@ namespace Toshi
 		}
 
 	private:
-		static t_MemoryFuncAlloc s_cbDefAllocator;
-		static t_MemoryFuncDealloc s_cbDefDeallocator;
 		static void* s_pDefAllocatorUserData;
 
 	private:
