@@ -290,10 +290,18 @@ namespace Toshi
 		using DepthStatePair = T2Pair<DepthState, ID3D11DepthStencilState*, DepthStencilComparator>;
 		using DepthPair = T2Pair<DepthState, UINT, DepthStencilComparator>;
 		
-		static inline const char* s_defaultVertexShader = " float4 ScaleTranslate : register(c0);               float4 uvST : register(c1);                                                             struct VS_IN                                                                                {                                                 float4 ObjPos   : POSITION;                   float2 UV\t\t  : TEXCOORD0;\t\t\t    };                                                                                          struct VS_OUT                                 {                                                 float4 ProjPos  : SV_POSITION;                   float2 UV\t\t  : TEXCOORD0;\t\t\t    };                                                                                          VS_OUT main( VS_IN In )                       {                                                 VS_OUT Out;                                   float4 scaledvert = In.ObjPos.xyzw * ScaleTranslate.xyzw;         scaledvert = scaledvert.xyzw + ScaleTranslate.zwzw;\t\t\t\t        scaledvert.zw = float2(0.0,1.0);\t\t\t\t\t\t\t\t     Out.ProjPos = scaledvert;\t\t\t\t        Out.UV = (In.UV*uvST.xy) + uvST.zw;           return Out;                               }                                            ";
-		static inline const char* s_defaultPixelShader = " struct PS_IN                                  {                                            \t\tfloat4 Position\t\t\t: SV_POSITION; \t\tfloat2 Tex0             : TEXCOORD0;    };                                                                                          sampler2D   diffuse_texture     : register(s0) = sampler_state { MipFilter = NONE; MinFilter = LINEAR; MagFilter = LINEAR; AddressU = WRAP; AddressV = WRAP; };   float4 main( PS_IN In )  : COLOR\t\t\t    {                                                return tex2D( diffuse_texture, In.Tex0 );        }                                            ";
-		static inline const char* s_defaultPixelShader2 = " struct PS_IN                                  {                                            \t\tfloat4 Position\t\t\t: SV_POSITION; \t\tfloat2 Tex0             : TEXCOORD0;    };                                                                                          sampler2D   diffuse_texture     : register(s0) = sampler_state { MipFilter = NONE; MinFilter = LINEAR; MagFilter = LINEAR; AddressU = WRAP; AddressV = WRAP; };   float4 main( PS_IN In )  : COLOR\t\t\t    {                                                return float4(tex2D( diffuse_texture, In.Tex0 ).xyz, 1.0);        }                                            ";
+		static constexpr const char* s_defaultVertexShader = " float4 ScaleTranslate : register(c0);               float4 uvST : register(c1);                                                             struct VS_IN                                                                                {                                                 float4 ObjPos   : POSITION;                   float2 UV\t\t  : TEXCOORD0;\t\t\t    };                                                                                          struct VS_OUT                                 {                                                 float4 ProjPos  : SV_POSITION;                   float2 UV\t\t  : TEXCOORD0;\t\t\t    };                                                                                          VS_OUT main( VS_IN In )                       {                                                 VS_OUT Out;                                   float4 scaledvert = In.ObjPos.xyzw * ScaleTranslate.xyzw;         scaledvert = scaledvert.xyzw + ScaleTranslate.zwzw;\t\t\t\t        scaledvert.zw = float2(0.0,1.0);\t\t\t\t\t\t\t\t     Out.ProjPos = scaledvert;\t\t\t\t        Out.UV = (In.UV*uvST.xy) + uvST.zw;           return Out;                               }                                            ";
+		static constexpr const char* s_defaultPixelShader = " struct PS_IN                                  {                                            \t\tfloat4 Position\t\t\t: SV_POSITION; \t\tfloat2 Tex0             : TEXCOORD0;    };                                                                                          sampler2D   diffuse_texture     : register(s0) = sampler_state { MipFilter = NONE; MinFilter = LINEAR; MagFilter = LINEAR; AddressU = WRAP; AddressV = WRAP; };   float4 main( PS_IN In )  : COLOR\t\t\t    {                                                return tex2D( diffuse_texture, In.Tex0 );        }                                            ";
+		static constexpr const char* s_defaultPixelShader2 = " struct PS_IN                                  {                                            \t\tfloat4 Position\t\t\t: SV_POSITION; \t\tfloat2 Tex0             : TEXCOORD0;    };                                                                                          sampler2D   diffuse_texture     : register(s0) = sampler_state { MipFilter = NONE; MinFilter = LINEAR; MagFilter = LINEAR; AddressU = WRAP; AddressV = WRAP; };   float4 main( PS_IN In )  : COLOR\t\t\t    {                                                return float4(tex2D( diffuse_texture, In.Tex0 ).xyz, 1.0);        }                                            ";
 		
+	private:
+		typedef uint32_t BufferOffset;
+		enum VSBufferOffset
+		{
+			VSBufferOffset_V4ScaleTranslate = 0,
+			VSBufferOffset_V4UVST = 1,
+		};
+
 	public:
 		TRenderDX11();
 		~TRenderDX11() = default;
@@ -340,8 +348,8 @@ namespace Toshi
 
 		void CreateVSPS();
 		bool Create(LPCSTR a_name);
-		void CopyToVertexConstantBuffer(int index, const void* src, int count);
-		void CopyToPixelConstantBuffer(int index, const void* src, int count);
+		void SetVec4InVSBuffer(uint32_t index, const void* src, int count = 1);
+		void SetVec4InPSBuffer(uint32_t index, const void* src, int count = 1);
 		HRESULT CreatePixelShader(const void* pShaderBytecode, SIZE_T BytecodeLength, ID3D11PixelShader** ppPixelShader);
 		HRESULT CreateVertexShader(const void* pShaderBytecode, SIZE_T BytecodeLength, ID3D11VertexShader** ppVertexShader);
 		ID3D11ShaderResourceView* CreateTexture(UINT width, UINT height, DXGI_FORMAT format, void* srcData, uint8_t flags, D3D11_USAGE usage, uint32_t cpuAccessFlags, uint32_t sampleDescCount);
@@ -362,7 +370,7 @@ namespace Toshi
 		void FlushConstantBuffers();
 		void FUN_00691190();
 
-		static void FUN_006a6700(float posX, float posY, float width, float height, ID3D11ShaderResourceView* pShaderResourceView, ID3D11PixelShader* pPixelShader, const void* srcData);
+		static void FUN_006a6700(float posX, float posY, float width, float height, ID3D11ShaderResourceView* pShaderResourceView, ID3D11PixelShader* pPixelShader, const TVector4* uvVec);
 	
 	private:
 		void BuildAdapterDatabase();
@@ -399,7 +407,7 @@ namespace Toshi
 		ID3D11PixelShader* m_pPixelShader1;               // 0x6DC
 		ID3D11PixelShader* m_pPixelShader2;               // 0x6E0
 		ID3D11InputLayout* m_pInputLayout;                // 0x6E4
-		ID3D11Buffer* m_pSomeBuffer;                      // 0x6E8
+		ID3D11Buffer* m_pQuarterScreenQuadBuffer;         // 0x6E8
 		FLOAT m_ClearColor[4];                            // 0x6EC
 		TToneMap* m_pToneMap;                             // 0x71C
 		TFXAA* m_pFXAA;                                   // 0x724

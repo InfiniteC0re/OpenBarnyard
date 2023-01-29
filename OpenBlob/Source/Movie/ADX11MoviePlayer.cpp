@@ -296,6 +296,7 @@ void ADX11MoviePlayer::OnUpdate(float deltaTime)
 void ADX11MoviePlayer::OnCreate()
 {
     CompileShader();
+    THEORAPLAY_SetMemoryFunctions(TMalloc, TFree);
     AMoviePlayer::OnCreate();
 }
 

@@ -99,7 +99,7 @@ namespace Toshi
 		unk.z = 0;
 		unk.w = 0;
 
-		pRender->CopyToPixelConstantBuffer(26, &unk, 1);
+		pRender->SetVec4InPSBuffer(PSBufferOffset_V2ScreenSize, &unk, 1);
 		TRenderDX11::FUN_006a6700(0.0f, 0.0f, (float)m_Width, (float)m_Height, pShaderResourceView, m_pShader, NULL);
 
 		// Restore original render targets

@@ -1,23 +1,29 @@
 #include "ToshiPCH.h"
 #include "TTexture_DX11.h"
+#include "TRender_DX11.h"
 
-void Toshi::TTexture::Init()
+namespace Toshi
 {
-	TASSERT(0 < m_DataSize, "DataSize is not empty");
-	TString8 a_Path = TString8::TString8("Data\\TextureOverride\\");
-	a_Path.Concat(m_imageName);
-	TFile* file = TFile::Create(a_Path, TFile::FileMode_Read);
-
-	if (file != TNULL)
+	void TTexture::Init()
 	{
-		if (a_Path.Find(".tga") <= 0)
-		{
+		TASSERT(0 < m_DataSize, "DataSize is not empty");
+		
+		TString8 a_Path("Data\\TextureOverride\\");
+		a_Path += m_TexName;
 
-		}
-		else
+		TFile* pFile = TFile::Create(a_Path, TFile::FileMode_Read);
+
+		if (pFile != TNULL)
 		{
-			file->Destroy();
-			TASSERT(a_Path.IsIndexValid(0));
+			if (a_Path.Find(".tga") <= 0)
+			{
+
+			}
+			else
+			{
+				pFile->Destroy();
+				TASSERT(a_Path.IsIndexValid(0));
+			}
 		}
 	}
 }

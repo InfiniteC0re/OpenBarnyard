@@ -23,6 +23,7 @@ group "Engine"
 
 group "Toshi Tools"
 	include "Tools/TRBF"
+	include "Tools/ttc"
 	
 group "Third-Party"
 	include "Toshi/Vendor/libogg"
