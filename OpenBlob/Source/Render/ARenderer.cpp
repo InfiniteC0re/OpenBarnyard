@@ -2,15 +2,20 @@
 #include "ARenderer.h"
 #include "AppBoot.h"
 #include "Movie/AMoviePlayer.h"
+#include "A2GUI/A2GUIRenderer_DX11.h"
+#include "GameInterface/AFrontEndMovieState.h"
 
 #include <Platform/Windows/DX11/TRender_DX11.h>
+#include <Platform/Windows/DX11/TRenderContext_DX11.h>
+#include <Platform/Windows/DX11/TPrimShader_DX11.h>
 #include <Toshi/Render/TAssetInit.h>
+#include <Toshi2/T2GUI/T2GUI.h>
 
 Toshi::TTRB ARenderer::s_BootAssetsTRB = Toshi::TTRB();
 
 static void MainScene(float deltaTime, void* pCameraObject)
 {
-
+	
 }
 
 ARenderer::ARenderer()
@@ -51,8 +56,15 @@ void ARenderer::Update(float deltaTime)
 		RenderMainScene(deltaTime, m_pViewport, TNULL, TNULL, MainScene, true);
 	}
 
-	ID3D11ShaderResourceView* pShaderResourceView = (pDisplayParams->MultisampleQualityLevel < 2) ? pRender->m_SRView1 : pRender->m_SRView2;
-	pRender->m_pFXAA->Render(pShaderResourceView);
+	RenderGUI(false);
+	auto pGameStateController = AGameStateController::GetSingletonWeak();
+	auto pGameState = pGameStateController->GetCurrentGameState();
+
+	if (TFALSE == pGameState->GetClass()->IsA(TGetClass(AFrontEndMovieState)))
+	{
+		ID3D11ShaderResourceView* pShaderResourceView = (pDisplayParams->MultisampleQualityLevel < 2) ? pRender->m_SRView1 : pRender->m_SRView2;
+		pRender->m_pFXAA->Render(pShaderResourceView);
+	}
 
 	pRender->EndScene();
 }
@@ -91,6 +103,7 @@ void ARenderer::Create()
 	TIMPLEMENT();
 
 	auto error = s_BootAssetsTRB.Load("Data\\BootAssets\\BootAssets.trb");
+	Toshi::TPrimShader::CreateSingleton();
 
 	if (error == Toshi::TTRB::ERROR_OK)
 	{
@@ -108,6 +121,16 @@ void ARenderer::SetBackgroundColour(uint32_t r, uint32_t g, uint32_t b)
 	}
 
 	m_BackgroundColor = ((r & 0xff) << 8 | g & 0xff) << 8 | b & 0xff;
+}
+
+void ARenderer::RenderGUI(bool allowBackgroundClear)
+{
+	TIMPLEMENT();
+
+	m_pViewport->AllowBackgroundClear(allowBackgroundClear);
+	m_pViewport->Begin();
+	Toshi::T2GUI::GetSingletonWeak()->Render();
+	m_pViewport->End();
 }
 
 void ARenderer::RenderMainScene(float deltaTime, Toshi::TViewport* pViewport, void* unk2, void* pCameraObject, t_MainScene mainSceneCb, bool allowBackgroundClear)
@@ -147,5 +170,5 @@ void ARenderer::CreateMainViewport()
 	m_pViewport->AllowBackgroundClear(true);
 	m_pViewport->AllowDepthClear(true);
 	m_pViewport->EnableDefaultBeginRender(true);
-	m_pViewport->SetBackgroundColor(64, 64, 64, 255);
+	m_pViewport->SetBackgroundColor(0, 0, 0, 255);
 }

@@ -55,26 +55,17 @@ namespace Toshi
 		}
 	};
 
-	class T2GUIElement : T2GUIElementNode
+	class T2GUIElement : public T2GUIElementNode
 	{
 	public:
-
 		enum FLAGS
 		{
 			Flags_Focus = 1,
 			Flags_Visible,
 			FLAGS_XUIELEMENT = 4
 		};
-
-
-		T2GUIElementNode m_children; // 0x20 deblob
-		float m_width; // 0x3C
-		float m_height; // 0x40
-		uint32_t m_colour; // 0x44
-		uint8_t m_flags; // 0x48
-
-		static inline uint32_t m_uiGlobalVisMask = -1;
-
+		
+	public:
 		T2GUIElement() : T2GUIElementNode()
 		{
 			TASSERT(m_children.m_next == &m_children);
@@ -123,9 +114,15 @@ namespace Toshi
 		virtual void SetFocus(bool enable = true) { enable ? m_flags |= 2 : m_flags &= ~2; }
 		virtual bool IsPointInside(const TVector2& a_rVector2);
 		virtual Toshi::TVector2 GetPivot() { return Toshi::TVector2::VEC_ZERO; }
-	};
 
-	
+	public:
+		static inline uint32_t m_uiGlobalVisMask = -1;
+
+	private:
+		T2GUIElementNode m_children; // 0x20 deblob
+		float m_width;               // 0x3C
+		float m_height;              // 0x40
+		uint32_t m_colour;           // 0x44
+		uint8_t m_flags;             // 0x48
+	};	
 }
-
-

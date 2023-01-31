@@ -1233,7 +1233,7 @@ namespace Toshi
 		m_CurrentBlendState.Parts.BlendOp = blendOp;
 		m_CurrentBlendState.Parts.bBlendEnabled = blendEnabled;
 		m_CurrentBlendState.Parts.SrcBlend = srcBlendAlpha;
-		m_CurrentBlendState.Parts.DestBlend = (D3D11_BLEND)(m_CurrentBlendState.Parts.DestBlend ^ destBlendAlpha);
+		m_CurrentBlendState.Parts.DestBlend = destBlendAlpha;
 
 		if (m_CurrentBlendState.Parts.SrcBlendAlpha != D3D11_BLEND_BLEND_FACTOR)
 		{
