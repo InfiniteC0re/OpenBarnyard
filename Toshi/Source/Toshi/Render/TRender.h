@@ -30,6 +30,13 @@ namespace Toshi
 			FLAG_HASWORLDVIEWMATRIX = BITFIELD(9),
 		};
 
+		typedef uint32_t CameraMode;
+		enum CameraMode_ : CameraMode
+		{
+			CameraMode_Perspective,
+			CameraMode_Orthographic,
+		};
+
 		struct Params
 		{
 			float fX;
@@ -44,6 +51,9 @@ namespace Toshi
 		{
 			TVector2 m_Centre;  // 0x0
 			TVector2 m_Proj;    // 0x8
+			float m_fNearClip;
+			float m_fFarClip;
+			float m_fUnk;
 		};
 
 	protected:
@@ -71,6 +81,12 @@ namespace Toshi
 			m_eFlags = (m_eFlags & (~(FLAG_UNK3 | FLAG_UNK4 | FLAG_UNK5 | FLAG_UNK6))) | FLAG_DIRTY;
 		}
 
+		void SetCameraMode(CameraMode cameraMode)
+		{
+			m_eCameraMode = cameraMode;
+			m_eFlags = (m_eFlags & (~(FLAG_UNK3 | FLAG_UNK4 | FLAG_UNK5 | FLAG_UNK6))) | FLAG_DIRTY;
+		}
+
 		float GetX() const
 		{
 			return m_oParams.fX;
@@ -91,9 +107,22 @@ namespace Toshi
 			return m_oParams.fHeight;
 		}
 
-	private:
+		TMatrix44& GetModelViewMatrix()
+		{
+			return m_mModelViewMatrix;
+		}
+
+		void SetProjectionParams(const PROJECTIONPARAMS& params)
+		{
+			TTODO("asserts and something more...");
+			m_sProjParams = params;
+			m_eFlags = (m_eFlags & (~(FLAG_UNK3 | FLAG_UNK4 | FLAG_UNK5 | FLAG_UNK6))) | FLAG_DIRTY;
+		}
+
+	protected:
 		TRender* m_pRender;                     // 0x04
 		FLAG m_eFlags;                          // 0x08
+		CameraMode m_eCameraMode;               // 0x14
 		Params m_oParams;                       // 0x18
 		PROJECTIONPARAMS m_sProjParams;         // 0x30
 		TMatrix44 m_mModelViewMatrix;           // 0x40

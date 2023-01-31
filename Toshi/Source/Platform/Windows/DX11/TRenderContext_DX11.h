@@ -11,7 +11,19 @@ namespace Toshi
 
 		}
 
-	private:
+		TMatrix44& GetProjectionMatrix()
+		{
+			return m_Projection;
+		}
 
+		void ComputePerspectiveProjection();
+		void ComputePerspectiveFrustum();
+		void ComputeOrthographicProjection();
+		void ComputeOrthographicFrustum();
+
+		virtual void Update();
+
+	private:
+		TMatrix44 m_Projection;
 	};
 }

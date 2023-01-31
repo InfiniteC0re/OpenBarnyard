@@ -4,13 +4,60 @@
 #include "Movie/AMoviePlayer.h"
 
 #include <Platform/Windows/DX11/TRender_DX11.h>
+#include <Platform/Windows/DX11/TRenderContext_DX11.h>
+#include <Platform/Windows/DX11/TPrimShader_DX11.h>
 #include <Toshi/Render/TAssetInit.h>
 
 Toshi::TTRB ARenderer::s_BootAssetsTRB = Toshi::TTRB();
 
 static void MainScene(float deltaTime, void* pCameraObject)
 {
+	// Test code
+	auto pRender = Toshi::TRenderDX11::Interface();
+	auto pDisplayParams = pRender->GetCurrentDisplayParams();
+	auto pRenderContext = (Toshi::TRenderContextDX11*)pRender->GetCurrentRenderContext();
+	pRenderContext->SetCameraMode(Toshi::TRenderContext::CameraMode_Orthographic);
 
+	static bool s_IsMatrixSet = false;
+	static Toshi::TMatrix44 s_IdentityMatrix;
+
+	if (!s_IsMatrixSet)
+	{
+		s_IdentityMatrix.Identity();
+		s_IsMatrixSet = true;
+	}
+
+	pRenderContext->SetModelViewMatrix(s_IdentityMatrix);
+	pRenderContext->SetWorldViewMatrix(s_IdentityMatrix);
+
+	Toshi::TRenderContext::PROJECTIONPARAMS projParams;
+	projParams.m_Proj.x = 1.0f;
+	projParams.m_Proj.y = -1.0f;
+	projParams.m_Centre.x = pDisplayParams->Width * 0.5f;
+	projParams.m_Centre.y = pDisplayParams->Height * 0.5f;
+	projParams.m_fNearClip = 0.0f;
+	projParams.m_fFarClip = 1.0f;
+
+	pRenderContext->SetProjectionParams(projParams);
+	pRenderContext->Update();
+
+	auto pPrimShader = Toshi::TPrimShader::GetSingletonWeak();
+	pPrimShader->StartRendering(Toshi::TPrimShader::PrimType_LineList);
+	pPrimShader->GetCurrentVertex()->UV.x = 0;
+	pPrimShader->GetCurrentVertex()->UV.y = 0;
+	pPrimShader->GetCurrentVertex()->Position.x = 0.0f;
+	pPrimShader->GetCurrentVertex()->Position.y = 0.0f;
+	pPrimShader->GetCurrentVertex()->Position.z = 0.0f;
+	pPrimShader->GetCurrentVertex()->Color = 0xFFFFFFFF;
+	pPrimShader->AddVert();
+	pPrimShader->GetCurrentVertex()->UV.x = 0;
+	pPrimShader->GetCurrentVertex()->UV.y = 0;
+	pPrimShader->GetCurrentVertex()->Position.x = 1.0f;
+	pPrimShader->GetCurrentVertex()->Position.y = 0.0f;
+	pPrimShader->GetCurrentVertex()->Position.z = 0.0f;
+	pPrimShader->GetCurrentVertex()->Color = 0xFFFFFFFF;
+	pPrimShader->AddVert();
+	pPrimShader->StopRendering();
 }
 
 ARenderer::ARenderer()
@@ -91,6 +138,7 @@ void ARenderer::Create()
 	TIMPLEMENT();
 
 	auto error = s_BootAssetsTRB.Load("Data\\BootAssets\\BootAssets.trb");
+	Toshi::TPrimShader::CreateSingleton();
 
 	if (error == Toshi::TTRB::ERROR_OK)
 	{
@@ -147,5 +195,5 @@ void ARenderer::CreateMainViewport()
 	m_pViewport->AllowBackgroundClear(true);
 	m_pViewport->AllowDepthClear(true);
 	m_pViewport->EnableDefaultBeginRender(true);
-	m_pViewport->SetBackgroundColor(64, 64, 64, 255);
+	m_pViewport->SetBackgroundColor(0, 0, 0, 255);
 }

@@ -10,7 +10,7 @@ AGameState::UpdateResult AAppInitState::OnUpdate(float deltaTime)
 {
     TIMPLEMENT();
 
-    ARenderer::GetSingletonWeak()->SetBackgroundColour(64, 64, 64);
+    //ARenderer::GetSingletonWeak()->SetBackgroundColour(64, 64, 64);
     AGameState::OnUpdate(deltaTime);
 
     // Create singletons here
