@@ -20,7 +20,8 @@ project "Toshi"
 	{
 		"Source",
 		"%{IncludeDir.spdlog}",
-		"%{IncludeDir.fmod}"
+		"%{IncludeDir.fmod}",
+        "%{IncludeDir.stb}"
 	}
 	
 	libdirs

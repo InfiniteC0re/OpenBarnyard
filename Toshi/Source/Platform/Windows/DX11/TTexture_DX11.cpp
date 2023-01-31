@@ -2,6 +2,7 @@
 #include "TTexture_DX11.h"
 #include "TRender_DX11.h"
 #include "XTK/DDSTextureLoader.h"
+#include "stb_image.h"
 
 namespace Toshi
 {
@@ -30,8 +31,21 @@ namespace Toshi
 			}
 			else
 			{
-				TASSERT(TFALSE, "implement loading images with stb_image library");
 				TASSERT(path.IsIndexValid(0));
+
+				int width, height, bpp;
+
+				stbi_uc* data = stbi_load(path, &width, &height, &bpp, 4);
+
+				if (data != NULL)
+				{
+					m_TexInfo->SRView = pRender->CreateTexture(width, height, DXGI_FORMAT_R8G8B8A8_UNORM, data, 0, D3D11_USAGE_IMMUTABLE, 0, 1);
+					stbi_image_free(data);
+				}
+				else
+				{
+					DirectX::CreateDDSTextureFromMemory(pRender->m_pDevice, m_TexData, m_DataSize, &pResource, &m_TexInfo->SRView, 0, TNULL);
+				}
 			}
 
 			pFile->Destroy();
