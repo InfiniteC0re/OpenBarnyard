@@ -42,6 +42,7 @@ namespace Toshi
 				if (data != NULL)
 				{
 					m_TexInfo->SRView = pRender->CreateTexture(width, height, DXGI_FORMAT_R8G8B8A8_UNORM, data, 0, D3D11_USAGE_IMMUTABLE, 0, 1);
+					if (m_TexInfo->SRView) pResource = TNULL;
 					stbi_image_free(data);
 				}
 				else
