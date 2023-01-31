@@ -88,8 +88,8 @@ bool ARenderer::CreateTRender()
 	displayParams.Unk5 = true;
 	displayParams.IsFullscreen = false;
 	displayParams.MultisampleQualityLevel = 1;
-	displayParams.Width = 800;
-	displayParams.Height = 600;
+	displayParams.Width = 1280;
+	displayParams.Height = 720;
 
 	renderer->CreateDisplay(&displayParams);
 

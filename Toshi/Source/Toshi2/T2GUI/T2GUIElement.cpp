@@ -20,10 +20,10 @@ namespace Toshi
 		fVar2 = m_Rot[1].GetX();
 		fVar3 = m_Rot[0].GetY();
 		fVar4 = m_Rot[1].GetY();
-		m_Rot[0].SetX(fVar1 * cos + fVar2 * sin);
-		m_Rot[0].SetY(fVar3 * cos + fVar4 * sin);
-		m_Rot[1].SetX(fVar1 * -sin + fVar2 * cos);
-		m_Rot[1].SetY(fVar3 * -sin + fVar4 * cos);
+		m_Rot[0].SetY(fVar1 * cos + fVar2 * sin);
+		m_Rot[0].SetX(fVar3 * cos + fVar4 * sin);
+		m_Rot[1].SetY(fVar1 * sin + -fVar2 * cos);
+		m_Rot[1].SetX(fVar3 * sin + -fVar4 * cos);
 	}
 
 	void T2GUITransform::RotateTo(float angle)

@@ -42,8 +42,8 @@ void AAppInitState::OnRemoval()
         auto pRootElement = pGUI->GetRootElement();
 
         Toshi::T2GUIRectangle* pRectangle = new Toshi::T2GUIRectangle;
-        pRectangle->Create(1000, 20);
-        pRectangle->SetTransform(0.0f, 0.0f, 0);
+        pRectangle->Create(200, 200);
+        pRectangle->SetTransform(0, 0, 0);
         pRectangle->SetColour(0x00FF0000); // ARGB
         pRootElement->AddChildHead(pRectangle);
 
