@@ -15,6 +15,13 @@ namespace Toshi
 			m_RootElement.SetTransform(0, 0, 0);
 		}
 
+		void Render()
+		{
+			m_RootElement.PreRender();
+			m_RootElement.Render();
+			m_RootElement.PostRender();
+		}
+
 		void Tick(float deltaTime)
 		{
 			m_RootElement.Tick(deltaTime);

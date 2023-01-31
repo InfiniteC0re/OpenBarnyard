@@ -6,6 +6,9 @@
 #include "Movie/ADX11MoviePlayer.h"
 #include "GameInterface/AFrontEndMovieState.h"
 
+#include <Toshi2/T2GUI/T2GUI.h>
+#include <Toshi2/T2GUI/T2GUIRectangle.h>
+
 AGameState::UpdateResult AAppInitState::OnUpdate(float deltaTime)
 {
     TIMPLEMENT();
@@ -35,6 +38,15 @@ void AAppInitState::OnRemoval()
     }
     else
     {
+        auto pGUI = Toshi::T2GUI::GetSingleton();
+        auto pRootElement = pGUI->GetRootElement();
+
+        Toshi::T2GUIRectangle* pRectangle = new Toshi::T2GUIRectangle;
+        pRectangle->Create(1000, 20);
+        pRectangle->SetTransform(0.0f, 0.0f, 0);
+        pRectangle->SetColour(0x00FF0000); // ARGB
+        pRootElement->AddChildHead(pRectangle);
+
         AGameStateController::GetSingleton()->PushState(new AFrontEndMovieState);
         TIMPLEMENT_D("The game");
     }

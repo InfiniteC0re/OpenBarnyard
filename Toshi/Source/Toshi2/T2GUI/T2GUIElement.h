@@ -12,7 +12,7 @@ namespace Toshi
 		class Rotation
 		{
 		public:
-			Rotation(unsigned short x, unsigned short y) : m_X(x), m_Y(y)
+			Rotation(short x, short y) : m_X(x), m_Y(y)
 			{
 				
 			}
@@ -38,8 +38,8 @@ namespace Toshi
 			}
 
 		private:
-			unsigned short m_X;
-			unsigned short m_Y;
+			short m_X;
+			short m_Y;
 		};
 
 	public:
@@ -71,14 +71,14 @@ namespace Toshi
 			return m_Vec;
 		}
 
-		static constexpr float UnpackFloat(unsigned short value)
+		static constexpr float UnpackFloat(short value)
 		{
 			return value * FLOAT_SCALE;
 		}
 
-		static constexpr unsigned short PackFloat(float value)
+		static constexpr short PackFloat(float value)
 		{
-			return static_cast<unsigned short>(value * FLOAT_QUALITY);
+			return static_cast<short>(value * FLOAT_QUALITY);
 		}
 
 		static void Multiply(T2GUITransform& outTransform, const T2GUITransform& a, const T2GUITransform& b);
@@ -138,12 +138,28 @@ namespace Toshi
 		virtual bool IsPointInside(const TVector2& point);
 		virtual const TVector2& GetPivot();
 
+		void AddChildTail(T2GUIElement* pElement)
+		{
+			if (pElement->IsLinked()) pElement->Remove();
+			pElement->m_pParent = this;
+			m_Children.PushBack(pElement);
+		}
+
+		void AddChildHead(T2GUIElement* pElement)
+		{
+			if (pElement->IsLinked()) pElement->Remove();
+			pElement->m_pParent = this;
+			m_Children.PushFront(pElement);
+		}
+
 		void SetTransform(float x, float y, float angle)
 		{
 			m_Transform.Reset();
+			m_Transform.GetPos().x = 0;
+			m_Transform.GetPos().y = 0;
 			m_Transform.Rotate(angle);
-			m_fX = x;
-			m_fY = y;
+			m_Transform.GetPos().x = x;
+			m_Transform.GetPos().y = y;
 		}
 
 		static float UnpackFloat(unsigned short value)
@@ -160,10 +176,8 @@ namespace Toshi
 		static constinit uint32_t s_uiGlobalVisMask;
 
 	protected:
-		void* m_Unk1;
+		T2GUIElement* m_pParent;
 		T2GUITransform m_Transform;
-		float m_fX;
-		float m_fY;
 		T2DList<T2GUIElement> m_Children;
 		unsigned short m_Width;
 		unsigned short m_Height;

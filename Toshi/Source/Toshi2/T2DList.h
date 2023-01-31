@@ -234,9 +234,9 @@ namespace Toshi
 			return m_oRoot.Next();
 		}
 
-		Iterator End() const
+		const Node* End() const
 		{
-			return m_oRoot.Prev();
+			return &m_oRoot;
 		}
 
 		void Begin(Iterator& begin) const
@@ -244,9 +244,9 @@ namespace Toshi
 			begin = m_oRoot.Next();
 		}
 
-		void End(Iterator& end) const
+		void End(const Node& end) const
 		{
-			end = m_oRoot.Prev();
+			end = &m_oRoot;
 		}
 
 		Iterator Front() const

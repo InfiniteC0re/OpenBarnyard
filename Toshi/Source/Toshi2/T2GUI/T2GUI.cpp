@@ -29,12 +29,7 @@ namespace Toshi
 		if (m_pContext1 && m_pRenderer)
 		{
 			m_pRenderer->BeginScene();
-
-			auto pRootElement = m_pContext1->GetRootElement();
-			pRootElement->PreRender();
-			pRootElement->Render();
-			pRootElement->PostRender();
-
+			m_pContext1->GetRootElement()->Render();
 			m_pRenderer->EndScene();
 		}
 	}
