@@ -58,6 +58,7 @@ namespace Toshi
 		void RotateTo(float angle);
 		void PreMultiply(const T2GUITransform& transform);
 		void PostMultiply(const T2GUITransform& transform);
+		void Matrix44(TMatrix44& outMatrix);
 		
 		void Transform(TVector2& outVec, const TVector2& transformVec) const
 		{
@@ -65,7 +66,10 @@ namespace Toshi
 			outVec.y = m_Vec.y + m_Rot[0].GetY() * transformVec.x + m_Rot[1].GetY() * transformVec.y;
 		}
 
-		static void Multiply(T2GUITransform& outTransform, const T2GUITransform& a, const T2GUITransform& b);
+		TVector2& GetPos()
+		{
+			return m_Vec;
+		}
 
 		static constexpr float UnpackFloat(unsigned short value)
 		{
@@ -74,8 +78,10 @@ namespace Toshi
 
 		static constexpr unsigned short PackFloat(float value)
 		{
-			return static_cast<unsigned short>(value / FLOAT_QUALITY);
+			return static_cast<unsigned short>(value * FLOAT_QUALITY);
 		}
+
+		static void Multiply(T2GUITransform& outTransform, const T2GUITransform& a, const T2GUITransform& b);
 
 	private:
 		Rotation m_Rot[2];
@@ -147,7 +153,7 @@ namespace Toshi
 
 		static unsigned short PackFloat(float value)
 		{
-			return static_cast<unsigned short>(value / FLOAT_QUALITY);
+			return static_cast<unsigned short>(value * FLOAT_QUALITY);
 		}
 
 	private:

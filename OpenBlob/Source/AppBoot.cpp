@@ -15,7 +15,9 @@
 #include "Locale/ALocaleManager.h"
 #include "Input/AInputManager2.h"
 #include "ALevelInformation.h"
+#include "A2GUI/A2GUIRenderer_DX11.h"
 
+#include <Toshi2/T2GUI/T2GUI.h>
 #include <Toshi/Sound/TSound.h>
 #include <Toshi/Render/TRender.h>
 #include <Platform/Windows/TSound_Win.h>
@@ -37,6 +39,10 @@ bool AApplication::OnCreate(int argc, char** argv)
 	
 	if (interfaceCreated)
 	{
+		auto pGUIRenderer = new A2GUIRenderer;
+		auto pGUI = Toshi::T2GUI::Open(AMemory::ms_apMemoryBlocks[AMemory::POOL_FrequentAllocations]);
+		pGUI->SetRenderer(pGUIRenderer);
+
 		AInputManager2::CreateSingleton();
 
 		size_t poolSize = 128 * 1024 * 1024;
@@ -67,6 +73,13 @@ bool AApplication::OnCreate(int argc, char** argv)
 
 bool AApplication::OnUpdate(float deltaTime)
 {
+	Toshi::T2GUI* pGUI = Toshi::T2GUI::GetSingletonWeak();
+	
+	if (pGUI != TNULL)
+	{
+		pGUI->Tick(deltaTime);
+	}
+	
 	AMoviePlayer* pMoviePlayer = AMoviePlayer::GetSingletonWeak();
 
 	if (pMoviePlayer != TNULL)

@@ -2,62 +2,20 @@
 #include "ARenderer.h"
 #include "AppBoot.h"
 #include "Movie/AMoviePlayer.h"
+#include "A2GUI/A2GUIRenderer_DX11.h"
+#include "GameInterface/AFrontEndMovieState.h"
 
 #include <Platform/Windows/DX11/TRender_DX11.h>
 #include <Platform/Windows/DX11/TRenderContext_DX11.h>
 #include <Platform/Windows/DX11/TPrimShader_DX11.h>
 #include <Toshi/Render/TAssetInit.h>
+#include <Toshi2/T2GUI/T2GUI.h>
 
 Toshi::TTRB ARenderer::s_BootAssetsTRB = Toshi::TTRB();
 
 static void MainScene(float deltaTime, void* pCameraObject)
 {
-	// Test code
-	auto pRender = Toshi::TRenderDX11::Interface();
-	auto pDisplayParams = pRender->GetCurrentDisplayParams();
-	auto pRenderContext = (Toshi::TRenderContextDX11*)pRender->GetCurrentRenderContext();
-	pRenderContext->SetCameraMode(Toshi::TRenderContext::CameraMode_Orthographic);
-
-	static bool s_IsMatrixSet = false;
-	static Toshi::TMatrix44 s_IdentityMatrix;
-
-	if (!s_IsMatrixSet)
-	{
-		s_IdentityMatrix.Identity();
-		s_IsMatrixSet = true;
-	}
-
-	pRenderContext->SetModelViewMatrix(s_IdentityMatrix);
-	pRenderContext->SetWorldViewMatrix(s_IdentityMatrix);
-
-	Toshi::TRenderContext::PROJECTIONPARAMS projParams;
-	projParams.m_Proj.x = 1.0f;
-	projParams.m_Proj.y = -1.0f;
-	projParams.m_Centre.x = pDisplayParams->Width * 0.5f;
-	projParams.m_Centre.y = pDisplayParams->Height * 0.5f;
-	projParams.m_fNearClip = 0.0f;
-	projParams.m_fFarClip = 1.0f;
-
-	pRenderContext->SetProjectionParams(projParams);
-	pRenderContext->Update();
-
-	auto pPrimShader = Toshi::TPrimShader::GetSingletonWeak();
-	pPrimShader->StartRendering(Toshi::TPrimShader::PrimType_LineList);
-	pPrimShader->GetCurrentVertex()->UV.x = 0;
-	pPrimShader->GetCurrentVertex()->UV.y = 0;
-	pPrimShader->GetCurrentVertex()->Position.x = 0.0f;
-	pPrimShader->GetCurrentVertex()->Position.y = 0.0f;
-	pPrimShader->GetCurrentVertex()->Position.z = 0.0f;
-	pPrimShader->GetCurrentVertex()->Color = 0xFFFFFFFF;
-	pPrimShader->AddVert();
-	pPrimShader->GetCurrentVertex()->UV.x = 0;
-	pPrimShader->GetCurrentVertex()->UV.y = 0;
-	pPrimShader->GetCurrentVertex()->Position.x = 1.0f;
-	pPrimShader->GetCurrentVertex()->Position.y = 0.0f;
-	pPrimShader->GetCurrentVertex()->Position.z = 0.0f;
-	pPrimShader->GetCurrentVertex()->Color = 0xFFFFFFFF;
-	pPrimShader->AddVert();
-	pPrimShader->StopRendering();
+	
 }
 
 ARenderer::ARenderer()
@@ -91,15 +49,22 @@ void ARenderer::Update(float deltaTime)
 	
 	if (bRenderMovie)
 	{
-		RenderMainScene(deltaTime, m_pViewport, TNULL, TNULL, MainScene, true);
+		pMoviePlayer->OnRender(deltaTime);
 	}
 	else if (bRenderWorld)
 	{
-		pMoviePlayer->OnRender(deltaTime);
+		RenderMainScene(deltaTime, m_pViewport, TNULL, TNULL, MainScene, true);
 	}
 
-	ID3D11ShaderResourceView* pShaderResourceView = (pDisplayParams->MultisampleQualityLevel < 2) ? pRender->m_SRView1 : pRender->m_SRView2;
-	pRender->m_pFXAA->Render(pShaderResourceView);
+	RenderGUI(false);
+	auto pGameStateController = AGameStateController::GetSingletonWeak();
+	auto pGameState = pGameStateController->GetCurrentGameState();
+
+	if (TFALSE == pGameState->GetClass()->IsA(TGetClass(AFrontEndMovieState)))
+	{
+		ID3D11ShaderResourceView* pShaderResourceView = (pDisplayParams->MultisampleQualityLevel < 2) ? pRender->m_SRView1 : pRender->m_SRView2;
+		pRender->m_pFXAA->Render(pShaderResourceView);
+	}
 
 	pRender->EndScene();
 }
@@ -156,6 +121,16 @@ void ARenderer::SetBackgroundColour(uint32_t r, uint32_t g, uint32_t b)
 	}
 
 	m_BackgroundColor = ((r & 0xff) << 8 | g & 0xff) << 8 | b & 0xff;
+}
+
+void ARenderer::RenderGUI(bool allowBackgroundClear)
+{
+	TIMPLEMENT();
+
+	m_pViewport->AllowBackgroundClear(allowBackgroundClear);
+	m_pViewport->Begin();
+	Toshi::T2GUI::GetSingletonWeak()->Render();
+	m_pViewport->End();
 }
 
 void ARenderer::RenderMainScene(float deltaTime, Toshi::TViewport* pViewport, void* unk2, void* pCameraObject, t_MainScene mainSceneCb, bool allowBackgroundClear)

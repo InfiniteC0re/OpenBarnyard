@@ -20,6 +20,7 @@ public:
 	void SetBackgroundColour(uint32_t r, uint32_t g, uint32_t b);
 
 private:
+	void RenderGUI(bool allowBackgroundClear);
 	void RenderMainScene(float deltaTime, Toshi::TViewport* pViewport, void* unk2, void* pCameraObject, t_MainScene mainSceneCb, bool allowBackgroundClear);
 	void CreateMainViewport();
 

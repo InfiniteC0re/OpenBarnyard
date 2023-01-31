@@ -14,7 +14,7 @@ namespace Toshi
 		static T2GUI* Open(TMemoryHeap* pMemoryHeap)
 		{
 			s_pMemHeap = pMemoryHeap;
-			T2GUI::CreateSingleton();
+			return T2GUI::CreateSingleton();
 		}
 
 		static void Close()
@@ -31,6 +31,19 @@ namespace Toshi
 		void SetRenderer(T2GUIRenderer* pRenderer)
 		{
 			m_pRenderer = pRenderer;
+		}
+
+		T2GUIElement* GetRootElement() const
+		{
+			return m_pContext1->GetRootElement();
+		}
+
+		void Tick(float deltaTime)
+		{
+			if (m_pContext1)
+			{
+				m_pContext1->Tick(deltaTime);
+			}
 		}
 
 		void Render();

@@ -81,6 +81,26 @@ namespace Toshi
 		m_Rot[1].SetY(fVar3 * fVar7 + fVar5 * fVar2);
 	}
 
+	void T2GUITransform::Matrix44(TMatrix44& outMatrix)
+	{
+		outMatrix.a = m_Rot[0].GetX();
+		outMatrix.b = m_Rot[0].GetY();
+		outMatrix.c = 0.0;
+		outMatrix.d = 0.0;
+		outMatrix.e = m_Rot[1].GetX();
+		outMatrix.f = m_Rot[1].GetY();
+		outMatrix.g = 0.0;
+		outMatrix.h = 0.0;
+		outMatrix.i = 0.0;
+		outMatrix.j = 0.0;
+		outMatrix.k = 1.0;
+		outMatrix.l = 0.0;
+		outMatrix.m = m_Vec.x;
+		outMatrix.n = m_Vec.y;
+		outMatrix.o = 0.0;
+		outMatrix.p = 1.0;
+	}
+
 	void T2GUITransform::Multiply(T2GUITransform& outTransform, const T2GUITransform& a, const T2GUITransform& b)
 	{
 		float fVar1;

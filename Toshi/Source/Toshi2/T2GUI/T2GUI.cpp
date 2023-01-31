@@ -3,6 +3,8 @@
 
 namespace Toshi
 {
+	TMemoryHeap* T2GUI::s_pMemHeap = TNULL;
+
 	T2GUI::T2GUI()
 	{
 		m_pRenderer = TNULL;

@@ -15,6 +15,11 @@ namespace Toshi
 			m_RootElement.SetTransform(0, 0, 0);
 		}
 
+		void Tick(float deltaTime)
+		{
+			m_RootElement.Tick(deltaTime);
+		}
+
 		T2GUIElement* GetRootElement()
 		{
 			return &m_RootElement;
