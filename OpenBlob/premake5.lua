@@ -28,7 +28,8 @@ project "OpenBlob"
 		"%{IncludeDir.libtheora}",
 		"%{IncludeDir.libogg}",
 		"%{IncludeDir.libvorbis}",
-		"%{IncludeDir.theoraplay}"
+		"%{IncludeDir.theoraplay}",
+        "%{IncludeDir.stb}"
 	}
 	
 	defines

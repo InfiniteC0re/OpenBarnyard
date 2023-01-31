@@ -2,7 +2,9 @@
 #include "TTexture_DX11.h"
 #include "TRender_DX11.h"
 #include "XTK/DDSTextureLoader.h"
+#define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
+
 
 namespace Toshi
 {
