@@ -1,7 +1,6 @@
 #pragma once
-
 #include "TXUIElement.h"
-#include "Toshi/T2gui/T2GUIElement.h"
+#include "Toshi2/T2GUI/T2GUIElement.h"
 
 namespace Toshi
 {

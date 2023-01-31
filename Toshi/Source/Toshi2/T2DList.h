@@ -224,6 +224,11 @@ namespace Toshi
 			static_assert(std::is_base_of<T2GenericDList::Node, T>::value, "T must be a descendant of T2GenericDList::Node");
 		}
 
+		~T2DList()
+		{
+			TASSERT(IsEmpty());
+		}
+
 		Iterator Begin() const
 		{
 			return m_oRoot.Next();
@@ -264,7 +269,7 @@ namespace Toshi
 		{
 			for (auto it = Begin(); it != End(); it++)
 			{
-				it->Delete();
+				Delete(it);
 			}
 		}
 

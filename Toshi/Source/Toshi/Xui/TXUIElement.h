@@ -1,7 +1,7 @@
 #pragma once
 #include "Toshi/Xui/TXUIResource.h"
 #include "Toshi/Xui/TXUITimeline.h"
-#include "Toshi/T2gui/T2GUIElement.h"
+#include "Toshi2/T2GUI/T2GUIElement.h"
 
 #define TXUI_TRANSLATE_TIMELINE_PROP(propName1, propName2, typeOut) \
 if (TStringManager::String8Compare(propName1, #propName2, -1) == 0) \

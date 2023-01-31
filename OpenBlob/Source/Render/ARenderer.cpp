@@ -91,11 +91,11 @@ void ARenderer::Update(float deltaTime)
 	
 	if (bRenderMovie)
 	{
-		pMoviePlayer->OnRender(deltaTime);
+		RenderMainScene(deltaTime, m_pViewport, TNULL, TNULL, MainScene, true);
 	}
 	else if (bRenderWorld)
 	{
-		RenderMainScene(deltaTime, m_pViewport, TNULL, TNULL, MainScene, true);
+		pMoviePlayer->OnRender(deltaTime);
 	}
 
 	ID3D11ShaderResourceView* pShaderResourceView = (pDisplayParams->MultisampleQualityLevel < 2) ? pRender->m_SRView1 : pRender->m_SRView2;

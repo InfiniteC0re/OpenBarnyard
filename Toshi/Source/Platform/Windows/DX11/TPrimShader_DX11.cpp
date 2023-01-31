@@ -87,6 +87,7 @@ namespace Toshi
 		TASSERT(pRender->IsInScene());
 		TASSERT(m_bIsRendering == TFALSE);
 		m_bIsRendering = TTRUE;
+		m_ePrimType = primType;
 
 		if (m_uiNumDrawnFrames != pRender->m_NumDrawnFrames)
 		{

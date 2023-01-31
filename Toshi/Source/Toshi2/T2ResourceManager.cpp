@@ -159,7 +159,7 @@ namespace Toshi
 	int T2ResourceManager::FindUnusedResource()
 	{
 		TASSERT(m_iNumUsedResources < m_iMaxNumResources);
-		for (size_t i = m_iUnk; i < m_iMaxNumResources; i++)
+		for (int i = m_iUnk; i < m_iMaxNumResources; i++)
 		{
 			if (m_pData[i].HasFlag(T2ResourceData::FLAG_DESTROYED | T2ResourceData::FLAG_USED) && m_pData[i].GetData() == TNULL)
 			{
@@ -168,7 +168,7 @@ namespace Toshi
 			}
 		}
 
-		for (size_t i = 0; i < m_iUnk; i++)
+		for (int i = 0; i < m_iUnk; i++)
 		{
 			if (m_pData[i].HasFlag(T2ResourceData::FLAG_DESTROYED | T2ResourceData::FLAG_USED) && m_pData[i].GetData() == TNULL)
 			{
