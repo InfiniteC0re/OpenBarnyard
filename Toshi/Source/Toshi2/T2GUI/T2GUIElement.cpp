@@ -1,5 +1,6 @@
 #include "ToshiPCH.h"
 #include "T2GUIElement.h"
+#include "T2GUI.h"
 
 namespace Toshi
 {
@@ -7,23 +8,22 @@ namespace Toshi
 	
 	void T2GUITransform::Rotate(float angle)
 	{
-		float v4; // xmm6_4
-		float v7; // xmm0_4
-		float v11; // xmm1_4
-		float cos; // [esp+10h] [ebp-8h] BYREF
-		float sin; // [esp+14h] [ebp-4h] BYREF
-		float a2a; // [esp+20h] [ebp+8h]
+		float fVar1;
+		float fVar2;
+		float fVar3;
+		float fVar4;
+		float cos;
+		float sin;
 
 		TMath::SinCos(angle, sin, cos);
-		a2a = m_Rot[0].GetX();
-		v7 = m_Rot[0].GetY();
-		v4 = m_Rot[1].GetX();
-		v11 = m_Rot[1].GetY();
-
-		m_Rot[0].SetX((v4 * sin) + (a2a * cos));
-		m_Rot[0].SetY((v11 * sin) + (v7 * cos));
-		m_Rot[1].SetX((v4 * cos) - (a2a * sin));
-		m_Rot[1].SetY((v11 * cos) - (v7 * sin));
+		fVar1 = m_Rot[0].GetX();
+		fVar2 = m_Rot[1].GetX();
+		fVar3 = m_Rot[0].GetY();
+		fVar4 = m_Rot[1].GetY();
+		m_Rot[0].SetX(fVar1 * cos + fVar2 * sin);
+		m_Rot[0].SetY(fVar3 * cos + fVar4 * sin);
+		m_Rot[1].SetX(fVar1 * -sin + fVar2 * cos);
+		m_Rot[1].SetY(fVar3 * -sin + fVar4 * cos);
 	}
 
 	void T2GUITransform::RotateTo(float angle)
@@ -132,9 +132,7 @@ namespace Toshi
 
 	T2GUIElement::T2GUIElement()
 	{
-		m_Unk1 = TNULL;
-		m_fX = 0;
-		m_fY = 0;
+		m_pParent = TNULL;
 		m_Width = 0;
 		m_Height = 0;
 		m_Color = 0xFFFFFFFF;
@@ -178,16 +176,84 @@ namespace Toshi
 
 	void T2GUIElement::PreRender()
 	{
-		TIMPLEMENT();
+		T2GUIRenderer* pRenderer;
+		TVector2 vec1;
+		TVector2 vec2;
+		float fHeight;
+		float fWidth;
 
-		if (m_Unk1 != TNULL)
-		{
-
+		vec1.x = 0.0;
+		vec1.y = 0.0;
+		vec2.x = 0.0;
+		vec2.y = 0.0;
+		if (this->m_pParent == (T2GUIElement*)0x0) goto switchD_006f62da_caseD_4;
+		GetDimensions(fWidth, fHeight);
+		if (false) goto switchD_006f62da_caseD_4;
+		switch (this->m_Flags2) {
+		case 0:
+			vec1.x = vec1.x - fWidth * 0.5;
+		case 1:
+		switchD_006f62da_caseD_1:
+			vec1.y = vec1.y - fHeight * 0.5;
+			break;
+		case 2:
+			vec1.x = fWidth * 0.5 + vec1.x;
+			goto switchD_006f62da_caseD_1;
+		case 3:
+			vec1.x = vec1.x - fWidth * 0.5;
+			break;
+		case 5:
+			vec1.x = fWidth * 0.5 + vec1.x;
+			break;
+		case 6:
+			vec1.x = vec1.x - fWidth * 0.5;
+		case 7:
+			goto switchD_006f62da_caseD_7;
+		case 8:
+			vec1.x = fWidth * 0.5 + vec1.x;
+		switchD_006f62da_caseD_7:
+			vec1.y = fHeight * 0.5 + vec1.y;
 		}
-		else
-		{
-
+	switchD_006f62da_caseD_4:
+		GetDimensions(fWidth, fHeight);
+		if (false) goto switchD_006f63c3_caseD_4;
+		switch (this->m_Flags3) {
+		case 0:
+			vec2.x = fWidth * 0.5 + vec2.x;
+			break;
+		case 1:
+			break;
+		case 2:
+			vec2.x = vec2.x - fWidth * 0.5;
+			break;
+		case 3:
+			vec2.x = fWidth * 0.5 + vec2.x;
+		default:
+			goto switchD_006f63c3_caseD_4;
+		case 5:
+			vec2.x = vec2.x - fWidth * 0.5;
+			goto switchD_006f63c3_caseD_4;
+		case 6:
+			vec2.x = fWidth * 0.5 + vec2.x;
+		case 7:
+			goto switchD_006f63c3_caseD_7;
+		case 8:
+			vec2.x = vec2.x - fWidth * 0.5;
+			goto switchD_006f63c3_caseD_7;
 		}
+		vec2.y = fHeight * 0.5 + vec2.y;
+	switchD_006f63c3_caseD_4:
+		if ((m_State & 4) != 0) {
+			auto pivot = GetPivot();
+			vec2.x = pivot.x * -1.0 + vec2.x;
+			vec2.y = pivot.y * -1.0 + vec2.y;
+		}
+		pRenderer = T2GUI::GetSingletonWeak()->GetRenderer();
+		pRenderer->PushTransform(m_Transform, vec1, vec2);
+		return;
+	switchD_006f63c3_caseD_7:
+		vec2.y = vec2.y - fHeight * 0.5;
+		goto switchD_006f63c3_caseD_4;
 	}
 
 	void T2GUIElement::Render()
@@ -210,7 +276,7 @@ namespace Toshi
 
 	void T2GUIElement::PostRender()
 	{
-		TIMPLEMENT();
+		T2GUI::GetSingletonWeak()->GetRenderer()->PopTransform();
 	}
 
 	void T2GUIElement::GetDimensions(float& width, float& height)
