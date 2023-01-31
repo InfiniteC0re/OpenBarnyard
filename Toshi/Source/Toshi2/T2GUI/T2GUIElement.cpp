@@ -16,6 +16,7 @@ namespace Toshi
 		float sin;
 
 		TMath::SinCos(angle, sin, cos);
+		
 		fVar1 = m_Rot[0].GetX();
 		fVar2 = m_Rot[1].GetX();
 		fVar3 = m_Rot[0].GetY();
@@ -87,14 +88,17 @@ namespace Toshi
 		outMatrix.b = m_Rot[0].GetY();
 		outMatrix.c = 0.0;
 		outMatrix.d = 0.0;
+
 		outMatrix.e = m_Rot[1].GetX();
 		outMatrix.f = m_Rot[1].GetY();
 		outMatrix.g = 0.0;
 		outMatrix.h = 0.0;
+
 		outMatrix.i = 0.0;
 		outMatrix.j = 0.0;
 		outMatrix.k = 1.0;
 		outMatrix.l = 0.0;
+
 		outMatrix.m = m_Vec.x;
 		outMatrix.n = m_Vec.y;
 		outMatrix.o = 0.0;
@@ -103,29 +107,16 @@ namespace Toshi
 
 	void T2GUITransform::Multiply(T2GUITransform& outTransform, const T2GUITransform& a, const T2GUITransform& b)
 	{
-		float fVar1;
-		float fVar2;
-		float fVar3;
-		float fVar4;
-		float fVar5;
-		float fVar6;
-		float fVar7;
-		float fVar8;
-
-		fVar3 = a.m_Rot[0].GetX();
-		fVar1 = a.m_Rot[0].GetY();
-		fVar8 = a.m_Rot[1].GetX();
-		fVar2 = a.m_Rot[1].GetY();
-
-		fVar5 = b.m_Rot[0].GetX();
-		fVar4 = b.m_Rot[0].GetY();
-		fVar7 = b.m_Rot[1].GetX();
-		fVar6 = b.m_Rot[1].GetY();
+		float a1 = a.m_Rot[0].GetX(); float b1 = a.m_Rot[0].GetY();
+		float c1 = a.m_Rot[1].GetX(); float d1 = a.m_Rot[1].GetY();
 		
-		outTransform.m_Rot[0].SetX(fVar4 * fVar8 + fVar5 * fVar3);
-		outTransform.m_Rot[0].SetY(fVar4 * fVar2 + fVar5 * fVar1);
-		outTransform.m_Rot[1].SetX(fVar6 * fVar8 + fVar7 * fVar3);
-		outTransform.m_Rot[1].SetY(fVar6 * fVar2 + fVar7 * fVar1);
+		float a2 = b.m_Rot[0].GetX(); float b2 = b.m_Rot[0].GetY();
+		float c2 = b.m_Rot[1].GetX(); float d2 = b.m_Rot[1].GetY();
+		
+		outTransform.m_Rot[0].SetX(a1 * a2 + b1 * c2);
+		outTransform.m_Rot[0].SetY(a1 * b2 + b1 * d2);
+		outTransform.m_Rot[1].SetX(c1 * a2 + d1 * c2);
+		outTransform.m_Rot[1].SetY(c1 * b2 + d1 * d2);
 
 		a.Transform(outTransform.m_Vec, b.m_Vec);
 	}
@@ -189,6 +180,7 @@ namespace Toshi
 		if (this->m_pParent == (T2GUIElement*)0x0) goto switchD_006f62da_caseD_4;
 		GetDimensions(fWidth, fHeight);
 		if (false) goto switchD_006f62da_caseD_4;
+		
 		switch (this->m_Flags2) {
 		case 0:
 			vec1.x = vec1.x - fWidth * 0.5;

@@ -128,7 +128,7 @@ namespace Toshi
 		TTODO("Write our own SIMD math library or use DirectXMath?");
 		DirectX::XMMATRIX projection = *(DirectX::XMMATRIX*)&pRenderContext->GetProjectionMatrix();
 		DirectX::XMMATRIX modelView = *(DirectX::FXMMATRIX*)&pRenderContext->GetModelViewMatrix();
-		DirectX::XMMATRIX worldViewProjection = DirectX::XMMatrixMultiply(projection, modelView);
+		DirectX::XMMATRIX worldViewProjection = DirectX::XMMatrixMultiply(modelView, projection);
 
 		pRender->SetVec4InVSBuffer(0, &worldViewProjection, 4);
 		pRender->m_pDeviceContext->IASetInputLayout(m_pInputLayout);
