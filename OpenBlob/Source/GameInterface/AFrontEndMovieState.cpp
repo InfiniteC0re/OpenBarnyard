@@ -28,6 +28,7 @@ AGameState::UpdateResult AFrontEndMovieState::OnUpdate(float deltaTime)
 void AFrontEndMovieState::OnInsertion()
 {
     auto pGUI = Toshi::T2GUI::GetSingleton();
+    auto pGUIRenderer = pGUI->GetRenderer();
     auto pRootElement = pGUI->GetRootElement();
 
     m_Test = new Toshi::T2GUIRectangle;
@@ -38,7 +39,8 @@ void AFrontEndMovieState::OnInsertion()
 
     Toshi::T2GUIRectangle* pRectangle2 = new Toshi::T2GUIRectangle;
     pRectangle2->Create(100, 100);
-    pRectangle2->SetColour(0x00FF6000); // ARGB
+    pRectangle2->SetTransform(0, 0, 0);
+    pRectangle2->SetMaterial(pGUIRenderer->CreateMaterial("loadicon.tga"));
     m_Test->AddChildHead(pRectangle2);
 
     TIMPLEMENT();

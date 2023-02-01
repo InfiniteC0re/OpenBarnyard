@@ -1343,17 +1343,17 @@ namespace Toshi
 		//pTexture->Release();
 	}
 
-	void TRenderDX11::SetSamplerState(UINT startSlot, int samplerId, BOOL SetForVS)
+	void TRenderDX11::SetSamplerState(UINT startSlot, int samplerId, BOOL SetForPS)
 	{
 		auto pSampler = m_SamplerStates[samplerId];
 
-		if (SetForVS == TRUE)
+		if (SetForPS == TRUE)
 		{
-			m_pDeviceContext->VSSetSamplers(startSlot, 1, &pSampler);
+			m_pDeviceContext->PSSetSamplers(startSlot, 1, &pSampler);
 		}
 		else
 		{
-			m_pDeviceContext->PSSetSamplers(startSlot, 1, &pSampler);
+			m_pDeviceContext->VSSetSamplers(startSlot, 1, &pSampler);
 		}
 	}
 

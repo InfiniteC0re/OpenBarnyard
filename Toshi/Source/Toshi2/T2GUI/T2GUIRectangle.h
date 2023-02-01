@@ -18,10 +18,7 @@ namespace Toshi
 			m_Height = PackFloat(height);
 		}
 
-		void SetMaterial(T2GUIMaterial* pMaterial)
-		{
-			m_pMaterial = pMaterial;
-		}
+		void SetMaterial(T2GUIMaterial* pMaterial);
 
 	private:
 		T2GUIMaterial* m_pMaterial;

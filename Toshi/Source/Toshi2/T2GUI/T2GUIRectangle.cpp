@@ -6,7 +6,7 @@ namespace Toshi
 {
 	T2GUIRectangle::T2GUIRectangle()
 	{
-
+		m_pMaterial = TNULL;
 	}
 
 	void T2GUIRectangle::Render()
@@ -23,5 +23,13 @@ namespace Toshi
 
 		pRenderer->RenderRectangle(pos1, pos2, m_UV1, m_UV2);
 		T2GUIElement::Render();
+	}
+
+	void T2GUIRectangle::SetMaterial(T2GUIMaterial* pMaterial)
+	{
+		m_pMaterial = pMaterial;
+		m_UV1 = { 0.0f, 0.0f };
+		m_UV2 = { 1.0f, 1.0f };
+		TTODO("Set some other fields");
 	}
 }

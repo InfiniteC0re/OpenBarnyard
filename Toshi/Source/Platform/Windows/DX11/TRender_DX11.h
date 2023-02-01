@@ -365,7 +365,7 @@ namespace Toshi
 		void SetZMode(bool depthEnable, D3D11_COMPARISON_FUNC comparisonFunc, D3D11_DEPTH_WRITE_MASK depthWriteMask);
 		void DrawMesh(D3D11_PRIMITIVE_TOPOLOGY primitiveTopology, ID3D11Buffer* pVertexBuffer, UINT vertexCount, UINT strides, UINT startVertex, UINT offsets);
 		void CopyDataToTexture(ID3D11ShaderResourceView* pSRTex, UINT dataSize, void* src, UINT textureSize);
-		void SetSamplerState(UINT startSlot, int samplerId, BOOL SetForVS);
+		void SetSamplerState(UINT startSlot, int samplerId, BOOL SetForPS);
 
 		void UpdateRenderStates();
 		void FlushConstantBuffers();

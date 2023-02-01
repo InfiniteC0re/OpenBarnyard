@@ -3,7 +3,7 @@
 
 namespace Toshi
 {
-	TTexture* T2GUIRenderer::GetTexture(char* texName) const
+	TTexture* T2GUIRenderer::GetTexture(const char* texName) const
 	{
 		return TNULL;
 	}

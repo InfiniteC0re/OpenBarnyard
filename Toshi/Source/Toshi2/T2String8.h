@@ -57,7 +57,7 @@ namespace Toshi
 			return strcmp(str1, str2);
 		}
 
-		static int CompareNoCase(const char* str1, const char* str2, size_t size)
+		static int CompareNoCase(const char* str1, const char* str2, size_t size = -1)
 		{
 			if (size != -1) {
 				return _strnicmp(str1, str2, size);
@@ -104,14 +104,22 @@ namespace Toshi
 			return -1;
 		}
 
-		static bool IsLowerCase(const char* src)
+		static bool IsLowerCase(const char* str)
 		{
-			int c = *src++;
-			while (c != 0 && (islower(c) != 0 || isalpha(c) == 0))
+			while (*str != 0 && (islower(*str) != 0 || isalpha(*str) == 0))
 			{
-				c = *src++;
+				str++;
 			}
-			return *src == 0;
+			return *str == 0;
+		}
+
+		static void ToLowerCase(char* str)
+		{
+			while (*str)
+			{
+				*str = static_cast<char>(tolower(*str));
+				str++;
+			}
 		}
 
 		static void IntToString(int value, char* dst, int unused, int radix)

@@ -1,9 +1,13 @@
 #include "pch.h"
 #include "A2GUIRenderer_DX11.h"
+#include "Memory/AMemory.h"
+
 #include <Platform/Windows/DX11/TRender_DX11.h>
 #include <Platform/Windows/DX11/TRenderContext_DX11.h>
 #include <Platform/Windows/DX11/TPrimShader_DX11.h>
-#include "Toshi2/T2GUI/T2GUI.h"
+#include <Platform/Windows/DX11/TTexture_DX11.h>
+#include <Toshi2/T2GUI/T2GUI.h>
+#include <Toshi2/T2GUI/T2GUIMaterial.h>
 
 using namespace Toshi;
 
@@ -19,6 +23,18 @@ A2GUIRenderer::A2GUIRenderer()
 A2GUIRenderer::~A2GUIRenderer()
 {
 	delete[] m_pTransforms;
+}
+
+TTexture* A2GUIRenderer::GetTexture(const char* texName) const
+{
+	char lowercaseTexName[512];
+
+	TASSERT(T2String8::Length(texName) < sizeof(lowercaseTexName));
+	TStringManager::String8CopySafe(lowercaseTexName, texName, sizeof(lowercaseTexName));
+	TStringManager::String8ToLowerCase(lowercaseTexName);
+	TTODO("Calculate string offset");
+
+	return TTextureManager::GetSingletonWeak()->FindTexture(lowercaseTexName);
 }
 
 void A2GUIRenderer::BeginScene()
@@ -63,7 +79,17 @@ void A2GUIRenderer::EndScene()
 
 void A2GUIRenderer::SetMaterial(T2GUIMaterial* pMat)
 {
-	TIMPLEMENT();
+	auto pPrimShader = TPrimShader::GetSingletonWeak();
+	TTexture* pTex = TNULL;
+
+	if (pMat != TNULL)
+	{
+		TASSERT(pMat->IsA(TGetClass(T2GUIMaterial)));
+		pTex = pMat->GetTexture();
+	}
+	
+	pPrimShader->SetImageAndUnlock(pTex);
+	m_pMaterial = pMat;
 }
 
 void A2GUIRenderer::PushTransform(const T2GUITransform& transform, const TVector2& vec1, const TVector2& vec2)
@@ -365,29 +391,50 @@ void A2GUIRenderer::ClearScissors()
 
 T2GUIMaterial* A2GUIRenderer::CreateMaterial(const char* texName)
 {
-	TIMPLEMENT();
-	return nullptr;
+	return CreateMaterial(GetTexture(texName));
 }
 
 T2GUIMaterial* A2GUIRenderer::CreateMaterial(TTexture* pTex)
 {
-	TIMPLEMENT();
-	return nullptr;
+	T2GUIMaterial* pMaterial = new (AMemory::GetPool(AMemory::POOL_FrequentAllocations)) T2GUIMaterial;
+	pMaterial->Create();
+	pMaterial->SetTexture(pTex);
+	
+	return pMaterial;
 }
 
 void A2GUIRenderer::DestroyMaterial(T2GUIMaterial* pMat)
 {
-	TIMPLEMENT();
+	if (pMat != TNULL)
+	{
+		TASSERT(pMat->IsA(TGetClass(T2GUIMaterial)));
+		pMat->OnDestroy();
+		pMat->Delete();
+	}
 }
 
-float A2GUIRenderer::GetWidth(T2GUIMaterial* pMat)
+uint32_t A2GUIRenderer::GetWidth(T2GUIMaterial* pMat)
 {
-	TIMPLEMENT();
-	return 0.0f;
+	TASSERT(pMat->IsA(TGetClass(T2GUIMaterial)));
+	TTexture* pTex = pMat->GetTexture();
+
+	if (pTex != TNULL)
+	{
+		return pTex->GetWidth();
+	}
+
+	return 0;
 }
 
-float A2GUIRenderer::GetHeight(T2GUIMaterial* pMat)
+uint32_t A2GUIRenderer::GetHeight(T2GUIMaterial* pMat)
 {
-	TIMPLEMENT();
-	return 0.0f;
+	TASSERT(pMat->IsA(TGetClass(T2GUIMaterial)));
+	TTexture* pTex = pMat->GetTexture();
+
+	if (pTex != TNULL)
+	{
+		return pTex->GetHeight();
+	}
+
+	return 0;
 }
