@@ -111,6 +111,32 @@ namespace Toshi
 			State_Focused,
 		};
 
+		enum class Pivot : uint8_t
+		{
+			TopRight,
+			TopCenter,
+			TopLeft,
+			MiddleRight,
+			MiddleCenter,
+			MiddleLeft,
+			BottomRight,
+			BottomCenter,
+			BottomLeft
+		};
+
+		enum class Anchor : uint8_t
+		{
+			TopRight,
+			TopCenter,
+			TopLeft,
+			MiddleRight,
+			MiddleCenter,
+			MiddleLeft,
+			BottomRight,
+			BottomCenter,
+			BottomLeft
+		};
+
 	public:
 		T2GUIElement();
 		virtual ~T2GUIElement();
@@ -162,6 +188,16 @@ namespace Toshi
 			m_Transform.GetPos().y = y;
 		}
 
+		void SetAnchor(Anchor pivot)
+		{
+			m_Anchor = pivot;
+		}
+
+		void SetPivot(Pivot pivot)
+		{
+			m_Pivot = pivot;
+		}
+
 		static float UnpackFloat(unsigned short value)
 		{
 			return value * FLOAT_SCALE;
@@ -184,8 +220,8 @@ namespace Toshi
 		uint32_t m_Color;
 		t_PostRender m_cbPostRender;
 		uint8_t m_Flags1;                     // 0x3B
-		uint8_t m_Flags2;                     // 0x3B
-		uint8_t m_Flags3;                     // 0x3B
-		State m_State;                        // 0x3B
+		Anchor m_Anchor;                      // 0x3C
+		Pivot m_Pivot;                        // 0x3D
+		State m_State;                        // 0x3E
 	};
 }
