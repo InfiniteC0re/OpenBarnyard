@@ -29,4 +29,4 @@ Then compile the generated solution and that's it
 - [premake](https://github.com/premake/premake-core)
 - [spdlog](https://github.com/gabime/spdlog)
 - [fmod](https://fmod.com/)
-- [theoraplay](https://github.com/icculus/theoraplay)
+- Fork of [theoraplay](https://github.com/InfiniteC0re/theoraplay)
