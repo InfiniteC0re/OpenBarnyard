@@ -55,6 +55,13 @@ namespace Toshi
 		TTODO("FUN_00693a00");
 	}
 
+	void TTexture::Bind(UINT startSlot)
+	{
+		auto pRender = TRenderDX11::Interface();
+		pRender->m_pDeviceContext->PSSetShaderResources(startSlot, 1, &m_TexInfo->SRView);
+		pRender->SetSamplerState(startSlot, m_SamplerId, TRUE);
+	}
+
 	TTexture* TTexture::InitRunTime(Info* pTextureInfo)
 	{
 		TRenderDX11* pRender = TRenderDX11::Interface();
@@ -131,5 +138,42 @@ namespace Toshi
 		m_pInvalidTexture->m_pNextTexture = TNULL;
 		m_pInvalidTexture->m_pPrevTexture = TNULL;
 		TFree(srcData);
+	}
+
+	TTexture* TTextureManager::FindTexture(const char* texName)
+	{
+		TASSERT(T2String8::IsLowerCase(texName));
+
+		TTexture* pCurrentTex = m_pLastTexture;
+
+		while (true)
+		{
+			if (pCurrentTex == TNULL)
+			{
+				return m_pInvalidTexture;
+			}
+
+			if (T2String8::CompareNoCase(pCurrentTex->GetName(), texName) == 0)
+			{
+				break;
+			}
+
+			pCurrentTex = pCurrentTex->m_pPrevTexture;
+		}
+
+		return pCurrentTex;
+	}
+
+	void TTextureManager::AddTexture(TTexture* pTexture)
+	{
+		pTexture->m_pPrevTexture = GetLastTexture();
+		pTexture->m_pNextTexture = TNULL;
+
+		if (pTexture->m_pPrevTexture != TNULL)
+		{
+			pTexture->m_pPrevTexture->m_pNextTexture = pTexture;
+		}
+
+		SetLastTexture(pTexture);
 	}
 }

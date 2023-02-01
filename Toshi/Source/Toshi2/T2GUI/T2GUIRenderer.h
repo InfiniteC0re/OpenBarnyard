@@ -1,18 +1,17 @@
 #pragma once
 #include "T2GUIElement.h"
+#include "T2GUIMaterial.h"
 #include "Toshi/Render/TTexture.h"
 
 namespace Toshi
 {
-	class T2GUIMaterial;
-
 	class T2GUIRenderer
 	{
 	public:
 		T2GUIRenderer() = default;
 		virtual ~T2GUIRenderer() = default;
 
-		virtual TTexture* GetTexture(char* texName) const;
+		virtual TTexture* GetTexture(const char* texName) const;
 		virtual void BeginScene() = 0;
 		virtual void EndScene() = 0;
 		virtual void SetMaterial(T2GUIMaterial* pMat) = 0;
@@ -34,8 +33,8 @@ namespace Toshi
 		virtual T2GUIMaterial* CreateMaterial(const char* texName) = 0;
 		virtual T2GUIMaterial* CreateMaterial(TTexture* pTex) = 0;
 		virtual void DestroyMaterial(T2GUIMaterial* pMat) = 0;
-		virtual float GetWidth(T2GUIMaterial* pMat) = 0;
-		virtual float GetHeight(T2GUIMaterial* pMat) = 0;
+		virtual uint32_t GetWidth(T2GUIMaterial* pMat) = 0;
+		virtual uint32_t GetHeight(T2GUIMaterial* pMat) = 0;
 
 	private:
 		int m_WhiteGlyphsCount;

@@ -1,5 +1,6 @@
 #pragma once
 #include <Toshi2/T2GUI/T2GUIRenderer.h>
+#include <Toshi/Render/TTexture.h>
 
 class A2GUIRenderer : public Toshi::T2GUIRenderer
 {
@@ -10,6 +11,7 @@ public:
 	A2GUIRenderer();
 	~A2GUIRenderer();
 
+	virtual Toshi::TTexture* GetTexture(const char* texName) const override;
 	virtual void BeginScene() override;
 	virtual void EndScene() override;
 	virtual void SetMaterial(Toshi::T2GUIMaterial* pMat) override;
@@ -31,8 +33,8 @@ public:
 	virtual Toshi::T2GUIMaterial* CreateMaterial(const char* texName) override;
 	virtual Toshi::T2GUIMaterial* CreateMaterial(Toshi::TTexture* pTex) override;
 	virtual void DestroyMaterial(Toshi::T2GUIMaterial* pMat) override;
-	virtual float GetWidth(Toshi::T2GUIMaterial* pMat) override;
-	virtual float GetHeight(Toshi::T2GUIMaterial* pMat) override;
+	virtual uint32_t GetWidth(Toshi::T2GUIMaterial* pMat) override;
+	virtual uint32_t GetHeight(Toshi::T2GUIMaterial* pMat) override;
 
 private:
 	Toshi::T2GUITransform* m_pTransforms;

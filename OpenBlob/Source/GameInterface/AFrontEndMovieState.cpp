@@ -10,8 +10,8 @@ AGameState::UpdateResult AFrontEndMovieState::OnUpdate(float deltaTime)
     TIMPLEMENT();
     AGameState::OnUpdate(deltaTime);
 
-    //m_Test->SetTransform(0, 0, m_TestRotAngle);
-    //m_TestRotAngle += deltaTime * 2.5f;
+    m_Test->SetTransform(0, 0, m_TestRotAngle);
+    m_TestRotAngle += deltaTime * 2.5f;
 
     AMoviePlayer* pMoviePlayer = AMoviePlayer::GetSingletonWeak();
 
@@ -28,6 +28,7 @@ AGameState::UpdateResult AFrontEndMovieState::OnUpdate(float deltaTime)
 void AFrontEndMovieState::OnInsertion()
 {
     auto pGUI = Toshi::T2GUI::GetSingleton();
+    auto pGUIRenderer = pGUI->GetRenderer();
     auto pRootElement = pGUI->GetRootElement();
 
     m_Test = new Toshi::T2GUIRectangle;
@@ -37,9 +38,9 @@ void AFrontEndMovieState::OnInsertion()
     pRootElement->AddChildHead(m_Test);
 
     Toshi::T2GUIRectangle* pRectangle2 = new Toshi::T2GUIRectangle;
-    pRectangle2->Create(50, 50);
-    pRectangle2->SetColour(0x00FF6000); // ARGB
-    pRectangle2->SetAnchor(Toshi::T2GUIElement::Anchor::BottomCenter);
+    pRectangle2->Create(100, 100);
+    pRectangle2->SetTransform(0, 0, 0);
+    pRectangle2->SetMaterial(pGUIRenderer->CreateMaterial("loadicon.tga"));
     m_Test->AddChildHead(pRectangle2);
 
     TIMPLEMENT();

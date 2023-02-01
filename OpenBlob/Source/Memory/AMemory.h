@@ -33,6 +33,11 @@ public:
 		return ms_apMemoryBlocks[type] != TNULL;
 	}
 
+	static Toshi::TMemoryHeap* GetPool(Pool type)
+	{
+		return ms_apMemoryBlocks[type];
+	}
+
 public:
 	static PoolDefinitionInfo ms_aPoolDefinitionInfo[POOL_NumOf];
 	static Toshi::TMemoryHeap* ms_apMemoryBlocks[POOL_NumOf];

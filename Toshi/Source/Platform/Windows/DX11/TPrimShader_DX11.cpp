@@ -98,11 +98,17 @@ namespace Toshi
 
 		AddMesh();
 		pRender->m_pDeviceContext->VSSetShader(m_pVShader, TNULL, 0);
-		pRender->m_pDeviceContext->PSSetShader(
-			(m_pImage != TNULL) ? m_pPShaderImage : m_pPShaderBasic,
-			TNULL,
-			0
-		);
+
+		if (m_pImage != TNULL)
+		{
+			m_pImage->Bind(0);
+			pRender->m_pDeviceContext->PSSetShader(m_pPShaderImage, TNULL, 0);
+		}
+		else
+		{
+			pRender->m_pDeviceContext->PSSetShader(m_pPShaderBasic, TNULL, 0);
+		}
+
 		pRender->SetAlphaUpdate(false);
 
 		D3D11_DEPTH_WRITE_MASK depthWriteMask;

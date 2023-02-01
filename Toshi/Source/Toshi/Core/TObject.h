@@ -17,7 +17,8 @@ namespace Toshi
 		static TObject* CreateTObject() { return nullptr; } 
 		static TObject* CreateTObjectInPlace(void* ptr) { return nullptr; }
 
-		bool IsExactly(TClass* toCompare) { return GetClass() == toCompare; }
+		bool IsExactly(TClass* pClass) { return GetClass() == pClass; }
+		bool IsA(TClass* pClass) { return GetClass()->IsA(pClass); }
 	
 	public:
 		static constinit TClass s_Class;

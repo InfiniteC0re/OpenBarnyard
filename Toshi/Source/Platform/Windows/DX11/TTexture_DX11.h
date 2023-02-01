@@ -40,11 +40,15 @@ namespace Toshi
 			m_TexData = 0;
 			m_pPrevTexture = TNULL;
 			m_pNextTexture = TNULL;
+			m_SamplerId = 3;
 		}
 
 		void Init();
 
+		void Bind(UINT startSlot);
+
 		TTexture* InitRunTime(Info* pTextureInfo);
+
 		static TTexture* InitRunTime(DXGI_FORMAT format, UINT width, UINT height, const void* srcData);
 
 		void SetName(const char* name)
@@ -57,6 +61,16 @@ namespace Toshi
 			return m_TexName;
 		}
 
+		UINT GetWidth() const
+		{
+			return m_TexInfo->Width;
+		}
+
+		UINT GetHeight() const
+		{
+			return m_TexInfo->Height;
+		}
+
 	private:
 		void* m_Unk1;             // 0x00
 		const char* m_TexName;    // 0x04
@@ -65,6 +79,7 @@ namespace Toshi
 		uint8_t* m_TexData;       // 0x10
 		TTexture* m_pPrevTexture; // 0x14
 		TTexture* m_pNextTexture; // 0x18
+		int m_SamplerId;          // 0x2C
 	};
 
 	class TTextureManager : public TSingleton<TTextureManager>
@@ -93,18 +108,9 @@ namespace Toshi
 			return m_pWhiteTexture;
 		}
 
-		void AddTexture(TTexture* pTexture)
-		{	
-			pTexture->m_pPrevTexture = GetLastTexture();
-			pTexture->m_pNextTexture = TNULL;
+		TTexture* FindTexture(const char* texName);
 
-			if (pTexture->m_pPrevTexture != TNULL)
-			{
-				pTexture->m_pPrevTexture->m_pNextTexture = pTexture;
-			}
-
-			SetLastTexture(pTexture);
-		}
+		void AddTexture(TTexture* pTexture);
 
 	private:
 		TTexture* m_pLastTexture;
