@@ -3,10 +3,15 @@
 #include "Movie/AMoviePlayer.h"
 #include "AppBoot.h"
 
+#include <Toshi2/T2GUI/T2GUI.h>
+
 AGameState::UpdateResult AFrontEndMovieState::OnUpdate(float deltaTime)
 {
     TIMPLEMENT();
     AGameState::OnUpdate(deltaTime);
+
+    m_Test->SetTransform(0, 0, m_TestRotAngle);
+    m_TestRotAngle += deltaTime * 2.5f;
 
     AMoviePlayer* pMoviePlayer = AMoviePlayer::GetSingletonWeak();
 
@@ -22,6 +27,20 @@ AGameState::UpdateResult AFrontEndMovieState::OnUpdate(float deltaTime)
 
 void AFrontEndMovieState::OnInsertion()
 {
+    auto pGUI = Toshi::T2GUI::GetSingleton();
+    auto pRootElement = pGUI->GetRootElement();
+
+    m_Test = new Toshi::T2GUIRectangle;
+    m_Test->Create(200, 200);
+    m_Test->SetTransform(0, 0, 0);
+    m_Test->SetColour(0x00FF0000); // ARGB
+    pRootElement->AddChildHead(m_Test);
+
+    Toshi::T2GUIRectangle* pRectangle2 = new Toshi::T2GUIRectangle;
+    pRectangle2->Create(100, 100);
+    pRectangle2->SetColour(0x00FF6000); // ARGB
+    m_Test->AddChildHead(pRectangle2);
+
     TIMPLEMENT();
     AGameState::OnInsertion();
 }
