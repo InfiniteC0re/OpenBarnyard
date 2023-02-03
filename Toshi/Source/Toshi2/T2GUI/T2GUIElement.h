@@ -76,7 +76,7 @@ namespace Toshi
 		virtual float GetAlpha();
 		virtual void SetVisible(bool visible);
 		virtual void SetFocus(bool focused);
-		virtual void Unk(void* unk);
+		virtual void GetScreenTransform(void* unk);
 		virtual bool IsPointInside(const TVector2& point);
 		virtual const TVector2& GetPivot();
 
@@ -127,7 +127,7 @@ namespace Toshi
 	private:
 		static constinit uint32_t s_uiGlobalVisMask;
 
-	protected:
+	public:
 		T2GUIElement* m_pParent;
 		T2GUITransform m_Transform;
 		T2DList<T2GUIElement> m_Children;

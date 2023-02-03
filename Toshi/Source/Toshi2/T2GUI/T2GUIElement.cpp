@@ -248,7 +248,7 @@ namespace Toshi
 		}
 	}
 
-	void T2GUIElement::Unk(void* unk)
+	void T2GUIElement::GetScreenTransform(void* unk)
 	{
 		TIMPLEMENT();
 	}

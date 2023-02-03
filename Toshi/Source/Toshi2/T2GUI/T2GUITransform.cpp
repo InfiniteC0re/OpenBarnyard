@@ -89,8 +89,8 @@ namespace Toshi
 		outMatrix.k = 1.0;
 		outMatrix.l = 0.0;
 
-		outMatrix.m = m_Vec.x;
-		outMatrix.n = m_Vec.y;
+		outMatrix.m = m_Pos.x;
+		outMatrix.n = m_Pos.y;
 		outMatrix.o = 0.0;
 		outMatrix.p = 1.0;
 	}
@@ -108,6 +108,6 @@ namespace Toshi
 		outTransform.m_Rot[1].SetX(c1 * a2 + d1 * c2);
 		outTransform.m_Rot[1].SetY(c1 * b2 + d1 * d2);
 
-		a.Transform(outTransform.m_Vec, b.m_Vec);
+		a.Transform(outTransform.m_Pos, b.m_Pos);
 	}
 }

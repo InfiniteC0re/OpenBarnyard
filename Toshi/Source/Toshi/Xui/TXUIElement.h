@@ -75,7 +75,10 @@ namespace Toshi
 		void LoadTimelines(TXUIResource& resource, uint8_t*& a_pData);
 		XURXUIObjectData* FindChildElementData(uint32_t index);
 
-	protected:
+	public:
+
+		uint16_t m_id; // 0x28 de blob
+
 		uint16_t m_index; //0x12 de blob 0x1C NT08
 		uint32_t m_index2; // 0x14 de blob 1E NT08
 
@@ -87,6 +90,21 @@ namespace Toshi
 
 		uint32_t m_countOfChildren; // 0x16 de blob 0x10 NT08
 		XURXUIObjectData** m_children; // 0x4 both
+
+		/* 0 */ uint16_t m_Id;
+		/* 1 */ float m_Width;
+		/* 2 */ float m_Height;
+		/* 3 */ int32_t m_Position;
+		/* 4 */ int32_t m_Scale;
+		/* 5 */ int32_t m_Rotation;
+		/* 6 */ float m_Opacity;
+		/* 7 */ uint32_t m_Anchor;
+		/* 8 */ int32_t m_Pivot;
+		/* 9 */ bool m_Show;
+		/* 10 */ uint32_t m_BlendMode;
+		/* 11 */ bool m_DisableTimelineRecursion;
+		/* 13 */ uint32_t m_ColorWriteFlags;
+		/* 14 */ bool m_ClipChildren;
 	};
 
 	class XURXUIElementData : public XURXUIObjectData
@@ -166,30 +184,30 @@ namespace Toshi
 			return 1;
 		}
 
-	protected:
-		/* 0 */ uint16_t m_Id;
-		/* 1 */ float m_Width;
-		/* 2 */ float m_Height;
-		/* 3 */ int32_t m_Position;
-		/* 4 */ int32_t m_Scale;
-		/* 5 */ int32_t m_Rotation;
-		/* 6 */ float m_Opacity;
-		/* 7 */ uint32_t m_Anchor;
-		/* 8 */ int32_t m_Pivot;
-		/* 9 */ bool m_Show;
-		/* 10 */ uint32_t m_BlendMode;
-		/* 11 */ bool m_DisableTimelineRecursion;
-		/* 13 */ uint32_t m_ColorWriteFlags;
-		/* 14 */ bool m_ClipChildren;
+	
 	};
 
 	class TXUIElement :
 		public TGenericClassDerived<TXUIElement, TObject, "TXUIElement", TMAKEVERSION(1, 0), false>, public T2GUIElement
 	{
 	public:
+
+		virtual bool SkipRender();
+
+
 		void Create(TXUIResource& a_rResource, XURXUIObjectData* a_pObjectData, bool a_bool);
 	
 	private:
+
+		XURXUIObjectData* m_pObjectData; // 0x40 de blob
+		wchar_t* m_objectID; // 0x44
+
+		T2GUITransform m_transform;
+		//uint16_t m_PositionX;
+		//uint16_t m_PositionY;
+		//uint16_t m_ScaleX;
+		//uint16_t m_ScaleY;
+
 		int m_iUIDCount; // 0xB4 globs
 	};
 }

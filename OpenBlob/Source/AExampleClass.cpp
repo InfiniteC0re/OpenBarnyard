@@ -91,14 +91,14 @@ AExampleClass::AExampleClass()
 
 	Toshi::TLogFile::GetSingletonWeak()->Log(Toshi::TLogFile::TYPE_Info, "Toshi", "Kernel", "Creating AExampleClass %s", "Yes we are...");*/
 
-	TFile* file = TFile::Create("C:\\Program Files (x86)\\Steam\\steamapps\\common\\de Blob\\Data\\BlobChar\\AssetPack.trb");
+	/*TFile* file = TFile::Create("C:\\Program Files (x86)\\Steam\\steamapps\\common\\de Blob\\Data\\BlobChar\\AssetPack.trb");
 
 	if (file)
 	{
 		TTRB trb;
 		trb.Load(file);
 		TAssetInit::InitAssets(trb, true, false);
-	}
+	}*/
 
 	/*
 	TFile* file = TFile::Create("C:\\Program Files (x86)\\Steam\\steamapps\\common\\de Blob\\Data\\XUI\\DE\\common.trb", TFile::OpenFlags_Read);

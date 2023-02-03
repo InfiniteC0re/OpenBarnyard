@@ -187,19 +187,49 @@ namespace Toshi
 
 	// TXUIElement
 
+	bool TXUIElement::SkipRender()
+	{
+		
+		return false;
+	}
+
 	void TXUIElement::Create(TXUIResource& a_rResource, XURXUIObjectData* a_pObjectData, bool a_bool)
 	{
+		m_pObjectData = a_pObjectData;
 		if (GetClass() == TXUICanvas::GetClassStatic())
 		{
-			//a_rResource.PushID(a_pObjectData->id);
+			a_rResource.PushID(a_rResource.GetString(a_pObjectData->m_id));
 		}
-		if (TXUIResource::s_bGenerateUIDs) //&& TStringManager::String16Length(a_pObjectData->id)) != 0
+		m_objectID = (wchar_t*)a_rResource.GetString(a_pObjectData->m_id);
+		if (TXUIResource::s_bGenerateUIDs && TStringManager::String16Length(m_objectID) != 0)
 		{
 			if (GetClass()->IsA(TXUIListItem::GetClassStatic()))
 			{
 				m_iUIDCount = TXUIResource::s_iUIDCount;
 				TXUIResource::s_iUIDCount++;
 			}
+		}
+		m_Width = a_pObjectData->m_Width;
+		m_Height = a_pObjectData->m_Width;
+
+		if (a_pObjectData->m_Position != -1)
+		{
+			TVector4* pos = a_rResource.GetVector(a_pObjectData->m_Position);
+			
+			/*m_PositionX = PackFloat(pos->x);
+			m_PositionY = PackFloat(pos->y);*/
+		}
+		if (a_pObjectData->m_Scale != -1)
+		{
+			TQuaternion* rot = a_rResource.GetQuat(a_pObjectData->m_Scale);
+			/*m_ScaleX = rot->x * 256.0f;
+			m_ScaleY = rot->y * 256.0f;*/
+		}
+		if (a_pObjectData->m_Scale != -1)
+		{
+			TVector4* scale = a_rResource.GetVector(a_pObjectData->m_Scale);
+			/*m_ScaleX = scale->x * 256.0f;
+			m_ScaleY = scale->y * 256.0f;*/
 		}
 	}
 }

@@ -61,13 +61,13 @@ namespace Toshi
 
 		void Transform(TVector2& outVec, const TVector2& transformVec) const
 		{
-			outVec.x = m_Vec.x + m_Rot[0].GetX() * transformVec.x + m_Rot[1].GetX() * transformVec.y;
-			outVec.y = m_Vec.y + m_Rot[0].GetY() * transformVec.x + m_Rot[1].GetY() * transformVec.y;
+			outVec.x = m_Pos.x + m_Rot[0].GetX() * transformVec.x + m_Rot[1].GetX() * transformVec.y;
+			outVec.y = m_Pos.y + m_Rot[0].GetY() * transformVec.x + m_Rot[1].GetY() * transformVec.y;
 		}
 
 		TVector2& GetPos()
 		{
-			return m_Vec;
+			return m_Pos;
 		}
 
 		static constexpr float UnpackFloat(short value)
@@ -84,6 +84,6 @@ namespace Toshi
 
 	private:
 		Rotation m_Rot[2];
-		TVector2 m_Vec;
+		TVector2 m_Pos;
 	};
 }

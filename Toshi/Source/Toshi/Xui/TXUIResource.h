@@ -93,16 +93,16 @@ namespace Toshi
 		}
 
 	private:
-		XURHeader m_oHeader;                           // 0x0
+		XURHeader m_oHeader;                        // 0x0
 		wchar_t** m_asStringTable = TNULL;          // 0x1C
 		uint8_t* m_pData;
-		TVector4* m_pVect; // 0x1C globs
+		TVector4* m_pVect;                          // 0x1C globs
 		TQuaternion* m_pQuat;                       // 0x20 both
 		unsigned char* m_pCust;                     // 0x28 / 0x24 globs
 		uint32_t m_uiCustDataSize;                  // 0x3C de blob / 0x38 globs
 		uint32_t m_uiStringTableCount;              // 0x30 / 0x3C globs
-		TString16* m_uIDStr; // 0x40
-		uint32_t m_uIDStrLength; // 0x44
+		TString16* m_uIDStr;                        // 0x40
+		uint32_t m_uIDStrLength;                    // 0x44
 
 		XURXUIObjectData* m_root;
 
