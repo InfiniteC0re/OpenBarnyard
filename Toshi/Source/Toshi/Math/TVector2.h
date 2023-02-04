@@ -78,6 +78,8 @@ namespace Toshi
 		TFloat Magnitude() const { return TMath::Sqrt(x * x + y * y); }
 		TFloat MagnitudeSq() const { return x * x + y * y; }
 
+		bool IsEqual(const TVector2& vec) { return TMath::Abs(x - x) < 0.00001 && TMath::Abs(y - y) < 0.00001; }
+
 		TVector2 operator+(const TVector2& other) const { return { x + other.x, y + other.y }; }
 		TVector2 operator-(const TVector2& other) const { return { x - other.x, y - other.y }; }
 		TVector2 operator*(const TVector2& other) const { return { x * other.x, y * other.y }; }

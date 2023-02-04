@@ -19,14 +19,6 @@ namespace Toshi
 
 		using t_PostRender = void(*)();
 
-		typedef uint8_t State;
-		enum State_ : State
-		{
-			State_Zero,
-			State_Visible,
-			State_Focused,
-		};
-
 		enum class Pivot : uint8_t
 		{
 			TopRight,
@@ -51,6 +43,14 @@ namespace Toshi
 			BottomRight,
 			BottomCenter,
 			BottomLeft
+		};
+
+		typedef uint8_t FLAGS;
+		enum FLAGS_ : FLAGS
+		{
+			FLAGS_VISIBLE = BITFIELD(0),
+			FLAGS_FOCUSED = BITFIELD(1),
+			FLAGS_XUIELEMENT = BITFIELD(2),
 		};
 
 	public:
@@ -124,7 +124,7 @@ namespace Toshi
 			return static_cast<unsigned short>(value * FLOAT_QUALITY);
 		}
 
-	private:
+	protected:
 		static constinit uint32_t s_uiGlobalVisMask;
 
 	public:
@@ -135,9 +135,9 @@ namespace Toshi
 		unsigned short m_Height;
 		uint32_t m_Color;
 		t_PostRender m_cbPostRender;
-		uint8_t m_Flags1;                     // 0x3B
+		FLAGS m_Flags1;                       // 0x3B
 		Anchor m_Anchor;                      // 0x3C
 		Pivot m_Pivot;                        // 0x3D
-		State m_State;                        // 0x3E
+		FLAGS m_State;                        // 0x3E
 	};
 }

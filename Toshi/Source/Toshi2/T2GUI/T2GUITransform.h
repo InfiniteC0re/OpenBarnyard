@@ -11,6 +11,10 @@ namespace Toshi
 		class Rotation
 		{
 		public:
+			Rotation()
+			{
+
+			}
 			Rotation(short x, short y) : m_X(x), m_Y(y)
 			{
 
@@ -82,7 +86,7 @@ namespace Toshi
 
 		static void Multiply(T2GUITransform& outTransform, const T2GUITransform& a, const T2GUITransform& b);
 
-	private:
+	public:
 		Rotation m_Rot[2];
 		TVector2 m_Pos;
 	};

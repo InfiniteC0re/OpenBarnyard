@@ -187,49 +187,128 @@ namespace Toshi
 
 	// TXUIElement
 
+	TXUIElement::TXUIElement()
+	{
+		m_pObjectData = TNULL;
+		m_Flags1 |= FLAGS_XUIELEMENT;
+		m_vRotation = T2GUITransform::Rotation(0,0);
+		m_vPosition = T2GUITransform::Rotation(0, 0);
+		m_vScale = T2GUITransform::Rotation(0, 0);
+	}
+
 	bool TXUIElement::SkipRender()
 	{
-		
+		TIMPLEMENT();
 		return false;
 	}
 
-	void TXUIElement::Create(TXUIResource& a_rResource, XURXUIObjectData* a_pObjectData, bool a_bool)
+	void TXUIElement::SetHeight(float height)
+	{
+		TVector2 currentDimension;
+		GetDimensions(currentDimension.x, currentDimension.y);
+
+		T2GUIElement::SetHeight(height);
+
+		TVector2 newDimension;
+		GetDimensions(newDimension.x, newDimension.y);
+
+		if (!currentDimension.IsEqual(newDimension))
+		{
+			TVector2 combined = currentDimension - newDimension;
+			UpdateAnchoring(combined);
+		}
+	}
+
+	void TXUIElement::SetWidth(float width)
+	{
+		TVector2 currentDimension;
+		GetDimensions(currentDimension.x, currentDimension.y);
+
+		T2GUIElement::SetWidth(width);
+
+		TVector2 newDimension;
+		GetDimensions(newDimension.x, newDimension.y);
+
+		if (!currentDimension.IsEqual(newDimension))
+		{
+			TVector2 combined = currentDimension - newDimension;
+			UpdateAnchoring(combined);
+		}
+	}
+
+	void TXUIElement::UpdateAnchoring(const TVector2& vec)
+	{
+		TIMPLEMENT();
+	}
+
+	bool TXUIElement::IsVisible()
+	{
+		if (HASFLAG(m_Flags1 & FLAGS_VISIBLE) && HASFLAG(m_Flags1 & (uint8_t)T2GUIElement::s_uiGlobalVisMask))
+		{
+			return TFALSE;
+		}
+
+		return TTRUE;
+	}
+
+	bool TXUIElement::Create(TXUIResource& a_rResource, XURXUIObjectData* a_pObjectData, bool hasChildren)
 	{
 		m_pObjectData = a_pObjectData;
-		if (GetClass() == TXUICanvas::GetClassStatic())
+		if (GetClass() == TGetClass(TXUICanvas))
 		{
 			a_rResource.PushID(a_rResource.GetString(a_pObjectData->m_id));
 		}
 		m_objectID = (wchar_t*)a_rResource.GetString(a_pObjectData->m_id);
 		if (TXUIResource::s_bGenerateUIDs && TStringManager::String16Length(m_objectID) != 0)
 		{
-			if (GetClass()->IsA(TXUIListItem::GetClassStatic()))
+			if (GetClass()->IsA(TGetClass(TXUIListItem)))
 			{
 				m_iUIDCount = TXUIResource::s_iUIDCount;
 				TXUIResource::s_iUIDCount++;
 			}
 		}
 		m_Width = a_pObjectData->m_Width;
-		m_Height = a_pObjectData->m_Width;
+		m_Height = a_pObjectData->m_Height;
 
 		if (a_pObjectData->m_Position != -1)
 		{
 			TVector4* pos = a_rResource.GetVector(a_pObjectData->m_Position);
 			
-			/*m_PositionX = PackFloat(pos->x);
-			m_PositionY = PackFloat(pos->y);*/
+			m_vPosition.SetX(pos->x);
+			m_vPosition.SetY(pos->x);
 		}
-		if (a_pObjectData->m_Scale != -1)
+		if (a_pObjectData->m_Rotation != -1)
 		{
-			TQuaternion* rot = a_rResource.GetQuat(a_pObjectData->m_Scale);
-			/*m_ScaleX = rot->x * 256.0f;
-			m_ScaleY = rot->y * 256.0f;*/
+			//m_Rotation = a_rResource.GetQuat(a_pObjectData->m_Scale);
 		}
 		if (a_pObjectData->m_Scale != -1)
 		{
 			TVector4* scale = a_rResource.GetVector(a_pObjectData->m_Scale);
-			/*m_ScaleX = scale->x * 256.0f;
-			m_ScaleY = scale->y * 256.0f;*/
+			m_vScale.SetX(scale->x);
+			m_vScale.SetY(scale->x);
 		}
+
+		SetVisible(a_pObjectData->m_Show);
+
+		if (hasChildren)
+		{
+			CreateChildren(a_rResource, a_pObjectData);
+		}
+
+		if (GetClass() == TGetClass(TXUICanvas))
+		{
+			a_rResource.PopID();
+		}
+		return true;
 	}
+
+	void TXUIElement::CreateChildren(TXUIResource& a_rResource, XURXUIObjectData* a_pObjectData)
+	{
+		for (size_t i = 0; i < a_pObjectData->m_countOfChildren; i++)
+		{
+			auto child = a_pObjectData->m_children[i];
+		}
+		TIMPLEMENT();
+	}
+	
 }

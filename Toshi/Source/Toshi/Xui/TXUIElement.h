@@ -44,6 +44,8 @@ namespace Toshi
 		Flags_AnchorMask = BITFIELD(6)
 	};
 
+	class TXUIElement;
+
 	class XURXUIObjectData
 	{
 	public:
@@ -192,21 +194,25 @@ namespace Toshi
 	{
 	public:
 
+		TXUIElement();
+
 		virtual bool SkipRender();
+		virtual void SetHeight(float height);
+		virtual void SetWidth(float width);
 
-
-		void Create(TXUIResource& a_rResource, XURXUIObjectData* a_pObjectData, bool a_bool);
+		bool Create(TXUIResource& a_rResource, XURXUIObjectData* a_pObjectData, bool hasChildren);
+		void CreateChildren(TXUIResource& a_rResource, XURXUIObjectData* a_pObjectData);
+		void UpdateAnchoring(const TVector2& vec);
+		bool IsVisible();
 	
 	private:
 
 		XURXUIObjectData* m_pObjectData; // 0x40 de blob
 		wchar_t* m_objectID; // 0x44
 
-		T2GUITransform m_transform;
-		//uint16_t m_PositionX;
-		//uint16_t m_PositionY;
-		//uint16_t m_ScaleX;
-		//uint16_t m_ScaleY;
+		T2GUITransform::Rotation m_vPosition;
+		T2GUITransform::Rotation m_vRotation;
+		T2GUITransform::Rotation m_vScale;
 
 		int m_iUIDCount; // 0xB4 globs
 	};
