@@ -42,8 +42,8 @@ void A2GUIBackground::SetupBackground()
 	gui->GetRootElement()->GetDimensions(width, height);
 	SetDimensions(width, height);
 
-	uint32_t textureWidths[MAX_TILES];
-	uint32_t textureHeights[MAX_TILES];
+	uint32_t textureWidths[3];
+	uint32_t textureHeights[2];
 
 	char* tgaName = TStringManager::GetTempString8();
 	
@@ -51,8 +51,8 @@ void A2GUIBackground::SetupBackground()
 	{
 		T2String8::Format(tgaName, "%s_%d.tga", m_pFileName, i+1);
 		T2GUIMaterial* mat = T2GUI::CreateMaterial(tgaName);
-		textureWidths[i] = mat->GetTexture()->GetWidth();
-		textureHeights[i] = mat->GetTexture()->GetHeight();
+		textureWidths[i % 3] = mat->GetTexture()->GetWidth();
+		textureHeights[i / 3] = mat->GetTexture()->GetHeight();
 		T2GUI::DestroyMaterial(mat);
 	}
 
