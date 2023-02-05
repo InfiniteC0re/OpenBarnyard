@@ -166,3 +166,13 @@ inline static void TFree(void* mem)
 {
 	Toshi::TMemory::s_Context.s_cbFree(mem);
 }
+
+inline void* __CRTDECL operator new(size_t size, Toshi::TMemoryHeap* heap)
+{
+	return Toshi::TMemoryHeap::Malloc(heap, size);
+}
+
+inline void* __CRTDECL operator new[](size_t size, Toshi::TMemoryHeap* heap)
+{
+	return Toshi::TMemoryHeap::Malloc(heap, size);
+}

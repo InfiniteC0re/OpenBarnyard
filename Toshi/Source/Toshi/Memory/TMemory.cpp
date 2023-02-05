@@ -15,11 +15,6 @@ void* __CRTDECL operator new(size_t size)
 	return TMalloc(size);
 }
 
-void* __CRTDECL operator new(size_t size, Toshi::TMemoryHeap* heap) noexcept
-{
-	return Toshi::TMemoryHeap::Malloc(heap, size);
-}
-
 void* __CRTDECL operator new[](size_t size)
 {
 	return TMalloc(size);
@@ -28,11 +23,6 @@ void* __CRTDECL operator new[](size_t size)
 void* __CRTDECL operator new[](size_t size, ::std::nothrow_t const&) noexcept
 {
 	return TMalloc(size);
-}
-
-void* __CRTDECL operator new[](size_t size, Toshi::TMemoryHeap* heap) noexcept
-{
-	return Toshi::TMemoryHeap::Malloc(heap, size);
 }
 
 void __CRTDECL operator delete(void* ptr, ::std::nothrow_t const&) noexcept
