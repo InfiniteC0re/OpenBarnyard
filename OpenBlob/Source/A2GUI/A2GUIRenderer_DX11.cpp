@@ -7,7 +7,6 @@
 #include <Platform/Windows/DX11/TPrimShader_DX11.h>
 #include <Platform/Windows/DX11/TTexture_DX11.h>
 #include <Toshi2/T2GUI/T2GUI.h>
-#include <Toshi2/T2GUI/T2GUIMaterial.h>
 
 using namespace Toshi;
 
@@ -176,9 +175,37 @@ void A2GUIRenderer::RenderRectangle(const TVector2& a, const TVector2& b, const 
 	pPrimShader->StopRendering();
 }
 
-void A2GUIRenderer::RenderTriStrip(void* unk1, void* unk2, uint32_t numverts)
+void A2GUIRenderer::RenderTriStrip(Toshi::TVector2* unk1, Toshi::TVector2* unk2, uint32_t numverts, float unk4, float unk5)
 {
-	TIMPLEMENT();
+	if (m_bIsInScene)
+	{
+		auto pRenderContext = TRender::GetSingletonWeak()->GetCurrentRenderContext();
+		auto pTransform = m_pTransforms + m_iTransformStackPointer;
+
+		TMatrix44 mat44;
+		pTransform->Matrix44(mat44);
+		pRenderContext->SetModelViewMatrix(mat44);
+		pRenderContext->SetWorldViewMatrix(mat44);
+
+		m_bIsInScene = TFALSE;
+	}
+
+	TASSERT(numverts < MAXVERTS);
+
+	TPrimShader::Vertex* pVertex;
+	auto pPrimShader = TPrimShader::GetSingletonWeak();
+	pPrimShader->StartRendering(TPrimShader::PrimType_TriangleStrip);
+
+	for (size_t i = 0; i < numverts; i++)
+	{
+		pVertex = pPrimShader->GetCurrentVertex();
+		TVector2 dif = unk2[i] - unk1[i];
+		pVertex->UV = { unk2[i].x, dif.y};
+		pVertex->Color = m_ui32Colour;
+		pVertex->Position = { dif.x, dif.y, 0.0f };
+		pPrimShader->AddVert();
+	}
+	pPrimShader->StopRendering();
 }
 
 void A2GUIRenderer::RenderLine(const TVector2& a, const TVector2& b)

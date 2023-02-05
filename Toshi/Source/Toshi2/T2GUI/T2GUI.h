@@ -48,6 +48,10 @@ namespace Toshi
 
 		void Render();
 
+		static T2GUIMaterial* CreateMaterial(const char* a_materialName);
+		static void DestroyMaterial(TMaterial* material);
+		static TTexture* GetTexture(const char* a_textureName);
+
 	private:
 		static TMemoryHeap* s_pMemHeap;
 

@@ -359,18 +359,15 @@ namespace Toshi
 		return _strnicmp(GetString(), a_pcString, param_2);
 	}
 
-	TString8 TString8::Mid(uint32_t param_1, uint32_t param_2) const
+	TString8 TString8::Mid(int param_1, int param_2) const
 	{
 		if (param_2 < 0)
 		{
 			param_2 = 0;
 		}
-		else
+		else if (Length() <= param_2)
 		{
-			if (Length() <= param_2)
-			{
-				return TString8(param_1);
-			}
+			return TString8();
 		}
 
 		// Rewrite not correct

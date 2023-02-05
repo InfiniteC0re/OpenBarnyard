@@ -2,6 +2,7 @@
 #include "AGameState.h"
 
 #include <Toshi2/T2GUI/T2GUIRectangle.h>
+#include <A2GUI/A2GUIBackground.h>
 
 class AFrontEndMovieState : public AGameState
 {
@@ -26,6 +27,7 @@ public:
 	AFrontEndMovieState()
 	{
 		m_iAssetId = Asset_Legal;
+		m_Background = new A2GUIBackground();
 	}
 
 	virtual UpdateResult OnUpdate(float deltaTime) override;
@@ -43,6 +45,7 @@ private:
 	}
 
 private:
+	A2GUIBackground* m_Background;
 	float m_fUnknown; // 0x104
 	Asset m_iAssetId; // 0x108
 	bool m_bFlag1;    // 0x10C

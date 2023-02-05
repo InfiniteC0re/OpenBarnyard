@@ -393,11 +393,12 @@ void ADX11MoviePlayer::ReadBuffer(void* data, uint32_t datalen)
 {
     if (datalen == 0) return;
     const THEORAPLAY_AudioPacket* audio;
+    char* dataBuffer = (char*)data;
     while (m_bIsPlaying)
     {
         if (m_TheoraAudio == NULL && (!THEORAPLAY_isDecoding(m_TheoraDecoder) || !m_bIsPlaying || (audio = THEORAPLAY_getAudio(m_TheoraDecoder)) == NULL))
         {
-            memset(data, 0, datalen);
+            memset(dataBuffer, 0, datalen);
             return;
         }
         
@@ -405,8 +406,8 @@ void ADX11MoviePlayer::ReadBuffer(void* data, uint32_t datalen)
         int size = (audio->frames - m_AudioOffset) * channels;
         if (size > (datalen / sizeof(float))) size = datalen / sizeof(float);
 
-        memmove(data, audio->samples + (channels * m_AudioOffset), size * sizeof(float));
-        data = (char*)data + size * sizeof(float);
+        memmove(dataBuffer, audio->samples + (channels * m_AudioOffset), size * sizeof(float));
+        dataBuffer += size * sizeof(float);
         m_AudioOffset += (size / channels);
         datalen -= size * sizeof(float);
 

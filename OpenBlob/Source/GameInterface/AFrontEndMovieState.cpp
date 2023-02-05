@@ -5,13 +5,14 @@
 
 #include <Toshi2/T2GUI/T2GUI.h>
 
+
 AGameState::UpdateResult AFrontEndMovieState::OnUpdate(float deltaTime)
 {
     TIMPLEMENT();
     AGameState::OnUpdate(deltaTime);
 
-    m_Test->SetTransform(0, 0, m_TestRotAngle);
-    m_TestRotAngle += deltaTime * 2.5f;
+    /*m_Test->SetTransform(0, 0, m_TestRotAngle);
+    m_TestRotAngle += deltaTime * 2.5f;*/
 
     AMoviePlayer* pMoviePlayer = AMoviePlayer::GetSingletonWeak();
 
@@ -31,17 +32,20 @@ void AFrontEndMovieState::OnInsertion()
     auto pGUIRenderer = pGUI->GetRenderer();
     auto pRootElement = pGUI->GetRootElement();
 
-    m_Test = new Toshi::T2GUIRectangle;
-    m_Test->Create(200, 200);
-    m_Test->SetTransform(0, 0, 0);
-    m_Test->SetColour(0x00FF0000); // ARGB
-    pRootElement->AddChildHead(m_Test);
+    m_Background->Create(s_Assets[0]);
+    pRootElement->AddChildHead(m_Background);
 
-    Toshi::T2GUIRectangle* pRectangle2 = new Toshi::T2GUIRectangle;
-    pRectangle2->Create(100, 100);
-    pRectangle2->SetTransform(0, 0, 0);
-    pRectangle2->SetMaterial(pGUIRenderer->CreateMaterial("loadicon.tga"));
-    m_Test->AddChildHead(pRectangle2);
+    //m_Test = new Toshi::T2GUIRectangle;
+    //m_Test->Create(200, 200);
+    //m_Test->SetTransform(0, 0, 0);
+    //m_Test->SetColour(0x00FF0000); // ARGB
+    //pRootElement->AddChildHead(m_Test);
+
+    //Toshi::T2GUIRectangle* pRectangle2 = new Toshi::T2GUIRectangle;
+    //pRectangle2->Create(100, 100);
+    //pRectangle2->SetTransform(0, 0, 0);
+    //pRectangle2->SetMaterial(pGUIRenderer->CreateMaterial("loadicon.tga"));
+    //m_Test->AddChildHead(pRectangle2);
 
     TIMPLEMENT();
     AGameState::OnInsertion();

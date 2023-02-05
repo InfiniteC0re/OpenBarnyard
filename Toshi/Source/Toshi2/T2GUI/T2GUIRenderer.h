@@ -20,7 +20,7 @@ namespace Toshi
 		virtual void SetTransform(const T2GUITransform& transform) = 0;
 		virtual void SetColour(uint32_t colour) = 0;
 		virtual void RenderRectangle(const TVector2& a, const TVector2& b, const TVector2& uv1, const TVector2& uv2) = 0;
-		virtual void RenderTriStrip(void* unk1, void* unk2, uint32_t numverts) = 0;
+		virtual void RenderTriStrip(TVector2* unk1, TVector2* unk2, uint32_t numverts, float unk4, float unk5) = 0;
 		virtual void RenderLine(const TVector2& a, const TVector2& b) = 0;
 		virtual void RenderLine(float x1, float y1, float x2, float y2) = 0;
 		virtual void RenderOutlineRectangle(const TVector2& a, const TVector2& b) = 0;

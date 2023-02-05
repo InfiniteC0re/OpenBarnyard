@@ -33,4 +33,48 @@ namespace Toshi
 			m_pRenderer->EndScene();
 		}
 	}
+
+	T2GUIMaterial* T2GUI::CreateMaterial(const char* a_materialName)
+	{
+		TTexture* texture = GetTexture(a_materialName);
+
+		T2GUIMaterial* mat;
+
+		if (s_pMemHeap == TNULL)
+		{
+			mat = new T2GUIMaterial();
+		}
+		else
+		{
+			mat = new (s_pMemHeap) T2GUIMaterial();
+		}
+
+		mat->Create();
+		mat->SetTexture(texture);
+
+		return mat;
+	}
+
+	void T2GUI::DestroyMaterial(TMaterial* material)
+	{
+		if (material != TNULL)
+		{
+			TASSERT(material->IsA(TGetClass(T2GUIMaterial)));
+			material->OnDestroy();
+		}
+	}
+
+	TTexture* T2GUI::GetTexture(const char* a_textureName)
+	{
+		char textureName[0x80];
+		TStringManager::String8CopySafe(textureName, a_textureName, 0x80);
+		TStringManager::String8ToLowerCase(textureName);
+
+		TString8 texName = TString8(textureName);
+		int index = texName.FindReverse('\\', -1);
+		texName = texName.Right(index);
+		
+		TTexture* texture = TTextureManager::GetSingletonWeak()->FindTexture(textureName);
+		return texture;
+	}
 }

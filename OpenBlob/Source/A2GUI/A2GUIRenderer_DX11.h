@@ -1,11 +1,11 @@
 #pragma once
 #include <Toshi2/T2GUI/T2GUIRenderer.h>
-#include <Toshi/Render/TTexture.h>
 
 class A2GUIRenderer : public Toshi::T2GUIRenderer
 {
 public:
 	static constexpr size_t TRANSFORMSTACKSIZE = 32;
+	static constexpr size_t MAXVERTS = 128;
 
 public:
 	A2GUIRenderer();
@@ -20,7 +20,7 @@ public:
 	virtual void SetTransform(const Toshi::T2GUITransform& transform) override;
 	virtual void SetColour(uint32_t colour) override;
 	virtual void RenderRectangle(const Toshi::TVector2& a, const Toshi::TVector2& b, const Toshi::TVector2& uv1, const Toshi::TVector2& uv2) override;
-	virtual void RenderTriStrip(void* unk1, void* unk2, uint32_t numverts) override;
+	virtual void RenderTriStrip(Toshi::TVector2* unk1, Toshi::TVector2* unk2, uint32_t numverts, float unk4, float unk5) override;
 	virtual void RenderLine(const Toshi::TVector2& a, const Toshi::TVector2& b) override;
 	virtual void RenderLine(float x1, float y1, float x2, float y2) override;
 	virtual void RenderOutlineRectangle(const Toshi::TVector2& a, const Toshi::TVector2& b) override;

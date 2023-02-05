@@ -16,6 +16,16 @@ namespace Toshi
 		static const char* String8FindString(const char* str, char* substr) { return T2String8::FindString(str, substr); }
 		static size_t String8Length(const char* str) { return T2String8::Length(str); }
 		static void String8ToLowerCase(char* str) { T2String8::ToLowerCase(str); }
+		static void String8Format(char* str, int size, const char* format, ...) 
+		{
+			va_list args;
+
+			va_start(args, format);
+
+			T2String8::FormatV(str, size, format, &args);
+
+			va_end(args);
+		}
 
 		static wchar_t* GetTempString16() { return T2String16::ms_aScratchMem; }
 		static int String16Compare(const wchar_t* str1, const wchar_t* str2, size_t size = -1) { return T2String16::Compare(str1, str2, size); }
