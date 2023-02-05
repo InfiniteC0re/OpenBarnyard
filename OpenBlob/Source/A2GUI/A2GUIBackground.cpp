@@ -34,6 +34,9 @@ void A2GUIBackground::LoadMaterialLibrary(const char* fileName)
 void A2GUIBackground::SetupBackground()
 {
 	auto gui = T2GUI::GetSingletonWeak();
+	
+	SetAnchor(Anchor::TopRight);
+	SetPivot(Pivot::TopRight);
 
 	float width, height;
 	gui->GetRootElement()->GetDimensions(width, height);
@@ -42,10 +45,11 @@ void A2GUIBackground::SetupBackground()
 	uint32_t textureWidths[MAX_TILES];
 	uint32_t textureHeights[MAX_TILES];
 
-	TString8 tgaName;
+	char* tgaName = TStringManager::GetTempString8();
+	
 	for (size_t i = 0; i < MAX_TILES; i++)
 	{
-		tgaName = tgaName.Format("%s_%d.tga", m_pFileName, i+1);
+		T2String8::Format(tgaName, "%s_%d.tga", m_pFileName, i+1);
 		T2GUIMaterial* mat = T2GUI::CreateMaterial(tgaName);
 		textureWidths[i] = mat->GetTexture()->GetWidth();
 		textureHeights[i] = mat->GetTexture()->GetHeight();
@@ -73,10 +77,10 @@ void A2GUIBackground::SetupBackground()
 			pTile = new T2GUIPolygon;
 
 			pTile->Create(4);
-			pTile->SetAnchor(T2GUIElement::Anchor::TopRight);
-			pTile->SetPivot(T2GUIElement::Pivot::MiddleCenter);
-
-			tgaName = tgaName.Format("%s_%d.tga", m_pFileName, iTile + 1);
+			pTile->SetAnchor(Anchor::TopRight);
+			pTile->SetPivot(Pivot::MiddleCenter);
+			
+			T2String8::Format(tgaName, "%s_%d.tga", m_pFileName, iTile + 1);
 			T2GUIMaterial* mat = T2GUI::CreateMaterial(tgaName);
 			pTile->SetMaterial(mat);
 
