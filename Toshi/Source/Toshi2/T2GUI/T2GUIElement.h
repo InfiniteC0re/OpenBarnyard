@@ -80,6 +80,12 @@ namespace Toshi
 		virtual bool IsPointInside(const TVector2& point);
 		virtual const TVector2& GetPivot();
 
+		void Unlink()
+		{
+			Node::Remove();
+			m_pParent = TNULL;
+		}
+
 		void AddChildTail(T2GUIElement* pElement)
 		{
 			if (pElement->IsLinked()) pElement->Remove();
@@ -127,7 +133,7 @@ namespace Toshi
 	protected:
 		static constinit uint32_t s_uiGlobalVisMask;
 
-	public:
+	protected:
 		T2GUIElement* m_pParent;
 		T2GUITransform m_Transform;
 		T2DList<T2GUIElement> m_Children;

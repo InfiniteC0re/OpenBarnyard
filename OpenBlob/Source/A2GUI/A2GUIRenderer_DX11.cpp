@@ -199,12 +199,12 @@ void A2GUIRenderer::RenderTriStrip(Toshi::TVector2* unk1, Toshi::TVector2* unk2,
 	for (size_t i = 0; i < numverts; i++)
 	{
 		pVertex = pPrimShader->GetCurrentVertex();
-		TVector2 dif = unk2[i] - unk1[i];
-		pVertex->UV = { unk2[i].x, dif.y};
+		pVertex->UV = { unk2[i].x, unk2[i].y };
 		pVertex->Color = m_ui32Colour;
-		pVertex->Position = { dif.x, dif.y, 0.0f };
+		pVertex->Position = { unk1[i].x, unk1[i].y, 0.0f };
 		pPrimShader->AddVert();
 	}
+
 	pPrimShader->StopRendering();
 }
 

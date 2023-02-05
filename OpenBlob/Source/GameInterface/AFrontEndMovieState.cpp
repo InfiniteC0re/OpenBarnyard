@@ -32,8 +32,8 @@ void AFrontEndMovieState::OnInsertion()
     auto pGUIRenderer = pGUI->GetRenderer();
     auto pRootElement = pGUI->GetRootElement();
 
-    m_Background->Create(s_Assets[0]);
-    pRootElement->AddChildHead(m_Background);
+    m_Background.Create(s_Assets[0]);
+    m_Background.SetVisible(TTRUE);
 
     //m_Test = new Toshi::T2GUIRectangle;
     //m_Test->Create(200, 200);
@@ -59,14 +59,20 @@ void AFrontEndMovieState::OnRemoval()
 
 void AFrontEndMovieState::OnActivate()
 {
-    TIMPLEMENT();
     AGameState::OnActivate();
+
+    auto pRootElement = Toshi::T2GUI::GetSingletonWeak()->GetRootElement();
+    pRootElement->AddChildHead(&m_Background);
+
+    float fWidth, fHeight;
+    pRootElement->GetDimensions(fWidth, fHeight);
+    m_Background.SetDimensions(fWidth, fHeight);
+
     AApplication::g_oTheApp.SetRenderWorld(false);
 }
 
 void AFrontEndMovieState::OnDeactivate()
 {
-    TIMPLEMENT();
     AGameState::OnDeactivate();
     AMoviePlayer* pPlayer = AMoviePlayer::GetSingleton();
 
@@ -75,6 +81,7 @@ void AFrontEndMovieState::OnDeactivate()
         pPlayer->StopMovie();
     }
 
+    m_Background.Unlink();
     AApplication::g_oTheApp.SetRenderWorld(true);
 }
 
@@ -90,6 +97,6 @@ void AFrontEndMovieState::StartMovie(Asset assetId)
     m_iAssetId = assetId;
     m_fUnknown = 5.0f;
     m_bFlag1 = true;
-    TTODO("(**(code **)(*(int *)&param_1_00->field_0x2c + 0x48))(0);");
+    //m_Background.SetVisible(TFALSE);
     pPlayer->PlayMovie(s_Assets[assetId], TNULL, 0);
 }
