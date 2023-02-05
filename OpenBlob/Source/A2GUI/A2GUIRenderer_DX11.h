@@ -20,7 +20,7 @@ public:
 	virtual void SetTransform(const Toshi::T2GUITransform& transform) override;
 	virtual void SetColour(uint32_t colour) override;
 	virtual void RenderRectangle(const Toshi::TVector2& a, const Toshi::TVector2& b, const Toshi::TVector2& uv1, const Toshi::TVector2& uv2) override;
-	virtual void RenderTriStrip(Toshi::TVector2* unk1, Toshi::TVector2* unk2, uint32_t numverts, float unk4, float unk5) override;
+	virtual void RenderTriStrip(Toshi::TVector2* vertices, Toshi::TVector2* UV, uint32_t numverts, float unk4, float unk5) override;
 	virtual void RenderLine(const Toshi::TVector2& a, const Toshi::TVector2& b) override;
 	virtual void RenderLine(float x1, float y1, float x2, float y2) override;
 	virtual void RenderOutlineRectangle(const Toshi::TVector2& a, const Toshi::TVector2& b) override;
