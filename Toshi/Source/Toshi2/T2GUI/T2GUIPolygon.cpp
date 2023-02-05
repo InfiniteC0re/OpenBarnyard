@@ -14,11 +14,28 @@ namespace Toshi
 
 	void T2GUIPolygon::GetDimensions(float& width, float& height)
 	{
-		if (!m_bSomethingDimensions)
+		if (!m_bCalculatedDimensions)
 		{
-			TIMPLEMENT();
+			float minX = TMath::MAXFLOAT;
+			float minY = TMath::MAXFLOAT;
+			float maxX = TMath::MINFLOAT;
+			float maxY = TMath::MINFLOAT;
+
+			for (size_t i = 0; i < m_iNumVerts; i++)
+			{
+				minX = TMath::Min(minX, m_pVertices[i].x);
+				minY = TMath::Min(minY, m_pVertices[i].y);
+				maxX = TMath::Max(maxX, m_pVertices[i].x);
+				maxY = TMath::Max(maxY, m_pVertices[i].y);
+			}
+
+			m_bCalculatedDimensions = TTRUE;
+			m_Width = PackFloat(maxX - minX);
+			m_Height = PackFloat(maxY - minY);
 		}
-		T2GUIElement::GetDimensions(width, height);
+
+		width = UnpackFloat(m_Width);
+		height = UnpackFloat(m_Height);
 	}
 
 	void T2GUIPolygon::SetDimensions(float width, float height)

@@ -13,7 +13,7 @@ namespace Toshi
 			m_pMaterial = TNULL;
 			m_pVertices = TNULL;
 			m_pUV = TNULL;
-			m_bSomethingDimensions = TFALSE;
+			m_bCalculatedDimensions = TFALSE;
 		}
 
 		~T2GUIPolygon()
@@ -47,6 +47,6 @@ namespace Toshi
 		uint32_t m_iNumVerts;
 		TVector2* m_pVertices;
 		TVector2* m_pUV;
-		bool m_bSomethingDimensions;
+		bool m_bCalculatedDimensions;
 	};
 }
