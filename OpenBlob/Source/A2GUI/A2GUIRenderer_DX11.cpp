@@ -46,7 +46,7 @@ void A2GUIRenderer::BeginScene()
 	pRender->FUN_00691190();
 
 	static bool s_IsMatrixSet = false;
-	static Toshi::TMatrix44 s_IdentityMatrix;
+	static TMatrix44 s_IdentityMatrix;
 
 	if (!s_IsMatrixSet)
 	{
@@ -57,7 +57,7 @@ void A2GUIRenderer::BeginScene()
 	pRenderContext->SetModelViewMatrix(s_IdentityMatrix);
 	pRenderContext->SetWorldViewMatrix(s_IdentityMatrix);
 
-	Toshi::TRenderContext::PROJECTIONPARAMS projParams;
+	TRenderContext::PROJECTIONPARAMS projParams;
 	projParams.m_Proj.x = 1.0f;
 	projParams.m_Proj.y = -1.0f;
 	projParams.m_Centre.x = pDisplayParams->Width * 0.5f;
@@ -175,7 +175,7 @@ void A2GUIRenderer::RenderRectangle(const TVector2& a, const TVector2& b, const 
 	pPrimShader->StopRendering();
 }
 
-void A2GUIRenderer::RenderTriStrip(Toshi::TVector2* unk1, Toshi::TVector2* unk2, uint32_t numverts, float unk4, float unk5)
+void A2GUIRenderer::RenderTriStrip(TVector2* vertices, TVector2* UV, uint32_t numverts, float unk4, float unk5)
 {
 	if (m_bIsInScene)
 	{
@@ -199,12 +199,12 @@ void A2GUIRenderer::RenderTriStrip(Toshi::TVector2* unk1, Toshi::TVector2* unk2,
 	for (size_t i = 0; i < numverts; i++)
 	{
 		pVertex = pPrimShader->GetCurrentVertex();
-		TVector2 dif = unk2[i] - unk1[i];
-		pVertex->UV = { unk2[i].x, dif.y};
+		pVertex->UV = { UV[i].x, UV[i].y };
 		pVertex->Color = m_ui32Colour;
-		pVertex->Position = { dif.x, dif.y, 0.0f };
+		pVertex->Position = { vertices[i].x, vertices[i].y, 0.0f };
 		pPrimShader->AddVert();
 	}
+
 	pPrimShader->StopRendering();
 }
 

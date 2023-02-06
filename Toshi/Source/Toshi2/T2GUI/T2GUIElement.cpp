@@ -53,43 +53,47 @@ namespace Toshi
 	void T2GUIElement::PreRender()
 	{
 		TVector2 vec1, vec2;	
-		float fWidth, fHeight;
-		GetDimensions(fWidth, fHeight);
 		
 		if (m_pParent != TNULL)
 		{
+			float fParentWidth, fParentHeight;
+			m_pParent->GetDimensions(fParentWidth, fParentHeight);
+
 			switch (m_Anchor)
 			{
 			case Anchor::TopRight:
-				vec1.x = vec1.x - fWidth * 0.5;
-				vec1.y = vec1.y - fHeight * 0.5;
+				vec1.x = vec1.x - fParentWidth * 0.5;
+				vec1.y = vec1.y - fParentHeight * 0.5;
 				break;
 			case Anchor::TopCenter:
-				vec1.y = vec1.y - fHeight * 0.5;
+				vec1.y = vec1.y - fParentHeight * 0.5;
 				break;
 			case Anchor::TopLeft:
-				vec1.y = vec1.y - fHeight * 0.5;
-				vec1.x = fWidth * 0.5 + vec1.x;
+				vec1.y = vec1.y - fParentHeight * 0.5;
+				vec1.x = fParentWidth * 0.5 + vec1.x;
 				break;
 			case Anchor::MiddleRight:
-				vec1.x = vec1.x - fWidth * 0.5;
+				vec1.x = vec1.x - fParentWidth * 0.5;
 				break;
 			case Anchor::MiddleLeft:
-				vec1.x = fWidth * 0.5 + vec1.x;
+				vec1.x = fParentWidth * 0.5 + vec1.x;
 				break;
 			case Anchor::BottomRight:
-				vec1.x = vec1.x - fWidth * 0.5;
-				vec1.y = fHeight * 0.5 + vec1.y;
+				vec1.x = vec1.x - fParentWidth * 0.5;
+				vec1.y = fParentHeight * 0.5 + vec1.y;
 				break;
 			case Anchor::BottomCenter:
-				vec1.y = fHeight * 0.5 + vec1.y;
+				vec1.y = fParentHeight * 0.5 + vec1.y;
 				break;
 			case Anchor::BottomLeft:
-				vec1.x = fWidth * 0.5 + vec1.x;
-				vec1.y = fHeight * 0.5 + vec1.y;
+				vec1.x = fParentWidth * 0.5 + vec1.x;
+				vec1.y = fParentHeight * 0.5 + vec1.y;
 				break;
 			}
-		}		
+		}	
+
+		float fWidth, fHeight;
+		GetDimensions(fWidth, fHeight);
 
 		switch (m_Pivot)
 		{

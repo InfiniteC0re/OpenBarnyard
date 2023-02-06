@@ -33,85 +33,104 @@ void A2GUIBackground::LoadMaterialLibrary(const char* fileName)
 
 void A2GUIBackground::SetupBackground()
 {
-	float width, height;
-	TString8 str;
-
 	auto gui = T2GUI::GetSingletonWeak();
+	
+	SetAnchor(Anchor::TopRight);
+	SetPivot(Pivot::TopRight);
 
+	float width, height;
 	gui->GetRootElement()->GetDimensions(width, height);
 	SetDimensions(width, height);
 
-	uint32_t textureWidths[MAX_TILES];
-	uint32_t textureHeights[MAX_TILES];
+	uint32_t textureWidths[3];
+	uint32_t textureHeights[2];
 
+	char* tgaName = TStringManager::GetTempString8();
+	
 	for (size_t i = 0; i < MAX_TILES; i++)
 	{
-		str = str.Format("%s_%d.tga", m_pFileName, i+1);
-		T2GUIMaterial* mat = T2GUI::CreateMaterial(str);
-		textureWidths[i] = mat->GetTexture()->GetWidth();
-		textureHeights[i] = mat->GetTexture()->GetHeight();
+		T2String8::Format(tgaName, "%s_%d.tga", m_pFileName, i+1);
+		T2GUIMaterial* mat = T2GUI::CreateMaterial(tgaName);
+		textureWidths[i % 3] = mat->GetTexture()->GetWidth();
+		textureHeights[i / 3] = mat->GetTexture()->GetHeight();
 		T2GUI::DestroyMaterial(mat);
 	}
 
+	float backgroundWidth = 0.0f + textureWidths[0] + textureWidths[1] + textureWidths[2];
+	float backgroundHeight = 0.0f + textureHeights[0] + textureHeights[1];
+
 	int iTile = 0;
+	int tileX = 0, tileY = 0;
 
 	for (size_t i = 0; i < 2; i++)
 	{
+		int tileHeight = (textureHeights[i] / backgroundHeight) * height;
+		tileX = 0;
+
 		for (size_t j = 0; j < MAX_TILES / 2; j++)
 		{
 			TASSERT(iTile < MAX_TILES);
-
-			str = str.Format("%s_%d.tga", m_pFileName, iTile + 1);
-
 			TASSERT(TNULL == m_Poly[iTile]);
 
-			m_Poly[iTile] = new T2GUIPolygon();
-			m_Poly[iTile]->Create(4);
-			m_Poly[iTile]->m_Anchor = T2GUIElement::Anchor::MiddleCenter;
+			int tileWidth = (textureWidths[j] / backgroundWidth) * width;
+			auto& pTile = m_Poly[iTile];
+			pTile = new T2GUIPolygon;
 
-			T2GUIMaterial* mat = T2GUI::CreateMaterial(str);
-			m_Poly[iTile]->m_pMaterial = mat;
+			pTile->Create(4);
+			pTile->SetAnchor(Anchor::TopRight);
+			pTile->SetPivot(Pivot::MiddleCenter);
+			
+			T2String8::Format(tgaName, "%s_%d.tga", m_pFileName, iTile + 1);
+			T2GUIMaterial* mat = T2GUI::CreateMaterial(tgaName);
+			pTile->SetMaterial(mat);
 
-			TVector2 vec[4] = {
-				{ 0.0f, 0.0f },
-				{ 1.0f, 0.0f },
-				{ 0.0f, 1.0f },
-				{ 1.0f, 1.0f },
-			};
+			auto uv = pTile->GetUV();
+			uv[0].x = 0.0;
+			uv[0].y = 0.0;
+			uv[1].x = 1.0;
+			uv[1].y = 0.0;
+			uv[2].x = 0.0;
+			uv[2].y = 1.0;
+			uv[3].x = 1.0;
+			uv[3].y = 1.0;
 
-			TVector2 vec2[4] = {
-				{ 0.0f, 0.0f },
-				{ 1.0f, 0.0f },
-				{ 0.0f, 1.0f },
-				{ 1.0f, 1.0f },
-			};
+			auto startX = tileX;
+			auto endX = tileX + tileWidth;
 
-			m_Poly[iTile]->m_pUnk = vec;
-			m_Poly[iTile]->m_pUnk2 = vec2;
+			auto vertices = pTile->GetVertices();
+			vertices[0].x = startX;
+			vertices[0].y = (height - tileY) - s_OffsetY;
+			vertices[1].x = endX;
+			vertices[1].y = (height - tileY) - s_OffsetY;
+			vertices[2].x = startX;
+			vertices[2].y = (height - tileHeight) - tileY;
+			vertices[3].x = endX;
+			vertices[3].y = (height - tileHeight) - tileY;
 
-			AddChildTail(m_Poly[iTile]);
+			AddChildTail(pTile);
+			tileX += tileWidth;
+
 			iTile++;
 		}
-	}
 
-	
+		tileY += tileHeight;
+	}
 }
 
 void A2GUIBackground::Destroy()
 {
-	
 	for (size_t i = 0; i < MAX_TILES; i++)
 	{
 		if (m_Poly[i] != TNULL)
 		{
-			T2GUI::DestroyMaterial(m_Poly[i]->m_pMaterial);
+			delete m_Poly[i];
 		}
 	}
 
 	if (m_pTrb != TNULL)
 	{
 		Toshi::TAssetInit::DeinitAssets(*m_pTrb);
-		m_pTrb->~TTRB();
+		delete m_pTrb;
 		m_pTrb = TNULL;
 	}
 }

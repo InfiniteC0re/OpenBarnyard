@@ -5,22 +5,22 @@
 
 class A2GUIBackground : public Toshi::T2GUIElement
 {
-	static const uint32_t MAX_FILENAME_LENGTH = 128;
-	static const uint32_t MAX_FILEPATH_LENGTH = 256;
-	static const uint32_t MAX_TILES           =   6;
+private:
+	static constexpr uint32_t MAX_FILENAME_LENGTH = 128;
+	static constexpr uint32_t MAX_FILEPATH_LENGTH = 256;
+	static constexpr uint32_t MAX_TILES           =   6;
 
-	static const uint32_t s_aTextureXSizes    = 256;
-	static const uint32_t s_aTextureYSizes    = 256;
+	static constexpr uint32_t s_aTextureXSizes    = 256;
+	static constexpr uint32_t s_aTextureYSizes    = 256;
 
-	static int s_OffsetX;
-	static int s_OffsetY;
+	static constexpr int s_OffsetX = 0;
+	static constexpr int s_OffsetY = 0;
 
 public:
-
 	A2GUIBackground()
 	{
 		m_pTrb = TNULL;
-		Toshi::TUtil::MemClear(m_Poly, MAX_TILES * sizeof(Toshi::T2GUIPolygon*));
+		Toshi::TUtil::MemClear(m_Poly, sizeof(m_Poly));
 	}
 
 	void Create(const char* fileName);
