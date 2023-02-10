@@ -5,19 +5,19 @@ namespace Toshi
 	class TStack
 	{
 	public:
-		inline void Push(T& a_item)
+		void Push(T& a_item)
 		{
 			m_iTop++;
 			if (IsFull()) return;
 			m_pStack[m_iTop] = a_item;
 		}
 
-		inline void PushNull()
+		void PushNull()
 		{
 			m_iTop++;
 		}
 
-		inline T& Pop()
+		T& Pop()
 		{
 			T& item = m_pStack[m_iTop];
 			m_iTop--;
@@ -25,22 +25,22 @@ namespace Toshi
 			return item;
 		}
 
-		inline bool IsFull()
+		bool IsFull()
 		{
 			return m_iTop == (C - 1);
 		}
 
-		inline T& Top()
+		T& Top()
 		{
 			return m_pStack[m_iTop];
 		}
 
-		inline bool IsEmpty()
+		bool IsEmpty()
 		{
 			return m_iTop == -1;
 		}
 
-		inline void Reset()
+		void Reset()
 		{
 			m_iTop = 0;
 		}

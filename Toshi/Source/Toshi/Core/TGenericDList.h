@@ -125,6 +125,162 @@ namespace Toshi
 		TNode m_Root;
 	};
 
+	class TGenericPriList
+	{
+	public:
+		class TNode
+		{
+		protected:
+			TNode() { Reset(); }
+
+			TNode* Next() const { return m_Next; }
+			TNode* Prev() const { return m_Prev; }
+
+			TNode& operator=(const TNode& node)
+			{
+				m_Next = node.m_Next;
+				m_Prev = node.m_Prev;
+				return *this;
+			}
+
+			void SetPriority(int priority)
+			{
+				m_iPriority = priority;
+			}
+
+			int GetPriority() const
+			{
+				return m_iPriority;
+			}
+
+		public:
+			bool IsLinked() const { return this != m_Next; }
+			void Reset() { m_Next = this; m_Prev = this; }
+
+			void InsertAfter(TNode* node)
+			{
+				TASSERT(!IsLinked(), "TNode::InsertAfter - TNode shouldn't be linked");
+
+				m_iPriority = -0x8000;
+				m_Prev = node;
+				m_Next = node->m_Next;
+				node->m_Next = this;
+				m_Next->m_Prev = this;
+			}
+
+			void InsertBefore(TNode* node)
+			{
+				TASSERT(!IsLinked(), "TNode::InsertBefore - TNode shouldn't be linked");
+
+				m_iPriority = 0x7FFF;
+				m_Next = node;
+				m_Prev = node->m_Prev;
+				node->m_Prev = this;
+				m_Prev->m_Next = this;
+			}
+
+			void Remove()
+			{
+				m_Prev->m_Next = m_Next;
+				m_Next->m_Prev = m_Prev;
+				Reset();
+			}
+			
+		public:
+			template<class T> friend class TPriList;
+			friend TGenericPriList;
+
+		public:
+			template<typename T>
+			T* As() { return static_cast<T*>(this); }
+
+		public:
+			TNode* m_Next;
+			TNode* m_Prev;
+			int m_iPriority;
+		};
+
+	public:
+		void InsertHead(TNode* node) { node->InsertAfter(&m_Root); }
+		void InsertTail(TNode* node) { node->InsertBefore(&m_Root); }
+		void RemoveHead() { if (!IsEmpty()) m_Root.Next()->Remove(); }
+		void RemoveTail() { if (!IsEmpty()) m_Root.Prev()->Remove(); }
+		bool IsEmpty() { return m_Root.Next() == &m_Root; }
+		TNode* Head() { return m_Root.Next(); }
+		TNode* Tail() { return m_Root.Prev(); }
+		TNode* Begin() { return m_Root.Next(); }
+		TNode* End() { return &m_Root; }
+
+		void Insert(TNode* node, int iPriority) 
+		{ 
+			node->SetPriority(iPriority);
+			Insert(node);
+		}
+
+		void Insert(TNode* node)
+		{
+			int priority = node->m_iPriority;
+			if (priority < 0)
+			{
+				TNode* curNode = m_Root.m_Next;
+				while (curNode != &m_Root && curNode->m_iPriority <= priority)
+				{
+					curNode = curNode->m_Next->m_Next;
+				}
+				node->m_Next = curNode;
+				node->m_Prev = curNode->m_Next->m_Prev;
+				curNode->m_Next->m_Prev = node;
+				node->m_Prev->m_Next = node;
+			}
+			else
+			{
+				TNode* curNode = m_Root.m_Prev;
+				while (curNode != &m_Root && priority < curNode->m_iPriority)
+				{
+					curNode = curNode->m_Prev;
+				}
+				node->m_Prev = curNode;
+				node->m_Next = curNode->m_Next;
+				curNode->m_Next = node;
+				node->m_Next->m_Prev = node;
+			}
+		}
+
+		void RemoveAll()
+		{
+			auto pNode = m_Root.Next();
+
+			while (pNode != &m_Root)
+			{
+				pNode->Remove();
+				pNode = m_Root.Next();
+			}
+		}
+
+	protected:
+		TGenericPriList() = default;
+		~TGenericPriList() { RemoveAll(); }
+
+	public:
+		TNode m_Root;
+	};
+
+	template <class T>
+	class TPriList : public TGenericPriList
+	{
+	public:
+		TPriList() { }
+
+		T* Head() { return TPriList::Head()->As<T>(); }
+		T* Tail() { return TPriList::Tail()->As<T>(); }
+		T* Begin() { return TPriList::Begin()->As<T>(); }
+		T* End() { return TPriList::End()->As<T>(); }
+		bool IsEmpty() { return TPriList::IsEmpty(); }
+		bool IsLinked() { return m_Root.IsLinked(); }
+		void RemoveHead() { TPriList::RemoveHead(); }
+		void RemoveTail() { TPriList::RemoveTail(); }
+	};
+
 	template <class T>
 	class TDList : public TGenericDList
 	{
