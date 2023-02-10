@@ -1,8 +1,50 @@
 #include "ToshiPCH.h"
+#include "Toshi2/T2Allocator.h"
 #include "Toshi/Utils/TUtil.h"
 
 namespace Toshi
 {
+	void TUtil::TrimLog(const char* fileName, int trimTo)
+	{
+		// and yes they actually did it with std
+
+		WIN32_FIND_DATAA ffd;
+
+		STL::Vector<std::string> vec;
+
+		HANDLE hFind = FindFirstFileA(fileName, &ffd);
+
+		if (INVALID_HANDLE_VALUE == hFind)
+		{
+			FindClose(hFind);
+			return;
+		}
+
+		do
+		{
+			if (ffd.dwFileAttributes & FILE_ATTRIBUTE_ARCHIVE)
+			{
+				vec.push_back(ffd.cFileName);
+			}
+
+			BOOL found = FindNextFileA(hFind, &ffd);
+
+			if (!found)
+			{
+				FindClose(hFind);
+				std::reverse(vec.begin(), vec.end());
+				do
+				{
+					DeleteFileA(vec.back().c_str());
+					vec.pop_back();
+				} while (vec.size() > trimTo);
+				return;
+			}
+			
+		} while (true);
+
+	}
+
 	const char* TUtil::GetTime()
 	{
 		time_t t = time(NULL);

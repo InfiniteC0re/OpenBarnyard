@@ -24,7 +24,10 @@ namespace Toshi
 	class TFileStream : public TThread
 	{
 	public:
-		TFileStream() = default;
+		TFileStream()
+		{
+			m_Jobs = TFifo<TFileStreamJob*, 32>();
+		}
 
 		virtual ~TFileStream() = default;
 		

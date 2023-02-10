@@ -20,6 +20,7 @@ workspace "Toshi"
 group "Engine"
 	include "Toshi"
 	include "OpenBlob"
+    --include "OpenJPOG"
 
 group "Toshi Tools"
 	include "Tools/TRBF"
