@@ -8,8 +8,8 @@ namespace Toshi
 
 	enum TApplicationFlag
 	{
-		TApplicationFlag_Created	= 1 << 0,
-		TApplicationFlag_Destroyed	= 1 << 1,
+		TApplicationFlag_Created	= BITFIELD(0),
+		TApplicationFlag_Destroyed	= BITFIELD(1),
 	};
 
 	class TApplication

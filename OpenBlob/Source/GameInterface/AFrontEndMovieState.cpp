@@ -32,8 +32,8 @@ void AFrontEndMovieState::OnInsertion()
     auto pGUIRenderer = pGUI->GetRenderer();
     auto pRootElement = pGUI->GetRootElement();
 
-    m_Background.Create(s_Assets[0]);
-    m_Background.SetVisible(TTRUE);
+    //m_Background.Create(s_Assets[0]);
+    //m_Background.SetVisible(TFALSE);
 
     //m_Test = new Toshi::T2GUIRectangle;
     //m_Test->Create(200, 200);

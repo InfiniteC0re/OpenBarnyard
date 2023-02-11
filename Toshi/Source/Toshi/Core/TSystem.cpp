@@ -4,7 +4,7 @@
 
 namespace Toshi
 {
-	TSystemManager::TSystemManager() : m_Emitter(m_Emitter)
+	TSystemManager::TSystemManager() : m_Emitter(this)
 	{
 		m_Scheduler = TNULL;
 		m_Paused = false;
