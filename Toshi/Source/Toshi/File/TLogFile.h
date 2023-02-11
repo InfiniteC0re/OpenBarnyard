@@ -24,6 +24,11 @@ namespace Toshi
 			"Error"
 		};
 
+		static_assert(
+			Type_NUMOF == sizeof(cTypeStrings) / sizeof(char*),
+			"There are not enough/too many type strings in the array"
+		);
+
 		enum class Error
 		{
 			OK,
