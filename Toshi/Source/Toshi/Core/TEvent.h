@@ -60,4 +60,12 @@ namespace Toshi
 		TPriList<TGenericListener> m_Listeners;
 		void* m_Owner;
 	};
+
+	template <class T>
+	class TEmitter : public TGenericEmitter
+	{
+	public:
+		TEmitter() = default;
+		TEmitter(T* owner) : TGenericEmitter(owner) {}
+	};
 }
