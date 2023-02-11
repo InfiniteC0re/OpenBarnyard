@@ -1,6 +1,7 @@
 #include "ToshiPCH.h"
 #include "TRender_DX11.h"
 #include "TRenderContext_DX11.h"
+#include "Toshi/Core/TSystem.h"
 
 #include <d3dcompiler.h>
 

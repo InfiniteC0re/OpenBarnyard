@@ -2,6 +2,7 @@
 #include "TApplication.h"
 #include "Toshi/Typedefs.h"
 #include "Toshi/Strings/TString8.h"
+#include "Toshi/Core/TSystem.h"
 #include "Toshi/File/TFile.h"
 
 namespace Toshi

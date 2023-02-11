@@ -10,6 +10,7 @@ public:
 	using State = uint8_t;
 	enum State_ : State
 	{
+		State_Null = 0,
 		State_Activated = BITFIELD(0),
 		State_Inserted = BITFIELD(1),
 		State_Suspended = BITFIELD(2),

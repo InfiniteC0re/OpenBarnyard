@@ -1,5 +1,7 @@
 #pragma once
-#include <Input/AInputMap.h>
+#include "Input/AInputMap.h"
+
+#include <Toshi/Core/TStack.h>
 
 class AInputManager2 : public Toshi::TSingleton<AInputManager2>
 {

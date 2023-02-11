@@ -176,3 +176,13 @@ inline void* __CRTDECL operator new[](size_t size, Toshi::TMemoryHeap* heap)
 {
 	return Toshi::TMemoryHeap::Malloc(heap, size);
 }
+
+inline void __CRTDECL operator delete(void* ptr, Toshi::TMemoryHeap* heap) noexcept
+{
+	heap->Free(ptr);
+}
+
+inline void __CRTDECL operator delete[](void* ptr, Toshi::TMemoryHeap* heap) noexcept
+{
+	heap->Free(ptr);
+}

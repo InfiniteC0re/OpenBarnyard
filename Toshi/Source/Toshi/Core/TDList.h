@@ -1,4 +1,6 @@
 #pragma once
+#include "Toshi2/T2Iterator.h"
+
 namespace Toshi
 {
 	class TGenericDList
@@ -7,11 +9,22 @@ namespace Toshi
 		class TNode
 		{
 		protected:
-			TNode() { Reset(); }
+			TNode()
+			{
+				Reset();
+			}
 
-			TNode* Next() const { return m_Next; }
-			TNode* Prev() const { return m_Prev; }
+			TNode* Next() const
+			{
+				return m_Next;
+			}
 
+			TNode* Prev() const
+			{
+				return m_Prev;
+			}
+
+		public:
 			TNode& operator=(const TNode& node)
 			{
 				m_Next = node.m_Next;
@@ -19,7 +32,6 @@ namespace Toshi
 				return *this;
 			}
 
-		public:
 			bool IsLinked() const { return this != m_Next; }
 			void Reset() { m_Next = this; m_Prev = this; }
 
@@ -52,6 +64,7 @@ namespace Toshi
 
 		public:
 			template<class T> friend class TDList;
+			template<class T, class Node> friend class T2Iterator;
 			friend TGenericDList;
 
 		public:
@@ -131,17 +144,13 @@ namespace Toshi
 		class TNode
 		{
 		protected:
-			TNode() { Reset(); }
+			TNode()
+			{
+				Reset();
+			}
 
 			TNode* Next() const { return m_Next; }
 			TNode* Prev() const { return m_Prev; }
-
-			TNode& operator=(const TNode& node)
-			{
-				m_Next = node.m_Next;
-				m_Prev = node.m_Prev;
-				return *this;
-			}
 
 			void SetPriority(int priority)
 			{
@@ -154,6 +163,13 @@ namespace Toshi
 			}
 
 		public:
+			TNode& operator=(const TNode& node)
+			{
+				m_Next = node.m_Next;
+				m_Prev = node.m_Prev;
+				return *this;
+			}
+
 			bool IsLinked() const { return this != m_Next; }
 			void Reset() { m_Next = this; m_Prev = this; }
 
@@ -188,6 +204,7 @@ namespace Toshi
 			
 		public:
 			template<class T> friend class TPriList;
+			template<class T, class Node> friend class T2Iterator;
 			friend TGenericPriList;
 
 		public:
@@ -271,14 +288,14 @@ namespace Toshi
 	public:
 		TPriList() { }
 
-		T* Head() { return TPriList::Head()->As<T>(); }
-		T* Tail() { return TPriList::Tail()->As<T>(); }
-		T* Begin() { return TPriList::Begin()->As<T>(); }
-		T* End() { return TPriList::End()->As<T>(); }
-		bool IsEmpty() { return TPriList::IsEmpty(); }
-		bool IsLinked() { return m_Root.IsLinked(); }
-		void RemoveHead() { TPriList::RemoveHead(); }
-		void RemoveTail() { TPriList::RemoveTail(); }
+		T* Head()                    { return TGenericPriList::Head()->As<T>(); }
+		T* Tail()                    { return TGenericPriList::Tail()->As<T>(); }
+		T2Iterator<T, TNode> Begin() { return TGenericPriList::Begin()->As<T>(); }
+		T2Iterator<T, TNode> End()   { return TGenericPriList::End()->As<T>(); }
+		bool IsEmpty()               { return TGenericPriList::IsEmpty(); }
+		bool IsLinked()              { return m_Root.IsLinked(); }
+		void RemoveHead()            { TGenericPriList::RemoveHead(); }
+		void RemoveTail()            { TGenericPriList::RemoveTail(); }
 	};
 
 	template <class T>
@@ -287,14 +304,14 @@ namespace Toshi
 	public:
 		TDList() { }
 
-		T* Head()         { return TGenericDList::Head()->As<T>(); }
-		T* Tail()         { return TGenericDList::Tail()->As<T>(); }
-		T* Begin()        { return TGenericDList::Begin()->As<T>(); }
-		T* End()          { return TGenericDList::End()->As<T>(); }
-		bool IsEmpty()    { return TGenericDList::IsEmpty(); }
-		bool IsLinked()   { return m_Root.IsLinked(); }
-		void RemoveHead() { TGenericDList::RemoveHead(); }
-		void RemoveTail() { TGenericDList::RemoveTail(); }
+		T* Head()                    { return TGenericDList::Head()->As<T>(); }
+		T* Tail()                    { return TGenericDList::Tail()->As<T>(); }
+		T2Iterator<T, TNode> Begin() { return TGenericDList::Begin()->As<T>(); }
+		T2Iterator<T, TNode> End()   { return TGenericDList::End()->As<T>(); }
+		bool IsEmpty()               { return TGenericDList::IsEmpty(); }
+		bool IsLinked()              { return m_Root.IsLinked(); }
+		void RemoveHead()            { TGenericDList::RemoveHead(); }
+		void RemoveTail()            { TGenericDList::RemoveTail(); }
 	};
 }
 

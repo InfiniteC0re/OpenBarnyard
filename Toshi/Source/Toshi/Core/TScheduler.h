@@ -1,5 +1,7 @@
 #pragma once
 #include "TNodeTree.h"
+#include "THPTimer.h"
+#include "TSystem.h"
 #include "TTask.h"
 
 namespace Toshi
