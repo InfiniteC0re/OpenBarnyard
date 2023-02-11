@@ -3,5 +3,5 @@
 
 namespace Toshi
 {
-	char T2String8::ms_aScratchMem[1024];
+	char T2String8::ms_aScratchMem[T2String8::SCRATCH_MEM_SIZE];
 }
