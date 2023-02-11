@@ -86,7 +86,7 @@ namespace Toshi
 
         m_Buffer3 = newBuffer3;
 
-        if (m_MaxOffset < m_Buffer3 - m_Buffer2)
+        if (m_MaxOffset < static_cast<uintptr_t>(m_Buffer3 - m_Buffer2))
         {
             m_Buffer2 = m_Buffer3 - m_MaxOffset;
 
@@ -224,7 +224,7 @@ namespace Toshi
         {
             size_t unknown = 2 << (i % 32);
 
-            if (m_DataEnd - buffer < unknown)
+            if (static_cast<uintptr_t>(m_DataEnd - buffer) < unknown)
             {
                 return;
             }
