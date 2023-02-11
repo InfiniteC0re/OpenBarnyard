@@ -78,7 +78,7 @@ void ADX11MoviePlayer::PlayMovie(const char* fileName, void* unused, uint8_t fla
 
             while (!THEORAPLAY_isInitialized(m_TheoraDecoder));
 
-            if (!THEORAPLAY_hasVideoStream)
+            if (!THEORAPLAY_hasVideoStream(m_TheoraDecoder))
             {
                 THEORAPLAY_stopDecode(m_TheoraDecoder);
                 m_TheoraDecoder = NULL;
@@ -394,8 +394,10 @@ void ADX11MoviePlayer::ReadBuffer(void* data, uint32_t datalen)
     if (datalen == 0) return;
     const THEORAPLAY_AudioPacket* audio;
     char* dataBuffer = (char*)data;
-    while (m_bIsPlaying)
+
+    while (m_bIsPlaying && datalen != 0)
     {
+        audio = m_TheoraAudio;
         if (m_TheoraAudio == NULL && (!THEORAPLAY_isDecoding(m_TheoraDecoder) || !m_bIsPlaying || (audio = THEORAPLAY_getAudio(m_TheoraDecoder)) == NULL))
         {
             memset(dataBuffer, 0, datalen);
@@ -404,23 +406,26 @@ void ADX11MoviePlayer::ReadBuffer(void* data, uint32_t datalen)
         
         int channels = audio->channels;
         int size = (audio->frames - m_AudioOffset) * channels;
-        if (size > (datalen / sizeof(float))) size = datalen / sizeof(float);
+        
+        int floatCount = datalen / sizeof(float);
+        if (floatCount <= size && size - floatCount != 0)
+        {
+            size = floatCount;
+        }
 
-        memmove(dataBuffer, audio->samples + (channels * m_AudioOffset), size * sizeof(float));
+        memcpy(dataBuffer, audio->samples + (channels * m_AudioOffset), size * sizeof(float));
         dataBuffer += size * sizeof(float);
-        m_AudioOffset += (size / channels);
         datalen -= size * sizeof(float);
 
-        if (m_AudioOffset <= audio->frames)
+        m_AudioOffset += (size / channels);
+
+        if (audio->frames <= m_AudioOffset)
         {
             THEORAPLAY_freeAudio(audio);
             audio = NULL;
             m_AudioOffset = 0;
         }
-        m_TheoraAudio = (THEORAPLAY_AudioPacket*)audio;
-        if (datalen == 0)
-        {
-            return;
-        }
+
+        m_TheoraAudio = audio;
     }
 }
