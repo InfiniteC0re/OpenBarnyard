@@ -1,10 +1,8 @@
 #pragma once
-
 #include "T2GUIFont.h"
 
 namespace Toshi
 {
-
 	static int* FindFontRef(const char* a_font);
 	static int* FindFreeFontRef();
 

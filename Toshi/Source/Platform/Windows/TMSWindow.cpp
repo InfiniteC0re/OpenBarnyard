@@ -92,7 +92,7 @@ namespace Toshi
 		wndClass.lpszClassName = TMSWindow::GetClassStatic()->GetName();
 		wndClass.style = CS_VREDRAW | CS_HREDRAW;
 		wndClass.cbWndExtra = 4;
-		wndClass.hCursor = LoadCursorA(NULL, MAKEINTRESOURCEA(IDC_ARROW));
+		wndClass.hCursor = LoadCursor(NULL, IDC_ARROW); 
 		wndClass.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
 		RegisterClassA(&wndClass);
 

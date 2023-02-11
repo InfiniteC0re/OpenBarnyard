@@ -21,7 +21,7 @@ namespace Toshi
 
 		static void LogInitialise();
 		static void Log(const char* format, ...);
-		static void Log(LogType logtype, const char* format, ...);
+		static void Log(TLogFile::Type logtype, const char* format, ...);
 		static void LogConsole(const char* format, ...);
 		static void LogSet(TLogFile* a_logFile);
 
