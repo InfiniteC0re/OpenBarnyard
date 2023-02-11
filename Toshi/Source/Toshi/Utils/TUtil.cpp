@@ -39,7 +39,7 @@ namespace Toshi
 			va_end(args);
 
 			GetLog()->Log(TLogFile::Type_Info, "Toshi", "Kernel", str);
-			// Throw GenericEmitter
+			GetSingletonWeak()->m_Emitter.Throw(GetLog());
 		}
 	}
 
@@ -55,7 +55,7 @@ namespace Toshi
 			va_end(args);
 
 			GetLog()->Log(logtype, "Toshi", "Kernel", format, str);
-			// Throw GenericEmitter
+			GetSingletonWeak()->m_Emitter.Throw(GetLog());
 		}
 	}
 

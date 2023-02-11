@@ -6,9 +6,9 @@
 FMOD_RESULT F_CALLBACK pcmreadcallback(FMOD_SOUND* sound, void* data, unsigned int datalen)
 {
     // Read from your buffer here...
-    void* moviePlayer;
-    FMOD_Sound_GetUserData(sound, &moviePlayer);
-    ((ADX11MoviePlayer*)moviePlayer)->ReadBuffer(data, datalen);
+    ADX11MoviePlayer* moviePlayer;
+    FMOD_Sound_GetUserData(sound, (void**)&moviePlayer);
+    moviePlayer->ReadBuffer(data, datalen);
     return FMOD_OK;
 }
 
@@ -133,6 +133,7 @@ void ADX11MoviePlayer::PlayMovie(const char* fileName, void* unused, uint8_t fla
                 if (m_pChannel != NULL)
                 {
                     m_pChannel->setPriority(0);
+                    TIMPLEMENT();
                     m_pChannel->setVolume(0.3f);
                     m_pChannel->setPaused(false);
                 }
@@ -151,7 +152,7 @@ void ADX11MoviePlayer::PlayMovie(const char* fileName, void* unused, uint8_t fla
 void ADX11MoviePlayer::StopMovie()
 {
     StopMovieImpl();
-    TIMPLEMENT_D("AMoviePlayer::ThrowPauseEvent();");
+    ThrowPauseEvent(AMovieEvent::Type_Stopped);
 }
 
 void ADX11MoviePlayer::StopMovieImpl()
@@ -289,9 +290,21 @@ void ADX11MoviePlayer::OnUpdate(float deltaTime)
 
             if (m_TheoraVideo == TNULL)
             {
-                TIMPLEMENT();
-                StopMovieImpl();
-                PauseMovie(true);
+                if (m_bIsMovieLooping)
+                {
+                    ThrowPauseEvent(AMovieEvent::Type_Looping);
+                    uint8_t flags = 0;
+                    if (m_bIsMuted)
+                    {
+                        flags = 2;
+                    }
+                    PlayMovie(m_CurrentFileName, TNULL, flags | m_bIsMovieLooping);
+                }
+                else
+                {
+                    StopMovieImpl();
+                    ThrowPauseEvent(AMovieEvent::Type_Finished);
+                }
             }
         }
     }

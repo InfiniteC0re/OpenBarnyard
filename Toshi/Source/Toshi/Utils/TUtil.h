@@ -1,6 +1,7 @@
 #pragma once
 #include "Toshi/Utils/TSingleton.h"
 #include "Toshi/File/TLogFile.h"
+#include "Toshi/Core/TEvent.h"
 
 namespace Toshi
 {
@@ -80,6 +81,7 @@ namespace Toshi
 	private:
 		TLogFile* m_pLogFile1;
 		TLogFile* m_pLogFile2;
+		TEmitter<TLogFile> m_Emitter;
 		
 	public:
 #pragma region CRC

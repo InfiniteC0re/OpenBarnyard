@@ -41,7 +41,7 @@ namespace Toshi
 		static bool Create();
 
 	private:
-		TGenericEmitter m_Emitter; // 0x00
+		TEmitter<TSystemManager> m_Emitter; // 0x00
 		TScheduler* m_Scheduler;
 		bool m_Paused;
 		uint32_t m_Unk2;

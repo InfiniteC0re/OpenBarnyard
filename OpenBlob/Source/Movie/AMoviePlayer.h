@@ -3,6 +3,16 @@
 #include "Toshi/Utils/TSingleton.h"
 #include "Toshi/Core/TEvent.h"
 
+namespace AMovieEvent
+{
+	enum Type
+	{
+		Type_Finished,
+		Type_Looping,
+		Type_Stopped,
+	};
+};
+
 class AMoviePlayer : public Toshi::TSingleton<AMoviePlayer>
 {
 public:
@@ -13,6 +23,8 @@ public:
 		m_bIsMuted = false;
 		m_bIsHidden = true;
 	}
+
+	void ThrowPauseEvent(AMovieEvent::Type type) { m_Emitter.Throw(&type); }
 
 	virtual ~AMoviePlayer() = default;
 	virtual void PlayMovie(const char* fileName, void* unused, uint8_t flags) = 0;
