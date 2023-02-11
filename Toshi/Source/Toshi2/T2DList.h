@@ -1,5 +1,5 @@
 #pragma once
-#include <type_traits>
+#include "T2Iterator.h"
 
 namespace Toshi
 {
@@ -11,6 +11,7 @@ namespace Toshi
 		protected:
 			friend T2GenericDList;
 			template<class T> friend class T2DList;
+			template<class T, class Node> friend class T2Iterator;
 
 		protected:
 			Node()
@@ -134,91 +135,6 @@ namespace Toshi
 	class T2DList : public T2GenericDList
 	{
 	public:
-		class Iterator
-		{
-		public:
-			Iterator()
-			{
-				m_pPtr = TNULL;
-			}
-
-			Iterator(Node* pPtr)
-			{
-				m_pPtr = static_cast<T*>(pPtr);
-			}
-
-			Iterator(T* pPtr)
-			{
-				m_pPtr = pPtr;
-			}
-
-			bool operator==(const Iterator& other)
-			{
-				return m_pPtr == other.m_pPtr;
-			}
-
-			bool operator!=(const Iterator& other)
-			{
-				return m_pPtr != other.m_pPtr;
-			}
-
-			void operator=(const Iterator& other)
-			{
-				m_pPtr = other.m_pPtr;
-			}
-
-			void operator=(const T* pPtr)
-			{
-				m_pPtr = pPtr;
-			}
-
-			T* operator->() const
-			{
-				TASSERT(m_pPtr != TNULL);
-				return m_pPtr;
-			}
-
-			operator T* () const
-			{
-				TASSERT(m_pPtr != TNULL);
-				return static_cast<T*>(m_pPtr);
-			}
-
-			Iterator operator++(int)
-			{
-				TASSERT(m_pPtr != TNULL);
-				Iterator old = m_pPtr;
-				m_pPtr = static_cast<T*>(m_pPtr->Next());
-				return old;
-			}
-
-			Iterator operator--(int)
-			{
-				TASSERT(m_pPtr != TNULL);
-				Iterator old = m_pPtr;
-				m_pPtr = static_cast<T*>(m_pPtr->Prev());
-				return old;
-			}
-
-			Iterator operator++()
-			{
-				TASSERT(m_pPtr != TNULL);
-				m_pPtr = m_pPtr->Next();
-				return m_pPtr;
-			}
-
-			Iterator operator--()
-			{
-				TASSERT(m_pPtr != TNULL);
-				m_pPtr = m_pPtr->Prev();
-				return m_pPtr;
-			}
-
-		private:
-			T* m_pPtr;
-		};
-
-	public:
 		T2DList()
 		{
 			static_assert(std::is_base_of<T2GenericDList::Node, T>::value, "T must be a descendant of T2GenericDList::Node");
@@ -229,7 +145,7 @@ namespace Toshi
 			TASSERT(IsEmpty());
 		}
 
-		Iterator Begin() const
+		T2Iterator<T, Node> Begin() const
 		{
 			return m_oRoot.Next();
 		}
@@ -239,7 +155,7 @@ namespace Toshi
 			return &m_oRoot;
 		}
 
-		void Begin(Iterator& begin) const
+		void Begin(T2Iterator<T, Node>& begin) const
 		{
 			begin = m_oRoot.Next();
 		}
@@ -249,17 +165,17 @@ namespace Toshi
 			end = &m_oRoot;
 		}
 
-		Iterator Front() const
+		T2Iterator<T, Node> Front() const
 		{
 			return m_oRoot.Next();
 		}
 
-		Iterator Back() const
+		T2Iterator<T, Node> Back() const
 		{
 			return m_oRoot.Prev();
 		}
 
-		void Delete(const Iterator& iter)
+		void Delete(const T2Iterator<T, Node>& iter)
 		{
 			iter->Remove();
 			delete static_cast<T*>(iter);
@@ -273,7 +189,7 @@ namespace Toshi
 			}
 		}
 
-		void Erase(const Iterator& iter)
+		void Erase(const T2Iterator<T, Node>& iter)
 		{
 			iter->Remove();
 		}
@@ -295,14 +211,14 @@ namespace Toshi
 
 		T* PopBack()
 		{
-			Iterator node = Back();
+			auto node = Back();
 			node->Remove();
 			return node;
 		}
 
 		T* PopFront()
 		{
-			Iterator node = Front();
+			auto node = Front();
 			node->Remove();
 			return node;
 		}

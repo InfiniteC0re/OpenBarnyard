@@ -150,7 +150,7 @@ namespace Toshi
 		{
 			auto pNode = m_Validated.Tail();
 
-			while (pNode != m_Validated.End())
+			while (m_Validated.End() != pNode)
 			{
 				pNode->RemoveNode();
 				m_Invalidated.InsertHead(pNode);
