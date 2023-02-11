@@ -10,7 +10,7 @@
 #undef THREAD_PRIORITY_NORMAL
 #undef THREAD_PRIORITY_TIME_CRITICAL
 
-#include "Toshi/Core/TGenericDList.h"
+#include "Toshi/Core/TDList.h"
 
 namespace Toshi
 {

@@ -1,5 +1,5 @@
 #pragma once
-#include "TGenericDList.h"
+#include "TDList.h"
 
 namespace Toshi
 {

@@ -6,7 +6,7 @@
 #include <Toshi/Core/TScheduler.h>
 #include <Toshi/Math/TRandom.h>
 #include <Toshi/File/TTRB.h>
-#include <Toshi/Core/TGenericDList.h>
+#include <Toshi/Core/TDList.h>
 #include <MemoryCard/EnSaveData.h>
 #include <Toshi/Xui/TXUIScene.h>
 

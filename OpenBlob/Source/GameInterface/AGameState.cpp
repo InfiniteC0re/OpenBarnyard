@@ -7,6 +7,7 @@ AGameState::AGameState() :
 	m_InputHelper(1, Toshi::TInputInterface::GetSingletonWeak()->GetKeyboardByIndex(0))
 {
 	m_InputHelper.AddDoodad(0x2002d);
+	m_State = State_Null;
 }
 
 AGameState::~AGameState()
