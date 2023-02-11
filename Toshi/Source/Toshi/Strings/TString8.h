@@ -51,7 +51,7 @@ namespace Toshi
 		int Compare(const char*, int) const;
 		int CompareNoCase(const char*, int) const;
 
-		TString8 Mid(int param_1, int param_2) const;
+		TString8 Mid(uint32_t param_1, uint32_t param_2) const;
 		TString8 Right(int param_1) const { return Mid(param_1, Length() - param_1); }
 
 		TString8& MakeUpper() { _strupr_s(m_pBuffer, m_iStrLen); return *this; }

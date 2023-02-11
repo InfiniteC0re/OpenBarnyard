@@ -4,7 +4,7 @@
 
 namespace Toshi
 {
-	void TUtil::TrimLog(const char* fileName, int trimTo)
+	void TUtil::TrimLog(const char* fileName, size_t trimTo)
 	{
 		// and yes they actually did it with std
 

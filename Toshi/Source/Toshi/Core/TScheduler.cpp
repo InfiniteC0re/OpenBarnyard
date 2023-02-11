@@ -13,13 +13,13 @@ namespace Toshi
 		m_DeltaTime = 0.0;
 		m_TasksUpdateTime = 0.0;
 		m_TotalTime = 0.0;
-		m_MaxDeltaTime = 0.25;
+		m_MaxDeltaTime = 0.25f;
 		m_FrameCount = 0;
 		m_UseFixedMaxFps = false;
 		m_FixedMaxFps = 0.0;
 		m_UseDebugDeltaTime = false;
-		m_DebugDeltaTime = 0.01;
-		m_DebugDeltaTimeMult = 1.0;
+		m_DebugDeltaTime = 0.01f;
+		m_DebugDeltaTimeMult = 1.0f;
 	}
 
 	TTask* TScheduler::CreateTask(TClass* pClass, TTask* pParent)

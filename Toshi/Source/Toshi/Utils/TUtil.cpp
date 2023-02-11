@@ -38,25 +38,23 @@ namespace Toshi
 
 			va_end(args);
 
-			GetLog()->Log(TLogFile::TYPE_Info, "Toshi", "Kernel", str);
+			GetLog()->Log(TLogFile::Type_Info, "Toshi", "Kernel", str);
 			// Throw GenericEmitter
 		}
 	}
 
-	void TUtil::Log(LogType logtype, const char* format, ...)
+	void TUtil::Log(TLogFile::Type logtype, const char* format, ...)
 	{
 		if (GetLog() != TNULL)
 		{
 			va_list args;
 			va_start(args, format);
 
-			char str[0x800];
-
+			char str[2048];
 			T2String8::FormatV(str, sizeof(str), format, &args);
-
 			va_end(args);
 
-			GetLog()->Log((TLogFile::TYPE)logtype, "Toshi", "Kernel", format, str);
+			GetLog()->Log(logtype, "Toshi", "Kernel", format, str);
 			// Throw GenericEmitter
 		}
 	}
@@ -68,10 +66,9 @@ namespace Toshi
 			va_list vargs;
 			va_start(vargs, format);
 
-			char str[0x400];
+			char str[1024];
 			T2String8::FormatV(str, sizeof(str), format, &vargs);
 			OutputDebugStringA(str);
-			// printf(str);
 			TOSHI_TRACE(str);
 		}
 	}
@@ -97,10 +94,9 @@ namespace Toshi
         TFileManager::Create();
 
 		Create();
-
-		new TError(0x1800, 0x100);
-
-        return true;
+		TError::CreateSingleton(0x1800, 0x100);
+        
+		return true;
     }
 
     void TUtil::MemSet(void* ptr, size_t value, size_t size)

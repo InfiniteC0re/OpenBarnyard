@@ -110,7 +110,7 @@ bool Toshi::THashTable::Create(int a_iItemCountTotal, int a_iItemSize, int a_iBu
 		SetItemHashFunction(DefaultItemHashFunc);
 		SetItemCompareFunction(DefaultItemCompareFunc);
 
-		for (size_t i = 0; i < m_iBucketSize; i++)
+		for (int i = 0; i < m_iBucketSize; i++)
 		{
 			m_pBuckets[i] = -1;
 		}

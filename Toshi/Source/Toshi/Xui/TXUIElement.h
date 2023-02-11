@@ -94,11 +94,11 @@ namespace Toshi
 		XURXUIObjectData** m_children; // 0x4 both
 
 		/* 0 */ uint16_t m_Id;
-		/* 1 */ float m_Width;
-		/* 2 */ float m_Height;
-		/* 3 */ int32_t m_Position;
-		/* 4 */ int32_t m_Scale;
-		/* 5 */ int32_t m_Rotation;
+		/* 1 */ uint16_t m_Width;
+		/* 2 */ uint16_t m_Height;
+		/* 3 */ int16_t m_Position;
+		/* 4 */ int16_t m_Scale;
+		/* 5 */ int16_t m_Rotation;
 		/* 6 */ float m_Opacity;
 		/* 7 */ uint32_t m_Anchor;
 		/* 8 */ int32_t m_Pivot;
@@ -137,10 +137,10 @@ namespace Toshi
 		friend XURXUIObjectData;
 
 	public:
-		XURXUIElementData() : XURXUIObjectData()
+		XURXUIElementData()
 		{
-			m_Width = 60.0f;
-			m_Height = 30.0f;
+			m_Width = T2GUIElement::PackFloat(60.0f);
+			m_Height = T2GUIElement::PackFloat(30.0f);
 			m_Opacity = 1.0f;
 			m_Position = -1;
 			m_Scale = -1;
@@ -190,10 +190,10 @@ namespace Toshi
 	};
 
 	class TXUIElement :
-		public TGenericClassDerived<TXUIElement, TObject, "TXUIElement", TMAKEVERSION(1, 0), false>, public T2GUIElement
+		public TGenericClassDerived<TXUIElement, TObject, "TXUIElement", TMAKEVERSION(1, 0), false>,
+		public T2GUIElement
 	{
 	public:
-
 		TXUIElement();
 
 		virtual bool SkipRender();

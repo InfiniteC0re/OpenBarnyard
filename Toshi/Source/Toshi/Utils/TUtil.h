@@ -2,26 +2,15 @@
 #include "Toshi/Utils/TSingleton.h"
 #include "Toshi/File/TLogFile.h"
 
-
 namespace Toshi
 {
 	class TUtil : public TSingleton<TUtil>
 	{
 	public:
 
-		enum LogType
-		{
-			LogType_Info,
-			LogType_Warning,
-			LogType_Error
-		};
-
-		TLogFile* m_pLogFile1;
-		TLogFile* m_pLogFile2;
-
 		static void LogInitialise();
 		static void Log(const char* format, ...);
-		static void Log(LogType logtype, const char* format, ...);
+		static void Log(TLogFile::Type logtype, const char* format, ...);
 		static void LogConsole(const char* format, ...);
 		static void LogSet(TLogFile* a_logFile);
 
@@ -69,7 +58,7 @@ namespace Toshi
 		}
 		
 		static const char* GetTime();
-		static void TrimLog(const char* fileExtension, int trimTo);
+		static void TrimLog(const char* fileExtension, size_t trimTo);
 		static uint64_t GetUnixSeconds(uint64_t* pOut = nullptr);
 		static void MemSet(void* ptr, size_t value, size_t size);
 		
@@ -87,7 +76,12 @@ namespace Toshi
 		{
 			return memcmp(ptr1, ptr2, size);
 		}
+
+	private:
+		TLogFile* m_pLogFile1;
+		TLogFile* m_pLogFile2;
 		
+	public:
 #pragma region CRC
 
 		// Source: https://lentz.com.au/blog/tag/crc-table-generator

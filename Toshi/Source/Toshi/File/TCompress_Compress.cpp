@@ -99,7 +99,7 @@ namespace Toshi
 
         while (bufferPos < bufferEnd)
         {
-            size_t uncompressedLeft = TMath::Min(size - (bufferPos - buffer), maxlength);
+            size_t uncompressedLeft = TMath::Min<size_t>(size - (bufferPos - buffer), maxlength);
 
             char* offset = TNULL;
             size_t dataSize = 0;

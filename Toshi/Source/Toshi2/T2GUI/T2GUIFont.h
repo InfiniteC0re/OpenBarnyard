@@ -1,19 +1,17 @@
 #pragma once
-
 #include "Toshi/Utils/TRegion.h"
-
 
 namespace Toshi
 {
 	typedef bool(*t_CanBreakBetweenChars)(wchar_t, wchar_t);
 
-	bool CanBreakBetweenChars_Default(wchar_t, wchar_t)
+	inline bool CanBreakBetweenChars_Default(wchar_t, wchar_t)
 	{
 		TIMPLEMENT();
 		return false;
 	}
 
-	bool CanBreakBetweenChars_Japanese(wchar_t, wchar_t)
+	inline bool CanBreakBetweenChars_Japanese(wchar_t, wchar_t)
 	{
 		TIMPLEMENT();
 		return false;
