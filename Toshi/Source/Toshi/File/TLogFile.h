@@ -19,7 +19,7 @@ namespace Toshi
 		bool m_bIsSimpleMode;           // 0x8
 		bool m_bAllowIndentation;       // 0x9
 		char m_LevelString[cLevelMax];  // 0xA
-		int m_curLevel;                 // 0x2C
+		uint32_t m_curLevel;                 // 0x2C
 		int m_typeCounts[3];              // 0x30
 		int* m_unk2;                    // 0x34
 		int m_unk3;                     // 0x38

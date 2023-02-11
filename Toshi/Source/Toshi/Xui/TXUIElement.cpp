@@ -103,8 +103,19 @@ namespace Toshi
 			if (m_index != 0) reader.ReadPropsInfo<PropType_NUMOF>();
 
 			reader.ReadProp16(PropType_Id, m_Id);
-			reader.ReadPropFloat(PropType_Width, m_Width);
-			reader.ReadPropFloat(PropType_Height, m_Height);
+
+			float width;
+			if (reader.ReadPropFloat(PropType_Width, width))
+			{
+				m_Width = T2GUIElement::PackFloat(width);
+			}
+
+			float height;
+			if (reader.ReadPropFloat(PropType_Height, height))
+			{
+				m_Height = T2GUIElement::PackFloat(height);
+			}
+
 			reader.ReadProp16From32(PropType_Position, m_Position);
 			reader.ReadProp16From32(PropType_Scale, m_Scale);
 			reader.ReadProp16From32(PropType_Rotation, m_Rotation);

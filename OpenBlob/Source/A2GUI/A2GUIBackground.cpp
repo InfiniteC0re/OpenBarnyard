@@ -64,7 +64,7 @@ void A2GUIBackground::SetupBackground()
 
 	for (size_t i = 0; i < 2; i++)
 	{
-		int tileHeight = (textureHeights[i] / backgroundHeight) * height;
+		int tileHeight = static_cast<int>((textureHeights[i] / backgroundHeight) * height);
 		tileX = 0;
 
 		for (size_t j = 0; j < MAX_TILES / 2; j++)
@@ -98,13 +98,13 @@ void A2GUIBackground::SetupBackground()
 			auto endX = tileX + tileWidth;
 
 			auto vertices = pTile->GetVertices();
-			vertices[0].x = startX;
+			vertices[0].x = static_cast<float>(startX);
 			vertices[0].y = (height - tileY) - s_OffsetY;
-			vertices[1].x = endX;
+			vertices[1].x = static_cast<float>(endX);
 			vertices[1].y = (height - tileY) - s_OffsetY;
-			vertices[2].x = startX;
+			vertices[2].x = static_cast<float>(startX);
 			vertices[2].y = (height - tileHeight) - tileY;
-			vertices[3].x = endX;
+			vertices[3].x = static_cast<float>(endX);
 			vertices[3].y = (height - tileHeight) - tileY;
 
 			AddChildTail(pTile);

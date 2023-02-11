@@ -321,8 +321,8 @@ namespace Toshi
 			m_DisplayParams.Height = 720;
 		}
 
-		m_DisplayParams.Width = TMath::Max(m_DisplayParams.Width, 1280);
-		m_DisplayParams.Height = TMath::Max(m_DisplayParams.Height, 720);
+		m_DisplayParams.Width = TMath::Max<uint32_t>(m_DisplayParams.Width, 1280);
+		m_DisplayParams.Height = TMath::Max<uint32_t>(m_DisplayParams.Height, 720);
 
 		m_SwapChainDesc.BufferDesc.Width = m_DisplayParams.Width;
 		m_SwapChainDesc.BufferDesc.Height = m_DisplayParams.Height;

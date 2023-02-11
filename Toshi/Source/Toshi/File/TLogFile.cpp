@@ -62,8 +62,8 @@ void Toshi::TLogFile::Close()
 
 void Toshi::TLogFile::RecalcLevel()
 {
-	m_curLevel = TMath::Min(m_curLevel, cLevelMax);
-	m_curLevel = TMath::Max(m_curLevel, 0);
+	m_curLevel = TMath::Min<uint32_t>(m_curLevel, cLevelMax);
+	m_curLevel = TMath::Max<uint32_t>(m_curLevel, 0);
 
 	for (size_t i = 0; i < m_curLevel; i++)
 	{

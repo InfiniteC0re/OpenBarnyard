@@ -1,4 +1,5 @@
 #pragma once
+#include "Toshi2/T2Iterator.h"
 
 namespace Toshi
 {
@@ -19,14 +20,14 @@ namespace Toshi
 				m_List = nullptr;
 			}
 
-			TNode* Next()
+			T* Next()
 			{
-				return m_Next;
+				return m_Next->As<T>();
 			}
 
-			TNode* Prev()
+			T* Prev()
 			{
-				return m_Prev;
+				return m_Prev->As<T>();
 			}
 
 			bool IsLinked()
@@ -49,64 +50,6 @@ namespace Toshi
 			TNodeList* m_List;
 			TNode* m_Next;
 			TNode* m_Prev;
-		};
-
-		class Iterator
-		{
-		public:
-			Iterator()
-			{
-				m_pPtr = TNULL;
-			}
-
-			Iterator(TNode* pPtr)
-			{
-				m_pPtr = pPtr;
-			}
-
-			Iterator(T* pPtr)
-			{
-				m_pPtr = static_cast<TNode*>(pPtr);
-			}
-
-			void operator=(const Iterator& other)
-			{
-				m_pPtr = other.m_pPtr;
-			}
-
-			bool operator==(const Iterator& other) const
-			{
-				return m_pPtr == other.m_pPtr;
-			}
-
-			T* operator->() const
-			{
-				TASSERT(m_pPtr != TNULL);
-				return static_cast<T*>(m_pPtr);
-			}
-
-			operator T* () const
-			{
-				TASSERT(m_pPtr != TNULL);
-				return static_cast<T*>(m_pPtr);
-			}
-
-			Iterator operator++()
-			{
-				TASSERT(m_pPtr != TNULL);
-				m_pPtr = m_pPtr->Next();
-				return m_pPtr;
-			}
-
-			Iterator operator--()
-			{
-				TASSERT(m_pPtr != TNULL);
-				m_pPtr = m_pPtr->Prev();
-				return m_pPtr;
-			}
-
-		private:
-			TNode* m_pPtr;
 		};
 
 	public:
@@ -236,12 +179,12 @@ namespace Toshi
 			return m_Count;
 		}
 
-		Iterator Begin() const
+		T2Iterator<T, TNode> Begin() const
 		{
 			return m_Head.m_Next;
 		}
 
-		Iterator End()
+		T2Iterator<T, TNode> End()
 		{
 			return &m_Head;
 		}

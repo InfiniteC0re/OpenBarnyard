@@ -62,32 +62,32 @@ namespace Toshi
 			switch (m_Anchor)
 			{
 			case Anchor::TopRight:
-				vec1.x = vec1.x - fParentWidth * 0.5;
-				vec1.y = vec1.y - fParentHeight * 0.5;
+				vec1.x = vec1.x - fParentWidth * 0.5f;
+				vec1.y = vec1.y - fParentHeight * 0.5f;
 				break;
 			case Anchor::TopCenter:
-				vec1.y = vec1.y - fParentHeight * 0.5;
+				vec1.y = vec1.y - fParentHeight * 0.5f;
 				break;
 			case Anchor::TopLeft:
-				vec1.y = vec1.y - fParentHeight * 0.5;
-				vec1.x = fParentWidth * 0.5 + vec1.x;
+				vec1.y = vec1.y - fParentHeight * 0.5f;
+				vec1.x = fParentWidth * 0.5f + vec1.x;
 				break;
 			case Anchor::MiddleRight:
-				vec1.x = vec1.x - fParentWidth * 0.5;
+				vec1.x = vec1.x - fParentWidth * 0.5f;
 				break;
 			case Anchor::MiddleLeft:
-				vec1.x = fParentWidth * 0.5 + vec1.x;
+				vec1.x = fParentWidth * 0.5f + vec1.x;
 				break;
 			case Anchor::BottomRight:
-				vec1.x = vec1.x - fParentWidth * 0.5;
-				vec1.y = fParentHeight * 0.5 + vec1.y;
+				vec1.x = vec1.x - fParentWidth * 0.5f;
+				vec1.y = fParentHeight * 0.5f + vec1.y;
 				break;
 			case Anchor::BottomCenter:
-				vec1.y = fParentHeight * 0.5 + vec1.y;
+				vec1.y = fParentHeight * 0.5f + vec1.y;
 				break;
 			case Anchor::BottomLeft:
-				vec1.x = fParentWidth * 0.5 + vec1.x;
-				vec1.y = fParentHeight * 0.5 + vec1.y;
+				vec1.x = fParentWidth * 0.5f + vec1.x;
+				vec1.y = fParentHeight * 0.5f + vec1.y;
 				break;
 			}
 		}	
@@ -98,40 +98,40 @@ namespace Toshi
 		switch (m_Pivot)
 		{
 		case Pivot::TopRight:
-			vec2.x = fWidth * 0.5 + vec2.x;
-			vec2.y = fHeight * 0.5 + vec2.y;
+			vec2.x = fWidth * 0.5f + vec2.x;
+			vec2.y = fHeight * 0.5f + vec2.y;
 			break;
 		case Pivot::TopCenter:
-			vec2.y = fHeight * 0.5 + vec2.y;
+			vec2.y = fHeight * 0.5f + vec2.y;
 			break;
 		case Pivot::TopLeft:
-			vec2.x = vec2.x - fWidth * 0.5;
-			vec2.y = fHeight * 0.5 + vec2.y;
+			vec2.x = vec2.x - fWidth * 0.5f;
+			vec2.y = fHeight * 0.5f + vec2.y;
 			break;
 		case Pivot::MiddleRight:
-			vec2.x = fWidth * 0.5 + vec2.x;
+			vec2.x = fWidth * 0.5f + vec2.x;
 			break;
 		case Pivot::MiddleLeft:
-			vec2.x = vec2.x - fWidth * 0.5;
+			vec2.x = vec2.x - fWidth * 0.5f;
 			break;
 		case Pivot::BottomRight:
-			vec2.x = fWidth * 0.5 + vec2.x;
-			vec2.y = vec2.y - fHeight * 0.5;
+			vec2.x = fWidth * 0.5f + vec2.x;
+			vec2.y = vec2.y - fHeight * 0.5f;
 			break;
 		case Pivot::BottomCenter:
-			vec2.y = vec2.y - fHeight * 0.5;
+			vec2.y = vec2.y - fHeight * 0.5f;
 			break;
 		case Pivot::BottomLeft:
-			vec2.x = vec2.x - fWidth * 0.5;
-			vec2.y = vec2.y - fHeight * 0.5;
+			vec2.x = vec2.x - fWidth * 0.5f;
+			vec2.y = vec2.y - fHeight * 0.5f;
 			break;
 		}
 		
 		if (HASFLAG(m_State & FLAGS_XUIELEMENT))
 		{
 			auto pivot = GetPivot();
-			vec2.x = pivot.x * -1.0 + vec2.x;
-			vec2.y = pivot.y * -1.0 + vec2.y;
+			vec2.x = -pivot.x + vec2.x;
+			vec2.y = -pivot.y + vec2.y;
 		}
 
 		T2GUI::GetSingletonWeak()->GetRenderer()->PushTransform(m_Transform, vec1, vec2);

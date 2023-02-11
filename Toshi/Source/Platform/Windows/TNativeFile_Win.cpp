@@ -250,7 +250,7 @@ namespace Toshi
                 size -= readedCount;
                 DWORD bufferLeftSize = m_Position - curBufferPos;
                 DWORD readCount = m_LastBufferSize - bufferLeftSize;
-                readCount = TMath::Min(readCount, size);
+                readCount = TMath::Min<DWORD>(readCount, size);
 
                 if (readCount > 0)
                 {
