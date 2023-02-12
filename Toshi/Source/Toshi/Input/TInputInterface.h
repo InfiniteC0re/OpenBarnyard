@@ -95,8 +95,20 @@ namespace Toshi
 		TInputDevice* GetDeviceByIndex(TClass* pClass, size_t index);
 		TInputDeviceKeyboard* GetKeyboardByIndex(size_t index);
 
+		virtual bool Initialise() { return true; }
+		virtual bool Deinitialise();
+
+		virtual bool AcquireAll();
+		virtual bool UnacquireAll();
+		virtual bool FlushAll();
+		virtual void SetExclusiveMode(bool mode);
+		virtual bool GetExclusiveMode() const;
+		virtual int ProcessEvents(float fUnk);
+		virtual void StopAllRepeats();
+
+
 	private:
-		uint32_t m_Unk;                       // 0x04 
+		bool m_bIsExclusiveMode;              // 0x04 
 		TNodeList<TInputDevice> m_DeviceList; // 0x08
 	};
 }

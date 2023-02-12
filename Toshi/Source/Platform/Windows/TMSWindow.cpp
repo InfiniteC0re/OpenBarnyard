@@ -88,7 +88,7 @@ namespace Toshi
 		m_ModuleHandle = GetModuleHandleA(NULL);
 		
 		WNDCLASSA wndClass = { };
-		wndClass.hIcon = LoadIconA(m_ModuleHandle, MAKEINTRESOURCEA(IDI_ICON1));
+		wndClass.hIcon = LoadIconA(m_ModuleHandle, MAKEINTRESOURCEA(IDI_APPLICATION));
 		wndClass.hInstance = m_ModuleHandle;
 		wndClass.lpfnWndProc = (WNDPROC)WndProc;
 		wndClass.lpszClassName = TMSWindow::GetClassStatic()->GetName();

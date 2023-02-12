@@ -30,4 +30,43 @@ namespace Toshi
 
 		return pKeyboard;
 	}
+
+	bool TInputInterface::Deinitialise()
+	{
+		return false;
+	}
+
+	bool TInputInterface::AcquireAll()
+	{
+		return false;
+	}
+
+	bool TInputInterface::UnacquireAll()
+	{
+		return false;
+	}
+
+	bool TInputInterface::FlushAll()
+	{
+		return false;
+	}
+
+	void TInputInterface::SetExclusiveMode(bool mode)
+	{
+		m_bIsExclusiveMode = mode;
+	}
+
+	bool TInputInterface::GetExclusiveMode() const
+	{
+		return m_bIsExclusiveMode;
+	}
+
+	int TInputInterface::ProcessEvents(float fUnk)
+	{
+		return 0;
+	}
+
+	void TInputInterface::StopAllRepeats()
+	{
+	}
 }
