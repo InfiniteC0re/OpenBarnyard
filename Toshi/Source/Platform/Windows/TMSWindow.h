@@ -68,12 +68,14 @@ namespace Toshi
 		static bool ms_bIsFocused;
 		static STICKYKEYS ms_StickyKeys;
 		static HDEVNOTIFY ms_hDeviceNotify;
+		static BOOL ms_bIsFullscreen;
 
 	private:
 		HWND m_HWND;               // 0x04
 		TRender* m_Render;         // 0x08
 		bool m_IsWindowed;         // 0x0C
 		bool m_IsDestroyed;        // 0x0D
+		bool m_bIsFocused;         // 0x0E
 		HMODULE m_ModuleHandle;    // 0x10
 		bool m_Flag2;              // 0x14
 		int m_xPos;                // 0x18

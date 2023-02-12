@@ -3,13 +3,23 @@
 
 namespace Toshi
 {
+
+	class TGenericEmitter;
+
 	class TGenericListener : public TPriList<TGenericListener>::TNode
 	{
 	public:
 		using t_Callback = bool (*)(void*, void*, void*);
 		
 	public:
-		TGenericListener() = default;
+		TGenericListener() : TNode()
+		{
+			m_Next = this;
+			m_Prev = this;
+			m_pCaller = TNULL;
+			m_pCallback = TNULL;
+			m_Unk = 0;
+		}
 
 		void Execute(void* pOwner, void* pData)
 		{
@@ -17,10 +27,27 @@ namespace Toshi
 		}
 
 	protected:
-		//void Connect(TGenericEmitter* emitter, void* unk1, t_Func func, int unk2);
+		void Connect(TGenericEmitter* emitter, void* caller, t_Callback callback, int unk2)
+		{
+			TASSERT(IsLinked() == TFALSE);
+			m_pCaller = caller;
+			m_pCallback = callback;
+			m_Unk = unk2;
+			Insert(this);
+		}
+
+		void Disconnect()
+		{
+			m_Prev->m_Next = m_Next;
+			m_Next->m_Prev = m_Prev;
+			m_Next = this;
+			m_Prev = this;
+			m_pCaller = TNULL;
+			m_pCallback = TNULL;
+		}
 
 	private:
-		void* m_pUnk;
+		int m_Unk;
 		void* m_pCaller;
 		t_Callback m_pCallback;
 	};

@@ -201,6 +201,41 @@ namespace Toshi
 				m_Next->m_Prev = m_Prev;
 				Reset();
 			}
+
+			void Insert(TNode* node, int iPriority)
+			{
+				node->SetPriority(iPriority);
+				Insert(node);
+			}
+
+			void Insert(TNode* node)
+			{
+				int priority = node->m_iPriority;
+				if (priority < 0)
+				{
+					TNode* curNode = m_Next;
+					while (curNode != this && curNode->m_iPriority <= priority)
+					{
+						curNode = curNode->m_Next->m_Next;
+					}
+					node->m_Next = curNode;
+					node->m_Prev = curNode->m_Next->m_Prev;
+					curNode->m_Next->m_Prev = node;
+					node->m_Prev->m_Next = node;
+				}
+				else
+				{
+					TNode* curNode = m_Prev;
+					while (curNode != this && priority < curNode->m_iPriority)
+					{
+						curNode = curNode->m_Prev;
+					}
+					node->m_Prev = curNode;
+					node->m_Next = curNode->m_Next;
+					curNode->m_Next = node;
+					node->m_Next->m_Prev = node;
+				}
+			}
 			
 		public:
 			template<class T> friend class TPriList;
@@ -228,40 +263,7 @@ namespace Toshi
 		TNode* Begin() { return m_Root.Next(); }
 		TNode* End() { return &m_Root; }
 
-		void Insert(TNode* node, int iPriority) 
-		{ 
-			node->SetPriority(iPriority);
-			Insert(node);
-		}
-
-		void Insert(TNode* node)
-		{
-			int priority = node->m_iPriority;
-			if (priority < 0)
-			{
-				TNode* curNode = m_Root.m_Next;
-				while (curNode != &m_Root && curNode->m_iPriority <= priority)
-				{
-					curNode = curNode->m_Next->m_Next;
-				}
-				node->m_Next = curNode;
-				node->m_Prev = curNode->m_Next->m_Prev;
-				curNode->m_Next->m_Prev = node;
-				node->m_Prev->m_Next = node;
-			}
-			else
-			{
-				TNode* curNode = m_Root.m_Prev;
-				while (curNode != &m_Root && priority < curNode->m_iPriority)
-				{
-					curNode = curNode->m_Prev;
-				}
-				node->m_Prev = curNode;
-				node->m_Next = curNode->m_Next;
-				curNode->m_Next = node;
-				node->m_Next->m_Prev = node;
-			}
-		}
+		
 
 		void RemoveAll()
 		{

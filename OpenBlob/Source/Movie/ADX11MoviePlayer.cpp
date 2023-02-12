@@ -152,7 +152,7 @@ void ADX11MoviePlayer::PlayMovie(const char* fileName, void* unused, uint8_t fla
 void ADX11MoviePlayer::StopMovie()
 {
     StopMovieImpl();
-    ThrowPauseEvent(AMovieEvent::Type_Stopped);
+    ThrowEvent(AMovieEvent::Type_Stopped);
 }
 
 void ADX11MoviePlayer::StopMovieImpl()
@@ -292,7 +292,7 @@ void ADX11MoviePlayer::OnUpdate(float deltaTime)
             {
                 if (m_bIsMovieLooping)
                 {
-                    ThrowPauseEvent(AMovieEvent::Type_Looping);
+                    ThrowEvent(AMovieEvent::Type_Looping);
                     uint8_t flags = 0;
                     if (m_bIsMuted)
                     {
@@ -303,7 +303,7 @@ void ADX11MoviePlayer::OnUpdate(float deltaTime)
                 else
                 {
                     StopMovieImpl();
-                    ThrowPauseEvent(AMovieEvent::Type_Finished);
+                    ThrowEvent(AMovieEvent::Type_Finished);
                 }
             }
         }

@@ -24,7 +24,7 @@ public:
 		m_bIsHidden = true;
 	}
 
-	void ThrowPauseEvent(AMovieEvent::Type type) { m_Emitter.Throw(&type); }
+	void ThrowEvent(AMovieEvent::Type type) { m_Emitter.Throw(&type); }
 
 	virtual ~AMoviePlayer() = default;
 	virtual void PlayMovie(const char* fileName, void* unused, uint8_t flags) = 0;

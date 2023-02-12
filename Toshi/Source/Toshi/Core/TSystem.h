@@ -17,8 +17,9 @@ namespace Toshi
 		bool Pause(bool pause)
 		{
 			bool oldState = m_Paused;
+
+			m_Paused = pause;
 			m_Emitter.Throw(&pause);
-			TTODO("FUN_00663190(true)");
 
 			return oldState;
 		}
