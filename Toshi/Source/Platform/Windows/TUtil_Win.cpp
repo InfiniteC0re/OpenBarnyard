@@ -1,6 +1,7 @@
 #include "ToshiPCH.h"
 #include "Toshi2/T2Allocator.h"
 #include "Toshi/Utils/TUtil.h"
+#include <queue>
 
 namespace Toshi
 {
@@ -9,8 +10,7 @@ namespace Toshi
 		// and yes they actually did it with std
 
 		WIN32_FIND_DATAA ffd;
-
-		STL::Vector<std::string> vec;
+		std::queue<std::string> queue;
 
 		HANDLE hFind = FindFirstFileA(fileName, &ffd);
 
@@ -24,7 +24,7 @@ namespace Toshi
 		{
 			if (ffd.dwFileAttributes & FILE_ATTRIBUTE_ARCHIVE)
 			{
-				vec.push_back(ffd.cFileName);
+				queue.push(ffd.cFileName);
 			}
 
 			BOOL found = FindNextFileA(hFind, &ffd);
@@ -32,12 +32,11 @@ namespace Toshi
 			if (!found)
 			{
 				FindClose(hFind);
-				std::reverse(vec.begin(), vec.end());
 				do
 				{
-					DeleteFileA(vec.back().c_str());
-					vec.pop_back();
-				} while (vec.size() > trimTo);
+					DeleteFileA(queue.front().c_str());
+					queue.pop();
+				} while (queue.size() > trimTo);
 				return;
 			}
 			

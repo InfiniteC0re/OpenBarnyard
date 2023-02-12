@@ -32,16 +32,16 @@ void AGameStateController::PushState(AGameState* pGameState)
 	m_bStatePushing = TTRUE;
 
 	// Suspend and deactivate the previous layer
-	if (m_GameStates.Size() > 0)
+	if (m_oStateStack.Size() > 0)
 	{
-		AGameState* pCurrentGameState = m_GameStates.Back();
+		AGameState* pCurrentGameState = m_oStateStack.Back();
 
 		pCurrentGameState->Suspend();
 		pCurrentGameState->Deactivate();
 	}
 
 	// Push the game state to the vector
-	m_GameStates.PushBack(pGameState);
+	m_oStateStack.PushBack(pGameState);
 
 	pGameState->Insert();
 	pGameState->Activate();
@@ -51,16 +51,16 @@ void AGameStateController::PushState(AGameState* pGameState)
 
 void AGameStateController::PopState(AGameState* pState)
 {
-	TASSERT(m_GameStates.Size() > 1);
+	TASSERT(m_oStateStack.Size() > 1);
 	AGameState* pOldState = GetCurrentGameState();
 
 	TASSERT(pState == pOldState);
-	m_GameStates.PopBack();
+	m_oStateStack.PopBack();
 
 	pOldState->Deactivate();
 	pOldState->Remove();
 
-	if (m_GameStates.Size() == 1)
+	if (m_oStateStack.Size() == 1)
 	{
 		// Leave the application if the only game state is left
 		AApplication::g_oTheApp.Destroy();
@@ -79,7 +79,7 @@ void AGameStateController::PopCurrentState()
 {
 	AGameState* pCurrentState = GetCurrentGameState();
 
-	if (m_GameStates.Size() > 1)
+	if (m_oStateStack.Size() > 1)
 	{
 		PopState(pCurrentState);
 	}

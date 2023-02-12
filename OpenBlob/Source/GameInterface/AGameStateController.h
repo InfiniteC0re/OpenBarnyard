@@ -14,7 +14,7 @@ public:
 
 	AGameState* GetCurrentGameState()
 	{
-		return m_GameStates.Back();
+		return m_oStateStack.Back();
 	}
 
 	void Create();
@@ -24,6 +24,6 @@ public:
 	void PopCurrentState();
 
 private:
-	Toshi::T2Vector<AGameState*, 10> m_GameStates;
+	Toshi::T2Vector<AGameState*, 10> m_oStateStack;
 	bool m_bStatePushing;
 };
