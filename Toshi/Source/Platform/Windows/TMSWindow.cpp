@@ -80,7 +80,7 @@ namespace Toshi
 		SetWindowPos(m_HWND, HWND_TOP, x, y, rect.right - rect.left, rect.bottom - rect.top, 0);
 	}
 
-	bool TMSWindow::RegisterWindowClass(TRender* renderer, LPCSTR title)
+	bool TMSWindow::Create(TRender* renderer, LPCSTR title)
 	{
 		UnregisterWindowClass();
 

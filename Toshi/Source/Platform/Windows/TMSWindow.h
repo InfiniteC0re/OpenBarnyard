@@ -5,7 +5,7 @@
 
 #include <dbt.h>
 #include <windowsx.h>
-#include <resource.h>
+#include "../resource.h"
 
 namespace Toshi
 {
@@ -23,7 +23,7 @@ namespace Toshi
 		void Disable();
 		void Update();
 
-		bool RegisterWindowClass(TRender* renderer, LPCSTR title);
+		bool Create(TRender* renderer, LPCSTR title);
 		void UnregisterWindowClass();
 
 		void SetPosition(UINT x, UINT y, UINT width, UINT height);
@@ -62,7 +62,7 @@ namespace Toshi
 		
 		static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
-	private:
+	protected:
 		static constexpr GUID WceusbshGUID = { 0x25dbce51, 0x6c8f, 0x4a72, 0x8a, 0x6d, 0xb5, 0x4c, 0x2b, 0x4f, 0xc8, 0x35 };
 
 		static bool ms_bIsFocused;

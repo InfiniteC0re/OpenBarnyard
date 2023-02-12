@@ -19,6 +19,7 @@ project "Toshi"
 	includedirs
 	{
 		"Source",
+        "Icons",
 		"%{IncludeDir.spdlog}",
 		"%{IncludeDir.fmod}",
         "%{IncludeDir.stb}"
@@ -51,7 +52,11 @@ project "Toshi"
 			"Source/Platform/Windows/**.c",
 			"Source/Toshi**/**.h",
 			"Source/Toshi**/**.cpp",
-			"Source/Toshi**/**.c"
+			"Source/Toshi**/**.c",
+            "Icons/*.ico",
+            "*.h",
+            "*.aps",
+            "*.rc"
 		}
 
 		defines

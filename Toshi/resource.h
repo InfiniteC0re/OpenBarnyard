@@ -1,6 +1,6 @@
 //{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
-// Used by Resource.rc
+// Used by Toshi.rc
 //
 #define IDI_ICON1                       101
 

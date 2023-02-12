@@ -732,7 +732,7 @@ namespace Toshi
 
 			m_hAccel = CreateAcceleratorTableA(accels, sizeof(accels) / sizeof(*accels));
 
-			if (m_Window.RegisterWindowClass(this, a_name))
+			if (m_Window.Create(this, a_name))
 			{
 				m_Unk2 = 1;
 				return true;
