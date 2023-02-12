@@ -1,6 +1,7 @@
 #pragma once
 #include "Input/AInputHelperSimple.h"
 #include "Toshi2/T2DList.h"
+#include <Toshi2/T2GUI/T2GUIRectangle.h>
 
 class AGameState :
 	public Toshi::TGenericClassDerived<AGameState, Toshi::TObject, "AGameState", TMAKEVERSION(1, 0), true>,
@@ -41,6 +42,8 @@ public:
 	virtual bool CanActivateConsoleState();
 	virtual bool CheckForControllerRemoval();
 	virtual bool PauseOnControllerReinserted();
+
+	static void SetupLoadIcon();
 
 	State GetState() const
 	{
@@ -122,6 +125,10 @@ public:
 	{
 
 	}
+
+
+	static inline Toshi::T2GUIRectangle* sm_pLoadIconRect = TNULL;
+	static inline Toshi::T2GUIMaterial* sm_pLoadIconMat = TNULL;
 
 private:
 	Toshi::T2DList<AGameState> m_GameStates; // 0x0C

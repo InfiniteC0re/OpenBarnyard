@@ -1,6 +1,7 @@
 #pragma once
 #include "Toshi/Core/TFifo.h"
 #include "Toshi/Thread/TThread.h"
+#include "Toshi/File/TTRB.h"
 
 namespace Toshi
 {
@@ -16,7 +17,7 @@ namespace Toshi
 
 		virtual void Process() = 0;
 
-	private:
+	protected:
 		TSemaphore* m_pSemaphore;
 		bool m_bIsProcessed;
 	};
@@ -39,5 +40,29 @@ namespace Toshi
 
 	private:
 		TFifo<TFileStreamJob*, 32> m_Jobs;
+	};
+
+	class TTRBStreamJob : public TFileStreamJob
+	{
+	public:
+		TTRBStreamJob() : TFileStreamJob(TNULL)
+		{
+			m_trb = TNULL;
+			m_fileName = TNULL;
+		}
+
+		virtual void Process()
+		{
+			m_trb->Load(m_fileName);
+		}
+
+		void Init(TTRB* trb, const char* fileName)
+		{
+			m_trb = trb;
+			T2String8::Copy(m_fileName, fileName, -1);
+		}
+	public:
+		TTRB* m_trb;
+		char* m_fileName;
 	};
 }

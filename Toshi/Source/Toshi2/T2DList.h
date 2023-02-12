@@ -13,7 +13,7 @@ namespace Toshi
 			template<class T> friend class T2DList;
 			template<class T, class Node> friend class T2Iterator;
 
-		protected:
+		public:
 			Node()
 			{
 				m_pNext = this;

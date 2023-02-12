@@ -2,6 +2,7 @@
 #include "AGameState.h"
 #include "AGameStateController.h"
 #include "Toshi/Input/TInputInterface.h"
+#include "Toshi2/T2GUI/T2GUI.h"
 
 AGameState::AGameState() :
 	m_InputHelper(1, Toshi::TInputInterface::GetSingletonWeak()->GetKeyboardByIndex(0))
@@ -106,6 +107,18 @@ bool AGameState::CheckForControllerRemoval()
 bool AGameState::PauseOnControllerReinserted()
 {
 	return false;
+}
+
+void AGameState::SetupLoadIcon()
+{
+	TASSERT(TNULL == sm_pLoadIconRect);
+	sm_pLoadIconRect = new Toshi::T2GUIRectangle();
+	sm_pLoadIconRect->Create(50.0f, 50.0f);
+	sm_pLoadIconRect->SetColour(-1);
+	sm_pLoadIconMat = Toshi::T2GUI::GetSingletonWeak()->CreateMaterial("loadicon.tga");
+	sm_pLoadIconRect->SetMaterial(sm_pLoadIconMat);
+	sm_pLoadIconRect->SetAnchor(Toshi::T2GUIElement::Anchor::BottomRight);
+	sm_pLoadIconRect->SetPivot(Toshi::T2GUIElement::Pivot::BottomRight);
 }
 
 void AGameState::RemoveSelf()

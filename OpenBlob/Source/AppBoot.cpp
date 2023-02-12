@@ -55,6 +55,7 @@ bool AApplication::OnCreate(int argc, char** argv)
 		system->setFileSystem(NULL, NULL, NULL, NULL, NULL, NULL, 0);
 
 		m_Renderer->Create();
+		AGameState::SetupLoadIcon();
 		SetRenderWorld(true);
 		m_pGameStateController = AGameStateController::CreateSingleton();
 		m_pGameStateController->Create();
