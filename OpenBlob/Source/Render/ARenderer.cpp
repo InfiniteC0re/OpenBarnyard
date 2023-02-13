@@ -86,9 +86,8 @@ bool ARenderer::CreateTRender()
 
 	renderer->BuildAdapterDatabase();
 	auto adapterList = renderer->GetAdapterList();
-	auto adapterIterator = adapterList->Begin();
-	auto firstAdapter = adapterIterator->As<Toshi::TD3DAdapter>();
-	auto mode = firstAdapter->GetMode();
+	auto adapter = adapterList->Head()->As<Toshi::TD3DAdapter>();
+	auto mode = adapter->GetMode();
 	
 	int width = 1280;
 	int height = 720;
