@@ -462,6 +462,7 @@ namespace Toshi
 
 		m_pToneMap = new TToneMap();
 		m_pFXAA = new TFXAA();
+		m_pGlow = new TGlow();
 		CreateVSPS();
 
 		return true;

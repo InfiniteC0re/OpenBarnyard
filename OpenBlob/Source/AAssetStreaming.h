@@ -3,9 +3,6 @@
 #include <Toshi/Utils/TSingleton.h>
 #include <Toshi2/T2DList.h>
 
-using namespace Toshi;
-
-
 enum class JOBTYPE
 {
 	MODEL,
@@ -13,7 +10,7 @@ enum class JOBTYPE
 	KEYLIB
 };
 
-class AMainThreadJob2 : public T2DList<AMainThreadJob2>::Node
+class AMainThreadJob2 : public Toshi::T2DList<AMainThreadJob2>::Node
 {
 public:
 
@@ -24,10 +21,10 @@ public:
 
 	virtual bool CancelJob() { return false; };
 
-	TTRBStreamJob m_streamJob;
+	Toshi::TTRBStreamJob m_streamJob;
 };
 
-class AAssetStreaming : public TSingleton<AAssetStreaming>
+class AAssetStreaming : public Toshi::TSingleton<AAssetStreaming>
 {
 
 	static constexpr int JOB_COUNT = 256;
@@ -64,8 +61,8 @@ public:
 	void Update();
 	void ReleaseJob(AMainThreadJob2* a_pJob);
 
-	T2DList<AMainThreadJob2> m_Jobs;     // 0x0
+	Toshi::T2DList<AMainThreadJob2> m_Jobs;     // 0x0
 	AMainThreadJob2* m_pCurrentJob;      // 0x8
-	TFileStream m_FileStream;            // 0x0C
-	T2DList<AMainThreadJob2> m_FreeList; // 0xDC
+	Toshi::TFileStream m_FileStream;            // 0x0C
+	Toshi::T2DList<AMainThreadJob2> m_FreeList; // 0xDC
 };

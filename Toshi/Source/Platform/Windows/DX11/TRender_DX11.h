@@ -8,6 +8,7 @@
 
 #include "Platform/Windows/TMSWindow.h"
 #include "Platform/Windows/DX11/Includes.h"
+#include <Platform/Windows/DX11/TGlow_DX11.h>
 
 namespace Toshi
 {
@@ -411,6 +412,7 @@ namespace Toshi
 		ID3D11Buffer* m_pQuarterScreenQuadBuffer;         // 0x6E8
 		FLOAT m_ClearColor[4];                            // 0x6EC
 		TToneMap* m_pToneMap;                             // 0x71C
+		TGlow* m_pGlow;                                   // 0x720
 		TFXAA* m_pFXAA;                                   // 0x724
 		size_t m_NumDrawnFrames;                          // 0x72C
 		ID3D11SamplerState* m_SamplerStates[12];          // 0x73C

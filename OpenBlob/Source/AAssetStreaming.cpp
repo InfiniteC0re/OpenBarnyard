@@ -6,9 +6,9 @@ AAssetStreaming::AAssetStreaming()
 {
 	// Create thread and run it
 	m_FileStream.Create(0, Toshi::TThread::THREAD_PRIORITY_ABOVE_NORMAL, 0);
-	m_Jobs = T2DList<AMainThreadJob2>();
+	/*m_Jobs = T2DList<AMainThreadJob2>();
 	m_FreeList = T2DList<AMainThreadJob2>();
-	m_FileStream = TFileStream();
+	m_FileStream = TFileStream();*/
 	m_pCurrentJob = TNULL;
 	TTODO("member at 0xD8 = TNULL");
 

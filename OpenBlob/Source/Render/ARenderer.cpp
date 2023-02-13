@@ -238,8 +238,8 @@ void ARenderer::RenderMainScene(float deltaTime, Toshi::TViewport* pViewport, vo
 
 void ARenderer::CreateMainViewport()
 {
-	TIMPLEMENT();
-	auto pDisplayParams = Toshi::TRenderDX11::Interface()->GetCurrentDisplayParams();
+	auto renderer = Toshi::TRenderDX11::Interface();
+	auto pDisplayParams = renderer->GetCurrentDisplayParams();
 
 	m_pViewport = new Toshi::TViewport();
 	m_pViewport->SetMemoryAllocatorBlock(AMemory::ms_apMemoryBlocks[AMemory::POOL_FrequentAllocations]);
@@ -253,4 +253,6 @@ void ARenderer::CreateMainViewport()
 	m_pViewport->AllowDepthClear(true);
 	m_pViewport->EnableDefaultBeginRender(true);
 	m_pViewport->SetBackgroundColor(0, 0, 0, 255);
+	renderer->m_pGlow->SetDist(1.5f);
+	renderer->m_pGlow->SetIntensity(4.0f);
 }
