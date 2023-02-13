@@ -3,6 +3,7 @@
 #include "AGameStateController.h"
 #include "Toshi/Input/TInputInterface.h"
 #include "Toshi2/T2GUI/T2GUI.h"
+#include "AAssetStreaming.h"
 
 AGameState::AGameState() :
 	m_InputHelper(1, Toshi::TInputInterface::GetSingletonWeak()->GetKeyboardByIndex(0))
@@ -33,8 +34,12 @@ void AGameState::Unk3(void*, void*)
 
 AGameState::UpdateResult AGameState::OnUpdate(float deltaTime)
 {
-	TTODO("Something with AAssetStreaming");
 	m_InputHelper.Update();
+
+	if (!AAssetStreaming::GetSingletonWeak()->HasActiveJobs())
+	{
+		sm_pLoadIconRect->SetVisible(TFALSE);
+	}
 
 	for (auto state = m_GameStates.Begin(); state != m_GameStates.End(); state++)
 	{
@@ -119,6 +124,10 @@ void AGameState::SetupLoadIcon()
 	sm_pLoadIconRect->SetMaterial(sm_pLoadIconMat);
 	sm_pLoadIconRect->SetAnchor(Toshi::T2GUIElement::Anchor::BottomRight);
 	sm_pLoadIconRect->SetPivot(Toshi::T2GUIElement::Pivot::BottomRight);
+}
+
+void AGameState::DestroyLoadIcon()
+{
 }
 
 void AGameState::RemoveSelf()

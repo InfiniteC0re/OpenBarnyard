@@ -31,9 +31,14 @@ public:
 public:
 	static AApplication g_oTheApp;
 
-private:
+public:
 	ARenderer* m_Renderer;                        // 0x34
 	AGameStateController* m_pGameStateController; // 0x38
 	bool m_bRenderWorld;                          // 0x48
+	uint32_t m_Width;                             // 0x58
+	uint32_t m_Height;                            // 0x5C
+	bool m_bUseDefaultHeightWidth;                                  // 0x60
+	bool m_bIsFullscreen;                         // 0x61
+	bool m_bUnk2;                                 // 0x60
 	bool m_bLoadModelViewState;                   // 0x63
 };

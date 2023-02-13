@@ -83,19 +83,93 @@ bool ARenderer::CreateTRender()
 	renderer->Create();
 
 	Toshi::TRender::DisplayParams displayParams;
-	displayParams.Unk3 = 32;
-	displayParams.Unk4 = 3;
-	displayParams.Unk5 = true;
-	displayParams.IsFullscreen = false;
-	displayParams.MultisampleQualityLevel = 1;
-	displayParams.Width = 800;
-	displayParams.Height = 600;
 
-	renderer->CreateDisplay(&displayParams);
+	renderer->BuildAdapterDatabase();
+	auto adapterList = renderer->GetAdapterList();
+	auto adapterIterator = adapterList->Begin();
+	auto firstAdapter = adapterIterator->As<Toshi::TD3DAdapter>();
+	auto mode = firstAdapter->GetMode();
+	
+	int width = 1280;
+	int height = 720;
 
-	TTODO("The whole function");
+	if (AApplication::g_oTheApp.m_Width == -1)
+	{
+		if (AApplication::g_oTheApp.m_Width != -1)
+		{
+			MessageBoxA(TNULL, "You should specify both width and heigth or neither", "Invalid args", MB_OK | MB_ICONERROR | MB_SYSTEMMODAL);
+			return false;
+		}
 
-	return true;
+		if (!AApplication::g_oTheApp.m_bUseDefaultHeightWidth)
+		{
+			width = mode->GetWidth();
+			height = mode->GetHeight();
+		}
+
+		displayParams.Unk3 = 32;
+		displayParams.Unk4 = 3;
+		displayParams.Unk5 = AApplication::g_oTheApp.m_bUseDefaultHeightWidth;
+		displayParams.IsFullscreen = AApplication::g_oTheApp.m_bIsFullscreen;
+		displayParams.MultisampleQualityLevel = 1;
+		displayParams.Width = width;
+		displayParams.Height = height;
+		renderer->CreateDisplay(&displayParams);
+
+		return true;
+	}
+	else
+	{
+		if (AApplication::g_oTheApp.m_Height == -1)
+		{
+			MessageBoxA(TNULL, "You should specify both width and heigth or neither", "Invalid args", MB_OK | MB_ICONERROR | MB_SYSTEMMODAL);
+			return false;
+		}
+
+		if (!AApplication::g_oTheApp.m_bUseDefaultHeightWidth)
+		{
+			TTODO("Is mode valid?");
+
+			if (AApplication::g_oTheApp.m_Height > 1280 && AApplication::g_oTheApp.m_Width > 720)
+			{
+				MessageBoxA(TNULL, "The specified width and heith must be greater than 1280x720 and match a valid mode", "Invalid args", MB_OK | MB_ICONERROR | MB_SYSTEMMODAL);
+				return false;
+			}
+
+			displayParams.Unk3 = 32;
+			displayParams.Unk4 = 3;
+			displayParams.Unk5 = AApplication::g_oTheApp.m_bUseDefaultHeightWidth;
+			displayParams.IsFullscreen = AApplication::g_oTheApp.m_bIsFullscreen;
+			displayParams.MultisampleQualityLevel = 1;
+			displayParams.Width = AApplication::g_oTheApp.m_Width;
+			displayParams.Height = AApplication::g_oTheApp.m_Height;
+			renderer->CreateDisplay(&displayParams);
+			return true;
+		}
+		else
+		{
+			if (AApplication::g_oTheApp.m_Height <= 1280
+				&& AApplication::g_oTheApp.m_Width <= 720
+				&& mode->GetHeight() < AApplication::g_oTheApp.m_Height
+				&& mode->GetWidth() < AApplication::g_oTheApp.m_Width)
+			{
+				char formattedString[512];
+				Toshi::T2String8::Format(formattedString, "The specified width and heith must be between 1280x720 and the current desktop res olution (%dx%d)", mode->GetWidth(), mode->GetHeight());
+				MessageBoxA(TNULL, formattedString, "Invalid args", MB_OK | MB_ICONERROR | MB_SYSTEMMODAL);
+				return false;
+			}
+
+			displayParams.Unk3 = 32;
+			displayParams.Unk4 = 3;
+			displayParams.Unk5 = AApplication::g_oTheApp.m_bUseDefaultHeightWidth;
+			displayParams.IsFullscreen = AApplication::g_oTheApp.m_bIsFullscreen;
+			displayParams.MultisampleQualityLevel = 1;
+			displayParams.Width = width;
+			displayParams.Height = height;
+			renderer->CreateDisplay(&displayParams);
+			return true;
+		}
+	}
 }
 
 void ARenderer::Create()

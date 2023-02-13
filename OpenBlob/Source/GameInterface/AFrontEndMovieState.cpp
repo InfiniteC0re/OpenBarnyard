@@ -39,6 +39,7 @@ void AFrontEndMovieState::OnInsertion()
     //m_Test->Create(200, 200);
     //m_Test->SetTransform(0, 0, 0);
     //m_Test->SetColour(0x00FF0000); // ARGB
+    pRootElement->AddChildHead(sm_pLoadIconRect);
     //pRootElement->AddChildHead(m_Test);
 
     //Toshi::T2GUIRectangle* pRectangle2 = new Toshi::T2GUIRectangle;

@@ -44,6 +44,7 @@ public:
 	virtual bool PauseOnControllerReinserted();
 
 	static void SetupLoadIcon();
+	static void DestroyLoadIcon();
 
 	State GetState() const
 	{
