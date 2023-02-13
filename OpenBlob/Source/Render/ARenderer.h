@@ -2,6 +2,7 @@
 #include <Toshi/Utils/TSingleton.h>
 #include <Toshi/Render/TViewport.h>
 #include <Toshi/File/TTRB.h>
+#include <Toshi/Core/THPTimer.h>
 
 class ARenderer : public Toshi::TSingleton<ARenderer>
 {
@@ -26,8 +27,10 @@ private:
 
 private:
 	static Toshi::TTRB s_BootAssetsTRB;
+	static Toshi::THPTimer s_timer;
 
 private:
 	Toshi::TViewport* m_pViewport; // 0x0C
 	uint32_t m_BackgroundColor;    // 0x48
+	float m_fUpdateTime;           // 0x64
 };

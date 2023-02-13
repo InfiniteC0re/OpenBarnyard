@@ -12,6 +12,7 @@
 #include <Toshi2/T2GUI/T2GUI.h>
 
 Toshi::TTRB ARenderer::s_BootAssetsTRB = Toshi::TTRB();
+Toshi::THPTimer ARenderer::s_timer = Toshi::THPTimer();
 
 static void MainScene(float deltaTime, void* pCameraObject)
 {
@@ -44,6 +45,7 @@ void ARenderer::Update(float deltaTime)
 		bRenderMovie = TTRUE;
 	}
 
+	
 	pRender->Update(deltaTime);
 	pRender->BeginScene();
 	
@@ -65,6 +67,13 @@ void ARenderer::Update(float deltaTime)
 		ID3D11ShaderResourceView* pShaderResourceView = (pDisplayParams->MultisampleQualityLevel < 2) ? pRender->m_SRView1 : pRender->m_SRView2;
 		pRender->m_pFXAA->Render(pShaderResourceView);
 	}
+
+	s_timer.Update();
+	m_fUpdateTime = s_timer.GetDelta();
+
+	//TOSHI_INFO("Update time of ARenderer was: {}", m_fUpdateTime);
+
+	s_timer.Reset();
 
 	pRender->EndScene();
 }
