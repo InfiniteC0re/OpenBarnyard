@@ -67,7 +67,7 @@ namespace Toshi
 			Node* m_pPrev;
 		};
 
-	protected:
+	public:
 		T2GenericDList()
 		{
 			

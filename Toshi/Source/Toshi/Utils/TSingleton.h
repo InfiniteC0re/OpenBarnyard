@@ -31,6 +31,11 @@ namespace Toshi
 			return ms_pSingleton;
 		}
 
+		static bool IsSingletonCreated()
+		{
+			return ms_pSingleton != TNULL;
+		}
+
 		// Returns pointer even if it's not allocated
 		static T* GetSingletonWeak()
 		{

@@ -7,6 +7,7 @@ using namespace Toshi;
 
 class ATRBLoaderJob : public AMainThreadJob2
 {
+public:
 	ATRBLoaderJob()
 	{
 		m_streamJob = TTRBStreamJob();
@@ -21,14 +22,13 @@ class ATRBLoaderJob : public AMainThreadJob2
 
 	virtual void Init(TTRB* trb, const char* a_szFilename)
 	{
-		TStringManager::String8Copy(m_fileName, a_szFilename, 0x80);
-		m_trb = trb;
+		m_streamJob.Init(trb, a_szFilename);
 		TASSERT(TStringManager::String8Length(a_szFilename) > 0);
 	}
 
 	virtual void BeginJob()
 	{
-		m_streamJob.Init(m_trb, m_fileName);
+		m_streamJob.Init(m_streamJob.m_trb, m_streamJob.m_fileName);
 		AAssetStreaming::GetSingletonWeak()->m_FileStream.AddStream(&m_streamJob);
 	}
 
@@ -37,8 +37,5 @@ class ATRBLoaderJob : public AMainThreadJob2
 		return true;
 	}
 
-	TTRBStreamJob m_streamJob;
-	char* m_fileName;
-	TTRB* m_trb;
 };
 

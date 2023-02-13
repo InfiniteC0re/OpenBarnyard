@@ -13,7 +13,7 @@ namespace Toshi
 	public:
 		TFileStreamJob(TSemaphore* semaphore) : m_pSemaphore(semaphore), m_bIsProcessed(false) { }
 
-		virtual ~TFileStreamJob() = 0;
+		virtual ~TFileStreamJob() = default;
 
 		virtual void Process() = 0;
 
@@ -50,6 +50,8 @@ namespace Toshi
 			m_trb = TNULL;
 			m_fileName = TNULL;
 		}
+
+		virtual ~TTRBStreamJob() = default;
 
 		virtual void Process()
 		{
