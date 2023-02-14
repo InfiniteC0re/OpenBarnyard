@@ -2,6 +2,7 @@
 #include "TGlow_DX11.h"
 #include "TRender_DX11.h"
 
+using namespace Toshi;
 
 TGlow::TGlow()
 {
@@ -61,11 +62,11 @@ void TGlow::Render(ID3D11ShaderResourceView* srv, void* unk)
 		ID3D11RenderTargetView* pRenderTargetView;
 		ID3D11DepthStencilView* pDepthStencilView;
 		UINT numViewports = 1;
-		D3D11_VIEWPORT* viewports = {};
+		D3D11_VIEWPORT viewports;
 		const FLOAT color[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
 
 		deviceContext->OMGetRenderTargets(1, &pRenderTargetView, &pDepthStencilView);
-		deviceContext->RSGetViewports(&numViewports, viewports);
+		deviceContext->RSGetViewports(&numViewports, &viewports);
 		deviceContext->ClearRenderTargetView(m_pRenderTarget, color);
 		deviceContext->OMSetRenderTargets(1, &m_pRenderTarget, TNULL);
 
@@ -77,9 +78,24 @@ void TGlow::Render(ID3D11ShaderResourceView* srv, void* unk)
 		viewport.MaxDepth = 1.0;
 		viewport.Height = m_uiHeight;
 		deviceContext->RSSetViewports(1, &viewport);
-
 		renderer->SetBlendMode(TFALSE, D3D11_BLEND_OP_ADD, D3D11_BLEND_ONE, D3D11_BLEND_ONE);
 
 		TIMPLEMENT();
+
+		deviceContext->CopyResource(m_pTexture, m_pTexture2);
+		deviceContext->OMSetRenderTargets(1, &pRenderTargetView, pDepthStencilView);
+
+		if (pRenderTargetView) pRenderTargetView->Release();
+		if (pDepthStencilView) pDepthStencilView->Release();
+
+		deviceContext->RSSetViewports(1, &viewports);
+
+		auto uvs = new TVector4(viewports.Width, viewports.Height, viewports.TopLeftX, viewports.TopLeftY);
+
+		renderer->FUN_006a6700(0.0f, 0.0f, viewports.Width, viewports.Height, srv, TNULL, uvs);
+		renderer->SetAlphaUpdate(0);
+		renderer->SetBlendMode(true, D3D11_BLEND_OP_ADD, D3D11_BLEND_ONE, D3D11_BLEND_ONE);
+		renderer->SetVec4InPSBuffer(28, &m_fIntensity);
+		renderer->FUN_006a6700(0.0f, 0.0f, viewports.Width, viewports.Height, srv, m_pPixelShader, uvs);
 	}
 }
