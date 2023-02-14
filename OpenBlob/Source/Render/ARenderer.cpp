@@ -228,6 +228,7 @@ void ARenderer::RenderMainScene(float deltaTime, Toshi::TViewport* pViewport, vo
 	pViewport->AllowBackgroundClear(allowBackgroundClear);
 	pViewport->Begin();
 	// ...
+	pRender->m_pGlow->Render(pRender->m_SRView2, TNULL);
 	mainSceneCb(deltaTime, pCameraObject);
 	pViewport->End();
 	// ...
