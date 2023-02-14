@@ -138,7 +138,7 @@ bool ARenderer::CreateTRender()
 		{
 			TTODO("Is mode valid?");
 
-			if (AApplication::g_oTheApp.m_Height > 1280 && AApplication::g_oTheApp.m_Width > 720)
+			if (AApplication::g_oTheApp.m_Width > 1280 && AApplication::g_oTheApp.m_Height > 720)
 			{
 				MessageBoxA(TNULL, "The specified width and heith must be greater than 1280x720 and match a valid mode", "Invalid args", MB_OK | MB_ICONERROR | MB_SYSTEMMODAL);
 				return false;
@@ -156,8 +156,8 @@ bool ARenderer::CreateTRender()
 		}
 		else
 		{
-			if (AApplication::g_oTheApp.m_Height <= 1280
-				&& AApplication::g_oTheApp.m_Width <= 720
+			if (AApplication::g_oTheApp.m_Width <= 1280
+				&& AApplication::g_oTheApp.m_Height <= 720
 				&& mode->GetHeight() < AApplication::g_oTheApp.m_Height
 				&& mode->GetWidth() < AApplication::g_oTheApp.m_Width)
 			{
