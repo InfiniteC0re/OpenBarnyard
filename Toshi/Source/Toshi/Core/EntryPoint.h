@@ -38,7 +38,7 @@ return TMain(__argc, __argv);
 #define TOSHI_TMEMORY_SIZE 64 * 1024 * 1024
 #endif
 
-const char* GetOSName(OSVERSIONINFOEX& osVersionInfo)
+static const char* GetOSName(OSVERSIONINFOEX& osVersionInfo)
 {
 	bool isWorkstation = osVersionInfo.wProductType == VER_NT_WORKSTATION;
 

@@ -143,7 +143,6 @@ bool ARenderer::CreateTRender()
 				MessageBoxA(TNULL, "The specified width and heith must be greater than 1280x720 and match a valid mode", "Invalid args", MB_OK | MB_ICONERROR | MB_SYSTEMMODAL);
 				return false;
 			}
-
 			displayParams.Unk3 = 32;
 			displayParams.Unk4 = 3;
 			displayParams.Unk5 = AApplication::g_oTheApp.m_bUseDefaultHeightWidth;

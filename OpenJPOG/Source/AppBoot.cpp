@@ -4,6 +4,12 @@
 #define TOSHI_TMEMORY_SIZE 640 * 1024 * 1024
 #define TOSHI_TMEMORY_FLAGS Toshi::TMemory::Flags_Standard
 
+#define TOSHI_APP \
+Toshi::TApplication& app = AApplication::g_oTheApp; \
+app.Create("Jurassic Park: Operation Genesis - (c) Blue Tongue Software", 0, 0); \
+app.Execute();
+
+
 // Including the entrypoint
 #include <Toshi.h>
 
@@ -17,6 +23,7 @@ AApplication AApplication::g_oTheApp;
 
 bool AApplication::OnCreate(int argc, char** argv)
 {
+	TApplication::OnCreate(argc, argv);
 	return true;
 }
 
