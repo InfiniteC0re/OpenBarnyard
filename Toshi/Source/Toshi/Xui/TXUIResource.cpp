@@ -398,7 +398,7 @@ namespace Toshi
         {
             return TNULL;
         }
+
         return TNULL;
     }
-
 }

@@ -67,9 +67,12 @@ namespace Toshi
 			va_start(vargs, format);
 
 			char str[1024];
-			T2String8::FormatV(str, sizeof(str), format, &vargs);
+			int size = T2String8::FormatV(str, sizeof(str), format, &vargs);
+			str[size] = '\n';
+			str[size + 1] = '\0';
 			OutputDebugStringA(str);
-			TOSHI_TRACE(str);
+			str[size] = '\0';
+			TOSHI_CORE_TRACE(str);
 		}
 	}
 

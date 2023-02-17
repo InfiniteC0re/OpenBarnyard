@@ -3,6 +3,8 @@
 #include "Platform/Windows/DX11/TRender_DX11.h"
 #include "Toshi/Sound/TSound.h"
 
+using namespace Toshi;
+
 FMOD_RESULT F_CALLBACK pcmreadcallback(FMOD_SOUND* sound, void* data, unsigned int datalen)
 {
     // Read from your buffer here...
@@ -49,7 +51,7 @@ void ADX11MoviePlayer::PlayMovie(const char* fileName, void* unused, uint8_t fla
     if (IsMoviePlaying())
     {
         StopMovieImpl();
-        Toshi::TUtil::MemClear(m_CurrentFileName, MAX_FILE_NAME);
+        TUtil::MemClear(m_CurrentFileName, MAX_FILE_NAME);
     }
 
     if (fileName == TNULL)
@@ -57,9 +59,9 @@ void ADX11MoviePlayer::PlayMovie(const char* fileName, void* unused, uint8_t fla
         return;
     }
 
-    char path[256];
-    Toshi::T2String8::CopySafe(m_CurrentFileName, fileName, MAX_FILE_NAME);
-    Toshi::T2String8::Format(path, "Data\\Movies\\%s.bik.ogv", fileName);
+    auto path = TStringManager::GetTempString8();
+    T2String8::CopySafe(m_CurrentFileName, fileName, MAX_FILE_NAME);
+    T2String8::Format(path, "Data\\Movies\\%s.bik.ogv", fileName);
     m_pFile = fopen(path, "rb");
 
     if (m_pFile == TNULL)
@@ -106,7 +108,7 @@ void ADX11MoviePlayer::PlayMovie(const char* fileName, void* unused, uint8_t fla
 
             if (m_bHasAudioStream)
             {
-                FMOD::System* system = Toshi::TSound::GetSingletonWeak()->GetSystem();
+                FMOD::System* system = TSound::GetSingletonWeak()->GetSystem();
                 FMOD_CREATESOUNDEXINFO soundInfo;
                 memset(&soundInfo, 0, sizeof(FMOD_CREATESOUNDEXINFO));
                 soundInfo.numchannels = audio->channels;
@@ -163,25 +165,30 @@ void ADX11MoviePlayer::StopMovieImpl()
         FMOD::Sound* sound;
         m_pChannel->getCurrentSound(&sound);
         m_pChannel->stop();
-        bool isPlaying;
-        do
+
+        bool isPlaying = true;
+        while (isPlaying)
         {
             m_pChannel->isPlaying(&isPlaying);
-        } while (isPlaying);
+        };
     }
+
     THEORAPLAY_stopDecode(m_TheoraDecoder);
     m_TheoraDecoder = TNULL;
+
     if (m_TheoraVideo != TNULL)
     {
         THEORAPLAY_freeVideo(m_TheoraVideo);
         m_TheoraVideo = TNULL;
     }
+
     if (m_TheoraAudio != TNULL)
     {
         THEORAPLAY_freeAudio(m_TheoraAudio);
         m_TheoraAudio = TNULL;
         m_AudioOffset = 0;
     }
+
     m_bIsPlaying = false;
     m_bIsHidden = true;
 }
@@ -214,7 +221,7 @@ void ADX11MoviePlayer::OnRender(float deltaTime)
     {
         if (!IsMoviePaused())
         {
-            auto pRender = Toshi::TRenderDX11::Interface();
+            auto pRender = TRenderDX11::Interface();
             auto video = m_TheoraVideo;
 
             if (video != TNULL)
@@ -321,7 +328,7 @@ void ADX11MoviePlayer::OnCreate()
 
 void ADX11MoviePlayer::CreateTextures(UINT width, UINT height)
 {
-    auto pRender = Toshi::TRenderDX11::Interface();
+    auto pRender = TRenderDX11::Interface();
     
     for (int i = 0; i < 2; i++)
     {
@@ -361,7 +368,7 @@ static FLOAT s_ScreenMesh[8] = {
 
 void ADX11MoviePlayer::CompileShader()
 {
-    auto pRender = Toshi::TRenderDX11::Interface();
+    auto pRender = TRenderDX11::Interface();
     m_pBuffer = pRender->CreateBuffer(0, sizeof(s_ScreenMesh), s_ScreenMesh, D3D11_USAGE_IMMUTABLE, 0);
 
     {
