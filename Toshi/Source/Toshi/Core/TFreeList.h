@@ -10,8 +10,10 @@ namespace Toshi
 
 		};
 
+		TFreeList(int size, int a_iInitialSize, int a_iGrowSize);
+
 		int GetCapacity() const { return m_iCapacity; }
-		int GetGrowSize() const { return m_iCapacity; }
+		int GetGrowSize() const { return m_iGrowSize; }
 
 
 	private:
