@@ -17,12 +17,14 @@ app.Execute();
 #include <Toshi/Sound/TSound.h>
 #include <Toshi/Render/TRender.h>
 #include <Platform/Windows/TSound_Win.h>
+#include "Toshi/Core/TSystem.h"
 #include TOSHI_MULTIRENDER(TRender)
 
 AApplication AApplication::g_oTheApp;
 
 bool AApplication::OnCreate(int argc, char** argv)
 {
+	Toshi::TSystemManager::CreateCStringPoolExplicit("data\\strpool.dat", 1024, 12000);
 	TApplication::OnCreate(argc, argv);
 	return true;
 }

@@ -42,7 +42,15 @@ namespace Toshi
 	{
 		if (ms_poTCStringPool == TNULL)
 		{
-			ms_poTCStringPool = new TCStringPool();
+			ms_poTCStringPool = new TCStringPool(unk, unk2);
+		}
+		return ms_poTCStringPool;
+	}
+	TCStringPool* TSystemManager::CreateCStringPoolExplicit(const char* a_szFileName, int unk, int unk2)
+	{
+		if (ms_poTCStringPool == TNULL)
+		{
+			ms_poTCStringPool = new TCStringPool(a_szFileName, unk, unk2);
 		}
 		return ms_poTCStringPool;
 	}
