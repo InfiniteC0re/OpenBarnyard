@@ -38,4 +38,12 @@ namespace Toshi
 		TSystemManager::CreateSingleton()->m_Scheduler = new TScheduler();
 		return true;
 	}
+	TCStringPool* TSystemManager::CreateCStringPoolExplicit(int unk, int unk2)
+	{
+		if (ms_poTCStringPool == TNULL)
+		{
+			ms_poTCStringPool = new TCStringPool();
+		}
+		return ms_poTCStringPool;
+	}
 }

@@ -2,6 +2,7 @@
 #include "TEvent.h"
 #include "Toshi/Utils/TSingleton.h"
 #include "Toshi/Core/THPTimer.h"
+#include <Toshi/Strings/TCStringPool.h>
 
 namespace Toshi
 {
@@ -41,6 +42,10 @@ namespace Toshi
 
 	public:
 		static bool Create();
+		static TCStringPool* CreateCStringPoolExplicit(int unk, int unk2);
+
+
+		static inline Toshi::TCStringPool* ms_poTCStringPool = TNULL;
 
 	private:
 		TEmitter<TSystemManager> m_Emitter; // 0x00

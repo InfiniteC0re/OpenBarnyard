@@ -143,6 +143,7 @@ ALocaleManager::ALocaleManager() : T2Locale(LOCALE_LANG_NUMOF, 0x64000, nullptr)
 {
     // 005e1ca0
     m_LocaleBuffer = T2Locale::m_Buffer;
+    setlocale(LC_ALL, "");
     TTODO("de blob: FUN_005e2470");
 }
 
