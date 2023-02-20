@@ -32,7 +32,7 @@ namespace TLib
 				for (SECT::Stack* stack : sect)
 				{
 					Toshi::TTRB::SecInfo sectionInfo = { };
-					sectionInfo.m_Size = stack->GetUsedSize();
+					sectionInfo.m_Size = Toshi::TMath::AlignNumUp(stack->GetUsedSize());
 					ttsfo.Write(sectionInfo);
 				}
 			}

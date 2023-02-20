@@ -22,6 +22,22 @@ namespace TLib
 				m_SymbolNames.reserve(5);
 			}
 
+			bool Is(int index, const char* name)
+			{
+				TASSERT(index >= 0 && index < m_Symbols.size());
+				auto hash = Toshi::TTRB::HashString(name);
+
+				if (m_Symbols[index].NameHash == hash)
+				{
+					if (m_SymbolNames[index] == name)
+					{
+						return true;
+					}
+				}
+
+				return false;
+			}
+
 			int FindIndex(SECT& sect, const char* name)
 			{
 				auto hash = Toshi::TTRB::HashString(name);
@@ -80,6 +96,11 @@ namespace TLib
 			SECT::Stack::Ptr<T> GetByIndex(SECT* sect, int index)
 			{
 				return GetByIndex<T>(*sect, index);
+			}
+
+			size_t GetCount()
+			{
+				return m_Symbols.size();
 			}
 
 			void Add(SECT::Stack* pStack, const char* name, void* ptr)

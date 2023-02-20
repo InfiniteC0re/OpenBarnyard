@@ -362,7 +362,10 @@ namespace TLib
 				size_t ready = 0;
 				size_t count = m_Stacks.size();
 				
-				TOSHI_CORE_TRACE("Compressing progress: 0%");
+				if (compress)
+				{
+					TOSHI_CORE_TRACE("Compressing progress: 0%");
+				}
 
 				for (auto stack : m_Stacks)
 				{
