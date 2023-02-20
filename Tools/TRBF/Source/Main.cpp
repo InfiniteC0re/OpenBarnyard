@@ -12,146 +12,68 @@
 // This file includes the entrypoint so set all the settings before including it
 #include "Toshi.h"
 #include "TRBF/TRBF.h"
+#include <filesystem>
 
-class PProperties
+struct TXUI
 {
-public:
-	class PProperty
-	{
-	public:
-		typedef uint32_t Type;
-		enum Type_ : Type
-		{
-			Type_UInt,
-			Type_Unknown,
-			Type_Float,
-			Type_Bool,
-			Type_PProperty,
-			Type_Unknown2,
-			Type_Array,
-			Type_String,
-			Type_Int,
-		};
-
-		class Array
-		{
-		public:
-			class Item
-			{
-			public:
-				template<class T>
-				T* GetData()
-				{
-					return reinterpret_cast<T*>(Data);
-				}
-
-			private:
-				Type Type;
-				void* Data;
-			};
-
-		public:
-			uint32_t GetSize()
-			{
-				return m_Size;
-			}
-
-			Item* GetItem(size_t index)
-			{
-				TASSERT(index >= 0 && index <= m_Size);
-				return &m_Items[index];
-			}
-
-		private:
-			Item* m_Items;
-			uint32_t m_Size;
-		};
-
-	public:
-		const char* GetName() const
-		{
-			return *m_Name;
-		}
-
-		Type GetType() const
-		{
-			return *m_Type;
-		}
-
-		template<class T>
-		T* GetData()
-		{
-			return reinterpret_cast<T*>(m_Type + 1);
-		}
-
-	private:
-		const char** m_Name;
-		Type* m_Type;
-	};
-
-	struct Main
-	{
-		uint32_t m_Zero;
-		PProperty* m_Properties;
-		uint32_t m_PropertyCount;
-	};
-
-public:
-	PProperties(Main* header)
-	{
-		m_Header = header;
-	}
-
-	uint32_t GetPropertyCount()
-	{
-		return m_Header->m_PropertyCount;
-	}
-
-	PProperty* GetProperty(size_t index)
-	{
-		TASSERT(index >= 0 && index <= m_Header->m_PropertyCount);
-		return &m_Header->m_Properties[index];
-	}
-
-private:
-	Main* m_Header;
+    uint32_t Unk1;
+    char* XURName;
+    char* XURData;
+    uint32_t Unk2;
+    uint32_t Unk3;
+    uint32_t Unk4;
 };
 
 int TMain(int argc, char** argv)
 {
-	TLib::TRBF::TRBF trbf;
-	trbf.ReadFromFile("D:\\Barnyard\\Game\\Data\\AGolfMinigameState.trb");
+    TLib::TRBF::TRBF trbf;
+    trbf.ReadFromFile("C:\\SteamLibrary\\steamapps\\common\\de Blob\\Data\\XUI\\US\\LoadingScreen_Original.trb");
 
-	auto pSect = trbf.GetSECT();
-	auto pSymb = trbf.GetSYMB();
+    auto pSect = trbf.GetSECT();
+    auto pSymb = trbf.GetSYMB();
 
-	PProperties properties(pSymb->Find<PProperties::Main>(pSect, "Main").get());
-	TOSHI_INFO("PProperty count: {0}", properties.GetPropertyCount());
+    auto txuiIndex = pSymb->FindIndex(pSect, "txui");
+    TASSERT(txuiIndex != -1);
 
-	for (size_t i = 0; i < properties.GetPropertyCount(); i++)
-	{
-		auto property = properties.GetProperty(i);
-		
-		TOSHI_INFO("PProperty name: {0}", property->GetName());
+    auto txui = pSymb->GetByIndex<TXUI>(pSect, txuiIndex);
+    auto xuib = pSect->GetStack(txui.stack()->GetIndex() + 1);
 
-		switch (property->GetType())
-		{
-			case PProperties::PProperty::Type_String:
-				TOSHI_INFO("PProperty value: {0}", *property->GetData<char*>());
-				break;
-			case PProperties::PProperty::Type_Array:
-			{
-				auto array = *property->GetData<PProperties::PProperty::Array*>();
-				TOSHI_INFO("PProperty array size: {0}", array->GetSize());
+    auto oldXurName = Toshi::TStringManager::GetTempString8();
+    size_t xurNameLength = Toshi::T2String8::Length(txui->XURName);
 
-				for (size_t k = 0; k < array->GetSize(); k++)
-				{
-					TOSHI_INFO("{0}) {1}", k + 1, array->GetItem(k)->GetData<char>());
-				}
-				break;
-			}
-		}
-	}
+    Toshi::T2String8::Copy(oldXurName, txui->XURName);
 
-	return 0;
+    // Remove the existing txui and xur file
+    pSect->DeleteStack(pSymb, txui.stack());
+    pSect->DeleteStack(pSymb, xuib);
+    
+    // Create stack for txui
+    auto pTxuiStack = pSect->CreateStack();
+    auto newTxui = pTxuiStack->Alloc<TXUI>();
+    pSymb->Add(pTxuiStack, "txui", newTxui.get());
+
+    auto xurName = pTxuiStack->Alloc(&newTxui->XURName, xurNameLength + 1);
+    Toshi::T2String8::Copy(xurName.get(), oldXurName, xurNameLength);
+
+    // Read xur file
+    Toshi::TFile* file = Toshi::TFile::Create("C:\\Users\\InfiniteC0re\\Desktop\\XUI_DeBlob\\Sources\\test.xur", Toshi::TFile::FileMode_Read);
+    int size = file->GetSize();
+
+    char* buffer = new char[size + 1];
+    buffer[size] = '\0';
+
+    file->Read(buffer, size);
+    file->Destroy();
+    
+    // Create stack for xur file
+    auto pXurStack = pSect->CreateStack();
+    auto xurFileData = pXurStack->AllocBytes(size);
+    Toshi::TUtil::MemCopy(xurFileData.get(), buffer, size);
+
+    // Link xur data to txui
+    pTxuiStack->SetCrossPointer(&newTxui->XURData, { xurFileData.stack(), xurFileData.get()});
+
+    trbf.WriteToFile("C:\\SteamLibrary\\steamapps\\common\\de Blob\\Data\\XUI\\US\\LoadingScreen.trb");
+
+    return 0;
 }

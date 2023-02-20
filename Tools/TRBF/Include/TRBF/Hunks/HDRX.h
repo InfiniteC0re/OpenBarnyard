@@ -46,7 +46,7 @@ namespace TLib
 					Toshi::TTRB::SecInfo sectionInfo;
 					ttsfi.Read(&sectionInfo);
 					
-					auto stack = sect.CreateSection();
+					auto stack = sect.CreateStack();
 					stack->SetExpectedSize(sectionInfo.m_Size);
 				}
 			}
