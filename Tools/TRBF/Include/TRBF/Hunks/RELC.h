@@ -20,15 +20,15 @@ namespace TLib
 
 				ttsfo.Write(ptrCount);
 
-				for (size_t i = 0; i < sect.GetSectionCount(); i++)
+				for (size_t i = 0; i < sect.GetStackCount(); i++)
 				{
-					auto section = sect.GetSection(i);
+					auto section = sect.GetStack(i);
 
 					for (auto& ptr : *section)
 					{
 						Toshi::TTRB::RELCEntry entry = { };
 						entry.HDRX1 = (short)i;
-						entry.HDRX2 = (short)i;
+						entry.HDRX2 = ptr.DataStack->GetIndex();
 						entry.Offset = ptr.Offset;
 						ttsfo.Write(entry);
 					}
@@ -44,9 +44,10 @@ namespace TLib
 				for (uint32_t i = 0; i < ptrCount; i++)
 				{
 					ttsfi.Read(&entry);
-					auto stack = sect.GetSection(entry.HDRX1);
+					auto stack = sect.GetStack(entry.HDRX1);
+					auto dataStack = sect.GetStack(entry.HDRX2);
 					uint32_t dataPtr = *(uint32_t*)(&stack->GetBuffer()[entry.Offset]);
-					stack->AddRelocationPtr(entry.Offset, dataPtr);
+					stack->AddRelocationPtr(entry.Offset, dataPtr, dataStack);
 				}
 
 				for (auto stack : sect)

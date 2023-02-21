@@ -80,7 +80,7 @@ namespace TLib
 
 				// HDRX
 				ttsfo.OpenHunk(&mark, "HDRX");
-				m_HDRX.SetSectionCount(m_SECT.GetSectionCount());
+				m_HDRX.SetSectionCount(m_SECT.GetStackCount());
 				m_HDRX.Write(ttsfo, m_SECT);
 				ttsfo.CloseHunk(&mark);
 
