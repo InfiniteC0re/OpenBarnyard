@@ -1,5 +1,6 @@
 #include "ToshiPCH.h"
 #include "TXUIScene.h"
+#include "XURReader.h"
 
 namespace Toshi
 {
@@ -73,23 +74,21 @@ namespace Toshi
 	bool XURXUISceneData::Load(TXUIResource& resource, uint8_t*& a_pData)
 	{
 		XURXUIControlData::Load(resource, a_pData);
-		uint8_t smth = *a_pData++;
-
-		if (smth != 0)
+		
+		if (*a_pData++ != 0)
 		{
-			int flag = 0;
-			if (m_index != 0) TXUI_READ_BYTE(a_pData, flag);
+			XURReader reader(a_pData);
+			if (m_Index != 0) reader.ReadPropsInfo<PropType_NUMOF>();
 
-			TXUI_READ_PROP_WORD(a_pData, flag, DefaultFocus);
-			TXUI_READ_PROP_WORD(a_pData, flag, TransFrom);
-			TXUI_READ_PROP_WORD(a_pData, flag, TransTo);
-			TXUI_READ_PROP_WORD(a_pData, flag, TransBackFrom);
-			TXUI_READ_PROP_WORD(a_pData, flag, TransBackTo);
-			TXUI_READ_PROP_DWORD(a_pData, flag, InterruptTransitions);
-			TXUI_READ_PROP_BYTE(a_pData, flag, IgnorePresses);
+			reader.ReadProperty<XUI_EPT_STRING>(PropType_DefaultFocus, m_DefaultFocus);
+			reader.ReadProperty<XUI_EPT_STRING>(PropType_TransFrom, m_TransFrom);
+			reader.ReadProperty<XUI_EPT_STRING>(PropType_TransTo, m_TransTo);
+			reader.ReadProperty<XUI_EPT_STRING>(PropType_TransBackFrom, m_TransBackFrom);
+			reader.ReadProperty<XUI_EPT_STRING>(PropType_TransBackTo, m_TransBackTo);
+			reader.ReadProperty<XUI_EPT_UNSIGNED>(PropType_InterruptTransitions, m_InterruptTransitions);
+			reader.ReadProperty<XUI_EPT_BOOL>(PropType_IgnorePresses, m_IgnorePresses);
 		}
 
 		return true;
 	}
-
 }

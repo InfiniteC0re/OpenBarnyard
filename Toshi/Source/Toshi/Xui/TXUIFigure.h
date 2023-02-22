@@ -40,7 +40,7 @@ namespace Toshi
 			PropType_FillType,
 			PropType_FillColor,
 			PropType_FillTextureFileName,
-			PropType_Unknown,
+			PropType_Gradient,
 			PropType_FillTranslation,
 			PropType_FillScale,
 			PropType_FillRotation,
@@ -66,15 +66,15 @@ namespace Toshi
 		virtual bool Load(TXUIResource& resource, uint8_t*& a_pData);
 
 	protected:
-		/* 0 */ uint32_t m_FillType;
-		/* 1 */ uint32_t m_FillColor;
-		/* 2 */ uint16_t m_FillTextureFileName;
-		/* 4 */ uint32_t m_FillTranslation;
-		/* 5 */ uint32_t m_FillScale;
-		/* 6 */ float m_FillRotation;
-		/* 7 */ uint32_t m_FillWrapX;
-		/* 8 */ uint32_t m_FillWrapY;
-		/* 9 */ uint32_t m_FillBrushFlags;
+		/* 0 */ XUIEPTUnsigned m_FillType;
+		/* 1 */ XUIEPTColor m_FillColor;
+		/* 2 */ XUIEPTString m_FillTextureFileName;
+		/* 4 */ XUIEPTVector m_FillTranslation;
+		/* 5 */ XUIEPTVector m_FillScale;
+		/* 6 */ XUIEPTFloat m_FillRotation;
+		/* 7 */ XUIEPTUnsigned m_FillWrapX;
+		/* 8 */ XUIEPTUnsigned m_FillWrapY;
+		/* 9 */ XUIEPTUnsigned m_FillBrushFlags;
 	};
 
 	class XURXUIStrokeData : public XURXUIObjectData
@@ -104,8 +104,8 @@ namespace Toshi
 		virtual bool Load(TXUIResource& resource, uint8_t*& a_pData);
 
 	protected:
-		/* 0 */ float m_StrokeWidth;
-		/* 1 */ uint32_t m_StrokeColor;
+		/* 0 */ XUIEPTFloat m_StrokeWidth;
+		/* 1 */ XUIEPTColor m_StrokeColor;
 	};
 
 	class XURXUIGradientData : public XURXUIObjectData
@@ -137,13 +137,10 @@ namespace Toshi
 		virtual bool Load(TXUIResource& resource, uint8_t*& a_pData);
 
 	protected:
-		/* 0 */ bool m_Radial;
-		/* 1 */ uint32_t m_NumStops;
-		/* 2 */ uint32_t m_StopPos;
-		/* 3 */ uint32_t m_StopColor;
-
-		uint32_t* m_Stops;
-		uint32_t* m_Stops2;
+		/* 0 */ XUIEPTBool m_Radial;
+		/* 1 */ XUIEPTUShort32 m_NumStops;
+		/* 2 */ XUIEPTFloat* m_Stops;
+		/* 3 */ XUIEPTColor* m_StopColors;
 	};
 }
 

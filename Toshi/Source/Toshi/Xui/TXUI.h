@@ -37,8 +37,8 @@ namespace Toshi
 		static TTRB::t_MemoryFuncDealloc AssetTRBDeallocator;
 
 		// All globs offsets
-		TTRB* m_trb; // 0x80
-		TTRB* m_trb2; // 0x94
+		TTRB m_trb; // 0x80
+		TTRB m_trb2; // 0x94
 
 		TXUICanvas* m_canvas; // 0x134
 

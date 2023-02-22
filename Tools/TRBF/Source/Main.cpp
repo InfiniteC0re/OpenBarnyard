@@ -85,10 +85,10 @@ private:
 
 int TMain(int argc, char** argv)
 {
-    const char* a_TargetXUR = "LoadingScreen.xur";
-    const char* a_TRBInput = "C:\\SteamLibrary\\steamapps\\common\\de Blob\\Data\\XUI\\US\\LoadingScreen_Original.trb";
-    const char* a_XURInput = "C:\\Users\\InfiniteC0re\\Desktop\\XUI_DeBlob\\Sources\\LoadingScreen_Edited.xur";
-    const char* a_TRBOutput = "C:\\SteamLibrary\\steamapps\\common\\de Blob\\Data\\XUI\\US\\LoadingScreen.trb";
+    const char* a_TargetXUR = "MainMenu.xur";
+    const char* a_TRBInput = "C:\\SteamLibrary\\steamapps\\common\\de Blob\\Data\\XUI\\US\\frontend.trb";
+    const char* a_XURInput = "C:\\Users\\InfiniteC0re\\Desktop\\XUI_DeBlob\\Sources\\MainMenu_Edited.xur";
+    const char* a_TRBOutput = "C:\\SteamLibrary\\steamapps\\common\\de Blob\\Data\\XUI\\US\\frontend.trb";
 
     TLib::TRBF::TRBF trbf;
     trbf.ReadFromFile(a_TRBInput);

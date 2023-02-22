@@ -19,8 +19,8 @@ namespace Toshi
 
 	TXUI::TXUI()
 	{
-		m_trb->SetMemoryFunctions(AssetTRBAllocator, AssetTRBDeallocator, TNULL);
-		m_trb2->SetMemoryFunctions(AssetTRBAllocator, AssetTRBDeallocator, TNULL);
+		m_trb.SetMemoryFunctions(AssetTRBAllocator, AssetTRBDeallocator, TNULL);
+		m_trb2.SetMemoryFunctions(AssetTRBAllocator, AssetTRBDeallocator, TNULL);
 		m_canvas = new (MemoryBlock()) TXUICanvas();
 		m_canvas->SetDimensions(176.0f, 176.0f);
 		//TRender::GetSingleton()->
@@ -28,8 +28,8 @@ namespace Toshi
 
 	void TXUI::SetDefaultFont(const char* a_pData)
 	{
-		m_trb->Load(a_pData);
-		TAssetInit::InitAssets(*m_trb, true, false);
+		m_trb.Load(a_pData);
+		TAssetInit::InitAssets(m_trb, true, false);
 
 	}
 

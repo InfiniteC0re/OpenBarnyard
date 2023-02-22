@@ -1,5 +1,6 @@
 #include "ToshiPCH.h"
 #include "TXUIText.h"
+#include "XURReader.h"
 
 Toshi::XURXUITextData::XURXUITextData() : Toshi::XURXUIElementData()
 {
@@ -59,7 +60,7 @@ bool Toshi::XURXUITextData::TranslateTimelineProp(const char* name, uint32_t& pa
 
 bool Toshi::XURXUITextData::ValidateTimelineProp(uint32_t a_uiObjectIndex, uint32_t param_2)
 {
-	if (a_uiObjectIndex == 0) return param_2 < 7;
+	if (a_uiObjectIndex == 0) return param_2 < PropType_NUMOF;
 	TASSERT(a_uiObjectIndex > 0);
 	return XURXUIElementData::ValidateTimelineProp(a_uiObjectIndex - 1, param_2);
 }
@@ -67,20 +68,20 @@ bool Toshi::XURXUITextData::ValidateTimelineProp(uint32_t a_uiObjectIndex, uint3
 bool Toshi::XURXUITextData::Load(TXUIResource& resource, uint8_t*& a_pData)
 {
     XURXUIElementData::Load(resource, a_pData);
-	uint8_t smth = *a_pData++;
-
-	if (smth != 0)
+	
+	if (*a_pData++ != 0)
 	{
-		int flag = 0;
-		if (m_index != 0) TXUI_READ_BYTE(a_pData, flag);
+		XURReader reader(a_pData);
+		if (m_Index != 0) reader.ReadPropsInfo<PropType_NUMOF>();
 
-		TXUI_READ_PROP_WORD(a_pData, flag, Text);
-		TXUI_READ_PROP_DWORD(a_pData, flag, TextColor);
-		TXUI_READ_PROP_DWORD(a_pData, flag, DropShadowColor);
-		TXUI_READ_PROP_FLOAT(a_pData, flag, PointSize);
-		TXUI_READ_PROP_WORD(a_pData, flag, Font);
-		TXUI_READ_PROP_DWORD(a_pData, flag, TextStyle);
-		TXUI_READ_PROP_DWORD(a_pData, flag, LineSpacingAdjust);
+		reader.ReadProperty<XUI_EPT_STRING>(PropType_Text, m_Text);
+		reader.ReadProperty<XUI_EPT_COLOR>(PropType_TextColor, m_TextColor);
+		reader.ReadProperty<XUI_EPT_COLOR>(PropType_DropShadowColor, m_DropShadowColor);
+		reader.ReadProperty<XUI_EPT_FLOAT>(PropType_PointSize, m_PointSize);
+		reader.ReadProperty<XUI_EPT_STRING>(PropType_Font, m_Font);
+		reader.ReadProperty<XUI_EPT_UNSIGNED>(PropType_TextStyle, m_TextStyle);
+		reader.ReadProperty<XUI_EPT_INTEGER>(PropType_LineSpacingAdjust, m_LineSpacingAdjust);
 	}
+
     return true;
 }

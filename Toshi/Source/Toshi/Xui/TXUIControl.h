@@ -26,6 +26,7 @@ namespace Toshi
 			PropType_Text,
 			PropType_Unknown,
 			PropType_ImagePath,
+			PropType_NUMOF
 		};
 
 	public:
@@ -43,16 +44,16 @@ namespace Toshi
 		virtual bool Load(TXUIResource& resource, uint8_t*& a_pData);
 
 	protected:
-		/* 0 */ uint16_t m_ClassOverride;
-		/* 1 */ uint16_t m_Visual;
-		/* 2 */ bool m_Enabled;
-		/* 3 */ bool m_UnfocussedInput;
-		/* 4 */ uint16_t m_NavLeft;
-		/* 5 */ uint16_t m_NavRight;
-		/* 6 */ uint16_t m_NavUp;
-		/* 7 */ uint16_t m_NavDown;
-		/* 8 */ uint16_t m_Text;
-		/* 10 */ uint16_t m_ImagePath;
+		/* 0 */ XUIEPTString m_ClassOverride;
+		/* 1 */ XUIEPTString m_Visual;
+		/* 2 */ XUIEPTBool m_Enabled;
+		/* 3 */ XUIEPTBool m_UnfocussedInput;
+		/* 4 */ XUIEPTString m_NavLeft;
+		/* 5 */ XUIEPTString m_NavRight;
+		/* 6 */ XUIEPTString m_NavUp;
+		/* 7 */ XUIEPTString m_NavDown;
+		/* 8 */ XUIEPTString m_Text;
+		/* 10 */ XUIEPTString m_ImagePath;
 	};
 
 }

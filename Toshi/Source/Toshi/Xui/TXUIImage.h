@@ -37,8 +37,8 @@ namespace Toshi
 		virtual bool Load(TXUIResource& resource, uint8_t*& a_pData);
 
 	private:
-		/* 0 */ uint32_t m_SizeMode;
-		/* 1 */ uint16_t m_ImagePath;
-		/* 2 */ uint32_t m_BrushFlags;
+		/* 0 */ XUIEPTUnsigned m_SizeMode;
+		/* 1 */ XUIEPTString m_ImagePath;
+		/* 2 */ XUIEPTUnsigned m_BrushFlags;
 	};
 }

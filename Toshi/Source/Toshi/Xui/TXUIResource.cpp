@@ -8,7 +8,7 @@
 #include "TXUIBackButton.h"
 #include "TXUIText.h"
 #include "TXUIFigure.h"
-#include "TXUIReader.h"
+#include "XURReader.h"
 
 namespace Toshi
 {
@@ -24,34 +24,32 @@ namespace Toshi
         return a_iIndex == -1 ? (TVector4*)&TVector4::VEC_ZERO : &m_pVect[a_iIndex];
     }
 
-    bool TXUIResource::ReadHeader(unsigned char* buffer)
+    bool TXUIResource::ReadHeader(uint8_t* buffer)
     {
-        m_oHeader.m_uiFileID = PARSEDWORD(buffer);
+        XURReader reader(buffer);
 
+        m_oHeader.m_uiFileID = reader.ReadUInt32LE();
         TASSERT(m_oHeader.m_uiFileID == IDXUR, "Not a .xur file!");
 
-        m_oHeader.m_uiUnk = PARSEDWORD_BIG(buffer + 0x4);
-        m_oHeader.m_uiUnk2 = PARSEDWORD_BIG(buffer + 0xA);
-        m_oHeader.m_uiSize = PARSEDWORD_BIG(buffer + 0xE);
-        m_oHeader.m_usUnk4 = PARSEDWORD_BIG(buffer + 0x8);
-        m_oHeader.m_usNumSections = PARSEWORD_BIG(buffer + 0x12);
+        m_oHeader.m_uiVersion = reader.ReadUInt32();
+        m_oHeader.m_uiFlags = reader.ReadUInt32();
+        m_oHeader.m_uiXuiVersion = reader.ReadUInt16();
+        m_oHeader.m_usBinSize = reader.ReadUInt32();
+        m_oHeader.m_usNumSections = reader.ReadUInt16();
 
         TASSERT(m_oHeader.m_usNumSections > 0, "There must be one or more Sections");
-
         m_oHeader.m_apSections = new (TXUI::MemoryBlock()) Section[m_oHeader.m_usNumSections];
 
-        uint32_t sectionID = PARSEDWORD(buffer + 0x14);
-
-        buffer += 0x14;
+        uint32_t sectionID = PARSEDWORD(buffer);
 
         if (sectionID != IDXURSTRING && sectionID != IDXURVEC && sectionID != IDXURQUAT && sectionID != IDXURCUST)
         {
-            buffer += 0x3C;
+            buffer += 0x28;
         }
 
         for (size_t i = 0; i < m_oHeader.m_usNumSections; i++)
         {
-            m_oHeader.m_apSections[i].m_uiSectionID = PARSEDWORD(buffer);
+            m_oHeader.m_apSections[i].m_uiSectionID = reader.ReadUInt32LE();
 
             TASSERT(
                 m_oHeader.m_apSections[i].m_uiSectionID == IDXURSTRING ||
@@ -62,10 +60,8 @@ namespace Toshi
                 "Invalid Section ID"
             );
 
-            m_oHeader.m_apSections[i].m_uiOffset = PARSEDWORD_BIG(buffer + 4);
-            m_oHeader.m_apSections[i].m_uiSize = PARSEDWORD_BIG(buffer + 8);
-
-            buffer += sizeof(Section);
+            m_oHeader.m_apSections[i].m_uiOffset = reader.ReadUInt32();
+            m_oHeader.m_apSections[i].m_uiSize = reader.ReadUInt32();
         }
 
         return true;
@@ -91,7 +87,7 @@ namespace Toshi
             if (file != TNULL)
             {
                 int size = file->GetSize();
-                unsigned char* buffer = (unsigned char*)TMalloc(size);
+                uint8_t* buffer = new uint8_t[size];
                 file->Read(buffer, size);
                 file->Destroy();
                 bool bRes = ReadHeader(buffer);
@@ -107,7 +103,7 @@ namespace Toshi
         }
     }
 
-    bool TXUIResource::Load(unsigned char* buffer)
+    bool TXUIResource::Load(uint8_t* buffer)
     {
         Destroy();
         ReadHeader(buffer);
@@ -116,102 +112,99 @@ namespace Toshi
 
         for (size_t i = 0; i < m_oHeader.m_usNumSections; i++)
         {
-            unsigned char* currentSectionBuffer = buffer + m_oHeader.m_apSections[i].m_uiOffset;
+            auto& section = m_oHeader.m_apSections[i];
+            uint8_t* currentSectionBuffer = buffer + section.m_uiOffset;
 
-            if (m_oHeader.m_apSections[i].m_uiSectionID == IDXURQUAT)
+            if (section.m_uiSectionID == IDXURQUAT)
             {
-                totalSize += (m_oHeader.m_apSections[i].m_uiSize / sizeof(TQuaternion)) * 4 + 4;
+                totalSize += (section.m_uiSize / sizeof(TQuaternion)) * 4 + 4;
             }
-            else if (m_oHeader.m_apSections[i].m_uiSectionID == IDXURCUST)
+            else if (section.m_uiSectionID == IDXURCUST)
             {
-                ReadCustSection(currentSectionBuffer, m_oHeader.m_apSections[i].m_uiSize);
+                ReadCustSection(currentSectionBuffer, section.m_uiSize);
             }
-            else if (m_oHeader.m_apSections[i].m_uiSectionID == IDXURDATA)
+            else if (section.m_uiSectionID == IDXURDATA)
             {
-                ReadDataSection(currentSectionBuffer, m_oHeader.m_apSections[i].m_uiSize);
+                ReadDataSection(currentSectionBuffer, section.m_uiSize);
             }
-            else if (m_oHeader.m_apSections[i].m_uiSectionID == IDXURSTRING)
+            else if (section.m_uiSectionID == IDXURSTRING)
             {
-                ReadStringSection((wchar_t*)currentSectionBuffer, m_oHeader.m_apSections[i].m_uiSize);
-                totalSize += GetStringTableSize(currentSectionBuffer, m_oHeader.m_apSections[i].m_uiSize);
+                ReadStringSection(currentSectionBuffer, section.m_uiSize);
+                totalSize += GetStringTableSize(currentSectionBuffer, section.m_uiSize);
             }
-            else if (m_oHeader.m_apSections[i].m_uiSectionID == IDXURVEC)
+            else if (section.m_uiSectionID == IDXURVEC)
             {
-                totalSize += (m_oHeader.m_apSections[i].m_uiSize / sizeof(TVector3)) * 8 + 0xC;
+                totalSize += (section.m_uiSize / sizeof(TVector3)) * 8 + 0xC;
             }
         }
 
         return true;
     }
 
-    int TXUIResource::ReadDataSection(unsigned char* buffer, uint32_t size)
+    int TXUIResource::ReadDataSection(uint8_t* buffer, uint32_t size)
     {
-        TXUIReader reader(buffer);
-        uint16_t uiType = reader.ReadUInt16();
+        XURReader reader(buffer);
 
-        TASSERT(0 == TStringManager::String16Compare(GetString(uiType), _TS16("XuiCanvas")), "First Element is not XuiCanvas!");
-
-        m_root = CreateObjectData(*this, uiType);
-
+        uint16_t rootNameId = reader.ReadUInt16();
         uint8_t opcode = reader.ReadUInt8();
+
+        TASSERT(0 == TStringManager::String16Compare(GetString(rootNameId), _TS16("XuiCanvas")), "First Element is not XuiCanvas!");
+        m_root = CreateObjectData(*this, rootNameId);
         m_root->Load(*this, buffer);
 
         if ((opcode & 2) != 0)
         {
             m_root->LoadChildren(*this, buffer);
         }
+
         if ((opcode & 4) != 0 && m_root->LoadNamedFrames(*this, buffer) && (opcode & 2) != 0)
         {
             m_root->LoadTimelines(*this, buffer);
         }
+
         return true;
     }
 
-    bool TXUIResource::ReadStringSection(wchar_t* pPtr, uint32_t size)
+    bool TXUIResource::ReadStringSection(uint8_t* buffer, uint32_t size)
     {
         TASSERT(TNULL == m_asStringTable, "StringTable must not be initialized");
+        XURReader reader(buffer);
 
-        wchar_t* pStart = pPtr;
-        wchar_t* pEnd = pPtr + (size / 2);
+        uint8_t* pStart = buffer;
+        uint8_t* pEnd = buffer + size;
         m_uiStringTableCount = 1;
 
-        while (pStart < pEnd)
+        while (reader.GetPos() < pEnd)
         {
-            wchar_t stringLength = PARSEWORD_BIG((uint8_t*)pStart);
+            uint16_t stringLength = reader.ReadUInt16();
+            reader.SeekFromCur(stringLength);
             m_uiStringTableCount++;
-            pStart += stringLength + 1;
         }
 
+        reader.SetPos(pStart);
+
         m_asStringTable = new (TXUI::MemoryBlock()) wchar_t* [m_uiStringTableCount];
-
         m_asStringTable[0] = new (TXUI::MemoryBlock()) wchar_t[1];
-
         m_asStringTable[0][0] = L'\0';
 
         for (size_t i = 1; i < m_uiStringTableCount; i++)
         {
-            TASSERT(pPtr < pEnd, "Pointer overflow");
+            TASSERT(buffer < pEnd, "Pointer overflow");
 
-            uint16_t stringLength = PARSEWORD_BIG((uint8_t*)pPtr);
-            uint16_t size = stringLength * sizeof(wchar_t) + sizeof(wchar_t);
-
-            wchar_t* pPtr2 = pPtr;
-            pPtr2++;
-
-            m_asStringTable[i] = new (TXUI::MemoryBlock()) wchar_t[size];
+            uint16_t stringLength = reader.ReadUInt16();
+            m_asStringTable[i] = new (TXUI::MemoryBlock()) wchar_t[stringLength + 1];
+            m_asStringTable[i][stringLength] = L'\0';
 
             for (size_t j = 0; j < stringLength; j++)
             {
-                m_asStringTable[i][j] = PARSEWORD_BIG((uint8_t*)pPtr2++);
+                m_asStringTable[i][j] = static_cast<wchar_t>(reader.ReadUInt16());
             }
-
-            pPtr += stringLength + 1;
         }
 
         return true;
     }
 
-    int TXUIResource::ReadCustSection(unsigned char* buffer, uint32_t size)
+    int TXUIResource::ReadCustSection(uint8_t* buffer, uint32_t size)
     {
         m_pCust = static_cast<uint8_t*>(TMemoryHeap::Malloc(TXUI::MemoryBlock(), size));
         TUtil::MemCopy(m_pCust, buffer, size);
@@ -219,7 +212,7 @@ namespace Toshi
         return 1;
     }
 
-    int TXUIResource::GetStringTableSize(unsigned char* pPtr, uint32_t size)
+    int TXUIResource::GetStringTableSize(uint8_t* pPtr, uint32_t size)
     {
         TIMPLEMENT_D("TXUIResource::GetStringTableSize");
         return 0;
