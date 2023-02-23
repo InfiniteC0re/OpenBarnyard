@@ -41,13 +41,13 @@ namespace Toshi
 		virtual bool Load(TXUIResource& resource, uint8_t*& a_pData);
 
 	private:
-		/* 0 */ uint16_t m_DefaultFocus;
-		/* 1 */ uint16_t m_TransFrom;
-		/* 2 */ uint16_t m_TransTo;
-		/* 3 */ uint16_t m_TransBackFrom;
-		/* 4 */ uint16_t m_TransBackTo;
-		/* 5 */ uint32_t m_InterruptTransitions;
-		/* 6 */ bool m_IgnorePresses;
+		/* 0 */ XUIEPTString m_DefaultFocus;
+		/* 1 */ XUIEPTString m_TransFrom;
+		/* 2 */ XUIEPTString m_TransTo;
+		/* 3 */ XUIEPTString m_TransBackFrom;
+		/* 4 */ XUIEPTString m_TransBackTo;
+		/* 5 */ XUIEPTUnsigned m_InterruptTransitions;
+		/* 6 */ XUIEPTBool m_IgnorePresses;
 	};
 }
 

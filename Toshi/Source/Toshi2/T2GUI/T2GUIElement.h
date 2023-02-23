@@ -17,6 +17,8 @@ namespace Toshi
 		static constexpr float FLOAT_QUALITY = 6;
 		static constexpr float FLOAT_SCALE = 1 / FLOAT_QUALITY;
 
+		using Float = uint16_t;
+
 		using t_PostRender = void(*)();
 
 		enum class Pivot : uint8_t
@@ -120,14 +122,14 @@ namespace Toshi
 			m_Pivot = pivot;
 		}
 
-		static float UnpackFloat(unsigned short value)
+		static float UnpackFloat(Float value)
 		{
 			return value * FLOAT_SCALE;
 		}
 
-		static unsigned short PackFloat(float value)
+		static Float PackFloat(float value)
 		{
-			return static_cast<unsigned short>(value * FLOAT_QUALITY);
+			return static_cast<Float>(value * FLOAT_QUALITY);
 		}
 
 	protected:
@@ -137,8 +139,8 @@ namespace Toshi
 		T2GUIElement* m_pParent;
 		T2GUITransform m_Transform;
 		T2DList<T2GUIElement> m_Children;
-		unsigned short m_Width;
-		unsigned short m_Height;
+		Float m_Width;
+		Float m_Height;
 		uint32_t m_Color;
 		t_PostRender m_cbPostRender;
 		FLAGS m_Flags1;                       // 0x3B

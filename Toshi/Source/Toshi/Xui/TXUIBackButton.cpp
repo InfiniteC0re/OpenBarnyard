@@ -2,38 +2,44 @@
 #include "TXUIButton.h"
 #include "TXUIBackButton.h"
 
-bool Toshi::XURXUIBackButtonData::IsColourPropType(uint32_t a_uiObjectIndex, uint32_t propType)
+namespace Toshi
 {
-	if (a_uiObjectIndex != 0) return XURXUIButtonData::IsColourPropType(a_uiObjectIndex - 1, propType);
-	return false;
-}
+	bool XURXUIBackButtonData::IsColourPropType(uint32_t a_uiObjectIndex, uint32_t propType)
+	{
+		if (a_uiObjectIndex != 0) return XURXUIButtonData::IsColourPropType(a_uiObjectIndex - 1, propType);
+		return false;
+	}
 
-bool Toshi::XURXUIBackButtonData::IsFloatPropType(uint32_t a_uiObjectIndex, uint32_t propType)
-{
-	if (a_uiObjectIndex != 0) return XURXUIButtonData::IsFloatPropType(a_uiObjectIndex - 1, propType);
-	return false;
-}
+	bool XURXUIBackButtonData::IsFloatPropType(uint32_t a_uiObjectIndex, uint32_t propType)
+	{
+		if (a_uiObjectIndex != 0) return XURXUIButtonData::IsFloatPropType(a_uiObjectIndex - 1, propType);
+		return false;
+	}
 
-uint32_t Toshi::XURXUIBackButtonData::GetTimelinePropSize(uint32_t a_uiObjectIndex, uint32_t propType)
-{
-	if (a_uiObjectIndex != 0) return XURXUIButtonData::GetTimelinePropSize(a_uiObjectIndex - 1, propType);
-	return 4;
-}
+	uint32_t XURXUIBackButtonData::GetTimelinePropSize(uint32_t a_uiObjectIndex, uint32_t propType)
+	{
+		if (a_uiObjectIndex != 0) return XURXUIButtonData::GetTimelinePropSize(a_uiObjectIndex - 1, propType);
+		return 4;
+	}
 
-bool Toshi::XURXUIBackButtonData::TranslateTimelineProp(const char* name, uint32_t& param_2, PropType& propType)
-{
-	name++;
-	return XURXUIButtonData::TranslateTimelineProp(name, param_2, propType);
-}
+	bool XURXUIBackButtonData::TranslateTimelineProp(const char* name, uint32_t& param_2, PropType& propType)
+	{
+		name++;
+		return XURXUIButtonData::TranslateTimelineProp(name, param_2, propType);
+	}
 
-bool Toshi::XURXUIBackButtonData::ValidateTimelineProp(uint32_t a_uiObjectIndex, uint32_t param_2)
-{
-	if (a_uiObjectIndex != 0) return XURXUIButtonData::ValidateTimelineProp(a_uiObjectIndex - 1, param_2);
-	return false;
-}
+	bool XURXUIBackButtonData::ValidateTimelineProp(uint32_t a_uiObjectIndex, uint32_t param_2)
+	{
+		if (a_uiObjectIndex != 0) return XURXUIButtonData::ValidateTimelineProp(a_uiObjectIndex - 1, param_2);
+		return false;
+	}
 
-bool Toshi::XURXUIBackButtonData::Load(TXUIResource& resource, uint8_t*& a_pData)
-{
-	a_pData++;
-	return XURXUIButtonData::Load(resource, a_pData);
+	bool XURXUIBackButtonData::Load(TXUIResource& resource, uint8_t*& a_pData)
+	{
+		auto res = XURXUIButtonData::Load(resource, a_pData);
+		a_pData++;
+
+		return res;
+	}
+
 }

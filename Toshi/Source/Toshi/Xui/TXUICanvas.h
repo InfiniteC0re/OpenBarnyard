@@ -22,5 +22,3 @@ namespace Toshi
 		virtual bool Load(TXUIResource& resource, uint8_t*& a_pData);
 	};
 }
-
-

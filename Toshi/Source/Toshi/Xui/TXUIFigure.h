@@ -1,35 +1,9 @@
 #pragma once
-
 #include "TXUIResource.h"
 #include "TXUIElement.h"
 
-
 namespace Toshi
 {
-	class TXUIFigure
-	{
-	};
-
-	class XURXUIFigureData : public XURXUIElementData
-	{
-	public:
-		static constexpr const char* sm_sTypeInfo = "XURXUIFigureData";
-
-	public:
-		virtual const char* GetTypeInfo() const { return sm_sTypeInfo; }
-
-		virtual bool IsColourPropType(uint32_t propType);
-
-		virtual bool IsFloatPropType(uint32_t propType);
-
-		virtual uint32_t GetTimelinePropSize(uint32_t propType);
-
-		virtual bool TranslateTimelineProp(const char* name, uint32_t& param_2, PropType& propType);
-		virtual bool ValidateTimelineProp(uint32_t param_2);
-
-		virtual bool Load(TXUIResource& resource, uint8_t*& a_pData);
-	};
-
 	class XURXUIFillData : public XURXUIObjectData
 	{
 	public:
@@ -40,7 +14,7 @@ namespace Toshi
 			PropType_FillType,
 			PropType_FillColor,
 			PropType_FillTextureFileName,
-			PropType_Unknown,
+			PropType_Gradient,
 			PropType_FillTranslation,
 			PropType_FillScale,
 			PropType_FillRotation,
@@ -66,15 +40,15 @@ namespace Toshi
 		virtual bool Load(TXUIResource& resource, uint8_t*& a_pData);
 
 	protected:
-		/* 0 */ uint32_t m_FillType;
-		/* 1 */ uint32_t m_FillColor;
-		/* 2 */ uint16_t m_FillTextureFileName;
-		/* 4 */ uint32_t m_FillTranslation;
-		/* 5 */ uint32_t m_FillScale;
-		/* 6 */ float m_FillRotation;
-		/* 7 */ uint32_t m_FillWrapX;
-		/* 8 */ uint32_t m_FillWrapY;
-		/* 9 */ uint32_t m_FillBrushFlags;
+		/* 0 */ XUIEPTUnsigned m_FillType;
+		/* 1 */ XUIEPTColor m_FillColor;
+		/* 2 */ XUIEPTString m_FillTextureFileName;
+		/* 4 */ XUIEPTVector m_FillTranslation;
+		/* 5 */ XUIEPTVector m_FillScale;
+		/* 6 */ XUIEPTFloat m_FillRotation;
+		/* 7 */ XUIEPTUnsigned m_FillWrapX;
+		/* 8 */ XUIEPTUnsigned m_FillWrapY;
+		/* 9 */ XUIEPTUnsigned m_FillBrushFlags;
 	};
 
 	class XURXUIStrokeData : public XURXUIObjectData
@@ -104,8 +78,8 @@ namespace Toshi
 		virtual bool Load(TXUIResource& resource, uint8_t*& a_pData);
 
 	protected:
-		/* 0 */ float m_StrokeWidth;
-		/* 1 */ uint32_t m_StrokeColor;
+		/* 0 */ XUIEPTFloat m_StrokeWidth;
+		/* 1 */ XUIEPTColor m_StrokeColor;
 	};
 
 	class XURXUIGradientData : public XURXUIObjectData
@@ -137,13 +111,49 @@ namespace Toshi
 		virtual bool Load(TXUIResource& resource, uint8_t*& a_pData);
 
 	protected:
-		/* 0 */ bool m_Radial;
-		/* 1 */ uint32_t m_NumStops;
-		/* 2 */ uint32_t m_StopPos;
-		/* 3 */ uint32_t m_StopColor;
+		/* 0 */ XUIEPTBool m_Radial;
+		/* 1 */ XUIEPTUShort32 m_NumStops;
+		/* 2 */ XUIEPTFloat* m_Stops;
+		/* 3 */ XUIEPTColor* m_StopColors;
+	};
 
-		uint32_t* m_Stops;
-		uint32_t* m_Stops2;
+	class XURXUIFigureData : public XURXUIElementData
+	{
+	public:
+		static constexpr const char* sm_sTypeInfo = "XURXUIFigureData";
+
+		enum PropType_ : PropType
+		{
+			PropType_Stroke,
+			PropType_Fill,
+			PropType_Closed,
+			PropType_Points,
+			PropType_NUMOF,
+		};
+
+	public:
+		virtual const char* GetTypeInfo() const { return sm_sTypeInfo; }
+
+		virtual bool IsColourPropType(uint32_t propType);
+
+		virtual bool IsFloatPropType(uint32_t propType);
+
+		virtual uint32_t GetTimelinePropSize(uint32_t propType);
+
+		virtual bool TranslateTimelineProp(const char* name, uint32_t& param_2, PropType& propType);
+		virtual bool ValidateTimelineProp(uint32_t param_2);
+
+		virtual bool Load(TXUIResource& resource, uint8_t*& a_pData);
+
+	private:
+		XURXUIStrokeData m_Stroke;
+		XURXUIFillData m_Fill;
+		XUIEPTBool m_Closed;
+		void* m_Points;
+	};
+
+	class TXUIFigure
+	{
+		
 	};
 }
-

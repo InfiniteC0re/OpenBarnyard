@@ -44,13 +44,13 @@ namespace Toshi
 		virtual bool Load(TXUIResource& resource, uint8_t*& a_pData);
 
 	private:
-		/* 0 */ uint16_t m_Text;
-		/* 1 */ uint32_t m_TextColor;
-		/* 2 */ uint32_t m_DropShadowColor;
-		/* 3 */ uint32_t m_PointSize;
-		/* 4 */ uint16_t m_Font;
-		/* 5 */ uint32_t m_TextStyle;
-		/* 6 */ uint32_t m_LineSpacingAdjust;
+		/* 0 */ XUIEPTString m_Text;
+		/* 1 */ XUIEPTColor m_TextColor;
+		/* 2 */ XUIEPTColor m_DropShadowColor;
+		/* 3 */ XUIEPTFloat m_PointSize;
+		/* 4 */ XUIEPTString m_Font;
+		/* 5 */ XUIEPTUnsigned m_TextStyle;
+		/* 6 */ XUIEPTInteger m_LineSpacingAdjust;
 	};
 }
 

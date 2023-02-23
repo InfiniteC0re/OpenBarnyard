@@ -1,5 +1,6 @@
 #include "ToshiPCH.h"
 #include "TXUIFigure.h"
+#include "XURReader.h"
 
 namespace Toshi
 {
@@ -40,61 +41,42 @@ namespace Toshi
 
 	bool XURXUIFillData::Load(TXUIResource& resource, uint8_t*& a_pData)
 	{
-		XURXUIObjectData::Load(resource, a_pData);
-		uint8_t smth = *a_pData++;
-
 		// TODO:!!!!! NOT FINISHED !!!!!!
 
-		if (smth != 0)
+		XURXUIObjectData::Load(resource, a_pData);
+		
+		if (*a_pData++ != 0)
 		{
-			int flag = 0;
-			if (m_index != 0) TXUI_READ_WORD(a_pData, flag);
+			XURReader reader(a_pData);
+			if (m_Index != 0) reader.ReadPropsInfo<PropType_NUMOF>();
 
-			if (TXUI_CHECK_READFLAG(flag, PropType_FillType))
-			{
-				TASSERT(PARSEDWORD_BIG(a_pData) < (1 << 16));
-				m_FillType = PARSEWORD_BIG(a_pData + 2);
-				a_pData += 4;
-			}
-
-			TXUI_READ_PROP_DWORD(a_pData, flag, FillColor);
-			TXUI_READ_PROP_WORD(a_pData, flag, FillTextureFileName);
-
-			if (TXUI_CHECK_READFLAG(flag, PropType_Unknown))
+			reader.ReadProperty<XUI_EPT_USHORT32>(PropType_FillType, m_FillType);
+			reader.ReadProperty<XUI_EPT_COLOR>(PropType_FillColor, m_FillColor);
+			reader.ReadProperty<XUI_EPT_STRING>(PropType_FillTextureFileName, m_FillTextureFileName);
+			
+			if (reader.ShouldReadThisProp(PropType_Gradient))
 			{
 				TTODO("XURXUIGradientData");
-				// TODO XURXUIGradientData
 			}
 
-			if (TXUI_CHECK_READFLAG(flag, PropType_FillTranslation))
-			{
-				TASSERT(PARSEDWORD_BIG(a_pData) < (1 << 15)); // 15 is probably a typo they did?
-				m_FillTranslation = PARSEDWORD_BIG(a_pData + 2);
-				a_pData += 4;
-			}
+			reader.ReadProperty<XUI_EPT_VECTOR>(PropType_FillTranslation, m_FillTranslation);
+			reader.ReadProperty<XUI_EPT_VECTOR>(PropType_FillScale, m_FillScale);
+			reader.ReadProperty<XUI_EPT_FLOAT>(PropType_FillRotation, m_FillRotation);
+			reader.ReadProperty<XUI_EPT_UNSIGNED>(PropType_FillWrapX, m_FillWrapX);
+			reader.ReadProperty<XUI_EPT_UNSIGNED>(PropType_FillWrapY, m_FillWrapY);
 
-			if (TXUI_CHECK_READFLAG(flag, PropType_FillScale))
-			{
-				TASSERT(PARSEDWORD_BIG(a_pData) < (1 << 15)); // 15 is probably a typo they did?
-				m_FillScale = PARSEDWORD_BIG(a_pData + 2);
-				a_pData += 4;
-			}
-
-			TXUI_READ_PROP_FLOAT(a_pData, flag, FillRotation);
-			TXUI_READ_PROP_DWORD(a_pData, flag, FillWrapX);
-			TXUI_READ_PROP_DWORD(a_pData, flag, FillWrapY);
-
-			if (TXUI_CHECK_READFLAG(flag, PropType_FillBrushFlags))
+			if (reader.ShouldReadThisProp(PropType_FillBrushFlags))
 			{
 				// there's nothing here in globs and de blob
 			}
 
-			if (TXUI_CHECK_READFLAG(flag, PropType_Unknown2))
+			if (reader.ShouldReadThisProp(PropType_Unknown2))
 			{
 				// there's nothing here in globs and de blob
 				// m_FillRotation = *a_pData++;
 			}
 		}
+
 		return true;
 	}
 
@@ -132,16 +114,15 @@ namespace Toshi
 	{
 		XURXUIObjectData::Load(resource, a_pData);
 
-		uint8_t smth = *a_pData++;
-
-		if (smth != 0)
+		if (*a_pData++ != 0)
 		{
-			int flag = 0;
-			if (m_index != 0) TXUI_READ_BYTE(a_pData, flag);
+			XURReader reader(a_pData);
+			if (m_Index != 0) reader.ReadPropsInfo<PropType_NUMOF>();
 
-			TXUI_READ_PROP_FLOAT(a_pData, flag, StrokeWidth);
-			TXUI_READ_PROP_DWORD(a_pData, flag, StrokeColor);
+			reader.ReadProperty<XUI_EPT_FLOAT>(PropType_StrokeWidth, m_StrokeWidth);
+			reader.ReadProperty<XUI_EPT_COLOR>(PropType_StrokeColor, m_StrokeColor);
 		}
+
 		return true;
 	}
 
@@ -181,46 +162,37 @@ namespace Toshi
 	{
 		XURXUIObjectData::Load(resource, a_pData);
 
-		uint8_t smth = *a_pData++;
-
-		if (smth != 0)
+		if (*a_pData++ != 0)
 		{
-			int flag = 0;
-			if (m_index != 0) TXUI_READ_BYTE(a_pData, flag);
+			XURReader reader(a_pData);
+			if (m_Index != 0) reader.ReadPropsInfo<PropType_NUMOF>();
 
-			TXUI_READ_PROP_BYTE_MANUAL(a_pData, flag, PropType_FillGradientRadial, m_Radial);
-			
-			if (TXUI_CHECK_READFLAG(flag, PropType_FillGradientNumStops))
+			reader.ReadProperty<XUI_EPT_BOOL>(PropType_FillGradientRadial, m_Radial);
+			reader.ReadProperty<XUI_EPT_USHORT32>(PropType_FillGradientNumStops, m_NumStops);
+
+			if (reader.ShouldReadThisProp(PropType_FillGradientStopPos))
 			{
-				TASSERT(PARSEDWORD_BIG(a_pData) < (1 << 16));
-				m_NumStops = PARSEWORD_BIG(a_pData + 2);
-				a_pData += 4;
-			}
+				XUIEPTUInt8 num = reader.ReadEPTUInt8();
+				m_Stops = new XUIEPTFloat[num];
 
-			if (TXUI_CHECK_READFLAG(flag, PropType_FillGradientStopPos))
-			{
-				uint32_t count = 0;
-				TXUI_READ_BYTE(a_pData, count);
-				m_Stops = new uint32_t[count];
-
-				for (size_t i = 0; i < count; i++)
+				for (size_t i = 0; i < num; i++)
 				{
-					TXUI_READ_DWORD(a_pData, m_Stops[i]);
+					m_Stops[i] = reader.ReadEPTFloat();
 				}
-
 			}
-			if (TXUI_CHECK_READFLAG(flag, PropType_FillGradientStopColor))
-			{
-				uint32_t count = 0;
-				TXUI_READ_BYTE(a_pData, count);
-				m_Stops2 = new uint32_t[count];
 
-				for (size_t i = 0; i < count; i++)
+			if (reader.ShouldReadThisProp(PropType_FillGradientStopColor))
+			{
+				XUIEPTUInt8 num = reader.ReadEPTUInt8();
+				m_StopColors = new XUIEPTColor[num];
+
+				for (size_t i = 0; i < num; i++)
 				{
-					TXUI_READ_DWORD(a_pData, m_Stops2[i]);
+					m_StopColors[i] = reader.ReadEPTColor();
 				}
 			}
 		}
+
 		return true;
 	}
 
@@ -251,7 +223,33 @@ namespace Toshi
 
 	bool XURXUIFigureData::Load(TXUIResource& resource, uint8_t*& a_pData)
 	{
-		return false;
-	}
+		XURXUIElementData::Load(resource, a_pData);
 
+		if (*a_pData++ != 0)
+		{
+			XURReader reader(a_pData);
+			if (m_Index != 0) reader.ReadPropsInfo<PropType_NUMOF>();
+
+			if (reader.ShouldReadThisProp(PropType_Stroke))
+			{
+				m_Stroke.Load(resource, a_pData);
+			}
+
+			if (reader.ShouldReadThisProp(PropType_Fill))
+			{
+				m_Fill.Load(resource, a_pData);
+			}
+
+			XUIEPTCustom points;
+			bool hasClosed = reader.ReadProperty<XUI_EPT_BOOL>(PropType_Closed, m_Closed);
+			bool hasPoints = reader.ReadProperty<XUI_EPT_CUSTOM>(PropType_Points, points);
+		
+			if (hasPoints)
+			{
+				TTODO("Load points");
+			}
+		}
+
+		return true;
+	}
 }
