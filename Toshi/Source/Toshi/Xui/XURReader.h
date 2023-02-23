@@ -79,7 +79,7 @@ namespace Toshi
 
 		__forceinline uint8_t ReadUInt8()
 		{
-			bool result = *m_Buffer;
+			uint8_t result = *m_Buffer;
 			m_Buffer += 1;
 			return result;
 		}
@@ -95,7 +95,7 @@ namespace Toshi
 		{
 			TASSERT(PARSEDWORD_BIG(m_Buffer) < (1 << 8));
 
-			bool result = *m_Buffer;
+			uint8_t result = *(m_Buffer + 3);
 			m_Buffer += sizeof(uint32_t);
 			return result;
 		}
@@ -248,7 +248,15 @@ namespace Toshi
 				}
 				else if constexpr (EPT == XUI_EPT_CUSTOM)
 				{
-					TASSERT(false && "Not implemented");
+					outValue = ReadEPTUnsigned();
+				}
+				else if constexpr (EPT == XUI_EPT_SHORT32)
+				{
+					outValue = ReadEPTShort32();
+				}
+				else if constexpr (EPT == XUI_EPT_USHORT32)
+				{
+					outValue = ReadEPTUShort32();
 				}
 
 				return true;

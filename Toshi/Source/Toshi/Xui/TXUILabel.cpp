@@ -34,7 +34,11 @@ bool Toshi::XURXUILabelData::ValidateTimelineProp(uint32_t a_uiObjectIndex, uint
 bool Toshi::XURXUILabelData::Load(TXUIResource& resource, uint8_t*& a_pData)
 {
     XURXUIControlData::Load(resource, a_pData);
-    uint8_t smth = *a_pData++;
-    if (smth != 0) a_pData += 4;
+    
+    if (*a_pData++ != 0)
+    {
+        a_pData += 4;
+    }
+    
     return true;
 }

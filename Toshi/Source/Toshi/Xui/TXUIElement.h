@@ -79,7 +79,7 @@ namespace Toshi
 		void LoadChildren(TXUIResource& resource, uint8_t*& a_pData);
 		bool LoadNamedFrames(TXUIResource& resource, uint8_t*& a_pData);
 		void LoadTimelines(TXUIResource& resource, uint8_t*& a_pData);
-		XURXUIObjectData* FindChildElementData(uint32_t index);
+		class XURXUIElementData* FindChildElementData(uint32_t index);
 
 	public:
 		XURXUIObjectData** m_Children;        // 0x4 both
@@ -90,16 +90,6 @@ namespace Toshi
 		uint32_t m_Index2;                    // 0x14 de blob 1E NT08
 		uint32_t m_NumChildren;               // 0x16 de blob 0x10 NT08
 		uint8_t m_NumTimelines;               // 
-
-		T2GUIElement::Float m_Width;
-		T2GUIElement::Float m_Height;
-		XUIEPTVector m_Position;
-		XUIEPTVector m_Scale;
-		XUIEPTQuaternion m_Rotation;
-		XUIEPTFloat m_Opacity;
-		XUIEPTString m_Id;
-		uint32_t m_Flags;
-		XUIEPTVector m_Pivot;
 	};
 
 	class XURXUIElementData : public XURXUIObjectData
@@ -114,7 +104,7 @@ namespace Toshi
 		{
 			m_Width = T2GUIElement::PackFloat(60.0f);
 			m_Height = T2GUIElement::PackFloat(30.0f);
-			m_Opacity = 1.0f;
+			m_Opacity = 255;
 			m_Position = -1;
 			m_Scale = -1;
 			m_Rotation = -1;
@@ -153,6 +143,52 @@ namespace Toshi
 			}
 			return 1;
 		}
+
+		XUIEPTString GetId() const
+		{
+			return m_Id;
+		}
+
+		T2GUIElement::Float GetWidth() const
+		{
+			return m_Width;
+		}
+
+		T2GUIElement::Float GetHeight() const
+		{
+			return m_Height;
+		}
+
+		XUIEPTVector GetPosition() const
+		{
+			return m_Position;
+		}
+
+		XUIEPTVector GetScale() const
+		{
+			return m_Scale;
+		}
+
+		XUIEPTQuaternion GetRotation() const
+		{
+			return m_Rotation;
+		}
+
+		bool IsVisible() const
+		{
+			return m_Flags & 0x1000;
+		}
+
+	protected:
+		T2GUIElement::Float m_Width;
+		T2GUIElement::Float m_Height;
+		XUIEPTVector m_Position;
+		XUIEPTVector m_Scale;
+		XUIEPTQuaternion m_Rotation;
+		XUIEPTVector m_Pivot;
+		XUIEPTString m_Id;
+		uint32_t m_Flags;
+		uint8_t m_Opacity;
 	};
 
 	class TXUIElement :
@@ -166,8 +202,8 @@ namespace Toshi
 		virtual void SetHeight(float height);
 		virtual void SetWidth(float width);
 
-		bool Create(TXUIResource& a_rResource, XURXUIObjectData* a_pObjectData, bool hasChildren);
-		void CreateChildren(TXUIResource& a_rResource, XURXUIObjectData* a_pObjectData);
+		bool Create(TXUIResource& a_rResource, XURXUIElementData* a_pElementData, bool hasChildren);
+		void CreateChildren(TXUIResource& a_rResource, XURXUIElementData* a_pElementData);
 		void UpdateAnchoring(const TVector2& vec);
 		bool IsVisible();
 	

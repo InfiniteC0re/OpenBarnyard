@@ -33,11 +33,11 @@ namespace Toshi
 			if (opcode & 2)
 			{
 				m_Children[i]->LoadChildren(resource, a_pData);
-			}
 
-			if (opcode & 2 && opcode & 4 && m_Children[i]->LoadNamedFrames(resource, a_pData))
-			{
-				m_Children[i]->LoadTimelines(resource, a_pData);
+				if (m_Children[i]->LoadNamedFrames(resource, a_pData), opcode & 4)
+				{
+					m_Children[i]->LoadTimelines(resource, a_pData);
+				}
 			}
 		}
 	}
@@ -50,7 +50,7 @@ namespace Toshi
 
 		if (m_NumNamedFrames != 0)
 		{
-			m_pNamedFrames = new (TXUI::MemoryBlock()) XURXUINamedFrameData();
+			m_pNamedFrames = new (TXUI::MemoryBlock()) XURXUINamedFrameData[m_NumNamedFrames];
 			TASSERT(m_pNamedFrames != TNULL);
 
 			for (size_t i = 0; i < m_NumNamedFrames; i++)
@@ -61,6 +61,7 @@ namespace Toshi
 				m_pNamedFrames[i].m_unk3 = reader.ReadUInt16();
 			}
 		}
+
 		return true;
 	}
 
@@ -82,13 +83,15 @@ namespace Toshi
 		}
 	}
 
-	XURXUIObjectData* XURXUIObjectData::FindChildElementData(uint32_t index)
+	XURXUIElementData* XURXUIObjectData::FindChildElementData(uint32_t index)
 	{
 		for (size_t i = 0; i < m_NumChildren; i++)
 		{
-			if (m_Children[m_NumChildren]->m_Id == index)
+			XURXUIElementData* pElementData = static_cast<XURXUIElementData*>(m_Children[m_NumChildren]);
+
+			if (pElementData->GetId() == index)
 			{
-				return m_Children[m_NumChildren];
+				return pElementData;
 			}
 		}
 
@@ -138,7 +141,7 @@ namespace Toshi
 			if (hasOpacity)
 			{
 				TASSERT(opacity >= 0.0f && opacity <= 1.0f);
-				m_Opacity = opacity * 255.0f;
+				m_Opacity = opacity * 255;
 			}
 
 			if (hasAnchor)
@@ -284,16 +287,16 @@ namespace Toshi
 		return TTRUE;
 	}
 
-	bool TXUIElement::Create(TXUIResource& a_rResource, XURXUIObjectData* a_pObjectData, bool hasChildren)
+	bool TXUIElement::Create(TXUIResource& a_rResource, XURXUIElementData* a_pElementData, bool hasChildren)
 	{
-		m_pObjectData = a_pObjectData;
+		m_pObjectData = a_pElementData;
 		
 		if (GetClass() == TGetClass(TXUICanvas))
 		{
-			a_rResource.PushID(a_rResource.GetString(a_pObjectData->m_Id));
+			a_rResource.PushID(a_rResource.GetString(a_pElementData->GetId()));
 		}
 
-		m_objectID = a_rResource.GetString(a_pObjectData->m_Id);
+		m_objectID = a_rResource.GetString(a_pElementData->GetId());
 		if (TXUIResource::s_bGenerateUIDs && TStringManager::String16Length(m_objectID) != 0)
 		{
 			if (GetClass()->IsA(TGetClass(TXUIListItem)))
@@ -303,34 +306,34 @@ namespace Toshi
 			}
 		}
 
-		m_Width = a_pObjectData->m_Width;
-		m_Height = a_pObjectData->m_Height;
+		m_Width = a_pElementData->GetWidth();
+		m_Height = a_pElementData->GetHeight();
 
-		if (a_pObjectData->m_Position != -1)
+		if (a_pElementData->GetPosition() != -1)
 		{
-			TVector4* pos = a_rResource.GetVector(a_pObjectData->m_Position);
+			TVector4* pos = a_rResource.GetVector(a_pElementData->GetPosition());
 			
 			m_vPosition.SetX(pos->x);
 			m_vPosition.SetY(pos->x);
 		}
 		
-		if (a_pObjectData->m_Rotation != -1)
+		if (a_pElementData->GetRotation() != -1)
 		{
 			//m_Rotation = a_rResource.GetQuat(a_pObjectData->m_Scale);
 		}
 
-		if (a_pObjectData->m_Scale != -1)
+		if (a_pElementData->GetScale() != -1)
 		{
-			TVector4* scale = a_rResource.GetVector(a_pObjectData->m_Scale);
+			TVector4* scale = a_rResource.GetVector(a_pElementData->GetScale());
 			m_vScale.SetX(scale->x);
 			m_vScale.SetY(scale->x);
 		}
 
-		SetVisible(a_pObjectData->m_Flags & 0x1000);
+		SetVisible(a_pElementData->IsVisible());
 
 		if (hasChildren)
 		{
-			CreateChildren(a_rResource, a_pObjectData);
+			CreateChildren(a_rResource, a_pElementData);
 		}
 
 		if (GetClass() == TGetClass(TXUICanvas))
@@ -341,11 +344,11 @@ namespace Toshi
 		return true;
 	}
 
-	void TXUIElement::CreateChildren(TXUIResource& a_rResource, XURXUIObjectData* a_pObjectData)
+	void TXUIElement::CreateChildren(TXUIResource& a_rResource, XURXUIElementData* a_pElementData)
 	{
-		for (size_t i = 0; i < a_pObjectData->m_NumChildren; i++)
+		for (size_t i = 0; i < a_pElementData->m_NumChildren; i++)
 		{
-			auto child = a_pObjectData->m_Children[i];
+			auto child = a_pElementData->m_Children[i];
 		}
 
 		TIMPLEMENT();

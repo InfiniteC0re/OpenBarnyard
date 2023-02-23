@@ -8,6 +8,7 @@
 #include "TXUIBackButton.h"
 #include "TXUIText.h"
 #include "TXUIFigure.h"
+#include "TXUINineGrid.h"
 #include "XURReader.h"
 
 namespace Toshi
@@ -177,7 +178,7 @@ namespace Toshi
         while (reader.GetPos() < pEnd)
         {
             uint16_t stringLength = reader.ReadUInt16();
-            reader.SeekFromCur(stringLength);
+            reader.SeekFromCur(stringLength * sizeof(wchar_t));
             m_uiStringTableCount++;
         }
 
@@ -301,7 +302,7 @@ namespace Toshi
         }
         else if (TStringManager::String16Compare(objectName, _TS16("XuiNineGrid"), -1) == 0)
         {
-            return TNULL;
+            return new (TXUI::MemoryBlock()) XURXUINineGridData();
         }
         else if (TStringManager::String16Compare(objectName, _TS16("XuiSoundXAudio"), -1) == 0)
         {

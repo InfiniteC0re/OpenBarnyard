@@ -1,5 +1,4 @@
 #pragma once
-
 #include "Toshi/Xui/TXUIElement.h"
 
 namespace Toshi

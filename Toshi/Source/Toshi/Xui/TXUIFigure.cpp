@@ -223,7 +223,33 @@ namespace Toshi
 
 	bool XURXUIFigureData::Load(TXUIResource& resource, uint8_t*& a_pData)
 	{
-		return false;
-	}
+		XURXUIElementData::Load(resource, a_pData);
 
+		if (*a_pData++ != 0)
+		{
+			XURReader reader(a_pData);
+			if (m_Index != 0) reader.ReadPropsInfo<PropType_NUMOF>();
+
+			if (reader.ShouldReadThisProp(PropType_Stroke))
+			{
+				m_Stroke.Load(resource, a_pData);
+			}
+
+			if (reader.ShouldReadThisProp(PropType_Fill))
+			{
+				m_Fill.Load(resource, a_pData);
+			}
+
+			XUIEPTCustom points;
+			bool hasClosed = reader.ReadProperty<XUI_EPT_BOOL>(PropType_Closed, m_Closed);
+			bool hasPoints = reader.ReadProperty<XUI_EPT_CUSTOM>(PropType_Points, points);
+		
+			if (hasPoints)
+			{
+				TTODO("Load points");
+			}
+		}
+
+		return true;
+	}
 }

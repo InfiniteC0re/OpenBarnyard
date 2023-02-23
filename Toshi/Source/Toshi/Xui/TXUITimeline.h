@@ -1,6 +1,6 @@
 #pragma once
-
 #include "Toshi/Xui/TXUIResource.h"
+#include "XUI.h"
 
 namespace Toshi
 {
@@ -46,6 +46,7 @@ namespace Toshi
 
 	class XURXUITimelineData
 	{
+	public:
 		class TimelineProp
 		{
 		public:
@@ -59,17 +60,15 @@ namespace Toshi
 			}
 		};
 
-		XURXUIObjectData* m_pControlledChild; // 0x4 de blob
-		XURXUIKeyframeData* m_aKeyframeData; // 0x8 de blob
-		TimelineProp* m_aTimelineProp; // 0xC de blob
-		
-		uint16_t m_uiNumTimelineProp; // 0x10 de blob
-		uint16_t m_uiNumKeyframes; // 0x12 de blob
-		uint16_t m_uiNumUnk; // 0x14 de blob
-
 	public:
+		void Load(Toshi::TXUIResource& a_rXur, uint8_t*& a_pData);
 
-		void Load(Toshi::TXUIResource& a_rXur, unsigned char*& a_pData);
+	private:
+		XURXUIObjectData* m_pControlledChild; // 0x4 de blob
+		XURXUIKeyframeData* m_pKeyframeData; // 0x8 de blob
+		TimelineProp* m_TimelineProps;
+		XUIEPTShort32 m_NumTimelineProps;
+		XUIEPTShort32 m_NumKeyframes;
+		XUIEPTString m_StringId;
 	};
-
 }

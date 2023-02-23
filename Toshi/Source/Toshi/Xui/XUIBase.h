@@ -37,7 +37,7 @@ typedef uint32_t XUIEPTColor;
 typedef uint16_t XUIEPTVector;
 typedef uint16_t XUIEPTQuaternion;
 typedef uint16_t XUIEPTObject;
-typedef uint16_t XUIEPTCustom;
+typedef uint32_t XUIEPTCustom;
 typedef int16_t XUIEPTShort32;
 typedef uint16_t XUIEPTUShort32;
 typedef uint32_t XUIEPTUColor;
