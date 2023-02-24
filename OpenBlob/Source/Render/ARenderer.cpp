@@ -95,6 +95,7 @@ bool ARenderer::CreateTRender()
 
 	renderer->BuildAdapterDatabase();
 	auto adapterList = renderer->GetAdapterList();
+	
 	auto adapter = adapterList->Head()->As<Toshi::TD3DAdapter>();
 	auto mode = adapter->GetMode();
 	
@@ -161,7 +162,7 @@ bool ARenderer::CreateTRender()
 				&& mode->GetWidth() < AApplication::g_oTheApp.m_Width)
 			{
 				char formattedString[512];
-				Toshi::T2String8::Format(formattedString, "The specified width and heith must be between 1280x720 and the current desktop res olution (%dx%d)", mode->GetWidth(), mode->GetHeight());
+				Toshi::T2String8::Format(formattedString, "The specified width and heith must be between 1280x720 and the current desktop resolution (%dx%d)", mode->GetWidth(), mode->GetHeight());
 				MessageBoxA(TNULL, formattedString, "Invalid args", MB_OK | MB_ICONERROR | MB_SYSTEMMODAL);
 				return false;
 			}
