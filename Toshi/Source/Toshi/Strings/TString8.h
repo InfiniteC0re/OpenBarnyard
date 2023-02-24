@@ -63,8 +63,8 @@ namespace Toshi
 		bool IsAllLowerCase() const;
 		bool IsAllUpperCase() const;
 		bool IsIndexValid(uint32_t index) const { return index >= 0 && index <= Length(); }
-		bool IsEmpty() { return m_iStrLen == 0; }
-		bool IsUnicode() { return false; } // Who would have known?
+		bool IsEmpty() const { return m_iStrLen == 0; }
+		bool IsUnicode() const { return false; } // Who would have known?
 
 	public:
 		TString8 operator+(char const* cstr) const { TString8 str = TString8(*this); return std::move(str.Concat(cstr)); }

@@ -12,6 +12,7 @@
 // This file includes the entrypoint so set all the settings before including it
 #include "Toshi.h"
 #include "TRBF/TRBF.h"
+#include <filesystem>
 
 class PProperties
 {
@@ -120,12 +121,49 @@ private:
 int TMain(int argc, char** argv)
 {
 	TLib::TRBF::TRBF trbf;
-	trbf.ReadFromFile("D:\\Barnyard\\Game\\Data\\AGolfMinigameState.trb");
+	trbf.ReadFromFile(argv[1]);
+
+	Toshi::TFile* file = Toshi::TFile::Create(argv[2], Toshi::TFile::FileMode_Read);
+	int size = file->GetSize();
+	char* buffer = (char*)TMalloc(size);
+	file->Read(buffer, size);
+	file->Destroy();
 
 	auto pSect = trbf.GetSECT();
 	auto pSymb = trbf.GetSYMB();
 
-	PProperties properties(pSymb->Find<PProperties::Main>(pSect, "Main").get());
+	for (size_t i = 0; i < pSect->GetSectionCount(); i++)
+	{
+		auto curSect = pSect->GetSection(i);
+		auto buff = curSect->GetBuffer();
+		buff += 4;
+		char* fileName = *(char**)buff;
+		if (fileName != std::filesystem::path(argv[2]).filename())
+		{
+			continue;
+		}
+		buff += 4;
+
+		auto xur = pSect->GetSection(i+1);
+		auto xurBuffer = xur->GetBuffer();
+
+		if (size > xur->GetBufferSize())
+		{
+			xur->GrowBuffer(size);
+			xur->Write(0, buffer, size);
+		}
+		else
+		{
+			xur->SetExpectedSize(size);
+			xur->Write(0, buffer, size);
+		}
+		
+		break;
+	}
+
+	trbf.WriteToFile("C:\\Users\\Leon\\Desktop\\test.trb");
+
+	/*PProperties properties(pSymb->Find<PProperties::Main>(pSect, "Main").get());
 	TOSHI_INFO("PProperty count: {0}", properties.GetPropertyCount());
 
 	for (size_t i = 0; i < properties.GetPropertyCount(); i++)
@@ -151,7 +189,7 @@ int TMain(int argc, char** argv)
 				break;
 			}
 		}
-	}
+	}*/
 
 	return 0;
 }
