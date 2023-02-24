@@ -69,7 +69,7 @@ namespace Toshi
 			return _stricmp(str1, str2);
 		}
 
-		static char* Copy(char* dst, const char* src, size_t size)
+		static char* Copy(char* dst, const char* src, size_t size = -1)
 		{
 			if (size != -1) return strncpy(dst, src, size);
 			return strcpy(dst, src);

@@ -53,9 +53,9 @@ namespace Toshi
 
 		struct RELCEntry
 		{
-			short HDRX1;
-			short HDRX2;
-			uint32_t Offset;
+			short HDRX1;     // HDRX of pointer
+			short HDRX2;     // HDRX of data
+			uint32_t Offset; // Offset to pointer in HDRX1
 		};
 
 		struct SectionFORM

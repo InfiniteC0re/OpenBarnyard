@@ -68,17 +68,16 @@ AExampleClass::AExampleClass()
 			file->Destroy();
 		}
 	}
-	/*
-	TFile* file = TFile::Create("C:\\Program Files (x86)\\Steam\\steamapps\\common\\de Blob\\Data\\XUI\\DE\\common.trb");
+	
+	TFile* file = TFile::Create("Data\\XUI\\DE\\common.trb");
 	
 	if (file)
 	{
 		TTRB trb;
 		trb.Load(file);
-		TXUI::ms_pXUIMemoryBlock = TMemory::CreateHeap(0x10000, 4, "xui pile");
 		TAssetInit::InitAssets(trb, true, false);
 	}
-	*/
+	
 
 	/*TError* error = TError::GetSingletonWeak();
 	error->AddError("Material \'%s\' Couldnt find texture \'%s\'", "test", "debloblol.tga");

@@ -17,6 +17,7 @@
 #include "ALevelInformation.h"
 #include "A2GUI/A2GUIRenderer_DX11.h"
 
+#include <Toshi/Xui/TXUI.h>
 #include <Toshi2/T2GUI/T2GUI.h>
 #include <Toshi/Sound/TSound.h>
 #include <Toshi/Render/TRender.h>
@@ -44,6 +45,10 @@ bool AApplication::OnCreate(int argc, char** argv)
 		pGUI->SetRenderer(pGUIRenderer);
 
 		AInputManager2::CreateSingleton();
+
+		// Temp solution
+		Toshi::TXUI::ms_pXUIMemoryBlock = Toshi::TMemory::CreateHeap(0x10000, 4, "xui pile");
+		Toshi::TXUI::CreateSingleton();
 
 		size_t poolSize = 128 * 1024 * 1024;
 		void* mempool = malloc(poolSize);

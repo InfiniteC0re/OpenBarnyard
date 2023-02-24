@@ -8,6 +8,8 @@ namespace Toshi
 		static constexpr float FLOAT_QUALITY = 256;
 		static constexpr float FLOAT_SCALE = 1 / FLOAT_QUALITY;
 
+		using Float = int16_t;
+
 		class Rotation
 		{
 		public:
@@ -15,7 +17,7 @@ namespace Toshi
 			{
 
 			}
-			Rotation(short x, short y) : m_X(x), m_Y(y)
+			Rotation(int16_t x, int16_t y) : m_X(x), m_Y(y)
 			{
 
 			}
@@ -41,8 +43,8 @@ namespace Toshi
 			}
 
 		private:
-			short m_X;
-			short m_Y;
+			Float m_X;
+			Float m_Y;
 		};
 
 	public:
@@ -74,14 +76,14 @@ namespace Toshi
 			return m_Pos;
 		}
 
-		static constexpr float UnpackFloat(short value)
+		static constexpr float UnpackFloat(Float value)
 		{
 			return value * FLOAT_SCALE;
 		}
 
-		static constexpr short PackFloat(float value)
+		static constexpr Float PackFloat(float value)
 		{
-			return static_cast<short>(value * FLOAT_QUALITY);
+			return static_cast<Float>(value * FLOAT_QUALITY);
 		}
 
 		static void Multiply(T2GUITransform& outTransform, const T2GUITransform& a, const T2GUITransform& b);

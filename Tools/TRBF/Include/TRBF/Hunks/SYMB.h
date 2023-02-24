@@ -22,8 +22,23 @@ namespace TLib
 				m_SymbolNames.reserve(5);
 			}
 
-			template <class T>
-			SECT::Stack::Ptr<T> Find(SECT& sect, const char* name)
+			bool Is(int index, const char* name)
+			{
+				TASSERT(index >= 0 && index < m_Symbols.size());
+				auto hash = Toshi::TTRB::HashString(name);
+
+				if (m_Symbols[index].NameHash == hash)
+				{
+					if (m_SymbolNames[index] == name)
+					{
+						return true;
+					}
+				}
+
+				return false;
+			}
+
+			int FindIndex(SECT& sect, const char* name)
 			{
 				auto hash = Toshi::TTRB::HashString(name);
 
@@ -33,10 +48,28 @@ namespace TLib
 					{
 						if (m_SymbolNames[i] == name)
 						{
-							auto stack = sect.GetSection(m_Symbols[i].HDRX);
-							return { stack, m_Symbols[i].DataOffset };
+							return i;
 						}
 					}
+				}
+
+				return -1;
+			}
+
+			int FindIndex(SECT* sect, const char* name)
+			{
+				return FindIndex(*sect, name);
+			}
+
+			template <class T>
+			SECT::Stack::Ptr<T> Find(SECT& sect, const char* name)
+			{
+				int index = FindIndex(sect, name);
+
+				if (index != -1)
+				{
+					auto stack = sect.GetStack(m_Symbols[index].HDRX);
+					return { stack, m_Symbols[index].DataOffset };
 				}
 
 				return { TNULL, (size_t)0 };
@@ -48,10 +81,70 @@ namespace TLib
 				return Find<T>(*sect, name);
 			}
 
-			void Add(SECT::Stack* stack, const char* name, void* ptr)
+			template <class T>
+			SECT::Stack::Ptr<T> GetByIndex(SECT& sect, int index)
 			{
-				m_Symbols.emplace_back(stack->GetIndex(), 0, 0, 0, stack->GetOffset(ptr));
+				TASSERT(index >= 0 && index < m_Symbols.size());
+
+				return {
+					sect.GetStack(m_Symbols[index].HDRX),
+					m_Symbols[index].DataOffset
+				};
+			}
+
+			template <class T>
+			SECT::Stack::Ptr<T> GetByIndex(SECT* sect, int index)
+			{
+				return GetByIndex<T>(*sect, index);
+			}
+
+			size_t GetCount()
+			{
+				return m_Symbols.size();
+			}
+
+			void Add(SECT::Stack* pStack, const char* name, void* ptr)
+			{
+				m_Symbols.emplace_back(pStack->GetIndex(), 0, 0, 0, pStack->GetOffset(ptr));
 				m_SymbolNames.push_back(name);
+			}
+
+			void UpdateSymbolsIndexes(SECT::Stack* pStack, uint32_t newIndex)
+			{
+				auto stackIndex = pStack->GetIndex();
+
+				for (size_t i = 0; i < m_Symbols.size(); i++)
+				{
+					if (m_Symbols[i].HDRX == stackIndex)
+					{
+						m_Symbols[i].HDRX = newIndex;
+					}
+				}
+				
+				pStack->SetIndex(newIndex);
+			}
+
+			void Remove(int index)
+			{
+				TASSERT(index >= 0 && index < m_Symbols.size());
+
+				m_Symbols.erase(m_Symbols.begin() + index);
+				m_SymbolNames.erase(m_SymbolNames.begin() + index);
+			}
+
+			void RemoveAllWithStackIndex(int stackIndex)
+			{
+				for (size_t i = 0; i < m_Symbols.size();)
+				{
+					if (m_Symbols[i].HDRX == stackIndex)
+					{
+						Remove(i);
+					}
+					else
+					{
+						i++;
+					}
+				}
 			}
 
 			void Write(Toshi::TTSFO& ttsfo)

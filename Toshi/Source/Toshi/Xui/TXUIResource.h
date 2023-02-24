@@ -30,14 +30,15 @@ namespace Toshi
 
 		struct XURHeader
 		{
-			Section* m_apSections;		// 0x0
-			uint32_t m_uiFileID;		// 0x4
-			uint32_t m_uiUnk;			// 0x8
-			uint32_t m_uiUnk2;			// 0xC
-			uint32_t m_uiSize;			// 0x10
-			uint16_t m_usUnk4;			// 0x14
-			uint16_t m_usNumSections;	// 0x16
+			Section* m_apSections;      // 0x00
+			uint32_t m_uiFileID;        // 0x04
+			uint32_t m_uiVersion;       // 0x08
+			uint32_t m_uiFlags;         // 0x0C
+			uint16_t m_uiXuiVersion;    // 0x10
+			uint32_t m_usBinSize;       // 0x14
+			uint16_t m_usNumSections;   // 0x18
 		};
+
 	public:
 		TXUIResource()
 		{
@@ -48,12 +49,12 @@ namespace Toshi
 
 		~TXUIResource() = default;
 
-		inline const wchar_t* GetString(uint16_t index) { return m_asStringTable[index]; }
+		const wchar_t* GetString(uint16_t index) { return m_asStringTable[index]; }
 		TQuaternion* GetQuat(int a_iIndex = 0);
 		TVector4* GetVector(int a_iIndex = 0);
 		//inline TQuaternion& GetQuat(int index) { return index == -1 ? TQuaternion::IDENTITY : m_pQuat; }
 
-		bool ReadHeader(unsigned char* buffer);
+		bool ReadHeader(uint8_t* buffer);
 
 		// Toshi::TXUIResource::Load(const char*, const char*, bool, Toshi::TTRB*)
 
@@ -64,11 +65,11 @@ namespace Toshi
 		// unk3 = probably a function
 		void Load(bool loadStringTables, const char* filenameXUIB, const char* fileNameStringTable, bool loadTrb, void* unk3);
 
-		bool Load(unsigned char* buffer);
-		int ReadDataSection(unsigned char* buffer, uint32_t size);
-		bool ReadStringSection(wchar_t* pPtr, uint32_t size);
-		int ReadCustSection(unsigned char* buffer, uint32_t size);
-		int GetStringTableSize(unsigned char* pPtr, uint32_t size);
+		bool Load(uint8_t* buffer);
+		int ReadDataSection(uint8_t* buffer, uint32_t size);
+		bool ReadStringSection(uint8_t* buffer, uint32_t size);
+		int ReadCustSection(uint8_t* buffer, uint32_t size);
+		int GetStringTableSize(uint8_t* pPtr, uint32_t size);
 
 		void PushID(const wchar_t* a_wsID);
 		void PopID();
@@ -98,7 +99,7 @@ namespace Toshi
 		uint8_t* m_pData;
 		TVector4* m_pVect;                          // 0x1C globs
 		TQuaternion* m_pQuat;                       // 0x20 both
-		unsigned char* m_pCust;                     // 0x28 / 0x24 globs
+		uint8_t* m_pCust;                           // 0x28 / 0x24 globs
 		uint32_t m_uiCustDataSize;                  // 0x3C de blob / 0x38 globs
 		uint32_t m_uiStringTableCount;              // 0x30 / 0x3C globs
 		TString16* m_uIDStr;                        // 0x40

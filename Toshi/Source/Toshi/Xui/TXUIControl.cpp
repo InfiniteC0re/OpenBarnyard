@@ -1,29 +1,31 @@
 #include "ToshiPCH.h"
 #include "TXUIControl.h"
+#include "XURReader.h"
 
 namespace Toshi
 {
-	bool Toshi::XURXUIControlData::IsColourPropType(uint32_t a_uiObjectIndex, uint32_t propType)
+	bool XURXUIControlData::IsColourPropType(uint32_t a_uiObjectIndex, uint32_t propType)
 	{
 		if (a_uiObjectIndex == 0) return false;
 		TASSERT(a_uiObjectIndex > 0);
 		return XURXUIElementData::IsColourPropType(a_uiObjectIndex - 1, propType);
 	}
 
-	bool Toshi::XURXUIControlData::IsFloatPropType(uint32_t a_uiObjectIndex, uint32_t propType)
+	bool XURXUIControlData::IsFloatPropType(uint32_t a_uiObjectIndex, uint32_t propType)
 	{
 		if (a_uiObjectIndex == 0) return false;
 		TASSERT(a_uiObjectIndex > 0);
 		return XURXUIElementData::IsFloatPropType(a_uiObjectIndex - 1, propType);
 	}
 
-	uint32_t Toshi::XURXUIControlData::GetTimelinePropSize(uint32_t a_uiObjectIndex, uint32_t propType)
+	uint32_t XURXUIControlData::GetTimelinePropSize(uint32_t a_uiObjectIndex, uint32_t propType)
 	{
 		if (a_uiObjectIndex != 0)
 		{
 			TASSERT(a_uiObjectIndex > 0);
 			return XURXUIElementData::GetTimelinePropSize(a_uiObjectIndex - 1, propType);
 		}
+
 		if (propType != 2 && propType != 3)
 		{
 			if (propType != 0 && propType != 1 && propType != 4 &&
@@ -32,12 +34,14 @@ namespace Toshi
 			{
 				return 4;
 			}
+
 			return 2;
 		}
+
 		return 1;
 	}
 
-	bool Toshi::XURXUIControlData::TranslateTimelineProp(const char* name, uint32_t& param_2, PropType& propType)
+	bool XURXUIControlData::TranslateTimelineProp(const char* name, uint32_t& param_2, PropType& propType)
 	{
 		TXUI_TRANSLATE_TIMELINE_PROP(name, ClassOverride, propType);
 		TXUI_TRANSLATE_TIMELINE_PROP(name, Visual, propType);
@@ -54,35 +58,34 @@ namespace Toshi
 		return XURXUIElementData::TranslateTimelineProp(name, param_2, propType);
 	}
 
-	bool Toshi::XURXUIControlData::ValidateTimelineProp(uint32_t a_uiObjectIndex, uint32_t param_2)
+	bool XURXUIControlData::ValidateTimelineProp(uint32_t a_uiObjectIndex, uint32_t param_2)
 	{
-		if (a_uiObjectIndex == 0) return param_2 < 11;
+		if (a_uiObjectIndex == 0) return param_2 < PropType_NUMOF;
 		TASSERT(a_uiObjectIndex > 0);
 		return XURXUIElementData::ValidateTimelineProp(a_uiObjectIndex - 1, param_2);
 	}
 
-	bool Toshi::XURXUIControlData::Load(TXUIResource& resource, uint8_t*& a_pData)
+	bool XURXUIControlData::Load(TXUIResource& resource, uint8_t*& a_pData)
 	{
 		XURXUIElementData::Load(resource, a_pData);
-		uint8_t smth = *a_pData++;
-
-		if (smth != 0)
+		
+		if (*a_pData++ != 0)
 		{
-			int flag = 0;
-			if (m_index != 0) TXUI_READ_WORD(a_pData, flag);
+			XURReader reader(a_pData);
+			if (m_Index != 0) reader.ReadPropsInfo<PropType_NUMOF>();
 
-			TXUI_READ_PROP_WORD(a_pData, flag, ClassOverride);
-			TXUI_READ_PROP_WORD(a_pData, flag, Visual);
-			TXUI_READ_PROP_BYTE(a_pData, flag, Enabled);
-			TXUI_READ_PROP_BYTE(a_pData, flag, UnfocussedInput);
-			TXUI_READ_PROP_WORD(a_pData, flag, NavLeft);
-			TXUI_READ_PROP_WORD(a_pData, flag, NavRight);
-			TXUI_READ_PROP_WORD(a_pData, flag, NavUp);
-			TXUI_READ_PROP_WORD(a_pData, flag, NavDown);
-			TXUI_READ_PROP_WORD(a_pData, flag, Text);
-			TXUI_READ_PROP_WORD(a_pData, flag, ImagePath);
+			reader.ReadProperty<XUI_EPT_STRING>(PropType_ClassOverride, m_ClassOverride);
+			reader.ReadProperty<XUI_EPT_STRING>(PropType_Visual, m_Visual);
+			reader.ReadProperty<XUI_EPT_BOOL>(PropType_Enabled, m_Enabled);
+			reader.ReadProperty<XUI_EPT_BOOL>(PropType_UnfocussedInput, m_UnfocussedInput);
+			reader.ReadProperty<XUI_EPT_STRING>(PropType_NavLeft, m_NavLeft);
+			reader.ReadProperty<XUI_EPT_STRING>(PropType_NavRight, m_NavRight);
+			reader.ReadProperty<XUI_EPT_STRING>(PropType_NavUp, m_NavUp);
+			reader.ReadProperty<XUI_EPT_STRING>(PropType_NavDown, m_NavDown);
+			reader.ReadProperty<XUI_EPT_STRING>(PropType_Text, m_Text);
+			reader.ReadProperty<XUI_EPT_STRING>(PropType_ImagePath, m_ImagePath);
 		}
+
 		return true;
 	}
-
 }

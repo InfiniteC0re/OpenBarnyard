@@ -14,182 +14,113 @@
 #include "TRBF/TRBF.h"
 #include <filesystem>
 
-class PProperties
+class TXUIBuilder
 {
 public:
-	class PProperty
-	{
-	public:
-		typedef uint32_t Type;
-		enum Type_ : Type
-		{
-			Type_UInt,
-			Type_Unknown,
-			Type_Float,
-			Type_Bool,
-			Type_PProperty,
-			Type_Unknown2,
-			Type_Array,
-			Type_String,
-			Type_Int,
-		};
-
-		class Array
-		{
-		public:
-			class Item
-			{
-			public:
-				template<class T>
-				T* GetData()
-				{
-					return reinterpret_cast<T*>(Data);
-				}
-
-			private:
-				Type Type;
-				void* Data;
-			};
-
-		public:
-			uint32_t GetSize()
-			{
-				return m_Size;
-			}
-
-			Item* GetItem(size_t index)
-			{
-				TASSERT(index >= 0 && index <= m_Size);
-				return &m_Items[index];
-			}
-
-		private:
-			Item* m_Items;
-			uint32_t m_Size;
-		};
-
-	public:
-		const char* GetName() const
-		{
-			return *m_Name;
-		}
-
-		Type GetType() const
-		{
-			return *m_Type;
-		}
-
-		template<class T>
-		T* GetData()
-		{
-			return reinterpret_cast<T*>(m_Type + 1);
-		}
-
-	private:
-		const char** m_Name;
-		Type* m_Type;
-	};
-
-	struct Main
-	{
-		uint32_t m_Zero;
-		PProperty* m_Properties;
-		uint32_t m_PropertyCount;
-	};
+    struct Props
+    {
+        uint32_t Unk1;
+        char* XURName;
+        char* XURData;
+        uint32_t Unk2;
+        uint32_t Unk3;
+        uint32_t Unk4;
+    };
 
 public:
-	PProperties(Main* header)
-	{
-		m_Header = header;
-	}
+    TXUIBuilder(TLib::TRBF::TRBF& trbf) : m_TRBF(trbf)
+    {
+        m_Created = TFALSE;
+    }
 
-	uint32_t GetPropertyCount()
-	{
-		return m_Header->m_PropertyCount;
-	}
+    void Create(const char* xurName)
+    {
+        TASSERT(m_Created == TFALSE);
+        size_t xurNameLength = Toshi::T2String8::Length(xurName);
 
-	PProperty* GetProperty(size_t index)
-	{
-		TASSERT(index >= 0 && index <= m_Header->m_PropertyCount);
-		return &m_Header->m_Properties[index];
-	}
+        auto pSect = m_TRBF.GetSECT();
+        auto pSymb = m_TRBF.GetSYMB();
+
+        auto txuiStack = pSect->CreateStack();
+        auto xurStack = pSect->CreateStack();
+
+        auto txui = txuiStack->Alloc<TXUIBuilder::Props>();
+        pSymb->Add(txuiStack, "txui", txui.get());
+
+        txuiStack->Alloc(&txui->XURName, xurNameLength + 1);
+        Toshi::T2String8::Copy(txui->XURName, xurName, xurNameLength);
+
+        txuiStack->SetCrossPointer(&txui->XURData, { xurStack, xurStack->GetBuffer() });
+
+        m_XURStack = xurStack;
+        m_TXUIStack = txuiStack;
+        m_Created = TTRUE;
+    }
+
+    void LoadXUR(const char* filepath)
+    {
+        TASSERT(m_Created == TTRUE);
+        Toshi::TFile* file = Toshi::TFile::Create(filepath, Toshi::TFile::FileMode_Read);
+        auto fileSize = file->GetSize();
+
+        char* xurData = new char[fileSize + 1];
+        xurData[fileSize] = '\0';
+
+        file->Read(xurData, fileSize);
+        file->Destroy();
+
+        auto xurBuffer = m_XURStack->AllocBytes(fileSize);
+        Toshi::TUtil::MemCopy(xurBuffer.get(), xurData, fileSize);
+
+        m_Created = TFALSE;
+        delete[] xurData;
+    }
 
 private:
-	Main* m_Header;
+    Props m_Data;
+    TLib::TRBF::TRBF& m_TRBF;
+    TLib::TRBF::SECT::Stack* m_TXUIStack;
+    TLib::TRBF::SECT::Stack* m_XURStack;
+    bool m_Created;
 };
 
 int TMain(int argc, char** argv)
 {
-	TLib::TRBF::TRBF trbf;
-	trbf.ReadFromFile(argv[1]);
+    const char* a_TargetXUR = "MainMenu.xur";
+    const char* a_TRBInput = "C:\\SteamLibrary\\steamapps\\common\\de Blob\\Data\\XUI\\US\\frontend.trb";
+    const char* a_XURInput = "C:\\Users\\InfiniteC0re\\Desktop\\XUI_DeBlob\\Sources\\MainMenu_Edited.xur";
+    const char* a_TRBOutput = "C:\\SteamLibrary\\steamapps\\common\\de Blob\\Data\\XUI\\US\\frontend.trb";
 
-	Toshi::TFile* file = Toshi::TFile::Create(argv[2], Toshi::TFile::FileMode_Read);
-	int size = file->GetSize();
-	char* buffer = (char*)TMalloc(size);
-	file->Read(buffer, size);
-	file->Destroy();
+    TLib::TRBF::TRBF trbf;
+    trbf.ReadFromFile(a_TRBInput);
 
-	auto pSect = trbf.GetSECT();
-	auto pSymb = trbf.GetSYMB();
+    auto pSect = trbf.GetSECT();
+    auto pSymb = trbf.GetSYMB();
 
-	for (size_t i = 0; i < pSect->GetSectionCount(); i++)
-	{
-		auto curSect = pSect->GetSection(i);
-		auto buff = curSect->GetBuffer();
-		buff += 4;
-		char* fileName = *(char**)buff;
-		if (fileName != std::filesystem::path(argv[2]).filename())
-		{
-			continue;
-		}
-		buff += 4;
+    for (size_t i = 0; i < pSymb->GetCount(); i++)
+    {
+        if (pSymb->Is(i, "txui"))
+        {
+            auto txui = pSymb->GetByIndex<TXUIBuilder::Props>(pSect, i);
+            auto xuib = pSect->GetStack(txui.stack()->GetIndex() + 1);
 
-		auto xur = pSect->GetSection(i+1);
-		auto xurBuffer = xur->GetBuffer();
+            if (Toshi::TStringManager::String8Compare(txui->XURName, a_TargetXUR) == 0)
+            {
+                // Remove the existing txui and xur data
+                pSect->DeleteStack(pSymb, txui.stack());
+                pSect->DeleteStack(pSymb, xuib);
 
-		if (size > xur->GetBufferSize())
-		{
-			xur->GrowBuffer(size);
-			xur->Write(0, buffer, size);
-		}
-		else
-		{
-			xur->SetExpectedSize(size);
-			xur->Write(0, buffer, size);
-		}
-		
-		break;
-	}
+                // Create txui in the trb file
+                TXUIBuilder txuiBuilder(trbf);
+                txuiBuilder.Create(a_TargetXUR);
+                txuiBuilder.LoadXUR(a_XURInput);
 
-	trbf.WriteToFile("C:\\Users\\Leon\\Desktop\\test.trb");
+                // Save the output
+                trbf.WriteToFile(a_TRBOutput);
+                break;
+            }
+        }
+    }
 
-	/*PProperties properties(pSymb->Find<PProperties::Main>(pSect, "Main").get());
-	TOSHI_INFO("PProperty count: {0}", properties.GetPropertyCount());
-
-	for (size_t i = 0; i < properties.GetPropertyCount(); i++)
-	{
-		auto property = properties.GetProperty(i);
-		
-		TOSHI_INFO("PProperty name: {0}", property->GetName());
-
-		switch (property->GetType())
-		{
-			case PProperties::PProperty::Type_String:
-				TOSHI_INFO("PProperty value: {0}", *property->GetData<char*>());
-				break;
-			case PProperties::PProperty::Type_Array:
-			{
-				auto array = *property->GetData<PProperties::PProperty::Array*>();
-				TOSHI_INFO("PProperty array size: {0}", array->GetSize());
-
-				for (size_t k = 0; k < array->GetSize(); k++)
-				{
-					TOSHI_INFO("{0}) {1}", k + 1, array->GetItem(k)->GetData<char>());
-				}
-				break;
-			}
-		}
-	}*/
-
-	return 0;
+    return 0;
 }
