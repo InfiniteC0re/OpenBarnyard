@@ -1,10 +1,14 @@
 #include "pch.h"
 #include "AXYZViewportManager.h"
 #include <Memory/AMemory.h>
+#include <Platform/Windows/DX11/TRender_DX11.h>
 
 AXYZViewportManager::AXYZViewportManager()
 {
 	TIMPLEMENT();
+	auto renderer = Toshi::TRenderDX11::Interface();
+	auto pDisplayParams = renderer->GetCurrentDisplayParams();
+
 }
 
 Toshi::TViewport* AXYZViewportManager::CreateViewport(float x, float y, float w, float h)
@@ -24,4 +28,9 @@ Toshi::TViewport* AXYZViewportManager::CreateViewport(float x, float y, float w,
 	pViewport->SetBackgroundColor(64, 64, 64, 255);
 
 	return pViewport;
+}
+
+void AXYZViewportManager::SetMainFullScreen(bool fullscreen)
+{
+	TIMPLEMENT();
 }
