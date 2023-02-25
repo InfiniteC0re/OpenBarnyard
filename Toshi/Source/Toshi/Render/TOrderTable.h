@@ -67,7 +67,7 @@ namespace Toshi
 		enum State_ : State
 		{
 			State_Unk1 = BITFIELD(0),
-			State_Used = BITFIELD(1),
+			State_Used = BITFIELD(1)
 		};
 
 	public:
@@ -135,9 +135,13 @@ namespace Toshi
 			TIMPLEMENT();
 		}
 
+		void Render();
+
+		void DeregisterMaterial(TRegMaterial* pRegMat);
+
 		void UseMaterial(TRegMaterial* pRegMat)
 		{
-			if ((pRegMat->GetFlags() & TRegMaterial::State_Used) == 0)
+			if (!HASFLAG(pRegMat->GetFlags() & TRegMaterial::State_Used))
 			{
 				pRegMat->SetFlags(TRegMaterial::State_Used);
 				pRegMat->SetNextUsedMaterial(m_pLastRegMat);

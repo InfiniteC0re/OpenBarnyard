@@ -21,6 +21,25 @@ namespace Toshi
         }
     }
 
+	void TOrderTable::Render()
+	{
+		for (auto it = m_pLastRegMat; it != TNULL; it = m_pLastRegMat->Next())
+		{
+			m_pLastRegMat->Render();
+		}
+		s_uiNumRenderPackets = 0;
+		m_pLastRegMat = TNULL;
+	}
+
+	void TOrderTable::DeregisterMaterial(TRegMaterial* pRegMat)
+	{
+		if (HASFLAG(pRegMat->GetFlags() & TRegMaterial::State_Unk1))
+		{
+			TASSERT(s_uiNumRenderPackets == 0);
+			TIMPLEMENT();
+		}
+	}
+
 	void TRegMaterial::Render()
 	{
 		m_pMaterial->PreRender();
@@ -31,7 +50,7 @@ namespace Toshi
 		}
 
 		m_pRenderPacket = TNULL;
-		SetFlags(m_State & ~4);
+		SetFlags(m_State & ~State_Used);
 		m_pMaterial->PostRender();
 
 	}

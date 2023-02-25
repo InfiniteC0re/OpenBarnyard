@@ -80,6 +80,11 @@ namespace Toshi
 			return oldState;
 		}
 
+		void Enable(bool enable)
+		{
+			m_bEnable = enable;
+		}
+
 		bool EnableDefaultBeginRender(bool enable)
 		{
 			bool oldState = m_bDefaultBeginRender;
@@ -185,6 +190,7 @@ namespace Toshi
 		bool m_bAllowBackgroundClear;     // 0x0C
 		bool m_bAllowDepthClear;          // 0x0D
 		bool m_bDefaultBeginRender;       // 0x0E
+		bool m_bEnable;                   // 0x0F
 		bool m_bInViewport;               // 0x10
 	};
 }
