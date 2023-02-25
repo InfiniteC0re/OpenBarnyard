@@ -10,6 +10,7 @@
 #include <Platform/Windows/DX11/TPrimShader_DX11.h>
 #include <Toshi/Render/TAssetInit.h>
 #include <Toshi2/T2GUI/T2GUI.h>
+#include <Toshi/Render/TOrderTable.h>
 
 Toshi::TTRB ARenderer::s_BootAssetsTRB = Toshi::TTRB();
 Toshi::THPTimer ARenderer::s_timer = Toshi::THPTimer();
@@ -81,7 +82,7 @@ void ARenderer::Update(float deltaTime)
 bool ARenderer::CreateInterface()
 {
 	// 005ed3b0
-	TTODO("Toshi::TOrderTable::CreateStaticData");
+	Toshi::TOrderTable::CreateStaticData(4500, 2500);
 	return CreateTRender();
 }
 

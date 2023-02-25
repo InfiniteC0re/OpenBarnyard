@@ -15,7 +15,7 @@ namespace Toshi
 			TIMPLEMENT();
 		}
 
-		void CreateStaticData(uint32_t maxMaterials, uint32_t maxRenderPackets);
+		static void CreateStaticData(uint32_t maxMaterials, uint32_t maxRenderPackets);
 
 		~TOrderTable()
 		{
@@ -38,14 +38,14 @@ namespace Toshi
 			return TNULL;
 		}
 
-		static uint32_t s_uiMaxRenderPackets;
-		static uint32_t s_uiNumRenderPackets;
-		static uint32_t s_uiOrigMaxRenderPackets;
-		static TRenderPacket* s_pRenderPackets;
-		
-		static uint32_t s_uiMaxMaterials;
-		static TNodeList<TRegMaterial*> s_pRegMaterials;
-		static TFreeList s_RegMatFreeList;
+		inline static uint32_t s_uiMaxRenderPackets = 0;
+		inline static uint32_t s_uiNumRenderPackets = 0;
+		inline static uint32_t s_uiOrigMaxRenderPackets = 0;
+		inline static TRenderPacket* s_pRenderPackets = TNULL;
+
+		inline static uint32_t s_uiMaxMaterials = 0;
+		inline static TRegMaterial* s_pRegMaterials = TNULL;
+		inline static TNodeList<TRegMaterial> s_RegMatFreeList = TNodeList<TRegMaterial>();
 
 	private:
 		TRegMaterial* m_pLastRegMat; // 0x20

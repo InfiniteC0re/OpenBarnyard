@@ -1,13 +1,14 @@
 #pragma once
 #include "TMaterial.h"
 #include "TMesh.h"
+#include "Toshi/Core/TNodeList.h"
 
 namespace Toshi
 {
 	class TRenderPacket;
 	class TOrderTable;
 
-	class TRegMaterial
+	class TRegMaterial : public TNodeList<TRegMaterial>::TNode
 	{
 	public:
 		typedef uint32_t State;
