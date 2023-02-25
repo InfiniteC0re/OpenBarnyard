@@ -17,7 +17,34 @@ namespace Toshi
         for (size_t i = 0; i < s_uiMaxMaterials; i++)
         {
             s_pRegMaterials[i].SetOrderTable(TNULL);
-            s_RegMatFreeList.InsertTail(s_pRegMaterials[i]);
+            s_llRegMatFreeList.InsertTail(s_pRegMaterials[i]);
         }
     }
+
+	void TRegMaterial::Render()
+	{
+		m_pMaterial->PreRender();
+
+		for (auto it = m_pRenderPacket; it != TNULL; it = m_pRenderPacket->Next())
+		{
+			TIMPLEMENT();
+		}
+
+		m_pRenderPacket = TNULL;
+		SetFlags(m_State & ~4);
+		m_pMaterial->PostRender();
+
+	}
+
+	TRenderPacket* TRegMaterial::AddRenderPacket(TMesh* pMesh)
+	{
+		m_pRenderPacket = TOrderTable::AllocRenderPacket();
+		m_pRenderPacket->SetNext(m_pRenderPacket);
+
+		m_pOrderTable->UseMaterial(this);
+		m_pRenderPacket->SetMesh(pMesh);
+		m_pRenderPacket->SetMaterial(pMesh->GetMaterial());
+
+		return m_pRenderPacket;
+	}
 }

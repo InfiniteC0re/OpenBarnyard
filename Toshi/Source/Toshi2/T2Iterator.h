@@ -26,12 +26,12 @@ namespace Toshi
 
 		/*bool operator==(const T* ptr)
 		{
-			return m_pPtr == ptr;
+			return m_pNode == ptr;
 		}*/
 
 		/*bool operator!=(const T* ptr)
 		{
-			return m_pPtr != ptr;
+			return m_pNode != ptr;
 		}*/
 
 		void operator=(const T2Iterator& other)

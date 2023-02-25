@@ -203,7 +203,7 @@ namespace Toshi
 			return m_Head.m_Next;
 		}
 
-		T2Iterator<T, TNode> End() const
+		T2Iterator<T, TNode> End()
 		{
 			return &m_Head;
 		}
