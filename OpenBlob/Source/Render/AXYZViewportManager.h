@@ -6,10 +6,19 @@
 class AXYZViewportManager
 {
 public:
+
+	enum Viewport
+	{
+		VIEWPORT_NONE = -1,
+
+	};
+
 	AXYZViewportManager();
 	~AXYZViewportManager() = default;
 
 	Toshi::TViewport* CreateViewport(float x, float y, float w, float h);
+
+	void GetUseableArea(float& x, float& y, float& w, float& h);
 
 	void SetMainFullScreen(bool fullscreen);
 

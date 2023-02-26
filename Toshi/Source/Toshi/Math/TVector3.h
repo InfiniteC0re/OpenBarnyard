@@ -17,6 +17,8 @@ namespace Toshi
 		void RotateY(TFloat a_fRotation);
 		void RotateZ(TFloat a_fRotation);
 
+		void Normalize();
+
 		void Set(const TVector3& vec) { TVector3::x = vec.x; TVector3::y = vec.y; TVector3::z = vec.z; }
 		void Set(TFloat floats[3]) { TVector3::x = floats[0]; TVector3::y = floats[1]; TVector3::z = floats[2]; }
 		void Set(TFloat x, TFloat y, TFloat z) { TVector3::x = x; TVector3::y = y; TVector3::z = z; }

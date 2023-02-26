@@ -9,6 +9,10 @@ AXYZViewportManager::AXYZViewportManager()
 	auto renderer = Toshi::TRenderDX11::Interface();
 	auto pDisplayParams = renderer->GetCurrentDisplayParams();
 
+	float x, y, w, h;
+	GetUseableArea(x, y, w, h);
+
+
 }
 
 Toshi::TViewport* AXYZViewportManager::CreateViewport(float x, float y, float w, float h)
@@ -28,6 +32,18 @@ Toshi::TViewport* AXYZViewportManager::CreateViewport(float x, float y, float w,
 	pViewport->SetBackgroundColor(64, 64, 64, 255);
 
 	return pViewport;
+}
+
+void AXYZViewportManager::GetUseableArea(float& x, float& y, float& w, float& h)
+{
+	TIMPLEMENT();
+	auto renderer = Toshi::TRenderDX11::Interface();
+	auto pDisplayParams = renderer->GetCurrentDisplayParams();
+
+	//x = pDisplayParams->Width / 3.0f;
+	//y = pDisplayParams->
+	w = pDisplayParams->Width * 0.5f;
+	h = pDisplayParams->Height * 0.5f;
 }
 
 void AXYZViewportManager::SetMainFullScreen(bool fullscreen)

@@ -31,6 +31,14 @@ namespace Toshi
 		p = s_Identity[15];
 	}
 
+	void TMatrix44::LookAtTarget(const TVector3& vec, const TVector3& vec2)
+	{
+		i = vec.x - vec2.x;
+		j = vec.y - vec2.y;
+		k = vec.z - vec2.z;
+		
+	}
+
 	void TMatrix44::Set(TFloat a_f11, TFloat a_f12, TFloat a_f13, TFloat a_f14,
 		TFloat a_f21, TFloat a_f22, TFloat a_f23, TFloat a_f24, 
 		TFloat a_f31, TFloat a_f32, TFloat a_f33, TFloat a_f34, 
