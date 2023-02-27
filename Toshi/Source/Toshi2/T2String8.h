@@ -1,6 +1,7 @@
 #pragma once
 #include <stdlib.h>
 #include <Toshi/Strings/TString8.h>
+#include "T2Allocator.h"
 
 namespace Toshi
 {
@@ -135,7 +136,13 @@ namespace Toshi
 			return atoi(src);
 		}
 
+		static Toshi::T2Allocator* GetDefaultAllocatorCB()
+		{
+			return &T2Allocator::s_GlobalAllocator;
+		}
+
 	public:
+		static Toshi::T2Allocator* sm_pDefaultAllocatorCB;
 		static char ms_aScratchMem[SCRATCH_MEM_SIZE];
 	};
 }

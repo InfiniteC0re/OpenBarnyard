@@ -21,6 +21,7 @@ group "Engine"
 	include "Toshi"
 	include "OpenBlob"
     include "OpenJPOG"
+    include "OpenGlobs"
 
 group "Toshi Tools"
 	include "Tools/TRBF"

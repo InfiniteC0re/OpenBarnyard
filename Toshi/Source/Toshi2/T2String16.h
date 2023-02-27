@@ -99,7 +99,13 @@ namespace Toshi
 			return -1;
 		}
 
+		static Toshi::T2Allocator* GetDefaultAllocatorCB()
+		{
+			return &T2Allocator::s_GlobalAllocator;
+		}
+
 	public:
+		static Toshi::T2Allocator* sm_pDefaultAllocatorCB;
 		static wchar_t ms_aScratchMem[512];
 	};
 }
