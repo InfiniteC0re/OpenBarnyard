@@ -20,17 +20,24 @@ namespace Toshi
 				m_List = nullptr;
 			}
 
-			T* Next()
+			TNode(const TNode& node)
+			{
+				m_Next = node.m_Next;
+				m_Prev = node.m_Prev;
+				m_List = node.m_List;
+			}
+
+			T* Next() const
 			{
 				return m_Next->As<T>();
 			}
 
-			T* Prev()
+			T* Prev() const
 			{
 				return m_Prev->As<T>();
 			}
 
-			bool IsLinked()
+			bool IsLinked() const
 			{
 				return m_List != TNULL;
 			}
@@ -40,10 +47,22 @@ namespace Toshi
 				m_List = list;
 			}
 
+			TNodeList* GetList() const
+			{
+				return m_List;
+			}
+
 			template<class T>
 			T* As()
 			{
 				return static_cast<T*>(this);
+			}
+
+			TNode& operator=(const TNode& node)
+			{
+				m_Next = node.m_Next;
+				m_Prev = node.m_Prev;
+				m_List = node.m_List;
 			}
 
 		protected:
@@ -63,39 +82,39 @@ namespace Toshi
 			DeleteAll();
 		}
 
-		void InsertAfter(TNode* insertAfter, TNode* newNode)
+		void InsertAfter(TNode& insertAfter, TNode& newNode)
 		{
-			TASSERT(!newNode->IsLinked());
-			newNode->SetList(this);
-			newNode->m_Next = insertAfter->m_Next;
-			newNode->m_Prev = insertAfter;
-			insertAfter->m_Next->m_Prev = newNode;
-			insertAfter->m_Next = newNode;
-			m_Count += 1;
+			TASSERT(!newNode.IsLinked());
+			newNode.SetList(this);
+			newNode.m_Next = insertAfter.m_Next;
+			newNode.m_Prev = &insertAfter;
+			insertAfter.m_Next->m_Prev = &newNode;
+			insertAfter.m_Next = &newNode;
+			m_Count++;
 		}
 
-		void InsertBefore(TNode* insertBefore, TNode* newNode)
+		void InsertBefore(TNode& insertBefore, TNode& newNode)
 		{
-			TASSERT(!newNode->IsLinked());
-			newNode->SetList(this);
-			newNode->m_Next = insertBefore;
-			newNode->m_Prev = insertBefore->m_Prev;
-			insertBefore->m_Prev->m_Next = newNode;
-			insertBefore->m_Prev = newNode;
-			m_Count += 1;
+			TASSERT(!newNode.IsLinked());
+			newNode.SetList(this);
+			newNode.m_Next = &insertBefore;
+			newNode.m_Prev = insertBefore.m_Prev;
+			insertBefore.m_Prev->m_Next = &newNode;
+			insertBefore.m_Prev = &newNode;
+			m_Count++;
 		}
 
-		TNode* Remove(TNode* node)
+		TNode* Remove(TNode& node)
 		{
-			TASSERT(node != TNULL);
-			node->SetList(TNULL);
-			node->m_Prev->m_Next = node->m_Next;
-			node->m_Next->m_Prev = node->m_Prev;
-			node->m_Next = node;
-			node->m_Prev = node;
-			m_Count -= 1;
+			TASSERT(&node != TNULL);
+			node.SetList(TNULL);
+			node.m_Prev->m_Next = node.m_Next;
+			node.m_Next->m_Prev = node.m_Prev;
+			node.m_Next = &node;
+			node.m_Prev = &node;
+			m_Count--;
 
-			return node;
+			return &node;
 		}
 
 		TNode* RemoveHead()
@@ -132,44 +151,44 @@ namespace Toshi
 		{
 			while (!IsEmpty())
 			{
-				Delete(m_Head.Next());
+				Delete(*m_Head.Next());
 			}
 		}
 
-		void Delete(TNode* node)
+		void Delete(TNode& node)
 		{
-			TASSERT(node != TNULL);
+			TASSERT(&node != TNULL);
 			Remove(node);
 
-			static_cast<T*>(node)->~T();
+			delete &node;
 		}
 
-		void InsertHead(TNode* node)
+		void InsertHead(TNode& node)
 		{
-			InsertAfter(&m_Head, node);
+			InsertAfter(m_Head, node);
 		}
 
-		void InsertTail(TNode* node)
+		void InsertTail(TNode& node)
 		{
-			InsertBefore(&m_Head, node);
+			InsertBefore(m_Head, node);
 		}
 
-		bool IsEmpty()
+		bool IsEmpty() const
 		{
 			return m_Head.Next() == &m_Head;
 		}
 
-		bool IsValid(const TNode* node)
+		bool IsValid(const TNode* node) const
 		{
 			return node != TNULL && node->m_List == this;
 		}
 
-		TNode* Head()
+		TNode* Head() const
 		{
 			return m_Head.Next();
 		}
 
-		TNode* Tail()
+		TNode* Tail() const
 		{
 			return m_Head.Prev();
 		}

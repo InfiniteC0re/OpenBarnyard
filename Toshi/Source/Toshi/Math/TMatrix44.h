@@ -41,6 +41,8 @@ namespace Toshi
 
 		void Identity();
 
+		void LookAtTarget(const TVector3& vec, const TVector3& vec2);
+
 		void Set(
 			TFloat a_f11, TFloat a_f12, TFloat a_f13, TFloat a_f14,
 			TFloat a_f21, TFloat a_f22, TFloat a_f23, TFloat a_f24,

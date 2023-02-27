@@ -60,6 +60,17 @@ namespace Toshi
 			m_iNumElements = 0;
 		}
 
+		T* Find(const T& item)
+		{
+			for (T* it = Begin(); it != End(); it++)
+			{
+				if (it == item)
+				{
+					return it;
+				}
+			}
+		}
+
 		void Erase(Iterator it)
 		{
 			const size_t itemIndex = it.Item() - Begin();

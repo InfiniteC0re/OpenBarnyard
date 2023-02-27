@@ -11,6 +11,7 @@ namespace Toshi
 		}
 
 		TCStringPool(int unk, int unk2);
+		TCStringPool(const char* a_szFileName, int unk, int unk2);
 
 		struct StringPool
 		{
@@ -18,11 +19,20 @@ namespace Toshi
 			int count;
 		};
 
+		struct StringPools
+		{
+			StringPool* m_pStringPool;
+			int m_iCountOfPools;
+		};
+
+	protected:
+		bool ReadFile(const char* a_szFileName);
+		void InitStringPool(int a_iStringCount);
 
 	private:
-		int m_size;               // 0x0
-		int m_unk;                // 0x4
-		int m_iCount;             // 0x8
-		StringPool* m_oStringPool;// 0xC
+		int m_iMaxSize;           // 0x0
+		int m_iStringCount;       // 0x4
+		int m_iCapacity;          // 0x8
+		StringPools m_oStringPool;// 0xC
 	};
 }

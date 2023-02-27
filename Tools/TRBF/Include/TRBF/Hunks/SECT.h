@@ -132,6 +132,11 @@ namespace TLib
 					return m_BufferPos;
 				}
 
+				size_t GetBufferSize() const
+				{
+					return m_BufferSize;
+				}
+
 				size_t GetUsedSize() const
 				{
 					return (size_t)m_BufferPos - (size_t)m_Buffer;
@@ -172,6 +177,12 @@ namespace TLib
 					TASSERT(offset >= 0 && offset < m_BufferSize, "Offset is out of buffer");
 					*(T*)(&m_Buffer[offset]) = value;
 					return reinterpret_cast<T*>(&m_Buffer[offset]);
+				}
+
+				void Write(size_t offset, char* value, int size)
+				{
+					TASSERT(offset >= 0 && offset < m_BufferSize, "Offset is out of buffer");
+					Toshi::TUtil::MemCopy(&m_Buffer[offset], value, size);
 				}
 
 				template <class T>

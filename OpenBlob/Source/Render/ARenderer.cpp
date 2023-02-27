@@ -10,6 +10,8 @@
 #include <Platform/Windows/DX11/TPrimShader_DX11.h>
 #include <Toshi/Render/TAssetInit.h>
 #include <Toshi2/T2GUI/T2GUI.h>
+#include <Toshi/Render/TOrderTable.h>
+#include "AXYZViewportManager.h"
 
 Toshi::TTRB ARenderer::s_BootAssetsTRB = Toshi::TTRB();
 Toshi::THPTimer ARenderer::s_timer = Toshi::THPTimer();
@@ -81,7 +83,7 @@ void ARenderer::Update(float deltaTime)
 bool ARenderer::CreateInterface()
 {
 	// 005ed3b0
-	TTODO("Toshi::TOrderTable::CreateStaticData");
+	Toshi::TOrderTable::CreateStaticData(4500, 2500);
 	return CreateTRender();
 }
 
@@ -95,6 +97,7 @@ bool ARenderer::CreateTRender()
 
 	renderer->BuildAdapterDatabase();
 	auto adapterList = renderer->GetAdapterList();
+	
 	auto adapter = adapterList->Head()->As<Toshi::TD3DAdapter>();
 	auto mode = adapter->GetMode();
 	
@@ -161,7 +164,7 @@ bool ARenderer::CreateTRender()
 				&& mode->GetWidth() < AApplication::g_oTheApp.m_Width)
 			{
 				char formattedString[512];
-				Toshi::T2String8::Format(formattedString, "The specified width and heith must be between 1280x720 and the current desktop res olution (%dx%d)", mode->GetWidth(), mode->GetHeight());
+				Toshi::T2String8::Format(formattedString, "The specified width and heith must be between 1280x720 and the current desktop resolution (%dx%d)", mode->GetWidth(), mode->GetHeight());
 				MessageBoxA(TNULL, formattedString, "Invalid args", MB_OK | MB_ICONERROR | MB_SYSTEMMODAL);
 				return false;
 			}
@@ -192,6 +195,19 @@ void ARenderer::Create()
 	}
 
 	CreateMainViewport();
+
+	AXYZViewportManager* vpMgr = new AXYZViewportManager();
+
+	float width, height;
+
+	Toshi::T2GUI::GetSingletonWeak()->GetRootElement()->GetDimensions(width, height);
+
+	m_pRectangle = new Toshi::T2GUIRectangle();
+	
+	m_pRectangle->Create(width, height);
+	m_pRectangle->SetColour(0xFF000000);
+	m_pRectangle->SetAlpha(0);
+	m_pRectangle->SetVisible(true);
 }
 
 void ARenderer::SetBackgroundColour(uint32_t r, uint32_t g, uint32_t b)
@@ -251,6 +267,7 @@ void ARenderer::CreateMainViewport()
 	m_pViewport->SetMaxZ(1.0f);
 	m_pViewport->AllowBackgroundClear(true);
 	m_pViewport->AllowDepthClear(true);
+	m_pViewport->Enable(true);
 	m_pViewport->EnableDefaultBeginRender(true);
 	m_pViewport->SetBackgroundColor(0, 0, 0, 255);
 	renderer->m_pGlow->SetDist(1.5f);

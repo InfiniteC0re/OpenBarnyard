@@ -12,6 +12,7 @@
 // This file includes the entrypoint so set all the settings before including it
 #include "Toshi.h"
 #include "TRBF/TRBF.h"
+#include <filesystem>
 
 class TXUIBuilder
 {

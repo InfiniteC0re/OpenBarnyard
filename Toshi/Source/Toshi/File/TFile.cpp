@@ -196,7 +196,7 @@ namespace Toshi
 	TFileSystem::TFileSystem(const char* name) : m_Name(name), m_Prefix()
 	{
 		//???
-		// m_unk = m_unk
+		// m_iStringCount = m_iStringCount
 		m_Handle = NULL;
 	}
 

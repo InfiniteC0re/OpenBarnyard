@@ -43,6 +43,7 @@ namespace Toshi
 	public:
 		static bool Create();
 		static TCStringPool* CreateCStringPoolExplicit(int unk, int unk2);
+		static TCStringPool* CreateCStringPoolExplicit(const char* a_szFileName, int unk, int unk2);
 
 
 		static inline Toshi::TCStringPool* ms_poTCStringPool = TNULL;

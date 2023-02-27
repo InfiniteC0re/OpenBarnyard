@@ -1641,7 +1641,7 @@ namespace Toshi
 
 				d3dAdapter->EnumerateOutputs(this, dxgiAdapter);
 
-				GetAdapterList()->InsertTail(d3dAdapter);
+				GetAdapterList()->InsertTail(*d3dAdapter);
 				TUtil::LogDown();
 				dxgiAdapter->Release();
 				enumResult = pFactory->EnumAdapters(++adapterIndex, &dxgiAdapter);
@@ -1700,7 +1700,7 @@ namespace Toshi
 					mode->SetDescription(descriptions[i]);
 					mode->SetName(outputDesc.DeviceName);
 
-					GetModeList()->InsertTail(mode);
+					GetModeList()->InsertTail(*mode);
 				}
 
 				delete[] descriptions;
