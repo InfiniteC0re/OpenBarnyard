@@ -105,7 +105,7 @@ namespace Toshi
 		}
 
 	public:
-		static Toshi::T2Allocator* sm_pDefaultAllocatorCB;
+		static inline Toshi::T2Allocator* sm_pDefaultAllocatorCB = GetDefaultAllocatorCB();
 		static wchar_t ms_aScratchMem[512];
 	};
 }

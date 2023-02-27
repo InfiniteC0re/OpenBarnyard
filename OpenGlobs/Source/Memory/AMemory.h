@@ -41,5 +41,5 @@ public:
 public:
 	static PoolDefinitionInfo ms_aPoolDefinitionInfo[POOL_NumOf];
 	static Toshi::TMemoryHeap* ms_apMemoryBlocks[POOL_NumOf];
-	static Toshi::T2Allocator* ms_aMemoryAllocators;
+	static inline Toshi::T2Allocator* ms_aMemoryAllocators = TNULL;
 };

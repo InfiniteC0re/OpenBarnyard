@@ -142,7 +142,7 @@ namespace Toshi
 		}
 
 	public:
-		static Toshi::T2Allocator* sm_pDefaultAllocatorCB;
+		static inline Toshi::T2Allocator* sm_pDefaultAllocatorCB = GetDefaultAllocatorCB();
 		static char ms_aScratchMem[SCRATCH_MEM_SIZE];
 	};
 }
