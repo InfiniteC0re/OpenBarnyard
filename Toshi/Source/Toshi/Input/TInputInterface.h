@@ -1,9 +1,10 @@
 #pragma once
-#include "TInputDevice.h"
-#include "TInputDeviceKeyboard.h"
+#include <Toshi/Input/TInputDeviceKeyboard.h>
 
 namespace Toshi
 {
+
+
 	class TInputInterface :
 		public TGenericClassDerived<TInputInterface, TObject, "TInputInterface", TMAKEVERSION(1, 0), false>,
 		public TSingleton<TInputInterface>
@@ -164,6 +165,7 @@ namespace Toshi
 	private:
 		bool m_bIsExclusiveMode;              // 0x04 
 		TNodeList<TInputDevice> m_DeviceList; // 0x08
+		TGenericEmitter m_Emitter1;           // 0x24
 	};
 }
 

@@ -3,11 +3,21 @@
 
 namespace Toshi
 {
+
+	class TInputInterface;
+
 	class TInputDevice :
 		public TGenericClassDerived<TInputDevice, TObject, "TInputDevice", TMAKEVERSION(1, 0), false>,
 		public TNodeList<TInputDevice>::TNode
 	{
 	protected:
+
+		struct DoodadProperties
+		{
+			int m_iUnk;
+			int m_iUnk2;
+		};
+
 		struct RepeatInfo
 		{
 			int m_iDoodad;
@@ -20,16 +30,20 @@ namespace Toshi
 		virtual bool StopAllRepeats();
 		virtual void ThrowRepeatEvent(TGenericEmitter& emitter, RepeatInfo* repeatInfo, float flt);
 
-	public:
-		struct DoodadProperties
+		bool IsAquired() const
 		{
-			int m_iUnk;
-			int m_iUnk2;
-		};
+			return m_bIsAquired;
+		}
+
+	public:
+		
 
 		TInputDevice()
 		{
 
 		}
+
+		TInputInterface* m_pInterface;
+		bool m_bIsAquired;              // 0x39 de blob 0x35 JPOG
 	};
 }

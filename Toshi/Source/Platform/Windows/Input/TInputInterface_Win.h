@@ -1,6 +1,9 @@
 #pragma once
-
+#define DIRECTINPUT_VERSION 0x0800
+#pragma comment(lib,"winmm.lib")
+#pragma comment(lib,"dinput8.lib")
 #include <dinput.h>
+#include <joystickapi.h>
 #include "Toshi/Input/TInputInterface.h"
 
 namespace Toshi
@@ -40,6 +43,8 @@ namespace Toshi
 		{
 			return static_cast<TInputDXInterface*>(TInputInterface::GetSingletonWeak());
 		}
+
+		bool LostDevice();
 
 		static BOOL CALLBACK EnumerateDeviceCallback(LPCDIDEVICEINSTANCE a_poDeviceInstance, LPVOID poDXInputInterface);
 

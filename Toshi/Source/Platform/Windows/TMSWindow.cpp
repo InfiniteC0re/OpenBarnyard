@@ -2,6 +2,7 @@
 #include "TMSWindow.h"
 #include "Toshi/Core/TSystem.h"
 #include "DX11/TRender_DX11.h"
+#include "Input/TInputInterface_Win.h"
 
 namespace Toshi
 {
@@ -218,7 +219,7 @@ namespace Toshi
 			{
 				if (wParam == DBT_DEVNODES_CHANGED)
 				{
-					TTODO("Toshi::TInputDXInterface::FUN_00680030()");
+					Toshi::TInputDXInterface::GetInterface()->LostDevice();
 				}
 			}
 			else

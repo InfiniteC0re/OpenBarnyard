@@ -1,6 +1,6 @@
 #include "ToshiPCH.h"
 #include "TInputInterface_Win.h"
-#include <joystickapi.h>
+
 
 namespace Toshi
 {
@@ -51,6 +51,16 @@ namespace Toshi
         }
 
         return true; // ?
+    }
+
+    bool TInputDXInterface::LostDevice()
+    {
+        auto input = GetDirectInput();
+        if (input != NULL)
+        {
+            return input->EnumDevices(DI8DEVCLASS_ALL, EnumerateDeviceCallback, this, DIEDFL_ATTACHEDONLY) != DI_OK;
+        }
+        return false;
     }
 
     BOOL TInputDXInterface::EnumerateDeviceCallback(LPCDIDEVICEINSTANCE a_poDeviceInstance, LPVOID poDXInputInterface)

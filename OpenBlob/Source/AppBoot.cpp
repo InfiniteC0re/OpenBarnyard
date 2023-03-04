@@ -22,6 +22,7 @@
 #include <Toshi/Sound/TSound.h>
 #include <Toshi/Render/TRender.h>
 #include <Platform/Windows/TSound_Win.h>
+#include "Toshi/Input/TInputInterface.h"
 #include TOSHI_MULTIRENDER(TRender)
 
 AApplication AApplication::g_oTheApp;
@@ -58,6 +59,8 @@ bool AApplication::OnCreate(int argc, char** argv)
 
 		FMOD::System* system = Toshi::TSound::GetSingletonWeak()->GetSystem();
 		system->setFileSystem(NULL, NULL, NULL, NULL, NULL, NULL, 0);
+
+		//Toshi::TInputInterface::CreateSingleton();
 
 		m_Renderer->Create();
 		AGameState::SetupLoadIcon();

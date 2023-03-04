@@ -1,6 +1,5 @@
 #include "ToshiPCH.h"
 #include "TInputInterface.h"
-#include "TInputDeviceKeyboard.h"
 
 namespace Toshi
 {
@@ -39,6 +38,13 @@ namespace Toshi
 
 	bool TInputInterface::AcquireAll()
 	{
+		for (auto it = m_DeviceList.Begin(); it != m_DeviceList.End(); ++it)
+		{
+			if (it->IsAquired())
+			{
+				TIMPLEMENT();
+			}
+		}
 		return false;
 	}
 
@@ -64,15 +70,32 @@ namespace Toshi
 
 	int TInputInterface::ProcessEvents(float fUnk)
 	{
-		return 0;
+		int events = 0;
+
+		for (auto it = m_DeviceList.Begin(); it != m_DeviceList.End(); ++it)
+		{
+			if (it->IsAquired())
+			{
+				TIMPLEMENT();
+			}
+		}
+
+		for (auto it = m_DeviceList.Begin(); it != m_DeviceList.End(); ++it)
+		{
+			if (it->IsAquired())
+			{
+				TIMPLEMENT();
+			}
+		}
+
+		return events;
 	}
 
 	void TInputInterface::StopAllRepeats()
 	{
 		for (auto it = m_DeviceList.Begin(); it != m_DeviceList.End(); ++it)
 		{
-			TIMPLEMENT();
-			return;
+			it->StopAllRepeats();
 		}
 	}
 }
