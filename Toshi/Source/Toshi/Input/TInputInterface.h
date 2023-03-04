@@ -1,4 +1,5 @@
 #pragma once
+#include "TInputDevice.h"
 #include "TInputDeviceKeyboard.h"
 
 namespace Toshi
@@ -159,7 +160,6 @@ namespace Toshi
 		virtual bool GetExclusiveMode() const;
 		virtual int ProcessEvents(float fUnk);
 		virtual void StopAllRepeats();
-
 
 	private:
 		bool m_bIsExclusiveMode;              // 0x04 

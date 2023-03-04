@@ -43,11 +43,14 @@ namespace Toshi
     bool TInputDXInterface::Deinitialise()
     {
         TInputInterface::Deinitialise();
+
         if (m_poDirectInput8 != NULL)
         {
             m_poDirectInput8->Release();
             m_poDirectInput8 = NULL;
         }
+
+        return true; // ?
     }
 
     BOOL TInputDXInterface::EnumerateDeviceCallback(LPCDIDEVICEINSTANCE a_poDeviceInstance, LPVOID poDXInputInterface)
