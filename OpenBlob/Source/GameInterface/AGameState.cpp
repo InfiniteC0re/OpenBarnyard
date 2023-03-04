@@ -1,9 +1,12 @@
 #include "pch.h"
 #include "AGameState.h"
 #include "AGameStateController.h"
-#include "Toshi/Input/TInputInterface.h"
-#include "Toshi2/T2GUI/T2GUI.h"
 #include "AAssetStreaming.h"
+
+#include <Toshi/Input/TInputInterface.h>
+#include <Toshi/Input/TInputDeviceKeyboard.h>
+
+#include <Toshi2/T2GUI/T2GUI.h>
 
 AGameState::AGameState() :
 	m_InputHelper(1, Toshi::TInputInterface::GetSingletonWeak()->GetKeyboardByIndex(0))

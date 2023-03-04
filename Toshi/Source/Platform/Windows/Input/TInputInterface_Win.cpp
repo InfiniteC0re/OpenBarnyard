@@ -43,6 +43,7 @@ namespace Toshi
     bool TInputDXInterface::Deinitialise()
     {
         TInputInterface::Deinitialise();
+
         if (m_poDirectInput8 != NULL)
         {
             m_poDirectInput8->Release();

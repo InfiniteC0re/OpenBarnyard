@@ -1,5 +1,6 @@
 #include "ToshiPCH.h"
 #include "TInputInterface.h"
+#include "TInputDeviceKeyboard.h"
 
 namespace Toshi
 {
