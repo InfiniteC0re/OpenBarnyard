@@ -49,6 +49,8 @@ namespace Toshi
             m_poDirectInput8->Release();
             m_poDirectInput8 = NULL;
         }
+
+        return true; // ?
     }
 
     BOOL TInputDXInterface::EnumerateDeviceCallback(LPCDIDEVICEINSTANCE a_poDeviceInstance, LPVOID poDXInputInterface)
