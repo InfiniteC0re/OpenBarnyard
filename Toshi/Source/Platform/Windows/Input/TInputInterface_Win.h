@@ -23,6 +23,7 @@ namespace Toshi
 		{
 			m_poDirectInput8 = NULL;
 			m_hMainWindow = NULL;
+			ms_pTheInterface = this;
 		}
 
 		virtual bool Initialise();
@@ -41,12 +42,14 @@ namespace Toshi
 
 		static TInputDXInterface* GetInterface()
 		{
-			return static_cast<TInputDXInterface*>(TInputInterface::GetSingletonWeak());
+			return ms_pTheInterface;
 		}
 
 		bool LostDevice();
 
 		static BOOL CALLBACK EnumerateDeviceCallback(LPCDIDEVICEINSTANCE a_poDeviceInstance, LPVOID poDXInputInterface);
+
+		static inline TInputDXInterface* ms_pTheInterface = TNULL;
 
 		LPDIRECTINPUT8 m_poDirectInput8; // 0x30
 		HWND m_hMainWindow;              // 0x34

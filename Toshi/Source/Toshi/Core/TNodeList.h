@@ -63,6 +63,7 @@ namespace Toshi
 				m_Next = node.m_Next;
 				m_Prev = node.m_Prev;
 				m_List = node.m_List;
+				return *this;
 			}
 
 		protected:

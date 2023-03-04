@@ -148,6 +148,12 @@ namespace Toshi
 		};
 
 	public:
+
+		TInputInterface() 
+		{
+			m_DeviceList = TNodeList<TInputDevice>();
+		}
+
 		TInputDevice* GetDeviceByIndex(TClass* pClass, size_t index);
 		TInputDeviceKeyboard* GetKeyboardByIndex(size_t index);
 

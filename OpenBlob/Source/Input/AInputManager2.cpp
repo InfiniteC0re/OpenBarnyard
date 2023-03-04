@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "AInputManager2.h"
-#include TOSHI_MULTIRENDER(TInputInterface)
+#include "Platform/Windows/Input/TInputInterface_Win.h"
 
 AInputManager2::AInputManager2()
 {
