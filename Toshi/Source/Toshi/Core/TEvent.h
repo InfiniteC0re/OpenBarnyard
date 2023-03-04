@@ -88,7 +88,7 @@ namespace Toshi
 		void* m_Owner;
 	};
 
-	template <class T>
+	template <class T, class U = void*>
 	class TEmitter : public TGenericEmitter
 	{
 	public:

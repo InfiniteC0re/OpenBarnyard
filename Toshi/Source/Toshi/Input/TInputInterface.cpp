@@ -68,5 +68,10 @@ namespace Toshi
 
 	void TInputInterface::StopAllRepeats()
 	{
+		for (auto it = m_DeviceList.Begin(); it != m_DeviceList.End(); ++it)
+		{
+			TIMPLEMENT();
+			return;
+		}
 	}
 }

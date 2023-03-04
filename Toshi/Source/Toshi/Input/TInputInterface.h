@@ -10,13 +10,67 @@ namespace Toshi
 	public:
 		class InputEvent
 		{
-		private:
+		public:
 			enum EventType
 			{
-
+				EventType_Unk,
+				EventType_Unk2,
+				EventType_Repeat
 			};
 
 		public:
+
+			InputEvent(TInputDevice* device, int doodad, EventType eventType)
+			{
+				m_pSource = device;
+				m_iDoodad = doodad;
+				m_eEventType = eventType;
+				m_bIsMagnitudeFloat = false;
+				m_iAxisCount = 0;
+			}
+
+			InputEvent(TInputDevice* device, int doodad, EventType eventType, float magnitude)
+			{
+				m_pSource = device;
+				m_iDoodad = doodad;
+				m_eEventType = eventType;
+				m_Magnitude.Floats[0] = magnitude;
+				m_bIsMagnitudeFloat = true;
+				m_iAxisCount = 1;
+			}
+
+			InputEvent(TInputDevice* device, int doodad, EventType eventType, float magnitude, float magnitude2)
+			{
+				m_pSource = device;
+				m_iDoodad = doodad;
+				m_eEventType = eventType;
+				m_Magnitude.Floats[0] = magnitude;
+				m_Magnitude.Floats[1] = magnitude2;
+				m_bIsMagnitudeFloat = true;
+				m_iAxisCount = 2;
+			}
+
+			InputEvent(TInputDevice* device, int doodad, EventType eventType, int magnitude)
+			{
+				m_pSource = device;
+				m_iDoodad = doodad;
+				m_eEventType = eventType;
+				m_Magnitude.Ints[0] = magnitude;
+				m_bIsMagnitudeFloat = false;
+				m_iAxisCount = 1;
+			}
+
+			InputEvent(TInputDevice* device, int doodad, EventType eventType, int magnitude, int magnitude2)
+			{
+				m_pSource = device;
+				m_iDoodad = doodad;
+				m_eEventType = eventType;
+				m_Magnitude.Ints[0] = magnitude;
+				m_Magnitude.Ints[1] = magnitude2;
+				m_bIsMagnitudeFloat = false;
+				m_iAxisCount = 2;
+			}
+
 			int8_t GetAxisCount() const
 			{
 				return m_iAxisCount;
@@ -32,7 +86,7 @@ namespace Toshi
 				return m_eEventType;
 			}
 
-			TInputInterface* GetSource() const
+			TInputDevice* GetSource() const
 			{
 				return m_pSource;
 			}
@@ -88,7 +142,7 @@ namespace Toshi
 				float* Floats;
 				int* Ints;
 			} m_Magnitude;              // 0x10 JPOG 0x18 De blob
-			TInputInterface* m_pSource; // 0xC
+			TInputDevice* m_pSource; // 0xC
 		};
 
 	public:

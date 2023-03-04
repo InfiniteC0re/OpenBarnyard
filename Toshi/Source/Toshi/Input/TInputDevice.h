@@ -1,5 +1,6 @@
 #pragma once
 #include "Toshi/Core/TNodeList.h"
+#include "TInputInterface.h"
 
 namespace Toshi
 {
@@ -7,11 +8,30 @@ namespace Toshi
 		public TGenericClassDerived<TInputDevice, TObject, "TInputDevice", TMAKEVERSION(1, 0), false>,
 		public TNodeList<TInputDevice>::TNode
 	{
-
-		virtual bool Flush() { return true; }
-		virtual bool StartRepeat(int param_1, float param_2, float param_3);
+	protected:
+		struct RepeatInfo
+		{
+			int m_iDoodad;
+		};
 
 	public:
+		virtual bool Flush() { return true; }
+		virtual bool StartRepeat(int param_1, float param_2, float param_3);
+		virtual bool StopRepeat(int param_1);
+		virtual bool StopAllRepeats();
+		virtual void ThrowRepeatEvent(TEmitter<TInputInterface, TInputInterface::InputEvent>& emitter, RepeatInfo* repeatInfo, float flt);
+
+
+		
+
+	public:
+
+		struct DoodadProperties
+		{
+			int m_iUnk;
+			int m_iUnk2;
+		};
+
 		TInputDevice()
 		{
 

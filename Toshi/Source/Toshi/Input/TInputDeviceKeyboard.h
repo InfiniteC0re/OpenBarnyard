@@ -3,8 +3,7 @@
 
 namespace Toshi
 {
-	class TInputDeviceKeyboard : 
-		public TGenericClassDerived<TInputDeviceKeyboard, TInputDevice, "TInputDeviceKeyboard", TMAKEVERSION(1, 0), false>
+	class TInputDeviceKeyboard : public TInputDevice
 	{
 	public:
 	};
