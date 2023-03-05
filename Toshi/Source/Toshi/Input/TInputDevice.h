@@ -38,9 +38,10 @@ namespace Toshi
 	public:
 		
 
-		TInputDevice()
+		TInputDevice() : TNodeList<TInputDevice>::TNode()
 		{
-
+			m_pInterface = TNULL;
+			m_bIsAquired = false;
 		}
 
 		TInputInterface* m_pInterface;

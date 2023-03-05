@@ -152,6 +152,7 @@ namespace Toshi
 		TInputInterface() 
 		{
 			m_DeviceList = TNodeList<TInputDevice>();
+			m_Emitter1 = TGenericEmitter(this);
 		}
 
 		TInputDevice* GetDeviceByIndex(TClass* pClass, size_t index);
@@ -172,6 +173,7 @@ namespace Toshi
 		bool m_bIsExclusiveMode;              // 0x04 
 		TNodeList<TInputDevice> m_DeviceList; // 0x08
 		TGenericEmitter m_Emitter1;           // 0x24
+		TGenericEmitter m_Emitter2;           // 0x28
 	};
 }
 

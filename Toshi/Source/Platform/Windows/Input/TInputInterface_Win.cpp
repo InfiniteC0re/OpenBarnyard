@@ -1,13 +1,13 @@
 #include "ToshiPCH.h"
 #include "TInputInterface_Win.h"
-
+#include TOSHI_MULTIINPUT(TInputDeviceController);
 
 namespace Toshi
 {
     bool TInputDXInterface::Initialise()
     {
         TASSERT(TNULL == m_poDirectInput8);
-        HRESULT hRes = DirectInput8Create(GetModuleHandle(NULL), DIRECTINPUT_VERSION, IID_IDirectInput8, (LPVOID*)m_poDirectInput8, NULL);
+        HRESULT hRes = DirectInput8Create(GetModuleHandle(NULL), DIRECTINPUT_VERSION, IID_IDirectInput8, (LPVOID*)&m_poDirectInput8, NULL);
 
         if (hRes == DI_OK)
         {
@@ -67,7 +67,8 @@ namespace Toshi
     {
         TASSERT(poDXInputInterface != NULL);
         TASSERT(a_poDeviceInstance != NULL);
-
+        char fmtStr[37];
+        char productName[260];
         switch (GET_DIDEVICE_TYPE(a_poDeviceInstance->dwDevType))
         {
         case DI8DEVTYPE_MOUSE:
@@ -81,8 +82,30 @@ namespace Toshi
         case DI8DEVTYPE_GAMEPAD:
         case DI8DEVTYPE_1STPERSON:
             TIMPLEMENT();
-            char* fmtStr;
-            Toshi::T2String8::Format(fmtStr, "%08lX-%04hX-%04hX-%02hhX%02hhX-%02hhX%02hhX%02hhX%02hhX%02hhX%02hhX");
+            
+            Toshi::T2String8::Format(fmtStr, "%08lX-%04hX-%04hX-%02hhX%02hhX-%02hhX%02hhX%02hhX%02hhX%02hhX%02hhX", 
+                a_poDeviceInstance->guidProduct.Data1, a_poDeviceInstance->guidProduct.Data2, 
+                a_poDeviceInstance->guidProduct.Data3, a_poDeviceInstance->guidProduct.Data4[0],
+                a_poDeviceInstance->guidProduct.Data4[1], a_poDeviceInstance->guidProduct.Data4[2],
+                a_poDeviceInstance->guidProduct.Data4[3], a_poDeviceInstance->guidProduct.Data4[4],
+                a_poDeviceInstance->guidProduct.Data4[5], a_poDeviceInstance->guidProduct.Data4[6],
+                a_poDeviceInstance->guidProduct.Data4[7]);
+
+            Toshi::TStringManager::StringUnicodeToChar(productName, a_poDeviceInstance->tszProductName, -1);
+
+            if (!TInputDXDeviceController::IsXInputController(a_poDeviceInstance))
+            {
+                TUtil::Log("Added XInput Controller: \'%s\' (%s) - NON-PSX", productName, fmtStr);
+                TUtil::LogConsole("Added XInput Controller: \'%s\' (%s) - NON-PSX", productName, fmtStr);
+                return DIENUM_CONTINUE;
+            }
+
+            TUtil::Log("Added Direct Input Controller: \'%s\' (%s) - NON-PSX", productName, fmtStr);
+            TUtil::LogConsole("Added Direct Input Controller: \'%s\' (%s) - NON-PSX", productName, fmtStr);
+
+
+
+
             break;
         default:
             break;

@@ -13,7 +13,9 @@ project "Toshi"
 		"d3d11.lib",
 		"d3dcompiler.lib",
 		"dxguid.lib",
-		"dxgi.lib"
+		"dxgi.lib",
+		"winmm.lib",
+		"dinput8.lib"
 	}
 
 	includedirs
