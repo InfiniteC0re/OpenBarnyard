@@ -7,7 +7,7 @@ namespace Toshi
     {
         s_uiOrigMaxRenderPackets = s_uiMaxRenderPackets = maxRenderPackets;
         s_uiNumRenderPackets = 0;
-        TTODO("INT_009a89c8 = 0;");
+		s_uiNumMaterials = 0;
 
         s_pRenderPackets = (TRenderPacket*)TMemalign(32, maxRenderPackets * sizeof(TRenderPacket));
 

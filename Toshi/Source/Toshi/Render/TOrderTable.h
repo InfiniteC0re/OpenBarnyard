@@ -159,6 +159,7 @@ namespace Toshi
 		inline static uint32_t s_uiOrigMaxRenderPackets = 0;
 		inline static TRenderPacket* s_pRenderPackets = TNULL;
 
+		inline static uint32_t s_uiNumMaterials = 0;
 		inline static uint32_t s_uiMaxMaterials = 0;
 		inline static TRegMaterial* s_pRegMaterials = TNULL;
 		inline static TNodeList<TRegMaterial> s_llRegMatFreeList = TNodeList<TRegMaterial>();
