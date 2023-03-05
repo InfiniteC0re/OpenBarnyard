@@ -69,6 +69,7 @@ namespace Toshi
         TASSERT(a_poDeviceInstance != NULL);
         char fmtStr[37];
         char productName[260];
+        TInputDXInterface* inputInterface = (TInputDXInterface*)poDXInputInterface;
         switch (GET_DIDEVICE_TYPE(a_poDeviceInstance->dwDevType))
         {
         case DI8DEVTYPE_MOUSE:
@@ -103,8 +104,8 @@ namespace Toshi
             TUtil::Log("Added Direct Input Controller: \'%s\' (%s) - NON-PSX", productName, fmtStr);
             TUtil::LogConsole("Added Direct Input Controller: \'%s\' (%s) - NON-PSX", productName, fmtStr);
 
-
-
+            auto inputDeviceController = new TInputDXDeviceController();
+            //inputDeviceController->BindToDIDevice(inputInterface->GetMainWindow(), a_poDeviceInstance, )
 
             break;
         default:

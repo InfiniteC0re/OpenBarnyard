@@ -32,5 +32,9 @@ bool const Toshi::TInputDXDeviceController::BindToDIDevice(HWND a_mainWindow, LP
     TASSERT(a_poDXInputDevice != NULL);
     m_isXInput = IsXInputController(a_poDeviceInstance);
     Initialise();
+
+    m_pDXInputDevice = a_poDXInputDevice;
+    m_pDXDiDevCaps = DIDEVCAPS();
+    m_pDXInputDevice->GetCapabilities(&m_pDXDiDevCaps);
     return false;
 }
