@@ -72,17 +72,16 @@ namespace Toshi
         char productName[260];
         TInputDXInterface* inputInterface = (TInputDXInterface*)poDXInputInterface;
         LPDIRECTINPUTDEVICE8 inputDevice;
-        TInputDeviceMouse* inputMouse;
+        TInputDeviceMouse* inputMouse = TNULL;
         HRESULT hr;
 
 
         switch (GET_DIDEVICE_TYPE(a_poDeviceInstance->dwDevType))
         {
         case DI8DEVTYPE_MOUSE:
-            inputMouse = inputInterface->GetMouseByIndex(0);
+            //inputMouse = inputInterface->GetMouseByIndex(0);
             hr = inputInterface->m_poDirectInput8->CreateDevice(GUID_SysMouse, &inputDevice, NULL);
 
-            // No mouse
             if (hr != DI_OK)
             {
                 return DIENUM_CONTINUE;
@@ -96,6 +95,14 @@ namespace Toshi
             TIMPLEMENT();
             break;
         case DI8DEVTYPE_KEYBOARD:
+
+            hr = inputInterface->m_poDirectInput8->CreateDevice(a_poDeviceInstance->guidInstance, &inputDevice, NULL);
+
+            if (hr != DI_OK)
+            {
+                return DIENUM_CONTINUE;
+            }
+
             TIMPLEMENT();
             break;
         case DI8DEVTYPE_JOYSTICK:
