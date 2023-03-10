@@ -31,6 +31,23 @@ namespace Toshi
 		return pKeyboard;
 	}
 
+	TInputDeviceMouse* TInputInterface::GetMouseByIndex(size_t index)
+	{
+		TInputDeviceMouse* pMouse = static_cast<TInputDeviceMouse*>(GetDeviceByIndex(TGetClass(TInputDeviceMouse), index));
+		TASSERT(pMouse == TNULL || pMouse->GetClass()->IsA(TGetClass(TInputDeviceMouse)));
+
+		return pMouse;
+	}
+
+	void TInputInterface::AddDevice(TInputDevice* device)
+	{
+		if (device != TNULL)
+		{
+			device->m_pInterface = this;
+			m_DeviceList.InsertTail(*device);
+		}
+	}
+
 	bool TInputInterface::Deinitialise()
 	{
 		return false;

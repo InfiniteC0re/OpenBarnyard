@@ -1,6 +1,7 @@
 #include "ToshiPCH.h"
 #include "TInputInterface_Win.h"
 #include TOSHI_MULTIINPUT(TInputDeviceController);
+#include TOSHI_MULTIINPUT(TInputDeviceMouse);
 
 namespace Toshi
 {
@@ -70,9 +71,27 @@ namespace Toshi
         char fmtStr[37];
         char productName[260];
         TInputDXInterface* inputInterface = (TInputDXInterface*)poDXInputInterface;
+        LPDIRECTINPUTDEVICE8 inputDevice;
+        TInputDeviceMouse* inputMouse;
+        HRESULT hr;
+
+
         switch (GET_DIDEVICE_TYPE(a_poDeviceInstance->dwDevType))
         {
         case DI8DEVTYPE_MOUSE:
+            inputMouse = inputInterface->GetMouseByIndex(0);
+            hr = inputInterface->m_poDirectInput8->CreateDevice(GUID_SysMouse, &inputDevice, NULL);
+
+            // No mouse
+            if (hr != DI_OK)
+            {
+                return DIENUM_CONTINUE;
+            }
+
+            if (inputMouse == TNULL)
+            {
+                // new DXMouse
+            }
 
             TIMPLEMENT();
             break;
@@ -104,7 +123,7 @@ namespace Toshi
             TUtil::Log("Added Direct Input Controller: \'%s\' (%s) - NON-PSX", productName, fmtStr);
             TUtil::LogConsole("Added Direct Input Controller: \'%s\' (%s) - NON-PSX", productName, fmtStr);
 
-            auto inputDeviceController = new TInputDXDeviceController();
+            //auto inputDeviceController = new TInputDXDeviceController();
             //inputDeviceController->BindToDIDevice(inputInterface->GetMainWindow(), a_poDeviceInstance, )
 
             break;

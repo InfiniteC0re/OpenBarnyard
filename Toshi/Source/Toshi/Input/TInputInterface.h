@@ -1,5 +1,6 @@
 #pragma once
 #include <Toshi/Input/TInputDeviceKeyboard.h>
+#include "TInputDeviceMouse.h"
 
 namespace Toshi
 {
@@ -157,6 +158,8 @@ namespace Toshi
 
 		TInputDevice* GetDeviceByIndex(TClass* pClass, size_t index);
 		TInputDeviceKeyboard* GetKeyboardByIndex(size_t index);
+		TInputDeviceMouse* GetMouseByIndex(size_t index);
+		void AddDevice(TInputDevice* device);
 
 		virtual bool Initialise() { return true; }
 		virtual bool Deinitialise();
