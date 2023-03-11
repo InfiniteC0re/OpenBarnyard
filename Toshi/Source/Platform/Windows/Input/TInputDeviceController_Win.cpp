@@ -1,7 +1,7 @@
 #include "ToshiPCH.h"
 #include "TInputDeviceController_Win.h"
 
-bool Toshi::TInputDXDeviceController::IsXInputController(LPCDIDEVICEINSTANCE a_poDeviceInstance)
+bool Toshi::TInputDXDeviceController::IsDirectInputController(LPCDIDEVICEINSTANCE a_poDeviceInstance)
 {
     TASSERT(a_poDeviceInstance != NULL);
     char fmtStr[37];
@@ -30,7 +30,7 @@ bool const Toshi::TInputDXDeviceController::BindToDIDevice(HWND a_mainWindow, LP
 {
     TASSERT(a_poDeviceInstance != NULL);
     TASSERT(a_poDXInputDevice != NULL);
-    m_isXInput = IsXInputController(a_poDeviceInstance);
+    m_isXInput = IsDirectInputController(a_poDeviceInstance);
     Initialise();
 
     m_pDXInputDevice = a_poDXInputDevice;

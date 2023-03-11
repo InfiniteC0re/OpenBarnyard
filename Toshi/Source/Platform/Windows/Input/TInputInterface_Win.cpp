@@ -125,7 +125,7 @@ namespace Toshi
 
             Toshi::TStringManager::StringUnicodeToChar(productName, a_poDeviceInstance->tszProductName, -1);
 
-            if (!TInputDXDeviceController::IsXInputController(a_poDeviceInstance))
+            if (!TInputDXDeviceController::IsDirectInputController(a_poDeviceInstance))
             {
                 TUtil::Log("Added XInput Controller: \'%s\' (%s) - NON-PSX", productName, fmtStr);
                 return DIENUM_CONTINUE;

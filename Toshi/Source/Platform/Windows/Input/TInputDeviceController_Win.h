@@ -10,7 +10,7 @@ namespace Toshi
 
 		virtual bool Initialise() { return true; }
 
-		static bool IsXInputController(LPCDIDEVICEINSTANCE a_poDeviceInstance);
+		static bool IsDirectInputController(LPCDIDEVICEINSTANCE a_poDeviceInstance);
 		bool const BindToDIDevice(HWND a_mainWindow, LPCDIDEVICEINSTANCE a_poDeviceInstance, IDirectInputDevice8* a_poDXInputDevice);
 		static int CALLBACK EnumerateObjectCallback(LPCDIDEVICEOBJECTINSTANCE a_poDeviceInstance, LPVOID a_pData)
 		{
