@@ -131,7 +131,12 @@ namespace Toshi
 		}
 
 	protected:
-		TGenericDList() = default;
+		TGenericDList()
+		{
+			m_Root.m_Next = &m_Root;
+			m_Root.m_Prev = &m_Root;
+		}
+
 		~TGenericDList() { RemoveAll(); }
 
 	public:
@@ -167,11 +172,12 @@ namespace Toshi
 			{
 				m_Next = node.m_Next;
 				m_Prev = node.m_Prev;
+				SetPriority(node.GetPriority());
 				return *this;
 			}
 
 			bool IsLinked() const { return this != m_Next; }
-			void Reset() { m_Next = this; m_Prev = this; }
+			void Reset() { m_Next = this; m_Prev = this; SetPriority(0); }
 
 			void InsertAfter(TNode* node)
 			{
@@ -199,7 +205,8 @@ namespace Toshi
 			{
 				m_Prev->m_Next = m_Next;
 				m_Next->m_Prev = m_Prev;
-				Reset();
+				m_Next = this; 
+				m_Prev = this;
 			}
 
 			void Insert(TNode* node, int iPriority)
@@ -277,7 +284,12 @@ namespace Toshi
 		}
 
 	protected:
-		TGenericPriList() = default;
+		TGenericPriList()
+		{
+			m_Root.m_Next = &m_Root;
+			m_Root.m_Prev = &m_Root;
+		}
+
 		~TGenericPriList() { RemoveAll(); }
 
 	public:

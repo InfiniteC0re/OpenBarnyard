@@ -14,8 +14,6 @@ namespace Toshi
 	public:
 		TGenericListener() : TNode()
 		{
-			m_Next = this;
-			m_Prev = this;
 			m_pCaller = TNULL;
 			m_pCallback = TNULL;
 			m_Unk = 0;
@@ -55,10 +53,15 @@ namespace Toshi
 	class TGenericEmitter
 	{
 	public:
-		TGenericEmitter() = default;
+		TGenericEmitter()
+		{
+			m_Listeners = TPriList<TGenericListener>();
+			Create(TNULL);
+		}
 
 		TGenericEmitter(void* owner) 
 		{
+			m_Listeners = TPriList<TGenericListener>();
 			Create(owner); 
 		}
 
@@ -70,10 +73,10 @@ namespace Toshi
 
 		void Throw(void* pData)
 		{
-			for (auto it = m_Listeners.Begin(); it != m_Listeners.End(); it++)
+			/*for (auto it = m_Listeners.Begin(); it != m_Listeners.End(); it++)
 			{
 				it->Execute(m_Owner, pData);
-			}
+			}*/
 		}
 
 		void Create(void* owner)

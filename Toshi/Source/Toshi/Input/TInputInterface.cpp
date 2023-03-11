@@ -5,6 +5,7 @@ namespace Toshi
 {
 	TInputDevice* TInputInterface::GetDeviceByIndex(TClass* pClass, size_t index)
 	{
+		if (m_DeviceList.Count() == 0) return TNULL;
 		for (auto it = m_DeviceList.Begin(); it != m_DeviceList.End(); ++it)
 		{
 			if (it->GetClass()->IsA(pClass))

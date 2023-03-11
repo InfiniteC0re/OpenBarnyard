@@ -79,7 +79,7 @@ namespace Toshi
         switch (GET_DIDEVICE_TYPE(a_poDeviceInstance->dwDevType))
         {
         case DI8DEVTYPE_MOUSE:
-            //inputMouse = inputInterface->GetMouseByIndex(0);
+            inputMouse = inputInterface->GetMouseByIndex(0);
             hr = inputInterface->m_poDirectInput8->CreateDevice(GUID_SysMouse, &inputDevice, NULL);
 
             if (hr != DI_OK)

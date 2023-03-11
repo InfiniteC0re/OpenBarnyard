@@ -305,7 +305,7 @@ void ADX11MoviePlayer::OnUpdate(float deltaTime)
                     {
                         flags = 2;
                     }
-                    PlayMovie(m_CurrentFileName, TNULL, flags | m_bIsMovieLooping);
+                    PlayMovie(m_CurrentFileName, TNULL, flags | (uint8_t)m_bIsMovieLooping);
                 }
                 else
                 {
