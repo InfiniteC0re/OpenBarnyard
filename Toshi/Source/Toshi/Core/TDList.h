@@ -209,40 +209,7 @@ namespace Toshi
 				m_Prev = this;
 			}
 
-			void Insert(TNode* node, int iPriority)
-			{
-				node->SetPriority(iPriority);
-				Insert(node);
-			}
-
-			void Insert(TNode* node)
-			{
-				int priority = node->m_iPriority;
-				if (priority < 0)
-				{
-					TNode* curNode = m_Next;
-					while (curNode != this && curNode->m_iPriority <= priority)
-					{
-						curNode = curNode->m_Next->m_Next;
-					}
-					node->m_Next = curNode;
-					node->m_Prev = curNode->m_Next->m_Prev;
-					curNode->m_Next->m_Prev = node;
-					node->m_Prev->m_Next = node;
-				}
-				else
-				{
-					TNode* curNode = m_Prev;
-					while (curNode != this && priority < curNode->m_iPriority)
-					{
-						curNode = curNode->m_Prev;
-					}
-					node->m_Prev = curNode;
-					node->m_Next = curNode->m_Next;
-					curNode->m_Next = node;
-					node->m_Next->m_Prev = node;
-				}
-			}
+			
 			
 		public:
 			template<class T> friend class TPriList;
@@ -252,6 +219,9 @@ namespace Toshi
 		public:
 			template<typename T>
 			T* As() { return static_cast<T*>(this); }
+
+			template<typename T>
+			T* operator*() { return static_cast<T*>(this); }
 
 		public:
 			TNode* m_Next;
@@ -270,7 +240,40 @@ namespace Toshi
 		TNode* Begin() { return m_Root.Next(); }
 		TNode* End() { return &m_Root; }
 
-		
+		void Insert(TNode* node, int iPriority)
+		{
+			node->SetPriority(iPriority);
+			Insert(node);
+		}
+
+		void Insert(TNode* node)
+		{
+			int priority = node->m_iPriority;
+			if (priority < 0)
+			{
+				TNode* curNode = m_Root.m_Next;
+				while (curNode != &m_Root && curNode->m_iPriority <= priority)
+				{
+					curNode = curNode->m_Next->m_Next;
+				}
+				node->m_Next = curNode;
+				node->m_Prev = curNode->m_Next->m_Prev;
+				curNode->m_Next->m_Prev = node;
+				node->m_Prev->m_Next = node;
+			}
+			else
+			{
+				TNode* curNode = m_Root.m_Prev;
+				while (curNode != &m_Root && priority < curNode->m_iPriority)
+				{
+					curNode = curNode->m_Prev;
+				}
+				node->m_Prev = curNode;
+				node->m_Next = curNode->m_Next;
+				curNode->m_Next = node;
+				node->m_Next->m_Prev = node;
+			}
+		}
 
 		void RemoveAll()
 		{
@@ -302,14 +305,9 @@ namespace Toshi
 	public:
 		TPriList() { }
 
-		T* Head()                    { return TGenericPriList::Head()->As<T>(); }
-		T* Tail()                    { return TGenericPriList::Tail()->As<T>(); }
-		T2Iterator<T, TNode> Begin() { return TGenericPriList::Begin()->As<T>(); }
-		T2Iterator<T, TNode> End()   { return TGenericPriList::End()->As<T>(); }
-		bool IsEmpty()               { return TGenericPriList::IsEmpty(); }
+		T2Iterator<T, TNode> Begin() { return TGenericPriList::Begin(); }
+		T2Iterator<T, TNode> End()   { return TGenericPriList::End(); }
 		bool IsLinked()              { return m_Root.IsLinked(); }
-		void RemoveHead()            { TGenericPriList::RemoveHead(); }
-		void RemoveTail()            { TGenericPriList::RemoveTail(); }
 	};
 
 	template <class T>

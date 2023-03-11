@@ -6,8 +6,8 @@ AInputManager2::AInputManager2()
 {
 	TIMPLEMENT();
 
-	auto input = Toshi::TInputDXInterface();
-	bool result = input.Initialise();
+	auto input = new Toshi::TInputDXInterface();
+	bool result = input->Initialise();
 	TASSERT(result == TTRUE);
 }
 

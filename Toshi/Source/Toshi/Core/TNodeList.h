@@ -105,17 +105,17 @@ namespace Toshi
 			m_Count++;
 		}
 
-		TNode* Remove(TNode& node)
+		TNode* Remove(TNode& rNode)
 		{
-			TASSERT(&node != TNULL);
-			node.SetList(TNULL);
-			node.m_Prev->m_Next = node.m_Next;
-			node.m_Next->m_Prev = node.m_Prev;
-			node.m_Next = &node;
-			node.m_Prev = &node;
+			TASSERT(rNode.GetList() == this);
+			rNode.SetList(TNULL);
+			rNode.m_Prev->m_Next = rNode.m_Next;
+			rNode.m_Next->m_Prev = rNode.m_Prev;
+			rNode.m_Next = &rNode;
+			rNode.m_Prev = &rNode;
 			m_Count--;
-
-			return &node;
+			TASSERT(rNode.IsLinked() == TFALSE);
+			return &rNode;
 		}
 
 		TNode* RemoveHead()
@@ -158,10 +158,9 @@ namespace Toshi
 
 		void Delete(TNode& node)
 		{
-			TASSERT(&node != TNULL);
 			Remove(node);
-
-			delete &node;
+			
+			delete& node;
 		}
 
 		void InsertHead(TNode& node)

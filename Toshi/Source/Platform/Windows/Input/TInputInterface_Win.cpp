@@ -29,7 +29,7 @@ namespace Toshi
                     MMRESULT res = joyGetDevCapsA(i, &joyCaps, sizeof(joyCaps));
                     if (res == 0)
                     {
-                        TUtil::Log("Joystick[%d] \'%s\' \'%s\'", i, joyCaps.szPname, joyCaps.szOEMVxD);
+                        TUtil::LogConsole("Joystick[%d] \'%s\' \'%s\'", i, joyCaps.szPname, joyCaps.szOEMVxD);
                     }
                 }
 

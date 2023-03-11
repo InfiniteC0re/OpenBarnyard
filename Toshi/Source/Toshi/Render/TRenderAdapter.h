@@ -17,6 +17,7 @@ namespace Toshi
 
 		public:
 			Mode() = default;
+
 			virtual ~Mode() = default;
 
 			virtual TRenderAdapter* GetAdapter() const = 0;
@@ -31,6 +32,7 @@ namespace Toshi
 
 	public:
 		TRenderAdapter() = default;
+
 		virtual ~TRenderAdapter() = default;
 
 		TNodeList<Mode>* GetModeList() { return &m_Modes; }

@@ -152,8 +152,7 @@ namespace Toshi
 
 		TInputInterface() 
 		{
-			m_DeviceList = TNodeList<TInputDevice>();
-			m_Emitter1 = TGenericEmitter(this);
+			m_bIsExclusiveMode = false;
 		}
 
 		TInputDevice* GetDeviceByIndex(TClass* pClass, size_t index);
