@@ -6,6 +6,7 @@ namespace Toshi
 {
 	class TInputDeviceMouse : public TInputDevice
 	{
+	public:
 		TInputDeviceMouse() : TInputDevice()
 		{
 

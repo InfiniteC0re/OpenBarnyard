@@ -36,5 +36,13 @@ bool const Toshi::TInputDXDeviceController::BindToDIDevice(HWND a_mainWindow, LP
     m_pDXInputDevice = a_poDXInputDevice;
     m_pDXDiDevCaps = DIDEVCAPS();
     m_pDXInputDevice->GetCapabilities(&m_pDXDiDevCaps);
-    return false;
+    HRESULT hr = m_pDXInputDevice->SetDataFormat(&c_dfDIJoystick);
+    if (hr != DI_OK)
+    {
+        return false;
+    }
+    
+    m_pDXInputDevice->EnumObjects(EnumerateObjectCallback, this, DIDFT_BUTTON | DIDFT_AXIS);
+    TTODO("field_0x38C = 0");
+    return true;
 }

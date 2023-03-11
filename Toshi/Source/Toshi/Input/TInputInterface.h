@@ -158,6 +158,15 @@ namespace Toshi
 		TInputDevice* GetDeviceByIndex(TClass* pClass, size_t index);
 		TInputDeviceKeyboard* GetKeyboardByIndex(size_t index);
 		TInputDeviceMouse* GetMouseByIndex(size_t index);
+
+		TClass* GetSpecificDeviceByIndex(TClass* pClass, size_t index)
+		{
+			auto pDevice = GetDeviceByIndex(pClass, index);
+			TASSERT(pDevice == TNULL || pDevice->GetClass()->IsA(pClass));
+			if (pDevice == TNULL) return TNULL;
+			return pDevice->GetClass();
+		}
+
 		void AddDevice(TInputDevice* device);
 
 		virtual bool Initialise() { return true; }
@@ -170,6 +179,8 @@ namespace Toshi
 		virtual bool GetExclusiveMode() const;
 		virtual int ProcessEvents(float fUnk);
 		virtual void StopAllRepeats();
+
+
 
 	private:
 		bool m_bIsExclusiveMode;              // 0x04 

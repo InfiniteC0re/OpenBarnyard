@@ -4,7 +4,7 @@
 
 namespace Toshi
 {
-	class TInputDeviceController : TInputDevice
+	class TInputDeviceController : public TInputDevice
 	{
 		uint8_t* m_things; // 0x3C
 		uint8_t* m_things2; // 0x40

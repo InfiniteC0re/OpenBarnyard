@@ -72,14 +72,17 @@ namespace Toshi
         char productName[260];
         TInputDXInterface* inputInterface = (TInputDXInterface*)poDXInputInterface;
         LPDIRECTINPUTDEVICE8 inputDevice;
-        TInputDeviceMouse* inputMouse = TNULL;
+        TInputDXDeviceMouse* inputMouse;
+        TInputDXDeviceController* inputController;
         HRESULT hr;
 
 
         switch (GET_DIDEVICE_TYPE(a_poDeviceInstance->dwDevType))
         {
         case DI8DEVTYPE_MOUSE:
-            inputMouse = inputInterface->GetMouseByIndex(0);
+            inputMouse = (TInputDXDeviceMouse*)inputInterface->GetSpecificDeviceByIndex(TGetClass(TInputDXDeviceMouse), 0);
+
+            //inputMouse = inputInterface->GetMouseByIndex(0);
             hr = inputInterface->m_poDirectInput8->CreateDevice(GUID_SysMouse, &inputDevice, NULL);
 
             if (hr != DI_OK)
@@ -90,6 +93,8 @@ namespace Toshi
             if (inputMouse == TNULL)
             {
                 // new DXMouse
+                inputMouse = new TInputDXDeviceMouse();
+                inputMouse->BindToDIDevice(inputInterface->GetMainWindow(), a_poDeviceInstance, inputDevice);
             }
 
             TIMPLEMENT();
@@ -128,8 +133,20 @@ namespace Toshi
 
             TUtil::Log("Added Direct Input Controller: \'%s\' (%s) - NON-PSX", productName, fmtStr);
 
-            //auto inputDeviceController = new TInputDXDeviceController();
-            //inputDeviceController->BindToDIDevice(inputInterface->GetMainWindow(), a_poDeviceInstance, )
+            inputController = (TInputDXDeviceController*)inputInterface->GetSpecificDeviceByIndex(TGetClass(TInputDXDeviceController), 0);
+            hr = inputInterface->m_poDirectInput8->CreateDevice(a_poDeviceInstance->guidInstance, &inputDevice, NULL);
+
+            if (hr != DI_OK)
+            {
+                return DIENUM_CONTINUE;
+            }
+
+            if (inputController == TNULL)
+            {
+                // new DXController
+                inputController = new TInputDXDeviceController();
+                inputController->BindToDIDevice(inputInterface->GetMainWindow(), a_poDeviceInstance, inputDevice);
+            }
 
             break;
         default:
