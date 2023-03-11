@@ -79,7 +79,6 @@ TOSHI_ENTRY
 	Toshi::TMemory memorySettings(TOSHI_TMEMORY_FLAGS, TOSHI_TMEMORY_SIZE);
 	Toshi::TUtil::ToshiCreate(0, 0, memorySettings);
 	Toshi::TUtil::Log("Build Version %s", "0.28");
-	Toshi::TUtil::LogConsole("Build Version %s", "0.28");
 
 	OSVERSIONINFOEX osVersionInfo = { };
 	osVersionInfo.dwOSVersionInfoSize = sizeof(osVersionInfo);
@@ -101,11 +100,8 @@ TOSHI_ENTRY
 
 	LPSTR cmd = GetCommandLineA();
 	Toshi::TUtil::Log("Command Line: %s", cmd);
-	Toshi::TUtil::LogConsole("Command Line: %s", cmd);
 	Toshi::TUtil::Log("OS Name: %s", osName);
-	Toshi::TUtil::LogConsole("OS Name: %s", osName);
 	Toshi::TUtil::Log("OS Version: %d.%d Build:%d %s", osVersionInfo.dwMajorVersion, osVersionInfo.dwMinorVersion, osVersionInfo.dwBuildNumber, osVersionInfo.szCSDVersion);
-	Toshi::TUtil::LogConsole("OS Version: %d.%d Build:%d %s", osVersionInfo.dwMajorVersion, osVersionInfo.dwMinorVersion, osVersionInfo.dwBuildNumber, osVersionInfo.szCSDVersion);
 
 
 	HANDLE hMutex = CreateMutexA(NULL, true, "BLOB07");

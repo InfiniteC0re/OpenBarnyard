@@ -32,30 +32,48 @@ namespace Toshi
 			va_list args;
 			va_start(args, format);
 
-			char str[0x800];
+			char str[2048];
+			int size = T2String8::FormatV(str, sizeof(str), format, &args);
 
-			T2String8::FormatV(str, sizeof(str), format, &args);
+#ifdef TOSHI_DEBUG
+			str[size] = '\n';
+			str[size + 1] = '\0';
+			OutputDebugStringA(str);
+			str[size] = '\0';
+			TOSHI_CORE_TRACE(str);
+#endif
 
 			va_end(args);
 
-			GetLog()->Log(TLogFile::Type_Info, "Toshi", "Kernel", str);
+			GetLog()->Log(TLogFile::Type_Info, "Toshi", "Kernel", format, str);
 			GetSingletonWeak()->m_Emitter.Throw(GetLog());
 		}
 	}
 
 	void TUtil::Log(TLogFile::Type logtype, const char* format, ...)
 	{
+
 		if (GetLog() != TNULL)
 		{
 			va_list args;
 			va_start(args, format);
 
 			char str[2048];
-			T2String8::FormatV(str, sizeof(str), format, &args);
+			int size = T2String8::FormatV(str, sizeof(str), format, &args);
+
+#ifdef TOSHI_DEBUG
+			str[size] = '\n';
+			str[size + 1] = '\0';
+			OutputDebugStringA(str);
+			str[size] = '\0';
+			TOSHI_CORE_TRACE(str);
+#endif
+
 			va_end(args);
 
 			GetLog()->Log(logtype, "Toshi", "Kernel", format, str);
 			GetSingletonWeak()->m_Emitter.Throw(GetLog());
+
 		}
 	}
 

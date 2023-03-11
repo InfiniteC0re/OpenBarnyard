@@ -306,7 +306,7 @@ namespace Toshi
 				}
 				if (pRenderer->m_SwapChain != TNULL && ms_bIsFullscreen)
 				{
-					Toshi::TUtil::LogConsole("#####  Restore fullscreen");
+					Toshi::TUtil::Log("#####  Restore fullscreen");
 					pRenderer->m_SwapChain->SetFullscreenState(TTRUE, TNULL);
 					return DefWindowProcA(hWnd, uMsg, wParam, lParam);;
 				}
@@ -318,7 +318,7 @@ namespace Toshi
 					pRenderer->m_SwapChain->GetFullscreenState(&ms_bIsFullscreen, TNULL);
 					if (pDisplayParams->IsFullscreen && ms_bIsFullscreen)
 					{
-						Toshi::TUtil::LogConsole("#####  Disable fullscreen");
+						Toshi::TUtil::Log("#####  Disable fullscreen");
 						pRenderer->m_SwapChain->SetFullscreenState(TFALSE, TNULL);
 					}
 				}
@@ -345,7 +345,7 @@ namespace Toshi
 			pSystemManager->Pause(true);
 			if (bLockCursor)
 			{
-				Toshi::TUtil::LogConsole("Minimize window\n");
+				Toshi::TUtil::Log("Minimize window\n");
 				ShowWindow(hWnd, SW_MINIMIZE);
 			}
 			return 1;

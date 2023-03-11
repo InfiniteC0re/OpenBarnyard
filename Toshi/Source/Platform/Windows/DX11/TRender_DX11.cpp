@@ -701,7 +701,6 @@ namespace Toshi
 		if (bResult)
 		{
 			TUtil::Log("Creating TRenderDX11");
-			TUtil::LogConsole("Creating TRenderDX11");
 			TUtil::LogUp();
 
 			D3D_FEATURE_LEVEL featureLevel = D3D_FEATURE_LEVEL_9_3;
@@ -713,7 +712,6 @@ namespace Toshi
 			}
 
 			TUtil::Log("FeatureLevel : %s", GetFeatureLevel(featureLevel));
-			TUtil::LogConsole("FeatureLevel : %s", GetFeatureLevel(featureLevel));
 
 			BuildAdapterDatabase();
 
@@ -740,7 +738,6 @@ namespace Toshi
 			}
 
 			TUtil::Log("Failed to create Window");
-			TUtil::LogConsole("Failed to create Window");
 		}
 
 		return false;
@@ -1628,16 +1625,11 @@ namespace Toshi
 				char adapter[128];
 				TStringManager::StringUnicodeToChar(adapter, adapterDesc->Description, -1);
 				TUtil::Log("Adapter: %s", adapter);
-				TUtil::LogConsole("Adapter: %s", adapter);
 				TUtil::LogUp();
 				TUtil::Log("Vendor: %d, Device: %d Revision: %d", adapterDesc->VendorId, adapterDesc->DeviceId, adapterDesc->Revision);
-				TUtil::LogConsole("Vendor: %d, Device: %d Revision: %d", adapterDesc->VendorId, adapterDesc->DeviceId, adapterDesc->Revision);
 				TUtil::Log("DedicatedSystemMemory: %.2f MB", (double)adapterDesc->DedicatedSystemMemory / 1024 / 1024);
-				TUtil::LogConsole("DedicatedSystemMemory: %.2f MB", (double)adapterDesc->DedicatedSystemMemory / 1024 / 1024);
 				TUtil::Log("DedicatedVideoMemory : %.2f MB", (double)adapterDesc->DedicatedVideoMemory / 1024 / 1024);
-				TUtil::LogConsole("DedicatedVideoMemory : %.2f MB", (double)adapterDesc->DedicatedVideoMemory / 1024 / 1024);
 				TUtil::Log("SharedSystemMemory   : %.2f MB", (double)adapterDesc->SharedSystemMemory / 1024 / 1024);
-				TUtil::LogConsole("SharedSystemMemory   : %.2f MB", (double)adapterDesc->SharedSystemMemory / 1024 / 1024);
 
 				d3dAdapter->EnumerateOutputs(this, dxgiAdapter);
 

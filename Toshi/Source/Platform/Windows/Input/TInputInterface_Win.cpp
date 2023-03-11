@@ -29,7 +29,7 @@ namespace Toshi
                     MMRESULT res = joyGetDevCapsA(i, &joyCaps, sizeof(joyCaps));
                     if (res == 0)
                     {
-                        TUtil::LogConsole("Joystick[%d] \'%s\' \'%s\'", i, joyCaps.szPname, joyCaps.szOEMVxD);
+                        TUtil::Log("Joystick[%d] \'%s\' \'%s\'", i, joyCaps.szPname, joyCaps.szRegKey);
                     }
                 }
 
@@ -123,12 +123,10 @@ namespace Toshi
             if (!TInputDXDeviceController::IsXInputController(a_poDeviceInstance))
             {
                 TUtil::Log("Added XInput Controller: \'%s\' (%s) - NON-PSX", productName, fmtStr);
-                TUtil::LogConsole("Added XInput Controller: \'%s\' (%s) - NON-PSX", productName, fmtStr);
                 return DIENUM_CONTINUE;
             }
 
             TUtil::Log("Added Direct Input Controller: \'%s\' (%s) - NON-PSX", productName, fmtStr);
-            TUtil::LogConsole("Added Direct Input Controller: \'%s\' (%s) - NON-PSX", productName, fmtStr);
 
             //auto inputDeviceController = new TInputDXDeviceController();
             //inputDeviceController->BindToDIDevice(inputInterface->GetMainWindow(), a_poDeviceInstance, )
