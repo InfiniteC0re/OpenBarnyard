@@ -4,6 +4,10 @@
 
 namespace Toshi
 {
+    int TInputDevice::ProcessRepeats(TGenericEmitter& emitter, float flt)
+    {
+        return 0;
+    }
     bool TInputDevice::StartRepeat(int param_1, float param_2, float param_3)
     {
         return false;

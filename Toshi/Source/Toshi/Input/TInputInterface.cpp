@@ -49,6 +49,15 @@ namespace Toshi
 		}
 	}
 
+	void TInputInterface::RemoveDevice(TInputDevice* device)
+	{
+		if (device != TNULL)
+		{
+			device->m_pInterface = this;
+			m_DeviceList.Remove(*device);
+		}
+	}
+
 	bool TInputInterface::Deinitialise()
 	{
 		return false;
