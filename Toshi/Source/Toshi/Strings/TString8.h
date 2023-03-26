@@ -2,18 +2,19 @@
 #include "TString.h"
 #include "TString16.h"
 #include "Toshi/Typedefs.h"
+#include "Toshi2/T2Allocator.h"
 
 namespace Toshi
 {
 	class TString8
 	{
 	public:
-		TString8();
-		TString8(TString8&& src) noexcept;
-		TString8(const TString8& src);
-		TString8(const TString16& src);
-		TString8(const char* const& src);
-		TString8(uint32_t size);
+		TString8(T2Allocator* allocator = TNULL);
+		TString8(TString8&& src, T2Allocator* allocator = TNULL) noexcept;
+		TString8(const TString8& src, T2Allocator* allocator = TNULL);
+		TString8(const TString16& src, T2Allocator* allocator = TNULL);
+		TString8(const char* const& src, T2Allocator* allocator = TNULL);
+		TString8(uint32_t size, T2Allocator* allocator = TNULL);
 		~TString8() { FreeBuffer(); }
 
 		void Copy(const TString8& src, uint32_t size = -1) { Copy(src.m_pBuffer, size); }
@@ -87,6 +88,9 @@ namespace Toshi
 		TString8& operator=(const TString8& str) { Copy(str, -1); return *this; };
 
 	private:
+
+		typedef T2Allocator* (*func_DefaultAllocatorCB)();
+
 		void Reset()
 		{
 			m_pBuffer = NullString;
@@ -94,10 +98,24 @@ namespace Toshi
 			m_iExcessLen = 0;
 		}
 
+		T2Allocator* GetAllocator()
+		{
+			return sm_pDefaultAllocatorCB();
+		}
+
+		static T2Allocator* GetDefaultAllocatorCB()
+		{
+			return &T2Allocator::s_GlobalAllocator;
+		}
+
 	private:
+
+		static inline func_DefaultAllocatorCB sm_pDefaultAllocatorCB = &GetDefaultAllocatorCB;
+
 		char* m_pBuffer = NullString; // 0x0
 		uint8_t m_iExcessLen = 0;     // 0x4
 		uint32_t m_iStrLen : 24 = 0;  // 0x5
+		T2Allocator* m_pAllocator;    // 0x8
 	};
 }
 

@@ -5,41 +5,16 @@
 
 namespace Toshi
 {
-	TString8::TString8()
+	TString8::TString8(T2Allocator* allocator)
 	{
 		Reset();
+		m_pAllocator = allocator == TNULL ? GetAllocator() : allocator;
 		AllocBuffer(0, true);
-		// this+7 = 0
-		/*  if (param_1 == 0) {
-		if ((_DAT_009b1704 == 0) && (sm_pDefaultAllocatorCB == (code *)0x0)) {
-		  puVar1 = (undefined4 *)
-				   Assert("TNULL!=sm_pDefaultAllocatorCB","..\\..\\Source\\Toshi\\TString8.cpp",100,
-						  "TASSERT");
-		  return puVar1;
-		}
-		param_1 = (*sm_pDefaultAllocatorCB)();
-	  }
-	  *(int *)((int)this + 8) = param_1;
-	  uVar2 = (*(int *)((int)this + 4) << 8) >> 8;
-	  if ((_DAT_009b1700 == 0) && (0x7fffffff < uVar2)) {
-		puVar1 = (undefined4 *)
-				 Assert("a_iX <= TINT32_MAX",
-						"E:\\src\\Development\\ToshiBranch\\Source\\Math/TMathInline.h",0x67,"TASSERT");
-		return puVar1;
-	  }
-	  if (uVar2 != 0) {
-		(**(code**)(**(int**)((int)this + 8) + 8))(*this);
-		*(undefined*)((int)this + 7) = 0;
-		*(uint*)((int)this + 4) = *(uint*)((int)this + 4) & 0xff000000;
-		*(undefined1**)this = &m_aNull;
-	}
-	**this = 0;
-	return (undefined4*)this;
-		*/
 	}
 
-	TString8::TString8(TString8&& src) noexcept
+	TString8::TString8(TString8&& src, T2Allocator* allocator) noexcept
 	{
+		m_pAllocator = allocator == TNULL ? GetAllocator() : allocator;
 		TString8::m_iExcessLen = src.m_iExcessLen;
 		TString8::m_iStrLen = src.m_iStrLen;
 		TString8::m_pBuffer = src.m_pBuffer;
@@ -48,27 +23,31 @@ namespace Toshi
 		src.m_pBuffer = NullString;
 	}
 
-	TString8::TString8(const TString8& src)
+	TString8::TString8(const TString8& src, T2Allocator* allocator)
 	{
 		Reset();
+		m_pAllocator = allocator == TNULL ? GetAllocator() : allocator;
 		Copy(src, -1);
 	}
 
-	TString8::TString8(uint32_t size)
+	TString8::TString8(uint32_t size, T2Allocator* allocator)
 	{
 		Reset();
+		m_pAllocator = allocator == TNULL ? GetAllocator() : allocator;
 		AllocBuffer(size);
 	}
 
-	TString8::TString8(const TString16& src)
+	TString8::TString8(const TString16& src, T2Allocator* allocator)
 	{
 		Reset();
+		m_pAllocator = allocator == TNULL ? GetAllocator() : allocator;
 		Copy(src);
 	}
 
-	TString8::TString8(const char* const& src)
+	TString8::TString8(const char* const& src, T2Allocator* allocator)
 	{
 		Reset();
+		m_pAllocator = allocator == TNULL ? GetAllocator() : allocator;
 		Copy(src);
 	}
 
@@ -135,7 +114,7 @@ namespace Toshi
 		{
 			if (a_iLength == 0)
 			{
-				if (freeMemory) TFree(m_pBuffer);
+				if (freeMemory) m_pAllocator->Free(m_pBuffer);
 
 				m_pBuffer = NullString;
 				m_iExcessLen = 0;
@@ -150,10 +129,10 @@ namespace Toshi
 				{
 					if (currentLength != 0 && freeMemory)
 					{
-						TFree(m_pBuffer);
+						m_pAllocator->Free(m_pBuffer);
 					}
 
-					m_pBuffer = (char*)TMalloc(a_iLength + 1);
+					m_pBuffer = (char*)m_pAllocator->Malloc(a_iLength + 1);
 					m_iExcessLen = 0;
 
 					hasChanged = true;
@@ -258,13 +237,13 @@ namespace Toshi
 
 		if (allocated && Length() != 0)
 		{
-			TFree(oldBuffer);
+			m_pAllocator->Free(oldBuffer);
 		}
 	}
 
 	void TString8::FreeBuffer()
 	{
-		if (Length() != 0) TFree(m_pBuffer);
+		if (Length() != 0) m_pAllocator->Free(m_pBuffer);
 		Reset();
 	}
 
@@ -303,7 +282,7 @@ namespace Toshi
 
 		if (allocated && oldLength != 0)
 		{
-			TFree(oldString);
+			m_pAllocator->Free(oldString);
 		}
 
 		return *this;
@@ -406,7 +385,7 @@ namespace Toshi
 		
 		if (allocated && m_iStrLen != 0)
 		{
-			TFree(oldString);
+			m_pAllocator->Free(oldString);
 		}
 
 		return *this;

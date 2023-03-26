@@ -22,6 +22,7 @@ public:
 	virtual bool CancelJob() { return false; };
 
 	Toshi::TTRBStreamJob m_streamJob;
+	bool m_isRunning;
 };
 
 class AAssetStreaming : public Toshi::TSingleton<AAssetStreaming>
