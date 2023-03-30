@@ -26,9 +26,9 @@ namespace Toshi
 
 		enum GXTlutFmt
 		{
-			IA8 = 0x0,
-			RGB565 = 0x1,
-			RGB5A3 = 0x2,
+			GX_TL_IA8 = 0x0,
+			GX_TL_RGB565 = 0x1,
+			GX_TL_RGB5A3 = 0x2,
 		};
 
 		enum GXTexWrapMode
@@ -36,6 +36,16 @@ namespace Toshi
 			GX_CLAMP,
 			GX_REPEAT,
 			GX_MIRROR
+		};
+
+		enum GXTexFilter
+		{
+			GX_NEAR,
+			GX_LINEAR,
+			GX_NEAR_MIP_NEAR,
+			GX_LIN_MIP_NEAR,
+			GX_NEAR_MIP_LIN,
+			GX_LIN_MIP_LIN
 		};
 
 		char* m_szFileName;     //0x4
@@ -47,8 +57,8 @@ namespace Toshi
 		uint32_t m_wrapS;       //0x58
 		uint32_t m_wrapT;       //0x5C
 		uint32_t m_unk3;        //0x60
-		uint32_t m_minFilter;   //0x64
-		uint32_t m_maxFilter;   //0x68
+		GXTexFilter m_minFilter;//0x64
+		GXTexFilter m_magFilter;//0x68
 		uint32_t m_unk4;        //0x70
 		uint32_t m_width;       //0x78
 		uint32_t m_height;      //0x7A
@@ -72,12 +82,14 @@ namespace Toshi
 			void* a_unk6,
 			char const* a_szFileName);
 
+		void GetPhysicalSize(uint32_t& width, uint32_t& height, uint32_t bitsPerTexel);
+
 		void Swizzle();
 		void Swizzle32Bit();
 		void Swizzle16Bit();
 		void Swizzle8Bit();
 		void Swizzle4Bit();
 
-		void CreateResource() { T2Resource::CreateResource(m_szFileName, this, ResourceCallback, this); }
+		//void CreateResource() { T2Resource::CreateResource(m_szFileName, this, ResourceCallback, this); }
 	};
 }

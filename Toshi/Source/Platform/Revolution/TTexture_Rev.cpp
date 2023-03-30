@@ -53,7 +53,7 @@ namespace Toshi
 		{
 			m_unk2 |= 0x10000000;
 			m_unk3 = 2;
-			m_maxFilter = 5;
+			m_magFilter = GX_LIN_MIP_LIN;
 			m_unk4 = 0.5f * -(m_mipMaps - 176.0f);
 		}
 
@@ -80,8 +80,8 @@ namespace Toshi
 		m_pImageData = TNULL;
 		m_texFmt = a_texFmt;
 		m_tlutFmt = a_tlutFmt;
-		m_wrapS = GXTexWrapMode::GX_REPEAT;
-		m_wrapT = GXTexWrapMode::GX_REPEAT;
+		m_wrapS = GX_REPEAT;
+		m_wrapT = GX_REPEAT;
 		m_szFileName = (char*)a_szFileName;
 		
 		m_iHash = ComputeHash(m_szFileName);
@@ -173,6 +173,14 @@ namespace Toshi
 			height /= 2;
 			width /= 2;
 			imagePtr += 32;
+		}
+	}
+
+	void TTexture::GetPhysicalSize(uint32_t& width, uint32_t& height, uint32_t bitsPerTexel)
+	{
+		if (bitsPerTexel < 16)
+		{
+			
 		}
 	}
 }

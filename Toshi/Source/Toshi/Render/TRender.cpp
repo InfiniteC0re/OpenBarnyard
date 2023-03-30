@@ -192,9 +192,86 @@ namespace Toshi
 	{
 	}
 
+	void TRender::DestroyDyingResources()
+	{
+		auto attached = m_Resources.GetRoot()->Attached();
+		if (attached != TNULL)
+		{
+			auto prev = attached->Prev() == attached ? TNULL : attached->Prev();
+			if (attached->IsDying())
+			{
+				DestroyDyingResources(attached);
+			}
+			else
+			{
+				DeleteResource(prev);
+			}
+		}
+	}
+
+	void TRender::DestroyDyingResources(TResource* resources)
+	{
+		auto res = resources;
+		while (resources != TNULL)
+		{
+			auto next = res->Next() == resources ? TNULL : res->Next();
+			if (res->IsDying())
+			{
+				DestroyDyingResources(res->Attached());
+			}
+			else
+			{
+				if (res == resources)
+				{
+					resources = next;
+				}
+				DeleteResource(next);
+				res = next;
+			}
+			
+		}
+	}
+
+	void TRender::DeleteResource(TResource* resources)
+	{
+		DeleteResourceRecurse(resources->Attached());
+		DeleteResourceAtomic(resources);
+	}
+
+	void TRender::DeleteResourceRecurse(TResource* resources)
+	{
+		auto res = resources;
+		while (resources != TNULL)
+		{
+			auto next = res->Next() == resources ? TNULL : res->Next();
+			DeleteResourceAtomic(resources);
+			resources = next;
+		}
+	}
+
+	void TRender::DeleteResourceAtomic(TResource* a_pResource)
+	{
+		auto attached = a_pResource->Attached();
+
+		if (attached != TNULL)
+		{
+			DeleteResourceRecurse(attached);
+		}
+
+		TASSERT(TFALSE == a_pResource->IsValid());
+
+		if (a_pResource->IsCreated())
+		{
+			a_pResource->OnDestroy();
+		}
+
+		m_Resources.Remove(a_pResource, false);
+		a_pResource->~TResource();
+	}
+
 	void TRender::Update(float deltatime)
 	{
-		TTODO("FlushDyingResources");
+		FlushDyingResources();
 	}
 
 	void TRender::BeginScene()
