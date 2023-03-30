@@ -6,6 +6,16 @@ namespace Toshi
 {
     void TRenderContextDX11::ComputePerspectiveProjection()
     {
+        TASSERT(m_sProjParams.m_Proj.x != 0.0f);
+        TASSERT(m_sProjParams.m_Proj.y != 0.0f);
+        TASSERT(m_oParams.fWidth != 0.0f);
+        TASSERT(m_oParams.fHeight != 0.0f);
+
+        TASSERT(TMath::IsFinite(m_sProjParams.m_Proj.x) && (!TMath::IsNaN(m_sProjParams.m_Proj.x)));
+        TASSERT(TMath::IsFinite(m_sProjParams.m_Proj.y) && (!TMath::IsNaN(m_sProjParams.m_Proj.y)));
+        TASSERT(TMath::IsFinite(m_sProjParams.m_Centre.x) && (!TMath::IsNaN(m_sProjParams.m_Centre.x)));
+        TASSERT(TMath::IsFinite(m_sProjParams.m_Centre.y) && (!TMath::IsNaN(m_sProjParams.m_Centre.y)));
+
         float v1; // xmm0_4
         float v2; // xmm0_4
         float v3; // xmm0_4
@@ -42,6 +52,17 @@ namespace Toshi
 
     void TRenderContextDX11::ComputeOrthographicProjection()
     {
+        TASSERT(m_sProjParams.m_Proj.x != 0.0f);
+        TASSERT(m_sProjParams.m_Proj.y != 0.0f);
+        TASSERT(m_oParams.fWidth != 0.0f);
+        TASSERT(m_oParams.fHeight != 0.0f);
+
+        TASSERT(TMath::IsFinite(m_sProjParams.m_Proj.x) && (!TMath::IsNaN(m_sProjParams.m_Proj.x)));
+        TASSERT(TMath::IsFinite(m_sProjParams.m_Proj.y) && (!TMath::IsNaN(m_sProjParams.m_Proj.y)));
+        TASSERT(TMath::IsFinite(m_sProjParams.m_Centre.x) && (!TMath::IsNaN(m_sProjParams.m_Centre.x)));
+        TASSERT(TMath::IsFinite(m_sProjParams.m_Centre.y) && (!TMath::IsNaN(m_sProjParams.m_Centre.y)));
+
+
         float v2; // xmm0_4
         float v3; // xmm0_4
         float v4; // xmm0_4
@@ -75,6 +96,18 @@ namespace Toshi
 
     void TRenderContextDX11::ComputeOrthographicFrustum()
     {
+        TASSERT(m_sProjParams.m_Proj.x != 0.0f);
+        TASSERT(m_sProjParams.m_Proj.y != 0.0f);
+        TASSERT(m_oParams.fWidth != 0.0f);
+        TASSERT(m_oParams.fHeight != 0.0f);
+
+        TASSERT(TMath::IsFinite(m_sProjParams.m_Proj.x) && (!TMath::IsNaN(m_sProjParams.m_Proj.x)));
+        TASSERT(TMath::IsFinite(m_sProjParams.m_Proj.y) && (!TMath::IsNaN(m_sProjParams.m_Proj.y)));
+        TASSERT(TMath::IsFinite(m_sProjParams.m_Centre.x) && (!TMath::IsNaN(m_sProjParams.m_Centre.x)));
+        TASSERT(TMath::IsFinite(m_sProjParams.m_Centre.y) && (!TMath::IsNaN(m_sProjParams.m_Centre.y)));
+
+
+
         TIMPLEMENT();
     }
 
