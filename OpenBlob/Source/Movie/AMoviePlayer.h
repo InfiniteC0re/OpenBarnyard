@@ -27,7 +27,7 @@ public:
 	void ThrowEvent(AMovieEvent::Type type) { m_Emitter.Throw(&type); }
 
 	virtual ~AMoviePlayer() = default;
-	virtual void PlayMovie(const char* fileName, void* unused, uint8_t flags) = 0;
+	virtual bool PlayMovie(const char* fileName, uint32_t soundChannel, uint32_t flags) = 0;
 	virtual void StopMovie() = 0;
 	virtual void PauseMovie(bool pause) = 0;
 	virtual void Mute(bool mute = true) { m_bIsMuted = mute; }

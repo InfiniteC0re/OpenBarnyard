@@ -46,7 +46,7 @@ ADX11MoviePlayer::ADX11MoviePlayer() : m_CurrentFileName("")
     m_AudioOffset = 0;
 }
 
-void ADX11MoviePlayer::PlayMovie(const char* fileName, void* unused, uint8_t flags)
+bool ADX11MoviePlayer::PlayMovie(const char* fileName, uint32_t soundChannel, uint32_t flags)
 {
     if (IsMoviePlaying())
     {
@@ -56,7 +56,7 @@ void ADX11MoviePlayer::PlayMovie(const char* fileName, void* unused, uint8_t fla
 
     if (fileName == TNULL)
     {
-        return;
+        return false;
     }
 
     auto path = TStringManager::GetTempString8();
@@ -84,7 +84,7 @@ void ADX11MoviePlayer::PlayMovie(const char* fileName, void* unused, uint8_t fla
             {
                 THEORAPLAY_stopDecode(m_TheoraDecoder);
                 m_TheoraDecoder = NULL;
-                return;
+                return false;
             }
 
             m_bHasAudioStream = THEORAPLAY_hasAudioStream(m_TheoraDecoder);
@@ -147,6 +147,7 @@ void ADX11MoviePlayer::PlayMovie(const char* fileName, void* unused, uint8_t fla
             m_bIsPaused = TFALSE;
             m_bIsHidden = TFALSE;
             m_Position = 0;
+            return true;
         }
     }
 }
@@ -305,7 +306,7 @@ void ADX11MoviePlayer::OnUpdate(float deltaTime)
                     {
                         flags = 2;
                     }
-                    PlayMovie(m_CurrentFileName, TNULL, flags | (uint8_t)m_bIsMovieLooping);
+                    PlayMovie(m_CurrentFileName, 0, flags | (uint8_t)m_bIsMovieLooping);
                 }
                 else
                 {
