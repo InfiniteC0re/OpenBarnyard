@@ -5,7 +5,7 @@
 
 class AMovieState : public AGameState
 {
-	AMovieState();
+	AMovieState(const char* name, bool unk, bool unk2, bool unk3, AGameState* gameState);
 
 	virtual void Unk1();
 	virtual bool Unk2();
@@ -20,5 +20,11 @@ class AMovieState : public AGameState
 	virtual bool CanActivateConsoleState();
 	virtual bool CheckForControllerRemoval();
 	virtual bool PauseOnControllerReinserted();
+	virtual void PlayMovie(uint32_t unk);
+
+	// T2DynamicArray
+
+	bool m_bUnk; // 0x40
+	bool m_bUnk2; // 0x41
 };
 

@@ -1,7 +1,7 @@
 #pragma once
 #include <Toshi/Locale/T2Locale.h>
 
-class ALocaleManager : public Toshi::T2Locale
+class ALocaleManager : public Toshi::T2Locale, public Toshi::TSingleton<ALocaleManager>
 {
 public:
 	typedef int Platform;
@@ -32,11 +32,11 @@ public:
 	static void Destroy();
 
 	static const char* GetLocaleCode(int code);
-	inline const char* GetCurLocaleCode(int code) { return GetLocaleCode(m_code); }
+	inline const char* GetCurLocaleCode() { return GetLocaleCode(m_code); }
 	static const char* GetVOLocaleCode(int code);
 
 	static int GetSoundChannel(int code);
-	inline int GetCurSoundChannel(int code) { return GetSoundChannel(m_code); }
+	inline int GetCurSoundChannel() { return GetSoundChannel(m_code); }
 
 	static int GetOSLanguage() { return 0; }
 	static int FixStringIdPlatform(int stringid);

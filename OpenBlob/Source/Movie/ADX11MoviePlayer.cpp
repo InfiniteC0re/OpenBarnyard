@@ -228,9 +228,9 @@ void ADX11MoviePlayer::OnRender(float deltaTime)
             {
                 UINT width = video->width;
                 UINT height = video->height;
-                UINT halfWidth = width >> 1;
+                UINT halfWidth = width / 2;
                 UINT pixelCount = width * height;
-                UINT quarterPixelCount = halfWidth * (height >> 1);
+                UINT quarterPixelCount = halfWidth * (height / 2);
 
                 uint8_t* src = video->pixels + pixelCount;
                 pRender->CopyDataToTexture(m_Textures[m_iTexIndex], pixelCount, video->pixels, width);

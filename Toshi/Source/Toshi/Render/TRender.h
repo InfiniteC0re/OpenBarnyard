@@ -127,7 +127,6 @@ namespace Toshi
 		PROJECTIONPARAMS m_sProjParams;         // 0x30
 		TMatrix44 m_mModelViewMatrix;           // 0x40
 		TMatrix44 m_mWorldViewMatrix;           // 0x80
-		TMatrix44 m_
 	};
 
 	class TRender :
