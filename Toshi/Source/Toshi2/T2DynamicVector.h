@@ -66,7 +66,7 @@ namespace Toshi
 
 		T& Begin() const
 		{
-			return m_poElements;
+			return *(T*)m_poElements;
 		}
 
 		int Size() const

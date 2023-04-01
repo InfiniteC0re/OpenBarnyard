@@ -99,5 +99,5 @@ void AFrontEndMovieState::StartMovie(Asset assetId)
     m_fUnknown = 5.0f;
     m_bFlag1 = true;
     //m_Background.SetVisible(TFALSE);
-    pPlayer->PlayMovie(s_Assets[assetId], TNULL, 0);
+    pPlayer->PlayMovie(s_Assets[assetId], 0, 0);
 }
