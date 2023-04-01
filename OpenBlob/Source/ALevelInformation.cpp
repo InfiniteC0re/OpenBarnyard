@@ -21,13 +21,13 @@ void ALevelInformation::Create(const char* a_trbName)
 void ALevelInformation::MakeStringToIDHashTable()
 {
 	int levelCount = GetLevelHeader()->m_levelCount;
-	m_pHashTable->Create(levelCount, 0x80, levelCount, levelCount);
-	m_pHashTable->SetItemCompareFunction(LevelNameHashCompareFunc);
+	m_pHashTable.Create(levelCount, 0x80, levelCount, levelCount);
+	m_pHashTable.SetItemCompareFunction(LevelNameHashCompareFunc);
 	for (size_t i = 0; i < levelCount; i++)
 	{
 		char toAddLevelName[0x80];
 		Toshi::TStringManager::String8Copy(toAddLevelName, GetLevelName(i), 0x80);
-		m_pHashTable->Insert(toAddLevelName);
+		m_pHashTable.Insert(toAddLevelName);
 	}
 }
 
