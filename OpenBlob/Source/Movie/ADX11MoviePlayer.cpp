@@ -277,6 +277,59 @@ void ADX11MoviePlayer::OnUpdate(float deltaTime)
             }
         }
 
+        uint32_t pos = 0;
+        if (m_pChannel == NULL)
+        {
+            pos = (uint32_t)m_Position;
+        }
+        else
+        {
+            m_pChannel->getPosition(&pos, FMOD_TIMEUNIT_MS);
+        }
+
+        if (pos == 0)
+        {
+            pos = (uint32_t)m_Position;
+        }
+
+        auto video = m_TheoraVideo;
+
+        // Very laggy video but all movie play and stop
+        /*while (m_FrameMS < (pos - video->playms))
+        {
+            THEORAPLAY_freeVideo(video);
+            auto isDecoding = THEORAPLAY_isDecoding(m_TheoraDecoder);
+            video = THEORAPLAY_getVideo(m_TheoraDecoder);
+            m_TheoraVideo = video;
+            while (video == NULL && isDecoding)
+            {
+                isDecoding = THEORAPLAY_isDecoding(m_TheoraDecoder);
+                video = THEORAPLAY_getVideo(m_TheoraDecoder);
+                m_TheoraVideo = video;
+            }
+            video = m_TheoraVideo;
+
+            if (video == TNULL)
+            {
+                if (m_bIsMovieLooping)
+                {
+                    ThrowEvent(AMovieEvent::Type_Looping);
+                    uint8_t flags = 0;
+                    if (m_bIsMuted)
+                    {
+                        flags = 2;
+                    }
+                    PlayMovie(m_CurrentFileName, 0, flags | (uint8_t)m_bIsMovieLooping);
+                }
+                else
+                {
+                    StopMovieImpl();
+                    ThrowEvent(AMovieEvent::Type_Finished);
+                }
+                break;
+            }
+        }*/
+
         if (m_TheoraVideo->playms <= m_Position)
         {
             const THEORAPLAY_VideoFrame* last = m_TheoraVideo;
