@@ -25,14 +25,11 @@ AGameState::UpdateResult AFrontEndMovieState::OnUpdate(float deltaTime)
     case Asset_THQLogo:
     case Asset_LogoMovie:
     case Asset_Intro:
-        if (m_bFlag1)
+        if (m_bSkip)
         {
             if (AApplication::g_oTheApp.m_bUnk4)
             {
-                if (pMoviePlayer->IsMoviePlaying())
-                {
-                    pMoviePlayer->StopMovie();
-                }
+                StopMovieIfPlaying();
                 TIMPLEMENT("Start Rendering Frontend menu");
             }
         }
@@ -42,10 +39,7 @@ AGameState::UpdateResult AFrontEndMovieState::OnUpdate(float deltaTime)
             {
                 if (AApplication::g_oTheApp.m_bUnk4)
                 {
-                    if (pMoviePlayer->IsMoviePlaying())
-                    {
-                        pMoviePlayer->StopMovie();
-                    }
+                    StopMovieIfPlaying();
                     TIMPLEMENT("Start Rendering Frontend menu");
                 }
             }
@@ -56,10 +50,7 @@ AGameState::UpdateResult AFrontEndMovieState::OnUpdate(float deltaTime)
         {
             if (AApplication::g_oTheApp.m_bUnk4)
             {
-                if (pMoviePlayer->IsMoviePlaying())
-                {
-                    pMoviePlayer->StopMovie();
-                }
+                StopMovieIfPlaying();
                 TIMPLEMENT("Start Rendering Frontend menu");
             }
         }
@@ -68,9 +59,29 @@ AGameState::UpdateResult AFrontEndMovieState::OnUpdate(float deltaTime)
     switch (m_iAssetId)
     {
     case Asset_Legal:
-        if (SomeCheck())
+        if (HasBackgroundStoppedShowing())
+        {
+            StartMovie(Asset_THQLogo);
+        }
+        break;
+    case Asset_THQLogo:
+        if (HasMovieStopped())
+        {
+            StartMovie(Asset_LogoMovie);
+        }
+        break;
+    case Asset_LogoMovie:
+        if (HasMovieStopped())
         {
             StartMovie(Asset_Intro);
+        }
+        break;
+    case Asset_Intro:
+        if (HasMovieStopped())
+        {
+            StopMovieIfPlaying();
+            m_bSkip = false;
+            TIMPLEMENT("Start Rendering Frontend menu");
         }
         break;
     }
@@ -138,16 +149,43 @@ void AFrontEndMovieState::OnDeactivate()
     AApplication::g_oTheApp.SetRenderWorld(true);
 }
 
-bool AFrontEndMovieState::SomeCheck()
+bool AFrontEndMovieState::HasBackgroundStoppedShowing()
 {
-    if (m_iAssetId >= Asset_THQLogo && m_iAssetId <= Asset_Intro)
+    switch (m_iAssetId)
     {
-        if (m_bFlag1)
+    case Asset_THQLogo:
+    case Asset_LogoMovie:
+    case Asset_Intro:
+        if (m_bSkip)
         {
             return true;
         }
     }
     return m_fUnknown <= 0.0f;
+}
+
+bool AFrontEndMovieState::HasMovieStopped()
+{
+    switch (m_iAssetId)
+    {
+    case Asset_THQLogo:
+    case Asset_LogoMovie:
+    case Asset_Intro:
+        if (m_bSkip)
+        {
+            return true;
+        }
+    }
+    return !AMoviePlayer::GetSingletonWeak()->IsMoviePlaying();
+}
+
+void AFrontEndMovieState::StopMovieIfPlaying()
+{
+    AMoviePlayer* pPlayer = AMoviePlayer::GetSingletonWeak();
+    if (pPlayer->IsMoviePlaying())
+    {
+        pPlayer->StopMovie();
+    }
 }
 
 void AFrontEndMovieState::StartMovie(Asset assetId)
@@ -161,7 +199,7 @@ void AFrontEndMovieState::StartMovie(Asset assetId)
 
     m_iAssetId = assetId;
     m_fUnknown = 5.0f;
-    m_bFlag1 = false;
+    m_bSkip = false;
     m_Background.SetVisible(TFALSE);
     pPlayer->PlayMovie(s_Assets[assetId], 0, 0);
 }
