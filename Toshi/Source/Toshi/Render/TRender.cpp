@@ -266,7 +266,7 @@ namespace Toshi
 		}
 
 		m_Resources.Remove(a_pResource, false);
-		a_pResource->~TResource();
+		delete a_pResource;
 	}
 
 	void TRender::Update(float deltatime)
