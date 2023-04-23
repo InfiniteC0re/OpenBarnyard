@@ -228,6 +228,21 @@ namespace Toshi
 		TRenderContext* GetCurrentRenderContext() const { return m_pRenderContext; }
 		TNodeList<TRenderAdapter>* GetAdapterList() { return &m_AdapterList; }
 		TRenderParamTable* GetParamTable() const { return m_ParamTable; }
+
+		void DestroyDyingResources(TResource* resources);
+		void DestroyDyingResources();
+
+		void DeleteResource(TResource* resources);
+		void DeleteResourceRecurse(TResource* resources);
+		void DeleteResourceAtomic(TResource* resources);
+
+		void FlushDyingResources()
+		{
+			if (m_HasDyingResources)
+			{
+				DestroyDyingResources();
+			}
+		}
 	
 	public:
 		/*

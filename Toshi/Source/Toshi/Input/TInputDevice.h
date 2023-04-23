@@ -23,16 +23,29 @@ namespace Toshi
 			int m_iDoodad;
 		};
 
+		int ProcessRepeats(TGenericEmitter& emitter, float flt);
+
 	public:
 		virtual bool Flush() { return true; }
 		virtual bool StartRepeat(int param_1, float param_2, float param_3);
 		virtual bool StopRepeat(int param_1);
 		virtual bool StopAllRepeats();
 		virtual void ThrowRepeatEvent(TGenericEmitter& emitter, RepeatInfo* repeatInfo, float flt);
+		virtual bool IsForceFeedbackDevice() { return false; }
 
 		bool IsAquired() const
 		{
 			return m_bIsAquired;
+		}
+
+		TInputInterface* GetInputInterface()
+		{
+			return m_pInterface;
+		}
+
+		void SetInputInterface(TInputInterface* a_pInterface)
+		{
+			m_pInterface = a_pInterface;
 		}
 
 	public:

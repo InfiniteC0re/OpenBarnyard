@@ -46,7 +46,7 @@ ADX11MoviePlayer::ADX11MoviePlayer() : m_CurrentFileName("")
     m_AudioOffset = 0;
 }
 
-void ADX11MoviePlayer::PlayMovie(const char* fileName, void* unused, uint8_t flags)
+bool ADX11MoviePlayer::PlayMovie(const char* fileName, uint32_t soundChannel, uint32_t flags)
 {
     if (IsMoviePlaying())
     {
@@ -56,7 +56,7 @@ void ADX11MoviePlayer::PlayMovie(const char* fileName, void* unused, uint8_t fla
 
     if (fileName == TNULL)
     {
-        return;
+        return false;
     }
 
     auto path = TStringManager::GetTempString8();
@@ -84,7 +84,7 @@ void ADX11MoviePlayer::PlayMovie(const char* fileName, void* unused, uint8_t fla
             {
                 THEORAPLAY_stopDecode(m_TheoraDecoder);
                 m_TheoraDecoder = NULL;
-                return;
+                return false;
             }
 
             m_bHasAudioStream = THEORAPLAY_hasAudioStream(m_TheoraDecoder);
@@ -147,6 +147,7 @@ void ADX11MoviePlayer::PlayMovie(const char* fileName, void* unused, uint8_t fla
             m_bIsPaused = TFALSE;
             m_bIsHidden = TFALSE;
             m_Position = 0;
+            return true;
         }
     }
 }
@@ -228,9 +229,9 @@ void ADX11MoviePlayer::OnRender(float deltaTime)
             {
                 UINT width = video->width;
                 UINT height = video->height;
-                UINT halfWidth = width >> 1;
+                UINT halfWidth = width / 2;
                 UINT pixelCount = width * height;
-                UINT quarterPixelCount = halfWidth * (height >> 1);
+                UINT quarterPixelCount = halfWidth * (height / 2);
 
                 uint8_t* src = video->pixels + pixelCount;
                 pRender->CopyDataToTexture(m_Textures[m_iTexIndex], pixelCount, video->pixels, width);
@@ -276,6 +277,59 @@ void ADX11MoviePlayer::OnUpdate(float deltaTime)
             }
         }
 
+        uint32_t pos = 0;
+        if (m_pChannel == NULL)
+        {
+            pos = (uint32_t)m_Position;
+        }
+        else
+        {
+            m_pChannel->getPosition(&pos, FMOD_TIMEUNIT_MS);
+        }
+
+        if (pos == 0)
+        {
+            pos = (uint32_t)m_Position;
+        }
+
+        auto video = m_TheoraVideo;
+
+        // Very laggy video but all movie play and stop
+        /*while (m_FrameMS < (pos - video->playms))
+        {
+            THEORAPLAY_freeVideo(video);
+            auto isDecoding = THEORAPLAY_isDecoding(m_TheoraDecoder);
+            video = THEORAPLAY_getVideo(m_TheoraDecoder);
+            m_TheoraVideo = video;
+            while (video == NULL && isDecoding)
+            {
+                isDecoding = THEORAPLAY_isDecoding(m_TheoraDecoder);
+                video = THEORAPLAY_getVideo(m_TheoraDecoder);
+                m_TheoraVideo = video;
+            }
+            video = m_TheoraVideo;
+
+            if (video == TNULL)
+            {
+                if (m_bIsMovieLooping)
+                {
+                    ThrowEvent(AMovieEvent::Type_Looping);
+                    uint8_t flags = 0;
+                    if (m_bIsMuted)
+                    {
+                        flags = 2;
+                    }
+                    PlayMovie(m_CurrentFileName, 0, flags | (uint8_t)m_bIsMovieLooping);
+                }
+                else
+                {
+                    StopMovieImpl();
+                    ThrowEvent(AMovieEvent::Type_Finished);
+                }
+                break;
+            }
+        }*/
+
         if (m_TheoraVideo->playms <= m_Position)
         {
             const THEORAPLAY_VideoFrame* last = m_TheoraVideo;
@@ -305,7 +359,7 @@ void ADX11MoviePlayer::OnUpdate(float deltaTime)
                     {
                         flags = 2;
                     }
-                    PlayMovie(m_CurrentFileName, TNULL, flags | (uint8_t)m_bIsMovieLooping);
+                    PlayMovie(m_CurrentFileName, 0, flags | (uint8_t)m_bIsMovieLooping);
                 }
                 else
                 {

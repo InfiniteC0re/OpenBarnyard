@@ -12,7 +12,7 @@ namespace Toshi
 		public:
 			friend TNodeTree;
 
-		public:
+		protected:
 			TNode()
 			{
 				m_Tree = TNULL;
@@ -22,7 +22,7 @@ namespace Toshi
 				m_Attached = TNULL;
 			}
 
-		protected:
+		public:
 			bool IsLinked() const
 			{
 				return m_Tree != TNULL;

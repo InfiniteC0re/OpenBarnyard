@@ -1,6 +1,8 @@
 #include "ToshiPCH.h"
 #include "TInputInterface_Win.h"
 #include TOSHI_MULTIINPUT(TInputDeviceController);
+#include "TInputDeviceController_XInput.h"
+#include "TInputDeviceController_Wiin.h"
 #include TOSHI_MULTIINPUT(TInputDeviceMouse);
 
 namespace Toshi
@@ -19,7 +21,11 @@ namespace Toshi
             hRes = m_poDirectInput8->EnumDevices(DI8DEVCLASS_ALL, TInputDXInterface::EnumerateDeviceCallback, this, DIEDFL_ATTACHEDONLY);
             if (hRes == DI_OK)
             {
-                TIMPLEMENT();
+                for (size_t i = 0; i < 4; i++)
+                {
+                    AddDevice(new TInputDeviceController_XInput());
+                    AddDevice(new TInputWiinDeviceController());
+                }
 
                 UINT numJoyDevs = joyGetNumDevs();
 
@@ -82,7 +88,6 @@ namespace Toshi
         case DI8DEVTYPE_MOUSE:
             inputMouse = (TInputDXDeviceMouse*)inputInterface->GetSpecificDeviceByIndex(TGetClass(TInputDXDeviceMouse), 0);
 
-            //inputMouse = inputInterface->GetMouseByIndex(0);
             hr = inputInterface->m_poDirectInput8->CreateDevice(GUID_SysMouse, &inputDevice, NULL);
 
             if (hr != DI_OK)
@@ -92,9 +97,19 @@ namespace Toshi
 
             if (inputMouse == TNULL)
             {
-                // new DXMouse
                 inputMouse = new TInputDXDeviceMouse();
-                inputMouse->BindToDIDevice(inputInterface->GetMainWindow(), a_poDeviceInstance, inputDevice);
+                bool res = inputMouse->BindToDIDevice(inputInterface->GetMainWindow(), a_poDeviceInstance, inputDevice);
+
+                if (res)
+                {
+                    inputMouse->Initialise();
+                    inputMouse->Acquire();
+                    inputInterface->AddDevice(inputMouse);
+                }
+                else
+                {
+                    inputInterface->RemoveDevice(inputMouse);
+                }
             }
 
             TIMPLEMENT();

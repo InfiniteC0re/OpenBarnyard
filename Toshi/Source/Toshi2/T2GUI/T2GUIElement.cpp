@@ -42,7 +42,7 @@ namespace Toshi
 
 	bool T2GUIElement::SkipRender()
 	{
-		if (HASFLAG(m_Flags1 & FLAGS_VISIBLE) && HASFLAG(m_Flags1 & (uint8_t)s_uiGlobalVisMask))
+		if (HASFLAG(m_State & FLAGS_VISIBLE) && HASFLAG(m_State & (uint8_t)s_uiGlobalVisMask))
 		{
 			return TFALSE;
 		}

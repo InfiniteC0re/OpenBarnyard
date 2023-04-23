@@ -3,6 +3,26 @@
 
 void Toshi::TInputDXDeviceMouse::Release()
 {
+	TIMPLEMENT();
+}
+
+bool Toshi::TInputDXDeviceMouse::Initialise()
+{
+	TIMPLEMENT();
+	return false;
+}
+
+bool Toshi::TInputDXDeviceMouse::Acquire()
+{
+	TIMPLEMENT();
+	return false;
+}
+
+bool Toshi::TInputDXDeviceMouse::Unacquire()
+{
+	m_bIsAquired = false;
+	TIMPLEMENT();
+	return false;
 }
 
 bool const Toshi::TInputDXDeviceMouse::BindToDIDevice(HWND a_mainWindow, LPCDIDEVICEINSTANCE a_poDeviceInstance, IDirectInputDevice8* a_poDXInputDevice)
@@ -12,5 +32,6 @@ bool const Toshi::TInputDXDeviceMouse::BindToDIDevice(HWND a_mainWindow, LPCDIDE
 
 	Release();
 
+	TIMPLEMENT();
 	return true;
 }

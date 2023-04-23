@@ -34,7 +34,7 @@ public:
 
 	virtual bool RunJob()
 	{
-		return true;
+		return m_isRunning;
 	}
 
 };

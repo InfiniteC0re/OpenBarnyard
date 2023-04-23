@@ -168,6 +168,7 @@ namespace Toshi
 		}
 
 		void AddDevice(TInputDevice* device);
+		void RemoveDevice(TInputDevice* device);
 
 		virtual bool Initialise() { return true; }
 		virtual bool Deinitialise();

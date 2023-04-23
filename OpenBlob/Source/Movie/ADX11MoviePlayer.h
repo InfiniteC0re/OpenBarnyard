@@ -12,7 +12,7 @@ public:
 public:
 	ADX11MoviePlayer();
 
-	virtual void PlayMovie(const char* fileName, void* unused, uint8_t flags) override;
+	virtual bool PlayMovie(const char* fileName, uint32_t soundChannel, uint32_t flags) override;
 	virtual void StopMovie() override;
 	virtual void PauseMovie(bool pause) override;
 	virtual bool IsMoviePlaying() override;

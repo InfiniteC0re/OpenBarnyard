@@ -27,6 +27,7 @@ public:
 	AFrontEndMovieState()
 	{
 		m_iAssetId = Asset_Legal;
+		m_fUnknown = 5.0f;
 	}
 
 	virtual UpdateResult OnUpdate(float deltaTime) override;
@@ -36,18 +37,18 @@ public:
 	virtual void OnDeactivate() override;
 
 private:
+
+	bool HasBackgroundStoppedShowing();
+	bool HasMovieStopped();
+	void StopMovieIfPlaying();
+
 	void StartMovie(Asset assetId);
-
-	bool IsMoviePlaying()
-	{
-
-	}
 
 private:
 	A2GUIBackground m_Background;
 	float m_fUnknown; // 0x104
 	Asset m_iAssetId; // 0x108
-	bool m_bFlag1;    // 0x10C
+	bool m_bSkip;    // 0x10C
 
 	Toshi::T2GUIRectangle* m_Test;
 	float m_TestRotAngle;

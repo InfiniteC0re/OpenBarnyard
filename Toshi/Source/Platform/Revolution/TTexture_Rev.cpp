@@ -3,30 +3,30 @@
 
 namespace Toshi
 {
-	int TTexture::GetBitsPerTexel(uint8_t a_texFmt)
+	int TTexture::GetBitsPerTexel(GXTexFmt a_texFmt)
 	{
 		switch (a_texFmt)
 		{
-		case 0x0:
-		case 0x8:
-		case 0xE:
-			return 0x4;
-		case 0x1:
-		case 0x2:
-		case 0x9:
+		case I4:
+		case C4:
+		case CMPR:
+			return 4;
+		case I8:
+		case IA4:
+		case C8:
 		case 0x11:
-			return 0x8;
-		case 0x3:
-		case 0x4:
-		case 0x5:
-		case 0xA:
+			return 8;
+		/*case IA8:
+		case RGB565:
+		case RGB5A3:*/
+		case C14X2:
 		case 0x13:
-			return 0x10;
-		case 0x6:
+			return 16;
+		case RGBA8:
 		case 0x16:
-			return 0x20;
+			return 32;
 		default:
-			return 0x0;
+			return 0;
 		}
 	}
 
@@ -40,6 +40,63 @@ namespace Toshi
 			hash = hash * 0x11 + val;
 		}
 		return hash;
+	}
+
+	void TTexture::CheckValid()
+	{
+		if (m_texFmt - 8 < 3)
+		{
+			m_unk2 |= 0x20000000;
+		}
+
+		if (m_mipMaps != 0)
+		{
+			m_unk2 |= 0x10000000;
+			m_unk3 = 2;
+			m_magFilter = GX_LIN_MIP_LIN;
+			m_unk4 = 0.5f * -(m_mipMaps - 176.0f);
+		}
+
+		if (m_texFmt - 8 < 2)
+		{
+			m_unk2 |= 0x20000000;
+		}
+
+		m_unk2 |= 0x80000000;
+	}
+
+	void TTexture::InitTexObj()
+	{
+		CheckValid();
+
+		if (m_mipMaps & 0x20000000)
+		{
+
+		}
+	}
+
+	void TTexture::InitRuntime(GXTexFmt a_texFmt, GXTlutFmt a_tlutFmt, unsigned int a_unk, unsigned int a_unk2, unsigned int a_unk3, unsigned int a_unk4, void* a_unk5, void* a_unk6, char const* a_szFileName)
+	{
+		m_pImageData = TNULL;
+		m_texFmt = a_texFmt;
+		m_tlutFmt = a_tlutFmt;
+		m_wrapS = GX_REPEAT;
+		m_wrapT = GX_REPEAT;
+		m_szFileName = (char*)a_szFileName;
+		
+		m_iHash = ComputeHash(m_szFileName);
+
+		if (m_texFmt - 8 < 3)
+		{
+			a_unk3 |= 0x20000000;
+		}
+		else
+		{
+			a_unk3 |= 0x10000000;
+		}
+
+
+
 	}
 
 	void TTexture::Swizzle()
@@ -70,10 +127,10 @@ namespace Toshi
 		uint32_t* imgPtr3;
 		uint32_t height = m_height;
 		uint32_t width = m_width;
-		for (size_t i = 0; i < m_unk + 1; i++)
+		for (size_t i = 0; i < m_mipMaps + 1; i++)
 		{
 			int iVar7 = 0;
-			uint32_t* imagePtr = reinterpret_cast<uint32_t*>(m_imagePtr);
+			uint32_t* imagePtr = reinterpret_cast<uint32_t*>(m_pImageData);
 			for (size_t j = 0; j < height; j += 4)
 			{
 				TUtil::MemCopy(buf, imagePtr + (iVar7 * 2), width * 16);
@@ -116,6 +173,14 @@ namespace Toshi
 			height /= 2;
 			width /= 2;
 			imagePtr += 32;
+		}
+	}
+
+	void TTexture::GetPhysicalSize(uint32_t& width, uint32_t& height, uint32_t bitsPerTexel)
+	{
+		if (bitsPerTexel < 16)
+		{
+			
 		}
 	}
 }
