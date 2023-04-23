@@ -17,7 +17,7 @@ namespace Toshi
 			return 1;
 		}
 
-		bool m_isXInput;
+		bool m_isDirectInput;
 		IDirectInputDevice8* m_pDXInputDevice;
 		DIDEVCAPS m_pDXDiDevCaps;
 	};
