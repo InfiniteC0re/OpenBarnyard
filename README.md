@@ -17,8 +17,8 @@ Building on Windows requires
 
 Clone the repository with the following commands:
 
-	git clone https://github.com/AdventureT/OpenBlob.git
-	cd OpenBlob
+	git clone https://github.com/AdventureT/OpenToshi.git
+	cd OpenToshi
 	git submodule update --init --recursive
 	./GenerateProjects-VS2019.bat (if you use Visual Studio 2019)
 	./GenerateProjects-VS2022.bat (if you use Visual Studio 2022)
