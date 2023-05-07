@@ -10,7 +10,7 @@ class ATRBLoaderJob : public AMainThreadJob2
 public:
 	ATRBLoaderJob()
 	{
-		m_streamJob = TTRBStreamJob();
+		
 	}
 
 	virtual ~ATRBLoaderJob() = default;
@@ -22,20 +22,19 @@ public:
 
 	virtual void Init(TTRB* trb, const char* a_szFilename)
 	{
-		m_streamJob.Init(trb, a_szFilename);
+		m_StreamJob.Init(trb, a_szFilename);
 		TASSERT(TStringManager::String8Length(a_szFilename) > 0);
 	}
 
 	virtual void BeginJob()
 	{
-		m_streamJob.Init(m_streamJob.m_trb, m_streamJob.m_fileName);
-		AAssetStreaming::GetSingletonWeak()->m_FileStream.AddStream(&m_streamJob);
+		m_StreamJob.Init(m_StreamJob.m_trb, m_StreamJob.m_fileName);
+		AAssetStreaming::GetSingletonWeak()->GetFileStream().AddStream(&m_StreamJob);
 	}
 
 	virtual bool RunJob()
 	{
-		return m_isRunning;
+		return m_IsRunning;
 	}
-
 };
 

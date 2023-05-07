@@ -18,6 +18,7 @@ public:
 		LevelProperties* m_pLevelProps;
 	};
 
+public:
 	ALevelInformation()
 	{
 		m_pData = TNULL;
@@ -28,10 +29,10 @@ public:
 	LevelHeader* GetLevelHeader() { return reinterpret_cast<LevelHeader*>(m_pData); }
 	const char* GetLevelName(int a_iLevelIndex);
 
-
+public:
 	static Toshi::THashTable::t_ItemCompareFunc LevelNameHashCompareFunc;
 
-
+private:
 	uint8_t* m_pData; // 0x14
 	Toshi::THashTable m_pHashTable; // 0x18
 };

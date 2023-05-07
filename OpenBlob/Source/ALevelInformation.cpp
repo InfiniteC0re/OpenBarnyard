@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "ALevelInformation.h"
 
-
 Toshi::THashTable::t_ItemCompareFunc ALevelInformation::LevelNameHashCompareFunc = [](void* unk, void* unk2, int unk3)
 {
 	return Toshi::TStringManager::String8Compare((char*)unk, (char*)unk2, -1) == 0;
@@ -23,7 +22,8 @@ void ALevelInformation::MakeStringToIDHashTable()
 	int levelCount = GetLevelHeader()->m_levelCount;
 	m_pHashTable.Create(levelCount, 0x80, levelCount, levelCount);
 	m_pHashTable.SetItemCompareFunction(LevelNameHashCompareFunc);
-	for (size_t i = 0; i < levelCount; i++)
+
+	for (int i = 0; i < levelCount; i++)
 	{
 		char toAddLevelName[0x80];
 		Toshi::TStringManager::String8Copy(toAddLevelName, GetLevelName(i), 0x80);

@@ -35,7 +35,7 @@ void AAssetStreaming::Update()
 
 void AAssetStreaming::ReleaseJob(AMainThreadJob2* a_pJob)
 {
-	a_pJob->m_streamJob = Toshi::TTRBStreamJob();
+	a_pJob->m_StreamJob = Toshi::TTRBStreamJob();
 	a_pJob->CancelJob();
 	TASSERT(m_FreeList.Size() < JOB_COUNT);
 	m_FreeList.PushBack(a_pJob);
