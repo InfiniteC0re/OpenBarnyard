@@ -28,7 +28,7 @@ namespace Toshi
 		virtual const char* GetShaderPrefix() = 0;
 		virtual bool Unk1() { return TTRUE; }
 		virtual bool Unk2() { return TTRUE; }
-		virtual void Render(TRenderPacket* packet) = 0;
+		virtual void Render(TRenderPacket* pPacket) = 0;
 
 	private:
 		State m_State;

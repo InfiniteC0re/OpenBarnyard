@@ -120,13 +120,13 @@ namespace Toshi
 		}
 
 	protected:
-		TRender* m_pRender;                     // 0x04
-		FLAG m_eFlags;                          // 0x08
-		CameraMode m_eCameraMode;               // 0x14
-		Params m_oParams;                       // 0x18
-		PROJECTIONPARAMS m_sProjParams;         // 0x30
-		TMatrix44 m_mModelViewMatrix;           // 0x40
-		TMatrix44 m_mWorldViewMatrix;           // 0x80
+		TRender* m_pRender;                     // 0x004
+		FLAG m_eFlags;                          // 0x008
+		CameraMode m_eCameraMode;               // 0x014
+		Params m_oParams;                       // 0x018
+		PROJECTIONPARAMS m_sProjParams;         // 0x030
+		TMatrix44 m_mModelViewMatrix;           // 0x040
+		TMatrix44 m_mWorldViewMatrix;           // 0x080
 	};
 
 	class TRender :

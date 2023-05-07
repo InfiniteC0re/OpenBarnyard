@@ -59,15 +59,6 @@ public:
 		m_Jobs.PushBack(a_pJob);
 	}
 
-	AMainThreadJob2* CancelAllWaitungTerrainJobs()
-	{
-		TASSERT(!m_FreeList.IsEmpty(), "Job free list is empty!");
-		auto job = m_FreeList.PopBack();
-		TASSERT(!job->IsLinked());
-		TASSERT(m_pCurrentJob != job);
-		return job;
-	}
-
 	void Update();
 	void ReleaseJob(AMainThreadJob2* a_pJob);
 

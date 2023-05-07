@@ -1,7 +1,7 @@
 #include "Toshi/File/TTRB.h"
 #include "Toshi/Core/THashTable.h"
 
-class ALevelInformation : Toshi::TTRB, public Toshi::TSingleton<ALevelInformation>
+class ALevelInformation : public Toshi::TTRB, public Toshi::TSingleton<ALevelInformation>
 {
 public:
 	struct LevelProperties
@@ -18,7 +18,7 @@ public:
 		LevelProperties* m_pLevelProps;
 	};
 
-	ALevelInformation() : TTRB()
+	ALevelInformation()
 	{
 		m_pData = TNULL;
 	}

@@ -3,6 +3,8 @@
 
 namespace Toshi
 {
+	class TShader;
+
 	class TMesh :
 		public TGenericClassDerived<TMesh, TObject, "TMesh", TMAKEVERSION(1, 0), false>
 	{
@@ -54,8 +56,19 @@ namespace Toshi
 			return m_pMaterial;
 		}
 
+		void SetOwnerShader(TShader* pShader)
+		{
+			m_pOwnerShader = pShader;
+		}
+
+		TShader* GetOwnerShader()
+		{
+			return m_pOwnerShader;
+		}
+
 	private:
-		TMaterial* m_pMaterial; // 0x04
-		State m_State;          // 0x0C
+		TMaterial* m_pMaterial;  // 0x04
+		TShader* m_pOwnerShader; // 0x08
+		State m_State;           // 0x0C
 	};
 }

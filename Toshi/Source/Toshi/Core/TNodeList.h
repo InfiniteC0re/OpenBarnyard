@@ -27,6 +27,11 @@ namespace Toshi
 				m_List = node.m_List;
 			}
 
+			void Remove()
+			{
+				m_List->Remove(*this);
+			}
+
 			T* Next() const
 			{
 				return m_Next->As<T>();
@@ -122,7 +127,7 @@ namespace Toshi
 		{
 			if (!IsEmpty())
 			{
-				return Remove(m_Head.Next());
+				return Remove(*m_Head.Next());
 			}
 
 			return TNULL;
@@ -132,7 +137,7 @@ namespace Toshi
 		{
 			if (!IsEmpty())
 			{
-				return Remove(m_Head.Prev());
+				return Remove(*m_Head.Prev());
 			}
 
 			return TNULL;

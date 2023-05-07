@@ -71,12 +71,12 @@ void TGlow::Render(ID3D11ShaderResourceView* srv, void* unk)
 		deviceContext->OMSetRenderTargets(1, &m_pRenderTarget, TNULL);
 
 		D3D11_VIEWPORT viewport;
-		viewport.Width = m_uiWidth;
+		viewport.Width = (FLOAT)m_uiWidth;
+		viewport.Height = (FLOAT)m_uiHeight;
 		viewport.TopLeftX = 0.0;
 		viewport.TopLeftY = 0.0;
 		viewport.MinDepth = 0.0;
 		viewport.MaxDepth = 1.0;
-		viewport.Height = m_uiHeight;
 		deviceContext->RSSetViewports(1, &viewport);
 		renderer->SetBlendMode(TFALSE, D3D11_BLEND_OP_ADD, D3D11_BLEND_ONE, D3D11_BLEND_ONE);
 

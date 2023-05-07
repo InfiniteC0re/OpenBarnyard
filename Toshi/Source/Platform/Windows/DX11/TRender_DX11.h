@@ -3,12 +3,13 @@
 #include "Toshi/Render/TRenderAdapter.h"
 #include "Toshi/Render/Shaders/TToneMap.h"
 #include "Toshi/Render/Shaders/TFXAA.h"
+#include "Toshi/Render/TOrderTable.h"
 #include "Toshi2/T2RedBlackTree.h"
 #include "Toshi2/T2Pair.h"
 
 #include "Platform/Windows/TMSWindow.h"
 #include "Platform/Windows/DX11/Includes.h"
-#include <Platform/Windows/DX11/TGlow_DX11.h>
+#include "Platform/Windows/DX11/TGlow_DX11.h"
 
 namespace Toshi
 {
@@ -368,6 +369,11 @@ namespace Toshi
 		void CopyDataToTexture(ID3D11ShaderResourceView* pSRTex, UINT dataSize, void* src, UINT textureSize);
 		void SetSamplerState(UINT startSlot, int samplerId, BOOL SetForPS);
 
+		// Flushes all the order tables and renders the scene
+		void FlushShaders();
+
+		void ResolveSubresource();
+
 		void UpdateRenderStates();
 		void FlushConstantBuffers();
 		void FUN_00691190();
@@ -428,6 +434,7 @@ namespace Toshi
 		size_t m_iImmediateVertexCurrentOffset;           // 0x808
 		ID3D11Buffer* m_MainIndexBuffer;                  // 0x80C
 		size_t m_iImmediateIndexCurrentOffset;            // 0x810
+		TDList<TOrderTable> m_OrderTables;                // 0x814
 		DepthPair m_CurrentDepth;                         // 0x820
 		DepthPair m_PreviousDepth;                        // 0x830
 		T2RedBlackTree<DepthStatePair> m_DepthStatesTree; // 0x83C

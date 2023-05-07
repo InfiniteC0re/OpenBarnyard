@@ -42,7 +42,7 @@ namespace Toshi
 		inline float Sqrt(float a_fX) 
 		{
 			TASSERT(a_fX != 0.0f);
-			float fVal = sqrtf(fVal);
+			float fVal = sqrtf(a_fX);
 			TASSERT(IsFinite(fVal));
 			return fVal;
 		}
