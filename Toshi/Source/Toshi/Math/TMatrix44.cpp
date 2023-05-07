@@ -17,9 +17,6 @@ namespace Toshi
 	{
 		TASSERT(IsOrthonormal());
 
-		float fVar1;
-		float fVar2;
-
 		std::swap(b, e);
 		std::swap(c, i);
 		std::swap(g, j);

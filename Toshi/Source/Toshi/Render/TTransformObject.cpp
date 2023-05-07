@@ -9,7 +9,7 @@ TTransformObject::TTransformObject()
 	m_EulerOrder[1] = 1;
 	m_EulerOrder[0] = 0;
 
-	m_bFlag = TTRUE;
+	m_bChanged = TTRUE;
 	m_eMode = Mode::Matrix;
 	m_Matrix.Identity();
 
@@ -68,20 +68,20 @@ void TTransformObject::SetTranslate(const TVector3& translation)
 	if (m_eMode == Mode::Matrix)
 		m_Matrix.SetTranslation(m_Translation);
 
-	m_bFlag = TTRUE;
+	m_bChanged = TTRUE;
 }
 
 void TTransformObject::SetQuat(const TQuaternion& quaternion)
 {
 	m_eMode = Mode::Quat;
-	m_bFlag = TTRUE;
+	m_bChanged = TTRUE;
 	m_Quat = quaternion;
 }
 
 void TTransformObject::SetMatrix(const TMatrix44& matrix)
 {
 	m_eMode = Mode::Matrix;
-	m_bFlag = TTRUE;
+	m_bChanged = TTRUE;
 	m_Matrix = matrix;
 	m_Translation = matrix.GetTranslation3();
 }

@@ -24,6 +24,16 @@ public:
 	void SetTranslate(const TVector3& translation);
 	void SetQuat(const TQuaternion& quaternion);
 	void SetMatrix(const TMatrix44& matrix);
+
+	void ResetChangedState()
+	{
+		m_bChanged = TFALSE;
+	}
+
+	bool HasChanged() const
+	{
+		return m_bChanged;
+	}
 	
 	Mode GetMode() const
 	{
@@ -61,7 +71,7 @@ private:
 	TVector3 m_Translation;
 	TVector3 m_ScaleVector;
 	uint8_t m_EulerOrder[3];
-	bool m_bFlag;
+	bool m_bChanged;
 };
 
 }
