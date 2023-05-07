@@ -30,7 +30,7 @@ AGameState::UpdateResult AFrontEndMovieState::OnUpdate(float deltaTime)
             if (AApplication::g_oTheApp.m_bUnk4)
             {
                 StopMovieIfPlaying();
-                TIMPLEMENT("Start Rendering Frontend menu");
+                TIMPLEMENT_D("Start Rendering Frontend menu");
             }
         }
         else
@@ -40,7 +40,7 @@ AGameState::UpdateResult AFrontEndMovieState::OnUpdate(float deltaTime)
                 if (AApplication::g_oTheApp.m_bUnk4)
                 {
                     StopMovieIfPlaying();
-                    TIMPLEMENT("Start Rendering Frontend menu");
+                    TIMPLEMENT_D("Start Rendering Frontend menu");
                 }
             }
         }
@@ -51,7 +51,7 @@ AGameState::UpdateResult AFrontEndMovieState::OnUpdate(float deltaTime)
             if (AApplication::g_oTheApp.m_bUnk4)
             {
                 StopMovieIfPlaying();
-                TIMPLEMENT("Start Rendering Frontend menu");
+                TIMPLEMENT_D("Start Rendering Frontend menu");
             }
         }
         break;
@@ -81,7 +81,7 @@ AGameState::UpdateResult AFrontEndMovieState::OnUpdate(float deltaTime)
         {
             StopMovieIfPlaying();
             m_bSkip = false;
-            TIMPLEMENT("Start Rendering Frontend menu");
+            TIMPLEMENT_D("Start Rendering Frontend menu");
         }
         break;
     }

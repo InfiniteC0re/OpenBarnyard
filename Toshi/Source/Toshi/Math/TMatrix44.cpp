@@ -1,6 +1,8 @@
 #include "ToshiPCH.h"
 #include "TMatrix44.h"
 
+#include <DirectXMath.h>
+
 namespace Toshi
 {
 	TMatrix44::TMatrix44(const TMatrix44& a_rMatrix)
@@ -11,32 +13,68 @@ namespace Toshi
 			a_rMatrix.m, a_rMatrix.n, a_rMatrix.o, a_rMatrix.p);
 	}
 
-	void TMatrix44::Identity()
+	void TMatrix44::SetFromQuaternion(const TQuaternion& quaternion)
 	{
-		a = s_Identity[0];
-		b = s_Identity[1];
-		c = s_Identity[2];
-		d = s_Identity[3];
-		e = s_Identity[4];
-		f = s_Identity[5];
-		g = s_Identity[6];
-		h = s_Identity[7];
-		i = s_Identity[8];
-		j = s_Identity[9];
-		k = s_Identity[10];
-		l = s_Identity[11];
-		m = s_Identity[12];
-		n = s_Identity[13];
-		o = s_Identity[14];
-		p = s_Identity[15];
+		auto matrix = (DirectX::XMMATRIX*)this;
+		auto quat = (DirectX::XMVECTOR*)&quaternion;
+		*matrix = DirectX::XMMatrixRotationQuaternion(*quat);
 	}
 
-	void TMatrix44::LookAtTarget(const TVector3& vec, const TVector3& vec2)
+	void TMatrix44::RotateX(float angle)
 	{
-		i = vec.x - vec2.x;
-		j = vec.y - vec2.y;
-		k = vec.z - vec2.z;
-		
+		float fVar1;
+		float fVar2;
+		float fCos;
+		float fSin;
+
+		TMath::SinCos(angle, fSin, fCos);
+		fVar1 = i;
+		i = fVar1 * fCos - e * fSin;
+		fVar2 = j;
+		e = fVar1 * fSin + e * fCos;
+		fVar1 = g;
+		j = fVar2 * fCos - f * fSin;
+		f = fVar2 * fSin + f * fCos;
+		g = k * fSin + fVar1 * fCos;
+		k = k * fCos - fVar1 * fSin;
+	}
+
+	void TMatrix44::RotateY(float angle)
+	{
+		float fVar1;
+		float fVar2;
+		float fSin;
+		float fCos;
+
+		TMath::SinCos(angle, fSin, fCos);
+		fVar1 = i;
+		i = fVar1 * fCos + a * fSin;
+		fVar2 = j;
+		a = a * fCos - fVar1 * fSin;
+		fVar1 = c;
+		j = fVar2 * fCos + b * fSin;
+		b = b * fCos - fVar2 * fSin;
+		c = fVar1 * fCos - k * fSin;
+		k = k * fCos + fVar1 * fSin;
+	}
+
+	void TMatrix44::RotateZ(float angle)
+	{
+		float fVar1;
+		float fVar2;
+		float fCos;
+		float fSin;
+
+		TMath::SinCos(angle, fSin, fCos);
+		fVar1 = e;
+		e = fVar1 * fCos - a * fSin;
+		fVar2 = f;
+		a = fVar1 * fSin + a * fCos;
+		fVar1 = c;
+		f = fVar2 * fCos - b * fSin;
+		b = fVar2 * fSin + b * fCos;
+		c = g * fSin + fVar1 * fCos;
+		g = g * fCos - fVar1 * fSin;
 	}
 
 	void TMatrix44::Set(TFloat a_f11, TFloat a_f12, TFloat a_f13, TFloat a_f14,
