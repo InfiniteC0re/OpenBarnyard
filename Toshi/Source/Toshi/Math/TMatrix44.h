@@ -106,6 +106,20 @@ namespace Toshi
 			k *= scalar3;
 		}
 
+		bool IsOrthonormal() const
+		{
+			float fVar1 = (j * j + i * i + k * k) - 1.0;
+			float fVar2 = (f * f + e * e + g * g) - 1.0;
+			float fVar3 = f * j + i * e + g * k;
+			float fVar4 = j * b + a * i + k * c;
+			float fVar5 = f * b + a * e + g * c;
+			float fVar6 = (a * a + b * b + c * c) - 1.0;
+
+			return !(((0.01 <= fVar6 * fVar6 + fVar2 * fVar2 + fVar1 * fVar1 + fVar4 * fVar4 + fVar5 * fVar5 + fVar3 * fVar3) || (d != 0.0)) || (h != 0.0)) || ((l != 0.0 || (p != 1.0)));
+		}
+
+		void InvertOrthogonal();
+
 		void SetFromQuaternion(const TQuaternion& quaternion);
 		void RotateX(float angle);
 		void RotateY(float angle);

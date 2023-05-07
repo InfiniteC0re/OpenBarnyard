@@ -13,6 +13,25 @@ namespace Toshi
 			a_rMatrix.m, a_rMatrix.n, a_rMatrix.o, a_rMatrix.p);
 	}
 
+	void TMatrix44::InvertOrthogonal()
+	{
+		TASSERT(IsOrthonormal());
+
+		float fVar1;
+		float fVar2;
+
+		std::swap(b, e);
+		std::swap(c, i);
+		std::swap(g, j);
+
+		n *= -1;
+		m *= -1;
+		o *= -1;
+		n = f * n + m * b + o * j;
+		o = n * g + m * c + k * o;
+		m = n * e + m * a + o * i;
+	}
+
 	void TMatrix44::SetFromQuaternion(const TQuaternion& quaternion)
 	{
 		auto matrix = (DirectX::XMMATRIX*)this;
