@@ -30,7 +30,7 @@ AGameState::UpdateResult AMovieState::OnUpdate(float deltaTime)
 		{
 			m_bRenderWorld = AApplication::g_oTheApp.m_bRenderWorld;
 			AApplication::g_oTheApp.SetRenderWorld(false);
-			TIMPLEMENT("AMovieState::PauseSounds(1,0)");
+			TIMPLEMENT_D("AMovieState::PauseSounds(1,0)");
 			PlayMovie(0);
 		}
 		break;

@@ -16,6 +16,15 @@ namespace AMovieEvent
 class AMoviePlayer : public Toshi::TSingleton<AMoviePlayer>
 {
 public:
+	typedef uint32_t PlayFlags;
+	enum PlayFlags_
+	{
+		PlayFlags_None  = 0,
+		PlayFlags_Loop  = BITFIELD(0),
+		PlayFlags_Muted = BITFIELD(1),
+	};
+
+public:
 	AMoviePlayer() : m_Emitter(this)
 	{
 		m_bInitialised = false;
@@ -27,7 +36,7 @@ public:
 	void ThrowEvent(AMovieEvent::Type type) { m_Emitter.Throw(&type); }
 
 	virtual ~AMoviePlayer() = default;
-	virtual bool PlayMovie(const char* fileName, uint32_t soundChannel, uint32_t flags) = 0;
+	virtual bool PlayMovie(const char* fileName, uint32_t soundChannel, PlayFlags flags = PlayFlags_None) = 0;
 	virtual void StopMovie() = 0;
 	virtual void PauseMovie(bool pause) = 0;
 	virtual void Mute(bool mute = true) { m_bIsMuted = mute; }

@@ -46,7 +46,7 @@ ADX11MoviePlayer::ADX11MoviePlayer() : m_CurrentFileName("")
     m_AudioOffset = 0;
 }
 
-bool ADX11MoviePlayer::PlayMovie(const char* fileName, uint32_t soundChannel, uint32_t flags)
+bool ADX11MoviePlayer::PlayMovie(const char* fileName, uint32_t soundChannel, PlayFlags flags)
 {
     if (IsMoviePlaying())
     {
@@ -106,7 +106,7 @@ bool ADX11MoviePlayer::PlayMovie(const char* fileName, uint32_t soundChannel, ui
                 m_TexturesHeight = video->height;
             }
 
-            if (m_bHasAudioStream)
+            if (m_bHasAudioStream && audio)
             {
                 FMOD::System* system = TSound::GetSingletonWeak()->GetSystem();
                 FMOD_CREATESOUNDEXINFO soundInfo;
@@ -120,8 +120,10 @@ bool ADX11MoviePlayer::PlayMovie(const char* fileName, uint32_t soundChannel, ui
                 soundInfo.pcmsetposcallback = pcmsetposcallback;
                 soundInfo.userdata = this;
                 soundInfo.cbsize = sizeof(FMOD_CREATESOUNDEXINFO);
+
                 FMOD::Sound* sound;
                 FMOD_RESULT eResult = system->createSound(NULL, 0x4CA, &soundInfo, &sound);
+
                 if (eResult == FMOD_OK)
                 {
                     FMOD_RESULT eResult = system->playSound(sound, NULL, true, &m_pChannel);
@@ -132,6 +134,7 @@ bool ADX11MoviePlayer::PlayMovie(const char* fileName, uint32_t soundChannel, ui
                         sound = NULL;
                     }
                 }
+
                 if (m_pChannel != NULL)
                 {
                     m_pChannel->setPriority(0);
@@ -141,7 +144,7 @@ bool ADX11MoviePlayer::PlayMovie(const char* fileName, uint32_t soundChannel, ui
                 }
             }
 
-            Mute(flags & 0b10);
+            Mute(flags & PlayFlags_Muted);
             m_TheoraVideo = video;
             m_bIsPlaying = TTRUE;
             m_bIsPaused = TFALSE;
@@ -349,17 +352,13 @@ void ADX11MoviePlayer::OnUpdate(float deltaTime)
                 m_TheoraVideo = last;
             }
 
-            if (m_TheoraVideo == TNULL)
+            if (m_TheoraVideo == TNULL || !THEORAPLAY_isDecoding(m_TheoraDecoder))
             {
                 if (m_bIsMovieLooping)
                 {
                     ThrowEvent(AMovieEvent::Type_Looping);
-                    uint8_t flags = 0;
-                    if (m_bIsMuted)
-                    {
-                        flags = 2;
-                    }
-                    PlayMovie(m_CurrentFileName, 0, flags | (uint8_t)m_bIsMovieLooping);
+                    uint8_t flags = m_bIsMuted ? PlayFlags_Muted : 0;
+                    PlayMovie(m_CurrentFileName, 0, flags | (m_bIsMovieLooping ? PlayFlags_Loop : 0));
                 }
                 else
                 {

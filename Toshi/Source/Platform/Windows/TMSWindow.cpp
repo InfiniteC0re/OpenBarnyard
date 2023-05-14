@@ -345,7 +345,7 @@ namespace Toshi
 			pSystemManager->Pause(true);
 			if (bLockCursor)
 			{
-				Toshi::TUtil::Log("Minimize window\n");
+				Toshi::TUtil::Log("Minimize window");
 				ShowWindow(hWnd, SW_MINIMIZE);
 			}
 			return 1;
