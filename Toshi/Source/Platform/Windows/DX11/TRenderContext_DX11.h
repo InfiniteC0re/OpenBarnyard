@@ -21,7 +21,7 @@ namespace Toshi
 		void ComputeOrthographicProjection();
 		void ComputeOrthographicFrustum();
 
-		virtual void Update();
+		virtual void Update() override;
 
 	private:
 		TMatrix44 m_Projection;

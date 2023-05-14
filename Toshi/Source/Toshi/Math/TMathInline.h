@@ -42,7 +42,7 @@ namespace Toshi
 		inline float Sqrt(float a_fX) 
 		{
 			TASSERT(a_fX != 0.0f);
-			float fVal = sqrtf(fVal);
+			float fVal = sqrtf(a_fX);
 			TASSERT(IsFinite(fVal));
 			return fVal;
 		}
@@ -53,7 +53,7 @@ namespace Toshi
 		inline bool IsNaN(float fVal) { return isnan(fVal); }
 		inline int FastMod(int a_iNum, int a_iModulus) { TASSERT(a_iNum >= 0); TASSERT(a_iModulus > 0); TASSERT(0 == (a_iModulus & (a_iModulus - 1))); return a_iNum & (a_iModulus - 1); }
 		inline void SinCos(float fVal, float& fVal1, float& fVal2) { fVal1 = cos(fVal); fVal2 = sin(fVal); }
-		inline void Clip(float& rfVal, float fVal, float fVal2) { if (fVal2 < rfVal) { rfVal = fVal2; } if (rfVal < fVal) { rfVal = fVal; } }
+		inline void Clip(float& rfVal, float fMin, float fMax) { if (fMax < rfVal) { rfVal = fMax; } if (rfVal < fMin) { rfVal = fMin; } }
 		inline float LERP(float a, float b, float t) { return a + t * (b - a); }
 		
 		template <typename T>

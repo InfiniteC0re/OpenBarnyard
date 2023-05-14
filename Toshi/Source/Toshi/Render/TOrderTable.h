@@ -1,7 +1,7 @@
 #pragma once
 #include "Toshi/Core/TNodeList.h"
-#include <Toshi/Render/TMaterial.h>
-#include <Toshi/Render/TMesh.h>
+#include "Toshi/Render/TMaterial.h"
+#include "Toshi/Render/TMesh.h"
 
 namespace Toshi
 {
@@ -66,8 +66,8 @@ namespace Toshi
 		typedef uint32_t State;
 		enum State_ : State
 		{
-			State_Unk1 = BITFIELD(0),
-			State_Used = BITFIELD(1)
+			State_Registered = BITFIELD(0),
+			State_Used       = BITFIELD(1)
 		};
 
 	public:
@@ -79,6 +79,9 @@ namespace Toshi
 			m_pRenderPacket = TNULL;
 			m_pNextUsedMaterial = TNULL;
 		}
+
+		void Render();
+		TRenderPacket* AddRenderPacket(TMesh* pMesh);
 
 		State GetFlags() const
 		{
@@ -105,9 +108,10 @@ namespace Toshi
 			m_pNextUsedMaterial = pRegMat;
 		}
 
-		void Render();
-
-		TRenderPacket* AddRenderPacket(TMesh* pMesh);
+		TMaterial* GetMaterial() const
+		{
+			return m_pMaterial;
+		}
 
 	private:
 		State m_State;
@@ -117,10 +121,8 @@ namespace Toshi
 		TRegMaterial* m_pNextUsedMaterial;
 	};
 
-	class TOrderTable
+	class TOrderTable : public TDList<TOrderTable>::TNode
 	{
-
-
 	public:
 		TOrderTable()
 		{
@@ -128,16 +130,18 @@ namespace Toshi
 			TIMPLEMENT();
 		}
 
-		static void CreateStaticData(uint32_t maxMaterials, uint32_t maxRenderPackets);
-
 		~TOrderTable()
 		{
 			TIMPLEMENT();
 		}
 
-		void Render();
+		static void CreateStaticData(uint32_t maxMaterials, uint32_t maxRenderPackets);
 
-		void DeregisterMaterial(TRegMaterial* pRegMat);
+		void Render();
+		void Flush();
+
+		TRegMaterial* RegisterMaterial(TMaterial* pMat);
+		static void DeregisterMaterial(TRegMaterial* pRegMat);
 
 		void UseMaterial(TRegMaterial* pRegMat)
 		{
@@ -151,7 +155,8 @@ namespace Toshi
 
 		static TRenderPacket* AllocRenderPacket()
 		{
-			return s_uiNumRenderPackets++ < s_uiMaxRenderPackets ? &s_pRenderPackets[s_uiNumRenderPackets] : TNULL;
+			TRenderPacket* packet = &s_pRenderPackets[s_uiNumRenderPackets++];
+			return s_uiNumRenderPackets < s_uiMaxRenderPackets ? &s_pRenderPackets[s_uiNumRenderPackets] : TNULL;
 		}
 
 		inline static uint32_t s_uiMaxRenderPackets = 0;
@@ -161,14 +166,12 @@ namespace Toshi
 
 		inline static uint32_t s_uiNumMaterials = 0;
 		inline static uint32_t s_uiMaxMaterials = 0;
+		inline static uint32_t s_uiNumRegisteredMaterials = 0;
 		inline static TRegMaterial* s_pRegMaterials = TNULL;
-		inline static TNodeList<TRegMaterial> s_llRegMatFreeList = TNodeList<TRegMaterial>();
+		inline static TNodeList<TRegMaterial> s_llRegMatRegisteredList;
+		inline static TNodeList<TRegMaterial> s_llRegMatFreeList;
 
 	private:
 		TRegMaterial* m_pLastRegMat; // 0x20
 	};
-
-	
-
-	
 }

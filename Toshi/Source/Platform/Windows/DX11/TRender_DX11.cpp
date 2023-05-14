@@ -1356,6 +1356,21 @@ namespace Toshi
 		}
 	}
 
+	void TRenderDX11::FlushShaders()
+	{
+		TASSERT(TTRUE == IsInScene());
+
+		for (auto it = m_OrderTables.Begin(); it != m_OrderTables.End(); it++)
+		{
+			it->Flush();
+		}
+	}
+
+	void TRenderDX11::ResolveSubresource()
+	{
+		m_pDeviceContext->ResolveSubresource(m_SRView2Texture, 0, m_SRView1Texture, 0, DXGI_FORMAT_R8G8B8A8_UNORM);
+	}
+
 	void TRenderDX11::UpdateRenderStates()
 	{
 		// Update depth state if needed

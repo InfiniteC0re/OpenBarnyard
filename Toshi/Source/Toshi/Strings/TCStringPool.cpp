@@ -87,7 +87,7 @@ void Toshi::TCStringPool::InitStringPool(int a_iStringCount)
 
 		int stringCount = a_iStringCount < m_iStringCount ? a_iStringCount : m_iStringCount;
 
-		for (size_t i = 0; i < stringCount; i++)
+		for (int i = 0; i < stringCount; i++)
 		{
 			TIMPLEMENT();
 			//m_oStringPool.m_pStringPool[i] = new StringPool();

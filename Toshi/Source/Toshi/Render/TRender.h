@@ -69,7 +69,8 @@ namespace Toshi
 
 		virtual void SetModelViewMatrix(const TMatrix44& a_rMatrix);
 		virtual void SetWorldViewMatrix(const TMatrix44& a_rMatrix);
-		
+		virtual void Update() = 0;
+
 		Params& GetParams()
 		{
 			return m_oParams;
@@ -119,14 +120,19 @@ namespace Toshi
 			m_eFlags = (m_eFlags & (~(FLAG_UNK3 | FLAG_UNK4 | FLAG_UNK5 | FLAG_UNK6))) | FLAG_DIRTY;
 		}
 
+		const PROJECTIONPARAMS& GetProjectionParams() const
+		{
+			return m_sProjParams;
+		}
+
 	protected:
-		TRender* m_pRender;                     // 0x04
-		FLAG m_eFlags;                          // 0x08
-		CameraMode m_eCameraMode;               // 0x14
-		Params m_oParams;                       // 0x18
-		PROJECTIONPARAMS m_sProjParams;         // 0x30
-		TMatrix44 m_mModelViewMatrix;           // 0x40
-		TMatrix44 m_mWorldViewMatrix;           // 0x80
+		TRender* m_pRender;                     // 0x004
+		FLAG m_eFlags;                          // 0x008
+		CameraMode m_eCameraMode;               // 0x014
+		Params m_oParams;                       // 0x018
+		PROJECTIONPARAMS m_sProjParams;         // 0x030
+		TMatrix44 m_mModelViewMatrix;           // 0x040
+		TMatrix44 m_mWorldViewMatrix;           // 0x080
 	};
 
 	class TRender :

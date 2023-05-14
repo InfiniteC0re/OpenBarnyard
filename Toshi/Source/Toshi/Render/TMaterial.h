@@ -2,6 +2,8 @@
 
 namespace Toshi
 {
+	class TRegMaterial;
+
 	class TMaterial :
 		public TGenericClassDerived<TMaterial, TObject, "TMaterial", TMAKEVERSION(1, 0), false>
 	{
@@ -24,6 +26,8 @@ namespace Toshi
 		{
 			m_State = State_NULL;
 			m_Unk = TNULL;
+			m_pRegMaterial = nullptr;
+			m_Name[0] = '\0';
 		}
 
 		virtual void OnDestroy()
@@ -84,8 +88,19 @@ namespace Toshi
 			return m_State & State_Created;
 		}
 
+		void SetRegMaterial(TRegMaterial* pRegMaterial)
+		{
+			m_pRegMaterial = pRegMaterial;
+		}
+
+		TRegMaterial* GetRegMaterial() const
+		{
+			return m_pRegMaterial;
+		}
+
 	private:
 		State m_State;                  // 0x04
+		TRegMaterial* m_pRegMaterial;   // 0x0C
 		char m_Name[NAMESIZELIMIT + 1]; // 0x2C
 		void* m_Unk;                    // 0x4C
 	};

@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "AInputManager2.h"
-#include TOSHI_MULTIINPUT(TInputInterface)
+#include TOSHI_MULTIPLATFORM(Input/TInputInterface)
 
 AInputManager2::AInputManager2()
 {
