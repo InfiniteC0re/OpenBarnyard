@@ -35,6 +35,7 @@ namespace Toshi
 
 	void TXUIResourceTRB::Init()
 	{
+		return;
 		if (m_resource == TNULL)
 		{
 			m_resource = new (TXUI::MemoryBlock()) TXUIResource();
