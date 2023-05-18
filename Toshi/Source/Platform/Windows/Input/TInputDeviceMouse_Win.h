@@ -9,7 +9,7 @@ namespace Toshi
 	public:
 		TInputDXDeviceMouse() : TInputDeviceMouse()
 		{
-
+			m_poDXInputDevice = NULL;
 		}
 
 		virtual void Release();
