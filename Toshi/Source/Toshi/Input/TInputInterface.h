@@ -18,11 +18,13 @@ namespace Toshi
 			{
 				EventType_Unk,
 				EventType_Unk2,
-				EventType_Repeat
+				EventType_Repeat,
+				EventType_Unk3,
+				EventType_MouseMotion
 			};
 
 		public:
-
+			InputEvent() = default;
 			InputEvent(TInputDevice* device, int doodad, EventType eventType)
 			{
 				m_pSource = device;

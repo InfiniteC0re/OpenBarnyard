@@ -1,5 +1,7 @@
 #include "ToshiPCH.h"
 #include "TInputDeviceMouse_Win.h"
+#include <Platform/Windows/DX11/TRender_DX11.h>
+#include <Platform/Windows/Input/TInputInterface_Win.h>
 
 void Toshi::TInputDXDeviceMouse::Release()
 {
@@ -13,6 +15,11 @@ void Toshi::TInputDXDeviceMouse::Release()
 bool Toshi::TInputDXDeviceMouse::Initialise()
 {
 	TIMPLEMENT();
+
+	m_field0x40 = 0;
+	m_dwButtonCurrent = 0;
+	m_dwButtonPrevious = 0;
+
 	GetCursorPos(&m_CursorPos);
 
 	DIPROPDWORD dwordProperty{};
@@ -89,8 +96,7 @@ int Toshi::TInputDXDeviceMouse::ProcessEvents(TGenericEmitter& emitter, float fl
 
 	HRESULT hr = m_poDXInputDevice->GetDeviceData(sizeof(DIDEVICEOBJECTDATA), dod, &dwItems, 0);
 
-	TTODO("Which DIERR is 0x8007001E?");
-	if (FAILED(hr) && hr == 0x8007001E)
+	if (FAILED(hr) && hr == (DIERR_NOTACQUIRED | DIERR_INPUTLOST))
 	{
 		Unacquire();
 		Acquire();
@@ -102,6 +108,56 @@ int Toshi::TInputDXDeviceMouse::ProcessEvents(TGenericEmitter& emitter, float fl
 			return false;
 		}
 
+	}
+
+	auto renderer = TRenderDX11::Interface();
+	auto input = TInputDXInterface::GetInterface();
+	TRenderDX11::DisplayParams* params;
+	TInputDXInterface::InputEvent inputEvent;
+
+	for (size_t i = 0; i < dwItems; i++)
+	{
+		
+		switch (dod[i].dwOfs)
+		{
+		case DIMOFS_X: // MouseUp
+			m_aAxis.m_iX += dod[i].dwData;
+
+			if (renderer != TNULL)
+			{
+				m_CursorPos.x += dod[i].dwData;
+			}
+			else
+			{
+				params = renderer->GetCurrentDisplayParams();
+				TTODO("Something with displayparams");
+			}
+			inputEvent = TInputDXInterface::InputEvent(this, AXIS_CURSOR, TInputDXInterface::InputEvent::EventType_MouseMotion, m_aAxis.m_iX, m_aAxis.m_iY);
+			emitter.Throw(&inputEvent);
+			break;
+		case DIMOFS_Y: // MouseDown
+			m_aAxis.m_iY += dod[i].dwData;
+
+			if (renderer != TNULL)
+			{
+				m_CursorPos.y += dod[i].dwData;
+			}
+			else
+			{
+				params = renderer->GetCurrentDisplayParams();
+				TTODO("Something with displayparams");
+			}
+			inputEvent = TInputDXInterface::InputEvent(this, AXIS_CURSOR, TInputDXInterface::InputEvent::EventType_MouseMotion, m_aAxis.m_iX, m_aAxis.m_iY);
+			emitter.Throw(&inputEvent);
+
+			break;
+		case DIMOFS_Z: // Wheel
+			inputEvent = TInputDXInterface::InputEvent(this, AXIS_WHEEL, TInputDXInterface::InputEvent::EventType_Unk, m_fWheelAxis / 120.0f);
+			emitter.Throw(&inputEvent);
+			break;
+		default:
+			break;
+		}
 	}
 
 
@@ -120,7 +176,32 @@ void Toshi::TInputDXDeviceMouse::RefreshDirect()
 			hr = m_poDXInputDevice->GetDeviceState(sizeof(DIMOUSESTATE), &mouseState);
 			if (SUCCEEDED(hr))
 			{
-				TTODO("Everything here");
+				if (mouseState.rgbButtons[0] & 0x80) // LeftClick
+				{
+					if (m_field0x40 == 0)
+					{
+						m_dwButtonCurrent |= 1;
+					}
+					else
+					{
+						m_dwButtonCurrent |= INPUT_DEVICE_MOUSE_BUTTONS;
+					}
+				}
+				if (mouseState.rgbButtons[1] & 0x80) // RightClick
+				{
+					if (m_field0x40 == 0)
+					{
+						m_dwButtonCurrent |= INPUT_DEVICE_MOUSE_BUTTONS;
+					}
+					else
+					{
+						m_dwButtonCurrent |= 1;
+					}
+				}
+				if (mouseState.rgbButtons[2] & 0x80) // Wheeling yeeet
+				{
+					m_dwButtonCurrent |= INPUT_DEVICE_MOUSE_WHEEL;
+				}
 			}
 		}
 	}

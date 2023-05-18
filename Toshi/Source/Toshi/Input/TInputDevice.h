@@ -11,7 +11,8 @@ namespace Toshi
 		public TNodeList<TInputDevice>::TNode
 	{
 	protected:
-
+		const int INPUT_DEVICE_MOUSE_BUTTONS = 2;
+		const int INPUT_DEVICE_MOUSE_WHEEL = 4;
 		struct DoodadProperties
 		{
 			int m_iUnk;

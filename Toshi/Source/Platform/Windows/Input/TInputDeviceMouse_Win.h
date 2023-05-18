@@ -54,6 +54,9 @@ namespace Toshi
 		DIDEVCAPS m_DIDevCaps;
 		POINT m_CursorPos;
 		bool m_bInitiliased;
+		DWORD m_dwButtonCurrent;
+		DWORD m_dwButtonPrevious;
+		int m_field0x40;
 		Axis m_aAxis;
 		float m_fWheelAxis; // very unsure
 	};
