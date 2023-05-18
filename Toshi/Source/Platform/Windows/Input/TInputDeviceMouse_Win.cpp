@@ -77,7 +77,7 @@ int Toshi::TInputDXDeviceMouse::ProcessEvents(TGenericEmitter& emitter, float fl
 
 		if (hr != DI_OK)
 		{
-			return;
+			return false;
 		}
 
 	}
