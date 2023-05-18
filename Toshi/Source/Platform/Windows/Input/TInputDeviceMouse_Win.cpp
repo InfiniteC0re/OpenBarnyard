@@ -13,7 +13,24 @@ void Toshi::TInputDXDeviceMouse::Release()
 bool Toshi::TInputDXDeviceMouse::Initialise()
 {
 	TIMPLEMENT();
-	return false;
+	GetCursorPos(&m_CursorPos);
+
+	DIPROPDWORD dwordProperty{};
+	dwordProperty.diph.dwSize = sizeof(dwordProperty);
+	dwordProperty.diph.dwHeaderSize = sizeof(DIPROPHEADER);
+	dwordProperty.diph.dwObj = 8;
+	dwordProperty.diph.dwHow = DIPH_BYOFFSET;
+
+	HRESULT hr = m_poDXInputDevice->GetProperty(DIPROP_GRANULARITY, &dwordProperty.diph);
+
+	TTODO("Which DIERR is 0x80070020?");
+	if (hr != 0x80070020)
+	{
+		m_bInitiliased = hr == DI_OK;
+		return m_bInitiliased;
+	}
+	m_bInitiliased = false;
+	return true;
 }
 
 bool Toshi::TInputDXDeviceMouse::Acquire()
@@ -32,7 +49,6 @@ bool Toshi::TInputDXDeviceMouse::Acquire()
 		TTODO("this + 100();");
 	}
 
-	TIMPLEMENT();
 	return false;
 }
 

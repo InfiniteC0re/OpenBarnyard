@@ -26,5 +26,7 @@ namespace Toshi
 
 		IDirectInputDevice8* m_poDXInputDevice;
 		DIDEVCAPS m_DIDevCaps;
+		POINT m_CursorPos;
+		bool m_bInitiliased;
 	};
 }
