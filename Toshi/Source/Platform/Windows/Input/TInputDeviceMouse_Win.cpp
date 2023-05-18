@@ -33,6 +33,12 @@ bool Toshi::TInputDXDeviceMouse::Initialise()
 	return true;
 }
 
+bool Toshi::TInputDXDeviceMouse::Deinitialise()
+{
+	Release();
+	return true;
+}
+
 bool Toshi::TInputDXDeviceMouse::Acquire()
 {
 	HRESULT hr = m_poDXInputDevice->Acquire();
@@ -46,7 +52,7 @@ bool Toshi::TInputDXDeviceMouse::Acquire()
 
 	if (hr != S_FALSE)
 	{
-		TTODO("this + 100();");
+		RefreshDirect();
 	}
 
 	return false;
@@ -67,7 +73,7 @@ bool Toshi::TInputDXDeviceMouse::Flush()
 		HRESULT hr = m_poDXInputDevice->GetDeviceData(sizeof(DIDEVICEOBJECTDATA), NULL, &dwItems, 0);
 		if (SUCCEEDED(hr))
 		{
-			TTODO("this + 100();");
+			RefreshDirect();
 			return true;
 		}
 	}
@@ -89,7 +95,7 @@ int Toshi::TInputDXDeviceMouse::ProcessEvents(TGenericEmitter& emitter, float fl
 		Unacquire();
 		Acquire();
 
-		HRESULT hr = m_poDXInputDevice->GetDeviceData(sizeof(DIDEVICEOBJECTDATA), dod, &dwItems, 0);
+		hr = m_poDXInputDevice->GetDeviceData(sizeof(DIDEVICEOBJECTDATA), dod, &dwItems, 0);
 
 		if (hr != DI_OK)
 		{
@@ -103,6 +109,23 @@ int Toshi::TInputDXDeviceMouse::ProcessEvents(TGenericEmitter& emitter, float fl
 	return 0;
 }
 
+void Toshi::TInputDXDeviceMouse::RefreshDirect()
+{
+	if (m_bIsAquired)
+	{
+		HRESULT hr = m_poDXInputDevice->Poll();
+		if (SUCCEEDED(hr))
+		{
+			DIMOUSESTATE mouseState;
+			hr = m_poDXInputDevice->GetDeviceState(sizeof(DIMOUSESTATE), &mouseState);
+			if (SUCCEEDED(hr))
+			{
+				TTODO("Everything here");
+			}
+		}
+	}
+}
+
 bool const Toshi::TInputDXDeviceMouse::BindToDIDevice(HWND a_mainWindow, LPCDIDEVICEINSTANCE a_poDeviceInstance, IDirectInputDevice8* a_poDXInputDevice, bool exclusive)
 {
 	TASSERT(a_poDeviceInstance != NULL);
@@ -110,7 +133,7 @@ bool const Toshi::TInputDXDeviceMouse::BindToDIDevice(HWND a_mainWindow, LPCDIDE
 
 	Release();
 
-	TIMPLEMENT_D("Create Device?");
+	TIMPLEMENT_D("Weird for loop");
 
 	m_poDXInputDevice = a_poDXInputDevice;
 	m_DIDevCaps.dwSize = sizeof(DIDEVCAPS);
@@ -138,4 +161,40 @@ bool const Toshi::TInputDXDeviceMouse::BindToDIDevice(HWND a_mainWindow, LPCDIDE
 	m_poDXInputDevice->SetProperty(DIPROP_BUFFERSIZE, &dipdw.diph);
 
 	return true;
+}
+
+int Toshi::TInputDXDeviceMouse::GetAxisInt(int doodad, Coord coord) const
+{
+	if (doodad == 0x3000b)
+	{
+		if (coord == X)
+		{
+			return m_aAxis.m_iX;
+		}
+		if (coord == Y)
+		{
+			return m_aAxis.m_iY;
+		}
+	}
+	return 0;
+}
+
+float Toshi::TInputDXDeviceMouse::GetAxisFloat(int doodad, Coord coord) const
+{
+	if (doodad == 0x3000b)
+	{
+		if (coord == X)
+		{
+			return m_aAxis.m_fX;
+		}
+		if (coord == Y)
+		{
+			return m_aAxis.m_fY;
+		}
+	}
+	else if (doodad == 0x3000c)
+	{
+		return m_fWheelAxis;
+	}
+	return 0;
 }
