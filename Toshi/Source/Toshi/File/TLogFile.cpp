@@ -28,8 +28,8 @@ namespace Toshi
 		TIMPLEMENT_D("FUN_00828A40(uVar1);");
 
 		TFile::FileMode fileMode = writeExisting ?
-			TFile::FileMode_NoBuffer | TFile::FileMode_Write | TFile::FileMode_CreateNew :
-			TFile::FileMode_NoBuffer | TFile::FileMode_Write;
+			TFile::FileMode_NoBuffer | TFile::FileMode_Write :
+			TFile::FileMode_NoBuffer | TFile::FileMode_Write | TFile::FileMode_CreateNew;
 
 		m_pFile = TFile::Create(fileName, fileMode);
 

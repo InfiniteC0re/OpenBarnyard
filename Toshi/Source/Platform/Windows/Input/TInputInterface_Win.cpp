@@ -98,7 +98,7 @@ namespace Toshi
             if (inputMouse == TNULL)
             {
                 inputMouse = new TInputDXDeviceMouse();
-                bool res = inputMouse->BindToDIDevice(inputInterface->GetMainWindow(), a_poDeviceInstance, inputDevice);
+                bool res = inputMouse->BindToDIDevice(inputInterface->GetMainWindow(), a_poDeviceInstance, inputDevice, inputInterface->m_bExclusive);
 
                 if (res)
                 {

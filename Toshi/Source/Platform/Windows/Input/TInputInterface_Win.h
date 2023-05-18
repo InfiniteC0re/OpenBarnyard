@@ -20,6 +20,7 @@ namespace Toshi
 			m_poDirectInput8 = NULL;
 			m_hMainWindow = NULL;
 			ms_pTheInterface = this;
+			m_bExclusive = false;
 		}
 
 		virtual bool Initialise();
@@ -49,5 +50,6 @@ namespace Toshi
 
 		LPDIRECTINPUT8 m_poDirectInput8; // 0x30
 		HWND m_hMainWindow;              // 0x34
+		bool m_bExclusive;               // 0x38
 	};
 }
