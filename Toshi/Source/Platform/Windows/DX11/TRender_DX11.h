@@ -129,7 +129,8 @@ namespace Toshi
 		UINT m_Revision;                 // 0x640
 	};
 
-	class TRenderDX11 : public TRender
+	class TRenderDX11 : 
+		public TGenericClassDerived<TRenderDX11, TRender, "TRenderD3D", TMAKEVERSION(1, 0), false>
 	{
 	private:
 		friend class ARenderer;

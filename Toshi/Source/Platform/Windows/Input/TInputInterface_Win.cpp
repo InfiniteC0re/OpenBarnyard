@@ -12,7 +12,7 @@ namespace Toshi
         TASSERT(TNULL == m_poDirectInput8);
         HRESULT hRes = DirectInput8Create(GetModuleHandle(NULL), DIRECTINPUT_VERSION, IID_IDirectInput8, (LPVOID*)&m_poDirectInput8, NULL);
 
-        if (hRes == DI_OK)
+        if (SUCCEEDED(hRes))
         {
             if (m_hMainWindow == NULL)
             {
