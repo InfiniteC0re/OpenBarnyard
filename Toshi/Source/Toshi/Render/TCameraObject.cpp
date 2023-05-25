@@ -27,17 +27,40 @@ void TCameraObject::Render()
 		TRenderContext::PROJECTIONPARAMS projParams = pRenderContext->GetProjectionParams();
 		projParams.m_Centre = { m_fCentreX * pRenderContext->GetWidth(), m_fCentreY * pRenderContext->GetHeight() };
 
+		auto render = TRender::GetSingletonWeak();
+		auto aspectRatio = render->GetAspectRatio();
+
 		if (m_Unk1 == 0)
 		{
-			float fHalfWidth = pRenderContext->GetWidth() * 0.5f;
-			double dHalfFOV = m_fFOV * 0.5;
-			TTODO("__libm_sse2_tan_precise?");
+			projParams.m_Proj.x = (pRenderContext->GetWidth() * 0.5) / tan(m_fFOV * 0.5);
+			projParams.m_Proj.y = projParams.m_Proj.x;
+
+			if (m_eMode == TRenderContext::CameraMode_Perspective)
+			{
+				projParams.m_Proj.y *= render->GetResolutionScalar();
+
+				if (m_eMode == TRenderContext::CameraMode_Perspective && aspectRatio == TRender::ASPECT_RATIO_16_9)
+				{
+					projParams.m_Proj.x *= 0.8660254;
+					projParams.m_Proj.y *= 0.8660254;
+				}
+			}
 		}
 		else
 		{
-			float fHalfheight = pRenderContext->GetHeight() * 0.5f;
-			double dHalfFOV = m_fFOV * 0.5;
-			TTODO("__libm_sse2_tan_precise?");
+			projParams.m_Proj.x = (pRenderContext->GetHeight() * 0.5) / tan(m_fFOV * 0.5);
+			projParams.m_Proj.y = projParams.m_Proj.x;
+
+			if (m_eMode == TRenderContext::CameraMode_Perspective)
+			{
+				projParams.m_Proj.x /= render->GetResolutionScalar();
+
+				if (m_eMode == TRenderContext::CameraMode_Perspective && aspectRatio == TRender::ASPECT_RATIO_16_9)
+				{
+					projParams.m_Proj.x *= 0.8660254;
+					projParams.m_Proj.y *= 0.8660254;
+				}
+			}
 		}
 
 		projParams.m_fNearClip = m_fNear;

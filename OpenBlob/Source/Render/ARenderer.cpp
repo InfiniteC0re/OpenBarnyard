@@ -248,7 +248,7 @@ void ARenderer::RenderMainScene(float deltaTime, Toshi::TViewport* pViewport, vo
 	pViewport->End();
 	// ...
 
-	pRender->FUN_00691190();
+	pRender->FlushShaders();
 	pRender->SetCurrentRenderContext(pOriginalContext);
 }
 

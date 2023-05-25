@@ -75,6 +75,27 @@ void AGameStateController::PopState(AGameState* pState)
 	delete pOldState;
 }
 
+void AGameStateController::ResetStack()
+{
+	bool shouldDeactivate = true;
+
+	while (1 < m_oStateStack.Size())
+	{
+		auto& state = m_oStateStack.Back();
+		
+		if (shouldDeactivate && HASFLAG(state->GetState() & AGameState::State_Activated))
+		{
+			state->OnDeactivate();
+			state->RemoveState(AGameState::State_Activated);
+		}
+
+		state->Remove();
+		m_oStateStack.PopBack();
+	}
+
+	TASSERT(m_oStateStack.Size() == 1);
+}
+
 void AGameStateController::PopCurrentState()
 {
 	AGameState* pCurrentState = GetCurrentGameState();

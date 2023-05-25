@@ -56,6 +56,7 @@ AGameState::UpdateResult AFrontEndMovieState::OnUpdate(float deltaTime)
         }
         break;
     }
+
     switch (m_iAssetId)
     {
     case Asset_Legal:

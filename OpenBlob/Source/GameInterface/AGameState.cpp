@@ -17,7 +17,7 @@ AGameState::AGameState() :
 
 AGameState::~AGameState()
 {
-	
+	TIMPLEMENT();
 }
 
 void AGameState::Unk1()

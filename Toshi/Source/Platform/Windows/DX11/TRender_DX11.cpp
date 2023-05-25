@@ -733,7 +733,7 @@ namespace Toshi
 
 			if (m_Window.Create(this, a_name))
 			{
-				m_Unk2 = 1;
+				m_eAspectRatio = ASPECT_RATIO_16_9;
 				return true;
 			}
 
@@ -1606,12 +1606,6 @@ namespace Toshi
 
 		m_pDeviceContext->VSSetConstantBuffers(0, 1, &m_VertexBuffers[m_VertexBufferIndex]);
 		m_pDeviceContext->PSSetConstantBuffers(0, 1, &m_PixelBuffers[m_PixelBufferIndex]);
-	}
-
-	void TRenderDX11::FUN_00691190()
-	{
-		TASSERT(IsInScene() == TTRUE);
-		TIMPLEMENT();
 	}
 
 	void TRenderDX11::BuildAdapterDatabase()

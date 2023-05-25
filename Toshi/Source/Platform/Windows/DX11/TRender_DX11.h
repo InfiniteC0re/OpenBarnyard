@@ -382,7 +382,6 @@ namespace Toshi
 
 		void UpdateRenderStates();
 		void FlushConstantBuffers();
-		void FUN_00691190();
 
 		static void FUN_006a6700(float posX, float posY, float width, float height, ID3D11ShaderResourceView* pShaderResourceView, ID3D11PixelShader* pPixelShader, const TVector4* uvVec);
 	

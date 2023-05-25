@@ -12,7 +12,7 @@ namespace Toshi
 		m_Unk1 = 0;
 		m_bIsEnabled = true;
 		m_ScreenOffset = { 0, 0 };
-		m_Unk2 = 0;
+		m_eAspectRatio = ASPECT_RATIO_4_3;
 		m_pRenderContext = TNULL;
 		m_Unk5 = 0;
 		m_HasDyingResources = false;
