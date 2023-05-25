@@ -1,6 +1,6 @@
 #include "pch.h"
-#include "SECT.h"
-#include "SYMB.h"
+#include "TRBF/Hunks/SECT.h"
+#include "TRBF/Hunks/SYMB.h"
 
 namespace TLib
 {

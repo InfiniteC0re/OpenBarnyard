@@ -325,6 +325,11 @@ namespace Toshi
 			return m_pDeviceContext;
 		}
 
+		TPriList<TOrderTable>& GetOrderTables()
+		{
+			return m_OrderTables;
+		}
+
 		static TRenderDX11* Interface()
 		{
 			return static_cast<TRenderDX11*>(TRender::GetSingletonWeak());
@@ -435,7 +440,7 @@ namespace Toshi
 		size_t m_iImmediateVertexCurrentOffset;           // 0x808
 		ID3D11Buffer* m_MainIndexBuffer;                  // 0x80C
 		size_t m_iImmediateIndexCurrentOffset;            // 0x810
-		TDList<TOrderTable> m_OrderTables;                // 0x814
+		TPriList<TOrderTable> m_OrderTables;              // 0x814
 		DepthPair m_CurrentDepth;                         // 0x820
 		DepthPair m_PreviousDepth;                        // 0x830
 		T2RedBlackTree<DepthStatePair> m_DepthStatesTree; // 0x83C

@@ -123,6 +123,12 @@ namespace Toshi
 			return &rNode;
 		}
 
+		void RemoveAll()
+		{
+			while (!IsEmpty())
+				return Remove(*m_Head.Next());
+		}
+
 		TNode* RemoveHead()
 		{
 			if (!IsEmpty())

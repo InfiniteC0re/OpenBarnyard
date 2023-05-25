@@ -197,6 +197,18 @@ namespace TLib
 					return { this, allocated };
 				}
 
+				template <class T>
+				Ptr<T> Alloc(size_t count)
+				{
+					const size_t TSize = sizeof(T) * count;
+					GrowBuffer(m_BufferSize + TSize);
+
+					T* allocated = reinterpret_cast<T*>(m_BufferPos);
+					m_BufferPos += TSize;
+
+					return { this, allocated };
+				}
+
 				Ptr<char> AllocBytes(size_t Size)
 				{
 					size_t TSize = Size;
