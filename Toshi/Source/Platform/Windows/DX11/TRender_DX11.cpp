@@ -733,7 +733,7 @@ namespace Toshi
 
 			if (m_Window.Create(this, a_name))
 			{
-				m_Unk2 = 1;
+				m_eAspectRatio = ASPECT_RATIO_16_9;
 				return true;
 			}
 
@@ -971,6 +971,21 @@ namespace Toshi
 		}
 
 		return pShaderBlob;
+	}
+
+	ID3DBlob* TRenderDX11::CompileShaderFromFile(const char* filepath, LPCSTR pEntrypoint, LPCSTR pTarget, const D3D_SHADER_MACRO* pDefines)
+	{
+		TFile* pFile = TFile::Create(filepath);
+		DWORD fileSize = pFile->GetSize();
+		char* srcData = new char[fileSize + 1];
+		pFile->Read(srcData, fileSize);
+		srcData[fileSize] = '\0';
+		pFile->Destroy();
+
+		ID3DBlob* shader = CompileShader(srcData, pEntrypoint, pTarget, pDefines);
+		delete[] srcData;
+
+		return shader;
 	}
 
 	void TRenderDX11::SetVec4InVSBuffer(BufferOffset index, const void* src, int count)
@@ -1227,6 +1242,23 @@ namespace Toshi
 		return pBuffer;
 	}
 
+	void TRenderDX11::SetDstAlpha(float alpha)
+	{
+		if (alpha >= 0)
+		{
+			m_CurrentBlendFactor[3] = alpha;
+			m_CurrentBlendState.Parts.BlendOpAlpha = D3D11_BLEND_OP_ADD;
+			m_CurrentBlendState.Parts.SrcBlendAlpha = D3D11_BLEND_BLEND_FACTOR;
+			m_CurrentBlendState.Parts.DestBlendAlpha = D3D11_BLEND_ZERO;
+		}
+		else
+		{
+			m_CurrentBlendState.Parts.BlendOpAlpha = m_CurrentBlendState.Parts.BlendOp;
+			m_CurrentBlendState.Parts.SrcBlendAlpha = m_CurrentBlendState.Parts.SrcBlend;
+			m_CurrentBlendState.Parts.DestBlendAlpha = m_CurrentBlendState.Parts.DestBlend;
+		}
+	}
+
 	void TRenderDX11::SetBlendMode(bool blendEnabled, D3D11_BLEND_OP blendOp, D3D11_BLEND srcBlendAlpha, D3D11_BLEND destBlendAlpha)
 	{
 		m_CurrentBlendState.Parts.BlendOp = blendOp;
@@ -1266,7 +1298,18 @@ namespace Toshi
 		m_CurrentDepth.m_First.Parts.DepthFunc = comparisonFunc;
 	}
 
-	void TRenderDX11::DrawMesh(D3D11_PRIMITIVE_TOPOLOGY primitiveTopology, ID3D11Buffer* pVertexBuffer, UINT vertexCount, UINT strides, UINT startVertex, UINT offsets)
+	void TRenderDX11::DrawIndexed(D3D11_PRIMITIVE_TOPOLOGY ePrimitiveType, UINT indexCount, ID3D11Buffer* pIndexBuffer, UINT indexBufferOffset, DXGI_FORMAT indexBufferFormat, ID3D11Buffer* pVertexBuffer, UINT pStrides, UINT pOffsets)
+	{
+		UpdateRenderStates();
+		m_pDeviceContext->IASetVertexBuffers(0, 1, &pVertexBuffer, &pStrides, &pOffsets);
+		m_pDeviceContext->IASetIndexBuffer(pIndexBuffer, indexBufferFormat, indexBufferOffset);
+		FlushConstantBuffers();
+
+		m_pDeviceContext->IASetPrimitiveTopology(ePrimitiveType);
+		m_pDeviceContext->DrawIndexed(indexCount, 0, 0);
+	}
+
+	void TRenderDX11::DrawNonIndexed(D3D11_PRIMITIVE_TOPOLOGY primitiveTopology, ID3D11Buffer* pVertexBuffer, UINT vertexCount, UINT strides, UINT startVertex, UINT offsets)
 	{
 		UpdateRenderStates();
 		m_pDeviceContext->IASetVertexBuffers(0, 1, &pVertexBuffer, &strides, &offsets);
@@ -1606,12 +1649,6 @@ namespace Toshi
 
 		m_pDeviceContext->VSSetConstantBuffers(0, 1, &m_VertexBuffers[m_VertexBufferIndex]);
 		m_pDeviceContext->PSSetConstantBuffers(0, 1, &m_PixelBuffers[m_PixelBufferIndex]);
-	}
-
-	void TRenderDX11::FUN_00691190()
-	{
-		TASSERT(IsInScene() == TTRUE);
-		TIMPLEMENT();
 	}
 
 	void TRenderDX11::BuildAdapterDatabase()

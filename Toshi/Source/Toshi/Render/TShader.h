@@ -7,30 +7,35 @@ namespace Toshi
 		public TGenericClassDerived<TShader, TObject, "TShader", TMAKEVERSION(1, 0), false>
 	{
 	public:
-		typedef uint32_t State;
-		enum State_ : State
+		enum class State : uint32_t
 		{
-			State_Created = BITFIELD(0),
-			State_Validated = BITFIELD(1),
+			None      = 0,
+			Created   = BITFIELD(0),
+			Validated = BITFIELD(1),
 		};
 
 	public:
-		TShader() = default;
+		TShader();
 		virtual ~TShader();
 
 		virtual void OnDestroy();
 		virtual void Flush();
 		virtual void StartFlush() = 0;
 		virtual void EndFlush() = 0;
-		virtual void Create();
-		virtual void Validate();
+		virtual TBOOL Create();
+		virtual TBOOL Validate();
 		virtual void Invalidate();
 		virtual const char* GetShaderPrefix() = 0;
 		virtual bool Unk1() { return TTRUE; }
 		virtual bool Unk2() { return TTRUE; }
 		virtual void Render(TRenderPacket* pPacket) = 0;
 
+		TBOOL IsCreated() const { return m_State.IsSet(State::Created); }
+		TBOOL IsValidated() const { return m_State.IsSet(State::Validated); }
+
 	private:
-		State m_State;
+		T2Flags<State> m_State;
 	};
+
+	DEFINE_T2FLAGS(TShader::State)
 }

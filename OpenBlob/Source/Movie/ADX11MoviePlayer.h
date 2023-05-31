@@ -59,6 +59,6 @@ private:
 	bool m_bHasAudioStream;                      // 0x178
 	FMOD::Channel* m_pChannel;                   // 0x17C
 	const THEORAPLAY_AudioPacket* m_TheoraAudio; // 0x180
-	int m_AudioOffset;                           // 0x184
+	uint32_t m_AudioOffset;                      // 0x184
 	double m_Position;                           // 0x188
 };

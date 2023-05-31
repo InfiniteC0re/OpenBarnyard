@@ -72,7 +72,7 @@ namespace Toshi
 
 	void TViewport::EndSKU()
 	{
-		TRenderDX11::Interface()->FUN_00691190();
+		TRenderDX11::Interface()->FlushShaders();
 	}
 
 	void TViewport::SetBackgroundColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a)

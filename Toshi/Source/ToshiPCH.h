@@ -26,6 +26,7 @@
 
 /* Toshi 2.0 Header Files */
 #include "Toshi2/Thread/T2MutexLock.h"
+#include "Toshi2/T2Flags.h"
 
 /* Platform specific headers */
 #ifdef TOSHI_PLATFORM_WINDOWS

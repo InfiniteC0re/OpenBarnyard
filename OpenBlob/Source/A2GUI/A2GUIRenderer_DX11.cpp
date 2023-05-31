@@ -43,7 +43,7 @@ void A2GUIRenderer::BeginScene()
 	auto pRender = TRenderDX11::Interface();
 	auto pDisplayParams = pRender->GetCurrentDisplayParams();
 	auto pRenderContext = (TRenderContextDX11*)pRender->GetCurrentRenderContext();
-	pRender->FUN_00691190();
+	pRender->FlushShaders();
 
 	static bool s_IsMatrixSet = false;
 	static TMatrix44 s_IdentityMatrix;

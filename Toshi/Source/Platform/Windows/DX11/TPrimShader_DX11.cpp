@@ -132,9 +132,7 @@ namespace Toshi
 		pRender->SetZMode(true, D3D11_COMPARISON_LESS_EQUAL, depthWriteMask);
 
 		TTODO("Write our own SIMD math library or use DirectXMath?");
-		DirectX::XMMATRIX projection = *(DirectX::XMMATRIX*)&pRenderContext->GetProjectionMatrix();
-		DirectX::XMMATRIX modelView = *(DirectX::FXMMATRIX*)&pRenderContext->GetModelViewMatrix();
-		DirectX::XMMATRIX worldViewProjection = DirectX::XMMatrixMultiply(modelView, projection);
+		TMatrix44 worldViewProjection = pRenderContext->GetModelViewMatrix().XMM() * pRenderContext->GetProjectionMatrix().XMM();
 
 		pRender->SetVec4InVSBuffer(0, &worldViewProjection, 4);
 		pRender->m_pDeviceContext->IASetInputLayout(m_pInputLayout);
@@ -181,7 +179,7 @@ namespace Toshi
 			TASSERT(TFALSE, "Unknown prim type");
 		}
 
-		TRenderDX11::Interface()->DrawMesh(
+		TRenderDX11::Interface()->DrawNonIndexed(
 			primitive,
 			m_pBuffer,
 			numPrim,

@@ -325,6 +325,11 @@ namespace Toshi
 			return m_pDeviceContext;
 		}
 
+		TPriList<TOrderTable>& GetOrderTables()
+		{
+			return m_OrderTables;
+		}
+
 		static TRenderDX11* Interface()
 		{
 			return static_cast<TRenderDX11*>(TRender::GetSingletonWeak());
@@ -349,6 +354,7 @@ namespace Toshi
 		static int GetTextureDepthPitch(DXGI_FORMAT format, int width, int height);
 		static const char* GetFeatureLevel(D3D_FEATURE_LEVEL a_featureLevel);
 		static ID3DBlob* CompileShader(const char* srcData, LPCSTR pEntrypoint, LPCSTR pTarget, const D3D_SHADER_MACRO* pDefines);
+		static ID3DBlob* CompileShaderFromFile(const char* filepath, LPCSTR pEntrypoint, LPCSTR pTarget, const D3D_SHADER_MACRO* pDefines);
 
 		void CreateVSPS();
 		bool Create(LPCSTR a_name);
@@ -362,11 +368,13 @@ namespace Toshi
 		ID3D11SamplerState* CreateSamplerState(D3D11_FILTER filter, D3D11_TEXTURE_ADDRESS_MODE addressU, D3D11_TEXTURE_ADDRESS_MODE addressV, D3D11_TEXTURE_ADDRESS_MODE addressW, FLOAT mipLODBias, uint32_t borderColor, FLOAT minLOD, FLOAT maxLOD, UINT maxAnisotropy);
 		ID3D11Buffer* CreateBuffer(UINT flags, UINT dataSize, void* data, D3D11_USAGE usage, UINT cpuAccessFlags);
 
+		void SetDstAlpha(float alpha);
 		void SetBlendMode(bool blendEnabled, D3D11_BLEND_OP blendOp, D3D11_BLEND srcBlendAlpha, D3D11_BLEND destBlendAlpha);
 		void SetAlphaUpdate(bool update);
 		void SetColorUpdate(bool update);
 		void SetZMode(bool depthEnable, D3D11_COMPARISON_FUNC comparisonFunc, D3D11_DEPTH_WRITE_MASK depthWriteMask);
-		void DrawMesh(D3D11_PRIMITIVE_TOPOLOGY primitiveTopology, ID3D11Buffer* pVertexBuffer, UINT vertexCount, UINT strides, UINT startVertex, UINT offsets);
+		void DrawIndexed(D3D11_PRIMITIVE_TOPOLOGY ePrimitiveType, UINT indexCount, ID3D11Buffer* pIndexBuffer, UINT indexBufferOffset, DXGI_FORMAT indexBufferFormat, ID3D11Buffer* pVertexBuffer, UINT pStrides, UINT pOffsets);
+		void DrawNonIndexed(D3D11_PRIMITIVE_TOPOLOGY primitiveTopology, ID3D11Buffer* pVertexBuffer, UINT vertexCount, UINT strides, UINT startVertex, UINT offsets);
 		void CopyDataToTexture(ID3D11ShaderResourceView* pSRTex, UINT dataSize, void* src, UINT textureSize);
 		void SetSamplerState(UINT startSlot, int samplerId, BOOL SetForPS);
 
@@ -377,7 +385,6 @@ namespace Toshi
 
 		void UpdateRenderStates();
 		void FlushConstantBuffers();
-		void FUN_00691190();
 
 		static void FUN_006a6700(float posX, float posY, float width, float height, ID3D11ShaderResourceView* pShaderResourceView, ID3D11PixelShader* pPixelShader, const TVector4* uvVec);
 	
@@ -435,7 +442,7 @@ namespace Toshi
 		size_t m_iImmediateVertexCurrentOffset;           // 0x808
 		ID3D11Buffer* m_MainIndexBuffer;                  // 0x80C
 		size_t m_iImmediateIndexCurrentOffset;            // 0x810
-		TDList<TOrderTable> m_OrderTables;                // 0x814
+		TPriList<TOrderTable> m_OrderTables;              // 0x814
 		DepthPair m_CurrentDepth;                         // 0x820
 		DepthPair m_PreviousDepth;                        // 0x830
 		T2RedBlackTree<DepthStatePair> m_DepthStatesTree; // 0x83C

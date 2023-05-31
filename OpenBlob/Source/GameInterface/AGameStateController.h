@@ -21,6 +21,7 @@ public:
 	void Update(float deltaTime);
 	void PushState(AGameState* pGameState);
 	void PopState(AGameState* pState);
+	void ResetStack();
 	void PopCurrentState();
 
 private:

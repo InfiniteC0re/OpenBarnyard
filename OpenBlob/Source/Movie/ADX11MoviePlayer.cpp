@@ -14,7 +14,6 @@ FMOD_RESULT F_CALLBACK pcmreadcallback(FMOD_SOUND* sound, void* data, unsigned i
     return FMOD_OK;
 }
 
-
 FMOD_RESULT F_CALLBACK pcmsetposcallback(FMOD_SOUND* sound, int subsound, unsigned int position, FMOD_TIMEUNIT postype)
 {
     // Seek to a location in your data, may not be required for what you want to do
@@ -87,15 +86,15 @@ bool ADX11MoviePlayer::PlayMovie(const char* fileName, uint32_t soundChannel, Pl
                 return false;
             }
 
-            m_bHasAudioStream = THEORAPLAY_hasAudioStream(m_TheoraDecoder);
+            m_bHasAudioStream = THEORAPLAY_hasAudioStream(m_TheoraDecoder) != 0;
 
             while ((video = THEORAPLAY_getVideo(m_TheoraDecoder)) == NULL);
-            while ((audio = THEORAPLAY_getAudio(m_TheoraDecoder)) == NULL)
+            while (m_bHasAudioStream && (audio = THEORAPLAY_getAudio(m_TheoraDecoder)) == NULL)
             {
                 if (THEORAPLAY_availableVideo(m_TheoraDecoder) >= 30) break;
             }
 
-            UINT framems = (video->fps == 0.0) ? 0 : ((UINT)(1000.0 / video->fps));
+            UINT framems = (video->fps == 0.0) ? 0 : 1000.0 / video->fps;
             m_FrameMS = framems;
 
             if (m_TexturesWidth != video->width || m_TexturesHeight != video->height)
@@ -106,7 +105,7 @@ bool ADX11MoviePlayer::PlayMovie(const char* fileName, uint32_t soundChannel, Pl
                 m_TexturesHeight = video->height;
             }
 
-            if (m_bHasAudioStream && audio)
+            if (m_bHasAudioStream)
             {
                 FMOD::System* system = TSound::GetSingletonWeak()->GetSystem();
                 FMOD_CREATESOUNDEXINFO soundInfo;
@@ -119,10 +118,10 @@ bool ADX11MoviePlayer::PlayMovie(const char* fileName, uint32_t soundChannel, Pl
                 soundInfo.pcmreadcallback = pcmreadcallback;
                 soundInfo.pcmsetposcallback = pcmsetposcallback;
                 soundInfo.userdata = this;
-                soundInfo.cbsize = sizeof(FMOD_CREATESOUNDEXINFO);
+                soundInfo.cbsize = sizeof(soundInfo);
 
                 FMOD::Sound* sound;
-                FMOD_RESULT eResult = system->createSound(NULL, 0x4CA, &soundInfo, &sound);
+                FMOD_RESULT eResult = system->createSound(NULL, FMOD_LOOP_NORMAL | FMOD_2D | FMOD_CREATESTREAM | FMOD_OPENUSER, &soundInfo, &sound);
 
                 if (eResult == FMOD_OK)
                 {
@@ -257,7 +256,7 @@ void ADX11MoviePlayer::OnRender(float deltaTime)
 
                 pDeviceContext->IASetInputLayout(m_pInputLayout);
                 pRender->m_CurrentRasterizerId.Flags.Parts.CullMode = D3D11_CULL_NONE;
-                pRender->DrawMesh(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP, m_pBuffer, 4, 8, 0, 0);
+                pRender->DrawNonIndexed(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP, m_pBuffer, 4, 8, 0, 0);
             }
         }
     }
@@ -270,6 +269,70 @@ void ADX11MoviePlayer::OnUpdate(float deltaTime)
         TASSERT(m_TheoraDecoder && m_TheoraVideo);
         m_Position += deltaTime * 1000.0f;
 
+        if (m_bHasAudioStream && !m_pChannel)
+        {
+            const THEORAPLAY_AudioPacket* audio = THEORAPLAY_getAudio(m_TheoraDecoder);
+
+            while (audio != TNULL)
+            {
+                THEORAPLAY_freeAudio(audio);
+                audio = THEORAPLAY_getAudio(m_TheoraDecoder);
+            }
+        }
+
+        uint32_t position = 0;
+
+        if (m_pChannel == TNULL)
+            position = m_Position;
+        else
+            m_pChannel->getPosition(&position, FMOD_TIMEUNIT_MS);
+
+        // If there's no audio, use position of the video playback
+        if (position == 0)
+            position = m_Position;
+
+        const THEORAPLAY_VideoFrame* video = m_TheoraVideo;
+
+        while (m_FrameMS <= (double)position - video->playms)
+        {
+            // Delete the previous frame
+            THEORAPLAY_freeVideo(video);
+            bool bIsDecoding = THEORAPLAY_isDecoding(m_TheoraDecoder);
+
+            // Get new frame
+            video = THEORAPLAY_getVideo(m_TheoraDecoder);
+
+            while (!video && bIsDecoding)
+            {
+                // Wait for video to decode
+                bIsDecoding = THEORAPLAY_isDecoding(m_TheoraDecoder);
+                video = THEORAPLAY_getVideo(m_TheoraDecoder);
+            }
+
+            m_TheoraVideo = video;
+
+            if (!video)
+            {
+                // End of the video
+                if (m_bIsMovieLooping)
+                {
+                    ThrowEvent(AMovieEvent::Type_Looping);
+                    uint8_t flags = m_bIsMuted ? PlayFlags_Muted : 0;
+                    PlayMovie(m_CurrentFileName, 0, flags | (m_bIsMovieLooping ? PlayFlags_Loop : 0));
+                }
+                else
+                {
+                    StopMovieImpl();
+                    ThrowEvent(AMovieEvent::Type_Finished);
+                }
+
+                break;
+            }
+        }
+
+        /*TASSERT(m_TheoraDecoder && m_TheoraVideo);
+        m_Position += deltaTime * 1000.0f;
+
         if (m_bHasAudioStream && m_pChannel == TNULL)
         {
             const THEORAPLAY_AudioPacket* audio;
@@ -280,61 +343,56 @@ void ADX11MoviePlayer::OnUpdate(float deltaTime)
         }
 
         uint32_t pos = 0;
+
         if (m_pChannel == NULL)
-        {
-            pos = (uint32_t)m_Position;
-        }
+            pos = m_Position;
         else
-        {
             m_pChannel->getPosition(&pos, FMOD_TIMEUNIT_MS);
-        }
 
         if (pos == 0)
-        {
-            pos = (uint32_t)m_Position;
-        }
-        m_Position = pos;
-        auto video = m_TheoraVideo;
+            pos = m_Position;
+
+        m_Position = pos;*/
 
         // Very laggy video but all movie play and stop
-        /*while (m_FrameMS < (pos - video->playms))
-        {
-            THEORAPLAY_freeVideo(video);
-            auto isDecoding = THEORAPLAY_isDecoding(m_TheoraDecoder);
-            video = THEORAPLAY_getVideo(m_TheoraDecoder);
-            m_TheoraVideo = video;
-            while (video == NULL && isDecoding)
-            {
-                isDecoding = THEORAPLAY_isDecoding(m_TheoraDecoder);
-                video = THEORAPLAY_getVideo(m_TheoraDecoder);
-                m_TheoraVideo = video;
-            }
-            video = m_TheoraVideo;
+        //while (m_FrameMS < (pos - video->playms))
+        //{
+        //    THEORAPLAY_freeVideo(video);
+        //    auto isDecoding = THEORAPLAY_isDecoding(m_TheoraDecoder);
+        //    video = THEORAPLAY_getVideo(m_TheoraDecoder);
+        //    m_TheoraVideo = video;
+        //    while (video == NULL && isDecoding)
+        //    {
+        //        isDecoding = THEORAPLAY_isDecoding(m_TheoraDecoder);
+        //        video = THEORAPLAY_getVideo(m_TheoraDecoder);
+        //        m_TheoraVideo = video;
+        //    }
+        //    video = m_TheoraVideo;
 
-            if (video == TNULL)
-            {
-                if (m_bIsMovieLooping)
-                {
-                    ThrowEvent(AMovieEvent::Type_Looping);
-                    uint8_t flags = 0;
-                    if (m_bIsMuted)
-                    {
-                        flags = 2;
-                    }
-                    PlayMovie(m_CurrentFileName, 0, flags | (uint8_t)m_bIsMovieLooping);
-                }
-                else
-                {
-                    StopMovieImpl();
-                    ThrowEvent(AMovieEvent::Type_Finished);
-                }
-                break;
-            }
-        }*/
+        //    if (video == TNULL)
+        //    {
+        //        if (m_bIsMovieLooping)
+        //        {
+        //            ThrowEvent(AMovieEvent::Type_Looping);
+        //            uint8_t flags = 0;
+        //            if (m_bIsMuted)
+        //            {
+        //                flags = 2;
+        //            }
+        //            PlayMovie(m_CurrentFileName, 0, flags | (uint8_t)m_bIsMovieLooping);
+        //        }
+        //        else
+        //        {
+        //            StopMovieImpl();
+        //            ThrowEvent(AMovieEvent::Type_Finished);
+        //        }
+        //        break;
+        //    }
+        //}
 
-        if (m_TheoraVideo->playms <= m_Position)
+        /*if (m_TheoraVideo->playms <= m_Position)
         {
-            if ((m_Position - video->playms) >= m_FrameMS)
+            if ((m_Position - m_TheoraVideo->playms) >= m_FrameMS)
             {
                 const THEORAPLAY_VideoFrame* last = m_TheoraVideo;
                 while ((m_TheoraVideo = THEORAPLAY_getVideo(m_TheoraDecoder)) != NULL)
@@ -352,7 +410,6 @@ void ADX11MoviePlayer::OnUpdate(float deltaTime)
                 {
                     m_TheoraVideo = last;
                     TUtil::LogConsole("Can't keep up with video playback.");
-
                 }
 
                 if (m_TheoraVideo == TNULL || !THEORAPLAY_isDecoding(m_TheoraDecoder))
@@ -369,9 +426,8 @@ void ADX11MoviePlayer::OnUpdate(float deltaTime)
                         ThrowEvent(AMovieEvent::Type_Finished);
                     }
                 }
-
             }
-        }
+        }*/
     }
 
     AMoviePlayer::OnUpdate(deltaTime);
@@ -472,7 +528,7 @@ void ADX11MoviePlayer::ReadBuffer(void* data, uint32_t datalen)
     const THEORAPLAY_AudioPacket* audio;
     char* dataBuffer = (char*)data;
 
-    while (m_bIsPlaying && datalen > 0)
+    while (m_bIsPlaying && datalen != 0)
     {
         audio = m_TheoraAudio;
         if (m_TheoraAudio == NULL && (!THEORAPLAY_isDecoding(m_TheoraDecoder) || !m_bIsPlaying || (audio = THEORAPLAY_getAudio(m_TheoraDecoder)) == NULL))
@@ -486,9 +542,7 @@ void ADX11MoviePlayer::ReadBuffer(void* data, uint32_t datalen)
         
         int floatCount = datalen / sizeof(float);
         if (floatCount <= size && size - floatCount != 0)
-        {
             size = floatCount;
-        }
 
         memcpy(dataBuffer, audio->samples + (channels * m_AudioOffset), size * sizeof(float));
         dataBuffer += size * sizeof(float);

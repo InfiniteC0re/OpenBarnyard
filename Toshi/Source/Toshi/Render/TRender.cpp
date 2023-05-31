@@ -12,7 +12,7 @@ namespace Toshi
 		m_Unk1 = 0;
 		m_bIsEnabled = true;
 		m_ScreenOffset = { 0, 0 };
-		m_Unk2 = 0;
+		m_eAspectRatio = ASPECT_RATIO_4_3;
 		m_pRenderContext = TNULL;
 		m_Unk5 = 0;
 		m_HasDyingResources = false;
@@ -324,7 +324,7 @@ namespace Toshi
 	void TRenderContext::SetWorldViewMatrix(const TMatrix44& a_rMatrix)
 	{
 		m_eFlags |= FLAG_HASWORLDVIEWMATRIX;
-		m_mModelViewMatrix = a_rMatrix;
+		m_mWorldViewMatrix = a_rMatrix;
 		m_eFlags &= ~(FLAG_UNK1 | FLAG_UNK2 | FLAG_UNK4 | FLAG_UNK5 | FLAG_UNK6);
 	}
 }

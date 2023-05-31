@@ -146,19 +146,26 @@ namespace Toshi
 		typedef uint8_t SYSRESOURCE;
 		enum SYSRESOURCE_ : SYSRESOURCE
 		{
-			SYSRESOURCE_1,
-			SYSRESOURCE_2,
-			SYSRESOURCE_3,
+			SYSRESOURCE_VFactories,
+			SYSRESOURCE_VFSYSVNDUV1,
+			SYSRESOURCE_VFSKIN,
 			SYSRESOURCE_4,
 			SYSRESOURCE_5,
 			SYSRESOURCE_6,
-			SYSRESOURCE_7,
+			SYSRESOURCE_VFWORLD,
 			SYSRESOURCE_8,
 			SYSRESOURCE_9,
-			SYSRESOURCE_10,
-			SYSRESOURCE_11,
+			SYSRESOURCE_IFactories,
+			SYSRESOURCE_IFSYS,
 			SYSRESOURCE_12,
 			SYSRESOURCE_NUMOF
+		};
+
+		typedef uint32_t ASPECT_RATIO;
+		enum ASPECT_RATIO_ : ASPECT_RATIO
+		{
+			ASPECT_RATIO_4_3,
+			ASPECT_RATIO_16_9,
 		};
 
 		struct DisplayParams
@@ -192,6 +199,16 @@ namespace Toshi
 		virtual void SetLightColourMatrix(TMatrix44* pMat);    // 0x40 at vftable
 		virtual bool CreateSystemResources();                  // 0x44 at vftable
 		virtual void DestroySystemResources();                 // 0x44 at vftable
+
+		float GetResolutionScalar()
+		{
+			auto displayParams = GetCurrentDisplayParams();
+			
+			if (m_eAspectRatio == ASPECT_RATIO_16_9)
+				return (displayParams->Height * 16.0f) / (displayParams->Width * 9.0f);
+			else
+				return (displayParams->Height * 4.0f) / (displayParams->Width * 3.0f);
+		}
 
 		// Creates display and returns true if success
 		bool CreateDisplay();
@@ -234,6 +251,7 @@ namespace Toshi
 		TRenderContext* GetCurrentRenderContext() const { return m_pRenderContext; }
 		TNodeList<TRenderAdapter>* GetAdapterList() { return &m_AdapterList; }
 		TRenderParamTable* GetParamTable() const { return m_ParamTable; }
+		ASPECT_RATIO GetAspectRatio() const { return m_eAspectRatio; }
 
 		void DestroyDyingResources(TResource* resources);
 		void DestroyDyingResources();
@@ -264,7 +282,7 @@ namespace Toshi
 		bool m_bCreated = false;                         // 0x0A
 		bool m_bDisplayCreated;                          // 0x0B
 		TVector2 m_ScreenOffset;                         // 0x0C
-		uint32_t m_Unk2;                                 // 0x14
+		ASPECT_RATIO m_eAspectRatio;                     // 0x14
 		TRenderContext* m_pRenderContext;                // 0x18
 		uint32_t m_Unk5;                                 // 0x1C
 		TResource* m_SystemResources[SYSRESOURCE_NUMOF]; // 0x20

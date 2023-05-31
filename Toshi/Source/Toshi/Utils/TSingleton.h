@@ -18,6 +18,13 @@ namespace Toshi
 			return new T(std::forward<Args>(args)...);
 		}
 
+		// Creates Singleton instance for a derived class and returns it
+		template <typename D, typename ... Args>
+		static D* CreateSingleton(Args&& ... args)
+		{
+			return new D(std::forward<Args>(args)...);
+		}
+
 		static void DestroySingleton()
 		{
 			delete GetSingleton();

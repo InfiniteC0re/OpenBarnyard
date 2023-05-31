@@ -4,14 +4,15 @@
 #include "Movie/AMoviePlayer.h"
 #include "A2GUI/A2GUIRenderer_DX11.h"
 #include "GameInterface/AFrontEndMovieState.h"
+#include "AXYZViewportManager.h"
 
 #include <Platform/Windows/DX11/TRender_DX11.h>
 #include <Platform/Windows/DX11/TRenderContext_DX11.h>
 #include <Platform/Windows/DX11/TPrimShader_DX11.h>
 #include <Toshi/Render/TAssetInit.h>
+#include <Toshi/Shaders/SysShader/TSysShaderHAL.h>
 #include <Toshi2/T2GUI/T2GUI.h>
 #include <Toshi/Render/TOrderTable.h>
-#include "AXYZViewportManager.h"
 
 Toshi::TTRB ARenderer::s_BootAssetsTRB = Toshi::TTRB();
 Toshi::THPTimer ARenderer::s_timer = Toshi::THPTimer();
@@ -194,6 +195,20 @@ void ARenderer::Create()
 		Toshi::TAssetInit::InitAssets(s_BootAssetsTRB, true, false);
 	}
 
+	// Create SysShader
+	Toshi::TSysShaderHAL::OrderTablePriorities priorities = {
+		100,
+		5220,
+		5222,
+		5225,
+		5215,
+		500,
+		5219
+	};
+
+	auto pSysShader = Toshi::TSysShaderHAL::CreateSingleton<Toshi::TSysShaderHAL>(&priorities);
+	pSysShader->Create();
+
 	CreateMainViewport();
 
 	AXYZViewportManager* vpMgr = new AXYZViewportManager();
@@ -248,7 +263,7 @@ void ARenderer::RenderMainScene(float deltaTime, Toshi::TViewport* pViewport, vo
 	pViewport->End();
 	// ...
 
-	pRender->FUN_00691190();
+	pRender->FlushShaders();
 	pRender->SetCurrentRenderContext(pOriginalContext);
 }
 
@@ -272,4 +287,10 @@ void ARenderer::CreateMainViewport()
 	m_pViewport->SetBackgroundColor(0, 0, 0, 255);
 	renderer->m_pGlow->SetDist(1.5f);
 	renderer->m_pGlow->SetIntensity(4.0f);
+}
+
+void ARenderer::CreateTRenderResources()
+{
+	// Since this is deprecated and factory resource classes don't even exist, TSysShader is not used too
+	TASSERT(TFALSE, "Deprecated in de blob");
 }

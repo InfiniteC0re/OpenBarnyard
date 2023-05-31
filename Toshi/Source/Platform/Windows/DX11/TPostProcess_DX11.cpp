@@ -17,5 +17,5 @@ void TPostProcess::Render()
 	renderer->SetZMode(false, D3D11_COMPARISON_LESS_EQUAL, D3D11_DEPTH_WRITE_MASK_ZERO);
 	deviceContext->IASetInputLayout(m_pQuadVtxDecl);
 	deviceContext->VSSetShader(m_pScreenSpaceVS, TNULL, 0);
-	renderer->DrawMesh(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP, m_pQuadVB, 4, 8, 0, 0);
+	renderer->DrawNonIndexed(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP, m_pQuadVB, 4, 8, 0, 0);
 }

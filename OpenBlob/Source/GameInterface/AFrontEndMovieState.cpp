@@ -17,8 +17,8 @@ AGameState::UpdateResult AFrontEndMovieState::OnUpdate(float deltaTime)
         m_fUnknown -= deltaTime;
     }
 
-    /*m_Test->SetTransform(0, 0, m_TestRotAngle);
-    m_TestRotAngle += deltaTime * 2.5f;*/
+    //m_Test->SetTransform(0, 0, m_TestRotAngle);
+    //m_TestRotAngle += deltaTime * 2.5f;
 
     switch (m_iAssetId)
     {
@@ -56,6 +56,7 @@ AGameState::UpdateResult AFrontEndMovieState::OnUpdate(float deltaTime)
         }
         break;
     }
+
     switch (m_iAssetId)
     {
     case Asset_Legal:
@@ -108,7 +109,8 @@ void AFrontEndMovieState::OnInsertion()
     //Toshi::T2GUIRectangle* pRectangle2 = new Toshi::T2GUIRectangle;
     //pRectangle2->Create(100, 100);
     //pRectangle2->SetTransform(0, 0, 0);
-    //pRectangle2->SetMaterial(pGUIRenderer->CreateMaterial("loadicon.tga"));
+    //pRectangle2->SetColour(0x0000FF00);
+    ////pRectangle2->SetMaterial(pGUIRenderer->CreateMaterial("loadicon.tga"));
     //m_Test->AddChildHead(pRectangle2);
 
     TIMPLEMENT();
