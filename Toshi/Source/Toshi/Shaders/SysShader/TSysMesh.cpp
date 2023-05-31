@@ -43,6 +43,8 @@ namespace Toshi {
 		auto pVertices = pRender->GetSystemResource(TRender::SYSRESOURCE_VFSYSVNDUV1);
 
 		TIMPLEMENT();
+
+		return true;
 	}
 
 }
