@@ -324,7 +324,7 @@ namespace Toshi
 	void TRenderContext::SetWorldViewMatrix(const TMatrix44& a_rMatrix)
 	{
 		m_eFlags |= FLAG_HASWORLDVIEWMATRIX;
-		m_mModelViewMatrix = a_rMatrix;
+		m_mWorldViewMatrix = a_rMatrix;
 		m_eFlags &= ~(FLAG_UNK1 | FLAG_UNK2 | FLAG_UNK4 | FLAG_UNK5 | FLAG_UNK6);
 	}
 }

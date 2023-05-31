@@ -1,0 +1,19 @@
+struct VS_OUT
+{
+	float4 ProjPos : SV_POSITION;
+	float4 Color : COLOR;
+	float2 UV : TEXCOORD0;
+};
+
+uniform sampler2D texture0 : register(s0);
+float4 alphaTest : register(c0);
+
+float4 main(VS_OUT In) : SV_TARGET
+{
+	float4 final = tex2D(texture0, In.UV) * In.Color;
+	
+	if (alphaTest.x > 0 && final.a < alphaTest.y)
+		discard;
+	
+	return final;
+}

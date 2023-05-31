@@ -25,6 +25,7 @@ private:
 	void RenderGUI(bool allowBackgroundClear);
 	void RenderMainScene(float deltaTime, Toshi::TViewport* pViewport, void* unk2, void* pCameraObject, t_MainScene mainSceneCb, bool allowBackgroundClear);
 	void CreateMainViewport();
+	void CreateTRenderResources();
 
 private:
 	static Toshi::TTRB s_BootAssetsTRB;

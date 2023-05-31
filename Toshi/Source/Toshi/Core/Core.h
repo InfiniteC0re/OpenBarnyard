@@ -46,6 +46,10 @@ constexpr uint32_t TMAKEFOUR(const char str[4])
 	#define TBREAK() 
 #endif
 
+#define TREINTERPRETCAST(TYPE, VALUE) (reinterpret_cast<TYPE>(VALUE))
+#define TSTATICCAST(TYPE, VALUE) (static_cast<TYPE>(VALUE))
+#define TARRAYSIZE(ARRAY) (sizeof(ARRAY) / sizeof(*ARRAY))
+
 #if defined(TOSHI_ENABLE_ASSERTS)
 	#define TFIREFLAG static bool FIREFLAG = false; if (!FIREFLAG)
 	#define TWIP() { TFIREFLAG { TOSHI_ERROR("Work in progress: {0}, at line {1}", __FUNCTION__, __LINE__); FIREFLAG = true; } }
@@ -58,6 +62,7 @@ constexpr uint32_t TMAKEFOUR(const char str[4])
 	#define TASSERT2(X, TEXT) TASSERT_IMPL(X, TEXT)
 	#define TASSERT3(X, TEXT, P1) TASSERT_IMPL(X, TEXT, P1)
 	#define TASSERT(...) CALL_OVERLOAD(TASSERT, __VA_ARGS__)
+	#define TVALIDPTR(PTR) TASSERT(PTR)
 #else
 	#define TWIP()
 	#define TWIP_D(DESC)
@@ -65,4 +70,5 @@ constexpr uint32_t TMAKEFOUR(const char str[4])
 	#define TIMPLEMENT()
 	#define TIMPLEMENT_D(DESC)
 	#define TASSERT(x, ...)
+	#define TVALIDPTR(PTR)
 #endif

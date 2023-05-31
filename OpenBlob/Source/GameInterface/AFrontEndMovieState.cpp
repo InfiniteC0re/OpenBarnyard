@@ -17,8 +17,8 @@ AGameState::UpdateResult AFrontEndMovieState::OnUpdate(float deltaTime)
         m_fUnknown -= deltaTime;
     }
 
-    /*m_Test->SetTransform(0, 0, m_TestRotAngle);
-    m_TestRotAngle += deltaTime * 2.5f;*/
+    m_Test->SetTransform(0, 0, m_TestRotAngle);
+    m_TestRotAngle += deltaTime * 2.5f;
 
     switch (m_iAssetId)
     {
@@ -99,18 +99,19 @@ void AFrontEndMovieState::OnInsertion()
     m_Background.Create(s_Assets[m_iAssetId]);
     m_Background.SetVisible(TTRUE);
 
-    //m_Test = new Toshi::T2GUIRectangle;
-    //m_Test->Create(200, 200);
-    //m_Test->SetTransform(0, 0, 0);
-    //m_Test->SetColour(0x00FF0000); // ARGB
-    //pRootElement->AddChildHead(sm_pLoadIconRect);
-    //pRootElement->AddChildHead(m_Test);
+    m_Test = new Toshi::T2GUIRectangle;
+    m_Test->Create(200, 200);
+    m_Test->SetTransform(0, 0, 0);
+    m_Test->SetColour(0x00FF0000); // ARGB
+    pRootElement->AddChildHead(sm_pLoadIconRect);
+    pRootElement->AddChildHead(m_Test);
 
-    //Toshi::T2GUIRectangle* pRectangle2 = new Toshi::T2GUIRectangle;
-    //pRectangle2->Create(100, 100);
-    //pRectangle2->SetTransform(0, 0, 0);
+    Toshi::T2GUIRectangle* pRectangle2 = new Toshi::T2GUIRectangle;
+    pRectangle2->Create(100, 100);
+    pRectangle2->SetTransform(0, 0, 0);
+    pRectangle2->SetColour(0x0000FF00);
     //pRectangle2->SetMaterial(pGUIRenderer->CreateMaterial("loadicon.tga"));
-    //m_Test->AddChildHead(pRectangle2);
+    m_Test->AddChildHead(pRectangle2);
 
     TIMPLEMENT();
     AGameState::OnInsertion();

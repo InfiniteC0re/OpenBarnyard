@@ -18,16 +18,7 @@ namespace Toshi
 		macro[4].Name = TNULL;
 		macro[4].Definition = TNULL;
 
-		TFile* pFile = TFile::Create("Data/Shaders/Other/FXAA.ps");
-		DWORD fileSize = pFile->GetSize();
-		char* srcData = new char[fileSize + 1];
-		pFile->Read(srcData, fileSize);
-		srcData[fileSize] = '\0';
-		pFile->Destroy();
-
-		ID3DBlob* shader = TRenderDX11::CompileShader(srcData, "main", "ps_4_0", macro);
-		delete[] srcData;
-
+		ID3DBlob* shader = TRenderDX11::CompileShaderFromFile("Data/Shaders/Other/FXAA.ps", "main", "ps_4_0", macro);
 		TRenderDX11::Interface()->CreatePixelShader(shader->GetBufferPointer(), shader->GetBufferSize(), &m_pShader);
 		Initialize();
 	}

@@ -3,6 +3,7 @@
 namespace Toshi
 {
 	class TRegMaterial;
+	class TShader;
 
 	class TMaterial :
 		public TGenericClassDerived<TMaterial, TObject, "TMaterial", TMAKEVERSION(1, 0), false>
@@ -54,6 +55,17 @@ namespace Toshi
 
 		}
 
+		void SetOwnerShader(TShader* pShader)
+		{
+			TASSERT(TNULL == m_pOwnerShader);
+			m_pOwnerShader = pShader;
+		}
+
+		TShader* GetOwnerShader() const
+		{
+			return m_pOwnerShader;
+		}
+
 		void SetName(const char* name)
 		{
 			if (name == TNULL)
@@ -100,6 +112,7 @@ namespace Toshi
 
 	private:
 		State m_State;                  // 0x04
+		TShader* m_pOwnerShader;        // 0x08
 		TRegMaterial* m_pRegMaterial;   // 0x0C
 		char m_Name[NAMESIZELIMIT + 1]; // 0x2C
 		void* m_Unk;                    // 0x4C

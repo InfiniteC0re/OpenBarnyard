@@ -45,9 +45,9 @@ namespace Toshi
 			return m_pMaterial;
 		}
 
-		TMatrix44* GetModelViewMatrix()
+		TMatrix44& GetModelViewMatrix()
 		{
-			return &m_ModelViewMatrix;
+			return m_ModelViewMatrix;
 		}
 
 	private:
@@ -157,7 +157,7 @@ namespace Toshi
 
 		static void CreateStaticData(uint32_t maxMaterials, uint32_t maxRenderPackets);
 
-		void Create(TShader* pShader, int priority, uint8_t index);
+		TBOOL Create(TShader* pShader, int priority, uint8_t index);
 		void Render();
 		void Flush();
 

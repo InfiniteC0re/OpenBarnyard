@@ -9,39 +9,46 @@ namespace Toshi
 		public TGenericClassDerived<TMesh, TObject, "TMesh", TMAKEVERSION(1, 0), false>
 	{
 	public:
-		typedef uint32_t State;
-		enum State_ : State
+		enum class State : uint32_t
 		{
-			State_Created = BITFIELD(0),
-			State_Validated = BITFIELD(1),
+			None = 0,
+			Created = BITFIELD(0),
+			Validated = BITFIELD(1),
 		};
 
 	public:
-		virtual bool Validate()
+		TMesh()
 		{
-			m_State |= State_Validated;
+			m_pOwnerShader = TNULL;
+			m_pMaterial = TNULL;
+			m_State = State::None;
+		}
+
+		virtual TBOOL Validate()
+		{
+			m_State.Set(State::Validated);
 			return true;
 		}
 
 		virtual void Invalidate()
 		{
-			m_State &= ~State_Validated;
+			m_State.Unset(State::Validated);
 		}
 
-		virtual bool Create()
+		virtual TBOOL Create()
 		{
-			m_State |= State_Created;
+			m_State.Set(State::Created);
 			return true;
 		}
 
-		virtual bool Render()
+		virtual TBOOL Render()
 		{
 			return true;
 		}
 
 		virtual void OnDestroy()
 		{
-			m_State &= State_Created;
+			m_State.Unset(State::Created);
 		}
 
 		void DestroyResource()
@@ -58,6 +65,7 @@ namespace Toshi
 
 		void SetOwnerShader(TShader* pShader)
 		{
+			TASSERT(TNULL == m_pOwnerShader);
 			m_pOwnerShader = pShader;
 		}
 
@@ -66,9 +74,16 @@ namespace Toshi
 			return m_pOwnerShader;
 		}
 
+		TBOOL IsCreated() const
+		{
+			return m_State.IsSet(State::Created);
+		}
+
 	private:
 		TMaterial* m_pMaterial;  // 0x04
 		TShader* m_pOwnerShader; // 0x08
-		State m_State;           // 0x0C
+		T2Flags<State> m_State;  // 0x0C
 	};
+
+	DEFINE_T2FLAGS(TMesh::State);
 }

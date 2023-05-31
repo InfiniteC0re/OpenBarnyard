@@ -15,6 +15,7 @@ namespace TLib
 
 		public:
 			TRBF() : m_HDRX(VERSION) { }
+			TRBF(const std::string& filepath) : m_HDRX(VERSION) { ReadFromFile(filepath); }
 
 			void Reset()
 			{

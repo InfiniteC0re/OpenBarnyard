@@ -1,5 +1,6 @@
 #pragma once
 #include "TQuaternion.h"
+#include <DirectXMath.h>
 
 namespace Toshi
 {
@@ -39,6 +40,7 @@ namespace Toshi
 		}
 
 		TMatrix44(const TMatrix44& a_rMatrix);
+
 		TMatrix44() { }
 
 		void Identity()
@@ -132,6 +134,28 @@ namespace Toshi
 			TFloat a_f41, TFloat a_f42, TFloat a_f43, TFloat a_f44
 		);
 
+		// DirectX Math
+
+		TMatrix44(const DirectX::XMMATRIX& matrix)
+		{
+			*(DirectX::XMMATRIX*)this = matrix;
+		}
+
+		void Set(const DirectX::XMMATRIX& matrix)
+		{
+			*(DirectX::XMMATRIX*)this = matrix;
+		}
+
+		const DirectX::XMMATRIX& XMM() const
+		{
+			return *(DirectX::XMMATRIX*)this;
+		}
+
+		TMatrix44 operator*=(const TMatrix44& a)
+		{
+			Set(DirectX::XMMatrixMultiply(this->XMM(), a.XMM()));
+		}
+
 	private:
 		constexpr static float s_Identity[16] = {
 			1.0f, 0.0f, 0.0f, 0.0f,
@@ -140,4 +164,9 @@ namespace Toshi
 			0.0f, 0.0f, 0.0f, 1.0f
 		};
 	};
+
+	inline TMatrix44 operator*(const TMatrix44& a, const TMatrix44& b)
+	{
+		return DirectX::XMMatrixMultiply(a.XMM(), b.XMM());
+	}
 }
