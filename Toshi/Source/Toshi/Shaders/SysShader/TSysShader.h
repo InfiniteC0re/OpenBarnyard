@@ -1,6 +1,8 @@
 #pragma once
 #include "Toshi/Core/TObject.h"
 #include "Toshi/Render/TShader.h"
+#include "TSysMaterial.h"
+#include "TSysMesh.h"
 
 namespace Toshi {
 
@@ -11,6 +13,8 @@ namespace Toshi {
 	public:
 		virtual const char* GetShaderPrefix() override;
 
+		virtual TSysMaterial* CreateMaterial() = 0;
+		virtual TSysMesh* CreateMesh(const char* name) = 0;
 		virtual bool IsLightScattering() const;
 		virtual bool SetLightScattering(bool scattering) const;
 	};

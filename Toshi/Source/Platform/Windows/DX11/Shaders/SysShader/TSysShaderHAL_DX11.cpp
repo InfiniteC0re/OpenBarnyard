@@ -256,7 +256,7 @@ namespace Toshi {
 		);
 	}
 
-	TSysMaterialHAL* TSysShaderHAL::CreateMaterial()
+	TSysMaterial* TSysShaderHAL::CreateMaterial()
 	{
 		TASSERT(IsCreated());
 		Validate();
@@ -267,7 +267,7 @@ namespace Toshi {
 		return pMaterial;
 	}
 
-	TSysMeshHAL* TSysShaderHAL::CreateMesh(const char* name)
+	TSysMesh* TSysShaderHAL::CreateMesh(const char* name)
 	{
 		TASSERT(IsCreated());
 		Validate();

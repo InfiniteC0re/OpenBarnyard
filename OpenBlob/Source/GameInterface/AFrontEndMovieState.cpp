@@ -4,7 +4,7 @@
 #include "AppBoot.h"
 
 #include <Toshi2/T2GUI/T2GUI.h>
-
+#include <Toshi/Shaders/SysShader/TSysShaderHAL.h>
 
 AGameState::UpdateResult AFrontEndMovieState::OnUpdate(float deltaTime)
 {
@@ -98,6 +98,10 @@ void AFrontEndMovieState::OnInsertion()
 
     m_Background.Create(s_Assets[m_iAssetId]);
     m_Background.SetVisible(TTRUE);
+
+    auto pSysShader = Toshi::TSysShaderHAL::GetSingletonWeak();
+    auto pTestMaterial = pSysShader->CreateMaterial();
+    pTestMaterial->Create(Toshi::TSysMaterial::BlendMode::Default);
 
     //m_Test = new Toshi::T2GUIRectangle;
     //m_Test->Create(200, 200);

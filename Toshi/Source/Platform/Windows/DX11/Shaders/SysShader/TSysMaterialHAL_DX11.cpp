@@ -142,6 +142,9 @@ namespace Toshi {
                 return;
             }
             break;
+        default:
+            TASSERT(TFALSE, "TSysShader default");
+            break;
         }
     }
 

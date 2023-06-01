@@ -34,8 +34,8 @@ namespace Toshi {
 		virtual TBOOL Validate() override;
 		virtual void Invalidate() override;
 		virtual void Render(TRenderPacket* pRenderPacket) override;
-		virtual TSysMaterialHAL* CreateMaterial();
-		virtual TSysMeshHAL* CreateMesh(const char* name);
+		virtual TSysMaterial* CreateMaterial() override;
+		virtual TSysMesh* CreateMesh(const char* name) override;
 
 		TOrderTable* GetOrderTable(size_t index)
 		{

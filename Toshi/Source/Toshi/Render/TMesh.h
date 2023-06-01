@@ -58,6 +58,11 @@ namespace Toshi
 			delete this;
 		}
 
+		void SetMaterial(TMaterial* pMaterial)
+		{
+			m_pMaterial = pMaterial;
+		}
+
 		TMaterial* GetMaterial() const
 		{
 			return m_pMaterial;
