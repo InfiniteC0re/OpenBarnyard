@@ -37,11 +37,31 @@ namespace Toshi {
 		virtual TSysMaterialHAL* CreateMaterial();
 		virtual TSysMeshHAL* CreateMesh(const char* name);
 
+		TOrderTable* GetOrderTable(size_t index)
+		{
+			return &m_OrderTables[index];
+		}
+
+		ID3D11PixelShader* GetPixelShaderNoTex() const
+		{
+			return m_pPixelShaderNoTex;
+		}
+
+		ID3D11PixelShader* GetPixelShaderTexture() const
+		{
+			return m_pPixelShaderTexture;
+		}
+
+		ID3D11PixelShader* GetPixelShaderAlphaTexture() const
+		{
+			return m_pPixelShaderAlphaTexture;
+		}
+
 	private:
 		TOrderTable m_OrderTables[6];
 		OrderTablePriorities m_Priorities;
 		ID3D11VertexShader* m_pVertexShader;
-		ID3D11PixelShader* m_pPixelShader;
+		ID3D11PixelShader* m_pPixelShaderNoTex;
 		ID3D11PixelShader* m_pPixelShaderTexture;
 		ID3D11PixelShader* m_pPixelShaderAlphaTexture;
 		ID3D11InputLayout* m_pInputLayout;

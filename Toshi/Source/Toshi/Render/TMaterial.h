@@ -1,4 +1,5 @@
 #pragma once
+#include "TTexture.h"
 
 namespace Toshi
 {
@@ -11,37 +12,44 @@ namespace Toshi
 	public:
 		static constexpr size_t NAMESIZELIMIT = 31;
 
-		typedef uint32_t State;
-		enum State_ : State
+		typedef uint32_t Flags;
+		enum Flags_ : Flags
 		{
-			State_NULL = 0,
-			State_Unk1 = BITFIELD(0),
-			State_Unk2 = BITFIELD(1),
-			State_Unk3 = BITFIELD(2),
-			State_Unk4 = BITFIELD(3),
-			State_Created = BITFIELD(4),
+			Flags_NULL         = 0,
+			Flags_Unk1         = BITFIELD(0),
+			Flags_Unk2         = BITFIELD(1),
+			Flags_Unk3         = BITFIELD(2),
+			Flags_Unk4         = BITFIELD(3),
+			Flags_Created      = BITFIELD(4),
+			Flags_NoDepthTest  = BITFIELD(27),
+			Flags_AlphaUpdate  = BITFIELD(28),
+			Flags_AlphaTexture = BITFIELD(31),
 		};
 
 	public:
 		TMaterial()
 		{
-			m_State = State_NULL;
+			m_Flags = Flags_NULL;
 			m_Unk = TNULL;
 			m_pRegMaterial = nullptr;
 			m_Name[0] = '\0';
+			m_pOwnerShader = TNULL;
+			m_pTexture = TNULL;
 		}
+
+		virtual ~TMaterial() = default;
 
 		virtual void OnDestroy()
 		{
 			TASSERT(TTRUE == IsCreated());
-			m_State &= ~State_Created;
+			m_Flags &= ~Flags_Created;
 			m_Unk = TNULL;
 		}
 
-		virtual bool Create()
+		virtual TBOOL Create()
 		{
 			TASSERT(TFALSE == IsCreated());
-			m_State |= State_Created;
+			m_Flags |= Flags_Created;
 			return true;
 		}
 
@@ -66,6 +74,16 @@ namespace Toshi
 			return m_pOwnerShader;
 		}
 
+		void SetTexture(TTexture* pTexture)
+		{
+			m_pTexture = pTexture;
+		}
+
+		TTexture* GetTexture() const
+		{
+			return m_pTexture;
+		}
+
 		void SetName(const char* name)
 		{
 			if (name == TNULL)
@@ -78,26 +96,26 @@ namespace Toshi
 			}
 		}
 
-		void SetFlag(State flag, bool set = false)
+		void SetFlag(Flags flag, TBOOL set = false)
 		{
 			if (set)
 			{
-				if (flag & (State_Unk1 | State_Unk2 | State_Unk3))
+				if (flag & (Flags_Unk1 | Flags_Unk2 | Flags_Unk3))
 				{
-					m_State &= ~(State_Unk1 | State_Unk2 | State_Unk3);
+					m_Flags &= ~(Flags_Unk1 | Flags_Unk2 | Flags_Unk3);
 				}
 
-				m_State |= flag;
+				m_Flags |= flag;
 			}
 			else
 			{
-				m_State &= ~flag;
+				m_Flags &= ~flag;
 			}
 		}
 
-		bool IsCreated() const
+		TBOOL IsCreated() const
 		{
-			return m_State & State_Created;
+			return m_Flags & Flags_Created;
 		}
 
 		void SetRegMaterial(TRegMaterial* pRegMaterial)
@@ -110,10 +128,11 @@ namespace Toshi
 			return m_pRegMaterial;
 		}
 
-	private:
-		State m_State;                  // 0x04
+	protected:
+		Flags m_Flags;                  // 0x04
 		TShader* m_pOwnerShader;        // 0x08
 		TRegMaterial* m_pRegMaterial;   // 0x0C
+		TTexture* m_pTexture;           // 0x14
 		char m_Name[NAMESIZELIMIT + 1]; // 0x2C
 		void* m_Unk;                    // 0x4C
 	};

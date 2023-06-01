@@ -141,7 +141,7 @@ namespace Toshi
 			if (hasOpacity)
 			{
 				TASSERT(opacity >= 0.0f && opacity <= 1.0f);
-				m_Opacity = opacity * 255;
+				m_Opacity = TSTATICCAST(uint8_t, opacity * 255);
 			}
 
 			if (hasAnchor)

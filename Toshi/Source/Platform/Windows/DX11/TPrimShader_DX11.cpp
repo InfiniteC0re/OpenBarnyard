@@ -131,7 +131,6 @@ namespace Toshi
 
 		pRender->SetZMode(true, D3D11_COMPARISON_LESS_EQUAL, depthWriteMask);
 
-		TTODO("Write our own SIMD math library or use DirectXMath?");
 		TMatrix44 worldViewProjection = pRenderContext->GetModelViewMatrix().XMM() * pRenderContext->GetProjectionMatrix().XMM();
 
 		pRender->SetVec4InVSBuffer(0, &worldViewProjection, 4);

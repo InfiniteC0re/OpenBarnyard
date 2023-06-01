@@ -32,7 +32,7 @@ void TCameraObject::Render()
 
 		if (m_Unk1 == 0)
 		{
-			projParams.m_Proj.x = (pRenderContext->GetWidth() * 0.5) / tan(m_fFOV * 0.5);
+			projParams.m_Proj.x = (pRenderContext->GetWidth() * 0.5f) / tan(m_fFOV * 0.5f);
 			projParams.m_Proj.y = projParams.m_Proj.x;
 
 			if (m_eMode == TRenderContext::CameraMode_Perspective)
@@ -41,14 +41,14 @@ void TCameraObject::Render()
 
 				if (m_eMode == TRenderContext::CameraMode_Perspective && aspectRatio == TRender::ASPECT_RATIO_16_9)
 				{
-					projParams.m_Proj.x *= 0.8660254;
-					projParams.m_Proj.y *= 0.8660254;
+					projParams.m_Proj.x *= 0.8660254f;
+					projParams.m_Proj.y *= 0.8660254f;
 				}
 			}
 		}
 		else
 		{
-			projParams.m_Proj.x = (pRenderContext->GetHeight() * 0.5) / tan(m_fFOV * 0.5);
+			projParams.m_Proj.x = (pRenderContext->GetHeight() * 0.5f) / tan(m_fFOV * 0.5f);
 			projParams.m_Proj.y = projParams.m_Proj.x;
 
 			if (m_eMode == TRenderContext::CameraMode_Perspective)
@@ -57,8 +57,8 @@ void TCameraObject::Render()
 
 				if (m_eMode == TRenderContext::CameraMode_Perspective && aspectRatio == TRender::ASPECT_RATIO_16_9)
 				{
-					projParams.m_Proj.x *= 0.8660254;
-					projParams.m_Proj.y *= 0.8660254;
+					projParams.m_Proj.x *= 0.8660254f;
+					projParams.m_Proj.y *= 0.8660254f;
 				}
 			}
 		}

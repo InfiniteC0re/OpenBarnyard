@@ -41,6 +41,7 @@ namespace Toshi
 			m_pPrevTexture = TNULL;
 			m_pNextTexture = TNULL;
 			m_SamplerId = 3;
+			m_Flags1 = 0;
 		}
 
 		void Init();
@@ -71,6 +72,11 @@ namespace Toshi
 			return m_TexInfo->Height;
 		}
 
+		uint8_t GetFlags1() const
+		{
+			return m_Flags1;
+		}
+
 	private:
 		void* m_Unk1;             // 0x00
 		const char* m_TexName;    // 0x04
@@ -79,6 +85,7 @@ namespace Toshi
 		uint8_t* m_TexData;       // 0x10
 		TTexture* m_pPrevTexture; // 0x14
 		TTexture* m_pNextTexture; // 0x18
+		uint8_t m_Flags1;         // 0x1C
 		int m_SamplerId;          // 0x2C
 	};
 

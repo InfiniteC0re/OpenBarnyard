@@ -8,7 +8,7 @@ namespace Toshi {
 	TSysShaderHAL::TSysShaderHAL(OrderTablePriorities* priorities)
 	{
 		m_pVertexShader = TNULL;
-		m_pPixelShader = TNULL;
+		m_pPixelShaderNoTex = TNULL;
 		m_pPixelShaderTexture = TNULL;
 		m_pPixelShaderAlphaTexture = TNULL;
 		m_pInputLayout = TNULL;
@@ -44,10 +44,10 @@ namespace Toshi {
 			m_pVertexShader = TNULL;
 		}
 
-		if (m_pPixelShader)
+		if (m_pPixelShaderNoTex)
 		{
-			m_pPixelShader->Release();
-			m_pPixelShader = TNULL;
+			m_pPixelShaderNoTex->Release();
+			m_pPixelShaderNoTex = TNULL;
 		}
 
 		if (m_pPixelShaderTexture)
@@ -185,7 +185,7 @@ namespace Toshi {
 		pRender->CreatePixelShader(
 			pShader->GetBufferPointer(),
 			pShader->GetBufferSize(),
-			&m_pPixelShader
+			&m_pPixelShaderNoTex
 		);
 		pShader->Release();
 
