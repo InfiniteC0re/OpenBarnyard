@@ -19,7 +19,7 @@ constexpr uint32_t TMAKEFOUR(const char str[4])
 #define STRCAT_4(A, X, Y, Z) STRCAT(A, STRCAT_3(X, Y, Z))
 
 #define TMAKEVERSION(VER_MAJOR, VER_MINOR) ((VER_MAJOR << 16) | VER_MINOR)
-#define BITFIELD(x) (1 << x)
+#define BITFIELD(x) (1U << x)
 
 #define _TS16(x) L##x
 

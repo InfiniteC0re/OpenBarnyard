@@ -72,7 +72,7 @@ void A2GUIBackground::SetupBackground()
 			TASSERT(iTile < MAX_TILES);
 			TASSERT(TNULL == m_Poly[iTile]);
 
-			int tileWidth = (textureWidths[j] / backgroundWidth) * width;
+			int tileWidth = TSTATICCAST(int, (textureWidths[j] / backgroundWidth) * width);
 			auto& pTile = m_Poly[iTile];
 			pTile = new T2GUIPolygon;
 

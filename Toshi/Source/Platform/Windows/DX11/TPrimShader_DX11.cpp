@@ -131,7 +131,6 @@ namespace Toshi
 
 		pRender->SetZMode(true, D3D11_COMPARISON_LESS_EQUAL, depthWriteMask);
 
-		TTODO("Write our own SIMD math library or use DirectXMath?");
 		TMatrix44 worldViewProjection = pRenderContext->GetModelViewMatrix().XMM() * pRenderContext->GetProjectionMatrix().XMM();
 
 		pRender->SetVec4InVSBuffer(0, &worldViewProjection, 4);
@@ -204,8 +203,8 @@ namespace Toshi
 		ID3DBlob* pBlob;
 
 		// Vertex shader
-		pBlob = pRender->CompileShader(
-			"float4x4 matWVP : register(c0); struct VS_IN { float4 ObjPos : POSITION; float4 Color: COLOR; float2 UV: TEXCOORD; }; struct VS_OUT { float4 ProjPos: SV_POSITION; float2 UV: TEXCOORD0; float4 Color: COLOR; }; VS_OUT main( VS_IN In ) { VS_OUT Out; Out.ProjPos = mul( matWVP, In.ObjPos ); Out.Color = In.Color; Out.UV = In.UV; return Out; }",
+		pBlob = pRender->CompileShaderFromFile(
+			"Data/Shaders/Other/PrimShader.vs",
 			"main",
 			"vs_4_0_level_9_3",
 			TNULL
@@ -239,8 +238,8 @@ namespace Toshi
 		pBlob->Release();
 
 		// Pixel shader for image rendering
-		pBlob = pRender->CompileShader(
-			"uniform sampler2D texture0 : register(s0); struct VS_OUT { float4 ProjPos: SV_POSITION; float2 UV: TEXCOORD0; float4 Color: COLOR; }; float4 main( VS_OUT In ) : SV_TARGET {return tex2D(texture0, In.UV) * In.Color; }",
+		pBlob = pRender->CompileShaderFromFile(
+			"Data/Shaders/Other/PrimShader.ps",
 			"main",
 			"ps_4_0_level_9_3",
 			TNULL
@@ -249,8 +248,8 @@ namespace Toshi
 		pBlob->Release();
 
 		// Pixel shader for color rendering
-		pBlob = pRender->CompileShader(
-			"struct VS_OUT { float4 ProjPos: SV_POSITION; float2 UV: TEXCOORD0; float4 Color: COLOR; }; float4 main( VS_OUT In ) : SV_TARGET {return In.Color; }",
+		pBlob = pRender->CompileShaderFromFile(
+			"Data/Shaders/Other/PrimShaderNoTex.ps",
 			"main",
 			"ps_4_0_level_9_3",
 			TNULL

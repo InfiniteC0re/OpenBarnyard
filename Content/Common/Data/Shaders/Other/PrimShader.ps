@@ -1,0 +1,13 @@
+uniform sampler2D texture0 : register(s0);
+
+struct VS_OUT
+{
+	float4 ProjPos: SV_POSITION;
+	float2 UV: TEXCOORD0;
+	float4 Color: COLOR;
+};
+
+float4 main( VS_OUT In ) : SV_TARGET
+{
+	return tex2D(texture0, In.UV) * In.Color;
+}

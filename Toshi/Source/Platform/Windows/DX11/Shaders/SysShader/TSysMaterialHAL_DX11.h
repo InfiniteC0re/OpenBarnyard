@@ -3,21 +3,32 @@
 
 namespace Toshi {
 
+	class TOrderTable;
+
 	class TSysMaterialHAL :
 		public TGenericClassDerived<TSysMaterialHAL, TSysMaterial, "TSysMaterialHAL", TMAKEVERSION(1, 0), TFALSE>
 	{
 	public:
 		TSysMaterialHAL()
 		{
-			m_Unk = 0;
+			m_pOrderTable = TNULL;
 		}
+
+		virtual ~TSysMaterialHAL();
+
+		virtual void PreRender() override;
+		virtual void PostRender() override;
+		virtual TBOOL Create(BlendMode eBlendMode) override;
+		virtual void SetBlendMode(BlendMode eBlendMode) override;
+
+		void SetOrderTable(TOrderTable* pOrderTable);
 
 	public:
 		inline static int s_eSysMaterialLazyState = 1;
 		inline static TVector4 s_AlphaTest;
 
 	private:
-		int m_Unk;
+		TOrderTable* m_pOrderTable;
 	};
 
 }

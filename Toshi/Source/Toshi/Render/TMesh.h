@@ -58,6 +58,11 @@ namespace Toshi
 			delete this;
 		}
 
+		void SetMaterial(TMaterial* pMaterial)
+		{
+			m_pMaterial = pMaterial;
+		}
+
 		TMaterial* GetMaterial() const
 		{
 			return m_pMaterial;
@@ -79,7 +84,7 @@ namespace Toshi
 			return m_State.IsSet(State::Created);
 		}
 
-	private:
+	protected:
 		TMaterial* m_pMaterial;  // 0x04
 		TShader* m_pOwnerShader; // 0x08
 		T2Flags<State> m_State;  // 0x0C

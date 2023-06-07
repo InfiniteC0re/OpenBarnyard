@@ -6,18 +6,35 @@ namespace Toshi {
 
 	TSysMesh::TSysMesh()
 	{
-		m_Unk1 = 0;
+		m_uiFlags = 0;
 		m_uiMaxVertices = 0;
 		m_uiMaxIndices = 0;
 		m_pVertexPool = TNULL;
 		m_pIndexPool = TNULL;
 	}
 
-	TBOOL TSysMesh::Create(uint32_t unk1, uint16_t uiMaxVertices, uint16_t uiMaxIndices)
+	TBOOL TSysMesh::Validate()
+	{
+		if (!m_State.IsSet(State::Validated))
+			m_State.Set(State::Validated);
+
+		return TTRUE;
+	}
+
+	void TSysMesh::Invalidate()
+	{
+		if (m_pVertexPool != TNULL && m_pIndexPool != TNULL)
+			Deallocate();
+
+		if (m_State.IsSet(State::Validated))
+			m_State.Unset(State::Validated);
+	}
+
+	TBOOL TSysMesh::Create(FLAGS uiFlags, uint16_t uiMaxVertices, uint16_t uiMaxIndices)
 	{
 		TASSERT(TFALSE == IsCreated());
 
-		m_Unk1 = unk1;
+		m_uiFlags = uiFlags;
 		m_uiMaxVertices = uiMaxVertices;
 		m_uiMaxIndices = uiMaxIndices;
 
@@ -32,6 +49,33 @@ namespace Toshi {
 		}
 	}
 
+	TBOOL TSysMesh::Lock(TLockBuffer* pLockBuffer)
+	{
+		TASSERT(!(m_uiFlags & FLAGS_LOCKED));
+		TIMPLEMENT();
+
+		return TTRUE;
+	}
+
+	void TSysMesh::Unlock(uint16_t uiNumVertices, uint16_t uiNumIndices)
+	{
+		TASSERT(m_uiFlags & FLAGS_LOCKED);
+		TASSERT(uiNumVertices >= 3);
+		TASSERT(uiNumIndices >= 3);
+		
+		TIMPLEMENT();
+	}
+
+	TResource* TSysMesh::GetVertexPool() const
+	{
+		return m_pVertexPool;
+	}
+
+	TResource* TSysMesh::GetIndexPool() const
+	{
+		return m_pIndexPool;
+	}
+
 	TBOOL TSysMesh::Allocate()
 	{
 		TASSERT(0 != m_uiMaxVertices);
@@ -42,9 +86,29 @@ namespace Toshi {
 		auto pRender = TRender::GetSingletonWeak();
 		auto pVertices = pRender->GetSystemResource(TRender::SYSRESOURCE_VFSYSVNDUV1);
 
+		TASSERT(TFALSE, "Not used in De Blob on Windows");
 		TIMPLEMENT();
 
 		return true;
+	}
+
+	void TSysMesh::Deallocate()
+	{
+		if (m_pVertexPool != TNULL)
+		{
+			TRender::GetSingletonWeak()->DestroyResource(m_pVertexPool);
+			m_pVertexPool = TNULL;
+		}
+
+		if (m_pIndexPool != TNULL)
+		{
+			TRender::GetSingletonWeak()->DestroyResource(m_pIndexPool);
+			m_pIndexPool = TNULL;
+		}
+
+		m_uiFlags = 0;
+		m_uiMaxVertices = 0;
+		m_uiMaxIndices = 0;
 	}
 
 }
