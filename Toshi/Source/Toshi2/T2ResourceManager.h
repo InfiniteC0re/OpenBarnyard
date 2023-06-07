@@ -7,78 +7,126 @@
 
 namespace Toshi
 {
-	using t_CreateDestroyCallbk = void* (*)(void* unk, TTRB* trb, bool unk1);
-
 	class T2ResourceData;
 
-	class T2Resource
+	class T2ResourceManager :
+		public TSingleton<T2ResourceManager>
 	{
-		int m_iID;
 	public:
-		static void CreateResource(const char* resourceName, void* unk, t_CreateDestroyCallbk a_fnCreateDestroyCallbk, void* a_pData);
-		void DestroyResource();
-	};
+		using t_CreateDestroyCallbk = void* (*)(void* pCustomData, TTRB* trb, TBOOL bCreated);
 
-	class T2ResourceManager : public TSingleton<T2ResourceManager>
-	{
 	public:
 		T2ResourceManager(int a_iMaxNumResources);
 		~T2ResourceManager();
 
-		T2ResourceData& GetResourceData(int a_iID);
-		void* GetData(int a_iID);
+		int CreateResource(const char* resourceName, void* pData, t_CreateDestroyCallbk a_fnCreateDestroyCallbk, void* pCallbkData);
+		void DestroyResource(int a_iID);
+		
 		void IncRefCount(int a_iID);
 		void DecRefCount(int a_iID);
-		int CreateResource(const char* resourceName, void* unk, t_CreateDestroyCallbk a_fnCreateDestroyCallbk, void* a_pData);
-		void DestroyResource(int a_iID);
+		
 		int FindUnusedResource();
 
-		int m_iMaxNumResources;		// 0x0
-		int m_iNumUsedResources;	// 0x4
-		int m_iUnk;					// 0x8
-		T2ResourceData* m_pData;	// 0xC
+		T2ResourceData* GetResourceData(int a_iID);
+		void* GetData(int a_iID);
+
+	private:
+		int m_iMaxNumResources;
+		int m_iNumUsedResources;
+		int m_iUnk;
+		T2ResourceData* m_pData;
+	};
+
+	class T2ResourceData
+	{
+	public:
+		static constexpr int MAX_RESOURCE_NAME = 48;
+
+		friend class T2ResourceManager;
+
+	public:
+		enum FLAG : uint8_t
+		{
+			FLAG_INITIALISED = BITFIELD(0),
+			FLAG_LOADING = BITFIELD(1),
+			FLAG_DESTROYED = BITFIELD(2),
+			FLAG_USED = BITFIELD(3),
+		};
+
+		void Init(const char* a_pName, T2ResourceManager::t_CreateDestroyCallbk a_fnCreateDestroyCallbk, void* a_pCallbkData);
+		void DeInit();
+
+		void Load(const char* filepath);
+		void Unload();
+
+		void SetLoadedData(void* a_pData);
+		void* GetData();
+
+		bool HasFlag(uint8_t flag) const
+		{
+			return (m_iFlags & flag) == flag;
+		}
+
+	private:
+		void* m_pData;
+		TTRB* m_pTRB1;
+		int m_iFlags;
+		int m_iRefCount;
+		char* m_pResourceName;
+		void* m_pCreateDestroyCallbkData;
+		T2ResourceManager::t_CreateDestroyCallbk m_fnCreateDestroyCallbk;
+		TTRB* m_pTRB2;
 	};
 
 	class T2ResourcePtr
 	{
 	public:
-		static const int IDINVALID = 0;
+		static constexpr int IDINVALID = 0;
 
-		int m_count;
+	public:
+		T2ResourcePtr()
+		{
+			m_iResourceID = IDINVALID;
+		}
+
+		explicit T2ResourcePtr(int a_iID)
+		{
+			m_iResourceID = a_iID;
+			T2ResourceManager::GetSingletonWeak()->IncRefCount(m_iResourceID);
+		}
 
 		T2ResourcePtr(const T2ResourcePtr& a_resourcePtr)
 		{
-			m_count = a_resourcePtr.m_count;
-			T2ResourceManager::GetSingleton()->IncRefCount(m_count);
+			m_iResourceID = a_resourcePtr.m_iResourceID;
+			T2ResourceManager::GetSingletonWeak()->IncRefCount(m_iResourceID);
 		}
+
+		~T2ResourcePtr()
+		{
+			T2ResourceManager::GetSingletonWeak()->DecRefCount(m_iResourceID);
+		}
+
+		operator bool() const
+		{
+			return m_iResourceID != IDINVALID;
+		}
+
+	private:
+		int m_iResourceID;
 	};
 
-	// sizeof(T2ResourceData) == 0x4C!
-	class T2ResourceData
+	class T2Resource
 	{
 	public:
-		enum FLAG : uint8_t
+		void CreateResource(const char* resourceName, void* pData, T2ResourceManager::t_CreateDestroyCallbk a_fnCreateDestroyCallbk, void* pCallbkData);
+		void DestroyResource();
+
+		T2ResourcePtr GetResourcePtr() const
 		{
-			FLAG_LOADING = BITFIELD(0),
-			FLAG_INITIALISED = BITFIELD(1),
-			FLAG_DESTROYED = BITFIELD(2),
-			FLAG_USED = BITFIELD(3),
-		};
-		
-		void Init(const char* a_pName, t_CreateDestroyCallbk a_fnCreateDestroyCallbk, void* a_pData);
-		void DeInit();
-		void SetLoadedData(void* a_pData);
-		void Unload();
-		void* GetData();
-		inline bool HasFlag(uint8_t flag) { return (m_iFlags & flag) == flag; }
-	public:
-		void* m_pData;										// 0x0
-		TTRB* m_trb2;										// 0x4
-		int m_iFlags;										// 0x8
-		int m_iRefCount;									// 0xC
-		char* m_pResourceName;								// 0x10
-		void* m_unk;										// 0x40
-		t_CreateDestroyCallbk m_fnCreateDestroyCallbk;		// 0x44
-		TTRB* m_trb;										// 0x48
+			return T2ResourcePtr(m_iID);
+		}
+
+	private:
+		int m_iID = 0;
 	};
 }

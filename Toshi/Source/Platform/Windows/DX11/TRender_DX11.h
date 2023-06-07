@@ -377,6 +377,7 @@ namespace Toshi
 		void DrawNonIndexed(D3D11_PRIMITIVE_TOPOLOGY primitiveTopology, ID3D11Buffer* pVertexBuffer, UINT vertexCount, UINT strides, UINT startVertex, UINT offsets);
 		void CopyDataToTexture(ID3D11ShaderResourceView* pSRTex, UINT dataSize, void* src, UINT textureSize);
 		void SetSamplerState(UINT startSlot, int samplerId, BOOL SetForPS);
+		void WaitForEndOfRender();
 
 		// Flushes all the order tables and renders the scene
 		void FlushShaders();

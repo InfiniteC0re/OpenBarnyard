@@ -1,6 +1,87 @@
 #pragma once
+#include "TTMDBase.h"
+#include "TSkeleton.h"
+#include "TModelCollision.h"
 
-#include TOSHI_MULTIRENDER(TModel)
+#include "Toshi/File/TTRB.h"
+#include "Toshi2/T2ResourceManager.h"
+
+namespace Toshi {
+
+	class TModel : public T2Resource
+	{
+	public:
+		enum class Flags
+		{
+			None      = 0,
+			Created   = BITFIELD(0),
+			TrbLoaded = BITFIELD(1),
+		};
+
+		using t_TRBLoadCallback = TBOOL(*)(TTRB& pTRB, TModel* pModel);
+
+	public:
+		TModel();
+		~TModel();
+
+		void Create(const char* name, TBOOL bLoadImmediately);
+		void Delete();
+		void Unload();
+		
+		void SetTRB(TTRB* pTRB, TBOOL bFreeOnUnload)
+		{
+			m_pTRB = pTRB;
+			m_bFreeOnUnload = bFreeOnUnload;
+		}
+		
+		TBOOL LoadTRB();
+		TBOOL LoadTRB(TTRB* pTRB, TBOOL bFreeOnUnload);
+
+		TBOOL LoadTRBFile(const char* filepath);
+		TBOOL LoadTRBFile(TFile* pFile);
+
+		void UnloadTRB(TBOOL bFreeTrb);
+
+		TBOOL IsCreated() const
+		{
+			return m_Flags.IsSet(Flags::Created);
+		}
+
+	protected:
+		void CreateResource(const char* name);
+
+		void CreateSkeleton(TTMDBase::SkeletonHeader* pSkeletonHeader, TSkeleton* pSkeleton, TBOOL bLoadAnimations);
+		void CreateCollision(TModelCollision* pModelCollision);
+
+	public:
+		static void* ResourceCallback(void* pData, TTRB* pTRB, TBOOL flag);
+		
+		static const char* TranslateSymbolName(const char* symbolName);
+
+		static void SetTRBLoadCallback(t_TRBLoadCallback fnCallback)
+		{
+			sm_pTRBLoadCallback = fnCallback;
+		}
+
+	protected:
+		inline static const char* sm_SymbolNamePrefix = TNULL;
+		inline static t_TRBLoadCallback sm_pTRBLoadCallback;
+
+	protected:
+		T2Flags<Flags> m_Flags;        // 0x04
+		int m_iLODCount;               // 0x0C
+		TSkeleton* m_pSkeleton;        // 0x14
+		TModelCollision* m_pCollision; // 0xA0
+		TTRB* m_pTRB;                  // 0xA4
+		TBOOL m_bFreeOnUnload;         // 0xA8
+		const char* m_pResourceName;   // 0xAC
+		T2ResourcePtr m_ResourcePtr1;  // 0xB0
+		T2ResourcePtr m_ResourcePtr2;  // 0xB4
+	};
+
+	DEFINE_T2FLAGS(TModel::Flags);
+
+}
 
 /*
 #include "Toshi/File/TFile.h"

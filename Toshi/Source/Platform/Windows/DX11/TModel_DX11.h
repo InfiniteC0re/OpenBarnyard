@@ -1,32 +1,39 @@
 #pragma once
-
+#include "Toshi/Render/TModel.h"
+#include "Toshi/Render/TTMDBase.h"
 #include "Toshi2/T2ResourceManager.h"
 
 namespace Toshi
 {
-
-	struct TTMDWin
+	namespace TTMDWin
 	{
 		struct TTRBWinHeader
 		{
-			char* m_txsModelName;
-			uint32_t m_version;
-			uint32_t m_remainingBytes;
+			char* m_pTXSModelName;
+			TVersion m_ui32Version;
+			uint32_t m_ui32Size;
+			TTMDBase::SkeletonHeader* m_pSkeletonHeader;
+			TSkeleton* m_pSkeleton;
+			TModelCollision* m_pModelCollision;
 		};
 	};
 
-	class TModel
+	class TModelHAL : public TModel
 	{
-		void CreateResource(const char* a_resourceName);
-		//bool Create(const char* name, bool a_bLoadImmediately);
-	};
-
-	class TModelHAL
-	{
-		TTMDWin::TTRBWinHeader* m_tmdHeader; // 0xBC
-		char* m_txsModelName; // 0xDC
-
 	public:
-		void Create(TTMDWin::TTRBWinHeader* a_tmdHeader);
+		TBOOL Create(TTMDWin::TTRBWinHeader* pTMDHeader);
+
+	private:
+		TTMDWin::TTRBWinHeader* m_pTMDHeader; // 0xBC
+		char* m_pTXSModelName;                // 0xDC
 	};
+
+	//class TModelHAL
+	//{
+	//	TTMDWin::TTRBWinHeader* m_tmdHeader; // 0xBC
+	//	char* m_txsModelName; // 0xDC
+
+	//public:
+	//	void Create(TTMDWin::TTRBWinHeader* a_tmdHeader);
+	//};
 }

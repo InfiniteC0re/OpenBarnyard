@@ -1,7 +1,7 @@
 #pragma once
 #include "Toshi/File/TTRB.h"
 #include "Toshi/Xui/TXUI.h"
-#include "Toshi/Render/TModel.h"
+#include "Toshi/Render/TModelHAL.h"
 #include "Toshi/Render/TTexture.h"
 
 namespace Toshi
@@ -62,7 +62,7 @@ namespace Toshi
 				a_modelHal = new (g_pMemHeap) TModelHAL();
 			}
 
-			a_modelHal->Create((TTMDWin::TTRBWinHeader*)a_pData);
+			a_modelHal->Create(TSTATICCAST(TTMDWin::TTRBWinHeader*, a_pData));
 		};
 
 		// Empty ( de blob only calls a func where TASSERT("TFALSE","..\\..\\Source\\Render\\TVertexDecl_DX11.cpp",0x1f,"TASSERT"); gets called
