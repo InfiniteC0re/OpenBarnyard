@@ -8,10 +8,31 @@
 #include "Toshi2/T2ModelPtr.h"
 #include "Toshi2/T2Flags.h"
 
+class AModelLoader;
+
 namespace Toshi {
 
 	class TModel : public T2Resource
 	{
+	public:
+		static constexpr int MAX_LOD_LEVEL = 5;
+
+		class TModelLOD
+		{
+		public:
+			struct Mesh { };
+
+		public:
+
+		private:
+			int m_Unk1;
+			int m_Unk2;
+			int m_Unk3;
+			int m_Unk4;
+			int m_iMeshCount;
+			Mesh* m_pMeshes;
+		};
+
 	public:
 		enum class Flags
 		{
@@ -23,6 +44,7 @@ namespace Toshi {
 		using t_TRBLoadCallback = TBOOL(*)(TTRB& pTRB, TModel* pModel);
 
 		friend class TModelManager;
+		friend class ::AModelLoader;
 
 	public:
 		TModel();
@@ -77,15 +99,23 @@ namespace Toshi {
 		inline static t_TRBLoadCallback sm_pTRBLoadCallback;
 
 	protected:
-		T2Flags<Flags> m_Flags;         // 0x04
-		int m_iLODCount;                // 0x0C
-		TSkeleton* m_pSkeleton;         // 0x14
-		TModelCollision* m_pCollision;  // 0xA0
-		TTRB* m_pTRB;                   // 0xA4
-		TBOOL m_bFreeOnUnload;          // 0xA8
-		const char* m_pResourceName;    // 0xAC
-		T2ModelPtr m_NextModelResource; // 0xB0
-		T2ModelPtr m_PrevModelResource; // 0xB4
+		T2Flags<Flags> m_Flags;               // 0x04
+		int m_Unk1;                           // 0x08
+		int m_iLODCount;                      // 0x0C
+		float m_fUnknown;                     // 0x10
+		TSkeleton* m_pSkeleton;               // 0x14
+		TModelLOD m_LODLevels[MAX_LOD_LEVEL]; // 0x18
+		float m_fUnk2;                        // 0x90
+		float m_fUnk3;                        // 0x94
+		float m_fUnk4;                        // 0x98
+		float m_fUnk5;                        // 0x9C
+		TModelCollision* m_pCollisionData;    // 0xA0
+		TTRB* m_pTRB;                         // 0xA4
+		TBOOL m_bFreeOnUnload;                // 0xA8
+		const char* m_pResourceName;          // 0xAC
+		T2ModelPtr m_NextModelResource;       // 0xB0
+		T2ModelPtr m_PrevModelResource;       // 0xB4
+		int m_Unk6;                           // 0xBC
 	};
 
 	DEFINE_T2FLAGS(TModel::Flags);

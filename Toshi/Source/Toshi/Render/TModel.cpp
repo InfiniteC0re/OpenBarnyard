@@ -8,13 +8,20 @@ namespace Toshi {
 	TModel::TModel()
 	{
 		m_Flags = Flags::None;
+		m_Unk1 = 0;
 		m_iLODCount = 0;
+		m_fUnknown = -1.0f;
 		m_pSkeleton = TNULL;
-		m_pCollision = TNULL;
+		m_pCollisionData = TNULL;
 		m_pTRB = TNULL;
 		m_bFreeOnUnload = TTRUE;
 		m_pResourceName = "unknown";
-		TIMPLEMENT();
+		TUtil::MemClear(m_LODLevels, sizeof(m_LODLevels));
+		m_Unk6 = 0;
+		m_fUnk2 = 5.0f;
+		m_fUnk3 = 20.0f;
+		m_fUnk4 = 40.0f;
+		m_fUnk5 = 80.0f;
 	}
 
 	TModel::~TModel()
@@ -129,7 +136,7 @@ namespace Toshi {
 		}
 
 		m_Flags.Unset(Flags::TrbLoaded);
-		m_pCollision = TNULL;
+		m_pCollisionData = TNULL;
 		m_pSkeleton = TNULL;
 	}
 
@@ -160,7 +167,7 @@ namespace Toshi {
 
 	void TModel::CreateCollision(TModelCollision* pModelCollision)
 	{
-		m_pCollision = pModelCollision;
+		m_pCollisionData = pModelCollision;
 	}
 
 	void* TModel::ResourceCallback(void* pData, TTRB* pTRB, TBOOL bCreated)
@@ -174,7 +181,7 @@ namespace Toshi {
 
 			pModel->m_pTRB = pTRB;
 			pModel->m_Flags.Unset(Flags::TrbLoaded);
-			pModel->m_pCollision = TNULL;
+			pModel->m_pCollisionData = TNULL;
 			pModel->m_pSkeleton = TNULL;
 			pModel->m_bFreeOnUnload = TTRUE;
 			pModel->LoadTRB();
