@@ -10,8 +10,8 @@ namespace Toshi
 		struct TTRBWinHeader
 		{
 			char* m_pTXSModelName;
-			TVersion m_ui32Version;
-			uint32_t m_ui32Size;
+			int m_iLODCount;
+			uint32_t m_Unknown;
 			TTMDBase::SkeletonHeader* m_pSkeletonHeader;
 			TSkeleton* m_pSkeleton;
 			TModelCollision* m_pModelCollision;

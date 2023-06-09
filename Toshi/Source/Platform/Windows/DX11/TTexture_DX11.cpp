@@ -69,7 +69,7 @@ namespace Toshi
 		}
 
 		TTextureManager::GetSingletonWeak()->AddTexture(this);
-		TTODO("FUN_00693a00");
+		SelectSettings();
 	}
 
 	void TTexture::Bind(UINT startSlot)
@@ -115,6 +115,11 @@ namespace Toshi
 		TTextureManager::GetSingletonWeak()->AddTexture(pTexture);
 
 		return pTexture;
+	}
+
+	void TTexture::SelectSettings()
+	{
+		TIMPLEMENT();
 	}
 
 	TTextureManager::TTextureManager() :

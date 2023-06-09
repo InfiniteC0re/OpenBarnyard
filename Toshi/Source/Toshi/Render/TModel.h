@@ -5,6 +5,8 @@
 
 #include "Toshi/File/TTRB.h"
 #include "Toshi2/T2ResourceManager.h"
+#include "Toshi2/T2ModelPtr.h"
+#include "Toshi2/T2Flags.h"
 
 namespace Toshi {
 
@@ -19,6 +21,8 @@ namespace Toshi {
 		};
 
 		using t_TRBLoadCallback = TBOOL(*)(TTRB& pTRB, TModel* pModel);
+
+		friend class TModelManager;
 
 	public:
 		TModel();
@@ -47,6 +51,11 @@ namespace Toshi {
 			return m_Flags.IsSet(Flags::Created);
 		}
 
+		const char* GetName() const
+		{
+			return m_pResourceName;
+		}
+
 	protected:
 		void CreateResource(const char* name);
 
@@ -68,15 +77,15 @@ namespace Toshi {
 		inline static t_TRBLoadCallback sm_pTRBLoadCallback;
 
 	protected:
-		T2Flags<Flags> m_Flags;        // 0x04
-		int m_iLODCount;               // 0x0C
-		TSkeleton* m_pSkeleton;        // 0x14
-		TModelCollision* m_pCollision; // 0xA0
-		TTRB* m_pTRB;                  // 0xA4
-		TBOOL m_bFreeOnUnload;         // 0xA8
-		const char* m_pResourceName;   // 0xAC
-		T2ResourcePtr m_ResourcePtr1;  // 0xB0
-		T2ResourcePtr m_ResourcePtr2;  // 0xB4
+		T2Flags<Flags> m_Flags;         // 0x04
+		int m_iLODCount;                // 0x0C
+		TSkeleton* m_pSkeleton;         // 0x14
+		TModelCollision* m_pCollision;  // 0xA0
+		TTRB* m_pTRB;                   // 0xA4
+		TBOOL m_bFreeOnUnload;          // 0xA8
+		const char* m_pResourceName;    // 0xAC
+		T2ModelPtr m_NextModelResource; // 0xB0
+		T2ModelPtr m_PrevModelResource; // 0xB4
 	};
 
 	DEFINE_T2FLAGS(TModel::Flags);

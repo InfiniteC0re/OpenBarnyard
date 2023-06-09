@@ -1,5 +1,6 @@
 #include "ToshiPCH.h"
 #include "TModel.h"
+#include "TModelManager.h"
 #include TOSHI_MULTIRENDER(TRender)
 
 namespace Toshi {
@@ -21,9 +22,10 @@ namespace Toshi {
 		TASSERT(TNULL == m_pTRB);
 		auto pResourceManager = T2ResourceManager::GetSingletonWeak();
 
-		if (GetResourcePtr())
+		if (GetResourceId() != T2ResourcePtr::IDINVALID)
 		{
-			TTODO("TModelManager::RemoveModel");
+			auto pModelManager = TModelManager::GetSingletonWeak();
+			pModelManager->RemoveModel(GetResourceId());
 		}
 
 		DestroyResource();
@@ -135,8 +137,8 @@ namespace Toshi {
 	{
 		T2Resource::CreateResource(name, this, ResourceCallback, this);
 		
-		auto resourcePtr = GetResourcePtr();
-		TTODO("TModelManager::AddModel");
+		auto pModelManager = TModelManager::GetSingletonWeak();
+		pModelManager->AddModel(GetResourceId());
 	}
 
 	void TModel::CreateSkeleton(TTMDBase::SkeletonHeader* pSkeletonHeader, TSkeleton* pSkeleton, TBOOL bLoadAnimations)
