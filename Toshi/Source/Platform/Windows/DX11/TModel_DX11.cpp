@@ -2,28 +2,21 @@
 #include "ToshiPCH.h"
 #include "TModel_DX11.h"
 
-namespace Toshi
-{
-	/*
-	bool TModel::Create(const char* name, bool a_bLoadImmediately)
+namespace Toshi {
+	
+	TBOOL TModelHAL::Create(TTMDWin::TTRBWinHeader* pTMDHeader)
 	{
 		TASSERT(TFALSE == IsCreated());
-		m_Flags |= 1;
-		TASSERT(TFALSE == a_bLoadImmediately);
-		m_modelName = name;
-		return true;
-	}*/
-	
-	void TModelHAL::Create(TTMDWin::TTRBWinHeader* a_tmdHeader)
-	{
-		m_tmdHeader = a_tmdHeader;
-		m_txsModelName = a_tmdHeader->m_txsModelName;
-	}
 
-	void TModel::CreateResource(const char* a_resourceName)
-	{
-		//T2Resource::CreateResource(a_resourceName, this, ResourceCallback, this);
-		
+		m_pTMDHeader = pTMDHeader;
+		m_pResourceName = pTMDHeader->m_pTXSModelName;
+		CreateSkeleton(pTMDHeader->m_pSkeletonHeader, pTMDHeader->m_pSkeleton, TTRUE);
+		CreateCollision(pTMDHeader->m_pModelCollision);
+
+		m_Flags.Set(Flags::Created | Flags::TrbLoaded);
+		TTODO("Call sm_pTRBLoadCallback2");
+
+		return TTRUE;
 	}
 
 }

@@ -252,6 +252,7 @@ namespace Toshi
 		TNodeList<TRenderAdapter>* GetAdapterList() { return &m_AdapterList; }
 		TRenderParamTable* GetParamTable() const { return m_ParamTable; }
 		ASPECT_RATIO GetAspectRatio() const { return m_eAspectRatio; }
+		TKeyframeLibraryManager& GetKeyframeLibraryManager() { return m_KeyframeManager; }
 
 		void DestroyDyingResources(TResource* resources);
 		void DestroyDyingResources();

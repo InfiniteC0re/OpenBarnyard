@@ -3,27 +3,26 @@
 
 namespace Toshi
 {
-	class T2ModelPtr
+	class TModel;
+
+	class T2ModelPtr : public T2ResourcePtr
 	{
 	public:
-		T2ModelPtr(int ID) : m_ID(ID)
+		T2ModelPtr(int ID = 0) : T2ResourcePtr(ID) { }
+
+		void operator=(const T2ModelPtr& other)
 		{
-			T2ResourceManager::GetSingleton()->IncRefCount(m_ID);
+			T2ResourcePtr::operator=(other);
 		}
 
-		~T2ModelPtr()
+		TModel* GetData() const
 		{
-			T2ResourceManager::GetSingleton()->DecRefCount(m_ID);
+			return TSTATICCAST(TModel*, T2ResourcePtr::GetData());
 		}
 
-		void operator=(T2ModelPtr other)
+		TModel* operator->() const
 		{
-			T2ResourceManager::GetSingleton()->DecRefCount(m_ID);
-			m_ID = other.m_ID;
-			T2ResourceManager::GetSingleton()->IncRefCount(m_ID);
+			return GetData();
 		}
-
-	private:
-		int m_ID;
 	};
 }
