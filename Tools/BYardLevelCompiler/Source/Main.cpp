@@ -12,6 +12,7 @@
 #include "Toshi.h"
 
 #include "Toshi/File/TTRB.h"
+#include "Toshi/Render/TModelManager.h"
 #include "TRBF/TRBF.h"
 
 #include "ModelHeader.h"
@@ -24,6 +25,34 @@ using namespace Toshi;
 
 int TMain(int argc, char** argv)
 {
+	TLib::TRBF::TRBF assetPack;
+	assetPack.ReadFromFile("C:\\dev\\OpenToshi\\bin\\Debug_Windows_x86\\OpenBlob\\Data\\BlobChar\\AssetPack.trb");
+
+	auto pSect = assetPack.GetSECT();
+	auto pSymb = assetPack.GetSYMB();
+
+	struct tmod
+	{
+		char* m_pTXSModelName;
+		uint32_t m_iLODCount;
+		float m_fUnknown;
+		void* m_pSkeletonHeader;
+		void* m_pSkeleton;
+		void* m_pModelCollision;
+		int*** m_LODs;
+	};
+
+	auto pTMOD = pSymb->Find<tmod>(pSect, "tmod").get();
+
+	T2ResourceManager::CreateSingleton(100);
+	TModelManager::CreateSingleton();
+	auto pModelManager = TModelManager::GetSingleton();
+
+	T2ModelPtr foundModel;
+	pModelManager->FindModel(foundModel, "test");
+
+	return 0;
+
 	MaterialList materialList;
 	uint32_t meshCount = 0;
 

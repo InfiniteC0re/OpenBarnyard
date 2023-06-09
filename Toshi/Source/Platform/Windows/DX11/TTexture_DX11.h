@@ -45,12 +45,11 @@ namespace Toshi
 		}
 
 		void Init();
-
 		void Bind(UINT startSlot);
-
 		TTexture* InitRunTime(Info* pTextureInfo);
-
 		static TTexture* InitRunTime(DXGI_FORMAT format, UINT width, UINT height, const void* srcData);
+
+		void SelectSettings();
 
 		void SetName(const char* name)
 		{

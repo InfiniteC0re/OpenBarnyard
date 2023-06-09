@@ -1399,6 +1399,27 @@ namespace Toshi
 		}
 	}
 
+	void TRenderDX11::WaitForEndOfRender()
+	{
+		D3D11_QUERY_DESC queryDesc = { D3D11_QUERY_EVENT, 0 };
+		ID3D11Query* pQuery = NULL;
+
+		m_pDevice->CreateQuery(&queryDesc, &pQuery);
+
+		if (pQuery != NULL)
+		{
+			m_pDeviceContext->End(pQuery);
+			m_pDeviceContext->Flush();
+
+			int data = 0;
+
+			while (data == 0)
+			{
+				m_pDeviceContext->GetData(pQuery, &data, 4, 0);
+			}
+		}
+	}
+
 	void TRenderDX11::FlushShaders()
 	{
 		TASSERT(TTRUE == IsInScene());

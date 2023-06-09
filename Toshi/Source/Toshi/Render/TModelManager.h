@@ -1,45 +1,30 @@
 #pragma once
 #include "Toshi/Utils/TSingleton.h"
 #include "Toshi2/T2ModelPtr.h"
+#include "TModel.h"
 
 namespace Toshi
 {
 	class TModelManager : public TSingleton<TModelManager>
 	{
 	public:
-		TModelManager()
+		TModelManager() { }
+
+		void AddModel(T2ModelPtr model);		
+		void RemoveModel(T2ModelPtr model);
+		void FindModel(T2ModelPtr& outModel, const char* name);
+
+		T2ModelPtr GetFirstModel() const
 		{
-			// 006aefe0
-			m_Unk = TNULL;
-			T2ResourceManager::GetSingleton()->IncRefCount(0);
+			return m_HeadModel;
 		}
 
-		void AddModel(T2ModelPtr model)
+		T2ModelPtr GetNextModel(T2ModelPtr model) const
 		{
-			TIMPLEMENT();
-		}
-
-		void FindModel(const char* name)
-		{
-			TIMPLEMENT();
-		}
-
-		void GetFirstModel()
-		{
-			TIMPLEMENT();
-		}
-
-		void GetNextModel(T2ModelPtr model)
-		{
-			TIMPLEMENT();
-		}
-
-		void RemoveModel(T2ModelPtr model)
-		{
-			TIMPLEMENT();
+			return model->m_NextModelResource;
 		}
 
 	private:
-		void* m_Unk;
+		T2ModelPtr m_HeadModel;
 	};
 }
