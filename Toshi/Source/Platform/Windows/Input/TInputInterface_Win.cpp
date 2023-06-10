@@ -108,6 +108,7 @@ namespace Toshi
                     dwordProperty.diph.dwHeaderSize = sizeof(DIPROPHEADER);
                     dwordProperty.diph.dwObj = 0;
                     dwordProperty.diph.dwHow = DIPH_DEVICE;
+                    dwordProperty.dwData = TInputDXDeviceMouse::sm_ciMouseBufferSize;
                     
                     HRESULT hr = inputDevice->SetProperty(DIPROP_BUFFERSIZE, &dwordProperty.diph);
 
