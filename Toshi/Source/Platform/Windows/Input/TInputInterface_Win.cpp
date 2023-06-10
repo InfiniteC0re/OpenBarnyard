@@ -109,7 +109,7 @@ namespace Toshi
                     dwordProperty.diph.dwObj = 0;
                     dwordProperty.diph.dwHow = DIPH_DEVICE;
                     
-                    HRESULT hr = inputDevice->GetProperty(DIPROP_BUFFERSIZE, &dwordProperty.diph);
+                    HRESULT hr = inputDevice->SetProperty(DIPROP_BUFFERSIZE, &dwordProperty.diph);
 
                     if (FAILED(hr)) return false;
 
