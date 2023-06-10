@@ -78,8 +78,10 @@ namespace Toshi
 		bool m_bIsFocused;         // 0x0E
 		HMODULE m_ModuleHandle;    // 0x10
 		bool m_Flag2;              // 0x14
+	public:
 		int m_xPos;                // 0x18
 		int m_yPos;                // 0x1C
+	private:
 		bool m_Flag3;              // 0x20
 		bool m_IsPopup;            // 0x21
 		bool m_Flag5;              // 0x22

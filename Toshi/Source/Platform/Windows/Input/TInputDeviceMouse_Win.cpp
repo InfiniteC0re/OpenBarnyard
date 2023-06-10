@@ -12,6 +12,28 @@ void Toshi::TInputDXDeviceMouse::Release()
 	}
 }
 
+void Toshi::TInputDXDeviceMouse::Update()
+{
+	if (m_bUnk)
+	{
+		m_aAxis.m_iX = 0;
+		m_aAxis.m_iY = 0;
+		m_fWheelAxis = 0;
+		auto renderer = TRenderDX11::Interface();
+		if (renderer != TNULL)
+		{
+			auto params = renderer->GetCurrentDisplayParams();
+			if (params->Height == 0)
+			{
+				TTODO("2x FUN_00667490");
+			}
+			TMSWindow* window = renderer->GetMSWindow();
+			m_CursorPos.x = window->m_xPos;
+			m_CursorPos.y = window->m_yPos;
+		}
+	}
+}
+
 bool Toshi::TInputDXDeviceMouse::Initialise()
 {
 	TIMPLEMENT();
@@ -25,13 +47,11 @@ bool Toshi::TInputDXDeviceMouse::Initialise()
 	DIPROPDWORD dwordProperty{};
 	dwordProperty.diph.dwSize = sizeof(dwordProperty);
 	dwordProperty.diph.dwHeaderSize = sizeof(DIPROPHEADER);
-	dwordProperty.diph.dwObj = 8;
+	dwordProperty.diph.dwObj = DIMOFS_Z;
 	dwordProperty.diph.dwHow = DIPH_BYOFFSET;
-
+	
 	HRESULT hr = m_poDXInputDevice->GetProperty(DIPROP_GRANULARITY, &dwordProperty.diph);
-
-	TTODO("Which DIERR is 0x80070020?");
-	if (hr != 0x80070020)
+	if (hr != DIERR_OBJECTNOTFOUND)
 	{
 		m_bInitiliased = hr == DI_OK;
 		return m_bInitiliased;
@@ -114,10 +134,10 @@ int Toshi::TInputDXDeviceMouse::ProcessEvents(TGenericEmitter& emitter, float fl
 	auto input = TInputDXInterface::GetInterface();
 	TRenderDX11::DisplayParams* params;
 	TInputDXInterface::InputEvent inputEvent;
+	int unk;
 
 	for (size_t i = 0; i < dwItems; i++)
 	{
-		
 		switch (dod[i].dwOfs)
 		{
 		case DIMOFS_X: // MouseUp
@@ -130,7 +150,10 @@ int Toshi::TInputDXDeviceMouse::ProcessEvents(TGenericEmitter& emitter, float fl
 			else
 			{
 				params = renderer->GetCurrentDisplayParams();
-				TTODO("Something with displayparams");
+				if (!params->Unk5)
+				{
+					m_CursorPos.x += dod[i].dwData;
+				}
 			}
 			inputEvent = TInputDXInterface::InputEvent(this, AXIS_CURSOR, TInputDXInterface::InputEvent::EventType_MouseMotion, m_aAxis.m_iX, m_aAxis.m_iY);
 			emitter.Throw(&inputEvent);
@@ -145,15 +168,42 @@ int Toshi::TInputDXDeviceMouse::ProcessEvents(TGenericEmitter& emitter, float fl
 			else
 			{
 				params = renderer->GetCurrentDisplayParams();
-				TTODO("Something with displayparams");
+				if (!params->Unk5)
+				{
+					m_CursorPos.y += dod[i].dwData;
+				}
 			}
 			inputEvent = TInputDXInterface::InputEvent(this, AXIS_CURSOR, TInputDXInterface::InputEvent::EventType_MouseMotion, m_aAxis.m_iX, m_aAxis.m_iY);
 			emitter.Throw(&inputEvent);
-
 			break;
 		case DIMOFS_Z: // Wheel
-			inputEvent = TInputDXInterface::InputEvent(this, AXIS_WHEEL, TInputDXInterface::InputEvent::EventType_Unk, m_fWheelAxis / 120.0f);
+			m_fWheelAxis += dod[i].dwData;
+			inputEvent = TInputDXInterface::InputEvent(this, AXIS_WHEEL, TInputDXInterface::InputEvent::EventType_MouseMotion, 0.0f, m_fWheelAxis / WHEEL_DELTA);
 			emitter.Throw(&inputEvent);
+			unk = m_fWheelAxis / m_field0x80;
+			if (unk < 0)
+			{
+				inputEvent = TInputDXInterface::InputEvent(this, BUTTON_WHEEL_BACKWARD, TInputDXInterface::InputEvent::EventType_Unk);
+				emitter.Throw(&inputEvent);
+				unk++;
+				if (unk < 0)
+				{
+					int i = -unk;
+					do
+					{
+						inputEvent = TInputDXInterface::InputEvent(this, BUTTON_WHEEL_BACKWARD, TInputDXInterface::InputEvent::EventType_Repeat);
+						emitter.Throw(&inputEvent);
+						i--;
+					} while (i != 0);
+				}
+				inputEvent = TInputDXInterface::InputEvent(this, BUTTON_WHEEL_BACKWARD, TInputDXInterface::InputEvent::EventType_Unk2);
+				emitter.Throw(&inputEvent);
+			}
+			TTODO("...");
+			break;
+		case DIMOFS_BUTTON0:
+		case DIMOFS_BUTTON1:
+			TTODO("...");
 			break;
 		default:
 			break;
@@ -239,7 +289,7 @@ bool const Toshi::TInputDXDeviceMouse::BindToDIDevice(HWND a_mainWindow, LPCDIDE
 	dipdw.diph.dwHow = DIPH_DEVICE;
 	dipdw.dwData = 1;
 
-	m_poDXInputDevice->SetProperty(DIPROP_BUFFERSIZE, &dipdw.diph);
+	m_poDXInputDevice->SetProperty(DIPROP_AXISMODE, &dipdw.diph);
 
 	return true;
 }
