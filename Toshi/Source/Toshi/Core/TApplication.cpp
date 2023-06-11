@@ -20,7 +20,7 @@ namespace Toshi
 	bool TApplication::Create(const char* appName, int argc, char** argv)
 	{
 		TTODO("TGenericGlobalListener<Toshi::TApplicationExitEvent>::ConnectImpl(&this->m_ExitEventListener,this,OnApplicationExitEvent);");
-		//m_oExitEvent.Connect(this, OnApplicationExitEvent);
+		m_oExitEvent.Connect(this, OnApplicationExitEvent);
 		m_Name = appName;
 		
 		m_pDebugConsole = new TDebugConsole;

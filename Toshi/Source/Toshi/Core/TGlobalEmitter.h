@@ -1,54 +1,58 @@
 #pragma once
 #include "TDList.h"
 
-template <class T>
-class TGlobalEmitter;
+namespace Toshi {
 
-template <class T2>
-class TGenericGlobalListener
-{
-public:
-	typedef void(*EventCallback)(void*, T2*);
+	template <class T>
+	class TGenericGlobalListener : public TDList<TGenericGlobalListener<T>>::TNode
+	{
+	public:
+		using EventCallback = void(*)(void*, T*);
 
-	void ConnectImpl(void* receiver, EventCallback* callback)
+	protected:
+		TGenericGlobalListener()
+		{
+			m_pReceiver = TNULL;
+			m_fnCallback = TNULL;
+		}
+
+		void ConnectImpl(void* pReceiver, EventCallback fnCallback);
+
+	protected:
+		void* m_pReceiver;
+		EventCallback m_fnCallback;
+	};
+
+	template <class T>
+	class TGlobalEmitter
+	{
+	public:
+		// Important note: This should be TQList!
+		inline static Toshi::TDList<TGenericGlobalListener<T>> sm_oListeners;
+	};
+
+	template <class ReceiverType, class EventType>
+	class TGlobalListener : public TGenericGlobalListener<EventType>
+	{
+	public:
+		void Connect(ReceiverType* receiver, TGenericGlobalListener<EventType>::EventCallback callback)
+		{
+			TGenericGlobalListener<EventType>::ConnectImpl(receiver, callback);
+		}
+
+		void Disconnect()
+		{
+
+		}
+	};
+
+	template<class T>
+	inline void TGenericGlobalListener<T>::ConnectImpl(void* pReceiver, EventCallback fnCallback)
 	{
 		TASSERT(TNULL == m_pReceiver);
-		m_pReceiver = receiver;
-		m_pCallback = callback;
-		m_oEmitter.sm_oListeners.InsertHead(this);
+		m_pReceiver = pReceiver;
+		m_fnCallback = fnCallback;
+		TGlobalEmitter<T>::sm_oListeners.InsertHead(this);
 	}
 
-	void DisconnectImpl()
-	{
-
-	}
-
-protected:
-	TGlobalEmitter<T2> m_oEmitter; // 0x0
-	void* m_pReceiver;             // 0x8
-	EventCallback* m_pCallback;
-};
-
-template <class T, class T2>
-class TGlobalListener : public TGenericGlobalListener<T2>
-{
-public:
-
-	void Connect(T* receiver, TGenericGlobalListener<T2>::EventCallback* callback)
-	{
-		TGenericGlobalListener<T2>::ConnectImpl(receiver, callback);
-	}
-
-	void Disconnect()
-	{
-
-	}
-};
-
-template <class T>
-class TGlobalEmitter
-{
-public:
-	// Important note: This should be TQList!
-	Toshi::TDList<TGenericGlobalListener<T>> sm_oListeners;
-};
+}
