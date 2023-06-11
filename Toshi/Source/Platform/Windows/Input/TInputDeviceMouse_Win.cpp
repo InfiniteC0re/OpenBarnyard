@@ -54,7 +54,7 @@ bool Toshi::TInputDXDeviceMouse::Initialise()
 	if (hr != DIERR_OBJECTNOTFOUND)
 	{
 		m_bInitiliased = hr == DI_OK;
-		return m_bInitiliased;
+		return true;
 	}
 	m_bInitiliased = false;
 	return true;
@@ -263,7 +263,6 @@ bool const Toshi::TInputDXDeviceMouse::BindToDIDevice(HWND a_mainWindow, LPCDIDE
 	TASSERT(a_poDXInputDevice != NULL);
 
 	Release();
-
 	TIMPLEMENT_D("Weird for loop");
 
 	m_poDXInputDevice = a_poDXInputDevice;
@@ -287,11 +286,11 @@ bool const Toshi::TInputDXDeviceMouse::BindToDIDevice(HWND a_mainWindow, LPCDIDE
 	dipdw.diph.dwHeaderSize = sizeof(DIPROPHEADER);
 	dipdw.diph.dwObj = 0;
 	dipdw.diph.dwHow = DIPH_DEVICE;
-	dipdw.dwData = 1;
+	dipdw.dwData = DIPROPAXISMODE_REL;
 
-	m_poDXInputDevice->SetProperty(DIPROP_AXISMODE, &dipdw.diph);
+	hr = m_poDXInputDevice->SetProperty(DIPROP_AXISMODE, &dipdw.diph);
 
-	return true;
+	return hr == DI_OK;
 }
 
 int Toshi::TInputDXDeviceMouse::GetAxisInt(int doodad, Coord coord) const

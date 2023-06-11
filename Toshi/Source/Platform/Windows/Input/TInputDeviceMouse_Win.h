@@ -12,6 +12,11 @@ namespace Toshi
 			m_poDXInputDevice = NULL;
 		}
 
+		virtual ~TInputDXDeviceMouse()
+		{
+			Deinitialise();
+		}
+
 		virtual void Release();
 		virtual void Update();
 		virtual bool Initialise();

@@ -1,6 +1,7 @@
 #pragma once
 #include "Toshi/Core/TDebugConsole.h"
 #include "Toshi/Strings/TString8.h"
+#include "TGlobalEmitter.h"
 
 namespace Toshi
 {
@@ -12,6 +13,12 @@ namespace Toshi
 		TApplicationFlag_Destroyed	= BITFIELD(1),
 	};
 
+	// ??
+	struct TApplicationExitEvent
+	{
+
+	};
+
 	class TApplication
 	{
 	public:
@@ -21,6 +28,11 @@ namespace Toshi
 		virtual bool OnCreate(int argc, char** argv);
 		virtual bool OnUpdate(float deltaTime);
 		virtual bool OnDestroy();
+
+		static void OnApplicationExitEvent(void* app, TApplicationExitEvent*)
+		{
+			((TApplication*)app)->m_Flags |= TApplicationFlag_Destroyed;
+		}
 
 		// Returns true if success
 		bool Create(const char* appName, int argc, char** argv);
@@ -41,9 +53,10 @@ namespace Toshi
 		bool Execute();
 
 	private:
-		TString8 m_Name;                       // 0x4
-		uint32_t m_Flags;                      // 0x10
-		bool m_IsVerbose;                      // 0x14
+		TString8 m_Name;                                     // 0x4
+		uint32_t m_Flags;                                    // 0x10
+		bool m_IsVerbose;                                    // 0x14
+		TGlobalListener<TApplication, TApplicationExitEvent> m_oExitEvent; // 0x1C
 		TDebugConsole* m_pDebugConsole;
 	};
 }
