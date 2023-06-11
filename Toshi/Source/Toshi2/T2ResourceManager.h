@@ -47,10 +47,10 @@ namespace Toshi
 	public:
 		enum FLAG : uint8_t
 		{
-			FLAG_INITIALISED = BITFIELD(0),
+			FLAG_LOADED = BITFIELD(0),
 			FLAG_LOADING = BITFIELD(1),
-			FLAG_DESTROYED = BITFIELD(2),
-			FLAG_USED = BITFIELD(3),
+			FLAG_INITIALISED = BITFIELD(2),
+			FLAG_DESTROYED = BITFIELD(3),
 		};
 
 		void Init(const char* a_pName, T2ResourceManager::t_CreateDestroyCallbk a_fnCreateDestroyCallbk, void* a_pCallbkData);
@@ -67,12 +67,17 @@ namespace Toshi
 			return (m_iFlags & flag) == flag;
 		}
 
+		bool HasAnyFlag(uint8_t flag) const
+		{
+			return (m_iFlags & flag) != 0;
+		}
+
 	private:
 		void* m_pData;
 		TTRB* m_pTRB1;
 		int m_iFlags;
 		int m_iRefCount;
-		char* m_pResourceName;
+		char m_pResourceName[48];
 		void* m_pCreateDestroyCallbkData;
 		T2ResourceManager::t_CreateDestroyCallbk m_fnCreateDestroyCallbk;
 		TTRB* m_pTRB2;
