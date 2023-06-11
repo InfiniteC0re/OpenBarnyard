@@ -37,7 +37,6 @@ namespace Toshi
 	void TApplication::Destroy()
 	{
 		m_Flags |= TApplicationFlag_Destroyed;
-		OnDestroy();
 	}
 
 	bool TApplication::Execute()

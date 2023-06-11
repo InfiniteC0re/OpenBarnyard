@@ -31,7 +31,7 @@ namespace Toshi
 
 		static void OnApplicationExitEvent(void* app, TApplicationExitEvent*)
 		{
-			((TApplication*)app)->m_Flags |= TApplicationFlag_Destroyed;
+			((TApplication*)app)->Destroy();
 		}
 
 		// Returns true if success
