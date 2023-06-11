@@ -117,7 +117,7 @@ namespace Toshi
 	{
 		m_pMaterial->PreRender();
 
-		for (auto pPacket = m_pLastRenderPacket; pPacket != TNULL; pPacket = m_pLastRenderPacket->Next())
+		for (auto pPacket = m_pLastRenderPacket; pPacket != TNULL; pPacket = pPacket->Next())
 			pPacket->GetMesh()->GetOwnerShader()->Render(pPacket);
 
 		m_pLastRenderPacket = TNULL;
