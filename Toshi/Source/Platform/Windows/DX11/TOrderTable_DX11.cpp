@@ -54,9 +54,9 @@ namespace Toshi
 		{
 			m_pShader->StartFlush();
 
-			for (auto it = m_pLastRegMat; it != TNULL; it = m_pLastRegMat->GetNextUsedMaterial())
+			for (auto it = m_pLastRegMat; it != TNULL; it = it->GetNextUsedMaterial())
 			{
-				m_pLastRegMat->Render();
+				it->Render();
 			}
 
 			m_pShader->EndFlush();

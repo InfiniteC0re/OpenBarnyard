@@ -84,6 +84,11 @@ namespace Toshi
 				m_Flags1 &= ~1;
 		}
 
+		void SetSamplerId(int iSamplerId)
+		{
+			m_SamplerId = iSamplerId;
+		}
+
 	private:
 		void* m_Unk1;             // 0x00
 		const char* m_TexName;    // 0x04

@@ -15,9 +15,15 @@ public:
 	void Render(float deltaTime);
 
 private:
+	void CreateCube();
+	void CreatePlane();
+
+private:
 	Toshi::TTRB m_AssetTRB;
 	Toshi::TCameraObject m_Camera;
-	Toshi::TSysMaterial* m_pMaterial;
+	Toshi::TSysMaterial* m_pCubeMaterial;
+	Toshi::TSysMaterial* m_pPlaneMaterial;
 	Toshi::TMesh* m_pCube;
+	Toshi::TMesh* m_pPlane;
 	float m_CubeRotation = 0.0f;
 };
