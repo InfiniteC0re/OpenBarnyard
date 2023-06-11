@@ -4,14 +4,15 @@
 #include "Render/ARenderer.h"
 #include "Movie/AMoviePlayer.h"
 #include "Movie/ADX11MoviePlayer.h"
-#include "GameInterface/AFrontEndMovieState.h"
-
-#include <Toshi2/T2GUI/T2GUI.h>
-#include <Toshi2/T2GUI/T2GUIRectangle.h>
+#include "AFrontEndMovieState.h"
+#include "ATestState.h"
 #include "AAssetStreaming.h"
 #include "ALevelInformation.h"
 #include "Options/AOptions.h"
 #include "ARandom.h"
+
+#include <Toshi2/T2GUI/T2GUI.h>
+#include <Toshi2/T2GUI/T2GUIRectangle.h>
 
 using namespace Toshi;
 
@@ -56,7 +57,7 @@ void AAppInitState::OnRemoval()
     }
     else
     {
-        AGameStateController::GetSingleton()->PushState(new AFrontEndMovieState);
+        AGameStateController::GetSingleton()->PushState(new ATestState);
         TIMPLEMENT_D("The game");
     }
 }

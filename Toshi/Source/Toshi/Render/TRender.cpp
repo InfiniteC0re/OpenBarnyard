@@ -294,8 +294,8 @@ namespace Toshi
 		m_oParams.fMinZ = 1.0f;
 
 		m_eCameraMode = CameraMode_Perspective;
-		m_sProjParams.m_fNearClip = 1.0f;
-		m_sProjParams.m_fFarClip = 1000.0f;
+		m_ProjParams.m_fNearClip = 1.0f;
+		m_ProjParams.m_fFarClip = 1000.0f;
 		m_mModelViewMatrix.Identity();
 		m_mWorldViewMatrix.Identity();
 

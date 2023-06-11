@@ -14,7 +14,11 @@ namespace Toshi {
 		CreateCollision(pTMDHeader->m_pModelCollision);
 
 		m_Flags.Set(Flags::Created | Flags::TrbLoaded);
-		sm_pTRBLoadCallback2(this, pTMDHeader);
+
+		if (sm_pTRBLoadCallback2)
+		{
+			sm_pTRBLoadCallback2(this, pTMDHeader);
+		}
 
 		return TTRUE;
 	}

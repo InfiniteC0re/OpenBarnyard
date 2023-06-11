@@ -103,19 +103,22 @@ void AFrontEndMovieState::OnInsertion()
     auto pTestMaterial = pSysShader->CreateMaterial();
     pTestMaterial->Create(Toshi::TSysMaterial::BlendMode::Default);
 
-    //m_Test = new Toshi::T2GUIRectangle;
-    //m_Test->Create(200, 200);
-    //m_Test->SetTransform(0, 0, 0);
-    //m_Test->SetColour(0x00FF0000); // ARGB
-    //pRootElement->AddChildHead(sm_pLoadIconRect);
-    //pRootElement->AddChildHead(m_Test);
+    m_Test = new Toshi::T2GUIRectangle;
+    m_Test->Create(200, 200);
+    m_Test->SetTransform(0, 0, 0);
+    m_Test->SetColour(0x00FF0000); // ARGB
+    pRootElement->AddChildHead(sm_pLoadIconRect);
+    pRootElement->AddChildHead(m_Test);
 
-    //Toshi::T2GUIRectangle* pRectangle2 = new Toshi::T2GUIRectangle;
-    //pRectangle2->Create(100, 100);
-    //pRectangle2->SetTransform(0, 0, 0);
-    //pRectangle2->SetColour(0x0000FF00);
-    ////pRectangle2->SetMaterial(pGUIRenderer->CreateMaterial("loadicon.tga"));
-    //m_Test->AddChildHead(pRectangle2);
+    Toshi::T2GUIRectangle* pRectangle2 = new Toshi::T2GUIRectangle;
+    pRectangle2->Create(100, 100);
+    pRectangle2->SetTransform(0, 0, 0);
+    pRectangle2->SetColour(0x0000FF00);
+    //pRectangle2->SetMaterial(pGUIRenderer->CreateMaterial("loadicon.tga"));
+    m_Test->AddChildHead(pRectangle2);
+
+    delete pRectangle2;
+    delete m_Test;
 
     TIMPLEMENT();
     AGameState::OnInsertion();

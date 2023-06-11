@@ -240,7 +240,7 @@ namespace Toshi {
 		auto pRenderContext = TSTATICCAST(TRenderContextDX11*, pRender->GetCurrentRenderContext());
 		auto pMesh          = TSTATICCAST(TSysMeshHAL*, pRenderPacket->GetMesh());
 
-		TMatrix44 worldViewProjection = pRenderPacket->GetModelViewMatrix() * pRenderContext->GetProjectionMatrix();
+		TMatrix44 worldViewProjection = pRenderPacket->GetModelViewMatrix().XMM() * pRenderContext->GetProjectionMatrix().XMM();
 		pRender->SetVec4InVSBuffer(0, &worldViewProjection, 4);
 		pRender->SetVec4InPSBuffer(0, &TSysMaterialHAL::s_AlphaTest, 1);
 

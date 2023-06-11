@@ -293,8 +293,8 @@ namespace Toshi
 
 		if (s_QualityLevel == 1)
 		{
-			UINT width = m_DisplayParams.Width / 2;
-			UINT height = m_DisplayParams.Height / 2;
+			UINT width = m_DisplayParams.Width;
+			UINT height = m_DisplayParams.Height;
 
 			if (width > 1920)
 			{

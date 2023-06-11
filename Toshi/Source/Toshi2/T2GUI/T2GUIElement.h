@@ -102,7 +102,7 @@ namespace Toshi
 			m_Children.PushFront(pElement);
 		}
 
-		void SetTransform(float x, float y, float angle)
+		void SetTransform(float x, float y, float angle = 90.0f / 180.0f * TMath::PI)
 		{
 			m_Transform.Reset();
 			m_Transform.GetPos().x = 0;
