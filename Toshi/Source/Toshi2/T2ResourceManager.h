@@ -5,9 +5,14 @@
 
 #include <cstdint>
 
+#ifdef FindResource
+#undef FindResource
+#endif
+
 namespace Toshi
 {
 	class T2ResourceData;
+	class T2ResourcePtr;
 
 	class T2ResourceManager :
 		public TSingleton<T2ResourceManager>
@@ -22,9 +27,12 @@ namespace Toshi
 		int CreateResource(const char* resourceName, void* pData, t_CreateDestroyCallbk a_fnCreateDestroyCallbk, void* pCallbkData);
 		void DestroyResource(int a_iID);
 		
+		TBOOL ReloadResource(const char* pName, const char* pFilepath);
+
 		void IncRefCount(int a_iID);
 		void DecRefCount(int a_iID);
 		
+		T2ResourcePtr FindResource(int& iOutResource, const char* pName);
 		int FindUnusedResource();
 
 		T2ResourceData* GetResourceData(int a_iID);
@@ -61,6 +69,11 @@ namespace Toshi
 
 		void SetLoadedData(void* a_pData);
 		void* GetData();
+
+		const char* GetName() const
+		{
+			return m_pResourceName;
+		}
 
 		bool HasFlag(uint8_t flag) const
 		{

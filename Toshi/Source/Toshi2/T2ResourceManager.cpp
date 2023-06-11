@@ -262,6 +262,49 @@ namespace Toshi
 		}
 	}
 
+	TBOOL T2ResourceManager::ReloadResource(const char* pName, const char* pFilepath)
+	{
+		int iID;
+		FindResource(iID, pName);
+
+		if (iID != T2ResourcePtr::IDINVALID)
+		{
+			TASSERT(iID >= 0);
+			TASSERT(iID < m_iMaxNumResources);
+
+			m_pData[iID].Unload();
+			m_pData[iID].Load(pFilepath);
+			return TTRUE;
+		}
+
+		return TFALSE;
+	}
+
+	T2ResourcePtr T2ResourceManager::FindResource(int& iOutResource, const char* pName)
+	{
+		TASSERT(T2String8::IsLowerCase(pName));
+
+		T2ResourceData* pResData = m_pData;
+		
+		while (!pResData->HasAnyFlag(T2ResourceData::FLAG_INITIALISED) ||
+			   TStringManager::String8CompareNoCase(pResData->GetName(), pName) != 0)
+		{
+			if (pResData >= m_pData + m_iMaxNumResources)
+			{
+				iOutResource = 0;
+				return T2ResourcePtr(0);
+			}
+		}
+
+		int iID = pResData - m_pData;
+
+		TASSERT(iID >= 0);
+		TASSERT(iID < m_iMaxNumResources);
+
+		iOutResource = iID;
+		return T2ResourcePtr(iID);
+	}
+
 	int T2ResourceManager::FindUnusedResource()
 	{
 		TASSERT(m_iNumUsedResources < m_iMaxNumResources);
