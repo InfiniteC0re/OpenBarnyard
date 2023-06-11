@@ -12,7 +12,7 @@ public:
 
 	void ConnectImpl(void* receiver, EventCallback* callback)
 	{
-		TASSERT(TNULL == receiver);
+		TASSERT(TNULL == m_pReceiver);
 		m_pReceiver = receiver;
 		m_pCallback = callback;
 		m_oEmitter.sm_oListeners.InsertHead(this);
