@@ -23,8 +23,6 @@ public:
 
 	}
 
-	//template<class T, class T2> friend class TGlobalListener;
-
 protected:
 	TGlobalEmitter<T2> m_oEmitter; // 0x0
 	void* m_pReceiver;             // 0x8
