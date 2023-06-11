@@ -81,6 +81,7 @@ namespace Toshi
         TInputDXDeviceMouse* inputMouse;
         TInputDXDeviceController* inputController;
         HRESULT hr;
+        bool addMouse = false;
 
 
         switch (GET_DIDEVICE_TYPE(a_poDeviceInstance->dwDevType))
@@ -98,15 +99,29 @@ namespace Toshi
             if (inputMouse == TNULL)
             {
                 inputMouse = new TInputDXDeviceMouse();
+                addMouse = true;
                 bool res = inputMouse->BindToDIDevice(inputInterface->GetMainWindow(), a_poDeviceInstance, inputDevice, inputInterface->m_bExclusive);
-
                 if (res)
                 {
-                    inputMouse->Initialise();
-                    inputMouse->Acquire();
-                    inputInterface->AddDevice(inputMouse);
+                    DIPROPDWORD dwordProperty{};
+                    dwordProperty.diph.dwSize = sizeof(DIPROPDWORD);
+                    dwordProperty.diph.dwHeaderSize = sizeof(DIPROPHEADER);
+                    dwordProperty.diph.dwObj = 0;
+                    dwordProperty.diph.dwHow = DIPH_DEVICE;
+                    dwordProperty.dwData = TInputDXDeviceMouse::sm_ciMouseBufferSize;
+                    
+                    HRESULT hr = inputDevice->SetProperty(DIPROP_BUFFERSIZE, &dwordProperty.diph);
+
+                    if (FAILED(hr)) return false;
+
+                    if (addMouse)
+                    {
+                        inputMouse->Initialise();
+                        inputMouse->Acquire();
+                        inputInterface->AddDevice(inputMouse);
+                    }
                 }
-                else
+                if (!addMouse)
                 {
                     inputInterface->RemoveDevice(inputMouse);
                 }

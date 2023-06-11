@@ -12,7 +12,13 @@ namespace Toshi
 			m_poDXInputDevice = NULL;
 		}
 
+		virtual ~TInputDXDeviceMouse()
+		{
+			Deinitialise();
+		}
+
 		virtual void Release();
+		virtual void Update();
 		virtual bool Initialise();
 		virtual bool Deinitialise();
 		virtual bool Acquire();
@@ -53,11 +59,13 @@ namespace Toshi
 		IDirectInputDevice8* m_poDXInputDevice;
 		DIDEVCAPS m_DIDevCaps;
 		POINT m_CursorPos;
-		bool m_bInitiliased;
+		bool m_bInitiliased; // 0x80
 		DWORD m_dwButtonCurrent;
 		DWORD m_dwButtonPrevious;
 		int m_field0x40;
 		Axis m_aAxis;
-		float m_fWheelAxis; // very unsure
+		float m_fWheelAxis; // 0x60 very unsure
+		int m_field0x80;
+		bool m_bUnk; // 0x35
 	};
 }

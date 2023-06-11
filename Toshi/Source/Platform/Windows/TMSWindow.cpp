@@ -142,7 +142,7 @@ namespace Toshi
 		{
 			bLockCursor = true;
 
-			if (pDisplayParams->Unk5 != false)
+			if (pDisplayParams->Unk5)
 			{
 				bLockCursor = false;
 			}
@@ -226,6 +226,7 @@ namespace Toshi
 			}
 			else
 			{
+				// Mouse Left the Screen
 				if (uMsg != WM_MOUSELEAVE) return DefWindowProcA(hWnd, uMsg, wParam, lParam);
 				window->m_Flag2 = false;
 				window->m_Flag3 = false;
@@ -292,7 +293,7 @@ namespace Toshi
 			}
 			break;
 		case WM_ACTIVATE:
-			if (LOWORD(wParam) == WA_ACTIVE || LOWORD(wParam) == WA_CLICKACTIVE)
+			if (wParam == WA_ACTIVE || wParam == WA_CLICKACTIVE)
 			{
 				if (!ms_bIsFocused)
 				{
@@ -309,6 +310,7 @@ namespace Toshi
 				if (pRenderer->m_SwapChain != TNULL && ms_bIsFullscreen)
 				{
 					Toshi::TUtil::Log("#####  Restore fullscreen");
+					ms_bIsFullscreen = TFALSE;
 					pRenderer->m_SwapChain->SetFullscreenState(TTRUE, TNULL);
 					return DefWindowProcA(hWnd, uMsg, wParam, lParam);;
 				}
