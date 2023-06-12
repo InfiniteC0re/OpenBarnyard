@@ -12,8 +12,12 @@ class ACamera :
 	{
 		Toshi::TMatrix44 m_mMatrix;
 		Toshi::TMatrix44 m_mShakeMatrix;
-		Toshi::TVector3 m_vUnk;
-		Toshi::TVector3 m_vUnk2;
+		float m_fNear;
+		float m_fFar;
+		float m_fFOV;
+		float m_fAspect;
+		float m_fProjectionCentreX;
+		float m_fProjectionCentreY;
 	};
 
 	enum CameraType
@@ -23,16 +27,20 @@ class ACamera :
 
 	ACamera(CameraType a_eCamType) : m_eCamType(a_eCamType)
 	{
-		InitCameraMatrix(m_Matrix);
+		ResetCameraMatrix(&m_Matrix);
 		TASSERT(a_eCamType >= 0 && a_eCamType < CT_TYPECOUNT);
 	}
 
-	static void InitCameraMatrix(CameraMatrix camMat)
+	static void ResetCameraMatrix(CameraMatrix* camMat)
 	{
-		camMat.m_mMatrix.Identity();
-		camMat.m_mShakeMatrix.Identity();
-		camMat.m_vUnk = { 5.0f, 500.0f, sm_fDefaultFOV };
-		camMat.m_vUnk2 = { Toshi::TMath::Tan(sm_fDefaultFOV * 0.5f), 0.5f, 0.f};
+		camMat->m_mMatrix.Identity();
+		camMat->m_mShakeMatrix.Identity();
+		camMat->m_fNear = 5.0f;
+		camMat->m_fFar = 500.0f;
+		camMat->m_fFOV = sm_fDefaultFOV;
+		camMat->m_fAspect = Toshi::TMath::Tan(sm_fDefaultFOV * 0.5f);
+		camMat->m_fProjectionCentreX = 0.5f;
+		camMat->m_fProjectionCentreY = 0.0f;
 	}
 
 	void SetMatrix(const Toshi::TMatrix44& a_mMatrix)
@@ -50,6 +58,11 @@ class ACamera :
 	void LookAtDirection(const Toshi::TVector4& a_vDirection)
 	{
 		m_Matrix.m_mMatrix.LookAtDirection(a_vDirection, sm_vWorldUp);
+	}
+
+	void LookAtDirection(const Toshi::TVector4& a_vDirection, const Toshi::TVector4& a_vVec2)
+	{
+		m_Matrix.m_mMatrix.LookAtDirection(a_vDirection, a_vVec2);
 	}
 
 	CameraType m_eCamType;             // 0x8
