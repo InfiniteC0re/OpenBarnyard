@@ -56,4 +56,37 @@ namespace Toshi
 		pShader->m_pNextShader = TNULL;
 	}
 
+	void TShader::TShaderList::RemoveShader(TShader* pShader)
+	{
+		TShader* pCurrShader = m_pRoot;
+		TShader* pPrevShader = TNULL;
+		TBOOL bFound = TFALSE;
+
+		while (pCurrShader)
+		{
+			if (pCurrShader == pShader)
+			{
+				bFound = TTRUE;
+				break;
+			}
+
+			pPrevShader = pCurrShader;
+			pCurrShader = pCurrShader->m_pNextShader;
+		}
+
+		if (bFound)
+		{
+			if (pPrevShader)
+			{
+				TASSERT(m_pRoot != pShader);
+				pPrevShader->m_pNextShader = pShader->m_pNextShader;
+			}
+			else
+			{
+				TASSERT(m_pRoot == pShader);
+				m_pRoot = pShader->m_pNextShader;
+			}
+		}
+	}
+
 }

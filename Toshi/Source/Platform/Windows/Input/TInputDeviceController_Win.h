@@ -7,17 +7,18 @@ namespace Toshi
 	class TInputDXDeviceController : public TInputDeviceController
 	{
 	public:
+		virtual TBOOL Initialise() { return TTRUE; }
 
-		virtual bool Initialise() { return true; }
-
-		static bool IsDirectInputController(LPCDIDEVICEINSTANCE a_poDeviceInstance);
-		bool const BindToDIDevice(HWND a_mainWindow, LPCDIDEVICEINSTANCE a_poDeviceInstance, IDirectInputDevice8* a_poDXInputDevice);
+		static TBOOL IsDirectInputController(LPCDIDEVICEINSTANCE a_poDeviceInstance);
+		TBOOL const BindToDIDevice(HWND a_mainWindow, LPCDIDEVICEINSTANCE a_poDeviceInstance, IDirectInputDevice8* a_poDXInputDevice);
+		
 		static int CALLBACK EnumerateObjectCallback(LPCDIDEVICEOBJECTINSTANCE a_poDeviceInstance, LPVOID a_pData)
 		{
 			return 1;
 		}
 
-		bool m_isXInput;
+	private:
+		TBOOL m_bIsXInput;
 		IDirectInputDevice8* m_pDXInputDevice;
 		DIDEVCAPS m_pDXDiDevCaps;
 	};
