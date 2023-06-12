@@ -5,6 +5,7 @@
 #include "A2GUI/A2GUIRenderer_DX11.h"
 #include "GameInterface/AFrontEndMovieState.h"
 #include "AXYZViewportManager.h"
+#include "ATestModel.h"
 
 #include <Platform/Windows/DX11/TRender_DX11.h>
 #include <Platform/Windows/DX11/TRenderContext_DX11.h>
@@ -257,6 +258,14 @@ void ARenderer::RenderMainScene(float deltaTime, Toshi::TViewport* pViewport, vo
 
 	pViewport->AllowBackgroundClear(allowBackgroundClear);
 	pViewport->Begin();
+
+	auto pTestModel = ATestModel::GetSingletonWeak();
+	
+	if (pTestModel)
+	{
+		pTestModel->Render(deltaTime);
+	}
+
 	// ...
 	pRender->m_pGlow->Render(pRender->m_SRView2, TNULL);
 	mainSceneCb(deltaTime, pCameraObject);

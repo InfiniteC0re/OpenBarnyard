@@ -20,6 +20,14 @@ namespace Toshi
 				m_pPrev = this;
 			}
 
+			~Node()
+			{
+				m_pNext->m_pPrev = m_pPrev;
+				m_pPrev->m_pNext = m_pNext;
+				m_pNext = this;
+				m_pPrev = this;
+			}
+
 			bool IsLinked() const
 			{
 				return m_pNext != this;
@@ -183,9 +191,9 @@ namespace Toshi
 
 		void DeleteAll()
 		{
-			for (auto it = Begin(); it != End(); it++)
+			while (Begin() != End())
 			{
-				Delete(it);
+				Delete(Begin());
 			}
 		}
 

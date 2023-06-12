@@ -6,43 +6,35 @@ namespace Toshi
 {
     void TRenderContextDX11::ComputePerspectiveProjection()
     {
-        TASSERT(m_sProjParams.m_Proj.x != 0.0f);
-        TASSERT(m_sProjParams.m_Proj.y != 0.0f);
-        TASSERT(m_oParams.fWidth != 0.0f);
-        TASSERT(m_oParams.fHeight != 0.0f);
+        //m_Projection = DirectX::XMMatrixPerspectiveFovLH(90, 16.0f / 9.0f, 0.1f, 100.0f);
+        float Zf;
+        float Zn;
 
-        TASSERT(TMath::IsFinite(m_sProjParams.m_Proj.x) && (!TMath::IsNaN(m_sProjParams.m_Proj.x)));
-        TASSERT(TMath::IsFinite(m_sProjParams.m_Proj.y) && (!TMath::IsNaN(m_sProjParams.m_Proj.y)));
-        TASSERT(TMath::IsFinite(m_sProjParams.m_Centre.x) && (!TMath::IsNaN(m_sProjParams.m_Centre.x)));
-        TASSERT(TMath::IsFinite(m_sProjParams.m_Centre.y) && (!TMath::IsNaN(m_sProjParams.m_Centre.y)));
-
-        float v1; // xmm0_4
-        float v2; // xmm0_4
-        float v3; // xmm0_4
-        float v4; // xmm0_4
-        float v5; // xmm2_4
-
-        v1 = (m_sProjParams.m_Proj.x * 2.0f) / m_oParams.fWidth;
-        m_Projection.e = 0.0f;
-        m_Projection.a = v1;
-        v2 = (m_sProjParams.m_Centre.x * 2.0f) / m_oParams.fWidth;
-        m_Projection.m = 0.0f;
-        m_Projection.b = 0.0f;
-        m_Projection.i = v2 - 1.0f;
-        m_Projection.f = -((m_sProjParams.m_Proj.y * 2.0f) / m_oParams.fHeight);
-        v3 = (m_sProjParams.m_Centre.y * 2.0f) / m_oParams.fHeight;
-        m_Projection.n = 0.0f;
-        m_Projection.c = 0.0f;
-        m_Projection.g = 0.0f;
-        m_Projection.j = -(v3 - 1.0f);
-        m_Projection.k = m_sProjParams.m_fFarClip / (m_sProjParams.m_fFarClip - m_sProjParams.m_fNearClip);
-        v4 = m_sProjParams.m_fNearClip;
-        v5 = m_sProjParams.m_fFarClip;
-        m_Projection.d = 0.0f;
-        m_Projection.h = 0.0f;
-        m_Projection.l = 1.0f;
-        m_Projection.p = 0.0f;
-        m_Projection.o = -((v4 * v5) / (v5 - v4));
+        Zn = m_ProjParams.m_Proj.x;
+        Zf = m_oParams.fWidth;
+        m_Projection.e = 0.0;
+        m_Projection.a = (Zn * 2.0) / Zf;
+        Zn = m_ProjParams.m_Centre.x;
+        Zf = m_oParams.fWidth;
+        m_Projection.m = 0.0;
+        m_Projection.b = 0.0;
+        m_Projection.i = (Zn * 2.0) / Zf - 1.0;
+        m_Projection.f = -(m_ProjParams.m_Proj.y * 2.0 / m_oParams.fHeight);
+        Zn = m_ProjParams.m_Centre.y;
+        Zf = m_oParams.fHeight;
+        m_Projection.n = 0.0;
+        m_Projection.c = 0.0;
+        m_Projection.g = 0.0;
+        m_Projection.j = -((Zn * 2.0) / Zf - 1.0);
+        Zn = m_ProjParams.m_fFarClip;
+        m_Projection.k = Zn / (Zn - m_ProjParams.m_fNearClip);
+        Zn = m_ProjParams.m_fNearClip;
+        Zf = m_ProjParams.m_fFarClip;
+        m_Projection.d = 0.0;
+        m_Projection.h = 0.0;
+        m_Projection.l = 1.0;
+        m_Projection.p = 0.0;
+        m_Projection.o = -((Zn * Zf) / (Zf - Zn));
     }
 
     void TRenderContextDX11::ComputePerspectiveFrustum()
@@ -52,16 +44,15 @@ namespace Toshi
 
     void TRenderContextDX11::ComputeOrthographicProjection()
     {
-        TASSERT(m_sProjParams.m_Proj.x != 0.0f);
-        TASSERT(m_sProjParams.m_Proj.y != 0.0f);
+        TASSERT(m_ProjParams.m_Proj.x != 0.0f);
+        TASSERT(m_ProjParams.m_Proj.y != 0.0f);
         TASSERT(m_oParams.fWidth != 0.0f);
         TASSERT(m_oParams.fHeight != 0.0f);
 
-        TASSERT(TMath::IsFinite(m_sProjParams.m_Proj.x) && (!TMath::IsNaN(m_sProjParams.m_Proj.x)));
-        TASSERT(TMath::IsFinite(m_sProjParams.m_Proj.y) && (!TMath::IsNaN(m_sProjParams.m_Proj.y)));
-        TASSERT(TMath::IsFinite(m_sProjParams.m_Centre.x) && (!TMath::IsNaN(m_sProjParams.m_Centre.x)));
-        TASSERT(TMath::IsFinite(m_sProjParams.m_Centre.y) && (!TMath::IsNaN(m_sProjParams.m_Centre.y)));
-
+        TASSERT(TMath::IsFinite(m_ProjParams.m_Proj.x) && (!TMath::IsNaN(m_ProjParams.m_Proj.x)));
+        TASSERT(TMath::IsFinite(m_ProjParams.m_Proj.y) && (!TMath::IsNaN(m_ProjParams.m_Proj.y)));
+        TASSERT(TMath::IsFinite(m_ProjParams.m_Centre.x) && (!TMath::IsNaN(m_ProjParams.m_Centre.x)));
+        TASSERT(TMath::IsFinite(m_ProjParams.m_Centre.y) && (!TMath::IsNaN(m_ProjParams.m_Centre.y)));
 
         float v2; // xmm0_4
         float v3; // xmm0_4
@@ -70,23 +61,23 @@ namespace Toshi
         float v6; // xmm1_4
         float v7; // xmm0_4
 
-        v2 = (m_sProjParams.m_Proj.x * 2.0f) / m_oParams.fWidth;
+        v2 = (m_ProjParams.m_Proj.x * 2.0f) / m_oParams.fWidth;
         m_Projection.e = 0.0f;
         m_Projection.i = 0.0f;
         m_Projection.a = v2;
-        v3 = (m_sProjParams.m_Centre.x * 2.0f) / m_oParams.fWidth;
+        v3 = (m_ProjParams.m_Centre.x * 2.0f) / m_oParams.fWidth;
         m_Projection.b = 0.0f;
         m_Projection.m = v3 - 1.0f;
-        v4 = (m_sProjParams.m_Proj.y * 2.0f) / m_oParams.fHeight;
+        v4 = (m_ProjParams.m_Proj.y * 2.0f) / m_oParams.fHeight;
         m_Projection.j = 0.0f;
         m_Projection.f = -v4;
-        v5 = (m_sProjParams.m_Centre.y * 2.0f) / m_oParams.fHeight;
+        v5 = (m_ProjParams.m_Centre.y * 2.0f) / m_oParams.fHeight;
         m_Projection.c = 0.0f;
         m_Projection.g = 0.0f;
         m_Projection.n = -(v5 - 1.0f);
-        m_Projection.k = 1.0f / (m_sProjParams.m_fFarClip - m_sProjParams.m_fNearClip);
-        v6 = m_sProjParams.m_fNearClip;
-        v7 = m_sProjParams.m_fFarClip - v6;
+        m_Projection.k = 1.0f / (m_ProjParams.m_fFarClip - m_ProjParams.m_fNearClip);
+        v6 = m_ProjParams.m_fNearClip;
+        v7 = m_ProjParams.m_fFarClip - v6;
         m_Projection.d = 0.0f;
         m_Projection.h = 0.0f;
         m_Projection.l = 0.0f;
@@ -96,15 +87,15 @@ namespace Toshi
 
     void TRenderContextDX11::ComputeOrthographicFrustum()
     {
-        TASSERT(m_sProjParams.m_Proj.x != 0.0f);
-        TASSERT(m_sProjParams.m_Proj.y != 0.0f);
+        TASSERT(m_ProjParams.m_Proj.x != 0.0f);
+        TASSERT(m_ProjParams.m_Proj.y != 0.0f);
         TASSERT(m_oParams.fWidth != 0.0f);
         TASSERT(m_oParams.fHeight != 0.0f);
 
-        TASSERT(TMath::IsFinite(m_sProjParams.m_Proj.x) && (!TMath::IsNaN(m_sProjParams.m_Proj.x)));
-        TASSERT(TMath::IsFinite(m_sProjParams.m_Proj.y) && (!TMath::IsNaN(m_sProjParams.m_Proj.y)));
-        TASSERT(TMath::IsFinite(m_sProjParams.m_Centre.x) && (!TMath::IsNaN(m_sProjParams.m_Centre.x)));
-        TASSERT(TMath::IsFinite(m_sProjParams.m_Centre.y) && (!TMath::IsNaN(m_sProjParams.m_Centre.y)));
+        TASSERT(TMath::IsFinite(m_ProjParams.m_Proj.x) && (!TMath::IsNaN(m_ProjParams.m_Proj.x)));
+        TASSERT(TMath::IsFinite(m_ProjParams.m_Proj.y) && (!TMath::IsNaN(m_ProjParams.m_Proj.y)));
+        TASSERT(TMath::IsFinite(m_ProjParams.m_Centre.x) && (!TMath::IsNaN(m_ProjParams.m_Centre.x)));
+        TASSERT(TMath::IsFinite(m_ProjParams.m_Centre.y) && (!TMath::IsNaN(m_ProjParams.m_Centre.y)));
 
 
 

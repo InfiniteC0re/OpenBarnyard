@@ -54,9 +54,9 @@ namespace Toshi
 		{
 			m_pShader->StartFlush();
 
-			for (auto it = m_pLastRegMat; it != TNULL; it = m_pLastRegMat->Next())
+			for (auto it = m_pLastRegMat; it != TNULL; it = it->GetNextUsedMaterial())
 			{
-				m_pLastRegMat->Render();
+				it->Render();
 			}
 
 			m_pShader->EndFlush();
@@ -117,23 +117,25 @@ namespace Toshi
 	{
 		m_pMaterial->PreRender();
 
-		for (auto pPacket = m_pRenderPacket; pPacket != TNULL; pPacket = m_pRenderPacket->Next())
+		for (auto pPacket = m_pLastRenderPacket; pPacket != TNULL; pPacket = pPacket->Next())
 			pPacket->GetMesh()->GetOwnerShader()->Render(pPacket);
 
-		m_pRenderPacket = TNULL;
+		m_pLastRenderPacket = TNULL;
 		SetFlags(m_State & ~State_Used);
 		m_pMaterial->PostRender();
 	}
 
 	TRenderPacket* TRegMaterial::AddRenderPacket(TMesh* pMesh)
 	{
-		m_pRenderPacket = TOrderTable::AllocRenderPacket();
-		m_pRenderPacket->SetNext(m_pRenderPacket);
+		auto pPreviousPacket = m_pLastRenderPacket;
+
+		m_pLastRenderPacket = TOrderTable::AllocRenderPacket();
+		m_pLastRenderPacket->SetNext(pPreviousPacket);
 
 		m_pOrderTable->UseMaterial(this);
-		m_pRenderPacket->SetMesh(pMesh);
-		m_pRenderPacket->SetMaterial(pMesh->GetMaterial());
+		m_pLastRenderPacket->SetMesh(pMesh);
+		m_pLastRenderPacket->SetMaterial(pMesh->GetMaterial());
 
-		return m_pRenderPacket;
+		return m_pLastRenderPacket;
 	}
 }

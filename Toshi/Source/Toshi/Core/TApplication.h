@@ -31,7 +31,7 @@ namespace Toshi
 
 		static void OnApplicationExitEvent(void* app, TApplicationExitEvent*)
 		{
-			((TApplication*)app)->m_Flags |= TApplicationFlag_Destroyed;
+			((TApplication*)app)->Destroy();
 		}
 
 		// Returns true if success
@@ -53,9 +53,9 @@ namespace Toshi
 		bool Execute();
 
 	private:
-		TString8 m_Name;                                     // 0x4
-		uint32_t m_Flags;                                    // 0x10
-		bool m_IsVerbose;                                    // 0x14
+		TString8 m_Name;                                                   // 0x4
+		uint32_t m_Flags;                                                  // 0x10
+		bool m_IsVerbose;                                                  // 0x14
 		TGlobalListener<TApplication, TApplicationExitEvent> m_oExitEvent; // 0x1C
 		TDebugConsole* m_pDebugConsole;
 	};

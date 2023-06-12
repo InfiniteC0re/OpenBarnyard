@@ -21,7 +21,7 @@ namespace Toshi
 
 	T2GUIElement::~T2GUIElement()
 	{
-		m_Children.DeleteAll();
+		TASSERT(!m_Children.IsLinked());
 	}
 
 	void T2GUIElement::Tick(float deltaTime)

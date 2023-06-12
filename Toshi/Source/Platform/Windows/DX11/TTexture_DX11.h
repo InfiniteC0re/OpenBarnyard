@@ -76,6 +76,19 @@ namespace Toshi
 			return m_Flags1;
 		}
 
+		void SetAlphaEnabled(TBOOL bEnabled)
+		{
+			if (bEnabled)
+				m_Flags1 |= 1;
+			else
+				m_Flags1 &= ~1;
+		}
+
+		void SetSamplerId(int iSamplerId)
+		{
+			m_SamplerId = iSamplerId;
+		}
+
 	private:
 		void* m_Unk1;             // 0x00
 		const char* m_TexName;    // 0x04

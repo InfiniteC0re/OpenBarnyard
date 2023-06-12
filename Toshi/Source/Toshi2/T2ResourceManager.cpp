@@ -26,7 +26,7 @@ namespace Toshi
 	void T2ResourceData::DeInit()
 	{
 		TASSERT(HasFlag(FLAG_INITIALISED));
-		m_iFlags &= ~FLAG_DESTROYED;
+		m_iFlags &= ~FLAG_INITIALISED;
 		
 		Unload();
 		TASSERT(m_pData == TNULL);
@@ -36,11 +36,13 @@ namespace Toshi
 
 		if (m_iRefCount == 0)
 		{
+			// Resource is not used by anything, so clear it's name
 			m_pResourceName[0] = '\0';
 		}
 		else
 		{
-			m_iFlags |= FLAG_USED;
+			// Set the resource to be destroyed but don't clear the name since it's still used by something
+			m_iFlags |= FLAG_DESTROYED;
 		}
 	}
 
@@ -48,13 +50,13 @@ namespace Toshi
 	{
 		Unload();
 		m_pData = a_pData;
-		m_iFlags |= FLAG_LOADING;
-		m_iFlags &= ~FLAG_INITIALISED;
+		m_iFlags |= FLAG_LOADED;
+		m_iFlags &= ~FLAG_LOADING;
 	}
 
 	void T2ResourceData::Load(const char* filepath)
 	{
-		if (m_iFlags & FLAG_INITIALISED || m_iFlags & FLAG_LOADING)
+		if (HASFLAG(m_iFlags & (FLAG_LOADED | FLAG_LOADING)))
 			return;
 
 		m_pTRB2 = new TTRB;
@@ -67,7 +69,7 @@ namespace Toshi
 			
 			if (m_pData != TNULL)
 			{
-				m_iFlags |= FLAG_INITIALISED;
+				m_iFlags |= FLAG_LOADED;
 				m_iFlags &= ~FLAG_LOADING;
 				return;
 			}
@@ -80,9 +82,9 @@ namespace Toshi
 
 	void T2ResourceData::Unload()
 	{
-		if (HASFLAG(m_iFlags & FLAG_LOADING))
+		if (HASFLAG(m_iFlags & FLAG_LOADED))
 		{
-			m_iFlags &= ~(FLAG_LOADING | FLAG_INITIALISED);
+			m_iFlags &= ~(FLAG_LOADED | FLAG_LOADING);
 
 			if (m_pTRB2 != TNULL)
 			{
@@ -101,11 +103,23 @@ namespace Toshi
 
 	void* T2ResourceData::GetData()
 	{
-		if (!HasFlag(FLAG_INITIALISED))
+		if (!HasFlag(FLAG_LOADED))
 		{
-			TASSERT(HasFlag(FLAG_LOADING));
+#ifdef TOSHI_DEBUG
 
-			while (!HasFlag(FLAG_INITIALISED))
+			// Check if the resource is being loaded
+			TASSERT(HasFlag(FLAG_LOADING), "Resource is not loaded and it's not in progress of being loaded");
+
+#else // TOSHI_DEBUG
+
+			// If the resource is not being loaded, return TNULL instead of waiting
+			if (!HasFlag(FLAG_LOADING))
+				return TNULL;
+
+#endif // TOSHI_DEBUG
+
+			// Wait for the resource to be loaded
+			while (!HasFlag(FLAG_LOADED))
 				Sleep(100);
 		}
 
@@ -132,11 +146,13 @@ namespace Toshi
 			TASSERT(a_iID < m_iMaxNumResources);
 
 			auto pData = &m_pData[a_iID];
+
+			pData->m_iRefCount--;
 			TASSERT(pData->m_iRefCount >= 0);
 
-			if (--pData->m_iRefCount == 0 && pData->HasFlag(T2ResourceData::FLAG_USED))
+			if (pData->m_iRefCount == 0 && pData->HasAnyFlag(T2ResourceData::FLAG_DESTROYED))
 			{
-				pData->m_iFlags = ~T2ResourceData::FLAG_USED;
+				pData->m_iFlags = ~T2ResourceData::FLAG_DESTROYED;
 				pData->m_pResourceName[0] = '\0';
 				m_iNumUsedResources--;
 			}
@@ -158,7 +174,7 @@ namespace Toshi
 
 		m_fnCreateDestroyCallbk = a_fnCreateDestroyCallbk;
 		m_pCreateDestroyCallbkData = a_pCallbkData;
-		m_iFlags |= FLAG_DESTROYED;
+		m_iFlags |= FLAG_INITIALISED;
 	}
 
 	T2ResourceManager::T2ResourceManager(int a_iMaxNumResources)
@@ -169,8 +185,9 @@ namespace Toshi
 
 		m_pData = new T2ResourceData[m_iMaxNumResources];
 		TUtil::MemClear(m_pData, m_iMaxNumResources * sizeof(T2ResourceData));
-
-		m_pData[0].m_iFlags |= T2ResourceData::FLAG_DESTROYED;
+		
+		// Initialize the dummy (invalid) resource
+		m_pData[0].m_iFlags |= T2ResourceData::FLAG_INITIALISED;
 	}
 
 	T2ResourceManager::~T2ResourceManager()
@@ -215,7 +232,15 @@ namespace Toshi
 
 		m_iNumUsedResources++;
 		m_pData[iID].Init(resourceName, a_fnCreateDestroyCallbk, pCallbkData);
-		m_pData[iID].SetLoadedData(pData);
+
+		/*
+		* Resources might also be loaded without passing pData argument but this feature
+		* is deprecated in the Toshi build used in de Blob (at least for Windows).
+		* Use T2ResourceData::Load instead of T2ResourceData::SetLoadedData to use the feature.
+		* The Create callback is only called from T2ResourceData::Load
+		*/
+
+		m_pData[iID].SetLoadedData(pData);		
 		m_pData[iID].m_pTRB1 = TAssetInit::g_pCurrentTRB;
 
 		return iID;
@@ -237,13 +262,57 @@ namespace Toshi
 		}
 	}
 
+	TBOOL T2ResourceManager::ReloadResource(const char* pName, const char* pFilepath)
+	{
+		int iID;
+		FindResource(iID, pName);
+
+		if (iID != T2ResourcePtr::IDINVALID)
+		{
+			TASSERT(iID >= 0);
+			TASSERT(iID < m_iMaxNumResources);
+
+			m_pData[iID].Unload();
+			m_pData[iID].Load(pFilepath);
+			return TTRUE;
+		}
+
+		return TFALSE;
+	}
+
+	T2ResourcePtr T2ResourceManager::FindResource(int& iOutResource, const char* pName)
+	{
+		TASSERT(T2String8::IsLowerCase(pName));
+
+		T2ResourceData* pResData = m_pData;
+		
+		while (!pResData->HasAnyFlag(T2ResourceData::FLAG_INITIALISED) ||
+			   TStringManager::String8CompareNoCase(pResData->GetName(), pName) != 0)
+		{
+			if (pResData >= m_pData + m_iMaxNumResources)
+			{
+				iOutResource = 0;
+				return T2ResourcePtr(0);
+			}
+		}
+
+		int iID = pResData - m_pData;
+
+		TASSERT(iID >= 0);
+		TASSERT(iID < m_iMaxNumResources);
+
+		iOutResource = iID;
+		return T2ResourcePtr(iID);
+	}
+
 	int T2ResourceManager::FindUnusedResource()
 	{
 		TASSERT(m_iNumUsedResources < m_iMaxNumResources);
 
 		for (int i = m_iUnk; i < m_iMaxNumResources; i++)
 		{
-			if (m_pData[i].HasFlag(T2ResourceData::FLAG_DESTROYED | T2ResourceData::FLAG_USED) && m_pData[i].GetData() == TNULL)
+			// Skip resource if it is initialized or is destroyed but something has some references to it
+			if (!m_pData[i].HasAnyFlag(T2ResourceData::FLAG_INITIALISED | T2ResourceData::FLAG_DESTROYED) && m_pData[i].m_iRefCount == 0)
 			{
 				m_iUnk = i + 1;
 				return i;
@@ -252,7 +321,8 @@ namespace Toshi
 
 		for (int i = 0; i < m_iUnk; i++)
 		{
-			if (m_pData[i].HasFlag(T2ResourceData::FLAG_DESTROYED | T2ResourceData::FLAG_USED) && m_pData[i].GetData() == TNULL)
+			// Skip resource if it is initialized or is destroyed but something has some references to it
+			if (!m_pData[i].HasAnyFlag(T2ResourceData::FLAG_INITIALISED | T2ResourceData::FLAG_DESTROYED) && m_pData[i].m_iRefCount == 0)
 			{
 				m_iUnk = i + 1;
 				return i;

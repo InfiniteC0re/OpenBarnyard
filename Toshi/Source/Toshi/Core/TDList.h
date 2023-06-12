@@ -14,6 +14,14 @@ namespace Toshi
 				Reset();
 			}
 
+			~TNode()
+			{
+				m_Next->m_Prev = m_Prev;
+				m_Prev->m_Next = m_Next;
+				m_Next = this;
+				m_Prev = this;
+			}
+
 			TNode* Next() const
 			{
 				return m_Next;

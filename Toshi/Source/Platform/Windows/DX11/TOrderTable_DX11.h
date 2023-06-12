@@ -76,7 +76,7 @@ namespace Toshi
 			m_State = 0;
 			m_pOrderTable = TNULL;
 			m_pMaterial = TNULL;
-			m_pRenderPacket = TNULL;
+			m_pLastRenderPacket = TNULL;
 			m_pNextUsedMaterial = TNULL;
 		}
 
@@ -108,6 +108,11 @@ namespace Toshi
 			m_pNextUsedMaterial = pRegMat;
 		}
 
+		TRegMaterial* GetNextUsedMaterial() const
+		{
+			return m_pNextUsedMaterial;
+		}
+
 		TMaterial* GetMaterial() const
 		{
 			return m_pMaterial;
@@ -117,7 +122,7 @@ namespace Toshi
 		State m_State;
 		TOrderTable* m_pOrderTable;
 		TMaterial* m_pMaterial;
-		TRenderPacket* m_pRenderPacket;
+		TRenderPacket* m_pLastRenderPacket;
 		TRegMaterial* m_pNextUsedMaterial;
 	};
 

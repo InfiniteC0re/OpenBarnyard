@@ -63,26 +63,26 @@ namespace Toshi {
             {
                 if (s_eSysMaterialLazyState != 8)
                 {
-                    pRender->SetZMode(bNoDepthTest, D3D11_COMPARISON_LESS_EQUAL, D3D11_DEPTH_WRITE_MASK_ALL);
+                    pRender->SetZMode(bDepthTestEnable, D3D11_COMPARISON_LESS_EQUAL, D3D11_DEPTH_WRITE_MASK_ALL);
                     s_eSysMaterialLazyState = 8;
                     return;
                 }
-                else if (!HASFLAG(pTexture->GetFlags1() & 1))
+            }
+            else if (!HASFLAG(pTexture->GetFlags1() & 1))
+            {
+                if (s_eSysMaterialLazyState != 0x10)
                 {
-                    if (s_eSysMaterialLazyState != 0x10)
-                    {
-                        pRender->SetZMode(bNoDepthTest, D3D11_COMPARISON_LESS_EQUAL, D3D11_DEPTH_WRITE_MASK_ALL);
-                        s_eSysMaterialLazyState = 0x10;
-                        return;
-                    }
-                }
-                else if (s_eSysMaterialLazyState != 4)
-                {
-                    s_eSysMaterialLazyState = 4;
-                    s_AlphaTest.x = 1.0f;
-                    s_AlphaTest.y = 0.003921569f;
+                    pRender->SetZMode(bDepthTestEnable, D3D11_COMPARISON_LESS_EQUAL, D3D11_DEPTH_WRITE_MASK_ALL);
+                    s_eSysMaterialLazyState = 0x10;
                     return;
                 }
+            }
+            else if (s_eSysMaterialLazyState != 4)
+            {
+                s_eSysMaterialLazyState = 4;
+                s_AlphaTest.x = 1.0f;
+                s_AlphaTest.y = 0.003921569f;
+                return;
             }
             break;
         case BlendMode::Mode1:

@@ -1,27 +1,25 @@
 #pragma once
 #include "Toshi/Render/TModel.h"
-#include "Toshi/Render/TTMDBase.h"
+#include "Toshi/Render/TTMDWin.h"
 #include "Toshi2/T2ResourceManager.h"
 
 namespace Toshi
 {
-	namespace TTMDWin
-	{
-		struct TTRBWinHeader
-		{
-			char* m_pTXSModelName;
-			int m_iLODCount;
-			uint32_t m_Unknown;
-			TTMDBase::SkeletonHeader* m_pSkeletonHeader;
-			TSkeleton* m_pSkeleton;
-			TModelCollision* m_pModelCollision;
-		};
-	};
-
 	class TModelHAL : public TModel
 	{
 	public:
+		using t_TRBLoadCallback2 = TBOOL(*)(TModel* pModel, TTMDWin::TTRBWinHeader* pHeader);
+
+	public:
 		TBOOL Create(TTMDWin::TTRBWinHeader* pTMDHeader);
+
+		static void SetTRBLoadCallback2(t_TRBLoadCallback2 fnCallback)
+		{
+			sm_pTRBLoadCallback2 = fnCallback;
+		}
+
+	private:
+		inline static t_TRBLoadCallback2 sm_pTRBLoadCallback2;
 
 	private:
 		TTMDWin::TTRBWinHeader* m_pTMDHeader; // 0xBC
