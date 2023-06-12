@@ -12,28 +12,28 @@ namespace Toshi
 
         Zn = m_ProjParams.m_Proj.x;
         Zf = m_oParams.fWidth;
-        m_Projection.e = 0.0;
-        m_Projection.a = (Zn * 2.0) / Zf;
+        m_Projection.e = 0.0f;
+        m_Projection.a = (Zn * 2.0f) / Zf;
         Zn = m_ProjParams.m_Centre.x;
         Zf = m_oParams.fWidth;
-        m_Projection.m = 0.0;
-        m_Projection.b = 0.0;
-        m_Projection.i = (Zn * 2.0) / Zf - 1.0;
-        m_Projection.f = -(m_ProjParams.m_Proj.y * 2.0 / m_oParams.fHeight);
+        m_Projection.m = 0.0f;
+        m_Projection.b = 0.0f;
+        m_Projection.i = (Zn * 2.0f) / Zf - 1.0f;
+        m_Projection.f = -(m_ProjParams.m_Proj.y * 2.0f / m_oParams.fHeight);
         Zn = m_ProjParams.m_Centre.y;
         Zf = m_oParams.fHeight;
-        m_Projection.n = 0.0;
-        m_Projection.c = 0.0;
-        m_Projection.g = 0.0;
-        m_Projection.j = -((Zn * 2.0) / Zf - 1.0);
+        m_Projection.n = 0.0f;
+        m_Projection.c = 0.0f;
+        m_Projection.g = 0.0f;
+        m_Projection.j = -((Zn * 2.0f) / Zf - 1.0f);
         Zn = m_ProjParams.m_fFarClip;
         m_Projection.k = Zn / (Zn - m_ProjParams.m_fNearClip);
         Zn = m_ProjParams.m_fNearClip;
         Zf = m_ProjParams.m_fFarClip;
-        m_Projection.d = 0.0;
-        m_Projection.h = 0.0;
-        m_Projection.l = 1.0;
-        m_Projection.p = 0.0;
+        m_Projection.d = 0.0f;
+        m_Projection.h = 0.0f;
+        m_Projection.l = 1.0f;
+        m_Projection.p = 0.0f;
         m_Projection.o = -((Zn * Zf) / (Zf - Zn));
     }
 

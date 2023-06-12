@@ -607,7 +607,7 @@ namespace Toshi {
 		return 0;
 	}
 
-	void TXUIRenderer::RenderTriStripColours(TVector2* pVertices, TVector2* pUV, uint32_t* pColors, int numverts, float fPosScaleX, float fPosScaleY)
+	void TXUIRenderer::RenderTriStripColours(TVector2* pVertices, TVector2* pUV, uint32_t* pColors, size_t numverts, float fPosScaleX, float fPosScaleY)
 	{
 		if (m_bIsInScene)
 		{

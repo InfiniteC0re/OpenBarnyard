@@ -7,6 +7,18 @@ const Toshi::TVector4 ACamera::sm_vWorldUp = { 0.0f, -1.0f, 0.0f, 1.0f };
 
 using namespace Toshi;
 
+void ACamera::ResetCameraMatrix(CameraMatrix* camMat)
+{
+	camMat->m_mMatrix.Identity();
+	camMat->m_mShakeMatrix.Identity();
+	camMat->m_fNear = 5.0f;
+	camMat->m_fFar = 500.0f;
+	camMat->m_fFOV = sm_fDefaultFOV;
+	camMat->m_fAspect = Toshi::TMath::Tan(sm_fDefaultFOV * 0.5f);
+	camMat->m_fProjectionCentreX = 0.5f;
+	camMat->m_fProjectionCentreY = 0.0f;
+}
+
 TBOOL ACamera::IsInViewCone(const TVector4& a_rvPos, float a_fSphereRadius) const
 {
 	const TMatrix44& transformMatrix = m_Matrix.m_mMatrix;

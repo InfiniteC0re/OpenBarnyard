@@ -27,11 +27,14 @@ namespace Toshi
 		auto pRender = TRender::GetSingletonWeak();
 		auto pDisplayParams = pRender->GetCurrentDisplayParams();
 
+		float fDisplayWidth = TSTATICCAST(float, pDisplayParams->Width);
+		float fDisplayHeight = TSTATICCAST(float, pDisplayParams->Height);
+
 		m_pContext = new (MemoryBlock()) T2GUIContext();
-		m_pContext->GetRootElement()->SetDimensions(pDisplayParams->Width, pDisplayParams->Height);
+		m_pContext->GetRootElement()->SetDimensions(fDisplayWidth, fDisplayHeight);
 
 		m_pCanvas = new (MemoryBlock()) TXUICanvas();
-		m_pCanvas->SetDimensions(pDisplayParams->Width, pDisplayParams->Height);
+		m_pCanvas->SetDimensions(fDisplayWidth, fDisplayHeight);
 
 		m_pContext->GetRootElement()->AddChildTail(m_pCanvas);
 

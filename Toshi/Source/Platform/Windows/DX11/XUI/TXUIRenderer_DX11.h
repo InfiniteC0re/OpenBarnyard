@@ -38,7 +38,7 @@ namespace Toshi {
 		virtual void ClearScissors() override;
 		virtual uint32_t GetWidth(T2GUIMaterial* pMat);
 		virtual uint32_t GetHeight(T2GUIMaterial* pMat);
-		virtual void RenderTriStripColours(TVector2* pVertices, TVector2* pUV, uint32_t* pColors, int numverts, float fPosScaleX, float fPosScaleY);
+		virtual void RenderTriStripColours(TVector2* pVertices, TVector2* pUV, uint32_t* pColors, size_t numverts, float fPosScaleX, float fPosScaleY);
 
 	private:
 		inline static TPrimShader::Vertex s_Vertices[MAXVERTS];

@@ -128,4 +128,13 @@ namespace Toshi
 		o = a_f43;
 		p = a_f44;
 	}
+
+	void TMatrix44::TransformVector(TVector4& outVector, const TMatrix44& matrix, const TVector4& vector)
+	{
+		outVector.z = matrix.c * vector.x + matrix.g * vector.y + matrix.k * vector.z + matrix.o * vector.w;
+		outVector.w = matrix.d * vector.x + matrix.h * vector.y + matrix.l * vector.z + matrix.p * vector.w;
+		outVector.y = matrix.b * vector.x + matrix.f * vector.y + matrix.j * vector.z + matrix.n * vector.w;
+		outVector.x = matrix.e * vector.y + matrix.a * vector.x + matrix.i * vector.z + matrix.m * vector.w;
+	}
+
 }

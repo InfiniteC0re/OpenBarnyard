@@ -136,6 +136,8 @@ namespace Toshi
 			TFloat a_f41, TFloat a_f42, TFloat a_f43, TFloat a_f44
 		);
 
+		static void TransformVector(TVector4& outVector, const TMatrix44& matrix, const TVector4& vector);
+
 		// DirectX Math
 
 		TMatrix44(const DirectX::XMMATRIX& matrix)

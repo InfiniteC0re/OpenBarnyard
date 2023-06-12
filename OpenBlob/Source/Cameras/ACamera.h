@@ -28,20 +28,10 @@ public:
 		TASSERT(a_eCamType >= 0 && a_eCamType < CT_TYPECOUNT);
 	}
 
-	static void ResetCameraMatrix(CameraMatrix* camMat)
-	{
-		camMat->m_mMatrix.Identity();
-		camMat->m_mShakeMatrix.Identity();
-		camMat->m_fNear = 5.0f;
-		camMat->m_fFar = 500.0f;
-		camMat->m_fFOV = sm_fDefaultFOV;
-		camMat->m_fAspect = Toshi::TMath::Tan(sm_fDefaultFOV * 0.5f);
-		camMat->m_fProjectionCentreX = 0.5f;
-		camMat->m_fProjectionCentreY = 0.0f;
-	}
-
 	TBOOL IsInViewCone(const Toshi::TVector4& a_rvPos, float a_fSphereRadius) const;
 	void LookAtPoint(const Toshi::TVector4& a_vPoint);
+	
+	static void ResetCameraMatrix(CameraMatrix* camMat);
 
 	void SetMatrix(const Toshi::TMatrix44& a_mMatrix)
 	{
