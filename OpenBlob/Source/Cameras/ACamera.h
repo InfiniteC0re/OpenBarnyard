@@ -36,6 +36,8 @@ class ACamera :
 		m_mMatrices[1] = a_mSkakeMatrix;
 	}
 
+	void LookAtPoint(const Toshi::TVector4& a_vPoint);
+
 	void LookAtDirection(const Toshi::TVector4& a_vDirection)
 	{
 		TIMPLEMENT();

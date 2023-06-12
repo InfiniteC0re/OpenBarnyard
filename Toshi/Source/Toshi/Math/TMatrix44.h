@@ -95,6 +95,8 @@ namespace Toshi
 			k = vec.z - vec2.z;
 		}
 
+		void LookAtDirection(const Toshi::TVector4& vec, const Toshi::TVector4& vec2);
+
 		void Scale(float scalar1, float scalar2, float scalar3)
 		{
 			a *= scalar1;

@@ -13,6 +13,16 @@ namespace Toshi
 			a_rMatrix.m, a_rMatrix.n, a_rMatrix.o, a_rMatrix.p);
 	}
 
+	void TMatrix44::LookAtDirection(const Toshi::TVector4& vec, const Toshi::TVector4& vec2)
+	{
+		TVector4 v;
+		TVector4 v2;
+		v.ProjectNormalToPlane(vec2, vec);
+		v.Multiply(-1.0f);
+		v2.CrossProduct(v, vec);
+		Set(v2.x, v2.y, v2.z, 0.0f, v.x, v.y, v.z, 0.0f, vec.x, vec.y, vec.z, vec.w, m, n, o, p);
+	}
+
 	void TMatrix44::InvertOrthogonal()
 	{
 		TASSERT(IsOrthonormal());
