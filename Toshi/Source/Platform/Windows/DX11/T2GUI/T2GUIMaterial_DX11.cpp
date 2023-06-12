@@ -6,5 +6,6 @@ namespace Toshi
 	T2GUIMaterial::T2GUIMaterial()
 	{
 		m_pTexture = TNULL;
+		m_iSamplerId = 1;
 	}
 }

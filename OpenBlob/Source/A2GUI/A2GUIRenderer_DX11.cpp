@@ -119,8 +119,7 @@ void A2GUIRenderer::PopTransform()
 
 void A2GUIRenderer::SetTransform(const T2GUITransform& transform)
 {
-	T2GUITransform& currTransform = *(m_pTransforms + m_iTransformStackPointer);
-	currTransform = transform;
+	m_pTransforms[m_iTransformStackPointer] = transform;
 	m_bIsInScene = TTRUE;
 }
 
@@ -167,7 +166,7 @@ void A2GUIRenderer::RenderRectangle(const TVector2& a, const TVector2& b, const 
 	pPrimShader->AddVert();
 
 	pVertex = pPrimShader->GetCurrentVertex();
-	pVertex->UV = { uv2.x, uv2.y };
+	pVertex->UV = uv2;
 	pVertex->Color = m_ui32Colour;
 	pVertex->Position = { b.x, b.y, 0.0f };
 	pPrimShader->AddVert();
@@ -175,7 +174,7 @@ void A2GUIRenderer::RenderRectangle(const TVector2& a, const TVector2& b, const 
 	pPrimShader->StopRendering();
 }
 
-void A2GUIRenderer::RenderTriStrip(TVector2* vertices, TVector2* UV, uint32_t numverts, float unk4, float unk5)
+void A2GUIRenderer::RenderTriStrip(TVector2* vertices, TVector2* UV, uint32_t numverts, float fPosScaleX, float fPosScaleY)
 {
 	if (m_bIsInScene)
 	{
@@ -228,16 +227,16 @@ void A2GUIRenderer::RenderLine(const TVector2& a, const TVector2& b)
 
 	TPrimShader::Vertex* pVertex;
 	auto pPrimShader = TPrimShader::GetSingletonWeak();
-	pPrimShader->StartRendering(TPrimShader::PrimType_TriangleStrip);
+	pPrimShader->StartRendering(TPrimShader::PrimType_LineList);
 
 	pVertex = pPrimShader->GetCurrentVertex();
-	pVertex->UV = { 0, 0 };
+	pVertex->UV = TVector2::VEC_ZERO;
 	pVertex->Color = m_ui32Colour;
 	pVertex->Position = { a.x, a.y, 0.0f };
 	pPrimShader->AddVert();
 
 	pVertex = pPrimShader->GetCurrentVertex();
-	pVertex->UV = { 0, 0 };
+	pVertex->UV = TVector2::VEC_ZERO;
 	pVertex->Color = m_ui32Colour;
 	pVertex->Position = { b.x, b.y, 0.0f };
 	pPrimShader->AddVert();
@@ -266,16 +265,16 @@ void A2GUIRenderer::RenderLine(float x1, float y1, float x2, float y2)
 
 	TPrimShader::Vertex* pVertex;
 	auto pPrimShader = TPrimShader::GetSingletonWeak();
-	pPrimShader->StartRendering(TPrimShader::PrimType_TriangleStrip);
+	pPrimShader->StartRendering(TPrimShader::PrimType_LineList);
 
 	pVertex = pPrimShader->GetCurrentVertex();
-	pVertex->UV = { 0, 0 };
+	pVertex->UV = TVector2::VEC_ZERO;
 	pVertex->Color = m_ui32Colour;
 	pVertex->Position = { x1, y1, 0.0f };
 	pPrimShader->AddVert();
 
 	pVertex = pPrimShader->GetCurrentVertex();
-	pVertex->UV = { 0, 0 };
+	pVertex->UV = TVector2::VEC_ZERO;
 	pVertex->Color = m_ui32Colour;
 	pVertex->Position = { x1, y2, 0.0f };
 	pPrimShader->AddVert();
@@ -304,28 +303,28 @@ void A2GUIRenderer::RenderOutlineRectangle(const TVector2& a, const TVector2& b)
 
 	TPrimShader::Vertex* pVertex;
 	auto pPrimShader = TPrimShader::GetSingletonWeak();
-	pPrimShader->StartRendering(TPrimShader::PrimType_TriangleStrip);
+	pPrimShader->StartRendering(TPrimShader::PrimType_LineStrip);
 
 	pVertex = pPrimShader->GetCurrentVertex();
-	pVertex->UV = { 0, 0 };
+	pVertex->UV = TVector2::VEC_ZERO;
 	pVertex->Color = m_ui32Colour;
 	pVertex->Position = { a.x, a.y, 0.0f };
 	pPrimShader->AddVert();
 
 	pVertex = pPrimShader->GetCurrentVertex();
-	pVertex->UV = { 0, 0 };
+	pVertex->UV = TVector2::VEC_ZERO;
 	pVertex->Color = m_ui32Colour;
 	pVertex->Position = { b.x, b.y, 0.0f };
 	pPrimShader->AddVert();
 
 	pVertex = pPrimShader->GetCurrentVertex();
-	pVertex->UV = { 0, 0 };
+	pVertex->UV = TVector2::VEC_ZERO;
 	pVertex->Color = m_ui32Colour;
 	pVertex->Position = { a.x, b.y, 0.0f };
 	pPrimShader->AddVert();
 
 	pVertex = pPrimShader->GetCurrentVertex();
-	pVertex->UV = { 0, 0 };
+	pVertex->UV = TVector2::VEC_ZERO;
 	pVertex->Color = m_ui32Colour;
 	pVertex->Position = { a.x, a.y, 0.0f };
 	pPrimShader->AddVert();
@@ -357,25 +356,25 @@ void A2GUIRenderer::RenderFilledRectangle(const TVector2& a, const TVector2& b)
 	pPrimShader->StartRendering(TPrimShader::PrimType_TriangleStrip);
 
 	pVertex = pPrimShader->GetCurrentVertex();
-	pVertex->UV = { 0, 0 };
+	pVertex->UV = TVector2::VEC_ZERO;
 	pVertex->Color = m_ui32Colour;
 	pVertex->Position = { a.x, a.y, 0.0f };
 	pPrimShader->AddVert();
 
 	pVertex = pPrimShader->GetCurrentVertex();
-	pVertex->UV = { 0, 0 };
+	pVertex->UV = TVector2::VEC_ZERO;
 	pVertex->Color = m_ui32Colour;
 	pVertex->Position = { b.x, a.y, 0.0f };
 	pPrimShader->AddVert();
 
 	pVertex = pPrimShader->GetCurrentVertex();
-	pVertex->UV = { 0, 0 };
+	pVertex->UV = TVector2::VEC_ZERO;
 	pVertex->Color = m_ui32Colour;
 	pVertex->Position = { a.x, b.y, 0.0f };
 	pPrimShader->AddVert();
 
 	pVertex = pPrimShader->GetCurrentVertex();
-	pVertex->UV = { 0, 0 };
+	pVertex->UV = TVector2::VEC_ZERO;
 	pVertex->Color = m_ui32Colour;
 	pVertex->Position = { b.x, b.y, 0.0f };
 	pPrimShader->AddVert();
@@ -384,12 +383,12 @@ void A2GUIRenderer::RenderFilledRectangle(const TVector2& a, const TVector2& b)
 	SetMaterial(pOldMat);
 }
 
-void A2GUIRenderer::RenderIndexedTriList()
+void A2GUIRenderer::RenderIndexedTriList(TVector2* pVertices, TVector2* pUV, void* pIndices, uint32_t numindices, int indexSize, uint32_t numverts, float fPosScaleX, float fPosScaleY)
 {
 	TASSERT(TFALSE, "Not implemented in the original engine");
 }
 
-void A2GUIRenderer::RenderIndexedTriStripColoursList()
+void A2GUIRenderer::RenderIndexedTriStripColoursList(TVector2* pVertices, TVector2* pUV, uint32_t* pColors, void* pIndices, uint32_t numindices, int indexSize, uint32_t numverts, float fPosScaleX, float fPosScaleY)
 {
 	TASSERT(TFALSE, "Not implemented in the original engine");
 }
@@ -453,7 +452,7 @@ uint32_t A2GUIRenderer::GetWidth(T2GUIMaterial* pMat)
 	return 0;
 }
 
-uint32_t A2GUIRenderer::GetHeight(T2GUIMaterial* pMat)
+uint32_t A2GUIRenderer::GetHeight(Toshi::T2GUIMaterial* pMat)
 {
 	TASSERT(pMat->IsA(TGetClass(T2GUIMaterial)));
 	TTexture* pTex = pMat->GetTexture();

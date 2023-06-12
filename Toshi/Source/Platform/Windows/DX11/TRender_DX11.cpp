@@ -1298,6 +1298,54 @@ namespace Toshi
 		m_CurrentDepth.m_First.Parts.DepthFunc = comparisonFunc;
 	}
 
+	void TRenderDX11::DrawImmediately(D3D11_PRIMITIVE_TOPOLOGY ePrimitiveType, size_t iIndexCount, void* pIndexData, DXGI_FORMAT eFormat, void* pVertexData, size_t iStrideSize, size_t iStrides)
+	{
+		int iIndexSize =
+			(eFormat == DXGI_FORMAT_R32_UINT) ? 4 :
+			(eFormat == DXGI_FORMAT_R32_SINT) ? 2 : 0;
+
+		TASSERT(iIndexSize != 0);
+
+		// Index buffer
+		size_t iIndexBufferSize = iIndexSize * iIndexCount;
+
+		if ((m_iImmediateIndexCurrentOffset + iIndexBufferSize) <= IMMEDIATE_INDEX_BUFFER_SIZE)
+		{
+			m_iImmediateIndexCurrentOffset = 0;
+		}
+
+		TASSERT((m_iImmediateIndexCurrentOffset + iIndexBufferSize) <= IMMEDIATE_INDEX_BUFFER_SIZE);
+
+		D3D11_MAPPED_SUBRESOURCE mappedSubresource;
+		m_pDeviceContext->Map(m_MainIndexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubresource);
+		Toshi::TUtil::MemCopy((void*)((uintptr_t)mappedSubresource.pData + m_iImmediateIndexCurrentOffset), pIndexData, iIndexBufferSize);
+		m_pDeviceContext->Unmap(m_MainIndexBuffer, 0);
+
+		// Vertex buffer
+		size_t iVertexBufferSize = iStrideSize * iStrides;
+
+		if ((m_iImmediateVertexCurrentOffset + iVertexBufferSize) <= IMMEDIATE_VERTEX_BUFFER_SIZE)
+		{
+			m_iImmediateVertexCurrentOffset = 0;
+		}
+
+		TASSERT((m_iImmediateVertexCurrentOffset + iVertexBufferSize) <= IMMEDIATE_VERTEX_BUFFER_SIZE);
+
+		m_pDeviceContext->Map(m_MainVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubresource);
+		Toshi::TUtil::MemCopy((void*)((uintptr_t)mappedSubresource.pData + m_iImmediateVertexCurrentOffset), pVertexData, iVertexBufferSize);
+		m_pDeviceContext->Unmap(m_MainVertexBuffer, 0);
+
+		// Drawing
+		UpdateRenderStates();
+		m_pDeviceContext->IASetVertexBuffers(0, 1, &m_MainVertexBuffer, &iStrideSize, &m_iImmediateVertexCurrentOffset);
+		m_pDeviceContext->IASetIndexBuffer(m_MainIndexBuffer, eFormat, m_iImmediateIndexCurrentOffset);
+		FlushConstantBuffers();
+		m_pDeviceContext->IASetPrimitiveTopology(ePrimitiveType);
+		m_pDeviceContext->DrawIndexed(iIndexCount, 0, 0);
+		m_iImmediateIndexCurrentOffset += iIndexBufferSize;
+		m_iImmediateVertexCurrentOffset += iVertexBufferSize;
+	}
+
 	void TRenderDX11::DrawIndexed(D3D11_PRIMITIVE_TOPOLOGY ePrimitiveType, UINT indexCount, ID3D11Buffer* pIndexBuffer, UINT indexBufferOffset, DXGI_FORMAT indexBufferFormat, ID3D11Buffer* pVertexBuffer, UINT pStrides, UINT pOffsets)
 	{
 		UpdateRenderStates();

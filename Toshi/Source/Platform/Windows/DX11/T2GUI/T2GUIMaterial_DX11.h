@@ -18,11 +18,6 @@ namespace Toshi
 
 		T2GUIMaterial();
 
-		void SetBlendMode(BLENDMODE blendMode)
-		{
-			m_eBlendMode = blendMode;
-		}
-
 		void SetTexture(TTexture* pTexture)
 		{
 			m_pTexture = pTexture;
@@ -33,8 +28,18 @@ namespace Toshi
 			return m_pTexture;
 		}
 
+		void SetSamplerId(int iSamplerId)
+		{
+			m_iSamplerId = iSamplerId;
+		}
+
+		int GetSamplerId() const
+		{
+			return m_iSamplerId;
+		}
+
 	private:
-		TTexture* m_pTexture;
-		BLENDMODE m_eBlendMode; // 0x54
+		TTexture* m_pTexture;   // 0x54
+		int m_iSamplerId;       // 0x5C
 	};
 }

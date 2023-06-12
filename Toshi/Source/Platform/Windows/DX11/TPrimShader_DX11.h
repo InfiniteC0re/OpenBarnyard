@@ -73,6 +73,26 @@ namespace Toshi
 			return m_pCurrentVertex;
 		}
 
+		ID3D11VertexShader* GetVertexShader() const
+		{
+			return m_pVShader;
+		}
+
+		ID3D11PixelShader* GetPixelBasicShader() const
+		{
+			return m_pPShaderBasic;
+		}
+
+		ID3D11PixelShader* GetPixelImageShader() const
+		{
+			return m_pPShaderImage;
+		}
+
+		ID3D11InputLayout* GetInputLayout() const
+		{
+			return m_pInputLayout;
+		}
+
 	private:
 		void DrawPrim(PrimType primType, UINT numPrim, UINT startPrim);
 	
