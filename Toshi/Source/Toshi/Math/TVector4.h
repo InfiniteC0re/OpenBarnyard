@@ -11,9 +11,15 @@ namespace Toshi
 		TVector4(TFloat floats[4]) { Set(floats); }
 		TVector4(const TVector4& other) { Set(other.x, other.y, other.z, other.w); }
 
+		void Set(const TVector3& vec) { TVector4::x = vec.x; TVector4::y = vec.y; TVector4::z = vec.z; TVector4::w = 1.0f; }
 		void Set(const TVector4& vec) { TVector4::x = vec.x; TVector4::y = vec.y; TVector4::z = vec.z; TVector4::w = vec.w; }
 		void Set(TFloat floats[4]) { TVector4::x = floats[0]; TVector4::y = floats[1]; TVector4::z = floats[2]; TVector4::w = floats[3]; }
 		void Set(TFloat x, TFloat y, TFloat z, TFloat w) { TVector4::x = x; TVector4::y = y; TVector4::z = z; TVector4::w = w; }
+
+		void Normalize();
+		bool isNormalised(float fVal = 0.05f) const { return (((1.0f - fVal) * (1.0f - fVal)) < MagnitudeSq()) && (((1.0f + fVal) * (1.0f + fVal)) >= MagnitudeSq()); }
+
+		void ProjectNormalToPlane(const TVector4& vec, const TVector4& vec2);
 
 		void Add(const TVector4& vec)
 		{
