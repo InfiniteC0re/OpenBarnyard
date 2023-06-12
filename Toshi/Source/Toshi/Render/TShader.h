@@ -17,58 +17,10 @@ namespace Toshi {
 		class TShaderList
 		{
 		public:
-			TShaderList()
-			{
-				m_pRoot = TNULL;
-			}
+			TShaderList() : m_pRoot(TNULL) { }
 
-			void AddShader(TShader* pShader)
-			{
-				TShader* pLastShader = m_pRoot;
-
-				while (pLastShader && pLastShader->m_pNextShader != TNULL)
-					pLastShader = pLastShader->m_pNextShader;
-
-				if (pLastShader != TNULL)
-					pLastShader->m_pNextShader = pShader;
-				else
-					m_pRoot = pShader;
-
-				pShader->m_pNextShader = TNULL;
-			}
-
-			void RemoveShader(TShader* pShader)
-			{
-				TShader* pCurrShader = m_pRoot;
-				TShader* pPrevShader = TNULL;
-				TBOOL bFound = TFALSE;
-
-				while (pCurrShader)
-				{
-					if (pCurrShader == pShader)
-					{
-						bFound = TTRUE;
-						break;
-					}
-
-					pPrevShader = pCurrShader;
-					pCurrShader = pCurrShader->m_pNextShader;
-				}
-
-				if (bFound)
-				{
-					if (pPrevShader)
-					{
-						TASSERT(m_pRoot != pShader);
-						pPrevShader->m_pNextShader = pShader->m_pNextShader;
-					}
-					else
-					{
-						TASSERT(m_pRoot == pShader);
-						m_pRoot = pShader->m_pNextShader;
-					}
-				}
-			}
+			void AddShader(TShader* pShader);
+			void RemoveShader(TShader* pShader);
 
 		private:
 			TShader* m_pRoot;

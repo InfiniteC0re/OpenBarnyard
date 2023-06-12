@@ -40,4 +40,20 @@ namespace Toshi
 	{
 		m_State.Unset(State::Validated);
 	}
+
+	void TShader::TShaderList::AddShader(TShader* pShader)
+	{
+		TShader* pLastShader = m_pRoot;
+
+		while (pLastShader && pLastShader->m_pNextShader != TNULL)
+			pLastShader = pLastShader->m_pNextShader;
+
+		if (pLastShader != TNULL)
+			pLastShader->m_pNextShader = pShader;
+		else
+			m_pRoot = pShader;
+
+		pShader->m_pNextShader = TNULL;
+	}
+
 }
