@@ -17,6 +17,8 @@ namespace Toshi
 		void Set(TFloat x, TFloat y, TFloat z, TFloat w) { TVector4::x = x; TVector4::y = y; TVector4::z = z; TVector4::w = w; }
 
 		void Normalize();
+		bool isNormalised(float fVal = 0.05f) const { return (((1.0f - fVal) * (1.0f - fVal)) < MagnitudeSq()) && (((1.0f + fVal) * (1.0f + fVal)) >= MagnitudeSq()); }
+
 		void ProjectNormalToPlane(const TVector4& vec, const TVector4& vec2);
 
 		void Add(const TVector4& vec)
