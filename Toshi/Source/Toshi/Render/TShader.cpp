@@ -5,13 +5,13 @@ namespace Toshi
 {
 	TShader::TShader()
 	{
-		TIMPLEMENT();
 		m_State = State::None;
+		sm_oShaderList.AddShader(this);
 	}
 
 	TShader::~TShader()
 	{
-
+		sm_oShaderList.RemoveShader(this);
 	}
 
 	void TShader::OnDestroy()
