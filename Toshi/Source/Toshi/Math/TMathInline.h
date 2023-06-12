@@ -55,6 +55,7 @@ namespace Toshi
 		inline void SinCos(float fVal, float& fVal1, float& fVal2) { fVal1 = cos(fVal); fVal2 = sin(fVal); }
 		inline void Clip(float& rfVal, float fMin, float fMax) { if (fMax < rfVal) { rfVal = fMax; } if (rfVal < fMin) { rfVal = fMin; } }
 		inline float LERP(float a, float b, float t) { return a + t * (b - a); }
+		inline float Tan(float fVal) { return tanf(fVal); }
 		
 		template <typename T>
 		inline const T& Min(const T& a, const T& b) { if (a < b) { return a; } else { return b; } }

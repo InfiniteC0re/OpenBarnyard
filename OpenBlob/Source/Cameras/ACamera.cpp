@@ -7,7 +7,7 @@ const Toshi::TVector4 ACamera::sm_vWorldUp = { 0.0f, -1.0f, 0.0f, 1.0f };
 void ACamera::LookAtPoint(const Toshi::TVector4& point)
 {
 	Toshi::TVector4 vec;
-	vec = point - m_mMatrices[0].GetTranslation4();
+	vec = point - m_Matrix.m_mMatrix.GetTranslation4();
 	vec.Normalize();
-	m_mMatrices[0].LookAtDirection(vec, sm_vWorldUp);
+	LookAtDirection(vec);
 }
