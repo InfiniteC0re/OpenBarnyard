@@ -132,7 +132,7 @@ namespace Toshi
 	class TRenderDX11 : 
 		public TGenericClassDerived<TRenderDX11, TRender, "TRenderD3D", TMAKEVERSION(1, 0), false>
 	{
-	private:
+	public:
 		friend class ARenderer;
 
 		static constexpr size_t HEAPSIZE = 0x10000;
@@ -330,6 +330,16 @@ namespace Toshi
 			return m_OrderTables;
 		}
 
+		DepthState GetCurrentDepthState() const
+		{
+			return m_CurrentDepth.m_First;
+		}
+
+		void SetCurrentDepthState(const DepthState& depthState)
+		{
+			m_CurrentDepth.m_First.Raw = depthState.Raw;
+		}
+
 		static TRenderDX11* Interface()
 		{
 			return static_cast<TRenderDX11*>(TRender::GetSingletonWeak());
@@ -373,6 +383,7 @@ namespace Toshi
 		void SetAlphaUpdate(bool update);
 		void SetColorUpdate(bool update);
 		void SetZMode(bool depthEnable, D3D11_COMPARISON_FUNC comparisonFunc, D3D11_DEPTH_WRITE_MASK depthWriteMask);
+		void DrawImmediately(D3D11_PRIMITIVE_TOPOLOGY ePrimitiveType, size_t iIndexCount, void* pIndexData, DXGI_FORMAT eFormat, void* pVertexData, size_t iStrideSize, size_t iStrides);
 		void DrawIndexed(D3D11_PRIMITIVE_TOPOLOGY ePrimitiveType, UINT indexCount, ID3D11Buffer* pIndexBuffer, UINT indexBufferOffset, DXGI_FORMAT indexBufferFormat, ID3D11Buffer* pVertexBuffer, UINT pStrides, UINT pOffsets);
 		void DrawNonIndexed(D3D11_PRIMITIVE_TOPOLOGY primitiveTopology, ID3D11Buffer* pVertexBuffer, UINT vertexCount, UINT strides, UINT startVertex, UINT offsets);
 		void CopyDataToTexture(ID3D11ShaderResourceView* pSRTex, UINT dataSize, void* src, UINT textureSize);

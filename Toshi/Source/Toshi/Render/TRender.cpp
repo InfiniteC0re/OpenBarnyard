@@ -4,8 +4,8 @@
 #include "Toshi2/T2ResourceManager.h"
 #include "Toshi/Render/TModelManager.h"
 
-namespace Toshi
-{
+namespace Toshi {
+
 	TRender::TRender()
 	{
 		// 0068ff70
@@ -327,4 +327,18 @@ namespace Toshi
 		m_mWorldViewMatrix = a_rMatrix;
 		m_eFlags &= ~(FLAG_UNK1 | FLAG_UNK2 | FLAG_UNK4 | FLAG_UNK5 | FLAG_UNK6);
 	}
+
+	void TRenderContext::SetProjectionParams(const PROJECTIONPARAMS& params)
+	{
+		TASSERT(params.m_Proj.x != 0.0f);
+		TASSERT(params.m_Proj.y != 0.0f);
+		TASSERT(TMath::IsFinite(params.m_Proj.x) && (!TMath::IsNaN(params.m_Proj.x)));
+		TASSERT(TMath::IsFinite(params.m_Proj.y) && (!TMath::IsNaN(params.m_Proj.y)));
+		TASSERT(TMath::IsFinite(params.m_Centre.x) && (!TMath::IsNaN(params.m_Centre.x)));
+		TASSERT(TMath::IsFinite(params.m_Centre.y) && (!TMath::IsNaN(params.m_Centre.y)));
+
+		m_ProjParams = params;
+		m_eFlags = (m_eFlags & (~(FLAG_UNK3 | FLAG_UNK4 | FLAG_UNK5 | FLAG_UNK6))) | FLAG_DIRTY;
+	}
+
 }

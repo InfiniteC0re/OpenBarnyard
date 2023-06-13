@@ -72,8 +72,6 @@ namespace Toshi
 
     BOOL TInputDXInterface::EnumerateDeviceCallback(LPCDIDEVICEINSTANCE a_poDeviceInstance, LPVOID poDXInputInterface)
     {
-        TASSERT(poDXInputInterface != NULL);
-        TASSERT(a_poDeviceInstance != NULL);
         char fmtStr[37];
         char productName[260];
         TInputDXInterface* inputInterface = (TInputDXInterface*)poDXInputInterface;
@@ -82,7 +80,26 @@ namespace Toshi
         TInputDXDeviceController* inputController;
         HRESULT hr;
         bool addMouse = false;
+        
+        TASSERT(poDXInputInterface != NULL);
+        TASSERT(a_poDeviceInstance != NULL);
 
+        // Check if any slots are left
+        if (ms_iNumDevices >= MAXDEVICESNUM)
+            return FALSE;
+
+        // Check if this device is not registered yet
+        for (size_t i = 0; i < ms_iNumDevices; i++)
+        {
+            if (ms_RegisteredDevices[i] == a_poDeviceInstance->guidInstance)
+            {
+                return TRUE;
+            }
+        }
+
+        // Add the device to the list of registered
+        size_t iDeviceIndex = ms_iNumDevices++;
+        ms_RegisteredDevices[iDeviceIndex] = a_poDeviceInstance->guidInstance;
 
         switch (GET_DIDEVICE_TYPE(a_poDeviceInstance->dwDevType))
         {

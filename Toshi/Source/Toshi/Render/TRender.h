@@ -71,10 +71,7 @@ namespace Toshi
 		virtual void SetWorldViewMatrix(const TMatrix44& a_rMatrix);
 		virtual void Update() = 0;
 
-		Params& GetParams()
-		{
-			return m_oParams;
-		}
+		void SetProjectionParams(const PROJECTIONPARAMS& params);
 
 		void SetParams(const Params& params)
 		{
@@ -86,6 +83,11 @@ namespace Toshi
 		{
 			m_eCameraMode = cameraMode;
 			m_eFlags = (m_eFlags & (~(FLAG_UNK3 | FLAG_UNK4 | FLAG_UNK5 | FLAG_UNK6))) | FLAG_DIRTY;
+		}
+
+		Params& GetParams()
+		{
+			return m_oParams;
 		}
 
 		float GetX() const
@@ -111,13 +113,6 @@ namespace Toshi
 		TMatrix44& GetModelViewMatrix()
 		{
 			return m_mModelViewMatrix;
-		}
-
-		void SetProjectionParams(const PROJECTIONPARAMS& params)
-		{
-			TTODO("asserts and something more...");
-			m_ProjParams = params;
-			m_eFlags = (m_eFlags & (~(FLAG_UNK3 | FLAG_UNK4 | FLAG_UNK5 | FLAG_UNK6))) | FLAG_DIRTY;
 		}
 
 		const PROJECTIONPARAMS& GetProjectionParams() const

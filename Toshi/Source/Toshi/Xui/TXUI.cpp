@@ -1,6 +1,7 @@
 #include "ToshiPCH.h"
 #include "Toshi/Xui/TXUI.h"
-#include <Toshi/Render/TAssetInit.h>
+#include "Toshi/Render/TAssetInit.h"
+#include "Toshi/Render/TRender.h"
 
 namespace Toshi
 {
@@ -19,17 +20,34 @@ namespace Toshi
 
 	TXUI::TXUI()
 	{
-		m_trb.SetMemoryFunctions(AssetTRBAllocator, AssetTRBDeallocator, TNULL);
-		m_trb2.SetMemoryFunctions(AssetTRBAllocator, AssetTRBDeallocator, TNULL);
-		m_canvas = new (MemoryBlock()) TXUICanvas();
-		m_canvas->SetDimensions(176.0f, 176.0f);
-		//TRender::GetSingleton()->
+		m_TRB1.SetMemoryFunctions(AssetTRBAllocator, AssetTRBDeallocator, TNULL);
+		m_TRB2.SetMemoryFunctions(AssetTRBAllocator, AssetTRBDeallocator, TNULL);
+		m_TRB3.SetMemoryFunctions(AssetTRBAllocator, AssetTRBDeallocator, TNULL);
+
+		auto pRender = TRender::GetSingletonWeak();
+		auto pDisplayParams = pRender->GetCurrentDisplayParams();
+
+		float fDisplayWidth = TSTATICCAST(float, pDisplayParams->Width);
+		float fDisplayHeight = TSTATICCAST(float, pDisplayParams->Height);
+
+		m_pContext = new (MemoryBlock()) T2GUIContext();
+		m_pContext->GetRootElement()->SetDimensions(fDisplayWidth, fDisplayHeight);
+
+		m_pCanvas = new (MemoryBlock()) TXUICanvas();
+		m_pCanvas->SetDimensions(fDisplayWidth, fDisplayHeight);
+
+		m_pContext->GetRootElement()->AddChildTail(m_pCanvas);
+
+		m_pRenderer = new (MemoryBlock()) TXUIRenderer();
+		m_Str[0] = '\0';
+
+		TTODO("TXUIShapeCache, TGenericListener");
 	}
 
 	void TXUI::SetDefaultFont(const char* a_pData)
 	{
-		m_trb.Load(a_pData);
-		TAssetInit::InitAssets(m_trb, true, false);
+		m_TRB1.Load(a_pData);
+		TAssetInit::InitAssets(m_TRB1, true, false);
 
 	}
 

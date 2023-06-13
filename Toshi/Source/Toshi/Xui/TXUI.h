@@ -1,8 +1,10 @@
 #pragma once
 #include "Toshi/Utils/TSingleton.h"
-#include "Toshi/File/TTRB.h"
-#include "Toshi/Render/TRender.h"
+#include "Toshi2/T2GUI/T2GUIContext.h"
+#include "Toshi/Xui/TXUIRenderer.h"
 #include "Toshi/Xui/TXUICanvas.h"
+#include "Toshi/Render/TRender.h"
+#include "Toshi/File/TTRB.h"
 
 namespace Toshi
 {
@@ -15,7 +17,7 @@ namespace Toshi
 	private:
 		uint8_t* m_unk;
 		uint8_t* m_fileName;
-		uint8_t* m_xurBuffer; // 0x8
+		uint8_t* m_xurBuffer;     // 0x8
 		TXUIResource* m_resource; // 0xC
 	};
 
@@ -36,12 +38,13 @@ namespace Toshi
 		static TTRB::t_MemoryFuncAlloc AssetTRBAllocator;
 		static TTRB::t_MemoryFuncDealloc AssetTRBDeallocator;
 
-		// All globs offsets
-		TTRB m_trb; // 0x80
-		TTRB m_trb2; // 0x94
-
-		TXUICanvas* m_canvas; // 0x134
-
-		// TDList at 0x160
+	public:
+		char m_Str[128];            // 0x0000
+		TTRB m_TRB1;                // 0x0080
+		TTRB m_TRB2;                // 0x0094
+		TTRB m_TRB3;                // 0x00A8
+		T2GUIContext* m_pContext;   // 0x015C
+		T2GUIRenderer* m_pRenderer; // 0x0160
+		TXUICanvas* m_pCanvas;      // 0x014C
 	};
 }

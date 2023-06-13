@@ -1,8 +1,8 @@
 #pragma once
 #include "TOrderTable.h"
 
-namespace Toshi
-{
+namespace Toshi {
+	
 	class TShader :
 		public TGenericClassDerived<TShader, TObject, "TShader", TMAKEVERSION(1, 0), false>
 	{
@@ -12,6 +12,18 @@ namespace Toshi
 			None      = 0,
 			Created   = BITFIELD(0),
 			Validated = BITFIELD(1),
+		};
+
+		class TShaderList
+		{
+		public:
+			TShaderList() : m_pRoot(TNULL) { }
+
+			void AddShader(TShader* pShader);
+			void RemoveShader(TShader* pShader);
+
+		private:
+			TShader* m_pRoot;
 		};
 
 	public:
@@ -33,8 +45,12 @@ namespace Toshi
 		TBOOL IsCreated() const { return m_State.IsSet(State::Created); }
 		TBOOL IsValidated() const { return m_State.IsSet(State::Validated); }
 
+	public:
+		inline static TShaderList sm_oShaderList;
+
 	private:
 		T2Flags<State> m_State;
+		TShader* m_pNextShader;
 	};
 
 	DEFINE_T2FLAGS(TShader::State)

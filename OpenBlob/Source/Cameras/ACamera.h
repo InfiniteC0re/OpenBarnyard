@@ -3,11 +3,7 @@
 class ACamera :
 	public Toshi::TGenericClassDerived<ACamera, Toshi::TObject, "ACamera", TMAKEVERSION(1, 0), false>
 {
-
-	static constexpr float sm_fDefaultFOV = 1.0471976f;
-	static const Toshi::TVector4 sm_vInitialPos;
-	static const Toshi::TVector4 sm_vWorldUp;
-
+public:
 	struct CameraMatrix
 	{
 		Toshi::TMatrix44 m_mMatrix;
@@ -25,23 +21,17 @@ class ACamera :
 		CT_TYPECOUNT = 4
 	};
 
+public:
 	ACamera(CameraType a_eCamType) : m_eCamType(a_eCamType)
 	{
 		ResetCameraMatrix(&m_Matrix);
 		TASSERT(a_eCamType >= 0 && a_eCamType < CT_TYPECOUNT);
 	}
 
-	static void ResetCameraMatrix(CameraMatrix* camMat)
-	{
-		camMat->m_mMatrix.Identity();
-		camMat->m_mShakeMatrix.Identity();
-		camMat->m_fNear = 5.0f;
-		camMat->m_fFar = 500.0f;
-		camMat->m_fFOV = sm_fDefaultFOV;
-		camMat->m_fAspect = Toshi::TMath::Tan(sm_fDefaultFOV * 0.5f);
-		camMat->m_fProjectionCentreX = 0.5f;
-		camMat->m_fProjectionCentreY = 0.0f;
-	}
+	TBOOL IsInViewCone(const Toshi::TVector4& a_rvPos, float a_fSphereRadius) const;
+	void LookAtPoint(const Toshi::TVector4& a_vPoint);
+	
+	static void ResetCameraMatrix(CameraMatrix* camMat);
 
 	void SetMatrix(const Toshi::TMatrix44& a_mMatrix)
 	{
@@ -53,8 +43,6 @@ class ACamera :
 		m_Matrix.m_mShakeMatrix = a_mSkakeMatrix;
 	}
 
-	void LookAtPoint(const Toshi::TVector4& a_vPoint);
-
 	void LookAtDirection(const Toshi::TVector4& a_vDirection)
 	{
 		m_Matrix.m_mMatrix.LookAtDirection(a_vDirection, sm_vWorldUp);
@@ -65,6 +53,12 @@ class ACamera :
 		m_Matrix.m_mMatrix.LookAtDirection(a_vDirection, a_vVec2);
 	}
 
+public:
+	static constexpr float sm_fDefaultFOV = 1.0471976f;
+	static const Toshi::TVector4 sm_vInitialPos;
+	static const Toshi::TVector4 sm_vWorldUp;
+
+private:
 	CameraType m_eCamType;             // 0x8
 	CameraMatrix m_Matrix;             // 0x6C
 };
