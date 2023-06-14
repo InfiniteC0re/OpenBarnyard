@@ -148,6 +148,7 @@ namespace Toshi
 		m_PreviousBlendFactor[2] = 1.0f;
 		m_PreviousBlendFactor[3] = 1.0f;
 
+		
 		TTODO("Some other initializations");
 	}
 
@@ -460,9 +461,11 @@ namespace Toshi
 
 		TTextureManager::CreateSingleton();
 
+		m_pPostProcess = new TPostProcess();
 		m_pToneMap = new TToneMap();
 		m_pFXAA = new TFXAA();
 		m_pGlow = new TGlow();
+		
 		CreateVSPS();
 
 		return true;

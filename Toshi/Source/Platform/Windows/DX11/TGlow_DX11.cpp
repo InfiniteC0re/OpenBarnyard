@@ -53,7 +53,7 @@ TGlow::TGlow()
 	renderer->CreatePixelShader(shader->GetBufferPointer(), shader->GetBufferSize(), &m_pPixelShader);
 }
 
-void TGlow::Render(ID3D11ShaderResourceView* srv, void* unk)
+void TGlow::Render(ID3D11ShaderResourceView* srv, ID3D11ShaderResourceView* srv2)
 {
 	if (m_fIntensity > 0.0f)
 	{
@@ -80,6 +80,7 @@ void TGlow::Render(ID3D11ShaderResourceView* srv, void* unk)
 		deviceContext->RSSetViewports(1, &viewport);
 		renderer->SetBlendMode(TFALSE, D3D11_BLEND_OP_ADD, D3D11_BLEND_ONE, D3D11_BLEND_ONE);
 
+		renderer->m_pPostProcess->FUN_006b91b0(srv, m_fDist * 4.1f, srv2);
 		TIMPLEMENT();
 
 		deviceContext->CopyResource(m_pTexture, m_pTexture2);

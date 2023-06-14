@@ -11,7 +11,7 @@ namespace Toshi
 
 		TGlow();
 
-		void Render(ID3D11ShaderResourceView* srv, void* unk);
+		void Render(ID3D11ShaderResourceView* srv, ID3D11ShaderResourceView* srv2);
 
 		void SetIntensity(float a_fIntensity)
 		{
