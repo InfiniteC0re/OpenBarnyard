@@ -20,9 +20,9 @@ public:
 	{
 		CT_DEFAULT,
 		CT_BLOBFOLLOW,
-		CT_SCRIPTEDCAM,
-		CT_FREECAM,
-		CT_KEYFRAMECAM,
+		CT_SCRIPTED,
+		CT_FREE,
+		CT_KEYFRAME,
 		CT_TYPECOUNT
 	};
 
@@ -71,7 +71,7 @@ public:
 	static const Toshi::TVector4 sm_vInitialPos;
 	static const Toshi::TVector4 sm_vWorldUp;
 
-private:
+protected:
 	CameraType m_eCamType;             // 0x8
 	CameraMatrix m_Matrix;             // 0x6C
 };

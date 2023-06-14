@@ -1,11 +1,16 @@
 #pragma once
 #include "Cameras/ACamera.h"
 
-class AFreeCamera : ACamera
+class AFreeCamera : protected ACamera
 {
 	AFreeCamera() : ACamera(CT_FREECAM)
 	{
 
+	}
+
+	void PushRight(float fVal)
+	{
+		TIMPLEMENT();
 	}
 
 	void Yaw(float fYaw)

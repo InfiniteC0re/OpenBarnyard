@@ -73,6 +73,26 @@ namespace Toshi
 			return { m, n, o, p };
 		}
 
+		const TVector3& AsBasicVector3(int index = 0) const
+		{
+			return *(TVector3*)(this + index * 0x10);
+		}
+
+		TVector3& AsBasicVector3(int index = 0)
+		{
+			return *(TVector3*)(this + index * 0x10);
+		}
+
+		const TVector4& AsBasicVector4(int index = 0) const
+		{
+			return *(TVector4*)(this + index * 0x10);
+		}
+
+		TVector4& AsBasicVector4(int index = 0)
+		{
+			return *(TVector4*)(this + index * 0x10);
+		}
+
 		void SetTranslation(const TVector3& translation)
 		{
 			m = translation.x;
