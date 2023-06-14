@@ -3,7 +3,7 @@
 
 class AFreeCamera : protected ACamera
 {
-	AFreeCamera() : ACamera(CT_FREECAM)
+	AFreeCamera() : ACamera(CT_FREE)
 	{
 
 	}
