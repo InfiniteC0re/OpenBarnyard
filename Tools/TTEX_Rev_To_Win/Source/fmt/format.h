@@ -3488,7 +3488,7 @@ FMT_CONSTEXPR20 auto format_float(Float value, int precision, float_specs specs,
             significand <<= 1;
         }
         else {
-            // Normalize subnormal inputs.
+            // Normalise subnormal inputs.
             FMT_ASSERT(significand != 0, "zeros should not appear hear");
             int shift = countl_zero(significand);
             FMT_ASSERT(shift >= num_bits<uint64_t>() - num_significand_bits<double>(),

@@ -18,6 +18,7 @@ public:
 
 	enum CameraType
 	{
+		CT_FREECAM = 3,
 		CT_TYPECOUNT = 4
 	};
 
@@ -32,6 +33,14 @@ public:
 	void LookAtPoint(const Toshi::TVector4& a_vPoint);
 	
 	static void ResetCameraMatrix(CameraMatrix& camMat);
+
+	void RotateAroundWorldUp(float rotation)
+	{
+		RotateAroundAxis(sm_vWorldUp, rotation);
+	}
+
+	void RotateAroundAxis(const Toshi::TVector4& a_vAxis, float rotation);
+	void RotateAroundRight(float rotation, float a_fVal);
 
 	void SetMatrix(const Toshi::TMatrix44& a_mMatrix)
 	{

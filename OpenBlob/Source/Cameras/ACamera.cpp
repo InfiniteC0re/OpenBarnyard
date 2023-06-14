@@ -19,6 +19,55 @@ void ACamera::ResetCameraMatrix(CameraMatrix& camMat)
 	camMat.m_fProjectionCentreY = 0.0f;
 }
 
+void ACamera::RotateAroundAxis(const Toshi::TVector4& a_vAxis, float rotation)
+{
+	TVector4 quat = { m_Matrix.m_mMatrix.i, m_Matrix.m_mMatrix.j, m_Matrix.m_mMatrix.k, 1.0f };
+	TQuaternion res;
+	res.SetRotation(a_vAxis.AsVector3(), rotation);
+	TQuaternion::RotateVector(quat.AsVector3(), res, quat.AsVector3());
+	LookAtDirection(quat);
+}
+
+void ACamera::RotateAroundRight(float rotation, float a_fVal)
+{
+	TVector4 vAxis = { m_Matrix.m_mMatrix.i, m_Matrix.m_mMatrix.j, m_Matrix.m_mMatrix.k, 1.0f };
+
+	TVector4 vRight;
+	vRight.CrossProduct(vAxis, sm_vWorldUp);
+
+	TASSERT(vRight.MagnitudeSq() > 0.0001f);
+
+	vRight.Normalise();
+
+	TQuaternion quat;
+	quat.SetRotation(vRight.AsVector3(), rotation);
+
+	TQuaternion::RotateVector(vAxis.AsVector3(), quat, vAxis.AsVector3());
+
+	float fDotProduct = vAxis.DotProduct(sm_vWorldUp);
+	float fVal = 1.0f - a_fVal;
+	TVector4 vec = sm_vWorldUp;
+
+	if (fDotProduct <= fVal)
+	{
+		if (fDotProduct > a_fVal - 1.0f)
+		{
+			LookAtDirection(vAxis);
+			return;
+		}
+		vec.Negate();
+		quat.SetRotation(vRight.AsVector3(), TMath::ACos(fVal));
+	}
+	else
+	{
+		quat.SetRotation(vRight.AsVector3(), -TMath::ACos(fVal));
+	}
+
+	TQuaternion::RotateVector(vAxis.AsVector3(), quat, vec.AsVector3());
+	LookAtDirection(vAxis);
+
+}
+
 TBOOL ACamera::IsInViewCone(const TVector4& a_rvPos, float a_fSphereRadius) const
 {
 	const TMatrix44& transformMatrix = m_Matrix.m_mMatrix;
@@ -32,6 +81,6 @@ void ACamera::LookAtPoint(const TVector4& point)
 {
 	TVector4 vec;
 	vec = point - m_Matrix.m_mMatrix.GetTranslation4();
-	vec.Normalize();
+	vec.Normalise();
 	LookAtDirection(vec);
 }
