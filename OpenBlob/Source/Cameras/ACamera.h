@@ -18,8 +18,12 @@ public:
 
 	enum CameraType
 	{
-		CT_FREECAM = 3,
-		CT_TYPECOUNT = 4
+		CT_DEFAULT,
+		CT_BLOBFOLLOW,
+		CT_SCRIPTEDCAM,
+		CT_FREECAM,
+		CT_KEYFRAMECAM,
+		CT_TYPECOUNT
 	};
 
 public:
