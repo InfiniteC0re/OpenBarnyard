@@ -24,14 +24,14 @@ public:
 public:
 	ACamera(CameraType a_eCamType) : m_eCamType(a_eCamType)
 	{
-		ResetCameraMatrix(&m_Matrix);
+		ResetCameraMatrix(m_Matrix);
 		TASSERT(a_eCamType >= 0 && a_eCamType < CT_TYPECOUNT);
 	}
 
 	TBOOL IsInViewCone(const Toshi::TVector4& a_rvPos, float a_fSphereRadius) const;
 	void LookAtPoint(const Toshi::TVector4& a_vPoint);
 	
-	static void ResetCameraMatrix(CameraMatrix* camMat);
+	static void ResetCameraMatrix(CameraMatrix& camMat);
 
 	void SetMatrix(const Toshi::TMatrix44& a_mMatrix)
 	{
