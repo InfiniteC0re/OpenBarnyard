@@ -8,7 +8,7 @@ namespace Toshi {
 	{
 		m_fNear = 1.0f;
 		m_fFar = 100.0f;
-		m_fFOV = TMath::HALF_PI;
+		m_fFOV = TMath::DegToRad(90.0f);
 		m_Unk1 = 0;
 		m_eMode = TRenderContext::CameraMode_Perspective;
 		m_fCentreX = 0.5f;

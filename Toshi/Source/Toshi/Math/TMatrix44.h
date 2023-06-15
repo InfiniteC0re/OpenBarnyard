@@ -45,22 +45,7 @@ namespace Toshi
 
 		void Identity()
 		{
-			a = s_Identity[0];
-			b = s_Identity[1];
-			c = s_Identity[2];
-			d = s_Identity[3];
-			e = s_Identity[4];
-			f = s_Identity[5];
-			g = s_Identity[6];
-			h = s_Identity[7];
-			i = s_Identity[8];
-			j = s_Identity[9];
-			k = s_Identity[10];
-			l = s_Identity[11];
-			m = s_Identity[12];
-			n = s_Identity[13];
-			o = s_Identity[14];
-			p = s_Identity[15];
+			*this = IDENTITY;
 		}
 
 		TVector3 GetTranslation3() const
@@ -75,47 +60,58 @@ namespace Toshi
 
 		const TVector3& AsBasicVector3(int index = 0) const
 		{
-			return *(TVector3*)(this + index * 0x10);
+			return *TREINTERPRETCAST(
+				TVector3*,
+				TREINTERPRETCAST(uintptr_t, this) + index * sizeof(TVector4)
+			);
 		}
 
 		TVector3& AsBasicVector3(int index = 0)
 		{
-			return *(TVector3*)(this + index * 0x10);
+			return *TREINTERPRETCAST(
+				TVector3*,
+				TREINTERPRETCAST(uintptr_t, this) + index * sizeof(TVector4)
+			);
 		}
 
 		const TVector4& AsBasicVector4(int index = 0) const
 		{
-			return *(TVector4*)(this + index * 0x10);
+			return *TREINTERPRETCAST(
+				TVector4*,
+				TREINTERPRETCAST(uintptr_t, this) + index * sizeof(TVector4)
+			);
 		}
 
 		TVector4& AsBasicVector4(int index = 0)
 		{
-			return *(TVector4*)(this + index * 0x10);
+			return *TREINTERPRETCAST(
+				TVector4*,
+				TREINTERPRETCAST(uintptr_t, this) + index * sizeof(TVector4)
+			);
+		}
+
+		TVector4& GetTranslation()
+		{
+			return AsBasicVector4(3);
+		}
+
+		const TVector4& GetTranslation() const
+		{
+			return AsBasicVector4(3);
 		}
 
 		void SetTranslation(const TVector3& translation)
 		{
-			m = translation.x;
-			n = translation.y;
-			o = translation.z;
+			GetTranslation() = translation;
 		}
 
 		void SetTranslation(const TVector4& translation)
 		{
-			m = translation.x;
-			n = translation.y;
-			o = translation.z;
-			p = translation.w;
+			GetTranslation() = translation;
 		}
 
-		void LookAtTarget(const TVector3& vec, const TVector3& vec2)
-		{
-			i = vec.x - vec2.x;
-			j = vec.y - vec2.y;
-			k = vec.z - vec2.z;
-		}
-
-		void LookAtDirection(const Toshi::TVector4& vec, const Toshi::TVector4& vec2);
+		void LookAtTarget(const TVector4& target, const TVector4& up);
+		void LookAtDirection(const TVector4& vec, const TVector4& vec2);
 
 		void Scale(float scalar1, float scalar2, float scalar3)
 		{
@@ -158,6 +154,16 @@ namespace Toshi
 
 		static void TransformVector(TVector4& outVector, const TMatrix44& matrix, const TVector4& vector);
 
+		void operator=(const TMatrix44& matrix)
+		{
+			Set(
+				matrix.a, matrix.b, matrix.c, matrix.d,
+				matrix.e, matrix.f, matrix.g, matrix.h,
+				matrix.i, matrix.j, matrix.k, matrix.l,
+				matrix.m, matrix.n, matrix.o, matrix.p
+			);
+		}
+
 		// DirectX Math
 
 		TMatrix44(const DirectX::XMMATRIX& matrix)
@@ -177,16 +183,11 @@ namespace Toshi
 
 		TMatrix44 operator*=(const TMatrix44& a)
 		{
-			Set(DirectX::XMMatrixMultiply(this->XMM(), a.XMM()));
+			Set(DirectX::XMMatrixMultiply(XMM(), a.XMM()));
 		}
 
-	private:
-		constexpr static float s_Identity[16] = {
-			1.0f, 0.0f, 0.0f, 0.0f,
-			0.0f, 1.0f, 0.0f, 0.0f,
-			0.0f, 0.0f, 1.0f, 0.0f,
-			0.0f, 0.0f, 0.0f, 1.0f
-		};
+	public:
+		static TMatrix44 IDENTITY;
 	};
 
 	inline TMatrix44 operator*(const TMatrix44& a, const TMatrix44& b)

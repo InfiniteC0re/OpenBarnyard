@@ -10,12 +10,13 @@
 // Including everything else
 #include "AAssetStreaming.h"
 #include "AExampleClass.h"
+#include "ALevelInformation.h"
 #include "GameInterface/AAppInitState.h"
 #include "Movie/AMoviePlayer.h"
 #include "Locale/ALocaleManager.h"
 #include "Input/AInputManager2.h"
 #include "Console/AConsoleVar.h"
-#include "ALevelInformation.h"
+#include "Cameras/ACameraManager.h"
 #include "A2GUI/A2GUIRenderer_DX11.h"
 
 #include <Toshi/Xui/TXUI.h>
@@ -70,7 +71,10 @@ bool AApplication::OnCreate(int argc, char** argv)
 		m_Renderer->Create();
 		AGameState::SetupLoadIcon();
 		SetRenderWorld(true);
+		
 		m_pGameStateController = AGameStateController::CreateSingleton();
+		ACameraManager::CreateSingleton();
+
 		m_pGameStateController->Create();
 		m_pGameStateController->PushState(new AAppInitState);
 

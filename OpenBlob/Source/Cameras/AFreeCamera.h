@@ -1,8 +1,9 @@
 #pragma once
 #include "Cameras/ACamera.h"
 
-class AFreeCamera : protected ACamera
+class AFreeCamera : public ACamera
 {
+public:
 	AFreeCamera() : ACamera(CT_FREE)
 	{
 
@@ -31,6 +32,7 @@ class AFreeCamera : protected ACamera
 		m_fFreeCamSpeed = a_fFreeCamSpeed;
 	}
 
+private:
 	float m_fFreeCamSpeed; // 0x104
 };
 

@@ -68,6 +68,11 @@ public:
 		return m_bEnabled;
 	}
 
+	TTransformObject& GetTransformObject()
+	{
+		return m_TransformObject;
+	}
+
 private:
 	float m_fNear;
 	float m_fFar;

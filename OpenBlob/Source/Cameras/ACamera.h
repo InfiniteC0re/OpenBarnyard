@@ -66,13 +66,29 @@ public:
 		m_Matrix.m_mMatrix.LookAtDirection(a_vDirection, a_vVec2);
 	}
 
+	TBOOL GetSomeFlag() const
+	{
+		return m_bSomeFlag;
+	}
+
+	void SetSomeFlag(TBOOL bFlag)
+	{
+		m_bSomeFlag = bFlag;
+	}
+
+	CameraMatrix& GetCameraMatrix()
+	{
+		return m_Matrix;
+	}
+
 public:
-	static constexpr float sm_fDefaultFOV = 1.0471976f;
+	static constexpr float sm_fDefaultFOV = Toshi::TMath::DegToRad(60.0f);
 	static const Toshi::TVector4 sm_vInitialPos;
 	static const Toshi::TVector4 sm_vWorldUp;
 
 protected:
-	CameraType m_eCamType;             // 0x8
+	TBOOL m_bSomeFlag;                 // 0x04
+	CameraType m_eCamType;             // 0x08
 	CameraMatrix m_Matrix;             // 0x6C
 };
 
