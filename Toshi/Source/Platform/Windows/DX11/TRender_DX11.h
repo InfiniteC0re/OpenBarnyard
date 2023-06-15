@@ -184,8 +184,7 @@ namespace Toshi
 				D3D11_BLEND SrcBlendAlpha : 5;
 				D3D11_BLEND DestBlendAlpha : 5;
 				// m_BlendState2
-				uint32_t RenderTargetWriteMask : 3;
-				BOOL bAlphaUpdate : 1;
+				uint32_t RenderTargetWriteMask : 4;
 				BOOL bBlendEnabled : 1;
 				D3D11_BLEND SrcBlend : 5;
 				D3D11_BLEND DestBlend : 5;

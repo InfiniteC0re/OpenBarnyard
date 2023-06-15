@@ -842,8 +842,7 @@ namespace Toshi
 		m_CurrentBlendState.Parts.BlendOpAlpha = D3D11_BLEND_OP_ADD;
 		m_CurrentBlendState.Parts.SrcBlendAlpha = D3D11_BLEND_ONE;
 		m_CurrentBlendState.Parts.DestBlendAlpha = D3D11_BLEND_ZERO;
-		m_CurrentBlendState.Parts.RenderTargetWriteMask = 0b111;
-		m_CurrentBlendState.Parts.bAlphaUpdate = TRUE;
+		m_CurrentBlendState.Parts.RenderTargetWriteMask = 0b1111;
 		m_CurrentBlendState.Parts.SrcBlend = D3D11_BLEND_ONE;
 		m_CurrentBlendState.Parts.DestBlend = D3D11_BLEND_ZERO;
 		m_CurrentBlendState.Parts.Unknown2 = 1;
@@ -1279,7 +1278,14 @@ namespace Toshi
 
 	void TRenderDX11::SetAlphaUpdate(bool update)
 	{
-		m_CurrentBlendState.Parts.bAlphaUpdate = update;
+		if (update)
+		{
+			m_CurrentBlendState.Parts.RenderTargetWriteMask |= D3D11_COLOR_WRITE_ENABLE_ALPHA;
+		}
+		else
+		{
+			m_CurrentBlendState.Parts.RenderTargetWriteMask &= ~D3D11_COLOR_WRITE_ENABLE_ALPHA;
+		}
 	}
 
 	void TRenderDX11::SetColorUpdate(bool update)
