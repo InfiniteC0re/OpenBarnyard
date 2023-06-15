@@ -1,9 +1,11 @@
 #pragma once
+#include "AXYZViewportManager.h"
+
 #include <Toshi/Utils/TSingleton.h>
 #include <Toshi/Render/TViewport.h>
 #include <Toshi/File/TTRB.h>
 #include <Toshi/Core/THPTimer.h>
-#include "Toshi2/T2GUI/T2GUIRectangle.h"
+#include <Toshi2/T2GUI/T2GUIRectangle.h>
 
 class ARenderer : public Toshi::TSingleton<ARenderer>
 {
@@ -32,8 +34,9 @@ private:
 	static Toshi::THPTimer s_timer;
 
 private:
-	Toshi::TViewport* m_pViewport;       // 0x0C
-	uint32_t m_BackgroundColor;          // 0x48
-	Toshi::T2GUIRectangle* m_pRectangle; // 0x60
-	float m_fUpdateTime;                 // 0x64
+	Toshi::TViewport* m_pViewport;           // 0x0C
+	AXYZViewportManager* m_pViewportManager; // 0x10
+	uint32_t m_BackgroundColor;              // 0x48
+	Toshi::T2GUIRectangle* m_pRectangle;     // 0x60
+	float m_fUpdateTime;                     // 0x64
 };

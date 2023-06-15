@@ -212,7 +212,7 @@ void ARenderer::Create()
 
 	CreateMainViewport();
 
-	AXYZViewportManager* vpMgr = new AXYZViewportManager();
+	m_pViewportManager = new AXYZViewportManager();
 
 	float width, height;
 

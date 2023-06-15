@@ -151,6 +151,7 @@ namespace Toshi
 		TVector4 operator*(const TVector4& other) const { return { x * other.x, y * other.y, z * other.z, other.w }; }
 		TVector4 operator/(const TVector4& other) const { return { x / other.x, y / other.y, z / other.z, other.w }; }
 
+		void operator=(const TVector3& other) { Set(other); }
 		void operator=(const TVector4& other) { Set(other); }
 		void operator+=(const TVector4& other) { Add(other); }
 		TVector4& operator-=(const TVector4& other) { Substract(other); return *this; }
