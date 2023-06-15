@@ -46,6 +46,59 @@ namespace Toshi {
 		shader->Release();
 	}
 
+	static inline float GaussianDistribution(float x, float y, float rho) noexcept
+	{
+		return expf(-(x * x + y * y) / (2 * rho * rho)) / sqrtf(2 * DirectX::XM_PI * rho * rho);
+	}
+
+	void TPostProcess::GaussianBlur5x5(int texWidth, int texHeight, TVector4* offsets, TVector4* weights, float fUnk)
+	{
+		const float tu = 1.0f / float(texWidth);
+		const float tv = 1.0f / float(texHeight);
+
+		float totalWeight = 0.0f;
+		size_t index = 0;
+
+
+		for (int x = -2; x <= 2; ++x)
+		{
+			for (int y = -2; y <= 2; ++y)
+			{
+				// Exclude pixels with a block distance greater than 2. This will
+				// create a kernel which approximates a 5x5 kernel using only 13
+				// sample points instead of 25; this is necessary since 2.0 shaders
+				// only support 16 texture grabs.
+				if (fabsf(float(x)) + fabsf(float(y)) > 2.0f)
+					continue;
+
+				// Get the unscaled Gaussian intensity for this offset
+				offsets[index].x = float(x) * tu;
+				offsets[index].y = float(y) * tv;
+				offsets[index].z = 0.0f;
+				offsets[index].w = 0.0f;
+
+				const float g = GaussianDistribution(float(x), float(y), 1.0f);
+				weights[index] = DirectX::XMVectorReplicate(g);
+
+				totalWeight += DirectX::XMVectorGetX(weights[index].XMM());
+
+				++index;
+			}
+		}
+
+		// Divide the current weight by the total weight of all the samples; Gaussian
+		// blur kernels add to 1.0f to ensure that the intensity of the image isn't
+		// changed when the blur occurs. An optional multiplier variable is used to
+		// add or remove image intensity during the blur.
+		const DirectX::XMVECTOR vtw = DirectX::XMVectorReplicate(totalWeight);
+		const DirectX::XMVECTOR vm = DirectX::XMVectorReplicate(1.0f);
+		for (size_t i = 0; i < index; ++i)
+		{
+			weights[i] = DirectX::XMVectorDivide(weights[i].XMM(), vtw);
+			weights[i] = DirectX::XMVectorMultiply(weights[i].XMM(), vm);
+		}
+	}
+
 	void TPostProcess::DrawScreenOverlay()
 	{
 		TASSERT(m_pQuadVtxDecl);
@@ -80,10 +133,10 @@ namespace Toshi {
 		tex->Release();
 		res->Release();
 
-		TTODO("FUN_006b8350");
-
 		TVector4 avSampleOffsets[MAX_SAMPLES];
 		TVector4 avSampleWeights[MAX_SAMPLES];
+
+		GaussianBlur5x5(texDesc.Width, texDesc.Height, avSampleOffsets, avSampleWeights, 1.0f);
 
 		renderer->SetVec4InPSBuffer(29, avSampleOffsets, MAX_SAMPLES);
 		renderer->SetVec4InPSBuffer(45, avSampleWeights, MAX_SAMPLES);

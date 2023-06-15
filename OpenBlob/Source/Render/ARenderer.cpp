@@ -306,9 +306,12 @@ void ARenderer::RenderMainScene(float deltaTime, TViewport* pViewport, TCameraOb
 	}
 
 	// ...
-	pRender->m_pGlow->Render(pRender->m_SRView2, TNULL);
 	mainSceneCb(deltaTime, pCameraObject);
 	pViewport->End();
+	pRender->FlushShaders();
+
+	pRender->ResolveSubresource();
+	pRender->m_pGlow->Render(pRender->m_SRView2, TNULL);
 	// ...
 
 	pRender->FlushShaders();

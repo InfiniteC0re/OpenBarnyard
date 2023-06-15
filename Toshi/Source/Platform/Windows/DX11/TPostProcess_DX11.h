@@ -23,6 +23,7 @@ namespace Toshi {
 		}
 
 	private:
+		void GaussianBlur5x5(int texWidth, int texHeight, TVector4* offsets, TVector4* weights, float fUnk);
 		void DrawScreenOverlay();
 		void RenderImpl(ID3D11PixelShader* pPS, ID3D11ShaderResourceView* pSRV, float fIntensity, ID3D11ShaderResourceView* pStencilSRV);
 

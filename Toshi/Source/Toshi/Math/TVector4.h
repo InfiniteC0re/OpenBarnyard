@@ -1,5 +1,6 @@
 #pragma once
 #include "Toshi/Math/TVector3.h"
+#include <DirectXMath.h>
 
 namespace Toshi
 {
@@ -160,6 +161,23 @@ namespace Toshi
 
 		TVector3& AsVector3() { return reinterpret_cast<TVector3&>(*this); }
 		const TVector3& AsVector3() const { return reinterpret_cast<const TVector3&>(*this); }
+
+		// DirectX Math
+
+		TVector4(const DirectX::XMFLOAT4& vector)
+		{
+			*(DirectX::XMFLOAT4*)this = vector;
+		}
+
+		TVector4(const DirectX::XMVECTOR& vector)
+		{
+			*(DirectX::XMVECTOR*)this = vector;
+		}
+
+		const DirectX::XMVECTOR& XMM() const
+		{
+			return *(DirectX::XMVECTOR*)this;
+		}
 
 	public:
 		static float Distance(const TVector4& vec1, const TVector4& vec2) { return (vec2 - vec1).Magnitude(); }
