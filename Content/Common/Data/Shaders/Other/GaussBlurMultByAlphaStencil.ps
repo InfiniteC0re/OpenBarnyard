@@ -1,0 +1,29 @@
+struct PS_IN
+{
+	float4 Position	: SV_POSITION;
+	float2 Tex0		: TEXCOORD0;
+};
+
+static const int	MAX_SAMPLES = 16;
+uniform float4	g_avSampleOffsets[MAX_SAMPLES] : register(c29);
+uniform float4	g_avSampleWeights[MAX_SAMPLES] : register(c45);
+uniform float4	g_stencilSize : register(c61);
+Texture2D t0			: register(t0);
+sampler s0			: register(s0);
+Texture2D<uint2> t1	: register(t1);
+sampler s1			: register(s1);
+
+float4 main( PS_IN In )  : SV_TARGET
+{
+	float4 vColor = 0.0f;
+	
+	for (int i = 0; i < 13; i++)
+	{
+		float4 colour = t0.Sample(s0, In.Tex0 + g_avSampleOffsets[i].xy);
+		colour *= t1.Load(int3((In.Tex0 + g_avSampleOffsets[i].xy) * g_stencilSize.xy, 0)).g;
+		vColor += g_avSampleWeights[i] * colour * colour.w;
+	}
+
+	vColor.w = 1.0;
+	return vColor;
+}

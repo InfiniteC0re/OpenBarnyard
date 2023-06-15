@@ -84,17 +84,13 @@ namespace Toshi
 		// Set our render target
 		pDeviceContext->OMSetRenderTargets(1, &m_pRenderTarget, NULL);
 
-		TVector4 unk;
-		unk.x = (float)m_Width;
-		unk.y = (float)m_Height;
-		unk.z = 0;
-		unk.w = 0;
+		TVector4 screenSize = { (TFloat)m_Width, (TFloat)m_Height, 0, 0};
 
-		pRender->SetVec4InPSBuffer(PSBufferOffset_V2ScreenSize, &unk, 1);
-		TRenderDX11::FUN_006a6700(0.0f, 0.0f, (float)m_Width, (float)m_Height, pShaderResourceView, m_pShader, NULL);
+		pRender->SetVec4InPSBuffer(PSBufferOffset_V2ScreenSize, &screenSize, 1);
+		TRenderDX11::RenderOverlay(0.0f, 0.0f, (float)m_Width, (float)m_Height, pShaderResourceView, m_pShader, NULL);
 
 		// Restore original render targets
 		pDeviceContext->OMSetRenderTargets(1, &pRenderTargetViews, pDepthStencilView);
-		TRenderDX11::FUN_006a6700(0.0f, 0.0f, (float)m_Width, (float)m_Height, m_pTextureView, NULL, NULL);
+		TRenderDX11::RenderOverlay(0.0f, 0.0f, (float)m_Width, (float)m_Height, m_pTextureView, NULL, NULL);
 	}
 }
