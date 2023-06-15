@@ -65,7 +65,7 @@ void ATestModel::CreateCube()
     auto pSysShader = Toshi::TSysShader::GetSingleton();
 
     m_pCubeMaterial = pSysShader->CreateMaterial();
-    //m_pCubeMaterial->SetFlag(Toshi::TMaterial::Flags_NoDepthTest, TTRUE);
+    m_pCubeMaterial->SetFlag(Toshi::TMaterial::Flags_AlphaUpdate, TTRUE);
     m_pCubeMaterial->Create(Toshi::TSysMaterialHAL::BlendMode::Default);
 
     auto pTexture = pTexManager->FindTexture("prop_fountain_02.tga");
@@ -105,6 +105,7 @@ void ATestModel::CreatePlane()
     auto pSysShader = Toshi::TSysShader::GetSingleton();
 
     m_pPlaneMaterial = pSysShader->CreateMaterial();
+    m_pPlaneMaterial->SetFlag(Toshi::TMaterial::Flags_AlphaUpdate, TTRUE);
     m_pPlaneMaterial->Create(Toshi::TSysMaterialHAL::BlendMode::Default);
 
     auto pTexture = pTexManager->FindTexture("slum_island_colour.tga");

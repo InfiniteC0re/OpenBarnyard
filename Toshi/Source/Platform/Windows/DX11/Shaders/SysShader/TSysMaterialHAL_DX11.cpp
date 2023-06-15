@@ -41,7 +41,7 @@ namespace Toshi {
         if (m_Flags & Flags_AlphaUpdate)
         {
             pRender->SetAlphaUpdate(TTRUE);
-            pRender->SetDstAlpha(-1.0f);
+            pRender->SetDstAlpha(0.0f);
         }
         else
         {
