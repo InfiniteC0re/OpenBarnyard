@@ -14,6 +14,7 @@
 #include "Movie/AMoviePlayer.h"
 #include "Locale/ALocaleManager.h"
 #include "Input/AInputManager2.h"
+#include "Console/AConsoleVar.h"
 #include "ALevelInformation.h"
 #include "A2GUI/A2GUIRenderer_DX11.h"
 
@@ -22,10 +23,12 @@
 #include <Toshi/Sound/TSound.h>
 #include <Toshi/Render/TRender.h>
 #include <Platform/Windows/TSound_Win.h>
-#include "Toshi/Input/TInputInterface.h"
+#include <Toshi/Input/TInputInterface.h>
 #include TOSHI_MULTIRENDER(TRender)
 
 AApplication AApplication::g_oTheApp;
+
+CVAR_CREATE(testcvar, TFALSE)
 
 bool AApplication::OnCreate(int argc, char** argv)
 {
@@ -38,6 +41,8 @@ bool AApplication::OnCreate(int argc, char** argv)
 
 	m_Renderer = ARenderer::GetSingleton();
 	bool interfaceCreated = m_Renderer->CreateInterface();
+
+	TOSHI_INFO("testcvar value: {0}", CVAR_GET_BOOL(testcvar));
 	
 	if (interfaceCreated)
 	{

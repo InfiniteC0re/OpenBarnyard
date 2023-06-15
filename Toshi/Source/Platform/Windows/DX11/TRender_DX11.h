@@ -399,7 +399,7 @@ namespace Toshi
 		void UpdateRenderStates();
 		void FlushConstantBuffers();
 
-		static void FUN_006a6700(float posX, float posY, float width, float height, ID3D11ShaderResourceView* pShaderResourceView, ID3D11PixelShader* pPixelShader, const TVector4* uvVec);
+		static void RenderOverlay(float posX, float posY, float width, float height, ID3D11ShaderResourceView* pShaderResourceView, ID3D11PixelShader* pPixelShader, const TVector4* uvVec);
 	
 	private:
 		void BuildAdapterDatabase();

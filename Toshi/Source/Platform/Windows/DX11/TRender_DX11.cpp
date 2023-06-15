@@ -563,7 +563,7 @@ namespace Toshi
 				}
 
 				m_CurrentBlendState.Parts.bBlendEnabled = FALSE;
-				FUN_006a6700(posX, posY, width, height, s_pShaderResourceView, NULL, NULL);
+				RenderOverlay(posX, posY, width, height, s_pShaderResourceView, NULL, NULL);
 			}
 			else
 			{
@@ -1638,7 +1638,7 @@ namespace Toshi
 		}
 	}
 
-	void TRenderDX11::FUN_006a6700(float posX, float posY, float width, float height, ID3D11ShaderResourceView* pShaderResourceView, ID3D11PixelShader* pPixelShader, const TVector4* uvVec)
+	void TRenderDX11::RenderOverlay(float posX, float posY, float width, float height, ID3D11ShaderResourceView* pShaderResourceView, ID3D11PixelShader* pPixelShader, const TVector4* uvVec)
 	{
 		auto pRender = TRenderDX11::Interface();
 		auto pDeviceContext = pRender->GetDeviceContext();

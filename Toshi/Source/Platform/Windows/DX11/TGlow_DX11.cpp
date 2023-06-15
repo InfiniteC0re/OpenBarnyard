@@ -80,7 +80,7 @@ void TGlow::Render(ID3D11ShaderResourceView* srv, ID3D11ShaderResourceView* srv2
 		deviceContext->RSSetViewports(1, &viewport);
 		renderer->SetBlendMode(TFALSE, D3D11_BLEND_OP_ADD, D3D11_BLEND_ONE, D3D11_BLEND_ONE);
 
-		renderer->m_pPostProcess->FUN_006b91b0(srv, m_fDist * 4.1f, srv2);
+		renderer->m_pPostProcess->ApplyGaussBlurWithAlpha(srv, m_fDist * 4.1f, srv2);
 		TIMPLEMENT();
 
 		deviceContext->CopyResource(m_pTexture, m_pTexture2);
@@ -91,12 +91,12 @@ void TGlow::Render(ID3D11ShaderResourceView* srv, ID3D11ShaderResourceView* srv2
 
 		deviceContext->RSSetViewports(1, &viewports);
 
-		auto uvs = new TVector4(viewports.Width, viewports.Height, viewports.TopLeftX, viewports.TopLeftY);
+		TVector4 uv(viewports.Width, viewports.Height, viewports.TopLeftX, viewports.TopLeftY);
 
-		renderer->FUN_006a6700(0.0f, 0.0f, viewports.Width, viewports.Height, srv, TNULL, uvs);
+		renderer->RenderOverlay(0.0f, 0.0f, viewports.Width, viewports.Height, srv, TNULL, &uv);
 		renderer->SetAlphaUpdate(0);
 		renderer->SetBlendMode(true, D3D11_BLEND_OP_ADD, D3D11_BLEND_ONE, D3D11_BLEND_ONE);
 		renderer->SetVec4InPSBuffer(28, &m_fIntensity);
-		renderer->FUN_006a6700(0.0f, 0.0f, viewports.Width, viewports.Height, srv, m_pPixelShader, uvs);
+		renderer->RenderOverlay(0.0f, 0.0f, viewports.Width, viewports.Height, srv, m_pPixelShader, &uv);
 	}
 }
