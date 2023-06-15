@@ -76,6 +76,11 @@ public:
 		m_bSomeFlag = bFlag;
 	}
 
+	CameraMatrix& GetCameraMatrix()
+	{
+		return m_Matrix;
+	}
+
 public:
 	static constexpr float sm_fDefaultFOV = Toshi::TMath::DegToRad(60.0f);
 	static const Toshi::TVector4 sm_vInitialPos;

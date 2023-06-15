@@ -51,6 +51,6 @@ public:
 private:
 	TBOOL m_bFlag;                    // 0x0000
 	ACamera* m_ppCameras[MAX_CAMERA]; // 0x0340
-	uint8_t m_iCurrentCamera;         // 0x0378
+	int8_t m_iCurrentCamera;          // 0x0378
 	int m_iSomeCount;                 // 0x037C
 };

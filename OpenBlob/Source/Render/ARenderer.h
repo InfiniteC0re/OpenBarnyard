@@ -17,26 +17,32 @@ public:
 	virtual ~ARenderer();
 
 	void Update(float deltaTime);
-	bool CreateInterface();
-	bool CreateTRender();
+	TBOOL CreateInterface();
+	TBOOL CreateTRender();
 	void Create();
 
 	void SetBackgroundColour(uint32_t r, uint32_t g, uint32_t b);
 
 private:
-	void RenderGUI(bool allowBackgroundClear);
-	void RenderMainScene(float deltaTime, Toshi::TViewport* pViewport, void* unk2, void* pCameraObject, t_MainScene mainSceneCb, bool allowBackgroundClear);
+	void RenderLoadingScreen(float fDeltaTime);
+	void RenderGUI(TBOOL allowBackgroundClear);
+	void RenderMainScene(float deltaTime, Toshi::TViewport* pViewport, Toshi::TCameraObject* pCameraObject, ACamera* pCamera, t_MainScene mainSceneCb, TBOOL bAllowBackgroundClear);
 	void CreateMainViewport();
 	void CreateTRenderResources();
 
+	void GetAppCamera();
+	void InitialiseViewPort();
+
 private:
 	static Toshi::TTRB s_BootAssetsTRB;
-	static Toshi::THPTimer s_timer;
+	static Toshi::THPTimer s_FrameTimer;
 
 private:
 	Toshi::TViewport* m_pViewport;           // 0x0C
 	AXYZViewportManager* m_pViewportManager; // 0x10
+	TBOOL m_bRenderGUI;                      // 0x44
+	TBOOL m_bIsLoadingScreen;                // 0x46
 	uint32_t m_BackgroundColor;              // 0x48
 	Toshi::T2GUIRectangle* m_pRectangle;     // 0x60
-	float m_fUpdateTime;                     // 0x64
+	float m_fFrameTime;                      // 0x64
 };

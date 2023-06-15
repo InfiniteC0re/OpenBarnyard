@@ -1,15 +1,17 @@
 #pragma once
+#include "Cameras/ACamera.h"
+
 #include <Toshi/Render/TViewport.h>
 #include <Toshi/Render/TCameraObject.h>
-#include "Cameras/ACamera.h"
 
 class AXYZViewportManager
 {
 public:
-	enum Viewport
+	using VIEWPORT = int;
+	enum VIEWPORT_ : VIEWPORT
 	{
 		VIEWPORT_NONE = -1,
-		VIEWPORT_Fullscreen,
+		VIEWPORT_FullScreen,
 		VIEWPORT_2X2_TOPLEFT,
 		VIEWPORT_2X2_TOPRIGHT,
 		VIEWPORT_2X2_BOTTOMLEFT,
@@ -33,12 +35,46 @@ public:
 	Toshi::TViewport* CreateViewport(float x, float y, float w, float h);
 
 	void GetUseableArea(float& x, float& y, float& w, float& h);
-
 	void SetMainFullScreen(bool fullscreen);
+
+	Toshi::TViewport* GetViewport(VIEWPORT eViewport)
+	{
+		TASSERT(eViewport >= VIEWPORT_FullScreen && eViewport < VIEWPORT_Count);
+		return m_Viewports[eViewport];
+	}
+
+	Toshi::TCameraObject* GetViewportCameraObject(VIEWPORT eViewport)
+	{
+		TASSERT(eViewport >= VIEWPORT_FullScreen && eViewport < VIEWPORT_Count);
+		return m_CameraObjects[eViewport];
+	}
+
+	ACamera* GetViewportCamera(VIEWPORT eViewport)
+	{
+		TASSERT(eViewport >= VIEWPORT_FullScreen && eViewport < VIEWPORT_Count);
+		return m_Cameras[eViewport];
+	}
+
+	TBOOL IsViewportCameraUsed(VIEWPORT eViewport)
+	{
+		TASSERT(eViewport >= VIEWPORT_FullScreen && eViewport < VIEWPORT_Count);
+		return m_UsedCameras[eViewport];
+	}
 
 	int GetViewportBeingRendered() const
 	{
 		return m_iRenderingViewportIndex;
+	}
+
+	void SetRenderingViewportIndex(int index)
+	{
+		m_iRenderingViewportIndex = index;
+	}
+
+	void SetCameraUsed(VIEWPORT eViewport, TBOOL bUsed)
+	{
+		TASSERT(eViewport >= VIEWPORT_FullScreen && eViewport < VIEWPORT_Count);
+		m_UsedCameras[eViewport] = bUsed;
 	}
 
 private:

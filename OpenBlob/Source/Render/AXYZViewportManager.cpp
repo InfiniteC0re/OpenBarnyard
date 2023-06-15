@@ -18,7 +18,7 @@ AXYZViewportManager::AXYZViewportManager()
 	float halfHeight = h * 0.5f;
 	float oneThirdWidth = w / 3.0f;
 
-	m_Viewports[VIEWPORT_Fullscreen]            = CreateViewport(x,                     y,              w,             h         );
+	m_Viewports[VIEWPORT_FullScreen]            = CreateViewport(x,                     y,              w,             h         );
 	m_Viewports[VIEWPORT_2X2_TOPLEFT]           = CreateViewport(x,                     y,              halfWidth,     halfHeight);
 	m_Viewports[VIEWPORT_2X2_TOPRIGHT]          = CreateViewport(x + halfWidth,         y, halfWidth,   halfHeight               );
 	m_Viewports[VIEWPORT_2X2_BOTTOMLEFT]        = CreateViewport(x,                     y + halfHeight, halfWidth,     halfHeight);
@@ -57,7 +57,7 @@ AXYZViewportManager::AXYZViewportManager()
 
 	m_Unk = TNULL;
 	m_iRenderingViewportIndex = -1;
-	m_UsedCameras[VIEWPORT_Fullscreen] = TTRUE;
+	m_UsedCameras[VIEWPORT_FullScreen] = TTRUE;
 }
 
 TViewport* AXYZViewportManager::CreateViewport(float x, float y, float w, float h)
@@ -87,8 +87,8 @@ void AXYZViewportManager::GetUseableArea(float& x, float& y, float& w, float& h)
 
 	x = 0;
 	y = 0;
-	w = pDisplayParams->Width * 0.5f;
-	h = pDisplayParams->Height * 0.5f;
+	w = pDisplayParams->Width;
+	h = pDisplayParams->Height;
 }
 
 void AXYZViewportManager::SetMainFullScreen(bool fullscreen)

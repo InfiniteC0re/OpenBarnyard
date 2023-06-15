@@ -7,6 +7,10 @@ constexpr uint32_t TMAKEFOUR(const char str[4])
 	return ((str[3] << 24) | (str[2] << 16) | (str[1] << 8) | str[0]);
 }
 
+#define TCOLOR(R, G, B)         ((((R & 0xff) << 8 | G & 0xff) << 8 | B & 0xff) | 0xFF000000)
+#define TCOLOR_GET_RED(COLOR)   ((COLOR >> 16) & 0xff)
+#define TCOLOR_GET_GREEN(COLOR) ((COLOR >> 8) & 0xff)
+#define TCOLOR_GET_BLUE(COLOR)  (COLOR & 0xff)
 #define ISZERO(X) ((X) == 0)
 #define HASFLAG(X) (!ISZERO(X))
 #define STRINGIFY(X) STRINGIFY2(X)    
