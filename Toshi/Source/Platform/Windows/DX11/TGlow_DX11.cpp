@@ -27,10 +27,9 @@ TGlow::TGlow()
 		m_pGlowSrv->GetResource(&textureResource);
 
 		HRESULT hr = textureResource->QueryInterface(__uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&m_pTexture));
-		if (textureResource || FAILED(hr))
-		{
+		
+		if (textureResource)
 			textureResource->Release();
-		}
 	}
 
 	m_pGlowSrv2 = renderer->CreateTexture(m_uiWidth, m_uiHeight, DXGI_FORMAT_R8G8B8A8_UNORM, TNULL, 4, D3D11_USAGE_DEFAULT, 0, 1);
@@ -40,13 +39,12 @@ TGlow::TGlow()
 	if (m_pGlowSrv2)
 	{
 		ID3D11Resource* textureResource = TNULL;
-		m_pGlowSrv->GetResource(&textureResource);
+		m_pGlowSrv2->GetResource(&textureResource);
 
 		HRESULT hr = textureResource->QueryInterface(__uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&m_pTexture2));
-		if (textureResource || FAILED(hr))
-		{
+		
+		if (textureResource)
 			textureResource->Release();
-		}
 	}
 
 	ID3DBlob* shader = renderer->CompileShader(s_defaultGlowPixelShader, "main", "ps_4_0_level_9_3", TNULL);
@@ -80,8 +78,17 @@ void TGlow::Render(ID3D11ShaderResourceView* srv, ID3D11ShaderResourceView* srv2
 		deviceContext->RSSetViewports(1, &viewport);
 		renderer->SetBlendMode(TFALSE, D3D11_BLEND_OP_ADD, D3D11_BLEND_ONE, D3D11_BLEND_ONE);
 
-		renderer->m_pPostProcess->FUN_006b91b0(srv, m_fDist * 4.1f, srv2);
-		TIMPLEMENT();
+		renderer->m_pPostProcess->ApplyGaussBlurWithAlpha(srv, m_fDist * 4.1f, srv2);
+		deviceContext->CopyResource(m_pTexture, m_pTexture2);
+
+		float fVal;
+		
+		fVal = TMath::LERP(m_fDist, 1.0f, 0.5f);
+		renderer->m_pPostProcess->ApplyGaussBlur(m_pGlowSrv, fVal * 2.7f);
+		deviceContext->CopyResource(m_pTexture, m_pTexture2);
+
+		fVal = TMath::LERP(m_fDist, 1.0f, 0.25f);
+		renderer->m_pPostProcess->ApplyGaussBlur(m_pGlowSrv, fVal * 1.3f);
 
 		deviceContext->CopyResource(m_pTexture, m_pTexture2);
 		deviceContext->OMSetRenderTargets(1, &pRenderTargetView, pDepthStencilView);
@@ -91,12 +98,19 @@ void TGlow::Render(ID3D11ShaderResourceView* srv, ID3D11ShaderResourceView* srv2
 
 		deviceContext->RSSetViewports(1, &viewports);
 
-		auto uvs = new TVector4(viewports.Width, viewports.Height, viewports.TopLeftX, viewports.TopLeftY);
+		TVector4 uv = {
+			viewports.Width / renderer->m_SwapChainDesc.BufferDesc.Width,
+			viewports.Height / renderer->m_SwapChainDesc.BufferDesc.Height,
+			viewports.TopLeftX / renderer->m_SwapChainDesc.BufferDesc.Width,
+			viewports.TopLeftY / renderer->m_SwapChainDesc.BufferDesc.Height
+		};
 
-		renderer->FUN_006a6700(0.0f, 0.0f, viewports.Width, viewports.Height, srv, TNULL, uvs);
-		renderer->SetAlphaUpdate(0);
-		renderer->SetBlendMode(true, D3D11_BLEND_OP_ADD, D3D11_BLEND_ONE, D3D11_BLEND_ONE);
-		renderer->SetVec4InPSBuffer(28, &m_fIntensity);
-		renderer->FUN_006a6700(0.0f, 0.0f, viewports.Width, viewports.Height, srv, m_pPixelShader, uvs);
+		TVector4 intensity = { m_fIntensity, m_fIntensity, m_fIntensity, m_fIntensity };
+
+		renderer->RenderOverlay(0.0f, 0.0f, viewports.Width, viewports.Height, srv, TNULL, &uv);
+		renderer->SetDstAlpha(0.0f);
+		renderer->SetBlendMode(TTRUE, D3D11_BLEND_OP_ADD, D3D11_BLEND_ONE, D3D11_BLEND_ONE);
+		renderer->SetVec4InPSBuffer(28, &intensity);
+		renderer->RenderOverlay(0.0f, 0.0f, viewports.Width, viewports.Height, m_pGlowSrv, m_pPixelShader, &uv);
 	}
 }

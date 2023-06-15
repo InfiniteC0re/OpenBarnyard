@@ -5,12 +5,34 @@
 
 namespace Toshi
 {
+	TMatrix44 TMatrix44::IDENTITY(
+		1.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, 1.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, 1.0f
+	);
+
 	TMatrix44::TMatrix44(const TMatrix44& a_rMatrix)
 	{
 		Set(a_rMatrix.a, a_rMatrix.b, a_rMatrix.c, a_rMatrix.d,
 			a_rMatrix.e, a_rMatrix.f, a_rMatrix.g, a_rMatrix.h,
 			a_rMatrix.i, a_rMatrix.j, a_rMatrix.k, a_rMatrix.l,
 			a_rMatrix.m, a_rMatrix.n, a_rMatrix.o, a_rMatrix.p);
+	}
+
+	void TMatrix44::LookAtTarget(const TVector4& target, const TVector4& up)
+	{
+		auto& forward = AsBasicVector3(2);
+
+		forward = target.AsVector3() - up.AsVector3();
+		forward.Normalize();
+
+		AsBasicVector3(0) = { k, 0, -i };
+		AsBasicVector3(0).Normalize();
+
+		f = a * k - c * i;
+		g = b * i - a * j;
+		e = c * j - b * k;
 	}
 
 	void TMatrix44::LookAtDirection(const Toshi::TVector4& vec, const Toshi::TVector4& vec2)

@@ -10,11 +10,13 @@
 // Including everything else
 #include "AAssetStreaming.h"
 #include "AExampleClass.h"
+#include "ALevelInformation.h"
 #include "GameInterface/AAppInitState.h"
 #include "Movie/AMoviePlayer.h"
 #include "Locale/ALocaleManager.h"
 #include "Input/AInputManager2.h"
-#include "ALevelInformation.h"
+#include "Console/AConsoleVar.h"
+#include "Cameras/ACameraManager.h"
 #include "A2GUI/A2GUIRenderer_DX11.h"
 
 #include <Toshi/Xui/TXUI.h>
@@ -22,10 +24,12 @@
 #include <Toshi/Sound/TSound.h>
 #include <Toshi/Render/TRender.h>
 #include <Platform/Windows/TSound_Win.h>
-#include "Toshi/Input/TInputInterface.h"
+#include <Toshi/Input/TInputInterface.h>
 #include TOSHI_MULTIRENDER(TRender)
 
 AApplication AApplication::g_oTheApp;
+
+CVAR_CREATE(testcvar, TFALSE)
 
 bool AApplication::OnCreate(int argc, char** argv)
 {
@@ -38,6 +42,8 @@ bool AApplication::OnCreate(int argc, char** argv)
 
 	m_Renderer = ARenderer::GetSingleton();
 	bool interfaceCreated = m_Renderer->CreateInterface();
+
+	TOSHI_INFO("testcvar value: {0}", CVAR_GET_BOOL(testcvar));
 	
 	if (interfaceCreated)
 	{
@@ -65,7 +71,10 @@ bool AApplication::OnCreate(int argc, char** argv)
 		m_Renderer->Create();
 		AGameState::SetupLoadIcon();
 		SetRenderWorld(true);
+		
 		m_pGameStateController = AGameStateController::CreateSingleton();
+		ACameraManager::CreateSingleton();
+
 		m_pGameStateController->Create();
 		m_pGameStateController->PushState(new AAppInitState);
 
