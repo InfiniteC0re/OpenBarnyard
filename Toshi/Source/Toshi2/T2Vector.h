@@ -105,7 +105,7 @@ namespace Toshi
 			return MaxSize;
 		}
 
-		bool IsEmpty() const
+		TBOOL IsEmpty() const
 		{
 			return Size() == 0;
 		}

@@ -7,7 +7,7 @@
 
 namespace Toshi
 {
-    bool TInputDXInterface::Initialise()
+    TBOOL TInputDXInterface::Initialise()
     {
         TASSERT(TNULL == m_poDirectInput8);
         HRESULT hRes = DirectInput8Create(GetModuleHandle(NULL), DIRECTINPUT_VERSION, IID_IDirectInput8, (LPVOID*)&m_poDirectInput8, NULL);
@@ -39,15 +39,15 @@ namespace Toshi
                     }
                 }
 
-                return true;
+                return TTRUE;
             }
             Deinitialise();
         }
 
-        return false;
+        return TFALSE;
     }
 
-    bool TInputDXInterface::Deinitialise()
+    TBOOL TInputDXInterface::Deinitialise()
     {
         TInputInterface::Deinitialise();
 
@@ -57,17 +57,17 @@ namespace Toshi
             m_poDirectInput8 = NULL;
         }
 
-        return true; // ?
+        return TTRUE; // ?
     }
 
-    bool TInputDXInterface::LostDevice()
+    TBOOL TInputDXInterface::LostDevice()
     {
         auto input = GetDirectInput();
         if (input != NULL)
         {
             return input->EnumDevices(DI8DEVCLASS_ALL, EnumerateDeviceCallback, this, DIEDFL_ATTACHEDONLY) != DI_OK;
         }
-        return false;
+        return TFALSE;
     }
 
     BOOL TInputDXInterface::EnumerateDeviceCallback(LPCDIDEVICEINSTANCE a_poDeviceInstance, LPVOID poDXInputInterface)
@@ -79,7 +79,7 @@ namespace Toshi
         TInputDXDeviceMouse* inputMouse;
         TInputDXDeviceController* inputController;
         HRESULT hr;
-        bool addMouse = false;
+        TBOOL addMouse = TFALSE;
         
         TASSERT(poDXInputInterface != NULL);
         TASSERT(a_poDeviceInstance != NULL);
@@ -116,8 +116,8 @@ namespace Toshi
             if (inputMouse == TNULL)
             {
                 inputMouse = new TInputDXDeviceMouse();
-                addMouse = true;
-                bool res = inputMouse->BindToDIDevice(inputInterface->GetMainWindow(), a_poDeviceInstance, inputDevice, inputInterface->m_bExclusive);
+                addMouse = TTRUE;
+                TBOOL res = inputMouse->BindToDIDevice(inputInterface->GetMainWindow(), a_poDeviceInstance, inputDevice, inputInterface->m_bExclusive);
                 if (res)
                 {
                     DIPROPDWORD dwordProperty{};
@@ -129,7 +129,7 @@ namespace Toshi
                     
                     HRESULT hr = inputDevice->SetProperty(DIPROP_BUFFERSIZE, &dwordProperty.diph);
 
-                    if (FAILED(hr)) return false;
+                    if (FAILED(hr)) return TFALSE;
 
                     if (addMouse)
                     {

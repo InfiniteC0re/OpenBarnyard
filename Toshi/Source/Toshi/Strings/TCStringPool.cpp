@@ -24,14 +24,14 @@ Toshi::TCStringPool::TCStringPool(const char* a_szFileName, int unk, int unk2) :
 	ReadFile(a_szFileName);
 }
 
-bool Toshi::TCStringPool::ReadFile(const char* a_szFileName)
+TBOOL Toshi::TCStringPool::ReadFile(const char* a_szFileName)
 {
 	TFileManager* fileManager = TFileManager::GetSingletonWeak();
 	TFile* file = fileManager->CreateFile(a_szFileName, 1);
 
 	if (file == TNULL)
 	{
-		return false;
+		return TFALSE;
 	}
 
 	int stringCount = 0;
@@ -49,7 +49,7 @@ bool Toshi::TCStringPool::ReadFile(const char* a_szFileName)
 		if (read != stringsSize)
 		{
 			TFree(strings);
-			return false;
+			return TFALSE;
 		}
 
 		if (m_iCapacity < stringCount)
@@ -63,7 +63,7 @@ bool Toshi::TCStringPool::ReadFile(const char* a_szFileName)
 
 	}
 
-	return false;
+	return TFALSE;
 }
 
 void Toshi::TCStringPool::InitStringPool(int a_iStringCount)

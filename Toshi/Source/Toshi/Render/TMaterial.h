@@ -7,7 +7,7 @@ namespace Toshi
 	class TShader;
 
 	class TMaterial :
-		public TGenericClassDerived<TMaterial, TObject, "TMaterial", TMAKEVERSION(1, 0), false>
+		public TGenericClassDerived<TMaterial, TObject, "TMaterial", TMAKEVERSION(1, 0), TFALSE>
 	{
 	public:
 		static constexpr size_t NAMESIZELIMIT = 31;
@@ -31,7 +31,7 @@ namespace Toshi
 		{
 			m_Flags = Flags_NULL;
 			m_Unk = TNULL;
-			m_pRegMaterial = nullptr;
+			m_pRegMaterial = TNULL;
 			m_Name[0] = '\0';
 			m_pOwnerShader = TNULL;
 			m_pTexture = TNULL;
@@ -50,7 +50,7 @@ namespace Toshi
 		{
 			TASSERT(TFALSE == IsCreated());
 			m_Flags |= Flags_Created;
-			return true;
+			return TTRUE;
 		}
 
 		virtual void PreRender()
@@ -96,7 +96,7 @@ namespace Toshi
 			}
 		}
 
-		void SetFlag(Flags flag, TBOOL set = false)
+		void SetFlag(Flags flag, TBOOL set = TFALSE)
 		{
 			if (set)
 			{

@@ -45,7 +45,7 @@ namespace Toshi
 			Close();
 		}
 
-		Error Create(const char* fileName, const char* str2, bool writeExisting);
+		Error Create(const char* fileName, const char* str2, TBOOL writeExisting);
 		void Close();
 		void RecalcLevel();
 		void Print(const char* format, ...);
@@ -64,12 +64,12 @@ namespace Toshi
 			RecalcLevel();
 		}
 
-		void AllowIndentation(bool allow)
+		void AllowIndentation(TBOOL allow)
 		{
 			m_bAllowIndentation = allow; 
 		}
 		
-		void SetSimpleMode(bool enable)
+		void SetSimpleMode(TBOOL enable)
 		{
 			m_bIsSimpleMode = enable;
 		}
@@ -92,8 +92,8 @@ namespace Toshi
 	private:
 		TFile* m_pFile;                 // 0x00
 		int m_iTotalLogCount;           // 0x04
-		bool m_bIsSimpleMode;           // 0x08
-		bool m_bAllowIndentation;       // 0x09
+		TBOOL m_bIsSimpleMode;           // 0x08
+		TBOOL m_bAllowIndentation;       // 0x09
 		char m_LevelString[cLevelMax];  // 0x0A
 		uint32_t m_curLevel;            // 0x2C
 		int m_typeCounts[Type_NUMOF];   // 0x30

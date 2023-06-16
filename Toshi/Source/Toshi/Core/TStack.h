@@ -25,7 +25,7 @@ namespace Toshi
 			return item;
 		}
 
-		bool IsFull()
+		TBOOL IsFull()
 		{
 			return m_iTop == (C - 1);
 		}
@@ -35,7 +35,7 @@ namespace Toshi
 			return m_pStack[m_iTop];
 		}
 
-		bool IsEmpty()
+		TBOOL IsEmpty()
 		{
 			return m_iTop == -1;
 		}

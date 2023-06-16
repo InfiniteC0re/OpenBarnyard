@@ -40,10 +40,10 @@ namespace Toshi
 
         void Initialize(char* buffer, size_t bufferSize, int maxoffset, int unk);
         void FUN_0068ae40(size_t dataSize);
-        bool FUN_0068af10(char* buffer, size_t bufferSize, char*& offset, size_t& dataSize);
+        TBOOL FUN_0068af10(char* buffer, size_t bufferSize, char*& offset, size_t& dataSize);
         void AllocSubstring(char* buffer);
 
-        static bool FUN_0068b300(char* buffer, Bucket nodeBucket, size_t bufferSize, Node*& out1, Node*& out2);
+        static TBOOL FUN_0068b300(char* buffer, Bucket nodeBucket, size_t bufferSize, Node*& out1, Node*& out2);
 
         static uint32_t HashData(char* data, size_t size)
         {

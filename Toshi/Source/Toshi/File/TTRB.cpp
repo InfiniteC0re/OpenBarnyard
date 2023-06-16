@@ -14,7 +14,7 @@ namespace Toshi
 		TFree(ptr);
 	};
 
-	void* TTRB::s_pDefAllocatorUserData = nullptr;
+	void* TTRB::s_pDefAllocatorUserData = TNULL;
 
 	TTRB::TTRB()
 	{
@@ -63,7 +63,7 @@ namespace Toshi
 		return error;
 	}
 
-	bool TTRB::ProcessForm(TTSFI& ttsf)
+	TBOOL TTRB::ProcessForm(TTSFI& ttsf)
 	{
 		// FUN_00686f10
 		static constexpr uint32_t s_RELCEntriesLimit = 0x200;
@@ -78,17 +78,17 @@ namespace Toshi
 			uint32_t sectionName = 0;
 			uint32_t sectionSize = 0;
 
-			while (true)
+			while (TTRUE)
 			{
 				if (fileSize < 1)
 				{
 					ttsf.PopForm();
 					// FUN_007ebfbf
-					return true;
+					return TTRUE;
 				}
 
 				uint8_t readResult = ttsf.ReadHunk();
-				if (readResult != ERROR_OK) return false;
+				if (readResult != ERROR_OK) return TFALSE;
 
 				sectionName = ttsf.m_CurrentHunk.Name;
 				sectionSize = ttsf.m_CurrentHunk.Size;
@@ -234,12 +234,12 @@ namespace Toshi
 
 				fileSize = leftSize;
 			}
-		} while (true);
+		} while (TTRUE);
 
 		SectionFORM form;
 		ttsf.ReadFORM(&form);
 
-		bool result = ProcessForm(ttsf);
+		TBOOL result = ProcessForm(ttsf);
 		fileSize = leftSize;
 
 		return result;

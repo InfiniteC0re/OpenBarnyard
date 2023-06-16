@@ -14,7 +14,7 @@ namespace Toshi
 
 		virtual size_t Read(void* dst, size_t size) override;
 		virtual size_t Write(const void* buffer, size_t size) override;
-		virtual bool Seek(int offset, TFile::TSEEK seek) override;
+		virtual TBOOL Seek(int offset, TFile::TSEEK seek) override;
 		virtual uint32_t Tell() override;
 		virtual DWORD GetSize() override;
 		virtual _FILETIME GetDate() override;
@@ -27,14 +27,14 @@ namespace Toshi
 		virtual int VCPrintf(const char* format, va_list* vargs);
 		virtual int VWPrintf(const wchar_t* format, ...) { return 0; }
 		
-		bool LoadBuffer(DWORD bufferPos);
+		TBOOL LoadBuffer(DWORD bufferPos);
 		int FlushWriteBuffer();
 		int ReadUnbuffered(LPVOID dst, size_t size);
 
 	protected:
 		TNativeFile(TNativeFileSystem* pFS);
 
-		bool Open(const TString8& a_FileName, FileMode a_Mode);
+		TBOOL Open(const TString8& a_FileName, FileMode a_Mode);
 		void Close();
 
 		friend TNativeFileSystem;
@@ -48,7 +48,7 @@ namespace Toshi
 		char* m_RBuffer;             // 0x1C (read buffer)
 		char* m_WBuffer;             // 0x20 (write buffer)
 		DWORD m_WriteBufferUsed;     // 0x24
-		bool m_WriteBuffered;        // 0x28
+		TBOOL m_WriteBuffered;        // 0x28
 	};
 }
 

@@ -7,7 +7,7 @@ namespace Toshi
 	class TInputInterface;
 
 	class TInputDevice :
-		public TGenericClassDerived<TInputDevice, TObject, "TInputDevice", TMAKEVERSION(1, 0), false>,
+		public TGenericClassDerived<TInputDevice, TObject, "TInputDevice", TMAKEVERSION(1, 0), TFALSE>,
 		public TNodeList<TInputDevice>::TNode
 	{
 	protected:
@@ -27,14 +27,14 @@ namespace Toshi
 		int ProcessRepeats(TGenericEmitter& emitter, float flt);
 
 	public:
-		virtual bool Flush() { return true; }
-		virtual bool StartRepeat(int param_1, float param_2, float param_3);
-		virtual bool StopRepeat(int param_1);
-		virtual bool StopAllRepeats();
+		virtual TBOOL Flush() { return TTRUE; }
+		virtual TBOOL StartRepeat(int param_1, float param_2, float param_3);
+		virtual TBOOL StopRepeat(int param_1);
+		virtual TBOOL StopAllRepeats();
 		virtual void ThrowRepeatEvent(TGenericEmitter& emitter, RepeatInfo* repeatInfo, float flt);
-		virtual bool IsForceFeedbackDevice() { return false; }
+		virtual TBOOL IsForceFeedbackDevice() { return TFALSE; }
 
-		bool IsAquired() const
+		TBOOL IsAquired() const
 		{
 			return m_bIsAquired;
 		}
@@ -55,10 +55,10 @@ namespace Toshi
 		TInputDevice() : TNodeList<TInputDevice>::TNode()
 		{
 			m_pInterface = TNULL;
-			m_bIsAquired = false;
+			m_bIsAquired = TFALSE;
 		}
 
 		TInputInterface* m_pInterface;
-		bool m_bIsAquired;              // 0x39 de blob 0x35 JPOG
+		TBOOL m_bIsAquired;              // 0x39 de blob 0x35 JPOG
 	};
 }

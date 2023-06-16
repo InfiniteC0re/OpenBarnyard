@@ -74,13 +74,13 @@ namespace Toshi
 		TASSERT(s_uiNumRenderPackets == 0);
 
 		TRegMaterial* pCurrentRegMat = pMat->GetRegMaterial();
-		if (pCurrentRegMat != nullptr)
+		if (pCurrentRegMat != TNULL)
 			return pCurrentRegMat;
 
 		TASSERT(TFALSE == s_llRegMatFreeList.IsEmpty());
 
 		if (s_llRegMatFreeList.IsEmpty())
-			return nullptr;
+			return TNULL;
 
 		TRegMaterial* pRegMat = s_llRegMatFreeList.RemoveHead()->As<TRegMaterial>();
 		s_llRegMatRegisteredList.InsertTail(*pRegMat);
@@ -107,9 +107,9 @@ namespace Toshi
 			s_uiNumRegisteredMaterials -= 1;
 
 			pRegMat->SetFlags(0);
-			pRegMat->SetMaterial(nullptr);
-			pRegMat->SetOrderTable(nullptr);
-			pMaterial->SetRegMaterial(nullptr);
+			pRegMat->SetMaterial(TNULL);
+			pRegMat->SetOrderTable(TNULL);
+			pMaterial->SetRegMaterial(TNULL);
 		}
 	}
 

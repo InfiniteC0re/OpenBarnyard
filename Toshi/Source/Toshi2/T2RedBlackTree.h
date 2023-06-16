@@ -96,49 +96,49 @@ namespace Toshi
 			return &m_Value;
 		}
 
-		bool IsLeftNodeNext(const T& value)
+		TBOOL IsLeftNodeNext(const T& value)
 		{
 			if (m_Value == value)
 			{
-				return false;
+				return TFALSE;
 			}
 			else
 			{
 				if (m_Value < value)
 				{
-					return false;
+					return TFALSE;
 				}
 
-				return true;
+				return TTRUE;
 			}
 		}
 
-		bool operator==(const T& other) const
+		TBOOL operator==(const T& other) const
 		{
 			return m_Value == other;
 		}
 
-		bool operator==(const T2RedBlackTreeNode<T>& other) const
+		TBOOL operator==(const T2RedBlackTreeNode<T>& other) const
 		{
 			return m_Value == other.m_Value;
 		}
 
-		bool operator>(const T2RedBlackTreeNode<T>& other) const
+		TBOOL operator>(const T2RedBlackTreeNode<T>& other) const
 		{
 			return m_Value > other.m_Value;
 		}
 
-		bool operator<(const T2RedBlackTreeNode<T>& other) const
+		TBOOL operator<(const T2RedBlackTreeNode<T>& other) const
 		{
 			return m_Value < other.m_Value;
 		}
 
-		bool operator<=(const T2RedBlackTreeNode<T>& other) const
+		TBOOL operator<=(const T2RedBlackTreeNode<T>& other) const
 		{
 			return m_Value <= other.m_Value;
 		}
 
-		bool operator>=(const T2RedBlackTreeNode<T>& other) const
+		TBOOL operator>=(const T2RedBlackTreeNode<T>& other) const
 		{
 			return m_Value >= other.m_Value;
 		}
@@ -168,7 +168,7 @@ namespace Toshi
 
 		}
 
-		bool IsRoot(Node* pNode)
+		TBOOL IsRoot(Node* pNode)
 		{
 			return pNode == &m_oRoot;
 		}

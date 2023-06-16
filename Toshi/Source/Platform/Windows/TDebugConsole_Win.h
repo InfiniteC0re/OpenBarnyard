@@ -10,21 +10,21 @@ namespace Toshi
 		TDebugConsole();
 		~TDebugConsole();
 
-		bool Show(bool state);
-		bool Toggle();
+		TBOOL Show(TBOOL state);
+		TBOOL Toggle();
 
-		// Returns true if the console is visible
-		bool IsVisible() const { return m_Visible; }
+		// Returns TTRUE if the console is visible
+		TBOOL IsVisible() const { return m_Visible; }
 
-		// Returns true if the console is created
-		bool IsCreated() const { return m_Created; }
+		// Returns TTRUE if the console is created
+		TBOOL IsCreated() const { return m_Created; }
 
 		// Tries to find handle of the debug console
 		HWND FindConsole() const;
 
 	private:
-		bool m_Visible = false;
-		bool m_Created = false;
+		TBOOL m_Visible = TFALSE;
+		TBOOL m_Created = TFALSE;
 		HWND m_HWND;
 	};
 }

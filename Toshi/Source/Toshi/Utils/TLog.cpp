@@ -7,7 +7,7 @@ namespace Toshi
 {
 	STL::Ref<spdlog::logger> TLog::s_CoreLogger;
 	STL::Ref<spdlog::logger> TLog::s_AppLogger;
-	bool TLog::s_Created = false;
+	TBOOL TLog::s_Created = TFALSE;
 
 	void TLog::Create()
 	{
@@ -20,15 +20,15 @@ namespace Toshi
 
 			s_AppLogger = spdlog::stdout_color_mt("App");
 			s_AppLogger->set_level(spdlog::level::level_enum::trace);
-			s_Created = true;
+			s_Created = TTRUE;
 		}
 	}
 
 	void TLog::Destroy()
 	{
 		spdlog::shutdown();
-		s_CoreLogger = nullptr;
-		s_AppLogger = nullptr;
-		s_Created = false;
+		s_CoreLogger = TNULL;
+		s_AppLogger = TNULL;
+		s_Created = TFALSE;
 	}
 }

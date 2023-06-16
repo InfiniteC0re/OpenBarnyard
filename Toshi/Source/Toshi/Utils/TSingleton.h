@@ -1,4 +1,5 @@
 #pragma once
+#include <type_traits>
 
 namespace Toshi
 {
@@ -13,50 +14,51 @@ namespace Toshi
 
 		// Creates Singleton instance and returns it
 		template <typename ... Args>
-		static T* CreateSingleton(Args&& ... args)
+		__forceinline static T* CreateSingleton(Args&& ... args)
 		{
 			return new T(std::forward<Args>(args)...);
 		}
 
 		// Creates Singleton instance for a derived class and returns it
 		template <typename D, typename ... Args>
-		static D* CreateSingleton(Args&& ... args)
+		__forceinline static D* CreateSingleton(Args&& ... args)
 		{
+			static_assert(std::is_base_of_v<T, D> == TTRUE);
 			return new D(std::forward<Args>(args)...);
 		}
 
-		static void DestroySingleton()
+		__forceinline static void DestroySingleton()
 		{
 			delete GetSingleton();
 			ms_pSingleton = TNULL;
 		}
 
 		// Returns pointer and asserts if it's not allocated
-		static T* GetSingleton()
+		__forceinline static T* GetSingleton()
 		{
 			TASSERT(ms_pSingleton != TNULL, "TSingleton::GetSingleton() - ms_pSingleton is TNULL");
 			return ms_pSingleton;
 		}
 
-		static bool IsSingletonCreated()
+		__forceinline static TBOOL IsSingletonCreated()
 		{
 			return ms_pSingleton != TNULL;
 		}
 
 		// Returns pointer even if it's not allocated
-		static T* GetSingletonWeak()
+		__forceinline static T* GetSingletonWeak()
 		{
 			return ms_pSingleton;
 		}
 
 	protected:
-		TSingleton()
+		__forceinline TSingleton()
 		{
 			TASSERT(ms_pSingleton == TNULL, "Trying to create TSingleton class twice");
 			ms_pSingleton = static_cast<T*>(this);
 		}
 
-		~TSingleton() { ms_pSingleton = TNULL; }
+		__forceinline ~TSingleton() { ms_pSingleton = TNULL; }
 
 		static T* ms_pSingleton;
 	};

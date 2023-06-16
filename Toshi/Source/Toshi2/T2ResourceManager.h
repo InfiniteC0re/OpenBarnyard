@@ -75,12 +75,12 @@ namespace Toshi
 			return m_pResourceName;
 		}
 
-		bool HasFlag(uint8_t flag) const
+		TBOOL HasFlag(uint8_t flag) const
 		{
 			return (m_iFlags & flag) == flag;
 		}
 
-		bool HasAnyFlag(uint8_t flag) const
+		TBOOL HasAnyFlag(uint8_t flag) const
 		{
 			return (m_iFlags & flag) != 0;
 		}

@@ -63,7 +63,7 @@ public:
 		return m_eMode;
 	}
 
-	bool IsEnabled() const
+	TBOOL IsEnabled() const
 	{
 		return m_bEnabled;
 	}
@@ -83,7 +83,7 @@ private:
 	float m_fCentreY;
 	TTransformObject m_TransformObject;
 	TMatrix44 m_TransformMatrix;
-	bool m_bEnabled;
+	TBOOL m_bEnabled;
 	float m_fUnk2;
 };
 

@@ -12,7 +12,7 @@ void SaveLoadSKU::OnUpdate()
 		break;
 	case SaveLoadSKU::OPERATION_NOPROMPTSAVE:
 	{
-		bool bRes = m_pSaveData->Validate();
+		TBOOL bRes = m_pSaveData->Validate();
 		if (bRes)
 		{
 			TIMPLEMENT_D("m_pSaveData->FUN_005e3bf0()");

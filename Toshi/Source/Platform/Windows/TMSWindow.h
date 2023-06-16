@@ -10,7 +10,7 @@
 namespace Toshi
 {
 	class TMSWindow :
-		public TGenericClassDerived<TMSWindow, TObject, "TMSWindow", TMAKEVERSION(1, 0), false>
+		public TGenericClassDerived<TMSWindow, TObject, "TMSWindow", TMAKEVERSION(1, 0), TFALSE>
 	{
 	public:
 		static constexpr UINT s_PopupStyles = WS_POPUP | WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU;
@@ -23,7 +23,7 @@ namespace Toshi
 		void Disable();
 		void Update();
 
-		bool Create(TRender* renderer, LPCSTR title);
+		TBOOL Create(TRender* renderer, LPCSTR title);
 		void UnregisterWindowClass();
 
 		void SetPosition(UINT x, UINT y, UINT width, UINT height);
@@ -31,26 +31,26 @@ namespace Toshi
 		void SetWindowed()
 		{
 			TASSERT(GetHWND() != TNULL);
-			m_IsWindowed = true;
+			m_IsWindowed = TTRUE;
 		}
 
 		void SetFullscreen()
 		{
 			TASSERT(GetHWND() != TNULL);
-			m_IsWindowed = false;
+			m_IsWindowed = TFALSE;
 		}
 
-		bool IsDestroyed() const
+		TBOOL IsDestroyed() const
 		{
 			return m_IsDestroyed;
 		}
 
-		bool IsPopup() const
+		TBOOL IsPopup() const
 		{
 			return m_IsPopup;
 		}
 
-		bool IsWindowed() const
+		TBOOL IsWindowed() const
 		{
 			return m_IsWindowed;
 		}
@@ -65,7 +65,7 @@ namespace Toshi
 	protected:
 		static constexpr GUID WceusbshGUID = { 0x25dbce51, 0x6c8f, 0x4a72, 0x8a, 0x6d, 0xb5, 0x4c, 0x2b, 0x4f, 0xc8, 0x35 };
 
-		static bool ms_bIsFocused;
+		static TBOOL ms_bIsFocused;
 		static STICKYKEYS ms_StickyKeys;
 		static HDEVNOTIFY ms_hDeviceNotify;
 		static BOOL ms_bIsFullscreen;
@@ -73,18 +73,18 @@ namespace Toshi
 	private:
 		HWND m_HWND;               // 0x04
 		TRender* m_Render;         // 0x08
-		bool m_IsWindowed;         // 0x0C
-		bool m_IsDestroyed;        // 0x0D
-		bool m_bIsFocused;         // 0x0E
+		TBOOL m_IsWindowed;         // 0x0C
+		TBOOL m_IsDestroyed;        // 0x0D
+		TBOOL m_bIsFocused;         // 0x0E
 		HMODULE m_ModuleHandle;    // 0x10
-		bool m_Flag2;              // 0x14
+		TBOOL m_Flag2;              // 0x14
 	public:
 		int m_xPos;                // 0x18
 		int m_yPos;                // 0x1C
 	private:
-		bool m_Flag3;              // 0x20
-		bool m_IsPopup;            // 0x21
-		bool m_Flag5;              // 0x22
+		TBOOL m_Flag3;              // 0x20
+		TBOOL m_IsPopup;            // 0x21
+		TBOOL m_Flag5;              // 0x22
 	};
 }
 

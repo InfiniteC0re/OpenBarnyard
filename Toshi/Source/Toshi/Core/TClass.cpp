@@ -19,14 +19,14 @@ namespace Toshi
 		m_Parent = parent;
 		m_Version = version;
 		m_Size = size;
-		m_Initialized = false;
+		m_Initialized = TFALSE;
 		m_Unk = 0;
 
 		if (m_Parent)
 		{
 			// check if it's not attached yet
 			TClass* tClass = m_Parent->m_LastAttached;
-			while (tClass != nullptr)
+			while (tClass != TNULL)
 			{
 				if (tClass == this) return;
 				tClass = tClass->m_Previous;
@@ -39,14 +39,14 @@ namespace Toshi
 
 	TClass::~TClass()
 	{
-		m_LastAttached = nullptr;
-		m_Previous = nullptr;
-		m_Parent = nullptr;
+		m_LastAttached = TNULL;
+		m_Previous = TNULL;
+		m_Parent = TNULL;
 
 		// Uninitialize static
 		if (m_Initialized && m_Uninitialize)
 		{
-			m_Initialized = false;
+			m_Initialized = TFALSE;
 			m_Uninitialize();
 		}
 	}
@@ -56,13 +56,13 @@ namespace Toshi
 		if (m_Initialize)
 		{
 			m_Initialize();
-			m_Initialized = true;
+			m_Initialized = TTRUE;
 		}
 	}
 
 	void TClass::RecurseTree(t_RecurceTreeCheck fCheck, t_RecurceTreeBaseBeginCb fBaseBegin, t_RecurceTreeBaseEndCb fBaseEnd, void* custom)
 	{
-		bool valid = fCheck(this, custom);
+		TBOOL valid = fCheck(this, custom);
 
 		if (valid)
 		{
@@ -76,7 +76,7 @@ namespace Toshi
 	{
 		TClass* tClass = m_LastAttached;
 
-		while (tClass != nullptr)
+		while (tClass != TNULL)
 		{
 			if (fCheck) fCheck(tClass, custom);
 
@@ -91,11 +91,11 @@ namespace Toshi
 		}
 	}
 
-	const TClass* TClass::FindRecurse(const char* const& name, const TClass* parent, bool hasPrevious)
+	const TClass* TClass::FindRecurse(const char* const& name, const TClass* parent, TBOOL hasPrevious)
 	{
 		while (parent)
 		{
-			TClass* previous = hasPrevious ? parent->m_Previous : nullptr;
+			TClass* previous = hasPrevious ? parent->m_Previous : TNULL;
 			int difference = Toshi::TStringManager::String8CompareNoCase(parent->m_Name, name, -1);
 
 			if (difference == 0)
@@ -105,7 +105,7 @@ namespace Toshi
 
 			if (parent->m_LastAttached)
 			{
-				const TClass* result = FindRecurse(name, parent->m_LastAttached, true);
+				const TClass* result = FindRecurse(name, parent->m_LastAttached, TTRUE);
 
 				if (result)
 				{
@@ -116,26 +116,26 @@ namespace Toshi
 			parent = previous;
 		}
 
-		return nullptr;
+		return TNULL;
 	}
 
 	const TClass* TClass::Find(const char* name, const TClass* parent)
 	{
 		if (parent == TNULL) parent = &TObject::s_Class;
-		return FindRecurse(name, parent, false);
+		return FindRecurse(name, parent, TFALSE);
 	}
 
 	TObject* TClass::CreateObject()
 	{
-		if (m_Create != nullptr)
+		if (m_Create != TNULL)
 		{
 			return m_Create();
 		}
 
-		return nullptr;
+		return TNULL;
 	}
 
-	bool TClass::IsA(TClass* cmpClass)
+	TBOOL TClass::IsA(TClass* cmpClass)
 	{
 		if (cmpClass->m_LastAttached == TNULL)
 		{
@@ -149,23 +149,23 @@ namespace Toshi
 			{
 				if (pClass == cmpClass)
 				{
-					return true;
+					return TTRUE;
 				}
 
 				pClass = pClass->m_Parent;
 			}
 		}
 
-		return false;
+		return TFALSE;
 	}
 		
-	bool TClass::TryInitialize(TClass* tClass)
+	TBOOL TClass::TryInitialize(TClass* tClass)
 	{
 		if (!tClass->IsInitialized())
 		{
 			tClass->Initialize();
 		}
 		
-		return true;
+		return TTRUE;
 	}
 }

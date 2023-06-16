@@ -45,12 +45,12 @@ void A2GUIRenderer::BeginScene()
 	auto pRenderContext = (TRenderContextDX11*)pRender->GetCurrentRenderContext();
 	pRender->FlushShaders();
 
-	static bool s_IsMatrixSet = false;
+	static TBOOL s_IsMatrixSet = TFALSE;
 	static TMatrix44 s_IdentityMatrix;
 
 	if (!s_IsMatrixSet)
 	{
-		s_IsMatrixSet = true;
+		s_IsMatrixSet = TTRUE;
 		s_IdentityMatrix.Identity();
 	}
 

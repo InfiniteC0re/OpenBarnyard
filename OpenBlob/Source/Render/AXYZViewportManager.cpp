@@ -71,10 +71,10 @@ TViewport* AXYZViewportManager::CreateViewport(float x, float y, float w, float 
 	pViewport->SetHeight(h);
 	pViewport->SetMinZ(0.2f);
 	pViewport->SetMaxZ(1.0f);
-	pViewport->AllowBackgroundClear(true);
-	pViewport->AllowDepthClear(true);
-	pViewport->Enable(true);
-	pViewport->EnableDefaultBeginRender(true);
+	pViewport->AllowBackgroundClear(TTRUE);
+	pViewport->AllowDepthClear(TTRUE);
+	pViewport->Enable(TTRUE);
+	pViewport->EnableDefaultBeginRender(TTRUE);
 	pViewport->SetBackgroundColor(64, 64, 64, 255);
 
 	return pViewport;
@@ -91,7 +91,7 @@ void AXYZViewportManager::GetUseableArea(float& x, float& y, float& w, float& h)
 	h = pDisplayParams->Height;
 }
 
-void AXYZViewportManager::SetMainFullScreen(bool fullscreen)
+void AXYZViewportManager::SetMainFullScreen(TBOOL fullscreen)
 {
 	TIMPLEMENT();
 }

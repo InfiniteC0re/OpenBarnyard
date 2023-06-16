@@ -18,7 +18,7 @@ namespace Toshi
 		while (compressedLeft > 0)
 		{
 			uint32_t chunkSize;
-			bool noOffset;
+			TBOOL noOffset;
 			int offset;
 
 			compressedLeft -= GetCommand(file, noOffset, chunkSize, offset);
@@ -87,10 +87,10 @@ namespace Toshi
 
 	// With the help of Revel8n approach
 	// Could use some code cleanup
-	int TCompress_Decompress::GetCommand(TFile* file, bool& noOffset, uint32_t& size, int& offset)
+	int TCompress_Decompress::GetCommand(TFile* file, TBOOL& noOffset, uint32_t& size, int& offset)
 	{
 		int read_count = file->Read(&size, 1);
-		bool isBigSize = size & BTECSizeFlag_BigSize;
+		TBOOL isBigSize = size & BTECSizeFlag_BigSize;
 		noOffset = size & BTECSizeFlag_NoOffset;
 		offset = -1;
 
@@ -109,7 +109,7 @@ namespace Toshi
 		{
 			// by default offset is 7 bits long
 			read_count += file->Read(&offset, 1);
-			bool bigOffset = offset & BTECOffsetFlag_BigOffset;
+			TBOOL bigOffset = offset & BTECOffsetFlag_BigOffset;
 			offset &= BTECOffsetFlag_OffsetMask;
 
 			if (bigOffset)

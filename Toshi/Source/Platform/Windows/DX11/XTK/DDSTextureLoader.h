@@ -58,7 +58,7 @@ namespace DirectX
         _Outptr_opt_ ID3D11Resource** texture,
         _Outptr_opt_ ID3D11ShaderResourceView** textureView,
         _In_ size_t maxsize = 0,
-        _Out_opt_ DDS_ALPHA_MODE* alphaMode = nullptr) noexcept;
+        _Out_opt_ DDS_ALPHA_MODE* alphaMode = TNULL) noexcept;
 
     HRESULT __cdecl CreateDDSTextureFromFile(
         _In_ ID3D11Device* d3dDevice,
@@ -66,7 +66,7 @@ namespace DirectX
         _Outptr_opt_ ID3D11Resource** texture,
         _Outptr_opt_ ID3D11ShaderResourceView** textureView,
         _In_ size_t maxsize = 0,
-        _Out_opt_ DDS_ALPHA_MODE* alphaMode = nullptr) noexcept;
+        _Out_opt_ DDS_ALPHA_MODE* alphaMode = TNULL) noexcept;
 
     // Standard version with optional auto-gen mipmap support
     HRESULT __cdecl CreateDDSTextureFromMemory(
@@ -82,7 +82,7 @@ namespace DirectX
         _Outptr_opt_ ID3D11Resource** texture,
         _Outptr_opt_ ID3D11ShaderResourceView** textureView,
         _In_ size_t maxsize = 0,
-        _Out_opt_ DDS_ALPHA_MODE* alphaMode = nullptr) noexcept;
+        _Out_opt_ DDS_ALPHA_MODE* alphaMode = TNULL) noexcept;
 
     HRESULT __cdecl CreateDDSTextureFromFile(
     #if defined(_XBOX_ONE) && defined(_TITLE)
@@ -96,7 +96,7 @@ namespace DirectX
         _Outptr_opt_ ID3D11Resource** texture,
         _Outptr_opt_ ID3D11ShaderResourceView** textureView,
         _In_ size_t maxsize = 0,
-        _Out_opt_ DDS_ALPHA_MODE* alphaMode = nullptr) noexcept;
+        _Out_opt_ DDS_ALPHA_MODE* alphaMode = TNULL) noexcept;
 
     // Extended version
     HRESULT __cdecl CreateDDSTextureFromMemoryEx(
@@ -111,7 +111,7 @@ namespace DirectX
         _In_ DDS_LOADER_FLAGS loadFlags,
         _Outptr_opt_ ID3D11Resource** texture,
         _Outptr_opt_ ID3D11ShaderResourceView** textureView,
-        _Out_opt_ DDS_ALPHA_MODE* alphaMode = nullptr) noexcept;
+        _Out_opt_ DDS_ALPHA_MODE* alphaMode = TNULL) noexcept;
 
     HRESULT __cdecl CreateDDSTextureFromFileEx(
         _In_ ID3D11Device* d3dDevice,
@@ -124,7 +124,7 @@ namespace DirectX
         _In_ DDS_LOADER_FLAGS loadFlags,
         _Outptr_opt_ ID3D11Resource** texture,
         _Outptr_opt_ ID3D11ShaderResourceView** textureView,
-        _Out_opt_ DDS_ALPHA_MODE* alphaMode = nullptr) noexcept;
+        _Out_opt_ DDS_ALPHA_MODE* alphaMode = TNULL) noexcept;
 
     // Extended version with optional auto-gen mipmap support
     HRESULT __cdecl CreateDDSTextureFromMemoryEx(
@@ -145,7 +145,7 @@ namespace DirectX
         _In_ DDS_LOADER_FLAGS loadFlags,
         _Outptr_opt_ ID3D11Resource** texture,
         _Outptr_opt_ ID3D11ShaderResourceView** textureView,
-        _Out_opt_ DDS_ALPHA_MODE* alphaMode = nullptr) noexcept;
+        _Out_opt_ DDS_ALPHA_MODE* alphaMode = TNULL) noexcept;
 
     HRESULT __cdecl CreateDDSTextureFromFileEx(
     #if defined(_XBOX_ONE) && defined(_TITLE)
@@ -164,7 +164,7 @@ namespace DirectX
         _In_ DDS_LOADER_FLAGS loadFlags,
         _Outptr_opt_ ID3D11Resource** texture,
         _Outptr_opt_ ID3D11ShaderResourceView** textureView,
-        _Out_opt_ DDS_ALPHA_MODE* alphaMode = nullptr) noexcept;
+        _Out_opt_ DDS_ALPHA_MODE* alphaMode = TNULL) noexcept;
 
 #ifdef __clang__
 #pragma clang diagnostic push

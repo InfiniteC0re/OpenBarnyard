@@ -135,7 +135,7 @@ namespace Toshi
 		return TTRB::ERROR_OK;
 	}
 
-	void TTSFI::Close(bool free)
+	void TTSFI::Close(TBOOL free)
 	{
 		PopForm();
 
@@ -272,17 +272,17 @@ namespace Toshi
 		return 0;
 	}
 
-	bool TTSFO::OpenHunk(HunkMark* hunkMark, const char* hunkName)
+	TBOOL TTSFO::OpenHunk(HunkMark* hunkMark, const char* hunkName)
 	{
 		TASSERT(hunkMark != TNULL, "HunkMark is TNULL");
 		hunkMark->Name = TMAKEFOUR(hunkName);
 		hunkMark->Pos = m_pFile->Tell();
 
 		WriteHunk(hunkMark->Name, TNULL, 0);
-		return true;
+		return TTRUE;
 	}
 
-	bool TTSFO::CloseHunk(HunkMark* hunkMark)
+	TBOOL TTSFO::CloseHunk(HunkMark* hunkMark)
 	{
 		TASSERT(hunkMark != TNULL, "HunkMark is TNULL");
 		auto oldPos = m_pFile->Tell();
@@ -292,7 +292,7 @@ namespace Toshi
 		m_pFile->Seek(oldPos, TFile::TSEEK_SET);
 		TTSFO::WriteAlignmentPad();
 
-		return true;
+		return TTRUE;
 	}
 
 	size_t TTSFO::WriteHunk(uint32_t hunkName, void* buffer, size_t bufferSize)

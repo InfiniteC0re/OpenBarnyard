@@ -26,7 +26,7 @@ namespace Toshi
 		TFree(m_pMeshes);
 	}
 
-	bool TPrimShader::AddMesh()
+	TBOOL TPrimShader::AddMesh()
 	{
 		TASSERT(TFALSE == m_bIsLocked);
 
@@ -109,27 +109,27 @@ namespace Toshi
 			pRender->m_pDeviceContext->PSSetShader(m_pPShaderBasic, TNULL, 0);
 		}
 
-		pRender->SetAlphaUpdate(false);
+		pRender->SetAlphaUpdate(TFALSE);
 
 		D3D11_DEPTH_WRITE_MASK depthWriteMask;
 
 		if (m_eBlendMode == 0)
 		{
-			pRender->SetBlendMode(true, D3D11_BLEND_OP_ADD, D3D11_BLEND_ONE, D3D11_BLEND_ZERO);
+			pRender->SetBlendMode(TTRUE, D3D11_BLEND_OP_ADD, D3D11_BLEND_ONE, D3D11_BLEND_ZERO);
 			depthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
 		}
 		else if (m_eBlendMode == 2)
 		{
-			pRender->SetBlendMode(true, D3D11_BLEND_OP_ADD, D3D11_BLEND_ONE, D3D11_BLEND_ONE);
+			pRender->SetBlendMode(TTRUE, D3D11_BLEND_OP_ADD, D3D11_BLEND_ONE, D3D11_BLEND_ONE);
 			depthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
 		}
 		else
 		{
-			pRender->SetBlendMode(true, D3D11_BLEND_OP_ADD, D3D11_BLEND_SRC_ALPHA, D3D11_BLEND_INV_SRC_ALPHA);
+			pRender->SetBlendMode(TTRUE, D3D11_BLEND_OP_ADD, D3D11_BLEND_SRC_ALPHA, D3D11_BLEND_INV_SRC_ALPHA);
 			depthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
 		}
 
-		pRender->SetZMode(true, D3D11_COMPARISON_LESS_EQUAL, depthWriteMask);
+		pRender->SetZMode(TTRUE, D3D11_COMPARISON_LESS_EQUAL, depthWriteMask);
 
 		TMatrix44 worldViewProjection = pRenderContext->GetModelViewMatrix().XMM() * pRenderContext->GetProjectionMatrix().XMM();
 

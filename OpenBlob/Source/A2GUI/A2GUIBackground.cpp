@@ -28,7 +28,7 @@ void A2GUIBackground::LoadMaterialLibrary(const char* fileName)
 
 	TTRB::ERROR eRet = m_pTrb->Load(matlibPath);
 	TASSERT(TTRB::ERROR_OK == eRet);
-	TAssetInit::InitAssets(*m_pTrb, true, false);
+	TAssetInit::InitAssets(*m_pTrb, TTRUE, TFALSE);
 }
 
 void A2GUIBackground::SetupBackground()

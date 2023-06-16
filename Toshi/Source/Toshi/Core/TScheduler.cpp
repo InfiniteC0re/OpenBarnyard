@@ -15,9 +15,9 @@ namespace Toshi
 		m_TotalTime = 0.0;
 		m_MaxDeltaTime = 0.25f;
 		m_FrameCount = 0;
-		m_UseFixedMaxFps = false;
+		m_UseFixedMaxFps = TFALSE;
 		m_FixedMaxFps = 0.0;
-		m_UseDebugDeltaTime = false;
+		m_UseDebugDeltaTime = TFALSE;
 		m_DebugDeltaTime = 0.01f;
 		m_DebugDeltaTimeMult = 1.0f;
 	}
@@ -72,7 +72,7 @@ namespace Toshi
 
 			TClass* pClass = task->GetClass();
 			task->OnDestroy();
-			m_TaskTree.Remove(task, false);
+			m_TaskTree.Remove(task, TFALSE);
 			task->Delete();
 
 			if (taskParent != TNULL)
@@ -117,7 +117,7 @@ namespace Toshi
 		{
 			TTask* nextTask = (currentTask->Next() != task) ? currentTask->Next() : TNULL;
 
-			bool recurse = true;
+			TBOOL recurse = TTRUE;
 			if (task->IsCreated() && task->IsActive())
 			{
 				recurse = currentTask->OnUpdate(m_DeltaTime);

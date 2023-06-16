@@ -24,8 +24,8 @@ namespace Toshi
 			virtual size_t GetModeIndex() const = 0;
 			virtual uint32_t GetWidth() const = 0;
 			virtual uint32_t GetHeight() const = 0;
-			virtual bool SomeCheck1() const = 0;
-			virtual bool SomeCheck2() const = 0;
+			virtual TBOOL SomeCheck1() const = 0;
+			virtual TBOOL SomeCheck2() const = 0;
 			virtual float GetRefreshRate() const = 0;
 			virtual TRenderAdapter::Mode::Device* GetDevice(int device) = 0;
 		};

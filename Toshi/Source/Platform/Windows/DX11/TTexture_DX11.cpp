@@ -168,7 +168,7 @@ namespace Toshi
 
 		TTexture* pCurrentTex = m_pLastTexture;
 
-		while (true)
+		while (TTRUE)
 		{
 			if (pCurrentTex == TNULL)
 			{

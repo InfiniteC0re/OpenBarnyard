@@ -89,7 +89,7 @@ namespace Toshi {
 		TASSERT(TFALSE, "Not used in De Blob on Windows");
 		TIMPLEMENT();
 
-		return true;
+		return TTRUE;
 	}
 
 	void TSysMesh::Deallocate()

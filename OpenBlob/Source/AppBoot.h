@@ -12,21 +12,21 @@ public:
 	}
 	~AApplication() { }
 
-	virtual bool OnCreate(int argc, char** argv) override;
-	virtual bool OnUpdate(float deltaTime) override;
-	bool UpdateSound(float deltaTime);
+	virtual TBOOL OnCreate(int argc, char** argv) override;
+	virtual TBOOL OnUpdate(float deltaTime) override;
+	TBOOL UpdateSound(float deltaTime);
 
-	bool ShouldLoadModelViewState() const
+	TBOOL ShouldLoadModelViewState() const
 	{
 		return m_bLoadModelViewState;
 	}
 
-	void SetRenderWorld(bool render)
+	void SetRenderWorld(TBOOL render)
 	{
 		m_bRenderWorld = render;
 	}
 
-	bool ShouldRenderWorld() const
+	TBOOL ShouldRenderWorld() const
 	{
 		return m_bRenderWorld;
 	}
@@ -43,14 +43,14 @@ public:
 public:
 	ARenderer* m_Renderer;                        // 0x34
 	AGameStateController* m_pGameStateController; // 0x38
-	bool m_bRenderWorld;                          // 0x48
+	TBOOL m_bRenderWorld;                          // 0x48
 	uint32_t m_Width;                             // 0x58
 	uint32_t m_Height;                            // 0x5C
-	bool m_bUseDefaultHeightWidth;                // 0x60
-	bool m_bIsFullscreen;                         // 0x61
-	bool m_bUnk2;                                 // 0x60
-	bool m_bLoadModelViewState;                   // 0x63
-	bool m_bUnk3;                                 // 0x64
-	bool m_bUnk4;                                 // 0x65
+	TBOOL m_bUseDefaultHeightWidth;                // 0x60
+	TBOOL m_bIsFullscreen;                         // 0x61
+	TBOOL m_bUnk2;                                 // 0x60
+	TBOOL m_bLoadModelViewState;                   // 0x63
+	TBOOL m_bUnk3;                                 // 0x64
+	TBOOL m_bUnk4;                                 // 0x65
 	const char* m_szLevelPropertiesFileName;      // 0x68
 };

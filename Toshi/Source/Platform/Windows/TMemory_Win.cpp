@@ -14,7 +14,7 @@ namespace Toshi
 	void TMemory::Shutdown()
 	{
 		DestroyHeap(s_GlobalHeap);
-		s_GlobalHeap = nullptr;
+		s_GlobalHeap = TNULL;
 
 		if (TMemory::s_Context.s_Heap)
 		{
@@ -105,7 +105,7 @@ namespace Toshi
 
 		TMemory::s_Context.s_cbRealloc = [](void* ptr, size_t size) -> void*
 		{
-			return nullptr;
+			return TNULL;
 		};
 
 		TMemory::s_Context.s_cbMemalign = [](size_t alignment, size_t size) -> void*

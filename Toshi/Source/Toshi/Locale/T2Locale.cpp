@@ -3,24 +3,22 @@
 
 namespace Toshi
 {
-	T2Locale* T2Locale::s_Singleton = TNULL;
-
 	T2Locale::T2Locale(int langCount, size_t bufferSize, void* buffer)
 	{
 		// 00662d40
-		m_Buffer = buffer;
+		m_pBuffer = buffer;
 		m_BufferPos = buffer;
-		m_StringTable = nullptr;
+		m_StringTable = TNULL;
 		m_LangId = -1;
-		m_Flag = false;
+		m_bOwnsBuffer = TFALSE;
 
-		if (m_Buffer == nullptr)
+		if (m_pBuffer == TNULL)
 		{
 			size_t symbolTableSize = TTRB::GetSymbolTableSize(1);
 			size_t headerSize = TTRB::GetHeaderSize(1);
-			m_Buffer = TMalloc(headerSize + bufferSize + symbolTableSize);
-			m_BufferPos = m_Buffer;
-			m_Flag = true;
+			m_pBuffer = TMalloc(headerSize + bufferSize + symbolTableSize);
+			m_BufferPos = m_pBuffer;
+			m_bOwnsBuffer = TTRUE;
 		}
 
 		m_Locale.SetMemoryFunctions(TRBAllocator, TRBDeallocator, this);
@@ -34,7 +32,7 @@ namespace Toshi
 			m_Locale.Load(GetLanguageFilename(langid));
 			m_StringTable = m_Locale.CastSymbol<LocaleStrings>("LocaleStrings");
 
-			m_BufferPos = m_Buffer;
+			m_BufferPos = m_pBuffer;
 			m_LangId = langid;
 		}
 	}

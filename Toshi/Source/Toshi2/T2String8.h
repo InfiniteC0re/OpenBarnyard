@@ -87,14 +87,14 @@ namespace Toshi
 
 		static const char* FindChar(const char* str, char character)
 		{
-			while (true)
+			while (TTRUE)
 			{
-				if (*str == L'\x0000') return nullptr;
+				if (*str == L'\x0000') return TNULL;
 				if (*str == character) return str;
 				str++;
 			}
 
-			return nullptr;
+			return TNULL;
 		}
 
 		static const char* FindString(const char* str, char* substr)
@@ -104,11 +104,11 @@ namespace Toshi
 
 		static size_t Length(const char* str)
 		{
-			if (str != nullptr) return strlen(str);
+			if (str != TNULL) return strlen(str);
 			return -1;
 		}
 
-		static bool IsLowerCase(const char* str)
+		static TBOOL IsLowerCase(const char* str)
 		{
 			while (*str != 0 && (islower(*str) != 0 || isalpha(*str) == 0))
 			{

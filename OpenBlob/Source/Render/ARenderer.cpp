@@ -90,7 +90,7 @@ void ARenderer::Update(float deltaTime)
 		RenderLoadingScreen(deltaTime);
 	}
 
-	RenderGUI(false);
+	RenderGUI(TFALSE);
 	auto pGameStateController = AGameStateController::GetSingletonWeak();
 	auto pGameState = pGameStateController->GetCurrentGameState();
 
@@ -140,7 +140,7 @@ TBOOL ARenderer::CreateTRender()
 		if (AApplication::g_oTheApp.m_Width != -1)
 		{
 			MessageBoxA(TNULL, "You should specify both width and heigth or neither", "Invalid args", MB_OK | MB_ICONERROR | MB_SYSTEMMODAL);
-			return false;
+			return TFALSE;
 		}
 
 		if (!AApplication::g_oTheApp.m_bUseDefaultHeightWidth)
@@ -158,14 +158,14 @@ TBOOL ARenderer::CreateTRender()
 		displayParams.Height = height;
 		renderer->CreateDisplay(&displayParams);
 
-		return true;
+		return TTRUE;
 	}
 	else
 	{
 		if (AApplication::g_oTheApp.m_Height == -1)
 		{
 			MessageBoxA(TNULL, "You should specify both width and heigth or neither", "Invalid args", MB_OK | MB_ICONERROR | MB_SYSTEMMODAL);
-			return false;
+			return TFALSE;
 		}
 
 		if (!AApplication::g_oTheApp.m_bUseDefaultHeightWidth)
@@ -175,7 +175,7 @@ TBOOL ARenderer::CreateTRender()
 			if (AApplication::g_oTheApp.m_Width > 1280 && AApplication::g_oTheApp.m_Height > 720)
 			{
 				MessageBoxA(TNULL, "The specified width and heith must be greater than 1280x720 and match a valid mode", "Invalid args", MB_OK | MB_ICONERROR | MB_SYSTEMMODAL);
-				return false;
+				return TFALSE;
 			}
 			displayParams.Unk3 = 32;
 			displayParams.Unk4 = 3;
@@ -185,7 +185,7 @@ TBOOL ARenderer::CreateTRender()
 			displayParams.Width = AApplication::g_oTheApp.m_Width;
 			displayParams.Height = AApplication::g_oTheApp.m_Height;
 			renderer->CreateDisplay(&displayParams);
-			return true;
+			return TTRUE;
 		}
 		else
 		{
@@ -197,7 +197,7 @@ TBOOL ARenderer::CreateTRender()
 				char formattedString[512];
 				T2String8::Format(formattedString, "The specified width and heith must be between 1280x720 and the current desktop resolution (%dx%d)", mode->GetWidth(), mode->GetHeight());
 				MessageBoxA(TNULL, formattedString, "Invalid args", MB_OK | MB_ICONERROR | MB_SYSTEMMODAL);
-				return false;
+				return TFALSE;
 			}
 
 			displayParams.Unk3 = 32;
@@ -208,7 +208,7 @@ TBOOL ARenderer::CreateTRender()
 			displayParams.Width = width;
 			displayParams.Height = height;
 			renderer->CreateDisplay(&displayParams);
-			return true;
+			return TTRUE;
 		}
 	}
 }
@@ -222,7 +222,7 @@ void ARenderer::Create()
 
 	if (error == TTRB::ERROR_OK)
 	{
-		TAssetInit::InitAssets(s_BootAssetsTRB, true, false);
+		TAssetInit::InitAssets(s_BootAssetsTRB, TTRUE, TFALSE);
 	}
 
 	// Create SysShader
@@ -252,7 +252,7 @@ void ARenderer::Create()
 	m_pRectangle->Create(width, height);
 	m_pRectangle->SetColour(0xFF000000);
 	m_pRectangle->SetAlpha(0);
-	m_pRectangle->SetVisible(true);
+	m_pRectangle->SetVisible(TTRUE);
 }
 
 void ARenderer::SetBackgroundColour(uint32_t r, uint32_t g, uint32_t b)
@@ -288,7 +288,7 @@ void ARenderer::RenderMainScene(float deltaTime, TViewport* pViewport, TCameraOb
 	TIMPLEMENT();
 	auto pRender = TRenderDX11::Interface();
 	
-	pViewport->AllowDepthClear(true);
+	pViewport->AllowDepthClear(TTRUE);
 
 	auto pOriginalContext = pRender->GetCurrentRenderContext();
 	pRender->SetCurrentRenderContext(pViewport->GetRenderContext());
@@ -329,10 +329,10 @@ void ARenderer::CreateMainViewport()
 	m_pViewport->SetHeight((float)pDisplayParams->Height);
 	m_pViewport->SetMinZ(0.2f);
 	m_pViewport->SetMaxZ(1.0f);
-	m_pViewport->AllowBackgroundClear(true);
-	m_pViewport->AllowDepthClear(true);
-	m_pViewport->Enable(true);
-	m_pViewport->EnableDefaultBeginRender(true);
+	m_pViewport->AllowBackgroundClear(TTRUE);
+	m_pViewport->AllowDepthClear(TTRUE);
+	m_pViewport->Enable(TTRUE);
+	m_pViewport->EnableDefaultBeginRender(TTRUE);
 	m_pViewport->SetBackgroundColor(0, 0, 0, 255);
 	renderer->m_pGlow->SetDist(1.5f);
 	renderer->m_pGlow->SetIntensity(4.0f);

@@ -126,7 +126,7 @@ namespace Toshi
         }
     }
 
-    bool BTECCompressor::FUN_0068af10(char* buffer, size_t bufferSize, char*& offset, size_t& dataSize)
+    TBOOL BTECCompressor::FUN_0068af10(char* buffer, size_t bufferSize, char*& offset, size_t& dataSize)
     {
         // +++
         offset = TNULL;
@@ -134,7 +134,7 @@ namespace Toshi
 
         if (bufferSize < 1 || m_Offsets[(BYTE)*buffer] == TNULL)
         {
-            return false;
+            return TFALSE;
         }
 
         if (m_BucketCount > 0)
@@ -151,8 +151,8 @@ namespace Toshi
                 
                 Node* localNode1;
                 Node* localNode2;
-                bool bRes = FUN_0068b300(buffer, m_Buckets[i], localSize, localNode1, localNode2);
-                if (bRes == false) break;
+                TBOOL bRes = FUN_0068b300(buffer, m_Buckets[i], localSize, localNode1, localNode2);
+                if (bRes == TFALSE) break;
 
                 size = localSize;
                 node1 = localNode1;
@@ -175,10 +175,10 @@ namespace Toshi
 
                 if (node1 == node2)
                 {
-                    return true;
+                    return TTRUE;
                 }
 
-                while (true)
+                while (TTRUE)
                 {
                     size = 0;
 
@@ -195,7 +195,7 @@ namespace Toshi
 
                         if (someSize <= size)
                         {
-                            return true;
+                            return TTRUE;
                         }
                     }
 
@@ -203,7 +203,7 @@ namespace Toshi
 
                     if (node1 == node2)
                     {
-                        return true;
+                        return TTRUE;
                     }
                 }
             }
@@ -212,7 +212,7 @@ namespace Toshi
         offset = m_Offsets[(BYTE)*buffer];
         dataSize = 1;
 
-        return true;
+        return TTRUE;
     }
 
     void BTECCompressor::AllocSubstring(char* buffer)
@@ -256,7 +256,7 @@ namespace Toshi
         }
     }
 
-    bool BTECCompressor::FUN_0068b300(char* buffer, Bucket nodeBucket, size_t bufferSize, Node*& out1, Node*& out2)
+    TBOOL BTECCompressor::FUN_0068b300(char* buffer, Bucket nodeBucket, size_t bufferSize, Node*& out1, Node*& out2)
     {
         auto hash = HashData(buffer, bufferSize);
         auto hashedNode = nodeBucket[hash % 256];

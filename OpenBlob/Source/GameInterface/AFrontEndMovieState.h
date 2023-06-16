@@ -5,7 +5,7 @@
 #include <A2GUI/A2GUIBackground.h>
 
 class AFrontEndMovieState :
-	public Toshi::TGenericClassDerived<AFrontEndMovieState, AGameState, "AFrontEndMovieState", TMAKEVERSION(1, 0), true>
+	public Toshi::TGenericClassDerived<AFrontEndMovieState, AGameState, "AFrontEndMovieState", TMAKEVERSION(1, 0), TTRUE>
 {
 public:
 	constexpr static const char* s_Assets[] = {
@@ -39,8 +39,8 @@ public:
 
 private:
 
-	bool HasBackgroundStoppedShowing();
-	bool HasMovieStopped();
+	TBOOL HasBackgroundStoppedShowing();
+	TBOOL HasMovieStopped();
 	void StopMovieIfPlaying();
 
 	void StartMovie(Asset assetId);
@@ -49,7 +49,7 @@ private:
 	A2GUIBackground m_Background;
 	float m_fUnknown; // 0x104
 	Asset m_iAssetId; // 0x108
-	bool m_bSkip;    // 0x10C
+	TBOOL m_bSkip;    // 0x10C
 
 	Toshi::T2GUIRectangle* m_Test;
 	float m_TestRotAngle;

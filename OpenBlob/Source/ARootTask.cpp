@@ -6,14 +6,14 @@
 #define TEST_STL 1
 #define TEST_LOCALE_BARNYARD 1
 
-bool ARootTask::OnUpdate(float deltaTime)
+TBOOL ARootTask::OnUpdate(float deltaTime)
 {
 	m_Seconds += deltaTime;
 
 	if (m_Seconds >= 5)
 	{
 		m_Seconds = 0;
-		Activate(false);
+		Activate(TFALSE);
 
 		TOSHI_INFO("ARootTask: Five seconds has passed. Deactivating ARootTask");
 		TOSHI_INFO("Average FPS is {0:f}", Toshi::TSystemManager::GetSingleton()->GetAverageFps());
@@ -75,5 +75,5 @@ bool ARootTask::OnUpdate(float deltaTime)
 #endif
 	}
 
-	return true;
+	return TTRUE;
 }

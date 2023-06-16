@@ -78,14 +78,14 @@ namespace Toshi
 
 		static const wchar_t* FindChar(const wchar_t* str, wchar_t character)
 		{
-			while (true)
+			while (TTRUE)
 			{
-				if (*str == L'\x0000') return nullptr;
+				if (*str == L'\x0000') return TNULL;
 				if (*str == character) return str;
 				str++;
 			}
 
-			return nullptr;
+			return TNULL;
 		}
 
 		static const wchar_t* FindString(const wchar_t* str, wchar_t* substr)
@@ -95,7 +95,7 @@ namespace Toshi
 
 		static size_t Length(const wchar_t* str)
 		{
-			if (str != nullptr) return wcslen(str);
+			if (str != TNULL) return wcslen(str);
 			return -1;
 		}
 

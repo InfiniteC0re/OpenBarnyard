@@ -47,7 +47,7 @@ namespace Toshi
 	void TXUI::SetDefaultFont(const char* a_pData)
 	{
 		m_TRB1.Load(a_pData);
-		TAssetInit::InitAssets(m_TRB1, true, false);
+		TAssetInit::InitAssets(m_TRB1, TTRUE, TFALSE);
 
 	}
 
@@ -57,7 +57,7 @@ namespace Toshi
 		if (m_resource == TNULL)
 		{
 			m_resource = new (TXUI::MemoryBlock()) TXUIResource();
-			bool bRes = m_resource->Load(m_xurBuffer);
+			TBOOL bRes = m_resource->Load(m_xurBuffer);
 			TASSERT(TTRUE == bRes, "Could not load XUR");
 			TXUI::GetSingleton()->AddResource(this);
 		}

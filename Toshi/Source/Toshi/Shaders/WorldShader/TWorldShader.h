@@ -3,7 +3,7 @@
 namespace Toshi
 {
 	class TWorldShader :
-		public TGenericClassDerived<TWorldShader, TObject, "TWorldShader", TMAKEVERSION(1, 0), false>
+		public TGenericClassDerived<TWorldShader, TObject, "TWorldShader", TMAKEVERSION(1, 0), TFALSE>
 	{
 
 	};

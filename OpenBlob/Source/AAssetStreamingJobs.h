@@ -32,7 +32,7 @@ public:
 		AAssetStreaming::GetSingletonWeak()->GetFileStream().AddStream(&m_StreamJob);
 	}
 
-	virtual bool RunJob()
+	virtual TBOOL RunJob()
 	{
 		return m_IsRunning;
 	}

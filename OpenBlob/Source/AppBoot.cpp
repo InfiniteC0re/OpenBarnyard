@@ -31,7 +31,7 @@ AApplication AApplication::g_oTheApp;
 
 CVAR_CREATE(testcvar, TFALSE)
 
-bool AApplication::OnCreate(int argc, char** argv)
+TBOOL AApplication::OnCreate(int argc, char** argv)
 {
 	TOSHI_INFO("Starting Blob...");
 	AMemory::CreatePools();
@@ -41,7 +41,7 @@ bool AApplication::OnCreate(int argc, char** argv)
 	ALocaleManager::Create();
 
 	m_Renderer = ARenderer::GetSingleton();
-	bool interfaceCreated = m_Renderer->CreateInterface();
+	TBOOL interfaceCreated = m_Renderer->CreateInterface();
 
 	TOSHI_INFO("testcvar value: {0}", CVAR_GET_BOOL(testcvar));
 	
@@ -60,7 +60,7 @@ bool AApplication::OnCreate(int argc, char** argv)
 		size_t poolSize = 128 * 1024 * 1024;
 		void* mempool = malloc(poolSize);
 
-		bool bResult = Toshi::TSound::CreateSingleton()->Create(mempool, poolSize, -1, -1, Toshi::TSound::SpeakerType_7POINT1);
+		TBOOL bResult = Toshi::TSound::CreateSingleton()->Create(mempool, poolSize, -1, -1, Toshi::TSound::SpeakerType_7POINT1);
 		TASSERT(TTRUE == bResult);
 
 		FMOD::System* system = Toshi::TSound::GetSingletonWeak()->GetSystem();
@@ -70,7 +70,7 @@ bool AApplication::OnCreate(int argc, char** argv)
 
 		m_Renderer->Create();
 		AGameState::SetupLoadIcon();
-		SetRenderWorld(true);
+		SetRenderWorld(TTRUE);
 		
 		m_pGameStateController = AGameStateController::CreateSingleton();
 		ACameraManager::CreateSingleton();
@@ -86,10 +86,10 @@ bool AApplication::OnCreate(int argc, char** argv)
 		exampleClass->Delete();
 	}
 	
-	return true;
+	return TTRUE;
 }
 
-bool AApplication::OnUpdate(float deltaTime)
+TBOOL AApplication::OnUpdate(float deltaTime)
 {
 	Toshi::T2GUI* pGUI = Toshi::T2GUI::GetSingletonWeak();
 	
@@ -108,12 +108,12 @@ bool AApplication::OnUpdate(float deltaTime)
 	UpdateSound(deltaTime);
 	m_pGameStateController->Update(deltaTime);
 	ARenderer::GetSingletonWeak()->Update(deltaTime);
-	return true;
+	return TTRUE;
 }
 
-bool AApplication::UpdateSound(float deltaTime)
+TBOOL AApplication::UpdateSound(float deltaTime)
 {
 	Toshi::TSound* sound = Toshi::TSound::GetSingleton();
 	sound->Update();
-	return false;
+	return TFALSE;
 }

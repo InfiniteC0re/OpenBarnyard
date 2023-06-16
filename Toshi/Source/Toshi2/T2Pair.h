@@ -39,32 +39,32 @@ namespace Toshi
 			m_Second = other.m_Second;
 		}
 
-		bool operator==(const T2Pair<First, Second, Comparator>& other) const
+		TBOOL operator==(const T2Pair<First, Second, Comparator>& other) const
 		{
 			return Comparator::IsEqual(m_First, other.m_First);
 		}
 
-		bool operator!=(const T2Pair<First, Second, Comparator>& other) const
+		TBOOL operator!=(const T2Pair<First, Second, Comparator>& other) const
 		{
 			return !Comparator::IsEqual(m_First, other.m_First);
 		}
 
-		bool operator>(const T2Pair<First, Second, Comparator>& other) const
+		TBOOL operator>(const T2Pair<First, Second, Comparator>& other) const
 		{
 			return Comparator::IsGreater(m_First, other.m_First);
 		}
 
-		bool operator>=(const T2Pair<First, Second, Comparator>& other) const
+		TBOOL operator>=(const T2Pair<First, Second, Comparator>& other) const
 		{
 			return Comparator::IsGreaterOrEqual(m_First, other.m_First);
 		}
 
-		bool operator<(const T2Pair<First, Second, Comparator>& other) const
+		TBOOL operator<(const T2Pair<First, Second, Comparator>& other) const
 		{
 			return Comparator::IsLess(m_First, other.m_First);
 		}
 
-		bool operator<=(const T2Pair<First, Second, Comparator>& other) const
+		TBOOL operator<=(const T2Pair<First, Second, Comparator>& other) const
 		{
 			return Comparator::IsLessOrEqual(m_First, other.m_First);
 		}

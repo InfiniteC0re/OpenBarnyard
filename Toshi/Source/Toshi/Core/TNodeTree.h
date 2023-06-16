@@ -23,12 +23,12 @@ namespace Toshi
 			}
 
 		public:
-			bool IsLinked() const
+			TBOOL IsLinked() const
 			{
 				return m_Tree != TNULL;
 			}
 
-			bool IsChildOfDefaultRoot() const
+			TBOOL IsChildOfDefaultRoot() const
 			{
 				TASSERT(IsLinked() == TTRUE);
 				return m_Parent == &Tree()->m_Root;
@@ -96,7 +96,7 @@ namespace Toshi
 			TASSERT(sourceNode->IsLinked() == TFALSE, "The source node shouldn't be linked");
 			
 			// Remove the source node from the tree
-			Remove(*sourceNode, false);
+			Remove(*sourceNode, TFALSE);
 
 			// Get the first attached to parent node
 			TNode* firstAttached = parentNode->Attached();
@@ -133,7 +133,7 @@ namespace Toshi
 			Insert(GetRoot(), sourceNode);
 		}
 
-		TNode* Remove(TNode& node, bool flag = false)
+		TNode* Remove(TNode& node, TBOOL flag = TFALSE)
 		{
 			// Toshi::TNodeTree<Toshi::TResource>::Remove - 00691e70
 			TNodeTree<T>* nodeRoot = node.Tree();
@@ -158,7 +158,7 @@ namespace Toshi
 				{
 					TNodeTree<T>* nodeRoot = node.Tree();
 
-					Remove(*attachedNode, false);
+					Remove(*attachedNode, TFALSE);
 					Insert(node.Parent(), attachedNode);
 
 					attachedNode = node.Attached();
@@ -185,7 +185,7 @@ namespace Toshi
 			return &node;
 		}
 
-		TNode* Remove(TNode* node, bool flag = false)
+		TNode* Remove(TNode* node, TBOOL flag = TFALSE)
 		{
 			return Remove(*node, flag);
 		}
@@ -239,7 +239,7 @@ namespace Toshi
 
 			while (node != TNULL)
 			{
-				Remove(node, false);
+				Remove(node, TFALSE);
 				DeleteRecurse(node);
 				node = GetRoot()->Attached();
 			}
@@ -262,7 +262,7 @@ namespace Toshi
 			return m_Count;
 		}
 
-		bool IsLinked() const
+		TBOOL IsLinked() const
 		{
 			return m_Root.IsLinked();
 		}

@@ -1,7 +1,7 @@
 #pragma once
 
 class ACamera :
-	public Toshi::TGenericClassDerived<ACamera, Toshi::TObject, "ACamera", TMAKEVERSION(1, 0), false>
+	public Toshi::TGenericClassDerived<ACamera, Toshi::TObject, "ACamera", TMAKEVERSION(1, 0), TFALSE>
 {
 public:
 	struct CameraMatrix

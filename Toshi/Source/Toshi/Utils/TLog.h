@@ -15,7 +15,7 @@ namespace Toshi
 		inline static STL::Ref<spdlog::logger>& GetAppLogger() { return s_AppLogger; };
 
 	private:
-		static bool s_Created;
+		static TBOOL s_Created;
 		static STL::Ref<spdlog::logger> s_CoreLogger;
 		static STL::Ref<spdlog::logger> s_AppLogger;
 	};

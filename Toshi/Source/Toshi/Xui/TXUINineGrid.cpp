@@ -4,14 +4,14 @@
 
 namespace Toshi
 {
-	bool XURXUINineGridData::IsColourPropType(uint32_t a_uiObjectIndex, uint32_t propType)
+	TBOOL XURXUINineGridData::IsColourPropType(uint32_t a_uiObjectIndex, uint32_t propType)
 	{
-		return false;
+		return TFALSE;
 	}
 
-	bool XURXUINineGridData::IsFloatPropType(uint32_t a_uiObjectIndex, uint32_t propType)
+	TBOOL XURXUINineGridData::IsFloatPropType(uint32_t a_uiObjectIndex, uint32_t propType)
 	{
-		return false;
+		return TFALSE;
 	}
 
 	uint32_t XURXUINineGridData::GetTimelinePropSize(uint32_t a_uiObjectIndex, uint32_t propType)
@@ -19,17 +19,17 @@ namespace Toshi
 		return 0;
 	}
 
-	bool XURXUINineGridData::TranslateTimelineProp(const char* name, uint32_t& param_2, PropType& propType)
+	TBOOL XURXUINineGridData::TranslateTimelineProp(const char* name, uint32_t& param_2, PropType& propType)
 	{
-		return false;
+		return TFALSE;
 	}
 
-	bool XURXUINineGridData::ValidateTimelineProp(uint32_t a_uiObjectIndex, uint32_t param_2)
+	TBOOL XURXUINineGridData::ValidateTimelineProp(uint32_t a_uiObjectIndex, uint32_t param_2)
 	{
-		return false;
+		return TFALSE;
 	}
 
-	bool XURXUINineGridData::Load(TXUIResource& resource, uint8_t*& a_pData)
+	TBOOL XURXUINineGridData::Load(TXUIResource& resource, uint8_t*& a_pData)
 	{
 		XURXUIElementData::Load(resource, a_pData);
 
@@ -46,6 +46,6 @@ namespace Toshi
 			reader.ReadProperty<XUI_EPT_BOOL>(PropType_NoCenter, m_NoCenter);
 		}
 
-		return false;
+		return TFALSE;
 	}
 }

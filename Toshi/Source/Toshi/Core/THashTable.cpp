@@ -54,7 +54,7 @@ void* Toshi::THashTable::Find(void* a_pData)
 		while (a_bucket != -1)
 		{
 			Item& item = m_pSmth[a_bucket];
-			bool bRes = m_ItemCompareFunc(a_pData, (int*)m_pItems + m_iItemSize * (int)item.value, m_iItemSize);
+			TBOOL bRes = m_ItemCompareFunc(a_pData, (int*)m_pItems + m_iItemSize * (int)item.value, m_iItemSize);
 			if (bRes) return &item;
 			a_bucket = item.key;
 		}
@@ -90,7 +90,7 @@ void* Toshi::THashTable::Append(void* a_pData)
 	return TNULL;
 }
 
-bool Toshi::THashTable::Create(int a_iItemCountTotal, int a_iItemSize, int a_iBucketSize, int a_iHashNodeCount)
+TBOOL Toshi::THashTable::Create(int a_iItemCountTotal, int a_iItemSize, int a_iBucketSize, int a_iHashNodeCount)
 {
 	if (m_pBuckets == TNULL)
 	{
@@ -115,7 +115,7 @@ bool Toshi::THashTable::Create(int a_iItemCountTotal, int a_iItemSize, int a_iBu
 			m_pBuckets[i] = -1;
 		}
 
-		return true;
+		return TTRUE;
 	}
-	return false;
+	return TFALSE;
 }

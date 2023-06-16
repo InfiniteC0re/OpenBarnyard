@@ -4,7 +4,7 @@
 #include <Toshi2/T2GUI/T2GUIRectangle.h>
 
 class AGameState :
-	public Toshi::TGenericClassDerived<AGameState, Toshi::TObject, "AGameState", TMAKEVERSION(1, 0), true>,
+	public Toshi::TGenericClassDerived<AGameState, Toshi::TObject, "AGameState", TMAKEVERSION(1, 0), TTRUE>,
 	public Toshi::T2DList<AGameState>::Node
 {
 public:
@@ -30,7 +30,7 @@ public:
 	virtual ~AGameState();
 
 	virtual void Unk1();
-	virtual bool Unk2();
+	virtual TBOOL Unk2();
 	virtual void Unk3(void*, void*);
 	virtual UpdateResult OnUpdate(float deltaTime);
 	virtual void OnInsertion();
@@ -39,9 +39,9 @@ public:
 	virtual void OnResume(AGameState* pOldState);
 	virtual void OnActivate();
 	virtual void OnDeactivate();
-	virtual bool CanActivateConsoleState();
-	virtual bool CheckForControllerRemoval();
-	virtual bool PauseOnControllerReinserted();
+	virtual TBOOL CanActivateConsoleState();
+	virtual TBOOL CheckForControllerRemoval();
+	virtual TBOOL PauseOnControllerReinserted();
 
 	static void SetupLoadIcon();
 	static void DestroyLoadIcon();
@@ -122,7 +122,7 @@ public:
 
 	void RemoveSelf();
 
-	bool HandleMenuRequestToChangeState(uint32_t menuType)
+	TBOOL HandleMenuRequestToChangeState(uint32_t menuType)
 	{
 
 	}

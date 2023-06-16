@@ -17,15 +17,15 @@ namespace Toshi
 			Destroy();
 		}
 
-		// Returns true if success
-		bool Create()
+		// Returns TTRUE if success
+		TBOOL Create()
 		{
 			m_Handle = CreateMutexA(NULL, FALSE, NULL);
-			return true;
+			return TTRUE;
 		}
 
-		// Returns true if success
-		bool Destroy()
+		// Returns TTRUE if success
+		TBOOL Destroy()
 		{
 			BOOL result = CloseHandle(m_Handle);
 			m_Handle = NULL;
@@ -33,8 +33,8 @@ namespace Toshi
 			return result;
 		}
 
-		// Returns true if the state is signaled
-		bool Lock(uint32_t flags = 0)
+		// Returns TTRUE if the state is signaled
+		TBOOL Lock(uint32_t flags = 0)
 		{
 			DWORD waitForMs = (flags & TMutexLockFlag_DoNotWait) ? 0 : INFINITE;
 			DWORD result = WaitForSingleObject(m_Handle, waitForMs);
@@ -42,8 +42,8 @@ namespace Toshi
 			return result == WAIT_OBJECT_0;
 		}
 
-		// Returns true if success
-		bool Unlock()
+		// Returns TTRUE if success
+		TBOOL Unlock()
 		{
 			return ReleaseMutex(m_Handle);
 		}

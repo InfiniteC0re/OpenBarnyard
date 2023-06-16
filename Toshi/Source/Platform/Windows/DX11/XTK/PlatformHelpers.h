@@ -54,7 +54,7 @@ namespace DirectX
     };
 
     // Helper utility converts D3D API failures into exceptions.
-    inline void ThrowIfFailed(HRESULT hr) noexcept(false)
+    inline void ThrowIfFailed(HRESULT hr) noexcept(TFALSE)
     {
         if (FAILED(hr))
         {
@@ -88,5 +88,5 @@ namespace DirectX
 
     using ScopedHandle = std::unique_ptr<void, handle_closer>;
 
-    inline HANDLE safe_handle(HANDLE h) noexcept { return (h == INVALID_HANDLE_VALUE) ? nullptr : h; }
+    inline HANDLE safe_handle(HANDLE h) noexcept { return (h == INVALID_HANDLE_VALUE) ? TNULL : h; }
 }

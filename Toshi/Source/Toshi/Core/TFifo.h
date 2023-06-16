@@ -17,10 +17,10 @@ namespace Toshi
 	protected:
 		TGenericFifo() = default;
 
-		bool Create(char* a_pBuffer, int a_iMaxItems, int a_iItemSize);
-		bool Destroy();
-		bool Push(void* a_pItem, Flags a_iFlags);
-		bool Pop(void* a_pOut, Flags a_iFlags);
+		TBOOL Create(char* a_pBuffer, int a_iMaxItems, int a_iItemSize);
+		TBOOL Destroy();
+		TBOOL Push(void* a_pItem, Flags a_iFlags);
+		TBOOL Pop(void* a_pOut, Flags a_iFlags);
 
 	private:
 #ifdef TOSHI_PLATFORM_WINDOWS
@@ -50,12 +50,12 @@ namespace Toshi
 			TGenericFifo::Destroy();
 		}
 
-		bool Push(T* element, Flags flags = TGenericFifo::Flags_None)
+		TBOOL Push(T* element, Flags flags = TGenericFifo::Flags_None)
 		{
 			return TGenericFifo::Push(element, flags);
 		}
 
-		bool Pop(T* out, Flags flags = TGenericFifo::Flags_None)
+		TBOOL Pop(T* out, Flags flags = TGenericFifo::Flags_None)
 		{
 			return TGenericFifo::Pop(out, flags);
 		}

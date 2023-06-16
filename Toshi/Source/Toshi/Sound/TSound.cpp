@@ -5,12 +5,12 @@
 
 namespace Toshi
 {
-    bool TSound::Create(void* poolmem, int poollen, int maxchannels, int filebuffersize, SpeakerType speakerType)
+    TBOOL TSound::Create(void* poolmem, int poollen, int maxchannels, int filebuffersize, SpeakerType speakerType)
     {
         if (m_pSystem != NULL)
         {
             TOSHI_ERROR("TSound::Create() - FMOD system has already been created. Only one FMOD system can be created at one time.\n");
-            return false;
+            return TFALSE;
         }
         m_SoundInitValues.m_pPoolmem = poolmem;
         m_SoundInitValues.m_iPoolSize = poollen;
@@ -21,13 +21,13 @@ namespace Toshi
         if (ErrorCheck(result))
         {
             TOSHI_ERROR("TSound::Create() - Failed to create FMOD System");
-            return false;
+            return TFALSE;
         }
 
         m_SoundInitValues.m_iMaxChannels = maxchannels;
         m_SoundInitValues.m_eSpeakerType = speakerType;
 
-        bool bInitialiseResult = ((TSound_Win*)this)->Initialise(maxchannels, speakerType);
+        TBOOL bInitialiseResult = ((TSound_Win*)this)->Initialise(maxchannels, speakerType);
 
         TASSERT(TTRUE == bInitialiseResult);
 
@@ -37,21 +37,21 @@ namespace Toshi
 
         m_pSystem->setStreamBufferSize(filebuffersize, FMOD_TIMEUNIT_RAWBYTES);
 
-        return true;
+        return TTRUE;
     }
 
-    bool TSound::ErrorCheck(FMOD_RESULT error)
+    TBOOL TSound::ErrorCheck(FMOD_RESULT error)
     {
         if (error != FMOD_OK)
         {
             const char* errorStr = FMOD_ErrorString(error);
             TOSHI_ERROR("TSound::ErrorCheck() - FMOD Error: %s", errorStr);
-            return true;
+            return TTRUE;
         }
-        return false;
+        return TFALSE;
     }
 
-    bool TSound::InitMem(void* poolmem, int poollen)
+    TBOOL TSound::InitMem(void* poolmem, int poollen)
     {
         if (poolmem == NULL)
         {
@@ -67,10 +67,10 @@ namespace Toshi
         if (eResult != FMOD_OK)
         {
             TOSHI_ERROR("FMOD: Failed to Initialise Memory");
-            return false;
+            return TFALSE;
         }
 
-        return true;
+        return TTRUE;
     }
 
 }

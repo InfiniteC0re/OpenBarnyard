@@ -353,7 +353,7 @@ namespace Toshi
 	{
 		T2GenericRedBlackTreeNode* pTVar1;
 		T2GenericRedBlackTreeNode* pTVar2 = pNode->m_pLeft;
-		bool bVar3;
+		TBOOL bVar3;
 
 		if (pTVar2 == &ms_oNil)
 		{

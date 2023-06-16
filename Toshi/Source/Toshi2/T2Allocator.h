@@ -8,7 +8,7 @@ namespace Toshi
 		virtual void* Malloc(size_t size) = 0;
 		virtual void* Malloc(size_t size, size_t alignment) = 0;
 		virtual void Free(void* ptr) = 0;
-		virtual bool CanAllocate(int unk) = 0;
+		virtual TBOOL CanAllocate(int unk) = 0;
 		virtual void* TryMalloc(size_t size) = 0;
 		virtual void* TryMalloc(size_t size, size_t alignment) = 0;
 		virtual size_t Size() = 0;
@@ -48,7 +48,7 @@ namespace Toshi
 		virtual void* Malloc(size_t size) override;
 		virtual void* Malloc(size_t size, size_t alignment) override;
 		virtual void Free(void* ptr) override;
-		virtual bool CanAllocate(int unk) override;
+		virtual TBOOL CanAllocate(int unk) override;
 		virtual void* TryMalloc(size_t size) override;
 		virtual void* TryMalloc(size_t size, size_t alignment) override;
 		virtual size_t Size() override;

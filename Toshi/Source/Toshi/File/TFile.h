@@ -22,12 +22,12 @@ namespace Toshi
 		// Override these funcs in TNativeFileSystem
 		virtual TFile* CreateFile(TString8 const& fn, uint32_t flags) = 0;
 		virtual void DestroyFile(TFile*) = 0;
-		virtual bool RemoveFile(TString8 const&) { return true; }
+		virtual TBOOL RemoveFile(TString8 const&) { return TTRUE; }
 		virtual TString8 MakeInternalPath(TString8 const&) = 0;
-		virtual bool GetFirstFile(TString8 const&, TString8&, unsigned int) { return false; }
-		virtual bool GetNextFile(TString8&, uint32_t) { return false; }
+		virtual TBOOL GetFirstFile(TString8 const&, TString8&, unsigned int) { return TFALSE; }
+		virtual TBOOL GetNextFile(TString8&, uint32_t) { return TFALSE; }
 		virtual void SetPrefix(const TString8& prefix);
-		virtual bool MakeDirectory(TString8 const&) = 0;
+		virtual TBOOL MakeDirectory(TString8 const&) = 0;
 
 		inline void UnmountFileSystem() { TNode::Remove(); }
 
@@ -35,7 +35,7 @@ namespace Toshi
 		inline TString8 const& GetPrefix() const { return m_Prefix; }
 		
 		inline void RemoveNode()       { TNode::Remove(); }
-		inline bool IsLinked()         { return TNode::IsLinked(); }
+		inline TBOOL IsLinked()         { return TNode::IsLinked(); }
 		inline TFileSystem* PrevNode() { return TNode::Prev()->As<TFileSystem>(); }
 		inline TFileSystem* NextNode() { return TNode::Next()->As<TFileSystem>(); }
 
@@ -55,8 +55,8 @@ namespace Toshi
 		virtual TFile* CreateFile(TString8 const& fn, uint32_t flags) override;
 		virtual void DestroyFile(TFile*) override;
 		virtual TString8 MakeInternalPath(TString8 const&) { return {}; }
-		virtual bool MakeDirectory(TString8 const&) override;
-		virtual bool GetNextFile(TString8& fileName, uint32_t flags);
+		virtual TBOOL MakeDirectory(TString8 const&) override;
+		virtual TBOOL GetNextFile(TString8& fileName, uint32_t flags);
 	};
 
 	class TFile
@@ -84,7 +84,7 @@ namespace Toshi
 
 		virtual size_t Read(void* dst, size_t size) = 0;           //0x0
 		virtual size_t Write(const void* buffer, size_t size) = 0; //0x4
-		virtual bool Seek(int offset, TFile::TSEEK origin) = 0;    //0x8
+		virtual TBOOL Seek(int offset, TFile::TSEEK origin) = 0;    //0x8
 		virtual uint32_t Tell() = 0;                               //0xC
 		virtual DWORD GetSize() = 0;                               //0x10
 		virtual _FILETIME GetDate() { return {}; }                 //0x14
@@ -119,23 +119,23 @@ namespace Toshi
 			TSysPathIter(const TString8& str) : m_String(str), m_Position(-1) { };
 			TSysPathIter(const TSysPathIter& other) : m_String(other.m_String), m_Position(other.m_Position) { };
 
-			bool First(TString8& path)
+			TBOOL First(TString8& path)
 			{
 				if (m_String.Length() > 0)
 				{
 					m_Position = m_String.Find(';', 0);
 					path.Copy(m_String, m_Position);
 					
-					return true;
+					return TTRUE;
 				}
 				else
 				{
 					m_Position = -1;
-					return false;
+					return TFALSE;
 				}
 			}
 
-			bool Next(TString8& path)
+			TBOOL Next(TString8& path)
 			{
 				if (m_Position >= 0)
 				{
@@ -147,11 +147,11 @@ namespace Toshi
 						(m_Position >= 0) ? (m_Position - strStart) : -1
 					);
 
-					return true;
+					return TTRUE;
 				}
 				else
 				{
-					return false;
+					return TFALSE;
 				}
 			}
 
@@ -200,14 +200,14 @@ namespace Toshi
 		* Define them in TNativeFile_{Platform}.cpp
 		*/
 
-		static bool Create();
+		static TBOOL Create();
 
 	private:
 		void ValidateSystemPath();
-		inline void InvalidateSystemPath() { m_IsValidated = false; }
+		inline void InvalidateSystemPath() { m_IsValidated = TFALSE; }
 
 	private:
-		bool m_IsValidated;                // 0x0
+		TBOOL m_IsValidated;                // 0x0
 		TString8 m_SysPath;                // 0x4
 		TString8 m_WorkingDirectory;       // 0x10
 		uint32_t m_ValidatedCount;         // 0x1C
@@ -228,7 +228,7 @@ namespace Toshi
 		virtual TFile* CreateFile(TString8 const& fn, uint32_t flags) override;
 		virtual void DestroyFile(TFile*) override;
 		virtual TString8 MakeInternalPath(TString8 const&) override;
-		virtual bool MakeDirectory(TString8 const&) override;
+		virtual TBOOL MakeDirectory(TString8 const&) override;
 	};
 }
 

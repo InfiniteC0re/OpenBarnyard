@@ -4,7 +4,7 @@
 
 namespace Toshi
 {
-	class T2Locale
+	class T2Locale : public Toshi::TSingleton<T2Locale>
 	{
 	public:
 		using Lang = int32_t;
@@ -36,12 +36,10 @@ namespace Toshi
 				return m_StringTable->Strings[locid];
 			}
 
-			return nullptr;
+			return TNULL;
 		}
 
 		inline int GetNumStrings() const { return m_StringTable->m_numstrings; }
-
-		T2Locale* Instance() const { return s_Singleton; }
 		
 		static void* TRBAllocator(TTRB::AllocType alloctype, size_t size, short unk, size_t unk2, void* userData)
 		{
@@ -61,15 +59,12 @@ namespace Toshi
 		}
 
 	protected:
-		static T2Locale* s_Singleton;
-
-	protected:
 		TTRB m_Locale;                // 0x04
-		void* m_Buffer;               // 0x18
+		void* m_pBuffer;               // 0x18
 		void* m_BufferPos;            // 0x1C
 		LocaleStrings* m_StringTable; // 0x20
 		Lang m_LangId;                // 0x24
-		bool m_Flag;                  // 0x28
+		TBOOL m_bOwnsBuffer;          // 0x28
 	};
 }
 

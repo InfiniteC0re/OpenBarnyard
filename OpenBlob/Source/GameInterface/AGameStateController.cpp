@@ -77,7 +77,7 @@ void AGameStateController::PopState(AGameState* pState)
 
 void AGameStateController::ResetStack()
 {
-	bool shouldDeactivate = true;
+	TBOOL shouldDeactivate = TTRUE;
 
 	while (1 < m_oStateStack.Size())
 	{

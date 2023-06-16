@@ -9,7 +9,7 @@ namespace Toshi
 	class TTask;
 
 	class TScheduler :
-		public TGenericClassDerived<TScheduler, TObject, "TScheduler", TMAKEVERSION(1, 0), false>
+		public TGenericClassDerived<TScheduler, TObject, "TScheduler", TMAKEVERSION(1, 0), TFALSE>
 	{
 	public:
 		TScheduler();
@@ -71,7 +71,7 @@ namespace Toshi
 #endif
 		}
 
-		bool IsFixedMaxFps() const
+		TBOOL IsFixedMaxFps() const
 		{
 			return m_UseFixedMaxFps;
 		}
@@ -81,25 +81,25 @@ namespace Toshi
 			return m_DebugDeltaTime;
 		}
 
-		void SetFixedMaxFps(bool useFixedMaxFps, float fixedMaxFps = 60.0f)
+		void SetFixedMaxFps(TBOOL useFixedMaxFps, float fixedMaxFps = 60.0f)
 		{
 			m_UseFixedMaxFps = useFixedMaxFps;
 			m_FixedMaxFps = 1 / fixedMaxFps;
 		}
 
-		void SetDebugDeltaTimeMult(bool useDebugDeltaTimeMult, float debugDeltaTimeMult = 1.0f)
+		void SetDebugDeltaTimeMult(TBOOL useDebugDeltaTimeMult, float debugDeltaTimeMult = 1.0f)
 		{
 			m_UseDebugDeltaTimeMult = useDebugDeltaTimeMult;
 			m_DebugDeltaTimeMult = debugDeltaTimeMult;
 		}
 
-		void SetDebugDeltaTime(bool useDebugDeltaTime, float debugDeltaTime = 0.0f)
+		void SetDebugDeltaTime(TBOOL useDebugDeltaTime, float debugDeltaTime = 0.0f)
 		{
 			m_UseDebugDeltaTime = useDebugDeltaTime;
 			m_DebugDeltaTime = debugDeltaTime;
 		}
 
-		void SetDebugPause(bool pause)
+		void SetDebugPause(TBOOL pause)
 		{
 			if (pause)
 			{
@@ -109,7 +109,7 @@ namespace Toshi
 			m_UseDebugDeltaTime = pause;
 		}
 
-		void SetDebugSlowTime(bool slowTime)
+		void SetDebugSlowTime(TBOOL slowTime)
 		{
 			m_MaxDeltaTime = slowTime ? s_DebugSlowMaxTimeDeltaAllowed : s_MaxTimeDeltaAllowed;
 		}
@@ -214,11 +214,11 @@ namespace Toshi
 		uint32_t m_FrameCount;        // 0x30
 		uint32_t m_Unk2;              // 0x34
 		THPTimer m_Timer;             // 0x38
-		bool m_UseDebugDeltaTime;     // 0x60
+		TBOOL m_UseDebugDeltaTime;     // 0x60
 		float m_DebugDeltaTime;       // 0x64
-		bool m_UseDebugDeltaTimeMult; // 0x6D
+		TBOOL m_UseDebugDeltaTimeMult; // 0x6D
 		float m_DebugDeltaTimeMult;   // 0x70
-		bool m_UseFixedMaxFps;        // 0x74
+		TBOOL m_UseFixedMaxFps;        // 0x74
 		float m_FixedMaxFps;          // 0x78
 	};
 }

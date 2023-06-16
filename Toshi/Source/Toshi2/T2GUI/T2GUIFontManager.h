@@ -10,13 +10,13 @@ namespace Toshi
 	{
 		char* m_font;
 
-		bool Init();
+		TBOOL Init();
 	};
 
 	class T2GUIFontManager
 	{
 
-		bool Open()
+		TBOOL Open()
 		{
 
 		}

@@ -200,7 +200,7 @@ namespace Toshi
 
 	private:
 		// Parses sections
-		bool ProcessForm(TTSFI& ttsf);
+		TBOOL ProcessForm(TTSFI& ttsf);
 
 		// Returns pointer to section by index
 		inline void* GetSection(int index) { return GetSectionInfo(index)->m_Data; }

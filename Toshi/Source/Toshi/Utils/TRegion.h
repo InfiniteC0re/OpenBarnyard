@@ -7,11 +7,11 @@ namespace Toshi
 	public:
 		static int GetRegion() { return s_ToshiRegion; }
 		static void SetRegion(int region) { TASSERT(!s_bRegionLocked); s_ToshiRegion = region; }
-		static void LockRegion() { s_bRegionLocked = true; }
-		static void UnlockRegion() { s_bRegionLocked = false; }
+		static void LockRegion() { s_bRegionLocked = TTRUE; }
+		static void UnlockRegion() { s_bRegionLocked = TFALSE; }
 
 	private:
-		static bool s_bRegionLocked;
+		static TBOOL s_bRegionLocked;
 		static int s_ToshiRegion;
 	};
 }

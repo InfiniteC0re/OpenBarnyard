@@ -17,7 +17,7 @@ ATestModel::ATestModel()
     Toshi::TAssetInit assetInit;
 
     m_AssetTRB.Load("Data\\LEVELS\\PRODUCTION\\Singleplayer\\Abyss\\RegionAssets.trb");
-    assetInit.InitAssets(m_AssetTRB, true, false);
+    assetInit.InitAssets(m_AssetTRB, TTRUE, TFALSE);
 
     CreateCube();
     CreatePlane();

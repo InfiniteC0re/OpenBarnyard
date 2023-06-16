@@ -38,8 +38,8 @@ namespace Toshi
 			virtual size_t GetModeIndex() const override;
 			virtual uint32_t GetWidth() const override;
 			virtual uint32_t GetHeight() const override;
-			virtual bool SomeCheck1() const override;
-			virtual bool SomeCheck2() const override;
+			virtual TBOOL SomeCheck1() const override;
+			virtual TBOOL SomeCheck2() const override;
 			virtual float GetRefreshRate() const override;
 			virtual TRenderAdapter::Mode::Device* GetDevice(int device) override;
 
@@ -131,7 +131,7 @@ namespace Toshi
 	};
 
 	class TRenderDX11 : 
-		public TGenericClassDerived<TRenderDX11, TRender, "TRenderD3D", TMAKEVERSION(1, 0), false>
+		public TGenericClassDerived<TRenderDX11, TRender, "TRenderD3D", TMAKEVERSION(1, 0), TFALSE>
 	{
 	public:
 		friend class ARenderer;
@@ -214,27 +214,27 @@ namespace Toshi
 			INT DepthBias;
 			FLOAT SlopeScaledDepthBias;
 
-			static bool IsEqual(const RasterizerId& a, const RasterizerId& b)
+			static TBOOL IsEqual(const RasterizerId& a, const RasterizerId& b)
 			{
 				return a == b;
 			}
 
-			static bool IsLess(const RasterizerId& a, const RasterizerId& b)
+			static TBOOL IsLess(const RasterizerId& a, const RasterizerId& b)
 			{
 				return a < b;
 			}
 
-			bool operator==(const RasterizerId& other) const
+			TBOOL operator==(const RasterizerId& other) const
 			{
 				return Flags.Raw == other.Flags.Raw && DepthBias == other.DepthBias && SlopeScaledDepthBias == other.SlopeScaledDepthBias;
 			}
 
-			bool operator!=(const RasterizerId& other) const
+			TBOOL operator!=(const RasterizerId& other) const
 			{
 				return Flags.Raw != other.Flags.Raw || DepthBias != other.DepthBias || SlopeScaledDepthBias != other.SlopeScaledDepthBias;
 			}
 
-			bool operator<(const RasterizerId & other) const
+			TBOOL operator<(const RasterizerId & other) const
 			{
 				return Flags.Raw < other.Flags.Raw && DepthBias < other.DepthBias && SlopeScaledDepthBias < other.SlopeScaledDepthBias;
 			}
@@ -273,20 +273,20 @@ namespace Toshi
 
 		struct DepthStencilComparator
 		{
-			static bool IsEqual(const DepthState& a, const DepthState& b) { return a.Raw == b.Raw; }
-			static bool IsGreater(const DepthState& a, const DepthState& b) { return a.Raw > b.Raw; }
-			static bool IsLess(const DepthState& a, const DepthState& b) { return a.Raw < b.Raw; }
-			static bool IsLessOrEqual(const DepthState& a, const DepthState& b) { return a.Raw <= b.Raw; }
-			static bool IsGreaterOrEqual(const DepthState& a, const DepthState& b) { return a.Raw >= b.Raw; }
+			static TBOOL IsEqual(const DepthState& a, const DepthState& b) { return a.Raw == b.Raw; }
+			static TBOOL IsGreater(const DepthState& a, const DepthState& b) { return a.Raw > b.Raw; }
+			static TBOOL IsLess(const DepthState& a, const DepthState& b) { return a.Raw < b.Raw; }
+			static TBOOL IsLessOrEqual(const DepthState& a, const DepthState& b) { return a.Raw <= b.Raw; }
+			static TBOOL IsGreaterOrEqual(const DepthState& a, const DepthState& b) { return a.Raw >= b.Raw; }
 		};
 
 		struct BlendStateComparator
 		{
-			static bool IsEqual(const BlendState& a, const BlendState& b) { return a.Raw == b.Raw; }
-			static bool IsGreater(const BlendState& a, const BlendState& b) { return a.Raw > b.Raw; }
-			static bool IsLess(const BlendState& a, const BlendState& b) { return a.Raw < b.Raw; }
-			static bool IsLessOrEqual(const BlendState& a, const BlendState& b) { return a.Raw <= b.Raw; }
-			static bool IsGreaterOrEqual(const BlendState& a, const BlendState& b) { return a.Raw >= b.Raw; }
+			static TBOOL IsEqual(const BlendState& a, const BlendState& b) { return a.Raw == b.Raw; }
+			static TBOOL IsGreater(const BlendState& a, const BlendState& b) { return a.Raw > b.Raw; }
+			static TBOOL IsLess(const BlendState& a, const BlendState& b) { return a.Raw < b.Raw; }
+			static TBOOL IsLessOrEqual(const BlendState& a, const BlendState& b) { return a.Raw <= b.Raw; }
+			static TBOOL IsGreaterOrEqual(const BlendState& a, const BlendState& b) { return a.Raw >= b.Raw; }
 		};
 
 		using BlendStatePair = T2Pair<BlendState, ID3D11BlendState*, BlendStateComparator>;
@@ -346,20 +346,20 @@ namespace Toshi
 		}
 		
 	public:
-		virtual bool CreateDisplay(DisplayParams* params) override;
-		virtual bool DestroyDisplay() override { return true; }
+		virtual TBOOL CreateDisplay(DisplayParams* params) override;
+		virtual TBOOL DestroyDisplay() override { return TTRUE; }
 		virtual void Update(float deltaTime) override;
 		virtual void BeginScene() override;
 		virtual void EndScene() override;
 		virtual void* GetCurrentDevice() override { return TNULL; }
 		virtual DisplayParams* GetCurrentDisplayParams() override { return &m_DisplayParams; }
-		virtual bool Create() override { return Create("de Blob"); }
+		virtual TBOOL Create() override { return Create("de Blob"); }
 		
-		virtual bool RecreateDisplay(DisplayParams* pDisplayParams);
+		virtual TBOOL RecreateDisplay(DisplayParams* pDisplayParams);
 		virtual void ShowDeviceError();
 		virtual void ShowDisplayError();
 
-		static bool IsColorEqual(const FLOAT a_Vec41[4], const FLOAT a_Vec42[4]);
+		static TBOOL IsColorEqual(const FLOAT a_Vec41[4], const FLOAT a_Vec42[4]);
 		static int GetTextureRowPitch(DXGI_FORMAT format, int width);
 		static int GetTextureDepthPitch(DXGI_FORMAT format, int width, int height);
 		static const char* GetFeatureLevel(D3D_FEATURE_LEVEL a_featureLevel);
@@ -367,7 +367,7 @@ namespace Toshi
 		static ID3DBlob* CompileShaderFromFile(const char* filepath, LPCSTR pEntrypoint, LPCSTR pTarget, const D3D_SHADER_MACRO* pDefines);
 
 		void CreateVSPS();
-		bool Create(LPCSTR a_name);
+		TBOOL Create(LPCSTR a_name);
 		void SetVec4InVSBuffer(BufferOffset index, const void* src, int count = 1);
 		void SetVec4InPSBuffer(BufferOffset index, const void* src, int count = 1);
 		HRESULT CreatePixelShader(const void* pShaderBytecode, SIZE_T BytecodeLength, ID3D11PixelShader** ppPixelShader);
@@ -379,10 +379,10 @@ namespace Toshi
 		ID3D11Buffer* CreateBuffer(UINT flags, UINT dataSize, void* data, D3D11_USAGE usage, UINT cpuAccessFlags);
 
 		void SetDstAlpha(float alpha);
-		void SetBlendMode(bool blendEnabled, D3D11_BLEND_OP blendOp, D3D11_BLEND srcBlendAlpha, D3D11_BLEND destBlendAlpha);
-		void SetAlphaUpdate(bool update);
-		void SetColorUpdate(bool update);
-		void SetZMode(bool depthEnable, D3D11_COMPARISON_FUNC comparisonFunc, D3D11_DEPTH_WRITE_MASK depthWriteMask);
+		void SetBlendMode(TBOOL blendEnabled, D3D11_BLEND_OP blendOp, D3D11_BLEND srcBlendAlpha, D3D11_BLEND destBlendAlpha);
+		void SetAlphaUpdate(TBOOL update);
+		void SetColorUpdate(TBOOL update);
+		void SetZMode(TBOOL depthEnable, D3D11_COMPARISON_FUNC comparisonFunc, D3D11_DEPTH_WRITE_MASK depthWriteMask);
 		void DrawImmediately(D3D11_PRIMITIVE_TOPOLOGY ePrimitiveType, size_t iIndexCount, void* pIndexData, DXGI_FORMAT eFormat, void* pVertexData, size_t iStrideSize, size_t iStrides);
 		void DrawIndexed(D3D11_PRIMITIVE_TOPOLOGY ePrimitiveType, UINT indexCount, ID3D11Buffer* pIndexBuffer, UINT indexBufferOffset, DXGI_FORMAT indexBufferFormat, ID3D11Buffer* pVertexBuffer, UINT pStrides, UINT pOffsets);
 		void DrawNonIndexed(D3D11_PRIMITIVE_TOPOLOGY primitiveTopology, ID3D11Buffer* pVertexBuffer, UINT vertexCount, UINT strides, UINT startVertex, UINT offsets);
@@ -414,7 +414,7 @@ namespace Toshi
 
 	public:
 		static UINT s_QualityLevel;
-		static bool s_bPresentTest;
+		static TBOOL s_bPresentTest;
 		static TMemoryHeap* s_pMemHeap;
 		static ID3D11ShaderResourceView* s_pShaderResourceView;
 
@@ -432,7 +432,7 @@ namespace Toshi
 		ID3D11Texture2D* m_SRView2Texture;                // 0x67C
 		ID3D11ShaderResourceView* m_SRView2;              // 0x680
 		ID3D11ShaderResourceView* m_StencilTexSR;         // 0x684
-		bool m_IsWidescreen;                              // 0x688
+		TBOOL m_IsWidescreen;                              // 0x688
 		ID3D11DeviceContext* m_pDeviceContext;            // 0x68C
 		ID3D11Device* m_pDevice;                          // 0x690
 		HACCEL m_hAccel;                                  // 0x694
@@ -451,11 +451,11 @@ namespace Toshi
 		size_t m_NumDrawnFrames;                          // 0x72C
 		ID3D11SamplerState* m_SamplerStates[12];          // 0x73C
 		void* m_pVertexConstantBuffer;                    // 0x76C
-		bool m_IsVertexConstantBufferSet;                 // 0x770
+		TBOOL m_IsVertexConstantBufferSet;                 // 0x770
 		ID3D11Buffer* m_VertexBuffers[NUMBUFFERS];        // 0x774
 		size_t m_VertexBufferIndex;                       // 0x7B4
 		void* m_pPixelConstantBuffer;                     // 0x7B8
-		bool m_IsPixelConstantBufferSet;                  // 0x7BC
+		TBOOL m_IsPixelConstantBufferSet;                  // 0x7BC
 		ID3D11Buffer* m_PixelBuffers[NUMBUFFERS];         // 0x7C0
 		size_t m_PixelBufferIndex;                        // 0x800
 		ID3D11Buffer* m_MainVertexBuffer;                 // 0x804

@@ -2,7 +2,7 @@
 #include "AGameState.h"
 
 class AAppInitState :
-	public Toshi::TGenericClassDerived<AAppInitState, AGameState, "AAppInitState", TMAKEVERSION(1, 0), true>
+	public Toshi::TGenericClassDerived<AAppInitState, AGameState, "AAppInitState", TMAKEVERSION(1, 0), TTRUE>
 {
 public:
 	virtual UpdateResult OnUpdate(float deltaTime) override;

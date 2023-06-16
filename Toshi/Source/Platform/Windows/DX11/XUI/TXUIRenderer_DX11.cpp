@@ -39,12 +39,12 @@ namespace Toshi {
 		pTransform.m_Pos.x = 0;
 		pTransform.m_Pos.y = 0;
 
-		static bool s_IsMatrixSet = false;
+		static TBOOL s_IsMatrixSet = TFALSE;
 		static TMatrix44 s_IdentityMatrix;
 
 		if (!s_IsMatrixSet)
 		{
-			s_IsMatrixSet = true;
+			s_IsMatrixSet = TTRUE;
 			s_IdentityMatrix.Identity();
 		}
 

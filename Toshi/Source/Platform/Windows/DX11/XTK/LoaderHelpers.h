@@ -253,7 +253,7 @@ namespace DirectX
         }
 
         //--------------------------------------------------------------------------------------
-        inline bool IsCompressed(_In_ DXGI_FORMAT fmt) noexcept
+        inline TBOOL IsCompressed(_In_ DXGI_FORMAT fmt) noexcept
         {
             switch (fmt)
             {
@@ -278,10 +278,10 @@ namespace DirectX
             case DXGI_FORMAT_BC7_TYPELESS:
             case DXGI_FORMAT_BC7_UNORM:
             case DXGI_FORMAT_BC7_UNORM_SRGB:
-                return true;
+                return TTRUE;
 
             default:
-                return false;
+                return TFALSE;
             }
         }
 
@@ -356,7 +356,7 @@ namespace DirectX
             }
 
             // Check for DX10 extension
-            bool bDXT10Header = false;
+            TBOOL bDXT10Header = TFALSE;
             if ((hdr->ddspf.flags & DDS_FOURCC) &&
                 (MAKEFOURCC('D', 'X', '1', '0') == hdr->ddspf.fourCC))
             {
@@ -366,7 +366,7 @@ namespace DirectX
                     return E_FAIL;
                 }
 
-                bDXT10Header = true;
+                bDXT10Header = TTRUE;
             }
 
             // setup the pointers in the process request
@@ -400,14 +400,14 @@ namespace DirectX
             ScopedHandle hFile(safe_handle(CreateFile2(
                 fileName,
                 GENERIC_READ, FILE_SHARE_READ, OPEN_EXISTING,
-                nullptr)));
+                TNULL)));
         #else
             ScopedHandle hFile(safe_handle(CreateFileW(
                 fileName,
                 GENERIC_READ, FILE_SHARE_READ,
-                nullptr,
+                TNULL,
                 OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL,
-                nullptr)));
+                TNULL)));
         #endif
 
             if (!hFile)
@@ -447,7 +447,7 @@ namespace DirectX
                 ddsData.get(),
                 fileInfo.EndOfFile.LowPart,
                 &bytesRead,
-                nullptr
+                TNULL
             ))
             {
                 ddsData.reset();
@@ -479,7 +479,7 @@ namespace DirectX
             }
 
             // Check for DX10 extension
-            bool bDXT10Header = false;
+            TBOOL bDXT10Header = TFALSE;
             if ((hdr->ddspf.flags & DDS_FOURCC) &&
                 (MAKEFOURCC('D', 'X', '1', '0') == hdr->ddspf.fourCC))
             {
@@ -490,7 +490,7 @@ namespace DirectX
                     return E_FAIL;
                 }
 
-                bDXT10Header = true;
+                bDXT10Header = TTRUE;
             }
 
             // setup the pointers in the process request
@@ -518,9 +518,9 @@ namespace DirectX
             uint64_t rowBytes = 0;
             uint64_t numRows = 0;
 
-            bool bc = false;
-            bool packed = false;
-            bool planar = false;
+            TBOOL bc = TFALSE;
+            TBOOL packed = TFALSE;
+            TBOOL planar = TFALSE;
             size_t bpe = 0;
             switch (fmt)
             {
@@ -530,7 +530,7 @@ namespace DirectX
             case DXGI_FORMAT_BC4_TYPELESS:
             case DXGI_FORMAT_BC4_UNORM:
             case DXGI_FORMAT_BC4_SNORM:
-                bc = true;
+                bc = TTRUE;
                 bpe = 8;
                 break;
 
@@ -549,20 +549,20 @@ namespace DirectX
             case DXGI_FORMAT_BC7_TYPELESS:
             case DXGI_FORMAT_BC7_UNORM:
             case DXGI_FORMAT_BC7_UNORM_SRGB:
-                bc = true;
+                bc = TTRUE;
                 bpe = 16;
                 break;
 
             case DXGI_FORMAT_R8G8_B8G8_UNORM:
             case DXGI_FORMAT_G8R8_G8B8_UNORM:
             case DXGI_FORMAT_YUY2:
-                packed = true;
+                packed = TTRUE;
                 bpe = 4;
                 break;
 
             case DXGI_FORMAT_Y210:
             case DXGI_FORMAT_Y216:
-                packed = true;
+                packed = TTRUE;
                 bpe = 8;
                 break;
 
@@ -573,14 +573,14 @@ namespace DirectX
                     // Requires a height alignment of 2.
                     return E_INVALIDARG;
                 }
-                planar = true;
+                planar = TTRUE;
                 bpe = 2;
                 break;
 
             #if (_WIN32_WINNT >= _WIN32_WINNT_WIN10)
 
             case DXGI_FORMAT_P208:
-                planar = true;
+                planar = TTRUE;
                 bpe = 2;
                 break;
 
@@ -593,7 +593,7 @@ namespace DirectX
                     // Requires a height alignment of 2.
                     return E_INVALIDARG;
                 }
-                planar = true;
+                planar = TTRUE;
                 bpe = 4;
                 break;
 
@@ -602,7 +602,7 @@ namespace DirectX
             case DXGI_FORMAT_D16_UNORM_S8_UINT:
             case DXGI_FORMAT_R16_UNORM_X8_TYPELESS:
             case DXGI_FORMAT_X16_TYPELESS_G8_UINT:
-                planar = true;
+                planar = TTRUE;
                 bpe = 4;
                 break;
 
@@ -1005,7 +1005,7 @@ namespace DirectX
                 }
             }
 
-            void clear() noexcept { m_handle = nullptr; }
+            void clear() noexcept { m_handle = TNULL; }
 
         private:
             HANDLE m_handle;

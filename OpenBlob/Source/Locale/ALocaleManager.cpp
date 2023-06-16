@@ -52,22 +52,16 @@ static_assert(LOCALE_FORMAT_LANG_NUMOF == LOCALE_LANG_NUMOF);
 
 void ALocaleManager::Create()
 {
-    TASSERT(T2Locale::s_Singleton == TNULL, "T2Locale is already created");
-
-    auto localeManager = new ALocaleManager();
+    auto localeManager = ALocaleManager::CreateSingleton<ALocaleManager>();
 
     auto langid = GetOSLanguage();
     localeManager->SetLanguage(langid);
-
-    T2Locale::s_Singleton = localeManager;
 }
 
 void ALocaleManager::Destroy()
 {
-    if (T2Locale::s_Singleton != TNULL)
-    {
-        delete T2Locale::s_Singleton;
-    }
+    if (T2Locale::ms_pSingleton != TNULL)
+        delete T2Locale::GetSingletonWeak();
 }
 
 const char* ALocaleManager::GetLocaleCode(int code)
@@ -139,10 +133,11 @@ int ALocaleManager::GetSoundChannel(int code)
     return 1;
 }
 
-ALocaleManager::ALocaleManager() : T2Locale(LOCALE_LANG_NUMOF, 0x64000, nullptr)
+ALocaleManager::ALocaleManager() :
+    T2Locale(LOCALE_LANG_NUMOF, BUFFER_SIZE, TMalloc(BUFFER_SIZE))
 {
     // 005e1ca0
-    m_LocaleBuffer = T2Locale::m_Buffer;
+    m_LocaleBuffer = T2Locale::m_pBuffer;
     setlocale(LC_ALL, "");
     TTODO("de blob: FUN_005e2470");
 }
@@ -158,7 +153,7 @@ const char* ALocaleManager::GetLanguageFilename(int32_t langid)
 
 void ALocaleManager::SetLanguage(Lang langid)
 {
-    bool changeLang = langid != m_LangId;
+    TBOOL changeLang = langid != m_LangId;
 
     if (changeLang)
     {

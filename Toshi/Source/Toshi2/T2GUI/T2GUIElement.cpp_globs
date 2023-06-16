@@ -19,7 +19,7 @@ void Toshi::T2GUIElement::Render()
 {
 }
 
-bool Toshi::T2GUIElement::IsPointInside(const TVector2& a_rVector2)
+TBOOL Toshi::T2GUIElement::IsPointInside(const TVector2& a_rVector2)
 {
 	float a_minX;
 	float a_minY;
@@ -29,7 +29,7 @@ bool Toshi::T2GUIElement::IsPointInside(const TVector2& a_rVector2)
 	GetMins(a_minX, a_minY);
 	GetMaxs(a_maxX, a_maxY);
 
-	return a_minX <= a_rVector2.x && a_rVector2.x <= a_maxX && a_minY <= a_rVector2.y && a_rVector2.y < a_maxY ? true : false;
+	return a_minX <= a_rVector2.x && a_rVector2.x <= a_maxX && a_minY <= a_rVector2.y && a_rVector2.y < a_maxY ? TTRUE : TFALSE;
 }
 
 void Toshi::T2GUIElement::PostRender()

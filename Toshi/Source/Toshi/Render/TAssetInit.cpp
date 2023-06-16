@@ -3,12 +3,12 @@
 
 namespace Toshi
 {
-	bool TAssetInit::g_bCreateResources = true;
-	bool TAssetInit::g_bAllowCrossTRBReferences;
+	TBOOL TAssetInit::g_bCreateResources = TTRUE;
+	TBOOL TAssetInit::g_bAllowCrossTRBReferences;
 	TTRB* TAssetInit::g_pCurrentTRB;
 	TMemoryHeap* TAssetInit::g_pMemHeap = TNULL;
 
-	void TAssetInit::InitAssets(TTRB& a_trb, bool createResources, bool allowCrossTRBReferences)
+	void TAssetInit::InitAssets(TTRB& a_trb, TBOOL createResources, TBOOL allowCrossTRBReferences)
 	{
 		size_t funcCount = 0;
 		const FourCCFunction* functions;

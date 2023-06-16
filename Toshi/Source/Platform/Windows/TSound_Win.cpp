@@ -7,13 +7,13 @@ FMOD_SYSTEM_CALLBACK Toshi::TSound_Win::SoundCB = [](FMOD_SYSTEM* system, FMOD_S
     {
     case FMOD_SYSTEM_CALLBACK_DEVICELOST:
         TOSHI_ERROR("FMOD reported a device loss. Setting system as uninitialized");
-        TSound_Win::GetSingletonWeak()->m_bInitialised = false;
+        TSound_Win::GetSingletonWeak()->m_bInitialised = TFALSE;
         break;
     }
     return FMOD_OK;
 };
 
-bool Toshi::TSound_Win::Initialise(int maxchannels, int unk)
+TBOOL Toshi::TSound_Win::Initialise(int maxchannels, int unk)
 {
     TASSERT(!m_bInitialised, "FMOD system has already been initialised. Only one FMOD system can be initialised at one time.");
 
@@ -47,10 +47,10 @@ bool Toshi::TSound_Win::Initialise(int maxchannels, int unk)
     if (ErrorCheck(result))
     {
         TOSHI_ERROR("TSound::Initialise() - Failed to initialise FMOD System with error code %d", result);
-        return false;
+        return TFALSE;
     }
 
-    m_bInitialised = true;
+    m_bInitialised = TTRUE;
 
-    return true;
+    return TTRUE;
 }

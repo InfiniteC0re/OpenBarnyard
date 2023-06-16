@@ -15,8 +15,8 @@ namespace Toshi {
 
 		virtual TSysMaterial* CreateMaterial() = 0;
 		virtual TSysMesh* CreateMesh(const char* name) = 0;
-		virtual bool IsLightScattering() const;
-		virtual bool SetLightScattering(bool scattering) const;
+		virtual TBOOL IsLightScattering() const;
+		virtual TBOOL SetLightScattering(TBOOL scattering) const;
 	};
 
 }

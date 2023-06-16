@@ -58,12 +58,12 @@ namespace Toshi
 		}
 	}
 
-	bool TInputInterface::Deinitialise()
+	TBOOL TInputInterface::Deinitialise()
 	{
-		return false;
+		return TFALSE;
 	}
 
-	bool TInputInterface::AcquireAll()
+	TBOOL TInputInterface::AcquireAll()
 	{
 		for (auto it = m_DeviceList.Begin(); it != m_DeviceList.End(); ++it)
 		{
@@ -72,25 +72,25 @@ namespace Toshi
 				TIMPLEMENT();
 			}
 		}
-		return false;
+		return TFALSE;
 	}
 
-	bool TInputInterface::UnacquireAll()
+	TBOOL TInputInterface::UnacquireAll()
 	{
-		return false;
+		return TFALSE;
 	}
 
-	bool TInputInterface::FlushAll()
+	TBOOL TInputInterface::FlushAll()
 	{
-		return false;
+		return TFALSE;
 	}
 
-	void TInputInterface::SetExclusiveMode(bool mode)
+	void TInputInterface::SetExclusiveMode(TBOOL mode)
 	{
 		m_bIsExclusiveMode = mode;
 	}
 
-	bool TInputInterface::GetExclusiveMode() const
+	TBOOL TInputInterface::GetExclusiveMode() const
 	{
 		return m_bIsExclusiveMode;
 	}

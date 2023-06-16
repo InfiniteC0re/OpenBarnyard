@@ -19,23 +19,23 @@ public:
 	virtual JOBTYPE GetJobType() = 0;
 	virtual void Init(){};
 	virtual void BeginJob() = 0;
-	virtual bool RunJob() = 0;
+	virtual TBOOL RunJob() = 0;
 
-	virtual bool CancelJob() { return false; };
+	virtual TBOOL CancelJob() { return TFALSE; };
 
 	Toshi::TTRBStreamJob& GetStreamJob()
 	{
 		return m_StreamJob;
 	}
 
-	bool IsRunning() const
+	TBOOL IsRunning() const
 	{
 		return m_IsRunning;
 	}
 
 protected:
 	Toshi::TTRBStreamJob m_StreamJob;
-	bool m_IsRunning;
+	TBOOL m_IsRunning;
 };
 
 class AAssetStreaming : public Toshi::TSingleton<AAssetStreaming>
@@ -63,7 +63,7 @@ public:
 		TASSERT(!m_pCurrentJob->IsLinked());
 	}
 
-	bool HasActiveJobs() const
+	TBOOL HasActiveJobs() const
 	{
 		return !m_Jobs.IsEmpty() || m_pCurrentJob != TNULL;
 	}

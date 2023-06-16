@@ -83,7 +83,7 @@ namespace Toshi
 		if (heap->m_Flags & TMemoryHeapFlags_UseMutex) TMemory::AcquireMutex();
 
 		void* chunk = mspace_malloc(heap->m_MSpace, size);
-		if (chunk == nullptr) TMemory::OutOfMem(heap, size);
+		if (chunk == TNULL) TMemory::OutOfMem(heap, size);
 
 		if (heap->m_Flags & TMemoryHeapFlags_UseMutex) TMemory::ReleaseMutex();
 		return chunk;
@@ -100,7 +100,7 @@ namespace Toshi
 		if (heap->m_Flags & TMemoryHeapFlags_UseMutex) TMemory::AcquireMutex();
 
 		void* chunk = mspace_calloc(heap->m_MSpace, nitems, size);
-		if (chunk == nullptr) TMemory::OutOfMem(heap, size);
+		if (chunk == TNULL) TMemory::OutOfMem(heap, size);
 
 		if (heap->m_Flags & TMemoryHeapFlags_UseMutex) TMemory::ReleaseMutex();
 		return chunk;
@@ -117,7 +117,7 @@ namespace Toshi
 		if (heap->m_Flags & TMemoryHeapFlags_UseMutex) TMemory::AcquireMutex();
 
 		void* chunk = mspace_memalign(heap->m_MSpace, alignment, size);
-		if (chunk == nullptr) TMemory::OutOfMem(heap, size);
+		if (chunk == TNULL) TMemory::OutOfMem(heap, size);
 
 		if (heap->m_Flags & TMemoryHeapFlags_UseMutex) TMemory::ReleaseMutex();
 		return chunk;
@@ -131,7 +131,7 @@ namespace Toshi
 		if (heap->m_Flags & TMemoryHeapFlags_UseMutex) TMemory::AcquireMutex();
 
 		void* chunk = mspace_realloc(heap->m_MSpace, mem, newsize);
-		if (chunk == nullptr) TMemory::OutOfMem(heap, newsize);
+		if (chunk == TNULL) TMemory::OutOfMem(heap, newsize);
 
 		if (heap->m_Flags & TMemoryHeapFlags_UseMutex) TMemory::ReleaseMutex();
 		return chunk;
@@ -150,16 +150,16 @@ namespace Toshi
 
 	void TMemory::dlheapdestroy(TMemoryHeap* heap)
 	{
-		if (heap != nullptr)
+		if (heap != TNULL)
 		{
 			if (heap->m_Flags & TMemoryHeapFlags_UseMutex) heap->DestroyMutex();
 			destroy_mspace(heap->m_MSpace);
-			heap->m_MSpace = nullptr;
+			heap->m_MSpace = TNULL;
 
-			if (heap->m_SubHeapBuffer != nullptr)
+			if (heap->m_SubHeapBuffer != TNULL)
 			{
 				TFree(heap->m_SubHeapBuffer);
-				heap->m_SubHeapBuffer = nullptr;
+				heap->m_SubHeapBuffer = TNULL;
 			}
 		}
 	}
@@ -167,11 +167,11 @@ namespace Toshi
 	TMemoryHeap* TMemory::dlheapcreatesubheap(TMemoryHeap* heap, size_t size, TMemoryHeapFlags flags, const char name[HEAP_MAXNAME])
 	{
 		// 006fc320
-		TMemoryHeap* subHeap = nullptr;
+		TMemoryHeap* subHeap = TNULL;
 		size_t subHeapSize = size + sizeof(TMemoryHeap);
 		void* mem = heap->Malloc(subHeapSize);
 
-		if (mem != nullptr)
+		if (mem != TNULL)
 		{	
 			if (flags & TMemoryHeapFlags_AllocAsPile)
 			{
@@ -222,7 +222,7 @@ namespace Toshi
 		size_t capacity = heapSize - sizeof(TMemoryHeap);
 		heap->m_MSpace = create_mspace_with_base(heap + 1, capacity, 1);
 
-		if (heap->m_MSpace != nullptr)
+		if (heap->m_MSpace != TNULL)
 		{
 			heap->m_Flags = flags;
 			heap->SetName(name);
@@ -240,7 +240,7 @@ namespace Toshi
 		}
 		else
 		{
-			return nullptr;
+			return TNULL;
 		}
 	}
 

@@ -35,7 +35,7 @@ public:
 	Toshi::TViewport* CreateViewport(float x, float y, float w, float h);
 
 	void GetUseableArea(float& x, float& y, float& w, float& h);
-	void SetMainFullScreen(bool fullscreen);
+	void SetMainFullScreen(TBOOL fullscreen);
 
 	Toshi::TViewport* GetViewport(VIEWPORT eViewport)
 	{

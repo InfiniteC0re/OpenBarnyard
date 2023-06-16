@@ -64,30 +64,30 @@ namespace Toshi
 			m_bInViewport = TFALSE;
 		}
 
-		bool AllowBackgroundClear(bool allow)
+		TBOOL AllowBackgroundClear(TBOOL allow)
 		{
-			bool oldState = m_bAllowBackgroundClear;
+			TBOOL oldState = m_bAllowBackgroundClear;
 			m_bAllowBackgroundClear = allow;
 			ChangeSKU(ChangeEvent_BackgroundClear);
 			return oldState;
 		}
 
-		bool AllowDepthClear(bool allow)
+		TBOOL AllowDepthClear(TBOOL allow)
 		{
-			bool oldState = m_bAllowDepthClear;
+			TBOOL oldState = m_bAllowDepthClear;
 			m_bAllowDepthClear = allow;
 			ChangeSKU(ChangeEvent_DepthClear);
 			return oldState;
 		}
 
-		void Enable(bool enable)
+		void Enable(TBOOL enable)
 		{
 			m_bEnable = enable;
 		}
 
-		bool EnableDefaultBeginRender(bool enable)
+		TBOOL EnableDefaultBeginRender(TBOOL enable)
 		{
-			bool oldState = m_bDefaultBeginRender;
+			TBOOL oldState = m_bDefaultBeginRender;
 			m_bDefaultBeginRender = enable;
 			return oldState;
 		}
@@ -187,10 +187,10 @@ namespace Toshi
 		uint8_t m_ColorG;                 // 0x09
 		uint8_t m_ColorB;                 // 0x0A
 		uint8_t m_ColorA;                 // 0x0B
-		bool m_bAllowBackgroundClear;     // 0x0C
-		bool m_bAllowDepthClear;          // 0x0D
-		bool m_bDefaultBeginRender;       // 0x0E
-		bool m_bEnable;                   // 0x0F
-		bool m_bInViewport;               // 0x10
+		TBOOL m_bAllowBackgroundClear;     // 0x0C
+		TBOOL m_bAllowDepthClear;          // 0x0D
+		TBOOL m_bDefaultBeginRender;       // 0x0E
+		TBOOL m_bEnable;                   // 0x0F
+		TBOOL m_bInViewport;               // 0x10
 	};
 }

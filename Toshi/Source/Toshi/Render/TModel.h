@@ -172,10 +172,10 @@ namespace Toshi
 
 		};
 
-		bool Create(const char* name, bool a_bLoadImmediately);
+		TBOOL Create(const char* name, TBOOL a_bLoadImmediately);
 		void CreateResource(const char* name);
 
-		inline bool IsCreated() { return (m_Flags & 1) != 0; }
+		inline TBOOL IsCreated() { return (m_Flags & 1) != 0; }
 
 		inline TModelLOD& GetLOD(int index) { return m_modelLODs[index]; }
 		inline int GetLODCount() { return m_iLODCount; }
@@ -183,9 +183,9 @@ namespace Toshi
 
 
 	protected:
-		bool LoadTMD(const char*); // JPOG only i think not sure though
-		bool LoadTRBTMD(const char*);
-		bool LoadTrb();
+		TBOOL LoadTMD(const char*); // JPOG only i think not sure though
+		TBOOL LoadTRBTMD(const char*);
+		TBOOL LoadTrb();
 		const char* TranslateSymbolName(const char* a_symbolName);
 	};
 	

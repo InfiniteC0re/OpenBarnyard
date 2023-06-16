@@ -63,7 +63,7 @@ namespace DirectX
             _In_ ID3D11Resource *resource,
             _In_ unsigned int subresource,
             _In_ D3D11_MAP mapType,
-            _In_ unsigned int mapFlags) noexcept(false)
+            _In_ unsigned int mapFlags) noexcept(TFALSE)
             : mContext(context), mResource(resource), mSubresource(subresource)
         {
             HRESULT hr = mContext->Map(resource, subresource, mapType, mapFlags, this);
@@ -152,7 +152,7 @@ namespace DirectX
         resource->SetName(name);
     #else
         char aname[MAX_PATH];
-        int result = WideCharToMultiByte(CP_UTF8, 0, name, TNameLength, aname, MAX_PATH, nullptr, nullptr);
+        int result = WideCharToMultiByte(CP_UTF8, 0, name, TNameLength, aname, MAX_PATH, TNULL, TNULL);
         if (result > 0)
         {
             resource->SetPrivateData(WKPDID_D3DDebugObjectName, TNameLength - 1, aname);
@@ -170,7 +170,7 @@ namespace DirectX
     {
         // Helper to check for power-of-2
         template<typename T>
-        constexpr bool IsPowerOf2(T x) noexcept { return ((x != 0) && !(x & (x - 1))); }
+        constexpr TBOOL IsPowerOf2(T x) noexcept { return ((x != 0) && !(x & (x - 1))); }
 
         // Helpers for aligning values by a power of 2
         template<typename T>

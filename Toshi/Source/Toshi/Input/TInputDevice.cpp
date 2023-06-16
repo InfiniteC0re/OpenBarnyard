@@ -8,19 +8,19 @@ namespace Toshi
     {
         return 0;
     }
-    bool TInputDevice::StartRepeat(int param_1, float param_2, float param_3)
+    TBOOL TInputDevice::StartRepeat(int param_1, float param_2, float param_3)
     {
-        return false;
+        return TFALSE;
     }
 
-    bool TInputDevice::StopRepeat(int param_1)
+    TBOOL TInputDevice::StopRepeat(int param_1)
     {
-        return false;
+        return TFALSE;
     }
 
-    bool TInputDevice::StopAllRepeats()
+    TBOOL TInputDevice::StopAllRepeats()
     {
-        return false;
+        return TFALSE;
     }
 
     void TInputDevice::ThrowRepeatEvent(TGenericEmitter& emitter, RepeatInfo* repeatInfo, float flt)

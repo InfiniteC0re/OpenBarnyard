@@ -35,12 +35,12 @@ namespace Toshi
 		}
 	}
 
-	bool T2GUIElement::IsPaused() const
+	TBOOL T2GUIElement::IsPaused() const
 	{
 		return TFALSE;
 	}
 
-	bool T2GUIElement::SkipRender()
+	TBOOL T2GUIElement::SkipRender()
 	{
 		if (HASFLAG(m_State & FLAGS_VISIBLE) && HASFLAG(m_State & (uint8_t)s_uiGlobalVisMask))
 		{
@@ -228,7 +228,7 @@ namespace Toshi
 		return ((m_Color & 0x00FFFFFF) >> 24) * 255.0f;
 	}
 
-	void T2GUIElement::SetVisible(bool visible)
+	void T2GUIElement::SetVisible(TBOOL visible)
 	{
 		if (visible)
 		{
@@ -240,7 +240,7 @@ namespace Toshi
 		}
 	}
 
-	void T2GUIElement::SetFocus(bool focused)
+	void T2GUIElement::SetFocus(TBOOL focused)
 	{
 		if (focused)
 		{
@@ -257,7 +257,7 @@ namespace Toshi
 		TIMPLEMENT();
 	}
 
-	bool T2GUIElement::IsPointInside(const TVector2& point)
+	TBOOL T2GUIElement::IsPointInside(const TVector2& point)
 	{
 		float minX, minY;
 		float maxX, maxY;
@@ -270,7 +270,7 @@ namespace Toshi
 			return point.y <= maxY;
 		}
 
-		return false;
+		return TFALSE;
 	}
 
 	const TVector2& T2GUIElement::GetPivot()

@@ -9,7 +9,7 @@ class AGameStateController : public Toshi::TSingleton<AGameStateController>
 public:
 	AGameStateController()
 	{
-		m_bStatePushing = false;
+		m_bStatePushing = TFALSE;
 	}
 
 	AGameState* GetCurrentGameState()
@@ -26,5 +26,5 @@ public:
 
 private:
 	Toshi::T2Vector<AGameState*, 10> m_oStateStack;
-	bool m_bStatePushing;
+	TBOOL m_bStatePushing;
 };

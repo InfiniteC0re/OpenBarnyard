@@ -200,13 +200,13 @@ namespace Toshi
 			return ReadEPTUShort32();
 		}
 
-		__forceinline bool ShouldReadThisProp(int propId)
+		__forceinline TBOOL ShouldReadThisProp(int propId)
 		{
 			return (m_ReadFlags & (1 << propId));
 		}
 
 		template<int EPT, typename T>
-		__forceinline bool ReadProperty(int propId, T& outValue)
+		__forceinline TBOOL ReadProperty(int propId, T& outValue)
 		{
 			if (ShouldReadThisProp(propId))
 			{
@@ -244,7 +244,7 @@ namespace Toshi
 				}
 				else if constexpr (EPT == XUI_EPT_OBJECT)
 				{
-					TASSERT(false && "Not implemented");
+					TASSERT(TFALSE && "Not implemented");
 				}
 				else if constexpr (EPT == XUI_EPT_CUSTOM)
 				{
@@ -259,10 +259,10 @@ namespace Toshi
 					outValue = ReadEPTUShort32();
 				}
 
-				return true;
+				return TTRUE;
 			}
 
-			return false;
+			return TFALSE;
 		}
 
 	private:

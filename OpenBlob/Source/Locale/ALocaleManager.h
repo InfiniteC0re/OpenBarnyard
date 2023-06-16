@@ -1,7 +1,8 @@
 #pragma once
 #include <Toshi/Locale/T2Locale.h>
 
-class ALocaleManager : public Toshi::T2Locale, public Toshi::TSingleton<ALocaleManager>
+class ALocaleManager :
+	public Toshi::T2Locale
 {
 public:
 	typedef int Platform;
@@ -17,6 +18,7 @@ public:
 
 	};
 
+	static constexpr size_t BUFFER_SIZE = 409600;
 
 public:
 	ALocaleManager();
@@ -24,23 +26,26 @@ public:
 	ALocaleManager(const ALocaleManager&&) = delete;
 
 	virtual ~ALocaleManager() { };
-	virtual const char* GetLanguageFilename(int32_t langid) override;
+	virtual const char* GetLanguageFilename(Lang langid) override;
 
 	void SetLanguage(Lang langid);
+	
+	const char* GetCurLocaleCode() { return GetLocaleCode(m_code); }
+	int GetCurSoundChannel() { return GetSoundChannel(m_code); }
 
+public:
 	static void Create();
 	static void Destroy();
 
 	static const char* GetLocaleCode(int code);
-	inline const char* GetCurLocaleCode() { return GetLocaleCode(m_code); }
 	static const char* GetVOLocaleCode(int code);
 
 	static int GetSoundChannel(int code);
-	inline int GetCurSoundChannel() { return GetSoundChannel(m_code); }
 
 	static int GetOSLanguage() { return 0; }
 	static int FixStringIdPlatform(int stringid);
-	static ALocaleManager& Instance() { return *static_cast<ALocaleManager*>(s_Singleton); }
+
+	static ALocaleManager& Instance() { return *TSTATICCAST(ALocaleManager*, GetSingletonWeak()); }
 
 private:
 	static constinit Platform s_Platform; // 00981a20

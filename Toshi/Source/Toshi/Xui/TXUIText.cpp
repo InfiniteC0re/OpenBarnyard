@@ -15,20 +15,20 @@ Toshi::XURXUITextData::XURXUITextData() : Toshi::XURXUIElementData()
 	// TClass::Find("TXUIText",(TClass *)&TXUIElement::m_sClass);
 }
 
-bool Toshi::XURXUITextData::IsColourPropType(uint32_t a_uiObjectIndex, uint32_t propType)
+TBOOL Toshi::XURXUITextData::IsColourPropType(uint32_t a_uiObjectIndex, uint32_t propType)
 {
 	if (a_uiObjectIndex != 0)
 	{
 		TASSERT(a_uiObjectIndex > 0);
 		return XURXUIElementData::IsColourPropType(a_uiObjectIndex - 1, propType);
 	}
-	if (propType == 1) return true; // propType 1 = TextColor
+	if (propType == 1) return TTRUE; // propType 1 = TextColor
 	return propType == 2;
 }
 
-bool Toshi::XURXUITextData::IsFloatPropType(uint32_t a_uiObjectIndex, uint32_t propType)
+TBOOL Toshi::XURXUITextData::IsFloatPropType(uint32_t a_uiObjectIndex, uint32_t propType)
 {
-	if (a_uiObjectIndex == 0) return false;
+	if (a_uiObjectIndex == 0) return TFALSE;
 	TASSERT(a_uiObjectIndex > 0);
 	return XURXUIElementData::IsFloatPropType(a_uiObjectIndex - 1, propType);
 }
@@ -44,7 +44,7 @@ uint32_t Toshi::XURXUITextData::GetTimelinePropSize(uint32_t a_uiObjectIndex, ui
 	return 2;
 }
 
-bool Toshi::XURXUITextData::TranslateTimelineProp(const char* name, uint32_t& param_2, PropType& propType)
+TBOOL Toshi::XURXUITextData::TranslateTimelineProp(const char* name, uint32_t& param_2, PropType& propType)
 {
 	TXUI_TRANSLATE_TIMELINE_PROP(name, Text, propType);
 	TXUI_TRANSLATE_TIMELINE_PROP(name, TextColor, propType);
@@ -58,14 +58,14 @@ bool Toshi::XURXUITextData::TranslateTimelineProp(const char* name, uint32_t& pa
 	return XURXUIElementData::TranslateTimelineProp(name, param_2, propType);
 }
 
-bool Toshi::XURXUITextData::ValidateTimelineProp(uint32_t a_uiObjectIndex, uint32_t param_2)
+TBOOL Toshi::XURXUITextData::ValidateTimelineProp(uint32_t a_uiObjectIndex, uint32_t param_2)
 {
 	if (a_uiObjectIndex == 0) return param_2 < PropType_NUMOF;
 	TASSERT(a_uiObjectIndex > 0);
 	return XURXUIElementData::ValidateTimelineProp(a_uiObjectIndex - 1, param_2);
 }
 
-bool Toshi::XURXUITextData::Load(TXUIResource& resource, uint8_t*& a_pData)
+TBOOL Toshi::XURXUITextData::Load(TXUIResource& resource, uint8_t*& a_pData)
 {
     XURXUIElementData::Load(resource, a_pData);
 	
@@ -83,5 +83,5 @@ bool Toshi::XURXUITextData::Load(TXUIResource& resource, uint8_t*& a_pData)
 		reader.ReadProperty<XUI_EPT_INTEGER>(PropType_LineSpacingAdjust, m_LineSpacingAdjust);
 	}
 
-    return true;
+    return TTRUE;
 }

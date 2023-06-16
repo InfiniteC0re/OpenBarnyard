@@ -28,7 +28,7 @@ namespace Toshi
 				m_pPrev = this;
 			}
 
-			bool IsLinked() const
+			TBOOL IsLinked() const
 			{
 				return m_pNext != this;
 			}
@@ -81,7 +81,7 @@ namespace Toshi
 			
 		}
 
-		bool IsLinked() const
+		TBOOL IsLinked() const
 		{
 			return m_oRoot.IsLinked();
 		}
@@ -113,14 +113,14 @@ namespace Toshi
 			}
 		}
 
-		bool IsInList(Node* pNode) const
+		TBOOL IsInList(Node* pNode) const
 		{
 			for (Node* pCNode = m_oRoot.m_pNext; pCNode != &m_oRoot; pCNode = pCNode->m_pNext)
 			{
-				if (pCNode == pCNode) return true;
+				if (pCNode == pCNode) return TTRUE;
 			}
 
-			return false;
+			return TFALSE;
 		}
 
 		size_t Size() const
@@ -202,7 +202,7 @@ namespace Toshi
 			iter->Remove();
 		}
 
-		bool IsEmpty() const
+		TBOOL IsEmpty() const
 		{
 			return !m_oRoot.IsLinked();
 		}

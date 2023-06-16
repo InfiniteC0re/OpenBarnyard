@@ -17,7 +17,7 @@ namespace Toshi
 		Destroy();
 	}
 
-	bool TApplication::Create(const char* appName, int argc, char** argv)
+	TBOOL TApplication::Create(const char* appName, int argc, char** argv)
 	{
 		TTODO("TGenericGlobalListener<Toshi::TApplicationExitEvent>::ConnectImpl(&this->m_ExitEventListener,this,OnApplicationExitEvent);");
 		m_oExitEvent.Connect(this, OnApplicationExitEvent);
@@ -26,9 +26,9 @@ namespace Toshi
 		m_pDebugConsole = new TDebugConsole;
 
 #ifdef TOSHI_DEBUG
-		m_pDebugConsole->Show(true);
+		m_pDebugConsole->Show(TTRUE);
 #else
-		m_pDebugConsole->Show(false);
+		m_pDebugConsole->Show(TFALSE);
 #endif
 
 		return OnCreate(argc, argv);
@@ -39,12 +39,12 @@ namespace Toshi
 		m_Flags |= TApplicationFlag_Destroyed;
 	}
 
-	bool TApplication::Execute()
+	TBOOL TApplication::Execute()
 	{
 		TASSERT(TApplication::IsCreated() == TTRUE);
 		TSystemManager* pSystemManager = TSystemManager::GetSingleton();
 		
-		bool updateResult = true;
+		TBOOL updateResult = TTRUE;
 		while (updateResult && !IsDestroyed())
 		{
 			pSystemManager->Update();
@@ -54,20 +54,20 @@ namespace Toshi
 		return OnDestroy();
 	}
 
-	bool TApplication::OnCreate(int argc, char** argv)
+	TBOOL TApplication::OnCreate(int argc, char** argv)
 	{
 		m_Flags |= TApplicationFlag_Created;
-		return true;
+		return TTRUE;
 	}
 
-	bool TApplication::OnUpdate(float deltaTime)
+	TBOOL TApplication::OnUpdate(float deltaTime)
 	{
 		return (m_Flags & TApplicationFlag_Destroyed) == 0;
 	}
 
-	bool TApplication::OnDestroy()
+	TBOOL TApplication::OnDestroy()
 	{
 		m_oExitEvent.Disconnect();
-		return true;
+		return TTRUE;
 	}
 }

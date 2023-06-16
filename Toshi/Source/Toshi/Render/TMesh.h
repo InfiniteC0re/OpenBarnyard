@@ -6,7 +6,7 @@ namespace Toshi
 	class TShader;
 
 	class TMesh :
-		public TGenericClassDerived<TMesh, TObject, "TMesh", TMAKEVERSION(1, 0), false>
+		public TGenericClassDerived<TMesh, TObject, "TMesh", TMAKEVERSION(1, 0), TFALSE>
 	{
 	public:
 		enum class State : uint32_t
@@ -27,7 +27,7 @@ namespace Toshi
 		virtual TBOOL Validate()
 		{
 			m_State.Set(State::Validated);
-			return true;
+			return TTRUE;
 		}
 
 		virtual void Invalidate()
@@ -38,12 +38,12 @@ namespace Toshi
 		virtual TBOOL Create()
 		{
 			m_State.Set(State::Created);
-			return true;
+			return TTRUE;
 		}
 
 		virtual TBOOL Render()
 		{
-			return true;
+			return TTRUE;
 		}
 
 		virtual void OnDestroy()

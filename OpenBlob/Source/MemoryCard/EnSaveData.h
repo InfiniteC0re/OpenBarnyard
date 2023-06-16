@@ -12,7 +12,7 @@ public:
 	// Size should be 0x318 or 792 in decimal
 	struct SaveGameSlot
 	{
-		bool m_bUsedSlot; // should be 0x0 not sure
+		TBOOL m_bUsedSlot; // should be 0x0 not sure
 	};
 
 	struct SaveData
@@ -31,6 +31,6 @@ public:
 	int m_size;
 	SaveData* m_savedata; // 0xC
 
-	bool Validate();
+	TBOOL Validate();
 };
 

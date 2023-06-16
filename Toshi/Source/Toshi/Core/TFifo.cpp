@@ -3,7 +3,7 @@
 
 namespace Toshi
 {
-	bool TGenericFifo::Create(char* a_pBuffer, int a_iMaxItems, int a_iItemSize)
+	TBOOL TGenericFifo::Create(char* a_pBuffer, int a_iMaxItems, int a_iItemSize)
 	{
 		TASSERT(a_iMaxItems > 0, "Max items is less than zero");
 		TASSERT(a_iItemSize > 0, "Item size is less than zero");
@@ -15,32 +15,32 @@ namespace Toshi
 		m_pDataBegin = a_pBuffer;
 		m_pDataEnd = a_pBuffer + (a_iMaxItems * a_iItemSize);
 
-		bool bResult;
+		TBOOL bResult;
 		bResult = m_Semaphore1.Create(m_iMaxItems, m_iMaxItems);
 		TASSERT(bResult != TFALSE, "Unable to create semaphore for TGenericFifo");
 		bResult = m_Semaphore2.Create(0, m_iMaxItems);
 		TASSERT(bResult != TFALSE, "Unable to create semaphore for TGenericvFifo");
 
 		InitializeCriticalSection(&m_CriticalSection);
-		return true;
+		return TTRUE;
 	}
 
-	bool TGenericFifo::Destroy()
+	TBOOL TGenericFifo::Destroy()
 	{
 		DeleteCriticalSection(&m_CriticalSection);
 		m_Semaphore1.Destroy();
 		m_Semaphore2.Destroy();
-		return true;
+		return TTRUE;
 	}
 
-	bool TGenericFifo::Push(void* a_pItem, Flags a_iFlags)
+	TBOOL TGenericFifo::Push(void* a_pItem, Flags a_iFlags)
 	{
-		bool noSemaphore = a_iFlags & Flags_NoSemaphore;
+		TBOOL noSemaphore = a_iFlags & Flags_NoSemaphore;
 
 		if (!noSemaphore)
 		{
-			bool bResult = (a_iFlags & Flags_PollSemaphore) ? m_Semaphore1.Poll() : m_Semaphore1.Wait();
-			if (!bResult) return false;
+			TBOOL bResult = (a_iFlags & Flags_PollSemaphore) ? m_Semaphore1.Poll() : m_Semaphore1.Wait();
+			if (!bResult) return TFALSE;
 		}
 
 		EnterCriticalSection(&m_CriticalSection);
@@ -56,28 +56,28 @@ namespace Toshi
 
 		if (!noSemaphore)
 		{
-			bool bResult = m_Semaphore2.Signal();
+			TBOOL bResult = m_Semaphore2.Signal();
 			TASSERT(bResult != TFALSE, "TSemaphore::Signal returned TFALSE");
 		}
 
-		return true;
+		return TTRUE;
 	}
 
-	bool TGenericFifo::Pop(void* a_pOut, Flags a_iFlags)
+	TBOOL TGenericFifo::Pop(void* a_pOut, Flags a_iFlags)
 	{
-		bool noSemaphore = a_iFlags & Flags_NoSemaphore;
+		TBOOL noSemaphore = a_iFlags & Flags_NoSemaphore;
 
 		if (!noSemaphore)
 		{
-			bool bResult = (a_iFlags & Flags_PollSemaphore) ? m_Semaphore2.Poll() : m_Semaphore2.Wait();
-			if (!bResult) return false;
+			TBOOL bResult = (a_iFlags & Flags_PollSemaphore) ? m_Semaphore2.Poll() : m_Semaphore2.Wait();
+			if (!bResult) return TFALSE;
 		}
 		else
 		{
 			// Check if FIFO is not empty
 			if (m_pDataPopCursor == m_pDataPushCursor)
 			{
-				return false;
+				return TFALSE;
 			}
 		}
 
@@ -94,10 +94,10 @@ namespace Toshi
 
 		if (!noSemaphore)
 		{
-			bool bResult = m_Semaphore1.Signal();
+			TBOOL bResult = m_Semaphore1.Signal();
 			TASSERT(bResult != TFALSE, "TSemaphore::Signal returned TFALSE");
 		}
 
-		return true;
+		return TTRUE;
 	}
 }

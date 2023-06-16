@@ -9,7 +9,7 @@ namespace Toshi
 	class TGenericListener : public TPriList<TGenericListener>::TNode
 	{
 	public:
-		using t_Callback = bool (*)(void*, void*, void*);
+		using t_Callback = TBOOL (*)(void*, void*, void*);
 		friend class TGenericEmitter;
 
 	public:

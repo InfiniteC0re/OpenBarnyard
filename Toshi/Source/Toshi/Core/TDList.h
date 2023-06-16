@@ -40,7 +40,7 @@ namespace Toshi
 				return *this;
 			}
 
-			bool IsLinked() const { return this != m_Next; }
+			TBOOL IsLinked() const { return this != m_Next; }
 			void Reset() { m_Next = this; m_Prev = this; }
 
 			void InsertAfter(TNode* node)
@@ -89,7 +89,7 @@ namespace Toshi
 		void InsertTail(TNode* node) { node->InsertBefore(&m_Root); }
 		void RemoveHead()            { if (!IsEmpty()) m_Root.Next()->Remove(); }
 		void RemoveTail()            { if (!IsEmpty()) m_Root.Prev()->Remove(); }
-		bool IsEmpty()               { return m_Root.Next() == &m_Root; }
+		TBOOL IsEmpty()               { return m_Root.Next() == &m_Root; }
 		TNode* Head()                { return m_Root.Next(); }
 		TNode* Tail()                { return m_Root.Prev(); }
 		TNode* Begin()               { return m_Root.Next(); }
@@ -184,7 +184,7 @@ namespace Toshi
 				return *this;
 			}
 
-			bool IsLinked() const { return this != m_Next; }
+			TBOOL IsLinked() const { return this != m_Next; }
 			void Reset() { m_Next = this; m_Prev = this; SetPriority(0); }
 
 			void InsertAfter(TNode* node)
@@ -242,7 +242,7 @@ namespace Toshi
 		void InsertTail(TNode* node) { node->InsertBefore(&m_Root); }
 		void RemoveHead() { if (!IsEmpty()) m_Root.Next()->Remove(); }
 		void RemoveTail() { if (!IsEmpty()) m_Root.Prev()->Remove(); }
-		bool IsEmpty() { return m_Root.Next() == &m_Root; }
+		TBOOL IsEmpty() { return m_Root.Next() == &m_Root; }
 		TNode* Head() { return m_Root.Next(); }
 		TNode* Tail() { return m_Root.Prev(); }
 		TNode* Begin() { return m_Root.Next(); }
@@ -315,7 +315,7 @@ namespace Toshi
 
 		T2Iterator<T, TNode> Begin() { return TGenericPriList::Begin(); }
 		T2Iterator<T, TNode> End()   { return TGenericPriList::End(); }
-		bool IsLinked()              { return m_Root.IsLinked(); }
+		TBOOL IsLinked()              { return m_Root.IsLinked(); }
 	};
 
 	template <class T>
@@ -328,8 +328,8 @@ namespace Toshi
 		T* Tail()                    { return TGenericDList::Tail()->As<T>(); }
 		T2Iterator<T, TNode> Begin() { return TGenericDList::Begin()->As<T>(); }
 		T2Iterator<T, TNode> End()   { return TGenericDList::End()->As<T>(); }
-		bool IsEmpty()               { return TGenericDList::IsEmpty(); }
-		bool IsLinked()              { return m_Root.IsLinked(); }
+		TBOOL IsEmpty()               { return TGenericDList::IsEmpty(); }
+		TBOOL IsLinked()              { return m_Root.IsLinked(); }
 		void RemoveHead()            { TGenericDList::RemoveHead(); }
 		void RemoveTail()            { TGenericDList::RemoveTail(); }
 	};

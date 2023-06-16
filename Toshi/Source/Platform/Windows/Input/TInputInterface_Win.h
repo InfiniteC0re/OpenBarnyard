@@ -14,14 +14,14 @@ namespace Toshi
 			m_poDirectInput8 = NULL;
 			m_hMainWindow = NULL;
 			ms_pTheInterface = this;
-			m_bExclusive = false;
+			m_bExclusive = TFALSE;
 		}
 
-		virtual bool Initialise();
-		virtual bool Deinitialise();
+		virtual TBOOL Initialise();
+		virtual TBOOL Deinitialise();
 		virtual void RefreshDirect() { }
 
-		bool LostDevice();
+		TBOOL LostDevice();
 
 		HWND GetMainWindow() const
 		{
@@ -54,6 +54,6 @@ namespace Toshi
 	private:
 		LPDIRECTINPUT8 m_poDirectInput8; // 0x30
 		HWND m_hMainWindow;              // 0x34
-		bool m_bExclusive;               // 0x38
+		TBOOL m_bExclusive;               // 0x38
 	};
 }
