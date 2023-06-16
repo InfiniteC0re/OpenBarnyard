@@ -17,6 +17,7 @@ namespace Toshi {
 		}
 
 		void ConnectImpl(void* pReceiver, EventCallback fnCallback);
+		void DisconnectImpl();
 
 	protected:
 		void* m_pReceiver;
@@ -42,7 +43,7 @@ namespace Toshi {
 
 		void Disconnect()
 		{
-
+			TGenericGlobalListener<EventType>::DisconnectImpl();
 		}
 	};
 
@@ -55,4 +56,11 @@ namespace Toshi {
 		TGlobalEmitter<T>::sm_oListeners.InsertHead(this);
 	}
 
+	template<class T>
+	inline void Toshi::TGenericGlobalListener<T>::DisconnectImpl()
+	{
+		TGlobalEmitter<T>::sm_oListeners.RemoveHead();
+		m_pReceiver = TNULL;
+		m_fnCallback = TNULL;
+	}
 }

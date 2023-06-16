@@ -67,6 +67,7 @@ namespace Toshi
 
 	bool TApplication::OnDestroy()
 	{
+		m_oExitEvent.Disconnect();
 		return true;
 	}
 }

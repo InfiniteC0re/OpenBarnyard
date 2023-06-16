@@ -64,10 +64,10 @@ namespace Toshi
 
 		void Throw(void* pData)
 		{
-			/*for (auto it = m_Listeners.Begin(); it != m_Listeners.End(); it++)
+			for (auto it = m_Listeners.Begin(); it != m_Listeners.End(); it++)
 			{
 				it->Execute(m_Owner, pData);
-			}*/
+			}
 		}
 
 		void Create(void* owner)
