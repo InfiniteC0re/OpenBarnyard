@@ -398,6 +398,13 @@ namespace Toshi
 		void UpdateRenderStates();
 		void FlushConstantBuffers();
 
+		void ApplyFXAA()
+		{
+			m_pFXAA->Render(
+				(m_DisplayParams.MultisampleQualityLevel < 2) ? m_SRView1 : m_SRView2
+			);
+		}
+
 		static void RenderOverlay(float posX, float posY, float width, float height, ID3D11ShaderResourceView* pShaderResourceView, ID3D11PixelShader* pPixelShader, const TVector4* uvVec);
 	
 	private:

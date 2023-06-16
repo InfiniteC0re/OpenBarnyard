@@ -4,7 +4,8 @@
 #include <Toshi2/T2GUI/T2GUIRectangle.h>
 #include <A2GUI/A2GUIBackground.h>
 
-class AFrontEndMovieState : public AGameState
+class AFrontEndMovieState :
+	public Toshi::TGenericClassDerived<AFrontEndMovieState, AGameState, "AFrontEndMovieState", TMAKEVERSION(1, 0), true>
 {
 public:
 	constexpr static const char* s_Assets[] = {

@@ -61,9 +61,6 @@ void ARenderer::Update(float deltaTime)
 	}
 	else if (bRenderWorld)
 	{
-		m_pViewportManager->SetCameraUsed(AXYZViewportManager::VIEWPORT_FullScreen, TFALSE);
-		m_pViewportManager->SetCameraUsed(AXYZViewportManager::VIEWPORT_1P1_HORIZONTAL_TOP, TTRUE);
-
 		GetAppCamera();
 		InitialiseViewPort();
 
@@ -97,10 +94,11 @@ void ARenderer::Update(float deltaTime)
 	auto pGameStateController = AGameStateController::GetSingletonWeak();
 	auto pGameState = pGameStateController->GetCurrentGameState();
 
+	auto cl = pGameState->GetClass();
+
 	if (TFALSE == pGameState->GetClass()->IsA(TGetClass(AFrontEndMovieState)))
 	{
-		ID3D11ShaderResourceView* pShaderResourceView = (pDisplayParams->MultisampleQualityLevel < 2) ? pRender->m_SRView1 : pRender->m_SRView2;
-		pRender->m_pFXAA->Render(pShaderResourceView);
+		pRender->ApplyFXAA();
 	}
 
 	s_FrameTimer.Update();

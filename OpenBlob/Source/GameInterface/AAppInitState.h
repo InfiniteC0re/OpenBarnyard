@@ -1,7 +1,8 @@
 #pragma once
 #include "AGameState.h"
 
-class AAppInitState : public AGameState
+class AAppInitState :
+	public Toshi::TGenericClassDerived<AAppInitState, AGameState, "AAppInitState", TMAKEVERSION(1, 0), true>
 {
 public:
 	virtual UpdateResult OnUpdate(float deltaTime) override;
