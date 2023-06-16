@@ -49,7 +49,7 @@ namespace Toshi
 		static inline Toshi::TCStringPool* ms_poTCStringPool = TNULL;
 
 	private:
-		TEmitter<TSystemManager> m_Emitter; // 0x00
+		TEmitter<TSystemManager, bool> m_Emitter; // 0x00
 		TScheduler* m_Scheduler;
 		bool m_Paused;
 		uint32_t m_Unk2;

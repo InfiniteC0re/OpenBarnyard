@@ -56,7 +56,7 @@ public:
 	virtual void OnDeactivate() { }
 
 protected:
-	Toshi::TEmitter<AMoviePlayer> m_Emitter; // 0x4
+	Toshi::TEmitter<AMoviePlayer, AMovieEvent::Type> m_Emitter; // 0x4
 	bool m_bInitialised; // 0x10
 	bool m_bIsFullscreen; // 0x11
 	bool m_bIsMuted; // 0x12
