@@ -132,21 +132,21 @@ ALocaleManager::LocaleString ALocaleManager::GetString(LocaleId stringid)
 
 ALocaleManager::LocaleString ALocaleManager::GetOverwrittenFormatString(LocaleId stringid, LocaleString fallbackString)
 {
-	LocaleString resultString = fallbackString;
+    LocaleString resultString = fallbackString;
 
-	if (m_LangId != -1)
-	{
-		auto foundString = FindOverwrittenFormatString(stringid, m_LangId);
+    if (m_LangId != -1)
+    {
+        auto foundString = FindOverwrittenFormatString(stringid, m_LangId);
 
-		if (foundString)
-			resultString = foundString;
-	}
-	else
-	{
-		return TNULL;
-	}
+        if (foundString)
+            resultString = foundString;
+    }
+    else
+    {
+        return TNULL;
+    }
 
-	return resultString;
+    return resultString;
 }
 
 ALocaleManager::LocaleId ALocaleManager::FixStringIdPlatform(Lang stringid)
@@ -251,27 +251,27 @@ ALocaleManager::LocaleId ALocaleManager::FixStringIdPlatform(Lang stringid)
 
 ALocaleManager::LocaleString ALocaleManager::FindOverwrittenLocaleString(LocaleId stringid, Lang langid)
 {
-	for (size_t i = 0; i < NUM_OF_OVERRIDES; i++)
-	{
-		if (s_Overrides[i].m_StringId == stringid)
-			return s_Overrides[i].m_LocaleStrings[langid];
-	}
+    for (size_t i = 0; i < NUM_OF_OVERRIDES; i++)
+    {
+        if (s_Overrides[i].m_StringId == stringid)
+            return s_Overrides[i].m_LocaleStrings[langid];
+    }
 
-	return TNULL;
+    return TNULL;
 }
 
 ALocaleManager::LocaleString ALocaleManager::FindOverwrittenFormatString(LocaleId stringid, Lang langid)
 {
-	for (size_t i = 0; i < NUM_OF_OVERRIDES; i++)
-	{
+    for (size_t i = 0; i < NUM_OF_OVERRIDES; i++)
+    {
         if (s_Overrides[i].m_StringId == stringid &&
             s_Overrides[i].m_LocaleStrings[langid] != TNULL)
         {
-			return s_Overrides[i].m_FormatStrings[langid];
+            return s_Overrides[i].m_FormatStrings[langid];
         }
-	}
+    }
 
-	return TNULL;
+    return TNULL;
 }
 
 void ALocaleManager::InitialiseOverrideTexts()
@@ -284,13 +284,13 @@ void ALocaleManager::InitialiseOverrideTexts()
         Toshi::TUtil::MemClear(s_Overrides, sizeof(s_Overrides));
 
         // Japanese
-		static wchar_t s_Str1[] = L"@を長押しして弱点を突き、侵入しよう。";
-		static wchar_t s_Str2[] = L"この2ブロックにはかつてミュージックバーとダンスホールがあった。*「今じゃ聞こえるのはグレーディアンたちがマシーンを増設するタップ音だけ」*活気を取り戻して、ブロブ！建物を緑に塗ろう。";
-		static wchar_t s_EmptyFormat[] = L"";
+        static wchar_t s_Str1[] = L"@を長押しして弱点を突き、侵入しよう。";
+        static wchar_t s_Str2[] = L"この2ブロックにはかつてミュージックバーとダンスホールがあった。*「今じゃ聞こえるのはグレーディアンたちがマシーンを増設するタップ音だけ」*活気を取り戻して、ブロブ！建物を緑に塗ろう。";
+        static wchar_t s_EmptyFormat[] = L"";
 
-		s_Overrides[0].m_StringId = 520;
-		s_Overrides[0].m_LocaleStrings[12] = s_Str1;
-		s_Overrides[0].m_FormatStrings[12] = s_EmptyFormat;
+        s_Overrides[0].m_StringId = 520;
+        s_Overrides[0].m_LocaleStrings[12] = s_Str1;
+        s_Overrides[0].m_FormatStrings[12] = s_EmptyFormat;
 
         for (size_t i = 0; i < LOCALE_LANG_NUMOF; i++)
         {
@@ -305,8 +305,8 @@ void ALocaleManager::InitialiseOverrideTexts()
             }
         }
 
-		s_Overrides[1].m_StringId = 985;
-		s_Overrides[1].m_LocaleStrings[12] = s_Str2;
-		s_Overrides[1].m_FormatStrings[12] = s_EmptyFormat;
+        s_Overrides[1].m_StringId = 985;
+        s_Overrides[1].m_LocaleStrings[12] = s_Str2;
+        s_Overrides[1].m_FormatStrings[12] = s_EmptyFormat;
     }
 }

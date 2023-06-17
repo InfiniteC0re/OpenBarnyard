@@ -38,6 +38,9 @@ namespace Toshi
 		T2ResourceData* GetResourceData(int a_iID);
 		void* GetData(int a_iID);
 
+		int GetMaxNumResources() const { return m_iMaxNumResources; }
+		int GetNumUsedResources() const { return m_iNumUsedResources; }
+
 	private:
 		int m_iMaxNumResources;
 		int m_iNumUsedResources;

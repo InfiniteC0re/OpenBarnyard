@@ -7,6 +7,7 @@
 #include "imgui_impl_dx11.h"
 #include "imgui_impl_win32.h"
 
+#include <Toshi2/T2ResourceManager.h>
 #include <Platform/Windows/DX11/TRender_DX11.h>
 #include <Platform/Windows/DX11/TRenderContext_DX11.h>
 
@@ -56,8 +57,10 @@ void AImGui::Render()
 		ImGui::IsMouseDown(ImGuiMouseButton_Left) ? 0xFFFFFFFF : 0xFF909090
 	);
 
-	ImGui::Begin("Test window");
-	ImGui::Text("Hello world!");
+	auto pResourceMngr = Toshi::T2ResourceManager::GetSingleton();
+
+	ImGui::Begin("Debug Info");
+	ImGui::Text("T2ResourceManager usage: %d/%d", pResourceMngr->GetNumUsedResources(), pResourceMngr->GetMaxNumResources());
 	ImGui::End();
 
 	End();
