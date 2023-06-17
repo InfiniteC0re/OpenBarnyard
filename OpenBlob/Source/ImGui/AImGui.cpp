@@ -8,6 +8,7 @@
 #include "imgui_impl_win32.h"
 
 #include "Cameras/ACameraManager.h"
+#include "GameInterface/AGameStateController.h"
 
 #include <Toshi2/T2ResourceManager.h>
 #include <Platform/Windows/DX11/TRender_DX11.h>
@@ -19,13 +20,13 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg
 
 AImGui::AImGui()
 {
-	IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
 
-	ImGuiIO& io = ImGui::GetIO();
-	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
-	
+    ImGuiIO& io = ImGui::GetIO();
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
+    
     io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\Bahnschrift.ttf", 15.0f);
 
     ImGuiStyle& style = ImGui::GetStyle();
@@ -84,52 +85,54 @@ AImGui::AImGui()
     style.FramePadding = ImVec2(12, 5);
     style.WindowBorderSize = 0.0f;
 
-	auto pRender = TRenderDX11::Interface();
+    auto pRender = TRenderDX11::Interface();
 
-	auto pWindow = pRender->GetMSWindow();
+    auto pWindow = pRender->GetMSWindow();
 
-	pWindow->s_fnWndProcHandler =
-		[](HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) -> LRESULT
-	{
-		return ImGui_ImplWin32_WndProcHandler(hWnd, uMsg, wParam, lParam);
-	};
-	
-	TFIXME("Use Toshi to get input events");
-	ImGui_ImplWin32_Init(pWindow->GetHWND());
-	ImGui_ImplDX11_Init(pRender->m_pDevice, pRender->m_pDeviceContext);
+    pWindow->s_fnWndProcHandler =
+        [](HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) -> LRESULT
+    {
+        return ImGui_ImplWin32_WndProcHandler(hWnd, uMsg, wParam, lParam);
+    };
+    
+    TFIXME("Use Toshi to get input events");
+    ImGui_ImplWin32_Init(pWindow->GetHWND());
+    ImGui_ImplDX11_Init(pRender->m_pDevice, pRender->m_pDeviceContext);
 
-	m_bIsInFrame = TFALSE;
+    m_bIsInFrame = TFALSE;
 }
 
 void AImGui::Render()
 {
-	Begin();
+    BeginScene();
 
-	// Draw custom cursor
-	auto mousePos = ImGui::GetMousePos();
-	auto drawList = ImGui::GetForegroundDrawList();
-	drawList->AddTriangleFilled(
-		{ mousePos.x + 6, mousePos.y + 14 },
-		{ mousePos.x - 0, mousePos.y - 0 },
-		{ mousePos.x - 6, mousePos.y + 14 },
-		// ABGR
-		ImGui::IsMouseDown(ImGuiMouseButton_Left) ? 0xFFFFFFFF : 0xFF909090
-	);
+    // Draw custom cursor
+    auto mousePos = ImGui::GetMousePos();
+    auto drawList = ImGui::GetForegroundDrawList();
+    drawList->AddTriangleFilled(
+        { mousePos.x + 6, mousePos.y + 14 },
+        { mousePos.x - 0, mousePos.y - 0 },
+        { mousePos.x - 6, mousePos.y + 14 },
+        // ABGR
+        ImGui::IsMouseDown(ImGuiMouseButton_Left) ? 0xFFFFFFFF : 0xFF909090
+    );
 
     auto pCameraMngr = ACameraManager::GetSingleton();
-	auto pResourceMngr = Toshi::T2ResourceManager::GetSingleton();
+    auto pResourceMngr = Toshi::T2ResourceManager::GetSingleton();
+    auto pGameStateController = AGameStateController::GetSingleton();
 
     auto pCamera = pCameraMngr->GetCurrentCamera();
 
     ImGui::SetNextWindowSize({ 0, 0 });
-	
+    
     ImGui::Begin("Debug Menu", TNULL, ImGuiWindowFlags_NoResize);
 
     ImGui::TextColored(ImColor(200, 200, 200, 255), "Statistics");
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 3);
-	ImGui::Text("Num of created T2Resources: %d/%d", pResourceMngr->GetNumUsedResources(), pResourceMngr->GetMaxNumResources());
-	ImGui::Text("Number of created textures: %d", TTextureManager::GetSingleton()->DEBUG_GetNumTextures());
-	
+    ImGui::Text("Current game state: %s", pGameStateController->GetCurrentGameState()->GetClass()->GetName());
+    ImGui::Text("Num of created T2Resources: %d/%d", pResourceMngr->GetNumUsedResources(), pResourceMngr->GetMaxNumResources());
+    ImGui::Text("Number of created textures: %d", TTextureManager::GetSingleton()->DEBUG_GetNumTextures());
+    
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
     ImGui::Separator();
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
@@ -147,27 +150,27 @@ void AImGui::Render()
     
     ImGui::End();
 
-	End();
+    EndScene();
 }
 
-void AImGui::Begin()
+void AImGui::BeginScene()
 {
-	TASSERT(TFALSE == m_bIsInFrame);
+    TASSERT(TFALSE == m_bIsInFrame);
 
-	ImGui_ImplDX11_NewFrame();
-	ImGui_ImplWin32_NewFrame();
-	ImGui::NewFrame();
+    ImGui_ImplDX11_NewFrame();
+    ImGui_ImplWin32_NewFrame();
+    ImGui::NewFrame();
 
-	m_bIsInFrame = TTRUE;
+    m_bIsInFrame = TTRUE;
 }
 
-void AImGui::End()
+void AImGui::EndScene()
 {
-	TASSERT(TTRUE == m_bIsInFrame);
+    TASSERT(TTRUE == m_bIsInFrame);
 
-	ImGui::Render();
-	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
-	m_bIsInFrame = TFALSE;
+    ImGui::Render();
+    ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+    m_bIsInFrame = TFALSE;
 }
 
 #endif // TOSHI_DEBUG

@@ -57,7 +57,7 @@ void AAppInitState::OnRemoval()
     }
     else
     {
-        AGameStateController::GetSingleton()->PushState(new ATestState);
+        AGameStateController::GetSingleton()->PushState(new AFrontEndMovieState);
         TIMPLEMENT_D("The game");
     }
 }

@@ -12,8 +12,8 @@ public:
 	void Render();
 
 private:
-	void Begin();
-	void End();
+	void BeginScene();
+	void EndScene();
 
 private:
 	TBOOL m_bIsInFrame;
