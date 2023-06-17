@@ -50,6 +50,7 @@ namespace Toshi
 		TTexture* InitRunTime(Info* pTextureInfo);
 		static TTexture* InitRunTime(DXGI_FORMAT format, UINT width, UINT height, const void* srcData);
 
+		void* GetHandle() const { return m_TexInfo->SRView; }
 		void SelectSettings();
 
 		void SetName(const char* name)
@@ -89,6 +90,9 @@ namespace Toshi
 		{
 			m_SamplerId = iSamplerId;
 		}
+
+        TTexture* GetPrev() const { return m_pPrevTexture; }
+        TTexture* GetNext() const { return m_pNextTexture; }
 
 	private:
 		void* m_Unk1;             // 0x00
@@ -134,7 +138,6 @@ namespace Toshi
 		TTexture* FindTexture(const char* texName);
 
 		void AddTexture(TTexture* pTexture);
-		void RemoveTexture(TTexture* pTexture);
 
 #ifdef TOSHI_DEBUG
 	public:
