@@ -203,5 +203,6 @@ namespace Toshi
 		static void InitAssets(TTRB& a_trb, TBOOL createResources, TBOOL allowCrossTRBReferences);
 		static void DeinitAssets(TTRB& a_trb);
 		static void Init(TTRB& a_trb, uint32_t a_unk, t_fourCCFunction a_fourCCFunc);
+		static TTRB* GetInitialisingTRB() { return g_pCurrentTRB; }
 	};
 }
