@@ -31,6 +31,7 @@ public:
 		m_fBackgroundLeftTime = 5.0f;
 	}
 
+
 	virtual UpdateResult OnUpdate(float deltaTime) override;
 	virtual void OnInsertion() override;
 	virtual void OnRemoval() override;
@@ -53,7 +54,4 @@ private:
 	float m_fBackgroundLeftTime; // 0x104
 	Asset m_iAssetId; // 0x108
 	TBOOL m_bSkip;    // 0x10C
-
-	Toshi::T2GUIRectangle* m_Test;
-	float m_TestRotAngle;
 };

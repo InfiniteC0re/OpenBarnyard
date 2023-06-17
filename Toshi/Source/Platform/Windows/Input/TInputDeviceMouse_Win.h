@@ -7,7 +7,7 @@ namespace Toshi
 	class TInputDXDeviceMouse : public TInputDeviceMouse
 	{
 	public:
-		TInputDXDeviceMouse() : TInputDeviceMouse()
+		TInputDXDeviceMouse()
 		{
 			m_poDXInputDevice = NULL;
 		}
@@ -24,7 +24,7 @@ namespace Toshi
 		virtual TBOOL Acquire();
 		virtual TBOOL Unacquire();
 		virtual TBOOL Flush();
-		virtual int ProcessEvents(TGenericEmitter& emitter, float flt);
+		virtual int ProcessEvents(TEmitter<TInputInterface, InputEvent>& emitter, float flt);
 		virtual void RefreshDirect();
 
 		TBOOL const BindToDIDevice(HWND a_mainWindow, LPCDIDEVICEINSTANCE a_poDeviceInstance, IDirectInputDevice8* a_poDXInputDevice, TBOOL exclusive);

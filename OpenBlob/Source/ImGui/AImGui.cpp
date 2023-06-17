@@ -9,6 +9,7 @@
 
 #include "Cameras/ACameraManager.h"
 #include "GameInterface/AGameStateController.h"
+#include "GameInterface/ATestState.h"
 
 #include <Toshi2/T2ResourceManager.h>
 #include <Platform/Windows/DX11/TRender_DX11.h>
@@ -134,6 +135,15 @@ void AImGui::Render()
     ImGui::Text("Num of created T2Resources: %d/%d", pResourceMngr->GetNumUsedResources(), pResourceMngr->GetMaxNumResources());
     ImGui::Text("Number of created textures: %d", TTextureManager::GetSingleton()->DEBUG_GetNumTextures());
     
+    if (!pGameState->IsExactly(TGetClass(ATestState)))
+    {
+        if (ImGui::Button("Load ATestState"))
+        {
+            pGameStateController->PushState(new ATestState);
+            pGameState = pGameStateController->GetCurrentGameState();
+        }
+    }
+
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
     ImGui::Separator();
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
@@ -153,7 +163,7 @@ void AImGui::Render()
     ImGui::Separator();
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
 
-    if (ImGui::CollapsingHeader(pGameState->GetClass()->GetName()))
+    if (ImGui::CollapsingHeader(pGameState->GetClass()->GetName(), ImGuiTreeNodeFlags_DefaultOpen))
     {
         ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
         pGameState->DEBUG_RenderImGui();

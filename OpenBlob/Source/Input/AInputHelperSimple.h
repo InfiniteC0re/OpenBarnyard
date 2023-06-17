@@ -1,6 +1,7 @@
 #pragma once
-#include "Toshi/Input/TInputDevice.h"
 #include "Memory/AMemory.h"
+
+#include <Toshi/Input/TInputInterface.h>
 
 class AInputHelperSimple
 {

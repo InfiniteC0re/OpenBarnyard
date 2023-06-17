@@ -23,6 +23,11 @@ public:
 		Toshi::TUtil::MemClear(m_Poly, sizeof(m_Poly));
 	}
 
+	~A2GUIBackground()
+	{
+		Destroy();
+	}
+
 	void Create(const char* fileName);
 	void LoadMaterialLibrary(const char* fileName);
 	void SetupBackground();
