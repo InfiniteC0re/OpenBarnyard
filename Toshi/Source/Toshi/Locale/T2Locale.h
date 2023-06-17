@@ -9,7 +9,7 @@ namespace Toshi
 	public:
 		using Lang = int32_t;
 		using LocaleId = int32_t;
-		using LocaleString = wchar_t*;
+		using LocaleString = const wchar_t*;
 
 		struct LocaleStrings
 		{
@@ -60,7 +60,7 @@ namespace Toshi
 
 	protected:
 		TTRB m_Locale;                // 0x04
-		void* m_pBuffer;               // 0x18
+		void* m_pBuffer;              // 0x18
 		void* m_BufferPos;            // 0x1C
 		LocaleStrings* m_StringTable; // 0x20
 		Lang m_LangId;                // 0x24
