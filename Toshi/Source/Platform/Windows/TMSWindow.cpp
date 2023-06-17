@@ -128,9 +128,17 @@ namespace Toshi
 	{
 		TMSWindow* window = reinterpret_cast<TMSWindow*>(GetWindowLongA(hWnd, GWL_USERDATA));
 
+		if (s_fnWndProcHandler != TNULL)
+		{
+			if (s_fnWndProcHandler(hWnd, uMsg, wParam, lParam))
+			{
+				return TRUE;
+			}
+		}
+
 		RECT rect;
 		TBOOL bFlag1, bLockCursor;
-		auto pRenderer = Toshi::TRenderDX11::Interface();
+		auto pRenderer = TRenderDX11::Interface();
 		auto pDisplayParams = pRenderer->GetCurrentDisplayParams();
 		auto pSystemManager = TSystemManager::GetSingleton();
 
@@ -160,7 +168,7 @@ namespace Toshi
 					{
 						if (lParam == 1)
 						{
-							SetCursor(0);
+							SetCursor(NULL);
 							return 1;
 						}
 					}
@@ -221,7 +229,7 @@ namespace Toshi
 			{
 				if (wParam == DBT_DEVNODES_CHANGED)
 				{
-					Toshi::TInputDXInterface::GetInterface()->LostDevice();
+					TInputDXInterface::GetInterface()->LostDevice();
 				}
 			}
 			else
@@ -309,7 +317,7 @@ namespace Toshi
 				}
 				if (pRenderer->m_SwapChain != TNULL && ms_bIsFullscreen)
 				{
-					Toshi::TUtil::Log("#####  Restore fullscreen");
+					TUtil::Log("#####  Restore fullscreen");
 					ms_bIsFullscreen = TFALSE;
 					pRenderer->m_SwapChain->SetFullscreenState(TTRUE, TNULL);
 					return DefWindowProcA(hWnd, uMsg, wParam, lParam);;
@@ -322,7 +330,7 @@ namespace Toshi
 					pRenderer->m_SwapChain->GetFullscreenState(&ms_bIsFullscreen, TNULL);
 					if (pDisplayParams->IsFullscreen && ms_bIsFullscreen)
 					{
-						Toshi::TUtil::Log("#####  Disable fullscreen");
+						TUtil::Log("#####  Disable fullscreen");
 						pRenderer->m_SwapChain->SetFullscreenState(TFALSE, TNULL);
 					}
 				}
@@ -349,7 +357,7 @@ namespace Toshi
 			pSystemManager->Pause(TTRUE);
 			if (bLockCursor)
 			{
-				Toshi::TUtil::Log("Minimize window");
+				TUtil::Log("Minimize window");
 				ShowWindow(hWnd, SW_MINIMIZE);
 			}
 			return 1;

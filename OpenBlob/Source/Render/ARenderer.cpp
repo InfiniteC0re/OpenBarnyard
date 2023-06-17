@@ -7,6 +7,7 @@
 #include "A2GUI/A2GUIRenderer_DX11.h"
 #include "GameInterface/AFrontEndMovieState.h"
 #include "Cameras/ACameraManager.h"
+#include "ImGui/AImGui.h"
 
 #include <Platform/Windows/DX11/TRender_DX11.h>
 #include <Platform/Windows/DX11/TRenderContext_DX11.h>
@@ -94,12 +95,12 @@ void ARenderer::Update(float deltaTime)
 	auto pGameStateController = AGameStateController::GetSingletonWeak();
 	auto pGameState = pGameStateController->GetCurrentGameState();
 
-	auto cl = pGameState->GetClass();
-
 	if (TFALSE == pGameState->GetClass()->IsA(TGetClass(AFrontEndMovieState)))
 	{
 		pRender->ApplyFXAA();
 	}
+
+	RenderImGui(TFALSE);
 
 	s_FrameTimer.Update();
 	m_fFrameTime = s_FrameTimer.GetDelta();
@@ -115,7 +116,17 @@ TBOOL ARenderer::CreateInterface()
 {
 	// 005ed3b0
 	TOrderTable::CreateStaticData(4500, 2500);
-	return CreateTRender();
+	TBOOL bCreatedRender = CreateTRender();
+
+	if (bCreatedRender)
+	{
+#ifdef TOSHI_DEBUG
+		AImGui::CreateSingleton();
+#endif // TOSHI_DEBUG
+		return TTRUE;
+	}
+
+	return TFALSE;
 }
 
 TBOOL ARenderer::CreateTRender()
@@ -281,6 +292,21 @@ void ARenderer::RenderGUI(TBOOL allowBackgroundClear)
 		T2GUI::GetSingletonWeak()->Render();
 		m_pViewport->End();
 	}
+}
+
+void ARenderer::RenderImGui(TBOOL allowBackgroundClear)
+{
+#ifdef TOSHI_DEBUG
+	if (m_bRenderGUI)
+	{
+		m_pViewport->AllowBackgroundClear(allowBackgroundClear);
+		m_pViewport->Begin();
+		
+		AImGui::GetSingleton()->Render();
+		
+		m_pViewport->End();
+	}
+#endif // TOSHI_DEBUG
 }
 
 void ARenderer::RenderMainScene(float deltaTime, TViewport* pViewport, TCameraObject* pCameraObject, ACamera* pCamera, t_MainScene mainSceneCb, TBOOL bAllowBackgroundClear)

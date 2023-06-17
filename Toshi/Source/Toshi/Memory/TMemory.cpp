@@ -52,11 +52,6 @@ void __CRTDECL operator delete[](void* ptr, size_t _Size) noexcept
 
 namespace Toshi
 {
-	TMemoryContext TMemory::s_Context;
-	TMemoryHeap* TMemory::s_GlobalHeap         = TNULL;
-	T2Mutex TMemory::s_GlobalMutex             = T2Mutex();
-	TMemory* TMemory::s_Instance               = TNULL;
-
 	void TMemory::OutOfMem(TMemoryHeap* heap, size_t size)
 	{
 		// 006fc7c0
