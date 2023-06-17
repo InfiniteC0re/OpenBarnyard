@@ -109,23 +109,6 @@ void AFrontEndMovieState::OnInsertion()
     auto pTestMaterial = pSysShader->CreateMaterial();
     pTestMaterial->Create(Toshi::TSysMaterial::BlendMode::Default);
 
-    m_Test = new Toshi::T2GUIRectangle;
-    m_Test->Create(200, 200);
-    m_Test->SetTransform(0, 0, 0);
-    m_Test->SetColour(0x00FF0000); // ARGB
-    pRootElement->AddChildHead(sm_pLoadIconRect);
-    pRootElement->AddChildHead(m_Test);
-
-    Toshi::T2GUIRectangle* pRectangle2 = new Toshi::T2GUIRectangle;
-    pRectangle2->Create(100, 100);
-    pRectangle2->SetTransform(0, 0, 0);
-    pRectangle2->SetColour(0x0000FF00);
-    //pRectangle2->SetMaterial(pGUIRenderer->CreateMaterial("loadicon.tga"));
-    m_Test->AddChildHead(pRectangle2);
-
-    delete pRectangle2;
-    delete m_Test;
-
     TIMPLEMENT();
     AGameState::OnInsertion();
 }
@@ -232,9 +215,9 @@ void AFrontEndMovieState::DEBUG_RenderImGui()
 
     AIMGUI_FORMAT("Video file: %s", pMoviePlayer->m_CurrentFileName);
     AIMGUI_FORMAT("Current asset: %s", s_Assets[m_iAssetId]);
-    AIMGUI_FORMAT("Video position: %.2lf", pMoviePlayer->m_Position);
-    AIMGUI_FORMAT("Audio position: %u", audioPosition);
-    AIMGUI_FORMAT("Audio delay: %d", int(pMoviePlayer->m_Position - audioPosition));
-    AIMGUI_FORMAT("Background image left time: %.2f", m_fBackgroundLeftTime);
+    AIMGUI_FORMAT("Video position: %.0lfms", pMoviePlayer->m_Position);
+    AIMGUI_FORMAT("Audio position: %ums", audioPosition);
+    AIMGUI_FORMAT("Audio delay: %dms", int(pMoviePlayer->m_Position - audioPosition));
+    AIMGUI_FORMAT("Background image left time: %.2fs", m_fBackgroundLeftTime);
 }
 #endif // TOSHI_DEBUG
