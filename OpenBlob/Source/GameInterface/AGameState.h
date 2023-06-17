@@ -1,6 +1,7 @@
 #pragma once
 #include "Input/AInputHelperSimple.h"
-#include "Toshi2/T2DList.h"
+
+#include <Toshi2/T2DList.h>
 #include <Toshi2/T2GUI/T2GUIRectangle.h>
 
 class AGameState :
@@ -42,6 +43,10 @@ public:
 	virtual TBOOL CanActivateConsoleState();
 	virtual TBOOL CheckForControllerRemoval();
 	virtual TBOOL PauseOnControllerReinserted();
+
+#ifdef TOSHI_DEBUG
+	virtual void DEBUG_RenderImGui();
+#endif
 
 	static void SetupLoadIcon();
 	static void DestroyLoadIcon();

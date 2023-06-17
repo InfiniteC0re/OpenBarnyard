@@ -117,6 +117,13 @@ TBOOL AGameState::PauseOnControllerReinserted()
 	return TFALSE;
 }
 
+#ifdef TOSHI_DEBUG
+void AGameState::DEBUG_RenderImGui()
+{
+
+}
+#endif // TOSHI_DEBUG
+
 void AGameState::SetupLoadIcon()
 {
 	TASSERT(TNULL == sm_pLoadIconRect);
