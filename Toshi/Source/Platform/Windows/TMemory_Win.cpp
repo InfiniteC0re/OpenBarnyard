@@ -181,18 +181,26 @@ namespace Toshi
 
 		TMemory::s_Context.s_cbMalloc = [](size_t size) -> void*
 		{
+#ifdef TOSHI_DEBUG
 			void* ptr = TMemory::dlheapmalloc(TMemory::s_GlobalHeap, size);
             mchunkptr chunk = mem2chunk(ptr);
             s_NumAllocatedBytes += chunksize(chunk);
 			return ptr;
+#else
+			return TMemory::dlheapmalloc(TMemory::s_GlobalHeap, size);
+#endif // TOSHI_DEBUG
 		};
 
 		TMemory::s_Context.s_cbCalloc = [](size_t nitems, size_t size) -> void*
 		{
+#ifdef TOSHI_DEBUG
 			void* ptr = TMemory::dlheapcalloc(TMemory::s_GlobalHeap, nitems, size);
             mchunkptr chunk = mem2chunk(ptr);
             s_NumAllocatedBytes += chunksize(chunk);
 			return ptr;
+#else
+            return TMemory::dlheapcalloc(TMemory::s_GlobalHeap, nitems, size);
+#endif // TOSHI_DEBUG
 		};
 
 		TMemory::s_Context.s_cbRealloc = [](void* ptr, size_t size) -> void*
@@ -202,19 +210,25 @@ namespace Toshi
 
 		TMemory::s_Context.s_cbMemalign = [](size_t alignment, size_t size) -> void*
 		{
+#ifdef TOSHI_DEBUG
 			void* ptr = TMemory::dlheapmemalign(TMemory::s_GlobalHeap, alignment, size);
             mchunkptr chunk = mem2chunk(ptr);
             s_NumAllocatedBytes += chunksize(chunk);
 			return ptr;
+#else
+            return TMemory::dlheapmemalign(TMemory::s_GlobalHeap, alignment, size);
+#endif // TOSHI_DEBUG
 		};
 
 		TMemory::s_Context.s_cbFree = [](void* ptr) -> void
 		{
+#ifdef TOSHI_DEBUG
 			if (get_mspace_from_ptr(ptr) == TMemory::s_GlobalHeap->GetMSpace())
 			{
                 mchunkptr chunk = mem2chunk(ptr);
                 s_NumAllocatedBytes -= chunksize(chunk);
 			}
+#endif // TOSHI_DEBUG
 
 			TMemory::dlheapfree(TMemory::s_GlobalHeap, ptr);
 		};
