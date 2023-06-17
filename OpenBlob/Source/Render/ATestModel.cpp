@@ -16,6 +16,8 @@ ATestModel::ATestModel()
 {
     Toshi::TAssetInit assetInit;
 
+    m_Position = { 0.0f, 0.0f, 6.0f, 1.0f };
+
     m_AssetTRB.Load("Data\\LEVELS\\PRODUCTION\\Singleplayer\\Abyss\\RegionAssets.trb");
     assetInit.InitAssets(m_AssetTRB, TTRUE, TFALSE);
 
@@ -30,13 +32,13 @@ void ATestModel::Render(float deltaTime)
     Toshi::TMatrix44 modelView;
     Toshi::TMatrix44 worldView = pRenderContext->GetModelViewMatrix();
 
-    modelView = DirectX::XMMatrixRotationY(m_CubeRotation) * DirectX::XMMatrixTranslation(0, 0, 6) * worldView.XMM();
+    modelView = DirectX::XMMatrixRotationY(m_CubeRotation) * DirectX::XMMatrixTranslationFromVector(m_Position.XMM()) * worldView.XMM();
     pRenderContext->SetModelViewMatrix(modelView);
 
     m_pCube->Render();
     m_CubeRotation += deltaTime;
 
-    modelView = DirectX::XMMatrixScaling(10, 1, 10) * DirectX::XMMatrixTranslation(0, 0.01f, 6) * worldView.XMM();
+    modelView = DirectX::XMMatrixScaling(10, 1, 10) * DirectX::XMMatrixTranslationFromVector((m_Position + Toshi::TVector4(0, 0.1f, 0, 0.0f)).XMM()) * worldView.XMM();
     pRenderContext->SetModelViewMatrix(modelView);
 
     m_pPlane->Render();

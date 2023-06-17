@@ -9,6 +9,10 @@ public:
 	virtual void OnRemoval() override;
 	virtual void OnInsertion() override;
 
+#ifdef TOSHI_DEBUG
+    virtual void DEBUG_RenderImGui() override;
+#endif
+
 private:
 	Toshi::T2GUIRectangle m_Menu;
 };

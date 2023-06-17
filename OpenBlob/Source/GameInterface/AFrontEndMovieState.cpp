@@ -1,10 +1,16 @@
 #include "pch.h"
 #include "AFrontEndMovieState.h"
 #include "Movie/AMoviePlayer.h"
+#include "ImGui/AImGui.h"
 #include "AppBoot.h"
 
 #include <Toshi2/T2GUI/T2GUI.h>
 #include <Toshi/Shaders/SysShader/TSysShaderHAL.h>
+
+#ifdef TOSHI_DEBUG
+// Used to output debug info
+#include "Movie/ADX11MoviePlayer.h"
+#endif // TOSHI_DEBUG
 
 AGameState::UpdateResult AFrontEndMovieState::OnUpdate(float deltaTime)
 {
@@ -14,7 +20,7 @@ AGameState::UpdateResult AFrontEndMovieState::OnUpdate(float deltaTime)
 
     if (m_iAssetId == Asset_Legal || (m_iAssetId < 3 && pMoviePlayer->IsMoviePlaying()))
     {
-        m_fUnknown -= deltaTime;
+        m_fBackgroundLeftTime -= deltaTime;
     }
 
     //m_Test->SetTransform(0, 0, m_TestRotAngle);
@@ -35,7 +41,7 @@ AGameState::UpdateResult AFrontEndMovieState::OnUpdate(float deltaTime)
         }
         else
         {
-            if (m_fUnknown <= 0.0f)
+            if (m_fBackgroundLeftTime <= 0.0f)
             {
                 if (AApplication::g_oTheApp.m_bUnk4)
                 {
@@ -46,7 +52,7 @@ AGameState::UpdateResult AFrontEndMovieState::OnUpdate(float deltaTime)
         }
         break;
     default:
-        if (m_fUnknown <= 0.0f)
+        if (m_fBackgroundLeftTime <= 0.0f)
         {
             if (AApplication::g_oTheApp.m_bUnk4)
             {
@@ -170,7 +176,8 @@ TBOOL AFrontEndMovieState::HasBackgroundStoppedShowing()
             return TTRUE;
         }
     }
-    return m_fUnknown <= 0.0f;
+
+    return m_fBackgroundLeftTime <= 0.0f;
 }
 
 TBOOL AFrontEndMovieState::HasMovieStopped()
@@ -207,8 +214,27 @@ void AFrontEndMovieState::StartMovie(Asset assetId)
     }
 
     m_iAssetId = assetId;
-    m_fUnknown = 5.0f;
+    m_fBackgroundLeftTime = 5.0f;
     m_bSkip = TFALSE;
     m_Background.SetVisible(TFALSE);
     pPlayer->PlayMovie(s_Assets[assetId], 0, 0);
 }
+
+#ifdef TOSHI_DEBUG
+void AFrontEndMovieState::DEBUG_RenderImGui()
+{
+    auto pMoviePlayer = TSTATICCAST(ADX11MoviePlayer*, AMoviePlayer::GetSingletonWeak());
+
+    unsigned int audioPosition = 0;
+
+    if (pMoviePlayer->m_pChannel)
+        pMoviePlayer->m_pChannel->getPosition(&audioPosition, FMOD_TIMEUNIT_MS);
+
+    AIMGUI_FORMAT("Video file: %s", pMoviePlayer->m_CurrentFileName);
+    AIMGUI_FORMAT("Current asset: %s", s_Assets[m_iAssetId]);
+    AIMGUI_FORMAT("Video position: %.2lf", pMoviePlayer->m_Position);
+    AIMGUI_FORMAT("Audio position: %u", audioPosition);
+    AIMGUI_FORMAT("Audio delay: %d", int(pMoviePlayer->m_Position - audioPosition));
+    AIMGUI_FORMAT("Background image left time: %.2f", m_fBackgroundLeftTime);
+}
+#endif // TOSHI_DEBUG

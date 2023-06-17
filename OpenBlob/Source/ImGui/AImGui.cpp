@@ -121,6 +121,7 @@ void AImGui::Render()
     auto pResourceMngr = Toshi::T2ResourceManager::GetSingleton();
     auto pGameStateController = AGameStateController::GetSingleton();
 
+    auto pGameState = pGameStateController->GetCurrentGameState();
     auto pCamera = pCameraMngr->GetCurrentCamera();
 
     ImGui::SetNextWindowSize({ 0, 0 });
@@ -129,7 +130,7 @@ void AImGui::Render()
 
     ImGui::TextColored(ImColor(200, 200, 200, 255), "Statistics");
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 3);
-    ImGui::Text("Current game state: %s", pGameStateController->GetCurrentGameState()->GetClass()->GetName());
+    ImGui::Text("Current game state: %s", pGameState->GetClass()->GetName());
     ImGui::Text("Num of created T2Resources: %d/%d", pResourceMngr->GetNumUsedResources(), pResourceMngr->GetMaxNumResources());
     ImGui::Text("Number of created textures: %d", TTextureManager::GetSingleton()->DEBUG_GetNumTextures());
     
@@ -148,6 +149,16 @@ void AImGui::Render()
     ImGui::SliderFloat("Far Plane", &pCamera->GetCameraMatrix().m_fFar, 0.01f, 200.0f, "%.2f", 1);
     ImGui::SliderFloat("Field of view", &pCamera->GetCameraMatrix().m_fFOV, TMath::DegToRad(30.0f), TMath::DegToRad(140.0f), "%.2f", 1);
     
+    ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+    ImGui::Separator();
+    ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+
+    if (ImGui::CollapsingHeader(pGameState->GetClass()->GetName()))
+    {
+        ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+        pGameState->DEBUG_RenderImGui();
+    }
+
     ImGui::End();
 
     EndScene();

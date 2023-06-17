@@ -13,6 +13,8 @@ public:
 
 	void Render(float deltaTime);
 
+	Toshi::TVector4& GetPosition() { return m_Position; }
+
 private:
 	void CreateCube();
 	void CreatePlane();
@@ -23,5 +25,6 @@ private:
     Toshi::TSysMaterial* m_pPlaneMaterial;
 	Toshi::TMesh* m_pCube;
 	Toshi::TMesh* m_pPlane;
+	Toshi::TVector4 m_Position;
 	float m_CubeRotation = 0.0f;
 };

@@ -9,6 +9,8 @@ class ADX11MoviePlayer : public AMoviePlayer
 public:
 	static constexpr size_t MAX_FILE_NAME = 256;
 
+	friend class AFrontEndMovieState;
+
 public:
 	ADX11MoviePlayer();
 
@@ -21,10 +23,6 @@ public:
 	virtual void OnUpdate(float deltaTime) override;
 	virtual void OnCreate() override;
 
-	static ADX11MoviePlayer* Create()
-	{
-		return new ADX11MoviePlayer();
-	}
 	void ReadBuffer(void* data, uint32_t datalen);
 
 private:
@@ -50,7 +48,7 @@ private:
 	TBOOL m_bIsPaused;                           // 0x045
 	TBOOL m_bIsMovieLooping;                     // 0x046
 	char m_CurrentFileName[MAX_FILE_NAME + 1];   // 0x047
-	UINT m_FrameMS;                              // 0x158
+	int m_FrameMS;                               // 0x158
 	UINT m_TexturesWidth;                        // 0x15C
 	UINT m_TexturesHeight;                       // 0x160
 	FILE* m_pFile;                               // 0x16C

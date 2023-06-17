@@ -28,7 +28,7 @@ public:
 	AFrontEndMovieState()
 	{
 		m_iAssetId = Asset_Legal;
-		m_fUnknown = 5.0f;
+		m_fBackgroundLeftTime = 5.0f;
 	}
 
 	virtual UpdateResult OnUpdate(float deltaTime) override;
@@ -37,8 +37,11 @@ public:
 	virtual void OnActivate() override;
 	virtual void OnDeactivate() override;
 
-private:
+#ifdef TOSHI_DEBUG
+    virtual void DEBUG_RenderImGui() override;
+#endif
 
+private:
 	TBOOL HasBackgroundStoppedShowing();
 	TBOOL HasMovieStopped();
 	void StopMovieIfPlaying();
@@ -47,7 +50,7 @@ private:
 
 private:
 	A2GUIBackground m_Background;
-	float m_fUnknown; // 0x104
+	float m_fBackgroundLeftTime; // 0x104
 	Asset m_iAssetId; // 0x108
 	TBOOL m_bSkip;    // 0x10C
 

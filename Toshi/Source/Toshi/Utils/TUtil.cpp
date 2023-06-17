@@ -29,11 +29,12 @@ namespace Toshi
 	{
 		if (GetLog() != TNULL)
 		{
+			char str[2048];
+
 			va_list args;
 			va_start(args, format);
-
-			char str[2048];
 			int size = T2String8::FormatV(str, sizeof(str), format, &args);
+			va_end(args);
 
 #ifdef TOSHI_DEBUG
 			str[size] = '\n';
@@ -43,9 +44,7 @@ namespace Toshi
 			TOSHI_CORE_TRACE(str);
 #endif
 
-			va_end(args);
-
-			GetLog()->Log(TLogFile::Type_Info, "Toshi", "Kernel", format, str);
+			GetLog()->Log(TLogFile::Type_Info, "Toshi", "Kernel", str);
 			GetSingletonWeak()->m_Emitter.Throw(GetLog());
 		}
 	}

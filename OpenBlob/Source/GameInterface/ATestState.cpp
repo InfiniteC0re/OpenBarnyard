@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "ATestState.h"
 #include "Render/ATestModel.h"
+#include "ImGui/AImGui.h"
 
 #include <Toshi2/T2GUI/T2GUI.h>
 #include <Toshi2/T2Map.h>
@@ -87,3 +88,11 @@ void ATestState::OnInsertion()
 
     pRootElement->AddChildHead(&m_Menu);
 }
+
+#ifdef TOSHI_DEBUG
+void ATestState::DEBUG_RenderImGui()
+{
+    auto& position = ATestModel::GetSingleton()->GetPosition();
+    ImGui::DragFloat3("Test model position", (float*)&position, 0.1f, -50.0f, 50.0f, "%.4f", 1);
+}
+#endif // TOSHI_DEBUG

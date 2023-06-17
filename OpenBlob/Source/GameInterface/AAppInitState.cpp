@@ -36,7 +36,7 @@ AGameState::UpdateResult AAppInitState::OnUpdate(float deltaTime)
     ARandom::CreateSingleton();
 
     // Create singletons here
-    ADX11MoviePlayer::Create()->OnCreate();
+    ADX11MoviePlayer::CreateSingleton<ADX11MoviePlayer>()->OnCreate();
 
     return UpdateResult_Remove;
 }
@@ -57,7 +57,7 @@ void AAppInitState::OnRemoval()
     }
     else
     {
-        AGameStateController::GetSingleton()->PushState(new ATestState);
+        AGameStateController::GetSingleton()->PushState(new AFrontEndMovieState);
         TIMPLEMENT_D("The game");
     }
 }
