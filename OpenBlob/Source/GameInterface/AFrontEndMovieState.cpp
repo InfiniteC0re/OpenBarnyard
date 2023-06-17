@@ -23,9 +23,6 @@ AGameState::UpdateResult AFrontEndMovieState::OnUpdate(float deltaTime)
         m_fBackgroundLeftTime -= deltaTime;
     }
 
-    //m_Test->SetTransform(0, 0, m_TestRotAngle);
-    //m_TestRotAngle += deltaTime * 2.5f;
-
     switch (m_iAssetId)
     {
     case Asset_THQLogo:
@@ -215,5 +212,13 @@ void AFrontEndMovieState::DEBUG_RenderImGui()
     AIMGUI_FORMAT("Audio position: %ums", audioPosition);
     AIMGUI_FORMAT("Audio delay: %dms", int(pMoviePlayer->m_Position - audioPosition));
     AIMGUI_FORMAT("Background image left time: %.2fs", m_fBackgroundLeftTime);
+
+    if (ImGui::Button("Reset state"))
+    {
+        m_iAssetId = Asset_Legal;
+        m_fBackgroundLeftTime = 5.0f;
+        m_Background.SetVisible(TTRUE);
+        StopMovieIfPlaying();
+    }
 }
 #endif // TOSHI_DEBUG

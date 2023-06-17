@@ -1398,6 +1398,8 @@ extern "C" {
     */
     DLMALLOC_EXPORT int mspace_mallopt(int, int);
 
+    DLMALLOC_EXPORT void* get_mspace_from_ptr(void* ptr);
+
 #endif /* MSPACES */
 
 #ifdef __cplusplus

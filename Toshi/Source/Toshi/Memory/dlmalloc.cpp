@@ -1364,7 +1364,7 @@ static void reset_on_error(mstate m);
 #endif /* CORRUPTION_ERROR_ACTION */
 
 #ifndef USAGE_ERROR_ACTION
-#define USAGE_ERROR_ACTION(m,p) TOSHI_CORE_CRITICAL("!\"TMemory: Memory block footer corruption detected - the block being free'd was probably overrun!\"")
+#define USAGE_ERROR_ACTION(m,p) __debugbreak(); TOSHI_CORE_CRITICAL("!\"TMemory: Memory block footer corruption detected - the block being free'd was probably overrun!\"")
 #endif /* USAGE_ERROR_ACTION */
 
 #endif /* TOSHI_DEBUG */
@@ -4534,6 +4534,14 @@ size_t mspace_usable_size(const void* mem) {
 
 int mspace_mallopt(int param_number, int value) {
   return change_mparam(param_number, value);
+}
+
+void* get_mspace_from_ptr(void* ptr)
+{
+    mchunkptr chunk = mem2chunk(ptr);
+    mstate ms = get_mstate_for(chunk);
+
+    return ms;
 }
 
 #endif /* MSPACES */

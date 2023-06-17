@@ -96,7 +96,7 @@ namespace Toshi
 		virtual int WPrintf(const wchar_t* format, ...) = 0;
 		virtual int VCPrintf(const char* format, va_list* vargs) = 0;
 		virtual int VWPrintf(const wchar_t* format, ...) = 0;
-		virtual ~TFile() { Destroy(); }
+		virtual ~TFile() { }
 
 		static TString8 ConcatPath(const TString8& a_rcString, const TString8& a_rcString2);
 		static TFile* Create(const TString8& filename, FileMode mode = FileMode_Read);

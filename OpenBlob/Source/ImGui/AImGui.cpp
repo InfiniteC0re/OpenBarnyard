@@ -125,9 +125,9 @@ void AImGui::Render()
     auto pGameState = pGameStateController->GetCurrentGameState();
     auto pCamera = pCameraMngr->GetCurrentCamera();
 
-    ImGui::SetNextWindowSize({ 0, 0 });
+    ImGui::SetNextWindowSize({ 500, 0 });
     
-    ImGui::Begin("Debug Menu", TNULL, ImGuiWindowFlags_NoResize);
+    ImGui::Begin("Debug Menu", 0);
 
     ImGui::TextColored(ImColor(200, 200, 200, 255), "Statistics");
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 3);
@@ -135,6 +135,18 @@ void AImGui::Render()
     ImGui::Text("Num of created T2Resources: %d/%d", pResourceMngr->GetNumUsedResources(), pResourceMngr->GetMaxNumResources());
     ImGui::Text("Number of created textures: %d", TTextureManager::GetSingleton()->DEBUG_GetNumTextures());
     
+    ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+    ImGui::Separator();
+    ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+    ImGui::TextColored(ImColor(200, 200, 200, 255), "TMemory");
+    ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+    ImGui::Text(
+        "Number of allocated bytes: %llu (~%lluKB, ~%lluMB)",
+        TMemory::GetNumOfAllocatedBytes(),
+        TMemory::GetNumOfAllocatedBytes() >> 10,
+        TMemory::GetNumOfAllocatedBytes() >> 20
+    );
+
     if (!pGameState->IsExactly(TGetClass(ATestState)))
     {
         if (ImGui::Button("Load ATestState"))
@@ -157,7 +169,7 @@ void AImGui::Render()
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
 
     ImGui::TextColored(ImColor(200, 200, 200, 255), "Camera");
-    ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 4);
+    ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
 
     Toshi::TMath::Clip(pCamera->GetCameraMatrix().m_fNear, 0.01f, 1.0f);
 

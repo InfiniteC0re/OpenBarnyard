@@ -9,6 +9,8 @@ namespace Toshi
 	class TAssetInit
 	{
 	public:
+		TAssetInit() = delete;
+
 		static TBOOL g_bCreateResources;
 		static TBOOL g_bAllowCrossTRBReferences;
 		static TTRB* g_pCurrentTRB;
@@ -26,7 +28,7 @@ namespace Toshi
 	public:
 		static t_fourCCFunction constexpr InitTex = [](void* a_pData)
 		{
-			reinterpret_cast<TTexture*>(a_pData)->Init();
+			TSTATICCAST(TTexture*, a_pData)->Init();
 		};
 
 		static t_fourCCFunction constexpr InitFXLite = [](void* a_pData)
@@ -51,7 +53,7 @@ namespace Toshi
 
 		static t_fourCCFunction constexpr InitModel = [](void* a_pData)
 		{
-			TModelHAL* a_modelHal;
+			/*TModelHAL* a_modelHal;
 
 			if (g_pMemHeap == TNULL)
 			{
@@ -62,7 +64,7 @@ namespace Toshi
 				a_modelHal = new (g_pMemHeap) TModelHAL();
 			}
 
-			a_modelHal->Create(TSTATICCAST(TTMDWin::TTRBWinHeader*, a_pData));
+			a_modelHal->Create(TSTATICCAST(TTMDWin::TTRBWinHeader*, a_pData));*/
 		};
 
 		// Empty ( de blob only calls a func where TASSERT("TFALSE","..\\..\\Source\\Render\\TVertexDecl_DX11.cpp",0x1f,"TASSERT"); gets called
@@ -73,7 +75,7 @@ namespace Toshi
 
 		static t_fourCCFunction constexpr InitXUI = [](void* a_pData)
 		{
-			reinterpret_cast<TXUIResourceTRB*>(a_pData)->Init();
+			//TSTATICCAST(TXUIResourceTRB*, a_pData)->Init();
 		};
 
 		static t_fourCCFunction constexpr InitFont = [](void* a_pData)
@@ -158,7 +160,7 @@ namespace Toshi
 
 		static t_fourCCFunction constexpr DeinitTex = [](void* a_pData)
 		{
-
+			TSTATICCAST(TTexture*, a_pData)->Deinit();
 		};
 
 		static FourCCFunction constexpr g_FourCCReloadFunctions[5] = {

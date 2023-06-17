@@ -18,12 +18,6 @@ void ATestState::OnRemoval()
 
 void ATestState::OnInsertion()
 {
-    Toshi::T2Map<std::string, std::string, Toshi::TComparator<std::string>> map;
-	map.Insert("key1", "hi!");
-	map.Insert("key2", "hello world!");
-
-    auto res = map.Find("key2");
-
     ATestModel::CreateSingleton();
 }
 

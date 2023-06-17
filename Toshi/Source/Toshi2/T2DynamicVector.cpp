@@ -14,9 +14,11 @@ void T2GenericDynamicVector::Reallocate(int a_iNewSize, int a_iCount)
 		if (a_iNewSize > 0)
 		{
 			elements = m_pAllocator->Malloc(a_iNewSize * a_iCount);
-
-			TUtil::MemCopy(elements, m_poElements, m_iNumElements <= a_iNewSize ? m_iNumElements : a_iNewSize);
+			TUtil::MemCopy(elements, m_poElements, m_iNumElements <= a_iNewSize ? m_iNumElements * a_iCount : a_iNewSize * a_iCount);
+			m_pAllocator->Free(m_poElements);
+			m_poElements = elements;
 		}
+
 		m_iMaxSize = a_iNewSize;
 	}
 }
@@ -29,6 +31,7 @@ void Toshi::T2GenericDynamicVector::Grow(int a_iNumElements, int a_iCount)
 	if (curSize < newSize)
 	{
 		TASSERT(m_iGrowSize != 0);
+
 		while (curSize < newSize)
 		{
 			if (m_iGrowSize == -1)
@@ -40,6 +43,7 @@ void Toshi::T2GenericDynamicVector::Grow(int a_iNumElements, int a_iCount)
 				curSize += m_iGrowSize;
 			}
 		}
+
 		Reallocate(curSize, a_iCount);
 	}
 }

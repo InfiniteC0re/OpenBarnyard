@@ -75,9 +75,10 @@ namespace Toshi
 		static void         OutOfMem(TMemoryHeap* heap, size_t size);
 		static void         Shutdown();
 
-		static TMemoryHeap* GetGlobalHeap() { return s_GlobalHeap; }
-		static void         AcquireMutex()          { TMemory::s_GlobalMutex.Lock(); }
-		static void         ReleaseMutex()          { TMemory::s_GlobalMutex.Unlock(); }
+        static TMemoryHeap*       GetGlobalHeap() { return s_GlobalHeap; }
+		static void               AcquireMutex()           { TMemory::s_GlobalMutex.Lock(); }
+		static void               ReleaseMutex()           { TMemory::s_GlobalMutex.Unlock(); }
+		static unsigned long long GetNumOfAllocatedBytes() { return s_NumAllocatedBytes; }
 
 	private:
 		static Flags GetFlags()
@@ -100,6 +101,7 @@ namespace Toshi
 		inline static TMemoryHeap* s_GlobalHeap;
 		inline static T2Mutex s_GlobalMutex;
 		inline static TMemory* s_pSingleton;
+		inline static unsigned long long s_NumAllocatedBytes;
 
 	private:
 		Flags m_Flags;
@@ -124,6 +126,8 @@ namespace Toshi
 			strncpy_s(m_Name, name, TMemory::HEAP_MAXNAME);
 			m_Name[TMemory::HEAP_MAXNAME] = '\0';
 		}
+
+		void* GetMSpace() const { return m_MSpace; }
 
 	private:
 		void  CreateMutex() { m_Mutex.Create(); }

@@ -16,6 +16,12 @@ namespace Toshi
 			m_poElements = a_iMaxSize > 0 ? a_pAllocator->Malloc(a_iMaxSize * a_iElementSize) : TNULL;
 		}
 
+		~T2GenericDynamicVector()
+		{
+			if (m_poElements)
+				m_pAllocator->Free(m_poElements);
+		}
+
 		void Reallocate(int a_iNewSize, int a_iCount);
 		void Grow(int a_iNumElements, int a_iCount);
 
