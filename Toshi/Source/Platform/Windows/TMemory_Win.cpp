@@ -93,48 +93,7 @@ typedef unsigned int flag_t;           /* The type of various bit flag sets */
 #define INUSE_BITS          (PINUSE_BIT|CINUSE_BIT)
 #define FLAG_BITS           (PINUSE_BIT|CINUSE_BIT|FLAG4_BIT)
 
-/* Head value for fenceposts */
-#define FENCEPOST_HEAD      (INUSE_BITS|SIZE_T_SIZE)
-
-/* extraction of fields from head words */
-#define cinuse(p)           ((p)->head & CINUSE_BIT)
-#define pinuse(p)           ((p)->head & PINUSE_BIT)
-#define flag4inuse(p)       ((p)->head & FLAG4_BIT)
-#define is_inuse(p)         (((p)->head & INUSE_BITS) != PINUSE_BIT)
-#define is_mmapped(p)       (((p)->head & INUSE_BITS) == 0)
-
 #define chunksize(p)        ((p)->head & ~(FLAG_BITS))
-
-#define clear_pinuse(p)     ((p)->head &= ~PINUSE_BIT)
-#define set_flag4(p)        ((p)->head |= FLAG4_BIT)
-#define clear_flag4(p)      ((p)->head &= ~FLAG4_BIT)
-
-/* Treat space at ptr +/- offset as a chunk */
-#define chunk_plus_offset(p, s)  ((mchunkptr)(((char*)(p)) + (s)))
-#define chunk_minus_offset(p, s) ((mchunkptr)(((char*)(p)) - (s)))
-
-/* Ptr to next or previous physical malloc_chunk. */
-#define next_chunk(p) ((mchunkptr)( ((char*)(p)) + ((p)->head & ~FLAG_BITS)))
-#define prev_chunk(p) ((mchunkptr)( ((char*)(p)) - ((p)->prev_foot) ))
-
-/* extract next chunk's pinuse bit */
-#define next_pinuse(p)  ((next_chunk(p)->head) & PINUSE_BIT)
-
-/* Get/set size at footer */
-#define get_foot(p, s)  (((mchunkptr)((char*)(p) + (s)))->prev_foot)
-#define set_foot(p, s)  (((mchunkptr)((char*)(p) + (s)))->prev_foot = (s))
-
-/* Set size, pinuse bit, and foot */
-#define set_size_and_pinuse_of_free_chunk(p, s)\
-  ((p)->head = (s|PINUSE_BIT), set_foot(p, s))
-
-/* Set size, pinuse bit, foot, and clear next pinuse */
-#define set_free_with_pinuse(p, s, n)\
-  (clear_pinuse(n), set_size_and_pinuse_of_free_chunk(p, s))
-
-/* Get the internal overhead associated with chunk p */
-#define overhead_for(p)\
- (is_mmapped(p)? MMAP_CHUNK_OVERHEAD : CHUNK_OVERHEAD)
 
 namespace Toshi
 {
@@ -224,8 +183,7 @@ namespace Toshi
 		{
 			void* ptr = TMemory::dlheapmalloc(TMemory::s_GlobalHeap, size);
             mchunkptr chunk = mem2chunk(ptr);
-			auto sz = chunksize(chunk);
-            s_NumAllocatedBytes += sz;
+            s_NumAllocatedBytes += chunksize(chunk);
 			return ptr;
 		};
 
@@ -246,8 +204,7 @@ namespace Toshi
 		{
 			void* ptr = TMemory::dlheapmemalign(TMemory::s_GlobalHeap, alignment, size);
             mchunkptr chunk = mem2chunk(ptr);
-			auto sz = chunksize(chunk);
-            s_NumAllocatedBytes += sz;
+            s_NumAllocatedBytes += chunksize(chunk);
 			return ptr;
 		};
 
@@ -256,8 +213,7 @@ namespace Toshi
 			if (get_mspace_from_ptr(ptr) == TMemory::s_GlobalHeap->GetMSpace())
 			{
                 mchunkptr chunk = mem2chunk(ptr);
-                auto sz = chunksize(chunk);
-                s_NumAllocatedBytes -= sz;
+                s_NumAllocatedBytes -= chunksize(chunk);
 			}
 
 			TMemory::dlheapfree(TMemory::s_GlobalHeap, ptr);
