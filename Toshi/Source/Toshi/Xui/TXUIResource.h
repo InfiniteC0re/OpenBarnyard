@@ -54,20 +54,20 @@ namespace Toshi
 		TVector4* GetVector(int a_iIndex = 0);
 		//inline TQuaternion& GetQuat(int index) { return index == -1 ? TQuaternion::IDENTITY : m_pQuat; }
 
-		bool ReadHeader(uint8_t* buffer);
+		TBOOL ReadHeader(uint8_t* buffer);
 
-		// Toshi::TXUIResource::Load(const char*, const char*, bool, Toshi::TTRB*)
+		// Toshi::TXUIResource::Load(const char*, const char*, TBOOL, Toshi::TTRB*)
 
-		// loadStringTables = when true load .xus/.trb files (StringTables)
+		// loadStringTables = when TTRUE load .xus/.trb files (StringTables)
 		// filename = f.e Data/XUI/%s.trb or Data/XUI/%s.xur
 		// fileNameStringTable = f.e %s/StringTables/%s/%s.xus or %s/StringTables/%s/%s.trb
-		// loadTrb = when true load .xur/.trb files (XUIB)
+		// loadTrb = when TTRUE load .xur/.trb files (XUIB)
 		// unk3 = probably a function
-		void Load(bool loadStringTables, const char* filenameXUIB, const char* fileNameStringTable, bool loadTrb, void* unk3);
+		void Load(TBOOL loadStringTables, const char* filenameXUIB, const char* fileNameStringTable, TBOOL loadTrb, void* unk3);
 
-		bool Load(uint8_t* buffer);
+		TBOOL Load(uint8_t* buffer);
 		int ReadDataSection(uint8_t* buffer, uint32_t size);
-		bool ReadStringSection(uint8_t* buffer, uint32_t size);
+		TBOOL ReadStringSection(uint8_t* buffer, uint32_t size);
 		int ReadCustSection(uint8_t* buffer, uint32_t size);
 		int GetStringTableSize(uint8_t* pPtr, uint32_t size);
 
@@ -110,6 +110,6 @@ namespace Toshi
 		TStack<const wchar_t*, 32> m_oIDComparisonStack;
 	public:
 		static inline int s_iUIDCount = 0;
-		static inline bool s_bGenerateUIDs = false;
+		static inline TBOOL s_bGenerateUIDs = TFALSE;
 	};
 }

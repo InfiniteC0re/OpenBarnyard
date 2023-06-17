@@ -38,12 +38,12 @@ namespace Toshi
 		TSound()
 		{
 			m_pSystem = NULL;
-			m_bInitialised = false;
+			m_bInitialised = TFALSE;
 			m_SoundInitValues = SoundInitValues();
 		}
 		
-		bool Create(void* poolmem, int poollen, int maxchannels, int filebuffersize, SpeakerType speakerType);
-		bool Create(const SoundInitValues soundInitValues)
+		TBOOL Create(void* poolmem, int poollen, int maxchannels, int filebuffersize, SpeakerType speakerType);
+		TBOOL Create(const SoundInitValues soundInitValues)
 		{
 			return Create(soundInitValues.m_pPoolmem, soundInitValues.m_iPoolSize, soundInitValues.m_iMaxChannels, soundInitValues.m_ifileBufferSize, soundInitValues.m_eSpeakerType);
 		}
@@ -62,16 +62,16 @@ namespace Toshi
 		}
 	
 	protected:	
-		bool ErrorCheck(FMOD_RESULT error);
+		TBOOL ErrorCheck(FMOD_RESULT error);
 		
-		bool InitMem(void* poolmem, int poollen);
+		TBOOL InitMem(void* poolmem, int poollen);
 		
 		
 
 	public:
 		                                     // 0x0 is m_pEventSystem which is deprecated in newer FMOD
 		FMOD::System* m_pSystem;             // 0x4
-		bool m_bInitialised;                 // 0x8
+		TBOOL m_bInitialised;                 // 0x8
 		SoundInitValues m_SoundInitValues;   // 0xC
 	};
 }

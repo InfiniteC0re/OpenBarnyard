@@ -56,7 +56,7 @@ namespace Toshi
 
 	public:
 		TMemory(Flags flags = Flags_Standard, BlockSize blockSize = 640 * 1024 * 1024) :
-			m_Flags(flags), m_GlobalSize(blockSize) { s_Instance = this; }
+			m_Flags(flags), m_GlobalSize(blockSize) { s_pSingleton = this; }
 
 		static void         dlheapfree(TMemoryHeap* heap, void* mem);
 		static void         dlheapdestroy(TMemoryHeap* heap);
@@ -82,7 +82,7 @@ namespace Toshi
 	private:
 		static Flags GetFlags()
 		{
-			return s_Instance->m_Flags;
+			return s_pSingleton->m_Flags;
 		}
 
 	public:
@@ -94,16 +94,16 @@ namespace Toshi
 		Error Init();
 
 	public:
-		static TMemoryContext s_Context;
+		inline static TMemoryContext s_Context;
 
 	private:
-		static TMemoryHeap* s_GlobalHeap;
-		static T2Mutex s_GlobalMutex;
+		inline static TMemoryHeap* s_GlobalHeap;
+		inline static T2Mutex s_GlobalMutex;
+		inline static TMemory* s_pSingleton;
 
 	private:
 		Flags m_Flags;
 		BlockSize m_GlobalSize;
-		static TMemory* s_Instance;
 	};
 
 	class TMemoryHeap

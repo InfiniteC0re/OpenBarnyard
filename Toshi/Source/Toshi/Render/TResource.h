@@ -17,7 +17,7 @@ namespace Toshi
 	};
 
 	class TResource :
-		public TGenericClassDerived<TResource, TObject, "TResource", TMAKEVERSION(1, 0), true>,
+		public TGenericClassDerived<TResource, TObject, "TResource", TMAKEVERSION(1, 0), TTRUE>,
 		public TNodeTree<TResource>::TNode
 	{
 	public:
@@ -34,18 +34,18 @@ namespace Toshi
 		}
 
 		virtual ~TResource();
-		virtual bool Create();
-		virtual bool Validate();
+		virtual TBOOL Create();
+		virtual TBOOL Validate();
 		virtual void Invalidate();
 		virtual void DestroyResource();
 		virtual void OnDestroy();
 
-		bool IsDead() const { return m_State & TResourceState_Dead; }
-		bool IsDying() const { return m_State & TResourceState_Dying; }
-		bool IsValid() const { return m_State & TResourceState_Valid; }
-		bool IsCreated() const { return m_State & TResourceState_Created; }
-		bool IsSceneObject() const { return m_State & TResourceState_SceneObject; }
-		bool IsInvalid() const { return ~m_State & TResourceState_Valid; }
+		TBOOL IsDead() const { return m_State & TResourceState_Dead; }
+		TBOOL IsDying() const { return m_State & TResourceState_Dying; }
+		TBOOL IsValid() const { return m_State & TResourceState_Valid; }
+		TBOOL IsCreated() const { return m_State & TResourceState_Created; }
+		TBOOL IsSceneObject() const { return m_State & TResourceState_SceneObject; }
+		TBOOL IsInvalid() const { return ~m_State & TResourceState_Valid; }
 
 		void SetState(TResourceState newState) { m_State = newState; }
 		void AddState(TResourceState state) { m_State |= state; }

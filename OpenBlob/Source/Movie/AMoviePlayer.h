@@ -27,40 +27,40 @@ public:
 public:
 	AMoviePlayer() : m_Emitter(this)
 	{
-		m_bInitialised = false;
-		m_bIsFullscreen = true;
-		m_bIsMuted = false;
-		m_bIsHidden = true;
+		m_bInitialised = TFALSE;
+		m_bIsFullscreen = TTRUE;
+		m_bIsMuted = TFALSE;
+		m_bIsHidden = TTRUE;
 	}
 
 	void ThrowEvent(AMovieEvent::Type type) { m_Emitter.Throw(&type); }
 
 	virtual ~AMoviePlayer() = default;
-	virtual bool PlayMovie(const char* fileName, uint32_t soundChannel, PlayFlags flags = PlayFlags_None) = 0;
+	virtual TBOOL PlayMovie(const char* fileName, uint32_t soundChannel, PlayFlags flags = PlayFlags_None) = 0;
 	virtual void StopMovie() = 0;
-	virtual void PauseMovie(bool pause) = 0;
-	virtual void Mute(bool mute = true) { m_bIsMuted = mute; }
-	virtual bool IsMoviePlaying() = 0;
-	virtual bool IsMoviePaused() = 0;
-	virtual bool IsFullScreen() { return m_bIsFullscreen; }
+	virtual void PauseMovie(TBOOL pause) = 0;
+	virtual void Mute(TBOOL mute = TTRUE) { m_bIsMuted = mute; }
+	virtual TBOOL IsMoviePlaying() = 0;
+	virtual TBOOL IsMoviePaused() = 0;
+	virtual TBOOL IsFullScreen() { return m_bIsFullscreen; }
 	virtual int Unk1() { return 0; }
 	virtual int Unk2() { return 0; }
 	virtual int Unk3() { return 0; }
-	virtual void SetHideMovie(bool hide = true) { m_bIsHidden = hide; }
-	virtual void SetFullScreen(bool fullscreen = true) { m_bIsFullscreen = fullscreen; }
+	virtual void SetHideMovie(TBOOL hide = TTRUE) { m_bIsHidden = hide; }
+	virtual void SetFullScreen(TBOOL fullscreen = TTRUE) { m_bIsFullscreen = fullscreen; }
 	virtual void OnRender(float deltaTime) = 0;
 	virtual void OnUpdate(float deltaTime) { }
-	virtual void OnCreate() { TASSERT(TFALSE == m_bInitialised); m_bInitialised = true; }
-	virtual void OnDestroy() { TASSERT(TTRUE == m_bInitialised); m_bInitialised = false; }
+	virtual void OnCreate() { TASSERT(TFALSE == m_bInitialised); m_bInitialised = TTRUE; }
+	virtual void OnDestroy() { TASSERT(TTRUE == m_bInitialised); m_bInitialised = TFALSE; }
 	virtual void OnActivate() { }
 	virtual void OnDeactivate() { }
 
 protected:
 	Toshi::TEmitter<AMoviePlayer, AMovieEvent::Type> m_Emitter; // 0x4
-	bool m_bInitialised; // 0x10
-	bool m_bIsFullscreen; // 0x11
-	bool m_bIsMuted; // 0x12
-	bool m_bIsHidden; // 0x13
+	TBOOL m_bInitialised; // 0x10
+	TBOOL m_bIsFullscreen; // 0x11
+	TBOOL m_bIsMuted; // 0x12
+	TBOOL m_bIsHidden; // 0x13
 
 };
 

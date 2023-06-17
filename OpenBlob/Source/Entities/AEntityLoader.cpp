@@ -14,11 +14,11 @@ void AEntityLoader::Update(float a_flt)
 		timer.Update();
 		do
 		{
-			//bool bRes = AAssetStreaming::GetSingleton()->HasActiveJobs();
+			//TBOOL bRes = AAssetStreaming::GetSingleton()->HasActiveJobs();
 			//if (bRes) break;
 			TASSERT(m_iCurEnt < m_pParamList->m_iEntityCount);
 			m_iCurEnt++;
-		} while (true);
+		} while (TTRUE);
 		
 		break;
 	default:

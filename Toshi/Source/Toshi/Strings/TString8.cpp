@@ -9,7 +9,7 @@ namespace Toshi
 	{
 		Reset();
 		m_pAllocator = allocator == TNULL ? GetAllocator() : allocator;
-		AllocBuffer(0, true);
+		AllocBuffer(0, TTRUE);
 	}
 
 	TString8::TString8(TString8&& src, T2Allocator* allocator) noexcept
@@ -58,7 +58,7 @@ namespace Toshi
 
 		if (srcLen < size || size == -1) { size = srcLen; }
 
-		AllocBuffer(size, true);
+		AllocBuffer(size, TTRUE);
 		TStringManager::StringUnicodeToChar(m_pBuffer, src, size);
 		m_pBuffer[size] = 0;
 	}
@@ -75,7 +75,7 @@ namespace Toshi
 				size = (uint32_t)srcLen;
 			}
 
-			AllocBuffer(size, true);
+			AllocBuffer(size, TTRUE);
 			TUtil::MemCopy(m_pBuffer, src, size);
 
 			m_pBuffer[size] = 0;
@@ -87,7 +87,7 @@ namespace Toshi
 		if (!IsIndexValid(pos)) return -1;
 
 		const char* foundAt = strchr(&m_pBuffer[pos], character);
-		if (foundAt == nullptr) return -1;
+		if (foundAt == TNULL) return -1;
 
 		return (int32_t)(foundAt - m_pBuffer);
 	}
@@ -97,14 +97,14 @@ namespace Toshi
 		if (!IsIndexValid(pos)) return -1;
 
 		const char* foundAt = strstr(GetString(pos), substr);
-		if (foundAt == nullptr) return -1;
+		if (foundAt == TNULL) return -1;
 
 		return (int32_t)(foundAt - m_pBuffer);
 	}
 
-	bool TString8::AllocBuffer(uint32_t a_iLength, bool freeMemory)
+	TBOOL TString8::AllocBuffer(uint32_t a_iLength, TBOOL freeMemory)
 	{
-		bool hasChanged = false;
+		TBOOL hasChanged = TFALSE;
 		uint32_t currentLength = Length();
 
 		TASSERT(a_iLength >= 0, "Length can't be less than 0");
@@ -119,7 +119,7 @@ namespace Toshi
 				m_pBuffer = NullString;
 				m_iExcessLen = 0;
 
-				hasChanged = true;
+				hasChanged = TTRUE;
 			}
 			else
 			{
@@ -135,12 +135,12 @@ namespace Toshi
 					m_pBuffer = (char*)m_pAllocator->Malloc(a_iLength + 1);
 					m_iExcessLen = 0;
 
-					hasChanged = true;
+					hasChanged = TTRUE;
 				}
 				else
 				{
 					m_iExcessLen = newExcessLen;
-					hasChanged = false;
+					hasChanged = TFALSE;
 				}
 			}
 
@@ -227,7 +227,7 @@ namespace Toshi
 
 		char* oldBuffer = m_pBuffer;
 
-		bool allocated = AllocBuffer(length, false);
+		TBOOL allocated = AllocBuffer(length, TFALSE);
 		if (allocated)
 		{
 			TStringManager::String8Copy(m_pBuffer, oldBuffer, length);
@@ -266,7 +266,7 @@ namespace Toshi
 		uint32_t oldLength = m_iStrLen;
 		char* oldString = m_pBuffer;
 
-		bool allocated = AllocBuffer(m_iStrLen + size, false);
+		TBOOL allocated = AllocBuffer(m_iStrLen + size, TFALSE);
 
 		if (allocated)
 		{
@@ -302,7 +302,7 @@ namespace Toshi
 		const char* str = GetString();
 		char bVar1 = 0;
 		char bVar4 = 0;
-		while (true)
+		while (TTRUE)
 		{
 			bVar1 = *str;
 			bVar4 = bVar1 < *a_pcString;
@@ -369,7 +369,7 @@ namespace Toshi
 		uint32_t oldLength = m_iStrLen;
 		char* oldString = m_pBuffer;
 		
-		bool allocated = AllocBuffer(m_iStrLen + size, false);
+		TBOOL allocated = AllocBuffer(m_iStrLen + size, TFALSE);
 		
 		if (allocated)
 		{
@@ -391,7 +391,7 @@ namespace Toshi
 		return *this;
 	}
 
-	bool TString8::IsAllLowerCase() const
+	TBOOL TString8::IsAllLowerCase() const
 	{
 		if (m_iStrLen != 0)
 		{
@@ -401,15 +401,15 @@ namespace Toshi
 			do
 			{
 				char currentC = *iter++;
-				if (currentC > '@' && currentC < '[') return false;
+				if (currentC > '@' && currentC < '[') return TFALSE;
 
 			} while (iter < endStr);
 		}
 
-		return true;
+		return TTRUE;
 	}
 
-	bool TString8::IsAllUpperCase() const
+	TBOOL TString8::IsAllUpperCase() const
 	{
 		if (m_iStrLen != 0)
 		{
@@ -419,11 +419,11 @@ namespace Toshi
 			do
 			{
 				char currentC = *iter++;
-				if (currentC > '`' && currentC < '{') return false;
+				if (currentC > '`' && currentC < '{') return TFALSE;
 
 			} while (iter < endStr);
 		}
 
-		return true;
+		return TTRUE;
 	}
 }

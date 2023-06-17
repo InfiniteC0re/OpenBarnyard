@@ -3,15 +3,15 @@
 
 namespace Toshi
 {
-	bool T2Mutex::Create()
+	TBOOL T2Mutex::Create()
 	{
 		Destroy();
 		m_Mutex = CreateMutexA(NULL, FALSE, NULL);
 		TASSERT(m_Mutex != NULL, "Failed to create mutex");
-		return true;
+		return TTRUE;
 	}
 
-	bool T2Mutex::Lock(Flags flags)
+	TBOOL T2Mutex::Lock(Flags flags)
 	{
 		TASSERT(m_Mutex != NULL, "Mutex is NULL");
 
@@ -21,7 +21,7 @@ namespace Toshi
 		return result == WAIT_OBJECT_0;
 	}
 
-	bool T2Mutex::Unlock()
+	TBOOL T2Mutex::Unlock()
 	{
 		TASSERT(m_Mutex != NULL, "Mutex is NULL");
 		return ReleaseMutex(m_Mutex);

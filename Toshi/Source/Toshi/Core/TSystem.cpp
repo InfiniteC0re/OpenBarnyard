@@ -7,11 +7,11 @@ namespace Toshi
 	TSystemManager::TSystemManager() : m_Emitter(this)
 	{
 		m_Scheduler = TNULL;
-		m_Paused = false;
+		m_Paused = TFALSE;
 		m_Second = 0;
 		m_AverageFps = 0;
 		m_FrameCount = 0;
-		m_Unk7 = false;
+		m_Unk7 = TFALSE;
 	}
 
 	void TSystemManager::Update()
@@ -33,10 +33,10 @@ namespace Toshi
 		m_Scheduler->Update();
 	}
 
-	bool TSystemManager::Create()
+	TBOOL TSystemManager::Create()
 	{
 		TSystemManager::CreateSingleton()->m_Scheduler = new TScheduler();
-		return true;
+		return TTRUE;
 	}
 	TCStringPool* TSystemManager::CreateCStringPoolExplicit(int unk, int unk2)
 	{

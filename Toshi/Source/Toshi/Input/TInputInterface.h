@@ -7,7 +7,7 @@ namespace Toshi
 
 
 	class TInputInterface :
-		public TGenericClassDerived<TInputInterface, TObject, "TInputInterface", TMAKEVERSION(1, 0), false>,
+		public TGenericClassDerived<TInputInterface, TObject, "TInputInterface", TMAKEVERSION(1, 0), TFALSE>,
 		public TSingleton<TInputInterface>
 	{
 	public:
@@ -30,7 +30,7 @@ namespace Toshi
 				m_pSource = device;
 				m_iDoodad = doodad;
 				m_eEventType = eventType;
-				m_bIsMagnitudeFloat = false;
+				m_bIsMagnitudeFloat = TFALSE;
 				m_iAxisCount = 0;
 			}
 
@@ -40,7 +40,7 @@ namespace Toshi
 				m_iDoodad = doodad;
 				m_eEventType = eventType;
 				m_Magnitude.Floats[0] = magnitude;
-				m_bIsMagnitudeFloat = true;
+				m_bIsMagnitudeFloat = TTRUE;
 				m_iAxisCount = 1;
 			}
 
@@ -51,7 +51,7 @@ namespace Toshi
 				m_eEventType = eventType;
 				m_Magnitude.Floats[0] = magnitude;
 				m_Magnitude.Floats[1] = magnitude2;
-				m_bIsMagnitudeFloat = true;
+				m_bIsMagnitudeFloat = TTRUE;
 				m_iAxisCount = 2;
 			}
 
@@ -61,7 +61,7 @@ namespace Toshi
 				m_iDoodad = doodad;
 				m_eEventType = eventType;
 				m_Magnitude.Ints[0] = magnitude;
-				m_bIsMagnitudeFloat = false;
+				m_bIsMagnitudeFloat = TFALSE;
 				m_iAxisCount = 1;
 			}
 
@@ -72,7 +72,7 @@ namespace Toshi
 				m_eEventType = eventType;
 				m_Magnitude.Ints[0] = magnitude;
 				m_Magnitude.Ints[1] = magnitude2;
-				m_bIsMagnitudeFloat = false;
+				m_bIsMagnitudeFloat = TFALSE;
 				m_iAxisCount = 2;
 			}
 
@@ -127,12 +127,12 @@ namespace Toshi
 				return (float)m_Magnitude.Ints[a_iAxis];
 			}
 
-			bool IsMagnitudeFloat()
+			TBOOL IsMagnitudeFloat()
 			{
 				return m_bIsMagnitudeFloat;
 			}
 
-			bool IsMagnitudeInt()
+			TBOOL IsMagnitudeInt()
 			{
 				return !m_bIsMagnitudeFloat;
 			}
@@ -140,7 +140,7 @@ namespace Toshi
 		public:
 			int m_iDoodad;              // 0x0
 			EventType m_eEventType;     // 0x4
-			bool m_bIsMagnitudeFloat;   // 0x8
+			TBOOL m_bIsMagnitudeFloat;   // 0x8
 			int8_t m_iAxisCount;        // 0x9
 			union
 			{
@@ -154,7 +154,7 @@ namespace Toshi
 
 		TInputInterface() 
 		{
-			m_bIsExclusiveMode = false;
+			m_bIsExclusiveMode = TFALSE;
 		}
 
 		TInputDevice* GetDeviceByIndex(TClass* pClass, size_t index);
@@ -172,21 +172,21 @@ namespace Toshi
 		void AddDevice(TInputDevice* device);
 		void RemoveDevice(TInputDevice* device);
 
-		virtual bool Initialise() { return true; }
-		virtual bool Deinitialise();
+		virtual TBOOL Initialise() { return TTRUE; }
+		virtual TBOOL Deinitialise();
 
-		virtual bool AcquireAll();
-		virtual bool UnacquireAll();
-		virtual bool FlushAll();
-		virtual void SetExclusiveMode(bool mode);
-		virtual bool GetExclusiveMode() const;
+		virtual TBOOL AcquireAll();
+		virtual TBOOL UnacquireAll();
+		virtual TBOOL FlushAll();
+		virtual void SetExclusiveMode(TBOOL mode);
+		virtual TBOOL GetExclusiveMode() const;
 		virtual int ProcessEvents(float fUnk);
 		virtual void StopAllRepeats();
 
 
 
 	private:
-		bool m_bIsExclusiveMode;              // 0x04 
+		TBOOL m_bIsExclusiveMode;              // 0x04 
 		TNodeList<TInputDevice> m_DeviceList; // 0x08
 		TGenericEmitter m_Emitter1;           // 0x24
 		TGenericEmitter m_Emitter2;           // 0x28

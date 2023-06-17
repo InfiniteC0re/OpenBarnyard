@@ -27,7 +27,7 @@ public:
 	static void CreatePool(Pool type);
 	static void DestroyPool(Pool type);
 
-	static bool IsPoolCreated(Pool type)
+	static TBOOL IsPoolCreated(Pool type)
 	{
 		TASSERT(type < POOL_NumOf);
 		return ms_apMemoryBlocks[type] != TNULL;

@@ -168,7 +168,7 @@ namespace Toshi
 
 		TTexture* pCurrentTex = m_pLastTexture;
 
-		while (true)
+		while (TTRUE)
 		{
 			if (pCurrentTex == TNULL)
 			{
@@ -197,5 +197,9 @@ namespace Toshi
 		}
 
 		SetLastTexture(pTexture);
+
+#ifdef TOSHI_DEBUG
+		s_NumTextures += 1;
+#endif
 	}
 }

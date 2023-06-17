@@ -8,14 +8,14 @@
 if (TStringManager::String8Compare(propName1, #propName2, -1) == 0) \
 { \
 	typeOut = PropType_##propName2; \
-	return true; \
+	return TTRUE; \
 }
 
 #define TXUI_TRANSLATE_TIMELINE_PROP_MANUAL(propName1, propName2, typeOut, flag) \
 if (TStringManager::String8Compare(propName1, propName2, -1) == 0) \
 { \
 	typeOut = flag; \
-	return true; \
+	return TTRUE; \
 }
 
 #define TXUI_PROPTYPE_TO_READFLAG(propType) (1 << propType)
@@ -69,15 +69,15 @@ namespace Toshi
 
 		virtual ~XURXUIObjectData() = default;
 
-		virtual bool Load(TXUIResource& resource, uint8_t*& a_pData);
-		virtual bool IsFloatPropType(uint32_t a_uiObjectIndex, PropType propType) { return false; };
-		virtual bool IsColourPropType(uint32_t a_uiObjectIndex, PropType propType) { return false; };
+		virtual TBOOL Load(TXUIResource& resource, uint8_t*& a_pData);
+		virtual TBOOL IsFloatPropType(uint32_t a_uiObjectIndex, PropType propType) { return TFALSE; };
+		virtual TBOOL IsColourPropType(uint32_t a_uiObjectIndex, PropType propType) { return TFALSE; };
 		virtual uint32_t GetTimelinePropSize(uint32_t a_uiObjectIndex, PropType propType) { return 0; };
-		virtual bool TranslateTimelineProp(const char* name, uint32_t& param_2, PropType& propType) { return false; };
-		virtual bool ValidateTimelineProp(uint32_t a_uiObjectIndex, PropType propType) { return false; };
+		virtual TBOOL TranslateTimelineProp(const char* name, uint32_t& param_2, PropType& propType) { return TFALSE; };
+		virtual TBOOL ValidateTimelineProp(uint32_t a_uiObjectIndex, PropType propType) { return TFALSE; };
 
 		void LoadChildren(TXUIResource& resource, uint8_t*& a_pData);
-		bool LoadNamedFrames(TXUIResource& resource, uint8_t*& a_pData);
+		TBOOL LoadNamedFrames(TXUIResource& resource, uint8_t*& a_pData);
 		void LoadTimelines(TXUIResource& resource, uint8_t*& a_pData);
 		class XURXUIElementData* FindChildElementData(uint32_t index);
 
@@ -117,21 +117,21 @@ namespace Toshi
 
 		virtual const char* GetTypeInfo() const { return sm_sTypeInfo; }
 
-		bool Load(TXUIResource& resource, uint8_t*& a_pData);
+		TBOOL Load(TXUIResource& resource, uint8_t*& a_pData);
 
-		bool TranslateTimelineProp(const char* name, uint32_t& param_2, PropType& propType);
+		TBOOL TranslateTimelineProp(const char* name, uint32_t& param_2, PropType& propType);
 
-		bool ValidateTimelineProp(uint32_t a_uiObjectIndex, uint32_t param_2);
+		TBOOL ValidateTimelineProp(uint32_t a_uiObjectIndex, uint32_t param_2);
 
-		bool IsFloatPropType(uint32_t a_uiObjectIndex, uint32_t propType)
+		TBOOL IsFloatPropType(uint32_t a_uiObjectIndex, uint32_t propType)
 		{
-			return propType != 1 && propType != 2 && propType != 6 ? false : true;
+			return propType != 1 && propType != 2 && propType != 6 ? TFALSE : TTRUE;
 		}
 
 		// No it's not
-		bool IsColourPropType(uint32_t a_uiObjectIndex, uint32_t propType)
+		TBOOL IsColourPropType(uint32_t a_uiObjectIndex, uint32_t propType)
 		{
-			return false;
+			return TFALSE;
 		}
 
 		uint32_t GetTimelinePropSize(uint32_t a_uiObjectIndex, uint32_t propType)
@@ -174,7 +174,7 @@ namespace Toshi
 			return m_Rotation;
 		}
 
-		bool IsVisible() const
+		TBOOL IsVisible() const
 		{
 			return m_Flags & 0x1000;
 		}
@@ -192,20 +192,20 @@ namespace Toshi
 	};
 
 	class TXUIElement :
-		public TGenericClassDerived<TXUIElement, TObject, "TXUIElement", TMAKEVERSION(1, 0), false>,
+		public TGenericClassDerived<TXUIElement, TObject, "TXUIElement", TMAKEVERSION(1, 0), TFALSE>,
 		public T2GUIElement
 	{
 	public:
 		TXUIElement();
 
-		virtual bool SkipRender();
+		virtual TBOOL SkipRender();
 		virtual void SetHeight(float height);
 		virtual void SetWidth(float width);
 
-		bool Create(TXUIResource& a_rResource, XURXUIElementData* a_pElementData, bool hasChildren);
+		TBOOL Create(TXUIResource& a_rResource, XURXUIElementData* a_pElementData, TBOOL hasChildren);
 		void CreateChildren(TXUIResource& a_rResource, XURXUIElementData* a_pElementData);
 		void UpdateAnchoring(const TVector2& vec);
-		bool IsVisible();
+		TBOOL IsVisible();
 	
 	private:
 

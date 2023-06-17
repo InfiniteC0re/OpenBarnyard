@@ -9,23 +9,23 @@ namespace Toshi
 		m_State |= TResourceState_Dead;
 	}
 
-	bool TResource::Create()
+	TBOOL TResource::Create()
 	{
 		TASSERT(TFALSE == IsCreated(), "This resource is already created");
 
 		m_State |= TResourceState_Created;
-		return true;
+		return TTRUE;
 	}
 
-	bool TResource::Validate()
+	TBOOL TResource::Validate()
 	{
 		TASSERT(IsDying() == TFALSE, "Resource is dying and cannot be validated");
 		TASSERT(Parent() == TNULL || Parent()->IsDying() == TFALSE, "Parent resource is dying");
 		
-		if (IsDying()) return false;
+		if (IsDying()) return TFALSE;
 		
 		m_State |= TResourceState_Valid;
-		return true;
+		return TTRUE;
 	}
 
 	void TResource::Invalidate()

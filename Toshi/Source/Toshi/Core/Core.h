@@ -55,13 +55,14 @@ constexpr uint32_t TMAKEFOUR(const char str[4])
 #define TARRAYSIZE(ARRAY) (sizeof(ARRAY) / sizeof(*ARRAY))
 
 #if defined(TOSHI_ENABLE_ASSERTS)
-	#define TFIREFLAG static bool FIREFLAG = false; if (!FIREFLAG)
-	#define TWIP() { TFIREFLAG { TOSHI_ERROR("Work in progress: {0}, at line {1}", __FUNCTION__, __LINE__); FIREFLAG = true; } }
-	#define TWIP_D(DESC) { TFIREFLAG { TOSHI_ERROR("Work in progress: {0} ({1}, at line {2})", DESC, __FUNCTION__, __LINE__); FIREFLAG = true; } }
-	#define TTODO(DESC) { TFIREFLAG { TOSHI_ERROR("TODO: {0} ({1}, at line {2})", DESC, __FUNCTION__, __LINE__); FIREFLAG = true; } }
-	#define TIMPLEMENT() { TFIREFLAG { TOSHI_ERROR("{0} is not implemented", __FUNCTION__); FIREFLAG = true; } }
-	#define TIMPLEMENT_D(DESC) { TFIREFLAG { TOSHI_ERROR("{0} is not implemented: {1}", __FUNCTION__, DESC); FIREFLAG = true; } }
-	#define TASSERT_IMPL(X, ...) { TFIREFLAG if (!(X)) { TOSHI_CORE_ERROR(__VA_ARGS__); TBREAK(); FIREFLAG = true; } }
+	#define TFIREFLAG static TBOOL FIREFLAG = TFALSE; if (!FIREFLAG)
+	#define TWIP() { TFIREFLAG { TOSHI_ERROR("Work in progress: {0}, at line {1}", __FUNCTION__, __LINE__); FIREFLAG = TTRUE; } }
+	#define TWIP_D(DESC) { TFIREFLAG { TOSHI_ERROR("Work in progress: {0} ({1}, at line {2})", DESC, __FUNCTION__, __LINE__); FIREFLAG = TTRUE; } }
+	#define TTODO(DESC) { TFIREFLAG { TOSHI_ERROR("TODO: {0} ({1}, at line {2})", DESC, __FUNCTION__, __LINE__); FIREFLAG = TTRUE; } }
+	#define TFIXME(DESC) { TFIREFLAG { TOSHI_WARN("FIXME: {0} ({1}, at line {2})", DESC, __FUNCTION__, __LINE__); FIREFLAG = TTRUE; } }
+	#define TIMPLEMENT() { TFIREFLAG { TOSHI_ERROR("{0} is not implemented", __FUNCTION__); FIREFLAG = TTRUE; } }
+	#define TIMPLEMENT_D(DESC) { TFIREFLAG { TOSHI_ERROR("{0} is not implemented: {1}", __FUNCTION__, DESC); FIREFLAG = TTRUE; } }
+	#define TASSERT_IMPL(X, ...) { TFIREFLAG if (!(X)) { TOSHI_CORE_ERROR(__VA_ARGS__); TBREAK(); FIREFLAG = TTRUE; } }
 	#define TASSERT1(X) TASSERT_IMPL(X, "TASSERT: {0} ({1}, at line {2})", #X, __FILE__, __LINE__)
 	#define TASSERT2(X, TEXT) TASSERT_IMPL(X, TEXT)
 	#define TASSERT3(X, TEXT, P1) TASSERT_IMPL(X, TEXT, P1)
@@ -71,6 +72,7 @@ constexpr uint32_t TMAKEFOUR(const char str[4])
 	#define TWIP()
 	#define TWIP_D(DESC)
 	#define TTODO(DESC)
+	#define TFIXME(DESC)
 	#define TIMPLEMENT()
 	#define TIMPLEMENT_D(DESC)
 	#define TASSERT(x, ...)

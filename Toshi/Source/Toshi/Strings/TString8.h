@@ -23,8 +23,8 @@ namespace Toshi
 
 		void FreeBuffer();
 
-		// Returns true if allocated memory
-		bool AllocBuffer(uint32_t size, bool freeMemory = true);
+		// Returns TTRUE if allocated memory
+		TBOOL AllocBuffer(uint32_t size, TBOOL freeMemory = TTRUE);
 
 		TString8 Format(const char* a_pcFormat, ...);
 		TString8& VFormat(const char* a_pcFormat, char* a_pcArgs);
@@ -61,11 +61,11 @@ namespace Toshi
 		uint32_t Length() const { return m_iStrLen; }
 		uint8_t ExcessLength() const { return m_iExcessLen; }
 
-		bool IsAllLowerCase() const;
-		bool IsAllUpperCase() const;
-		bool IsIndexValid(uint32_t index) const { return index >= 0 && index <= Length(); }
-		bool IsEmpty() const { return m_iStrLen == 0; }
-		bool IsUnicode() const { return false; } // Who would have known?
+		TBOOL IsAllLowerCase() const;
+		TBOOL IsAllUpperCase() const;
+		TBOOL IsIndexValid(uint32_t index) const { return index >= 0 && index <= Length(); }
+		TBOOL IsEmpty() const { return m_iStrLen == 0; }
+		TBOOL IsUnicode() const { return TFALSE; } // Who would have known?
 
 	public:
 		TString8 operator+(char const* cstr) const { TString8 str = TString8(*this); return std::move(str.Concat(cstr)); }
@@ -74,15 +74,15 @@ namespace Toshi
 		char& operator[](int index) { return m_pBuffer[index]; }
 		const char& operator[](int index) const { return *GetString(index); }
 		operator const char* () const { return m_pBuffer; }
-		bool operator!() { return m_iStrLen == 0; }
-		bool operator==(const char* cstr) const { return Compare(cstr, -1) == 0; }
-		bool operator==(const TString8& str) const { return Compare(str.m_pBuffer, -1) == 0; }
-		bool operator!=(const char* cstr) const { return Compare(cstr, -1) != 0; }
-		bool operator!=(const TString8& str) const { return Compare(str.m_pBuffer, -1) != 0; }
-		bool operator<(const char* cstr) const { return Compare(cstr, -1) > -1; };
-		bool operator<(const TString8& str) const { return Compare(str.m_pBuffer, -1) > -1; };
-		bool operator<=(const char* cstr) const { return Compare(cstr, -1) > 0; };
-		bool operator<=(const TString8& str) const { return Compare(str.m_pBuffer, -1) > 0; };
+		TBOOL operator!() { return m_iStrLen == 0; }
+		TBOOL operator==(const char* cstr) const { return Compare(cstr, -1) == 0; }
+		TBOOL operator==(const TString8& str) const { return Compare(str.m_pBuffer, -1) == 0; }
+		TBOOL operator!=(const char* cstr) const { return Compare(cstr, -1) != 0; }
+		TBOOL operator!=(const TString8& str) const { return Compare(str.m_pBuffer, -1) != 0; }
+		TBOOL operator<(const char* cstr) const { return Compare(cstr, -1) > -1; };
+		TBOOL operator<(const TString8& str) const { return Compare(str.m_pBuffer, -1) > -1; };
+		TBOOL operator<=(const char* cstr) const { return Compare(cstr, -1) > 0; };
+		TBOOL operator<=(const TString8& str) const { return Compare(str.m_pBuffer, -1) > 0; };
 		//TString8& operator=(const wchar_t* wcstr) { Copy(wcstr, -1); return *this; };
 		TString8& operator=(const char* cstr) { Copy(cstr, -1); return *this; };
 		TString8& operator=(const TString8& str) { Copy(str, -1); return *this; };

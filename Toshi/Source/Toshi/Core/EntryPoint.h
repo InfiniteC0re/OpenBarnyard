@@ -40,7 +40,7 @@ return TMain(__argc, __argv);
 
 static const char* GetOSName(OSVERSIONINFOEX& osVersionInfo)
 {
-	bool isWorkstation = osVersionInfo.wProductType == VER_NT_WORKSTATION;
+	TBOOL isWorkstation = osVersionInfo.wProductType == VER_NT_WORKSTATION;
 
 	if (osVersionInfo.dwMajorVersion == 10)
 	{
@@ -104,7 +104,7 @@ TOSHI_ENTRY
 	Toshi::TUtil::Log("OS Version: %d.%d Build:%d %s", osVersionInfo.dwMajorVersion, osVersionInfo.dwMinorVersion, osVersionInfo.dwBuildNumber, osVersionInfo.szCSDVersion);
 
 
-	HANDLE hMutex = CreateMutexA(NULL, true, "BLOB07");
+	HANDLE hMutex = CreateMutexA(NULL, TTRUE, "BLOB07");
 	if (GetLastError() == ERROR_ALREADY_EXISTS)
 	{
 		MessageBoxA(NULL, "Game is already running", "de Blob", MB_OK);

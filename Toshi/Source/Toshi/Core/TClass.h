@@ -11,7 +11,7 @@ namespace Toshi
 	typedef void  (*t_UninitializeStatic)();
 
 	// RecurseTree definitions
-	typedef bool  (*t_RecurceTreeCheck)(class TClass*, void*);
+	typedef TBOOL  (*t_RecurceTreeCheck)(class TClass*, void*);
 	typedef void  (*t_RecurceTreeBaseBeginCb)(class TClass*, void*);
 	typedef void  (*t_RecurceTreeBaseEndCb)(class TClass*, void*);
 
@@ -26,15 +26,15 @@ namespace Toshi
 			m_Name = name;
 			m_Create = fCreate;
 			m_CreateInPlace = fCreateInPlace;
-			m_Initialize = nullptr;
-			m_Uninitialize = nullptr;
-			m_Parent = nullptr;
-			m_Previous = nullptr;
-			m_LastAttached = nullptr;
+			m_Initialize = TNULL;
+			m_Uninitialize = TNULL;
+			m_Parent = TNULL;
+			m_Previous = TNULL;
+			m_LastAttached = TNULL;
 			m_Version = 0;
 			m_Size = size;
 			m_Unk = 0;
-			m_Initialized = false;
+			m_Initialized = TFALSE;
 		}
 
 		void Initialize();
@@ -42,9 +42,9 @@ namespace Toshi
 		void RecurseTree2(t_RecurceTreeCheck fCheck, t_RecurceTreeBaseBeginCb fBaseBegin, t_RecurceTreeBaseEndCb fBaseEnd, void* custom);
 		class TObject* CreateObject();
 
-		bool IsA(TClass* pClass);
-		bool IsExactly(TClass* toCompare) const { return this == toCompare; }
-		bool IsInitialized() const { return m_Initialized; }
+		TBOOL IsA(TClass* pClass);
+		TBOOL IsExactly(TClass* toCompare) const { return this == toCompare; }
+		TBOOL IsInitialized() const { return m_Initialized; }
 		TClass* GetParent() { return static_cast<TClass*>(m_Parent); }
 		const char* GetName() const { return m_Name; }
 		uint32_t GetVersion() const { return m_Version; }
@@ -52,14 +52,14 @@ namespace Toshi
 		uint16_t GetVersionMinor() const { return m_Version & 0xFFFF; }
 
 		// todo: move this function away from this class
-		static bool TryInitialize(TClass* tClass);
+		static TBOOL TryInitialize(TClass* tClass);
 		
 		// Looks for a class in parent
-		static const TClass* FindRecurse(const char* const& name, const TClass* parent, bool hasPrevious);
+		static const TClass* FindRecurse(const char* const& name, const TClass* parent, TBOOL hasPrevious);
 		static const TClass* Find(const char* name, const TClass* parent);
 
 	public:
-		inline bool operator==(const TClass* other) const { return this == other; }
+		inline TBOOL operator==(const TClass* other) const { return this == other; }
 	
 	private:
 		const char* m_Name = 0;                                 // 0x00
@@ -73,6 +73,6 @@ namespace Toshi
 		uint32_t m_Version = 0;                                 // 0x20
 		size_t m_Size = 0;                                      // 0x24
 		uint32_t m_Unk = 0;                                     // 0x28
-		bool m_Initialized = 0;                                 // 0x2C
+		TBOOL m_Initialized = 0;                                 // 0x2C
 	};
 }

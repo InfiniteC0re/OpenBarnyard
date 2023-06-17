@@ -197,7 +197,7 @@ unsigned char _BitScanReverse(unsigned long *index, unsigned long mask);
 /* -------------------------- MMAP preliminaries ------------------------- */
 
 /*
-   If HAVE_MORECORE or HAVE_MMAP are false, we just define calls and
+   If HAVE_MORECORE or HAVE_MMAP are TFALSE, we just define calls and
    checks to fail so compiler optimizer can delete code rather than
    using so many "#if"s.
 */
@@ -864,7 +864,7 @@ typedef unsigned int flag_t;           /* The type of various bit flag sets */
 #define overhead_for(p)\
  (is_mmapped(p)? MMAP_CHUNK_OVERHEAD : CHUNK_OVERHEAD)
 
-/* Return true if malloced space is not necessarily cleared */
+/* Return TTRUE if malloced space is not necessarily cleared */
 #if MMAP_CLEARS
 #define calloc_must_clear(p) (!is_mmapped(p))
 #else /* MMAP_CLEARS */
@@ -1277,7 +1277,7 @@ static msegmentptr segment_holding(mstate m, char* addr) {
   }
 }
 
-/* Return true if segment contains a segment link */
+/* Return TTRUE if segment contains a segment link */
 static int has_segment_link(mstate m, msegmentptr ss) {
   msegmentptr sp = &m->seg;
   for (;;) {
@@ -2632,7 +2632,7 @@ static void* sys_alloc(mstate m, size_t nb) {
        or main space is mmapped or a previous contiguous call failed)
     2. A call to MMAP new space (disabled if not HAVE_MMAP).
        Note that under the default settings, if MORECORE is unable to
-       fulfill a request, and HAVE_MMAP is true, then mmap is
+       fulfill a request, and HAVE_MMAP is TTRUE, then mmap is
        used as a noncontiguous system allocator. This is a useful backup
        strategy for systems with holes in address spaces -- in this case
        sbrk cannot contiguously expand the heap, but mmap may be able to
@@ -3373,7 +3373,7 @@ void* dlcalloc(size_t n_elements, size_t elem_size) {
 
 /* ------------ Internal support for realloc, memalign, etc -------------- */
 
-/* Try to realloc; only in-place unless can_move true */
+/* Try to realloc; only in-place unless can_move TTRUE */
 static mchunkptr try_realloc_chunk(mstate m, mchunkptr p, size_t nb,
                                    int can_move) {
   mchunkptr newp = 0;

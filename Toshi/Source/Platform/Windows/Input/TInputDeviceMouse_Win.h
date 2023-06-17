@@ -19,15 +19,15 @@ namespace Toshi
 
 		virtual void Release();
 		virtual void Update();
-		virtual bool Initialise();
-		virtual bool Deinitialise();
-		virtual bool Acquire();
-		virtual bool Unacquire();
-		virtual bool Flush();
+		virtual TBOOL Initialise();
+		virtual TBOOL Deinitialise();
+		virtual TBOOL Acquire();
+		virtual TBOOL Unacquire();
+		virtual TBOOL Flush();
 		virtual int ProcessEvents(TGenericEmitter& emitter, float flt);
 		virtual void RefreshDirect();
 
-		bool const BindToDIDevice(HWND a_mainWindow, LPCDIDEVICEINSTANCE a_poDeviceInstance, IDirectInputDevice8* a_poDXInputDevice, bool exclusive);
+		TBOOL const BindToDIDevice(HWND a_mainWindow, LPCDIDEVICEINSTANCE a_poDeviceInstance, IDirectInputDevice8* a_poDXInputDevice, TBOOL exclusive);
 
 		DWORD GetAxisCount() const
 		{
@@ -59,13 +59,13 @@ namespace Toshi
 		IDirectInputDevice8* m_poDXInputDevice;
 		DIDEVCAPS m_DIDevCaps;
 		POINT m_CursorPos;
-		bool m_bInitiliased; // 0x80
+		TBOOL m_bInitiliased; // 0x80
 		DWORD m_dwButtonCurrent;
 		DWORD m_dwButtonPrevious;
 		int m_field0x40;
 		Axis m_aAxis;
 		float m_fWheelAxis; // 0x60 very unsure
 		int m_field0x80;
-		bool m_bUnk; // 0x35
+		TBOOL m_bUnk; // 0x35
 	};
 }

@@ -89,7 +89,7 @@ namespace Toshi
 		TTRB::ERROR ReadFORM(TTRB::SectionFORM* section);
 		TTRB::ERROR ReadHunkData(void* dest);
 
-		void Close(bool free = true);
+		void Close(TBOOL free = TTRUE);
 
 		void ReadCompressed(void* buffer, uint32_t size);
 		void CompressSection(TFile* file, char* unk, uint32_t unk2, uint32_t unk3) { TCompress_Compress::Compress(file, unk, unk2, unk3, m_Endianess); }
@@ -182,17 +182,17 @@ namespace Toshi
 		*
 		* @param hunkMark - pointer to TTSFO::HunkMark which has to be opened
 		* @param hunkName - 4 bytes long name of the hunk
-		* @return always true
+		* @return always TTRUE
 		*/
-		bool OpenHunk(HunkMark* hunkMark, const char* hunkName);
+		TBOOL OpenHunk(HunkMark* hunkMark, const char* hunkName);
 
 		/**
 		* Closes the hunk.
 		*
 		* @param hunkMark - pointer to TTSFO::HunkMark which has to be closed
-		* @return always true
+		* @return always TTRUE
 		*/
-		bool CloseHunk(HunkMark* hunkMark);
+		TBOOL CloseHunk(HunkMark* hunkMark);
 
 		/**
 		* Writes a hunk of data.
@@ -225,7 +225,7 @@ namespace Toshi
 			return writtenSize;
 		}
 		
-		void WriteBool(bool value)               { Write(value); }
+		void WriteBool(TBOOL value)               { Write(value); }
 		void WriteInt8(int8_t value)             { Write(value); }
 		void WriteUInt8(uint8_t value)           { Write(value); }
 		void WriteUInt16(uint16_t value)         { Write(value); }

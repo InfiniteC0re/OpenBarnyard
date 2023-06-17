@@ -25,9 +25,9 @@ public:
 	Toshi::TStack<AInputMap::INPUTCONTEXT, 10> m_inputContextStack; // 0x1A0
 	void* m_unk; // 0x180
 
-	bool CheckIfValidDevice(const AInputDeviceHandle& handle)
+	TBOOL CheckIfValidDevice(const AInputDeviceHandle& handle)
 	{
-		return m_unk == 0 ? true : handle.m_unk == m_unk;
+		return m_unk == 0 ? TTRUE : handle.m_unk == m_unk;
 	}
 
 	void SetContext(AInputMap::INPUTCONTEXT a_eInputContext)

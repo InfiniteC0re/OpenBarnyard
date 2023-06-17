@@ -109,7 +109,7 @@ namespace Toshi {
 		auto deviceContext = renderer->GetDeviceContext();
 
 		renderer->m_CurrentRasterizerId.Flags.Parts.CullMode = D3D11_CULL_NONE;
-		renderer->SetZMode(false, D3D11_COMPARISON_LESS_EQUAL, D3D11_DEPTH_WRITE_MASK_ZERO);
+		renderer->SetZMode(TFALSE, D3D11_COMPARISON_LESS_EQUAL, D3D11_DEPTH_WRITE_MASK_ZERO);
 
 		deviceContext->IASetInputLayout(m_pQuadVtxDecl);
 		deviceContext->VSSetShader(m_pScreenSpaceVS, TNULL, 0);

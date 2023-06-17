@@ -26,6 +26,7 @@ public:
 private:
 	void RenderLoadingScreen(float fDeltaTime);
 	void RenderGUI(TBOOL allowBackgroundClear);
+	void RenderImGui(TBOOL allowBackgroundClear);
 	void RenderMainScene(float deltaTime, Toshi::TViewport* pViewport, Toshi::TCameraObject* pCameraObject, ACamera* pCamera, t_MainScene mainSceneCb, TBOOL bAllowBackgroundClear);
 	void CreateMainViewport();
 	void CreateTRenderResources();

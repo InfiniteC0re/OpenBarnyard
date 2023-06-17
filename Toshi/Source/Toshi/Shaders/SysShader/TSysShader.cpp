@@ -8,14 +8,14 @@ namespace Toshi {
 		return "";
 	}
 
-	bool TSysShader::IsLightScattering() const
+	TBOOL TSysShader::IsLightScattering() const
 	{
-		return false;
+		return TFALSE;
 	}
 
-	bool TSysShader::SetLightScattering(bool scattering) const
+	TBOOL TSysShader::SetLightScattering(TBOOL scattering) const
 	{
-		return false;
+		return TFALSE;
 	}
 
 }

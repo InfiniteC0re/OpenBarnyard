@@ -179,13 +179,13 @@ namespace Toshi
 			}
 		}
 
-		void SetPreFlushCallback(t_PreFlushCallback fnCallback, void* pCustomData = nullptr)
+		void SetPreFlushCallback(t_PreFlushCallback fnCallback, void* pCustomData = TNULL)
 		{
 			m_fnPreFlushCallback = fnCallback;
 			m_pPreFlushCallbackData = pCustomData;
 		}
 
-		void SetPostFlushCallback(t_PostFlushCallback fnCallback, void* pCustomData = nullptr)
+		void SetPostFlushCallback(t_PostFlushCallback fnCallback, void* pCustomData = TNULL)
 		{
 			m_fnPostFlushCallback = fnCallback;
 			m_pPostFlushCallbackData = pCustomData;

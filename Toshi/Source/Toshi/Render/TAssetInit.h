@@ -9,8 +9,8 @@ namespace Toshi
 	class TAssetInit
 	{
 	public:
-		static bool g_bCreateResources;
-		static bool g_bAllowCrossTRBReferences;
+		static TBOOL g_bCreateResources;
+		static TBOOL g_bAllowCrossTRBReferences;
 		static TTRB* g_pCurrentTRB;
 		static TMemoryHeap* g_pMemHeap;
 
@@ -200,7 +200,7 @@ namespace Toshi
 		};
 
 	public:
-		static void InitAssets(TTRB& a_trb, bool createResources, bool allowCrossTRBReferences);
+		static void InitAssets(TTRB& a_trb, TBOOL createResources, TBOOL allowCrossTRBReferences);
 		static void DeinitAssets(TTRB& a_trb);
 		static void Init(TTRB& a_trb, uint32_t a_unk, t_fourCCFunction a_fourCCFunc);
 	};

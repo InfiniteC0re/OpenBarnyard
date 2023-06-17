@@ -13,14 +13,14 @@ namespace Toshi
 		return 0;
 	}
 
-	bool TThread::Create(size_t a_iStackSize, PRIORITY a_ePriority, uint8_t flag)
+	TBOOL TThread::Create(size_t a_iStackSize, PRIORITY a_ePriority, uint8_t flag)
 	{
 		m_iThreadID = -1;
 		m_hThreadHnd = CreateThread(NULL, a_iStackSize, ThreadEntry, this, CREATE_SUSPENDED, &m_iThreadID);
 
 		TASSERT(m_hThreadHnd != NULL, "Couldn't create thread");
-		bool bResult = SetThreadPriority(m_hThreadHnd, a_ePriority);
-		TASSERT(bResult != false, "Couldn't set thread priority");
+		TBOOL bResult = SetThreadPriority(m_hThreadHnd, a_ePriority);
+		TASSERT(bResult != TFALSE, "Couldn't set thread priority");
 
 		TThreadManager::GetSingleton()->InsertThread(this);
 
@@ -30,7 +30,7 @@ namespace Toshi
 			TASSERT(iResult != -1, "Couldn't resume thread");
 		}
 
-		return true;
+		return TTRUE;
 	}
 
 	void TThread::Exit(TThread* a_pThread)

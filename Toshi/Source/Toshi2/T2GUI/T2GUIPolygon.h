@@ -47,6 +47,6 @@ namespace Toshi
 		uint32_t m_iNumVerts;
 		TVector2* m_pVertices;
 		TVector2* m_pUV;
-		bool m_bCalculatedDimensions;
+		TBOOL m_bCalculatedDimensions;
 	};
 }

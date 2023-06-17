@@ -40,7 +40,7 @@ namespace Toshi
 				return;
 			}
 			
-		} while (true);
+		} while (TTRUE);
 
 	}
 

@@ -126,7 +126,7 @@ namespace Toshi
 			k *= scalar3;
 		}
 
-		bool IsOrthonormal() const
+		TBOOL IsOrthonormal() const
 		{
 			float fVar1 = (j * j + i * i + k * k) - 1.0f;
 			float fVar2 = (f * f + e * e + g * g) - 1.0f;

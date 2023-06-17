@@ -17,7 +17,7 @@ namespace Toshi
 			{
 				m_Next = this;
 				m_Prev = this;
-				m_List = nullptr;
+				m_List = TNULL;
 			}
 
 			TNode(const TNode& node)
@@ -42,7 +42,7 @@ namespace Toshi
 				return m_Prev->As<T>();
 			}
 
-			bool IsLinked() const
+			TBOOL IsLinked() const
 			{
 				return m_List != TNULL;
 			}
@@ -184,12 +184,12 @@ namespace Toshi
 			InsertBefore(m_Head, node);
 		}
 
-		bool IsEmpty() const
+		TBOOL IsEmpty() const
 		{
 			return m_Head.Next() == &m_Head;
 		}
 
-		bool IsValid(const TNode* node) const
+		TBOOL IsValid(const TNode* node) const
 		{
 			return node != TNULL && node->m_List == this;
 		}

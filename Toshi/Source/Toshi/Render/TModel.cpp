@@ -208,7 +208,7 @@ namespace Toshi {
 }
 
 /*
-bool Toshi::TModel::LoadTMD(const char* a_tmdPath)
+TBOOL Toshi::TModel::LoadTMD(const char* a_tmdPath)
 {
 	TFile* file = TFile::Create(a_tmdPath);
 
@@ -225,7 +225,7 @@ bool Toshi::TModel::LoadTMD(const char* a_tmdPath)
 		file->Destroy();
 	}
 
-	return false;
+	return TFALSE;
 }
 
 void Toshi::TModel::CreateResource(const char* name)
@@ -234,7 +234,7 @@ void Toshi::TModel::CreateResource(const char* name)
 	
 }
 
-bool Toshi::TModel::LoadTRBTMD(const char*)
+TBOOL Toshi::TModel::LoadTRBTMD(const char*)
 {
 	const char* symbol = TranslateSymbolName("SkeletonHeader");
 	m_pTRB->GetSymbolAddress(symbol);
@@ -242,12 +242,12 @@ bool Toshi::TModel::LoadTRBTMD(const char*)
 	m_pTRB->GetSymbolAddress(symbol);
 	symbol = TranslateSymbolName("Collision");
 	m_pTRB->GetSymbolAddress(symbol);
-	return false;
+	return TFALSE;
 }
 
-bool Toshi::TModel::LoadTrb()
+TBOOL Toshi::TModel::LoadTrb()
 {
-	return false;
+	return TFALSE;
 }
 
 const char* Toshi::TModel::TranslateSymbolName(const char* a_symbolName)

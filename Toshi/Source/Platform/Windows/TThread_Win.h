@@ -35,23 +35,23 @@ namespace Toshi
 		virtual ~TThread() { };
 		virtual void Main() = 0;
 
-		bool Create(size_t a_iStackSize, PRIORITY a_ePriority, uint8_t flag);
+		TBOOL Create(size_t a_iStackSize, PRIORITY a_ePriority, uint8_t flag);
 
-		static bool GetPriority(void* a_hThreadHnd, PRIORITY& a_ePriority)
+		static TBOOL GetPriority(void* a_hThreadHnd, PRIORITY& a_ePriority)
 		{
 			TASSERT(a_hThreadHnd != NULL, "Thread doesn't exist");
 			int iPriority = GetThreadPriority(a_hThreadHnd);
 			TASSERT(iPriority != THREAD_PRIORITY_ERROR_RETURN, "Couldn't get thread priority");
 			a_ePriority = iPriority;
-			return true;
+			return TTRUE;
 		}
 
-		static bool SetPriority(void* a_hThreadHnd, PRIORITY a_ePriority)
+		static TBOOL SetPriority(void* a_hThreadHnd, PRIORITY a_ePriority)
 		{
 			TASSERT(a_hThreadHnd != NULL, "Thread doesn't exist");
 			BOOL bResult = SetThreadPriority(a_hThreadHnd, a_ePriority);
 			TASSERT(bResult != FALSE, "Couldn't set priority");
-			return true;
+			return TTRUE;
 		}
 
 		static void Exit(TThread* a_pThread);

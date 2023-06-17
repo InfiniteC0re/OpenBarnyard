@@ -35,7 +35,7 @@ namespace Toshi
 		constexpr float ONEOVER_SQRT_TWO = 0.70710677f;
 		constexpr float ONEOVERTWO_PI = 1 / TWO_PI;
 
-		inline bool IsFinite(float fVal) { return _finite(fVal) != 0; }
+		inline TBOOL IsFinite(float fVal) { return _finite(fVal) != 0; }
 		inline float Cos(float fVal) { return cosf(fVal); }
 		inline float ACos(float fVal) { return acos(fVal); }
 		inline float Abs(float fVal) { return (float)fabs(fVal); }
@@ -54,7 +54,7 @@ namespace Toshi
 			return 1.0f / Sqrt(a_fX);
 		}
 
-		inline bool IsNaN(float fVal) { return isnan(fVal); }
+		inline TBOOL IsNaN(float fVal) { return isnan(fVal); }
 		inline int FastMod(int a_iNum, int a_iModulus) { TASSERT(a_iNum >= 0); TASSERT(a_iModulus > 0); TASSERT(0 == (a_iModulus & (a_iModulus - 1))); return a_iNum & (a_iModulus - 1); }
 		inline void SinCos(float fVal, float& fVal1, float& fVal2) { fVal1 = cos(fVal); fVal2 = sin(fVal); }
 		inline void Clip(float& rfVal, float fMin, float fMax) { if (fMax < rfVal) { rfVal = fMax; } if (rfVal < fMin) { rfVal = fMin; } }

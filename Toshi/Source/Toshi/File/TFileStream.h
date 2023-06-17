@@ -11,7 +11,7 @@ namespace Toshi
 		friend class TFileStream;
 
 	public:
-		TFileStreamJob(TSemaphore* semaphore) : m_pSemaphore(semaphore), m_bIsProcessed(false) { }
+		TFileStreamJob(TSemaphore* semaphore) : m_pSemaphore(semaphore), m_bIsProcessed(TFALSE) { }
 
 		virtual ~TFileStreamJob() = default;
 
@@ -19,7 +19,7 @@ namespace Toshi
 
 	protected:
 		TSemaphore* m_pSemaphore;
-		bool m_bIsProcessed;
+		TBOOL m_bIsProcessed;
 	};
 
 	class TFileStream : public TThread

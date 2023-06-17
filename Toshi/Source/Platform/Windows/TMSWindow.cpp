@@ -6,21 +6,21 @@
 
 namespace Toshi
 {
-	bool TMSWindow::ms_bIsFocused = false;
-	BOOL TMSWindow::ms_bIsFullscreen = false;
+	TBOOL TMSWindow::ms_bIsFocused = TFALSE;
+	BOOL TMSWindow::ms_bIsFullscreen = TFALSE;
 	STICKYKEYS TMSWindow::ms_StickyKeys = { 0, 0 };
 	HDEVNOTIFY TMSWindow::ms_hDeviceNotify = { 0 };
 
 	void TMSWindow::Enable()
 	{
 		TASSERT(m_HWND != TNULL, "HWND is NULL");
-		m_IsWindowed = true;
+		m_IsWindowed = TTRUE;
 	}
 
 	void TMSWindow::Disable()
 	{
 		TASSERT(m_HWND != NULL, "HWND is NULL");
-		m_IsWindowed = false;
+		m_IsWindowed = TFALSE;
 	}
 
 	void TMSWindow::Update()
@@ -38,7 +38,7 @@ namespace Toshi
 				}
 			}
 
-			m_IsDestroyed = true;
+			m_IsDestroyed = TTRUE;
 		}
 	}
 
@@ -49,14 +49,14 @@ namespace Toshi
 			if (ms_bIsFocused)
 			{
 				SetThreadExecutionState(ES_CONTINUOUS);
-				ShowCursor(true);
-				TSystemManager::GetSingleton()->Pause(true);
+				ShowCursor(TTRUE);
+				TSystemManager::GetSingleton()->Pause(TTRUE);
 				SystemParametersInfoA(SPI_GETSTICKYKEYS, sizeof(STICKYKEYS), &ms_StickyKeys, 0);
-				ms_bIsFocused = false;
+				ms_bIsFocused = TFALSE;
 			}
 
 			DestroyWindow(m_HWND);
-			m_IsDestroyed = true;
+			m_IsDestroyed = TTRUE;
 			m_HWND = NULL;
 		}
 
@@ -81,7 +81,7 @@ namespace Toshi
 		SetWindowPos(m_HWND, HWND_TOP, x, y, rect.right - rect.left, rect.bottom - rect.top, 0);
 	}
 
-	bool TMSWindow::Create(TRender* renderer, LPCSTR title)
+	TBOOL TMSWindow::Create(TRender* renderer, LPCSTR title)
 	{
 		UnregisterWindowClass();
 
@@ -106,49 +106,57 @@ namespace Toshi
 		
 		if (m_HWND == NULL)
 		{
-			return false;
+			return TFALSE;
 		}
 
 		EnableWindow(m_HWND, TRUE);
 		ShowWindow(m_HWND, SW_SHOW);
 		SetForegroundWindow(m_HWND);
 
-		m_IsDestroyed = false;
+		m_IsDestroyed = TFALSE;
 		
 		if (GetForegroundWindow() != m_HWND)
 		{
 			TOSHI_INFO("Not foreground window, Pausing Systems!\n");
-			TSystemManager::GetSingleton()->Pause(true);
+			TSystemManager::GetSingleton()->Pause(TTRUE);
 		}
 
-		return true;
+		return TTRUE;
 	}
 
 	LRESULT CALLBACK TMSWindow::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 		TMSWindow* window = reinterpret_cast<TMSWindow*>(GetWindowLongA(hWnd, GWL_USERDATA));
 
+		if (s_fnWndProcHandler != TNULL)
+		{
+			if (s_fnWndProcHandler(hWnd, uMsg, wParam, lParam))
+			{
+				return TRUE;
+			}
+		}
+
 		RECT rect;
-		bool bFlag1, bLockCursor;
-		auto pRenderer = Toshi::TRenderDX11::Interface();
+		TBOOL bFlag1, bLockCursor;
+		auto pRenderer = TRenderDX11::Interface();
 		auto pDisplayParams = pRenderer->GetCurrentDisplayParams();
 		auto pSystemManager = TSystemManager::GetSingleton();
 
 		if (window == NULL || pDisplayParams->IsFullscreen)
 		{
-			bLockCursor = false;
+			bLockCursor = TFALSE;
 		}
 		else
 		{
-			bLockCursor = true;
+			bLockCursor = TTRUE;
 
 			if (pDisplayParams->Unk5)
 			{
-				bLockCursor = false;
+				bLockCursor = TFALSE;
 			}
 		}
 
-		bFlag1 = window != NULL && pDisplayParams->IsFullscreen != false && pDisplayParams->Unk5 != false;
+		bFlag1 = window != NULL && pDisplayParams->IsFullscreen != TFALSE && pDisplayParams->Unk5 != TFALSE;
 
 		if (WM_ACTIVATEAPP < uMsg)
 		{
@@ -160,7 +168,7 @@ namespace Toshi
 					{
 						if (lParam == 1)
 						{
-							SetCursor(0);
+							SetCursor(NULL);
 							return 1;
 						}
 					}
@@ -170,7 +178,7 @@ namespace Toshi
 						{
 							if (window->m_IsPopup) 
 							{
-								window->m_Flag5 = true;
+								window->m_Flag5 = TTRUE;
 								TTODO("FUN_006b17e0(&bLockCursor)");
 							}
 						}
@@ -195,8 +203,8 @@ namespace Toshi
 				{
 					if (!window->m_Flag2)
 					{
-						ShowCursor(false);
-						window->m_Flag2 = true;
+						ShowCursor(TFALSE);
+						window->m_Flag2 = TTRUE;
 
 						if (!window->m_Flag3)
 						{
@@ -207,7 +215,7 @@ namespace Toshi
 
 							if (TrackMouseEvent(&tme))
 							{
-								window->m_Flag3 = true;
+								window->m_Flag3 = TTRUE;
 							}
 						}
 					}
@@ -221,16 +229,16 @@ namespace Toshi
 			{
 				if (wParam == DBT_DEVNODES_CHANGED)
 				{
-					Toshi::TInputDXInterface::GetInterface()->LostDevice();
+					TInputDXInterface::GetInterface()->LostDevice();
 				}
 			}
 			else
 			{
 				// Mouse Left the Screen
 				if (uMsg != WM_MOUSELEAVE) return DefWindowProcA(hWnd, uMsg, wParam, lParam);
-				window->m_Flag2 = false;
-				window->m_Flag3 = false;
-				ShowCursor(true);
+				window->m_Flag2 = TFALSE;
+				window->m_Flag3 = TFALSE;
+				ShowCursor(TTRUE);
 			}
 
 			return 1;
@@ -252,7 +260,7 @@ namespace Toshi
 				if (wParam == TRUE)
 				{
 					// Window was activated
-					pSystemManager->Pause(false);
+					pSystemManager->Pause(TFALSE);
 					return 0;
 				}
 			}
@@ -261,11 +269,11 @@ namespace Toshi
 				if (wParam == TRUE)
 				{
 					// Window was activated
-					pSystemManager->Pause(false);
+					pSystemManager->Pause(TFALSE);
 					return 0;
 				}
 			}
-			pSystemManager->Pause(true);
+			pSystemManager->Pause(TTRUE);
 			return 0;
 		}
 
@@ -298,9 +306,9 @@ namespace Toshi
 				if (!ms_bIsFocused)
 				{
 					SetThreadExecutionState(ES_CONTINUOUS | ES_DISPLAY_REQUIRED | ES_SYSTEM_REQUIRED);
-					ShowCursor(false);
-					pSystemManager->Pause(true);
-					ms_bIsFocused = true;
+					ShowCursor(TFALSE);
+					pSystemManager->Pause(TTRUE);
+					ms_bIsFocused = TTRUE;
 
 					SystemParametersInfoA(SPI_GETSTICKYKEYS, sizeof(STICKYKEYS), &ms_StickyKeys, 0);
 
@@ -309,7 +317,7 @@ namespace Toshi
 				}
 				if (pRenderer->m_SwapChain != TNULL && ms_bIsFullscreen)
 				{
-					Toshi::TUtil::Log("#####  Restore fullscreen");
+					TUtil::Log("#####  Restore fullscreen");
 					ms_bIsFullscreen = TFALSE;
 					pRenderer->m_SwapChain->SetFullscreenState(TTRUE, TNULL);
 					return DefWindowProcA(hWnd, uMsg, wParam, lParam);;
@@ -322,16 +330,16 @@ namespace Toshi
 					pRenderer->m_SwapChain->GetFullscreenState(&ms_bIsFullscreen, TNULL);
 					if (pDisplayParams->IsFullscreen && ms_bIsFullscreen)
 					{
-						Toshi::TUtil::Log("#####  Disable fullscreen");
+						TUtil::Log("#####  Disable fullscreen");
 						pRenderer->m_SwapChain->SetFullscreenState(TFALSE, TNULL);
 					}
 				}
 				if (ms_bIsFocused)
 				{
 					SetThreadExecutionState(ES_CONTINUOUS);
-					ShowCursor(true);
-					pSystemManager->Pause(true);
-					ms_bIsFocused = false;
+					ShowCursor(TTRUE);
+					pSystemManager->Pause(TTRUE);
+					ms_bIsFocused = TFALSE;
 
 					SystemParametersInfoA(SPI_GETSTICKYKEYS, sizeof(STICKYKEYS), &ms_StickyKeys, 0);
 					return DefWindowProcA(hWnd, uMsg, wParam, lParam);;
@@ -339,17 +347,17 @@ namespace Toshi
 			}
 			break;
 		case WM_SETFOCUS:
-			window->m_bIsFocused = true;
-			ShowCursor(false);
-			pSystemManager->Pause(false);
+			window->m_bIsFocused = TTRUE;
+			ShowCursor(TFALSE);
+			pSystemManager->Pause(TFALSE);
 			return 1;
 		case WM_KILLFOCUS:
-			window->m_bIsFocused = false;
-			ShowCursor(true);
-			pSystemManager->Pause(true);
+			window->m_bIsFocused = TFALSE;
+			ShowCursor(TTRUE);
+			pSystemManager->Pause(TTRUE);
 			if (bLockCursor)
 			{
-				Toshi::TUtil::Log("Minimize window");
+				TUtil::Log("Minimize window");
 				ShowWindow(hWnd, SW_MINIMIZE);
 			}
 			return 1;

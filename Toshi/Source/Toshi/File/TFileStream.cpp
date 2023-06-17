@@ -11,17 +11,17 @@ namespace Toshi
 			do {
 				m_Jobs.Pop(&pJob);
 				pJob->Process();
-				pJob->m_bIsProcessed = true;
-			} while (pJob->m_pSemaphore == nullptr);
+				pJob->m_bIsProcessed = TTRUE;
+			} while (pJob->m_pSemaphore == TNULL);
 
 			pJob->m_pSemaphore->Signal();
 
-		} while (true);
+		} while (TTRUE);
 	}
 
 	void TFileStream::AddStream(TFileStreamJob* job)
 	{
-		job->m_bIsProcessed = false;
+		job->m_bIsProcessed = TFALSE;
 		m_Jobs.Push(&job);
 	}
 }

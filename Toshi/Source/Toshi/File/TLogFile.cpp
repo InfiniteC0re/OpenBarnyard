@@ -7,7 +7,7 @@ namespace Toshi
 	{
 		m_pFile = TNULL;
 		m_iTotalLogCount = 0;
-		m_bIsSimpleMode = false;
+		m_bIsSimpleMode = TFALSE;
 		m_curLevel = 0;
 		*m_LevelString = 0;
 		*m_typeCounts = 0;
@@ -15,7 +15,7 @@ namespace Toshi
 		m_unk3 = 0;
 	}
 
-	TLogFile::Error TLogFile::Create(const char* fileName, const char* str2, bool writeExisting)
+	TLogFile::Error TLogFile::Create(const char* fileName, const char* str2, TBOOL writeExisting)
 	{
 		TASSERT(TNULL == m_pFile);
 		

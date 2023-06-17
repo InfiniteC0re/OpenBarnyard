@@ -3,7 +3,7 @@
 
 namespace Toshi
 {
-    bool TFileManager::Create()
+    TBOOL TFileManager::Create()
     {
         CreateCommon();
         auto fileManager = TFileManager::GetSingleton();
@@ -21,7 +21,7 @@ namespace Toshi
 
         fileManager->SetSystemPath("local");
 
-        return true;
+        return TTRUE;
     }
 
 #pragma region TNativeFileSystem
@@ -53,18 +53,18 @@ namespace Toshi
         }
     }
 
-    bool TNativeFileSystem::MakeDirectory(TString8 const& string)
+    TBOOL TNativeFileSystem::MakeDirectory(TString8 const& string)
     {
         return CreateDirectoryA(string, TNULL);
     }
 
-    bool TNativeFileSystem::GetNextFile(TString8& fileName, uint32_t flags)
+    TBOOL TNativeFileSystem::GetNextFile(TString8& fileName, uint32_t flags)
     {
         WIN32_FIND_DATAA findFileData;
 
         if (m_Handle != INVALID_HANDLE_VALUE)
         {
-            bool bResult = FindNextFileA(m_Handle, &findFileData);
+            TBOOL bResult = FindNextFileA(m_Handle, &findFileData);
             if (!bResult)
             {
                 m_Handle = INVALID_HANDLE_VALUE;
@@ -74,17 +74,17 @@ namespace Toshi
                 if ((flags & 1) != 0)
                 {
                     fileName = findFileData.cFileName;
-                    return true;
+                    return TTRUE;
                 }
             }
             else if ((flags & 2) != 0)
             {
                 fileName = findFileData.cFileName;
-                return true;
+                return TTRUE;
             }
         }
 
-        return false;
+        return TFALSE;
     }
 
 #pragma endregion
@@ -99,7 +99,7 @@ namespace Toshi
         m_RBuffer = TNULL;
         m_WBuffer = TNULL;
         m_WriteBufferUsed = 0;
-        m_WriteBuffered = true;
+        m_WriteBuffered = TTRUE;
     }
 
     TNativeFile::TNativeFile(const TNativeFile& other) : TFile(other)
@@ -115,7 +115,7 @@ namespace Toshi
         m_WriteBuffered = other.m_WriteBuffered;
     }
 
-    bool TNativeFile::LoadBuffer(DWORD bufferPos)
+    TBOOL TNativeFile::LoadBuffer(DWORD bufferPos)
     {
         // FUN_00689ff0
         DWORD lpNumberOfBytesRead;
@@ -126,12 +126,12 @@ namespace Toshi
             if (m_RBufferPosition != bufferPos)
             {
                 m_RBufferPosition = SetFilePointer(m_Handle, bufferPos, TNULL, FILE_BEGIN);
-                if (m_RBufferPosition != bufferPos) return false;
+                if (m_RBufferPosition != bufferPos) return TFALSE;
             }
 
             if (ReadFile(m_Handle, m_RBuffer, BUFFER_SIZE, &lpNumberOfBytesRead, TNULL) == 0)
             {
-                return false;
+                return TFALSE;
             }
 
             m_RBufferPosition += lpNumberOfBytesRead;
@@ -139,7 +139,7 @@ namespace Toshi
             m_PrevBufferPos = bufferPos;
         }
 
-        return true;
+        return TTRUE;
     }
 
     int TNativeFile::FlushWriteBuffer()
@@ -281,7 +281,7 @@ namespace Toshi
             m_Position = m_RBufferPosition;
         }
 
-        if (m_WriteBuffered == false)
+        if (m_WriteBuffered == TFALSE)
         {
             DWORD written;
             BOOL bRes = WriteFile(m_Handle, buffer, size, &written, NULL);
@@ -332,7 +332,7 @@ namespace Toshi
         return m_Position;
     }
 
-    bool TNativeFile::Seek(int offset, TFile::TSEEK origin)
+    TBOOL TNativeFile::Seek(int offset, TFile::TSEEK origin)
     {
         FlushWriteBuffer();
 
@@ -350,7 +350,7 @@ namespace Toshi
             
             if (m_RBufferPosition == INVALID_SET_FILE_POINTER && GetLastError() != NO_ERROR)
             {
-                return false;
+                return TFALSE;
             }
 
             m_Position = m_RBufferPosition;
@@ -358,7 +358,7 @@ namespace Toshi
 
         if (m_Position < 0) m_Position = 0;
 
-        return true;
+        return TTRUE;
     }
 
     char TNativeFile::GetCChar()
@@ -452,7 +452,7 @@ namespace Toshi
         return fLastWriteTime;
     }
 
-    bool TNativeFile::Open(const TString8& a_FileName, FileMode a_Mode)
+    TBOOL TNativeFile::Open(const TString8& a_FileName, FileMode a_Mode)
     {
         TASSERT(a_FileName.IsIndexValid(0), "TNativeFile::Open - wrong filename");
 
@@ -482,21 +482,21 @@ namespace Toshi
 
             if (a_Mode & FileMode_NoBuffer)
             {
-                m_WriteBuffered = false;
+                m_WriteBuffered = TFALSE;
             }
             else
             {
                 m_RBuffer = (char*)TMalloc(BUFFER_SIZE);
                 m_WBuffer = (char*)TMalloc(BUFFER_SIZE);
-                m_WriteBuffered = true;
+                m_WriteBuffered = TTRUE;
             }
         }
         else
         {
-            return false;
+            return TFALSE;
         }
 
-        return true;
+        return TTRUE;
     }
 
     void TNativeFile::Close()

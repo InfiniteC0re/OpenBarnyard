@@ -3,18 +3,18 @@
 
 namespace Toshi
 {
-	typedef bool(*t_CanBreakBetweenChars)(wchar_t, wchar_t);
+	typedef TBOOL(*t_CanBreakBetweenChars)(wchar_t, wchar_t);
 
-	inline bool CanBreakBetweenChars_Default(wchar_t, wchar_t)
+	inline TBOOL CanBreakBetweenChars_Default(wchar_t, wchar_t)
 	{
 		TIMPLEMENT();
-		return false;
+		return TFALSE;
 	}
 
-	inline bool CanBreakBetweenChars_Japanese(wchar_t, wchar_t)
+	inline TBOOL CanBreakBetweenChars_Japanese(wchar_t, wchar_t)
 	{
 		TIMPLEMENT();
-		return false;
+		return TFALSE;
 	}
 
 	static t_CanBreakBetweenChars s_CanBreakBetweenChars = CanBreakBetweenChars_Default;

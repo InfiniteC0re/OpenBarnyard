@@ -41,6 +41,6 @@ private:
 	Toshi::T2GUITransform* m_pTransforms;
 	size_t m_iTransformStackPointer;
 	uint32_t m_ui32Colour;
-	bool m_bIsInScene;
+	TBOOL m_bIsInScene;
 	Toshi::T2GUIMaterial* m_pMaterial;
 };

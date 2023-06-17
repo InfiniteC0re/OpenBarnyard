@@ -28,7 +28,7 @@ enum XUI_ELEMENT_PROPERTY_TYPE
 	XUI_EPT_UINT8
 };
 
-typedef bool XUIEPTBool;
+typedef TBOOL XUIEPTBool;
 typedef int32_t XUIEPTInteger;
 typedef uint32_t XUIEPTUnsigned;
 typedef float XUIEPTFloat;

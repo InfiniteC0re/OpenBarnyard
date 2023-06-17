@@ -20,9 +20,9 @@ namespace Toshi
 		TFree(ptr);
 	}
 
-	bool T2GlobalAllocator::CanAllocate(int unk)
+	TBOOL T2GlobalAllocator::CanAllocate(int unk)
 	{
-		return true;
+		return TTRUE;
 	}
 
 	void* T2GlobalAllocator::TryMalloc(size_t size)

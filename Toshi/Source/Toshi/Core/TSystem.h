@@ -15,9 +15,9 @@ namespace Toshi
 	
 		void Update();
 
-		bool Pause(bool pause)
+		TBOOL Pause(TBOOL pause)
 		{
-			bool oldState = m_Paused;
+			TBOOL oldState = m_Paused;
 
 			m_Paused = pause;
 			m_Emitter.Throw(&pause);
@@ -41,7 +41,7 @@ namespace Toshi
 		}
 
 	public:
-		static bool Create();
+		static TBOOL Create();
 		static TCStringPool* CreateCStringPoolExplicit(int unk, int unk2);
 		static TCStringPool* CreateCStringPoolExplicit(const char* a_szFileName, int unk, int unk2);
 
@@ -49,16 +49,16 @@ namespace Toshi
 		static inline Toshi::TCStringPool* ms_poTCStringPool = TNULL;
 
 	private:
-		TEmitter<TSystemManager, bool> m_Emitter; // 0x00
+		TEmitter<TSystemManager, TBOOL> m_Emitter; // 0x00
 		TScheduler* m_Scheduler;
-		bool m_Paused;
+		TBOOL m_Paused;
 		uint32_t m_Unk2;
 		THPTimer m_Timer;
 		uint32_t m_Unk3;
 		float m_Second;
 		float m_AverageFps;
 		uint32_t m_FrameCount;
-		bool m_Unk7;
+		TBOOL m_Unk7;
 	};
 }
 

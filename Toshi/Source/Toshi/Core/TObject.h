@@ -14,17 +14,17 @@ namespace Toshi
 		virtual void Delete() { delete this; };
 		virtual ~TObject() = default;
 
-		static TObject* CreateTObject() { return nullptr; } 
-		static TObject* CreateTObjectInPlace(void* ptr) { return nullptr; }
+		static TObject* CreateTObject() { return TNULL; } 
+		static TObject* CreateTObjectInPlace(void* ptr) { return TNULL; }
 
-		bool IsExactly(TClass* pClass) { return GetClass() == pClass; }
-		bool IsA(TClass* pClass) { return GetClass()->IsA(pClass); }
+		TBOOL IsExactly(TClass* pClass) { return GetClass() == pClass; }
+		TBOOL IsA(TClass* pClass) { return GetClass()->IsA(pClass); }
 	
 	public:
 		static constinit TClass s_Class;
 	};
 
-	template<class T, class Parent, STL::StringLiteral Name, uint32_t Version, bool Instantiable>
+	template<class T, class Parent, STL::StringLiteral Name, uint32_t Version, TBOOL Instantiable>
 	class TGenericClassDerived : public Parent
 	{
 	public:
@@ -36,13 +36,13 @@ namespace Toshi
 		static TObject* CreateTObject()
 		{
 			if constexpr (Instantiable) { return new T(); }
-			else { return nullptr; }
+			else { return TNULL; }
 		}
 
 		static TObject* CreateTObjectInPlace(void* ptr)
 		{
 			if constexpr (Instantiable) { return new (ptr) T(); }
-			else { return nullptr; }
+			else { return TNULL; }
 		}
 
 		static TClass* GetClassStatic()
@@ -54,7 +54,7 @@ namespace Toshi
 		static TClass s_Class;
 	};
 
-	template <class T, class Parent, STL::StringLiteral Name, uint32_t Version, bool Instantiable>
+	template <class T, class Parent, STL::StringLiteral Name, uint32_t Version, TBOOL Instantiable>
 	TClass TGenericClassDerived<T, Parent, Name, Version, Instantiable>::s_Class = TClass(Name.value, &Parent::s_Class, Version, sizeof(T), T::CreateTObject, T::CreateTObjectInPlace, 0, 0);
 }
 

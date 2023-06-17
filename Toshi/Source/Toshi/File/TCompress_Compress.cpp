@@ -80,7 +80,7 @@ namespace Toshi
         return writtenSize;
     }
 
-    size_t TCompress_Compress::Compress(TFile* file, char* buffer, uint32_t size, uint32_t unused, bool isBigEndian)
+    size_t TCompress_Compress::Compress(TFile* file, char* buffer, uint32_t size, uint32_t unused, TBOOL isBigEndian)
     {
         BTECCompressor compressor;
 
@@ -103,9 +103,9 @@ namespace Toshi
 
             char* offset = TNULL;
             size_t dataSize = 0;
-            bool hasOffset = compressor.FUN_0068af10(bufferPos, uncompressedLeft, offset, dataSize);
+            TBOOL hasOffset = compressor.FUN_0068af10(bufferPos, uncompressedLeft, offset, dataSize);
 
-            if (hasOffset == false || dataSize < 3)
+            if (hasOffset == TFALSE || dataSize < 3)
             {
                 dataSize = 1;
                 

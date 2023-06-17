@@ -8,7 +8,7 @@
 namespace Toshi {
 	
 	class TSysShaderHAL :
-		public TGenericClassDerived<TSysShaderHAL, TSysShader, "TSysShaderHAL", TMAKEVERSION(1, 0), false>
+		public TGenericClassDerived<TSysShaderHAL, TSysShader, "TSysShaderHAL", TMAKEVERSION(1, 0), TFALSE>
 	{
 	public:
 		struct OrderTablePriorities

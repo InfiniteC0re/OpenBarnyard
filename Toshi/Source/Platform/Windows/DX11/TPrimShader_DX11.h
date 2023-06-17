@@ -39,7 +39,7 @@ namespace Toshi
 		void Initialize();
 		void Destroy();
 
-		bool AddMesh();
+		TBOOL AddMesh();
 		void AddVert();
 
 		void Unlock();
@@ -103,8 +103,8 @@ namespace Toshi
 		UINT m_uiNumDrawnFrames;
 		UINT m_uiNumUsedVerts;
 		Vertex* m_pCurrentVertex;
-		bool m_bIsLocked;
-		bool m_bIsRendering;
+		TBOOL m_bIsLocked;
+		TBOOL m_bIsRendering;
 		PrimType m_ePrimType;
 		BlendMode m_eBlendMode;
 		TTexture* m_pImage;

@@ -6,13 +6,13 @@ namespace Toshi
 	TString16::TString16()
 	{
 		Reset();
-		AllocBuffer(0, true);
+		AllocBuffer(0, TTRUE);
 	}
 
 	TString16::TString16(uint32_t size)
 	{
 		Reset();
-		AllocBuffer(size, true);
+		AllocBuffer(size, TTRUE);
 	}
 
 	TString16& TString16::Concat(const TString16& str, uint32_t size)
@@ -27,7 +27,7 @@ namespace Toshi
 		uint32_t oldLength = m_iStrLen;
 		wchar_t* oldString = m_pBuffer;
 
-		bool allocated = AllocBuffer(m_iStrLen + size, false);
+		TBOOL allocated = AllocBuffer(m_iStrLen + size, TFALSE);
 
 		if (allocated)
 		{
@@ -61,7 +61,7 @@ namespace Toshi
 		uint32_t oldLength = m_iStrLen;
 		wchar_t* oldString = m_pBuffer;
 
-		bool allocated = AllocBuffer(m_iStrLen + size, false);
+		TBOOL allocated = AllocBuffer(m_iStrLen + size, TFALSE);
 
 		if (allocated)
 		{
@@ -83,9 +83,9 @@ namespace Toshi
 		return *this;
 	}
 
-	bool TString16::AllocBuffer(uint32_t a_iLength, bool freeMemory)
+	TBOOL TString16::AllocBuffer(uint32_t a_iLength, TBOOL freeMemory)
 	{
-		bool hasChanged = false;
+		TBOOL hasChanged = TFALSE;
 		uint32_t currentLength = Length();
 
 		TASSERT(a_iLength >= 0, "Length can't be less than 0");
@@ -100,7 +100,7 @@ namespace Toshi
 				m_pBuffer = m_aNull;
 				m_iExcessLen = 0;
 
-				hasChanged = true;
+				hasChanged = TTRUE;
 			}
 			else
 			{
@@ -116,12 +116,12 @@ namespace Toshi
 					m_pBuffer = (wchar_t*)TMalloc((a_iLength + 1) * 2);
 					m_iExcessLen = 0;
 
-					hasChanged = true;
+					hasChanged = TTRUE;
 				}
 				else
 				{
 					m_iExcessLen = newExcessLen;
-					hasChanged = false;
+					hasChanged = TFALSE;
 				}
 			}
 
@@ -161,7 +161,7 @@ namespace Toshi
 
 		if (srcLen < size || size == -1) { size = srcLen; }
 
-		AllocBuffer(size, true);
+		AllocBuffer(size, TTRUE);
 		TUtil::MemCopy(m_pBuffer, src, size);
 		m_pBuffer[size] = 0;
 	}

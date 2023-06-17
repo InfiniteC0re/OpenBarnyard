@@ -17,7 +17,7 @@ ATestModel::ATestModel()
     Toshi::TAssetInit assetInit;
 
     m_AssetTRB.Load("Data\\LEVELS\\PRODUCTION\\Singleplayer\\Abyss\\RegionAssets.trb");
-    assetInit.InitAssets(m_AssetTRB, true, false);
+    assetInit.InitAssets(m_AssetTRB, TTRUE, TFALSE);
 
     CreateCube();
     CreatePlane();
@@ -25,22 +25,20 @@ ATestModel::ATestModel()
 
 void ATestModel::Render(float deltaTime)
 {
-    m_Camera.Render();
-
     auto pRenderContext = Toshi::TRender::GetSingletonWeak()->GetCurrentRenderContext();
 
     Toshi::TMatrix44 modelView;
-    modelView.Identity();
+    Toshi::TMatrix44 worldView = pRenderContext->GetModelViewMatrix();
 
-    modelView = DirectX::XMMatrixRotationY(m_CubeRotation) * DirectX::XMMatrixTranslation(0, 0, 6) * modelView.XMM();
+    modelView = DirectX::XMMatrixRotationY(m_CubeRotation) * DirectX::XMMatrixTranslation(0, 0, 6) * worldView.XMM();
     pRenderContext->SetModelViewMatrix(modelView);
-    
+
     m_pCube->Render();
     m_CubeRotation += deltaTime;
 
-    modelView.Identity();
-    modelView = DirectX::XMMatrixScaling(10, 1, 10) * DirectX::XMMatrixTranslation(0, 0.01f, 6) * modelView.XMM();
+    modelView = DirectX::XMMatrixScaling(10, 1, 10) * DirectX::XMMatrixTranslation(0, 0.01f, 6) * worldView.XMM();
     pRenderContext->SetModelViewMatrix(modelView);
+
     m_pPlane->Render();
 }
 

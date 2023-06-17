@@ -8,7 +8,7 @@ namespace Toshi
 	public:
 		TMutexLock()
 		{
-			m_Mutex = nullptr;
+			m_Mutex = TNULL;
 		}
 
 		TMutexLock(TMutex& mutex)
@@ -39,7 +39,7 @@ namespace Toshi
 			if (m_Mutex)
 			{
 				m_Mutex->Unlock();
-				m_Mutex = nullptr;
+				m_Mutex = TNULL;
 			}
 		}
 

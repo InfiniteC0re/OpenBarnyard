@@ -81,7 +81,7 @@ AGameState::UpdateResult AFrontEndMovieState::OnUpdate(float deltaTime)
         if (HasMovieStopped())
         {
             StopMovieIfPlaying();
-            m_bSkip = false;
+            m_bSkip = TFALSE;
             TIMPLEMENT_D("Start Rendering Frontend menu");
         }
         break;
@@ -141,7 +141,7 @@ void AFrontEndMovieState::OnActivate()
     pRootElement->GetDimensions(fWidth, fHeight);
     m_Background.SetDimensions(fWidth, fHeight);
 
-    AApplication::g_oTheApp.SetRenderWorld(false);
+    AApplication::g_oTheApp.SetRenderWorld(TFALSE);
 }
 
 void AFrontEndMovieState::OnDeactivate()
@@ -155,10 +155,10 @@ void AFrontEndMovieState::OnDeactivate()
     }
 
     m_Background.Unlink();
-    AApplication::g_oTheApp.SetRenderWorld(true);
+    AApplication::g_oTheApp.SetRenderWorld(TTRUE);
 }
 
-bool AFrontEndMovieState::HasBackgroundStoppedShowing()
+TBOOL AFrontEndMovieState::HasBackgroundStoppedShowing()
 {
     switch (m_iAssetId)
     {
@@ -167,13 +167,13 @@ bool AFrontEndMovieState::HasBackgroundStoppedShowing()
     case Asset_Intro:
         if (m_bSkip)
         {
-            return true;
+            return TTRUE;
         }
     }
     return m_fUnknown <= 0.0f;
 }
 
-bool AFrontEndMovieState::HasMovieStopped()
+TBOOL AFrontEndMovieState::HasMovieStopped()
 {
     switch (m_iAssetId)
     {
@@ -182,7 +182,7 @@ bool AFrontEndMovieState::HasMovieStopped()
     case Asset_Intro:
         if (m_bSkip)
         {
-            return true;
+            return TTRUE;
         }
     }
     return !AMoviePlayer::GetSingletonWeak()->IsMoviePlaying();
@@ -208,7 +208,7 @@ void AFrontEndMovieState::StartMovie(Asset assetId)
 
     m_iAssetId = assetId;
     m_fUnknown = 5.0f;
-    m_bSkip = false;
+    m_bSkip = TFALSE;
     m_Background.SetVisible(TFALSE);
     pPlayer->PlayMovie(s_Assets[assetId], 0, 0);
 }

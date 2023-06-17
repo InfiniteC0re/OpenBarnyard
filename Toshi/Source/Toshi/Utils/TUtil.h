@@ -32,7 +32,7 @@ namespace Toshi
 			util->m_pLogFile2->Up();
 		}
 
-		static bool ToshiCreate(int argc, char** argv, TMemory& memorySettings);
+		static TBOOL ToshiCreate(int argc, char** argv, TMemory& memorySettings);
 		
 		static void ToshiDestroy()
 		{
@@ -60,7 +60,7 @@ namespace Toshi
 		
 		static const char* GetTime();
 		static void TrimLog(const char* fileExtension, size_t trimTo);
-		//static uint64_t GetUnixSeconds(uint64_t* pOut = nullptr);
+		//static uint64_t GetUnixSeconds(uint64_t* pOut = TNULL);
 		static void MemSet(void* ptr, size_t value, size_t size);
 		
 		static void* MemCopy(void* dst, const void* src, size_t size)

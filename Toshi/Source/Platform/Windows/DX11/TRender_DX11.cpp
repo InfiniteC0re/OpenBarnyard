@@ -8,7 +8,7 @@
 namespace Toshi
 {
 	UINT TRenderDX11::s_QualityLevel = 1;
-	bool TRenderDX11::s_bPresentTest = TFALSE;
+	TBOOL TRenderDX11::s_bPresentTest = TFALSE;
 	TMemoryHeap* TRenderDX11::s_pMemHeap = TNULL;
 	ID3D11ShaderResourceView* TRenderDX11::s_pShaderResourceView = TNULL;
 
@@ -37,7 +37,7 @@ namespace Toshi
 		return m_Description.Height;
 	}
 
-	bool TD3DAdapter::Mode::SomeCheck1() const
+	TBOOL TD3DAdapter::Mode::SomeCheck1() const
 	{
 		DXGI_FORMAT format = m_Description.Format;
 
@@ -47,7 +47,7 @@ namespace Toshi
 		);
 	}
 
-	bool TD3DAdapter::Mode::SomeCheck2() const
+	TBOOL TD3DAdapter::Mode::SomeCheck2() const
 	{
 		DXGI_FORMAT format = m_Description.Format;
 
@@ -82,11 +82,11 @@ namespace Toshi
 		displaySettings.dmSize = sizeof(displaySettings);
 		EnumDisplaySettingsA(monitorInfo.szDevice, ENUM_CURRENT_SETTINGS, &displaySettings);
 
-		bool defaultRefreshRate = false;
+		TBOOL defaultRefreshRate = TFALSE;
 
 		if (displaySettings.dmDisplayFrequency == 1 || displaySettings.dmDisplayFrequency == 0)
 		{
-			defaultRefreshRate = true;
+			defaultRefreshRate = TTRUE;
 			displaySettings.dmDisplayFrequency = 0;
 		}
 
@@ -96,14 +96,14 @@ namespace Toshi
 		matchMode.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 		matchMode.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
 		matchMode.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
-		matchMode.RefreshRate.Denominator = (defaultRefreshRate == true) ? 0 : 1;
+		matchMode.RefreshRate.Denominator = (defaultRefreshRate == TTRUE) ? 0 : 1;
 		matchMode.RefreshRate.Numerator = displaySettings.dmDisplayFrequency;
 
 		dxgiOutput->FindClosestMatchingMode(&matchMode, modeDesc, NULL);
 	}
 
 	TRenderDX11::TRenderDX11() :
-		m_DisplayParams{ 1280, 720, 32, 3, true, false, 1 },
+		m_DisplayParams{ 1280, 720, 32, 3, TTRUE, TFALSE, 1 },
 		m_Window(),
 		m_CurrentDepth({ 0 }, 0)
 	{
@@ -152,7 +152,7 @@ namespace Toshi
 		TTODO("Some other initializations");
 	}
 
-	bool TRenderDX11::CreateDisplay(DisplayParams* pDisplayParams)
+	TBOOL TRenderDX11::CreateDisplay(DisplayParams* pDisplayParams)
 	{
 		TASSERT(IsCreated() == TTRUE);
 		TASSERT(IsDisplayCreated() == TFALSE);
@@ -160,7 +160,7 @@ namespace Toshi
 		if (TRender::CreateDisplay() == TFALSE)
 		{
 			ShowDisplayError();
-			return false;
+			return TFALSE;
 		}
 
 		m_DisplayParams = *pDisplayParams;
@@ -202,7 +202,7 @@ namespace Toshi
 
 		DXGI_MODE_DESC* pSelectedMode;
 
-		if (m_DisplayParams.IsFullscreen == false)
+		if (m_DisplayParams.IsFullscreen == TFALSE)
 		{
 			pSelectedMode = mode->GetDescription();
 			foundMode.Format = pSelectedMode->Format;
@@ -271,7 +271,7 @@ namespace Toshi
 
 		m_DisplayHeight = m_DisplayParams.Height;
 		m_DisplayWidth = m_DisplayParams.Width;
-		m_IsWidescreen = true;
+		m_IsWidescreen = TTRUE;
 
 		// expectedWidth is the width expected for 16:9 screen
 		UINT expectedWidth = (m_DisplayHeight / 9) * 16;
@@ -340,7 +340,7 @@ namespace Toshi
 				qualityLevel = 4;
 			}
 
-			bool isMultisampleSet = false;
+			TBOOL isMultisampleSet = TFALSE;
 			for (UINT level = qualityLevel; 1 < qualityLevel; qualityLevel /= 2)
 			{
 				UINT numQualityLevels;
@@ -349,7 +349,7 @@ namespace Toshi
 				if (hRes != S_OK && numQualityLevels != 0)
 				{
 					m_DisplayParams.MultisampleQualityLevel = level;
-					isMultisampleSet = true;
+					isMultisampleSet = TTRUE;
 					break;
 				}
 			}
@@ -442,9 +442,9 @@ namespace Toshi
 
 		SetCursorPos(centerX + m_DisplayParams.Width / 2, centerY + m_DisplayParams.Height / 2);
 
-		if (m_DisplayParams.Unk5 == false)
+		if (m_DisplayParams.Unk5 == TFALSE)
 		{
-			ShowCursor(false);
+			ShowCursor(TFALSE);
 		}
 
 		Initialize();
@@ -468,7 +468,7 @@ namespace Toshi
 		
 		CreateVSPS();
 
-		return true;
+		return TTRUE;
 	}
 
 	void TRenderDX11::Update(float deltaTime)
@@ -506,7 +506,7 @@ namespace Toshi
 
 		m_NumDrawnFrames += 1;
 
-		if (m_IsWidescreen == false)
+		if (m_IsWidescreen == TFALSE)
 		{
 			if (m_DisplayParams.MultisampleQualityLevel < 2)
 			{
@@ -591,9 +591,9 @@ namespace Toshi
 			}
 			else if(hRes == DXGI_STATUS_OCCLUDED)
 			{
-				s_bPresentTest = true;
+				s_bPresentTest = TTRUE;
 				TOSHI_CORE_ERROR("Pausing Occluded!");
-				TSystemManager::GetSingletonWeak()->Pause(true);
+				TSystemManager::GetSingletonWeak()->Pause(TTRUE);
 			}
 		}
 
@@ -601,7 +601,7 @@ namespace Toshi
 		TRender::EndScene();
 	}
 
-	bool TRenderDX11::RecreateDisplay(DisplayParams* pDisplayParams)
+	TBOOL TRenderDX11::RecreateDisplay(DisplayParams* pDisplayParams)
 	{
 		TASSERT(TTRUE == IsCreated());
 		TASSERT(TTRUE == IsDisplayCreated());
@@ -609,7 +609,7 @@ namespace Toshi
 		TTODO("FUN_006a7a30");
 
 		DestroyDisplay();
-		bool bRes = CreateDisplay(pDisplayParams);
+		TBOOL bRes = CreateDisplay(pDisplayParams);
 		TASSERT(bRes);
 
 		return TTRUE == bRes;
@@ -695,11 +695,11 @@ namespace Toshi
 		m_pDevice->CreateBuffer(&bufferDesc, &vertexData, &m_pQuarterScreenQuadBuffer);
 	}
 
-	bool TRenderDX11::Create(LPCSTR a_name)
+	TBOOL TRenderDX11::Create(LPCSTR a_name)
 	{
 		// 006a5e30
 		TASSERT(TFALSE == IsCreated());
-		bool bResult = TRender::Create();
+		TBOOL bResult = TRender::Create();
 
 		if (bResult)
 		{
@@ -737,13 +737,13 @@ namespace Toshi
 			if (m_Window.Create(this, a_name))
 			{
 				m_eAspectRatio = ASPECT_RATIO_16_9;
-				return true;
+				return TTRUE;
 			}
 
 			TUtil::Log("Failed to create Window");
 		}
 
-		return false;
+		return TFALSE;
 	}
 
 	void TRenderDX11::Initialize()
@@ -857,7 +857,7 @@ namespace Toshi
 		m_CurrentRasterizerId.SlopeScaledDepthBias = 0.0f;
 	}
 
-	bool TRenderDX11::IsColorEqual(const FLOAT a_Vec41[4], const FLOAT a_Vec42[4])
+	TBOOL TRenderDX11::IsColorEqual(const FLOAT a_Vec41[4], const FLOAT a_Vec42[4])
 	{
 		return (a_Vec41[0] == a_Vec42[0]) && (a_Vec41[1] == a_Vec42[1]) && (a_Vec41[2] == a_Vec42[2]) && (a_Vec41[3] == a_Vec42[3]);
 	}
@@ -997,7 +997,7 @@ namespace Toshi
 
 		TASSERT(offset + size <= VERTEX_CONSTANT_BUFFER_SIZE, "Buffer size exceeded");
 		TUtil::MemCopy((char*)m_pVertexConstantBuffer + offset, src, size);
-		m_IsVertexConstantBufferSet = true;
+		m_IsVertexConstantBufferSet = TTRUE;
 	}
 
 	void TRenderDX11::SetVec4InPSBuffer(BufferOffset index, const void* src, int count)
@@ -1007,7 +1007,7 @@ namespace Toshi
 			
 		TASSERT(offset + size <= PIXEL_CONSTANT_BUFFER_SIZE, "Buffer size exceeded");
 		TUtil::MemCopy((char*)m_pPixelConstantBuffer + offset, src, size);
-		m_IsPixelConstantBufferSet = true;
+		m_IsPixelConstantBufferSet = TTRUE;
 	}
 
 	HRESULT TRenderDX11::CreatePixelShader(const void* pShaderBytecode, SIZE_T BytecodeLength, ID3D11PixelShader** ppPixelShader)
@@ -1032,22 +1032,22 @@ namespace Toshi
 		D3D11_TEXTURE2D_DESC textureDesc = { };
 
 		UINT numberOfMipmaps = 0;
-		bool noMipLevels;
-		bool doScaryThings = true;
+		TBOOL noMipLevels;
+		TBOOL doScaryThings = TTRUE;
 
 		if (flags & 1 || (flags & 2) == 0)
 		{
-			noMipLevels = false;
+			noMipLevels = TFALSE;
 
 			if ((flags & 1) == 0)
 			{
 				numberOfMipmaps = 1;
-				doScaryThings = false;
+				doScaryThings = TFALSE;
 			}
 		}
 		else
 		{
-			noMipLevels = true;
+			noMipLevels = TTRUE;
 		}
 
 		if (doScaryThings)
@@ -1082,7 +1082,7 @@ namespace Toshi
 		}
 		else
 		{
-			if (noMipLevels == false)
+			if (noMipLevels == TFALSE)
 			{
 				TASSERT(numberOfMipmaps <= MAXIMUM_NUMBER_OF_MIPMAPS);
 
@@ -1120,7 +1120,7 @@ namespace Toshi
 			ID3D11ShaderResourceView* pShaderResourceView = TNULL;
 			m_pDevice->CreateShaderResourceView(pTexture, &shaderResourceViewDesc, &pShaderResourceView);
 
-			if (pShaderResourceView != TNULL && noMipLevels == false)
+			if (pShaderResourceView != TNULL && noMipLevels == TFALSE)
 			{
 				m_pDeviceContext->GenerateMips(pShaderResourceView);
 			}
@@ -1261,7 +1261,7 @@ namespace Toshi
 		}
 	}
 
-	void TRenderDX11::SetBlendMode(bool blendEnabled, D3D11_BLEND_OP blendOp, D3D11_BLEND srcBlendAlpha, D3D11_BLEND destBlendAlpha)
+	void TRenderDX11::SetBlendMode(TBOOL blendEnabled, D3D11_BLEND_OP blendOp, D3D11_BLEND srcBlendAlpha, D3D11_BLEND destBlendAlpha)
 	{
 		m_CurrentBlendState.Parts.BlendOp = blendOp;
 		m_CurrentBlendState.Parts.bBlendEnabled = blendEnabled;
@@ -1276,7 +1276,7 @@ namespace Toshi
 		}
 	}
 
-	void TRenderDX11::SetAlphaUpdate(bool update)
+	void TRenderDX11::SetAlphaUpdate(TBOOL update)
 	{
 		if (update)
 		{
@@ -1288,7 +1288,7 @@ namespace Toshi
 		}
 	}
 
-	void TRenderDX11::SetColorUpdate(bool update)
+	void TRenderDX11::SetColorUpdate(TBOOL update)
 	{
 		if (update)
 		{
@@ -1300,7 +1300,7 @@ namespace Toshi
 		}
 	}
 
-	void TRenderDX11::SetZMode(bool depthEnable, D3D11_COMPARISON_FUNC comparisonFunc, D3D11_DEPTH_WRITE_MASK depthWriteMask)
+	void TRenderDX11::SetZMode(TBOOL depthEnable, D3D11_COMPARISON_FUNC comparisonFunc, D3D11_DEPTH_WRITE_MASK depthWriteMask)
 	{
 		m_CurrentDepth.m_First.Parts.bDepthEnable = depthEnable;
 		m_CurrentDepth.m_First.Parts.DepthWriteMask = depthWriteMask;
@@ -1689,7 +1689,7 @@ namespace Toshi
 			scaleTranslate.w = 0.0F;
 		}
 		
-		pRender->m_IsVertexConstantBufferSet = true;
+		pRender->m_IsVertexConstantBufferSet = TTRUE;
 		pRender->SetVec4InVSBuffer(VSBufferOffset_V4UVST, uvVec, 1);
 
 		UINT stride = 20;
@@ -1713,7 +1713,7 @@ namespace Toshi
 			m_pDeviceContext->Map(m_VertexBuffers[m_VertexBufferIndex], 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubresources);
 			memcpy(mappedSubresources.pData, m_pVertexConstantBuffer, VERTEX_CONSTANT_BUFFER_SIZE);
 			m_pDeviceContext->Unmap(m_VertexBuffers[m_VertexBufferIndex], 0);
-			m_IsVertexConstantBufferSet = false;
+			m_IsVertexConstantBufferSet = TFALSE;
 		}
 
 		if (m_IsPixelConstantBufferSet)
@@ -1722,7 +1722,7 @@ namespace Toshi
 			m_pDeviceContext->Map(m_PixelBuffers[m_PixelBufferIndex], 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubresources);
 			memcpy(mappedSubresources.pData, m_pPixelConstantBuffer, PIXEL_CONSTANT_BUFFER_SIZE);
 			m_pDeviceContext->Unmap(m_PixelBuffers[m_PixelBufferIndex], 0);
-			m_IsPixelConstantBufferSet = false;
+			m_IsPixelConstantBufferSet = TFALSE;
 		}
 
 		m_pDeviceContext->VSSetConstantBuffers(0, 1, &m_VertexBuffers[m_VertexBufferIndex]);
@@ -1774,7 +1774,7 @@ namespace Toshi
 	void TD3DAdapter::EnumerateOutputs(TRenderDX11* render, IDXGIAdapter* dxgiAdapter)
 	{
 		IDXGIOutput* dxgiOutput;
-		bool shouldSaveMonitorData = true;
+		TBOOL shouldSaveMonitorData = TTRUE;
 		GetModeList()->DeleteAll();
 
 		int displayIndex = 0;
@@ -1801,12 +1801,12 @@ namespace Toshi
 			{
 				TD3DAdapter::Mode::GetDisplayMode(dxgiOutput, &modeDesc);
 
-				if (shouldSaveMonitorData == true)
+				if (shouldSaveMonitorData == TTRUE)
 				{
 					m_Mode.SetAdapter(this);
 					m_Mode.SetDescription(modeDesc);
 					m_Mode.SetName(outputDesc.DeviceName);
-					shouldSaveMonitorData = false;
+					shouldSaveMonitorData = TFALSE;
 				}
 
 				DXGI_MODE_DESC* descriptions = new DXGI_MODE_DESC[numModes];

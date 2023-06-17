@@ -1,76 +1,23 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "ALocaleManager.h"
 
-static constexpr const char* m_pLangDataFileNames[] =
-{
-        "Data/Locale/eng.trb",
-        "Data/Locale/eng-uk.trb",
-        "Data/Locale/ned.trb",
-        "Data/Locale/ger.trb",
-        "Data/Locale/ita.trb",
-        "Data/Locale/spa.trb",
-        "Data/Locale/las.trb",
-        "Data/Locale/fre.trb",
-        "Data/Locale/dan.trb",
-        "Data/Locale/nor.trb",
-        "Data/Locale/swe.trb",
-        "Data/Locale/fin.trb",
-        "Data/Locale/jpn.trb",
-        "Data/Locale/kor.trb",
-        "Data/Locale/pt-br.trb",
-        "Data/Locale/zh.trb",
-};
-
-static constexpr const char* s_LocaleFormatFiles[] =
-{
-        "Data/Locale/format_eng.trb",
-        "Data/Locale/format_eng-uk.trb",
-        "Data/Locale/format_ned.trb",
-        "Data/Locale/format_ger.trb",
-        "Data/Locale/format_ita.trb",
-        "Data/Locale/format_spa.trb",
-        "Data/Locale/format_las.trb",
-        "Data/Locale/format_fre.trb",
-        "Data/Locale/format_dan.trb",
-        "Data/Locale/format_nor.trb",
-        "Data/Locale/format_swe.trb",
-        "Data/Locale/format_fin.trb",
-        "Data/Locale/format_jpn.trb",
-        "Data/Locale/format_kor.trb",
-        "Data/Locale/format_pt-br.trb",
-        "Data/Locale/format_zh.trb",
-};
-
-// 00981a20
-constinit ALocaleManager::Platform ALocaleManager::s_Platform = Platform_PC;
-
-static constexpr int32_t LOCALE_LANG_INVALID = -1;
-static constexpr int32_t LOCALE_LANG_NUMOF = sizeof(m_pLangDataFileNames) / sizeof(*m_pLangDataFileNames);
-static constexpr int32_t LOCALE_FORMAT_LANG_NUMOF = sizeof(s_LocaleFormatFiles) / sizeof(*s_LocaleFormatFiles);
-
-static_assert(LOCALE_FORMAT_LANG_NUMOF == LOCALE_LANG_NUMOF);
+using namespace Toshi;
 
 void ALocaleManager::Create()
 {
-    TASSERT(T2Locale::s_Singleton == TNULL, "T2Locale is already created");
-
-    auto localeManager = new ALocaleManager();
+    auto localeManager = ALocaleManager::CreateSingleton<ALocaleManager>();
 
     auto langid = GetOSLanguage();
     localeManager->SetLanguage(langid);
-
-    T2Locale::s_Singleton = localeManager;
 }
 
 void ALocaleManager::Destroy()
 {
-    if (T2Locale::s_Singleton != TNULL)
-    {
-        delete T2Locale::s_Singleton;
-    }
+    if (T2Locale::ms_pSingleton != TNULL)
+        delete T2Locale::GetSingletonWeak();
 }
 
-const char* ALocaleManager::GetLocaleCode(int code)
+const char* ALocaleManager::GetLocaleCode(Lang code)
 {
     switch (code)
     {
@@ -109,7 +56,7 @@ const char* ALocaleManager::GetLocaleCode(int code)
     }
 }
 
-const char* ALocaleManager::GetVOLocaleCode(int code)
+const char* ALocaleManager::GetVOLocaleCode(Lang code)
 {
     switch (code) {
     case 2:
@@ -125,7 +72,7 @@ const char* ALocaleManager::GetVOLocaleCode(int code)
     }
 }
 
-int ALocaleManager::GetSoundChannel(int code)
+int ALocaleManager::GetSoundChannel(Lang code)
 {
     if (code == 2) {
         return 3;
@@ -139,12 +86,12 @@ int ALocaleManager::GetSoundChannel(int code)
     return 1;
 }
 
-ALocaleManager::ALocaleManager() : T2Locale(LOCALE_LANG_NUMOF, 0x64000, nullptr)
+ALocaleManager::ALocaleManager() :
+    m_pLocaleBuffer(TMalloc(BUFFER_SIZE)),
+    T2Locale(LOCALE_LANG_NUMOF, BUFFER_SIZE, m_pLocaleBuffer)
 {
-    // 005e1ca0
-    m_LocaleBuffer = T2Locale::m_Buffer;
-    setlocale(LC_ALL, "");
-    TTODO("de blob: FUN_005e2470");
+    m_Format.SetMemoryFunctions(TRBAllocator, TRBDeallocator, this);
+    InitialiseOverrideTexts();
 }
 
 const char* ALocaleManager::GetLanguageFilename(int32_t langid)
@@ -158,7 +105,7 @@ const char* ALocaleManager::GetLanguageFilename(int32_t langid)
 
 void ALocaleManager::SetLanguage(Lang langid)
 {
-    bool changeLang = langid != m_LangId;
+    TBOOL changeLang = langid != m_LangId;
 
     if (changeLang)
     {
@@ -168,14 +115,41 @@ void ALocaleManager::SetLanguage(Lang langid)
         {
             m_Format.Load(s_LocaleFormatFiles[langid]);
             m_LocaleFormat = m_Format.CastSymbol<LocaleFormat>("LocaleFormat");
-            TTODO("reverse LocaleFormat symbol");
         }
     }
 
     T2Locale::SetLanguage(langid);
 }
 
-int ALocaleManager::FixStringIdPlatform(int stringid)
+ALocaleManager::LocaleString ALocaleManager::GetString(LocaleId stringid)
+{
+    TASSERT(stringid >= 0 && stringid < m_StringTable->m_numstrings);
+    stringid = FixStringIdPlatform(stringid);
+
+    LocaleString overrideString = GetOverwrittenLocaleString(stringid, m_LangId);
+    return (overrideString == TNULL) ? m_StringTable->Strings[stringid] : overrideString;
+}
+
+ALocaleManager::LocaleString ALocaleManager::GetOverwrittenFormatString(LocaleId stringid, LocaleString fallbackString)
+{
+    LocaleString resultString = fallbackString;
+
+    if (m_LangId != -1)
+    {
+        auto foundString = FindOverwrittenFormatString(stringid, m_LangId);
+
+        if (foundString)
+            resultString = foundString;
+    }
+    else
+    {
+        return TNULL;
+    }
+
+    return resultString;
+}
+
+ALocaleManager::LocaleId ALocaleManager::FixStringIdPlatform(Lang stringid)
 {
     // 005e2210
     if (s_Platform == Platform_Wii)
@@ -273,4 +247,66 @@ int ALocaleManager::FixStringIdPlatform(int stringid)
     }
 
     return stringid;
+}
+
+ALocaleManager::LocaleString ALocaleManager::FindOverwrittenLocaleString(LocaleId stringid, Lang langid)
+{
+    for (size_t i = 0; i < NUM_OF_OVERRIDES; i++)
+    {
+        if (s_Overrides[i].m_StringId == stringid)
+            return s_Overrides[i].m_LocaleStrings[langid];
+    }
+
+    return TNULL;
+}
+
+ALocaleManager::LocaleString ALocaleManager::FindOverwrittenFormatString(LocaleId stringid, Lang langid)
+{
+    for (size_t i = 0; i < NUM_OF_OVERRIDES; i++)
+    {
+        if (s_Overrides[i].m_StringId == stringid &&
+            s_Overrides[i].m_LocaleStrings[langid] != TNULL)
+        {
+            return s_Overrides[i].m_FormatStrings[langid];
+        }
+    }
+
+    return TNULL;
+}
+
+void ALocaleManager::InitialiseOverrideTexts()
+{
+    static TBOOL s_bAreOverridesInitialized = TFALSE;
+
+    if (!s_bAreOverridesInitialized)
+    {
+        s_bAreOverridesInitialized = TTRUE;
+        Toshi::TUtil::MemClear(s_Overrides, sizeof(s_Overrides));
+
+        // Japanese
+        static wchar_t s_Str1[] = L"@を長押しして弱点を突き、侵入しよう。";
+        static wchar_t s_Str2[] = L"この2ブロックにはかつてミュージックバーとダンスホールがあった。*「今じゃ聞こえるのはグレーディアンたちがマシーンを増設するタップ音だけ」*活気を取り戻して、ブロブ！建物を緑に塗ろう。";
+        static wchar_t s_EmptyFormat[] = L"";
+
+        s_Overrides[0].m_StringId = 520;
+        s_Overrides[0].m_LocaleStrings[12] = s_Str1;
+        s_Overrides[0].m_FormatStrings[12] = s_EmptyFormat;
+
+        for (size_t i = 0; i < LOCALE_LANG_NUMOF; i++)
+        {
+            wchar_t* string = s_Overrides[0].m_LocaleStrings[i];
+
+            if (string != TNULL)
+            {
+                auto character = wcsrchr(string, L'@');
+
+                if (character)
+                    *character = L'\x84';
+            }
+        }
+
+        s_Overrides[1].m_StringId = 985;
+        s_Overrides[1].m_LocaleStrings[12] = s_Str2;
+        s_Overrides[1].m_FormatStrings[12] = s_EmptyFormat;
+    }
 }

@@ -7,7 +7,7 @@ namespace Toshi
 	class TScheduler;
 
 	class TTask :
-		public TGenericClassDerived<TTask, TObject, "TTask", TMAKEVERSION(1, 0), false>,
+		public TGenericClassDerived<TTask, TObject, "TTask", TMAKEVERSION(1, 0), TFALSE>,
 		public TNodeTree<TTask>::TNode
 	{
 	public:
@@ -24,26 +24,26 @@ namespace Toshi
 		TTask();
 		virtual ~TTask();
 		
-		virtual bool Create();
-		virtual bool CreateFailed();
-		virtual bool Reset();
-		virtual bool OnCreate();
-		virtual bool OnUpdate(float deltaTime);
+		virtual TBOOL Create();
+		virtual TBOOL CreateFailed();
+		virtual TBOOL Reset();
+		virtual TBOOL OnCreate();
+		virtual TBOOL OnUpdate(float deltaTime);
 		virtual void OnPreDestroy();
 		virtual void OnDestroy();
-		virtual bool OnChildDying(TTask* child);
+		virtual TBOOL OnChildDying(TTask* child);
 		virtual void OnChildDied(TClass* pClass, TTask* deletedTask);
 		virtual void OnActivate();
 		virtual void OnDeactivate();
 
-		void Activate(bool activate);
+		void Activate(TBOOL activate);
 
 		TScheduler* GetScheduler() const { return m_Scheduler; }
 		uint8_t& GetFlags() { return m_State; }
-		bool IsCreated() const { return m_State & State_Created; }
-		bool IsActive() const { return m_State & State_Active; }
-		bool IsCreatedAndActive() const { return (m_State & (State_Created | State_Active)) == (State_Created | State_Active); }
-		bool IsDying() const { return m_State & State_Dying; }
+		TBOOL IsCreated() const { return m_State & State_Created; }
+		TBOOL IsActive() const { return m_State & State_Active; }
+		TBOOL IsCreatedAndActive() const { return (m_State & (State_Created | State_Active)) == (State_Created | State_Active); }
+		TBOOL IsDying() const { return m_State & State_Dying; }
 
 	private:
 		void* m_Unk1;                    // 0x04

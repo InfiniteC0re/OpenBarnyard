@@ -6,11 +6,11 @@
 
 namespace Toshi
 {
-	bool XURXUIObjectData::Load(TXUIResource& resource, uint8_t*& a_pData)
+	TBOOL XURXUIObjectData::Load(TXUIResource& resource, uint8_t*& a_pData)
 	{
 		XURReader reader(a_pData);
 		m_Index = reader.ReadUInt16();
-		return true;
+		return TTRUE;
 	}
 
 	void XURXUIObjectData::LoadChildren(TXUIResource& resource, uint8_t*& a_pData)
@@ -42,7 +42,7 @@ namespace Toshi
 		}
 	}
 
-	bool XURXUIObjectData::LoadNamedFrames(TXUIResource& resource, uint8_t*& a_pData)
+	TBOOL XURXUIObjectData::LoadNamedFrames(TXUIResource& resource, uint8_t*& a_pData)
 	{
 		XURReader reader(a_pData);
 		m_NumNamedFrames = reader.ReadEPTUShort32();
@@ -62,7 +62,7 @@ namespace Toshi
 			}
 		}
 
-		return true;
+		return TTRUE;
 	}
 
 	void XURXUIObjectData::LoadTimelines(TXUIResource& resource, uint8_t*& a_pData)
@@ -98,7 +98,7 @@ namespace Toshi
 		return TNULL;
 	}
 
-	bool XURXUIElementData::Load(TXUIResource& resource, uint8_t*& a_pData)
+	TBOOL XURXUIElementData::Load(TXUIResource& resource, uint8_t*& a_pData)
 	{
 		XURXUIObjectData::Load(resource, a_pData);
 	
@@ -112,21 +112,21 @@ namespace Toshi
 			XUIEPTBool show, disableTimelineRecursion, clipChildren, designTime;
 			XUIEPTUnsigned colorWriteFlags;
 
-			bool hasId = reader.ReadProperty<XUI_EPT_STRING>(PropType_Id, m_Id);
-			bool hasWidth = reader.ReadProperty<XUI_EPT_FLOAT>(PropType_Width, width);
-			bool hasHeight = reader.ReadProperty<XUI_EPT_FLOAT>(PropType_Height, height);
-			bool hasPosition = reader.ReadProperty<XUI_EPT_VECTOR>(PropType_Position, m_Position);
-			bool hasScale = reader.ReadProperty<XUI_EPT_VECTOR>(PropType_Scale, m_Scale);
-			bool hasRotation = reader.ReadProperty<XUI_EPT_QUATERNION>(PropType_Rotation, m_Rotation);
-			bool hasOpacity = reader.ReadProperty<XUI_EPT_FLOAT>(PropType_Opacity, opacity);
-			bool hasAnchor = reader.ReadProperty<XUI_EPT_USHORT32>(PropType_Anchor, anchor);
-			bool hasPivot = reader.ReadProperty<XUI_EPT_VECTOR>(PropType_Pivot, m_Pivot);
-			bool hasShow = reader.ReadProperty<XUI_EPT_BOOL>(PropType_Show, show);
-			bool hasBlendMode = reader.ReadProperty<XUI_EPT_USHORT32>(PropType_BlendMode, blendMode);
-			bool hasDisableTimelineRecursion = reader.ReadProperty<XUI_EPT_BOOL>(PropType_DisableTimelineRecursion, disableTimelineRecursion);
-			bool hasDesignTime = reader.ReadProperty<XUI_EPT_BOOL>(PropType_DesignTime, designTime);
-			bool hasColorWriteFlags = reader.ReadProperty<XUI_EPT_UNSIGNED>(PropType_ColorWriteFlags, colorWriteFlags);;
-			bool hasClipChildren = reader.ReadProperty<XUI_EPT_BOOL>(PropType_ClipChildren, clipChildren);
+			TBOOL hasId = reader.ReadProperty<XUI_EPT_STRING>(PropType_Id, m_Id);
+			TBOOL hasWidth = reader.ReadProperty<XUI_EPT_FLOAT>(PropType_Width, width);
+			TBOOL hasHeight = reader.ReadProperty<XUI_EPT_FLOAT>(PropType_Height, height);
+			TBOOL hasPosition = reader.ReadProperty<XUI_EPT_VECTOR>(PropType_Position, m_Position);
+			TBOOL hasScale = reader.ReadProperty<XUI_EPT_VECTOR>(PropType_Scale, m_Scale);
+			TBOOL hasRotation = reader.ReadProperty<XUI_EPT_QUATERNION>(PropType_Rotation, m_Rotation);
+			TBOOL hasOpacity = reader.ReadProperty<XUI_EPT_FLOAT>(PropType_Opacity, opacity);
+			TBOOL hasAnchor = reader.ReadProperty<XUI_EPT_USHORT32>(PropType_Anchor, anchor);
+			TBOOL hasPivot = reader.ReadProperty<XUI_EPT_VECTOR>(PropType_Pivot, m_Pivot);
+			TBOOL hasShow = reader.ReadProperty<XUI_EPT_BOOL>(PropType_Show, show);
+			TBOOL hasBlendMode = reader.ReadProperty<XUI_EPT_USHORT32>(PropType_BlendMode, blendMode);
+			TBOOL hasDisableTimelineRecursion = reader.ReadProperty<XUI_EPT_BOOL>(PropType_DisableTimelineRecursion, disableTimelineRecursion);
+			TBOOL hasDesignTime = reader.ReadProperty<XUI_EPT_BOOL>(PropType_DesignTime, designTime);
+			TBOOL hasColorWriteFlags = reader.ReadProperty<XUI_EPT_UNSIGNED>(PropType_ColorWriteFlags, colorWriteFlags);;
+			TBOOL hasClipChildren = reader.ReadProperty<XUI_EPT_BOOL>(PropType_ClipChildren, clipChildren);
 			
 			if (hasWidth)
 			{
@@ -192,10 +192,10 @@ namespace Toshi
 			}
 		}
 
-		return true;
+		return TTRUE;
 	}
 
-	bool XURXUIElementData::TranslateTimelineProp(const char* name, uint32_t& param_2, PropType& propType) // param_3 = position?
+	TBOOL XURXUIElementData::TranslateTimelineProp(const char* name, uint32_t& param_2, PropType& propType) // param_3 = position?
 	{
 		TXUI_TRANSLATE_TIMELINE_PROP(name, Id, propType);
 		TXUI_TRANSLATE_TIMELINE_PROP(name, Width, propType);
@@ -212,10 +212,10 @@ namespace Toshi
 		TXUI_TRANSLATE_TIMELINE_PROP(name, ColorWriteFlags, propType);
 		TXUI_TRANSLATE_TIMELINE_PROP(name, ClipChildren, propType);
 
-		return false;
+		return TFALSE;
 	}
 
-	bool XURXUIElementData::ValidateTimelineProp(uint32_t a_uiObjectIndex, uint32_t param_2)
+	TBOOL XURXUIElementData::ValidateTimelineProp(uint32_t a_uiObjectIndex, uint32_t param_2)
 	{
 		TASSERT(a_uiObjectIndex == 0);
 		return param_2 < PropType_NUMOF;
@@ -232,10 +232,10 @@ namespace Toshi
 		m_vScale = T2GUITransform::Rotation(0, 0);
 	}
 
-	bool TXUIElement::SkipRender()
+	TBOOL TXUIElement::SkipRender()
 	{
 		TIMPLEMENT();
-		return false;
+		return TFALSE;
 	}
 
 	void TXUIElement::SetHeight(float height)
@@ -277,7 +277,7 @@ namespace Toshi
 		TIMPLEMENT();
 	}
 
-	bool TXUIElement::IsVisible()
+	TBOOL TXUIElement::IsVisible()
 	{
 		if (HASFLAG(m_Flags1 & FLAGS_VISIBLE) && HASFLAG(m_Flags1 & (uint8_t)T2GUIElement::s_uiGlobalVisMask))
 		{
@@ -287,7 +287,7 @@ namespace Toshi
 		return TTRUE;
 	}
 
-	bool TXUIElement::Create(TXUIResource& a_rResource, XURXUIElementData* a_pElementData, bool hasChildren)
+	TBOOL TXUIElement::Create(TXUIResource& a_rResource, XURXUIElementData* a_pElementData, TBOOL hasChildren)
 	{
 		m_pObjectData = a_pElementData;
 		
@@ -341,7 +341,7 @@ namespace Toshi
 			a_rResource.PopID();
 		}
 
-		return true;
+		return TTRUE;
 	}
 
 	void TXUIElement::CreateChildren(TXUIResource& a_rResource, XURXUIElementData* a_pElementData)

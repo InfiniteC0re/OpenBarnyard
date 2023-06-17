@@ -30,7 +30,7 @@ public:
 		m_bChanged = TFALSE;
 	}
 
-	bool HasChanged() const
+	TBOOL HasChanged() const
 	{
 		return m_bChanged;
 	}
@@ -71,7 +71,7 @@ private:
 	TVector3 m_Translation;
 	TVector3 m_ScaleVector;
 	uint8_t m_EulerOrder[3];
-	bool m_bChanged;
+	TBOOL m_bChanged;
 };
 
 }

@@ -7,10 +7,10 @@
 
 using namespace Toshi;
 
-AMovieState::AMovieState(const char* name, bool a_bUseSoundChannels, bool unk2, bool unk3, AGameState* gameState) : AGameState(), m_stringVector(&T2Allocator::s_GlobalAllocator, 1, 0)
+AMovieState::AMovieState(const char* name, TBOOL a_bUseSoundChannels, TBOOL bUseLocalePostFix, TBOOL unk3, AGameState* gameState) : AGameState(), m_stringVector(&T2Allocator::s_GlobalAllocator, 1, 0)
 {
 	m_bUseSoundChannels = a_bUseSoundChannels;
-	m_bUnk2 = unk2;
+	m_bUseLocalePostFix = bUseLocalePostFix;
 	m_flags = 0;
 	m_fDeltaTime = 0.0f;
 
@@ -29,7 +29,7 @@ AGameState::UpdateResult AMovieState::OnUpdate(float deltaTime)
 		if (!AAssetStreaming::GetSingletonWeak()->HasActiveJobs())
 		{
 			m_bRenderWorld = AApplication::g_oTheApp.m_bRenderWorld;
-			AApplication::g_oTheApp.SetRenderWorld(false);
+			AApplication::g_oTheApp.SetRenderWorld(TFALSE);
 			TIMPLEMENT_D("AMovieState::PauseSounds(1,0)");
 			PlayMovie(0);
 		}
@@ -51,22 +51,22 @@ void AMovieState::OnInsertion()
 void AMovieState::PlayMovie(uint8_t unk)
 {
 	TString8 str = TString8(*m_stringVector.Begin());
-	auto localeMgr = ALocaleManager::GetSingleton();
+	ALocaleManager& localeMgr = ALocaleManager::Instance();
 
-	if (m_bUnk2)
+	if (m_bUseLocalePostFix)
 	{
 		str.Concat("_");
-		str.Concat(localeMgr->GetCurLocaleCode());
+		str.Concat(localeMgr.GetCurLocaleCode());
 	}
 
 	int soundChannel = 0;
 
 	if (m_bUseSoundChannels)
 	{
-		soundChannel = localeMgr->GetCurSoundChannel();
+		soundChannel = localeMgr.GetCurSoundChannel();
 	}
 
-	bool bRes = AMoviePlayer::GetSingletonWeak()->PlayMovie(str, soundChannel, unk);
+	TBOOL bRes = AMoviePlayer::GetSingletonWeak()->PlayMovie(str, soundChannel, unk);
 	m_fDeltaTime = 0.0f;
 	m_flags = !bRes ? 3 : 1;
 }

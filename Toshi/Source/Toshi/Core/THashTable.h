@@ -11,7 +11,7 @@ namespace Toshi
 			void* value;
 		};
 
-		using t_ItemCompareFunc = bool (*) (void* unk, void* unk2, int unk3);
+		using t_ItemCompareFunc = TBOOL (*) (void* unk, void* unk2, int unk3);
 		using t_ItemHashFunc = uint32_t (*) (void* unk, int unk2, int unk3);
 
 		int m_iBucketSize;	// 0x0
@@ -71,7 +71,7 @@ namespace Toshi
 		void* Find(void* a_pData);
 		void* Append(void* a_pData);
 
-		bool Create(int a_iItemCountTotal, int a_iItemSize, int unk, int a_iHashNodeCount);
+		TBOOL Create(int a_iItemCountTotal, int a_iItemSize, int unk, int a_iHashNodeCount);
 		void SetItemCompareFunction(t_ItemCompareFunc a_HashCompareFunc) { m_ItemCompareFunc = a_HashCompareFunc; }
 		void SetItemHashFunction(t_ItemHashFunc a_HashCompareFunc) { m_ItemHashFunc = a_HashCompareFunc; }
 	};

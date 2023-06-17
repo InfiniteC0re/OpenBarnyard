@@ -6,27 +6,27 @@ namespace Toshi
 	class TComparator
 	{
 	public:
-		static bool IsEqual(const T& a, const T& b)
+		static TBOOL IsEqual(const T& a, const T& b)
 		{
 			return a == b;
 		}
 
-		static bool IsGreater(const T& a, const T& b)
+		static TBOOL IsGreater(const T& a, const T& b)
 		{
 			return a > b;
 		}
 
-		static bool IsLess(const T& a, const T& b)
+		static TBOOL IsLess(const T& a, const T& b)
 		{
 			return a < b;
 		}
 
-		static bool IsLessOrEqual(const T& a, const T& b)
+		static TBOOL IsLessOrEqual(const T& a, const T& b)
 		{
 			return a <= b;
 		}
 
-		static bool IsGreaterOrEqual(const T& a, const T& b)
+		static TBOOL IsGreaterOrEqual(const T& a, const T& b)
 		{
 			return a >= b;
 		}

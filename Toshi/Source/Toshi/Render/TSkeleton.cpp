@@ -29,10 +29,10 @@ namespace Toshi {
 		//tfree(this);
 	}
 
-	bool TSkeleton::Create(uint32_t param_1)
+	TBOOL TSkeleton::Create(uint32_t param_1)
 	{
 		TIMPLEMENT();
-		return false;
+		return TFALSE;
 	}
 
 	uint32_t TSkeleton::GetBoneID(const char* a_cBoneName, uint32_t length)

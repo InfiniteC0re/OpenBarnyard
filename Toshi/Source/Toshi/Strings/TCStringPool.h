@@ -26,7 +26,7 @@ namespace Toshi
 		};
 
 	protected:
-		bool ReadFile(const char* a_szFileName);
+		TBOOL ReadFile(const char* a_szFileName);
 		void InitStringPool(int a_iStringCount);
 
 	private:

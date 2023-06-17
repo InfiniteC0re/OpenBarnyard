@@ -141,7 +141,7 @@ namespace Toshi
 			pNode = pNode->NextNode();
 		}
 
-		return nullptr;
+		return TNULL;
 	}
 
 	void TFileManager::ValidateSystemPath()
@@ -163,7 +163,7 @@ namespace Toshi
 			TString8 fsName;
 			TSysPathIter pathIter(m_SysPath);
 
-			bool hasPath = pathIter.First(fsName);
+			TBOOL hasPath = pathIter.First(fsName);
 
 			while (hasPath)
 			{
@@ -179,7 +179,7 @@ namespace Toshi
 				hasPath = pathIter.Next(fsName);
 			}
 
-			m_IsValidated = true;
+			m_IsValidated = TTRUE;
 		}
 	}
 
@@ -224,7 +224,7 @@ namespace Toshi
 	TFile* TNullFileSystem::CreateFile(TString8 const& fn, uint32_t flags)
 	{
 		TIMPLEMENT();
-		return nullptr;
+		return TNULL;
 	}
 
 	void TNullFileSystem::DestroyFile(TFile*)
@@ -238,9 +238,9 @@ namespace Toshi
 		return TString8();
 	}
 
-	bool TNullFileSystem::MakeDirectory(TString8 const&)
+	TBOOL TNullFileSystem::MakeDirectory(TString8 const&)
 	{
 		TIMPLEMENT();
-		return false;
+		return TFALSE;
 	}
 }

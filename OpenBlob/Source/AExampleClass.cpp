@@ -75,7 +75,7 @@ AExampleClass::AExampleClass()
 	{
 		TTRB trb;
 		trb.Load(file);
-		TAssetInit::InitAssets(trb, true, false);
+		TAssetInit::InitAssets(trb, TTRUE, TFALSE);
 	}
 	
 
@@ -96,7 +96,7 @@ AExampleClass::AExampleClass()
 	{
 		TTRB trb;
 		trb.Load(file);
-		TAssetInit::InitAssets(trb, true, false);
+		TAssetInit::InitAssets(trb, TTRUE, TFALSE);
 	}*/
 
 	/*

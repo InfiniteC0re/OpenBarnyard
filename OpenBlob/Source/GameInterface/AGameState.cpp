@@ -25,9 +25,9 @@ void AGameState::Unk1()
 
 }
 
-bool AGameState::Unk2()
+TBOOL AGameState::Unk2()
 {
-	return false;
+	return TFALSE;
 }
 
 void AGameState::Unk3(void*, void*)
@@ -102,19 +102,19 @@ void AGameState::OnDeactivate()
 	}
 }
 
-bool AGameState::CanActivateConsoleState()
+TBOOL AGameState::CanActivateConsoleState()
 {
-	return true;
+	return TTRUE;
 }
 
-bool AGameState::CheckForControllerRemoval()
+TBOOL AGameState::CheckForControllerRemoval()
 {
-	return false;
+	return TFALSE;
 }
 
-bool AGameState::PauseOnControllerReinserted()
+TBOOL AGameState::PauseOnControllerReinserted()
 {
-	return false;
+	return TFALSE;
 }
 
 void AGameState::SetupLoadIcon()

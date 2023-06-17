@@ -45,7 +45,7 @@ ADX11MoviePlayer::ADX11MoviePlayer() : m_CurrentFileName("")
     m_AudioOffset = 0;
 }
 
-bool ADX11MoviePlayer::PlayMovie(const char* fileName, uint32_t soundChannel, PlayFlags flags)
+TBOOL ADX11MoviePlayer::PlayMovie(const char* fileName, uint32_t soundChannel, PlayFlags flags)
 {
     if (IsMoviePlaying())
     {
@@ -55,7 +55,7 @@ bool ADX11MoviePlayer::PlayMovie(const char* fileName, uint32_t soundChannel, Pl
 
     if (fileName == TNULL)
     {
-        return false;
+        return TFALSE;
     }
 
     auto path = TStringManager::GetTempString8();
@@ -83,7 +83,7 @@ bool ADX11MoviePlayer::PlayMovie(const char* fileName, uint32_t soundChannel, Pl
             {
                 THEORAPLAY_stopDecode(m_TheoraDecoder);
                 m_TheoraDecoder = NULL;
-                return false;
+                return TFALSE;
             }
 
             m_bHasAudioStream = THEORAPLAY_hasAudioStream(m_TheoraDecoder) != 0;
@@ -94,7 +94,7 @@ bool ADX11MoviePlayer::PlayMovie(const char* fileName, uint32_t soundChannel, Pl
                 if (THEORAPLAY_availableVideo(m_TheoraDecoder) >= 30) break;
             }
 
-            UINT framems = (video->fps == 0.0) ? 0 : 1000.0 / video->fps;
+            UINT framems = TSTATICCAST(UINT, (video->fps == 0.0) ? 0 : 1000.0 / video->fps);
             m_FrameMS = framems;
 
             if (m_TexturesWidth != video->width || m_TexturesHeight != video->height)
@@ -125,7 +125,7 @@ bool ADX11MoviePlayer::PlayMovie(const char* fileName, uint32_t soundChannel, Pl
 
                 if (eResult == FMOD_OK)
                 {
-                    FMOD_RESULT eResult = system->playSound(sound, NULL, true, &m_pChannel);
+                    FMOD_RESULT eResult = system->playSound(sound, NULL, TTRUE, &m_pChannel);
                     if (eResult != FMOD_OK)
                     {
                         m_pChannel = NULL;
@@ -139,7 +139,7 @@ bool ADX11MoviePlayer::PlayMovie(const char* fileName, uint32_t soundChannel, Pl
                     m_pChannel->setPriority(0);
                     TIMPLEMENT();
                     m_pChannel->setVolume(0.3f);
-                    m_pChannel->setPaused(false);
+                    m_pChannel->setPaused(TFALSE);
                 }
             }
 
@@ -149,9 +149,11 @@ bool ADX11MoviePlayer::PlayMovie(const char* fileName, uint32_t soundChannel, Pl
             m_bIsPaused = TFALSE;
             m_bIsHidden = TFALSE;
             m_Position = 0;
-            return true;
+            return TTRUE;
         }
     }
+
+    return TFALSE;
 }
 
 void ADX11MoviePlayer::StopMovie()
@@ -164,12 +166,12 @@ void ADX11MoviePlayer::StopMovieImpl()
 {
     if (m_bHasAudioStream && m_pChannel != TNULL)
     {
-        m_bIsPlaying = false;
+        m_bIsPlaying = TFALSE;
         FMOD::Sound* sound;
         m_pChannel->getCurrentSound(&sound);
         m_pChannel->stop();
 
-        bool isPlaying = true;
+        TBOOL isPlaying = TTRUE;
         while (isPlaying)
         {
             m_pChannel->isPlaying(&isPlaying);
@@ -192,11 +194,11 @@ void ADX11MoviePlayer::StopMovieImpl()
         m_AudioOffset = 0;
     }
 
-    m_bIsPlaying = false;
-    m_bIsHidden = true;
+    m_bIsPlaying = TFALSE;
+    m_bIsHidden = TTRUE;
 }
 
-void ADX11MoviePlayer::PauseMovie(bool pause)
+void ADX11MoviePlayer::PauseMovie(TBOOL pause)
 {
     if (pause != m_bIsPaused)
     {
@@ -208,12 +210,12 @@ void ADX11MoviePlayer::PauseMovie(bool pause)
     }
 }
 
-bool ADX11MoviePlayer::IsMoviePlaying()
+TBOOL ADX11MoviePlayer::IsMoviePlaying()
 {
     return m_bIsPlaying;
 }
 
-bool ADX11MoviePlayer::IsMoviePaused()
+TBOOL ADX11MoviePlayer::IsMoviePaused()
 {
     return m_bIsPaused;
 }
@@ -240,8 +242,8 @@ void ADX11MoviePlayer::OnRender(float deltaTime)
                 pRender->CopyDataToTexture(m_Textures[m_iTexIndex + 2], quarterPixelCount, src, halfWidth);
                 pRender->CopyDataToTexture(m_Textures[m_iTexIndex + 4], quarterPixelCount, src + quarterPixelCount, halfWidth);
                 
-                pRender->SetZMode(true, D3D11_COMPARISON_LESS_EQUAL, D3D11_DEPTH_WRITE_MASK_ALL);
-                pRender->SetBlendMode(true, D3D11_BLEND_OP_ADD, D3D11_BLEND_ONE, D3D11_BLEND_ZERO);
+                pRender->SetZMode(TTRUE, D3D11_COMPARISON_LESS_EQUAL, D3D11_DEPTH_WRITE_MASK_ALL);
+                pRender->SetBlendMode(TTRUE, D3D11_BLEND_OP_ADD, D3D11_BLEND_ONE, D3D11_BLEND_ZERO);
 
                 auto pDeviceContext = pRender->m_pDeviceContext;
                 pDeviceContext->VSSetShader(m_pVertexShader, TNULL, 0);
@@ -283,13 +285,13 @@ void ADX11MoviePlayer::OnUpdate(float deltaTime)
         uint32_t position = 0;
 
         if (m_pChannel == TNULL)
-            position = m_Position;
+            position = TSTATICCAST(uint32_t, m_Position);
         else
             m_pChannel->getPosition(&position, FMOD_TIMEUNIT_MS);
 
         // If there's no audio, use position of the video playback
         if (position == 0)
-            position = m_Position;
+            position = TSTATICCAST(uint32_t, m_Position);
 
         const THEORAPLAY_VideoFrame* video = m_TheoraVideo;
 
@@ -297,7 +299,7 @@ void ADX11MoviePlayer::OnUpdate(float deltaTime)
         {
             // Delete the previous frame
             THEORAPLAY_freeVideo(video);
-            bool bIsDecoding = THEORAPLAY_isDecoding(m_TheoraDecoder);
+            TBOOL bIsDecoding = THEORAPLAY_isDecoding(m_TheoraDecoder);
 
             // Get new frame
             video = THEORAPLAY_getVideo(m_TheoraDecoder);

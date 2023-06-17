@@ -34,7 +34,7 @@ void Toshi::TInputDXDeviceMouse::Update()
 	}
 }
 
-bool Toshi::TInputDXDeviceMouse::Initialise()
+TBOOL Toshi::TInputDXDeviceMouse::Initialise()
 {
 	TIMPLEMENT();
 
@@ -54,45 +54,45 @@ bool Toshi::TInputDXDeviceMouse::Initialise()
 	if (hr != DIERR_OBJECTNOTFOUND)
 	{
 		m_bInitiliased = hr == DI_OK;
-		return true;
+		return TTRUE;
 	}
-	m_bInitiliased = false;
-	return true;
+	m_bInitiliased = TFALSE;
+	return TTRUE;
 }
 
-bool Toshi::TInputDXDeviceMouse::Deinitialise()
+TBOOL Toshi::TInputDXDeviceMouse::Deinitialise()
 {
 	Release();
-	return true;
+	return TTRUE;
 }
 
-bool Toshi::TInputDXDeviceMouse::Acquire()
+TBOOL Toshi::TInputDXDeviceMouse::Acquire()
 {
 	HRESULT hr = m_poDXInputDevice->Acquire();
 	if (FAILED(hr))
 	{
-		m_bIsAquired = false;
-		return false;
+		m_bIsAquired = TFALSE;
+		return TFALSE;
 	}
 
-	m_bIsAquired = true;
+	m_bIsAquired = TTRUE;
 
 	if (hr != S_FALSE)
 	{
 		RefreshDirect();
 	}
 
-	return false;
+	return TFALSE;
 }
 
-bool Toshi::TInputDXDeviceMouse::Unacquire()
+TBOOL Toshi::TInputDXDeviceMouse::Unacquire()
 {
-	m_bIsAquired = false;
+	m_bIsAquired = TFALSE;
 	HRESULT hr = m_poDXInputDevice->Unacquire();
 	return SUCCEEDED(hr);
 }
 
-bool Toshi::TInputDXDeviceMouse::Flush()
+TBOOL Toshi::TInputDXDeviceMouse::Flush()
 {
 	DWORD dwItems = INFINITE;
 	if (m_bIsAquired)
@@ -101,10 +101,10 @@ bool Toshi::TInputDXDeviceMouse::Flush()
 		if (SUCCEEDED(hr))
 		{
 			RefreshDirect();
-			return true;
+			return TTRUE;
 		}
 	}
-	return false;
+	return TFALSE;
 }
 
 int Toshi::TInputDXDeviceMouse::ProcessEvents(TGenericEmitter& emitter, float flt)
@@ -125,7 +125,7 @@ int Toshi::TInputDXDeviceMouse::ProcessEvents(TGenericEmitter& emitter, float fl
 
 		if (hr != DI_OK)
 		{
-			return false;
+			return TFALSE;
 		}
 
 	}
@@ -257,7 +257,7 @@ void Toshi::TInputDXDeviceMouse::RefreshDirect()
 	}
 }
 
-bool const Toshi::TInputDXDeviceMouse::BindToDIDevice(HWND a_mainWindow, LPCDIDEVICEINSTANCE a_poDeviceInstance, IDirectInputDevice8* a_poDXInputDevice, bool exclusive)
+TBOOL const Toshi::TInputDXDeviceMouse::BindToDIDevice(HWND a_mainWindow, LPCDIDEVICEINSTANCE a_poDeviceInstance, IDirectInputDevice8* a_poDXInputDevice, TBOOL exclusive)
 {
 	TASSERT(a_poDeviceInstance != NULL);
 	TASSERT(a_poDXInputDevice != NULL);
@@ -273,7 +273,7 @@ bool const Toshi::TInputDXDeviceMouse::BindToDIDevice(HWND a_mainWindow, LPCDIDE
 
 	if (hr != DI_OK)
 	{
-		return false;
+		return TFALSE;
 	}
 
 	if (a_mainWindow)

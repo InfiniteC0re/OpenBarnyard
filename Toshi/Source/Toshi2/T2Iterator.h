@@ -24,12 +24,12 @@ namespace Toshi
 			m_pPtr = pPtr;
 		}
 
-		/*bool operator==(const T* ptr)
+		/*TBOOL operator==(const T* ptr)
 		{
 			return m_pNode == ptr;
 		}*/
 
-		/*bool operator!=(const T* ptr)
+		/*TBOOL operator!=(const T* ptr)
 		{
 			return m_pNode != ptr;
 		}*/

@@ -57,12 +57,12 @@ namespace Toshi
 		};
 
 	protected:
-		void SetDirty(bool enable) { enable ? m_eFlags |= FLAG_DIRTY : m_eFlags &= ~FLAG_DIRTY; }
-		void SetFlag(FLAG flag, bool enable) { enable ? m_eFlags |= flag : m_eFlags &= ~flag; }
+		void SetDirty(TBOOL enable) { enable ? m_eFlags |= FLAG_DIRTY : m_eFlags &= ~FLAG_DIRTY; }
+		void SetFlag(FLAG flag, TBOOL enable) { enable ? m_eFlags |= flag : m_eFlags &= ~flag; }
 
-		void EnableFog(bool enable) { enable ? m_eFlags |= FLAG_FOG : m_eFlags &= ~FLAG_FOG; }
-		bool IsFogEnabled() const { return m_eFlags & FLAG_FOG; }
-		bool IsDirty() const { return m_eFlags & FLAG_DIRTY; }
+		void EnableFog(TBOOL enable) { enable ? m_eFlags |= FLAG_FOG : m_eFlags &= ~FLAG_FOG; }
+		TBOOL IsFogEnabled() const { return m_eFlags & FLAG_FOG; }
+		TBOOL IsDirty() const { return m_eFlags & FLAG_DIRTY; }
 	
 	public:
 		TRenderContext(TRender* pRender);
@@ -110,10 +110,15 @@ namespace Toshi
 			return m_oParams.fHeight;
 		}
 
-		TMatrix44& GetModelViewMatrix()
-		{
-			return m_mModelViewMatrix;
-		}
+        TMatrix44& GetModelViewMatrix()
+        {
+            return m_mModelViewMatrix;
+        }
+
+        TMatrix44& GetWorldViewMatrix()
+        {
+            return m_mWorldViewMatrix;
+        }
 
 		const PROJECTIONPARAMS& GetProjectionParams() const
 		{
@@ -131,7 +136,7 @@ namespace Toshi
 	};
 
 	class TRender :
-		public TGenericClassDerived<TRender, TObject, "TRender", TMAKEVERSION(1, 0), false>,
+		public TGenericClassDerived<TRender, TObject, "TRender", TMAKEVERSION(1, 0), TFALSE>,
 		public TRefCounted,
 		public TSingleton<TRender>
 	{
@@ -169,8 +174,8 @@ namespace Toshi
 			uint32_t Height;
 			uint32_t Unk3;
 			uint32_t Unk4;
-			bool Unk5;
-			bool IsFullscreen;
+			TBOOL Unk5;
+			TBOOL IsFullscreen;
 			uint32_t MultisampleQualityLevel;
 		};
 
@@ -178,21 +183,21 @@ namespace Toshi
 		TRender();
 
 		virtual ~TRender();                                    // 0x08 at vftable
-		virtual bool CreateDisplay(DisplayParams* params) = 0; // 0x0C at vftable
-		virtual bool DestroyDisplay() = 0;                     // 0x10 at vftable
+		virtual TBOOL CreateDisplay(DisplayParams* params) = 0; // 0x0C at vftable
+		virtual TBOOL DestroyDisplay() = 0;                     // 0x10 at vftable
 		virtual void Update(float deltaTime);                 // 0x14 at vftable
 		virtual void BeginScene();                             // 0x18 at vftable
 		virtual void EndScene();                               // 0x1C at vftable
 		virtual void* GetCurrentDevice() = 0;                  // 0x20 at vftable
 		virtual DisplayParams* GetCurrentDisplayParams() = 0;  // 0x24 at vftable
-		virtual bool Create();                                 // 0x28 at vftable
-		virtual bool Destroy();                                // 0x2C at vftable
+		virtual TBOOL Create();                                 // 0x28 at vftable
+		virtual TBOOL Destroy();                                // 0x2C at vftable
 		virtual void DumpStats();                              // 0x30 at vftable
 		virtual void GetScreenOffset(TVector2* pOutVec);       // 0x34 at vftable
 		virtual void SetScreenOffset(TVector2* pVec);          // 0x38 at vftable
 		virtual void SetLightDirectionMatrix(TMatrix44* pMat); // 0x3C at vftable
 		virtual void SetLightColourMatrix(TMatrix44* pMat);    // 0x40 at vftable
-		virtual bool CreateSystemResources();                  // 0x44 at vftable
+		virtual TBOOL CreateSystemResources();                  // 0x44 at vftable
 		virtual void DestroySystemResources();                 // 0x44 at vftable
 
 		float GetResolutionScalar()
@@ -205,8 +210,8 @@ namespace Toshi
 				return (displayParams->Height * 4.0f) / (displayParams->Width * 3.0f);
 		}
 
-		// Creates display and returns true if success
-		bool CreateDisplay();
+		// Creates display and returns TTRUE if success
+		TBOOL CreateDisplay();
 
 		// Destroys resource
 		void DestroyResource(TResource* resource);
@@ -240,9 +245,9 @@ namespace Toshi
 			return previousContext;
 		}
 
-		bool IsInScene() { return m_bInScene; }
-		bool IsCreated() { return m_bCreated; }
-		bool IsDisplayCreated() { return m_bDisplayCreated; }
+		TBOOL IsInScene() { return m_bInScene; }
+		TBOOL IsCreated() { return m_bCreated; }
+		TBOOL IsDisplayCreated() { return m_bDisplayCreated; }
 		TRenderContext* GetCurrentRenderContext() const { return m_pRenderContext; }
 		TNodeList<TRenderAdapter>* GetAdapterList() { return &m_AdapterList; }
 		TRenderParamTable* GetParamTable() const { return m_ParamTable; }
@@ -273,10 +278,10 @@ namespace Toshi
 
 	protected:
 		uint32_t m_Unk1;                                 // 0x04
-		bool m_bIsEnabled;                               // 0x08
-		bool m_bInScene;                                 // 0x09
-		bool m_bCreated = false;                         // 0x0A
-		bool m_bDisplayCreated;                          // 0x0B
+		TBOOL m_bIsEnabled;                               // 0x08
+		TBOOL m_bInScene;                                 // 0x09
+		TBOOL m_bCreated = TFALSE;                         // 0x0A
+		TBOOL m_bDisplayCreated;                          // 0x0B
 		TVector2 m_ScreenOffset;                         // 0x0C
 		ASPECT_RATIO m_eAspectRatio;                     // 0x14
 		TRenderContext* m_pRenderContext;                // 0x18
@@ -289,7 +294,7 @@ namespace Toshi
 		TNodeTree<TResource> m_Resources;                // 0xE8
 		size_t m_ResourceCount = 0;                      // 0x100
 		uint32_t m_Unk4 = 0;                             // 0x104
-		bool m_HasDyingResources;                        // 0x108
+		TBOOL m_HasDyingResources;                        // 0x108
 		TKeyframeLibraryManager m_KeyframeManager;       // 0x10C
 		TStack<TMatrix44, 20> m_Transforms;              // 0x118
 	};

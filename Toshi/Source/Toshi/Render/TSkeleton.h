@@ -22,8 +22,8 @@ namespace Toshi
 		LOOPMODE m_eLoopMode;
 
 	public:
-		bool IsLooping() { return m_eLoopMode == LOOPMODE_LOOP; }
-		bool IsOverlay() { return m_Flags & FLAG_Overlay; }
+		TBOOL IsLooping() { return m_eLoopMode == LOOPMODE_LOOP; }
+		TBOOL IsOverlay() { return m_Flags & FLAG_Overlay; }
 		ResourceName& GetResourceName() { return m_ResourceName; }
 	};
 
@@ -40,7 +40,7 @@ namespace Toshi
 	public:
 		TSkeleton();
 		void Delete();
-		bool Create(uint32_t param_1);
+		TBOOL Create(uint32_t param_1);
 
 		TSkeleton& operator=(const TSkeleton& a_rSkeleton) { TIMPLEMENT(); }
 

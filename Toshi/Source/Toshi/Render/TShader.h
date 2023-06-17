@@ -4,7 +4,7 @@
 namespace Toshi {
 	
 	class TShader :
-		public TGenericClassDerived<TShader, TObject, "TShader", TMAKEVERSION(1, 0), false>
+		public TGenericClassDerived<TShader, TObject, "TShader", TMAKEVERSION(1, 0), TFALSE>
 	{
 	public:
 		enum class State : uint32_t
@@ -38,8 +38,8 @@ namespace Toshi {
 		virtual TBOOL Validate();
 		virtual void Invalidate();
 		virtual const char* GetShaderPrefix() = 0;
-		virtual bool Unk1() { return TTRUE; }
-		virtual bool Unk2() { return TTRUE; }
+		virtual TBOOL Unk1() { return TTRUE; }
+		virtual TBOOL Unk2() { return TTRUE; }
 		virtual void Render(TRenderPacket* pPacket) = 0;
 
 		TBOOL IsCreated() const { return m_State.IsSet(State::Created); }

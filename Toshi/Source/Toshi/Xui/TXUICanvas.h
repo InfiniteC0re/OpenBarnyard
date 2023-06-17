@@ -19,6 +19,6 @@ namespace Toshi
 		
 		virtual const char* GetTypeInfo() const { return sm_sTypeInfo; }
 
-		virtual bool Load(TXUIResource& resource, uint8_t*& a_pData);
+		virtual TBOOL Load(TXUIResource& resource, uint8_t*& a_pData);
 	};
 }

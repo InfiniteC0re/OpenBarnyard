@@ -20,9 +20,9 @@ namespace Toshi
 
 		char filename[256];
 		T2String8::Format(filename, "deblob_%d%02d%02d_%02d_%02d_%02d.log", time->tm_year + 1900, time->tm_mon + 1, time->tm_mday, time->tm_hour, time->tm_min, time->tm_sec);
-		GetLog()->Create(filename, "Toshi 2.0", false);
-		GetLog()->AllowIndentation(true);
-		GetLog()->SetSimpleMode(true);
+		GetLog()->Create(filename, "Toshi 2.0", TFALSE);
+		GetLog()->AllowIndentation(TTRUE);
+		GetLog()->SetSimpleMode(TTRUE);
 	}
 
 	void TUtil::Log(const char* format, ...)
@@ -102,7 +102,7 @@ namespace Toshi
 		util->m_pLogFile2 = a_logFile == TNULL ? util->m_pLogFile1 : a_logFile;
 	}
 
-	bool TUtil::ToshiCreate(int argc, char** argv, TMemory& memorySettings)
+	TBOOL TUtil::ToshiCreate(int argc, char** argv, TMemory& memorySettings)
     {
         TRegion::LockRegion();
 		
@@ -117,7 +117,7 @@ namespace Toshi
 		Create();
 		TError::CreateSingleton(0x1800, 0x100);
         
-		return true;
+		return TTRUE;
     }
 
     void TUtil::MemSet(void* ptr, size_t value, size_t size)

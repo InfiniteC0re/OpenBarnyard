@@ -252,23 +252,23 @@ MALLOC_ALIGNMENT         default: (size_t)(2 * sizeof(void *))
   though. Note however that code and data structures are optimized for
   the case of 8-byte alignment.
 
-MSPACES                  default: 0 (false)
-  If true, compile in support for independent allocation spaces.
-  This is only supported if HAVE_MMAP is true.
+MSPACES                  default: 0 (TFALSE)
+  If TTRUE, compile in support for independent allocation spaces.
+  This is only supported if HAVE_MMAP is TTRUE.
 
-ONLY_MSPACES             default: 0 (false)
-  If true, only compile in mspace versions, not regular versions.
+ONLY_MSPACES             default: 0 (TFALSE)
+  If TTRUE, only compile in mspace versions, not regular versions.
 
-USE_LOCKS                default: 0 (false)
+USE_LOCKS                default: 0 (TFALSE)
   Causes each call to each public routine to be surrounded with
-  pthread or WIN32 mutex lock/unlock. (If set true, this can be
+  pthread or WIN32 mutex lock/unlock. (If set TTRUE, this can be
   overridden on a per-mspace basis for mspace versions.) If set to a
   non-zero value other than 1, locks are used, but their
   implementation is left out, so lock functions must be supplied manually,
   as described below.
 
 USE_SPIN_LOCKS           default: 1 iff USE_LOCKS and spin locks available
-  If true, uses custom spin locks for locking. This is currently
+  If TTRUE, uses custom spin locks for locking. This is currently
   supported only gcc >= 4.1, older gccs on x86 platforms, and recent
   MS compilers.  Otherwise, posix locks or win32 critical sections are
   used.
@@ -285,12 +285,12 @@ LOCK_AT_FORK            default: not defined
   cases, you may need to customize the implementation.
 
 FOOTERS                  default: 0
-  If true, provide extra checking and dispatching by placing
+  If TTRUE, provide extra checking and dispatching by placing
   information in the footers of allocated chunks. This adds
   space and time overhead.
 
 INSECURE                 default: 0
-  If true, omit checks for usage errors and heap space overwrites.
+  If TTRUE, omit checks for usage errors and heap space overwrites.
 
 USE_DL_PREFIX            default: NOT defined
   Causes compiler to prefix all public routines with the string 'dl'.
@@ -314,7 +314,7 @@ ABORT                    default: defined as abort()
   abort.  Also, most compilers know that abort() does not return, so
   can better optimize code conditionally calling it.
 
-PROCEED_ON_ERROR           default: defined as 0 (false)
+PROCEED_ON_ERROR           default: defined as 0 (TFALSE)
   Controls whether detected bad addresses cause them to bypassed
   rather than aborting. If set, detected bad arguments to free and
   realloc are ignored. And all bookkeeping information is zeroed out
@@ -336,7 +336,7 @@ DEBUG                    default: NOT defined
   set will attempt to check every non-mmapped allocated and free chunk
   in the course of computing the summaries.
 
-ABORT_ON_ASSERT_FAILURE   default: defined as 1 (true)
+ABORT_ON_ASSERT_FAILURE   default: defined as 1 (TTRUE)
   Debugging assertion failures can be nearly impossible if your
   version of the assert macro causes malloc to be called, which will
   lead to a cascade of further failures, blowing the runtime stack.
@@ -347,7 +347,7 @@ MALLOC_FAILURE_ACTION     default: sets errno to ENOMEM, or no-op on win32
   The action to take before "return 0" when malloc fails to be able to
   return memory because there is none available.
 
-HAVE_MORECORE             default: 1 (true) unless win32 or ONLY_MSPACES
+HAVE_MORECORE             default: 1 (TTRUE) unless win32 or ONLY_MSPACES
   True if this system supports sbrk or an emulation of it.
 
 MORECORE                  default: sbrk
@@ -361,12 +361,12 @@ MORECORE                  default: sbrk
   the max value of a size_t, which should work across all reasonable
   possibilities, although sometimes generating compiler warnings.
 
-MORECORE_CONTIGUOUS       default: 1 (true) if HAVE_MORECORE
-  If true, take advantage of fact that consecutive calls to MORECORE
+MORECORE_CONTIGUOUS       default: 1 (TTRUE) if HAVE_MORECORE
+  If TTRUE, take advantage of fact that consecutive calls to MORECORE
   with positive arguments always return contiguous increasing
-  addresses.  This is true of unix sbrk. It does not hurt too much to
-  set it true anyway, since malloc copes with non-contiguities.
-  Setting it false when definitely non-contiguous saves time
+  addresses.  This is TTRUE of unix sbrk. It does not hurt too much to
+  set it TTRUE anyway, since malloc copes with non-contiguities.
+  Setting it TFALSE when definitely non-contiguous saves time
   and possibly wasted space it would take to discover this though.
 
 MORECORE_CANNOT_TRIM      default: NOT defined
@@ -381,10 +381,10 @@ NO_SEGMENT_TRAVERSAL       default: 0
   merging of segments that are contiguous, and selectively
   releasing them to the OS if unused, but bounds execution times.
 
-HAVE_MMAP                 default: 1 (true)
+HAVE_MMAP                 default: 1 (TTRUE)
   True if this system supports mmap or an emulation of it.  If so, and
-  HAVE_MORECORE is not true, MMAP is used for all system
-  allocation. If set and HAVE_MORECORE is true as well, MMAP is
+  HAVE_MORECORE is not TTRUE, MMAP is used for all system
+  allocation. If set and HAVE_MORECORE is TTRUE as well, MMAP is
   primarily used to directly allocate very large blocks. It is also
   used as a backup strategy in cases where MORECORE fails to provide
   space from system. Note: A single call to MUNMAP is assumed to be
@@ -392,11 +392,11 @@ HAVE_MMAP                 default: 1 (true)
   to MMAP, so long as they are adjacent.
 
 HAVE_MREMAP               default: 1 on linux, else 0
-  If true realloc() uses mremap() to re-allocate large blocks and
+  If TTRUE realloc() uses mremap() to re-allocate large blocks and
   extend or shrink allocation spaces.
 
 MMAP_CLEARS               default: 1 except on WINCE.
-  True if mmap clears memory so calloc doesn't need to. This is true
+  True if mmap clears memory so calloc doesn't need to. This is TTRUE
   for standard unix mmap using /dev/zero and on WIN32 except for WINCE.
 
 USE_BUILTIN_FFS            default: 0 (i.e., not used)
@@ -580,7 +580,7 @@ MAX_RELEASE_CHECK_RATE   default: 4095 unless not HAVE_MMAP
 /* The maximum possible size_t value has all bits set */
 #define MAX_SIZE_T           (~(size_t)0)
 
-#ifndef USE_LOCKS /* ensure true if spin or recursive locks set */
+#ifndef USE_LOCKS /* ensure TTRUE if spin or recursive locks set */
 #define USE_LOCKS  ((defined(USE_SPIN_LOCKS) && USE_SPIN_LOCKS != 0) || \
                     (defined(USE_RECURSIVE_LOCKS) && USE_RECURSIVE_LOCKS != 0))
 #endif /* USE_LOCKS */
@@ -1294,7 +1294,7 @@ extern "C" {
       others in this mspace. By default large chunks are not tracked,
       which reduces fragmentation. However, such chunks are not
       necessarily released to the system upon destroy_mspace.  Enabling
-      tracking by setting to true may increase fragmentation, but avoids
+      tracking by setting to TTRUE may increase fragmentation, but avoids
       leakage when relying on destroy_mspace to release all memory
       allocated using this space.  The function returns the previous
       setting.

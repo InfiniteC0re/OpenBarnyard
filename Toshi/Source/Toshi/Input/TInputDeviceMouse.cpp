@@ -1,11 +1,11 @@
 #include "ToshiPCH.h"
 #include "TInputDeviceMouse.h"
 
-bool Toshi::TInputDeviceMouse::GetDoodadProperties(int doodad, TInputDevice::DoodadProperties& props) const
+TBOOL Toshi::TInputDeviceMouse::GetDoodadProperties(int doodad, TInputDevice::DoodadProperties& props) const
 {
     if (12 < doodad - 0x30000)
     {
-        return false;
+        return TFALSE;
     }
 
     switch (doodad)
@@ -23,7 +23,7 @@ bool Toshi::TInputDeviceMouse::GetDoodadProperties(int doodad, TInputDevice::Doo
         props.m_iUnk2 = 0;
     }
 
-    return true;
+    return TTRUE;
 }
 
 const char* Toshi::TInputDeviceMouse::GetButtonFromDoodad(int doodad) const

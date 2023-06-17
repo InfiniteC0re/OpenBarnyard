@@ -8,18 +8,18 @@ namespace Toshi
 		
 	public:
 
-		virtual bool GetDoodadProperties(int doodad, DoodadProperties& doodadProps) const
+		virtual TBOOL GetDoodadProperties(int doodad, DoodadProperties& doodadProps) const
 		{
 			if (doodad >= 0x20000 && doodad < 0x20080)
 			{
 				doodadProps.m_iUnk = 0;
 				doodadProps.m_iUnk2 = 0;
-				return true;
+				return TTRUE;
 			}
-			return false;
+			return TFALSE;
 		}
 
-		virtual bool GetButtonFromDoodad(int doodad)
+		virtual TBOOL GetButtonFromDoodad(int doodad)
 		{
 			switch (doodad)
 			{

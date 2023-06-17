@@ -12,19 +12,19 @@ namespace Toshi
 		m_TransBackFrom = 0;
 		m_TransBackTo = 0;
 		m_InterruptTransitions = 0;
-		m_IgnorePresses = false;
+		m_IgnorePresses = TFALSE;
 	}
 
-	bool XURXUISceneData::IsColourPropType(uint32_t a_uiObjectIndex, uint32_t propType)
+	TBOOL XURXUISceneData::IsColourPropType(uint32_t a_uiObjectIndex, uint32_t propType)
 	{
-		if (a_uiObjectIndex == 0) return false;
+		if (a_uiObjectIndex == 0) return TFALSE;
 		TASSERT(a_uiObjectIndex > 0);
 		return XURXUIControlData::IsColourPropType(a_uiObjectIndex - 1, propType);
 	}
 
-	bool XURXUISceneData::IsFloatPropType(uint32_t a_uiObjectIndex, uint32_t propType)
+	TBOOL XURXUISceneData::IsFloatPropType(uint32_t a_uiObjectIndex, uint32_t propType)
 	{
-		if (a_uiObjectIndex == 0) return false;
+		if (a_uiObjectIndex == 0) return TFALSE;
 		TASSERT(a_uiObjectIndex > 0);
 		return XURXUIControlData::IsFloatPropType(a_uiObjectIndex - 1, propType);
 	}
@@ -50,7 +50,7 @@ namespace Toshi
 		return 2;
 	}
 
-	bool XURXUISceneData::TranslateTimelineProp(const char* name, uint32_t& param_2, PropType& propType)
+	TBOOL XURXUISceneData::TranslateTimelineProp(const char* name, uint32_t& param_2, PropType& propType)
 	{
 		TXUI_TRANSLATE_TIMELINE_PROP(name, DefaultFocus, propType);
 		TXUI_TRANSLATE_TIMELINE_PROP(name, TransFrom, propType);
@@ -64,14 +64,14 @@ namespace Toshi
 		return XURXUIControlData::TranslateTimelineProp(name, param_2, propType);
 	}
 
-	bool XURXUISceneData::ValidateTimelineProp(uint32_t a_uiObjectIndex, uint32_t param_2)
+	TBOOL XURXUISceneData::ValidateTimelineProp(uint32_t a_uiObjectIndex, uint32_t param_2)
 	{
 		if (a_uiObjectIndex == 0) return param_2 < PropType_NUMOF;
 		TASSERT(a_uiObjectIndex > 0);
 		return XURXUIControlData::ValidateTimelineProp(a_uiObjectIndex - 1, param_2);
 	}
 
-	bool XURXUISceneData::Load(TXUIResource& resource, uint8_t*& a_pData)
+	TBOOL XURXUISceneData::Load(TXUIResource& resource, uint8_t*& a_pData)
 	{
 		XURXUIControlData::Load(resource, a_pData);
 		
@@ -89,6 +89,6 @@ namespace Toshi
 			reader.ReadProperty<XUI_EPT_BOOL>(PropType_IgnorePresses, m_IgnorePresses);
 		}
 
-		return true;
+		return TTRUE;
 	}
 }

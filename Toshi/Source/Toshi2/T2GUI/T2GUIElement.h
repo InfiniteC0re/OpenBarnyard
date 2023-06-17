@@ -60,8 +60,8 @@ namespace Toshi
 		virtual ~T2GUIElement();
 
 		virtual void Tick(float deltaTime);
-		virtual bool IsPaused() const;
-		virtual bool SkipRender();
+		virtual TBOOL IsPaused() const;
+		virtual TBOOL SkipRender();
 		virtual void PreRender();
 		virtual void Render();
 		virtual void PostRender();
@@ -76,10 +76,10 @@ namespace Toshi
 		virtual void SetColour(uint32_t colour);
 		virtual void SetAlpha(float alpha);
 		virtual float GetAlpha();
-		virtual void SetVisible(bool visible);
-		virtual void SetFocus(bool focused);
+		virtual void SetVisible(TBOOL visible);
+		virtual void SetFocus(TBOOL focused);
 		virtual void GetScreenTransform(void* unk);
-		virtual bool IsPointInside(const TVector2& point);
+		virtual TBOOL IsPointInside(const TVector2& point);
 		virtual const TVector2& GetPivot();
 
 		void Unlink()

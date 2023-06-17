@@ -10,15 +10,15 @@ namespace Toshi {
 	{
 		// 0068ff70
 		m_Unk1 = 0;
-		m_bIsEnabled = true;
+		m_bIsEnabled = TTRUE;
 		m_ScreenOffset = { 0, 0 };
 		m_eAspectRatio = ASPECT_RATIO_4_3;
 		m_pRenderContext = TNULL;
 		m_Unk5 = 0;
-		m_HasDyingResources = false;
-		m_bDisplayCreated = false;
-		m_bCreated = false;
-		m_bInScene = false;
+		m_HasDyingResources = TFALSE;
+		m_bDisplayCreated = TFALSE;
+		m_bCreated = TFALSE;
+		m_bInScene = TFALSE;
 		// Create things
 		T2ResourceManager::CreateSingleton(TRender::MAXNUMRESOURCES);
 		m_ParamTable = new TRenderParamTable;
@@ -50,7 +50,7 @@ namespace Toshi {
 		T2ResourceManager::DestroySingleton();
 	}
 
-	bool TRender::Create()
+	TBOOL TRender::Create()
 	{
 		TASSERT(TFALSE == IsCreated(), "TRender already created");
 		TRenderContext* a_pRenderContext = CreateRenderContext();
@@ -58,24 +58,24 @@ namespace Toshi {
 		if (a_pRenderContext != TNULL)
 		{
 			SetCurrentRenderContext(a_pRenderContext);
-			m_bCreated = true;
-			return true;
+			m_bCreated = TTRUE;
+			return TTRUE;
 		}
 
-		return false;
+		return TFALSE;
 	}
 
-	bool TRender::Destroy()
+	TBOOL TRender::Destroy()
 	{
-		return false;
+		return TFALSE;
 	}
 
-	bool TRender::CreateDisplay()
+	TBOOL TRender::CreateDisplay()
 	{
 		TASSERT(TTRUE == IsCreated(), "TRender must be created");
 		TASSERT(TFALSE == IsDisplayCreated(), "Display already created");
-		m_bDisplayCreated = true;
-		return true;
+		m_bDisplayCreated = TTRUE;
+		return TTRUE;
 	}
 
 	void TRender::DestroyResource(TResource* resource)
@@ -86,7 +86,7 @@ namespace Toshi {
 
 		if (resource->IsDying() == TFALSE)
 		{
-			m_HasDyingResources = true;
+			m_HasDyingResources = TTRUE;
 			resource->AddState(TResourceState_Dying);
 			DestroyResourceRecurse(resource->GetAttached());
 			resource->Invalidate();
@@ -106,7 +106,7 @@ namespace Toshi {
 
 				if (resource->IsDying() == TFALSE)
 				{
-					m_HasDyingResources = true;
+					m_HasDyingResources = TTRUE;
 					resource->AddState(TResourceState_Dying);
 
 					if (resource->GetAttached() != TNULL)
@@ -132,7 +132,7 @@ namespace Toshi {
 
 		if (pResource != TNULL)
 		{
-			m_Resources.Remove(*pResource, false);
+			m_Resources.Remove(*pResource, TFALSE);
 
 			if (parent == TNULL)
 			{
@@ -183,9 +183,9 @@ namespace Toshi {
 	{
 	}
 
-	bool TRender::CreateSystemResources()
+	TBOOL TRender::CreateSystemResources()
 	{
-		return false;
+		return TFALSE;
 	}
 
 	void TRender::DestroySystemResources()
@@ -265,7 +265,7 @@ namespace Toshi {
 			a_pResource->OnDestroy();
 		}
 
-		m_Resources.Remove(a_pResource, false);
+		m_Resources.Remove(a_pResource, TFALSE);
 		delete a_pResource;
 	}
 

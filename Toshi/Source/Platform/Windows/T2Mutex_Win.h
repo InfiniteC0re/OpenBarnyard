@@ -16,14 +16,14 @@ namespace Toshi
 		T2Mutex() = default;
 		~T2Mutex() { Destroy(); }
 
-		// Returns true if success
-		bool Create();
+		// Returns TTRUE if success
+		TBOOL Create();
 
-		// Returns true if the state is signaled
-		bool Lock(Flags flags = Flags_Standard);
+		// Returns TTRUE if the state is signaled
+		TBOOL Lock(Flags flags = Flags_Standard);
 
-		// Returns true if success
-		bool Unlock();
+		// Returns TTRUE if success
+		TBOOL Unlock();
 
 		// Destroys mutex
 		void Destroy();

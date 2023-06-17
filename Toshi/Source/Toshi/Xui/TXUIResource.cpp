@@ -25,7 +25,7 @@ namespace Toshi
         return a_iIndex == -1 ? (TVector4*)&TVector4::VEC_ZERO : &m_pVect[a_iIndex];
     }
 
-    bool TXUIResource::ReadHeader(uint8_t* buffer)
+    TBOOL TXUIResource::ReadHeader(uint8_t* buffer)
     {
         XURReader reader(buffer);
 
@@ -65,11 +65,11 @@ namespace Toshi
             m_oHeader.m_apSections[i].m_uiSize = reader.ReadUInt32();
         }
 
-        return true;
+        return TTRUE;
     }
 
 
-    void TXUIResource::Load(bool loadStringTables, const char* filenameXUIB, const char* fileNameStringTable, bool loadTrb, void* unk3)
+    void TXUIResource::Load(TBOOL loadStringTables, const char* filenameXUIB, const char* fileNameStringTable, TBOOL loadTrb, void* unk3)
     {
         Destroy();
 
@@ -91,7 +91,7 @@ namespace Toshi
                 uint8_t* buffer = new uint8_t[size];
                 file->Read(buffer, size);
                 file->Destroy();
-                bool bRes = ReadHeader(buffer);
+                TBOOL bRes = ReadHeader(buffer);
 
                 if (bRes)
                 {
@@ -104,7 +104,7 @@ namespace Toshi
         }
     }
 
-    bool TXUIResource::Load(uint8_t* buffer)
+    TBOOL TXUIResource::Load(uint8_t* buffer)
     {
         Destroy();
         ReadHeader(buffer);
@@ -139,7 +139,7 @@ namespace Toshi
             }
         }
 
-        return true;
+        return TTRUE;
     }
 
     int TXUIResource::ReadDataSection(uint8_t* buffer, uint32_t size)
@@ -163,10 +163,10 @@ namespace Toshi
             m_root->LoadTimelines(*this, buffer);
         }
 
-        return true;
+        return TTRUE;
     }
 
-    bool TXUIResource::ReadStringSection(uint8_t* buffer, uint32_t size)
+    TBOOL TXUIResource::ReadStringSection(uint8_t* buffer, uint32_t size)
     {
         TASSERT(TNULL == m_asStringTable, "StringTable must not be initialized");
         XURReader reader(buffer);
@@ -202,7 +202,7 @@ namespace Toshi
             }
         }
 
-        return true;
+        return TTRUE;
     }
 
     int TXUIResource::ReadCustSection(uint8_t* buffer, uint32_t size)

@@ -24,9 +24,9 @@ namespace Toshi
 		}
 	}
 
-	bool TDebugConsole::Show(bool state)
+	TBOOL TDebugConsole::Show(TBOOL state)
 	{
-		bool oldState = m_Visible;
+		TBOOL oldState = m_Visible;
 		m_Visible = state;
 
 		ShowWindow(m_HWND, state);
@@ -35,7 +35,7 @@ namespace Toshi
 		return oldState;
 	}
 
-	bool TDebugConsole::Toggle()
+	TBOOL TDebugConsole::Toggle()
 	{
 		Show(!m_Visible);
 		return m_Visible;
