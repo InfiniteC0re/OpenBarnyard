@@ -143,6 +143,14 @@ void AImGui::Render()
             pGameState = pGameStateController->GetCurrentGameState();
         }
     }
+    else
+    {
+        if (ImGui::Button("Pop current state"))
+        {
+            pGameStateController->PopCurrentState();
+            pGameState = pGameStateController->GetCurrentGameState();
+        }
+    }
 
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
     ImGui::Separator();

@@ -7,24 +7,24 @@
 class AGameStateController : public Toshi::TSingleton<AGameStateController>
 {
 public:
-	AGameStateController()
-	{
-		m_bStatePushing = TFALSE;
-	}
+    AGameStateController()
+    {
+        m_bStatePushing = TFALSE;
+    }
 
-	AGameState* GetCurrentGameState()
-	{
-		return m_oStateStack.Back();
-	}
+    AGameState* GetCurrentGameState()
+    {
+        return m_oStateStack.Back();
+    }
 
-	void Create();
-	void Update(float deltaTime);
-	void PushState(AGameState* pGameState);
-	void PopState(AGameState* pState);
-	void ResetStack();
-	void PopCurrentState();
+    void Create();
+    void Update(float deltaTime);
+    void PushState(AGameState* pGameState);
+    void PopState(AGameState* pState);
+    void ResetStack();
+    void PopCurrentState();
 
 private:
-	Toshi::T2Vector<AGameState*, 10> m_oStateStack;
-	TBOOL m_bStatePushing;
+    Toshi::T2Vector<AGameState*, 10> m_oStateStack;
+    TBOOL m_bStatePushing;
 };

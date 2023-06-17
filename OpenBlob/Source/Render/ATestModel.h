@@ -10,6 +10,7 @@ class ATestModel :
 {
 public:
 	ATestModel();
+	~ATestModel();
 
 	void Render(float deltaTime);
 

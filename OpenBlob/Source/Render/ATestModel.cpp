@@ -25,6 +25,14 @@ ATestModel::ATestModel()
     CreatePlane();
 }
 
+ATestModel::~ATestModel()
+{
+    m_pCube->DestroyResource();
+    m_pPlane->DestroyResource();
+    delete m_pCubeMaterial;
+    delete m_pPlaneMaterial;
+}
+
 void ATestModel::Render(float deltaTime)
 {
     auto pRenderContext = Toshi::TRender::GetSingletonWeak()->GetCurrentRenderContext();

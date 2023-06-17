@@ -88,10 +88,10 @@ namespace Toshi
 			return m_State;
 		}
 
-		void SetFlags(State flags)
-		{
-			m_State = flags;
-		}
+        void SetFlags(State flags)
+        {
+            m_State = flags;
+        }
 
 		void SetOrderTable(TOrderTable* pOrderTable)
 		{
@@ -173,7 +173,7 @@ namespace Toshi
 		{
 			if (!HASFLAG(pRegMat->GetFlags() & TRegMaterial::State_Used))
 			{
-				pRegMat->SetFlags(TRegMaterial::State_Used);
+				pRegMat->SetFlags(pRegMat->GetFlags() | TRegMaterial::State_Used);
 				pRegMat->SetNextUsedMaterial(m_pLastRegMat);
 				m_pLastRegMat = pRegMat;
 			}

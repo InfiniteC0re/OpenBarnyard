@@ -1,5 +1,6 @@
 #pragma once
-namespace Toshi2
+
+namespace Toshi
 {
 	template<typename T, int Cap>
 	class T2Vector

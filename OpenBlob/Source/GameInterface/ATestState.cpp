@@ -13,7 +13,7 @@ AGameState::UpdateResult ATestState::OnUpdate(float deltaTime)
 
 void ATestState::OnRemoval()
 {
-    
+    ATestModel::DestroySingleton();
 }
 
 void ATestState::OnInsertion()
@@ -25,7 +25,10 @@ void ATestState::OnInsertion()
     auto res = map.Find("key2");
 
     ATestModel::CreateSingleton();
+}
 
+void ATestState::OnActivate()
+{
     auto pGUI = Toshi::T2GUI::GetSingleton();
     auto pGUIRenderer = pGUI->GetRenderer();
     auto pRootElement = pGUI->GetRootElement();
@@ -37,7 +40,7 @@ void ATestState::OnInsertion()
     m_Menu.SetTransform(10, -10);
 
     Toshi::T2GUIRectangle* rectangle;
-    
+
     rectangle = new Toshi::T2GUIRectangle;
     rectangle->Create(300, 50);
     rectangle->SetColour(0x00303030);
@@ -45,6 +48,7 @@ void ATestState::OnInsertion()
     rectangle->SetPivot(Toshi::T2GUIElement::Pivot::TopCenter);
     rectangle->SetTransform(0, 10);
     m_Menu.AddChildHead(rectangle);
+    m_Elements.PushBack(rectangle);
 
     rectangle = new Toshi::T2GUIRectangle;
     rectangle->Create(300, 50);
@@ -53,6 +57,7 @@ void ATestState::OnInsertion()
     rectangle->SetPivot(Toshi::T2GUIElement::Pivot::TopCenter);
     rectangle->SetTransform(0, 70);
     m_Menu.AddChildHead(rectangle);
+    m_Elements.PushBack(rectangle);
 
     rectangle = new Toshi::T2GUIRectangle;
     rectangle->Create(300, 50);
@@ -61,6 +66,7 @@ void ATestState::OnInsertion()
     rectangle->SetPivot(Toshi::T2GUIElement::Pivot::TopCenter);
     rectangle->SetTransform(0, 130);
     m_Menu.AddChildHead(rectangle);
+    m_Elements.PushBack(rectangle);
 
     rectangle = new Toshi::T2GUIRectangle;
     rectangle->Create(300, 50);
@@ -69,6 +75,7 @@ void ATestState::OnInsertion()
     rectangle->SetPivot(Toshi::T2GUIElement::Pivot::TopCenter);
     rectangle->SetTransform(0, 190);
     m_Menu.AddChildHead(rectangle);
+    m_Elements.PushBack(rectangle);
 
     rectangle = new Toshi::T2GUIRectangle;
     rectangle->Create(300, 50);
@@ -77,6 +84,7 @@ void ATestState::OnInsertion()
     rectangle->SetPivot(Toshi::T2GUIElement::Pivot::TopCenter);
     rectangle->SetTransform(0, 250);
     m_Menu.AddChildHead(rectangle);
+    m_Elements.PushBack(rectangle);
 
     rectangle = new Toshi::T2GUIRectangle;
     rectangle->Create(300, 50);
@@ -85,8 +93,18 @@ void ATestState::OnInsertion()
     rectangle->SetPivot(Toshi::T2GUIElement::Pivot::TopCenter);
     rectangle->SetTransform(0, 310);
     m_Menu.AddChildHead(rectangle);
+    m_Elements.PushBack(rectangle);
 
     pRootElement->AddChildHead(&m_Menu);
+}
+
+void ATestState::OnDeactivate()
+{
+    for (auto it = m_Elements.Begin(); it != m_Elements.End(); it++)
+        delete* it;
+
+    m_Elements.Clear();
+    m_Menu.Unlink();
 }
 
 #ifdef TOSHI_DEBUG

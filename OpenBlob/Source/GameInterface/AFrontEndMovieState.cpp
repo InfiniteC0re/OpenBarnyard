@@ -105,10 +105,6 @@ void AFrontEndMovieState::OnInsertion()
     m_Background.Create(s_Assets[m_iAssetId]);
     m_Background.SetVisible(TTRUE);
 
-    auto pSysShader = Toshi::TSysShaderHAL::GetSingletonWeak();
-    auto pTestMaterial = pSysShader->CreateMaterial();
-    pTestMaterial->Create(Toshi::TSysMaterial::BlendMode::Default);
-
     TIMPLEMENT();
     AGameState::OnInsertion();
 }
