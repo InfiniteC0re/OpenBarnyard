@@ -109,7 +109,7 @@ namespace Toshi {
         return TFALSE;
     }
 
-    int TInputDXDeviceMouse::ProcessEvents(TEmitter<TInputInterface, InputEvent>& emitter, float flt)
+    int TInputDXDeviceMouse::ProcessEvents(TEmitter<TInputInterface, TInputInterface::InputEvent>& emitter, float flt)
     {
         DIDEVICEOBJECTDATA dod[32];
         DWORD dwItems = 32;
@@ -135,7 +135,6 @@ namespace Toshi {
         auto renderer = TRenderDX11::Interface();
         auto input = TInputDXInterface::GetInterface();
         TRenderDX11::DisplayParams* params;
-        InputEvent inputEvent;
         int unk;
 
         for (size_t i = 0; i < dwItems; i++)
@@ -157,7 +156,7 @@ namespace Toshi {
                         m_CursorPos.x += dod[i].dwData;
                     }
                 }
-                emitter.Throw(InputEvent(this, AXIS_CURSOR, InputEvent::EventType_MouseMotion, m_aAxis.m_iX, m_aAxis.m_iY));
+                emitter.Throw(TInputInterface::InputEvent(this, AXIS_CURSOR, TInputInterface::InputEvent::EventType_MouseMotion, m_aAxis.m_iX, m_aAxis.m_iY));
                 break;
             case DIMOFS_Y: // MouseDown
                 m_aAxis.m_iY += dod[i].dwData;
@@ -174,27 +173,27 @@ namespace Toshi {
                         m_CursorPos.y += dod[i].dwData;
                     }
                 }
-                emitter.Throw(InputEvent(this, AXIS_CURSOR, InputEvent::EventType_MouseMotion, m_aAxis.m_iX, m_aAxis.m_iY));
+                emitter.Throw(TInputInterface::InputEvent(this, AXIS_CURSOR, TInputInterface::InputEvent::EventType_MouseMotion, m_aAxis.m_iX, m_aAxis.m_iY));
                 break;
             case DIMOFS_Z: // Wheel
                 m_fWheelAxis += dod[i].dwData;
-                emitter.Throw(InputEvent(this, AXIS_WHEEL, InputEvent::EventType_MouseMotion, 0.0f, m_fWheelAxis / WHEEL_DELTA));
+                emitter.Throw(TInputInterface::InputEvent(this, AXIS_WHEEL, TInputInterface::InputEvent::EventType_MouseMotion, 0.0f, m_fWheelAxis / WHEEL_DELTA));
                 unk = m_fWheelAxis / m_field0x80;
                 if (unk < 0)
                 {
-                    emitter.Throw(InputEvent(this, BUTTON_WHEEL_BACKWARD, InputEvent::EventType_Unk));
+                    emitter.Throw(TInputInterface::InputEvent(this, BUTTON_WHEEL_BACKWARD, TInputInterface::InputEvent::EventType_Unk));
                     unk++;
                     if (unk < 0)
                     {
                         int i = -unk;
                         do
                         {
-                            emitter.Throw(InputEvent(this, BUTTON_WHEEL_BACKWARD, InputEvent::EventType_Repeat));
+                            emitter.Throw(TInputInterface::InputEvent(this, BUTTON_WHEEL_BACKWARD, TInputInterface::InputEvent::EventType_Repeat));
                             i--;
                         } while (i != 0);
                     }
 
-                    emitter.Throw(InputEvent(this, BUTTON_WHEEL_BACKWARD, InputEvent::EventType_Unk2));
+                    emitter.Throw(TInputInterface::InputEvent(this, BUTTON_WHEEL_BACKWARD, TInputInterface::InputEvent::EventType_Unk2));
                 }
                 TTODO("...");
                 break;

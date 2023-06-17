@@ -1,5 +1,7 @@
 #include "ToshiPCH.h"
 #include "TInputInterface.h"
+#include "TInputDeviceKeyboard.h"
+#include "TInputDeviceMouse.h"
 
 namespace Toshi
 {
@@ -38,6 +40,14 @@ namespace Toshi
         TASSERT(pMouse == TNULL || pMouse->GetClass()->IsA(TGetClass(TInputDeviceMouse)));
 
         return pMouse;
+    }
+
+    Toshi::TClass* TInputInterface::GetSpecificDeviceByIndex(TClass* pClass, size_t index)
+    {
+        TInputDevice* pDevice = GetDeviceByIndex(pClass, index);
+        TASSERT(pDevice == TNULL || pDevice->GetClass()->IsA(pClass));
+        if (pDevice == TNULL) return TNULL;
+        return pDevice->GetClass();
     }
 
     void TInputInterface::AddDevice(TInputDevice* device)

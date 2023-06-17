@@ -1,5 +1,5 @@
 #pragma once
-#include "TInputDevice.h"
+#include "TInputInterface.h"
 
 namespace Toshi
 {

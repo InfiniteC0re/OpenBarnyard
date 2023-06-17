@@ -1,5 +1,5 @@
 #include "ToshiPCH.h"
-#include "TInputDevice.h"
+#include "TInputInterface.h"
 
 namespace Toshi
 {
@@ -23,8 +23,8 @@ namespace Toshi
         return TFALSE;
     }
 
-    void TInputDevice::ThrowRepeatEvent(TEmitter<TInputInterface, InputEvent>& emitter, RepeatInfo* repeatInfo, float flt)
+    void TInputDevice::ThrowRepeatEvent(TEmitter<TInputInterface, TInputInterface::InputEvent>& emitter, RepeatInfo* repeatInfo, float flt)
     {
-        emitter.Throw(InputEvent(this, repeatInfo->m_iDoodad, InputEvent::EventType::EventType_Repeat));
+        emitter.Throw(TInputInterface::InputEvent(this, repeatInfo->m_iDoodad, TInputInterface::InputEvent::EventType::EventType_Repeat));
     }
 }
