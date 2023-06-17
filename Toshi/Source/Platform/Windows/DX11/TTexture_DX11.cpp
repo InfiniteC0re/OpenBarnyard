@@ -197,5 +197,9 @@ namespace Toshi
 		}
 
 		SetLastTexture(pTexture);
+
+#ifdef TOSHI_DEBUG
+		s_NumTextures += 1;
+#endif
 	}
 }

@@ -16,7 +16,7 @@ void ACamera::ResetCameraMatrix(CameraMatrix& camMat)
 	camMat.m_fFOV = sm_fDefaultFOV;
 	camMat.m_fAspect = Toshi::TMath::Tan(sm_fDefaultFOV * 0.5f);
 	camMat.m_fProjectionCentreX = 0.5f;
-	camMat.m_fProjectionCentreY = 0.0f;
+	camMat.m_fProjectionCentreY = 0.5f;
 }
 
 void ACamera::RotateAroundAxis(const Toshi::TVector4& a_vAxis, float rotation)

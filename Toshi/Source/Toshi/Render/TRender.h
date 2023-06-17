@@ -110,10 +110,15 @@ namespace Toshi
 			return m_oParams.fHeight;
 		}
 
-		TMatrix44& GetModelViewMatrix()
-		{
-			return m_mModelViewMatrix;
-		}
+        TMatrix44& GetModelViewMatrix()
+        {
+            return m_mModelViewMatrix;
+        }
+
+        TMatrix44& GetWorldViewMatrix()
+        {
+            return m_mWorldViewMatrix;
+        }
 
 		const PROJECTIONPARAMS& GetProjectionParams() const
 		{

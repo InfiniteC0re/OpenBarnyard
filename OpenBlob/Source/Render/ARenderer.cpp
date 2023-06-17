@@ -321,6 +321,7 @@ void ARenderer::RenderMainScene(float deltaTime, TViewport* pViewport, TCameraOb
 
 	pViewport->AllowBackgroundClear(bAllowBackgroundClear);
 	pViewport->Begin();
+	pCameraObject->Render();
 
 	auto pTestModel = ATestModel::GetSingletonWeak();
 	
@@ -389,9 +390,9 @@ void ARenderer::GetAppCamera()
 			auto pCameraObject = m_pViewportManager->GetViewportCameraObject(i);
 			pCameraObject->SetProjectionCentreX(cameraMatrix.m_fProjectionCentreX);
 			pCameraObject->SetProjectionCentreY(cameraMatrix.m_fProjectionCentreY);
-			pCameraObject->SetFOV(cameraMatrix.m_fFOV);
-			pCameraObject->SetNear(cameraMatrix.m_fNear);
-			pCameraObject->SetFar(cameraMatrix.m_fFar);
+            pCameraObject->SetFOV(cameraMatrix.m_fFOV);
+            pCameraObject->SetNear(cameraMatrix.m_fNear);
+            pCameraObject->SetFar(cameraMatrix.m_fFar);
 			
 			auto& pCameraTransform = pCameraObject->GetTransformObject();
 			pCameraTransform.SetMatrix(cameraFinalMatrix);

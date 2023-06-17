@@ -131,6 +131,17 @@ namespace Toshi
 
 		void AddTexture(TTexture* pTexture);
 
+#ifdef TOSHI_DEBUG
+	public:
+        size_t DEBUG_GetNumTextures() const
+        {
+            return s_NumTextures;
+        }
+
+	private:
+		inline static size_t s_NumTextures = 0;
+#endif // TOSHI_DEBUG
+
 	private:
 		TTexture* m_pLastTexture;
 		TTexture* m_pInvalidTexture;
