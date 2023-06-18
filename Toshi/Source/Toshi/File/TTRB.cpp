@@ -37,28 +37,28 @@ namespace Toshi
 		TTSFI ttsf;
 		ERROR error = ttsf.Open(file);
 
-		if (error == ERROR_OK)
-		{
-			if (ttsf.m_Magic == TMAKEFOUR("TRBF"))
-			{
-				if (ProcessForm(ttsf))
-				{
-					error = ERROR_OK;
-				}
-				else
-				{
-					error = ERROR_PARSE_ERROR;
-				}
-			}
-			else
-			{
-				error = ERROR_NOT_TRBF;
-			}
-		}
-		else
-		{
-			error = ERROR_NO_HEADER;
-		}
+        if (error == ERROR_OK)
+        {
+            if (ttsf.m_Magic == TMAKEFOUR("TRBF"))
+            {
+                if (ProcessForm(ttsf))
+                {
+                    error = ERROR_OK;
+                }
+                else
+                {
+                    error = ERROR_PARSE_ERROR;
+                }
+            }
+            else
+            {
+                error = ERROR_NOT_TRBF;
+            }
+        }
+        else
+        {
+            error = ERROR_NO_HEADER;
+        }
 
 		return error;
 	}

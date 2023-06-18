@@ -11,6 +11,7 @@
 #include "GameInterface/AGameStateController.h"
 #include "GameInterface/ATestState.h"
 
+#include <Toshi/Render/TTexture.h>
 #include <Toshi2/T2ResourceManager.h>
 #include <Platform/Windows/DX11/TRender_DX11.h>
 #include <Platform/Windows/DX11/TRenderContext_DX11.h>
@@ -125,7 +126,7 @@ void AImGui::Render()
     auto pGameState = pGameStateController->GetCurrentGameState();
     auto pCamera = pCameraMngr->GetCurrentCamera();
 
-    ImGui::SetNextWindowSize({ 0, 0 });
+    ImGui::SetNextWindowSize({ 500, 500 });
     
     ImGui::Begin("Debug Menu", TNULL, ImGuiWindowFlags_NoResize);
 
@@ -135,6 +136,7 @@ void AImGui::Render()
     ImGui::Text("Num of created T2Resources: %d/%d", pResourceMngr->GetNumUsedResources(), pResourceMngr->GetMaxNumResources());
     ImGui::Text("Number of created textures: %d", TTextureManager::GetSingleton()->DEBUG_GetNumTextures());
     
+    ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
     if (!pGameState->IsExactly(TGetClass(ATestState)))
     {
         if (ImGui::Button("Load ATestState"))
@@ -143,13 +145,33 @@ void AImGui::Render()
             pGameState = pGameStateController->GetCurrentGameState();
         }
     }
+    else
+    {
+        if (ImGui::Button("Pop current state"))
+        {
+            pGameStateController->PopCurrentState();
+            pGameState = pGameStateController->GetCurrentGameState();
+        }
+    }
+
+    ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+    ImGui::Separator();
+    ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+    ImGui::TextColored(ImColor(200, 200, 200, 255), "TMemory");
+    ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+    ImGui::Text(
+        "Number of allocated bytes: %llu (~%lluKB, ~%lluMB)",
+        TMemory::GetNumOfAllocatedBytes(),
+        TMemory::GetNumOfAllocatedBytes() >> 10,
+        TMemory::GetNumOfAllocatedBytes() >> 20
+    );
 
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
     ImGui::Separator();
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
 
     ImGui::TextColored(ImColor(200, 200, 200, 255), "Camera");
-    ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 4);
+    ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
 
     Toshi::TMath::Clip(pCamera->GetCameraMatrix().m_fNear, 0.01f, 1.0f);
 
@@ -167,6 +189,31 @@ void AImGui::Render()
     {
         ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
         pGameState->DEBUG_RenderImGui();
+    }
+
+    ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+    ImGui::Separator();
+    ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+
+    if (ImGui::CollapsingHeader("TTextureManager"))
+    {
+        ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+
+        auto pTexManager = TTextureManager::GetSingleton();
+        
+        TTexture* pTexture = pTexManager->GetLastTexture();
+
+        int i = 1;
+        while (pTexture)
+        {
+            ImGui::Image(pTexture->GetHandle(), { 111, 111 });
+
+            if (ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled))
+                ImGui::SetTooltip(pTexture->GetName());
+
+            if ((i++ % 4) != 0) ImGui::SameLine();
+            pTexture = pTexture->GetPrev();
+        }
     }
 
     ImGui::End();

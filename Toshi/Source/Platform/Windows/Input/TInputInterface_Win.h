@@ -9,7 +9,7 @@ namespace Toshi
 	public:
 		static constexpr size_t MAXDEVICESNUM = 127;
 	public:
-		TInputDXInterface() : TInputInterface()
+		TInputDXInterface()
 		{
 			m_poDirectInput8 = NULL;
 			m_hMainWindow = NULL;

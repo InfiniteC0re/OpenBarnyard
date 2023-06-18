@@ -50,7 +50,7 @@ void AMovieState::OnInsertion()
 
 void AMovieState::PlayMovie(uint8_t unk)
 {
-	TString8 str = TString8(*m_stringVector.Begin());
+	TString8 str = **m_stringVector.Begin();
 	ALocaleManager& localeMgr = ALocaleManager::Instance();
 
 	if (m_bUseLocalePostFix)

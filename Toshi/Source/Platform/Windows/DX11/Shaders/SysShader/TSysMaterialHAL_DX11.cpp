@@ -7,7 +7,11 @@ namespace Toshi {
 
     TSysMaterialHAL::~TSysMaterialHAL()
     {
-
+        if (m_pOrderTable)
+        {
+            TOrderTable::DeregisterMaterial(GetRegMaterial());
+            m_pOrderTable = TNULL;
+        }
     }
 
     void TSysMaterialHAL::PreRender()

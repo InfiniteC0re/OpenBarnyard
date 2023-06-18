@@ -14,6 +14,7 @@ namespace Toshi {
 		virtual TBOOL Lock(TLockBuffer* pBufferLock) override;
 		virtual void Unlock(uint16_t uiNumVertices, uint16_t uiNumIndices) override;
 		virtual void SetZBias(int zBias) override;
+		virtual void OnDestroy() override;
 
 		ID3D11Buffer* GetVertexBuffer() const
 		{

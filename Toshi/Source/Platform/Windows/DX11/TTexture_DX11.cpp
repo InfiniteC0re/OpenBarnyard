@@ -70,9 +70,37 @@ namespace Toshi
 
 		TTextureManager::GetSingletonWeak()->AddTexture(this);
 		SelectSettings();
+
+#ifdef TOSHI_DEBUG
+        TTextureManager::s_NumTextures += 1;
+#endif
 	}
 
-	void TTexture::Bind(UINT startSlot)
+    void TTexture::Deinit()
+    {
+		m_TexInfo->SRView->Release();
+
+		if (m_pPrevTexture)
+			m_pPrevTexture->m_pNextTexture = m_pNextTexture;
+
+        if (m_pNextTexture)
+            m_pNextTexture->m_pPrevTexture = m_pPrevTexture;
+
+		auto pTexManager = TTextureManager::GetSingletonWeak();
+
+		if (pTexManager->GetLastTexture() == this)
+			pTexManager->SetLastTexture(m_pPrevTexture);
+
+        m_pNextTexture = TNULL;
+        m_pPrevTexture = TNULL;
+
+#ifdef TOSHI_DEBUG
+		TASSERT(TTextureManager::s_NumTextures > 0);
+        TTextureManager::s_NumTextures -= 1;
+#endif
+    }
+
+    void TTexture::Bind(UINT startSlot)
 	{
 		auto pRender = TRenderDX11::Interface();
 		pRender->m_pDeviceContext->PSSetShaderResources(startSlot, 1, &m_TexInfo->SRView);
@@ -197,9 +225,6 @@ namespace Toshi
 		}
 
 		SetLastTexture(pTexture);
-
-#ifdef TOSHI_DEBUG
-		s_NumTextures += 1;
-#endif
 	}
+
 }

@@ -14,15 +14,23 @@ struct SysMeshVertex
 
 ATestModel::ATestModel()
 {
-    Toshi::TAssetInit assetInit;
-
     m_Position = { 0.0f, 0.0f, 6.0f, 1.0f };
 
     m_AssetTRB.Load("Data\\LEVELS\\PRODUCTION\\Singleplayer\\Abyss\\RegionAssets.trb");
-    assetInit.InitAssets(m_AssetTRB, TTRUE, TFALSE);
+    Toshi::TAssetInit::InitAssets(m_AssetTRB, TTRUE, TFALSE);
 
     CreateCube();
     CreatePlane();
+}
+
+ATestModel::~ATestModel()
+{
+    Toshi::TAssetInit::DeinitAssets(m_AssetTRB);
+
+    m_pCube->DestroyResource();
+    m_pPlane->DestroyResource();
+    delete m_pCubeMaterial;
+    delete m_pPlaneMaterial;
 }
 
 void ATestModel::Render(float deltaTime)

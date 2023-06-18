@@ -16,6 +16,12 @@ namespace Toshi
 			m_poElements = a_iMaxSize > 0 ? a_pAllocator->Malloc(a_iMaxSize * a_iElementSize) : TNULL;
 		}
 
+		~T2GenericDynamicVector()
+		{
+			if (m_poElements)
+				m_pAllocator->Free(m_poElements);
+		}
+
 		void Reallocate(int a_iNewSize, int a_iCount);
 		void Grow(int a_iNumElements, int a_iCount);
 
@@ -38,10 +44,11 @@ namespace Toshi
 
 		void Clear()
 		{
-			for (size_t i = 0; i < m_iNumElements; i++)
-			{
-				((T*)m_poElements)[m_iNumElements].~T();
-			}
+            for (size_t i = 0; i < m_iNumElements; i++)
+            {
+                ((T*)m_poElements)[m_iNumElements].~T();
+            }
+
 			m_iNumElements = 0;
 		}
 
@@ -56,18 +63,20 @@ namespace Toshi
 		void PushBack(const T& element)
 		{
 			Grow(1, sizeof(T));
-			T* lastElement = &((T*)m_poElements)[m_iNumElements];
-			if (lastElement != TNULL)
-			{
-				lastElement = (T*)element;
-			}
-			m_iNumElements++;
+
+			T* elementArray = (T*)m_poElements;
+			elementArray[m_iNumElements++] = element;
 		}
 
-		T& Begin() const
-		{
-			return *(T*)m_poElements;
-		}
+        T* Begin() const
+        {
+            return (T*)m_poElements;
+        }
+
+        T* End() const
+        {
+            return (T*)m_poElements + m_iNumElements;
+        }
 
 		int Size() const
 		{
