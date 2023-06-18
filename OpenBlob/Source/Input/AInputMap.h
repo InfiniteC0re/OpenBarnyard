@@ -85,6 +85,7 @@ public:
 	Toshi::T2Map<ActionButton, Toshi::T2Vector<int, 4>, ButtonMapComparator> m_ActionButtonMap7;  // 0xAC
 	Toshi::T2Map<ActionButton, Toshi::T2Vector<int, 4>, ButtonMapComparator> m_ActionButtonMap8;  // 0xC8
 	Toshi::T2Map<ActionButton, Toshi::T2Vector<int, 4>, ButtonMapComparator> m_ActionButtonMap9;  // 0xE4
+	Toshi::T2Map<ActionButton, Toshi::T2Vector<int, 4>, ButtonMapComparator> m_ActionButtonMap10; // 0x100
 	Toshi::T2Map<int, int, Toshi::TComparator<int>>                          m_NamePadDoodadsMap; // 0x11C
 };
 
