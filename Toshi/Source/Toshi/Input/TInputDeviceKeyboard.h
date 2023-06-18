@@ -298,7 +298,7 @@ namespace Toshi
         float m_fMag1; // 0x40
         float m_fMag2; // 0x44
 
-        TVector4 m_iMapArray[4];  // 0x50
-        TVector4 m_iMapArray2[4]; // 0x60
+        TVector4* m_vpMapArray[4];  // 0x50
+        TVector4* m_vpMapArray2[4]; // 0x60
     };
 }
