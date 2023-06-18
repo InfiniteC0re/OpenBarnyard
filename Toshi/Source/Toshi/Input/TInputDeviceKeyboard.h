@@ -271,6 +271,7 @@ namespace Toshi
     "UNKNOWN")
 #pragma endregion
 
+        static const int VIRTSTK_DIRECTIONAL_MAPS = 2;
     public:
         virtual TBOOL GetDoodadProperties(int doodad, DoodadProperties& doodadProps) const
         {
@@ -283,8 +284,20 @@ namespace Toshi
             return TFALSE;
         }
 
-        virtual const char* GetButtonFromDoodad(int doodad) const;
+        virtual int ProcessVirtualButtons(TEmitter<TInputInterface, TInputInterface::InputEvent>& emitter, float flt);
+
+        virtual const char* GetButtonFromDoodad(int doodad) const { return GET_KEY_FROM_DOODAD(doodad); }
 
         virtual int GetAxisCount() { return 0; }
+        virtual int GetAxisInt() const { return 0; }
+        virtual int GetAxisFloat(int, int) const { return 0; }
+
+        void SetID(int a_iMapID, float x, float y, float z, float w);
+
+        float m_fMag1; // 0x40
+        float m_fMag2; // 0x44
+
+        TVector4 m_iMapArray[4];  // 0x50
+        TVector4 m_iMapArray2[4]; // 0x60
     };
 }
