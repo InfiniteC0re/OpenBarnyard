@@ -295,10 +295,11 @@ namespace Toshi
         void SetVirtStickDoodads(int a_iMapID, int x, int y, int z, int w);
         void GetVirtStickDoodads(int a_iMapID, int& x, int& y, int& z, int& w);
 
-        float m_fMag1; // 0x40
-        float m_fMag2; // 0x44
+    protected:
+        void UpdateVirtualButtons();
 
-        int m_VirtStickDoodads[4][4];  // 0x50
-        int m_ipMapArray2[4][4]; // 0x60
+        int  m_mags[4];              // 0x40
+        int* m_VirtStickDoodads[4];  // 0x50
+        int* m_ipMapArray2[4];       // 0x60
     };
 }
