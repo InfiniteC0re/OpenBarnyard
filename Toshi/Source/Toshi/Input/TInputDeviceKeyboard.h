@@ -292,7 +292,8 @@ namespace Toshi
         virtual int GetAxisInt() const { return 0; }
         virtual int GetAxisFloat(int, int) const { return 0; }
 
-        void SetID(int a_iMapID, float x, float y, float z, float w);
+        void SetMap(int a_iMapID, float x, float y, float z, float w);
+        void GetMap(int a_iMapID, float& x, float& y, float& z, float& w);
 
         float m_fMag1; // 0x40
         float m_fMag2; // 0x44
