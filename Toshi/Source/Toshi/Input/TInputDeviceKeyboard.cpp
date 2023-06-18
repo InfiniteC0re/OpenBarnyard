@@ -10,20 +10,20 @@ int TInputDeviceKeyboard::ProcessVirtualButtons(TEmitter<TInputInterface, TInput
 	return 0;
 }
 
-void Toshi::TInputDeviceKeyboard::SetMap(int a_iMapID, float x, float y, float z, float w)
+void Toshi::TInputDeviceKeyboard::SetVirtStickDoodads(int a_iMapID, int x, int y, int z, int w)
 {
 	TASSERT(a_iMapID >= 0 && a_iMapID < VIRTSTK_DIRECTIONAL_MAPS);
-	m_vpMapArray[a_iMapID]->x = x;
-	m_vpMapArray[a_iMapID]->y = y;
-	m_vpMapArray[a_iMapID]->z = z;
-	m_vpMapArray[a_iMapID]->w = w;
+	m_VirtStickDoodads[a_iMapID][0] = x;
+	m_VirtStickDoodads[a_iMapID][1] = y;
+	m_VirtStickDoodads[a_iMapID][2] = z;
+	m_VirtStickDoodads[a_iMapID][3] = w;
 }
 
-void Toshi::TInputDeviceKeyboard::GetMap(int a_iMapID, float& x, float& y, float& z, float& w)
+void Toshi::TInputDeviceKeyboard::GetVirtStickDoodads(int a_iMapID, int& x, int& y, int& z, int& w)
 {
 	TASSERT(a_iMapID >= 0 && a_iMapID < VIRTSTK_DIRECTIONAL_MAPS);
-	x = m_vpMapArray[a_iMapID]->x;
-	y = m_vpMapArray[a_iMapID]->y;
-	z = m_vpMapArray[a_iMapID]->z;
-	w = m_vpMapArray[a_iMapID]->w;
+	x = m_VirtStickDoodads[a_iMapID][0];
+	y = m_VirtStickDoodads[a_iMapID][1];
+	z = m_VirtStickDoodads[a_iMapID][2];
+	w = m_VirtStickDoodads[a_iMapID][3];
 }

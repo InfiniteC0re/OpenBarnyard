@@ -292,13 +292,13 @@ namespace Toshi
         virtual int GetAxisInt() const { return 0; }
         virtual int GetAxisFloat(int, int) const { return 0; }
 
-        void SetMap(int a_iMapID, float x, float y, float z, float w);
-        void GetMap(int a_iMapID, float& x, float& y, float& z, float& w);
+        void SetVirtStickDoodads(int a_iMapID, int x, int y, int z, int w);
+        void GetVirtStickDoodads(int a_iMapID, int& x, int& y, int& z, int& w);
 
         float m_fMag1; // 0x40
         float m_fMag2; // 0x44
 
-        TVector4* m_vpMapArray[4];  // 0x50
-        TVector4* m_vpMapArray2[4]; // 0x60
+        int m_VirtStickDoodads[4][4];  // 0x50
+        int m_ipMapArray2[4][4]; // 0x60
     };
 }
