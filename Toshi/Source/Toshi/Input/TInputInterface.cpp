@@ -78,7 +78,7 @@ namespace Toshi
     {
         for (auto it = m_DeviceList.Begin(); it != m_DeviceList.End(); ++it)
         {
-            if (it->IsAquired())
+            if (it->IsAcquired())
             {
                 TIMPLEMENT();
             }
@@ -112,7 +112,7 @@ namespace Toshi
 
         for (auto it = m_DeviceList.Begin(); it != m_DeviceList.End(); ++it)
         {
-            if (it->IsAquired())
+            if (it->IsAcquired())
             {
                 TIMPLEMENT();
             }
@@ -120,7 +120,7 @@ namespace Toshi
 
         for (auto it = m_DeviceList.Begin(); it != m_DeviceList.End(); ++it)
         {
-            if (it->IsAquired())
+            if (it->IsAcquired())
             {
                 TIMPLEMENT();
             }

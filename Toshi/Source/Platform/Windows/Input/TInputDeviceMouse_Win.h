@@ -59,13 +59,14 @@ namespace Toshi
 		IDirectInputDevice8* m_poDXInputDevice;
 		DIDEVCAPS m_DIDevCaps;
 		POINT m_CursorPos;
-		TBOOL m_bInitiliased; // 0x80
 		DWORD m_dwButtonCurrent;
 		DWORD m_dwButtonPrevious;
-		int m_field0x40;
+		int m_iLeftButton;
 		Axis m_aAxis;
-		float m_fWheelAxis; // 0x60 very unsure
 		int m_field0x80;
 		TBOOL m_bUnk; // 0x35
+		float m_fWheelAxis; // 0x60 very unsure
+		TBOOL m_bInitiliased; // 0x80
+		GUID m_oGUID; // 0x84
 	};
 }

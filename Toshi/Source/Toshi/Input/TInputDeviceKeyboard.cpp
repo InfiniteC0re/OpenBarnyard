@@ -30,4 +30,10 @@ void TInputDeviceKeyboard::GetVirtStickDoodads(int a_iMapID, int& x, int& y, int
 
 void TInputDeviceKeyboard::UpdateVirtualButtons()
 {
+	m_mags[2] = m_mags[0];
+	m_mags[3] = m_mags[1];
+	m_mags[0] = 0;
+	m_mags[1] = 0;
+
+	TIMPLEMENT();
 }
