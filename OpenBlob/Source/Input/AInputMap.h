@@ -70,6 +70,7 @@ public:
 	AInputMap()
 	{
 		InitialiseButtonMap();
+		NamePadDoodads();
 	}
 
 	void InitialiseButtonMap();
