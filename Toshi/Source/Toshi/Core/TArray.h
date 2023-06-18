@@ -8,7 +8,6 @@ class TArray
 private:
 	class TGenericArray
 	{
-
 		void* GetArrayAt(int a_iIndex = 0) const
 		{
 			TASSERT(a_iIndex >= 0);

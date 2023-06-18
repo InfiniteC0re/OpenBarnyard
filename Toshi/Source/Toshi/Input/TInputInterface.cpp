@@ -70,7 +70,8 @@ namespace Toshi
 
     TBOOL TInputInterface::Deinitialise()
     {
-        return TFALSE;
+        m_DeviceList.DeleteAll();
+        return TTRUE;
     }
 
     TBOOL TInputInterface::AcquireAll()
@@ -92,7 +93,7 @@ namespace Toshi
 
     TBOOL TInputInterface::FlushAll()
     {
-        return TFALSE;
+        return TTRUE;
     }
 
     void TInputInterface::SetExclusiveMode(TBOOL mode)

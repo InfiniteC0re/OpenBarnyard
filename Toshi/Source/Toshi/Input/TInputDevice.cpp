@@ -3,7 +3,7 @@
 
 namespace Toshi
 {
-    int TInputDevice::ProcessRepeats(TGenericEmitter& emitter, float flt)
+    int TInputDevice::ProcessRepeats(TEmitter<TInputInterface, TInputInterface::InputEvent>& emitter, float flt)
     {
         return 0;
     }

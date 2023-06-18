@@ -233,7 +233,7 @@ namespace Toshi {
         }
 
     protected:
-        int ProcessRepeats(TGenericEmitter& emitter, float flt);
+        int ProcessRepeats(TEmitter<TInputInterface, TInputInterface::InputEvent>& emitter, float flt);
 
     protected:
         TInputInterface* m_pInterface;
