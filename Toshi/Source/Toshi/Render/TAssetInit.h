@@ -53,18 +53,19 @@ namespace Toshi
 
 		static t_fourCCFunction constexpr InitModel = [](void* a_pData)
 		{
-			/*TModelHAL* a_modelHal;
+            TModelHAL* a_modelHal;
 
-			if (g_pMemHeap == TNULL)
-			{
-				a_modelHal = new TModelHAL();
-			}
-			else
-			{
-				a_modelHal = new (g_pMemHeap) TModelHAL();
-			}
+            if (g_pMemHeap == TNULL)
+            {
+                a_modelHal = new TModelHAL();
+            }
+            else
+            {
+                a_modelHal = new (g_pMemHeap) TModelHAL();
+            }
 
-			a_modelHal->Create(TSTATICCAST(TTMDWin::TTRBWinHeader*, a_pData));*/
+            a_modelHal->Create(TSTATICCAST(TTMDWin::TTRBWinHeader*, a_pData));
+            a_modelHal->SetDataHeader(a_pData);
 		};
 
 		// Empty ( de blob only calls a func where TASSERT("TFALSE","..\\..\\Source\\Render\\TVertexDecl_DX11.cpp",0x1f,"TASSERT"); gets called

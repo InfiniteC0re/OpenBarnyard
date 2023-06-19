@@ -40,8 +40,11 @@ namespace Toshi
 			m_TexData = 0;
 			m_pPrevTexture = TNULL;
 			m_pNextTexture = TNULL;
-			m_SamplerId = 3;
 			m_Flags1 = 0;
+            m_eAddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+            m_eAddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+            m_eFilter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+            m_SamplerId = 3;
 		}
 
         void Init();
@@ -49,34 +52,20 @@ namespace Toshi
 		void Bind(UINT startSlot);
 		TTexture* InitRunTime(Info* pTextureInfo);
 		static TTexture* InitRunTime(DXGI_FORMAT format, UINT width, UINT height, const void* srcData);
+		void SelectSamplerId();
 
-		void* GetHandle() const { return m_TexInfo->SRView; }
-		void SelectSettings();
-
-		void SetName(const char* name)
-		{
-			m_TexName = name;
-		}
-
-		const char* GetName() const
-		{
-			return m_TexName;
-		}
-
-		UINT GetWidth() const
-		{
-			return m_TexInfo->Width;
-		}
-
-		UINT GetHeight() const
-		{
-			return m_TexInfo->Height;
-		}
-
-		uint8_t GetFlags1() const
-		{
-			return m_Flags1;
-		}
+		const char* GetName() const       { return m_TexName; }
+		uint8_t GetFlags1() const         { return m_Flags1; }
+		void* GetHandle() const           { return m_TexInfo->SRView; }
+        UINT GetWidth() const             { return m_TexInfo->Width; }
+		UINT GetHeight() const            { return m_TexInfo->Height; }
+        
+        TTexture* GetPrev() const         { return m_pPrevTexture; }
+        TTexture* GetNext() const         { return m_pNextTexture; }
+		
+        void SetName(const char* name)    { m_TexName = name; }
+		void SetSamplerId(int iSamplerId) { m_SamplerId = iSamplerId; }
+        void SetWrap(D3D11_TEXTURE_ADDRESS_MODE eAddressU, D3D11_TEXTURE_ADDRESS_MODE eAddressV);
 
 		void SetAlphaEnabled(TBOOL bEnabled)
 		{
@@ -86,24 +75,19 @@ namespace Toshi
 				m_Flags1 &= ~1;
 		}
 
-		void SetSamplerId(int iSamplerId)
-		{
-			m_SamplerId = iSamplerId;
-		}
-
-        TTexture* GetPrev() const { return m_pPrevTexture; }
-        TTexture* GetNext() const { return m_pNextTexture; }
-
 	private:
-		void* m_Unk1;             // 0x00
-		const char* m_TexName;    // 0x04
-		Info* m_TexInfo;          // 0x08
-		uint32_t m_DataSize;      // 0x0C
-		uint8_t* m_TexData;       // 0x10
-		TTexture* m_pPrevTexture; // 0x14
-		TTexture* m_pNextTexture; // 0x18
-		uint8_t m_Flags1;         // 0x1C
-		int m_SamplerId;          // 0x2C
+        void* m_Unk1;                           // 0x00
+        const char* m_TexName;                  // 0x04
+        Info* m_TexInfo;                        // 0x08
+        uint32_t m_DataSize;                    // 0x0C
+        uint8_t* m_TexData;                     // 0x10
+        TTexture* m_pPrevTexture;               // 0x14
+        TTexture* m_pNextTexture;               // 0x18
+        uint8_t m_Flags1;                       // 0x1C
+        D3D11_TEXTURE_ADDRESS_MODE m_eAddressU; // 0x20
+        D3D11_TEXTURE_ADDRESS_MODE m_eAddressV; // 0x24
+        D3D11_FILTER m_eFilter;                 // 0x28
+		int m_SamplerId;                        // 0x2C
 	};
 
 	class TTextureManager : public TSingleton<TTextureManager>

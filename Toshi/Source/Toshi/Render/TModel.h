@@ -68,15 +68,9 @@ namespace Toshi {
 
 		void UnloadTRB(TBOOL bFreeTrb);
 
-		TBOOL IsCreated() const
-		{
-			return m_Flags.IsSet(Flags::Created);
-		}
-
-		const char* GetName() const
-		{
-			return m_pResourceName;
-		}
+		const char* GetName() const           { return m_pName; }
+		TBOOL IsCreated() const               { return m_Flags.IsSet(Flags::Created); }
+        void SetDataHeader(void* pDataHeader) { m_pDataHeader = pDataHeader; }
 
 	protected:
 		void CreateResource(const char* name);
@@ -86,13 +80,9 @@ namespace Toshi {
 
 	public:
 		static void* ResourceCallback(void* pData, TTRB* pTRB, TBOOL flag);
-		
 		static const char* TranslateSymbolName(const char* symbolName);
 
-		static void SetTRBLoadCallback(t_TRBLoadCallback fnCallback)
-		{
-			sm_pTRBLoadCallback = fnCallback;
-		}
+		static void SetTRBLoadCallback(t_TRBLoadCallback fnCallback) { sm_pTRBLoadCallback = fnCallback; }
 
 	protected:
 		inline static const char* sm_SymbolNamePrefix = TNULL;
@@ -112,10 +102,10 @@ namespace Toshi {
 		TModelCollision* m_pCollisionData;    // 0xA0
 		TTRB* m_pTRB;                         // 0xA4
 		TBOOL m_bFreeOnUnload;                // 0xA8
-		const char* m_pResourceName;          // 0xAC
+		const char* m_pName;                  // 0xAC
 		T2ModelPtr m_NextModelResource;       // 0xB0
 		T2ModelPtr m_PrevModelResource;       // 0xB4
-		int m_Unk6;                           // 0xBC
+		void* m_pDataHeader;                  // 0xBC
 	};
 
 	DEFINE_T2FLAGS(TModel::Flags);

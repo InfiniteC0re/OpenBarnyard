@@ -50,10 +50,10 @@ void A2GUIBackground::SetupBackground()
 	for (size_t i = 0; i < MAX_TILES; i++)
 	{
 		T2String8::Format(tgaName, "%s_%d.tga", m_pFileName, i+1);
-		T2GUIMaterial* mat = T2GUI::CreateMaterial(tgaName);
-		textureWidths[i % 3] = mat->GetTexture()->GetWidth();
-		textureHeights[i / 3] = mat->GetTexture()->GetHeight();
-		T2GUI::DestroyMaterial(mat);
+		T2GUIMaterial* pMaterial = T2GUI::CreateMaterial(tgaName);
+		textureWidths[i % 3] = pMaterial->GetTexture()->GetWidth();
+		textureHeights[i / 3] = pMaterial->GetTexture()->GetHeight();
+		T2GUI::DestroyMaterial(pMaterial);
 	}
 
 	float backgroundWidth = 0.0f + textureWidths[0] + textureWidths[1] + textureWidths[2];
@@ -81,8 +81,9 @@ void A2GUIBackground::SetupBackground()
 			pTile->SetPivot(Pivot::MiddleCenter);
 			
 			T2String8::Format(tgaName, "%s_%d.tga", m_pFileName, iTile + 1);
-			T2GUIMaterial* mat = T2GUI::CreateMaterial(tgaName);
-			pTile->SetMaterial(mat);
+			T2GUIMaterial* pMaterial = T2GUI::CreateMaterial(tgaName);
+            pMaterial->GetTexture()->SetWrap(D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_CLAMP);
+			pTile->SetMaterial(pMaterial);
 
 			auto uv = pTile->GetUV();
 			uv[0].x = 0.0;

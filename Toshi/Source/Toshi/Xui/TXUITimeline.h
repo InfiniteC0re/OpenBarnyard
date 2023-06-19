@@ -50,25 +50,41 @@ namespace Toshi
 		class TimelineProp
 		{
 		public:
-			uint32_t m_unk;
-			int32_t m_unk2;
+            union {
+                struct {
+                    uint8_t Byte1;
+                    uint8_t Byte2;
+                    uint8_t Byte3;
+                    uint8_t Byte4;
+                };
+
+                uint32_t Raw;
+            } m_Unk1;
+
+			int32_t m_Unk2;
 
 			TimelineProp()
 			{
-				m_unk = 0;
-				m_unk2 = -1;
+                m_Unk1.Raw = 0;
+				m_Unk2 = -1;
 			}
 		};
 
 	public:
 		void Load(Toshi::TXUIResource& a_rXur, uint8_t*& a_pData);
 
+        void SetOwner(XURXUIObjectData* pOwner)
+        {
+            m_pOwnerData = pOwner;
+        }
+
 	private:
+        XURXUIObjectData* m_pOwnerData;
 		XURXUIObjectData* m_pControlledChild; // 0x4 de blob
 		XURXUIKeyframeData* m_pKeyframeData; // 0x8 de blob
 		TimelineProp* m_TimelineProps;
 		XUIEPTShort32 m_NumTimelineProps;
-		XUIEPTShort32 m_NumKeyframes;
-		XUIEPTString m_StringId;
+		XUIEPTShort32 m_uiNumKeyframes;
+		XUIEPTString m_iControlledChildStringID;
 	};
 }

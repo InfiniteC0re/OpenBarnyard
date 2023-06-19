@@ -19,15 +19,15 @@ uint32_t Toshi::XURXUILabelData::GetTimelinePropSize(uint32_t a_uiObjectIndex, u
     return 4;
 }
 
-TBOOL Toshi::XURXUILabelData::TranslateTimelineProp(const char* name, uint32_t& param_2, PropType& propType)
+TBOOL Toshi::XURXUILabelData::TranslateTimelineProp(const char* name, uint32_t& a_uiObjectIndex, PropType& propType)
 {
-    param_2++;
-    return XURXUIControlData::TranslateTimelineProp(name, param_2, propType);
+    a_uiObjectIndex++;
+    return XURXUIControlData::TranslateTimelineProp(name, a_uiObjectIndex, propType);
 }
 
-TBOOL Toshi::XURXUILabelData::ValidateTimelineProp(uint32_t a_uiObjectIndex, uint32_t param_2)
+TBOOL Toshi::XURXUILabelData::ValidateTimelineProp(uint32_t a_uiObjectIndex, uint32_t a_uiPropIndex)
 {
-    if (a_uiObjectIndex != 0) return XURXUIControlData::ValidateTimelineProp(a_uiObjectIndex - 1, param_2);
+    if (a_uiObjectIndex != 0) return XURXUIControlData::ValidateTimelineProp(a_uiObjectIndex - 1, a_uiPropIndex);
     return TFALSE;
 }
 

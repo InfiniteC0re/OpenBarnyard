@@ -69,7 +69,7 @@ namespace Toshi
 		}
 
 		TTextureManager::GetSingletonWeak()->AddTexture(this);
-		SelectSettings();
+        SelectSamplerId();
 
 #ifdef TOSHI_DEBUG
         TTextureManager::s_NumTextures += 1;
@@ -145,12 +145,63 @@ namespace Toshi
 		return pTexture;
 	}
 
-	void TTexture::SelectSettings()
+	void TTexture::SelectSamplerId()
 	{
-		TIMPLEMENT();
+        if (m_eAddressU == D3D11_TEXTURE_ADDRESS_CLAMP && m_eAddressV == D3D11_TEXTURE_ADDRESS_CLAMP)
+        {
+            if (m_eFilter == D3D11_FILTER_MIN_MAG_MIP_POINT)
+                m_SamplerId = 0;
+            else if (m_eFilter == D3D11_FILTER_MIN_MAG_MIP_LINEAR || m_eFilter == D3D11_FILTER_MIN_POINT_MAG_MIP_LINEAR)
+                m_SamplerId = 1;
+            else if (m_eFilter == D3D11_FILTER_MIN_MAG_LINEAR_MIP_POINT)
+                m_SamplerId = 5;
+            else
+                TASSERT(TFALSE);
+        }
+        else if (m_eAddressU == D3D11_TEXTURE_ADDRESS_WRAP && m_eAddressV == D3D11_TEXTURE_ADDRESS_WRAP)
+        {
+            if (m_eFilter == D3D11_FILTER_MIN_MAG_MIP_POINT)
+                m_SamplerId = 2;
+            else if (m_eFilter == D3D11_FILTER_MIN_MAG_MIP_LINEAR)
+                m_SamplerId = 3;
+            else if (m_eFilter == D3D11_FILTER_MIN_MAG_LINEAR_MIP_POINT)
+                m_SamplerId = 6;
+            else
+                TASSERT(TFALSE);
+        }
+        else
+        {
+            if (m_eAddressU == D3D11_TEXTURE_ADDRESS_CLAMP && m_eAddressV == D3D11_TEXTURE_ADDRESS_WRAP)
+            {
+                if (m_eFilter == D3D11_FILTER_MIN_MAG_MIP_POINT)
+                    m_SamplerId = 9;
+                else if (m_eFilter == D3D11_FILTER_MIN_MAG_MIP_LINEAR)
+                    m_SamplerId = 10;
+                else if (m_eFilter == D3D11_FILTER_MIN_MAG_LINEAR_MIP_POINT)
+                    m_SamplerId = 0xb;
+
+                TASSERT(TFALSE);
+            }
+            else
+            {
+                TASSERT(TFALSE);
+
+                m_eAddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+                m_eAddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+                m_eFilter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+                m_SamplerId = 3;
+            }
+        }
 	}
 
-	TTextureManager::TTextureManager() :
+    void TTexture::SetWrap(D3D11_TEXTURE_ADDRESS_MODE eAddressU, D3D11_TEXTURE_ADDRESS_MODE eAddressV)
+    {
+        m_eAddressU = eAddressU;
+        m_eAddressV = eAddressV;
+        SelectSamplerId();
+    }
+
+    TTextureManager::TTextureManager() :
 		m_pLastTexture(TNULL)
 	{
 		uint8_t* srcData;

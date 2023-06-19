@@ -33,8 +33,8 @@ namespace Toshi
         TASSERT(m_oHeader.m_uiFileID == IDXUR, "Not a .xur file!");
 
         m_oHeader.m_uiVersion = reader.ReadUInt32();
-        m_oHeader.m_uiFlags = reader.ReadUInt32();
-        m_oHeader.m_uiXuiVersion = reader.ReadUInt16();
+        m_oHeader.m_uiFlags = reader.ReadUInt16();
+        m_oHeader.m_uiXuiVersion = reader.ReadUInt32();
         m_oHeader.m_usBinSize = reader.ReadUInt32();
         m_oHeader.m_usNumSections = reader.ReadUInt16();
 
@@ -44,9 +44,7 @@ namespace Toshi
         uint32_t sectionID = PARSEDWORD(buffer);
 
         if (sectionID != IDXURSTRING && sectionID != IDXURVEC && sectionID != IDXURQUAT && sectionID != IDXURCUST)
-        {
-            buffer += 0x28;
-        }
+            buffer += 0x3C;
 
         for (size_t i = 0; i < m_oHeader.m_usNumSections; i++)
         {
@@ -173,22 +171,22 @@ namespace Toshi
 
         uint8_t* pStart = buffer;
         uint8_t* pEnd = buffer + size;
-        m_uiStringTableCount = 1;
+        m_uiStringCount = 1;
 
         while (reader.GetPos() < pEnd)
         {
             uint16_t stringLength = reader.ReadUInt16();
             reader.SeekFromCur(stringLength * sizeof(wchar_t));
-            m_uiStringTableCount++;
+            m_uiStringCount++;
         }
 
         reader.SetPos(pStart);
 
-        m_asStringTable = new (TXUI::MemoryBlock()) wchar_t* [m_uiStringTableCount];
-        m_asStringTable[0] = new (TXUI::MemoryBlock()) wchar_t[1];
+        m_asStringTable       = new (TXUI::MemoryBlock()) wchar_t*[m_uiStringCount];
+        m_asStringTable[0]    = new (TXUI::MemoryBlock()) wchar_t[1];
         m_asStringTable[0][0] = L'\0';
 
-        for (size_t i = 1; i < m_uiStringTableCount; i++)
+        for (size_t i = 1; i < m_uiStringCount; i++)
         {
             TASSERT(buffer < pEnd, "Pointer overflow");
 
@@ -198,7 +196,7 @@ namespace Toshi
 
             for (size_t j = 0; j < stringLength; j++)
             {
-                m_asStringTable[i][j] = static_cast<wchar_t>(reader.ReadUInt16());
+                m_asStringTable[i][j] = TSTATICCAST(wchar_t, reader.ReadUInt16());
             }
         }
 
@@ -215,8 +213,36 @@ namespace Toshi
 
     int TXUIResource::GetStringTableSize(uint8_t* pPtr, uint32_t size)
     {
-        TIMPLEMENT_D("TXUIResource::GetStringTableSize");
-        return 0;
+        XURReader reader(pPtr);
+
+        uint8_t* pStart = pPtr;
+        uint8_t* pEnd = pPtr + size;
+        int iStringCount = 1;
+
+        while (reader.GetPos() < pEnd)
+        {
+            uint16_t stringLength = reader.ReadUInt16();
+            reader.SeekFromCur(stringLength * sizeof(wchar_t));
+            iStringCount++;
+        }
+
+        reader.SetPos(pStart);
+
+        int result = iStringCount * 4 + 8;
+        int iStringsLeft = iStringCount - 1;
+
+        while (iStringsLeft != 0)
+        {
+            TASSERT(reader.GetPos() < pEnd);
+
+            uint16_t stringSize = reader.ReadUInt16() * sizeof(wchar_t);
+            reader.SeekFromCur(stringSize);
+
+            result += (stringSize + 5U & 0xfffffffc);
+            iStringsLeft--;
+        }
+
+        return result;
     }
 
     void TXUIResource::PushID(const wchar_t* a_wsID)
@@ -238,7 +264,7 @@ namespace Toshi
 
     TXUIStringTable& TXUIResource::LookupStringTable()
     {
-        if (m_uiStringTableCount != 0)
+        if (m_uiStringCount != 0)
         {
             //TXUIStringTable::Lookup()
         }
@@ -266,6 +292,7 @@ namespace Toshi
         }
         else if (TStringManager::String16Compare(objectName, _TS16("XuiTabScene"), -1) == 0)
         {
+            TASSERT(TFALSE, "Some XUI class is not implemented, can't continue reading data");
             return TNULL;
         }
         else if (TStringManager::String16Compare(objectName, _TS16("XuiFigure"), -1) == 0)
@@ -274,10 +301,12 @@ namespace Toshi
         }
         else if (TStringManager::String16Compare(objectName, _TS16("XuiVisual"), -1) == 0)
         {
+            TASSERT(TFALSE, "Some XUI class is not implemented, can't continue reading data");
             return TNULL;
         }
         else if (TStringManager::String16Compare(objectName, _TS16("XuiImage"), -1) == 0)
         {
+            TASSERT(TFALSE, "Some XUI class is not implemented, can't continue reading data");
             return TNULL;
         }
         else if (TStringManager::String16Compare(objectName, _TS16("XuiText"), -1) == 0)
@@ -294,10 +323,12 @@ namespace Toshi
         }
         else if (TStringManager::String16Compare(objectName, _TS16("XuiImagePresenter"), -1) == 0)
         {
+            TASSERT(TFALSE, "Some XUI class is not implemented, can't continue reading data");
             return TNULL;
         }
         else if (TStringManager::String16Compare(objectName, _TS16("XuiTextPresenter"), -1) == 0)
         {
+            TASSERT(TFALSE, "Some XUI class is not implemented, can't continue reading data");
             return TNULL;
         }
         else if (TStringManager::String16Compare(objectName, _TS16("XuiNineGrid"), -1) == 0)
@@ -306,26 +337,32 @@ namespace Toshi
         }
         else if (TStringManager::String16Compare(objectName, _TS16("XuiSoundXAudio"), -1) == 0)
         {
+            TASSERT(TFALSE, "Some XUI class is not implemented, can't continue reading data");
             return TNULL;
         }
         else if (TStringManager::String16Compare(objectName, _TS16("XuiSoundXAct"), -1) == 0)
         {
+            TASSERT(TFALSE, "Some XUI class is not implemented, can't continue reading data");
             return TNULL;
         }
         else if (TStringManager::String16Compare(objectName, _TS16("XuiLabel"), -1) == 0)
         {
+            TASSERT(TFALSE, "Some XUI class is not implemented, can't continue reading data");
             return TNULL;
         }
         else if (TStringManager::String16Compare(objectName, _TS16("XuiEdit"), -1) == 0)
         {
+            TASSERT(TFALSE, "Some XUI class is not implemented, can't continue reading data");
             return TNULL;
         }
         else if (TStringManager::String16Compare(objectName, _TS16("XuiMessageBoxButton"), -1) == 0)
         {
+            TASSERT(TFALSE, "Some XUI class is not implemented, can't continue reading data");
             return TNULL;
         }
         else if (TStringManager::String16Compare(objectName, _TS16("XuiNavButton"), -1) == 0)
         {
+            TASSERT(TFALSE, "Some XUI class is not implemented, can't continue reading data");
             return TNULL;
         }
         else if (TStringManager::String16Compare(objectName, _TS16("XuiBackButton"), -1) == 0)
@@ -334,62 +371,77 @@ namespace Toshi
         }
         else if (TStringManager::String16Compare(objectName, _TS16("XuiRadioButton"), -1) == 0)
         {
+            TASSERT(TFALSE, "Some XUI class is not implemented, can't continue reading data");
             return TNULL;
         }
         else if (TStringManager::String16Compare(objectName, _TS16("XuiCheckbox"), -1) == 0)
         {
+            TASSERT(TFALSE, "Some XUI class is not implemented, can't continue reading data");
             return TNULL;
         }
         else if (TStringManager::String16Compare(objectName, _TS16("XuiProgressbar"), -1) == 0)
         {
+            TASSERT(TFALSE, "Some XUI class is not implemented, can't continue reading data");
             return TNULL;
         }
         else if (TStringManager::String16Compare(objectName, _TS16("XuiSlider"), -1) == 0)
         {
+            TASSERT(TFALSE, "Some XUI class is not implemented, can't continue reading data");
             return TNULL;
         }
         else if (TStringManager::String16Compare(objectName, _TS16("XuiList"), -1) == 0)
         {
+            TASSERT(TFALSE, "Some XUI class is not implemented, can't continue reading data");
             return TNULL;
         }
         else if (TStringManager::String16Compare(objectName, _TS16("XuiCommonList"), -1) == 0)
         {
+            TASSERT(TFALSE, "Some XUI class is not implemented, can't continue reading data");
             return TNULL;
         }
         else if (TStringManager::String16Compare(objectName, _TS16("XuiRadioGroup"), -1) == 0)
         {
+            TASSERT(TFALSE, "Some XUI class is not implemented, can't continue reading data");
             return TNULL;
         }
         else if (TStringManager::String16Compare(objectName, _TS16("XuiScrollEnd"), -1) == 0)
         {
+            TASSERT(TFALSE, "Some XUI class is not implemented, can't continue reading data");
             return TNULL;
         }
         else if (TStringManager::String16Compare(objectName, _TS16("XuiCaret"), -1) == 0)
         {
+            TASSERT(TFALSE, "Some XUI class is not implemented, can't continue reading data");
             return TNULL;
         }
         else if (TStringManager::String16Compare(objectName, _TS16("XuiListItem"), -1) == 0)
         {
+            TASSERT(TFALSE, "Some XUI class is not implemented, can't continue reading data");
             return TNULL;
         }
         else if (TStringManager::String16Compare(objectName, _TS16("XuiHtmlPresenter"), -1) == 0)
         {
+            TASSERT(TFALSE, "Some XUI class is not implemented, can't continue reading data");
             return TNULL;
         }
         else if (TStringManager::String16Compare(objectName, _TS16("XuiHtmlElement"), -1) == 0)
         {
+            TASSERT(TFALSE, "Some XUI class is not implemented, can't continue reading data");
             return TNULL;
         }
         else if (TStringManager::String16Compare(objectName, _TS16("XuiHtmlControl"), -1) == 0)
         {
+            TASSERT(TFALSE, "Some XUI class is not implemented, can't continue reading data");
             return TNULL;
         }
         else if (TStringManager::String16Compare(objectName, _TS16("XuiControl"), -1) == 0)
         {
+            TASSERT(TFALSE, "Some XUI class is not implemented, can't continue reading data");
             return TNULL;
         }
         else if (TStringManager::String16Compare(objectName, _TS16("XuiVideo"), -1) == 0)
         {
+            TASSERT(TFALSE, "Some XUI class is not implemented, can't continue reading data");
             return TNULL;
         }
 

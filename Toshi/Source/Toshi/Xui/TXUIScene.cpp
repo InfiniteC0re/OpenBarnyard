@@ -50,7 +50,7 @@ namespace Toshi
 		return 2;
 	}
 
-	TBOOL XURXUISceneData::TranslateTimelineProp(const char* name, uint32_t& param_2, PropType& propType)
+	TBOOL XURXUISceneData::TranslateTimelineProp(const char* name, uint32_t& a_uiObjectIndex, PropType& propType)
 	{
 		TXUI_TRANSLATE_TIMELINE_PROP(name, DefaultFocus, propType);
 		TXUI_TRANSLATE_TIMELINE_PROP(name, TransFrom, propType);
@@ -60,15 +60,15 @@ namespace Toshi
 		TXUI_TRANSLATE_TIMELINE_PROP(name, InterruptTransitions, propType);
 		TXUI_TRANSLATE_TIMELINE_PROP(name, IgnorePresses, propType);
 
-		param_2++;
-		return XURXUIControlData::TranslateTimelineProp(name, param_2, propType);
+		a_uiObjectIndex++;
+		return XURXUIControlData::TranslateTimelineProp(name, a_uiObjectIndex, propType);
 	}
 
-	TBOOL XURXUISceneData::ValidateTimelineProp(uint32_t a_uiObjectIndex, uint32_t param_2)
+	TBOOL XURXUISceneData::ValidateTimelineProp(uint32_t a_uiObjectIndex, uint32_t a_uiPropIndex)
 	{
-		if (a_uiObjectIndex == 0) return param_2 < PropType_NUMOF;
+		if (a_uiObjectIndex == 0) return a_uiPropIndex < PropType_NUMOF;
 		TASSERT(a_uiObjectIndex > 0);
-		return XURXUIControlData::ValidateTimelineProp(a_uiObjectIndex - 1, param_2);
+		return XURXUIControlData::ValidateTimelineProp(a_uiObjectIndex - 1, a_uiPropIndex);
 	}
 
 	TBOOL XURXUISceneData::Load(TXUIResource& resource, uint8_t*& a_pData)

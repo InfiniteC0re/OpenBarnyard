@@ -97,148 +97,148 @@ typedef unsigned int flag_t;           /* The type of various bit flag sets */
 
 namespace Toshi
 {
-	void TMemory::Shutdown()
-	{
-		DestroyHeap(s_GlobalHeap);
-		s_GlobalHeap = TNULL;
+    void TMemory::Shutdown()
+    {
+        DestroyHeap(s_GlobalHeap);
+        s_GlobalHeap = TNULL;
 
-		if (TMemory::s_Context.s_Heap)
-		{
-			HeapFree(TMemory::s_Context.s_Sysheap, NULL, TMemory::s_Context.s_Heap);
-		}
+        if (TMemory::s_Context.s_Heap)
+        {
+            HeapFree(TMemory::s_Context.s_Sysheap, NULL, TMemory::s_Context.s_Heap);
+        }
 
-		if (TMemory::GetFlags() & Flags_Standard)
-		{
-			// Reset callbacks so no external libraries can malloc or free anything
-			TMemory::s_Context.s_cbMalloc = [](size_t size) -> void* { return TNULL; };
-			TMemory::s_Context.s_cbCalloc = [](size_t nitems, size_t size) -> void* { return TNULL; };
-			TMemory::s_Context.s_cbRealloc = [](void* ptr, size_t size) -> void* { return TNULL; };
-			TMemory::s_Context.s_cbMemalign = [](size_t alignment, size_t size) -> void* { return TNULL; };
-			TMemory::s_Context.s_cbFree = [](void* ptr) -> void { };
-			TMemory::s_Context.s_cbIdk = [](void* ptr, size_t size) -> void { };
-		}
+        if (TMemory::GetFlags() & Flags_Standard)
+        {
+            // Reset callbacks so no external libraries can malloc or free anything
+            TMemory::s_Context.s_cbMalloc = [](size_t size) -> void* { return TNULL; };
+            TMemory::s_Context.s_cbCalloc = [](size_t nitems, size_t size) -> void* { return TNULL; };
+            TMemory::s_Context.s_cbRealloc = [](void* ptr, size_t size) -> void* { return TNULL; };
+            TMemory::s_Context.s_cbMemalign = [](size_t alignment, size_t size) -> void* { return TNULL; };
+            TMemory::s_Context.s_cbFree = [](void* ptr) -> void {};
+            TMemory::s_Context.s_cbIdk = [](void* ptr, size_t size) -> void {};
+        }
 
-		TUtil::MemSet(&TMemory::s_Context, 0, sizeof(TMemory::s_Context));
-	}
+        TUtil::MemSet(&TMemory::s_Context, 0, sizeof(TMemory::s_Context));
+    }
 
-	TMemory::Error TMemory::Init()
-	{
-		// 0x006fb9d0
-		TASSERT(TMemory::s_Context.s_Sysheap == NULL, "TMemory is already initialized");
-		
-		TMemory::s_Context.s_Sysheap = GetProcessHeap();
-		TMemory::s_GlobalMutex.Create();
+    TMemory::Error TMemory::Init()
+    {
+        // 0x006fb9d0
+        TASSERT(TMemory::s_Context.s_Sysheap == NULL, "TMemory is already initialized");
 
-		if (TMemory::s_Context.s_Sysheap == NULL)
-		{
-			return Error_Heap;
-		}
+        TMemory::s_Context.s_Sysheap = GetProcessHeap();
+        TMemory::s_GlobalMutex.Create();
 
-		// Check if we should use default memory management methods
-		if (m_Flags & Flags_NativeMethods)
-		{
-			TMemory::s_Context.s_cbMalloc = [](size_t size) -> void*
-			{
-				return malloc(size);
-			};
+        if (TMemory::s_Context.s_Sysheap == NULL)
+        {
+            return Error_Heap;
+        }
 
-			TMemory::s_Context.s_cbCalloc = [](size_t nitems, size_t size) -> void*
-			{
-				return calloc(nitems, size);
-			};
+        // Check if we should use default memory management methods
+        if (m_Flags & Flags_NativeMethods)
+        {
+            TMemory::s_Context.s_cbMalloc = [](size_t size) -> void*
+            {
+                return malloc(size);
+            };
 
-			TMemory::s_Context.s_cbRealloc = [](void* ptr, size_t size) -> void*
-			{
-				return realloc(ptr, size);
-			};
+            TMemory::s_Context.s_cbCalloc = [](size_t nitems, size_t size) -> void*
+            {
+                return calloc(nitems, size);
+            };
 
-			TMemory::s_Context.s_cbMemalign = [](size_t alignment, size_t size) -> void*
-			{
-				return malloc(size);
-			};
+            TMemory::s_Context.s_cbRealloc = [](void* ptr, size_t size) -> void*
+            {
+                return realloc(ptr, size);
+            };
 
-			TMemory::s_Context.s_cbFree = [](void* ptr) -> void
-			{
-				free(ptr);
-			};
+            TMemory::s_Context.s_cbMemalign = [](size_t alignment, size_t size) -> void*
+            {
+                return malloc(size);
+            };
 
-			TMemory::s_Context.s_cbIdk = [](void* ptr, size_t size) -> void
-			{
-				
-			};
+            TMemory::s_Context.s_cbFree = [](void* ptr) -> void
+            {
+                free(ptr);
+            };
 
-			return Error_Ok;
-		}
+            TMemory::s_Context.s_cbIdk = [](void* ptr, size_t size) -> void
+            {
 
-		// Allocate memory for the heap
-		TMemory::s_Context.s_Heap = HeapAlloc(TMemory::s_Context.s_Sysheap, NULL, m_GlobalSize);
+            };
 
-		// Save pointers to our own functions
-		if (TMemory::s_Context.s_Heap == NULL)
-		{
-			return Error_Heap;
-		}
+            return Error_Ok;
+        }
 
-		TMemory::s_Context.s_cbMalloc = [](size_t size) -> void*
-		{
+        // Allocate memory for the heap
+        TMemory::s_Context.s_Heap = HeapAlloc(TMemory::s_Context.s_Sysheap, NULL, m_GlobalSize);
+
+        // Save pointers to our own functions
+        if (TMemory::s_Context.s_Heap == NULL)
+        {
+            return Error_Heap;
+        }
+
+        TMemory::s_Context.s_cbMalloc = [](size_t size) -> void*
+        {
 #ifdef TOSHI_DEBUG
-			void* ptr = TMemory::dlheapmalloc(TMemory::s_GlobalHeap, size);
+            void* ptr = TMemory::dlheapmalloc(TMemory::s_GlobalHeap, size);
             mchunkptr chunk = mem2chunk(ptr);
             s_NumAllocatedBytes += chunksize(chunk);
-			return ptr;
+            return ptr;
 #else
-			return TMemory::dlheapmalloc(TMemory::s_GlobalHeap, size);
+            return TMemory::dlheapmalloc(TMemory::s_GlobalHeap, size);
 #endif // TOSHI_DEBUG
-		};
+        };
 
-		TMemory::s_Context.s_cbCalloc = [](size_t nitems, size_t size) -> void*
-		{
+        TMemory::s_Context.s_cbCalloc = [](size_t nitems, size_t size) -> void*
+        {
 #ifdef TOSHI_DEBUG
-			void* ptr = TMemory::dlheapcalloc(TMemory::s_GlobalHeap, nitems, size);
+            void* ptr = TMemory::dlheapcalloc(TMemory::s_GlobalHeap, nitems, size);
             mchunkptr chunk = mem2chunk(ptr);
             s_NumAllocatedBytes += chunksize(chunk);
-			return ptr;
+            return ptr;
 #else
             return TMemory::dlheapcalloc(TMemory::s_GlobalHeap, nitems, size);
 #endif // TOSHI_DEBUG
-		};
+        };
 
-		TMemory::s_Context.s_cbRealloc = [](void* ptr, size_t size) -> void*
-		{
-			return TNULL;
-		};
+        TMemory::s_Context.s_cbRealloc = [](void* ptr, size_t size) -> void*
+        {
+            return TNULL;
+        };
 
-		TMemory::s_Context.s_cbMemalign = [](size_t alignment, size_t size) -> void*
-		{
+        TMemory::s_Context.s_cbMemalign = [](size_t alignment, size_t size) -> void*
+        {
 #ifdef TOSHI_DEBUG
-			void* ptr = TMemory::dlheapmemalign(TMemory::s_GlobalHeap, alignment, size);
+            void* ptr = TMemory::dlheapmemalign(TMemory::s_GlobalHeap, alignment, size);
             mchunkptr chunk = mem2chunk(ptr);
             s_NumAllocatedBytes += chunksize(chunk);
-			return ptr;
+            return ptr;
 #else
             return TMemory::dlheapmemalign(TMemory::s_GlobalHeap, alignment, size);
 #endif // TOSHI_DEBUG
-		};
+        };
 
-		TMemory::s_Context.s_cbFree = [](void* ptr) -> void
-		{
+        TMemory::s_Context.s_cbFree = [](void* ptr) -> void
+        {
 #ifdef TOSHI_DEBUG
-			if (get_mspace_from_ptr(ptr) == TMemory::s_GlobalHeap->GetMSpace())
-			{
+            if (get_mspace_from_ptr(ptr) == TMemory::s_GlobalHeap->GetMSpace())
+            {
                 mchunkptr chunk = mem2chunk(ptr);
                 s_NumAllocatedBytes -= chunksize(chunk);
-			}
+            }
 #endif // TOSHI_DEBUG
 
-			TMemory::dlheapfree(TMemory::s_GlobalHeap, ptr);
-		};
+            TMemory::dlheapfree(TMemory::s_GlobalHeap, ptr);
+        };
 
-		TMemory::s_Context.s_cbIdk = [](void* ptr, size_t size) -> void
-		{
+        TMemory::s_Context.s_cbIdk = [](void* ptr, size_t size) -> void
+        {
 
-		};
+        };
 
-		s_GlobalHeap = CreateHeapInPlace(TMemory::s_Context.s_Heap, m_GlobalSize, TMemoryHeapFlags_UseMutex, "global");
-		return Error_Ok;
-	}
+        s_GlobalHeap = CreateHeapInPlace(TMemory::s_Context.s_Heap, m_GlobalSize, TMemoryHeapFlags_UseMutex, "global");
+        return Error_Ok;
+    }
 }

@@ -29,18 +29,18 @@ namespace Toshi
 		};
 
 	public:
-		virtual const char* GetTypeInfo() const { return sm_sTypeInfo; }
+		virtual const char* GetTypeInfo() const override { return sm_sTypeInfo; }
 
-		virtual TBOOL IsColourPropType(uint32_t a_uiObjectIndex, uint32_t propType);
+		virtual TBOOL IsColourPropType(uint32_t a_uiObjectIndex, uint32_t propType) override;
 
-		virtual TBOOL IsFloatPropType(uint32_t a_uiObjectIndex, uint32_t propType);
+		virtual TBOOL IsFloatPropType(uint32_t a_uiObjectIndex, uint32_t propType) override;
 
-		virtual uint32_t GetTimelinePropSize(uint32_t a_uiObjectIndex, uint32_t propType);
+		virtual uint32_t GetTimelinePropSize(uint32_t a_uiObjectIndex, uint32_t propType) override;
 
-		virtual TBOOL TranslateTimelineProp(const char* name, uint32_t& param_2, PropType& propType);
-		virtual TBOOL ValidateTimelineProp(uint32_t a_uiObjectIndex, uint32_t param_2);
+		virtual TBOOL TranslateTimelineProp(const char* name, uint32_t& a_uiObjectIndex, PropType& propType) override;
+		virtual TBOOL ValidateTimelineProp(uint32_t a_uiObjectIndex, uint32_t a_uiPropIndex) override;
 
-		virtual TBOOL Load(TXUIResource& resource, uint8_t*& a_pData);
+		virtual TBOOL Load(TXUIResource& resource, uint8_t*& a_pData) override;
 
 	protected:
 		/* 0 */ XUIEPTString m_ClassOverride;

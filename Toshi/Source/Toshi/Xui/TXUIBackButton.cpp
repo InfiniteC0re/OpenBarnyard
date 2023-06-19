@@ -22,15 +22,15 @@ namespace Toshi
 		return 4;
 	}
 
-	TBOOL XURXUIBackButtonData::TranslateTimelineProp(const char* name, uint32_t& param_2, PropType& propType)
+	TBOOL XURXUIBackButtonData::TranslateTimelineProp(const char* name, uint32_t& a_uiObjectIndex, PropType& propType)
 	{
 		name++;
-		return XURXUIButtonData::TranslateTimelineProp(name, param_2, propType);
+		return XURXUIButtonData::TranslateTimelineProp(name, a_uiObjectIndex, propType);
 	}
 
-	TBOOL XURXUIBackButtonData::ValidateTimelineProp(uint32_t a_uiObjectIndex, uint32_t param_2)
+	TBOOL XURXUIBackButtonData::ValidateTimelineProp(uint32_t a_uiObjectIndex, uint32_t a_uiPropIndex)
 	{
-		if (a_uiObjectIndex != 0) return XURXUIButtonData::ValidateTimelineProp(a_uiObjectIndex - 1, param_2);
+		if (a_uiObjectIndex != 0) return XURXUIButtonData::ValidateTimelineProp(a_uiObjectIndex - 1, a_uiPropIndex);
 		return TFALSE;
 	}
 

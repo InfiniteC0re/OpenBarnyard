@@ -19,12 +19,12 @@ namespace Toshi
 		return 0;
 	}
 
-	TBOOL XURXUINineGridData::TranslateTimelineProp(const char* name, uint32_t& param_2, PropType& propType)
+	TBOOL XURXUINineGridData::TranslateTimelineProp(const char* name, uint32_t& a_uiObjectIndex, PropType& propType)
 	{
 		return TFALSE;
 	}
 
-	TBOOL XURXUINineGridData::ValidateTimelineProp(uint32_t a_uiObjectIndex, uint32_t param_2)
+	TBOOL XURXUINineGridData::ValidateTimelineProp(uint32_t a_uiObjectIndex, uint32_t a_uiPropIndex)
 	{
 		return TFALSE;
 	}

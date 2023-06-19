@@ -59,7 +59,7 @@ namespace Toshi
 		XURXUIObjectData()
 		{
 			m_Index = 0;
-			m_Index2 = 0;
+			m_uiTypeIndex = 0;
 			m_NumNamedFrames = 0;
 			m_pNamedFrames = TNULL;
 			m_TimelinesData = TNULL;
@@ -73,13 +73,13 @@ namespace Toshi
 		virtual TBOOL IsFloatPropType(uint32_t a_uiObjectIndex, PropType propType) { return TFALSE; };
 		virtual TBOOL IsColourPropType(uint32_t a_uiObjectIndex, PropType propType) { return TFALSE; };
 		virtual uint32_t GetTimelinePropSize(uint32_t a_uiObjectIndex, PropType propType) { return 0; };
-		virtual TBOOL TranslateTimelineProp(const char* name, uint32_t& param_2, PropType& propType) { return TFALSE; };
-		virtual TBOOL ValidateTimelineProp(uint32_t a_uiObjectIndex, PropType propType) { return TFALSE; };
+		virtual TBOOL TranslateTimelineProp(const char* name, uint32_t& a_uiObjectIndex, PropType& propType) { return TFALSE; };
+		virtual TBOOL ValidateTimelineProp(uint32_t a_uiObjectIndex, uint32_t a_uiPropIndex) { return TFALSE; };
 
 		void LoadChildren(TXUIResource& resource, uint8_t*& a_pData);
 		TBOOL LoadNamedFrames(TXUIResource& resource, uint8_t*& a_pData);
 		void LoadTimelines(TXUIResource& resource, uint8_t*& a_pData);
-		class XURXUIElementData* FindChildElementData(uint32_t index);
+		class XURXUIElementData* FindChildElementData(uint32_t a_iStringId);
 
 	public:
 		XURXUIObjectData** m_Children;        // 0x4 both
@@ -87,8 +87,8 @@ namespace Toshi
 		XURXUITimelineData* m_TimelinesData;  // 
 		XUIEPTUShort32 m_NumNamedFrames;      // 0x10 de blob 0x14 NT08
 		uint16_t m_Index;                     // 0x12 de blob 0x1C NT08
-		uint32_t m_Index2;                    // 0x14 de blob 1E NT08
-		uint32_t m_NumChildren;               // 0x16 de blob 0x10 NT08
+		uint32_t m_uiTypeIndex;               // 0x14 de blob 1E NT08
+        uint8_t m_NumChildren;                // 0x16 de blob 0x10 NT08
 		uint8_t m_NumTimelines;               // 
 	};
 
@@ -119,13 +119,13 @@ namespace Toshi
 
 		TBOOL Load(TXUIResource& resource, uint8_t*& a_pData);
 
-		TBOOL TranslateTimelineProp(const char* name, uint32_t& param_2, PropType& propType);
+		TBOOL TranslateTimelineProp(const char* name, uint32_t& a_uiObjectIndex, PropType& propType);
 
-		TBOOL ValidateTimelineProp(uint32_t a_uiObjectIndex, uint32_t param_2);
+		TBOOL ValidateTimelineProp(uint32_t a_uiObjectIndex, uint32_t a_uiPropIndex);
 
 		TBOOL IsFloatPropType(uint32_t a_uiObjectIndex, uint32_t propType)
 		{
-			return propType != 1 && propType != 2 && propType != 6 ? TFALSE : TTRUE;
+			return propType == PropType_Width || propType == PropType_Height || propType == PropType_Opacity;
 		}
 
 		// No it's not
