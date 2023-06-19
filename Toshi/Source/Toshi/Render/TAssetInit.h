@@ -76,7 +76,7 @@ namespace Toshi
 
 		static t_fourCCFunction constexpr InitXUI = [](void* a_pData)
 		{
-			//TSTATICCAST(TXUIResourceTRB*, a_pData)->Init();
+			TSTATICCAST(TXUIResourceTRB*, a_pData)->Init();
 		};
 
 		static t_fourCCFunction constexpr InitFont = [](void* a_pData)

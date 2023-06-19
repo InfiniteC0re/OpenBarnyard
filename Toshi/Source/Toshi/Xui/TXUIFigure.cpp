@@ -291,7 +291,7 @@ namespace Toshi
             return m_Fill.ValidateTimelineProp(a_uiPropIndex);
     }
 
-    TBOOL XURXUIFigureData::GetTimelineSubPropSize(uint32_t a_uiObjectIndex, uint32_t a_uiPropIndex)
+    uint32_t XURXUIFigureData::GetTimelineSubPropSize(uint32_t a_uiObjectIndex, uint32_t a_uiPropIndex)
     {
         if (a_uiObjectIndex == 0)
             return m_Stroke.GetTimelinePropSize(a_uiPropIndex);

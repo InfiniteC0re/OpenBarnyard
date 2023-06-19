@@ -121,7 +121,7 @@ namespace Toshi
 		virtual TBOOL Load(TXUIResource& resource, uint8_t*& a_pData) override;
 		virtual const char* GetTypeInfo() const override { return sm_sTypeInfo; }
         virtual TBOOL ValidateTimelineSubProp(uint32_t a_uiObjectIndex, uint32_t a_uiPropIndex);
-        virtual TBOOL GetTimelineSubPropSize(uint32_t a_uiObjectIndex, uint32_t a_uiPropIndex);
+        virtual uint32_t GetTimelineSubPropSize(uint32_t a_uiObjectIndex, uint32_t a_uiPropIndex);
         virtual TBOOL IsFloatSubPropType(uint32_t a_uiObjectIndex, uint32_t a_uiPropIndex);
         virtual TBOOL IsColourSubPropType(uint32_t a_uiObjectIndex, uint32_t a_uiPropIndex);
 

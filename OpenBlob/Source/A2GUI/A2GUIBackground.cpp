@@ -82,7 +82,7 @@ void A2GUIBackground::SetupBackground()
 			
 			T2String8::Format(tgaName, "%s_%d.tga", m_pFileName, iTile + 1);
 			T2GUIMaterial* pMaterial = T2GUI::CreateMaterial(tgaName);
-            pMaterial->GetTexture()->SetWrap(D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_CLAMP);
+			pMaterial->GetTexture()->SetWrap(D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_CLAMP);
 			pTile->SetMaterial(pMaterial);
 
 			auto uv = pTile->GetUV();
