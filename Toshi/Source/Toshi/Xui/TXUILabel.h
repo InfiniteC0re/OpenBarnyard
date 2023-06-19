@@ -1,5 +1,4 @@
 #pragma once
-
 #include "TXUIControl.h"
 
 namespace Toshi

@@ -10,6 +10,8 @@
 #include "TXUIFigure.h"
 #include "TXUINineGrid.h"
 #include "XURReader.h"
+#include "TXUILabel.h"
+#include "TXUITabScene.h"
 
 namespace Toshi
 {
@@ -44,7 +46,7 @@ namespace Toshi
         uint32_t sectionID = PARSEDWORD(buffer);
 
         if (sectionID != IDXURSTRING && sectionID != IDXURVEC && sectionID != IDXURQUAT && sectionID != IDXURCUST)
-            buffer += 0x3C;
+            buffer += 0x28;
 
         for (size_t i = 0; i < m_oHeader.m_usNumSections; i++)
         {
@@ -292,8 +294,7 @@ namespace Toshi
         }
         else if (TStringManager::String16Compare(objectName, _TS16("XuiTabScene"), -1) == 0)
         {
-            TASSERT(TFALSE, "Some XUI class is not implemented, can't continue reading data");
-            return TNULL;
+			return new (TXUI::MemoryBlock()) XURXUITabSceneData();
         }
         else if (TStringManager::String16Compare(objectName, _TS16("XuiFigure"), -1) == 0)
         {
@@ -346,9 +347,8 @@ namespace Toshi
             return TNULL;
         }
         else if (TStringManager::String16Compare(objectName, _TS16("XuiLabel"), -1) == 0)
-        {
-            TASSERT(TFALSE, "Some XUI class is not implemented, can't continue reading data");
-            return TNULL;
+		{
+            return new (TXUI::MemoryBlock()) XURXUILabelData();
         }
         else if (TStringManager::String16Compare(objectName, _TS16("XuiEdit"), -1) == 0)
         {

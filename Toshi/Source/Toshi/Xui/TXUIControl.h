@@ -45,14 +45,14 @@ namespace Toshi
 	protected:
 		/* 0 */ XUIEPTString m_ClassOverride;
 		/* 1 */ XUIEPTString m_Visual;
-		/* 2 */ XUIEPTBool m_Enabled;
-		/* 3 */ XUIEPTBool m_UnfocussedInput;
 		/* 4 */ XUIEPTString m_NavLeft;
 		/* 5 */ XUIEPTString m_NavRight;
 		/* 6 */ XUIEPTString m_NavUp;
 		/* 7 */ XUIEPTString m_NavDown;
 		/* 8 */ XUIEPTString m_Text;
 		/* 10 */ XUIEPTString m_ImagePath;
+		/* 2 */ XUIEPTBool m_Enabled;
+		/* 3 */ XUIEPTBool m_UnfocussedInput;
 	};
 
 }
