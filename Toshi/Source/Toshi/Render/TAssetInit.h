@@ -131,7 +131,7 @@ namespace Toshi
 
 		static t_fourCCFunction constexpr DeinitXUI = [](void* a_pData)
 		{
-
+			TSTATICCAST(TXUIResourceTRB*, a_pData)->Deinit();
 		};
 
 		static t_fourCCFunction constexpr DeinitModel = [](void* a_pData)

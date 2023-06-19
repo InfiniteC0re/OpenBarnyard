@@ -61,13 +61,15 @@ namespace Toshi
 			m_Index = 0;
 			m_uiTypeIndex = 0;
 			m_NumNamedFrames = 0;
+			m_NumTimelines = 0;
 			m_pNamedFrames = TNULL;
 			m_TimelinesData = TNULL;
 			m_Children = TNULL;
 			m_NumChildren = 0;
+			m_pClass = TNULL;
 		}
 
-		virtual ~XURXUIObjectData() = default;
+		virtual ~XURXUIObjectData();
 
 		virtual TBOOL Load(TXUIResource& resource, uint8_t*& a_pData);
 		virtual TBOOL IsFloatPropType(uint32_t a_uiObjectIndex, PropType propType) { return TFALSE; };

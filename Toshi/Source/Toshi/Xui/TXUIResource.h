@@ -1,12 +1,10 @@
 #pragma once
-
+#include "TXUIStringTable.h"
 #include "Toshi/File/TFile.h"
-
 #include "Toshi/Core/TSystem.h"
-#include "Toshi2/T2String16.h"
 #include "Toshi/Core/TStack.h"
 #include "Toshi/Strings/TString16.h"
-#include "TXUIStringTable.h"
+#include "Toshi2/T2String16.h"
 
 namespace Toshi
 {
@@ -42,17 +40,43 @@ namespace Toshi
     public:
         TXUIResource()
         {
-            m_uiStringCount = 0;
-            m_asStringTable = TNULL;
-            m_pQuat = TNULL;
+			m_oHeader.m_apSections = TNULL;
+			m_oHeader.m_uiFileID = 0;
+			m_oHeader.m_uiVersion = 0;
+			m_oHeader.m_uiXuiVersion = 0;
+			m_oHeader.m_usBinSize = 0;
+			m_oHeader.m_uiFlags = 0;
+			m_oHeader.m_usNumSections = 0;
+			m_pMemoryHeap = TNULL;
+			m_asStringTable = TNULL;
+			m_avVectors = TNULL;
+			m_aqZRotTable = TNULL;
+			m_pCustData = TNULL;
+			m_pRoot = TNULL;
+			m_uiStringCount = 0;
+			m_uiVectorCount = 0;
+			m_uiQuatCount = 0;
+			m_pStringTable = 0;
         }
 
-        ~TXUIResource() = default;
+		~TXUIResource();
 
-        const wchar_t* GetString(uint16_t index) { return m_asStringTable[index]; }
-        TQuaternion* GetQuat(int a_iIndex = 0);
-        TVector4* GetVector(int a_iIndex = 0);
-        //inline TQuaternion& GetQuat(int index) { return index == -1 ? TQuaternion::IDENTITY : m_pQuat; }
+        const wchar_t* GetString(uint16_t index)
+		{
+			return m_asStringTable[index];
+		}
+
+		float GetZRotation(int a_iIndex = 0)
+		{
+			TASSERT(a_iIndex >= -1);
+			return (a_iIndex == -1) ? 0 : m_aqZRotTable[a_iIndex];
+		}
+
+		const TVector2* GetVector(int a_iIndex = 0)
+		{
+			TASSERT(a_iIndex >= -1);
+			return (a_iIndex == -1) ? &TVector2::VEC_ZERO : &m_avVectors[a_iIndex];
+		}
 
         TBOOL ReadHeader(uint8_t* buffer);
 
@@ -66,9 +90,10 @@ namespace Toshi
         void Load(TBOOL loadStringTables, const char* filenameXUIB, const char* fileNameStringTable, TBOOL loadTrb, void* unk3);
 
         TBOOL Load(uint8_t* buffer);
-        int ReadDataSection(uint8_t* buffer, uint32_t size);
+		TBOOL ReadDataSection(uint8_t* buffer, uint32_t size);
         TBOOL ReadStringSection(uint8_t* buffer, uint32_t size);
-        int ReadCustSection(uint8_t* buffer, uint32_t size);
+        TBOOL ReadCustSection(uint8_t* buffer, uint32_t size);
+		TBOOL ReadQuatSection(uint8_t* buffer, uint32_t size);
         int GetStringTableSize(uint8_t* pPtr, uint32_t size);
 
         void PushID(const wchar_t* a_wsID);
@@ -80,34 +105,23 @@ namespace Toshi
         static XURXUIObjectData* CreateObjectData(TXUIResource& a_rResource, const wchar_t* objectName);
 
     private:
-        void Destroy()
-        {
-            for (size_t i = 0; i < m_uiStringCount; i++)
-            {
-                delete m_asStringTable[i];
-            }
-
-            if (m_asStringTable) delete[] m_asStringTable;
-            if (m_pQuat) delete[] m_pQuat;
-
-            // this+0x2C(1) probably function pointer parameter=int (value 1 in this case)
-        }
+		void Destroy();
 
     private:
-        XURHeader m_oHeader;                        // 0x0
-        wchar_t** m_asStringTable = TNULL;          // 0x1C
-        uint8_t* m_pData;
-        TVector4* m_pVect;                          // 0x1C globs
-        TQuaternion* m_pQuat;                       // 0x20 both
-        uint8_t* m_pCust;                           // 0x28 / 0x24 globs
-        uint32_t m_uiCustDataSize;                  // 0x3C de blob / 0x38 globs
-        uint32_t m_uiStringCount;                   // 0x30 / 0x3C globs
-        TString16* m_uIDStr;                        // 0x40
-        uint32_t m_uIDStrLength;                    // 0x44
-
-        XURXUIObjectData* m_root;
-
-        TStack<const wchar_t*, 32> m_oIDComparisonStack;
+        XURHeader m_oHeader;                             // 0x00
+		TMemoryHeap* m_pMemoryHeap;                      // 0x18
+        wchar_t** m_asStringTable;                       // 0x1C
+		TVector2* m_avVectors;                           // 0x20
+		float* m_aqZRotTable;                            // 0x24
+        uint8_t* m_pCustData;                            // 0x28
+		XURXUIObjectData* m_pRoot;                       // 0x2C
+		uint32_t m_uiStringCount;                        // 0x30
+		uint32_t m_uiVectorCount;                        // 0x34
+		uint32_t m_uiQuatCount;                          // 0x38
+		uint32_t m_uiCustDataSize;                       // 0x3C
+		TXUIStringTable* m_pStringTable;                 // 0x40
+		TString16 m_ID;                                  // 0x44
+        TStack<const wchar_t*, 32> m_oIDComparisonStack; // 0x50
     public:
         static inline int s_iUIDCount = 0;
         static inline TBOOL s_bGenerateUIDs = TFALSE;

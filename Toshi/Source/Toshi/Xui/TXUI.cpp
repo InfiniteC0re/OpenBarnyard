@@ -48,15 +48,15 @@ namespace Toshi
 	{
 		m_TRB1.Load(a_pData);
 		TAssetInit::InitAssets(m_TRB1, TTRUE, TFALSE);
-
 	}
 
 	void TXUIResourceTRB::Init()
 	{
-		if (m_resource == TNULL)
+		if (m_pResource == TNULL)
 		{
-			m_resource = new (TXUI::MemoryBlock()) TXUIResource();
-			TBOOL bRes = m_resource->Load(m_xurBuffer);
+			m_pResource = new (TXUI::MemoryBlock()) TXUIResource();
+			TFIXME("Allocate memory chunk for the resource");
+			TBOOL bRes = m_pResource->Load(m_xurBuffer);
 			TASSERT(TTRUE == bRes, "Could not load XUR");
 			TXUI::GetSingleton()->AddResource(this);
 		}
@@ -64,7 +64,9 @@ namespace Toshi
 
 	void TXUIResourceTRB::Deinit()
 	{
-		m_resource->~TXUIResource();
+		if (m_pResource)
+			delete m_pResource;
+
 		TXUI::GetSingleton()->RemoveResource(this);
 	}
 }

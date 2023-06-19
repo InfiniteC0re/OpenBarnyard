@@ -46,7 +46,7 @@ namespace Toshi
 		}
 
 	private:
-		T m_pStack[C];
 		int m_iTop = -1;
+		T m_pStack[C];
 	};
 }

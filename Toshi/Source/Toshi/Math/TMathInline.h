@@ -36,8 +36,13 @@ namespace Toshi
 		constexpr float ONEOVERTWO_PI = 1 / TWO_PI;
 
 		inline TBOOL IsFinite(float fVal) { return _finite(fVal) != 0; }
+		inline float Sin(float fVal) { return sinf(fVal); }
 		inline float Cos(float fVal) { return cosf(fVal); }
+		inline float Tan(float fVal) { return tanf(fVal); }
+		inline float ASin(float fVal) { return sinf(fVal); }
 		inline float ACos(float fVal) { return acos(fVal); }
+		inline float ATan(float fVal) { float fRes = atanf(fVal); TASSERT(TMath::IsFinite(fRes)); return fRes; }
+		inline float ATan2(float fVal1, float fVal2) { float fRes = atan2f(fVal1, fVal2); TASSERT(TMath::IsFinite(fRes)); return fRes; }
 		inline float Abs(float fVal) { return (float)fabs(fVal); }
 		inline constexpr float DegToRad(float fDeg) { return (fDeg / 180.0f) * PI; }
 
@@ -59,7 +64,6 @@ namespace Toshi
 		inline void SinCos(float fVal, float& fVal1, float& fVal2) { fVal1 = cos(fVal); fVal2 = sin(fVal); }
 		inline void Clip(float& rfVal, float fMin, float fMax) { if (fMax < rfVal) { rfVal = fMax; } if (rfVal < fMin) { rfVal = fMin; } }
 		inline float LERP(float a, float b, float t) { return a + t * (b - a); }
-		inline float Tan(float fVal) { return tanf(fVal); }
 		
 		template <typename T>
 		inline const T& Min(const T& a, const T& b) { if (a < b) { return a; } else { return b; } }

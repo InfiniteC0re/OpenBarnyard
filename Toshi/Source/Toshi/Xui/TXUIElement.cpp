@@ -6,7 +6,25 @@
 
 namespace Toshi
 {
-    TBOOL XURXUIObjectData::Load(TXUIResource& resource, uint8_t*& a_pData)
+
+	XURXUIObjectData::~XURXUIObjectData()
+	{
+		for (uint8_t i = 0; i < m_NumChildren; i++)
+		{
+			if (m_Children[i] != TNULL)
+				delete m_Children[i];
+		}
+
+		delete[] m_Children;
+
+		if (m_pNamedFrames)
+			delete[] m_pNamedFrames;
+
+		if (m_TimelinesData)
+			delete[] m_TimelinesData;
+	}
+
+	TBOOL XURXUIObjectData::Load(TXUIResource& resource, uint8_t*& a_pData)
     {
         XURReader reader(a_pData);
         m_Index = reader.ReadUInt16();
@@ -314,7 +332,7 @@ namespace Toshi
 
         if (a_pElementData->GetPosition() != -1)
         {
-            TVector4* pos = a_rResource.GetVector(a_pElementData->GetPosition());
+            auto pos = a_rResource.GetVector(a_pElementData->GetPosition());
 
             m_vPosition.SetX(pos->x);
             m_vPosition.SetY(pos->x);
@@ -327,7 +345,7 @@ namespace Toshi
 
         if (a_pElementData->GetScale() != -1)
         {
-            TVector4* scale = a_rResource.GetVector(a_pElementData->GetScale());
+            auto scale = a_rResource.GetVector(a_pElementData->GetScale());
             m_vScale.SetX(scale->x);
             m_vScale.SetY(scale->x);
         }
