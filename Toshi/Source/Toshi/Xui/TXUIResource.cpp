@@ -12,6 +12,7 @@
 #include "XURReader.h"
 #include "TXUILabel.h"
 #include "TXUITabScene.h"
+#include "TXUISlider.h"
 
 namespace Toshi
 {
@@ -386,8 +387,7 @@ namespace Toshi
         }
         else if (TStringManager::String16Compare(objectName, _TS16("XuiSlider"), -1) == 0)
         {
-            TASSERT(TFALSE, "Some XUI class is not implemented, can't continue reading data");
-            return TNULL;
+			return new (TXUI::MemoryBlock()) XURXUISliderData();
         }
         else if (TStringManager::String16Compare(objectName, _TS16("XuiList"), -1) == 0)
         {
