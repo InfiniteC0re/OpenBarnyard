@@ -1,23 +1,21 @@
 #pragma once
-#include "TXUIElement.h"
-#include "Toshi2/T2GUI/T2GUIElement.h"
+#include "TXUIControl.h"
 
-namespace Toshi
-{
-	class TXUIImage : TXUIElement
+namespace Toshi {
+
+	class TXUIList :
+		public TGenericClassDerived<TXUIList, TXUIControl, "TXUIList", TMAKEVERSION(1, 0), TFALSE>
 	{
 	};
 
-	class XURXUIImageData : public XURXUIElementData
+	class XURXUIListData : public XURXUIControlData
 	{
 	public:
-		static constexpr const char* sm_sTypeInfo = "XURXUIImageData";
+		static constexpr const char* sm_sTypeInfo = "XURXUIListData";
 
 		enum PropType_ : PropType
 		{
-			PropType_SizeMode,
-			PropType_ImagePath,
-			PropType_BrushFlags,
+			PropType_Wrap,
 			PropType_NUMOF,
 		};
 
@@ -31,8 +29,7 @@ namespace Toshi
 		virtual const char* GetTypeInfo() const { return sm_sTypeInfo; }
 
 	private:
-		/* 0 */ XUIEPTUnsigned m_SizeMode;
-		/* 1 */ XUIEPTString m_ImagePath;
-		/* 2 */ XUIEPTUnsigned m_BrushFlags;
+		XUIEPTBool m_bWrap;
 	};
+
 }
