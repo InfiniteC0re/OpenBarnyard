@@ -3,7 +3,8 @@
 
 namespace Toshi
 {
-	class TXUIControl
+	class TXUIControl :
+		public TGenericClassDerived<TXUIControl, TXUIElement, "TXUIControl", TMAKEVERSION(1, 0), TFALSE>
 	{
 	};
 

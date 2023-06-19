@@ -3,24 +3,19 @@
 
 namespace Toshi {
 
-	class TXUISlider
+	class TXUICheckBox :
+		public TGenericClassDerived<TXUICheckBox, TXUIControl, "TXUICheckBox", TMAKEVERSION(1, 0), TFALSE>
 	{
 	};
 
-	class XURXUISliderData : public XURXUIControlData
+	class XURXUICheckBoxData : public XURXUIControlData
 	{
 	public:
-		static constexpr const char* sm_sTypeInfo = "XURXUISliderData";
+		static constexpr const char* sm_sTypeInfo = "XURXUICheckBoxData";
 
 		enum PropType_ : PropType
 		{
-			PropType_RangeMin,
-			PropType_RangeMax,
-			PropType_Value,
-			PropType_Step,
-			PropType_Vertical,
-			PropType_AccelInc,
-			PropType_AccelTime,
+			PropType_PressKey,
 			PropType_NUMOF,
 		};
 
@@ -34,13 +29,7 @@ namespace Toshi {
 		virtual const char* GetTypeInfo() const { return sm_sTypeInfo; }
 
 	private:
-		XUIEPTInteger m_iRangeMin;
-		XUIEPTInteger m_iRangeMax;
-		XUIEPTInteger m_iValue;
-		XUIEPTInteger m_iStep;
-		XUIEPTInteger m_iAccelInc;
-		XUIEPTInteger m_iAccelTime;
-		XUIEPTBool m_bVertical;
+		XUIEPTUnsigned m_uiPressKey;
 	};
 
 }

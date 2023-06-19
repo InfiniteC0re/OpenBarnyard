@@ -12,7 +12,8 @@
 #include "XURReader.h"
 #include "TXUILabel.h"
 #include "TXUITabScene.h"
-#include "TXUISlider.h"
+#include "TXUISliderBar.h"
+#include "TXUICheckBox.h"
 
 namespace Toshi
 {
@@ -377,8 +378,7 @@ namespace Toshi
         }
         else if (TStringManager::String16Compare(objectName, _TS16("XuiCheckbox"), -1) == 0)
         {
-            TASSERT(TFALSE, "Some XUI class is not implemented, can't continue reading data");
-            return TNULL;
+			return new (TXUI::MemoryBlock()) XURXUICheckBoxData();
         }
         else if (TStringManager::String16Compare(objectName, _TS16("XuiProgressbar"), -1) == 0)
         {
@@ -387,7 +387,7 @@ namespace Toshi
         }
         else if (TStringManager::String16Compare(objectName, _TS16("XuiSlider"), -1) == 0)
         {
-			return new (TXUI::MemoryBlock()) XURXUISliderData();
+			return new (TXUI::MemoryBlock()) XURXUISliderBarData();
         }
         else if (TStringManager::String16Compare(objectName, _TS16("XuiList"), -1) == 0)
         {

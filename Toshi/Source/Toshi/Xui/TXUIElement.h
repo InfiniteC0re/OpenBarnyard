@@ -89,7 +89,8 @@ namespace Toshi
 		uint16_t m_Index;                     // 0x12 de blob 0x1C NT08
 		uint32_t m_uiTypeIndex;               // 0x14 de blob 1E NT08
         uint8_t m_NumChildren;                // 0x16 de blob 0x10 NT08
-		uint8_t m_NumTimelines;               // 
+		uint8_t m_NumTimelines;               // 0x17
+		const TClass* m_pClass;               // 0x18
 	};
 
 	class XURXUIElementData : public XURXUIObjectData

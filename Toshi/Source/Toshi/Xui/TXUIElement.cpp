@@ -147,11 +147,11 @@ namespace Toshi
                 m_Opacity = TSTATICCAST(uint8_t, opacity * 255);
             }
 
-            if (hasAnchor)
-            {
-                TASSERT(anchor <= Flags_AnchorMask);
-                m_Flags |= reader.ReadEPTUShort32() << 3;
-            }
+			if (hasAnchor)
+			{
+				TASSERT(anchor <= Flags_AnchorMask);
+				m_Flags |= anchor << 3;
+			}
 
             if (hasShow)
             {

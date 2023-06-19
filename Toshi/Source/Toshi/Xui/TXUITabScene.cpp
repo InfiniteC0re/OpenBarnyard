@@ -30,7 +30,7 @@ namespace Toshi {
 			return a_uiPropIndex < PropType_NUMOF;
 
 		TASSERT(a_uiObjectIndex > 0);
-		return XURXUISceneData::IsColourPropType(a_uiObjectIndex - 1, a_uiPropIndex);
+		return XURXUISceneData::ValidateTimelineProp(a_uiObjectIndex - 1, a_uiPropIndex);
 	}
 
 	TBOOL XURXUITabSceneData::TranslateTimelineProp(const char* name, uint32_t& a_uiObjectIndex, PropType& propType)
