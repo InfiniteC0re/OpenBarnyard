@@ -199,11 +199,27 @@ namespace Toshi
 		public T2GUIElement
 	{
 	public:
+		using XUIState = uint32_t;
+
+		enum XUIState_ : XUIState
+		{
+			XUIState_PAUSED              = BITFIELD(9),
+			XUIState_NOTIMELINERECURSION = BITFIELD(10),
+			XUIState_CLIPCHILDREN        = BITFIELD(16),
+			XUIState_STATEMASK           = XUIState_PAUSED | 0b111000000,
+			XUIState_OPACITYMASK         = 0b11111110000000000000000000000000,
+			XUIState_ALPHAMASK           = 0b1111111100000000000000000,
+			XUIState_ANCHORMASK          = 0b0000000000000000000111111,
+			XUIState_BLENDMODEMASK       = 0b0000000000001110000000000
+		};
+
+	public:
 		TXUIElement();
 
-		virtual TBOOL SkipRender();
-		virtual void SetHeight(float height);
-		virtual void SetWidth(float width);
+		virtual TBOOL SkipRender() override;
+		virtual TBOOL IsPaused() const override;
+		virtual void SetHeight(float height) override;
+		virtual void SetWidth(float width) override;
 
 		TBOOL Create(TXUIResource& a_rResource, XURXUIElementData* a_pElementData, TBOOL hasChildren);
 		void CreateChildren(TXUIResource& a_rResource, XURXUIElementData* a_pElementData);
@@ -212,13 +228,13 @@ namespace Toshi
 	
 	private:
 
-		XURXUIObjectData* m_pObjectData; // 0x40 de blob
-		const wchar_t* m_objectID; // 0x44
-
-		T2GUITransform::Rotation m_vPosition;
-		T2GUITransform::Rotation m_vRotation;
-		T2GUITransform::Rotation m_vScale;
-
-		int m_iUIDCount; // 0xB4 globs
+		XURXUIObjectData* m_pObjectData;      // 0x40
+		const wchar_t* m_objectID;            // 0x44
+		T2GUITransform::Rotation m_vPosition; // 0x48
+		T2GUITransform::Rotation m_vRotation; // 0x4C
+		T2GUITransform::Rotation m_vScale;    // 0x50
+		XUIState m_eXUIState;                 // 0x5C
+		
+		int m_iUIDCount;                      // 0xB4 globs
 	};
 }

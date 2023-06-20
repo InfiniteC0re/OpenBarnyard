@@ -13,10 +13,10 @@ namespace Toshi
 		m_Height = 0;
 		m_Color = 0xFFFFFFFF;
 		m_cbPostRender = TNULL;
-		m_Flags1 = 255;
+		m_State = 255;
 		m_Pivot = Pivot::MiddleCenter;
 		m_Anchor = Anchor::MiddleCenter;
-		m_State = FLAGS_FOCUSED | FLAGS_VISIBLE;
+		m_Flags = 3;
 	}
 
 	T2GUIElement::~T2GUIElement()
@@ -42,7 +42,7 @@ namespace Toshi
 
 	TBOOL T2GUIElement::SkipRender()
 	{
-		if (HASFLAG(m_State & FLAGS_VISIBLE) && HASFLAG(m_State & (uint8_t)s_uiGlobalVisMask))
+		if (HASFLAG(m_Flags & FLAGS_VISIBLE) && HASFLAG(m_Flags & (uint8_t)s_uiGlobalVisMask))
 		{
 			return TFALSE;
 		}
@@ -127,7 +127,7 @@ namespace Toshi
 			break;
 		}
 		
-		if (HASFLAG(m_State & FLAGS_XUIELEMENT))
+		if (HASFLAG(m_Flags & FLAGS_XUIELEMENT))
 		{
 			auto pivot = GetPivot();
 			vec2.x = -pivot.x + vec2.x;
@@ -232,11 +232,11 @@ namespace Toshi
 	{
 		if (visible)
 		{
-			m_State |= FLAGS_VISIBLE;
+			m_Flags |= FLAGS_VISIBLE;
 		}
 		else
 		{
-			m_State &= ~FLAGS_VISIBLE;
+			m_Flags &= ~FLAGS_VISIBLE;
 		}
 	}
 
@@ -244,11 +244,11 @@ namespace Toshi
 	{
 		if (focused)
 		{
-			m_State |= FLAGS_FOCUSED;
+			m_Flags |= FLAGS_FOCUSED;
 		}
 		else
 		{
-			m_State &= ~FLAGS_FOCUSED;
+			m_Flags &= ~FLAGS_FOCUSED;
 		}
 	}
 

@@ -53,6 +53,11 @@ namespace Toshi
 
 		}
 
+		T2GUITransform(float basisVec1Angle, float basisVec2Angle) : m_Rot{ { PackFloat(basisVec1Angle), 0 }, { 0, PackFloat(basisVec2Angle) } }
+		{
+
+		}
+
 		void Reset()
 		{
 			m_Rot[0] = { PackFloat(1.0f), 0 };
@@ -60,9 +65,11 @@ namespace Toshi
 		}
 
 		void Rotate(float angle);
-		void RotateTo(float angle);
+		void GetInverse(T2GUITransform& outTransform);
 		void PreMultiply(const T2GUITransform& transform);
+		void PreMultiply(float basisVec1Angle, float basisVec2Angle) { PreMultiply({ basisVec1Angle, basisVec2Angle }); }
 		void PostMultiply(const T2GUITransform& transform);
+		void PostMultiply(float basisVec1Angle, float basisVec2Angle) { PostMultiply({ basisVec1Angle, basisVec2Angle }); }
 		void Matrix44(TMatrix44& outMatrix);
 
 		void Transform(TVector2& outVec, const TVector2& transformVec) const
