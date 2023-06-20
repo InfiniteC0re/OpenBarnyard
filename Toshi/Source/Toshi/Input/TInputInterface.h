@@ -15,8 +15,8 @@ namespace Toshi {
         public:
             enum EventType
             {
-                EventType_Unk,
-                EventType_Unk2,
+                EventType_StartRepeat,
+                EventType_StopRepeat,
                 EventType_Repeat,
                 EventType_Unk3,
                 EventType_MouseMotion
@@ -189,7 +189,7 @@ namespace Toshi {
         public TNodeList<TInputDevice>::TNode
     {
     public:
-        static constexpr int INPUT_DEVICE_MOUSE_BUTTONS = 2;
+        static constexpr int INPUT_DEVICE_MOUSE_BUTTONS = 3;
         static constexpr int INPUT_DEVICE_MOUSE_WHEEL = 4;
 
         struct DoodadProperties
@@ -207,7 +207,7 @@ namespace Toshi {
         TInputDevice()
         {
             m_pInterface = TNULL;
-            m_bIsAquired = TFALSE;
+            m_bIsAcquired = TFALSE;
         }
 
         virtual TBOOL Flush() { return TTRUE; }
@@ -217,9 +217,9 @@ namespace Toshi {
         virtual void ThrowRepeatEvent(TEmitter<TInputInterface, TInputInterface::InputEvent>& emitter, RepeatInfo* repeatInfo, float flt);
         virtual TBOOL IsForceFeedbackDevice() { return TFALSE; }
 
-        TBOOL IsAquired() const
+        TBOOL IsAcquired() const
         {
-            return m_bIsAquired;
+            return m_bIsAcquired;
         }
 
         TInputInterface* GetInputInterface()
@@ -233,11 +233,11 @@ namespace Toshi {
         }
 
     protected:
-        int ProcessRepeats(TGenericEmitter& emitter, float flt);
+        int ProcessRepeats(TEmitter<TInputInterface, TInputInterface::InputEvent>& emitter, float flt);
 
     protected:
         TInputInterface* m_pInterface;
-        TBOOL m_bIsAquired;              // 0x39 de blob 0x35 JPOG
+        TBOOL m_bIsAcquired;              // 0x39 de blob 0x35 JPOG
     };
 
 }

@@ -13,7 +13,7 @@ public:
 
 	~AInputHelperSimple()
 	{
-		TFree(m_pArray);
+		delete m_pArray;
 	}
 
 	void Initialise(size_t doodadCount, Toshi::TInputDevice* pInputDevice)
@@ -32,8 +32,8 @@ public:
 	void Update();
 
 private:
-	uint32_t* m_pArray;
-	size_t m_iArrayIndex;
-	size_t m_iArraySize;
-	Toshi::TInputDevice* m_pInputDevice;
+	uint32_t* m_pArray;                   // 0x0
+	size_t m_iArrayIndex;                 // 0x4
+	size_t m_iArraySize;                  // 0x8
+	Toshi::TInputDevice* m_pInputDevice;  // 0xC
 };

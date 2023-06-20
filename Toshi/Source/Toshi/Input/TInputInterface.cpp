@@ -70,14 +70,15 @@ namespace Toshi
 
     TBOOL TInputInterface::Deinitialise()
     {
-        return TFALSE;
+        m_DeviceList.DeleteAll();
+        return TTRUE;
     }
 
     TBOOL TInputInterface::AcquireAll()
     {
         for (auto it = m_DeviceList.Begin(); it != m_DeviceList.End(); ++it)
         {
-            if (it->IsAquired())
+            if (it->IsAcquired())
             {
                 TIMPLEMENT();
             }
@@ -92,7 +93,7 @@ namespace Toshi
 
     TBOOL TInputInterface::FlushAll()
     {
-        return TFALSE;
+        return TTRUE;
     }
 
     void TInputInterface::SetExclusiveMode(TBOOL mode)
@@ -111,7 +112,7 @@ namespace Toshi
 
         for (auto it = m_DeviceList.Begin(); it != m_DeviceList.End(); ++it)
         {
-            if (it->IsAquired())
+            if (it->IsAcquired())
             {
                 TIMPLEMENT();
             }
@@ -119,7 +120,7 @@ namespace Toshi
 
         for (auto it = m_DeviceList.Begin(); it != m_DeviceList.End(); ++it)
         {
-            if (it->IsAquired())
+            if (it->IsAcquired())
             {
                 TIMPLEMENT();
             }
