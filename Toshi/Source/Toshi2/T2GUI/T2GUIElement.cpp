@@ -252,7 +252,7 @@ namespace Toshi
 		}
 	}
 
-	void T2GUIElement::GetScreenTransform(void* unk)
+	void T2GUIElement::GetScreenTransform(T2GUITransform& outTransform)
 	{
 		TIMPLEMENT();
 	}
@@ -277,4 +277,12 @@ namespace Toshi
 	{
 		return TVector2::VEC_ZERO;
 	}
+
+	void T2GUIElement::GetInvScreenTransform(T2GUITransform& outTransform)
+	{
+		T2GUITransform screenTransform;
+		GetScreenTransform(screenTransform);
+		screenTransform.GetInverse(outTransform);
+	}
+
 }

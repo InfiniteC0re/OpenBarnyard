@@ -153,6 +153,18 @@ namespace Toshi
 			TASSERT(IsEmpty());
 		}
 
+		T2Iterator<T, Node> Head() const
+		{
+			TASSERT(!IsEmpty());
+			return m_oRoot.Next();
+		}
+
+		T2Iterator<T, Node> Tail() const
+		{
+			TASSERT(!IsEmpty());
+			return m_oRoot.Prev();
+		}
+
 		T2Iterator<T, Node> Begin() const
 		{
 			return m_oRoot.Next();

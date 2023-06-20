@@ -201,7 +201,7 @@ namespace Toshi
         SelectSamplerId();
     }
 
-    TTextureManager::TTextureManager() :
+	TTextureManager::TTextureManager() :
         m_pLastTexture(TNULL)
     {
         uint8_t* srcData;

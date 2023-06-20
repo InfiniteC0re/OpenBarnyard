@@ -63,6 +63,7 @@ namespace Toshi
         TTexture* GetPrev() const         { return m_pPrevTexture; }
         TTexture* GetNext() const         { return m_pNextTexture; }
         
+		TBOOL CheckFormat()               { return m_TexInfo->Format == DXGI_FORMAT_R8G8B8A8_UNORM || m_TexInfo->Format == DXGI_FORMAT_BC3_UNORM; }
         void SetName(const char* name)    { m_TexName = name; }
         void SetSamplerId(int iSamplerId) { m_SamplerId = iSamplerId; }
         void SetWrap(D3D11_TEXTURE_ADDRESS_MODE eAddressU, D3D11_TEXTURE_ADDRESS_MODE eAddressV);

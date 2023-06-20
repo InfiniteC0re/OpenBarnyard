@@ -78,9 +78,11 @@ namespace Toshi
 		virtual float GetAlpha();
 		virtual void SetVisible(TBOOL visible);
 		virtual void SetFocus(TBOOL focused);
-		virtual void GetScreenTransform(void* unk);
+		virtual void GetScreenTransform(T2GUITransform& outTransform);
 		virtual TBOOL IsPointInside(const TVector2& point);
 		virtual const TVector2& GetPivot();
+
+		void GetInvScreenTransform(T2GUITransform& outTransform);
 
 		void Unlink()
 		{

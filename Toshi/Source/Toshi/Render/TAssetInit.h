@@ -3,6 +3,7 @@
 #include "Toshi/Xui/TXUI.h"
 #include "Toshi/Render/TModelHAL.h"
 #include "Toshi/Render/TTexture.h"
+#include "Toshi2/T2Material.h"
 
 namespace Toshi
 {
@@ -38,7 +39,7 @@ namespace Toshi
 
 		static t_fourCCFunction constexpr InitMaterial = [](void* a_pData)
 		{
-
+			TSTATICCAST(T2Material*, a_pData)->Init();
 		};
 
 		static t_fourCCFunction constexpr ReloadMaterial = [](void* a_pData)
@@ -146,7 +147,7 @@ namespace Toshi
 
 		static t_fourCCFunction constexpr DeinitMaterial = [](void* a_pData)
 		{
-
+			TSTATICCAST(T2Material*, a_pData)->Deinit();
 		};
 
 		static t_fourCCFunction constexpr DeinitFXLite = [](void* a_pData)
