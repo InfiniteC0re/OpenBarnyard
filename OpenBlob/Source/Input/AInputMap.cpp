@@ -116,6 +116,64 @@ void AInputMap::InitialiseButtonMap()
 	vec.Clear();
 #pragma endregion
 
+	#pragma region ActionButtonMap2
+	vec.PushBack(3);
+	vec.PushBack(Toshi::TInputDeviceKeyboard::KEY_GRAVE);
+	vec.PushBack(Toshi::TInputDeviceKeyboard::KEY_ESCAPE);
+	vec.PushBack(0x10009); // Controller
+	m_ActionButtonMap2.Insert(ACTIONBUTTON_20, vec);
+	vec.Clear();
+
+	vec.PushBack(1);
+	vec.PushBack(Toshi::TInputDeviceKeyboard::KEY_BACK);
+	m_ActionButtonMap2.Insert(ACTIONBUTTON_24, vec);
+	vec.Clear();
+
+	vec.PushBack(3);
+	vec.PushBack(Toshi::TInputDeviceKeyboard::KEY_UP);
+	vec.PushBack(0x10001); // Controller
+	vec.PushBack(0x10011); // Controller
+	m_ActionButtonMap2.Insert(ACTIONBUTTON_2, vec);
+	vec.Clear();
+
+	vec.PushBack(3);
+	vec.PushBack(Toshi::TInputDeviceKeyboard::KEY_DOWN);
+	vec.PushBack(0x10003); // Controller
+	vec.PushBack(0x10013); // Controller
+	m_ActionButtonMap2.Insert(ACTIONBUTTON_3, vec);
+	vec.Clear();
+
+	vec.PushBack(1);
+	vec.PushBack(Toshi::TInputDeviceKeyboard::KEY_TAB);
+	m_ActionButtonMap2.Insert(ACTIONBUTTON_25, vec);
+	vec.Clear();
+
+	vec.PushBack(1);
+	vec.PushBack(Toshi::TInputDeviceKeyboard::KEY_RETURN);
+	m_ActionButtonMap2.Insert(ACTIONBUTTON_28, vec);
+	vec.Clear();
+
+	vec.PushBack(1);
+	vec.PushBack(Toshi::TInputDeviceKeyboard::KEY_A);
+	m_ActionButtonMap2.Insert(ACTIONBUTTON_29, vec);
+	vec.Clear();
+	#pragma endregion
+
+	/*#pragma region ActionButtonMap3
+
+	#pragma endregion*/
+
+	/*#pragma region ActionButtonMap4
+
+	#pragma endregion*/
+
+	#pragma region ActionButtonMap5
+	vec.PushBack(2);
+	vec.PushBack(0x10006); // Controller
+	vec.PushBack(Toshi::TInputDeviceKeyboard::KEY_RETURN);
+	m_ActionButtonMap2.Insert(ACTIONBUTTON_1, vec);
+	vec.Clear();
+	#pragma endregion
 
 
 	TIMPLEMENT_D("Init other ActionButtonMaps");

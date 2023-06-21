@@ -11,7 +11,12 @@ public:
 		UNK,
 		UNK2,
 		UNK3,
-		UNK4
+		UNK4,
+		UNK5,
+		UNK6,
+		UNK7,
+		UNK8,
+		UNK9
 	};
 
 	enum ActionButton {
