@@ -4,38 +4,38 @@
 
 namespace Toshi
 {
-	static constexpr TTRB::t_MemoryFuncAlloc s_cbDefAllocator = [](TTRB::AllocType alloctype, size_t size, short unk1, size_t unk2, void* userData)
-	{
-		return TMalloc(size);
-	};
+    static constexpr TTRB::t_MemoryFuncAlloc s_cbDefAllocator = [](TTRB::AllocType alloctype, size_t size, short unk1, size_t unk2, void* userData)
+    {
+        return TMalloc(size);
+    };
 
-	static constexpr TTRB::t_MemoryFuncDealloc s_cbDefDeallocator = [](TTRB::AllocType alloctype, void* ptr, short unk1, size_t unk2, void* userData)
-	{
-		TFree(ptr);
-	};
+    static constexpr TTRB::t_MemoryFuncDealloc s_cbDefDeallocator = [](TTRB::AllocType alloctype, void* ptr, short unk1, size_t unk2, void* userData)
+    {
+        TFree(ptr);
+    };
 
-	void* TTRB::s_pDefAllocatorUserData = TNULL;
+    void* TTRB::s_pDefAllocatorUserData = TNULL;
 
-	TTRB::TTRB()
-	{
-		m_pHeader = TNULL;
-		m_SYMB = TNULL;
+    TTRB::TTRB()
+    {
+        m_pHeader = TNULL;
+        m_SYMB = TNULL;
 
-		SetMemoryFunctions(s_cbDefAllocator, s_cbDefDeallocator, s_pDefAllocatorUserData);
-	}
+        SetMemoryFunctions(s_cbDefAllocator, s_cbDefDeallocator, s_pDefAllocatorUserData);
+    }
 
-	TTRB::ERROR TTRB::Load(const char* path)
-	{
-		// FUN_006868e0
-		TFile* pFile = TFile::Create(path);
-		return Load(pFile);
-	}
+    TTRB::ERROR TTRB::Load(const char* path)
+    {
+        // FUN_006868e0
+        TFile* pFile = TFile::Create(path);
+        return Load(pFile);
+    }
 
-	TTRB::ERROR TTRB::Load(TFile* file)
-	{
-		// FUN_00686920
-		TTSFI ttsf;
-		ERROR error = ttsf.Open(file);
+    TTRB::ERROR TTRB::Load(TFile* file)
+    {
+        // FUN_00686920
+        TTSFI ttsf;
+        ERROR error = ttsf.Open(file);
 
         if (error == ERROR_OK)
         {
@@ -60,256 +60,256 @@ namespace Toshi
             error = ERROR_NO_HEADER;
         }
 
-		return error;
-	}
+        return error;
+    }
 
-	TBOOL TTRB::ProcessForm(TTSFI& ttsf)
-	{
-		// FUN_00686f10
-		static constexpr uint32_t s_RELCEntriesLimit = 0x200;
-		RELCEntry relcEntries[s_RELCEntriesLimit];
+    TBOOL TTRB::ProcessForm(TTSFI& ttsf)
+    {
+        // FUN_00686f10
+        static constexpr uint32_t s_RELCEntriesLimit = 0x200;
+        RELCEntry relcEntries[s_RELCEntriesLimit];
 
-		int32_t fileSize = ttsf.m_CurrentHunk.Size - 4;
-		int32_t leftSize = fileSize;
-		ttsf.PushForm();
+        int32_t fileSize = ttsf.m_CurrentHunk.Size - 4;
+        int32_t leftSize = fileSize;
+        ttsf.PushForm();
 
-		do
-		{
-			uint32_t sectionName = 0;
-			uint32_t sectionSize = 0;
+        do
+        {
+            uint32_t sectionName = 0;
+            uint32_t sectionSize = 0;
 
-			while (TTRUE)
-			{
-				if (fileSize < 1)
-				{
-					ttsf.PopForm();
-					// FUN_007ebfbf
-					return TTRUE;
-				}
+            while (TTRUE)
+            {
+                if (fileSize < 1)
+                {
+                    ttsf.PopForm();
+                    // FUN_007ebfbf
+                    return TTRUE;
+                }
 
-				uint8_t readResult = ttsf.ReadHunk();
-				if (readResult != ERROR_OK) return TFALSE;
+                uint8_t readResult = ttsf.ReadHunk();
+                if (readResult != ERROR_OK) return TFALSE;
 
-				sectionName = ttsf.m_CurrentHunk.Name;
-				sectionSize = ttsf.m_CurrentHunk.Size;
-				leftSize -= TMath::AlignNumUp(sectionSize) + sizeof(Toshi::TTSF::Hunk);
+                sectionName = ttsf.m_CurrentHunk.Name;
+                sectionSize = ttsf.m_CurrentHunk.Size;
+                leftSize -= TMath::AlignNumUp(sectionSize) + sizeof(Toshi::TTSF::Hunk);
 
-				if (TMAKEFOUR("HEAD") < sectionName) break;
+                if (TMAKEFOUR("HEAD") < sectionName) break;
 
-				if (sectionName == TMAKEFOUR("HEAD"))
-				{
-					int numsections = (sectionSize - 4) / 0xC;
+                if (sectionName == TMAKEFOUR("HEAD"))
+                {
+                    int numsections = (sectionSize - 4) / 0xC;
 
-					m_pHeader = static_cast<Header*>(m_MemAllocator(AllocType_Unk0, sizeof(Header) + sizeof(SecInfo) * numsections, 0, 0, m_MemUserData));
-					m_pHeader->m_ui32Version = { 0 };
+                    m_pHeader = static_cast<Header*>(m_MemAllocator(AllocType_Unk0, sizeof(Header) + sizeof(SecInfo) * numsections, 0, 0, m_MemUserData));
+                    m_pHeader->m_ui32Version = { 0 };
 
-					ttsf.ReadRaw(&m_pHeader->m_i32SectionCount, sizeof(m_pHeader->m_i32SectionCount));
+                    ttsf.ReadRaw(&m_pHeader->m_i32SectionCount, sizeof(m_pHeader->m_i32SectionCount));
 
-					TASSERT(m_pHeader->m_i32SectionCount == numsections, "HEAD section has wrong num of sections");
+                    TASSERT(m_pHeader->m_i32SectionCount == numsections, "HEAD section has wrong num of sections");
 
-					for (int i = 0; i < m_pHeader->m_i32SectionCount; i++)
-					{
-						SecInfo* pSect = GetSectionInfo(i);
-						
-						ttsf.ReadRaw(pSect, 0xC);
-						pSect->m_Data = m_MemAllocator(AllocType_Unk1, pSect->m_Size, 0, 0, m_MemUserData);
-						pSect->m_Unk1 = (pSect->m_Unk1 == 0) ? 16 : pSect->m_Unk1;
-						pSect->m_Unk2 = 0;
-					}
+                    for (int i = 0; i < m_pHeader->m_i32SectionCount; i++)
+                    {
+                        SecInfo* pSect = GetSectionInfo(i);
 
-					ttsf.SkipHunk();
-				}
-				else if (sectionName == TMAKEFOUR("SYMB"))
-				{
-					m_SYMB = static_cast<SYMB*>(m_MemAllocator(AllocType_Unk2, ttsf.m_CurrentHunk.Size, 0, 0, m_MemUserData));
-					ttsf.ReadHunkData(m_SYMB);
-				}
-				else if (sectionName == TMAKEFOUR("SECC"))
-				{
-					for (int i = 0; i < m_pHeader->m_i32SectionCount; i++)
-					{
-						auto* secInfo = GetSectionInfo(i);
+                        ttsf.ReadRaw(pSect, 0xC);
+                        pSect->m_Data = m_MemAllocator(AllocType_Unk1, pSect->m_Size, 0, 0, m_MemUserData);
+                        pSect->m_Unk1 = (pSect->m_Unk1 == 0) ? 16 : pSect->m_Unk1;
+                        pSect->m_Unk2 = 0;
+                    }
 
-						if (secInfo->m_Data != TNULL)
-						{
-							ttsf.ReadCompressed(secInfo->m_Data, secInfo->m_Size);
-						}
-					}
+                    ttsf.SkipHunk();
+                }
+                else if (sectionName == TMAKEFOUR("SYMB"))
+                {
+                    m_SYMB = static_cast<SYMB*>(m_MemAllocator(AllocType_Unk2, ttsf.m_CurrentHunk.Size, 0, 0, m_MemUserData));
+                    ttsf.ReadHunkData(m_SYMB);
+                }
+                else if (sectionName == TMAKEFOUR("SECC"))
+                {
+                    for (int i = 0; i < m_pHeader->m_i32SectionCount; i++)
+                    {
+                        auto* secInfo = GetSectionInfo(i);
 
-					ttsf.SkipHunk();
-				}
-				else if (sectionName == TMAKEFOUR("RELC"))
-				{
-					uint32_t relocCount = 0;
-					uint32_t curReloc = 0;
-					uint32_t readedRelocs = 0;
+                        if (secInfo->m_Data != TNULL)
+                        {
+                            ttsf.ReadCompressed(secInfo->m_Data, secInfo->m_Size);
+                        }
+                    }
 
-					ttsf.ReadRaw(&relocCount, sizeof(relocCount));
+                    ttsf.SkipHunk();
+                }
+                else if (sectionName == TMAKEFOUR("RELC"))
+                {
+                    uint32_t relocCount = 0;
+                    uint32_t curReloc = 0;
+                    uint32_t readedRelocs = 0;
 
-					if (relocCount < 1)
-					{
-						relocCount = 0;
-					}
-					else
-					{
-						do
-						{
-							uint32_t relocReadCount = relocCount - readedRelocs;
+                    ttsf.ReadRaw(&relocCount, sizeof(relocCount));
 
-							// limit count of RELCs to read
-							relocReadCount = TMath::Min(relocReadCount, s_RELCEntriesLimit);
-							ttsf.ReadRaw(relcEntries, relocReadCount << 3);
-							curReloc = readedRelocs + relocReadCount;
+                    if (relocCount < 1)
+                    {
+                        relocCount = 0;
+                    }
+                    else
+                    {
+                        do
+                        {
+                            uint32_t relocReadCount = relocCount - readedRelocs;
 
-							auto& header = *m_pHeader;
-							for (uint32_t i = 0; i < relocReadCount; i++)
-							{
-								auto& relcEntry = relcEntries[i];
-								auto hdrx1 = GetSectionInfo(relcEntry.HDRX1);
-								auto hdrx2 = hdrx1;
+                            // limit count of RELCs to read
+                            relocReadCount = TMath::Min(relocReadCount, s_RELCEntriesLimit);
+                            ttsf.ReadRaw(relcEntries, relocReadCount << 3);
+                            curReloc = readedRelocs + relocReadCount;
 
-								if (m_pHeader->m_ui32Version.Value >= TMAKEVERSION(1, 0))
-								{
-									hdrx2 = GetSectionInfo(relcEntry.HDRX2);
-								}
+                            auto& header = *m_pHeader;
+                            for (uint32_t i = 0; i < relocReadCount; i++)
+                            {
+                                auto& relcEntry = relcEntries[i];
+                                auto hdrx1 = GetSectionInfo(relcEntry.HDRX1);
+                                auto hdrx2 = hdrx1;
 
-								// this won't work in x64 because pointers in TRB files are always 4 bytes
-								// need some workaround to support x64 again
-								uintptr_t* ptr = reinterpret_cast<uintptr_t*>((uintptr_t)hdrx1->m_Data + relcEntry.Offset);
-								*ptr += (uintptr_t)hdrx2->m_Data;
-							}
+                                if (m_pHeader->m_ui32Version.Value >= TMAKEVERSION(1, 0))
+                                {
+                                    hdrx2 = GetSectionInfo(relcEntry.HDRX2);
+                                }
 
-							readedRelocs += relocReadCount;
-						} while (curReloc < relocCount);
-					}
+                                // this won't work in x64 because pointers in TRB files are always 4 bytes
+                                // need some workaround to support x64 again
+                                uintptr_t* ptr = reinterpret_cast<uintptr_t*>((uintptr_t)hdrx1->m_Data + relcEntry.Offset);
+                                *ptr += (uintptr_t)hdrx2->m_Data;
+                            }
 
-					ttsf.SkipHunk();
-				}
-				else
-				{
-					// Unknown section
-					ttsf.SkipHunk();
+                            readedRelocs += relocReadCount;
+                        } while (curReloc < relocCount);
+                    }
 
-#ifdef TOSHI_DEBUG
-					ttsf.LogUnknownSection();
-#endif
-				}
-
-				fileSize = leftSize;
-			}
-
-			if (sectionName != TMAKEFOUR("FORM"))
-			{
-				if (sectionName == TMAKEFOUR("SECT"))
-				{
-					for (int i = 0; i < m_pHeader->m_i32SectionCount; i++)
-					{
-						SecInfo* pSect = GetSectionInfo(i);
-						ttsf.ReadRaw(pSect->m_Data, pSect->m_Size);
-					}
-
-					ttsf.SkipHunk();
-				}
-				else if (sectionName == TMAKEFOUR("HDRX"))
-				{
-					m_pHeader = static_cast<Header*>(m_MemAllocator(AllocType_Unk0, sectionSize, 0, 0, m_MemUserData));
-					ttsf.ReadHunkData(m_pHeader);
-					
-					for (int i = 0; i < m_pHeader->m_i32SectionCount; i++)
-					{
-						SecInfo* pSect = GetSectionInfo(i);
-						pSect->m_Unk1 = (pSect->m_Unk1 == 0) ? 16 : pSect->m_Unk1;
-						pSect->m_Data = m_MemAllocator(AllocType_Unk1, pSect->m_Size, pSect->m_Unk1, pSect->m_Unk2, m_MemUserData);
-					}
-				}
-				else
-				{
-					// Unknown section
-					ttsf.SkipHunk();
+                    ttsf.SkipHunk();
+                }
+                else
+                {
+                    // Unknown section
+                    ttsf.SkipHunk();
 
 #ifdef TOSHI_DEBUG
-					ttsf.LogUnknownSection();
+                    ttsf.LogUnknownSection();
 #endif
-				}
+                }
 
-				fileSize = leftSize;
-			}
-		} while (TTRUE);
+                fileSize = leftSize;
+            }
 
-		SectionFORM form;
-		ttsf.ReadFORM(&form);
+            if (sectionName != TMAKEFOUR("FORM"))
+            {
+                if (sectionName == TMAKEFOUR("SECT"))
+                {
+                    for (int i = 0; i < m_pHeader->m_i32SectionCount; i++)
+                    {
+                        SecInfo* pSect = GetSectionInfo(i);
+                        ttsf.ReadRaw(pSect->m_Data, pSect->m_Size);
+                    }
 
-		TBOOL result = ProcessForm(ttsf);
-		fileSize = leftSize;
+                    ttsf.SkipHunk();
+                }
+                else if (sectionName == TMAKEFOUR("HDRX"))
+                {
+                    m_pHeader = static_cast<Header*>(m_MemAllocator(AllocType_Unk0, sectionSize, 0, 0, m_MemUserData));
+                    ttsf.ReadHunkData(m_pHeader);
 
-		return result;
-	}
+                    for (int i = 0; i < m_pHeader->m_i32SectionCount; i++)
+                    {
+                        SecInfo* pSect = GetSectionInfo(i);
+                        pSect->m_Unk1 = (pSect->m_Unk1 == 0) ? 16 : pSect->m_Unk1;
+                        pSect->m_Data = m_MemAllocator(AllocType_Unk1, pSect->m_Size, pSect->m_Unk1, pSect->m_Unk2, m_MemUserData);
+                    }
+                }
+                else
+                {
+                    // Unknown section
+                    ttsf.SkipHunk();
 
-	void* TTRB::GetSymbolAddress(const char* symbName)
-	{
-		// FUN_00686d30
-		auto index = GetSymbolIndex(symbName);
+#ifdef TOSHI_DEBUG
+                    ttsf.LogUnknownSection();
+#endif
+                }
 
-		if (m_SYMB != TNULL && index != -1 && index < m_SYMB->m_i32SymbCount)
-		{
-			auto entry = GetSymbol(index);
-			return static_cast<char*>(GetSection(entry->HDRX)) + entry->DataOffset;
-		}
+                fileSize = leftSize;
+            }
+        } while (TTRUE);
 
-		return TNULL;
-	}
+        SectionFORM form;
+        ttsf.ReadFORM(&form);
 
-	int TTRB::GetSymbolIndex(const char* symbName)
-	{
-		// 00686c30
-		if (m_SYMB != TNULL)
-		{
-			short hash = HashString(symbName);
+        TBOOL result = ProcessForm(ttsf);
+        fileSize = leftSize;
 
-			for (int i = 0; i < m_SYMB->m_i32SymbCount; i++)
-			{
-				auto symbol = GetSymbol(i);
+        return result;
+    }
 
-				if (symbol->NameHash == hash)
-				{
-					if (Toshi::TStringManager::String8Compare(symbName, GetSymbolName(symbol), -1) == 0)
-					{
-						return i;
-					}
-				}
-			}
-		}
+    void* TTRB::GetSymbolAddress(const char* symbName)
+    {
+        // FUN_00686d30
+        auto index = GetSymbolIndex(symbName);
 
-		return -1;
-	}
+        if (m_SYMB != TNULL && index != -1 && index < m_SYMB->m_i32SymbCount)
+        {
+            auto entry = GetSymbol(index);
+            return static_cast<char*>(GetSection(entry->HDRX)) + entry->DataOffset;
+        }
 
-	void TTRB::Close()
-	{
-		// FUN_006869d0
-		if (m_pHeader != TNULL)
-		{
-			for (int i = 0; i < m_pHeader->m_i32SectionCount; i++)
-			{
-				auto sec = GetSectionInfo(i);
+        return TNULL;
+    }
 
-				if (sec->m_Data != TNULL)
-				{
-					m_MemDeallocator(AllocType_Unk1, sec->m_Data, sec->m_Unk1, sec->m_Unk2, m_MemUserData);
-				}
-			}
+    int TTRB::GetSymbolIndex(const char* symbName)
+    {
+        // 00686c30
+        if (m_SYMB != TNULL)
+        {
+            short hash = HashString(symbName);
 
-			m_MemDeallocator(AllocType_Unk0, m_pHeader, 0, 0, m_MemUserData);
-			m_pHeader = TNULL;
-		}
+            for (int i = 0; i < m_SYMB->m_i32SymbCount; i++)
+            {
+                auto symbol = GetSymbol(i);
 
-		DeleteSymbolTable();
-	}
+                if (symbol->NameHash == hash)
+                {
+                    if (Toshi::TStringManager::String8Compare(symbName, GetSymbolName(symbol), -1) == 0)
+                    {
+                        return i;
+                    }
+                }
+            }
+        }
 
-	void TTRB::SetDefaultMemoryFuncs(t_MemoryFuncAlloc allocator, t_MemoryFuncDealloc deallocator, void* allocatorUserData)
-	{
-		if (allocator != TNULL)
-		{
-			TASSERT(deallocator != TNULL);
-		}
-	}
+        return -1;
+    }
+
+    void TTRB::Close()
+    {
+        // FUN_006869d0
+        if (m_pHeader != TNULL)
+        {
+            for (int i = 0; i < m_pHeader->m_i32SectionCount; i++)
+            {
+                auto sec = GetSectionInfo(i);
+
+                if (sec->m_Data != TNULL)
+                {
+                    m_MemDeallocator(AllocType_Unk1, sec->m_Data, sec->m_Unk1, sec->m_Unk2, m_MemUserData);
+                }
+            }
+
+            m_MemDeallocator(AllocType_Unk0, m_pHeader, 0, 0, m_MemUserData);
+            m_pHeader = TNULL;
+        }
+
+        DeleteSymbolTable();
+    }
+
+    void TTRB::SetDefaultMemoryFuncs(t_MemoryFuncAlloc allocator, t_MemoryFuncDealloc deallocator, void* allocatorUserData)
+    {
+        if (allocator != TNULL)
+        {
+            TASSERT(deallocator != TNULL);
+        }
+    }
 }

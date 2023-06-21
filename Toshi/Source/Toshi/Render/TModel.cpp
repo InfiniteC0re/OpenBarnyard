@@ -15,9 +15,9 @@ namespace Toshi {
 		m_pCollisionData = TNULL;
 		m_pTRB = TNULL;
 		m_bFreeOnUnload = TTRUE;
-		m_pResourceName = "unknown";
+		m_pName = "unknown";
 		TUtil::MemClear(m_LODLevels, sizeof(m_LODLevels));
-		m_Unk6 = 0;
+        m_pDataHeader = TNULL;
 		m_fUnk2 = 5.0f;
 		m_fUnk3 = 20.0f;
 		m_fUnk4 = 40.0f;
@@ -46,7 +46,7 @@ namespace Toshi {
 		TASSERT(TFALSE == bLoadImmediately);
 
 		CreateResource(name);
-		m_pResourceName = name;
+		m_pName = name;
 	}
 
 	void TModel::Delete()

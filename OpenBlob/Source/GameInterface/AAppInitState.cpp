@@ -2,6 +2,7 @@
 #include "AppBoot.h"
 #include "AAppInitState.h"
 #include "Render/ARenderer.h"
+#include "Render/ModelLoading/AModelLoader.h"
 #include "Movie/AMoviePlayer.h"
 #include "Movie/ADX11MoviePlayer.h"
 #include "AFrontEndMovieState.h"
@@ -34,8 +35,7 @@ AGameState::UpdateResult AAppInitState::OnUpdate(float deltaTime)
 
     AOptions::CreateSingleton();
     ARandom::CreateSingleton();
-
-    // Create singletons here
+	AModelLoader::CreateSingleton();
     ADX11MoviePlayer::CreateSingleton<ADX11MoviePlayer>()->OnCreate();
 
     return UpdateResult_Remove;

@@ -6,10 +6,10 @@ namespace Toshi {
 	
 	TBOOL TModelHAL::Create(TTMDWin::TTRBWinHeader* pTMDHeader)
 	{
-		TASSERT(TFALSE == IsCreated());
+        CreateResource(pTMDHeader->m_pTXSModelName);
 
 		m_pTMDHeader = pTMDHeader;
-		m_pResourceName = pTMDHeader->m_pTXSModelName;
+		m_pName = pTMDHeader->m_pTXSModelName;
 		CreateSkeleton(pTMDHeader->m_pSkeletonHeader, pTMDHeader->m_pSkeleton, TTRUE);
 		CreateCollision(pTMDHeader->m_pModelCollision);
 

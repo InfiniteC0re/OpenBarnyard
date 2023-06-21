@@ -6,6 +6,24 @@
 
 namespace Toshi
 {
+
+	XURXUIObjectData::~XURXUIObjectData()
+	{
+		for (uint8_t i = 0; i < m_NumChildren; i++)
+		{
+			if (m_Children[i] != TNULL)
+				delete m_Children[i];
+		}
+
+		delete[] m_Children;
+
+		if (m_pNamedFrames)
+			delete[] m_pNamedFrames;
+
+		if (m_TimelinesData)
+			delete[] m_TimelinesData;
+	}
+
 	TBOOL XURXUIObjectData::Load(TXUIResource& resource, uint8_t*& a_pData)
 	{
 		XURReader reader(a_pData);
@@ -17,7 +35,7 @@ namespace Toshi
 	{
 		XURReader reader(a_pData);
 		m_NumChildren = reader.ReadUInt8From32();
-		m_Children = new (TXUI::MemoryBlock()) XURXUIObjectData*[m_NumChildren];
+		m_Children = new (TXUI::MemoryBlock()) XURXUIObjectData * [m_NumChildren];
 		TASSERT(m_Children != TNULL);
 
 		for (size_t i = 0; i < m_NumChildren; i++)
@@ -25,7 +43,7 @@ namespace Toshi
 			uint16_t objectIndex = reader.ReadUInt16();
 
 			m_Children[i] = TXUIResource::CreateObjectData(resource, objectIndex);
-			m_Children[i]->m_Index2 = objectIndex;
+			m_Children[i]->m_uiTypeIndex = objectIndex;
 			uint8_t opcode = reader.ReadUInt8();
 
 			m_Children[i]->Load(resource, a_pData);
@@ -33,11 +51,14 @@ namespace Toshi
 			if (opcode & 2)
 			{
 				m_Children[i]->LoadChildren(resource, a_pData);
+			}
 
-				if (m_Children[i]->LoadNamedFrames(resource, a_pData), opcode & 4)
-				{
+			if (opcode & 4)
+			{
+				m_Children[i]->LoadNamedFrames(resource, a_pData);
+
+				if (opcode & 2)
 					m_Children[i]->LoadTimelines(resource, a_pData);
-				}
 			}
 		}
 	}
@@ -77,19 +98,19 @@ namespace Toshi
 
 			for (size_t i = 0; i < m_NumTimelines; i++)
 			{
-				//m_timelinesData[i] = *this;
+				m_TimelinesData[i].SetOwner(this);
 				m_TimelinesData[i].Load(resource, a_pData);
 			}
 		}
 	}
 
-	XURXUIElementData* XURXUIObjectData::FindChildElementData(uint32_t index)
+	XURXUIElementData* XURXUIObjectData::FindChildElementData(uint32_t a_iStringId)
 	{
 		for (size_t i = 0; i < m_NumChildren; i++)
 		{
-			XURXUIElementData* pElementData = static_cast<XURXUIElementData*>(m_Children[m_NumChildren]);
+			XURXUIElementData* pElementData = TSTATICCAST(XURXUIElementData*, m_Children[i]);
 
-			if (pElementData->GetId() == index)
+			if (pElementData->GetId() == a_iStringId)
 			{
 				return pElementData;
 			}
@@ -101,7 +122,7 @@ namespace Toshi
 	TBOOL XURXUIElementData::Load(TXUIResource& resource, uint8_t*& a_pData)
 	{
 		XURXUIObjectData::Load(resource, a_pData);
-	
+
 		if (*a_pData++ != 0)
 		{
 			XURReader reader(a_pData);
@@ -127,7 +148,7 @@ namespace Toshi
 			TBOOL hasDesignTime = reader.ReadProperty<XUI_EPT_BOOL>(PropType_DesignTime, designTime);
 			TBOOL hasColorWriteFlags = reader.ReadProperty<XUI_EPT_UNSIGNED>(PropType_ColorWriteFlags, colorWriteFlags);;
 			TBOOL hasClipChildren = reader.ReadProperty<XUI_EPT_BOOL>(PropType_ClipChildren, clipChildren);
-			
+
 			if (hasWidth)
 			{
 				m_Width = T2GUIElement::PackFloat(width);
@@ -147,7 +168,7 @@ namespace Toshi
 			if (hasAnchor)
 			{
 				TASSERT(anchor <= Flags_AnchorMask);
-				m_Flags |= reader.ReadEPTUShort32() << 3;
+				m_Flags |= anchor << 3;
 			}
 
 			if (hasShow)
@@ -178,7 +199,7 @@ namespace Toshi
 					m_Flags &= ~0x2000;
 				}
 			}
-			
+
 			if (hasClipChildren)
 			{
 				if (clipChildren)
@@ -195,7 +216,7 @@ namespace Toshi
 		return TTRUE;
 	}
 
-	TBOOL XURXUIElementData::TranslateTimelineProp(const char* name, uint32_t& param_2, PropType& propType) // param_3 = position?
+	TBOOL XURXUIElementData::TranslateTimelineProp(const char* name, uint32_t& a_uiObjectIndex, PropType& propType)
 	{
 		TXUI_TRANSLATE_TIMELINE_PROP(name, Id, propType);
 		TXUI_TRANSLATE_TIMELINE_PROP(name, Width, propType);
@@ -215,10 +236,10 @@ namespace Toshi
 		return TFALSE;
 	}
 
-	TBOOL XURXUIElementData::ValidateTimelineProp(uint32_t a_uiObjectIndex, uint32_t param_2)
+	TBOOL XURXUIElementData::ValidateTimelineProp(uint32_t a_uiObjectIndex, uint32_t a_uiPropIndex)
 	{
 		TASSERT(a_uiObjectIndex == 0);
-		return param_2 < PropType_NUMOF;
+		return a_uiPropIndex < PropType_NUMOF;
 	}
 
 	// TXUIElement
@@ -226,16 +247,24 @@ namespace Toshi
 	TXUIElement::TXUIElement()
 	{
 		m_pObjectData = TNULL;
-		m_Flags1 |= FLAGS_XUIELEMENT;
-		m_vRotation = T2GUITransform::Rotation(0,0);
+		m_Flags |= FLAGS_XUIELEMENT;
+		m_vRotation = T2GUITransform::Rotation(0, 0);
 		m_vPosition = T2GUITransform::Rotation(0, 0);
 		m_vScale = T2GUITransform::Rotation(0, 0);
+		m_eXUIState = 0xc000;
+		m_eXUIState = m_eXUIState & 0xfe01ffff | 0x1fe0000;
+		m_eXUIState = m_eXUIState & 0x01ffffff | 0xfe000000;
 	}
 
 	TBOOL TXUIElement::SkipRender()
 	{
 		TIMPLEMENT();
 		return TFALSE;
+	}
+
+	TBOOL TXUIElement::IsPaused() const
+	{
+		return (m_eXUIState & XUIState_STATEMASK) == XUIState_PAUSED;
 	}
 
 	void TXUIElement::SetHeight(float height)
@@ -279,7 +308,7 @@ namespace Toshi
 
 	TBOOL TXUIElement::IsVisible()
 	{
-		if (HASFLAG(m_Flags1 & FLAGS_VISIBLE) && HASFLAG(m_Flags1 & (uint8_t)T2GUIElement::s_uiGlobalVisMask))
+		if (HASFLAG(m_State & FLAGS_VISIBLE) && HASFLAG(m_State & (uint8_t)T2GUIElement::s_uiGlobalVisMask))
 		{
 			return TFALSE;
 		}
@@ -290,7 +319,7 @@ namespace Toshi
 	TBOOL TXUIElement::Create(TXUIResource& a_rResource, XURXUIElementData* a_pElementData, TBOOL hasChildren)
 	{
 		m_pObjectData = a_pElementData;
-		
+
 		if (GetClass() == TGetClass(TXUICanvas))
 		{
 			a_rResource.PushID(a_rResource.GetString(a_pElementData->GetId()));
@@ -311,12 +340,12 @@ namespace Toshi
 
 		if (a_pElementData->GetPosition() != -1)
 		{
-			TVector4* pos = a_rResource.GetVector(a_pElementData->GetPosition());
-			
+			auto pos = a_rResource.GetVector(a_pElementData->GetPosition());
+
 			m_vPosition.SetX(pos->x);
 			m_vPosition.SetY(pos->x);
 		}
-		
+
 		if (a_pElementData->GetRotation() != -1)
 		{
 			//m_Rotation = a_rResource.GetQuat(a_pObjectData->m_Scale);
@@ -324,7 +353,7 @@ namespace Toshi
 
 		if (a_pElementData->GetScale() != -1)
 		{
-			TVector4* scale = a_rResource.GetVector(a_pElementData->GetScale());
+			auto scale = a_rResource.GetVector(a_pElementData->GetScale());
 			m_vScale.SetX(scale->x);
 			m_vScale.SetY(scale->x);
 		}

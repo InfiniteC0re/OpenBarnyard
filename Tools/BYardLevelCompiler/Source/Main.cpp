@@ -13,6 +13,7 @@
 
 #include "Toshi/File/TTRB.h"
 #include "Toshi/Render/TModelManager.h"
+#include "Toshi/Render/TTexture.h"
 #include "TRBF/TRBF.h"
 
 #include "ModelHeader.h"
@@ -26,30 +27,58 @@ using namespace Toshi;
 int TMain(int argc, char** argv)
 {
 	TLib::TRBF::TRBF assetPack;
-	assetPack.ReadFromFile("C:\\dev\\OpenToshi\\bin\\Debug_Windows_x86\\OpenBlob\\Data\\BlobChar\\AssetPack.trb");
+	assetPack.ReadFromFile("C:\\dev\\OpenToshi\\bin\\Debug_Windows_x86\\OpenBlob\\Data\\LEVELS\\PRODUCTION\\Singleplayer\\Abyss\\RegionAssets.trb");
 
 	auto pSect = assetPack.GetSECT();
 	auto pSymb = assetPack.GetSYMB();
 
-	struct tmod
+	/*struct T2Material
 	{
-		char* m_pTXSModelName;
-		uint32_t m_iLODCount;
-		float m_fUnknown;
-		void* m_pSkeletonHeader;
-		void* m_pSkeleton;
-		void* m_pModelCollision;
-		int*** m_LODs;
+		struct Texture
+		{
+			TTexture* pTexture;
+			const char* pName;
+		};
+
+		struct Pass
+		{
+			uint32_t uiUnk1;
+			uint32_t uiUnk2;
+			uint32_t uiUnk3;
+			Texture* pTexture;
+			uint32_t uiUnk4;
+			uint32_t uiUnk5;
+			uint32_t uiUnk6;
+			uint32_t uiUnk7;
+			uint32_t uiUnk8;
+			uint32_t uiUnk9;
+			uint32_t uiUnk10;
+		};
+
+		uint32_t uiResource;
+		uint32_t uiUnk1;
+		uint32_t uiFlags;
+		const char* pMaterialName;
+		int iNumTextures;
+		Texture* pTextures;
+		uint32_t uiUnk2;
+		uint32_t uiUnk3;
+		Pass* aPasses;
+		uint32_t uiNumPasses;
 	};
 
-	auto pTMOD = pSymb->Find<tmod>(pSect, "tmod").get();
+	for (size_t i = 0; i < pSymb->GetCount(); i++)
+	{
+		if (pSymb->Is(i, "tmat"))
+		{
+			auto pTMAT = pSymb->GetByIndex<T2Material>(pSect, i).get();
 
-	T2ResourceManager::CreateSingleton(100);
-	TModelManager::CreateSingleton();
-	auto pModelManager = TModelManager::GetSingleton();
-
-	T2ModelPtr foundModel;
-	pModelManager->FindModel(foundModel, "test");
+			for (size_t k = 0; k < pTMAT->uiNumPasses; k++)
+			{
+				TOSHI_INFO("{0} - {1}", k, pTMAT->aPasses[k].pTexture->pName);
+			}
+		}
+	}*/
 
 	return 0;
 

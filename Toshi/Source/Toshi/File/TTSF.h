@@ -5,239 +5,239 @@
 
 namespace Toshi
 {
-	class TTSF
-	{
-	public:
-		static constexpr uint32_t IDMAGICB = TMAKEFOUR("TSFB");
-		static constexpr uint32_t IDMAGICL = TMAKEFOUR("TSFL");
+    class TTSF
+    {
+    public:
+        static constexpr uint32_t IDMAGICB = TMAKEFOUR("TSFB");
+        static constexpr uint32_t IDMAGICL = TMAKEFOUR("TSFL");
 
-		typedef uint8_t Endianess;
-		enum Endianess_ : Endianess
-		{
-			Endianess_Little,
-			Endianess_Big,
-		};
+        typedef uint8_t Endianess;
+        enum Endianess_ : Endianess
+        {
+            Endianess_Little,
+            Endianess_Big,
+        };
 
-		struct Header
-		{
-			uint32_t Magic;
-			uint32_t FileSize;
-		};
+        struct Header
+        {
+            uint32_t Magic;
+            uint32_t FileSize;
+        };
 
-		struct FileInfo
-		{
-			uint32_t FileStartOffset; // offset to TRBF
-			uint32_t FileSize;        // just the size
-		};
+        struct FileInfo
+        {
+            uint32_t FileStartOffset; // offset to TRBF
+            uint32_t FileSize;        // just the size
+        };
 
-		struct Hunk
-		{
-			uint32_t Name;
-			uint32_t Size;
-		};
+        struct Hunk
+        {
+            uint32_t Name;
+            uint32_t Size;
+        };
 
-	public:
-		TTSF() : m_Endianess(Endianess_Little), m_pFile(TNULL) { }
+    public:
+        TTSF() : m_Endianess(Endianess_Little), m_pFile(TNULL) { }
 
-	protected:
-		Endianess m_Endianess; // 0x0
-		TFile* m_pFile;        // 0x4
-	};
+    protected:
+        Endianess m_Endianess; // 0x0
+        TFile* m_pFile;        // 0x4
+    };
 
-	class TTSFI : public TTSF
-	{
-	public:
-		friend TTRB;
+    class TTSFI : public TTSF
+    {
+    public:
+        friend TTRB;
 
-	public:
-		TTSFI();
-		~TTSFI() { Close(); }
+    public:
+        TTSFI();
+        ~TTSFI() { Close(); }
 
-		size_t ReadAlignmentPad()
-		{
-			TASSERT(m_pFile != TNULL, "File is TNULL");
-			static char s_AlignBuffer[4] = { 0, 0, 0, 0 };
-			uint8_t alignValue = 4 - (m_pFile->Tell() & 3);
+        size_t ReadAlignmentPad()
+        {
+            TASSERT(m_pFile != TNULL, "File is TNULL");
+            static char s_AlignBuffer[4] = { 0, 0, 0, 0 };
+            uint8_t alignValue = 4 - (m_pFile->Tell() & 3);
 
-			if (alignValue != 4)
-			{
-				return m_pFile->Read(s_AlignBuffer, alignValue);
-			}
+            if (alignValue != 4)
+            {
+                return m_pFile->Read(s_AlignBuffer, alignValue);
+            }
 
-			return 0;
-		}
-		
-		TTRB::ERROR Open(TFile* a_pFile);
+            return 0;
+        }
 
-		TTRB::ERROR PushForm();
-		TTRB::ERROR PopForm();
+        TTRB::ERROR Open(TFile* a_pFile);
 
-		template<class T>
-		void Read(T* dst)
-		{
-			m_ReadPos += m_pFile->Read(dst, sizeof(T));
-		}
+        TTRB::ERROR PushForm();
+        TTRB::ERROR PopForm();
 
-		void ReadRaw(void* dst, uint32_t size)
-		{
-			m_ReadPos += m_pFile->Read(dst, size);
-		}
+        template<class T>
+        void Read(T* dst)
+        {
+            m_ReadPos += m_pFile->Read(dst, sizeof(T));
+        }
 
-		// Sections related stuff
-		TTRB::ERROR ReadHunk();
-		TTRB::ERROR SkipHunk();
-		TTRB::ERROR ReadFORM(TTRB::SectionFORM* section);
-		TTRB::ERROR ReadHunkData(void* dest);
+        void ReadRaw(void* dst, uint32_t size)
+        {
+            m_ReadPos += m_pFile->Read(dst, size);
+        }
 
-		void Close(TBOOL free = TTRUE);
+        // Sections related stuff
+        TTRB::ERROR ReadHunk();
+        TTRB::ERROR SkipHunk();
+        TTRB::ERROR ReadFORM(TTRB::SectionFORM* section);
+        TTRB::ERROR ReadHunkData(void* dest);
 
-		void ReadCompressed(void* buffer, uint32_t size);
-		void CompressSection(TFile* file, char* unk, uint32_t unk2, uint32_t unk3) { TCompress_Compress::Compress(file, unk, unk2, unk3, m_Endianess); }
+        void Close(TBOOL free = TTRUE);
 
-		void LogUnknownSection();
+        void ReadCompressed(void* buffer, uint32_t size);
+        void CompressSection(TFile* file, char* unk, uint32_t unk2, uint32_t unk3) { TCompress_Compress::Compress(file, unk, unk2, unk3, m_Endianess); }
 
-		const Hunk& GetCurrentHunk() { return m_CurrentHunk; }
+        void LogUnknownSection();
 
-	private:
-		uint32_t m_FileInfoCount; // 0x8
-		FileInfo m_FileInfo[32];  // 0xC
-		Header m_Header;          // 0x10C
-		uint32_t m_Magic;         // 0x114
-		Hunk m_CurrentHunk;       // 0x118
-		uint32_t m_ReadPos;       // 0x120
-	};
+        const Hunk& GetCurrentHunk() { return m_CurrentHunk; }
 
-	class TTSFO : public TTSF
-	{
-	public:
-		typedef uint8_t ERROR;
-		enum ERROR_ : ERROR
-		{
-			ERROR_OK,
-			ERROR_UNKNOWN,
-			ERROR_FILE
-		};
+    private:
+        uint32_t m_FileInfoCount; // 0x8
+        FileInfo m_FileInfo[32];  // 0xC
+        Header m_Header;          // 0x10C
+        uint32_t m_Magic;         // 0x114
+        Hunk m_CurrentHunk;       // 0x118
+        uint32_t m_ReadPos;       // 0x120
+    };
 
-		struct HunkMark
-		{
-			uint32_t Name;
-			uint32_t Pos;
-		};
+    class TTSFO : public TTSF
+    {
+    public:
+        typedef uint8_t ERROR;
+        enum ERROR_ : ERROR
+        {
+            ERROR_OK,
+            ERROR_UNKNOWN,
+            ERROR_FILE
+        };
 
-	public:
-		TTSFO() : m_PositionCount(0), m_Positions() { }
-		~TTSFO() { Close(); }
+        struct HunkMark
+        {
+            uint32_t Name;
+            uint32_t Pos;
+        };
 
-		/**
-		* Aligns current position to 4.
-		*
-		* @return number of written bytes
-		*/
-		size_t WriteAlignmentPad()
-		{
-			TASSERT(m_pFile != TNULL, "TTSFO is not created");
-			static char s_AlignBuffer[4] = { 0, 0, 0, 0 };
-			uint8_t alignValue = 4 - (m_pFile->Tell() & 3);
+    public:
+        TTSFO() : m_PositionCount(0), m_Positions() { }
+        ~TTSFO() { Close(); }
 
-			if (alignValue != 4)
-			{
-				return m_pFile->Write(s_AlignBuffer, alignValue);
-			}
+        /**
+        * Aligns current position to 4.
+        *
+        * @return number of written bytes
+        */
+        size_t WriteAlignmentPad()
+        {
+            TASSERT(m_pFile != TNULL, "TTSFO is not created");
+            static char s_AlignBuffer[4] = { 0, 0, 0, 0 };
+            uint8_t alignValue = 4 - (m_pFile->Tell() & 3);
 
-			return 0;
-		}
+            if (alignValue != 4)
+            {
+                return m_pFile->Write(s_AlignBuffer, alignValue);
+            }
 
-		/**
-		* Creates file for writing.
-		* 
-		* @param filepath - path to the file
-		* @param magic - magic value which is placed after the first hunk
-		* @return TTRB::ERROR_OK if successful
-		*/
-		TTSFO::ERROR Create(const char* filepath, const char* magic = "TRBF", Endianess endianess = Endianess_Little);
+            return 0;
+        }
 
-		/**
-		* Closes the file.
-		* 
-		*/
-		void Close();
+        /**
+        * Creates file for writing.
+        *
+        * @param filepath - path to the file
+        * @param magic - magic value which is placed after the first hunk
+        * @return TTRB::ERROR_OK if successful
+        */
+        TTSFO::ERROR Create(const char* filepath, const char* magic = "TRBF", Endianess endianess = Endianess_Little);
 
-		/**
-		* Begin a new form and saves it's info
-		* 
-		* @param name - 4 bytes long value which will be written after the hunk
-		* @return number of written bytes
-		*/
-		size_t BeginForm(const char* name);
+        /**
+        * Closes the file.
+        *
+        */
+        void Close();
 
-		/**
-		* Ends the current form if it exists.
-		* 
-		* @return size of the form
-		*/
-		size_t EndForm();
+        /**
+        * Begin a new form and saves it's info
+        *
+        * @param name - 4 bytes long value which will be written after the hunk
+        * @return number of written bytes
+        */
+        size_t BeginForm(const char* name);
 
-		/**
-		* Opens new hunk.
-		*
-		* @param hunkMark - pointer to TTSFO::HunkMark which has to be opened
-		* @param hunkName - 4 bytes long name of the hunk
-		* @return always TTRUE
-		*/
-		TBOOL OpenHunk(HunkMark* hunkMark, const char* hunkName);
+        /**
+        * Ends the current form if it exists.
+        *
+        * @return size of the form
+        */
+        size_t EndForm();
 
-		/**
-		* Closes the hunk.
-		*
-		* @param hunkMark - pointer to TTSFO::HunkMark which has to be closed
-		* @return always TTRUE
-		*/
-		TBOOL CloseHunk(HunkMark* hunkMark);
+        /**
+        * Opens new hunk.
+        *
+        * @param hunkMark - pointer to TTSFO::HunkMark which has to be opened
+        * @param hunkName - 4 bytes long name of the hunk
+        * @return always TTRUE
+        */
+        TBOOL OpenHunk(HunkMark* hunkMark, const char* hunkName);
 
-		/**
-		* Writes a hunk of data.
-		*
-		* @param hunkName - magic value that is used to identificate hunk (use TMAKEFOUR to get it)
-		* @param buffer - pointer to the buffer of data (can be TNULL)
-		* @param bufferSize - size of the buffer (can be 0)
-		* @return number of written bytes
-		*/
-		size_t WriteHunk(uint32_t hunkName, void* buffer = TNULL, size_t bufferSize = 0);
+        /**
+        * Closes the hunk.
+        *
+        * @param hunkMark - pointer to TTSFO::HunkMark which has to be closed
+        * @return always TTRUE
+        */
+        TBOOL CloseHunk(HunkMark* hunkMark);
 
-		template <class T>
-		size_t Write(const T& value)
-		{
-			TASSERT(m_pFile != TNULL, "TTSFO is not created");
-			return m_pFile->Write(&value, sizeof(T));
-		}
-		
-		size_t WriteRaw(const void* buffer, size_t size)
-		{
-			TASSERT(m_pFile != TNULL, "TTSFO is not created");
-			return m_pFile->Write(buffer, size);
-		}
+        /**
+        * Writes a hunk of data.
+        *
+        * @param hunkName - magic value that is used to identificate hunk (use TMAKEFOUR to get it)
+        * @param buffer - pointer to the buffer of data (can be TNULL)
+        * @param bufferSize - size of the buffer (can be 0)
+        * @return number of written bytes
+        */
+        size_t WriteHunk(uint32_t hunkName, void* buffer = TNULL, size_t bufferSize = 0);
 
-		size_t WriteCompressed(const void* buffer, size_t size)
-		{
-			TASSERT(m_pFile != TNULL, "TTSFO is not created");
-			size_t writtenSize = TCompress_Compress::Compress(m_pFile, (char*)buffer, size, 0, m_Endianess == Endianess_Big);
-			WriteAlignmentPad();
-			return writtenSize;
-		}
-		
-		void WriteBool(TBOOL value)               { Write(value); }
-		void WriteInt8(int8_t value)             { Write(value); }
-		void WriteUInt8(uint8_t value)           { Write(value); }
-		void WriteUInt16(uint16_t value)         { Write(value); }
-		void WriteInt32(int32_t value)           { Write(value); }
-		void WriteUInt32(uint32_t value)         { Write(value); }
-		void WriteFloat(float value)             { Write(value); }
-		void WriteVector3(TVector3& value)       { Write(value); }
-		void WriteVector4(TVector4& value)       { Write(value); }
-		void WriteQuaternion(TQuaternion& value) { Write(value); }
+        template <class T>
+        size_t Write(const T& value)
+        {
+            TASSERT(m_pFile != TNULL, "TTSFO is not created");
+            return m_pFile->Write(&value, sizeof(T));
+        }
 
-	private:
-		size_t m_PositionCount;
-		size_t m_Positions[32];
-	};
+        size_t WriteRaw(const void* buffer, size_t size)
+        {
+            TASSERT(m_pFile != TNULL, "TTSFO is not created");
+            return m_pFile->Write(buffer, size);
+        }
+
+        size_t WriteCompressed(const void* buffer, size_t size)
+        {
+            TASSERT(m_pFile != TNULL, "TTSFO is not created");
+            size_t writtenSize = TCompress_Compress::Compress(m_pFile, (char*)buffer, size, 0, m_Endianess == Endianess_Big);
+            WriteAlignmentPad();
+            return writtenSize;
+        }
+
+        void WriteBool(TBOOL value) { Write(value); }
+        void WriteInt8(int8_t value) { Write(value); }
+        void WriteUInt8(uint8_t value) { Write(value); }
+        void WriteUInt16(uint16_t value) { Write(value); }
+        void WriteInt32(int32_t value) { Write(value); }
+        void WriteUInt32(uint32_t value) { Write(value); }
+        void WriteFloat(float value) { Write(value); }
+        void WriteVector3(TVector3& value) { Write(value); }
+        void WriteVector4(TVector4& value) { Write(value); }
+        void WriteQuaternion(TQuaternion& value) { Write(value); }
+
+    private:
+        size_t m_PositionCount;
+        size_t m_Positions[32];
+    };
 }

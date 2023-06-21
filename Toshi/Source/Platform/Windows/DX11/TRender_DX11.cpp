@@ -1,5 +1,6 @@
 #include "ToshiPCH.h"
 #include "TRender_DX11.h"
+#include "T2Material_DX11.h"
 #include "TRenderContext_DX11.h"
 #include "Toshi/Core/TSystem.h"
 
@@ -137,6 +138,8 @@ namespace Toshi
 		m_iImmediateIndexCurrentOffset = 0;
 		
 		s_pMemHeap = TMemory::CreateHeap(HEAPSIZE, 0, "render states");
+		
+		TMaterialManager::CreateSingleton();
 
 		m_CurrentBlendFactor[0] = 1.0f;
 		m_CurrentBlendFactor[1] = 1.0f;
@@ -147,7 +150,6 @@ namespace Toshi
 		m_PreviousBlendFactor[1] = 1.0f;
 		m_PreviousBlendFactor[2] = 1.0f;
 		m_PreviousBlendFactor[3] = 1.0f;
-
 		
 		TTODO("Some other initializations");
 	}

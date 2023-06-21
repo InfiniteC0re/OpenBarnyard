@@ -135,6 +135,35 @@ namespace Toshi
 		Set(-x, -y, -z, -w);
 	}
 
+	void TQuaternion::GetEulerXYZ(TVector3& outVec) const
+	{
+		TMatrix44 matrix;
+		matrix.SetFromQuaternion(*this);
+
+		float fVal1 = matrix.i;
+		TMath::Clip(fVal1, -1.0f, 1.0f);
+		
+		float fVal2 = TMath::Sqrt(1.0f - fVal1 * fVal1);
+
+		if (matrix.a < 0 && matrix.k < 0)
+			fVal2 *= -1;
+
+		if (0.001f < fVal2 || fVal2 < -0.001)
+		{
+			float fVal3 = 1.0f / fVal2;
+
+			outVec.x = TMath::ATan2(matrix.j * fVal3, matrix.k * fVal3);
+			outVec.y = TMath::ATan2(fVal1, fVal2);
+			outVec.z = TMath::ATan2(matrix.e * fVal3, matrix.a * fVal3);
+		}
+		else
+		{
+			outVec.x = TMath::ATan2(-matrix.j, matrix.f);
+			outVec.y = -TMath::ASin(fVal1);
+			outVec.z = 0.0f;
+		}
+	}
+
 	TQuaternion& TQuaternion::operator*=(const TQuaternion& a_Quat)
 	{
 		TFloat fX = ((x * a_Quat.w + a_Quat.z * y) - a_Quat.y * z) + a_Quat.x * w;

@@ -71,12 +71,12 @@ AExampleClass::AExampleClass()
 	
 	TFile* file = TFile::Create("Data\\XUI\\DE\\common.trb");
 	
-    /*if (file)
+    if (file)
     {
-        TTRB trb;
+        static TTRB trb;
         trb.Load(file);
         TAssetInit::InitAssets(trb, TTRUE, TFALSE);
-    }*/
+    }
 	
 
 	/*TError* error = TError::GetSingletonWeak();

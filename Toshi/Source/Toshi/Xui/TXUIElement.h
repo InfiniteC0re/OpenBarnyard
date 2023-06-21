@@ -59,27 +59,29 @@ namespace Toshi
 		XURXUIObjectData()
 		{
 			m_Index = 0;
-			m_Index2 = 0;
+			m_uiTypeIndex = 0;
 			m_NumNamedFrames = 0;
+			m_NumTimelines = 0;
 			m_pNamedFrames = TNULL;
 			m_TimelinesData = TNULL;
 			m_Children = TNULL;
 			m_NumChildren = 0;
+			m_pClass = TNULL;
 		}
 
-		virtual ~XURXUIObjectData() = default;
+		virtual ~XURXUIObjectData();
 
 		virtual TBOOL Load(TXUIResource& resource, uint8_t*& a_pData);
 		virtual TBOOL IsFloatPropType(uint32_t a_uiObjectIndex, PropType propType) { return TFALSE; };
 		virtual TBOOL IsColourPropType(uint32_t a_uiObjectIndex, PropType propType) { return TFALSE; };
 		virtual uint32_t GetTimelinePropSize(uint32_t a_uiObjectIndex, PropType propType) { return 0; };
-		virtual TBOOL TranslateTimelineProp(const char* name, uint32_t& param_2, PropType& propType) { return TFALSE; };
-		virtual TBOOL ValidateTimelineProp(uint32_t a_uiObjectIndex, PropType propType) { return TFALSE; };
+		virtual TBOOL TranslateTimelineProp(const char* name, uint32_t& a_uiObjectIndex, PropType& propType) { return TFALSE; };
+		virtual TBOOL ValidateTimelineProp(uint32_t a_uiObjectIndex, uint32_t a_uiPropIndex) { return TFALSE; };
 
 		void LoadChildren(TXUIResource& resource, uint8_t*& a_pData);
 		TBOOL LoadNamedFrames(TXUIResource& resource, uint8_t*& a_pData);
 		void LoadTimelines(TXUIResource& resource, uint8_t*& a_pData);
-		class XURXUIElementData* FindChildElementData(uint32_t index);
+		class XURXUIElementData* FindChildElementData(uint32_t a_iStringId);
 
 	public:
 		XURXUIObjectData** m_Children;        // 0x4 both
@@ -87,9 +89,10 @@ namespace Toshi
 		XURXUITimelineData* m_TimelinesData;  // 
 		XUIEPTUShort32 m_NumNamedFrames;      // 0x10 de blob 0x14 NT08
 		uint16_t m_Index;                     // 0x12 de blob 0x1C NT08
-		uint32_t m_Index2;                    // 0x14 de blob 1E NT08
-		uint32_t m_NumChildren;               // 0x16 de blob 0x10 NT08
-		uint8_t m_NumTimelines;               // 
+		uint32_t m_uiTypeIndex;               // 0x14 de blob 1E NT08
+        uint8_t m_NumChildren;                // 0x16 de blob 0x10 NT08
+		uint8_t m_NumTimelines;               // 0x17
+		const TClass* m_pClass;               // 0x18
 	};
 
 	class XURXUIElementData : public XURXUIObjectData
@@ -119,13 +122,13 @@ namespace Toshi
 
 		TBOOL Load(TXUIResource& resource, uint8_t*& a_pData);
 
-		TBOOL TranslateTimelineProp(const char* name, uint32_t& param_2, PropType& propType);
+		TBOOL TranslateTimelineProp(const char* name, uint32_t& a_uiObjectIndex, PropType& propType);
 
-		TBOOL ValidateTimelineProp(uint32_t a_uiObjectIndex, uint32_t param_2);
+		TBOOL ValidateTimelineProp(uint32_t a_uiObjectIndex, uint32_t a_uiPropIndex);
 
 		TBOOL IsFloatPropType(uint32_t a_uiObjectIndex, uint32_t propType)
 		{
-			return propType != 1 && propType != 2 && propType != 6 ? TFALSE : TTRUE;
+			return propType == PropType_Width || propType == PropType_Height || propType == PropType_Opacity;
 		}
 
 		// No it's not
@@ -196,11 +199,27 @@ namespace Toshi
 		public T2GUIElement
 	{
 	public:
+		using XUIState = uint32_t;
+
+		enum XUIState_ : XUIState
+		{
+			XUIState_PAUSED              = BITFIELD(9),
+			XUIState_NOTIMELINERECURSION = BITFIELD(10),
+			XUIState_CLIPCHILDREN        = BITFIELD(16),
+			XUIState_STATEMASK           = XUIState_PAUSED | 0b111000000,
+			XUIState_OPACITYMASK         = 0b11111110000000000000000000000000,
+			XUIState_ALPHAMASK           = 0b1111111100000000000000000,
+			XUIState_ANCHORMASK          = 0b0000000000000000000111111,
+			XUIState_BLENDMODEMASK       = 0b0000000000001110000000000
+		};
+
+	public:
 		TXUIElement();
 
-		virtual TBOOL SkipRender();
-		virtual void SetHeight(float height);
-		virtual void SetWidth(float width);
+		virtual TBOOL SkipRender() override;
+		virtual TBOOL IsPaused() const override;
+		virtual void SetHeight(float height) override;
+		virtual void SetWidth(float width) override;
 
 		TBOOL Create(TXUIResource& a_rResource, XURXUIElementData* a_pElementData, TBOOL hasChildren);
 		void CreateChildren(TXUIResource& a_rResource, XURXUIElementData* a_pElementData);
@@ -209,13 +228,13 @@ namespace Toshi
 	
 	private:
 
-		XURXUIObjectData* m_pObjectData; // 0x40 de blob
-		const wchar_t* m_objectID; // 0x44
-
-		T2GUITransform::Rotation m_vPosition;
-		T2GUITransform::Rotation m_vRotation;
-		T2GUITransform::Rotation m_vScale;
-
-		int m_iUIDCount; // 0xB4 globs
+		XURXUIObjectData* m_pObjectData;      // 0x40
+		const wchar_t* m_objectID;            // 0x44
+		T2GUITransform::Rotation m_vPosition; // 0x48
+		T2GUITransform::Rotation m_vRotation; // 0x4C
+		T2GUITransform::Rotation m_vScale;    // 0x50
+		XUIState m_eXUIState;                 // 0x5C
+		
+		int m_iUIDCount;                      // 0xB4 globs
 	};
 }

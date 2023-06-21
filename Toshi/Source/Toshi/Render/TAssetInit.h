@@ -3,6 +3,7 @@
 #include "Toshi/Xui/TXUI.h"
 #include "Toshi/Render/TModelHAL.h"
 #include "Toshi/Render/TTexture.h"
+#include "Toshi2/T2Material.h"
 
 namespace Toshi
 {
@@ -38,7 +39,7 @@ namespace Toshi
 
 		static t_fourCCFunction constexpr InitMaterial = [](void* a_pData)
 		{
-
+			TSTATICCAST(T2Material*, a_pData)->Init();
 		};
 
 		static t_fourCCFunction constexpr ReloadMaterial = [](void* a_pData)
@@ -53,18 +54,19 @@ namespace Toshi
 
 		static t_fourCCFunction constexpr InitModel = [](void* a_pData)
 		{
-			/*TModelHAL* a_modelHal;
+            TModelHAL* a_modelHal;
 
-			if (g_pMemHeap == TNULL)
-			{
-				a_modelHal = new TModelHAL();
-			}
-			else
-			{
-				a_modelHal = new (g_pMemHeap) TModelHAL();
-			}
+            if (g_pMemHeap == TNULL)
+            {
+                a_modelHal = new TModelHAL();
+            }
+            else
+            {
+                a_modelHal = new (g_pMemHeap) TModelHAL();
+            }
 
-			a_modelHal->Create(TSTATICCAST(TTMDWin::TTRBWinHeader*, a_pData));*/
+            a_modelHal->Create(TSTATICCAST(TTMDWin::TTRBWinHeader*, a_pData));
+            a_modelHal->SetDataHeader(a_pData);
 		};
 
 		// Empty ( de blob only calls a func where TASSERT("TFALSE","..\\..\\Source\\Render\\TVertexDecl_DX11.cpp",0x1f,"TASSERT"); gets called
@@ -75,7 +77,7 @@ namespace Toshi
 
 		static t_fourCCFunction constexpr InitXUI = [](void* a_pData)
 		{
-			//TSTATICCAST(TXUIResourceTRB*, a_pData)->Init();
+			TSTATICCAST(TXUIResourceTRB*, a_pData)->Init();
 		};
 
 		static t_fourCCFunction constexpr InitFont = [](void* a_pData)
@@ -130,7 +132,7 @@ namespace Toshi
 
 		static t_fourCCFunction constexpr DeinitXUI = [](void* a_pData)
 		{
-
+			TSTATICCAST(TXUIResourceTRB*, a_pData)->Deinit();
 		};
 
 		static t_fourCCFunction constexpr DeinitModel = [](void* a_pData)
@@ -145,7 +147,7 @@ namespace Toshi
 
 		static t_fourCCFunction constexpr DeinitMaterial = [](void* a_pData)
 		{
-
+			TSTATICCAST(T2Material*, a_pData)->Deinit();
 		};
 
 		static t_fourCCFunction constexpr DeinitFXLite = [](void* a_pData)

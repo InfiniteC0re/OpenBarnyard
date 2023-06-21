@@ -21,15 +21,15 @@ namespace Toshi
 		return 4;
 	}
 
-	TBOOL XURXUIGroupData::TranslateTimelineProp(const char* name, uint32_t& param_2, PropType& propType)
+	TBOOL XURXUIGroupData::TranslateTimelineProp(const char* name, uint32_t& a_uiObjectIndex, PropType& propType)
 	{
-		param_2++;
-		return XURXUIElementData::TranslateTimelineProp(name, param_2, propType);
+		a_uiObjectIndex++;
+		return XURXUIElementData::TranslateTimelineProp(name, a_uiObjectIndex, propType);
 	}
 
-	TBOOL XURXUIGroupData::ValidateTimelineProp(uint32_t a_uiObjectIndex, uint32_t param_2)
+	TBOOL XURXUIGroupData::ValidateTimelineProp(uint32_t a_uiObjectIndex, uint32_t a_uiPropIndex)
 	{
-		if (a_uiObjectIndex != 0) return XURXUIElementData::ValidateTimelineProp(a_uiObjectIndex - 1, param_2);
+		if (a_uiObjectIndex != 0) return XURXUIElementData::ValidateTimelineProp(a_uiObjectIndex - 1, a_uiPropIndex);
 		return TFALSE;
 	}
 
