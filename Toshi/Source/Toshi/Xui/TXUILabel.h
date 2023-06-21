@@ -1,5 +1,4 @@
 #pragma once
-
 #include "TXUIControl.h"
 
 namespace Toshi
@@ -22,8 +21,8 @@ namespace Toshi
 
 		virtual uint32_t GetTimelinePropSize(uint32_t a_uiObjectIndex, uint32_t propType);
 
-		virtual TBOOL TranslateTimelineProp(const char* name, uint32_t& param_2, PropType& propType);
-		virtual TBOOL ValidateTimelineProp(uint32_t a_uiObjectIndex, uint32_t param_2);
+		virtual TBOOL TranslateTimelineProp(const char* name, uint32_t& a_uiObjectIndex, PropType& propType);
+		virtual TBOOL ValidateTimelineProp(uint32_t a_uiObjectIndex, uint32_t a_uiPropIndex);
 
 		virtual TBOOL Load(TXUIResource& resource, uint8_t*& a_pData);
 	};

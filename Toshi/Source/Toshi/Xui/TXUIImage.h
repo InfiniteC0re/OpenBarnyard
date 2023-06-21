@@ -8,7 +8,7 @@ namespace Toshi
 	{
 	};
 
-	class XURXUIImageData : XURXUIElementData
+	class XURXUIImageData : public XURXUIElementData
 	{
 	public:
 		static constexpr const char* sm_sTypeInfo = "XURXUIImageData";
@@ -22,19 +22,13 @@ namespace Toshi
 		};
 
 	public:
-
+		virtual TBOOL Load(TXUIResource& resource, uint8_t*& a_pData) override;
+		virtual TBOOL ValidateTimelineProp(uint32_t a_uiObjectIndex, uint32_t a_uiPropIndex) override;
+		virtual TBOOL TranslateTimelineProp(const char* name, uint32_t& a_uiObjectIndex, PropType& propType) override;
+		virtual uint32_t GetTimelinePropSize(uint32_t a_uiObjectIndex, uint32_t propType) override;
+		virtual TBOOL IsFloatPropType(uint32_t a_uiObjectIndex, uint32_t propType) override;
+		virtual TBOOL IsColourPropType(uint32_t a_uiObjectIndex, uint32_t propType) override;
 		virtual const char* GetTypeInfo() const { return sm_sTypeInfo; }
-
-		virtual TBOOL IsColourPropType(uint32_t a_uiObjectIndex, uint32_t propType);
-
-		virtual TBOOL IsFloatPropType(uint32_t a_uiObjectIndex, uint32_t propType);
-
-		virtual uint32_t GetTimelinePropSize(uint32_t a_uiObjectIndex, uint32_t propType);
-
-		virtual TBOOL TranslateTimelineProp(const char* name, uint32_t& param_2, PropType& propType);
-		virtual TBOOL ValidateTimelineProp(uint32_t a_uiObjectIndex, uint32_t param_2);
-
-		virtual TBOOL Load(TXUIResource& resource, uint8_t*& a_pData);
 
 	private:
 		/* 0 */ XUIEPTUnsigned m_SizeMode;

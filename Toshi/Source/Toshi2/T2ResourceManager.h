@@ -153,7 +153,12 @@ namespace Toshi
 	{
 	public:
 		void CreateResource(const char* resourceName, void* pData, T2ResourceManager::t_CreateDestroyCallbk a_fnCreateDestroyCallbk, void* pCallbkData);
-		void DestroyResource();
+		
+		void DestroyResource()
+		{
+			TASSERT(m_iID != T2ResourcePtr::IDINVALID);
+			T2ResourceManager::GetSingleton()->DestroyResource(m_iID);
+		}
 
 		T2ResourcePtr GetResourcePtr() const
 		{

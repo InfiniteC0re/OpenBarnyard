@@ -25,21 +25,21 @@ namespace Toshi
 		return XURXUIElementData::GetTimelinePropSize(a_uiObjectIndex - 1, propType);
 	}
 
-	TBOOL XURXUIImageData::TranslateTimelineProp(const char* name, uint32_t& param_2, PropType& propType)
+	TBOOL XURXUIImageData::TranslateTimelineProp(const char* name, uint32_t& a_uiObjectIndex, PropType& propType)
 	{
 		TXUI_TRANSLATE_TIMELINE_PROP(name, SizeMode, propType);
 		TXUI_TRANSLATE_TIMELINE_PROP(name, ImagePath, propType);
 		TXUI_TRANSLATE_TIMELINE_PROP(name, BrushFlags, propType);
 	
-		param_2++;
-		return XURXUIElementData::TranslateTimelineProp(name, param_2, propType);
+		a_uiObjectIndex++;
+		return XURXUIElementData::TranslateTimelineProp(name, a_uiObjectIndex, propType);
 	}
 
-	TBOOL XURXUIImageData::ValidateTimelineProp(uint32_t a_uiObjectIndex, uint32_t param_2)
+	TBOOL XURXUIImageData::ValidateTimelineProp(uint32_t a_uiObjectIndex, uint32_t a_uiPropIndex)
 	{
-		if (a_uiObjectIndex == 0) return param_2 < PropType_NUMOF;
+		if (a_uiObjectIndex == 0) return a_uiPropIndex < PropType_NUMOF;
 		TASSERT(a_uiObjectIndex > 0);
-		return XURXUIElementData::ValidateTimelineProp(a_uiObjectIndex - 1, param_2);
+		return XURXUIElementData::ValidateTimelineProp(a_uiObjectIndex - 1, a_uiPropIndex);
 	}
 
 	TBOOL XURXUIImageData::Load(TXUIResource& resource, uint8_t*& a_pData)

@@ -23,6 +23,7 @@ namespace Toshi
 		void RotateAroundAxis(const TVector3& param_1, TFloat param_2);
 
 		void Negate();
+		void GetEulerXYZ(TVector3& outVec) const;
 
 		inline TFloat Magnitude() const { return TMath::Sqrt(w * w + z * z + y * y + x * x); }
 		inline TFloat MagnitudeSq() const { return w * w + z * z + y * y + x * x; }

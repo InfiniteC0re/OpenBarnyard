@@ -78,9 +78,11 @@ namespace Toshi
 		virtual float GetAlpha();
 		virtual void SetVisible(TBOOL visible);
 		virtual void SetFocus(TBOOL focused);
-		virtual void GetScreenTransform(void* unk);
+		virtual void GetScreenTransform(T2GUITransform& outTransform);
 		virtual TBOOL IsPointInside(const TVector2& point);
 		virtual const TVector2& GetPivot();
+
+		void GetInvScreenTransform(T2GUITransform& outTransform);
 
 		void Unlink()
 		{
@@ -136,16 +138,16 @@ namespace Toshi
 		static constinit uint32_t s_uiGlobalVisMask;
 
 	protected:
-		T2GUIElement* m_pParent;
-		T2GUITransform m_Transform;
-		T2DList<T2GUIElement> m_Children;
-		Float m_Width;
-		Float m_Height;
-		uint32_t m_Color;
-		t_PostRender m_cbPostRender;
-		FLAGS m_Flags1;                       // 0x3B
-		Anchor m_Anchor;                      // 0x3C
-		Pivot m_Pivot;                        // 0x3D
-		FLAGS m_State;                        // 0x3E
+		T2GUIElement* m_pParent;              // 0x0C
+		T2GUITransform m_Transform;           // 0x10
+		T2DList<T2GUIElement> m_Children;     // 0x20
+		Float m_Width;                        // 0x2C
+		Float m_Height;                       // 0x2E
+		uint32_t m_Color;                     // 0x30
+		t_PostRender m_cbPostRender;          // 0x34
+		FLAGS m_State;                        // 0x38
+		Anchor m_Anchor;                      // 0x39
+		Pivot m_Pivot;                        // 0x3A
+		FLAGS m_Flags;                        // 0x3B
 	};
 }

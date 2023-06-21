@@ -17,9 +17,22 @@ namespace Toshi
 		m_Rot[1].SetY(cos);
 	}
 
-	void T2GUITransform::RotateTo(float angle)
+	void T2GUITransform::GetInverse(T2GUITransform& outTransform)
 	{
-		TIMPLEMENT();
+		TASSERT(m_Rot[0].GetX() * m_Rot[1].GetY() - m_Rot[1].GetX() * m_Rot[0].GetY() != 0.0f);
+
+		float fVal1 = 1.0f / (m_Rot[0].GetX() * m_Rot[1].GetY() - m_Rot[1].GetX() * m_Rot[0].GetY());
+		outTransform.m_Rot[0].SetX(m_Rot[1].GetY() * fVal1);
+		outTransform.m_Rot[0].SetY(-m_Rot[0].GetY() * fVal1);
+		outTransform.m_Rot[1].SetX(-m_Rot[1].GetX() * fVal1);
+		outTransform.m_Rot[1].SetY(m_Rot[0].GetX() * fVal1);
+
+		outTransform.m_Pos.x = 0;
+		outTransform.m_Pos.y = 0;
+		outTransform.m_Pos.x = outTransform.m_Rot[1].GetX() * m_Pos.y + outTransform.m_Rot[0].GetX() * m_Pos.x + outTransform.m_Pos.x;
+		outTransform.m_Pos.y = outTransform.m_Rot[1].GetY() * m_Pos.y + outTransform.m_Rot[0].GetY() * m_Pos.x + outTransform.m_Pos.y;
+		outTransform.m_Pos.x *= -1;
+		outTransform.m_Pos.y *= -1;
 	}
 
 	void T2GUITransform::PreMultiply(const T2GUITransform& transform)

@@ -3,7 +3,8 @@
 
 namespace Toshi
 {
-	class TXUIControl
+	class TXUIControl :
+		public TGenericClassDerived<TXUIControl, TXUIElement, "TXUIControl", TMAKEVERSION(1, 0), TFALSE>
 	{
 	};
 
@@ -29,30 +30,25 @@ namespace Toshi
 		};
 
 	public:
+		virtual TBOOL Load(TXUIResource& resource, uint8_t*& a_pData) override;
+		virtual TBOOL ValidateTimelineProp(uint32_t a_uiObjectIndex, uint32_t a_uiPropIndex) override;
+		virtual TBOOL TranslateTimelineProp(const char* name, uint32_t& a_uiObjectIndex, PropType& propType) override;
+		virtual uint32_t GetTimelinePropSize(uint32_t a_uiObjectIndex, uint32_t propType) override;
+		virtual TBOOL IsFloatPropType(uint32_t a_uiObjectIndex, uint32_t propType) override;
+		virtual TBOOL IsColourPropType(uint32_t a_uiObjectIndex, uint32_t propType) override;
 		virtual const char* GetTypeInfo() const { return sm_sTypeInfo; }
-
-		virtual TBOOL IsColourPropType(uint32_t a_uiObjectIndex, uint32_t propType);
-
-		virtual TBOOL IsFloatPropType(uint32_t a_uiObjectIndex, uint32_t propType);
-
-		virtual uint32_t GetTimelinePropSize(uint32_t a_uiObjectIndex, uint32_t propType);
-
-		virtual TBOOL TranslateTimelineProp(const char* name, uint32_t& param_2, PropType& propType);
-		virtual TBOOL ValidateTimelineProp(uint32_t a_uiObjectIndex, uint32_t param_2);
-
-		virtual TBOOL Load(TXUIResource& resource, uint8_t*& a_pData);
 
 	protected:
 		/* 0 */ XUIEPTString m_ClassOverride;
 		/* 1 */ XUIEPTString m_Visual;
-		/* 2 */ XUIEPTBool m_Enabled;
-		/* 3 */ XUIEPTBool m_UnfocussedInput;
 		/* 4 */ XUIEPTString m_NavLeft;
 		/* 5 */ XUIEPTString m_NavRight;
 		/* 6 */ XUIEPTString m_NavUp;
 		/* 7 */ XUIEPTString m_NavDown;
 		/* 8 */ XUIEPTString m_Text;
 		/* 10 */ XUIEPTString m_ImagePath;
+		/* 2 */ XUIEPTBool m_Enabled;
+		/* 3 */ XUIEPTBool m_UnfocussedInput;
 	};
 
 }

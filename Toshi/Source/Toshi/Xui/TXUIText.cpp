@@ -44,7 +44,7 @@ uint32_t Toshi::XURXUITextData::GetTimelinePropSize(uint32_t a_uiObjectIndex, ui
 	return 2;
 }
 
-TBOOL Toshi::XURXUITextData::TranslateTimelineProp(const char* name, uint32_t& param_2, PropType& propType)
+TBOOL Toshi::XURXUITextData::TranslateTimelineProp(const char* name, uint32_t& a_uiObjectIndex, PropType& propType)
 {
 	TXUI_TRANSLATE_TIMELINE_PROP(name, Text, propType);
 	TXUI_TRANSLATE_TIMELINE_PROP(name, TextColor, propType);
@@ -54,15 +54,15 @@ TBOOL Toshi::XURXUITextData::TranslateTimelineProp(const char* name, uint32_t& p
 	TXUI_TRANSLATE_TIMELINE_PROP(name, TextStyle, propType);
 	TXUI_TRANSLATE_TIMELINE_PROP(name, LineSpacingAdjust, propType);
 	
-	param_2++;
-	return XURXUIElementData::TranslateTimelineProp(name, param_2, propType);
+	a_uiObjectIndex++;
+	return XURXUIElementData::TranslateTimelineProp(name, a_uiObjectIndex, propType);
 }
 
-TBOOL Toshi::XURXUITextData::ValidateTimelineProp(uint32_t a_uiObjectIndex, uint32_t param_2)
+TBOOL Toshi::XURXUITextData::ValidateTimelineProp(uint32_t a_uiObjectIndex, uint32_t a_uiPropIndex)
 {
-	if (a_uiObjectIndex == 0) return param_2 < PropType_NUMOF;
+	if (a_uiObjectIndex == 0) return a_uiPropIndex < PropType_NUMOF;
 	TASSERT(a_uiObjectIndex > 0);
-	return XURXUIElementData::ValidateTimelineProp(a_uiObjectIndex - 1, param_2);
+	return XURXUIElementData::ValidateTimelineProp(a_uiObjectIndex - 1, a_uiPropIndex);
 }
 
 TBOOL Toshi::XURXUITextData::Load(TXUIResource& resource, uint8_t*& a_pData)

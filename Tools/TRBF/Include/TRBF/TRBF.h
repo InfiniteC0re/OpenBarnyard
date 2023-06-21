@@ -61,12 +61,14 @@ namespace TLib
 						ttsfi.SkipHunk();
 					}
 
+					ttsfi.Close(TFALSE);
 					pFile->Destroy();
 					return true;
 				}
 
 				if (pFile != TNULL)
 				{
+					ttsfi.Close(TFALSE);
 					pFile->Destroy();
 				}
 

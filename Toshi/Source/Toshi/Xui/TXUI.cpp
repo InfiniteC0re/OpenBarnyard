@@ -1,7 +1,6 @@
 #include "ToshiPCH.h"
-#include "Toshi/Xui/TXUI.h"
+#include "TXUI.h"
 #include "Toshi/Render/TAssetInit.h"
-#include "Toshi/Render/TRender.h"
 
 namespace Toshi
 {
@@ -20,7 +19,14 @@ namespace Toshi
 
 	TXUI::TXUI()
 	{
-		m_TRB1.SetMemoryFunctions(AssetTRBAllocator, AssetTRBDeallocator, TNULL);
+		m_pHeadTRBResource = TNULL;
+		m_pDefaultFont = TNULL;
+		m_sDefaultFont = TNULL;
+		m_pRenderer = TNULL;
+		m_pCanvas = TNULL;
+		m_pContext = TNULL;
+
+		m_FontTRB.SetMemoryFunctions(AssetTRBAllocator, AssetTRBDeallocator, TNULL);
 		m_TRB2.SetMemoryFunctions(AssetTRBAllocator, AssetTRBDeallocator, TNULL);
 		m_TRB3.SetMemoryFunctions(AssetTRBAllocator, AssetTRBDeallocator, TNULL);
 
@@ -44,20 +50,61 @@ namespace Toshi
 		TTODO("TXUIShapeCache, TGenericListener");
 	}
 
+	TXUIResource* TXUI::FindResource(const char* a_sName)
+	{
+		TASSERT(T2String8::IsLowerCase(a_sName));
+
+		auto pResource = m_pHeadTRBResource;
+
+		while (pResource)
+		{
+			if (TStringManager::String8Compare(pResource->m_pFileName, a_sName) == 0)
+			{
+				return pResource->m_pResource;
+			}
+
+			pResource = pResource->m_pNext;
+		}
+
+		return TNULL;
+	}
+
+	void TXUI::AddResource(TXUIResourceTRB* a_pResourceTrb)
+	{
+		a_pResourceTrb->m_pNext = m_pHeadTRBResource;
+		a_pResourceTrb->m_pPrev = TNULL;
+
+		if (m_pHeadTRBResource)
+			m_pHeadTRBResource->m_pPrev = a_pResourceTrb;
+
+		m_pHeadTRBResource = a_pResourceTrb;
+	}
+
+	void TXUI::RemoveResource(TXUIResourceTRB* a_pResourceTrb)
+	{
+		if (a_pResourceTrb->m_pNext)
+			a_pResourceTrb->m_pNext->m_pPrev = a_pResourceTrb->m_pPrev;
+
+		if (a_pResourceTrb->m_pPrev)
+			a_pResourceTrb->m_pPrev->m_pNext = a_pResourceTrb->m_pNext;
+
+		if (a_pResourceTrb == m_pHeadTRBResource)
+			m_pHeadTRBResource = m_pHeadTRBResource->m_pNext;
+	}
+
 	void TXUI::SetDefaultFont(const char* a_pData)
 	{
-		m_TRB1.Load(a_pData);
-		TAssetInit::InitAssets(m_TRB1, TTRUE, TFALSE);
-
+		m_FontTRB.Load(a_pData);
+		TAssetInit::InitAssets(m_FontTRB, TTRUE, TFALSE);
 	}
 
 	void TXUIResourceTRB::Init()
 	{
-		return;
-		if (m_resource == TNULL)
+		if (m_pResource == TNULL)
 		{
-			m_resource = new (TXUI::MemoryBlock()) TXUIResource();
-			TBOOL bRes = m_resource->Load(m_xurBuffer);
+			m_pResource = new (TXUI::MemoryBlock()) TXUIResource();
+			TFIXME("Allocate memory chunk for the resource");
+			TBOOL bRes = m_pResource->Load(m_pXURBuffer);
 			TASSERT(TTRUE == bRes, "Could not load XUR");
 			TXUI::GetSingleton()->AddResource(this);
 		}
@@ -65,7 +112,9 @@ namespace Toshi
 
 	void TXUIResourceTRB::Deinit()
 	{
-		m_resource->~TXUIResource();
+		if (m_pResource)
+			delete m_pResource;
+
 		TXUI::GetSingleton()->RemoveResource(this);
 	}
 }

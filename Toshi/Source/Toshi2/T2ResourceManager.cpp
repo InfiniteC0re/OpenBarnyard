@@ -16,13 +16,6 @@ namespace Toshi
 		TASSERT(TFALSE, "resource already created!");
 	}
 
-	void T2Resource::DestroyResource()
-	{
-		TASSERT(m_iID != T2ResourcePtr::IDINVALID);
-
-		T2ResourceManager::GetSingleton()->DestroyResource(m_iID);
-	}
-
 	void T2ResourceData::DeInit()
 	{
 		TASSERT(HasFlag(FLAG_INITIALISED));

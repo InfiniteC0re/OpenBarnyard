@@ -4,6 +4,7 @@
 namespace Toshi
 {
 	class TRegMaterial;
+	class T2Material;
 	class TShader;
 
 	class TMaterial :
@@ -35,6 +36,7 @@ namespace Toshi
 			m_Name[0] = '\0';
 			m_pOwnerShader = TNULL;
 			m_pTexture = TNULL;
+			m_pMetaMat = TNULL;
 		}
 
 		virtual ~TMaterial() = default;
@@ -135,5 +137,6 @@ namespace Toshi
 		TTexture* m_pTexture;           // 0x14
 		char m_Name[NAMESIZELIMIT + 1]; // 0x2C
 		void* m_Unk;                    // 0x4C
+		T2Material* m_pMetaMat;         // 0x50
 	};
 }
