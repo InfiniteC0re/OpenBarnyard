@@ -2,6 +2,7 @@
 #include "AInputManager2.h"
 #include TOSHI_MULTIPLATFORM(Input/TInputInterface)
 
+
 AInputManager2::AInputManager2()
 {
 	TIMPLEMENT();

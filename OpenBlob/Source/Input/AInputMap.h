@@ -16,7 +16,11 @@ public:
 		UNK6,
 		UNK7,
 		UNK8,
-		UNK9
+		UNK9,
+		UNK10,
+		UNK11,
+		UNK12,
+		UNK13,
 	};
 
 	enum ActionButton {
@@ -70,6 +74,11 @@ public:
 		ACTIONBUTTON_47
 	};
 
+	enum INPUTBUTTON
+	{
+
+	};
+
 	typedef Toshi::TComparator<int> ButtonMapComparator;
 
 	AInputMap()
@@ -80,6 +89,8 @@ public:
 
 	void InitialiseButtonMap();
 	void NamePadDoodads();
+	
+	Toshi::T2Map<ActionButton, Toshi::T2Vector<int, 4>, ButtonMapComparator>& GetButtonMap(INPUTCONTEXT m_eInputContext);
 
 	Toshi::T2Map<ActionButton, Toshi::T2Vector<int, 4>, ButtonMapComparator> m_ActionButtonMap1;  // 0x4
 	Toshi::T2Map<ActionButton, Toshi::T2Vector<int, 4>, ButtonMapComparator> m_ActionButtonMap2;  // 0x20

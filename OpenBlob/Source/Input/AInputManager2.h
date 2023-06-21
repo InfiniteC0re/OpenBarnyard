@@ -1,19 +1,21 @@
 #pragma once
 #include "Input/AInputMap.h"
 
-#include <Toshi/Core/TStack.h>
+#include "AStack.h"
 
 class AInputManager2 : public Toshi::TSingleton<AInputManager2>
 {
 public:
 
-	enum INPUTDEVICE
+	enum INPUTDEVICE : uint32_t
 	{
-		INPUTDEVICE_Unk = 1,
+		INPUTDEVICE_Unk,
+		INPUTDEVICE_Unk1,
 		INPUTDEVICE_Unk2,
-		INPUTDEVICE_Count,
 		INPUTDEVICE_Unk3,
+		INPUTDEVICE_Count,
 		INPUTDEVICE_Unk4,
+		INPUTDEVICE_Unk5,
 		INPUTDEVICE_Invalid,
 	};
 
@@ -22,10 +24,12 @@ public:
 		void* m_unk; // 0x0
 	};
 
-	Toshi::TStack<AInputMap::INPUTCONTEXT, 10> m_inputContextStack; // 0x1A0
-	void* m_unk; // 0x180
+	AInputMap m_InputMap;                                    // 0x48
+	void* m_unk;                                             // 0x180
+	AStack<AInputMap::INPUTCONTEXT, 10> m_inputContextStack; // 0x1A0
 
-	TBOOL CheckIfValidDevice(const AInputDeviceHandle& handle)
+
+	TBOOL CheckIfValidDevice(const AInputDeviceHandle& handle) const
 	{
 		return m_unk == 0 ? TTRUE : handle.m_unk == m_unk;
 	}
@@ -33,6 +37,11 @@ public:
 	void SetContext(AInputMap::INPUTCONTEXT a_eInputContext)
 	{
 		m_inputContextStack.Push(a_eInputContext);
+	}
+
+	AInputMap::INPUTCONTEXT GetContext()
+	{
+		return m_inputContextStack.IsEmpty() ? AInputMap::INPUTCONTEXT::UNK12 : m_inputContextStack.Top();
 	}
 
 	AInputManager2();

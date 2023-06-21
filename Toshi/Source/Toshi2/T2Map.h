@@ -27,6 +27,11 @@ namespace Toshi {
 			return result ? &result->GetValue()->GetSecond() : TNULL;
 		}
 
+		ValueType* End()
+		{
+			return m_RedBlackTree.End();
+		}
+
 	private:
 		T2RedBlackTree<Pair> m_RedBlackTree;
 	};

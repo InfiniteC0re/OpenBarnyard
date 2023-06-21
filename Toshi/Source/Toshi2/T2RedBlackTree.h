@@ -173,6 +173,12 @@ namespace Toshi
 			return pNode == &m_oRoot;
 		}
 
+		Iterator End()
+		{
+			return m_oRoot;
+		}
+
+
 		void Insert(Node*& insertedNode, const T& value)
 		{
 			Node* pNode = m_pAllocator->New<Node, T>(value);
