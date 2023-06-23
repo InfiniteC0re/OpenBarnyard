@@ -25,21 +25,21 @@ namespace Toshi {
 			T2RedBlackTreeNode<Pair>* result = TNULL;
 			T2RedBlackTree<Pair>::Find(result, { key });
 
-			return result ? &result->GetValue()->GetSecond() : TNULL;
+			return result ? &result->GetValue()->GetSecond() : &m_RedBlackTree.End()->GetSecond();
 		}
 
-		//T2RedBlackTree<Pair>::Iterator Begin()
-		//{
-		//	return m_RedBlackTree.Begin();
-		//}
+		ValueType* Begin()
+		{
+			return &m_RedBlackTree.Begin()->GetSecond();
+		}
 
-		//T2RedBlackTree<Pair>::Iterator End()
-		//{
-		//	return m_RedBlackTree.End();
-		//}
+		ValueType* End()
+		{
+			return &m_RedBlackTree.End()->GetSecond();
+		}
 
 	private:
-		//T2RedBlackTree<Pair> m_RedBlackTree;
+		T2RedBlackTree<Pair> m_RedBlackTree;
 	};
 
 }

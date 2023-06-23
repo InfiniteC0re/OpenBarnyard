@@ -166,7 +166,7 @@ namespace Toshi
 		class Iterator
 		{
 		public:
-			Iterator(Node*& ppNode) : m_ppNode(ppNode) { }
+			Iterator(Node* ppNode) : m_ppNode(ppNode) { }
 
 
 			TBOOL operator!=(const Iterator& other) const
@@ -189,9 +189,14 @@ namespace Toshi
 				return m_ppNode == other;
 			}
 
-
-			T& operator*() const {
+			T& operator*() const
+			{
 				return m_ppNode->m_Value;
+			}
+
+			T* operator->() const
+			{
+				return &m_ppNode->m_Value;
 			}
 
 			Iterator& operator++()
@@ -200,7 +205,7 @@ namespace Toshi
 				return *this;
 			}
 		private:
-			Node*& m_ppNode;
+			Node* m_ppNode;
 		};
 
 	public:
@@ -216,12 +221,12 @@ namespace Toshi
 
 		Iterator Begin()
 		{
-			return GetFirstNode();
+			return Iterator(TREINTERPRETCAST(Node*, GetFirstNode()));
 		}
 
 		Iterator End()
 		{
-			return &ms_oNil;
+			return Iterator(TREINTERPRETCAST(Node*, &m_oRoot));
 		}
 
 		void Insert(Node*& insertedNode, const T& value)
@@ -230,8 +235,8 @@ namespace Toshi
 			pNode->m_pLeft = &ms_oNil;
 			pNode->m_pRight = &ms_oNil;
 
-			Node* pCurrentNode = static_cast<Node*>(m_oRoot.m_pLeft);
-			Node* pInsertTo = static_cast<Node*>(&m_oRoot);
+			Node* pCurrentNode = TSTATICCAST(Node*, m_oRoot.m_pLeft);
+			Node* pInsertTo = TSTATICCAST(Node*, &m_oRoot);
 
 			while (pCurrentNode != &ms_oNil)
 			{
@@ -239,11 +244,11 @@ namespace Toshi
 
 				if (pCurrentNode->IsLeftNodeNext(value))
 				{
-					pCurrentNode = static_cast<Node*>(pCurrentNode->m_pLeft);
+					pCurrentNode = TSTATICCAST(Node*, pCurrentNode->m_pLeft);
 				}
 				else
 				{
-					pCurrentNode = static_cast<Node*>(pCurrentNode->m_pRight);
+					pCurrentNode = TSTATICCAST(Node*, pCurrentNode->m_pRight);
 				}
 			}
 
@@ -265,7 +270,7 @@ namespace Toshi
 
 		Iterator Find(Node*& foundNode, const T& value)
 		{
-			Node* pCurrentNode = static_cast<Node*>(m_oRoot.m_pLeft);
+			Node* pCurrentNode = TSTATICCAST(Node*, m_oRoot.m_pLeft);
 
 			while (pCurrentNode != &ms_oNil)
 			{
@@ -277,15 +282,15 @@ namespace Toshi
 
 				if (pCurrentNode->IsLeftNodeNext(value))
 				{
-					pCurrentNode = static_cast<Node*>(pCurrentNode->m_pLeft);
+					pCurrentNode = TSTATICCAST(Node*, pCurrentNode->m_pLeft);
 				}
 				else
 				{
-					pCurrentNode = static_cast<Node*>(pCurrentNode->m_pRight);
+					pCurrentNode = TSTATICCAST(Node*, pCurrentNode->m_pRight);
 				}
 			}
 
-			foundNode = static_cast<Node*>(&m_oRoot);
+			foundNode = TSTATICCAST(Node*, &m_oRoot);
 			return foundNode;
 		}
 	};

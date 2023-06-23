@@ -18,10 +18,9 @@ void AInputHelper::AddMapping(AInputMap::INPUTBUTTON a_eInputButton, AInputManag
 	}
 
 	auto buttonMap = inputMng->m_InputMap.GetButtonMap(inputMng->GetContext());
-	auto foundMap1 = map1.Find((AInputMap::ActionButton)a_eInputButton);
-	auto mapEnd2 = map2.End();
+	auto foundMap1 = map1.Find(TSTATICCAST(AInputMap::ActionButton, a_eInputButton));
 
-	if (foundMap1 != mapEnd2)
+	if (foundMap1 != map2.End())
 	{
 		for (auto i = input.Begin(); i != input.End(); i++)
 		{
@@ -48,6 +47,6 @@ void AInputHelper::Update(float fVal)
 {
 	for (auto i = m_oButtonMap.Begin(); i != m_oButtonMap.End(); i++)
 	{
-		
+
 	}
 }
