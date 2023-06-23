@@ -123,6 +123,16 @@ namespace Toshi
 			return m_Value == other.m_Value;
 		}
 
+		TBOOL operator!=(const T& other) const
+		{
+			return m_Value != other;
+		}
+
+		TBOOL operator!=(const T2RedBlackTreeNode<T>& other) const
+		{
+			return m_Value != other.m_Value;
+		}
+
 		TBOOL operator>(const T2RedBlackTreeNode<T>& other) const
 		{
 			return m_Value > other.m_Value;
@@ -158,6 +168,37 @@ namespace Toshi
 		public:
 			Iterator(Node*& ppNode) : m_ppNode(ppNode) { }
 
+
+			TBOOL operator!=(const Iterator& other) const
+			{
+				return m_ppNode != other.m_ppNode;
+			}
+
+			TBOOL operator==(const Iterator& other) const
+			{
+				return m_ppNode == other.m_ppNode;
+			}
+
+			TBOOL operator!=(const T& other) const
+			{
+				return m_ppNode != other;
+			}
+
+			TBOOL operator==(const T& other) const
+			{
+				return m_ppNode == other;
+			}
+
+
+			T& operator*() const {
+				return m_ppNode->m_Value;
+			}
+
+			Iterator& operator++()
+			{
+				m_ppNode = T2GenericRedBlackTree::GetSuccessorOf(m_ppNode);
+				return *this;
+			}
 		private:
 			Node*& m_ppNode;
 		};
@@ -173,11 +214,15 @@ namespace Toshi
 			return pNode == &m_oRoot;
 		}
 
-		Iterator End()
+		Iterator Begin()
 		{
-			return m_oRoot;
+			return GetFirstNode();
 		}
 
+		Iterator End()
+		{
+			return &ms_oNil;
+		}
 
 		void Insert(Node*& insertedNode, const T& value)
 		{

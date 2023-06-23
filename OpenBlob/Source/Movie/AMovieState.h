@@ -3,6 +3,7 @@
 #include "GameInterface/AGameState.h"
 #include "Input/AInputManager2.h"
 #include "Toshi2/T2DynamicVector.h"
+#include "Input/AInputHelper.h"
 
 class AMovieState : public AGameState
 {
@@ -28,6 +29,7 @@ class AMovieState : public AGameState
 	TBOOL m_bUseLocalePostFix;                               // 0x41
 	AGameState* m_pGameState;                                // 0x48
 	uint32_t m_flags;                                        // 0x4C
+	AInputHelper m_InputHelper;                              // 0x24
 	TBOOL m_bRenderWorld;                                    // 0xD9
 	float m_fDeltaTime;                                      // 0xDC
 };

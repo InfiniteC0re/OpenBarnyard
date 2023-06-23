@@ -324,25 +324,25 @@ void AInputMap::NamePadDoodads()
 Toshi::T2Map<AInputMap::ActionButton, Toshi::T2Vector<int, 4>, AInputMap::ButtonMapComparator>& AInputMap::GetButtonMap(INPUTCONTEXT m_eInputContext)
 {
 	switch (m_eInputContext) {
-	case AInputMap::UNK:
+	case AInputMap::INPUTCONTEXT_UNK:
 		return m_ActionButtonMap1;
-	case AInputMap::UNK2:
+	case AInputMap::INPUTCONTEXT_UNK2:
 		return m_ActionButtonMap2;
-	case AInputMap::UNK3:
+	case AInputMap::INPUTCONTEXT_UNK3:
 		return m_ActionButtonMap3;
-	case AInputMap::UNK4:
+	case AInputMap::INPUTCONTEXT_UNK4:
 		return m_ActionButtonMap4;
-	case AInputMap::UNK5:
+	case AInputMap::INPUTCONTEXT_UNK5:
 		return m_ActionButtonMap5;
-	case AInputMap::UNK6:
+	case AInputMap::INPUTCONTEXT_UNK6:
 		return m_ActionButtonMap6;
-	case AInputMap::UNK7:
+	case AInputMap::INPUTCONTEXT_UNK7:
 		return m_ActionButtonMap7;
-	case AInputMap::UNK8:
+	case AInputMap::INPUTCONTEXT_UNK8:
 		return m_ActionButtonMap8;
-	case AInputMap::UNK9:
+	case AInputMap::INPUTCONTEXT_UNK9:
 		return m_ActionButtonMap9;
-	case AInputMap::UNK10:
+	case AInputMap::INPUTCONTEXT_UNK10:
 		return m_ActionButtonMap10;
 	default:
 		return m_ActionButtonMap1;

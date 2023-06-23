@@ -6,8 +6,8 @@
 class AInputManager2 : public Toshi::TSingleton<AInputManager2>
 {
 public:
-
-	enum INPUTDEVICE : uint32_t
+	typedef uint32_t INPUTDEVICE;
+	enum INPUTDEVICE_ : INPUTDEVICE
 	{
 		INPUTDEVICE_Unk,
 		INPUTDEVICE_Unk1,
@@ -41,7 +41,7 @@ public:
 
 	AInputMap::INPUTCONTEXT GetContext()
 	{
-		return m_inputContextStack.IsEmpty() ? AInputMap::INPUTCONTEXT::UNK12 : m_inputContextStack.Top();
+		return m_inputContextStack.IsEmpty() ? AInputMap::INPUTCONTEXT_UNK12 : m_inputContextStack.Top();
 	}
 
 	AInputManager2();

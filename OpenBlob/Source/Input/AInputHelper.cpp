@@ -6,12 +6,13 @@ void AInputHelper::AddMapping(AInputMap::INPUTBUTTON a_eInputButton, AInputManag
 	Toshi::T2Map<AInputMap::ActionButton, Toshi::T2Vector<int, 4>, AInputMap::ButtonMapComparator> map1;
 	Toshi::T2Map<AInputMap::ActionButton, Toshi::T2Vector<int, 4>, AInputMap::ButtonMapComparator> map2;
 	Toshi::T2Vector<int, 4> input;
+	Toshi::T2Vector<ButtonInfo, 4> buttonInfoVector;
 
 	TASSERT(0.01666f <= a_fRepeatTime);
 
 	AInputManager2* inputMng = AInputManager2::GetSingletonWeak();
 
-	if (m_eInputContext == AInputMap::INPUTCONTEXT::UNK12)
+	if (m_eInputContext == AInputMap::INPUTCONTEXT_UNK12)
 	{
 		m_eInputContext = inputMng->GetContext();
 	}
@@ -25,19 +26,28 @@ void AInputHelper::AddMapping(AInputMap::INPUTBUTTON a_eInputButton, AInputManag
 		for (auto i = input.Begin(); i != input.End(); i++)
 		{
 			TWIP();
+			buttonInfoVector.PushBack(*(ButtonInfo*)i);
 		}
 	}
 
 	uint32_t buttonDevice = MakeButtonDevice(a_eInputButton, a_eInputDevice);
 
-	map2.Insert((AInputMap::ActionButton)buttonDevice, input);
+	m_oButtonMap.Insert(buttonDevice, buttonInfoVector);
 }
 
 void AInputHelper::AddMapping(AInputMap::INPUTBUTTON a_eInputButton, bool bVal, float a_fRepeatTime)
 {
-	for (size_t i = 0; i < AInputManager2::INPUTDEVICE::INPUTDEVICE_Count; i++)
+	for (size_t i = 0; i < AInputManager2::INPUTDEVICE_Count; i++)
 	{
 		AddMapping(a_eInputButton, (AInputManager2::INPUTDEVICE)i, bVal, a_fRepeatTime);
 	}
-	AddMapping(a_eInputButton, AInputManager2::INPUTDEVICE::INPUTDEVICE_Unk4, bVal, a_fRepeatTime);
+	AddMapping(a_eInputButton, AInputManager2::INPUTDEVICE_Unk4, bVal, a_fRepeatTime);
+}
+
+void AInputHelper::Update(float fVal)
+{
+	for (auto i = m_oButtonMap.Begin(); i != m_oButtonMap.End(); i++)
+	{
+		
+	}
 }

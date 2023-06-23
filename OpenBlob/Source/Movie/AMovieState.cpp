@@ -45,7 +45,10 @@ AGameState::UpdateResult AMovieState::OnUpdate(float deltaTime)
 
 void AMovieState::OnInsertion()
 {
-    AInputManager2::GetSingleton()->SetContext(AInputMap::UNK4);
+    auto inputMng = AInputManager2::GetSingletonWeak();
+    inputMng->SetContext(AInputMap::INPUTCONTEXT_UNK4);
+    m_InputHelper.AddMapping(AInputMap::INPUTBUTTON_SPACE, TFALSE, -1.0f);
+    m_InputHelper.Update();
 }
 
 void AMovieState::PlayMovie(uint8_t unk)
