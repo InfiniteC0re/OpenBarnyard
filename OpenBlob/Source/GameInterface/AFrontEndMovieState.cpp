@@ -11,10 +11,12 @@
 // Used to output debug info
 #include "Movie/ADX11MoviePlayer.h"
 #endif // TOSHI_DEBUG
+#include "Input/AInputHelper.h"
 
 AGameState::UpdateResult AFrontEndMovieState::OnUpdate(float deltaTime)
 {
     TIMPLEMENT();
+    m_InputHelper.Update(deltaTime);
     AGameState::OnUpdate(deltaTime);
     AMoviePlayer* pMoviePlayer = AMoviePlayer::GetSingletonWeak();
 
@@ -98,6 +100,10 @@ void AFrontEndMovieState::OnInsertion()
     auto pGUI = Toshi::T2GUI::GetSingleton();
     auto pGUIRenderer = pGUI->GetRenderer();
     auto pRootElement = pGUI->GetRootElement();
+
+    AInputManager2::GetSingletonWeak()->SetContext(AInputMap::INPUTCONTEXT_UNK8);
+    m_InputHelper.AddMapping(0x2A, TFALSE, -1.0f); // SPACE
+    m_InputHelper.AddMapping(0x2B, TFALSE, -1.0f); // RETURN
 
     m_Background.Create(s_Assets[m_iAssetId]);
     m_Background.SetVisible(TTRUE);

@@ -28,14 +28,14 @@ namespace Toshi {
 			return result ? &result->GetValue()->GetSecond() : &m_RedBlackTree.End()->GetSecond();
 		}
 
-		ValueType* Begin()
+		T2RedBlackTree<Pair>::Iterator Begin()
 		{
-			return &m_RedBlackTree.Begin()->GetSecond();
+			return m_RedBlackTree.Begin();
 		}
 
-		ValueType* End()
+		T2RedBlackTree<Pair>::Iterator End()
 		{
-			return &m_RedBlackTree.End()->GetSecond();
+			return m_RedBlackTree.End();
 		}
 
 	private:

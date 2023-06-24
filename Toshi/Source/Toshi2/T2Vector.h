@@ -123,7 +123,7 @@ namespace Toshi
 
 		T* End()
 		{
-			return Begin() + Capacity() * sizeof(T);
+			return &m_Items[m_iNumElements - 1];
 		}
 
 	private:

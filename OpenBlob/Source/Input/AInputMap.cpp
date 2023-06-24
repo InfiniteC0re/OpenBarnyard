@@ -175,6 +175,22 @@ void AInputMap::InitialiseButtonMap()
 	vec.Clear();
 	#pragma endregion
 
+	#pragma region ActionButtonMap8
+
+	vec.PushBack(3);
+	vec.PushBack(0x1000B); // Controller
+	vec.PushBack(0x10009); // Controller
+	vec.PushBack(Toshi::TInputDeviceKeyboard::KEY_SPACE);
+	m_ActionButtonMap8.Insert(ACTIONBUTTON_42, vec);
+	vec.Clear();
+
+	vec.PushBack(2);
+	vec.PushBack(0x10006); // Controller
+	vec.PushBack(Toshi::TInputDeviceKeyboard::KEY_RETURN);
+	m_ActionButtonMap8.Insert(ACTIONBUTTON_43, vec);
+	vec.Clear();
+
+	#pragma endregion
 
 	TIMPLEMENT_D("Init other ActionButtonMaps");
 }

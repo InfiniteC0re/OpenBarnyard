@@ -199,11 +199,12 @@ namespace Toshi
 				return &m_ppNode->m_Value;
 			}
 
-			Iterator& operator++()
+			Iterator operator++(int)
 			{
-				m_ppNode = T2GenericRedBlackTree::GetSuccessorOf(m_ppNode);
+				m_ppNode = TSTATICCAST(Node*, T2RedBlackTree::GetSuccessorOf(m_ppNode));
 				return *this;
 			}
+
 		private:
 			Node* m_ppNode;
 		};

@@ -138,6 +138,6 @@ public:
 
 private:
 	Toshi::T2DList<AGameState> m_GameStates; // 0x0C
-	AInputHelperSimple m_InputHelper;        // 0x14
+	AInputHelperSimple m_InputHelperSimple;  // 0x14
 	State m_State;                           // 0x28
 };

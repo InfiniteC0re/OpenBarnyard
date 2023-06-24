@@ -20,7 +20,7 @@ AMovieState::AMovieState(const char* name, TBOOL a_bUseSoundChannels, TBOOL bUse
 AGameState::UpdateResult AMovieState::OnUpdate(float deltaTime)
 {
     TIMPLEMENT();
-    TTODO("Update AInputHelper");
+    m_InputHelper.Update(deltaTime);
     m_fDeltaTime += deltaTime;
 
     switch (m_flags)

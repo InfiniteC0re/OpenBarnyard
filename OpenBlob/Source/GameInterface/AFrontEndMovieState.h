@@ -3,6 +3,7 @@
 
 #include <Toshi2/T2GUI/T2GUIRectangle.h>
 #include <A2GUI/A2GUIBackground.h>
+#include "Input/AInputHelper.h"
 
 class AFrontEndMovieState :
     public Toshi::TGenericClassDerived<AFrontEndMovieState, AGameState, "AFrontEndMovieState", TMAKEVERSION(1, 0), TTRUE>
@@ -50,8 +51,9 @@ private:
     void StartMovie(Asset assetId);
 
 private:
-    A2GUIBackground m_Background;
-    float m_fBackgroundLeftTime; // 0x104
-    Asset m_iAssetId; // 0x108
-    TBOOL m_bSkip;    // 0x10C
+    A2GUIBackground m_Background; // 0x02C
+    float m_fBackgroundLeftTime;  // 0x104
+    Asset m_iAssetId;             // 0x108
+    TBOOL m_bSkip;                // 0x10C
+    AInputHelper m_InputHelper;   // 0x110
 };

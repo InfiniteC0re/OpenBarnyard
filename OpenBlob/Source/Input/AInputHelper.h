@@ -14,8 +14,8 @@ public:
 
 	};
 
-	void AddMapping(AInputMap::INPUTBUTTON a_eInputButton, AInputManager2::INPUTDEVICE a_eInputDevice, bool bVal, float a_fRepeatTime);
-	void AddMapping(AInputMap::INPUTBUTTON a_eInputButton, bool bVal, float a_fRepeatTime);
+	void AddMapping(AInputMap::INPUTBUTTON a_eInputButton, AInputManager2::INPUTDEVICE a_eInputDevice, TBOOL bVal, float a_fRepeatTime);
+	void AddMapping(AInputMap::INPUTBUTTON a_eInputButton, TBOOL bVal, float a_fRepeatTime);
 
 	void Update(float fVal = 0.0f);
 
