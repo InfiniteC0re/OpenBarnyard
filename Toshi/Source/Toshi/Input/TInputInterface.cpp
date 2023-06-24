@@ -76,7 +76,7 @@ namespace Toshi
 
     TBOOL TInputInterface::AcquireAll()
     {
-        bool bRet = true;
+        TBOOL bRet = TTRUE;
         for (auto it = m_DeviceList.Begin(); it != m_DeviceList.End(); ++it)
         {
             bRet = it->Acquire();
@@ -86,7 +86,7 @@ namespace Toshi
 
     TBOOL TInputInterface::UnacquireAll()
     {
-        bool bRet = true;
+        TBOOL bRet = TTRUE;
         for (auto it = m_DeviceList.Begin(); it != m_DeviceList.End(); ++it)
         {
             bRet = it->Unacquire();
@@ -96,7 +96,12 @@ namespace Toshi
 
     TBOOL TInputInterface::FlushAll()
     {
-        return TTRUE;
+        TBOOL bRet = TTRUE;
+        for (auto it = m_DeviceList.Begin(); it != m_DeviceList.End(); ++it)
+        {
+            bRet = it->Flush();
+        }
+        return bRet;
     }
 
     void TInputInterface::SetExclusiveMode(TBOOL mode)
