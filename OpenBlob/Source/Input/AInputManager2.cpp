@@ -3,6 +3,26 @@
 #include TOSHI_MULTIPLATFORM(Input/TInputInterface)
 
 
+void AInputManager2::AddInGameController(const AInputDeviceHandle& a_Handle)
+{
+	TASSERT(a_Handle.IsValid());
+
+	if (m_pInputDeviceHandles.Find(a_Handle) != m_pInputDeviceHandles.End())
+	{
+		m_pInputDeviceHandles.PushBack(a_Handle);
+	}
+}
+
+void AInputManager2::RemoveInGameController(const AInputDeviceHandle& a_Handle)
+{
+	TASSERT(a_Handle.IsValid());
+
+	if (m_pInputDeviceHandles.Find(a_Handle) != m_pInputDeviceHandles.End())
+	{
+		//m_pInputDeviceHandles.Erase(a_Handle);
+	}
+}
+
 AInputManager2::AInputManager2()
 {
 	TIMPLEMENT();

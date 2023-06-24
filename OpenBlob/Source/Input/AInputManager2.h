@@ -22,13 +22,21 @@ public:
 	struct AInputDeviceHandle
 	{
 		Toshi::TInputDevice* m_unk; // 0x0
+
+		bool IsValid() const
+		{
+			return m_unk != TNULL;
+		}
 	};
 
 	AInputDeviceHandle m_pInputDeviceHandle[4];
+	Toshi::T2Vector<AInputDeviceHandle, 2> m_pInputDeviceHandles;
 	AInputMap m_InputMap;                                    // 0x48
 	void* m_unk;                                             // 0x180
 	AStack<AInputMap::INPUTCONTEXT, 10> m_inputContextStack; // 0x1A0
 
+	void AddInGameController(const AInputDeviceHandle& a_Handle);
+	void RemoveInGameController(const AInputDeviceHandle& a_Handle);
 
 	AInputDeviceHandle GetDeviceHandle(INPUTDEVICE a_eDevice)
 	{

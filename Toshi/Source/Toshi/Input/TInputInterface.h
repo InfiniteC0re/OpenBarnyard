@@ -144,8 +144,8 @@ namespace Toshi {
 
             union
             {
-                float* Floats;
-                int* Ints;
+                float Floats[2];
+                int Ints[2];
             } m_Magnitude;              // 0x10 JPOG 0x18 De blob
 
             TInputDevice* m_pSource;    // 0xC

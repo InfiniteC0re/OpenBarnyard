@@ -26,6 +26,14 @@ namespace Toshi
 		virtual TBOOL Flush();
 		virtual int ProcessEvents(TEmitter<TInputInterface, TInputInterface::InputEvent>& emitter, float deltaTime);
 		virtual void RefreshDirect();
+		virtual TBOOL IsDown(int doodad) const
+		{
+			return doodad >= BUTTON_1 && doodad <= BUTTON_8 ? ((1 << doodad) & m_dwButtonCurrent) != 0 : TFALSE;
+		}
+		virtual TBOOL WasDown(int doodad) const
+		{
+			return doodad >= BUTTON_1 && doodad <= BUTTON_8 ? ((1 << doodad) & m_dwButtonPrevious) != 0 : TFALSE;
+		}
 
 		TBOOL const BindToDIDevice(HWND a_mainWindow, LPCDIDEVICEINSTANCE a_poDeviceInstance, IDirectInputDevice8* a_poDXInputDevice, TBOOL exclusive);
 
