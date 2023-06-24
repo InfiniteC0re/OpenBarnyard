@@ -17,6 +17,16 @@ AGameState::UpdateResult AFrontEndMovieState::OnUpdate(float deltaTime)
 {
     TIMPLEMENT();
     m_InputHelper.Update(deltaTime);
+
+    if (m_iAssetId != Asset_Legal)
+    {
+        if (m_InputHelper.IsJustDown(0x2A))
+        {
+            // Commenting this cause handling input is not finished atm and it would skip all instantly
+            // m_bSkip = true;
+        }
+    }
+
     AGameState::OnUpdate(deltaTime);
     AMoviePlayer* pMoviePlayer = AMoviePlayer::GetSingletonWeak();
 

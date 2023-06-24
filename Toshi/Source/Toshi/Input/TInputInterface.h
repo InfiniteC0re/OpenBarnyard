@@ -178,10 +178,10 @@ namespace Toshi {
         virtual void StopAllRepeats();
 
     private:
-        TBOOL m_bIsExclusiveMode;             // 0x04 
-        TNodeList<TInputDevice> m_DeviceList; // 0x08
-        TGenericEmitter m_Emitter1;           // 0x24
-        TGenericEmitter m_Emitter2;           // 0x28
+        TBOOL m_bIsExclusiveMode;                                                    // 0x04 
+        TNodeList<TInputDevice> m_DeviceList;                                        // 0x08
+        TEmitter<TInputInterface, TInputInterface::InputEvent> m_Emitter1;           // 0x24
+        TGenericEmitter m_Emitter2;                                                  // 0x28
     };
 
     class TInputDevice :
@@ -214,8 +214,11 @@ namespace Toshi {
         virtual TBOOL StartRepeat(int param_1, float param_2, float param_3);
         virtual TBOOL StopRepeat(int param_1);
         virtual TBOOL StopAllRepeats();
-        virtual void ThrowRepeatEvent(TEmitter<TInputInterface, TInputInterface::InputEvent>& emitter, RepeatInfo* repeatInfo, float flt);
+        virtual void ThrowRepeatEvent(TEmitter<TInputInterface, TInputInterface::InputEvent>& emitter, RepeatInfo* repeatInfo, float deltaTime);
         virtual TBOOL IsForceFeedbackDevice() { return TFALSE; }
+        virtual int ProcessEvents(TEmitter<TInputInterface, TInputInterface::InputEvent>& emitter, float deltaTime) { return 0; };
+        virtual void Update(float deltaTime) { };
+        virtual TBOOL Acquire() { return TFALSE; };
 
         TBOOL IsAcquired() const
         {

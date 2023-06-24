@@ -80,7 +80,7 @@ namespace Toshi
         {
             if (it->IsAcquired())
             {
-                TIMPLEMENT();
+                it->Acquire();
             }
         }
         return TFALSE;
@@ -106,7 +106,7 @@ namespace Toshi
         return m_bIsExclusiveMode;
     }
 
-    int TInputInterface::ProcessEvents(float fUnk)
+    int TInputInterface::ProcessEvents(float deltaTime)
     {
         int events = 0;
 
@@ -114,7 +114,7 @@ namespace Toshi
         {
             if (it->IsAcquired())
             {
-                TIMPLEMENT();
+                it->Update(deltaTime);
             }
         }
 
@@ -122,7 +122,7 @@ namespace Toshi
         {
             if (it->IsAcquired())
             {
-                TIMPLEMENT();
+                it->ProcessEvents(m_Emitter1, deltaTime);
             }
         }
 

@@ -17,6 +17,9 @@ public:
 	void AddMapping(AInputMap::INPUTBUTTON a_eInputButton, AInputManager2::INPUTDEVICE a_eInputDevice, TBOOL bVal, float a_fRepeatTime);
 	void AddMapping(AInputMap::INPUTBUTTON a_eInputButton, TBOOL bVal, float a_fRepeatTime);
 
+	TBOOL IsJustDown(AInputMap::INPUTBUTTON a_eInputButton);
+	TBOOL IsJustDown(AInputMap::INPUTBUTTON a_eInputButton, AInputManager2::INPUTDEVICE a_eInputDevice);
+
 	void Update(float fVal = 0.0f);
 
 	static uint32_t MakeButtonDevice(AInputMap::INPUTBUTTON a_eInputButton, AInputManager2::INPUTDEVICE a_eDevice)

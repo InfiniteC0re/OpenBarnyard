@@ -18,7 +18,7 @@ namespace Toshi
 		}
 
 		virtual void Release();
-		virtual void Update();
+		virtual void Update(float deltaTime);
 		virtual TBOOL Initialise();
 		virtual TBOOL Deinitialise();
 		virtual TBOOL Acquire();

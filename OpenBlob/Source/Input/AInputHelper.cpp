@@ -39,7 +39,44 @@ void AInputHelper::AddMapping(AInputMap::INPUTBUTTON a_eInputButton, TBOOL bVal,
 	{
 		AddMapping(a_eInputButton, i, bVal, a_fRepeatTime);
 	}
-	AddMapping(a_eInputButton, AInputManager2::INPUTDEVICE_Unk4, bVal, a_fRepeatTime);
+	AddMapping(a_eInputButton, AInputManager2::INPUTDEVICE_Keyboard, bVal, a_fRepeatTime);
+}
+
+TBOOL AInputHelper::IsJustDown(AInputMap::INPUTBUTTON a_eInputButton)
+{
+	for (size_t i = 0; i < AInputManager2::INPUTDEVICE_Count; i++)
+	{
+		if (IsJustDown(a_eInputButton, i))
+		{
+			return TTRUE;
+		}
+	}
+	return IsJustDown(a_eInputButton, AInputManager2::INPUTDEVICE_Keyboard);
+}
+
+TBOOL AInputHelper::IsJustDown(AInputMap::INPUTBUTTON a_eInputButton, AInputManager2::INPUTDEVICE a_eInputDevice)
+{
+	auto inputMng = AInputManager2::GetSingletonWeak();
+
+	if (a_eInputDevice != AInputManager2::INPUTDEVICE_Keyboard && inputMng->CheckIfValidDevice(inputMng->GetDeviceHandle(a_eInputDevice)))
+	{
+		return TFALSE;
+	}
+
+	for (auto i = m_oButtonMap.Begin(); i != m_oButtonMap.End(); i++)
+	{
+		auto value = i->GetSecond();
+		for (size_t j = 0; j < value.Size(); j++)
+		{
+			if (HASFLAG(value[j] & 1))
+			{
+				return TTRUE;
+			}
+		}
+	}
+
+	return TFALSE;
+
 }
 
 void AInputHelper::Update(float fVal)

@@ -14,7 +14,7 @@ namespace Toshi {
         }
     }
 
-    void TInputDXDeviceMouse::Update()
+    void TInputDXDeviceMouse::Update(float deltaTime)
     {
         if (IsAcquired())
         {
@@ -88,7 +88,7 @@ namespace Toshi {
             RefreshDirect();
         }
 
-        return TFALSE;
+        return TTRUE;
     }
 
     TBOOL TInputDXDeviceMouse::Unacquire()
