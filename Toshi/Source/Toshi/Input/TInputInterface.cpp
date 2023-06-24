@@ -76,19 +76,22 @@ namespace Toshi
 
     TBOOL TInputInterface::AcquireAll()
     {
+        bool bRet = true;
         for (auto it = m_DeviceList.Begin(); it != m_DeviceList.End(); ++it)
         {
-            if (it->IsAcquired())
-            {
-                it->Acquire();
-            }
+            bRet = it->Acquire();
         }
-        return TFALSE;
+        return bRet;
     }
 
     TBOOL TInputInterface::UnacquireAll()
     {
-        return TFALSE;
+        bool bRet = true;
+        for (auto it = m_DeviceList.Begin(); it != m_DeviceList.End(); ++it)
+        {
+            bRet = it->Unacquire();
+        }
+        return bRet;
     }
 
     TBOOL TInputInterface::FlushAll()

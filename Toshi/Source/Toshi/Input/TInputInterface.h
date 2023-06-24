@@ -219,6 +219,7 @@ namespace Toshi {
         virtual int ProcessEvents(TEmitter<TInputInterface, TInputInterface::InputEvent>& emitter, float deltaTime) { return 0; };
         virtual void Update(float deltaTime) { };
         virtual TBOOL Acquire() { return TFALSE; };
+        virtual TBOOL Unacquire() { return TFALSE; };
 
         TBOOL IsAcquired() const
         {
