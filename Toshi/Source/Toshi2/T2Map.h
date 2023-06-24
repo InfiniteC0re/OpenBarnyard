@@ -6,7 +6,7 @@
 namespace Toshi {
 
 	template <class KeyType, class ValueType, class Comparator>
-	class T2Map : public T2RedBlackTree<T2Pair<KeyType, ValueType, Comparator>>
+	class T2Map
 	{
 	public:
 		using Pair = T2Pair<KeyType, ValueType, Comparator>;
@@ -15,7 +15,7 @@ namespace Toshi {
 		ValueType* Insert(const KeyType& key, const ValueType& value)
 		{
 			T2RedBlackTreeNode<Pair>* result = TNULL;
-			T2RedBlackTree<Pair>::Insert(result, { key, value });
+			m_RedBlackTree.Insert(result, { key, value });
 
 			return &result->GetValue()->GetSecond();
 		}
@@ -23,23 +23,23 @@ namespace Toshi {
 		ValueType* Find(const KeyType& key)
 		{
 			T2RedBlackTreeNode<Pair>* result = TNULL;
-			T2RedBlackTree<Pair>::Find(result, { key });
+			m_RedBlackTree.Find(result, { key });
 
-			return result ? &result->GetValue()->GetSecond() : TNULL;
+			return result ? &result->GetValue()->GetSecond() : &m_RedBlackTree.End()->GetSecond();
 		}
 
-		//T2RedBlackTree<Pair>::Iterator Begin()
-		//{
-		//	return m_RedBlackTree.Begin();
-		//}
+		ValueType* Begin()
+		{
+			return &m_RedBlackTree.Begin()->GetSecond();
+		}
 
-		//T2RedBlackTree<Pair>::Iterator End()
-		//{
-		//	return m_RedBlackTree.End();
-		//}
+		ValueType* End()
+		{
+			return &m_RedBlackTree.End()->GetSecond();
+		}
 
 	private:
-		//T2RedBlackTree<Pair> m_RedBlackTree;
+		T2RedBlackTree<Pair> m_RedBlackTree;
 	};
 
 }
