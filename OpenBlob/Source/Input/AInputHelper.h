@@ -19,14 +19,14 @@ public:
 
 	void Update(float fVal = 0.0f);
 
-	uint32_t MakeButtonDevice(AInputMap::INPUTBUTTON a_eInputButton, AInputManager2::INPUTDEVICE a_eDevice)
+	static uint32_t MakeButtonDevice(AInputMap::INPUTBUTTON a_eInputButton, AInputManager2::INPUTDEVICE a_eDevice)
 	{
 		TASSERT(0 == (0xFFFF0000 & a_eInputButton));
 		TASSERT(0 == (0xFFFF0000 & a_eDevice));
 		return (a_eInputButton << 16 | a_eDevice);
 	}
 
-	void GetInputButtonDevice(uint32_t a_iButtonDevice, AInputMap::INPUTBUTTON& a_eInputButton, AInputManager2::INPUTDEVICE& a_eInputDevice)
+	static void GetInputButtonDevice(uint32_t a_iButtonDevice, AInputMap::INPUTBUTTON& a_eInputButton, AInputManager2::INPUTDEVICE& a_eInputDevice)
 	{
 		a_eInputButton = a_iButtonDevice >> 16;
 		a_eInputDevice = a_iButtonDevice & 0xFFFF;

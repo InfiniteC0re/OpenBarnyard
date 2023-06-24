@@ -3,9 +3,6 @@
 
 void AInputHelper::AddMapping(AInputMap::INPUTBUTTON a_eInputButton, AInputManager2::INPUTDEVICE a_eInputDevice, TBOOL bVal, float a_fRepeatTime)
 {
-	Toshi::T2Map<AInputMap::ActionButton, Toshi::T2Vector<int, 4>, AInputMap::ButtonMapComparator> map1;
-	Toshi::T2Map<AInputMap::ActionButton, Toshi::T2Vector<int, 4>, AInputMap::ButtonMapComparator> map2;
-	Toshi::T2Vector<int, 4> input;
 	Toshi::T2Vector<ButtonInfo, 4> buttonInfoVector;
 
 	if (bVal)
