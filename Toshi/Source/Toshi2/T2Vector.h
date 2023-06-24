@@ -126,6 +126,11 @@ namespace Toshi
 			return &m_Items[m_iNumElements - 1];
 		}
 
+		T& operator[](int idx)
+		{
+			return m_Items[idx];
+		}
+
 	private:
 		size_t m_iNumElements;
 		T m_Items[MaxSize];

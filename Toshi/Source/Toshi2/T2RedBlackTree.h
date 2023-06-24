@@ -201,7 +201,27 @@ namespace Toshi
 
 			Iterator operator++(int)
 			{
+				Iterator prev = *this;
 				m_ppNode = TSTATICCAST(Node*, T2RedBlackTree::GetSuccessorOf(m_ppNode));
+				return prev;
+			}
+
+			Iterator& operator++()
+			{
+				m_ppNode = TSTATICCAST(Node*, T2RedBlackTree::GetSuccessorOf(m_ppNode));
+				return *this;
+			}
+
+			Iterator operator--(int)
+			{
+				Iterator prev = *this;
+				m_ppNode = TSTATICCAST(Node*, T2RedBlackTree::GetPredecessorOf(m_ppNode));
+				return prev;
+			}
+
+			Iterator& operator--()
+			{
+				m_ppNode = TSTATICCAST(Node*, T2RedBlackTree::GetPredecessorOf(m_ppNode));
 				return *this;
 			}
 

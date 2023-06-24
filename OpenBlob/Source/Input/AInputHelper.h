@@ -32,6 +32,8 @@ public:
 		a_eInputDevice = a_iButtonDevice & 0xFFFF;
 	}
 
+	void UpdateButtonInfo(ButtonInfo* a_pButtonInfo, AInputManager2::INPUTDEVICE a_eInputDevice);
+
 	typedef Toshi::TComparator<int> ButtonMapComparator;
 
 	AInputMap::INPUTCONTEXT m_eInputContext;                                                  // 0x4

@@ -52,5 +52,17 @@ void AInputHelper::Update(float fVal)
 
 	for (auto i = m_oButtonMap.Begin(); i != m_oButtonMap.End(); i++)
 	{
+		auto key = i->GetFirst();
+		auto value = i->GetSecond();
+		GetInputButtonDevice(key, eInputButton, eInputDevice);
+		for (size_t i = 0; i < value.Size(); i++)
+		{
+			UpdateButtonInfo(&value[i], eInputDevice);
+		}
 	}
+}
+
+void AInputHelper::UpdateButtonInfo(ButtonInfo* a_pButtonInfo, AInputManager2::INPUTDEVICE a_eInputDevice)
+{
+
 }
