@@ -24,7 +24,7 @@ namespace Toshi
 		virtual TBOOL Acquire();
 		virtual TBOOL Unacquire();
 		virtual TBOOL Flush();
-		virtual int ProcessEvents(TEmitter<TInputInterface, TInputInterface::InputEvent>& emitter, float flt);
+		virtual int ProcessEvents(TEmitter<TInputInterface, TInputInterface::InputEvent>& emitter, float deltaTime);
 		virtual void RefreshDirect();
 
 		TBOOL const BindToDIDevice(HWND a_mainWindow, LPCDIDEVICEINSTANCE a_poDeviceInstance, IDirectInputDevice8* a_poDXInputDevice, TBOOL exclusive);

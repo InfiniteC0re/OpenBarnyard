@@ -122,7 +122,7 @@ namespace Toshi
         {
             if (it->IsAcquired())
             {
-                it->ProcessEvents(m_Emitter1, deltaTime);
+                events += it->ProcessEvents(m_Emitter1, deltaTime);
             }
         }
 
