@@ -57,7 +57,7 @@ namespace Toshi
             m_poDirectInput8 = NULL;
         }
 
-        return TTRUE; // ?
+        return TTRUE;
     }
 
     TBOOL TInputDXInterface::LostDevice()
@@ -143,9 +143,9 @@ namespace Toshi
                     inputInterface->RemoveDevice(inputMouse);
                 }
             }
-
             TIMPLEMENT();
             break;
+
         case DI8DEVTYPE_KEYBOARD:
 
             hr = inputInterface->m_poDirectInput8->CreateDevice(a_poDeviceInstance->guidInstance, &inputDevice, NULL);

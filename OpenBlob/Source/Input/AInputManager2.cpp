@@ -13,10 +13,11 @@ AInputManager2::AInputManager2()
 	TBOOL result = input->Initialise();
 	TASSERT(result == TTRUE);
 
-	for (size_t i = 0; i < INPUTDEVICE_Count + 1; i++)
+	for (size_t i = 0; i < INPUTDEVICE_Invalid; i++)
 	{
 		input->AcquireAll();
 		input->ProcessEvents(0.1f);
+		Sleep(200);
 	}
 }
 
