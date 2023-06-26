@@ -158,10 +158,14 @@ namespace Toshi {
         }
 
         TInputDevice* GetDeviceByIndex(TClass* pClass, size_t index);
-        class TInputDeviceKeyboard* GetKeyboardByIndex(size_t index);
-        class TInputDeviceMouse* GetMouseByIndex(size_t index);
 
-        TClass* GetSpecificDeviceByIndex(TClass* pClass, size_t index);
+        template <class C>
+        C* GetDeviceByIndex(size_t index = 0)
+        {
+            C* pDevice = TSTATICCAST(C*, GetDeviceByIndex(TGetClass(C), index));
+            TASSERT(pDevice == TNULL || pDevice->GetClass()->IsA(TGetClass(C)));
+            return pDevice;
+        }
 
         void AddDevice(TInputDevice* device);
         void RemoveDevice(TInputDevice* device);

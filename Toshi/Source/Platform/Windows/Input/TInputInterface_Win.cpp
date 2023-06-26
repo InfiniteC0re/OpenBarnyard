@@ -104,7 +104,7 @@ namespace Toshi
         switch (GET_DIDEVICE_TYPE(a_poDeviceInstance->dwDevType))
         {
         case DI8DEVTYPE_MOUSE:
-            inputMouse = (TInputDXDeviceMouse*)inputInterface->GetSpecificDeviceByIndex(TGetClass(TInputDXDeviceMouse), 0);
+            inputMouse = inputInterface->GetDeviceByIndex<TInputDXDeviceMouse>();
 
             hr = inputInterface->m_poDirectInput8->CreateDevice(GUID_SysMouse, &inputDevice, NULL);
 
@@ -180,7 +180,7 @@ namespace Toshi
 
             TUtil::Log("Added Direct Input Controller: \'%s\' (%s) - NON-PSX", productName, fmtStr);
 
-            inputController = (TInputDXDeviceController*)inputInterface->GetSpecificDeviceByIndex(TGetClass(TInputDXDeviceController), 0);
+            inputController = inputInterface->GetDeviceByIndex<TInputDXDeviceController>();
             hr = inputInterface->m_poDirectInput8->CreateDevice(a_poDeviceInstance->guidInstance, &inputDevice, NULL);
 
             if (hr != DI_OK)

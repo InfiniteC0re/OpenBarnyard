@@ -26,30 +26,6 @@ namespace Toshi
         return TNULL;
     }
 
-    TInputDeviceKeyboard* TInputInterface::GetKeyboardByIndex(size_t index)
-    {
-        TInputDeviceKeyboard* pKeyboard = static_cast<TInputDeviceKeyboard*>(GetDeviceByIndex(TGetClass(TInputDeviceKeyboard), index));
-        TASSERT(pKeyboard == TNULL || pKeyboard->GetClass()->IsA(TGetClass(TInputDeviceKeyboard)));
-
-        return pKeyboard;
-    }
-
-    TInputDeviceMouse* TInputInterface::GetMouseByIndex(size_t index)
-    {
-        TInputDeviceMouse* pMouse = static_cast<TInputDeviceMouse*>(GetDeviceByIndex(TGetClass(TInputDeviceMouse), index));
-        TASSERT(pMouse == TNULL || pMouse->GetClass()->IsA(TGetClass(TInputDeviceMouse)));
-
-        return pMouse;
-    }
-
-    Toshi::TClass* TInputInterface::GetSpecificDeviceByIndex(TClass* pClass, size_t index)
-    {
-        TInputDevice* pDevice = GetDeviceByIndex(pClass, index);
-        TASSERT(pDevice == TNULL || pDevice->GetClass()->IsA(pClass));
-        if (pDevice == TNULL) return TNULL;
-        return pDevice->GetClass();
-    }
-
     void TInputInterface::AddDevice(TInputDevice* device)
     {
         if (device != TNULL)

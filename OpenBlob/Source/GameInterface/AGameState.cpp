@@ -9,9 +9,9 @@
 #include <Toshi2/T2GUI/T2GUI.h>
 
 AGameState::AGameState() :
-	m_InputHelperSimple(1, Toshi::TInputInterface::GetSingletonWeak()->GetKeyboardByIndex(0))
+	m_InputHelperSimple(1, Toshi::TInputInterface::GetSingletonWeak()->GetDeviceByIndex<Toshi::TInputDeviceKeyboard>())
 {
-	m_InputHelperSimple.AddDoodad(0x2002d);
+	m_InputHelperSimple.AddDoodad(Toshi::TInputDeviceKeyboard::KEY_GRAVE);
 	m_State = State_Null;
 }
 
