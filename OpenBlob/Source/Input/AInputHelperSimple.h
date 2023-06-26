@@ -16,15 +16,15 @@ public:
 		delete m_pArray;
 	}
 
-	void Initialise(size_t doodadCount, Toshi::TInputDevice* pInputDevice)
+	void Initialise(size_t a_iDoodadCount, Toshi::TInputDevice* pInputDevice)
 	{
+		TASSERT(0 != a_iDoodadCount, "ERROR: Initialising with zero array size");
 		m_iArrayIndex = 0;
-		m_iArraySize = doodadCount;
+		m_iArraySize = a_iDoodadCount;
 		m_pInputDevice = pInputDevice;
-		TASSERT(m_iArraySize != 0, "ERROR: Initialising with zero array size");
-
-		m_pArray = (uint32_t*)AMemory::ms_apMemoryBlocks[0]->Malloc(m_iArraySize * 8);
-		Toshi::TUtil::MemClear(m_pArray, sizeof(m_iArraySize * 8));
+		
+		m_pArray = new (AMemory::ms_apMemoryBlocks[0]) Toshi::TInputDevice::DoodadProperties[m_iArraySize];
+		Toshi::TUtil::MemClear(m_pArray, m_iArraySize * sizeof(Toshi::TInputDevice::DoodadProperties));
 	}
 
 	void AddDoodad(size_t doodad);
@@ -32,8 +32,8 @@ public:
 	void Update();
 
 private:
-	uint32_t* m_pArray;                   // 0x0
-	size_t m_iArrayIndex;                 // 0x4
-	size_t m_iArraySize;                  // 0x8
-	Toshi::TInputDevice* m_pInputDevice;  // 0xC
+	Toshi::TInputDevice::DoodadProperties* m_pArray; // 0x0
+	size_t m_iArrayIndex;                            // 0x4
+	size_t m_iArraySize;                             // 0x8
+	Toshi::TInputDevice* m_pInputDevice;             // 0xC
 };

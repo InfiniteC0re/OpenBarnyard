@@ -9,8 +9,8 @@ void AInputHelperSimple::AddDoodad(size_t doodad)
 	TASSERT(0 != m_iArraySize);
 	TASSERT(m_iArrayIndex < m_iArraySize);
 
-	m_pArray[m_iArrayIndex * 2] = doodad;
-	m_iArrayIndex += 1;
+	m_pArray[m_iArrayIndex].m_iUnk = doodad;
+	m_iArrayIndex++;
 }
 
 void AInputHelperSimple::Update()
