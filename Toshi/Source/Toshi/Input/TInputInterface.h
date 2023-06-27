@@ -224,6 +224,8 @@ namespace Toshi {
         virtual void Update(float deltaTime) { };
         virtual TBOOL Acquire() { return TFALSE; };
         virtual TBOOL Unacquire() { return TFALSE; };
+        virtual TBOOL IsDown(int doodad) const { return TFALSE; }
+        virtual TBOOL WasDown(int doodad) const { return TFALSE; }
 
         TBOOL IsAcquired() const
         {
