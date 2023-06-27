@@ -3,6 +3,7 @@
 #include TOSHI_MULTIPLATFORM(Input/TInputDeviceController)
 #include "TInputDeviceController_XInput.h"
 #include "TInputDeviceController_Wiin.h"
+#include <Platform/Windows/Input/TInputDeviceKeyboard_Win.h>
 #include TOSHI_MULTIPLATFORM(Input/TInputDeviceMouse)
 
 namespace Toshi
@@ -78,8 +79,11 @@ namespace Toshi
         LPDIRECTINPUTDEVICE8 inputDevice;
         TInputDXDeviceMouse* inputMouse;
         TInputDXDeviceController* inputController;
+        TInputDXDeviceKeyboard* inputKeyboard;
         HRESULT hr;
         TBOOL addMouse = TFALSE;
+        TBOOL addKeyboard = TFALSE;
+        TBOOL res;
         
         TASSERT(poDXInputInterface != NULL);
         TASSERT(a_poDeviceInstance != NULL);
@@ -153,6 +157,13 @@ namespace Toshi
             if (hr != DI_OK)
             {
                 return DIENUM_CONTINUE;
+            }
+
+            inputKeyboard = new TInputDXDeviceKeyboard();
+            addKeyboard = TTRUE;
+            res = inputKeyboard->BindToDIDevice(inputInterface->GetMainWindow(), a_poDeviceInstance, inputDevice, inputInterface->m_bExclusive);
+            if (res)
+            {
             }
 
             TIMPLEMENT();

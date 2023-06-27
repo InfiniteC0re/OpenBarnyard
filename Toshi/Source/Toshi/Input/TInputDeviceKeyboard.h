@@ -131,6 +131,7 @@ namespace Toshi
         static const int KEY_SYSRQ = 0x2006e;
         static const int KEY_RMENU = 0x2006f;
         static const int KEY_HOME = 0x20070;
+        static const int KEY_PAUSE = 0x20071;
         static const int KEY_UP = 0x20072;
         static const int KEY_PRIOR = 0x20073;
         static const int KEY_LEFT = 0x20074;
@@ -143,6 +144,8 @@ namespace Toshi
         static const int KEY_LWIN = 0x2007b;
         static const int KEY_RWIN = 0x2007c;
         static const int KEY_APPS = 0x2007d;
+        static const int KEY_POWER = 0x2007e;
+        static const int KEY_SLEEP = 0x2007f;
 
 #define GET_KEY_FROM_DOODAD(doodad) \
     ((doodad) == VIRTKEY_SHIFT ? STRINGIFY(VIRTKEY_SHIFT) : \
