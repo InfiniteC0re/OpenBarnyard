@@ -12,6 +12,11 @@ project "OpenBlob"
 		"libtheora",
 		"theoraplay"
 	}
+	
+	linkoptions
+	{
+		"%{wks.location}/bin-int/" .. outputdir .. "/Toshi/Toshi.res"
+	}
 
 	files
 	{

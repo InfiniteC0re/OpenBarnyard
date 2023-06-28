@@ -44,6 +44,8 @@ TBOOL AApplication::OnCreate(int argc, char** argv)
 	TBOOL interfaceCreated = m_Renderer->CreateInterface();
 
 	TOSHI_INFO("testcvar value: {0}", CVAR_GET_BOOL(testcvar));
+	TASSERT(TFALSE, "Assertion test");
+
 	
 	if (interfaceCreated)
 	{
