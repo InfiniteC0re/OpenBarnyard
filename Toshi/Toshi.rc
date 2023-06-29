@@ -1,4 +1,4 @@
-// Microsoft Visual C++ generated resource script.
+п»ї// Microsoft Visual C++ generated resource script.
 //
 #include "resource.h"
 
@@ -13,7 +13,7 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// Русский (Россия) resources
+// Р СѓСЃСЃРєРёР№ (Р РѕСЃСЃРёСЏ) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_RUS)
 LANGUAGE LANG_RUSSIAN, SUBLANG_DEFAULT
@@ -29,12 +29,12 @@ BEGIN
     0
 END
 
-#endif    // Русский (Россия) resources
+#endif    // Р СѓСЃСЃРєРёР№ (Р РѕСЃСЃРёСЏ) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
 /////////////////////////////////////////////////////////////////////////////
-// Немецкий (Германия) resources
+// German (Germany) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_DEU)
 LANGUAGE LANG_GERMAN, SUBLANG_GERMAN
@@ -75,12 +75,12 @@ END
 // remains consistent on all systems.
 IDI_ICON1               ICON                    "Icons\\deBlob.ico"
 
-#endif    // Немецкий (Германия) resources
+#endif    // German (Germany) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
 /////////////////////////////////////////////////////////////////////////////
-// Английский (Австралия) resources
+// РђРЅРіР»РёР№СЃРєРёР№ (РђРІСЃС‚СЂР°Р»РёСЏ) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENA)
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_AUS
@@ -134,7 +134,7 @@ BEGIN
     0
 END
 
-#endif    // Английский (Австралия) resources
+#endif    // РђРЅРіР»РёР№СЃРєРёР№ (РђРІСЃС‚СЂР°Р»РёСЏ) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
