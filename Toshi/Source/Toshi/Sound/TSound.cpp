@@ -1,7 +1,7 @@
 #include "ToshiPCH.h"
 #include "TSound.h"
 #include "Platform/Windows/TSound_Win.h"
-#include <fmod/fmod_errors.h>
+#include <fmod/core/fmod_errors.h>
 
 namespace Toshi
 {

@@ -10,6 +10,8 @@ project "Toshi"
 	links
 	{
 		"fmod_vc.lib",
+        "fmodstudio_vc.lib",
+        "fsbank_vc.lib",
 		"d3d11.lib",
 		"d3dcompiler.lib",
 		"dxguid.lib",

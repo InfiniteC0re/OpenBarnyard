@@ -1,5 +1,5 @@
 #pragma once
-#include <fmod/fmod.hpp>
+#include <fmod/core/fmod.hpp>
 
 namespace Toshi
 {
@@ -60,6 +60,11 @@ namespace Toshi
 			TASSERT(TNULL != m_pSystem);
 			return m_pSystem;
 		}
+
+		TBOOL IsInitialised() const
+		{
+			return m_bInitialised;
+		}
 	
 	protected:	
 		TBOOL ErrorCheck(FMOD_RESULT error);
@@ -71,7 +76,7 @@ namespace Toshi
 	public:
 		                                     // 0x0 is m_pEventSystem which is deprecated in newer FMOD
 		FMOD::System* m_pSystem;             // 0x4
-		TBOOL m_bInitialised;                 // 0x8
+		TBOOL m_bInitialised;                // 0x8
 		SoundInitValues m_SoundInitValues;   // 0xC
 	};
 }

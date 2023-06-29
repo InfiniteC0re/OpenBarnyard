@@ -42,13 +42,13 @@ TBOOL Toshi::TCStringPool::ReadFile(const char* a_szFileName)
 
 	if (stringCount != 0 && stringsSize != 0)
 	{
-		void* strings = TMalloc(stringsSize);
+		auto strings = new char*[stringsSize];
 		int read = file->Read(strings, stringsSize);
 		fileManager->DestroyFile(file);
 
 		if (read != stringsSize)
 		{
-			TFree(strings);
+			delete strings;
 			return TFALSE;
 		}
 

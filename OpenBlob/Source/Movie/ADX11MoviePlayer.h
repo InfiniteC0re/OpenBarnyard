@@ -2,7 +2,7 @@
 #include "AMoviePlayer.h"
 #include <Platform/Windows/DX11/Includes.h>
 #include <theoraplay/theoraplay.h>
-#include <fmod/fmod.hpp>
+#include <fmod/core/fmod.hpp>
 
 class ADX11MoviePlayer : public AMoviePlayer
 {
