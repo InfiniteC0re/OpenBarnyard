@@ -1,4 +1,4 @@
-// Microsoft Visual C++ generated resource script.
+﻿// Microsoft Visual C++ generated resource script.
 //
 #include "resource.h"
 
@@ -11,6 +11,27 @@
 
 /////////////////////////////////////////////////////////////////////////////
 #undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// Русский (Россия) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_RUS)
+LANGUAGE LANG_RUSSIAN, SUBLANG_DEFAULT
+#pragma code_page(1251)
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// AFX_DIALOG_LAYOUT
+//
+
+IDD_ASSERT AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+#endif    // Русский (Россия) resources
+/////////////////////////////////////////////////////////////////////////////
+
 
 /////////////////////////////////////////////////////////////////////////////
 // German (Germany) resources
@@ -55,6 +76,65 @@ END
 IDI_ICON1               ICON                    "Icons\\deBlob.ico"
 
 #endif    // German (Germany) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// Английский (Австралия) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENA)
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_AUS
+#pragma code_page(1252)
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ASSERT DIALOGEX 0, 0, 305, 137
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION
+CAPTION "Toshi : Assertion Failed!"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "&Debug",8201,7,116,50,14
+    PUSHBUTTON      "&Ignore",8202,63,116,50,14
+    PUSHBUTTON      "&Quit",8200,248,116,50,14
+    LTEXT           "File:",-1,29,25,14,8
+    LTEXT           "Line:",-1,27,35,16,8
+    LTEXT           "Assertion Failed!",-1,7,7,52,8
+    LTEXT           "Filename Goes Here",8204,47,25,251,10
+    LTEXT           "Line Number Goes Here",8205,47,35,77,8
+    LTEXT           "Expression:",-1,7,45,37,8
+    LTEXT           "Expression Goes Here",8206,47,45,251,60
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO
+BEGIN
+    IDD_ASSERT, DIALOG
+    BEGIN
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// AFX_DIALOG_LAYOUT
+//
+
+IDD_ASSERT AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+#endif    // Английский (Австралия) resources
 /////////////////////////////////////////////////////////////////////////////
 
 

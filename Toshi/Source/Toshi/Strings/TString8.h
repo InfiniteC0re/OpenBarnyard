@@ -26,7 +26,7 @@ namespace Toshi
 		// Returns TTRUE if allocated memory
 		TBOOL AllocBuffer(uint32_t size, TBOOL freeMemory = TTRUE);
 
-		TString8 Format(const char* a_pcFormat, ...);
+		static TString8 Format(const char* a_pcFormat, ...);
 		TString8& VFormat(const char* a_pcFormat, char* a_pcArgs);
 
 		void UndoForceSetData() { Reset(); }

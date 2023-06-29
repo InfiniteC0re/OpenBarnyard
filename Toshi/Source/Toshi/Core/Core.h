@@ -39,42 +39,50 @@ constexpr uint32_t TMAKEFOUR(const char str[4])
 
 #define CALL_OVERLOAD(name, ...) GLUE(OVERLOAD_MACRO(name, COUNT_ARGS_MAX5(__VA_ARGS__)), (__VA_ARGS__))
 
-#if defined(TOSHI_DEBUG)
-	#if defined(TOSHI_PLATFORM_WINDOWS)
-		#define TBREAK() __debugbreak()
-		#define TOSHI_ENABLE_ASSERTS
-	#endif
-#endif
+#ifdef TOSHI_DEBUG
+#ifdef TOSHI_PLATFORM_WINDOWS
+#define TBREAK() __debugbreak()
+#define TOSHI_ENABLE_ASSERTS
+#endif // TOSHI_PLATFORM_WINDOWS
+#endif // TOSHI_DEBUG
 
 #ifndef TBREAK
-	#define TBREAK() 
-#endif
+#define TBREAK() 
+#endif // TBREAK
 
 #define TREINTERPRETCAST(TYPE, VALUE) (reinterpret_cast<TYPE>(VALUE))
 #define TSTATICCAST(TYPE, VALUE) (static_cast<TYPE>(VALUE))
 #define TARRAYSIZE(ARRAY) (sizeof(ARRAY) / sizeof(*ARRAY))
 
-#if defined(TOSHI_ENABLE_ASSERTS)
-	#define TFIREFLAG static TBOOL FIREFLAG = TFALSE; if (!FIREFLAG)
-	#define TWIP() { TFIREFLAG { TOSHI_ERROR("Work in progress: {0}, at line {1}", __FUNCTION__, __LINE__); FIREFLAG = TTRUE; } }
-	#define TWIP_D(DESC) { TFIREFLAG { TOSHI_ERROR("Work in progress: {0} ({1}, at line {2})", DESC, __FUNCTION__, __LINE__); FIREFLAG = TTRUE; } }
-	#define TTODO(DESC) { TFIREFLAG { TOSHI_ERROR("TODO: {0} ({1}, at line {2})", DESC, __FUNCTION__, __LINE__); FIREFLAG = TTRUE; } }
-	#define TFIXME(DESC) { TFIREFLAG { TOSHI_WARN("FIXME: {0} ({1}, at line {2})", DESC, __FUNCTION__, __LINE__); FIREFLAG = TTRUE; } }
-	#define TIMPLEMENT() { TFIREFLAG { TOSHI_ERROR("{0} is not implemented", __FUNCTION__); FIREFLAG = TTRUE; } }
-	#define TIMPLEMENT_D(DESC) { TFIREFLAG { TOSHI_ERROR("{0} is not implemented: {1}", __FUNCTION__, DESC); FIREFLAG = TTRUE; } }
-	#define TASSERT_IMPL(X, ...) { TFIREFLAG if (!(X)) { TOSHI_CORE_ERROR(__VA_ARGS__); TBREAK(); FIREFLAG = TTRUE; } }
-	#define TASSERT1(X) TASSERT_IMPL(X, "TASSERT: {0} ({1}, at line {2})", #X, __FILE__, __LINE__)
-	#define TASSERT2(X, TEXT) TASSERT_IMPL(X, TEXT)
-	#define TASSERT3(X, TEXT, P1) TASSERT_IMPL(X, TEXT, P1)
-	#define TASSERT(...) CALL_OVERLOAD(TASSERT, __VA_ARGS__)
-	#define TVALIDPTR(PTR) TASSERT(PTR)
-#else
-	#define TWIP()
-	#define TWIP_D(DESC)
-	#define TTODO(DESC)
-	#define TFIXME(DESC)
-	#define TIMPLEMENT()
-	#define TIMPLEMENT_D(DESC)
-	#define TASSERT(x, ...)
-	#define TVALIDPTR(PTR)
-#endif
+#ifdef TOSHI_ENABLE_ASSERTS
+
+typedef enum {
+	Ignore,
+	Break
+} AssertionAction;
+
+AssertionAction AssertionCallback(const char* file, int line, const char* expression);
+
+#define TFIREFLAG static TBOOL FIREFLAG = TFALSE; if (!FIREFLAG)
+#define TWIP() { TFIREFLAG { TOSHI_ERROR("Work in progress: {0}, at line {1}", __FUNCTION__, __LINE__); FIREFLAG = TTRUE; } }
+#define TWIP_D(DESC) { TFIREFLAG { TOSHI_ERROR("Work in progress: {0} ({1}, at line {2})", DESC, __FUNCTION__, __LINE__); FIREFLAG = TTRUE; } }
+#define TTODO(DESC) { TFIREFLAG { TOSHI_ERROR("TODO: {0} ({1}, at line {2})", DESC, __FUNCTION__, __LINE__); FIREFLAG = TTRUE; } }
+#define TFIXME(DESC) { TFIREFLAG { TOSHI_WARN("FIXME: {0} ({1}, at line {2})", DESC, __FUNCTION__, __LINE__); FIREFLAG = TTRUE; } }
+#define TIMPLEMENT() { TFIREFLAG { TOSHI_ERROR("{0} is not implemented", __FUNCTION__); FIREFLAG = TTRUE; } }
+#define TIMPLEMENT_D(DESC) { TFIREFLAG { TOSHI_ERROR("{0} is not implemented: {1}", __FUNCTION__, DESC); FIREFLAG = TTRUE; } }
+#define TASSERT_IMPL(X, ...) { TFIREFLAG if (!(X)) { TOSHI_CORE_ERROR(__VA_ARGS__); if (::AssertionCallback(__FILE__, __LINE__, #X) == AssertionAction::Break) TBREAK(); FIREFLAG = TTRUE; } }
+#define TASSERT1(X) TASSERT_IMPL(X, "TASSERT: {0} ({1}, at line {2})", #X, __FILE__, __LINE__)
+#define TASSERT2(X, TEXT) TASSERT_IMPL(X, TEXT)
+#define TASSERT3(X, TEXT, P1) TASSERT_IMPL(X, TEXT, P1)
+#define TASSERT(...) CALL_OVERLOAD(TASSERT, __VA_ARGS__)
+#define TVALIDPTR(PTR) TASSERT(PTR)
+#else // TOSHI_ENABLE_ASSERTS
+#define TWIP()
+#define TWIP_D(DESC)
+#define TTODO(DESC)
+#define TFIXME(DESC)
+#define TIMPLEMENT()
+#define TIMPLEMENT_D(DESC)
+#define TASSERT(x, ...)
+#define TVALIDPTR(PTR)
+#endif // TOSHI_ENABLE_ASSERTS
