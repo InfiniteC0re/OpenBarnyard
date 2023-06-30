@@ -123,11 +123,13 @@ TBOOL ADX11MoviePlayer::PlayMovie(const char* fileName, uint32_t soundChannel, P
                 soundInfo.defaultfrequency = audio->freq;
                 soundInfo.length = -1;
                 soundInfo.format = FMOD_SOUND_FORMAT_PCMFLOAT;
-                soundInfo.decodebuffersize = soundInfo.numchannels * soundInfo.defaultfrequency / 16;
+                soundInfo.decodebuffersize = (soundInfo.numchannels * soundInfo.defaultfrequency) / 16;
                 soundInfo.pcmreadcallback = pcmreadcallback;
                 soundInfo.pcmsetposcallback = pcmsetposcallback;
                 soundInfo.userdata = this;
                 soundInfo.cbsize = sizeof(soundInfo);
+
+                Toshi::TUtil::Log("Playing movie %s, %d channels, %d Hz\n", fileName, audio->channels, audio->freq);
 
                 FMOD::Sound* sound;
                 FMOD_RESULT eResult = system->createSound(NULL, FMOD_LOOP_NORMAL | FMOD_2D | FMOD_CREATESTREAM | FMOD_OPENUSER, &soundInfo, &sound);
@@ -181,10 +183,10 @@ void ADX11MoviePlayer::StopMovieImpl()
         m_pChannel->stop();
 
         TBOOL isPlaying = TTRUE;
-        while (isPlaying)
+        do
         {
             m_pChannel->isPlaying(&isPlaying);
-        };
+        } while (isPlaying);
     }
 
     THEORAPLAY_stopDecode(m_TheoraDecoder);

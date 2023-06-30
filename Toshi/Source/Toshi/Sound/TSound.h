@@ -1,5 +1,6 @@
 #pragma once
 #include <fmod/core/fmod.hpp>
+#include <fmod/studio/fmod_studio.hpp>
 
 namespace Toshi
 {

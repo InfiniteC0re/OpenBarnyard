@@ -61,7 +61,7 @@ namespace Toshi
             }
             poolmem = malloc(poollen);
         }
-
+        
         FMOD_RESULT eResult = FMOD::Memory_Initialize(poolmem, poollen, NULL, NULL, NULL);
 
         if (eResult != FMOD_OK)

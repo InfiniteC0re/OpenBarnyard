@@ -25,7 +25,7 @@ TBOOL Toshi::TSound_Win::Initialise(int maxchannels, int unk)
     {
         int numOutputDrivers;
 
-        m_pSystem->setSoftwareFormat(48000, FMOD_SPEAKERMODE_7POINT1, 1);
+        m_pSystem->setSoftwareFormat(0, FMOD_SPEAKERMODE_7POINT1, 0);
 
         FMOD_RESULT eResult = m_pSystem->getNumDrivers(&numOutputDrivers);
 
