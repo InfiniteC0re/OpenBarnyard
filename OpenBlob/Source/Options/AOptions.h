@@ -5,8 +5,8 @@ public:
 	AOptions()
 	{
 		TTODO("Actually read it from g_oTheApp, aka safefile");
-		m_Options->unk = 2;
-		m_Options->unk2 = 8;
+		m_Options->m_iUnk = 2;
+		m_Options->m_iPitch = 8;
 		m_Options->m_iVolume = 7;
 	}
 
@@ -16,12 +16,19 @@ public:
 		OPTIONS_MAXSIZE = 28
 	};
 
+	// This is a part of the savefile!
+	
 	struct Options
 	{
-		int unk;
-		int unk2;
+		int m_iUnk;
+		int m_iPitch;
 		int m_iVolume;
+		float m_fUnk;
+		int m_iUnk2;
+		int m_iUnk3;
+		int m_iUnk4;
 	};
+	static_assert(sizeof(Options) == OPTIONS_MAXSIZE);
 
 	Options* m_Options; // 0x4
 
