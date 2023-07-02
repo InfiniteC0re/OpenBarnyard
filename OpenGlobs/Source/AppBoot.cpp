@@ -13,14 +13,6 @@ app.Execute();
 // Including the entrypoint
 #include <Toshi.h>
 
-#include <Toshi2/T2GUI/T2GUI.h>
-#include <Toshi/Sound/TSound.h>
-#include <Toshi/Render/TRender.h>
-#include <Platform/Windows/TSound_Win.h>
-#include <Memory/AMemory.h>
-#include "Toshi2/T2String8.h"
-#include "Toshi2/T2String16.h"
-
 #include TOSHI_MULTIRENDER(TRender)
 
 AApplication AApplication::g_oTheApp;
@@ -35,7 +27,8 @@ bool AApplication::OnCreate(int argc, char** argv)
 	Toshi::T2String8::sm_pDefaultAllocatorCB = AppStringAllocator();
 	Toshi::T2String16::sm_pDefaultAllocatorCB = AppStringAllocator();
 
-
+	m_Renderer = ARenderer::GetSingleton();
+	TBOOL interfaceCreated = m_Renderer->CreateInterface();
 
 	TApplication::OnCreate(argc, argv);
 	return true;

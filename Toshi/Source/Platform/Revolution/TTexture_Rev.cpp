@@ -71,7 +71,13 @@ namespace Toshi
 
 		if (m_mipMaps & 0x20000000)
 		{
-
+			m_pImageData = new byte[m_iImageSize];
+			if (m_width != (m_width & -m_width) || m_height != (m_height & -m_height))
+			{
+				m_wrapS = 0;
+				m_wrapT = 0;
+				m_mipMaps = 0;
+			}
 		}
 	}
 

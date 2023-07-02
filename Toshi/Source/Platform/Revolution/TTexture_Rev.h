@@ -54,6 +54,7 @@ namespace Toshi
 		GXTlutFmt m_tlutFmt;    //0x3C
 		uint32_t m_unk2;        //0x40
 		uint8_t* m_pImageData;  //0x44
+		uint32_t m_iImageSize;  //0x48
 		uint32_t m_wrapS;       //0x58
 		uint32_t m_wrapT;       //0x5C
 		uint32_t m_unk3;        //0x60
@@ -64,7 +65,7 @@ namespace Toshi
 		uint32_t m_height;      //0x7A
 		uint32_t m_mipMaps;     //0x80
 
-		static t_CreateDestroyCallbk ResourceCallback;
+		//static t_CreateDestroyCallbk ResourceCallback;
 
 		int GetBitsPerTexel(GXTexFmt a_texFmt);
 		void CreateResource();
