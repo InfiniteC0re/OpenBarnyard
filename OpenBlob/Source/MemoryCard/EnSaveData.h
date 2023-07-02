@@ -7,12 +7,13 @@ class EnSaveData
 {
 public:
 
-	const int SAVEGAME_SLOT_COUNT = 3;
+	static constexpr int SAVEGAME_SLOT_COUNT = 3;
 
 	// Size should be 0x318 or 792 in decimal
 	struct SaveGameSlot
 	{
 		TBOOL m_bUsedSlot; // should be 0x0 not sure
+		uint8_t padding[791];
 	};
 
 	struct SaveData
@@ -24,12 +25,13 @@ public:
 			int m_crc; // 0x8
 		} header;
 		
-		SaveGameSlot* m_SaveGameSlots; // 0xC
+		SaveGameSlot m_SaveGameSlots[SAVEGAME_SLOT_COUNT]; // 0xC
 	};
 
-	unsigned char* m_buffer;
-	int m_size;
-	SaveData* m_savedata; // 0xC
+	int m_size2;               // 0x0
+	int m_size;                // 0x4
+	unsigned char* m_buffer;   // 0x8
+	SaveData* m_savedata;      // 0xC
 
 	TBOOL Validate();
 };

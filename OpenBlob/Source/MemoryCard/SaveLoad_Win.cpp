@@ -12,13 +12,10 @@ void SaveLoadSKU::OnUpdate()
 		break;
 	case SaveLoadSKU::OPERATION_NOPROMPTSAVE:
 	{
-		TBOOL bRes = m_pSaveData->Validate();
-		if (bRes)
-		{
-			TIMPLEMENT_D("m_pSaveData->FUN_005e3bf0()");
-			m_error = -1;
-			m_Operation = OPERATION_UNK;
-		}
+		TASSERT(m_pSaveData->Validate());
+		TIMPLEMENT_D("m_pSaveData->FUN_005e3bf0()");
+		m_error = -1;
+		m_Operation = OPERATION_UNK;
 		break;
 	}
 	case SaveLoadSKU::OPERATION_AUTOSAVE:

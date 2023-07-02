@@ -3,7 +3,7 @@
 #include "EnSaveData.h"
 #include "SaveLoad.h"
 
-class SaveLoadSKU : SaveLoad
+class SaveLoadSKU : public SaveLoad
 {
 public:
 	// Not in the correct order but names should be correct

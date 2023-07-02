@@ -15,7 +15,7 @@ TBOOL EnSaveData::Validate()
 
         float fVal1 = 0.5f;
         float fVal2 = 1.0f;
-
+        //const int size = sizeof(SaveData);
     }
     return TFALSE;
 }
