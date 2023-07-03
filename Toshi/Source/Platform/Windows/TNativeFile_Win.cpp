@@ -472,6 +472,12 @@ namespace Toshi
             dwDesiredAccess |= GENERIC_WRITE;
         }
 
+        if (dwDesiredAccess == 0)
+        {
+            TOSHI_WARN("WARNING: File created with no access mode, assuming WRITEONLY\n");
+            dwDesiredAccess = GENERIC_WRITE;
+        }
+
         m_Handle = CreateFileA(a_FileName.GetString(), dwDesiredAccess, dwShareMode, NULL, dwCreationDisposition, NULL, NULL);
 
         if (m_Handle != INVALID_HANDLE_VALUE)
