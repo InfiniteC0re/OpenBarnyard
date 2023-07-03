@@ -4,10 +4,11 @@
 #include "AXYZViewportManager.h"
 #include "ATestModel.h"
 #include "Movie/AMoviePlayer.h"
-#include "A2GUI/A2GUIRenderer_DX11.h"
 #include "GameInterface/AFrontEndMovieState.h"
 #include "Cameras/ACameraManager.h"
 #include "ImGui/AImGui.h"
+
+#include TOSHI_MULTIRENDER(A2GUI/A2GUIRenderer)
 
 #include <Platform/Windows/DX11/TRender_DX11.h>
 #include <Platform/Windows/DX11/TRenderContext_DX11.h>

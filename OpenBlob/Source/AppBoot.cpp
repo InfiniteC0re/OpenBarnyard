@@ -17,7 +17,6 @@
 #include "Input/AInputManager2.h"
 #include "Console/AConsoleVar.h"
 #include "Cameras/ACameraManager.h"
-#include "A2GUI/A2GUIRenderer_DX11.h"
 
 #include <Toshi/Xui/TXUI.h>
 #include <Toshi2/T2GUI/T2GUI.h>
@@ -25,6 +24,8 @@
 #include <Toshi/Render/TRender.h>
 #include <Platform/Windows/TSound_Win.h>
 #include <Toshi/Input/TInputInterface.h>
+
+#include TOSHI_MULTIRENDER(A2GUI/A2GUIRenderer)
 #include TOSHI_MULTIRENDER(TRender)
 
 AApplication AApplication::g_oTheApp;
