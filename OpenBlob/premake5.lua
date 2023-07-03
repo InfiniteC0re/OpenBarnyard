@@ -36,7 +36,7 @@ project "OpenBlob"
 		"%{IncludeDir.libogg}",
 		"%{IncludeDir.libvorbis}",
 		"%{IncludeDir.theoraplay}",
-        "%{IncludeDir.stb}"
+		"%{IncludeDir.stb}"
 	}
 	
 	defines

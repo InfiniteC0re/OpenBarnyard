@@ -12,7 +12,7 @@ project "Shared"
 		"%{IncludeDir.libogg}",
 		"%{IncludeDir.libvorbis}",
 		"%{IncludeDir.theoraplay}",
-        "%{IncludeDir.stb}"
+		"%{IncludeDir.stb}"
 	}
 	
 	filter "system:windows"

@@ -10,8 +10,8 @@ project "Toshi"
 	links
 	{
 		"fmod_vc.lib",
-        "fmodstudio_vc.lib",
-        "fsbank_vc.lib",
+		"fmodstudio_vc.lib",
+		"fsbank_vc.lib",
 		"d3d11.lib",
 		"d3dcompiler.lib",
 		"dxguid.lib",
@@ -23,10 +23,10 @@ project "Toshi"
 	includedirs
 	{
 		"Source",
-        "Icons",
+		"Icons",
 		"%{IncludeDir.spdlog}",
 		"%{IncludeDir.fmod}",
-        "%{IncludeDir.stb}"
+		"%{IncludeDir.stb}"
 	}
 	
 	libdirs
@@ -57,10 +57,10 @@ project "Toshi"
 			"Source/Toshi**/**.h",
 			"Source/Toshi**/**.cpp",
 			"Source/Toshi**/**.c",
-            "Icons/*.ico",
-            "*.h",
-            "*.aps",
-            "*.rc"
+			"Icons/*.ico",
+			"*.h",
+			"*.aps",
+			"*.rc"
 		}
 
 		defines
