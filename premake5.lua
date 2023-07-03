@@ -19,6 +19,7 @@ workspace "Toshi"
 
 group "Engine"
 	include "Toshi"
+	include "Shared"
 	include "OpenBlob"
     include "OpenJPOG"
     include "OpenGlobs"

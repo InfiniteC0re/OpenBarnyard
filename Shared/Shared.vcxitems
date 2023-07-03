@@ -1,0 +1,84 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <ItemsProjectGuid>{7C480CD1-68EA-36A7-51A5-4AFB3DE6BDF7}</ItemsProjectGuid>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(MSBuildThisFileDirectory)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ProjectCapability Include="SourceItemsFromImports" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\A2GUI\A2GUIBackground.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\AAssetStreaming.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\AAssetStreamingJobs.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\ARandom.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\ARootTask.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\AStack.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\Console\AConsoleVar.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameInterface\AFrontEndMovieState.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameInterface\AGameState.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\GameInterface\AGameStateController.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\ImGui\AImGui.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\ImGui\imconfig.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\ImGui\imgui.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\ImGui\imgui_impl_dx11.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\ImGui\imgui_impl_win32.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\ImGui\imgui_internal.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\ImGui\imstb_rectpack.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\ImGui\imstb_textedit.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\ImGui\imstb_truetype.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\Input\AInputHelper.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\Input\AInputHelperSimple.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\Input\AInputManager2.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\Input\AInputMap.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\Locale\ALocaleLookup.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\Locale\ALocaleManager.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\Movie\AMoviePlayer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\Movie\AMovieState.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\Platform\Windows\DX11\A2GUI\A2GUIRenderer_DX11.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\Platform\Windows\DX11\Movie\ADX11MoviePlayer_DX11.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\Render\ARenderer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\Render\ATestModel.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\Render\AXYZViewportManager.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\Render\ModelLoading\AModelLoader.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Source\Shaders\ASkinMesh.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\A2GUI\A2GUIBackground.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\AAssetStreaming.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\AAssetStreamingJobs.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\ARootTask.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\Console\AConsoleVar.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameInterface\AFrontEndMovieState.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameInterface\AGameState.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\GameInterface\AGameStateController.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\ImGui\AImGui.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\ImGui\imgui.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\ImGui\imgui_draw.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\ImGui\imgui_impl_dx11.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\ImGui\imgui_impl_win32.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\ImGui\imgui_tables.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\ImGui\imgui_widgets.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\Input\AInputHelper.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\Input\AInputHelperSimple.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\Input\AInputManager2.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\Input\AInputMap.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\Locale\ALocaleLookup.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\Locale\ALocaleManager.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\Movie\AMoviePlayer.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\Movie\AMovieState.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\Platform\Windows\DX11\A2GUI\A2GUIRenderer_DX11.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\Platform\Windows\DX11\Movie\ADX11MoviePlayer_DX11.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\Render\ARenderer.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\Render\ATestModel.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\Render\AXYZViewportManager.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\Render\ModelLoading\AModelLoader.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\Shaders\ASkinMesh.cpp" />
+  </ItemGroup>
+</Project>

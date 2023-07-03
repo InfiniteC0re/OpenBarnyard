@@ -1,5 +1,5 @@
 #pragma once
-#include "AGameState.h"
+#include "GameInterface/AGameState.h"
 #include <Toshi2/T2DynamicVector.h>
 
 class ATestState :
