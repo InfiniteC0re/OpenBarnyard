@@ -26,59 +26,32 @@ using namespace Toshi;
 
 int TMain(int argc, char** argv)
 {
-	TLib::TRBF::TRBF assetPack;
-	assetPack.ReadFromFile("C:\\dev\\OpenToshi\\bin\\Debug_Windows_x86\\OpenBlob\\Data\\LEVELS\\PRODUCTION\\Singleplayer\\Abyss\\RegionAssets.trb");
+	TLib::TRBF::TRBF fsms;
+	TLib::TRBF::TRBF fsmsD;
+	fsms.ReadFromFile("C:\\Stuff\\Barnyard\\Game\\Data\\Units\\allfsms.trb");
+	fsmsD.ReadFromFile("C:\\Stuff\\Barnyard\\Game\\Data\\Units\\allfsmsD.trb");
 
-	auto pSect = assetPack.GetSECT();
-	auto pSymb = assetPack.GetSYMB();
-
-	/*struct T2Material
+	struct FSM
 	{
-		struct Texture
+		struct Main
 		{
-			TTexture* pTexture;
-			const char* pName;
+			unsigned m_Count1;
+			unsigned m_uiNumKeywords;
+			uint8_t* m_InstructionsData;
+			const char** m_Strings;
+			unsigned m_uiInstructionsDataSize;
+			const char** m_Keywords;
 		};
-
-		struct Pass
-		{
-			uint32_t uiUnk1;
-			uint32_t uiUnk2;
-			uint32_t uiUnk3;
-			Texture* pTexture;
-			uint32_t uiUnk4;
-			uint32_t uiUnk5;
-			uint32_t uiUnk6;
-			uint32_t uiUnk7;
-			uint32_t uiUnk8;
-			uint32_t uiUnk9;
-			uint32_t uiUnk10;
-		};
-
-		uint32_t uiResource;
-		uint32_t uiUnk1;
-		uint32_t uiFlags;
-		const char* pMaterialName;
-		int iNumTextures;
-		Texture* pTextures;
-		uint32_t uiUnk2;
-		uint32_t uiUnk3;
-		Pass* aPasses;
-		uint32_t uiNumPasses;
 	};
+	
+	auto lineNums = fsmsD.GetSYMB()->Find<uint32_t>(fsmsD.GetSECT(), "LineNums").get();
+	
+	auto pSect = fsms.GetSECT();
+	auto pSymb = fsms.GetSYMB();
 
-	for (size_t i = 0; i < pSymb->GetCount(); i++)
-	{
-		if (pSymb->Is(i, "tmat"))
-		{
-			auto pTMAT = pSymb->GetByIndex<T2Material>(pSect, i).get();
+	auto main = pSymb->Find<FSM::Main>(pSect, "Main").get();
 
-			for (size_t k = 0; k < pTMAT->uiNumPasses; k++)
-			{
-				TOSHI_INFO("{0} - {1}", k, pTMAT->aPasses[k].pTexture->pName);
-			}
-		}
-	}*/
+	auto s1 = main->m_Strings[0];
 
 	return 0;
 

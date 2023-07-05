@@ -78,7 +78,7 @@ void ATestModel::CreateCube()
 
     auto pTexture = pTexManager->FindTexture("prop_fountain_02.tga");
     pTexture->SetAlphaEnabled(TFALSE);
-    m_pCubeMaterial->SetTexture(pTexture);
+    m_pCubeMaterial->SetTexture(0, pTexture);
 
     auto pMesh = pSysShader->CreateMesh("test_cube");
     pMesh->Create(0, sizeof(s_Vertices) / sizeof(SysMeshVertex), sizeof(s_Indices) / sizeof(uint16_t));
@@ -119,7 +119,7 @@ void ATestModel::CreatePlane()
     auto pTexture = pTexManager->FindTexture("slum_island_colour.tga");
     pTexture->SetAlphaEnabled(TFALSE);
     pTexture->SetSamplerId(3);
-    m_pPlaneMaterial->SetTexture(pTexture);
+    m_pPlaneMaterial->SetTexture(0, pTexture);
 
     auto pMesh = pSysShader->CreateMesh("test_cube");
     pMesh->Create(0, sizeof(s_Vertices) / sizeof(SysMeshVertex), sizeof(s_Indices) / sizeof(uint16_t));

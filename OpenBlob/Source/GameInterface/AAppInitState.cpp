@@ -4,13 +4,14 @@
 #include "Render/ARenderer.h"
 #include "Render/ModelLoading/AModelLoader.h"
 #include "Movie/AMoviePlayer.h"
-#include "Movie/ADX11MoviePlayer.h"
 #include "GameInterface/AFrontEndMovieState.h"
 #include "GameInterface/ATestState.h"
 #include "AAssetStreaming.h"
 #include "ALevelInformation.h"
 #include "Options/AOptions.h"
 #include "ARandom.h"
+
+#include TOSHI_MULTIRENDER(Movie/ADX11MoviePlayer)
 
 #include <Toshi2/T2GUI/T2GUI.h>
 #include <Toshi2/T2GUI/T2GUIRectangle.h>
