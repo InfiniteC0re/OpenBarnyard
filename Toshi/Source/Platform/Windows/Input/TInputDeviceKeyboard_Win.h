@@ -41,7 +41,7 @@ namespace Toshi {
 		static int TranslateDoodadToDX(int dxkey);
 	
 	public:
-		TBOOL BindToDIDevice(HWND a_hMainWindow, LPCDIDEVICEINSTANCE a_poDeviceInstance, IDirectInputDevice8* a_poDXInputDevice, TBOOL a_bExclusive);
+		const TBOOL BindToDIDevice(HWND a_hMainWindow, LPCDIDEVICEINSTANCE a_poDeviceInstance, IDirectInputDevice8* a_poDXInputDevice, TBOOL a_bExclusive);
 		static BOOL CALLBACK EnumObjectCallback(LPCDIDEVICEOBJECTINSTANCE a_poDeviceInstance, LPVOID a_pvRef);
 
 	private:

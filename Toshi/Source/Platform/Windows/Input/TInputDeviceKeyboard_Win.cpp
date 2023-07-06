@@ -654,7 +654,7 @@ namespace Toshi {
 		}
 	}
 
-	TBOOL TInputDXDeviceKeyboard::BindToDIDevice(HWND a_hMainWindow, LPCDIDEVICEINSTANCE a_poDeviceInstance, IDirectInputDevice8* a_poDXInputDevice, TBOOL a_bExclusive)
+	const TBOOL TInputDXDeviceKeyboard::BindToDIDevice(HWND a_hMainWindow, LPCDIDEVICEINSTANCE a_poDeviceInstance, IDirectInputDevice8* a_poDXInputDevice, TBOOL a_bExclusive)
 	{
 		TASSERT(a_poDeviceInstance != NULL);
 		TASSERT(a_poDXInputDevice != NULL);
