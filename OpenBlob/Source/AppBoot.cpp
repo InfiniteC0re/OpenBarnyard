@@ -19,6 +19,7 @@
 #include "Cameras/ACameraManager.h"
 
 #include <Toshi/Xui/TXUI.h>
+#include <Toshi/Core/TArray.h>
 #include <Toshi2/T2GUI/T2GUI.h>
 #include <Toshi/Sound/TSound.h>
 #include <Toshi/Render/TRender.h>
@@ -47,6 +48,16 @@ TBOOL AApplication::OnCreate(int argc, char** argv)
 	TOSHI_INFO("testcvar value: {0}", CVAR_GET_BOOL(testcvar));
 	//TASSERT(TFALSE, "Assertion test");
 
+	Toshi::TArray<int>::Storage genArray;
+	genArray.Push(5);
+	genArray.Push(9);
+
+	Toshi::TArray<int> arr(genArray);
+
+	for (int i = 0; i < genArray.GetNumElements(); i++)
+	{
+		TOSHI_INFO("{0}", genArray[i]);
+	}
 	
 	if (interfaceCreated)
 	{
