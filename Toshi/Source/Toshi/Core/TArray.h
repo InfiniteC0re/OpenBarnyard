@@ -12,7 +12,7 @@ namespace Toshi {
 			friend class TArray;
 
 		public:
-			Storage(int a_iGrowSize = 8, int a_iSize = 0)
+			Storage(int a_iGrowSize = 10, int a_iSize = 0)
 			{
 				m_iGrowSize = a_iGrowSize;
 				m_iNumAllocElements = a_iSize;

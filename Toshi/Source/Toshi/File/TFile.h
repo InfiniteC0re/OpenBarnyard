@@ -88,7 +88,7 @@ namespace Toshi
         virtual uint32_t Tell() = 0;                               //0xC
         virtual DWORD GetSize() = 0;                               //0x10
         virtual _FILETIME GetDate() { return {}; }                 //0x14
-        virtual char GetCChar() = 0;
+        virtual int GetCChar() = 0;
         virtual wchar_t GetWChar() = 0;
         virtual int PutCChar(char character) = 0;
         virtual int PutWChar(wchar_t character) = 0;
