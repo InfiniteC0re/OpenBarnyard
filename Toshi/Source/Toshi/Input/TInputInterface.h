@@ -1,5 +1,6 @@
 #pragma once
 #include "Toshi/Core/TNodeList.h"
+#include "Toshi/Core/TArray.h"
 
 namespace Toshi {
     
@@ -24,6 +25,7 @@ namespace Toshi {
 
         public:
             InputEvent() = default;
+
             InputEvent(TInputDevice* device, int doodad, EventType eventType)
             {
                 m_pSource = device;
@@ -32,6 +34,27 @@ namespace Toshi {
                 m_bIsMagnitudeFloat = TFALSE;
                 m_iAxisCount = 0;
             }
+
+			InputEvent(TInputDevice* device, int doodad, EventType eventType, int magnitude)
+			{
+				m_pSource = device;
+				m_iDoodad = doodad;
+				m_eEventType = eventType;
+				m_Magnitude.Ints[0] = magnitude;
+				m_bIsMagnitudeFloat = TFALSE;
+				m_iAxisCount = 1;
+			}
+
+			InputEvent(TInputDevice* device, int doodad, EventType eventType, int magnitude, int magnitude2)
+			{
+				m_pSource = device;
+				m_iDoodad = doodad;
+				m_eEventType = eventType;
+				m_Magnitude.Ints[0] = magnitude;
+				m_Magnitude.Ints[1] = magnitude2;
+				m_bIsMagnitudeFloat = TFALSE;
+				m_iAxisCount = 2;
+			}
 
             InputEvent(TInputDevice* device, int doodad, EventType eventType, float magnitude)
             {
@@ -51,27 +74,6 @@ namespace Toshi {
                 m_Magnitude.Floats[0] = magnitude;
                 m_Magnitude.Floats[1] = magnitude2;
                 m_bIsMagnitudeFloat = TTRUE;
-                m_iAxisCount = 2;
-            }
-
-            InputEvent(TInputDevice* device, int doodad, EventType eventType, int magnitude)
-            {
-                m_pSource = device;
-                m_iDoodad = doodad;
-                m_eEventType = eventType;
-                m_Magnitude.Ints[0] = magnitude;
-                m_bIsMagnitudeFloat = TFALSE;
-                m_iAxisCount = 1;
-            }
-
-            InputEvent(TInputDevice* device, int doodad, EventType eventType, int magnitude, int magnitude2)
-            {
-                m_pSource = device;
-                m_iDoodad = doodad;
-                m_eEventType = eventType;
-                m_Magnitude.Ints[0] = magnitude;
-                m_Magnitude.Ints[1] = magnitude2;
-                m_bIsMagnitudeFloat = TFALSE;
                 m_iAxisCount = 2;
             }
 
@@ -182,8 +184,8 @@ namespace Toshi {
         virtual void StopAllRepeats();
 
     private:
-        TBOOL m_bIsExclusiveMode;                                                    // 0x04 
-        TNodeList<TInputDevice> m_DeviceList;                                        // 0x08
+        TNodeList<TInputDevice> m_DeviceList;                                        // 0x04
+        TBOOL m_bIsExclusiveMode;                                                    // 0x14 
         TEmitter<TInputInterface, TInputInterface::InputEvent> m_Emitter1;           // 0x24
         TGenericEmitter m_Emitter2;                                                  // 0x28
     };
@@ -199,7 +201,7 @@ namespace Toshi {
         struct DoodadProperties
         {
             int m_iUnk;
-            int m_iUnk2;
+            TBOOL m_bFlag;
         };
 
         struct RepeatInfo
@@ -207,11 +209,18 @@ namespace Toshi {
             int m_iDoodad;
         };
 
+		static constexpr size_t MAX_DEVICE_COUNT = 14;
+		inline static TInputDevice* s_aDevices[MAX_DEVICE_COUNT];
+		inline static size_t s_uiDeviceCount;
+
     public:
         TInputDevice()
         {
-            m_pInterface = TNULL;
+			TIMPLEMENT();
+			m_pInputInterface = TNULL;
             m_bIsAcquired = TFALSE;
+			m_uiDeviceIndex = s_uiDeviceCount++;
+			s_aDevices[m_uiDeviceIndex] = this;
         }
 
         virtual TBOOL Flush() { return TTRUE; }
@@ -234,20 +243,24 @@ namespace Toshi {
 
         TInputInterface* GetInputInterface()
         {
-            return m_pInterface;
+            return m_pInputInterface;
         }
 
         void SetInputInterface(TInputInterface* a_pInterface)
         {
-            m_pInterface = a_pInterface;
+			m_pInputInterface = a_pInterface;
         }
 
     protected:
         int ProcessRepeats(TEmitter<TInputInterface, TInputInterface::InputEvent>& emitter, float flt);
 
     protected:
-        TInputInterface* m_pInterface;
-        TBOOL m_bIsAcquired;              // 0x39 de blob 0x35 JPOG
+		size_t m_uiDeviceIndex;             // 0x14
+		TArray<void*>::Storage m_Array1;    // 0x18 FIXME: replace void* with some structure which size is 0xC
+		TArray<void*>::Storage m_Array2;    // 0x28 FIXME: replace void* with some structure which size is 0xC
+		TBOOL m_bUnknown;                   // 0x38
+		TBOOL m_bIsAcquired;                // 0x39 de blob 0x35 JPOG
+        TInputInterface* m_pInputInterface; // 0x3C
     };
 
 }

@@ -86,7 +86,7 @@ namespace Toshi {
 
 	TBOOL TFileLexerUTF8::ComputePreprocessorAllow()
 	{
-		for (size_t i = 0; i < m_iSomeNum; i++)
+		for (int i = 0; i < m_iSomeNum; i++)
 		{
 			bool bFlag;
 

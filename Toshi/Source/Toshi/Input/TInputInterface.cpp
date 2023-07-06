@@ -30,8 +30,8 @@ namespace Toshi
     {
         if (device != TNULL)
         {
-            device->SetInputInterface(this);
             m_DeviceList.InsertTail(*device);
+            device->SetInputInterface(this);
         }
     }
 
@@ -39,8 +39,8 @@ namespace Toshi
     {
         if (device != TNULL)
         {
-            device->SetInputInterface(this);
             m_DeviceList.Remove(*device);
+            device->SetInputInterface(TNULL);
         }
     }
 

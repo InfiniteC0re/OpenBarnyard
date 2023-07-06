@@ -87,8 +87,8 @@ void AXYZViewportManager::GetUseableArea(float& x, float& y, float& w, float& h)
 
 	x = 0;
 	y = 0;
-	w = pDisplayParams->Width;
-	h = pDisplayParams->Height;
+	w = TSTATICCAST(float, pDisplayParams->Width);
+	h = TSTATICCAST(float, pDisplayParams->Height);
 }
 
 void AXYZViewportManager::SetMainFullScreen(TBOOL fullscreen)

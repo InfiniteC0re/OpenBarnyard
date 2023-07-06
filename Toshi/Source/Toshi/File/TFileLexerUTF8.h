@@ -15,7 +15,7 @@ namespace Toshi {
 			void assign(const Token& token);
 
 		public:
-			TFileLexer::TOKEN m_type = TOKEN_UNKNOWN;
+			TFileLexer::TOKEN m_type = TFileLexer::TOKEN_UNKNOWN;
 			int m_unknown = 0;
 			TString8 m_value;
 		};
