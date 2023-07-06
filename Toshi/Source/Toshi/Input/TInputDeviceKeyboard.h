@@ -158,6 +158,11 @@ namespace Toshi
 		virtual const char* GetButtonFromDoodad(int doodad) const override;
 		virtual int GetAxisInt(int doodad, int axis) const override { return 0; }
 		virtual float GetAxisFloat(int doodad, int axis) const override { return 0; }
+		virtual TBOOL IsShiftDown() const = 0;
+		virtual TBOOL IsControlDown() const = 0;
+		virtual TBOOL IsAltDown() const = 0;
+		virtual TBOOL WasDown(int doodad) const = 0;
+		virtual wchar_t* TranslateDoodadToCharacter(int doodad) const = 0;
 		// FIXME: add other virtual methods of this class...
 		virtual int ProcessVirtualButtons(TEmitter<TInputInterface, TInputInterface::InputEvent>& emitter, float flt);
 		

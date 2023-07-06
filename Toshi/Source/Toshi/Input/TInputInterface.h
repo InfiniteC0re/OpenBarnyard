@@ -214,9 +214,10 @@ namespace Toshi {
 		inline static size_t s_uiDeviceCount;
 
 	public:
-		TInputDevice()
+		TInputDevice() :
+			m_Repeats(0, 16),
+			m_Array2(0, 16)
 		{
-			TIMPLEMENT();
 			m_pInputInterface = TNULL;
 			m_bUnknown = TFALSE;
 			m_bIsAcquired = TFALSE;
@@ -265,8 +266,8 @@ namespace Toshi {
 
 	protected:
 		size_t m_uiDeviceIndex;             // 0x14
-		TArray<void*>::Storage m_Array1;    // 0x18 FIXME: replace void* with some structure which size is 0xC
-		TArray<void*>::Storage m_Array2;    // 0x28 FIXME: replace void* with some structure which size is 0xC
+		TArray<void*>::Storage m_Repeats;   // 0x18 FIXME: replace void* with some structure whose size is 0xC
+		TArray<void*>::Storage m_Array2;    // 0x28 FIXME: replace void* with some structure whose size is 0x4
 		TBOOL m_bUnknown;                   // 0x38
 		TBOOL m_bIsAcquired;                // 0x39 de blob 0x35 JPOG
 		TInputInterface* m_pInputInterface; // 0x3C
