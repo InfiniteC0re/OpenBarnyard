@@ -218,23 +218,32 @@ namespace Toshi {
 		{
 			TIMPLEMENT();
 			m_pInputInterface = TNULL;
+			m_bUnknown = TFALSE;
 			m_bIsAcquired = TFALSE;
 			m_uiDeviceIndex = s_uiDeviceCount++;
 			s_aDevices[m_uiDeviceIndex] = this;
 		}
 
+		virtual TBOOL Acquire() = 0;
+		virtual TBOOL Unacquire() = 0;
+		virtual void Release() = 0;
+		virtual void Update(float deltaTime) = 0;
 		virtual TBOOL Flush() { return TTRUE; }
+		virtual int ProcessEvents(TEmitter<TInputInterface, TInputInterface::InputEvent>& emitter, float deltaTime) = 0;
+		virtual int GetButtonCount() const = 0;
+		virtual int GetAxisCount() const = 0;
+		virtual TBOOL GetDoodadProperties(int doodad, DoodadProperties& doodadProps) const = 0;
 		virtual TBOOL StartRepeat(int param_1, float param_2, float param_3);
 		virtual TBOOL StopRepeat(int param_1);
 		virtual TBOOL StopAllRepeats();
-		virtual void ThrowRepeatEvent(TEmitter<TInputInterface, TInputInterface::InputEvent>& emitter, RepeatInfo* repeatInfo, float deltaTime);
 		virtual TBOOL IsForceFeedbackDevice() { return TFALSE; }
-		virtual int ProcessEvents(TEmitter<TInputInterface, TInputInterface::InputEvent>& emitter, float deltaTime) { return 0; };
-		virtual void Update(float deltaTime) { };
-		virtual TBOOL Acquire() { return TFALSE; };
-		virtual TBOOL Unacquire() { return TFALSE; };
-		virtual TBOOL IsDown(int doodad) const { return TFALSE; }
-		virtual TBOOL WasDown(int doodad) const { return TFALSE; }
+		virtual int Unknown1() const = 0;
+		virtual const char* GetButtonFromDoodad(int a_iDoodad) const = 0;
+		virtual TBOOL IsDown(int doodad) const = 0;
+		virtual int GetAxisInt(int doodad, int axis) const = 0;
+		virtual float GetAxisFloat(int doodad, int axis) const = 0;
+		virtual TBOOL Unknown2() const = 0;
+		virtual void ThrowRepeatEvent(TEmitter<TInputInterface, TInputInterface::InputEvent>& emitter, RepeatInfo* repeatInfo, float deltaTime);
 
 		TBOOL IsAcquired() const
 		{

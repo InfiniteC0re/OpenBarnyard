@@ -152,14 +152,15 @@ namespace Toshi
 	public:
 		TInputDeviceKeyboard();
 
-		virtual TBOOL GetDoodadProperties(int doodad, DoodadProperties& doodadProps) const;
+		virtual int GetAxisCount() const override { return 0; }
+		virtual TBOOL GetDoodadProperties(int doodad, DoodadProperties& doodadProps) const override;
+		virtual int Unknown1() const override { return 2; }
+		virtual const char* GetButtonFromDoodad(int doodad) const override;
+		virtual int GetAxisInt(int doodad, int axis) const override { return 0; }
+		virtual float GetAxisFloat(int doodad, int axis) const override { return 0; }
+		// FIXME: add other virtual methods of this class...
 		virtual int ProcessVirtualButtons(TEmitter<TInputInterface, TInputInterface::InputEvent>& emitter, float flt);
-		virtual const char* GetButtonFromDoodad(int doodad) const;
-
-		virtual int GetAxisCount() { return 0; }
-		virtual int GetAxisInt() const { return 0; }
-		virtual int GetAxisFloat(int, int) const { return 0; }
-
+		
 		void SetVirtStickDoodads(int a_iMapID, int x, int y, int z, int w);
 		void GetVirtStickDoodads(int a_iMapID, int& x, int& y, int& z, int& w);
 

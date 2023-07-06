@@ -7,6 +7,13 @@ namespace Toshi
 	class TInputDXDeviceMouse : public TInputDeviceMouse
 	{
 	public:
+		union Axis
+		{
+			int m_iX, m_iY;
+			float m_fX, m_fY;
+		};
+
+	public:
 		TInputDXDeviceMouse()
 		{
 			m_poDXInputDevice = NULL;
@@ -17,53 +24,30 @@ namespace Toshi
 			Deinitialise();
 		}
 
-		virtual void Release();
-		virtual void Update(float deltaTime);
+		virtual TBOOL Acquire() override;
+		virtual TBOOL Unacquire() override;
+		virtual void Release() override;
+		virtual void Update(float deltaTime) override;
+		virtual TBOOL Flush() override;
+		virtual int ProcessEvents(TEmitter<TInputInterface, TInputInterface::InputEvent>& emitter, float deltaTime) override;
+		virtual int GetButtonCount() const override;
+		virtual int GetAxisCount() const override;
+		virtual int Unknown1() const override;
+		virtual TBOOL IsDown(int doodad) const override;
+		virtual int GetAxisInt(int doodad, int axis) const override;
+		virtual float GetAxisFloat(int doodad, int axis) const override;
+		virtual TBOOL Unknown2() const override;
 		virtual TBOOL Initialise();
 		virtual TBOOL Deinitialise();
-		virtual TBOOL Acquire();
-		virtual TBOOL Unacquire();
-		virtual TBOOL Flush();
-		virtual int ProcessEvents(TEmitter<TInputInterface, TInputInterface::InputEvent>& emitter, float deltaTime);
 		virtual void RefreshDirect();
-		virtual TBOOL IsDown(int doodad) const
-		{
-			return doodad >= BUTTON_1 && doodad <= BUTTON_8 ? ((1 << doodad) & m_dwButtonCurrent) != 0 : TFALSE;
-		}
-		virtual TBOOL WasDown(int doodad) const
-		{
-			return doodad >= BUTTON_1 && doodad <= BUTTON_8 ? ((1 << doodad) & m_dwButtonPrevious) != 0 : TFALSE;
-		}
+		virtual TBOOL WasDown(int doodad) const;
 
 		TBOOL const BindToDIDevice(HWND a_mainWindow, LPCDIDEVICEINSTANCE a_poDeviceInstance, IDirectInputDevice8* a_poDXInputDevice, TBOOL exclusive);
 
-		DWORD GetAxisCount() const
-		{
-			return m_DIDevCaps.dwAxes;
-		}
+	public:
+		static constexpr size_t sm_ciMouseBufferSize = 0x20000000U;
 
-		DWORD GetButtonCount() const
-		{
-			return m_DIDevCaps.dwButtons;
-		}
-
-		enum Coord
-		{
-			X,
-			Y
-		};
-
-		int GetAxisInt(int doodad, Coord coord) const;
-		float GetAxisFloat(int doodad, Coord coord) const;
-
-		union Axis
-		{
-			int m_iX, m_iY;
-			float m_fX, m_fY;
-		};
-
-		static constexpr int sm_ciMouseBufferSize = 0x20000000;
-
+	private:
 		IDirectInputDevice8* m_poDXInputDevice;
 		DIDEVCAPS m_DIDevCaps;
 		POINT m_CursorPos;

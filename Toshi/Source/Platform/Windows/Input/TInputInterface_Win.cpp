@@ -24,8 +24,8 @@ namespace Toshi
             {
                 for (size_t i = 0; i < 4; i++)
                 {
-                    AddDevice(new TInputDeviceController_XInput());
-                    AddDevice(new TInputWiinDeviceController());
+                    //AddDevice(new TInputDeviceController_XInput());
+                    //AddDevice(new TInputWiinDeviceController());
                 }
 
                 UINT numJoyDevs = joyGetNumDevs();
@@ -202,8 +202,8 @@ namespace Toshi
             if (inputController == TNULL)
             {
                 // new DXController
-                inputController = new TInputDXDeviceController();
-                inputController->BindToDIDevice(inputInterface->GetMainWindow(), a_poDeviceInstance, inputDevice);
+				//inputController = new TInputDXDeviceController();
+				//inputController->BindToDIDevice(inputInterface->GetMainWindow(), a_poDeviceInstance, inputDevice);
             }
 
             break;

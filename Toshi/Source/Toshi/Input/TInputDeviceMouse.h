@@ -25,7 +25,7 @@ namespace Toshi
 
         }
 
-        virtual TBOOL GetDoodadProperties(int doodad, TInputDevice::DoodadProperties& props) const;
-        virtual const char* GetButtonFromDoodad(int doodad) const;
+        virtual TBOOL GetDoodadProperties(int doodad, TInputDevice::DoodadProperties& props) const override;
+        virtual const char* GetButtonFromDoodad(int doodad) const override;
     };
 }

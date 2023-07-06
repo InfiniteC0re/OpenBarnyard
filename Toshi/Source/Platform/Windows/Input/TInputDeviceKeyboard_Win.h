@@ -18,8 +18,16 @@ namespace Toshi {
 	public:
 		TInputDXDeviceKeyboard();
 
+		virtual TBOOL Acquire() override;
+		virtual TBOOL Unacquire() override;
+		virtual void Release() override;
+		virtual void Update(float deltaTime) override;
+		virtual TBOOL Flush() override;
+		virtual int ProcessEvents(TEmitter<TInputInterface, TInputInterface::InputEvent>& emitter, float deltaTime) override;
+		virtual int GetButtonCount() const override;
+		virtual TBOOL IsDown(int doodad) const override;
+		virtual TBOOL Unknown2() const override;
 		virtual TBOOL Initialise();
-		virtual void Release();
 
 	protected:
 		static int TranslateDXToDoodad(int doodad);

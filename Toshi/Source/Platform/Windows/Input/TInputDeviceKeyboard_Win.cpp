@@ -8,13 +8,60 @@ namespace Toshi {
 
 	}
 
-	TBOOL TInputDXDeviceKeyboard::Initialise()
+	void TInputDXDeviceKeyboard::Release()
 	{
+
+	}
+
+	TBOOL TInputDXDeviceKeyboard::Acquire()
+	{
+		TIMPLEMENT();
+		return TTRUE;
+	}
+
+	TBOOL TInputDXDeviceKeyboard::Unacquire()
+	{
+		TIMPLEMENT();
+		return TTRUE;
+	}
+
+	void TInputDXDeviceKeyboard::Update(float deltaTime)
+	{
+		TIMPLEMENT();
+	}
+
+	TBOOL TInputDXDeviceKeyboard::Flush()
+	{
+		TIMPLEMENT();
+		return TTRUE;
+	}
+
+	int TInputDXDeviceKeyboard::ProcessEvents(TEmitter<TInputInterface, TInputInterface::InputEvent>& emitter, float deltaTime)
+	{
+		TIMPLEMENT();
+		return 0;
+	}
+
+	int TInputDXDeviceKeyboard::GetButtonCount() const
+	{
+		TIMPLEMENT();
+		return 0;
+	}
+
+	TBOOL TInputDXDeviceKeyboard::IsDown(int doodad) const
+	{
+		TIMPLEMENT();
 		return TFALSE;
 	}
 
-	void TInputDXDeviceKeyboard::Release()
+	TBOOL TInputDXDeviceKeyboard::Unknown2() const
 	{
+		return TTRUE;
+	}
+
+	TBOOL TInputDXDeviceKeyboard::Initialise()
+	{
+		return TFALSE;
 	}
 
 	int TInputDXDeviceKeyboard::TranslateDXToDoodad(int doodad)

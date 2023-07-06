@@ -183,7 +183,7 @@ namespace Toshi {
 
 	TBOOL TInputDeviceKeyboard::GetDoodadProperties(int doodad, DoodadProperties& doodadProps) const
 	{
-		if (doodad >= 0x20000 && doodad < 0x20080)
+		if (doodad - 0x20000 < 0x80)
 		{
 			doodadProps.m_iUnk = 0;
 			doodadProps.m_bFlag = TFALSE;
