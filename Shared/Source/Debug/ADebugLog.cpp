@@ -27,9 +27,9 @@ ADebugLog::ADebugLog(const char* a_szBaseName, const char* a_szExtension, int a_
 ADebugLog::~ADebugLog()
 {
 	Flush();
-	TFree(m_szExtension);
-	TFree(m_szBaseName);
-	TFree(m_pBuffer);
+	delete m_szExtension;
+	delete m_szBaseName;
+	delete m_pBuffer;
 }
 
 void ADebugLog::CreateFile()

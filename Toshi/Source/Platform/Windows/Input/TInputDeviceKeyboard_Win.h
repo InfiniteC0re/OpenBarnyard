@@ -2,8 +2,7 @@
 #include "Toshi/Input/TInputDeviceKeyboard.h"
 #include "Toshi2/T2Array.h"
 
-#define DIRECTINPUT_VERSION 0x0800
-#include <dinput.h>
+#include "Includes.h"
 
 namespace Toshi {
 

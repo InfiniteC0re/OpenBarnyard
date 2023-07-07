@@ -27,7 +27,7 @@ namespace Toshi {
 		m_bIsUpdating = TFALSE;
 		HRESULT hRes = m_poDXInputDevice->Acquire();
 
-		if (SUCCEEDED(m_poDXInputDevice->Acquire()))
+		if (SUCCEEDED(hRes))
 		{
 			SetAcquired(TTRUE);
 

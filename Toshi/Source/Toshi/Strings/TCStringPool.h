@@ -2,6 +2,10 @@
 namespace Toshi
 {
 	// Only used in JPOG
+	// it's also used in Barnyard but it was renamed to TString8Pool
+	// as well as TCString was renamed to TString8 and they probably have
+	// made some changes to the code too
+
 	class TCStringPool
 	{
 	public:
