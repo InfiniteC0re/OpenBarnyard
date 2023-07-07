@@ -192,7 +192,7 @@ namespace Toshi
             fileManager->m_Mutex.Create();
         }
 
-        static void DestroyCommon() { delete TFileManager::GetSingleton(); }
+        static void DestroyCommon() { delete TFileManager::GetSingletonSafe(); }
 
     public:
         /*
@@ -221,7 +221,7 @@ namespace Toshi
     public:
         TNullFileSystem(const char* name) : TFileSystem(name)
         {
-            TFileManager::GetSingleton()->MountFileSystem(this);
+            TFileManager::GetSingletonSafe()->MountFileSystem(this);
         }
 
         // Inherited via TFileSystem

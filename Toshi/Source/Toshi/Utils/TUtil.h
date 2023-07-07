@@ -17,18 +17,18 @@ namespace Toshi
 
 		static TLogFile* GetLog()
 		{
-			return Toshi::TUtil::GetSingletonWeak()->m_pLogFile2;
+			return Toshi::TUtil::GetSingleton()->m_pLogFile2;
 		}
 
 		static void LogDown()
 		{
-			TUtil* util = Toshi::TUtil::GetSingleton();
+			TUtil* util = Toshi::TUtil::GetSingletonSafe();
 			util->m_pLogFile2->Down();
 		}
 
 		static void LogUp()
 		{
-			TUtil* util = Toshi::TUtil::GetSingleton();
+			TUtil* util = Toshi::TUtil::GetSingletonSafe();
 			util->m_pLogFile2->Up();
 		}
 
@@ -43,7 +43,7 @@ namespace Toshi
 		static void Create()
 		{
 			TUtil::CreateSingleton();
-			TUtil::GetSingleton()->LogInitialise();
+			TUtil::GetSingletonSafe()->LogInitialise();
 			TUtil::CRCInitialise();
 		}
 		

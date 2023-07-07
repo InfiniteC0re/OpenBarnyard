@@ -38,7 +38,7 @@ void AModelLoader::GetMaterial(TShader* pShader, const char* pName, TMaterial*& 
 		T2String8::CopySafe(matName, pName, sizeof(matName));
 		T2String8::ToLowerCase(matName);
 
-		TMaterialManager* pMatManager = TMaterialManager::GetSingletonWeak();
+		TMaterialManager* pMatManager = TMaterialManager::GetSingleton();
 		auto metaMat = pMatManager->FindMaterial(matName);
 		TASSERT(TNULL != metaMat);
 

@@ -117,7 +117,7 @@ namespace Toshi
                 ComputeOrthographicFrustum();
             }
 
-            TRender::GetSingletonWeak()->GetParamTable()->SetParameterM44(
+            TRender::GetSingleton()->GetParamTable()->SetParameterM44(
                 TRenderParamTable::M44PARAM_PROJ,
                 m_Projection
             );

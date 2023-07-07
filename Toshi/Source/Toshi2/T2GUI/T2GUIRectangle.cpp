@@ -11,7 +11,7 @@ namespace Toshi
 
 	void T2GUIRectangle::Render()
 	{
-		T2GUIRenderer* pRenderer = T2GUI::GetSingletonWeak()->GetRenderer();
+		T2GUIRenderer* pRenderer = T2GUI::GetSingleton()->GetRenderer();
 		pRenderer->SetMaterial(m_pMaterial);
 		pRenderer->SetColour(m_Color);
 

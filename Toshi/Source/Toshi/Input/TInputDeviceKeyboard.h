@@ -154,7 +154,7 @@ namespace Toshi
 
 		virtual int GetAxisCount() const override { return 0; }
 		virtual TBOOL GetDoodadProperties(int doodad, DoodadProperties& doodadProps) const override;
-		virtual int Unknown1() const override { return 2; }
+		virtual Platform GetPlatform() const override { return Platform::PC; }
 		virtual const char* GetButtonFromDoodad(int doodad) const override;
 		virtual int GetAxisInt(int doodad, int axis) const override { return 0; }
 		virtual float GetAxisFloat(int doodad, int axis) const override { return 0; }

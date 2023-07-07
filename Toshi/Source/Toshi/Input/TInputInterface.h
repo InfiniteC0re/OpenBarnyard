@@ -24,8 +24,6 @@ namespace Toshi {
 			};
 
 		public:
-			//InputEvent() = default;
-
 			InputEvent(TInputDevice* a_pDevice, int a_iDoodad, EventType a_eEventType);
 			InputEvent(TInputDevice* a_pDevice, int a_iDoodad, EventType a_eEventType, wchar_t* a_wszString);
 			InputEvent(TInputDevice* a_pDevice, int a_iDoodad, EventType a_eEventType, int a_iMagnitude1);
@@ -138,10 +136,6 @@ namespace Toshi {
 			int m_iDoodad;
 		};
 
-		static constexpr size_t MAX_DEVICE_COUNT = 14;
-		inline static TInputDevice* s_aDevices[MAX_DEVICE_COUNT];
-		inline static size_t s_uiDeviceCount;
-
 	public:
 		TInputDevice() :
 			m_Repeats(0, 16),
@@ -167,12 +161,12 @@ namespace Toshi {
 		virtual TBOOL StopRepeat(int param_1);
 		virtual TBOOL StopAllRepeats();
 		virtual TBOOL IsForceFeedbackDevice() { return TFALSE; }
-		virtual int Unknown1() const = 0;
+		virtual Platform GetPlatform() const = 0;
 		virtual const char* GetButtonFromDoodad(int a_iDoodad) const = 0;
 		virtual TBOOL IsDown(int doodad) const = 0;
 		virtual int GetAxisInt(int doodad, int axis) const = 0;
 		virtual float GetAxisFloat(int doodad, int axis) const = 0;
-		virtual TBOOL Unknown2() const = 0;
+		virtual TBOOL IsEnabled() const = 0;
 		virtual void ThrowRepeatEvent(TEmitter<TInputInterface, TInputInterface::InputEvent>& emitter, RepeatInfo* repeatInfo, float deltaTime);
 
 		TBOOL IsAcquired() const
@@ -197,6 +191,23 @@ namespace Toshi {
 
 	protected:
 		int ProcessRepeats(TEmitter<TInputInterface, TInputInterface::InputEvent>& emitter, float flt);
+
+	public:
+		static TInputDevice** GetRegisteredDevices()
+		{
+			return s_aDevices;
+		}
+
+		static size_t GetNumRegisteredDevices()
+		{
+			return s_uiDeviceCount;
+		}
+
+	protected:
+		static constexpr size_t MAX_DEVICE_COUNT = 14;
+
+		inline static TInputDevice* s_aDevices[MAX_DEVICE_COUNT];
+		inline static size_t s_uiDeviceCount;
 
 	protected:
 		size_t m_uiDeviceIndex;             // 0x14

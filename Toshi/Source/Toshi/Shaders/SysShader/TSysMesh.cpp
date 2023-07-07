@@ -83,7 +83,7 @@ namespace Toshi {
 		TASSERT(TNULL == m_pVertexPool);
 		TASSERT(TNULL == m_pIndexPool);
 
-		auto pRender = TRender::GetSingletonWeak();
+		auto pRender = TRender::GetSingleton();
 		auto pVertices = pRender->GetSystemResource(TRender::SYSRESOURCE_VFSYSVNDUV1);
 
 		TASSERT(TFALSE, "Not used in De Blob on Windows");
@@ -96,13 +96,13 @@ namespace Toshi {
 	{
 		if (m_pVertexPool != TNULL)
 		{
-			TRender::GetSingletonWeak()->DestroyResource(m_pVertexPool);
+			TRender::GetSingleton()->DestroyResource(m_pVertexPool);
 			m_pVertexPool = TNULL;
 		}
 
 		if (m_pIndexPool != TNULL)
 		{
-			TRender::GetSingletonWeak()->DestroyResource(m_pIndexPool);
+			TRender::GetSingleton()->DestroyResource(m_pIndexPool);
 			m_pIndexPool = TNULL;
 		}
 

@@ -283,9 +283,9 @@ namespace Toshi {
 		return m_DIDevCaps.dwAxes;
 	}
 
-	int TInputDXDeviceMouse::Unknown1() const
-	{
-		return 2;
+	Platform TInputDXDeviceMouse::GetPlatform() const
+{
+		return Platform::PC;
 	}
 
 	void TInputDXDeviceMouse::RefreshDirect()
@@ -411,7 +411,7 @@ namespace Toshi {
 		return 0;
 	}
 
-	TBOOL TInputDXDeviceMouse::Unknown2() const
+	TBOOL TInputDXDeviceMouse::IsEnabled() const
 	{
 		return TTRUE;
 	}

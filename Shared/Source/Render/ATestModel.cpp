@@ -35,7 +35,7 @@ ATestModel::~ATestModel()
 
 void ATestModel::Render(float deltaTime)
 {
-    auto pRenderContext = Toshi::TRender::GetSingletonWeak()->GetCurrentRenderContext();
+    auto pRenderContext = Toshi::TRender::GetSingleton()->GetCurrentRenderContext();
 
     Toshi::TMatrix44 modelView;
     Toshi::TMatrix44 worldView = pRenderContext->GetModelViewMatrix();
@@ -69,8 +69,8 @@ void ATestModel::CreateCube()
         0, 1, 2, 3, 4, 5, 6, 7, 0, 1
     };
 
-    auto pTexManager = Toshi::TTextureManager::GetSingleton();
-    auto pSysShader = Toshi::TSysShader::GetSingleton();
+    auto pTexManager = Toshi::TTextureManager::GetSingletonSafe();
+    auto pSysShader = Toshi::TSysShader::GetSingletonSafe();
 
     m_pCubeMaterial = pSysShader->CreateMaterial();
     m_pCubeMaterial->SetFlag(Toshi::TMaterial::Flags_AlphaUpdate, TTRUE);
@@ -109,8 +109,8 @@ void ATestModel::CreatePlane()
         0, 1, 2, 3
     };
 
-    auto pTexManager = Toshi::TTextureManager::GetSingleton();
-    auto pSysShader = Toshi::TSysShader::GetSingleton();
+    auto pTexManager = Toshi::TTextureManager::GetSingletonSafe();
+    auto pSysShader = Toshi::TSysShader::GetSingletonSafe();
 
     m_pPlaneMaterial = pSysShader->CreateMaterial();
     m_pPlaneMaterial->SetFlag(Toshi::TMaterial::Flags_AlphaUpdate, TTRUE);

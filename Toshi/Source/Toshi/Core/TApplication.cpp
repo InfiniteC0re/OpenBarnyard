@@ -42,7 +42,7 @@ namespace Toshi
 	TBOOL TApplication::Execute()
 	{
 		TASSERT(TApplication::IsCreated() == TTRUE);
-		TSystemManager* pSystemManager = TSystemManager::GetSingleton();
+		TSystemManager* pSystemManager = TSystemManager::GetSingletonSafe();
 		
 		TBOOL updateResult = TTRUE;
 		while (updateResult && !IsDestroyed())

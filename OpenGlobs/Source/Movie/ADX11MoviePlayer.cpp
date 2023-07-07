@@ -116,7 +116,7 @@ TBOOL ADX11MoviePlayer::PlayMovie(const char* fileName, uint32_t soundChannel, P
 
             if (m_bHasAudioStream)
             {
-                FMOD::System* system = TSound::GetSingletonWeak()->GetSystem();
+                FMOD::System* system = TSound::GetSingleton()->GetSystem();
                 FMOD_CREATESOUNDEXINFO soundInfo;
                 memset(&soundInfo, 0, sizeof(FMOD_CREATESOUNDEXINFO));
                 soundInfo.numchannels = audio->channels;

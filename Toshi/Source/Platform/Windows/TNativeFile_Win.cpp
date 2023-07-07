@@ -6,7 +6,7 @@ namespace Toshi
     TBOOL TFileManager::Create()
     {
         CreateCommon();
-        auto fileManager = TFileManager::GetSingleton();
+        auto fileManager = TFileManager::GetSingletonSafe();
 
         CHAR currentDir[0x200];
         DWORD dirLength = GetCurrentDirectoryA(sizeof(currentDir), currentDir);
@@ -29,7 +29,7 @@ namespace Toshi
     TNativeFileSystem::TNativeFileSystem(const char* name) : TFileSystem(name)
     {
         m_Handle = INVALID_HANDLE_VALUE;
-        TFileManager::GetSingleton()->MountFileSystem(this);
+        TFileManager::GetSingletonSafe()->MountFileSystem(this);
     }
 
     TFile* TNativeFileSystem::CreateFile(TString8 const& fn, uint32_t flags)

@@ -47,7 +47,7 @@ void ARenderer::Update(float deltaTime)
     auto pRender = TRenderDX11::Interface();
     auto pDisplayParams = pRender->GetCurrentDisplayParams();
 
-    AMoviePlayer* pMoviePlayer = AMoviePlayer::GetSingletonWeak();
+    AMoviePlayer* pMoviePlayer = AMoviePlayer::GetSingleton();
 
     TBOOL bRenderWorld = AApplication::g_oTheApp.ShouldRenderWorld();
     TBOOL bRenderMovie = pMoviePlayer != TNULL && pMoviePlayer->IsMoviePlaying();
@@ -75,7 +75,7 @@ void ARenderer::Update(float deltaTime)
                 auto pCamera = m_pViewportManager->GetViewportCamera(i);
 
                 if (pCamera == TNULL)
-                    pCamera = ACameraManager::GetSingletonWeak()->GetCurrentCamera();
+                    pCamera = ACameraManager::GetSingleton()->GetCurrentCamera();
 
                 RenderMainScene(deltaTime, pViewport, pCameraObject, pCamera, MainScene, i == AXYZViewportManager::VIEWPORT_FullScreen);
             }
@@ -91,7 +91,7 @@ void ARenderer::Update(float deltaTime)
     }
 
     RenderGUI(TFALSE);
-    auto pGameStateController = AGameStateController::GetSingletonWeak();
+    auto pGameStateController = AGameStateController::GetSingleton();
     auto pGameState = pGameStateController->GetCurrentGameState();
 
     if (TFALSE == pGameState->GetClass()->IsA(TGetClass(AFrontEndMovieState)))
@@ -255,7 +255,7 @@ void ARenderer::Create()
 
     float width, height;
 
-    T2GUI::GetSingletonWeak()->GetRootElement()->GetDimensions(width, height);
+    T2GUI::GetSingleton()->GetRootElement()->GetDimensions(width, height);
 
     m_pRectangle = new T2GUIRectangle();
     
@@ -288,7 +288,7 @@ void ARenderer::RenderGUI(TBOOL allowBackgroundClear)
     {
         m_pViewport->AllowBackgroundClear(allowBackgroundClear);
         m_pViewport->Begin();
-        T2GUI::GetSingletonWeak()->Render();
+        T2GUI::GetSingleton()->Render();
         m_pViewport->End();
     }
 }
@@ -301,7 +301,7 @@ void ARenderer::RenderImGui(TBOOL allowBackgroundClear)
         m_pViewport->AllowBackgroundClear(allowBackgroundClear);
         m_pViewport->Begin();
         
-        AImGui::GetSingleton()->Render();
+        AImGui::GetSingletonSafe()->Render();
         
         m_pViewport->End();
     }
@@ -322,7 +322,7 @@ void ARenderer::RenderMainScene(float deltaTime, TViewport* pViewport, TCameraOb
     pViewport->Begin();
     pCameraObject->Render();
 
-    //auto pTestModel = ATestModel::GetSingletonWeak();
+    //auto pTestModel = ATestModel::GetSingleton();
     //
     //if (pTestModel)
     //{
@@ -368,7 +368,7 @@ void ARenderer::GetAppCamera()
 {
     TASSERT(ACameraManager::IsSingletonCreated());
 
-    auto pCamMngr = ACameraManager::GetSingletonWeak();
+    auto pCamMngr = ACameraManager::GetSingleton();
 
     for (int i = AXYZViewportManager::VIEWPORT_Count - 1; i >= 0; i--)
     {

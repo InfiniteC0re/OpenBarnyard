@@ -19,9 +19,9 @@ AGameState::UpdateResult AAppInitState::OnUpdate(float deltaTime)
 {
     TIMPLEMENT();
 
-    if (AAssetStreaming::GetSingletonWeak()->HasActiveJobs())
+    if (AAssetStreaming::GetSingleton()->HasActiveJobs())
     {
-        ARenderer::GetSingletonWeak()->SetBackgroundColour(0, 0, 0);
+        ARenderer::GetSingleton()->SetBackgroundColour(0, 0, 0);
         return AGameState::OnUpdate(deltaTime);
     }
 
@@ -54,7 +54,7 @@ void AAppInitState::OnRemoval()
     }
     else
     {
-        AGameStateController::GetSingleton()->PushState(new AFrontEndMovieState);
+        AGameStateController::GetSingletonSafe()->PushState(new AFrontEndMovieState);
         TIMPLEMENT_D("The game");
     }
 }

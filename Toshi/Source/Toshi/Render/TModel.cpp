@@ -27,11 +27,11 @@ namespace Toshi {
 	TModel::~TModel()
 	{
 		TASSERT(TNULL == m_pTRB);
-		auto pResourceManager = T2ResourceManager::GetSingletonWeak();
+		auto pResourceManager = T2ResourceManager::GetSingleton();
 
 		if (GetResourceId() != T2ResourcePtr::IDINVALID)
 		{
-			auto pModelManager = TModelManager::GetSingletonWeak();
+			auto pModelManager = TModelManager::GetSingleton();
 			pModelManager->RemoveModel(GetResourceId());
 		}
 
@@ -144,7 +144,7 @@ namespace Toshi {
 	{
 		T2Resource::CreateResource(name, this, ResourceCallback, this);
 		
-		auto pModelManager = TModelManager::GetSingletonWeak();
+		auto pModelManager = TModelManager::GetSingleton();
 		pModelManager->AddModel(GetResourceId());
 	}
 
@@ -157,7 +157,7 @@ namespace Toshi {
 
 			if (bLoadAnimations && pSkeletonHeader->m_pTKLName != TNULL)
 			{
-				auto keyframeLibraryManager = TRender::GetSingleton()->GetKeyframeLibraryManager();
+				auto keyframeLibraryManager = TRender::GetSingletonSafe()->GetKeyframeLibraryManager();
 				auto pKeyframeLibrary = keyframeLibraryManager.GetLibrary(pSkeletonHeader->m_pTKLName);
 
 				TTODO("Toshi::TKeyframeLibraryInstance::CreateEx");

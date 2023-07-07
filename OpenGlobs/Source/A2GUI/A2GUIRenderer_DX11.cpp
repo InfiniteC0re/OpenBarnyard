@@ -33,7 +33,7 @@ TTexture* A2GUIRenderer::GetTexture(const char* texName) const
 	TStringManager::String8ToLowerCase(lowercaseTexName);
 	TTODO("Calculate string offset");
 
-	return TTextureManager::GetSingletonWeak()->FindTexture(lowercaseTexName);
+	return TTextureManager::GetSingleton()->FindTexture(lowercaseTexName);
 }
 
 void A2GUIRenderer::BeginScene()
@@ -78,7 +78,7 @@ void A2GUIRenderer::EndScene()
 
 void A2GUIRenderer::SetMaterial(T2GUIMaterial* pMat)
 {
-	auto pPrimShader = TPrimShader::GetSingletonWeak();
+	auto pPrimShader = TPrimShader::GetSingleton();
 	TTexture* pTex = TNULL;
 
 	if (pMat != TNULL)
@@ -132,7 +132,7 @@ void A2GUIRenderer::RenderRectangle(const TVector2& a, const TVector2& b, const 
 {
 	if (m_bIsInScene)
 	{
-		auto pRenderContext = TRender::GetSingletonWeak()->GetCurrentRenderContext();
+		auto pRenderContext = TRender::GetSingleton()->GetCurrentRenderContext();
 		auto pTransform = m_pTransforms + m_iTransformStackPointer;
 		
 		TMatrix44 mat44;
@@ -144,7 +144,7 @@ void A2GUIRenderer::RenderRectangle(const TVector2& a, const TVector2& b, const 
 	}
 
 	TPrimShader::Vertex* pVertex;
-	auto pPrimShader = TPrimShader::GetSingletonWeak();
+	auto pPrimShader = TPrimShader::GetSingleton();
 	pPrimShader->StartRendering(TPrimShader::PrimType_TriangleStrip);
 
 	pVertex = pPrimShader->GetCurrentVertex();
@@ -178,7 +178,7 @@ void A2GUIRenderer::RenderTriStrip(TVector2* vertices, TVector2* UV, uint32_t nu
 {
 	if (m_bIsInScene)
 	{
-		auto pRenderContext = TRender::GetSingletonWeak()->GetCurrentRenderContext();
+		auto pRenderContext = TRender::GetSingleton()->GetCurrentRenderContext();
 		auto pTransform = m_pTransforms + m_iTransformStackPointer;
 
 		TMatrix44 mat44;
@@ -192,7 +192,7 @@ void A2GUIRenderer::RenderTriStrip(TVector2* vertices, TVector2* UV, uint32_t nu
 	TASSERT(numverts < MAXVERTS);
 
 	TPrimShader::Vertex* pVertex;
-	auto pPrimShader = TPrimShader::GetSingletonWeak();
+	auto pPrimShader = TPrimShader::GetSingleton();
 	pPrimShader->StartRendering(TPrimShader::PrimType_TriangleStrip);
 
 	for (size_t i = 0; i < numverts; i++)
@@ -214,7 +214,7 @@ void A2GUIRenderer::RenderLine(const TVector2& a, const TVector2& b)
 
 	if (m_bIsInScene)
 	{
-		auto pRenderContext = TRender::GetSingletonWeak()->GetCurrentRenderContext();
+		auto pRenderContext = TRender::GetSingleton()->GetCurrentRenderContext();
 		auto pTransform = m_pTransforms + m_iTransformStackPointer;
 
 		TMatrix44 mat44;
@@ -226,7 +226,7 @@ void A2GUIRenderer::RenderLine(const TVector2& a, const TVector2& b)
 	}
 
 	TPrimShader::Vertex* pVertex;
-	auto pPrimShader = TPrimShader::GetSingletonWeak();
+	auto pPrimShader = TPrimShader::GetSingleton();
 	pPrimShader->StartRendering(TPrimShader::PrimType_LineList);
 
 	pVertex = pPrimShader->GetCurrentVertex();
@@ -252,7 +252,7 @@ void A2GUIRenderer::RenderLine(float x1, float y1, float x2, float y2)
 
 	if (m_bIsInScene)
 	{
-		auto pRenderContext = TRender::GetSingletonWeak()->GetCurrentRenderContext();
+		auto pRenderContext = TRender::GetSingleton()->GetCurrentRenderContext();
 		auto pTransform = m_pTransforms + m_iTransformStackPointer;
 
 		TMatrix44 mat44;
@@ -264,7 +264,7 @@ void A2GUIRenderer::RenderLine(float x1, float y1, float x2, float y2)
 	}
 
 	TPrimShader::Vertex* pVertex;
-	auto pPrimShader = TPrimShader::GetSingletonWeak();
+	auto pPrimShader = TPrimShader::GetSingleton();
 	pPrimShader->StartRendering(TPrimShader::PrimType_LineList);
 
 	pVertex = pPrimShader->GetCurrentVertex();
@@ -290,7 +290,7 @@ void A2GUIRenderer::RenderOutlineRectangle(const TVector2& a, const TVector2& b)
 
 	if (m_bIsInScene)
 	{
-		auto pRenderContext = TRender::GetSingletonWeak()->GetCurrentRenderContext();
+		auto pRenderContext = TRender::GetSingleton()->GetCurrentRenderContext();
 		auto pTransform = m_pTransforms + m_iTransformStackPointer;
 
 		TMatrix44 mat44;
@@ -302,7 +302,7 @@ void A2GUIRenderer::RenderOutlineRectangle(const TVector2& a, const TVector2& b)
 	}
 
 	TPrimShader::Vertex* pVertex;
-	auto pPrimShader = TPrimShader::GetSingletonWeak();
+	auto pPrimShader = TPrimShader::GetSingleton();
 	pPrimShader->StartRendering(TPrimShader::PrimType_LineStrip);
 
 	pVertex = pPrimShader->GetCurrentVertex();
@@ -340,7 +340,7 @@ void A2GUIRenderer::RenderFilledRectangle(const TVector2& a, const TVector2& b)
 
 	if (m_bIsInScene)
 	{
-		auto pRenderContext = TRender::GetSingletonWeak()->GetCurrentRenderContext();
+		auto pRenderContext = TRender::GetSingleton()->GetCurrentRenderContext();
 		auto pTransform = m_pTransforms + m_iTransformStackPointer;
 
 		TMatrix44 mat44;
@@ -352,7 +352,7 @@ void A2GUIRenderer::RenderFilledRectangle(const TVector2& a, const TVector2& b)
 	}
 
 	TPrimShader::Vertex* pVertex;
-	auto pPrimShader = TPrimShader::GetSingletonWeak();
+	auto pPrimShader = TPrimShader::GetSingleton();
 	pPrimShader->StartRendering(TPrimShader::PrimType_TriangleStrip);
 
 	pVertex = pPrimShader->GetCurrentVertex();
@@ -396,7 +396,7 @@ void A2GUIRenderer::RenderIndexedTriStripColoursList(TVector2* pVertices, TVecto
 void A2GUIRenderer::ScaleCoords(float& x, float& y)
 {
 	auto pDisplayParams = TRenderDX11::Interface()->GetCurrentDisplayParams();
-	T2GUIElement* pRoot = T2GUI::GetSingletonWeak()->GetRootElement();
+	T2GUIElement* pRoot = T2GUI::GetSingleton()->GetRootElement();
 
 	float fRootWidth, fRootHeight;
 	pRoot->GetDimensions(fRootWidth, fRootHeight);

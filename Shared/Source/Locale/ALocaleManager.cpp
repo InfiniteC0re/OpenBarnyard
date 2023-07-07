@@ -14,7 +14,7 @@ void ALocaleManager::Create()
 void ALocaleManager::Destroy()
 {
     if (T2Locale::ms_pSingleton != TNULL)
-        delete T2Locale::GetSingletonWeak();
+        delete T2Locale::GetSingleton();
 }
 
 const char* ALocaleManager::GetLocaleCode(Lang code)
@@ -152,7 +152,7 @@ ALocaleManager::LocaleString ALocaleManager::GetOverwrittenFormatString(LocaleId
 ALocaleManager::LocaleId ALocaleManager::FixStringIdPlatform(Lang stringid)
 {
     // 005e2210
-    if (s_Platform == Platform_Wii)
+    if (s_ePlatform == Platform::Wii)
     {
         // PC => Wii
         if (stringid < 879)

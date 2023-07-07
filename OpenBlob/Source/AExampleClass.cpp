@@ -79,7 +79,7 @@ AExampleClass::AExampleClass()
     }
 	
 
-	/*TError* error = TError::GetSingletonWeak();
+	/*TError* error = TError::GetSingleton();
 	error->AddError("Material \'%s\' Couldnt find texture \'%s\'", "test", "debloblol.tga");
 	error->AddError("couldnt create resource \'%s\' because we have reached our max (%d)", "Resource1", 5);
 	const char* error1 = error->GetError(0);
@@ -88,7 +88,7 @@ AExampleClass::AExampleClass()
 
 	/*new Toshi::TLogFile();
 
-	Toshi::TLogFile::GetSingletonWeak()->Log(Toshi::TLogFile::TYPE_Info, "Toshi", "Kernel", "Creating AExampleClass %s", "Yes we are...");*/
+	Toshi::TLogFile::GetSingleton()->Log(Toshi::TLogFile::TYPE_Info, "Toshi", "Kernel", "Creating AExampleClass %s", "Yes we are...");*/
 
 	/*TFile* file = TFile::Create("C:\\Program Files (x86)\\Steam\\steamapps\\common\\de Blob\\Data\\BlobChar\\AssetPack.trb");
 
@@ -128,7 +128,7 @@ AExampleClass::AExampleClass()
 	trb.Load("C:\\Users\\nepel\\Desktop\\BKG_CONCEPT01_NTSC_ENG.TTL");
 	*/
 
-	TSystemManager::GetSingleton()->GetScheduler()->CreateTask(TGetClass(ARootTask))->Create();
+	TSystemManager::GetSingletonSafe()->GetScheduler()->CreateTask(TGetClass(ARootTask))->Create();
 }
 
 AExampleClass::~AExampleClass()

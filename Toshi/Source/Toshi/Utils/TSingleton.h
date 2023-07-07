@@ -29,14 +29,14 @@ namespace Toshi
 
 		__forceinline static void DestroySingleton()
 		{
-			delete GetSingleton();
+			delete GetSingletonSafe();
 			ms_pSingleton = TNULL;
 		}
 
 		// Returns pointer and asserts if it's not allocated
-		__forceinline static T* GetSingleton()
+		__forceinline static T* GetSingletonSafe()
 		{
-			TASSERT(ms_pSingleton != TNULL, "TSingleton::GetSingleton() - ms_pSingleton is TNULL");
+			TASSERT(ms_pSingleton != TNULL, "Singleton instance is not created");
 			return ms_pSingleton;
 		}
 
@@ -46,7 +46,7 @@ namespace Toshi
 		}
 
 		// Returns pointer even if it's not allocated
-		__forceinline static T* GetSingletonWeak()
+		__forceinline static T* GetSingleton()
 		{
 			return ms_pSingleton;
 		}
@@ -54,7 +54,7 @@ namespace Toshi
 	protected:
 		__forceinline TSingleton()
 		{
-			TASSERT(ms_pSingleton == TNULL, "Trying to create TSingleton class twice");
+			TASSERT(ms_pSingleton == TNULL, "Singleton instance is already created");
 			ms_pSingleton = static_cast<T*>(this);
 		}
 

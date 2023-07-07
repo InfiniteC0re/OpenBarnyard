@@ -27,7 +27,7 @@ namespace Toshi {
 		virtual int ProcessEvents(TEmitter<TInputInterface, TInputInterface::InputEvent>& emitter, float deltaTime) override;
 		virtual int GetButtonCount() const override;
 		virtual TBOOL IsDown(int doodad) const override;
-		virtual TBOOL Unknown2() const override;
+		virtual TBOOL IsEnabled() const override;
 		virtual TBOOL IsShiftDown() const override;
 		virtual TBOOL IsControlDown() const override;
 		virtual TBOOL IsAltDown() const override;

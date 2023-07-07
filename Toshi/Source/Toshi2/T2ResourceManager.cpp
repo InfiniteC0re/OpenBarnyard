@@ -9,7 +9,7 @@ namespace Toshi
 	{
 		if (m_iID == T2ResourcePtr::IDINVALID)
 		{
-			m_iID = T2ResourceManager::GetSingleton()->CreateResource(resourceName, pData, a_fnCreateDestroyCallbk, pCallbkData);
+			m_iID = T2ResourceManager::GetSingletonSafe()->CreateResource(resourceName, pData, a_fnCreateDestroyCallbk, pCallbkData);
 			return;
 		}
 
@@ -215,7 +215,7 @@ namespace Toshi
 		
 		if (m_iMaxNumResources <= iID)
 		{
-			TError::GetSingletonWeak()->AddError("couldnt create resource \"%s\" because we have reached our max (%d)", resourceName, m_iMaxNumResources);
+			TError::GetSingleton()->AddError("couldnt create resource \"%s\" because we have reached our max (%d)", resourceName, m_iMaxNumResources);
 			return 0;
 		}
 

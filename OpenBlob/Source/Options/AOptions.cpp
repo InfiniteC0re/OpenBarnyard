@@ -6,7 +6,7 @@ using namespace Toshi;
 
 void AOptions::SoundThings(TBOOL unk, float a_fPitch, float a_fVolume)
 {
-	if (TSound::GetSingletonWeak()->IsInitialised())
+	if (TSound::GetSingleton()->IsInitialised())
 	{
 		TMath::Clip(m_Options->m_iPitch, 0, 10);
 		TMath::Clip(m_Options->m_iVolume, 0, 10);

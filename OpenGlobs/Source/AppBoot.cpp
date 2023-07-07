@@ -27,7 +27,7 @@ bool AApplication::OnCreate(int argc, char** argv)
 	Toshi::T2String8::sm_pDefaultAllocatorCB = AppStringAllocator();
 	Toshi::T2String16::sm_pDefaultAllocatorCB = AppStringAllocator();
 
-	m_Renderer = ARenderer::GetSingleton();
+	m_Renderer = ARenderer::GetSingletonSafe();
 	TBOOL interfaceCreated = m_Renderer->CreateInterface();
 
 	TApplication::OnCreate(argc, argv);

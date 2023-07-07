@@ -4,7 +4,7 @@
 
 void ACurrentLevelInformation::Create(DataBlock a_type)
 {
-	auto assetStreaming = AAssetStreaming::GetSingletonWeak();
+	auto assetStreaming = AAssetStreaming::GetSingleton();
 
 	char* szFilename = Toshi::TStringManager::GetTempString8();
 

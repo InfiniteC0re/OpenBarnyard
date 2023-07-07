@@ -25,7 +25,7 @@ namespace Toshi
 		// Updates tasks
 		void Update()
 		{
-			float deltaTime = TSystemManager::GetSingleton()->GetTimer()->GetDelta();
+			float deltaTime = TSystemManager::GetSingletonSafe()->GetTimer()->GetDelta();
 			m_FrameCount += 1;
 			m_TotalTime += deltaTime;
 			m_DeltaTime = deltaTime;

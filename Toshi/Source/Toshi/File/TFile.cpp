@@ -19,7 +19,7 @@ namespace Toshi
 	{
 		TASSERT(filename.IsIndexValid(0), "filename is empty");
 
-		TFile* pFile = TFileManager::GetSingleton()->CreateFile(filename, mode);
+		TFile* pFile = TFileManager::GetSingletonSafe()->CreateFile(filename, mode);
 
 		if (pFile != TNULL)
 		{

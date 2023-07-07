@@ -26,7 +26,7 @@ Toshi::TCStringPool::TCStringPool(const char* a_szFileName, int unk, int unk2) :
 
 TBOOL Toshi::TCStringPool::ReadFile(const char* a_szFileName)
 {
-	TFileManager* fileManager = TFileManager::GetSingletonWeak();
+	TFileManager* fileManager = TFileManager::GetSingleton();
 	TFile* file = fileManager->CreateFile(a_szFileName, 1);
 
 	if (file == TNULL)

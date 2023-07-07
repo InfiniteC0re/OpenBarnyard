@@ -149,7 +149,7 @@ namespace Toshi {
 			return m_pKeyStates1[TranslateDXToDoodad(doodad)] & 0x80;
 	}
 
-	TBOOL TInputDXDeviceKeyboard::Unknown2() const
+	TBOOL TInputDXDeviceKeyboard::IsEnabled() const
 	{
 		return TTRUE;
 	}

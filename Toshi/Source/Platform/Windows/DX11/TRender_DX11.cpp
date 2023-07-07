@@ -595,7 +595,7 @@ namespace Toshi
 			{
 				s_bPresentTest = TTRUE;
 				TOSHI_CORE_ERROR("Pausing Occluded!");
-				TSystemManager::GetSingletonWeak()->Pause(TTRUE);
+				TSystemManager::GetSingleton()->Pause(TTRUE);
 			}
 		}
 

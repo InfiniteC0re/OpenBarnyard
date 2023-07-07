@@ -68,7 +68,7 @@ namespace Toshi
             return;
         }
 
-        TTextureManager::GetSingletonWeak()->AddTexture(this);
+        TTextureManager::GetSingleton()->AddTexture(this);
         SelectSamplerId();
 
 #ifdef TOSHI_DEBUG
@@ -86,7 +86,7 @@ namespace Toshi
         if (m_pNextTexture)
             m_pNextTexture->m_pPrevTexture = m_pPrevTexture;
 
-        auto pTexManager = TTextureManager::GetSingletonWeak();
+        auto pTexManager = TTextureManager::GetSingleton();
 
         if (pTexManager->GetLastTexture() == this)
             pTexManager->SetLastTexture(m_pPrevTexture);
@@ -117,7 +117,7 @@ namespace Toshi
         pTexture->m_TexName = "runtime";
         pTexture->m_TexInfo = pTextureInfo;
         pTexture->m_TexData = TNULL;
-        TTextureManager::GetSingletonWeak()->AddTexture(pTexture);
+        TTextureManager::GetSingleton()->AddTexture(pTexture);
 
         return pTexture;
     }
@@ -140,7 +140,7 @@ namespace Toshi
         pTexture->m_TexInfo->MipMapCount = 1;
         pTexture->m_TexInfo->Format = format;
 
-        TTextureManager::GetSingletonWeak()->AddTexture(pTexture);
+        TTextureManager::GetSingleton()->AddTexture(pTexture);
 
         return pTexture;
     }
