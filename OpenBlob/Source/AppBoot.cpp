@@ -105,21 +105,16 @@ TBOOL AApplication::OnCreate(int argc, char** argv)
 
 TBOOL AApplication::OnUpdate(float deltaTime)
 {
-	Toshi::T2GUI* pGUI = Toshi::T2GUI::GetSingleton();
-	
-	if (pGUI != TNULL)
-	{
-		pGUI->Tick(deltaTime);
-	}
-	
-	AMoviePlayer* pMoviePlayer = AMoviePlayer::GetSingleton();
-
-	if (pMoviePlayer != TNULL)
-	{
-		pMoviePlayer->OnUpdate(deltaTime);
-	}
-
 	UpdateSound(deltaTime);
+
+	Toshi::T2GUI* pGUI = Toshi::T2GUI::GetSingleton();
+	AMoviePlayer* pMoviePlayer = AMoviePlayer::GetSingleton();
+	AInputManager2* pInputManager = AInputManager2::GetSingleton();
+	
+	if (pGUI) pGUI->Tick(deltaTime);
+	if (pInputManager) pInputManager->Update(deltaTime);
+	if (pMoviePlayer) pMoviePlayer->OnUpdate(deltaTime);
+
 	m_pGameStateController->Update(deltaTime);
 	ARenderer::GetSingleton()->Update(deltaTime);
 	return TTRUE;
