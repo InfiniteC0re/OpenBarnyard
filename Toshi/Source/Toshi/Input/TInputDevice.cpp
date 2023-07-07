@@ -29,6 +29,6 @@ namespace Toshi
 
 	void TInputDevice::ThrowRepeatEvent(TEmitter<TInputInterface, TInputInterface::InputEvent>& emitter, RepeatInfo* repeatInfo, float flt)
 	{
-		emitter.Throw(TInputInterface::InputEvent(this, repeatInfo->m_iDoodad, TInputInterface::InputEvent::EventType_Repeat));
+		emitter.Throw(TInputInterface::InputEvent(this, repeatInfo->m_iDoodad, TInputInterface::EVENT_TYPE_REPEAT));
 	}
 }

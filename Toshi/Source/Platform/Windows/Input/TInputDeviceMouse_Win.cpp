@@ -163,7 +163,7 @@ namespace Toshi {
 						m_CursorPos.x += dod[i].dwData;
 					}
 				}
-				emitter.Throw(TInputInterface::InputEvent(this, AXIS_CURSOR, TInputInterface::InputEvent::EventType_MouseMotion, m_aAxis.m_iX, m_aAxis.m_iY));
+				emitter.Throw(TInputInterface::InputEvent(this, AXIS_CURSOR, TInputInterface::EVENT_TYPE_MOVED, m_aAxis.m_iX, m_aAxis.m_iY));
 				eventCount++;
 				break;
 			case DIMOFS_Y: // MouseDown
@@ -181,39 +181,39 @@ namespace Toshi {
 						m_CursorPos.y += dod[i].dwData;
 					}
 				}
-				emitter.Throw(TInputInterface::InputEvent(this, AXIS_CURSOR, TInputInterface::InputEvent::EventType_MouseMotion, m_aAxis.m_iX, m_aAxis.m_iY));
+				emitter.Throw(TInputInterface::InputEvent(this, AXIS_CURSOR, TInputInterface::EVENT_TYPE_MOVED, m_aAxis.m_iX, m_aAxis.m_iY));
 				eventCount++;
 				break;
 			case DIMOFS_Z: // Wheel
 				m_fWheelAxis += dod[i].dwData;
-				emitter.Throw(TInputInterface::InputEvent(this, AXIS_WHEEL, TInputInterface::InputEvent::EventType_MouseMotion, 0.0f, m_fWheelAxis / WHEEL_DELTA));
+				emitter.Throw(TInputInterface::InputEvent(this, AXIS_WHEEL, TInputInterface::EVENT_TYPE_MOVED, 0.0f, m_fWheelAxis / WHEEL_DELTA));
 				unk = m_fWheelAxis / m_field0x80;
 				// WHEEL_UP
 				if (unk < 0)
 				{
-					emitter.Throw(TInputInterface::InputEvent(this, BUTTON_WHEEL_BACKWARD, TInputInterface::InputEvent::EventType_StartRepeat));
+					emitter.Throw(TInputInterface::InputEvent(this, BUTTON_WHEEL_BACKWARD, TInputInterface::EVENT_TYPE_GONE_DOWN));
 					unk++;
 					if (unk < 0)
 					{
 						int i = -unk;
 						do
 						{
-							emitter.Throw(TInputInterface::InputEvent(this, BUTTON_WHEEL_BACKWARD, TInputInterface::InputEvent::EventType_Repeat));
+							emitter.Throw(TInputInterface::InputEvent(this, BUTTON_WHEEL_BACKWARD, TInputInterface::EVENT_TYPE_REPEAT));
 							i--;
 						} while (i != 0);
 					}
 
-					emitter.Throw(TInputInterface::InputEvent(this, BUTTON_WHEEL_BACKWARD, TInputInterface::InputEvent::EventType_StopRepeat));
+					emitter.Throw(TInputInterface::InputEvent(this, BUTTON_WHEEL_BACKWARD, TInputInterface::EVENT_TYPE_GONE_UP));
 				}
 				// WHEEL_DOWN
 				else
 				{
-					emitter.Throw(TInputInterface::InputEvent(this, BUTTON_WHEEL_FORWARD, TInputInterface::InputEvent::EventType_StartRepeat));
+					emitter.Throw(TInputInterface::InputEvent(this, BUTTON_WHEEL_FORWARD, TInputInterface::EVENT_TYPE_GONE_DOWN));
 					while (unk = unk - 1, 0 < unk)
 					{
-						emitter.Throw(TInputInterface::InputEvent(this, BUTTON_WHEEL_FORWARD, TInputInterface::InputEvent::EventType_Repeat));
+						emitter.Throw(TInputInterface::InputEvent(this, BUTTON_WHEEL_FORWARD, TInputInterface::EVENT_TYPE_REPEAT));
 					}
-					emitter.Throw(TInputInterface::InputEvent(this, BUTTON_WHEEL_FORWARD, TInputInterface::InputEvent::EventType_StopRepeat));
+					emitter.Throw(TInputInterface::InputEvent(this, BUTTON_WHEEL_FORWARD, TInputInterface::EVENT_TYPE_GONE_UP));
 				}
 				eventCount++;
 				break;
@@ -223,12 +223,12 @@ namespace Toshi {
 				if (dod[i].dwData & 0x80)
 				{
 					TASSERT((m_dwButtonCurrent & (1 << iButton)) != 0);
-					emitter.Throw(TInputInterface::InputEvent(this, BUTTON_1 + iButton, TInputInterface::InputEvent::EventType_StartRepeat));
+					emitter.Throw(TInputInterface::InputEvent(this, BUTTON_1 + iButton, TInputInterface::EVENT_TYPE_GONE_DOWN));
 					m_dwButtonCurrent |= iButton;
 				}
 				else
 				{
-					emitter.Throw(TInputInterface::InputEvent(this, BUTTON_1 + iButton, TInputInterface::InputEvent::EventType_StopRepeat));
+					emitter.Throw(TInputInterface::InputEvent(this, BUTTON_1 + iButton, TInputInterface::EVENT_TYPE_GONE_UP));
 					m_dwButtonCurrent &= ~iButton;
 				}
 				eventCount++;
@@ -239,12 +239,12 @@ namespace Toshi {
 				if (dod[i].dwData & 0x80)
 				{
 					TASSERT((m_dwButtonCurrent & (1 << iButton)) != 0);
-					emitter.Throw(TInputInterface::InputEvent(this, BUTTON_1 + iButton, TInputInterface::InputEvent::EventType_StartRepeat));
+					emitter.Throw(TInputInterface::InputEvent(this, BUTTON_1 + iButton, TInputInterface::EVENT_TYPE_GONE_DOWN));
 					m_dwButtonCurrent |= iButton;
 				}
 				else
 				{
-					emitter.Throw(TInputInterface::InputEvent(this, BUTTON_1 + iButton, TInputInterface::InputEvent::EventType_StopRepeat));
+					emitter.Throw(TInputInterface::InputEvent(this, BUTTON_1 + iButton, TInputInterface::EVENT_TYPE_GONE_UP));
 					m_dwButtonCurrent &= ~iButton;
 				}
 				eventCount++;
@@ -255,12 +255,12 @@ namespace Toshi {
 				if (dod[i].dwData & 0x80)
 				{
 					TASSERT((m_dwButtonCurrent & (1 << iButton)) != 0);
-					emitter.Throw(TInputInterface::InputEvent(this, BUTTON_1 + iButton, TInputInterface::InputEvent::EventType_StartRepeat));
+					emitter.Throw(TInputInterface::InputEvent(this, BUTTON_1 + iButton, TInputInterface::EVENT_TYPE_GONE_DOWN));
 					m_dwButtonCurrent |= iButton;
 				}
 				else
 				{
-					emitter.Throw(TInputInterface::InputEvent(this, BUTTON_1 + iButton, TInputInterface::InputEvent::EventType_StopRepeat));
+					emitter.Throw(TInputInterface::InputEvent(this, BUTTON_1 + iButton, TInputInterface::EVENT_TYPE_GONE_UP));
 					m_dwButtonCurrent &= ~iButton;
 				}
 				eventCount++;

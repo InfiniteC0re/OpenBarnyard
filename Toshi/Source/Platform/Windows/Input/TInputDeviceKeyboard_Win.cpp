@@ -254,7 +254,7 @@ namespace Toshi {
 			m_pKeyStates1[a_iKeyIndex] = 0;
 			m_pKeyStates2[a_iKeyIndex] = 0x80;
 
-			a_Emitter.Throw(TInputInterface::InputEvent(this, iDoodad, TInputInterface::InputEvent::EventType_StopRepeat));
+			a_Emitter.Throw(TInputInterface::InputEvent(this, iDoodad, TInputInterface::EVENT_TYPE_GONE_UP));
 		}
 		else
 		{
@@ -263,7 +263,7 @@ namespace Toshi {
 			m_pKeyStates2[a_iKeyIndex] = 0;
 
 			wchar_t* wcsCharacter = TranslateDoodadToCharacter(iDoodad);
-			a_Emitter.Throw(TInputInterface::InputEvent(this, iDoodad, TInputInterface::InputEvent::EventType_StartRepeat, wcsCharacter));
+			a_Emitter.Throw(TInputInterface::InputEvent(this, iDoodad, TInputInterface::EVENT_TYPE_GONE_DOWN, wcsCharacter));
 		}
 
 		return TTRUE;

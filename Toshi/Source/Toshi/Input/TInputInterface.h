@@ -11,25 +11,24 @@ namespace Toshi {
 		public TSingleton<TInputInterface>
 	{
 	public:
+		enum EVENT_TYPE
+		{
+			EVENT_TYPE_GONE_DOWN,
+			EVENT_TYPE_GONE_UP,
+			EVENT_TYPE_REPEAT,
+			EVENT_TYPE_UNKNOWN,
+			EVENT_TYPE_MOVED
+		};
+
 		class InputEvent
 		{
 		public:
-			enum EventType
-			{
-				EventType_StartRepeat,
-				EventType_StopRepeat,
-				EventType_Repeat,
-				EventType_Unk3,
-				EventType_MouseMotion
-			};
-
-		public:
-			InputEvent(TInputDevice* a_pDevice, int a_iDoodad, EventType a_eEventType);
-			InputEvent(TInputDevice* a_pDevice, int a_iDoodad, EventType a_eEventType, wchar_t* a_wszString);
-			InputEvent(TInputDevice* a_pDevice, int a_iDoodad, EventType a_eEventType, int a_iMagnitude1);
-			InputEvent(TInputDevice* a_pDevice, int a_iDoodad, EventType a_eEventType, int a_iMagnitude1, int a_iMagnitude2);
-			InputEvent(TInputDevice* a_pDevice, int a_iDoodad, EventType a_eEventType, float a_fMagnitude1);
-			InputEvent(TInputDevice* a_pDevice, int a_iDoodad, EventType a_eEventType, float a_fMagnitude1, float a_fMagnitude2);
+			InputEvent(TInputDevice* a_pDevice, int a_iDoodad, EVENT_TYPE a_eEventType);
+			InputEvent(TInputDevice* a_pDevice, int a_iDoodad, EVENT_TYPE a_eEventType, wchar_t* a_wszString);
+			InputEvent(TInputDevice* a_pDevice, int a_iDoodad, EVENT_TYPE a_eEventType, int a_iMagnitude1);
+			InputEvent(TInputDevice* a_pDevice, int a_iDoodad, EVENT_TYPE a_eEventType, int a_iMagnitude1, int a_iMagnitude2);
+			InputEvent(TInputDevice* a_pDevice, int a_iDoodad, EVENT_TYPE a_eEventType, float a_fMagnitude1);
+			InputEvent(TInputDevice* a_pDevice, int a_iDoodad, EVENT_TYPE a_eEventType, float a_fMagnitude1, float a_fMagnitude2);
 
 			int GetMagnitudeInt(int a_iAxis);
 
@@ -45,7 +44,7 @@ namespace Toshi {
 				return m_iDoodad;
 			}
 
-			EventType GetEventType() const
+			EVENT_TYPE GetEventType() const
 			{
 				return m_eEventType;
 			}
@@ -67,7 +66,7 @@ namespace Toshi {
 
 		public:
 			int m_iDoodad;             // 0x00
-			EventType m_eEventType;    // 0x04
+			EVENT_TYPE m_eEventType;   // 0x04
 			TBOOL m_bIsMagnitudeFloat; // 0x08
 			int8_t m_iAxisCount;       // 0x09
 			TInputDevice* m_pSource;   // 0x0C

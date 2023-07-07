@@ -121,7 +121,7 @@ namespace Toshi
 		}
 	}
 
-	TInputInterface::InputEvent::InputEvent(TInputDevice* a_pDevice, int a_iDoodad, EventType a_eEventType)
+	TInputInterface::InputEvent::InputEvent(TInputDevice* a_pDevice, int a_iDoodad, EVENT_TYPE a_eEventType)
 	{
 		m_pSource = a_pDevice;
 		m_iDoodad = a_iDoodad;
@@ -131,7 +131,7 @@ namespace Toshi
 		m_wszString[0] = L'\0';
 	}
 
-	TInputInterface::InputEvent::InputEvent(TInputDevice* a_pDevice, int a_iDoodad, EventType a_eEventType, wchar_t* a_wszString)
+	TInputInterface::InputEvent::InputEvent(TInputDevice* a_pDevice, int a_iDoodad, EVENT_TYPE a_eEventType, wchar_t* a_wszString)
 	{
 		m_pSource = a_pDevice;
 		m_iDoodad = a_iDoodad;
@@ -142,7 +142,7 @@ namespace Toshi
 		m_Magnitude.Ints[0] = 0;
 	}
 
-	TInputInterface::InputEvent::InputEvent(TInputDevice* a_pDevice, int a_iDoodad, EventType a_eEventType, int a_iMagnitude1)
+	TInputInterface::InputEvent::InputEvent(TInputDevice* a_pDevice, int a_iDoodad, EVENT_TYPE a_eEventType, int a_iMagnitude1)
 	{
 		m_pSource = a_pDevice;
 		m_iDoodad = a_iDoodad;
@@ -153,7 +153,7 @@ namespace Toshi
 		m_wszString[0] = L'\0';
 	}
 
-	TInputInterface::InputEvent::InputEvent(TInputDevice* a_pDevice, int a_iDoodad, EventType a_eEventType, int a_iMagnitude1, int a_iMagnitude2)
+	TInputInterface::InputEvent::InputEvent(TInputDevice* a_pDevice, int a_iDoodad, EVENT_TYPE a_eEventType, int a_iMagnitude1, int a_iMagnitude2)
 	{
 		m_pSource = a_pDevice;
 		m_iDoodad = a_iDoodad;
@@ -165,7 +165,7 @@ namespace Toshi
 		m_wszString[0] = L'\0';
 	}
 
-	TInputInterface::InputEvent::InputEvent(TInputDevice* a_pDevice, int a_iDoodad, EventType a_eEventType, float a_fMagnitude1)
+	TInputInterface::InputEvent::InputEvent(TInputDevice* a_pDevice, int a_iDoodad, EVENT_TYPE a_eEventType, float a_fMagnitude1)
 	{
 		m_pSource = a_pDevice;
 		m_iDoodad = a_iDoodad;
@@ -176,7 +176,7 @@ namespace Toshi
 		m_wszString[0] = L'\0';
 	}
 
-	TInputInterface::InputEvent::InputEvent(TInputDevice* a_pDevice, int a_iDoodad, EventType a_eEventType, float a_fMagnitude1, float a_fMagnitude2)
+	TInputInterface::InputEvent::InputEvent(TInputDevice* a_pDevice, int a_iDoodad, EVENT_TYPE a_eEventType, float a_fMagnitude1, float a_fMagnitude2)
 	{
 		m_pSource = a_pDevice;
 		m_iDoodad = a_iDoodad;
