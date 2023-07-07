@@ -654,7 +654,7 @@ namespace Toshi {
 		}
 	}
 
-	const TBOOL TInputDXDeviceKeyboard::BindToDIDevice(HWND a_hMainWindow, LPCDIDEVICEINSTANCE a_poDeviceInstance, IDirectInputDevice8* a_poDXInputDevice, TBOOL a_bExclusive)
+	const TBOOL TInputDXDeviceKeyboard::BindToDIDevice(HWND a_hMainWindow, LPCDIDEVICEINSTANCEA a_poDeviceInstance, IDirectInputDevice8A* a_poDXInputDevice, TBOOL a_bExclusive)
 	{
 		TASSERT(a_poDeviceInstance != NULL);
 		TASSERT(a_poDXInputDevice != NULL);
@@ -662,8 +662,7 @@ namespace Toshi {
 		Initialise();
 		Release();
 
-		TUtil::MemCopy(&m_oGUID, &a_poDeviceInstance->guidInstance, sizeof(GUID));
-		TIMPLEMENT_D("Weird for loop, could be memcopy although unsure");
+		TUtil::MemCopy(&m_oDeviceInstance, a_poDeviceInstance, sizeof(DIDEVICEINSTANCEA));
 
 		m_poDXInputDevice = a_poDXInputDevice;
 		m_DIDevCaps.dwSize = sizeof(DIDEVCAPS);
@@ -688,7 +687,7 @@ namespace Toshi {
 		return TTRUE;
 	}
 
-	BOOL CALLBACK TInputDXDeviceKeyboard::EnumObjectCallback(LPCDIDEVICEOBJECTINSTANCE a_poDeviceInstance, LPVOID a_pvRef)
+	BOOL CALLBACK TInputDXDeviceKeyboard::EnumObjectCallback(LPCDIDEVICEOBJECTINSTANCEA a_poDeviceInstance, LPVOID a_pvRef)
 	{
 		return 0;
 	}

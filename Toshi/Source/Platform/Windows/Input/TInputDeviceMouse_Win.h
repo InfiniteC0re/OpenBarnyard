@@ -42,13 +42,13 @@ namespace Toshi
 		virtual void RefreshDirect();
 		virtual TBOOL WasDown(int doodad) const;
 
-		TBOOL const BindToDIDevice(HWND a_mainWindow, LPCDIDEVICEINSTANCE a_poDeviceInstance, IDirectInputDevice8* a_poDXInputDevice, TBOOL exclusive);
+		TBOOL const BindToDIDevice(HWND a_mainWindow, LPCDIDEVICEINSTANCEA a_poDeviceInstance, IDirectInputDevice8A* a_poDXInputDevice, TBOOL exclusive);
 
 	public:
 		static constexpr size_t sm_ciMouseBufferSize = 0x20000000U;
 
 	private:
-		IDirectInputDevice8* m_poDXInputDevice;
+		IDirectInputDevice8A* m_poDXInputDevice;
 		DIDEVCAPS m_DIDevCaps;
 		POINT m_CursorPos;
 		DWORD m_dwButtonCurrent;

@@ -41,8 +41,8 @@ namespace Toshi {
 		static int TranslateDoodadToDX(int dxkey);
 	
 	public:
-		const TBOOL BindToDIDevice(HWND a_hMainWindow, LPCDIDEVICEINSTANCE a_poDeviceInstance, IDirectInputDevice8* a_poDXInputDevice, TBOOL a_bExclusive);
-		static BOOL CALLBACK EnumObjectCallback(LPCDIDEVICEOBJECTINSTANCE a_poDeviceInstance, LPVOID a_pvRef);
+		const TBOOL BindToDIDevice(HWND a_hMainWindow, LPCDIDEVICEINSTANCEA a_poDeviceInstance, IDirectInputDevice8A* a_poDXInputDevice, TBOOL a_bExclusive);
+		static BOOL CALLBACK EnumObjectCallback(LPCDIDEVICEOBJECTINSTANCEA a_poDeviceInstance, LPVOID a_pvRef);
 
 	private:
 		int m_iSomeNum;                                 // 0x070
@@ -51,9 +51,9 @@ namespace Toshi {
 		uint8_t m_aBuffer[512];                         // 0x07C
 		T2Array<KeyInfo, KEYBOARD_NUM_DOODADS> m_Array; // 0x27C
 		TBOOL m_bIsUpdating;                            // 0x67C
-		GUID m_oGUID;                                   // 0x680
+		DIDEVICEINSTANCEA m_oDeviceInstance;            // 0x680
 		DIDEVCAPS m_DIDevCaps;                          // 0x8C4
-		IDirectInputDevice8* m_poDXInputDevice;         // 0x8F0
+		IDirectInputDevice8A* m_poDXInputDevice;        // 0x8F0
 	};
 
 }

@@ -9,17 +9,17 @@ namespace Toshi
 	public:
 		virtual TBOOL Initialise() { return TTRUE; }
 
-		static TBOOL IsDirectInputController(LPCDIDEVICEINSTANCE a_poDeviceInstance);
-		TBOOL const BindToDIDevice(HWND a_mainWindow, LPCDIDEVICEINSTANCE a_poDeviceInstance, IDirectInputDevice8* a_poDXInputDevice);
+		static TBOOL IsDirectInputController(LPCDIDEVICEINSTANCEA a_poDeviceInstance);
+		TBOOL const BindToDIDevice(HWND a_mainWindow, LPCDIDEVICEINSTANCEA a_poDeviceInstance, IDirectInputDevice8A* a_poDXInputDevice);
 		
-		static int CALLBACK EnumerateObjectCallback(LPCDIDEVICEOBJECTINSTANCE a_poDeviceInstance, LPVOID a_pData)
+		static int CALLBACK EnumerateObjectCallback(LPCDIDEVICEOBJECTINSTANCEA a_poDeviceInstance, LPVOID a_pData)
 		{
 			return 1;
 		}
 
 	private:
 		TBOOL m_bIsXInput;
-		IDirectInputDevice8* m_pDXInputDevice;
+		IDirectInputDevice8A* m_pDXInputDevice;
 		DIDEVCAPS m_pDXDiDevCaps;
 	};
 }

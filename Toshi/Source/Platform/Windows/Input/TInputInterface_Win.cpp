@@ -71,12 +71,11 @@ namespace Toshi
         return TFALSE;
     }
 
-    BOOL TInputDXInterface::EnumerateDeviceCallback(LPCDIDEVICEINSTANCE a_poDeviceInstance, LPVOID poDXInputInterface)
+    BOOL TInputDXInterface::EnumerateDeviceCallback(LPCDIDEVICEINSTANCEA a_poDeviceInstance, LPVOID poDXInputInterface)
     {
         char fmtStr[37];
-        char productName[260];
         TInputDXInterface* inputInterface = (TInputDXInterface*)poDXInputInterface;
-        LPDIRECTINPUTDEVICE8 inputDevice;
+        LPDIRECTINPUTDEVICE8A inputDevice;
         TInputDXDeviceMouse* inputMouse;
         TInputDXDeviceController* inputController;
         TInputDXDeviceKeyboard* inputKeyboard;
@@ -181,15 +180,13 @@ namespace Toshi
                 a_poDeviceInstance->guidProduct.Data4[5], a_poDeviceInstance->guidProduct.Data4[6],
                 a_poDeviceInstance->guidProduct.Data4[7]);
 
-            Toshi::TStringManager::StringUnicodeToChar(productName, a_poDeviceInstance->tszProductName, -1);
-
             if (!TInputDXDeviceController::IsDirectInputController(a_poDeviceInstance))
             {
-                TUtil::Log("Added XInput Controller: \'%s\' (%s) - NON-PSX", productName, fmtStr);
+                TUtil::Log("Added XInput Controller: \'%s\' (%s) - NON-PSX", a_poDeviceInstance->tszProductName, fmtStr);
                 return DIENUM_CONTINUE;
             }
 
-            TUtil::Log("Added Direct Input Controller: \'%s\' (%s) - NON-PSX", productName, fmtStr);
+            TUtil::Log("Added Direct Input Controller: \'%s\' (%s) - NON-PSX", a_poDeviceInstance->tszProductName, fmtStr);
 
             inputController = inputInterface->GetDeviceByIndex<TInputDXDeviceController>();
             hr = inputInterface->m_poDirectInput8->CreateDevice(a_poDeviceInstance->guidInstance, &inputDevice, NULL);
