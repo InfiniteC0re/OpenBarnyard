@@ -24,6 +24,12 @@ BOOL CALLBACK AssertionDlgProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lP
 		SetForegroundWindow(hwnd);
 		SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
 
+		if (!g_szAssertFilename)
+			g_szAssertFilename = "***INVALID***";
+
+		if (!g_szAssertExpression)
+			g_szAssertExpression = "***INVALID***";
+
 		SetDlgItemTextA(hwnd, 8204, g_szAssertFilename);
 		SetDlgItemInt(hwnd, 8205, g_uiAssertLineNumber, TRUE);
 		SetDlgItemTextA(hwnd, 8206, g_szAssertExpression);
