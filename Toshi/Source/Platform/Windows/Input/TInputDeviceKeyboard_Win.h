@@ -11,8 +11,8 @@ namespace Toshi {
 	public:
 		struct KeyInfo
 		{
-			int Unk1;
-			int Unk2;
+			wchar_t* wszKeyName;
+			DWORD dwKeyScanCode;
 		};
 
 	public:
@@ -42,14 +42,14 @@ namespace Toshi {
 	
 	public:
 		const TBOOL BindToDIDevice(HWND a_hMainWindow, LPCDIDEVICEINSTANCEA a_poDeviceInstance, IDirectInputDevice8A* a_poDXInputDevice, TBOOL a_bExclusive);
-		static BOOL CALLBACK EnumObjectCallback(LPCDIDEVICEOBJECTINSTANCEA a_poDeviceInstance, LPVOID a_pvRef);
+		static BOOL CALLBACK EnumObjectCallback(LPCDIDEVICEOBJECTINSTANCEA a_poObjectInstance, LPVOID a_pvRef);
 
 	private:
 		int m_iSomeNum;                                 // 0x070
 		uint8_t* m_pKeyStates1;                         // 0x074
 		uint8_t* m_pKeyStates2;                         // 0x078
 		uint8_t m_aBuffer[512];                         // 0x07C
-		T2Array<KeyInfo, KEYBOARD_NUM_DOODADS> m_Array; // 0x27C
+		T2Array<KeyInfo, KEYBOARD_NUM_DOODADS> m_aKeys; // 0x27C
 		TBOOL m_bIsUpdating;                            // 0x67C
 		DIDEVICEINSTANCEA m_oDeviceInstance;            // 0x680
 		DIDEVCAPS m_DIDevCaps;                          // 0x8C4

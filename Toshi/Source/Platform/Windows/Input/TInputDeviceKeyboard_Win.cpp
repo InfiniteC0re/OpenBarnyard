@@ -9,7 +9,7 @@ namespace Toshi {
 		m_pKeyStates1 = TNULL;
 		m_pKeyStates2 = TNULL;
 		m_poDXInputDevice = TNULL;
-		m_Array.InitialiseAll({ 0 });
+		m_aKeys.InitialiseAll({ TNULL });
 	}
 
 	void TInputDXDeviceKeyboard::Release()
@@ -687,9 +687,45 @@ namespace Toshi {
 		return TTRUE;
 	}
 
-	BOOL CALLBACK TInputDXDeviceKeyboard::EnumObjectCallback(LPCDIDEVICEOBJECTINSTANCEA a_poDeviceInstance, LPVOID a_pvRef)
+	BOOL CALLBACK TInputDXDeviceKeyboard::EnumObjectCallback(LPCDIDEVICEOBJECTINSTANCEA a_poObjectInstance, LPVOID a_pvRef)
 	{
-		return 0;
+		TInputDXDeviceKeyboard* pKeyboard = TREINTERPRETCAST(TInputDXDeviceKeyboard*, a_pvRef);
+		int iDoodad = TranslateDXToDoodad(a_poObjectInstance->dwOfs);
+
+		if (iDoodad - 0x20000U < 0x80)
+		{
+			iDoodad -= 0x20000U;
+
+			// Save name of key
+			auto iKeyNameLength = TStringManager::String8Length(a_poObjectInstance->tszName);
+			delete[] pKeyboard->m_aKeys[iDoodad].wszKeyName;
+			wchar_t* wcsKeyName = new wchar_t[iKeyNameLength + 1];
+			TStringManager::StringCharToUnicode(wcsKeyName, a_poObjectInstance->tszName, -1);
+			pKeyboard->m_aKeys[iDoodad].wszKeyName = wcsKeyName;
+
+			DIPROPSTRING oKeyName;
+			oKeyName.diph.dwSize = sizeof(DIPROPSTRING);
+			oKeyName.diph.dwHeaderSize = sizeof(DIPROPHEADER);
+			oKeyName.diph.dwHow = 1;
+			oKeyName.diph.dwObj = a_poObjectInstance->dwType >> 8 & 0xffff;
+			
+			pKeyboard->m_poDXInputDevice->GetProperty(DIPROP_KEYNAME, &oKeyName.diph);
+
+			DIPROPDWORD oKeyScanCode;
+			oKeyScanCode.diph.dwSize = sizeof(oKeyScanCode);
+			oKeyScanCode.diph.dwHeaderSize = sizeof(DIPROPHEADER);
+			oKeyScanCode.diph.dwHow = 1;
+			oKeyScanCode.diph.dwObj = a_poObjectInstance->dwType >> 8 & 0xffff;
+			
+			HRESULT hRes = pKeyboard->m_poDXInputDevice->GetProperty(DIPROP_SCANCODE, &oKeyScanCode.diph);
+			
+			if (hRes == S_OK)
+				pKeyboard->m_aKeys[iDoodad].dwKeyScanCode = oKeyScanCode.dwData;
+			else
+				pKeyboard->m_aKeys[iDoodad].dwKeyScanCode = -1;
+		}
+
+		return TRUE;
 	}
 
 }

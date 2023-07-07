@@ -2,8 +2,8 @@
 #include "Toshi2/T2String8.h"
 #include "Toshi2/T2String16.h"
 
-namespace Toshi
-{
+namespace Toshi {
+
 	class TStringManager
 	{
 	public:
@@ -37,6 +37,8 @@ namespace Toshi
 		static const wchar_t* String16FindString(const wchar_t* str, wchar_t* substr) { return T2String16::FindString(str, substr); }
 		static size_t String16Length(const wchar_t* str) { return T2String16::Length(str); }
 		
-		static const char* StringUnicodeToChar(char* a_CharString, const wchar_t* const& a_UnicodeString, uint32_t a_iLength);
+		static wchar_t* StringCharToUnicode(wchar_t* a_UnicodeString, const char* a_CharString, uint32_t a_iLength);
+		static char* StringUnicodeToChar(char* a_CharString, const wchar_t* const& a_UnicodeString, uint32_t a_iLength);
 	};
+
 }

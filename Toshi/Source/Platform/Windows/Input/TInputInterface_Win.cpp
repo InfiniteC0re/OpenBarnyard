@@ -1,10 +1,10 @@
 #include "ToshiPCH.h"
 #include "TInputInterface_Win.h"
-#include TOSHI_MULTIPLATFORM(Input/TInputDeviceController)
+#include "TInputDeviceController_Win.h"
+#include "TInputDeviceMouse_Win.h"
 #include "TInputDeviceController_XInput.h"
 #include "TInputDeviceController_Wiin.h"
-#include <Platform/Windows/Input/TInputDeviceKeyboard_Win.h>
-#include TOSHI_MULTIPLATFORM(Input/TInputDeviceMouse)
+#include "TInputDeviceKeyboard_Win.h"
 
 namespace Toshi
 {
