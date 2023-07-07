@@ -141,7 +141,20 @@ namespace Toshi {
 			return;
 
 		std::swap(m_pKeyStates1, m_pKeyStates2);
-		TTODO("Do calls with m_poDXInputDevice");
+		HRESULT hPoolRes = m_poDXInputDevice->Poll();
+
+		if (SUCCEEDED(hPoolRes) && 
+			m_poDXInputDevice->GetDeviceState(256, m_pKeyStates1) == S_OK)
+		{
+			DWORD dwNumElements = 32;
+			m_poDXInputDevice->GetDeviceData(sizeof(DIDEVICEOBJECTDATA), NULL, &dwNumElements, 0);
+			m_bFlag = TTRUE;
+			m_bIsUpdating = TTRUE;
+		}
+		else
+		{
+			m_bIsUpdating = TFALSE;
+		}
 	}
 
 	int TInputDXDeviceKeyboard::TranslateDXToDoodad(int doodad)

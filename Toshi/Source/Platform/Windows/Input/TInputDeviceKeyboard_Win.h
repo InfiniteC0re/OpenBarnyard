@@ -54,6 +54,7 @@ namespace Toshi {
 		DIDEVICEINSTANCEA m_oDeviceInstance;            // 0x680
 		DIDEVCAPS m_DIDevCaps;                          // 0x8C4
 		IDirectInputDevice8A* m_poDXInputDevice;        // 0x8F0
+		TBOOL m_bFlag;                                  // 0x8F4
 	};
 
 }
