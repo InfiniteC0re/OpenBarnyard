@@ -2,6 +2,7 @@
 #include "Toshi/Input/TInputDeviceKeyboard.h"
 #include "Toshi2/T2Array.h"
 
+#define DIRECTINPUT_VERSION 0x0800
 #include <dinput.h>
 
 namespace Toshi {
@@ -37,6 +38,7 @@ namespace Toshi {
 		virtual void RefreshDirect();
 
 	protected:
+		TBOOL HandleKeyChange(TEmitter<TInputInterface, TInputInterface::InputEvent>& a_Emitter, int a_iKeyIndex, uint8_t a_ui8KeyState);
 		static int TranslateDXToDoodad(int doodad);
 		static int TranslateDoodadToDX(int dxkey);
 	

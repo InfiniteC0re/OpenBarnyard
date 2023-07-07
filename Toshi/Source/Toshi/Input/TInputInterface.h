@@ -24,58 +24,18 @@ namespace Toshi {
 			};
 
 		public:
-			InputEvent() = default;
+			//InputEvent() = default;
 
-			InputEvent(TInputDevice* device, int doodad, EventType eventType)
-			{
-				m_pSource = device;
-				m_iDoodad = doodad;
-				m_eEventType = eventType;
-				m_bIsMagnitudeFloat = TFALSE;
-				m_iAxisCount = 0;
-			}
+			InputEvent(TInputDevice* a_pDevice, int a_iDoodad, EventType a_eEventType);
+			InputEvent(TInputDevice* a_pDevice, int a_iDoodad, EventType a_eEventType, wchar_t* a_wszString);
+			InputEvent(TInputDevice* a_pDevice, int a_iDoodad, EventType a_eEventType, int a_iMagnitude1);
+			InputEvent(TInputDevice* a_pDevice, int a_iDoodad, EventType a_eEventType, int a_iMagnitude1, int a_iMagnitude2);
+			InputEvent(TInputDevice* a_pDevice, int a_iDoodad, EventType a_eEventType, float a_fMagnitude1);
+			InputEvent(TInputDevice* a_pDevice, int a_iDoodad, EventType a_eEventType, float a_fMagnitude1, float a_fMagnitude2);
 
-			InputEvent(TInputDevice* device, int doodad, EventType eventType, int magnitude)
-			{
-				m_pSource = device;
-				m_iDoodad = doodad;
-				m_eEventType = eventType;
-				m_Magnitude.Ints[0] = magnitude;
-				m_bIsMagnitudeFloat = TFALSE;
-				m_iAxisCount = 1;
-			}
+			int GetMagnitudeInt(int a_iAxis);
 
-			InputEvent(TInputDevice* device, int doodad, EventType eventType, int magnitude, int magnitude2)
-			{
-				m_pSource = device;
-				m_iDoodad = doodad;
-				m_eEventType = eventType;
-				m_Magnitude.Ints[0] = magnitude;
-				m_Magnitude.Ints[1] = magnitude2;
-				m_bIsMagnitudeFloat = TFALSE;
-				m_iAxisCount = 2;
-			}
-
-			InputEvent(TInputDevice* device, int doodad, EventType eventType, float magnitude)
-			{
-				m_pSource = device;
-				m_iDoodad = doodad;
-				m_eEventType = eventType;
-				m_Magnitude.Floats[0] = magnitude;
-				m_bIsMagnitudeFloat = TTRUE;
-				m_iAxisCount = 1;
-			}
-
-			InputEvent(TInputDevice* device, int doodad, EventType eventType, float magnitude, float magnitude2)
-			{
-				m_pSource = device;
-				m_iDoodad = doodad;
-				m_eEventType = eventType;
-				m_Magnitude.Floats[0] = magnitude;
-				m_Magnitude.Floats[1] = magnitude2;
-				m_bIsMagnitudeFloat = TTRUE;
-				m_iAxisCount = 2;
-			}
+			float GetMagnitudeFloat(int a_iAxis);
 
 			int8_t GetAxisCount() const
 			{
@@ -97,37 +57,6 @@ namespace Toshi {
 				return m_pSource;
 			}
 
-			int GetMagnitudeInt(int a_iAxis)
-			{
-				TASSERT(a_iAxis >= 0 && a_iAxis < GetAxisCount());
-
-				if (IsMagnitudeInt())
-				{
-					return m_Magnitude.Ints[a_iAxis];
-				}
-				else
-				{
-					if (m_Magnitude.Floats[a_iAxis] < -0.5f)
-					{
-						return -1;
-					}
-
-					return 0.5f < m_Magnitude.Floats[a_iAxis];
-				}
-			}
-
-			float GetMagnitudeFloat(int a_iAxis)
-			{
-				TASSERT(a_iAxis >= 0 && a_iAxis < GetAxisCount());
-
-				if (IsMagnitudeFloat())
-				{
-					return m_Magnitude.Floats[a_iAxis];
-				}
-
-				return (float)m_Magnitude.Ints[a_iAxis];
-			}
-
 			TBOOL IsMagnitudeFloat()
 			{
 				return m_bIsMagnitudeFloat;
@@ -139,18 +68,18 @@ namespace Toshi {
 			}
 
 		public:
-			int m_iDoodad;              // 0x0
-			EventType m_eEventType;     // 0x4
-			TBOOL m_bIsMagnitudeFloat;  // 0x8
-			int8_t m_iAxisCount;        // 0x9
+			int m_iDoodad;             // 0x00
+			EventType m_eEventType;    // 0x04
+			TBOOL m_bIsMagnitudeFloat; // 0x08
+			int8_t m_iAxisCount;       // 0x09
+			TInputDevice* m_pSource;   // 0x0C
+			wchar_t m_wszString[4];    // 0x10
 
 			union
 			{
 				float Floats[2];
 				int Ints[2];
-			} m_Magnitude;              // 0x10 JPOG 0x18 De blob
-
-			TInputDevice* m_pSource;    // 0xC
+			} m_Magnitude;             // 0x18 De blob 0x10 JPOG
 		};
 
 	public:
@@ -249,6 +178,11 @@ namespace Toshi {
 		TBOOL IsAcquired() const
 		{
 			return m_bIsAcquired;
+		}
+
+		void SetAcquired(TBOOL a_bAcquired)
+		{
+			m_bIsAcquired = a_bAcquired;
 		}
 
 		TInputInterface* GetInputInterface()
