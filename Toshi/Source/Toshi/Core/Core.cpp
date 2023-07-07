@@ -9,12 +9,9 @@ using namespace Toshi;
 #ifdef TOSHI_ENABLE_ASSERTS
 
 #ifdef TOSHI_PLATFORM_WINDOWS
-struct AssertionData
-{
-	const char* FileName;
-	size_t LineNumber;
-	const char* Expression;
-};
+const char* g_szAssertFilename;
+size_t g_uiAssertLineNumber;
+const char* g_szAssertExpression;
 
 BOOL CALLBACK AssertionDlgProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
 {
@@ -27,10 +24,9 @@ BOOL CALLBACK AssertionDlgProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lP
 		SetForegroundWindow(hwnd);
 		SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
 
-		AssertionData* pData = TREINTERPRETCAST(AssertionData*, lParam);
-		SetWindowTextA(GetDlgItem(hwnd, 8204), pData->FileName);
-		SetWindowTextA(GetDlgItem(hwnd, 8205), TString8::Format("%u", pData->LineNumber));
-		SetWindowTextA(GetDlgItem(hwnd, 8206), pData->Expression);
+		SetDlgItemTextA(hwnd, 8204, g_szAssertFilename);
+		SetDlgItemInt(hwnd, 8205, g_uiAssertLineNumber, TRUE);
+		SetDlgItemTextA(hwnd, 8206, g_szAssertExpression);
 		return TRUE;
 	}
 	case WM_COMMAND:
@@ -57,10 +53,14 @@ BOOL CALLBACK AssertionDlgProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lP
 
 AssertionAction AssertionCallback(const char* file, int line, const char* expression)
 {
-	AssertionData data;
-	data.FileName = file;
-	data.LineNumber = line;
-	data.Expression = expression;
+	g_szAssertFilename = file;
+	g_uiAssertLineNumber = line;
+	g_szAssertExpression = expression;
+
+	HWND hWnd = GetActiveWindow();
+	
+	if (hWnd != NULL)
+		hWnd = GetLastActivePopup(hWnd);
 	
 	return
 		TSTATICCAST(
@@ -68,9 +68,9 @@ AssertionAction AssertionCallback(const char* file, int line, const char* expres
 			DialogBoxParamA(
 				GetModuleHandleA(NULL),
 				MAKEINTRESOURCEA(IDD_ASSERT),
-				NULL,
+				hWnd,
 				AssertionDlgProc,
-				TREINTERPRETCAST(LPARAM, &data)
+				NULL
 			)
 		);
 }
