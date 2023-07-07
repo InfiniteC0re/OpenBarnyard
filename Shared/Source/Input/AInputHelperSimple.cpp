@@ -39,7 +39,6 @@ TBOOL AInputHelperSimple::WasPressed(size_t doodad)
 
 void AInputHelperSimple::Update()
 {
-	TTODO("this->m_pInputDevice->vftable[0x15])() ???");
 	if (m_pInputDevice != TNULL)
 	{
 		if (!m_pInputDevice->GetClass()->IsA(TGetClass(TInputDeviceKeyboard)) || 
