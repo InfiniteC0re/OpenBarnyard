@@ -17,10 +17,10 @@ void AInputHelper::AddMapping(AInputMap::INPUTBUTTON a_eInputButton, AInputManag
 		m_eInputContext = inputMng->GetContext();
 	}
 
-	auto buttonMap = inputMng->GetInputMap().GetButtonMap(inputMng->GetContext());
-	auto foundMap1 = buttonMap.Find(TSTATICCAST(AInputMap::ActionButton, a_eInputButton));
+	auto pButtonMap = inputMng->GetInputMap().GetButtonMap(inputMng->GetContext());
+	auto foundMap1 = pButtonMap->Find(TSTATICCAST(AInputMap::ActionButton, a_eInputButton));
 
-	if (buttonMap.Begin() != buttonMap.End())
+	if (pButtonMap->Begin() != pButtonMap->End())
 	{
 		for (auto j = foundMap1->Begin(); j != foundMap1->End(); j++)
 		{
