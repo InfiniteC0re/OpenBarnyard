@@ -44,13 +44,13 @@ namespace Toshi {
 	{
 		TIMPLEMENT();
 
-		m_iLeftButton = 0;
+		m_bReverseButtons = TFALSE;
 		m_dwButtonCurrent = 0;
 		m_dwButtonPrevious = 0;
 
 		GetCursorPos(&m_CursorPos);
 
-		DIPROPDWORD dwordProperty{};
+		DIPROPDWORD dwordProperty;
 		dwordProperty.diph.dwSize = sizeof(dwordProperty);
 		dwordProperty.diph.dwHeaderSize = sizeof(DIPROPHEADER);
 		dwordProperty.diph.dwObj = DIMOFS_Z;
@@ -75,13 +75,14 @@ namespace Toshi {
 	TBOOL TInputDXDeviceMouse::Acquire()
 	{
 		HRESULT hr = m_poDXInputDevice->Acquire();
+
 		if (FAILED(hr))
 		{
 			m_bIsAcquired = TFALSE;
 			return TFALSE;
 		}
-
-		m_bIsAcquired = TTRUE;
+		
+		SetAcquired(TTRUE);
 
 		if (hr != S_FALSE)
 		{
@@ -93,7 +94,7 @@ namespace Toshi {
 
 	TBOOL TInputDXDeviceMouse::Unacquire()
 	{
-		m_bIsAcquired = TFALSE;
+		SetAcquired(TFALSE); 
 		HRESULT hr = m_poDXInputDevice->Unacquire();
 		return SUCCEEDED(hr);
 	}
@@ -118,6 +119,8 @@ namespace Toshi {
 		DIDEVICEOBJECTDATA dod[32];
 		DWORD dwItems = 32;
 
+		m_dwButtonPrevious = m_dwButtonCurrent;
+		ProcessRepeats(emitter, deltaTime);
 		TUtil::MemClear(dod, sizeof(dod));
 
 		HRESULT hr = m_poDXInputDevice->GetDeviceData(sizeof(DIDEVICEOBJECTDATA), dod, &dwItems, 0);
@@ -135,14 +138,12 @@ namespace Toshi {
 			{
 				return eventCount;
 			}
-
 		}
 
 		auto renderer = TRenderDX11::Interface();
 		auto input = TInputDXInterface::GetInterface();
 		TRenderDX11::DisplayParams* params;
 		int unk;
-		int iButton;
 
 		for (size_t i = 0; i < dwItems; i++)
 		{
@@ -218,53 +219,37 @@ namespace Toshi {
 				eventCount++;
 				break;
 			case DIMOFS_BUTTON0:
-				iButton = m_iLeftButton != 0;
-				TASSERT(iButton < INPUT_DEVICE_MOUSE_BUTTONS);
-				if (dod[i].dwData & 0x80)
-				{
-					TASSERT((m_dwButtonCurrent & (1 << iButton)) != 0);
-					emitter.Throw(TInputInterface::InputEvent(this, BUTTON_1 + iButton, TInputInterface::EVENT_TYPE_GONE_DOWN));
-					m_dwButtonCurrent |= iButton;
-				}
-				else
-				{
-					emitter.Throw(TInputInterface::InputEvent(this, BUTTON_1 + iButton, TInputInterface::EVENT_TYPE_GONE_UP));
-					m_dwButtonCurrent &= ~iButton;
-				}
-				eventCount++;
-				break;
 			case DIMOFS_BUTTON1:
-				iButton = m_iLeftButton == 0;
-				TASSERT(iButton < INPUT_DEVICE_MOUSE_BUTTONS);
-				if (dod[i].dwData & 0x80)
-				{
-					TASSERT((m_dwButtonCurrent & (1 << iButton)) != 0);
-					emitter.Throw(TInputInterface::InputEvent(this, BUTTON_1 + iButton, TInputInterface::EVENT_TYPE_GONE_DOWN));
-					m_dwButtonCurrent |= iButton;
-				}
-				else
-				{
-					emitter.Throw(TInputInterface::InputEvent(this, BUTTON_1 + iButton, TInputInterface::EVENT_TYPE_GONE_UP));
-					m_dwButtonCurrent &= ~iButton;
-				}
-				eventCount++;
-				break;
 			case DIMOFS_BUTTON2:
-				iButton = 2;
+			{
+				int iButton =
+					(dod[i].dwOfs == DIMOFS_BUTTON0) ? (!m_bReverseButtons ? 0 : 1) :
+					(dod[i].dwOfs == DIMOFS_BUTTON1) ? (!m_bReverseButtons ? 1 : 0) : 2;
+
 				TASSERT(iButton < INPUT_DEVICE_MOUSE_BUTTONS);
+
 				if (dod[i].dwData & 0x80)
 				{
-					TASSERT((m_dwButtonCurrent & (1 << iButton)) != 0);
-					emitter.Throw(TInputInterface::InputEvent(this, BUTTON_1 + iButton, TInputInterface::EVENT_TYPE_GONE_DOWN));
-					m_dwButtonCurrent |= iButton;
+					if ((m_dwButtonCurrent & (1 << iButton)) != 0)
+					{
+						// wtf is this assert??????????????
+						TASSERT((m_dwButtonCurrent & (1 << iButton)) != 0);
+					}
+					else
+					{
+						emitter.Throw(TInputInterface::InputEvent(this, BUTTON_1 + iButton, TInputInterface::EVENT_TYPE_GONE_DOWN));
+						m_dwButtonCurrent |= 1 << iButton;
+					}
 				}
 				else
 				{
 					emitter.Throw(TInputInterface::InputEvent(this, BUTTON_1 + iButton, TInputInterface::EVENT_TYPE_GONE_UP));
-					m_dwButtonCurrent &= ~iButton;
+					m_dwButtonCurrent &= ~(1 << iButton);
 				}
+
 				eventCount++;
 				break;
+			}
 			default:
 				break;
 			}
@@ -290,51 +275,40 @@ namespace Toshi {
 
 	void TInputDXDeviceMouse::RefreshDirect()
 	{
+		TOSHI_INFO("{0}x{1}", 0, 0);
+
 		if (IsAcquired())
 		{
 			m_dwButtonPrevious = m_dwButtonCurrent;
 			m_dwButtonCurrent = 0;
 			HRESULT hr = m_poDXInputDevice->Poll();
+
 			if (SUCCEEDED(hr))
 			{
 				DIMOUSESTATE mouseState;
 				hr = m_poDXInputDevice->GetDeviceState(sizeof(DIMOUSESTATE), &mouseState);
+				
 				if (SUCCEEDED(hr))
 				{
 					if (mouseState.rgbButtons[0] & 0x80) // LeftClick
-					{
-						if (m_iLeftButton == 0)
-						{
-							m_dwButtonCurrent |= 1;
-						}
-						else
-						{
-							m_dwButtonCurrent |= 2;
-						}
-					}
+						m_dwButtonCurrent |= m_bReverseButtons ? 2 : 1;
+					
 					if (mouseState.rgbButtons[1] & 0x80) // RightClick
-					{
-						if (m_iLeftButton == 0)
-						{
-							m_dwButtonCurrent |= 2;
-						}
-						else
-						{
-							m_dwButtonCurrent |= 1;
-						}
-					}
+						m_dwButtonCurrent |= m_bReverseButtons ? 1 : 2;
+
 					if (mouseState.rgbButtons[2] & 0x80) // Wheeling yeeet
-					{
 						m_dwButtonCurrent |= INPUT_DEVICE_MOUSE_WHEEL;
-					}
 				}
 			}
 		}
 	}
 
-	TBOOL TInputDXDeviceMouse::WasDown(int doodad) const
+	TBOOL TInputDXDeviceMouse::WasDown(int a_iDoodad) const
 	{
-		return doodad >= BUTTON_1 && doodad <= BUTTON_8 ? ((1 << doodad) & m_dwButtonPrevious) != 0 : TFALSE;
+		if (a_iDoodad - 0x30001 < 8)
+			return (m_dwButtonPrevious & ((a_iDoodad - 1) & 0x1F));
+
+		return TFALSE;
 	}
 
 	TBOOL const TInputDXDeviceMouse::BindToDIDevice(HWND a_mainWindow, LPCDIDEVICEINSTANCEA a_poDeviceInstance, IDirectInputDevice8A* a_poDXInputDevice, TBOOL exclusive)
@@ -343,24 +317,20 @@ namespace Toshi {
 		TASSERT(a_poDXInputDevice != NULL);
 
 		Release();
-		TUtil::MemCopy(&m_oGUID, &a_poDeviceInstance->guidInstance, sizeof(GUID));
-		TIMPLEMENT_D("Weird for loop, could be memcopy although unsure");
+		TUtil::MemCopy(&m_oDeviceInstance, a_poDeviceInstance, sizeof(DIDEVICEINSTANCEA));
 
 		m_poDXInputDevice = a_poDXInputDevice;
 		m_DIDevCaps.dwSize = sizeof(DIDEVCAPS);
 
 		m_poDXInputDevice->GetCapabilities(&m_DIDevCaps);
+
 		HRESULT hr = m_poDXInputDevice->SetDataFormat(&c_dfDIMouse);
 
 		if (hr != DI_OK)
-		{
 			return TFALSE;
-		}
 
 		if (a_mainWindow)
-		{
 			m_poDXInputDevice->SetCooperativeLevel(a_mainWindow, DISCL_FOREGROUND | (exclusive ? DISCL_EXCLUSIVE : DISCL_NONEXCLUSIVE));
-		}
 
 		DIPROPDWORD dipdw{};
 		dipdw.diph.dwSize = sizeof(DIPROPDWORD);
@@ -374,9 +344,12 @@ namespace Toshi {
 		return hr == DI_OK;
 	}
 
-	TBOOL TInputDXDeviceMouse::IsDown(int doodad) const
+	TBOOL TInputDXDeviceMouse::IsDown(int a_iDoodad) const
 	{
-		return doodad >= BUTTON_1 && doodad <= BUTTON_8 ? ((1 << doodad) & m_dwButtonCurrent) != 0 : TFALSE;
+		if (a_iDoodad - 0x30001 < 8)
+			return (m_dwButtonCurrent & ((a_iDoodad - 1) & 0x1F));
+
+		return TFALSE;
 	}
 
 	int TInputDXDeviceMouse::GetAxisInt(int doodad, int coord) const

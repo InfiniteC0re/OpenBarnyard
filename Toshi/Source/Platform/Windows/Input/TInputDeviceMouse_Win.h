@@ -48,17 +48,17 @@ namespace Toshi
 		static constexpr size_t sm_ciMouseBufferSize = 0x20000000U;
 
 	private:
-		IDirectInputDevice8A* m_poDXInputDevice;
-		DIDEVCAPS m_DIDevCaps;
-		POINT m_CursorPos;
+		TBOOL m_bReverseButtons;
 		DWORD m_dwButtonCurrent;
 		DWORD m_dwButtonPrevious;
-		int m_iLeftButton;
+		POINT m_CursorPos;
 		Axis m_aAxis;
 		int m_field0x80;
 		TBOOL m_bUnk; // 0x35
 		float m_fWheelAxis; // 0x60 very unsure
-		TBOOL m_bInitiliased; // 0x80
-		GUID m_oGUID; // 0x84
+		TBOOL m_bInitiliased;                    // 0x80
+		DIDEVICEINSTANCEA m_oDeviceInstance;     // 0x084
+		DIDEVCAPS m_DIDevCaps;                   // 0x2C8
+		IDirectInputDevice8A* m_poDXInputDevice; // 0x2F4
 	};
 }
