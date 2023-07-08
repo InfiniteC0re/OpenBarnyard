@@ -275,8 +275,6 @@ namespace Toshi {
 
 	void TInputDXDeviceMouse::RefreshDirect()
 	{
-		TOSHI_INFO("{0}x{1}", 0, 0);
-
 		if (IsAcquired())
 		{
 			m_dwButtonPrevious = m_dwButtonCurrent;
