@@ -8,19 +8,20 @@ namespace Toshi
 
 	XURXUITimelineData::XURXUITimelineData()
 	{
-		/*m_pOwnerData = TNULL;
+		m_pOwnerData = TNULL;
 		m_uiNumTimelineProps = 0;
 		m_uiNumKeyframes = 0;
 		m_iControlledChildStringID = 0;
+		m_aTimelineValues = TNULL;
 		m_aTimelineProps = TNULL;
 		m_pControlledChild = TNULL;
-		m_aTimelineProps = TNULL;*/
+		m_aTimelineProps = TNULL;
 	}
 
 	XURXUITimelineData::~XURXUITimelineData()
 	{
-		/*delete[] m_aTimelineProps;
-		delete[] m_aTimelineValues;*/
+		delete[] m_aTimelineProps;
+		delete[] m_aTimelineValues;
 	}
 
 	TBOOL XURXUITimelineData::Load(TXUIResource& a_rXur, uint8_t*& a_pData)
