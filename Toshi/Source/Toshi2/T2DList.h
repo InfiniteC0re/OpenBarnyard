@@ -80,6 +80,12 @@ namespace Toshi
 		{
 			
 		}
+		
+		~T2GenericDList()
+		{
+			TASSERT(m_oRoot.m_pNext == &m_oRoot);
+			TASSERT(TFALSE == IsLinked());
+		}
 
 		TBOOL IsLinked() const
 		{

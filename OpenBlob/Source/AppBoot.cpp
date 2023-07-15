@@ -21,6 +21,7 @@
 #include <Toshi/Xui/TXUI.h>
 #include <Toshi/Core/TArray.h>
 #include <Toshi2/T2GUI/T2GUI.h>
+#include <Toshi2/T2SimpleArray.h>
 #include <Toshi/Sound/TSound.h>
 #include <Toshi/Render/TRender.h>
 #include <Platform/Windows/TSound_Win.h>
@@ -47,6 +48,14 @@ TBOOL AApplication::OnCreate(int argc, char** argv)
 
 	TOSHI_INFO("testcvar value: {0}", CVAR_GET_BOOL(testcvar));
 	//TASSERT(TFALSE, "Assertion test");
+
+	Toshi::T2SimpleArray<int> simpleArray;
+	simpleArray.Create(4);
+
+	simpleArray[0] = 1;
+	simpleArray[1] = 2;
+	simpleArray[2] = 3;
+	simpleArray[3] = 4;
 
 	Toshi::TArray<int>::Storage genArray;
 	genArray.Push(5);

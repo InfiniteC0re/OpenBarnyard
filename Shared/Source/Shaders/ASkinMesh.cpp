@@ -7,7 +7,6 @@ ASkinMesh::ASkinMesh()
 	m_uiMaxVertices = 0;
 	m_uiNumSubMeshes = 0;
 	m_pVertexPool = TNULL;
-	m_pIndexPool = TNULL;
 }
 
 TBOOL ASkinMesh::Validate()
