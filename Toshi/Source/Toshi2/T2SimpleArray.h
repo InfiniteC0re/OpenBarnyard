@@ -3,7 +3,7 @@
 namespace Toshi {
 
 	// The name of the class is just a guess since it's possible to find the original name
-	// Use this when allo
+	// Use this when allocated array has 4 extra bytes containing size of array
 	template <class T>
 	class T2SimpleArray
 	{
@@ -26,15 +26,15 @@ namespace Toshi {
 
 		void Create(size_t a_uiSize)
 		{
-			size_t uiAllocDataSize = sizeof(size_t) + sizeof(T) * a_uiSize;
+			size_t uiAllocDataSize = sizeof(AllocateData) + sizeof(T) * a_uiSize;
 			
-			AllocateData* pAllocData = TSTATICCAST(AllocateData*, TMemalign(16, uiAllocDataSize));
+			AllocateData* pAllocData = TSTATICCAST(AllocateData*, TMalloc(uiAllocDataSize));
 			T* pArrayData = TREINTERPRETCAST(T*, pAllocData + 1);
 
 			if (pAllocData)
 			{
 				pAllocData->m_uiSize = a_uiSize;
-				new (pArrayData) T[a_uiSize]();
+				new (pArrayData) T[a_uiSize];
 
 				m_pArray = pArrayData;
 			}

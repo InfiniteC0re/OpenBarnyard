@@ -1,4 +1,5 @@
 #pragma once
+#include "Toshi2/T2SimpleArray.h"
 #include "Toshi/Xui/TXUIResource.h"
 #include "XUI.h"
 
@@ -42,7 +43,6 @@ namespace Toshi {
 		uint16_t m_unk3;
 		uint8_t m_unk4;
 
-
 		XURXUINamedFrameData()
 		{
 			m_unk = 0;
@@ -79,6 +79,9 @@ namespace Toshi {
 		};
 
 	public:
+		XURXUITimelineData();
+		~XURXUITimelineData();
+
 		TBOOL Load(Toshi::TXUIResource& a_rXur, uint8_t*& a_pData);
 
 		void SetOwner(XURXUIObjectData* pOwner)
@@ -89,8 +92,8 @@ namespace Toshi {
 	private:
 		XURXUIObjectData* m_pOwnerData;
 		XURXUIObjectData* m_pControlledChild; // 0x4 de blob
-		XURXUIKeyframeData* m_aKeyframeData; // 0x8 de blob
-		TimelineProp* m_TimelineProps;
+		T2SimpleArray<XURXUIKeyframeData> m_aKeyframeData; // 0x8 de blob
+		TimelineProp* m_aTimelineProps;
 		XUIEPTUShort32 m_uiNumTimelineProps;
 		XUIEPTUShort32 m_uiNumKeyframes;
 		XUIEPTString m_iControlledChildStringID;

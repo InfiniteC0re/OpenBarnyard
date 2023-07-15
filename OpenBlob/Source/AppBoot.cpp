@@ -49,13 +49,13 @@ TBOOL AApplication::OnCreate(int argc, char** argv)
 	TOSHI_INFO("testcvar value: {0}", CVAR_GET_BOOL(testcvar));
 	//TASSERT(TFALSE, "Assertion test");
 
-	Toshi::T2SimpleArray<int> simpleArray;
+	/*Toshi::T2SimpleArray<int> simpleArray;
 	simpleArray.Create(4);
 
 	simpleArray[0] = 1;
 	simpleArray[1] = 2;
 	simpleArray[2] = 3;
-	simpleArray[3] = 4;
+	simpleArray[3] = 4;*/
 
 	Toshi::TArray<int>::Storage genArray;
 	genArray.Push(5);
