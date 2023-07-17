@@ -1,5 +1,6 @@
 #include "ToshiPCH.h"
 #include "TMSWindow.h"
+#include "Toshi/Core/TApplication.h"
 #include "Toshi/Core/TSystem.h"
 #include "DX11/TRender_DX11.h"
 #include "Input/TInputInterface_Win.h"
@@ -179,7 +180,7 @@ namespace Toshi
 							if (window->m_IsPopup) 
 							{
 								window->m_Flag5 = TTRUE;
-								TTODO("FUN_006b17e0(&bLockCursor)");
+								TGlobalEmitter<TApplicationExitEvent>::Throw({ bLockCursor });
 							}
 						}
 						else
