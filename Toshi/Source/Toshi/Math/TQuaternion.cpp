@@ -140,25 +140,25 @@ namespace Toshi
 		TMatrix44 matrix;
 		matrix.SetFromQuaternion(*this);
 
-		float fVal1 = matrix.i;
+		float fVal1 = matrix.m_f31;
 		TMath::Clip(fVal1, -1.0f, 1.0f);
 		
 		float fVal2 = TMath::Sqrt(1.0f - fVal1 * fVal1);
 
-		if (matrix.a < 0 && matrix.k < 0)
+		if (matrix.m_f11 < 0 && matrix.m_f33 < 0)
 			fVal2 *= -1;
 
 		if (0.001f < fVal2 || fVal2 < -0.001)
 		{
 			float fVal3 = 1.0f / fVal2;
 
-			outVec.x = TMath::ATan2(matrix.j * fVal3, matrix.k * fVal3);
+			outVec.x = TMath::ATan2(matrix.m_f32 * fVal3, matrix.m_f33 * fVal3);
 			outVec.y = TMath::ATan2(fVal1, fVal2);
-			outVec.z = TMath::ATan2(matrix.e * fVal3, matrix.a * fVal3);
+			outVec.z = TMath::ATan2(matrix.m_f21 * fVal3, matrix.m_f11 * fVal3);
 		}
 		else
 		{
-			outVec.x = TMath::ATan2(-matrix.j, matrix.f);
+			outVec.x = TMath::ATan2(-matrix.m_f32, matrix.m_f22);
 			outVec.y = -TMath::ASin(fVal1);
 			outVec.z = 0.0f;
 		}

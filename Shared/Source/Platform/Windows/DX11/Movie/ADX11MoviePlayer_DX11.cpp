@@ -108,7 +108,7 @@ TBOOL ADX11MoviePlayer::PlayMovie(const char* fileName, uint32_t soundChannel, P
 
             auto uVar6 = THEORAPLAY_availableVideo(this->m_TheoraDecoder);
             auto uVar1 = 0;
-            while ((uVar6 < 300 && (uVar6 != uVar1))) {
+            while ((uVar6 < 30 && (uVar6 != uVar1))) {
                 auto uVar7 = THEORAPLAY_availableVideo(this->m_TheoraDecoder);
                 uVar1 = uVar6;
                 uVar6 = uVar7;
@@ -129,7 +129,7 @@ TBOOL ADX11MoviePlayer::PlayMovie(const char* fileName, uint32_t soundChannel, P
                 soundInfo.userdata = this;
                 soundInfo.cbsize = sizeof(soundInfo);
 
-                Toshi::TUtil::Log("Playing movie %s, %d channels, %d Hz\n", fileName, audio->channels, audio->freq);
+                TUtil::Log("Playing movie %s, %d channels, %d Hz\n", fileName, audio->channels, audio->freq);
 
                 FMOD::Sound* sound;
                 FMOD_RESULT eResult = system->createSound(NULL, FMOD_LOOP_NORMAL | FMOD_2D | FMOD_CREATESTREAM | FMOD_OPENUSER, &soundInfo, &sound);
@@ -306,7 +306,7 @@ void ADX11MoviePlayer::OnUpdate(float deltaTime)
 
         const THEORAPLAY_VideoFrame* video = m_TheoraVideo;
 
-        while (m_FrameMS < int(position - video->playms))
+        while (position > video->playms && m_FrameMS < position - video->playms)
         {
             // Delete the previous frame
             THEORAPLAY_freeVideo(video);

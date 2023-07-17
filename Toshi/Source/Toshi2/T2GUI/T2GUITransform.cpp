@@ -5,16 +5,14 @@ namespace Toshi
 {
 	void T2GUITransform::Rotate(float angle)
 	{
-		float cos;
-		float sin;
+		float fCos;
+		float fSin;
 
-		// at the moment it resets the previous angle
-		// but originally it seems to take it into account
-		TMath::SinCos(angle, sin, cos);
-		m_Rot[0].SetX(cos);
-		m_Rot[0].SetY(-sin);
-		m_Rot[1].SetX(sin);
-		m_Rot[1].SetY(cos);
+		TMath::SinCos(angle, fSin, fCos);
+		m_Rot[0].SetX(m_Rot[1].GetX() * fSin + m_Rot[0].GetX() * fCos);
+		m_Rot[0].SetY(m_Rot[1].GetY() * fSin + m_Rot[0].GetY() * fCos);
+		m_Rot[1].SetX(-m_Rot[0].GetX() * fSin + m_Rot[1].GetX() * fCos);
+		m_Rot[1].SetY(-m_Rot[0].GetY() * fSin + m_Rot[1].GetY() * fCos);
 	}
 
 	void T2GUITransform::GetInverse(T2GUITransform& outTransform)
@@ -87,25 +85,12 @@ namespace Toshi
 
 	void T2GUITransform::Matrix44(TMatrix44& outMatrix)
 	{
-		outMatrix.a = m_Rot[0].GetX();
-		outMatrix.b = m_Rot[0].GetY();
-		outMatrix.c = 0.0;
-		outMatrix.d = 0.0;
-
-		outMatrix.e = m_Rot[1].GetX();
-		outMatrix.f = m_Rot[1].GetY();
-		outMatrix.g = 0.0;
-		outMatrix.h = 0.0;
-
-		outMatrix.i = 0.0;
-		outMatrix.j = 0.0;
-		outMatrix.k = 1.0;
-		outMatrix.l = 0.0;
-
-		outMatrix.m = m_Pos.x;
-		outMatrix.n = m_Pos.y;
-		outMatrix.o = 0.0;
-		outMatrix.p = 1.0;
+		outMatrix = {
+			m_Rot[0].GetX(), m_Rot[0].GetY(), 0.0f, 0.0f,
+			m_Rot[1].GetX(), m_Rot[1].GetY(), 0.0f, 0.0f,
+			0.0f,            0.0f,            1.0f, 0.0f,
+			m_Pos.x,         m_Pos.y,         0.0f, 1.0f
+		};
 	}
 
 	void T2GUITransform::Multiply(T2GUITransform& outTransform, const T2GUITransform& a, const T2GUITransform& b)

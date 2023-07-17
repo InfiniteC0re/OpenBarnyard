@@ -10,6 +10,7 @@ namespace Toshi
 		TVector4() { Set(0, 0, 0, 1); }
 		TVector4(TFloat x, TFloat y, TFloat z, TFloat w) { Set(x, y, z, w); }
 		TVector4(TFloat floats[4]) { Set(floats); }
+		TVector4(const TVector3& other) { Set(other.x, other.y, other.z, 1.0f); }
 		TVector4(const TVector4& other) { Set(other.x, other.y, other.z, other.w); }
 
 		void Set(const TVector3& vec) { TVector4::x = vec.x; TVector4::y = vec.y; TVector4::z = vec.z; TVector4::w = 1.0f; }
