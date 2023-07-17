@@ -148,6 +148,16 @@ namespace Toshi
 		TFloat MagnitudeXZ() const { return TMath::Sqrt(x * x + z * z); }
 		TFloat MagnitudeSqXZ() const { return x * x + z * z; }
 
+		TVector4& Progress(const TVector4& a_rVec, float a_fScalar)
+		{
+			x = a_rVec.x * a_fScalar;
+			y = a_rVec.y * a_fScalar;
+			z = a_rVec.z * a_fScalar;
+			w = a_rVec.w * a_fScalar;
+
+			return *this;
+		}
+
 		TVector4 operator+(const TVector4& other) const { return { x + other.x, y + other.y, z + other.z, other.w }; }
 		TVector4 operator-(const TVector4& other) const { return { x - other.x, y - other.y, z - other.z, other.w }; }
 		TVector4 operator*(const TVector4& other) const { return { x * other.x, y * other.y, z * other.z, other.w }; }

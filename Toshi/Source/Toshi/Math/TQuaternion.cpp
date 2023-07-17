@@ -1,37 +1,9 @@
 #include "ToshiPCH.h"
 #include "TQuaternion.h"
 
-namespace Toshi
-{
+namespace Toshi {
+
 	const TQuaternion TQuaternion::IDENTITY = { 0.0f, 0.0f, 0.0f, 1.0f };
-
-	TQuaternion::TQuaternion()
-	{
-		Set(0, 0, 0, 1);
-	}
-
-	TQuaternion::TQuaternion(const TQuaternion& a_pQuaternion)
-	{
-		Set(a_pQuaternion.x, a_pQuaternion.y, a_pQuaternion.z, a_pQuaternion.w);
-	}
-
-	TQuaternion::TQuaternion(TFloat x, TFloat y, TFloat z, TFloat w)
-	{
-		Set(x, y, z, w);
-	}
-
-	void TQuaternion::Set(TFloat x, TFloat y, TFloat z, TFloat w)
-	{
-		TQuaternion::x = x;
-		TQuaternion::y = y;
-		TQuaternion::z = z;
-		TQuaternion::w = w;
-	}
-
-	void TQuaternion::SetIdentity()
-	{
-		Set(TQuaternion::IDENTITY.x, TQuaternion::IDENTITY.y, TQuaternion::IDENTITY.z, TQuaternion::IDENTITY.w);
-	}
 
 	void TQuaternion::SetFromEulerYX(const TFloat* fVal)
 	{
@@ -130,11 +102,6 @@ namespace Toshi
 		*this *= TQuaternion(param_1.x * fVal, param_1.y * fVal, param_1.z * fVal, fVal2);
 	}
 
-	void TQuaternion::Negate()
-	{
-		Set(-x, -y, -z, -w);
-	}
-
 	void TQuaternion::GetEulerXYZ(TVector3& outVec) const
 	{
 		TMatrix44 matrix;
@@ -173,4 +140,95 @@ namespace Toshi
 		Set(fX, fY, fZ, fW);
 		return *this;
 	}
+
+	void TQuaternion::Nlerp(TQuaternion& a_rOut, const TQuaternion& a_rStart, const TQuaternion& a_rEnd, float a_fProgress)
+	{
+		float fDot = TVector4::DotProduct4(a_rStart.AsVector4(), a_rEnd.AsVector4());
+
+		if (0.0f <= fDot)
+		{
+			TVector4 vec = a_rEnd.AsVector4() - a_rStart.AsVector4();
+			vec.Progress(vec, a_fProgress);
+
+			a_rOut.x = vec.x + a_rStart.x;
+			a_rOut.y = vec.y + a_rStart.y;
+			a_rOut.z = vec.z + a_rStart.z;
+			a_rOut.w = vec.w + a_rStart.w;
+		}
+		else
+		{
+			TVector4 vec = a_rEnd.AsVector4() + a_rStart.AsVector4();
+			vec.Progress(vec, a_fProgress);
+
+			a_rOut.x = vec.x - a_rStart.x;
+			a_rOut.y = vec.y - a_rStart.y;
+			a_rOut.z = vec.z - a_rStart.z;
+			a_rOut.w = vec.w - a_rStart.w;
+		}
+
+		float fMag = TMath::Sqrt(a_rOut.x * a_rOut.x + a_rOut.y * a_rOut.y + a_rOut.z * a_rOut.z + a_rOut.w * a_rOut.w);
+		
+		if (fMag != 0.0f)
+		{
+			float fOneOverMag = 1.0f / fMag;
+
+			a_rOut.x /= fOneOverMag;
+			a_rOut.y /= fOneOverMag;
+			a_rOut.z /= fOneOverMag;
+			a_rOut.w /= fOneOverMag;
+		}
+	}
+
+	void TQuaternion::Slerp(TQuaternion& a_rOut, const TQuaternion& a_rStart, const TQuaternion& a_rEnd, float a_fProgress)
+	{
+		if (a_fProgress == 0.0f)
+		{
+			a_rOut = a_rStart;
+			return;
+		}
+
+		if (a_fProgress == 1.0f)
+		{
+			a_rOut = a_rEnd;
+			return;
+		}
+
+		float fDot = TVector4::DotProduct4(a_rStart.AsVector4(), a_rEnd.AsVector4());
+		TBOOL bNegativeDot = fDot < 0.0f;
+
+		if (bNegativeDot)
+			fDot *= -1;
+
+		float fProg1 = a_fProgress;
+		float fProg2;
+
+		if (1.0f - fDot <= 0.001f)
+		{
+			fProg2 = 1.0f - a_fProgress;
+		}
+		else
+		{
+			float fAcos = TMath::ACos(fDot);
+			float fSin = TMath::Sin(fAcos);
+
+			fProg1 = TMath::Sin(fAcos * a_fProgress) * (1.0f / fSin);
+			fProg2 = TMath::Sin((1.0f - a_fProgress) * fAcos) * (1.0f / fSin);
+		}
+
+		if (bNegativeDot)
+		{
+			a_rOut.x = a_rStart.x * fProg2 - a_rEnd.x * fProg1;
+			a_rOut.y = a_rStart.y * fProg2 - a_rEnd.y * fProg1;
+			a_rOut.z = a_rStart.z * fProg2 - a_rEnd.z * fProg1;
+			a_rOut.w = a_rStart.w * fProg2 - a_rEnd.w * fProg1;
+		}
+		else
+		{
+			a_rOut.x = a_rStart.x * fProg2 + a_rEnd.x * fProg1;
+			a_rOut.y = a_rStart.y * fProg2 + a_rEnd.y * fProg1;
+			a_rOut.z = a_rStart.z * fProg2 + a_rEnd.z * fProg1;
+			a_rOut.w = a_rStart.w * fProg2 + a_rEnd.w * fProg1;
+		}
+	}
+
 }
