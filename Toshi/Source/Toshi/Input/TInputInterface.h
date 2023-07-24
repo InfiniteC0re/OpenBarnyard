@@ -1,253 +1,220 @@
 #pragma once
 #include "Toshi/Core/TNodeList.h"
+#include "Toshi/Core/TArray.h"
 
 namespace Toshi {
-    
-    class TInputDevice;
+	
+	class TInputDevice;
 
-    class TInputInterface :
-        public TGenericClassDerived<TInputInterface, TObject, "TInputInterface", TMAKEVERSION(1, 0), TFALSE>,
-        public TSingleton<TInputInterface>
-    {
-    public:
-        class InputEvent
-        {
-        public:
-            enum EventType
-            {
-                EventType_StartRepeat,
-                EventType_StopRepeat,
-                EventType_Repeat,
-                EventType_Unk3,
-                EventType_MouseMotion
-            };
+	class TInputInterface :
+		public TGenericClassDerived<TInputInterface, TObject, "TInputInterface", TMAKEVERSION(1, 0), TFALSE>,
+		public TSingleton<TInputInterface>
+	{
+	public:
+		enum EVENT_TYPE
+		{
+			EVENT_TYPE_GONE_DOWN,
+			EVENT_TYPE_GONE_UP,
+			EVENT_TYPE_REPEAT,
+			EVENT_TYPE_UNKNOWN,
+			EVENT_TYPE_MOVED
+		};
 
-        public:
-            InputEvent() = default;
-            InputEvent(TInputDevice* device, int doodad, EventType eventType)
-            {
-                m_pSource = device;
-                m_iDoodad = doodad;
-                m_eEventType = eventType;
-                m_bIsMagnitudeFloat = TFALSE;
-                m_iAxisCount = 0;
-            }
+		class InputEvent
+		{
+		public:
+			InputEvent(TInputDevice* a_pDevice, int a_iDoodad, EVENT_TYPE a_eEventType);
+			InputEvent(TInputDevice* a_pDevice, int a_iDoodad, EVENT_TYPE a_eEventType, wchar_t* a_wszString);
+			InputEvent(TInputDevice* a_pDevice, int a_iDoodad, EVENT_TYPE a_eEventType, int a_iMagnitude1);
+			InputEvent(TInputDevice* a_pDevice, int a_iDoodad, EVENT_TYPE a_eEventType, int a_iMagnitude1, int a_iMagnitude2);
+			InputEvent(TInputDevice* a_pDevice, int a_iDoodad, EVENT_TYPE a_eEventType, float a_fMagnitude1);
+			InputEvent(TInputDevice* a_pDevice, int a_iDoodad, EVENT_TYPE a_eEventType, float a_fMagnitude1, float a_fMagnitude2);
 
-            InputEvent(TInputDevice* device, int doodad, EventType eventType, float magnitude)
-            {
-                m_pSource = device;
-                m_iDoodad = doodad;
-                m_eEventType = eventType;
-                m_Magnitude.Floats[0] = magnitude;
-                m_bIsMagnitudeFloat = TTRUE;
-                m_iAxisCount = 1;
-            }
+			int GetMagnitudeInt(int a_iAxis);
 
-            InputEvent(TInputDevice* device, int doodad, EventType eventType, float magnitude, float magnitude2)
-            {
-                m_pSource = device;
-                m_iDoodad = doodad;
-                m_eEventType = eventType;
-                m_Magnitude.Floats[0] = magnitude;
-                m_Magnitude.Floats[1] = magnitude2;
-                m_bIsMagnitudeFloat = TTRUE;
-                m_iAxisCount = 2;
-            }
+			float GetMagnitudeFloat(int a_iAxis);
 
-            InputEvent(TInputDevice* device, int doodad, EventType eventType, int magnitude)
-            {
-                m_pSource = device;
-                m_iDoodad = doodad;
-                m_eEventType = eventType;
-                m_Magnitude.Ints[0] = magnitude;
-                m_bIsMagnitudeFloat = TFALSE;
-                m_iAxisCount = 1;
-            }
+			int8_t GetAxisCount() const
+			{
+				return m_iAxisCount;
+			}
 
-            InputEvent(TInputDevice* device, int doodad, EventType eventType, int magnitude, int magnitude2)
-            {
-                m_pSource = device;
-                m_iDoodad = doodad;
-                m_eEventType = eventType;
-                m_Magnitude.Ints[0] = magnitude;
-                m_Magnitude.Ints[1] = magnitude2;
-                m_bIsMagnitudeFloat = TFALSE;
-                m_iAxisCount = 2;
-            }
+			int GetDoodad() const
+			{
+				return m_iDoodad;
+			}
 
-            int8_t GetAxisCount() const
-            {
-                return m_iAxisCount;
-            }
+			EVENT_TYPE GetEventType() const
+			{
+				return m_eEventType;
+			}
 
-            int GetDoodad() const
-            {
-                return m_iDoodad;
-            }
+			TInputDevice* GetSource() const
+			{
+				return m_pSource;
+			}
 
-            EventType GetEventType() const
-            {
-                return m_eEventType;
-            }
+			TBOOL IsMagnitudeFloat()
+			{
+				return m_bIsMagnitudeFloat;
+			}
 
-            TInputDevice* GetSource() const
-            {
-                return m_pSource;
-            }
+			TBOOL IsMagnitudeInt()
+			{
+				return !m_bIsMagnitudeFloat;
+			}
 
-            int GetMagnitudeInt(int a_iAxis)
-            {
-                TASSERT(a_iAxis >= 0 && a_iAxis < GetAxisCount());
+		public:
+			int m_iDoodad;             // 0x00
+			EVENT_TYPE m_eEventType;   // 0x04
+			TBOOL m_bIsMagnitudeFloat; // 0x08
+			int8_t m_iAxisCount;       // 0x09
+			TInputDevice* m_pSource;   // 0x0C
+			wchar_t m_wszString[4];    // 0x10
 
-                if (IsMagnitudeInt())
-                {
-                    return m_Magnitude.Ints[a_iAxis];
-                }
-                else
-                {
-                    if (m_Magnitude.Floats[a_iAxis] < -0.5f)
-                    {
-                        return -1;
-                    }
+			union
+			{
+				float Floats[2];
+				int Ints[2];
+			} m_Magnitude;             // 0x18 De blob 0x10 JPOG
+		};
 
-                    return 0.5f < m_Magnitude.Floats[a_iAxis];
-                }
-            }
+	public:
+		TInputInterface() 
+		{
+			m_bIsExclusiveMode = TFALSE;
+		}
 
-            float GetMagnitudeFloat(int a_iAxis)
-            {
-                TASSERT(a_iAxis >= 0 && a_iAxis < GetAxisCount());
+		TInputDevice* GetDeviceByIndex(TClass* pClass, size_t index);
 
-                if (IsMagnitudeFloat())
-                {
-                    return m_Magnitude.Floats[a_iAxis];
-                }
+		template <class C>
+		C* GetDeviceByIndex(size_t index = 0)
+		{
+			C* pDevice = TSTATICCAST(C*, GetDeviceByIndex(TGetClass(C), index));
+			TASSERT(pDevice == TNULL || pDevice->GetClass()->IsA(TGetClass(C)));
+			return pDevice;
+		}
 
-                return (float)m_Magnitude.Ints[a_iAxis];
-            }
+		void AddDevice(TInputDevice* device);
+		void RemoveDevice(TInputDevice* device);
 
-            TBOOL IsMagnitudeFloat()
-            {
-                return m_bIsMagnitudeFloat;
-            }
+		virtual TBOOL Initialise() { return TTRUE; }
+		virtual TBOOL Deinitialise();
 
-            TBOOL IsMagnitudeInt()
-            {
-                return !m_bIsMagnitudeFloat;
-            }
+		virtual TBOOL AcquireAll();
+		virtual TBOOL UnacquireAll();
+		virtual TBOOL FlushAll();
+		virtual void SetExclusiveMode(TBOOL mode);
+		virtual TBOOL GetExclusiveMode() const;
+		virtual int ProcessEvents(float fUnk);
+		virtual void StopAllRepeats();
 
-        public:
-            int m_iDoodad;              // 0x0
-            EventType m_eEventType;     // 0x4
-            TBOOL m_bIsMagnitudeFloat;  // 0x8
-            int8_t m_iAxisCount;        // 0x9
+	private:
+		TNodeList<TInputDevice> m_DeviceList;                                        // 0x04
+		TBOOL m_bIsExclusiveMode;                                                    // 0x14 
+		TEmitter<TInputInterface, TInputInterface::InputEvent> m_Emitter1;           // 0x24
+		TGenericEmitter m_Emitter2;                                                  // 0x28
+	};
 
-            union
-            {
-                float Floats[2];
-                int Ints[2];
-            } m_Magnitude;              // 0x10 JPOG 0x18 De blob
+	class TInputDevice :
+		public TGenericClassDerived<TInputDevice, TObject, "TInputDevice", TMAKEVERSION(1, 0), TFALSE>,
+		public TNodeList<TInputDevice>::TNode
+	{
+	public:
+		static constexpr int INPUT_DEVICE_MOUSE_BUTTONS = 3;
+		static constexpr int INPUT_DEVICE_MOUSE_WHEEL = 4;
 
-            TInputDevice* m_pSource;    // 0xC
-        };
+		struct DoodadProperties
+		{
+			int m_iUnk;
+			TBOOL m_bFlag;
+		};
 
-    public:
-        TInputInterface() 
-        {
-            m_bIsExclusiveMode = TFALSE;
-        }
+		struct RepeatInfo
+		{
+			int m_iDoodad;
+		};
 
-        TInputDevice* GetDeviceByIndex(TClass* pClass, size_t index);
+	public:
+		TInputDevice() :
+			m_Repeats(0, 16),
+			m_Array2(0, 16)
+		{
+			m_pInputInterface = TNULL;
+			m_bUnknown = TFALSE;
+			m_bIsAcquired = TFALSE;
+			m_uiDeviceIndex = s_uiDeviceCount++;
+			s_aDevices[m_uiDeviceIndex] = this;
+		}
 
-        template <class C>
-        C* GetDeviceByIndex(size_t index = 0)
-        {
-            C* pDevice = TSTATICCAST(C*, GetDeviceByIndex(TGetClass(C), index));
-            TASSERT(pDevice == TNULL || pDevice->GetClass()->IsA(TGetClass(C)));
-            return pDevice;
-        }
+		virtual TBOOL Acquire() = 0;
+		virtual TBOOL Unacquire() = 0;
+		virtual void Release() = 0;
+		virtual void Update(float deltaTime) = 0;
+		virtual TBOOL Flush() { return TTRUE; }
+		virtual int ProcessEvents(TEmitter<TInputInterface, TInputInterface::InputEvent>& emitter, float deltaTime) = 0;
+		virtual int GetButtonCount() const = 0;
+		virtual int GetAxisCount() const = 0;
+		virtual TBOOL GetDoodadProperties(int doodad, DoodadProperties& doodadProps) const = 0;
+		virtual TBOOL StartRepeat(int param_1, float param_2, float param_3);
+		virtual TBOOL StopRepeat(int param_1);
+		virtual TBOOL StopAllRepeats();
+		virtual TBOOL IsForceFeedbackDevice() { return TFALSE; }
+		virtual Platform GetPlatform() const = 0;
+		virtual const char* GetButtonFromDoodad(int a_iDoodad) const = 0;
+		virtual TBOOL IsDown(int doodad) const = 0;
+		virtual int GetAxisInt(int doodad, int axis) const = 0;
+		virtual float GetAxisFloat(int doodad, int axis) const = 0;
+		virtual TBOOL IsEnabled() const = 0;
+		virtual void ThrowRepeatEvent(TEmitter<TInputInterface, TInputInterface::InputEvent>& emitter, RepeatInfo* repeatInfo, float deltaTime);
 
-        void AddDevice(TInputDevice* device);
-        void RemoveDevice(TInputDevice* device);
+		TBOOL IsAcquired() const
+		{
+			return m_bIsAcquired;
+		}
 
-        virtual TBOOL Initialise() { return TTRUE; }
-        virtual TBOOL Deinitialise();
+		void SetAcquired(TBOOL a_bAcquired)
+		{
+			m_bIsAcquired = a_bAcquired;
+		}
 
-        virtual TBOOL AcquireAll();
-        virtual TBOOL UnacquireAll();
-        virtual TBOOL FlushAll();
-        virtual void SetExclusiveMode(TBOOL mode);
-        virtual TBOOL GetExclusiveMode() const;
-        virtual int ProcessEvents(float fUnk);
-        virtual void StopAllRepeats();
+		TInputInterface* GetInputInterface()
+		{
+			return m_pInputInterface;
+		}
 
-    private:
-        TBOOL m_bIsExclusiveMode;                                                    // 0x04 
-        TNodeList<TInputDevice> m_DeviceList;                                        // 0x08
-        TEmitter<TInputInterface, TInputInterface::InputEvent> m_Emitter1;           // 0x24
-        TGenericEmitter m_Emitter2;                                                  // 0x28
-    };
+		void SetInputInterface(TInputInterface* a_pInterface)
+		{
+			m_pInputInterface = a_pInterface;
+		}
 
-    class TInputDevice :
-        public TGenericClassDerived<TInputDevice, TObject, "TInputDevice", TMAKEVERSION(1, 0), TFALSE>,
-        public TNodeList<TInputDevice>::TNode
-    {
-    public:
-        static constexpr int INPUT_DEVICE_MOUSE_BUTTONS = 3;
-        static constexpr int INPUT_DEVICE_MOUSE_WHEEL = 4;
+	protected:
+		int ProcessRepeats(TEmitter<TInputInterface, TInputInterface::InputEvent>& emitter, float flt);
 
-        struct DoodadProperties
-        {
-            int m_iUnk;
-            int m_iUnk2;
-        };
+	public:
+		static TInputDevice** GetRegisteredDevices()
+		{
+			return s_aDevices;
+		}
 
-        struct RepeatInfo
-        {
-            int m_iDoodad;
-        };
+		static size_t GetNumRegisteredDevices()
+		{
+			return s_uiDeviceCount;
+		}
 
-    public:
-        TInputDevice()
-        {
-            m_pInterface = TNULL;
-            m_bIsAcquired = TFALSE;
-        }
+	protected:
+		static constexpr size_t MAX_DEVICE_COUNT = 14;
 
-        virtual TBOOL Flush() { return TTRUE; }
-        virtual TBOOL StartRepeat(int param_1, float param_2, float param_3);
-        virtual TBOOL StopRepeat(int param_1);
-        virtual TBOOL StopAllRepeats();
-        virtual void ThrowRepeatEvent(TEmitter<TInputInterface, TInputInterface::InputEvent>& emitter, RepeatInfo* repeatInfo, float deltaTime);
-        virtual TBOOL IsForceFeedbackDevice() { return TFALSE; }
-        virtual int ProcessEvents(TEmitter<TInputInterface, TInputInterface::InputEvent>& emitter, float deltaTime) { return 0; };
-        virtual void Update(float deltaTime) { };
-        virtual TBOOL Acquire() { return TFALSE; };
-        virtual TBOOL Unacquire() { return TFALSE; };
-        virtual TBOOL IsDown(int doodad) const { return TFALSE; }
-        virtual TBOOL WasDown(int doodad) const { return TFALSE; }
+		inline static TInputDevice* s_aDevices[MAX_DEVICE_COUNT];
+		inline static size_t s_uiDeviceCount;
 
-        TBOOL IsAcquired() const
-        {
-            return m_bIsAcquired;
-        }
-
-        TInputInterface* GetInputInterface()
-        {
-            return m_pInterface;
-        }
-
-        void SetInputInterface(TInputInterface* a_pInterface)
-        {
-            m_pInterface = a_pInterface;
-        }
-
-    protected:
-        int ProcessRepeats(TEmitter<TInputInterface, TInputInterface::InputEvent>& emitter, float flt);
-
-    protected:
-        TInputInterface* m_pInterface;
-        TBOOL m_bIsAcquired;              // 0x39 de blob 0x35 JPOG
-    };
+	protected:
+		size_t m_uiDeviceIndex;             // 0x14
+		TArray<void*>::Storage m_Repeats;   // 0x18 FIXME: replace void* with some structure whose size is 0xC
+		TArray<void*>::Storage m_Array2;    // 0x28 FIXME: replace void* with some structure whose size is 0x4
+		TBOOL m_bUnknown;                   // 0x38
+		TBOOL m_bIsAcquired;                // 0x39 de blob 0x35 JPOG
+		TInputInterface* m_pInputInterface; // 0x3C
+	};
 
 }

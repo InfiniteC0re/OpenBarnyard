@@ -30,7 +30,7 @@ namespace Toshi
 		m_TRB2.SetMemoryFunctions(AssetTRBAllocator, AssetTRBDeallocator, TNULL);
 		m_TRB3.SetMemoryFunctions(AssetTRBAllocator, AssetTRBDeallocator, TNULL);
 
-		auto pRender = TRender::GetSingletonWeak();
+		auto pRender = TRender::GetSingleton();
 		auto pDisplayParams = pRender->GetCurrentDisplayParams();
 
 		float fDisplayWidth = TSTATICCAST(float, pDisplayParams->Width);
@@ -106,7 +106,7 @@ namespace Toshi
 			TFIXME("Allocate memory chunk for the resource");
 			TBOOL bRes = m_pResource->Load(m_pXURBuffer);
 			TASSERT(TTRUE == bRes, "Could not load XUR");
-			TXUI::GetSingleton()->AddResource(this);
+			TXUI::GetSingletonSafe()->AddResource(this);
 		}
 	}
 
@@ -115,6 +115,6 @@ namespace Toshi
 		if (m_pResource)
 			delete m_pResource;
 
-		TXUI::GetSingleton()->RemoveResource(this);
+		TXUI::GetSingletonSafe()->RemoveResource(this);
 	}
 }

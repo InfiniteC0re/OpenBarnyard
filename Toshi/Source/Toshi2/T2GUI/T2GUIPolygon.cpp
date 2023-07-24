@@ -5,7 +5,7 @@ namespace Toshi
 {
 	void T2GUIPolygon::Render()
 	{
-		auto renderer = T2GUI::GetSingletonWeak()->GetRenderer();
+		auto renderer = T2GUI::GetSingleton()->GetRenderer();
 		renderer->SetMaterial(m_pMaterial);
 		renderer->SetColour(m_Color);
 		renderer->RenderTriStrip(m_pVertices, m_pUV, m_iNumVerts, 1.0f, 1.0f);

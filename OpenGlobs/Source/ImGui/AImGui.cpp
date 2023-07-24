@@ -118,9 +118,9 @@ void AImGui::Render()
         ImGui::IsMouseDown(ImGuiMouseButton_Left) ? 0xFFFFFFFF : 0xFF909090
     );
 
-    auto pCameraMngr = ACameraManager::GetSingleton();
-    auto pResourceMngr = Toshi::T2ResourceManager::GetSingleton();
-    auto pGameStateController = AGameStateController::GetSingleton();
+    auto pCameraMngr = ACameraManager::GetSingletonSafe();
+    auto pResourceMngr = Toshi::T2ResourceManager::GetSingletonSafe();
+    auto pGameStateController = AGameStateController::GetSingletonSafe();
 
     auto pGameState = pGameStateController->GetCurrentGameState();
     auto pCamera = pCameraMngr->GetCurrentCamera();
@@ -133,7 +133,7 @@ void AImGui::Render()
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 3);
     ImGui::Text("Current game state: %s", pGameState->GetClass()->GetName());
     ImGui::Text("Num of created T2Resources: %d/%d", pResourceMngr->GetNumUsedResources(), pResourceMngr->GetMaxNumResources());
-    ImGui::Text("Number of created textures: %d", TTextureManager::GetSingleton()->DEBUG_GetNumTextures());
+    ImGui::Text("Number of created textures: %d", TTextureManager::GetSingletonSafe()->DEBUG_GetNumTextures());
     
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
     /*if (!pGameState->IsExactly(TGetClass(ATestState)))
@@ -198,7 +198,7 @@ void AImGui::Render()
     {
         ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
 
-        auto pTexManager = TTextureManager::GetSingleton();
+        auto pTexManager = TTextureManager::GetSingletonSafe();
         
         TTexture* pTexture = pTexManager->GetLastTexture();
 

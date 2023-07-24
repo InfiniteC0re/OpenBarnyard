@@ -9,7 +9,7 @@ namespace Toshi
 	public:
 		T2GUIContext()
 		{
-			auto pDisplayParams = TRender::GetSingleton()->GetCurrentDisplayParams();
+			auto pDisplayParams = TRender::GetSingletonSafe()->GetCurrentDisplayParams();
 
 			m_RootElement.SetDimensions((float)pDisplayParams->Width, (float)pDisplayParams->Height);
 			m_RootElement.SetTransform(0, 0, 0);

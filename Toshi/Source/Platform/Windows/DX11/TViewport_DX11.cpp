@@ -15,7 +15,7 @@ namespace Toshi
 		m_bAllowBackgroundClear = TTRUE;
 		m_bAllowDepthClear = TTRUE;
 		m_bDefaultBeginRender = TTRUE;
-		m_pRenderCtx = TRender::GetSingletonWeak()->CreateRenderContext();
+		m_pRenderCtx = TRender::GetSingleton()->CreateRenderContext();
 		m_MemAllocatorBlock = TNULL;
 
 		SetWidth(-1.0f);

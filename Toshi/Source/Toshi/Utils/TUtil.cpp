@@ -9,8 +9,8 @@ namespace Toshi
 	void TUtil::LogInitialise()
 	{
 		TLogFile* logfile = new TLogFile();
-		Toshi::TUtil::GetSingletonWeak()->m_pLogFile1 = logfile;
-		Toshi::TUtil::GetSingletonWeak()->m_pLogFile2 = logfile;
+		Toshi::TUtil::GetSingleton()->m_pLogFile1 = logfile;
+		Toshi::TUtil::GetSingleton()->m_pLogFile2 = logfile;
 		
 		TrimLog("*.log", 9);
 		time_t seconds;
@@ -45,7 +45,7 @@ namespace Toshi
 #endif
 
 			GetLog()->Log(TLogFile::Type_Info, "Toshi", "Kernel", str);
-			GetSingletonWeak()->m_Emitter.Throw(GetLog());
+			GetSingleton()->m_Emitter.Throw(GetLog());
 		}
 	}
 
@@ -71,8 +71,7 @@ namespace Toshi
 			va_end(args);
 
 			GetLog()->Log(logtype, "Toshi", "Kernel", format, str);
-			GetSingletonWeak()->m_Emitter.Throw(GetLog());
-
+			GetSingleton()->m_Emitter.Throw(GetLog());
 		}
 	}
 
@@ -96,7 +95,7 @@ namespace Toshi
 	void TUtil::LogSet(TLogFile* a_logFile)
 	{
 		Log("Changing log file.");
-		TUtil* util = Toshi::TUtil::GetSingleton();
+		TUtil* util = Toshi::TUtil::GetSingletonSafe();
 		GetLog()->Close();
 		util->m_pLogFile2 = a_logFile == TNULL ? util->m_pLogFile1 : a_logFile;
 	}

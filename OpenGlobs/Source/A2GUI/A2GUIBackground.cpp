@@ -33,7 +33,7 @@ void A2GUIBackground::LoadMaterialLibrary(const char* fileName)
 
 void A2GUIBackground::SetupBackground()
 {
-	auto gui = T2GUI::GetSingletonWeak();
+	auto gui = T2GUI::GetSingleton();
 	
 	SetAnchor(Anchor::TopRight);
 	SetPivot(Pivot::TopRight);

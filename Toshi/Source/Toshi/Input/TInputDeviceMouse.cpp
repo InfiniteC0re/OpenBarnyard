@@ -14,15 +14,15 @@ namespace Toshi {
         {
         case AXIS_CURSOR:
             props.m_iUnk = 2;
-            props.m_iUnk2 = 0;
+            props.m_bFlag = TFALSE;
             break;
         case AXIS_WHEEL:
             props.m_iUnk = 1;
-            props.m_iUnk2 = 0;
+            props.m_bFlag = TFALSE;
             break;
         default:
             props.m_iUnk = 0;
-            props.m_iUnk2 = 0;
+            props.m_bFlag = TFALSE;
         }
 
         return TTRUE;

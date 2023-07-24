@@ -24,5 +24,4 @@ private:
 	uint16_t m_uiMaxVertices;
 	uint16_t m_uiNumSubMeshes;
 	Toshi::TResource* m_pVertexPool;
-	Toshi::TResource* m_pIndexPool;
 };

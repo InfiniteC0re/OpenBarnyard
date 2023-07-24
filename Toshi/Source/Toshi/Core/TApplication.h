@@ -13,10 +13,9 @@ namespace Toshi
 		TApplicationFlag_Destroyed	= BITFIELD(1),
 	};
 
-	// ??
 	struct TApplicationExitEvent
 	{
-
+		TBOOL m_bLockedCursor;
 	};
 
 	class TApplication
@@ -28,10 +27,11 @@ namespace Toshi
 		virtual TBOOL OnCreate(int argc, char** argv);
 		virtual TBOOL OnUpdate(float deltaTime);
 		virtual TBOOL OnDestroy();
+		virtual TBOOL IsConsoleEnabled() { return TTRUE; }
 
-		static void OnApplicationExitEvent(void* app, TApplicationExitEvent*)
+		static void OnApplicationExitEvent(void* a_pApp, const TApplicationExitEvent& a_rEvent)
 		{
-			((TApplication*)app)->Destroy();
+			TSTATICCAST(TApplication*, a_pApp)->Destroy();
 		}
 
 		// Returns TTRUE if success

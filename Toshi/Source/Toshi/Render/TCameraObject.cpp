@@ -21,13 +21,13 @@ namespace Toshi {
 	{
 		if (m_bEnabled)
 		{
-			auto pRender = TRender::GetSingletonWeak();
+			auto pRender = TRender::GetSingleton();
 			auto pRenderContext = pRender->GetCurrentRenderContext();
 
 			TRenderContext::PROJECTIONPARAMS projParams = pRenderContext->GetProjectionParams();
 			projParams.m_Centre = { m_fCentreX * pRenderContext->GetWidth(), m_fCentreY * pRenderContext->GetHeight() };
 
-			auto render = TRender::GetSingletonWeak();
+			auto render = TRender::GetSingleton();
 			auto aspectRatio = render->GetAspectRatio();
 
 			if (m_Unk1 == 0)

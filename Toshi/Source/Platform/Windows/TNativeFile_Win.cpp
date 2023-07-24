@@ -6,7 +6,7 @@ namespace Toshi
     TBOOL TFileManager::Create()
     {
         CreateCommon();
-        auto fileManager = TFileManager::GetSingleton();
+        auto fileManager = TFileManager::GetSingletonSafe();
 
         CHAR currentDir[0x200];
         DWORD dirLength = GetCurrentDirectoryA(sizeof(currentDir), currentDir);
@@ -29,7 +29,7 @@ namespace Toshi
     TNativeFileSystem::TNativeFileSystem(const char* name) : TFileSystem(name)
     {
         m_Handle = INVALID_HANDLE_VALUE;
-        TFileManager::GetSingleton()->MountFileSystem(this);
+        TFileManager::GetSingletonSafe()->MountFileSystem(this);
     }
 
     TFile* TNativeFileSystem::CreateFile(TString8 const& fn, uint32_t flags)
@@ -362,7 +362,7 @@ namespace Toshi
         return TTRUE;
     }
 
-    char TNativeFile::GetCChar()
+    int TNativeFile::GetCChar()
     {
         FlushWriteBuffer();
 
@@ -372,19 +372,41 @@ namespace Toshi
             if ((curBufferPos == m_PrevBufferPos) && (m_Position - curBufferPos <= m_LastBufferSize - 1))
             {
                 char c = m_RBuffer[m_Position - curBufferPos];
-                m_Position++;
+                m_Position += sizeof(c);
                 return c;
             }
         }
-        //   iVar3 = (*(code *)*this->field_0x0)(&stack0xfffffff4,1);
-        //   if (iVar3 != 1) {
-        //      return 0xffffffff;
-        //   }
-        //   return puVar4 & 0xFF;
-        return 0;
+
+		char result;
+		if (Read(&result, sizeof(result)) != sizeof(result))
+			return -1;
+
+        return result;
     }
 
-    int TNativeFile::CPrintf(const char* format, ...)
+	wchar_t TNativeFile::GetWChar()
+	{
+		FlushWriteBuffer();
+
+		if (m_RBuffer != TNULL)
+		{
+			uint32_t curBufferPos = m_Position / BUFFER_SIZE * BUFFER_SIZE;
+			if ((curBufferPos == m_PrevBufferPos) && (m_Position - curBufferPos <= m_LastBufferSize - 1))
+			{
+				wchar_t c = *TREINTERPRETCAST(wchar_t*, &m_RBuffer[m_Position - curBufferPos]);
+				m_Position += sizeof(c);
+				return c;
+			}
+		}
+
+		wchar_t result;
+		if (Read(&result, sizeof(result)) != sizeof(result))
+			return L'\xFFFF';
+
+		return result;
+	}
+
+	int TNativeFile::CPrintf(const char* format, ...)
     {
         va_list args; 
         va_start(args, format);

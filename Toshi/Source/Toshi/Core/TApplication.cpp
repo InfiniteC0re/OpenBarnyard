@@ -19,14 +19,14 @@ namespace Toshi
 
 	TBOOL TApplication::Create(const char* appName, int argc, char** argv)
 	{
-		TTODO("TGenericGlobalListener<Toshi::TApplicationExitEvent>::ConnectImpl(&this->m_ExitEventListener,this,OnApplicationExitEvent);");
 		m_oExitEvent.Connect(this, OnApplicationExitEvent);
 		m_Name = appName;
 		
 		m_pDebugConsole = new TDebugConsole;
 
 #ifdef TOSHI_DEBUG
-		m_pDebugConsole->Show(TTRUE);
+		if (IsConsoleEnabled())
+			m_pDebugConsole->Show(TTRUE);
 #else
 		m_pDebugConsole->Show(TFALSE);
 #endif
@@ -42,7 +42,7 @@ namespace Toshi
 	TBOOL TApplication::Execute()
 	{
 		TASSERT(TApplication::IsCreated() == TTRUE);
-		TSystemManager* pSystemManager = TSystemManager::GetSingleton();
+		TSystemManager* pSystemManager = TSystemManager::GetSingletonSafe();
 		
 		TBOOL updateResult = TTRUE;
 		while (updateResult && !IsDestroyed())

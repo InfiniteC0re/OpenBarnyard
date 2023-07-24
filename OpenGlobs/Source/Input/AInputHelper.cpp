@@ -10,7 +10,7 @@ void AInputHelper::AddMapping(AInputMap::INPUTBUTTON a_eInputButton, AInputManag
 		TASSERT(0.01666f <= a_fRepeatTime);
 	}
 
-	AInputManager2* inputMng = AInputManager2::GetSingletonWeak();
+	AInputManager2* inputMng = AInputManager2::GetSingleton();
 
 	if (m_eInputContext == AInputMap::INPUTCONTEXT_UNK12)
 	{
@@ -56,7 +56,7 @@ TBOOL AInputHelper::IsJustDown(AInputMap::INPUTBUTTON a_eInputButton)
 
 TBOOL AInputHelper::IsJustDown(AInputMap::INPUTBUTTON a_eInputButton, AInputManager2::INPUTDEVICE a_eInputDevice)
 {
-	auto inputMng = AInputManager2::GetSingletonWeak();
+	auto inputMng = AInputManager2::GetSingleton();
 
 	if (a_eInputDevice != AInputManager2::INPUTDEVICE_Keyboard && inputMng->CheckIfValidDevice(inputMng->GetDeviceHandle(a_eInputDevice)))
 	{

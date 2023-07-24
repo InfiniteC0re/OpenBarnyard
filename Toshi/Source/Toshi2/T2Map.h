@@ -5,7 +5,7 @@
 
 namespace Toshi {
 
-	template <class KeyType, class ValueType, class Comparator>
+	template <class KeyType, class ValueType, class Comparator = TComparator<KeyType>>
 	class T2Map
 	{
 	public:

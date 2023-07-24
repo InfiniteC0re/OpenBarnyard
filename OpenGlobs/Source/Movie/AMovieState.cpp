@@ -26,7 +26,7 @@ AGameState::UpdateResult AMovieState::OnUpdate(float deltaTime)
     switch (m_flags)
     {
     case 0:
-        if (!AAssetStreaming::GetSingletonWeak()->HasActiveJobs())
+        if (!AAssetStreaming::GetSingleton()->HasActiveJobs())
         {
             m_bRenderWorld = AApplication::g_oTheApp.m_bRenderWorld;
             AApplication::g_oTheApp.SetRenderWorld(TFALSE);
@@ -45,7 +45,7 @@ AGameState::UpdateResult AMovieState::OnUpdate(float deltaTime)
 
 void AMovieState::OnInsertion()
 {
-    auto inputMng = AInputManager2::GetSingletonWeak();
+    auto inputMng = AInputManager2::GetSingleton();
     inputMng->SetContext(AInputMap::INPUTCONTEXT_UNK4);
     m_InputHelper.AddMapping(AInputMap::INPUTBUTTON_SPACE, TFALSE, -1.0f);
     m_InputHelper.Update();
@@ -69,7 +69,7 @@ void AMovieState::PlayMovie(uint8_t unk)
         soundChannel = localeMgr.GetCurSoundChannel();
     }
 
-    TBOOL bRes = AMoviePlayer::GetSingletonWeak()->PlayMovie(str, soundChannel, unk);
+    TBOOL bRes = AMoviePlayer::GetSingleton()->PlayMovie(str, soundChannel, unk);
     m_fDeltaTime = 0.0f;
     m_flags = !bRes ? 3 : 1;
 }

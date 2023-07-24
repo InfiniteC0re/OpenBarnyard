@@ -1,4 +1,5 @@
 #pragma once
+#include <Toshi/Core/Platform.h>
 #include <Toshi/Locale/T2Locale.h>
 
 class ALocaleManager :
@@ -45,21 +46,13 @@ public:
         "Data/Locale/format_zh.trb",
     };
 
-    typedef int Platform;
-    enum Platform_ : Platform
-    {
-        Platform_Wii,
-        Platform_Unk,
-        Platform_PC,
-    };
-
     static constexpr int32_t LOCALE_LANG_INVALID = -1;
     static constexpr int32_t LOCALE_LANG_NUMOF = sizeof(m_pLangDataFileNames) / sizeof(*m_pLangDataFileNames);
     static constexpr int32_t LOCALE_FORMAT_LANG_NUMOF = sizeof(s_LocaleFormatFiles) / sizeof(*s_LocaleFormatFiles);
 
     static_assert(LOCALE_FORMAT_LANG_NUMOF == LOCALE_LANG_NUMOF);
 
-    inline static constinit Platform s_Platform = Platform_PC;
+    inline static constinit Toshi::Platform s_ePlatform = Toshi::Platform::PC;
     static constexpr size_t BUFFER_SIZE = 409600;
 
     struct Override
@@ -97,6 +90,7 @@ public:
 public:
     static void Create();
     static void Destroy();
+	static void SetPlatform(Toshi::Platform a_ePlatform) { s_ePlatform = a_ePlatform; }
 
     static const char* GetLocaleCode(Lang code);
     static const char* GetVOLocaleCode(Lang code);
@@ -113,7 +107,7 @@ public:
         return (langid != -1) ? FindOverwrittenLocaleString(stringid, langid) : TNULL;
     }
 
-    static ALocaleManager& Instance() { return *TSTATICCAST(ALocaleManager*, GetSingletonWeak()); }
+    static ALocaleManager& Instance() { return *TSTATICCAST(ALocaleManager*, GetSingleton()); }
 
 private:
     static void InitialiseOverrideTexts();

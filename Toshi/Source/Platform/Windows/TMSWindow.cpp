@@ -1,5 +1,6 @@
 #include "ToshiPCH.h"
 #include "TMSWindow.h"
+#include "Toshi/Core/TApplication.h"
 #include "Toshi/Core/TSystem.h"
 #include "DX11/TRender_DX11.h"
 #include "Input/TInputInterface_Win.h"
@@ -50,7 +51,7 @@ namespace Toshi
 			{
 				SetThreadExecutionState(ES_CONTINUOUS);
 				ShowCursor(TTRUE);
-				TSystemManager::GetSingleton()->Pause(TTRUE);
+				TSystemManager::GetSingletonSafe()->Pause(TTRUE);
 				SystemParametersInfoA(SPI_GETSTICKYKEYS, sizeof(STICKYKEYS), &ms_StickyKeys, 0);
 				ms_bIsFocused = TFALSE;
 			}
@@ -118,7 +119,7 @@ namespace Toshi
 		if (GetForegroundWindow() != m_HWND)
 		{
 			TOSHI_INFO("Not foreground window, Pausing Systems!\n");
-			TSystemManager::GetSingleton()->Pause(TTRUE);
+			TSystemManager::GetSingletonSafe()->Pause(TTRUE);
 		}
 
 		return TTRUE;
@@ -140,7 +141,7 @@ namespace Toshi
 		TBOOL bFlag1, bLockCursor;
 		auto pRenderer = TRenderDX11::Interface();
 		auto pDisplayParams = pRenderer->GetCurrentDisplayParams();
-		auto pSystemManager = TSystemManager::GetSingleton();
+		auto pSystemManager = TSystemManager::GetSingletonSafe();
 
 		if (window == NULL || pDisplayParams->IsFullscreen)
 		{
@@ -179,7 +180,7 @@ namespace Toshi
 							if (window->m_IsPopup) 
 							{
 								window->m_Flag5 = TTRUE;
-								TTODO("FUN_006b17e0(&bLockCursor)");
+								TGlobalEmitter<TApplicationExitEvent>::Throw({ bLockCursor });
 							}
 						}
 						else

@@ -9,7 +9,7 @@ namespace Toshi {
     {
         if (!s_bStopRendering)
         {
-            auto pRenderContext = TRender::GetSingletonWeak()->GetCurrentRenderContext();
+            auto pRenderContext = TRender::GetSingleton()->GetCurrentRenderContext();
             auto pRegMaterial = GetMaterial()->GetRegMaterial();
             auto pRenderPacket = pRegMaterial->AddRenderPacket(this);
 

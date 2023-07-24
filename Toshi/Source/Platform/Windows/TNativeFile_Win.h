@@ -18,8 +18,8 @@ namespace Toshi
         virtual uint32_t Tell() override;
         virtual DWORD GetSize() override;
         virtual _FILETIME GetDate() override;
-        virtual char GetCChar() override;
-        virtual wchar_t GetWChar() { return 0; }
+        virtual int GetCChar() override;
+		virtual wchar_t GetWChar() override;
         virtual int PutCChar(char character) { return 0; }
         virtual int PutWChar(wchar_t character) { return 0; }
         virtual int CPrintf(const char* format, ...);

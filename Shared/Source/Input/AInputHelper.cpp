@@ -10,17 +10,17 @@ void AInputHelper::AddMapping(AInputMap::INPUTBUTTON a_eInputButton, AInputManag
 		TASSERT(0.01666f <= a_fRepeatTime);
 	}
 
-	AInputManager2* inputMng = AInputManager2::GetSingletonWeak();
+	AInputManager2* inputMng = AInputManager2::GetSingleton();
 
 	if (m_eInputContext == AInputMap::INPUTCONTEXT_UNK12)
 	{
 		m_eInputContext = inputMng->GetContext();
 	}
 
-	auto buttonMap = inputMng->m_InputMap.GetButtonMap(inputMng->GetContext());
-	auto foundMap1 = buttonMap.Find(TSTATICCAST(AInputMap::ActionButton, a_eInputButton));
+	auto pButtonMap = inputMng->GetInputMap().GetButtonMap(inputMng->GetContext());
+	auto foundMap1 = pButtonMap->Find(TSTATICCAST(AInputMap::ActionButton, a_eInputButton));
 
-	if (buttonMap.Begin() != buttonMap.End())
+	if (pButtonMap->Begin() != pButtonMap->End())
 	{
 		for (auto j = foundMap1->Begin(); j != foundMap1->End(); j++)
 		{
@@ -39,6 +39,7 @@ void AInputHelper::AddMapping(AInputMap::INPUTBUTTON a_eInputButton, TBOOL bVal,
 	{
 		AddMapping(a_eInputButton, i, bVal, a_fRepeatTime);
 	}
+
 	AddMapping(a_eInputButton, AInputManager2::INPUTDEVICE_Keyboard, bVal, a_fRepeatTime);
 }
 
@@ -51,14 +52,18 @@ TBOOL AInputHelper::IsJustDown(AInputMap::INPUTBUTTON a_eInputButton)
 			return TTRUE;
 		}
 	}
+
 	return IsJustDown(a_eInputButton, AInputManager2::INPUTDEVICE_Keyboard);
 }
 
 TBOOL AInputHelper::IsJustDown(AInputMap::INPUTBUTTON a_eInputButton, AInputManager2::INPUTDEVICE a_eInputDevice)
 {
-	auto inputMng = AInputManager2::GetSingletonWeak();
+	auto inputMng = AInputManager2::GetSingleton();
 
-	if (a_eInputDevice != AInputManager2::INPUTDEVICE_Keyboard && inputMng->CheckIfValidDevice(inputMng->GetDeviceHandle(a_eInputDevice)))
+	if (a_eInputDevice != AInputManager2::INPUTDEVICE_Keyboard &&
+		inputMng->CheckIfValidDevice(
+			inputMng->GetControllerHandle(a_eInputDevice)
+		))
 	{
 		return TFALSE;
 	}

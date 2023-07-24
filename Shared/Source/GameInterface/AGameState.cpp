@@ -9,7 +9,7 @@
 #include <Toshi2/T2GUI/T2GUI.h>
 
 AGameState::AGameState() :
-	m_InputHelperSimple(1, Toshi::TInputInterface::GetSingletonWeak()->GetDeviceByIndex<Toshi::TInputDeviceKeyboard>())
+	m_InputHelperSimple(1, Toshi::TInputInterface::GetSingleton()->GetDeviceByIndex<Toshi::TInputDeviceKeyboard>())
 {
 	m_InputHelperSimple.AddDoodad(Toshi::TInputDeviceKeyboard::KEY_GRAVE);
 	m_State = State_Null;
@@ -39,7 +39,7 @@ AGameState::UpdateResult AGameState::OnUpdate(float deltaTime)
 {
 	m_InputHelperSimple.Update();
 
-	if (!AAssetStreaming::GetSingletonWeak()->HasActiveJobs())
+	if (!AAssetStreaming::GetSingleton()->HasActiveJobs())
 	{
 		sm_pLoadIconRect->SetVisible(TFALSE);
 	}
@@ -130,7 +130,7 @@ void AGameState::SetupLoadIcon()
 	sm_pLoadIconRect = new Toshi::T2GUIRectangle();
 	sm_pLoadIconRect->Create(50.0f, 50.0f);
 	sm_pLoadIconRect->SetColour(-1);
-	sm_pLoadIconMat = Toshi::T2GUI::GetSingletonWeak()->CreateMaterial("loadicon.tga");
+	sm_pLoadIconMat = Toshi::T2GUI::GetSingleton()->CreateMaterial("loadicon.tga");
 	sm_pLoadIconRect->SetMaterial(sm_pLoadIconMat);
 	sm_pLoadIconRect->SetAnchor(Toshi::T2GUIElement::Anchor::BottomRight);
 	sm_pLoadIconRect->SetPivot(Toshi::T2GUIElement::Pivot::BottomRight);
@@ -142,6 +142,6 @@ void AGameState::DestroyLoadIcon()
 
 void AGameState::RemoveSelf()
 {
-	TASSERT(AGameStateController::GetSingletonWeak()->GetCurrentGameState() == this);
-	AGameStateController::GetSingletonWeak()->PopCurrentState();
+	TASSERT(AGameStateController::GetSingleton()->GetCurrentGameState() == this);
+	AGameStateController::GetSingleton()->PopCurrentState();
 }

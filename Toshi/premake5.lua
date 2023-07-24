@@ -3,6 +3,7 @@ project "Toshi"
 	language "C++"
 	cppdialect "C++20"
 	staticruntime "on"
+	characterset "ASCII"
 
 	pchheader "ToshiPCH.h"
 	pchsource "Source/ToshiPCH.cpp"

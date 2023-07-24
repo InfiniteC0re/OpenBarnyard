@@ -29,7 +29,7 @@ public:
 	virtual void BeginJob()
 	{
 		m_StreamJob.Init(m_StreamJob.m_trb, m_StreamJob.m_fileName);
-		AAssetStreaming::GetSingletonWeak()->GetFileStream().AddStream(&m_StreamJob);
+		AAssetStreaming::GetSingleton()->GetFileStream().AddStream(&m_StreamJob);
 	}
 
 	virtual TBOOL RunJob()

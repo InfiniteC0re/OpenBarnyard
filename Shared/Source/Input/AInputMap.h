@@ -24,8 +24,9 @@ public:
 		INPUTCONTEXT_UNK13,
 	};
 
-	enum ActionButton : uint32_t {
-		ACTIONBUTTON_0 = 0,
+	typedef uint32_t ActionButton;
+	enum ActionButton_ : ActionButton {
+		ACTIONBUTTON_0,
 		ACTIONBUTTON_1,
 		ACTIONBUTTON_2,
 		ACTIONBUTTON_3,
@@ -81,8 +82,14 @@ public:
 		INPUTBUTTON_SPACE = 35,
 	};
 
-	typedef Toshi::TComparator<int> ButtonMapComparator;
+	// The first element of BindVector is count of keybinds
+	using BindVector = Toshi::T2Vector<int, 4>;
 
+	using ButtonMapComparator = Toshi::TComparator<ActionButton>;
+	using NamePadMap = Toshi::T2Map<int, int>;
+	using ButtonMap = Toshi::T2Map<ActionButton, BindVector, ButtonMapComparator>;
+
+public:
 	AInputMap()
 	{
 		InitialiseButtonMap();
@@ -92,18 +99,18 @@ public:
 	void InitialiseButtonMap();
 	void NamePadDoodads();
 	
-	Toshi::T2Map<ActionButton, Toshi::T2Vector<int, 4>, ButtonMapComparator>& GetButtonMap(INPUTCONTEXT m_eInputContext);
+	ButtonMap* GetButtonMap(INPUTCONTEXT m_eInputContext);
 
-	Toshi::T2Map<ActionButton, Toshi::T2Vector<int, 4>, ButtonMapComparator> m_ActionButtonMap1;  // 0x4
-	Toshi::T2Map<ActionButton, Toshi::T2Vector<int, 4>, ButtonMapComparator> m_ActionButtonMap2;  // 0x20
-	Toshi::T2Map<ActionButton, Toshi::T2Vector<int, 4>, ButtonMapComparator> m_ActionButtonMap3;  // 0x3C
-	Toshi::T2Map<ActionButton, Toshi::T2Vector<int, 4>, ButtonMapComparator> m_ActionButtonMap4;  // 0x58
-	Toshi::T2Map<ActionButton, Toshi::T2Vector<int, 4>, ButtonMapComparator> m_ActionButtonMap5;  // 0x74
-	Toshi::T2Map<ActionButton, Toshi::T2Vector<int, 4>, ButtonMapComparator> m_ActionButtonMap6;  // 0x90
-	Toshi::T2Map<ActionButton, Toshi::T2Vector<int, 4>, ButtonMapComparator> m_ActionButtonMap7;  // 0xAC
-	Toshi::T2Map<ActionButton, Toshi::T2Vector<int, 4>, ButtonMapComparator> m_ActionButtonMap8;  // 0xC8
-	Toshi::T2Map<ActionButton, Toshi::T2Vector<int, 4>, ButtonMapComparator> m_ActionButtonMap9;  // 0xE4
-	Toshi::T2Map<ActionButton, Toshi::T2Vector<int, 4>, ButtonMapComparator> m_ActionButtonMap10; // 0x100
-	Toshi::T2Map<int, int, Toshi::TComparator<int>>                          m_NamePadDoodadsMap; // 0x11C
+private:
+	ButtonMap m_ActionButtonMap1;   // 0x4
+	ButtonMap m_ActionButtonMap2;   // 0x20
+	ButtonMap m_ActionButtonMap3;   // 0x3C
+	ButtonMap m_ActionButtonMap4;   // 0x58
+	ButtonMap m_ActionButtonMap5;   // 0x74
+	ButtonMap m_ActionButtonMap6;   // 0x90
+	ButtonMap m_ActionButtonMap7;   // 0xAC
+	ButtonMap m_ActionButtonMap8;   // 0xC8
+	ButtonMap m_ActionButtonMap9;   // 0xE4
+	ButtonMap m_ActionButtonMap10;  // 0x100
+	NamePadMap m_NamePadDoodadsMap; // 0x11C
 };
-

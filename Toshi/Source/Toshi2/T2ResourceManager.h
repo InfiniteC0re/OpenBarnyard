@@ -108,36 +108,36 @@ namespace Toshi
 		T2ResourcePtr()
 		{
 			m_iResourceID = IDINVALID;
-			T2ResourceManager::GetSingletonWeak()->IncRefCount(IDINVALID);
+			T2ResourceManager::GetSingleton()->IncRefCount(IDINVALID);
 		}
 
 		T2ResourcePtr(int a_iID)
 		{
 			m_iResourceID = a_iID;
-			T2ResourceManager::GetSingletonWeak()->IncRefCount(m_iResourceID);
+			T2ResourceManager::GetSingleton()->IncRefCount(m_iResourceID);
 		}
 
 		explicit T2ResourcePtr(const T2ResourcePtr& other)
 		{
 			m_iResourceID = other.m_iResourceID;
-			T2ResourceManager::GetSingleton()->IncRefCount(m_iResourceID);
+			T2ResourceManager::GetSingletonSafe()->IncRefCount(m_iResourceID);
 		}
 
 		~T2ResourcePtr()
 		{
-			T2ResourceManager::GetSingletonWeak()->DecRefCount(m_iResourceID);
+			T2ResourceManager::GetSingleton()->DecRefCount(m_iResourceID);
 		}
 
 		void operator=(const T2ResourcePtr& other)
 		{
-			T2ResourceManager::GetSingleton()->DecRefCount(m_iResourceID);
+			T2ResourceManager::GetSingletonSafe()->DecRefCount(m_iResourceID);
 			m_iResourceID = other.m_iResourceID;
-			T2ResourceManager::GetSingleton()->IncRefCount(m_iResourceID);
+			T2ResourceManager::GetSingletonSafe()->IncRefCount(m_iResourceID);
 		}
 
 		void* GetData() const
 		{
-			return T2ResourceManager::GetSingleton()->GetData(m_iResourceID);
+			return T2ResourceManager::GetSingletonSafe()->GetData(m_iResourceID);
 		}
 
 		operator int() const
@@ -157,7 +157,7 @@ namespace Toshi
 		void DestroyResource()
 		{
 			TASSERT(m_iID != T2ResourcePtr::IDINVALID);
-			T2ResourceManager::GetSingleton()->DestroyResource(m_iID);
+			T2ResourceManager::GetSingletonSafe()->DestroyResource(m_iID);
 		}
 
 		T2ResourcePtr GetResourcePtr() const

@@ -22,7 +22,7 @@ namespace Toshi
 		TBOOL bResult = SetThreadPriority(m_hThreadHnd, a_ePriority);
 		TASSERT(bResult != TFALSE, "Couldn't set thread priority");
 
-		TThreadManager::GetSingleton()->InsertThread(this);
+		TThreadManager::GetSingletonSafe()->InsertThread(this);
 
 		if ((flag & 1) == 0)
 		{
@@ -40,7 +40,7 @@ namespace Toshi
 		BOOL bResult = CloseHandle(a_pThread->m_hThreadHnd);
 		TASSERT(bResult != FALSE, "Couldn't close thread");
 
-		TThreadManager::GetSingleton()->RemoveThread(a_pThread);
+		TThreadManager::GetSingletonSafe()->RemoveThread(a_pThread);
 		a_pThread->m_hThreadHnd = NULL;
 		a_pThread->m_iThreadID = -1;
 

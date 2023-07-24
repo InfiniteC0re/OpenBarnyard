@@ -7,7 +7,7 @@ FMOD_SYSTEM_CALLBACK Toshi::TSound_Win::SoundCB = [](FMOD_SYSTEM* system, FMOD_S
     {
     case FMOD_SYSTEM_CALLBACK_DEVICELOST:
         TOSHI_ERROR("FMOD reported a device loss. Setting system as uninitialized");
-        TSound_Win::GetSingletonWeak()->m_bInitialised = TFALSE;
+        TSound_Win::GetSingleton()->m_bInitialised = TFALSE;
         break;
     }
     return FMOD_OK;

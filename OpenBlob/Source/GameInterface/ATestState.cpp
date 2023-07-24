@@ -23,7 +23,7 @@ void ATestState::OnInsertion()
 
 void ATestState::OnActivate()
 {
-    auto pGUI = Toshi::T2GUI::GetSingleton();
+    auto pGUI = Toshi::T2GUI::GetSingletonSafe();
     auto pGUIRenderer = pGUI->GetRenderer();
     auto pRootElement = pGUI->GetRootElement();
 
@@ -104,7 +104,7 @@ void ATestState::OnDeactivate()
 #ifdef TOSHI_DEBUG
 void ATestState::DEBUG_RenderImGui()
 {
-    auto& position = ATestModel::GetSingleton()->GetPosition();
+    auto& position = ATestModel::GetSingletonSafe()->GetPosition();
     ImGui::DragFloat3("Test model position", (float*)&position, 0.1f, -50.0f, 50.0f, "%.4f", 1);
 }
 #endif // TOSHI_DEBUG

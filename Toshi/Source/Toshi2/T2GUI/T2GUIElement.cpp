@@ -134,7 +134,7 @@ namespace Toshi
 			vec2.y = -pivot.y + vec2.y;
 		}
 
-		T2GUI::GetSingletonWeak()->GetRenderer()->PushTransform(m_Transform, vec1, vec2);
+		T2GUI::GetSingleton()->GetRenderer()->PushTransform(m_Transform, vec1, vec2);
 	}
 
 	void T2GUIElement::Render()
@@ -157,7 +157,7 @@ namespace Toshi
 
 	void T2GUIElement::PostRender()
 	{
-		T2GUI::GetSingletonWeak()->GetRenderer()->PopTransform();
+		T2GUI::GetSingleton()->GetRenderer()->PopTransform();
 	}
 
 	void T2GUIElement::GetDimensions(float& width, float& height)

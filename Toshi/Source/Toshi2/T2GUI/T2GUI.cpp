@@ -74,7 +74,7 @@ namespace Toshi
 		int index = texName.FindReverse('\\', -1);
 		texName = texName.Right(index);
 		
-		TTexture* texture = TTextureManager::GetSingletonWeak()->FindTexture(textureName);
+		TTexture* texture = TTextureManager::GetSingleton()->FindTexture(textureName);
 		return texture;
 	}
 }

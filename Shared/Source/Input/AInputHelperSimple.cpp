@@ -39,38 +39,41 @@ TBOOL AInputHelperSimple::WasPressed(size_t doodad)
 
 void AInputHelperSimple::Update()
 {
-	TTODO("this->m_pInputDevice->vftable[0x15])() ???");
-	if (m_pInputDevice != TNULL && m_pInputDevice->GetClass()->IsA(TGetClass(TInputDeviceKeyboard)))
+	if (m_pInputDevice != TNULL)
 	{
-		for (size_t i = 0; i < m_iArrayIndex; i++)
+		if (!m_pInputDevice->GetClass()->IsA(TGetClass(TInputDeviceKeyboard)) || 
+			m_pInputDevice->IsEnabled())
 		{
-			switch (m_pArray[i].m_iState)
+			for (size_t i = 0; i < m_iArrayIndex; i++)
 			{
-			case STATE_NONE:
-				if (m_pInputDevice->IsDown(m_pArray[i].m_iDoodad))
+				switch (m_pArray[i].m_iState)
 				{
-					m_pArray[i].m_iState = STATE_PRESSED;
+				case STATE_NONE:
+					if (m_pInputDevice->IsDown(m_pArray[i].m_iDoodad))
+					{
+						m_pArray[i].m_iState = STATE_PRESSED;
+					}
+					break;
+				case STATE_PRESSED:
+					if (m_pInputDevice->IsDown(m_pArray[i].m_iDoodad))
+					{
+						m_pArray[i].m_iState = STATE_HELD;
+					}
+					else
+					{
+						m_pArray[i].m_iState = STATE_RELEASED;
+					}
+					break;
+				case STATE_HELD:
+					if (!m_pInputDevice->IsDown(m_pArray[i].m_iDoodad))
+					{
+						m_pArray[i].m_iState = STATE_RELEASED;
+					}
+					break;
+				case STATE_RELEASED:
+					m_pArray[i].m_iState = STATE_NONE;
+					break;
 				}
-				break;
-			case STATE_PRESSED:
-				if (m_pInputDevice->IsDown(m_pArray[i].m_iDoodad))
-				{
-					m_pArray[i].m_iState = STATE_HELD;
-				}
-				else
-				{
-					m_pArray[i].m_iState = STATE_RELEASED;
-				}
-				break;
-			case STATE_HELD:
-				if (!m_pInputDevice->IsDown(m_pArray[i].m_iDoodad))
-				{
-					m_pArray[i].m_iState = STATE_RELEASED;
-				}
-				break;
-			case STATE_RELEASED:
-				m_pArray[i].m_iState = STATE_NONE;
-				break;
 			}
 		}
 	}

@@ -1,216 +1,238 @@
 #include "ToshiPCH.h"
 #include "TInputInterface_Win.h"
-#include TOSHI_MULTIPLATFORM(Input/TInputDeviceController)
+#include "TInputDeviceController_Win.h"
+#include "TInputDeviceMouse_Win.h"
 #include "TInputDeviceController_XInput.h"
 #include "TInputDeviceController_Wiin.h"
-#include <Platform/Windows/Input/TInputDeviceKeyboard_Win.h>
-#include TOSHI_MULTIPLATFORM(Input/TInputDeviceMouse)
+#include "TInputDeviceKeyboard_Win.h"
 
 namespace Toshi
 {
-    TBOOL TInputDXInterface::Initialise()
-    {
-        TASSERT(TNULL == m_poDirectInput8);
-        HRESULT hRes = DirectInput8Create(GetModuleHandle(NULL), DIRECTINPUT_VERSION, IID_IDirectInput8, (LPVOID*)&m_poDirectInput8, NULL);
+	TBOOL TInputDXInterface::Initialise()
+	{
+		TASSERT(TNULL == m_poDirectInput8);
+		HRESULT hRes = DirectInput8Create(GetModuleHandle(NULL), DIRECTINPUT_VERSION, IID_IDirectInput8, (LPVOID*)&m_poDirectInput8, NULL);
 
-        if (SUCCEEDED(hRes))
-        {
-            if (m_hMainWindow == NULL)
-            {
-                m_hMainWindow = FindWindowA("TRenderD3D", NULL);
-            }
-            hRes = m_poDirectInput8->EnumDevices(DI8DEVCLASS_ALL, TInputDXInterface::EnumerateDeviceCallback, this, DIEDFL_ATTACHEDONLY);
-            if (hRes == DI_OK)
-            {
-                for (size_t i = 0; i < 4; i++)
-                {
-                    AddDevice(new TInputDeviceController_XInput());
-                    AddDevice(new TInputWiinDeviceController());
-                }
+		if (SUCCEEDED(hRes))
+		{
+			if (m_hMainWindow == NULL)
+			{
+				m_hMainWindow = FindWindowA("TRenderD3D", NULL);
+			}
+			hRes = m_poDirectInput8->EnumDevices(DI8DEVCLASS_ALL, TInputDXInterface::EnumerateDeviceCallback, this, DIEDFL_ATTACHEDONLY);
+			if (hRes == DI_OK)
+			{
+				for (size_t i = 0; i < 4; i++)
+				{
+					//AddDevice(new TInputDeviceController_XInput());
+					//AddDevice(new TInputWiinDeviceController());
+				}
 
-                UINT numJoyDevs = joyGetNumDevs();
+				UINT numJoyDevs = joyGetNumDevs();
 
-                for (size_t i = 0; i < numJoyDevs; i++)
-                {
-                    JOYCAPSA joyCaps;
-                    MMRESULT res = joyGetDevCapsA(i, &joyCaps, sizeof(joyCaps));
-                    if (res == 0)
-                    {
-                        TUtil::Log("Joystick[%d] \'%s\' \'%s\'", i, joyCaps.szPname, joyCaps.szRegKey);
-                    }
-                }
+				for (size_t i = 0; i < numJoyDevs; i++)
+				{
+					JOYCAPSA joyCaps;
+					MMRESULT res = joyGetDevCapsA(i, &joyCaps, sizeof(joyCaps));
+					if (res == 0)
+					{
+						TUtil::Log("Joystick[%d] \'%s\' \'%s\'", i, joyCaps.szPname, joyCaps.szRegKey);
+					}
+				}
 
-                return TTRUE;
-            }
-            Deinitialise();
-        }
+				return TTRUE;
+			}
+			Deinitialise();
+		}
 
-        return TFALSE;
-    }
+		return TFALSE;
+	}
 
-    TBOOL TInputDXInterface::Deinitialise()
-    {
-        TInputInterface::Deinitialise();
+	TBOOL TInputDXInterface::Deinitialise()
+	{
+		TInputInterface::Deinitialise();
 
-        if (m_poDirectInput8 != NULL)
-        {
-            m_poDirectInput8->Release();
-            m_poDirectInput8 = NULL;
-        }
+		if (m_poDirectInput8 != NULL)
+		{
+			m_poDirectInput8->Release();
+			m_poDirectInput8 = NULL;
+		}
 
-        return TTRUE;
-    }
+		return TTRUE;
+	}
 
-    TBOOL TInputDXInterface::LostDevice()
-    {
-        auto input = GetDirectInput();
-        if (input != NULL)
-        {
-            return input->EnumDevices(DI8DEVCLASS_ALL, EnumerateDeviceCallback, this, DIEDFL_ATTACHEDONLY) != DI_OK;
-        }
-        return TFALSE;
-    }
+	TBOOL TInputDXInterface::LostDevice()
+	{
+		auto input = GetDirectInput();
+		if (input != NULL)
+		{
+			return input->EnumDevices(DI8DEVCLASS_ALL, EnumerateDeviceCallback, this, DIEDFL_ATTACHEDONLY) != DI_OK;
+		}
+		return TFALSE;
+	}
 
-    BOOL TInputDXInterface::EnumerateDeviceCallback(LPCDIDEVICEINSTANCE a_poDeviceInstance, LPVOID poDXInputInterface)
-    {
-        char fmtStr[37];
-        char productName[260];
-        TInputDXInterface* inputInterface = (TInputDXInterface*)poDXInputInterface;
-        LPDIRECTINPUTDEVICE8 inputDevice;
-        TInputDXDeviceMouse* inputMouse;
-        TInputDXDeviceController* inputController;
-        TInputDXDeviceKeyboard* inputKeyboard;
-        HRESULT hr;
-        TBOOL addMouse = TFALSE;
-        TBOOL addKeyboard = TFALSE;
-        TBOOL res;
-        
-        TASSERT(poDXInputInterface != NULL);
-        TASSERT(a_poDeviceInstance != NULL);
+	BOOL TInputDXInterface::EnumerateDeviceCallback(LPCDIDEVICEINSTANCEA a_poDeviceInstance, LPVOID poDXInputInterface)
+	{
+		TInputDXInterface* pInputInterface = (TInputDXInterface*)poDXInputInterface;
+		LPDIRECTINPUTDEVICE8A inputDevice;
+		TInputDXDeviceMouse* inputMouse;
+		TInputDXDeviceController* inputController;
+		TBOOL addMouse = TFALSE;
+		TBOOL addKeyboard = TFALSE;
+		
+		TASSERT(poDXInputInterface != NULL);
+		TASSERT(a_poDeviceInstance != NULL);
 
-        // Check if any slots are left
-        if (ms_iNumDevices >= MAXDEVICESNUM)
-            return FALSE;
+		// Check if any slots are left
+		if (ms_iNumDevices >= MAXDEVICESNUM)
+			return FALSE;
 
-        // Check if this device is not registered yet
-        for (size_t i = 0; i < ms_iNumDevices; i++)
-        {
-            if (ms_RegisteredDevices[i] == a_poDeviceInstance->guidInstance)
-            {
-                return TRUE;
-            }
-        }
+		// Check if this device is not registered yet
+		for (size_t i = 0; i < ms_iNumDevices; i++)
+		{
+			if (ms_RegisteredDevices[i] == a_poDeviceInstance->guidInstance)
+			{
+				return TRUE;
+			}
+		}
 
-        // Add the device to the list of registered
-        size_t iDeviceIndex = ms_iNumDevices++;
-        ms_RegisteredDevices[iDeviceIndex] = a_poDeviceInstance->guidInstance;
+		// Add the device to the list of registered
+		size_t iDeviceIndex = ms_iNumDevices++;
+		ms_RegisteredDevices[iDeviceIndex] = a_poDeviceInstance->guidInstance;
 
-        switch (GET_DIDEVICE_TYPE(a_poDeviceInstance->dwDevType))
-        {
-        case DI8DEVTYPE_MOUSE:
-            inputMouse = inputInterface->GetDeviceByIndex<TInputDXDeviceMouse>();
+		switch (GET_DIDEVICE_TYPE(a_poDeviceInstance->dwDevType))
+		{
+		case DI8DEVTYPE_MOUSE:
+		{
+			inputMouse = pInputInterface->GetDeviceByIndex<TInputDXDeviceMouse>();
 
-            hr = inputInterface->m_poDirectInput8->CreateDevice(GUID_SysMouse, &inputDevice, NULL);
+			HRESULT hRes = pInputInterface->m_poDirectInput8->CreateDevice(GUID_SysMouse, &inputDevice, NULL);
 
-            if (hr != DI_OK)
-            {
-                return DIENUM_CONTINUE;
-            }
+			if (hRes != DI_OK)
+				return DIENUM_CONTINUE;
 
-            if (inputMouse == TNULL)
-            {
-                inputMouse = new TInputDXDeviceMouse();
-                addMouse = TTRUE;
-                TBOOL res = inputMouse->BindToDIDevice(inputInterface->GetMainWindow(), a_poDeviceInstance, inputDevice, inputInterface->m_bExclusive);
-                if (res)
-                {
-                    DIPROPDWORD dwordProperty{};
-                    dwordProperty.diph.dwSize = sizeof(DIPROPDWORD);
-                    dwordProperty.diph.dwHeaderSize = sizeof(DIPROPHEADER);
-                    dwordProperty.diph.dwObj = 0;
-                    dwordProperty.diph.dwHow = DIPH_DEVICE;
-                    dwordProperty.dwData = TInputDXDeviceMouse::sm_ciMouseBufferSize;
-                    
-                    HRESULT hr = inputDevice->SetProperty(DIPROP_BUFFERSIZE, &dwordProperty.diph);
+			if (inputMouse == TNULL)
+			{
+				inputMouse = new TInputDXDeviceMouse();
+				addMouse = TTRUE;
+				TBOOL bRes = inputMouse->BindToDIDevice(pInputInterface->GetMainWindow(), a_poDeviceInstance, inputDevice, pInputInterface->m_bExclusive);
+				
+				if (bRes)
+				{
+					DIPROPDWORD oProperty;
+					oProperty.diph.dwSize = sizeof(DIPROPDWORD);
+					oProperty.diph.dwHeaderSize = sizeof(DIPROPHEADER);
+					oProperty.diph.dwObj = 0;
+					oProperty.diph.dwHow = DIPH_DEVICE;
+					oProperty.dwData = TInputDXDeviceMouse::sm_ciMouseBufferSize;
+					
+					HRESULT hr = inputDevice->SetProperty(DIPROP_BUFFERSIZE, &oProperty.diph);
 
-                    if (FAILED(hr)) return TFALSE;
+					if (FAILED(hr))
+						return DIENUM_STOP;
 
-                    if (addMouse)
-                    {
-                        inputMouse->Initialise();
-                        inputMouse->Acquire();
-                        inputInterface->AddDevice(inputMouse);
-                    }
-                }
-                if (!addMouse)
-                {
-                    inputInterface->RemoveDevice(inputMouse);
-                }
-            }
-            TIMPLEMENT();
-            break;
+					if (addMouse)
+					{
+						inputMouse->Initialise();
+						inputMouse->Acquire();
+						pInputInterface->AddDevice(inputMouse);
+					}
+				}
+				if (!addMouse)
+				{
+					pInputInterface->RemoveDevice(inputMouse);
+				}
+			}
+			TIMPLEMENT();
+			break;
+		}
+		case DI8DEVTYPE_KEYBOARD:
+		{
+			HRESULT hRes = pInputInterface->m_poDirectInput8->CreateDevice(a_poDeviceInstance->guidInstance, &inputDevice, NULL);
 
-        case DI8DEVTYPE_KEYBOARD:
+			if (hRes != DI_OK)
+				return DIENUM_CONTINUE;
 
-            hr = inputInterface->m_poDirectInput8->CreateDevice(a_poDeviceInstance->guidInstance, &inputDevice, NULL);
+			TInputDXDeviceKeyboard* pKeyboard = new TInputDXDeviceKeyboard();
+			addKeyboard = TTRUE;
 
-            if (hr != DI_OK)
-            {
-                return DIENUM_CONTINUE;
-            }
+			TBOOL bRes = pKeyboard->BindToDIDevice(pInputInterface->GetMainWindow(), a_poDeviceInstance, inputDevice, pInputInterface->m_bExclusive);
 
-            inputKeyboard = new TInputDXDeviceKeyboard();
-            addKeyboard = TTRUE;
-            res = inputKeyboard->BindToDIDevice(inputInterface->GetMainWindow(), a_poDeviceInstance, inputDevice, inputInterface->m_bExclusive);
-            if (res)
-            {
-            }
+			if (bRes)
+			{
+				DIPROPDWORD oProperty;
+				oProperty.diph.dwSize = sizeof(DIPROPDWORD);
+				oProperty.diph.dwHeaderSize = sizeof(DIPROPHEADER);
+				oProperty.diph.dwObj = 0;
+				oProperty.diph.dwHow = DIPH_DEVICE;
 
-            TIMPLEMENT();
-            break;
-        case DI8DEVTYPE_JOYSTICK:
-        case DI8DEVTYPE_GAMEPAD:
-        case DI8DEVTYPE_1STPERSON:
-            TIMPLEMENT();
-            
-            Toshi::T2String8::Format(fmtStr, "%08lX-%04hX-%04hX-%02hhX%02hhX-%02hhX%02hhX%02hhX%02hhX%02hhX%02hhX", 
-                a_poDeviceInstance->guidProduct.Data1, a_poDeviceInstance->guidProduct.Data2, 
-                a_poDeviceInstance->guidProduct.Data3, a_poDeviceInstance->guidProduct.Data4[0],
-                a_poDeviceInstance->guidProduct.Data4[1], a_poDeviceInstance->guidProduct.Data4[2],
-                a_poDeviceInstance->guidProduct.Data4[3], a_poDeviceInstance->guidProduct.Data4[4],
-                a_poDeviceInstance->guidProduct.Data4[5], a_poDeviceInstance->guidProduct.Data4[6],
-                a_poDeviceInstance->guidProduct.Data4[7]);
+				HRESULT hRes = inputDevice->SetProperty(DIPROP_BUFFERSIZE, &oProperty.diph);
 
-            Toshi::TStringManager::StringUnicodeToChar(productName, a_poDeviceInstance->tszProductName, -1);
+				if (FAILED(hRes))
+					return DIENUM_STOP;
 
-            if (!TInputDXDeviceController::IsDirectInputController(a_poDeviceInstance))
-            {
-                TUtil::Log("Added XInput Controller: \'%s\' (%s) - NON-PSX", productName, fmtStr);
-                return DIENUM_CONTINUE;
-            }
+				hRes = inputDevice->SetCooperativeLevel(
+					pInputInterface->GetMainWindow(),
+					pInputInterface->GetExclusiveMode() ? (DISCL_NOWINKEY | DISCL_FOREGROUND | DISCL_EXCLUSIVE) : (DISCL_NONEXCLUSIVE | DISCL_BACKGROUND)
+				);
 
-            TUtil::Log("Added Direct Input Controller: \'%s\' (%s) - NON-PSX", productName, fmtStr);
+				if (hRes == S_OK)
+				{
+					pKeyboard->Initialise();
+					pKeyboard->Acquire();
+					pInputInterface->AddDevice(pKeyboard);
+					return DIENUM_CONTINUE;
+				}
+				else
+				{
+					delete pKeyboard;
+					return DIENUM_CONTINUE;
+				}
+			}
+			break;
+		}
+		case DI8DEVTYPE_JOYSTICK:
+		case DI8DEVTYPE_GAMEPAD:
+		case DI8DEVTYPE_1STPERSON:
+		{
+			TIMPLEMENT();
 
-            inputController = inputInterface->GetDeviceByIndex<TInputDXDeviceController>();
-            hr = inputInterface->m_poDirectInput8->CreateDevice(a_poDeviceInstance->guidInstance, &inputDevice, NULL);
+			char fmtStr[37];
+			Toshi::T2String8::Format(fmtStr, "%08lX-%04hX-%04hX-%02hhX%02hhX-%02hhX%02hhX%02hhX%02hhX%02hhX%02hhX",
+				a_poDeviceInstance->guidProduct.Data1, a_poDeviceInstance->guidProduct.Data2,
+				a_poDeviceInstance->guidProduct.Data3, a_poDeviceInstance->guidProduct.Data4[0],
+				a_poDeviceInstance->guidProduct.Data4[1], a_poDeviceInstance->guidProduct.Data4[2],
+				a_poDeviceInstance->guidProduct.Data4[3], a_poDeviceInstance->guidProduct.Data4[4],
+				a_poDeviceInstance->guidProduct.Data4[5], a_poDeviceInstance->guidProduct.Data4[6],
+				a_poDeviceInstance->guidProduct.Data4[7]);
 
-            if (hr != DI_OK)
-            {
-                return DIENUM_CONTINUE;
-            }
+			if (!TInputDXDeviceController::IsDirectInputController(a_poDeviceInstance))
+			{
+				TUtil::Log("Added XInput Controller: \'%s\' (%s) - NON-PSX", a_poDeviceInstance->tszProductName, fmtStr);
+				return DIENUM_CONTINUE;
+			}
 
-            if (inputController == TNULL)
-            {
-                // new DXController
-                inputController = new TInputDXDeviceController();
-                inputController->BindToDIDevice(inputInterface->GetMainWindow(), a_poDeviceInstance, inputDevice);
-            }
+			TUtil::Log("Added Direct Input Controller: \'%s\' (%s) - NON-PSX", a_poDeviceInstance->tszProductName, fmtStr);
 
-            break;
-        default:
-            break;
-        }
+			inputController = pInputInterface->GetDeviceByIndex<TInputDXDeviceController>();
+			HRESULT hRes = pInputInterface->m_poDirectInput8->CreateDevice(a_poDeviceInstance->guidInstance, &inputDevice, NULL);
 
-        return DIENUM_CONTINUE;
-    }
+			if (hRes != DI_OK)
+				return DIENUM_CONTINUE;
+
+			if (inputController == TNULL)
+			{
+				// new DXController
+				//inputController = new TInputDXDeviceController();
+				//inputController->BindToDIDevice(pInputInterface->GetMainWindow(), a_poDeviceInstance, inputDevice);
+			}
+
+			break;
+		}
+		default:
+			break;
+		}
+
+		return DIENUM_CONTINUE;
+	}
 }

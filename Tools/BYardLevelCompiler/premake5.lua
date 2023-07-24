@@ -2,6 +2,7 @@ project "BYard Level Compiler"
 	language "C++"
 	cppdialect "C++20"
 	staticruntime "on"
+	characterset "ASCII"
 	
 	pchheader "pch.h"
 	pchsource "Source/pch.cpp"

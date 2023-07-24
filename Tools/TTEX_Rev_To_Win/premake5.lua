@@ -2,6 +2,7 @@ project "TTEX_Rev_To_Win"
 	language "C++"
 	cppdialect "C++20"
 	staticruntime "on"
+	characterset "ASCII"
 	
 	pchheader "pch.h"
 	pchsource "Source/pch.cpp"

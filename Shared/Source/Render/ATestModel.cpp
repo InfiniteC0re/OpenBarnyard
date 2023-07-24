@@ -35,7 +35,7 @@ ATestModel::~ATestModel()
 
 void ATestModel::Render(float deltaTime)
 {
-    auto pRenderContext = Toshi::TRender::GetSingletonWeak()->GetCurrentRenderContext();
+    auto pRenderContext = Toshi::TRender::GetSingleton()->GetCurrentRenderContext();
 
     Toshi::TMatrix44 modelView;
     Toshi::TMatrix44 worldView = pRenderContext->GetModelViewMatrix();
@@ -69,8 +69,8 @@ void ATestModel::CreateCube()
         0, 1, 2, 3, 4, 5, 6, 7, 0, 1
     };
 
-    auto pTexManager = Toshi::TTextureManager::GetSingleton();
-    auto pSysShader = Toshi::TSysShader::GetSingleton();
+    auto pTexManager = Toshi::TTextureManager::GetSingletonSafe();
+    auto pSysShader = Toshi::TSysShader::GetSingletonSafe();
 
     m_pCubeMaterial = pSysShader->CreateMaterial();
     m_pCubeMaterial->SetFlag(Toshi::TMaterial::Flags_AlphaUpdate, TTRUE);
@@ -78,7 +78,7 @@ void ATestModel::CreateCube()
 
     auto pTexture = pTexManager->FindTexture("prop_fountain_02.tga");
     pTexture->SetAlphaEnabled(TFALSE);
-    m_pCubeMaterial->SetTexture(pTexture);
+    m_pCubeMaterial->SetTexture(0, pTexture);
 
     auto pMesh = pSysShader->CreateMesh("test_cube");
     pMesh->Create(0, sizeof(s_Vertices) / sizeof(SysMeshVertex), sizeof(s_Indices) / sizeof(uint16_t));
@@ -109,8 +109,8 @@ void ATestModel::CreatePlane()
         0, 1, 2, 3
     };
 
-    auto pTexManager = Toshi::TTextureManager::GetSingleton();
-    auto pSysShader = Toshi::TSysShader::GetSingleton();
+    auto pTexManager = Toshi::TTextureManager::GetSingletonSafe();
+    auto pSysShader = Toshi::TSysShader::GetSingletonSafe();
 
     m_pPlaneMaterial = pSysShader->CreateMaterial();
     m_pPlaneMaterial->SetFlag(Toshi::TMaterial::Flags_AlphaUpdate, TTRUE);
@@ -119,7 +119,7 @@ void ATestModel::CreatePlane()
     auto pTexture = pTexManager->FindTexture("slum_island_colour.tga");
     pTexture->SetAlphaEnabled(TFALSE);
     pTexture->SetSamplerId(3);
-    m_pPlaneMaterial->SetTexture(pTexture);
+    m_pPlaneMaterial->SetTexture(0, pTexture);
 
     auto pMesh = pSysShader->CreateMesh("test_cube");
     pMesh->Create(0, sizeof(s_Vertices) / sizeof(SysMeshVertex), sizeof(s_Indices) / sizeof(uint16_t));

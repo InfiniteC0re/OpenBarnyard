@@ -3,7 +3,7 @@
 
 namespace Toshi {
 
-	TBOOL TInputDXDeviceController::IsDirectInputController(LPCDIDEVICEINSTANCE a_poDeviceInstance)
+	TBOOL TInputDXDeviceController::IsDirectInputController(LPCDIDEVICEINSTANCEA a_poDeviceInstance)
 	{
 		TASSERT(a_poDeviceInstance != NULL);
 		char fmtStr[37];
@@ -28,7 +28,7 @@ namespace Toshi {
 		return TTRUE;
 	}
 
-	TBOOL const TInputDXDeviceController::BindToDIDevice(HWND a_mainWindow, LPCDIDEVICEINSTANCE a_poDeviceInstance, IDirectInputDevice8* a_poDXInputDevice)
+	TBOOL const TInputDXDeviceController::BindToDIDevice(HWND a_mainWindow, LPCDIDEVICEINSTANCEA a_poDeviceInstance, IDirectInputDevice8A* a_poDXInputDevice)
 	{
 		TASSERT(a_poDeviceInstance != NULL);
 		TASSERT(a_poDXInputDevice != NULL);

@@ -194,16 +194,6 @@ namespace Toshi
 			return node != TNULL && node->m_List == this;
 		}
 
-		TNode* Head() const
-		{
-			return m_Head.Next();
-		}
-
-		TNode* Tail() const
-		{
-			return m_Head.Prev();
-		}
-
 		size_t Count() const
 		{
 			return m_Count;
@@ -212,6 +202,16 @@ namespace Toshi
 		T2Iterator<T, TNode> Begin() const
 		{
 			return m_Head.m_Next;
+		}
+
+		T2Iterator<T, TNode> Head() const
+		{
+			return m_Head.m_Next;
+		}
+
+		T2Iterator<T, TNode> Tail() const
+		{
+			return m_Head.m_Prev;
 		}
 
 		T2Iterator<T, TNode> End()

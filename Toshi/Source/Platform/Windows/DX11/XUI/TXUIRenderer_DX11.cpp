@@ -22,7 +22,7 @@ namespace Toshi {
 	{
 		TASSERT(m_iTransformStackPointer == 0);
 
-		auto p2GUI = T2GUI::GetSingletonWeak();
+		auto p2GUI = T2GUI::GetSingleton();
 		auto pRender = TRenderDX11::Interface();
 		auto pDisplayParams = pRender->GetCurrentDisplayParams();
 		auto pRenderContext = TSTATICCAST(TRenderContextDX11*, pRender->GetCurrentRenderContext());
@@ -72,7 +72,7 @@ namespace Toshi {
 
 	void TXUIRenderer::SetMaterial(T2GUIMaterial* pMat)
 	{
-		auto pPrimShader = TPrimShader::GetSingletonWeak();
+		auto pPrimShader = TPrimShader::GetSingleton();
 		TTexture* pTex = TNULL;
 
 		if (pMat != TNULL)
@@ -127,7 +127,7 @@ namespace Toshi {
 	{
 		if (m_bIsInScene)
 		{
-			auto pRenderContext = TRender::GetSingletonWeak()->GetCurrentRenderContext();
+			auto pRenderContext = TRender::GetSingleton()->GetCurrentRenderContext();
 			auto pTransform = m_pTransforms + m_iTransformStackPointer;
 
 			TMatrix44 mat44;
@@ -139,7 +139,7 @@ namespace Toshi {
 		}
 
 		TPrimShader::Vertex* pVertex;
-		auto pPrimShader = TPrimShader::GetSingletonWeak();
+		auto pPrimShader = TPrimShader::GetSingleton();
 		pPrimShader->SetBlendModeAndUnlock(1);
 		pPrimShader->StartRendering(TPrimShader::PrimType_TriangleStrip);
 
@@ -174,7 +174,7 @@ namespace Toshi {
 	{
 		if (m_bIsInScene)
 		{
-			auto pRenderContext = TRender::GetSingletonWeak()->GetCurrentRenderContext();
+			auto pRenderContext = TRender::GetSingleton()->GetCurrentRenderContext();
 			auto pTransform = m_pTransforms + m_iTransformStackPointer;
 
 			TMatrix44 mat44;
@@ -188,7 +188,7 @@ namespace Toshi {
 		TASSERT(numverts < MAXVERTS);
 
 		TPrimShader::Vertex* pVertex;
-		auto pPrimShader = TPrimShader::GetSingletonWeak();
+		auto pPrimShader = TPrimShader::GetSingleton();
 		pPrimShader->SetBlendModeAndUnlock(1);
 		pPrimShader->StartRendering(TPrimShader::PrimType_TriangleStrip);
 
@@ -225,7 +225,7 @@ namespace Toshi {
 
 		if (m_bIsInScene)
 		{
-			auto pRenderContext = TRender::GetSingletonWeak()->GetCurrentRenderContext();
+			auto pRenderContext = TRender::GetSingleton()->GetCurrentRenderContext();
 			auto pTransform = m_pTransforms + m_iTransformStackPointer;
 
 			TMatrix44 mat44;
@@ -237,7 +237,7 @@ namespace Toshi {
 		}
 
 		TPrimShader::Vertex* pVertex;
-		auto pPrimShader = TPrimShader::GetSingletonWeak();
+		auto pPrimShader = TPrimShader::GetSingleton();
 		pPrimShader->SetBlendModeAndUnlock(0);
 		pPrimShader->StartRendering(TPrimShader::PrimType_LineList);
 
@@ -264,7 +264,7 @@ namespace Toshi {
 
 		if (m_bIsInScene)
 		{
-			auto pRenderContext = TRender::GetSingletonWeak()->GetCurrentRenderContext();
+			auto pRenderContext = TRender::GetSingleton()->GetCurrentRenderContext();
 			auto pTransform = m_pTransforms + m_iTransformStackPointer;
 
 			TMatrix44 mat44;
@@ -276,7 +276,7 @@ namespace Toshi {
 		}
 
 		TPrimShader::Vertex* pVertex;
-		auto pPrimShader = TPrimShader::GetSingletonWeak();
+		auto pPrimShader = TPrimShader::GetSingleton();
 		pPrimShader->SetBlendModeAndUnlock(0);
 		pPrimShader->StartRendering(TPrimShader::PrimType_LineList);
 
@@ -303,7 +303,7 @@ namespace Toshi {
 
 		if (m_bIsInScene)
 		{
-			auto pRenderContext = TRender::GetSingletonWeak()->GetCurrentRenderContext();
+			auto pRenderContext = TRender::GetSingleton()->GetCurrentRenderContext();
 			auto pTransform = m_pTransforms + m_iTransformStackPointer;
 
 			TMatrix44 mat44;
@@ -315,7 +315,7 @@ namespace Toshi {
 		}
 
 		TPrimShader::Vertex* pVertex;
-		auto pPrimShader = TPrimShader::GetSingletonWeak();
+		auto pPrimShader = TPrimShader::GetSingleton();
 		pPrimShader->SetBlendModeAndUnlock(0);
 		pPrimShader->StartRendering(TPrimShader::PrimType_LineStrip);
 
@@ -354,7 +354,7 @@ namespace Toshi {
 
 		if (m_bIsInScene)
 		{
-			auto pRenderContext = TRender::GetSingletonWeak()->GetCurrentRenderContext();
+			auto pRenderContext = TRender::GetSingleton()->GetCurrentRenderContext();
 			auto pTransform = m_pTransforms + m_iTransformStackPointer;
 
 			TMatrix44 mat44;
@@ -366,7 +366,7 @@ namespace Toshi {
 		}
 
 		TPrimShader::Vertex* pVertex;
-		auto pPrimShader = TPrimShader::GetSingletonWeak();
+		auto pPrimShader = TPrimShader::GetSingleton();
 		pPrimShader->SetBlendModeAndUnlock(0);
 		pPrimShader->StartRendering(TPrimShader::PrimType_TriangleStrip);
 
@@ -402,7 +402,7 @@ namespace Toshi {
 	{
 		if (m_bIsInScene)
 		{
-			auto pRenderContext = TRender::GetSingletonWeak()->GetCurrentRenderContext();
+			auto pRenderContext = TRender::GetSingleton()->GetCurrentRenderContext();
 			auto pTransform = m_pTransforms + m_iTransformStackPointer;
 
 			TMatrix44 mat44;
@@ -418,7 +418,7 @@ namespace Toshi {
 		auto pRender = TRenderDX11::Interface();
 		auto pRenderContext = pRender->GetCurrentRenderContext();
 		auto pDeviceContext = pRender->GetDeviceContext();
-		auto pPrimShader = TPrimShader::GetSingletonWeak();
+		auto pPrimShader = TPrimShader::GetSingleton();
 
 		pRender->SetZMode(TTRUE, D3D11_COMPARISON_LESS_EQUAL, D3D11_DEPTH_WRITE_MASK_ZERO);
 		pRender->SetBlendMode(TTRUE, D3D11_BLEND_OP_ADD, D3D11_BLEND_SRC_ALPHA, D3D11_BLEND_INV_SRC_ALPHA);
@@ -479,7 +479,7 @@ namespace Toshi {
 {
 		if (m_bIsInScene)
 		{
-			auto pRenderContext = TRender::GetSingletonWeak()->GetCurrentRenderContext();
+			auto pRenderContext = TRender::GetSingleton()->GetCurrentRenderContext();
 			auto pTransform = m_pTransforms + m_iTransformStackPointer;
 
 			TMatrix44 mat44;
@@ -495,7 +495,7 @@ namespace Toshi {
 		auto pRender = TRenderDX11::Interface();
 		auto pRenderContext = pRender->GetCurrentRenderContext();
 		auto pDeviceContext = pRender->GetDeviceContext();
-		auto pPrimShader = TPrimShader::GetSingletonWeak();
+		auto pPrimShader = TPrimShader::GetSingleton();
 
 		TMatrix44 worldViewProjection = pRenderContext->GetModelViewMatrix().XMM() * pRenderContext->GetModelViewMatrix().XMM();
 
@@ -551,7 +551,7 @@ namespace Toshi {
 	void TXUIRenderer::ScaleCoords(float& x, float& y)
 	{
 		auto pDisplayParams = TRenderDX11::Interface()->GetCurrentDisplayParams();
-		T2GUIElement* pRoot = T2GUI::GetSingletonWeak()->GetRootElement();
+		T2GUIElement* pRoot = T2GUI::GetSingleton()->GetRootElement();
 
 		float fRootWidth, fRootHeight;
 		pRoot->GetDimensions(fRootWidth, fRootHeight);
@@ -611,7 +611,7 @@ namespace Toshi {
 	{
 		if (m_bIsInScene)
 		{
-			auto pRenderContext = TRender::GetSingletonWeak()->GetCurrentRenderContext();
+			auto pRenderContext = TRender::GetSingleton()->GetCurrentRenderContext();
 			auto pTransform = m_pTransforms + m_iTransformStackPointer;
 
 			TMatrix44 mat44;
@@ -625,7 +625,7 @@ namespace Toshi {
 		TASSERT(numverts < MAXVERTS);
 
 		TPrimShader::Vertex* pVertex;
-		auto pPrimShader = TPrimShader::GetSingletonWeak();
+		auto pPrimShader = TPrimShader::GetSingleton();
 		pPrimShader->SetBlendModeAndUnlock(1);
 		pPrimShader->StartRendering(TPrimShader::PrimType_TriangleStrip);
 

@@ -21,7 +21,7 @@ namespace Toshi {
         auto pRender = TRenderDX11::Interface();
         auto pDeviceContext = pRender->m_pDeviceContext;
 
-        auto pTexture = GetTexture();
+        auto pTexture = GetTexture(0);
         s_eSysMaterialLazyState = 1;
 
         if (pTexture != TNULL)

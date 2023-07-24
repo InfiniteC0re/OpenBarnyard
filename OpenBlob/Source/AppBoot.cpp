@@ -19,7 +19,9 @@
 #include "Cameras/ACameraManager.h"
 
 #include <Toshi/Xui/TXUI.h>
+#include <Toshi/Core/TArray.h>
 #include <Toshi2/T2GUI/T2GUI.h>
+#include <Toshi2/T2SimpleArray.h>
 #include <Toshi/Sound/TSound.h>
 #include <Toshi/Render/TRender.h>
 #include <Platform/Windows/TSound_Win.h>
@@ -41,12 +43,30 @@ TBOOL AApplication::OnCreate(int argc, char** argv)
 	AAssetStreaming::CreateSingleton();
 	ALocaleManager::Create();
 
-	m_Renderer = ARenderer::GetSingleton();
+	m_Renderer = ARenderer::GetSingletonSafe();
 	TBOOL interfaceCreated = m_Renderer->CreateInterface();
 
 	TOSHI_INFO("testcvar value: {0}", CVAR_GET_BOOL(testcvar));
 	//TASSERT(TFALSE, "Assertion test");
 
+	/*Toshi::T2SimpleArray<int> simpleArray;
+	simpleArray.Create(4);
+
+	simpleArray[0] = 1;
+	simpleArray[1] = 2;
+	simpleArray[2] = 3;
+	simpleArray[3] = 4;*/
+
+	Toshi::TArray<int>::Storage genArray;
+	genArray.Push(5);
+	genArray.Push(9);
+
+	Toshi::TArray<int> arr(genArray);
+
+	for (int i = 0; i < genArray.GetNumElements(); i++)
+	{
+		TOSHI_INFO("{0}", genArray[i]);
+	}
 	
 	if (interfaceCreated)
 	{
@@ -66,7 +86,7 @@ TBOOL AApplication::OnCreate(int argc, char** argv)
 		TBOOL bResult = Toshi::TSound::CreateSingleton()->Create(mempool, poolSize, -1, -1, Toshi::TSound::SpeakerType_7POINT1);
 		TASSERT(TTRUE == bResult);
 
-		FMOD::System* system = Toshi::TSound::GetSingletonWeak()->GetSystem();
+		FMOD::System* system = Toshi::TSound::GetSingleton()->GetSystem();
 		system->setFileSystem(NULL, NULL, NULL, NULL, NULL, NULL, 0);
 
 		//Toshi::TInputInterface::CreateSingleton();
@@ -94,29 +114,24 @@ TBOOL AApplication::OnCreate(int argc, char** argv)
 
 TBOOL AApplication::OnUpdate(float deltaTime)
 {
-	Toshi::T2GUI* pGUI = Toshi::T2GUI::GetSingletonWeak();
-	
-	if (pGUI != TNULL)
-	{
-		pGUI->Tick(deltaTime);
-	}
-	
-	AMoviePlayer* pMoviePlayer = AMoviePlayer::GetSingletonWeak();
-
-	if (pMoviePlayer != TNULL)
-	{
-		pMoviePlayer->OnUpdate(deltaTime);
-	}
-
 	UpdateSound(deltaTime);
+
+	Toshi::T2GUI* pGUI = Toshi::T2GUI::GetSingleton();
+	AMoviePlayer* pMoviePlayer = AMoviePlayer::GetSingleton();
+	AInputManager2* pInputManager = AInputManager2::GetSingleton();
+	
+	if (pGUI) pGUI->Tick(deltaTime);
+	if (pInputManager) pInputManager->Update(deltaTime);
+	if (pMoviePlayer) pMoviePlayer->OnUpdate(deltaTime);
+
 	m_pGameStateController->Update(deltaTime);
-	ARenderer::GetSingletonWeak()->Update(deltaTime);
+	ARenderer::GetSingleton()->Update(deltaTime);
 	return TTRUE;
 }
 
 TBOOL AApplication::UpdateSound(float deltaTime)
 {
-	Toshi::TSound* sound = Toshi::TSound::GetSingleton();
+	Toshi::TSound* sound = Toshi::TSound::GetSingletonSafe();
 	sound->Update();
 	return TFALSE;
 }

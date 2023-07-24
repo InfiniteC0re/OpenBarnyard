@@ -223,7 +223,7 @@ namespace Toshi
         TMemory::s_Context.s_cbFree = [](void* ptr) -> void
         {
 #ifdef TOSHI_DEBUG
-            if (get_mspace_from_ptr(ptr) == TMemory::s_GlobalHeap->GetMSpace())
+            if (ptr && get_mspace_from_ptr(ptr) == TMemory::s_GlobalHeap->GetMSpace())
             {
                 mchunkptr chunk = mem2chunk(ptr);
                 s_NumAllocatedBytes -= chunksize(chunk);

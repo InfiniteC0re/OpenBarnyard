@@ -44,16 +44,16 @@ namespace Toshi
 		static inline size_t ms_iNumDevices;
 	
 	private:
-		static BOOL CALLBACK EnumerateDeviceCallback(LPCDIDEVICEINSTANCE a_poDeviceInstance, LPVOID poDXInputInterface);
+		static BOOL CALLBACK EnumerateDeviceCallback(LPCDIDEVICEINSTANCEA a_poDeviceInstance, LPVOID poDXInputInterface);
 		
-		LPDIRECTINPUT8 GetDirectInput() const
+		LPDIRECTINPUT8A GetDirectInput() const
 		{
 			return m_poDirectInput8;
 		}
 
 	private:
-		LPDIRECTINPUT8 m_poDirectInput8; // 0x30
+		LPDIRECTINPUT8A m_poDirectInput8; // 0x30
 		HWND m_hMainWindow;              // 0x34
-		TBOOL m_bExclusive;               // 0x38
+		TBOOL m_bExclusive;              // 0x38
 	};
 }

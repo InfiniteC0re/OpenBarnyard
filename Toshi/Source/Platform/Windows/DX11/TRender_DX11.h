@@ -342,7 +342,7 @@ namespace Toshi
 
 		static TRenderDX11* Interface()
 		{
-			return static_cast<TRenderDX11*>(TRender::GetSingletonWeak());
+			return static_cast<TRenderDX11*>(TRender::GetSingleton());
 		}
 		
 	public:

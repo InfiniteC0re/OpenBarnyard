@@ -7,13 +7,21 @@ namespace Toshi {
 	class TGenericGlobalListener : public TDList<TGenericGlobalListener<T>>::TNode
 	{
 	public:
-		using EventCallback = void(*)(void*, T*);
+		using EventCallback = void(*)(void*, const T&);
+
+		template <class T>
+		friend class TGlobalEmitter;
 
 	protected:
 		TGenericGlobalListener()
 		{
 			m_pReceiver = TNULL;
 			m_fnCallback = TNULL;
+		}
+
+		void Execute(const T& a_rData)
+		{
+			m_fnCallback(m_pReceiver, a_rData);
 		}
 
 		void ConnectImpl(void* pReceiver, EventCallback fnCallback);
@@ -27,6 +35,15 @@ namespace Toshi {
 	template <class T>
 	class TGlobalEmitter
 	{
+	public:
+		static void Throw(const T& a_rData)
+		{
+			for (auto it = sm_oListeners.Begin(); it != sm_oListeners.End(); it++)
+			{
+				it->Execute(a_rData);
+			}
+		}
+
 	public:
 		// Important note: This should be TQList!
 		inline static Toshi::TDList<TGenericGlobalListener<T>> sm_oListeners;

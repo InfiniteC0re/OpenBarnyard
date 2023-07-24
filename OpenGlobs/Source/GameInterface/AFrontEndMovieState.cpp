@@ -28,7 +28,7 @@ AGameState::UpdateResult AFrontEndMovieState::OnUpdate(float deltaTime)
     }
 
     AGameState::OnUpdate(deltaTime);
-    AMoviePlayer* pMoviePlayer = AMoviePlayer::GetSingletonWeak();
+    AMoviePlayer* pMoviePlayer = AMoviePlayer::GetSingleton();
 
     if (m_iAssetId == Asset_Legal || (m_iAssetId < 3 && pMoviePlayer->IsMoviePlaying()))
     {
@@ -107,11 +107,11 @@ AGameState::UpdateResult AFrontEndMovieState::OnUpdate(float deltaTime)
 
 void AFrontEndMovieState::OnInsertion()
 {
-    auto pGUI = Toshi::T2GUI::GetSingleton();
+    auto pGUI = Toshi::T2GUI::GetSingletonSafe();
     auto pGUIRenderer = pGUI->GetRenderer();
     auto pRootElement = pGUI->GetRootElement();
 
-    AInputManager2::GetSingletonWeak()->SetContext(AInputMap::INPUTCONTEXT_UNK8);
+    AInputManager2::GetSingleton()->SetContext(AInputMap::INPUTCONTEXT_UNK8);
     m_InputHelper.AddMapping(0x2A, TFALSE, -1.0f); // SPACE
     m_InputHelper.AddMapping(0x2B, TFALSE, -1.0f); // RETURN
 
@@ -132,7 +132,7 @@ void AFrontEndMovieState::OnActivate()
 {
     AGameState::OnActivate();
 
-    auto pRootElement = Toshi::T2GUI::GetSingletonWeak()->GetRootElement();
+    auto pRootElement = Toshi::T2GUI::GetSingleton()->GetRootElement();
     pRootElement->AddChildHead(&m_Background);
 
     float fWidth, fHeight;
@@ -145,7 +145,7 @@ void AFrontEndMovieState::OnActivate()
 void AFrontEndMovieState::OnDeactivate()
 {
     AGameState::OnDeactivate();
-    AMoviePlayer* pPlayer = AMoviePlayer::GetSingleton();
+    AMoviePlayer* pPlayer = AMoviePlayer::GetSingletonSafe();
 
     if (pPlayer->IsMoviePlaying())
     {
@@ -184,12 +184,12 @@ TBOOL AFrontEndMovieState::HasMovieStopped()
             return TTRUE;
         }
     }
-    return !AMoviePlayer::GetSingletonWeak()->IsMoviePlaying();
+    return !AMoviePlayer::GetSingleton()->IsMoviePlaying();
 }
 
 void AFrontEndMovieState::StopMovieIfPlaying()
 {
-    AMoviePlayer* pPlayer = AMoviePlayer::GetSingletonWeak();
+    AMoviePlayer* pPlayer = AMoviePlayer::GetSingleton();
     if (pPlayer->IsMoviePlaying())
     {
         pPlayer->StopMovie();
@@ -198,7 +198,7 @@ void AFrontEndMovieState::StopMovieIfPlaying()
 
 void AFrontEndMovieState::StartMovie(Asset assetId)
 {
-    AMoviePlayer* pPlayer = AMoviePlayer::GetSingletonWeak();
+    AMoviePlayer* pPlayer = AMoviePlayer::GetSingleton();
 
     if (pPlayer->IsMoviePlaying())
     {
@@ -215,7 +215,7 @@ void AFrontEndMovieState::StartMovie(Asset assetId)
 #ifdef TOSHI_DEBUG
 void AFrontEndMovieState::DEBUG_RenderImGui()
 {
-    auto pMoviePlayer = TSTATICCAST(ADX11MoviePlayer*, AMoviePlayer::GetSingletonWeak());
+    auto pMoviePlayer = TSTATICCAST(ADX11MoviePlayer*, AMoviePlayer::GetSingleton());
 
     unsigned int audioPosition = 0;
 

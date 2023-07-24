@@ -14,7 +14,7 @@ void ALocaleManager::Create()
 void ALocaleManager::Destroy()
 {
     if (T2Locale::ms_pSingleton != TNULL)
-        delete T2Locale::GetSingletonWeak();
+        delete T2Locale::GetSingleton();
 }
 
 const char* ALocaleManager::GetLocaleCode(Lang code)

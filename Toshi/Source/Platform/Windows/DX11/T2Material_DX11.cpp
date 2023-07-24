@@ -12,7 +12,7 @@ namespace Toshi {
 		CreateResource(m_pMaterialName, this, ResourceCallback, this);
 		TASSERT(!HasFlag(Flags_InMaterialManager));
 
-		auto pMatManager = TMaterialManager::GetSingletonWeak();
+		auto pMatManager = TMaterialManager::GetSingleton();
 		auto pMetaMat = pMatManager->FindMaterial(m_pMaterialName);
 
 		if (pMetaMat == TNULL)
@@ -27,7 +27,7 @@ namespace Toshi {
 		if (sm_pTRBUnloadCallback)
 			sm_pTRBUnloadCallback(this, sm_pTRBUnloadCallbackData);
 
-		auto pMatManager = TMaterialManager::GetSingletonWeak();
+		auto pMatManager = TMaterialManager::GetSingleton();
 
 		if (m_uiFlags & Flags_InMaterialManager)
 		{
@@ -46,7 +46,7 @@ namespace Toshi {
 
 	void T2Material::InitData()
 	{
-		auto pTexManager = TTextureManager::GetSingletonWeak();
+		auto pTexManager = TTextureManager::GetSingleton();
 
 		for (int i = 0; i < m_iNumTex; i++)
 			m_aTextures[i].m_pTexture = pTexManager->FindTexture(m_aTextures[i].m_pName);
@@ -59,7 +59,7 @@ namespace Toshi {
 			pPass->m_pTexture->m_pTexture = pTexture;
 
 			if (pTexture == pTexManager->GetInvalidTexture())
-				TError::GetSingletonWeak()->AddError("Material \'%s\' Couldn\'t find texture \'%s\'", m_pMaterialName, pPass->m_pTexture->m_pName);
+				TError::GetSingleton()->AddError("Material \'%s\' Couldn\'t find texture \'%s\'", m_pMaterialName, pPass->m_pTexture->m_pName);
 		}
 	}
 

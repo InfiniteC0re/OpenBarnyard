@@ -2,7 +2,7 @@
 
 namespace Toshi
 {
-	template<class T, size_t MaxSize>
+	template<typename T, size_t MaxSize>
 	class T2Vector
 	{
 	public:

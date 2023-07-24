@@ -10,7 +10,7 @@ namespace Toshi
 
 		T2TexturePtr& operator=(T2TexturePtr texturePtr)
 		{
-			auto resourceManager = T2ResourceManager::GetSingletonWeak();
+			auto resourceManager = T2ResourceManager::GetSingleton();
 			resourceManager->DecRefCount(m_iID);
 			m_iID = texturePtr.m_iID;
 			resourceManager->IncRefCount(m_iID);
@@ -24,7 +24,7 @@ namespace Toshi
 
 		~T2TexturePtr()
 		{
-			auto resourceManager = T2ResourceManager::GetSingletonWeak();
+			auto resourceManager = T2ResourceManager::GetSingleton();
 			resourceManager->DecRefCount(m_iID);
 		}
 
