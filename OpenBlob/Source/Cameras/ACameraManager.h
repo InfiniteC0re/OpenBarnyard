@@ -10,6 +10,8 @@ public:
 public:
 	ACameraManager();
 
+	ACamera* SetCurrentCamera(ACamera::CameraType a_eCamType);
+
 	ACamera* GetCurrentCamera() const
 	{
 		if (m_iCurrentCamera >= 0)
