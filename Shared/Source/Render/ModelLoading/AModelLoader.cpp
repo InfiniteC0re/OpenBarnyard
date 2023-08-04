@@ -40,7 +40,7 @@ void AModelLoader::GetMaterial(TShader* pShader, const char* pName, TMaterial*& 
 
 		TMaterialManager* pMatManager = TMaterialManager::GetSingleton();
 		auto metaMat = pMatManager->FindMaterial(matName);
-		TASSERT(TNULL != metaMat);
+		TASSERT(TNULL != metaMat, "Failed to find mat [{0}]", matName);
 
 		TTexture* pMatTexture = metaMat->GetTexture(0);
 		TBOOL bValidFormat = pMatTexture->CheckFormat();

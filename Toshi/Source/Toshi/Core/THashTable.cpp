@@ -33,12 +33,8 @@ void* Toshi::THashTable::Insert(void* a_pData)
 	if (a_pBuckets == TNULL) return TNULL;
 
 	void* foundBucket = Find(a_pData);
-	if (foundBucket == TNULL)
-	{
-		return Append(a_pData);
-	}
 
-	return TNULL;
+	return foundBucket ? foundBucket : Append(a_pData);
 }
 
 void* Toshi::THashTable::Find(void* a_pData)
