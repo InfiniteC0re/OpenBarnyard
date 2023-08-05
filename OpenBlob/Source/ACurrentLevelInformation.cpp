@@ -24,22 +24,33 @@ void ACurrentLevelInformation::Create(DataBlock a_type)
 		TASSERT(!m_streamingJobs[i]);
 		TASSERT(!m_datablocks[i]);
 		m_datablocks[i] = new Toshi::TTRB();
-		m_streamingJobs[i] = (ATRBLoaderJob*)assetStreaming->GetAvaiableJob();
+		m_streamingJobs[i] = TSTATICCAST(ATRBLoaderJob*, assetStreaming->CancelAllWaitingTerrainJobs());
 		m_streamingJobs[i]->Init(m_datablocks[i], szFilename);
 		assetStreaming->AddMainThreadJob2(m_streamingJobs[i]);
 	}
 }
 
-Toshi::TTRB* ACurrentLevelInformation::GetDataBlock(DataBlock a_type)
+const char* ACurrentLevelInformation::GetDataBlockFilename(DataBlock a_type)
 {
-	
-	return nullptr;
+	TASSERT(a_type >= 0 && a_type < DataBlockCount);
+	return sm_dataBlockFilenames[a_type].second;
 }
 
-void ACurrentLevelInformation::Stream()
+Toshi::TTRB* ACurrentLevelInformation::GetDataBlock(DataBlock a_type)
 {
+	TASSERT(a_type >= 0 && a_type < DataBlockCount);
+	return m_datablocks[a_type];
+}
+
+Toshi::TTRB* ACurrentLevelInformation::Stream(DataBlock a_type)
+{
+	auto stream = AAssetStreaming::GetSingleton();
+
 	for (size_t i = 0; i < DataBlockCount; i++)
 	{
-		
+		stream->ReleaseJob(m_streamingJobs[i]);
+		m_streamingJobs[i] = TNULL;
 	}
+
+	return GetDataBlock(a_type);
 }

@@ -22,8 +22,9 @@ class ACurrentLevelInformation
 	}
 
 	void Create(DataBlock a_type);
+	const char* GetDataBlockFilename(DataBlock a_type);
 	Toshi::TTRB* GetDataBlock(DataBlock a_type);
-	void Stream();
+	Toshi::TTRB* Stream(DataBlock a_type);
 
 	char* m_szLevelName;
 	ATRBLoaderJob* m_streamingJobs[DataBlockCount];

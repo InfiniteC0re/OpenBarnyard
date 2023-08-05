@@ -53,6 +53,11 @@ public:
 		return &m_pStack[index];
 	}
 
+	T& operator[] (int index)
+	{
+		return m_pStack[index];
+	}
+
 private:
 	int m_iTop = -1;
 	T m_pStack[C];
