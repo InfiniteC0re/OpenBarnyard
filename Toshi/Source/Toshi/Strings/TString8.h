@@ -13,7 +13,7 @@ namespace Toshi
 		TString8(TString8&& src, T2Allocator* allocator = TNULL) noexcept;
 		TString8(const TString8& src, T2Allocator* allocator = TNULL);
 		TString8(const TString16& src, T2Allocator* allocator = TNULL);
-		TString8(const char* const& src, T2Allocator* allocator = TNULL);
+		TString8(const char* src, T2Allocator* allocator = TNULL);
 		TString8(uint32_t size, T2Allocator* allocator = TNULL);
 		~TString8() { FreeBuffer(); }
 

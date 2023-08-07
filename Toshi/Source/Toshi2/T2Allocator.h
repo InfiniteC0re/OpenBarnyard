@@ -1,4 +1,5 @@
 #pragma once
+#include "Toshi/Typedefs.h"
 
 namespace Toshi
 {
@@ -14,28 +15,19 @@ namespace Toshi
 		virtual size_t Size() = 0;
 		virtual size_t Capacity() = 0;
 
-		template<class T>
-		T* New()
+		template<class T, class... Args>
+		T* New(Args&& ...args)
 		{
 			void* mem = Malloc(sizeof(T));
-			T* object = new (mem) T();
+			T* object = new (mem) T(std::forward<Args>(args)...);
 			return object;
 		}
 
 		template<class T>
-		T* New(const T& value)
+		void Delete(T* ptr)
 		{
-			void* mem = Malloc(sizeof(T));
-			T* object = new (mem) T(value);
-			return object;
-		}
-
-		template<class T, class I>
-		T* New(const I& value)
-		{
-			void* mem = Malloc(sizeof(T));
-			T* object = new (mem) T(value);
-			return object;
+			ptr->~T();
+			Free(ptr);
 		}
 
 	public:
