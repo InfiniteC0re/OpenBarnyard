@@ -35,8 +35,12 @@ private:
 	void InitialiseViewPort();
 
 private:
+
+	static constexpr int MAX_VIEWPORTS_PER_FRAME = 4;
+
 	static Toshi::TTRB s_BootAssetsTRB;
 	static Toshi::THPTimer s_FrameTimer;
+	static inline int s_iCurrentCamera = 0;
 
 private:
 	Toshi::TViewport* m_pViewport;           // 0x0C

@@ -1,6 +1,10 @@
 #pragma once
 
 #ifdef TOSHI_ENABLE_DEPRECATED
+
+#include "Toshi/Strings/TPooledCString.h"
+
+
 namespace Toshi
 {
 	// Only used in JPOG
@@ -21,8 +25,8 @@ namespace Toshi
 
 		struct StringPool
 		{
-			TString8* m_szStrings;
 			int count;
+			TString8* m_szStrings;
 		};
 
 		struct StringPools
@@ -31,6 +35,9 @@ namespace Toshi
 			int m_iCountOfPools;
 		};
 
+	public:
+
+		void Remove(TPooledCString& a_pcString);
 	protected:
 		TBOOL ReadFile(const char* a_szFileName);
 		void InitStringPool(int a_iStringCount);

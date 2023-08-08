@@ -50,7 +50,7 @@ void* Toshi::TFreeList::Allocate(int a_iNumber, int size)
 	return newList;
 }
 
-void* Toshi::TFreeList::New(int size)
+void* Toshi::TFreeList::New(uint32_t size)
 {
 	if (size != m_iItemSize)
 	{
@@ -64,4 +64,18 @@ void* Toshi::TFreeList::New(int size)
 	}
 	m_pLastNode = m_pLastNode->m_pNextBlock;
 	return lastNode;
+}
+
+void Toshi::TFreeList::Delete(void* a_pData)
+{
+	if (m_pLastNode)
+	{
+		a_pData = m_pLastNode;
+		m_pLastNode = TSTATICCAST(TFreeList*, a_pData);
+	}
+	else
+	{
+		m_pLastNode = TSTATICCAST(TFreeList*, a_pData);
+		a_pData = TNULL;
+	}
 }

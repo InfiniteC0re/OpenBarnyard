@@ -25,6 +25,11 @@ Toshi::TCStringPool::TCStringPool(const char* a_szFileName, int unk, int unk2) :
 	ReadFile(a_szFileName);
 }
 
+void Toshi::TCStringPool::Remove(TPooledCString& a_pcString)
+{
+	TIMPLEMENT();
+}
+
 TBOOL Toshi::TCStringPool::ReadFile(const char* a_szFileName)
 {
 	TFileManager* fileManager = TFileManager::GetSingleton();
@@ -49,7 +54,7 @@ TBOOL Toshi::TCStringPool::ReadFile(const char* a_szFileName)
 
 		if (read != stringsSize)
 		{
-			delete strings;
+			delete[] strings;
 			return TFALSE;
 		}
 
@@ -59,8 +64,15 @@ TBOOL Toshi::TCStringPool::ReadFile(const char* a_szFileName)
 		}
 		m_iStringCount = stringCount;
 
-		StringPool* pool = new StringPool();
-		pool->count = 0;
+		StringPool* pool = new StringPool[m_iStringCount];
+
+		for (size_t i = 0; i < m_iStringCount; i++)
+		{
+			pool[i].m_szStrings = new TString8();
+			pool[i].count = 0;
+		}
+
+		TTODO("WTH");
 
 	}
 

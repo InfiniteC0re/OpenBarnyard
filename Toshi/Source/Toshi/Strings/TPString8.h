@@ -101,8 +101,10 @@ namespace Toshi {
 	public:
 		static void Create()
 		{
+#ifndef TOSHI_ENABLE_DEPRECATED
 			TSystemManager::SetStringPool(new TPString8Pool(1024, 0, &s_Allocator, 0));
 			TTODO("FUN_006c1a60 in Barnyard");
+#endif // !TOSHI_ENABLE_DEPRECATED
 		}
 
 		void Get(TPooledString8*& a_pOutString, const char* a_szString, bool* a_pWasInPool = TNULL);
@@ -136,7 +138,9 @@ namespace Toshi {
 
 		__forceinline TPString8(const char* a_szString)
 		{
+#ifndef TOSHI_ENABLE_DEPRECATED
 			TSystemManager::GetStringPool()->Get(m_pPtr, a_szString, TNULL);
+#endif // !TOSHI_ENABLE_DEPRECATED
 		}
 
 		__forceinline TPString8(TPString8Pool* a_pPool, const char* a_szString)
@@ -200,7 +204,10 @@ namespace Toshi {
 		__forceinline TPString8& operator=(const char* a_szString)
 		{
 			Decrement();
+#ifndef TOSHI_ENABLE_DEPRECATED
+
 			TSystemManager::GetStringPool()->Get(m_pPtr, a_szString, TNULL);
+#endif // !TOSHI_ENABLE_DEPRECATED
 
 			return *this;
 		}

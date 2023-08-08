@@ -80,6 +80,8 @@ void ARenderer::Update(float deltaTime)
                     pCamera = ACameraManager::GetSingleton()->GetCurrentCamera();
 
                 RenderMainScene(deltaTime, pViewport, pCameraObject, pCamera, MainScene, i == AXYZViewportManager::VIEWPORT_FullScreen);
+                //TASSERT(s_iCurrentCamera < MAX_VIEWPORTS_PER_FRAME);
+                //s_iCurrentCamera++;
             }
         }
 

@@ -36,7 +36,8 @@ project "OpenJPOG"
 	defines
 	{
 		"TOSHI_USER_CLIENT",
-		"SPDLOG_WCHAR_TO_UTF8_SUPPORT"
+		"SPDLOG_WCHAR_TO_UTF8_SUPPORT",
+		"TOSHI_ENABLE_DEPRECATED"
 	}
 	
 	postbuildcommands
