@@ -183,6 +183,26 @@ namespace Toshi {
 			m_pPtr = a_pPooledString;
 		}
 
+		__forceinline bool IsEqual(const TPString8& a_Other)
+		{
+			return m_pPtr == a_Other.m_pPtr;
+		}
+
+		__forceinline bool IsEqual(TPString8* a_pOther)
+		{
+			return m_pPtr == a_pOther->m_pPtr;
+		}
+
+		__forceinline bool operator==(const TPString8& a_Other)
+		{
+			return m_pPtr == a_Other.m_pPtr;
+		}
+
+		__forceinline bool operator!=(const TPString8& a_Other)
+		{
+			return m_pPtr != a_Other.m_pPtr;
+		}
+
 		__forceinline TPString8& operator=(TPooledString8* a_pString)
 		{
 			Decrement();
