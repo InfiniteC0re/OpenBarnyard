@@ -132,6 +132,9 @@ namespace Toshi {
 	class TPString8
 	{
 	public:
+		inline static const TString8 ms_sEmpty = TString8("");
+
+	public:
 		__forceinline TPString8()
 		{
 			m_pPtr = TNULL;
@@ -168,7 +171,7 @@ namespace Toshi {
 
 		__forceinline const TString8& GetString8() const
 		{
-			return m_pPtr->m_oString;
+			return m_pPtr ? m_pPtr->m_oString : ms_sEmpty;
 		}
 
 		__forceinline const TPooledString8* GetPooledString() const
@@ -229,7 +232,7 @@ namespace Toshi {
 
 		__forceinline operator const TString8*() const
 		{
-			return &m_pPtr->m_oString;
+			return m_pPtr ? &m_pPtr->m_oString : &ms_sEmpty;
 		}
 
 		__forceinline operator const TPooledString8*() const
