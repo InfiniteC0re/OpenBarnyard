@@ -14,7 +14,7 @@ namespace Toshi {
 	// Use this macro to get predefined string that is stored in the s_aStrings array.
 	// The macro looks for the string at compile time so it doesn't take any execution time.
 	// Before TPS8 is allowed to use, TPString8StaticPool::Undump should be called.
-	#define TPS8(STR) Toshi::TPString8StaticPool::Find(#STR)
+#define TPS8(STR) Toshi::TPString8StaticPool::Find(#STR)
 
 	class TPString8StaticPool
 	{
@@ -42,7 +42,7 @@ namespace Toshi {
 			for (size_t i = 0; i < NumOfStrings; i++)
 			{
 				TPString8 string(a_pPool, s_aStrings[i]);
-				
+
 				if (string.GetPooledString() &&
 					string.GetPooledString() != s_apPooledStrings[i].GetPooledString())
 				{
@@ -55,16 +55,10 @@ namespace Toshi {
 		// Executes at compile time and doesn't take any execution time.
 		static consteval const TPString8* Find(std::string_view a_String)
 		{
-			for (size_t i = 0; i < NumOfStrings; i++)
-			{
-				if (s_aStrings[i] == a_String)
-				{
-					return &s_apPooledStrings[i];
-				}
-			}
+			auto it = std::find(s_aStrings, s_aStrings + NumOfStrings, a_String);
 
-			throw "not found";
-			return nullptr;
+			if (it != std::end(s_aStrings))
+				return &s_apPooledStrings[std::distance(s_aStrings, it)];
 		}
 	};
 

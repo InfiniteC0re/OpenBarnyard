@@ -84,19 +84,19 @@ namespace Toshi {
 		TPString8Pool* m_pPool;
 	};
 
-	class TPString8PoolAllocator : public T2GlobalAllocator
-	{
-	public:
-		TPooledString8* AllocateString(const char* a_szString, TPString8Pool* a_pPool, T2Allocator* a_pAllocator)
-		{
-			return T2GlobalAllocator::New<TPooledString8>(a_szString, a_pPool, a_pAllocator);
-		}
-	};
-
 	class TPString8Pool
 	{
 	public:
-		inline static TPString8PoolAllocator s_Allocator;
+		class Allocator : public T2GlobalAllocator
+		{
+		public:
+			TPooledString8* AllocateString(const char* a_szString, TPString8Pool* a_pPool, T2Allocator* a_pAllocator)
+			{
+				return T2GlobalAllocator::New<TPooledString8>(a_szString, a_pPool, a_pAllocator);
+			}
+		};
+
+		inline static Allocator s_Allocator;
 
 	public:
 		static void Create()
@@ -115,16 +115,16 @@ namespace Toshi {
 			m_oMap.Remove(a_pString->GetString8());
 		}
 
-		TPString8PoolAllocator* GetAllocator() const
+		Allocator* GetAllocator() const
 		{
 			return m_pAllocator;
 		}
 
 	private:
-		TPString8Pool(int a_iUnknown1, int a_iUnknown2, TPString8PoolAllocator* a_pAllocator, void* m_pUnknown3);
+		TPString8Pool(int a_iUnknown1, int a_iUnknown2, Allocator* a_pAllocator, void* m_pUnknown3);
 
 	private:
-		TPString8PoolAllocator* m_pAllocator;
+		Allocator* m_pAllocator;
 		T2Map<const char*, TPooledString8*, TPooledString8::Comparator> m_oMap;
 	};
 

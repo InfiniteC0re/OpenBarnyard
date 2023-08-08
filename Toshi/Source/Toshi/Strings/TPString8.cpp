@@ -36,7 +36,7 @@ namespace Toshi {
 		}
 	}
 
-	TPString8Pool::TPString8Pool(int a_iUnknown1, int a_iUnknown2, TPString8PoolAllocator* a_pAllocator, void* m_pUnknown3) :
+	TPString8Pool::TPString8Pool(int a_iUnknown1, int a_iUnknown2, Allocator* a_pAllocator, void* m_pUnknown3) :
 		m_pAllocator(a_pAllocator),
 		m_oMap(a_pAllocator)
 	{
