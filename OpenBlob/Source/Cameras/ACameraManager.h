@@ -10,7 +10,7 @@ public:
 public:
 	ACameraManager();
 
-	ACamera* SetCurrentCamera(ACamera::CameraType a_eCamType);
+	ACamera* CreateCamera(ACamera::CameraType a_eCamType);
 
 	ACamera* GetCurrentCamera() const
 	{
@@ -24,7 +24,7 @@ public:
 	}
 
 	template<class T>
-	void CreateCamera()
+	T* CreateCamera()
 	{
 		static_assert(std::is_base_of_v<ACamera, T> == TTRUE);
 
@@ -45,7 +45,7 @@ public:
 					m_ppCameras[i]->SetSomeFlag(TFALSE);
 				}
 
-				break;
+				return m_ppCameras[i];
 			}
 		}
 	}

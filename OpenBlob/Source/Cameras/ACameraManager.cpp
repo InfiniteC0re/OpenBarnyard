@@ -21,46 +21,26 @@ ACameraManager::ACameraManager()
 	TTODO("CreateCamera<AScriptedCamera>()");
 }
 
-ACamera* ACameraManager::SetCurrentCamera(ACamera::CameraType a_eCamType)
+ACamera* ACameraManager::CreateCamera(ACamera::CameraType a_eCamType)
 {
-	for (size_t i = 0; i < MAX_CAMERA; i++)
+	switch (a_eCamType)
 	{
-		if (m_ppCameras[i] == TNULL)
-		{
-			switch (a_eCamType)
-			{
-			case ACamera::CT_DEFAULT:
-				TIMPLEMENT();
-				break;
-			case ACamera::CT_BLOBFOLLOW:
-				TIMPLEMENT();
-				break;
-			case ACamera::CT_SCRIPTED:
-				TIMPLEMENT();
-				break;
-			case ACamera::CT_FREE:
-				m_ppCameras[i] = new AFreeCamera();
-				break;
-			case ACamera::CT_KEYFRAME:
-				TIMPLEMENT();
-				break;
-			default:
-				break;
-			}
-			
-			if (m_iCurrentCamera == -1)
-				m_iCurrentCamera = i;
-
-			if (m_ppCameras[i] != TNULL)
-			{
-				if (m_ppCameras[i]->GetSomeFlag())
-					m_iSomeCount--;
-
-				m_ppCameras[i]->SetSomeFlag(TFALSE);
-			}
-
-			return m_ppCameras[i];
-		}
-		
+	case ACamera::CT_DEFAULT:
+		TIMPLEMENT();
+		break;
+	case ACamera::CT_BLOBFOLLOW:
+		TIMPLEMENT();
+		break;
+	case ACamera::CT_SCRIPTED:
+		TIMPLEMENT();
+		break;
+	case ACamera::CT_FREE:
+		return CreateCamera<AFreeCamera>();
+		break;
+	case ACamera::CT_KEYFRAME:
+		TIMPLEMENT();
+		break;
+	default:
+		break;
 	}
 }
