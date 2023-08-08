@@ -45,7 +45,7 @@ public:
 					m_ppCameras[i]->SetSomeFlag(TFALSE);
 				}
 
-				return m_ppCameras[i];
+				return TSTATICCAST(T*, m_ppCameras[i]);
 			}
 		}
 	}
