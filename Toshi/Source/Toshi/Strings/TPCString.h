@@ -107,7 +107,7 @@ namespace Toshi
 
 		inline TPooledCString* GetPtr() const { return m_pPooledString; }
 		inline TCStringPool* GetStringPool() const { return m_pPooledString->m_pCStringPool; }
-		inline TString8& GetVolatileCString() const { TASSERT(GetPtr() != TNULL); TASSERT(GetPtr()->m_pCStringPool); return GetPtr()->m_oString; }
+		inline TString8& GetVolatileCString() const { TASSERT(GetPtr() != TNULL); TASSERT(GetPtr()->m_pCStringPool == TNULL); return GetPtr()->m_oString; }
 		inline const TString8& GetCString() const { return !m_pPooledString ? ms_sEmpty : m_pPooledString->m_oString; }
 		inline TBOOL IsEmpty() const { return !m_pPooledString ? TTRUE : m_pPooledString->m_oString.IsEmpty(); }
 
