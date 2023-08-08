@@ -8,30 +8,6 @@ namespace Toshi
 	class TUtil : public TSingleton<TUtil>
 	{
 	public:
-
-		static void LogInitialise();
-		static void Log(const char* format, ...);
-		static void Log(TLogFile::Type logtype, const char* format, ...);
-		static void LogConsole(const char* format, ...);
-		static void LogSet(TLogFile* a_logFile);
-
-		static TLogFile* GetLog()
-		{
-			return Toshi::TUtil::GetSingleton()->m_pLogFile2;
-		}
-
-		static void LogDown()
-		{
-			TUtil* util = Toshi::TUtil::GetSingletonSafe();
-			util->m_pLogFile2->Down();
-		}
-
-		static void LogUp()
-		{
-			TUtil* util = Toshi::TUtil::GetSingletonSafe();
-			util->m_pLogFile2->Up();
-		}
-
 		static TBOOL ToshiCreate(int argc, char** argv, TMemory& memorySettings);
 		
 		static void ToshiDestroy()
@@ -46,7 +22,7 @@ namespace Toshi
 			TUtil::GetSingletonSafe()->LogInitialise();
 			TUtil::CRCInitialise();
 		}
-		
+
 		static void ToshiDestroySubsystems()
 		{
 			TLog::Destroy();
@@ -76,6 +52,29 @@ namespace Toshi
 		static int MemCompare(void* ptr1, void* ptr2, int size)
 		{
 			return memcmp(ptr1, ptr2, size);
+		}
+
+		static void LogInitialise();
+		static void Log(const char* format, ...);
+		static void Log(TLogFile::Type logtype, const char* format, ...);
+		static void LogConsole(const char* format, ...);
+		static void LogSet(TLogFile* a_logFile);
+
+		static TLogFile* GetLog()
+		{
+			return Toshi::TUtil::GetSingleton()->m_pLogFile2;
+		}
+
+		static void LogDown()
+		{
+			TUtil* util = Toshi::TUtil::GetSingletonSafe();
+			util->m_pLogFile2->Down();
+		}
+
+		static void LogUp()
+		{
+			TUtil* util = Toshi::TUtil::GetSingletonSafe();
+			util->m_pLogFile2->Up();
 		}
 
 	private:

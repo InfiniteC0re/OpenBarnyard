@@ -1,4 +1,6 @@
 #pragma once
+
+#ifdef TOSHI_ENABLE_DEPRECATED
 namespace Toshi
 {
 	// Only used in JPOG
@@ -40,3 +42,4 @@ namespace Toshi
 		StringPools m_oStringPool;// 0xC
 	};
 }
+#endif // TOSHI_ENABLE_DEPRECATED

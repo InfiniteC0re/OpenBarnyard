@@ -1,6 +1,7 @@
 #include "ToshiPCH.h"
 #include "TCStringPool.h"
 
+#ifdef TOSHI_ENABLE_DEPRECATED
 Toshi::TCStringPool::TCStringPool(int a_iMaxSize, int a_iCapacity)
 {
 	m_iStringCount = 0;
@@ -96,3 +97,5 @@ void Toshi::TCStringPool::InitStringPool(int a_iStringCount)
 	}
 
 }
+
+#endif // TOSHI_ENABLE_DEPRECATED

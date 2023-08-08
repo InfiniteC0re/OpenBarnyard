@@ -12,12 +12,26 @@ namespace Toshi {
 		using Pair = T2Pair<KeyType, ValueType, Comparator>;
 
 	public:
+		T2Map(T2Allocator* a_pAllocator = &T2Allocator::s_GlobalAllocator) : m_RedBlackTree(a_pAllocator)
+		{
+
+		}
+
 		ValueType* Insert(const KeyType& key, const ValueType& value)
 		{
 			T2RedBlackTreeNode<Pair>* result = TNULL;
 			m_RedBlackTree.Insert(result, { key, value });
 
 			return &result->GetValue()->GetSecond();
+		}
+
+		void Remove(const KeyType& key)
+		{
+			T2RedBlackTreeNode<Pair>* result = TNULL;
+			m_RedBlackTree.Find(result, { key });
+
+			TASSERT(result != End());
+			m_RedBlackTree.Delete(result);
 		}
 
 		ValueType* Find(const KeyType& key)

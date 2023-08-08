@@ -44,7 +44,7 @@ namespace Toshi
 		Copy(src);
 	}
 
-	TString8::TString8(const char* const& src, T2Allocator* allocator)
+	TString8::TString8(const char* src, T2Allocator* allocator)
 	{
 		Reset();
 		m_pAllocator = allocator == TNULL ? GetAllocator() : allocator;

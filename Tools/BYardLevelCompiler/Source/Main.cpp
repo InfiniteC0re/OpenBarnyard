@@ -14,6 +14,8 @@
 #include "Toshi/File/TTRB.h"
 #include "Toshi/Render/TModelManager.h"
 #include "Toshi/Render/TTexture.h"
+#include "Toshi/Strings/TPString8.h"
+#include "Toshi/Strings/TPString8Static.h"
 #include "TRBF/TRBF.h"
 
 #include "ModelHeader.h"
@@ -26,7 +28,138 @@ using namespace Toshi;
 
 int TMain(int argc, char** argv)
 {
-	TLib::TRBF::TRBF fsms;
+	TSystemManager::CreateStringPool();
+	TPString8Pool::Create();
+
+	{
+		TPString8 newString("TPString8 test");
+		TOSHI_INFO("Dynamic pooled string: {}", newString.GetString8());
+	}
+
+	const TPString8* testString1 = TPS8(walk_lp);
+	const TPString8* testString2 = TPS8(run_lp);
+
+	TOSHI_INFO("Static pooled strings: {}, {}", testString1->GetString8(), testString2->GetString8());
+
+	return 0;
+
+	TLib::TRBF::TRBF network;
+	network.ReadFromFile("C:\\Stuff\\Barnyard\\Game\\Data\\Networks\\park2.trb");
+
+	struct INetwork
+	{
+		struct S1
+		{
+			enum Type
+			{
+				Type_Locator        = 0,
+				Type_Trigger        = 4,
+				Type_TerrainTrigger = 8  // ?
+			};
+
+			TVector3 vec1;
+			TVector3 vec2;
+			uint32_t unk1;
+			uint32_t index;
+			Type type;
+			struct {
+				TVector3 v1;
+				TVector3 v2;
+			}* unk4;
+			uint32_t unk5;
+			char* unk6;
+			union {
+				struct {
+					char* unk7;
+					char* locatorName;
+				};
+
+				struct {
+					TVector2 vec3;
+				};
+			};
+			char* triggerName;
+			uint32_t unk8;
+		};
+
+		uint32_t num1;
+		uint32_t numItems;
+		uint32_t num2;
+		uint32_t num3;
+		S1* items;
+		void* locators;
+		char* names1;
+		char* names2;
+		char* names3;
+		uint32_t unk4;
+		uint32_t unk5;
+		uint32_t unk6;
+	};
+
+	auto pSect = network.GetSECT();
+	auto pSymb = network.GetSYMB();
+
+	auto inetwork = pSymb->Find<INetwork>(pSect, "INetwork").get();
+
+	for (size_t i = 0; i < inetwork->numItems; i++)
+	{
+		auto& item = inetwork->items[i];
+
+		//if (item.type != INetwork::S1::Type_Trigger && item.type != INetwork::S1::Type_Locator)
+		//	__debugbreak();
+
+		if (item.type & INetwork::S1::Type_Trigger)
+		{
+			if (strcmp(item.triggerName, "park2.triggers.sleep") == 0)
+				__debugbreak();
+
+			TOSHI_INFO(
+				"Trigger: {} - ({} {} {}) x ({} {} {}) - {}",
+				item.triggerName,
+				item.vec1.x, item.vec1.y, item.vec1.z,
+				item.vec2.x, item.vec2.y, item.vec2.z,
+				item.type
+			);
+		}
+
+		if (item.type == INetwork::S1::Type_Locator)
+		{
+			TOSHI_INFO(
+				"Locator: {} - ({} {} {}) x ({} {} {}) - {}",
+				item.locatorName,
+				item.vec1.x, item.vec1.y, item.vec1.z,
+				item.vec2.x, item.vec2.y, item.vec2.z,
+				item.type
+			);
+		}
+
+		if (item.type & INetwork::S1::Type_TerrainTrigger)
+		{
+			TOSHI_INFO(
+				"Terrain Trigger: {} - ({} {} {}) x ({} {} {}) - {}",
+				item.triggerName,
+				item.vec1.x, item.vec1.y, item.vec1.z,
+				item.vec2.x, item.vec2.y, item.vec2.z,
+				item.type
+			);
+		}
+	}
+	
+	/*std::vector<std::string> strings;
+	char* cursor = inetwork->names1;
+
+	for (size_t i = 0; i < inetwork->num1 + inetwork->numLocators + inetwork->num2 + inetwork->num3; i++)
+	{
+		std::string currentString;
+
+		while (*cursor != '\0')
+			currentString += *(cursor++);
+
+		cursor++;
+		strings.push_back(currentString);
+	}*/
+
+	/*TLib::TRBF::TRBF fsms;
 	TLib::TRBF::TRBF fsmsD;
 	fsms.ReadFromFile("C:\\Stuff\\Barnyard\\Game\\Data\\Units\\allfsms.trb");
 	fsmsD.ReadFromFile("C:\\Stuff\\Barnyard\\Game\\Data\\Units\\allfsmsD.trb");
@@ -43,15 +176,15 @@ int TMain(int argc, char** argv)
 			const char** m_Keywords;
 		};
 	};
-	
+
 	auto lineNums = fsmsD.GetSYMB()->Find<uint32_t>(fsmsD.GetSECT(), "LineNums").get();
-	
+
 	auto pSect = fsms.GetSECT();
 	auto pSymb = fsms.GetSYMB();
 
 	auto main = pSymb->Find<FSM::Main>(pSect, "Main").get();
 
-	auto s1 = main->m_Strings[0];
+	auto s1 = main->m_Strings[0];*/
 
 	return 0;
 

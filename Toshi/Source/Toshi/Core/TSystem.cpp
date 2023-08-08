@@ -38,6 +38,8 @@ namespace Toshi
 		TSystemManager::CreateSingleton()->m_Scheduler = new TScheduler();
 		return TTRUE;
 	}
+
+#ifdef TOSHI_ENABLE_DEPRECATED
 	TCStringPool* TSystemManager::CreateCStringPoolExplicit(int unk, int unk2)
 	{
 		if (ms_poTCStringPool == TNULL)
@@ -46,6 +48,7 @@ namespace Toshi
 		}
 		return ms_poTCStringPool;
 	}
+
 	TCStringPool* TSystemManager::CreateCStringPoolExplicit(const char* a_szFileName, int unk, int unk2)
 	{
 		if (ms_poTCStringPool == TNULL)
@@ -54,4 +57,5 @@ namespace Toshi
 		}
 		return ms_poTCStringPool;
 	}
+#endif // TOSHI_ENABLE_DEPRECATED
 }

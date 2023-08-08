@@ -1,4 +1,5 @@
 #pragma once
+#include "Toshi/Core/TComparator.h"
 #include "T2Allocator.h"
 
 namespace Toshi
@@ -28,6 +29,7 @@ namespace Toshi
 			m_pParent = pNil;
 		}
 
+	public:
 		virtual ~T2GenericRedBlackTreeNode() = default;
 
 	protected:
@@ -50,6 +52,11 @@ namespace Toshi
 		{
 			// TASSERT(m_iNumElements == 0);
 			TTODO("Make sure all elements are deleted");
+		}
+
+		T2Allocator* GetAllocator() const
+		{
+			return m_pAllocator;
 		}
 
 		T2GenericRedBlackTreeNode* GetFirstNode();
@@ -115,42 +122,42 @@ namespace Toshi
 
 		TBOOL operator==(const T& other) const
 		{
-			return m_Value == other;
+			return TComparator<T>::IsEqual(m_Value, other);
 		}
 
 		TBOOL operator==(const T2RedBlackTreeNode<T>& other) const
 		{
-			return m_Value == other.m_Value;
+			return TComparator<T>::IsEqual(m_Value, other.m_Value);
 		}
 
 		TBOOL operator!=(const T& other) const
 		{
-			return m_Value != other;
+			return !TComparator<T>::IsEqual(m_Value, other);
 		}
 
 		TBOOL operator!=(const T2RedBlackTreeNode<T>& other) const
 		{
-			return m_Value != other.m_Value;
+			return !TComparator<T>::IsEqual(m_Value, other.m_Value);
 		}
 
 		TBOOL operator>(const T2RedBlackTreeNode<T>& other) const
 		{
-			return m_Value > other.m_Value;
+			return TComparator<T>::IsGreater(m_Value, other.m_Value);
 		}
 
 		TBOOL operator<(const T2RedBlackTreeNode<T>& other) const
 		{
-			return m_Value < other.m_Value;
+			return TComparator<T>::IsLess(m_Value, other.m_Value);
 		}
 
 		TBOOL operator<=(const T2RedBlackTreeNode<T>& other) const
 		{
-			return m_Value <= other.m_Value;
+			return TComparator<T>::IsLessOrEqual(m_Value, other.m_Value);
 		}
 
 		TBOOL operator>=(const T2RedBlackTreeNode<T>& other) const
 		{
-			return m_Value >= other.m_Value;
+			return TComparator<T>::IsGreaterOrEqual(m_Value, other.m_Value);
 		}
 
 	private:
@@ -250,9 +257,14 @@ namespace Toshi
 			return Iterator(TREINTERPRETCAST(Node*, &m_oRoot));
 		}
 
+		void Delete(Node* a_pNode)
+		{
+			m_pAllocator->Delete(DeleteNode(a_pNode));
+		}
+
 		void Insert(Node*& insertedNode, const T& value)
 		{
-			Node* pNode = m_pAllocator->New<Node, T>(value);
+			Node* pNode = m_pAllocator->New<Node>(value);
 			pNode->m_pLeft = &ms_oNil;
 			pNode->m_pRight = &ms_oNil;
 

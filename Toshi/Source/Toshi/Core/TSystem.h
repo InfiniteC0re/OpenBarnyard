@@ -2,11 +2,18 @@
 #include "TEvent.h"
 #include "Toshi/Utils/TSingleton.h"
 #include "Toshi/Core/THPTimer.h"
-#include <Toshi/Strings/TCStringPool.h>
+
+#include <utility>
 
 namespace Toshi
 {
 	class TScheduler;
+
+#ifdef TOSHI_ENABLE_DEPRECATED
+	class TCStringPool;
+#else
+	class TPString8Pool;
+#endif // TOSHI_ENABLE_DEPRECATED
 
 	class TSystemManager : public TSingleton<TSystemManager>
 	{
@@ -42,11 +49,35 @@ namespace Toshi
 
 	public:
 		static TBOOL Create();
+
+#ifdef TOSHI_ENABLE_DEPRECATED
 		static TCStringPool* CreateCStringPoolExplicit(int unk, int unk2);
 		static TCStringPool* CreateCStringPoolExplicit(const char* a_szFileName, int unk, int unk2);
 
+		static inline TCStringPool* ms_poTCStringPool = TNULL;
+#else
+	public:
+		static void CreateStringPool()
+		{
+			TASSERT(ms_poStringPool == TNULL);
+			ms_poStringPool = new TPString8Pool*;
+			*ms_poStringPool = TNULL;
+		}
 
-		static inline Toshi::TCStringPool* ms_poTCStringPool = TNULL;
+		static TPString8Pool* GetStringPool()
+		{
+			TASSERT(ms_poStringPool != TNULL);
+			return *ms_poStringPool;
+		}
+
+		static TPString8Pool* SetStringPool(TPString8Pool* a_pStringPool)
+		{
+			return std::exchange(*ms_poStringPool, a_pStringPool);
+		}
+
+	private:
+		inline static TPString8Pool** ms_poStringPool;
+#endif // TOSHI_ENABLE_DEPRECATED
 
 	private:
 		TEmitter<TSystemManager, TBOOL> m_Emitter; // 0x00

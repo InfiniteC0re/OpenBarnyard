@@ -4,6 +4,7 @@
 
 namespace Toshi
 {
+#ifdef TOSHI_ENABLE_DEPRECATED
 	class TPCString
 	{
 		TString8* m_sStr; //0x0
@@ -18,6 +19,7 @@ namespace Toshi
 
 		TPCString() { m_sStr = TNULL; }
 	};
+#endif TOSHI_ENABLE_DEPRECATED
 }
 
 
