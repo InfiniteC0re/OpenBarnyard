@@ -1,6 +1,5 @@
 #include "ToshiPCH.h"
 #include "TPString8.h"
-#include "TPString8Static.h"
 
 namespace Toshi {
 
@@ -42,7 +41,44 @@ namespace Toshi {
 	{
 		TTODO("Initialise some unknown values");
 
-		TPString8StaticPool::Undump(this);
+		for (auto it = TPString8Initialiser::Head(); it != TNULL; it = it->Next())
+		{
+			it->Initialise(this);
+		}
+	}
+
+	TPString8Initialiser::TPString8Initialiser(StringMap* a_pStrings, size_t a_iStringCount, TBOOL a_bFlag)
+	{
+		m_iCount = a_iStringCount;
+		m_pStrings = a_pStrings;
+		m_pNextInitialiser = ms_pHeadInitialiser;
+		m_bFlag = a_bFlag;
+		ms_pHeadInitialiser = this;
+	}
+
+	void TPString8Initialiser::Initialise(TPString8Pool* a_pStringPool)
+	{
+		if (m_bFlag)
+		{
+			for (size_t i = 0; i < m_iCount; i++)
+			{
+				if (m_pStrings[i].m_pString8)
+				{
+					m_pStrings[i].m_pString8->SetPooledString(TNULL);
+				}
+			}
+		}
+
+		for (size_t i = 0; i < m_iCount; i++)
+		{
+			TPString8 string(a_pStringPool, m_pStrings[i].m_szCString);
+
+			if (string.GetPooledString() &&
+				string.GetPooledString() != m_pStrings[i].m_pString8->GetPooledString())
+			{
+				*m_pStrings[i].m_pString8 = string;
+			}
+		}
 	}
 
 }

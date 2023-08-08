@@ -5,6 +5,9 @@
 #include "Toshi2/T2Map.h"
 #include "Toshi/Core/TSystem.h"
 
+#define TPSTRING8_DECLARE(STR) extern Toshi::TPString8 g_str_##STR
+#define TPS8(STR) (&g_str_##STR)
+
 namespace Toshi {
 
 	class TPString8Pool;
@@ -183,22 +186,22 @@ namespace Toshi {
 			m_pPtr = a_pPooledString;
 		}
 
-		__forceinline bool IsEqual(const TPString8& a_Other)
+		__forceinline bool IsEqual(const TPString8& a_Other) const
 		{
 			return m_pPtr == a_Other.m_pPtr;
 		}
 
-		__forceinline bool IsEqual(TPString8* a_pOther)
+		__forceinline bool IsEqual(const TPString8* a_pOther) const
 		{
 			return m_pPtr == a_pOther->m_pPtr;
 		}
 
-		__forceinline bool operator==(const TPString8& a_Other)
+		__forceinline bool operator==(const TPString8& a_Other) const
 		{
 			return m_pPtr == a_Other.m_pPtr;
 		}
 
-		__forceinline bool operator!=(const TPString8& a_Other)
+		__forceinline bool operator!=(const TPString8& a_Other) const
 		{
 			return m_pPtr != a_Other.m_pPtr;
 		}
@@ -253,6 +256,40 @@ namespace Toshi {
 
 	private:
 		TPooledString8* m_pPtr;
+	};
+
+	class TPString8Initialiser
+	{
+	public:
+		struct StringMap
+		{
+			TPString8* m_pString8;
+			const char* m_szCString;
+		};
+
+	public:
+		TPString8Initialiser(StringMap* a_pStrings, size_t a_iStringCount, TBOOL a_bFlag);
+
+		void Initialise(TPString8Pool* a_pStringPool);
+
+		TPString8Initialiser* Next() const
+		{
+			return m_pNextInitialiser;
+		}
+
+		static TPString8Initialiser* Head()
+		{
+			return ms_pHeadInitialiser;
+		}
+
+	private:
+		inline static TPString8Initialiser* ms_pHeadInitialiser;
+
+	private:
+		StringMap* m_pStrings;
+		size_t m_iCount;
+		TPString8Initialiser* m_pNextInitialiser;
+		TBOOL m_bFlag;
 	};
 
 	inline void TPooledString8::Delete()

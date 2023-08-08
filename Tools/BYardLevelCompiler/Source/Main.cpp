@@ -11,12 +11,12 @@
 // This file includes the entrypoint so set all the settings before including it
 #include "Toshi.h"
 
-#include "Toshi/File/TTRB.h"
-#include "Toshi/Render/TModelManager.h"
-#include "Toshi/Render/TTexture.h"
-#include "Toshi/Strings/TPString8.h"
-#include "Toshi/Strings/TPString8Static.h"
-#include "TRBF/TRBF.h"
+#include <Toshi/File/TTRB.h>
+#include <Toshi/Render/TModelManager.h>
+#include <Toshi/Render/TTexture.h>
+#include <Toshi/Strings/TPString8.h>
+
+#include <TRBF/TRBF.h>
 
 #include "ModelHeader.h"
 #include "Materials.h"
@@ -24,7 +24,10 @@
 
 #include <limits>
 
-using namespace Toshi;
+TOSHI_NAMESPACE_USING
+
+TPSTRING8_DECLARE(AnimControllerType);
+TPSTRING8_DECLARE(AnimObjTypes);
 
 int TMain(int argc, char** argv)
 {
@@ -34,10 +37,11 @@ int TMain(int argc, char** argv)
 	{
 		TPString8 newString("TPString8 test");
 		TOSHI_INFO("Dynamic pooled string: {}", newString.GetString8());
+		TOSHI_INFO("{}", newString.GetString8() == TPString8("TPString8 test").GetString8());
 	}
 
-	const TPString8* testString1 = TPS8(walk_lp);
-	const TPString8* testString2 = TPS8(run_lp);
+	const TPString8* testString1 = TPS8(AnimControllerType);
+	const TPString8* testString2 = TPS8(AnimObjTypes);
 
 	TOSHI_INFO("Static pooled strings: {}, {}", testString1->GetString8(), testString2->GetString8());
 
