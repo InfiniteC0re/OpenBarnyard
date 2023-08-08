@@ -1,7 +1,7 @@
 #pragma once
 #include "AppBoot.h"
 
-#ifdef TOSHI_PLATFORM_WINDOWS
+#ifdef TOSHI_SKU_WINDOWS
 
 #ifndef TOSHI_DIST
 #define TOSHI_ENTRY int main(int argc, char** argv)

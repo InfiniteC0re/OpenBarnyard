@@ -63,7 +63,7 @@ namespace Toshi
 			deltaTime = m_Timer.GetDelta();
 			m_TasksUpdateTime = deltaTime;
 
-#ifdef TOSHI_PLATFORM_WINDOWS
+#ifdef TOSHI_SKU_WINDOWS
 			if (m_UseFixedMaxFps && deltaTime < m_FixedMaxFps)
 			{
 				Sleep(static_cast<DWORD>((m_FixedMaxFps - deltaTime) * 1000));

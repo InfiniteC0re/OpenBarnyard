@@ -23,7 +23,7 @@ namespace Toshi
 		TBOOL Pop(void* a_pOut, Flags a_iFlags);
 
 	private:
-#ifdef TOSHI_PLATFORM_WINDOWS
+#ifdef TOSHI_SKU_WINDOWS
 		CRITICAL_SECTION m_CriticalSection;
 #endif
 		TSemaphore m_Semaphore1;

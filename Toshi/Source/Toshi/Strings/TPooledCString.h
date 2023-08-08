@@ -1,7 +1,6 @@
 #pragma once
-
 #include "Toshi/Core/TFreeList.h"
-#include <Toshi/Strings/TCStringPool.h>
+#include "Toshi/Strings/TCStringPool.h"
 
 namespace Toshi
 {

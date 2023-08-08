@@ -24,13 +24,13 @@ namespace Toshi {
 		m_bAllowPreprocessor = TTRUE;
 		m_bUnk7 = TFALSE;
 
-#if defined(TOSHI_PLATFORM_WINDOWS)
+#if defined(TOSHI_SKU_WINDOWS)
 		Define("TOSHI_SKU_WINDOWS");
-#elif defined(TOSHI_PLATFORM_PS2)
+#elif defined(TOSHI_SKU_PS2)
 		Define("TOSHI_SKU_PS2");
-#elif defined(TOSHI_PLATFORM_GC)
+#elif defined(TOSHI_SKU_GC)
 		Define("TOSHI_SKU_GC");
-#elif defined(TOSHI_PLATFORM_WII)
+#elif defined(TOSHI_SKU_WII)
 		Define("TOSHI_SKU_WII");
 #else
 #error Wrong define?
@@ -64,13 +64,13 @@ namespace Toshi {
 		TASSERT(a_pInputStream != TNULL)
 		SetInputStream(a_pInputStream);
 
-#if defined(TOSHI_PLATFORM_WINDOWS)
+#if defined(TOSHI_SKU_WINDOWS)
 		Define("TOSHI_SKU_WINDOWS");
-#elif defined(TOSHI_PLATFORM_PS2)
+#elif defined(TOSHI_SKU_PS2)
 		Define("TOSHI_SKU_PS2");
-#elif defined(TOSHI_PLATFORM_GC)
+#elif defined(TOSHI_SKU_GC)
 		Define("TOSHI_SKU_GC");
-#elif defined(TOSHI_PLATFORM_WII)
+#elif defined(TOSHI_SKU_WII)
 		Define("TOSHI_SKU_WII");
 #else
 #error Wrong define?

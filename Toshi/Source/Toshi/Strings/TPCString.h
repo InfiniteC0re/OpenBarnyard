@@ -75,6 +75,8 @@ namespace Toshi
 					m_pPooledString->m_iCount++;
 				}
 			}
+
+			return *this;
 		}
 
 		bool operator<(const TPCString& other) const

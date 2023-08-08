@@ -39,7 +39,7 @@ project "BYard Level Compiler"
 		defines
 		{
 			"TOSHI_CONSOLE",
-			"TOSHI_PLATFORM_WINDOWS"
+			"TOSHI_SKU_WINDOWS"
 		}
 
 	filter "configurations:Debug"

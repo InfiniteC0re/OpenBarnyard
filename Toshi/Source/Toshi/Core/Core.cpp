@@ -8,7 +8,7 @@ using namespace Toshi;
 
 #ifdef TOSHI_ENABLE_ASSERTS
 
-#ifdef TOSHI_PLATFORM_WINDOWS
+#ifdef TOSHI_SKU_WINDOWS
 const char* g_szAssertFilename;
 size_t g_uiAssertLineNumber;
 const char* g_szAssertExpression;
@@ -80,11 +80,11 @@ AssertionAction AssertionCallback(const char* file, int line, const char* expres
 			)
 		);
 }
-#else // TOSHI_PLATFORM_WINDOWS
+#else // TOSHI_SKU_WINDOWS
 AssertionAction AssertionCallback(const char* file, int line, const char* expression)
 {
 	return AssertionAction::Break;
 }
-#endif // TOSHI_PLATFORM_WINDOWS
+#endif // TOSHI_SKU_WINDOWS
 
 #endif // TOSHI_ENABLE_ASSERTS

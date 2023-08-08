@@ -42,10 +42,10 @@ constexpr uint32_t TMAKEFOUR(const char str[4])
 #define TOSHI_NAMESPACE_USING using namespace Toshi;
 
 #ifdef TOSHI_DEBUG
-#ifdef TOSHI_PLATFORM_WINDOWS
+#ifdef TOSHI_SKU_WINDOWS
 #define TBREAK() __debugbreak()
 #define TOSHI_ENABLE_ASSERTS
-#endif // TOSHI_PLATFORM_WINDOWS
+#endif // TOSHI_SKU_WINDOWS
 #endif // TOSHI_DEBUG
 
 #ifndef TBREAK
