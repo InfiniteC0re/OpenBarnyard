@@ -3,11 +3,14 @@
 
 int Toshi::TPCString::Compare(const TPCString& other) const
 {
-	if (!m_pPooledString && other) return -1;
-	if (!other) return 1;
-	if (m_pPooledString != other)
+	TPooledCString* thisStringPool = GetPtr();
+	TPooledCString* otherStringPool = other.GetPtr();
+
+	if (!thisStringPool && otherStringPool) return -1;
+	if (!otherStringPool) return 1;
+	if (thisStringPool != otherStringPool)
 	{
-		return m_pPooledString->m_oString.Compare(other.m_pPooledString->m_oString, -1);
+		return thisStringPool->m_oString.Compare(otherStringPool->m_oString, -1);
 	}
 	return 0;
 }
