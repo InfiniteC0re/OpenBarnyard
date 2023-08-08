@@ -1,6 +1,7 @@
 #include "ToshiPCH.h"
 #include "TPCString.h"
 
+#ifdef TOSHI_ENABLE_DEPRECATED
 int Toshi::TPCString::Compare(const TPCString& other) const
 {
 	TPooledCString* thisStringPool = GetPtr();
@@ -14,3 +15,4 @@ int Toshi::TPCString::Compare(const TPCString& other) const
 	}
 	return 0;
 }
+#endif // TOSHI_ENABLE_DEPRECATED

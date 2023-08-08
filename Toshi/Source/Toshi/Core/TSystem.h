@@ -3,17 +3,17 @@
 #include "Toshi/Utils/TSingleton.h"
 #include "Toshi/Core/THPTimer.h"
 
-#ifdef TOSHI_ENABLE_DEPRECATED
-#include "Toshi/Strings/TCStringPool.h"
-#else
-#include "Toshi/Strings/TPooledCString.h"
-#endif // TOSHI_ENABLE_DEPRECATED
-
 #include <utility>
 
 namespace Toshi
 {
 	class TScheduler;
+
+#ifdef TOSHI_ENABLE_DEPRECATED
+	class TCStringPool;
+#else
+	class TPString8Pool;
+#endif // TOSHI_ENABLE_DEPRECATED
 
 	class TSystemManager : public TSingleton<TSystemManager>
 	{

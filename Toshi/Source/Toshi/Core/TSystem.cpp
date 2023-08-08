@@ -2,6 +2,12 @@
 #include "TSystem.h"
 #include "TScheduler.h"
 
+#ifdef TOSHI_ENABLE_DEPRECATED
+#include "Toshi/Strings/TCStringPool.h"
+#else
+#include "Toshi/Strings/TPString8.h"
+#endif // TOSHI_ENABLE_DEPRECATED
+
 namespace Toshi
 {
 	TSystemManager::TSystemManager() : m_Emitter(this)
