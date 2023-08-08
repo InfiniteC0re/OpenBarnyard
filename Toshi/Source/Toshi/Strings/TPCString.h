@@ -45,26 +45,26 @@ namespace Toshi
 		{
 			if (m_pPooledString)
 			{
-				return &m_pPooledString->m_oString;
+				return &GetPtr()->m_oString;
 			}
 			return &ms_sEmpty;
 		}
 
 		bool operator==(const TPCString& other) const
 		{
-			return m_pPooledString == other.m_pPooledString;
+			return GetPtr() == other.GetPtr();
 		}
 
 		bool operator!=(const TPCString& other) const
 		{
-			return m_pPooledString != other.m_pPooledString;
+			return GetPtr() != other.GetPtr();
 		}
 
 		TPCString& operator=(const TPCString& other)
 		{
 			if (m_pPooledString != other.m_pPooledString)
 			{
-				if (m_pPooledString)
+				if (GetPtr())
 				{
 					m_pPooledString->m_iCount--;
 					if (m_pPooledString->m_iCount == 0) m_pPooledString->Delete();
@@ -86,7 +86,7 @@ namespace Toshi
 		{
 			if (m_pPooledString)
 			{
-				return &m_pPooledString->m_oString;
+				return &GetPtr()->m_oString;
 			}
 			return &ms_sEmpty;
 		}
@@ -95,7 +95,7 @@ namespace Toshi
 		{
 			if (m_pPooledString)
 			{
-				return m_pPooledString->m_oString;
+				return GetPtr()->m_oString;
 			}
 			return ms_sEmpty;
 		}
@@ -105,9 +105,9 @@ namespace Toshi
 
 		int Compare(const TPCString& other) const;
 
-
-		inline TCStringPool* GetStringPool() const { return m_pPooledString->m_pStringPool; }
-		inline TString8& GetVolatileCString() const { return m_pPooledString->m_oString; }
+		inline TPooledCString* GetPtr() const { return m_pPooledString; }
+		inline TCStringPool* GetStringPool() const { return m_pPooledString->m_pCStringPool; }
+		inline TString8& GetVolatileCString() const { TASSERT(GetPtr() != TNULL); TASSERT(GetPtr()->m_pCStringPool); return GetPtr()->m_oString; }
 		inline const TString8& GetCString() const { return !m_pPooledString ? ms_sEmpty : m_pPooledString->m_oString; }
 		inline TBOOL IsEmpty() const { return !m_pPooledString ? TTRUE : m_pPooledString->m_oString.IsEmpty(); }
 

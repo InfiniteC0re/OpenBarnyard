@@ -12,20 +12,20 @@ namespace Toshi
 		TPooledCString()
 		{
 			m_iCount = 0;
-			m_pStringPool = TNULL;
+			m_pCStringPool = TNULL;
 		}
 
 		TPooledCString(const char* a_szString, TCStringPool* a_pStringPool) : m_oString(a_szString)
 		{
 			m_iCount = 0;
-			m_pStringPool = a_pStringPool;
+			m_pCStringPool = a_pStringPool;
 		}
 
 		~TPooledCString()
 		{
-			if (m_pStringPool)
+			if (m_pCStringPool)
 			{
-				m_pStringPool->Remove(*this);
+				m_pCStringPool->Remove(*this);
 			}
 			delete m_oString;
 		}
@@ -60,9 +60,9 @@ namespace Toshi
 
 		void Delete()
 		{
-			if (m_pStringPool)
+			if (m_pCStringPool)
 			{
-				m_pStringPool->Remove(*this);
+				m_pCStringPool->Remove(*this);
 			}
 			delete m_oString;
 			ms_oFreeList.Delete(this);
@@ -72,7 +72,7 @@ namespace Toshi
 
 		int m_iCount;                 // 0x0
 		TString8 m_oString;           // 0x4
-		TCStringPool* m_pStringPool;  // 0xC
+		TCStringPool* m_pCStringPool;  // 0xC
 
 		static TFreeList ms_oFreeList;
 	};

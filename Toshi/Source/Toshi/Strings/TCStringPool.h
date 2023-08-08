@@ -31,7 +31,7 @@ namespace Toshi
 
 		struct StringPools
 		{
-			StringPool* m_pStringPool;
+			StringPool* m_pCStringPool;
 			int m_iCountOfPools;
 		};
 
