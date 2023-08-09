@@ -17,6 +17,7 @@
 #include <Toshi/Strings/TPString8.h>
 
 #include <TRBF/TRBF.h>
+#include <Plugins/PPropertyParser/PProperties.h>
 
 #include "ModelHeader.h"
 #include "Materials.h"
@@ -31,7 +32,16 @@ TPSTRING8_DECLARE(AnimObjTypes);
 
 int TMain(int argc, char** argv)
 {
-	TSystemManager::CreateStringPool();
+	TTRB trb;
+	
+	if (TTRB::ERROR_OK == trb.Load("C:\\Stuff\\Barnyard\\Game\\Data\\AGopherShopGame.trb"))
+	{
+		auto properties = PProperties::LoadFromTRB(trb);
+		auto disablebreakpoints = properties->GetOptionalProperty("playercharacter")->GetProperties()->GetOptionalProperty("disablebreakpoints")->GetBoolean();
+	}
+
+	return 0;
+	/*TSystemManager::CreateStringPool();
 	TPString8Pool::Create();
 
 	{
@@ -45,7 +55,7 @@ int TMain(int argc, char** argv)
 
 	TOSHI_INFO("Static pooled strings: {}, {}", testString1->GetString8(), testString2->GetString8());
 
-	return 0;
+	return 0;*/
 
 	TLib::TRBF::TRBF network;
 	network.ReadFromFile("C:\\Stuff\\Barnyard\\Game\\Data\\Networks\\park2.trb");
@@ -63,7 +73,7 @@ int TMain(int argc, char** argv)
 
 			TVector3 vec1;
 			TVector3 vec2;
-			uint32_t unk1;
+			uint32_t unk1; // m_pInteriorNetwork
 			uint32_t index;
 			Type type;
 			struct {
@@ -86,12 +96,23 @@ int TMain(int argc, char** argv)
 			uint32_t unk8;
 		};
 
+		struct S2
+		{
+			char padding[32];
+			void* m_pInteriorNetwork;
+			TVector3 m_oPosition;
+			int m_iIndex;
+			const char* m_Name1;
+			const char* m_Name2;
+			int unk;
+		};
+
 		uint32_t num1;
 		uint32_t numItems;
 		uint32_t num2;
 		uint32_t num3;
 		S1* items;
-		void* locators;
+		S2* items2;
 		char* names1;
 		char* names2;
 		char* names3;
@@ -105,49 +126,57 @@ int TMain(int argc, char** argv)
 
 	auto inetwork = pSymb->Find<INetwork>(pSect, "INetwork").get();
 
+	//sizeof(INetwork::S2);
+
 	for (size_t i = 0; i < inetwork->numItems; i++)
 	{
-		auto& item = inetwork->items[i];
-
-		//if (item.type != INetwork::S1::Type_Trigger && item.type != INetwork::S1::Type_Locator)
-		//	__debugbreak();
-
-		if (item.type & INetwork::S1::Type_Trigger)
-		{
-			if (strcmp(item.triggerName, "park2.triggers.sleep") == 0)
-				__debugbreak();
-
-			TOSHI_INFO(
-				"Trigger: {} - ({} {} {}) x ({} {} {}) - {}",
-				item.triggerName,
-				item.vec1.x, item.vec1.y, item.vec1.z,
-				item.vec2.x, item.vec2.y, item.vec2.z,
-				item.type
-			);
-		}
-
-		if (item.type == INetwork::S1::Type_Locator)
-		{
-			TOSHI_INFO(
-				"Locator: {} - ({} {} {}) x ({} {} {}) - {}",
-				item.locatorName,
-				item.vec1.x, item.vec1.y, item.vec1.z,
-				item.vec2.x, item.vec2.y, item.vec2.z,
-				item.type
-			);
-		}
-
-		if (item.type & INetwork::S1::Type_TerrainTrigger)
-		{
-			TOSHI_INFO(
-				"Terrain Trigger: {} - ({} {} {}) x ({} {} {}) - {}",
-				item.triggerName,
-				item.vec1.x, item.vec1.y, item.vec1.z,
-				item.vec2.x, item.vec2.y, item.vec2.z,
-				item.type
-			);
-		}
+		auto& item = inetwork->items2[i];
+		TOSHI_INFO("{} {} - {} {} {}", item.m_Name1, item.m_Name2, item.m_oPosition.x, item.m_oPosition.y, item.m_oPosition.z);
 	}
+
+	//for (size_t i = 0; i < inetwork->numItems; i++)
+	//{
+	//	auto& item = inetwork->items[i];
+
+	//	//if (item.type != INetwork::S1::Type_Trigger && item.type != INetwork::S1::Type_Locator)
+	//	//	__debugbreak();
+
+	//	if (item.type & INetwork::S1::Type_Trigger)
+	//	{
+	//		if (strcmp(item.triggerName, "park2.triggers.sleep") == 0)
+	//			__debugbreak();
+
+	//		TOSHI_INFO(
+	//			"Trigger: {} - ({} {} {}) x ({} {} {}) - {}",
+	//			item.triggerName,
+	//			item.vec1.x, item.vec1.y, item.vec1.z,
+	//			item.vec2.x, item.vec2.y, item.vec2.z,
+	//			item.type
+	//		);
+	//	}
+
+	//	if (item.type == INetwork::S1::Type_Locator)
+	//	{
+	//		TOSHI_INFO(
+	//			"Locator: {} - ({} {} {}) x ({} {} {}) - {}",
+	//			item.locatorName,
+	//			item.vec1.x, item.vec1.y, item.vec1.z,
+	//			item.vec2.x, item.vec2.y, item.vec2.z,
+	//			item.type
+	//		);
+	//	}
+
+	//	if (item.type & INetwork::S1::Type_TerrainTrigger)
+	//	{
+	//		TOSHI_INFO(
+	//			"Terrain Trigger: {} - ({} {} {}) x ({} {} {}) - {}",
+	//			item.triggerName,
+	//			item.vec1.x, item.vec1.y, item.vec1.z,
+	//			item.vec2.x, item.vec2.y, item.vec2.z,
+	//			item.type
+	//		);
+	//	}
+	//}
 	
 	/*std::vector<std::string> strings;
 	char* cursor = inetwork->names1;

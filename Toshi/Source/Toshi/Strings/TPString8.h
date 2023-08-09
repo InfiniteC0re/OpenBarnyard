@@ -1,4 +1,8 @@
 #pragma once
+#ifndef __TOSHI_TPSTRING8_H__
+#define __TOSHI_TPSTRING8_H__
+#endif
+
 #include "TString8.h"
 #include "TStringManager.h"
 #include "Toshi2/T2Allocator.h"

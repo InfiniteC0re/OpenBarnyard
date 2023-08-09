@@ -1,4 +1,8 @@
 #pragma once
+#ifndef __TOSHI_TTRB_H__
+#define __TOSHI_TTRB_H__
+#endif
+
 #include "Toshi/Strings/TString8.h"
 #include "Toshi/File/TFile.h"
 
