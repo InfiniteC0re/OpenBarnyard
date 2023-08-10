@@ -9,8 +9,7 @@ project "BYard Level Compiler"
 
 	links
 	{
-		"Toshi",
-		"TRBF"
+		"Toshi"
 	}
 
 	files
@@ -23,7 +22,6 @@ project "BYard Level Compiler"
 	{
 		"Source",
 		"%{wks.location}/Toshi/Source",
-		"%{wks.location}/Tools/TRBF/Include",
 		"%{IncludeDir.spdlog}"
 	}
 	

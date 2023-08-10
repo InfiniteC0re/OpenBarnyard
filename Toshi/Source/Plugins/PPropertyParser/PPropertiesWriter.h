@@ -1,6 +1,7 @@
 #pragma once
-#include "Toshi/File/TTRB.h"
 #include "PProperties.h"
+#include "Plugins/PTRB.h"
+#include "Toshi/File/TTRB.h"
 
 class PPropertiesWriter
 {

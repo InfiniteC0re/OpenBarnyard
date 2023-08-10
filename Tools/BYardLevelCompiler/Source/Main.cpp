@@ -16,7 +16,7 @@
 #include <Toshi/Render/TTexture.h>
 #include <Toshi/Strings/TPString8.h>
 
-#include <TRBF/TRBF.h>
+#include <Plugins/PTRB.h>
 #include <Plugins/PPropertyParser/PProperties.h>
 
 #include "ModelHeader.h"
@@ -73,7 +73,7 @@ int TMain(int argc, char** argv)
 
 	return 0;*/
 
-	TLib::TRBF::TRBF network;
+	PTRB::TRBF network;
 	network.ReadFromFile("C:\\Stuff\\Barnyard\\Game\\Data\\Networks\\park2.trb");
 
 	struct INetwork
@@ -242,18 +242,18 @@ int TMain(int argc, char** argv)
 
 	constexpr bool bSkipGrassModels = false;
 
-	std::vector<TLib::TRBF::TRBF*> trbfiles = {
-		new TLib::TRBF::TRBF("C:\\Stuff\\Barnyard\\Game\\Data\\Terrain\\EnvMainO\\Barn_L0Mod0.trb"),
-		new TLib::TRBF::TRBF("C:\\Stuff\\Barnyard\\Game\\Data\\Terrain\\EnvMainO\\Barn_L0Mod1.trb"),
-		new TLib::TRBF::TRBF("C:\\Stuff\\Barnyard\\Game\\Data\\Terrain\\EnvMainO\\Barn_L0Mod2.trb"),
-		new TLib::TRBF::TRBF("C:\\Stuff\\Barnyard\\Game\\Data\\Terrain\\EnvMainO\\Barn_L0Mod3.trb"),
-		new TLib::TRBF::TRBF("C:\\Stuff\\Barnyard\\Game\\Data\\Terrain\\EnvMainO\\BarnNorth_L0Mod0.trb"),
-		new TLib::TRBF::TRBF("C:\\Stuff\\Barnyard\\Game\\Data\\Terrain\\EnvMainO\\BarnNorth_L0Mod1.trb"),
-		new TLib::TRBF::TRBF("C:\\Stuff\\Barnyard\\Game\\Data\\Terrain\\EnvMainO\\BarnNorth_L0Mod2.trb"),
-		new TLib::TRBF::TRBF("C:\\Stuff\\Barnyard\\Game\\Data\\Terrain\\EnvMainO\\BarnNorth_L0Mod3.trb"),
-		new TLib::TRBF::TRBF("C:\\Stuff\\Barnyard\\Game\\Data\\Terrain\\EnvMainO\\BarnNorth_L0Mod4.trb"),
-		new TLib::TRBF::TRBF("C:\\Stuff\\Barnyard\\Game\\Data\\Terrain\\EnvMainO\\Hilltop_L0Mod0.trb"),
-		new TLib::TRBF::TRBF("C:\\Stuff\\Barnyard\\Game\\Data\\Terrain\\EnvMainO\\Hilltop_L0Mod1.trb"),
+	std::vector<PTRB::TRBF*> trbfiles = {
+		new PTRB::TRBF("C:\\Stuff\\Barnyard\\Game\\Data\\Terrain\\EnvMainO\\Barn_L0Mod0.trb"),
+		new PTRB::TRBF("C:\\Stuff\\Barnyard\\Game\\Data\\Terrain\\EnvMainO\\Barn_L0Mod1.trb"),
+		new PTRB::TRBF("C:\\Stuff\\Barnyard\\Game\\Data\\Terrain\\EnvMainO\\Barn_L0Mod2.trb"),
+		new PTRB::TRBF("C:\\Stuff\\Barnyard\\Game\\Data\\Terrain\\EnvMainO\\Barn_L0Mod3.trb"),
+		new PTRB::TRBF("C:\\Stuff\\Barnyard\\Game\\Data\\Terrain\\EnvMainO\\BarnNorth_L0Mod0.trb"),
+		new PTRB::TRBF("C:\\Stuff\\Barnyard\\Game\\Data\\Terrain\\EnvMainO\\BarnNorth_L0Mod1.trb"),
+		new PTRB::TRBF("C:\\Stuff\\Barnyard\\Game\\Data\\Terrain\\EnvMainO\\BarnNorth_L0Mod2.trb"),
+		new PTRB::TRBF("C:\\Stuff\\Barnyard\\Game\\Data\\Terrain\\EnvMainO\\BarnNorth_L0Mod3.trb"),
+		new PTRB::TRBF("C:\\Stuff\\Barnyard\\Game\\Data\\Terrain\\EnvMainO\\BarnNorth_L0Mod4.trb"),
+		new PTRB::TRBF("C:\\Stuff\\Barnyard\\Game\\Data\\Terrain\\EnvMainO\\Hilltop_L0Mod0.trb"),
+		new PTRB::TRBF("C:\\Stuff\\Barnyard\\Game\\Data\\Terrain\\EnvMainO\\Hilltop_L0Mod1.trb"),
 	};
 
 	for (auto trbf : trbfiles)
@@ -276,9 +276,9 @@ int TMain(int argc, char** argv)
 		}
 	}
 
-	TLib::TRBF::TRBF outTrbf;
-	TLib::TRBF::SECT* sect = outTrbf.GetSECT();
-	TLib::TRBF::SYMB* symb = outTrbf.GetSYMB();
+	PTRB::TRBF outTrbf;
+	PTRB::SECT* sect = outTrbf.GetSECT();
+	PTRB::SYMB* symb = outTrbf.GetSYMB();
 
 	auto stack = sect->CreateStack();
 
