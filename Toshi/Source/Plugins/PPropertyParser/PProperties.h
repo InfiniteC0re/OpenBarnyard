@@ -233,7 +233,7 @@ public:
 		}
 		else
 		{
-			m_pValues = other.m_pValues;
+			m_pValues = TNULL;
 		}
 
 		m_iSize = other.m_iSize;
@@ -609,7 +609,7 @@ public:
 		other.m_pProperties = TNULL;
 		other.m_iCount = 0;
 	}
-	
+
 	~PProperties()
 	{
 		Delete();
