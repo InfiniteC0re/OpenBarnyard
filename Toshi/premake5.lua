@@ -55,6 +55,8 @@ project "Toshi"
 			"Source/Platform/Windows/**.h",
 			"Source/Platform/Windows/**.cpp",
 			"Source/Platform/Windows/**.c",
+			"Source/Plugins**/**.h",
+			"Source/Plugins**/**.cpp",
 			"Source/Toshi**/**.h",
 			"Source/Toshi**/**.cpp",
 			"Source/Toshi**/**.c",

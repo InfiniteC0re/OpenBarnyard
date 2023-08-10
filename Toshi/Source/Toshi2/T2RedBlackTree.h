@@ -50,13 +50,17 @@ namespace Toshi
 
 		~T2GenericRedBlackTree()
 		{
-			// TASSERT(m_iNumElements == 0);
-			TTODO("Make sure all elements are deleted");
+			TASSERT(m_iNumElements == 0);
 		}
 
 		T2Allocator* GetAllocator() const
 		{
 			return m_pAllocator;
+		}
+
+		size_t GetNumElements() const
+		{
+			return m_iNumElements;
 		}
 
 		T2GenericRedBlackTreeNode* GetFirstNode();
@@ -255,6 +259,15 @@ namespace Toshi
 		Iterator End()
 		{
 			return Iterator(TREINTERPRETCAST(Node*, &m_oRoot));
+		}
+
+		void DeleteAll()
+		{
+			while (GetNumElements() > 0)
+			{
+				auto pNode = TSTATICCAST(Node*, GetFirstNode());
+				Delete(pNode);
+			}
 		}
 
 		void Delete(Node* a_pNode)

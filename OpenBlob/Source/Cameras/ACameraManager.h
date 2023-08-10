@@ -48,6 +48,8 @@ public:
 				return TSTATICCAST(T*, m_ppCameras[i]);
 			}
 		}
+
+		return TNULL;
 	}
 
 private:

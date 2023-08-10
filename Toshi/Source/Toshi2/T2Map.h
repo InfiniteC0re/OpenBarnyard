@@ -10,11 +10,17 @@ namespace Toshi {
 	{
 	public:
 		using Pair = T2Pair<KeyType, ValueType, Comparator>;
+		using Iterator = T2RedBlackTree<Pair>::Iterator;
 
 	public:
 		T2Map(T2Allocator* a_pAllocator = &T2Allocator::s_GlobalAllocator) : m_RedBlackTree(a_pAllocator)
 		{
 
+		}
+
+		void Clear()
+		{
+			m_RedBlackTree.DeleteAll();
 		}
 
 		ValueType* Insert(const KeyType& key, const ValueType& value)
@@ -42,12 +48,12 @@ namespace Toshi {
 			return result ? &result->GetValue()->GetSecond() : &m_RedBlackTree.End()->GetSecond();
 		}
 
-		T2RedBlackTree<Pair>::Iterator Begin()
+		Iterator Begin()
 		{
 			return m_RedBlackTree.Begin();
 		}
 
-		T2RedBlackTree<Pair>::Iterator End()
+		Iterator End()
 		{
 			return m_RedBlackTree.End();
 		}

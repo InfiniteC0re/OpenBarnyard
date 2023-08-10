@@ -55,6 +55,7 @@ namespace PTRB
 			class Ptr
 			{
 			public:
+				Ptr() : m_Stack(TNULL), m_Offset(0) { }
 				Ptr(SECT::Stack* stack, size_t offset) : m_Stack(stack), m_Offset(offset) { }
 				Ptr(SECT::Stack* stack, T* ptr) : m_Stack(stack), m_Offset(stack->GetOffset(ptr)) { }
 
@@ -64,12 +65,18 @@ namespace PTRB
 					return reinterpret_cast<T*>(m_Stack->GetBuffer() + m_Offset);
 				}
 
+				const T* get() const
+				{
+					TASSERT(this->operator bool() == TTRUE, "Pointer is null");
+					return reinterpret_cast<const T*>(m_Stack->GetBuffer() + m_Offset);
+				}
+
 				SECT::Stack* stack()
 				{
 					return m_Stack;
 				}
 
-				size_t offset()
+				size_t offset() const
 				{
 					return m_Offset;
 				}
@@ -84,6 +91,18 @@ namespace PTRB
 				{
 					TASSERT(this->operator bool() == TTRUE, "Pointer is null");
 					return reinterpret_cast<T*>(m_Stack->GetBuffer() + m_Offset);
+				}
+
+				template <typename N>
+				Ptr<T> operator+(const N& a_iValue)
+				{
+					return Ptr<T>{m_Stack, m_Offset + sizeof(T) * a_iValue};
+				}
+
+				template <typename N>
+				Ptr<T> operator-(const N& a_iValue)
+				{
+					return Ptr<T>{m_Stack, m_Offset - sizeof(T) * a_iValue};
 				}
 
 				operator bool() const
@@ -147,7 +166,7 @@ namespace PTRB
 
 			size_t GetUsedSize() const { return (size_t)m_BufferPos - (size_t)m_Buffer; }
 
-			size_t GetOffset(void* ptr) const
+			size_t GetOffset(const void* ptr) const
 			{
 				TASSERT((size_t)ptr >= (size_t)m_Buffer && (size_t)ptr < (size_t)m_Buffer + m_BufferSize, "Pointer is out of buffer");
 				return (size_t)ptr - (size_t)m_Buffer;
@@ -177,6 +196,12 @@ namespace PTRB
 			Ptr<T> Alloc(size_t count);
 
 			Ptr<char> AllocBytes(size_t Size);
+
+			template <class T>
+			void WritePointer(T** outPtr, const T* ptr);
+
+			template <class T>
+			void WritePointer(T** outPtr, const Ptr<T>& ptr);
 
 			template <class T>
 			Ptr<T> Alloc(T** outPtr, size_t count);
@@ -269,7 +294,7 @@ namespace PTRB
 			m_SymbolNames.reserve(5);
 		}
 
-		bool Is(int index, const char* name)
+		bool Is(size_t index, const char* name)
 		{
 			TASSERT(index >= 0 && index < m_Symbols.size());
 			auto hash = Toshi::TTRB::HashString(name);
@@ -371,7 +396,7 @@ namespace PTRB
 			pStack->SetIndex(newIndex);
 		}
 
-		void Remove(int index)
+		void Remove(size_t index)
 		{
 			TASSERT(index >= 0 && index < m_Symbols.size());
 
@@ -521,7 +546,7 @@ namespace PTRB
 		{
 			Toshi::TTSFO ttsfo;
 			Toshi::TTSFO::HunkMark mark;
-			ttsfo.Create(filepath.c_str(), "PTRB", endianess);
+			ttsfo.Create(filepath.c_str(), "TRBF", endianess);
 
 			// HDRX
 			ttsfo.OpenHunk(&mark, "HDRX");
@@ -596,7 +621,7 @@ namespace PTRB
 	{
 		ttsfi.Read(&m_Header);
 
-		for (size_t i = 0; i < m_Header.m_i32SectionCount; i++)
+		for (int i = 0; i < m_Header.m_i32SectionCount; i++)
 		{
 			Toshi::TTRB::SecInfo sectionInfo;
 			ttsfi.Read(&sectionInfo);
@@ -678,8 +703,10 @@ namespace PTRB
 	template<class T>
 	inline SECT::Stack::Ptr<T> SECT::Stack::Alloc()
 	{
+		m_BufferPos = TREINTERPRETCAST(char*, Toshi::TMath::AlignPointer(m_BufferPos));
+
 		constexpr size_t TSize = sizeof(T);
-		GrowBuffer(m_BufferSize + TSize);
+		GrowBuffer(GetUsedSize() + TSize);
 
 		T* allocated = reinterpret_cast<T*>(m_BufferPos);
 		m_BufferPos += TSize;
@@ -690,8 +717,10 @@ namespace PTRB
 	template<class T>
 	inline SECT::Stack::Ptr<T> SECT::Stack::Alloc(size_t count)
 	{
+		m_BufferPos = TREINTERPRETCAST(char*, Toshi::TMath::AlignPointer(m_BufferPos));
+
 		const size_t TSize = sizeof(T) * count;
-		GrowBuffer(m_BufferSize + TSize);
+		GrowBuffer(GetUsedSize() + TSize);
 
 		T* allocated = reinterpret_cast<T*>(m_BufferPos);
 		m_BufferPos += TSize;
@@ -703,10 +732,11 @@ namespace PTRB
 	inline SECT::Stack::Ptr<T> SECT::Stack::Alloc(T** outPtr, size_t count)
 	{
 		TASSERT((size_t)outPtr >= (size_t)m_Buffer && (size_t)outPtr < (size_t)m_Buffer + (size_t)m_BufferSize, "Out pointer is out of buffer");
+		m_BufferPos = TREINTERPRETCAST(char*, Toshi::TMath::AlignPointer(m_BufferPos));
 
 		const size_t TSize = sizeof(T) * count;
 		size_t outPtrOffset = GetOffset(outPtr);
-		GrowBuffer(m_BufferSize + TSize);
+		GrowBuffer(GetUsedSize() + TSize);
 
 		T* allocated = reinterpret_cast<T*>(m_BufferPos);
 		m_BufferPos += TSize;
@@ -721,10 +751,11 @@ namespace PTRB
 	inline SECT::Stack::Ptr<T> SECT::Stack::Alloc(T** outPtr)
 	{
 		TASSERT((size_t)outPtr >= (size_t)m_Buffer && (size_t)outPtr < (size_t)m_Buffer + (size_t)m_BufferSize, "Out pointer is out of buffer");
+		m_BufferPos = TREINTERPRETCAST(char*, Toshi::TMath::AlignPointer(m_BufferPos));
 
 		constexpr size_t TSize = sizeof(T) * Count;
 		size_t outPtrOffset = GetOffset(outPtr);
-		GrowBuffer(m_BufferSize + TSize);
+		GrowBuffer(GetUsedSize() + TSize);
 
 		T* allocated = reinterpret_cast<T*>(m_BufferPos);
 		m_BufferPos += TSize;
@@ -735,13 +766,33 @@ namespace PTRB
 		return { this, allocated };
 	}
 
+	template<class T>
+	inline void SECT::Stack::WritePointer(T** outPtr, const T* ptr)
+	{
+		TASSERT((size_t)outPtr >= (size_t)m_Buffer && (size_t)outPtr < (size_t)m_Buffer + (size_t)m_BufferSize, "Out pointer is out of buffer");
+		TASSERT((size_t)ptr >= (size_t)m_Buffer && (size_t)ptr < (size_t)m_Buffer + (size_t)m_BufferSize, "Pointer is out of buffer");
+
+		size_t outPtrOffset = GetOffset(outPtr);
+		Write<uint32_t>(outPtrOffset, TREINTERPRETCAST(uint32_t, ptr));
+		AddRelocationPtr(outPtrOffset, GetOffset(ptr));
+	}
+
+	template<class T>
+	inline void SECT::Stack::WritePointer(T** outPtr, const SECT::Stack::Ptr<T>& ptr)
+	{
+		TASSERT((size_t)outPtr >= (size_t)m_Buffer && (size_t)outPtr < (size_t)m_Buffer + (size_t)m_BufferSize, "Out pointer is out of buffer");
+
+		size_t outPtrOffset = GetOffset(outPtr);
+		Write<uint32_t>(outPtrOffset, TREINTERPRETCAST(uint32_t, ptr.get()));
+		AddRelocationPtr(outPtrOffset, ptr.offset());
+	}
+
 	inline SECT::Stack::Ptr<char> SECT::Stack::AllocBytes(size_t Size)
 	{
-		size_t TSize = Size;
-		GrowBuffer(m_BufferSize + TSize);
+		GrowBuffer(GetUsedSize() + Size);
 
 		char* allocated = reinterpret_cast<char*>(m_BufferPos);
-		m_BufferPos += TSize;
+		m_BufferPos += Size;
 
 		return { this, allocated };
 	}
@@ -775,8 +826,8 @@ namespace PTRB
 	inline void SECT::Stack::ResizeBuffer(size_t size)
 	{
 		TASSERT(size > 0, "Size should be positive");
-		TASSERT(size != m_BufferSize, "Size is the same");
-		TASSERT(size > m_BufferSize, "Buffer can't shrink");
+		//TASSERT(size != m_BufferSize, "Size is the same");
+		//TASSERT(size > m_BufferSize, "Buffer can't shrink");
 
 		char* oldBuffer = m_Buffer;
 		size_t usedSize = GetUsedSize();

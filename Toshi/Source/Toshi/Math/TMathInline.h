@@ -72,7 +72,7 @@ namespace Toshi
 		template <typename T>
 		inline const T& Max(const T& a, const T& b) { if (a < b) { return b; } else { return a; } }
 
-		inline uintptr_t AlignPointer(uintptr_t ptr) { return (ptr & SIZE_T_ALIGN_VALUE); }
+		inline uintptr_t AlignPointer(uintptr_t ptr) { return ((ptr + 3) & SIZE_T_ALIGN_VALUE); }
 		inline uintptr_t AlignPointer(void* ptr) { return AlignPointer(reinterpret_cast<uintptr_t>(ptr)); }
 
 #if INTPTR_MAX == INT64_MAX

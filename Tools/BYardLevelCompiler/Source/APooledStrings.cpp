@@ -89,4 +89,4 @@ static TPString8Initialiser::StringMap oInitStrMap[] =
 	{ &g_str_null,                             "null" },
 };
 
-static TPString8Initialiser oInitStrNode(oInitStrMap, 40, TTRUE);
+//static TPString8Initialiser oInitStrNode(oInitStrMap, 40, TTRUE);

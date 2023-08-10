@@ -106,11 +106,7 @@ namespace Toshi {
 		inline static Allocator s_Allocator;
 
 	public:
-		static void Create()
-		{
-			TSystemManager::SetStringPool(new TPString8Pool(1024, 0, &s_Allocator, 0));
-			TTODO("FUN_006c1a60 in Barnyard");
-		}
+		TPString8Pool(int a_iUnknown1, int a_iUnknown2, Allocator* a_pAllocator, void* m_pUnknown3);
 
 		void Get(TPooledString8*& a_pOutString, const char* a_szString, bool* a_pWasInPool = TNULL);
 
@@ -125,8 +121,22 @@ namespace Toshi {
 			return m_pAllocator;
 		}
 
-	private:
-		TPString8Pool(int a_iUnknown1, int a_iUnknown2, Allocator* a_pAllocator, void* m_pUnknown3);
+		T2Map<const char*, TPooledString8*, TPooledString8::Comparator>::Iterator Begin()
+		{
+			return m_oMap.Begin();
+		}
+
+		T2Map<const char*, TPooledString8*, TPooledString8::Comparator>::Iterator End()
+		{
+			return m_oMap.End();
+		}
+
+	public:
+		static void Create()
+		{
+			TSystemManager::SetStringPool(new TPString8Pool(1024, 0, &s_Allocator, 0));
+			TTODO("FUN_006c1a60 in Barnyard");
+		}
 
 	private:
 		Allocator* m_pAllocator;

@@ -19,6 +19,8 @@ public:
 		UInt32
 	};
 
+	friend class PPropertiesWriter;
+
 public:
 	PPropertyValue()
 	{
@@ -68,7 +70,7 @@ public:
 
 	~PPropertyValue();
 
-	Type GetType()
+	Type GetType() const
 	{
 		return m_eType;
 	}
@@ -210,6 +212,9 @@ private:
 
 class PPropertyValueArray
 {
+public:
+	friend class PPropertiesWriter;
+
 public:
 	PPropertyValueArray()
 	{
@@ -358,6 +363,9 @@ private:
 class PPropertyName
 {
 public:
+	friend class PPropertiesWriter;
+
+public:
 	PPropertyName()
 	{
 		m_szName = TNULL;
@@ -394,7 +402,7 @@ public:
 		Toshi::TStringManager::String8Copy(m_szName, a_sName);
 	}
 
-	const char* GetName() const
+	const char* GetString() const
 	{
 		return m_szName;
 	}
@@ -433,6 +441,9 @@ class PProperties
 public:
 	class PProperty
 	{
+	public:
+		friend class PPropertiesWriter;
+
 	public:
 		PProperty()
 		{
@@ -552,6 +563,8 @@ public:
 		PPropertyValue* m_pValue;
 	};
 
+	friend class PPropertiesWriter;
+
 public:
 	PProperties()
 	{
@@ -569,7 +582,15 @@ public:
 			m_pProperties = new PProperty[other.m_iCount];
 
 			for (size_t i = 0; i < other.m_iCount; i++)
+			{
 				m_pProperties[i] = other.m_pProperties[i];
+				auto pValue = m_pProperties[i].GetValue();
+
+				if (pValue->GetType() == PPropertyValue::Type::Props)
+				{
+					pValue->GetProperties()->m_pParent = this;
+				}
+			}
 		}
 		else
 		{
@@ -733,6 +754,7 @@ inline void PPropertyValue::Delete()
 inline PPropertyValue::PPropertyValue(const PPropertyValue& other)
 {
 	m_eType = other.m_eType;
+	m_uValue.Pointer = TNULL;
 
 	if (other.m_eType == Type::Array)
 		m_uValue.Array = new PPropertyValueArray(*other.m_uValue.Array);

@@ -18,6 +18,7 @@
 
 #include <Plugins/PTRB.h>
 #include <Plugins/PPropertyParser/PProperties.h>
+#include <Plugins/PPropertyParser/PPropertiesWriter.h>
 
 #include "ModelHeader.h"
 #include "Materials.h"
@@ -30,31 +31,55 @@ TOSHI_NAMESPACE_USING
 TPSTRING8_DECLARE(AnimControllerType);
 TPSTRING8_DECLARE(AnimObjTypes);
 
+void LogProperties(const PProperties* properties)
+{
+	for (auto it = properties->Begin(); it != properties->End(); it++)
+	{
+		auto propName = it->GetName().GetString();
+
+		switch (it->GetValue()->GetType())
+		{
+		case PPropertyValue::Type::Int:
+			TOSHI_INFO("{} = {}", propName, it->GetValue()->GetInteger());
+			break;
+		case PPropertyValue::Type::String:
+			TOSHI_INFO("{} = {}", propName, it->GetValue()->GetString());
+			break;
+		case PPropertyValue::Type::Float:
+			TOSHI_INFO("{} = {}", propName, it->GetValue()->GetFloat());
+			break;
+		case PPropertyValue::Type::Bool:
+			TOSHI_INFO("{} = {}", propName, it->GetValue()->GetBoolean());
+			break;
+		case PPropertyValue::Type::UInt32:
+			TOSHI_INFO("{} = {}", propName, it->GetValue()->GetUINT32());
+			break;
+		case PPropertyValue::Type::Array:
+			TOSHI_INFO("{} = {} elements", propName, it->GetValue()->GetArray()->GetSize());
+			break;
+		case PPropertyValue::Type::Props:
+			TOSHI_INFO("{} = subitem", propName);
+			LogProperties(it->GetValue()->GetProperties());
+			break;
+		}
+	}
+}
+
 int TMain(int argc, char** argv)
 {
 	TTRB trb;
 	
 	if (TTRB::ERROR_OK == trb.Load("C:\\Stuff\\Barnyard\\Game\\Data\\AGopherShopGame.trb"))
 	{
-		auto properties = PProperties::LoadFromTRB(trb);
-		auto disablebreakpoints = properties->GetOptionalProperty("playercharacter")->GetProperties()->GetOptionalProperty("disablebreakpoints")->GetBoolean();
+		PProperties properties = *PProperties::LoadFromTRB(trb);
+		PPropertiesWriter::WriteTRB("C:\\dev\\pproperties_repacked.trb", properties, TTRUE);
 	}
 
+	/*if (TTRB::ERROR_OK == trb.Load("C:\\dev\\a.trb"))
 	{
-		PProperties properties;
-		auto stringArray = properties.AddPropertyArray("string_array");
-		stringArray->GetValue()->GetArray()->Add("string1");
-		stringArray->GetValue()->GetArray()->Add("string2");
-		stringArray->GetValue()->GetArray()->Add("string3");
-
-		auto subprop = properties.AddProperties("unit");
-		subprop->GetValue()->GetProperties()->AddProperty("TClass", "ASteer");
-
-		TOSHI_INFO("string_array[0] = {}", properties.GetOptionalProperty("string_array")->GetArray()->GetValue(0)->GetString());
-		TOSHI_INFO("string_array[1] = {}", properties.GetOptionalProperty("string_array")->GetArray()->GetValue(1)->GetString());
-		TOSHI_INFO("string_array[2] = {}", properties.GetOptionalProperty("string_array")->GetArray()->GetValue(2)->GetString());
-		TOSHI_INFO("unit.TClass = {}", properties.GetOptionalProperty("unit")->GetProperties()->GetOptionalProperty("TClass")->GetString());
-	}
+		auto properties = PProperties::LoadFromTRB(trb);
+		LogProperties(properties);
+	}*/
 
 	return 0;
 	/*TSystemManager::CreateStringPool();
