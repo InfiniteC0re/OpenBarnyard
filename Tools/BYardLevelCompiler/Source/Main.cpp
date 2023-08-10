@@ -2,11 +2,11 @@
 
 // TOSHI_TMEMORY_FLAGS allows you to change the mode TMemory initializes with
 // Flags_NativeMethods stands for native memory management methods instead of using dlmalloc
-#define TOSHI_TMEMORY_FLAGS Toshi::TMemory::Flags_NativeMethods
+#define TOSHI_TMEMORY_FLAGS Toshi::TMemory::Flags_Standard
 
 // TOSHI_TMEMORY_SIZE allows you to change size of the global memory block
 // The value is not used when TMemory initialized with native methods
-#define TOSHI_TMEMORY_SIZE 0
+#define TOSHI_TMEMORY_SIZE 64 * 1024 * 1024
 
 // This file includes the entrypoint so set all the settings before including it
 #include "Toshi.h"
@@ -38,6 +38,22 @@ int TMain(int argc, char** argv)
 	{
 		auto properties = PProperties::LoadFromTRB(trb);
 		auto disablebreakpoints = properties->GetOptionalProperty("playercharacter")->GetProperties()->GetOptionalProperty("disablebreakpoints")->GetBoolean();
+	}
+
+	{
+		PProperties properties;
+		auto stringArray = properties.AddPropertyArray("string_array");
+		stringArray->GetValue()->GetArray()->Add("string1");
+		stringArray->GetValue()->GetArray()->Add("string2");
+		stringArray->GetValue()->GetArray()->Add("string3");
+
+		auto subprop = properties.AddProperties("unit");
+		subprop->GetValue()->GetProperties()->AddProperty("TClass", "ASteer");
+
+		TOSHI_INFO("string_array[0] = {}", properties.GetOptionalProperty("string_array")->GetArray()->GetValue(0)->GetString());
+		TOSHI_INFO("string_array[1] = {}", properties.GetOptionalProperty("string_array")->GetArray()->GetValue(1)->GetString());
+		TOSHI_INFO("string_array[2] = {}", properties.GetOptionalProperty("string_array")->GetArray()->GetValue(2)->GetString());
+		TOSHI_INFO("unit.TClass = {}", properties.GetOptionalProperty("unit")->GetProperties()->GetOptionalProperty("TClass")->GetString());
 	}
 
 	return 0;

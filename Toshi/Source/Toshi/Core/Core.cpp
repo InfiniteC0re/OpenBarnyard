@@ -67,18 +67,16 @@ AssertionAction AssertionCallback(const char* file, int line, const char* expres
 	
 	if (hWnd != NULL)
 		hWnd = GetLastActivePopup(hWnd);
+
+	INT_PTR result = DialogBoxParamA(
+		GetModuleHandleA(NULL),
+		MAKEINTRESOURCEA(IDD_ASSERT),
+		hWnd,
+		AssertionDlgProc,
+		NULL
+	);
 	
-	return
-		TSTATICCAST(
-			AssertionAction,
-			DialogBoxParamA(
-				GetModuleHandleA(NULL),
-				MAKEINTRESOURCEA(IDD_ASSERT),
-				hWnd,
-				AssertionDlgProc,
-				NULL
-			)
-		);
+	return result != -1 ? TSTATICCAST(AssertionAction, result) : AssertionAction::Break;
 }
 #else // TOSHI_SKU_WINDOWS
 AssertionAction AssertionCallback(const char* file, int line, const char* expression)

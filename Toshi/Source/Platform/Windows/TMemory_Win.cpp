@@ -205,7 +205,16 @@ namespace Toshi
 
         TMemory::s_Context.s_cbRealloc = [](void* ptr, size_t size) -> void*
         {
-            return TNULL;
+#ifdef TOSHI_DEBUG
+			mchunkptr oldChunk = mem2chunk(ptr);
+			s_NumAllocatedBytes -= chunksize(oldChunk);
+			ptr = TMemory::dlheaprealloc(TMemory::s_GlobalHeap, ptr, size);
+			mchunkptr newChunk = mem2chunk(ptr);
+			s_NumAllocatedBytes += chunksize(newChunk);
+			return ptr;
+#else
+			return TMemory::dlheaprealloc(TMemory::s_GlobalHeap, ptr, size);
+#endif // TOSHI_DEBUG
         };
 
         TMemory::s_Context.s_cbMemalign = [](size_t alignment, size_t size) -> void*
