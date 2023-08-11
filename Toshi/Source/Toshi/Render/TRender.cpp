@@ -14,7 +14,7 @@ namespace Toshi {
 		m_ScreenOffset = { 0, 0 };
 		m_eAspectRatio = ASPECT_RATIO_4_3;
 		m_pRenderContext = TNULL;
-		m_Unk5 = 0;
+		m_pCreatedRenderContext = TNULL;
 		m_HasDyingResources = TFALSE;
 		m_bDisplayCreated = TFALSE;
 		m_bCreated = TFALSE;
@@ -45,19 +45,22 @@ namespace Toshi {
 
 	TRender::~TRender()
 	{
-		delete m_ParamTable;
+		if (m_ParamTable)
+			delete m_ParamTable;
+		
 		TModelManager::DestroySingleton();
 		T2ResourceManager::DestroySingleton();
+		m_Unk1 = -1;
 	}
 
 	TBOOL TRender::Create()
 	{
 		TASSERT(TFALSE == IsCreated(), "TRender already created");
-		TRenderContext* a_pRenderContext = CreateRenderContext();
+		m_pCreatedRenderContext = CreateRenderContext();
 		
-		if (a_pRenderContext != TNULL)
+		if (m_pCreatedRenderContext != TNULL)
 		{
-			SetCurrentRenderContext(a_pRenderContext);
+			SetCurrentRenderContext(m_pCreatedRenderContext);
 			m_bCreated = TTRUE;
 			return TTRUE;
 		}
@@ -67,13 +70,23 @@ namespace Toshi {
 
 	TBOOL TRender::Destroy()
 	{
-		return TFALSE;
+		m_pRenderContext = TNULL;
+
+		if (m_pCreatedRenderContext != TNULL)
+		{
+			delete m_pCreatedRenderContext;
+			m_pCreatedRenderContext = TNULL;
+		}
+
+		m_bCreated = TFALSE;
+		return TTRUE;
 	}
 
 	TBOOL TRender::CreateDisplay()
 	{
 		TASSERT(TTRUE == IsCreated(), "TRender must be created");
 		TASSERT(TFALSE == IsDisplayCreated(), "Display already created");
+
 		m_bDisplayCreated = TTRUE;
 		return TTRUE;
 	}
@@ -167,29 +180,35 @@ namespace Toshi {
 		}
 	}
 
-	void TRender::GetScreenOffset(TVector2* pOutVec)
+	void TRender::GetScreenOffset(TVector2& a_rVec)
 	{
+		a_rVec.Set(m_ScreenOffset);
 	}
 
-	void TRender::SetScreenOffset(TVector2* pVec)
+	void TRender::SetScreenOffset(const TVector2& a_rVec)
 	{
+		m_ScreenOffset.Set(a_rVec);
 	}
 
-	void TRender::SetLightDirectionMatrix(TMatrix44* pMat)
+	void TRender::SetLightDirectionMatrix(const TMatrix44& a_rMatrix)
 	{
+		m_LightDirection = a_rMatrix;
 	}
 
-	void TRender::SetLightColourMatrix(TMatrix44* pMat)
+	void TRender::SetLightColourMatrix(const TMatrix44& a_rMatrix)
 	{
+		m_LightColour = a_rMatrix;
 	}
 
 	TBOOL TRender::CreateSystemResources()
 	{
-		return TFALSE;
+		return TTRUE;
 	}
 
 	void TRender::DestroySystemResources()
 	{
+		DestroyResourceRecurse(m_Resources.AttachedToRoot());
+		FlushDyingResources();
 	}
 
 	void TRender::DestroyDyingResources()
@@ -276,10 +295,18 @@ namespace Toshi {
 
 	void TRender::BeginScene()
 	{
+		TASSERT(TTRUE == IsCreated());
+		TASSERT(TTRUE == IsDisplayCreated());
+
+		m_iFrameCount += 1;
+		m_Transforms.Reset();
+		m_Transforms.Top().Identity();
 	}
 
 	void TRender::EndScene()
 	{
+		TASSERT(TTRUE == IsCreated());
+		TASSERT(TTRUE == IsDisplayCreated());
 	}
 
 	TRenderContext::TRenderContext(TRender* pRender)

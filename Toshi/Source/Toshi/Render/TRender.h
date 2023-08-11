@@ -182,23 +182,23 @@ namespace Toshi
 	public:
 		TRender();
 
-		virtual ~TRender();                                    // 0x08 at vftable
-		virtual TBOOL CreateDisplay(DisplayParams* params) = 0; // 0x0C at vftable
-		virtual TBOOL DestroyDisplay() = 0;                     // 0x10 at vftable
-		virtual void Update(float deltaTime);                 // 0x14 at vftable
-		virtual void BeginScene();                             // 0x18 at vftable
-		virtual void EndScene();                               // 0x1C at vftable
-		virtual void* GetCurrentDevice() = 0;                  // 0x20 at vftable
-		virtual DisplayParams* GetCurrentDisplayParams() = 0;  // 0x24 at vftable
-		virtual TBOOL Create();                                 // 0x28 at vftable
-		virtual TBOOL Destroy();                                // 0x2C at vftable
-		virtual void DumpStats();                              // 0x30 at vftable
-		virtual void GetScreenOffset(TVector2* pOutVec);       // 0x34 at vftable
-		virtual void SetScreenOffset(TVector2* pVec);          // 0x38 at vftable
-		virtual void SetLightDirectionMatrix(TMatrix44* pMat); // 0x3C at vftable
-		virtual void SetLightColourMatrix(TMatrix44* pMat);    // 0x40 at vftable
-		virtual TBOOL CreateSystemResources();                  // 0x44 at vftable
-		virtual void DestroySystemResources();                 // 0x44 at vftable
+		virtual ~TRender();                                               // 0x08 at vftable
+		virtual TBOOL CreateDisplay(DisplayParams* params) = 0;           // 0x0C at vftable
+		virtual TBOOL DestroyDisplay() = 0;                               // 0x10 at vftable
+		virtual void Update(float deltaTime);                             // 0x14 at vftable
+		virtual void BeginScene();                                        // 0x18 at vftable
+		virtual void EndScene();                                          // 0x1C at vftable
+		virtual void* GetCurrentDevice() = 0;                             // 0x20 at vftable
+		virtual DisplayParams* GetCurrentDisplayParams() = 0;             // 0x24 at vftable
+		virtual TBOOL Create();                                           // 0x28 at vftable
+		virtual TBOOL Destroy();                                          // 0x2C at vftable
+		virtual void DumpStats();                                         // 0x30 at vftable
+		virtual void GetScreenOffset(TVector2& a_rVec);                   // 0x34 at vftable
+		virtual void SetScreenOffset(const TVector2& a_rVec);             // 0x38 at vftable
+		virtual void SetLightDirectionMatrix(const TMatrix44& a_rMatrix); // 0x3C at vftable
+		virtual void SetLightColourMatrix(const TMatrix44& a_rMatrix);    // 0x40 at vftable
+		virtual TBOOL CreateSystemResources();                            // 0x44 at vftable
+		virtual void DestroySystemResources();                            // 0x44 at vftable
 
 		float GetResolutionScalar()
 		{
@@ -278,14 +278,14 @@ namespace Toshi
 
 	protected:
 		uint32_t m_Unk1;                                 // 0x04
-		TBOOL m_bIsEnabled;                               // 0x08
-		TBOOL m_bInScene;                                 // 0x09
-		TBOOL m_bCreated = TFALSE;                         // 0x0A
-		TBOOL m_bDisplayCreated;                          // 0x0B
+		TBOOL m_bIsEnabled;                              // 0x08
+		TBOOL m_bInScene;                                // 0x09
+		TBOOL m_bCreated = TFALSE;                       // 0x0A
+		TBOOL m_bDisplayCreated;                         // 0x0B
 		TVector2 m_ScreenOffset;                         // 0x0C
 		ASPECT_RATIO m_eAspectRatio;                     // 0x14
 		TRenderContext* m_pRenderContext;                // 0x18
-		uint32_t m_Unk5;                                 // 0x1C
+		TRenderContext* m_pCreatedRenderContext;         // 0x1C
 		TResource* m_SystemResources[SYSRESOURCE_NUMOF]; // 0x20
 		TMatrix44 m_LightDirection;                      // 0x50
 		TMatrix44 m_LightColour;                         // 0x90
@@ -293,8 +293,8 @@ namespace Toshi
 		TNodeList<TRenderAdapter> m_AdapterList;         // 0xD8
 		TNodeTree<TResource> m_Resources;                // 0xE8
 		size_t m_ResourceCount = 0;                      // 0x100
-		uint32_t m_Unk4 = 0;                             // 0x104
-		TBOOL m_HasDyingResources;                        // 0x108
+		uint32_t m_iFrameCount = 0;                      // 0x104
+		TBOOL m_HasDyingResources;                       // 0x108
 		TKeyframeLibraryManager m_KeyframeManager;       // 0x10C
 		TStack<TMatrix44, 20> m_Transforms;              // 0x118
 	};
