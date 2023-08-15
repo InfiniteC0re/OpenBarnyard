@@ -7,11 +7,11 @@ namespace Toshi
 	class TVector4
 	{
 	public:
-		TVector4() { Set(0, 0, 0, 1); }
-		TVector4(TFloat x, TFloat y, TFloat z, TFloat w) { Set(x, y, z, w); }
-		TVector4(TFloat floats[4]) { Set(floats); }
-		TVector4(const TVector3& other) { Set(other.x, other.y, other.z, 1.0f); }
-		TVector4(const TVector4& other) { Set(other.x, other.y, other.z, other.w); }
+		TVector4() { TVector4::x = 0; TVector4::y = 0; TVector4::z = 0; TVector4::w = 1.0f; }
+		TVector4(TFloat x, TFloat y, TFloat z, TFloat w) { TVector4::x = x; TVector4::y = y; TVector4::z = z; TVector4::w = w; }
+		TVector4(TFloat floats[4]) { TVector4::x = floats[0]; TVector4::y = floats[1]; TVector4::z = floats[2]; TVector4::w = floats[3]; }
+		TVector4(const TVector3& other) { TVector4::x = other.x; TVector4::y = other.y; TVector4::z = other.z; TVector4::w = 1.0f; }
+		TVector4(const TVector4& other) { TVector4::x = other.x; TVector4::y = other.y; TVector4::z = other.z; TVector4::w = other.w; }
 
 		void Set(const TVector3& vec) { TVector4::x = vec.x; TVector4::y = vec.y; TVector4::z = vec.z; TVector4::w = 1.0f; }
 		void Set(const TVector4& vec) { TVector4::x = vec.x; TVector4::y = vec.y; TVector4::z = vec.z; TVector4::w = vec.w; }
@@ -22,6 +22,13 @@ namespace Toshi
 		TBOOL isNormalised(float fVal = 0.05f) const { return (((1.0f - fVal) * (1.0f - fVal)) < MagnitudeSq()) && (((1.0f + fVal) * (1.0f + fVal)) >= MagnitudeSq()); }
 
 		void ProjectNormalToPlane(const TVector4& vec, const TVector4& vec2);
+
+		void Add(const TVector3& vec)
+		{
+			x += vec.x;
+			y += vec.y;
+			z += vec.z;
+		}
 
 		void Add(const TVector4& vec)
 		{
@@ -158,6 +165,11 @@ namespace Toshi
 			return *this;
 		}
 
+		TVector4 operator+(const TVector3& other) const { return { x + other.x, y + other.y, z + other.z, w }; }
+		TVector4 operator-(const TVector3& other) const { return { x - other.x, y - other.y, z - other.z, w }; }
+		TVector4 operator*(const TVector3& other) const { return { x * other.x, y * other.y, z * other.z, w }; }
+		TVector4 operator/(const TVector3& other) const { return { x / other.x, y / other.y, z / other.z, w }; }
+
 		TVector4 operator+(const TVector4& other) const { return { x + other.x, y + other.y, z + other.z, other.w }; }
 		TVector4 operator-(const TVector4& other) const { return { x - other.x, y - other.y, z - other.z, other.w }; }
 		TVector4 operator*(const TVector4& other) const { return { x * other.x, y * other.y, z * other.z, other.w }; }
@@ -170,6 +182,8 @@ namespace Toshi
 		void operator/=(const TVector4& other) { Divide(other); }
 		void operator*=(const TVector4& other) { Multiply(other); }
 
+		float* AsArray() { return reinterpret_cast<float*>(this); }
+		const float* AsArray() const { return reinterpret_cast<const float*>(this); }
 		TVector3& AsVector3() { return reinterpret_cast<TVector3&>(*this); }
 		const TVector3& AsVector3() const { return reinterpret_cast<const TVector3&>(*this); }
 

@@ -368,8 +368,6 @@ namespace Toshi
 
 		void CreateVSPS();
 		TBOOL Create(LPCSTR a_name);
-		void SetVec4InVSBuffer(BufferOffset index, const void* src, int count = 1);
-		void SetVec4InPSBuffer(BufferOffset index, const void* src, int count = 1);
 		HRESULT CreatePixelShader(const void* pShaderBytecode, SIZE_T BytecodeLength, ID3D11PixelShader** ppPixelShader);
 		HRESULT CreateVertexShader(const void* pShaderBytecode, SIZE_T BytecodeLength, ID3D11VertexShader** ppVertexShader);
 		ID3D11ShaderResourceView* CreateTexture(UINT width, UINT height, DXGI_FORMAT format, const void* srcData, uint8_t flags, D3D11_USAGE usage, uint32_t cpuAccessFlags, uint32_t sampleDescCount);
@@ -377,6 +375,29 @@ namespace Toshi
 		ID3D11SamplerState* CreateSamplerStateAutoAnisotropy(D3D11_FILTER filter, D3D11_TEXTURE_ADDRESS_MODE addressU, D3D11_TEXTURE_ADDRESS_MODE addressV, D3D11_TEXTURE_ADDRESS_MODE addressW, FLOAT mipLODBias, uint32_t borderColor, FLOAT minLOD, FLOAT maxLOD);
 		ID3D11SamplerState* CreateSamplerState(D3D11_FILTER filter, D3D11_TEXTURE_ADDRESS_MODE addressU, D3D11_TEXTURE_ADDRESS_MODE addressV, D3D11_TEXTURE_ADDRESS_MODE addressW, FLOAT mipLODBias, uint32_t borderColor, FLOAT minLOD, FLOAT maxLOD, UINT maxAnisotropy);
 		ID3D11Buffer* CreateBuffer(UINT flags, UINT dataSize, void* data, D3D11_USAGE usage, UINT cpuAccessFlags);
+
+		void SetVec4InVSBuffer(BufferOffset index, const void* src, int count = 1);
+		void SetVec4InPSBuffer(BufferOffset index, const void* src, int count = 1);
+		
+		void SetValueInVSBuffer(BufferOffset a_iIndex, const TMatrix44& a_rMatrix)
+		{
+			SetVec4InVSBuffer(a_iIndex, &a_rMatrix, 4);
+		}
+
+		void SetValueInPSBuffer(BufferOffset a_iIndex, const TMatrix44& a_rMatrix)
+		{
+			SetVec4InPSBuffer(a_iIndex, &a_rMatrix, 4);
+		}
+
+		void SetValueInVSBuffer(BufferOffset a_iIndex, const TVector4& a_rVector)
+		{
+			SetVec4InVSBuffer(a_iIndex, &a_rVector, 1);
+		}
+
+		void SetValueInPSBuffer(BufferOffset a_iIndex, const TVector4& a_rVector)
+		{
+			SetVec4InPSBuffer(a_iIndex, &a_rVector, 1);
+		}
 
 		void SetDstAlpha(float alpha);
 		void SetBlendMode(TBOOL blendEnabled, D3D11_BLEND_OP blendOp, D3D11_BLEND srcBlendAlpha, D3D11_BLEND destBlendAlpha);

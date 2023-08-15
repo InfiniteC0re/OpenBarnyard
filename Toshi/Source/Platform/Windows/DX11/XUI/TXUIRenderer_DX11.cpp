@@ -416,14 +416,15 @@ namespace Toshi {
 		TASSERT(numverts < MAXVERTS);
 
 		auto pRender = TRenderDX11::Interface();
-		auto pRenderContext = pRender->GetCurrentRenderContext();
+		auto pRenderContext = TSTATICCAST(TRenderContextDX11*, pRender->GetCurrentRenderContext());
 		auto pDeviceContext = pRender->GetDeviceContext();
 		auto pPrimShader = TPrimShader::GetSingleton();
 
 		pRender->SetZMode(TTRUE, D3D11_COMPARISON_LESS_EQUAL, D3D11_DEPTH_WRITE_MASK_ZERO);
 		pRender->SetBlendMode(TTRUE, D3D11_BLEND_OP_ADD, D3D11_BLEND_SRC_ALPHA, D3D11_BLEND_INV_SRC_ALPHA);
 
-		TMatrix44 worldViewProjection = pRenderContext->GetModelViewMatrix().XMM() * pRenderContext->GetModelViewMatrix().XMM();
+		TMatrix44 worldViewProjection;
+		worldViewProjection.Multiply(pRenderContext->GetProjectionMatrix(), pRenderContext->GetModelViewMatrix());
 
 		pRender->SetVec4InVSBuffer(0, &worldViewProjection, 4);
 		pDeviceContext->IASetInputLayout(pPrimShader->GetInputLayout());
@@ -493,11 +494,12 @@ namespace Toshi {
 		TASSERT(numverts < MAXVERTS);
 
 		auto pRender = TRenderDX11::Interface();
-		auto pRenderContext = pRender->GetCurrentRenderContext();
+		auto pRenderContext = TSTATICCAST(TRenderContextDX11*, pRender->GetCurrentRenderContext());
 		auto pDeviceContext = pRender->GetDeviceContext();
 		auto pPrimShader = TPrimShader::GetSingleton();
 
-		TMatrix44 worldViewProjection = pRenderContext->GetModelViewMatrix().XMM() * pRenderContext->GetModelViewMatrix().XMM();
+		TMatrix44 worldViewProjection;
+		worldViewProjection.Multiply(pRenderContext->GetProjectionMatrix(), pRenderContext->GetModelViewMatrix());
 
 		pRender->SetVec4InVSBuffer(0, &worldViewProjection, 4);
 		pDeviceContext->IASetInputLayout(pPrimShader->GetInputLayout());

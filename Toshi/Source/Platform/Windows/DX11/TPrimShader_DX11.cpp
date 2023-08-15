@@ -131,9 +131,10 @@ namespace Toshi
 
 		pRender->SetZMode(TTRUE, D3D11_COMPARISON_LESS_EQUAL, depthWriteMask);
 
-		TMatrix44 worldViewProjection = pRenderContext->GetModelViewMatrix().XMM() * pRenderContext->GetProjectionMatrix().XMM();
+		TMatrix44 worldViewProjection;
+		worldViewProjection.Multiply(pRenderContext->GetProjectionMatrix(), pRenderContext->GetModelViewMatrix());
 
-		pRender->SetVec4InVSBuffer(0, &worldViewProjection, 4);
+		pRender->SetValueInVSBuffer(0, worldViewProjection);
 		pRender->m_pDeviceContext->IASetInputLayout(m_pInputLayout);
 		pRender->m_CurrentRasterizerId.Flags.Parts.CullMode = D3D11_CULL_NONE;
 	}

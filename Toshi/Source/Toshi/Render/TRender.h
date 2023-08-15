@@ -20,14 +20,14 @@ namespace Toshi
 		{
 			FLAG_DIRTY = BITFIELD(0),
 			FLAG_FOG = BITFIELD(1),
-			FLAG_UNK1 = BITFIELD(2),
-			FLAG_UNK2 = BITFIELD(3),
+			FLAG_HAS_MODELWORLDMATRIX = BITFIELD(2),
+			FLAG_HAS_VIEWWORLDMATRIX = BITFIELD(3),
 			FLAG_UNK3 = BITFIELD(4),
 			FLAG_UNK4 = BITFIELD(5),
 			FLAG_UNK5 = BITFIELD(6),
 			FLAG_UNK6 = BITFIELD(7),
-			FLAG_HASMODELVIEWMATRIX = BITFIELD(8),
-			FLAG_HASWORLDVIEWMATRIX = BITFIELD(9),
+			FLAG_HAS_MODELVIEWMATRIX = BITFIELD(8),
+			FLAG_DIRTY_VIEWMODELMATRIX = BITFIELD(9),
 		};
 
 		typedef uint32_t CameraMode;
@@ -110,15 +110,11 @@ namespace Toshi
 			return m_oParams.fHeight;
 		}
 
-        TMatrix44& GetModelViewMatrix()
-        {
-            return m_mModelViewMatrix;
-        }
-
-        TMatrix44& GetWorldViewMatrix()
-        {
-            return m_mWorldViewMatrix;
-        }
+		const TMatrix44& GetViewWorldMatrix();
+		const TMatrix44& GetModelWorldMatrix();
+		const TMatrix44& GetViewModelMatrix();
+        TMatrix44& GetModelViewMatrix() { return m_oModelViewMatrix; }
+        TMatrix44& GetWorldViewMatrix() { return m_oWorldViewMatrix; }
 
 		const PROJECTIONPARAMS& GetProjectionParams() const
 		{
@@ -126,13 +122,17 @@ namespace Toshi
 		}
 
 	protected:
-		TRender* m_pRender;                     // 0x004
-		FLAG m_eFlags;                          // 0x008
-		CameraMode m_eCameraMode;               // 0x014
-		Params m_oParams;                       // 0x018
-		PROJECTIONPARAMS m_ProjParams;          // 0x030
-		TMatrix44 m_mModelViewMatrix;           // 0x040
-		TMatrix44 m_mWorldViewMatrix;           // 0x080
+		TRender* m_pRender;                     // 0x0004
+		FLAG m_eFlags;                          // 0x0008
+		CameraMode m_eCameraMode;               // 0x0014
+		Params m_oParams;                       // 0x0018
+		PROJECTIONPARAMS m_ProjParams;          // 0x0030
+		TMatrix44 m_oModelViewMatrix;           // 0x0050
+		TMatrix44 m_oWorldViewMatrix;           // 0x0090
+		TMatrix44 m_oModelWorldMatrix;          // 0x00D0
+		TMatrix44 m_oViewWorldMatrix;           // 0x0110
+		// ...
+		TMatrix44 m_oViewModelMatrix;           // 0x036C
 	};
 
 	class TRender :

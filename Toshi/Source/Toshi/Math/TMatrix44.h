@@ -159,6 +159,24 @@ namespace Toshi
 			m_f33 *= a_fScalar3;
 		}
 
+		void Scale(const TVector4& a_rScalars)
+		{
+			m_f11 *= a_rScalars.x;
+			m_f12 *= a_rScalars.x;
+			m_f13 *= a_rScalars.x;
+			m_f21 *= a_rScalars.y;
+			m_f22 *= a_rScalars.y;
+			m_f23 *= a_rScalars.y;
+			m_f31 *= a_rScalars.z;
+			m_f32 *= a_rScalars.z;
+			m_f33 *= a_rScalars.z;
+		}
+
+		void Scale(float a_fScale)
+		{
+			Scale(a_fScale, a_fScale, a_fScale);
+		}
+
 		TBOOL IsOrthonormal() const
 		{
 			float fVar1 = (m_f32 * m_f32 + m_f31 * m_f31 + m_f33 * m_f33) - 1.0f;
@@ -171,15 +189,42 @@ namespace Toshi
 			return !(((0.01 <= fVar6 * fVar6 + fVar2 * fVar2 + fVar1 * fVar1 + fVar4 * fVar4 + fVar5 * fVar5 + fVar3 * fVar3) || (m_f14 != 0.0)) || (m_f24 != 0.0)) || ((m_f34 != 0.0 || (m_f44 != 1.0)));
 		}
 
+		void Multiply(const TMatrix44& a_rLeft, const TMatrix44& a_rRight);
+
+		void Multiply(const TMatrix44& a_rRight)
+		{
+			TMatrix44 temp;
+			temp.Multiply(*this, a_rRight);
+			*this = temp;
+		}
+
 		TBOOL Invert(TMatrix44& a_rRight);
-		void InvertOrthogonal();
+
+		void InvertOrthogonal(const TMatrix44& a_rRight);
+		void InvertOrthonormal();
 
 		TMatrix44& SetFromQuaternion(const TQuaternion& a_rQuaternion);
+		TMatrix44& PushQuaternion(const TQuaternion& a_rQuaternion, const TMatrix44& a_rMatrix, const TVector3& a_rOrigin);
+
 		void RotateX(float a_fAngle);
 		void RotateY(float a_fAngle);
 		void RotateZ(float a_fAngle);
 
-		static void TransformVector(TVector4& a_rOutVector, const TMatrix44& a_rMatrix, const TVector4& a_rVector);
+		static void RotateVector(TVector4& a_rOutVector, const TMatrix44& a_rMatrix, const TVector4& a_rVector)
+		{
+			a_rOutVector.x = a_rMatrix.m_f31 * a_rVector.z + a_rMatrix.m_f21 * a_rVector.y + a_rMatrix.m_f11 * a_rVector.x;
+			a_rOutVector.y = a_rMatrix.m_f32 * a_rVector.z + a_rMatrix.m_f22 * a_rVector.y + a_rMatrix.m_f12 * a_rVector.x;
+			a_rOutVector.z = a_rMatrix.m_f13 * a_rVector.x + a_rMatrix.m_f23 * a_rVector.y + a_rMatrix.m_f33 * a_rVector.z;
+			a_rOutVector.w = a_rVector.w;
+		}
+
+		static void TransformVector(TVector4& a_rOutVector, const TMatrix44& a_rMatrix, const TVector4& a_rVector)
+		{
+			a_rOutVector.x = a_rMatrix.m_f11 * a_rVector.x + a_rMatrix.m_f21 * a_rVector.y + a_rMatrix.m_f31 * a_rVector.z + a_rMatrix.m_f41 * a_rVector.w;
+			a_rOutVector.y = a_rMatrix.m_f12 * a_rVector.x + a_rMatrix.m_f22 * a_rVector.y + a_rMatrix.m_f32 * a_rVector.z + a_rMatrix.m_f42 * a_rVector.w;
+			a_rOutVector.z = a_rMatrix.m_f13 * a_rVector.x + a_rMatrix.m_f23 * a_rVector.y + a_rMatrix.m_f33 * a_rVector.z + a_rMatrix.m_f43 * a_rVector.w;
+			a_rOutVector.w = a_rMatrix.m_f14 * a_rVector.x + a_rMatrix.m_f24 * a_rVector.y + a_rMatrix.m_f34 * a_rVector.z + a_rMatrix.m_f44 * a_rVector.w;
+		}
 
 		void operator=(const TMatrix44& a_rMatrix)
 		{
@@ -191,34 +236,7 @@ namespace Toshi
 			);
 		}
 
-		// DirectX Math
-
-		TMatrix44(const DirectX::XMMATRIX& a_rMatrix)
-		{
-			*(DirectX::XMMATRIX*)this = a_rMatrix;
-		}
-
-		void Set(const DirectX::XMMATRIX& a_rMatrix)
-		{
-			*(DirectX::XMMATRIX*)this = a_rMatrix;
-		}
-
-		const DirectX::XMMATRIX& XMM() const
-		{
-			return *(DirectX::XMMATRIX*)this;
-		}
-
-		TMatrix44 operator*=(const TMatrix44& a_rMatrix)
-		{
-			Set(DirectX::XMMatrixMultiply(XMM(), a_rMatrix.XMM()));
-		}
-
 	public:
 		static TMatrix44 IDENTITY;
 	};
-
-	inline TMatrix44 operator*(const TMatrix44& a_rMatrix1, const TMatrix44& a_rMatrix2)
-	{
-		return DirectX::XMMatrixMultiply(a_rMatrix1.XMM(), a_rMatrix2.XMM());
-	}
 }

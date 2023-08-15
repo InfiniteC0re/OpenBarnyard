@@ -79,7 +79,7 @@ namespace Toshi {
 			}
 
 			TMatrix44 viewMatrix = m_TransformMatrix;
-			viewMatrix.InvertOrthogonal();
+			viewMatrix.InvertOrthonormal();
 
 			pRenderContext->SetWorldViewMatrix(viewMatrix);
 			pRenderContext->SetModelViewMatrix(viewMatrix);

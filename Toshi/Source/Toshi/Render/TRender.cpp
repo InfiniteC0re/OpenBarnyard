@@ -323,8 +323,8 @@ namespace Toshi {
 		m_eCameraMode = CameraMode_Perspective;
 		m_ProjParams.m_fNearClip = 1.0f;
 		m_ProjParams.m_fFarClip = 1000.0f;
-		m_mModelViewMatrix.Identity();
-		m_mWorldViewMatrix.Identity();
+		m_oModelViewMatrix.Identity();
+		m_oWorldViewMatrix.Identity();
 
 		auto pDevice = pRender->GetCurrentDevice();
 		
@@ -341,18 +341,18 @@ namespace Toshi {
 
 	void TRenderContext::SetModelViewMatrix(const TMatrix44& a_rMatrix)
 	{
-		m_eFlags |= (FLAG_HASMODELVIEWMATRIX | FLAG_HASWORLDVIEWMATRIX);
-		m_mModelViewMatrix = a_rMatrix;
-		m_eFlags &= ~(FLAG_UNK1 | FLAG_UNK3);
+		m_eFlags |= (FLAG_HAS_MODELVIEWMATRIX | FLAG_DIRTY_VIEWMODELMATRIX);
+		m_oModelViewMatrix = a_rMatrix;
+		m_eFlags &= ~(FLAG_HAS_MODELWORLDMATRIX | FLAG_UNK3);
 
 		TRender::GetSingleton()->GetParamTable()->SetParameterM44(TRenderParamTable::M44PARAM_MODELVIEW, a_rMatrix);
 	}
 
 	void TRenderContext::SetWorldViewMatrix(const TMatrix44& a_rMatrix)
 	{
-		m_eFlags |= FLAG_HASWORLDVIEWMATRIX;
-		m_mWorldViewMatrix = a_rMatrix;
-		m_eFlags &= ~(FLAG_UNK1 | FLAG_UNK2 | FLAG_UNK4 | FLAG_UNK5 | FLAG_UNK6);
+		m_eFlags |= FLAG_DIRTY_VIEWMODELMATRIX;
+		m_oWorldViewMatrix = a_rMatrix;
+		m_eFlags &= ~(FLAG_HAS_MODELWORLDMATRIX | FLAG_HAS_VIEWWORLDMATRIX | FLAG_UNK4 | FLAG_UNK5 | FLAG_UNK6);
 	}
 
 	void TRenderContext::SetProjectionParams(const PROJECTIONPARAMS& params)
@@ -366,6 +366,40 @@ namespace Toshi {
 
 		m_ProjParams = params;
 		m_eFlags = (m_eFlags & (~(FLAG_UNK3 | FLAG_UNK4 | FLAG_UNK5 | FLAG_UNK6))) | FLAG_DIRTY;
+	}
+
+	const TMatrix44& TRenderContext::GetViewWorldMatrix()
+	{
+		if (!HASFLAG(m_eFlags & FLAG_HAS_VIEWWORLDMATRIX))
+		{
+			m_oViewWorldMatrix.InvertOrthogonal(m_oWorldViewMatrix);
+			m_eFlags |= FLAG_HAS_VIEWWORLDMATRIX;
+		}
+
+		return m_oViewWorldMatrix;
+	}
+
+	const TMatrix44& TRenderContext::GetModelWorldMatrix()
+	{
+		if (!HASFLAG(m_eFlags & FLAG_HAS_MODELWORLDMATRIX))
+		{
+			m_oModelWorldMatrix.Multiply(GetViewWorldMatrix(), m_oModelViewMatrix);
+			m_eFlags |= FLAG_HAS_MODELWORLDMATRIX;
+		}
+
+		TRender::GetSingleton()->GetParamTable()->SetParameterM44(TRenderParamTable::M44PARAM_MODELWORLD, m_oModelWorldMatrix);
+		return m_oModelWorldMatrix;
+	}
+
+	const TMatrix44& TRenderContext::GetViewModelMatrix()
+	{
+		if (HASFLAG(m_eFlags & FLAG_DIRTY_VIEWMODELMATRIX))
+		{
+			m_oViewModelMatrix.Invert(m_oModelViewMatrix);
+			m_eFlags &= ~FLAG_DIRTY_VIEWMODELMATRIX;
+		}
+		
+		return m_oViewModelMatrix;
 	}
 
 }

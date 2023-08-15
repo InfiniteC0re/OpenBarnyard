@@ -37,6 +37,46 @@ namespace Toshi
 		Set(v2.x, v2.y, v2.z, 0.0f, v.x, v.y, v.z, 0.0f, vec.x, vec.y, vec.z, vec.w, m_f41, m_f42, m_f43, m_f44);
 	}
 
+	void TMatrix44::Multiply(const TMatrix44& a_rLeft, const TMatrix44& a_rRight)
+	{
+		/*float fVar2;
+		bool bVar3;
+		int iVar4;
+		int iVar5;
+
+		TMatrix44* pThis = this;
+
+		iVar4 = 0;
+		do {
+			iVar5 = 0;
+			while (true) {
+				fVar2 = (&a_rLeft.m_f11)[iVar5] * *(float*)((int)&a_rRight.m_f11 + iVar4);
+				if (3 < iVar5 + 1) break;
+				(&pThis->m_f11)[iVar5] = fVar2;
+				iVar5 = iVar5 + 1;
+			}
+			(&pThis->m_f11)[iVar5] = fVar2;
+			iVar4 = iVar4 + 0x10;
+			pThis = (TMatrix44*)&pThis->m_f21;
+		} while (iVar4 < 0x40);*/
+
+		TASSERT((this != &a_rLeft) && (this != &a_rRight));
+
+		for (int i = 0; i < 4; i++)
+		{
+			float* pBasis = AsBasisVector4(i).AsArray();
+
+			for (int k = 0; k < 4; k++)
+			{
+				pBasis[k] =
+					a_rLeft.AsBasisVector4(3).AsArray()[k] * a_rRight.AsBasisVector4(i).w +
+					a_rLeft.AsBasisVector4(2).AsArray()[k] * a_rRight.AsBasisVector4(i).z +
+					a_rLeft.AsBasisVector4(1).AsArray()[k] * a_rRight.AsBasisVector4(i).y +
+					a_rLeft.AsBasisVector4(0).AsArray()[k] * a_rRight.AsBasisVector4(i).x;
+			}
+		}
+	}
+
 	TBOOL TMatrix44::Invert(TMatrix44& a_rRight)
 	{
 		assert(a_rRight.m_f14 == 0.0f);
@@ -80,7 +120,34 @@ namespace Toshi
 		return TTRUE;
 	}
 
-	void TMatrix44::InvertOrthogonal()
+	void TMatrix44::InvertOrthogonal(const TMatrix44& a_rRight)
+	{
+		TASSERT(a_rRight.m_f14 == 0.0f);
+		TASSERT(a_rRight.m_f24 == 0.0f);
+		TASSERT(a_rRight.m_f34 == 0.0f);
+		TASSERT(a_rRight.m_f44 == 1.0f);
+
+		m_f11 = a_rRight.m_f11;
+		m_f12 = a_rRight.m_f21;
+		m_f13 = a_rRight.m_f31;
+		m_f14 = a_rRight.m_f14;
+		m_f21 = a_rRight.m_f12;
+		m_f22 = a_rRight.m_f22;
+		m_f23 = a_rRight.m_f32;
+		m_f24 = a_rRight.m_f24;
+		m_f31 = a_rRight.m_f13;
+		m_f32 = a_rRight.m_f23;
+		m_f33 = a_rRight.m_f33;
+		m_f34 = a_rRight.m_f34;
+		m_f41 = -a_rRight.m_f41;
+		m_f42 = -a_rRight.m_f42;
+		m_f43 = -a_rRight.m_f43;
+		m_f44 = m_f44;
+
+		RotateVector(AsBasisVector4(3), *this, AsBasisVector4(0));
+	}
+
+	void TMatrix44::InvertOrthonormal()
 	{
 		TASSERT(IsOrthonormal());
 
@@ -120,6 +187,17 @@ namespace Toshi
 		m_f32 = fVal1 * a_rQuaternion.y - fVal3;
 		m_f23 = fVal1 * a_rQuaternion.y + fVal3;
 		m_f33 = 1.0f - (fVal2 * a_rQuaternion.y + fVal4);
+
+		return *this;
+	}
+
+	TMatrix44& TMatrix44::PushQuaternion(const TQuaternion& a_rQuaternion, const TMatrix44& a_rMatrix, const TVector3& a_rOrigin)
+	{
+		TMatrix44 matrix;
+
+		matrix.SetFromQuaternion(a_rQuaternion);
+		matrix.AsBasisVector3(3) = a_rOrigin;
+		Multiply(a_rMatrix, matrix);
 
 		return *this;
 	}
@@ -179,14 +257,6 @@ namespace Toshi
 		m_f12 = fVar2 * fSin + m_f12 * fCos;
 		m_f13 = m_f23 * fSin + fVar1 * fCos;
 		m_f23 = m_f23 * fCos - fVar1 * fSin;
-	}
-
-	void TMatrix44::TransformVector(TVector4& outVector, const TMatrix44& matrix, const TVector4& vector)
-	{
-		outVector.z = matrix.m_f13 * vector.x + matrix.m_f23 * vector.y + matrix.m_f33 * vector.z + matrix.m_f43 * vector.w;
-		outVector.w = matrix.m_f14 * vector.x + matrix.m_f24 * vector.y + matrix.m_f34 * vector.z + matrix.m_f44 * vector.w;
-		outVector.y = matrix.m_f12 * vector.x + matrix.m_f22 * vector.y + matrix.m_f32 * vector.z + matrix.m_f42 * vector.w;
-		outVector.x = matrix.m_f21 * vector.y + matrix.m_f11 * vector.x + matrix.m_f31 * vector.z + matrix.m_f41 * vector.w;
 	}
 
 }

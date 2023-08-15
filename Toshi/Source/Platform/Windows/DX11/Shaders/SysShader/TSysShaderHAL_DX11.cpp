@@ -240,9 +240,10 @@ namespace Toshi {
 		auto pRenderContext = TSTATICCAST(TRenderContextDX11*, pRender->GetCurrentRenderContext());
 		auto pMesh          = TSTATICCAST(TSysMeshHAL*, pRenderPacket->GetMesh());
 
-		TMatrix44 worldViewProjection = pRenderPacket->GetModelViewMatrix().XMM() * pRenderContext->GetProjectionMatrix().XMM();
-		pRender->SetVec4InVSBuffer(0, &worldViewProjection, 4);
-		pRender->SetVec4InPSBuffer(0, &TSysMaterialHAL::s_AlphaTest, 1);
+		TMatrix44 worldViewProjection;
+		worldViewProjection.Multiply(pRenderContext->GetProjectionMatrix(), pRenderPacket->GetModelViewMatrix());
+		pRender->SetValueInVSBuffer(0, worldViewProjection);
+		pRender->SetValueInPSBuffer(0, TSysMaterialHAL::s_AlphaTest);
 
 		pRender->DrawIndexed(
 			D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP,

@@ -75,6 +75,26 @@ int TMain(int argc, char** argv)
 		PPropertiesWriter::WriteTRB("C:\\dev\\pproperties_repacked.trb", properties, TTRUE);
 	}
 
+	TMatrix44 matOut;
+	TMatrix44 mat1;
+	TMatrix44 mat2;
+
+	mat1.Set(
+		1, 0, 0, 0,
+		1, 2, 3, 8,
+		0, 12, 26, 9,
+		9, 2, 5, 9
+	);
+
+	mat2.Set(
+		0, 12, 26, 9,
+		1, 2, 3, 8,
+		9, 2, 5, 9,
+		1, 0, 0, 0
+	);
+
+	matOut.Multiply(mat1, mat2);
+
 	/*if (TTRB::ERROR_OK == trb.Load("C:\\dev\\a.trb"))
 	{
 		auto properties = PProperties::LoadFromTRB(trb);

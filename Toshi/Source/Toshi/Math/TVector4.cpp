@@ -16,11 +16,11 @@ namespace Toshi
 		if (MagnitudeSq() != 0.0f)
 		{
 			float magnitude = TMath::OneOverSqrt(MagnitudeSq());
-			Set({ x * magnitude, y * magnitude, z * magnitude });
+			Set({ x * magnitude, y * magnitude, z * magnitude, 1.0f });
 		}
 		else
 		{
-			Set({ 0.0f, 0.0f, 1.0f });
+			Set({ 0.0f, 0.0f, 1.0f, 1.0f });
 		}
 	}
 
