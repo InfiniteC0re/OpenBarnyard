@@ -113,8 +113,8 @@ namespace Toshi
 		const TMatrix44& GetViewWorldMatrix();
 		const TMatrix44& GetModelWorldMatrix();
 		const TMatrix44& GetViewModelMatrix();
-        TMatrix44& GetModelViewMatrix() { return m_oModelViewMatrix; }
-        TMatrix44& GetWorldViewMatrix() { return m_oWorldViewMatrix; }
+		TMatrix44& GetModelViewMatrix() { return m_oModelViewMatrix; }
+		TMatrix44& GetWorldViewMatrix() { return m_oWorldViewMatrix; }
 
 		const PROJECTIONPARAMS& GetProjectionParams() const
 		{

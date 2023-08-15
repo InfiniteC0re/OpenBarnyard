@@ -39,26 +39,26 @@ void ATestModel::Render(float deltaTime)
     Toshi::TMatrix44 worldView = pRenderContext->GetWorldViewMatrix();
     Toshi::TMatrix44 modelView;
 
-	Toshi::TMatrix44 rotationMatrix;
-	rotationMatrix.Identity();
-	rotationMatrix.RotateY(m_CubeRotation);
+    Toshi::TMatrix44 rotationMatrix;
+    rotationMatrix.Identity();
+    rotationMatrix.RotateY(m_CubeRotation);
 
-	Toshi::TMatrix44 modelMatrix;
-	modelMatrix.Identity();
-	modelMatrix.SetTranslation(m_Position);
+    Toshi::TMatrix44 modelMatrix;
+    modelMatrix.Identity();
+    modelMatrix.SetTranslation(m_Position);
 
-	modelView.Multiply(worldView, modelMatrix);
-	modelView.Multiply(rotationMatrix);
+    modelView.Multiply(worldView, modelMatrix);
+    modelView.Multiply(rotationMatrix);
     pRenderContext->SetModelViewMatrix(modelView);
 
     m_pCube->Render();
     m_CubeRotation += deltaTime;
 
-	modelMatrix.Identity();
-	modelMatrix.Scale(10.0f, 1.0f, 10.0f);
-	modelMatrix.SetTranslation(m_Position + Toshi::TVector3(0, 0.1f, 0));
+    modelMatrix.Identity();
+    modelMatrix.Scale(10.0f, 1.0f, 10.0f);
+    modelMatrix.SetTranslation(m_Position + Toshi::TVector3(0, 0.1f, 0));
 
-	modelView.Multiply(worldView, modelMatrix);
+    modelView.Multiply(worldView, modelMatrix);
     pRenderContext->SetModelViewMatrix(modelView);
 
     m_pPlane->Render();
