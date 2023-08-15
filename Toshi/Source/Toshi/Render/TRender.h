@@ -26,7 +26,7 @@ namespace Toshi
 			FLAG_UNK4 = BITFIELD(5),
 			FLAG_UNK5 = BITFIELD(6),
 			FLAG_UNK6 = BITFIELD(7),
-			FLAG_HAS_MODELVIEWMATRIX = BITFIELD(8),
+			FLAG_DIRTY_WORLDMODELMATRIX = BITFIELD(8),
 			FLAG_DIRTY_VIEWMODELMATRIX = BITFIELD(9),
 		};
 
@@ -111,6 +111,7 @@ namespace Toshi
 		}
 
 		const TMatrix44& GetViewWorldMatrix();
+		const TMatrix44& GetWorldModelMatrix();
 		const TMatrix44& GetModelWorldMatrix();
 		const TMatrix44& GetViewModelMatrix();
 		TMatrix44& GetModelViewMatrix() { return m_oModelViewMatrix; }
@@ -132,6 +133,7 @@ namespace Toshi
 		TMatrix44 m_oModelWorldMatrix;          // 0x00D0
 		TMatrix44 m_oViewWorldMatrix;           // 0x0110
 		// ...
+		TMatrix44 m_oWorldModelMatrix;          // 0x036C
 		TMatrix44 m_oViewModelMatrix;           // 0x036C
 	};
 

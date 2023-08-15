@@ -341,7 +341,7 @@ namespace Toshi {
 
 	void TRenderContext::SetModelViewMatrix(const TMatrix44& a_rMatrix)
 	{
-		m_eFlags |= (FLAG_HAS_MODELVIEWMATRIX | FLAG_DIRTY_VIEWMODELMATRIX);
+		m_eFlags |= (FLAG_DIRTY_WORLDMODELMATRIX | FLAG_DIRTY_VIEWMODELMATRIX);
 		m_oModelViewMatrix = a_rMatrix;
 		m_eFlags &= ~(FLAG_HAS_MODELWORLDMATRIX | FLAG_UNK3);
 
@@ -400,6 +400,17 @@ namespace Toshi {
 		}
 		
 		return m_oViewModelMatrix;
+	}
+
+	const TMatrix44& TRenderContext::GetWorldModelMatrix()
+	{
+		if (HASFLAG(m_eFlags & FLAG_DIRTY_WORLDMODELMATRIX))
+		{
+			m_oViewModelMatrix.Invert(m_oModelViewMatrix);
+			m_eFlags &= ~FLAG_DIRTY_WORLDMODELMATRIX;
+		}
+
+		return m_oWorldModelMatrix;
 	}
 
 }
