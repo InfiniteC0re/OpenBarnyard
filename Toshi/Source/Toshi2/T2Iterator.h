@@ -75,15 +75,15 @@ namespace Toshi
 		T2Iterator operator++()
 		{
 			TASSERT(m_pPtr != TNULL);
-			m_pPtr = m_pPtr->Next();
-			return m_pPtr;
+			m_pPtr = static_cast<T*>(m_pPtr->Next());
+			return T2Iterator{ m_pPtr };
 		}
 
 		T2Iterator operator--()
 		{
 			TASSERT(m_pPtr != TNULL);
-			m_pPtr = m_pPtr->Prev();
-			return m_pPtr;
+			m_pPtr = static_cast<T*>(m_pPtr->Prev());
+			return T2Iterator{ m_pPtr };
 		}
 
 	private:

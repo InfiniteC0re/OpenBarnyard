@@ -149,6 +149,9 @@ namespace Toshi
 	class T2DList : public T2GenericDList
 	{
 	public:
+		using Iterator = T2Iterator<T, Node>;
+
+	public:
 		T2DList()
 		{
 			static_assert(std::is_base_of<T2GenericDList::Node, T>::value, "T must be a descendant of T2GenericDList::Node");
@@ -159,19 +162,19 @@ namespace Toshi
 			TASSERT(IsEmpty());
 		}
 
-		T2Iterator<T, Node> Head() const
+		Iterator Head() const
 		{
 			TASSERT(!IsEmpty());
 			return m_oRoot.Next();
 		}
 
-		T2Iterator<T, Node> Tail() const
+		Iterator Tail() const
 		{
 			TASSERT(!IsEmpty());
 			return m_oRoot.Prev();
 		}
 
-		T2Iterator<T, Node> Begin() const
+		Iterator Begin() const
 		{
 			return m_oRoot.Next();
 		}
@@ -181,7 +184,7 @@ namespace Toshi
 			return &m_oRoot;
 		}
 
-		void Begin(T2Iterator<T, Node>& begin) const
+		void Begin(Iterator& begin) const
 		{
 			begin = m_oRoot.Next();
 		}
@@ -191,17 +194,17 @@ namespace Toshi
 			end = &m_oRoot;
 		}
 
-		T2Iterator<T, Node> Front() const
+		Iterator Front() const
 		{
 			return m_oRoot.Next();
 		}
 
-		T2Iterator<T, Node> Back() const
+		Iterator Back() const
 		{
 			return m_oRoot.Prev();
 		}
 
-		void Delete(const T2Iterator<T, Node>& iter)
+		void Delete(const Iterator& iter)
 		{
 			iter->Remove();
 			delete static_cast<T*>(iter);
@@ -215,7 +218,7 @@ namespace Toshi
 			}
 		}
 
-		void Erase(const T2Iterator<T, Node>& iter)
+		void Erase(const Iterator& iter)
 		{
 			iter->Remove();
 		}

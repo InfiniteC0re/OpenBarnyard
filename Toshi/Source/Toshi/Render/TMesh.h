@@ -1,5 +1,6 @@
 #pragma once
 #include "TMaterial.h"
+#include "Toshi2/T2Flags.h"
 
 namespace Toshi
 {

@@ -135,6 +135,7 @@ namespace Toshi
 	{
 	public:
 		friend class ARenderer;
+		friend class AImGuiRenderer;
 
 		static constexpr size_t HEAPSIZE = 0x10000;
 		static constexpr size_t VERTEX_CONSTANT_BUFFER_SIZE = 0x1000;
