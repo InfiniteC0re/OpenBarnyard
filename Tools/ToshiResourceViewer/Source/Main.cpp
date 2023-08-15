@@ -20,7 +20,7 @@ public:
 	virtual TBOOL OnCreate(int argc, char** argv) override
 	{
 		AResourceViewLoader::CreateSingleton();
-		AResourceViewLoader::GetSingleton()->CreateFile("C:\\Stuff\\Barnyard\\Game\\Data\\Units\\AllUnitTypes.trz");
+		AResourceViewLoader::GetSingleton()->CreateFile("C:\\Stuff\\Barnyard\\Game\\Data\\credits.trb");
 
 		return AImGuiRenderer::CreateSingleton()->CreateTRender() && TApplication::OnCreate(argc, argv);
 	}
@@ -33,6 +33,7 @@ public:
 
 	virtual TBOOL OnUpdate(float a_fDeltaTime) override
 	{
+		AResourceViewLoader::GetSingleton()->Update(a_fDeltaTime);
 		AImGuiRenderer::GetSingleton()->Update(a_fDeltaTime);
 
 		return TTRUE;

@@ -44,7 +44,7 @@ AImGui::AImGui()
     style.Colors[ImGuiCol_TitleBg] = ImVec4(0.08f, 0.08f, 0.09f, 1.00f);
     style.Colors[ImGuiCol_TitleBgActive] = ImVec4(0.08f, 0.08f, 0.09f, 1.00f);
     style.Colors[ImGuiCol_TitleBgCollapsed] = ImVec4(0.00f, 0.00f, 0.00f, 0.51f);
-    style.Colors[ImGuiCol_MenuBarBg] = ImVec4(0.14f, 0.14f, 0.14f, 1.00f);
+    style.Colors[ImGuiCol_MenuBarBg] = ImVec4(0.10f, 0.10f, 0.10f, 1.00f);
     style.Colors[ImGuiCol_ScrollbarBg] = ImVec4(0.02f, 0.02f, 0.02f, 0.53f);
     style.Colors[ImGuiCol_ScrollbarGrab] = ImVec4(0.31f, 0.31f, 0.31f, 1.00f);
     style.Colors[ImGuiCol_ScrollbarGrabHovered] = ImVec4(0.41f, 0.41f, 0.41f, 1.00f);
@@ -120,11 +120,9 @@ void AImGui::Render()
 
 	auto pResourceLoader = AResourceViewLoader::GetSingleton();
 
-	for (auto it = pResourceLoader->Begin(); it != pResourceLoader->End(); )
+	for (auto it = pResourceLoader->Begin(); it != pResourceLoader->End(); it++)
 	{
-		auto pNext = it->Next();
 		it->Render();
-		it = pNext;
 	}
 
     ImGui::SetNextWindowSize({ 500, 500 });

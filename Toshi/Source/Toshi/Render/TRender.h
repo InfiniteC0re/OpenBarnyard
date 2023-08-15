@@ -133,7 +133,7 @@ namespace Toshi
 		TMatrix44 m_oModelWorldMatrix;          // 0x00D0
 		TMatrix44 m_oViewWorldMatrix;           // 0x0110
 		// ...
-		TMatrix44 m_oWorldModelMatrix;          // 0x032Ñ
+		TMatrix44 m_oWorldModelMatrix;          // 0x032C
 		TMatrix44 m_oViewModelMatrix;           // 0x036C
 	};
 

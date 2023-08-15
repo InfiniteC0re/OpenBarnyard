@@ -68,8 +68,10 @@ void AImGuiRenderer::Update(float a_fDeltaTime)
 
 	pRender->Update(a_fDeltaTime);
 	pRender->BeginScene();
+
 	m_pViewport->Begin();
 	AImGui::GetSingleton()->Render();
 	m_pViewport->End();
+	
 	pRender->EndScene();
 }

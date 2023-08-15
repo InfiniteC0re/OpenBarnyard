@@ -27,6 +27,7 @@ public:
 		return m_Resources.End();
 	}
 
+	void Update(float a_fDeltaTime);
 	TBOOL CreateFile(const char* a_szFileName, AResourceFilePtr* a_pResourceFile = TNULL);
 
 private:

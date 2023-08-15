@@ -137,6 +137,30 @@ public:
 		return m_uValue.Array;
 	}
 
+	bool* GetBooleanPointer()
+	{
+		TASSERT(m_eType == Type::Bool);
+		return &m_uValue.Bool;
+	}
+
+	float* GetFloatPointer()
+	{
+		TASSERT(m_eType == Type::Float);
+		return &m_uValue.Float;
+	}
+
+	int* GetIntegerPointer()
+	{
+		TASSERT(m_eType == Type::Int);
+		return &m_uValue.Int;
+	}
+
+	uint32_t* GetUINT32Pointer()
+	{
+		TASSERT(m_eType == Type::UInt32);
+		return &m_uValue.UInt32;
+	}
+
 	void SetInt(int a_iValue)
 	{
 		this->operator=(a_iValue);
@@ -613,6 +637,16 @@ public:
 	~PProperties()
 	{
 		Delete();
+	}
+
+	PProperty* Begin()
+	{
+		return m_pProperties;
+	}
+
+	PProperty* End()
+	{
+		return m_pProperties + m_iCount;
 	}
 
 	const PProperty* Begin() const

@@ -20,6 +20,23 @@ static constexpr AResourceInitialiserMap oInitialiser[] =
 
 static constexpr size_t oInitialiserSize = sizeof(oInitialiser) / sizeof(*oInitialiser);
 
+void AResourceViewLoader::Update(float a_fDeltaTime)
+{
+	for (auto it = m_Resources.Begin(); it != m_Resources.End();)
+	{
+		if (it->IsSetToBeDestroyed())
+		{
+			auto pNext = it->Next();
+			delete it;
+			it = pNext;
+		}
+		else
+		{
+			it++;
+		}
+	}
+}
+
 TBOOL AResourceViewLoader::CreateFile(const char* a_szFileName, AResourceFilePtr* a_pResourceFile)
 {
 	AResourceFilePtr pResFile = AResourceFile::Create();

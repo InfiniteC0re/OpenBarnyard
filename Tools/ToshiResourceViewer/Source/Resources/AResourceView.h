@@ -11,8 +11,13 @@ public:
 
 	TBOOL LoadFile(const char* a_szFileName)
 	{
-		m_sFilePath = a_szFileName;
+		m_sFileName = a_szFileName;
 		return m_TRB.Load(a_szFileName) == Toshi::TTRB::ERROR_OK;
+	}
+
+	const Toshi::TString8& GetFileName() const
+	{
+		return m_sFileName;
 	}
 
 	Toshi::TTRB& GetTRB()
@@ -29,7 +34,7 @@ private:
 	AResourceFile() = default;
 
 private:
-	Toshi::TString8 m_sFilePath;
+	Toshi::TString8 m_sFileName;
 	Toshi::TTRB m_TRB;
 };
 
@@ -112,6 +117,7 @@ public:
 		m_pFile(a_pResourceFile)
 	{
 		OnCreate();
+		m_bToBeDestroyed = TFALSE;
 	}
 	
 	virtual ~AResourceView()
@@ -125,7 +131,12 @@ public:
 
 	void Destroy()
 	{
-		delete this;
+		m_bToBeDestroyed = TTRUE;
+	}
+
+	TBOOL IsSetToBeDestroyed() const
+	{
+		return m_bToBeDestroyed;
 	}
 
 	AResourceFilePtr GetFile()
@@ -140,6 +151,7 @@ public:
 	
 private:
 	AResourceFilePtr m_pFile;
+	TBOOL m_bToBeDestroyed;
 };
 
 inline AResourceFilePtr AResourceFile::Create()
