@@ -20,7 +20,7 @@ public:
 	virtual TBOOL OnCreate(int argc, char** argv) override
 	{
 		AResourceViewLoader::CreateSingleton();
-		AResourceViewLoader::GetSingleton()->CreateFile("C:\\Stuff\\Barnyard\\Game\\Data\\credits.trb");
+		//AResourceViewLoader::GetSingleton()->CreateFile("C:\\Stuff\\Barnyard\\Game\\Data\\credits.trb");
 
 		return AImGuiRenderer::CreateSingleton()->CreateTRender() && TApplication::OnCreate(argc, argv);
 	}

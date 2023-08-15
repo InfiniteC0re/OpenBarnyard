@@ -41,16 +41,25 @@ private:
 class AResourceFilePtr
 {
 public:
+	AResourceFilePtr()
+	{
+		m_pPtr = TNULL;
+	}
+
 	AResourceFilePtr(AResourceFile* a_pResFile)
 	{
 		m_pPtr = a_pResFile;
-		m_pPtr->IncRefCount();
+		
+		if (m_pPtr)
+			m_pPtr->IncRefCount();
 	}
 
 	AResourceFilePtr(const AResourceFilePtr& a_rOther)
 	{
 		m_pPtr = a_rOther.m_pPtr;
-		m_pPtr->IncRefCount();
+		
+		if (m_pPtr)
+			m_pPtr->IncRefCount();
 	}
 
 	~AResourceFilePtr()
@@ -124,6 +133,9 @@ public:
 	{
 		OnDestroy();
 	}
+
+	virtual TBOOL SupportsSave() { return TFALSE; }
+	virtual void Save() { }
 
 	virtual void Render() { }
 	virtual void OnCreate() { }

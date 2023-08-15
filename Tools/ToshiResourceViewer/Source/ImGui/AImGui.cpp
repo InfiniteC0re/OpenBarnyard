@@ -14,7 +14,9 @@
 #include <Platform/Windows/DX11/TRender_DX11.h>
 #include <Platform/Windows/DX11/TRenderContext_DX11.h>
 
-using namespace Toshi;
+#include <commdlg.h>
+
+TOSHI_NAMESPACE_USING
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -84,7 +86,7 @@ AImGui::AImGui()
     style.GrabRounding = style.FrameRounding = 2.3f;
     style.WindowPadding = { 10, 10 };
     style.FramePadding = ImVec2(12, 5);
-    style.WindowBorderSize = 0.0f;
+    style.WindowBorderSize = 1.0f;
 
     auto pRender = TRenderDX11::Interface();
 
@@ -128,6 +130,31 @@ void AImGui::Render()
     ImGui::SetNextWindowSize({ 500, 500 });
     
     ImGui::Begin("Debug Menu", TNULL, ImGuiWindowFlags_NoResize);
+
+	if (ImGui::Button("Open File"))
+	{
+		OPENFILENAMEA ofn;       // common dialog box structure
+		TCHAR szFile[260] = { 0 };       // if using TCHAR macros
+
+		// Initialize OPENFILENAME
+		ZeroMemory(&ofn, sizeof(ofn));
+		ofn.lStructSize = sizeof(ofn);
+		ofn.hwndOwner = TRenderDX11::Interface()->m_Window.GetHWND();
+		ofn.lpstrFile = szFile;
+		ofn.nMaxFile = sizeof(szFile);
+		ofn.lpstrFilter = "All\0*.*\0";
+		ofn.nFilterIndex = 1;
+		ofn.lpstrFileTitle = NULL;
+		ofn.nMaxFileTitle = 0;
+		ofn.lpstrInitialDir = NULL;
+		ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR;
+
+		if (GetOpenFileName(&ofn) == TRUE)
+		{
+			// use ofn.lpstrFile
+			AResourceViewLoader::GetSingleton()->CreateFile(ofn.lpstrFile);
+		}
+	}
 
     ImGui::TextColored(ImColor(200, 200, 200, 255), "Statistics");
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 3);
