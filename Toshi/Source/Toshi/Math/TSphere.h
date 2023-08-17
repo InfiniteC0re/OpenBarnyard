@@ -100,6 +100,16 @@ namespace Toshi {
 			m_fRadius = a_rSphere.m_fRadius;
 		}
 
+		__forceinline const TVector3& GetOrigin() const
+		{
+			return m_Origin;
+		}
+
+		__forceinline TFLOAT GetRadius() const
+		{
+			return m_fRadius;
+		}
+
 		__forceinline TVector4& AsVector4() { return *TREINTERPRETCAST(TVector4*, this); }
 		__forceinline const TVector4& AsVector4() const { return *TREINTERPRETCAST(const TVector4*, this); }
 	

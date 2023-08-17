@@ -385,6 +385,19 @@ namespace Toshi {
 		return m_aWorldPlanes;
 	}
 
+	TBOOL TRenderContext::CullSphereToFrustumSimple(const TSphere& a_rSphere, const TPlane* a_pPlanes, int a_iUnused)
+	{
+		for (size_t i = 0; i < 6; i++)
+		{
+			TFLOAT fDist = TVector4::DotProduct3(a_rSphere.AsVector4(), a_pPlanes[i].AsVector4());
+
+			if (a_rSphere.GetRadius() < fDist - a_pPlanes[i].GetD())
+				return TFALSE;
+		}
+
+		return TTRUE;
+	}
+
 	const TMatrix44& TRenderContext::GetViewWorldMatrix()
 	{
 		if (!HASFLAG(m_eFlags & FLAG_HAS_VIEWWORLDMATRIX))

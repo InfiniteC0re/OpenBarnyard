@@ -1,5 +1,6 @@
 #pragma once
 #include "Toshi/Math/Math.h"
+#include "Toshi/Math/TSphere.h"
 #include "Toshi/Core/TStack.h"
 #include "Toshi/Core/TNodeList.h"
 #include "Toshi/Core/TRefCounted.h"
@@ -122,6 +123,8 @@ namespace Toshi
 		}
 
 		const TPlane* GetWorldPlanes();
+
+		TBOOL CullSphereToFrustumSimple(const TSphere& a_rSphere, const TPlane* a_pPlanes, int a_iUnused);
 
 		const TMatrix44& GetViewWorldMatrix();
 		const TMatrix44& GetWorldModelMatrix();
