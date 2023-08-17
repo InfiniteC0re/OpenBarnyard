@@ -6,12 +6,12 @@ namespace Toshi
 	{
 	public:
 		TVector2() { Set(0, 0); }
-		TVector2(TFloat x, TFloat y) { Set(x, y); }
-		TVector2(TFloat coords[2]) { Set(coords[0], coords[1]); }
+		TVector2(TFLOAT x, TFLOAT y) { Set(x, y); }
+		TVector2(TFLOAT coords[2]) { Set(coords[0], coords[1]); }
 		TVector2(const TVector2& other) { Set(other); }
 
-		void Set(TFloat x, TFloat y) { TVector2::x = x; TVector2::y = y; }
-		void Set(TFloat coords[2]) { TVector2::x = coords[0]; TVector2::y = coords[1]; }
+		void Set(TFLOAT x, TFLOAT y) { TVector2::x = x; TVector2::y = y; }
+		void Set(TFLOAT coords[2]) { TVector2::x = coords[0]; TVector2::y = coords[1]; }
 		void Set(const TVector2& other) { TVector2::x = other.x; TVector2::y = other.y; }
 
 		void Add(const TVector2& vec)
@@ -31,9 +31,9 @@ namespace Toshi
 			y /= vec.y;
 		}
 
-		void Divide(TFloat scalar)
+		void Divide(TFLOAT scalar)
 		{
-			TFloat ratio = 1.0f / scalar;
+			TFLOAT ratio = 1.0f / scalar;
 			x *= ratio;
 			y *= ratio;
 		}
@@ -43,7 +43,7 @@ namespace Toshi
 			Set(vec1 / vec2);
 		}
 
-		void Divide(const TVector2& vec, TFloat scalar)
+		void Divide(const TVector2& vec, TFLOAT scalar)
 		{
 			Set(vec);
 			Divide(scalar);
@@ -55,7 +55,7 @@ namespace Toshi
 			y *= vec.y;
 		}
 
-		void Multiply(TFloat scalar)
+		void Multiply(TFLOAT scalar)
 		{
 			x *= scalar;
 			y *= scalar;
@@ -66,7 +66,7 @@ namespace Toshi
 			Set(vec1 * vec2);
 		}
 
-		void Multiply(const TVector2& vec, TFloat scalar)
+		void Multiply(const TVector2& vec, TFLOAT scalar)
 		{
 			Set(vec);
 			Multiply(scalar);
@@ -75,8 +75,8 @@ namespace Toshi
 		void Abs(const TVector2& vec3) { Set(TMath::Abs(vec3.x), TMath::Abs(vec3.y)); }
 		void Abs() { Set(TMath::Abs(x), TMath::Abs(y)); }
 
-		TFloat Magnitude() const { return TMath::Sqrt(x * x + y * y); }
-		TFloat MagnitudeSq() const { return x * x + y * y; }
+		TFLOAT Magnitude() const { return TMath::Sqrt(x * x + y * y); }
+		TFLOAT MagnitudeSq() const { return x * x + y * y; }
 
 		TBOOL IsEqual(const TVector2& vec) { return TMath::Abs(x - x) < 0.00001 && TMath::Abs(y - y) < 0.00001; }
 
@@ -90,9 +90,9 @@ namespace Toshi
 		void operator/=(const TVector2& other) { Divide(other); }
 
 	public:
-		static TFloat Distance(const TVector2& vec1, const TVector2& vec2) { return (vec2 - vec1).Magnitude(); }
-		static TFloat DistanceSq(const TVector2& vec1, const TVector2& vec2) { return (vec2 - vec1).MagnitudeSq(); }
-		static TFloat DotProduct(const TVector2& vec1, const TVector2& vec2) { return vec1.x * vec2.x + vec1.y * vec2.y; }
+		static TFLOAT Distance(const TVector2& vec1, const TVector2& vec2) { return (vec2 - vec1).Magnitude(); }
+		static TFLOAT DistanceSq(const TVector2& vec1, const TVector2& vec2) { return (vec2 - vec1).MagnitudeSq(); }
+		static TFLOAT DotProduct(const TVector2& vec1, const TVector2& vec2) { return vec1.x * vec2.x + vec1.y * vec2.y; }
 
 	public:
 		const static TVector2 VEC_ZERO;

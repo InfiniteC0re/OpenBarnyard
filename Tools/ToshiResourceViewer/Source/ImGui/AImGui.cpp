@@ -129,75 +129,75 @@ void AImGui::Render()
 
     ImGui::SetNextWindowSize({ 500, 500 });
     
-    ImGui::Begin("Debug Menu", TNULL, ImGuiWindowFlags_NoResize);
+ //   ImGui::Begin("Debug Menu", TNULL, ImGuiWindowFlags_NoResize);
 
-	if (ImGui::Button("Open File"))
-	{
-		OPENFILENAMEA ofn;       // common dialog box structure
-		TCHAR szFile[260] = { 0 };       // if using TCHAR macros
+	//if (ImGui::Button("Open File"))
+	//{
+	//	OPENFILENAMEA ofn;       // common dialog box structure
+	//	TCHAR szFile[260] = { 0 };       // if using TCHAR macros
 
-		// Initialize OPENFILENAME
-		ZeroMemory(&ofn, sizeof(ofn));
-		ofn.lStructSize = sizeof(ofn);
-		ofn.hwndOwner = TRenderDX11::Interface()->m_Window.GetHWND();
-		ofn.lpstrFile = szFile;
-		ofn.nMaxFile = sizeof(szFile);
-		ofn.lpstrFilter = "All\0*.*\0";
-		ofn.nFilterIndex = 1;
-		ofn.lpstrFileTitle = NULL;
-		ofn.nMaxFileTitle = 0;
-		ofn.lpstrInitialDir = NULL;
-		ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR;
+	//	// Initialize OPENFILENAME
+	//	ZeroMemory(&ofn, sizeof(ofn));
+	//	ofn.lStructSize = sizeof(ofn);
+	//	ofn.hwndOwner = TRenderDX11::Interface()->m_Window.GetHWND();
+	//	ofn.lpstrFile = szFile;
+	//	ofn.nMaxFile = sizeof(szFile);
+	//	ofn.lpstrFilter = "All\0*.*\0";
+	//	ofn.nFilterIndex = 1;
+	//	ofn.lpstrFileTitle = NULL;
+	//	ofn.nMaxFileTitle = 0;
+	//	ofn.lpstrInitialDir = NULL;
+	//	ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR;
 
-		if (GetOpenFileName(&ofn) == TRUE)
-		{
-			// use ofn.lpstrFile
-			AResourceViewLoader::GetSingleton()->CreateFile(ofn.lpstrFile);
-		}
-	}
+	//	if (GetOpenFileName(&ofn) == TRUE)
+	//	{
+	//		// use ofn.lpstrFile
+	//		AResourceViewLoader::GetSingleton()->CreateFile(ofn.lpstrFile);
+	//	}
+	//}
 
-    ImGui::TextColored(ImColor(200, 200, 200, 255), "Statistics");
-    ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 3);
-    ImGui::Text("Number of created textures: %d", TTextureManager::GetSingletonSafe()->DEBUG_GetNumTextures());
+ //   ImGui::TextColored(ImColor(200, 200, 200, 255), "Statistics");
+ //   ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 3);
+ //   ImGui::Text("Number of created textures: %d", TTextureManager::GetSingletonSafe()->DEBUG_GetNumTextures());
 
-    ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
-    ImGui::Separator();
-    ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
-    ImGui::TextColored(ImColor(200, 200, 200, 255), "TMemory");
-    ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
-    ImGui::Text(
-        "Number of allocated bytes: %llu (~%lluKB, ~%lluMB)",
-        TMemory::GetNumOfAllocatedBytes(),
-        TMemory::GetNumOfAllocatedBytes() >> 10,
-        TMemory::GetNumOfAllocatedBytes() >> 20
-    );
+ //   ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+ //   ImGui::Separator();
+ //   ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+ //   ImGui::TextColored(ImColor(200, 200, 200, 255), "TMemory");
+ //   ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+ //   ImGui::Text(
+ //       "Number of allocated bytes: %llu (~%lluKB, ~%lluMB)",
+ //       TMemory::GetNumOfAllocatedBytes(),
+ //       TMemory::GetNumOfAllocatedBytes() >> 10,
+ //       TMemory::GetNumOfAllocatedBytes() >> 20
+ //   );
 
-    ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
-    ImGui::Separator();
-    ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+ //   ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+ //   ImGui::Separator();
+ //   ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
 
-    if (ImGui::CollapsingHeader("TTextureManager"))
-    {
-        ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+ //   if (ImGui::CollapsingHeader("TTextureManager"))
+ //   {
+ //       ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
 
-        auto pTexManager = TTextureManager::GetSingletonSafe();
-        
-        TTexture* pTexture = pTexManager->GetLastTexture();
+ //       auto pTexManager = TTextureManager::GetSingletonSafe();
+ //       
+ //       TTexture* pTexture = pTexManager->GetLastTexture();
 
-        int i = 1;
-        while (pTexture)
-        {
-            ImGui::Image(pTexture->GetHandle(), { 111, 111 });
+ //       int i = 1;
+ //       while (pTexture)
+ //       {
+ //           ImGui::Image(pTexture->GetHandle(), { 111, 111 });
 
-            if (ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled))
-                ImGui::SetTooltip(pTexture->GetName());
+ //           if (ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled))
+ //               ImGui::SetTooltip(pTexture->GetName());
 
-            if ((i++ % 4) != 0) ImGui::SameLine();
-            pTexture = pTexture->GetPrev();
-        }
-    }
+ //           if ((i++ % 4) != 0) ImGui::SameLine();
+ //           pTexture = pTexture->GetPrev();
+ //       }
+ //   }
 
-    ImGui::End();
+ //   ImGui::End();
 
     EndScene();
 }

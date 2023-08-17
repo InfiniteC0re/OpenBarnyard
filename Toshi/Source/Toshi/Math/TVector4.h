@@ -7,16 +7,16 @@ namespace Toshi
 	class TVector4
 	{
 	public:
-		TVector4() { TVector4::x = 0; TVector4::y = 0; TVector4::z = 0; TVector4::w = 1.0f; }
-		TVector4(TFloat x, TFloat y, TFloat z, TFloat w) { TVector4::x = x; TVector4::y = y; TVector4::z = z; TVector4::w = w; }
-		TVector4(TFloat floats[4]) { TVector4::x = floats[0]; TVector4::y = floats[1]; TVector4::z = floats[2]; TVector4::w = floats[3]; }
+		TVector4() = default;
+		TVector4(TFLOAT x, TFLOAT y, TFLOAT z, TFLOAT w) { TVector4::x = x; TVector4::y = y; TVector4::z = z; TVector4::w = w; }
+		TVector4(TFLOAT floats[4]) { TVector4::x = floats[0]; TVector4::y = floats[1]; TVector4::z = floats[2]; TVector4::w = floats[3]; }
 		TVector4(const TVector3& other) { TVector4::x = other.x; TVector4::y = other.y; TVector4::z = other.z; TVector4::w = 1.0f; }
 		TVector4(const TVector4& other) { TVector4::x = other.x; TVector4::y = other.y; TVector4::z = other.z; TVector4::w = other.w; }
 
 		void Set(const TVector3& vec) { TVector4::x = vec.x; TVector4::y = vec.y; TVector4::z = vec.z; TVector4::w = 1.0f; }
 		void Set(const TVector4& vec) { TVector4::x = vec.x; TVector4::y = vec.y; TVector4::z = vec.z; TVector4::w = vec.w; }
-		void Set(TFloat floats[4]) { TVector4::x = floats[0]; TVector4::y = floats[1]; TVector4::z = floats[2]; TVector4::w = floats[3]; }
-		void Set(TFloat x, TFloat y, TFloat z, TFloat w) { TVector4::x = x; TVector4::y = y; TVector4::z = z; TVector4::w = w; }
+		void Set(TFLOAT floats[4]) { TVector4::x = floats[0]; TVector4::y = floats[1]; TVector4::z = floats[2]; TVector4::w = floats[3]; }
+		void Set(TFLOAT x, TFLOAT y, TFLOAT z, TFLOAT w) { TVector4::x = x; TVector4::y = y; TVector4::z = z; TVector4::w = w; }
 
 		void Normalise();
 		TBOOL isNormalised(float fVal = 0.05f) const { return (((1.0f - fVal) * (1.0f - fVal)) < MagnitudeSq()) && (((1.0f + fVal) * (1.0f + fVal)) >= MagnitudeSq()); }
@@ -63,9 +63,9 @@ namespace Toshi
 			z /= vec.z;
 		}
 
-		void Divide(TFloat scalar)
+		void Divide(TFLOAT scalar)
 		{
-			TFloat ratio = 1.0f / scalar;
+			TFLOAT ratio = 1.0f / scalar;
 			x *= ratio;
 			y *= ratio;
 			z *= ratio;
@@ -76,7 +76,7 @@ namespace Toshi
 			Set(vec1 / vec2);
 		}
 
-		void Divide(const TVector4& vec, TFloat scalar)
+		void Divide(const TVector4& vec, TFLOAT scalar)
 		{
 			Set(vec);
 			Divide(scalar);
@@ -89,7 +89,7 @@ namespace Toshi
 			z *= vec.z;
 		}
 
-		void Multiply(TFloat scalar)
+		void Multiply(TFLOAT scalar)
 		{
 			x *= scalar;
 			y *= scalar;
@@ -101,7 +101,7 @@ namespace Toshi
 			Set(vec1 * vec2);
 		}
 
-		void Multiply(const TVector4& vec, TFloat scalar)
+		void Multiply(const TVector4& vec, TFLOAT scalar)
 		{
 			Set(vec);
 			Multiply(scalar);
@@ -150,10 +150,10 @@ namespace Toshi
 		void Negate4(const TVector4& vec) { Set(-vec.x, -vec.y, -vec.z, -vec.w); }
 		void Negate4() { Set(-x, -y, -z, -w); }
 
-		TFloat Magnitude() const { return TMath::Sqrt(x * x + y * y + z * z); }
-		TFloat MagnitudeSq() const { return x * x + y * y + z * z; }
-		TFloat MagnitudeXZ() const { return TMath::Sqrt(x * x + z * z); }
-		TFloat MagnitudeSqXZ() const { return x * x + z * z; }
+		TFLOAT Magnitude() const { return TMath::Sqrt(x * x + y * y + z * z); }
+		TFLOAT MagnitudeSq() const { return x * x + y * y + z * z; }
+		TFLOAT MagnitudeXZ() const { return TMath::Sqrt(x * x + z * z); }
+		TFLOAT MagnitudeSqXZ() const { return x * x + z * z; }
 
 		TVector4& Progress(const TVector4& a_rVec, float a_fScalar)
 		{
@@ -227,6 +227,6 @@ namespace Toshi
 		static const TVector4 VEC_NEGZ;
 
 	public:
-		TFloat x, y, z, w;
+		TFLOAT x, y, z, w;
 	};
 }

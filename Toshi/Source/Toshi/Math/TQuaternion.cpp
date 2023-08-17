@@ -5,10 +5,10 @@ namespace Toshi {
 
 	const TQuaternion TQuaternion::IDENTITY = { 0.0f, 0.0f, 0.0f, 1.0f };
 
-	void TQuaternion::SetFromEulerYX(const TFloat* fVal)
+	void TQuaternion::SetFromEulerYX(const TFLOAT* fVal)
 	{
-		TFloat f1;
-		TFloat f2;
+		TFLOAT f1;
+		TFLOAT f2;
 
 		TMath::SinCos(fVal[0] * 0.5f, f1, f2);
 		TQuaternion quat = TQuaternion(f1, 0, 0, f2);
@@ -17,27 +17,27 @@ namespace Toshi {
 		*this *= quat;
 	}
 
-	void TQuaternion::SetFromEulerRollPitchYaw(TFloat a_fRoll, TFloat a_fPitch, TFloat a_fYaw)
+	void TQuaternion::SetFromEulerRollPitchYaw(TFLOAT a_fRoll, TFLOAT a_fPitch, TFLOAT a_fYaw)
 	{
-		TFloat fCosRoll = cos(a_fRoll * 0.5f);
-		TFloat fSinRoll = sin(a_fRoll * 0.5f);
-		TFloat fCosPitch = cos(a_fPitch * 0.5f);
-		TFloat fSinPitch = sin(a_fPitch * 0.5f);
-		TFloat fCosYaw = cos(a_fYaw * 0.5f);
-		TFloat fSinYaw = sin(a_fYaw * 0.5f);
+		TFLOAT fCosRoll = cos(a_fRoll * 0.5f);
+		TFLOAT fSinRoll = sin(a_fRoll * 0.5f);
+		TFLOAT fCosPitch = cos(a_fPitch * 0.5f);
+		TFLOAT fSinPitch = sin(a_fPitch * 0.5f);
+		TFLOAT fCosYaw = cos(a_fYaw * 0.5f);
+		TFLOAT fSinYaw = sin(a_fYaw * 0.5f);
 
-		TFloat fX = fCosYaw * fCosPitch * fSinRoll - fSinYaw * fSinPitch * fCosRoll;
-		TFloat fY = fCosPitch * fSinRoll * fSinYaw + fSinPitch * fCosRoll * fCosYaw;
-		TFloat fZ = fCosRoll * fCosPitch * fSinYaw - fCosYaw * fSinPitch * fSinRoll;
-		TFloat fW = fSinYaw * fSinPitch * fSinRoll + fCosYaw * fCosPitch * fCosRoll;
+		TFLOAT fX = fCosYaw * fCosPitch * fSinRoll - fSinYaw * fSinPitch * fCosRoll;
+		TFLOAT fY = fCosPitch * fSinRoll * fSinYaw + fSinPitch * fCosRoll * fCosYaw;
+		TFLOAT fZ = fCosRoll * fCosPitch * fSinYaw - fCosYaw * fSinPitch * fSinRoll;
+		TFLOAT fW = fSinYaw * fSinPitch * fSinRoll + fCosYaw * fCosPitch * fCosRoll;
 
 		Set(fX, fY, fZ, fW);
 	}
 
-	void TQuaternion::SetRotation(const TVector3& a_rVec3, TFloat a_fVal)
+	void TQuaternion::SetRotation(const TVector3& a_rVec3, TFLOAT a_fVal)
 	{
-		TFloat fVal;
-		TFloat fVal2;
+		TFLOAT fVal;
+		TFLOAT fVal2;
 
 		TMath::SinCos(a_fVal * 0.5f, fVal, fVal2);
 		Set(a_rVec3.x * fVal, a_rVec3.y * fVal, a_rVec3.z * fVal, fVal2);
@@ -48,13 +48,13 @@ namespace Toshi {
 		TVector3 vec3;
 		vec3.CrossProduct(a_rVec3_2, a_rVec3);
 
-		TFloat mag = vec3.Magnitude();
+		TFLOAT mag = vec3.Magnitude();
 
 		if (mag > TMath::TFLOAT_EPSILON)
 		{
 			vec3.Divide(mag);
-			TFloat dotProduct = TVector3::DotProduct(a_rVec3_2, a_rVec3);
-			TFloat rot = 0.0f;
+			TFLOAT dotProduct = TVector3::DotProduct(a_rVec3_2, a_rVec3);
+			TFLOAT rot = 0.0f;
 			if ((dotProduct <= 1.0f - TMath::TFLOAT_EPSILON) && (rot = TMath::PI, -1.0f + TMath::TFLOAT_EPSILON <= dotProduct))
 			{
 				rot = TMath::ACos(dotProduct);
@@ -63,7 +63,7 @@ namespace Toshi {
 			return;
 		}
 
-		TFloat dotProduct = TVector3::DotProduct(a_rVec3_2, a_rVec3);
+		TFLOAT dotProduct = TVector3::DotProduct(a_rVec3_2, a_rVec3);
 
 		if (dotProduct < 0.0f)
 		{
@@ -93,10 +93,10 @@ namespace Toshi {
 		param_1.Set(quat3.x, quat3.y, quat3.z);
 	}
 
-	void TQuaternion::RotateAroundAxis(const TVector3& param_1, TFloat param_2)
+	void TQuaternion::RotateAroundAxis(const TVector3& param_1, TFLOAT param_2)
 	{
-		TFloat fVal;
-		TFloat fVal2;
+		TFLOAT fVal;
+		TFLOAT fVal2;
 
 		TMath::SinCos(param_2 * 0.5f, fVal, fVal2);
 		*this *= TQuaternion(param_1.x * fVal, param_1.y * fVal, param_1.z * fVal, fVal2);
@@ -133,10 +133,10 @@ namespace Toshi {
 
 	TQuaternion& TQuaternion::operator*=(const TQuaternion& a_Quat)
 	{
-		TFloat fX = ((x * a_Quat.w + a_Quat.z * y) - a_Quat.y * z) + a_Quat.x * w;
-		TFloat fY = a_Quat.x * z + (y * a_Quat.w - a_Quat.z * x) + a_Quat.y * w;
-		TFloat fZ = w * a_Quat.z + (a_Quat.y * x - a_Quat.x * y) + z * a_Quat.w;
-		TFloat fW = (-(a_Quat.y * y + a_Quat.x * x) - a_Quat.z * z) + a_Quat.w * w;
+		TFLOAT fX = ((x * a_Quat.w + a_Quat.z * y) - a_Quat.y * z) + a_Quat.x * w;
+		TFLOAT fY = a_Quat.x * z + (y * a_Quat.w - a_Quat.z * x) + a_Quat.y * w;
+		TFLOAT fZ = w * a_Quat.z + (a_Quat.y * x - a_Quat.x * y) + z * a_Quat.w;
+		TFLOAT fW = (-(a_Quat.y * y + a_Quat.x * x) - a_Quat.z * z) + a_Quat.w * w;
 		Set(fX, fY, fZ, fW);
 		return *this;
 	}

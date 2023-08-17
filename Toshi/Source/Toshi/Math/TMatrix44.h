@@ -1,5 +1,6 @@
 #pragma once
 #include "TQuaternion.h"
+#include "TPlane.h"
 
 #include <DirectXMath.h>
 
@@ -8,7 +9,7 @@ namespace Toshi
 	class TMatrix44
 	{
 	public:
-		TFloat
+		TFLOAT
 			m_f11, m_f12, m_f13, m_f14,
 			m_f21, m_f22, m_f23, m_f24,
 			m_f31, m_f32, m_f33, m_f34,
@@ -25,10 +26,10 @@ namespace Toshi
 		{ }
 
 		TMatrix44(
-			TFloat a_f11, TFloat a_f12, TFloat a_f13, TFloat a_f14,
-			TFloat a_f21, TFloat a_f22, TFloat a_f23, TFloat a_f24,
-			TFloat a_f31, TFloat a_f32, TFloat a_f33, TFloat a_f34,
-			TFloat a_f41, TFloat a_f42, TFloat a_f43, TFloat a_f44
+			TFLOAT a_f11, TFLOAT a_f12, TFLOAT a_f13, TFLOAT a_f14,
+			TFLOAT a_f21, TFLOAT a_f22, TFLOAT a_f23, TFLOAT a_f24,
+			TFLOAT a_f31, TFLOAT a_f32, TFLOAT a_f33, TFLOAT a_f34,
+			TFLOAT a_f41, TFLOAT a_f42, TFLOAT a_f43, TFLOAT a_f44
 		) :
 			m_f11(a_f11), m_f12(a_f12), m_f13(a_f13), m_f14(a_f14),
 			m_f21(a_f21), m_f22(a_f22), m_f23(a_f23), m_f24(a_f24),
@@ -37,10 +38,10 @@ namespace Toshi
 		{ }
 
 		void Set(
-			TFloat a_f11, TFloat a_f12, TFloat a_f13, TFloat a_f14,
-			TFloat a_f21, TFloat a_f22, TFloat a_f23, TFloat a_f24,
-			TFloat a_f31, TFloat a_f32, TFloat a_f33, TFloat a_f34,
-			TFloat a_f41, TFloat a_f42, TFloat a_f43, TFloat a_f44
+			TFLOAT a_f11, TFLOAT a_f12, TFLOAT a_f13, TFLOAT a_f14,
+			TFLOAT a_f21, TFLOAT a_f22, TFLOAT a_f23, TFLOAT a_f24,
+			TFLOAT a_f31, TFLOAT a_f32, TFLOAT a_f33, TFLOAT a_f34,
+			TFLOAT a_f41, TFLOAT a_f42, TFLOAT a_f43, TFLOAT a_f44
 		)
 		{
 			m_f11 = a_f11;
@@ -209,6 +210,18 @@ namespace Toshi
 		void RotateX(float a_fAngle);
 		void RotateY(float a_fAngle);
 		void RotateZ(float a_fAngle);
+
+		static void TransformPlaneOrthogonal(TPlane& a_rOutPlane, const TMatrix44& a_rMatrix, const TPlane& a_rPlane)
+		{
+			RotateVector(a_rOutPlane.AsVector4(), a_rMatrix, a_rPlane.AsVector4());
+			
+			a_rOutPlane.SetD(
+				a_rPlane.GetD() + 
+				TVector4::DotProduct3(
+					a_rOutPlane.AsVector4(), a_rMatrix.AsBasisVector4(3)
+				)
+			);
+		}
 
 		static void RotateVector(TVector4& a_rOutVector, const TMatrix44& a_rMatrix, const TVector4& a_rVector)
 		{

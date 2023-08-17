@@ -191,7 +191,7 @@ void APropertiesResourceView::Render()
 	{
 		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, { 4, 2 });
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0, 2 });
-		ImGui::Begin(m_szIdListWindowName, TNULL, ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar);
+		ImGui::Begin(m_szIdListWindowName, TNULL, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar);
 		if (ImGui::TreeNodeEx(&m_Properties, ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_CollapsingHeader, "Properties"))
 		{
 			ImGui::TreePush();
@@ -201,7 +201,7 @@ void APropertiesResourceView::Render()
 		ImGui::PopStyleVar(2);
 		ImGui::End();
 
-		ImGui::Begin(m_szIdEditorWindowName, TNULL, ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar);
+		ImGui::Begin(m_szIdEditorWindowName, TNULL, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar);
 
 		if (m_pSelectedProperty)
 		{

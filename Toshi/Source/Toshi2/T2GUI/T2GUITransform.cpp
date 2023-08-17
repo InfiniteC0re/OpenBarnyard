@@ -35,48 +35,30 @@ namespace Toshi
 
 	void T2GUITransform::PreMultiply(const T2GUITransform& transform)
 	{
-		float fVar1;
-		float fVar2;
-		float fVar3;
-		float fVar4;
-		float fVar5;
-		float fVar6;
-		float fVar7;
-		float fVar8;
-
-		fVar1 = m_Rot[0].GetX();
-		fVar6 = m_Rot[0].GetY();
-		fVar2 = m_Rot[1].GetX();
-		fVar7 = m_Rot[1].GetY();
-		fVar4 = transform.m_Rot[0].GetX();
-		fVar5 = transform.m_Rot[0].GetY();
-		fVar8 = transform.m_Rot[1].GetX();
-		fVar3 = transform.m_Rot[1].GetY();
-		m_Rot[0].SetX(fVar8 * fVar6 + fVar4 * fVar1);
-		m_Rot[0].SetY(fVar3 * fVar6 + fVar5 * fVar1);
-		m_Rot[1].SetX(fVar8 * fVar7 + fVar4 * fVar2);
-		m_Rot[1].SetY(fVar3 * fVar7 + fVar5 * fVar2);
+		float fVar1 = m_Rot[0].GetX();
+		float fVar2 = m_Rot[0].GetY();
+		float fVar3 = transform.m_Rot[0].GetX();
+		float fVar8 = transform.m_Rot[0].GetY();
+		float fVar5 = m_Rot[1].GetX();
+		float fVar6 = m_Rot[1].GetY();
+		float fVar7 = transform.m_Rot[1].GetY();
+		float fVar4 = transform.m_Rot[1].GetX();
+		m_Rot[0].SetX(fVar8 * fVar5 + fVar3 * fVar1);
+		m_Rot[0].SetY(fVar8 * fVar6 + fVar3 * fVar2);
+		m_Rot[1].SetX(fVar7 * fVar5 + fVar4 * fVar1);
+		m_Rot[1].SetY(fVar7 * fVar6 + fVar4 * fVar2);
 	}
 
 	void T2GUITransform::PostMultiply(const T2GUITransform& transform)
 	{
-		float fVar1;
-		float fVar2;
-		float fVar3;
-		float fVar4;
-		float fVar5;
-		float fVar6;
-		float fVar7;
-		float fVar8;
-
-		fVar1 = m_Rot[0].GetX();
-		fVar6 = m_Rot[0].GetY();
-		fVar2 = m_Rot[1].GetX();
-		fVar7 = m_Rot[1].GetY();
-		fVar4 = transform.m_Rot[0].GetX();
-		fVar5 = transform.m_Rot[0].GetY();
-		fVar8 = transform.m_Rot[1].GetX();
-		fVar3 = transform.m_Rot[1].GetY();
+		float fVar1 = m_Rot[0].GetX();
+		float fVar6 = m_Rot[0].GetY();
+		float fVar2 = m_Rot[1].GetX();
+		float fVar7 = m_Rot[1].GetY();
+		float fVar4 = transform.m_Rot[0].GetX();
+		float fVar5 = transform.m_Rot[0].GetY();
+		float fVar8 = transform.m_Rot[1].GetX();
+		float fVar3 = transform.m_Rot[1].GetY();
 		m_Rot[0].SetX(fVar8 * fVar6 + fVar4 * fVar1);
 		m_Rot[0].SetY(fVar3 * fVar6 + fVar5 * fVar1);
 		m_Rot[1].SetX(fVar8 * fVar7 + fVar4 * fVar2);

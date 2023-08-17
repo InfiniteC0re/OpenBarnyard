@@ -84,7 +84,7 @@ namespace Toshi
 		// Set our render target
 		pDeviceContext->OMSetRenderTargets(1, &m_pRenderTarget, NULL);
 
-		TVector4 screenSize = { (TFloat)m_Width, (TFloat)m_Height, 0, 0};
+		TVector4 screenSize = { (TFLOAT)m_Width, (TFLOAT)m_Height, 0, 0};
 
 		pRender->SetVec4InPSBuffer(PSBufferOffset_V2ScreenSize, &screenSize, 1);
 		TRenderDX11::RenderOverlay(0.0f, 0.0f, (float)m_Width, (float)m_Height, pShaderResourceView, m_pShader, NULL);

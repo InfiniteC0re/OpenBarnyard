@@ -1,6 +1,6 @@
 #pragma once
 
-using TFloat = float;
+using TFLOAT = float;
 using TBOOL = bool;
 using TINT = int;
 

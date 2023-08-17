@@ -15,7 +15,7 @@ namespace Toshi
 	const TVector3 TVector3::VEC_NEGXPOSZ = { TVector3::VEC_POSXNEGZ.z, 0, TMath::ONEOVER_SQRT_TWO };
 	const TVector3 TVector3::VEC_NEGXNEGZ = { TVector3::VEC_POSXNEGZ.z, 0, TVector3::VEC_POSXNEGZ.z };
 
-	void TVector3::Clip(TFloat fVal, TFloat fVal2)
+	void TVector3::Clip(TFLOAT fVal, TFLOAT fVal2)
 	{
 		TMath::Clip(x, fVal, fVal2);
 		TMath::Clip(y, fVal, fVal2);
@@ -24,17 +24,17 @@ namespace Toshi
 
 	void TVector3::CrossProduct(const TVector3& vec1, const TVector3& vec2)
 	{
-		TFloat fX = vec2.z * vec1.y - vec2.y * vec1.z;
-		TFloat fY = vec1.z * vec2.x - vec2.z * vec1.x;
-		TFloat fZ = vec1.x * vec2.y - vec1.y * vec2.x;
+		TFLOAT fX = vec2.z * vec1.y - vec2.y * vec1.z;
+		TFLOAT fY = vec1.z * vec2.x - vec2.z * vec1.x;
+		TFLOAT fZ = vec1.x * vec2.y - vec1.y * vec2.x;
 		Set(fX, fY, fZ);
 	}
 
-	void TVector3::RotateX(TFloat a_fRotation)
+	void TVector3::RotateX(TFLOAT a_fRotation)
 	{
-		TFloat f1;
-		TFloat f2;
-		TFloat oldY = y;
+		TFLOAT f1;
+		TFLOAT f2;
+		TFLOAT oldY = y;
 
 		TMath::SinCos(a_fRotation, f1, f2);
 
@@ -42,11 +42,11 @@ namespace Toshi
 		z = oldY * f1 + z * f2;
 	}
 
-	void TVector3::RotateY(TFloat a_fRotation)
+	void TVector3::RotateY(TFLOAT a_fRotation)
 	{
-		TFloat f1;
-		TFloat f2;
-		TFloat oldX = x;
+		TFLOAT f1;
+		TFLOAT f2;
+		TFLOAT oldX = x;
 
 		TMath::SinCos(a_fRotation, f1, f2);
 
@@ -54,11 +54,11 @@ namespace Toshi
 		z = z * f2 + -f1 * oldX;
 	}
 
-	void TVector3::RotateZ(TFloat a_fRotation)
+	void TVector3::RotateZ(TFLOAT a_fRotation)
 	{
-		TFloat f1;
-		TFloat f2;
-		TFloat oldX = x;
+		TFLOAT f1;
+		TFLOAT f2;
+		TFLOAT oldX = x;
 
 		TMath::SinCos(a_fRotation, f1, f2);
 

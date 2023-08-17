@@ -143,7 +143,7 @@ namespace Toshi {
 
 		if (pStencilSRV)
 		{
-			TVector4 stencilSize = { (TFloat)texDesc.Width, (TFloat)texDesc.Height, 0, 0 };
+			TVector4 stencilSize = { (TFLOAT)texDesc.Width, (TFLOAT)texDesc.Height, 0, 0 };
 			renderer->SetVec4InPSBuffer(61, &stencilSize, 1);
 		}
 

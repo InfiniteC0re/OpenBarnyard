@@ -11,6 +11,7 @@ public:
 	{
 		static int s_iGlobalId = 0;
 
+		m_bInitialised = TFALSE;
 		m_pSelectedProperty = TNULL;
 		m_pSelectedValue = TNULL;
 		m_PropertyNameBuffer[0] = '\0';
@@ -45,7 +46,7 @@ private:
 	PPropertyValue* m_pSelectedValue;
 	char m_PropertyNameBuffer[512];
 	char m_PropertyValueBuffer[512];
-	TBOOL m_bInitialised = TFALSE;
+	TBOOL m_bInitialised;
 	char m_szIdListWindowName[48];
 	char m_szIdEditorWindowName[48];
 	char m_szIdPropertyName[48];

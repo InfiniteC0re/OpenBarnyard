@@ -55,6 +55,7 @@ void ACamera::RotateAroundRight(float rotation, float a_fVal)
 			LookAtDirection(vAxis);
 			return;
 		}
+
 		vec.Negate();
 		quat.SetRotation(vRight.AsVector3(), TMath::ACos(fVal));
 	}
