@@ -24,7 +24,7 @@ void AInputHelper::AddMapping(AInputMap::INPUTBUTTON a_eInputButton, AInputManag
 	{
 		for (auto j = foundMap1->Begin(); j != foundMap1->End(); j++)
 		{
-			buttonInfoVector.PushBack(*(ButtonInfo*)j);
+			buttonInfoVector.PushBack((ButtonInfo)*j);
 		}
 	}
 

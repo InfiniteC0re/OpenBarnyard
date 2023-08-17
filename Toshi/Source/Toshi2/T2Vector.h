@@ -12,16 +12,145 @@ namespace Toshi
 			friend class T2Vector;
 
 		public:
-			Iterator(T& item) : m_Item(item) { }
+			Iterator(T2Vector* a_pVector) : m_uiIndex(0), m_pVector(a_pVector) { }
+			Iterator(size_t a_uiIndex, T2Vector* a_pVector) : m_uiIndex(a_uiIndex), m_pVector(a_pVector) { }
+			Iterator(const Iterator& a_rOther) : m_uiIndex(a_rOther.m_uiIndex), m_pVector(a_rOther.m_pVector) { }
 
-			T* Item()
+			size_t Index() const noexcept
 			{
-				return &m_Item;
+				return m_uiIndex;
+			}
+
+			T* Pointer() noexcept
+			{
+				return &m_pVector->At(m_uiIndex);
+			}
+
+			const T* Pointer() const noexcept
+			{
+				return &m_pVector->At(m_uiIndex);
+			}
+
+			T& Value() noexcept
+			{
+				return m_pVector->At(m_uiIndex);
+			}
+
+			const T& Value() const noexcept
+			{
+				return m_pVector->At(m_uiIndex);
+			}
+
+			T& operator*() noexcept
+			{
+				return m_pVector->ValueAt(m_uiIndex);
+			}
+
+			const T& operator*() const noexcept
+			{
+				return m_pVector->ValueAt(m_uiIndex);
+			}
+
+			T* operator->() noexcept
+			{
+				return &m_pVector->ValueAt(m_uiIndex);
+			}
+
+			const T* operator->() const noexcept
+			{
+				return &m_pVector->ValueAt(m_uiIndex);
+			}
+
+			TBOOL operator==(const Iterator& a_rOther) const noexcept
+			{
+				return a_rOther.m_pVector == m_pVector && a_rOther.m_uiIndex == m_uiIndex;
+			}
+
+			TBOOL operator>(const Iterator& a_rOther) const noexcept
+			{
+				return a_rOther.m_pVector == m_pVector && a_rOther.m_uiIndex > m_uiIndex;
+			}
+
+			TBOOL operator>=(const Iterator& a_rOther) const noexcept
+			{
+				return a_rOther.m_pVector == m_pVector && a_rOther.m_uiIndex >= m_uiIndex;
+			}
+
+			TBOOL operator<(const Iterator& a_rOther) const noexcept
+			{
+				return a_rOther.m_pVector == m_pVector && a_rOther.m_uiIndex < m_uiIndex;
+			}
+
+			TBOOL operator<=(const Iterator& a_rOther) const noexcept
+			{
+				return a_rOther.m_pVector == m_pVector && a_rOther.m_uiIndex <= m_uiIndex;
+			}
+
+			Iterator operator++(int) noexcept
+			{
+				Iterator temp = *this;
+				m_uiIndex++;
+				return temp;
+			}
+
+			Iterator operator--(int) noexcept
+			{
+				Iterator temp = *this;
+				m_uiIndex--;
+				return temp;
+			}
+
+			Iterator& operator++() noexcept
+			{
+				m_uiIndex++;
+				return *this;
+			}
+
+			Iterator& operator--() noexcept
+			{
+				m_uiIndex--;
+				return *this;
+			}
+
+			Iterator& operator=(const Iterator& a_rOther) noexcept
+			{
+				m_uiIndex = a_rOther.m_uiIndex;
+				m_pVector = a_rOther.m_pVector;
+			}
+
+			Iterator operator+(size_t a_uiValue) const noexcept
+			{
+				TASSERT(m_uiIndex + a_uiValue < m_pVector->Size());
+				return Iterator(m_uiIndex + a_uiValue, m_pVector);
+			}
+
+			Iterator operator-(size_t a_uiValue) const noexcept
+			{
+				TASSERT(m_uiIndex - a_uiValue < m_pVector->Size());
+				return Iterator(m_uiIndex - a_uiValue, m_pVector);
+			}
+
+			Iterator& operator+=(size_t a_uiValue) const noexcept
+			{
+				TASSERT(m_uiIndex + a_uiValue < m_pVector->Size());
+				m_uiIndex += a_uiValue;
+				return *this;
+			}
+
+			Iterator& operator-=(size_t a_uiValue) const noexcept
+			{
+				TASSERT(m_uiIndex - a_uiValue < m_pVector->Size());
+				m_uiIndex -= a_uiValue;
+				return *this;
 			}
 
 		private:
-			T& m_Item;
+			size_t m_uiIndex;
+			T2Vector* m_pVector;
 		};
+
+	public:
+		constexpr static size_t CAPACITY = MaxSize;
 
 	public:
 		T2Vector()
@@ -36,63 +165,51 @@ namespace Toshi
 
 		void PushBack(const T& item)
 		{
-			TASSERT(Size() < Capacity());
+			TASSERT(m_iNumElements < CAPACITY);
 			m_Items[m_iNumElements++] = item;
 		}
 
 		void PopBack()
 		{
-			TASSERT(Size() > 0);
+			TASSERT(m_iNumElements > 0);
 			m_iNumElements--;
 
 			m_Items[m_iNumElements].~T();
-			new (&m_Items[m_iNumElements]) T();
 		}
 
 		void Clear()
 		{
 			for (size_t i = 0; i < Size(); i++)
-			{
 				m_Items[i].~T();
-				new (&m_Items[i]) T();
-			}
 
 			m_iNumElements = 0;
 		}
 
-		T* Find(const T& item)
+		Iterator Find(const T& a_rValue)
 		{
-			for (T* it = Begin(); it != End(); it++)
+			for (auto it = Begin(); it != End(); it++)
 			{
-				if (it == item)
-				{
+				if (it.GetValue() == a_rValue)
 					return it;
-				}
 			}
 		}
 
-		void Erase(Iterator it)
+		void Erase(const Iterator& a_rIterator)
 		{
-			const size_t itemIndex = it.Item() - Begin();
-			TASSERT(itemIndex >= 0 && itemIndex <= Size());
+			size_t uiItemIndex = a_rIterator->GetIndex();
+			TASSERT(uiItemIndex < m_iNumElements);
 
-			size_t currentIndex = 0;
-			for (size_t i = 0; i < Size(); i++)
+			if (uiItemIndex + 1 < Size())
 			{
-				if (i == itemIndex)
-				{
-					continue;
-				}
-
-				m_Items[currentIndex++] = m_Items[i];
+				for (size_t i = uiItemIndex + 1; i < Size(); i++)
+					m_Items[i - 1] = m_Items[i];
+			}
+			else
+			{
+				m_Items[uiItemIndex].~T();
 			}
 
-			m_iNumElements -= 1;
-		}
-
-		Iterator MakeIterator(T& item)
-		{
-			return Iterator(item);
+			m_iNumElements--;
 		}
 
 		size_t Size() const
@@ -100,35 +217,67 @@ namespace Toshi
 			return m_iNumElements;
 		}
 
-		size_t Capacity() const
-		{
-			return MaxSize;
-		}
-
 		TBOOL IsEmpty() const
 		{
 			return Size() == 0;
 		}
 
+		T& Front()
+		{
+			TASSERT(m_iNumElements > 0);
+			return m_Items[0];
+		}
+
+		const T& Front() const
+		{
+			TASSERT(m_iNumElements > 0);
+			return m_Items[0];
+		}
+
 		T& Back()
 		{
-			TASSERT(Size() > 0);
+			TASSERT(m_iNumElements > 0);
 			return m_Items[m_iNumElements - 1];
 		}
 
-		T* Begin()
+		const T& Back() const
 		{
-			return m_Items;
+			TASSERT(m_iNumElements > 0);
+			return m_Items[m_iNumElements - 1];
 		}
 
-		T* End()
+		Iterator Begin()
 		{
-			return &m_Items[m_iNumElements - 1];
+			return Iterator(this);
 		}
 
-		T& operator[](int idx)
+		Iterator End()
 		{
-			return m_Items[idx];
+			return Iterator(m_iNumElements, this);
+		}
+
+		constexpr T& ValueAt(size_t a_uiIndex)
+		{
+			TASSERT(a_uiIndex < m_iNumElements);
+			return m_Items[a_uiIndex];
+		}
+
+		constexpr const T& ValueAt(size_t a_uiIndex) const
+		{
+			TASSERT(a_uiIndex < m_iNumElements);
+			return m_Items[a_uiIndex];
+		}
+
+		constexpr T& operator[](size_t a_uiIndex)
+		{
+			TASSERT(a_uiIndex < m_iNumElements);
+			return m_Items[a_uiIndex];
+		}
+
+		constexpr const T& operator[](size_t a_uiIndex) const
+		{
+			TASSERT(a_uiIndex < m_iNumElements);
+			return m_Items[a_uiIndex];
 		}
 
 	private:
