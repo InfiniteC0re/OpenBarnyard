@@ -344,7 +344,7 @@ namespace Toshi {
 		m_eFlags |= (FLAG_DIRTY_WORLDMODELMATRIX | FLAG_DIRTY_VIEWMODELMATRIX);
 		m_oModelViewMatrix = a_rMatrix;
 		m_eFlags &= ~(FLAG_HAS_MODELWORLDMATRIX | FLAG_UNK3);
-
+		
 		TRender::GetSingleton()->GetParamTable()->SetParameterM44(TRenderParamTable::M44PARAM_MODELVIEW, a_rMatrix);
 	}
 
@@ -352,7 +352,7 @@ namespace Toshi {
 	{
 		m_eFlags |= FLAG_DIRTY_VIEWMODELMATRIX;
 		m_oWorldViewMatrix = a_rMatrix;
-		m_eFlags &= ~(FLAG_HAS_MODELWORLDMATRIX | FLAG_HAS_VIEWWORLDMATRIX | FLAG_UNK4 | FLAG_UNK5 | FLAG_UNK6);
+		m_eFlags &= ~(FLAG_HAS_MODELWORLDMATRIX | FLAG_HAS_VIEWWORLDMATRIX | FLAG_UNK4 | FLAG_HAS_WORLDPLANES | FLAG_UNK6);
 	}
 
 	void TRenderContext::SetProjectionParams(const PROJECTIONPARAMS& params)
@@ -365,7 +365,24 @@ namespace Toshi {
 		TASSERT(TMath::IsFinite(params.m_Centre.y) && (!TMath::IsNaN(params.m_Centre.y)));
 
 		m_ProjParams = params;
-		m_eFlags = (m_eFlags & (~(FLAG_UNK3 | FLAG_UNK4 | FLAG_UNK5 | FLAG_UNK6))) | FLAG_DIRTY;
+		m_eFlags = (m_eFlags & (~(FLAG_UNK3 | FLAG_UNK4 | FLAG_HAS_WORLDPLANES | FLAG_UNK6))) | FLAG_DIRTY;
+	}
+
+	const TPlane* TRenderContext::GetWorldPlanes()
+	{
+		if (!HASFLAG(m_eFlags & FLAG_HAS_WORLDPLANES))
+		{
+			auto& viewWorld = GetViewWorldMatrix();
+
+			for (size_t i = 0; i < 6; i++)
+			{
+				TMatrix44::TransformPlaneOrthogonal(m_aWorldPlanes[i], viewWorld, m_aFrustumPlanes1[i]);
+			}
+
+			m_eFlags |= FLAG_HAS_WORLDPLANES;
+		}
+
+		return m_aWorldPlanes;
 	}
 
 	const TMatrix44& TRenderContext::GetViewWorldMatrix()
