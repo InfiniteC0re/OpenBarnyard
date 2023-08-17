@@ -8,9 +8,9 @@ namespace Toshi {
 	public:
 		enum PlaneComparison
 		{
-			PlaneComparison_Unk1 = -1,
-			PlaneComparison_Unk2,
-			PlaneComparison_Unk3,
+			PlaneComparison_InFront = -1,
+			PlaneComparison_Intersects,
+			PlaneComparison_InBack,
 		};
 
 	public:

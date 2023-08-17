@@ -83,15 +83,15 @@ namespace Toshi {
 
 		TPlane::PlaneComparison ComparePlane(const TPlane& a_rPlane)
 		{
-			float fDist = TVector3::DotProduct(a_rPlane.GetNormal(), m_Origin);
+			float fDist = TVector3::DotProduct(a_rPlane.GetNormal(), m_Origin) - a_rPlane.GetD();
 
-			if (m_fRadius < fDist - a_rPlane.GetD())
-				return TPlane::PlaneComparison_Unk1;
+			if (m_fRadius < fDist)
+				return TPlane::PlaneComparison_InFront;
 
-			if (fDist - a_rPlane.GetD() < -m_fRadius)
-				return TPlane::PlaneComparison_Unk3;
+			if (fDist < -m_fRadius)
+				return TPlane::PlaneComparison_InBack;
 
-			return TPlane::PlaneComparison_Unk2;
+			return TPlane::PlaneComparison_Intersects;
 		}
 
 		TSphere& operator=(const TSphere& a_rSphere)
