@@ -37,6 +37,17 @@ namespace Toshi
 			CameraMode_Orthographic,
 		};
 
+		typedef uint32_t WORLDPLANE;
+		enum WORLDPLANE_ : WORLDPLANE
+		{
+			WORLDPLANE_LEFT,
+			WORLDPLANE_RIGHT,
+			WORLDPLANE_BOTTOM,
+			WORLDPLANE_TOP,
+			WORLDPLANE_NEAR,
+			WORLDPLANE_FAR,
+		};
+
 		struct Params
 		{
 			float fX;

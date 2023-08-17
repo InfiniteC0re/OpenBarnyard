@@ -6,6 +6,14 @@ namespace Toshi {
 	class TPlane
 	{
 	public:
+		enum PlaneComparison
+		{
+			PlaneComparison_Unk1 = -1,
+			PlaneComparison_Unk2,
+			PlaneComparison_Unk3,
+		};
+
+	public:
 		TPlane() = default;
 
 		TPlane(const TVector4& a_PlaneData)
@@ -33,6 +41,36 @@ namespace Toshi {
 		}
 
 		TPlane(const TPlane& a_Other)
+		{
+			m_Normal = a_Other.m_Normal;
+			m_fDistance = a_Other.m_fDistance;
+		}
+
+		void Set(const TVector4& a_PlaneData)
+		{
+			m_Normal = a_PlaneData.AsVector3();
+			m_fDistance = a_PlaneData.w;
+		}
+
+		void Set(const TVector3& a_Normal, TFLOAT a_fDistance)
+		{
+			m_Normal = a_Normal;
+			m_fDistance = a_fDistance;
+		}
+
+		void Set(const TVector3& a_Normal, const TVector3& a_Point)
+		{
+			m_Normal = a_Normal;
+			m_fDistance = TVector3::DotProduct(a_Normal, a_Point);
+		}
+
+		void Set(TFLOAT a_fNormalX, TFLOAT a_fNormalY, TFLOAT a_fNormalZ, TFLOAT a_fDistance)
+		{
+			m_Normal.Set(a_fNormalX, a_fNormalY, a_fNormalZ);
+			m_fDistance = a_fDistance;
+		}
+
+		void Set(const TPlane& a_Other)
 		{
 			m_Normal = a_Other.m_Normal;
 			m_fDistance = a_Other.m_fDistance;
@@ -87,6 +125,7 @@ namespace Toshi {
 		{
 			m_Normal = a_rPlane.m_Normal;
 			m_fDistance = a_rPlane.m_fDistance;
+			return *this;
 		}
 
 		__forceinline TVector3& AsNormal() { return m_Normal; }
