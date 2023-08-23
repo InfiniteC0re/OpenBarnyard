@@ -7,6 +7,8 @@
 #endif LoadLibrary
 
 namespace Toshi {
+	
+	constexpr int TANIMATION_MAXBONES = 128;
 
 	extern TMemoryHeap* s_pAnimMemHeap;
 

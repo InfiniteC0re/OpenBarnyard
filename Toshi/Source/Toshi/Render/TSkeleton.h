@@ -58,20 +58,20 @@ namespace Toshi {
 
 		void SetQInterpFn(QUATINTERP a_eQuatInterp);
 
-		TSkeletonBone* GetBone(const char* a_cBoneName, uint32_t length) { return GetBone(GetBoneID(a_cBoneName, length)); }
-		uint32_t GetBoneID(const char* a_cBoneName, uint32_t length);
+		TSkeletonBone* GetBone(const char* a_cBoneName, uint32_t a_iLength) { return GetBone(GetBoneID(a_cBoneName, a_iLength)); }
+		uint32_t GetBoneID(const char* a_cBoneName, uint32_t a_iLength);
 
 		TKeyframeLibraryInstance& GetKeyLibraryInstance() { return m_KeyLibraryInstance; }
-		short GetAnimationMaxCount() { return m_iAnimationMaxCount; }
-		TSkeletonBone* GetBone(uint32_t index) { return &m_pBones[index]; }
+		int GetAnimationMaxCount() { return m_iAnimationMaxCount; }
+		TSkeletonBone* GetBone(int a_iBone) { return &m_pBones[a_iBone]; }
 		TSkeletonBone* GetBones() { return m_pBones; }
-		short GetInstanceCount() { return m_iInstanceCount; }
-		short GetAutoBoneCount() { return m_iBoneCount - m_iManualBoneCount; }
+		int GetInstanceCount() { return m_iInstanceCount; }
+		int GetAutoBoneCount() { return m_iBoneCount - m_iManualBoneCount; }
 
-		uint32_t GetSequenceID(const char* a_sSequenceName, uint32_t length);
+		uint32_t GetSequenceID(const char* a_sSequenceName, uint32_t a_iLength);
 		TSkeletonSequence** GetSequences() { return m_SkeletonSequences; }
-		TSkeletonSequence* GetSequence(uint32_t index) { return m_SkeletonSequences[index]; }
-		TSkeletonSequence* GetSequence(const char* a_sSequenceName, uint32_t length) { return GetSequence(GetSequenceID(a_sSequenceName, length)); }
+		TSkeletonSequence* GetSequence(uint32_t a_iSequence) { return m_SkeletonSequences[a_iSequence]; }
+		TSkeletonSequence* GetSequence(const char* a_sSequenceName, uint32_t a_iLength) { return GetSequence(GetSequenceID(a_sSequenceName, a_iLength)); }
 
 		short GetSequenceCount() { return m_iSequenceCount; }
 
@@ -95,18 +95,18 @@ namespace Toshi {
 	};
 
 #pragma pack(push, 1)
-	struct TSkeletonInstanceAnimation : public TDList<TSkeletonInstanceAnimation>::TNode
+	class TAnimation : public TDList<TAnimation>::TNode
 	{
-		TSkeletonInstanceAnimation()
+	public:
+		TAnimation()
 		{
-			m_iUnk4 = 0;
+			m_iUnk2 = 0;
 		}
 
-		short m_iUnk1;
+	private:
+		int m_iUnk1;
+		short m_iSeqID;
 		short m_iUnk2;
-		short m_iUnk3;
-		short m_iUnk4;
-		char unk[36];
 	};
 #pragma pack(pop)
 
@@ -121,16 +121,16 @@ namespace Toshi {
 		void SetStateFromBasePose();
 
 	private:
-		int m_iUnk1;
+		int m_iFlags;
 		uint32_t m_iSize;
 		TSkeleton* m_pSkeleton;
 		short m_iBaseAnimationCount;
 		short m_iOverlayAnimationCount;
-		TDList<int> m_List1; // int is a placeholder
-		TDList<int> m_List2; // int is a placeholder
-		TDList<TSkeletonInstanceAnimation> m_FreeAnimations;
+		TDList<TAnimation> m_BaseAnimations;
+		TDList<TAnimation> m_OverlayAnimations;
+		TDList<TAnimation> m_FreeAnimations;
 		TSkeletonInstanceBone* m_pBones;
-		TSkeletonInstanceAnimation* m_pAnimations;
+		TAnimation* m_pAnimations;
 		float m_fUnk3;
 		int m_iUnk4;
 		int m_iCurrentFrame;

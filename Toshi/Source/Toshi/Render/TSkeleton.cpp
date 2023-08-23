@@ -40,7 +40,7 @@ namespace Toshi {
 		}
 
 		auto iAutoBoneCount = GetAutoBoneCount();
-		size_t iAnimationSize = iAutoBoneCount * 2 + TMath::AlignNum(sizeof(TSkeletonInstanceAnimation));
+		size_t iAnimationSize = iAutoBoneCount * 2 + TMath::AlignNum(sizeof(TAnimation));
 		size_t iInstanceSize = sizeof(TSkeletonInstance) + sizeof(TSkeletonInstanceBone) * iAutoBoneCount + iAnimationSize * GetAnimationMaxCount();
 		TSkeletonInstance* pInstance;
 
@@ -58,8 +58,9 @@ namespace Toshi {
 		pInstance->m_iSize = iInstanceSize;
 		pInstance->m_iBaseAnimationCount = 0;
 		pInstance->m_iOverlayAnimationCount = 0;
+		pInstance->m_iFlags = 0;
 		pInstance->m_pBones = TREINTERPRETCAST(TSkeletonInstanceBone*, this + 1);
-		pInstance->m_pAnimations = TREINTERPRETCAST(TSkeletonInstanceAnimation*, this + 1) + iAutoBoneCount;
+		pInstance->m_pAnimations = TREINTERPRETCAST(TAnimation*, this + 1) + iAutoBoneCount;
 		pInstance->m_fUnk3 = 3.0f;
 		pInstance->m_iUnk4 = 0;
 		pInstance->m_iCurrentFrame = 0;
@@ -67,12 +68,12 @@ namespace Toshi {
 
 		for (int i = 0; i < GetAnimationMaxCount(); i++)
 		{
-			TSkeletonInstanceAnimation* pAnimation = TREINTERPRETCAST(
-				TSkeletonInstanceAnimation*,
+			TAnimation* pAnimation = TREINTERPRETCAST(
+				TAnimation*,
 				TREINTERPRETCAST(uintptr_t, pInstance->m_pAnimations) + i * iAnimationSize
 			);
 
-			new (pAnimation) TSkeletonInstanceAnimation();
+			new (pAnimation) TAnimation();
 			pInstance->m_FreeAnimations.InsertHead(pAnimation);
 		}
 
@@ -85,12 +86,10 @@ namespace Toshi {
 
 	void TSkeleton::SetQInterpFn(QUATINTERP a_eQuatInterp)
 	{
-		if (a_eQuatInterp == QUATINTERP_Default)
-			m_fnQuatLerp = TQuaternion::Nlerp;
-		else if (a_eQuatInterp == QUATINTERP_Nlerp)
-			m_fnQuatLerp = TQuaternion::Nlerp;
-		else if (a_eQuatInterp == QUATINTERP_Slerp)
+		if (a_eQuatInterp == QUATINTERP_Slerp)
 			m_fnQuatLerp = TQuaternion::Slerp;
+		else
+			m_fnQuatLerp = TQuaternion::Nlerp;
 	}
 
 	uint32_t TSkeleton::GetBoneID(const char* a_cBoneName, uint32_t length)
@@ -131,10 +130,13 @@ namespace Toshi {
 		return -1;
 	}
 
-
 	void TSkeletonInstance::SetStateFromBasePose()
 	{
-		TIMPLEMENT();
+		for (int i = 0; i < m_pSkeleton->GetAutoBoneCount(); i++)
+		{
+			m_pSkeleton->GetBone(i);
+			m_pBones[i].Matrix.Identity();
+		}
 	}
 
 }
