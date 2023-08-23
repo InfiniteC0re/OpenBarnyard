@@ -8,6 +8,8 @@
 
 namespace Toshi {
 
+	extern TMemoryHeap* s_pAnimMemHeap;
+
 	struct TAnimVector
 	{
 		float m_fX;
@@ -57,9 +59,6 @@ namespace Toshi {
 		{
 			return m_szName;
 		}
-
-	public:
-		inline static TMemoryHeap* s_pAnimMemHeap = TNULL;
 
 	private:
 		TKeyframeLibrary();
