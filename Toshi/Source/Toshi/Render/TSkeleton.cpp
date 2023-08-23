@@ -92,26 +92,20 @@ namespace Toshi {
 			m_fnQuatLerp = TQuaternion::Nlerp;
 	}
 
-	uint32_t TSkeleton::GetBoneID(const char* a_cBoneName, uint32_t length)
+	int TSkeleton::GetBoneID(const char* a_cBoneName, uint32_t length)
 	{
-		if (length == 0)
-		{
-			length = (uint32_t)TStringManager::String8Length(a_cBoneName);
-		}
-
 		for (short i = 0; i < m_iBoneCount; i++)
 		{
-			if (m_pBones[i].GetResourceName().GetNameLength() == length)
+			if (TStringManager::String8CompareNoCase(m_pBones[i].GetName(), a_cBoneName) == 0)
 			{
-				int comp = TStringManager::String8CompareNoCase(m_pBones[i].GetResourceName().GetName(), a_cBoneName, length);
-				if (comp == 0) { return i; }
+				return i;
 			}
 		}
 
 		return -1;
 	}
 
-	uint32_t TSkeleton::GetSequenceID(const char* a_sSequenceName, uint32_t length)
+	int TSkeleton::GetSequenceID(const char* a_sSequenceName, uint32_t length)
 	{
 		if (length == 0)
 		{

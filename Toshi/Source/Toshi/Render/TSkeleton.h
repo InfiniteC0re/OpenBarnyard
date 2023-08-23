@@ -29,10 +29,15 @@ namespace Toshi {
 
 	class TSkeletonBone
 	{
-		ResourceName m_ResourceName; // 0x90
-
 	public:
-		ResourceName& GetResourceName() { return m_ResourceName; }
+		const char* GetName() const { return m_szName; }
+
+	private:
+		TQuaternion m_Rotation;
+		TMatrix44 m_Transform;
+		TMatrix44 m_TransformInv;
+		const char* m_szName;
+		char pad[28];
 	};
 
 	class TSkeleton
@@ -59,16 +64,17 @@ namespace Toshi {
 		void SetQInterpFn(QUATINTERP a_eQuatInterp);
 
 		TSkeletonBone* GetBone(const char* a_cBoneName, uint32_t a_iLength) { return GetBone(GetBoneID(a_cBoneName, a_iLength)); }
-		uint32_t GetBoneID(const char* a_cBoneName, uint32_t a_iLength);
+		int GetBoneID(const char* a_cBoneName, uint32_t a_iLength);
 
 		TKeyframeLibraryInstance& GetKeyLibraryInstance() { return m_KeyLibraryInstance; }
 		int GetAnimationMaxCount() { return m_iAnimationMaxCount; }
 		TSkeletonBone* GetBone(int a_iBone) { return &m_pBones[a_iBone]; }
 		TSkeletonBone* GetBones() { return m_pBones; }
-		int GetInstanceCount() { return m_iInstanceCount; }
-		int GetAutoBoneCount() { return m_iBoneCount - m_iManualBoneCount; }
+		int GetInstanceCount() const { return m_iInstanceCount; }
+		int GetBoneCount() const { return m_iBoneCount; }
+		int GetAutoBoneCount() const { return m_iBoneCount - m_iManualBoneCount; }
 
-		uint32_t GetSequenceID(const char* a_sSequenceName, uint32_t a_iLength);
+		int GetSequenceID(const char* a_sSequenceName, uint32_t a_iLength);
 		TSkeletonSequence** GetSequences() { return m_SkeletonSequences; }
 		TSkeletonSequence* GetSequence(uint32_t a_iSequence) { return m_SkeletonSequences[a_iSequence]; }
 		TSkeletonSequence* GetSequence(const char* a_sSequenceName, uint32_t a_iLength) { return GetSequence(GetSequenceID(a_sSequenceName, a_iLength)); }
