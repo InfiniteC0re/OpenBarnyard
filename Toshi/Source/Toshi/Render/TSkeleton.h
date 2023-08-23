@@ -50,8 +50,8 @@ namespace Toshi
 
 		TKeyframeLibraryInstance& GetKeyLibraryInstance() { return m_KeyLibraryInstance; }
 		short GetAnimationMaxCount() { return m_sAnimationMaxCount; }
-		TSkeletonBone* GetBone(uint32_t index) { return &m_Bones[index]; }
-		TSkeletonBone* GetBones() { return m_Bones; }
+		TSkeletonBone* GetBone(uint32_t index) { return &m_pBones[index]; }
+		TSkeletonBone* GetBones() { return m_pBones; }
 		short GetInstanceCount() { return m_sInstanceCount; }
 		short GetAutoBoneCount() { return m_sBoneCount - m_sManualBoneCount; }
 
@@ -63,7 +63,7 @@ namespace Toshi
 		short GetSequenceCount() { return m_sSequenceCount; }
 
 	private:
-		// Members complete
+		// Note: these offsets are wrong compared to de blob
 		uint32_t m_iSize;                              // 0x0
 		short m_sBoneCount;                            // 0x4
 		short m_sManualBoneCount;                      // 0x6
@@ -71,8 +71,9 @@ namespace Toshi
 		short m_sAnimationMaxCount;                    // 0xA
 		short m_sInstanceCount;                        // 0xC
 		TKeyframeLibraryInstance m_KeyLibraryInstance; // 0x10
-		TSkeletonBone* m_Bones;                        // 0x38
+		TSkeletonBone* m_pBones;                       // 0x38
 		TSkeletonSequence** m_SkeletonSequences;       // 0x3C
+		void* m_fnQuatLerp;
 	};
 }
 

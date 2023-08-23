@@ -7,12 +7,12 @@ namespace Toshi {
 		struct SkeletonHeader
 		{
 			const char* m_pTKLName;
-			int m_Unk1;
-			int m_Unk2;
-			int m_Unk3;
-			int m_Unk4;
-			int m_Unk5;
-			int m_Unk6;
+			int m_iTKeyCount;
+			int m_iQKeyCount;
+			int m_iSKeyCount;
+			int m_iTBaseIndex;
+			int m_iQBaseIndex;
+			int m_iSBaseIndex;
 		};
 
 	}

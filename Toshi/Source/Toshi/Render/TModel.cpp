@@ -157,10 +157,18 @@ namespace Toshi {
 
 			if (bLoadAnimations && pSkeletonHeader->m_pTKLName != TNULL)
 			{
-				auto& keyframeLibraryManager = TRender::GetSingletonSafe()->GetKeyframeLibraryManager();
-				auto pKeyframeLibrary = keyframeLibraryManager.GetLibrary(pSkeletonHeader->m_pTKLName);
-
-				TTODO("Toshi::TKeyframeLibraryInstance::CreateEx");
+				auto& keyframeLibMgr = TRender::GetSingletonSafe()->GetKeyframeLibraryManager();
+				auto pKeyframeLibrary = keyframeLibMgr.GetLibrary(pSkeletonHeader->m_pTKLName);
+				
+				pSkeleton->GetKeyLibraryInstance().CreateEx(
+					pKeyframeLibrary,
+					pSkeletonHeader->m_iTKeyCount,
+					pSkeletonHeader->m_iQKeyCount,
+					pSkeletonHeader->m_iSKeyCount,
+					pSkeletonHeader->m_iTBaseIndex,
+					pSkeletonHeader->m_iQBaseIndex,
+					pSkeletonHeader->m_iSBaseIndex
+				);
 			}
 		}
 	}

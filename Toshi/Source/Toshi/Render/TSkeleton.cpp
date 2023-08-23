@@ -13,7 +13,7 @@ namespace Toshi {
 		m_sInstanceCount = 0;
 
 		m_KeyLibraryInstance = TKeyframeLibraryInstance();
-		m_Bones = TNULL;
+		m_pBones = TNULL;
 		m_SkeletonSequences = TNULL;
 	}
 
@@ -44,9 +44,9 @@ namespace Toshi {
 
 		for (short i = 0; i < m_sBoneCount; i++)
 		{
-			if (m_Bones[i].GetResourceName().GetNameLength() == length)
+			if (m_pBones[i].GetResourceName().GetNameLength() == length)
 			{
-				int comp = TStringManager::String8CompareNoCase(m_Bones[i].GetResourceName().GetName(), a_cBoneName, length);
+				int comp = TStringManager::String8CompareNoCase(m_pBones[i].GetResourceName().GetName(), a_cBoneName, length);
 				if (comp == 0) { return i; }
 			}
 		}
