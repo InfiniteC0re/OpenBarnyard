@@ -2,6 +2,10 @@
 #include "Toshi/Core/Core.h"
 #include "Toshi2/Thread/T2Mutex.h"
 
+#define TMEMORY_NEW(TYPE, HEAP, ...) \
+	((HEAP != TNULL) ? new (HEAP) TYPE(__VA_ARGS__) : \
+	new TYPE(__VA_ARGS__))
+
 namespace Toshi
 {
     class TMemoryHeap;

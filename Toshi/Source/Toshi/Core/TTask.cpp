@@ -5,8 +5,7 @@ namespace Toshi
 {
 	TTask::TTask()
 	{
-		m_Unk1 = TNULL;
-
+		
 	}
 	
 	TTask::~TTask()

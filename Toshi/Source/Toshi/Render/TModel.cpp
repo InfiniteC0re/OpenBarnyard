@@ -157,7 +157,7 @@ namespace Toshi {
 
 			if (bLoadAnimations && pSkeletonHeader->m_pTKLName != TNULL)
 			{
-				auto keyframeLibraryManager = TRender::GetSingletonSafe()->GetKeyframeLibraryManager();
+				auto& keyframeLibraryManager = TRender::GetSingletonSafe()->GetKeyframeLibraryManager();
 				auto pKeyframeLibrary = keyframeLibraryManager.GetLibrary(pSkeletonHeader->m_pTKLName);
 
 				TTODO("Toshi::TKeyframeLibraryInstance::CreateEx");

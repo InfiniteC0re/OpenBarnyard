@@ -46,7 +46,6 @@ namespace Toshi
 		TBOOL IsDying() const { return m_State & State_Dying; }
 
 	private:
-		void* m_Unk1;                    // 0x04
 		uint8_t m_State;                 // 0x1C
 		TScheduler* m_Scheduler;         // 0x20
 	};

@@ -44,7 +44,7 @@ namespace Toshi
 
         void Clear()
         {
-            for (size_t i = 0; i < m_iNumElements; i++)
+            for (int i = 0; i < m_iNumElements; i++)
             {
                 ((T*)m_poElements)[m_iNumElements].~T();
             }
