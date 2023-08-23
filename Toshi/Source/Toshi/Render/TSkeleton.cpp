@@ -92,11 +92,11 @@ namespace Toshi {
 			m_fnQuatLerp = TQuaternion::Nlerp;
 	}
 
-	int TSkeleton::GetBoneID(const char* a_cBoneName, uint32_t length)
+	int TSkeleton::GetBoneID(const char* a_cBoneName, uint32_t a_iLength)
 	{
 		for (short i = 0; i < m_iBoneCount; i++)
 		{
-			if (TStringManager::String8CompareNoCase(m_pBones[i].GetName(), a_cBoneName) == 0)
+			if (TStringManager::String8CompareNoCase(m_pBones[i].GetName(), a_cBoneName, a_iLength) == 0)
 			{
 				return i;
 			}
@@ -105,19 +105,13 @@ namespace Toshi {
 		return -1;
 	}
 
-	int TSkeleton::GetSequenceID(const char* a_sSequenceName, uint32_t length)
+	int TSkeleton::GetSequenceID(const char* a_sSequenceName, uint32_t a_iLength)
 	{
-		if (length == 0)
-		{
-			length = (uint32_t)TStringManager::String8Length(a_sSequenceName);
-		}
-
 		for (short i = 0; i < m_iSequenceCount; i++)
 		{
-			if (m_SkeletonSequences[i]->GetResourceName().GetNameLength() == length)
+			if (TStringManager::String8CompareNoCase(m_SkeletonSequences[i].GetName(), a_sSequenceName, a_iLength) == 0)
 			{
-				int comp = TStringManager::String8CompareNoCase(m_SkeletonSequences[i]->GetResourceName().GetName(), a_sSequenceName, length);
-				if (comp == 0) { return i; }
+				return i;
 			}
 		}
 

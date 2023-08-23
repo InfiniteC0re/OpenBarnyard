@@ -17,14 +17,17 @@ namespace Toshi {
 			LOOPMODE_LOOP
 		};
 
-		ResourceName m_ResourceName;
+		const char* m_szName;
 		Flag m_Flags;
 		LOOPMODE m_eLoopMode;
+		float m_fDuration;
+		void* m_pChannels;
+		int m_iUnk3;
 
 	public:
 		TBOOL IsLooping() { return m_eLoopMode == LOOPMODE_LOOP; }
 		TBOOL IsOverlay() { return m_Flags & FLAG_Overlay; }
-		ResourceName& GetResourceName() { return m_ResourceName; }
+		const char* GetName() const { return m_szName; }
 	};
 
 	class TSkeletonBone
@@ -75,8 +78,8 @@ namespace Toshi {
 		int GetAutoBoneCount() const { return m_iBoneCount - m_iManualBoneCount; }
 
 		int GetSequenceID(const char* a_sSequenceName, uint32_t a_iLength);
-		TSkeletonSequence** GetSequences() { return m_SkeletonSequences; }
-		TSkeletonSequence* GetSequence(uint32_t a_iSequence) { return m_SkeletonSequences[a_iSequence]; }
+		TSkeletonSequence* GetSequences() { return m_SkeletonSequences; }
+		TSkeletonSequence* GetSequence(uint32_t a_iSequence) { return &m_SkeletonSequences[a_iSequence]; }
 		TSkeletonSequence* GetSequence(const char* a_sSequenceName, uint32_t a_iLength) { return GetSequence(GetSequenceID(a_sSequenceName, a_iLength)); }
 
 		short GetSequenceCount() { return m_iSequenceCount; }
@@ -91,7 +94,7 @@ namespace Toshi {
 		short m_iInstanceCount;                        // 0x08
 		TKeyframeLibraryInstance m_KeyLibraryInstance; // 0x0C
 		TSkeletonBone* m_pBones;                       // 0x34
-		TSkeletonSequence** m_SkeletonSequences;       // 0x38
+		TSkeletonSequence* m_SkeletonSequences;       // 0x38
 		t_fnQuatLerp m_fnQuatLerp;                     // 0x3C
 	};
 
