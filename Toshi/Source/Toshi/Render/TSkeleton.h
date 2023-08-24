@@ -17,13 +17,33 @@ namespace Toshi {
 		 */
 		float GetKeyPair(int a_iCurrentAnimProgress, unsigned short& a_rCurrentKeyIndex, unsigned short& a_rLerpFromIndex, unsigned short& a_rLerpToIndex);
 
-		__forceinline uint16_t* GetKeyData(size_t a_iKeyIndex)
+		__forceinline uint16_t* GetKey(size_t a_iKeyIndex)
 		{
 			return TREINTERPRETCAST(uint16_t*, a_iKeyIndex * m_iKeySize + TREINTERPRETCAST(uintptr_t, m_pData));
 		}
 
+		__forceinline unsigned short GetKeyCount() const
+		{
+			return m_iNumKeys;
+		}
+
+		__forceinline TBOOL IsTranslateAnimated() const
+		{
+			return m_eFlags & 1;
+		}
+
+		__forceinline TBOOL Is2() const
+		{
+			return m_eFlags & 2;
+		}
+
+		__forceinline uint8_t GetFlags() const
+		{
+			return m_eFlags;
+		}
+
 	private:
-		uint8_t m_eChannelMode;
+		uint8_t m_eFlags;
 		uint8_t m_iKeySize;
 		unsigned short m_iNumKeys;
 		uint16_t* m_pData;
@@ -46,6 +66,9 @@ namespace Toshi {
 		TBOOL IsLooping() const { return m_eLoopMode == LOOPMODE_LOOP; }
 		TBOOL IsOverlay() const { return m_Flags & FLAG_Overlay; }
 
+		TSkeletonSequenceBone* GetBones() { return m_pSeqBones; }
+		TSkeletonSequenceBone* GetBone(int a_iIndex) { return &m_pSeqBones[a_iIndex]; }
+
 		float GetDuration() const { return m_fDuration; }
 		const char* GetName() const { return m_szName; }
 		short GetUnk2() const { return m_iUnk2; }
@@ -63,14 +86,21 @@ namespace Toshi {
 	class TSkeletonBone
 	{
 	public:
+		const TQuaternion& GetRotation() const { return m_Rotation; }
+		const TMatrix44& GetTransform() const { return m_Transform; }
+		const TMatrix44& GetTransformInv() const { return m_TransformInv; }
+		const TVector3& GetPosition() const { return m_Position; }
 		const char* GetName() const { return m_szName; }
+		int GetParentBone() const { return m_iParentBone; }
 
 	private:
 		TQuaternion m_Rotation;
 		TMatrix44 m_Transform;
 		TMatrix44 m_TransformInv;
 		const char* m_szName;
-		char pad[28];
+		short m_iParentBone;
+		TVector3 m_Position;
+		char pad[12];
 	};
 
 	class TSkeleton
@@ -94,6 +124,7 @@ namespace Toshi {
 
 		class TSkeletonInstance* CreateInstance(TBOOL a_bSetBasePose);
 
+		t_fnQuatLerp GetQInterpFn() const { return m_fnQuatLerp; }
 		void SetQInterpFn(QUATINTERP a_eQuatInterp);
 
 		TSkeletonBone* GetBone(const char* a_cBoneName, uint32_t a_iLength) { return GetBone(GetBoneID(a_cBoneName, a_iLength)); }
@@ -128,14 +159,17 @@ namespace Toshi {
 		t_fnQuatLerp m_fnQuatLerp;                     // 0x3C
 	};
 
-	struct TSkeletonInstanceBone
-	{
-		TMatrix44 Matrix;
-	};
+	using TSkeletonInstanceBone = TMatrix44;
 
 	class TSkeletonInstance
 	{
-	private:
+	public:
+		struct BoneCache
+		{
+			TQuaternion Rotation;
+			TVector3 Position;
+		};
+		
 		friend TSkeleton;
 
 	public:
@@ -150,6 +184,10 @@ namespace Toshi {
 
 		TSkeleton* GetSkeleton() { return m_pSkeleton; }
 
+	public:
+		inline static TMatrix44 g_aForwardMatrices[TANIMATION_MAXBONES];
+		inline static BoneCache g_aBonesCaches[TANIMATION_MAXBONES];
+
 	private:
 		int m_iFlags;
 		uint32_t m_iSize;
@@ -161,9 +199,9 @@ namespace Toshi {
 		TDList<TAnimation> m_FreeAnimations;    // FIXME: Should be TQList
 		TSkeletonInstanceBone* m_pBones;
 		TAnimation* m_pAnimations;
-		float m_fUnk3;
-		int m_iUnk4;
-		int m_iCurrentFrame;
+		float m_fTotalWeight;
+		int m_iLastUpdateTimeFrame;
+		int m_iLastUpdateStateFrame;
 		int m_iUnk5;
 	};
 

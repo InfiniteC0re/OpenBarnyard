@@ -27,7 +27,7 @@ namespace Toshi {
 					
 					// Reset states of all bones
 					for (int i = 0; i < pSkeleton->GetAutoBoneCount(); i++)
-						GetBone(i)->Key = 0;
+						*GetBone(i) = 0;
 				}
 			}
 			else

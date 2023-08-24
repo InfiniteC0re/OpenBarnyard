@@ -12,30 +12,10 @@ namespace Toshi {
 
 	extern TMemoryHeap* s_pAnimMemHeap;
 
-	struct TAnimVector
-	{
-		float m_fX;
-		float m_fY;
-		float m_fZ;
-	};
-
-	struct TAnimQuaternion
-	{
-		float m_fX;
-		float m_fY;
-		float m_fZ;
-		float m_fW;
-	};
-
-	struct TAnimScale
-	{
-		float m_fScale;
-	};
-
-	struct TAnimationBone
-	{
-		unsigned short Key;
-	};
+	using TAnimVector = TVector3;
+	using TAnimQuaternion = TQuaternion;
+	using TAnimScale = TFLOAT;
+	using TAnimationBone = unsigned short;
 
 	class TSkeletonInstance;
 
@@ -61,19 +41,18 @@ namespace Toshi {
 		};
 
 	public:
-		TAnimation()
-		{
-			m_eFlags = Flags_None;
-		}
+		TAnimation() = default;
 
 		TBOOL UpdateTime(float a_fDeltaTime);
 		void RemoveAnimation(float a_fVal);
 
-		float SetDestWeight(float a_fDestWeight, float a_fBlendInSpeed);
-
 		void SetMode(Mode a_eMode) { m_eMode = a_eMode; }
 		float SetSpeed(float a_fSpeed) { return std::exchange(m_fSpeed, a_fSpeed); }
+		
+		float SetDestWeight(float a_fDestWeight, float a_fBlendInSpeed);
 
+		Flags GetFlags() const { return m_eFlags; }
+		Mode GetMode() const { return m_eMode; }
 		TBOOL IsActive() const { return m_eFlags & Flags_Active; }
 		TBOOL IsManaged() const { return m_eFlags & Flags_Managed; }
 		TBOOL IsUpdateStateOnRemove() const { return m_eFlags & Flags_UpdateStateOnRemove; }
@@ -87,8 +66,6 @@ namespace Toshi {
 		float GetDestWeight() const { return m_fDestWeight; }
 		float GetBlendInSpeed() const { return m_fBlendInSpeed; }
 		float GetBlendOutSpeed() const { return m_fBlendOutSpeed; }
-		Flags GetFlags() const { return m_eFlags; }
-		Mode GetMode() const { return m_eMode; }
 
 		TAnimationBone* GetBones() { return TREINTERPRETCAST(TAnimationBone*, this + 1); }
 		TAnimationBone* GetBone(int a_iIndex) { return &TREINTERPRETCAST(TAnimationBone*, this + 1)[a_iIndex]; }
@@ -177,15 +154,33 @@ namespace Toshi {
 
 		void Destroy();
 
+		TAnimVector* GetT(int a_iIndex) const
+		{
+			TASSERT(a_iIndex < m_iTKeyCount);
+			return &m_pTranslations[a_iIndex];
+		}
+
+		TAnimQuaternion* GetQ(int a_iIndex) const
+		{
+			TASSERT(a_iIndex < m_iQKeyCount);
+			return &m_pQuaternions[a_iIndex];
+		}
+
+		TAnimScale GetS(int a_iIndex) const
+		{
+			TASSERT(a_iIndex < m_iQKeyCount);
+			return m_pScales[a_iIndex];
+		}
+
 		void SetLibrary(TKeyframeLibrary* a_pLibrary) { m_pLibrary = a_pLibrary; }
 		void SetTCount(int a_iTCount) { m_iTKeyCount = a_iTCount; }
 		void SetQCount(int a_iQCount) { m_iQKeyCount = a_iQCount; }
 		void SetSCount(int a_iSCount) { m_iSKeyCount = a_iSCount; }
 
-		TKeyframeLibrary* GetLibrary() { return m_pLibrary; }
-		int GetTCount() { return m_iTKeyCount; }
-		int GetQCount() { return m_iQKeyCount; }
-		int GetSCount() { return m_iSKeyCount; }
+		TKeyframeLibrary* GetLibrary() const { return m_pLibrary; }
+		int GetTCount() const { return m_iTKeyCount; }
+		int GetQCount() const { return m_iQKeyCount; }
+		int GetSCount() const { return m_iSKeyCount; }
 
 	private:
 		TKeyframeLibrary* m_pLibrary;
