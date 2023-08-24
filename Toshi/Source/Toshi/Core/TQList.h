@@ -98,17 +98,17 @@ namespace Toshi {
 			return pFirstElement;
 		}
 
-		Iterator Head()
+		Iterator Head() const
 		{
 			return m_oRoot.m_pNext;
 		}
 
-		Iterator Begin()
+		Iterator Begin() const
 		{
 			return m_oRoot.m_pNext;
 		}
 
-		const Iterator End()
+		const TNode* End() const
 		{
 			return &m_oRoot;
 		}

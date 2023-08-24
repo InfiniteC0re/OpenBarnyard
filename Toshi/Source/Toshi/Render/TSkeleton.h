@@ -178,6 +178,7 @@ namespace Toshi {
 
 		void UpdateTime(float a_fDeltaTime);
 		void UpdateState(TBOOL a_bForceUpdate);
+		TMatrix44* GetBoneTransformCurrent(int a_iBone, TMatrix44& a_rMatrix);
 
 		void RemoveAnimation(TAnimation* a_pAnimation, float a_fValue);
 

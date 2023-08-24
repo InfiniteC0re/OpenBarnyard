@@ -329,6 +329,19 @@ namespace Toshi {
 		}
 	}
 
+	TMatrix44* TSkeletonInstance::GetBoneTransformCurrent(int a_iBone, TMatrix44& a_rMatrix)
+	{
+		if (a_iBone < m_pSkeleton->GetAutoBoneCount())
+		{
+			auto pBone = m_pSkeleton->GetBone(a_iBone);
+			a_rMatrix.Multiply(m_pBones[a_iBone], pBone->GetTransform());
+			return &a_rMatrix;
+		}
+
+		a_rMatrix = m_pSkeleton->GetBone(a_iBone)->GetTransform();
+		return &a_rMatrix;
+	}
+
 	void TSkeletonInstance::RemoveAnimation(TAnimation* a_pAnimation, float a_fValue)
 	{
 		TASSERT(TTRUE == a_pAnimation->IsActive());
