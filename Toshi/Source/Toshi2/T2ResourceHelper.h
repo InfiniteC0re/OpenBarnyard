@@ -1,33 +1,13 @@
 #pragma once
-
 #include "Toshi2/T2ResourceManager.h"
 
-namespace Toshi
-{
+namespace Toshi {
 
-	class T2TexturePtr
-	{
+#ifdef TOSHI_SKU_WINDOWS
+	// FIXME: TTexture is not a T2Resource since Blitworks only adapted Barnyard code for the de Blob port
+	using T2TexturePtr = T2ResPtr<void>;
+#else
+	using T2TexturePtr = T2ResPtr<class TTexture>;
+#endif
 
-		T2TexturePtr& operator=(T2TexturePtr texturePtr)
-		{
-			auto resourceManager = T2ResourceManager::GetSingleton();
-			resourceManager->DecRefCount(m_iID);
-			m_iID = texturePtr.m_iID;
-			resourceManager->IncRefCount(m_iID);
-		}
-
-	public:
-		T2TexturePtr()
-		{
-			m_iID = 0;
-		}
-
-		~T2TexturePtr()
-		{
-			auto resourceManager = T2ResourceManager::GetSingleton();
-			resourceManager->DecRefCount(m_iID);
-		}
-
-		int m_iID;
-	};
 }

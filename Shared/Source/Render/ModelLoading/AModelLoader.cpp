@@ -92,7 +92,7 @@ TBOOL AModelLoader::LoadTRBCallback2(TModel* pModel, TTMDWin::TTRBWinHeader* pHe
 	pModel->m_iLODCount = pHeader->m_iLODCount;
 	pModel->m_fUnknown = pHeader->m_fUnknown;
 
-	for (size_t i = 0; i < pHeader->m_iLODCount; i++)
+	for (int i = 0; i < pHeader->m_iLODCount; i++)
 	{
 		auto& lod = pModel->m_LODLevels[i];
 

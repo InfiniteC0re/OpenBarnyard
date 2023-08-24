@@ -1,28 +1,8 @@
 #pragma once
 #include "Toshi2/T2ResourceManager.h"
 
-namespace Toshi
-{
-	class TModel;
+namespace Toshi {
 
-	class T2ModelPtr : public T2ResourcePtr
-	{
-	public:
-		T2ModelPtr(int ID = 0) : T2ResourcePtr(ID) { }
+	using T2ModelPtr = T2ResPtr<class TModel>;
 
-		void operator=(const T2ModelPtr& other)
-		{
-			T2ResourcePtr::operator=(other);
-		}
-
-		TModel* GetData() const
-		{
-			return TSTATICCAST(TModel*, T2ResourcePtr::GetData());
-		}
-
-		TModel* operator->() const
-		{
-			return GetData();
-		}
-	};
 }

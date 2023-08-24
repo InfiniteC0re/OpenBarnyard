@@ -140,6 +140,11 @@ namespace Toshi
 			return T2ResourceManager::GetSingletonSafe()->GetData(m_iResourceID);
 		}
 
+		int GetID() const
+		{
+			return m_iResourceID;
+		}
+
 		operator int() const
 		{
 			return m_iResourceID;
@@ -147,6 +152,28 @@ namespace Toshi
 
 	protected:
 		int m_iResourceID;
+	};
+
+	template <class T>
+	class T2ResPtr : protected T2ResourcePtr
+	{
+	public:
+		T2ResPtr(int a_iID = IDINVALID) : T2ResourcePtr(a_iID) { }
+		T2ResPtr(const T2ResPtr& a_rOther) : T2ResourcePtr(a_rOther.m_iResourceID) { }
+		T2ResPtr(T2ResPtr&& a_rOther) : T2ResourcePtr(a_rOther.m_iResourceID) { a_rOther.m_iResourceID = IDINVALID; }
+
+		void operator=(const T2ResPtr& a_rOther)
+		{
+			T2ResourceManager::GetSingletonSafe()->DecRefCount(m_iResourceID);
+			m_iResourceID = a_rOther.m_iResourceID;
+			T2ResourceManager::GetSingletonSafe()->IncRefCount(m_iResourceID);
+		}
+		
+		int GetID() const { return m_iResourceID; }
+		operator int() const { return m_iResourceID; }
+
+		T* GetData() const { return TSTATICCAST(T*, T2ResourcePtr::GetData()); }
+		T* operator->() const { return TSTATICCAST(T*, T2ResourcePtr::GetData()); }
 	};
 
 	class T2Resource
@@ -163,6 +190,12 @@ namespace Toshi
 		T2ResourcePtr GetResourcePtr() const
 		{
 			return T2ResourcePtr(m_iID);
+		}
+
+		template <class T>
+		T2ResPtr<T> GetResourcePtr() const
+		{
+			return T2ResPtr(m_iID);
 		}
 
 		int GetResourceId()
