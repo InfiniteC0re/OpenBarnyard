@@ -59,6 +59,7 @@ namespace Toshi
 			return 1.0f / Sqrt(a_fX);
 		}
 
+		inline int FloorToInt(float a_fVal) { return int(a_fVal) - uint32_t(0x80000000 < uint32_t(a_fVal - uint32_t(a_fVal))); }
 		inline TBOOL IsNaN(float fVal) { return isnan(fVal); }
 		inline int FastMod(int a_iNum, int a_iModulus) { TASSERT(a_iNum >= 0); TASSERT(a_iModulus > 0); TASSERT(0 == (a_iModulus & (a_iModulus - 1))); return a_iNum & (a_iModulus - 1); }
 		inline void SinCos(float fVal, float& fVal1, float& fVal2) { fVal1 = cos(fVal); fVal2 = sin(fVal); }

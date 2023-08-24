@@ -31,27 +31,33 @@ namespace Toshi {
 
 	class TSkeletonSequence
 	{
+	public:
 		enum Flag : unsigned short
 		{
 			FLAG_Overlay = BITFIELD(0),
 		};
 
-		enum LOOPMODE
+		enum LOOPMODE : int
 		{
 			LOOPMODE_LOOP
 		};
 
+	public:
+		TBOOL IsLooping() const { return m_eLoopMode == LOOPMODE_LOOP; }
+		TBOOL IsOverlay() const { return m_Flags & FLAG_Overlay; }
+
+		float GetDuration() const { return m_fDuration; }
+		const char* GetName() const { return m_szName; }
+		short GetUnk2() const { return m_iUnk2; }
+
+	private:
 		const char* m_szName;
 		Flag m_Flags;
+		short m_iUnk2;
 		LOOPMODE m_eLoopMode;
 		float m_fDuration;
 		TSkeletonSequenceBone* m_pSeqBones;
 		int m_iUnk3;
-
-	public:
-		TBOOL IsLooping() { return m_eLoopMode == LOOPMODE_LOOP; }
-		TBOOL IsOverlay() { return m_Flags & FLAG_Overlay; }
-		const char* GetName() const { return m_szName; }
 	};
 
 	class TSkeletonBone
@@ -138,7 +144,11 @@ namespace Toshi {
 		void UpdateTime(float a_fDeltaTime);
 		void UpdateState(TBOOL a_bForceUpdate);
 
+		void RemoveAnimation(TAnimation* a_pAnimation, float a_fValue);
+
 		void SetStateFromBasePose();
+
+		TSkeleton* GetSkeleton() { return m_pSkeleton; }
 
 	private:
 		int m_iFlags;

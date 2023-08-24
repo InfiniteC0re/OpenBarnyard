@@ -32,43 +32,81 @@ namespace Toshi {
 		float m_fScale;
 	};
 
+	struct TAnimationBone
+	{
+		unsigned short Key;
+	};
+
 	class TSkeletonInstance;
 
-#pragma pack(push, 1)
 	class TAnimation : public TDList<TAnimation>::TNode
 	{
 	public:
+		using Flags = uint8_t;
+		enum Flags_ : Flags
+		{
+			Flags_None = 0,
+			Flags_Active = BITFIELD(0),
+			Flags_Managed = BITFIELD(1),
+			Flags_Unknown2 = BITFIELD(2),
+			Flags_UpdateStateOnRemove = BITFIELD(3),
+		};
+
+		using Mode = uint32_t;
+		enum Mode_ : Mode
+		{
+			MODE_UNK1,
+			MODE_UNK2,
+			MODE_UNK3,
+		};
+
+	public:
 		TAnimation()
 		{
-			m_iUnk2 = 0;
+			m_eFlags = Flags_None;
 		}
 
 		TBOOL UpdateTime(float a_fDeltaTime);
+		void RemoveAnimation(float a_fVal);
 
-		TSkeletonInstance* GetSkeletonInstance() const
-		{
-			return m_pSkeletonInstance;
-		}
+		float SetDestWeight(float a_fDestWeight, float a_fBlendInSpeed);
 
-		unsigned short GetSequenceID() const
-		{
-			return m_iSeqID;
-		}
+		void SetMode(Mode a_eMode) { m_eMode = a_eMode; }
+		float SetSpeed(float a_fSpeed) { return std::exchange(m_fSpeed, a_fSpeed); }
 
-	public: // FIXME: Make members private when most are figured out
+		TBOOL IsActive() const { return m_eFlags & Flags_Active; }
+		TBOOL IsManaged() const { return m_eFlags & Flags_Managed; }
+		TBOOL IsUpdateStateOnRemove() const { return m_eFlags & Flags_UpdateStateOnRemove; }
+
+		TSkeletonInstance* GetSkeletonInstance() const { return m_pSkeletonInstance; }
+		unsigned short GetSequence() const { return m_iSeqID; }
+		float GetSpeed() const { return m_fSpeed; }
+		float GetSeqTime() const { return m_fSeqTime; }
+		float GetTotalTime() const { return m_fTotalTime; }
+		float GetWeight() const { return m_fWeight; }
+		float GetDestWeight() const { return m_fDestWeight; }
+		float GetBlendInSpeed() const { return m_fBlendInSpeed; }
+		float GetBlendOutSpeed() const { return m_fBlendOutSpeed; }
+		Flags GetFlags() const { return m_eFlags; }
+		Mode GetMode() const { return m_eMode; }
+
+		TAnimationBone* GetBones() { return TREINTERPRETCAST(TAnimationBone*, this + 1); }
+		TAnimationBone* GetBone(int a_iIndex) { return &TREINTERPRETCAST(TAnimationBone*, this + 1)[a_iIndex]; }
+
+	private:
 		TSkeletonInstance* m_pSkeletonInstance;
 		unsigned short m_iSeqID;
-		short m_iUnk2;
+		Flags m_eFlags;
 		int m_iUnk3;
-		int m_eFlags;
-		float m_fAnimSpeedMultiplier;
-		float m_fUnk4;
-		float m_fTotalPlayingTime;
-		float m_fPlaybackTime;
-		float m_fUnk6;
-		float m_fUnk7;
+		Mode m_eMode;
+		float m_fSpeed;
+		float m_fWeight;
+		float m_fDestWeight;
+		float m_fTotalTime;
+		float m_fSeqTime;
+		float m_fBlendInSpeed;
+		float m_fBlendOutSpeed;
 	};
-#pragma pack(pop)
 
 	class TKeyframeLibrary : public TDList<TKeyframeLibrary>::TNode
 	{

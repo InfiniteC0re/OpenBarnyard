@@ -40,7 +40,7 @@ namespace Toshi {
 		}
 
 		auto iAutoBoneCount = GetAutoBoneCount();
-		size_t iAnimationSize = iAutoBoneCount * sizeof(short) + TMath::AlignNum(sizeof(TAnimation));
+		size_t iAnimationSize = iAutoBoneCount * sizeof(TAnimationBone) + TMath::AlignNum(sizeof(TAnimation));
 		size_t iInstanceSize = sizeof(TSkeletonInstance) + sizeof(TSkeletonInstanceBone) * iAutoBoneCount + iAnimationSize * GetAnimationMaxCount();
 		TSkeletonInstance* pInstance;
 
@@ -131,8 +131,8 @@ namespace Toshi {
 			{
 				if (pAnim->UpdateTime(a_fDeltaTime))
 				{
-					m_pSkeleton->GetSequence(pAnim->GetSequenceID()); // Throws assert if seqId is wrong
-					m_fUnk3 += pAnim->m_fUnk4;
+					m_pSkeleton->GetSequence(pAnim->GetSequence());
+					m_fUnk3 += pAnim->GetWeight();
 				}
 			}
 
@@ -152,6 +152,13 @@ namespace Toshi {
 
 	void TSkeletonInstance::UpdateState(TBOOL a_bForceUpdate)
 	{
+		TIMPLEMENT();
+	}
+
+	void TSkeletonInstance::RemoveAnimation(TAnimation* a_pAnimation, float a_fValue)
+	{
+		TASSERT(TTRUE == a_pAnimation->IsActive());
+
 		TIMPLEMENT();
 	}
 
