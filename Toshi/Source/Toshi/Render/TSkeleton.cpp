@@ -40,7 +40,7 @@ namespace Toshi {
 		}
 
 		auto iAutoBoneCount = GetAutoBoneCount();
-		size_t iAnimationSize = iAutoBoneCount * 2 + TMath::AlignNum(sizeof(TAnimation));
+		size_t iAnimationSize = iAutoBoneCount * sizeof(short) + TMath::AlignNum(sizeof(TAnimation));
 		size_t iInstanceSize = sizeof(TSkeletonInstance) + sizeof(TSkeletonInstanceBone) * iAutoBoneCount + iAnimationSize * GetAnimationMaxCount();
 		TSkeletonInstance* pInstance;
 
@@ -125,6 +125,79 @@ namespace Toshi {
 			m_pSkeleton->GetBone(i);
 			m_pBones[i].Matrix.Identity();
 		}
+	}
+
+	float TSkeletonSequenceBone::GetKeyPair(int a_iCurrentAnimTime, unsigned short& a_rCurrentKeyIndex, unsigned short& a_rLerpFromIndex, unsigned short& a_rLerpToIndex)
+	{
+		auto pFirstKeyTime = *GetKeyData(0);
+
+		if (a_iCurrentAnimTime < pFirstKeyTime || a_iCurrentAnimTime == pFirstKeyTime)
+		{
+			// Animation haven't reached it's first frame
+			a_rCurrentKeyIndex = 0;
+			a_rLerpFromIndex = 0;
+			a_rLerpToIndex = 0;
+			return 0.0f;
+		}
+
+		auto iLastKeyIndex = m_iNumKeys - 1;
+		auto pLastKeyTime = *GetKeyData(iLastKeyIndex);
+		
+		if (pLastKeyTime <= a_iCurrentAnimTime)
+		{
+			// Animation is over
+			a_rCurrentKeyIndex = iLastKeyIndex;
+			a_rLerpFromIndex = iLastKeyIndex;
+			a_rLerpToIndex = iLastKeyIndex;
+			return 0.0f;
+		}
+
+		auto pCurrentKeyTime = *GetKeyData(a_rCurrentKeyIndex);
+		
+		if (pCurrentKeyTime < a_iCurrentAnimTime)
+		{
+			// Current key is currently lerping
+			auto iNextIndex = a_rCurrentKeyIndex + 1;
+			auto iNextKeyTime = *GetKeyData(iNextIndex);
+
+			while (iNextKeyTime <= a_iCurrentAnimTime)
+			{
+				// Skip keys that are already over
+				a_rCurrentKeyIndex = iNextIndex++;
+				iNextKeyTime = *GetKeyData(iNextIndex);
+			}
+
+			a_rLerpFromIndex = a_rCurrentKeyIndex;
+			a_rLerpToIndex = iNextIndex;
+		}
+		else
+		{
+			if (pCurrentKeyTime == a_iCurrentAnimTime)
+			{
+				// Current time is right at the end of keys transition
+				a_rLerpFromIndex = a_rCurrentKeyIndex;
+				a_rLerpToIndex = a_rCurrentKeyIndex;
+				return 0.0f;
+			}
+
+			// The animation is playing backwards?
+			auto iPrevIndex = a_rCurrentKeyIndex - 1;
+			auto iPrevKeyTime = *GetKeyData(iPrevIndex);
+
+			while (a_iCurrentAnimTime < iPrevKeyTime || a_iCurrentAnimTime == iPrevKeyTime)
+			{
+				a_rCurrentKeyIndex = iPrevIndex--;
+				iPrevKeyTime = *GetKeyData(iPrevIndex);
+			}
+
+			a_rLerpFromIndex = iPrevIndex;
+			a_rLerpToIndex = a_rCurrentKeyIndex;
+		}
+
+		auto iLerpFromTime = *GetKeyData(a_rLerpFromIndex);
+		auto iLerpToTime = *GetKeyData(a_rLerpToIndex);
+
+		return ((a_iCurrentAnimTime - iLerpFromTime) * (1.0f / 65535)) / ((iLerpToTime - iLerpFromTime) * (1.0f / 65535));
 	}
 
 }

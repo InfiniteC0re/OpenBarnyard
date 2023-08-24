@@ -32,6 +32,22 @@ namespace Toshi {
 		float m_fScale;
 	};
 
+#pragma pack(push, 1)
+	class TAnimation : public TDList<TAnimation>::TNode
+	{
+	public:
+		TAnimation()
+		{
+			m_iUnk2 = 0;
+		}
+
+	private:
+		int m_iUnk1;
+		short m_iSeqID;
+		short m_iUnk2;
+	};
+#pragma pack(pop)
+
 	class TKeyframeLibrary : public TDList<TKeyframeLibrary>::TNode
 	{
 	public:

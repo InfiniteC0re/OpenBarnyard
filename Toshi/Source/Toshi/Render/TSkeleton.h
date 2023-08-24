@@ -5,6 +5,30 @@
 
 namespace Toshi {
 
+	class TSkeletonSequenceBone
+	{
+	public:
+		/**
+		 * Returns lerp progress coefficient that should be used for animating
+		 * @param a_iCurrentAnimProgress The current progress of animation from 0 to 65535
+		 * @param a_rCurrentKeyIndex The index of current frame
+		 * @param a_rLerpFromIndex The index of key that is being interpolated from
+		 * @param a_rLerpToIndex The index of key to which previous is being interpolated to
+		 */
+		float GetKeyPair(int a_iCurrentAnimProgress, unsigned short& a_rCurrentKeyIndex, unsigned short& a_rLerpFromIndex, unsigned short& a_rLerpToIndex);
+
+		__forceinline uint16_t* GetKeyData(size_t a_iKeyIndex)
+		{
+			return TREINTERPRETCAST(uint16_t*, a_iKeyIndex * m_iKeySize + TREINTERPRETCAST(uintptr_t, m_pData));
+		}
+
+	private:
+		uint8_t m_eChannelMode;
+		uint8_t m_iKeySize;
+		unsigned short m_iNumKeys;
+		uint16_t* m_pData;
+	};
+
 	class TSkeletonSequence
 	{
 		enum Flag : unsigned short
@@ -21,7 +45,7 @@ namespace Toshi {
 		Flag m_Flags;
 		LOOPMODE m_eLoopMode;
 		float m_fDuration;
-		void* m_pChannels;
+		TSkeletonSequenceBone* m_pSeqBones;
 		int m_iUnk3;
 
 	public:
@@ -102,22 +126,6 @@ namespace Toshi {
 	{
 		TMatrix44 Matrix;
 	};
-
-#pragma pack(push, 1)
-	class TAnimation : public TDList<TAnimation>::TNode
-	{
-	public:
-		TAnimation()
-		{
-			m_iUnk2 = 0;
-		}
-
-	private:
-		int m_iUnk1;
-		short m_iSeqID;
-		short m_iUnk2;
-	};
-#pragma pack(pop)
 
 	class TSkeletonInstance
 	{
