@@ -135,6 +135,9 @@ namespace Toshi {
 	public:
 		TSkeletonInstance() = default;
 
+		void UpdateTime(float a_fDeltaTime);
+		void UpdateState(TBOOL a_bForceUpdate);
+
 		void SetStateFromBasePose();
 
 	private:
@@ -143,9 +146,9 @@ namespace Toshi {
 		TSkeleton* m_pSkeleton;
 		short m_iBaseAnimationCount;
 		short m_iOverlayAnimationCount;
-		TDList<TAnimation> m_BaseAnimations;
-		TDList<TAnimation> m_OverlayAnimations;
-		TDList<TAnimation> m_FreeAnimations;
+		TDList<TAnimation> m_BaseAnimations;    // FIXME: Should be TQList
+		TDList<TAnimation> m_OverlayAnimations; // FIXME: Should be TQList
+		TDList<TAnimation> m_FreeAnimations;    // FIXME: Should be TQList
 		TSkeletonInstanceBone* m_pBones;
 		TAnimation* m_pAnimations;
 		float m_fUnk3;

@@ -32,6 +32,8 @@ namespace Toshi {
 		float m_fScale;
 	};
 
+	class TSkeletonInstance;
+
 #pragma pack(push, 1)
 	class TAnimation : public TDList<TAnimation>::TNode
 	{
@@ -41,10 +43,30 @@ namespace Toshi {
 			m_iUnk2 = 0;
 		}
 
-	private:
-		int m_iUnk1;
-		short m_iSeqID;
+		TBOOL UpdateTime(float a_fDeltaTime);
+
+		TSkeletonInstance* GetSkeletonInstance() const
+		{
+			return m_pSkeletonInstance;
+		}
+
+		unsigned short GetSequenceID() const
+		{
+			return m_iSeqID;
+		}
+
+	public: // FIXME: Make members private when most are figured out
+		TSkeletonInstance* m_pSkeletonInstance;
+		unsigned short m_iSeqID;
 		short m_iUnk2;
+		int m_iUnk3;
+		int m_eFlags;
+		float m_fAnimSpeedMultiplier;
+		float m_fUnk4;
+		float m_fTotalPlayingTime;
+		float m_fPlaybackTime;
+		float m_fUnk6;
+		float m_fUnk7;
 	};
 #pragma pack(pop)
 

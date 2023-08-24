@@ -28,6 +28,11 @@ namespace Toshi
 			return oldState;
 		}
 
+		uint32_t GetFrameCount()
+		{
+			return m_FrameCount;
+		}
+
 		THPTimer* GetTimer()
 		{
 			return &m_Timer;

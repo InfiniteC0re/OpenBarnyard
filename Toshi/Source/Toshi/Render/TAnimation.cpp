@@ -5,4 +5,10 @@ namespace Toshi {
 
 	TMemoryHeap* s_pAnimMemHeap = TNULL;
 
+	TBOOL TAnimation::UpdateTime(float a_fDeltaTime)
+	{
+		TIMPLEMENT();
+		return TFALSE;
+	}
+
 }

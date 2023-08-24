@@ -118,6 +118,43 @@ namespace Toshi {
 		return -1;
 	}
 
+	void TSkeletonInstance::UpdateTime(float a_fDeltaTime)
+	{
+		if (!m_BaseAnimations.IsEmpty() || (!m_OverlayAnimations.IsEmpty() &&
+			m_iCurrentFrame != TSystemManager::GetSingleton()->GetFrameCount()))
+		{
+			m_iCurrentFrame = TSystemManager::GetSingleton()->GetFrameCount();
+			m_fUnk3 = 0.0f;
+
+			// Update base animations
+			for (auto pAnim = m_BaseAnimations.Begin(); pAnim != m_BaseAnimations.End(); pAnim++)
+			{
+				if (pAnim->UpdateTime(a_fDeltaTime))
+				{
+					m_pSkeleton->GetSequence(pAnim->GetSequenceID()); // Throws assert if seqId is wrong
+					m_fUnk3 += pAnim->m_fUnk4;
+				}
+			}
+
+			// Update overlay animations
+			for (auto pAnim = m_OverlayAnimations.Begin(); pAnim != m_OverlayAnimations.End(); pAnim++)
+			{
+				pAnim->UpdateTime(a_fDeltaTime);
+			}
+
+			if (HASFLAG(m_iFlags & 1))
+			{
+				m_iFlags &= ~1;
+				UpdateState(TFALSE);
+			}
+		}
+	}
+
+	void TSkeletonInstance::UpdateState(TBOOL a_bForceUpdate)
+	{
+		TIMPLEMENT();
+	}
+
 	void TSkeletonInstance::SetStateFromBasePose()
 	{
 		for (int i = 0; i < m_pSkeleton->GetAutoBoneCount(); i++)
