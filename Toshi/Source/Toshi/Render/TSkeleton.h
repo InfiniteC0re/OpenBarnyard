@@ -1,6 +1,7 @@
 #pragma once
-#include "Toshi/Render/TAnimation.h"
+#include "Toshi/Core/TQList.h"
 #include "Toshi/Core/TSystem.h"
+#include "Toshi/Render/TAnimation.h"
 #include "Toshi/Render/ResourceName.h"
 
 namespace Toshi {
@@ -64,7 +65,7 @@ namespace Toshi {
 
 	public:
 		TBOOL IsLooping() const { return m_eLoopMode == LOOPMODE_LOOP; }
-		TBOOL IsOverlay() const { return m_Flags & FLAG_Overlay; }
+		TBOOL IsOverlay() const { return m_eFlags & FLAG_Overlay; }
 
 		TSkeletonSequenceBone* GetBones() { return m_pSeqBones; }
 		TSkeletonSequenceBone* GetBone(int a_iIndex) { return &m_pSeqBones[a_iIndex]; }
@@ -75,7 +76,7 @@ namespace Toshi {
 
 	private:
 		const char* m_szName;
-		Flag m_Flags;
+		Flag m_eFlags;
 		short m_iUnk2;
 		LOOPMODE m_eLoopMode;
 		float m_fDuration;
@@ -194,9 +195,9 @@ namespace Toshi {
 		TSkeleton* m_pSkeleton;
 		short m_iBaseAnimationCount;
 		short m_iOverlayAnimationCount;
-		TDList<TAnimation> m_BaseAnimations;    // FIXME: Should be TQList
-		TDList<TAnimation> m_OverlayAnimations; // FIXME: Should be TQList
-		TDList<TAnimation> m_FreeAnimations;    // FIXME: Should be TQList
+		TQList<TAnimation> m_BaseAnimations;
+		TQList<TAnimation> m_OverlayAnimations;
+		TQList<TAnimation> m_FreeAnimations;
 		TSkeletonInstanceBone* m_pBones;
 		TAnimation* m_pAnimations;
 		float m_fTotalWeight;

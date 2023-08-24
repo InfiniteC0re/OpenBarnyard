@@ -41,6 +41,7 @@ ACamera* ACameraManager::CreateCamera(ACamera::CameraType a_eCamType)
 		TIMPLEMENT();
 		break;
 	default:
+		return TNULL;
 		break;
 	}
 }

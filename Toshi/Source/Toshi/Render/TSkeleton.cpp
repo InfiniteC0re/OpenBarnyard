@@ -74,7 +74,7 @@ namespace Toshi {
 			);
 
 			new (pAnimation) TAnimation();
-			pInstance->m_FreeAnimations.InsertHead(pAnimation);
+			pInstance->m_FreeAnimations.PushFront(pAnimation);
 		}
 
 		if (a_bSetBasePose)

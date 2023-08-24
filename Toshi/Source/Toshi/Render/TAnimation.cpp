@@ -111,4 +111,9 @@ namespace Toshi {
 		return fOldValue;
 	}
 
+	TSkeletonSequence* TAnimation::GetSequencePtr() const
+	{
+		return m_pSkeletonInstance->GetSkeleton()->GetSequence(m_iSeqID);
+	}
+
 }

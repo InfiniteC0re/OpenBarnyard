@@ -1,6 +1,6 @@
 #pragma once
+#include "Toshi/Core/TQList.h"
 #include "Toshi/File/TTRB.h"
-#include "Toshi2/T2DList.h"
 
 #ifdef LoadLibrary
 #undef LoadLibrary
@@ -8,9 +8,8 @@
 
 namespace Toshi {
 	
-	constexpr int TANIMATION_MAXBONES = 128;
-
 	extern TMemoryHeap* s_pAnimMemHeap;
+	constexpr int TANIMATION_MAXBONES = 128;
 
 	using TAnimVector = TVector3;
 	using TAnimQuaternion = TQuaternion;
@@ -19,7 +18,7 @@ namespace Toshi {
 
 	class TSkeletonInstance;
 
-	class TAnimation : public TDList<TAnimation>::TNode
+	class TAnimation : public TQList<TAnimation>::TNode
 	{
 	public:
 		using Flags = uint8_t;
@@ -57,8 +56,9 @@ namespace Toshi {
 		TBOOL IsManaged() const { return m_eFlags & Flags_Managed; }
 		TBOOL IsUpdateStateOnRemove() const { return m_eFlags & Flags_UpdateStateOnRemove; }
 
-		TSkeletonInstance* GetSkeletonInstance() const { return m_pSkeletonInstance; }
 		unsigned short GetSequence() const { return m_iSeqID; }
+		class TSkeletonSequence* GetSequencePtr() const;
+		TSkeletonInstance* GetSkeletonInstance() const { return m_pSkeletonInstance; }
 		float GetSpeed() const { return m_fSpeed; }
 		float GetSeqTime() const { return m_fSeqTime; }
 		float GetTotalTime() const { return m_fTotalTime; }
