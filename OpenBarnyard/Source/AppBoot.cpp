@@ -23,6 +23,7 @@
 
 #include "Tasks/ADummyTask.h"
 #include "Locale/ALocaleManager.h"
+#include "AGUI2/AGUI2TextureSection.h"
 
 AApplication AApplication::g_oTheApp;
 
@@ -79,6 +80,8 @@ TBOOL AApplication::OnCreate(int argc, char** argv)
 
 		m_pRootTask->Activate(TTRUE);
 	}
+
+	AGUI2TextureSectionManager::Open("data/gui/texsec.trb", (TTRB*)1);
 
 #if 1
 
