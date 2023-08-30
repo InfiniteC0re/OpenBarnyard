@@ -94,19 +94,7 @@ namespace Toshi {
 	class TPString8Pool
 	{
 	public:
-		class Allocator : public T2GlobalAllocator
-		{
-		public:
-			TPooledString8* AllocateString(const char* a_szString, TPString8Pool* a_pPool, T2Allocator* a_pAllocator)
-			{
-				return T2GlobalAllocator::New<TPooledString8>(a_szString, a_pPool, a_pAllocator);
-			}
-		};
-
-		inline static Allocator s_Allocator;
-
-	public:
-		TPString8Pool(int a_iUnknown1, int a_iUnknown2, Allocator* a_pAllocator, void* m_pUnknown3);
+		TPString8Pool(int a_iUnknown1, int a_iUnknown2, T2Allocator* a_pAllocator, void* m_pUnknown3);
 
 		void Get(TPooledString8*& a_pOutString, const char* a_szString, bool* a_pWasInPool = TNULL);
 
@@ -116,7 +104,12 @@ namespace Toshi {
 			m_oMap.Remove(a_pString->GetString8());
 		}
 
-		Allocator* GetAllocator() const
+		void InitialiseStatic()
+		{
+			TIMPLEMENT();
+		}
+
+		T2Allocator* GetAllocator() const
 		{
 			return m_pAllocator;
 		}
@@ -134,12 +127,13 @@ namespace Toshi {
 	public:
 		static void Create()
 		{
-			TSystemManager::SetStringPool(new TPString8Pool(1024, 0, &s_Allocator, 0));
-			TTODO("FUN_006c1a60 in Barnyard");
+			auto pPool = new TPString8Pool(1024, 0, &T2Allocator::s_GlobalAllocator, 0);
+			TSystemManager::SetStringPool(pPool);
+			pPool->InitialiseStatic();
 		}
 
 	private:
-		Allocator* m_pAllocator;
+		T2Allocator* m_pAllocator;
 		T2Map<const char*, TPooledString8*, TPooledString8::Comparator> m_oMap;
 	};
 

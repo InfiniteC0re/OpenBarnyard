@@ -25,7 +25,7 @@ namespace Toshi {
 				}
 				else
 				{
-					TPooledString8* pString = m_pAllocator->AllocateString(a_szString, this, m_pAllocator);
+					TPooledString8* pString = m_pAllocator->New<TPooledString8>(a_szString, this, m_pAllocator);
 					m_oMap.Insert(a_szString, pString);
 
 					a_pOutString = pString;
@@ -35,7 +35,7 @@ namespace Toshi {
 		}
 	}
 
-	TPString8Pool::TPString8Pool(int a_iUnknown1, int a_iUnknown2, Allocator* a_pAllocator, void* m_pUnknown3) :
+	TPString8Pool::TPString8Pool(int a_iUnknown1, int a_iUnknown2, T2Allocator* a_pAllocator, void* m_pUnknown3) :
 		m_pAllocator(a_pAllocator),
 		m_oMap(a_pAllocator)
 	{
