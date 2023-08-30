@@ -13,7 +13,7 @@ TBOOL AGUI2TextureSectionManager::Open(const char* a_szFileName, Toshi::TTRB* a_
 		if (g_trb->Load(a_szFileName) != TTRB::ERROR_OK)
 			return TFALSE;
 
-		g_sections = TSTATICCAST(AGUI2TextureSection**, g_trb->GetSymbolAddress("texturesections"));
+		g_defblock = TSTATICCAST(TRBHeader*, g_trb->GetSymbolAddress("texturesections"));
 	}
 	else
 	{
@@ -39,7 +39,7 @@ TBOOL AGUI2TextureSectionManager::Open(const char* a_szFileName, Toshi::TTRB* a_
 		return TTRUE;
 	}
 
-	g_defblock = *g_sections;
+	g_sections = g_defblock->m_pSections;
 	CreateMaterials();
 
 	return TTRUE;

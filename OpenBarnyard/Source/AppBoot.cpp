@@ -23,7 +23,7 @@
 
 #include "Tasks/ADummyTask.h"
 #include "Locale/ALocaleManager.h"
-#include "AGUI2/AGUI2TextureSection.h"
+#include "AGUI2/AGUI2.h"
 
 AApplication AApplication::g_oTheApp;
 
@@ -81,7 +81,9 @@ TBOOL AApplication::OnCreate(int argc, char** argv)
 		m_pRootTask->Activate(TTRUE);
 	}
 
-	AGUI2TextureSectionManager::Open("data/gui/texsec.trb", (TTRB*)1);
+
+	AGUI2TextureSectionManager::Open("data/gui/texsec.trb", TNULL);
+	AGUI2TextureSection* pFoundSection = AGUI2::GetTextureSection("Bullseye_Mask");
 
 #if 1
 
