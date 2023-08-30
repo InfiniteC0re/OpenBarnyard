@@ -50,8 +50,13 @@ void __CRTDECL operator delete[](void* ptr, size_t _Size) noexcept
 	TFree(ptr);
 }
 
-namespace Toshi
-{
+namespace Toshi {
+
+	TMemoryHeap* TMemory::CreateHeap(size_t size, TMemoryHeapFlags flags, const char name[HEAP_MAXNAME], TMemoryHeap* a_pOnHeap)
+	{
+		return TMemory::CreateHeapInPlace((a_pOnHeap) ? a_pOnHeap->Memalign(16, size) : TMemalign(16, size), size, flags, name);
+	}
+
 	void TMemory::OutOfMem(TMemoryHeap* heap, size_t size)
 	{
 		// 006fc7c0

@@ -24,6 +24,16 @@ namespace Toshi
 		m_Locale.SetMemoryFunctions(TRBAllocator, TRBDeallocator, this);
 	}
 
+	T2Locale::~T2Locale()
+	{
+		m_Locale.Close();
+		
+		if (m_bOwnsBuffer)
+		{
+			TFree(m_pBuffer);
+		}
+	}
+
 	void T2Locale::SetLanguage(Lang langid)
 	{
 		// 00662e30

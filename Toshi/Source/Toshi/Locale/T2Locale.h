@@ -21,7 +21,7 @@ namespace Toshi
 		T2Locale(const T2Locale&) = delete;
 		T2Locale(const T2Locale&&) = delete;
 
-		virtual ~T2Locale() { };
+		virtual ~T2Locale();
 		virtual const char* GetLanguageFilename(Lang lang) = 0;
 
 		void SetLanguage(Lang langid);
@@ -39,7 +39,7 @@ namespace Toshi
 			return TNULL;
 		}
 
-		inline int GetNumStrings() const { return m_StringTable->m_numstrings; }
+		int GetNumStrings() const { return m_StringTable->m_numstrings; }
 		
 		static void* TRBAllocator(TTRB::AllocType alloctype, size_t size, short unk, size_t unk2, void* userData)
 		{

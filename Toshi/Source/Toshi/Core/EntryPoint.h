@@ -14,7 +14,7 @@
 #ifndef TOSHI_APP
 #define TOSHI_APP \
 Toshi::TApplication& app = AApplication::g_oTheApp; \
-app.Create("Blob07 - (c) Blue Tongue Software", 0, 0); \
+app.Create("The Barnyard - (c) Blue Tongue Entertainment", 0, 0); \
 app.Execute();
 #endif
 
@@ -104,10 +104,10 @@ TOSHI_ENTRY
 	Toshi::TUtil::Log("OS Version: %d.%d Build:%d %s", osVersionInfo.dwMajorVersion, osVersionInfo.dwMinorVersion, osVersionInfo.dwBuildNumber, osVersionInfo.szCSDVersion);
 
 
-	HANDLE hMutex = CreateMutexA(NULL, TTRUE, "BLOB07");
+	HANDLE hMutex = CreateMutexA(NULL, TTRUE, "BARNYARD");
 	if (GetLastError() == ERROR_ALREADY_EXISTS)
 	{
-		MessageBoxA(NULL, "Game is already running", "de Blob", MB_OK);
+		MessageBoxA(NULL, "Game is already running", "Barnyard", MB_OK);
 		return 0;
 	}
 

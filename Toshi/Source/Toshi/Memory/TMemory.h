@@ -75,7 +75,8 @@ namespace Toshi
         static TMemoryHeap* dlheapcreate(TMemoryHeap* heap, size_t size, TMemoryHeapFlags flags, const char name[HEAP_MAXNAME]) { return TMemory::dlheapcreatesubheap(heap, size, flags, name); }
 
         static TMemoryHeap* CreateHeapInPlace(void* ptr, size_t heapSize, TMemoryHeapFlags flags, const char name[HEAP_MAXNAME]) { return TMemory::dlheapcreateinplace(ptr, heapSize, flags, name); }
-        static TMemoryHeap* CreateHeap(size_t size, TMemoryHeapFlags flags, const char name[HEAP_MAXNAME]) { return TMemory::dlheapcreate(s_GlobalHeap, size, flags, name); }
+		static TMemoryHeap* CreateHeap(size_t size, TMemoryHeapFlags flags, const char name[HEAP_MAXNAME]) { return TMemory::dlheapcreate(s_GlobalHeap, size, flags, name); }
+		static TMemoryHeap* CreateHeap(size_t size, TMemoryHeapFlags flags, const char name[HEAP_MAXNAME], TMemoryHeap* a_pOnHeap);
         static void         DestroyHeap(TMemoryHeap* heap) { TMemory::dlheapdestroy(heap); }
 
         static void         OutOfMem(TMemoryHeap* heap, size_t size);

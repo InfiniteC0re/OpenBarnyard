@@ -48,6 +48,7 @@ namespace Toshi
 			return m_AverageFps;
 		}
 
+
 	public:
 		static TBOOL Create();
 

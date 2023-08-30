@@ -19,15 +19,7 @@ workspace "Toshi"
 
 group "Engine"
 	include "Toshi"
-	include "Shared"
-	include "OpenBlob"
-	include "OpenGlobs"
-
-group "Toshi Tools"
-	include "Tools/ToshiResourceViewer"
-	include "Tools/BYardLevelCompiler"
-	include "Tools/ttc"
-	include "Tools/TTEX_Rev_To_Win"
+	include "OpenBarnyard"
 	
 group "Third-Party"
 	include "Toshi/Vendor/libogg"

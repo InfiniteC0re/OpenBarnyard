@@ -111,6 +111,7 @@ namespace Toshi
 		TLog::Create();
         TSystemManager::Create();
         TFileManager::Create();
+		TSystemManager::GetSingleton()->CreateStringPool();
 
 		Create();
 		TError::CreateSingleton(0x1800, 0x100);
