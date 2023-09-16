@@ -211,6 +211,9 @@ namespace Toshi
 		void RotateY(float a_fAngle);
 		void RotateZ(float a_fAngle);
 
+		void Transpose();
+		void Transpose(const TMatrix44& a_rSource);
+
 		static void TransformPlaneOrthogonal(TPlane& a_rOutPlane, const TMatrix44& a_rMatrix, const TPlane& a_rPlane)
 		{
 			RotateVector(a_rOutPlane.AsVector4(), a_rMatrix, a_rPlane.AsVector4());

@@ -10,7 +10,7 @@
 #include "Platform/Windows/TMSWindow.h"
 #include "Platform/Windows/DX11/Includes.h"
 #include "Platform/Windows/DX11/TGlow_DX11.h"
-#include <Platform/Windows/DX11/TPostProcess_DX11.h>
+#include "Platform/Windows/DX11/TPostProcess_DX11.h"
 
 namespace Toshi
 {

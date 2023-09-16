@@ -259,4 +259,30 @@ namespace Toshi
 		m_f23 = m_f23 * fCos - fVar1 * fSin;
 	}
 
+	void TMatrix44::Transpose(const TMatrix44& a_rSource)
+	{
+		m_f11 = a_rSource.m_f11;
+		m_f12 = a_rSource.m_f21;
+		m_f13 = a_rSource.m_f31;
+		m_f14 = a_rSource.m_f41;
+		m_f21 = a_rSource.m_f12;
+		m_f22 = a_rSource.m_f22;
+		m_f23 = a_rSource.m_f32;
+		m_f24 = a_rSource.m_f42;
+		m_f31 = a_rSource.m_f13;
+		m_f32 = a_rSource.m_f23;
+		m_f33 = a_rSource.m_f33;
+		m_f34 = a_rSource.m_f43;
+		m_f41 = a_rSource.m_f14;
+		m_f42 = a_rSource.m_f24;
+		m_f43 = a_rSource.m_f34;
+		m_f44 = a_rSource.m_f44;
+	}
+
+	void TMatrix44::Transpose()
+	{
+		TMatrix44 temp = *this;
+		Transpose(temp);
+	}
+
 }

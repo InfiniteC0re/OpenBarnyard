@@ -58,7 +58,8 @@ project "OpenBlob"
 
 		defines
 		{
-			"TOSHI_SKU_WINDOWS"
+			"TOSHI_SKU_WINDOWS",
+			"TOSHI_RENDERER_OPENGL"
 		}
 
 	filter "configurations:Debug"

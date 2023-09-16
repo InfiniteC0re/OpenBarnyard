@@ -27,7 +27,9 @@ project "Toshi"
 		"Icons",
 		"%{IncludeDir.spdlog}",
 		"%{IncludeDir.fmod}",
-		"%{IncludeDir.stb}"
+		"%{IncludeDir.stb}",
+		"%{IncludeDir.sdl2}",
+		"%{IncludeDir.glm}"
 	}
 	
 	libdirs
@@ -55,6 +57,9 @@ project "Toshi"
 			"Source/Platform/Windows/**.h",
 			"Source/Platform/Windows/**.cpp",
 			"Source/Platform/Windows/**.c",
+			"Source/Platform/SDL/**.h",
+			"Source/Platform/SDL/**.cpp",
+			"Source/Platform/SDL/**.c",
 			"Source/Plugins**/**.h",
 			"Source/Plugins**/**.cpp",
 			"Source/Toshi**/**.h",
@@ -68,7 +73,8 @@ project "Toshi"
 
 		defines
 		{
-			"TOSHI_SKU_WINDOWS"
+			"TOSHI_SKU_WINDOWS",
+			"TOSHI_RENDERER_OPENGL"
 		}
 
 	filter "configurations:Debug"

@@ -44,4 +44,6 @@ ACamera* ACameraManager::CreateCamera(ACamera::CameraType a_eCamType)
 		return TNULL;
 		break;
 	}
+
+	return TNULL;
 }
