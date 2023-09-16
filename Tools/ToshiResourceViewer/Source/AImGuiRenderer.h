@@ -1,6 +1,7 @@
 #pragma once
 #include <Toshi/Render/TViewport.h>
 #include <Toshi/Utils/TSingleton.h>
+#include <Platform/SDL/TRender_SDL.h>
 
 class AImGuiRenderer : public Toshi::TSingleton<AImGuiRenderer>
 {
@@ -15,4 +16,6 @@ public:
 
 private:
 	Toshi::TViewport* m_pViewport;
+	Toshi::TGLShaderProgram m_ShaderProgram;
+	Toshi::TGLVertexArrayRef m_VertexArray;
 };

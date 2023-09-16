@@ -19,6 +19,10 @@ namespace Toshi {
 		{
 			if (m_bAllowBackgroundClear)
 			{
+				uint8_t r, g, b, a;
+				GetBackgroundColor(r, g, b, a);
+
+				glClearColor(r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f);
 				glClear(GL_COLOR_BUFFER_BIT);
 			}
 

@@ -91,8 +91,8 @@ namespace Toshi {
 			SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
 			SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
 
-			SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-			SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
+			SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
+			SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
 			SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
 			if (m_hAccel != NULL)
@@ -158,6 +158,110 @@ namespace Toshi {
 		}
 
 		return uiTexture;
+	}
+
+	TGLShaderRef TRenderSDL::CompileShader(GLenum a_eShader, const char* a_szSource)
+	{
+		TGLShaderRef shader = glCreateShader(a_eShader);
+		TASSERT(shader, "Couldn't create GL shader");
+
+		glShaderSource(shader.GetId(), 1, &a_szSource, TNULL);
+		glCompileShader(shader.GetId());
+
+		GLint compileSuccess = 0;
+		glGetShaderiv(shader.GetId(), GL_COMPILE_STATUS, &compileSuccess);
+
+		if (compileSuccess == GL_FALSE)
+		{
+			GLint logLength;
+			glGetShaderiv(shader.GetId(), GL_INFO_LOG_LENGTH, &logLength);
+
+			GLchar* log = new GLchar[logLength - 1];
+			glGetShaderInfoLog(shader.GetId(), logLength - 1, nullptr, log);
+
+			TOSHI_CORE_ERROR("Unable to compile shader");
+			TOSHI_CORE_ERROR("Error: {0}", log);
+			delete[] log;
+		}
+
+		return shader;
+	}
+
+	TGLShaderRef TRenderSDL::CompileShaderFromFile(GLenum a_eShader, const char* a_szFileName)
+	{
+		TFile* pFile = TFile::Create(a_szFileName);
+		DWORD fileSize = pFile->GetSize();
+		char* srcData = new char[fileSize + 1];
+		pFile->Read(srcData, fileSize);
+		srcData[fileSize] = '\0';
+		pFile->Destroy();
+
+		TGLShaderRef shader = CompileShader(a_eShader, srcData);
+		delete[] srcData;
+
+		return shader;
+	}
+
+	TGLShaderProgram TRenderSDL::CreateShaderProgram(TGLShaderRef a_VertexShader, TGLShaderRef a_FragmentShader)
+	{
+		TGLShaderProgram program(a_VertexShader, a_FragmentShader);
+		program.Create();
+
+		return program;
+	}
+
+	TGLVertexBuffer TRenderSDL::CreateVertexBuffer(const void* a_pData, GLuint a_uiSize, GLenum a_eUsage)
+	{
+		GLuint bufferId;
+		glGenBuffers(1, &bufferId);
+		TASSERT(bufferId != 0);
+
+		TGLVertexBuffer buffer = bufferId;
+
+		if (a_uiSize != 0)
+		{
+			buffer.SetData(a_pData, a_uiSize, a_eUsage);
+		}
+
+		return buffer;
+	}
+
+	TGLIndexBuffer TRenderSDL::CreateIndexBuffer(const uint16_t* a_pIndices, unsigned int a_uiCount, GLenum a_eUsage)
+	{
+		GLuint bufferId;
+		glGenBuffers(1, &bufferId);
+		TASSERT(bufferId != 0);
+
+		TGLIndexBuffer buffer = bufferId;
+
+		if (a_uiCount != 0)
+		{
+			buffer.SetData(a_pIndices, sizeof(*a_pIndices) * a_uiCount, a_eUsage);
+		}
+
+		return buffer;
+	}
+
+	TGLVertexArrayRef TRenderSDL::CreateVertexArray()
+	{
+		GLuint vaoId;
+		glGenVertexArrays(1, &vaoId);
+		TASSERT(vaoId != 0);
+
+		return TGLVertexArrayRef(vaoId);
+	}
+
+	TGLVertexArrayRef TRenderSDL::CreateVertexArray(TGLVertexBuffer a_VertexBuffer, TGLIndexBuffer a_IndexBuffer)
+	{
+		GLuint vaoId;
+		glGenVertexArrays(1, &vaoId);
+		TASSERT(vaoId != 0);
+
+		TGLVertexArrayRef vao(vaoId);
+		vao.SetVertexBuffer(a_VertexBuffer);
+		vao.SetIndexBuffer(a_IndexBuffer);
+
+		return vao;
 	}
 
 	TBOOL TRenderSDL::RecreateDisplay(DisplayParams* a_pDisplayParams)
