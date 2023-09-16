@@ -27,9 +27,7 @@ project "Toshi"
 		"Icons",
 		"%{IncludeDir.spdlog}",
 		"%{IncludeDir.fmod}",
-		"%{IncludeDir.stb}",
-		"%{IncludeDir.sdl2}",
-		"%{IncludeDir.glm}"
+		"%{IncludeDir.stb}"
 	}
 	
 	libdirs
@@ -57,9 +55,6 @@ project "Toshi"
 			"Source/Platform/Windows/**.h",
 			"Source/Platform/Windows/**.cpp",
 			"Source/Platform/Windows/**.c",
-			"Source/Platform/SDL/**.h",
-			"Source/Platform/SDL/**.cpp",
-			"Source/Platform/SDL/**.c",
 			"Source/Plugins**/**.h",
 			"Source/Plugins**/**.cpp",
 			"Source/Toshi**/**.h",
@@ -73,8 +68,46 @@ project "Toshi"
 
 		defines
 		{
-			"TOSHI_SKU_WINDOWS",
-			"TOSHI_RENDERER_OPENGL"
+			"TOSHI_SKU_WINDOWS"
+		}
+	
+	filter "options:renderer=DX11"
+		defines
+		{
+			"TOSHI_RENDERER_DX11"
+		}
+		
+		files
+		{
+			"Source/Platform/DX11/**.h",
+			"Source/Platform/DX11/**.cpp",
+			"Source/Platform/DX11/**.c",
+		}
+		
+	filter "options:renderer=OpenGL"
+		defines
+		{
+			"TOSHI_RENDERER_OPENGL",
+			"GLEW_STATIC"
+		}
+		
+		libdirs
+		{
+			"%{LibDir.glew}"
+		}
+		
+		files
+		{
+			"Source/Platform/SDL/**.h",
+			"Source/Platform/SDL/**.cpp",
+			"Source/Platform/SDL/**.c",
+		}
+		
+		includedirs
+		{
+			"%{IncludeDir.sdl2}",
+			"%{IncludeDir.glm}",
+			"%{IncludeDir.glew}"
 		}
 
 	filter "configurations:Debug"

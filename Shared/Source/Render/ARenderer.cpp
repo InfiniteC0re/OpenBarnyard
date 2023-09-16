@@ -10,13 +10,14 @@
 
 #include TOSHI_MULTIRENDER(A2GUI/A2GUIRenderer)
 
-#include <Platform/Windows/DX11/TRender_DX11.h>
-#include <Platform/Windows/DX11/TRenderContext_DX11.h>
-#include <Platform/Windows/DX11/TPrimShader_DX11.h>
 #include <Toshi/Render/TAssetInit.h>
 #include <Toshi/Shaders/SysShader/TSysShaderHAL.h>
 #include <Toshi2/T2GUI/T2GUI.h>
 #include <Toshi/Render/TOrderTable.h>
+
+#include <Platform/DX11/TRender_DX11.h>
+#include <Platform/DX11/TRenderContext_DX11.h>
+#include <Platform/DX11/TPrimShader_DX11.h>
 
 using namespace Toshi;
 

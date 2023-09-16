@@ -13,8 +13,8 @@
 
 #include <Toshi/Render/TTexture.h>
 #include <Toshi2/T2ResourceManager.h>
-#include <Platform/Windows/DX11/TRender_DX11.h>
-#include <Platform/Windows/DX11/TRenderContext_DX11.h>
+#include <Platform/DX11/TRender_DX11.h>
+#include <Platform/DX11/TRenderContext_DX11.h>
 
 using namespace Toshi;
 
@@ -89,7 +89,7 @@ AImGui::AImGui()
 
     auto pRender = TRenderDX11::Interface();
 
-    auto pWindow = pRender->GetMSWindow();
+    auto pWindow = pRender->GetWindow();
 
     pWindow->s_fnWndProcHandler =
         [](HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) -> LRESULT

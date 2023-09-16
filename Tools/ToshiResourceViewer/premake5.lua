@@ -48,6 +48,40 @@ project "Toshi Resource Viewer"
 			"TOSHI_CONSOLE",
 			"TOSHI_SKU_WINDOWS"
 		}
+	
+	filter "options:renderer=DX11"
+		defines
+		{
+			"TOSHI_RENDERER_DX11"
+		}
+		
+	filter "options:renderer=OpenGL"
+		defines
+		{
+			"TOSHI_RENDERER_OPENGL",
+			"GLEW_STATIC",
+			"SDL_MAIN_HANDLED"
+		}
+		
+		libdirs
+		{
+			"%{LibDir.sdl2}",
+			"%{LibDir.glew}"
+		}
+		
+		links
+		{
+			"SDL2.lib",
+			"opengl32.lib",
+			"glew32s.lib"
+		}
+		
+		includedirs
+		{
+			"%{IncludeDir.sdl2}",
+			"%{IncludeDir.glm}",
+			"%{IncludeDir.glew}"
+		}
 
 	filter "configurations:Debug"
 		runtime "Debug"

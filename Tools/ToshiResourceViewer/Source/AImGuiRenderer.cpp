@@ -2,26 +2,16 @@
 #include "AImGuiRenderer.h"
 #include "ImGui/AImGui.h"
 
-#ifdef TOSHI_SKU_WINDOWS
-#include <Platform/Windows/DX11/TRender_DX11.h>
-#include <Platform/Windows/DX11/TRenderContext_DX11.h>
-#endif
-
-TOSHI_NAMESPACE_USING
-
 AImGuiRenderer::AImGuiRenderer()
 {
-	
 }
 
 TBOOL AImGuiRenderer::CreateTRender()
 {
-	auto pRender = new TRenderDX11();
+	auto pRender = new Toshi::TRENDER();
 	TBOOL bCreatedRender = pRender->Create();
 
-	pRender->BuildAdapterDatabase();
-
-	TRender::DisplayParams displayParams;
+	Toshi::TRender::DisplayParams displayParams;
 	displayParams.Unk3 = 32;
 	displayParams.Unk4 = 3;
 	displayParams.Unk5 = TFALSE;
@@ -36,10 +26,10 @@ TBOOL AImGuiRenderer::CreateTRender()
 
 TBOOL AImGuiRenderer::CreateMainViewport()
 {
-	auto pRender = TRenderDX11::Interface();
+	auto pRender = Toshi::TRENDER::Interface();
 	auto pDisplayParams = pRender->GetCurrentDisplayParams();
 
-	m_pViewport = new TViewport;
+	m_pViewport = new Toshi::TViewport;
 	m_pViewport->SetX(0.0f);
 	m_pViewport->SetY(0.0f);
 	m_pViewport->SetWidth((float)pDisplayParams->Width);
@@ -51,8 +41,6 @@ TBOOL AImGuiRenderer::CreateMainViewport()
 	m_pViewport->Enable(TTRUE);
 	m_pViewport->EnableDefaultBeginRender(TTRUE);
 	m_pViewport->SetBackgroundColor(255, 255, 255, 255);
-	pRender->m_pGlow->SetDist(1.5f);
-	pRender->m_pGlow->SetIntensity(4.0f);
 
 	return TTRUE;
 }
@@ -64,7 +52,7 @@ TBOOL AImGuiRenderer::CreateImGui()
 
 void AImGuiRenderer::Update(float a_fDeltaTime)
 {
-	auto pRender = TRenderDX11::Interface();
+	auto pRender = Toshi::TRENDER::Interface();
 
 	pRender->Update(a_fDeltaTime);
 	pRender->BeginScene();
@@ -75,3 +63,4 @@ void AImGuiRenderer::Update(float a_fDeltaTime)
 	
 	pRender->EndScene();
 }
+

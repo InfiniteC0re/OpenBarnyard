@@ -194,7 +194,7 @@ void APropertiesResourceView::Render()
 		ImGui::Begin(m_szIdListWindowName, TNULL, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar);
 		if (ImGui::TreeNodeEx(&m_Properties, ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_CollapsingHeader, "Properties"))
 		{
-			ImGui::TreePush();
+			ImGui::TreePush(&m_Properties);
 			ShowProperties(&m_Properties);
 			ImGui::TreePop();
 		}

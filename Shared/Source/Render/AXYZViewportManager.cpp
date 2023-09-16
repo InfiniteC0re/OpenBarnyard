@@ -2,7 +2,7 @@
 #include "AXYZViewportManager.h"
 
 #include <Memory/AMemory.h>
-#include <Platform/Windows/DX11/TRender_DX11.h>
+#include <Platform/DX11/TRender_DX11.h>
 
 using namespace Toshi;
 

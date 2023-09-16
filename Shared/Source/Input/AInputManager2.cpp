@@ -3,7 +3,7 @@
 #include "Locale/ALocaleManager.h"
 
 #include <Toshi/Input/TInputDeviceController.h>
-#include TOSHI_MULTIPLATFORM(Input/TInputInterface)
+#include TOSHI_MULTIRENDER(Input/TInputInterface)
 
 using namespace Toshi;
 
