@@ -184,6 +184,7 @@ namespace Toshi {
 		void RemoveAnimation(TAnimation* a_pAnimation, float a_fBlendOutSpeed);
 
 		void SetStateFromBasePose();
+		TAnimation* IsAnimating(short a_iSequenceIndex);
 
 		TSkeleton* GetSkeleton() { return m_pSkeleton; }
 		int GetSequenceMaxUnk3() const { return m_iSequenceMaxUnk3; }

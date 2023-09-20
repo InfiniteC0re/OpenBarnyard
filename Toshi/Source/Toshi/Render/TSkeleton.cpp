@@ -399,6 +399,28 @@ namespace Toshi {
 		}
 	}
 
+	TAnimation* TSkeletonInstance::IsAnimating(short a_iSequenceIndex)
+	{
+		TASSERT(a_iSequenceIndex < m_pSkeleton->GetSequenceCount());
+
+		if (m_pSkeleton->GetSequenceCount() <= a_iSequenceIndex)
+			return TNULL;
+
+		for (auto it = m_BaseAnimations.Begin(); it != m_BaseAnimations.End(); it++)
+		{
+			if (it->GetSequence() == a_iSequenceIndex)
+				return it;
+		}
+
+		for (auto it = m_OverlayAnimations.Begin(); it != m_OverlayAnimations.End(); it++)
+		{
+			if (it->GetSequence() == a_iSequenceIndex)
+				return it;
+		}
+
+		return TNULL;
+	}
+
 	float TSkeletonSequenceBone::GetKeyPair(int a_iCurrentAnimTime, unsigned short& a_rCurrentKeyIndex, unsigned short& a_rLerpFromIndex, unsigned short& a_rLerpToIndex)
 	{
 		auto pFirstKeyTime = *GetKey(0);
