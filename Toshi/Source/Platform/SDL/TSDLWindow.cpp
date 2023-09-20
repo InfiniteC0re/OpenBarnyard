@@ -31,6 +31,11 @@ namespace Toshi {
 		}
 	}
 
+	void TSDLWindow::SetFullscreen(TBOOL a_bFullScreen)
+	{
+		SDL_SetWindowFullscreen(m_pWindow, a_bFullScreen ? SDL_WINDOW_FULLSCREEN : 0);
+	}
+
 	void TSDLWindow::SetPosition(int a_iX, int a_iY, int a_iWidth, int a_iHeight)
 	{
 		SDL_SetWindowPosition(m_pWindow, a_iX, a_iY);

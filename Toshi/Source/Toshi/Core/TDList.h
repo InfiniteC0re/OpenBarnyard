@@ -216,8 +216,6 @@ namespace Toshi
 				m_Next = this; 
 				m_Prev = this;
 			}
-
-			
 			
 		public:
 			template<class T> friend class TPriList;

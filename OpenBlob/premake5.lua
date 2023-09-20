@@ -1,4 +1,4 @@
-project "OpenBlob"
+project ("OpenBlob (" .. _OPTIONS["renderer"] .. ")")
 	language "C++"
 	cppdialect "C++20"
 	staticruntime "on"

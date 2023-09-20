@@ -33,6 +33,11 @@ namespace Toshi {
 			.fMaxZ = 1.0f
 		});
 
+		if (m_DisplayParams.IsFullscreen)
+		{
+			m_Window.SetFullscreen(TTRUE);
+		}
+
 		m_Window.SetPosition(100, 100, m_DisplayParams.Width, m_DisplayParams.Height);
 
 		TTextureManager::CreateSingleton();

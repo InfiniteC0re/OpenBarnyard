@@ -23,6 +23,7 @@ namespace Toshi {
 		
 		void Update();
 
+		void SetFullscreen(TBOOL a_bFullScreen);
 		void SetPosition(int a_iX, int a_iY, int a_iWidth, int a_iHeight);
 
 		void SetListener(TSDLWindowListener* a_pListener)
