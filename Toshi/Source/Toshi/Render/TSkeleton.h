@@ -142,7 +142,7 @@ namespace Toshi {
 
 		int GetSequenceID(const char* a_sSequenceName, uint32_t a_iLength);
 		TSkeletonSequence* GetSequences() { return m_SkeletonSequences; }
-		TSkeletonSequence* GetSequence(uint32_t a_iSequence) { return &m_SkeletonSequences[a_iSequence]; }
+		TSkeletonSequence* GetSequence(short a_iSeqID) { TASSERT(a_iSeqID < m_iSequenceCount); return &m_SkeletonSequences[a_iSeqID]; }
 		TSkeletonSequence* GetSequence(const char* a_sSequenceName, uint32_t a_iLength) { return GetSequence(GetSequenceID(a_sSequenceName, a_iLength)); }
 
 		short GetSequenceCount() { return m_iSequenceCount; }
@@ -181,6 +181,12 @@ namespace Toshi {
 		void UpdateState(TBOOL a_bForceUpdate);
 		TMatrix44* GetBoneTransformCurrent(int a_iBone, TMatrix44& a_rMatrix);
 
+		TAnimation* AddAnimation(short a_iSequenceIndex, float a_fDestWeight, float a_fBlendInSpeed)
+		{
+			return AddAnimationFull(a_iSequenceIndex, a_fDestWeight, a_fBlendInSpeed, 0.0f, 0);
+		}
+
+		TAnimation* AddAnimationFull(short a_iSequenceIndex, float a_fDestWeight, float a_fBlendInSpeed, float a_fBlendOutSpeed, TAnimation::Flags a_eAnimFlags);
 		void RemoveAnimation(TAnimation* a_pAnimation, float a_fBlendOutSpeed);
 
 		void SetStateFromBasePose();

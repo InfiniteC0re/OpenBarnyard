@@ -85,10 +85,10 @@ namespace Toshi {
 		return TTRUE;
 	}
 
-	void TAnimation::RemoveAnimation(float a_fVal)
+	void TAnimation::RemoveAnimation(float a_fBlendOutSpeed)
 	{
 		if (m_pSkeletonInstance)
-			m_pSkeletonInstance->RemoveAnimation(this, a_fVal);
+			m_pSkeletonInstance->RemoveAnimation(this, a_fBlendOutSpeed);
 	}
 
 	float TAnimation::SetDestWeight(float a_fDestWeight, float a_fBlendInSpeed)

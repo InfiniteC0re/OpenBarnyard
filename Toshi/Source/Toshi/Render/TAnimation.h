@@ -43,16 +43,19 @@ namespace Toshi {
 		TAnimation() = default;
 
 		TBOOL UpdateTime(float a_fDeltaTime);
-		void RemoveAnimation(float a_fVal);
+		void RemoveAnimation(float a_fBlendOutSpeed);
 
 		void SetMode(Mode a_eMode) { m_eMode = a_eMode; }
+		void SetSkeletonInstance(TSkeletonInstance* a_pSkeletonInstance) { m_pSkeletonInstance = a_pSkeletonInstance; }
 		float SetSpeed(float a_fSpeed) { return std::exchange(m_fSpeed, a_fSpeed); }
 		float SetDestWeight(float a_fDestWeight, float a_fBlendInSpeed);
-
 		void SetDestWeightExplicit(float a_fDestWeight) { m_fDestWeight = a_fDestWeight; }
 		void SetBlendInSpeed(float a_fBlendInSpeed) { m_fBlendInSpeed = a_fBlendInSpeed; }
 		void SetBlendOutSpeed(float a_fBlendOutSpeed) { m_fBlendOutSpeed = a_fBlendOutSpeed; }
 		void SetWeight(float a_fWeight) { m_fWeight = a_fWeight; }
+		void SetFlags(Flags a_eFlags) { m_eFlags = a_eFlags; }
+		void SetUnk3(short a_iUnk3) { m_iUnk3 = a_iUnk3; }
+		void SetSequence(unsigned short a_iSeqID) { m_iSeqID = a_iSeqID; }
 
 		void SetUpdateStateOnRemove(TBOOL a_bEnable)
 		{
@@ -62,7 +65,11 @@ namespace Toshi {
 				m_eFlags &= ~Flags_UpdateStateOnRemove;
 		}
 
-		void SetFlags(Flags a_eFlags) { m_eFlags = a_eFlags; }
+		void ResetTime()
+		{
+			m_fTotalTime = 0.0f;
+			m_fSeqTime = 0.0f;
+		}
 
 		Flags GetFlags() const { return m_eFlags; }
 		Mode GetMode() const { return m_eMode; }
@@ -81,6 +88,8 @@ namespace Toshi {
 		float GetBlendInSpeed() const { return m_fBlendInSpeed; }
 		float GetBlendOutSpeed() const { return m_fBlendOutSpeed; }
 
+		float& GetWeight() { return m_fWeight; }
+
 		TAnimationBone* GetBones() { return TREINTERPRETCAST(TAnimationBone*, this + 1); }
 		TAnimationBone* GetBone(int a_iIndex) { return &TREINTERPRETCAST(TAnimationBone*, this + 1)[a_iIndex]; }
 
@@ -91,7 +100,7 @@ namespace Toshi {
 		TSkeletonInstance* m_pSkeletonInstance;
 		unsigned short m_iSeqID;
 		Flags m_eFlags;
-		int m_iUnk3;
+		short m_iUnk3;
 		Mode m_eMode;
 		float m_fSpeed;
 		float m_fWeight;

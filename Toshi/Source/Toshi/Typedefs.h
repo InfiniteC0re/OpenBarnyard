@@ -3,6 +3,12 @@
 using TFLOAT = float;
 using TBOOL = bool;
 using TINT = int;
+using TINT32 = int32_t;
+using TUINT32 = uint32_t;
+using TINT16 = int16_t;
+using TUINT16 = uint16_t;
+using TINT8 = int8_t;
+using TUINT8 = uint8_t;
 
 union TVersion {
 	uint32_t Value;
