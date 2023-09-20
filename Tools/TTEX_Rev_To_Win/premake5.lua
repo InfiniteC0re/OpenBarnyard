@@ -9,7 +9,7 @@ project "TTEX_Rev_To_Win"
 
 	links
 	{
-		"Toshi"
+		TOSHI_PROJECT_NAME
 	}
 
 	files

@@ -1,4 +1,4 @@
-project ("Toshi (" .. _OPTIONS["renderer"] .. ")")
+project (TOSHI_PROJECT_NAME)
 	kind "StaticLib"
 	language "C++"
 	cppdialect "C++20"

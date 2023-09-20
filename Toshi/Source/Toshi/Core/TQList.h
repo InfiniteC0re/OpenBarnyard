@@ -42,6 +42,14 @@ namespace Toshi {
 				return m_pPrev;
 			}
 
+			void Remove()
+			{
+				m_pPrev->m_pNext = m_pNext;
+				m_pNext->m_pPrev = m_pPrev;
+				m_pNext = TSTATICCAST(T*, this);
+				m_pPrev = TSTATICCAST(T*, this);
+			}
+
 		private:
 			void InsertAfter(TNode* a_pNode)
 			{
@@ -59,14 +67,6 @@ namespace Toshi {
 				m_pPrev = a_pNode->m_pPrev;
 				a_pNode->m_pPrev = TSTATICCAST(T*, this);
 				m_pPrev->m_pNext = TSTATICCAST(T*, this);
-			}
-
-			void Remove()
-			{
-				m_pPrev->m_pNext = m_pNext;
-				m_pNext->m_pPrev = m_pPrev;
-				m_pNext = TSTATICCAST(T*, this);
-				m_pPrev = TSTATICCAST(T*, this);
 			}
 
 		private:

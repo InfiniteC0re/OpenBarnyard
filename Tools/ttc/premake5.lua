@@ -9,7 +9,7 @@ project "ttc"
 
 	links
 	{
-		"Toshi"
+		TOSHI_PROJECT_NAME
 	}
 
 	files

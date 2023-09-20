@@ -9,7 +9,8 @@ project "OpenGlobs"
 
 	links
 	{
-		"Toshi",
+		TOSHI_PROJECT_NAME,
+		SHARED_PROJECT_NAME,
 		"libtheora",
 		"theoraplay"
 	}

@@ -21,7 +21,7 @@ namespace Toshi {
 	class TAnimation : public TQList<TAnimation>::TNode
 	{
 	public:
-		using Flags = uint8_t;
+		using Flags = uint16_t;
 		enum Flags_ : Flags
 		{
 			Flags_None = 0,
@@ -47,8 +47,22 @@ namespace Toshi {
 
 		void SetMode(Mode a_eMode) { m_eMode = a_eMode; }
 		float SetSpeed(float a_fSpeed) { return std::exchange(m_fSpeed, a_fSpeed); }
-		
 		float SetDestWeight(float a_fDestWeight, float a_fBlendInSpeed);
+
+		void SetDestWeightExplicit(float a_fDestWeight) { m_fDestWeight = a_fDestWeight; }
+		void SetBlendInSpeed(float a_fBlendInSpeed) { m_fBlendInSpeed = a_fBlendInSpeed; }
+		void SetBlendOutSpeed(float a_fBlendOutSpeed) { m_fBlendOutSpeed = a_fBlendOutSpeed; }
+		void SetWeight(float a_fWeight) { m_fWeight = a_fWeight; }
+
+		void SetUpdateStateOnRemove(TBOOL a_bEnable)
+		{
+			if (a_bEnable)
+				m_eFlags |= Flags_UpdateStateOnRemove;
+			else
+				m_eFlags &= ~Flags_UpdateStateOnRemove;
+		}
+
+		void SetFlags(Flags a_eFlags) { m_eFlags = a_eFlags; }
 
 		Flags GetFlags() const { return m_eFlags; }
 		Mode GetMode() const { return m_eMode; }
@@ -69,6 +83,9 @@ namespace Toshi {
 
 		TAnimationBone* GetBones() { return TREINTERPRETCAST(TAnimationBone*, this + 1); }
 		TAnimationBone* GetBone(int a_iIndex) { return &TREINTERPRETCAST(TAnimationBone*, this + 1)[a_iIndex]; }
+
+	public:
+		static int FindSequenceMaxUnk3(const TQList<TAnimation>& a_rList);
 
 	private:
 		TSkeletonInstance* m_pSkeletonInstance;

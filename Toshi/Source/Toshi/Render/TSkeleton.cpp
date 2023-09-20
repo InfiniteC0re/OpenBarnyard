@@ -64,7 +64,7 @@ namespace Toshi {
 		pInstance->m_fTotalWeight = 0.0f;
 		pInstance->m_iLastUpdateStateFrame = 0;
 		pInstance->m_iLastUpdateTimeFrame = 0;
-		pInstance->m_iUnk5 = -1;
+		pInstance->m_iSequenceMaxUnk3 = -1;
 
 		for (int i = 0; i < GetAnimationMaxCount(); i++)
 		{
@@ -342,11 +342,52 @@ namespace Toshi {
 		return &a_rMatrix;
 	}
 
-	void TSkeletonInstance::RemoveAnimation(TAnimation* a_pAnimation, float a_fValue)
+	void TSkeletonInstance::RemoveAnimation(TAnimation* a_pAnimation, float a_fBlendOutSpeed)
 	{
 		TASSERT(TTRUE == a_pAnimation->IsActive());
 
-		TIMPLEMENT();
+		if (a_pAnimation)
+		{
+			if (a_fBlendOutSpeed <= 0.0f)
+			{
+				if (a_pAnimation->IsUpdateStateOnRemove())
+				{
+					a_pAnimation->SetUpdateStateOnRemove(TFALSE);
+					a_pAnimation->SetWeight(1.0f);
+					a_pAnimation->SetBlendOutSpeed(1.0f);
+					a_pAnimation->SetMode(TAnimation::MODE_UNK3);
+					m_iFlags |= 1;
+					return;
+				}
+
+				auto pSeq = a_pAnimation->GetSequencePtr();
+
+				if (TFALSE == pSeq->IsOverlay())
+					m_iBaseAnimationCount--;
+				else
+					m_iOverlayAnimationCount--;
+
+				a_pAnimation->SetFlags(TAnimation::Flags_None);
+				a_pAnimation->Remove();
+				m_FreeAnimations.PushFront(a_pAnimation);
+			}
+			else
+			{
+				a_pAnimation->SetBlendOutSpeed(a_fBlendOutSpeed);
+				a_pAnimation->SetDestWeightExplicit(0.0f);
+				a_pAnimation->SetMode(TAnimation::MODE_UNK3);
+			}
+
+			SetSequenceMaxUnk3(
+				TMath::Max(
+					TMath::Max(
+						GetSequenceMaxUnk3(),
+						TAnimation::FindSequenceMaxUnk3(m_BaseAnimations)
+					),
+					TAnimation::FindSequenceMaxUnk3(m_OverlayAnimations)
+				)
+			);
+		}
 	}
 
 	void TSkeletonInstance::SetStateFromBasePose()

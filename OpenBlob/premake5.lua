@@ -9,8 +9,8 @@ project ("OpenBlob (" .. _OPTIONS["renderer"] .. ")")
 
 	links
 	{
-		"Toshi",
-		"Shared",
+		TOSHI_PROJECT_NAME,
+		SHARED_PROJECT_NAME,
 		"libtheora",
 		"theoraplay"
 	}

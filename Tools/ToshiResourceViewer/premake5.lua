@@ -10,7 +10,7 @@ project "Toshi Resource Viewer"
 
 	links
 	{
-		"Toshi"
+		TOSHI_PROJECT_NAME
 	}
 
 	files

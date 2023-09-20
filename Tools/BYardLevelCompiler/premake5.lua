@@ -9,7 +9,7 @@ project "BYard Level Compiler"
 
 	links
 	{
-		"Toshi"
+		TOSHI_PROJECT_NAME
 	}
 
 	files

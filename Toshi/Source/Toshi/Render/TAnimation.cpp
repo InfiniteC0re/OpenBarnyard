@@ -116,4 +116,16 @@ namespace Toshi {
 		return m_pSkeletonInstance->GetSkeleton()->GetSequence(m_iSeqID);
 	}
 
+	int TAnimation::FindSequenceMaxUnk3(const TQList<TAnimation>& a_rList)
+	{
+		int iResult = -1;
+
+		for (auto it = a_rList.Begin(); it != a_rList.End(); it++)
+		{
+			iResult = TMath::Max(iResult, it->GetSequencePtr()->GetUnk3());
+		}
+
+		return iResult;
+	}
+
 }

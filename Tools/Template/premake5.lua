@@ -9,7 +9,7 @@ project "ToolTemplate"
 
 	links
 	{
-		"Toshi"
+		TOSHI_PROJECT_NAME
 	}
 
 	files

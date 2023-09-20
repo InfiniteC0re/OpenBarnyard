@@ -73,6 +73,7 @@ namespace Toshi {
 		float GetDuration() const { return m_fDuration; }
 		const char* GetName() const { return m_szName; }
 		short GetUnk2() const { return m_iUnk2; }
+		int GetUnk3() const { return m_iUnk3; }
 
 	private:
 		const char* m_szName;
@@ -180,11 +181,13 @@ namespace Toshi {
 		void UpdateState(TBOOL a_bForceUpdate);
 		TMatrix44* GetBoneTransformCurrent(int a_iBone, TMatrix44& a_rMatrix);
 
-		void RemoveAnimation(TAnimation* a_pAnimation, float a_fValue);
+		void RemoveAnimation(TAnimation* a_pAnimation, float a_fBlendOutSpeed);
 
 		void SetStateFromBasePose();
 
 		TSkeleton* GetSkeleton() { return m_pSkeleton; }
+		int GetSequenceMaxUnk3() const { return m_iSequenceMaxUnk3; }
+		void SetSequenceMaxUnk3(int a_iSequenceMaxUnk3) { m_iSequenceMaxUnk3 = a_iSequenceMaxUnk3; }
 
 	public:
 		inline static TMatrix44 g_aForwardMatrices[TANIMATION_MAXBONES];
@@ -204,7 +207,7 @@ namespace Toshi {
 		float m_fTotalWeight;
 		int m_iLastUpdateTimeFrame;
 		int m_iLastUpdateStateFrame;
-		int m_iUnk5;
+		int m_iSequenceMaxUnk3;
 	};
 
 }
