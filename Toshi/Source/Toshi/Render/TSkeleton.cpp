@@ -422,7 +422,7 @@ namespace Toshi {
 			pAnimation->SetMode(TAnimation::MODE_UNK1);
 		}
 
-		TUtil::MemSet(pAnimation->GetBones(), 0, sizeof(TAnimationBone) * m_pSkeleton->GetAutoBoneCount());
+		TUtil::MemClear(pAnimation->GetBones(), sizeof(TAnimationBone) * m_pSkeleton->GetAutoBoneCount());
 		pAnimation->SetSkeletonInstance(this);
 
 		SetSequenceMaxUnk3(
