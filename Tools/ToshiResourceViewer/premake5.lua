@@ -1,4 +1,4 @@
-project "Toshi Resource Viewer"
+project ("Toshi Resource Viewer (" .. _OPTIONS["renderer"] .. ")")
 	kind "ConsoleApp"
 	language "C++"
 	cppdialect "C++20"
@@ -61,6 +61,11 @@ project "Toshi Resource Viewer"
 			"TOSHI_RENDERER_OPENGL",
 			"GLEW_STATIC",
 			"SDL_MAIN_HANDLED"
+		}
+		
+		postbuildcommands
+		{
+			"{COPY} \"%{LibDir.sdl2}/SDL2.dll\" \"%{wks.location}bin/" .. outputdir .. "/%{prj.name}\""
 		}
 		
 		libdirs

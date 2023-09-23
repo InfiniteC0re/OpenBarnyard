@@ -17,7 +17,7 @@ project ("OpenBlob (" .. _OPTIONS["renderer"] .. ")")
 	
 	linkoptions
 	{
-		"%{wks.location}/bin-int/" .. outputdir .. "/Toshi/Toshi.res"
+		"%{wks.location}/bin-int/" .. outputdir .. "/" .. TOSHI_PROJECT_NAME .. "/Toshi.res"
 	}
 
 	files

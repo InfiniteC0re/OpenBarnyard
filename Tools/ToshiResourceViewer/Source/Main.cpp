@@ -14,13 +14,18 @@
 #include "AImGuiRenderer.h"
 #include "Resources/AResourceViewLoader.h"
 
+#ifndef TOSHI_RENDERER_OPENGL
+#error Building with unsupported renderer
+#endif
+
 class AApplication : public Toshi::TApplication
 {
 public:
 	virtual TBOOL OnCreate(int argc, char** argv) override
 	{
-		AResourceViewLoader::CreateSingleton();
-		AResourceViewLoader::GetSingleton()->CreateFile("C:\\Stuff\\Barnyard\\Game\\Data\\Units\\AllUnitTypes.trz");
+		auto pResourceLoader = AResourceViewLoader::CreateSingleton();
+
+		pResourceLoader->CreateFile("C:\\Stuff\\Barnyard\\Game\\Data\\Units\\AllUnitTypes.trz");
 
 		return AImGuiRenderer::CreateSingleton()->CreateTRender() && TApplication::OnCreate(argc, argv);
 	}

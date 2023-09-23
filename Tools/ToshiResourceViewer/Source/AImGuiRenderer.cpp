@@ -100,7 +100,7 @@ TBOOL AImGuiRenderer::CreateImGui()
 	
 	m_ShaderProgram.Use();
 	m_ShaderProgram.SetUniform("u_Color", Toshi::TVector4(1.0f, 0.0f, 0.0f, 1.0f));
-	m_ShaderProgram.SetUniform("u_Transform", Toshi::TVector3(2.0f, 2.0f, 2.0f));
+	m_ShaderProgram.SetUniform("u_Transform", Toshi::TVector3(0.0f, 0.0f, -2.0f));
 
 	m_pCameraObject = new Toshi::TCameraObject();
 	m_pCameraObject->GetTransformObject().SetTranslate(Toshi::TVector3(0, 0.0, 0.0f));
@@ -124,14 +124,13 @@ void AImGuiRenderer::Update(float a_fDeltaTime)
 	Toshi::TMatrix44 viewProjection = pContext->GetProjectionMatrix();
 	Toshi::TMatrix44 worldView = pContext->GetWorldViewMatrix();
 	viewProjection.Multiply(worldView);
-	//pContext->GetProjectionMatrix().Multiply(viewProjection);
 	m_ShaderProgram.SetUniform("u_Projection", viewProjection);
 
 	m_VertexArray.Bind();
 	glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, TNULL);
 
 	// Draw UI
-	//AImGui::GetSingleton()->Render();
+	AImGui::GetSingleton()->Render();
 	
 	m_pViewport->End();
 	
