@@ -1,5 +1,5 @@
 #pragma once
-#include "AGameState.h"
+#include "GameInterface/AGameState.h"
 
 #include <Toshi2/T2GUI/T2GUIRectangle.h>
 #include <A2GUI/A2GUIBackground.h>

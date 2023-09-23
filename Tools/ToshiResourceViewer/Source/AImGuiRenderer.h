@@ -2,7 +2,10 @@
 #include <Toshi/Render/TViewport.h>
 #include <Toshi/Utils/TSingleton.h>
 #include <Toshi/Render/TCameraObject.h>
+
+#ifdef TOSHI_RENDERER_OPENGL
 #include <Platform/SDL/TRender_SDL.h>
+#endif
 
 class AImGuiRenderer : public Toshi::TSingleton<AImGuiRenderer>
 {
@@ -17,7 +20,9 @@ public:
 
 private:
 	Toshi::TViewport* m_pViewport;
+#ifdef TOSHI_RENDERER_OPENGL
 	Toshi::TGLShaderProgram m_ShaderProgram;
 	Toshi::TGLVertexArrayRef m_VertexArray;
+#endif
 	Toshi::TCameraObject* m_pCameraObject;
 };

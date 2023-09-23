@@ -1,5 +1,5 @@
 #pragma once
-#include "AGameState.h"
+#include "GameInterface/AGameState.h"
 
 class AAppInitState :
 	public Toshi::TGenericClassDerived<AAppInitState, AGameState, "AAppInitState", TMAKEVERSION(1, 0), TTRUE>

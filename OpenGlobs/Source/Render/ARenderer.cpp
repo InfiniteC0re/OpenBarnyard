@@ -1,16 +1,16 @@
 #include "pch.h"
 #include "ARenderer.h"
 #include "AppBoot.h"
-#include "AXYZViewportManager.h"
+#include "Render/AXYZViewportManager.h"
 #include "Movie/AMoviePlayer.h"
 #include "A2GUI/A2GUIRenderer_DX11.h"
 #include "GameInterface/AFrontEndMovieState.h"
 #include "Cameras/ACameraManager.h"
 #include "ImGui/AImGui.h"
 
-#include <Platform/Windows/DX11/TRender_DX11.h>
-#include <Platform/Windows/DX11/TRenderContext_DX11.h>
-#include <Platform/Windows/DX11/TPrimShader_DX11.h>
+#include <Platform/DX11/TRender_DX11.h>
+#include <Platform/DX11/TRenderContext_DX11.h>
+#include <Platform/DX11/TPrimShader_DX11.h>
 #include <Toshi/Render/TAssetInit.h>
 #include <Toshi/Shaders/SysShader/TSysShaderHAL.h>
 #include <Toshi2/T2GUI/T2GUI.h>

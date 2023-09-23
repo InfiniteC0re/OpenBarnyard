@@ -9,7 +9,7 @@
 
 #ifdef TOSHI_DEBUG
 // Used to output debug info
-#include "Movie/ADX11MoviePlayer.h"
+#include "Platform/DX11/Movie/ADX11MoviePlayer_DX11.h"
 #endif // TOSHI_DEBUG
 #include "Input/AInputHelper.h"
 

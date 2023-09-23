@@ -14,10 +14,6 @@
 #include "AImGuiRenderer.h"
 #include "Resources/AResourceViewLoader.h"
 
-#ifndef TOSHI_RENDERER_OPENGL
-#error Building with unsupported renderer
-#endif
-
 class AApplication : public Toshi::TApplication
 {
 public:

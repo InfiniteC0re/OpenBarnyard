@@ -2,7 +2,9 @@
 #include "AImGuiRenderer.h"
 #include "ImGui/AImGui.h"
 
+#ifdef TOSHI_RENDERER_OPENGL
 #include <Platform/SDL/TRenderContext_SDL.h>
+#endif
 
 AImGuiRenderer::AImGuiRenderer()
 {
@@ -49,8 +51,8 @@ TBOOL AImGuiRenderer::CreateMainViewport()
 
 TBOOL AImGuiRenderer::CreateImGui()
 {
+#ifdef TOSHI_RENDERER_OPENGL
 	auto pRender = Toshi::TRENDER::Interface();
-	auto pContext = TSTATICCAST(Toshi::TRenderContextSDL*, pRender->GetCurrentRenderContext());
 
 	static float s_Vertices[] = {
 		-0.5f, -0.5f, 0.5f,
@@ -104,6 +106,7 @@ TBOOL AImGuiRenderer::CreateImGui()
 
 	m_pCameraObject = new Toshi::TCameraObject();
 	m_pCameraObject->GetTransformObject().SetTranslate(Toshi::TVector3(0, 0.0, 0.0f));
+#endif
 
 	return AImGui::CreateSingleton() != TNULL;
 }
@@ -111,16 +114,17 @@ TBOOL AImGuiRenderer::CreateImGui()
 void AImGuiRenderer::Update(float a_fDeltaTime)
 {
 	auto pRender = Toshi::TRENDER::Interface();
-	auto pContext = TSTATICCAST(Toshi::TRenderContextSDL*, pRender->GetCurrentRenderContext());
 
 	pRender->Update(a_fDeltaTime);
 	pRender->BeginScene();
 
 	m_pViewport->Begin();
-	m_pCameraObject->Render();
 
+#ifdef TOSHI_RENDERER_OPENGL
+	m_pCameraObject->Render();
 	m_ShaderProgram.Use();
 
+	auto pContext = TSTATICCAST(Toshi::TRenderContextSDL*, pRender->GetCurrentRenderContext());
 	Toshi::TMatrix44 viewProjection = pContext->GetProjectionMatrix();
 	Toshi::TMatrix44 worldView = pContext->GetWorldViewMatrix();
 	viewProjection.Multiply(worldView);
@@ -128,6 +132,7 @@ void AImGuiRenderer::Update(float a_fDeltaTime)
 
 	m_VertexArray.Bind();
 	glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, TNULL);
+#endif
 
 	// Draw UI
 	AImGui::GetSingleton()->Render();

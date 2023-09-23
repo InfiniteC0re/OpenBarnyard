@@ -2,10 +2,10 @@
 #include "A2GUIRenderer_DX11.h"
 #include "Memory/AMemory.h"
 
-#include <Platform/Windows/DX11/TRender_DX11.h>
-#include <Platform/Windows/DX11/TRenderContext_DX11.h>
-#include <Platform/Windows/DX11/TPrimShader_DX11.h>
-#include <Platform/Windows/DX11/TTexture_DX11.h>
+#include <Platform/DX11/TRender_DX11.h>
+#include <Platform/DX11/TRenderContext_DX11.h>
+#include <Platform/DX11/TPrimShader_DX11.h>
+#include <Platform/DX11/TTexture_DX11.h>
 #include <Toshi2/T2GUI/T2GUI.h>
 
 using namespace Toshi;

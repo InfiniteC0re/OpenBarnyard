@@ -4,7 +4,7 @@
 #include "Render/ARenderer.h"
 #include "Render/ModelLoading/AModelLoader.h"
 #include "Movie/AMoviePlayer.h"
-#include "Movie/ADX11MoviePlayer.h"
+#include "Platform/DX11/Movie/ADX11MoviePlayer_DX11.h"
 #include "AFrontEndMovieState.h"
 #include "AAssetStreaming.h"
 #include "ALevelInformation.h"

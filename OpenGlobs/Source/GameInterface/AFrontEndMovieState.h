@@ -1,9 +1,9 @@
 #pragma once
-#include "AGameState.h"
+#include "GameInterface/AGameState.h"
+#include "A2GUI/A2GUIBackground.h"
+#include "Input/AInputHelper.h"
 
 #include <Toshi2/T2GUI/T2GUIRectangle.h>
-#include <A2GUI/A2GUIBackground.h>
-#include "Input/AInputHelper.h"
 
 class AFrontEndMovieState :
     public Toshi::TGenericClassDerived<AFrontEndMovieState, AGameState, "AFrontEndMovieState", TMAKEVERSION(1, 0), TTRUE>
