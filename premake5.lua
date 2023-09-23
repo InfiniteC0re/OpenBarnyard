@@ -2,6 +2,7 @@ include "Settings.lua"
 include "Dependencies.lua"
 
 TOSHI_PROJECT_NAME = "Toshi (" .. _OPTIONS["renderer"] .. ")"
+TOSHI_RESOURCE_FILE = "\"%{wks.location}/bin-int/" .. outputdir .. "/" .. TOSHI_PROJECT_NAME .. "/Toshi.res\""
 SHARED_PROJECT_NAME = "Shared"
 
 workspace ("Toshi (" .. _OPTIONS["renderer"] .. ")")
