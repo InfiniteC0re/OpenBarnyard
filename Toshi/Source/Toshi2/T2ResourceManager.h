@@ -193,9 +193,9 @@ namespace Toshi
 		}
 
 		template <class T>
-		T2ResPtr<T> GetResourcePtr() const
+		T2ResPtr<T> GetResPtr() const
 		{
-			return T2ResPtr(m_iID);
+			return T2ResPtr<T>(m_iID);
 		}
 
 		int GetResourceId()
