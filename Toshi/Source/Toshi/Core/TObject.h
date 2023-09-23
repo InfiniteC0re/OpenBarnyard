@@ -5,9 +5,9 @@
 #include "Toshi/Memory/TMemory.h"
 #include "Toshi/Utils/TLog.h"
 
-namespace Toshi
-{
-	class TObject
+namespace Toshi {
+
+	class TALIGNAS(4) TObject
 	{
 	public:
 		virtual TClass* GetClass() { return &s_Class; }
@@ -35,14 +35,29 @@ namespace Toshi
 
 		static TObject* CreateTObject()
 		{
-			if constexpr (Instantiable) { return new T(); }
-			else { return TNULL; }
+			if constexpr (Instantiable)
+			{
+				void* pPtr = TMemalign(alignof(T), sizeof(T));
+				return new (pPtr) T();
+			}
+			else
+			{
+				TASSERT(TFALSE, "This TObject cannot be created from TClass");
+				return TNULL;
+			}
 		}
 
-		static TObject* CreateTObjectInPlace(void* ptr)
+		static TObject* CreateTObjectInPlace(void* a_pPtr)
 		{
-			if constexpr (Instantiable) { return new (ptr) T(); }
-			else { return TNULL; }
+			if constexpr (Instantiable)
+			{
+				return new (a_pPtr) T();
+			}
+			else
+			{
+				TASSERT(TFALSE, "This TObject cannot be created from TClass");
+				return TNULL;
+			}
 		}
 
 		static TClass* GetClassStatic()
@@ -55,6 +70,5 @@ namespace Toshi
 	};
 
 	template <class T, class Parent, STL::StringLiteral Name, uint32_t Version, TBOOL Instantiable>
-	TClass TGenericClassDerived<T, Parent, Name, Version, Instantiable>::s_Class = TClass(Name.value, &Parent::s_Class, Version, sizeof(T), T::CreateTObject, T::CreateTObjectInPlace, 0, 0);
+	TClass TGenericClassDerived<T, Parent, Name, Version, Instantiable>::s_Class = TClass(Name.value, &Parent::s_Class, Version, sizeof(T), T::CreateTObject, T::CreateTObjectInPlace, 0, 0, alignof(T));
 }
-

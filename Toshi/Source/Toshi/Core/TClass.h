@@ -11,31 +11,31 @@ namespace Toshi
 	typedef void  (*t_UninitializeStatic)();
 
 	// RecurseTree definitions
-	typedef TBOOL  (*t_RecurceTreeCheck)(class TClass*, void*);
+	typedef TBOOL (*t_RecurceTreeCheck)(class TClass*, void*);
 	typedef void  (*t_RecurceTreeBaseBeginCb)(class TClass*, void*);
 	typedef void  (*t_RecurceTreeBaseEndCb)(class TClass*, void*);
 
 	class TClass
 	{
 	public:
-		TClass(const char* name, TClass* parent, uint32_t version, size_t size, t_CreateTObject fCreate, t_CreateTObjectInPlace m_CreateInPlace, t_InitializeStatic fInit, t_UninitializeStatic fUninit);
-		~TClass();
+		TClass(const char* a_szName, TClass* a_pParent, TUINT32 a_uiVersion, TUINT32 a_uiSize, t_CreateTObject a_fCreate, t_CreateTObjectInPlace a_fCreateInPlace, t_InitializeStatic a_fInit, t_UninitializeStatic a_fUninit, TUINT32 a_uiAlignment);
 
-		constexpr TClass(const char* name, uint32_t version, t_CreateTObject fCreate, t_CreateTObjectInPlace fCreateInPlace, uint32_t size)
-		{
-			m_Name = name;
-			m_Create = fCreate;
-			m_CreateInPlace = fCreateInPlace;
-			m_Initialize = TNULL;
-			m_Uninitialize = TNULL;
-			m_Parent = TNULL;
-			m_Previous = TNULL;
-			m_LastAttached = TNULL;
-			m_Version = 0;
-			m_Size = size;
-			m_Unk = 0;
-			m_Initialized = TFALSE;
-		}
+		constexpr TClass(const char* a_szName, uint32_t a_uiVersion, t_CreateTObject a_fCreate, t_CreateTObjectInPlace a_fCreateInPlace, uint32_t a_uiSize, TUINT32 a_uiAlignment) :
+			m_Name(a_szName),
+			m_Create(a_fCreate),
+			m_CreateInPlace(a_fCreateInPlace),
+			m_Initialize(TNULL),
+			m_Uninitialize(TNULL),
+			m_Parent(TNULL),
+			m_Previous(TNULL),
+			m_LastAttached(TNULL),
+			m_Version(a_uiVersion),
+			m_Size(a_uiSize),
+			m_Alignment(a_uiAlignment),
+			m_Initialized(TFALSE)
+		{ }
+
+		~TClass();
 
 		void Initialize();
 		void RecurseTree(t_RecurceTreeCheck fCheck, t_RecurceTreeBaseBeginCb fBaseBegin, t_RecurceTreeBaseEndCb fBaseEnd, void* custom);
@@ -47,9 +47,11 @@ namespace Toshi
 		TBOOL IsInitialized() const { return m_Initialized; }
 		TClass* GetParent() { return static_cast<TClass*>(m_Parent); }
 		const char* GetName() const { return m_Name; }
-		uint32_t GetVersion() const { return m_Version; }
-		uint16_t GetVersionMajor() const { return m_Version >> 16; }
-		uint16_t GetVersionMinor() const { return m_Version & 0xFFFF; }
+		TUINT32 GetAlignment() const { return m_Alignment; }
+		TUINT32 GetSize() const { return m_Size; }
+		TUINT32 GetVersion() const { return m_Version; }
+		TUINT16 GetVersionMajor() const { return m_Version >> 16; }
+		TUINT16 GetVersionMinor() const { return m_Version & 0xFFFF; }
 
 		// todo: move this function away from this class
 		static TBOOL TryInitialize(TClass* tClass);
@@ -61,18 +63,18 @@ namespace Toshi
 	public:
 		inline TBOOL operator==(const TClass* other) const { return this == other; }
 	
-	private:
-		const char* m_Name = 0;                                 // 0x00
-		t_CreateTObject m_Create = 0;                           // 0x04
-		t_CreateTObjectInPlace m_CreateInPlace = 0;             // 0x08
-		t_InitializeStatic m_Initialize = 0;                    // 0x0C
-		t_UninitializeStatic m_Uninitialize = 0;                // 0x10
-		TClass* m_Parent = 0;                                   // 0x14
-		TClass* m_Previous = 0;                                 // 0x18
-		TClass* m_LastAttached;                                 // 0x1C
-		uint32_t m_Version = 0;                                 // 0x20
-		size_t m_Size = 0;                                      // 0x24
-		uint32_t m_Unk = 0;                                     // 0x28
-		TBOOL m_Initialized = 0;                                 // 0x2C
+	protected:
+		const char* m_Name = 0;                     // 0x00
+		t_CreateTObject m_Create = 0;               // 0x04
+		t_CreateTObjectInPlace m_CreateInPlace = 0; // 0x08
+		t_InitializeStatic m_Initialize = 0;        // 0x0C
+		t_UninitializeStatic m_Uninitialize = 0;    // 0x10
+		TClass* m_Parent = 0;                       // 0x14
+		TClass* m_Previous = 0;                     // 0x18
+		TClass* m_LastAttached;                     // 0x1C
+		TUINT32 m_Version = 0;                      // 0x20
+		TUINT32 m_Size = 0;                         // 0x24
+		TUINT32 m_Alignment = 0;                    // 0x28
+		TBOOL m_Initialized = 0;                    // 0x2C
 	};
 }

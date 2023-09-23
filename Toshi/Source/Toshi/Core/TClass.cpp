@@ -6,21 +6,22 @@
 namespace Toshi
 {
 	TClass::TClass(
-		const char* name, TClass* parent, uint32_t version, size_t size,
-		t_CreateTObject fCreate, t_CreateTObjectInPlace fCreateInPlace,
-		t_InitializeStatic fInit, t_UninitializeStatic fUninit
+		const char* a_szName, TClass* a_pParent, TUINT32 a_uiVersion,
+		TUINT32 a_uiSize, t_CreateTObject a_fCreate,
+		t_CreateTObjectInPlace a_fCreateInPlace, t_InitializeStatic a_fInit,
+		t_UninitializeStatic a_fUninit, TUINT32 a_uiAlignment
 	)
 	{
-		m_Name = name;
-		m_Create = fCreate;
-		m_CreateInPlace = fCreateInPlace;
-		m_Initialize = fInit;
-		m_Uninitialize = fUninit;
-		m_Parent = parent;
-		m_Version = version;
-		m_Size = size;
+		m_Name = a_szName;
+		m_Create = a_fCreate;
+		m_CreateInPlace = a_fCreateInPlace;
+		m_Initialize = a_fInit;
+		m_Uninitialize = a_fUninit;
+		m_Parent = a_pParent;
+		m_Version = a_uiVersion;
+		m_Size = a_uiSize;
 		m_Initialized = TFALSE;
-		m_Unk = 0;
+		m_Alignment = a_uiAlignment;
 
 		if (m_Parent)
 		{

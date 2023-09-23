@@ -56,7 +56,7 @@ BOOL CALLBACK AssertionDlgProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lP
 	return TRUE;
 }
 
-AssertionAction AssertionCallback(const char* file, int line, const char* expression)
+AssertionAction TDebug_AssertionCallback(const char* file, int line, const char* expression)
 {
 	g_szAssertFilename = file;
 	g_uiAssertLineNumber = line;
@@ -78,7 +78,7 @@ AssertionAction AssertionCallback(const char* file, int line, const char* expres
 	return result != -1 ? TSTATICCAST(AssertionAction, result) : AssertionAction::Break;
 }
 #else // TOSHI_SKU_WINDOWS
-AssertionAction AssertionCallback(const char* file, int line, const char* expression)
+AssertionAction TDebug_AssertionCallback(const char* file, int line, const char* expression)
 {
 	return AssertionAction::Break;
 }
