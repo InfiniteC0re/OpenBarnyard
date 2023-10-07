@@ -1,6 +1,6 @@
 #pragma once
 #include "TTransformObject.h"
-#include "TRender.h"
+#include "TRenderInterface.h"
 
 namespace Toshi {
 

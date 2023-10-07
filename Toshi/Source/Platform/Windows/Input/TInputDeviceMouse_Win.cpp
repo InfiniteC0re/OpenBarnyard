@@ -1,6 +1,6 @@
 #include "ToshiPCH.h"
 #include "TInputDeviceMouse_Win.h"
-#include <Platform/Windows/DX11/TRender_DX11.h>
+#include <Platform/DX8/TRenderInterface_DX8.h>
 #include <Platform/Windows/Input/TInputInterface_Win.h>
 
 namespace Toshi {
@@ -18,7 +18,7 @@ namespace Toshi {
 	{
 		if (IsAcquired())
 		{
-			m_aAxis.m_iX = 0;
+			/*m_aAxis.m_iX = 0;
 			m_aAxis.m_iY = 0;
 			m_fWheelAxis = 0;
 			auto renderer = TRenderDX11::Interface();
@@ -36,7 +36,7 @@ namespace Toshi {
 				TMSWindow* window = renderer->GetMSWindow();
 				m_CursorPos.x = window->m_xPos;
 				m_CursorPos.y = window->m_yPos;
-			}
+			}*/
 		}
 	}
 
@@ -140,120 +140,120 @@ namespace Toshi {
 			}
 		}
 
-		auto renderer = TRenderDX11::Interface();
-		auto input = TInputDXInterface::GetInterface();
-		TRenderDX11::DisplayParams* params;
-		int unk;
+		//auto renderer = TRenderDX11::Interface();
+		//auto input = TInputDXInterface::GetInterface();
+		//TRenderDX11::DisplayParams* params;
+		//int unk;
 
-		for (size_t i = 0; i < dwItems; i++)
-		{
-			switch (dod[i].dwOfs)
-			{
-			case DIMOFS_X: // MouseUp
-				m_aAxis.m_iX += dod[i].dwData;
+		//for (size_t i = 0; i < dwItems; i++)
+		//{
+		//	switch (dod[i].dwOfs)
+		//	{
+		//	case DIMOFS_X: // MouseUp
+		//		m_aAxis.m_iX += dod[i].dwData;
 
-				if (renderer != TNULL)
-				{
-					m_CursorPos.x += dod[i].dwData;
-				}
-				else
-				{
-					params = renderer->GetCurrentDisplayParams();
-					if (!params->Unk5)
-					{
-						m_CursorPos.x += dod[i].dwData;
-					}
-				}
-				emitter.Throw(TInputInterface::InputEvent(this, AXIS_CURSOR, TInputInterface::EVENT_TYPE_MOVED, m_aAxis.m_iX, m_aAxis.m_iY));
-				eventCount++;
-				break;
-			case DIMOFS_Y: // MouseDown
-				m_aAxis.m_iY += dod[i].dwData;
+		//		if (renderer != TNULL)
+		//		{
+		//			m_CursorPos.x += dod[i].dwData;
+		//		}
+		//		else
+		//		{
+		//			params = renderer->GetCurrentDisplayParams();
+		//			if (!params->Unk5)
+		//			{
+		//				m_CursorPos.x += dod[i].dwData;
+		//			}
+		//		}
+		//		emitter.Throw(TInputInterface::InputEvent(this, AXIS_CURSOR, TInputInterface::EVENT_TYPE_MOVED, m_aAxis.m_iX, m_aAxis.m_iY));
+		//		eventCount++;
+		//		break;
+		//	case DIMOFS_Y: // MouseDown
+		//		m_aAxis.m_iY += dod[i].dwData;
 
-				if (renderer != TNULL)
-				{
-					m_CursorPos.y += dod[i].dwData;
-				}
-				else
-				{
-					params = renderer->GetCurrentDisplayParams();
-					if (!params->Unk5)
-					{
-						m_CursorPos.y += dod[i].dwData;
-					}
-				}
-				emitter.Throw(TInputInterface::InputEvent(this, AXIS_CURSOR, TInputInterface::EVENT_TYPE_MOVED, m_aAxis.m_iX, m_aAxis.m_iY));
-				eventCount++;
-				break;
-			case DIMOFS_Z: // Wheel
-				m_fWheelAxis += dod[i].dwData;
-				emitter.Throw(TInputInterface::InputEvent(this, AXIS_WHEEL, TInputInterface::EVENT_TYPE_MOVED, 0.0f, m_fWheelAxis / WHEEL_DELTA));
-				unk = m_fWheelAxis / m_field0x80;
-				// WHEEL_UP
-				if (unk < 0)
-				{
-					emitter.Throw(TInputInterface::InputEvent(this, BUTTON_WHEEL_BACKWARD, TInputInterface::EVENT_TYPE_GONE_DOWN));
-					unk++;
-					if (unk < 0)
-					{
-						int i = -unk;
-						do
-						{
-							emitter.Throw(TInputInterface::InputEvent(this, BUTTON_WHEEL_BACKWARD, TInputInterface::EVENT_TYPE_REPEAT));
-							i--;
-						} while (i != 0);
-					}
+		//		if (renderer != TNULL)
+		//		{
+		//			m_CursorPos.y += dod[i].dwData;
+		//		}
+		//		else
+		//		{
+		//			params = renderer->GetCurrentDisplayParams();
+		//			if (!params->Unk5)
+		//			{
+		//				m_CursorPos.y += dod[i].dwData;
+		//			}
+		//		}
+		//		emitter.Throw(TInputInterface::InputEvent(this, AXIS_CURSOR, TInputInterface::EVENT_TYPE_MOVED, m_aAxis.m_iX, m_aAxis.m_iY));
+		//		eventCount++;
+		//		break;
+		//	case DIMOFS_Z: // Wheel
+		//		m_fWheelAxis += dod[i].dwData;
+		//		emitter.Throw(TInputInterface::InputEvent(this, AXIS_WHEEL, TInputInterface::EVENT_TYPE_MOVED, 0.0f, m_fWheelAxis / WHEEL_DELTA));
+		//		unk = m_fWheelAxis / m_field0x80;
+		//		// WHEEL_UP
+		//		if (unk < 0)
+		//		{
+		//			emitter.Throw(TInputInterface::InputEvent(this, BUTTON_WHEEL_BACKWARD, TInputInterface::EVENT_TYPE_GONE_DOWN));
+		//			unk++;
+		//			if (unk < 0)
+		//			{
+		//				int i = -unk;
+		//				do
+		//				{
+		//					emitter.Throw(TInputInterface::InputEvent(this, BUTTON_WHEEL_BACKWARD, TInputInterface::EVENT_TYPE_REPEAT));
+		//					i--;
+		//				} while (i != 0);
+		//			}
 
-					emitter.Throw(TInputInterface::InputEvent(this, BUTTON_WHEEL_BACKWARD, TInputInterface::EVENT_TYPE_GONE_UP));
-				}
-				// WHEEL_DOWN
-				else
-				{
-					emitter.Throw(TInputInterface::InputEvent(this, BUTTON_WHEEL_FORWARD, TInputInterface::EVENT_TYPE_GONE_DOWN));
-					while (unk = unk - 1, 0 < unk)
-					{
-						emitter.Throw(TInputInterface::InputEvent(this, BUTTON_WHEEL_FORWARD, TInputInterface::EVENT_TYPE_REPEAT));
-					}
-					emitter.Throw(TInputInterface::InputEvent(this, BUTTON_WHEEL_FORWARD, TInputInterface::EVENT_TYPE_GONE_UP));
-				}
-				eventCount++;
-				break;
-			case DIMOFS_BUTTON0:
-			case DIMOFS_BUTTON1:
-			case DIMOFS_BUTTON2:
-			{
-				int iButton =
-					(dod[i].dwOfs == DIMOFS_BUTTON0) ? (!m_bReverseButtons ? 0 : 1) :
-					(dod[i].dwOfs == DIMOFS_BUTTON1) ? (!m_bReverseButtons ? 1 : 0) : 2;
+		//			emitter.Throw(TInputInterface::InputEvent(this, BUTTON_WHEEL_BACKWARD, TInputInterface::EVENT_TYPE_GONE_UP));
+		//		}
+		//		// WHEEL_DOWN
+		//		else
+		//		{
+		//			emitter.Throw(TInputInterface::InputEvent(this, BUTTON_WHEEL_FORWARD, TInputInterface::EVENT_TYPE_GONE_DOWN));
+		//			while (unk = unk - 1, 0 < unk)
+		//			{
+		//				emitter.Throw(TInputInterface::InputEvent(this, BUTTON_WHEEL_FORWARD, TInputInterface::EVENT_TYPE_REPEAT));
+		//			}
+		//			emitter.Throw(TInputInterface::InputEvent(this, BUTTON_WHEEL_FORWARD, TInputInterface::EVENT_TYPE_GONE_UP));
+		//		}
+		//		eventCount++;
+		//		break;
+		//	case DIMOFS_BUTTON0:
+		//	case DIMOFS_BUTTON1:
+		//	case DIMOFS_BUTTON2:
+		//	{
+		//		int iButton =
+		//			(dod[i].dwOfs == DIMOFS_BUTTON0) ? (!m_bReverseButtons ? 0 : 1) :
+		//			(dod[i].dwOfs == DIMOFS_BUTTON1) ? (!m_bReverseButtons ? 1 : 0) : 2;
 
-				TASSERT(iButton < INPUT_DEVICE_MOUSE_BUTTONS);
+		//		TASSERT(iButton < INPUT_DEVICE_MOUSE_BUTTONS);
 
-				if (dod[i].dwData & 0x80)
-				{
-					if ((m_dwButtonCurrent & (1 << iButton)) != 0)
-					{
-						// wtf is this assert??????????????
-						TASSERT((m_dwButtonCurrent & (1 << iButton)) != 0);
-					}
-					else
-					{
-						emitter.Throw(TInputInterface::InputEvent(this, BUTTON_1 + iButton, TInputInterface::EVENT_TYPE_GONE_DOWN));
-						m_dwButtonCurrent |= 1 << iButton;
-					}
-				}
-				else
-				{
-					emitter.Throw(TInputInterface::InputEvent(this, BUTTON_1 + iButton, TInputInterface::EVENT_TYPE_GONE_UP));
-					m_dwButtonCurrent &= ~(1 << iButton);
-				}
+		//		if (dod[i].dwData & 0x80)
+		//		{
+		//			if ((m_dwButtonCurrent & (1 << iButton)) != 0)
+		//			{
+		//				// wtf is this assert??????????????
+		//				TASSERT((m_dwButtonCurrent & (1 << iButton)) != 0);
+		//			}
+		//			else
+		//			{
+		//				emitter.Throw(TInputInterface::InputEvent(this, BUTTON_1 + iButton, TInputInterface::EVENT_TYPE_GONE_DOWN));
+		//				m_dwButtonCurrent |= 1 << iButton;
+		//			}
+		//		}
+		//		else
+		//		{
+		//			emitter.Throw(TInputInterface::InputEvent(this, BUTTON_1 + iButton, TInputInterface::EVENT_TYPE_GONE_UP));
+		//			m_dwButtonCurrent &= ~(1 << iButton);
+		//		}
 
-				eventCount++;
-				break;
-			}
-			default:
-				break;
-			}
-		}
+		//		eventCount++;
+		//		break;
+		//	}
+		//	default:
+		//		break;
+		//	}
+		//}
 
 		return eventCount;
 	}

@@ -3,7 +3,7 @@
 
 namespace Toshi
 {
-	class TRender;
+	class TRenderInterface;
 
 	typedef uint8_t TResourceState;
 	enum TResourceState_ : TResourceState
@@ -22,7 +22,7 @@ namespace Toshi
 	{
 	public:
 		static constexpr size_t MAXNAMELEN = 14;
-		friend TRender;
+		friend TRenderInterface;
 
 	public:
 		TResource()
@@ -55,12 +55,12 @@ namespace Toshi
 		const char* GetName() const { return m_Name; }
 		void SetName(const char* name);
 
-		TRender* GetRenderer() const
+		TRenderInterface* GetRenderer() const
 		{
 			return m_Renderer;
 		}
 
-		void SetRenderer(TRender* pRenderer)
+		void SetRenderer(TRenderInterface* pRenderer)
 		{
 			m_Renderer = pRenderer;
 		}
@@ -101,7 +101,7 @@ namespace Toshi
 		}
 
 	private:
-		TRender* m_Renderer;         // 0x18
+		TRenderInterface* m_Renderer;         // 0x18
 		char m_Name[MAXNAMELEN + 1]; // 0x1C
 		TResourceState m_State;      // 0x2B
 		uint32_t m_UId;              // 0x2C

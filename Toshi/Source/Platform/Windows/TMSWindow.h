@@ -1,6 +1,6 @@
 #pragma once
 #include "Toshi/Core/TObject.h"
-#include "Toshi/Render/TRender.h"
+#include "Toshi/Render/TRenderInterface.h"
 #include "Toshi/Strings/TString8.h"
 
 #include <dbt.h>
@@ -25,7 +25,7 @@ namespace Toshi
 		void Disable();
 		void Update();
 
-		TBOOL Create(TRender* renderer, LPCSTR title);
+		TBOOL Create(TRenderInterface* renderer, LPCSTR title);
 		void UnregisterWindowClass();
 
 		void SetPosition(UINT x, UINT y, UINT width, UINT height);
@@ -80,7 +80,7 @@ namespace Toshi
 
 	private:
 		HWND m_HWND;                // 0x04
-		TRender* m_Render;          // 0x08
+		TRenderInterface* m_Render;          // 0x08
 		TBOOL m_IsWindowed;         // 0x0C
 		TBOOL m_IsDestroyed;        // 0x0D
 		TBOOL m_bIsFocused;         // 0x0E

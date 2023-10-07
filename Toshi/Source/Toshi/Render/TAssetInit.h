@@ -1,9 +1,5 @@
 #pragma once
 #include "Toshi/File/TTRB.h"
-#include "Toshi/Xui/TXUI.h"
-#include "Toshi/Render/TModelHAL.h"
-#include "Toshi/Render/TTexture.h"
-#include "Toshi2/T2Material.h"
 
 namespace Toshi
 {
@@ -27,180 +23,16 @@ namespace Toshi
 		};
 
 	public:
-		static t_fourCCFunction constexpr InitTex = [](void* a_pData)
-		{
-			TSTATICCAST(TTexture*, a_pData)->Init();
-		};
-
-		static t_fourCCFunction constexpr InitFXLite = [](void* a_pData)
-		{
-
-		};
-
-		static t_fourCCFunction constexpr InitMaterial = [](void* a_pData)
-		{
-			TSTATICCAST(T2Material*, a_pData)->Init();
-		};
-
-		static t_fourCCFunction constexpr ReloadMaterial = [](void* a_pData)
-		{
-
-		};
-
-		static t_fourCCFunction constexpr InitKeyframes = [](void* a_pData)
-		{
-
-		};
-
-		static t_fourCCFunction constexpr InitModel = [](void* a_pData)
-		{
-            TModelHAL* a_modelHal;
-
-            if (g_pMemHeap == TNULL)
-            {
-                a_modelHal = new TModelHAL();
-            }
-            else
-            {
-                a_modelHal = new (g_pMemHeap) TModelHAL();
-            }
-
-            a_modelHal->Create(TSTATICCAST(TTMDWin::TTRBWinHeader*, a_pData));
-            a_modelHal->SetDataHeader(a_pData);
-		};
-
-		// Empty ( de blob only calls a func where TASSERT("TFALSE","..\\..\\Source\\Render\\TVertexDecl_DX11.cpp",0x1f,"TASSERT"); gets called
-		static t_fourCCFunction constexpr InitVertexDecleration = [](void* a_pData)
-		{
-
-		};
-
-		static t_fourCCFunction constexpr InitXUI = [](void* a_pData)
-		{
-			TSTATICCAST(TXUIResourceTRB*, a_pData)->Init();
-		};
-
-		static t_fourCCFunction constexpr InitFont = [](void* a_pData)
-		{
-
-		};
-
-		static t_fourCCFunction constexpr InitWorld = [](void* a_pData)
-		{
-
-		};
-
-		static t_fourCCFunction constexpr InitParticleMaterial = [](void* a_pData)
-		{
-
-		};
-
-		static t_fourCCFunction constexpr InitParticleSettings = [](void* a_pData)
-		{
-
-		};
-
-		static t_fourCCFunction constexpr InitParticleEffect = [](void* a_pData)
-		{
-
-		};
-
-		static t_fourCCFunction constexpr DeinitParticleEffect = [](void* a_pData)
-		{
-
-		};
-
-		static t_fourCCFunction constexpr DeinitParticleSettings = [](void* a_pData)
-		{
-
-		};
-
-		static t_fourCCFunction constexpr DeinitParticleMaterial = [](void* a_pData)
-		{
-
-		};
-
-		static t_fourCCFunction constexpr DeinitWorld = [](void* a_pData)
-		{
-
-		};
-
-		static t_fourCCFunction constexpr DeinitFont = [](void* a_pData)
-		{
-
-		};
-
-		static t_fourCCFunction constexpr DeinitXUI = [](void* a_pData)
-		{
-			TSTATICCAST(TXUIResourceTRB*, a_pData)->Deinit();
-		};
-
-		static t_fourCCFunction constexpr DeinitModel = [](void* a_pData)
-		{
-
-		};
-
-		static t_fourCCFunction constexpr DeinitKeyframes = [](void* a_pData)
-		{
-
-		};
-
-		static t_fourCCFunction constexpr DeinitMaterial = [](void* a_pData)
-		{
-			TSTATICCAST(T2Material*, a_pData)->Deinit();
-		};
-
-		static t_fourCCFunction constexpr DeinitFXLite = [](void* a_pData)
-		{
-
-		};
-
-		static t_fourCCFunction constexpr DeinitVertexDecleration = [](void* a_pData)
-		{
-
-		};
-
-		static t_fourCCFunction constexpr DeinitTex = [](void* a_pData)
-		{
-			TSTATICCAST(TTexture*, a_pData)->Deinit();
-		};
-
 		static FourCCFunction constexpr g_FourCCReloadFunctions[5] = {
-			{ TMAKEFOUR("ttex"), InitTex },
-			{ TMAKEFOUR("tfxl"), InitFXLite },
-			{ TMAKEFOUR("tmat"), ReloadMaterial },
-			{ TMAKEFOUR("tkey"), InitKeyframes },
-			{ TMAKEFOUR("tmod"), InitModel }
+			
 		};
 
 		static FourCCFunction constexpr g_FourCCInitFunctions[12] = {
-			{ TMAKEFOUR("ttex"), InitTex },
-			{ TMAKEFOUR("tvdc"), InitVertexDecleration },
-			{ TMAKEFOUR("tfxl"), InitFXLite },
-			{ TMAKEFOUR("tmat"), InitMaterial },
-			{ TMAKEFOUR("tkey"), InitKeyframes },
-			{ TMAKEFOUR("tmod"), InitModel },
-			{ TMAKEFOUR("txui"), InitXUI },
-			{ TMAKEFOUR("tfnt"), InitFont },
-			{ TMAKEFOUR("twld"), InitWorld },
-			{ TMAKEFOUR("tpma"), InitParticleMaterial },
-			{ TMAKEFOUR("tpse"), InitParticleSettings },
-			{ TMAKEFOUR("tpef"), InitParticleEffect },
+			
 		};
 
 		static FourCCFunction constexpr g_FourCCDeinitFunctions[12] = {
-			{ TMAKEFOUR("tpef"), DeinitParticleEffect },
-			{ TMAKEFOUR("tpse"), DeinitParticleSettings },
-			{ TMAKEFOUR("tpma"), DeinitParticleMaterial },
-			{ TMAKEFOUR("twld"), DeinitWorld },
-			{ TMAKEFOUR("tfnt"), DeinitFont },
-			{ TMAKEFOUR("txui"), DeinitXUI },
-			{ TMAKEFOUR("tmod"), DeinitModel },
-			{ TMAKEFOUR("tkey"), DeinitKeyframes },
-			{ TMAKEFOUR("tmat"), DeinitMaterial },
-			{ TMAKEFOUR("tfxl"), DeinitFXLite },
-			{ TMAKEFOUR("tvdc"), DeinitVertexDecleration },
-			{ TMAKEFOUR("ttex"), DeinitTex },
+			
 		};
 
 	public:

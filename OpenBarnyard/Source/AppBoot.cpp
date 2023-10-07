@@ -10,16 +10,15 @@
 #include <Toshi/Core/TArray.h>
 #include <Toshi/Core/TScheduler.h>
 #include <Toshi/Core/TSystem.h>
-#include <Toshi2/T2GUI/T2GUI.h>
 #include <Toshi2/T2SimpleArray.h>
 #include <Toshi/Sound/TSound.h>
-#include <Toshi/Render/TRender.h>
+#include <Toshi/Render/TRenderInterface.h>
 #include <Toshi/Strings/TPString8.h>
 #include <Toshi/Input/TInputInterface.h>
 
 #include <Platform/Windows/TSound_Win.h>
 
-#include TOSHI_MULTIRENDER(TRender)
+#include TOSHI_MULTIRENDER(TRenderInterface)
 
 #include "Tasks/ADummyTask.h"
 #include "Locale/ALocaleManager.h"

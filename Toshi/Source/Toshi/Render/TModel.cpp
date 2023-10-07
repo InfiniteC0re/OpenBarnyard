@@ -1,7 +1,7 @@
 #include "ToshiPCH.h"
 #include "TModel.h"
 #include "TModelManager.h"
-#include TOSHI_MULTIRENDER(TRender)
+#include TOSHI_MULTIRENDER(TRenderInterface)
 
 namespace Toshi {
 	
@@ -157,9 +157,9 @@ namespace Toshi {
 
 			if (bLoadAnimations && pSkeletonHeader->m_pTKLName != TNULL)
 			{
-				auto& keyframeLibMgr = TRender::GetSingletonSafe()->GetKeyframeLibraryManager();
+				/*auto& keyframeLibMgr = TRender::GetSingletonSafe()->GetKeyframeLibraryManager();
 				auto pKeyframeLibrary = keyframeLibMgr.GetLibrary(pSkeletonHeader->m_pTKLName);
-				
+
 				pSkeleton->GetKeyLibraryInstance().CreateEx(
 					pKeyframeLibrary,
 					pSkeletonHeader->m_iTKeyCount,
@@ -168,7 +168,7 @@ namespace Toshi {
 					pSkeletonHeader->m_iTBaseIndex,
 					pSkeletonHeader->m_iQBaseIndex,
 					pSkeletonHeader->m_iSBaseIndex
-				);
+				);*/
 			}
 		}
 	}
@@ -184,8 +184,8 @@ namespace Toshi {
 
 		if (bCreated)
 		{
-			auto pRender = TRenderDX11::Interface();
-			pRender->WaitForEndOfRender();
+			/*auto pRender = TRenderDX11::Interface();
+			pRender->WaitForEndOfRender();*/
 
 			pModel->m_pTRB = pTRB;
 			pModel->m_Flags.Unset(Flags::TrbLoaded);
@@ -214,57 +214,3 @@ namespace Toshi {
 	}
 
 }
-
-/*
-TBOOL Toshi::TModel::LoadTMD(const char* a_tmdPath)
-{
-	TFile* file = TFile::Create(a_tmdPath);
-
-	if (file != TNULL)
-	{
-		Header header;
-		file->Read(&header, sizeof(Header));
-
-		if (header.m_magic == TMAKEFOUR("TMDL"))
-		{
-
-		}
-
-		file->Destroy();
-	}
-
-	return TFALSE;
-}
-
-void Toshi::TModel::CreateResource(const char* name)
-{
-	T2Resource::CreateResource(name, this, TNULL, this);
-	
-}
-
-TBOOL Toshi::TModel::LoadTRBTMD(const char*)
-{
-	const char* symbol = TranslateSymbolName("SkeletonHeader");
-	m_pTRB->GetSymbolAddress(symbol);
-	symbol = TranslateSymbolName("Skeleton");
-	m_pTRB->GetSymbolAddress(symbol);
-	symbol = TranslateSymbolName("Collision");
-	m_pTRB->GetSymbolAddress(symbol);
-	return TFALSE;
-}
-
-TBOOL Toshi::TModel::LoadTrb()
-{
-	return TFALSE;
-}
-
-const char* Toshi::TModel::TranslateSymbolName(const char* a_symbolName)
-{
-	if (sm_SymbolNamePrefix != TNULL)
-	{
-		T2String8::Format(s_TranslatedSymbol, sizeof(s_TranslatedSymbol), "%s_%s", sm_SymbolNamePrefix);
-		a_symbolName = s_TranslatedSymbol;
-	}
-	return a_symbolName;
-}
-*/

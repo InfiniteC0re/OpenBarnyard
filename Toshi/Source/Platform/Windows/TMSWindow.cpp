@@ -2,7 +2,7 @@
 #include "TMSWindow.h"
 #include "Toshi/Core/TApplication.h"
 #include "Toshi/Core/TSystem.h"
-#include "DX11/TRender_DX11.h"
+#include "Platform/DX8/TRenderInterface_DX8.h"
 #include "Input/TInputInterface_Win.h"
 
 namespace Toshi
@@ -82,14 +82,15 @@ namespace Toshi
 		SetWindowPos(m_HWND, HWND_TOP, x, y, rect.right - rect.left, rect.bottom - rect.top, 0);
 	}
 
-	TBOOL TMSWindow::Create(TRender* renderer, LPCSTR title)
+	TBOOL TMSWindow::Create(TRenderInterface* renderer, LPCSTR title)
 	{
 		UnregisterWindowClass();
 
 		m_Render = renderer;
 		m_ModuleHandle = GetModuleHandleA(NULL);
 
-		const char* className = TGetClass(TRenderDX11)->GetName();
+		//const char* className = TGetClass(TRenderDX8)->GetName();
+		const char* className = "TRenderD3DInterface";
 		
 		WNDCLASSA wndClass = { };
 		wndClass.hIcon = LoadIconA(m_ModuleHandle, MAKEINTRESOURCEA(IDI_APPLICATION));
@@ -139,11 +140,11 @@ namespace Toshi
 
 		RECT rect;
 		TBOOL bFlag1, bLockCursor;
-		auto pRenderer = TRenderDX11::Interface();
-		auto pDisplayParams = pRenderer->GetCurrentDisplayParams();
+		//auto pRenderer = TRenderDX8::Interface();
+		//auto pDisplayParams = pRenderer->GetCurrentDisplayParams();
 		auto pSystemManager = TSystemManager::GetSingletonSafe();
 
-		if (window == NULL || pDisplayParams->IsFullscreen)
+		if (window == NULL /*|| pDisplayParams->IsFullscreen*/)
 		{
 			bLockCursor = TFALSE;
 		}
@@ -151,13 +152,13 @@ namespace Toshi
 		{
 			bLockCursor = TTRUE;
 
-			if (pDisplayParams->Unk5)
+			/*if (pDisplayParams->Unk5)
 			{
 				bLockCursor = TFALSE;
-			}
+			}*/
 		}
 
-		bFlag1 = window != NULL && pDisplayParams->IsFullscreen != TFALSE && pDisplayParams->Unk5 != TFALSE;
+		bFlag1 = window != NULL /*&& pDisplayParams->IsFullscreen != TFALSE && pDisplayParams->Unk5 != TFALSE*/;
 
 		if (WM_ACTIVATEAPP < uMsg)
 		{
@@ -316,17 +317,17 @@ namespace Toshi
 					STICKYKEYS newStickyKeys { sizeof(STICKYKEYS), 0 };
 					SystemParametersInfoA(SPI_SETSTICKYKEYS, sizeof(STICKYKEYS), &newStickyKeys, 0);
 				}
-				if (pRenderer->m_SwapChain != TNULL && ms_bIsFullscreen)
+				/*if (pRenderer->m_SwapChain != TNULL && ms_bIsFullscreen)
 				{
 					TUtil::Log("#####  Restore fullscreen");
 					ms_bIsFullscreen = TFALSE;
 					pRenderer->m_SwapChain->SetFullscreenState(TTRUE, TNULL);
 					return DefWindowProcA(hWnd, uMsg, wParam, lParam);;
-				}
+				}*/
 			}
 			else
 			{
-				if (pRenderer->m_SwapChain != TNULL)
+				/*if (pRenderer->m_SwapChain != TNULL)
 				{
 					pRenderer->m_SwapChain->GetFullscreenState(&ms_bIsFullscreen, TNULL);
 					if (pDisplayParams->IsFullscreen && ms_bIsFullscreen)
@@ -334,7 +335,7 @@ namespace Toshi
 						TUtil::Log("#####  Disable fullscreen");
 						pRenderer->m_SwapChain->SetFullscreenState(TFALSE, TNULL);
 					}
-				}
+				}*/
 				if (ms_bIsFocused)
 				{
 					SetThreadExecutionState(ES_CONTINUOUS);

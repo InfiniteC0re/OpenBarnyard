@@ -1,6 +1,5 @@
 #include "ToshiPCH.h"
 #include "TCameraObject.h"
-#include "TRender.h"
 
 namespace Toshi {
 
@@ -21,13 +20,13 @@ namespace Toshi {
 	{
 		if (m_bEnabled)
 		{
-			auto pRender = TRender::GetSingleton();
+			auto pRender = TRenderInterface::GetSingleton();
 			auto pRenderContext = pRender->GetCurrentRenderContext();
 
 			TRenderContext::PROJECTIONPARAMS projParams = pRenderContext->GetProjectionParams();
 			projParams.m_Centre = { m_fCentreX * pRenderContext->GetWidth(), m_fCentreY * pRenderContext->GetHeight() };
 
-			auto render = TRender::GetSingleton();
+			auto render = TRenderInterface::GetSingleton();
 			auto aspectRatio = render->GetAspectRatio();
 
 			if (m_Unk1 == 0)
@@ -39,7 +38,7 @@ namespace Toshi {
 				{
 					projParams.m_Proj.y *= render->GetResolutionScalar();
 
-					if (m_eMode == TRenderContext::CameraMode_Perspective && aspectRatio == TRender::ASPECT_RATIO_16_9)
+					if (m_eMode == TRenderContext::CameraMode_Perspective && aspectRatio == TRenderInterface::ASPECT_RATIO_16_9)
 					{
 						projParams.m_Proj.x *= 0.8660254f;
 						projParams.m_Proj.y *= 0.8660254f;
@@ -55,7 +54,7 @@ namespace Toshi {
 				{
 					projParams.m_Proj.x /= render->GetResolutionScalar();
 
-					if (m_eMode == TRenderContext::CameraMode_Perspective && aspectRatio == TRender::ASPECT_RATIO_16_9)
+					if (m_eMode == TRenderContext::CameraMode_Perspective && aspectRatio == TRenderInterface::ASPECT_RATIO_16_9)
 					{
 						projParams.m_Proj.x *= 0.8660254f;
 						projParams.m_Proj.y *= 0.8660254f;

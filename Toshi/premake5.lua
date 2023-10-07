@@ -13,8 +13,7 @@ project "Toshi"
 		"fmod_vc.lib",
 		"fmodstudio_vc.lib",
 		"fsbank_vc.lib",
-		"d3d11.lib",
-		"d3dcompiler.lib",
+		"d3d8.lib",
 		"dxguid.lib",
 		"dxgi.lib",
 		"winmm.lib",
@@ -30,9 +29,15 @@ project "Toshi"
 		"%{IncludeDir.stb}"
 	}
 	
+	externalincludedirs 
+	{
+		"%{IncludeDir.dx8}"
+	}
+	
 	libdirs
 	{
-		"%{LibDir.fmod}"
+		"%{LibDir.fmod}",
+		"%{LibDir.dx8}"
 	}
 
 	defines
@@ -55,6 +60,9 @@ project "Toshi"
 			"Source/Platform/Windows/**.h",
 			"Source/Platform/Windows/**.cpp",
 			"Source/Platform/Windows/**.c",
+			"Source/Platform/DX8/**.h",
+			"Source/Platform/DX8/**.cpp",
+			"Source/Platform/DX8/**.c",
 			"Source/Plugins**/**.h",
 			"Source/Plugins**/**.cpp",
 			"Source/Toshi**/**.h",

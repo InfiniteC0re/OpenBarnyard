@@ -39,6 +39,11 @@ project "OpenBarnyard"
 		"%{IncludeDir.stb}"
 	}
 	
+	externalincludedirs 
+	{
+		"%{IncludeDir.dx8}"
+	}
+	
 	defines
 	{
 		"TOSHI_USER_CLIENT",
