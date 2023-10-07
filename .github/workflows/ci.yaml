@@ -22,8 +22,19 @@ jobs:
     - name: Premake
       run: premake5 vs2022 --arch=x86
     
-    - name: Build
+    - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v1.1
     
     - name: Build the whole solution for debug
       run: msbuild './Toshi.sln' -property:Configuration=Debug
+      
+    - name: Create Artifact
+      run: |
+        mkdir artifact
+        Compress-Archive -Path bin/Debug_Windows_x86/* -Destination artifact/Debug_Windows_x86.zip
+    
+    - name: Publish Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: web-release
+        path: artifact
