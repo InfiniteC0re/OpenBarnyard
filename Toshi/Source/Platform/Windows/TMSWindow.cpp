@@ -24,8 +24,10 @@ namespace Toshi
 		m_IsWindowed = TFALSE;
 	}
 
-	void TMSWindow::Update()
+	void TMSWindow::Update(TFLOAT a_fDeltaTime)
 	{
+		TIMPLEMENT();
+
 		MSG msg;
 		if (!m_IsDestroyed && PeekMessageA(&msg, NULL, 0, 0, 0) == TRUE)
 		{

@@ -23,7 +23,7 @@ namespace Toshi
 
 		void Enable();
 		void Disable();
-		void Update();
+		void Update(TFLOAT a_fDeltaTime);
 
 		TBOOL Create(TRenderInterface* renderer, LPCSTR title);
 		void UnregisterWindowClass();

@@ -132,7 +132,7 @@ namespace Toshi {
 		}
 
 	protected:
-		TRenderInterface* m_pRender;                     // 0x0004
+		TRenderInterface* m_pRenderer;          // 0x0004
 		FLAG m_eFlags;                          // 0x0008
 		CameraMode m_eCameraMode;               // 0x0014
 		Params m_oParams;                       // 0x0018

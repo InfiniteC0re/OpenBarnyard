@@ -8,7 +8,7 @@ namespace Toshi {
 	{
 		TIMPLEMENT();
 		m_eFlags = 0;
-		m_pRender = pRender;
+		m_pRenderer = pRender;
 
 		m_oParams.fX = 0;
 		m_oParams.fY = 0;

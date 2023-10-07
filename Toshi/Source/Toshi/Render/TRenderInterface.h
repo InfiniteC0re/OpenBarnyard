@@ -47,28 +47,26 @@ namespace Toshi {
 			ASPECT_RATIO_16_9,
 		};
 
-		struct DisplayParams
+		struct DISPLAYPARAMS
 		{
-			uint32_t Width;
-			uint32_t Height;
-			uint32_t Unk3;
-			uint32_t Unk4;
-			TBOOL Unk5;
-			TBOOL IsFullscreen;
-			uint32_t MultisampleQualityLevel;
+			TUINT32 uiWidth;
+			TUINT32 uiHeight;
+			TUINT32 uiColourDepth;
+			TUINT32 eDepthStencilFormat;
+			TBOOL bWindowed;
 		};
 
 	public:
 		TRenderInterface();
 		virtual ~TRenderInterface();
 
-		virtual TBOOL CreateDisplay(DisplayParams* params) = 0;
+		virtual TBOOL CreateDisplay(DISPLAYPARAMS* a_pParams);
 		virtual TBOOL DestroyDisplay() = 0;
-		virtual void Update(float deltaTime) = 0;
-		virtual void BeginScene() = 0;
-		virtual void EndScene() = 0;
+		virtual TBOOL Update(float a_fDeltaTime) = 0;
+		virtual TBOOL BeginScene();
+		virtual TBOOL EndScene() = 0;
 		virtual void* GetCurrentDevice() = 0;
-		virtual DisplayParams* GetCurrentDisplayParams() = 0;
+		virtual DISPLAYPARAMS* GetCurrentDisplayParams() = 0;
 		virtual TBOOL Create();
 		virtual TBOOL Destroy();
 		virtual void RenderIndexPrimitive(int param_2, int param_3, int param_4, int param_5, int param_6, int param_7);
@@ -94,7 +92,7 @@ namespace Toshi {
 		virtual void OnInitializationFailureDevice();
 		virtual void OnInitializationFailureDisplay();
 		virtual TDebugText* CreateDebugText() = 0;
-		virtual void DestroyDebugText(TDebugText* a_pDebugText) = 0;
+		virtual void DestroyDebugText() = 0;
 		virtual TBOOL CreateSystemResources();
 		virtual void DestroySystemResources();
 
@@ -138,6 +136,8 @@ namespace Toshi {
 		TNodeList<TRenderAdapter>* GetAdapterList() { return &m_AdapterList; }
 		TKeyframeLibraryManager& GetKeyframeLibraryManager() { return m_KeyframeManager; }
 
+		void DestroyAllShaderResources();
+
 		void DestroyDyingResources(TResource* resources);
 		void DestroyDyingResources();
 
@@ -155,7 +155,7 @@ namespace Toshi {
 
 	protected:
 		TUINT32 m_Unk1;                                  // 0x04
-		TBOOL m_bUnkFlag;                                // 0x08
+		TBOOL m_bCreateSystemResources;                  // 0x08
 		TBOOL m_bInScene;                                // 0x09
 		TBOOL m_bCreated = TFALSE;                       // 0x0A
 		TBOOL m_bDisplayCreated;                         // 0x0B

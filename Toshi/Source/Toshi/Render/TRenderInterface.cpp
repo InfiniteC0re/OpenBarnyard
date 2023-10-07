@@ -9,7 +9,7 @@ namespace Toshi {
 	TRenderInterface::TRenderInterface()
 	{
 		m_Unk1 = 0;
-		m_bUnkFlag = TTRUE;
+		m_bCreateSystemResources = TTRUE;
 		m_bInScene = TFALSE;
 		m_bCreated = TFALSE;
 		m_bDisplayCreated = TFALSE;
@@ -97,6 +97,20 @@ namespace Toshi {
 		TASSERT(TFALSE == IsDisplayCreated(), "Display already created");
 
 		m_bDisplayCreated = TTRUE;
+		return TTRUE;
+	}
+
+	TBOOL TRenderInterface::CreateDisplay(DISPLAYPARAMS* a_pParams)
+	{
+		m_bDisplayCreated = TTRUE;
+		return TTRUE;
+	}
+
+	TBOOL TRenderInterface::BeginScene()
+	{
+		m_iFrameCount += 1;
+		m_Transforms.Reset();
+		m_Transforms.Top().Identity();
 		return TTRUE;
 	}
 
@@ -262,6 +276,11 @@ namespace Toshi {
 	{
 		DestroyResourceRecurse(m_Resources.AttachedToRoot());
 		FlushDyingResources();
+	}
+
+	void TRenderInterface::DestroyAllShaderResources()
+	{
+		TIMPLEMENT();
 	}
 
 	void TRenderInterface::DestroyDyingResources()
