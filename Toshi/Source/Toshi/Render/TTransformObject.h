@@ -3,8 +3,6 @@
 #include "Toshi/Math/TQuaternion.h"
 #include "Toshi/Math/TVector3.h"
 
-#include <cstdint>
-
 namespace Toshi {
 
 class TTransformObject
@@ -20,7 +18,7 @@ public:
 
 	void GetLocalMatrixImp(TMatrix44& outMatrix);
 
-	void SetEulerOrder(uint8_t x, uint8_t y, uint8_t z);
+	void SetEulerOrder(TUINT8 x, TUINT8 y, TUINT8 z);
 	void SetTranslate(const TVector3& translation);
 	void SetQuat(const TQuaternion& quaternion);
 	void SetMatrix(const TMatrix44& matrix);
@@ -69,8 +67,8 @@ private:
 
 	Mode m_eMode;
 	TVector3 m_Translation;
-	TVector3 m_ScaleVector;
-	uint8_t m_EulerOrder[3];
+	TVector3 m_Scale;
+	TUINT8 m_EulerOrder[3];
 	TBOOL m_bChanged;
 };
 

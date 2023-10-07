@@ -22,6 +22,7 @@ constexpr uint32_t TMAKEFOUR(const char str[4])
 #define STRCAT_3(X, Y, Z) STRCAT(X, STRCAT(Y, Z))
 #define STRCAT_4(A, X, Y, Z) STRCAT(A, STRCAT_3(X, Y, Z))
 
+#define TDEPRECATED(...) [[deprecated(__VA_ARGS__)]]
 #define TMAKEVERSION(VER_MAJOR, VER_MINOR) ((VER_MAJOR << 16) | VER_MINOR)
 #define BITFIELD(x) (1U << x)
 

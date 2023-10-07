@@ -8,59 +8,55 @@ namespace Toshi {
 
 	TRenderInterface::TRenderInterface()
 	{
-		// 0068ff70
 		m_Unk1 = 0;
-		m_bIsEnabled = TTRUE;
-		m_ScreenOffset = { 0, 0 };
-		m_eAspectRatio = ASPECT_RATIO_4_3;
-		m_pRenderContext = TNULL;
-		m_pCreatedRenderContext = TNULL;
-		m_HasDyingResources = TFALSE;
-		m_bDisplayCreated = TFALSE;
-		m_bCreated = TFALSE;
+		m_bUnkFlag = TTRUE;
 		m_bInScene = TFALSE;
-		// Create things
-		T2ResourceManager::CreateSingleton(TRenderInterface::MAXNUMRESOURCES);
-		m_ParamTable = new TRenderParamTable;
-		TModelManager::CreateSingleton();
+		m_bCreated = TFALSE;
+		m_bDisplayCreated = TFALSE;
+		m_ScreenOffset.Set(0.0f, 0.0f);
+		m_pCurrentContext = TNULL;
+		m_pCreatedContext = TNULL;
+		m_pDebugText = TNULL;
+		m_Unk2 = TNULL;
+		m_Unk3 = TNULL;
+		m_ResourceCount = 1;
+		m_iFrameCount = 0;
+		m_bHasDyingResources = TFALSE;
 
-		// Reset array
-		std::memset(m_SystemResources, '\0', sizeof(m_SystemResources));
+		m_Transforms.PushNull();
+		m_Transforms.Top().Identity();
 
-		// Setting matrices up
-		m_LightColour = {
+		TUtil::MemClear(m_SystemResources, sizeof(m_SystemResources));
+
+		m_LightColour.Set(
 			1.0f, 1.0f, 1.0f, 0.0f,
 			0.0f, 0.0f, 0.0f, 0.0f,
 			0.0f, 0.0f, 0.0f, 0.0f,
 			0.0f, 0.0f, 0.0f, 0.0f
-		};
+		);
 
-		m_LightDirection = {
+		m_LightDirection.Set(
 			-0.47f, -0.74f, 0.47f, 0.0f,
 			0.0f, 0.0f, 0.0f, 0.0f,
 			0.0f, 0.0f, 0.0f, 0.0f,
 			0.0f, 0.0f, 0.0f, 0.0f
-		};
+		);
 	}
 
 	TRenderInterface::~TRenderInterface()
 	{
-		if (m_ParamTable)
-			delete m_ParamTable;
-		
-		TModelManager::DestroySingleton();
-		T2ResourceManager::DestroySingleton();
 		m_Unk1 = -1;
 	}
 
 	TBOOL TRenderInterface::Create()
 	{
 		TASSERT(TFALSE == IsCreated(), "TRender already created");
-		m_pCreatedRenderContext = CreateRenderContext();
+		m_pCreatedContext = CreateRenderContext();
 		
-		if (m_pCreatedRenderContext != TNULL)
+		if (m_pCreatedContext)
 		{
-			SetCurrentRenderContext(m_pCreatedRenderContext);
+			SetCurrentRenderContext(m_pCreatedContext);
+			m_Unk2 = CreateUnknown("Render", 0, 0, 10);
 			m_bCreated = TTRUE;
 			return TTRUE;
 		}
@@ -70,16 +66,29 @@ namespace Toshi {
 
 	TBOOL TRenderInterface::Destroy()
 	{
-		m_pRenderContext = TNULL;
+		TASSERT(TTRUE == IsCreated(), "TRender is not created");
 
-		if (m_pCreatedRenderContext != TNULL)
+		if (m_Unk2)
 		{
-			delete m_pCreatedRenderContext;
-			m_pCreatedRenderContext = TNULL;
+			delete m_Unk2;
+			m_Unk2 = TNULL;
 		}
 
+		if (m_pCreatedContext)
+		{
+			delete m_pCreatedContext;
+			m_pCreatedContext = TNULL;
+		}
+
+		m_pCurrentContext = TNULL;
 		m_bCreated = TFALSE;
+
 		return TTRUE;
+	}
+
+	void TRenderInterface::RenderIndexPrimitive(int param_2, int param_3, int param_4, int param_5, int param_6, int param_7)
+	{
+
 	}
 
 	TBOOL TRenderInterface::CreateDisplay()
@@ -93,13 +102,12 @@ namespace Toshi {
 
 	void TRenderInterface::DestroyResource(TResource* resource)
 	{
-		// 00690fe0
 		TASSERT(TNULL != resource->GetTree(), "Resource doesn't have a tree");
 		TASSERT(TFALSE != resource->IsDead(), "Resource is already dead");
 
 		if (resource->IsDying() == TFALSE)
 		{
-			m_HasDyingResources = TTRUE;
+			m_bHasDyingResources = TTRUE;
 			resource->AddState(TResourceState_Dying);
 			DestroyResourceRecurse(resource->GetAttached());
 			resource->Invalidate();
@@ -108,7 +116,6 @@ namespace Toshi {
 
 	void TRenderInterface::DestroyResourceRecurse(TResource* resource)
 	{
-		// 00691280
 		if (resource == TNULL)
 		{
 			TResource* lastResource = resource->GetLastResource();
@@ -119,7 +126,7 @@ namespace Toshi {
 
 				if (resource->IsDying() == TFALSE)
 				{
-					m_HasDyingResources = TTRUE;
+					m_bHasDyingResources = TTRUE;
 					resource->AddState(TResourceState_Dying);
 
 					if (resource->GetAttached() != TNULL)
@@ -166,7 +173,9 @@ namespace Toshi {
 
 	void TRenderInterface::DumpStats()
 	{
-		TFile* file = TFile::Create("TRender.txt", TFile::FileMode_CreateNew);
+		TIMPLEMENT();
+
+		TFile* file = TFile::Create("TRenderInterface.txt", TFile::FileMode_CreateNew);
 
 		if (file != TNULL)
 		{
@@ -176,7 +185,6 @@ namespace Toshi {
 			uint16_t versionMinor = GetClass()->GetVersionMinor();
 			file->CPrintf("Toshi rendering interface through object[\"%s\"] Version : %u.%u\r\n", name, versionMajor, versionMinor);
 			file->CPrintf("-\r\n");
-
 		}
 	}
 
@@ -190,6 +198,36 @@ namespace Toshi {
 		m_ScreenOffset.Set(a_rVec);
 	}
 
+	float TRenderInterface::GetScreenAspectRatio()
+	{
+		return 4.0f / 3.0f;
+	}
+
+	float TRenderInterface::GetPixelAspectRatio()
+	{
+		return 1.0f;
+	}
+
+	TBOOL TRenderInterface::SetPixelAspectRatio(float a_fPixelAspectRatio)
+	{
+		return TFALSE;
+	}
+
+	void TRenderInterface::FlushOrderTables()
+	{
+
+	}
+
+	TBOOL TRenderInterface::IsTextureFormatSupported(int a_eTextureFormat)
+	{
+		return TTRUE;
+	}
+
+	TBOOL TRenderInterface::Supports32BitTextures()
+	{
+		return TFALSE;
+	}
+
 	void TRenderInterface::SetLightDirectionMatrix(const TMatrix44& a_rMatrix)
 	{
 		m_LightDirection = a_rMatrix;
@@ -198,6 +236,21 @@ namespace Toshi {
 	void TRenderInterface::SetLightColourMatrix(const TMatrix44& a_rMatrix)
 	{
 		m_LightColour = a_rMatrix;
+	}
+
+	void TRenderInterface::Unknown1(int a_iUnknown)
+	{
+
+	}
+
+	void TRenderInterface::OnInitializationFailureDevice()
+	{
+
+	}
+
+	void TRenderInterface::OnInitializationFailureDisplay()
+	{
+
 	}
 
 	TBOOL TRenderInterface::CreateSystemResources()
@@ -214,6 +267,7 @@ namespace Toshi {
 	void TRenderInterface::DestroyDyingResources()
 	{
 		auto attached = m_Resources.GetRoot()->Attached();
+
 		if (attached != TNULL)
 		{
 			auto prev = attached->Prev() == attached ? TNULL : attached->Prev();
@@ -231,6 +285,7 @@ namespace Toshi {
 	void TRenderInterface::DestroyDyingResources(TResource* resources)
 	{
 		auto res = resources;
+
 		while (resources != TNULL)
 		{
 			auto next = res->Next() == resources ? TNULL : res->Next();
@@ -247,7 +302,6 @@ namespace Toshi {
 				DeleteResource(next);
 				res = next;
 			}
-			
 		}
 	}
 
@@ -286,161 +340,6 @@ namespace Toshi {
 
 		m_Resources.Remove(a_pResource, TFALSE);
 		delete a_pResource;
-	}
-
-	void TRenderInterface::Update(float deltatime)
-	{
-		FlushDyingResources();
-	}
-
-	void TRenderInterface::BeginScene()
-	{
-		TASSERT(TTRUE == IsCreated());
-		TASSERT(TTRUE == IsDisplayCreated());
-
-		m_iFrameCount += 1;
-		m_Transforms.Reset();
-		m_Transforms.Top().Identity();
-	}
-
-	void TRenderInterface::EndScene()
-	{
-		TASSERT(TTRUE == IsCreated());
-		TASSERT(TTRUE == IsDisplayCreated());
-	}
-
-	TRenderContext::TRenderContext(TRenderInterface* pRender)
-	{
-		TIMPLEMENT();
-		m_eFlags = 0;
-		m_pRender = pRender;
-
-		m_oParams.fX = 0;
-		m_oParams.fY = 0;
-		m_oParams.fMaxZ = 1.0f;
-		m_oParams.fMinZ = 1.0f;
-
-		m_eCameraMode = CameraMode_Perspective;
-		m_ProjParams.m_fNearClip = 1.0f;
-		m_ProjParams.m_fFarClip = 1000.0f;
-		m_oModelViewMatrix.Identity();
-		m_oWorldViewMatrix.Identity();
-
-		auto pDevice = pRender->GetCurrentDevice();
-		
-		if (pDevice == TNULL)
-		{
-			m_oParams.fWidth = 640.0f;
-			m_oParams.fHeight = 480.0f;
-		}
-		else
-		{
-			TASSERT(TFALSE, "Not used in De blob");
-		}
-	}
-
-	void TRenderContext::SetModelViewMatrix(const TMatrix44& a_rMatrix)
-	{
-		m_eFlags |= (FLAG_DIRTY_WORLDMODELMATRIX | FLAG_DIRTY_VIEWMODELMATRIX);
-		m_oModelViewMatrix = a_rMatrix;
-		m_eFlags &= ~(FLAG_HAS_MODELWORLDMATRIX | FLAG_UNK3);
-		
-		TRenderInterface::GetSingleton()->GetParamTable()->SetParameterM44(TRenderParamTable::M44PARAM_MODELVIEW, a_rMatrix);
-	}
-
-	void TRenderContext::SetWorldViewMatrix(const TMatrix44& a_rMatrix)
-	{
-		m_eFlags |= FLAG_DIRTY_VIEWMODELMATRIX;
-		m_oWorldViewMatrix = a_rMatrix;
-		m_eFlags &= ~(FLAG_HAS_MODELWORLDMATRIX | FLAG_HAS_VIEWWORLDMATRIX | FLAG_UNK4 | FLAG_HAS_WORLDPLANES | FLAG_UNK6);
-	}
-
-	void TRenderContext::SetProjectionParams(const PROJECTIONPARAMS& params)
-	{
-		TASSERT(params.m_Proj.x != 0.0f);
-		TASSERT(params.m_Proj.y != 0.0f);
-		TASSERT(TMath::IsFinite(params.m_Proj.x) && (!TMath::IsNaN(params.m_Proj.x)));
-		TASSERT(TMath::IsFinite(params.m_Proj.y) && (!TMath::IsNaN(params.m_Proj.y)));
-		TASSERT(TMath::IsFinite(params.m_Centre.x) && (!TMath::IsNaN(params.m_Centre.x)));
-		TASSERT(TMath::IsFinite(params.m_Centre.y) && (!TMath::IsNaN(params.m_Centre.y)));
-
-		m_ProjParams = params;
-		m_eFlags = (m_eFlags & (~(FLAG_UNK3 | FLAG_UNK4 | FLAG_HAS_WORLDPLANES | FLAG_UNK6))) | FLAG_DIRTY;
-	}
-
-	const TPlane* TRenderContext::GetWorldPlanes()
-	{
-		if (!HASFLAG(m_eFlags & FLAG_HAS_WORLDPLANES))
-		{
-			auto& viewWorld = GetViewWorldMatrix();
-
-			for (size_t i = 0; i < 6; i++)
-			{
-				TMatrix44::TransformPlaneOrthogonal(m_aWorldPlanes[i], viewWorld, m_aFrustumPlanes1[i]);
-			}
-
-			m_eFlags |= FLAG_HAS_WORLDPLANES;
-		}
-
-		return m_aWorldPlanes;
-	}
-
-	TBOOL TRenderContext::CullSphereToFrustumSimple(const TSphere& a_rSphere, const TPlane* a_pPlanes, int a_iUnused)
-	{
-		for (size_t i = 0; i < 6; i++)
-		{
-			TFLOAT fDist = TVector4::DotProduct3(a_rSphere.AsVector4(), a_pPlanes[i].AsVector4());
-
-			if (a_rSphere.GetRadius() < fDist - a_pPlanes[i].GetD())
-				return TFALSE;
-		}
-
-		return TTRUE;
-	}
-
-	const TMatrix44& TRenderContext::GetViewWorldMatrix()
-	{
-		if (!HASFLAG(m_eFlags & FLAG_HAS_VIEWWORLDMATRIX))
-		{
-			m_oViewWorldMatrix.InvertOrthogonal(m_oWorldViewMatrix);
-			m_eFlags |= FLAG_HAS_VIEWWORLDMATRIX;
-		}
-
-		return m_oViewWorldMatrix;
-	}
-
-	const TMatrix44& TRenderContext::GetModelWorldMatrix()
-	{
-		if (!HASFLAG(m_eFlags & FLAG_HAS_MODELWORLDMATRIX))
-		{
-			m_oModelWorldMatrix.Multiply(GetViewWorldMatrix(), m_oModelViewMatrix);
-			m_eFlags |= FLAG_HAS_MODELWORLDMATRIX;
-		}
-
-		TRenderInterface::GetSingleton()->GetParamTable()->SetParameterM44(TRenderParamTable::M44PARAM_MODELWORLD, m_oModelWorldMatrix);
-		return m_oModelWorldMatrix;
-	}
-
-	const TMatrix44& TRenderContext::GetViewModelMatrix()
-	{
-		if (HASFLAG(m_eFlags & FLAG_DIRTY_VIEWMODELMATRIX))
-		{
-			m_oViewModelMatrix.Invert(m_oModelViewMatrix);
-			m_eFlags &= ~FLAG_DIRTY_VIEWMODELMATRIX;
-		}
-		
-		return m_oViewModelMatrix;
-	}
-
-	const TMatrix44& TRenderContext::GetWorldModelMatrix()
-	{
-		if (HASFLAG(m_eFlags & FLAG_DIRTY_WORLDMODELMATRIX))
-		{
-			m_oViewModelMatrix.Invert(m_oModelViewMatrix);
-			m_eFlags &= ~FLAG_DIRTY_WORLDMODELMATRIX;
-		}
-
-		return m_oWorldModelMatrix;
 	}
 
 }

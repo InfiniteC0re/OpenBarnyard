@@ -2,10 +2,7 @@
 #include "TRenderInterface_DX8.h"
 
 namespace Toshi {
+	
 
-	TRenderContext* TRenderInterface::CreateRenderContext()
-	{
-		return TNULL;
-	}
 
 }

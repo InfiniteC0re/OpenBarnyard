@@ -8,157 +8,15 @@
 #include "Toshi/Render/TAnimation.h"
 #include "Toshi/Render/TRenderAdapter.h"
 #include "Toshi/Render/TRenderParamTable.h"
+#include "Toshi/Render/TRenderCapture.h"
+#include "Toshi/Render/TRenderContext.h"
+#include "Toshi/Render/TModel.h"
+#include "Toshi/Render/TDebugText.h"
 
-namespace Toshi
-{
-	class TRenderInterface;
-
-	class TRenderContext
-	{
-	public:
-		typedef uint32_t FLAG;
-		enum FLAG_ : FLAG
-		{
-			FLAG_DIRTY = BITFIELD(0),
-			FLAG_FOG = BITFIELD(1),
-			FLAG_HAS_MODELWORLDMATRIX = BITFIELD(2),
-			FLAG_HAS_VIEWWORLDMATRIX = BITFIELD(3),
-			FLAG_UNK3 = BITFIELD(4),
-			FLAG_UNK4 = BITFIELD(5),
-			FLAG_HAS_WORLDPLANES = BITFIELD(6),
-			FLAG_UNK6 = BITFIELD(7),
-			FLAG_DIRTY_WORLDMODELMATRIX = BITFIELD(8),
-			FLAG_DIRTY_VIEWMODELMATRIX = BITFIELD(9),
-		};
-
-		typedef uint32_t CameraMode;
-		enum CameraMode_ : CameraMode
-		{
-			CameraMode_Perspective,
-			CameraMode_Orthographic,
-		};
-
-		typedef uint32_t WORLDPLANE;
-		enum WORLDPLANE_ : WORLDPLANE
-		{
-			WORLDPLANE_LEFT,
-			WORLDPLANE_RIGHT,
-			WORLDPLANE_BOTTOM,
-			WORLDPLANE_TOP,
-			WORLDPLANE_NEAR,
-			WORLDPLANE_FAR,
-		};
-
-		struct Params
-		{
-			float fX;
-			float fY;
-			float fWidth;
-			float fHeight;
-			float fMinZ;
-			float fMaxZ;
-		};
-
-		struct PROJECTIONPARAMS
-		{
-			TVector2 m_Centre;  // 0x0
-			TVector2 m_Proj;    // 0x8
-			float m_fNearClip;
-			float m_fFarClip;
-			float m_fUnk;
-		};
-
-	protected:
-		void SetDirty(TBOOL enable) { enable ? m_eFlags |= FLAG_DIRTY : m_eFlags &= ~FLAG_DIRTY; }
-		void SetFlag(FLAG flag, TBOOL enable) { enable ? m_eFlags |= flag : m_eFlags &= ~flag; }
-
-		void EnableFog(TBOOL enable) { enable ? m_eFlags |= FLAG_FOG : m_eFlags &= ~FLAG_FOG; }
-		TBOOL IsFogEnabled() const { return m_eFlags & FLAG_FOG; }
-		TBOOL IsDirty() const { return m_eFlags & FLAG_DIRTY; }
-	
-	public:
-		TRenderContext(TRenderInterface* pRender);
-
-		virtual void SetModelViewMatrix(const TMatrix44& a_rMatrix);
-		virtual void SetWorldViewMatrix(const TMatrix44& a_rMatrix);
-		virtual void Update() = 0;
-
-		void SetProjectionParams(const PROJECTIONPARAMS& params);
-
-		void SetParams(const Params& params)
-		{
-			m_oParams = params;
-			m_eFlags = (m_eFlags & (~(FLAG_UNK3 | FLAG_UNK4 | FLAG_HAS_WORLDPLANES | FLAG_UNK6))) | FLAG_DIRTY;
-		}
-
-		void SetCameraMode(CameraMode cameraMode)
-		{
-			m_eCameraMode = cameraMode;
-			m_eFlags = (m_eFlags & (~(FLAG_UNK3 | FLAG_UNK4 | FLAG_HAS_WORLDPLANES | FLAG_UNK6))) | FLAG_DIRTY;
-		}
-
-		Params& GetParams()
-		{
-			return m_oParams;
-		}
-
-		float GetX() const
-		{
-			return m_oParams.fX;
-		}
-
-		float GetY() const
-		{
-			return m_oParams.fY;
-		}
-
-		float GetWidth() const
-		{
-			return m_oParams.fWidth;
-		}
-
-		float GetHeight() const
-		{
-			return m_oParams.fHeight;
-		}
-
-		const TPlane* GetWorldPlanes();
-
-		TBOOL CullSphereToFrustumSimple(const TSphere& a_rSphere, const TPlane* a_pPlanes, int a_iUnused);
-
-		const TMatrix44& GetViewWorldMatrix();
-		const TMatrix44& GetWorldModelMatrix();
-		const TMatrix44& GetModelWorldMatrix();
-		const TMatrix44& GetViewModelMatrix();
-		TMatrix44& GetModelViewMatrix() { return m_oModelViewMatrix; }
-		TMatrix44& GetWorldViewMatrix() { return m_oWorldViewMatrix; }
-
-		const PROJECTIONPARAMS& GetProjectionParams() const
-		{
-			return m_ProjParams;
-		}
-
-	protected:
-		TRenderInterface* m_pRender;                     // 0x0004
-		FLAG m_eFlags;                          // 0x0008
-		CameraMode m_eCameraMode;               // 0x0014
-		Params m_oParams;                       // 0x0018
-		PROJECTIONPARAMS m_ProjParams;          // 0x0030
-		TMatrix44 m_oModelViewMatrix;           // 0x0050
-		TMatrix44 m_oWorldViewMatrix;           // 0x0090
-		TMatrix44 m_oModelWorldMatrix;          // 0x00D0
-		TMatrix44 m_oViewWorldMatrix;           // 0x0110
-		TPlane m_aFrustumPlanes1[6];            // 0x01AC
-		TPlane m_aWorldPlanes[6];               // 0x020C
-		TPlane m_aFrustumPlanes2[6];            // 0x026C
-		// ...
-		TMatrix44 m_oWorldModelMatrix;          // 0x032C
-		TMatrix44 m_oViewModelMatrix;           // 0x036C
-	};
+namespace Toshi {
 
 	class TRenderInterface :
 		public TGenericClassDerived<TRenderInterface, TObject, "TRender", TMAKEVERSION(1, 0), TFALSE>,
-		public TRefCounted,
 		public TSingleton<TRenderInterface>
 	{
 	public:
@@ -179,7 +37,7 @@ namespace Toshi
 			SYSRESOURCE_IFactories,
 			SYSRESOURCE_IFSYS,
 			SYSRESOURCE_12,
-			SYSRESOURCE_NUMOF
+			SYSRESOURCE_NUMOF = 28
 		};
 
 		typedef uint32_t ASPECT_RATIO;
@@ -202,34 +60,43 @@ namespace Toshi
 
 	public:
 		TRenderInterface();
+		virtual ~TRenderInterface();
 
-		virtual ~TRenderInterface();                                               // 0x08 at vftable
-		virtual TBOOL CreateDisplay(DisplayParams* params) = 0;           // 0x0C at vftable
-		virtual TBOOL DestroyDisplay() = 0;                               // 0x10 at vftable
-		virtual void Update(float deltaTime);                             // 0x14 at vftable
-		virtual void BeginScene();                                        // 0x18 at vftable
-		virtual void EndScene();                                          // 0x1C at vftable
-		virtual void* GetCurrentDevice() = 0;                             // 0x20 at vftable
-		virtual DisplayParams* GetCurrentDisplayParams() = 0;             // 0x24 at vftable
-		virtual TBOOL Create();                                           // 0x28 at vftable
-		virtual TBOOL Destroy();                                          // 0x2C at vftable
-		virtual void DumpStats();                                         // 0x30 at vftable
-		virtual void GetScreenOffset(TVector2& a_rVec);                   // 0x34 at vftable
-		virtual void SetScreenOffset(const TVector2& a_rVec);             // 0x38 at vftable
-		virtual void SetLightDirectionMatrix(const TMatrix44& a_rMatrix); // 0x3C at vftable
-		virtual void SetLightColourMatrix(const TMatrix44& a_rMatrix);    // 0x40 at vftable
-		virtual TBOOL CreateSystemResources();                            // 0x44 at vftable
-		virtual void DestroySystemResources();                            // 0x44 at vftable
-
-		float GetResolutionScalar()
-		{
-			auto displayParams = GetCurrentDisplayParams();
-			
-			if (m_eAspectRatio == ASPECT_RATIO_16_9)
-				return (displayParams->Height * 16.0f) / (displayParams->Width * 9.0f);
-			else
-				return (displayParams->Height * 4.0f) / (displayParams->Width * 3.0f);
-		}
+		virtual TBOOL CreateDisplay(DisplayParams* params) = 0;
+		virtual TBOOL DestroyDisplay() = 0;
+		virtual void Update(float deltaTime) = 0;
+		virtual void BeginScene() = 0;
+		virtual void EndScene() = 0;
+		virtual void* GetCurrentDevice() = 0;
+		virtual DisplayParams* GetCurrentDisplayParams() = 0;
+		virtual TBOOL Create();
+		virtual TBOOL Destroy();
+		virtual void RenderIndexPrimitive(int param_2, int param_3, int param_4, int param_5, int param_6, int param_7);
+		virtual void DumpStats();
+		virtual void GetScreenOffset(TVector2& a_rVec);
+		virtual void SetScreenOffset(const TVector2& a_rVec);
+		virtual float GetScreenAspectRatio();
+		virtual float GetPixelAspectRatio();
+		virtual TBOOL SetPixelAspectRatio(float a_fPixelAspectRatio);
+		virtual void FlushOrderTables();
+		virtual TBOOL IsTextureFormatSupported(int a_eTextureFormat);
+		virtual TBOOL Supports32BitTextures();
+		virtual TRenderContext* CreateRenderContext() = 0;
+		virtual TRenderCapture* CreateCapture() = 0;
+		virtual void DestroyCapture(TRenderCapture* a_pRenderCapture) = 0;
+		virtual void SetLightDirectionMatrix(const TMatrix44& a_rMatrix);
+		virtual void SetLightColourMatrix(const TMatrix44& a_rMatrix);
+		virtual void Unknown1(int a_iUnknown);
+		virtual void* CreateUnknown(const char* a_szName, int a_iUnk1, int a_iUnk2, int a_iUnk3) = 0;
+		virtual TModel* CreateModel1(void* a_Unk1, void* a_Unk2) = 0;
+		virtual TModel* CreateModel2(void* a_Unk1, void* a_Unk2) = 0;
+		virtual TModel* CreateModel3(void* a_Unk1, void* a_Unk2, void* a_Unk3, void* a_Unk4) = 0;
+		virtual void OnInitializationFailureDevice();
+		virtual void OnInitializationFailureDisplay();
+		virtual TDebugText* CreateDebugText() = 0;
+		virtual void DestroyDebugText(TDebugText* a_pDebugText) = 0;
+		virtual TBOOL CreateSystemResources();
+		virtual void DestroySystemResources();
 
 		// Creates display and returns TTRUE if success
 		TBOOL CreateDisplay();
@@ -261,18 +128,14 @@ namespace Toshi
 		// Sets new render context and returns the old one
 		TRenderContext* SetCurrentRenderContext(TRenderContext* a_pRenderContext)
 		{
-			auto previousContext = m_pRenderContext;
-			m_pRenderContext = a_pRenderContext;
-			return previousContext;
+			return std::exchange(m_pCurrentContext, a_pRenderContext);
 		}
 
 		TBOOL IsInScene() { return m_bInScene; }
 		TBOOL IsCreated() { return m_bCreated; }
 		TBOOL IsDisplayCreated() { return m_bDisplayCreated; }
-		TRenderContext* GetCurrentRenderContext() const { return m_pRenderContext; }
+		TRenderContext* GetCurrentRenderContext() const { return m_pCurrentContext; }
 		TNodeList<TRenderAdapter>* GetAdapterList() { return &m_AdapterList; }
-		TRenderParamTable* GetParamTable() const { return m_ParamTable; }
-		ASPECT_RATIO GetAspectRatio() const { return m_eAspectRatio; }
 		TKeyframeLibraryManager& GetKeyframeLibraryManager() { return m_KeyframeManager; }
 
 		void DestroyDyingResources(TResource* resources);
@@ -284,41 +147,36 @@ namespace Toshi
 
 		void FlushDyingResources()
 		{
-			if (m_HasDyingResources)
+			if (m_bHasDyingResources)
 			{
 				DestroyDyingResources();
 			}
 		}
-	
-	public:
-		/*
-		* Platform specific methods
-		* Define them in TRender_{Renderer}.cpp
-		*/
-		TRenderContext* CreateRenderContext();
 
 	protected:
-		uint32_t m_Unk1;                                 // 0x04
-		TBOOL m_bIsEnabled;                              // 0x08
+		TUINT32 m_Unk1;                                  // 0x04
+		TBOOL m_bUnkFlag;                                // 0x08
 		TBOOL m_bInScene;                                // 0x09
 		TBOOL m_bCreated = TFALSE;                       // 0x0A
 		TBOOL m_bDisplayCreated;                         // 0x0B
 		TVector2 m_ScreenOffset;                         // 0x0C
-		ASPECT_RATIO m_eAspectRatio;                     // 0x14
-		TRenderContext* m_pRenderContext;                // 0x18
-		TRenderContext* m_pCreatedRenderContext;         // 0x1C
-		TResource* m_SystemResources[SYSRESOURCE_NUMOF]; // 0x20
-		TMatrix44 m_LightDirection;                      // 0x50
-		TMatrix44 m_LightColour;                         // 0x90
-		TRenderParamTable* m_ParamTable;                 // 0xD4
-		TNodeList<TRenderAdapter> m_AdapterList;         // 0xD8
-		TNodeTree<TResource> m_Resources;                // 0xE8
-		size_t m_ResourceCount = 0;                      // 0x100
-		uint32_t m_iFrameCount = 0;                      // 0x104
-		TBOOL m_HasDyingResources;                       // 0x108
-		TKeyframeLibraryManager m_KeyframeManager;       // 0x10C
-		TStack<TMatrix44, 20> m_Transforms;              // 0x118
+		TRenderContext* m_pCurrentContext;               // 0x14
+		TRenderContext* m_pCreatedContext;               // 0x18
+		TResource* m_SystemResources[SYSRESOURCE_NUMOF]; // 0x1C
+		TMatrix44 m_LightDirection;                      // 0x8C
+		TMatrix44 m_LightColour;                         // 0xCC
+		TDebugText* m_pDebugText;                        // 0x10C
+		void* m_Unk2;                                    // 0x110
+		void* m_Unk3;                                    // 0x114
+		TNodeList<TRenderAdapter> m_AdapterList;         // 0x118
+		TNodeTree<TResource> m_Resources;                // 0x128
+		TUINT32 m_ResourceCount = 0;                     // 0x140
+		TUINT32 m_iFrameCount = 0;                       // 0x144
+		TBOOL m_bHasDyingResources;                      // 0x148
+		TKeyframeLibraryManager m_KeyframeManager;       // 0x14C
+		TGenericEmitter m_BeginSceneEmitter;             // 0x158
+		TGenericEmitter m_EndSceneEmitter;               // 0x164
+		TStack<TMatrix44, 20> m_Transforms;              // 0x170
 	};
+
 }
-
-

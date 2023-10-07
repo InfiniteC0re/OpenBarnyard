@@ -4,87 +4,85 @@
 
 namespace Toshi {
 
-class TCameraObject
-{
-public:
-	static constexpr float s_kMinFOV = (1.0f / 180.0f) * TMath::PI;
-	static constexpr float s_kMaxFOV = TMath::PI;
-
-public:
-	TCameraObject();
-
-	void Render();
-
-	float SetNear(float fNear)
+	class TCameraObject
 	{
-		return std::exchange(m_fNear, fNear);
-	}
+	public:
+		static constexpr float s_kMinFOV = (1.0f / 180.0f) * TMath::PI;
+		static constexpr float s_kMaxFOV = TMath::PI;
 
-	float SetFar(float fFar)
-	{
-		return std::exchange(m_fFar, fFar);
-	}
+	public:
+		TCameraObject();
 
-	float SetFOV(float fFOV)
-	{
-		TMath::Clip(fFOV, s_kMinFOV, s_kMaxFOV);
-		return std::exchange(m_fFOV, fFOV);
-	}
+		void Render();
 
-	float SetProjectionCentreX(float fCentreX)
-	{
-		TMath::Clip(fCentreX, 0.0f, 1.0f);
-		return std::exchange(m_fCentreX, fCentreX);
-	}
+		float SetNear(float fNear)
+		{
+			return std::exchange(m_fNear, fNear);
+		}
 
-	float SetProjectionCentreY(float fCentreY)
-	{
-		TMath::Clip(fCentreY, 0.0f, 1.0f);
-		return std::exchange(m_fCentreY, fCentreY);
-	}
+		float SetFar(float fFar)
+		{
+			return std::exchange(m_fFar, fFar);
+		}
 
-	float GetNear() const
-	{
-		return m_fNear;
-	}
+		float SetFOV(float fFOV)
+		{
+			TMath::Clip(fFOV, s_kMinFOV, s_kMaxFOV);
+			return std::exchange(m_fFOV, fFOV);
+		}
 
-	float GetFar() const
-	{
-		return m_fFar;
-	}
+		float SetProjectionCentreX(float fCentreX)
+		{
+			TMath::Clip(fCentreX, 0.0f, 1.0f);
+			return std::exchange(m_fCentreX, fCentreX);
+		}
 
-	float GetFOV() const
-	{
-		return m_fFOV;
-	}
+		float SetProjectionCentreY(float fCentreY)
+		{
+			TMath::Clip(fCentreY, 0.0f, 1.0f);
+			return std::exchange(m_fCentreY, fCentreY);
+		}
 
-	TRenderContext::CameraMode GetMode() const
-	{
-		return m_eMode;
-	}
+		float GetNear() const
+		{
+			return m_fNear;
+		}
 
-	TBOOL IsEnabled() const
-	{
-		return m_bEnabled;
-	}
+		float GetFar() const
+		{
+			return m_fFar;
+		}
 
-	TTransformObject& GetTransformObject()
-	{
-		return m_TransformObject;
-	}
+		float GetFOV() const
+		{
+			return m_fFOV;
+		}
 
-private:
-	float m_fNear;
-	float m_fFar;
-	float m_fFOV;
-	int m_Unk1;
-	TRenderContext::CameraMode m_eMode;
-	float m_fCentreX;
-	float m_fCentreY;
-	TTransformObject m_TransformObject;
-	TMatrix44 m_TransformMatrix;
-	TBOOL m_bEnabled;
-	float m_fUnk2;
-};
+		TRenderContext::CameraMode GetMode() const
+		{
+			return m_eMode;
+		}
+
+		TBOOL IsEnabled() const
+		{
+			return m_bEnabled;
+		}
+
+		TTransformObject& GetTransformObject()
+		{
+			return m_TransformObject;
+		}
+
+	private:
+		float m_fNear;
+		float m_fFar;
+		float m_fFOV;
+		int m_Unk1;
+		TRenderContext::CameraMode m_eMode;
+		float m_fCentreX;
+		float m_fCentreY;
+		TTransformObject m_TransformObject;
+		TBOOL m_bEnabled;
+	};
 
 }
