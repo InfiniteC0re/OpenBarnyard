@@ -101,10 +101,10 @@ namespace Toshi {
 		virtual TUINT32 GetAdapterIndex() const override;
 		virtual const TString8& GetDriver() const override;
 		virtual const TString8& GetDriverDescription() const override;
-		virtual TUINT16 GetVersionHighMajor() const override;
-		virtual TUINT16 GetVersionHighMinor() const override;
-		virtual TUINT16 GetVersionLowMajor() const override;
-		virtual TUINT16 GetVersionLowMinor() const override;
+		virtual TUINT16 GetProductID() const override;
+		virtual TUINT16 GetVersion() const override;
+		virtual TUINT16 GetSubVersion() const override;
+		virtual TUINT16 GetBuild() const override;
 		virtual const GUID& GetDeviceIdentifier() const override;
 		virtual TUINT32 GetNumSupportedDevices() const override;
 

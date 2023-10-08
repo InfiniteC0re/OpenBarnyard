@@ -47,10 +47,10 @@ namespace Toshi
 		virtual TUINT32 GetAdapterIndex() const = 0;
 		virtual const TString8& GetDriver() const = 0;
 		virtual const TString8& GetDriverDescription() const = 0;
-		virtual TUINT16 GetVersionHighMajor() const = 0;
-		virtual TUINT16 GetVersionHighMinor() const = 0;
-		virtual TUINT16 GetVersionLowMajor() const = 0;
-		virtual TUINT16 GetVersionLowMinor() const = 0;
+		virtual TUINT16 GetProductID() const = 0;
+		virtual TUINT16 GetVersion() const = 0;
+		virtual TUINT16 GetSubVersion() const = 0;
+		virtual TUINT16 GetBuild() const = 0;
 		virtual const GUID& GetDeviceIdentifier() const = 0;
 		virtual TUINT32 GetNumSupportedDevices() const = 0;
 

@@ -199,6 +199,20 @@ namespace Toshi {
 			uint16_t versionMinor = GetClass()->GetVersionMinor();
 			file->CPrintf("Toshi rendering interface through object[\"%s\"] Version : %u.%u\r\n", name, versionMajor, versionMinor);
 			file->CPrintf("-\r\n");
+
+			for (auto it = m_AdapterList.Begin(); it != m_AdapterList.End(); it++)
+			{
+				file->CPrintf("Adapter       : %d\r\n", it->GetAdapterIndex());
+				file->CPrintf("  Driver      : %s\r\n", it->GetDriver());
+				file->CPrintf("  Description : %s\r\n", it->GetDriverDescription());
+				file->CPrintf("  Product ID  : %u\r\n", it->GetProductID());
+				file->CPrintf("  Version     : %u\r\n", it->GetVersion());
+				file->CPrintf("  Sub-version : %u\r\n", it->GetSubVersion());
+				file->CPrintf("  Build       : %u\r\n", it->GetBuild());
+				file->CPrintf("  Supports %d modes:\r\n", it->GetModeList()->Count());
+			}
+
+			file->Destroy();
 		}
 	}
 

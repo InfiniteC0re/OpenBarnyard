@@ -19,22 +19,22 @@ namespace Toshi {
 		return m_Description;
 	}
 
-	TUINT16 TD3DAdapter::GetVersionHighMajor() const
+	TUINT16 TD3DAdapter::GetProductID() const
 	{
 		return m_DriverVersionHighPart >> 16;
 	}
 
-	TUINT16 TD3DAdapter::GetVersionHighMinor() const
+	TUINT16 TD3DAdapter::GetVersion() const
 	{
 		return m_DriverVersionHighPart & 0xFFFF;
 	}
 
-	TUINT16 TD3DAdapter::GetVersionLowMajor() const
+	TUINT16 TD3DAdapter::GetSubVersion() const
 	{
 		return m_DriverVersionLowPart >> 16;
 	}
 
-	TUINT16 TD3DAdapter::GetVersionLowMinor() const
+	TUINT16 TD3DAdapter::GetBuild() const
 	{
 		return m_DriverVersionLowPart & 0xFFFF;
 	}

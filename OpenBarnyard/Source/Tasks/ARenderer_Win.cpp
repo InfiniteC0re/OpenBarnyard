@@ -24,6 +24,7 @@ TBOOL ARenderer::CreateTRender()
 		displayParams.eDepthStencilFormat = 0;
 
 		pRenderer->CreateDisplay(displayParams);
+		pRenderer->DumpStats();
 	}
 
 	return bCreated;
