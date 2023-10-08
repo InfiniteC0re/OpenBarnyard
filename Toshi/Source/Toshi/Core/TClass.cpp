@@ -125,7 +125,7 @@ namespace Toshi
 		return FindRecurse(name, parent, TFALSE);
 	}
 
-	TObject* TClass::CreateObject()
+	TObject* TClass::CreateObject() const
 	{
 		if (m_Create != TNULL)
 		{

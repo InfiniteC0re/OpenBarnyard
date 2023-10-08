@@ -39,7 +39,7 @@ namespace Toshi {
 
 	TBOOL TRenderD3DInterface::CreateDisplay(const DISPLAYPARAMS& a_rParams)
 	{
-		if (TRenderInterface::CreateDisplay())
+		if (!TRenderInterface::CreateDisplay())
 		{
 			OnInitializationFailureDisplay();
 			return TFALSE;
@@ -223,6 +223,8 @@ namespace Toshi {
 				return TFALSE;
 			}
 		}
+
+		return TTRUE;
 	}
 
 	TBOOL TRenderD3DInterface::EndScene()
@@ -676,11 +678,14 @@ namespace Toshi {
 	{
 		DestroyAccelTable();
 
-		ACCEL accel;
-		accel.fVirt = 1;
-		accel.key = 27;
-		accel.cmd = 0;
-		m_AcceleratorTable = CreateAcceleratorTableA(&accel, 2);
+		ACCEL accel[2];
+		accel[0].fVirt = 1;
+		accel[0].key = 27;
+		accel[0].cmd = 0;
+		accel[1].fVirt = 16;
+		accel[1].key = 13;
+		accel[1].cmd = 0;
+		m_AcceleratorTable = CreateAcceleratorTableA(accel, 2);
 	}
 
 	const char* TRenderD3DInterface::GetErrorString(TINT32 a_eError)

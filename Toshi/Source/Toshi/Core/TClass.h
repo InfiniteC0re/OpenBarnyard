@@ -40,7 +40,7 @@ namespace Toshi
 		void Initialize();
 		void RecurseTree(t_RecurceTreeCheck fCheck, t_RecurceTreeBaseBeginCb fBaseBegin, t_RecurceTreeBaseEndCb fBaseEnd, void* custom);
 		void RecurseTree2(t_RecurceTreeCheck fCheck, t_RecurceTreeBaseBeginCb fBaseBegin, t_RecurceTreeBaseEndCb fBaseEnd, void* custom);
-		class TObject* CreateObject();
+		class TObject* CreateObject() const;
 
 		TBOOL IsA(TClass* pClass);
 		TBOOL IsExactly(TClass* toCompare) const { return this == toCompare; }
@@ -56,7 +56,7 @@ namespace Toshi
 		
 		// Looks for a class in parent
 		static const TClass* FindRecurse(const char* const& name, const TClass* parent, TBOOL hasPrevious);
-		static const TClass* Find(const char* name, const TClass* parent);
+		static const TClass* Find(const char* name, const TClass* parent = TNULL);
 
 	public:
 		inline TBOOL operator==(const TClass* other) const { return this == other; }

@@ -10,7 +10,8 @@
 
 namespace Toshi {
 
-	class TRenderD3DInterface : public TRenderInterface
+	class TRenderD3DInterface :
+		public TGenericClassDerived<TRenderD3DInterface, TRenderInterface, "TRenderD3DInterface", TMAKEVERSION(1, 0), TTRUE>
 	{
 	public:
 		TRenderD3DInterface();
