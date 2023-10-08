@@ -13,6 +13,15 @@ namespace Toshi
 			{
 			public:
 				Device() = default;
+				virtual ~Device() = default;
+
+				virtual Mode* GetMode() const = 0;
+				virtual TUINT32 GetDeviceIndex() const = 0;
+				virtual const char* GetTypeString() const = 0;
+				virtual TBOOL IsSoftware() const = 0;
+				virtual TBOOL CanRenderWindowed() const = 0;
+				virtual TBOOL SupportsHardwareTransfomations() const = 0;
+				virtual TBOOL IsDepthStencilFormatSupported(TUINT32 a_iIndex) const = 0;
 			};
 
 		public:
@@ -24,16 +33,26 @@ namespace Toshi
 			virtual size_t GetModeIndex() const = 0;
 			virtual uint32_t GetWidth() const = 0;
 			virtual uint32_t GetHeight() const = 0;
-			virtual TBOOL SomeCheck1() const = 0;
-			virtual TBOOL SomeCheck2() const = 0;
-			virtual float GetRefreshRate() const = 0;
-			virtual TRenderAdapter::Mode::Device* GetDevice(int device) = 0;
+			virtual TBOOL Is32Bit() const = 0;
+			virtual TBOOL Is16Bit() const = 0;
+			virtual TUINT32 GetRefreshRate() const = 0;
+			virtual TRenderAdapter::Mode::Device* GetDevice(TUINT32 a_iDevice) = 0;
 		};
 
 	public:
 		TRenderAdapter() = default;
-
 		virtual ~TRenderAdapter() = default;
+
+		// TODO: complete vftable
+		virtual TUINT32 GetAdapterIndex() const = 0;
+		virtual const TString8& GetDriver() const = 0;
+		virtual const TString8& GetDriverDescription() const = 0;
+		virtual TUINT16 GetVersionHighMajor() const = 0;
+		virtual TUINT16 GetVersionHighMinor() const = 0;
+		virtual TUINT16 GetVersionLowMajor() const = 0;
+		virtual TUINT16 GetVersionLowMinor() const = 0;
+		virtual const GUID& GetDeviceIdentifier() const = 0;
+		virtual TUINT32 GetNumSupportedDevices() const = 0;
 
 		TNodeList<Mode>* GetModeList() { return &m_Modes; }
 		

@@ -361,4 +361,87 @@ namespace Toshi {
 		delete a_pResource;
 	}
 
+	TRenderAdapter::Mode::Device* TRenderInterface::FindDevice(const DISPLAYPARAMS& a_rDisplayParams)
+	{
+		while (TTRUE)
+		{
+			auto pAdapter = GetAdapterList()->Begin();
+
+			if (pAdapter == GetAdapterList()->End())
+			{
+				TString8 errorString = "Unable to find the passed device!\n";
+#ifdef TOSHI_DEBUG
+				OutputDebugStringA(errorString);
+#endif
+				return TNULL;
+			}
+
+			for (auto pMode = pAdapter->GetModeList()->Begin(); pMode != pAdapter->GetModeList()->End(); pMode++)
+			{
+				auto uiNumSupportedDevices = pAdapter->GetNumSupportedDevices();
+
+				for (TUINT32 i = 0; i < uiNumSupportedDevices; i++)
+				{
+					auto pDevice = pMode->GetDevice(i);
+
+					if (pDevice->IsSoftware()) continue;
+
+					TBOOL bPassedColourDepth = TTRUE;
+
+					if (a_rDisplayParams.uiColourDepth == 32)
+					{
+						if (!pDevice->GetMode()->Is32Bit())
+						{
+							bPassedColourDepth = TFALSE;
+						}
+					}
+					else if (a_rDisplayParams.uiColourDepth == 16)
+					{
+						if (!pDevice->GetMode()->Is16Bit())
+						{
+							bPassedColourDepth = TFALSE;
+						}
+					}
+
+					TBOOL bPassedWindowed = TTRUE;
+
+					if (a_rDisplayParams.bWindowed && !pDevice->CanRenderWindowed())
+					{
+						bPassedWindowed = TFALSE;
+					}
+
+					auto uiWidth = pDevice->GetMode()->GetWidth();
+					auto uiHeight = pDevice->GetMode()->GetHeight();
+
+					if (uiHeight < uiWidth || !a_rDisplayParams.bWindowed || a_rDisplayParams.uiWidth <= a_rDisplayParams.uiHeight)
+					{
+						if (uiWidth == a_rDisplayParams.uiWidth && uiHeight == a_rDisplayParams.uiHeight)
+						{
+							if (pDevice->IsDepthStencilFormatSupported(a_rDisplayParams.eDepthStencilFormat) &&
+								bPassedColourDepth && bPassedWindowed)
+							{
+								return pDevice;
+							}
+						}
+					}
+					else
+					{
+						if (a_rDisplayParams.uiWidth <= uiWidth)
+						{
+							if (uiHeight < a_rDisplayParams.uiHeight) continue;
+
+							if (pDevice->IsDepthStencilFormatSupported(a_rDisplayParams.eDepthStencilFormat) &&
+								bPassedColourDepth && bPassedWindowed)
+							{
+								return pDevice;
+							}
+						}
+					}
+				}
+			}
+
+			pAdapter++;
+		}
+	}
+
 }

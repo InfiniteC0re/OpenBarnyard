@@ -70,6 +70,7 @@ namespace Toshi {
 		void OnD3DDeviceFound();
 		void GetCurrentColourRamp();
 		TDebugD3DText* InitDebugText(TINT a_iBufferSize);
+		void SetDeviceDefaultStates();
 
 		static const char* GetErrorString(TINT32 a_eError);
 		static const char* GetErrorDescription(TINT32 a_eError);

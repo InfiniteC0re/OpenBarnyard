@@ -145,6 +145,8 @@ namespace Toshi {
 		void DeleteResourceRecurse(TResource* resources);
 		void DeleteResourceAtomic(TResource* resources);
 
+		TRenderAdapter::Mode::Device* FindDevice(const DISPLAYPARAMS& a_rDisplayParams);
+
 		void FlushDyingResources()
 		{
 			if (m_bHasDyingResources)

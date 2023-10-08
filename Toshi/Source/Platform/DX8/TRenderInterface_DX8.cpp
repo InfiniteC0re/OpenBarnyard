@@ -1,6 +1,7 @@
 #include "ToshiPCH.h"
 #include "TRenderCapture_DX8.h"
 #include "TRenderContext_DX8.h"
+#include "TRenderAdapter_DX8.h"
 #include "TRenderInterface_DX8.h"
 
 namespace Toshi {
@@ -414,6 +415,16 @@ namespace Toshi {
 		return TNULL;
 	}
 
+	void TRenderD3DInterface::SetDeviceDefaultStates()
+	{
+		m_pDirectDevice->SetRenderState(D3DRS_ZENABLE, 1);
+		m_pDirectDevice->SetRenderState(D3DRS_CULLMODE, 2);
+		m_pDirectDevice->SetRenderState(D3DRS_LIGHTING, 0);
+		m_pDirectDevice->SetTextureStageState(0, D3DTSS_MINFILTER, 2);
+		m_pDirectDevice->SetTextureStageState(0, D3DTSS_MAGFILTER, 2);
+		m_pDirectDevice->SetTextureStageState(0, D3DTSS_MIPFILTER, 2);
+	}
+
 	TBOOL TRenderD3DInterface::IsTextureFormatSupported(int a_eTextureFormat)
 	{
 		switch (a_eTextureFormat) {
@@ -495,7 +506,33 @@ namespace Toshi {
 
 	void TRenderD3DInterface::BuildAdapterDatabase()
 	{
-		TIMPLEMENT();
+		UINT uiAdapterCount = m_pDirect3D->GetAdapterCount();
+
+		for (UINT i = 0; i < uiAdapterCount; i++)
+		{
+			auto pAdapter = new TD3DAdapter();
+			pAdapter->SetAdapterIndex(i);
+
+			D3DDISPLAYMODE displayMode;
+			auto pIdentifier = pAdapter->GetD3DIdentifier8();
+			m_pDirect3D->GetAdapterIdentifier(i, D3DENUM_NO_WHQL_LEVEL, pIdentifier);
+			m_pDirect3D->GetAdapterDisplayMode(i, &displayMode);
+			
+			pAdapter->SetDriver(pIdentifier->Driver);
+			pAdapter->SetDescription(pIdentifier->Description);
+			pAdapter->SetDriverVersionLowPart(pIdentifier->DriverVersion.LowPart);
+			pAdapter->SetDriverVersionHighPart(pIdentifier->DriverVersion.HighPart);
+			pAdapter->SetDeviceId(pIdentifier->DeviceId);
+			pAdapter->SetVendorId(pIdentifier->VendorId);
+			pAdapter->SetSubSysId(pIdentifier->SubSysId);
+			pAdapter->SetRevision(pIdentifier->Revision);
+			pAdapter->SetDeviceIdentifier(pIdentifier->DeviceIdentifier);
+
+			pAdapter->GetMode().SetD3DDisplayMode(displayMode);
+			pAdapter->EnumerateOutputs(this);
+
+			GetAdapterList()->InsertTail(*pAdapter);
+		}
 	}
 
 	void TRenderD3DInterface::DestroyAccelTable()
