@@ -100,7 +100,7 @@ namespace Toshi {
 		return TTRUE;
 	}
 
-	TBOOL TRenderInterface::CreateDisplay(DISPLAYPARAMS* a_pParams)
+	TBOOL TRenderInterface::CreateDisplay(const DISPLAYPARAMS& a_rParams)
 	{
 		m_bDisplayCreated = TTRUE;
 		return TTRUE;

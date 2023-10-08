@@ -37,9 +37,127 @@ namespace Toshi {
 		Destroy();
 	}
 
-	TBOOL TRenderD3DInterface::CreateDisplay(DISPLAYPARAMS* a_pParams)
+	TBOOL TRenderD3DInterface::CreateDisplay(const DISPLAYPARAMS& a_rParams)
 	{
-		TASSERT(TFALSE, "Not implemented")
+		if (TRenderInterface::CreateDisplay())
+		{
+			OnInitializationFailureDisplay();
+			return TFALSE;
+		}
+
+		m_pDevice = TSTATICCAST(TD3DAdapter::Mode::Device*, FindDevice(a_rParams));
+		m_oDisplayParams = a_rParams;
+
+		if (m_pDevice)
+		{
+			auto pDisplayParams = GetCurrentDisplayParams();
+
+			RECT clientRect;
+			GetClientRect(GetDesktopWindow(), &clientRect);
+
+			if (2000 < clientRect.right)
+			{
+				clientRect.right /= 2;
+			}
+
+			TUINT32 uiWindowPosX = 0;
+			TUINT32 uiWindowPosY = 0;
+
+			if (pDisplayParams->bWindowed)
+			{
+				auto pMode = GetCurrentDevice()->GetMode();
+				uiWindowPosX = (clientRect.right - pMode->GetWidth()) / 2;
+				uiWindowPosY = (clientRect.bottom - pMode->GetHeight()) / 2;
+			}
+
+			TUtil::MemClear(&m_PresentParams, sizeof(m_PresentParams));
+			m_PresentParams.Windowed = pDisplayParams->bWindowed;
+			m_PresentParams.BackBufferCount = 1;
+			m_PresentParams.MultiSampleType = D3DMULTISAMPLE_NONE;
+			m_PresentParams.SwapEffect = D3DSWAPEFFECT_DISCARD;
+			m_PresentParams.EnableAutoDepthStencil = TRUE;
+			m_PresentParams.hDeviceWindow = m_Window.GetHWND();
+			m_PresentParams.AutoDepthStencilFormat = TD3DAdapter::Mode::Device::DEPTHSTENCILFORMATS[pDisplayParams->eDepthStencilFormat];
+			m_PresentParams.BackBufferWidth = pDisplayParams->uiWidth;
+			m_PresentParams.BackBufferHeight = pDisplayParams->uiHeight;
+
+			auto pDevice = TSTATICCAST(TD3DAdapter::Mode::Device*, GetCurrentDevice());
+			auto pMode = TSTATICCAST(TD3DAdapter::Mode*, pDevice->GetMode());
+			auto pAdapter = TSTATICCAST(TD3DAdapter*, pMode->GetAdapter());
+			auto uiAdapterIndex = pAdapter->GetAdapterIndex();
+
+			if (pDisplayParams->bWindowed)
+			{
+				m_PresentParams.BackBufferFormat = pMode->GetD3DDisplayMode().Format;
+			}
+			else
+			{
+				m_PresentParams.BackBufferFormat = pMode->GetBackBufferFormat(pDisplayParams->uiColourDepth);
+			}
+
+			HRESULT hRes = m_pDirect3D->CreateDevice(
+				uiAdapterIndex,
+				TD3DAdapter::Mode::Device::DEVICETYPES[pDevice->GetDeviceIndex()],
+				m_Window.GetHWND(),
+				pDevice->GetD3DDeviceFlags(),
+				&m_PresentParams,
+				&m_pDirectDevice
+			);
+
+			if (FAILED(hRes))
+			{
+				OnInitializationFailureDevice();
+				PrintError(hRes, "Failed to create D3D Device!");
+
+				return TFALSE;
+			}
+
+			SetDeviceDefaultStates();
+
+			if (pDisplayParams->bWindowed)
+			{
+				m_Window.SetWindowed();
+			}
+			else
+			{
+				m_Window.SetFullscreen();
+			}
+
+			if (uiAdapterIndex != 0)
+			{
+				HMONITOR hMonitor = m_pDirect3D->GetAdapterMonitor(uiAdapterIndex);
+
+				MONITORINFO monitorInfo = { .cbSize = sizeof(monitorInfo) };
+				GetMonitorInfoA(hMonitor, &monitorInfo);
+
+				uiWindowPosX += monitorInfo.rcMonitor.left;
+				uiWindowPosY += monitorInfo.rcMonitor.right;
+			}
+
+			m_Window.SetPosition(uiWindowPosX, uiWindowPosY, pDisplayParams->uiWidth, pDisplayParams->uiHeight);
+			
+			IDirect3DSurface8* pSurface;
+			m_pDirectDevice->GetBackBuffer(0, D3DBACKBUFFER_TYPE_MONO, &pSurface);
+			pSurface->GetDesc(&m_SurfaceDesk);
+			pSurface->Release();
+
+			SetCursorPos(
+				uiWindowPosX + pDisplayParams->uiWidth / 2,
+				uiWindowPosY + pDisplayParams->uiHeight / 2
+			);
+
+			m_pDirectDevice->ShowCursor(TRUE);
+
+			auto pResource = GetSystemResource(27);
+			TTODO("Do some call with the resource and save result at m_Unk3");
+
+			EnableColourCorrection(TTRUE);
+			m_bDisplayCreated = TTRUE;
+
+			return TTRUE;
+		}
+
+		OnInitializationFailureDisplay();
 		return TFALSE;
 	}
 
@@ -145,7 +263,7 @@ namespace Toshi {
 		return TTRUE;
 	}
 
-	void* TRenderD3DInterface::GetCurrentDevice()
+	TRenderAdapter::Mode::Device* TRenderD3DInterface::GetCurrentDevice()
 	{
 		return m_pDevice;
 	}
@@ -285,7 +403,7 @@ namespace Toshi {
 		}
 	}
 
-	TBOOL TRenderD3DInterface::RecreateDisplay(DISPLAYPARAMS* a_pDisplayParams)
+	TBOOL TRenderD3DInterface::RecreateDisplay(const DISPLAYPARAMS& a_rDisplayParams)
 	{
 		if (IsCreated())
 		{
@@ -294,7 +412,7 @@ namespace Toshi {
 				OnD3DDeviceLost();
 				DestroyDisplay();
 
-				if (CreateDisplay(a_pDisplayParams))
+				if (CreateDisplay(a_rDisplayParams))
 				{
 					OnD3DDeviceFound();
 					return TTRUE;
@@ -443,8 +561,18 @@ namespace Toshi {
 
 	TBOOL TRenderD3DInterface::IsTextureFormatSupportedImpl(D3DFORMAT a_eFormat)
 	{
-		TIMPLEMENT();
-		return TTRUE;
+		auto pDevice = GetCurrentDevice();
+
+		return SUCCEEDED(
+			m_pDirect3D->CheckDeviceFormat(
+				pDevice->GetMode()->GetAdapter()->GetAdapterIndex(),
+				TD3DAdapter::Mode::Device::DEVICETYPES[pDevice->GetDeviceIndex()],
+				m_PresentParams.BackBufferFormat,
+				0,
+				D3DRTYPE_TEXTURE,
+				a_eFormat
+			)
+		);
 	}
 
 	TBOOL TRenderD3DInterface::Supports32BitTextures()

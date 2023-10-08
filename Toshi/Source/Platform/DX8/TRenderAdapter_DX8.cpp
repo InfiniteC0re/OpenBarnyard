@@ -66,11 +66,6 @@ namespace Toshi {
 
 			pRenderer->GetDirect3D()->EnumAdapterModes(uiAdapterIndex, i, &pMode->GetD3DDisplayMode());
 
-			static constexpr D3DDEVTYPE s_DevTypes[Mode::NUMSUPPORTEDDEVICES] = {
-				D3DDEVTYPE_HAL,
-				D3DDEVTYPE_REF
-			};
-
 			for (TUINT32 k = 0; k < uiNumSupportedDevices; k++)
 			{
 				auto pDevice = TSTATICCAST(TD3DAdapter::Mode::Device*, pMode->GetDevice(k));
@@ -78,10 +73,10 @@ namespace Toshi {
 				pDevice->SetOwnerMode(pMode);
 				pDevice->SetDeviceIndex(k);
 
-				pRenderer->GetDirect3D()->GetDeviceCaps(uiAdapterIndex, s_DevTypes[k], &pDevice->GetD3DCaps());
+				pRenderer->GetDirect3D()->GetDeviceCaps(uiAdapterIndex, Mode::Device::DEVICETYPES[k], &pDevice->GetD3DCaps());
 				HRESULT hRes = pRenderer->GetDirect3D()->CheckDeviceType(
 					uiAdapterIndex,
-					s_DevTypes[k],
+					Mode::Device::DEVICETYPES[k],
 					pMode->GetD3DDisplayMode().Format,
 					pMode->GetD3DDisplayMode().Format,
 					FALSE
@@ -91,7 +86,7 @@ namespace Toshi {
 				{
 					auto& caps = pDevice->GetD3DCaps();
 
-					if (s_DevTypes[k] == D3DDEVTYPE_REF)
+					if (Mode::Device::DEVICETYPES[k] == D3DDEVTYPE_REF)
 					{
 						pDevice->m_bIsSoftware = TTRUE;
 					}
@@ -116,16 +111,16 @@ namespace Toshi {
 					{
 						if (pDevice->SupportsPureDevice())
 						{
-							pDevice->m_eFlags |= 0x40;
+							pDevice->m_eFlags |= D3DCREATE_HARDWARE_VERTEXPROCESSING;
 						}
 						else
 						{
-							pDevice->m_eFlags |= 0x80;
+							pDevice->m_eFlags |= D3DCREATE_MIXED_VERTEXPROCESSING;
 						}
 					}
 					else
 					{
-						pDevice->m_eFlags |= 0x20;
+						pDevice->m_eFlags |= D3DCREATE_SOFTWARE_VERTEXPROCESSING;
 					}
 
 					for (int j = 0; j < Mode::Device::NUMDEPTHSTENCILFORMATS; j++)
@@ -134,7 +129,7 @@ namespace Toshi {
 						{
 							HRESULT hCheck = pRenderer->GetDirect3D()->CheckDeviceFormat(
 								uiAdapterIndex,
-								s_DevTypes[k],
+								Mode::Device::DEVICETYPES[k],
 								pMode->GetD3DDisplayMode().Format,
 								D3DUSAGE_DEPTHSTENCIL,
 								D3DRTYPE_SURFACE,
@@ -145,7 +140,7 @@ namespace Toshi {
 							{
 								HRESULT hMatch = pRenderer->GetDirect3D()->CheckDepthStencilMatch(
 									uiAdapterIndex,
-									s_DevTypes[k],
+									Mode::Device::DEVICETYPES[k],
 									pMode->GetD3DDisplayMode().Format,
 									pMode->GetD3DDisplayMode().Format,
 									Mode::Device::DEPTHSTENCILFORMATS[j]
@@ -213,6 +208,16 @@ namespace Toshi {
 		return TNULL;
 	}
 
+	D3DFORMAT TD3DAdapter::Mode::GetBackBufferFormat(TUINT32 a_uiColourDepth)
+	{
+		if (a_uiColourDepth == 16)
+		{
+			TSTATICCAST(D3DFORMAT, (-(TUINT32)((*(TUINT8*)&(m_DisplayMode).Format & 0x17) != 0) & 0xfffffff9) + D3DFMT_X4R4G4B4);
+		}
+
+		return TSTATICCAST(D3DFORMAT, (a_uiColourDepth != 32) - 1 & 0x16);
+	}
+
 	TRenderAdapter::Mode* TD3DAdapter::Mode::Device::GetMode() const
 	{
 		return m_pOwnerMode;
@@ -225,7 +230,7 @@ namespace Toshi {
 
 	const char* TD3DAdapter::Mode::Device::GetTypeString() const
 	{
-		return DEVICETYPES[m_uiDeviceIndex];
+		return DEVICETYPESSTRINGS[m_uiDeviceIndex];
 	}
 
 	TBOOL TD3DAdapter::Mode::Device::IsSoftware() const

@@ -20,7 +20,12 @@ namespace Toshi {
 				friend TD3DAdapter;
 				friend Mode;
 
-				static constexpr const char* DEVICETYPES[NUMSUPPORTEDDEVICES] = {
+				static constexpr D3DDEVTYPE DEVICETYPES[NUMSUPPORTEDDEVICES] = {
+					D3DDEVTYPE_HAL,
+					D3DDEVTYPE_REF
+				};
+
+				static constexpr const char* DEVICETYPESSTRINGS[NUMSUPPORTEDDEVICES] = {
 					"HAL",
 					"REF"
 				};
@@ -49,6 +54,8 @@ namespace Toshi {
 				void SetOwnerMode(Mode* a_pMode) { m_pOwnerMode = a_pMode; }
 				void SetDeviceIndex(TUINT32 a_uiIndex) { m_uiDeviceIndex = a_uiIndex; }
 
+				TUINT32 GetD3DDeviceFlags() const { return m_eFlags; }
+
 				D3DCAPS8& GetD3DCaps() { return m_Caps; }
 				const D3DCAPS8& GetD3DCaps() const { return m_Caps; }
 
@@ -74,6 +81,8 @@ namespace Toshi {
 			virtual TBOOL Is16Bit() const override;
 			virtual TUINT32 GetRefreshRate() const override;
 			virtual TRenderAdapter::Mode::Device* GetDevice(TUINT32 a_iDevice) override;
+
+			D3DFORMAT GetBackBufferFormat(TUINT32 a_uiColourDepth);
 
 			void SetOwnerAdapter(TD3DAdapter* a_pOwnerAdapter) { m_pOwnerAdapter = a_pOwnerAdapter; }
 			void SetModeIndex(TUINT32 a_uiModeIndex) { m_uiModeIndex = a_uiModeIndex; }

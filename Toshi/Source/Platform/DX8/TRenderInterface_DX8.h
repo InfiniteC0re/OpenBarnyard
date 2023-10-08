@@ -1,9 +1,10 @@
 #pragma once
 #include "Toshi/Render/TRenderInterface.h"
 #include "Toshi/Render/TOrderTable.h"
+#include "TRenderAdapter_DX8.h"
+#include "TDebugText_DX8.h"
 
 #include "Platform/Windows/TMSWindow.h"
-#include "TDebugText_DX8.h"
 
 #include <d3d8.h>
 
@@ -15,12 +16,12 @@ namespace Toshi {
 		TRenderD3DInterface();
 		~TRenderD3DInterface();
 
-		virtual TBOOL CreateDisplay(DISPLAYPARAMS* a_pParams) override;
+		virtual TBOOL CreateDisplay(const DISPLAYPARAMS& a_rParams) override;
 		virtual TBOOL DestroyDisplay() override;
 		virtual TBOOL Update(float a_fDeltaTime) override;
 		virtual TBOOL BeginScene() override;
 		virtual TBOOL EndScene() override;
-		virtual void* GetCurrentDevice() override;
+		virtual TRenderAdapter::Mode::Device* GetCurrentDevice() override;
 		virtual DISPLAYPARAMS* GetCurrentDisplayParams() override;
 		virtual TBOOL Create() override;
 		virtual TBOOL Destroy() override;
@@ -41,7 +42,7 @@ namespace Toshi {
 		virtual void OnInitializationFailureDisplay() override;
 		virtual TDebugText* CreateDebugText() override;
 		virtual void DestroyDebugText() override;
-		virtual TBOOL RecreateDisplay(DISPLAYPARAMS* a_pDisplayParams);
+		virtual TBOOL RecreateDisplay(const DISPLAYPARAMS& a_rDisplayParams);
 		virtual void SetContrast(TFLOAT a_fConstrast);
 		virtual void SetBrightness(TFLOAT a_fBrightness);
 		virtual void SetGamma(TFLOAT a_fGamma);
@@ -79,10 +80,10 @@ namespace Toshi {
 		IDirect3D8* m_pDirect3D;
 		IDirect3DDevice8* m_pDirectDevice;
 		D3DPRESENT_PARAMETERS m_PresentParams;
-		// ...
+		D3DSURFACE_DESC m_SurfaceDesk;
 		float m_fPixelAspectRatio;
 		HACCEL m_AcceleratorTable;
-		void* m_pDevice;
+		TD3DAdapter::Mode::Device* m_pDevice;
 		DISPLAYPARAMS m_oDisplayParams;
 		TMSWindow m_Window;
 		TBOOL m_bClosed; // ?

@@ -60,12 +60,12 @@ namespace Toshi {
 		TRenderInterface();
 		virtual ~TRenderInterface();
 
-		virtual TBOOL CreateDisplay(DISPLAYPARAMS* a_pParams);
+		virtual TBOOL CreateDisplay(const DISPLAYPARAMS& a_rParams);
 		virtual TBOOL DestroyDisplay() = 0;
 		virtual TBOOL Update(float a_fDeltaTime) = 0;
 		virtual TBOOL BeginScene();
 		virtual TBOOL EndScene() = 0;
-		virtual void* GetCurrentDevice() = 0;
+		virtual TRenderAdapter::Mode::Device* GetCurrentDevice() = 0;
 		virtual DISPLAYPARAMS* GetCurrentDisplayParams() = 0;
 		virtual TBOOL Create();
 		virtual TBOOL Destroy();
