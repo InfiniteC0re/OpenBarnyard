@@ -14,6 +14,7 @@ TBOOL ARenderer::CreateTRender()
 	auto pRenderer = TSTATICCAST(TRenderD3DInterface*, pRendererClass->CreateObject());
 
 	TBOOL bCreated = pRenderer->Create("Barnyard");
+	m_DisplayModes.Initialise();
 
 	if (bCreated)
 	{

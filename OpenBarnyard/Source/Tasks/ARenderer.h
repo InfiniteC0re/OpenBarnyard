@@ -1,4 +1,6 @@
 #pragma once
+#include "ADisplayModes_Win.h"
+
 #include <Toshi/Core/TTask.h>
 #include <Toshi/Render/TViewport.h>
 #include <Toshi/Render/TCameraObject.h>
@@ -20,4 +22,5 @@ private:
 	TFLOAT m_fFar;
 	TFLOAT m_fNear;
 	TUINT32 m_eScreenCaptureStatus;
+	ADisplayModes_Win m_DisplayModes;
 };
