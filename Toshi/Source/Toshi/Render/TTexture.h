@@ -10,7 +10,7 @@ namespace Toshi {
 	};
 
 	class TTexture :
-		public TGenericClassDerived<TTexture, TResource, "TTexture", TMAKEVERSION(1, 0), TTRUE>
+		public TGenericClassDerived<TTexture, TResource, "TTexture", TMAKEVERSION(1, 0), TFALSE>
 	{
 	public:
 		struct LOCKSTATE
