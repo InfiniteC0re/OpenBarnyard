@@ -129,6 +129,8 @@ namespace Toshi {
 			return std::exchange(m_pCurrentContext, a_pRenderContext);
 		}
 
+		void SetAutoCreateSystemResources(TBOOL a_bAutoCreate) { m_bCreateSystemResources = a_bAutoCreate; }
+
 		TBOOL IsInScene() { return m_bInScene; }
 		TBOOL IsCreated() { return m_bCreated; }
 		TBOOL IsDisplayCreated() { return m_bDisplayCreated; }

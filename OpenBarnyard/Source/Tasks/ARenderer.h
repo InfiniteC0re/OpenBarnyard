@@ -4,6 +4,8 @@
 #include <Toshi/Core/TTask.h>
 #include <Toshi/Render/TViewport.h>
 #include <Toshi/Render/TCameraObject.h>
+#include <Toshi/Render/TRenderInterface.h>
+#include <Toshi/Render/TRenderAdapter.h>
 
 class ARenderer :
 	public Toshi::TGenericClassDerived<ARenderer, Toshi::TTask, "ARenderer", TMAKEVERSION(1, 0), TTRUE>
@@ -13,6 +15,9 @@ public:
 	virtual TBOOL OnUpdate(float a_fDeltaTime) override;
 
 	TBOOL CreateTRender();
+	TBOOL CreateTRenderResources();
+
+	Toshi::TRenderAdapter::Mode::Device* FindSuitableDevice(Toshi::TRenderInterface::DISPLAYPARAMS& a_rDisplayParams, bool a_bReverseOrder);
 
 private:
 	Toshi::TViewport* m_pViewport;

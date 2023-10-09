@@ -136,6 +136,11 @@ namespace Toshi
 			return atoi(src);
 		}
 
+		static TFLOAT StringToFloat(const char* src)
+		{
+			return atof(src);
+		}
+
 		static Toshi::T2Allocator* GetDefaultAllocatorCB()
 		{
 			return &T2Allocator::s_GlobalAllocator;

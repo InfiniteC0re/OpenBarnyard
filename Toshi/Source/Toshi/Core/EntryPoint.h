@@ -123,8 +123,6 @@ TOSHI_ENTRY
 		);
 	}
 
-	// de blob does steam init
-
 	TOSHI_APP;
 	
 	if (hMutex != NULL)

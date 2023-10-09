@@ -3,6 +3,7 @@
 using TFLOAT = float;
 using TBOOL = bool;
 using TINT = int;
+using TUINT = unsigned int;
 using TINT32 = int32_t;
 using TUINT32 = uint32_t;
 using TINT16 = int16_t;

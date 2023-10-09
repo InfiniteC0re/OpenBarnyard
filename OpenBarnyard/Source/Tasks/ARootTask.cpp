@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "ARootTask.h"
-
+#include "Memory/AMemory.h"
 #include <Toshi/Core/TScheduler.h>
 
 TOSHI_NAMESPACE_USING
@@ -9,8 +9,10 @@ ARootTask::ARootTask()
 {
 	TIMPLEMENT();
 
-	auto pSystemManager = TSystemManager::GetSingleton();
+	m_pOptions = AOptions::CreateSingleton();
+	AMemory::CreatePool(AMemory::POOL_Sound);
 
+	auto pSystemManager = TSystemManager::GetSingleton();
 	m_pRenderer = TSTATICCAST(ARenderer*, pSystemManager->GetScheduler()->CreateTask(&TGetClass(ARenderer)));
 
 	m_bRenderScene = TFALSE;
@@ -19,6 +21,10 @@ ARootTask::ARootTask()
 TBOOL ARootTask::OnCreate()
 {
 	TIMPLEMENT();
+
+	AMemory::CreatePool(AMemory::POOL_Misc);
+	AMemory::CreatePool(AMemory::POOL_Collision);
+	AMemory::CreatePool(AMemory::POOL_Viewport);
 
 	if (m_pRenderer)
 	{

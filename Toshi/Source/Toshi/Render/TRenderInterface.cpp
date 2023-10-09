@@ -377,10 +377,10 @@ namespace Toshi {
 
 	TRenderAdapter::Mode::Device* TRenderInterface::FindDevice(const DISPLAYPARAMS& a_rDisplayParams)
 	{
+		auto pAdapter = GetAdapterList()->Begin();
+
 		while (TTRUE)
 		{
-			auto pAdapter = GetAdapterList()->Begin();
-
 			if (pAdapter == GetAdapterList()->End())
 			{
 				TString8 errorString = "Unable to find the passed device!\n";

@@ -18,6 +18,7 @@ public:
 
 	enum Lang_ : Lang
 	{
+		Lang_UNKNOWN = -1,
 		Lang_English,
 		Lang_EnglishUK,
 		Lang_Japanese,
