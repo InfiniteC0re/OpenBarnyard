@@ -214,13 +214,13 @@ namespace Toshi
 			return m_Head.m_Prev;
 		}
 
-		T2Iterator<T, TNode> End()
+		T2Iterator<T, TNode> End() const
 		{
 			return &m_Head;
 		}
 
 	protected:
-		TNode m_Head;
+		mutable TNode m_Head;
 		size_t m_Count;
 	};
 }
