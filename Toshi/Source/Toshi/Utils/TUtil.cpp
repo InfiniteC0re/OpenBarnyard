@@ -19,7 +19,7 @@ namespace Toshi
 		tm* time = gmtime(&seconds);
 
 		char filename[256];
-		T2String8::Format(filename, "deblob_%d%02d%02d_%02d_%02d_%02d.log", time->tm_year + 1900, time->tm_mon + 1, time->tm_mday, time->tm_hour, time->tm_min, time->tm_sec);
+		T2String8::Format(filename, "barnyard_%d%02d%02d_%02d_%02d_%02d.log", time->tm_year + 1900, time->tm_mon + 1, time->tm_mday, time->tm_hour, time->tm_min, time->tm_sec);
 		GetLog()->Create(filename, "Toshi 2.0", TFALSE);
 		GetLog()->AllowIndentation(TTRUE);
 		GetLog()->SetSimpleMode(TTRUE);
