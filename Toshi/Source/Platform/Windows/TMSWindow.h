@@ -52,6 +52,8 @@ namespace Toshi
 		{
 			return m_HWND;
 		}
+
+		static void SetFocused(TBOOL a_bFocused);
 		
 	private:
 		static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);

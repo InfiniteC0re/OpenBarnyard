@@ -24,34 +24,35 @@ namespace Toshi {
 
 		STICKYKEYS newStickyKeys = { sizeof(STICKYKEYS) };
 		newStickyKeys.dwFlags = 0;
-		SystemParametersInfoA(0x3b, sizeof(STICKYKEYS), &newStickyKeys, 0);
+		SystemParametersInfoA(SPI_SETSTICKYKEYS, sizeof(STICKYKEYS), &newStickyKeys, 0);
 	}
 
 	void TMSWindow::Update(TFLOAT a_fDeltaTime)
 	{
 		MSG msg;
 
-		if (!m_bDestroyed)
-		{
-			if (!m_bIsFocused)
-			{
-				if (!TSystemManager::GetSingleton()->IsPaused())
-				{
-					if (FALSE != PeekMessageA(&msg, NULL, 0, 0, 0))
-					{
-						while (FALSE != GetMessageA(&msg, NULL, 0, 0))
-						{
-							TranslateMessage(&msg);
-							DispatchMessageA(&msg);
+		if (m_bDestroyed) return;
 
-							if (FALSE == PeekMessageA(&msg, NULL, 0, 0, 0))
-							{
-								return;
-							}
+		if (!m_bIsFocused)
+		{
+			if (!TSystemManager::GetSingleton()->IsPaused())
+			{
+				if (FALSE != PeekMessageA(&msg, NULL, 0, 0, 0))
+				{
+					while (FALSE != GetMessageA(&msg, NULL, 0, 0))
+					{
+						TranslateMessage(&msg);
+						DispatchMessageA(&msg);
+
+						if (FALSE == PeekMessageA(&msg, NULL, 0, 0, 0))
+						{
+							return;
 						}
 					}
 				}
-
+			}
+			else
+			{
 				m_bIsFocused = TTRUE;
 				LONG uStyle = GetWindowLongA(m_HWND, GWL_STYLE);
 				SetWindowLongA(m_HWND, GWL_STYLE, uStyle | WS_SYSMENU);
@@ -114,6 +115,27 @@ namespace Toshi {
 		}
 	}
 
+	void TMSWindow::SetFocused(TBOOL a_bFocused)
+	{
+		if (ms_bIsFocused != a_bFocused)
+		{
+			ms_bIsFocused = a_bFocused;
+
+			if (ms_bIsFocused)
+			{
+				SystemParametersInfoA(SPI_GETSTICKYKEYS, sizeof(STICKYKEYS), &ms_StickyKeys, 0);
+
+				STICKYKEYS newStickyKeys = { sizeof(STICKYKEYS) };
+				newStickyKeys.dwFlags = 0;
+				SystemParametersInfoA(SPI_SETSTICKYKEYS, sizeof(STICKYKEYS), &newStickyKeys, 0);
+			}
+			else
+			{
+				SystemParametersInfoA(SPI_SETSTICKYKEYS, sizeof(STICKYKEYS), &ms_StickyKeys, 0);
+			}
+		}
+	}
+
 	void TMSWindow::SetPosition(UINT x, UINT y, UINT width, UINT height)
 	{
 		SetWindowPos(m_HWND, HWND_TOP, x, y, width, height, 0);
@@ -165,6 +187,108 @@ namespace Toshi {
 
 	LRESULT CALLBACK TMSWindow::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
+		static TBOOL s_bIsPaused;
+
+		if (uMsg <= WM_ACTIVATEAPP)
+		{
+			if (uMsg == WM_ACTIVATEAPP)
+			{
+				TMSWindow* pWindow = TREINTERPRETCAST(TMSWindow*, GetWindowLongA(hWnd, GWL_USERDATA));
+				TRenderD3DInterface* pRenderer = TREINTERPRETCAST(TRenderD3DInterface*, pWindow->m_pRenderer);
+
+				if (!pWindow->m_bDestroyed)
+				{
+					if (wParam)
+					{
+						TSystemManager::GetSingleton()->Pause(TFALSE);
+						s_bIsPaused = TFALSE;
+
+						if (!pWindow->m_bWindowed)
+						{
+							if (pRenderer->GetDirect3DDevice())
+								pRenderer->OnD3DDeviceFound();
+						}
+
+						return 0;
+					}
+					else
+					{
+						TSystemManager::GetSingleton()->Pause(TTRUE);
+						s_bIsPaused = TTRUE;
+
+						if (!pWindow->m_bWindowed)
+						{
+							if (pRenderer->GetDirect3DDevice())
+								pRenderer->OnD3DDeviceLost();
+						}
+
+						return 0;
+					}
+				}
+			}
+
+			if (uMsg == WM_CREATE)
+			{
+				SetWindowLongA(hWnd, GWL_USERDATA, *(LONG*)lParam);
+				return 0;
+			}
+
+			if (uMsg == WM_ACTIVATE)
+			{
+				if (wParam == 1 || wParam == 2)
+				{
+					SetFocused(TTRUE);
+
+					return DefWindowProcA(hWnd, WM_ACTIVATE, wParam, lParam);
+				}
+				else if (ms_bIsFocused)
+				{
+					ms_bIsFocused = TFALSE;
+					SystemParametersInfoA(SPI_SETSTICKYKEYS, sizeof(STICKYKEYS), &ms_StickyKeys, 0);
+
+					return DefWindowProcA(hWnd, WM_ACTIVATE, wParam, lParam);
+				}
+			}
+
+			if (uMsg == WM_QUIT)
+			{
+				DestroyWindow(hWnd);
+
+				return DefWindowProcA(hWnd, WM_QUIT, wParam, lParam);
+			}
+		}
+		else if (uMsg == WM_SETCURSOR)
+		{
+			TRenderD3DInterface* pRenderer = TREINTERPRETCAST(TRenderD3DInterface*, TRenderInterface::GetSingleton());
+
+			pRenderer->GetDirect3DDevice()->ShowCursor(TRUE);
+			TFIXME("Use data from TMouse_D3D8_Win to set cursor properties");
+		}
+		else if (uMsg == WM_SYSCOMMAND)
+		{
+			if (wParam == SC_CLOSE)
+			{
+				TRenderD3DInterface* pRenderer = TREINTERPRETCAST(TRenderD3DInterface*, TRenderInterface::GetSingleton());
+				pRenderer->Exit();
+				TTODO("FUN_006bbb80");
+
+				return 0;
+			}
+			else if (wParam == SC_SCREENSAVE)
+			{
+				return 0;
+			}
+			else if (wParam == SC_MONITORPOWER)
+			{
+				return 0;
+			}
+		}
+		else if (uMsg == WM_MOUSEFIRST)
+		{
+			TTODO("TInputDXDeviceMouse->FUN_006d4140(...)");
+			return 1;
+		}
+
 		return DefWindowProcA(hWnd, uMsg, wParam, lParam);
 	}
 }

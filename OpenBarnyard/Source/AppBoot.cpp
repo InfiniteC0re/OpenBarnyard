@@ -24,7 +24,7 @@
 #include "Locale/ALocaleManager.h"
 #include "AGUI2/AGUI2.h"
 
-AApplication AApplication::g_oTheApp;
+AApplication g_oTheApp;
 
 TOSHI_NAMESPACE_USING
 

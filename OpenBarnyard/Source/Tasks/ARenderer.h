@@ -8,6 +8,7 @@ class ARenderer :
 {
 public:
 	virtual TBOOL OnCreate() override;
+	virtual TBOOL OnUpdate(float a_fDeltaTime) override;
 
 	TBOOL CreateTRender();
 

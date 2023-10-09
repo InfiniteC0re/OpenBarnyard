@@ -20,7 +20,7 @@ namespace Toshi {
 		m_oDisplayParams.bWindowed = TTRUE;
 		m_fBrightness = 0.5f;
 		m_fSaturate = 0.5f;
-		m_bClosed = TFALSE;
+		m_bExited = TFALSE;
 		m_bCheckedCapableColourCorrection = TFALSE;
 		m_bCapableColourCorrection = TFALSE;
 		m_bFailed = TFALSE;
@@ -187,7 +187,7 @@ namespace Toshi {
 		FlushDyingResources();
 		m_Window.Update(a_fDeltaTime);
 
-		return !m_bClosed;
+		return !m_bExited;
 	}
 
 	TBOOL TRenderD3DInterface::BeginScene()

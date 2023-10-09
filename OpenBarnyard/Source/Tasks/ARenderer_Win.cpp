@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "ARenderer.h"
+#include "AppBoot.h"
 
 #include TOSHI_MULTIRENDER(TRenderInterface)
 
@@ -36,4 +37,25 @@ TBOOL ARenderer::OnCreate()
 
 	TOrderTable::CreateStaticData(2000, 4000);
 	return CreateTRender();
+}
+
+TBOOL ARenderer::OnUpdate(float a_fDeltaTime)
+{
+	TIMPLEMENT();
+
+	auto pRenderer = TSTATICCAST(TRenderD3DInterface*, TRenderInterface::GetSingleton());
+
+	if (g_oTheApp.IsDestroyed())
+	{
+		return TTRUE;
+	}
+
+	pRenderer->Update(a_fDeltaTime);
+
+	if (!TSystemManager::GetSingleton()->IsPaused())
+	{
+		pRenderer->BeginScene();
+
+		pRenderer->EndScene();
+	}
 }

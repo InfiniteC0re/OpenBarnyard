@@ -13,7 +13,7 @@
 
 #ifndef TOSHI_APP
 #define TOSHI_APP \
-Toshi::TApplication& app = AApplication::g_oTheApp; \
+Toshi::TApplication& app = g_oTheApp; \
 app.Create("The Barnyard - (c) Blue Tongue Entertainment", 0, 0); \
 app.Execute();
 #endif

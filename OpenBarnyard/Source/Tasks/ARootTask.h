@@ -13,4 +13,5 @@ public:
 
 private:
 	ARenderer* m_pRenderer; // 0x30
+	TBOOL m_bRenderScene;   // 0x57
 };

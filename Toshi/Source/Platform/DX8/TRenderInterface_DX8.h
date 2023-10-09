@@ -74,6 +74,11 @@ namespace Toshi {
 		TDebugD3DText* InitDebugText(TINT a_iBufferSize);
 		void SetDeviceDefaultStates();
 
+		void Exit()
+		{
+			m_bExited = TTRUE;
+		}
+
 		static const char* GetErrorString(TINT32 a_eError);
 		static const char* GetErrorDescription(TINT32 a_eError);
 
@@ -87,7 +92,7 @@ namespace Toshi {
 		TD3DAdapter::Mode::Device* m_pDevice;
 		DISPLAYPARAMS m_oDisplayParams;
 		TMSWindow m_Window;
-		TBOOL m_bClosed; // ?
+		TBOOL m_bExited;
 		TFLOAT m_fContrast;
 		TFLOAT m_fBrightness;
 		TFLOAT m_fGamma;

@@ -15,9 +15,6 @@ public:
 	virtual TBOOL OnUpdate(float deltaTime) override;
 
 	TBOOL CreateStringPool();
-
-public:
-	static AApplication g_oTheApp;
 	
 public:
 	ARootTask* m_pRootTask;
@@ -27,3 +24,5 @@ public:
 	ADummyTask* m_pUpdate3Task;
 	ADummyTask* m_pRenderTask;
 };
+
+extern AApplication g_oTheApp;
