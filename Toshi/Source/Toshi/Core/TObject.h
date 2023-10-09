@@ -45,7 +45,7 @@ namespace Toshi
 			else { return TNULL; }
 		}
 
-		static TClass* GetClassStatic()
+		static constexpr TClass* GetClassStatic()
 		{
 			return std::addressof(s_Class);
 		}

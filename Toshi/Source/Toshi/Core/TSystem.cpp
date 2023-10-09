@@ -20,7 +20,7 @@ namespace Toshi
 	{
 		// Calculating average fps
 		m_Timer.Update();
-		float deltaTime = m_Timer.GetDelta();
+		TFLOAT deltaTime = m_Timer.GetDelta();
 		m_Second += deltaTime;
 
 		if (m_Second > 1.0f)

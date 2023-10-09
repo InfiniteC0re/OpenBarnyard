@@ -1,6 +1,6 @@
 #pragma once
 
-#define TGetClass(X) X::GetClassStatic()
+#define TGetClass(X) X::s_Class
 
 namespace Toshi
 {

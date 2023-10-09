@@ -90,8 +90,8 @@ namespace Toshi {
 		template <class C>
 		C* GetDeviceByIndex(size_t index = 0)
 		{
-			C* pDevice = TSTATICCAST(C*, GetDeviceByIndex(TGetClass(C), index));
-			TASSERT(pDevice == TNULL || pDevice->GetClass()->IsA(TGetClass(C)));
+			C* pDevice = TSTATICCAST(C*, GetDeviceByIndex(&TGetClass(C), index));
+			TASSERT(pDevice == TNULL || pDevice->GetClass()->IsA(&TGetClass(C)));
 			return pDevice;
 		}
 

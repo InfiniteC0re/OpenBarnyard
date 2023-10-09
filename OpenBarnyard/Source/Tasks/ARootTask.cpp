@@ -11,7 +11,7 @@ ARootTask::ARootTask()
 
 	auto pSystemManager = TSystemManager::GetSingleton();
 
-	m_pRenderer = TSTATICCAST(ARenderer*, pSystemManager->GetScheduler()->CreateTask(TGetClass(ARenderer)));
+	m_pRenderer = TSTATICCAST(ARenderer*, pSystemManager->GetScheduler()->CreateTask(&TGetClass(ARenderer)));
 }
 
 TBOOL ARootTask::OnCreate()

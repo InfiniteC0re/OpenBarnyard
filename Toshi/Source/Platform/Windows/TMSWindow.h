@@ -15,14 +15,10 @@ namespace Toshi
 	public:
 		static constexpr UINT s_PopupStyles = WS_POPUP | WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU;
 
-		using t_WndProcCallback = LRESULT(*)(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-
 	public:
-		TMSWindow() = default;
+		TMSWindow();
 		TMSWindow(const TMSWindow&) = default;
 
-		void Enable();
-		void Disable();
 		void Update(TFLOAT a_fDeltaTime);
 
 		TBOOL Create(TRenderInterface* renderer, LPCSTR title);
@@ -33,39 +29,29 @@ namespace Toshi
 		void SetWindowed()
 		{
 			TASSERT(GetHWND() != TNULL);
-			m_IsWindowed = TTRUE;
+			m_bWindowed = TTRUE;
 		}
 
 		void SetFullscreen()
 		{
 			TASSERT(GetHWND() != TNULL);
-			m_IsWindowed = TFALSE;
+			m_bWindowed = TFALSE;
 		}
 
 		TBOOL IsDestroyed() const
 		{
-			return m_IsDestroyed;
-		}
-
-		TBOOL IsPopup() const
-		{
-			return m_IsPopup;
+			return m_bDestroyed;
 		}
 
 		TBOOL IsWindowed() const
 		{
-			return m_IsWindowed;
+			return m_bWindowed;
 		}
 
 		HWND GetHWND() const
 		{
 			return m_HWND;
 		}
-
-	public:
-		// Custom function used to send events to ImGui
-		// FIXME: delete it when we can catch input using Toshi input system
-		inline static t_WndProcCallback s_fnWndProcHandler = TNULL;
 		
 	private:
 		static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -73,26 +59,18 @@ namespace Toshi
 	protected:
 		static constexpr GUID WceusbshGUID = { 0x25dbce51, 0x6c8f, 0x4a72, 0x8a, 0x6d, 0xb5, 0x4c, 0x2b, 0x4f, 0xc8, 0x35 };
 
-		static TBOOL ms_bIsFocused;
-		static STICKYKEYS ms_StickyKeys;
-		static HDEVNOTIFY ms_hDeviceNotify;
-		static BOOL ms_bIsFullscreen;
+		inline static TBOOL ms_bIsFocused;
+		inline static BOOL ms_bIsFullscreen;
+		inline static STICKYKEYS ms_StickyKeys;
+		inline static HDEVNOTIFY ms_hDeviceNotify;
 
 	private:
-		HWND m_HWND;                // 0x04
-		TRenderInterface* m_Render;          // 0x08
-		TBOOL m_IsWindowed;         // 0x0C
-		TBOOL m_IsDestroyed;        // 0x0D
-		TBOOL m_bIsFocused;         // 0x0E
-		HMODULE m_ModuleHandle;     // 0x10
-		TBOOL m_Flag2;              // 0x14
-	public:
-		int m_xPos;                 // 0x18
-		int m_yPos;                 // 0x1C
-	private:
-		TBOOL m_Flag3;              // 0x20
-		TBOOL m_IsPopup;            // 0x21
-		TBOOL m_Flag5;              // 0x22
+		HWND m_HWND;                   // 0x04
+		TRenderInterface* m_pRenderer; // 0x08
+		TBOOL m_bWindowed;             // 0x0C
+		TBOOL m_bDestroyed;            // 0x0D
+		TBOOL m_bIsFocused;            // 0x0E
+		HMODULE m_ModuleHandle;        // 0x10
 	};
 }
 

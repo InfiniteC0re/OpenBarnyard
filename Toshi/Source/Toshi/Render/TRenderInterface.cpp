@@ -159,7 +159,7 @@ namespace Toshi {
 	TResource* TRenderInterface::CreateResource(TClass* pClass, char* name, TNodeTree<TResource>::TNode* parent)
 	{
 		TASSERT(pClass != TNULL, "TResource class is TNULL");
-		TASSERT(pClass->IsA(TGetClass(TResource)), "TResource class is TNULL");
+		TASSERT(pClass->IsA(&TGetClass(TResource)), "TResource class is TNULL");
 
 		TResource* pResource = static_cast<TResource*>(pClass->CreateObject());
 		TASSERT(pResource != TNULL, "Couldn't create TResource");

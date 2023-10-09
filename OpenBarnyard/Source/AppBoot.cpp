@@ -45,32 +45,32 @@ TBOOL AApplication::OnCreate(int argc, char** argv)
 	
 	auto pSystemManager = TSystemManager::GetSingleton();
 
-	m_pRenderTask = TSTATICCAST(ADummyTask*, pSystemManager->GetScheduler()->CreateTask(TGetClass(ADummyTask)));
+	m_pRenderTask = TSTATICCAST(ADummyTask*, pSystemManager->GetScheduler()->CreateTask(&TGetClass(ADummyTask)));
 	m_pRenderTask->Create();
 	m_pRenderTask->Activate(TTRUE);
 	m_pRenderTask->SetName("RenderTask");
 
-	m_pUpdate3Task = TSTATICCAST(ADummyTask*, pSystemManager->GetScheduler()->CreateTask(TGetClass(ADummyTask)));
+	m_pUpdate3Task = TSTATICCAST(ADummyTask*, pSystemManager->GetScheduler()->CreateTask(&TGetClass(ADummyTask)));
 	m_pUpdate3Task->Create();
 	m_pUpdate3Task->Activate(TTRUE);
 	m_pUpdate3Task->SetName("Update3");
 
-	m_pUpdate2Task = TSTATICCAST(ADummyTask*, pSystemManager->GetScheduler()->CreateTask(TGetClass(ADummyTask)));
+	m_pUpdate2Task = TSTATICCAST(ADummyTask*, pSystemManager->GetScheduler()->CreateTask(&TGetClass(ADummyTask)));
 	m_pUpdate2Task->Create();
 	m_pUpdate2Task->Activate(TTRUE);
 	m_pUpdate2Task->SetName("Update2");
 
-	m_pUpdate1Task = TSTATICCAST(ADummyTask*, pSystemManager->GetScheduler()->CreateTask(TGetClass(ADummyTask)));
+	m_pUpdate1Task = TSTATICCAST(ADummyTask*, pSystemManager->GetScheduler()->CreateTask(&TGetClass(ADummyTask)));
 	m_pUpdate1Task->Create();
 	m_pUpdate1Task->Activate(TTRUE);
 	m_pUpdate1Task->SetName("Update1");
 
-	m_pInputTask = TSTATICCAST(ADummyTask*, pSystemManager->GetScheduler()->CreateTask(TGetClass(ADummyTask)));
+	m_pInputTask = TSTATICCAST(ADummyTask*, pSystemManager->GetScheduler()->CreateTask(&TGetClass(ADummyTask)));
 	m_pInputTask->Create();
 	m_pInputTask->Activate(TTRUE);
 	m_pInputTask->SetName("InputTask");
 
-	m_pRootTask = TSTATICCAST(ARootTask*, pSystemManager->GetScheduler()->CreateTask(TGetClass(ARootTask)));
+	m_pRootTask = TSTATICCAST(ARootTask*, pSystemManager->GetScheduler()->CreateTask(&TGetClass(ARootTask)));
 
 	if (m_pRootTask != TNULL)
 	{

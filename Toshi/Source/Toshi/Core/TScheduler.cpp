@@ -24,7 +24,7 @@ namespace Toshi
 
 	TTask* TScheduler::CreateTask(TClass* pClass, TTask* pParent)
 	{
-		TASSERT(pClass->IsA(TGetClass(TTask)));
+		TASSERT(pClass->IsA(&TGetClass(TTask)));
 		
 		TTask* pTask = static_cast<TTask*>(pClass->CreateObject());
 		TASSERT(pTask != TNULL);

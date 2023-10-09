@@ -8,7 +8,6 @@
 namespace Toshi
 {
 	class TScheduler;
-
 	class TPString8Pool;
 
 	class TSystemManager : public TSingleton<TSystemManager>
@@ -43,11 +42,15 @@ namespace Toshi
 			return m_Scheduler;
 		}
 
-		float GetAverageFps() const
+		TFLOAT GetAverageFps() const
 		{
 			return m_AverageFps;
 		}
 
+		TBOOL IsPaused() const
+		{
+			return m_Paused;
+		}
 
 	public:
 		static TBOOL Create();
@@ -78,12 +81,12 @@ namespace Toshi
 		TEmitter<TSystemManager, TBOOL> m_Emitter; // 0x00
 		TScheduler* m_Scheduler;
 		TBOOL m_Paused;
-		uint32_t m_Unk2;
+		TUINT32 m_Unk2;
 		THPTimer m_Timer;
-		uint32_t m_Unk3;
-		float m_Second;
-		float m_AverageFps;
-		uint32_t m_FrameCount;
+		TUINT32 m_Unk3;
+		TFLOAT m_Second;
+		TFLOAT m_AverageFps;
+		TUINT32 m_FrameCount;
 		TBOOL m_Unk7;
 	};
 }
