@@ -2,6 +2,6 @@
 
 namespace Toshi {
 
-	class TTexture { };
+	class TTextureResourceHAL { };
 
 }

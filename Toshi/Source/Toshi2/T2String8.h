@@ -131,6 +131,11 @@ namespace Toshi
 			_itoa(value, dst, radix);
 		}
 
+		static void IntToString(int value, char* dst, int radix)
+		{
+			_itoa(value, dst, radix);
+		}
+
 		static int StringToInt(const char* src)
 		{
 			return atoi(src);

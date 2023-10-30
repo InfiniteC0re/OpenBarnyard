@@ -5,11 +5,6 @@
 #include "TTextureFactory.h"
 
 namespace Toshi {
-	
-	enum class TTEXTURERESOURCEFORMAT
-	{
-
-	};
 
 	class TTexture :
 		public TGenericClassDerived<TTexture, TResource, "TTexture", TMAKEVERSION(1, 0), TFALSE>
