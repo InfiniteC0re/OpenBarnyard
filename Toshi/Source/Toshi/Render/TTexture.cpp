@@ -7,7 +7,7 @@ namespace Toshi {
 	{
 		m_Unk1 = 0;
 		m_Unk2 = 0;
-		m_Unk3 = 0;
+		m_pNameEntry = TNULL;
 	}
 
 	TTexture::~TTexture()

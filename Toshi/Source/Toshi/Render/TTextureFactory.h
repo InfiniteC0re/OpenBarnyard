@@ -1,9 +1,10 @@
 #pragma once
-#include "TTexture.h"
 #include "Toshi/Core/TNodeList.h"
 #include "Toshi/Render/TResource.h"
 
 namespace Toshi {
+
+	class TTexture;
 
 	class TTextureFactory : 
 		public TGenericClassDerived<TTextureFactory, TResource, "TTextureFactory", TMAKEVERSION(1, 0), TTRUE>
@@ -26,13 +27,19 @@ namespace Toshi {
 			TTexture* m_pTexture;
 		};
 
-		constexpr static TUINT32 NUM_LISTS = 50;
+		constexpr static TUINT32 NUM_LISTS = 1024;
 
 	public:
 		TTextureFactory() = default;
 		~TTextureFactory();
 
 		virtual void Dump() const;
+
+		TTexture* FindTexture(const char* a_szName) const;
+		NameEntry* RegisterTexture(const char* a_szName, TTexture* a_pTexture);
+		void DeregisterTexture(TTexture* a_pTexture);
+
+		static TUINT32 HashName(const char* a_szName);
 
 	private:
 		TNodeList<NameEntry> m_aLists[NUM_LISTS];

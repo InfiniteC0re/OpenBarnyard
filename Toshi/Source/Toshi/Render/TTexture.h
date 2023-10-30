@@ -2,6 +2,8 @@
 #include "Toshi/Render/TResource.h"
 #include "Toshi/Render/TRenderAdapter.h"
 
+#include "TTextureFactory.h"
+
 namespace Toshi {
 	
 	enum class TTEXTURERESOURCEFORMAT
@@ -17,6 +19,8 @@ namespace Toshi {
 		{
 
 		};
+
+		friend TTextureFactory;
 
 	public:
 		TTexture();
@@ -34,7 +38,7 @@ namespace Toshi {
 	private:
 		int m_Unk1;
 		int m_Unk2;
-		int m_Unk3;
+		TTextureFactory::NameEntry* m_pNameEntry;
 	};
 
 }
