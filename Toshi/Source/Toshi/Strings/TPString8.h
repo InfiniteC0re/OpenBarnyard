@@ -132,6 +132,35 @@ namespace Toshi {
 	class TPString8
 	{
 	public:
+		class Comparator
+		{
+		public:
+			static TBOOL IsEqual(const TPString8& a, const TPString8& b)
+			{
+				return a.GetPooledString() == b.GetPooledString();
+			}
+
+			static TBOOL IsGreater(const TPString8& a, const TPString8& b)
+			{
+				return a.GetPooledString() > b.GetPooledString();
+			}
+
+			static TBOOL IsLess(const TPString8& a, const TPString8& b)
+			{
+				return a.GetPooledString() < b.GetPooledString();
+			}
+
+			static TBOOL IsLessOrEqual(const TPString8& a, const TPString8& b)
+			{
+				return a.GetPooledString() <= b.GetPooledString();
+			}
+
+			static TBOOL IsGreaterOrEqual(const TPString8& a, const TPString8& b)
+			{
+				return a.GetPooledString() >= b.GetPooledString();
+			}
+		};
+
 		inline static const TString8 ms_sEmpty = TString8("");
 
 	public:
@@ -228,6 +257,11 @@ namespace Toshi {
 			Decrement();
 			TSystemManager::GetStringPool()->Get(m_pPtr, a_szString, TNULL);
 			return *this;
+		}
+
+		__forceinline operator const char* () const
+		{
+			return m_pPtr ? m_pPtr->m_oString.GetString() : ms_sEmpty.GetString();
 		}
 
 		__forceinline operator const TString8*() const

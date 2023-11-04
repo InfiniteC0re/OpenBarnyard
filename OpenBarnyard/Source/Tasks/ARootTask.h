@@ -14,6 +14,8 @@ public:
 
 	virtual TBOOL OnCreate() override;
 
+	void LoadStartupData();
+
 private:
 	AOptions* m_pOptions;   // 0x20
 	ARenderer* m_pRenderer; // 0x30

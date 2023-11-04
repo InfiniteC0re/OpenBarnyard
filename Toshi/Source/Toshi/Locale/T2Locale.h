@@ -25,6 +25,7 @@ namespace Toshi
 		virtual const char* GetLanguageFilename(Lang lang) = 0;
 
 		void SetLanguage(Lang langid);
+		Lang GetLangId() const { return m_LangId; }
 
 	protected:
 		T2Locale(int langCount, size_t bufferSize, void* buffer);

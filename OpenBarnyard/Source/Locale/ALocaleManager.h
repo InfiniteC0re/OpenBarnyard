@@ -52,5 +52,29 @@ public:
 		return T2Locale::GetNumStrings();
 	}
 
+	const char* GetCurrentLanguageName()
+	{
+		return GetLanguageName(m_LangId);
+	}
+
+	static const char* GetLanguageName(Lang a_eLang)
+	{
+		switch (a_eLang)
+		{
+		case Lang_Japanese: return "JPN";
+		case Lang_German: return "DEU";
+		case Lang_Italian: return "ITA";
+		case Lang_Spanish: return "ESL";
+		case Lang_French: return "FRE";
+		case Lang_Netherlandic: return "NLD";
+		default: return "ENG";
+		}
+	}
+
+	static ALocaleManager* Interface()
+	{
+		return TSTATICCAST(ALocaleManager*, T2Locale::GetSingletonSafe());
+	}
+
 private:
 };

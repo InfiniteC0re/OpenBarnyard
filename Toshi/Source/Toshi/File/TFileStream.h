@@ -14,8 +14,9 @@ namespace Toshi
 		TFileStreamJob(TSemaphore* semaphore) : m_pSemaphore(semaphore), m_bIsProcessed(TFALSE) { }
 
 		virtual ~TFileStreamJob() = default;
-
 		virtual void Process() = 0;
+
+		TBOOL IsProcessed() const { return m_bIsProcessed; }
 
 	protected:
 		TSemaphore* m_pSemaphore;
@@ -48,7 +49,7 @@ namespace Toshi
 		TTRBStreamJob() : TFileStreamJob(TNULL)
 		{
 			m_trb = TNULL;
-			m_fileName = TNULL;
+			m_fileName[0] = '\0';
 		}
 
 		virtual ~TTRBStreamJob() = default;
@@ -63,8 +64,9 @@ namespace Toshi
 			m_trb = trb;
 			T2String8::Copy(m_fileName, fileName, -1);
 		}
+
 	public:
 		TTRB* m_trb;
-		char* m_fileName;
+		char m_fileName[64];
 	};
 }
