@@ -55,8 +55,8 @@ namespace Toshi
 		static TBOOL TryInitialize(TClass* tClass);
 		
 		// Looks for a class in parent
-		static const TClass* FindRecurse(const char* const& name, const TClass* parent, TBOOL hasPrevious);
-		static const TClass* Find(const char* name, const TClass* parent = TNULL);
+		static TClass* FindRecurse(const char* const& name, TClass* parent, TBOOL hasPrevious);
+		static TClass* Find(const char* name, TClass* parent = TNULL);
 
 	public:
 		inline TBOOL operator==(const TClass* other) const { return this == other; }

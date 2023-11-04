@@ -36,10 +36,10 @@ namespace Toshi {
 		~TTextureFactory();
 
 		virtual void Dump() const;
-		virtual TTexture* CreateTextureFromFile(const char* a_szFilePath, TUINT32 a_uiFlags) = 0;
-		virtual TTexture* CreateTextureFromMemory(void* a_pMem, TUINT32 a_uiMemSize, TUINT32 a_uiWidth, TUINT32 a_uiHeight, TUINT32 a_uiFlags) = 0;
-		virtual TTexture* CreateEx(void* a_pMem, TUINT32 a_uiMemSize, TUINT32 a_uiWidth, TUINT32 a_uiHeight, TUINT32 a_uiFlags, TTEXTURERESOURCEFORMAT a_eFormat, TUINT32 a_uiUnknown) = 0;
-		virtual TTexture* CreateUnk(void* a_pUnk) = 0; // TODO: Figure out it's name and parameters
+		virtual TTexture* CreateTextureFromFile(const char* a_szFilePath, TUINT32 a_eTextureFlags) = 0;
+		virtual TTexture* CreateTextureFromMemory(void* a_pData, TUINT a_uiDataSize, TUINT a_eTextureFlags, TUINT a_uiWidth, TUINT a_uiHeight) = 0;
+		virtual TTexture* CreateEx(void* a_pData, TUINT a_uiDataSize, TUINT a_uiWidth, TUINT a_uiHeight, TUINT a_uiMipLevels, TTEXTURERESOURCEFORMAT a_eFormat, BOOL a_bNoMipLevels) = 0;
+		virtual TTexture* CreateFromT2Texture(void* a_pUnk) = 0; // TODO: Figure out it's parameters
 
 		TTexture* FindTexture(const char* a_szName) const;
 		NameEntry* RegisterTexture(const char* a_szName, TTexture* a_pTexture);

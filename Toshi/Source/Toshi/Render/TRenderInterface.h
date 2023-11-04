@@ -37,7 +37,8 @@ namespace Toshi {
 			SYSRESOURCE_IFactories,
 			SYSRESOURCE_IFSYS,
 			SYSRESOURCE_12,
-			SYSRESOURCE_NUMOF = 28
+			SYSRESOURCE_TEXTUREFACTORY = 27,
+			SYSRESOURCE_NUMOF
 		};
 
 		typedef uint32_t ASPECT_RATIO;
@@ -121,7 +122,7 @@ namespace Toshi {
 		}
 
 		// Creates resource and returns it
-		TResource* CreateResource(TClass* pClass, char* name, TNodeTree<TResource>::TNode* parent);
+		TResource* CreateResource(TClass* pClass, const char* name, TNodeTree<TResource>::TNode* parent);
 
 		// Sets new render context and returns the old one
 		TRenderContext* SetCurrentRenderContext(TRenderContext* a_pRenderContext)

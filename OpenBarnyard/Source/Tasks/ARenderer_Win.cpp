@@ -2,6 +2,7 @@
 #include "ARenderer.h"
 #include "AppBoot.h"
 
+#include TOSHI_MULTIRENDER(TTextureFactoryHAL)
 #include TOSHI_MULTIRENDER(TRenderInterface)
 
 TOSHI_NAMESPACE_USING
@@ -82,6 +83,17 @@ TBOOL ARenderer::CreateTRender()
 TBOOL ARenderer::CreateTRenderResources()
 {
 	TIMPLEMENT();
+
+	auto pRenderer = TSTATICCAST(TRenderD3DInterface*, TRenderInterface::GetSingleton());
+
+	TResource* pTextureFactory = pRenderer->CreateResource(
+		TClass::Find("TTextureFactoryHAL"),
+		"TextureFactory",
+		TNULL
+	);
+
+	pRenderer->SetResourceExplicit(pTextureFactory, TRenderInterface::SYSRESOURCE_TEXTUREFACTORY);
+	pTextureFactory->Create();
 
 	return TTRUE;
 }

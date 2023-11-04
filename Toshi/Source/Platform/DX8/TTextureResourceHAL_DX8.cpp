@@ -59,7 +59,7 @@ namespace Toshi {
 		}
 	}
 
-	void TTextureResourceHAL::CreateShared(void* a_pUnknown)
+	void TTextureResourceHAL::CreateFromT2Texture(void* a_pUnknown)
 	{
 		TIMPLEMENT();
 		TASSERT(TFALSE, "This is probably unused but it's important if it's actually used");

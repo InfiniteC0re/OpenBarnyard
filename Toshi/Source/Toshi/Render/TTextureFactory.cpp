@@ -28,13 +28,19 @@ namespace Toshi {
 
 	void TTextureFactory::Dump() const
 	{
-		TIMPLEMENT();
+		TUINT uiTexIndex = 0;
 
 		for (TUINT32 i = 0; i < NUM_LISTS; i++)
 		{
 			for (auto it = m_aLists[i].Begin(); it != m_aLists[i].End(); it++)
 			{
-
+#if 1
+				TOSHI_CORE_TRACE("[{0}] Texture [{1}]: W={2} , H={3}", uiTexIndex++, it->GetName(), it->GetTexture()->GetWidth(), it->GetTexture()->GetHeight());
+#else
+				TString8 output;
+				output.Format("[%d] Texture [%s]: W=%d , H=%d\n", uiTexIndex++, it->GetName(), it->GetTexture()->GetWidth(), it->GetTexture()->GetHeight());
+				OutputDebugStringA(output);
+#endif
 			}
 		}
 	}

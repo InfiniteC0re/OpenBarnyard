@@ -10,17 +10,11 @@ namespace Toshi {
 		public TGenericClassDerived<TTextureResourceHAL, TTexture, "TTextureResourceHAL", TMAKEVERSION(1, 0), TTRUE>
 	{
 	public:
-		static TObject* CreateTObject()
-		{
-			void* pTexture = ms_oFreeList.New(sizeof(TTextureResourceHAL));
+		void* operator new(size_t s) { return ms_oFreeList.New(sizeof(TTextureResourceHAL)); }
+		void* operator new(size_t s, void* where) { return where; }
 
-			if (pTexture)
-			{
-				return new (pTexture) TTextureResourceHAL;
-			}
-
-			return TNULL;
-		}
+		void operator delete(void* ptr) { ms_oFreeList.Delete(ptr); }
+		void operator delete(void* ptr, void* where) { delete ptr; }
 
 		static TFreeList ms_oFreeList;
 
@@ -44,7 +38,7 @@ namespace Toshi {
 		virtual TUINT GetHeight() override;
 		virtual TBOOL Lock(TTexture::LOCKSTATE& a_rLockState) override;
 		virtual void Unlock() override;
-		virtual void CreateShared(void* a_pUnknown) override;
+		virtual void CreateFromT2Texture(void* a_pUnknown) override;
 		virtual TBOOL Create(void* a_pData, TUINT a_uiDataSize, TUINT a_eTextureFlags, TUINT a_uiWidth, TUINT a_uiHeight) override;
 		virtual TBOOL Create(const char* a_szFileName, TUINT a_eTextureFlags) override;
 		virtual TBOOL CreateEx(void* a_pData, TUINT a_uiDataSize, TUINT a_uiWidth, TUINT a_uiHeight, TUINT a_uiMipLevels, TTEXTURERESOURCEFORMAT a_eFormat, BOOL a_bNoMipLevels) override;
