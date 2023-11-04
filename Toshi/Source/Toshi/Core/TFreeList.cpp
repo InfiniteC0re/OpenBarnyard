@@ -3,9 +3,9 @@
 
 namespace Toshi {
 
-	TFreeList::TFreeList(int size, int a_iInitialSize, int a_iGrowSize)
+	TFreeList::TFreeList(TUINT a_uiItemSize, TINT a_iInitialSize, TINT a_iGrowSize)
 	{
-		m_iItemSize = size;
+		m_uiItemSize = a_uiItemSize;
 		m_iCapacity = 0;
 		m_pLastNode = TNULL;
 		m_pRootBlock = TNULL;
@@ -17,7 +17,7 @@ namespace Toshi {
 		ms_pRootFreeList = this;
 	}
 
-	void* TFreeList::Allocate(int a_iNumber, int size)
+	void* TFreeList::Allocate(TINT a_iNumber, TINT a_iSize)
 	{
 		TASSERT(a_iNumber > 0);
 		m_iCapacity += a_iNumber;
@@ -26,11 +26,11 @@ namespace Toshi {
 
 		if (m_pMemoryHeap != TNULL)
 		{
-			newList = reinterpret_cast<TFreeList*>(m_pMemoryHeap->Malloc(a_iNumber * size + 4));
+			newList = TREINTERPRETCAST(TFreeList*, m_pMemoryHeap->Malloc(a_iNumber * a_iSize + 4));
 		}
 		else
 		{
-			newList = reinterpret_cast<TFreeList*>(TMalloc(a_iNumber * size + 4));
+			newList = TREINTERPRETCAST(TFreeList*, TMalloc(a_iNumber * a_iSize + 4));
 		}
 
 		a_iNumber--;
@@ -44,26 +44,36 @@ namespace Toshi {
 		{
 			newList2 = newList;
 			newList2->m_pNextBlock = newList;
-			newList = m_pNextBlock + size;
+			newList = m_pNextBlock + a_iSize;
 			newList = newList2;
 		}
 		m_pLastNode = newList2;
 		return newList;
 	}
 
-	void* TFreeList::New(uint32_t size)
+	void TFreeList::SetCapacity(TINT a_iNewCapacity)
 	{
-		if (size != m_iItemSize)
+		if (m_iCapacity < a_iNewCapacity)
 		{
-			return TMalloc(size);
+			auto pBlock = TREINTERPRETCAST(TFreeList*, Allocate(a_iNewCapacity - m_iCapacity, m_uiItemSize));
+			pBlock->m_pNextBlock = m_pLastNode;
+			m_pLastNode = pBlock;
+		}
+	}
+
+	void* TFreeList::New(TUINT a_uiSize)
+	{
+		if (a_uiSize != m_uiItemSize)
+		{
+			return TMalloc(a_uiSize);
 		}
 
 		TFreeList* lastNode = m_pLastNode;
 
 		if (lastNode == TNULL)
 		{
-			TASSERT((0 < m_iGrowSize), "Tried to grow TFreeList with 0 grow size\n");
-			return Allocate(m_iGrowSize, size);
+			TASSERT((0 < m_iGrowSize), "Tried to grow TFreeList with 0 grow size");
+			return Allocate(m_iGrowSize, a_uiSize);
 		}
 
 		m_pLastNode = m_pLastNode->m_pNextBlock;

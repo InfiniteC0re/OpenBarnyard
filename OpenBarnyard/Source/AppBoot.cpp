@@ -17,6 +17,7 @@
 #include <Toshi/Input/TInputInterface.h>
 
 #include <Platform/Windows/TSound_Win.h>
+#include <Platform/DX8/TTextureResourceHAL_DX8.h>
 
 #include TOSHI_MULTIRENDER(TRenderInterface)
 
@@ -37,6 +38,9 @@ TBOOL AApplication::OnCreate(int argc, char** argv)
 
 	if (!CreateStringPool())
 		return TFALSE;
+
+	TTextureResourceHAL::ms_oFreeList.SetCapacity(690);
+	TTextureResourceHAL::ms_oFreeList.SetGrowSize(0);
 
 	ALocaleManager* pLocaleManager = T2Locale::CreateSingleton<ALocaleManager>();
 	TTODO("Create some instances of some classes");
