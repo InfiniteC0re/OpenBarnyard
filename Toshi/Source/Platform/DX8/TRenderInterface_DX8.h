@@ -64,7 +64,6 @@ namespace Toshi {
 		TBOOL IsTextureFormatSupportedImpl(D3DFORMAT a_eFormat);
 
 		TBOOL Create(const char* a_szWindowName);
-		void PrintError(TINT32 a_eError, const char* a_szInfo);
 		void BuildAdapterDatabase();
 		void DestroyAccelTable();
 		void CreateAccelTable();
@@ -79,6 +78,7 @@ namespace Toshi {
 			m_bExited = TTRUE;
 		}
 
+		static void PrintError(TINT32 a_eError, const char* a_szInfo);
 		static const char* GetErrorString(TINT32 a_eError);
 		static const char* GetErrorDescription(TINT32 a_eError);
 

@@ -293,6 +293,8 @@ namespace Toshi {
 		TString8 string;
 		string.Format("> %s: D3D Error [%s] : Description [%s] !\n", a_szInfo, errString, errDescription);
 		OutputDebugStringA(string);
+		
+		TASSERT(TFALSE, string);
 	}
 
 	TBOOL TRenderD3DInterface::Destroy()

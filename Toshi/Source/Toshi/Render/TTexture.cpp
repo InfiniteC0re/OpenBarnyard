@@ -6,7 +6,7 @@ namespace Toshi {
 	TTexture::TTexture()
 	{
 		m_Unk1 = 0;
-		m_Unk2 = 0;
+		m_eTextureFlags = 0;
 		m_pNameEntry = TNULL;
 	}
 
@@ -25,7 +25,7 @@ namespace Toshi {
 
 	}
 
-	TBOOL TTexture::CreateEx(void*, TUINT, TUINT, TUINT, TUINT, TTEXTURERESOURCEFORMAT, TUINT)
+	TBOOL TTexture::CreateEx(void* a_pData, TUINT a_uiDataSize, TUINT a_uiWidth, TUINT a_uiHeight, TUINT a_uiMipLevels, TTEXTURERESOURCEFORMAT a_eFormat, BOOL a_bNoMipLevels)
 	{
 		return TResource::Create();
 	}

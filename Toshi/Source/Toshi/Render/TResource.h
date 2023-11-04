@@ -38,6 +38,8 @@ namespace Toshi
 		virtual TBOOL Validate();
 		virtual void Invalidate();
 		virtual void DestroyResource();
+		virtual TBOOL Unknown1() { return TTRUE; }
+		virtual TBOOL Unknown2() { return TTRUE; }
 		virtual void OnDestroy();
 
 		TBOOL IsDead() const { return m_State & TResourceState_Dead; }

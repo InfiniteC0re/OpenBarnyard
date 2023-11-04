@@ -12,7 +12,8 @@ namespace Toshi {
 	public:
 		struct LOCKSTATE
 		{
-
+			TINT Pitch;
+			void* pBits;
 		};
 
 		friend TTextureFactory;
@@ -21,18 +22,33 @@ namespace Toshi {
 		TTexture();
 		~TTexture();
 
-		virtual TINT GetWidth() const = 0;
-		virtual TINT GetHeight() const = 0;
+		virtual TUINT GetWidth() = 0;
+		virtual TUINT GetHeight() = 0;
 		virtual TBOOL Lock(LOCKSTATE& a_rLockState);
 		virtual void Unlock();
-		virtual void Unknown(void* a_pUnknown) = 0;
-		virtual TBOOL Create(void*, TUINT, TUINT, TUINT, TUINT) = 0;
-		virtual TBOOL Create(const char*, TUINT) = 0;
-		virtual TBOOL CreateEx(void*, TUINT, TUINT, TUINT, TUINT, TTEXTURERESOURCEFORMAT, TUINT);
+		virtual void CreateShared(void* a_pUnknown) = 0;
+		virtual TBOOL Create(void* a_pData, TUINT a_uiDataSize, TUINT a_eTextureFlags, TUINT a_uiWidth, TUINT a_uiHeight) = 0;
+		virtual TBOOL Create(const char* a_szFileName, TUINT a_eTextureFlags) = 0;
+		virtual TBOOL CreateEx(void* a_pData, TUINT a_uiDataSize, TUINT a_uiWidth, TUINT a_uiHeight, TUINT a_uiMipLevels, TTEXTURERESOURCEFORMAT a_eFormat, BOOL a_bNoMipLevels);
 
-	private:
+		TBOOL CreateResource(void* a_pData, TUINT a_uiDataSize, TUINT a_eTextureFlags, TUINT a_uiWidth, TUINT a_uiHeight)
+		{
+			return TResource::Create();
+		}
+
+		TBOOL CreateResource(const char* a_szFileName, TUINT a_eTextureFlags)
+		{
+			return TResource::Create();
+		}
+
+		TBOOL CreateResource(void* a_pData, TUINT a_uiDataSize, TUINT a_uiWidth, TUINT a_uiHeight, TUINT a_uiMipLevels, TTEXTURERESOURCEFORMAT a_eFormat, BOOL a_bNoMipLevels)
+		{
+			return TResource::Create();
+		}
+
+	protected:
 		int m_Unk1;
-		int m_Unk2;
+		TUINT m_eTextureFlags;
 		TTextureFactory::NameEntry* m_pNameEntry;
 	};
 
