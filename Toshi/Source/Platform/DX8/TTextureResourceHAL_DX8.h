@@ -1,13 +1,42 @@
 #pragma once
 #include "Toshi/Render/TTexture.h"
+#include "Toshi/Core/TFreeList.h"
 
 #include <d3dx8.h>
 
 namespace Toshi {
 
-	class TTextureResourceHAL : public TTexture
+	class TTextureResourceHAL :
+		public TGenericClassDerived<TTextureResourceHAL, TTexture, "TTextureResourceHAL", TMAKEVERSION(1, 0), TTRUE>
 	{
 	public:
+		static TObject* CreateTObject()
+		{
+			void* pTexture = ms_oFreeList.New(sizeof(TTextureResourceHAL));
+
+			if (pTexture)
+			{
+				return new (pTexture) TTextureResourceHAL;
+			}
+
+			return TNULL;
+		}
+
+		static TFreeList ms_oFreeList;
+
+	public:
+		TTextureResourceHAL()
+		{
+			m_iNumLocks = 0;
+			m_bLoadFromMemory = TFALSE;
+			m_bIsShared = TFALSE;
+			m_pData = TNULL;
+			m_uiDataSize = 0;
+			m_pD3DTexture = TNULL;
+			m_iUnk1 = 0;
+			m_iUnk2 = 0;
+		}
+
 		virtual TBOOL Validate() override;
 		virtual void Invalidate() override;
 

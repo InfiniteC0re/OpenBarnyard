@@ -14,8 +14,10 @@ project "Toshi"
 		"fmodstudio_vc.lib",
 		"fsbank_vc.lib",
 		"d3d8.lib",
+		"d3dx8.lib",
 		"dxguid.lib",
 		"dxgi.lib",
+		"legacy_stdio_definitions.lib",
 		"winmm.lib",
 		"dinput8.lib"
 	}

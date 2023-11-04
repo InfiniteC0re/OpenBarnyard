@@ -24,6 +24,11 @@ project "OpenBarnyard"
 		"Source/**.h",
 		"Source/**.cpp",
 	}
+	
+	libdirs
+	{
+		"%{LibDir.dx8}"
+	}
 
 	includedirs
 	{
