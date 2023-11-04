@@ -71,4 +71,5 @@ public:
 
 public:
 	static void CreatePool(POOL a_ePool);
+	static Toshi::T2GlobalAllocator* GetAllocator(POOL a_ePool);
 };

@@ -112,10 +112,10 @@ namespace Toshi
 
 		static inline func_DefaultAllocatorCB sm_pDefaultAllocatorCB = &GetDefaultAllocatorCB;
 
-		char* m_pBuffer = NullString; // 0x0
-		uint8_t m_iExcessLen = 0;     // 0x4
-		uint32_t m_iStrLen : 24 = 0;  // 0x5
-		T2Allocator* m_pAllocator;    // 0x8
+		char* m_pBuffer = NullString;  // 0x0
+		uint32_t m_iExcessLen : 8 = 0; // 0x4
+		uint32_t m_iStrLen : 24 = 0;   // 0x5
+		T2Allocator* m_pAllocator;     // 0x8
 	};
 }
 
