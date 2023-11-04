@@ -3,7 +3,7 @@
 
 namespace Toshi {
 
-	template <class T>
+	template <class T, int Unknown = 0>
 	class T2SList
 	{
 	public:
