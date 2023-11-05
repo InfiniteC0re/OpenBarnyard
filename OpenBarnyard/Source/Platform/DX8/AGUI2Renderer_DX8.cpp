@@ -317,30 +317,21 @@ void AGUI2RendererDX8::RenderRectangle(const Toshi::TVector2& a, const Toshi::TV
 		UpdateTransform();
 	}
 
-	sm_Vertices[0].Position.x = a.x;
-	sm_Vertices[0].Position.y = a.y;
-	sm_Vertices[0].Position.z = sm_fZCoordinate;
+	sm_Vertices[0].Position = { a.x, a.y, sm_fZCoordinate };
 	sm_Vertices[0].Colour = m_uiColour;
-	sm_Vertices[0].UV.x = uv1.x;
-	sm_Vertices[0].UV.y = uv1.y;
-	sm_Vertices[1].Position.y = a.y;
-	sm_Vertices[1].Position.x = b.x;
-	sm_Vertices[1].Position.z = sm_fZCoordinate;
+	sm_Vertices[0].UV = { uv1.x, uv1.y };
+
+	sm_Vertices[1].Position = { b.x, a.y, sm_fZCoordinate };
 	sm_Vertices[1].Colour = m_uiColour;
-	sm_Vertices[1].UV.y = uv1.y;
-	sm_Vertices[1].UV.x = uv2.x;
-	sm_Vertices[2].Position.y = b.y;
-	sm_Vertices[2].Position.x = a.x;
-	sm_Vertices[2].Position.z = sm_fZCoordinate;
+	sm_Vertices[1].UV = { uv2.x, uv1.y };
+
+	sm_Vertices[2].Position = { a.x, b.y, sm_fZCoordinate };
 	sm_Vertices[2].Colour = m_uiColour;
-	sm_Vertices[2].UV.y = uv2.y;
-	sm_Vertices[2].UV.x = uv1.x;
-	sm_Vertices[3].Position.y = b.y;
-	sm_Vertices[3].Position.x = b.x;
-	sm_Vertices[3].Position.z = sm_fZCoordinate;
+	sm_Vertices[2].UV = { uv1.x, uv2.y };
+
+	sm_Vertices[3].Position = { b.x, b.y, sm_fZCoordinate };
 	sm_Vertices[3].Colour = m_uiColour;
-	sm_Vertices[3].UV.y = uv2.y;
-	sm_Vertices[3].UV.x = uv2.x;
+	sm_Vertices[3].UV = { uv2.x, uv2.y };
 
 	auto pRender = TSTATICCAST(TRenderD3DInterface*, TRenderInterface::GetSingleton());
 	pRender->GetDirect3DDevice()->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, sm_Vertices, sizeof(Vertex));
@@ -348,17 +339,55 @@ void AGUI2RendererDX8::RenderRectangle(const Toshi::TVector2& a, const Toshi::TV
 
 void AGUI2RendererDX8::RenderTriStrip(Toshi::TVector2* vertices, Toshi::TVector2* UV, uint32_t numverts)
 {
-	
+	TIMPLEMENT();
 }
 
 void AGUI2RendererDX8::RenderLine(const Toshi::TVector2& a, const Toshi::TVector2& b)
 {
-	
+	auto pMaterial = m_pMaterial;
+	SetMaterial(TNULL);
+
+	if (m_bIsTransformDirty)
+	{
+		UpdateTransform();
+	}
+
+	sm_Vertices[0].Position = { a.x, a.y, 0.0f };
+	sm_Vertices[0].Colour = m_uiColour;
+	sm_Vertices[0].UV = { 0.0f, 0.0f };
+
+	sm_Vertices[1].Position = { b.x, b.y, 0.0f };
+	sm_Vertices[1].Colour = m_uiColour;
+	sm_Vertices[1].UV = { 0.0f, 0.0f };
+
+	auto pRender = TSTATICCAST(TRenderD3DInterface*, TRenderInterface::GetSingleton());
+	pRender->GetDirect3DDevice()->DrawPrimitiveUP(D3DPT_LINELIST, 1, sm_Vertices, sizeof(Vertex));
+
+	SetMaterial(pMaterial);
 }
 
 void AGUI2RendererDX8::RenderLine(float x1, float y1, float x2, float y2)
 {
-	
+	auto pMaterial = m_pMaterial;
+	SetMaterial(TNULL);
+
+	if (m_bIsTransformDirty)
+	{
+		UpdateTransform();
+	}
+
+	sm_Vertices[0].Position = { x1, y1, 0.0f };
+	sm_Vertices[0].Colour = m_uiColour;
+	sm_Vertices[0].UV = { 0.0f, 0.0f };
+
+	sm_Vertices[1].Position = { x2, y2, 0.0f };
+	sm_Vertices[1].Colour = m_uiColour;
+	sm_Vertices[1].UV = { 0.0f, 0.0f };
+
+	auto pRender = TSTATICCAST(TRenderD3DInterface*, TRenderInterface::GetSingleton());
+	pRender->GetDirect3DDevice()->DrawPrimitiveUP(D3DPT_LINELIST, 1, sm_Vertices, sizeof(Vertex));
+
+	SetMaterial(pMaterial);
 }
 
 void AGUI2RendererDX8::RenderOutlineRectangle(const Toshi::TVector2& a, const Toshi::TVector2& b)
