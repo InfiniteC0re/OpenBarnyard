@@ -7,6 +7,7 @@
 namespace Toshi {
 
 	class TTexture;
+	class T2Texture;
 
 	class TTextureFactory : 
 		public TGenericClassDerived<TTextureFactory, TResource, "TTextureFactory", TMAKEVERSION(1, 0), TFALSE>
@@ -39,7 +40,7 @@ namespace Toshi {
 		virtual TTexture* CreateTextureFromFile(const char* a_szFilePath, TUINT32 a_eTextureFlags) = 0;
 		virtual TTexture* CreateTextureFromMemory(void* a_pData, TUINT a_uiDataSize, TUINT a_eTextureFlags, TUINT a_uiWidth, TUINT a_uiHeight) = 0;
 		virtual TTexture* CreateEx(void* a_pData, TUINT a_uiDataSize, TUINT a_uiWidth, TUINT a_uiHeight, TUINT a_uiMipLevels, TTEXTURERESOURCEFORMAT a_eFormat, BOOL a_bNoMipLevels) = 0;
-		virtual TTexture* CreateFromT2Texture(void* a_pUnk) = 0; // TODO: Figure out it's parameters
+		virtual TTexture* CreateFromT2Texture(T2Texture* a_pTexture) = 0;
 
 		TTexture* FindTexture(const char* a_szName) const;
 		NameEntry* RegisterTexture(const char* a_szName, TTexture* a_pTexture);

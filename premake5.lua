@@ -1,7 +1,7 @@
 include "Settings.lua"
 include "Dependencies.lua"
 
-workspace "Toshi"
+workspace "OpenBarnyard"
 	platforms "Windows"
 	configurations { "Debug", "Release", "Dist" }
 	

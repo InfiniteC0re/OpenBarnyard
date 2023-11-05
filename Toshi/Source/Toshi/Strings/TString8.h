@@ -55,8 +55,8 @@ namespace Toshi
 		TString8 Mid(uint32_t param_1, uint32_t param_2) const;
 		TString8 Right(int param_1) const { return Mid(param_1, Length() - param_1); }
 
-		TString8& MakeUpper() { _strupr_s(m_pBuffer, m_iStrLen); return *this; }
-		TString8& MakeLower() { _strlwr_s(m_pBuffer, m_iStrLen); return *this; }
+		TString8& MakeUpper() { _strupr(m_pBuffer); return *this; }
+		TString8& MakeLower() { _strlwr(m_pBuffer); return *this; }
 
 		uint32_t Length() const { return m_iStrLen; }
 		uint8_t ExcessLength() const { return m_iExcessLen; }

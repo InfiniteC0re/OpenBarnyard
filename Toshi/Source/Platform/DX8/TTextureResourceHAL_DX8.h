@@ -23,7 +23,7 @@ namespace Toshi {
 		{
 			m_iNumLocks = 0;
 			m_bLoadFromMemory = TFALSE;
-			m_bIsShared = TFALSE;
+			m_bIsToshi2 = TFALSE;
 			m_pData = TNULL;
 			m_uiDataSize = 0;
 			m_pD3DTexture = TNULL;
@@ -38,7 +38,7 @@ namespace Toshi {
 		virtual TUINT GetHeight() override;
 		virtual TBOOL Lock(TTexture::LOCKSTATE& a_rLockState) override;
 		virtual void Unlock() override;
-		virtual void CreateFromT2Texture(void* a_pUnknown) override;
+		virtual void CreateFromT2Texture(T2Texture* a_pTexture) override;
 		virtual TBOOL Create(void* a_pData, TUINT a_uiDataSize, TUINT a_eTextureFlags, TUINT a_uiWidth, TUINT a_uiHeight) override;
 		virtual TBOOL Create(const char* a_szFileName, TUINT a_eTextureFlags) override;
 		virtual TBOOL CreateEx(void* a_pData, TUINT a_uiDataSize, TUINT a_uiWidth, TUINT a_uiHeight, TUINT a_uiMipLevels, TTEXTURERESOURCEFORMAT a_eFormat, BOOL a_bNoMipLevels) override;
@@ -57,7 +57,7 @@ namespace Toshi {
 	private:
 		TINT m_iNumLocks;
 		TBOOL m_bLoadFromMemory;
-		TBOOL m_bIsShared;
+		TBOOL m_bIsToshi2;
 		void* m_pData;
 		TUINT m_uiDataSize;
 		TUINT m_uiWidth;

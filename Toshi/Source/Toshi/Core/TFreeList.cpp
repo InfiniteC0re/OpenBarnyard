@@ -7,57 +7,49 @@ namespace Toshi {
 	{
 		m_uiItemSize = a_uiItemSize;
 		m_iCapacity = 0;
-		m_pLastNode = TNULL;
-		m_pRootBlock = TNULL;
 		m_pMemoryHeap = TNULL;
 		TASSERT(m_iGrowSize >= 0);
 		TASSERT(a_iInitialSize >= 0);
 		SetGrowSize(a_iGrowSize);
-		m_pNextBlock = ms_pRootFreeList;
-		ms_pRootFreeList = this;
+
+		m_pPrevList = ms_pLastList;
+		ms_pLastList = this;
 	}
 
-	void* TFreeList::Allocate(TINT a_iNumber, TINT a_iSize)
+	TFreeList::Node* TFreeList::Allocate(TINT a_iNumber, TINT a_iSize)
 	{
 		TASSERT(a_iNumber > 0);
 		m_iCapacity += a_iNumber;
 
-		TFreeList* newList = TNULL;
+		Node* pNewNode = (m_pMemoryHeap != TNULL) ?
+			TREINTERPRETCAST(Node*, m_pMemoryHeap->Malloc(a_iNumber * a_iSize + sizeof(Node))) :
+			TREINTERPRETCAST(Node*, TMalloc(a_iNumber * a_iSize + sizeof(Node)));
 
-		if (m_pMemoryHeap != TNULL)
+		pNewNode->pNext = m_RootNode.pNext;
+		m_RootNode.pNext = pNewNode;
+
+		auto pData = pNewNode + 1;
+		Node* pNext = TNULL;
+
+		for (TINT i = a_iNumber - 1; i != 0; i--)
 		{
-			newList = TREINTERPRETCAST(TFreeList*, m_pMemoryHeap->Malloc(a_iNumber * a_iSize + 4));
+			pData->pNext = pNext;
+			pNext = pData;
+
+			pData = TREINTERPRETCAST(Node*, TREINTERPRETCAST(uintptr_t, pData) + a_iSize);
 		}
-		else
-		{
-			newList = TREINTERPRETCAST(TFreeList*, TMalloc(a_iNumber * a_iSize + 4));
-		}
 
-		a_iNumber--;
-
-		newList->m_pNextBlock = m_pRootBlock;
-		m_pRootBlock = newList;
-
-		TFreeList* newList2 = TNULL;
-
-		for (size_t i = a_iNumber; i > 0; i--)
-		{
-			newList2 = newList;
-			newList2->m_pNextBlock = newList;
-			newList = m_pNextBlock + a_iSize;
-			newList = newList2;
-		}
-		m_pLastNode = newList2;
-		return newList;
+		return pData;
 	}
 
 	void TFreeList::SetCapacity(TINT a_iNewCapacity)
 	{
 		if (m_iCapacity < a_iNewCapacity)
 		{
-			auto pBlock = TREINTERPRETCAST(TFreeList*, Allocate(a_iNewCapacity - m_iCapacity, m_uiItemSize));
-			pBlock->m_pNextBlock = m_pLastNode;
-			m_pLastNode = pBlock;
+			auto pNode = Allocate(a_iNewCapacity - m_iCapacity, m_uiItemSize);
+
+			pNode->pNext = m_LastNode.pNext;
+			m_LastNode.pNext = pNode;
 		}
 	}
 
@@ -68,29 +60,31 @@ namespace Toshi {
 			return TMalloc(a_uiSize);
 		}
 
-		TFreeList* lastNode = m_pLastNode;
-
-		if (lastNode == TNULL)
+		if (m_LastNode.pNext != TNULL)
 		{
-			TASSERT((0 < m_iGrowSize), "Tried to grow TFreeList with 0 grow size");
-			return Allocate(m_iGrowSize, a_uiSize);
-		}
-
-		m_pLastNode = m_pLastNode->m_pNextBlock;
-		return lastNode;
-	}
-
-	void TFreeList::Delete(void* a_pData)
-	{
-		if (m_pLastNode)
-		{
-			a_pData = m_pLastNode;
-			m_pLastNode = TSTATICCAST(TFreeList*, a_pData);
+			auto pNode = m_LastNode.pNext;
+			m_LastNode.pNext = pNode;
+			return pNode;
 		}
 		else
 		{
-			m_pLastNode = TSTATICCAST(TFreeList*, a_pData);
-			a_pData = TNULL;
+			return Allocate(m_iGrowSize, a_uiSize);
+		}
+	}
+
+	void TFreeList::Delete(void* a_Ptr)
+	{
+		Node* pNode = TSTATICCAST(Node*, a_Ptr);
+
+		if (m_LastNode.pNext != TNULL)
+		{
+			pNode->pNext = m_LastNode.pNext;
+			m_LastNode.pNext = pNode;
+		}
+		else
+		{
+			m_LastNode.pNext = pNode;
+			pNode->pNext = TNULL;
 		}
 	}
 

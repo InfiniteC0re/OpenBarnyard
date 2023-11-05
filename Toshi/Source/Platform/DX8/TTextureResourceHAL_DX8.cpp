@@ -1,6 +1,7 @@
 #include "ToshiPCH.h"
 #include "TTextureResourceHAL_DX8.h"
 
+#include "T2Texture_DX8.h"
 #include "TRenderInterface_DX8.h"
 
 #include <d3dtypes.h>
@@ -59,17 +60,18 @@ namespace Toshi {
 		}
 	}
 
-	void TTextureResourceHAL::CreateFromT2Texture(void* a_pUnknown)
+	void TTextureResourceHAL::CreateFromT2Texture(T2Texture* a_pTexture)
 	{
-		TIMPLEMENT();
-		TASSERT(TFALSE, "This is probably unused but it's important if it's actually used");
-
-		m_bIsShared = TTRUE;
+		m_bIsToshi2 = TTRUE;
+		m_uiWidth = a_pTexture->GetWidth();
+		m_uiHeight = a_pTexture->GetHeight();
+		m_uiMipLevels = a_pTexture->GetMipLevels();
 		m_bNoMipLevels = FALSE;
 		m_eResourceFormat = TTEXTURERESOURCEFORMAT::Unknown;
 		m_iUnk1 = 0;
 		m_iUnk2 = 0;
-		// ...
+		m_ImageInfo = a_pTexture->GetImageInfo();
+		m_pD3DTexture = a_pTexture->GetD3DTexture();
 
 		TResource::Create();
 		TResource::Validate();
@@ -312,7 +314,7 @@ namespace Toshi {
 	{
 		if (IsCreated() && IsValid()) 
 		{
-			if (m_bIsShared == TTRUE)
+			if (m_bIsToshi2 == TTRUE)
 			{
 				m_pD3DTexture = TNULL;
 			}

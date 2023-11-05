@@ -82,7 +82,7 @@ namespace Toshi {
 		return pTexture;
 	}
 
-	TTexture* TTextureFactoryHAL::CreateFromT2Texture(void* a_pUnk)
+	TTexture* TTextureFactoryHAL::CreateFromT2Texture(T2Texture* a_pTexture)
 	{
 		static TUINT s_iNumMemTextures = 0;
 		static char s_szName[32];
@@ -103,7 +103,7 @@ namespace Toshi {
 			)
 		);
 
-		pTexture->CreateFromT2Texture(a_pUnk);
+		pTexture->CreateFromT2Texture(a_pTexture);
 		RegisterTexture(s_szName, pTexture);
 
 		return pTexture;

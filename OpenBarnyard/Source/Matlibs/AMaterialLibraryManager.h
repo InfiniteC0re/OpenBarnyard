@@ -1,30 +1,11 @@
 #pragma once
+#include "AMaterialLibrary.h"
+
 #include <Toshi/Strings/TPString8.h>
 #include <Plugins/PPropertyParser/PProperties.h>
-#include <Toshi/File/TTRB.h>
 #include <Toshi/Render/TTexture.h>
 #include <Toshi2/T2Map.h>
 #include <Toshi2/T2SList.h>
-#include <Toshi2/T2DList.h>
-
-class AMaterialLibrary :
-	public Toshi::T2DList<AMaterialLibrary>::Node
-{
-public:
-	AMaterialLibrary();
-
-	void SetPath(const char* a_szFilePath)
-	{
-		m_Path = a_szFilePath;
-	}
-
-private:
-	Toshi::TString8 m_Path;
-	int* m_Unk1;
-	int* m_Unk2;
-	int m_iNumTextures;
-	Toshi::TTRB m_TRB;
-};
 
 class AMaterialLibraryManager : 
 	public Toshi::TGenericClassDerived<AMaterialLibraryManager, Toshi::TObject, "AMaterialLibraryManager", TMAKEVERSION(1, 0), TTRUE>,
@@ -35,10 +16,8 @@ public:
 		public Toshi::TSingleton<List>
 	{
 	public:
-		AMaterialLibrary* CreateLibrary(const char* a_szFilePath, Toshi::TTRB* a_pTRB);
-
-		TBOOL LoadTTLData(void* a_pTTLData);
-		TBOOL LoadTTLFile(const char* a_szFilePath);
+		AMaterialLibrary* CreateLibraryFromAsset(const char* a_szFilePath, Toshi::TTRB* a_pTRB);
+		AMaterialLibrary::Texture* FindTexture(const char* a_szTextureName, AMaterialLibrary** a_ppMaterialLibrary, TINT* a_pTextureIndex);
 
 	private:
 		Toshi::T2DList<AMaterialLibrary> m_Libraries;
@@ -50,10 +29,41 @@ public:
 	public:
 		TextureSlot() = default;
 
-	public:
+		void SetTexture(Toshi::TTexture* a_pTexture)
+		{
+			m_pTexture = a_pTexture;
+		}
+
+		Toshi::TTexture* GetTexture() const
+		{
+			return m_pTexture;
+		}
+
+		void SetName(Toshi::TString8& a_Name)
+		{
+			m_Name = a_Name;
+			m_Name.MakeLower();
+		}
+
+		const Toshi::TString8& GetName()
+		{
+			return m_Name;
+		}
+
+		AMaterialLibrary* GetLibrary() const
+		{
+			return m_pMaterialLibrary;
+		}
+
+		void SetLibrary(AMaterialLibrary* a_pLibrary)
+		{
+			m_pMaterialLibrary = a_pLibrary;
+		}
+
+	private:
 		Toshi::TTexture* m_pTexture;
 		Toshi::TString8 m_Name;
-		AMaterialLibrary* m_MaterialLibrary;
+		AMaterialLibrary* m_pMaterialLibrary;
 	};
 
 	static constexpr TUINT NUM_SLOTS = 600;

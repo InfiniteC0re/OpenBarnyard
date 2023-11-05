@@ -58,6 +58,11 @@ namespace Toshi {
 			}
 		}
 
+		T* GetArray()
+		{
+			return m_pArray;
+		}
+
 		size_t GetSize() const
 		{
 			return GetAllocatedData()->m_uiSize;

@@ -62,8 +62,6 @@ void AMaterialLibraryManager::LoadFromProperties(const PPropertyValue* a_pProper
 
 void AMaterialLibraryManager::LoadLibrary(const Toshi::TPString8& a_rLibName, Toshi::TTRB* a_pTRB, TBOOL a_bIsGUI)
 {
-	TIMPLEMENT();
-
 	auto pRenderer = TRenderInterface::GetSingleton();
 
 	if (m_LoadedLibraries.Find(a_rLibName) == &m_LoadedLibraries.End()->GetSecond())
@@ -86,7 +84,7 @@ void AMaterialLibraryManager::LoadLibrary(const Toshi::TPString8& a_rLibName, To
 			fileFormat.GetString()
 		);
 
-		auto pLibrary = List::GetSingleton()->CreateLibrary(matlibPath, a_pTRB);
+		auto pLibrary = List::GetSingleton()->CreateLibraryFromAsset(matlibPath, a_pTRB);
 
 		if (pLibrary)
 		{
@@ -111,7 +109,25 @@ void AMaterialLibraryManager::LoadLibrary(const Toshi::TPString8& a_rLibName, To
 
 void AMaterialLibraryManager::CreateTextures(AMaterialLibrary* a_pMatLibrary)
 {
-	TIMPLEMENT();
+	auto pTextureFactory = TSTATICCAST(
+		TTextureFactory*,
+		TRenderInterface::GetSingleton()->GetSystemResource(TRenderInterface::SYSRESOURCE_TEXTUREFACTORY)
+	);
+	
+	for (TINT i = 0; i < a_pMatLibrary->GetNumTextures(); i++)
+	{
+		auto pMatlibTexture = a_pMatLibrary->GetTexture(i);
+		
+		auto pTexSlot = m_FreeTextures.PopFront();
+		m_iNumFreeTextures -= 1;
+
+		pTexSlot->SetName(pMatlibTexture->Name);
+		pTexSlot->SetLibrary(a_pMatLibrary);
+		pTexSlot->SetTexture(pTextureFactory->CreateFromT2Texture(pMatlibTexture->pTexture));
+
+		m_UsedTextures.PushFront(pTexSlot);
+		m_iNumUsedTextures += 1;
+	}
 }
 
 void AMaterialLibraryManager::OnLibraryLoaded(TBOOL a_bIsGUI)
@@ -127,7 +143,7 @@ void AMaterialLibraryManager::OnLibraryLoaded(TBOOL a_bIsGUI)
 	}
 }
 
-AMaterialLibrary* AMaterialLibraryManager::List::CreateLibrary(const char* a_szFilePath, Toshi::TTRB* a_pTRB)
+AMaterialLibrary* AMaterialLibraryManager::List::CreateLibraryFromAsset(const char* a_szFilePath, Toshi::TTRB* a_pTRB)
 {
 	auto pLibrary = new AMaterialLibrary;
 	pLibrary->SetPath(a_szFilePath);
@@ -157,16 +173,16 @@ AMaterialLibrary* AMaterialLibraryManager::List::CreateLibrary(const char* a_szF
 
 		if (pTTLData)
 		{
-			bSuccess = LoadTTLData(pTTLData);
+			bSuccess = pLibrary->LoadTTLData(pTTLData);
 		}
 		else
 		{
-			bSuccess = LoadTTLFile(a_szFilePath);
+			bSuccess = pLibrary->LoadTTLFile(a_szFilePath);
 		}
 	}
 	else
 	{
-		bSuccess = LoadTTLFile(a_szFilePath);
+		bSuccess = pLibrary->LoadTTLFile(a_szFilePath);
 	}
 
 	if (!bSuccess)
@@ -185,21 +201,33 @@ AMaterialLibrary* AMaterialLibraryManager::List::CreateLibrary(const char* a_szF
 	return pLibrary;
 }
 
-TBOOL AMaterialLibraryManager::List::LoadTTLData(void* a_pTTLData)
+AMaterialLibrary::Texture* AMaterialLibraryManager::List::FindTexture(const char* a_szTextureName, AMaterialLibrary** a_ppMaterialLibrary, TINT* a_pTextureIndex)
 {
-	TIMPLEMENT();
-	return TTRUE;
-}
+	TINT iIndex = -1;
+	auto it = m_Libraries.Begin();
 
-TBOOL AMaterialLibraryManager::List::LoadTTLFile(const char* a_szFilePath)
-{
-	TIMPLEMENT();
-	return TTRUE;
-}
+	while (true)
+	{
+		if (it == m_Libraries.End())
+		{
+			return TNULL;
+		}
 
-AMaterialLibrary::AMaterialLibrary()
-{
-	m_Unk1 = 0;
-	m_Unk2 = 0;
-	m_iNumTextures = 0;
+		iIndex = it->FindTextureIndex(a_szTextureName);
+		if (iIndex != -1) break;
+
+		it++;
+	}
+
+	if (a_ppMaterialLibrary)
+	{
+		*a_ppMaterialLibrary = it;
+	}
+
+	if (a_pTextureIndex)
+	{
+		*a_pTextureIndex = iIndex;
+	}
+
+	return it->GetTexture(iIndex);
 }
