@@ -17,7 +17,7 @@ public:
 	{
 	public:
 		AMaterialLibrary* CreateLibraryFromAsset(const char* a_szFilePath, Toshi::TTRB* a_pTRB);
-		AMaterialLibrary::Texture* FindTexture(const char* a_szTextureName, AMaterialLibrary** a_ppMaterialLibrary, TINT* a_pTextureIndex);
+		ATexture* FindTexture(const char* a_szTextureName, AMaterialLibrary** a_ppMaterialLibrary, TINT* a_pTextureIndex);
 
 	private:
 		Toshi::T2DList<AMaterialLibrary> m_Libraries;
@@ -84,6 +84,8 @@ public:
 
 	void CreateTextures(AMaterialLibrary* a_pMatLibrary);
 	void OnLibraryLoaded(TBOOL a_bIsGUI);
+
+	Toshi::TTexture* FindTexture(const char* a_szTextureName);
 
 private:
 	void DestroyLibrary(LibrariesMap::Node*& a_rpMaterialLibraryNode, TBOOL a_bUnused);

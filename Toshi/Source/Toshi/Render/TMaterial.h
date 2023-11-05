@@ -34,11 +34,9 @@ namespace Toshi
 			m_Flags = Flags_NULL;
 			m_pOwnerShader = TNULL;
 			m_iNumTex = 0;
-			m_pUVAnimation = TNULL;
 			TUtil::MemClear(m_pTextures, sizeof(m_pTextures));
 			m_pRegMaterial = TNULL;
 			m_Name[0] = '\0';
-			m_pMetaMat = TNULL;
 		}
 
 		virtual ~TMaterial() = default;
@@ -47,7 +45,6 @@ namespace Toshi
 		{
 			TASSERT(TTRUE == IsCreated());
 			m_Flags &= ~Flags_Created;
-			m_pUVAnimation = TNULL;
 		}
 
 		virtual TBOOL Create()
@@ -146,7 +143,5 @@ namespace Toshi
 		uint32_t m_iNumTex;                 // 0x10
 		TTexture* m_pTextures[MAXTEXTURES]; // 0x14
 		char m_Name[NAMESIZELIMIT + 1];     // 0x2C
-		void* m_pUVAnimation;               // 0x4C
-		T2Material* m_pMetaMat;             // 0x50
 	};
 }

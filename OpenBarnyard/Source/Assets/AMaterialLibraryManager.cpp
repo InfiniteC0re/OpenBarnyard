@@ -229,6 +229,19 @@ void AMaterialLibraryManager::OnLibraryLoaded(TBOOL a_bIsGUI)
 	}
 }
 
+Toshi::TTexture* AMaterialLibraryManager::FindTexture(const char* a_szTextureName)
+{
+	for (auto it = m_UsedTextures.Begin(); it != m_UsedTextures.End(); it = it->GetNext())
+	{
+		if (Toshi::TStringManager::String8CompareNoCase(it->GetName(), a_szTextureName) == 0)
+		{
+			return it->GetTexture();
+		}
+	}
+
+	return TNULL;
+}
+
 AMaterialLibrary* AMaterialLibraryManager::List::CreateLibraryFromAsset(const char* a_szFilePath, Toshi::TTRB* a_pTRB)
 {
 	auto pLibrary = new AMaterialLibrary;
@@ -287,7 +300,7 @@ AMaterialLibrary* AMaterialLibraryManager::List::CreateLibraryFromAsset(const ch
 	return pLibrary;
 }
 
-AMaterialLibrary::Texture* AMaterialLibraryManager::List::FindTexture(const char* a_szTextureName, AMaterialLibrary** a_ppMaterialLibrary, TINT* a_pTextureIndex)
+ATexture* AMaterialLibraryManager::List::FindTexture(const char* a_szTextureName, AMaterialLibrary** a_ppMaterialLibrary, TINT* a_pTextureIndex)
 {
 	TINT iIndex = -1;
 	auto it = m_Libraries.Begin();

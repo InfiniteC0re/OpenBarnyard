@@ -1,4 +1,6 @@
 #pragma once
+#include "ATexture.h"
+
 #include <Toshi/File/TTRB.h>
 
 #include <Toshi2/T2SimpleArray.h>
@@ -25,12 +27,6 @@ public:
 		const char* m_szPackName;
 	};
 
-	struct Texture
-	{
-		Toshi::T2Texture* pTexture;
-		Toshi::TString8 Name;
-	};
-
 public:
 	AMaterialLibrary();
 
@@ -47,7 +43,7 @@ public:
 		return m_iNumTextures;
 	}
 
-	Texture* GetTexture(TINT a_uiIndex)
+	ATexture* GetTexture(TINT a_uiIndex)
 	{
 		TASSERT(a_uiIndex < m_iNumTextures);
 		return m_pTextures + a_uiIndex;
@@ -63,8 +59,8 @@ private:
 
 private:
 	Toshi::TString8 m_Path;
-	Toshi::T2SimpleArray<Texture> m_TexturesArray;
-	Texture* m_pTextures;
+	Toshi::T2SimpleArray<ATexture> m_TexturesArray;
+	ATexture* m_pTextures;
 	TINT m_iNumTextures;
 	Toshi::TTRB m_TRB;
 };
