@@ -26,7 +26,7 @@ jobs:
       uses: microsoft/setup-msbuild@v1.1
     
     - name: Build the whole solution for debug
-      run: msbuild './Toshi.sln' -property:Configuration=Debug
+      run: msbuild './OpenBarnyard.sln' -property:Configuration=Debug
     
     - name: Publish Artifact
       uses: actions/upload-artifact@v2
