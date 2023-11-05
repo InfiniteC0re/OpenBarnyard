@@ -84,11 +84,7 @@ TBOOL AApplication::OnCreate(int argc, char** argv)
 		m_pRootTask->Activate(TTRUE);
 	}
 
-
-	AGUI2TextureSectionManager::Open("data/gui/texsec.trb", TNULL);
-	AGUI2TextureSection* pFoundSection = AGUI2::GetTextureSection("Bullseye_Mask");
-
-#if 1
+#if 0
 
 	for (int i = 0; i < pLocaleManager->GetNumStrings(); i++)
 	{

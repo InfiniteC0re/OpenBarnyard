@@ -4,6 +4,7 @@
 #include "Assets/AMaterialLibraryManager.h"
 #include "Assets/AAssetLoader.h"
 #include "Memory/AMemory.h"
+#include "AGUI2/AGUI2.h"
 
 #include <Plugins/PPropertyParser/PProperties.h>
 #include <Toshi/Core/TScheduler.h>
@@ -18,6 +19,8 @@ ARootTask::ARootTask()
 	AMemory::CreatePool(AMemory::POOL_Sound);
 
 	auto pSystemManager = TSystemManager::GetSingleton();
+
+	m_pGUI2 = pSystemManager->GetScheduler()->CreateTask(&TGetClass(AGUI2));
 	m_pRenderer = TSTATICCAST(ARenderer*, pSystemManager->GetScheduler()->CreateTask(&TGetClass(ARenderer)));
 
 	m_bRenderScene = TFALSE;
@@ -68,4 +71,9 @@ void ARootTask::LoadStartupData()
 	}
 
 	trb.Close();
+
+	if (m_pGUI2)
+	{
+		m_pGUI2->Create();
+	}
 }
