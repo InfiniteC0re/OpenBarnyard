@@ -30,7 +30,7 @@ public:
 public:
 	static void Multiply(AGUI2Transform& a_rOutTransform, const AGUI2Transform& a_rA, const AGUI2Transform& a_rB);
 
-private:
+public:
 	Toshi::TVector2 m_Rotation[2];
 	Toshi::TVector2 m_Position;
 };

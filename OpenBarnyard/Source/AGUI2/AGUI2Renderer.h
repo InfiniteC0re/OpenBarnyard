@@ -32,5 +32,5 @@ public:
 	virtual void RenderOutlineRectangle(const Toshi::TVector2& a, const Toshi::TVector2& b) = 0;
 	virtual void RenderFilledRectangle(const Toshi::TVector2& a, const Toshi::TVector2& b) = 0;
 	virtual void ScaleCoords(float& x, float& y) = 0;
-	virtual TFLOAT GetZCoordinate() = 0;
+	virtual void ResetZCoordinate() = 0;
 };

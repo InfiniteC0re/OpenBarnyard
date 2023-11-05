@@ -5,6 +5,10 @@
 class AGUI2Material : public Toshi::TMaterial
 {
 public:
+	friend class AGUI2Renderer;
+	friend class AGUI2RendererDX8;
+	
+public:
 	AGUI2Material()
 	{
 		m_iNumTex = 1;

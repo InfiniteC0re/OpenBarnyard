@@ -35,8 +35,8 @@ TBOOL AGUI2TextureSectionManager::Open(const char* a_szFileName, Toshi::TTRB* a_
 		symbolName[iFileNameLength + 1] = '\0';
 		TStringManager::String8ToLowerCase(symbolName);
 		TStringManager::String8Copy(symbolName + iFileNameLength + 1, "texturesections");
-		
-		return TTRUE;
+
+		g_defblock = TSTATICCAST(TRBHeader*, g_trb->GetSymbolAddress(symbolName));
 	}
 
 	g_sections = g_defblock->m_pSections;

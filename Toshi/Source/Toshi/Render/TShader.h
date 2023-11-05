@@ -22,6 +22,8 @@ namespace Toshi {
 			void AddShader(TShader* pShader);
 			void RemoveShader(TShader* pShader);
 
+			TShader* GetRootShader() { return m_pRoot; }
+
 		private:
 			TShader* m_pRoot;
 		};
@@ -44,6 +46,8 @@ namespace Toshi {
 
 		TBOOL IsCreated() const { return m_State.IsSet(State::Created); }
 		TBOOL IsValidated() const { return m_State.IsSet(State::Validated); }
+
+		TShader* GetNextShader() { return m_pNextShader; }
 
 	public:
 		inline static TShaderList sm_oShaderList;

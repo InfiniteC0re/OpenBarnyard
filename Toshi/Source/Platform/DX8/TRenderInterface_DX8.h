@@ -72,6 +72,7 @@ namespace Toshi {
 		void GetCurrentColourRamp();
 		TDebugD3DText* InitDebugText(TINT a_iBufferSize);
 		void SetDeviceDefaultStates();
+		void SetTextureStageState(DWORD a_iStage, TINT a_eType, TINT a_iUnk);
 
 		void BeginEndScene();
 
@@ -79,6 +80,9 @@ namespace Toshi {
 		{
 			m_bExited = TTRUE;
 		}
+
+	public:
+		static void FlushShaders();
 
 		static void PrintError(TINT32 a_eError, const char* a_szInfo);
 		static const char* GetErrorString(TINT32 a_eError);

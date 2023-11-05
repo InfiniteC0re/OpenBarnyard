@@ -20,6 +20,7 @@ public:
 
 public:
 	static AGUI2TextureSection* GetTextureSection(const char* a_szSectionName);
+	static AGUI2Context* GetContext() { return ms_pCurrentContext; }
 	static AGUI2Renderer* GetRenderer();
 
 private:

@@ -6,6 +6,8 @@
 #include "TTextureFactoryHAL_DX8.h"
 #include "TTextureResourceHAL_DX8.h"
 
+#include "Toshi/Render/TShader.h"
+
 namespace Toshi {
 	
 	TRenderD3DInterface::TRenderD3DInterface()
@@ -288,6 +290,16 @@ namespace Toshi {
 		return Create(s_Class.GetName());
 	}
 
+	void TRenderD3DInterface::FlushShaders()
+	{
+		GetSingleton()->FlushOrderTables();
+
+		for (auto it = TShader::sm_oShaderList.GetRootShader(); it != TNULL; it = it->GetNextShader())
+		{
+			it->Flush();
+		}
+	}
+
 	void TRenderD3DInterface::PrintError(TINT32 a_eError, const char* a_szInfo)
 	{
 		if (!a_szInfo)
@@ -553,6 +565,55 @@ namespace Toshi {
 		m_pDirectDevice->SetTextureStageState(0, D3DTSS_MINFILTER, 2);
 		m_pDirectDevice->SetTextureStageState(0, D3DTSS_MAGFILTER, 2);
 		m_pDirectDevice->SetTextureStageState(0, D3DTSS_MIPFILTER, 2);
+	}
+
+	void TRenderD3DInterface::SetTextureStageState(DWORD a_iStage, TINT a_eType, TINT a_iUnk)
+	{
+		// TODO: Refactor
+
+		DWORD DVar1;
+
+		if (a_eType == 0) {
+			DVar1 = 1;
+			if (a_iUnk == 0) goto LAB_006c618c;
+			if (a_iUnk == 1) goto LAB_006c61da;
+			m_pDirectDevice->SetTextureStageState(a_iStage, D3DTSS_ADDRESSU, 1);
+			DVar1 = 1;
+		}
+		else if (a_eType == 2) {
+			DVar1 = 3;
+			if (a_iUnk == 0) goto LAB_006c618c;
+			if (a_iUnk == 1) goto LAB_006c61da;
+			m_pDirectDevice->SetTextureStageState(a_iStage, D3DTSS_ADDRESSU, 3);
+			DVar1 = 3;
+		}
+		else if (a_eType == 1) {
+			DVar1 = 2;
+			if (a_iUnk == 0) {
+			LAB_006c618c:
+				m_pDirectDevice->SetTextureStageState(a_iStage, D3DTSS_ADDRESSU, DVar1);
+				return;
+			}
+			if (a_iUnk == 1) {
+			LAB_006c61da:
+				m_pDirectDevice->SetTextureStageState(a_iStage, D3DTSS_ADDRESSV, DVar1);
+				return;
+			}
+			m_pDirectDevice->SetTextureStageState(a_iStage, D3DTSS_ADDRESSU, 2);
+			DVar1 = 2;
+		}
+		else {
+			if (a_eType != 3) {
+				return;
+			}
+			DVar1 = 4;
+			if (a_iUnk == 0) goto LAB_006c618c;
+			if (a_iUnk == 1) goto LAB_006c61da;
+			m_pDirectDevice->SetTextureStageState(a_iStage, D3DTSS_ADDRESSU, 4);
+			DVar1 = 4;
+		}
+
+		m_pDirectDevice->SetTextureStageState(a_iStage, D3DTSS_ADDRESSV, DVar1);
 	}
 
 	void TRenderD3DInterface::BeginEndScene()
