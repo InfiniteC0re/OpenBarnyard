@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "ARenderer.h"
 #include "AppBoot.h"
-#include "Matlibs/AMaterialLibraryManager.h"
+#include "Assets/AMaterialLibraryManager.h"
 
 #include TOSHI_MULTIRENDER(TTextureFactoryHAL)
 #include TOSHI_MULTIRENDER(TRenderInterface)
