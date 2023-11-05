@@ -37,6 +37,9 @@ public:
 	TBOOL LoadTTLData(void* a_pTTLData);
 	TBOOL LoadTTLFile(const char* a_szFilePath);
 
+	void Destroy();
+	void DestroyTextures();
+
 	TINT FindTextureIndex(const char* a_szTextureName);
 
 	TINT GetNumTextures() const

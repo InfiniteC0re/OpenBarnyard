@@ -11,6 +11,7 @@ namespace Toshi {
 	public:
 		using Pair = T2Pair<KeyType, ValueType, Comparator>;
 		using Iterator = T2RedBlackTree<Pair>::Iterator;
+		using Node = T2RedBlackTree<Pair>::Node;
 
 	public:
 		T2Map(T2Allocator* a_pAllocator = &T2Allocator::s_GlobalAllocator) : m_RedBlackTree(a_pAllocator)
@@ -25,7 +26,7 @@ namespace Toshi {
 
 		ValueType* Insert(const KeyType& key, const ValueType& value)
 		{
-			T2RedBlackTreeNode<Pair>* result = TNULL;
+			Node* result = TNULL;
 			m_RedBlackTree.Insert(result, { key, value });
 
 			return &result->GetValue()->GetSecond();
@@ -33,19 +34,33 @@ namespace Toshi {
 
 		void Remove(const KeyType& key)
 		{
-			T2RedBlackTreeNode<Pair>* result = TNULL;
+			Node* result = TNULL;
 			m_RedBlackTree.Find(result, { key });
 
 			TASSERT(result != End());
 			m_RedBlackTree.Delete(result);
 		}
 
+		void RemoveNode(Node* a_pNode)
+		{
+			TASSERT(TNULL != a_pNode && a_pNode != End());
+			m_RedBlackTree.Delete(a_pNode);
+		}
+
 		ValueType* Find(const KeyType& key)
 		{
-			T2RedBlackTreeNode<Pair>* result = TNULL;
+			Node* result = TNULL;
 			m_RedBlackTree.Find(result, { key });
 
 			return result ? &result->GetValue()->GetSecond() : &m_RedBlackTree.End()->GetSecond();
+		}
+
+		Node* FindNode(const KeyType& key)
+		{
+			Node* result = TNULL;
+			m_RedBlackTree.Find(result, { key });
+
+			return result;
 		}
 
 		Iterator Begin()

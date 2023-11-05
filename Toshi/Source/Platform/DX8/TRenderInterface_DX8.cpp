@@ -555,6 +555,14 @@ namespace Toshi {
 		m_pDirectDevice->SetTextureStageState(0, D3DTSS_MIPFILTER, 2);
 	}
 
+	void TRenderD3DInterface::BeginEndScene()
+	{
+		if (S_OK == m_pDirectDevice->BeginScene())
+		{
+			m_pDirectDevice->EndScene();
+		}
+	}
+
 	TBOOL TRenderD3DInterface::IsTextureFormatSupported(int a_eTextureFormat)
 	{
 		switch (a_eTextureFormat) {

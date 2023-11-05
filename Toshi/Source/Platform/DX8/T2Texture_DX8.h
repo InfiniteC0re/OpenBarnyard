@@ -17,6 +17,19 @@ namespace Toshi {
 			m_pD3DTexture = TNULL;
 		}
 
+		~T2Texture()
+		{
+			if (m_pD3DTexture)
+			{
+				m_pD3DTexture->Release();
+			}
+
+			if (m_pData)
+			{
+				delete m_pData;
+			}
+		}
+
 		void SetData(void* a_pData, TUINT a_uiDataSize)
 		{
 			m_pData = a_pData;

@@ -217,6 +217,7 @@ namespace Toshi {
 
 			if (a_uiLevels == 0)
 			{
+				TFIXME("Call some D3DX? function with 4 parameters with the first one being IDirect3DTexture (most likely not related to the engine)");
 				TUtil::MemClear(&m_ImageInfo, sizeof(m_ImageInfo));
 				m_ImageInfo.Width = a_uiWidth;
 				m_ImageInfo.Height = a_uiHeight;

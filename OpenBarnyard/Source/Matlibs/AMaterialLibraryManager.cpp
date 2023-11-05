@@ -5,6 +5,8 @@
 #include "AMaterialLibraryManager.h"
 #include "Locale/ALocaleManager.h"
 
+#include TOSHI_MULTIRENDER(TRenderInterface)
+
 TOSHI_NAMESPACE_USING
 
 AMaterialLibraryManager::AMaterialLibraryManager() :
@@ -105,6 +107,90 @@ void AMaterialLibraryManager::LoadLibrary(const Toshi::TPString8& a_rLibName, To
 		auto pRefCount = m_NumRefLibraries.Find(a_rLibName);
 		*pRefCount = *pRefCount + 1;
 	}
+}
+
+void AMaterialLibraryManager::UnloadLibrary(const TPString8& a_rLibName, TBOOL a_bUnused)
+{
+	TPString8 matlibName = a_rLibName;
+	auto eLangId = ALocaleManager::GetSingleton()->GetLangId();
+
+	TBOOL bLocaliseAsset;
+
+	if (eLangId == ALocaleManager::Lang_English || eLangId == ALocaleManager::Lang_EnglishUK)
+	{
+		bLocaliseAsset = TFALSE;
+	}
+	else
+	{
+		bLocaliseAsset = TPString8("gui_loc") == matlibName;
+	}
+
+	if (bLocaliseAsset)
+	{
+		TString8 localisedAssetName = matlibName.GetString8();
+		localisedAssetName += "_";
+		localisedAssetName += ALocaleManager::Interface()->GetCurrentLanguageName();
+		localisedAssetName.MakeLower();
+
+		matlibName = TPString8(localisedAssetName);
+	}
+
+	auto pRenderer = TSTATICCAST(TRenderD3DInterface*, TRenderInterface::GetSingleton());
+	pRenderer->BeginEndScene();
+
+	auto pMatlibNode = m_LoadedLibraries.FindNode(matlibName);
+	
+	if (pMatlibNode != m_LoadedLibraries.End())
+	{
+		auto pRefCountNode = m_NumRefLibraries.FindNode(matlibName);
+
+		if (pRefCountNode != m_NumRefLibraries.End())
+		{
+			pRefCountNode->GetValue()->GetSecond() -= 1;
+
+			if (pRefCountNode->GetValue()->GetSecond() == 0)
+			{
+				DestroyLibrary(pMatlibNode, a_bUnused);
+				m_NumRefLibraries.RemoveNode(pRefCountNode);
+			}
+		}
+	}
+}
+
+void AMaterialLibraryManager::DestroyLibrary(LibrariesMap::Node*& a_rpMaterialLibraryNode, TBOOL a_bUnused)
+{
+	auto pMaterialLibrary = a_rpMaterialLibraryNode->GetValue()->GetSecond();
+	UnloadTexturesOfLibrary(pMaterialLibrary);
+	
+	pMaterialLibrary->Destroy();
+	m_LoadedLibraries.RemoveNode(a_rpMaterialLibraryNode);
+
+	TRenderInterface::GetSingleton()->FlushDyingResources();
+	TRenderInterface::GetSingleton()->FlushDyingResources();
+	TTODO("FUN_006bfa10");
+}
+
+void AMaterialLibraryManager::UnloadTexturesOfLibrary(AMaterialLibrary* a_pMaterialLibrary)
+{
+	for (auto it = m_UsedTextures.Begin(); it != m_UsedTextures.End(); it = it->GetNext())
+	{
+		if (it->GetLibrary() == a_pMaterialLibrary)
+		{
+			AMaterialLibraryManager::TextureSlot* pRemovedSlot;
+			m_UsedTextures.Remove(pRemovedSlot, it);
+			m_iNumUsedTextures -= 1;
+
+			pRemovedSlot->GetTexture()->DestroyResource();
+			pRemovedSlot->SetTexture(TNULL);
+			pRemovedSlot->ResetName();
+
+			m_FreeTextures.PushFront(pRemovedSlot);
+			m_iNumFreeTextures += 1;
+		}
+	}
+
+	TRenderInterface::GetSingleton()->FlushDyingResources();
+	TTODO("FUN_006120e0");
 }
 
 void AMaterialLibraryManager::CreateTextures(AMaterialLibrary* a_pMatLibrary)

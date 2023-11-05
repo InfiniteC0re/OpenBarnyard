@@ -73,6 +73,8 @@ namespace Toshi {
 		TDebugD3DText* InitDebugText(TINT a_iBufferSize);
 		void SetDeviceDefaultStates();
 
+		void BeginEndScene();
+
 		void Exit()
 		{
 			m_bExited = TTRUE;

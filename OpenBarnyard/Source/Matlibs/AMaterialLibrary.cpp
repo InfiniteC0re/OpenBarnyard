@@ -71,6 +71,29 @@ TBOOL AMaterialLibrary::LoadTTLFile(const char* a_szFilePath)
 	return TTRUE;
 }
 
+void AMaterialLibrary::Destroy()
+{
+	Node::Remove();
+	DestroyTextures();
+	delete this;
+}
+
+void AMaterialLibrary::DestroyTextures()
+{
+	for (TINT i = 0; i < m_iNumTextures; i++)
+	{
+		if (m_pTextures[i].pTexture)
+		{
+			delete m_pTextures[i].pTexture;
+			m_pTextures[i].pTexture = TNULL;
+		}
+	}
+
+	m_pTextures = TNULL;
+	m_iNumTextures = 0;
+	m_TexturesArray.Destroy();
+}
+
 TINT AMaterialLibrary::FindTextureIndex(const char* a_szTextureName)
 {
 	for (TINT i = 0; i < m_iNumTextures; i++)

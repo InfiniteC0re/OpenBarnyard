@@ -39,10 +39,15 @@ public:
 			return m_pTexture;
 		}
 
-		void SetName(Toshi::TString8& a_Name)
+		void SetName(const Toshi::TString8& a_Name)
 		{
 			m_Name = a_Name;
 			m_Name.MakeLower();
+		}
+
+		void ResetName()
+		{
+			m_Name = "";
 		}
 
 		const Toshi::TString8& GetName()
@@ -66,6 +71,8 @@ public:
 		AMaterialLibrary* m_pMaterialLibrary;
 	};
 
+	using LibrariesMap = Toshi::T2Map<Toshi::TPString8, AMaterialLibrary*, Toshi::TPString8::Comparator>;
+
 	static constexpr TUINT NUM_SLOTS = 600;
 
 public:
@@ -73,13 +80,18 @@ public:
 
 	void LoadFromProperties(const PPropertyValue* a_pProperty, Toshi::TTRB* a_pTRB, TBOOL a_bUpdateGUIMaterials);
 	void LoadLibrary(const Toshi::TPString8& a_rLibName, Toshi::TTRB* a_pTRB, TBOOL a_bIsGUI);
+	void UnloadLibrary(const Toshi::TPString8& a_rLibName, TBOOL a_bUnused);
 
 	void CreateTextures(AMaterialLibrary* a_pMatLibrary);
 	void OnLibraryLoaded(TBOOL a_bIsGUI);
 
 private:
-	Toshi::T2Map<Toshi::TPString8, int, Toshi::TPString8::Comparator> m_NumRefLibraries; // ?
-	Toshi::T2Map<Toshi::TPString8, AMaterialLibrary*, Toshi::TPString8::Comparator> m_LoadedLibraries;
+	void DestroyLibrary(LibrariesMap::Node*& a_rpMaterialLibraryNode, TBOOL a_bUnused);
+	void UnloadTexturesOfLibrary(AMaterialLibrary* a_pMaterialLibrary);
+
+private:
+	Toshi::T2Map<Toshi::TPString8, int, Toshi::TPString8::Comparator> m_NumRefLibraries;
+	LibrariesMap m_LoadedLibraries;
 	TextureSlot m_aSlots[600];
 	Toshi::T2SList<TextureSlot> m_UsedTextures;
 	Toshi::T2SList<TextureSlot> m_FreeTextures;

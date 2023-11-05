@@ -115,7 +115,7 @@ namespace Toshi {
 
 			while (a_pFrom != a_pTo)
 			{
-				T* pNext = a_pFrom->m_pNext;
+				T* pNext = TSTATICCAST(T*, a_pFrom->m_pNext);
 				a_pFrom->m_pNext = a_pFrom;
 				a_pFrom = pNext;
 			}
@@ -158,6 +158,13 @@ namespace Toshi {
 			a_rList.PushBack(a_pNode);
 
 			return pNodeBefore;
+		}
+
+		T* Remove(T*& a_rpRemovedNode, T* a_pNode)
+		{
+			Erase(a_pNode, a_pNode->GetNext());
+			a_rpRemovedNode = a_pNode;
+			return a_rpRemovedNode;
 		}
 
 	private:
