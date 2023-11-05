@@ -182,8 +182,54 @@ namespace Toshi {
 
 	TBOOL TTextureResourceHAL::CreateFromMemory4444(TUINT a_uiWidth, TUINT a_uiHeight, TUINT a_uiLevels, void* a_pData)
 	{
-		TIMPLEMENT();
-		return TFALSE;
+		auto pRenderer = TSTATICCAST(TRenderD3DInterface*, GetRenderer());
+
+		HRESULT hCreateRes = pRenderer->GetDirect3DDevice()->CreateTexture(
+			a_uiWidth,
+			a_uiHeight,
+			a_uiLevels,
+			0,
+			D3DFMT_A4R4G4B4,
+			D3DPOOL_MANAGED,
+			&m_pD3DTexture
+		);
+
+		if (SUCCEEDED(hCreateRes))
+		{
+			D3DLOCKED_RECT rect;
+			m_pD3DTexture->LockRect(0, &rect, NULL, D3DLOCK_NO_DIRTY_UPDATE | D3DLOCK_NOSYSLOCK);
+
+			if (a_uiHeight != 0)
+			{
+				TUINT16* pTexPixel = TSTATICCAST(TUINT16*, rect.pBits);
+				TUINT16* pDataPixel = TSTATICCAST(TUINT16*, a_pData);
+
+				for (TUINT i = a_uiHeight; i != 0; i--)
+				{
+					TUINT16 uiDataPixel = *pDataPixel;
+					*pTexPixel = ((((uiDataPixel >> 12) << 4 | uiDataPixel & 15) << 4 | uiDataPixel >> 4 & 15) << 4) | uiDataPixel >> 8 & 15;
+					pTexPixel++;
+					pDataPixel++;
+				}
+			}
+
+			m_pD3DTexture->UnlockRect(0);
+
+			if (a_uiLevels == 0)
+			{
+				TUtil::MemClear(&m_ImageInfo, sizeof(m_ImageInfo));
+				m_ImageInfo.Width = a_uiWidth;
+				m_ImageInfo.Height = a_uiHeight;
+			}
+
+			return TTRUE;
+		}
+		else
+		{
+			TRenderD3DInterface::PrintError(hCreateRes, TNULL);
+		}
+
+		return TTRUE;
 	}
 
 	TBOOL TTextureResourceHAL::CreateFromMemoryDDS(TUINT a_uiWidth, TUINT a_uiHeight, TUINT a_uiLevels, void* a_pData)
@@ -293,8 +339,10 @@ namespace Toshi {
 				{
 					CreateFromMemory8888(m_uiWidth, m_uiHeight, 0, m_pData);
 				}
-				
-				CreateFromMemoryDDS(m_uiWidth, m_uiHeight, -1, m_pData);
+				else
+				{
+					CreateFromMemoryDDS(m_uiWidth, m_uiHeight, -1, m_pData);
+				}
 			}
 		}
 		else

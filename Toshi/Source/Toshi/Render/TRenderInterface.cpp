@@ -18,7 +18,7 @@ namespace Toshi {
 		m_pCreatedContext = TNULL;
 		m_pDebugText = TNULL;
 		m_Unk2 = TNULL;
-		m_Unk3 = TNULL;
+		m_pInvalidTexture = TNULL;
 		m_ResourceCount = 1;
 		m_iFrameCount = 0;
 		m_bHasDyingResources = TFALSE;

@@ -3,6 +3,8 @@
 #include "TRenderContext_DX8.h"
 #include "TRenderAdapter_DX8.h"
 #include "TRenderInterface_DX8.h"
+#include "TTextureFactoryHAL_DX8.h"
+#include "TTextureResourceHAL_DX8.h"
 
 namespace Toshi {
 	
@@ -148,8 +150,14 @@ namespace Toshi {
 
 			m_pDirectDevice->ShowCursor(TRUE);
 
-			auto pResource = GetSystemResource(27);
-			TTODO("Do some call with the resource and save result at m_Unk3");
+			TUINT invalidTextureData[32];
+			for (int i = 0; i < 32; i++)
+			{
+				invalidTextureData[i] = 0xff0fff0f;
+			}
+
+			auto pTextureFactory = TSTATICCAST(TTextureFactoryHAL*, GetSystemResource(SYSRESOURCE_TEXTUREFACTORY));
+			m_pInvalidTexture = pTextureFactory->CreateTextureFromMemory(invalidTextureData, sizeof(invalidTextureData), 0x11, 8, 8);
 
 			EnableColourCorrection(TTRUE);
 			m_bDisplayCreated = TTRUE;

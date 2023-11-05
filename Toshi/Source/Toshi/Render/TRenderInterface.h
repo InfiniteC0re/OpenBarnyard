@@ -172,7 +172,7 @@ namespace Toshi {
 		TMatrix44 m_LightColour;                         // 0xCC
 		TDebugText* m_pDebugText;                        // 0x10C
 		void* m_Unk2;                                    // 0x110
-		void* m_Unk3;                                    // 0x114
+		TTexture* m_pInvalidTexture;                     // 0x114
 		TNodeList<TRenderAdapter> m_AdapterList;         // 0x118
 		TNodeTree<TResource> m_Resources;                // 0x128
 		TUINT32 m_ResourceCount = 0;                     // 0x140
