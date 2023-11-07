@@ -33,3 +33,15 @@ jobs:
       with:
         name: Toshi Binaries
         path: bin
+
+    - name: Update Nightly Release
+      uses: andelf/nightly-release@main
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: nightly
+        name: 'OpenBarnyard Nightly Release $$'
+        prerelease: true
+        body: 'Automatic nightly release.'
+        files: |
+          ./bin
