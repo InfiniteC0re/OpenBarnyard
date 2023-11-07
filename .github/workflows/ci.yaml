@@ -34,14 +34,14 @@ jobs:
         name: Toshi Binaries
         path: bin
 
-    - name: Update Nightly Release
+    - name: Update Auto Release
       uses: andelf/nightly-release@main
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         tag_name: nightly
-        name: 'OpenBarnyard Nightly Release $$'
+        name: 'OpenBarnyard Automatic Release $$'
         prerelease: true
-        body: 'Automatic nightly release.'
+        body: 'Automatic releases are being uploaded after any new commit.'
         files: |
-          ./bin
+          ./bin/Debug_Windows_x86/OpenBarnyard/OpenBarnyard.exe
