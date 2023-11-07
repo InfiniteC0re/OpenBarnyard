@@ -1,4 +1,4 @@
-# OpenToshi
+# OpenToshi [![Toshi](https://github.com/InfiniteC0re/OpenBarnyard/actions/workflows/ci.yaml/badge.svg)](https://github.com/InfiniteC0re/OpenBarnyard/actions/workflows/ci.yaml)
 Decompilation of the Toshi engine Barnyard the video game.
 
 # **SUPPORT THE DEVELOPERS OF THE TOSHI ENGINE**
