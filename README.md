@@ -1,5 +1,5 @@
 # OpenToshi
-Decompilation of the Toshi engine and Toshi games like de blob.
+Decompilation of the Toshi engine Barnyard the video game.
 
 # **SUPPORT THE DEVELOPERS OF THE TOSHI ENGINE**
 We do not own the Toshi Engine in any way, shape or form, and this project would not have been possible had they not developed TOSHI in the first place. The Toshi Engine is currently owned by [THQ Nordic](https://www.thqnordic.com); we highly urge you to follow & support their projects if you like this project!
@@ -17,8 +17,8 @@ Building on Windows requires
 
 Clone the repository with the following commands:
 
-	git clone https://github.com/AdventureT/OpenToshi.git
-	cd OpenToshi
+	git clone https://github.com/InfiniteC0re/OpenBarnyard.git
+	cd OpenBarnyard
 	git submodule update --init --recursive
 	./GenerateProjects-VS2019.bat (if you use Visual Studio 2019)
 	./GenerateProjects-VS2022.bat (if you use Visual Studio 2022)
