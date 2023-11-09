@@ -2,8 +2,9 @@
 #include "AGUI2Renderer_DX8.h"
 
 #include "Assets/AMaterialLibraryManager.h"
-#include "AGUI2/AGUI2.h"
+#include "AGUI/AGUI2.h"
 
+#include TOSHI_MULTIRENDER(TTextureResourceHAL)
 #include TOSHI_MULTIRENDER(TRenderInterface)
 
 TOSHI_NAMESPACE_USING
@@ -91,8 +92,8 @@ void AGUI2RendererDX8::BeginScene()
 	pD3DDevice->SetTransform(D3DTS_VIEW, (D3DMATRIX*)&s_IdentityMatrix);
 
 	TMatrix44 projection = {
-		2.0f / (float)pDisplayParams->uiWidth, 0.0f, 0.0f, 0.0f,
-		0.0f, 2.0f / (float)pDisplayParams->uiHeight, 0.0f, 0.0f,
+		2.0f / (TFLOAT)pDisplayParams->uiWidth, 0.0f, 0.0f, 0.0f,
+		0.0f, 2.0f / (TFLOAT)pDisplayParams->uiHeight, 0.0f, 0.0f,
 		0.0f, 0.0f, 1.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, 1.0f
 	};
@@ -128,7 +129,7 @@ void AGUI2RendererDX8::BeginScene()
 	sm_bUnknownFlag = TFALSE;
 }
 
-void AGUI2RendererDX8::SetupScene()
+void AGUI2RendererDX8::EndScene()
 {
 	auto pRender = TSTATICCAST(TRenderD3DInterface*, TRenderInterface::GetSingleton());
 	auto pD3DDevice = pRender->GetDirect3DDevice();
@@ -149,7 +150,7 @@ void AGUI2RendererDX8::SetupScene()
 	pD3DDevice->SetTexture(1, NULL);
 	pD3DDevice->SetTextureStageState(1, D3DTSS_COLOROP, 1);
 	pD3DDevice->SetTextureStageState(1, D3DTSS_ALPHAOP, 1);
-	pRender->SetTextureStageState(0, 0, -1);
+	pRender->SetTextureAddress(0, 0, -1);
 }
 
 void AGUI2RendererDX8::ResetRenderer()
@@ -196,8 +197,8 @@ void AGUI2RendererDX8::PrepareRenderer()
 	pD3DDevice->SetTransform(D3DTS_VIEW, (D3DMATRIX*)&s_IdentityMatrix);
 
 	TMatrix44 projection = {
-		2.0f / (float)pDisplayParams->uiWidth, 0.0f, 0.0f, 0.0f,
-		0.0f, 2.0f / (float)pDisplayParams->uiHeight, 0.0f, 0.0f,
+		2.0f / (TFLOAT)pDisplayParams->uiWidth, 0.0f, 0.0f, 0.0f,
+		0.0f, 2.0f / (TFLOAT)pDisplayParams->uiHeight, 0.0f, 0.0f,
 		0.0f, 0.0f, 1.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, 1.0f
 	};
@@ -218,19 +219,182 @@ void AGUI2RendererDX8::PrepareRenderer()
 	// Force material to update
 	auto pMaterial = m_pMaterial;
 	m_pMaterial = (AGUI2Material*)(~(uintptr_t)pMaterial);
-	SetMaterial(m_pMaterial);
+	SetMaterial(pMaterial);
 
 	// Force colour to update
 	auto uiColour = m_uiColour;
 	m_uiColour = ~uiColour;
-	SetColour(m_uiColour);
+	SetColour(uiColour);
 
 	m_bIsTransformDirty = TTRUE;
 }
 
 void AGUI2RendererDX8::SetMaterial(AGUI2Material* a_pMaterial)
 {
-	TIMPLEMENT();
+	auto pRender = TSTATICCAST(TRenderD3DInterface*, TRenderInterface::GetSingleton());
+	auto pD3DDevice = pRender->GetDirect3DDevice();
+
+	if (a_pMaterial == m_pMaterial)
+	{
+		return;
+	}
+
+	pD3DDevice->SetRenderState(D3DRS_ALPHATESTENABLE, 0);
+	pD3DDevice->SetRenderState(D3DRS_CULLMODE, 1);
+	sm_fZCoordinate = 0.1f;
+
+	if (a_pMaterial == TNULL)
+	{
+		pD3DDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, 1);
+		pD3DDevice->SetRenderState(D3DRS_ALPHAFUNC, 5);
+		pD3DDevice->SetRenderState(D3DRS_ALPHAREF, 0);
+		pD3DDevice->SetRenderState(D3DRS_BLENDOP, 1);
+		pD3DDevice->SetRenderState(D3DRS_SRCBLEND, 5);
+		pD3DDevice->SetRenderState(D3DRS_DESTBLEND, 6);
+		pD3DDevice->SetTextureStageState(0, D3DTSS_COLOROP, 2);
+		pD3DDevice->SetTextureStageState(0, D3DTSS_COLORARG1, 0);
+		pD3DDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, 2);
+		pD3DDevice->SetTextureStageState(0, D3DTSS_ALPHAARG1, 0);
+		pD3DDevice->SetTextureStageState(0, D3DTSS_MIPMAPLODBIAS, 0);
+		pD3DDevice->SetTextureStageState(1, D3DTSS_COLOROP, 1);
+		pD3DDevice->SetTextureStageState(1, D3DTSS_ALPHAOP, 1);
+		m_pMaterial = TNULL;
+	}
+	else
+	{
+		auto pTexture = TSTATICCAST(Toshi::TTextureResourceHAL*, a_pMaterial->m_pTextureResource);
+		pTexture->Validate();
+		
+		pD3DDevice->SetTexture(0, pTexture->GetD3DTexture());
+		pRender->SetTextureAddress(0, pTexture->GetAddress(), -1);
+
+		switch (a_pMaterial->m_eBlendState)
+		{
+		case 0:
+			pD3DDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, 0);
+			pD3DDevice->SetRenderState(D3DRS_ALPHAFUNC, 5);
+			pD3DDevice->SetRenderState(D3DRS_ALPHAREF, 0);
+			break;
+		case 1:
+			pD3DDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, 1);
+			pD3DDevice->SetRenderState(D3DRS_ALPHAFUNC, 5);
+			pD3DDevice->SetRenderState(D3DRS_ALPHAREF, 0);
+			pD3DDevice->SetRenderState(D3DRS_BLENDOP, 1);
+			pD3DDevice->SetRenderState(D3DRS_SRCBLEND, 5);
+			pD3DDevice->SetRenderState(D3DRS_DESTBLEND, 6);
+			pD3DDevice->SetRenderState(D3DRS_ZWRITEENABLE, 0);
+			break;
+		case 2:
+			pD3DDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, 1);
+			pD3DDevice->SetRenderState(D3DRS_ALPHAFUNC, 5);
+			pD3DDevice->SetRenderState(D3DRS_ALPHAREF, 0);
+			pD3DDevice->SetRenderState(D3DRS_BLENDOP, 1);
+			pD3DDevice->SetRenderState(D3DRS_SRCBLEND, 5);
+			pD3DDevice->SetRenderState(D3DRS_DESTBLEND, 2);
+			pD3DDevice->SetRenderState(D3DRS_ZWRITEENABLE, 0);
+			break;
+		case 3:
+			pD3DDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, 1);
+			pD3DDevice->SetRenderState(D3DRS_ALPHAFUNC, 5);
+			pD3DDevice->SetRenderState(D3DRS_ALPHAREF, 0);
+			pD3DDevice->SetRenderState(D3DRS_BLENDOP, 3);
+			pD3DDevice->SetRenderState(D3DRS_SRCBLEND, 5);
+			pD3DDevice->SetRenderState(D3DRS_DESTBLEND, 2);
+			pD3DDevice->SetRenderState(D3DRS_ZWRITEENABLE, 0);
+			break;
+		case 4:
+			pD3DDevice->SetRenderState(D3DRS_SRCBLEND, 1);
+			pD3DDevice->SetRenderState(D3DRS_DESTBLEND, 2);
+			pD3DDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, 1);
+			pD3DDevice->SetRenderState(D3DRS_BLENDOP, 1);
+			pD3DDevice->SetRenderState(D3DRS_ZENABLE, 1);
+			pD3DDevice->SetRenderState(D3DRS_ZWRITEENABLE, 1);
+			pD3DDevice->SetRenderState(D3DRS_ZFUNC, 4);
+			pD3DDevice->SetRenderState(D3DRS_ALPHAREF, 0x3c);
+			pD3DDevice->SetRenderState(D3DRS_ALPHATESTENABLE, 1);
+			pD3DDevice->SetRenderState(D3DRS_ALPHAFUNC, 7);
+			
+			if (!sm_bUnknownFlag)
+			{
+				sm_fZCoordinate = 0.05f;
+			}
+			else
+			{
+				sm_fZCoordinate = 0.02f;
+			}
+
+			break;
+		case 5:
+			pD3DDevice->SetRenderState(D3DRS_ZENABLE, 1);
+			pD3DDevice->SetRenderState(D3DRS_ZWRITEENABLE, 0);
+			pD3DDevice->SetRenderState(D3DRS_ZFUNC, 4);
+			pD3DDevice->SetRenderState(D3DRS_ALPHATESTENABLE, 0);
+			pD3DDevice->SetRenderState(D3DRS_ALPHAFUNC, 5);
+			pD3DDevice->SetRenderState(D3DRS_ALPHAREF, 0);
+			pD3DDevice->SetRenderState(D3DRS_SRCBLEND, 5);
+			pD3DDevice->SetRenderState(D3DRS_DESTBLEND, 6);
+			pD3DDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, 1);
+
+			if (sm_bUnknownFlag)
+			{
+				sm_fZCoordinate = 0.03f;
+				sm_bUnknownFlag = TFALSE;
+			}
+
+			break;
+		case 6:
+			pD3DDevice->SetRenderState(D3DRS_ALPHATESTENABLE, 0);
+			pD3DDevice->SetRenderState(D3DRS_ALPHAFUNC, 5);
+			pD3DDevice->SetRenderState(D3DRS_ALPHAREF, 0);
+			pD3DDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, 1);
+			pD3DDevice->SetRenderState(D3DRS_BLENDOP, 1);
+			pD3DDevice->SetRenderState(D3DRS_SRCBLEND, 5);
+			pD3DDevice->SetRenderState(D3DRS_DESTBLEND, 6);
+			pD3DDevice->SetRenderState(D3DRS_ZWRITEENABLE, 1);
+			pD3DDevice->SetRenderState(D3DRS_ZFUNC, 4);
+			sm_fZCoordinate = 0.04f;
+			sm_bUnknownFlag = TTRUE;
+			break;
+		default:
+			pD3DDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, 1);
+			pD3DDevice->SetRenderState(D3DRS_ALPHAFUNC, 5);
+			pD3DDevice->SetRenderState(D3DRS_ALPHAREF, 0);
+			pD3DDevice->SetRenderState(D3DRS_BLENDOP, 1);
+			pD3DDevice->SetRenderState(D3DRS_SRCBLEND, 5);
+			pD3DDevice->SetRenderState(D3DRS_DESTBLEND, 6);
+			break;
+		}
+
+		if (a_pMaterial->m_eTextureAddress == 1)
+		{
+			pD3DDevice->SetTextureStageState(0, D3DTSS_ADDRESSU, D3DTADDRESS_CLAMP);
+			pD3DDevice->SetTextureStageState(0, D3DTSS_ADDRESSV, D3DTADDRESS_CLAMP);
+		}
+		else if (a_pMaterial->m_eTextureAddress == 2)
+		{
+			pD3DDevice->SetTextureStageState(0, D3DTSS_ADDRESSU, D3DTADDRESS_MIRROR);
+			pD3DDevice->SetTextureStageState(0, D3DTSS_ADDRESSV, D3DTADDRESS_MIRROR);
+		}
+		else
+		{
+			pD3DDevice->SetTextureStageState(0, D3DTSS_ADDRESSU, D3DTADDRESS_WRAP);
+			pD3DDevice->SetTextureStageState(0, D3DTSS_ADDRESSV, D3DTADDRESS_WRAP);
+		}
+
+		pD3DDevice->SetTextureStageState(0, D3DTSS_MINFILTER, 2);
+		pD3DDevice->SetTextureStageState(0, D3DTSS_MAGFILTER, 2);
+		pD3DDevice->SetTextureStageState(0, D3DTSS_MIPFILTER, 1);
+		pD3DDevice->SetTextureStageState(0, D3DTSS_COLOROP, 4);
+		pD3DDevice->SetTextureStageState(0, D3DTSS_COLORARG1, 2);
+		pD3DDevice->SetTextureStageState(0, D3DTSS_COLORARG2, 0);
+		pD3DDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, 4);
+		pD3DDevice->SetTextureStageState(0, D3DTSS_ALPHAARG1, 2);
+		pD3DDevice->SetTextureStageState(0, D3DTSS_ALPHAARG2, 0);
+		pD3DDevice->SetTextureStageState(0, D3DTSS_MIPMAPLODBIAS, a_pMaterial->m_iMipMapLODBias);
+		pD3DDevice->SetTextureStageState(1, D3DTSS_COLOROP, 1);
+		pD3DDevice->SetTextureStageState(1, D3DTSS_ALPHAOP, 1);
+		m_pMaterial = a_pMaterial;
+	}
 }
 
 void AGUI2RendererDX8::PushTransform(const AGUI2Transform& a_rTransform, const Toshi::TVector2& a_rVec1, const Toshi::TVector2& a_rVec2)
@@ -272,7 +436,64 @@ void AGUI2RendererDX8::SetColour(TUINT32 a_uiColour)
 
 void AGUI2RendererDX8::SetupViewport(TFLOAT a_fVal1, TFLOAT a_fVal2, TFLOAT a_fVal3, TFLOAT a_fVal4)
 {
-	TIMPLEMENT();
+	auto pRender = TSTATICCAST(TRenderD3DInterface*, TRenderInterface::GetSingleton());
+	auto pD3DDevice = pRender->GetDirect3DDevice();
+
+	auto pDisplayParams = pRender->GetCurrentDisplayParams();
+	auto pTransform = m_pTransforms + m_iTransformCount;
+
+	TVector2 transformed1;
+	pTransform->Transform(transformed1, { a_fVal1, a_fVal2 });
+
+	TVector2 transformed2;
+	pTransform->Transform(transformed2, { a_fVal3, a_fVal4 });
+
+	transformed1.x = (pDisplayParams->uiWidth / 2.0f) + transformed1.x;
+	transformed2.x = (pDisplayParams->uiWidth / 2.0f) + transformed2.x;
+	transformed1.y = (pDisplayParams->uiHeight / 2.0f) - transformed1.y;
+	transformed2.y = (pDisplayParams->uiHeight / 2.0f) - transformed2.y;
+
+	DWORD iLeft = TMath::Max(TMath::FloorToInt(transformed1.x), 0);
+	DWORD iRight = TMath::Min(TMath::CeilToInt(transformed2.x), TINT(pDisplayParams->uiWidth));
+	DWORD iTop = TMath::Max(TMath::FloorToInt(transformed2.y), 0);
+	DWORD iBottom = TMath::Min(TMath::FloorToInt(transformed1.y), TINT(pDisplayParams->uiHeight));
+
+	D3DVIEWPORT8 viewport = {
+		.X = iLeft,
+		.Y = iTop,
+		.Width = iRight - iLeft,
+		.Height = iBottom - iTop,
+		.MinZ = 0.0f,
+		.MaxZ = 1.0f
+	};
+
+	if (viewport.Width == 0)
+	{
+		viewport.Width = 1;
+	}
+
+	if (viewport.Height == 0)
+	{
+		viewport.Height = 1;
+	}
+
+	pD3DDevice->SetViewport(&viewport);
+
+	static TUINT32 s_MatrixFlags = 0;
+	static Toshi::TMatrix44 s_IdentityMatrix;
+
+	if ((s_MatrixFlags & 1) == 0)
+	{
+		s_MatrixFlags |= 1;
+		s_IdentityMatrix = TMatrix44::IDENTITY;
+	}
+
+	pD3DDevice->SetTransform(D3DTS_WORLDMATRIX(0), (D3DMATRIX*)&s_IdentityMatrix);
+	pD3DDevice->SetTransform(D3DTS_VIEW, (D3DMATRIX*)&s_IdentityMatrix);
+
+	TMatrix44 projection;
+	SetupProjectionMatrix(projection, iLeft, iRight, iTop, iBottom);
+	pD3DDevice->SetTransform(D3DTS_PROJECTION, (D3DMATRIX*)&projection);
 }
 
 void AGUI2RendererDX8::SetupViewport()
@@ -334,7 +555,7 @@ void AGUI2RendererDX8::RenderRectangle(const Toshi::TVector2& a, const Toshi::TV
 	sm_Vertices[3].UV = { uv2.x, uv2.y };
 
 	auto pRender = TSTATICCAST(TRenderD3DInterface*, TRenderInterface::GetSingleton());
-	HRESULT hRes = pRender->GetDirect3DDevice()->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, sm_Vertices, sizeof(Vertex));
+	pRender->GetDirect3DDevice()->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, sm_Vertices, sizeof(Vertex));
 }
 
 void AGUI2RendererDX8::RenderTriStrip(Toshi::TVector2* vertices, Toshi::TVector2* UV, uint32_t numverts)
@@ -366,7 +587,7 @@ void AGUI2RendererDX8::RenderLine(const Toshi::TVector2& a, const Toshi::TVector
 	SetMaterial(pMaterial);
 }
 
-void AGUI2RendererDX8::RenderLine(float x1, float y1, float x2, float y2)
+void AGUI2RendererDX8::RenderLine(TFLOAT x1, TFLOAT y1, TFLOAT x2, TFLOAT y2)
 {
 	auto pMaterial = m_pMaterial;
 	SetMaterial(TNULL);
@@ -392,17 +613,81 @@ void AGUI2RendererDX8::RenderLine(float x1, float y1, float x2, float y2)
 
 void AGUI2RendererDX8::RenderOutlineRectangle(const Toshi::TVector2& a, const Toshi::TVector2& b)
 {
+	auto pMaterial = m_pMaterial;
+	SetMaterial(TNULL);
+
+	if (m_bIsTransformDirty)
+	{
+		UpdateTransform();
+	}
+
+	sm_Vertices[0].Position = { a.x, a.y, sm_fZCoordinate };
+	sm_Vertices[0].Colour = m_uiColour;
+	sm_Vertices[0].UV = { 0.0f, 0.0f };
+
+	sm_Vertices[1].Position = { b.x, a.y, sm_fZCoordinate };
+	sm_Vertices[1].Colour = m_uiColour;
+	sm_Vertices[1].UV = { 0.0f, 0.0f };
+
+	sm_Vertices[2].Position = { b.x, b.y, sm_fZCoordinate };
+	sm_Vertices[2].Colour = m_uiColour;
+	sm_Vertices[2].UV = { 0.0f, 0.0f };
+
+	sm_Vertices[3].Position = { a.x, b.y, sm_fZCoordinate };
+	sm_Vertices[3].Colour = m_uiColour;
+	sm_Vertices[3].UV = { 0.0f, 0.0f };
+
+	sm_Vertices[4].Position = { a.x, a.y, sm_fZCoordinate };
+	sm_Vertices[4].Colour = m_uiColour;
+	sm_Vertices[4].UV = { 0.0f, 0.0f };
+
+	auto pRender = TSTATICCAST(TRenderD3DInterface*, TRenderInterface::GetSingleton());
+	pRender->GetDirect3DDevice()->DrawPrimitiveUP(D3DPT_LINESTRIP, 4, sm_Vertices, sizeof(Vertex));
 	
+	SetMaterial(pMaterial);
 }
 
 void AGUI2RendererDX8::RenderFilledRectangle(const Toshi::TVector2& a, const Toshi::TVector2& b)
 {
-	
+	auto pMaterial = m_pMaterial;
+	SetMaterial(TNULL);
+
+	if (m_bIsTransformDirty)
+	{
+		UpdateTransform();
+	}
+
+	sm_Vertices[0].Position = { a.x, a.y, sm_fZCoordinate };
+	sm_Vertices[0].Colour = m_uiColour;
+	sm_Vertices[0].UV = { 0.0f, 0.0f };
+
+	sm_Vertices[1].Position = { b.x, a.y, sm_fZCoordinate };
+	sm_Vertices[1].Colour = m_uiColour;
+	sm_Vertices[1].UV = { 0.0f, 0.0f };
+
+	sm_Vertices[2].Position = { a.x, b.y, sm_fZCoordinate };
+	sm_Vertices[2].Colour = m_uiColour;
+	sm_Vertices[2].UV = { 0.0f, 0.0f };
+
+	sm_Vertices[3].Position = { b.x, b.y, sm_fZCoordinate };
+	sm_Vertices[3].Colour = m_uiColour;
+	sm_Vertices[3].UV = { 0.0f, 0.0f };
+
+	auto pRender = TSTATICCAST(TRenderD3DInterface*, TRenderInterface::GetSingleton());
+	pRender->GetDirect3DDevice()->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, sm_Vertices, sizeof(Vertex));
+
+	SetMaterial(pMaterial);
 }
 
-void AGUI2RendererDX8::ScaleCoords(float& x, float& y)
+void AGUI2RendererDX8::ScaleCoords(TFLOAT& x, TFLOAT& y)
 {
-	
+	auto pDisplayParams = TRenderInterface::GetSingleton()->GetCurrentDisplayParams();
+
+	TFLOAT fRootWidth, fRootHeight;
+	AGUI2::GetContext()->GetRootElement()->GetDimensions(fRootWidth, fRootHeight);
+
+	x /= pDisplayParams->uiWidth / fRootWidth;
+	y /= pDisplayParams->uiHeight / fRootHeight;
 }
 
 void AGUI2RendererDX8::ResetZCoordinate()

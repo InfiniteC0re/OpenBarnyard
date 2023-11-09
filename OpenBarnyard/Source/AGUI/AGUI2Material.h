@@ -13,14 +13,14 @@ public:
 	{
 		m_iNumTex = 1;
 		m_pTextureResource = TNULL;
-		m_iUnk1 = 1;
-		m_iUnk2 = 1;
-		m_iUnk3 = 0;
+		m_eBlendState = 1;
+		m_eTextureAddress = 1;
+		m_iMipMapLODBias = 0;
 	}
 
 private:
 	Toshi::TTexture* m_pTextureResource;
-	TUINT m_iUnk1;
-	TUINT m_iUnk2;
-	TUINT m_iUnk3;
+	TUINT m_eBlendState;
+	TUINT m_eTextureAddress;
+	TUINT m_iMipMapLODBias;
 };

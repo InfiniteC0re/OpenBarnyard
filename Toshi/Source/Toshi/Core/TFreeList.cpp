@@ -39,6 +39,7 @@ namespace Toshi {
 			pData = TREINTERPRETCAST(Node*, TREINTERPRETCAST(uintptr_t, pData) + a_iSize);
 		}
 
+		m_LastNode.pNext = pNext;
 		return pData;
 	}
 
@@ -60,10 +61,11 @@ namespace Toshi {
 			return TMalloc(a_uiSize);
 		}
 
-		if (m_LastNode.pNext != TNULL)
+		auto pNode = m_LastNode.pNext;
+
+		if (pNode != TNULL)
 		{
-			auto pNode = m_LastNode.pNext;
-			m_LastNode.pNext = pNode;
+			m_LastNode.pNext = pNode->pNext;
 			return pNode;
 		}
 		else

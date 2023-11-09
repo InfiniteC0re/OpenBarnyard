@@ -4,7 +4,9 @@
 #include "Assets/AMaterialLibraryManager.h"
 #include "Assets/AAssetLoader.h"
 #include "Memory/AMemory.h"
-#include "AGUI2/AGUI2.h"
+#include "AGUI/AGUI2.h"
+#include "AGUI/AGUISystem.h"
+#include "AGUI/AGUI2TextureSectionManager.h"
 
 #include <Plugins/PPropertyParser/PProperties.h>
 #include <Toshi/Core/TScheduler.h>
@@ -21,6 +23,7 @@ ARootTask::ARootTask()
 	auto pSystemManager = TSystemManager::GetSingleton();
 
 	m_pGUI2 = pSystemManager->GetScheduler()->CreateTask(&TGetClass(AGUI2));
+	m_pGUISystem = pSystemManager->GetScheduler()->CreateTask(&TGetClass(AGUISystem));
 	m_pRenderer = TSTATICCAST(ARenderer*, pSystemManager->GetScheduler()->CreateTask(&TGetClass(ARenderer)));
 
 	m_bRenderScene = TFALSE;
@@ -74,6 +77,21 @@ void ARootTask::LoadStartupData()
 
 	if (m_pGUI2)
 	{
-		m_pGUI2->Create();
+		if (!m_pGUI2->Create())
+		{
+			m_pGUI2 = TNULL;
+		}
 	}
+
+	if (m_pGUISystem)
+	{
+		if (!m_pGUISystem->Create())
+		{
+			m_pGUISystem = TNULL;
+		}
+	}
+
+	Toshi::TRenderInterface::GetSingleton()->FlushDyingResources();
+	Toshi::TRenderInterface::GetSingleton()->FlushDyingResources();
+	AGUI2TextureSectionManager::UpdateMaterials();
 }

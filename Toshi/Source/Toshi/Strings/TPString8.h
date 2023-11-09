@@ -252,6 +252,15 @@ namespace Toshi {
 			return *this;
 		}
 
+		__forceinline TPString8& operator=(const TPString8* pOther)
+		{
+			Decrement();
+			m_pPtr = pOther->m_pPtr;
+			m_pPtr->IncRefCount();
+
+			return *this;
+		}
+
 		__forceinline TPString8& operator=(const char* a_szString)
 		{
 			Decrement();

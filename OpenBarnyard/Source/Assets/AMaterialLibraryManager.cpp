@@ -2,6 +2,8 @@
 #include <Toshi/Render/TRenderInterface.h>
 #include <Toshi/File/TTRB.h>
 
+#include "AGUI/AGUISystem.h"
+#include "AGUI/AGUI2TextureSectionManager.h"
 #include "AMaterialLibraryManager.h"
 #include "Locale/ALocaleManager.h"
 
@@ -58,7 +60,18 @@ void AMaterialLibraryManager::LoadFromProperties(const PPropertyValue* a_pProper
 			}
 
 			LoadLibrary(matlibName, a_pTRB, TFALSE);
+			TTODO("ALoadingScreen::Update");
 		}
+
+		TRenderInterface::GetSingleton()->FlushDyingResources();
+		TRenderInterface::GetSingleton()->FlushDyingResources();
+
+		if (a_bUpdateGUIMaterials && AGUISystem::GetSingleton())
+		{
+			AGUI2TextureSectionManager::UpdateMaterials();
+		}
+
+		TTODO("ALoadingScreen::Update");
 	}
 }
 
@@ -157,7 +170,7 @@ void AMaterialLibraryManager::UnloadLibrary(const TPString8& a_rLibName, TBOOL a
 	}
 }
 
-void AMaterialLibraryManager::DestroyLibrary(LibrariesMap::Node*& a_rpMaterialLibraryNode, TBOOL a_bUnused)
+void AMaterialLibraryManager::DestroyLibrary(LibrariesMap::Node*& a_rpMaterialLibraryNode, TBOOL a_bUpdateGUIMaterials)
 {
 	auto pMaterialLibrary = a_rpMaterialLibraryNode->GetValue()->GetSecond();
 	UnloadTexturesOfLibrary(pMaterialLibrary);
@@ -167,7 +180,11 @@ void AMaterialLibraryManager::DestroyLibrary(LibrariesMap::Node*& a_rpMaterialLi
 
 	TRenderInterface::GetSingleton()->FlushDyingResources();
 	TRenderInterface::GetSingleton()->FlushDyingResources();
-	TTODO("FUN_006bfa10");
+
+	if (a_bUpdateGUIMaterials && AGUISystem::GetSingleton())
+	{
+		AGUI2TextureSectionManager::UpdateMaterials();
+	}
 }
 
 void AMaterialLibraryManager::UnloadTexturesOfLibrary(AMaterialLibrary* a_pMaterialLibrary)
@@ -216,16 +233,14 @@ void AMaterialLibraryManager::CreateTextures(AMaterialLibrary* a_pMatLibrary)
 	}
 }
 
-void AMaterialLibraryManager::OnLibraryLoaded(TBOOL a_bIsGUI)
+void AMaterialLibraryManager::OnLibraryLoaded(TBOOL a_bUpdateGUIMaterials)
 {
-	auto pRenderer = TRenderInterface::GetSingleton();
+	TRenderInterface::GetSingleton()->FlushDyingResources();
+	TRenderInterface::GetSingleton()->FlushDyingResources();
 
-	pRenderer->FlushDyingResources();
-	pRenderer->FlushDyingResources();
-
-	if (a_bIsGUI)
+	if (a_bUpdateGUIMaterials && AGUISystem::GetSingleton())
 	{
-		TTODO("Recreate GUI materials");
+		AGUI2TextureSectionManager::UpdateMaterials();
 	}
 }
 

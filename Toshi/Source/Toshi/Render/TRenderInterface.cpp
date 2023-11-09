@@ -266,7 +266,7 @@ namespace Toshi {
 		m_LightColour = a_rMatrix;
 	}
 
-	void TRenderInterface::Unknown1(int a_iUnknown)
+	void TRenderInterface::Unknown1(TViewport* a_pViewport)
 	{
 
 	}

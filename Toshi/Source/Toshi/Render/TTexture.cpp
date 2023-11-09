@@ -5,7 +5,7 @@ namespace Toshi {
 
 	TTexture::TTexture()
 	{
-		m_Unk1 = 0;
+		m_eAddress = 0;
 		m_eTextureFlags = 0;
 		m_pNameEntry = TNULL;
 	}

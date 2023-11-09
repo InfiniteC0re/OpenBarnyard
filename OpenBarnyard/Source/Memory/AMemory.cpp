@@ -20,3 +20,10 @@ Toshi::T2GlobalAllocator* AMemory::GetAllocator(POOL a_ePool)
 
 	return &s_aAllocators[a_ePool].Allocator;
 }
+
+Toshi::TMemoryHeap* AMemory::GetHeap(POOL a_ePool)
+{
+	TASSERT(a_ePool >= POOL_None && a_ePool < POOL_NUMOF);
+
+	return s_aHeaps[a_ePool];
+}

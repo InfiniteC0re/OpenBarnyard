@@ -78,7 +78,7 @@ namespace Toshi {
 
 		void SetProjectionParams(const PROJECTIONPARAMS& params);
 
-		void SetParams(const Params& params)
+		void SetViewportParameters(const Params& params)
 		{
 			m_oParams = params;
 			m_eFlags = (m_eFlags & (~(FLAG_UNK3 | FLAG_UNK4 | FLAG_HAS_WORLDPLANES | FLAG_UNK6))) | FLAG_DIRTY;

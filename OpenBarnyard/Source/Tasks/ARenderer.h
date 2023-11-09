@@ -7,10 +7,12 @@
 #include <Toshi/Render/TRenderInterface.h>
 #include <Toshi/Render/TRenderAdapter.h>
 
-class ARenderer :
-	public Toshi::TGenericClassDerived<ARenderer, Toshi::TTask, "ARenderer", TMAKEVERSION(1, 0), TTRUE>
+TOBJECT(ARenderer, Toshi::TTask, TTRUE),
+public Toshi::TSingleton<ARenderer>
 {
 public:
+	ARenderer();
+
 	virtual TBOOL OnCreate() override;
 	virtual TBOOL OnUpdate(float a_fDeltaTime) override;
 
@@ -18,6 +20,9 @@ public:
 	TBOOL CreateTRenderResources();
 
 	Toshi::TRenderAdapter::Mode::Device* FindSuitableDevice(Toshi::TRenderInterface::DISPLAYPARAMS& a_rDisplayParams, bool a_bReverseOrder);
+
+	Toshi::TGenericEmitter& GetRenderGUIEmitter() { return m_RenderGUIEmitter; }
+	const Toshi::TGenericEmitter& GetRenderGUIEmitter() const { return m_RenderGUIEmitter; }
 
 private:
 	void RenderGUI();
@@ -30,5 +35,8 @@ private:
 	TFLOAT m_fFar;
 	TFLOAT m_fNear;
 	TUINT32 m_eScreenCaptureStatus;
+	Toshi::TGenericEmitter m_AnimationUpdateStartEmitter;
+	Toshi::TGenericEmitter m_AnimationUpdateEndEmitter;
+	Toshi::TEmitter<ARenderer, TINT> m_RenderGUIEmitter;
 	ADisplayModes_Win m_DisplayModes;
 };

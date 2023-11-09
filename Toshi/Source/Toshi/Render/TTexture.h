@@ -33,6 +33,11 @@ namespace Toshi {
 		virtual TBOOL Create(const char* a_szFileName, TUINT a_eTextureFlags) = 0;
 		virtual TBOOL CreateEx(void* a_pData, TUINT a_uiDataSize, TUINT a_uiWidth, TUINT a_uiHeight, TUINT a_uiMipLevels, TTEXTURERESOURCEFORMAT a_eFormat, BOOL a_bNoMipLevels);
 
+		TUINT GetAddress() const
+		{
+			return m_eAddress;
+		}
+
 		TBOOL CreateResource(void* a_pData, TUINT a_uiDataSize, TUINT a_eTextureFlags, TUINT a_uiWidth, TUINT a_uiHeight)
 		{
 			return TResource::Create();
@@ -49,7 +54,7 @@ namespace Toshi {
 		}
 
 	protected:
-		int m_Unk1;
+		TUINT m_eAddress;
 		TUINT m_eTextureFlags;
 		TTextureFactory::NameEntry* m_pNameEntry;
 	};

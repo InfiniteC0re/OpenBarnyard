@@ -15,7 +15,7 @@ public:
 	virtual TUINT GetWidth(AGUI2Material* a_pMaterial) = 0;
 	virtual TUINT GetHeight(AGUI2Material* a_pMaterial) = 0;
 	virtual void BeginScene() = 0;
-	virtual void SetupScene() = 0;
+	virtual void EndScene() = 0;
 	virtual void ResetRenderer() = 0;
 	virtual void PrepareRenderer() = 0;
 	virtual void SetMaterial(AGUI2Material* a_pMaterial) = 0;
@@ -28,9 +28,9 @@ public:
 	virtual void RenderRectangle(const Toshi::TVector2& a, const Toshi::TVector2& b, const Toshi::TVector2& uv1, const Toshi::TVector2& uv2) = 0;
 	virtual void RenderTriStrip(Toshi::TVector2* vertices, Toshi::TVector2* UV, uint32_t numverts) = 0;
 	virtual void RenderLine(const Toshi::TVector2& a, const Toshi::TVector2& b) = 0;
-	virtual void RenderLine(float x1, float y1, float x2, float y2) = 0;
+	virtual void RenderLine(TFLOAT x1, TFLOAT y1, TFLOAT x2, TFLOAT y2) = 0;
 	virtual void RenderOutlineRectangle(const Toshi::TVector2& a, const Toshi::TVector2& b) = 0;
 	virtual void RenderFilledRectangle(const Toshi::TVector2& a, const Toshi::TVector2& b) = 0;
-	virtual void ScaleCoords(float& x, float& y) = 0;
+	virtual void ScaleCoords(TFLOAT& x, TFLOAT& y) = 0;
 	virtual void ResetZCoordinate() = 0;
 };

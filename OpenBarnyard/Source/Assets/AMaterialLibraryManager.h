@@ -88,7 +88,7 @@ public:
 	Toshi::TTexture* FindTexture(const char* a_szTextureName);
 
 private:
-	void DestroyLibrary(LibrariesMap::Node*& a_rpMaterialLibraryNode, TBOOL a_bUnused);
+	void DestroyLibrary(LibrariesMap::Node*& a_rpMaterialLibraryNode, TBOOL a_bUpdateGUIMaterials);
 	void UnloadTexturesOfLibrary(AMaterialLibrary* a_pMaterialLibrary);
 
 private:

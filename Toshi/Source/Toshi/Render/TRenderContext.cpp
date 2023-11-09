@@ -7,31 +7,44 @@ namespace Toshi {
 	TRenderContext::TRenderContext(TRenderInterface* pRender)
 	{
 		TIMPLEMENT();
-		m_eFlags = 0;
+		m_eFlags = FLAG_DIRTY;
+		m_eCameraMode = CameraMode_Perspective;
 		m_pRenderer = pRender;
+
+		// Setup viewport parameters
+		if (pRender->GetCurrentDevice() != TNULL)
+		{
+			auto pDevice = pRender->GetCurrentDevice();
+			auto pMode = pDevice->GetMode();
+			m_oParams.fWidth = TFLOAT(pMode->GetWidth());
+			m_oParams.fHeight = TFLOAT(pMode->GetHeight());
+		}
+		else
+		{
+			m_oParams.fWidth = 640.0f;
+			m_oParams.fHeight = 480.0f;
+		}
 
 		m_oParams.fX = 0;
 		m_oParams.fY = 0;
 		m_oParams.fMaxZ = 1.0f;
 		m_oParams.fMinZ = 1.0f;
 
-		m_eCameraMode = CameraMode_Perspective;
+		// Setup projection parameters
+		TFLOAT fHalfWidth = m_oParams.fWidth * 0.5f;
+		TFLOAT fHalfHeight = m_oParams.fHeight * 0.5f;
+		TFLOAT fProj = fHalfHeight / TMath::Tan(TMath::DegToRad(45.0f));
+
 		m_ProjParams.m_fNearClip = 1.0f;
 		m_ProjParams.m_fFarClip = 1000.0f;
+		m_ProjParams.m_Centre.x = fHalfWidth;
+		m_ProjParams.m_Centre.y = fHalfHeight;
+		m_ProjParams.m_Proj.x = fProj;
+		m_ProjParams.m_Proj.y = fProj;
+
 		m_oModelViewMatrix.Identity();
 		m_oWorldViewMatrix.Identity();
-
-		auto pDevice = pRender->GetCurrentDevice();
-
-		if (pDevice == TNULL)
-		{
-			m_oParams.fWidth = 640.0f;
-			m_oParams.fHeight = 480.0f;
-		}
-		else
-		{
-			TASSERT(TFALSE, "Not used in De blob");
-		}
+		m_eFlags |= FLAG_DIRTY_VIEWMODELMATRIX | FLAG_DIRTY_WORLDMODELMATRIX;
 	}
 
 	void TRenderContext::SetModelViewMatrix(const TMatrix44& a_rMatrix)

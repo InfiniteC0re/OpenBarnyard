@@ -52,6 +52,12 @@ namespace Toshi {
 
 		TBOOL CreateFromFileDDS(TUINT a_uiWidth, TUINT a_uiHeight, TUINT a_uiLevels, const char* a_szFile);
 
+		IDirect3DTexture8* GetD3DTexture()
+		{
+			return m_pD3DTexture;
+		}
+
+	public:
 		static TBOOL IsPPM(const char* a_szName);
 
 	private:

@@ -18,6 +18,7 @@ public:
 
 private:
 	AOptions* m_pOptions;   // 0x20
+	TTask* m_pGUISystem;    // 0x24
 	TTask* m_pGUI2;         // 0x28
 	ARenderer* m_pRenderer; // 0x30
 	TBOOL m_bRenderScene;   // 0x57

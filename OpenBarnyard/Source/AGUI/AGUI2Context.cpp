@@ -52,6 +52,6 @@ void AGUI2Context::Render()
 		m_pOverlayElement->Render();
 		m_pOverlayElement->PostRender();
 
-		AGUI2::GetRenderer()->SetupScene();
+		AGUI2::GetRenderer()->EndScene();
 	}
 }

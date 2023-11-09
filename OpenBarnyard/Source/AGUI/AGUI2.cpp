@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "AGUI2.h"
 #include "Assets/AAssetLoader.h"
+#include "AGUI2TextureSectionManager.h"
 
 #include TOSHI_MULTIRENDER(AGUI2Renderer)
 
@@ -44,22 +45,6 @@ TBOOL AGUI2::OnUpdate(float a_fDeltaTime)
 void AGUI2::CreateContext()
 {
 	ms_pCurrentContext = new AGUI2Context;
-}
-
-AGUI2TextureSection* AGUI2::GetTextureSection(const char* a_szSectionName)
-{
-	auto pDefblock = AGUI2TextureSectionManager::g_defblock;
-	auto pSections = AGUI2TextureSectionManager::g_sections;
-
-	for (size_t i = 0; i < pDefblock->m_uiNumSections; i++)
-	{
-		auto pSection = &pSections[i];
-
-		if (TStringManager::String8Compare(pSection->GetName(), a_szSectionName) == 0)
-			return pSection;
-	}
-
-	return TNULL;
 }
 
 AGUI2Renderer* AGUI2::GetRenderer()

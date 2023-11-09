@@ -14,6 +14,8 @@
 #include "Toshi/Render/TDebugText.h"
 
 namespace Toshi {
+	
+	class TViewport;
 
 	class TRenderInterface :
 		public TGenericClassDerived<TRenderInterface, TObject, "TRender", TMAKEVERSION(1, 0), TFALSE>,
@@ -85,7 +87,7 @@ namespace Toshi {
 		virtual void DestroyCapture(TRenderCapture* a_pRenderCapture) = 0;
 		virtual void SetLightDirectionMatrix(const TMatrix44& a_rMatrix);
 		virtual void SetLightColourMatrix(const TMatrix44& a_rMatrix);
-		virtual void Unknown1(int a_iUnknown);
+		virtual void Unknown1(TViewport* a_pViewport);
 		virtual void* CreateUnknown(const char* a_szName, int a_iUnk1, int a_iUnk2, int a_iUnk3) = 0;
 		virtual TModel* CreateModel1(void* a_Unk1, void* a_Unk2) = 0;
 		virtual TModel* CreateModel2(void* a_Unk1, void* a_Unk2) = 0;

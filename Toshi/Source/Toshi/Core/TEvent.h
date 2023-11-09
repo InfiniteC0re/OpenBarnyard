@@ -1,43 +1,35 @@
 #pragma once
 #include "TDList.h"
 
-namespace Toshi
-{
+namespace Toshi {
 
 	class TGenericEmitter;
 
 	class TGenericListener : public TPriList<TGenericListener>::TNode
 	{
 	public:
-		using t_Callback = TBOOL (*)(void*, void*, void*);
+		using t_Callback = TBOOL (*)(void* a_pCaller, void* a_pOwner, void* a_pData);
 		friend class TGenericEmitter;
 
 	public:
-		TGenericListener() : TNode()
+		TGenericListener() = default;
+		~TGenericListener()
 		{
-			m_pCaller = TNULL;
-			m_pCallback = TNULL;
-			m_Unk = 0;
+			Disconnect();
 		}
 
+		void Connect(TGenericEmitter& a_rEmitter, void* a_pCaller, t_Callback a_pCallback, int a_iPriority);
+		void Disconnect();
+
+	private:
 		void Execute(void* pOwner, void* pData)
 		{
 			m_pCallback(m_pCaller, pOwner, pData);
 		}
 
-		void Connect(TGenericEmitter* emitter, void* caller, t_Callback callback, int unk2);
-
-		void Disconnect()
-		{
-			Remove();
-			m_pCaller = TNULL;
-			m_pCallback = TNULL;
-		}
-
 	private:
-		int m_Unk;
-		void* m_pCaller;
-		t_Callback m_pCallback;
+		void* m_pCaller = TNULL;
+		t_Callback m_pCallback = TNULL;
 	};
 
 	class TGenericEmitter
@@ -45,34 +37,31 @@ namespace Toshi
 	public:
 		TGenericEmitter()
 		{
-			//m_Listeners = TPriList<TGenericListener>();
 			Create(TNULL);
 		}
 
-		TGenericEmitter(void* owner)
+		TGenericEmitter(void* a_pOwner)
 		{
-			//m_Listeners = TPriList<TGenericListener>();
-			Create(owner);
+			Create(a_pOwner);
 		}
 
-		TGenericEmitter(const TGenericEmitter& cpy)
+		TGenericEmitter(const TGenericEmitter& other)
 		{
-			m_Listeners.m_Root = cpy.m_Listeners.m_Root;
-			Create(cpy.m_Owner);
+			m_Listeners.m_Root = other.m_Listeners.m_Root;
+			Create(other.m_pOwner);
 		}
 
-
-		void Throw(void* pData)
+		void Throw(void* a_pData)
 		{
 			for (auto it = m_Listeners.Begin(); it != m_Listeners.End(); it++)
 			{
-				it->Execute(m_Owner, pData);
+				it->Execute(m_pOwner, a_pData);
 			}
 		}
 
-		void Create(void* owner)
+		void Create(void* a_pOwner)
 		{
-			m_Owner = owner;
+			m_pOwner = a_pOwner;
 		}
 
 		void Destroy()
@@ -81,12 +70,16 @@ namespace Toshi
 			{
 				//it->Disconnect();
 			}
-			m_Owner = TNULL;
+
+			m_pOwner = TNULL;
 		}
+
+		TPriList<TGenericListener>& GetListeners() { return m_Listeners; }
+		const TPriList<TGenericListener>& GetListeners() const { return m_Listeners; }
 
 	public:
 		TPriList<TGenericListener> m_Listeners;
-		void* m_Owner;
+		void* m_pOwner;
 	};
 
 	template <typename Owner, typename Data = Owner>
@@ -100,7 +93,24 @@ namespace Toshi
 		void Throw(Data&& data) { TGenericEmitter::Throw(&data); }
 
 		void Create(Owner* owner) { TGenericEmitter::Create(owner); }
-
 		void Destroy() { TGenericEmitter::Destroy(); }
+	};
+
+	template <typename Owner, typename Data, typename Caller>
+	class TListener : public TGenericListener
+	{
+	public:
+		using t_CallerCallback = TBOOL(*)(Caller* a_pCaller, Owner* a_pOwner, Data* a_pData);
+
+	public:
+		void Connect(TGenericEmitter& a_rEmitter, Caller* a_pCaller, t_CallerCallback a_pCallback, int a_iPriority)
+		{
+			TGenericListener::Connect(
+				a_rEmitter,
+				a_pCaller,
+				TREINTERPRETCAST(t_Callback, a_pCallback),
+				a_iPriority
+			);
+		}
 	};
 }

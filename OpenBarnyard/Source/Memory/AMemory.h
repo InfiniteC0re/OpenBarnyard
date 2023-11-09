@@ -72,4 +72,5 @@ public:
 public:
 	static void CreatePool(POOL a_ePool);
 	static Toshi::T2GlobalAllocator* GetAllocator(POOL a_ePool);
+	static Toshi::TMemoryHeap* GetHeap(POOL a_ePool);
 };

@@ -567,53 +567,85 @@ namespace Toshi {
 		m_pDirectDevice->SetTextureStageState(0, D3DTSS_MIPFILTER, 2);
 	}
 
-	void TRenderD3DInterface::SetTextureStageState(DWORD a_iStage, TINT a_eType, TINT a_iUnk)
+	void TRenderD3DInterface::SetTextureAddress(DWORD a_iStage, TINT a_eType, TINT a_iUnk)
 	{
 		// TODO: Refactor
-
 		DWORD DVar1;
 
-		if (a_eType == 0) {
-			DVar1 = 1;
+		if (a_eType == 0)
+		{
+			DVar1 = D3DTADDRESS_WRAP;
 			if (a_iUnk == 0) goto LAB_006c618c;
 			if (a_iUnk == 1) goto LAB_006c61da;
-			m_pDirectDevice->SetTextureStageState(a_iStage, D3DTSS_ADDRESSU, 1);
-			DVar1 = 1;
+			m_pDirectDevice->SetTextureStageState(a_iStage, D3DTSS_ADDRESSU, D3DTADDRESS_WRAP);
+			DVar1 = D3DTADDRESS_WRAP;
 		}
-		else if (a_eType == 2) {
-			DVar1 = 3;
+		else if (a_eType == 2)
+		{
+			DVar1 = D3DTADDRESS_CLAMP;
 			if (a_iUnk == 0) goto LAB_006c618c;
 			if (a_iUnk == 1) goto LAB_006c61da;
-			m_pDirectDevice->SetTextureStageState(a_iStage, D3DTSS_ADDRESSU, 3);
-			DVar1 = 3;
+			m_pDirectDevice->SetTextureStageState(a_iStage, D3DTSS_ADDRESSU, D3DTADDRESS_CLAMP);
+			DVar1 = D3DTADDRESS_CLAMP;
 		}
-		else if (a_eType == 1) {
-			DVar1 = 2;
-			if (a_iUnk == 0) {
+		else if (a_eType == 1)
+		{
+			DVar1 = D3DTADDRESS_MIRROR;
+
+			if (a_iUnk == 0)
+			{
 			LAB_006c618c:
 				m_pDirectDevice->SetTextureStageState(a_iStage, D3DTSS_ADDRESSU, DVar1);
 				return;
 			}
-			if (a_iUnk == 1) {
+
+			if (a_iUnk == 1)
+			{
 			LAB_006c61da:
 				m_pDirectDevice->SetTextureStageState(a_iStage, D3DTSS_ADDRESSV, DVar1);
 				return;
 			}
-			m_pDirectDevice->SetTextureStageState(a_iStage, D3DTSS_ADDRESSU, 2);
-			DVar1 = 2;
+
+			m_pDirectDevice->SetTextureStageState(a_iStage, D3DTSS_ADDRESSU, D3DTADDRESS_MIRROR);
+			DVar1 = D3DTADDRESS_MIRROR;
 		}
-		else {
-			if (a_eType != 3) {
-				return;
-			}
-			DVar1 = 4;
+		else
+		{
+			if (a_eType != 3) return;
+
+			DVar1 = D3DTADDRESS_BORDER;
 			if (a_iUnk == 0) goto LAB_006c618c;
 			if (a_iUnk == 1) goto LAB_006c61da;
-			m_pDirectDevice->SetTextureStageState(a_iStage, D3DTSS_ADDRESSU, 4);
-			DVar1 = 4;
+			m_pDirectDevice->SetTextureStageState(a_iStage, D3DTSS_ADDRESSU, D3DTADDRESS_BORDER);
+			DVar1 = D3DTADDRESS_BORDER;
 		}
 
 		m_pDirectDevice->SetTextureStageState(a_iStage, D3DTSS_ADDRESSV, DVar1);
+	}
+
+	void TRenderD3DInterface::Clear(TINT a_iX, TINT a_iY, TINT a_iWidth, TINT a_iHeight, TUINT8 a_eClearFlags, TUINT8 a_uiColorR, TUINT8 a_uiColorG, TUINT8 a_uiColorB, TFLOAT a_fZ, TUINT a_uiStencil)
+	{
+		DWORD eFlags = (a_eClearFlags & 1) ? D3DCLEAR_TARGET : 0;
+
+		if (a_eClearFlags & 2) 
+		{
+			eFlags = eFlags | D3DCLEAR_ZBUFFER;
+			TMath::Clip(a_fZ, 0.0f, 1.0f);
+		}
+
+		if (a_eClearFlags & 4)
+		{
+			eFlags = eFlags | D3DCLEAR_STENCIL;
+		}
+
+		m_pDirectDevice->Clear(
+			0,
+			NULL,
+			eFlags,
+			((a_uiColorR | 0xffffff00) << 8 | (TUINT)a_uiColorG) << 8 | (TUINT)a_uiColorB,
+			a_fZ,
+			a_uiStencil
+		);
 	}
 
 	void TRenderD3DInterface::BeginEndScene()

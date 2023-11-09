@@ -2,12 +2,19 @@
 #include "ARenderer.h"
 #include "AppBoot.h"
 #include "Assets/AMaterialLibraryManager.h"
-#include "AGUI2/AGUI2.h"
+#include "AGUI/AGUISystem.h"
+#include "AGUI/AGUI2.h"
 
 #include TOSHI_MULTIRENDER(TTextureFactoryHAL)
 #include TOSHI_MULTIRENDER(TRenderInterface)
 
 TOSHI_NAMESPACE_USING
+
+ARenderer::ARenderer() :
+	m_RenderGUIEmitter(this)
+{
+
+}
 
 TBOOL ARenderer::CreateTRender()
 {
@@ -169,13 +176,26 @@ Toshi::TRenderAdapter::Mode::Device* ARenderer::FindSuitableDevice(TRenderInterf
 
 void ARenderer::RenderGUI()
 {
-	TIMPLEMENT();
+	auto pRender = TSTATICCAST(TRenderD3DInterface*, TRenderInterface::GetSingleton());
+	auto pViewport = AGUISystem::GetSingleton()->GetRenderObject(0)->GetViewport();
+
+	auto pOldContext = pRender->SetCurrentRenderContext(pViewport->GetRenderContext());;
+
+	TTODO("Save and restore value of 'm_AmbientColor?' when it's figured out");
+
+	pViewport->Begin();
+	
 	AGUI2::GetContext()->GetRenderer()->BeginScene();
-	AGUI2::GetContext()->GetRenderer()->SetupScene();
-	AGUI2::GetContext()->GetRenderer()->SetupViewport();
-	AGUI2::GetContext()->Render();
 	AGUI2::GetContext()->GetRenderer()->SetColour(TCOLOR(255, 0, 0));
 	AGUI2::GetContext()->GetRenderer()->RenderRectangle({ -80.0f, -25.0f }, { 80.0f, 25.0f }, { 0, 0 }, { 0, 0 });
+	m_RenderGUIEmitter.Throw(0);
+	AGUI2::GetContext()->GetRenderer()->EndScene();
+	AGUI2::GetContext()->Render();
+
+	pViewport->End();
+	pRender->FlushShaders();
+
+	pRender->SetCurrentRenderContext(pOldContext);
 }
 
 TBOOL ARenderer::OnCreate()

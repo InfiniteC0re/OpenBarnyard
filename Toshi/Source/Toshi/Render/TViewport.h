@@ -23,8 +23,12 @@ namespace Toshi
 		};
 
 	public:
-		TViewport();
-		~TViewport();
+		TViewport(TBOOL a_bFlag);
+		virtual ~TViewport();
+
+		virtual void BeginSKU();
+		virtual void EndSKU();
+		virtual void ChangeSKU(ChangeEvent a_eEvent);
 
 		float GetX() const
 		{
@@ -101,7 +105,7 @@ namespace Toshi
 			if (params.fX != value)
 			{
 				params.fX = value;
-				m_pRenderCtx->SetParams(params);
+				m_pRenderCtx->SetViewportParameters(params);
 				ChangeSKU(ChangeEvent_X);
 			}
 		}
@@ -113,7 +117,7 @@ namespace Toshi
 			if (params.fY != value)
 			{
 				params.fY = value;
-				m_pRenderCtx->SetParams(params);
+				m_pRenderCtx->SetViewportParameters(params);
 				ChangeSKU(ChangeEvent_Y);
 			}
 		}
@@ -125,7 +129,7 @@ namespace Toshi
 			if (params.fWidth != value)
 			{
 				params.fWidth = value;
-				m_pRenderCtx->SetParams(params);
+				m_pRenderCtx->SetViewportParameters(params);
 				ChangeSKU(ChangeEvent_Width);
 			}
 		}
@@ -137,7 +141,7 @@ namespace Toshi
 			if (params.fHeight != value)
 			{
 				params.fHeight = value;
-				m_pRenderCtx->SetParams(params);
+				m_pRenderCtx->SetViewportParameters(params);
 				ChangeSKU(ChangeEvent_Height);
 			}
 		}
@@ -149,7 +153,7 @@ namespace Toshi
 			if (params.fMinZ != value)
 			{
 				params.fMinZ = value;
-				m_pRenderCtx->SetParams(params);
+				m_pRenderCtx->SetViewportParameters(params);
 				ChangeSKU(ChangeEvent_MinZ);
 			}
 		}
@@ -161,7 +165,7 @@ namespace Toshi
 			if (params.fMaxZ != value)
 			{
 				params.fMaxZ = value;
-				m_pRenderCtx->SetParams(params);
+				m_pRenderCtx->SetViewportParameters(params);
 				ChangeSKU(ChangeEvent_MaxZ);
 			}
 		}
@@ -174,10 +178,6 @@ namespace Toshi
 		void SetBackgroundColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
 		void GetBackgroundColor(uint8_t& r, uint8_t& g, uint8_t& b, uint8_t& a);
 
-		void ChangeSKU(ChangeEvent a_eEvent);
-		void BeginSKU();
-		void EndSKU();
-
 	private:
 		TMemoryHeap* m_MemAllocatorBlock; // 0x00
 		TRenderContext* m_pRenderCtx;     // 0x04
@@ -185,10 +185,10 @@ namespace Toshi
 		uint8_t m_ColorG;                 // 0x09
 		uint8_t m_ColorB;                 // 0x0A
 		uint8_t m_ColorA;                 // 0x0B
-		TBOOL m_bAllowBackgroundClear;     // 0x0C
-		TBOOL m_bAllowDepthClear;          // 0x0D
-		TBOOL m_bDefaultBeginRender;       // 0x0E
-		TBOOL m_bEnable;                   // 0x0F
-		TBOOL m_bInViewport;               // 0x10
+		TBOOL m_bAllowBackgroundClear;    // 0x0C
+		TBOOL m_bAllowDepthClear;         // 0x0D
+		TBOOL m_bDefaultBeginRender;      // 0x0E
+		TBOOL m_bEnable;                  // 0x0F
+		TBOOL m_bInViewport;              // 0x10
 	};
 }

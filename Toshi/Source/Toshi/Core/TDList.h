@@ -165,16 +165,6 @@ namespace Toshi
 			TNode* Next() const { return m_Next; }
 			TNode* Prev() const { return m_Prev; }
 
-			void SetPriority(int priority)
-			{
-				m_iPriority = priority;
-			}
-
-			int GetPriority() const
-			{
-				return m_iPriority;
-			}
-
 		public:
 			TNode& operator=(const TNode& node)
 			{
@@ -184,8 +174,12 @@ namespace Toshi
 				return *this;
 			}
 
-			TBOOL IsLinked() const { return this != m_Next; }
-			void Reset() { m_Next = this; m_Prev = this; SetPriority(0); }
+			void Reset()
+			{
+				m_Next = this;
+				m_Prev = this;
+				SetPriority(0);
+			}
 
 			void InsertAfter(TNode* node)
 			{
@@ -217,8 +211,21 @@ namespace Toshi
 				m_Prev = this;
 			}
 
-			
-			
+			void SetPriority(int priority)
+			{
+				m_iPriority = priority;
+			}
+
+			int GetPriority() const
+			{
+				return m_iPriority;
+			}
+
+			TBOOL IsLinked() const
+			{
+				return this != m_Next;
+			}
+
 		public:
 			template<class T> friend class TPriList;
 			template<class T, class Node> friend class T2Iterator;
