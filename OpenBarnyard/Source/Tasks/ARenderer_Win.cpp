@@ -4,6 +4,7 @@
 #include "Assets/AMaterialLibraryManager.h"
 #include "AGUI/AGUISystem.h"
 #include "AGUI/AGUI2.h"
+#include "AGUI/AGUI2TextureSectionManager.h"
 
 #include TOSHI_MULTIRENDER(TTextureFactoryHAL)
 #include TOSHI_MULTIRENDER(TRenderInterface)
@@ -186,8 +187,15 @@ void ARenderer::RenderGUI()
 	pViewport->Begin();
 	
 	AGUI2::GetContext()->GetRenderer()->BeginScene();
-	AGUI2::GetContext()->GetRenderer()->SetColour(TCOLOR(255, 0, 0));
-	AGUI2::GetContext()->GetRenderer()->RenderRectangle({ -80.0f, -25.0f }, { 80.0f, 25.0f }, { 0, 0 }, { 0, 0 });
+	AGUI2::GetContext()->GetRenderer()->SetColour(TCOLOR(255, 255, 255));
+
+	AGUI2::GetContext()->GetRenderer()->SetMaterial(AGUI2TextureSectionManager::GetTextureSection("Panel_01")->GetMaterial());
+	AGUI2::GetContext()->GetRenderer()->RenderRectangle({ -80.0f, -25.0f }, { 80.0f, 25.0f }, { 1.0f, 1.0f }, { 0, 0 });
+
+	auto pSection = AGUI2TextureSectionManager::GetTextureSection("Putt_Ball");
+	AGUI2::GetContext()->GetRenderer()->SetMaterial(pSection->GetMaterial());
+	AGUI2::GetContext()->GetRenderer()->RenderRectangle({ -10.0f, -10.0f }, { 10.0f, 10.0f }, { pSection->GetUVPoint2().x, pSection->GetUVPoint2().y }, { pSection->GetUVPoint1().x, pSection->GetUVPoint1().y });
+
 	m_RenderGUIEmitter.Throw(0);
 	AGUI2::GetContext()->GetRenderer()->EndScene();
 	AGUI2::GetContext()->Render();
