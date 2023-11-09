@@ -15,7 +15,7 @@ public:
 	virtual TUINT GetWidth(AGUI2Material* a_pMaterial) = 0;
 	virtual TUINT GetHeight(AGUI2Material* a_pMaterial) = 0;
 	virtual void BeginScene() = 0;
-	virtual void EndScene() = 0;
+	virtual void SetupScene() = 0;
 	virtual void ResetRenderer() = 0;
 	virtual void PrepareRenderer() = 0;
 	virtual void SetMaterial(AGUI2Material* a_pMaterial) = 0;

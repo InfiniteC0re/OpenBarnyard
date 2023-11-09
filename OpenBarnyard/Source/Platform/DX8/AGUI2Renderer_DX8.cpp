@@ -128,7 +128,7 @@ void AGUI2RendererDX8::BeginScene()
 	sm_bUnknownFlag = TFALSE;
 }
 
-void AGUI2RendererDX8::EndScene()
+void AGUI2RendererDX8::SetupScene()
 {
 	auto pRender = TSTATICCAST(TRenderD3DInterface*, TRenderInterface::GetSingleton());
 	auto pD3DDevice = pRender->GetDirect3DDevice();
@@ -334,7 +334,7 @@ void AGUI2RendererDX8::RenderRectangle(const Toshi::TVector2& a, const Toshi::TV
 	sm_Vertices[3].UV = { uv2.x, uv2.y };
 
 	auto pRender = TSTATICCAST(TRenderD3DInterface*, TRenderInterface::GetSingleton());
-	pRender->GetDirect3DDevice()->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, sm_Vertices, sizeof(Vertex));
+	HRESULT hRes = pRender->GetDirect3DDevice()->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, sm_Vertices, sizeof(Vertex));
 }
 
 void AGUI2RendererDX8::RenderTriStrip(Toshi::TVector2* vertices, Toshi::TVector2* UV, uint32_t numverts)

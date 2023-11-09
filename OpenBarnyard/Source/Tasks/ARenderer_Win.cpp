@@ -2,6 +2,7 @@
 #include "ARenderer.h"
 #include "AppBoot.h"
 #include "Assets/AMaterialLibraryManager.h"
+#include "AGUI2/AGUI2.h"
 
 #include TOSHI_MULTIRENDER(TTextureFactoryHAL)
 #include TOSHI_MULTIRENDER(TRenderInterface)
@@ -166,6 +167,17 @@ Toshi::TRenderAdapter::Mode::Device* ARenderer::FindSuitableDevice(TRenderInterf
 	return pDevice;
 }
 
+void ARenderer::RenderGUI()
+{
+	TIMPLEMENT();
+	AGUI2::GetContext()->GetRenderer()->BeginScene();
+	AGUI2::GetContext()->GetRenderer()->SetupScene();
+	AGUI2::GetContext()->GetRenderer()->SetupViewport();
+	AGUI2::GetContext()->Render();
+	AGUI2::GetContext()->GetRenderer()->SetColour(TCOLOR(255, 0, 0));
+	AGUI2::GetContext()->GetRenderer()->RenderRectangle({ -80.0f, -25.0f }, { 80.0f, 25.0f }, { 0, 0 }, { 0, 0 });
+}
+
 TBOOL ARenderer::OnCreate()
 {
 	TIMPLEMENT();
@@ -199,6 +211,8 @@ TBOOL ARenderer::OnUpdate(float a_fDeltaTime)
 	if (!TSystemManager::GetSingleton()->IsPaused())
 	{
 		pRenderer->BeginScene();
+
+		RenderGUI();
 
 		pRenderer->EndScene();
 	}

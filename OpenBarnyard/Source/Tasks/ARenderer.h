@@ -20,6 +20,9 @@ public:
 	Toshi::TRenderAdapter::Mode::Device* FindSuitableDevice(Toshi::TRenderInterface::DISPLAYPARAMS& a_rDisplayParams, bool a_bReverseOrder);
 
 private:
+	void RenderGUI();
+
+private:
 	Toshi::TViewport* m_pViewport;
 	Toshi::TCameraObject m_pCameraObject;
 	Toshi::TViewport* m_pHALViewport1;

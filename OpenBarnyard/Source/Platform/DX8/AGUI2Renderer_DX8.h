@@ -26,7 +26,7 @@ public:
 	virtual TUINT GetWidth(AGUI2Material* a_pMaterial) override;
 	virtual TUINT GetHeight(AGUI2Material* a_pMaterial) override;
 	virtual void BeginScene() override;
-	virtual void EndScene() override;
+	virtual void SetupScene() override;
 	virtual void ResetRenderer() override;
 	virtual void PrepareRenderer() override;
 	virtual void SetMaterial(AGUI2Material* a_pMaterial) override;
@@ -41,7 +41,7 @@ public:
 	virtual void RenderLine(const Toshi::TVector2& a, const Toshi::TVector2& b) override;
 	virtual void RenderLine(float x1, float y1, float x2, float y2) override;
 	virtual void RenderOutlineRectangle(const Toshi::TVector2& a, const Toshi::TVector2& b) override;
-	virtual void RenderFilledRectangle(const Toshi::TVector2& a, const Toshi::TVector2& b) = 0;
+	virtual void RenderFilledRectangle(const Toshi::TVector2& a, const Toshi::TVector2& b) override;
 	virtual void ScaleCoords(float& x, float& y) override;
 	virtual void ResetZCoordinate() override;
 

@@ -2,6 +2,8 @@
 #include "AGUI2.h"
 #include "Assets/AAssetLoader.h"
 
+#include TOSHI_MULTIRENDER(AGUI2Renderer)
+
 TOSHI_NAMESPACE_USING
 
 AGUI2::AGUI2()
@@ -19,6 +21,8 @@ TBOOL AGUI2::OnCreate()
 	TIMPLEMENT();
 
 	CreateContext();
+	ms_pCurrentContext->SetRenderer(new AGUI2RendererDX8);
+
 	m_pRootElement = ms_pCurrentContext->GetRootElement();
 	m_pRootElement->SetDimensions(800.0f, 600.0f);
 	m_pRootElement->SetPostRenderCallback(MainPostRenderCallback);
