@@ -6,14 +6,14 @@ namespace Toshi
 	class T2Allocator
 	{
 	public:
-		virtual void* Malloc(size_t size) = 0;
 		virtual void* Malloc(size_t size, size_t alignment) = 0;
+		virtual void* Malloc(size_t size) = 0;
 		virtual void Free(void* ptr) = 0;
-		virtual TBOOL CanAllocate(int unk) = 0;
-		virtual void* TryMalloc(size_t size) = 0;
+		virtual TBOOL CanAllocate(size_t size) = 0;
 		virtual void* TryMalloc(size_t size, size_t alignment) = 0;
-		virtual size_t Size() = 0;
-		virtual size_t Capacity() = 0;
+		virtual void* TryMalloc(size_t size) = 0;
+		virtual size_t GetSize() = 0;
+		virtual size_t GetCapacity() = 0;
 
 		template<class T, class... Args>
 		T* New(Args&& ...args)
@@ -37,13 +37,13 @@ namespace Toshi
 	class T2GlobalAllocator : public T2Allocator
 	{
 	public:
-		virtual void* Malloc(size_t size) override;
 		virtual void* Malloc(size_t size, size_t alignment) override;
+		virtual void* Malloc(size_t size) override;
 		virtual void Free(void* ptr) override;
-		virtual TBOOL CanAllocate(int unk) override;
-		virtual void* TryMalloc(size_t size) override;
+		virtual TBOOL CanAllocate(size_t size) override;
 		virtual void* TryMalloc(size_t size, size_t alignment) override;
-		virtual size_t Size() override;
-		virtual size_t Capacity() override;
+		virtual void* TryMalloc(size_t size) override;
+		virtual size_t GetSize() override;
+		virtual size_t GetCapacity() override;
 	};
 }
