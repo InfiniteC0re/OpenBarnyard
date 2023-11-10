@@ -22,6 +22,8 @@ namespace Toshi
 			TUtil::MemClear(m_OldState, sizeof(*m_OldState) * NUM_BUTTONS);
 		}
 
+		~TInputDeviceController() = default;
+
 		virtual TBOOL GetDoodadProperties(Doodad a_iDoodad, DoodadProperties& a_rProperties) const override;
 		virtual const char* GetButtonFromDoodad(Doodad a_iDoodad) const override;
 		virtual TBOOL IsDown(Doodad a_iDoodad) const override;

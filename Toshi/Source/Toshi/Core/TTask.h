@@ -28,7 +28,7 @@ namespace Toshi
 		virtual TBOOL CreateFailed();
 		virtual TBOOL Reset();
 		virtual TBOOL OnCreate();
-		virtual TBOOL OnUpdate(float a_fDeltaTime);
+		virtual TBOOL OnUpdate(TFLOAT a_fDeltaTime);
 		virtual void OnPreDestroy();
 		virtual void OnDestroy();
 		virtual TBOOL OnChildDying(TTask* child);

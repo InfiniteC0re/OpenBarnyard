@@ -84,7 +84,7 @@ namespace Toshi {
 			m_bIsExclusiveMode = TFALSE;
 		}
 
-		virtual ~TInputInterface() = 0;
+		~TInputInterface() = default;
 		virtual TBOOL Initialise() = 0;
 		virtual TBOOL Deinitialise() = 0;
 		virtual TBOOL AcquireAll();
@@ -97,6 +97,8 @@ namespace Toshi {
 
 		void AddDevice(TInputDevice* device);
 		void RemoveDevice(TInputDevice* device);
+
+		void ReleaseAllDevices();
 
 		TInputDevice* GetDeviceByIndex(TClass* a_pClass, TUINT a_uiIndex);
 
@@ -139,7 +141,7 @@ namespace Toshi {
 
 	public:
 		TInputDevice();
-		virtual ~TInputDevice() = 0;
+		~TInputDevice() = default;
 
 		virtual TBOOL Acquire() = 0;
 		virtual TBOOL Unacquire() = 0;

@@ -4,6 +4,7 @@
 #include "Toshi/Core/TSystem.h"
 #include "Input/TInputInterface_Win.h"
 
+#include "Platform/Windows/Input/TInputDeviceMouse_Win.h"
 #include "Platform/DX8/TRenderInterface_DX8.h"
 
 namespace Toshi {
@@ -285,7 +286,9 @@ namespace Toshi {
 		}
 		else if (uMsg == WM_MOUSEFIRST)
 		{
-			TTODO("TInputDXDeviceMouse->FUN_006d4140(...)");
+			auto pMouse = TInputInterface::GetSingletonSafe()->GetDeviceByIndex<TInputDXDeviceMouse>(0);
+			pMouse->SetCurrentPosition(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+
 			return 1;
 		}
 

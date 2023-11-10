@@ -1,6 +1,6 @@
 #pragma once
-#include "ARenderer.h"
 #include "AOptions.h"
+#include "Render/ARenderer.h"
 
 #include <Toshi/Core/TTask.h>
 #include <Toshi/Strings/TString8.h>
@@ -20,6 +20,7 @@ private:
 	AOptions* m_pOptions;   // 0x20
 	TTask* m_pGUISystem;    // 0x24
 	TTask* m_pGUI2;         // 0x28
+	TTask* m_pInputHandler; // 0x2C
 	ARenderer* m_pRenderer; // 0x30
 	TBOOL m_bRenderScene;   // 0x57
 };

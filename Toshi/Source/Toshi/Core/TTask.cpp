@@ -73,7 +73,7 @@ namespace Toshi
 		return TTRUE;
 	}
 
-	TBOOL TTask::OnUpdate(float deltaTime)
+	TBOOL TTask::OnUpdate(TFLOAT a_fDeltaTime)
 	{
 		return TTRUE;
 	}

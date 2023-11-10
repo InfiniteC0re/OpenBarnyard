@@ -125,6 +125,17 @@ namespace Toshi
 		}
 	}
 
+	void TInputInterface::ReleaseAllDevices()
+	{
+		for (auto it = m_DeviceList.Begin(); it != m_DeviceList.End(); it++)
+		{
+			it->Unacquire();
+			it->Release();
+			it->Remove();
+			delete it;
+		}
+	}
+
 	TInputInterface::InputEvent::InputEvent(TInputDevice* a_pDevice, TINT a_iDoodad, EVENT_TYPE a_eEventType)
 	{
 		m_pSource = a_pDevice;

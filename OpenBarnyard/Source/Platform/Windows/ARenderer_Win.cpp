@@ -1,10 +1,11 @@
 #include "pch.h"
-#include "ARenderer.h"
 #include "AppBoot.h"
 #include "Assets/AMaterialLibraryManager.h"
 #include "AGUI/AGUISystem.h"
 #include "AGUI/AGUI2.h"
 #include "AGUI/AGUI2TextureSectionManager.h"
+#include "Render/ARenderer.h"
+#include "Input/AInputHandler.h"
 
 #include TOSHI_MULTIRENDER(TTextureFactoryHAL)
 #include TOSHI_MULTIRENDER(TRenderInterface)
@@ -239,6 +240,19 @@ TBOOL ARenderer::OnUpdate(float a_fDeltaTime)
 	if (!TSystemManager::GetSingleton()->IsPaused())
 	{
 		pRenderer->BeginScene();
+
+		auto pInputHandler = AInputHandler::GetSingleton();
+		auto pMouseDevice = pInputHandler->GetMouseDevice();
+
+		if (pMouseDevice->GetAxisInt(Toshi::TInputDeviceMouse::AXIS_CURSOR, 0) != 0 ||
+			pMouseDevice->GetAxisInt(Toshi::TInputDeviceMouse::AXIS_CURSOR, 1) != 0)
+		{
+			TOSHI_INFO(
+				"Mouse position: X = {}; Y = {}",
+				pMouseDevice->GetAxisInt(Toshi::TInputDeviceMouse::AXIS_CURSOR, 0),
+				pMouseDevice->GetAxisInt(Toshi::TInputDeviceMouse::AXIS_CURSOR, 1)
+			);
+		}
 
 		RenderGUI();
 

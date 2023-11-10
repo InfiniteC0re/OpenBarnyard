@@ -5,80 +5,13 @@
 
 namespace Toshi {
 
-	void TInputDXDeviceMouse::Release()
-	{
-		if (m_poDXInputDevice)
-		{
-			m_poDXInputDevice->Release();
-			m_poDXInputDevice = NULL;
-		}
-	}
-
-	void TInputDXDeviceMouse::Update(float deltaTime)
-	{
-		if (IsAcquired())
-		{
-			/*m_aAxis.m_iX = 0;
-			m_aAxis.m_iY = 0;
-			m_fWheelAxis = 0;
-			auto renderer = TRenderDX11::Interface();
-			if (renderer != TNULL)
-			{
-				auto params = renderer->GetCurrentDisplayParams();
-				if (params->Height == 0)
-				{
-					int x = TSTATICCAST(int, m_CursorPos.x);
-					int y = TSTATICCAST(int, m_CursorPos.y);
-					TMath::Clip(x, 0, (int)params->Width);
-					TMath::Clip(y, 0, (int)params->Height);
-				}
-
-				TMSWindow* window = renderer->GetMSWindow();
-				m_CursorPos.x = window->m_xPos;
-				m_CursorPos.y = window->m_yPos;
-			}*/
-		}
-	}
-
-	TBOOL TInputDXDeviceMouse::Initialise()
-	{
-		TIMPLEMENT();
-
-		m_bReverseButtons = TFALSE;
-		m_dwButtonCurrent = 0;
-		m_dwButtonPrevious = 0;
-
-		GetCursorPos(&m_CursorPos);
-
-		DIPROPDWORD dwordProperty;
-		dwordProperty.diph.dwSize = sizeof(dwordProperty);
-		dwordProperty.diph.dwHeaderSize = sizeof(DIPROPHEADER);
-		dwordProperty.diph.dwObj = DIMOFS_Z;
-		dwordProperty.diph.dwHow = DIPH_BYOFFSET;
-	
-		HRESULT hr = m_poDXInputDevice->GetProperty(DIPROP_GRANULARITY, &dwordProperty.diph);
-		if (hr != DIERR_OBJECTNOTFOUND)
-		{
-			m_bInitiliased = hr == DI_OK;
-			return TTRUE;
-		}
-		m_bInitiliased = TFALSE;
-		return TTRUE;
-	}
-
-	TBOOL TInputDXDeviceMouse::Deinitialise()
-	{
-		Release();
-		return TTRUE;
-	}
-
 	TBOOL TInputDXDeviceMouse::Acquire()
 	{
 		HRESULT hr = m_poDXInputDevice->Acquire();
 
 		if (FAILED(hr))
 		{
-			m_bIsAcquired = TFALSE;
+			SetAcquired(TFALSE);
 			return TFALSE;
 		}
 		
@@ -99,173 +32,267 @@ namespace Toshi {
 		return SUCCEEDED(hr);
 	}
 
+	void TInputDXDeviceMouse::Release()
+	{
+		if (m_poDXInputDevice)
+		{
+			m_poDXInputDevice->Release();
+			m_poDXInputDevice = NULL;
+		}
+	}
+
+	void TInputDXDeviceMouse::Update(TFLOAT a_fDeltaTime)
+	{
+		if (IsAcquired())
+		{
+			m_iDeltaPositionX = 0;
+			m_iDeltaPositionY = 0;
+			m_iDeltaPositionZ = 0;
+
+			HRESULT hRes = m_poDXInputDevice->Poll();
+
+			if (SUCCEEDED(hRes))
+			{
+				DIMOUSESTATE state;
+				hRes = m_poDXInputDevice->GetDeviceState(sizeof(state), &state);
+
+				if (SUCCEEDED(hRes))
+				{
+					m_iDeltaPositionX += state.lX;
+					m_iPositionX += state.lX;
+					m_iDeltaPositionY += state.lY;
+					m_iPositionY += state.lY;
+					m_iDeltaPositionZ += state.lZ;
+					m_iPositionZ += state.lZ;
+
+					if (TRenderInterface::GetSingleton())
+					{
+						auto pDisplayParams = TRenderInterface::GetSingleton()->GetCurrentDisplayParams();
+
+						if (!pDisplayParams->bWindowed)
+						{
+							TMath::Clip(m_iPositionX, 0, TINT(pDisplayParams->uiWidth));
+							TMath::Clip(m_iPositionY, 0, TINT(pDisplayParams->uiHeight));
+						}
+					}
+				}
+			}
+		}
+	}
+
 	TBOOL TInputDXDeviceMouse::Flush()
 	{
 		DWORD dwItems = INFINITE;
+
 		if (IsAcquired())
 		{
 			HRESULT hr = m_poDXInputDevice->GetDeviceData(sizeof(DIDEVICEOBJECTDATA), NULL, &dwItems, 0);
+
 			if (SUCCEEDED(hr))
 			{
 				RefreshDirect();
 				return TTRUE;
 			}
 		}
+
 		return TFALSE;
 	}
 
-	int TInputDXDeviceMouse::ProcessEvents(TEmitter<TInputInterface, TInputInterface::InputEvent>& emitter, float deltaTime)
+	TINT TInputDXDeviceMouse::ProcessEvents(EventEmitter& a_rEmitter, TFLOAT a_fDeltaTime)
 	{
-		DIDEVICEOBJECTDATA dod[32];
-		DWORD dwItems = 32;
-
 		m_dwButtonPrevious = m_dwButtonCurrent;
-		ProcessRepeats(emitter, deltaTime);
+		TINT iNumProcessed = ProcessRepeats(a_rEmitter, a_fDeltaTime);
+
+		DWORD dwItems = 32;
+		DIDEVICEOBJECTDATA dod[32];
 		TUtil::MemClear(dod, sizeof(dod));
 
-		HRESULT hr = m_poDXInputDevice->GetDeviceData(sizeof(DIDEVICEOBJECTDATA), dod, &dwItems, 0);
+		HRESULT hRes = m_poDXInputDevice->GetDeviceData(sizeof(DIDEVICEOBJECTDATA), dod, &dwItems, 0);
 
-		int eventCount = 0;
-
-		if (FAILED(hr) && hr == (DIERR_NOTACQUIRED | DIERR_INPUTLOST))
+		if (FAILED(hRes) && hRes == (DIERR_NOTACQUIRED | DIERR_INPUTLOST))
 		{
 			Unacquire();
 			Acquire();
 
-			hr = m_poDXInputDevice->GetDeviceData(sizeof(DIDEVICEOBJECTDATA), dod, &dwItems, 0);
+			hRes = m_poDXInputDevice->GetDeviceData(sizeof(DIDEVICEOBJECTDATA), dod, &dwItems, 0);
 
-			if (hr != DI_OK)
+			if (hRes != DI_OK)
 			{
-				return eventCount;
+				return 0;
 			}
 		}
 
-		//auto renderer = TRenderDX11::Interface();
-		//auto input = TInputDXInterface::GetInterface();
-		//TRenderDX11::DisplayParams* params;
-		//int unk;
+		for (DWORD i = 0; i < dwItems; i++)
+		{
+			switch (dod[i].dwOfs)
+			{
+			case DIMOFS_BUTTON0:
+			case DIMOFS_BUTTON1:
+			case DIMOFS_BUTTON2:
+			{
+				TINT iButton =
+					(dod[i].dwOfs == DIMOFS_BUTTON0) ? (!m_bReverseButtons ? 0 : 1) :
+					(dod[i].dwOfs == DIMOFS_BUTTON1) ? (!m_bReverseButtons ? 1 : 0) : 2;
 
-		//for (size_t i = 0; i < dwItems; i++)
-		//{
-		//	switch (dod[i].dwOfs)
-		//	{
-		//	case DIMOFS_X: // MouseUp
-		//		m_aAxis.m_iX += dod[i].dwData;
+				TUINT uiButtonFlag = (1 << iButton);
 
-		//		if (renderer != TNULL)
-		//		{
-		//			m_CursorPos.x += dod[i].dwData;
-		//		}
-		//		else
-		//		{
-		//			params = renderer->GetCurrentDisplayParams();
-		//			if (!params->Unk5)
-		//			{
-		//				m_CursorPos.x += dod[i].dwData;
-		//			}
-		//		}
-		//		emitter.Throw(TInputInterface::InputEvent(this, AXIS_CURSOR, TInputInterface::EVENT_TYPE_MOVED, m_aAxis.m_iX, m_aAxis.m_iY));
-		//		eventCount++;
-		//		break;
-		//	case DIMOFS_Y: // MouseDown
-		//		m_aAxis.m_iY += dod[i].dwData;
+				TASSERT(iButton < INPUT_DEVICE_MOUSE_BUTTONS);
 
-		//		if (renderer != TNULL)
-		//		{
-		//			m_CursorPos.y += dod[i].dwData;
-		//		}
-		//		else
-		//		{
-		//			params = renderer->GetCurrentDisplayParams();
-		//			if (!params->Unk5)
-		//			{
-		//				m_CursorPos.y += dod[i].dwData;
-		//			}
-		//		}
-		//		emitter.Throw(TInputInterface::InputEvent(this, AXIS_CURSOR, TInputInterface::EVENT_TYPE_MOVED, m_aAxis.m_iX, m_aAxis.m_iY));
-		//		eventCount++;
-		//		break;
-		//	case DIMOFS_Z: // Wheel
-		//		m_fWheelAxis += dod[i].dwData;
-		//		emitter.Throw(TInputInterface::InputEvent(this, AXIS_WHEEL, TInputInterface::EVENT_TYPE_MOVED, 0.0f, m_fWheelAxis / WHEEL_DELTA));
-		//		unk = m_fWheelAxis / m_field0x80;
-		//		// WHEEL_UP
-		//		if (unk < 0)
-		//		{
-		//			emitter.Throw(TInputInterface::InputEvent(this, BUTTON_WHEEL_BACKWARD, TInputInterface::EVENT_TYPE_GONE_DOWN));
-		//			unk++;
-		//			if (unk < 0)
-		//			{
-		//				int i = -unk;
-		//				do
-		//				{
-		//					emitter.Throw(TInputInterface::InputEvent(this, BUTTON_WHEEL_BACKWARD, TInputInterface::EVENT_TYPE_REPEAT));
-		//					i--;
-		//				} while (i != 0);
-		//			}
+				if (dod[i].dwData & 0x80)
+				{
+					TASSERT((m_dwButtonCurrent & uiButtonFlag) == 0);
 
-		//			emitter.Throw(TInputInterface::InputEvent(this, BUTTON_WHEEL_BACKWARD, TInputInterface::EVENT_TYPE_GONE_UP));
-		//		}
-		//		// WHEEL_DOWN
-		//		else
-		//		{
-		//			emitter.Throw(TInputInterface::InputEvent(this, BUTTON_WHEEL_FORWARD, TInputInterface::EVENT_TYPE_GONE_DOWN));
-		//			while (unk = unk - 1, 0 < unk)
-		//			{
-		//				emitter.Throw(TInputInterface::InputEvent(this, BUTTON_WHEEL_FORWARD, TInputInterface::EVENT_TYPE_REPEAT));
-		//			}
-		//			emitter.Throw(TInputInterface::InputEvent(this, BUTTON_WHEEL_FORWARD, TInputInterface::EVENT_TYPE_GONE_UP));
-		//		}
-		//		eventCount++;
-		//		break;
-		//	case DIMOFS_BUTTON0:
-		//	case DIMOFS_BUTTON1:
-		//	case DIMOFS_BUTTON2:
-		//	{
-		//		int iButton =
-		//			(dod[i].dwOfs == DIMOFS_BUTTON0) ? (!m_bReverseButtons ? 0 : 1) :
-		//			(dod[i].dwOfs == DIMOFS_BUTTON1) ? (!m_bReverseButtons ? 1 : 0) : 2;
+					if ((m_dwButtonCurrent & uiButtonFlag) == 0)
+					{
+						a_rEmitter.Throw(TInputInterface::InputEvent(this, BUTTON_1 + iButton, TInputInterface::EVENT_TYPE_GONE_DOWN));
+						m_dwButtonCurrent |= uiButtonFlag;
+					}
+				}
+				else if ((m_dwButtonCurrent & uiButtonFlag) != 0)
+				{
+					a_rEmitter.Throw(TInputInterface::InputEvent(this, BUTTON_1 + iButton, TInputInterface::EVENT_TYPE_GONE_UP));
+					m_dwButtonCurrent &= ~uiButtonFlag;
+				}
 
-		//		TASSERT(iButton < INPUT_DEVICE_MOUSE_BUTTONS);
+				iNumProcessed += 1;
+				break;
+			}
+			}
+		}
 
-		//		if (dod[i].dwData & 0x80)
-		//		{
-		//			if ((m_dwButtonCurrent & (1 << iButton)) != 0)
-		//			{
-		//				// wtf is this assert??????????????
-		//				TASSERT((m_dwButtonCurrent & (1 << iButton)) != 0);
-		//			}
-		//			else
-		//			{
-		//				emitter.Throw(TInputInterface::InputEvent(this, BUTTON_1 + iButton, TInputInterface::EVENT_TYPE_GONE_DOWN));
-		//				m_dwButtonCurrent |= 1 << iButton;
-		//			}
-		//		}
-		//		else
-		//		{
-		//			emitter.Throw(TInputInterface::InputEvent(this, BUTTON_1 + iButton, TInputInterface::EVENT_TYPE_GONE_UP));
-		//			m_dwButtonCurrent &= ~(1 << iButton);
-		//		}
+		if (m_iDeltaPositionX != 0 && m_iDeltaPositionY != 0)
+		{
+			a_rEmitter.Throw(
+				TInputInterface::InputEvent(
+					this,
+					0x3000b,
+					TInputInterface::EVENT_TYPE_MOVED,
+					m_iDeltaPositionX,
+					m_iDeltaPositionY
+				)
+			);
 
-		//		eventCount++;
-		//		break;
-		//	}
-		//	default:
-		//		break;
-		//	}
-		//}
+			iNumProcessed += 1;
+		}
 
-		return eventCount;
+		if (m_iDeltaPositionZ != 0)
+		{
+			TTODO("Throw scroll events");
+		}
+
+		return iNumProcessed;
 	}
 
-	int TInputDXDeviceMouse::GetButtonCount() const
+	TINT TInputDXDeviceMouse::GetButtonCount() const
 	{
 		return m_DIDevCaps.dwButtons;
 	}
 
-	int TInputDXDeviceMouse::GetAxisCount() const
+	TINT TInputDXDeviceMouse::GetAxisCount() const
 	{
 		return m_DIDevCaps.dwAxes;
+	}
+
+	TBOOL TInputDXDeviceMouse::IsDown(TINT a_iDoodad) const
+	{
+		if ((0x30000 < a_iDoodad) && (a_iDoodad < 0x30009))
+		{
+			return (m_dwButtonCurrent & ((a_iDoodad - 1) & 0x1F));
+		}
+
+		return TFALSE;
+	}
+
+	TINT TInputDXDeviceMouse::GetAxisInt(Doodad a_iDoodad, TINT coord) const
+	{
+		if (a_iDoodad == AXIS_CURSOR)
+		{
+			if (coord == 0)
+			{
+				return m_iDeltaPositionX;
+			}
+
+			if (coord == 1)
+			{
+				return m_iDeltaPositionY;
+			}
+		}
+
+		return 0;
+	}
+
+	TFLOAT TInputDXDeviceMouse::GetAxisFloat(Doodad a_iDoodad, TINT coord) const
+	{
+		if (a_iDoodad == AXIS_CURSOR)
+		{
+			if (coord == 0)
+			{
+				return TSTATICCAST(TFLOAT, m_iDeltaPositionX);
+			}
+
+			if (coord == 1)
+			{
+				return TSTATICCAST(TFLOAT, m_iDeltaPositionY);
+			}
+		}
+		else if (a_iDoodad == AXIS_WHEEL)
+		{
+			return TSTATICCAST(TFLOAT, m_iDeltaPositionZ);
+		}
+
+		return 0.0f;
+	}
+
+	TBOOL TInputDXDeviceMouse::IsEnabled() const
+	{
+		return TTRUE;
+	}
+
+	TBOOL TInputDXDeviceMouse::Initialise()
+	{
+		m_bReverseButtons = TFALSE;
+		m_dwButtonCurrent = 0;
+		m_dwButtonPrevious = 0;
+
+		POINT cursorPos;
+		GetCursorPos(&cursorPos);
+
+		m_iPositionX = cursorPos.x;
+		m_iPositionY = cursorPos.y;
+		m_iPositionZ = 0;
+		m_iDeltaPositionX = 0;
+		m_iDeltaPositionY = 0;
+		m_iDeltaPositionZ = 0;
+		m_iUnk1 = 0;
+		m_iUnk2 = 0;
+		m_iUnk3 = 0;
+		m_iUnk4 = 0;
+		m_iUnk5 = 0;
+		m_iUnk6 = -1;
+		m_iUnk7 = -1;
+
+		DIPROPDWORD dwordProperty;
+		dwordProperty.diph.dwSize = sizeof(dwordProperty);
+		dwordProperty.diph.dwHeaderSize = sizeof(DIPROPHEADER);
+		dwordProperty.diph.dwObj = DIMOFS_Z;
+		dwordProperty.diph.dwHow = DIPH_BYOFFSET;
+
+		HRESULT hr = m_poDXInputDevice->GetProperty(DIPROP_GRANULARITY, &dwordProperty.diph);
+
+		if (hr != DIERR_OBJECTNOTFOUND)
+		{
+			m_bInitiliased = (hr != DI_OK) - 1 & dwordProperty.diph.dwHeaderSize;
+			return TTRUE;
+		}
+
+		m_bInitiliased = FALSE;
+		return TTRUE;
+	}
+
+	TBOOL TInputDXDeviceMouse::Deinitialise()
+	{
+		Release();
+		return TTRUE;
 	}
 
 	void TInputDXDeviceMouse::RefreshDirect()
@@ -274,14 +301,13 @@ namespace Toshi {
 		{
 			m_dwButtonPrevious = m_dwButtonCurrent;
 			m_dwButtonCurrent = 0;
-			HRESULT hr = m_poDXInputDevice->Poll();
 
-			if (SUCCEEDED(hr))
+			if (SUCCEEDED(m_poDXInputDevice->Poll()))
 			{
 				DIMOUSESTATE mouseState;
-				hr = m_poDXInputDevice->GetDeviceState(sizeof(DIMOUSESTATE), &mouseState);
+				HRESULT hRes = m_poDXInputDevice->GetDeviceState(sizeof(DIMOUSESTATE), &mouseState);
 				
-				if (SUCCEEDED(hr))
+				if (SUCCEEDED(hRes))
 				{
 					if (mouseState.rgbButtons[0] & 0x80) // LeftClick
 						m_dwButtonCurrent |= m_bReverseButtons ? 2 : 1;
@@ -296,15 +322,33 @@ namespace Toshi {
 		}
 	}
 
-	TBOOL TInputDXDeviceMouse::WasDown(int a_iDoodad) const
+	TBOOL TInputDXDeviceMouse::WasDown(TINT a_iDoodad) const
 	{
-		if (a_iDoodad - 0x30001 < 8)
+		if ((0x30000 < a_iDoodad) && (a_iDoodad < 0x30009))
+		{
 			return (m_dwButtonPrevious & ((a_iDoodad - 1) & 0x1F));
+		}
 
 		return TFALSE;
 	}
 
-	TBOOL const TInputDXDeviceMouse::BindToDIDevice(HWND a_mainWindow, LPCDIDEVICEINSTANCEA a_poDeviceInstance, IDirectInputDevice8A* a_poDXInputDevice, TBOOL exclusive)
+	void TInputDXDeviceMouse::SetExclusive(HWND a_hWindow, TBOOL a_bExclusive)
+	{
+		m_poDXInputDevice->SetCooperativeLevel(
+			a_hWindow,
+			a_bExclusive ? (DISCL_EXCLUSIVE | DISCL_FOREGROUND) : (DISCL_NONEXCLUSIVE | DISCL_FOREGROUND)
+		);
+	}
+
+	void TInputDXDeviceMouse::SetCurrentPosition(TINT a_iX, TINT a_iY)
+	{
+		auto pDisplayParams = TRenderInterface::GetSingleton()->GetCurrentDisplayParams();
+
+		TMath::Clip(m_iPositionX, 0, TINT(pDisplayParams->uiWidth));
+		TMath::Clip(m_iPositionY, 0, TINT(pDisplayParams->uiHeight));
+	}
+
+	TBOOL const TInputDXDeviceMouse::BindToDIDevice(HWND a_hMainWindow, LPCDIDEVICEINSTANCEA a_poDeviceInstance, IDirectInputDevice8A* a_poDXInputDevice, TBOOL a_bExclusive)
 	{
 		TASSERT(a_poDeviceInstance != NULL);
 		TASSERT(a_poDXInputDevice != NULL);
@@ -313,17 +357,19 @@ namespace Toshi {
 		TUtil::MemCopy(&m_oDeviceInstance, a_poDeviceInstance, sizeof(DIDEVICEINSTANCEA));
 
 		m_poDXInputDevice = a_poDXInputDevice;
-		m_DIDevCaps.dwSize = sizeof(DIDEVCAPS);
 
+		m_DIDevCaps = { sizeof(DIDEVCAPS) };
 		m_poDXInputDevice->GetCapabilities(&m_DIDevCaps);
 
-		HRESULT hr = m_poDXInputDevice->SetDataFormat(&c_dfDIMouse);
+		HRESULT hRes = m_poDXInputDevice->SetDataFormat(&c_dfDIMouse);
 
-		if (hr != DI_OK)
+		if (hRes != DI_OK)
 			return TFALSE;
 
-		if (a_mainWindow)
-			m_poDXInputDevice->SetCooperativeLevel(a_mainWindow, DISCL_FOREGROUND | (exclusive ? DISCL_EXCLUSIVE : DISCL_NONEXCLUSIVE));
+		if (a_hMainWindow)
+		{
+			m_poDXInputDevice->SetCooperativeLevel(a_hMainWindow, DISCL_FOREGROUND | (a_bExclusive ? DISCL_EXCLUSIVE : DISCL_NONEXCLUSIVE));
+		}
 
 		DIPROPDWORD dipdw{};
 		dipdw.diph.dwSize = sizeof(DIPROPDWORD);
@@ -331,55 +377,9 @@ namespace Toshi {
 		dipdw.diph.dwObj = 0;
 		dipdw.diph.dwHow = DIPH_DEVICE;
 		dipdw.dwData = DIPROPAXISMODE_REL;
+		hRes = m_poDXInputDevice->SetProperty(DIPROP_AXISMODE, &dipdw.diph);
 
-		hr = m_poDXInputDevice->SetProperty(DIPROP_AXISMODE, &dipdw.diph);
-
-		return hr == DI_OK;
-	}
-
-	TBOOL TInputDXDeviceMouse::IsDown(int a_iDoodad) const
-	{
-		if (a_iDoodad - 0x30001 < 8)
-			return (m_dwButtonCurrent & ((a_iDoodad - 1) & 0x1F));
-
-		return TFALSE;
-	}
-
-	int TInputDXDeviceMouse::GetAxisInt(int doodad, int coord) const
-	{
-		if (doodad == AXIS_CURSOR)
-		{
-			if (coord == 0)
-				return TSTATICCAST(int, m_aAxis.m_fX);
-
-			if (coord == 1)
-				return TSTATICCAST(int, m_aAxis.m_fY);
-		}
-		else if (doodad == AXIS_WHEEL)
-			return TSTATICCAST(int, m_fWheelAxis);
-
-		return 0;
-	}
-
-	float TInputDXDeviceMouse::GetAxisFloat(int doodad, int coord) const
-	{
-		if (doodad == AXIS_CURSOR)
-		{
-			if (coord == 0)
-				return m_aAxis.m_fX;
-
-			if (coord == 1)
-				return m_aAxis.m_fY;
-		}
-		else if (doodad == AXIS_WHEEL)
-			return m_fWheelAxis;
-
-		return 0;
-	}
-
-	TBOOL TInputDXDeviceMouse::IsEnabled() const
-	{
-		return TTRUE;
+		return hRes == DI_OK;
 	}
 
 }

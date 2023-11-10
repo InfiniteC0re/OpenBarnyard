@@ -4,21 +4,30 @@
 
 namespace Toshi
 {
-	class TInputDXInterface : public TInputInterface
+	TOBJECT(TInputDXInterface, TInputInterface, TTRUE)
 	{
-	public:
-		static constexpr size_t MAXDEVICESNUM = 127;
 	public:
 		TInputDXInterface()
 		{
 			m_poDirectInput8 = NULL;
 			m_hMainWindow = NULL;
-			ms_pTheInterface = this;
-			m_bExclusive = TFALSE;
+			m_bExclusive = TTRUE;
 		}
 
-		virtual TBOOL Initialise();
-		virtual TBOOL Deinitialise();
+		virtual ~TInputDXInterface() override
+		{
+			ReleaseAllDevices();
+
+			if (m_poDirectInput8)
+			{
+				m_poDirectInput8->Release();
+				m_poDirectInput8 = TNULL;
+			}
+		}
+
+		virtual TBOOL Initialise() override;
+		virtual TBOOL Deinitialise() override;
+		virtual void SetExclusiveMode(TBOOL a_bIsExclusive) override;
 		virtual void RefreshDirect() { }
 
 		TBOOL LostDevice();
@@ -32,16 +41,6 @@ namespace Toshi
 		{
 			m_hMainWindow = a_hMainWindow;
 		}
-
-		static TInputDXInterface* GetInterface()
-		{
-			return ms_pTheInterface;
-		}
-	
-	public:
-		static inline TInputDXInterface* ms_pTheInterface = TNULL;
-		static inline GUID ms_RegisteredDevices[MAXDEVICESNUM];
-		static inline size_t ms_iNumDevices;
 	
 	private:
 		static BOOL CALLBACK EnumerateDeviceCallback(LPCDIDEVICEINSTANCEA a_poDeviceInstance, LPVOID poDXInputInterface);
@@ -53,7 +52,7 @@ namespace Toshi
 
 	private:
 		LPDIRECTINPUT8A m_poDirectInput8; // 0x30
-		HWND m_hMainWindow;              // 0x34
-		TBOOL m_bExclusive;              // 0x38
+		HWND m_hMainWindow;               // 0x34
+		TBOOL m_bExclusive;               // 0x38
 	};
 }

@@ -4,6 +4,7 @@
 #include "Assets/AMaterialLibraryManager.h"
 #include "Assets/AAssetLoader.h"
 #include "Memory/AMemory.h"
+#include "Input/AInputHandler.h"
 #include "AGUI/AGUI2.h"
 #include "AGUI/AGUISystem.h"
 #include "AGUI/AGUI2TextureSectionManager.h"
@@ -22,9 +23,10 @@ ARootTask::ARootTask()
 
 	auto pSystemManager = TSystemManager::GetSingleton();
 
-	m_pGUI2 = pSystemManager->GetScheduler()->CreateTask(&TGetClass(AGUI2));
 	m_pGUISystem = pSystemManager->GetScheduler()->CreateTask(&TGetClass(AGUISystem));
+	m_pGUI2 = pSystemManager->GetScheduler()->CreateTask(&TGetClass(AGUI2));
 	m_pRenderer = TSTATICCAST(ARenderer*, pSystemManager->GetScheduler()->CreateTask(&TGetClass(ARenderer)));
+	m_pInputHandler = pSystemManager->GetScheduler()->CreateTask(&TGetClass(AInputHandler));
 
 	m_bRenderScene = TFALSE;
 }
@@ -43,9 +45,16 @@ TBOOL ARootTask::OnCreate()
 	{
 		if (!m_pRenderer->Create())
 		{
-			return TFALSE;
+			m_pRenderer = TNULL;
 		}
 	}
+
+	if (!m_pRenderer)
+	{
+		return TFALSE;
+	}
+
+	m_pInputHandler->Create();
 
 	ARandom::CreateSingleton();
 

@@ -1,5 +1,5 @@
 #pragma once
-#include "ADisplayModes_Win.h"
+#include TOSHI_MULTIPLATFORM(ADisplayModes)
 
 #include <Toshi/Core/TTask.h>
 #include <Toshi/Render/TViewport.h>

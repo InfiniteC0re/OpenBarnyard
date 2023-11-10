@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "AGUISystem.h"
 #include "AGUI2TextureSectionManager.h"
-#include "Tasks/ARenderer.h"
+#include "Render/ARenderer.h"
 #include "Memory/AMemory.h"
 
 TPSTRING8_DECLARE(Start);
