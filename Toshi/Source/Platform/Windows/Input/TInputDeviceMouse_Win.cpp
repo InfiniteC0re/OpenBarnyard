@@ -268,11 +268,6 @@ namespace Toshi {
 		return m_DIDevCaps.dwAxes;
 	}
 
-	Platform TInputDXDeviceMouse::GetPlatform() const
-{
-		return Platform::PC;
-	}
-
 	void TInputDXDeviceMouse::RefreshDirect()
 	{
 		if (IsAcquired())

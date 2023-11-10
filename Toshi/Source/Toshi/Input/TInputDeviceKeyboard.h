@@ -151,20 +151,21 @@ namespace Toshi
 
 	public:
 		TInputDeviceKeyboard();
+		~TInputDeviceKeyboard() = default;
+
+		virtual TBOOL GetDoodadProperties(Doodad a_iDoodad, DoodadProperties& doodadProps) const override;
 
 		virtual int GetAxisCount() const override { return 0; }
-		virtual TBOOL GetDoodadProperties(int doodad, DoodadProperties& doodadProps) const override;
-		virtual Platform GetPlatform() const override { return Platform::PC; }
-		virtual const char* GetButtonFromDoodad(int doodad) const override;
-		virtual int GetAxisInt(int doodad, int axis) const override { return 0; }
-		virtual float GetAxisFloat(int doodad, int axis) const override { return 0; }
+		virtual const char* GetButtonFromDoodad(Doodad a_iDoodad) const override;
+		virtual int GetAxisInt(Doodad a_iDoodad, int axis) const override { return 0; }
+		virtual float GetAxisFloat(Doodad a_iDoodad, int axis) const override { return 0; }
+
 		virtual TBOOL IsShiftDown() const = 0;
 		virtual TBOOL IsControlDown() const = 0;
 		virtual TBOOL IsAltDown() const = 0;
-		virtual TBOOL WasDown(int doodad) const = 0;
-		virtual wchar_t* TranslateDoodadToCharacter(int doodad) const = 0;
-		// FIXME: add other virtual methods of this class...
-		virtual int ProcessVirtualButtons(TEmitter<TInputInterface, TInputInterface::InputEvent>& emitter, float flt);
+		virtual TBOOL WasDown(Doodad a_iDoodad) const = 0;
+		virtual wchar_t* TranslateDoodadToCharacter(Doodad a_iDoodad) const = 0;
+		virtual int ProcessVirtualButtons(EventEmitter& emitter, float flt);
 		
 		void SetVirtStickDoodads(int a_iMapID, int x, int y, int z, int w);
 		void GetVirtStickDoodads(int a_iMapID, int& x, int& y, int& z, int& w);

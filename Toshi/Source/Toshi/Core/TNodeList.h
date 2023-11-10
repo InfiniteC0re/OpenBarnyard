@@ -167,29 +167,29 @@ namespace Toshi
 			}
 		}
 
-		void Delete(TNode& node)
+		void Delete(T& node)
 		{
 			Remove(node);
 			
 			delete& node;
 		}
 
-		void InsertHead(TNode& node)
+		void InsertHead(T& node)
 		{
 			InsertAfter(m_Head, node);
 		}
 
-		void InsertTail(TNode& node)
+		void InsertTail(T& node)
 		{
 			InsertBefore(m_Head, node);
 		}
 
 		TBOOL IsEmpty() const
 		{
-			return m_Head.Next() == &m_Head;
+			return m_Head.Next() == End();
 		}
 
-		TBOOL IsValid(const TNode* node) const
+		TBOOL IsValid(const T* node) const
 		{
 			return node != TNULL && node->m_List == this;
 		}

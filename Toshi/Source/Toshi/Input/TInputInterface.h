@@ -1,13 +1,12 @@
 #pragma once
 #include "Toshi/Core/TNodeList.h"
-#include "Toshi/Core/TArray.h"
+#include "Toshi2/T2DynamicArray.h"
 
 namespace Toshi {
 	
 	class TInputDevice;
 
-	class TInputInterface :
-		public TGenericClassDerived<TInputInterface, TObject, "TInputInterface", TMAKEVERSION(1, 0), TFALSE>,
+	TOBJECT(TInputInterface, TObject, TFALSE),
 		public TSingleton<TInputInterface>
 	{
 	public:
@@ -23,23 +22,23 @@ namespace Toshi {
 		class InputEvent
 		{
 		public:
-			InputEvent(TInputDevice* a_pDevice, int a_iDoodad, EVENT_TYPE a_eEventType);
-			InputEvent(TInputDevice* a_pDevice, int a_iDoodad, EVENT_TYPE a_eEventType, wchar_t* a_wszString);
-			InputEvent(TInputDevice* a_pDevice, int a_iDoodad, EVENT_TYPE a_eEventType, int a_iMagnitude1);
-			InputEvent(TInputDevice* a_pDevice, int a_iDoodad, EVENT_TYPE a_eEventType, int a_iMagnitude1, int a_iMagnitude2);
-			InputEvent(TInputDevice* a_pDevice, int a_iDoodad, EVENT_TYPE a_eEventType, float a_fMagnitude1);
-			InputEvent(TInputDevice* a_pDevice, int a_iDoodad, EVENT_TYPE a_eEventType, float a_fMagnitude1, float a_fMagnitude2);
+			InputEvent(TInputDevice* a_pDevice, TINT a_iDoodad, EVENT_TYPE a_eEventType);
+			InputEvent(TInputDevice* a_pDevice, TINT a_iDoodad, EVENT_TYPE a_eEventType, wchar_t* a_wszString);
+			InputEvent(TInputDevice* a_pDevice, TINT a_iDoodad, EVENT_TYPE a_eEventType, TINT a_iMagnitude1);
+			InputEvent(TInputDevice* a_pDevice, TINT a_iDoodad, EVENT_TYPE a_eEventType, TINT a_iMagnitude1, TINT a_iMagnitude2);
+			InputEvent(TInputDevice* a_pDevice, TINT a_iDoodad, EVENT_TYPE a_eEventType, TFLOAT a_fMagnitude1);
+			InputEvent(TInputDevice* a_pDevice, TINT a_iDoodad, EVENT_TYPE a_eEventType, TFLOAT a_fMagnitude1, TFLOAT a_fMagnitude2);
 
-			int GetMagnitudeInt(int a_iAxis);
+			TINT GetMagnitudeInt(TINT a_iAxis);
 
-			float GetMagnitudeFloat(int a_iAxis);
+			TFLOAT GetMagnitudeFloat(TINT a_iAxis);
 
 			int8_t GetAxisCount() const
 			{
 				return m_iAxisCount;
 			}
 
-			int GetDoodad() const
+			TINT GetDoodad() const
 			{
 				return m_iDoodad;
 			}
@@ -65,7 +64,7 @@ namespace Toshi {
 			}
 
 		public:
-			int m_iDoodad;             // 0x00
+			TINT m_iDoodad;             // 0x00
 			EVENT_TYPE m_eEventType;   // 0x04
 			TBOOL m_bIsMagnitudeFloat; // 0x08
 			int8_t m_iAxisCount;       // 0x09
@@ -74,8 +73,8 @@ namespace Toshi {
 
 			union
 			{
-				float Floats[2];
-				int Ints[2];
+				TFLOAT Floats[2];
+				TINT Ints[2];
 			} m_Magnitude;             // 0x18 De blob 0x10 JPOG
 		};
 
@@ -85,35 +84,35 @@ namespace Toshi {
 			m_bIsExclusiveMode = TFALSE;
 		}
 
-		TInputDevice* GetDeviceByIndex(TClass* pClass, size_t index);
-
-		template <class C>
-		C* GetDeviceByIndex(size_t index = 0)
-		{
-			C* pDevice = TSTATICCAST(C*, GetDeviceByIndex(&TGetClass(C), index));
-			TASSERT(pDevice == TNULL || pDevice->GetClass()->IsA(&TGetClass(C)));
-			return pDevice;
-		}
+		virtual ~TInputInterface() = 0;
+		virtual TBOOL Initialise() = 0;
+		virtual TBOOL Deinitialise() = 0;
+		virtual TBOOL AcquireAll();
+		virtual TBOOL UnacquireAll();
+		virtual TBOOL FlushAll();
+		virtual void SetExclusiveMode(TBOOL a_bIsExclusive);
+		virtual TBOOL GetExclusiveMode() const;
+		virtual TINT ProcessEvents(TFLOAT a_fDeltaTime);
+		virtual void StopAllRepeats();
 
 		void AddDevice(TInputDevice* device);
 		void RemoveDevice(TInputDevice* device);
 
-		virtual TBOOL Initialise() { return TTRUE; }
-		virtual TBOOL Deinitialise();
+		TInputDevice* GetDeviceByIndex(TClass* a_pClass, TUINT a_uiIndex);
 
-		virtual TBOOL AcquireAll();
-		virtual TBOOL UnacquireAll();
-		virtual TBOOL FlushAll();
-		virtual void SetExclusiveMode(TBOOL mode);
-		virtual TBOOL GetExclusiveMode() const;
-		virtual int ProcessEvents(float fUnk);
-		virtual void StopAllRepeats();
+		template <class C>
+		C* GetDeviceByIndex(TUINT a_uiIndex = 0)
+		{
+			C* pDevice = TSTATICCAST(C*, GetDeviceByIndex(&TGetClass(C), a_uiIndex));
+			TASSERT(pDevice == TNULL || pDevice->GetClass()->IsA(&TGetClass(C)));
+			return pDevice;
+		}
 
 	private:
-		TNodeList<TInputDevice> m_DeviceList;                                        // 0x04
-		TBOOL m_bIsExclusiveMode;                                                    // 0x14 
-		TEmitter<TInputInterface, TInputInterface::InputEvent> m_Emitter1;           // 0x24
-		TGenericEmitter m_Emitter2;                                                  // 0x28
+		TBOOL m_bIsExclusiveMode;                                                    // 0x04
+		TNodeList<TInputDevice> m_DeviceList;                                        // 0x08
+		TEmitter<TInputInterface, TInputInterface::InputEvent> m_Emitter1;           // 0x18
+		TGenericEmitter m_Emitter2;                                                  // 0x24
 	};
 
 	class TInputDevice :
@@ -121,52 +120,48 @@ namespace Toshi {
 		public TNodeList<TInputDevice>::TNode
 	{
 	public:
-		static constexpr int INPUT_DEVICE_MOUSE_BUTTONS = 3;
-		static constexpr int INPUT_DEVICE_MOUSE_WHEEL = 4;
+		static constexpr TINT INPUT_DEVICE_MOUSE_BUTTONS = 3;
+		static constexpr TINT INPUT_DEVICE_MOUSE_WHEEL = 4;
+
+		using EventEmitter = TEmitter<TInputInterface, TInputInterface::InputEvent>;
+		using Doodad = TINT;
 
 		struct DoodadProperties
 		{
-			int m_iUnk;
+			TINT m_iUnk;
 			TBOOL m_bFlag;
 		};
 
 		struct RepeatInfo
 		{
-			int m_iDoodad;
+			TINT m_iDoodad;
 		};
 
 	public:
-		TInputDevice() :
-			m_Repeats(0, 16),
-			m_Array2(0, 16)
-		{
-			m_pInputInterface = TNULL;
-			m_bUnknown = TFALSE;
-			m_bIsAcquired = TFALSE;
-			m_uiDeviceIndex = s_uiDeviceCount++;
-			s_aDevices[m_uiDeviceIndex] = this;
-		}
+		TInputDevice();
+		virtual ~TInputDevice() = 0;
 
 		virtual TBOOL Acquire() = 0;
 		virtual TBOOL Unacquire() = 0;
 		virtual void Release() = 0;
-		virtual void Update(float deltaTime) = 0;
-		virtual TBOOL Flush() { return TTRUE; }
-		virtual int ProcessEvents(TEmitter<TInputInterface, TInputInterface::InputEvent>& emitter, float deltaTime) = 0;
-		virtual int GetButtonCount() const = 0;
-		virtual int GetAxisCount() const = 0;
-		virtual TBOOL GetDoodadProperties(int doodad, DoodadProperties& doodadProps) const = 0;
-		virtual TBOOL StartRepeat(int param_1, float param_2, float param_3);
-		virtual TBOOL StopRepeat(int param_1);
-		virtual TBOOL StopAllRepeats();
-		virtual TBOOL IsForceFeedbackDevice() { return TFALSE; }
-		virtual Platform GetPlatform() const = 0;
-		virtual const char* GetButtonFromDoodad(int a_iDoodad) const = 0;
-		virtual TBOOL IsDown(int doodad) const = 0;
-		virtual int GetAxisInt(int doodad, int axis) const = 0;
-		virtual float GetAxisFloat(int doodad, int axis) const = 0;
+		virtual void Update(TFLOAT deltaTime) = 0;
+		virtual TBOOL Flush();
+		virtual TINT ProcessEvents(EventEmitter& emitter, TFLOAT deltaTime) = 0;
+		virtual TINT GetButtonCount() const = 0;
+		virtual TINT GetAxisCount() const = 0;
+		virtual TBOOL GetDoodadProperties(Doodad a_iDoodad, DoodadProperties& a_rProperties) const = 0;
+		virtual TBOOL StartRepeat(TINT param_1, TFLOAT param_2, TFLOAT param_3);
+		virtual void StopRepeat(TINT param_1);
+		virtual void StopAllRepeats();
+		virtual TBOOL IsForceFeedbackDevice();
+		virtual const char* GetButtonFromDoodad(Doodad a_iDoodad) const = 0;
+		virtual TBOOL IsDown(Doodad a_iDoodad) const = 0;
+		virtual TINT GetAxisInt(Doodad a_iDoodad, TINT axis) const = 0;
+		virtual TINT GetAxisInt2(Doodad a_iDoodad, TINT axis) const { return GetAxisInt(a_iDoodad, axis); }
+		virtual TFLOAT GetAxisFloat(Doodad a_iDoodad, TINT axis) const = 0;
+		virtual TFLOAT GetAxisFloat2(Doodad a_iDoodad, TINT axis) const { return GetAxisFloat(a_iDoodad, axis); }
 		virtual TBOOL IsEnabled() const = 0;
-		virtual void ThrowRepeatEvent(TEmitter<TInputInterface, TInputInterface::InputEvent>& emitter, RepeatInfo* repeatInfo, float deltaTime);
+		virtual void ThrowRepeatEvent(EventEmitter& emitter, RepeatInfo* repeatInfo, TFLOAT deltaTime);
 
 		TBOOL IsAcquired() const
 		{
@@ -189,7 +184,7 @@ namespace Toshi {
 		}
 
 	protected:
-		int ProcessRepeats(TEmitter<TInputInterface, TInputInterface::InputEvent>& emitter, float flt);
+		TINT ProcessRepeats(EventEmitter& a_rEmitter, TFLOAT a_fDeltaTime);
 
 	public:
 		static TInputDevice** GetRegisteredDevices()
@@ -197,24 +192,24 @@ namespace Toshi {
 			return s_aDevices;
 		}
 
-		static size_t GetNumRegisteredDevices()
+		static TUINT GetNumRegisteredDevices()
 		{
 			return s_uiDeviceCount;
 		}
 
 	protected:
-		static constexpr size_t MAX_DEVICE_COUNT = 14;
+		static constexpr TUINT MAX_DEVICE_COUNT = 14;
 
 		inline static TInputDevice* s_aDevices[MAX_DEVICE_COUNT];
-		inline static size_t s_uiDeviceCount;
+		inline static TUINT s_uiDeviceCount;
 
 	protected:
-		size_t m_uiDeviceIndex;             // 0x14
-		TArray<void*>::Storage m_Repeats;   // 0x18 FIXME: replace void* with some structure whose size is 0xC
-		TArray<void*>::Storage m_Array2;    // 0x28 FIXME: replace void* with some structure whose size is 0x4
-		TBOOL m_bUnknown;                   // 0x38
-		TBOOL m_bIsAcquired;                // 0x39 de blob 0x35 JPOG
-		TInputInterface* m_pInputInterface; // 0x3C
+		TUINT m_uiDeviceIndex;
+		T2DynamicArray<void*> m_Repeats;
+		T2DynamicArray<void*> m_Array2;
+		TBOOL m_bUnknown;
+		TBOOL m_bIsAcquired;
+		TInputInterface* m_pInputInterface;
 	};
 
 }

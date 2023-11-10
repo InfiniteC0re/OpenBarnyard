@@ -1,34 +1,58 @@
 #include "ToshiPCH.h"
 #include "TInputInterface.h"
 
-namespace Toshi
-{
-	int TInputDevice::ProcessRepeats(TEmitter<TInputInterface, TInputInterface::InputEvent>& emitter, float flt)
+namespace Toshi {
+
+	TInputDevice::TInputDevice() :
+		m_Repeats(0, 16),
+		m_Array2(0, 16)
+	{
+		m_bUnknown = TFALSE;
+		m_bIsAcquired = TFALSE;
+		m_pInputInterface = TNULL;
+	}
+
+	TBOOL TInputDevice::Flush()
+	{
+		return TTRUE;
+	}
+
+	TINT TInputDevice::ProcessRepeats(EventEmitter& a_rEmitter, TFLOAT a_fDeltaTime)
 	{
 		TIMPLEMENT();
 		return 0;
 	}
 
-	TBOOL TInputDevice::StartRepeat(int param_1, float param_2, float param_3)
+	TBOOL TInputDevice::StartRepeat(TINT param_1, TFLOAT param_2, TFLOAT param_3)
 	{
 		TIMPLEMENT();
 		return TFALSE;
 	}
 
-	TBOOL TInputDevice::StopRepeat(int param_1)
+	void TInputDevice::StopRepeat(TINT param_1)
 	{
 		TIMPLEMENT();
+	}
+
+	void TInputDevice::StopAllRepeats()
+	{
+		m_Repeats.Clear();
+	}
+
+	TBOOL TInputDevice::IsForceFeedbackDevice()
+	{
 		return TFALSE;
 	}
 
-	TBOOL TInputDevice::StopAllRepeats()
+	void TInputDevice::ThrowRepeatEvent(EventEmitter& emitter, RepeatInfo* repeatInfo, TFLOAT flt)
 	{
-		TIMPLEMENT();
-		return TFALSE;
+		emitter.Throw(
+			TInputInterface::InputEvent(
+				this,
+				repeatInfo->m_iDoodad,
+				TInputInterface::EVENT_TYPE_REPEAT
+			)
+		);
 	}
 
-	void TInputDevice::ThrowRepeatEvent(TEmitter<TInputInterface, TInputInterface::InputEvent>& emitter, RepeatInfo* repeatInfo, float flt)
-	{
-		emitter.Throw(TInputInterface::InputEvent(this, repeatInfo->m_iDoodad, TInputInterface::EVENT_TYPE_REPEAT));
-	}
 }

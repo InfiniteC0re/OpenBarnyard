@@ -5,20 +5,24 @@
 
 namespace Toshi
 {
-	TInputDevice* TInputInterface::GetDeviceByIndex(TClass* pClass, size_t index)
+	TInputDevice* TInputInterface::GetDeviceByIndex(TClass* a_pClass, TUINT a_uiIndex)
 	{
-		if (m_DeviceList.Count() == 0) return TNULL;
-		for (auto it = m_DeviceList.Begin(); it != m_DeviceList.End(); ++it)
+		if (m_DeviceList.Count() == 0)
 		{
-			if (it->GetClass()->IsA(pClass))
+			return TNULL;
+		}
+
+		for (auto it = m_DeviceList.Begin(); it != m_DeviceList.End(); it++)
+		{
+			if (it->GetClass()->IsA(a_pClass))
 			{
-				if (index == 0)
+				if (a_uiIndex == 0)
 				{
 					return it;
 				}
 				else
 				{
-					index -= 1;
+					a_uiIndex -= 1;
 				}
 			}
 		}
@@ -44,45 +48,45 @@ namespace Toshi
 		}
 	}
 
-	TBOOL TInputInterface::Deinitialise()
-	{
-		m_DeviceList.DeleteAll();
-		return TTRUE;
-	}
-
 	TBOOL TInputInterface::AcquireAll()
 	{
-		TBOOL bRet = TTRUE;
-		for (auto it = m_DeviceList.Begin(); it != m_DeviceList.End(); ++it)
+		TBOOL bResult = TTRUE;
+
+		for (auto it = m_DeviceList.Begin(); it != m_DeviceList.End(); it++)
 		{
-			bRet = it->Acquire();
+			bResult &= it->Acquire();
 		}
-		return bRet;
+
+		return bResult;
 	}
 
 	TBOOL TInputInterface::UnacquireAll()
 	{
-		TBOOL bRet = TTRUE;
-		for (auto it = m_DeviceList.Begin(); it != m_DeviceList.End(); ++it)
+		TBOOL bResult = TTRUE;
+
+		for (auto it = m_DeviceList.Begin(); it != m_DeviceList.End(); it++)
 		{
-			bRet = it->Unacquire();
+			bResult &= it->Unacquire();
 		}
-		return bRet;
+
+		return bResult;
 	}
 
 	TBOOL TInputInterface::FlushAll()
 	{
-		TBOOL bRet = TTRUE;
-		for (auto it = m_DeviceList.Begin(); it != m_DeviceList.End(); ++it)
+		TBOOL bResult = TTRUE;
+
+		for (auto it = m_DeviceList.Begin(); it != m_DeviceList.End(); it++)
 		{
-			bRet = it->Flush();
+			bResult &= it->Flush();
 		}
-		return bRet;
+
+		return bResult;
 	}
 
-	void TInputInterface::SetExclusiveMode(TBOOL mode)
+	void TInputInterface::SetExclusiveMode(TBOOL a_bIsExclusive)
 	{
-		m_bIsExclusiveMode = mode;
+		m_bIsExclusiveMode = a_bIsExclusive;
 	}
 
 	TBOOL TInputInterface::GetExclusiveMode() const
@@ -90,23 +94,23 @@ namespace Toshi
 		return m_bIsExclusiveMode;
 	}
 
-	int TInputInterface::ProcessEvents(float deltaTime)
+	TINT TInputInterface::ProcessEvents(TFLOAT a_fDeltaTime)
 	{
-		int iNumProcessed = 0;
+		TINT iNumProcessed = 0;
 
-		for (auto it = m_DeviceList.Tail(); it != m_DeviceList.End(); --it)
+		for (auto it = m_DeviceList.Begin(); it != m_DeviceList.End(); it++)
 		{
 			if (it->IsAcquired())
 			{
-				it->Update(deltaTime);
+				it->Update(a_fDeltaTime);
 			}
 		}
 
-		for (auto it = m_DeviceList.Tail(); it != m_DeviceList.End(); --it)
+		for (auto it = m_DeviceList.Begin(); it != m_DeviceList.End(); it++)
 		{
 			if (it->IsAcquired())
 			{
-				iNumProcessed += it->ProcessEvents(m_Emitter1, deltaTime);
+				iNumProcessed += it->ProcessEvents(m_Emitter1, a_fDeltaTime);
 			}
 		}
 
@@ -115,13 +119,13 @@ namespace Toshi
 
 	void TInputInterface::StopAllRepeats()
 	{
-		for (auto it = m_DeviceList.Begin(); it != m_DeviceList.End(); ++it)
+		for (auto it = m_DeviceList.Begin(); it != m_DeviceList.End(); it++)
 		{
 			it->StopAllRepeats();
 		}
 	}
 
-	TInputInterface::InputEvent::InputEvent(TInputDevice* a_pDevice, int a_iDoodad, EVENT_TYPE a_eEventType)
+	TInputInterface::InputEvent::InputEvent(TInputDevice* a_pDevice, TINT a_iDoodad, EVENT_TYPE a_eEventType)
 	{
 		m_pSource = a_pDevice;
 		m_iDoodad = a_iDoodad;
@@ -131,7 +135,7 @@ namespace Toshi
 		m_wszString[0] = L'\0';
 	}
 
-	TInputInterface::InputEvent::InputEvent(TInputDevice* a_pDevice, int a_iDoodad, EVENT_TYPE a_eEventType, wchar_t* a_wszString)
+	TInputInterface::InputEvent::InputEvent(TInputDevice* a_pDevice, TINT a_iDoodad, EVENT_TYPE a_eEventType, wchar_t* a_wszString)
 	{
 		m_pSource = a_pDevice;
 		m_iDoodad = a_iDoodad;
@@ -142,7 +146,7 @@ namespace Toshi
 		m_Magnitude.Ints[0] = 0;
 	}
 
-	TInputInterface::InputEvent::InputEvent(TInputDevice* a_pDevice, int a_iDoodad, EVENT_TYPE a_eEventType, int a_iMagnitude1)
+	TInputInterface::InputEvent::InputEvent(TInputDevice* a_pDevice, TINT a_iDoodad, EVENT_TYPE a_eEventType, TINT a_iMagnitude1)
 	{
 		m_pSource = a_pDevice;
 		m_iDoodad = a_iDoodad;
@@ -153,7 +157,7 @@ namespace Toshi
 		m_wszString[0] = L'\0';
 	}
 
-	TInputInterface::InputEvent::InputEvent(TInputDevice* a_pDevice, int a_iDoodad, EVENT_TYPE a_eEventType, int a_iMagnitude1, int a_iMagnitude2)
+	TInputInterface::InputEvent::InputEvent(TInputDevice* a_pDevice, TINT a_iDoodad, EVENT_TYPE a_eEventType, TINT a_iMagnitude1, TINT a_iMagnitude2)
 	{
 		m_pSource = a_pDevice;
 		m_iDoodad = a_iDoodad;
@@ -165,7 +169,7 @@ namespace Toshi
 		m_wszString[0] = L'\0';
 	}
 
-	TInputInterface::InputEvent::InputEvent(TInputDevice* a_pDevice, int a_iDoodad, EVENT_TYPE a_eEventType, float a_fMagnitude1)
+	TInputInterface::InputEvent::InputEvent(TInputDevice* a_pDevice, TINT a_iDoodad, EVENT_TYPE a_eEventType, TFLOAT a_fMagnitude1)
 	{
 		m_pSource = a_pDevice;
 		m_iDoodad = a_iDoodad;
@@ -176,7 +180,7 @@ namespace Toshi
 		m_wszString[0] = L'\0';
 	}
 
-	TInputInterface::InputEvent::InputEvent(TInputDevice* a_pDevice, int a_iDoodad, EVENT_TYPE a_eEventType, float a_fMagnitude1, float a_fMagnitude2)
+	TInputInterface::InputEvent::InputEvent(TInputDevice* a_pDevice, TINT a_iDoodad, EVENT_TYPE a_eEventType, TFLOAT a_fMagnitude1, TFLOAT a_fMagnitude2)
 	{
 		m_pSource = a_pDevice;
 		m_iDoodad = a_iDoodad;
@@ -188,7 +192,7 @@ namespace Toshi
 		m_wszString[0] = L'\0';
 	}
 
-	int TInputInterface::InputEvent::GetMagnitudeInt(int a_iAxis)
+	TINT TInputInterface::InputEvent::GetMagnitudeInt(TINT a_iAxis)
 	{
 		TASSERT(a_iAxis >= 0 && a_iAxis < GetAxisCount());
 
@@ -207,7 +211,7 @@ namespace Toshi
 		}
 	}
 
-	float TInputInterface::InputEvent::GetMagnitudeFloat(int a_iAxis)
+	TFLOAT TInputInterface::InputEvent::GetMagnitudeFloat(TINT a_iAxis)
 	{
 		TASSERT(a_iAxis >= 0 && a_iAxis < GetAxisCount());
 
@@ -216,7 +220,7 @@ namespace Toshi
 			return m_Magnitude.Floats[a_iAxis];
 		}
 
-		return (float)m_Magnitude.Ints[a_iAxis];
+		return (TFLOAT)m_Magnitude.Ints[a_iAxis];
 	}
 
 }

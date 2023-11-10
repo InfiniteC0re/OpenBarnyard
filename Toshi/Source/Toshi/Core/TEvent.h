@@ -45,12 +45,6 @@ namespace Toshi {
 			Create(a_pOwner);
 		}
 
-		TGenericEmitter(const TGenericEmitter& other)
-		{
-			m_Listeners.m_Root = other.m_Listeners.m_Root;
-			Create(other.m_pOwner);
-		}
-
 		void Throw(void* a_pData)
 		{
 			for (auto it = m_Listeners.Begin(); it != m_Listeners.End(); it++)

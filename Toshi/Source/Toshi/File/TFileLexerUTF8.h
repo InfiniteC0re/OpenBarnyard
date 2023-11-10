@@ -84,7 +84,7 @@ namespace Toshi {
 		TBOOL m_bFlags[4];                   // 0x4C
 		TBOOL m_bAllowPreprocessor;          // 0x6C
 		TBOOL m_bUnk7;                       // 0x6D
-		TArray<TString8>::Storage m_Defines; // 0x70
+		TArray<TString8> m_Defines;          // 0x70
 		TGenericEmitter m_oEmitter;          // 0x80
 	};
 

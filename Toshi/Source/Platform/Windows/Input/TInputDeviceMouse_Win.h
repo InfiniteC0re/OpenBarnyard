@@ -32,7 +32,6 @@ namespace Toshi
 		virtual int ProcessEvents(TEmitter<TInputInterface, TInputInterface::InputEvent>& emitter, float deltaTime) override;
 		virtual int GetButtonCount() const override;
 		virtual int GetAxisCount() const override;
-		virtual Platform GetPlatform() const override;
 		virtual TBOOL IsDown(int doodad) const override;
 		virtual int GetAxisInt(int doodad, int axis) const override;
 		virtual float GetAxisFloat(int doodad, int axis) const override;
