@@ -275,6 +275,18 @@ namespace Toshi
 			m_pAllocator->Delete(DeleteNode(a_pNode));
 		}
 
+		void Erase(Node* a_pFrom, Node* a_pTo)
+		{
+			Node* pNode = a_pFrom;
+
+			while (pNode != a_pTo)
+			{
+				auto pNext = GetSuccessorOf(pNode);
+				Delete(pNode);
+				pNode = pNext;
+			}
+		}
+
 		void Insert(Node*& insertedNode, const T& value)
 		{
 			Node* pNode = m_pAllocator->New<Node>(value);

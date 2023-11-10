@@ -136,7 +136,9 @@ namespace Toshi {
 
 		struct RepeatInfo
 		{
-			TINT m_iDoodad;
+			Doodad iDoodad;
+			TFLOAT fLeftTime;
+			TFLOAT fRepeatTime;
 		};
 
 	public:
@@ -152,8 +154,8 @@ namespace Toshi {
 		virtual TINT GetButtonCount() const = 0;
 		virtual TINT GetAxisCount() const = 0;
 		virtual TBOOL GetDoodadProperties(Doodad a_iDoodad, DoodadProperties& a_rProperties) const = 0;
-		virtual TBOOL StartRepeat(TINT param_1, TFLOAT param_2, TFLOAT param_3);
-		virtual void StopRepeat(TINT param_1);
+		virtual TBOOL StartRepeat(Doodad a_iDoodad, TFLOAT a_fFirstRepeatTime, TFLOAT a_fRepeatTime);
+		virtual void StopRepeat(Doodad a_iDoodad);
 		virtual void StopAllRepeats();
 		virtual TBOOL IsForceFeedbackDevice();
 		virtual const char* GetButtonFromDoodad(Doodad a_iDoodad) const = 0;
@@ -207,7 +209,7 @@ namespace Toshi {
 
 	protected:
 		TUINT m_uiDeviceIndex;
-		T2DynamicArray<void*> m_Repeats;
+		T2DynamicArray<RepeatInfo> m_Repeats;
 		T2DynamicArray<void*> m_Array2;
 		TBOOL m_bUnknown;
 		TBOOL m_bIsAcquired;

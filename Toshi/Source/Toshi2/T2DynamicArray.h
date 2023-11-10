@@ -9,6 +9,7 @@ namespace Toshi {
 		class Iterator
 		{
 		public:
+			friend T2GenericDynamicArray;
 			using Storage = T2GenericDynamicArray;
 
 		public:
@@ -30,25 +31,25 @@ namespace Toshi {
 				m_poArray = &a_poArray;
 			}
 
-			Iterator(int a_iIndex, Storage& a_poArray)
+			Iterator(TINT a_iIndex, Storage& a_poArray)
 			{
 				m_iIndex = a_iIndex;
 				m_poArray = &a_poArray;
 			}
 
-			void SetCurrentIndex(int a_iIndex) const
+			void SetCurrentIndex(TINT a_iIndex) const
 			{
 				TASSERT(m_poArray);
 				TASSERT(a_iIndex < m_poArray->GetNumElements());
 				m_iIndex = a_iIndex;
 			}
 
-			int GetCurrentIndex() const
+			TINT GetCurrentIndex() const
 			{
 				return m_iIndex;
 			}
 
-			int& IncrementSafe()
+			TINT& IncrementSafe()
 			{
 				m_iIndex++;
 				TASSERT(m_poArray);
@@ -100,7 +101,7 @@ namespace Toshi {
 				return *this;
 			}
 
-			Iterator operator++(int)
+			Iterator operator++(TINT)
 			{
 				Iterator temp = *this;
 				m_iIndex++;
@@ -113,30 +114,30 @@ namespace Toshi {
 				return *this;
 			}
 
-			Iterator operator--(int)
+			Iterator operator--(TINT)
 			{
 				Iterator temp = *this;
 				m_iIndex--;
 				return temp;
 			}
 
-			Iterator operator+(int a_iValue) const
+			Iterator operator+(TINT a_iValue) const
 			{
 				return Iterator(m_iIndex + a_iValue, m_poArray);
 			}
 
-			Iterator operator-(int a_iValue) const
+			Iterator operator-(TINT a_iValue) const
 			{
 				return Iterator(m_iIndex - a_iValue, m_poArray);
 			}
 
 		private:
-			int m_iIndex;       // 0x0
+			TINT m_iIndex;      // 0x0
 			Storage* m_poArray; // 0x4
 		};
 
 	public:
-		T2GenericDynamicArray(int a_iGrowSize, int a_iSize)
+		T2GenericDynamicArray(TINT a_iGrowSize, TINT a_iSize)
 		{
 			m_iGrowSize = a_iGrowSize;
 			m_iNumAllocElements = a_iSize;
@@ -177,28 +178,28 @@ namespace Toshi {
 			m_iNumElements = 0;
 		}
 
-		void Bind(Iterator& a_rIterator) const
+		void Bind(Iterator& a_rIterator)
 		{
-			a_rIterator->m_poArray = this;
-			a_rIterator->m_iIndex = (m_iNumElements == 0) ? -1 : 0;
+			a_rIterator.m_poArray = this;
+			a_rIterator.m_iIndex = (m_iNumElements == 0) ? -1 : 0;
 		}
 
-		int GetNumElements() const
+		TINT GetNumElements() const
 		{
 			return m_iNumElements;
 		}
 
-		int GetNumAllocElements() const
+		TINT GetNumAllocElements() const
 		{
 			return m_iNumAllocElements;
 		}
 
-		int GetGrowSize() const
+		TINT GetGrowSize() const
 		{
 			return m_iGrowSize;
 		}
 
-		void SetGrowSize(int a_iGrowSize)
+		void SetGrowSize(TINT a_iGrowSize)
 		{
 			m_iGrowSize = a_iGrowSize;
 		}
@@ -209,14 +210,20 @@ namespace Toshi {
 			(*this)[m_iNumElements++] = element;
 		}
 
-		T& operator[](int a_iIndex)
+		T& Pop()
+		{
+			TASSERT(m_iNumElements >= 1);
+			return m_pData[--m_iNumElements];
+		}
+
+		T& operator[](TINT a_iIndex)
 		{
 			TASSERT(a_iIndex >= 0);
 			TASSERT(a_iIndex < m_iNumElements);
 			return m_pData[a_iIndex];
 		}
 
-		const T& operator[](int a_iIndex) const
+		const T& operator[](TINT a_iIndex) const
 		{
 			TASSERT(a_iIndex >= 0);
 			TASSERT(a_iIndex < m_iNumElements);
@@ -224,7 +231,7 @@ namespace Toshi {
 		}
 
 	private:
-		void GrowBy(int a_iGrowBy)
+		void GrowBy(TINT a_iGrowBy)
 		{
 			if (m_iNumAllocElements < m_iNumElements + a_iGrowBy)
 			{
@@ -235,7 +242,7 @@ namespace Toshi {
 			}
 		}
 
-		void Resize(int a_iNewSize)
+		void Resize(TINT a_iNewSize)
 		{
 			if (a_iNewSize != 0)
 			{
@@ -261,9 +268,9 @@ namespace Toshi {
 		}
 
 	private:
-		int m_iGrowSize;         // 0x0
-		int m_iNumElements;      // 0x4
-		int m_iNumAllocElements; // 0x8
+		TINT m_iGrowSize;         // 0x0
+		TINT m_iNumElements;      // 0x4
+		TINT m_iNumAllocElements; // 0x8
 		T* m_pData;              // 0xC
 	};
 
@@ -271,7 +278,7 @@ namespace Toshi {
 	class T2DynamicArray : public T2GenericDynamicArray<T>
 	{
 	public:
-		T2DynamicArray(int a_iGrowSize = 10, int a_iSize = 0) :
+		T2DynamicArray(TINT a_iGrowSize = 10, TINT a_iSize = 0) :
 			T2GenericDynamicArray<T>(a_iGrowSize, a_iSize)
 		{
 			
