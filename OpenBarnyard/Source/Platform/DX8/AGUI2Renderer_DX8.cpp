@@ -76,7 +76,7 @@ void AGUI2RendererDX8::BeginScene()
 
 	auto& rTransform = m_pTransforms[m_iTransformCount];
 	rTransform.m_Rotation[0] = { pDisplayParams->uiWidth / fRootWidth, 0.0f };
-	rTransform.m_Rotation[1] = { 0.0f, pDisplayParams->uiHeight / fRootHeight };
+	rTransform.m_Rotation[1] = { 0.0f, -TFLOAT(pDisplayParams->uiHeight) / fRootHeight };
 	rTransform.m_Position = { 0.0f, 0.0f };
 
 	static TUINT32 s_MatrixFlags = 0;
