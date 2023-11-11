@@ -241,18 +241,18 @@ TBOOL ARenderer::OnUpdate(float a_fDeltaTime)
 	{
 		pRenderer->BeginScene();
 
-		auto pInputHandler = AInputHandler::GetSingleton();
-		auto pMouseDevice = pInputHandler->GetMouseDevice();
+		//auto pInputHandler = AInputHandler::GetSingleton();
+		//auto pMouseDevice = pInputHandler->GetMouseDevice();
 
-		if (pMouseDevice->GetAxisInt(Toshi::TInputDeviceMouse::AXIS_CURSOR, 0) != 0 ||
-			pMouseDevice->GetAxisInt(Toshi::TInputDeviceMouse::AXIS_CURSOR, 1) != 0)
-		{
-			TOSHI_INFO(
-				"Mouse position: X = {}; Y = {}",
-				pMouseDevice->GetAxisInt(Toshi::TInputDeviceMouse::AXIS_CURSOR, 0),
-				pMouseDevice->GetAxisInt(Toshi::TInputDeviceMouse::AXIS_CURSOR, 1)
-			);
-		}
+		//if (pMouseDevice->GetAxisInt(Toshi::TInputDeviceMouse::AXIS_CURSOR, 0) != 0 ||
+		//	pMouseDevice->GetAxisInt(Toshi::TInputDeviceMouse::AXIS_CURSOR, 1) != 0)
+		//{
+		//	TOSHI_INFO(
+		//		"Mouse position: X = {}; Y = {}",
+		//		pMouseDevice->GetAxisInt(Toshi::TInputDeviceMouse::AXIS_CURSOR, 0),
+		//		pMouseDevice->GetAxisInt(Toshi::TInputDeviceMouse::AXIS_CURSOR, 1)
+		//	);
+		//}
 
 		RenderGUI();
 

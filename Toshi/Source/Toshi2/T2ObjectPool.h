@@ -7,21 +7,12 @@
 
 namespace Toshi {
 
-	class T2GenericObjectPool : public T2Allocator
+	class T2GenericObjectPool
 	{
-	public:
-		class Object
+	protected:
+		struct Object
 		{
-		public:
-			friend T2GenericObjectPool;
-
-		public:
-			void SetNext(Object* a_pObject) { m_pNext = a_pObject; }
-			Object* GetNext() { return m_pNext; }
-			const Object* GetNext() const { return m_pNext; }
-
-		private:
-			Object* m_pNext;
+			Object* pNextObject;
 		};
 
 	public:
@@ -37,30 +28,30 @@ namespace Toshi {
 			for (TUINT i = a_uiMaxNumber - 1; i != 0; i--)
 			{
 				Object* pNext = TREINTERPRETCAST(Object*, TREINTERPRETCAST(uintptr_t, pObject) + a_uiObjectSize);
-				pObject->m_pNext = pNext;
+				pObject->pNextObject = pNext;
 				pObject = pNext;
 			}
 
-			pObject->m_pNext = TNULL;
+			pObject->pNextObject = TNULL;
 		}
 
 		Object* GetObject()
 		{
 			Object* pNode = m_pHead;
-			m_pHead = m_pHead->m_pNext;
+			m_pHead = m_pHead->pNextObject;
 			return pNode;
 		}
 
 		void ReturnObject(Object* a_pObject)
 		{
-			a_pObject->m_pNext = m_pHead;
+			a_pObject->pNextObject = m_pHead;
 			m_pHead = a_pObject;
 		}
 
 		TUINT GetNumUsedObjects() const
 		{
 			TUINT uiNumber = 0;
-			for (auto it = m_pHead; it != TNULL; it = it->m_pNext, uiNumber++);
+			for (auto it = m_pHead; it != TNULL; it = it->pNextObject, uiNumber++);
 
 			return uiNumber;
 		}
@@ -69,24 +60,49 @@ namespace Toshi {
 		Object* m_pHead;
 	};
 
-	template <class T, TUINT MaxNumber = 2, TUINT ObjectSize = sizeof(T), TUINT Alignment = alignof(T)>
-	class T2ObjectPool : protected T2GenericObjectPool
+	template <class T, TUINT MaxNumber, TUINT ObjectSize = sizeof(T), TUINT Alignment = alignof(T)>
+	class T2ObjectPool :
+		protected T2GenericObjectPool,
+		protected T2Allocator
 	{
+	public:
+		static_assert(MaxNumber >= 2);
+		static_assert(sizeof(T) >= sizeof(T2GenericObjectPool::Object));
+
 	public:
 		T2ObjectPool()
 		{
-			T2GenericObjectPool::Initialise(GetObjects(), MaxNumber, ObjectSize);
+			T2GenericObjectPool::Initialise(
+				TREINTERPRETCAST(T2GenericObjectPool::Object*, GetObjects()),
+				MaxNumber,
+				ObjectSize
+			);
 		}
 
-		T* New()
+		template<class... Args>
+		T* NewObject(Args&& ...args)
+		{
+			TASSERT(TTRUE == CanAllocate(ObjectSize));
+			T* pValue = new (Malloc(ObjectSize)) T(std::forward<Args>(args)...);
+			return pValue;
+		}
+
+		T* AllocateObject()
 		{
 			TASSERT(TTRUE == CanAllocate(ObjectSize));
 			return TSTATICCAST(T*, Malloc(ObjectSize));
 		}
 
-		void Delete(T* a_pObject)
+		void FreeObject(T* a_pObject)
 		{
 			TASSERT(TTRUE == IsAddressInPool(a_pObject));
+			Free(a_pObject);
+		}
+
+		void DeleteObject(T* a_pObject)
+		{
+			TASSERT(TTRUE == IsAddressInPool(a_pObject));
+			a_pObject->~T();
 			Free(a_pObject);
 		}
 

@@ -15,12 +15,16 @@ public:
 	virtual TBOOL OnCreate() override;
 
 	void LoadStartupData();
+	TBOOL IsPaused();
 
 private:
-	AOptions* m_pOptions;   // 0x20
-	TTask* m_pGUISystem;    // 0x24
-	TTask* m_pGUI2;         // 0x28
-	TTask* m_pInputHandler; // 0x2C
-	ARenderer* m_pRenderer; // 0x30
-	TBOOL m_bRenderScene;   // 0x57
+	AOptions* m_pOptions;        // 0x20
+	TTask* m_pGUISystem;         // 0x24
+	TTask* m_pGUI2;              // 0x28
+	TTask* m_pInputHandler;      // 0x2C
+	ARenderer* m_pRenderer;      // 0x30
+	TBOOL m_bLoadedTerrain;      // 0x54
+	TBOOL m_bPaused;             // 0x55
+	TBOOL m_bStopRenderingWorld; // 0x56
+	TBOOL m_bGameSystemCreated;  // 0x57
 };

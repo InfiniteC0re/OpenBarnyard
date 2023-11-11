@@ -11,6 +11,7 @@
 
 #include <Plugins/PPropertyParser/PProperties.h>
 #include <Toshi/Core/TScheduler.h>
+#include <Toshi2/T2ObjectPool.h>
 
 TOSHI_NAMESPACE_USING
 
@@ -18,6 +19,10 @@ ARootTask::ARootTask()
 {
 	TIMPLEMENT();
 
+	m_bLoadedTerrain = TFALSE;
+	m_bPaused = TFALSE;
+	m_bStopRenderingWorld = TFALSE;
+	m_bGameSystemCreated = TFALSE;
 	m_pOptions = AOptions::CreateSingleton();
 	AMemory::CreatePool(AMemory::POOL_Sound);
 
@@ -28,12 +33,37 @@ ARootTask::ARootTask()
 	m_pRenderer = TSTATICCAST(ARenderer*, pSystemManager->GetScheduler()->CreateTask(&TGetClass(ARenderer), this));
 	m_pInputHandler = pSystemManager->GetScheduler()->CreateTask(&TGetClass(AInputHandler), this);
 
-	m_bRenderScene = TFALSE;
+	m_bGameSystemCreated = TFALSE;
 }
 
 TBOOL ARootTask::OnCreate()
 {
 	TIMPLEMENT();
+
+	// Test T2ObjectPool #1
+	T2ObjectPool<TFLOAT, 4> pool1;
+	auto pFloat1 = pool1.NewObject(5.0f);
+	auto pFloat2 = pool1.NewObject(9.0f);
+	auto pFloat3 = pool1.NewObject(16.0f);
+	auto pFloat4 = pool1.NewObject(21.0f);
+
+	// Test T2ObjectPool #2
+	struct MyCustomClass
+	{
+		MyCustomClass()
+		{
+			TOSHI_INFO("Created MyCustomClass");
+		}
+
+		virtual ~MyCustomClass()
+		{
+			TOSHI_INFO("Destroyed MyCustomClass");
+		}
+	};
+
+	T2ObjectPool<MyCustomClass, 4> pool2;
+	auto pObject1 = pool2.NewObject();
+	pool2.DeleteObject(pObject1);
 
 	AMemory::CreatePool(AMemory::POOL_Misc);
 	AMemory::CreatePool(AMemory::POOL_Collision);
@@ -103,4 +133,9 @@ void ARootTask::LoadStartupData()
 	Toshi::TRenderInterface::GetSingleton()->FlushDyingResources();
 	Toshi::TRenderInterface::GetSingleton()->FlushDyingResources();
 	AGUI2TextureSectionManager::UpdateMaterials();
+}
+
+TBOOL ARootTask::IsPaused()
+{
+	return m_bPaused || Toshi::TSystemManager::GetSingleton()->IsPaused();
 }
