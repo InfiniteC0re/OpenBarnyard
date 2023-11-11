@@ -18,8 +18,8 @@ TBOOL AFadeManager::OnUpdate(TFLOAT a_fDeltaTime)
 
 			if (it->IsStillFading(TTRUE))
 			{
-				TUINT8 aRGBA[4];
-				it->GetCurrentColor(aRGBA);
+				AFade::Color color;
+				it->GetCurrentColor(color);
 				TTODO("Change color of m_Overlay");
 			}
 			else
@@ -49,7 +49,7 @@ void AFadeManager::StopAllFades()
 	}
 }
 
-AFade* AFadeManager::CreateFade(TUINT8 a_pFadeFromColor[4], TUINT8 a_pFadeToColor[4], TFLOAT a_fFadeTime)
+AFade* AFadeManager::CreateFade(const AFade::Color& a_rFadeFrom, const AFade::Color& a_rFadeTo, TFLOAT a_fFadeTime)
 {
 	TFLOAT fWidth;
 	TFLOAT fHeight;
@@ -70,8 +70,8 @@ AFade* AFadeManager::CreateFade(TUINT8 a_pFadeFromColor[4], TUINT8 a_pFadeToColo
 
 	auto pFade = m_Fades.NewObject();
 	pFade->SetFadeTime(a_fFadeTime);
-	pFade->SetFadeFromColor(a_pFadeFromColor[0], a_pFadeFromColor[1], a_pFadeFromColor[2], a_pFadeFromColor[3]);
-	pFade->SetFadeToColor(a_pFadeToColor[0], a_pFadeToColor[1], a_pFadeToColor[2], a_pFadeToColor[3]);
+	pFade->SetFadeFromColor(a_rFadeFrom);
+	pFade->SetFadeToColor(a_rFadeTo);
 
 	TTODO("Setup m_Overlay when AGUI2Element and AGUI2Rectangle are implemented");
 

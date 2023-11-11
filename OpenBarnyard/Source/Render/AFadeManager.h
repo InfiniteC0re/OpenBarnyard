@@ -11,7 +11,7 @@ public:
 
 	virtual void StopAllFades();
 
-	AFade* CreateFade(TUINT8 a_pFadeFromColor[4], TUINT8 a_pFadeToColor[4], TFLOAT a_fFadeTime);
+	AFade* CreateFade(const AFade::Color& a_rFadeFrom, const AFade::Color& a_rFadeTo, TFLOAT a_fFadeTime);
 
 private:
 	Toshi::T2ObjectPool<AFade, 8> m_Fades;

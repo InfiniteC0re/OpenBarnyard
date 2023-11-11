@@ -1,19 +1,12 @@
 #include "pch.h"
 #include "AFade.h"
 
-AFade::AFade()
+AFade::AFade() :
+	m_FadeFromColor(255, 255, 255, 255),
+	m_FadeToColor(255, 255, 255, 255),
+	m_fCurrentTime(0.0f)
 {
-	m_fCurrentTime = 0.0f;
-
-	m_ui8FadeFromR = 255;
-	m_ui8FadeFromG = 255;
-	m_ui8FadeFromB = 255;
-	m_ui8FadeFromA = 255;
-
-	m_ui8FadeToR = 255;
-	m_ui8FadeToG = 255;
-	m_ui8FadeToB = 255;
-	m_ui8FadeToA = 255;
+	
 }
 
 void AFade::SetFadeTime(TFLOAT a_fFadeTime)
@@ -21,31 +14,25 @@ void AFade::SetFadeTime(TFLOAT a_fFadeTime)
 	m_fFadeTime = a_fFadeTime;
 }
 
-void AFade::SetFadeFromColor(TUINT8 a_uiR, TUINT8 a_uiG, TUINT8 a_uiB, TUINT8 a_uiA)
+void AFade::SetFadeFromColor(const Color& a_rFadeFromColor)
 {
-	m_ui8FadeFromR = a_uiR;
-	m_ui8FadeFromG = a_uiG;
-	m_ui8FadeFromB = a_uiB;
-	m_ui8FadeFromA = a_uiA;
+	m_FadeFromColor = a_rFadeFromColor;
 }
 
-void AFade::SetFadeToColor(TUINT8 a_uiR, TUINT8 a_uiG, TUINT8 a_uiB, TUINT8 a_uiA)
+void AFade::SetFadeToColor(const Color& a_rFadeToColor)
 {
-	m_ui8FadeToR = a_uiR;
-	m_ui8FadeToG = a_uiG;
-	m_ui8FadeToB = a_uiB;
-	m_ui8FadeToA = a_uiA;
+	m_FadeToColor = a_rFadeToColor;
 }
 
-TUINT8* AFade::GetCurrentColor(TUINT8 a_pColor[4])
+AFade::Color* AFade::GetCurrentColor(Color& a_rColor)
 {
 	TFLOAT fProgress = m_fCurrentTime / m_fFadeTime;
-	a_pColor[0] = TUINT8(Toshi::TMath::LERP(m_ui8FadeFromR / 255.0f, m_ui8FadeToR / 255.0f, fProgress) * 255.0f);
-	a_pColor[1] = TUINT8(Toshi::TMath::LERP(m_ui8FadeFromG / 255.0f, m_ui8FadeToG / 255.0f, fProgress) * 255.0f);
-	a_pColor[2] = TUINT8(Toshi::TMath::LERP(m_ui8FadeFromB / 255.0f, m_ui8FadeToB / 255.0f, fProgress) * 255.0f);
-	a_pColor[3] = TUINT8(Toshi::TMath::LERP(m_ui8FadeFromA / 255.0f, m_ui8FadeToA / 255.0f, fProgress) * 255.0f);
+	a_rColor.A = TUINT8(Toshi::TMath::LERP(m_FadeFromColor.A / 255.0f, m_FadeToColor.A / 255.0f, fProgress) * 255.0f);
+	a_rColor.R = TUINT8(Toshi::TMath::LERP(m_FadeFromColor.R / 255.0f, m_FadeToColor.R / 255.0f, fProgress) * 255.0f);
+	a_rColor.G = TUINT8(Toshi::TMath::LERP(m_FadeFromColor.G / 255.0f, m_FadeToColor.G / 255.0f, fProgress) * 255.0f);
+	a_rColor.B = TUINT8(Toshi::TMath::LERP(m_FadeFromColor.B / 255.0f, m_FadeToColor.B / 255.0f, fProgress) * 255.0f);
 
-	return a_pColor;
+	return &a_rColor;
 }
 
 TBOOL AFade::IsStillFading(TBOOL a_bThrowFadeOver)

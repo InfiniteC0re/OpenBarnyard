@@ -11,13 +11,13 @@ namespace Toshi
 		static void Create();
 		static void Destroy();
 
-		inline static STL::Ref<spdlog::logger>& GetCoreLogger() { return s_CoreLogger; };
-		inline static STL::Ref<spdlog::logger>& GetAppLogger() { return s_AppLogger; };
+		inline static std::shared_ptr<spdlog::logger>& GetCoreLogger() { return s_CoreLogger; };
+		inline static std::shared_ptr<spdlog::logger>& GetAppLogger() { return s_AppLogger; };
 
 	private:
 		static TBOOL s_Created;
-		static STL::Ref<spdlog::logger> s_CoreLogger;
-		static STL::Ref<spdlog::logger> s_AppLogger;
+		static std::shared_ptr<spdlog::logger> s_CoreLogger;
+		static std::shared_ptr<spdlog::logger> s_AppLogger;
 	};
 }
 
