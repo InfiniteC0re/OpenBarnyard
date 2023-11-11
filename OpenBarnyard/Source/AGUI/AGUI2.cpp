@@ -42,6 +42,11 @@ TBOOL AGUI2::OnUpdate(float a_fDeltaTime)
 	return TTRUE;
 }
 
+void AGUI2::GetDimensions(TFLOAT& a_rWidth, TFLOAT& a_rHeight)
+{
+	m_pRootElement->GetDimensions(a_rWidth, a_rHeight);
+}
+
 void AGUI2::CreateContext()
 {
 	ms_pCurrentContext = new AGUI2Context;

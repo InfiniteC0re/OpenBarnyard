@@ -1,5 +1,4 @@
 #pragma once
-
 #include <Toshi/Core/TQList.h>
 #include <Toshi2/T2ObjectPool.h>
 
@@ -10,8 +9,12 @@ public:
 	friend class AFadeManager;
 
 public:
-	AFade() = default;
+	AFade();
 	virtual ~AFade() = default;
+
+	void SetFadeTime(TFLOAT a_fFadeTime);
+	void SetFadeFromColor(TUINT8 a_uiR, TUINT8 a_uiG, TUINT8 a_uiB, TUINT8 a_uiA);
+	void SetFadeToColor(TUINT8 a_uiR, TUINT8 a_uiG, TUINT8 a_uiB, TUINT8 a_uiA);
 
 	TUINT8* GetCurrentColor(TUINT8 a_pColor[4]);
 	TBOOL IsStillFading(TBOOL a_bThrowFadeOver);

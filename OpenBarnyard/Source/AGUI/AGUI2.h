@@ -16,6 +16,7 @@ public:
 	virtual TBOOL OnCreate() override;
 	virtual TBOOL OnUpdate(float a_fDeltaTime) override;
 
+	void GetDimensions(TFLOAT& a_rWidth, TFLOAT& a_rHeight);
 	void CreateContext();
 
 public:

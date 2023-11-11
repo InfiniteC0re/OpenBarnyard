@@ -106,6 +106,23 @@ namespace Toshi {
 			Free(a_pObject);
 		}
 
+		virtual size_t GetUsedSize() override
+		{
+			return (MaxNumber - GetNumUsedObjects()) * ObjectSize;
+		}
+
+		virtual size_t GetCapacity() override
+		{
+			return MaxNumber * ObjectSize;
+		}
+
+		virtual TBOOL IsAddressInPool(const void* a_pAddress)
+		{
+			return
+				(TREINTERPRETCAST(uintptr_t, this) + sizeof(T2GenericObjectPool)) <= TREINTERPRETCAST(uintptr_t, a_pAddress) &&
+				TREINTERPRETCAST(uintptr_t, a_pAddress) < (TREINTERPRETCAST(uintptr_t, this) + sizeof(T2GenericObjectPool) + (MaxNumber * ObjectSize));
+		}
+
 	protected:
 		virtual void* Malloc(size_t a_uiSize, size_t a_uiAlignment) override
 		{
@@ -140,23 +157,6 @@ namespace Toshi {
 			}
 
 			return TNULL;
-		}
-
-		virtual size_t GetSize() override
-		{
-			return (MaxNumber - GetNumUsedObjects()) * ObjectSize;
-		}
-
-		virtual size_t GetCapacity() override
-		{
-			return MaxNumber * ObjectSize;
-		}
-
-		virtual TBOOL IsAddressInPool(const void* a_pAddress)
-		{
-			return
-				(TREINTERPRETCAST(uintptr_t, this) + sizeof(T2GenericObjectPool)) <= TREINTERPRETCAST(uintptr_t, a_pAddress) &&
-				TREINTERPRETCAST(uintptr_t, a_pAddress) < (TREINTERPRETCAST(uintptr_t, this) + sizeof(T2GenericObjectPool) + (MaxNumber * ObjectSize));
 		}
 
 	private:

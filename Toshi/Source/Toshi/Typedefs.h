@@ -1,4 +1,5 @@
 #pragma once
+#include <cstdint>
 
 using TFLOAT = float;
 using TBOOL = bool;

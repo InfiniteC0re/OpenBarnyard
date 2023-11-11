@@ -12,7 +12,7 @@ namespace Toshi
 		virtual TBOOL CanAllocate(size_t size) = 0;
 		virtual void* TryMalloc(size_t size, size_t alignment) = 0;
 		virtual void* TryMalloc(size_t size) = 0;
-		virtual size_t GetSize() = 0;
+		virtual size_t GetUsedSize() = 0;
 		virtual size_t GetCapacity() = 0;
 
 		template<class T, class... Args>
@@ -43,7 +43,7 @@ namespace Toshi
 		virtual TBOOL CanAllocate(size_t size) override;
 		virtual void* TryMalloc(size_t size, size_t alignment) override;
 		virtual void* TryMalloc(size_t size) override;
-		virtual size_t GetSize() override;
+		virtual size_t GetUsedSize() override;
 		virtual size_t GetCapacity() override;
 	};
 }

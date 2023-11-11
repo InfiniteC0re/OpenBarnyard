@@ -35,7 +35,7 @@ namespace Toshi
 		return TMemalign(alignment, size);
 	}
 
-	size_t T2GlobalAllocator::GetSize()
+	size_t T2GlobalAllocator::GetUsedSize()
 	{
 		return 0;
 	}
