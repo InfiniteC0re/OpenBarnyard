@@ -37,6 +37,7 @@ namespace Toshi
 		virtual void OnDeactivate();
 
 		void Activate(TBOOL activate);
+		void AttachTo(TTask* a_pAttachTo);
 
 		TScheduler* GetScheduler() const { return m_Scheduler; }
 		uint8_t& GetFlags() { return m_State; }

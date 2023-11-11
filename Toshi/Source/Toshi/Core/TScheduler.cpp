@@ -29,12 +29,11 @@ namespace Toshi
 		TTask* pTask = static_cast<TTask*>(pClass->CreateObject());
 		TASSERT(pTask != TNULL);
 
-		if (pParent == TNULL)
+		m_TaskTree.InsertAtRoot(pTask);
+
+		if (pParent != TNULL)
 		{
-			m_TaskTree.InsertAtRoot(pTask);
-		}
-		else
-		{
+			m_TaskTree.Remove(pTask, TFALSE);
 			m_TaskTree.Insert(pParent, pTask);
 		}
 

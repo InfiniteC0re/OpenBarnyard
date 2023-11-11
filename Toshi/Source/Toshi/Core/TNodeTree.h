@@ -133,6 +133,25 @@ namespace Toshi
 			Insert(GetRoot(), sourceNode);
 		}
 
+		/**
+		 * Tries to remove sourceNode from the tree and inserts it to the parentNode or to the root
+		 */
+		void ReInsert(TNode* parentNode, TNode* sourceNode)
+		{
+			Remove(sourceNode, TFALSE);
+
+			if (parentNode == TNULL)
+			{
+				if (this != TNULL)
+				{
+					InsertAtRoot(sourceNode);
+					return;
+				}
+			}
+
+			Insert(parentNode, sourceNode);
+		}
+
 		TNode* Remove(TNode& node, TBOOL flag = TFALSE)
 		{
 			// Toshi::TNodeTree<Toshi::TResource>::Remove - 00691e70
@@ -177,8 +196,8 @@ namespace Toshi
 				node.m_Parent = TNULL;
 			}
 
-			node.m_Prev->m_Prev = node.m_Next;
-			node.m_Next->m_Parent = node.m_Prev;
+			node.m_Prev->m_Next = node.m_Next;
+			node.m_Next->m_Prev = node.m_Prev;
 			node.m_Next = &node;
 			node.m_Prev = &node;
 			node.m_Tree = TNULL;

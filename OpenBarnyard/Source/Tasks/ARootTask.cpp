@@ -23,10 +23,10 @@ ARootTask::ARootTask()
 
 	auto pSystemManager = TSystemManager::GetSingleton();
 
-	m_pGUISystem = pSystemManager->GetScheduler()->CreateTask(&TGetClass(AGUISystem));
-	m_pGUI2 = pSystemManager->GetScheduler()->CreateTask(&TGetClass(AGUI2));
-	m_pRenderer = TSTATICCAST(ARenderer*, pSystemManager->GetScheduler()->CreateTask(&TGetClass(ARenderer)));
-	m_pInputHandler = pSystemManager->GetScheduler()->CreateTask(&TGetClass(AInputHandler));
+	m_pGUISystem = pSystemManager->GetScheduler()->CreateTask(&TGetClass(AGUISystem), this);
+	m_pGUI2 = pSystemManager->GetScheduler()->CreateTask(&TGetClass(AGUI2), this);
+	m_pRenderer = TSTATICCAST(ARenderer*, pSystemManager->GetScheduler()->CreateTask(&TGetClass(ARenderer), this));
+	m_pInputHandler = pSystemManager->GetScheduler()->CreateTask(&TGetClass(AInputHandler), this);
 
 	m_bRenderScene = TFALSE;
 }
