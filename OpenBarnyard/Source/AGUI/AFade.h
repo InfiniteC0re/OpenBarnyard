@@ -43,6 +43,11 @@ public:
 	AFade();
 	virtual ~AFade() = default;
 
+	void Update(TFLOAT a_fDeltaTime)
+	{
+		m_fCurrentTime += a_fDeltaTime;
+	}
+
 	void SetFadeTime(TFLOAT a_fFadeTime);
 	void SetFadeFromColor(const Color& a_rFadeFromColor);
 	void SetFadeToColor(const Color& a_rFadeToColor);

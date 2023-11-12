@@ -28,7 +28,7 @@ public:
 		AGUI2Element::SetDimensions(a_fWidth, a_fHeight);
 	}
 
-private:
+protected:
 	AGUI2Material* m_pMaterial;
 	Toshi::TVector4 m_UV1;
 	Toshi::TVector4 m_UV2;

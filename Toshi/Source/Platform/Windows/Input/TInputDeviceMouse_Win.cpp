@@ -197,7 +197,7 @@ namespace Toshi {
 	{
 		if ((0x30000 < a_iDoodad) && (a_iDoodad < 0x30009))
 		{
-			return (m_dwButtonCurrent & ((a_iDoodad - 1) & 0x1F));
+			return (m_dwButtonCurrent & (1 << ((a_iDoodad - 1) & 0x1F)));
 		}
 
 		return TFALSE;

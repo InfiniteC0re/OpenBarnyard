@@ -5,7 +5,7 @@ namespace Toshi
 	class TVector2
 	{
 	public:
-		TVector2() { Set(0, 0); }
+		TVector2() { }
 		TVector2(TFLOAT x, TFLOAT y) { Set(x, y); }
 		TVector2(TFLOAT coords[2]) { Set(coords[0], coords[1]); }
 		TVector2(const TVector2& other) { Set(other); }
@@ -70,6 +70,19 @@ namespace Toshi
 		{
 			Set(vec);
 			Multiply(scalar);
+		}
+
+		void Normalize()
+		{
+			if (MagnitudeSq() != 0.0f)
+			{
+				float magnitude = TMath::OneOverSqrt(MagnitudeSq());
+				Set(x * magnitude, y * magnitude);
+			}
+			else
+			{
+				Set(1.0f, 0.0f);
+			}
 		}
 
 		void Abs(const TVector2& vec3) { Set(TMath::Abs(vec3.x), TMath::Abs(vec3.y)); }

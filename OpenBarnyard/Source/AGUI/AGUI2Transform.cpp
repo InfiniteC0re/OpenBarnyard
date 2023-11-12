@@ -29,6 +29,15 @@ void AGUI2Transform::PreMultiply(const AGUI2Transform& a_rTransform)
 	m_Rotation[0].y = a_rTransform.m_Rotation[0].x * fVar8 + fVar5 * a_rTransform.m_Rotation[0].y;
 }
 
+void AGUI2Transform::PreMultiply(TFLOAT a_fBasisVec1Angle, TFLOAT a_fBasisVec2Angle)
+{
+	AGUI2Transform transform;
+	transform.m_Rotation[0] = { a_fBasisVec1Angle, 0.0f };
+	transform.m_Rotation[1] = { 0.0f, a_fBasisVec2Angle };
+	transform.m_Position = { 0.0f,0.0f };
+	PreMultiply(transform);
+}
+
 void AGUI2Transform::Transform(Toshi::TVector2& a_rOutVec, const Toshi::TVector2& a_rTransformVec) const
 {
 	a_rOutVec.x = m_Position.x + m_Rotation[0].x * a_rTransformVec.x + m_Rotation[1].x * a_rTransformVec.y;

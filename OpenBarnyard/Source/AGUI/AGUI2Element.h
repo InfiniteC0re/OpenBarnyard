@@ -86,6 +86,8 @@ public:
 	virtual void SetFocus(TBOOL a_bFocused);
 	virtual TBOOL IsPointInside(const Toshi::TVector2& a_rPoint);
 
+	void GetScreenTransform(AGUI2Transform& a_rOutTransform);
+
 	void SetShouldResetZCoordinate()
 	{
 		m_eFlags |= 16;
@@ -156,6 +158,11 @@ public:
 	t_PostRender SetPostRenderCallback(t_PostRender a_cbNewCallback)
 	{
 		return std::exchange(m_cbPostRender, a_cbNewCallback);
+	}
+
+	AGUI2Transform& GetTransform()
+	{
+		return m_oTransform;
 	}
 
 public:

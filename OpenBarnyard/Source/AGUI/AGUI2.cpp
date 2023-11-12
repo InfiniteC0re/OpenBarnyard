@@ -31,12 +31,15 @@ TBOOL AGUI2::OnCreate()
 	AGUI2TextureSectionManager::Open("data/gui/texsec.trb", AAssetLoader::GetAssetTRB(AAssetLoader::AssetType_Startup));
 	AGUI2TextureSectionManager::CreateMaterials();
 
+	m_oMouseCursor.Create("Pointer_Up", "Pointer_Down", 0.5f);
+
 	return TTRUE;
 }
 
 TBOOL AGUI2::OnUpdate(float a_fDeltaTime)
 {
 	TIMPLEMENT();
+	m_oMouseCursor.Update();
 	ms_pCurrentContext->Tick(a_fDeltaTime);
 
 	return TTRUE;
@@ -60,8 +63,13 @@ AGUI2Renderer* AGUI2::GetRenderer()
 
 void AGUI2::MainPostRenderCallback()
 {
-	if (GetSingleton()->m_bShowMouseCursor)
+	// FIXME: Render only when cursor should be visible
+	if (!AGUI2::GetSingleton()->IsCursorVisible())
 	{
-		TTODO("Render in-game mouse cursor");
+		auto& mouseCursor = AGUI2::GetSingleton()->m_oMouseCursor;
+
+		mouseCursor.PreRender();
+		mouseCursor.Render();
+		mouseCursor.PostRender();
 	}
 }

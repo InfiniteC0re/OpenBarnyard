@@ -13,6 +13,7 @@ public:
 
 	void Rotate(TFLOAT a_fAngle);
 	void PreMultiply(const AGUI2Transform& a_rTransform);
+	void PreMultiply(TFLOAT a_fBasisVec1Angle, TFLOAT a_fBasisVec2Angle);
 	void Transform(Toshi::TVector2& a_rOutVec, const Toshi::TVector2& a_rTransformVec) const;
 
 	void SetPosition(TFLOAT a_fX, TFLOAT a_fY)

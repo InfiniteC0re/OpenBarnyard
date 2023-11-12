@@ -9,7 +9,7 @@ TBOOL AFadeManager::OnUpdate(TFLOAT a_fDeltaTime)
 	{
 		for (auto it = m_ActiveFades.Begin(); it != m_ActiveFades.End(); it++)
 		{
-			it->m_fCurrentTime += a_fDeltaTime;
+			it->Update(a_fDeltaTime);
 		}
 
 		for (auto it = m_ActiveFades.Begin(); it != m_ActiveFades.End(); )

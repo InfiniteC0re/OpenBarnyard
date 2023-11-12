@@ -2,6 +2,7 @@
 #include "AGUI2Context.h"
 #include "AGUI2Element.h"
 #include "AGUI2Renderer.h"
+#include "AGUI2MouseCursor.h"
 #include "AGUI2TextureSection.h"
 
 #include <Toshi/Core/TTask.h>
@@ -19,6 +20,11 @@ public:
 	void GetDimensions(TFLOAT& a_rWidth, TFLOAT& a_rHeight);
 	void CreateContext();
 
+	TBOOL IsCursorVisible() const
+	{
+		return m_bShowMouseCursor;
+	}
+
 public:
 	static AGUI2Element* GetRootElement() { return GetSingletonSafe()->m_pRootElement; }
 	static AGUI2Context* GetContext() { return ms_pCurrentContext; }
@@ -32,6 +38,7 @@ private:
 
 private:
 	AGUI2Element* m_pRootElement;
+	AGUI2MouseCursor m_oMouseCursor;
 	TBOOL m_bShowMouseCursor;
 	// ...
 	TBOOL m_bShowMemStatsInfo;

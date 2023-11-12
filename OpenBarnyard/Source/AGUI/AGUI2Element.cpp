@@ -2,6 +2,8 @@
 #include "AGUI2.h"
 #include "AGUI2Element.h"
 
+#include <Toshi/Render/TRenderInterface.h>
+
 AGUI2Element::AGUI2Element()
 {
 	m_pParent = TNULL;
@@ -82,11 +84,11 @@ void AGUI2Element::PreRender()
 		vec2.x = vec2.x - fWidth * 0.5f;
 		vec2.y = fHeight * 0.5f + vec2.y;
 		break;
-	case Pivot_MiddleRight:
-		vec2.x = vec2.x - fWidth * 0.5f;
-		break;
 	case Pivot_MiddleLeft:
 		vec2.x = fWidth * 0.5f + vec2.x;
+		break;
+	case Pivot_MiddleRight:
+		vec2.x = vec2.x - fWidth * 0.5f;
 		break;
 	case Pivot_TopLeft:
 		vec2.x = fWidth * 0.5f + vec2.x;
@@ -217,4 +219,112 @@ TBOOL AGUI2Element::IsPointInside(const Toshi::TVector2& a_rPoint)
 	}
 
 	return TFALSE;
+}
+
+void AGUI2Element::GetScreenTransform(AGUI2Transform& a_rOutTransform)
+{
+	Toshi::TVector2 vec1 = { 0.0f, 0.0f };
+	Toshi::TVector2 vec2 = { 0.0f, 0.0f };
+
+	if (m_pParent != TNULL)
+	{
+		float fParentWidth, fParentHeight;
+		m_pParent->GetDimensions(fParentWidth, fParentHeight);
+
+		switch (m_eAnchor)
+		{
+		case Anchor_BottomLeft:
+			vec1.x = vec1.x - fParentWidth * 0.5f;
+			vec1.y = vec1.y - fParentHeight * 0.5f;
+			break;
+		case Anchor_BottomCenter:
+			vec1.y = vec1.y - fParentHeight * 0.5f;
+			break;
+		case Anchor_BottomRight:
+			vec1.x = vec1.x + fParentWidth * 0.5f;
+			vec1.y = vec1.y - fParentHeight * 0.5f;
+			break;
+		case Anchor_MiddleLeft:
+			vec1.x = vec1.x - fParentWidth * 0.5f;
+			break;
+		case Anchor_MiddleRight:
+			vec1.x = fParentWidth * 0.5f + vec1.x;
+			break;
+		case Anchor_TopLeft:
+			vec1.x = vec1.x - fParentWidth * 0.5f;
+			vec1.y = fParentHeight * 0.5f + vec1.y;
+			break;
+		case Anchor_TopCenter:
+			vec1.y = fParentHeight * 0.5f + vec1.y;
+			break;
+		case Anchor_TopRight:
+			vec1.x = fParentWidth * 0.5f + vec1.x;
+			vec1.y = fParentHeight * 0.5f + vec1.y;
+			break;
+		}
+	}
+
+	float fWidth, fHeight;
+	GetDimensions(fWidth, fHeight);
+
+	switch (m_ePivot)
+	{
+	case Pivot_BottomLeft:
+		vec2.x = fWidth * 0.5f + vec2.x;
+		vec2.y = fHeight * 0.5f + vec2.y;
+		break;
+	case Pivot_BottomCenter:
+		vec2.y = fHeight * 0.5f + vec2.y;
+		break;
+	case Pivot_BottomRight:
+		vec2.x = vec2.x - fWidth * 0.5f;
+		vec2.y = fHeight * 0.5f + vec2.y;
+		break;
+	case Pivot_MiddleLeft:
+		vec2.x = fWidth * 0.5f + vec2.x;
+		break;
+	case Pivot_MiddleRight:
+		vec2.x = vec2.x - fWidth * 0.5f;
+		break;
+	case Pivot_TopLeft:
+		vec2.x = fWidth * 0.5f + vec2.x;
+		vec2.y = vec2.y - fHeight * 0.5f;
+		break;
+	case Pivot_TopCenter:
+		vec2.y = vec2.y - fHeight * 0.5f;
+		break;
+	case Pivot_TopRight:
+		vec2.x = vec2.x - fWidth * 0.5f;
+		vec2.y = vec2.y - fHeight * 0.5f;
+		break;
+	}
+
+	AGUI2Transform transform1;
+	AGUI2Transform transform2;
+
+	if (m_pParent)
+	{
+		m_pParent->GetScreenTransform(transform1);
+		transform2 = GetTransform();
+	}
+	else
+	{
+		auto pDisplayParams = Toshi::TRenderInterface::GetSingleton()->GetCurrentDisplayParams();
+
+		transform1.m_Rotation[0] = { 1.0f, 0.0f };
+		transform1.m_Rotation[1] = { 0.0f, 1.0f };
+		transform1.m_Position = { pDisplayParams->uiWidth / 2.0f, pDisplayParams->uiHeight / 2.0f };
+
+		transform1.PreMultiply(pDisplayParams->uiWidth / fWidth, pDisplayParams->uiHeight / fHeight);
+		transform2 = GetTransform();
+	}
+
+	Toshi::TVector2 vec;
+	transform1.Transform(vec, vec1);
+	transform1.m_Position = { vec.x, vec.y };
+
+	transform2.Transform(vec, vec2);
+	transform2.m_Position = { vec.x, vec.y };
+
+	AGUI2Transform::Multiply(a_rOutTransform, transform1, transform2);
 }

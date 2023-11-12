@@ -50,7 +50,11 @@ namespace Toshi {
 							return;
 						}
 					}
+
+					m_bDestroyed = TTRUE;
 				}
+
+				return;
 			}
 			else
 			{
