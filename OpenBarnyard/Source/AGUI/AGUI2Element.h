@@ -26,30 +26,30 @@ public:
 class AGUI2Element : public AGUI2ElementNode
 {
 public:
-	enum class Anchor : TUINT
+	enum class Pivot : uint8_t
 	{
-		TopRight,
-		TopCenter,
-		TopLeft,
-		MiddleRight,
-		MiddleCenter,
-		MiddleLeft,
-		BottomRight,
+		BottomLeft,
 		BottomCenter,
-		BottomLeft
+		BottomRight,
+		MiddleLeft,
+		MiddleCenter,
+		MiddleRight,
+		TopLeft,
+		TopCenter,
+		TopRight
 	};
 
-	enum class Pivot : TUINT
+	enum class Anchor : uint8_t
 	{
-		TopRight,
-		TopCenter,
-		TopLeft,
-		MiddleRight,
-		MiddleCenter,
-		MiddleLeft,
-		BottomRight,
+		BottomLeft,
 		BottomCenter,
-		BottomLeft
+		BottomRight,
+		MiddleLeft,
+		MiddleCenter,
+		MiddleRight,
+		TopLeft,
+		TopCenter,
+		TopRight
 	};
 
 	using t_PostRender = void(*)();
