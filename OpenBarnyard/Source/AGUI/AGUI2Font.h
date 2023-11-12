@@ -31,5 +31,5 @@ struct AGUI2FontRef
 	AGUI2Font* pFont;
 	void* Unk1;
 	AGUI2FontResource* pFontResource;
-	void* Unk2;
+	TUINT uiNumRefs;
 };

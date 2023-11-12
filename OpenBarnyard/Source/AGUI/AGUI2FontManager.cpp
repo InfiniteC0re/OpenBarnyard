@@ -33,6 +33,19 @@ TBOOL AGUI2FontManager::Open(const char* a_szFileName)
 	CreateFontFromResource(pResource);
 }
 
+AGUI2Font* AGUI2FontManager::FindFont(const char* a_szFontName)
+{
+	auto pRef = FindFontRef(a_szFontName);
+
+	if (pRef)
+	{
+		pRef->uiNumRefs += 1;
+		return pRef->pFont;
+	}
+
+	return TNULL;
+}
+
 AGUI2FontRef* AGUI2FontManager::FindFontRef(const char* a_szFontName)
 {
 	for (TUINT i = 0; i < MAX_NUM_FONT_REFS; i++)

@@ -11,6 +11,7 @@ public:
 public:
 	static TBOOL Open(const char* a_szFileName);
 
+	static AGUI2Font* FindFont(const char* a_szFontName);
 	static AGUI2FontRef* FindFontRef(const char* a_szFontName);
 	static AGUI2FontResource* FindFontResource(const char* a_szResourceName);
 
