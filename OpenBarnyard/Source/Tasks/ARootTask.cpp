@@ -8,6 +8,7 @@
 #include "AGUI/AGUI2.h"
 #include "AGUI/AGUISystem.h"
 #include "AGUI/AGUI2TextureSectionManager.h"
+#include "AGUI/AFadeManager.h"
 
 #include <Plugins/PPropertyParser/PProperties.h>
 #include <Toshi/Core/TScheduler.h>
@@ -133,6 +134,12 @@ void ARootTask::LoadStartupData()
 	Toshi::TRenderInterface::GetSingleton()->FlushDyingResources();
 	Toshi::TRenderInterface::GetSingleton()->FlushDyingResources();
 	AGUI2TextureSectionManager::UpdateMaterials();
+
+	auto pSystemManager = TSystemManager::GetSingleton();
+	auto pFadeManager = TSTATICCAST(AFadeManager*, pSystemManager->GetScheduler()->CreateTask(&TGetClass(AFadeManager), this));
+	pFadeManager->Create();
+	pFadeManager->StartFade(AFade::Color(255, 0, 0, 0), AFade::Color(0, 0, 0, 0), 2.0f);
+	
 }
 
 TBOOL ARootTask::IsPaused()

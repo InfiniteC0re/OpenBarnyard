@@ -1,4 +1,6 @@
 #pragma once
+#include "AGUI/AGUI2Rectangle.h"
+
 #include <Toshi/Core/TColor.h>
 #include <Toshi/Core/TQList.h>
 #include <Toshi2/T2ObjectPool.h>
@@ -30,6 +32,11 @@ public:
 			G(TCOLOR_GET_G(a_uiColor)),
 			B(TCOLOR_GET_B(a_uiColor)) 
 		{ }
+
+		constexpr TUINT32 GetTColor32() const
+		{
+			return TCOLOR_ALPHA(R, G, B, A);
+		}
 	};
 
 public:
@@ -43,11 +50,16 @@ public:
 	Color* GetCurrentColor(Color& a_rColor);
 	TBOOL IsStillFading(TBOOL a_bThrowFadeOver);
 
+	AGUI2Rectangle& GetRectangleElement()
+	{
+		return m_Overlay;
+	}
+
 private:
 	Color m_FadeFromColor;
 	Color m_FadeToColor;
 	TFLOAT m_fCurrentTime;
 	TFLOAT m_fFadeTime;
-	// AGUI2Rectangle m_Overlay;
+	AGUI2Rectangle m_Overlay;
 	Toshi::TEmitter<AFade, TBOOL> m_FadeOverEmitter; // is it really TBOOL?
 };

@@ -10,8 +10,8 @@ AGUI2Element::AGUI2Element()
 	m_uiColour = 0xFFFFFFFF;
 	m_uiVisibilityMask = 0xFFFFFFFF;
 	m_cbPostRender = TNULL;
-	m_ePivot = Pivot::MiddleCenter;
-	m_eAnchor = Anchor::MiddleCenter;
+	m_ePivot = Pivot_MiddleCenter;
+	m_eAnchor = Anchor_MiddleCenter;
 	m_eFlags = 3;
 }
 
@@ -35,31 +35,31 @@ void AGUI2Element::PreRender()
 
 		switch (m_eAnchor)
 		{
-		case Anchor::BottomLeft:
+		case Anchor_BottomLeft:
 			vec1.x = vec1.x - fParentWidth * 0.5f;
 			vec1.y = vec1.y - fParentHeight * 0.5f;
 			break;
-		case Anchor::BottomCenter:
+		case Anchor_BottomCenter:
 			vec1.y = vec1.y - fParentHeight * 0.5f;
 			break;
-		case Anchor::BottomRight:
+		case Anchor_BottomRight:
 			vec1.y = vec1.y - fParentHeight * 0.5f;
 			vec1.x = fParentWidth * 0.5f + vec1.x;
 			break;
-		case Anchor::MiddleLeft:
+		case Anchor_MiddleLeft:
 			vec1.x = vec1.x - fParentWidth * 0.5f;
 			break;
-		case Anchor::MiddleRight:
+		case Anchor_MiddleRight:
 			vec1.x = fParentWidth * 0.5f + vec1.x;
 			break;
-		case Anchor::TopLeft:
+		case Anchor_TopLeft:
 			vec1.x = vec1.x - fParentWidth * 0.5f;
 			vec1.y = fParentHeight * 0.5f + vec1.y;
 			break;
-		case Anchor::TopCenter:
+		case Anchor_TopCenter:
 			vec1.y = fParentHeight * 0.5f + vec1.y;
 			break;
-		case Anchor::TopRight:
+		case Anchor_TopRight:
 			vec1.x = fParentWidth * 0.5f + vec1.x;
 			vec1.y = fParentHeight * 0.5f + vec1.y;
 			break;
@@ -71,31 +71,31 @@ void AGUI2Element::PreRender()
 
 	switch (m_ePivot)
 	{
-	case Pivot::BottomLeft:
+	case Pivot_BottomLeft:
 		vec2.x = fWidth * 0.5f + vec2.x;
 		vec2.y = fHeight * 0.5f + vec2.y;
 		break;
-	case Pivot::BottomCenter:
+	case Pivot_BottomCenter:
 		vec2.y = fHeight * 0.5f + vec2.y;
 		break;
-	case Pivot::BottomRight:
+	case Pivot_BottomRight:
 		vec2.x = vec2.x - fWidth * 0.5f;
 		vec2.y = fHeight * 0.5f + vec2.y;
 		break;
-	case Pivot::MiddleRight:
+	case Pivot_MiddleRight:
 		vec2.x = vec2.x - fWidth * 0.5f;
 		break;
-	case Pivot::MiddleLeft:
+	case Pivot_MiddleLeft:
 		vec2.x = fWidth * 0.5f + vec2.x;
 		break;
-	case Pivot::TopLeft:
+	case Pivot_TopLeft:
 		vec2.x = fWidth * 0.5f + vec2.x;
 		vec2.y = vec2.y - fHeight * 0.5f;
 		break;
-	case Pivot::TopCenter:
+	case Pivot_TopCenter:
 		vec2.y = vec2.y - fHeight * 0.5f;
 		break;
-	case Pivot::TopRight:
+	case Pivot_TopRight:
 		vec2.x = vec2.x - fWidth * 0.5f;
 		vec2.y = vec2.y - fHeight * 0.5f;
 		break;

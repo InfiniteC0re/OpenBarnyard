@@ -13,6 +13,14 @@ class AGUI2ElementNode : public Toshi::T2DList<AGUI2ElementNode>::Node
 public:
 	virtual ~AGUI2ElementNode() = default;
 
+	void Unlink()
+	{
+		if (Node::IsLinked())
+		{
+			Node::Remove();
+		}
+	}
+
 	AGUI2Element* Element() { return TREINTERPRETCAST(AGUI2Element*, this); }
 	const AGUI2Element* Element() const { return TREINTERPRETCAST(const AGUI2Element*, this); }
 };
@@ -26,30 +34,32 @@ public:
 class AGUI2Element : public AGUI2ElementNode
 {
 public:
-	enum class Pivot : uint8_t
+	using Pivot = uint32_t;
+	enum Pivot_ : Pivot
 	{
-		BottomLeft,
-		BottomCenter,
-		BottomRight,
-		MiddleLeft,
-		MiddleCenter,
-		MiddleRight,
-		TopLeft,
-		TopCenter,
-		TopRight
+		Pivot_BottomLeft,
+		Pivot_BottomCenter,
+		Pivot_BottomRight,
+		Pivot_MiddleLeft,
+		Pivot_MiddleCenter,
+		Pivot_MiddleRight,
+		Pivot_TopLeft,
+		Pivot_TopCenter,
+		Pivot_TopRight
 	};
 
-	enum class Anchor : uint8_t
+	using Anchor = uint32_t;
+	enum Anchor_ : Anchor
 	{
-		BottomLeft,
-		BottomCenter,
-		BottomRight,
-		MiddleLeft,
-		MiddleCenter,
-		MiddleRight,
-		TopLeft,
-		TopCenter,
-		TopRight
+		Anchor_BottomLeft,
+		Anchor_BottomCenter,
+		Anchor_BottomRight,
+		Anchor_MiddleLeft,
+		Anchor_MiddleCenter,
+		Anchor_MiddleRight,
+		Anchor_TopLeft,
+		Anchor_TopCenter,
+		Anchor_TopRight
 	};
 
 	using t_PostRender = void(*)();
@@ -76,6 +86,21 @@ public:
 	virtual void SetFocus(TBOOL a_bFocused);
 	virtual TBOOL IsPointInside(const Toshi::TVector2& a_rPoint);
 
+	void SetShouldResetZCoordinate()
+	{
+		m_eFlags |= 16;
+	}
+
+	void Show()
+	{
+		m_eFlags |= 1;
+	}
+
+	void Hide()
+	{
+		m_eFlags &= ~1;
+	}
+
 	TBOOL IsVisible() const
 	{
 		return m_eFlags & 1;
@@ -86,16 +111,21 @@ public:
 		return m_eFlags & 2;
 	}
 
+	TBOOL ShoudResetZCoordinate() const
+	{
+		return m_eFlags & 16;
+	}
+
 	void AddChildTail(AGUI2Element* a_pElement)
 	{
-		if (a_pElement->IsLinked()) a_pElement->Remove();
+		a_pElement->Unlink();
 		a_pElement->m_pParent = this;
 		m_Children.PushBack(a_pElement);
 	}
 
 	void AddChildHead(AGUI2Element* a_pElement)
 	{
-		if (a_pElement->IsLinked()) a_pElement->Remove();
+		a_pElement->Unlink();
 		a_pElement->m_pParent = this;
 		m_Children.PushFront(a_pElement);
 	}
@@ -107,6 +137,22 @@ public:
 		m_oTransform.SetPosition(a_fX, a_fY);
 	}
 
+	void SetAnchor(Anchor a_eAnchor)
+	{
+		m_eAnchor = a_eAnchor;
+	}
+
+	void SetPivot(Pivot a_ePivot)
+	{
+		m_ePivot = a_ePivot;
+	}
+
+	void SetAttachment(Anchor a_eAnchor, Pivot a_ePivot)
+	{
+		m_eAnchor = a_eAnchor;
+		m_ePivot = a_ePivot;
+	}
+
 	t_PostRender SetPostRenderCallback(t_PostRender a_cbNewCallback)
 	{
 		return std::exchange(m_cbPostRender, a_cbNewCallback);
@@ -115,7 +161,7 @@ public:
 public:
 	inline static TUINT32 s_uiVisibilityMask = 0xFFFFFFFF;
 
-private:
+protected:
 	AGUI2Element* m_pParent;
 	AGUI2Transform m_oTransform;
 	AGUI2ElementList m_Children;

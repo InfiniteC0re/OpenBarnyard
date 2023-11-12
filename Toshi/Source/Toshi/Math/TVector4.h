@@ -1,5 +1,7 @@
 #pragma once
 #include "Toshi/Math/TVector3.h"
+#include "Toshi/Math/TVector2.h"
+
 #include <DirectXMath.h>
 
 namespace Toshi
@@ -186,6 +188,8 @@ namespace Toshi
 		const float* AsArray() const { return reinterpret_cast<const float*>(this); }
 		TVector3& AsVector3() { return reinterpret_cast<TVector3&>(*this); }
 		const TVector3& AsVector3() const { return reinterpret_cast<const TVector3&>(*this); }
+		TVector2& AsVector2() { return reinterpret_cast<TVector2&>(*this); }
+		const TVector2& AsVector2() const { return reinterpret_cast<const TVector2&>(*this); }
 
 		// DirectX Math
 

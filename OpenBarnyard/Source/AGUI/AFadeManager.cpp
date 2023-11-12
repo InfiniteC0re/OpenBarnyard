@@ -20,7 +20,7 @@ TBOOL AFadeManager::OnUpdate(TFLOAT a_fDeltaTime)
 			{
 				AFade::Color color;
 				it->GetCurrentColor(color);
-				TTODO("Change color of m_Overlay");
+				it->GetRectangleElement().SetColour(color.GetTColor32());
 			}
 			else
 			{
@@ -49,7 +49,7 @@ void AFadeManager::StopAllFades()
 	}
 }
 
-AFade* AFadeManager::CreateFade(const AFade::Color& a_rFadeFrom, const AFade::Color& a_rFadeTo, TFLOAT a_fFadeTime)
+AFade* AFadeManager::StartFade(const AFade::Color& a_rFadeFrom, const AFade::Color& a_rFadeTo, TFLOAT a_fFadeTime)
 {
 	TFLOAT fWidth;
 	TFLOAT fHeight;
@@ -69,11 +69,21 @@ AFade* AFadeManager::CreateFade(const AFade::Color& a_rFadeFrom, const AFade::Co
 	TASSERT(m_Fades.GetUsedSize() != m_Fades.GetCapacity());
 
 	auto pFade = m_Fades.NewObject();
+	m_ActiveFades.Push(pFade);
+
 	pFade->SetFadeTime(a_fFadeTime);
 	pFade->SetFadeFromColor(a_rFadeFrom);
 	pFade->SetFadeToColor(a_rFadeTo);
 
-	TTODO("Setup m_Overlay when AGUI2Element and AGUI2Rectangle are implemented");
+	auto& rRectangle = pFade->GetRectangleElement();	
+	rRectangle.Create(fWidth, fHeight);
+	rRectangle.SetAttachment(AGUI2Element::Anchor_BottomCenter, AGUI2Element::Pivot_BottomCenter);
+	rRectangle.SetColour(a_rFadeFrom.GetTColor32());
+	rRectangle.SetShouldResetZCoordinate();
+	rRectangle.Unlink();
+
+	AGUI2::GetRootElement()->AddChildTail(&rRectangle);
+	rRectangle.Show();
 
 	return pFade;
 }

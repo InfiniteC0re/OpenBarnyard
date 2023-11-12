@@ -20,6 +20,7 @@ public:
 	void CreateContext();
 
 public:
+	static AGUI2Element* GetRootElement() { return GetSingletonSafe()->m_pRootElement; }
 	static AGUI2Context* GetContext() { return ms_pCurrentContext; }
 	static AGUI2Renderer* GetRenderer();
 
