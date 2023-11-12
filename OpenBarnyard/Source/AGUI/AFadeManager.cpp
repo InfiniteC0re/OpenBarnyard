@@ -77,7 +77,7 @@ AFade* AFadeManager::StartFade(const AFade::Color& a_rFadeFrom, const AFade::Col
 
 	auto& rRectangle = pFade->GetRectangleElement();	
 	rRectangle.Create(fWidth, fHeight);
-	rRectangle.SetAttachment(AGUI2Element::Anchor_BottomCenter, AGUI2Element::Pivot_BottomCenter);
+	rRectangle.SetAttachment(AGUI2Element::Anchor_TopCenter, AGUI2Element::Pivot_TopCenter);
 	rRectangle.SetColour(a_rFadeFrom.GetTColor32());
 	rRectangle.SetShouldResetZCoordinate();
 	rRectangle.Unlink();

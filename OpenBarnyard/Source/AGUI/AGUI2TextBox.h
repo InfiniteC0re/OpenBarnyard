@@ -7,6 +7,8 @@ class AGUI2TextBox : public AGUI2Element
 public:
 	AGUI2TextBox();
 
+	virtual void Render() override;
+
 	void Create(AGUI2Font* a_pFont, TFLOAT a_fWidth);
 
 private:

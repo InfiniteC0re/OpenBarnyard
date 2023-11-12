@@ -2,6 +2,7 @@
 #include "AGUI2Context.h"
 #include "AGUI2Element.h"
 #include "AGUI2Renderer.h"
+#include "AGUI2TextBox.h"
 #include "AGUI2MouseCursor.h"
 #include "AGUI2TextureSection.h"
 
@@ -40,6 +41,7 @@ private:
 	AGUI2Element* m_pRootElement;
 	AGUI2MouseCursor m_oMouseCursor;
 	TBOOL m_bShowMouseCursor;
+	AGUI2TextBox m_TestTextBox;
 	// ...
 	TBOOL m_bShowMemStatsInfo;
 	TBOOL m_bShowFPSInfo;

@@ -37,29 +37,29 @@ public:
 	using Pivot = uint32_t;
 	enum Pivot_ : Pivot
 	{
-		Pivot_BottomLeft,
-		Pivot_BottomCenter,
-		Pivot_BottomRight,
+		Pivot_TopLeft,
+		Pivot_TopCenter,
+		Pivot_TopRight,
 		Pivot_MiddleLeft,
 		Pivot_MiddleCenter,
 		Pivot_MiddleRight,
-		Pivot_TopLeft,
-		Pivot_TopCenter,
-		Pivot_TopRight
+		Pivot_BottomLeft,
+		Pivot_BottomCenter,
+		Pivot_BottomRight,
 	};
 
 	using Anchor = uint32_t;
 	enum Anchor_ : Anchor
 	{
-		Anchor_BottomLeft,
-		Anchor_BottomCenter,
-		Anchor_BottomRight,
+		Anchor_TopLeft,
+		Anchor_TopCenter,
+		Anchor_TopRight,
 		Anchor_MiddleLeft,
 		Anchor_MiddleCenter,
 		Anchor_MiddleRight,
-		Anchor_TopLeft,
-		Anchor_TopCenter,
-		Anchor_TopRight
+		Anchor_BottomLeft,
+		Anchor_BottomCenter,
+		Anchor_BottomRight,
 	};
 
 	using t_PostRender = void(*)();
@@ -137,7 +137,7 @@ public:
 		m_Children.PushFront(a_pElement);
 	}
 
-	void SetTransform(TFLOAT a_fX, TFLOAT a_fY, float a_fRotAngle)
+	void SetTransform(TFLOAT a_fX, TFLOAT a_fY, float a_fRotAngle = 0.0f)
 	{
 		m_oTransform = AGUI2Transform();
 		m_oTransform.Rotate(a_fRotAngle);

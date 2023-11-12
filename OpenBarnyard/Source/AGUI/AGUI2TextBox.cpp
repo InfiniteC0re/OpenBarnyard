@@ -21,3 +21,16 @@ void AGUI2TextBox::Create(AGUI2Font* a_pFont, TFLOAT a_fWidth)
 	m_bIsCreated = TTRUE;
 	m_bUnkFlag2 = TFALSE;
 }
+
+void AGUI2TextBox::Render()
+{
+	TIMPLEMENT();
+	TASSERT(m_pFont != TNULL);
+
+	TFLOAT fWidth;
+	TFLOAT fHeight;
+	AGUI2Element::GetDimensions(fWidth, fHeight);
+
+	m_pFont->DrawTextSingleLine(L"Hello, world!", 13, -fWidth / 2, -fHeight / 2, TCOLOR(150, 130, 220), 0.6f, TNULL);
+	AGUI2Element::Render();
+}

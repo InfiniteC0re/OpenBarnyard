@@ -35,12 +35,18 @@ TBOOL AGUI2::OnCreate()
 
 	m_oMouseCursor.Create("Pointer_Up", "Pointer_Down", 0.5f);
 
+	m_TestTextBox.Create(AGUI2FontManager::FindFont("Rekord26"), 145.0f);
+	m_TestTextBox.SetTransform(0.0f, -50.0f, 0.0f);
+	m_TestTextBox.SetAttachment(AGUI2Element::Anchor_MiddleCenter, AGUI2Element::Pivot_MiddleCenter);
+	m_pRootElement->AddChildTail(&m_TestTextBox);
+
 	return TTRUE;
 }
 
 TBOOL AGUI2::OnUpdate(float a_fDeltaTime)
 {
 	TIMPLEMENT();
+
 	m_oMouseCursor.Update();
 	ms_pCurrentContext->Tick(a_fDeltaTime);
 

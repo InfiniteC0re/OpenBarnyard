@@ -37,14 +37,14 @@ void AGUI2Element::PreRender()
 
 		switch (m_eAnchor)
 		{
-		case Anchor_BottomLeft:
+		case Anchor_TopLeft:
 			vec1.x = vec1.x - fParentWidth * 0.5f;
 			vec1.y = vec1.y - fParentHeight * 0.5f;
 			break;
-		case Anchor_BottomCenter:
+		case Anchor_TopCenter:
 			vec1.y = vec1.y - fParentHeight * 0.5f;
 			break;
-		case Anchor_BottomRight:
+		case Anchor_TopRight:
 			vec1.y = vec1.y - fParentHeight * 0.5f;
 			vec1.x = fParentWidth * 0.5f + vec1.x;
 			break;
@@ -54,14 +54,14 @@ void AGUI2Element::PreRender()
 		case Anchor_MiddleRight:
 			vec1.x = fParentWidth * 0.5f + vec1.x;
 			break;
-		case Anchor_TopLeft:
+		case Anchor_BottomLeft:
 			vec1.x = vec1.x - fParentWidth * 0.5f;
 			vec1.y = fParentHeight * 0.5f + vec1.y;
 			break;
-		case Anchor_TopCenter:
+		case Anchor_BottomCenter:
 			vec1.y = fParentHeight * 0.5f + vec1.y;
 			break;
-		case Anchor_TopRight:
+		case Anchor_BottomRight:
 			vec1.x = fParentWidth * 0.5f + vec1.x;
 			vec1.y = fParentHeight * 0.5f + vec1.y;
 			break;
@@ -73,14 +73,14 @@ void AGUI2Element::PreRender()
 
 	switch (m_ePivot)
 	{
-	case Pivot_BottomLeft:
+	case Pivot_TopLeft:
 		vec2.x = fWidth * 0.5f + vec2.x;
 		vec2.y = fHeight * 0.5f + vec2.y;
 		break;
-	case Pivot_BottomCenter:
+	case Pivot_TopCenter:
 		vec2.y = fHeight * 0.5f + vec2.y;
 		break;
-	case Pivot_BottomRight:
+	case Pivot_TopRight:
 		vec2.x = vec2.x - fWidth * 0.5f;
 		vec2.y = fHeight * 0.5f + vec2.y;
 		break;
@@ -90,14 +90,14 @@ void AGUI2Element::PreRender()
 	case Pivot_MiddleRight:
 		vec2.x = vec2.x - fWidth * 0.5f;
 		break;
-	case Pivot_TopLeft:
+	case Pivot_BottomLeft:
 		vec2.x = fWidth * 0.5f + vec2.x;
 		vec2.y = vec2.y - fHeight * 0.5f;
 		break;
-	case Pivot_TopCenter:
+	case Pivot_BottomCenter:
 		vec2.y = vec2.y - fHeight * 0.5f;
 		break;
-	case Pivot_TopRight:
+	case Pivot_BottomRight:
 		vec2.x = vec2.x - fWidth * 0.5f;
 		vec2.y = vec2.y - fHeight * 0.5f;
 		break;

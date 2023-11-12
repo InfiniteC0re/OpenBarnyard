@@ -37,7 +37,7 @@ TBOOL AGUI2MouseCursor::Create(const char* a_szPointerUpTexture, const char* a_s
 	AGUI2Rectangle::SetDimensions(fCursorWidth, fCursorHeight);
 	AGUI2Element::GetTransform().PreMultiply(a_fScalar, a_fScalar);
 	AGUI2Rectangle::SetTextureSection(m_pPointerUpSection);
-	AGUI2Element::SetAttachment(AGUI2Element::Anchor_MiddleCenter, AGUI2Element::Pivot_BottomLeft);
+	AGUI2Element::SetAttachment(AGUI2Element::Anchor_MiddleCenter, AGUI2Element::Pivot_TopLeft);
 	m_BoundingStart = { -fCursorWidth / 2, -fCursorHeight / 2 };
 
 	if (a_szPointerDownTexture)
