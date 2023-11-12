@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "AGUI2.h"
 #include "Assets/AAssetLoader.h"
+#include "AGUI2FontManager.h"
 #include "AGUI2TextureSectionManager.h"
 
 #include TOSHI_MULTIRENDER(AGUI2Renderer)
@@ -28,6 +29,7 @@ TBOOL AGUI2::OnCreate()
 	m_pRootElement->SetDimensions(800.0f, 600.0f);
 	m_pRootElement->SetPostRenderCallback(MainPostRenderCallback);
 
+	AGUI2FontManager::Open("data/gui/fonts.trb");
 	AGUI2TextureSectionManager::Open("data/gui/texsec.trb", AAssetLoader::GetAssetTRB(AAssetLoader::AssetType_Startup));
 	AGUI2TextureSectionManager::CreateMaterials();
 

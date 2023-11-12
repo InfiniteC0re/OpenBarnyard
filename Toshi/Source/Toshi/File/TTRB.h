@@ -416,6 +416,11 @@ namespace Toshi {
 			);
 		}
 
+		TINT32 GetNumSymbols() const
+		{
+			return m_SYMB->m_i32SymbCount;
+		}
+
 		SYMB* GetSymbolTable() const { return m_SYMB; }
 
 		static TINT16 HashString(const char* str)
