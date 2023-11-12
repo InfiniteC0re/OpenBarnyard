@@ -1,19 +1,20 @@
 #include "ToshiPCH.h"
 #include "TTSF.h"
 
-namespace Toshi
-{
-	TTRB::ERROR TTSFI::Open(TFile* a_pFile)
-	{
-		// FUN_00686920
+namespace Toshi {
 
+	TUINT32 TTSFI::Open(TFile* a_pFile)
+	{
 		m_pFile = a_pFile;
 		m_FileInfoCount = 0;
+		m_UNKFLAG = TFALSE;
 
 		if (m_pFile == TNULL)
 		{
 			return TTRB::ERROR_NO_FILE;
 		}
+
+		m_UNKFLAG = TTRUE;
 
 		m_pFile->Read(&m_Header, sizeof(TTSFI::Header));
 
@@ -46,10 +47,16 @@ namespace Toshi
 		return TTRB::ERROR_OK;
 	}
 
-	TTRB::ERROR TTSFI::PushForm()
+	TUINT32 TTSFI::Open(const char* a_szFilePath)
 	{
-		// FUN_00688160
+		TFile* pFile = TFile::Create(a_szFilePath);
+		auto uiResult = Open(pFile);
+		m_UNKFLAG = TFALSE;
+		return uiResult;
+	}
 
+	TUINT32 TTSFI::PushForm()
+	{
 		if (m_CurrentHunk.Name != TMAKEFOUR("FORM") &&
 			m_CurrentHunk.Name != TMAKEFOUR("TSFL") &&
 			m_CurrentHunk.Name != TMAKEFOUR("TSFB"))
@@ -64,7 +71,7 @@ namespace Toshi
 		return TTRB::ERROR_OK;
 	}
 
-	TTRB::ERROR TTSFI::PopForm()
+	TUINT32 TTSFI::PopForm()
 	{
 		// FUN_006881B0
 		if (m_FileInfoCount < 1) return TTRB::ERROR_NO_FILEINFO_ON_STACK;
@@ -75,14 +82,14 @@ namespace Toshi
 		m_CurrentHunk.Size = fileInfo.FileSize;
 		m_ReadPos = m_pFile->Tell() - fileInfo.FileStartOffset;
 
-		uint32_t alignedPos = TMath::AlignNumUp(m_CurrentHunk.Size);
+		TUINT32 alignedPos = TMath::AlignNumUp(m_CurrentHunk.Size);
 		m_pFile->Seek(alignedPos - m_ReadPos, TFile::TSEEK_CUR);
 		m_ReadPos = alignedPos;
 
 		return TTRB::ERROR_OK;
 	}
 
-	TTRB::ERROR TTSFI::ReadHunk()
+	TUINT8 TTSFI::ReadHunk()
 	{
 		// FUN_00687fa0
 		m_pFile->Read(&m_CurrentHunk, sizeof(Hunk));
@@ -98,17 +105,17 @@ namespace Toshi
 		return TTRB::ERROR_OK;
 	}
 
-	TTRB::ERROR TTSFI::SkipHunk()
+	TUINT8 TTSFI::SkipHunk()
 	{
 		// FUN_006880e0
-		uint32_t alignedSize = TMath::AlignNumUp(m_CurrentHunk.Size);
+		TUINT32 alignedSize = TMath::AlignNumUp(m_CurrentHunk.Size);
 		m_pFile->Seek(alignedSize - m_ReadPos, TFile::TSEEK_CUR);
 		m_ReadPos = alignedSize;
 
 		return TTRB::ERROR_OK;
 	}
 
-	TTRB::ERROR TTSFI::ReadFORM(TTRB::SectionFORM* section)
+	TUINT8 TTSFI::ReadFORM(TFORM* section)
 	{
 		// FUN_00688120
 		if (m_CurrentHunk.Name != TMAKEFOUR("FORM"))
@@ -116,12 +123,12 @@ namespace Toshi
 			return TTRB::ERROR_WRONG_MAGIC;
 		}
 
-		m_ReadPos += m_pFile->Read(section, sizeof(TTRB::SectionFORM));
+		m_ReadPos += m_pFile->Read(section, sizeof(TFORM));
 
 		return TTRB::ERROR_OK;
 	}
 
-	TTRB::ERROR TTSFI::ReadHunkData(void* dst)
+	TUINT8 TTSFI::ReadHunkData(void* dst)
 	{
 		if (m_CurrentHunk.Name == TMAKEFOUR("FORM"))
 		{
@@ -148,16 +155,16 @@ namespace Toshi
 		m_FileInfoCount = 0;
 	}
 
-	void TTSFI::ReadCompressed(void* buffer, uint32_t size)
+	void TTSFI::ReadCompressed(void* buffer, TUINT32 size)
 	{
 		TCompress::Header header;
 
-		uint32_t headerStart = m_pFile->Tell();
+		TUINT32 headerStart = m_pFile->Tell();
 		int8_t error = TCompress_Decompress::GetHeader(m_pFile, header);
 
 		if (error == TCOMPRESS_ERROR_OK)
 		{
-			uint32_t headerSize = m_pFile->Tell() - headerStart;
+			TUINT32 headerSize = m_pFile->Tell() - headerStart;
 			TCompress_Decompress::Decompress(m_pFile, &header, (char*)buffer, size);
 			m_ReadPos += header.CompressedSize + headerSize;
 		}
@@ -173,16 +180,16 @@ namespace Toshi
 #endif
 	}
 
-	TTSFI::TTSFI() : m_FileInfo(), m_Header()
+	TTSFI::TTSFI()
 	{
 		m_pFile = TNULL;
 		m_FileInfoCount = 0;
+		m_UNKFLAG = TFALSE;
 		m_ReadPos = 0;
-		// FUN_007EC9F0(m_FileInfo, 0, 0x100);
+		TUtil::MemClear(m_FileInfo, sizeof(m_FileInfo));
 		m_Magic = 0;
 		m_CurrentHunk.Name = 0;
 		m_CurrentHunk.Size = 0;
-		m_Endianess = Endianess_Little;
 	}
 
 	TTSFO::ERROR TTSFO::Create(const char* filepath, const char* magic, Endianess endianess)
@@ -192,7 +199,7 @@ namespace Toshi
 		if (m_pFile != TNULL)
 		{
 			TTSF::Hunk hunk{ TMAKEFOUR("TSFL"), 0 };
-			uint32_t magicValue = TMAKEFOUR(magic);
+			TUINT32 magicValue = TMAKEFOUR(magic);
 
 			if (endianess == Endianess_Big)
 			{
@@ -295,7 +302,7 @@ namespace Toshi
 		return TTRUE;
 	}
 
-	size_t TTSFO::WriteHunk(uint32_t hunkName, void* buffer, size_t bufferSize)
+	size_t TTSFO::WriteHunk(TUINT32 hunkName, void* buffer, size_t bufferSize)
 	{
 		TTSF::Hunk hunk{ hunkName, bufferSize };
 

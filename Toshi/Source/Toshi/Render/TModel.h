@@ -64,7 +64,6 @@ namespace Toshi {
 		TBOOL LoadTRB(TTRB* pTRB, TBOOL bFreeOnUnload);
 
 		TBOOL LoadTRBFile(const char* filepath);
-		TBOOL LoadTRBFile(TFile* pFile);
 
 		void UnloadTRB(TBOOL bFreeTrb);
 

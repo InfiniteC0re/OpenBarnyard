@@ -17,8 +17,8 @@ AGUI2MouseCursor::AGUI2MouseCursor()
 	m_fCursorAccelerations[Acceleration_Slow] = 10.0f;
 	m_fCursorAccelerations[Acceleration_Fast] = 20.0f;
 	m_eAccelerationType = Acceleration_Fast;
-	m_UnkVector = TVector2::VEC_ZERO;
-	m_fUnk = -1.0f;
+	m_RadialFieldPos = TVector2::VEC_ZERO;
+	m_fRadialRadius = -1.0f;
 }
 
 TBOOL AGUI2MouseCursor::Create(const char* a_szPointerUpTexture, const char* a_szPointerDownTexture, TFLOAT a_fScalar)
@@ -129,15 +129,15 @@ void AGUI2MouseCursor::MoveCursor(TFLOAT a_fDeltaX, TFLOAT a_fDeltaY)
 	if (m_CursorPos.y < fMinsY) m_CursorPos.y = fMinsY;
 	if (m_CursorPos.y > fMaxsY) m_CursorPos.y = fMaxsY;
 
-	if (m_fUnk != -1.0f)
+	if (m_fRadialRadius != -1.0f)
 	{
-		Toshi::TVector2 vec = m_CursorPos - m_UnkVector;
+		Toshi::TVector2 vec = m_CursorPos - m_RadialFieldPos;
 
-		if (m_fUnk < vec.Magnitude())
+		if (m_fRadialRadius < vec.Magnitude())
 		{
 			vec.Normalize();
-			m_CursorPos.x = vec.x * m_fUnk + m_UnkVector.x;
-			m_CursorPos.y = vec.y * m_fUnk + m_UnkVector.y;
+			m_CursorPos.x = vec.x * m_fRadialRadius + m_RadialFieldPos.x;
+			m_CursorPos.y = vec.y * m_fRadialRadius + m_RadialFieldPos.y;
 		}
 	}
 }

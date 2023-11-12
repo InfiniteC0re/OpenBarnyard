@@ -103,25 +103,6 @@ namespace Toshi {
 		return TFALSE;
 	}
 
-	TBOOL TModel::LoadTRBFile(TFile* pFile)
-	{
-		if (m_bFreeOnUnload && m_pTRB != TNULL)
-		{
-			m_pTRB->Close();
-			delete m_pTRB;
-		}
-
-		m_pTRB = new TTRB();
-		TTRB::ERROR iError = m_pTRB->Load(pFile);
-
-		if (iError == TTRB::ERROR_OK)
-		{
-			return LoadTRB();
-		}
-
-		return TFALSE;
-	}
-
 	void TModel::UnloadTRB(TBOOL bFreeTrb)
 	{
 		if (m_pTRB != TNULL)

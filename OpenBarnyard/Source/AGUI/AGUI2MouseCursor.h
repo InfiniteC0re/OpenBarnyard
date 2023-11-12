@@ -33,6 +33,6 @@ private:
 	TFLOAT m_fCursorAccelerations[Acceleration_NUMOF];
 	Acceleration m_eAccelerationType;
 	TBOOL m_bIsMouseDown;
-	Toshi::TVector2 m_UnkVector;
-	TFLOAT m_fUnk;
+	Toshi::TVector2 m_RadialFieldPos;
+	TFLOAT m_fRadialRadius;
 };
