@@ -255,3 +255,43 @@ TFLOAT AGUI2Font::GetTextHeightWrapped(const wchar_t* a_wszText, TFLOAT a_fMaxWi
 		return 0.0f;
 	}
 }
+
+TFLOAT AGUI2Font::GetTextWidth(const wchar_t* a_wszText, TFLOAT a_fScale)
+{
+	if (a_wszText && m_pFontDef)
+	{
+		return GetTextWidth(
+			a_wszText,
+			Toshi::TStringManager::String16Length(a_wszText),
+			a_fScale
+		);
+	}
+	
+	return 0.0f;
+}
+
+TFLOAT AGUI2Font::GetTextWidth(const wchar_t* a_wszText, TINT a_iTextLength, TFLOAT a_fScale)
+{
+	TINT iWidth = 0;
+	
+	for (TINT i = 0; i < a_iTextLength; i++)
+	{
+		auto pFontDef = m_pFontDef;
+		auto wChar = a_wszText[i];
+
+		if (pFontDef->ui16MinCharacter <= wChar && wChar <= pFontDef->ui16MaxCharacter)
+		{
+			TINT iCharIndex = pFontDef->pCharactersMap[wChar - pFontDef->ui16MinCharacter];
+
+			if (iCharIndex >= 0)
+			{
+				auto& pCharData = pFontDef->pCharactersData[iCharIndex];
+				iWidth += pFontDef->Unk2 + pCharData.Unk4 + pCharData.Unk3 + pCharData.ui8CharWidth;
+			}
+
+		}
+
+	}
+
+	return iWidth * a_fScale;
+}

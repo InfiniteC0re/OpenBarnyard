@@ -24,6 +24,12 @@ public:
 		m_bDimensionsDirty = TTRUE;
 	}
 
+	void SetScale(TFLOAT a_fScale)
+	{
+		m_fScale = a_fScale;
+		m_bDimensionsDirty = TTRUE;
+	}
+
 	void SetShadow(TBOOL a_bEnabled, TUINT32 a_uiColour)
 	{
 		m_bRenderShadow = a_bEnabled;

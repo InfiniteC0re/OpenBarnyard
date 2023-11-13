@@ -1,5 +1,5 @@
 #pragma once
-#include "AGUI/AGUI2Rectangle.h"
+#include "GUI/AGUI2Rectangle.h"
 
 #include <Toshi/Core/TColor.h>
 #include <Toshi/Core/TQList.h>

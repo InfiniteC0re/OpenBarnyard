@@ -1,5 +1,5 @@
 #pragma once
-#include "AGUI/AGUI2Renderer.h"
+#include "GUI/AGUI2Renderer.h"
 
 class AGUI2RendererDX8 : public AGUI2Renderer
 {

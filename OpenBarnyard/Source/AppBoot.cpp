@@ -23,7 +23,7 @@
 
 #include "Tasks/ADummyTask.h"
 #include "Locale/ALocaleManager.h"
-#include "AGUI/AGUI2.h"
+#include "GUI/AGUI2.h"
 
 AApplication g_oTheApp;
 

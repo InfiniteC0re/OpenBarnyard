@@ -5,10 +5,11 @@
 #include "Assets/AAssetLoader.h"
 #include "Memory/AMemory.h"
 #include "Input/AInputHandler.h"
-#include "AGUI/AGUI2.h"
-#include "AGUI/AGUISystem.h"
-#include "AGUI/AGUI2TextureSectionManager.h"
-#include "AGUI/AFadeManager.h"
+#include "GUI/AGUI2.h"
+#include "GUI/AGUISystem.h"
+#include "GUI/AGUI2TextureSectionManager.h"
+#include "GUI/AFadeManager.h"
+#include "ALoadScreen.h"
 
 #include <Plugins/PPropertyParser/PProperties.h>
 #include <Toshi/Core/TScheduler.h>
@@ -94,6 +95,13 @@ TBOOL ARootTask::OnCreate()
 	return TTRUE;
 }
 
+TBOOL ARootTask::OnUpdate(TFLOAT a_fDeltaTime)
+{
+	ALoadScreen::GetGlobalInstance()->Update(1.0f, TTRUE);
+
+	return TTRUE;
+}
+
 void ARootTask::LoadStartupData()
 {
 	TIMPLEMENT();
@@ -139,7 +147,9 @@ void ARootTask::LoadStartupData()
 	auto pFadeManager = TSTATICCAST(AFadeManager*, pSystemManager->GetScheduler()->CreateTask(&TGetClass(AFadeManager), this));
 	pFadeManager->Create();
 	pFadeManager->StartFade(AFade::Color(255, 0, 0, 0), AFade::Color(0, 0, 0, 0), 2.0f);
-	
+
+	ALoadScreen::GetGlobalInstance()->Create();
+	ALoadScreen::GetGlobalInstance()->StartLoading(0, TTRUE);
 }
 
 TBOOL ARootTask::IsPaused()

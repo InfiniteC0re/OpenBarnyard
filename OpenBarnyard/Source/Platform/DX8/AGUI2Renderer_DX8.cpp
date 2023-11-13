@@ -2,7 +2,7 @@
 #include "AGUI2Renderer_DX8.h"
 
 #include "Assets/AMaterialLibraryManager.h"
-#include "AGUI/AGUI2.h"
+#include "GUI/AGUI2.h"
 
 #include TOSHI_MULTIRENDER(TTextureResourceHAL)
 #include TOSHI_MULTIRENDER(TRenderInterface)

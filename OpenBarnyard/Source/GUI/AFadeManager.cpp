@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "AFadeManager.h"
 #include "Tasks/ARootTask.h"
-#include "AGUI/AGUI2.h"
+#include "GUI/AGUI2.h"
 
 TBOOL AFadeManager::OnUpdate(TFLOAT a_fDeltaTime)
 {
@@ -82,7 +82,7 @@ AFade* AFadeManager::StartFade(const AFade::Color& a_rFadeFrom, const AFade::Col
 	rRectangle.SetShouldResetZCoordinate();
 	rRectangle.Unlink();
 
-	AGUI2::GetRootElement()->AddChildTail(&rRectangle);
+	AGUI2::GetRootElement()->AddChildHead(&rRectangle);
 	rRectangle.Show();
 
 	return pFade;

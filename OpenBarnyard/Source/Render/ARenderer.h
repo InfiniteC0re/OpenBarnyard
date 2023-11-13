@@ -19,6 +19,8 @@ public:
 	TBOOL CreateTRender();
 	TBOOL CreateTRenderResources();
 
+	void ForceUpdate30FPS();
+
 	Toshi::TRenderAdapter::Mode::Device* FindSuitableDevice(Toshi::TRenderInterface::DISPLAYPARAMS& a_rDisplayParams, bool a_bReverseOrder);
 
 	Toshi::TGenericEmitter& GetRenderGUIEmitter() { return m_RenderGUIEmitter; }

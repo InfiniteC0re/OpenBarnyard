@@ -13,6 +13,7 @@ public:
 	ARootTask();
 
 	virtual TBOOL OnCreate() override;
+	virtual TBOOL OnUpdate(TFLOAT a_fDeltaTime) override;
 
 	void LoadStartupData();
 	TBOOL IsPaused();

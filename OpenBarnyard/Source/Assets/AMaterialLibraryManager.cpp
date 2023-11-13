@@ -2,8 +2,8 @@
 #include <Toshi/Render/TRenderInterface.h>
 #include <Toshi/File/TTRB.h>
 
-#include "AGUI/AGUISystem.h"
-#include "AGUI/AGUI2TextureSectionManager.h"
+#include "GUI/AGUISystem.h"
+#include "GUI/AGUI2TextureSectionManager.h"
 #include "AMaterialLibraryManager.h"
 #include "Locale/ALocaleManager.h"
 

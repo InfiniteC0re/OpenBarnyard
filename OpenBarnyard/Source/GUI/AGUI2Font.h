@@ -50,6 +50,8 @@ public:
 	void DrawTextSingleLine(const wchar_t* a_wszText, TINT a_iTextLength, TFLOAT a_fX, TFLOAT a_fY, TUINT32 a_uiColour, TFLOAT a_fScale, void* a_fnCallback = TNULL);
 
 	TFLOAT GetTextHeightWrapped(const wchar_t* a_wszText, TFLOAT a_fMaxWidth, TFLOAT a_fScale);
+	TFLOAT GetTextWidth(const wchar_t* a_wszText, TFLOAT a_fScale);
+	TFLOAT GetTextWidth(const wchar_t* a_wszText, TINT a_iTextLength, TFLOAT a_fScale);
 
 private:
 	AGUI2FontDef* m_pFontDef = TNULL;
