@@ -84,7 +84,7 @@ namespace Toshi {
 			m_pHead = a_pObject;
 		}
 
-		TUINT GetNumUsedObjects() const
+		TUINT GetNumFreeObjects() const
 		{
 			TUINT uiNumber = 0;
 			for (auto it = m_pHead; it != TNULL; it = it->pNextObject, uiNumber++);
@@ -143,7 +143,7 @@ namespace Toshi {
 
 		virtual size_t GetUsedSize() override
 		{
-			return (MaxNumber - GetNumUsedObjects()) * ObjectSize;
+			return (MaxNumber - GetNumFreeObjects()) * ObjectSize;
 		}
 
 		virtual size_t GetCapacity() override
@@ -250,7 +250,7 @@ namespace Toshi {
 
 		virtual size_t GetUsedSize() override
 		{
-			return (m_iMaxNumber - GetNumUsedObjects()) * m_uiObjectSize;
+			return (m_iMaxNumber - GetNumFreeObjects()) * m_uiObjectSize;
 		}
 
 		virtual size_t GetCapacity() override

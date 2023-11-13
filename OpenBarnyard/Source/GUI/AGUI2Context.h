@@ -12,7 +12,7 @@ public:
 
 	AGUI2Renderer* GetRenderer() const { return m_pRenderer; }
 	AGUI2Element* GetRootElement() const { return m_pRootElement; }
-	AGUI2Element* GetOverlayElement() const { return m_pOverlayElement; }
+	AGUI2Element* GetDebugCanvas() const { return m_pDebugCanvas; }
 
 	void SetRenderer(AGUI2Renderer* a_pRenderer) { m_pRenderer = a_pRenderer; }
 	void SetRootElement(AGUI2Element* a_pElement) { m_pRootElement = a_pElement; }
@@ -21,5 +21,5 @@ private:
 	AGUI2Renderer* m_pRenderer;
 	AGUI2Element* m_pRootElement;
 	AGUI2Element* m_pCreatedRootElement;
-	AGUI2Element* m_pOverlayElement;
+	AGUI2Element* m_pDebugCanvas;
 };

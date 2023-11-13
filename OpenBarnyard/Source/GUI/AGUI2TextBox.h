@@ -51,6 +51,11 @@ public:
 		m_uiShadowColour = a_uiColour;
 	}
 
+	void SetTextAlign(AGUI2Font::TextAlign a_eTextAlign)
+	{
+		m_eTextAlign = a_eTextAlign;
+	}
+
 private:
 	void RenderText(void* a_fnCallback);
 

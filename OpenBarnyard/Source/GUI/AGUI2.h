@@ -16,7 +16,7 @@ public:
 	AGUI2();
 
 	virtual TBOOL OnCreate() override;
-	virtual TBOOL OnUpdate(float a_fDeltaTime) override;
+	virtual TBOOL OnUpdate(TFLOAT a_fDeltaTime) override;
 
 	void GetDimensions(TFLOAT& a_rWidth, TFLOAT& a_rHeight);
 	void CreateContext();
@@ -41,7 +41,14 @@ private:
 	AGUI2Element* m_pRootElement;
 	AGUI2MouseCursor m_oMouseCursor;
 	TBOOL m_bShowMouseCursor;
-	// ...
+	AGUI2TextBox m_oFPS;
+	AGUI2TextBox m_oMemStats;
+	AGUI2TextBox m_oPlayerInfo;
+	AGUI2TextBox m_oTexturesInfo;
+	wchar_t m_wszMemStats[320];
+	wchar_t m_wszFPS[64];
+	wchar_t m_wszPlayerInfo[128];
+	wchar_t m_wszTexturesInfo[64];
 	TBOOL m_bShowMemStatsInfo;
 	TBOOL m_bShowFPSInfo;
 	TBOOL m_bShowPlayerInfo;

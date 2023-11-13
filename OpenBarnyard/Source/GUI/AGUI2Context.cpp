@@ -7,7 +7,7 @@ AGUI2Context::AGUI2Context()
 	m_pRenderer = TNULL;
 	m_pRootElement = TNULL;
 	m_pCreatedRootElement = TNULL;
-	m_pOverlayElement = TNULL;
+	m_pDebugCanvas = TNULL;
 
 	m_pCreatedRootElement = new AGUI2Element;
 
@@ -17,12 +17,12 @@ AGUI2Context::AGUI2Context()
 		m_pCreatedRootElement->SetTransform(0.0f, 0.0f, 0.0f);
 	}
 
-	m_pOverlayElement = new AGUI2Element;
+	m_pDebugCanvas = new AGUI2Element;
 
-	if (m_pOverlayElement)
+	if (m_pDebugCanvas)
 	{
-		m_pOverlayElement->SetDimensions(640.0f, 512.0f);
-		m_pOverlayElement->SetTransform(0.0f, 0.0f, 0.0f);
+		m_pDebugCanvas->SetDimensions(640.0f, 512.0f);
+		m_pDebugCanvas->SetTransform(0.0f, 0.0f, 0.0f);
 	}
 
 	m_pRootElement = m_pCreatedRootElement;
@@ -35,7 +35,7 @@ void AGUI2Context::Tick(TFLOAT a_fDeltaTime)
 		m_pRootElement->Tick(a_fDeltaTime);
 	}
 
-	m_pOverlayElement->Tick(a_fDeltaTime);
+	m_pDebugCanvas->Tick(a_fDeltaTime);
 }
 
 void AGUI2Context::Render()
@@ -48,9 +48,9 @@ void AGUI2Context::Render()
 		m_pRootElement->Render();
 		m_pRootElement->PostRender();
 
-		m_pOverlayElement->PreRender();
-		m_pOverlayElement->Render();
-		m_pOverlayElement->PostRender();
+		m_pDebugCanvas->PreRender();
+		m_pDebugCanvas->Render();
+		m_pDebugCanvas->PostRender();
 
 		AGUI2::GetRenderer()->EndScene();
 	}

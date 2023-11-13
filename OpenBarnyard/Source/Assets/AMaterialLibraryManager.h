@@ -73,7 +73,7 @@ public:
 
 	using LibrariesMap = Toshi::T2Map<Toshi::TPString8, AMaterialLibrary*, Toshi::TPString8::Comparator>;
 
-	static constexpr TUINT NUM_SLOTS = 600;
+	static constexpr TUINT MAX_NUM_TEXTURES = 600;
 
 public:
 	AMaterialLibraryManager();
@@ -86,6 +86,8 @@ public:
 	void OnLibraryLoaded(TBOOL a_bIsGUI);
 
 	Toshi::TTexture* FindTexture(const char* a_szTextureName);
+	TINT GetNumUsedTextures() const { return m_iNumUsedTextures; }
+	TINT GetNumFreeTextures() const { return m_iNumFreeTextures; }
 
 private:
 	void DestroyLibrary(LibrariesMap::Node*& a_rpMaterialLibraryNode, TBOOL a_bUpdateGUIMaterials);
@@ -94,7 +96,7 @@ private:
 private:
 	Toshi::T2Map<Toshi::TPString8, int, Toshi::TPString8::Comparator> m_NumRefLibraries;
 	LibrariesMap m_LoadedLibraries;
-	TextureSlot m_aSlots[600];
+	TextureSlot m_aSlots[MAX_NUM_TEXTURES];
 	Toshi::T2SList<TextureSlot> m_UsedTextures;
 	Toshi::T2SList<TextureSlot> m_FreeTextures;
 	TINT m_iNumUsedTextures;

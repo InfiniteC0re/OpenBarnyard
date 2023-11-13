@@ -6,6 +6,7 @@
 #include "GUI/AGUI2TextureSectionManager.h"
 #include "AMaterialLibraryManager.h"
 #include "Locale/ALocaleManager.h"
+#include "ALoadScreen.h"
 
 #include TOSHI_MULTIRENDER(TRenderInterface)
 
@@ -20,7 +21,7 @@ AMaterialLibraryManager::AMaterialLibraryManager() :
 	m_iNumUsedTextures = 0;
 	m_iNumFreeTextures = 0;
 
-	for (TUINT i = 0; i < NUM_SLOTS; i++)
+	for (TUINT i = 0; i < MAX_NUM_TEXTURES; i++)
 	{
 		m_FreeTextures.PushFront(&m_aSlots[i]);
 		m_iNumFreeTextures++;
@@ -60,7 +61,7 @@ void AMaterialLibraryManager::LoadFromProperties(const PPropertyValue* a_pProper
 			}
 
 			LoadLibrary(matlibName, a_pTRB, TFALSE);
-			TTODO("ALoadingScreen::Update");
+			ALoadScreen::GetGlobalInstance()->Update(1.0f, TTRUE);
 		}
 
 		TRenderInterface::GetSingleton()->FlushDyingResources();
@@ -71,7 +72,7 @@ void AMaterialLibraryManager::LoadFromProperties(const PPropertyValue* a_pProper
 			AGUI2TextureSectionManager::UpdateMaterials();
 		}
 
-		TTODO("ALoadingScreen::Update");
+		ALoadScreen::GetGlobalInstance()->Update(1.0f, TTRUE);
 	}
 }
 

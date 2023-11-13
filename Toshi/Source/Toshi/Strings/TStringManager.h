@@ -38,6 +38,17 @@ namespace Toshi {
 		static const wchar_t* String16FindString(const wchar_t* str, wchar_t* substr) { return T2String16::FindString(str, substr); }
 		static size_t String16Length(const wchar_t* str) { return T2String16::Length(str); }
 		
+		static void String16Format(wchar_t* str, int size, const wchar_t* format, ...)
+		{
+			va_list args;
+
+			va_start(args, format);
+
+			T2String16::FormatV(str, size, format, args);
+
+			va_end(args);
+		}
+
 		static wchar_t* StringCharToUnicode(wchar_t* a_UnicodeString, const char* a_CharString, uint32_t a_iLength);
 		static char* StringUnicodeToChar(char* a_CharString, const wchar_t* const& a_UnicodeString, uint32_t a_iLength);
 	};
