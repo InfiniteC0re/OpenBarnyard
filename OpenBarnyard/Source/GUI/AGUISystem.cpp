@@ -38,7 +38,7 @@ TBOOL AGUISystem::OnCreate()
 		pViewport->SetMinZ(0.0f);
 		pViewport->SetMaxZ(1.0f);
 		pViewport->SetBackgroundColor(0, 0, 0, 0);
-		pViewport->AllowBackgroundClear(TTRUE);
+		pViewport->AllowBackgroundClear(TFALSE);
 		pViewport->AllowDepthClear(TTRUE);
 		pViewport->SetMemoryAllocatorBlock(AMemory::GetHeap(AMemory::POOL_Viewport));
 
@@ -67,4 +67,17 @@ TBOOL AGUISystem::OnGUIRender(AGUISystem* a_pGUISystem, ARenderer* a_pRenderer, 
 	}
 
 	return TTRUE;
+}
+
+void AGUISystem::AllowBackgroundClear(TBOOL a_bAllow)
+{
+	if (ms_pSingleton->m_pRenderObjects[0] != TNULL)
+	{
+		auto pViewport = ms_pSingleton->m_pRenderObjects[0]->GetViewport();
+
+		if (pViewport)
+		{
+			pViewport->AllowBackgroundClear(a_bAllow);
+		}
+	}
 }

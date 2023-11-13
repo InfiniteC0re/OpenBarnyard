@@ -23,6 +23,9 @@ public:
 		return m_pRenderObjects[a_uiIndex];
 	}
 
+public:
+	static void AllowBackgroundClear(TBOOL a_bAllow);
+
 private:
 	static TBOOL OnGUIRender(AGUISystem* a_pGUISystem, ARenderer* a_pRenderer, TINT* a_pUnknown);
 

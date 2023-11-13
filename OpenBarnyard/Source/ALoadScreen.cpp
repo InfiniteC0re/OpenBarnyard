@@ -89,7 +89,7 @@ void ALoadScreen::StartLoading(TINT a_iUnused, TBOOL a_bRender)
 
 	if (!m_bFlag)
 	{
-		m_CanvasElement.Hide();
+		m_CanvasElement.Show();
 	}
 
 	m_TextBox.Show();

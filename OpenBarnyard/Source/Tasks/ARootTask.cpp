@@ -66,6 +66,11 @@ TBOOL ARootTask::OnCreate()
 	ARandom::CreateSingleton();
 
 	LoadStartupData();
+
+	AGUISystem::AllowBackgroundClear(TTRUE);
+	ARenderer::GetSingleton()->ForceUpdate30FPS();
+	ARenderer::GetSingleton()->ForceUpdate30FPS();
+	AGUISystem::AllowBackgroundClear(TFALSE);
 	
 	return TTRUE;
 }

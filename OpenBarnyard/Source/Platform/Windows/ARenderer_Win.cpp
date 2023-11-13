@@ -186,24 +186,18 @@ void ARenderer::RenderGUI()
 	TTODO("Save and restore value of 'm_AmbientColor?' when it's figured out");
 
 	pViewport->Begin();
-	
+
+	// Render UI that is not attached to context
 	AGUI2::GetContext()->GetRenderer()->BeginScene();
-	AGUI2::GetContext()->GetRenderer()->SetColour(TCOLOR(255, 255, 255));
-
-	AGUI2::GetContext()->GetRenderer()->SetMaterial(AGUI2TextureSectionManager::GetTextureSection("Panel_01")->GetMaterial());
-	AGUI2::GetContext()->GetRenderer()->RenderRectangle({ -80.0f, -25.0f }, { 80.0f, 25.0f }, { 0, 0 }, { 1.0f, 1.0f });
-
-	auto pSection = AGUI2TextureSectionManager::GetTextureSection("Putt_Ball");
-	AGUI2::GetContext()->GetRenderer()->SetMaterial(pSection->GetMaterial());
-	AGUI2::GetContext()->GetRenderer()->RenderRectangle({ -10.0f, -10.0f }, { 10.0f, 10.0f }, { pSection->GetUVPoint1().x, pSection->GetUVPoint1().y }, { pSection->GetUVPoint2().x, pSection->GetUVPoint2().y });
-
 	m_RenderGUIEmitter.Throw(0);
 	AGUI2::GetContext()->GetRenderer()->EndScene();
+
+	// Render UI that is attached to the context
 	AGUI2::GetContext()->Render();
-
+	
 	pViewport->End();
-	pRender->FlushShaders();
 
+	pRender->FlushShaders();
 	pRender->SetCurrentRenderContext(pOldContext);
 }
 

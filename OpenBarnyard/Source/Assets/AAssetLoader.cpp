@@ -2,6 +2,7 @@
 #include "AAssetLoader.h"
 #include "AAssetStreaming.h"
 #include "ATRBLoaderJob.h"
+#include "ALoadScreen.h"
 
 TOSHI_NAMESPACE_USING
 
@@ -26,7 +27,7 @@ void AAssetLoader::Load(const char* a_szFileName, AssetType a_eAssetType, TBOOL 
 
 		while (AAssetStreaming::GetSingleton()->HasActiveJobs())
 		{
-			TFIXME("ALoadingScreen::GetSingleton()->Update(1.0f, TTRUE);");
+			ALoadScreen::GetGlobalInstance()->Update(1.0f, TTRUE);
 			Sleep(5);
 			AAssetStreaming::GetSingleton()->Update();
 		}
