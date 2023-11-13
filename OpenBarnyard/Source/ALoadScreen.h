@@ -14,6 +14,8 @@ public:
 	};
 
 	static constexpr TUINT32 NUM_LOAD_TEXTURES = sizeof(ms_LoadTextures) / sizeof(*ms_LoadTextures);
+	static constexpr TUINT32 NUM_LOAD_INDICATORS = 9;
+	static constexpr TFLOAT ICON_SWITCH_INTERVAL = 0.4f;
 
 public:
 	ALoadScreen();
@@ -37,10 +39,10 @@ private:
 	// ...
 	TBOOL m_bIsLoadingScreen;
 	TBOOL m_bFlag;
-	TINT m_iCowIndex;
-	TINT m_iCowPosIndex;
+	TINT m_iNumCowIcons;
+	TINT m_iCowPos;
 	AGUI2Rectangle m_CanvasElement;
-	AGUI2Rectangle m_aRectangles[9];
+	AGUI2Rectangle m_aRectangles[NUM_LOAD_INDICATORS];
 	AGUI2TextureSection* m_aTextureSections[NUM_LOAD_TEXTURES];
 	// ...
 	AGUI2TextBox m_TextBox;

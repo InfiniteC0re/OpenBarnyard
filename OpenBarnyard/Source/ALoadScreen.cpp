@@ -11,7 +11,7 @@ ALoadScreen::ALoadScreen()
 {
 	m_bIsLoadingScreen = TFALSE;
 	m_bFlag = TFALSE;
-	m_iCowIndex = 1;
+	m_iNumCowIcons = 1;
 	m_fTotalTime = 0.0f;
 	m_fTimer = 0.8f;
 }
@@ -44,16 +44,9 @@ void ALoadScreen::Create()
 
 	TFLOAT fRectPosX = fWidth * 0.1f;
 
-	for (TUINT i = 0; i < 9; i++)
+	for (TUINT i = 0; i < NUM_LOAD_INDICATORS; i++)
 	{
-		TINT iTexSection = i & 0x80000001;
-
-		if (iTexSection < 0)
-		{
-			iTexSection = (iTexSection - 1U | 0xfffffffe) + 1;
-		}
-
-		auto pTexSection = m_aTextureSections[iTexSection];
+		auto pTexSection = m_aTextureSections[i % NUM_LOAD_TEXTURES];
 		auto pRectangle = &m_aRectangles[i];
 
 		pRectangle->SetDimensions(pTexSection->GetWidth(), pTexSection->GetHeight());
@@ -63,7 +56,7 @@ void ALoadScreen::Create()
 		pRectangle->Hide();
 
 		pRootElement->AddChildHead(pRectangle);
-		fRectPosX += (fWidth * 0.8f) / 9;
+		fRectPosX += (fWidth * 0.8f) / NUM_LOAD_INDICATORS;
 	}
 
 	auto pFont = AGUI2FontManager::FindFont("Rekord26");
@@ -93,15 +86,15 @@ void ALoadScreen::StartLoading(TINT a_iUnused, TBOOL a_bRender)
 	}
 
 	m_TextBox.Show();
-	m_iCowIndex = 0;
-	m_iCowPosIndex = 0;
+	m_iNumCowIcons = 1;
+	m_iCowPos = 0;
 	m_bFlag = TFALSE;
 
 	m_oTimer.Reset();
 	m_fTimer = 0.0f;
 	m_fTotalTime = 0.0f;
 
-	for (TUINT i = 0; i < 9; i++)
+	for (TUINT i = 0; i < NUM_LOAD_INDICATORS; i++)
 	{
 		m_aRectangles[i].Show();
 	}
@@ -122,7 +115,7 @@ void ALoadScreen::SetLoadingState(TBOOL a_bIsLoading, TBOOL a_bUpdateUI)
 
 	if (!a_bIsLoading)
 	{
-		m_iCowIndex = 0;
+		m_iNumCowIcons = 0;
 	}
 
 	if (a_bIsLoading) m_TextBox.Show();
@@ -139,12 +132,12 @@ void ALoadScreen::Update(TFLOAT a_fDeltaTime, TBOOL a_bRender)
 		m_fTimer += m_oTimer.GetDelta();
 		m_fTotalTime += m_oTimer.GetDelta();
 
-		if (0.4f <= m_fTimer)
+		if (m_fTimer >= ICON_SWITCH_INTERVAL)
 		{
 			m_fTimer = 0.0f;
 
-			if (m_iCowIndex < 3) m_iCowIndex++;
-			m_iCowPosIndex = (m_iCowPosIndex + 1) % 9;
+			if (m_iNumCowIcons < 3) m_iNumCowIcons++;
+			m_iCowPos = (m_iCowPos + 1) % NUM_LOAD_INDICATORS;
 			UpdateUI(a_bRender);
 		}
 	}
@@ -152,31 +145,28 @@ void ALoadScreen::Update(TFLOAT a_fDeltaTime, TBOOL a_bRender)
 
 void ALoadScreen::UpdateUI(TBOOL a_bRender)
 {
-	for (TUINT i = 0; i < 9; i++)
+	for (TUINT i = 0; i < NUM_LOAD_INDICATORS; i++)
 	{
 		auto pRectangle = &m_aRectangles[i];
 
-		if (m_iCowIndex == 3 && ((i + 2) % 9 == m_iCowPosIndex))
+		if (m_iNumCowIcons == 3 && ((i + 2) % NUM_LOAD_INDICATORS == m_iCowPos))
 		{
 			pRectangle->SetAlpha(0.2f);
 			pRectangle->Show();
 		}
-		else if (m_iCowIndex < 2 || ((i + 1) % 9 != m_iCowPosIndex))
-		{
-			if (m_iCowIndex < 1 || i != m_iCowPosIndex)
-			{
-				pRectangle->Hide();
-			}
-			else
-			{
-				pRectangle->SetAlpha(1.0f);
-				pRectangle->Show();
-			}
-		}
-		else
+		else if (m_iNumCowIcons >= 2 && ((i + 1) % NUM_LOAD_INDICATORS == m_iCowPos))
 		{
 			pRectangle->SetAlpha(0.5f);
 			pRectangle->Show();
+		}
+		else if (m_iNumCowIcons >= 1 && i == m_iCowPos)
+		{
+			pRectangle->SetAlpha(1.0f);
+			pRectangle->Show();
+		}
+		else
+		{
+			pRectangle->Hide();
 		}
 	}
 
