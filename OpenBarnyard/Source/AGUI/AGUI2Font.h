@@ -6,10 +6,10 @@ struct AGUI2FontDefCharacterData
 {
 	TINT8 Unk1;
 	TINT8 Unk2;
-	TINT16 ui16PosX;
-	TINT16 ui16PosY;
-	TINT8 ui8CharWidth;
-	TINT8 ui8CharHeight;
+	TUINT16 ui16PosX;
+	TUINT16 ui16PosY;
+	TUINT8 ui8CharWidth;
+	TUINT8 ui8CharHeight;
 	TINT8 Unk3;
 	TINT8 Unk4;
 	TINT8 Unk5;
@@ -21,9 +21,9 @@ struct AGUI2FontDef
 	void* Unk1;
 	const char* szTextureNames;
 	TINT8 Unk2;
-	TINT8 uiLinesMargin;
-	TINT8 uiLineHeight;
-	TINT8 uiNumMaterials;
+	TUINT8 uiLinesMargin;
+	TUINT8 uiLineHeight;
+	TUINT8 uiNumMaterials;
 	TUINT16 ui16MaxCharacter;
 	TUINT16 ui16MinCharacter;
 	TINT32 Unk3;
@@ -34,11 +34,22 @@ struct AGUI2FontDef
 class AGUI2Font
 {
 public:
+	enum TextAlign : TUINT32
+	{
+		TextAlign_Left,
+		TextAlign_Center,
+		TextAlign_Right,
+	};
+
+public:
 	AGUI2Font() = default;
 
 	TBOOL Create(AGUI2FontDef* a_pFontDef);
 
-	void DrawTextSingleLine(const wchar_t* a_wszText, TINT a_iTextSize, TFLOAT a_fX, TFLOAT a_fY, TUINT32 a_uiColour, TFLOAT a_fScale, void* a_fnCallback = TNULL);
+	void DrawTextWrapped(const wchar_t* a_wszText, TFLOAT a_fX, TFLOAT a_fY, TFLOAT a_fWidth, TFLOAT a_fHeight, TUINT32 a_uiColour, TFLOAT a_fScale, TextAlign a_eAlign, void* a_fnCallback = TNULL);
+	void DrawTextSingleLine(const wchar_t* a_wszText, TINT a_iTextLength, TFLOAT a_fX, TFLOAT a_fY, TUINT32 a_uiColour, TFLOAT a_fScale, void* a_fnCallback = TNULL);
+
+	TFLOAT GetTextHeightWrapped(const wchar_t* a_wszText, TFLOAT a_fMaxWidth, TFLOAT a_fScale);
 
 private:
 	AGUI2FontDef* m_pFontDef = TNULL;

@@ -31,6 +31,8 @@ TBOOL AGUI2FontManager::Open(const char* a_szFileName)
 
 	pResource->uiRefCount++;
 	CreateFontFromResource(pResource);
+
+	return TTRUE;
 }
 
 AGUI2Font* AGUI2FontManager::FindFont(const char* a_szFontName)

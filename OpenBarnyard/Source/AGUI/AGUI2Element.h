@@ -82,16 +82,11 @@ public:
 	virtual void GetMaxs(TFLOAT& a_fX, TFLOAT& a_fY);
 	virtual void SetColour(TUINT32 a_uiColour);
 	virtual void SetAlpha(TFLOAT a_fAlpha);
-	virtual void SetUnknown(TFLOAT a_fValue);
+	virtual void SetShadowAlpha(TFLOAT a_fAlpha);
 	virtual void SetFocus(TBOOL a_bFocused);
 	virtual TBOOL IsPointInside(const Toshi::TVector2& a_rPoint);
 
 	void GetScreenTransform(AGUI2Transform& a_rOutTransform);
-
-	void SetShouldResetZCoordinate()
-	{
-		m_eFlags |= 16;
-	}
 
 	void Show()
 	{
@@ -101,6 +96,16 @@ public:
 	void Hide()
 	{
 		m_eFlags &= ~1;
+	}
+
+	void SetShouldResetZCoordinate()
+	{
+		m_eFlags |= 16;
+	}
+
+	void SetShouldRenderBeforeChildren()
+	{
+		m_eFlags |= 8;
 	}
 
 	TBOOL HasFlags(UINT32 a_uiFlags) const
@@ -116,6 +121,11 @@ public:
 	TBOOL IsFocused() const
 	{
 		return m_eFlags & 2;
+	}
+
+	TBOOL ShouldRenderBeforeChildren()
+	{
+		return m_eFlags & 8;
 	}
 
 	TBOOL ShoudResetZCoordinate() const

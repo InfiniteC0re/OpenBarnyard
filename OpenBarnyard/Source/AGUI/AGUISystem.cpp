@@ -38,7 +38,7 @@ TBOOL AGUISystem::OnCreate()
 		pViewport->SetMinZ(0.0f);
 		pViewport->SetMaxZ(1.0f);
 		pViewport->SetBackgroundColor(0, 0, 0, 0);
-		pViewport->AllowBackgroundClear(TFALSE);
+		pViewport->AllowBackgroundClear(TTRUE);
 		pViewport->AllowDepthClear(TTRUE);
 		pViewport->SetMemoryAllocatorBlock(AMemory::GetHeap(AMemory::POOL_Viewport));
 

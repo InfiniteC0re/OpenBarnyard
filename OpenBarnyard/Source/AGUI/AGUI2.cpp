@@ -35,9 +35,10 @@ TBOOL AGUI2::OnCreate()
 
 	m_oMouseCursor.Create("Pointer_Up", "Pointer_Down", 0.5f);
 
-	m_TestTextBox.Create(AGUI2FontManager::FindFont("Rekord26"), 145.0f);
-	m_TestTextBox.SetTransform(0.0f, -50.0f, 0.0f);
-	m_TestTextBox.SetAttachment(AGUI2Element::Anchor_MiddleCenter, AGUI2Element::Pivot_MiddleCenter);
+	m_TestTextBox.Create(AGUI2FontManager::FindFont("Rekord26"), 160.0f);
+	m_TestTextBox.SetAttachment(AGUI2Element::Pivot_BottomCenter, AGUI2Element::Pivot_BottomCenter);
+	m_TestTextBox.SetText(L"Loading...");
+	m_TestTextBox.SetTransform(0.0f, m_pRootElement->GetHeight() * -0.08f);
 	m_pRootElement->AddChildTail(&m_TestTextBox);
 
 	return TTRUE;

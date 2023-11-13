@@ -108,6 +108,18 @@ void AGUI2Element::PreRender()
 
 void AGUI2Element::Render()
 {
+#if 1
+	{
+		TFLOAT fWidth;
+		TFLOAT fHeight;
+		GetDimensions(fWidth, fHeight);
+		Toshi::TVector2 pos1 = { -fWidth / 2, -fHeight / 2 };
+		Toshi::TVector2 pos2 = { pos1.x + fWidth - 1, pos1.y + fHeight - 1 };
+
+		AGUI2::GetRenderer()->RenderOutlineRectangle(pos1, pos2);
+	}
+#endif
+
 	for (auto it = m_Children.Back(); it != m_Children.End(); it--)
 	{
 		if (it->Element()->IsVisible() && (it->Element()->m_uiVisibilityMask & s_uiVisibilityMask) != 0)
@@ -188,7 +200,7 @@ void AGUI2Element::SetAlpha(TFLOAT a_fAlpha)
 	m_uiColour = (m_uiColour & 0x00FFFFFF) | alpha8 << 24;
 }
 
-void AGUI2Element::SetUnknown(TFLOAT a_fValue)
+void AGUI2Element::SetShadowAlpha(TFLOAT a_fAlpha)
 {
 
 }

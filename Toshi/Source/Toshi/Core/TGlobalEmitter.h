@@ -1,10 +1,10 @@
 #pragma once
-#include "TDList.h"
+#include "TQList.h"
 
 namespace Toshi {
 
 	template <class T>
-	class TGenericGlobalListener : public TDList<TGenericGlobalListener<T>>::TNode
+	class TGenericGlobalListener : public TQList<TGenericGlobalListener<T>>::TNode
 	{
 	public:
 		using EventCallback = void(*)(void*, const T&);
@@ -36,6 +36,13 @@ namespace Toshi {
 	class TGlobalEmitter
 	{
 	public:
+		class ListenerList : public Toshi::TQList<TGenericGlobalListener<T>>
+		{
+		public:
+
+		};
+
+	public:
 		static void Throw(const T& a_rData)
 		{
 			for (auto it = sm_oListeners.Begin(); it != sm_oListeners.End(); it++)
@@ -45,8 +52,7 @@ namespace Toshi {
 		}
 
 	public:
-		// Important note: This should be TQList!
-		inline static Toshi::TDList<TGenericGlobalListener<T>> sm_oListeners;
+		inline static ListenerList sm_oListeners;
 	};
 
 	template <class ReceiverType, class EventType>
@@ -70,14 +76,15 @@ namespace Toshi {
 		TASSERT(TNULL == m_pReceiver);
 		m_pReceiver = pReceiver;
 		m_fnCallback = fnCallback;
-		TGlobalEmitter<T>::sm_oListeners.InsertHead(this);
+		TGlobalEmitter<T>::sm_oListeners.Push(this);
 	}
 
 	template<class T>
-	inline void Toshi::TGenericGlobalListener<T>::DisconnectImpl()
+	inline void TGenericGlobalListener<T>::DisconnectImpl()
 	{
-		TGlobalEmitter<T>::sm_oListeners.RemoveHead();
+		TGlobalEmitter<T>::sm_oListeners.Remove(this);
 		m_pReceiver = TNULL;
 		m_fnCallback = TNULL;
 	}
+
 }
