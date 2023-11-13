@@ -6,7 +6,7 @@
 namespace Toshi
 {
 	TClass::TClass(
-		const char* name, TClass* parent, uint32_t version, size_t size,
+		const char* name, TClass* parent, TUINT32 version, TUINT32 size, TUINT32 alignment,
 		t_CreateTObject fCreate, t_CreateTObjectInPlace fCreateInPlace,
 		t_InitializeStatic fInit, t_UninitializeStatic fUninit
 	)
@@ -20,7 +20,7 @@ namespace Toshi
 		m_Version = version;
 		m_Size = size;
 		m_Initialized = TFALSE;
-		m_Unk = 0;
+		m_Alignment = alignment;
 
 		if (m_Parent)
 		{
@@ -60,34 +60,30 @@ namespace Toshi
 		}
 	}
 
-	void TClass::RecurseTree(t_RecurceTreeCheck fCheck, t_RecurceTreeBaseBeginCb fBaseBegin, t_RecurceTreeBaseEndCb fBaseEnd, void* custom)
+	void TClass::RecurseTree(t_RecurceTreeBaseBeginCb fBaseBegin, t_RecurceTreeBaseEndCb fBaseEnd, t_RecurceTreeCheck fCheck, void* custom)
 	{
 		TBOOL valid = fCheck(this, custom);
 
 		if (valid)
 		{
 			if (fBaseBegin) fBaseBegin(this, custom);
-			RecurseTree2(fCheck, fBaseBegin, fBaseEnd, custom);
+			RecurseTree2(fBaseBegin, fBaseEnd, fCheck, custom);
 			if (fBaseEnd) fBaseEnd(this, custom);
 		}
 	}
 
-	void TClass::RecurseTree2(t_RecurceTreeCheck fCheck, t_RecurceTreeBaseBeginCb fBaseBegin, t_RecurceTreeBaseEndCb fBaseEnd, void* custom)
+	void TClass::RecurseTree2(t_RecurceTreeBaseBeginCb fBaseBegin, t_RecurceTreeBaseEndCb fBaseEnd, t_RecurceTreeCheck fCheck, void* custom)
 	{
-		TClass* tClass = m_LastAttached;
-
-		while (tClass != TNULL)
+		for (TClass* pClass = m_LastAttached; pClass != TNULL; pClass = pClass->m_Previous)
 		{
-			if (fCheck) fCheck(tClass, custom);
+			if (fCheck) fCheck(pClass, custom);
 
-			if (tClass->m_LastAttached)
+			if (pClass->m_LastAttached)
 			{
-				if (fBaseBegin) fBaseBegin(tClass, custom);
-				tClass->RecurseTree2(fCheck, fBaseBegin, fBaseEnd, custom);
-				if (fBaseEnd) fBaseEnd(tClass, custom);
+				if (fBaseBegin) fBaseBegin(pClass, custom);
+				pClass->RecurseTree2(fBaseBegin, fBaseEnd, fCheck, custom);
+				if (fBaseEnd) fBaseEnd(pClass, custom);
 			}
-
-			tClass = tClass->m_Previous;
 		}
 	}
 
@@ -159,6 +155,48 @@ namespace Toshi
 		return TFALSE;
 	}
 		
+	TUINT32 TClass::GetMaxSizeOfDerivedClasses()
+	{
+		auto GetMaxSizeOfClass = [](TClass* a_pClass, void* a_pSize) -> TBOOL
+		{
+			if (*(TUINT32*)a_pSize < a_pClass->m_Size)
+			{
+				*(TUINT32*)a_pSize = a_pClass->m_Size;
+			}
+
+			return TTRUE;
+		};
+
+		TUINT32 uiClassSize = 0;
+		if (GetMaxSizeOfClass(this, &uiClassSize))
+		{
+			RecurseTree2(TNULL, TNULL, GetMaxSizeOfClass, &uiClassSize);
+		}
+
+		return uiClassSize;
+	}
+
+	TUINT32 TClass::GetMaxAlignmentOfDerivedClasses()
+	{
+		auto GetMaxAlignmentOfClass = [](TClass* a_pClass, void* a_pAlignment) -> TBOOL
+		{
+			if (*(TUINT32*)a_pAlignment < a_pClass->m_Alignment)
+			{
+				*(TUINT32*)a_pAlignment = a_pClass->m_Alignment;
+			}
+
+			return TTRUE;
+		};
+
+		TUINT32 uiAlignment = 0;
+		if (GetMaxAlignmentOfClass(this, &uiAlignment))
+		{
+			RecurseTree2(TNULL, TNULL, GetMaxAlignmentOfClass, &uiAlignment);
+		}
+
+		return uiAlignment;
+	}
+
 	TBOOL TClass::TryInitialize(TClass* tClass)
 	{
 		if (!tClass->IsInitialized())

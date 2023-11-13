@@ -110,6 +110,27 @@ void ALoadScreen::StartLoading(TINT a_iUnused, TBOOL a_bRender)
 	UpdateUI(a_bRender);
 }
 
+void ALoadScreen::SetLoadingState(TBOOL a_bIsLoading, TBOOL a_bUpdateUI)
+{
+	m_bIsLoadingScreen = a_bIsLoading;
+
+	if (!m_bFlag)
+	{
+		if (a_bIsLoading) m_CanvasElement.Show();
+		else m_CanvasElement.Hide();
+	}
+
+	if (!a_bIsLoading)
+	{
+		m_iCowIndex = 0;
+	}
+
+	if (a_bIsLoading) m_TextBox.Show();
+	else m_TextBox.Hide();
+
+	if (a_bUpdateUI) UpdateUI(a_bIsLoading);
+}
+
 void ALoadScreen::Update(TFLOAT a_fDeltaTime, TBOOL a_bRender)
 {
 	if (m_bIsLoadingScreen)

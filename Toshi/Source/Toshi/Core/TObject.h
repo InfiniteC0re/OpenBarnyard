@@ -67,6 +67,6 @@ namespace Toshi
 	};
 
 	template <class T, class Parent, StringLiteral Name, uint32_t Version, TBOOL Instantiable>
-	TClass TGenericClassDerived<T, Parent, Name, Version, Instantiable>::s_Class = TClass(Name.value, &Parent::s_Class, Version, sizeof(T), T::CreateTObject, T::CreateTObjectInPlace, 0, 0);
+	TClass TGenericClassDerived<T, Parent, Name, Version, Instantiable>::s_Class = TClass(Name.value, &Parent::s_Class, Version, sizeof(T), alignof(T), T::CreateTObject, T::CreateTObjectInPlace, 0, 0);
 }
 

@@ -42,31 +42,6 @@ TBOOL ARootTask::OnCreate()
 {
 	TIMPLEMENT();
 
-	// Test T2ObjectPool #1
-	T2ObjectPool<TFLOAT, 4> pool1;
-	auto pFloat1 = pool1.NewObject(5.0f);
-	auto pFloat2 = pool1.NewObject(9.0f);
-	auto pFloat3 = pool1.NewObject(16.0f);
-	auto pFloat4 = pool1.NewObject(21.0f);
-
-	// Test T2ObjectPool #2
-	struct MyCustomClass
-	{
-		MyCustomClass()
-		{
-			TOSHI_INFO("Created MyCustomClass");
-		}
-
-		virtual ~MyCustomClass()
-		{
-			TOSHI_INFO("Destroyed MyCustomClass");
-		}
-	};
-
-	T2ObjectPool<MyCustomClass, 4> pool2;
-	auto pObject1 = pool2.NewObject();
-	pool2.DeleteObject(pObject1);
-
 	AMemory::CreatePool(AMemory::POOL_Misc);
 	AMemory::CreatePool(AMemory::POOL_Collision);
 	AMemory::CreatePool(AMemory::POOL_Viewport);
@@ -104,8 +79,6 @@ TBOOL ARootTask::OnUpdate(TFLOAT a_fDeltaTime)
 
 void ARootTask::LoadStartupData()
 {
-	TIMPLEMENT();
-
 	TTRB trb;
 	trb.Load(TString8::Format("Data/%s.trb", "lib_startup"));
 
@@ -145,11 +118,15 @@ void ARootTask::LoadStartupData()
 
 	auto pSystemManager = TSystemManager::GetSingleton();
 	auto pFadeManager = TSTATICCAST(AFadeManager*, pSystemManager->GetScheduler()->CreateTask(&TGetClass(AFadeManager), this));
+	
+#if 1
+	// Code for tests
 	pFadeManager->Create();
 	pFadeManager->StartFade(AFade::Color(255, 0, 0, 0), AFade::Color(0, 0, 0, 0), 2.0f);
 
 	ALoadScreen::GetGlobalInstance()->Create();
 	ALoadScreen::GetGlobalInstance()->StartLoading(0, TTRUE);
+#endif
 }
 
 TBOOL ARootTask::IsPaused()

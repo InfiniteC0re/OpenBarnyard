@@ -21,6 +21,7 @@ public:
 
 	void Create();
 	void StartLoading(TINT a_iUnused, TBOOL a_bRender);
+	void SetLoadingState(TBOOL a_bIsLoading, TBOOL a_bUpdateUI);
 	void Update(TFLOAT a_fDeltaTime = 1.0f, TBOOL a_bRender = TTRUE);
 
 	static ALoadScreen* GetGlobalInstance()
