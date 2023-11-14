@@ -55,9 +55,9 @@ namespace Toshi
 			return TGenericFifo::Push(element, flags);
 		}
 
-		TBOOL Pop(T* out, Flags flags = TGenericFifo::Flags_None)
+		TBOOL Pop(T& out, Flags flags = TGenericFifo::Flags_None)
 		{
-			return TGenericFifo::Pop(out, flags);
+			return TGenericFifo::Pop(&out, flags);
 		}
 
 	private:

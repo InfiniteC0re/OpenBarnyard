@@ -26,16 +26,13 @@ namespace Toshi
 	class TFileStream : public TThread
 	{
 	public:
-		TFileStream()
-		{
-			m_Jobs = TFifo<TFileStreamJob*, 32>();
-		}
+		TFileStream() = default;
 
-		virtual ~TFileStream() = default;
-		
 		// This method will be executed by the thread
 		virtual void Main() override;
 
+		virtual ~TFileStream() = default;
+		
 		// Adds job to the FIFO
 		void AddStream(TFileStreamJob* job);
 

@@ -11,15 +11,21 @@ namespace Toshi {
 
 			void* elements = TNULL;
 
-			if (a_iNewSize > 0)
+			if (0 < a_iNewSize)
 			{
 				elements = m_pAllocator->Malloc(a_iNewSize * a_iCount);
 				TUtil::MemCopy(elements, m_poElements, m_iNumElements <= a_iNewSize ? m_iNumElements * a_iCount : a_iNewSize * a_iCount);
-				m_pAllocator->Free(m_poElements);
-				m_poElements = elements;
 			}
 
 			m_iMaxSize = a_iNewSize;
+			m_iNumElements = TMath::Min(m_iNumElements, a_iNewSize);
+
+			if (m_poElements)
+			{
+				m_pAllocator->Free(m_poElements);
+			}
+
+			m_poElements = elements;
 		}
 	}
 

@@ -17,6 +17,8 @@ namespace Toshi
 	
 		void Update();
 
+		TFLOAT GetAverageFps() const;
+
 		TBOOL Pause(TBOOL pause)
 		{
 			TBOOL oldState = m_Paused;
@@ -40,11 +42,6 @@ namespace Toshi
 		TScheduler* GetScheduler() const
 		{
 			return m_Scheduler;
-		}
-
-		TFLOAT GetAverageFps() const
-		{
-			return m_AverageFps;
 		}
 
 		TBOOL IsPaused() const

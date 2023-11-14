@@ -35,6 +35,11 @@ namespace Toshi
 		m_Scheduler->Update();
 	}
 
+	TFLOAT TSystemManager::GetAverageFps() const
+	{
+		return 1.0f / m_Scheduler->GetCurrentDeltaTime();
+	}
+
 	TBOOL TSystemManager::Create()
 	{
 		TSystemManager::CreateSingleton()->m_Scheduler = new TScheduler();

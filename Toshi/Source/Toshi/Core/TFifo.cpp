@@ -19,7 +19,7 @@ namespace Toshi
 		bResult = m_Semaphore1.Create(m_iMaxItems, m_iMaxItems);
 		TASSERT(bResult != TFALSE, "Unable to create semaphore for TGenericFifo");
 		bResult = m_Semaphore2.Create(0, m_iMaxItems);
-		TASSERT(bResult != TFALSE, "Unable to create semaphore for TGenericvFifo");
+		TASSERT(bResult != TFALSE, "Unable to create semaphore for TGenericFifo");
 
 		InitializeCriticalSection(&m_CriticalSection);
 		return TTRUE;
@@ -35,13 +35,8 @@ namespace Toshi
 
 	TBOOL TGenericFifo::Push(void* a_pItem, Flags a_iFlags)
 	{
-		TBOOL noSemaphore = a_iFlags & Flags_NoSemaphore;
-
-		if (!noSemaphore)
-		{
-			TBOOL bResult = (a_iFlags & Flags_PollSemaphore) ? m_Semaphore1.Poll() : m_Semaphore1.Wait();
-			if (!bResult) return TFALSE;
-		}
+		TBOOL bResult = (a_iFlags & Flags_PollSemaphore) ? m_Semaphore1.Poll() : m_Semaphore1.Wait();
+		if (!bResult) return TFALSE;
 
 		EnterCriticalSection(&m_CriticalSection);
 
@@ -49,37 +44,24 @@ namespace Toshi
 		Toshi::TUtil::MemCopy(m_pDataPushCursor, a_pItem, m_iItemSize);
 		m_pDataPushCursor += m_iItemSize;
 
-		// Set cursor to the beginning if reached the end
-		if (m_pDataPushCursor == m_pDataEnd) m_pDataPushCursor = m_pDataBegin;
+		if (m_pDataPushCursor == m_pDataEnd)
+		{
+			// Set cursor to the beginning if reached the end
+			m_pDataPushCursor = m_pDataBegin;
+		}
 
 		LeaveCriticalSection(&m_CriticalSection);
 
-		if (!noSemaphore)
-		{
-			TBOOL bResult = m_Semaphore2.Signal();
-			TASSERT(bResult != TFALSE, "TSemaphore::Signal returned TFALSE");
-		}
+		bResult = m_Semaphore2.Signal();
+		TASSERT(bResult != TFALSE, "TSemaphore::Signal returned TFALSE");
 
 		return TTRUE;
 	}
 
 	TBOOL TGenericFifo::Pop(void* a_pOut, Flags a_iFlags)
 	{
-		TBOOL noSemaphore = a_iFlags & Flags_NoSemaphore;
-
-		if (!noSemaphore)
-		{
-			TBOOL bResult = (a_iFlags & Flags_PollSemaphore) ? m_Semaphore2.Poll() : m_Semaphore2.Wait();
-			if (!bResult) return TFALSE;
-		}
-		else
-		{
-			// Check if FIFO is not empty
-			if (m_pDataPopCursor == m_pDataPushCursor)
-			{
-				return TFALSE;
-			}
-		}
+		TBOOL bResult = (a_iFlags & Flags_PollSemaphore) ? m_Semaphore2.Poll() : m_Semaphore2.Wait();
+		if (!bResult) return TFALSE;
 
 		EnterCriticalSection(&m_CriticalSection);
 
@@ -87,16 +69,16 @@ namespace Toshi
 		TUtil::MemCopy(a_pOut, m_pDataPopCursor, m_iItemSize);
 		m_pDataPopCursor += m_iItemSize;
 
-		// Set cursor to the beginning if reached the end
-		if (m_pDataPopCursor == m_pDataEnd) m_pDataPopCursor = m_pDataBegin;
+		if (m_pDataPopCursor == m_pDataEnd)
+		{
+			// Set cursor to the beginning if reached the end
+			m_pDataPopCursor = m_pDataBegin;
+		}
 
 		LeaveCriticalSection(&m_CriticalSection);
 
-		if (!noSemaphore)
-		{
-			TBOOL bResult = m_Semaphore1.Signal();
-			TASSERT(bResult != TFALSE, "TSemaphore::Signal returned TFALSE");
-		}
+		bResult = m_Semaphore1.Signal();
+		TASSERT(bResult != TFALSE, "TSemaphore::Signal returned TFALSE");
 
 		return TTRUE;
 	}

@@ -9,7 +9,7 @@ namespace Toshi
 
 		do {
 			do {
-				m_Jobs.Pop(&pJob);
+				m_Jobs.Pop(pJob);
 				pJob->Process();
 				pJob->m_bIsProcessed = TTRUE;
 			} while (pJob->m_pSemaphore == TNULL);

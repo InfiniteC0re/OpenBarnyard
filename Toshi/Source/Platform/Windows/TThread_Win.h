@@ -32,8 +32,8 @@ namespace Toshi
 		};
 
 	public:
-		virtual ~TThread() { };
 		virtual void Main() = 0;
+		virtual ~TThread() { };
 
 		TBOOL Create(size_t a_iStackSize, PRIORITY a_ePriority, uint8_t flag);
 

@@ -87,4 +87,30 @@ namespace Toshi {
 		m_fnCallback = TNULL;
 	}
 
+	/**
+	 * Used to catch all events that are thrown from TGlobalEvent
+	 */
+	class TGenericGlobalEvent
+	{
+	public:
+		TGenericGlobalEvent(const void* a_pData) : m_pData(a_pData) { }
+
+	public:
+		const void* m_pData;
+	};
+
+	/**
+	 * Use as a parent class for classes that are global events
+	 */
+	template <class T>
+	class TGlobalEvent
+	{
+	public:
+		virtual void ThrowGlobal() const
+		{
+			TGlobalEmitter<T>::Throw(*TSTATICCAST(const T*, this));
+			TGlobalEmitter<TGenericGlobalEvent>::Throw(TGenericGlobalEvent(this));
+		}
+	};
+
 }
