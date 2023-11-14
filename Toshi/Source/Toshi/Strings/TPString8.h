@@ -182,13 +182,13 @@ namespace Toshi {
 		__forceinline TPString8(TPooledString8* a_pPooled)
 		{
 			m_pPtr = a_pPooled;
-			m_pPtr->IncRefCount();
+			Increment();
 		}
 
 		__forceinline TPString8(const TPString8& other)
 		{
 			m_pPtr = other.m_pPtr;
-			m_pPtr->IncRefCount();
+			Increment();
 		}
 
 		TPString8(TPString8&& other) = delete;
@@ -212,6 +212,7 @@ namespace Toshi {
 		{
 			Decrement();
 			m_pPtr = a_pPooledString;
+			Increment();
 		}
 
 		__forceinline bool IsEqual(const TPString8& a_Other) const
@@ -238,7 +239,7 @@ namespace Toshi {
 		{
 			Decrement();
 			m_pPtr = a_pString;
-			m_pPtr->IncRefCount();
+			Increment();
 
 			return *this;
 		}
@@ -247,7 +248,7 @@ namespace Toshi {
 		{
 			Decrement();
 			m_pPtr = other.m_pPtr;
-			m_pPtr->IncRefCount();
+			Increment();
 
 			return *this;
 		}
@@ -256,7 +257,7 @@ namespace Toshi {
 		{
 			Decrement();
 			m_pPtr = pOther->m_pPtr;
-			m_pPtr->IncRefCount();
+			Increment();
 
 			return *this;
 		}
@@ -284,6 +285,14 @@ namespace Toshi {
 		}
 
 	private:
+		__forceinline void Increment()
+		{
+			if (m_pPtr)
+			{
+				m_pPtr->IncRefCount();
+			}
+		}
+
 		__forceinline void Decrement()
 		{
 			if (m_pPtr && m_pPtr->DecRefCount() == 0)

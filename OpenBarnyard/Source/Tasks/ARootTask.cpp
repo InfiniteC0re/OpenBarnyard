@@ -5,6 +5,7 @@
 #include "Assets/AAssetLoader.h"
 #include "Memory/AMemory.h"
 #include "Input/AInputHandler.h"
+#include "Input/AInputMapManager.h"
 #include "GUI/AGUI2.h"
 #include "GUI/AGUISystem.h"
 #include "GUI/AGUI2TextureSectionManager.h"
@@ -66,6 +67,9 @@ TBOOL ARootTask::OnCreate()
 	m_pInputHandler->Create();
 
 	ARandom::CreateSingleton();
+
+	TGetClass(AInputMapManager).CreateObject();
+	AInputMapManager::GetSingleton()->ReadControlsData();
 
 	LoadStartupData();
 	m_pGameStateController->Create();
