@@ -9,6 +9,7 @@
 #include "GUI/AGUISystem.h"
 #include "GUI/AGUI2TextureSectionManager.h"
 #include "GUI/AFadeManager.h"
+#include "GameInterface/AGameStateController.h"
 #include "ALoadScreen.h"
 
 #include <Plugins/PPropertyParser/PProperties.h>
@@ -34,6 +35,7 @@ ARootTask::ARootTask()
 	m_pGUI2 = pSystemManager->GetScheduler()->CreateTask(&TGetClass(AGUI2), this);
 	m_pRenderer = TSTATICCAST(ARenderer*, pSystemManager->GetScheduler()->CreateTask(&TGetClass(ARenderer), this));
 	m_pInputHandler = pSystemManager->GetScheduler()->CreateTask(&TGetClass(AInputHandler), this);
+	m_pGameStateController = pSystemManager->GetScheduler()->CreateTask(&TGetClass(AGameStateController), this);
 
 	m_bGameSystemCreated = TFALSE;
 }
@@ -66,6 +68,7 @@ TBOOL ARootTask::OnCreate()
 	ARandom::CreateSingleton();
 
 	LoadStartupData();
+	m_pGameStateController->Create();
 
 	AGUISystem::AllowBackgroundClear(TTRUE);
 	ARenderer::GetSingleton()->ForceUpdate30FPS();
@@ -134,7 +137,7 @@ void ARootTask::LoadStartupData()
 #endif
 }
 
-TBOOL ARootTask::IsPaused()
+TBOOL ARootTask::IsPaused() const
 {
 	return m_bPaused || Toshi::TSystemManager::GetSingleton()->IsPaused();
 }

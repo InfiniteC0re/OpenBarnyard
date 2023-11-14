@@ -19,10 +19,15 @@ public:
 		{
 			Node::Remove();
 		}
+
+		m_pParent = TNULL;
 	}
 
 	AGUI2Element* Element() { return TREINTERPRETCAST(AGUI2Element*, this); }
 	const AGUI2Element* Element() const { return TREINTERPRETCAST(const AGUI2Element*, this); }
+
+protected:
+	AGUI2Element* m_pParent;
 };
 
 class AGUI2ElementList : public Toshi::T2DList<AGUI2ElementNode>
@@ -98,12 +103,12 @@ public:
 		m_eFlags &= ~1;
 	}
 
-	void SetShouldResetZCoordinate()
+	void SetInFront()
 	{
 		m_eFlags |= 16;
 	}
 
-	void SetShouldRenderBeforeChildren()
+	void IsInFront()
 	{
 		m_eFlags |= 8;
 	}
@@ -184,7 +189,6 @@ public:
 	inline static TUINT32 s_uiVisibilityMask = 0xFFFFFFFF;
 
 protected:
-	AGUI2Element* m_pParent;
 	AGUI2Transform m_oTransform;
 	AGUI2ElementList m_Children;
 	Anchor m_eAnchor;

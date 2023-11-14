@@ -12,11 +12,22 @@ TOBJECT(AGameStateController, Toshi::TTask, TTRUE),
 {
 public:
 	AGameStateController();
+	~AGameStateController();
+
+	virtual TBOOL OnCreate() override;
+	virtual TBOOL OnUpdate(TFLOAT a_fDeltaTime) override;
+	virtual void OnDestroy() override;
 
 	void PushState(AGameState* a_pGameState);
+	void PopState(AGameState* a_pGameState);
+
+	void ResetStack();
+
+	void PopCurrentGameState();
+	void UpdateScreenOverlay();
 
 private:
-	void AddGameState(AGameState* a_pGameState);
+	void InsertGameState(AGameState* a_pGameState);
 
 private:
 	// ...

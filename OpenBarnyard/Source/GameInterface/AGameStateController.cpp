@@ -1,5 +1,8 @@
 #include "pch.h"
 #include "AGameStateController.h"
+#include "Tasks/ARootTask.h"
+#include "GUI/AGUI2.h"
+#include "AppBoot.h"
 
 TOSHI_NAMESPACE_USING
 
@@ -10,33 +13,154 @@ AGameStateController::AGameStateController() :
 	m_eFlags = 0;
 }
 
-void AGameStateController::AddGameState(AGameState* a_pGameState)
+AGameStateController::~AGameStateController()
+{
+	TASSERT(m_oStates.Size() == 0);
+}
+
+TBOOL AGameStateController::OnCreate()
+{
+	InsertGameState(new AGameState);
+
+	TFLOAT fWidth, fHeight;
+	AGUI2::GetSingleton()->GetDimensions(fWidth, fHeight);
+
+	m_Rectangle.SetDimensions(fWidth, fHeight);
+	m_Rectangle.SetAttachment(AGUI2Element::Anchor_TopCenter, AGUI2Element::Pivot_TopCenter);
+	m_Rectangle.SetInFront();
+	m_Rectangle.Hide();
+
+	return TTRUE;
+}
+
+TBOOL AGameStateController::OnUpdate(TFLOAT a_fDeltaTime)
+{
+	auto eFlags = m_eFlags;
+
+	if (eFlags & 0x10)
+	{
+		m_eFlags = eFlags & 0xffef;
+
+		if (HASFLAG(eFlags & 0x1000))
+		{
+			TTODO("FUN_00424000(false)");
+			return TTRUE;
+		}
+		else
+		{
+			TTODO("FUN_00423de0((char *)0x0,true,(TPooledString8 *)0x0)");
+			return TTRUE;
+		}
+	}
+
+	if (m_oStates.Size() > 1)
+	{
+		TTODO("This section");
+	}
+
+	UpdateScreenOverlay();
+	return TTRUE;
+}
+
+void AGameStateController::OnDestroy()
+{
+	TASSERT(m_oStates.Size() == 1);
+
+	auto pGameState = m_oStates.Back();
+	m_oStates.PopBack();
+	pGameState->Destroy();
+}
+
+void AGameStateController::InsertGameState(AGameState* a_pGameState)
 {
 	TGlobalEmitter<AGameStateControllerEvent>::Throw(
 		AGameStateControllerEvent(a_pGameState, AGameStateControllerEvent::Type_GameStateBeingAdded)
 	);
 
 	m_oStates.PushBack(a_pGameState);
-	TTODO("Call virtual methods of AGameState");
-
-	TGlobalEmitter<AGameStateControllerEvent>::Throw(
-		AGameStateControllerEvent(a_pGameState, AGameStateControllerEvent::Type_GameStateAdded)
-	);
+	a_pGameState->OnInsertion();
+	a_pGameState->Activate();
 }
 
 void AGameStateController::PushState(AGameState* a_pGameState)
 {
 	if (m_oStates.Size() > 1)
 	{
-		TTODO("Call virtual methods of AGameState on the top of stack");
-
-		TGlobalEmitter<AGameStateControllerEvent>::Throw(
-			AGameStateControllerEvent(
-				m_oStates.Back(),
-				AGameStateControllerEvent::Type_GameStateSuspended
-			)
-		);
+		m_oStates.Back()->Deactivate();
+		m_oStates.Back()->Suspend();
 	}
 
-	AddGameState(a_pGameState);
+	InsertGameState(a_pGameState);
+}
+
+void AGameStateController::PopState(AGameState* a_pGameState)
+{
+	auto pCurrentGameState = m_oStates.Back();
+
+	TASSERT(a_pGameState == pCurrentGameState);
+	m_oStates.PopBack();
+
+	pCurrentGameState->Destroy();
+
+	if (m_oStates.Size() == 1 && ARootTask::GetSingleton()->IsGameSystemCreated())
+	{
+		g_oTheApp.Destroy();
+		return;
+	}
+
+	if (m_oStates.Size() > 1)
+	{
+		pCurrentGameState = m_oStates.Back();
+		pCurrentGameState->OnResume(a_pGameState);
+		pCurrentGameState->Activate();
+	}
+}
+
+void AGameStateController::PopCurrentGameState()
+{
+	TASSERT(m_oStates.Size() > 1);
+
+	if (m_oStates.Size() > 1)
+	{
+		PopState(m_oStates.Back());
+	}
+}
+
+void AGameStateController::UpdateScreenOverlay()
+{
+	TBOOL bAddOverlay = TFALSE;
+
+	if (m_oStates.Size() > 1)
+	{
+		TFIXME("Set bAddElement and m_Rectangle color if needed");
+	}
+
+	m_Rectangle.Unlink();
+
+	if (bAddOverlay)
+	{
+		AGUI2::GetRootElement()->AddChildHead(&m_Rectangle);
+		m_Rectangle.Show();
+	}
+	else
+	{
+		m_Rectangle.Hide();
+	}
+}
+
+void AGameStateController::ResetStack()
+{
+	UpdateScreenOverlay();
+	m_eFlags = 0;
+
+	TBOOL bIsFirst = TTRUE;
+
+	while (1 < m_oStates.Size())
+	{
+		auto pGameState = m_oStates.Back();
+		m_oStates.PopBack();
+
+		pGameState->Destroy(bIsFirst);
+		bIsFirst = TFALSE;
+	}
 }

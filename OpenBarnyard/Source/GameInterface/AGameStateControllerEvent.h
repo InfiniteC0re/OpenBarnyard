@@ -1,8 +1,8 @@
 #pragma once
-#include "AGameState.h"
-
 #include <Toshi/Typedefs.h>
 #include <Toshi/Core/TGlobalEmitter.h>
+
+class AGameState;
 
 class AGameStateControllerEvent :
 	public Toshi::TGlobalEvent<AGameStateControllerEvent>
@@ -12,8 +12,8 @@ public:
 	enum Type_ : Type
 	{
 		Type_Unknown,
-		Type_GameStateAdded,
-		Type_GameStateSuspended,
+		Type_GameStateActivated,
+		Type_GameStateDeactivated,
 		Type_GameStateBeingAdded,
 	};
 
