@@ -74,9 +74,9 @@ AInputMap* AInputMapManager::PopInputMap()
 	return m_apPushedInputMaps[m_iNumPushedInputMaps - 1];
 }
 
-void AInputMapManager::GetEventCommands(Toshi::TInputInterface::InputEvent* a_pEvent, AInputCommandArray* a_pCommandArray)
+void AInputMapManager::GetEventCommands(const Toshi::TInputInterface::InputEvent* a_pEvent, AInputCommandArray& a_rCommandArray)
 {
-	a_pCommandArray->Clear();
+	a_rCommandArray.Clear();
 
 	if (m_pActiveInputMap)
 	{
@@ -105,7 +105,7 @@ void AInputMapManager::GetEventCommands(Toshi::TInputInterface::InputEvent* a_pE
 
 			if (bCommandValid)
 			{
-				a_pCommandArray->AddCommand(pCommandIndexRes->GetValue()->GetSecond());
+				a_rCommandArray.AddCommand(pCommandIndexRes->GetValue()->GetSecond());
 			}
 
 			// Look if there is any other commands binded to this doodad

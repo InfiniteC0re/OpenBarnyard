@@ -78,8 +78,11 @@ namespace Toshi {
 			} m_Magnitude;             // 0x18 De blob 0x10 JPOG
 		};
 
+		using EventEmitter = TEmitter<TInputInterface, TInputInterface::InputEvent>;
+
 	public:
-		TInputInterface() 
+		TInputInterface() : 
+			m_InputEventEmitter(this)
 		{
 			m_bIsExclusiveMode = TFALSE;
 		}
@@ -102,6 +105,8 @@ namespace Toshi {
 
 		TInputDevice* GetDeviceByIndex(TClass* a_pClass, TUINT a_uiIndex);
 
+		EventEmitter& GetInputEventEmitter() { return m_InputEventEmitter; }
+
 		template <class C>
 		C* GetDeviceByIndex(TUINT a_uiIndex = 0)
 		{
@@ -111,10 +116,10 @@ namespace Toshi {
 		}
 
 	private:
-		TBOOL m_bIsExclusiveMode;                                                    // 0x04
-		TNodeList<TInputDevice> m_DeviceList;                                        // 0x08
-		TEmitter<TInputInterface, TInputInterface::InputEvent> m_Emitter1;           // 0x18
-		TGenericEmitter m_Emitter2;                                                  // 0x24
+		TBOOL m_bIsExclusiveMode;             // 0x04
+		TNodeList<TInputDevice> m_DeviceList; // 0x08
+		EventEmitter m_InputEventEmitter;     // 0x18
+		TGenericEmitter m_Emitter2;           // 0x24
 	};
 
 	class TInputDevice :
@@ -125,7 +130,7 @@ namespace Toshi {
 		static constexpr TINT INPUT_DEVICE_MOUSE_BUTTONS = 3;
 		static constexpr TINT INPUT_DEVICE_MOUSE_WHEEL = 4;
 
-		using EventEmitter = TEmitter<TInputInterface, TInputInterface::InputEvent>;
+		using EventEmitter = TInputInterface::EventEmitter;
 		using Doodad = TINT;
 
 		struct DoodadProperties

@@ -23,22 +23,22 @@ namespace Toshi
 
 			T* Pointer() noexcept
 			{
-				return &m_pVector->At(m_uiIndex);
+				return &m_pVector->ValueAt(m_uiIndex);
 			}
 
 			const T* Pointer() const noexcept
 			{
-				return &m_pVector->At(m_uiIndex);
+				return &m_pVector->ValueAt(m_uiIndex);
 			}
 
 			T& Value() noexcept
 			{
-				return m_pVector->At(m_uiIndex);
+				return m_pVector->ValueAt(m_uiIndex);
 			}
 
 			const T& Value() const noexcept
 			{
-				return m_pVector->At(m_uiIndex);
+				return m_pVector->ValueAt(m_uiIndex);
 			}
 
 			T& operator*() noexcept
@@ -189,9 +189,11 @@ namespace Toshi
 		{
 			for (auto it = Begin(); it != End(); it++)
 			{
-				if (it.GetValue() == a_rValue)
+				if (it.Value() == a_rValue)
 					return it;
 			}
+
+			return End();
 		}
 
 		void Erase(const Iterator& a_rIterator)

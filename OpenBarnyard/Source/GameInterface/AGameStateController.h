@@ -26,6 +26,8 @@ public:
 	void PopCurrentGameState();
 	void UpdateScreenOverlay();
 
+	TBOOL ProcessInput(const Toshi::TInputInterface::InputEvent* a_pEvent);
+
 private:
 	void InsertGameState(AGameState* a_pGameState);
 

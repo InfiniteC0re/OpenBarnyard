@@ -1,5 +1,6 @@
 #pragma once
 #include "GUI/AGUI2Element.h"
+#include "Input/AInputMapManager.h"
 #include "AGameStateControllerEvent.h"
 
 #include <Toshi2/T2DList.h>
@@ -20,7 +21,7 @@ public:
 	virtual ~AGameState() = default;
 
 	virtual TBOOL ProcessInput(const Toshi::TInputInterface::InputEvent* a_pInputEvent);
-	virtual TBOOL ProcessCommand(InputCommand a_eInputCommand, const Toshi::TInputInterface::InputEvent* a_pInputEvent, TBOOL& a_rOutFlag);
+	virtual TBOOL ProcessCommand(InputCommand a_eInputCommand, const Toshi::TInputInterface::InputEvent* a_pInputEvent, TBOOL& a_rStopEvents);
 	virtual TBOOL Unknown1(void* a_pUnk1, void* a_pUnk2);
 	virtual void Unknown2(void* a_pUnk1) { }
 	virtual void Unknown3(void* a_pUnk1) { }
@@ -45,6 +46,8 @@ public:
 
 	void Destroy();
 	void Destroy(TBOOL a_bDeactivate);
+
+	TBOOL SendInputCommands(const Toshi::TInputInterface::InputEvent* a_pEvent);
 
 	void Activate()
 	{
@@ -156,7 +159,7 @@ protected:
 protected:
 	// ...
 	Toshi::T2DList<AGameState> m_ChildStates;
-	// ...
+	AInputMap* m_pInputMap;
 	AGameState* m_pOwnerState;
 	TBOOL m_bWasInserted;
 	TBOOL m_bIsActivated;

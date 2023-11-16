@@ -3,6 +3,7 @@
 #include "Tasks/ARootTask.h"
 #include "GUI/AGUI2.h"
 #include "AppBoot.h"
+#include "ACheatActivator.h"
 
 TOSHI_NAMESPACE_USING
 
@@ -162,5 +163,34 @@ void AGameStateController::ResetStack()
 
 		pGameState->Destroy(bIsFirst);
 		bIsFirst = TFALSE;
+	}
+}
+
+TBOOL AGameStateController::ProcessInput(const Toshi::TInputInterface::InputEvent* a_pEvent)
+{
+	if (m_eFlags & 1)
+	{
+		return TTRUE;
+	}
+
+	if (m_oStates.Size() <= 1)
+	{
+		return TFALSE;
+	}
+
+	if (ACheatActivator::IsSingletonCreated())
+	{
+		TIMPLEMENT_D("Cheat code activation");
+	}
+
+	auto pGameState = m_oStates.Back();
+	
+	if (pGameState->SendInputCommands(a_pEvent))
+	{
+		return TTRUE;
+	}
+	else
+	{
+		return pGameState->ProcessInput(a_pEvent);
 	}
 }

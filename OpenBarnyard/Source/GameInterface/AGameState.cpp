@@ -1,13 +1,20 @@
 #include "pch.h"
 #include "AGameState.h"
+#include "Input/AInputHandler.h"
 #include "Tasks/ARootTask.h"
 #include "Cameras/ACamera.h"
 #include "GUI/AGUI2.h"
+#include "AppBoot.h"
+
+#include <Toshi/Input/TInputDeviceKeyboard.h>
 
 #include TOSHI_MULTIRENDER(TRenderInterface)
 
+TOSHI_NAMESPACE_USING
+
 AGameState::AGameState()
 {
+	m_pInputMap = TNULL;
 	m_pOwnerState = TNULL;
 	m_bWasInserted = TFALSE;
 	m_bIsActivated = TFALSE;
@@ -30,7 +37,7 @@ TBOOL AGameState::ProcessInput(const Toshi::TInputInterface::InputEvent* a_pInpu
 	return TFALSE == ARootTask::GetSingleton()->IsGameSystemCreated();
 }
 
-TBOOL AGameState::ProcessCommand(InputCommand a_eInputCommand, const Toshi::TInputInterface::InputEvent* a_pInputEvent, TBOOL& a_rOutFlag)
+TBOOL AGameState::ProcessCommand(InputCommand a_eInputCommand, const Toshi::TInputInterface::InputEvent* a_pInputEvent, TBOOL& a_rStopEvents)
 {
 	return TFALSE;
 }
@@ -107,4 +114,59 @@ void AGameState::Destroy(TBOOL a_bDeactivate)
 
 	OnRemoval();
 	delete this;
+}
+
+TBOOL AGameState::SendInputCommands(const Toshi::TInputInterface::InputEvent* a_pEvent)
+{
+	auto pInputHandler = AInputHandler::GetSingleton();
+	auto pInputManager = AInputMapManager::GetSingleton();
+
+	pInputManager->PushInputMap(m_pInputMap);
+
+	AInputCommandArray commands;
+	pInputManager->GetEventCommands(a_pEvent, commands);
+
+	if (a_pEvent->GetDoodad() == TInputDeviceKeyboard::KEY_F4 && pInputHandler->GetKeyboardDevice()->IsAltDown())
+	{
+		// Alt + F4
+		TTODO("FUN_00425980");
+		g_oTheApp.Destroy();
+	}
+	else
+	{
+		TBOOL bProcessedCommand = TFALSE;
+
+		for (TINT i = 0; i < commands.iNumCommands; i++)
+		{
+			auto eCommand = commands.aCommands[i];
+			TBOOL bStopEvents = TTRUE;
+
+			if (ProcessCommand(eCommand, a_pEvent, bStopEvents))
+			{
+				bProcessedCommand = TTRUE;
+
+				if (bStopEvents)
+				{
+					pInputManager->PopInputMap();
+
+					for (TINT k = 0; k < commands.iNumCommands; k++)
+					{
+						commands.aCommands[k] = 0;
+					}
+					
+					return TTRUE;
+				}
+			}
+		}
+
+		pInputManager->PopInputMap();
+		commands.Clear();
+
+		if (!bProcessedCommand)
+		{
+			return ExecuteForOneChildState(&AGameState::SendInputCommands, 0, a_pEvent);
+		}
+	}
+
+	return TTRUE;
 }

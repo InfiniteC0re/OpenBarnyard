@@ -110,7 +110,7 @@ namespace Toshi
 		{
 			if (it->IsAcquired())
 			{
-				iNumProcessed += it->ProcessEvents(m_Emitter1, a_fDeltaTime);
+				iNumProcessed += it->ProcessEvents(m_InputEventEmitter, a_fDeltaTime);
 			}
 		}
 

@@ -28,7 +28,7 @@ struct AInputCommandArray
 		}
 	}
 
-	TINT iNumCommands;
+	TINT iNumCommands = 0;
 	TINT aCommands[MAX_NUM_COMMANDS];
 };
 
@@ -71,7 +71,7 @@ public:
 	void PushInputMap(AInputMap* a_pInputMap);
 	AInputMap* PopInputMap();
 
-	void GetEventCommands(Toshi::TInputInterface::InputEvent* a_pEvent, AInputCommandArray* a_pCommandArray);
+	void GetEventCommands(const Toshi::TInputInterface::InputEvent* a_pEvent, AInputCommandArray& a_rCommandArray);
 
 	AInputCommand GetCommandCode(const Toshi::TPString8& a_rCommandName);
 	Toshi::TInputDevice::Doodad GetDoodadFromKey(const Toshi::TPString8& a_rKey);
