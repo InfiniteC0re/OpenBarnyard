@@ -49,6 +49,7 @@ TBOOL AMaterialLibrary::LoadTTLData(void* a_pTTLData)
 				if (pTexture)
 				{
 					void* pData = TMalloc(pTexInfo->m_uiDataSize);
+
 					Toshi::TUtil::MemCopy(pData, pTexInfo->m_pData, pTexInfo->m_uiDataSize);
 					pTexture->SetData(pData, pTexInfo->m_uiDataSize);
 					pTexture->Load();

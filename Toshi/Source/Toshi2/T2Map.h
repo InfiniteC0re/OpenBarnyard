@@ -34,7 +34,7 @@ namespace Toshi {
 
 		void Remove(const KeyType& key)
 		{
-			Node* result = TNULL;
+			Node* result;
 			m_RedBlackTree.Find(result, { key });
 
 			TASSERT(result != End());
@@ -49,7 +49,7 @@ namespace Toshi {
 
 		ValueType* Find(const KeyType& key)
 		{
-			Node* result = TNULL;
+			Node* result;
 			m_RedBlackTree.Find(result, { key });
 
 			return result ? &result->GetValue()->GetSecond() : &m_RedBlackTree.End()->GetSecond();
@@ -57,8 +57,24 @@ namespace Toshi {
 
 		Node* FindNode(const KeyType& key)
 		{
-			Node* result = TNULL;
+			Node* result;
 			m_RedBlackTree.Find(result, { key });
+
+			return result;
+		}
+
+		Node* FindNext(Node* a_pNode, const KeyType& a_rKey)
+		{
+			Node* result;
+			m_RedBlackTree.FindNext(result, a_pNode, { a_rKey });
+
+			return result ? &result->GetValue()->GetSecond() : &m_RedBlackTree.End()->GetSecond();
+		}
+
+		Node* FindNextNode(Node* a_pNode, const KeyType& a_rKey)
+		{
+			Node* result;
+			m_RedBlackTree.FindNext(result, a_pNode, { a_rKey });
 
 			return result;
 		}

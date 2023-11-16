@@ -6,6 +6,32 @@
 #include <Toshi2/T2Vector.h>
 #include <Toshi2/T2Map.h>
 
+struct AInputCommandArray
+{
+	static constexpr TUINT MAX_NUM_COMMANDS = 40;
+
+	void Clear()
+	{
+		for (TINT i = 0; i < iNumCommands; i++)
+		{
+			aCommands[i] = 0;
+		}
+
+		iNumCommands = 0;
+	}
+
+	void AddCommand(AInputCommand a_eCommand)
+	{
+		if (iNumCommands < MAX_NUM_COMMANDS)
+		{
+			aCommands[iNumCommands++] = a_eCommand;
+		}
+	}
+
+	TINT iNumCommands;
+	TINT aCommands[MAX_NUM_COMMANDS];
+};
+
 class AInputMapManager :
 	public Toshi::TGenericClassDerived<AInputMapManager, Toshi::TObject, "AInputMapManager", TMAKEVERSION(1, 0), TTRUE>,
 	public Toshi::TSingleton<AInputMapManager>
@@ -13,19 +39,41 @@ class AInputMapManager :
 public:
 	using ActionId = TUINT32;
 
+	enum InputEvent : TUINT32
+	{
+		InputEvent_None = 0,
+		InputEvent_GoneDown = BITFIELD(Toshi::TInputInterface::EVENT_TYPE_GONE_DOWN),
+		InputEvent_GoneUp = BITFIELD(Toshi::TInputInterface::EVENT_TYPE_GONE_UP),
+		InputEvent_Repeat = BITFIELD(Toshi::TInputInterface::EVENT_TYPE_REPEAT),
+		InputEvent_Unknown = BITFIELD(Toshi::TInputInterface::EVENT_TYPE_UNKNOWN),
+		InputEvent_Moved = BITFIELD(Toshi::TInputInterface::EVENT_TYPE_MOVED),
+	};
+
 	struct Command
 	{
 		Toshi::TPString8 Name;
 		TINT32 uiCode;
-		TINT32 uiFlags;
+		TINT32 uiEventType;
+
+		TBOOL IsEventTypeAllowed(Toshi::TInputInterface::EVENT_TYPE a_eEventType)
+		{
+			return HASFLAG(uiEventType & (1 << (a_eEventType & 0x1F)));
+		}
 	};
+
+	static constexpr TUINT MAX_NUM_INPUT_MAPS = 32;
 
 public:
 	AInputMapManager();
 
 	TBOOL ReadControlsData();
 
-	ACommandCode GetCommandCode(const Toshi::TPString8& a_rCommandName);
+	void PushInputMap(AInputMap* a_pInputMap);
+	AInputMap* PopInputMap();
+
+	void GetEventCommands(Toshi::TInputInterface::InputEvent* a_pEvent, AInputCommandArray* a_pCommandArray);
+
+	AInputCommand GetCommandCode(const Toshi::TPString8& a_rCommandName);
 	Toshi::TInputDevice::Doodad GetDoodadFromKey(const Toshi::TPString8& a_rKey);
 
 private:
@@ -37,10 +85,13 @@ private:
 	void BindDoodad(Toshi::TInputDevice::Doodad a_iDoodad, const Toshi::TPString8& a_ButtonName, ActionId a_uiAction);
 
 private:
-	Toshi::T2Vector<AInputMap*, 32> m_InputMaps;
-	// ...
+	Toshi::T2Vector<AInputMap*, MAX_NUM_INPUT_MAPS> m_InputMaps;
+	AInputMap* m_pActiveInputMap;
 	Toshi::T2Map<Toshi::TInputDevice::Doodad, Toshi::TPString8> m_oDoodadToNameMap;
 	Toshi::T2Map<Toshi::TInputDevice::Doodad, ActionId> m_oKeyMap;
-	Toshi::T2Map<ACommandCode, Command> m_oCommandMap;
+	Toshi::T2Map<AInputCommand, Command> m_oCommandMap;
 	Toshi::T2RedBlackTree<void*> m_UnkMap;
+	TINT m_iNumPushedInputMaps;
+	// ...
+	AInputMap* m_apPushedInputMaps[MAX_NUM_INPUT_MAPS];
 };

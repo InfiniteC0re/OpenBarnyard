@@ -5,10 +5,12 @@
 TOSHI_NAMESPACE_USING
 
 AInputMapManager::AInputMapManager() :
-	m_oDoodadToNameMap(AMemory::GetAllocator(AMemory::POOL_StringPool)),
-	m_oKeyMap(AMemory::GetAllocator(AMemory::POOL_StringPool)),
-	m_oCommandMap(AMemory::GetAllocator(AMemory::POOL_StringPool)),
-	m_UnkMap(AMemory::GetAllocator(AMemory::POOL_StringPool))
+	m_pActiveInputMap(TNULL),
+	m_iNumPushedInputMaps(0),
+	m_oDoodadToNameMap(AMemory::GetAllocator(AMemory::POOL_Misc)),
+	m_oKeyMap(AMemory::GetAllocator(AMemory::POOL_Misc)),
+	m_oCommandMap(AMemory::GetAllocator(AMemory::POOL_Misc)),
+	m_UnkMap(AMemory::GetAllocator(AMemory::POOL_Misc))
 {
 	InitMouseDoodads();
 	InitKeyboardDoodads();
@@ -46,9 +48,73 @@ TBOOL AInputMapManager::ReadControlsData()
 		pInputMap->LoadFromProperties(*it->GetValue()->GetProperties());
 		m_InputMaps.PushBack(pInputMap);
 	}
+
+	return TTRUE;
 }
 
-ACommandCode AInputMapManager::GetCommandCode(const Toshi::TPString8& a_rCommandName)
+void AInputMapManager::PushInputMap(AInputMap* a_pInputMap)
+{
+	TASSERT(m_iNumPushedInputMaps < MAX_NUM_INPUT_MAPS);
+	m_iNumPushedInputMaps++;
+
+	if (m_iNumPushedInputMaps < 32)
+	{
+		m_apPushedInputMaps[m_iNumPushedInputMaps - 1] = a_pInputMap;
+	}
+
+	m_pActiveInputMap = a_pInputMap;
+}
+
+AInputMap* AInputMapManager::PopInputMap()
+{
+	TASSERT(m_iNumPushedInputMaps > 0);
+	m_iNumPushedInputMaps = Toshi::TMath::Max(m_iNumPushedInputMaps - 1, 0);
+
+	m_pActiveInputMap = (m_iNumPushedInputMaps != 0) ? m_apPushedInputMaps[m_iNumPushedInputMaps - 1] : TNULL;
+	return m_apPushedInputMaps[m_iNumPushedInputMaps - 1];
+}
+
+void AInputMapManager::GetEventCommands(Toshi::TInputInterface::InputEvent* a_pEvent, AInputCommandArray* a_pCommandArray)
+{
+	a_pCommandArray->Clear();
+
+	if (m_pActiveInputMap)
+	{
+		auto pCommandMap = &m_pActiveInputMap->GetCommandMap();
+		auto pCommandIndexRes = pCommandMap->FindNode(a_pEvent->GetDoodad());
+
+		while (pCommandIndexRes != pCommandMap->End())
+		{
+			auto pCommandRes = m_oCommandMap.FindNode(pCommandIndexRes->GetValue()->GetSecond());
+			TBOOL bCommandValid;
+
+			if (pCommandRes != m_oCommandMap.End())
+			{
+				bCommandValid = TTRUE;
+				auto command = pCommandRes->GetValue()->GetSecond();
+
+				if (!command.IsEventTypeAllowed(a_pEvent->GetEventType()))
+				{
+					bCommandValid = TFALSE;
+				}
+			}
+			else
+			{
+				bCommandValid = TFALSE;
+			}
+
+			if (bCommandValid)
+			{
+				a_pCommandArray->AddCommand(pCommandIndexRes->GetValue()->GetSecond());
+			}
+
+			// Look if there is any other commands binded to this doodad
+			pCommandIndexRes = pCommandMap->FindNextNode(pCommandIndexRes, a_pEvent->GetDoodad());
+		}
+	}
+}
+
+AInputCommand AInputMapManager::GetCommandCode(const Toshi::TPString8& a_rCommandName)
 {
 	for (auto it = m_oCommandMap.Begin(); it != m_oCommandMap.End(); it++)
 	{
@@ -253,86 +319,86 @@ void AInputMapManager::InitCommandMap()
 {
 	m_oCommandMap.Insert(-1, { "Unknown", -1, 0 });
 	m_oCommandMap.Insert(0, { Toshi::TPString8(), -1, 0 });
-	m_oCommandMap.Insert(1, { "OK", 0x4b9, 0x1d });
-	m_oCommandMap.Insert(2, { "Cancel", 0x4ba, 0x1d });
-	m_oCommandMap.Insert(3, { "Retry", 0x4bb, 0x1d });
-	m_oCommandMap.Insert(4, { "Back", 0x4bc, 0x1d });
-	m_oCommandMap.Insert(5, { "Close", 0x4bd, 0x1d });
-	m_oCommandMap.Insert(6, { "Quit", 0x4be, 0x1d });
-	m_oCommandMap.Insert(7, { "Start", 0x4bf, 0x1d });
-	m_oCommandMap.Insert(8, { "Select", 0x4c0, 0x1d });
-	m_oCommandMap.Insert(10, { "Yes", 0x4c2, 0x1d });
-	m_oCommandMap.Insert(11, { "No", 0x4c3, 0x1d });
-	m_oCommandMap.Insert(12, { "Restart", 0x4c4, 0x1d });
-	m_oCommandMap.Insert(13, { "Leave", 0x4c5, 0x1d });
-	m_oCommandMap.Insert(14, { "Save", 0x4c6, 0x1d });
-	m_oCommandMap.Insert(15, { "Move", 0x4c9, 0x1d });
-	m_oCommandMap.Insert(16, { "Up", 0x4c7, 0x1d });
-	m_oCommandMap.Insert(17, { "Down", 0x4c8, 0x1d });
-	m_oCommandMap.Insert(20, { "LeftWithUp", 0x4eb, 0x1f });
-	m_oCommandMap.Insert(21, { "RightWithUp", 0x4ea, 0x1f });
-	m_oCommandMap.Insert(18, { "Left", 0x4ca, 0x1d });
-	m_oCommandMap.Insert(19, { "Right", 0x4cb, 0x1d });
-	m_oCommandMap.Insert(22, { "Forward", 0x4cc, 0x1d });
-	m_oCommandMap.Insert(23, { "ForwardWithUp", 0x4ec, 0x1f });
-	m_oCommandMap.Insert(24, { "SuperSpeed_Forward_Debug", 0x4f6, 0x1f });
-	m_oCommandMap.Insert(25, { "SuperSpeed", 0x4f7, 0x1f });
-	m_oCommandMap.Insert(28, { "PanLeft", 0x4fe, 0x1f });
-	m_oCommandMap.Insert(29, { "PanRight", 0x4ff, 0x1f });
-	m_oCommandMap.Insert(68, { "Reload", 0x4f4, 0x1d });
-	m_oCommandMap.Insert(69, { "Dodge", 0x4f5, 0x1f });
-	m_oCommandMap.Insert(26, { "Backward", 0x4cd, 0x1d });
-	m_oCommandMap.Insert(27, { "BackwardWithUp", 0x4ed, 0x1f });
-	m_oCommandMap.Insert(30, { "ZoomIn", 0x4d3, 0x1d });
-	m_oCommandMap.Insert(31, { "ZoomOut", 0x4d4, 0x1d });
-	m_oCommandMap.Insert(32, { "Look", 0x4d5, 0x1d });
-	m_oCommandMap.Insert(33, { "LookUp", 0x4d6, 0x1d });
-	m_oCommandMap.Insert(34, { "LookDown", 0x4d7, 0x1d });
-	m_oCommandMap.Insert(35, { "LookLeft", 0x4d8, 0x1d });
-	m_oCommandMap.Insert(36, { "LookRight", 0x4d9, 0x1d });
-	m_oCommandMap.Insert(37, { "LookUpWithUp", 0x4b7, 0x1f });
-	m_oCommandMap.Insert(38, { "LookDownWithUp", 0x4b8, 0x1f });
-	m_oCommandMap.Insert(39, { "LookLeftWithUp", 0x4b5, 0x1f });
-	m_oCommandMap.Insert(40, { "LookRightWithUp", 0x4b6, 0x1f });
-	m_oCommandMap.Insert(41, { "Context1", 0x4da, 0x1d });
-	m_oCommandMap.Insert(42, { "Context2", 0x4db, 0x1d });
-	m_oCommandMap.Insert(43, { "Context3", 0x4dc, 0x1d });
-	m_oCommandMap.Insert(44, { "Context4", 0x4dd, 0x1d });
-	m_oCommandMap.Insert(51, { "Menu", 0x4e4, 0x1d });
-	m_oCommandMap.Insert(52, { "DebugMenu", 0x4e5, 0x1d });
-	m_oCommandMap.Insert(53, { "Interact", 0x4e6, 0x1d });
-	m_oCommandMap.Insert(54, { "Use", 0x4f2, 0x1d });
-	m_oCommandMap.Insert(57, { "Jump", 0x4f0, 0x1f });
-	m_oCommandMap.Insert(55, { "Shoot", 0x4e7, 0x1f });
-	m_oCommandMap.Insert(78, { "ZLock", 0x500, 0x1f });
-	m_oCommandMap.Insert(56, { "ShootAlt", 0x4e8, 0x1f });
-	m_oCommandMap.Insert(67, { "Switch", 0x4f9, 0x1f });
-	m_oCommandMap.Insert(66, { "SideStep", 0x4f8, 0x1f });
-	m_oCommandMap.Insert(58, { "Speed", 0x4ef, 0x1d });
-	m_oCommandMap.Insert(59, { "Brake", 0x4ee, 0x1d });
-	m_oCommandMap.Insert(60, { "Accelerator", 0x4e9, 0x1d });
-	m_oCommandMap.Insert(61, { "Bell", 0x4f3, 0x1d });
-	m_oCommandMap.Insert(62, { "Trick1", 0x4fa, 0x1f });
-	m_oCommandMap.Insert(63, { "Trick2", 0x4fb, 0x1f });
-	m_oCommandMap.Insert(64, { "Trick3", 0x4fc, 0x1f });
-	m_oCommandMap.Insert(65, { "Trick4", 0x4fd, 0x1f });
-	m_oCommandMap.Insert(45, { "SelectUp", 0x4de, 0x1d });
-	m_oCommandMap.Insert(46, { "SelectDown", 0x4df, 0x1d });
-	m_oCommandMap.Insert(47, { "SelectLeft", 0x4e0, 0x1d });
-	m_oCommandMap.Insert(48, { "SelectRight", 0x4e1, 0x1d });
-	m_oCommandMap.Insert(49, { "SelectPrevious", 0x4e2, 0x1d });
-	m_oCommandMap.Insert(50, { "SelectNext", 0x4e3, 0x1d });
-	m_oCommandMap.Insert(71, { "ElevateCameraCW", 0x4ce, 0x1d });
-	m_oCommandMap.Insert(70, { "ElevateCameraCCW", 0x4cf, 0x1d });
-	m_oCommandMap.Insert(72, { "RotateCameraCW", 0x4d0, 0x1d });
-	m_oCommandMap.Insert(73, { "RotateCamera", 0x4d1, 0x1d });
-	m_oCommandMap.Insert(74, { "RotateCameraCCW", 0x4d2, 0x1d });
-	m_oCommandMap.Insert(75, { "Inventory", 0x4f1, 0x1d });
-	m_oCommandMap.Insert(76, { "Icons", 0x501, 0x1f });
-	m_oCommandMap.Insert(78, { "ZLock", 0x500, 0x1f });
-	m_oCommandMap.Insert(79, { "Quad", -1, 0x1d });
-	m_oCommandMap.Insert(80, { "Horn", 0x4b4, 0x1f });
-	m_oCommandMap.Insert(80, { "CUSTOM COMMAND", -1, 0 });
+	m_oCommandMap.Insert(1, { "OK", 0x4b9, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(2, { "Cancel", 0x4ba, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(3, { "Retry", 0x4bb, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(4, { "Back", 0x4bc, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(5, { "Close", 0x4bd, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(6, { "Quit", 0x4be, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(7, { "Start", 0x4bf, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(8, { "Select", 0x4c0, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(10, { "Yes", 0x4c2, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(11, { "No", 0x4c3, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(12, { "Restart", 0x4c4, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(13, { "Leave", 0x4c5, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(14, { "Save", 0x4c6, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(15, { "Move", 0x4c9, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(16, { "Up", 0x4c7, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(17, { "Down", 0x4c8, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(20, { "LeftWithUp", 0x4eb, InputEvent_GoneDown | InputEvent_GoneUp | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(21, { "RightWithUp", 0x4ea, InputEvent_GoneDown | InputEvent_GoneUp | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(18, { "Left", 0x4ca, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(19, { "Right", 0x4cb, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(22, { "Forward", 0x4cc, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(23, { "ForwardWithUp", 0x4ec, InputEvent_GoneDown | InputEvent_GoneUp | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(24, { "SuperSpeed_Forward_Debug", 0x4f6, InputEvent_GoneDown | InputEvent_GoneUp | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(25, { "SuperSpeed", 0x4f7, InputEvent_GoneDown | InputEvent_GoneUp | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(28, { "PanLeft", 0x4fe, InputEvent_GoneDown | InputEvent_GoneUp | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(29, { "PanRight", 0x4ff, InputEvent_GoneDown | InputEvent_GoneUp | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(68, { "Reload", 0x4f4, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(69, { "Dodge", 0x4f5, InputEvent_GoneDown | InputEvent_GoneUp | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(26, { "Backward", 0x4cd, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(27, { "BackwardWithUp", 0x4ed, InputEvent_GoneDown | InputEvent_GoneUp | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(30, { "ZoomIn", 0x4d3, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(31, { "ZoomOut", 0x4d4, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(32, { "Look", 0x4d5, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(33, { "LookUp", 0x4d6, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(34, { "LookDown", 0x4d7, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(35, { "LookLeft", 0x4d8, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(36, { "LookRight", 0x4d9, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(37, { "LookUpWithUp", 0x4b7, InputEvent_GoneDown | InputEvent_GoneUp | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(38, { "LookDownWithUp", 0x4b8, InputEvent_GoneDown | InputEvent_GoneUp | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(39, { "LookLeftWithUp", 0x4b5, InputEvent_GoneDown | InputEvent_GoneUp | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(40, { "LookRightWithUp", 0x4b6, InputEvent_GoneDown | InputEvent_GoneUp | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(41, { "Context1", 0x4da, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(42, { "Context2", 0x4db, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(43, { "Context3", 0x4dc, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(44, { "Context4", 0x4dd, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(51, { "Menu", 0x4e4, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(52, { "DebugMenu", 0x4e5, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(53, { "Interact", 0x4e6, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(54, { "Use", 0x4f2, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(57, { "Jump", 0x4f0, InputEvent_GoneDown | InputEvent_GoneUp | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(55, { "Shoot", 0x4e7, InputEvent_GoneDown | InputEvent_GoneUp | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(78, { "ZLock", 0x500, InputEvent_GoneDown | InputEvent_GoneUp | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(56, { "ShootAlt", 0x4e8, InputEvent_GoneDown | InputEvent_GoneUp | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(67, { "Switch", 0x4f9, InputEvent_GoneDown | InputEvent_GoneUp | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(66, { "SideStep", 0x4f8, InputEvent_GoneDown | InputEvent_GoneUp | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(58, { "Speed", 0x4ef, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(59, { "Brake", 0x4ee, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(60, { "Accelerator", 0x4e9, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(61, { "Bell", 0x4f3, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(62, { "Trick1", 0x4fa, InputEvent_GoneDown | InputEvent_GoneUp | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(63, { "Trick2", 0x4fb, InputEvent_GoneDown | InputEvent_GoneUp | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(64, { "Trick3", 0x4fc, InputEvent_GoneDown | InputEvent_GoneUp | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(65, { "Trick4", 0x4fd, InputEvent_GoneDown | InputEvent_GoneUp | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(45, { "SelectUp", 0x4de, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(46, { "SelectDown", 0x4df, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(47, { "SelectLeft", 0x4e0, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(48, { "SelectRight", 0x4e1, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(49, { "SelectPrevious", 0x4e2, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(50, { "SelectNext", 0x4e3, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(71, { "ElevateCameraCW", 0x4ce, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(70, { "ElevateCameraCCW", 0x4cf, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(72, { "RotateCameraCW", 0x4d0, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(73, { "RotateCamera", 0x4d1, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(74, { "RotateCameraCCW", 0x4d2, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(75, { "Inventory", 0x4f1, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(76, { "Icons", 0x501, InputEvent_GoneDown | InputEvent_GoneUp | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(78, { "ZLock", 0x500, InputEvent_GoneDown | InputEvent_GoneUp | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(79, { "Quad", -1, InputEvent_GoneDown | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(80, { "Horn", 0x4b4, InputEvent_GoneDown | InputEvent_GoneUp | InputEvent_Repeat | InputEvent_Unknown | InputEvent_Moved });
+	m_oCommandMap.Insert(77, { "CUSTOM COMMAND", -1, 0 });
 }
 
 void AInputMapManager::BindDoodad(Toshi::TInputDevice::Doodad a_iDoodad, const Toshi::TPString8& a_ButtonName, ActionId a_uiAction)

@@ -13,8 +13,8 @@
 TOSHI_NAMESPACE_USING
 
 AMaterialLibraryManager::AMaterialLibraryManager() :
-	m_NumRefLibraries(AMemory::GetAllocator(AMemory::POOL_StringPool)),
-	m_LoadedLibraries(AMemory::GetAllocator(AMemory::POOL_StringPool))
+	m_NumRefLibraries(AMemory::GetAllocator(AMemory::POOL_Misc)),
+	m_LoadedLibraries(AMemory::GetAllocator(AMemory::POOL_Misc))
 {
 	List::CreateSingleton();
 

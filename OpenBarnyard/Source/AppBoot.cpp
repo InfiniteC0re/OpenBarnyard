@@ -84,15 +84,6 @@ TBOOL AApplication::OnCreate(int argc, char** argv)
 		m_pRootTask->Activate(TTRUE);
 	}
 
-#if 0
-
-	for (int i = 0; i < pLocaleManager->GetNumStrings(); i++)
-	{
-		TOSHI_INFO(L"{}: {}", i, pLocaleManager->GetString(i));
-	}
-
-#endif
-
 	return TApplication::OnCreate(argc, argv);
 }
 
@@ -104,8 +95,7 @@ TBOOL AApplication::OnUpdate(float deltaTime)
 
 TBOOL AApplication::CreateStringPool()
 {
-	// FIXME: use AMemory's allocator
-	auto pStringPool = new TPString8Pool(1024, 0, &AMemory::s_aAllocators[0].Allocator, TNULL);
+	auto pStringPool = new TPString8Pool(1024, 0, AMemory::GetAllocator(AMemory::POOL_StringPool), TNULL);
 
 	TSystemManager::GetSingleton()->SetStringPool(pStringPool);
 	pStringPool->InitialiseStatic();

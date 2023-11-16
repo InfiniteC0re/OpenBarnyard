@@ -99,7 +99,7 @@ AGUI2FontResource* AGUI2FontManager::FindUnusedFontResource()
 	{
 		if (s_fontresources[i].uiRefCount == 0)
 		{
-			return &s_fontresources[i];;
+			return &s_fontresources[i];
 		}
 	}
 

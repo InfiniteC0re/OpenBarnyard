@@ -348,6 +348,20 @@ namespace Toshi
 			foundNode = TSTATICCAST(Node*, &m_oRoot);
 			return foundNode;
 		}
+
+		Iterator FindNext(Node*& foundNode, Node*& nextAfter, const T& value)
+		{
+			Node* pNode = TSTATICCAST(Node*, GetSuccessorOf(nextAfter));
+
+			if (pNode->operator==(value))
+			{
+				foundNode = pNode;
+				return foundNode;
+			}
+
+			foundNode = TSTATICCAST(Node*, &m_oRoot);
+			return foundNode;
+		}
 	};
 
 }

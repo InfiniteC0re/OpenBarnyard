@@ -1,17 +1,10 @@
 #pragma once
-#include <Toshi/Memory/TMemory.h>
+#include "AMemoryPoolAllocator.h"
 
 #include <cstdint>
 
 class AMemoryPool
 {
-public:
-	struct Allocator
-	{
-		Toshi::TMemoryHeap* pMemoryHeap;
-		Toshi::T2GlobalAllocator Allocator;
-	};
-
 public:
 	constexpr AMemoryPool(const char* a_szName, int a_iHeapIndex, size_t a_uiSize, int a_iUnk1, int a_iUnk2) :
 		m_szName(a_szName),
@@ -52,8 +45,14 @@ public:
 		POOL_NUMOF = 8
 	};
 
+	struct AllocatorList
+	{
+		void* Unknown;
+		AMemoryPoolAllocator aAllocators[POOL_NUMOF];
+	};
+
 	inline static Toshi::TMemoryHeap* s_aHeaps[POOL_NUMOF];
-	inline static AMemoryPool::Allocator s_aAllocators[POOL_NUMOF];
+	inline static AllocatorList s_AllocatorList;
 
 	inline static constexpr AMemoryPool s_aPools[POOL_NUMOF] =
 	{
@@ -71,6 +70,6 @@ public:
 
 public:
 	static void CreatePool(POOL a_ePool);
-	static Toshi::T2GlobalAllocator* GetAllocator(POOL a_ePool);
+	static Toshi::T2Allocator* GetAllocator(POOL a_ePool);
 	static Toshi::TMemoryHeap* GetHeap(POOL a_ePool);
 };
