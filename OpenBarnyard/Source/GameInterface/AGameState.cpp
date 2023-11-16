@@ -5,6 +5,7 @@
 #include "Cameras/ACamera.h"
 #include "GUI/AGUI2.h"
 #include "AppBoot.h"
+#include "AGameStateController.h"
 
 #include <Toshi/Input/TInputDeviceKeyboard.h>
 
@@ -169,4 +170,24 @@ TBOOL AGameState::SendInputCommands(const Toshi::TInputInterface::InputEvent* a_
 	}
 
 	return TTRUE;
+}
+
+void AGameState::Remove()
+{
+	if (m_pOwnerState == TNULL)
+	{
+		AGameStateController::GetSingleton()->PopCurrentGameState();
+	}
+	else
+	{
+		Node::Remove();
+
+		if (m_bIsActivated)
+		{
+			OnDeactivate();
+		}
+
+		OnRemoval();
+		delete this;
+	}
 }

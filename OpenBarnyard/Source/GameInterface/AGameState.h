@@ -75,6 +75,8 @@ public:
 		OnSuspend();
 	}
 
+	void Remove();
+
 	template <class... Args>
 	void ExecuteForAllChildStates(t_ExecuteForChildCb<void, Args...> a_fnCallback, TUINT32 a_uiOffset, Args... args)
 	{
@@ -133,7 +135,7 @@ protected:
 
 	void ChildState_OnRemoval()
 	{
-		OnRemoval();
+		Remove();
 	}
 
 	void ChildState_OnSuspend()

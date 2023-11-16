@@ -208,11 +208,19 @@ namespace Toshi {
 			return m_pPtr;
 		}
 
+		__forceinline TBOOL IsEmpty() const
+		{
+			return m_pPtr == TNULL;
+		}
+
 		__forceinline void SetPooledString(TPooledString8* a_pPooledString)
 		{
-			Decrement();
-			m_pPtr = a_pPooledString;
-			Increment();
+			if (m_pPtr != a_pPooledString)
+			{
+				Decrement();
+				m_pPtr = a_pPooledString;
+				Increment();
+			}
 		}
 
 		__forceinline bool IsEqual(const TPString8& a_Other) const
@@ -237,27 +245,36 @@ namespace Toshi {
 
 		__forceinline TPString8& operator=(TPooledString8* a_pString)
 		{
-			Decrement();
-			m_pPtr = a_pString;
-			Increment();
+			if (m_pPtr != a_pString)
+			{
+				Decrement();
+				m_pPtr = a_pString;
+				Increment();
+			}
 
 			return *this;
 		}
 
 		__forceinline TPString8& operator=(const TPString8& other)
 		{
-			Decrement();
-			m_pPtr = other.m_pPtr;
-			Increment();
+			if (m_pPtr != other.m_pPtr)
+			{
+				Decrement();
+				m_pPtr = other.m_pPtr;
+				Increment();
+			}
 
 			return *this;
 		}
 
 		__forceinline TPString8& operator=(const TPString8* pOther)
 		{
-			Decrement();
-			m_pPtr = pOther->m_pPtr;
-			Increment();
+			if (m_pPtr != pOther->m_pPtr)
+			{
+				Decrement();
+				m_pPtr = pOther->m_pPtr;
+				Increment();
+			}
 
 			return *this;
 		}

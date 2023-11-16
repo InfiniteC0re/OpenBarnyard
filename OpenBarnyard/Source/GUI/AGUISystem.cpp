@@ -63,7 +63,7 @@ TBOOL AGUISystem::OnGUIRender(AGUISystem* a_pGUISystem, ARenderer* a_pRenderer, 
 {
 	if (*a_pUnknown == 0)
 	{
-		TIMPLEMENT();
+		a_pGUISystem->m_MatLibPicture.Render();
 	}
 
 	return TTRUE;

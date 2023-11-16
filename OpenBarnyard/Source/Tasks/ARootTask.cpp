@@ -10,6 +10,7 @@
 #include "GUI/AGUISystem.h"
 #include "GUI/AGUI2TextureSectionManager.h"
 #include "GUI/AFadeManager.h"
+#include "GUI/AGUIPicture.h"
 #include "GameInterface/AGameStateController.h"
 #include "ALoadScreen.h"
 
@@ -48,6 +49,15 @@ TBOOL ARootTask::OnCreate()
 	AMemory::CreatePool(AMemory::POOL_Misc);
 	AMemory::CreatePool(AMemory::POOL_Collision);
 	AMemory::CreatePool(AMemory::POOL_Viewport);
+
+	TGetClass(TObject).RecurseTree(TNULL, TNULL, [](TClass* a_pClass, void*) {
+		if (!a_pClass->IsInitialized())
+		{
+			a_pClass->Initialize();
+		}
+
+		return TTRUE;
+	}, TNULL);
 
 	AAssetLoader::Load("data\\assets\\lib_startup.trb", AAssetLoader::AssetType_Startup, TTRUE);
 
@@ -136,8 +146,11 @@ void ARootTask::LoadStartupData()
 	pFadeManager->Create();
 	pFadeManager->StartFade(AFade::Color(255, 0, 0, 0), AFade::Color(0, 0, 0, 0), 2.0f);
 
+	AGUISystem::GetSingleton()->GetMatlibPicture().Create("bkg_by_legal1");
+	AGUISystem::GetSingleton()->GetMatlibPicture().Cache();
+
 	ALoadScreen::GetGlobalInstance()->Create();
-	ALoadScreen::GetGlobalInstance()->StartLoading(0, TTRUE);
+	//ALoadScreen::GetGlobalInstance()->StartLoading(0, TTRUE);
 #endif
 }
 

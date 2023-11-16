@@ -165,7 +165,7 @@ void AGUI2Font::DrawTextSingleLine(const wchar_t* a_wszText, TINT a_iTextLength,
 
 				}
 
-				TFLOAT fPos2X = pFontDef->Unk2 + pCharData.Unk4 + pCharData.ui8CharWidth;
+				TFLOAT fPos2X = TFLOAT(pFontDef->Unk2 + pCharData.Unk4 + pCharData.ui8CharWidth);
 				a_fX = fPos2X * a_fScale + fPos1X;
 			}
 		}

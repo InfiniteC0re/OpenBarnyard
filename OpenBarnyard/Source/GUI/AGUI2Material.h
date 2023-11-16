@@ -18,6 +18,16 @@ public:
 		m_iMipMapLODBias = 0;
 	}
 
+	void SetBlendState(TUINT a_eBlendState)
+	{
+		m_eBlendState = a_eBlendState;
+	}
+
+	void SetTextureAddress(TUINT a_eTextureAddress)
+	{
+		m_eTextureAddress = a_eTextureAddress;
+	}
+
 private:
 	Toshi::TTexture* m_pTextureResource;
 	TUINT m_eBlendState;
