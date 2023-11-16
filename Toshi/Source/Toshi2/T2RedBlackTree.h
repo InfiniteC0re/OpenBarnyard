@@ -29,9 +29,6 @@ namespace Toshi
 			m_pParent = pNil;
 		}
 
-	public:
-		virtual ~T2GenericRedBlackTreeNode() = default;
-
 	protected:
 		int red;
 		T2GenericRedBlackTreeNode* m_pLeft;
