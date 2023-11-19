@@ -46,6 +46,10 @@ TPString8 g_str_UserRender;
 TPString8 g_str_null;
 TPString8 g_str_ParkManager;
 TPString8 g_str_Start;
+TPString8 g_str_ASlideshowState;
+TPString8 g_str_bkg_by_legal1;
+TPString8 g_str_bkg_Bink_Big;
+TPString8 g_str_bkg_bluetongue;
 
 static TPString8Initialiser::StringMap oInitStrMap[] =
 {
@@ -91,6 +95,11 @@ static TPString8Initialiser::StringMap oInitStrMap[] =
 	{ &g_str_null,                             "null" },
 	{ &g_str_ParkManager,                      "ParkManager" },
 	{ &g_str_Start,                            "Start" },
+	{ &g_str_ASlideshowState,                  "ASlideshowState" },
+	{ &g_str_bkg_by_legal1,                    "bkg_by_legal1" },
+	{ &g_str_bkg_Bink_Big,                     "bkg_Bink_Big" },
+	{ &g_str_bkg_bluetongue,                   "bkg_bluetongue" },
+	
 };
 
 static TPString8Initialiser oInitStrNode(oInitStrMap, sizeof(oInitStrMap) / sizeof(*oInitStrMap), TTRUE);

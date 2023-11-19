@@ -74,6 +74,28 @@ AInputMap* AInputMapManager::PopInputMap()
 	return m_apPushedInputMaps[m_iNumPushedInputMaps - 1];
 }
 
+AInputMap* AInputMapManager::FindMap(const Toshi::TPString8& a_rMapName)
+{
+	for (auto it = m_InputMaps.Begin(); it != m_InputMaps.End(); it++)
+	{
+		if ((*it)->GetName() == a_rMapName)
+		{
+			return *it;
+		}
+	}
+
+	return TNULL;
+}
+
+TBOOL AInputMapManager::SetMap(const Toshi::TPString8& a_rMapName)
+{
+	auto pMap = FindMap(a_rMapName);
+	if (!pMap) return TFALSE;
+
+	m_pActiveInputMap = pMap;
+	return TTRUE;
+}
+
 void AInputMapManager::GetEventCommands(const Toshi::TInputInterface::InputEvent* a_pEvent, AInputCommandArray& a_rCommandArray)
 {
 	a_rCommandArray.Clear();

@@ -11,7 +11,7 @@ namespace Toshi
 		TResourceState_Valid       = BITFIELD(0),
 		TResourceState_Created     = BITFIELD(1),
 		TResourceState_Dying       = BITFIELD(2),
-		TResourceState_Unk2        = BITFIELD(3),
+		TResourceState_External    = BITFIELD(3),
 		TResourceState_Dead        = BITFIELD(4),
 		TResourceState_SceneObject = BITFIELD(5),
 	};
@@ -45,6 +45,7 @@ namespace Toshi
 		TBOOL IsDead() const { return m_State & TResourceState_Dead; }
 		TBOOL IsDying() const { return m_State & TResourceState_Dying; }
 		TBOOL IsValid() const { return m_State & TResourceState_Valid; }
+		TBOOL IsExternal() const { return m_State & TResourceState_External; }
 		TBOOL IsCreated() const { return m_State & TResourceState_Created; }
 		TBOOL IsSceneObject() const { return m_State & TResourceState_SceneObject; }
 		TBOOL IsInvalid() const { return ~m_State & TResourceState_Valid; }

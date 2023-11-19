@@ -15,8 +15,8 @@ public:
 		Flags_Skippable = BITFIELD(0),
 		Flags_Unk1 = BITFIELD(1),
 		Flags_InstaSkippable = BITFIELD(2),
-		Flags_HasFade = BITFIELD(3),
-		Flags_Unk2 = BITFIELD(4),
+		Flags_HasFadeIn = BITFIELD(3),
+		Flags_HasFadeOut = BITFIELD(4),
 		Flags_Repeat = BITFIELD(5),
 		Flags_Ended = BITFIELD(6),
 	};
@@ -27,30 +27,36 @@ public:
 		TBOOL bSlideSkippable;
 		TBOOL bUnk2;
 		TBOOL bInstaSkippable;
-		TBOOL bHasFade;
-		TBOOL bUnk3;
+		TBOOL bHasFadeIn;
+		TBOOL bHasFadeOut;
 		TBOOL bRepeat;
 		TBOOL bIsFading;
 		TFLOAT fDuration;
-		TFLOAT fFadeTime;
-		TFLOAT fUnk4;
+		TFLOAT fFadeInTime;
+		TFLOAT fFadeOutTime;
 		TFLOAT fUnk5;
 	};
 
 public:
 	AGUISlideshow();
 
-	TBOOL Setup(AGameState::HUDParams* a_pHUDParams, const Params& a_rParams, TBOOL a_bFlag);
-	void Activate();
+	TBOOL Setup(AGameState::HUDParams* a_pHUDParams, const Params& a_rParams, TBOOL a_bShouldLocalise);
 	void Update(TFLOAT a_fDeltaTime);
 	void UpdateFadeOverlay();
 	void SwitchToNextSlide();
-	void EndSlideshow();
-	void ResetSlideshow();
+
+	void Activate();
+	void Deactivate();
+	void Reset();
 
 	TBOOL ProcessInput(const Toshi::TInputInterface::InputEvent* a_pEvent);
 	TBOOL ProcessCommand(AInputCommand a_eCommand);
 	TBOOL IsSlideshowOver();
+
+	TBOOL HasSlides() const
+	{
+		return m_Images.Size() != 0;
+	}
 
 	void AddSlide(const Toshi::TPString8& a_rName)
 	{
@@ -61,7 +67,7 @@ public:
 	static Toshi::TPString8* LocaliseBackgroundFileName(Toshi::TPString8& a_rOutName, const Toshi::TPString8& a_rName);
 	static void LocaliseBackgroundFileName(Toshi::TPString8& a_rOutName, const char* a_szName);
 
-private:
+protected:
 	AGameState::HUDParams* m_pHUDParams;
 	Toshi::T2DynamicVector<Toshi::TPString8> m_Images;
 	Toshi::T2DynamicVector<Toshi::TPString8>::Iterator m_ImageIterator;
@@ -70,10 +76,10 @@ private:
 	TFLOAT m_fCurrentSlideTime;
 	TFLOAT m_fUnk2;
 	TFLOAT m_fDuration;
-	TFLOAT m_fFadeTime;
-	TFLOAT m_fUnk3;
+	TFLOAT m_fFadeInTime;
+	TFLOAT m_fFadeOutTime;
 	TFLOAT m_fUnk4;
 	AGUI2Rectangle m_FadeOverlay;
 	TBOOL m_bIsFading;
-	TBOOL m_bFlag;
+	TBOOL m_bShouldLocalise;
 };

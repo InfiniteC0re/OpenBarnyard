@@ -38,7 +38,7 @@ TBOOL AGameState::ProcessInput(const Toshi::TInputInterface::InputEvent* a_pInpu
 	return TFALSE == ARootTask::GetSingleton()->IsGameSystemCreated();
 }
 
-TBOOL AGameState::ProcessCommand(InputCommand a_eInputCommand, const Toshi::TInputInterface::InputEvent* a_pInputEvent, TBOOL& a_rStopEvents)
+TBOOL AGameState::ProcessCommand(AInputCommand a_eInputCommand, const Toshi::TInputInterface::InputEvent* a_pInputEvent, TBOOL& a_rStopEvents)
 {
 	return TFALSE;
 }
@@ -152,7 +152,7 @@ TBOOL AGameState::SendInputCommands(const Toshi::TInputInterface::InputEvent* a_
 
 					for (TINT k = 0; k < commands.iNumCommands; k++)
 					{
-						commands.aCommands[k] = 0;
+						commands.aCommands[k] = AInputCommand_Empty;
 					}
 					
 					return TTRUE;

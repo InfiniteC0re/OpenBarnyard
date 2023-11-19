@@ -208,7 +208,7 @@ namespace Toshi
 		{
 			for (TINT i = 0; i < m_iNumElements; i++)
 			{
-				((T*)m_poElements)[m_iNumElements].~T();
+				((T*)m_poElements + i)->~T();
 			}
 
 			m_iNumElements = 0;
@@ -225,9 +225,7 @@ namespace Toshi
 		void PushBack(const T& element)
 		{
 			Grow(1, sizeof(T));
-
-			T* elementArray = (T*)m_poElements;
-			elementArray[m_iNumElements++] = element;
+			new ((T*)m_poElements + m_iNumElements++) T(element);
 		}
 
 		Iterator Begin()

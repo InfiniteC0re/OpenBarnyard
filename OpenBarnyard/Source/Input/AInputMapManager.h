@@ -14,7 +14,7 @@ struct AInputCommandArray
 	{
 		for (TINT i = 0; i < iNumCommands; i++)
 		{
-			aCommands[i] = 0;
+			aCommands[i] = AInputCommand_Empty;
 		}
 
 		iNumCommands = 0;
@@ -29,7 +29,7 @@ struct AInputCommandArray
 	}
 
 	TINT iNumCommands = 0;
-	TINT aCommands[MAX_NUM_COMMANDS];
+	AInputCommand aCommands[MAX_NUM_COMMANDS];
 };
 
 class AInputMapManager :
@@ -70,6 +70,9 @@ public:
 
 	void PushInputMap(AInputMap* a_pInputMap);
 	AInputMap* PopInputMap();
+
+	AInputMap* FindMap(const Toshi::TPString8& a_rMapName);
+	TBOOL SetMap(const Toshi::TPString8& a_rMapName);
 
 	void GetEventCommands(const Toshi::TInputInterface::InputEvent* a_pEvent, AInputCommandArray& a_rCommandArray);
 

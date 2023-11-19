@@ -18,6 +18,7 @@ public:
 	virtual TBOOL OnUpdate(TFLOAT a_fDeltaTime) override;
 	virtual void OnDestroy() override;
 
+	void ReplaceState(AGameState* a_pGameState);
 	void PushState(AGameState* a_pGameState);
 	void PopState(AGameState* a_pGameState);
 

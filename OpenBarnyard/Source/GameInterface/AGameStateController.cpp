@@ -57,6 +57,11 @@ TBOOL AGameStateController::OnUpdate(TFLOAT a_fDeltaTime)
 	if (m_oStates.Size() > 1)
 	{
 		TTODO("This section");
+
+		if (!HASFLAG(m_eFlags & 7))
+		{
+			m_oStates.Back()->OnUpdate(a_fDeltaTime);
+		}
 	}
 
 	UpdateScreenOverlay();
@@ -81,6 +86,19 @@ void AGameStateController::InsertGameState(AGameState* a_pGameState)
 	m_oStates.PushBack(a_pGameState);
 	a_pGameState->OnInsertion();
 	a_pGameState->Activate();
+}
+
+void AGameStateController::ReplaceState(AGameState* a_pGameState)
+{
+	if (m_oStates.Size() > 1)
+	{
+		auto pCurrentGameState = m_oStates.Back();
+		m_oStates.PopBack();
+
+		pCurrentGameState->Destroy();
+	}
+
+	InsertGameState(a_pGameState);
 }
 
 void AGameStateController::PushState(AGameState* a_pGameState)

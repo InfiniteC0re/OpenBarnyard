@@ -13,11 +13,11 @@ AGUISlideshow::AGUISlideshow() :
 	m_fCurrentSlideTime = 0.0f;
 	m_fUnk2 = 0.0f;
 	m_fDuration = 1.0f;
-	m_fFadeTime = 0.0f;
-	m_fUnk3 = 0.0f;
+	m_fFadeInTime = 0.0f;
+	m_fFadeOutTime = 0.0f;
 	m_fUnk4 = -1.0f;
 	m_bIsFading = TFALSE;
-	m_bFlag = TFALSE;
+	m_bShouldLocalise = TFALSE;
 }
 
 Toshi::TPString8* AGUISlideshow::LocaliseBackgroundFileName(Toshi::TPString8& a_rOutName, const Toshi::TPString8& a_rName)
@@ -58,7 +58,7 @@ void AGUISlideshow::Activate()
 
 	if (!m_bIsFading)
 	{
-		if (!m_bFlag)
+		if (!m_bShouldLocalise)
 		{
 			AGUISystem::GetSingleton()->SetPicture(m_Images[0]);
 		}
@@ -80,15 +80,15 @@ void AGUISlideshow::UpdateFadeOverlay()
 
 	if (!m_bIsFading)
 	{
-		if (m_fFadeTime <= m_fCurrentSlideTime)
+		if (m_fFadeInTime <= m_fCurrentSlideTime)
 		{
-			if (m_fCurrentSlideTime <= m_fDuration + m_fFadeTime)
+			if (m_fCurrentSlideTime <= m_fDuration + m_fFadeInTime)
 			{
 				fOpacity = 0.0f;
 			}
 			else
 			{
-				fOpacity = (m_fCurrentSlideTime - m_fFadeTime - m_fDuration) / m_fUnk3;
+				fOpacity = (m_fCurrentSlideTime - m_fFadeInTime - m_fDuration) / m_fFadeOutTime;
 
 				if (fOpacity > 1.0f)
 				{
@@ -96,10 +96,14 @@ void AGUISlideshow::UpdateFadeOverlay()
 				}
 			}
 		}
+		else
+		{
+			fOpacity = 1.0f - m_fCurrentSlideTime / m_fFadeInTime;
+		}
 	}
 	else
 	{
-		fOpacity = m_fCurrentSlideTime / m_fFadeTime;
+		fOpacity = m_fCurrentSlideTime / m_fFadeInTime;
 		
 		if (fOpacity >= 1.0f)
 		{
@@ -134,7 +138,7 @@ void AGUISlideshow::Update(TFLOAT a_fDeltaTime)
 
 		m_fUnk2 += a_fDeltaTime;
 
-		if (m_fCurrentSlideTime >= m_fUnk3 + m_fFadeTime + m_fDuration)
+		if (m_fCurrentSlideTime >= m_fFadeOutTime + m_fFadeInTime + m_fDuration)
 		{
 			SwitchToNextSlide();
 		}
@@ -170,7 +174,7 @@ void AGUISlideshow::SwitchToNextSlide()
 
 	if (m_ImageIterator.IsOver())
 	{
-		if (HASFLAG(m_eFlags & Flags_Repeat)) return;
+		if (!HASFLAG(m_eFlags & Flags_Repeat)) return;
 		m_ImageIterator = m_Images;
 	}
 
@@ -181,7 +185,7 @@ void AGUISlideshow::SwitchToNextSlide()
 	AGUISystem::GetSingleton()->SetPicture(pictureName);
 }
 
-void AGUISlideshow::EndSlideshow()
+void AGUISlideshow::Deactivate()
 {
 	TASSERT(TTRUE == m_bIsActive);
 	
@@ -190,14 +194,14 @@ void AGUISlideshow::EndSlideshow()
 	m_eFlags |= Flags_Ended;
 }
 
-TBOOL AGUISlideshow::Setup(AGameState::HUDParams* a_pHUDParams, const Params& a_rParams, TBOOL a_bFlag)
+TBOOL AGUISlideshow::Setup(AGameState::HUDParams* a_pHUDParams, const Params& a_rParams, TBOOL a_bShouldLocalise)
 {
 	if (m_pHUDParams)
 	{
 		return TFALSE;
 	}
 
-	m_bFlag = a_bFlag;
+	m_bShouldLocalise = a_bShouldLocalise;
 	m_eFlags = Flags_None;
 
 	if (a_rParams.iUnk1 != 0)
@@ -222,16 +226,16 @@ TBOOL AGUISlideshow::Setup(AGameState::HUDParams* a_pHUDParams, const Params& a_
 		m_eFlags |= Flags_InstaSkippable;
 	}
 
-	if (a_rParams.bHasFade)
+	if (a_rParams.bHasFadeIn)
 	{
-		m_eFlags |= Flags_HasFade;
-		m_fFadeTime = a_rParams.fFadeTime;
+		m_eFlags |= Flags_HasFadeIn;
+		m_fFadeInTime = a_rParams.fFadeInTime;
 	}
 
-	if (a_rParams.bUnk3)
+	if (a_rParams.bHasFadeOut)
 	{
-		m_eFlags |= Flags_Unk2;
-		m_fFadeTime = a_rParams.fUnk4;
+		m_eFlags |= Flags_HasFadeOut;
+		m_fFadeOutTime = a_rParams.fFadeOutTime;
 	}
 
 	if (a_rParams.bRepeat)
@@ -291,7 +295,7 @@ TBOOL AGUISlideshow::ProcessCommand(AInputCommand a_eCommand)
 	return TTRUE;
 }
 
-void AGUISlideshow::ResetSlideshow()
+void AGUISlideshow::Reset()
 {
 	m_ImageIterator = m_Images;
 	m_fCurrentSlideTime = 0.0f;

@@ -144,7 +144,7 @@ namespace Toshi {
 		void DestroyAllShaderResources();
 
 		void DestroyDyingResources(TResource* resources);
-		void DestroyDyingResources();
+		//void DestroyDyingResources();
 
 		void DeleteResource(TResource* resources);
 		void DeleteResourceRecurse(TResource* resources);
@@ -154,9 +154,10 @@ namespace Toshi {
 
 		void FlushDyingResources()
 		{
-			if (m_bHasDyingResources)
+			while (m_bHasDyingResources)
 			{
-				DestroyDyingResources();
+				m_bHasDyingResources = TFALSE;
+				DestroyDyingResources(m_Resources.AttachedToRoot());
 			}
 		}
 

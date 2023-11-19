@@ -103,6 +103,8 @@ public:
 		
 	}
 
+	const Toshi::TPString8& GetName() const { return m_Name; }
+
 	void LoadFromProperties(const PProperties& a_rProperties);
 	Toshi::T2Map<Toshi::TInputDevice::Doodad, AInputCommand>& GetCommandMap() { return m_oDoodadToCommandMap; }
 

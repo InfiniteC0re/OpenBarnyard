@@ -12,6 +12,7 @@
 #include "GUI/AFadeManager.h"
 #include "GUI/AGUIPicture.h"
 #include "GameInterface/AGameStateController.h"
+#include "GameInterface/ASlideshowState.h"
 #include "ALoadScreen.h"
 
 #include <Plugins/PPropertyParser/PProperties.h>
@@ -94,9 +95,54 @@ TBOOL ARootTask::OnCreate()
 
 TBOOL ARootTask::OnUpdate(TFLOAT a_fDeltaTime)
 {
-	ALoadScreen::GetGlobalInstance()->Update(1.0f, TTRUE);
+	TIMPLEMENT();
+
+	if (!m_bStartedGame)
+	{
+		CreateStartupGameStates();
+		return TTRUE;
+	}
+
+	//ALoadScreen::GetGlobalInstance()->Update(1.0f, TTRUE);
 
 	return TTRUE;
+}
+
+TPSTRING8_DECLARE(bkg_by_legal1);
+TPSTRING8_DECLARE(bkg_Bink_Big);
+TPSTRING8_DECLARE(bkg_bluetongue);
+
+void ARootTask::CreateStartupGameStates()
+{
+	TIMPLEMENT();
+
+	AGUISlideshow::Params params;
+	params.iUnk1 = 0;
+	params.bSlideSkippable = TFALSE;
+	params.bUnk2 = TFALSE;
+	params.bInstaSkippable = TFALSE;
+	params.bHasFadeIn = TTRUE;
+	params.bHasFadeOut = TTRUE;
+	params.bRepeat = TFALSE;
+	params.bIsFading = TFALSE;
+	params.fDuration = 2.0f;
+	params.fUnk5 = -1.0f;
+	params.fFadeInTime = 1.0f;
+	params.fFadeOutTime = 0.5f;
+
+	auto bluetongueSlide = new ASlideshowState(params, TNULL, TFALSE);
+	bluetongueSlide->AddSlide(*TPS8(bkg_bluetongue));
+
+	auto binkSlide = new ASlideshowState(params, bluetongueSlide, TFALSE);
+	binkSlide->AddSlide(*TPS8(bkg_Bink_Big));
+
+	params.fDuration = 5.0f;
+	auto legalSlide = new ASlideshowState(params, binkSlide, TTRUE);
+	legalSlide->AddSlide(*TPS8(bkg_by_legal1));
+
+	AGameStateController::GetSingleton()->PushState(legalSlide);
+
+	m_bStartedGame = TTRUE;
 }
 
 void ARootTask::LoadStartupData()
@@ -144,11 +190,6 @@ void ARootTask::LoadStartupData()
 #if 1
 	// Code for tests
 	pFadeManager->Create();
-	pFadeManager->StartFade(AFade::Color(255, 0, 0, 0), AFade::Color(0, 0, 0, 0), 2.0f);
-
-	AGUISystem::GetSingleton()->GetMatlibPicture().Create("bkg_by_legal1");
-	AGUISystem::GetSingleton()->GetMatlibPicture().Cache();
-
 	ALoadScreen::GetGlobalInstance()->Create();
 	//ALoadScreen::GetGlobalInstance()->StartLoading(0, TTRUE);
 #endif

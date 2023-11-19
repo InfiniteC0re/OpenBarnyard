@@ -117,7 +117,7 @@ namespace Toshi {
 	void TRenderInterface::DestroyResource(TResource* resource)
 	{
 		TASSERT(TNULL != resource->GetTree(), "Resource doesn't have a tree");
-		TASSERT(TFALSE != resource->IsDead(), "Resource is already dead");
+		TASSERT(TFALSE == resource->IsDead(), "Resource is already dead");
 
 		if (resource->IsDying() == TFALSE)
 		{
@@ -130,7 +130,7 @@ namespace Toshi {
 
 	void TRenderInterface::DestroyResourceRecurse(TResource* resource)
 	{
-		if (resource == TNULL)
+		if (resource != TNULL)
 		{
 			TResource* lastResource = resource->GetLastResource();
 
@@ -297,44 +297,47 @@ namespace Toshi {
 		TIMPLEMENT();
 	}
 
-	void TRenderInterface::DestroyDyingResources()
-	{
-		auto attached = m_Resources.GetRoot()->Attached();
-
-		if (attached != TNULL)
-		{
-			auto prev = attached->Prev() == attached ? TNULL : attached->Prev();
-			if (attached->IsDying())
-			{
-				DestroyDyingResources(attached);
-			}
-			else
-			{
-				DeleteResource(prev);
-			}
-		}
-	}
-
 	void TRenderInterface::DestroyDyingResources(TResource* resources)
 	{
-		auto res = resources;
+		// TODO: refactor
+		TResource* pTVar1;
+		TResource* next;
+		TResource* pRes1;
+		TResource* pRes2;
 
-		while (resources != TNULL)
-		{
-			auto next = res->Next() == resources ? TNULL : res->Next();
-			if (res->IsDying())
-			{
-				DestroyDyingResources(res->Attached());
-			}
-			else
-			{
-				if (res == resources)
-				{
-					resources = next;
+		pRes1 = resources;
+		pRes2 = resources;
+		if (resources != (TResource*)0x0) {
+			do {
+				next = pRes2->GetNextResource();
+				if (next == pRes1) {
+					next = (TResource*)0x0;
 				}
-				DeleteResource(next);
-				res = next;
-			}
+				if ((pRes2->m_State & 4) == 0) {
+					pRes2 = pRes2->GetAttached();
+					if (pRes2 != (TResource*)0x0) {
+						DestroyDyingResources(pRes2);
+					}
+				}
+				else {
+					if (pRes2 == pRes1) {
+						pRes1 = next;
+						resources = next;
+					}
+					pTVar1 = pRes2->GetAttached();
+					while (pTVar1 != (TResource*)0x0) {
+						pRes1 = pTVar1->GetNextResource();
+						if (pRes1 == pTVar1) {
+							pRes1 = (TResource*)0x0;
+						}
+						DeleteResourceAtomic(pTVar1);
+						pTVar1 = pRes1;
+						pRes1 = resources;
+					}
+					DeleteResourceAtomic(pRes2);
+				}
+				pRes2 = next;
+			} while (next != (TResource*)0x0);
 		}
 	}
 
@@ -344,35 +347,42 @@ namespace Toshi {
 		DeleteResourceAtomic(resources);
 	}
 
-	void TRenderInterface::DeleteResourceRecurse(TResource* resources)
+	void TRenderInterface::DeleteResourceRecurse(TResource* resource)
 	{
-		auto res = resources;
-		while (resources != TNULL)
+		while (resource)
 		{
-			auto next = res->Next() == resources ? TNULL : res->Next();
-			DeleteResourceAtomic(resources);
-			resources = next;
+			auto next = resource->GetNextResource();
+			if (next == resource) next = TNULL;
+
+			DeleteResourceAtomic(resource);
+			resource = next;
 		}
 	}
 
 	void TRenderInterface::DeleteResourceAtomic(TResource* a_pResource)
 	{
-		auto attached = a_pResource->Attached();
-
-		if (attached != TNULL)
+		if (a_pResource)
 		{
-			DeleteResourceRecurse(attached);
+			DeleteResourceRecurse(a_pResource->Attached());
+
+			TASSERT(TFALSE == a_pResource->IsValid());
+
+			if (a_pResource->IsCreated())
+			{
+				a_pResource->OnDestroy();
+			}
+
+			m_Resources.Remove(a_pResource, TFALSE);
+
+			if (a_pResource->IsExternal())
+			{
+				a_pResource->~TResource();
+			}
+			else
+			{
+				delete a_pResource;
+			}
 		}
-
-		TASSERT(TFALSE == a_pResource->IsValid());
-
-		if (a_pResource->IsCreated())
-		{
-			a_pResource->OnDestroy();
-		}
-
-		m_Resources.Remove(a_pResource, TFALSE);
-		delete a_pResource;
 	}
 
 	TRenderAdapter::Mode::Device* TRenderInterface::FindDevice(const DISPLAYPARAMS& a_rDisplayParams)

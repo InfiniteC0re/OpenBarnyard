@@ -14,8 +14,6 @@ public:
 	template <class Result, class... Args>
 	using t_ExecuteForChildCb = Result(AGameState::*)(Args... args);
 
-	using InputCommand = TUINT32;
-
 	struct HUDParams
 	{
 		TUINT m_uiFlags = 0;
@@ -43,7 +41,7 @@ public:
 	virtual ~AGameState() = default;
 
 	virtual TBOOL ProcessInput(const Toshi::TInputInterface::InputEvent* a_pInputEvent);
-	virtual TBOOL ProcessCommand(InputCommand a_eInputCommand, const Toshi::TInputInterface::InputEvent* a_pInputEvent, TBOOL& a_rStopEvents);
+	virtual TBOOL ProcessCommand(AInputCommand a_eInputCommand, const Toshi::TInputInterface::InputEvent* a_pInputEvent, TBOOL& a_rStopEvents);
 	virtual TBOOL Unknown1(void* a_pUnk1, void* a_pUnk2);
 	virtual void Unknown2(void* a_pUnk1) { }
 	virtual void Unknown3(void* a_pUnk1) { }

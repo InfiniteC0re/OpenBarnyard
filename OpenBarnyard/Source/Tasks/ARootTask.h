@@ -15,6 +15,7 @@ public:
 	virtual TBOOL OnCreate() override;
 	virtual TBOOL OnUpdate(TFLOAT a_fDeltaTime) override;
 
+	void CreateStartupGameStates();
 	void LoadStartupData();
 
 	TBOOL IsPaused() const;
@@ -31,4 +32,5 @@ private:
 	TBOOL m_bPaused;               // 0x55
 	TBOOL m_bStopRenderingWorld;   // 0x56
 	TBOOL m_bGameSystemCreated;    // 0x57
+	TBOOL m_bStartedGame;
 };
