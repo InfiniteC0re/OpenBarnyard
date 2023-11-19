@@ -11,7 +11,7 @@ AGUIPicture::AGUIPicture()
 	m_iNumRects2 = 0;
 	m_bFlag = TFALSE;
 	m_bLoaded = TFALSE;
-	m_bRender = TTRUE;
+	m_bIsVisible = TTRUE;
 	m_fUnknown3 = -10.0f;
 }
 
@@ -61,7 +61,7 @@ void AGUIPicture::SetFlag()
 
 void AGUIPicture::Render()
 {
-	if (m_bRender)
+	if (m_bIsVisible)
 	{
 		TFLOAT fWidth, fHeight;
 		AGUI2::GetSingleton()->GetDimensions(fWidth, fHeight);

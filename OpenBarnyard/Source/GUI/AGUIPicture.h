@@ -43,6 +43,11 @@ public:
 	virtual void Cache() = 0;
 	virtual void Create(const Toshi::TPString8& a_rName) = 0;
 
+	void SetVisible() { m_bIsVisible = TTRUE; }
+	void SetHidden() { m_bIsVisible = TFALSE; }
+
+	const Toshi::TPString8& GetName() const { return m_Name; }
+
 	static void InitialiseStatic();
 
 protected:
@@ -55,7 +60,7 @@ protected:
 	Toshi::T2SimpleArray<Rectangle> m_pRectangles;
 	Toshi::T2SimpleArray<Image> m_pImages;
 	Toshi::TPString8 m_Name;
-	TBOOL m_bRender;
+	TBOOL m_bIsVisible;
 	TBOOL m_bFlag;
 	TBOOL m_bLoaded;
 	TFLOAT m_fUnknown3;

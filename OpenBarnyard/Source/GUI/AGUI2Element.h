@@ -11,7 +11,10 @@ class AGUI2Element;
 class AGUI2ElementNode : public Toshi::T2DList<AGUI2ElementNode>::Node
 {
 public:
-	virtual ~AGUI2ElementNode() = default;
+	virtual ~AGUI2ElementNode()
+	{
+		Unlink();
+	}
 
 	void Unlink()
 	{

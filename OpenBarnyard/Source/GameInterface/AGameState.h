@@ -16,6 +16,28 @@ public:
 
 	using InputCommand = TUINT32;
 
+	struct HUDParams
+	{
+		TUINT m_uiFlags = 0;
+		TUINT m_Unk1 = 0;
+		TUINT m_Unk2 = 0;
+		TUINT m_Unk3 = 0;
+		TUINT m_Unk4 = 0;
+		TUINT m_Unk5 = 0;
+		TUINT m_Unk6 = 0;
+		TUINT m_Unk7 = 0;
+		TUINT m_Unk8 = 0;
+		TUINT m_Unk9 = 0;
+
+		void SetFlags(TUINT a_uiFlags)
+		{
+			if (a_uiFlags != m_uiFlags)
+			{
+				m_uiFlags = a_uiFlags;
+			}
+		}
+	};
+
 public:
 	AGameState();
 	virtual ~AGameState() = default;
@@ -159,7 +181,8 @@ protected:
 	}
 
 protected:
-	// ...
+	HUDParams m_HUDParams;
+	TINT m_iOverlayColorIndex;
 	Toshi::T2DList<AGameState> m_ChildStates;
 	AInputMap* m_pInputMap;
 	AGameState* m_pOwnerState;

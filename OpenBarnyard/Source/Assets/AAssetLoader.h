@@ -14,7 +14,8 @@ public:
 	};
 
 public:
-	static void Load(const char* a_szFileName, AssetType a_eAssetType, TBOOL a_bUseStreaming);
+	static TBOOL Load(const char* a_szFileName, AssetType a_eAssetType, TBOOL a_bUseStreaming);
+	static void Close(AssetType a_eAssetType);
 
 	static Toshi::TTRB* GetAssetTRB(AssetType a_eAssetType)
 	{

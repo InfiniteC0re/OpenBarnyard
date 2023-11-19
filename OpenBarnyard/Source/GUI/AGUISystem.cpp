@@ -81,3 +81,28 @@ void AGUISystem::AllowBackgroundClear(TBOOL a_bAllow)
 		}
 	}
 }
+
+void AGUISystem::SetPicture(const Toshi::TPString8& a_rName)
+{
+	TBOOL bShowPicture = TFALSE;
+
+	if (!a_rName.IsEmpty() && a_rName.GetString8().Length() != 0)
+	{
+		bShowPicture = (a_rName != m_MatLibPicture.GetName());
+	}
+
+	if (bShowPicture)
+	{
+		TTODO("Call some method of ATerrain");
+		m_MatLibPicture.Create(a_rName);
+		m_MatLibPicture.Flush();
+		m_MatLibPicture.Cache();
+		m_MatLibPicture.SetVisible();
+	}
+	else if (a_rName.IsEmpty() || a_rName.GetString8().Length() == 0)
+	{
+		m_MatLibPicture.Flush();
+		m_MatLibPicture.Create(a_rName);
+		m_MatLibPicture.SetHidden();
+	}
+}

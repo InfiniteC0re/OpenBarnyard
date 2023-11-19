@@ -3,7 +3,7 @@
 
 namespace Toshi {
 
-	void T2GenericDynamicVector::Reallocate(int a_iNewSize, int a_iCount)
+	void T2GenericDynamicVector::Reallocate(TINT a_iNewSize, TINT a_iElementSize)
 	{
 		if (a_iNewSize != m_iMaxSize)
 		{
@@ -13,8 +13,8 @@ namespace Toshi {
 
 			if (0 < a_iNewSize)
 			{
-				elements = m_pAllocator->Malloc(a_iNewSize * a_iCount);
-				TUtil::MemCopy(elements, m_poElements, m_iNumElements <= a_iNewSize ? m_iNumElements * a_iCount : a_iNewSize * a_iCount);
+				elements = m_pAllocator->Malloc(a_iNewSize * a_iElementSize);
+				TUtil::MemCopy(elements, m_poElements, m_iNumElements <= a_iNewSize ? m_iNumElements * a_iElementSize : a_iNewSize * a_iElementSize);
 			}
 
 			m_iMaxSize = a_iNewSize;
@@ -29,10 +29,10 @@ namespace Toshi {
 		}
 	}
 
-	void T2GenericDynamicVector::Grow(int a_iNumElements, int a_iCount)
+	void T2GenericDynamicVector::Grow(TINT a_iNumElements, TINT a_iElementSize)
 	{
-		int newSize = m_iNumElements + a_iNumElements;
-		int curSize = m_iMaxSize;
+		TINT newSize = m_iNumElements + a_iNumElements;
+		TINT curSize = m_iMaxSize;
 
 		if (curSize < newSize)
 		{
@@ -50,9 +50,8 @@ namespace Toshi {
 				}
 			}
 
-			Reallocate(curSize, a_iCount);
+			Reallocate(curSize, a_iElementSize);
 		}
 	}
-
 
 }

@@ -15,6 +15,7 @@ TOSHI_NAMESPACE_USING
 
 AGameState::AGameState()
 {
+	m_iOverlayColorIndex = 0;
 	m_pInputMap = TNULL;
 	m_pOwnerState = TNULL;
 	m_bWasInserted = TFALSE;
@@ -23,9 +24,8 @@ AGameState::AGameState()
 
 	auto pRootElement = AGUI2::GetRootElement();
 	m_GUIElement.SetDimensions(pRootElement->GetWidth(), pRootElement->GetHeight());
-	m_GUIElement.Hide();
-
 	pRootElement->AddChildHead(&m_GUIElement);
+	m_GUIElement.Hide();
 }
 
 TBOOL AGameState::ProcessInput(const Toshi::TInputInterface::InputEvent* a_pInputEvent)

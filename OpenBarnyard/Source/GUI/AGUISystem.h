@@ -18,6 +18,8 @@ public:
 	virtual TBOOL OnCreate() override;
 	virtual void OnDestroy() override;
 
+	void SetPicture(const Toshi::TPString8& a_rName);
+
 	PGUITRRenderObject* GetRenderObject(TUINT a_uiIndex)
 	{
 		TASSERT(a_uiIndex < NUM_RENDER_OBJECTS);

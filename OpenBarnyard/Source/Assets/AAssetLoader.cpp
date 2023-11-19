@@ -6,7 +6,7 @@
 
 TOSHI_NAMESPACE_USING
 
-void AAssetLoader::Load(const char* a_szFileName, AssetType a_eAssetType, TBOOL a_bUseStreaming)
+TBOOL AAssetLoader::Load(const char* a_szFileName, AssetType a_eAssetType, TBOOL a_bUseStreaming)
 {
 	if (!ms_pTRBFiles[a_eAssetType])
 	{
@@ -40,6 +40,20 @@ void AAssetLoader::Load(const char* a_szFileName, AssetType a_eAssetType, TBOOL 
 		{
 			delete ms_pTRBFiles[a_eAssetType];
 			ms_pTRBFiles[a_eAssetType] = TNULL;
+
+			return TFALSE;
 		}
+	}
+
+	return TTRUE;
+}
+
+void AAssetLoader::Close(AssetType a_eAssetType)
+{
+	if (ms_pTRBFiles[a_eAssetType])
+	{
+		ms_pTRBFiles[a_eAssetType]->Close();
+		delete ms_pTRBFiles[a_eAssetType];
+		ms_pTRBFiles[a_eAssetType] = TNULL;
 	}
 }
