@@ -32,11 +32,14 @@ namespace Toshi {
 			SetAcquired(TTRUE);
 
 			if (hRes != S_FALSE)
+			{
 				RefreshDirect();
+			}
 		}
 		else
 		{
 			SetAcquired(TFALSE);
+			return TFALSE;
 		}
 
 		return TTRUE;
@@ -86,7 +89,9 @@ namespace Toshi {
 				for (size_t i = 0; i < 256; i++)
 				{
 					if (m_pKeyStates1[i] != m_pKeyStates2[i])
+					{
 						HandleKeyChange(emitter, i, m_pKeyStates1[i]);
+					}
 				}
 
 				m_bFlag = TFALSE;
@@ -245,8 +250,12 @@ namespace Toshi {
 		int iDoodad = TranslateDXToDoodad(a_iKeyIndex);
 
 		if (iDoodad == KEY_TAB)
+		{
 			if (IsAltDown())
+			{
 				return TFALSE;
+			}
+		}
 		
 		if ((a_ui8KeyState & 0x80) == 0)
 		{
@@ -779,7 +788,7 @@ namespace Toshi {
 		}
 	}
 
-	const TBOOL TInputDXDeviceKeyboard::BindToDIDevice(HWND a_hMainWindow, LPCDIDEVICEINSTANCEA a_poDeviceInstance, IDirectInputDevice8A* a_poDXInputDevice, TBOOL a_bExclusive)
+	const TBOOL TInputDXDeviceKeyboard::BindToDIDevice(HWND a_hMainWindow, LPCDIDEVICEINSTANCEA a_poDeviceInstance, IDirectInputDevice8A* a_poDXInputDevice)
 	{
 		TASSERT(a_poDeviceInstance != NULL);
 		TASSERT(a_poDXInputDevice != NULL);

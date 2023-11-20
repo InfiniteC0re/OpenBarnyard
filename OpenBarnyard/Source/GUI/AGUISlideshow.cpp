@@ -16,7 +16,7 @@ AGUISlideshow::AGUISlideshow() :
 	m_fFadeInTime = 0.0f;
 	m_fFadeOutTime = 0.0f;
 	m_fUnk4 = -1.0f;
-	m_bIsFading = TFALSE;
+	m_bIsAppearing = TFALSE;
 	m_bShouldLocalise = TFALSE;
 }
 
@@ -56,7 +56,7 @@ void AGUISlideshow::Activate()
 	m_fCurrentSlideTime = 0.0f;
 	m_fUnk2 = 0.0f;
 
-	if (!m_bIsFading)
+	if (!m_bIsAppearing)
 	{
 		if (!m_bShouldLocalise)
 		{
@@ -78,7 +78,7 @@ void AGUISlideshow::UpdateFadeOverlay()
 {
 	TFLOAT fOpacity;
 
-	if (!m_bIsFading)
+	if (!m_bIsAppearing)
 	{
 		if (m_fFadeInTime <= m_fCurrentSlideTime)
 		{
@@ -111,7 +111,7 @@ void AGUISlideshow::UpdateFadeOverlay()
 			LocaliseBackgroundFileName(pictureName, m_ImageIterator.Current());
 			AGUISystem::GetSingleton()->SetPicture(pictureName);
 
-			m_bIsFading = TFALSE;
+			m_bIsAppearing = TFALSE;
 			m_fCurrentSlideTime = 0.0f;
 			fOpacity = 1.0f;
 		}
@@ -130,7 +130,7 @@ void AGUISlideshow::Update(TFLOAT a_fDeltaTime)
 	{
 		m_fCurrentSlideTime += a_fDeltaTime;
 		
-		if (m_bIsFading)
+		if (m_bIsAppearing)
 		{
 			UpdateFadeOverlay();
 			return;
@@ -252,7 +252,11 @@ TBOOL AGUISlideshow::Setup(AGameState::HUDParams* a_pHUDParams, const Params& a_
 	m_FadeOverlay.SetAttachment(AGUI2Element::Anchor_TopCenter, AGUI2Element::Pivot_TopCenter);
 	m_FadeOverlay.Hide();
 
-	m_bIsFading = a_rParams.bIsFading;
+	if (a_rParams.bDelayAppear)
+	{
+		m_bIsAppearing = TTRUE;
+	}
+
 	return TTRUE;
 }
 

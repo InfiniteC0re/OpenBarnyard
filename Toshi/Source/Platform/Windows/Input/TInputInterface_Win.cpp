@@ -79,6 +79,54 @@ namespace Toshi {
 
 		switch (GET_DIDEVICE_TYPE(a_poDeviceInstance->dwDevType))
 		{
+		case DI8DEVTYPE_KEYBOARD:
+		{
+			LPDIRECTINPUTDEVICE8A pInputDevice;
+			HRESULT hRes = pInputInterface->m_poDirectInput8->CreateDevice(a_poDeviceInstance->guidInstance, &pInputDevice, NULL);
+
+			if (hRes == DI_OK)
+			{
+				TInputDXDeviceKeyboard* pKeyboard = new TInputDXDeviceKeyboard();
+
+				if (pKeyboard)
+				{
+					TBOOL bRes = pKeyboard->BindToDIDevice(pInputInterface->GetMainWindow(), a_poDeviceInstance, pInputDevice);
+					
+					if (bRes)
+					{
+						DIPROPDWORD oProperty;
+						oProperty.dwData = 0x20;
+						oProperty.diph.dwSize = sizeof(DIPROPDWORD);
+						oProperty.diph.dwHeaderSize = sizeof(DIPROPHEADER);
+						oProperty.diph.dwObj = 0;
+						oProperty.diph.dwHow = DIPH_DEVICE;
+
+						HRESULT hRes = pInputDevice->SetProperty(DIPROP_BUFFERSIZE, &oProperty.diph);
+
+						if (FAILED(hRes))
+							return DIENUM_STOP;
+
+						hRes = pInputDevice->SetCooperativeLevel(
+							pInputInterface->GetMainWindow(),
+							pInputInterface->GetExclusiveMode() ? (DISCL_NOWINKEY | DISCL_FOREGROUND | DISCL_EXCLUSIVE) : (DISCL_NONEXCLUSIVE | DISCL_BACKGROUND)
+						);
+
+						if (hRes == DI_OK)
+						{
+							pKeyboard->Initialise();
+							pKeyboard->Acquire();
+							pInputInterface->AddDevice(pKeyboard);
+						}
+						else
+						{
+							delete pKeyboard;
+							return DIENUM_CONTINUE;
+						}
+					}
+				}
+			}
+			break;
+		}
 		case DI8DEVTYPE_MOUSE:
 		{
 			LPDIRECTINPUTDEVICE8A pInputDevice;
@@ -182,51 +230,6 @@ namespace Toshi {
 			TIMPLEMENT();
 			break;*/
 		}
-		//case DI8DEVTYPE_KEYBOARD:
-		//{
-		//	HRESULT hRes = pInputInterface->m_poDirectInput8->CreateDevice(a_poDeviceInstance->guidInstance, &inputDevice, NULL);
-
-		//	if (hRes != DI_OK)
-		//		return DIENUM_CONTINUE;
-
-		//	TInputDXDeviceKeyboard* pKeyboard = new TInputDXDeviceKeyboard();
-		//	addKeyboard = TTRUE;
-
-		//	TBOOL bRes = pKeyboard->BindToDIDevice(pInputInterface->GetMainWindow(), a_poDeviceInstance, inputDevice, pInputInterface->m_bExclusive);
-
-		//	if (bRes)
-		//	{
-		//		DIPROPDWORD oProperty;
-		//		oProperty.diph.dwSize = sizeof(DIPROPDWORD);
-		//		oProperty.diph.dwHeaderSize = sizeof(DIPROPHEADER);
-		//		oProperty.diph.dwObj = 0;
-		//		oProperty.diph.dwHow = DIPH_DEVICE;
-
-		//		HRESULT hRes = inputDevice->SetProperty(DIPROP_BUFFERSIZE, &oProperty.diph);
-
-		//		if (FAILED(hRes))
-		//			return DIENUM_STOP;
-
-		//		hRes = inputDevice->SetCooperativeLevel(
-		//			pInputInterface->GetMainWindow(),
-		//			pInputInterface->GetExclusiveMode() ? (DISCL_NOWINKEY | DISCL_FOREGROUND | DISCL_EXCLUSIVE) : (DISCL_NONEXCLUSIVE | DISCL_BACKGROUND)
-		//		);
-
-		//		if (hRes == S_OK)
-		//		{
-		//			pKeyboard->Initialise();
-		//			pKeyboard->Acquire();
-		//			pInputInterface->AddDevice(pKeyboard);
-		//			return DIENUM_CONTINUE;
-		//		}
-		//		else
-		//		{
-		//			delete pKeyboard;
-		//			return DIENUM_CONTINUE;
-		//		}
-		//	}
-		//	break;
-		//}
 		//case DI8DEVTYPE_JOYSTICK:
 		//case DI8DEVTYPE_GAMEPAD:
 		//case DI8DEVTYPE_1STPERSON:

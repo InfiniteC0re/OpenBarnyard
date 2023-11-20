@@ -6,7 +6,7 @@
 
 namespace Toshi {
 
-	class TInputDXDeviceKeyboard : public TInputDeviceKeyboard
+	TOBJECT(TInputDXDeviceKeyboard, TInputDeviceKeyboard, TTRUE)
 	{
 	public:
 		struct KeyInfo
@@ -42,20 +42,20 @@ namespace Toshi {
 		static int TranslateDoodadToDX(int dxkey);
 	
 	public:
-		const TBOOL BindToDIDevice(HWND a_hMainWindow, LPCDIDEVICEINSTANCEA a_poDeviceInstance, IDirectInputDevice8A* a_poDXInputDevice, TBOOL a_bExclusive);
+		const TBOOL BindToDIDevice(HWND a_hMainWindow, LPCDIDEVICEINSTANCEA a_poDeviceInstance, IDirectInputDevice8A* a_poDXInputDevice);
 		static BOOL CALLBACK EnumObjectCallback(LPCDIDEVICEOBJECTINSTANCEA a_poObjectInstance, LPVOID a_pvRef);
 
 	private:
-		int m_iSomeNum;                                 // 0x070
-		uint8_t* m_pKeyStates1;                         // 0x074
-		uint8_t* m_pKeyStates2;                         // 0x078
-		uint8_t m_aBuffer[512];                         // 0x07C
-		T2Array<KeyInfo, KEYBOARD_NUM_DOODADS> m_aKeys; // 0x27C
-		TBOOL m_bIsUpdating;                            // 0x67C
-		DIDEVICEINSTANCEA m_oDeviceInstance;            // 0x680
-		DIDEVCAPS m_DIDevCaps;                          // 0x8C4
-		IDirectInputDevice8A* m_poDXInputDevice;        // 0x8F0
-		TBOOL m_bFlag;                                  // 0x8F4
+		int m_iSomeNum;
+		TUINT8* m_pKeyStates1;
+		TUINT8* m_pKeyStates2;
+		TUINT8 m_aBuffer[512];
+		T2Array<KeyInfo, KEYBOARD_NUM_DOODADS> m_aKeys;
+		TBOOL m_bIsUpdating;
+		DIDEVICEINSTANCEA m_oDeviceInstance;
+		DIDEVCAPS m_DIDevCaps;
+		IDirectInputDevice8A* m_poDXInputDevice;
+		TBOOL m_bFlag;
 	};
 
 }

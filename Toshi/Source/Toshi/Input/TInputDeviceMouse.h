@@ -3,7 +3,7 @@
 
 namespace Toshi
 {
-	class TInputDeviceMouse : public TInputDevice
+	TOBJECT(TInputDeviceMouse, TInputDevice, TFALSE)
 	{
 	public:
 		static constexpr TINT BUTTON_1 = 0x30001;

@@ -3,7 +3,7 @@
 
 namespace Toshi
 {
-	class TInputDeviceKeyboard : public TInputDevice
+	TOBJECT(TInputDeviceKeyboard, TInputDevice, TFALSE)
 	{
 	public:
 #pragma region KEYS

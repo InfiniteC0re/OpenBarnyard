@@ -37,6 +37,7 @@ TBOOL AInputHandler::OnCreate()
 	TIMPLEMENT();
 	TInputInterface::GetSingleton()->Initialise();
 	m_pMouseDevice = TInputInterface::GetSingleton()->GetDeviceByIndex<TInputDeviceMouse>(0);
+	m_pKeyboardDevice = TInputInterface::GetSingleton()->GetDeviceByIndex<TInputDeviceKeyboard>(0);
 
 	m_InputListener.Connect(
 		TInputInterface::GetSingleton()->GetInputEventEmitter(),

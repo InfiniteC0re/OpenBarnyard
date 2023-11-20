@@ -30,7 +30,7 @@ public:
 		TBOOL bHasFadeIn;
 		TBOOL bHasFadeOut;
 		TBOOL bRepeat;
-		TBOOL bIsFading;
+		TBOOL bDelayAppear;
 		TFLOAT fDuration;
 		TFLOAT fFadeInTime;
 		TFLOAT fFadeOutTime;
@@ -80,6 +80,6 @@ protected:
 	TFLOAT m_fFadeOutTime;
 	TFLOAT m_fUnk4;
 	AGUI2Rectangle m_FadeOverlay;
-	TBOOL m_bIsFading;
+	TBOOL m_bIsAppearing;
 	TBOOL m_bShouldLocalise;
 };

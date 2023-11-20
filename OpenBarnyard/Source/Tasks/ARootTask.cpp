@@ -124,7 +124,7 @@ void ARootTask::CreateStartupGameStates()
 	params.bHasFadeIn = TTRUE;
 	params.bHasFadeOut = TTRUE;
 	params.bRepeat = TFALSE;
-	params.bIsFading = TFALSE;
+	params.bDelayAppear = TFALSE;
 	params.fDuration = 2.0f;
 	params.fUnk5 = -1.0f;
 	params.fFadeInTime = 1.0f;
