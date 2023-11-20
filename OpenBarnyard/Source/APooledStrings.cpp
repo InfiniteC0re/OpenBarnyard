@@ -51,7 +51,7 @@ TPString8 g_str_bkg_by_legal1;
 TPString8 g_str_bkg_Bink_Big;
 TPString8 g_str_bkg_bluetongue;
 
-static TPString8Initialiser::StringMap oInitStrMap[] =
+static TPString8Initialiser::StringMap oInitStrMap[] = 
 {
 	{ &g_str_AnimControllerType,               "AnimControllerType" },
 	{ &g_str_AnimObjTypes,                     "AnimObjTypes" },
@@ -99,7 +99,7 @@ static TPString8Initialiser::StringMap oInitStrMap[] =
 	{ &g_str_bkg_by_legal1,                    "bkg_by_legal1" },
 	{ &g_str_bkg_Bink_Big,                     "bkg_Bink_Big" },
 	{ &g_str_bkg_bluetongue,                   "bkg_bluetongue" },
-	
 };
 
-static TPString8Initialiser oInitStrNode(oInitStrMap, sizeof(oInitStrMap) / sizeof(*oInitStrMap), TTRUE);
+static TPString8Initialiser oInitStrNode(oInitStrMap, 46, TTRUE);
+

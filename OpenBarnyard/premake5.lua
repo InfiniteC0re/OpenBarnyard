@@ -55,6 +55,11 @@ project "OpenBarnyard"
 		"SPDLOG_WCHAR_TO_UTF8_SUPPORT"
 	}
 	
+	prebuildcommands
+	{
+		"\"%{wks.location}/DevTools/PooledStrings.exe\" \"%{prj.location}Source\\APooledStrings.txt\" \"%{prj.location}Source\\APooledStrings.cpp\""
+	}
+	
 	postbuildcommands
 	{
 		"{COPYDIR} Data \"%{wks.location}bin/" .. outputdir .. "/%{prj.name}/Data\"",
