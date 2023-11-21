@@ -89,6 +89,11 @@ namespace Toshi {
 		static const char* GetErrorString(TINT32 a_eError);
 		static const char* GetErrorDescription(TINT32 a_eError);
 
+		static TRenderD3DInterface* Interface()
+		{
+			return TSTATICCAST(TRenderD3DInterface*, TRenderInterface::GetSingleton());
+		}
+
 	private:
 		IDirect3D8* m_pDirect3D;
 		IDirect3DDevice8* m_pDirectDevice;

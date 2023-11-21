@@ -172,6 +172,11 @@ TBOOL AGameState::SendInputCommands(const Toshi::TInputInterface::InputEvent* a_
 	return TTRUE;
 }
 
+void AGameState::SetInputMap(const Toshi::TPString8& a_MapName)
+{
+	m_pInputMap = AInputMapManager::GetSingleton()->FindMap(a_MapName);
+}
+
 void AGameState::Remove()
 {
 	if (m_pOwnerState == TNULL)

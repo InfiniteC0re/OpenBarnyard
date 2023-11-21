@@ -8,10 +8,12 @@ IncludeDir.libtheora = "%{wks.location}/Toshi/Vendor/libtheora/include"
 IncludeDir.theoraplay = "%{wks.location}/Toshi/Vendor/theoraplay/include"
 IncludeDir.stb = "%{wks.location}/Toshi/Vendor/stb"
 IncludeDir.dx8 = "%{wks.location}/Toshi/Vendor/DX81/include"
+IncludeDir.bink = "%{wks.location}/Toshi/Vendor/bink/include"
 
 LibDir = {}
 LibDir.fmod = "%{wks.location}/Toshi/Vendor/fmod/lib"
 LibDir.dx8 = "%{wks.location}/Toshi/Vendor/DX81/lib"
+LibDir.bink = "%{wks.location}/Toshi/Vendor/bink/lib"
 
 -- content of these folders should be copied to any client application
 ClientContentCommon = "%{wks.location}Content/Common/"
@@ -19,4 +21,5 @@ ClientContentArch   = "%{wks.location}Content"
 
 -- modify paths based on architecture
 LibDir.fmod = LibDir.fmod .. "/" .. _OPTIONS["arch"] .. "/"
+LibDir.bink = LibDir.bink .. "/" .. _OPTIONS["arch"] .. "/"
 ClientContentArch = ClientContentArch .. "/" .. _OPTIONS["arch"] .. "/"

@@ -13,7 +13,9 @@
 #include "GUI/AGUIPicture.h"
 #include "GameInterface/AGameStateController.h"
 #include "GameInterface/ASlideshowState.h"
+#include "GameInterface/AMovieState.h"
 #include "Sound/ASoundManager.h"
+#include "Movie/ABINKMoviePlayer.h"
 #include "ALoadScreen.h"
 
 #include <Plugins/PPropertyParser/PProperties.h>
@@ -41,7 +43,7 @@ ARootTask::ARootTask()
 	m_pInputHandler = pSystemManager->GetScheduler()->CreateTask(&TGetClass(AInputHandler), this);
 	m_pGameStateController = pSystemManager->GetScheduler()->CreateTask(&TGetClass(AGameStateController), this);
 	m_pSoundManager = pSystemManager->GetScheduler()->CreateTask(&TGetClass(ASoundManager), this);
-
+	m_pMoviePlayer = pSystemManager->GetScheduler()->CreateTask(&TGetClass(ABINKMoviePlayer), this);
 	m_bGameSystemCreated = TFALSE;
 }
 
@@ -88,6 +90,11 @@ TBOOL ARootTask::OnCreate()
 
 	ARandom::CreateSingleton();
 
+	if (m_pMoviePlayer)
+	{
+		m_pMoviePlayer->Create();
+	}
+
 	TGetClass(AInputMapManager).CreateObject();
 	AInputMapManager::GetSingleton()->ReadControlsData();
 
@@ -120,34 +127,41 @@ TBOOL ARootTask::OnUpdate(TFLOAT a_fDeltaTime)
 TPSTRING8_DECLARE(bkg_by_legal1);
 TPSTRING8_DECLARE(bkg_Bink_Big);
 TPSTRING8_DECLARE(bkg_bluetongue);
+TPSTRING8_DECLARE(bkg_fmod);
 
 void ARootTask::CreateStartupGameStates()
 {
 	TIMPLEMENT();
 
-	AGUISlideshow::Params params;
-	params.iUnk1 = 0;
-	params.bSlideSkippable = TFALSE;
-	params.bUnk2 = TFALSE;
-	params.bInstaSkippable = TFALSE;
-	params.bHasFadeIn = TTRUE;
-	params.bHasFadeOut = TTRUE;
-	params.bRepeat = TFALSE;
-	params.bDelayAppear = TFALSE;
-	params.fDuration = 2.0f;
-	params.fUnk5 = -1.0f;
-	params.fFadeInTime = 1.0f;
-	params.fFadeOutTime = 0.5f;
+	auto attractMovie = new AMovieState("Attract", TFALSE, TNULL, TFALSE);
+	auto bluetongueMovie = new AMovieState("BTE", TFALSE, attractMovie, TFALSE);
+	auto thqMovie = new AMovieState("THQ", TFALSE, bluetongueMovie, TFALSE);
+	auto nickmovsMovie = new AMovieState("NickMovs", TFALSE, thqMovie, TFALSE);
 
-	auto bluetongueSlide = new ASlideshowState(params, TNULL, TFALSE);
-	bluetongueSlide->AddSlide(*TPS8(bkg_bluetongue));
+	AGUISlideshow::Params slideshowSettings = {
+		.iUnk1 = 0,
+		.bSlideSkippable = TFALSE,
+		.bUnk2 = TFALSE,
+		.bInstaSkippable = TFALSE,
+		.bHasFadeIn = TTRUE,
+		.bHasFadeOut = TTRUE,
+		.bRepeat = TFALSE,
+		.bDelayAppear = TFALSE,
+		.fDuration = 2.0f,
+		.fFadeInTime = 1.0f,
+		.fFadeOutTime = 0.5f,
+		.fUnk5 = -1.0f,
+	};
 
-	auto binkSlide = new ASlideshowState(params, bluetongueSlide, TFALSE);
-	binkSlide->AddSlide(*TPS8(bkg_Bink_Big));
+	auto fmodSlide = new ASlideshowState(slideshowSettings, nickmovsMovie, TFALSE);
+	fmodSlide->AddSlide(TPS8(bkg_fmod));
 
-	params.fDuration = 5.0f;
-	auto legalSlide = new ASlideshowState(params, binkSlide, TTRUE);
-	legalSlide->AddSlide(*TPS8(bkg_by_legal1));
+	auto binkSlide = new ASlideshowState(slideshowSettings, fmodSlide, TFALSE);
+	binkSlide->AddSlide(TPS8(bkg_Bink_Big));
+
+	slideshowSettings.fDuration = 5.0f;
+	auto legalSlide = new ASlideshowState(slideshowSettings, binkSlide, TTRUE);
+	legalSlide->AddSlide(TPS8(bkg_by_legal1));
 
 	AGameStateController::GetSingleton()->PushState(legalSlide);
 

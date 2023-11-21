@@ -46,6 +46,19 @@ namespace Toshi
 		inline float Abs(float fVal) { return (float)fabs(fVal); }
 		inline constexpr float DegToRad(float fDeg) { return (fDeg / 180.0f) * PI; }
 
+		inline unsigned int RoundToNextPowerOfTwo(unsigned int a_uiValue)
+		{
+			a_uiValue--;
+			a_uiValue |= a_uiValue >> 1;
+			a_uiValue |= a_uiValue >> 2;
+			a_uiValue |= a_uiValue >> 4;
+			a_uiValue |= a_uiValue >> 8;
+			a_uiValue |= a_uiValue >> 16;
+			a_uiValue++;
+
+			return a_uiValue;
+		}
+
 		inline float Sqrt(float a_fX) 
 		{
 			TASSERT(a_fX != 0.0f);

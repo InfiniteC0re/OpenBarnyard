@@ -11,7 +11,8 @@ project "OpenBarnyard"
 	{
 		"Toshi",
 		"libtheora",
-		"theoraplay"
+		"theoraplay",
+		"binkw32.lib"
 	}
 	
 	linkoptions
@@ -28,6 +29,7 @@ project "OpenBarnyard"
 	libdirs
 	{
 		"%{LibDir.fmod}",
+		"%{LibDir.bink}",
 		"%{LibDir.dx8}"
 	}
 
@@ -38,6 +40,7 @@ project "OpenBarnyard"
 		"%{wks.location}/Shared/Source",
 		"%{IncludeDir.spdlog}",
 		"%{IncludeDir.fmod}",
+		"%{IncludeDir.bink}",
 		"%{IncludeDir.libtheora}",
 		"%{IncludeDir.libogg}",
 		"%{IncludeDir.libvorbis}",

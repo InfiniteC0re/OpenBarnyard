@@ -69,6 +69,8 @@ public:
 
 	TBOOL SendInputCommands(const Toshi::TInputInterface::InputEvent* a_pEvent);
 
+	void SetInputMap(const Toshi::TPString8& a_MapName);
+
 	void Activate()
 	{
 		OnActivate();

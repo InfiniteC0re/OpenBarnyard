@@ -10,7 +10,7 @@
 #include "Toshi/Core/TSystem.h"
 
 #define TPSTRING8_DECLARE(STR) extern Toshi::TPString8 g_str_##STR
-#define TPS8(STR) (&g_str_##STR)
+#define TPS8(STR) (g_str_##STR)
 
 namespace Toshi {
 

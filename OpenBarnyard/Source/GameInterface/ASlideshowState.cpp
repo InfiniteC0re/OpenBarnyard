@@ -7,7 +7,7 @@ TPSTRING8_DECLARE(ASlideshowState);
 ASlideshowState::ASlideshowState(const AGUISlideshow::Params& a_rSlideShowParams, AGameState* a_pNextGameState, TBOOL a_bShouldLocalise)
 {
 	m_pNextState = a_pNextGameState;
-	m_pInputMap = AInputMapManager::GetSingleton()->FindMap(*TPS8(ASlideshowState));
+	m_pInputMap = AInputMapManager::GetSingleton()->FindMap(TPS8(ASlideshowState));
 	m_Slideshow.Setup(&m_HUDParams, a_rSlideShowParams, a_bShouldLocalise);
 }
 
@@ -63,7 +63,7 @@ void ASlideshowState::OnInsertion()
 		}
 	}
 
-	AInputMapManager::GetSingleton()->SetMap(*TPS8(ASlideshowState));
+	AInputMapManager::GetSingleton()->SetMap(TPS8(ASlideshowState));
 	AGameState::OnInsertion();
 }
 

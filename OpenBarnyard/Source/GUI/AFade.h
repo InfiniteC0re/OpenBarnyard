@@ -60,11 +60,16 @@ public:
 		return m_Overlay;
 	}
 
+	Toshi::TEmitter<AFade, TBOOL>& GetFadeOverEmitter()
+	{
+		return m_FadeOverEmitter;
+	}
+
 private:
 	Color m_FadeFromColor;
 	Color m_FadeToColor;
 	TFLOAT m_fCurrentTime;
 	TFLOAT m_fFadeTime;
 	AGUI2Rectangle m_Overlay;
-	Toshi::TEmitter<AFade, TBOOL> m_FadeOverEmitter; // is it really TBOOL?
+	Toshi::TEmitter<AFade, TBOOL> m_FadeOverEmitter;
 };

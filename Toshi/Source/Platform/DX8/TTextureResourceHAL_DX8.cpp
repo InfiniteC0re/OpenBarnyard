@@ -170,8 +170,59 @@ namespace Toshi {
 
 	TBOOL TTextureResourceHAL::CreateFromMemory888(TUINT a_uiWidth, TUINT a_uiHeight, TUINT a_uiLevels, void* a_pData)
 	{
-		TIMPLEMENT();
-		return TFALSE;
+		auto pRenderer = TSTATICCAST(TRenderD3DInterface*, GetRenderer());
+
+		HRESULT hCreateRes = pRenderer->GetDirect3DDevice()->CreateTexture(
+			a_uiWidth,
+			a_uiHeight,
+			a_uiLevels,
+			0,
+			D3DFMT_X8R8G8B8,
+			D3DPOOL_MANAGED,
+			&m_pD3DTexture
+		);
+
+		if (SUCCEEDED(hCreateRes))
+		{
+			D3DLOCKED_RECT rect;
+			m_pD3DTexture->LockRect(0, &rect, NULL, D3DLOCK_NO_DIRTY_UPDATE | D3DLOCK_NOSYSLOCK);
+
+			if (a_uiHeight != 0)
+			{
+				TUINT8* pTexPixel = TSTATICCAST(TUINT8*, rect.pBits);
+				TUINT8* pDataPixel = TSTATICCAST(TUINT8*, a_pData);
+
+				for (TUINT i = a_uiHeight; i != 0; i--)
+				{
+					TUINT8 uiDataPixel = *pDataPixel;
+					pTexPixel[0] = pDataPixel[2];
+					pTexPixel[1] = pDataPixel[1];
+					pTexPixel[2] = pDataPixel[0];
+					pTexPixel[3] = 255;
+
+					pTexPixel += 4;
+					pDataPixel += 3;
+				}
+			}
+
+			m_pD3DTexture->UnlockRect(0);
+
+			if (a_uiLevels == 0)
+			{
+				TFIXME("Call some D3DX? function with 4 parameters with the first one being IDirect3DTexture (most likely not related to the engine)");
+				TUtil::MemClear(&m_ImageInfo, sizeof(m_ImageInfo));
+				m_ImageInfo.Width = a_uiWidth;
+				m_ImageInfo.Height = a_uiHeight;
+			}
+
+			return TTRUE;
+		}
+		else
+		{
+			TRenderD3DInterface::PrintError(hCreateRes, TNULL);
+		}
+
+		return TTRUE;
 	}
 
 	TBOOL TTextureResourceHAL::CreateFromMemory5551(TUINT a_uiWidth, TUINT a_uiHeight, TUINT a_uiLevels, void* a_pData)
@@ -325,24 +376,26 @@ namespace Toshi {
 						return TFALSE;
 					}
 				}
-
-				TUINT uiLayout = m_eTextureFlags & 0x38;
-
-				if (uiLayout == 8)
-				{
-					CreateFromMemory5551(m_uiWidth, m_uiHeight, 0, m_pData);
-				}
-				else if (uiLayout == 16)
-				{
-					CreateFromMemory4444(m_uiWidth, m_uiHeight, 0, m_pData);
-				}
-				else if (uiLayout == 32)
-				{
-					CreateFromMemory8888(m_uiWidth, m_uiHeight, 0, m_pData);
-				}
 				else
 				{
-					CreateFromMemoryDDS(m_uiWidth, m_uiHeight, -1, m_pData);
+					TUINT uiLayout = m_eTextureFlags & 0x38;
+
+					if (uiLayout == 8)
+					{
+						CreateFromMemory5551(m_uiWidth, m_uiHeight, 0, m_pData);
+					}
+					else if (uiLayout == 16)
+					{
+						CreateFromMemory4444(m_uiWidth, m_uiHeight, 0, m_pData);
+					}
+					else if (uiLayout == 32)
+					{
+						CreateFromMemory8888(m_uiWidth, m_uiHeight, 0, m_pData);
+					}
+					else
+					{
+						CreateFromMemoryDDS(m_uiWidth, m_uiHeight, -1, m_pData);
+					}
 				}
 			}
 		}

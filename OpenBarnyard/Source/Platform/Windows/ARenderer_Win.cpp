@@ -6,6 +6,7 @@
 #include "GUI/AGUI2TextureSectionManager.h"
 #include "Render/ARenderer.h"
 #include "Input/AInputHandler.h"
+#include "Movie/AMoviePlayer.h"
 
 #include TOSHI_MULTIRENDER(TTextureFactoryHAL)
 #include TOSHI_MULTIRENDER(TRenderInterface)
@@ -234,6 +235,11 @@ TBOOL ARenderer::OnUpdate(float a_fDeltaTime)
 	if (!TSystemManager::GetSingleton()->IsPaused())
 	{
 		pRenderer->BeginScene();
+
+		if (AMoviePlayer::IsSingletonCreated() && AMoviePlayer::GetSingleton()->IsMoviePlaying())
+		{
+			AMoviePlayer::GetSingleton()->Render(a_fDeltaTime);
+		}
 
 		RenderGUI();
 

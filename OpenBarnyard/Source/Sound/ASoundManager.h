@@ -3,7 +3,8 @@
 #include <Toshi2/T2DList.h>
 #include <Toshi2/T2SimpleArray.h>
 
-TOBJECT(ASoundManager, Toshi::TTask, TTRUE)
+TOBJECT(ASoundManager, Toshi::TTask, TTRUE),
+	public Toshi::TSingleton<ASoundManager>
 {
 public:
 	struct S1 : public Toshi::T2DList<S1>::Node

@@ -50,6 +50,8 @@ TPString8 g_str_ASlideshowState;
 TPString8 g_str_bkg_by_legal1;
 TPString8 g_str_bkg_Bink_Big;
 TPString8 g_str_bkg_bluetongue;
+TPString8 g_str_bkg_fmod;
+TPString8 g_str_DialogInputMap;
 
 static TPString8Initialiser::StringMap oInitStrMap[] = 
 {
@@ -99,7 +101,9 @@ static TPString8Initialiser::StringMap oInitStrMap[] =
 	{ &g_str_bkg_by_legal1,                    "bkg_by_legal1" },
 	{ &g_str_bkg_Bink_Big,                     "bkg_Bink_Big" },
 	{ &g_str_bkg_bluetongue,                   "bkg_bluetongue" },
+	{ &g_str_bkg_fmod,                         "bkg_fmod" },
+	{ &g_str_DialogInputMap,                   "DialogInputMap" },
 };
 
-static TPString8Initialiser oInitStrNode(oInitStrMap, 46, TTRUE);
+static TPString8Initialiser oInitStrNode(oInitStrMap, 48, TTRUE);
 

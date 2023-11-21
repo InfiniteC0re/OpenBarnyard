@@ -87,3 +87,16 @@ AFade* AFadeManager::StartFade(const AFade::Color& a_rFadeFrom, const AFade::Col
 
 	return pFade;
 }
+
+TBOOL AFadeManager::HasAnyFadesInProgress(TBOOL a_bThrowFadeOver)
+{
+	for (auto it = m_ActiveFades.Begin(); it != m_ActiveFades.End(); it++)
+	{
+		if (it->IsStillFading(a_bThrowFadeOver))
+		{
+			return TTRUE;
+		}
+	}
+
+	return TFALSE;
+}

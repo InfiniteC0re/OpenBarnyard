@@ -47,9 +47,13 @@ namespace Toshi {
 
 		void Throw(void* a_pData)
 		{
-			for (auto it = m_Listeners.Begin(); it != m_Listeners.End(); it++)
+			auto pListener = m_Listeners.Begin();
+
+			while (pListener != m_Listeners.End())
 			{
-				it->Execute(m_pOwner, a_pData);
+				auto pNextListener = pListener->Next();
+				pListener->Execute(m_pOwner, a_pData);
+				pListener = pNextListener;
 			}
 		}
 
