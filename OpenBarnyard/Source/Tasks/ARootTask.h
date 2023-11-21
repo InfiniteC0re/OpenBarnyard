@@ -27,7 +27,8 @@ private:
 	TTask* m_pGUI2;                // 0x28
 	TTask* m_pInputHandler;        // 0x2C
 	ARenderer* m_pRenderer;        // 0x30
-	TTask* m_pGameStateController; // 0x30
+	TTask* m_pGameStateController; // 0x34
+	TTask* m_pSoundManager;        // 0x44
 	TBOOL m_bLoadedTerrain;        // 0x54
 	TBOOL m_bPaused;               // 0x55
 	TBOOL m_bStopRenderingWorld;   // 0x56

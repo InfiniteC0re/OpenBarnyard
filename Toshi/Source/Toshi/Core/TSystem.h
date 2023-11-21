@@ -24,9 +24,14 @@ namespace Toshi
 			TBOOL oldState = m_Paused;
 
 			m_Paused = pause;
-			m_Emitter.Throw(&pause);
+			m_PauseEmitter.Throw(&pause);
 
 			return oldState;
+		}
+
+		TEmitter<TSystemManager, TBOOL>& GetPauseEmitter()
+		{
+			return m_PauseEmitter;
 		}
 
 		uint32_t GetFrameCount()
@@ -75,7 +80,7 @@ namespace Toshi
 		inline static TPString8Pool** ms_poStringPool;
 
 	private:
-		TEmitter<TSystemManager, TBOOL> m_Emitter; // 0x00
+		TEmitter<TSystemManager, TBOOL> m_PauseEmitter; // 0x00
 		TScheduler* m_Scheduler;
 		TBOOL m_Paused;
 		TUINT32 m_Unk2;

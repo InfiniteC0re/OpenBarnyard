@@ -27,6 +27,7 @@ project "OpenBarnyard"
 	
 	libdirs
 	{
+		"%{LibDir.fmod}",
 		"%{LibDir.dx8}"
 	}
 

@@ -13,6 +13,7 @@
 #include "GUI/AGUIPicture.h"
 #include "GameInterface/AGameStateController.h"
 #include "GameInterface/ASlideshowState.h"
+#include "Sound/ASoundManager.h"
 #include "ALoadScreen.h"
 
 #include <Plugins/PPropertyParser/PProperties.h>
@@ -39,6 +40,7 @@ ARootTask::ARootTask()
 	m_pRenderer = TSTATICCAST(ARenderer*, pSystemManager->GetScheduler()->CreateTask(&TGetClass(ARenderer), this));
 	m_pInputHandler = pSystemManager->GetScheduler()->CreateTask(&TGetClass(AInputHandler), this);
 	m_pGameStateController = pSystemManager->GetScheduler()->CreateTask(&TGetClass(AGameStateController), this);
+	m_pSoundManager = pSystemManager->GetScheduler()->CreateTask(&TGetClass(ASoundManager), this);
 
 	m_bGameSystemCreated = TFALSE;
 }
@@ -47,18 +49,24 @@ TBOOL ARootTask::OnCreate()
 {
 	TIMPLEMENT();
 
+	AMemory::CreatePool(AMemory::POOL_Viewport);
 	AMemory::CreatePool(AMemory::POOL_Misc);
 	AMemory::CreatePool(AMemory::POOL_Collision);
-	AMemory::CreatePool(AMemory::POOL_Viewport);
 
-	TGetClass(TObject).RecurseTree(TNULL, TNULL, [](TClass* a_pClass, void*) {
-		if (!a_pClass->IsInitialized())
+	TGetClass(TObject).RecurseTree(
+		TNULL,
+		TNULL,
+		[](TClass* a_pClass, void*)
 		{
-			a_pClass->Initialize();
-		}
+			if (!a_pClass->IsInitialized())
+			{
+				a_pClass->Initialize();
+			}
 
-		return TTRUE;
-	}, TNULL);
+			return TTRUE;
+		},
+		TNULL
+	);
 
 	AAssetLoader::Load("data\\assets\\lib_startup.trb", AAssetLoader::AssetType_Startup, TTRUE);
 
@@ -76,6 +84,7 @@ TBOOL ARootTask::OnCreate()
 	}
 
 	m_pInputHandler->Create();
+	m_pSoundManager->Create();
 
 	ARandom::CreateSingleton();
 

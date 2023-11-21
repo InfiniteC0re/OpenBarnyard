@@ -11,12 +11,10 @@
 #include <Toshi/Core/TScheduler.h>
 #include <Toshi/Core/TSystem.h>
 #include <Toshi2/T2SimpleArray.h>
-#include <Toshi/Sound/TSound.h>
 #include <Toshi/Render/TRenderInterface.h>
 #include <Toshi/Strings/TPString8.h>
 #include <Toshi/Input/TInputInterface.h>
 
-#include <Platform/Windows/TSound_Win.h>
 #include <Platform/DX8/TTextureResourceHAL_DX8.h>
 
 #include TOSHI_MULTIRENDER(TRenderInterface)
