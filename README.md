@@ -1,5 +1,7 @@
-# OpenToshi [![Toshi](https://github.com/InfiniteC0re/OpenBarnyard/actions/workflows/ci.yaml/badge.svg)](https://github.com/InfiniteC0re/OpenBarnyard/actions/workflows/ci.yaml)
+# OpenBarnyard [![Toshi](https://github.com/InfiniteC0re/OpenBarnyard/actions/workflows/ci.yaml/badge.svg)](https://github.com/InfiniteC0re/OpenBarnyard/actions/workflows/ci.yaml)
 Decompilation of the Toshi engine Barnyard the video game.
+
+![alt text](https://repository-images.githubusercontent.com/524925868/e2f3fde2-ece4-4a71-bd81-f4cbce744c9a)
 
 # **SUPPORT THE DEVELOPERS OF THE TOSHI ENGINE**
 We do not own the Toshi Engine in any way, shape or form, and this project would not have been possible had they not developed TOSHI in the first place. The Toshi Engine is currently owned by [THQ Nordic](https://www.thqnordic.com); we highly urge you to follow & support their projects if you like this project!
