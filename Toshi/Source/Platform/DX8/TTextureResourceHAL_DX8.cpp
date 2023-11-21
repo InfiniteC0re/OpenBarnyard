@@ -79,7 +79,7 @@ namespace Toshi {
 
 	TBOOL TTextureResourceHAL::Create(void* a_pData, TUINT a_uiDataSize, TUINT a_eTextureFlags, TUINT a_uiWidth, TUINT a_uiHeight)
 	{
-		TOSHI_CORE_WARN("Deprecated! Please use: TTextureResourceHAL::CreateEx()");
+		TOSHI_WARN("Deprecated! Please use: TTextureResourceHAL::CreateEx()");
 
 		if (!CreateResource(a_pData, a_uiDataSize, a_eTextureFlags, a_uiWidth, a_uiHeight))
 		{

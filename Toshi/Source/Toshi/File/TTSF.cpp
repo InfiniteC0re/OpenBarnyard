@@ -176,7 +176,7 @@ namespace Toshi {
 		char charName[sizeof(m_CurrentHunk.Name) + 1] = {};
 		*charName = m_CurrentHunk.Name;
 
-		TOSHI_CORE_ERROR("Unknown TRB section: {0}", charName);
+		TOSHI_ERROR("Unknown TRB section: {0}", charName);
 #endif
 	}
 

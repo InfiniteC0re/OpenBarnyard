@@ -60,14 +60,14 @@ namespace Toshi {
 	void TMemory::OutOfMem(TMemoryHeap* heap, size_t size)
 	{
 		// 006fc7c0
-		TOSHI_CORE_CRITICAL("=========================================================================");
-		TOSHI_CORE_CRITICAL("MEMORY ALLOCATION FAILED");
-		TOSHI_CORE_CRITICAL("------------------------");
-		TOSHI_CORE_CRITICAL("HEAP: {0}", heap->m_Name);
-		TOSHI_CORE_CRITICAL("------------------------");
-		TOSHI_CORE_CRITICAL("failed to allocate {0} bytes (~{1}KB, ~{2}MB)", size, size >> 10, size >> 20);
+		TOSHI_CRITICAL("=========================================================================");
+		TOSHI_CRITICAL("MEMORY ALLOCATION FAILED");
+		TOSHI_CRITICAL("------------------------");
+		TOSHI_CRITICAL("HEAP: {0}", heap->m_Name);
+		TOSHI_CRITICAL("------------------------");
+		TOSHI_CRITICAL("failed to allocate {0} bytes (~{1}KB, ~{2}MB)", size, size >> 10, size >> 20);
 		// FUN_006fbec0(local_e8);
-		TOSHI_CORE_CRITICAL("=========================================================================");
+		TOSHI_CRITICAL("=========================================================================");
 		// ...
 	}
 
@@ -254,7 +254,7 @@ namespace Toshi {
 
 		if (usedMemorySize + size > heap->m_PileSize)
 		{
-			TOSHI_CORE_CRITICAL("Out of memory in pile '{0}' when trying to alloc {1} bytes", heap->m_Name, size);
+			TOSHI_CRITICAL("Out of memory in pile '{0}' when trying to alloc {1} bytes", heap->m_Name, size);
 			TBREAK();
 		}
 

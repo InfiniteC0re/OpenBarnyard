@@ -41,7 +41,7 @@ namespace Toshi
 			str[size + 1] = '\0';
 			OutputDebugStringA(str);
 			str[size] = '\0';
-			TOSHI_CORE_TRACE(str);
+			TOSHI_TRACE(str);
 #endif
 
 			GetLog()->Log(TLogFile::Type_Info, "Toshi", "Kernel", str);
@@ -65,7 +65,7 @@ namespace Toshi
 			str[size + 1] = '\0';
 			OutputDebugStringA(str);
 			str[size] = '\0';
-			TOSHI_CORE_TRACE(str);
+			TOSHI_TRACE(str);
 #endif
 
 			va_end(args);
@@ -88,7 +88,7 @@ namespace Toshi
 			str[size + 1] = '\0';
 			OutputDebugStringA(str);
 			str[size] = '\0';
-			TOSHI_CORE_TRACE(str);
+			TOSHI_TRACE(str);
 		}
 	}
 

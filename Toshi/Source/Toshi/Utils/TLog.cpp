@@ -15,10 +15,10 @@ namespace Toshi
 		{
 			spdlog::set_pattern("%^[%H:%M:%S] [%n] %v%$");
 
-			s_CoreLogger = spdlog::stdout_color_mt("Toshi");
+			s_CoreLogger = spdlog::stdout_color_mt("Toshi 2.0");
 			s_CoreLogger->set_level(spdlog::level::level_enum::trace);
 
-			s_AppLogger = spdlog::stdout_color_mt("App");
+			s_AppLogger = spdlog::stdout_color_mt("Barnyard");
 			s_AppLogger->set_level(spdlog::level::level_enum::trace);
 			s_Created = TTRUE;
 		}

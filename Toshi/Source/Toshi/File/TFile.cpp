@@ -23,11 +23,11 @@ namespace Toshi
 
 		if (pFile != TNULL)
 		{
-			TOSHI_CORE_TRACE("TFile::Create - Created file {0} with mode {1}", filename, mode);
+			TOSHI_TRACE("TFile::Create - Created file {0} with mode {1}", filename, mode);
 		}
 		else
 		{
-			TOSHI_CORE_TRACE("TFile::Create - Failed to create file {0} with mode {1}", filename, mode);
+			TOSHI_TRACE("TFile::Create - Failed to create file {0} with mode {1}", filename, mode);
 		}
 
 		return pFile;

@@ -116,7 +116,7 @@ TOSHI_ENTRY
 		SetUnhandledExceptionFilter(
 			[](_EXCEPTION_POINTERS* ExceptionInfo) -> LONG
 			{
-				TOSHI_CORE_ERROR("Blob_UnhandledExceptionFilter");
+				TOSHI_ERROR("Blob_UnhandledExceptionFilter");
 				TBREAK();
 				return EXCEPTION_EXECUTE_HANDLER;
 			}

@@ -1360,11 +1360,11 @@ static void reset_on_error(mstate m);
 #else /* TOSHI_DEBUG */
 
 #ifndef CORRUPTION_ERROR_ACTION
-#define CORRUPTION_ERROR_ACTION(m) TOSHI_CORE_CRITICAL("!\"TMemory: Memory system corruption detected!\"")
+#define CORRUPTION_ERROR_ACTION(m) TOSHI_CRITICAL("!\"TMemory: Memory system corruption detected!\"")
 #endif /* CORRUPTION_ERROR_ACTION */
 
 #ifndef USAGE_ERROR_ACTION
-#define USAGE_ERROR_ACTION(m,p) __debugbreak(); TOSHI_CORE_CRITICAL("!\"TMemory: Memory block footer corruption detected - the block being free'd was probably overrun!\"")
+#define USAGE_ERROR_ACTION(m,p) __debugbreak(); TOSHI_CRITICAL("!\"TMemory: Memory block footer corruption detected - the block being free'd was probably overrun!\"")
 #endif /* USAGE_ERROR_ACTION */
 
 #endif /* TOSHI_DEBUG */

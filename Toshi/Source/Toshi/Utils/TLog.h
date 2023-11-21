@@ -21,12 +21,16 @@ namespace Toshi
 	};
 }
 
+#ifdef TOSHI_USER_ENGINE
+
 // Engine log macros
-#define TOSHI_CORE_INFO(...) Toshi::TLog::GetCoreLogger()->info(__VA_ARGS__)
-#define TOSHI_CORE_WARN(...) Toshi::TLog::GetCoreLogger()->warn(__VA_ARGS__)
-#define TOSHI_CORE_ERROR(...) Toshi::TLog::GetCoreLogger()->error(__VA_ARGS__)
-#define TOSHI_CORE_TRACE(...) Toshi::TLog::GetCoreLogger()->trace(__VA_ARGS__)
-#define TOSHI_CORE_CRITICAL(...) Toshi::TLog::GetCoreLogger()->critical(__VA_ARGS__)
+#define TOSHI_INFO(...) Toshi::TLog::GetCoreLogger()->info(__VA_ARGS__)
+#define TOSHI_WARN(...) Toshi::TLog::GetCoreLogger()->warn(__VA_ARGS__)
+#define TOSHI_ERROR(...) Toshi::TLog::GetCoreLogger()->error(__VA_ARGS__)
+#define TOSHI_TRACE(...) Toshi::TLog::GetCoreLogger()->trace(__VA_ARGS__)
+#define TOSHI_CRITICAL(...) Toshi::TLog::GetCoreLogger()->critical(__VA_ARGS__)
+
+#else
 
 // App log macros
 #define TOSHI_INFO(...) Toshi::TLog::GetAppLogger()->info(__VA_ARGS__)
@@ -34,3 +38,5 @@ namespace Toshi
 #define TOSHI_ERROR(...) Toshi::TLog::GetAppLogger()->error(__VA_ARGS__)
 #define TOSHI_TRACE(...) Toshi::TLog::GetAppLogger()->trace(__VA_ARGS__)
 #define TOSHI_CRITICAL(...) Toshi::TLog::GetAppLogger()->critical(__VA_ARGS__)
+
+#endif
