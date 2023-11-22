@@ -28,6 +28,16 @@ public:
 	void UpdateScreenOverlay();
 
 	TBOOL ProcessInput(const Toshi::TInputInterface::InputEvent* a_pEvent);
+	
+	AGameState* GetCurrentState()
+	{
+		return m_oStates.Back();
+	}
+
+	TBOOL IsCurrentState(Toshi::TClass* a_pClass)
+	{
+		return GetCurrentState()->IsA(a_pClass);
+	}
 
 private:
 	void InsertGameState(AGameState* a_pGameState);

@@ -130,9 +130,9 @@ namespace Toshi
 
 	void TTask::AttachTo(TTask* a_pAttachTo)
 	{
-		if (a_pAttachTo != Parent() && a_pAttachTo != TNULL)
+		if (this != Parent() && a_pAttachTo != TNULL)
 		{
-			Tree()->ReInsert(a_pAttachTo, this);
+			Tree()->ReInsert(this != Parent() ? a_pAttachTo : TNULL, this);
 		}
 	}
 

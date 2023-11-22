@@ -49,6 +49,8 @@ private:
 	TBOOL CreateSurfaces();
 	TBOOL CreateAGUISurfaces(TUINT a_uiWidth, TUINT a_uiHeight, D3DFORMAT a_eFormat);
 
+	void DestroySurfaces();
+
 private:
 	HBINK m_Bink;
 	TBOOL m_bPlaying;

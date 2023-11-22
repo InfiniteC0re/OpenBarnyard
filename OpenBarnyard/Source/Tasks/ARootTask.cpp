@@ -14,6 +14,8 @@
 #include "GameInterface/AGameStateController.h"
 #include "GameInterface/ASlideshowState.h"
 #include "GameInterface/AMovieState.h"
+#include "GameInterface/SaveLoadSKU.h"
+#include "GameInterface/AMessagePopupState.h"
 #include "Sound/ASoundManager.h"
 #include "Movie/ABINKMoviePlayer.h"
 #include "ALoadScreen.h"
@@ -111,17 +113,75 @@ TBOOL ARootTask::OnCreate()
 
 TBOOL ARootTask::OnUpdate(TFLOAT a_fDeltaTime)
 {
-	TIMPLEMENT();
-
-	if (!m_bStartedGame)
+	if (!IsGameSystemCreated())
 	{
-		CreateStartupGameStates();
-		return TTRUE;
+		if (!AGameStateController::GetSingleton()->IsCurrentState(&TGetClass(ASlideshowState)))
+		{
+			if (!AGameStateController::GetSingleton()->IsCurrentState(&TGetClass(SaveLoadSKU)))
+			{
+				if (!AGameStateController::GetSingleton()->IsCurrentState(&TGetClass(AMovieState)))
+				{
+					if (!AGameStateController::GetSingleton()->IsCurrentState(&TGetClass(AMessagePopupState)))
+					{
+						if (!m_bStartedGame)
+						{
+							CreateStartupGameStates();
+							return TTRUE;
+						}
+						else
+						{
+							ALoadScreen::GetGlobalInstance()->Create();
+							CreateGameSystem();
+							LoadFrontEnd();
+							return TTRUE;
+						}
+					}
+				}
+			}
+		}
 	}
 
-	//ALoadScreen::GetGlobalInstance()->Update(1.0f, TTRUE);
+	TTODO("FUN_00427e70");
+	ALoadScreen::GetGlobalInstance()->Update(1.0f, TTRUE);
 
 	return TTRUE;
+}
+
+void ARootTask::OnChildDied(TClass* a_pClass, TTask* a_pDeletedTask)
+{
+	if (a_pDeletedTask == m_pGUISystem) m_pGUISystem = TNULL;
+	else if (a_pDeletedTask == m_pGUI2) m_pGUI2 = TNULL;
+	else if (a_pDeletedTask == m_pInputHandler) m_pInputHandler = TNULL;
+	else if (a_pDeletedTask == m_pRenderer) m_pRenderer = TNULL;
+	else if (a_pDeletedTask == m_pGameStateController) m_pGameStateController = TNULL;
+	else if (a_pDeletedTask == m_pMoviePlayer) m_pMoviePlayer = TNULL;
+}
+
+void ARootTask::OnActivate()
+{
+	if (m_pGUISystem) m_pGUISystem->Activate(TTRUE);
+	if (m_pGUI2) m_pGUI2->Activate(TTRUE);
+	if (m_pRenderer) m_pRenderer->Activate(TTRUE);
+	if (m_pInputHandler) m_pInputHandler->Activate(TTRUE);
+	if (m_pGameStateController) m_pGameStateController->Activate(TTRUE);
+	if (m_pMoviePlayer) m_pMoviePlayer->Activate(TTRUE);
+	
+	if (m_bGameSystemCreated)
+	{
+		TTODO("Activate three more tasks");
+	}
+}
+
+void ARootTask::OnDeactivate()
+{
+	if (m_pGUISystem) m_pGUISystem->Activate(TTRUE);
+	if (m_pGUI2) m_pGUI2->Activate(TTRUE);
+	if (m_pRenderer) m_pRenderer->Activate(TTRUE);
+	if (m_pInputHandler) m_pInputHandler->Activate(TTRUE);
+	if (m_pGameStateController) m_pGameStateController->Activate(TTRUE);
+	if (m_pMoviePlayer) m_pMoviePlayer->Activate(TTRUE);
+
+	TTODO("Deactivate two more tasks");
 }
 
 TPSTRING8_DECLARE(bkg_by_legal1);
@@ -209,16 +269,59 @@ void ARootTask::LoadStartupData()
 
 	auto pSystemManager = TSystemManager::GetSingleton();
 	auto pFadeManager = TSTATICCAST(AFadeManager*, pSystemManager->GetScheduler()->CreateTask(&TGetClass(AFadeManager), this));
-	
-#if 1
-	// Code for tests
 	pFadeManager->Create();
-	ALoadScreen::GetGlobalInstance()->Create();
-	//ALoadScreen::GetGlobalInstance()->StartLoading(0, TTRUE);
-#endif
 }
 
 TBOOL ARootTask::IsPaused() const
 {
 	return m_bPaused || Toshi::TSystemManager::GetSingleton()->IsPaused();
+}
+
+void ARootTask::CreateGameSystem()
+{
+	TIMPLEMENT();
+
+	AFadeManager::GetSingleton()->StopAllFades();
+	ALoadScreen::GetGlobalInstance()->StartLoading(9, TTRUE);
+
+	// ...
+	ALoadScreen::GetGlobalInstance()->Update(1.0f, TTRUE);
+	ALoadScreen::GetGlobalInstance()->Update(1.0f, TTRUE);
+	ALoadScreen::GetGlobalInstance()->Update(1.0f, TTRUE);
+
+	// Reorder tasks?
+	if (m_pInputHandler)
+	{
+		m_pInputHandler->AttachTo(m_pInputHandler->Parent());
+	}
+
+	if (m_pMoviePlayer)
+	{
+		m_pMoviePlayer->AttachTo(m_pMoviePlayer->Parent());
+	}
+
+	if (m_pGUISystem)
+	{
+		m_pGUISystem->AttachTo(m_pGUISystem->Parent());
+	}
+
+	if (m_pGameStateController)
+	{
+		m_pGameStateController->AttachTo(m_pGameStateController->Parent());
+	}
+
+	// ...
+
+	if (m_pRenderer)
+	{
+		m_pRenderer->AttachTo(m_pRenderer->Parent());
+	}
+
+	m_bGameSystemCreated = TTRUE;
+	OnActivate();
+}
+
+void ARootTask::LoadFrontEnd()
+{
+	TIMPLEMENT();
 }

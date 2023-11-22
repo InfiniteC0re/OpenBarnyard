@@ -14,12 +14,19 @@ public:
 
 	virtual TBOOL OnCreate() override;
 	virtual TBOOL OnUpdate(TFLOAT a_fDeltaTime) override;
+	virtual void OnChildDied(Toshi::TClass* a_pClass, Toshi::TTask* a_pDeletedTask) override;
+	virtual void OnActivate() override;
+	virtual void OnDeactivate() override;
 
 	void CreateStartupGameStates();
 	void LoadStartupData();
 
 	TBOOL IsPaused() const;
 	TBOOL IsGameSystemCreated() const { return m_bGameSystemCreated; }
+
+private:
+	void CreateGameSystem();
+	static void LoadFrontEnd();
 
 private:
 	AOptions* m_pOptions;          // 0x20

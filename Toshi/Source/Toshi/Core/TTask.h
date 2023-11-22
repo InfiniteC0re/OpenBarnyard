@@ -32,7 +32,7 @@ namespace Toshi
 		virtual void OnPreDestroy();
 		virtual void OnDestroy();
 		virtual TBOOL OnChildDying(TTask* child);
-		virtual void OnChildDied(TClass* pClass, TTask* deletedTask);
+		virtual void OnChildDied(TClass* a_pClass, TTask* a_pDeletedTask);
 		virtual void OnActivate();
 		virtual void OnDeactivate();
 

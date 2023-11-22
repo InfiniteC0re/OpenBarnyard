@@ -216,6 +216,7 @@ void ABINKMoviePlayer::StopMovie()
 	{
 		BinkClose(m_Bink);
 		m_Bink = TNULL;
+		DestroySurfaces();
 	}
 
 	m_bPlaying = TFALSE;
@@ -370,6 +371,18 @@ TBOOL ABINKMoviePlayer::CreateAGUISurfaces(TUINT a_uiWidth, TUINT a_uiHeight, D3
 	}
 
 	return hRes == S_OK;
+}
+
+void ABINKMoviePlayer::DestroySurfaces()
+{
+	if (m_pSurface)
+	{
+		m_pSurface->Release();
+		m_pSurface = TNULL;
+	}
+
+	m_pRects.Destroy();
+	m_iNumRects = 0;
 }
 
 ABINKMoviePlayer::Rect::~Rect()
