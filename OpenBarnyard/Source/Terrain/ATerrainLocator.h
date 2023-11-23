@@ -16,6 +16,8 @@ class ATerrainLocatorManager
 public:
 	void LoadFromTRB(Toshi::TTRB* a_pTRB);
 
+	Toshi::TTRB* GetTRB() { return m_pTRB; }
+
 private:
 	Toshi::TTRB* m_pTRB;
 	void* m_pLocators;

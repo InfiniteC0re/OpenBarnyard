@@ -23,7 +23,7 @@ TBOOL AAssetLoader::Load(const char* a_szFileName, AssetType a_eAssetType, TBOOL
 		ATRBLoaderJob trbLoaderJob;
 		trbLoaderJob.InitJob(ms_pTRBFiles[a_eAssetType], a_szFileName);
 
-		AAssetStreaming::GetSingleton()->AddMainThreadJob2(&trbLoaderJob);
+		AAssetStreaming::GetSingleton()->AddMainThreadJob(&trbLoaderJob);
 
 		while (AAssetStreaming::GetSingleton()->HasActiveJobs())
 		{

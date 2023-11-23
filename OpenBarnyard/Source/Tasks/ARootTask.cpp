@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "ARandom.h"
 #include "ARootTask.h"
+#include "AGameSystemManager.h"
 #include "Assets/AMaterialLibraryManager.h"
 #include "Assets/AAssetLoader.h"
 #include "Memory/AMemory.h"
@@ -19,6 +20,7 @@
 #include "Sound/ASoundManager.h"
 #include "Movie/ABINKMoviePlayer.h"
 #include "ALoadScreen.h"
+#include "Terrain/ATerrain.h"
 
 #include <Plugins/PPropertyParser/PProperties.h>
 #include <Toshi/Core/TScheduler.h>
@@ -30,7 +32,7 @@ ARootTask::ARootTask()
 {
 	TIMPLEMENT();
 
-	m_bLoadedTerrain = TFALSE;
+	m_bTerrainIsReady = TFALSE;
 	m_bPaused = TFALSE;
 	m_bStopRenderingWorld = TFALSE;
 	m_bGameSystemCreated = TFALSE;
@@ -283,8 +285,12 @@ void ARootTask::CreateGameSystem()
 
 	AFadeManager::GetSingleton()->StopAllFades();
 	ALoadScreen::GetGlobalInstance()->StartLoading(9, TTRUE);
-
+	
 	// ...
+	auto pSystemManager = TSystemManager::GetSingleton();
+	m_pGameSystemManager = pSystemManager->GetScheduler()->CreateTask(&TGetClass(AGameSystemManager), this);
+	m_pGameSystemManager->Create();
+
 	ALoadScreen::GetGlobalInstance()->Update(1.0f, TTRUE);
 	ALoadScreen::GetGlobalInstance()->Update(1.0f, TTRUE);
 	ALoadScreen::GetGlobalInstance()->Update(1.0f, TTRUE);
@@ -324,60 +330,15 @@ void ARootTask::CreateGameSystem()
 void ARootTask::LoadFrontEnd()
 {
 	TIMPLEMENT();
+	ATerrainManager::SetTerrain(
+		ATerrainManager::Terrain_FrontEnd,
+		TTRUE,
+		TTRUE,
+		0,
+		0,
+		0,
+		0
+	);
 
-	Toshi::TTRB trb;
-	trb.Load("Data/Terrain/EnvMain/EnvMain.trb");
-
-	struct ALocatorList
-	{
-
-	};
-
-	struct ATerrainLODBlock
-	{
-
-	};
-
-	struct S1
-	{
-		char* m_szName;
-		char unk1[24];
-		char* m_szSomeName;
-		void* unk2;
-		char unk3[32];
-		TUINT8* m_pLODTypes;
-		TUINT m_eFlags;
-		void* unk4;
-		ATerrainLODBlock** m_ppLODBlocks;
-		char unk5[12];
-		TUINT8 m_uiLODBlock;
-	};
-
-	struct ATerrainVIS
-	{
-		char* m_Unk1;
-		char* m_szMatLibrary;
-		char* m_Unk2;
-		char* m_Unk3;
-		AMaterialLibrary* m_pMaterialLibrary;
-		Toshi::TTRB* m_pMaterialLibraryTRB;
-		ALocatorList* m_pLocators;
-		TINT m_iSomeNum;
-		S1* m_pS1;
-		TUINT m_uiHighLODSize;
-		TINT m_iHighLODNum;
-		ATerrainLODBlock** m_pHighLODs;
-		TINT m_iLowLODNum;
-		ATerrainLODBlock** m_pLowLODs;
-		TINT m_uiPersistantTerrainBlockSize;
-		ATerrainLODBlock* m_pPersistantTerrainBlock;
-	};
-
-	auto pVIS = trb.CastSymbol<ATerrainVIS>("terrainvis");
-
-	for (TINT i = 0; i < pVIS->m_iSomeNum; i++)
-	{
-		auto pS1 = &pVIS->m_pS1[i];
-		TOSHI_INFO("");
-	}
+	ATerrainManager::StartLoading();
 }

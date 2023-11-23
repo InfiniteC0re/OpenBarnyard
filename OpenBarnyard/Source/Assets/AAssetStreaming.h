@@ -16,16 +16,21 @@ public:
 		return !m_Jobs.IsEmpty() || m_pCurrentJob != TNULL;
 	}
 
-	void AddMainThreadJob2(AMainThreadJob* a_pJob)
+	void AddMainThreadJob(AMainThreadJob* a_pJob)
 	{
 		TASSERT(m_pCurrentJob != a_pJob);
 		a_pJob->m_bIsRunning = TFALSE;
-		m_Jobs.PushFront(a_pJob);
+		m_Jobs.PushBack(a_pJob);
 	}
 
 	Toshi::TFileStream& GetFileStream()
 	{
 		return m_FileStream;
+	}
+
+	void SetFlag(TBOOL a_bFlag)
+	{
+		m_bFlag = a_bFlag;
 	}
 
 private:

@@ -7,6 +7,11 @@
 class ATerrainVIS
 {
 public:
+	friend class ATerrain;
+
+public:
+	void LoadSkeleton();
+
 	ATerrainLocatorManager* GetLocatorManager() { return m_pLocatorManager; }
 
 private:

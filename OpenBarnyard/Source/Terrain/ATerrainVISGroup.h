@@ -14,16 +14,11 @@ public:
 		Toshi::TModelRef m_ModelRef;
 	};
 
-	using LODType = TUINT8;
-	enum LODType_ : LODType
-	{
-		LODType_High,
-		LODType_Low,
-		LODType_NUMOF,
-	};
+	friend class ATerrain;
 
 public:
-	
+	void LoadCollision();
+	void LoadModels();
 
 private:
 	const char* m_szName;
@@ -35,7 +30,7 @@ private:
 	TUINT32 m_Unk2;
 	const char* m_szCollisionFile;
 	ModelData* m_pCollisionModelData;
-	ModelData** m_ppLODModelsData[LODType_NUMOF];
+	ModelData** m_ppLODModelsData[ATerrainLODType_NUMOF];
 	const char* m_szHighLODMatLibName;
 	Toshi::TTRB* m_pMatLibHighTRB;
 	AMaterialLibrary* m_pMatLibHigh;

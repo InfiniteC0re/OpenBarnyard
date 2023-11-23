@@ -1,0 +1,24 @@
+#include "pch.h"
+#include "ATerrainVIS.h"
+#include "ATerrain.h"
+#include "Assets/AAssetStreaming.h"
+
+void ATerrainVIS::LoadSkeleton()
+{
+	auto pTerrain = ATerrain::GetSingleton();
+	auto pPersistantBlock = pTerrain->m_pTerrainVIS->m_pPersistantTerrainBlock;
+
+	m_pLocatorManager = new (pPersistantBlock->GetHeap()) ATerrainLocatorManager();
+	auto pTRB = new (pPersistantBlock->GetHeap()) Toshi::TTRB();
+
+	pPersistantBlock->SetupTRB(pTRB, pPersistantBlock);
+
+	auto pTRBJob = pTerrain->GetFreeTRBLoaderJob();
+	pTRBJob->InitJob(pTRB, m_szSkelFilePath);
+
+	auto pSkeletonJob = pTerrain->GetFreeSkeletonLoaderJob();
+	pSkeletonJob->InitJob(this, pTRBJob);
+
+	AAssetStreaming::GetSingleton()->AddMainThreadJob(pTRBJob);
+	AAssetStreaming::GetSingleton()->AddMainThreadJob(pSkeletonJob);
+}

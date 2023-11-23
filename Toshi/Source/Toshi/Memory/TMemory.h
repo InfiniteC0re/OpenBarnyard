@@ -40,7 +40,7 @@ namespace Toshi
 	class TMemory
 	{
 	public:
-		static constexpr int HEAP_MAXNAME = 15;
+		static constexpr int HEAP_MAXNAME = 51;
 
 		typedef uint32_t Flags;
 		typedef uint32_t Error;
@@ -181,6 +181,18 @@ inline static void* TMalloc(size_t size)
 	return Toshi::TMemory::s_Context.s_cbMalloc(size);
 }
 
+inline static void* TMalloc(size_t size, Toshi::TMemoryHeap* heap)
+{
+	if (heap)
+	{
+		return Toshi::TMemoryHeap::Malloc(heap, size);
+	}
+	else
+	{
+		return Toshi::TMemory::s_Context.s_cbMalloc(size);
+	}
+}
+
 inline static void* TCalloc(size_t nitems, size_t size)
 {
 	return Toshi::TMemory::s_Context.s_cbCalloc(nitems, size);
@@ -194,6 +206,18 @@ inline static void* TRealloc(void* mem, size_t newsize)
 inline static void* TMemalign(size_t alignment, size_t size)
 {
 	return Toshi::TMemory::s_Context.s_cbMemalign(alignment, size);
+}
+
+inline static void* TMemalign(size_t alignment, size_t size, Toshi::TMemoryHeap* heap)
+{
+	if (heap)
+	{
+		return heap->Memalign(alignment, size);
+	}
+	else
+	{
+		return Toshi::TMemory::s_Context.s_cbMemalign(alignment, size);
+	}
 }
 
 inline static void TFree(void* mem)

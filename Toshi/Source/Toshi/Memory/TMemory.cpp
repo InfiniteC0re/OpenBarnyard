@@ -73,7 +73,11 @@ namespace Toshi {
 
 	void* TMemory::dlheapmalloc(TMemoryHeap* heap, size_t size)
 	{
-		// 006fc520
+		if (!heap)
+		{
+			heap = GetGlobalHeap();
+		}
+
 		if (heap->m_Flags & TMemoryHeapFlags_AllocAsPile)
 		{
 
@@ -91,7 +95,11 @@ namespace Toshi {
 
 	void* TMemory::dlheapcalloc(TMemoryHeap* heap, size_t nitems, size_t size)
 	{
-		// 006fc580
+		if (!heap)
+		{
+			heap = GetGlobalHeap();
+		}
+
 		if (heap->m_Flags & TMemoryHeapFlags_AllocAsPile)
 		{
 			return TMemoryHeap::AllocAsPile(heap, nitems * size, 4);
@@ -108,7 +116,11 @@ namespace Toshi {
 
 	void* TMemory::dlheapmemalign(TMemoryHeap* heap, size_t alignment, size_t size)
 	{
-		// 006fc6f0
+		if (!heap)
+		{
+			heap = GetGlobalHeap();
+		}
+
 		if (heap->m_Flags & TMemoryHeapFlags_AllocAsPile)
 		{
 			return TMemoryHeap::AllocAsPile(heap, size, 4);
@@ -125,7 +137,11 @@ namespace Toshi {
 
 	void* TMemory::dlheaprealloc(TMemoryHeap* heap, void* mem, size_t newsize)
 	{
-		// 006fc5f0
+		if (!heap)
+		{
+			heap = GetGlobalHeap();
+		}
+
 		TASSERT((heap->m_Flags & TMemoryHeapFlags_AllocAsPile) == 0, "Cannot realloc on pile");
 
 		if (heap->m_Flags & TMemoryHeapFlags_UseMutex) TMemory::AcquireMutex();
@@ -139,6 +155,11 @@ namespace Toshi {
 
 	void TMemory::dlheapfree(TMemoryHeap* heap, void* mem)
 	{
+		if (!heap)
+		{
+			heap = GetGlobalHeap();
+		}
+
 		TASSERT((heap->m_Flags & TMemoryHeapFlags_AllocAsPile) == 0, "Cannot free pile memory");
 
 		if (heap->m_Flags & TMemoryHeapFlags_UseMutex) TMemory::AcquireMutex();

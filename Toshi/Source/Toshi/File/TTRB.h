@@ -439,19 +439,11 @@ namespace Toshi {
 
 		void SetMemoryFunctions(t_MemoryFuncAlloc allocator, t_MemoryFuncDealloc deallocator, void* userdata)
 		{
-			// 00686e00
 			m_MemAllocator = allocator;
 			m_MemDeallocator = deallocator;
 			m_MemUserData = userdata;
 		}
 
-	private:
-		// Parses sections
-		TBOOL ProcessForm(TTSFI& ttsf);
-
-		// Returns pointer to section by index
-		inline void* GetSection(int index) { return GetSectionInfo(index)->m_Data; }
-		
 		void DeleteSymbolTable()
 		{
 			if (m_SYMB != TNULL)
@@ -460,6 +452,13 @@ namespace Toshi {
 				m_SYMB = TNULL;
 			}
 		}
+
+	private:
+		// Parses sections
+		TBOOL ProcessForm(TTSFI& ttsf);
+
+		// Returns pointer to section by index
+		inline void* GetSection(int index) { return GetSectionInfo(index)->m_Data; }
 
 	private:
 		static void* s_pDefAllocatorUserData;
