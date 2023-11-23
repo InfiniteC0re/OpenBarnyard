@@ -24,12 +24,8 @@ namespace Toshi
 		
 		m_pDebugConsole = new TDebugConsole;
 
-#ifdef TOSHI_DEBUG
 		if (IsConsoleEnabled())
 			m_pDebugConsole->Show(TTRUE);
-#else
-		m_pDebugConsole->Show(TFALSE);
-#endif
 
 		return OnCreate(argc, argv);
 	}

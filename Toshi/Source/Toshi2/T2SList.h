@@ -40,6 +40,11 @@ namespace Toshi {
 		};
 
 	public:
+		~T2SList()
+		{
+			Clear();
+		}
+
 		T* Begin()
 		{
 			return m_oRoot.GetNext();
@@ -130,7 +135,7 @@ namespace Toshi {
 
 			while (pNode != End())
 			{
-				T* pNext = pNode->m_pNext;
+				T* pNext = TSTATICCAST(T*, pNode->m_pNext);
 				pNode->m_pNext = pNode;
 				pNode = pNext;
 			}

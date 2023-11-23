@@ -200,7 +200,7 @@ void ARootTask::CreateStartupGameStates()
 
 	AGUISlideshow::Params slideshowSettings = {
 		.iUnk1 = 0,
-		.bSlideSkippable = TFALSE,
+		.bSlideSkippable = TTRUE,
 		.bUnk2 = TFALSE,
 		.bInstaSkippable = TFALSE,
 		.bHasFadeIn = TTRUE,
@@ -324,4 +324,60 @@ void ARootTask::CreateGameSystem()
 void ARootTask::LoadFrontEnd()
 {
 	TIMPLEMENT();
+
+	Toshi::TTRB trb;
+	trb.Load("Data/Terrain/EnvMain/EnvMain.trb");
+
+	struct ALocatorList
+	{
+
+	};
+
+	struct ATerrainLODBlock
+	{
+
+	};
+
+	struct S1
+	{
+		char* m_szName;
+		char unk1[24];
+		char* m_szSomeName;
+		void* unk2;
+		char unk3[32];
+		TUINT8* m_pLODTypes;
+		TUINT m_eFlags;
+		void* unk4;
+		ATerrainLODBlock** m_ppLODBlocks;
+		char unk5[12];
+		TUINT8 m_uiLODBlock;
+	};
+
+	struct ATerrainVIS
+	{
+		char* m_Unk1;
+		char* m_szMatLibrary;
+		char* m_Unk2;
+		char* m_Unk3;
+		AMaterialLibrary* m_pMaterialLibrary;
+		Toshi::TTRB* m_pMaterialLibraryTRB;
+		ALocatorList* m_pLocators;
+		TINT m_iSomeNum;
+		S1* m_pS1;
+		TUINT m_uiHighLODSize;
+		TINT m_iHighLODNum;
+		ATerrainLODBlock** m_pHighLODs;
+		TINT m_iLowLODNum;
+		ATerrainLODBlock** m_pLowLODs;
+		TINT m_uiPersistantTerrainBlockSize;
+		ATerrainLODBlock* m_pPersistantTerrainBlock;
+	};
+
+	auto pVIS = trb.CastSymbol<ATerrainVIS>("terrainvis");
+
+	for (TINT i = 0; i < pVIS->m_iSomeNum; i++)
+	{
+		auto pS1 = &pVIS->m_pS1[i];
+		TOSHI_INFO("");
+	}
 }

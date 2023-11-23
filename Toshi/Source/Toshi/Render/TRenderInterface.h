@@ -91,7 +91,7 @@ namespace Toshi {
 		virtual void* CreateUnknown(const char* a_szName, int a_iUnk1, int a_iUnk2, int a_iUnk3) = 0;
 		virtual TModel* CreateModel1(void* a_Unk1, void* a_Unk2) = 0;
 		virtual TModel* CreateModel2(void* a_Unk1, void* a_Unk2) = 0;
-		virtual TModel* CreateModel3(void* a_Unk1, void* a_Unk2, void* a_Unk3, void* a_Unk4) = 0;
+		virtual TModel* CreateModel3(const char* a_szFilePath, TBOOL a_eLoad, TTRB* a_pAssetTRB, TUINT a_uiSymbolNameOffset) = 0;
 		virtual void OnInitializationFailureDevice();
 		virtual void OnInitializationFailureDisplay();
 		virtual TDebugText* CreateDebugText() = 0;

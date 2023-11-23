@@ -181,6 +181,42 @@ namespace Toshi {
 		return TNULL;
 	}
 
+	TBOOL TModel::GetSkeletonAssetSymbolName(const char* a_szFileName, const char*& a_rSymbolName, TUINT32& a_rStartPos, TTRB* a_pTRB)
+	{
+		auto iFilePathLength = TStringManager::String8Length(a_szFileName);
+		auto iFileNamePos = iFilePathLength - 1;
+		a_rStartPos = iFilePathLength;
+
+		while (a_szFileName[iFileNamePos] != '\\' && a_szFileName[iFileNamePos] != '/')
+			iFileNamePos--;
+
+		iFileNamePos++;
+		char symbolName[64];
+
+		auto iFileNameLength = iFilePathLength - iFileNamePos - 4;
+		a_rStartPos = iFileNameLength;
+
+		TStringManager::String8Copy(symbolName, a_szFileName + iFileNamePos, iFileNameLength);
+		symbolName[iFileNameLength] = '_';
+		symbolName[iFileNameLength + 1] = '\0';
+		a_rStartPos = iFileNameLength + 1;
+
+		TStringManager::String8ToLowerCase(symbolName);
+		TStringManager::String8Copy(symbolName + a_rStartPos, "Skeleton");
+
+		auto pSymbol = a_pTRB->GetSymbol(symbolName);
+
+		if (pSymbol)
+		{
+			a_rSymbolName = a_pTRB->GetSymbolName(pSymbol);
+			return TTRUE;
+		}
+		else
+		{
+			return TFALSE;
+		}
+	}
+
 	const char* TModel::TranslateSymbolName(const char* symbolName)
 	{
 		static char s_TranslatedSymbol[512];

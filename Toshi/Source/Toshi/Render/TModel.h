@@ -79,6 +79,7 @@ namespace Toshi {
 
 	public:
 		static void* ResourceCallback(void* pData, TTRB* pTRB, TBOOL flag);
+		static TBOOL GetSkeletonAssetSymbolName(const char* a_szFileName, const char*& a_rSymbolName, TUINT32& a_rStartPos, TTRB* a_pTRB);
 		static const char* TranslateSymbolName(const char* symbolName);
 
 		static void SetTRBLoadCallback(t_TRBLoadCallback fnCallback) { sm_pTRBLoadCallback = fnCallback; }

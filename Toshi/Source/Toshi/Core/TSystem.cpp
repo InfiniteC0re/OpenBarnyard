@@ -25,8 +25,9 @@ namespace Toshi
 
 		if (m_Second > 1.0f)
 		{
+			m_AverageFps += 1.0f / deltaTime;
+			m_AverageFps /= 2.0f;
 			m_Second = 0.0;
-			m_AverageFps = (1.0f / deltaTime) * 0.5f + m_AverageFps * 0.5f;
 		}
 
 		m_FrameCount += 1;
