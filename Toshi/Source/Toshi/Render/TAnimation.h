@@ -106,9 +106,10 @@ namespace Toshi {
 		};
 
 	public:
-		static TKeyframeLibrary* Create(TRBHeader* a_pTRBHeader);
+		static TKeyframeLibrary* CreateFromTRB(TTRB* a_pTRB, const char* a_szSymbolName);
 
 		void Delete();
+		void SetTRB(TTRB* a_pTRB) { m_pTRB = a_pTRB; }
 
 		const char* GetName() const
 		{
@@ -129,7 +130,8 @@ namespace Toshi {
 		}
 
 	private:
-		const char* m_szName;
+		TUINT8 m_iNameLength;
+		char m_szName[31];
 		TVector3 m_SomeVector;
 		int m_iReferenceCount;
 		int m_iNumTranslations;
@@ -203,8 +205,7 @@ namespace Toshi {
 
 		TKeyframeLibrary* GetLibrary(const char* a_szName);
 
-		TKeyframeLibrary* LoadLibrary(TKeyframeLibrary::TRBHeader* a_pTRBHeader);
-		TKeyframeLibrary* LoadLibraryFromTRB(TTRB* a_pTRB, const char* a_szSymbolName);
+		TKeyframeLibrary* LoadLibraryFromTRB(const char* a_szFilePath);
 		void UnloadLibrary(TKeyframeLibrary* a_pLibrary);
 
 	private:

@@ -14,5 +14,5 @@ public:
 	virtual TBOOL CancelJob() { return TFALSE; }
 
 protected:
-	TBOOL m_bIsRunning;
+	TBOOL m_bIsRunning = TFALSE;
 };
