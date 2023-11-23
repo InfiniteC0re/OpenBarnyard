@@ -89,9 +89,9 @@ namespace Toshi {
 		virtual void SetLightColourMatrix(const TMatrix44& a_rMatrix);
 		virtual void Unknown1(TViewport* a_pViewport);
 		virtual void* CreateUnknown(const char* a_szName, int a_iUnk1, int a_iUnk2, int a_iUnk3) = 0;
-		virtual TModel* CreateModel1(void* a_Unk1, void* a_Unk2) = 0;
-		virtual TModel* CreateModel2(void* a_Unk1, void* a_Unk2) = 0;
-		virtual TModel* CreateModel3(const char* a_szFilePath, TBOOL a_eLoad, TTRB* a_pAssetTRB, TUINT a_uiSymbolNameOffset) = 0;
+		virtual TModel* CreateModel(TTMD* a_pTMD, TBOOL a_bLoad) = 0;
+		virtual TModel* CreateModel(const char* a_szFilePath, TBOOL a_bLoad) = 0;
+		virtual TModel* CreateModel(const char* a_szFilePath, TBOOL a_bLoad, TTRB* a_pAssetTRB, TUINT8 a_ui8FileNameLen) = 0;
 		virtual void OnInitializationFailureDevice();
 		virtual void OnInitializationFailureDisplay();
 		virtual TDebugText* CreateDebugText() = 0;

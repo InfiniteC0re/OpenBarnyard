@@ -1,8 +1,6 @@
 #include "ToshiPCH.h"
 #include "TRenderInterface.h"
 #include "Toshi/File/TFile.h"
-#include "Toshi2/T2ResourceManager.h"
-#include "Toshi/Render/TModelManager.h"
 
 namespace Toshi {
 

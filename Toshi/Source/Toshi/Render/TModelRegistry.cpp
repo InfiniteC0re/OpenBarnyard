@@ -55,16 +55,16 @@ namespace Toshi {
 		ms_oUsedList.PushFront(pEntry);
 
 		const char* szSkeletonSymbolName;
-		TUINT32 uiSymbolNameOffset = 0;
+		TUINT8 ui8NameLen = 0;
 
-		if (!a_pAssetTRB || !TModel::GetSkeletonAssetSymbolName(filepath, szSkeletonSymbolName, uiSymbolNameOffset, a_pAssetTRB))
+		if (!a_pAssetTRB || !TModel::GetSkeletonAssetSymbolName(filepath, szSkeletonSymbolName, ui8NameLen, a_pAssetTRB))
 		{
 			a_pAssetTRB = TNULL;
 			szSkeletonSymbolName = filepath;
-			uiSymbolNameOffset = -1;
+			ui8NameLen = -1;
 		}
 
-		auto pModel = TRenderInterface::GetSingleton()->CreateModel3(szSkeletonSymbolName, TTRUE, a_pAssetTRB, uiSymbolNameOffset);
+		auto pModel = TRenderInterface::GetSingleton()->CreateModel(szSkeletonSymbolName, TTRUE, a_pAssetTRB, ui8NameLen);
 		pEntry->Create(crc32, pModel);
 
 		return pEntry;

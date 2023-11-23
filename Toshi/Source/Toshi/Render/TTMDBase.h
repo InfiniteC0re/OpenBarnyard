@@ -6,7 +6,7 @@ namespace Toshi {
 
 		struct SkeletonHeader
 		{
-			const char* m_pTKLName;
+			char m_szTKLName[16];
 			int m_iTKeyCount;
 			int m_iQKeyCount;
 			int m_iSKeyCount;

@@ -1,4 +1,5 @@
 #include "ToshiPCH.h"
+#include "TModel_DX8.h"
 #include "TRenderCapture_DX8.h"
 #include "TRenderContext_DX8.h"
 #include "TRenderAdapter_DX8.h"
@@ -394,22 +395,52 @@ namespace Toshi {
 		return TNULL;
 	}
 
-	TModel* TRenderD3DInterface::CreateModel1(void* a_Unk1, void* a_Unk2)
+	TModel* TRenderD3DInterface::CreateModel(TTMD* a_pTMD, TBOOL a_bLoad)
 	{
-		TIMPLEMENT();
-		return TNULL;
+		auto pModel = new TModelHAL();
+
+		if (pModel)
+		{
+			if (!pModel->Create(a_pTMD, a_bLoad))
+			{
+				pModel->Delete();
+				return TNULL;
+			}
+		}
+
+		return pModel;
 	}
 
-	TModel* TRenderD3DInterface::CreateModel2(void* a_Unk1, void* a_Unk2)
+	TModel* TRenderD3DInterface::CreateModel(const char* a_szFilePath, TBOOL a_bLoad)
 	{
-		TIMPLEMENT();
-		return TNULL;
+		auto pModel = new TModelHAL();
+
+		if (pModel)
+		{
+			if (!pModel->Create(a_szFilePath, a_bLoad))
+			{
+				pModel->Delete();
+				return TNULL;
+			}
+		}
+
+		return pModel;
 	}
 
-	TModel* TRenderD3DInterface::CreateModel3(const char* a_szFilePath, TBOOL a_eLoad, TTRB* a_pAssetTRB, TUINT a_uiSymbolNameOffset)
+	TModel* TRenderD3DInterface::CreateModel(const char* a_szFilePath, TBOOL a_bLoad, TTRB* a_pAssetTRB, TUINT8 a_ui8FileNameLen)
 	{
-		TIMPLEMENT();
-		return TNULL;
+		auto pModel = new TModelHAL();
+
+		if (pModel)
+		{
+			if (!pModel->Create(a_szFilePath, a_bLoad, a_pAssetTRB, a_ui8FileNameLen))
+			{
+				pModel->Delete();
+				return TNULL;
+			}
+		}
+
+		return pModel;
 	}
 
 	TDebugText* TRenderD3DInterface::CreateDebugText()

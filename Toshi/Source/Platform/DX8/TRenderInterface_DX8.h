@@ -36,9 +36,9 @@ namespace Toshi {
 		virtual TRenderCapture* CreateCapture() override;
 		virtual void DestroyCapture(TRenderCapture* a_pRenderCapture) override;
 		virtual void* CreateUnknown(const char* a_szName, int a_iUnk1, int a_iUnk2, int a_iUnk3) override;
-		virtual TModel* CreateModel1(void* a_Unk1, void* a_Unk2) override;
-		virtual TModel* CreateModel2(void* a_Unk1, void* a_Unk2) override;
-		virtual TModel* CreateModel3(const char* a_szFilePath, TBOOL a_eLoad, TTRB* a_pAssetTRB, TUINT a_uiSymbolNameOffset) override;
+		virtual TModel* CreateModel(TTMD* a_pTMD, TBOOL a_bLoad) override;
+		virtual TModel* CreateModel(const char* a_szFilePath, TBOOL a_bLoad) override;
+		virtual TModel* CreateModel(const char* a_szFilePath, TBOOL a_bLoad, TTRB* a_pAssetTRB, TUINT8 a_ui8FileNameLen) override;
 		virtual void OnInitializationFailureDevice() override;
 		virtual void OnInitializationFailureDisplay() override;
 		virtual TDebugText* CreateDebugText() override;
