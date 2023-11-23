@@ -62,6 +62,9 @@ namespace Toshi
 			T2String8::Copy(m_fileName, fileName, -1);
 		}
 
+		TTRB* GetTRB() const { return m_trb; }
+		const char* GetFileName() const { return m_fileName; }
+
 	public:
 		TTRB* m_trb;
 		char m_fileName[64];
