@@ -258,6 +258,21 @@ Toshi::TTexture* AMaterialLibraryManager::FindTexture(const char* a_szTextureNam
 	return TNULL;
 }
 
+AMaterialLibrary* AMaterialLibraryManager::List::CreateLibraryFromTRB(Toshi::TTRB* a_pTRB, const char* a_szFilePath)
+{
+	auto pLibrary = new AMaterialLibrary;
+	pLibrary->SetPath(a_szFilePath);
+
+	if (!pLibrary->LoadTRBFile(a_pTRB))
+	{
+		delete pLibrary;
+		return TNULL;
+	}
+
+	m_Libraries.PushBack(pLibrary);
+	return pLibrary;
+}
+
 AMaterialLibrary* AMaterialLibraryManager::List::CreateLibraryFromAsset(const char* a_szFilePath, Toshi::TTRB* a_pTRB)
 {
 	auto pLibrary = new AMaterialLibrary;

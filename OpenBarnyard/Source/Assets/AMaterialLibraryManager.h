@@ -16,6 +16,7 @@ public:
 		public Toshi::TSingleton<List>
 	{
 	public:
+		AMaterialLibrary* CreateLibraryFromTRB(Toshi::TTRB* a_pTRB, const char* a_szFilePath);
 		AMaterialLibrary* CreateLibraryFromAsset(const char* a_szFilePath, Toshi::TTRB* a_pTRB);
 		ATexture* FindTexture(const char* a_szTextureName, AMaterialLibrary** a_ppMaterialLibrary, TINT* a_pTextureIndex);
 

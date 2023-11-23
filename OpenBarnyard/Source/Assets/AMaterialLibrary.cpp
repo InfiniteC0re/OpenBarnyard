@@ -72,6 +72,17 @@ TBOOL AMaterialLibrary::LoadTTLFile(const char* a_szFilePath)
 	return TTRUE;
 }
 
+TBOOL AMaterialLibrary::LoadTRBFile(Toshi::TTRB* a_pTRB)
+{
+	void* pTTL = a_pTRB->GetSymbol("TTL");
+	TASSERT(TNULL != pTTL);
+
+	LoadTTLData(pTTL);
+	a_pTRB->Close();
+
+	return TTRUE;
+}
+
 void AMaterialLibrary::Destroy()
 {
 	Node::Remove();

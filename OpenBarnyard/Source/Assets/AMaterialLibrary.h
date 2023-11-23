@@ -32,6 +32,7 @@ public:
 
 	TBOOL LoadTTLData(void* a_pTTLData);
 	TBOOL LoadTTLFile(const char* a_szFilePath);
+	TBOOL LoadTRBFile(Toshi::TTRB* a_pTRB);
 
 	void Destroy();
 	void DestroyTextures();
