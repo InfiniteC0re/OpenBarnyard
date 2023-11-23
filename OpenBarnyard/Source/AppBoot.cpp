@@ -12,6 +12,7 @@
 #include <Toshi/Core/TSystem.h>
 #include <Toshi2/T2SimpleArray.h>
 #include <Toshi/Render/TRenderInterface.h>
+#include <Toshi/Render/TModelRegistry.h>
 #include <Toshi/Strings/TPString8.h>
 #include <Toshi/Input/TInputInterface.h>
 
@@ -43,6 +44,7 @@ TBOOL AApplication::OnCreate(int argc, char** argv)
 	ALocaleManager* pLocaleManager = T2Locale::CreateSingleton<ALocaleManager>();
 	TTODO("Create some instances of some classes");
 
+	TModelRegistry::Initialise();
 	pLocaleManager->SetLanguage(ALocaleManager::Lang_EnglishUK);
 	
 	auto pSystemManager = TSystemManager::GetSingleton();

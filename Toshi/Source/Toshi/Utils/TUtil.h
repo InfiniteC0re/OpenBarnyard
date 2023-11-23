@@ -9,12 +9,7 @@ namespace Toshi
 	{
 	public:
 		static TBOOL ToshiCreate(int argc, char** argv, TMemory& memorySettings);
-		
-		static void ToshiDestroy()
-		{
-			ToshiDestroySubsystems();
-			ToshiDestroyMemory();
-		}
+		static void ToshiDestroy();
 
 		static void Create()
 		{
@@ -23,16 +18,8 @@ namespace Toshi
 			TUtil::CRCInitialise();
 		}
 
-		static void ToshiDestroySubsystems()
-		{
-			TLog::Destroy();
-			// ....
-		}
-
-		static void ToshiDestroyMemory()
-		{
-			TMemory::Shutdown();
-		}
+		static void ToshiDestroySubsystems();
+		static void ToshiDestroyMemory();
 		
 		static const char* GetTime();
 		static void TrimLog(const char* fileExtension, size_t trimTo);

@@ -156,10 +156,14 @@ namespace Toshi
 	class TMemoryHeapSwap
 	{
 	public:
+		TMemoryHeapSwap()
+		{
+			m_pOldHeap = TMemory::GetGlobalHeap();
+		}
+
 		TMemoryHeapSwap(TMemoryHeap* a_pNewHeap)
 		{
 			m_pOldHeap = TMemory::GetGlobalHeap();
-			TMemory::SetGlobalHeap(a_pNewHeap);
 		}
 
 		~TMemoryHeapSwap()

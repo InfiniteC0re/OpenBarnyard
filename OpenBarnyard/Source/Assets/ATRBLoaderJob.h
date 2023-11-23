@@ -11,6 +11,8 @@ public:
 
 	void InitJob(Toshi::TTRB* a_pTRB, const char* a_szFileName);
 
+	Toshi::TTRBStreamJob& GetStream() { return m_oStreamJob; }
+
 protected:
 	Toshi::TTRBStreamJob m_oStreamJob;
 };

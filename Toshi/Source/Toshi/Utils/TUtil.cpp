@@ -3,6 +3,7 @@
 #include "TRegion.h"
 #include "Toshi/Core/TSystem.h"
 #include "Toshi/Core/TError.h"
+#include "Toshi/Render/TModelRegistry.h"
 
 namespace Toshi
 {
@@ -119,7 +120,25 @@ namespace Toshi
 		return TTRUE;
     }
 
-    void TUtil::MemSet(void* ptr, size_t value, size_t size)
+	void TUtil::ToshiDestroy()
+	{
+		ToshiDestroySubsystems();
+		ToshiDestroyMemory();
+	}
+
+	void TUtil::ToshiDestroySubsystems()
+	{
+		TLog::Destroy();
+		TModelRegistry::Uninitialise();
+		// ....
+	}
+
+	void TUtil::ToshiDestroyMemory()
+	{
+		TMemory::Shutdown();
+	}
+
+	void TUtil::MemSet(void* ptr, size_t value, size_t size)
     {
 		if (size >= sizeof(void*))
 		{
