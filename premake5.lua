@@ -22,6 +22,7 @@ group "Engine"
 	include "OpenBarnyard"
 	
 group "Third-Party"
+	include "Toshi/Vendor/Opcode"
 	include "Toshi/Vendor/libogg"
 	include "Toshi/Vendor/libvorbis"
 	include "Toshi/Vendor/libtheora"
