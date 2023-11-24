@@ -18,7 +18,7 @@ public:
 
 public:
 	void LoadCollision();
-	void LoadModels();
+	void LoadModels(ATerrainLODType a_eLODType);
 	void LoadMatlib(ATerrainLODType a_eLODType);
 
 	void UnloadMatlib(ATerrainLODType a_eLODType);
@@ -52,7 +52,7 @@ private:
 	ATerrainLODBlock** m_ppHighLODBlocks;
 	ATerrainLODBlock** m_ppLowLODBlocks;
 	TUINT8* m_pHighLODToBlock;
-	TUINT* m_pLowLODToBlock;
+	TUINT8* m_pLowLODToBlock;
 	TUINT8 m_ui8AllocCollisionBlock;
 	TUINT8 m_ui8AllocMatlibsHighBlock;
 	TUINT8 m_ui8AllocMatlibsLowBlock;

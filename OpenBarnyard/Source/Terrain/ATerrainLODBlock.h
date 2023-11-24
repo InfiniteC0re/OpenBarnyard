@@ -19,6 +19,7 @@ class ATerrainLODBlock :
 public:
 	friend class ATerrain;
 	friend class ATerrainVIS;
+	friend class ATerrainVISGroup;
 
 public:
 	ATerrainLODBlock(TUINT a_uiHeapSize, const char* a_szName);

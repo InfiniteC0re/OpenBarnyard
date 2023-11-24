@@ -6,16 +6,141 @@
 
 void ATerrainVISGroup::LoadCollision()
 {
-	TIMPLEMENT();
+	auto pTerrain = ATerrain::GetSingleton();
+
+	if (m_szCollisionFile[0] != '\0')
+	{
+		auto pBlock = (pTerrain->IsCollisionPersistant()) ?
+			pTerrain->GetVIS()->m_pPersistantTerrainBlock : 
+			m_ppHighLODBlocks[m_ui8AllocCollisionBlock];
+
+		m_pCollisionModelData = new (pBlock->GetHeap()) ModelData();
+
+		auto pTRB = new (pBlock->GetHeap()) Toshi::TTRB();
+		pBlock->SetupTRB(pTRB, pBlock);
+
+		auto pModelLoaderJob = pTerrain->GetFreeModelLoaderJob();
+		pModelLoaderJob->InitJob(
+			&m_pCollisionModelData->m_ModelRef,
+			pTRB,
+			m_szCollisionFile,
+			pTerrain->IsCollisionPersistant()
+		);
+
+		auto pCollisionJob = pTerrain->GetFreeCollisionLoaderJob();
+		pCollisionJob->InitJob(this, TFALSE);
+
+		AAssetStreaming::GetSingleton()->AddMainThreadJob(pModelLoaderJob);
+		AAssetStreaming::GetSingleton()->AddMainThreadJob(pCollisionJob);
+		m_eFlags |= BITFIELD(10);
+	}
 }
 
-void ATerrainVISGroup::LoadModels()
+void ATerrainVISGroup::LoadModels(ATerrainLODType a_eLODType)
 {
-	TIMPLEMENT();
+	TASSERT(a_eLODType == ATerrainLODType_High || a_eLODType == ATerrainLODType_Low);
+
+	auto pTerrain = ATerrain::GetSingleton();
+
+	if ((m_eFlags & 1 << (a_eLODType + 2)) == 0 &&
+		(m_eFlags & 1 << (a_eLODType)) == 0)
+	{
+		const char** ppLODNames;
+		TINT iNumLODs;
+
+		if (a_eLODType == ATerrainLODType_High)
+		{
+			iNumLODs = m_iNumHighLODs;
+			ppLODNames = m_ppHighLODNames;
+		}
+		else
+		{
+			iNumLODs = m_iNumLowLODs;
+			ppLODNames = m_ppLowLODNames;
+		}
+
+		if (iNumLODs == 0 && m_szCollisionFile[0] == '\0')
+		{
+			m_eFlags = ~(16 << a_eLODType) & m_eFlags | 64 << (a_eLODType) | 1 << (a_eLODType);
+		}
+		else
+		{
+			TUINT16 uiNumLODBlocks;
+			ATerrainLODBlock** ppLODBlocks;
+			TUINT8* pLODToBlock;
+
+			if (a_eLODType == ATerrainLODType_High)
+			{
+				uiNumLODBlocks = m_ui16NumHighLODBlocks;
+				ppLODBlocks = m_ppHighLODBlocks;
+				pLODToBlock = m_pHighLODToBlock;
+			}
+			else
+			{
+				uiNumLODBlocks = m_ui16NumLowLODBlocks;
+				ppLODBlocks = m_ppLowLODBlocks;
+				pLODToBlock = m_pLowLODToBlock;
+			}
+
+			for (TINT i = 0; i < uiNumLODBlocks; i++)
+			{
+				if (ppLODBlocks[i] == TNULL)
+				{
+					ppLODBlocks[i] = pTerrain->AllocateLODBlock(a_eLODType, this);
+
+					if (ppLODBlocks[i] == TNULL)
+					{
+						TASSERT(TFALSE, "Couldn't allocated new LOD block!");
+						return;
+					}
+
+					ppLODBlocks[i]->m_bIsUnused = TFALSE;
+				}
+			}
+
+			if (a_eLODType == ATerrainLODType_High && pTerrain->IsCollisionPersistant())
+			{
+				LoadCollision();
+			}
+
+			LoadMatlib(a_eLODType);
+
+			for (TINT i = 0; i < iNumLODs; i++)
+			{
+				if (m_ppLODModelsData[a_eLODType][i] == TNULL)
+				{
+					auto pBlock = ppLODBlocks[pLODToBlock[i]];
+					auto pModelData = new (pBlock->GetHeap()) ModelData();
+
+					auto pTRB = new (pBlock->GetHeap()) Toshi::TTRB();
+					pBlock->SetupTRB(pTRB, pBlock);
+					m_ppLODModelsData[a_eLODType][i] = pModelData;
+
+					auto pModelLoaderJob = pTerrain->GetFreeModelLoaderJob();
+					pModelLoaderJob->InitJob(
+						&pModelData->m_ModelRef,
+						pTRB,
+						ppLODNames[i],
+						TTRUE
+					);
+
+					AAssetStreaming::GetSingleton()->AddMainThreadJob(pModelLoaderJob);
+				}
+			}
+
+			auto pSectionJob = pTerrain->GetFreeSectionLoaderJob();
+			pSectionJob->InitJob(this, a_eLODType);
+
+			AAssetStreaming::GetSingleton()->AddMainThreadJob(pSectionJob);
+			m_eFlags = ~(16 << (a_eLODType)) & m_eFlags | (1 << (a_eLODType + 2));
+		}
+	}	
 }
 
 void ATerrainVISGroup::LoadMatlib(ATerrainLODType a_eLODType)
 {
+	TASSERT(a_eLODType == ATerrainLODType_High || a_eLODType == ATerrainLODType_Low);
+
 	TUINT8 uiAllocAtBlock;
 	ATerrainLODBlock** ppBlocks;
 
@@ -55,6 +180,8 @@ void ATerrainVISGroup::LoadMatlib(ATerrainLODType a_eLODType)
 
 void ATerrainVISGroup::UnloadMatlib(ATerrainLODType a_eLODType)
 {
+	TASSERT(a_eLODType == ATerrainLODType_High || a_eLODType == ATerrainLODType_Low);
+
 	if (a_eLODType == ATerrainLODType_High)
 	{
 		if (m_pMatLibHigh)

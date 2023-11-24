@@ -8,6 +8,7 @@ class ATerrainVIS
 {
 public:
 	friend class ATerrain;
+	friend class ATerrainVISGroup;
 
 public:
 	void LoadSkeleton();

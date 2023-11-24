@@ -57,6 +57,8 @@ public:
 	void UseBlocksInCurrentVIS(ATerrainLODType a_eLODType);
 	ATerrainLODBlock* AllocateLODBlock(ATerrainLODType a_eLODType, ATerrainVISGroup* a_pVISGroup);
 
+	ATerrainVIS* GetVIS() { return m_pTerrainVIS; }
+
 	ATRBLoaderJob* GetFreeTRBLoaderJob()
 	{
 		TASSERT(m_FreeTRBLoaderJobs.Size() > 0, "No free ATRBLoaderJobs left!");
@@ -101,6 +103,57 @@ public:
 			m_UsedMatlibLoaderJobs.PushFront(pTRBJobSlot);
 
 			return TSTATICCAST(AMatLibLoaderJob*, pTRBJobSlot->pJob);
+		}
+		else
+		{
+			return TNULL;
+		}
+	}
+
+	ACollisionDoneJob* GetFreeCollisionLoaderJob()
+	{
+		TASSERT(m_FreeCollisionLoaderJobs.Size() > 0, "No free ACollisionDoneJob left!");
+
+		if (m_FreeCollisionLoaderJobs.Size() > 0)
+		{
+			auto pTRBJobSlot = m_FreeCollisionLoaderJobs.PopFront();
+			m_UsedCollisionLoaderJobs.PushFront(pTRBJobSlot);
+
+			return TSTATICCAST(ACollisionDoneJob*, pTRBJobSlot->pJob);
+		}
+		else
+		{
+			return TNULL;
+		}
+	}
+
+	AModelLoaderJob* GetFreeModelLoaderJob()
+	{
+		TASSERT(m_FreeModelLoaderJobs.Size() > 0, "No free AModelLoaderJob left!");
+
+		if (m_FreeModelLoaderJobs.Size() > 0)
+		{
+			auto pTRBJobSlot = m_FreeModelLoaderJobs.PopFront();
+			m_UsedModelLoaderJobs.PushFront(pTRBJobSlot);
+
+			return TSTATICCAST(AModelLoaderJob*, pTRBJobSlot->pJob);
+		}
+		else
+		{
+			return TNULL;
+		}
+	}
+
+	ASectionDoneJob* GetFreeSectionLoaderJob()
+	{
+		TASSERT(m_FreeSectionLoaderJobs.Size() > 0, "No free ASectionDoneJob left!");
+
+		if (m_FreeSectionLoaderJobs.Size() > 0)
+		{
+			auto pTRBJobSlot = m_FreeSectionLoaderJobs.PopFront();
+			m_UsedSectionLoaderJobs.PushFront(pTRBJobSlot);
+
+			return TSTATICCAST(ASectionDoneJob*, pTRBJobSlot->pJob);
 		}
 		else
 		{
