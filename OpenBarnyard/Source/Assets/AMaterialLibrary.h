@@ -35,7 +35,6 @@ public:
 	TBOOL LoadTRBFile(Toshi::TTRB* a_pTRB);
 
 	void Destroy();
-	void DestroyTextures();
 
 	TINT FindTextureIndex(const char* a_szTextureName);
 
@@ -54,6 +53,9 @@ public:
 	{
 		m_Path = a_szFilePath;
 	}
+
+private:
+	void DestroyTextures();
 
 private:
 	inline static TBOOL ms_bSkipLoadedTextures = TFALSE;

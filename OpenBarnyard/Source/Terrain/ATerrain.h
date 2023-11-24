@@ -45,10 +45,17 @@ public:
 	virtual ~ATerrain();
 
 	void Update();
-	TBOOL IsLoaded();
+
+	TBOOL IsLoaded() const;
+	TBOOL IsCollisionPersistant() const { return m_bPersistantCollision; }
 
 	void LoadFromFile(const char* a_szFilePath, TBOOL a_bLoadLater, TBOOL a_bPersistantCollision);
 	void WaitUntilLoaded();
+
+	void DestroyModelData(ATerrainVISGroup::ModelData* a_pModelData);
+
+	void UseBlocksInCurrentVIS(ATerrainLODType a_eLODType);
+	ATerrainLODBlock* AllocateLODBlock(ATerrainLODType a_eLODType, ATerrainVISGroup* a_pVISGroup);
 
 	ATRBLoaderJob* GetFreeTRBLoaderJob()
 	{

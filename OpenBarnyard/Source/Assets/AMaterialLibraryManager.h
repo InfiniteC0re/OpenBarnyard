@@ -90,9 +90,10 @@ public:
 	TINT GetNumUsedTextures() const { return m_iNumUsedTextures; }
 	TINT GetNumFreeTextures() const { return m_iNumFreeTextures; }
 
+	void UnloadTexturesOfLibrary(AMaterialLibrary* a_pMaterialLibrary);
+
 private:
 	void DestroyLibrary(LibrariesMap::Node*& a_rpMaterialLibraryNode, TBOOL a_bUpdateGUIMaterials);
-	void UnloadTexturesOfLibrary(AMaterialLibrary* a_pMaterialLibrary);
 
 private:
 	Toshi::T2Map<Toshi::TPString8, int, Toshi::TPString8::Comparator> m_NumRefLibraries;

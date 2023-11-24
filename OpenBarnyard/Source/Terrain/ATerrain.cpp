@@ -85,7 +85,7 @@ void ATerrain::Update()
 	TIMPLEMENT();
 }
 
-TBOOL ATerrain::IsLoaded()
+TBOOL ATerrain::IsLoaded() const
 {
 	if (m_pTerrainVIS == TNULL)
 	{
@@ -141,33 +141,33 @@ void ATerrain::LoadFromFile(const char* a_szFilePath, TBOOL a_bLoadLater, TBOOL 
 		);
 	}
 
-	if (m_pTerrainVIS->m_iHighLODNum > 0)
+	if (m_pTerrainVIS->m_iNumHighBlocks > 0)
 	{
-		m_pTerrainVIS->m_ppHighLODs = new ATerrainLODBlock*[m_pTerrainVIS->m_iHighLODNum];
+		m_pTerrainVIS->m_ppHighBlocks = new ATerrainLODBlock*[m_pTerrainVIS->m_iNumHighBlocks];
 
-		for (TINT i = 0; i < m_pTerrainVIS->m_iHighLODNum; i++)
+		for (TINT i = 0; i < m_pTerrainVIS->m_iNumHighBlocks; i++)
 		{
 			char szBlockName[64];
 			TStringManager::String8Format(szBlockName, sizeof(szBlockName), "Terrain_HighLOD_Block%d", i);
 
-			m_pTerrainVIS->m_ppHighLODs[i] = new ATerrainLODBlock(
-				m_pTerrainVIS->m_uiHighLODSize,
+			m_pTerrainVIS->m_ppHighBlocks[i] = new ATerrainLODBlock(
+				m_pTerrainVIS->m_uiHighBlockSize,
 				szBlockName
 			);
 		}
 	}
 
-	if (m_pTerrainVIS->m_iLowLODNum > 0)
+	if (m_pTerrainVIS->m_iNumLowBlocks > 0)
 	{
-		m_pTerrainVIS->m_ppLowLODs = new ATerrainLODBlock*[m_pTerrainVIS->m_iLowLODNum];
+		m_pTerrainVIS->m_ppLowBlocks = new ATerrainLODBlock*[m_pTerrainVIS->m_iNumLowBlocks];
 
-		for (TINT i = 0; i < m_pTerrainVIS->m_iLowLODNum; i++)
+		for (TINT i = 0; i < m_pTerrainVIS->m_iNumLowBlocks; i++)
 		{
 			char szBlockName[64];
 			TStringManager::String8Format(szBlockName, sizeof(szBlockName), "Terrain_LowLOD_Block%d", i);
 
-			m_pTerrainVIS->m_ppLowLODs[i] = new ATerrainLODBlock(
-				m_pTerrainVIS->m_uiLowLODSize,
+			m_pTerrainVIS->m_ppLowBlocks[i] = new ATerrainLODBlock(
+				m_pTerrainVIS->m_uiLowBlockSize,
 				szBlockName
 			);
 		}
@@ -229,6 +229,160 @@ void ATerrain::WaitUntilLoaded()
 		AAssetStreaming::GetSingleton()->Update();
 		Sleep(20);
 	}
+}
+
+void ATerrain::DestroyModelData(ATerrainVISGroup::ModelData* a_pModelData)
+{
+	TVALIDPTR(a_pModelData);
+
+	if (a_pModelData->IsLinked())
+	{
+		m_ModelDatas.Remove(a_pModelData, a_pModelData);
+	}
+
+	if (a_pModelData)
+	{
+		delete a_pModelData;
+	}
+}
+
+void ATerrain::UseBlocksInCurrentVIS(ATerrainLODType a_eLODType)
+{
+	TINT iNumBlocks;
+	ATerrainLODBlock** ppBlocks;
+
+	if (a_eLODType == ATerrainLODType_High)
+	{
+		iNumBlocks = m_pTerrainVIS->m_iNumHighBlocks;
+		ppBlocks = m_pTerrainVIS->m_ppHighBlocks;
+	}
+	else
+	{
+		iNumBlocks = m_pTerrainVIS->m_iNumLowBlocks;
+		ppBlocks = m_pTerrainVIS->m_ppLowBlocks;
+	}
+
+	auto pCurrentVISGroup = m_pTerrainVIS->m_pGroups + m_iCurrentGroup;
+
+	for (TINT i = 0; i < iNumBlocks; i++)
+	{
+		auto pBlock = ppBlocks[i];
+		pBlock->m_bIsUnused = TTRUE;
+
+		if (a_eLODType == ATerrainLODType_High && pBlock->m_pVISGroup == pCurrentVISGroup)
+		{
+			pBlock->SetUsed();
+		}
+		else
+		{
+			auto pVIS = m_pTerrainVIS;
+
+			for (TINT k = 0; k < pVIS->m_iNumGroups; k++)
+			{
+				if (pCurrentVISGroup->m_pLODTypes[k] == a_eLODType &&
+					pBlock->m_pVISGroup == &pVIS->m_pGroups[k])
+				{
+					pBlock->SetUsed();
+				}
+			}
+		}
+	}
+}
+
+ATerrainLODBlock* ATerrain::AllocateLODBlock(ATerrainLODType a_eLODType, ATerrainVISGroup* a_pVISGroup)
+{
+	TINT iNumBlocks;
+	ATerrainLODBlock** ppBlocks;
+	
+	if (a_eLODType == ATerrainLODType_High)
+	{
+		iNumBlocks = m_pTerrainVIS->m_iNumHighBlocks;
+		ppBlocks = m_pTerrainVIS->m_ppHighBlocks;
+	}
+	else
+	{
+		iNumBlocks = m_pTerrainVIS->m_iNumLowBlocks;
+		ppBlocks = m_pTerrainVIS->m_ppLowBlocks;
+	}
+	
+	TFLOAT fMinAccessTime = TMath::MAXFLOAT;
+	TINT iPrevFoundIndex = -1;
+	TINT iFoundIndex;
+
+	for (TINT i = 0; i < iNumBlocks; i++)
+	{
+		auto pBlock = ppBlocks[i];
+		iFoundIndex = iPrevFoundIndex;
+
+		if (!pBlock->IsUsed())
+		{
+			iFoundIndex = i;
+			if (pBlock->m_pVISGroup == TNULL) break;
+
+			iFoundIndex = iPrevFoundIndex;
+			if ((pBlock->m_pVISGroup->m_eFlags & 1 << (a_eLODType + 2 & 0x1f)) == 0)
+			{
+				iFoundIndex = i;
+				if (pBlock->m_pVISGroup = TNULL) break;
+
+				iFoundIndex = iPrevFoundIndex;
+				if (pBlock->m_fLastAccessTime < fMinAccessTime)
+				{
+					fMinAccessTime = pBlock->m_fLastAccessTime;
+					iFoundIndex = i;
+				}
+			}
+		}
+
+		iPrevFoundIndex = iFoundIndex;
+	}
+
+	if (iFoundIndex >= 0)
+	{
+		auto pBlock = ppBlocks[iFoundIndex];
+		auto pVISGroup = pBlock->m_pVISGroup;
+
+		if (pVISGroup)
+		{
+			if (pVISGroup->IsLODCreated(pBlock->m_eLODType))
+			{
+				pVISGroup->SetLODCreatedFlags(pBlock->m_eLODType, TFALSE);
+				return TNULL;
+			}
+
+			if (pVISGroup)
+			{
+				if ((pVISGroup->m_eFlags & (21 << a_eLODType)) != 0)
+				{
+					if (pVISGroup->IsMatLibLoaded(pBlock->m_eLODType))
+					{
+						pVISGroup->SetLODCreatedFlags(pBlock->m_eLODType, TFALSE);
+
+						if (pBlock->m_pVISGroup)
+						{
+							pBlock->m_pVISGroup->UnloadMatlib(pBlock->m_eLODType);
+						}
+					}
+					else if (pBlock->m_pVISGroup)
+					{
+						pBlock->m_pVISGroup->DestroyLOD(pBlock->m_eLODType);
+					}
+
+					return TNULL;
+				}
+
+				if (pVISGroup)
+				{
+					pVISGroup->DestroyLOD(pBlock->m_eLODType);
+				}
+			}
+		}
+
+		pBlock->Assign(a_pVISGroup, a_eLODType);
+		return pBlock;
+	}
+
+	return TNULL;
 }
 
 TINT ATerrain::GetCurrentVISGroupIndex()

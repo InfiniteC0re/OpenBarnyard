@@ -24,12 +24,12 @@ private:
 	ATerrainLocatorManager* m_pLocatorManager;
 	TINT32 m_iNumGroups;
 	ATerrainVISGroup* m_pGroups;
-	TUINT32 m_uiHighLODSize;
-	TINT32 m_iHighLODNum;
-	ATerrainLODBlock** m_ppHighLODs;
-	TUINT32 m_uiLowLODSize;
-	TINT32 m_iLowLODNum;
-	ATerrainLODBlock** m_ppLowLODs;
+	TUINT32 m_uiHighBlockSize;
+	TINT32 m_iNumHighBlocks;
+	ATerrainLODBlock** m_ppHighBlocks;
+	TUINT32 m_uiLowBlockSize;
+	TINT32 m_iNumLowBlocks;
+	ATerrainLODBlock** m_ppLowBlocks;
 	TUINT32 m_uiPersistantTerrainBlockSize;
 	ATerrainLODBlock* m_pPersistantTerrainBlock;
 };

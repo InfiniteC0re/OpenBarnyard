@@ -19,6 +19,14 @@ public:
 public:
 	void LoadCollision();
 	void LoadModels();
+	void LoadMatlib(ATerrainLODType a_eLODType);
+
+	void UnloadMatlib(ATerrainLODType a_eLODType);
+	void DestroyLOD(ATerrainLODType a_eLODType);
+
+	TBOOL IsMatLibLoaded(ATerrainLODType a_eLODType) const;
+	TBOOL IsLODCreated(ATerrainLODType a_eLODType) const { return (m_eFlags & (64 << (a_eLODType & 0x1f))); }
+	void SetLODCreatedFlags(ATerrainLODType a_eLODType, TBOOL a_bCreated);
 
 private:
 	const char* m_szName;
@@ -43,7 +51,9 @@ private:
 	TUINT16 m_ui16NumLowLODBlocks;
 	ATerrainLODBlock** m_ppHighLODBlocks;
 	ATerrainLODBlock** m_ppLowLODBlocks;
-	TUINT32 m_Unk3;
-	TUINT32 m_Unk4;
-	TUINT8 m_ui8LODBlock;
+	TUINT8* m_pHighLODToBlock;
+	TUINT* m_pLowLODToBlock;
+	TUINT8 m_ui8AllocCollisionBlock;
+	TUINT8 m_ui8AllocMatlibsHighBlock;
+	TUINT8 m_ui8AllocMatlibsLowBlock;
 };
