@@ -10,8 +10,6 @@ project "OpenBarnyard"
 	links
 	{
 		"Toshi",
-		"libtheora",
-		"theoraplay",
 		"binkw32.lib"
 	}
 	

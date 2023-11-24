@@ -23,7 +23,3 @@ group "Engine"
 	
 group "Third-Party"
 	include "Toshi/Vendor/Opcode"
-	include "Toshi/Vendor/libogg"
-	include "Toshi/Vendor/libvorbis"
-	include "Toshi/Vendor/libtheora"
-	include "Toshi/Vendor/theoraplay"
