@@ -26,3 +26,19 @@ void AAssetStreaming::Update()
 		m_pCurrentJob = TNULL;
 	}
 }
+
+void AAssetStreaming::CancelAllJobs()
+{
+	for (auto it = m_Jobs.Begin(); it != m_Jobs.End(); )
+	{
+		auto next = it->Next();
+
+		if (it->CancelJob())
+		{
+			it->m_bIsRunning = TTRUE;
+			it->Remove();
+		}
+
+		it = next;
+	}
+}

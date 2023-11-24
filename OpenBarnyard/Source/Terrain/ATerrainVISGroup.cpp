@@ -42,8 +42,7 @@ void ATerrainVISGroup::LoadModels(ATerrainLODType a_eLODType)
 
 	auto pTerrain = ATerrain::GetSingleton();
 
-	if ((m_eFlags & 1 << (a_eLODType + 2)) == 0 &&
-		(m_eFlags & 1 << (a_eLODType)) == 0)
+	if (!IsLODLoading(a_eLODType) && !IsLODLoaded(a_eLODType))
 	{
 		const char** ppLODNames;
 		TINT iNumLODs;
@@ -61,7 +60,9 @@ void ATerrainVISGroup::LoadModels(ATerrainLODType a_eLODType)
 
 		if (iNumLODs == 0 && m_szCollisionFile[0] == '\0')
 		{
-			m_eFlags = ~(16 << a_eLODType) & m_eFlags | 64 << (a_eLODType) | 1 << (a_eLODType);
+			SetLODEmpty(a_eLODType, TTRUE);
+			SetLODProcessed(a_eLODType, TTRUE);
+			SetLODLoaded(a_eLODType, TTRUE);
 		}
 		else
 		{
@@ -132,7 +133,9 @@ void ATerrainVISGroup::LoadModels(ATerrainLODType a_eLODType)
 			pSectionJob->InitJob(this, a_eLODType);
 
 			AAssetStreaming::GetSingleton()->AddMainThreadJob(pSectionJob);
-			m_eFlags = ~(16 << (a_eLODType)) & m_eFlags | (1 << (a_eLODType + 2));
+
+			SetLODProcessed(a_eLODType, TTRUE);
+			SetLODLoading(a_eLODType, TTRUE);
 		}
 	}	
 }
@@ -253,7 +256,7 @@ void ATerrainVISGroup::DestroyLOD(ATerrainLODType a_eLODType)
 			}
 		}
 
-		eNewFlags = m_eFlags & ~(BITFIELD(0) | BITFIELD(2) | BITFIELD(4));
+		eNewFlags = m_eFlags & ~(FLAGS_HIGH_LOD_LOADED | FLAGS_HIGH_LOD_LOADING | FLAGS_HIGH_LOD_PROCESSED);
 	}
 	else
 	{
@@ -268,11 +271,11 @@ void ATerrainVISGroup::DestroyLOD(ATerrainLODType a_eLODType)
 			}
 		}
 
-		eNewFlags = m_eFlags & ~(BITFIELD(1) | BITFIELD(3) | BITFIELD(5));
+		eNewFlags = m_eFlags & ~(FLAGS_LOW_LOD_LOADED | FLAGS_LOW_LOD_LOADING | FLAGS_LOW_LOD_PROCESSED);
 	}
 
 	m_eFlags = eNewFlags;
-	SetLODCreatedFlags(a_eLODType, TFALSE);
+	SetLODEmpty(a_eLODType, TFALSE);
 }
 
 TBOOL ATerrainVISGroup::IsMatLibLoaded(ATerrainLODType a_eLODType) const
@@ -289,11 +292,53 @@ TBOOL ATerrainVISGroup::IsMatLibLoaded(ATerrainLODType a_eLODType) const
 	}
 }
 
-void ATerrainVISGroup::SetLODCreatedFlags(ATerrainLODType a_eLODType, TBOOL a_bCreated)
+void ATerrainVISGroup::SetLODProcessed(ATerrainLODType a_eLODType, TBOOL a_bProcessed)
 {
 	TASSERT(a_eLODType == ATerrainLODType_High || a_eLODType == ATerrainLODType_Low);
 
-	if (a_bCreated)
+	if (a_bProcessed)
+	{
+		m_eFlags &= ~(16 << a_eLODType);
+	}
+	else
+	{
+		m_eFlags |= (16 << a_eLODType);
+	}
+}
+
+void ATerrainVISGroup::SetLODLoaded(ATerrainLODType a_eLODType, TBOOL a_bLoaded)
+{
+	TASSERT(a_eLODType == ATerrainLODType_High || a_eLODType == ATerrainLODType_Low);
+
+	if (a_bLoaded)
+	{
+		m_eFlags |= (1 << (a_eLODType));
+	}
+	else
+	{
+		m_eFlags &= ~(1 << (a_eLODType));
+	}
+}
+
+void ATerrainVISGroup::SetLODLoading(ATerrainLODType a_eLODType, TBOOL a_bLoading)
+{
+	TASSERT(a_eLODType == ATerrainLODType_High || a_eLODType == ATerrainLODType_Low);
+
+	if (a_bLoading)
+	{
+		m_eFlags |= (1 << (a_eLODType + ATerrainLODType_NUMOF));
+	}
+	else
+	{
+		m_eFlags &= ~(1 << (a_eLODType + ATerrainLODType_NUMOF));
+	}
+}
+
+void ATerrainVISGroup::SetLODEmpty(ATerrainLODType a_eLODType, TBOOL a_bEmpty)
+{
+	TASSERT(a_eLODType == ATerrainLODType_High || a_eLODType == ATerrainLODType_Low);
+
+	if (a_bEmpty)
 	{
 		m_eFlags |= (64 << a_eLODType);
 	}

@@ -10,6 +10,7 @@ public:
 	AAssetStreaming();
 
 	void Update();
+	void CancelAllJobs();
 
 	TBOOL HasActiveJobs() const
 	{

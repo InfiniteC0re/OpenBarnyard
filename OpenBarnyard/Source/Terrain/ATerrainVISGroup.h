@@ -14,6 +14,16 @@ public:
 		Toshi::TModelRef m_ModelRef;
 	};
 
+	enum FLAGS : TUINT32
+	{
+		FLAGS_HIGH_LOD_LOADED = BITFIELD(0),
+		FLAGS_LOW_LOD_LOADED = BITFIELD(1),
+		FLAGS_HIGH_LOD_LOADING = BITFIELD(2),
+		FLAGS_LOW_LOD_LOADING = BITFIELD(3),
+		FLAGS_HIGH_LOD_PROCESSED = BITFIELD(4),
+		FLAGS_LOW_LOD_PROCESSED = BITFIELD(5),
+	};
+
 	friend class ATerrain;
 
 public:
@@ -25,8 +35,18 @@ public:
 	void DestroyLOD(ATerrainLODType a_eLODType);
 
 	TBOOL IsMatLibLoaded(ATerrainLODType a_eLODType) const;
-	TBOOL IsLODCreated(ATerrainLODType a_eLODType) const { return (m_eFlags & (64 << (a_eLODType & 0x1f))); }
-	void SetLODCreatedFlags(ATerrainLODType a_eLODType, TBOOL a_bCreated);
+
+	TBOOL IsLODProcessed(ATerrainLODType a_eLODType) const { return (m_eFlags & (16 << a_eLODType)) == 0; }
+	void SetLODProcessed(ATerrainLODType a_eLODType, TBOOL a_bProcessed);
+
+	TBOOL IsLODLoaded(ATerrainLODType a_eLODType) const { return m_eFlags & (1 << (a_eLODType)); }
+	void SetLODLoaded(ATerrainLODType a_eLODType, TBOOL a_bLoaded);
+
+	TBOOL IsLODLoading(ATerrainLODType a_eLODType) const { return m_eFlags & (1 << (a_eLODType + ATerrainLODType_NUMOF)); }
+	void SetLODLoading(ATerrainLODType a_eLODType, TBOOL a_bLoading);
+
+	TBOOL IsLODEmpty(ATerrainLODType a_eLODType) const { return (m_eFlags & (64 << (a_eLODType & 0x1f))); }
+	void SetLODEmpty(ATerrainLODType a_eLODType, TBOOL a_bEmpty);
 
 private:
 	const char* m_szName;
@@ -45,7 +65,7 @@ private:
 	const char* m_szLowLODMatLibName;
 	Toshi::TTRB* m_pMatLibLowTRB;
 	AMaterialLibrary* m_pMatLibLow;
-	TUINT8* m_pLODTypes;
+	ATerrainLODType* m_pLODTypes;
 	TUINT32 m_eFlags;
 	TUINT16 m_ui16NumHighLODBlocks;
 	TUINT16 m_ui16NumLowLODBlocks;

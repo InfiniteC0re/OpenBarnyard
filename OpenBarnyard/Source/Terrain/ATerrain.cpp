@@ -320,7 +320,7 @@ ATerrainLODBlock* ATerrain::AllocateLODBlock(ATerrainLODType a_eLODType, ATerrai
 			if (pBlock->m_pVISGroup == TNULL) break;
 
 			iFoundIndex = iPrevFoundIndex;
-			if ((pBlock->m_pVISGroup->m_eFlags & 1 << (a_eLODType + 2 & 0x1f)) == 0)
+			if (!pBlock->m_pVISGroup->IsLODLoading(a_eLODType))
 			{
 				iFoundIndex = i;
 				if (pBlock->m_pVISGroup = TNULL) break;
@@ -344,9 +344,9 @@ ATerrainLODBlock* ATerrain::AllocateLODBlock(ATerrainLODType a_eLODType, ATerrai
 
 		if (pVISGroup)
 		{
-			if (pVISGroup->IsLODCreated(pBlock->m_eLODType))
+			if (pVISGroup->IsLODEmpty(pBlock->m_eLODType))
 			{
-				pVISGroup->SetLODCreatedFlags(pBlock->m_eLODType, TFALSE);
+				pVISGroup->SetLODEmpty(pBlock->m_eLODType, TFALSE);
 				return TNULL;
 			}
 
@@ -356,7 +356,7 @@ ATerrainLODBlock* ATerrain::AllocateLODBlock(ATerrainLODType a_eLODType, ATerrai
 				{
 					if (pVISGroup->IsMatLibLoaded(pBlock->m_eLODType))
 					{
-						pVISGroup->SetLODCreatedFlags(pBlock->m_eLODType, TFALSE);
+						pVISGroup->SetLODEmpty(pBlock->m_eLODType, TFALSE);
 
 						if (pBlock->m_pVISGroup)
 						{
@@ -383,6 +383,27 @@ ATerrainLODBlock* ATerrain::AllocateLODBlock(ATerrainLODType a_eLODType, ATerrai
 	}
 
 	return TNULL;
+}
+
+void ATerrain::CancelUnrequiredRunningJobs()
+{
+	if (m_iCurrentGroup != m_iPreviousGroup && m_iPreviousGroup >= 0)
+	{
+		for (TINT i = 0; i < m_pTerrainVIS->m_iNumGroups; i++)
+		{
+			auto pGroup = &m_pTerrainVIS->m_pGroups[i];
+
+			if (pGroup->m_eFlags & (ATerrainVISGroup::FLAGS_HIGH_LOD_LOADING | ATerrainVISGroup::FLAGS_LOW_LOD_LOADING))
+			{
+				if (i < 0) return;
+				if (pGroup->m_pLODTypes[i] == ((pGroup->m_eFlags >> 2) - 1) % ATerrainLODType_NUMOF) return;
+				if (i == m_iCurrentGroup) return;
+
+				AAssetStreaming::GetSingleton()->CancelAllJobs();
+				return;
+			}
+		}
+	}
 }
 
 TINT ATerrain::GetCurrentVISGroupIndex()
