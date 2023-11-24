@@ -11,6 +11,7 @@ ATerrainLODBlock::ATerrainLODBlock(TUINT a_uiHeapSize, const char* a_szName)
 {
 	m_pAllocatedSize = TNULL;
 	m_pUnk2 = 0;
+	m_pVISGroup = TNULL;
 	m_eLODType = ATerrainLODType_None;
 	m_fLastAccessTime = 0.0f;
 	m_uiHeapSize = a_uiHeapSize;

@@ -32,7 +32,7 @@ void ATerrainVISGroup::LoadCollision()
 
 		AAssetStreaming::GetSingleton()->AddMainThreadJob(pModelLoaderJob);
 		AAssetStreaming::GetSingleton()->AddMainThreadJob(pCollisionJob);
-		m_eFlags |= BITFIELD(10);
+		m_eFlags |= FLAGS_COLLISION_LOADING;
 	}
 }
 
@@ -60,8 +60,8 @@ void ATerrainVISGroup::LoadModels(ATerrainLODType a_eLODType)
 
 		if (iNumLODs == 0 && m_szCollisionFile[0] == '\0')
 		{
+			SetLODQueued(a_eLODType, TFALSE);
 			SetLODEmpty(a_eLODType, TTRUE);
-			SetLODProcessed(a_eLODType, TTRUE);
 			SetLODLoaded(a_eLODType, TTRUE);
 		}
 		else
@@ -134,7 +134,7 @@ void ATerrainVISGroup::LoadModels(ATerrainLODType a_eLODType)
 
 			AAssetStreaming::GetSingleton()->AddMainThreadJob(pSectionJob);
 
-			SetLODProcessed(a_eLODType, TTRUE);
+			SetLODQueued(a_eLODType, TFALSE);
 			SetLODLoading(a_eLODType, TTRUE);
 		}
 	}	
@@ -165,14 +165,14 @@ void ATerrainVISGroup::LoadMatlib(ATerrainLODType a_eLODType)
 
 	if (a_eLODType == ATerrainLODType_High)
 	{
-		m_pMatLibHighTRB = new Toshi::TTRB();
+		m_pMatLibHighTRB = new (pBlock->GetHeap()) Toshi::TTRB();
 		pBlock->SetupTRB(m_pMatLibHighTRB, pBlock);
 
 		pMatlibJob->InitJob(m_szHighLODMatLibName, m_pMatLibHighTRB, m_pMatLibHigh, pBlock->GetHeap());
 	}
 	else
 	{
-		m_pMatLibLowTRB = new Toshi::TTRB();
+		m_pMatLibLowTRB = new (pBlock->GetHeap()) Toshi::TTRB();
 		pBlock->SetupTRB(m_pMatLibLowTRB, pBlock);
 
 		pMatlibJob->InitJob(m_szLowLODMatLibName, m_pMatLibLowTRB, m_pMatLibLow, pBlock->GetHeap());
@@ -256,7 +256,7 @@ void ATerrainVISGroup::DestroyLOD(ATerrainLODType a_eLODType)
 			}
 		}
 
-		eNewFlags = m_eFlags & ~(FLAGS_HIGH_LOD_LOADED | FLAGS_HIGH_LOD_LOADING | FLAGS_HIGH_LOD_PROCESSED);
+		eNewFlags = m_eFlags & ~(FLAGS_HIGH_LOD_LOADED | FLAGS_HIGH_LOD_LOADING | FLAGS_HIGH_LOD_QUEUED);
 	}
 	else
 	{
@@ -271,11 +271,41 @@ void ATerrainVISGroup::DestroyLOD(ATerrainLODType a_eLODType)
 			}
 		}
 
-		eNewFlags = m_eFlags & ~(FLAGS_LOW_LOD_LOADED | FLAGS_LOW_LOD_LOADING | FLAGS_LOW_LOD_PROCESSED);
+		eNewFlags = m_eFlags & ~(FLAGS_LOW_LOD_LOADED | FLAGS_LOW_LOD_LOADING | FLAGS_LOW_LOD_QUEUED);
 	}
 
 	m_eFlags = eNewFlags;
 	SetLODEmpty(a_eLODType, TFALSE);
+}
+
+void ATerrainVISGroup::RemoveFromStreamingQueue()
+{
+	for (TINT i = 0; i < ATerrainLODType_NUMOF; i++)
+	{
+		if (IsLODQueued(i))
+		{
+			TUINT16 uiNumLODBlocks;
+			ATerrainLODBlock** ppLODBlocks;
+
+			if (i == ATerrainLODType_High)
+			{
+				uiNumLODBlocks = m_ui16NumHighLODBlocks;
+				ppLODBlocks = m_ppHighLODBlocks;
+			}
+			else
+			{
+				uiNumLODBlocks = m_ui16NumLowLODBlocks;
+				ppLODBlocks = m_ppLowLODBlocks;
+			}
+
+			for (TINT k = 0; k < uiNumLODBlocks; k++)
+			{
+				ppLODBlocks[k]->Assign(TNULL, ATerrainLODType_None);
+			}
+
+			SetLODQueued(i, TFALSE);
+		}
+	}
 }
 
 TBOOL ATerrainVISGroup::IsMatLibLoaded(ATerrainLODType a_eLODType) const
@@ -292,17 +322,17 @@ TBOOL ATerrainVISGroup::IsMatLibLoaded(ATerrainLODType a_eLODType) const
 	}
 }
 
-void ATerrainVISGroup::SetLODProcessed(ATerrainLODType a_eLODType, TBOOL a_bProcessed)
+void ATerrainVISGroup::SetLODQueued(ATerrainLODType a_eLODType, TBOOL a_bQueued)
 {
 	TASSERT(a_eLODType == ATerrainLODType_High || a_eLODType == ATerrainLODType_Low);
 
-	if (a_bProcessed)
+	if (a_bQueued)
 	{
-		m_eFlags &= ~(16 << a_eLODType);
+		m_eFlags |= (16 << a_eLODType);
 	}
 	else
 	{
-		m_eFlags |= (16 << a_eLODType);
+		m_eFlags &= ~(16 << a_eLODType);
 	}
 }
 

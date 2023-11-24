@@ -39,6 +39,7 @@ public:
 	friend class ATerrainManager;
 
 	using t_GetCurrentVISGroup = TINT(*)();
+	using t_OnVISGroupChanged = void(*)(ATerrainVISGroup* a_pCurrent, ATerrainVISGroup* a_pPrevious);
 
 public:
 	ATerrain(TINT a_iUnused1, TINT a_iUnused2, TINT a_iPreloadTerrainBlockSize, TINT a_iStartVISGroup);
@@ -55,14 +56,22 @@ public:
 	void DestroyModelData(ATerrainVISGroup::ModelData* a_pModelData);
 
 	void UseBlocksInCurrentVIS(ATerrainLODType a_eLODType);
+
+	void QueueStreamingAssets();
+
+	void UnqueueStreamingAssets();
+
+	TBOOL HasAnyLODsQueued();
+
+	void CancelUnrequiredJobs();
 	
 	ATerrainLODBlock* AllocateLODBlock(ATerrainLODType a_eLODType, ATerrainVISGroup* a_pVISGroup);
-
-	void CancelUnrequiredRunningJobs();
 
 	TBOOL IsCollisionPersistant() const { return m_bPersistantCollision; }
 	
 	ATerrainVIS* GetVIS() const { return m_pTerrainVIS; }
+
+	void FlushJobs();
 
 	ATRBLoaderJob* GetFreeTRBLoaderJob()
 	{
@@ -167,6 +176,10 @@ public:
 	}
 
 private:
+	void UpdateNightMaterials();
+	void MoveAllFinishedJobs(Toshi::T2SList<JobSlot>& a_rFreeJobs, Toshi::T2SList<JobSlot>& a_rUsedJobs);
+
+private:
 	static TINT GetCurrentVISGroupIndex();
 	static TINT GetPersistantVISGroupIndex();
 
@@ -181,6 +194,7 @@ private:
 	// ...
 	Toshi::T2SList<ATerrainVISGroup::ModelData> m_ModelDatas;
 	// ...
+	t_OnVISGroupChanged m_cbOnVISGroupChanged;
 	AModelLoaderJob m_aModelLoaderJobs[MAX_NUM_MODEL_LOADER_JOBS];
 	AMatLibLoaderJob m_aMatlibLoaderJobs[MAX_NUM_MATLIB_LOADER_JOBS];
 	AKeyLibLoaderJob m_aKeylibLoaderJobs[MAX_NUM_KEYLIB_LOADER_JOBS];
@@ -210,7 +224,7 @@ private:
 	Toshi::TTRB m_VISTRB;
 	Toshi::TTRB m_TRB2;
 	ATerrainVIS* m_pTerrainVIS;
-	void* m_pOrderDVIS;
+	ATerrainOrderDVIS* m_pOrderDVIS;
 	// ...
 	TINT m_iCurrentGroup;
 	TINT m_iPreviousGroup;

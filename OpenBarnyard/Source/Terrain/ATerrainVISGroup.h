@@ -20,11 +20,14 @@ public:
 		FLAGS_LOW_LOD_LOADED = BITFIELD(1),
 		FLAGS_HIGH_LOD_LOADING = BITFIELD(2),
 		FLAGS_LOW_LOD_LOADING = BITFIELD(3),
-		FLAGS_HIGH_LOD_PROCESSED = BITFIELD(4),
-		FLAGS_LOW_LOD_PROCESSED = BITFIELD(5),
+		FLAGS_HIGH_LOD_QUEUED = BITFIELD(4),
+		FLAGS_LOW_LOD_QUEUED = BITFIELD(5),
+		FLAGS_COLLISION_LOADING = BITFIELD(10)
 	};
 
 	friend class ATerrain;
+	friend class ASectionDoneJob;
+	friend class ACollisionDoneJob;
 
 public:
 	void LoadCollision();
@@ -34,10 +37,12 @@ public:
 	void UnloadMatlib(ATerrainLODType a_eLODType);
 	void DestroyLOD(ATerrainLODType a_eLODType);
 
+	void RemoveFromStreamingQueue();
+
 	TBOOL IsMatLibLoaded(ATerrainLODType a_eLODType) const;
 
-	TBOOL IsLODProcessed(ATerrainLODType a_eLODType) const { return (m_eFlags & (16 << a_eLODType)) == 0; }
-	void SetLODProcessed(ATerrainLODType a_eLODType, TBOOL a_bProcessed);
+	TBOOL IsLODQueued(ATerrainLODType a_eLODType) const { return (m_eFlags & (16 << a_eLODType)); }
+	void SetLODQueued(ATerrainLODType a_eLODType, TBOOL a_bQueued);
 
 	TBOOL IsLODLoaded(ATerrainLODType a_eLODType) const { return m_eFlags & (1 << (a_eLODType)); }
 	void SetLODLoaded(ATerrainLODType a_eLODType, TBOOL a_bLoaded);
@@ -45,6 +50,7 @@ public:
 	TBOOL IsLODLoading(ATerrainLODType a_eLODType) const { return m_eFlags & (1 << (a_eLODType + ATerrainLODType_NUMOF)); }
 	void SetLODLoading(ATerrainLODType a_eLODType, TBOOL a_bLoading);
 
+	// TODO: The flag's name is wrong
 	TBOOL IsLODEmpty(ATerrainLODType a_eLODType) const { return (m_eFlags & (64 << (a_eLODType & 0x1f))); }
 	void SetLODEmpty(ATerrainLODType a_eLODType, TBOOL a_bEmpty);
 
@@ -65,7 +71,7 @@ private:
 	const char* m_szLowLODMatLibName;
 	Toshi::TTRB* m_pMatLibLowTRB;
 	AMaterialLibrary* m_pMatLibLow;
-	ATerrainLODType* m_pLODTypes;
+	ATerrainLODType* m_pOtherGroupsLODs;
 	TUINT32 m_eFlags;
 	TUINT16 m_ui16NumHighLODBlocks;
 	TUINT16 m_ui16NumLowLODBlocks;

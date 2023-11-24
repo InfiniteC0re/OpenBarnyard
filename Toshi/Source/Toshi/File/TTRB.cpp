@@ -53,6 +53,7 @@ namespace Toshi
 			error = ERROR_NO_HEADER;
 		}
 
+		m_TTSFI.Close();
 		return error;
 	}
 

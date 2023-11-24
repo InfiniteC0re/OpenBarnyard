@@ -9,6 +9,8 @@ void ACollisionDoneJob::BeginJob()
 TBOOL ACollisionDoneJob::RunJob()
 {
 	TIMPLEMENT();
+
+	m_pVISGroup->m_eFlags &= ~ATerrainVISGroup::FLAGS_COLLISION_LOADING;
 	return TTRUE;
 }
 

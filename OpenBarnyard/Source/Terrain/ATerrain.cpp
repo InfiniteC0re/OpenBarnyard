@@ -2,8 +2,9 @@
 #include "ATerrain.h"
 #include "Tasks/ARootTask.h"
 #include "Assets/AAssetStreaming.h"
+#include "ALoadScreen.h"
 
-#include <Toshi/Render/TRenderInterface.h>
+#include TOSHI_MULTIRENDER(TRenderInterface)
 
 TOSHI_NAMESPACE_USING
 
@@ -69,6 +70,7 @@ ATerrain::ATerrain(TINT a_iUnused1, TINT a_iUnused2, TINT a_iPreloadTerrainBlock
 	TTODO("Call FUN_00619040() and initialise some other values");
 	m_iCurrentGroup = a_iStartVISGroup;
 	m_iPreviousGroup = -1;
+	m_cbOnVISGroupChanged = TNULL;
 	m_fnGetCurrentVISGroup = GetCurrentVISGroupIndex;
 }
 
@@ -82,7 +84,152 @@ ATerrain::~ATerrain()
 
 void ATerrain::Update()
 {
-	TIMPLEMENT();
+	if (!m_pTerrainVIS) return;
+
+	if (m_fnGetCurrentVISGroup)
+	{
+		TINT iCurrentGroup = m_fnGetCurrentVISGroup();
+
+		if (iCurrentGroup != -1)
+		{
+			m_iCurrentGroup = iCurrentGroup;
+		}
+	}
+
+	if (m_iCurrentGroup >= 0)
+	{
+		if (m_iPreviousGroup != m_iCurrentGroup)
+		{
+			UseBlocksInCurrentVIS(ATerrainLODType_High);
+			UseBlocksInCurrentVIS(ATerrainLODType_Low);
+
+			UnqueueStreamingAssets();
+			CancelUnrequiredJobs();
+
+			if (m_cbOnVISGroupChanged)
+			{
+				auto pPrevious = m_iPreviousGroup >= 0 ? &m_pTerrainVIS->m_pGroups[m_iPreviousGroup] : TNULL;
+				auto pCurrent = m_iCurrentGroup >= 0 ? &m_pTerrainVIS->m_pGroups[m_iCurrentGroup] : TNULL;
+
+				m_cbOnVISGroupChanged(pPrevious, pCurrent);
+			}
+
+			m_iPreviousGroup = m_iCurrentGroup;
+			QueueStreamingAssets();
+		}
+
+		if (m_bIsLoaded && !IsLoaded())
+		{
+			TFIXME("Create and push ATerrainLoadingStallState if needed");
+		}
+
+		TBOOL bSkipLoadingModels = TFALSE;
+
+		for (TINT i = 0; i < m_pTerrainVIS->m_iNumGroups; i++)
+		{
+			if (m_pTerrainVIS->m_pGroups[i].IsLODLoading(ATerrainLODType_High) ||
+				m_pTerrainVIS->m_pGroups[i].IsLODLoading(ATerrainLODType_Low))
+			{
+				// There are already some models loading, don't create any new jobs
+				bSkipLoadingModels = TTRUE;
+				break;
+			}
+		}
+
+		if (!bSkipLoadingModels)
+		{
+			if (HasAnyLODsQueued())
+			{
+				auto pGroups = m_pTerrainVIS->m_pGroups;
+
+				if (m_pOrderDVIS)
+				{
+					// Use precomputed order of queued groups to load
+					auto pDVIS = &m_pOrderDVIS[m_iCurrentGroup];
+					
+					for (TINT i = 0; i < pDVIS->iCount; i++)
+					{
+						auto uiGroupIndex = pDVIS->pInfo[i].uiGroupIndex;
+						auto eLODType = pDVIS->pInfo[i].eLODType;
+
+						if (pGroups[uiGroupIndex].IsLODQueued(eLODType))
+						{
+							pGroups[uiGroupIndex].LoadModels(eLODType);
+							break;
+						}
+					}
+				}
+				else
+				{
+					// Brute force order of queued groups to load
+					if (pGroups[m_iCurrentGroup].IsLODQueued(ATerrainLODType_High))
+					{
+						pGroups[m_iCurrentGroup].LoadModels(ATerrainLODType_High);
+					}
+					else
+					{
+						for (TINT i = 0; i < m_pTerrainVIS->m_iNumGroups; i++)
+						{
+							if (pGroups[i].IsLODQueued(ATerrainLODType_High))
+							{
+								pGroups[i].LoadModels(ATerrainLODType_High);
+								break;
+							}
+							else if (pGroups[i].IsLODQueued(ATerrainLODType_Low))
+							{
+								pGroups[i].LoadModels(ATerrainLODType_Low);
+								break;
+							}
+						}
+					}
+				}
+			}
+		}
+
+		TFIXME("Restore value of m_fnGetCurrentVISGroup if it was saved");
+
+		// Wait till queued LODs are ready
+		for (TINT i = 0; i < m_pTerrainVIS->m_iNumGroups; i++)
+		{
+			if (m_pTerrainVIS->m_pGroups[i].IsLODQueued(ATerrainLODType_High) ||
+				m_pTerrainVIS->m_pGroups[i].IsLODQueued(ATerrainLODType_Low))
+			{
+				FlushJobs();
+				return;
+			}
+		}
+
+		// Wait till all LODs are loaded
+		for (TINT i = 0; i < m_pTerrainVIS->m_iNumGroups; i++)
+		{
+			if (m_pTerrainVIS->m_pGroups[i].IsLODLoading(ATerrainLODType_High) ||
+				m_pTerrainVIS->m_pGroups[i].IsLODLoading(ATerrainLODType_Low))
+			{
+				FlushJobs();
+				return;
+			}
+		}
+
+		if (m_pOrderDVIS)
+		{
+			auto pDVIS = &m_pOrderDVIS[m_iCurrentGroup];
+
+			for (TINT i = 0; i < pDVIS->iCount; i++)
+			{
+				auto pInfo = &pDVIS->pInfo[i];
+				auto pGroup = &m_pTerrainVIS->m_pGroups[pInfo->uiGroupIndex];
+
+				if (pGroup->IsLODLoaded(pInfo->eLODType) && !pGroup->IsLODEmpty(pInfo->eLODType))
+				{
+					TRenderD3DInterface::Interface()->BeginEndScene();
+					pGroup->DestroyLOD(pInfo->eLODType);
+					QueueStreamingAssets();
+				}
+			}
+		}
+	}
+
+	FlushJobs();
 }
 
 TBOOL ATerrain::IsLoaded() const
@@ -118,7 +265,7 @@ void ATerrain::LoadFromFile(const char* a_szFilePath, TBOOL a_bLoadLater, TBOOL 
 	m_VISTRB.Load(a_szFilePath, 0);
 
 	m_pTerrainVIS = m_VISTRB.CastSymbol<ATerrainVIS>("terrainvis");
-	m_pOrderDVIS = m_VISTRB.CastSymbol<void*>("orderdvis");
+	m_pOrderDVIS = m_VISTRB.CastSymbol<ATerrainOrderDVIS>("orderdvis");
 
 	if (m_VISTRB.GetSymbolAddress("preloadcollision"))
 	{
@@ -279,7 +426,7 @@ void ATerrain::UseBlocksInCurrentVIS(ATerrainLODType a_eLODType)
 
 			for (TINT k = 0; k < pVIS->m_iNumGroups; k++)
 			{
-				if (pCurrentVISGroup->m_pLODTypes[k] == a_eLODType &&
+				if (pCurrentVISGroup->m_pOtherGroupsLODs[k] == a_eLODType &&
 					pBlock->m_pVISGroup == &pVIS->m_pGroups[k])
 				{
 					pBlock->SetUsed();
@@ -287,6 +434,57 @@ void ATerrain::UseBlocksInCurrentVIS(ATerrainLODType a_eLODType)
 			}
 		}
 	}
+}
+
+void ATerrain::QueueStreamingAssets()
+{
+	TASSERT(m_iCurrentGroup != -1);
+
+	auto pCurrentGroup = &m_pTerrainVIS->m_pGroups[m_iCurrentGroup];
+
+	for (TINT i = 0; i < m_pTerrainVIS->m_iNumGroups; i++)
+	{
+		auto eLODType = pCurrentGroup->m_pOtherGroupsLODs[i];
+
+		if (eLODType > ATerrainLODType_None)
+		{
+			auto pGroup = &m_pTerrainVIS->m_pGroups[i];
+
+			if ((pGroup->m_eFlags & (21 << eLODType)) == 0)
+			{
+				pGroup->SetLODQueued(eLODType, TTRUE);
+			}
+		}
+	}
+
+	if (!HASFLAG(pCurrentGroup->m_eFlags &
+		(ATerrainVISGroup::FLAGS_HIGH_LOD_LOADED | ATerrainVISGroup::FLAGS_HIGH_LOD_LOADING)))
+	{
+		pCurrentGroup->SetLODQueued(ATerrainLODType_High, TTRUE);
+	}
+}
+
+void ATerrain::UnqueueStreamingAssets()
+{
+	for (TINT i = 0; i < m_pTerrainVIS->m_iNumGroups; i++)
+	{
+		m_pTerrainVIS->m_pGroups[i].RemoveFromStreamingQueue();
+	}
+}
+
+TBOOL ATerrain::HasAnyLODsQueued()
+{
+	for (TINT i = 0; i < m_pTerrainVIS->m_iNumGroups; i++)
+	{
+		auto pGroup = &m_pTerrainVIS->m_pGroups[i];
+
+		if (pGroup->m_eFlags & (ATerrainVISGroup::FLAGS_HIGH_LOD_QUEUED | ATerrainVISGroup::FLAGS_LOW_LOD_QUEUED))
+		{
+			return TTRUE;
+		}
+	}
+
+	return TFALSE;
 }
 
 ATerrainLODBlock* ATerrain::AllocateLODBlock(ATerrainLODType a_eLODType, ATerrainVISGroup* a_pVISGroup)
@@ -385,7 +583,35 @@ ATerrainLODBlock* ATerrain::AllocateLODBlock(ATerrainLODType a_eLODType, ATerrai
 	return TNULL;
 }
 
-void ATerrain::CancelUnrequiredRunningJobs()
+void ATerrain::FlushJobs()
+{
+	MoveAllFinishedJobs(m_FreeModelLoaderJobs, m_UsedModelLoaderJobs);
+	MoveAllFinishedJobs(m_FreeUnknownLoaderJobs, m_UsedUnknownLoaderJobs);
+	MoveAllFinishedJobs(m_FreeSectionLoaderJobs, m_UsedSectionLoaderJobs);
+	MoveAllFinishedJobs(m_FreeKeylibLoaderJobs, m_UsedKeylibLoaderJobs);
+	MoveAllFinishedJobs(m_FreeMatlibLoaderJobs, m_UsedMatlibLoaderJobs);
+	MoveAllFinishedJobs(m_FreeTRBLoaderJobs, m_UsedTRBLoaderJobs);
+	MoveAllFinishedJobs(m_FreeSkeletonLoaderJobs, m_UsedSkeletonLoaderJobs);
+	MoveAllFinishedJobs(m_FreeCollisionLoaderJobs, m_UsedCollisionLoaderJobs);
+}
+
+void ATerrain::MoveAllFinishedJobs(Toshi::T2SList<JobSlot>& a_rFreeJobs, Toshi::T2SList<JobSlot>& a_rUsedJobs)
+{
+	for (auto it = a_rUsedJobs.Begin(); it != a_rUsedJobs.End(); )
+	{
+		auto pNext = it->GetNext();
+
+		if (!it->pJob->IsRunning())
+		{
+			a_rUsedJobs.Remove(it, it);
+			a_rFreeJobs.PushFront(it);
+		}
+
+		it = pNext;
+	}
+}
+
+void ATerrain::CancelUnrequiredJobs()
 {
 	if (m_iCurrentGroup != m_iPreviousGroup && m_iPreviousGroup >= 0)
 	{
@@ -396,7 +622,7 @@ void ATerrain::CancelUnrequiredRunningJobs()
 			if (pGroup->m_eFlags & (ATerrainVISGroup::FLAGS_HIGH_LOD_LOADING | ATerrainVISGroup::FLAGS_LOW_LOD_LOADING))
 			{
 				if (i < 0) return;
-				if (pGroup->m_pLODTypes[i] == ((pGroup->m_eFlags >> 2) - 1) % ATerrainLODType_NUMOF) return;
+				if (pGroup->m_pOtherGroupsLODs[i] == ((pGroup->m_eFlags >> 2) - 1) % ATerrainLODType_NUMOF) return;
 				if (i == m_iCurrentGroup) return;
 
 				AAssetStreaming::GetSingleton()->CancelAllJobs();
@@ -404,6 +630,11 @@ void ATerrain::CancelUnrequiredRunningJobs()
 			}
 		}
 	}
+}
+
+void ATerrain::UpdateNightMaterials()
+{
+	TIMPLEMENT();
 }
 
 TINT ATerrain::GetCurrentVISGroupIndex()
@@ -476,6 +707,7 @@ void ATerrainManager::StartLoading()
 		AAssetStreaming::GetSingleton()->Update();
 		Sleep(20);
 		pTerrain->Update();
+		ALoadScreen::GetGlobalInstance()->Update();
 	}
 
 	pTerrain->m_bIsLoaded = TTRUE;

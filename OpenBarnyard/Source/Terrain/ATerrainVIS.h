@@ -4,6 +4,18 @@
 #include "ATerrainLODBlock.h"
 #include "Assets/AMaterialLibrary.h"
 
+struct ATerrainOrderDVIS
+{
+	struct Info
+	{
+		TUINT16 uiGroupIndex;
+		ATerrainLODType eLODType;
+	};
+
+	TINT iCount;
+	Info* pInfo;
+};
+
 class ATerrainVIS
 {
 public:

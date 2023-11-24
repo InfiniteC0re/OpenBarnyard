@@ -4,6 +4,7 @@
 #include "GUI/AGUISystem.h"
 #include "GUI/AGUI2.h"
 #include "GUI/AGUI2TextureSectionManager.h"
+#include "Assets/AModelLoader.h"
 #include "Render/ARenderer.h"
 #include "Input/AInputHandler.h"
 #include "Movie/AMoviePlayer.h"
@@ -213,6 +214,7 @@ TBOOL ARenderer::OnCreate()
 
 	if (bCreatedTRender)
 	{
+		AModelLoader::CreateSingleton();
 		AMaterialLibraryManager::CreateSingleton();
 	}
 
