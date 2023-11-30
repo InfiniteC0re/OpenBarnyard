@@ -58,18 +58,13 @@ namespace Toshi {
 
 	TBOOL TInputDevice::StartRepeat(Doodad a_iDoodad, TFLOAT a_fFirstRepeatTime, TFLOAT a_fRepeatTime)
 	{
-		T2DynamicArray<RepeatInfo>::Iterator it;
-		m_Repeats.Bind(it);
-
-		while (!it.IsOver())
+		for (auto it = m_Repeats.Begin(); it.IsOver() == TFALSE; it++)
 		{
 			if (it->iDoodad == a_iDoodad)
 			{
 				it->fRepeatTime = a_fRepeatTime;
 				return TTRUE;
 			}
-
-			it++;
 		}
 
 		m_Repeats.Push({
@@ -85,8 +80,7 @@ namespace Toshi {
 	{
 		if (m_Repeats.GetNumElements() != 0)
 		{
-			T2DynamicArray<RepeatInfo>::Iterator it;
-			m_Repeats.Bind(it);
+			auto it = m_Repeats.Begin();
 
 			TINT iIndex = 0;
 			while (it->iDoodad != a_iDoodad)

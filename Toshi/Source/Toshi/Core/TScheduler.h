@@ -25,7 +25,7 @@ namespace Toshi
 		// Updates tasks
 		void Update()
 		{
-			float deltaTime = TSystemManager::GetSingletonSafe()->GetTimer()->GetDelta();
+			TFLOAT deltaTime = TSystemManager::GetSingletonSafe()->GetTimer()->GetDelta();
 			m_FrameCount += 1;
 			m_TotalTime += deltaTime;
 			m_DeltaTime = deltaTime;
@@ -76,24 +76,24 @@ namespace Toshi
 			return m_UseFixedMaxFps;
 		}
 
-		float GetDebugDeltaTime() const
+		TFLOAT GetDebugDeltaTime() const
 		{
 			return m_DebugDeltaTime;
 		}
 
-		void SetFixedMaxFps(TBOOL useFixedMaxFps, float fixedMaxFps = 60.0f)
+		void SetFixedMaxFps(TBOOL useFixedMaxFps, TFLOAT fixedMaxFps = 60.0f)
 		{
 			m_UseFixedMaxFps = useFixedMaxFps;
 			m_FixedMaxFps = 1 / fixedMaxFps;
 		}
 
-		void SetDebugDeltaTimeMult(TBOOL useDebugDeltaTimeMult, float debugDeltaTimeMult = 1.0f)
+		void SetDebugDeltaTimeMult(TBOOL useDebugDeltaTimeMult, TFLOAT debugDeltaTimeMult = 1.0f)
 		{
 			m_UseDebugDeltaTimeMult = useDebugDeltaTimeMult;
 			m_DebugDeltaTimeMult = debugDeltaTimeMult;
 		}
 
-		void SetDebugDeltaTime(TBOOL useDebugDeltaTime, float debugDeltaTime = 0.0f)
+		void SetDebugDeltaTime(TBOOL useDebugDeltaTime, TFLOAT debugDeltaTime = 0.0f)
 		{
 			m_UseDebugDeltaTime = useDebugDeltaTime;
 			m_DebugDeltaTime = debugDeltaTime;
@@ -114,12 +114,12 @@ namespace Toshi
 			m_MaxDeltaTime = slowTime ? s_DebugSlowMaxTimeDeltaAllowed : s_MaxTimeDeltaAllowed;
 		}
 
-		float GetCurrentDeltaTime() const
+		TFLOAT GetCurrentDeltaTime() const
 		{
 			return m_DeltaTime;
 		}
 
-		float GetTotalTime() const
+		TFLOAT GetTotalTime() const
 		{
 			return m_TotalTime;
 		}
@@ -201,24 +201,24 @@ namespace Toshi
 		void UpdateActiveTasks(TTask* task);
 
 	private:
-		static float s_DebugSlowMaxTimeDeltaAllowed;
-		static float s_MaxTimeDeltaAllowed;
+		static TFLOAT s_DebugSlowMaxTimeDeltaAllowed;
+		static TFLOAT s_MaxTimeDeltaAllowed;
 			
 	private:
-		uint32_t m_Unk1;              // 0x04
-		TNodeTree<TTask> m_TaskTree;  // 0x08
-		float m_DeltaTime;            // 0x20
-		float m_TasksUpdateTime;      // 0x24
-		float m_TotalTime;            // 0x28
-		float m_MaxDeltaTime;         // 0x2C
-		uint32_t m_FrameCount;        // 0x30
-		uint32_t m_Unk2;              // 0x34
-		THPTimer m_Timer;             // 0x38
+		uint32_t m_Unk1;               // 0x04
+		TNodeTree<TTask> m_TaskTree;   // 0x08
+		TFLOAT m_DeltaTime;            // 0x20
+		TFLOAT m_TasksUpdateTime;      // 0x24
+		TFLOAT m_TotalTime;            // 0x28
+		TFLOAT m_MaxDeltaTime;         // 0x2C
+		uint32_t m_FrameCount;         // 0x30
+		uint32_t m_Unk2;               // 0x34
+		THPTimer m_Timer;              // 0x38
 		TBOOL m_UseDebugDeltaTime;     // 0x60
-		float m_DebugDeltaTime;       // 0x64
+		TFLOAT m_DebugDeltaTime;       // 0x64
 		TBOOL m_UseDebugDeltaTimeMult; // 0x6D
-		float m_DebugDeltaTimeMult;   // 0x70
+		TFLOAT m_DebugDeltaTimeMult;   // 0x70
 		TBOOL m_UseFixedMaxFps;        // 0x74
-		float m_FixedMaxFps;          // 0x78
+		TFLOAT m_FixedMaxFps;          // 0x78
 	};
 }

@@ -31,7 +31,7 @@ TBOOL AGUI2::OnCreate()
 	m_pRootElement->SetPostRenderCallback(MainPostRenderCallback);
 
 	AGUI2FontManager::Open("data/gui/fonts.trb");
-	AGUI2TextureSectionManager::Open("data/gui/texsec.trb", AAssetLoader::GetAssetTRB(AAssetLoader::AssetType_Startup));
+	AGUI2TextureSectionManager::Open("data/gui/texsec.trb", AAssetLoader::GetAssetTRB(AAssetType_Startup));
 	AGUI2TextureSectionManager::CreateMaterials();
 
 	auto pDebugCanvas = ms_pCurrentContext->GetDebugCanvas();
@@ -87,16 +87,34 @@ TBOOL AGUI2::OnUpdate(TFLOAT a_fDeltaTime)
 {
 	if (m_bShowMemStatsInfo)
 	{
-		// FIXME (or not): Barnyard uses legacy memory allocator but OpenBarnyard
-		// uses a new one from de Blob, so some information cannot be added to the debug info
-		Toshi::TStringManager::String16Format(
-			m_wszMemStats,
-			sizeof(m_wszMemStats),
-			L"Mem Used: %lu",
-			Toshi::TMemory::GetNumOfAllocatedBytes()
-		);
+		static TFLOAT s_UpdateTimer = 10.0f;
 
-		m_oMemStats.SetText(m_wszMemStats);
+		s_UpdateTimer += a_fDeltaTime;
+
+		if (s_UpdateTimer >= 1.0f)
+		{
+			size_t maxBytes;
+			size_t systemBytes;
+			size_t inUseBytes;
+			Toshi::TMemoryHeap::GetStats(
+				Toshi::TMemory::GetGlobalHeap(),
+				&maxBytes,
+				&systemBytes,
+				&inUseBytes
+			);
+
+			Toshi::TStringManager::String16Format(
+				m_wszMemStats,
+				sizeof(m_wszMemStats),
+				L"Mem Used: %lu, Free: %lu (%.1f%%)",
+				inUseBytes,
+				maxBytes - inUseBytes,
+				TFLOAT(inUseBytes) / TFLOAT(maxBytes) * 100
+			);
+
+			m_oMemStats.SetText(m_wszMemStats);
+			s_UpdateTimer = 0.0f;
+		}
 	}
 
 	if (m_bShowFPSInfo)

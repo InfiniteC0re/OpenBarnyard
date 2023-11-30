@@ -1,5 +1,6 @@
 #pragma once
 #include <Toshi/File/TTSF.h>
+#include <Toshi/Strings/TString8.h>
 
 #ifndef __TOSHI_TTRB_H__
 #error Include TTRB.h to use this extension
@@ -134,6 +135,29 @@ namespace PTRB
 				GrowBuffer(0);
 			}
 
+			Stack(const Stack& other)
+			{
+				TASSERT(other.m_DependentStacks.size() == 0, "Cross pointers are not supported");
+
+				m_Index = other.m_Index;
+				m_Buffer = TNULL;
+				m_BufferSize = 0;
+				m_ExpectedSize = other.m_ExpectedSize;
+				ResizeBuffer(other.m_BufferSize);
+				m_BufferPos = m_Buffer + other.GetUsedSize();
+				Toshi::TUtil::MemCopy(m_Buffer, other.m_Buffer, other.GetUsedSize());
+				
+				m_PtrList.reserve(other.m_PtrList.size());
+				for (TUINT i = 0; i < other.m_PtrList.size(); i++)
+				{
+					m_PtrList.emplace_back(
+						other.m_PtrList[i].Offset,
+						other.m_PtrList[i].DataPtr,
+						this // TODO: support cross pointers
+					);
+				}
+			}
+
 			~Stack()
 			{
 				if (m_Buffer != TNULL)
@@ -148,6 +172,13 @@ namespace PTRB
 			{
 				TASSERT(newPos < m_BufferSize, "Trying to seek out of buffer");
 				m_BufferPos = m_Buffer + newPos;
+			}
+
+			uint32_t SetIndex(uint32_t index)
+			{
+				uint32_t oldIndex = m_Index;
+				m_Index = index;
+				return oldIndex;
 			}
 
 			void SetExpectedSize(uint32_t expectedSize) { m_ExpectedSize = expectedSize; }
@@ -225,13 +256,6 @@ namespace PTRB
 				m_PtrList.emplace_back(offset, dataPtr, pDataStack == TNULL ? this : pDataStack);
 			}
 
-			uint32_t SetIndex(uint32_t index)
-			{
-				uint32_t oldIndex = m_Index;
-				m_Index = index;
-				return oldIndex;
-			}
-
 		private:
 			uint32_t m_Index;
 			char* m_Buffer;
@@ -264,6 +288,7 @@ namespace PTRB
 		}
 
 		SECT::Stack* CreateStack();
+		SECT::Stack* CreateStack(const SECT::Stack* pStack);
 		bool DeleteStack(SYMB* pSymb, SECT::Stack* pStack);
 
 		SECT::Stack* GetStack(size_t index);
@@ -353,10 +378,28 @@ namespace PTRB
 			return Find<T>(*sect, name);
 		}
 
-		template <class T>
-		SECT::Stack::Ptr<T> GetByIndex(SECT& sect, int index)
+		SECT::Stack* FindStack(SECT& sect, const char* name)
 		{
-			TASSERT(index >= 0 && index < m_Symbols.size());
+			int index = FindIndex(sect, name);
+
+			if (index != -1)
+			{
+				auto stack = sect.GetStack(m_Symbols[index].HDRX);
+				return stack;
+			}
+
+			return TNULL;
+		}
+
+		SECT::Stack* FindStack(SECT* sect, const char* name)
+		{
+			return FindStack(*sect, name);
+		}
+
+		template <class T>
+		SECT::Stack::Ptr<T> GetByIndex(SECT& sect, TUINT index)
+		{
+			TASSERT(index < m_Symbols.size());
 
 			return {
 				sect.GetStack(m_Symbols[index].HDRX),
@@ -365,9 +408,25 @@ namespace PTRB
 		}
 
 		template <class T>
-		SECT::Stack::Ptr<T> GetByIndex(SECT* sect, int index)
+		SECT::Stack::Ptr<T> GetByIndex(SECT* sect, TUINT index)
 		{
 			return GetByIndex<T>(*sect, index);
+		}
+
+		SECT::Stack* GetStack(SECT& sect, TUINT index)
+		{
+			TASSERT(index < m_Symbols.size());
+			return sect.GetStack(m_Symbols[index].HDRX);
+		}
+
+		SECT::Stack* GetStack(SECT* sect, TUINT index)
+		{
+			return GetStack(*sect, index);
+		}
+
+		Toshi::TString8 GetName(TUINT index)
+		{
+			return m_SymbolNames[index].c_str();
 		}
 
 		size_t GetCount()
@@ -857,6 +916,14 @@ namespace PTRB
 		return stack;
 	}
 
+	inline SECT::Stack* SECT::CreateStack(const SECT::Stack* pStack)
+	{
+		SECT::Stack* stack = new SECT::Stack(*pStack);
+		stack->SetIndex(m_Stacks.size());
+		m_Stacks.push_back(stack);
+		return stack;
+	}
+
 	inline bool SECT::DeleteStack(SYMB* pSymb, SECT::Stack* pStack)
 	{
 		auto result = std::find(m_Stacks.begin(), m_Stacks.end(), pStack);
@@ -897,9 +964,16 @@ namespace PTRB
 
 		if (compress)
 		{
-			TOSHI_CORE_TRACE("Compressing progress: 0%");
+			if (count > 1)
+			{
+				TOSHI_TRACE("Compressing progress: 0%");
+			}
+			else
+			{
+				TOSHI_TRACE("Started BTEC compression...");
+			}
 		}
-
+		
 		for (auto stack : m_Stacks)
 		{
 			stack->Unlink();
@@ -908,7 +982,15 @@ namespace PTRB
 			{
 				ttsfo.WriteCompressed(stack->GetBuffer(), stack->GetUsedSize());
 				ready += 1;
-				TOSHI_CORE_TRACE("Compressing progress: {0:.1f}%", (double)ready / count * 100);
+
+				if (count > 1)
+				{
+					TOSHI_TRACE("Compressing progress: {0:.1f}%", (double)ready / count * 100);
+				}
+				else
+				{
+					TOSHI_TRACE("BTEC compression completed...");
+				}
 			}
 			else
 			{

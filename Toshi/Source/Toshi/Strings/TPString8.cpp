@@ -26,7 +26,7 @@ namespace Toshi {
 				else
 				{
 					TPooledString8* pString = m_pAllocator->New<TPooledString8>(a_szString, this, m_pAllocator);
-					m_oMap.Insert(a_szString, pString);
+					m_oMap.Insert(pString->GetString8().GetString(), pString);
 
 					a_pOutString = pString;
 					pString->IncRefCount();

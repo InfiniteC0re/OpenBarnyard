@@ -1,5 +1,9 @@
 #pragma once
+#include "AWaveBank.h"
+
+#include <Toshi/Strings/TPString8.h>
 #include <Toshi/Core/TSystem.h>
+#include <Toshi2/T2Map.h>
 #include <Toshi2/T2DList.h>
 #include <Toshi2/T2SimpleArray.h>
 
@@ -27,6 +31,14 @@ public:
 
 	};
 
+	struct CameraData
+	{
+		Toshi::TVector4 Position = Toshi::TVector4::VEC_ZERO;
+		Toshi::TVector4 Velocity = Toshi::TVector4::VEC_ZERO;
+		Toshi::TVector4 Forward = Toshi::TVector4::VEC_ZERO;
+		Toshi::TVector4 Up = Toshi::TVector4::VEC_ZERO;
+	};
+
 	using PauseListener = Toshi::TListener<Toshi::TSystemManager, TBOOL, ASoundManager>;
 
 public:
@@ -38,16 +50,18 @@ public:
 	virtual TBOOL OnUpdate(TFLOAT a_fDeltaTime) override;
 	virtual void OnDestroy() override;
 
+	TBOOL LoadWaveBanks(const char* a_szFileName);
 	void PauseAllSound(TBOOL a_bPaused);
 
 private:
 	TBOOL Initialise();
 
 private:
-	Toshi::TVector4 m_CameraPos;     // 0xC8
-	Toshi::TVector4 m_SomeVelocity;  // 0xD8
-	Toshi::TVector4 m_CameraForward; // 0xE8
-	Toshi::TVector4 m_CameraUp;      // 0xF8
+	inline static Toshi::TFileSystem* ms_pFileSystem;
+	inline static Toshi::T2Map<Toshi::TPString8, AWaveBank, Toshi::TPString8::Comparator> ms_WaveBanks;
+
+private:
+	CameraData m_CameraData;         // 0xC8
 	S1 m_aS1[128];                   // 0x108
 	S2 m_aS2[8];                     // 0x4D08
 	S3 m_aS3[16];                    // 0x4E10

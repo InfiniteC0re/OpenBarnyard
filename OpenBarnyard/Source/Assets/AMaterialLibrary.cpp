@@ -74,7 +74,7 @@ TBOOL AMaterialLibrary::LoadTTLFile(const char* a_szFilePath)
 
 TBOOL AMaterialLibrary::LoadTRBFile(Toshi::TTRB* a_pTRB)
 {
-	void* pTTL = a_pTRB->GetSymbol("TTL");
+	void* pTTL = a_pTRB->GetSymbolAddress("TTL");
 	TASSERT(TNULL != pTTL);
 
 	LoadTTLData(pTTL);

@@ -265,6 +265,16 @@ namespace Toshi {
 		}
 	}
 
+	void TMemoryHeap::GetStats(TMemoryHeap* a_pHeap, size_t* a_pMaxBytes, size_t* a_pSystemBytes, size_t* a_pInUseBytes)
+	{
+		TVALIDPTR(a_pHeap);
+		auto info = mspace_mallinfo(a_pHeap->m_MSpace);
+		
+		if (a_pMaxBytes) *a_pMaxBytes = info.usmblks;
+		if (a_pSystemBytes) *a_pSystemBytes = info.arena;
+		if (a_pInUseBytes) *a_pInUseBytes = info.uordblks;
+	}
+
 	void* TMemoryHeap::AllocAsPile(TMemoryHeap* heap, size_t size, size_t alignment)
 	{
 		TASSERT(heap->m_Flags & TMemoryHeapFlags_AllocAsPile, "Can't allocate as pile on a non-pile heap");

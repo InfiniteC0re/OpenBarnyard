@@ -74,7 +74,7 @@ TBOOL ARootTask::OnCreate()
 		TNULL
 	);
 
-	AAssetLoader::Load("data\\assets\\lib_startup.trb", AAssetLoader::AssetType_Startup, TTRUE);
+	AAssetLoader::Load("data\\assets\\lib_startup.trb", AAssetType_Startup, TTRUE);
 
 	if (m_pRenderer)
 	{
@@ -242,7 +242,7 @@ void ARootTask::LoadStartupData()
 	{
 		AMaterialLibraryManager::GetSingleton()->LoadFromProperties(
 			matlibProperty,
-			AAssetLoader::GetAssetTRB(AAssetLoader::AssetType_Startup),
+			AAssetLoader::GetAssetTRB(AAssetType_Startup),
 			TTRUE
 		);
 	}

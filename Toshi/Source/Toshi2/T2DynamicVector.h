@@ -222,10 +222,10 @@ namespace Toshi
 			}
 		}
 
-		void PushBack(const T& element)
+		T* PushBack(const T& element)
 		{
 			Grow(1, sizeof(T));
-			new ((T*)m_poElements + m_iNumElements++) T(element);
+			return new ((T*)m_poElements + m_iNumElements++) T(element);
 		}
 
 		Iterator Begin()
@@ -236,6 +236,12 @@ namespace Toshi
 		Iterator End()
 		{
 			return Iterator{ m_iNumElements, *this };
+		}
+
+		Iterator Back()
+		{
+			TASSERT(m_iNumElements > 0);
+			return Iterator{ m_iNumElements - 1, *this };
 		}
 
 		TINT Size() const

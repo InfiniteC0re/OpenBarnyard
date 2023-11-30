@@ -178,10 +178,14 @@ namespace Toshi {
 			m_iNumElements = 0;
 		}
 
-		void Bind(Iterator& a_rIterator)
+		Iterator Begin()
 		{
-			a_rIterator.m_poArray = this;
-			a_rIterator.m_iIndex = (m_iNumElements == 0) ? -1 : 0;
+			return Iterator((m_iNumElements == 0) ? -1 : 0, *this);
+		}
+
+		Iterator End()
+		{
+			return Iterator(-1, *this);
 		}
 
 		TINT GetNumElements() const
@@ -204,10 +208,10 @@ namespace Toshi {
 			m_iGrowSize = a_iGrowSize;
 		}
 
-		void Push(const T& element)
+		T* Push(const T& element)
 		{
 			GrowBy(1);
-			(*this)[m_iNumElements++] = element;
+			return new (&m_pData[m_iNumElements++]) T(element);
 		}
 
 		T& Pop()
@@ -249,8 +253,7 @@ namespace Toshi {
 				T* pNewBuffer = TSTATICCAST(T*, TMemalign(alignof(T), a_iNewSize * sizeof(T)));
 				size_t uiCopySize = TMath::Min(m_iNumElements, a_iNewSize);
 
-				for (size_t i = 0; i < uiCopySize; i++)
-					pNewBuffer[i] = m_pData[i];
+				TUtil::MemCopy(pNewBuffer, m_pData, sizeof(T) * uiCopySize);
 
 				m_iNumAllocElements = a_iNewSize;
 				TASSERT(m_iNumElements <= m_iNumAllocElements);

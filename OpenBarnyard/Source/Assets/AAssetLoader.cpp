@@ -6,7 +6,7 @@
 
 TOSHI_NAMESPACE_USING
 
-TBOOL AAssetLoader::Load(const char* a_szFileName, AssetType a_eAssetType, TBOOL a_bUseStreaming)
+TBOOL AAssetLoader::Load(const char* a_szFileName, AAssetType a_eAssetType, TBOOL a_bUseStreaming)
 {
 	if (!ms_pTRBFiles[a_eAssetType])
 	{
@@ -48,7 +48,7 @@ TBOOL AAssetLoader::Load(const char* a_szFileName, AssetType a_eAssetType, TBOOL
 	return TTRUE;
 }
 
-void AAssetLoader::Close(AssetType a_eAssetType)
+void AAssetLoader::Close(AAssetType a_eAssetType)
 {
 	if (ms_pTRBFiles[a_eAssetType])
 	{
@@ -56,4 +56,16 @@ void AAssetLoader::Close(AssetType a_eAssetType)
 		delete ms_pTRBFiles[a_eAssetType];
 		ms_pTRBFiles[a_eAssetType] = TNULL;
 	}
+}
+
+void* AAssetLoader::GetSymbolAddress(const char* a_szFileName, const char* a_szSymbolName, AAssetType a_eAssetType)
+{
+	if (ms_pTRBFiles[a_eAssetType])
+	{
+		char szName[256];
+		Toshi::TStringManager::String8Format(szName, sizeof(szName), "%s_%s", a_szFileName, a_szSymbolName);
+		return ms_pTRBFiles[a_eAssetType]->GetSymbolAddress(szName);
+	}
+
+	return TNULL;
 }

@@ -137,6 +137,9 @@ namespace Toshi
 
 		void* GetMSpace() const { return m_MSpace; }
 
+	public:
+		static void GetStats(TMemoryHeap* a_pHeap, size_t* a_pMaxBytes, size_t* a_pSystemBytes, size_t* a_pInUseBytes);
+	
 	private:
 		void  CreateMutex() { m_Mutex.Create(); }
 		void  DestroyMutex() { m_Mutex.Destroy(); }

@@ -3,6 +3,7 @@
 #include "AGUI2TextureSectionManager.h"
 #include "Render/ARenderer.h"
 #include "Memory/AMemory.h"
+#include "Terrain/ATerrain.h"
 
 TPSTRING8_DECLARE(Start);
 TPSTRING8_DECLARE(ParkManager);
@@ -93,7 +94,11 @@ void AGUISystem::SetPicture(const Toshi::TPString8& a_rName)
 
 	if (bShowPicture)
 	{
-		TTODO("Call some method of ATerrain");
+		if (ATerrain::IsSingletonCreated())
+		{
+			ATerrain::GetSingleton()->WaitUntilLoaded();
+		}
+
 		m_MatLibPicture.Create(a_rName);
 		m_MatLibPicture.Flush();
 		m_MatLibPicture.Cache();

@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "ASoundManager.h"
+#include "Assets/AAssetLoader.h"
 
 #include <fmod/fmod.h>
 
@@ -9,6 +10,8 @@ ASoundManager::ASoundManager()
 	m_bUseMinHardwareChannels = TTRUE;
 	m_iMinHWChannels = 32;
 	m_iNumChannels = 32;
+
+	ms_pFileSystem = Toshi::TFileManager::GetSingleton()->FindFileSystem("local");
 }
 
 ASoundManager::~ASoundManager()
@@ -97,4 +100,20 @@ TBOOL ASoundManager::Initialise()
 void ASoundManager::PauseAllSound(TBOOL a_bPaused)
 {
 	TIMPLEMENT();
+}
+
+TBOOL ASoundManager::LoadWaveBanks(const char* a_szFileName)
+{
+	TBOOL bOpened = AAssetLoader::Load(
+		"Data/Assets/lib_wavebank.trb",
+		AAssetType_WaveBank,
+		TTRUE
+	);
+
+	if (!bOpened) return TFALSE;
+
+	TIMPLEMENT();
+	//AAssetLoader::CastSymbol()
+
+	return TTRUE;
 }

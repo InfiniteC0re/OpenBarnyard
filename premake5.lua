@@ -20,6 +20,9 @@ workspace "OpenBarnyard"
 group "Engine"
 	include "Toshi"
 	include "OpenBarnyard"
+
+group "Tools"
+	include "Tools/AssetPack"
 	
 group "Third-Party"
 	include "Toshi/Vendor/Opcode"

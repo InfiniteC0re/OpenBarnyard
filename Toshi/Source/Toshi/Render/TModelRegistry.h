@@ -83,6 +83,7 @@ namespace Toshi {
 
 	public:
 		TModelRef() = default;
+		~TModelRef();
 
 		TBOOL Create(const char* a_szFileName, TTRB* a_pTRB);
 		void SetModel(TModel* a_pModel) { m_pModel = a_pModel; }

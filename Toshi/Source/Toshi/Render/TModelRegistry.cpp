@@ -4,6 +4,37 @@
 
 namespace Toshi {
 
+	TModelRef::~TModelRef()
+	{
+		if (m_pModel)
+		{
+			if (m_pEntry)
+			{
+				if (m_pEntry->GetRefCount() == 1)
+				{
+					m_pModel->Delete();
+					m_pEntry->Remove();
+					TModelRegistry::ms_oFreeList.PushBack(m_pEntry);
+
+					m_pModel = TNULL;
+					m_pEntry = TNULL;
+				}
+				else
+				{
+					m_pEntry->DecRefCount();
+					m_pModel = TNULL;
+					m_pEntry = TNULL;
+				}
+			}
+			else
+			{
+				m_pModel->Delete();
+				m_pModel = TNULL;
+				m_pEntry = TNULL;
+			}
+		}
+	}
+
 	void TModelRegistry::Initialise()
 	{
 		TASSERT(ms_pEntries.GetArray() == TNULL);

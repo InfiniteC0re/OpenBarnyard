@@ -19,6 +19,11 @@ namespace Toshi {
 
 		}
 
+		~T2Map()
+		{
+			Clear();
+		}
+
 		void Clear()
 		{
 			m_RedBlackTree.DeleteAll();
