@@ -45,7 +45,7 @@ TBOOL AGUI2MouseCursor::Create(const char* a_szPointerUpTexture, const char* a_s
 		m_pPointerDownSection = AGUI2TextureSectionManager::GetTextureSection(a_szPointerDownTexture);
 	}
 
-	AGUI2::GetRootElement()->AddChildHead(this);
+	AGUI2::GetRootElement()->AddChildTail(*this);
 	AGUI2Element::Hide();
 
 	return TTRUE;

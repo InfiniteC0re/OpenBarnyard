@@ -1,4 +1,9 @@
 #pragma once
+
+#ifndef TOSHI_APP_LOGNAME
+#define TOSHI_APP_LOGNAME "Barnyard"
+#endif
+
 #include "Toshi/Core/Core.h"
 
 #include <spdlog/spdlog.h>
@@ -8,7 +13,7 @@ namespace Toshi
 	class TLog
 	{
 	public:
-		static void Create();
+		static void Create(const char* a_szAppName = TOSHI_APP_LOGNAME);
 		static void Destroy();
 
 		inline static std::shared_ptr<spdlog::logger>& GetCoreLogger() { return s_CoreLogger; };

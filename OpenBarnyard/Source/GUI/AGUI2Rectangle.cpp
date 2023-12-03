@@ -14,7 +14,7 @@ void AGUI2Rectangle::Render()
 	pRenderer->SetMaterial(m_pMaterial);
 	pRenderer->SetColour(m_uiColour);
 	
-	if (ShoudResetZCoordinate())
+	if (IsInFront())
 	{
 		pRenderer->ResetZCoordinate();
 	}

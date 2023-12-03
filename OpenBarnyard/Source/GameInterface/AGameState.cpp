@@ -24,7 +24,7 @@ AGameState::AGameState()
 
 	auto pRootElement = AGUI2::GetRootElement();
 	m_GUIElement.SetDimensions(pRootElement->GetWidth(), pRootElement->GetHeight());
-	pRootElement->AddChildHead(&m_GUIElement);
+	pRootElement->AddChildTail(m_GUIElement);
 	m_GUIElement.Hide();
 }
 

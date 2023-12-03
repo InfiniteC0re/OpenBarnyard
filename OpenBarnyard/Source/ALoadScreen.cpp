@@ -40,7 +40,7 @@ void ALoadScreen::Create()
 	m_CanvasElement.SetColour(TCOLOR(0, 0, 0));
 	m_CanvasElement.Hide();
 
-	pRootElement->AddChildHead(&m_CanvasElement);
+	pRootElement->AddChildTail(m_CanvasElement);
 
 	TFLOAT fRectPosX = fWidth * 0.1f;
 
@@ -55,7 +55,7 @@ void ALoadScreen::Create()
 		pRectangle->SetTransform(fRectPosX, -fHeight * 0.075f);
 		pRectangle->Hide();
 
-		pRootElement->AddChildHead(pRectangle);
+		pRootElement->AddChildTail(*pRectangle);
 		fRectPosX += (fWidth * 0.8f) / NUM_LOAD_INDICATORS;
 	}
 
@@ -69,7 +69,7 @@ void ALoadScreen::Create()
 	m_TextBox.SetTransform(0.0f, -fHeight * 0.08f);
 	m_TextBox.Hide();
 
-	pRootElement->AddChildHead(&m_TextBox);
+	pRootElement->AddChildTail(m_TextBox);
 	m_oTimer.Reset();
 
 	m_fTimer = 0.8f;

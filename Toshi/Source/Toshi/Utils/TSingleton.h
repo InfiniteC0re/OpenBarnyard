@@ -51,6 +51,14 @@ namespace Toshi
 			return ms_pSingleton;
 		}
 
+#ifdef TOSHI_SDK
+		__forceinline static T* SetSingletonExplicit(TUINT32 a_pPtr)
+		{
+			ms_pSingleton = TREINTERPRETCAST(T*, a_pPtr);
+			return ms_pSingleton;
+		}
+#endif
+
 	protected:
 		__forceinline TSingleton()
 		{

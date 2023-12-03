@@ -82,7 +82,7 @@ AFade* AFadeManager::StartFade(const AFade::Color& a_rFadeFrom, const AFade::Col
 	rRectangle.SetInFront();
 
 	rRectangle.Unlink();
-	AGUI2::GetRootElement()->AddChildHead(&rRectangle);
+	AGUI2::GetRootElement()->AddChildTail(rRectangle);
 	rRectangle.Show();
 
 	return pFade;

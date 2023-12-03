@@ -23,6 +23,11 @@ group "Engine"
 
 group "Tools"
 	include "Tools/AssetPack"
-	
+		
 group "Third-Party"
 	include "Toshi/Vendor/Opcode"
+
+group "SDK"
+	include "SDK/BYardSDK"
+	include "SDK/BYModCore"
+	include "SDK/BYSpeedrunHelper"

@@ -9,7 +9,7 @@ namespace Toshi
 	std::shared_ptr<spdlog::logger> TLog::s_AppLogger;
 	TBOOL TLog::s_Created = TFALSE;
 
-	void TLog::Create()
+	void TLog::Create(const char* a_szAppName)
 	{
 		if (!s_Created)
 		{
@@ -18,7 +18,7 @@ namespace Toshi
 			s_CoreLogger = spdlog::stdout_color_mt("Toshi 2.0");
 			s_CoreLogger->set_level(spdlog::level::level_enum::trace);
 
-			s_AppLogger = spdlog::stdout_color_mt("Barnyard");
+			s_AppLogger = spdlog::stdout_color_mt(a_szAppName);
 			s_AppLogger->set_level(spdlog::level::level_enum::trace);
 			s_Created = TTRUE;
 		}

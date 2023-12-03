@@ -120,7 +120,7 @@ void AGUISlideshow::UpdateFadeOverlay()
 	TASSERT(fOpacity <= 1.0f);
 	m_FadeOverlay.SetColour(TUINT32(fOpacity * 255) << 24);
 	m_FadeOverlay.Unlink();
-	AGUI2::GetRootElement()->AddChildHead(&m_FadeOverlay);
+	AGUI2::GetRootElement()->AddChildTail(m_FadeOverlay);
 	m_FadeOverlay.Show();
 }
 

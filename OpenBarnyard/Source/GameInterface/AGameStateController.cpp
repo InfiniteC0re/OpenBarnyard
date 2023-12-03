@@ -158,7 +158,7 @@ void AGameStateController::UpdateScreenOverlay()
 
 	if (bAddOverlay)
 	{
-		AGUI2::GetRootElement()->AddChildHead(&m_Rectangle);
+		AGUI2::GetRootElement()->AddChildTail(m_Rectangle);
 		m_Rectangle.Show();
 	}
 	else

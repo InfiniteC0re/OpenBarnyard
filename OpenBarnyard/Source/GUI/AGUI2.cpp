@@ -45,7 +45,7 @@ TBOOL AGUI2::OnCreate()
 
 	if (m_bShowFPSInfo) m_oFPS.Show();
 	else m_oFPS.Hide();
-	pDebugCanvas->AddChildHead(&m_oFPS);
+	pDebugCanvas->AddChildTail(m_oFPS);
 
 	// Player stats
 	m_oPlayerInfo.Create(pFont, 600.0f);
@@ -55,7 +55,7 @@ TBOOL AGUI2::OnCreate()
 
 	if (m_bShowPlayerInfo) m_oPlayerInfo.Show();
 	else m_oPlayerInfo.Hide();
-	pDebugCanvas->AddChildHead(&m_oPlayerInfo);
+	pDebugCanvas->AddChildTail(m_oPlayerInfo);
 
 	// Textures stats
 	m_oTexturesInfo.Create(pFont, 600.0f);
@@ -65,7 +65,7 @@ TBOOL AGUI2::OnCreate()
 
 	if (m_bShowTexturesInfo) m_oTexturesInfo.Show();
 	else m_oTexturesInfo.Hide();
-	pDebugCanvas->AddChildHead(&m_oTexturesInfo);
+	pDebugCanvas->AddChildTail(m_oTexturesInfo);
 
 	// Memory stats
 	m_oMemStats.Create(pFont, 600.0f);
@@ -75,7 +75,7 @@ TBOOL AGUI2::OnCreate()
 
 	if (m_bShowMemStatsInfo) m_oMemStats.Show();
 	else m_oMemStats.Hide();
-	pDebugCanvas->AddChildHead(&m_oMemStats);
+	pDebugCanvas->AddChildTail(m_oMemStats);
 
 	// Mouse cursor
 	m_oMouseCursor.Create("Pointer_Up", "Pointer_Down", 0.5f);

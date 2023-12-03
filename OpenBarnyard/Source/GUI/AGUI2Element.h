@@ -8,9 +8,15 @@
 
 class AGUI2Element;
 
-class AGUI2ElementNode : public Toshi::T2DList<AGUI2ElementNode>::Node
+class AGUI2ElementNode
 {
 public:
+	AGUI2ElementNode()
+	{
+		m_pNext = this;
+		m_pPrev = this;
+	}
+
 	virtual ~AGUI2ElementNode()
 	{
 		Unlink();
@@ -18,25 +24,34 @@ public:
 
 	void Unlink()
 	{
-		if (Node::IsLinked())
-		{
-			Node::Remove();
-		}
-
-		m_pParent = TNULL;
+		m_pNext->m_pPrev = m_pPrev;
+		m_pPrev->m_pNext = m_pNext;
+		m_pNext = this;
+		m_pPrev = this;
 	}
 
-	AGUI2Element* Element() { return TREINTERPRETCAST(AGUI2Element*, this); }
-	const AGUI2Element* Element() const { return TREINTERPRETCAST(const AGUI2Element*, this); }
+	void LinkAfter(AGUI2ElementNode& a_rNode)
+	{
+		m_pNext = &a_rNode;
+		m_pPrev = a_rNode.m_pPrev;
+		a_rNode.m_pPrev = this;
+		m_pPrev->m_pNext = this;
+	}
+
+	void LinkBefore(AGUI2ElementNode& a_rNode)
+	{
+		m_pNext = a_rNode.m_pNext;
+		m_pPrev = &a_rNode;
+		a_rNode.m_pNext->m_pPrev = this;
+		a_rNode.m_pNext = this;
+	}
+
+	AGUI2Element* GetNextElem() { return TREINTERPRETCAST(AGUI2Element*, m_pNext); }
+	AGUI2Element* GetPrevElem() { return TREINTERPRETCAST(AGUI2Element*, m_pPrev); }
 
 protected:
-	AGUI2Element* m_pParent;
-};
-
-class AGUI2ElementList : public Toshi::T2DList<AGUI2ElementNode>
-{
-public:
-	virtual ~AGUI2ElementList() = default;
+	AGUI2ElementNode* m_pNext;
+	AGUI2ElementNode* m_pPrev;
 };
 
 class AGUI2Element : public AGUI2ElementNode
@@ -111,7 +126,7 @@ public:
 		m_eFlags |= 16;
 	}
 
-	void IsInFront()
+	void SetRenderBeforeChildren()
 	{
 		m_eFlags |= 8;
 	}
@@ -136,23 +151,23 @@ public:
 		return m_eFlags & 8;
 	}
 
-	TBOOL ShoudResetZCoordinate() const
+	TBOOL IsInFront() const
 	{
 		return m_eFlags & 16;
 	}
 
-	void AddChildTail(AGUI2Element* a_pElement)
+	void AddChildTail(AGUI2Element& a_rElement)
 	{
-		a_pElement->Unlink();
-		a_pElement->m_pParent = this;
-		m_Children.PushBack(a_pElement);
+		a_rElement.Unlink();
+		a_rElement.m_pParent = this;
+		a_rElement.LinkBefore(m_Children);
 	}
 
-	void AddChildHead(AGUI2Element* a_pElement)
+	void AddChildHead(AGUI2Element& a_rElement)
 	{
-		a_pElement->Unlink();
-		a_pElement->m_pParent = this;
-		m_Children.PushFront(a_pElement);
+		a_rElement.Unlink();
+		a_rElement.m_pParent = this;
+		a_rElement.LinkAfter(m_Children);
 	}
 
 	void SetTransform(TFLOAT a_fX, TFLOAT a_fY, float a_fRotAngle = 0.0f)
@@ -192,8 +207,9 @@ public:
 	inline static TUINT32 s_uiVisibilityMask = 0xFFFFFFFF;
 
 protected:
+	AGUI2Element* m_pParent;
 	AGUI2Transform m_oTransform;
-	AGUI2ElementList m_Children;
+	AGUI2ElementNode m_Children;
 	Anchor m_eAnchor;
 	Pivot m_ePivot;
 	TFLOAT m_fWidth;
