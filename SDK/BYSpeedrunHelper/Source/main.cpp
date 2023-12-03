@@ -1,32 +1,98 @@
 #include "pch.h"
+#include "ModLoader.h"
+#include "BYardSDK/AGUI2.h"
+#include "BYardSDK/AGUI2TextBox.h"
+#include "BYardSDK/AGUI2FontManager.h"
 
-#include <stdio.h>
-#include <windows.h>
+#include <Toshi/Core/THPTimer.h>
+#include <Windows.h>
 #include <detours.h>
 
-#define TOSHI_TMEMORY_SIZE 128 * 1024 * 1024
-#define TOSHI_TMEMORY_FLAGS Toshi::TMemory::Flags_NativeMethods
+AGUI2TextBox* g_pTimerTextBox;
+TFLOAT g_fTimerTime = 0.0f;
+TBOOL g_bIsStarted = TFALSE;
 
-#define thisCallHook(fnName, addr, thisType, retType, ...) \
-    typedef retType (__fastcall fnName)(thisType _this, DWORD _edx, __VA_ARGS__); \
-    fnName* real##fnName = (fnName*)addr; \
-    retType __fastcall _##fnName(thisType _this, DWORD _edx, __VA_ARGS__)
+t_AddHook ModCore_AddHook;
 
-#define Attach(fnName) DetourAttach(&(PVOID&)real##fnName, _##fnName);
-#define Dettach(fnName) DetourDetach(&(PVOID&)real##fnName, _##fnName);
+void ResetTimer()
+{
+	g_fTimerTime = 0.0f;
+	g_bIsStarted = TTRUE;
+}
 
-HMODULE hModuleCore;
+extern "C"
+{
+	__declspec(dllexport) void GetModInfo(ModInfo_t& a_rModInfo)
+	{
+		a_rModInfo.szModName = "BYSpeedrunHelper";
+	}
 
-//// 0x006c6da0 - ~TRenderD3DInterface()
-//thisCallHook(TRenderD3DInterfaceDestructor, 0x006c6da0, void*, void*, char flag)
-//{
-//	std::cout << "[Modloader] Unloading " << plugins.size() << " mods" << std::endl;
-//
-//	for (auto& plugin : plugins) plugin->Unload();
-//	FreeLibrary(hModuleCore);
-//
-//	return realTRenderD3DInterfaceDestructor(_this, _edx, flag);
-//}
+	__declspec(dllexport) TBOOL InitialiseMod()
+	{
+		TBOOL bLinked = LinkModCoreAtRuntime(ModCore_AddHook);
+		
+		if (bLinked)
+		{
+			Toshi::TMemory(Toshi::TMemory::Flags_NativeMethods, 0).Init();
+			Toshi::TLog::Create("BYSpeedrunHelper");
+
+			if (ModCore_AddHook(Hook_NewGameStarted, HookType_Before, ResetTimer))
+			{
+				auto pFont = AGUI2FontManager::FindFont("Rekord18");
+				g_pTimerTextBox = AGUI2TextBox::CreateFromEngine();
+				g_pTimerTextBox->Create(pFont, 200.0f);
+				g_pTimerTextBox->SetText(L"00:00:00.000");
+				g_pTimerTextBox->SetColour(TCOLOR(253, 226, 1));
+				g_pTimerTextBox->SetTransform(6.0f, 0.0f);
+				g_pTimerTextBox->SetAlpha(1.0f);
+				g_pTimerTextBox->SetInFront();
+				g_pTimerTextBox->SetTextAlign(AGUI2Font::TextAlign_Left);
+				g_pTimerTextBox->SetAttachment(AGUI2Element::Anchor_MiddleLeft, AGUI2Element::Pivot_MiddleLeft);
+
+				AGUI2::GetRootElement()->AddChildTail(*g_pTimerTextBox);
+				return TTRUE;
+			}
+		}
+
+		return TFALSE;
+	}
+
+	__declspec(dllexport) void DeinitialiseMod()
+	{
+		// TODO
+	}
+
+	__declspec(dllexport) TBOOL UpdateMod(TFLOAT a_fDeltaTime)
+	{
+		if (g_bIsStarted)
+		{
+			TINT iMilliseconds = Toshi::TMath::FloorToInt(fmod(g_fTimerTime, 1.0f) * 1000);
+			TINT iSeconds = Toshi::TMath::FloorToInt(fmod(g_fTimerTime, 60.0f));
+			TINT iMinutes = Toshi::TMath::FloorToInt(g_fTimerTime / 60.0f);
+			TINT iHours = Toshi::TMath::FloorToInt(g_fTimerTime / 3600.0f);
+
+			static wchar_t s_buffer[48];
+
+			if (iHours != 0)
+			{
+				Toshi::TStringManager::String16Format(s_buffer, sizeof(s_buffer), L"%02d:%02d:%02d.%03d", iHours, iMinutes, iSeconds, iMilliseconds);
+			}
+			else if (iMinutes != 0)
+			{
+				Toshi::TStringManager::String16Format(s_buffer, sizeof(s_buffer), L"%02d:%02d.%03d", iMinutes, iSeconds, iMilliseconds);
+			}
+			else
+			{
+				Toshi::TStringManager::String16Format(s_buffer, sizeof(s_buffer), L"%0d.%03d", iSeconds, iMilliseconds);
+			}
+
+			g_pTimerTextBox->SetText(s_buffer);
+			g_fTimerTime += a_fDeltaTime;
+		}
+
+		return TTRUE;
+	}
+}
 
 DWORD APIENTRY DllMain(HMODULE hModule, DWORD reason, LPVOID reserved)
 {
@@ -34,32 +100,6 @@ DWORD APIENTRY DllMain(HMODULE hModule, DWORD reason, LPVOID reserved)
 	{
 	case DLL_PROCESS_ATTACH:
 	{
-		Toshi::TMemory(TOSHI_TMEMORY_FLAGS, TOSHI_TMEMORY_SIZE).Init();
-
-		AllocConsole();
-		FILE* fDummy;
-		freopen_s(&fDummy, "CONOUT$", "w", stdout);
-		hModuleCore = hModule;
-
-		Toshi::TLog::Create();
-		TOSHI_INFO("Log system was successfully initialised!");
-		/*AGUI2::SetSingletonExplicit(*(TUINT32*)0x007b4ff4);
-
-		TFLOAT fWidth, fHeight;
-		AGUI2::GetSingleton()->GetDimensions(fWidth, fHeight);
-
-		using t_AGUI2RectangleCTOR = AGUI2Rectangle*(__thiscall*)(AGUI2Rectangle* pThis);
-		t_AGUI2RectangleCTOR AGUI2RectangleCTOR = (t_AGUI2RectangleCTOR)0x006c3ae0;
-		AGUI2Rectangle* rectangle = new AGUI2Rectangle;
-		AGUI2RectangleCTOR(rectangle);
-
-		rectangle->Create(200, 300);
-		rectangle->SetAttachment(AGUI2Element::Anchor_BottomLeft, AGUI2Element::Pivot_BottomLeft);
-		rectangle->Show();
-		rectangle->SetInFront();
-		rectangle->SetColour(TCOLOR(60, 255, 60));
-		AGUI2::GetRootElement()->AddChildTail(rectangle);*/
-
 		return TTRUE;
 	}
 	default:

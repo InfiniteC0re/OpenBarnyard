@@ -124,7 +124,7 @@ namespace Toshi {
 		}
 
 		// Creates resource and returns it
-		TResource* CreateResource(TClass* pClass, const char* name, TNodeTree<TResource>::TNode* parent);
+		TResource* CreateResource(TClass* pClass, const char* name, TResource* parent);
 
 		// Sets new render context and returns the old one
 		TRenderContext* SetCurrentRenderContext(TRenderContext* a_pRenderContext)

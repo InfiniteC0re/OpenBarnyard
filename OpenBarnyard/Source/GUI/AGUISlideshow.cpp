@@ -165,7 +165,7 @@ TBOOL AGUISlideshow::IsSlideshowOver()
 	return TTRUE;
 }
 
-void AGUISlideshow::SwitchToNextSlide()
+void AGUISlideshow::SwitchToNextSlide(TBOOL a_bUnused)
 {
 	if (!m_ImageIterator.IsOver())
 	{

@@ -5,16 +5,12 @@ namespace Toshi
 {
 	TTask::TTask()
 	{
-		//m_State = 0;
+		m_State = 0;
 	}
 	
 	TTask::~TTask()
 	{
 		TASSERT(IsLinked() == TFALSE);
-		/*if (m_Scheduler)
-		{
-			m_Scheduler->DeleteTask();
-		}*/
 	}
 
 	TBOOL TTask::Create()

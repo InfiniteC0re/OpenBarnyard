@@ -212,7 +212,7 @@ namespace Toshi {
 	{
 		if (a_uiColourDepth == 16)
 		{
-			TSTATICCAST(D3DFORMAT, (-(TUINT32)((*(TUINT8*)&(m_DisplayMode).Format & 0x17) != 0) & 0xfffffff9) + D3DFMT_X4R4G4B4);
+			return TSTATICCAST(D3DFORMAT, (-(TUINT32)((*(TUINT8*)&(m_DisplayMode).Format & 0x17) != 0) & 0xfffffff9) + D3DFMT_X4R4G4B4);
 		}
 
 		return TSTATICCAST(D3DFORMAT, (a_uiColourDepth != 32) - 1 & 0x16);

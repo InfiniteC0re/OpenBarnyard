@@ -1,8 +1,9 @@
 #pragma once
+#include "AInputMap.h"
 #include "AGUI2Rectangle.h"
-#include "GameInterface/AGameState.h"
 
 #include <Toshi/Strings/TPString8.h>
+#include <Toshi/Input/TInputInterface.h>
 #include <Toshi2/T2DynamicVector.h>
 
 TOBJECT(AGUISlideshow, Toshi::TObject, TTRUE)
@@ -40,35 +41,13 @@ public:
 public:
 	AGUISlideshow();
 
-	TBOOL Setup(AGameState::HUDParams* a_pHUDParams, const Params& a_rParams, TBOOL a_bShouldLocalise);
-	void Update(TFLOAT a_fDeltaTime);
-	void UpdateFadeOverlay();
-	void SwitchToNextSlide(TBOOL a_bUnused = TTRUE);
-
-	void Activate();
-	void Deactivate();
-	void Reset();
-
 	TBOOL ProcessInput(const Toshi::TInputInterface::InputEvent* a_pEvent);
 	TBOOL ProcessCommand(AInputCommand a_eCommand);
-	TBOOL IsSlideshowOver();
 
-	TBOOL HasSlides() const
-	{
-		return m_Images.Size() != 0;
-	}
-
-	void AddSlide(const Toshi::TPString8& a_rName)
-	{
-		m_Images.PushBack(a_rName);
-	}
+	void SwitchToNextSlide(TBOOL a_bUnused);
 
 public:
-	static Toshi::TPString8* LocaliseBackgroundFileName(Toshi::TPString8& a_rOutName, const Toshi::TPString8& a_rName);
-	static void LocaliseBackgroundFileName(Toshi::TPString8& a_rOutName, const char* a_szName);
-
-protected:
-	AGameState::HUDParams* m_pHUDParams;
+	void* m_pHUDParams;
 	Toshi::T2DynamicVector<Toshi::TPString8> m_Images;
 	Toshi::T2DynamicVector<Toshi::TPString8>::Iterator m_ImageIterator;
 	Flags m_eFlags;

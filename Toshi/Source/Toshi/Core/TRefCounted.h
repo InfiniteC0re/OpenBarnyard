@@ -9,6 +9,7 @@ namespace Toshi
 	public:
 		TRefCounted() { m_iRefCount = 0; }
 		TRefCounted(TRefCounted const&) { m_iRefCount = 0; }
+		~TRefCounted() { m_iRefCount = -1; }
 
 		inline int DecRefCount() { return m_iRefCount--; }
 		inline int GetRefCount() { return m_iRefCount; }

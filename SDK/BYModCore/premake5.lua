@@ -15,7 +15,8 @@ project "BYModCore"
 	links
 	{
 		"Toshi",
-		"BYardSDK"
+		"BYardSDK",
+		"detours.lib"
 	}
 	
 	libdirs

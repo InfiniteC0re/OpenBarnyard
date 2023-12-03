@@ -16,60 +16,32 @@ namespace Toshi
 			TNode()
 			{
 				m_Tree = TNULL;
-				m_Next = this;
-				m_Prev = this;
+				m_Next = (T*)this;
+				m_Prev = (T*)this;
 				m_Parent = TNULL;
 				m_Attached = TNULL;
 			}
 
 		public:
-			TBOOL IsLinked() const
-			{
-				return m_Tree != TNULL;
-			}
-
 			TBOOL IsChildOfDefaultRoot() const
 			{
 				TASSERT(IsLinked() == TTRUE);
-				return m_Parent == &Tree()->m_Root;
+				return m_Parent == (T*)(&Tree()->m_Root);
 			}
 
-			T* Parent() const
-			{
-				return m_Parent->Cast();
-			}
-
-			T* Next() const
-			{
-				return m_Next->Cast();
-			}
-
-			T* Prev() const
-			{
-				return m_Prev->Cast();
-			}
-
-			TNodeTree<T>* Tree() const
-			{
-				return m_Tree;
-			}
-
-			T* Attached() const
-			{
-				return m_Attached->Cast();
-			}
-
-			T* Cast()
-			{
-				return static_cast<T*>(this);
-			}
+			TBOOL IsLinked() const { return m_Tree != TNULL; }
+			T* Parent() const { return m_Parent; }
+			T* Next() const { return m_Next; }
+			T* Prev() const { return m_Prev; }
+			TNodeTree<T>* Tree() const { return m_Tree; }
+			T* Attached() const { return m_Attached; }
 
 		protected:
 			TNodeTree<T>* m_Tree;
-			TNode* m_Next;
-			TNode* m_Prev;
-			TNode* m_Parent;
-			TNode* m_Attached;
+			T* m_Next;
+			T* m_Prev;
+			T* m_Parent;
+			T* m_Attached;
 		};
 
 	public:
@@ -90,7 +62,7 @@ namespace Toshi
 		* @param parentNode Pointer to the parent node.
 		* @param sourceNode Pointer to the node you want to insert.
 		*/
-		void Insert(TNode* parentNode, TNode* sourceNode)
+		void Insert(T* parentNode, T* sourceNode)
 		{
 			// Toshi::TNodeTree<Toshi::TResource>::Insert - 00691aa0
 			TASSERT(sourceNode->IsLinked() == TFALSE, "The source node shouldn't be linked");
@@ -99,12 +71,12 @@ namespace Toshi
 			Remove(*sourceNode, TFALSE);
 
 			// Get the first attached to parent node
-			TNode* firstAttached = parentNode->Attached();
+			T* firstAttached = parentNode->Attached();
 
 			if (firstAttached != TNULL)
 			{
 				// Attach node to other attached nodes
-				TNode* lastAttached = firstAttached->Prev();
+				T* lastAttached = firstAttached->Prev();
 				
 				lastAttached->m_Next = sourceNode;
 				firstAttached->m_Prev = sourceNode;
@@ -128,7 +100,7 @@ namespace Toshi
 		*
 		* @param sourceNode Pointer to the node you want to insert.
 		*/
-		void InsertAtRoot(TNode* sourceNode)
+		void InsertAtRoot(T* sourceNode)
 		{
 			Insert(GetRoot(), sourceNode);
 		}
@@ -136,7 +108,7 @@ namespace Toshi
 		/**
 		 * Tries to remove sourceNode from the tree and inserts it to the parentNode or to the root
 		 */
-		void ReInsert(TNode* parentNode, TNode* sourceNode)
+		void ReInsert(T* parentNode, T* sourceNode)
 		{
 			Remove(sourceNode, TFALSE);
 
@@ -152,11 +124,11 @@ namespace Toshi
 			Insert(parentNode, sourceNode);
 		}
 
-		TNode* Remove(TNode& node, TBOOL flag = TFALSE)
+		T* Remove(T& node, TBOOL flag = TFALSE)
 		{
 			// Toshi::TNodeTree<Toshi::TResource>::Remove - 00691e70
 			TNodeTree<T>* nodeRoot = node.Tree();
-			TNode* nodeParent = node.Parent();
+			T* nodeParent = node.Parent();
 			
 			if (nodeRoot != TNULL)
 			{
@@ -171,7 +143,7 @@ namespace Toshi
 
 			if (flag)
 			{
-				TNode* attachedNode = node.Attached();
+				T* attachedNode = node.Attached();
 
 				while (attachedNode != TNULL)
 				{
@@ -204,16 +176,16 @@ namespace Toshi
 			return &node;
 		}
 
-		TNode* Remove(TNode* node, TBOOL flag = TFALSE)
+		T* Remove(T* node, TBOOL flag = TFALSE)
 		{
 			return Remove(*node, flag);
 		}
 
-		void DeleteRecurse(TNode* node)
+		void DeleteRecurse(T* node)
 		{
 			while (node != TNULL)
 			{
-				TNode* next = (node->Next() != node) ? node->Next() : TNULL;
+				T* next = (node->Next() != node) ? node->Next() : TNULL;
 
 				if (node->Attached() != TNULL)
 				{
@@ -227,7 +199,7 @@ namespace Toshi
 
 				if (node->Tree() == TNULL || node->Tree() == this)
 				{
-					TNode* nodeParent = node->Parent();
+					T* nodeParent = node->Parent();
 
 					if (nodeParent != TNULL)
 					{
@@ -254,7 +226,7 @@ namespace Toshi
 		
 		void DeleteAll()
 		{
-			TNode* node = GetRoot()->Attached();
+			T* node = GetRoot()->Attached();
 
 			while (node != TNULL)
 			{
@@ -266,9 +238,9 @@ namespace Toshi
 			TASSERT(Count() == 0);
 		}
 
-		TNode* GetRoot()
+		T* GetRoot()
 		{
-			return &m_Root;
+			return TSTATICCAST(T*, &m_Root);
 		}
 
 		T* AttachedToRoot()

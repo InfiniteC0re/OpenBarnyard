@@ -1,5 +1,6 @@
 #pragma once
 #include "TObject.h"
+#include "TRefCounted.h"
 #include "TNodeTree.h"
 
 namespace Toshi
@@ -8,6 +9,7 @@ namespace Toshi
 
 	class TTask :
 		public TGenericClassDerived<TTask, TObject, "TTask", TMAKEVERSION(1, 0), TFALSE>,
+		public TRefCounted,
 		public TNodeTree<TTask>::TNode
 	{
 	public:
@@ -39,15 +41,13 @@ namespace Toshi
 		void Activate(TBOOL activate);
 		void AttachTo(TTask* a_pAttachTo);
 
-		TScheduler* GetScheduler() const { return m_Scheduler; }
-		uint8_t& GetFlags() { return m_State; }
+		TUINT32& GetFlags() { return m_State; }
 		TBOOL IsCreated() const { return m_State & State_Created; }
 		TBOOL IsActive() const { return m_State & State_Active; }
 		TBOOL IsCreatedAndActive() const { return (m_State & (State_Created | State_Active)) == (State_Created | State_Active); }
 		TBOOL IsDying() const { return m_State & State_Dying; }
 
 	private:
-		uint8_t m_State;                 // 0x1C
-		TScheduler* m_Scheduler;         // 0x20
+		TUINT32 m_State;
 	};
 }

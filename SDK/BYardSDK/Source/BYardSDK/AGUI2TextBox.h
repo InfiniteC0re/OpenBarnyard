@@ -56,6 +56,11 @@ public:
 		m_eTextAlign = a_eTextAlign;
 	}
 
+	AGUI2Font* GetFont()
+	{
+		return m_pFont;
+	}
+
 	static AGUI2TextBox* CreateFromEngine()
 	{
 		return CALL_THIS(0x006c3620, AGUI2TextBox*, AGUI2TextBox*, new AGUI2TextBox);

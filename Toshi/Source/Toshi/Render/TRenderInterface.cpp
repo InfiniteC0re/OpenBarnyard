@@ -154,7 +154,7 @@ namespace Toshi {
 		}
 	}
 
-	TResource* TRenderInterface::CreateResource(TClass* pClass, const char* name, TNodeTree<TResource>::TNode* parent)
+	TResource* TRenderInterface::CreateResource(TClass* pClass, const char* name, TResource* parent)
 	{
 		TASSERT(pClass != TNULL, "TResource class is TNULL");
 		TASSERT(pClass->IsA(&TGetClass(TResource)), "TResource class is TNULL");
