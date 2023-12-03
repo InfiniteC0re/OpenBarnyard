@@ -18,7 +18,6 @@
 #include <filesystem>
 
 HMODULE hModuleCore;
-AGUI2TextBox* g_pTextBox = TNULL;
 AModLoaderTask* g_pModLoaderTask = TNULL;
 
 DWORD WINAPI MainThread(HMODULE hModule)
@@ -30,29 +29,19 @@ DWORD WINAPI MainThread(HMODULE hModule)
 	while (!AGUI2::IsSingletonCreated()) { Sleep(50); }
 	while (!AGUI2::GetSingleton()->GetRootElement()) { Sleep(50); }
 
+	// Log info about AGUI2
+	TFLOAT fWidth, fHeight;
+	AGUI2::GetSingleton()->GetDimensions(fWidth, fHeight);
+	TOSHI_INFO("AGUI2 is ready! (Dimensions: {0}x{1})", fWidth, fHeight);
+	
+	// Initialise hooks
+	AHooks::Initialise();
+
 	// Create AModLoaderTask
 	Toshi::TTask* pRootTask = *(Toshi::TTask**)0x0077de78;
 	auto pScheduler = CALL_THIS(0x006bbc10, Toshi::TSystemManager*, Toshi::TScheduler*, (Toshi::TSystemManager*)0x007ce640);
 	g_pModLoaderTask = CALL_THIS(0x006bcbf0, Toshi::TScheduler*, AModLoaderTask*, pScheduler, Toshi::TClass*, AModLoaderTask::GetClassStatic(), Toshi::TTask*, pRootTask);
 
-	// Initialise hooks
-	AHooks::Initialise();
-
-	auto pGUI = AGUI2::GetSingleton();
-	
-	TFLOAT fWidth, fHeight;
-	pGUI->GetDimensions(fWidth, fHeight);
-	TOSHI_INFO("AGUI2 is ready! (Dimensions: {0}x{1})", fWidth, fHeight);
-
-	auto pFont = AGUI2FontManager::FindFont("Rekord18");
-	g_pTextBox = AGUI2TextBox::CreateFromEngine();
-	g_pTextBox->SetAttachment(AGUI2Element::Anchor_TopCenter, AGUI2Element::Pivot_TopCenter);
-	g_pTextBox->Create(pFont, 200.0f);
-	g_pTextBox->SetTransform(0, 16.0f);
-	g_pTextBox->SetText(L"ModLoader works!");
-	g_pTextBox->SetInFront();
-
-	AGUI2::GetRootElement()->AddChildTail(*g_pTextBox);
 	TINT uiNumLoaded = 0;
 
 	for (const auto& entry : std::filesystem::directory_iterator(L"Mods"))
@@ -100,30 +89,7 @@ DWORD WINAPI MainThread(HMODULE hModule)
 
 	static wchar_t s_buffer[256];
 	Toshi::TStringManager::String16Format(s_buffer, sizeof(s_buffer), L"Loaded %d mods!", uiNumLoaded);
-	g_pTextBox->SetText(s_buffer);
-
-	Toshi::THPTimer timer;
-	TFLOAT fTimeFromStart = 0.0f;
-
-	while (true)
-	{
-		timer.Update();
-		fTimeFromStart += timer.GetDelta();
-
-		TFLOAT fAlpha = (fTimeFromStart - 3.0f) / 0.8f;
-		Toshi::TMath::Clip(fAlpha, 0.0f, 1.0f);
-
-		fAlpha *= fAlpha;
-		g_pTextBox->SetAlpha(1.0f - fAlpha);
-
-		if (fAlpha == 1.0f)
-		{
-			g_pTextBox->Hide();
-			break;
-		}
-
-		Sleep(25);
-	}
+	g_pModLoaderTask->GetTextBox()->SetText(s_buffer);
 
 	return 0;
 }

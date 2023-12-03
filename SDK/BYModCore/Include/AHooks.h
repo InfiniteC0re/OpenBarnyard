@@ -7,6 +7,7 @@ extern "C" {
 
 	enum Hook
 	{
+		Hook_AGUI2_MainPostRenderCallback,
 		Hook_AGUISlideshow_ProcessInput,
 		Hook_NewGameStarted,
 		Hook_NUMOF,
@@ -24,6 +25,12 @@ extern "C" {
 	public:
 		constexpr static TUINT MAX_NUM_CALLBACKS = 16;
 
+		struct GUI2
+		{
+			using t_MainPostRenderCallback = void(*)();
+			inline static Toshi::T2Vector<t_MainPostRenderCallback, MAX_NUM_CALLBACKS> MainPostRenderCallback[HookType_NUMOF];
+		};
+
 		struct GUISlideshow
 		{
 			using t_ProcessInput = TBOOL(*)(AGUISlideshow* a_pSlideshow, Toshi::TInputInterface::InputEvent* a_pEvent);
@@ -40,5 +47,5 @@ extern "C" {
 		static void Initialise();
 	};
 
-	TBOOL __declspec(dllexport) AddHookImpl(Hook a_eHook, HookType a_eHookType, void* a_pCallback);
+	TBOOL __declspec(dllexport) AddHook(Hook a_eHook, HookType a_eHookType, void* a_pCallback);
 }

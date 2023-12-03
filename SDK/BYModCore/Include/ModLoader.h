@@ -18,7 +18,7 @@ TBOOL LinkModCoreAtRuntime(t_AddHook& a_rAddHook)
 
 	if (hModCore)
 	{
-		a_rAddHook = (t_AddHook)GetProcAddress(hModCore, "AddHookImpl");
+		a_rAddHook = (t_AddHook)GetProcAddress(hModCore, "AddHook");
 		return a_rAddHook != TNULL;
 	}
 

@@ -81,15 +81,44 @@ void AHooks::Initialise()
 		DetourAttach(&pRealMethod, _methodHolder::hook);
 	}
 
+	{
+		// AGUI2::MainPostRenderCallback
+		using t_OriginalMethod = void(*)();
+		static t_OriginalMethod OriginalMethod = (t_OriginalMethod)(0x00635410);
+
+		struct _methodHolder
+		{
+			static void __stdcall hook()
+			{
+				for (TUINT i = 0; i < GUI2::MainPostRenderCallback[HookType_Before].Size(); i++)
+				{
+					GUI2::MainPostRenderCallback[HookType_Before][i]();
+				}
+
+				OriginalMethod();
+
+				for (TUINT i = 0; i < GUI2::MainPostRenderCallback[HookType_After].Size(); i++)
+				{
+					GUI2::MainPostRenderCallback[HookType_After][i]();
+				}
+			}
+		};
+
+		DetourAttach((PVOID*)&OriginalMethod, _methodHolder::hook);
+	}
+
 	DetourTransactionCommit();
 }
 
 extern "C" {
 
-	TBOOL __declspec(dllexport) AddHookImpl(Hook a_eHook, HookType a_eHookType, void* a_pCallback)
+	TBOOL __declspec(dllexport) AddHook(Hook a_eHook, HookType a_eHookType, void* a_pCallback)
 	{
 		switch (a_eHook)
 		{
+		case Hook_AGUI2_MainPostRenderCallback:
+			AHooks::GUI2::MainPostRenderCallback[a_eHookType].PushBack(TSTATICCAST(AHooks::GUI2::t_MainPostRenderCallback, a_pCallback));
+			return TTRUE;
 		case Hook_AGUISlideshow_ProcessInput:
 			AHooks::GUISlideshow::ProcessInput[a_eHookType].PushBack(TSTATICCAST(AHooks::GUISlideshow::t_ProcessInput, a_pCallback));
 			return TTRUE;
