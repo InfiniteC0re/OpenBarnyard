@@ -16,6 +16,10 @@ public:
 public:
 	TTransformObject();
 
+	void Push();
+	void Pop();
+
+	TVector3& GetTranslation();
 	void GetLocalMatrixImp(TMatrix44& outMatrix);
 
 	void SetEulerOrder(TUINT8 x, TUINT8 y, TUINT8 z);

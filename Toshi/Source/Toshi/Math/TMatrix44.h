@@ -231,6 +231,13 @@ namespace Toshi
 			a_rOutVector.w = a_rVector.w;
 		}
 
+		static void TransformVector(TVector3& a_rOutVector, const TMatrix44& a_rMatrix, const TVector3& a_rVector)
+		{
+			a_rOutVector.x = a_rMatrix.m_f11 * a_rVector.x + a_rMatrix.m_f21 * a_rVector.y + a_rMatrix.m_f31 * a_rVector.z + a_rMatrix.m_f41;
+			a_rOutVector.y = a_rMatrix.m_f12 * a_rVector.x + a_rMatrix.m_f22 * a_rVector.y + a_rMatrix.m_f32 * a_rVector.z + a_rMatrix.m_f42;
+			a_rOutVector.z = a_rMatrix.m_f13 * a_rVector.x + a_rMatrix.m_f23 * a_rVector.y + a_rMatrix.m_f33 * a_rVector.z + a_rMatrix.m_f43;
+		}
+
 		static void TransformVector(TVector4& a_rOutVector, const TMatrix44& a_rMatrix, const TVector4& a_rVector)
 		{
 			a_rOutVector.x = a_rMatrix.m_f11 * a_rVector.x + a_rMatrix.m_f21 * a_rVector.y + a_rMatrix.m_f31 * a_rVector.z + a_rMatrix.m_f41 * a_rVector.w;

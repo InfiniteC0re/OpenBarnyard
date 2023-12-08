@@ -6,6 +6,7 @@
 namespace Toshi {
 
 	class TRenderInterface;
+	class TSkeletonInstance;
 
 	class TRenderContext
 	{
@@ -115,9 +116,20 @@ namespace Toshi {
 			return m_oParams.fHeight;
 		}
 
+		TSkeletonInstance* GetSkeletonInstance() const
+		{
+			return m_pCurrentSkeletonInstance;
+		}
+
+		void SetSkeletonInstance(TSkeletonInstance* a_pSkeletonInstance)
+		{
+			m_pCurrentSkeletonInstance = a_pSkeletonInstance;
+		}
+
 		const TPlane* GetWorldPlanes();
 
-		TBOOL CullSphereToFrustumSimple(const TSphere& a_rSphere, const TPlane* a_pPlanes, int a_iUnused);
+		static TBOOL CullSphereToFrustumSimple(const TSphere& a_rSphere, const TPlane* a_pPlanes, int a_iUnused);
+		static TINT CullSphereToFrustum(const TSphere& a_rSphere, const TPlane* a_pPlanes, TINT a_iUnk1, TINT a_iUnk2);
 
 		const TMatrix44& GetViewWorldMatrix();
 		const TMatrix44& GetWorldModelMatrix();
@@ -132,21 +144,22 @@ namespace Toshi {
 		}
 
 	protected:
-		TRenderInterface* m_pRenderer;          // 0x0004
-		FLAG m_eFlags;                          // 0x0008
-		CameraMode m_eCameraMode;               // 0x0014
-		Params m_oParams;                       // 0x0018
-		PROJECTIONPARAMS m_ProjParams;          // 0x0030
-		TMatrix44 m_oModelViewMatrix;           // 0x0050
-		TMatrix44 m_oWorldViewMatrix;           // 0x0090
-		TMatrix44 m_oModelWorldMatrix;          // 0x00D0
-		TMatrix44 m_oViewWorldMatrix;           // 0x0110
-		TPlane m_aFrustumPlanes1[6];            // 0x01AC
-		TPlane m_aWorldPlanes[6];               // 0x020C
-		TPlane m_aFrustumPlanes2[6];            // 0x026C
+		TRenderInterface* m_pRenderer;                 // 0x0004
+		FLAG m_eFlags;                                 // 0x0008
+		CameraMode m_eCameraMode;                      // 0x0014
+		Params m_oParams;                              // 0x0018
+		PROJECTIONPARAMS m_ProjParams;                 // 0x0030
+		TSkeletonInstance* m_pCurrentSkeletonInstance; // 0x0048
+		TMatrix44 m_oModelViewMatrix;                  // 0x0050
+		TMatrix44 m_oWorldViewMatrix;                  // 0x0090
+		TMatrix44 m_oModelWorldMatrix;                 // 0x00D0
+		TMatrix44 m_oViewWorldMatrix;                  // 0x0110
+		TPlane m_aFrustumPlanes1[6];                   // 0x01AC
+		TPlane m_aWorldPlanes[6];                      // 0x020C
+		TPlane m_aFrustumPlanes2[6];                   // 0x026C
 		// ...
-		TMatrix44 m_oWorldModelMatrix;          // 0x032C
-		TMatrix44 m_oViewModelMatrix;           // 0x036C
+		TMatrix44 m_oWorldModelMatrix;                 // 0x032C
+		TMatrix44 m_oViewModelMatrix;                  // 0x036C
 	};
 
 }

@@ -262,7 +262,7 @@ namespace Toshi {
 
 						if (!pSeqBone->Is2() && pSeqBone->GetKeyCount() != 0)
 						{
-							int iCurrentKeyframePos = (it->GetSeqTime() / pSeq->GetDuration()) * 65535;
+							int iCurrentKeyframePos = TINT((it->GetSeqTime() / pSeq->GetDuration()) * 65535);
 
 							unsigned short iLerpFromIndex;
 							unsigned short iLerpToIndex;

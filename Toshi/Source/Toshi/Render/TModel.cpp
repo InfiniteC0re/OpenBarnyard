@@ -188,10 +188,34 @@ namespace Toshi {
 	{
 		m_pModel = a_pModel;
 		m_pSkeletonInstance = TNULL;
-		m_Unknown1 = 0;
-		m_fnSomeCallback = TNULL;
-		m_pCBUserData = TNULL;
-		m_Unknown2 = 0;
+		m_fnPreRenderCb = 0;
+		m_fnCustomRenderCb = TNULL;
+		m_pCustomRenderCbUserData = TNULL;
+		m_iCurrentLOD = 0;
+	}
+
+	void TModelInstance::Render()
+	{
+		if (m_fnPreRenderCb)
+		{
+			m_fnPreRenderCb(this);
+		}
+
+		if (!m_fnCustomRenderCb)
+		{
+			m_pSkeletonInstance->UpdateState(TTRUE);
+			TRenderInterface::GetSingleton()->GetCurrentRenderContext()->SetSkeletonInstance(m_pSkeletonInstance);
+
+			for (TINT i = 0; i < m_pModel->m_LODs[m_iCurrentLOD].iNumMeshes; i++)
+			{
+				auto pMesh = m_pModel->m_LODs[m_iCurrentLOD].ppMeshes[i];
+				pMesh->Render();
+			}
+		}
+		else
+		{
+			m_fnCustomRenderCb(this, m_pCustomRenderCbUserData);
+		}
 	}
 
 	void TModelInstance::Delete()

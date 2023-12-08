@@ -26,7 +26,8 @@ namespace Toshi {
 	public:
 		friend class TModel;
 
-		using t_Callback = void(*)(TModelInstance* a_pInstance, void* a_pUserData);
+		using t_PreRenderCB = void(*)(TModelInstance* a_pInstance);
+		using t_CustomRenderCB = void(*)(TModelInstance* a_pInstance, void* a_pUserData);
 
 	public:
 		TModelInstance(TModel* a_pModel);
@@ -36,21 +37,28 @@ namespace Toshi {
 			m_pSkeletonInstance->UpdateTime(a_fDeltaTime);
 		}
 
-		void Delete();
+		void Render();
 
-		void SetSomeCallback(t_Callback a_fnCallback, void* a_pUserData)
+		void SetPreRenderCallback(t_PreRenderCB a_fnCallback)
 		{
-			m_fnSomeCallback = a_fnCallback;
-			m_pCBUserData = a_pUserData;
+			m_fnPreRenderCb = a_fnCallback;
 		}
+
+		void SetCustomRenderMethod(t_CustomRenderCB a_fnCallback, void* a_pUserData)
+		{
+			m_fnCustomRenderCb = a_fnCallback;
+			m_pCustomRenderCbUserData = a_pUserData;
+		}
+
+		void Delete();
 
 	private:
 		TModel* m_pModel;
 		TSkeletonInstance* m_pSkeletonInstance;
-		TUINT32 m_Unknown1;
-		t_Callback m_fnSomeCallback;
-		void* m_pCBUserData;
-		TUINT32 m_Unknown2;
+		t_PreRenderCB m_fnPreRenderCb;
+		t_CustomRenderCB m_fnCustomRenderCb;
+		void* m_pCustomRenderCbUserData;
+		TUINT32 m_iCurrentLOD;
 	};
 
 	class TModel

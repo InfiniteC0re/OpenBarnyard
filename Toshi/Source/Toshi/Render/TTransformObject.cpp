@@ -1,5 +1,6 @@
 #include "ToshiPCH.h"
 #include "TTransformObject.h"
+#include "TRenderInterface.h"
 
 namespace Toshi {
 
@@ -15,6 +16,65 @@ namespace Toshi {
 
 		m_Translation = m_Matrix.GetTranslation3();
 		m_Scale = { 1.0f, 1.0f, 1.0f };
+	}
+
+	void TTransformObject::Push()
+	{
+		auto pRender = TRenderInterface::GetSingleton();
+
+		auto pPrevTransform = &pRender->GetTransforms().Pop();
+
+		pRender->GetTransforms().PushNull();
+		auto pPushTransform = &pRender->GetTransforms().Top();
+
+		if (m_eMode == Mode::Quat)
+		{
+			pPushTransform->PushQuaternion(m_Quat, *pPrevTransform, m_Translation);
+			pPushTransform->Scale(m_Scale.x, m_Scale.y, m_Scale.z);
+		}
+		else if (m_eMode == Mode::Euler)
+		{
+			*pPushTransform = *pPrevTransform;
+			TMatrix44::TransformVector(pPushTransform->GetTranslation().AsVector3(), *pPushTransform, GetTranslation());
+
+			for (int i = 0; i < 3; i++)
+			{
+				switch (m_EulerOrder[i])
+				{
+				case 0:
+					pPushTransform->RotateX(m_Euler.x);
+					break;
+				case 1:
+					pPushTransform->RotateY(m_Euler.y);
+					break;
+				case 2:
+					pPushTransform->RotateZ(m_Euler.z);
+					break;
+				}
+			}
+
+			pPushTransform->Scale(m_Scale.x, m_Scale.y, m_Scale.z);
+		}
+		else
+		{
+			TASSERT(m_eMode == Mode::Matrix);
+			pPushTransform->Multiply(*pPrevTransform, m_Matrix);
+		}
+
+		pRender->GetCurrentRenderContext()->SetModelViewMatrix(pRender->GetTransforms().Top());
+	}
+
+	void TTransformObject::Pop()
+	{
+		auto pRender = TRenderInterface::GetSingleton();
+
+		pRender->GetTransforms().Pop();
+		pRender->GetCurrentRenderContext()->SetModelViewMatrix(pRender->GetTransforms().Top());
+	}
+
+	Toshi::TVector3& TTransformObject::GetTranslation()
+	{
+		return (m_eMode != Mode::Matrix) ? m_Translation : m_Matrix.GetTranslation().AsVector3();
 	}
 
 	void TTransformObject::GetLocalMatrixImp(TMatrix44& outMatrix)
@@ -37,10 +97,10 @@ namespace Toshi {
 					RotateX(m_Euler.x);
 					break;
 				case 1:
-					RotateX(m_Euler.y);
+					RotateY(m_Euler.y);
 					break;
 				case 2:
-					RotateX(m_Euler.z);
+					RotateZ(m_Euler.z);
 					break;
 				}
 			}

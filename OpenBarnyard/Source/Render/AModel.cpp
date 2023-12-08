@@ -155,7 +155,7 @@ AModelInstance::AModelInstance(AModel* a_pModel, T2ModelInstance* a_pT2Instance,
 	m_eFlags = 0b00001001;
 
 	SetSkeletonUpdating(a_bEnableSkeletonUpdate);
-	m_pT2ModelInstance->GetInstance()->SetSomeCallback(SomeCallback, this);
+	m_pT2ModelInstance->GetInstance()->SetCustomRenderMethod(RenderInstanceCallback, this);
 }
 
 AModelInstance::AModelInstance()
@@ -171,7 +171,7 @@ AModelInstance::AModelInstance()
 	m_eFlags = 0b00011000;
 }
 
-void AModelInstance::SomeCallback(TModelInstance* a_pInstance, void* a_pUserData)
+void AModelInstance::RenderInstanceCallback(TModelInstance* a_pInstance, void* a_pUserData)
 {
 	TIMPLEMENT();
 }

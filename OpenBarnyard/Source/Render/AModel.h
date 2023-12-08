@@ -38,7 +38,7 @@ public:
 	TBOOL IsUpdatingSkeleton() const { return m_eFlags & Flags_UpdatingSkeleton; }
 
 private:
-	static void SomeCallback(Toshi::TModelInstance* a_pInstance, void* a_pUserData);
+	static void RenderInstanceCallback(Toshi::TModelInstance* a_pInstance, void* a_pUserData);
 
 private:
 	TFLOAT m_Unknown1[4];

@@ -9,6 +9,7 @@ namespace Toshi {
 		TIMPLEMENT();
 		m_eFlags = FLAG_DIRTY;
 		m_eCameraMode = CameraMode_Perspective;
+		m_pCurrentSkeletonInstance = TNULL;
 		m_pRenderer = pRender;
 
 		// Setup viewport parameters
@@ -102,6 +103,40 @@ namespace Toshi {
 		}
 
 		return TTRUE;
+	}
+
+	TINT TRenderContext::CullSphereToFrustum(const TSphere& a_rSphere, const TPlane* a_pPlanes, TINT a_iUnk1, TINT a_iUnk2)
+	{
+		TINT iLeftPlanes = a_iUnk1 & a_iUnk2;
+		TINT iPlaneFlag = 1;
+
+		do {
+			if (iLeftPlanes == 0)
+			{
+				return a_iUnk1;
+			}
+
+			if (iLeftPlanes & iPlaneFlag)
+			{
+				TFLOAT fDist = TVector4::DotProduct3(a_rSphere.AsVector4(), a_pPlanes->AsVector4()) - a_pPlanes->GetD();
+
+				if (a_rSphere.GetRadius() < fDist)
+				{
+					return -1;
+				}
+
+				if (fDist < -a_rSphere.GetRadius())
+				{
+					a_iUnk1 &= ~iPlaneFlag;
+				}
+
+				iLeftPlanes &= ~iPlaneFlag;
+			}
+
+			iPlaneFlag = iPlaneFlag << 1;
+			a_pPlanes++;
+
+		} while (TTRUE);
 	}
 
 	const TMatrix44& TRenderContext::GetViewWorldMatrix()

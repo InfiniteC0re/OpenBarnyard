@@ -330,6 +330,19 @@ void ARootTask::CreateGameSystem()
 void ARootTask::LoadFrontEnd()
 {
 	TIMPLEMENT();
+
+	Toshi::TSphere sphere = { 24.55160141f, -11.76614094f, -32.63951874f, 45.89837265f };
+	Toshi::TPlane planes[6] = {
+		{ -0.3349758983f, 0.02605731972f, -0.9418663979f, 24.19716644f },
+		{ 0.9829545617f, 0.02605731972, 0.1819926798, 34.31285095f },
+		{ 0.3024052083f, -0.8847551942f, -0.3546254933f, 35.86272049f },
+		{ 0.2410077006f, 0.9284599423f, -0.2826256454f, 13.20540524f },
+		{ 0.6479786038f, 0.05211463198f, -0.759873569f, 57.51000977f },
+		{ -0.6479786038f, -0.05211463198f, 0.759873569f, 221.4899902f }
+	};
+
+	Toshi::TRenderContext::CullSphereToFrustumSimple(sphere, planes, 6);
+
 	ATerrainManager::SetTerrain(
 		ATerrainManager::Terrain_FrontEnd,
 		TTRUE,

@@ -161,6 +161,11 @@ namespace Toshi {
 			}
 		}
 
+		TStack<TMatrix44, 20>& GetTransforms()
+		{
+			return m_Transforms;
+		}
+
 	protected:
 		TUINT32 m_Unk1;                                  // 0x04
 		TBOOL m_bCreateSystemResources;                  // 0x08
