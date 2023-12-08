@@ -5,6 +5,8 @@
 
 namespace Toshi {
 
+	class T2ModelInstance;
+
 	class TModelRegistryEntry :
 		public T2DList<TModelRegistryEntry>::Node
 	{
@@ -57,7 +59,7 @@ namespace Toshi {
 		TModel* m_pModel;
 	};
 
-	class TModelRef;
+	class TModelPtr;
 
 	class TModelRegistry
 	{
@@ -68,7 +70,7 @@ namespace Toshi {
 		static void Initialise();
 		static void Uninitialise();
 
-		static TModelRegistryEntry* CreateModel(const char* a_szFileName, TModelRef& a_rModelRef, TTRB* a_pAssetTRB);
+		static TModelRegistryEntry* CreateModel(const char* a_szFileName, TModelPtr& a_rModelRef, TTRB* a_pAssetTRB);
 
 	public:
 		inline static T2SimpleArray<TModelRegistryEntry> ms_pEntries;
@@ -76,16 +78,18 @@ namespace Toshi {
 		inline static T2DList<TModelRegistryEntry> ms_oFreeList;
 	};
 
-	class TModelRef
+	class TModelPtr
 	{
 	public:
 		friend TModelRegistry;
 
 	public:
-		TModelRef() = default;
-		~TModelRef();
+		TModelPtr() = default;
+		~TModelPtr();
 
 		TBOOL Create(const char* a_szFileName, TTRB* a_pTRB);
+		T2ModelInstance* CreateInstance();
+
 		void SetModel(TModel* a_pModel) { m_pModel = a_pModel; }
 
 		TModel* GetModel() const { return m_pModel; }

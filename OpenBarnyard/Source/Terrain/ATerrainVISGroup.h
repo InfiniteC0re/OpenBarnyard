@@ -1,6 +1,7 @@
 #pragma once
 #include "ATerrainLODBlock.h"
 #include "Assets/AMaterialLibrary.h"
+#include "Render/AModel.h"
 
 #include <Toshi/Render/TModelRegistry.h>
 #include <Toshi2/T2SList.h>
@@ -11,7 +12,10 @@ public:
 	struct ModelData : 
 		Toshi::T2SList<ModelData>::Node
 	{
-		Toshi::TModelRef m_ModelRef;
+		~ModelData();
+
+		Toshi::TModelPtr m_ModelRef;
+		Toshi::T2ModelInstance* m_pModelInstance;
 	};
 
 	enum FLAGS : TUINT32

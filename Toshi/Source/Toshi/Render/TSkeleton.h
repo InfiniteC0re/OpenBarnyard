@@ -117,6 +117,8 @@ namespace Toshi {
 			QUATINTERP_Nlerp
 		};
 
+		friend class TSkeletonInstance;
+
 	public:
 		TSkeleton();
 		
@@ -183,6 +185,8 @@ namespace Toshi {
 		void RemoveAnimation(TAnimation* a_pAnimation, float a_fValue);
 
 		void SetStateFromBasePose();
+
+		void Delete();
 
 		TSkeleton* GetSkeleton() { return m_pSkeleton; }
 

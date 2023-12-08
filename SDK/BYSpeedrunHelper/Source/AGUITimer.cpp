@@ -11,8 +11,11 @@ AGUITimer::AGUITimer()
 
 AGUITimer::~AGUITimer()
 {
-	delete m_pTextBox;
-	m_pTextBox = TNULL;
+	if (m_pTextBox)
+	{
+		delete m_pTextBox;
+		m_pTextBox = TNULL;
+	}
 }
 
 void AGUITimer::Create()
@@ -50,7 +53,7 @@ void AGUITimer::Update(TFLOAT a_fDeltaTime)
 		}
 		else
 		{
-			Toshi::TStringManager::String16Format(s_buffer, sizeof(s_buffer), L"%0d.%03d", iSeconds, iMilliseconds);
+			Toshi::TStringManager::String16Format(s_buffer, sizeof(s_buffer), L"%02d.%03d", iSeconds, iMilliseconds);
 		}
 
 		m_pTextBox->SetText(s_buffer);

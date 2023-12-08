@@ -19,10 +19,38 @@ namespace Toshi {
 	};
 
 	struct TTMD;
+	class TModel;
 
 	class TModelInstance
 	{
+	public:
+		friend class TModel;
 
+		using t_Callback = void(*)(TModelInstance* a_pInstance, void* a_pUserData);
+
+	public:
+		TModelInstance(TModel* a_pModel);
+
+		void Update(TFLOAT a_fDeltaTime)
+		{
+			m_pSkeletonInstance->UpdateTime(a_fDeltaTime);
+		}
+
+		void Delete();
+
+		void SetSomeCallback(t_Callback a_fnCallback, void* a_pUserData)
+		{
+			m_fnSomeCallback = a_fnCallback;
+			m_pCBUserData = a_pUserData;
+		}
+
+	private:
+		TModel* m_pModel;
+		TSkeletonInstance* m_pSkeletonInstance;
+		TUINT32 m_Unknown1;
+		t_Callback m_fnSomeCallback;
+		void* m_pCBUserData;
+		TUINT32 m_Unknown2;
 	};
 
 	class TModel
@@ -40,6 +68,8 @@ namespace Toshi {
 		using t_ModelLoaderTMDCallback = TBOOL(*)(TModel* a_pModel);
 
 		static constexpr TUINT MAX_NUM_LODS = 5;
+
+		friend TModelInstance;
 
 	public:
 		TModel();

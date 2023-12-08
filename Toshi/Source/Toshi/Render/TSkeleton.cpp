@@ -358,6 +358,12 @@ namespace Toshi {
 		}
 	}
 
+	void TSkeletonInstance::Delete()
+	{
+		m_pSkeleton->m_iInstanceCount--;
+		delete this;
+	}
+
 	float TSkeletonSequenceBone::GetKeyPair(int a_iCurrentAnimTime, unsigned short& a_rCurrentKeyIndex, unsigned short& a_rLerpFromIndex, unsigned short& a_rLerpToIndex)
 	{
 		auto pFirstKeyTime = *GetKey(0);

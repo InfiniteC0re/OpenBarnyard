@@ -130,13 +130,27 @@ namespace Toshi {
 
 	TModelInstance* TModel::CreateInstance()
 	{
-		TASSERT(TFALSE, "Not implemented!");
-		return TNULL;
+		auto pInstance = new TModelInstance(this);
+
+		if (m_pSkeleton)
+		{
+			pInstance->m_pSkeletonInstance = m_pSkeleton->CreateInstance(TTRUE);
+
+			if (TNULL == pInstance->m_pSkeletonInstance)
+			{
+				TASSERT(!"Couldn't create skeleton instance");
+				delete pInstance;
+				return TNULL;
+			}
+		}
+
+		m_iNumInstances++;
+		return pInstance;
 	}
 
 	TBOOL TModel::GetSkeletonAssetSymbolName(const char* a_szFileName, const char*& a_rSymbolName, TUINT8& a_rNameLen, TTRB* a_pTRB)
 	{
-		auto iFilePathLength = TStringManager::String8Length(a_szFileName);
+		auto iFilePathLength = TUINT8(TStringManager::String8Length(a_szFileName));
 		auto iFileNamePos = iFilePathLength - 1;
 		a_rNameLen = iFilePathLength;
 
@@ -168,6 +182,29 @@ namespace Toshi {
 		{
 			return TFALSE;
 		}
+	}
+
+	TModelInstance::TModelInstance(TModel* a_pModel)
+	{
+		m_pModel = a_pModel;
+		m_pSkeletonInstance = TNULL;
+		m_Unknown1 = 0;
+		m_fnSomeCallback = TNULL;
+		m_pCBUserData = TNULL;
+		m_Unknown2 = 0;
+	}
+
+	void TModelInstance::Delete()
+	{
+		if (m_pSkeletonInstance)
+		{
+			m_pSkeletonInstance->Delete();
+			m_pSkeletonInstance = TNULL;
+		}
+
+		m_pModel->m_iNumInstances--;
+		m_pModel = TNULL;
+		delete this;
 	}
 
 }

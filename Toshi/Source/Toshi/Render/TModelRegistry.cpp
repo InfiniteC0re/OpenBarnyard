@@ -2,9 +2,11 @@
 #include "TModelRegistry.h"
 #include "TRenderInterface.h"
 
+#include "Toshi2/T2ModelInstance.h"
+
 namespace Toshi {
 
-	TModelRef::~TModelRef()
+	TModelPtr::~TModelPtr()
 	{
 		if (m_pModel)
 		{
@@ -49,7 +51,7 @@ namespace Toshi {
 		ms_pEntries.Destroy();
 	}
 
-	TModelRegistryEntry* TModelRegistry::CreateModel(const char* a_szFileName, TModelRef& a_rModelRef, TTRB* a_pAssetTRB)
+	TModelRegistryEntry* TModelRegistry::CreateModel(const char* a_szFileName, TModelPtr& a_rModelRef, TTRB* a_pAssetTRB)
 	{
 		if (ms_oFreeList.IsEmpty())
 		{
@@ -101,12 +103,20 @@ namespace Toshi {
 		return pEntry;
 	}
 
-	TBOOL TModelRef::Create(const char* a_szFileName, TTRB* a_pTRB)
+	TBOOL TModelPtr::Create(const char* a_szFileName, TTRB* a_pTRB)
 	{
 		m_pModel = TNULL;
 		m_pEntry = TModelRegistry::CreateModel(a_szFileName, *this, a_pTRB);
 
 		return m_pModel != TNULL;
+	}
+
+	T2ModelInstance* TModelPtr::CreateInstance()
+	{
+		auto pInstance = new T2ModelInstance();
+		pInstance->Create(this);
+
+		return pInstance;
 	}
 
 }

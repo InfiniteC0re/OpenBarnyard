@@ -377,3 +377,13 @@ void ATerrainVISGroup::SetLODEmpty(ATerrainLODType a_eLODType, TBOOL a_bEmpty)
 		m_eFlags &= ~(64 << a_eLODType);
 	}
 }
+
+ATerrainVISGroup::ModelData::~ModelData()
+{
+	TIMPLEMENT();
+
+	if (m_pModelInstance)
+	{
+		m_pModelInstance->Delete();
+	}
+}
