@@ -13,6 +13,11 @@ namespace Toshi
 
 		TMutexLock(TMutex& mutex)
 		{
+			Create(&mutex);
+		}
+
+		TMutexLock(TMutex* mutex)
+		{
 			Create(mutex);
 		}
 
@@ -27,9 +32,9 @@ namespace Toshi
 		}
 
 		// Locks the passed mutex
-		void Create(TMutex& mutex)
+		void Create(TMutex* mutex)
 		{
-			m_Mutex = &mutex;
+			m_Mutex = mutex;
 			m_Mutex->Lock();
 		}
 
@@ -44,7 +49,7 @@ namespace Toshi
 		}
 
 	public:
-		TMutexLock& operator = (const TMutexLock& mutexLock)
+		TMutexLock& operator=(const TMutexLock& mutexLock)
 		{
 			m_Mutex = mutexLock.m_Mutex;
 			return *this;

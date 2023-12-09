@@ -16,6 +16,8 @@
 #include <Toshi/Strings/TPString8.h>
 #include <Toshi/Input/TInputInterface.h>
 
+#include <Toshi/Memory/TMemoryLegacy.h>
+
 #include <Platform/DX8/TTextureResourceHAL_DX8.h>
 
 #include TOSHI_MULTIRENDER(TRenderInterface)
@@ -31,6 +33,8 @@ TOSHI_NAMESPACE_USING
 TBOOL AApplication::OnCreate(int argc, char** argv)
 {
 	TOSHI_INFO("Starting Barnyard...");
+
+	TMemoryLegacy::Initialise(0, 0);
 	
 	// FIXME: Move this line to EntryPoint's code
 	AMemory::CreatePool(AMemory::POOL_StringPool);

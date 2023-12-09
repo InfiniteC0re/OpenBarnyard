@@ -129,21 +129,21 @@ namespace Toshi
 				return Remove(*m_Head.Next());
 		}
 
-		TNode* RemoveHead()
+		T* RemoveHead()
 		{
 			if (!IsEmpty())
 			{
-				return Remove(*m_Head.Next());
+				return Remove(*m_Head.Next())->As<T>();
 			}
 
 			return TNULL;
 		}
 
-		TNode* RemoveTail()
+		T* RemoveTail()
 		{
 			if (!IsEmpty())
 			{
-				return Remove(*m_Head.Prev());
+				return Remove(*m_Head.Prev())->As<T>();
 			}
 
 			return TNULL;
