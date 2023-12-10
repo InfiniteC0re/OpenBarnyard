@@ -99,7 +99,6 @@ namespace Toshi {
 		}
 
 		void DumpMemInfo();
-		void GetMemInfo(MemInfo& a_rMemInfo, MemBlock* a_pMemBlock);
 		void GetHALMemInfo(HALMemInfo& a_rHALMemInfo);
 		void PrintDebug(const char* a_szFormat, ...);
 
@@ -108,6 +107,7 @@ namespace Toshi {
 		void SetMemBlockUnused(MemBlock* a_pMemBlock);
 
 	public:
+		static void GetMemInfo(MemInfo& a_rMemInfo, MemBlock* a_pMemBlock);
 		static TBOOL Initialise(TUINT a_uiHeapSize, TUINT a_uiReservedSize);
 		static TUINT MapSizeToFreeList(TUINT a_uiSize);
 

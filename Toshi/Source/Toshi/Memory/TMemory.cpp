@@ -497,7 +497,7 @@ namespace Toshi {
 
 		if (!a_pMemBlock)
 		{
-			a_pMemBlock = m_pGlobalBlock;
+			a_pMemBlock = GetSingleton()->m_pGlobalBlock;
 		}
 
 		a_rMemInfo.m_uiUnk3 = 28;

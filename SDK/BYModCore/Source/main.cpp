@@ -33,9 +33,6 @@ DWORD WINAPI MainThread(HMODULE hModule)
 	TFLOAT fWidth, fHeight;
 	AGUI2::GetSingleton()->GetDimensions(fWidth, fHeight);
 	TOSHI_INFO("AGUI2 is ready! (Dimensions: {0}x{1})", fWidth, fHeight);
-	
-	// Initialise hooks
-	AHooks::Initialise();
 
 	// Create AModLoaderTask
 	Toshi::TTask* pRootTask = *(Toshi::TTask**)0x0077de78;
@@ -118,15 +115,17 @@ DWORD APIENTRY DllMain(HMODULE hModule, DWORD reason, LPVOID reserved)
 	case DLL_PROCESS_ATTACH:
 	{
 		Toshi::TMemory::Initialise(8 * 1024 * 1024, 0);
-
+		
 		AllocConsole();
 		FILE* fDummy;
 		freopen_s(&fDummy, "CONOUT$", "w", stdout);
 		hModuleCore = hModule;
+		Toshi::TLog::Create("BYModLoader");
+
+		// Initialise hooks
+		AHooks::Initialise();
 
 		SetConsoleCtrlHandler(exit_handler, TRUE);
-
-		Toshi::TLog::Create("BYModLoader");
 
 		TOSHI_INFO("Log system was successfully initialised!");
 		TOSHI_INFO("Starting ModLoader thread...");

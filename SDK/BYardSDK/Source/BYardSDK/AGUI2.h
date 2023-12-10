@@ -34,7 +34,7 @@ public:
 private:
 	inline static AGUI2Context** ms_ppCurrentContext = (AGUI2Context**)0x007cef20;
 
-private:
+public:
 	AGUI2Element* m_pRootElement;
 	AGUI2MouseCursor m_oMouseCursor;
 	TBOOL m_bShowMouseCursor;

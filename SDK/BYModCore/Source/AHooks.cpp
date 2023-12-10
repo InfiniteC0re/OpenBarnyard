@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "AHooks.h"
-
+#include <BYardSDK/AGUI2.h>
 #include <detours.h>
 
 void AHooks::Initialise()
@@ -115,8 +115,6 @@ void AHooks::Initialise()
 		using t_OriginalMethod = TBOOL(__fastcall*)(Toshi::TMemory*, void*, void*);
 		static t_OriginalMethod OriginalMethod = (t_OriginalMethod)(0x006b4a20);
 
-#define MEM_TO_HOLE(PTR) (((Toshi::TMemory::Hole*)(((TUINT)PTR) + 4)) - 1)
-
 		struct _methodHolder
 		{
 			static TBOOL __fastcall hook(
@@ -124,6 +122,7 @@ void AHooks::Initialise()
 				void* a_pMem
 			)
 			{
+				//free(a_pMem);
 				return pThis->Free(a_pMem);
 			}
 		};
@@ -143,10 +142,52 @@ void AHooks::Initialise()
 				TUINT a_uiSize, TINT a_uiAlignment, Toshi::TMemory::MemBlock* a_pMemBlock, const char* a_szUnused1, TINT a_iUnused2
 			)
 			{
+				//return malloc(a_uiSize + (a_uiAlignment - 1) & ~(a_uiAlignment - 1));
 				return pThis->Alloc(a_uiSize, a_uiAlignment, a_pMemBlock, a_szUnused1, a_iUnused2);
 			}
 		};
 
+		DetourAttach((PVOID*)&OriginalMethod, _methodHolder::hook);
+	}
+
+	{
+		// TMemory::GetMemInfo
+		using t_OriginalMethod = void(*)();
+		static t_OriginalMethod OriginalMethod = (t_OriginalMethod)(0x006b4ba0);
+
+		struct _methodHolder
+		{
+			static void __stdcall hook(
+				Toshi::TMemory::MemInfo& a_rMemInfo, Toshi::TMemory::MemBlock* a_pBlock
+			)
+			{
+				auto pBlock = (*(Toshi::TMemory**)0x007ce1d4)->GetGlobalBlock();
+
+				TOSHI_INFO(pBlock->m_szName);
+				Toshi::TMemory::GetMemInfo(a_rMemInfo, pBlock);
+			}
+		};
+
+		DetourAttach((PVOID*)&OriginalMethod, _methodHolder::hook);
+	}
+
+	{
+		// AGUI2::AGUI2
+		using t_OriginalMethod = void(__fastcall*)(AGUI2* pThis, void* _EDX);
+		static t_OriginalMethod OriginalMethod = (t_OriginalMethod)(0x00635440);
+
+		struct _methodHolder
+		{
+			static void __fastcall hook(
+				AGUI2* pThis, void* _EDX
+			)
+			{
+				OriginalMethod(pThis, _EDX);
+				pThis->m_bShowMemStatsInfo = TTRUE;
+			}
+		};
+
+		
 		DetourAttach((PVOID*)&OriginalMethod, _methodHolder::hook);
 	}
 
