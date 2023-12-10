@@ -106,122 +106,121 @@ namespace Toshi {
 		TUINT iDataSize;
 		Hole* pFreeList = TNULL;
 
-		if (uiFreeListId < NUM_FREE_LISTS)
+		for (TUINT i = uiFreeListId; i < NUM_FREE_LISTS; i++)
 		{
-			for (TUINT i = uiFreeListId; i < NUM_FREE_LISTS; i++)
+			pFreeList = a_pMemBlock->m_pHoles[i];
+
+			while (pFreeList != TNULL)
 			{
-				pFreeList = a_pMemBlock->m_pHoles[i];
+				iDataEnd = TREINTERPRETCAST(TUINT, &pFreeList->m_pPrevHole) + TMath::AlignNum(pFreeList->m_uiSize);
+				iDataStart = TREINTERPRETCAST(TUINT, &pFreeList->m_pNextHole) + a_uiAlignment + 3 & ~(a_uiAlignment - 1);
+				iDataSize = iDataEnd - iDataStart;
 
-				while (pFreeList != TNULL)
+				if (iDataStart < iDataEnd && a_uiSize <= iDataSize)
 				{
-					iDataStart = (TREINTERPRETCAST(TUINT, &pFreeList->m_pNextHole) + 3 + a_uiAlignment) & ~(a_uiAlignment - 1);
-					iDataEnd = TREINTERPRETCAST(TUINT, &pFreeList->m_pPrevHole) + TMath::AlignNum(pFreeList->m_uiSize);
-					iDataSize = iDataEnd - iDataStart;
+					auto pHole = MEM_TO_HOLE(iDataStart);
+					auto unk1 = pFreeList->m_Unk1;
 
-					if (iDataStart < iDataEnd && a_uiSize <= iDataSize)
+					if (unk1 == TNULL)
 					{
-						auto pHole = MEM_TO_HOLE(iDataStart);
-						auto unk1 = pFreeList->m_Unk1;
-
-						if (unk1 == TNULL)
+						if (pHole != pFreeList)
 						{
-							if (pHole != pFreeList)
-							{
-								a_pMemBlock->m_pFirstHole = pHole;
-							}
-						}
-						else
-						{
-							unk1->m_uiSize = (TUINT)(iDataStart + (-0x18 - (TUINT)unk1)) | unk1->m_uiSize & 3;
-						}
-
-						if (a_uiSize + sizeof(Hole) < iDataSize)
-						{
-							if (pFreeList->m_pPrevHole == TNULL)
-							{
-								a_pMemBlock->m_pHoles[i] = pFreeList->m_pNextHole;
-							}
-							else
-							{
-								pFreeList->m_pPrevHole->m_pNextHole = pFreeList->m_pNextHole;
-							}
-
-							if (pFreeList->m_pNextHole != TNULL)
-							{
-								pFreeList->m_pNextHole->m_pPrevHole = pFreeList->m_pPrevHole;
-							}
-							
-							if (pFreeList != pHole)
-							{
-								auto uiSize = pFreeList->m_uiSize;
-								pHole->m_Unk1 = pFreeList->m_Unk1;
-								*(Hole**)((TUINT)&pFreeList->m_pPrevHole + TMath::AlignNum(uiSize)) = pHole;
-							}
-
-							pHole->m_uiSize = GetSingleton()->m_Unknown1 | iDataSize | 1;
-							pHole->m_pMemBlock = a_pMemBlock;
-
-							auto pNewHole = (Hole*)(iDataStart + a_uiSize);
-							pNewHole->m_uiSize = ((TMath::AlignNum(pHole->m_uiSize) - iDataStart) - a_uiSize) + (TUINT)pHole;
-
-							pHole->m_pMemBlock = a_pMemBlock;
-							pHole->m_uiSize = (TUINT)pNewHole + (-0xc - (TUINT)pHole) | ms_pSingleton->m_Unknown1 | 1;
-							pNewHole->m_Unk1 = pHole;
-
-							TUINT uiNewFreeListId = MapSizeToFreeList(pNewHole->m_uiSize);
-
-							auto pOldHole = a_pMemBlock->m_pHoles[uiNewFreeListId];
-							pNewHole->m_pNextHole = pOldHole;
-
-							if (pOldHole != TNULL)
-							{
-								pOldHole->m_pPrevHole = pNewHole;
-							}
-
-							pNewHole->m_pPrevHole = TNULL;
-							a_pMemBlock->m_pHoles[uiNewFreeListId] = pNewHole;
-							*(Hole**)((TUINT)&pNewHole->m_pPrevHole + TMath::AlignNum(pNewHole->m_uiSize)) = pNewHole;
-
-							return (void*)iDataStart;
-						}
-						else
-						{
-							if (pFreeList->m_pPrevHole == TNULL)
-							{
-								a_pMemBlock->m_pHoles[i] = pFreeList->m_pNextHole;
-							}
-							else
-							{
-								pFreeList->m_pPrevHole->m_pNextHole = pFreeList->m_pNextHole;
-							}
-
-							if (pFreeList->m_pNextHole != TNULL)
-							{
-								pFreeList->m_pNextHole->m_pPrevHole = pFreeList->m_pPrevHole;
-							}
-
-							if (pFreeList != pHole)
-							{
-								auto uiSize = pFreeList->m_uiSize;
-								pHole->m_Unk1 = pFreeList->m_Unk1;
-								*(Hole**)((TUINT)&pFreeList->m_pPrevHole + TMath::AlignNum(uiSize)) = pHole;
-							}
-
-							pHole->m_uiSize = ms_pSingleton->m_Unknown1 | iDataSize | 1;
-							pHole->m_pMemBlock = a_pMemBlock;
-
-							return (void*)iDataStart;
+							a_pMemBlock->m_pFirstHole = pHole;
 						}
 					}
+					else
+					{
+						unk1->m_uiSize = (TUINT)(iDataStart + (-0x18 - (TUINT)unk1)) | unk1->m_uiSize & 3;
+					}
 
-					pFreeList = pFreeList->m_pNextHole;
+					if (a_uiSize + sizeof(Hole) < iDataSize)
+					{
+						if (pFreeList->m_pPrevHole == TNULL)
+						{
+							a_pMemBlock->m_pHoles[i] = pFreeList->m_pNextHole;
+						}
+						else
+						{
+							pFreeList->m_pPrevHole->m_pNextHole = pFreeList->m_pNextHole;
+						}
+
+						if (pFreeList->m_pNextHole != TNULL)
+						{
+							pFreeList->m_pNextHole->m_pPrevHole = pFreeList->m_pPrevHole;
+						}
+
+						if (pFreeList != pHole)
+						{
+							auto uiSize = pFreeList->m_uiSize;
+							pHole->m_Unk1 = pFreeList->m_Unk1;
+							*(Hole**)((TUINT)&pFreeList->m_pPrevHole + TMath::AlignNum(uiSize)) = pHole;
+						}
+
+						pHole->m_uiSize = GetSingleton()->m_Unknown1 | iDataSize | 1;
+						pHole->m_pMemBlock = a_pMemBlock;
+
+						auto pNewHole = (Hole*)(iDataStart + a_uiSize);
+						pNewHole->m_uiSize = ((TMath::AlignNum(pHole->m_uiSize) - iDataStart) - a_uiSize) + (TUINT)pHole;
+
+						pHole->m_pMemBlock = a_pMemBlock;
+						pHole->m_uiSize = (TINT)pNewHole + (-0xc - (TINT)pHole) | ms_pSingleton->m_Unknown1 | 1;
+						pNewHole->m_Unk1 = pHole;
+
+						TUINT uiNewFreeListId = MapSizeToFreeList(pNewHole->m_uiSize);
+
+						auto pOldHole = a_pMemBlock->m_pHoles[uiNewFreeListId];
+						pNewHole->m_pNextHole = pOldHole;
+
+						if (pOldHole != TNULL)
+						{
+							pOldHole->m_pPrevHole = pNewHole;
+						}
+
+						pNewHole->m_pPrevHole = TNULL;
+						a_pMemBlock->m_pHoles[uiNewFreeListId] = pNewHole;
+						*(Hole**)((TUINT)&pNewHole->m_pPrevHole + TMath::AlignNum(pNewHole->m_uiSize)) = pNewHole;
+
+						return (void*)iDataStart;
+					}
+					else
+					{
+						if (pFreeList->m_pPrevHole == TNULL)
+						{
+							a_pMemBlock->m_pHoles[i] = pFreeList->m_pNextHole;
+						}
+						else
+						{
+							pFreeList->m_pPrevHole->m_pNextHole = pFreeList->m_pNextHole;
+						}
+
+						if (pFreeList->m_pNextHole != TNULL)
+						{
+							pFreeList->m_pNextHole->m_pPrevHole = pFreeList->m_pPrevHole;
+						}
+
+						if (pFreeList != pHole)
+						{
+							auto uiSize = pFreeList->m_uiSize;
+							pHole->m_Unk1 = pFreeList->m_Unk1;
+							*(Hole**)((TUINT)&pFreeList->m_pPrevHole + TMath::AlignNum(uiSize)) = pHole;
+						}
+
+						pHole->m_uiSize = ms_pSingleton->m_Unknown1 | iDataSize | 1;
+						pHole->m_pMemBlock = a_pMemBlock;
+
+						return (void*)iDataStart;
+					}
 				}
+
+				pFreeList = pFreeList->m_pNextHole;
 			}
 
-			if (pFreeList)
-			{
-				return (void*)iDataStart;
-			}
+			pFreeList = TNULL;
+		}
+
+		if (pFreeList)
+		{
+			return (void*)iDataStart;
 		}
 
 		PrintDebug("Out of Toshi Memory on block [%s]\n", a_pMemBlock->m_szName);
@@ -234,30 +233,31 @@ namespace Toshi {
 
 	TBOOL TMemory::Free(void* a_pMem)
 	{
-		return TTRUE;
 		TMutexLock lock(ms_pGlobalMutex);
 		TUINT uiMem = TREINTERPRETCAST(TUINT, a_pMem);
 
 		if ((uiMem & 3) == 0 && a_pMem != TNULL)
 		{
 			auto pRootHole = MEM_TO_HOLE(a_pMem);
-			auto uiSize = TMath::AlignNum(pRootHole->m_uiSize);
 			auto pMemBlock = pRootHole->m_pMemBlock;
-			auto pHole = pRootHole->m_pNextHole;
-			auto pNextHole = (Hole*)((TUINT)(&pRootHole->m_pPrevHole) + uiSize);
-
+			auto uiSize = TMath::AlignNum(pRootHole->m_uiSize);
 			auto ppHole = &pRootHole->m_pNextHole;
-			auto pUnk1 = pRootHole->m_Unk1;
+			auto pNextHole = (Hole*)(uiMem + uiSize);
 
-			if (pUnk1 && (pUnk1->m_uiSize & 1) == 0)
+			auto pHole = pRootHole->m_Unk1;
+			pRootHole->m_uiSize = uiSize;
+
+			if (pHole && (pHole->m_uiSize & 1) == 0)
 			{
-				pUnk1->m_uiSize = uiSize + 0xc + TMath::AlignNum(pUnk1->m_uiSize) | pUnk1->m_uiSize & 3;
-				pNextHole->m_Unk1 = pUnk1;
-				ppHole = &pUnk1->m_pNextHole;
+				auto uiHoleSize = pHole->m_uiSize;
+				pHole->m_uiSize = uiSize + 0xc + TMath::AlignNum(uiHoleSize) | uiHoleSize & 3;
+				pNextHole->m_Unk1 = pHole;
+				pRootHole = pHole;
+				ppHole = &pHole->m_pNextHole;
 
 				if (pHole->m_pPrevHole == TNULL)
 				{
-					auto uiHoleId = MapSizeToFreeList(TMath::AlignNum(pHole->m_uiSize));
+					auto uiHoleId = MapSizeToFreeList(TMath::AlignNum(uiHoleSize));
 					pMemBlock->m_pHoles[uiHoleId] = *ppHole;
 				}
 				else
@@ -265,11 +265,10 @@ namespace Toshi {
 					pHole->m_pPrevHole->m_pNextHole = *ppHole;
 				}
 
-				pRootHole = pUnk1;
 
 				if (*ppHole)
 				{
-					(*ppHole)->m_pPrevHole = pUnk1->m_pPrevHole;
+					(*ppHole)->m_pPrevHole = pHole->m_pPrevHole;
 				}
 			}
 
@@ -282,6 +281,7 @@ namespace Toshi {
 				}
 				else
 				{
+					TASSERT((TINT)pNextHole->m_pNextHole != 0x25);
 					pNextHole->m_pPrevHole->m_pNextHole = pNextHole->m_pNextHole;
 				}
 
@@ -294,8 +294,9 @@ namespace Toshi {
 				*(Hole**)((TUINT)&pNextHole->m_pPrevHole + TMath::AlignNum(pNextHole->m_uiSize)) = pRootHole;
 			}
 
+			auto uiHoleId = MapSizeToFreeList(TMath::AlignNum(pRootHole->m_uiSize));
 			pRootHole->m_pPrevHole = TNULL;
-			auto uiHoleId = MapSizeToFreeList(TMath::AlignNum(pHole->m_uiSize));
+			
 			auto pOldHole = pMemBlock->m_pHoles[uiHoleId];
 			*ppHole = pOldHole;
 
@@ -453,7 +454,7 @@ namespace Toshi {
 		if (uiResult != 0)
 			uiResult = uiResult - 1;
 
-		if (uiResult > NUM_FREE_LISTS - 1)
+		if (uiResult >= NUM_FREE_LISTS)
 			uiResult = NUM_FREE_LISTS - 1;
 
 		return uiResult;
@@ -474,7 +475,6 @@ namespace Toshi {
 			PrintDebug("\tSmallest Process: %d\n", memInfo.m_uiSmallestProcess);
 			PrintDebug("\tTotal Free      : %d\n", memInfo.m_uiTotalFree);
 			PrintDebug("\tTotal Used      : %d\n", memInfo.m_uiTotalUsed);
-			PrintDebug("\tTotal Size      : %d\n", memInfo.m_uiTotalSize);
 			PrintDebug("\tTotal Size      : %d\n", memInfo.m_uiTotalSize);
 			PrintDebug("\tLogic Total Free: %d\n", memInfo.m_uiLogicTotalFree);
 			PrintDebug("\tLogic Total Used: %d\n", memInfo.m_uiLogicTotalUsed);

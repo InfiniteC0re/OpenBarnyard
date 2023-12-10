@@ -107,6 +107,49 @@ void AHooks::Initialise()
 		DetourAttach((PVOID*)&OriginalMethod, _methodHolder::hook);
 	}
 
+	static Toshi::TMutex s_MemoryMutex;
+	s_MemoryMutex.Create();
+
+	{
+		// TMemory::Free
+		using t_OriginalMethod = TBOOL(__fastcall*)(Toshi::TMemory*, void*, void*);
+		static t_OriginalMethod OriginalMethod = (t_OriginalMethod)(0x006b4a20);
+
+#define MEM_TO_HOLE(PTR) (((Toshi::TMemory::Hole*)(((TUINT)PTR) + 4)) - 1)
+
+		struct _methodHolder
+		{
+			static TBOOL __fastcall hook(
+				Toshi::TMemory* pThis, void* _EDX,
+				void* a_pMem
+			)
+			{
+				return pThis->Free(a_pMem);
+			}
+		};
+
+		DetourAttach((PVOID*)&OriginalMethod, _methodHolder::hook);
+	}
+
+	{
+		// TMemory::Alloc
+		using t_OriginalMethod = void(*)();
+		static t_OriginalMethod OriginalMethod = (t_OriginalMethod)(0x006b5230);
+
+		struct _methodHolder
+		{
+			static void* __fastcall hook(
+				Toshi::TMemory* pThis, void*,
+				TUINT a_uiSize, TINT a_uiAlignment, Toshi::TMemory::MemBlock* a_pMemBlock, const char* a_szUnused1, TINT a_iUnused2
+			)
+			{
+				return pThis->Alloc(a_uiSize, a_uiAlignment, a_pMemBlock, a_szUnused1, a_iUnused2);
+			}
+		};
+
+		DetourAttach((PVOID*)&OriginalMethod, _methodHolder::hook);
+	}
+
 	DetourTransactionCommit();
 }
 

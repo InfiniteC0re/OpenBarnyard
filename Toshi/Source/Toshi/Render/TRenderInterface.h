@@ -161,6 +161,11 @@ namespace Toshi {
 			}
 		}
 
+		TTexture* GetInvalidTexture()
+		{
+			return m_pInvalidTexture;
+		}
+
 		TStack<TMatrix44, 20>& GetTransforms()
 		{
 			return m_Transforms;
