@@ -39,6 +39,7 @@ TBOOL AApplication::OnCreate(int argc, char** argv)
 	auto pMainMemBlock = TMemoryLegacy::GetSingleton()->GetMainMemBlock();
 	void* pMem1 = TMemoryLegacy::GetSingleton()->Alloc(80, 4, pMainMemBlock, TNULL, 0);
 	void* pMem2 = TMemoryLegacy::GetSingleton()->Alloc(16, 4, pMainMemBlock, TNULL, 0);
+	TMemoryLegacy::GetSingleton()->Free(pMem2);
 	void* pMem3 = TMemoryLegacy::GetSingleton()->Alloc(16, 4, pMainMemBlock, TNULL, 0);
 	void* pMem4 = TMemoryLegacy::GetSingleton()->Alloc(16, 4, pMainMemBlock, TNULL, 0);
 	void* pMem5 = TMemoryLegacy::GetSingleton()->Alloc(16, 4, pMainMemBlock, TNULL, 0);

@@ -10,14 +10,20 @@ namespace Toshi {
 		static constexpr TUINT NUM_BLOCK_SLOTS = 128;
 		static constexpr TUINT NUM_FREE_LISTS = 9;
 
+		struct MemBlock;
 		struct MemBlockSlot;
 
 		struct Hole
 		{
-			TUINT m_Unk1;
-			TUINT m_uiDataSize;
-			Hole* m_pNext;
-			Hole* m_pPrev;
+			Hole* m_Unk1;
+			TUINT m_uiSize;
+			union {
+				Hole* m_pNextHole;
+				MemBlock* m_pMemBlock;
+			};
+			union {
+				Hole* m_pPrevHole;
+			};
 		};
 
 		struct MemBlock
@@ -41,17 +47,6 @@ namespace Toshi {
 			TUINT m_Unk4;            // -0x04
 		};
 
-		struct DataHeader
-		{
-			Hole* m_pChunk;
-			TUINT m_uiSize;
-
-			union {
-				MemBlock* m_pMemBlock;
-				Hole* m_pHole;
-			};
-		};
-
 		struct MemBlockSlot :
 			public TNodeList<MemBlockSlot>::TNode
 		{
@@ -62,7 +57,7 @@ namespace Toshi {
 		TMemoryLegacy();
 
 		void* Alloc(TUINT a_uiSize, TINT a_uiAlignment, MemBlock* a_pMemBlock, char* a_szUnused1, TINT a_iUnused2);
-		void Free(void* a_pMem);
+		TBOOL Free(void* a_pMem);
 
 		MemBlock* CreateHeapInPlace(void* a_pMem, TUINT a_uiSize, const char* a_szName);
 
