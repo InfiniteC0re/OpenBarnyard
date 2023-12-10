@@ -14,11 +14,11 @@ public:
 	virtual size_t GetCapacity() override;
 	virtual void Unknown();
 
-	void SetHeap(Toshi::TMemoryHeap* a_pHeap)
+	void SetMemBlock(Toshi::TMemory::MemBlock* a_pMemBlock)
 	{
-		m_pMemoryHeap = a_pHeap;
+		m_pMemBlock = a_pMemBlock;
 	}
 
 private:
-	Toshi::TMemoryHeap* m_pMemoryHeap;
+	Toshi::TMemory::MemBlock* m_pMemBlock;
 };

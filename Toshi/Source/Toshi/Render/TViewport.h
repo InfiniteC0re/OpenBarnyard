@@ -92,9 +92,9 @@ namespace Toshi
 			return oldState;
 		}
 
-		void SetMemoryAllocatorBlock(TMemoryHeap* pHeap)
+		void SetMemoryAllocatorBlock(TMemory::MemBlock* a_pMemBlock)
 		{
-			m_MemAllocatorBlock = pHeap;
+			m_MemAllocatorBlock = a_pMemBlock;
 			ChangeSKU(ChangeEvent_AllocatorBlock);
 		}
 
@@ -179,16 +179,16 @@ namespace Toshi
 		void GetBackgroundColor(uint8_t& r, uint8_t& g, uint8_t& b, uint8_t& a);
 
 	private:
-		TMemoryHeap* m_MemAllocatorBlock; // 0x00
-		TRenderContext* m_pRenderCtx;     // 0x04
-		uint8_t m_ColorR;                 // 0x08
-		uint8_t m_ColorG;                 // 0x09
-		uint8_t m_ColorB;                 // 0x0A
-		uint8_t m_ColorA;                 // 0x0B
-		TBOOL m_bAllowBackgroundClear;    // 0x0C
-		TBOOL m_bAllowDepthClear;         // 0x0D
-		TBOOL m_bDefaultBeginRender;      // 0x0E
-		TBOOL m_bEnable;                  // 0x0F
-		TBOOL m_bInViewport;              // 0x10
+		TMemory::MemBlock* m_MemAllocatorBlock; // 0x00
+		TRenderContext* m_pRenderCtx;           // 0x04
+		uint8_t m_ColorR;                       // 0x08
+		uint8_t m_ColorG;                       // 0x09
+		uint8_t m_ColorB;                       // 0x0A
+		uint8_t m_ColorA;                       // 0x0B
+		TBOOL m_bAllowBackgroundClear;          // 0x0C
+		TBOOL m_bAllowDepthClear;               // 0x0D
+		TBOOL m_bDefaultBeginRender;            // 0x0E
+		TBOOL m_bEnable;                        // 0x0F
+		TBOOL m_bInViewport;                    // 0x10
 	};
 }

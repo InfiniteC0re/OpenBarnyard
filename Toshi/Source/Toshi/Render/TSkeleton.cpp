@@ -44,14 +44,7 @@ namespace Toshi {
 		size_t iInstanceSize = sizeof(TSkeletonInstance) + sizeof(TSkeletonInstanceBone) * iAutoBoneCount + iAnimationSize * GetAnimationMaxCount();
 		TSkeletonInstance* pInstance;
 
-		if (s_pAnimMemHeap)
-		{
-			pInstance = TSTATICCAST(TSkeletonInstance*, s_pAnimMemHeap->Malloc(iInstanceSize));
-		}
-		else
-		{
-			pInstance = TSTATICCAST(TSkeletonInstance*, TMalloc(iInstanceSize));
-		}
+		pInstance = TSTATICCAST(TSkeletonInstance*, TMalloc(iInstanceSize, TNULL));
 
 		new (pInstance) TSkeletonInstance();
 		pInstance->m_pSkeleton = this;

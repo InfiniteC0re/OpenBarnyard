@@ -3,17 +3,17 @@
 
 void* AMemoryPoolAllocator::Malloc(size_t size, size_t alignment)
 {
-	return m_pMemoryHeap ? m_pMemoryHeap->Memalign(alignment, size) : TMemalign(alignment, size);
+	return TMemalign(alignment, size, m_pMemBlock);
 }
 
 void* AMemoryPoolAllocator::Malloc(size_t size)
 {
-	return m_pMemoryHeap ? m_pMemoryHeap->Malloc(size) : TMalloc(size);
+	return TMalloc(size, m_pMemBlock);
 }
 
 void AMemoryPoolAllocator::Free(void* ptr)
 {
-	return m_pMemoryHeap ? m_pMemoryHeap->Free(ptr) : TFree(ptr);
+	TFree(ptr);
 }
 
 TBOOL AMemoryPoolAllocator::CanAllocate(size_t size)
@@ -23,12 +23,12 @@ TBOOL AMemoryPoolAllocator::CanAllocate(size_t size)
 
 void* AMemoryPoolAllocator::TryMalloc(size_t size, size_t alignment)
 {
-	return m_pMemoryHeap ? m_pMemoryHeap->Memalign(alignment, size) : TMemalign(alignment, size);
+	return TMemalign(alignment, size, m_pMemBlock);
 }
 
 void* AMemoryPoolAllocator::TryMalloc(size_t size)
 {
-	return m_pMemoryHeap ? m_pMemoryHeap->Malloc(size) : TMalloc(size);
+	return TMalloc(size, m_pMemBlock);
 }
 
 size_t AMemoryPoolAllocator::GetUsedSize()

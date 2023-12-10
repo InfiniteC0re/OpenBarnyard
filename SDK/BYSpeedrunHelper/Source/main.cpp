@@ -33,7 +33,7 @@ extern "C"
 		
 		if (bLinked)
 		{
-			Toshi::TMemory(Toshi::TMemory::Flags_NativeMethods, 0).Init();
+			Toshi::TMemory::Initialise(32 * 1024 * 1024, 0);
 			Toshi::TLog::Create("BYSpeedrunHelper");
 
 			if (ModCore_AddHook(Hook_NewGameStarted, HookType_Before, NewGameStarted) && 

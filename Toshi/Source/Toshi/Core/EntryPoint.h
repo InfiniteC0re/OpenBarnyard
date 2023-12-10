@@ -73,11 +73,18 @@ static const char* GetOSName(OSVERSIONINFOEX& osVersionInfo)
 	return "unknown";
 }
 
+TINT InitialiseTMemory()
+{
+	Toshi::TMemory::Initialise(0, 0);
+	return 0;
+}
+
+static TINT s_iTMemoryStatus = InitialiseTMemory();
+
 TOSHI_ENTRY
 {
 	Toshi::TRegion::SetRegion(0);
-	Toshi::TMemory memorySettings(TOSHI_TMEMORY_FLAGS, TOSHI_TMEMORY_SIZE);
-	Toshi::TUtil::ToshiCreate(0, 0, memorySettings);
+	Toshi::TUtil::ToshiCreate(GetCommandLineA(), 0, 0);
 	Toshi::TUtil::Log("Build Version %s", "0.28");
 
 	OSVERSIONINFOEX osVersionInfo = { };

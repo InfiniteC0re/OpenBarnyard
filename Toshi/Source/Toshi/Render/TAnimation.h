@@ -8,7 +8,6 @@
 
 namespace Toshi {
 	
-	extern TMemoryHeap* s_pAnimMemHeap;
 	constexpr int TANIMATION_MAXBONES = 128;
 
 	using TAnimVector = TVector3;

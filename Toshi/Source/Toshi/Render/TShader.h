@@ -7,11 +7,12 @@ namespace Toshi {
 		public TGenericClassDerived<TShader, TObject, "TShader", TMAKEVERSION(1, 0), TFALSE>
 	{
 	public:
-		enum class State : uint32_t
+		using State = TUINT32;
+		enum State_ : State
 		{
-			None      = 0,
-			Created   = BITFIELD(0),
-			Validated = BITFIELD(1),
+			State_None      = 0,
+			State_Created   = BITFIELD(0),
+			State_Validated = BITFIELD(1),
 		};
 
 		class TShaderList
@@ -44,8 +45,8 @@ namespace Toshi {
 		virtual TBOOL Unk2() { return TTRUE; }
 		virtual void Render(TRenderPacket* pPacket) = 0;
 
-		TBOOL IsCreated() const { return m_State.IsSet(State::Created); }
-		TBOOL IsValidated() const { return m_State.IsSet(State::Validated); }
+		TBOOL IsCreated() const { return m_State & State_Created; }
+		TBOOL IsValidated() const { return m_State & State_Validated; }
 
 		TShader* GetNextShader() { return m_pNextShader; }
 
@@ -53,9 +54,8 @@ namespace Toshi {
 		inline static TShaderList sm_oShaderList;
 
 	private:
-		T2Flags<State> m_State;
+		State m_State;
 		TShader* m_pNextShader;
 	};
 
-	DEFINE_T2FLAGS(TShader::State)
 }

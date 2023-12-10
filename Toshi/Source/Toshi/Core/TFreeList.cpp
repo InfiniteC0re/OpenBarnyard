@@ -21,9 +21,7 @@ namespace Toshi {
 		TASSERT(a_iNumber > 0);
 		m_iCapacity += a_iNumber;
 
-		Node* pNewNode = (m_pMemoryHeap != TNULL) ?
-			TREINTERPRETCAST(Node*, m_pMemoryHeap->Malloc(a_iNumber * a_iSize + sizeof(Node))) :
-			TREINTERPRETCAST(Node*, TMalloc(a_iNumber * a_iSize + sizeof(Node)));
+		Node* pNewNode = TREINTERPRETCAST(Node*, TMalloc(a_iNumber * a_iSize + sizeof(Node), m_pMemoryHeap));
 
 		pNewNode->pNext = m_RootNode.pNext;
 		m_RootNode.pNext = pNewNode;
@@ -58,7 +56,7 @@ namespace Toshi {
 	{
 		if (a_uiSize != m_uiItemSize)
 		{
-			return TMalloc(a_uiSize);
+			return TMalloc(a_uiSize, TNULL);
 		}
 
 		auto pNode = m_LastNode.pNext;

@@ -327,7 +327,7 @@ void ATerrain::LoadFromFile(const char* a_szFilePath, TBOOL a_bLoadLater, TBOOL 
 		auto pMatlibJob = GetFreeMatlibLoaderJob();
 		auto pPersitantBlock = m_pTerrainVIS->m_pPersistantTerrainBlock;
 
-		auto pTRB = new (pPersitantBlock->GetHeap()) TTRB();
+		auto pTRB = new (pPersitantBlock->GetMemBlock()) TTRB();
 		m_pTerrainVIS->m_pMaterialLibraryTRB = pTRB;
 		pPersitantBlock->SetupTRB(pTRB, pPersitantBlock);
 
@@ -335,7 +335,7 @@ void ATerrain::LoadFromFile(const char* a_szFilePath, TBOOL a_bLoadLater, TBOOL 
 			m_pTerrainVIS->m_szMatLibrary,
 			m_pTerrainVIS->m_pMaterialLibraryTRB,
 			m_pTerrainVIS->m_pMaterialLibrary,
-			pPersitantBlock->GetHeap()
+			pPersitantBlock->GetMemBlock()
 		);
 
 		AAssetStreaming::GetSingleton()->AddMainThreadJob(pMatlibJob);

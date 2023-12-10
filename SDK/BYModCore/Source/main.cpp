@@ -117,7 +117,7 @@ DWORD APIENTRY DllMain(HMODULE hModule, DWORD reason, LPVOID reserved)
 	{
 	case DLL_PROCESS_ATTACH:
 	{
-		Toshi::TMemory(Toshi::TMemory::Flags_NativeMethods, 0).Init();
+		Toshi::TMemory::Initialise(8 * 1024 * 1024, 0);
 
 		AllocConsole();
 		FILE* fDummy;

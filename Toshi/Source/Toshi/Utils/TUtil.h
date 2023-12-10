@@ -8,7 +8,7 @@ namespace Toshi
 	class TUtil : public TSingleton<TUtil>
 	{
 	public:
-		static TBOOL ToshiCreate(int argc, char** argv, TMemory& memorySettings);
+		static TBOOL ToshiCreate(char* a_szCommandLine, TINT a_iArg2, TINT a_iArg3);
 		static void ToshiDestroy();
 
 		static void Create()
@@ -17,9 +17,6 @@ namespace Toshi
 			TUtil::GetSingletonSafe()->LogInitialise();
 			TUtil::CRCInitialise();
 		}
-
-		static void ToshiDestroySubsystems();
-		static void ToshiDestroyMemory();
 		
 		static const char* GetTime();
 		static void TrimLog(const char* fileExtension, size_t trimTo);

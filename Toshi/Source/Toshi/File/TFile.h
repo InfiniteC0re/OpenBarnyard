@@ -2,6 +2,7 @@
 #include "Toshi/Utils/TSingleton.h"
 #include "Toshi/Strings/TString8.h"
 #include "Toshi/Core/TDList.h"
+#include "Toshi2/Thread/T2Mutex.h"
 
 #ifdef CreateFile
 #undef CreateFile

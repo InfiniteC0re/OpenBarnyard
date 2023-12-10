@@ -41,7 +41,7 @@ TBOOL AGUISystem::OnCreate()
 		pViewport->SetBackgroundColor(0, 0, 0, 0);
 		pViewport->AllowBackgroundClear(TFALSE);
 		pViewport->AllowDepthClear(TTRUE);
-		pViewport->SetMemoryAllocatorBlock(AMemory::GetHeap(AMemory::POOL_Viewport));
+		pViewport->SetMemoryAllocatorBlock(AMemory::GetMemBlock(AMemory::POOL_Viewport));
 
 		m_pRenderObjects[i] = new PGUITRRenderObject(i);
 		m_pRenderObjects[i]->SetViewport(pViewport);

@@ -93,7 +93,7 @@ TBOOL AGUI2::OnUpdate(TFLOAT a_fDeltaTime)
 
 		if (s_UpdateTimer >= 1.0f)
 		{
-			size_t maxBytes;
+			/*size_t maxBytes;
 			size_t systemBytes;
 			size_t inUseBytes;
 			Toshi::TMemoryHeap::GetStats(
@@ -101,15 +101,15 @@ TBOOL AGUI2::OnUpdate(TFLOAT a_fDeltaTime)
 				&maxBytes,
 				&systemBytes,
 				&inUseBytes
-			);
+			);*/
 
 			Toshi::TStringManager::String16Format(
 				m_wszMemStats,
 				sizeof(m_wszMemStats),
 				L"Mem Used: %lu, Free: %lu (%.1f%%)",
-				inUseBytes,
-				maxBytes - inUseBytes,
-				TFLOAT(inUseBytes) / TFLOAT(maxBytes) * 100
+				0,
+				0,
+				0
 			);
 
 			m_oMemStats.SetText(m_wszMemStats);

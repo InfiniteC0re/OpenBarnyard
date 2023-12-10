@@ -101,12 +101,9 @@ namespace Toshi
 		util->m_pLogFile2 = a_logFile == TNULL ? util->m_pLogFile1 : a_logFile;
 	}
 
-	TBOOL TUtil::ToshiCreate(int argc, char** argv, TMemory& memorySettings)
+	TBOOL TUtil::ToshiCreate(char* a_szCommandLine, TINT a_iArg2, TINT a_iArg3)
     {
         TRegion::LockRegion();
-		
-		// Initialize TMemory and dlmalloc
-        memorySettings.Init();
 
 		// Initialize other systems
 		TLog::Create();
@@ -122,20 +119,9 @@ namespace Toshi
 
 	void TUtil::ToshiDestroy()
 	{
-		ToshiDestroySubsystems();
-		ToshiDestroyMemory();
-	}
-
-	void TUtil::ToshiDestroySubsystems()
-	{
+		TIMPLEMENT();
 		TLog::Destroy();
 		TModelRegistry::Uninitialise();
-		// ....
-	}
-
-	void TUtil::ToshiDestroyMemory()
-	{
-		TMemory::Shutdown();
 	}
 
 	void TUtil::MemSet(void* ptr, size_t value, size_t size)

@@ -14,9 +14,9 @@ void ATerrainVISGroup::LoadCollision()
 			pTerrain->GetVIS()->m_pPersistantTerrainBlock : 
 			m_ppHighLODBlocks[m_ui8AllocCollisionBlock];
 
-		m_pCollisionModelData = new (pBlock->GetHeap()) ModelData();
+		m_pCollisionModelData = new (pBlock->GetMemBlock()) ModelData();
 
-		auto pTRB = new (pBlock->GetHeap()) Toshi::TTRB();
+		auto pTRB = new (pBlock->GetMemBlock()) Toshi::TTRB();
 		pBlock->SetupTRB(pTRB, pBlock);
 
 		auto pModelLoaderJob = pTerrain->GetFreeModelLoaderJob();
@@ -111,9 +111,9 @@ void ATerrainVISGroup::LoadModels(ATerrainLODType a_eLODType)
 				if (m_ppLODModelsData[a_eLODType][i] == TNULL)
 				{
 					auto pBlock = ppLODBlocks[pLODToBlock[i]];
-					auto pModelData = new (pBlock->GetHeap()) ModelData();
+					auto pModelData = new (pBlock->GetMemBlock()) ModelData();
 
-					auto pTRB = new (pBlock->GetHeap()) Toshi::TTRB();
+					auto pTRB = new (pBlock->GetMemBlock()) Toshi::TTRB();
 					pBlock->SetupTRB(pTRB, pBlock);
 					m_ppLODModelsData[a_eLODType][i] = pModelData;
 
@@ -165,17 +165,17 @@ void ATerrainVISGroup::LoadMatlib(ATerrainLODType a_eLODType)
 
 	if (a_eLODType == ATerrainLODType_High)
 	{
-		m_pMatLibHighTRB = new (pBlock->GetHeap()) Toshi::TTRB();
+		m_pMatLibHighTRB = new (pBlock->GetMemBlock()) Toshi::TTRB();
 		pBlock->SetupTRB(m_pMatLibHighTRB, pBlock);
 
-		pMatlibJob->InitJob(m_szHighLODMatLibName, m_pMatLibHighTRB, m_pMatLibHigh, pBlock->GetHeap());
+		pMatlibJob->InitJob(m_szHighLODMatLibName, m_pMatLibHighTRB, m_pMatLibHigh, pBlock->GetMemBlock());
 	}
 	else
 	{
-		m_pMatLibLowTRB = new (pBlock->GetHeap()) Toshi::TTRB();
+		m_pMatLibLowTRB = new (pBlock->GetMemBlock()) Toshi::TTRB();
 		pBlock->SetupTRB(m_pMatLibLowTRB, pBlock);
 
-		pMatlibJob->InitJob(m_szLowLODMatLibName, m_pMatLibLowTRB, m_pMatLibLow, pBlock->GetHeap());
+		pMatlibJob->InitJob(m_szLowLODMatLibName, m_pMatLibLowTRB, m_pMatLibLow, pBlock->GetMemBlock());
 	}
 
 	AAssetStreaming::GetSingleton()->AddMainThreadJob(pMatlibJob);

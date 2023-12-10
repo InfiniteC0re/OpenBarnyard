@@ -51,7 +51,7 @@ public:
 		AMemoryPoolAllocator aAllocators[POOL_NUMOF];
 	};
 
-	inline static Toshi::TMemoryHeap* s_aHeaps[POOL_NUMOF];
+	inline static Toshi::TMemory::MemBlock* s_aMemBlocks[POOL_NUMOF];
 	inline static AllocatorList s_AllocatorList;
 
 	inline static constexpr AMemoryPool s_aPools[POOL_NUMOF] =
@@ -71,5 +71,5 @@ public:
 public:
 	static void CreatePool(POOL a_ePool);
 	static Toshi::T2Allocator* GetAllocator(POOL a_ePool);
-	static Toshi::TMemoryHeap* GetHeap(POOL a_ePool);
+	static Toshi::TMemory::MemBlock* GetMemBlock(POOL a_ePool);
 };

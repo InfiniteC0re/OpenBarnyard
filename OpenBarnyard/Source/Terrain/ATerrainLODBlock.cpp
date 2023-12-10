@@ -16,15 +16,17 @@ ATerrainLODBlock::ATerrainLODBlock(TUINT a_uiHeapSize, const char* a_szName)
 	m_fLastAccessTime = 0.0f;
 	m_uiHeapSize = a_uiHeapSize;
 	m_bIsUnused = TTRUE;
-	m_pCreatedHeap = TMemory::CreateHeap(m_uiHeapSize, TMemoryHeapFlags_UseMutex, a_szName);
-	m_Allocator.SetHeap(m_pCreatedHeap);
+
+	auto pMemManager = TMemory::GetSingleton();
+	m_pCreatedMemBlock = pMemManager->CreateMemBlock(m_uiHeapSize, a_szName, pMemManager->GetGlobalBlock());
+	m_Allocator.SetMemBlock(m_pCreatedMemBlock);
 }
 
 ATerrainLODBlock::~ATerrainLODBlock()
 {
-	TMemory::DestroyHeap(m_pCreatedHeap);
-	m_pCreatedHeap = (TMemoryHeap*)1;
-	m_Allocator.SetHeap(TNULL);
+	TMemory::GetSingleton()->DestroyMemBlock(m_pCreatedMemBlock);
+	m_pCreatedMemBlock = (TMemory::MemBlock*)1;
+	m_Allocator.SetMemBlock(TNULL);
 
 	static TUINT32 s_AllocatedSizeAfterDestroy = 0;
 	static TUINT32 s_Unk2AfterDestroy = 0;
@@ -46,7 +48,7 @@ void ATerrainLODBlock::SetupTRB(TTRB* a_pTRB, ATerrainLODBlock* a_pOther)
 				*pBlock->m_pAllocatedSize += size;
 			}
 
-			return TMemalign(128, size, pBlock->GetNext()->m_pCreatedHeap);
+			return TMemalign(128, size, pBlock->GetNext()->m_pCreatedMemBlock);
 		},
 		[](TTRB::AllocType alloctype, void* ptr, TINT16 unk1, TUINT32 unk2, void* userData)
 		{

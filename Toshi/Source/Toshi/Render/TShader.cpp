@@ -5,7 +5,7 @@ namespace Toshi
 {
 	TShader::TShader()
 	{
-		m_State = State::None;
+		m_State = State_None;
 		sm_oShaderList.AddShader(this);
 	}
 
@@ -16,7 +16,7 @@ namespace Toshi
 
 	void TShader::OnDestroy()
 	{
-		m_State.Unset(State::Created);
+		m_State &= ~State_Created;
 	}
 
 	void TShader::Flush()
@@ -26,19 +26,19 @@ namespace Toshi
 
 	TBOOL TShader::Create()
 	{
-		m_State.Set(State::Created);
+		m_State |= State_Created;
 		return TTRUE;
 	}
 
 	TBOOL TShader::Validate()
 	{
-		m_State.Set(State::Validated);
+		m_State |= State_Validated;
 		return TTRUE;
 	}
 
 	void TShader::Invalidate()
 	{
-		m_State.Unset(State::Validated);
+		m_State &= ~State_Validated;
 	}
 
 	void TShader::TShaderList::AddShader(TShader* pShader)

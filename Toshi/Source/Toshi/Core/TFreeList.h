@@ -34,6 +34,6 @@ namespace Toshi {
 		Node m_LastNode;
 		Node m_RootNode;
 		TINT m_iGrowSize;
-		TMemoryHeap* m_pMemoryHeap;
+		TMemory::MemBlock* m_pMemoryHeap;
 	};
 }

@@ -1,6 +1,5 @@
 #pragma once
 #include "TMaterial.h"
-#include "Toshi2/T2Flags.h"
 
 namespace Toshi
 {
@@ -10,11 +9,12 @@ namespace Toshi
 		public TGenericClassDerived<TMesh, TObject, "TMesh", TMAKEVERSION(1, 0), TFALSE>
 	{
 	public:
-		enum class State : uint32_t
+		using State = TUINT32;
+		enum State_ : State
 		{
-			None = 0,
-			Created = BITFIELD(0),
-			Validated = BITFIELD(1),
+			State_None = 0,
+			State_Created = BITFIELD(0),
+			State_Validated = BITFIELD(1),
 		};
 
 	public:
@@ -22,23 +22,23 @@ namespace Toshi
 		{
 			m_pOwnerShader = TNULL;
 			m_pMaterial = TNULL;
-			m_State = State::None;
+			m_State = State_None;
 		}
 
 		virtual TBOOL Validate()
 		{
-			m_State.Set(State::Validated);
+			m_State |= State_Validated;
 			return TTRUE;
 		}
 
 		virtual void Invalidate()
 		{
-			m_State.Unset(State::Validated);
+			m_State &= ~State_Validated;
 		}
 
 		virtual TBOOL Create()
 		{
-			m_State.Set(State::Created);
+			m_State |= State_Created;
 			return TTRUE;
 		}
 
@@ -49,7 +49,7 @@ namespace Toshi
 
 		virtual void OnDestroy()
 		{
-			m_State.Unset(State::Created);
+			m_State &= ~State_Created;
 		}
 
 		void DestroyResource()
@@ -82,7 +82,7 @@ namespace Toshi
 
 		TBOOL IsCreated() const
 		{
-			return m_State.IsSet(State::Created);
+			return m_State & State_Created;
 		}
 
 	protected:
@@ -94,8 +94,7 @@ namespace Toshi
 	protected:
 		TMaterial* m_pMaterial;  // 0x04
 		TShader* m_pOwnerShader; // 0x08
-		T2Flags<State> m_State;  // 0x0C
+		State m_State;           // 0x0C
 	};
 
-	DEFINE_T2FLAGS(TMesh::State);
 }

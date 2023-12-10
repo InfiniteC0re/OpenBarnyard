@@ -22,7 +22,16 @@ ABINKMoviePlayer::ABINKMoviePlayer()
 
 TBOOL ABINKMoviePlayer::OnCreate()
 {
-	BinkSetMemory([](unsigned int size) { return TMalloc(size); }, [](void* ptr) { TFree(ptr); });
+	BinkSetMemory(
+		[](unsigned int size)
+		{
+			return TMalloc(size);
+		},
+		[](void* ptr)
+		{
+			TFree(ptr);
+		}
+	);
 	
 	int iOutput = FSOUND_GetOutput();
 

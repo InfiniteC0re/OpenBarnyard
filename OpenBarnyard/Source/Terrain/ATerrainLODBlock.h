@@ -45,7 +45,7 @@ public:
 	TBOOL IsUnused() const { return m_bIsUnused; }
 
 	AMemoryPoolAllocator& GetAllocator() { return m_Allocator; }
-	Toshi::TMemoryHeap* GetHeap() { return m_pCreatedHeap; }
+	Toshi::TMemory::MemBlock* GetMemBlock() { return m_pCreatedMemBlock; }
 
 private:
 	TUINT32* m_pAllocatedSize;
@@ -55,7 +55,7 @@ private:
 	ATerrainLODType m_eLODType;
 	TFLOAT m_fLastAccessTime;
 	TUINT m_uiHeapSize;
-	Toshi::TMemoryHeap* m_pCreatedHeap;
+	Toshi::TMemory::MemBlock* m_pCreatedMemBlock;
 	AMemoryPoolAllocator m_Allocator;
 	TBOOL m_bIsUnused;
 };

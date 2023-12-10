@@ -12,8 +12,9 @@ TBOOL AMatLibLoaderJob::RunJob()
 {
 	if (m_oStreamJob.IsProcessed())
 	{
-		TASSERT(TNULL != m_pMemoryHeap);
-		Toshi::TMemoryHeapSwap heapSwap(m_pMemoryHeap);
+		TASSERT(TNULL != m_pMemBlock);
+		auto pMemManager = Toshi::TMemory::GetSingleton();
+		auto pOldMemBlock = pMemManager->SetGlobalBlock(m_pMemBlock);
 
 		m_pMatLib = AMaterialLibraryManager::List::GetSingleton()->CreateLibraryFromTRB(m_oStreamJob.GetTRB(), m_FileName);
 		AMaterialLibraryManager::GetSingleton()->CreateTextures(m_pMatLib);
@@ -22,7 +23,8 @@ TBOOL AMatLibLoaderJob::RunJob()
 		{
 			*m_ppOutMatLib = m_pMatLib;
 		}
-		
+
+		pMemManager->SetGlobalBlock(pOldMemBlock);
 		return TTRUE;
 	}
 
@@ -34,10 +36,10 @@ TBOOL AMatLibLoaderJob::CancelJob()
 	return TTRUE;
 }
 
-void AMatLibLoaderJob::InitJob(const char* a_szFileName, Toshi::TTRB* a_pTRB, AMaterialLibrary*& a_rpOutMatLib, Toshi::TMemoryHeap* a_pMemoryHeap)
+void AMatLibLoaderJob::InitJob(const char* a_szFileName, Toshi::TTRB* a_pTRB, AMaterialLibrary*& a_rpOutMatLib, Toshi::TMemory::MemBlock* a_pMemBlock)
 {
 	m_FileName = a_szFileName;
 	m_pTRB = a_pTRB;
-	m_pMemoryHeap = a_pMemoryHeap;
+	m_pMemBlock = a_pMemBlock;
 	m_ppOutMatLib = &a_rpOutMatLib;
 }

@@ -32,6 +32,7 @@ ARootTask::ARootTask()
 {
 	TIMPLEMENT();
 
+	m_bStartedGame = TFALSE;
 	m_bTerrainIsReady = TFALSE;
 	m_bPaused = TFALSE;
 	m_bStopRenderingWorld = TFALSE;
