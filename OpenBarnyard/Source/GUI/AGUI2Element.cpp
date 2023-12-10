@@ -108,7 +108,7 @@ void AGUI2Element::PreRender()
 
 void AGUI2Element::Render()
 {
-#if 1
+#if 0
 	{
 		TFLOAT fWidth;
 		TFLOAT fHeight;

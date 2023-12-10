@@ -88,7 +88,7 @@ DWORD WINAPI MainThread(HMODULE hModule)
 	g_pModLoaderTask->Create();
 
 	static wchar_t s_buffer[256];
-	Toshi::TStringManager::String16Format(s_buffer, sizeof(s_buffer), L"Loaded %d mods!", uiNumLoaded);
+	Toshi::TStringManager::String16Format(s_buffer, sizeof(s_buffer), L"Loaded %d mod!", uiNumLoaded);
 	g_pModLoaderTask->GetTextBox()->SetText(s_buffer);
 
 	return 0;

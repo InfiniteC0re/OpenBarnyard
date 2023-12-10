@@ -53,7 +53,7 @@ void AGUITimer::Update(TFLOAT a_fDeltaTime)
 		}
 		else
 		{
-			Toshi::TStringManager::String16Format(s_buffer, sizeof(s_buffer), L"%02d.%03d", iSeconds, iMilliseconds);
+			Toshi::TStringManager::String16Format(s_buffer, sizeof(s_buffer), L"%d.%03d", iSeconds, iMilliseconds);
 		}
 
 		m_pTextBox->SetText(s_buffer);

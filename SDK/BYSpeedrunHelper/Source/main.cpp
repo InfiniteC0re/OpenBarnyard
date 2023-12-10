@@ -4,8 +4,6 @@
 #include "AGUITimer.h"
 
 #include <Toshi/Core/THPTimer.h>
-#include <Windows.h>
-#include <detours.h>
 
 AGUITimer g_Timer;
 
