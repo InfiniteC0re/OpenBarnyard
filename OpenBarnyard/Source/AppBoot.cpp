@@ -36,15 +36,16 @@ TBOOL AApplication::OnCreate(int argc, char** argv)
 
 	TMemoryLegacy::Initialise(0, 0);
 
-	auto pMainMemBlock = TMemoryLegacy::GetSingleton()->GetMainMemBlock();
-	void* pMem1 = TMemoryLegacy::GetSingleton()->Alloc(80, 4, pMainMemBlock, TNULL, 0);
+	auto pMainMemBlock = TMemoryLegacy::GetSingleton()->GetGlobalBlock();
 	void* pMem2 = TMemoryLegacy::GetSingleton()->Alloc(16, 4, pMainMemBlock, TNULL, 0);
+	TMemoryLegacy::GetSingleton()->DumpMemInfo();
+	void* pMem1 = TMemoryLegacy::GetSingleton()->Alloc(80, 4, pMainMemBlock, TNULL, 0);
 	TMemoryLegacy::GetSingleton()->Free(pMem2);
 	void* pMem3 = TMemoryLegacy::GetSingleton()->Alloc(16, 4, pMainMemBlock, TNULL, 0);
 	void* pMem4 = TMemoryLegacy::GetSingleton()->Alloc(16, 4, pMainMemBlock, TNULL, 0);
 	void* pMem5 = TMemoryLegacy::GetSingleton()->Alloc(16, 4, pMainMemBlock, TNULL, 0);
 	void* pMem6 = TMemoryLegacy::GetSingleton()->Alloc(16, 4, pMainMemBlock, TNULL, 0);
-	
+
 	// FIXME: Move this line to EntryPoint's code
 	AMemory::CreatePool(AMemory::POOL_StringPool);
 

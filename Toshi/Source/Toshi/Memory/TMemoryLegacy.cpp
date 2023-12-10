@@ -315,8 +315,7 @@ namespace Toshi {
 
 #ifdef TOSHI_DEBUG
 		pBuffer[iLen - 1] = '\0';
-		TOSHI_CRITICAL(pBuffer);
-		TASSERT(TFALSE);
+		TOSHI_TRACE(pBuffer);
 #endif
 	}
 
@@ -326,7 +325,7 @@ namespace Toshi {
 		new (tmemory) TMemoryLegacy();
 
 		tmemory->m_pMainBlockMemory = TNULL;
-		tmemory->m_pMainBlock = TNULL;
+		tmemory->m_pGlobalBlock = TNULL;
 		tmemory->m_Unknown1 = 0;
 		tmemory->m_Unknown2 = 0;
 
@@ -337,7 +336,7 @@ namespace Toshi {
 		tmemory->m_TotalAllocatedSize = (a_uiHeapSize == 0) ? 128 * 1024 * 1024 : a_uiHeapSize;
 		tmemory->m_MainBlockSize = tmemory->m_TotalAllocatedSize - a_uiReservedSize;
 		tmemory->m_pMainBlockMemory = malloc(tmemory->m_TotalAllocatedSize);
-		tmemory->m_pMainBlock = tmemory->CreateHeapInPlace(
+		tmemory->m_pGlobalBlock = tmemory->CreateHeapInPlace(
 			tmemory->m_pMainBlockMemory,
 			tmemory->m_TotalAllocatedSize,
 			"Toshi"
@@ -368,7 +367,120 @@ namespace Toshi {
 
 	void TMemoryLegacy::DumpMemInfo()
 	{
-		TIMPLEMENT();
+		MemInfo memInfo;
+
+		for (auto it = m_UsedBlocks.Tail(); it != m_UsedBlocks.End(); it--)
+		{
+			GetMemInfo(memInfo, it->m_pPtr);
+
+			PrintDebug("Pool: \'%s\'\n", it->m_pPtr->m_szName);
+			PrintDebug("\tLargest Hole    : %d\n", memInfo.m_uiLargestHole);
+			PrintDebug("\tSmallest Hole   : %d\n", memInfo.m_uiSmallestHole);
+			PrintDebug("\tLargest Process : %d\n", memInfo.m_uiLargestProcess);
+			PrintDebug("\tSmallest Process: %d\n", memInfo.m_uiSmallestProcess);
+			PrintDebug("\tTotal Free      : %d\n", memInfo.m_uiTotalFree);
+			PrintDebug("\tTotal Used      : %d\n", memInfo.m_uiTotalUsed);
+			PrintDebug("\tTotal Size      : %d\n", memInfo.m_uiTotalSize);
+			PrintDebug("\tTotal Size      : %d\n", memInfo.m_uiTotalSize);
+			PrintDebug("\tLogic Total Free: %d\n", memInfo.m_uiLogicTotalFree);
+			PrintDebug("\tLogic Total Used: %d\n", memInfo.m_uiLogicTotalUsed);
+			PrintDebug("\tLogic Total Size: %d\n", memInfo.m_uiLogicTotalSize);
+
+			TFLOAT fLogicTotalUsed = TMath::Abs(TFLOAT(memInfo.m_uiLogicTotalUsed));
+			TFLOAT fLogicTotalSize = TMath::Abs(TFLOAT(memInfo.m_uiLogicTotalSize));
+			PrintDebug("\t%%Logical Used   : %f\n", (fLogicTotalUsed / fLogicTotalSize) * 100.0);
+
+			TFLOAT fTotalUsed = TMath::Abs(TFLOAT(memInfo.m_uiTotalUsed));
+			TFLOAT fTotalSize = TMath::Abs(TFLOAT(memInfo.m_uiTotalSize));
+			PrintDebug("\t%%Used\t          : %f\n", (fTotalUsed / fTotalSize) * 100.0);
+			PrintDebug("------\n\n");
+		}
+	}
+
+	void TMemoryLegacy::GetMemInfo(MemInfo& a_rMemInfo, MemBlock* a_pMemBlock)
+	{
+		TMutexLock lock(ms_pGlobalMutex);
+
+		if (!a_pMemBlock)
+		{
+			a_pMemBlock = m_pGlobalBlock;
+		}
+
+		a_rMemInfo.m_uiUnk3 = 28;
+		a_rMemInfo.m_uiUnk4 = 28;
+		a_rMemInfo.m_uiTotalSize = 0;
+		a_rMemInfo.m_uiLogicTotalSize = 0;
+		a_rMemInfo.m_uiLargestHole = 0;
+		a_rMemInfo.m_uiLargestProcess = 0;
+		a_rMemInfo.m_uiSmallestHole = 0;
+		a_rMemInfo.m_uiSmallestProcess = 0;
+		a_rMemInfo.m_uiTotalFree = 0;
+		a_rMemInfo.m_uiLogicTotalFree = 0;
+		a_rMemInfo.m_uiTotalUsed = 0;
+		a_rMemInfo.m_uiLogicTotalUsed = 0;
+		a_rMemInfo.m_iNumHoles = 0;
+		a_rMemInfo.m_iNumProcesses = 0;
+		a_rMemInfo.m_uiTotalSize = a_pMemBlock->m_uiTotalSize1;
+		a_rMemInfo.m_uiLogicTotalSize = a_pMemBlock->m_uiTotalSize1;
+		a_rMemInfo.m_uiSmallestProcess = -1;
+		a_rMemInfo.m_uiSmallestHole = -1;
+		a_rMemInfo.m_uiLargestProcess = 0;
+		a_rMemInfo.m_uiLargestHole = 0;
+
+		auto uiUnk = (TUINT)a_pMemBlock->m_pFirstHole + (-88 - (TUINT)a_pMemBlock);
+		a_rMemInfo.m_uiUnk3 = uiUnk;
+		a_rMemInfo.m_uiUnk4 = uiUnk;
+
+		auto pHole = a_pMemBlock->m_pFirstHole;
+		TUINT uiHoleSize = pHole->m_uiSize;
+
+		while (TMath::AlignNum(uiHoleSize) != 0)
+		{
+			a_rMemInfo.m_uiUnk3 += 12;
+			uiHoleSize = TMath::AlignNum(pHole->m_uiSize);
+
+			if ((pHole->m_uiSize & 1) == 0)
+			{
+				a_rMemInfo.m_iNumHoles += 1;
+				a_rMemInfo.m_uiTotalFree = a_rMemInfo.m_uiTotalFree + uiHoleSize;
+
+				if (a_rMemInfo.m_uiLargestHole <= uiHoleSize && uiHoleSize != a_rMemInfo.m_uiLargestHole)
+				{
+					a_rMemInfo.m_uiLargestHole = uiHoleSize;
+				}
+
+				if (uiHoleSize < a_rMemInfo.m_uiSmallestHole)
+				{
+					a_rMemInfo.m_uiSmallestHole = uiHoleSize;
+				}
+			}
+			else
+			{
+				a_rMemInfo.m_iNumProcesses += 1;
+				a_rMemInfo.m_uiTotalUsed = a_rMemInfo.m_uiTotalUsed + uiHoleSize;
+
+				if (a_rMemInfo.m_uiLargestProcess <= uiHoleSize && uiHoleSize != a_rMemInfo.m_uiLargestProcess)
+				{
+					a_rMemInfo.m_uiLargestProcess = uiHoleSize;
+				}
+
+				if (uiHoleSize < a_rMemInfo.m_uiSmallestProcess)
+				{
+					a_rMemInfo.m_uiSmallestProcess = uiHoleSize;
+				}
+			}
+
+			pHole = (Hole*)((TUINT)&pHole->m_pPrevHole + uiHoleSize);
+			uiHoleSize = pHole->m_uiSize;
+		}
+
+		a_rMemInfo.m_uiLogicTotalFree = a_rMemInfo.m_uiTotalFree;
+		a_rMemInfo.m_uiLogicTotalUsed = a_rMemInfo.m_uiTotalUsed + uiUnk;
+
+		if (a_rMemInfo.m_uiSmallestHole == -1)
+		{
+			a_rMemInfo.m_uiSmallestHole = 0;
+		}
 	}
 
 }

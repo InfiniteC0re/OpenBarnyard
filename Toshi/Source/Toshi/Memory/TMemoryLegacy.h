@@ -21,9 +21,7 @@ namespace Toshi {
 				Hole* m_pNextHole;
 				MemBlock* m_pMemBlock;
 			};
-			union {
-				Hole* m_pPrevHole;
-			};
+			Hole* m_pPrevHole;
 		};
 
 		struct MemBlock
@@ -53,21 +51,48 @@ namespace Toshi {
 			MemBlock* m_pPtr = TNULL;
 		};
 
+		struct MemInfo
+		{
+			TUINT m_uiTotalSize;
+			TUINT m_uiLogicTotalSize;
+			TUINT m_uiTotalFree;
+			TUINT m_uiLogicTotalFree;
+			TUINT m_uiTotalUsed;
+			TUINT m_uiLogicTotalUsed;
+			TINT m_iNumHoles;
+			TINT m_iNumProcesses;
+			TUINT m_uiLargestHole;
+			TUINT m_uiLargestProcess;
+			TUINT m_uiSmallestHole;
+			TUINT m_uiSmallestProcess;
+			TUINT m_uiUnk3;
+			TUINT m_uiUnk4;
+		};
+
 	public:
 		TMemoryLegacy();
 
 		void* Alloc(TUINT a_uiSize, TINT a_uiAlignment, MemBlock* a_pMemBlock, char* a_szUnused1, TINT a_iUnused2);
+		
 		TBOOL Free(void* a_pMem);
 
 		MemBlock* CreateHeapInPlace(void* a_pMem, TUINT a_uiSize, const char* a_szName);
 
-		MemBlock* GetMainMemBlock() const
+		MemBlock* GetGlobalBlock() const
 		{
-			return m_pMainBlock;
+			return m_pGlobalBlock;
 		}
 
-	private:
+		MemBlock* SetGlobalBlock(MemBlock* a_pBlock)
+		{
+			m_pGlobalBlock = a_pBlock;
+		}
+
 		void DumpMemInfo();
+		void GetMemInfo(MemInfo& a_rMemInfo, MemBlock* a_pMemBlock);
+
+
+	private:
 		void PrintDebug(const char* a_szFormat, ...);
 
 	public:
@@ -85,7 +110,7 @@ namespace Toshi {
 		TNodeList<MemBlockSlot> m_FreeBlocks;
 		MemBlockSlot m_aBlockSlots[NUM_BLOCK_SLOTS];
 		void* m_pMainBlockMemory;
-		MemBlock* m_pMainBlock;
+		MemBlock* m_pGlobalBlock;
 		TUINT m_Unknown1;
 		TUINT m_Unknown2;
 		TBOOL m_bFlag1;
