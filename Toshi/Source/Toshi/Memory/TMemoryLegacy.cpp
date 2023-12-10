@@ -250,7 +250,13 @@ namespace Toshi {
 		return TFALSE;
 	}
 
-	TMemoryLegacy::MemBlock* TMemoryLegacy::CreateHeapInPlace(void* a_pMem, TUINT a_uiSize, const char* a_szName)
+	TMemoryLegacy::MemBlock* TMemoryLegacy::CreateMemBlock(TUINT a_uiSize, const char* a_szName, MemBlock* a_pOwnerBlock)
+	{
+		void* pMem = Alloc(a_uiSize, 16, a_pOwnerBlock, TNULL, -1);
+		return CreateMemBlockInPlace(pMem, a_uiSize, a_szName);
+	}
+
+	TMemoryLegacy::MemBlock* TMemoryLegacy::CreateMemBlockInPlace(void* a_pMem, TUINT a_uiSize, const char* a_szName)
 	{
 		TMutexLock lock(ms_pGlobalMutex);
 
@@ -304,6 +310,32 @@ namespace Toshi {
 		return TNULL;
 	}
 
+	void TMemoryLegacy::DestroyMemBlock(MemBlock* a_pMemBlock)
+	{
+		FreeMemBlock(a_pMemBlock);
+		Free(a_pMemBlock);
+	}
+
+	TBOOL TMemoryLegacy::FreeMemBlock(MemBlock* a_pMemBlock)
+	{
+		TMutexLock lock(ms_pGlobalMutex);
+
+		SetMemBlockUnused(a_pMemBlock);
+		a_pMemBlock->m_pSlot->Remove();
+		m_FreeBlocks.InsertHead(*a_pMemBlock->m_pSlot);
+
+		return TTRUE;
+	}
+
+	void TMemoryLegacy::SetMemBlockUnused(MemBlock* a_pMemBlock)
+	{
+		a_pMemBlock->m_pSlot->Remove();
+		m_FreeBlocks.InsertHead(*a_pMemBlock->m_pSlot);
+
+		CreateMemBlockInPlace(a_pMemBlock, a_pMemBlock->m_uiTotalSize1, "_unused");
+		TStringManager::String8Copy(a_pMemBlock->m_szSignature, "xxxxxxx");
+	}
+
 	void TMemoryLegacy::PrintDebug(const char* a_szFormat, ...)
 	{
 		va_list args;
@@ -336,7 +368,7 @@ namespace Toshi {
 		tmemory->m_TotalAllocatedSize = (a_uiHeapSize == 0) ? 128 * 1024 * 1024 : a_uiHeapSize;
 		tmemory->m_MainBlockSize = tmemory->m_TotalAllocatedSize - a_uiReservedSize;
 		tmemory->m_pMainBlockMemory = malloc(tmemory->m_TotalAllocatedSize);
-		tmemory->m_pGlobalBlock = tmemory->CreateHeapInPlace(
+		tmemory->m_pGlobalBlock = tmemory->CreateMemBlockInPlace(
 			tmemory->m_pMainBlockMemory,
 			tmemory->m_TotalAllocatedSize,
 			"Toshi"
@@ -481,6 +513,11 @@ namespace Toshi {
 		{
 			a_rMemInfo.m_uiSmallestHole = 0;
 		}
+	}
+
+	void TMemoryLegacy::GetHALMemInfo(HALMemInfo& a_rHALMemInfo)
+	{
+		TUtil::MemClear(&a_rHALMemInfo, sizeof(a_rHALMemInfo));
 	}
 
 }

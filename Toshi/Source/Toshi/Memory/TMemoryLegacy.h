@@ -69,6 +69,11 @@ namespace Toshi {
 			TUINT m_uiUnk4;
 		};
 
+		struct HALMemInfo
+		{
+			TUINT m_Unknown[26];
+		};
+
 	public:
 		TMemoryLegacy();
 
@@ -76,23 +81,27 @@ namespace Toshi {
 		
 		TBOOL Free(void* a_pMem);
 
-		MemBlock* CreateHeapInPlace(void* a_pMem, TUINT a_uiSize, const char* a_szName);
+		MemBlock* CreateMemBlock(TUINT a_uiSize, const char* a_szName, MemBlock* a_pOwnerBlock);
+		MemBlock* CreateMemBlockInPlace(void* a_pMem, TUINT a_uiSize, const char* a_szName);
+		void DestroyMemBlock(MemBlock* a_pMemBlock);
 
 		MemBlock* GetGlobalBlock() const
 		{
 			return m_pGlobalBlock;
 		}
 
-		MemBlock* SetGlobalBlock(MemBlock* a_pBlock)
+		MemBlock* SetGlobalBlock(MemBlock* a_pMemBlock)
 		{
-			m_pGlobalBlock = a_pBlock;
+			m_pGlobalBlock = a_pMemBlock;
 		}
 
 		void DumpMemInfo();
 		void GetMemInfo(MemInfo& a_rMemInfo, MemBlock* a_pMemBlock);
-
+		void GetHALMemInfo(HALMemInfo& a_rHALMemInfo);
 
 	private:
+		TBOOL FreeMemBlock(MemBlock* a_pMemBlock);
+		void SetMemBlockUnused(MemBlock* a_pMemBlock);
 		void PrintDebug(const char* a_szFormat, ...);
 
 	public:
