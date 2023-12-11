@@ -79,6 +79,7 @@ namespace Toshi {
 
 	public:
 		TMemory();
+		~TMemory();
 
 		void* Alloc(TUINT a_uiSize, TINT a_uiAlignment, MemBlock* a_pMemBlock, const char* a_szUnused1, TINT a_iUnused2);
 		
@@ -111,6 +112,7 @@ namespace Toshi {
 	public:
 		static void GetMemInfo(MemInfo& a_rMemInfo, MemBlock* a_pMemBlock);
 		static TBOOL Initialise(TUINT a_uiHeapSize, TUINT a_uiReservedSize);
+		static void Deinitialise();
 		static TUINT MapSizeToFreeList(TUINT a_uiSize);
 
 	private:

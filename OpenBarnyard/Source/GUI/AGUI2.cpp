@@ -118,7 +118,7 @@ TBOOL AGUI2::OnUpdate(TFLOAT a_fDeltaTime)
 
 		if (s_UpdateTimer > 0.1f)
 		{
-			s_FPS = Toshi::TSystemManager::GetSingleton()->GetAverageFps();
+			s_FPS = Toshi::g_oSystemManager.GetFPS();
 			s_UpdateTimer = 0.0f;
 		}
 

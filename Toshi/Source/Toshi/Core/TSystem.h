@@ -1,7 +1,7 @@
 #pragma once
 #include "TEvent.h"
 #include "Toshi/Utils/TSingleton.h"
-#include "Toshi/Core/THPTimer.h"
+#include "TKernelInterface.h"
 
 #include <utility>
 
@@ -10,23 +10,27 @@ namespace Toshi
 	class TScheduler;
 	class TPString8Pool;
 
-	class TSystemManager : public TSingleton<TSystemManager>
+	class TSystemManager
 	{
+	public:
+		friend TScheduler;
+
 	public:
 		TSystemManager();
 	
 		void Update();
 
-		TFLOAT GetAverageFps() const;
-
-		TBOOL Pause(TBOOL pause)
+		TFLOAT GetFPS() const
 		{
-			TBOOL oldState = m_Paused;
+			return m_pKernelInterface->GetFPS();
+		}
 
-			m_Paused = pause;
-			m_PauseEmitter.Throw(&pause);
+		TBOOL Pause(TBOOL a_bPause)
+		{
+			TBOOL bOldState = m_pKernelInterface->SetPaused(a_bPause);
+			m_PauseEmitter.Throw(&a_bPause);
 
-			return oldState;
+			return bOldState;
 		}
 
 		TEmitter<TSystemManager, TBOOL>& GetPauseEmitter()
@@ -34,63 +38,43 @@ namespace Toshi
 			return m_PauseEmitter;
 		}
 
-		uint32_t GetFrameCount()
+		uint32_t GetFrameCount() const
 		{
-			return m_FrameCount;
+			return m_pKernelInterface->GetNumFrames();
 		}
 
-		THPTimer* GetTimer()
+		THPTimer& GetTimer()
 		{
-			return &m_Timer;
+			return m_pKernelInterface->GetTimer();
 		}
 
 		TScheduler* GetScheduler() const
 		{
-			return m_Scheduler;
+			return m_pKernelInterface->GetScheduler();
 		}
 
 		TBOOL IsPaused() const
 		{
-			return m_Paused;
+			return m_pKernelInterface->IsPaused();
+		}
+
+		void SetQuitCallback(TKernelInterface::t_QuitCallback a_fnQuitCallback)
+		{
+			m_pKernelInterface->SetQuitCallback(a_fnQuitCallback);
 		}
 
 	public:
 		static TBOOL Create();
 
-	public:
-		static void CreateStringPool()
-		{
-			TASSERT(ms_poStringPool == TNULL);
-			ms_poStringPool = new TPString8Pool*;
-			*ms_poStringPool = TNULL;
-		}
-
-		static TPString8Pool* GetStringPool()
-		{
-			TASSERT(ms_poStringPool != TNULL);
-			return *ms_poStringPool;
-		}
-
-		static TPString8Pool* SetStringPool(TPString8Pool* a_pStringPool)
-		{
-			return std::exchange(*ms_poStringPool, a_pStringPool);
-		}
+	private:
+		inline static TBOOL ms_bWasEverUpdated;
 
 	private:
-		inline static TPString8Pool** ms_poStringPool;
-
-	private:
-		TEmitter<TSystemManager, TBOOL> m_PauseEmitter; // 0x00
-		TScheduler* m_Scheduler;
-		TBOOL m_Paused;
-		TUINT32 m_Unk2;
-		THPTimer m_Timer;
-		TUINT32 m_Unk3;
-		TFLOAT m_Second;
-		TFLOAT m_AverageFps;
-		TUINT32 m_FrameCount;
-		TBOOL m_Unk7;
+		TEmitter<TSystemManager, TBOOL> m_PauseEmitter;
+		TKernelInterface* m_pKernelInterface;
 	};
+
+	extern TSystemManager g_oSystemManager;
 }
 
 

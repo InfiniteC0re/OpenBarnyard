@@ -198,7 +198,7 @@ namespace Toshi
 
 		void Erase(const Iterator& a_rIterator)
 		{
-			TUINT32 uiItemIndex = a_rIterator->GetIndex();
+			TUINT32 uiItemIndex = a_rIterator.Index();
 			TASSERT(uiItemIndex < m_iNumElements);
 
 			if (uiItemIndex + 1 < Size())

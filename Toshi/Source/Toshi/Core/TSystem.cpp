@@ -6,44 +6,24 @@
 
 namespace Toshi
 {
-	TSystemManager::TSystemManager() : m_PauseEmitter(this)
+	TSystemManager g_oSystemManager;
+
+	TSystemManager::TSystemManager() :
+		m_PauseEmitter(this)
 	{
-		m_Scheduler = TNULL;
-		m_Paused = TFALSE;
-		m_Second = 0;
-		m_AverageFps = 0;
-		m_FrameCount = 0;
-		m_Unk7 = TFALSE;
+		m_pKernelInterface = TNULL;
 	}
 
 	void TSystemManager::Update()
 	{
-		// Calculating average fps
-		m_Timer.Update();
-		TFLOAT deltaTime = m_Timer.GetDelta();
-		m_Second += deltaTime;
-
-		if (m_Second > 1.0f)
-		{
-			m_AverageFps += 1.0f / deltaTime;
-			m_AverageFps /= 2.0f;
-			m_Second = 0.0;
-		}
-
-		m_FrameCount += 1;
-		
-		// Update the scheduler
-		m_Scheduler->Update();
-	}
-
-	TFLOAT TSystemManager::GetAverageFps() const
-	{
-		return 1.0f / m_Scheduler->GetCurrentDeltaTime();
+		m_pKernelInterface->Update();
 	}
 
 	TBOOL TSystemManager::Create()
 	{
-		TSystemManager::CreateSingleton()->m_Scheduler = new TScheduler();
+		TASSERT(g_oSystemManager.m_pKernelInterface == TNULL);
+		g_oSystemManager.m_pKernelInterface = new TKernelInterface();
+		g_oSystemManager.m_pKernelInterface->SetScheduler(new TScheduler());
 		return TTRUE;
 	}
 

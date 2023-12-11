@@ -1,14 +1,5 @@
 #include "pch.h"
 
-// TOSHI_TMEMORY_FLAGS allows you to change the mode TMemory initializes with
-// Flags_NativeMethods stands for native memory management methods instead of using dlmalloc
-#define TOSHI_TMEMORY_FLAGS Toshi::TMemory::Flags_NativeMethods
-
-// TOSHI_TMEMORY_SIZE allows you to change size of the global memory block
-// The value is not used when TMemory initialized with native methods
-#define TOSHI_TMEMORY_SIZE 0
-
-// This file includes the entrypoint so set all the settings before including it
 #include <Toshi.h>
 #include <Toshi/Strings/TPString8.h>
 
@@ -18,9 +9,12 @@
 
 TOSHI_NAMESPACE_USING
 
-int TMain(int argc, char** argv)
+static TMemoryInitialiser s_MemoryInitialiser;
+
+int main(int argc, char** argv)
 {
-	TSystemManager::GetSingleton()->SetStringPool(new TPString8Pool(1024, 0, &T2Allocator::s_GlobalAllocator, TNULL));
+	Toshi::TUtil::ToshiCreate(GetCommandLineA(), 0, 0);
+	TUtil::SetTPStringPool(new TPString8Pool(1024, 0, &T2Allocator::s_GlobalAllocator, TNULL));
 
 	AArgumentParser args(argv, argc);
 	if (args.GetMode() == AArgumentParser::Mode::Unpack)
@@ -40,6 +34,7 @@ int TMain(int argc, char** argv)
 		CreateDirectoryA(outputDir, NULL);
 
 		AAssetPack assetPack;
+
 		if (assetPack.Load(filepath))
 		{
 			AAssetUnpacker::Unpack(assetPack, outputDir, args.IsUsingBTEC());

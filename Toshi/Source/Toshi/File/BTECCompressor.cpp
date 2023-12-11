@@ -45,7 +45,7 @@ namespace Toshi
         m_Root2.Reset();
 
         size_t arraySize1 = m_BucketCount * maxoffset;
-        m_SomeArray1 = (Node*)TMemalign(16, arraySize1 * sizeof(Node));
+        m_SomeArray1 = (Node*)TMemalign(arraySize1 * sizeof(Node), 16);
 
         for (size_t i = 0; i < arraySize1; i++)
         {
@@ -57,11 +57,11 @@ namespace Toshi
 
         TUtil::MemClear(m_Offsets, sizeof(m_Offsets));
 
-        m_Buckets = (Bucket*)TMemalign(16, m_BucketCount * sizeof(Bucket));
+        m_Buckets = (Bucket*)TMemalign(m_BucketCount * sizeof(Bucket), 16);
 
         for (size_t i = 0; i < m_BucketCount; i++)
         {
-            m_Buckets[i] = (Bucket)TMemalign(16, 256 * sizeof(Node*));
+            m_Buckets[i] = (Bucket)TMemalign(256 * sizeof(Node*), 16);
 
             for (size_t k = 0; k < 256; k++)
             {

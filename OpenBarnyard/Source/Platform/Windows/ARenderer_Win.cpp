@@ -234,7 +234,7 @@ TBOOL ARenderer::OnUpdate(float a_fDeltaTime)
 
 	pRenderer->Update(a_fDeltaTime);
 
-	if (!TSystemManager::GetSingleton()->IsPaused())
+	if (!g_oSystemManager.IsPaused())
 	{
 		pRenderer->BeginScene();
 

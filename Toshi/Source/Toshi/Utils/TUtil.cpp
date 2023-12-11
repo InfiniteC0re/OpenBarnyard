@@ -1,6 +1,5 @@
 #include "ToshiPCH.h"
 #include "TUtil.h"
-#include "TRegion.h"
 #include "Toshi/Core/TSystem.h"
 #include "Toshi/Core/TError.h"
 #include "Toshi/Render/TModelRegistry.h"
@@ -102,30 +101,35 @@ namespace Toshi
 	}
 
 	TBOOL TUtil::ToshiCreate(char* a_szCommandLine, TINT a_iArg2, TINT a_iArg3)
-    {
-        TRegion::LockRegion();
-
-		// Initialize other systems
+	{
+		CreateKernelInterface();
+		// TODO: FUN_006c7fe0
 		TLog::Create();
-        TSystemManager::Create();
-        TFileManager::Create();
-		TSystemManager::GetSingleton()->CreateStringPool();
-
+		TFileManager::Create();
+		CreateTPStringPool();
 		Create();
-		TError::CreateSingleton(0x1800, 0x100);
-        
+		
 		return TTRUE;
-    }
+	}
 
 	void TUtil::ToshiDestroy()
 	{
 		TIMPLEMENT();
+#ifdef TOSHI_SKU_WINDOWS
+		ReleaseMutex(ms_hGlobalMutex);
+#endif
+
 		TLog::Destroy();
 		TModelRegistry::Uninitialise();
 	}
 
+	TBOOL TUtil::CreateKernelInterface()
+	{
+		return TSystemManager::Create();
+	}
+
 	void TUtil::MemSet(void* ptr, size_t value, size_t size)
-    {
+	{
 		if (size >= sizeof(void*))
 		{
 			size_t* pos = static_cast<size_t*>(ptr);
@@ -166,33 +170,33 @@ namespace Toshi
 			ptr = reinterpret_cast<void*>((uintptr_t)ptr + stepSize);
 			size -= stepSize;
 		}
-    }
-
-    // Source: https://lentz.com.au/blog/tag/crc-table-generator
-	void TUtil::CRCInitialise()
-	{
-        uint32_t crc;
-
-        for (int i = 0; i < CRC_TABSIZE; i++) {
-            crc = i;
-            for (int j = 8; j > 0; j--) {
-                if (crc & 1)
-                    crc = (crc >> 1) ^ CRC32POLY;
-                else
-                    crc >>= 1;
-            }
-            s_aiCRC32LUT[i] = crc;
-        }
 	}
 
-    // Source: https://lentz.com.au/blog/tag/crc-table-generator
+	// Source: https://lentz.com.au/blog/tag/crc-table-generator
+	void TUtil::CRCInitialise()
+	{
+		uint32_t crc;
+
+		for (int i = 0; i < CRC_TABSIZE; i++) {
+			crc = i;
+			for (int j = 8; j > 0; j--) {
+				if (crc & 1)
+					crc = (crc >> 1) ^ CRC32POLY;
+				else
+					crc >>= 1;
+			}
+			s_aiCRC32LUT[i] = crc;
+		}
+	}
+
+	// Source: https://lentz.com.au/blog/tag/crc-table-generator
 	uint32_t TUtil::CRC32(unsigned char* buffer, uint32_t len)
 	{
-        uint32_t crc = 0;
+		uint32_t crc = 0;
 
-        while (len--)
-            crc = crc32upd(s_aiCRC32LUT, crc, *buffer++);
+		while (len--)
+			crc = crc32upd(s_aiCRC32LUT, crc, *buffer++);
 
-        return CRC32POST(crc);
+		return CRC32POST(crc);
 	}
 }

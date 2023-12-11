@@ -36,7 +36,7 @@ namespace Toshi {
 
 		if (!m_bIsFocused)
 		{
-			if (!TSystemManager::GetSingleton()->IsPaused())
+			if (!g_oSystemManager.IsPaused())
 			{
 				if (FALSE != PeekMessageA(&msg, NULL, 0, 0, 0))
 				{
@@ -65,7 +65,7 @@ namespace Toshi {
 			}
 		}
 
-		while (TSystemManager::GetSingleton()->IsPaused())
+		while (g_oSystemManager.IsPaused())
 		{
 			if (FALSE == GetMessageA(&msg, NULL, 0, 0))
 			{
@@ -205,7 +205,7 @@ namespace Toshi {
 				{
 					if (wParam)
 					{
-						TSystemManager::GetSingleton()->Pause(TFALSE);
+						g_oSystemManager.Pause(TFALSE);
 						s_bIsPaused = TFALSE;
 
 						if (!pWindow->m_bWindowed)
@@ -218,7 +218,7 @@ namespace Toshi {
 					}
 					else
 					{
-						TSystemManager::GetSingleton()->Pause(TTRUE);
+						g_oSystemManager.Pause(TTRUE);
 						s_bIsPaused = TTRUE;
 
 						if (!pWindow->m_bWindowed)

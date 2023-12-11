@@ -38,13 +38,12 @@ namespace Toshi
 	TBOOL TApplication::Execute()
 	{
 		TASSERT(TApplication::IsCreated() == TTRUE);
-		TSystemManager* pSystemManager = TSystemManager::GetSingletonSafe();
-		
-		TBOOL updateResult = TTRUE;
-		while (updateResult && !IsDestroyed())
+
+		TBOOL bUpdateResult = TTRUE;
+		while (bUpdateResult && !IsDestroyed())
 		{
-			pSystemManager->Update();
-			updateResult = OnUpdate(pSystemManager->GetTimer()->GetDelta());
+			g_oSystemManager.Update();
+			bUpdateResult = OnUpdate(g_oSystemManager.GetTimer().GetDelta());
 		}
 
 		return OnDestroy();

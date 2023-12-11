@@ -40,15 +40,13 @@ ARootTask::ARootTask()
 	m_pOptions = AOptions::CreateSingleton();
 	AMemory::CreatePool(AMemory::POOL_Sound);
 
-	auto pSystemManager = TSystemManager::GetSingleton();
-
-	m_pGUISystem = pSystemManager->GetScheduler()->CreateTask(&TGetClass(AGUISystem), this);
-	m_pGUI2 = pSystemManager->GetScheduler()->CreateTask(&TGetClass(AGUI2), this);
-	m_pRenderer = TSTATICCAST(ARenderer*, pSystemManager->GetScheduler()->CreateTask(&TGetClass(ARenderer), this));
-	m_pInputHandler = pSystemManager->GetScheduler()->CreateTask(&TGetClass(AInputHandler), this);
-	m_pGameStateController = pSystemManager->GetScheduler()->CreateTask(&TGetClass(AGameStateController), this);
-	m_pSoundManager = pSystemManager->GetScheduler()->CreateTask(&TGetClass(ASoundManager), this);
-	m_pMoviePlayer = pSystemManager->GetScheduler()->CreateTask(&TGetClass(ABINKMoviePlayer), this);
+	m_pGUISystem = g_oSystemManager.GetScheduler()->CreateTask(&TGetClass(AGUISystem), this);
+	m_pGUI2 = g_oSystemManager.GetScheduler()->CreateTask(&TGetClass(AGUI2), this);
+	m_pRenderer = TSTATICCAST(ARenderer*, g_oSystemManager.GetScheduler()->CreateTask(&TGetClass(ARenderer), this));
+	m_pInputHandler = g_oSystemManager.GetScheduler()->CreateTask(&TGetClass(AInputHandler), this);
+	m_pGameStateController = g_oSystemManager.GetScheduler()->CreateTask(&TGetClass(AGameStateController), this);
+	m_pSoundManager = g_oSystemManager.GetScheduler()->CreateTask(&TGetClass(ASoundManager), this);
+	m_pMoviePlayer = g_oSystemManager.GetScheduler()->CreateTask(&TGetClass(ABINKMoviePlayer), this);
 	m_bGameSystemCreated = TFALSE;
 }
 
@@ -266,18 +264,17 @@ void ARootTask::LoadStartupData()
 		}
 	}
 
-	Toshi::TRenderInterface::GetSingleton()->FlushDyingResources();
-	Toshi::TRenderInterface::GetSingleton()->FlushDyingResources();
+	TRenderInterface::GetSingleton()->FlushDyingResources();
+	TRenderInterface::GetSingleton()->FlushDyingResources();
 	AGUI2TextureSectionManager::UpdateMaterials();
 
-	auto pSystemManager = TSystemManager::GetSingleton();
-	auto pFadeManager = TSTATICCAST(AFadeManager*, pSystemManager->GetScheduler()->CreateTask(&TGetClass(AFadeManager), this));
+	auto pFadeManager = TSTATICCAST(AFadeManager*, g_oSystemManager.GetScheduler()->CreateTask(&TGetClass(AFadeManager), this));
 	pFadeManager->Create();
 }
 
 TBOOL ARootTask::IsPaused() const
 {
-	return m_bPaused || Toshi::TSystemManager::GetSingleton()->IsPaused();
+	return m_bPaused || g_oSystemManager.IsPaused();
 }
 
 void ARootTask::CreateGameSystem()
@@ -288,8 +285,7 @@ void ARootTask::CreateGameSystem()
 	ALoadScreen::GetGlobalInstance()->StartLoading(9, TTRUE);
 	
 	// ...
-	auto pSystemManager = TSystemManager::GetSingleton();
-	m_pGameSystemManager = pSystemManager->GetScheduler()->CreateTask(&TGetClass(AGameSystemManager), this);
+	m_pGameSystemManager = g_oSystemManager.GetScheduler()->CreateTask(&TGetClass(AGameSystemManager), this);
 	m_pGameSystemManager->Create();
 
 	ALoadScreen::GetGlobalInstance()->Update(1.0f, TTRUE);
@@ -332,8 +328,8 @@ void ARootTask::LoadFrontEnd()
 {
 	TIMPLEMENT();
 
-	Toshi::TSphere sphere = { 24.55160141f, -11.76614094f, -32.63951874f, 45.89837265f };
-	Toshi::TPlane planes[6] = {
+	TSphere sphere = { 24.55160141f, -11.76614094f, -32.63951874f, 45.89837265f };
+	TPlane planes[6] = {
 		{ -0.3349758983f, 0.02605731972f, -0.9418663979f, 24.19716644f },
 		{ 0.9829545617f, 0.02605731972, 0.1819926798, 34.31285095f },
 		{ 0.3024052083f, -0.8847551942f, -0.3546254933f, 35.86272049f },
@@ -342,7 +338,7 @@ void ARootTask::LoadFrontEnd()
 		{ -0.6479786038f, -0.05211463198f, 0.759873569f, 221.4899902f }
 	};
 
-	Toshi::TRenderContext::CullSphereToFrustumSimple(sphere, planes, 6);
+	TRenderContext::CullSphereToFrustumSimple(sphere, planes, 6);
 
 	ATerrainManager::SetTerrain(
 		ATerrainManager::Terrain_FrontEnd,

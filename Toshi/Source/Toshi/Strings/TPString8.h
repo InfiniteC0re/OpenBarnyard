@@ -171,7 +171,7 @@ namespace Toshi {
 
 		__forceinline TPString8(const char* a_szString)
 		{
-			TSystemManager::GetStringPool()->Get(m_pPtr, a_szString, TNULL);
+			TUtil::GetTPStringPool()->Get(m_pPtr, a_szString, TNULL);
 		}
 
 		__forceinline TPString8(TPString8Pool* a_pPool, const char* a_szString)
@@ -282,7 +282,7 @@ namespace Toshi {
 		__forceinline TPString8& operator=(const char* a_szString)
 		{
 			Decrement();
-			TSystemManager::GetStringPool()->Get(m_pPtr, a_szString, TNULL);
+			TUtil::GetTPStringPool()->Get(m_pPtr, a_szString, TNULL);
 			return *this;
 		}
 

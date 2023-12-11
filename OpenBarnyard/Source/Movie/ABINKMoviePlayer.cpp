@@ -65,7 +65,7 @@ TBOOL ABINKMoviePlayer::OnUpdate(TFLOAT a_fDeltaTime)
 		return TTRUE;
 	}
 
-	if (TSystemManager::GetSingleton()->IsPaused())
+	if (g_oSystemManager.IsPaused())
 	{
 		if (!m_bPaused)
 		{

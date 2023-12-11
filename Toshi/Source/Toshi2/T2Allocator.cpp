@@ -12,7 +12,7 @@ namespace Toshi
 
 	void* T2GlobalAllocator::Malloc(size_t size, size_t alignment)
 	{
-		return TMemalign(alignment, size);
+		return TMemalign(size, alignment);
 	}
 
 	void T2GlobalAllocator::Free(void* ptr)
@@ -32,7 +32,7 @@ namespace Toshi
 
 	void* T2GlobalAllocator::TryMalloc(size_t size, size_t alignment)
 	{
-		return TMemalign(alignment, size);
+		return TMemalign(size, alignment);
 	}
 
 	size_t T2GlobalAllocator::GetUsedSize()

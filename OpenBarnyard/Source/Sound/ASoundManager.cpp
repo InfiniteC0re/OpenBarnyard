@@ -35,7 +35,7 @@ TBOOL ASoundManager::OnCreate()
 {
 	Initialise();
 	m_PauseListener.Connect(
-		Toshi::TSystemManager::GetSingleton()->GetPauseEmitter(),
+		Toshi::g_oSystemManager.GetPauseEmitter(),
 		this,
 		[](ASoundManager* a_pSndMngr, Toshi::TSystemManager* a_pSysMngr, TBOOL* a_pPaused) {
 			a_pSndMngr->PauseAllSound(*a_pPaused);

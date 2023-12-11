@@ -60,7 +60,7 @@ void ATerrainLODBlock::SetupTRB(TTRB* a_pTRB, ATerrainLODBlock* a_pOther)
 
 void ATerrainLODBlock::UpdateLastAccessTime()
 {
-	m_fLastAccessTime = TSystemManager::GetSingleton()->GetScheduler()->GetTotalTime();
+	m_fLastAccessTime = g_oSystemManager.GetScheduler()->GetTotalTime();
 }
 
 void ATerrainLODBlock::Assign(ATerrainVISGroup* a_pVISGroup, ATerrainLODType a_eLODType)

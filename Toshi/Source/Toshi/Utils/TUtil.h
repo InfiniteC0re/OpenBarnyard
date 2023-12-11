@@ -3,13 +3,17 @@
 #include "Toshi/File/TLogFile.h"
 #include "Toshi/Core/TEvent.h"
 
-namespace Toshi
-{
+namespace Toshi {
+
+	class TPString8Pool;
+
 	class TUtil : public TSingleton<TUtil>
 	{
 	public:
 		static TBOOL ToshiCreate(char* a_szCommandLine, TINT a_iArg2, TINT a_iArg3);
 		static void ToshiDestroy();
+
+		static TBOOL CreateKernelInterface();
 
 		static void Create()
 		{
@@ -20,7 +24,6 @@ namespace Toshi
 		
 		static const char* GetTime();
 		static void TrimLog(const char* fileExtension, size_t trimTo);
-		//static uint64_t GetUnixSeconds(uint64_t* pOut = TNULL);
 		static void MemSet(void* ptr, size_t value, size_t size);
 		
 		static void* MemCopy(void* dst, const void* src, size_t size)
@@ -60,6 +63,42 @@ namespace Toshi
 			TUtil* util = Toshi::TUtil::GetSingletonSafe();
 			util->m_pLogFile2->Up();
 		}
+
+		static void CreateTPStringPool()
+		{
+			TASSERT(ms_poStringPool == TNULL);
+			ms_poStringPool = new TPString8Pool*;
+			*ms_poStringPool = TNULL;
+		}
+
+		static void DestroyTPStringPool()
+		{
+			if (ms_poStringPool)
+			{
+				delete ms_poStringPool;
+				ms_poStringPool = TNULL;
+			}
+		}
+
+		static TPString8Pool* GetTPStringPool()
+		{
+			TASSERT(ms_poStringPool != TNULL);
+			return *ms_poStringPool;
+		}
+
+		static TPString8Pool* SetTPStringPool(TPString8Pool* a_pStringPool)
+		{
+			return std::exchange(*ms_poStringPool, a_pStringPool);
+		}
+
+		static void SetGlobalMutex(HANDLE a_hGlobalMutex)
+		{
+			ms_hGlobalMutex = a_hGlobalMutex;
+		}
+
+	private:
+		inline static TPString8Pool** ms_poStringPool;
+		inline static HANDLE ms_hGlobalMutex;
 
 	private:
 		TLogFile* m_pLogFile1;

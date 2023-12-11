@@ -114,9 +114,9 @@ namespace Toshi {
 	void TSkeletonInstance::UpdateTime(float a_fDeltaTime)
 	{
 		if (!m_BaseAnimations.IsEmpty() || (!m_OverlayAnimations.IsEmpty() &&
-			m_iLastUpdateTimeFrame != TSystemManager::GetSingleton()->GetFrameCount()))
+			m_iLastUpdateTimeFrame != g_oSystemManager.GetFrameCount()))
 		{
-			m_iLastUpdateTimeFrame = TSystemManager::GetSingleton()->GetFrameCount();
+			m_iLastUpdateTimeFrame = g_oSystemManager.GetFrameCount();
 			m_fTotalWeight = 0.0f;
 
 			// Update base animations
@@ -145,10 +145,10 @@ namespace Toshi {
 
 	void TSkeletonInstance::UpdateState(TBOOL a_bForceUpdate)
 	{
-		if ((a_bForceUpdate || m_iLastUpdateStateFrame != TSystemManager::GetSingleton()->GetFrameCount()) &&
+		if ((a_bForceUpdate || m_iLastUpdateStateFrame != g_oSystemManager.GetFrameCount()) &&
 			m_pSkeleton->GetKeyLibraryInstance().GetLibrary() != TNULL)
 		{
-			m_iLastUpdateStateFrame = TSystemManager::GetSingleton()->GetFrameCount();
+			m_iLastUpdateStateFrame = g_oSystemManager.GetFrameCount();
 
 			const auto QInterpFn = m_pSkeleton->GetQInterpFn();
 			float fOneOverTotalWeight = 1.0f;

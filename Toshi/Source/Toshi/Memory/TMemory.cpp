@@ -65,6 +65,11 @@ namespace Toshi {
 		m_bFlag2 = TTRUE;
 	}
 
+	TMemory::~TMemory()
+	{
+		
+	}
+
 	void* TMemory::Alloc(TUINT a_uiSize, TINT a_uiAlignment, MemBlock* a_pMemBlock, const char* a_szUnused1, TINT a_iUnused2)
 	{
 		TMutexLock lock(ms_pGlobalMutex);
@@ -233,6 +238,7 @@ namespace Toshi {
 	TBOOL TMemory::Free(void* a_pMem)
 	{
 		TMutexLock lock(ms_pGlobalMutex);
+
 		TUINT uiMem = TREINTERPRETCAST(TUINT, a_pMem);
 
 		if ((uiMem & 3) == 0 && a_pMem != TNULL)
@@ -295,7 +301,7 @@ namespace Toshi {
 
 			auto uiHoleId = MapSizeToFreeList(TMath::AlignNum(pRootHole->m_uiSize));
 			pRootHole->m_pPrevHole = TNULL;
-			
+
 			auto pOldHole = pMemBlock->m_pHoles[uiHoleId];
 			*ppHole = pOldHole;
 
@@ -437,6 +443,20 @@ namespace Toshi {
 		);
 
 		return TTRUE;
+	}
+
+	void TMemory::Deinitialise()
+	{
+		TASSERT(TTRUE == IsSingletonCreated());
+		auto pMemManager = TMemory::GetSingleton();
+		auto pMainBlockMemory = pMemManager->m_pMainBlockMemory;
+
+		pMemManager->m_UsedBlocks.RemoveAll();
+		pMemManager->m_FreeBlocks.RemoveAll();
+		pMemManager->~TMemory();
+
+		free(pMemManager);
+		free(pMainBlockMemory);
 	}
 
 	TUINT TMemory::MapSizeToFreeList(TUINT a_uiSize)

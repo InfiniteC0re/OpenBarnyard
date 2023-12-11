@@ -11,14 +11,13 @@ namespace Toshi
 	TScheduler::TScheduler()
 	{
 		m_DeltaTime = 0.0f;
-		m_TasksUpdateTime = 0.0f;
 		m_TotalTime = 0.0f;
 		m_MaxDeltaTime = 0.25f;
-		m_FrameCount = 0;
-		m_UseFixedMaxFps = TFALSE;
-		m_FixedMaxFps = 0.0f;
+		m_uiNumFrames = 0;
+		m_fnDeltaTimeCalculator = TNULL;
 		m_UseDebugDeltaTime = TFALSE;
 		m_DebugDeltaTime = 0.01f;
+		m_UseDebugDeltaTimeMult = TFALSE;
 		m_DebugDeltaTimeMult = 1.0f;
 	}
 
@@ -38,6 +37,50 @@ namespace Toshi
 		}
 
 		return pTask;
+	}
+
+	void TScheduler::Update()
+	{
+		if (!g_oSystemManager.ms_bWasEverUpdated)
+		{
+			g_oSystemManager.ms_bWasEverUpdated = TTRUE;
+		}
+		
+		TFLOAT fDeltaTime = g_oSystemManager.GetTimer().GetDelta();
+		m_DeltaTime = fDeltaTime;
+		m_TotalTime += fDeltaTime;
+		m_uiNumFrames += 1;
+
+		// Control delta time
+		if (m_DeltaTime >= 0.0f)
+		{
+			if (m_DeltaTime >= m_MaxDeltaTime)
+			{
+				m_DeltaTime = m_MaxDeltaTime;
+			}
+		}
+		else
+		{
+			m_DeltaTime = 0.0f;
+		}
+
+		if (m_fnDeltaTimeCalculator)
+		{
+			m_DeltaTime = m_fnDeltaTimeCalculator(m_DeltaTime);
+		}
+
+		if (m_UseDebugDeltaTime)
+		{
+			m_DeltaTime = m_DebugDeltaTime;
+		}
+
+		if (m_UseDebugDeltaTimeMult)
+		{
+			m_DeltaTime *= m_DebugDeltaTimeMult;
+		}
+
+		DestroyDyingTasks(m_TaskTree.AttachedToRoot());
+		UpdateActiveTasks(m_TaskTree.AttachedToRoot());
 	}
 
 	void TScheduler::DeleteTaskAtomic(TTask* task)
