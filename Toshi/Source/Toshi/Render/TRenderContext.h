@@ -126,6 +126,18 @@ namespace Toshi {
 			m_pCurrentSkeletonInstance = a_pSkeletonInstance;
 		}
 
+		TUINT GetClipFlags() const
+		{
+			return m_eClipFlags;
+		}
+
+		TUINT SetClipFlags(TUINT a_uiClipFlags)
+		{
+			auto uiOldFlags = m_eClipFlags;
+			m_eClipFlags = a_uiClipFlags;
+			return uiOldFlags;
+		}
+
 		const TPlane* GetWorldPlanes();
 
 		static TBOOL CullSphereToFrustumSimple(const TSphere& a_rSphere, const TPlane* a_pPlanes, int a_iUnused);
@@ -146,6 +158,7 @@ namespace Toshi {
 	protected:
 		TRenderInterface* m_pRenderer;                 // 0x0004
 		FLAG m_eFlags;                                 // 0x0008
+		TUINT m_eClipFlags;                            // 0x000C
 		CameraMode m_eCameraMode;                      // 0x0014
 		Params m_oParams;                              // 0x0018
 		PROJECTIONPARAMS m_ProjParams;                 // 0x0030

@@ -50,6 +50,16 @@ namespace Toshi {
 			m_pCustomRenderCbUserData = a_pUserData;
 		}
 
+		void SetLOD(TUINT32 a_uiLOD)
+		{
+			m_iCurrentLOD = a_uiLOD;
+		}
+
+		TUINT32 GetLOD()
+		{
+			return m_iCurrentLOD;
+		}
+
 		void Delete();
 
 		TModel* GetModel() { return m_pModel; }

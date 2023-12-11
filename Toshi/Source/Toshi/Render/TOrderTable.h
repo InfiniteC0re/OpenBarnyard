@@ -1,63 +1,10 @@
 #pragma once
+#include "TRenderPacket.h"
 #include "Toshi/Core/TNodeList.h"
-#include "Toshi/Render/TMaterial.h"
-#include "Toshi/Render/TMesh.h"
+#include "Toshi2/T2SimpleArray.h"
 
 namespace Toshi
 {
-	class TRegMaterial;
-
-	class TRenderPacket
-	{
-	public:
-		void SetModelViewMatrix(TMatrix44* pMatrix44)
-		{
-			m_ModelViewMatrix = *pMatrix44;
-		}
-
-		void SetMesh(TMesh* pMesh)
-		{
-			m_pMesh = pMesh;
-		}
-
-		void SetNext(TRenderPacket* pNextPacket)
-		{
-			m_pNextPacket = pNextPacket;
-		}
-
-		void SetMaterial(TMaterial* pMaterial)
-		{
-			m_pMaterial = pMaterial;
-		}
-
-		TRenderPacket* Next() const
-		{
-			return m_pNextPacket;
-		}
-
-		TMesh* GetMesh() const
-		{
-			return m_pMesh;
-		}
-
-		TMaterial* GetMaterial() const
-		{
-			return m_pMaterial;
-		}
-
-		TMatrix44& GetModelViewMatrix()
-		{
-			return m_ModelViewMatrix;
-		}
-
-	private:
-		TRenderPacket* m_pNextPacket; // 0x00
-		TMesh* m_pMesh;               // 0x08
-		TMatrix44 m_ModelViewMatrix;  // 0x10
-		TMaterial* m_pMaterial;       // 0x50
-
-	};
-
 	class TOrderTable;
 
 	class TRegMaterial : public TNodeList<TRegMaterial>::TNode
@@ -71,7 +18,7 @@ namespace Toshi
 		};
 
 	public:
-		TRegMaterial() : TNode()
+		TRegMaterial()
 		{
 			m_State = 0;
 			m_pOrderTable = TNULL;
@@ -81,6 +28,7 @@ namespace Toshi
 		}
 
 		void Render();
+
 		TRenderPacket* AddRenderPacket(TMesh* pMesh);
 
 		State GetFlags() const
@@ -136,28 +84,21 @@ namespace Toshi
 		TOrderTable()
 		{
 			m_pLastRegMat = TNULL;
-			m_iPriority = 0;
 			m_pShader = TNULL;
-			m_fnPreFlushCallback = TNULL;
-			m_pPreFlushCallbackData = TNULL;
-			m_fnPostFlushCallback = TNULL;
-			m_pPostFlushCallbackData = TNULL;
 			m_pLastRegMat = TNULL;
 		}
 
 		~TOrderTable()
 		{
-			if (s_pRegMaterials)
+			if (s_pRegMaterials.GetArray())
 			{
-				delete[] s_pRegMaterials;
-				s_pRegMaterials = TNULL;
+				DeregisterAllMaterials();
+				s_llRegMatFreeList.RemoveAll();
+
+				s_pRegMaterials.Destroy();
 			}
 
-			if (s_pRenderPackets)
-			{
-				TFree(s_pRenderPackets);
-				s_pRenderPackets = TNULL;
-			}
+			s_pRenderPackets.Destroy();
 		}
 
 		void Render();
@@ -166,6 +107,7 @@ namespace Toshi
 		TRegMaterial* RegisterMaterial(TMaterial* pMat);
 
 		static void DeregisterMaterial(TRegMaterial* pRegMat);
+		static void DeregisterAllMaterials();
 
 		void UseMaterial(TRegMaterial* pRegMat)
 		{
@@ -177,24 +119,10 @@ namespace Toshi
 			}
 		}
 
-		void SetPreFlushCallback(t_PreFlushCallback fnCallback, void* pCustomData = TNULL)
-		{
-			m_fnPreFlushCallback = fnCallback;
-			m_pPreFlushCallbackData = pCustomData;
-		}
-
-		void SetPostFlushCallback(t_PostFlushCallback fnCallback, void* pCustomData = TNULL)
-		{
-			m_fnPostFlushCallback = fnCallback;
-			m_pPostFlushCallbackData = pCustomData;
-		}
+	public:
+		TBOOL Create(TShader* a_pShader, TINT a_iPriority);
 
 	public:
-		// HAL methods
-		TBOOL Create(TShader* pShader, int priority, uint8_t index);
-
-	public:
-		// Static methods
 		static void CreateStaticData(uint32_t maxMaterials, uint32_t maxRenderPackets);
 
 		static TRenderPacket* AllocRenderPacket()
@@ -206,23 +134,18 @@ namespace Toshi
 	public:
 		inline static uint32_t s_uiMaxRenderPackets = 0;
 		inline static uint32_t s_uiNumRenderPackets = 0;
+		inline static uint32_t s_uiMaxNumRenderPackets = 0;
 		inline static uint32_t s_uiOrigMaxRenderPackets = 0;
-		inline static TRenderPacket* s_pRenderPackets = TNULL;
+		inline static T2SimpleArray<TRenderPacket> s_pRenderPackets;
 
-		inline static uint32_t s_uiNumMaterials = 0;
 		inline static uint32_t s_uiMaxMaterials = 0;
 		inline static uint32_t s_uiNumRegisteredMaterials = 0;
-		inline static TRegMaterial* s_pRegMaterials = TNULL;
+		inline static T2SimpleArray<TRegMaterial> s_pRegMaterials;
 		inline static TNodeList<TRegMaterial> s_llRegMatRegisteredList;
 		inline static TNodeList<TRegMaterial> s_llRegMatFreeList;
 
 	private:
 		TShader* m_pShader;
-		t_PreFlushCallback m_fnPreFlushCallback;
-		void* m_pPreFlushCallbackData;
-		t_PostFlushCallback m_fnPostFlushCallback;
-		void* m_pPostFlushCallbackData;
 		TRegMaterial* m_pLastRegMat;
-		uint8_t m_iIndex;
 	};
 }

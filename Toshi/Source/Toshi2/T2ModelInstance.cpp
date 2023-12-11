@@ -1,5 +1,6 @@
 #include "ToshiPCH.h"
 #include "T2ModelInstance.h"
+#include "Toshi/Render/TRenderInterface.h"
 
 namespace Toshi {
 
@@ -31,9 +32,54 @@ namespace Toshi {
 		m_pModelInstance->Update(a_fDeltaTime);
 	}
 
-	void T2ModelInstance::Render(TUINT a_uiClipFlags, const TVector3& a_rBounding)
+	TBOOL T2ModelInstance::Render(TUINT a_uiClipFlags, const TVector3& a_rBounding)
 	{
 		TIMPLEMENT();
+		auto pContext = TRenderInterface::GetSingleton()->GetCurrentRenderContext();
+		
+		m_pModelInstance->SetLOD(0);
+
+		auto uiOldClipFlags = pContext->SetClipFlags(a_uiClipFlags);
+
+		m_TransformObject.Push();
+		m_pModelInstance->Render();
+		m_TransformObject.Pop();
+		
+		pContext->SetClipFlags(uiOldClipFlags);
+
+		return TTRUE;
+	}
+
+	TBOOL T2ModelInstance::RenderIfVisible()
+	{
+		auto pContext = TRenderInterface::GetSingleton()->GetCurrentRenderContext();
+		auto pModel = m_pModelInstance->GetModel();
+		auto& lod = pModel->GetLOD(0);
+
+		TVector4 transformScale = m_TransformObject.GetScale();
+		TSphere bounding = lod.BoundingSphere;
+		bounding.AsVector4().Multiply(TVector4(
+			transformScale.x,
+			transformScale.y,
+			transformScale.z,
+			TMath::Max(TMath::Max(transformScale.x, transformScale.y), transformScale.z)
+		));
+
+		TMatrix44 transformMatrix;
+		m_TransformObject.GetLocalMatrixImp(transformMatrix);
+		TMatrix44::TransformVector(bounding.GetOrigin(), transformMatrix, bounding.GetOrigin());
+		
+		if (bounding.GetRadius() > 0.0f)
+		{
+			auto pWorldPlanes = pContext->GetWorldPlanes();
+			
+			if (!pContext->CullSphereToFrustumSimple(bounding, pWorldPlanes, 6))
+			{
+				return TFALSE;
+			}
+		}
+
+		return Render(pContext->GetClipFlags(), bounding.GetOrigin());
 	}
 
 }

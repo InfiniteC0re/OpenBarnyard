@@ -126,7 +126,9 @@ namespace Toshi
 		void RemoveAll()
 		{
 			while (!IsEmpty())
-				return Remove(*m_Head.Next());
+			{
+				Remove(*m_Head.Next());
+			}
 		}
 
 		T* RemoveHead()
