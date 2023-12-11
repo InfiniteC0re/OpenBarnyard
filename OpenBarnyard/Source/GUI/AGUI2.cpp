@@ -88,7 +88,6 @@ TBOOL AGUI2::OnUpdate(TFLOAT a_fDeltaTime)
 	if (m_bShowMemStatsInfo)
 	{
 		static TFLOAT s_UpdateTimer = 10.0f;
-
 		s_UpdateTimer += a_fDeltaTime;
 
 		if (s_UpdateTimer >= 1.0f)

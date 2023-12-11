@@ -176,20 +176,14 @@ namespace Toshi
 		public:
 			Iterator(Node* ppNode) : m_ppNode(ppNode) { }
 
-
-			TBOOL operator!=(const Iterator& other) const
+			TBOOL operator==(const Node* a_pNode) const
 			{
-				return m_ppNode != other.m_ppNode;
+				return m_ppNode == a_pNode;
 			}
 
 			TBOOL operator==(const Iterator& other) const
 			{
 				return m_ppNode == other.m_ppNode;
-			}
-
-			TBOOL operator!=(const T& other) const
-			{
-				return m_ppNode != other;
 			}
 
 			TBOOL operator==(const T& other) const

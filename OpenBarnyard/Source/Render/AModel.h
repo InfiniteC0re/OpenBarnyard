@@ -64,6 +64,8 @@ public:
 	void Update(TFLOAT a_fDeltaTime);
 	AModelInstanceRef* CreateInstance(AModelInstanceRef& a_rOutRef);
 
+	const Toshi::TPString8& GetName() const { return m_Name; }
+
 public:
 	static Toshi::TModelPtr* Create(const Toshi::TPString8& a_rFilePath, Toshi::TTRB* a_pTRB);
 	static void GetNameFromPath(const Toshi::TPString8& a_FilePath, Toshi::TString8& a_rName);

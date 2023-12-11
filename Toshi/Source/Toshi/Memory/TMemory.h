@@ -72,6 +72,8 @@ namespace Toshi {
 
 		struct HALMemInfo
 		{
+			HALMemInfo();
+
 			TUINT m_Unknown[26];
 		};
 
@@ -127,9 +129,7 @@ namespace Toshi {
 		TUINT m_Unknown2;
 		TBOOL m_bFlag1;
 		TBOOL m_bFlag2;
-		TBOOL m_bFlag3;
-		TBOOL m_bFlag4;
-		char m_Unknown4[104];
+		HALMemInfo m_HALMemInfo;
 	};
 
 }

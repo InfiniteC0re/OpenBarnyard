@@ -61,7 +61,6 @@ namespace Toshi {
 			m_FreeBlocks.InsertTail(m_aBlockSlots[i]);
 		}
 
-		TUtil::MemClear(m_Unknown4, sizeof(m_Unknown4));
 		m_bFlag1 = TFALSE;
 		m_bFlag2 = TTRUE;
 	}
@@ -582,6 +581,10 @@ namespace Toshi {
 		TUtil::MemClear(&a_rHALMemInfo, sizeof(a_rHALMemInfo));
 	}
 
+	TMemory::HALMemInfo::HALMemInfo()
+	{
+		TUtil::MemClear(this, sizeof(*this));
+	}
 }
 
 void* TMalloc(TUINT a_uiSize, Toshi::TMemory::MemBlock* a_pMemBlock, const char* a_szUnused1, TINT a_iUnused2)
