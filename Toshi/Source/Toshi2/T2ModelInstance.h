@@ -13,8 +13,10 @@ namespace Toshi {
 		void Delete();
 
 		void Update(TFLOAT a_fDeltaTime);
+		void Render(TUINT a_uiClipFlags, const TVector3& a_rBounding);
 
 		TModelInstance* GetInstance() { return m_pModelInstance; }
+		TTransformObject& GetTransform() { return m_TransformObject; }
 
 		void EnableSkeletonUpdate() { m_eFlags |= 1; }
 		void DisableSkeletonUpdate() { m_eFlags &= ~1; }

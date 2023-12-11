@@ -31,4 +31,9 @@ namespace Toshi {
 		m_pModelInstance->Update(a_fDeltaTime);
 	}
 
+	void T2ModelInstance::Render(TUINT a_uiClipFlags, const TVector3& a_rBounding)
+	{
+		TIMPLEMENT();
+	}
+
 }

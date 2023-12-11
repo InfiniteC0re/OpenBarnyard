@@ -42,6 +42,11 @@ public:
 		return m_eMode;
 	}
 
+	const TVector3& GetScale() const
+	{
+		return m_Scale;
+	}
+
 private:
 	void RotateX(float angle)
 	{

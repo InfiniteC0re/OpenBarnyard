@@ -52,6 +52,8 @@ namespace Toshi {
 
 		void Delete();
 
+		TModel* GetModel() { return m_pModel; }
+
 	private:
 		TModel* m_pModel;
 		TSkeletonInstance* m_pSkeletonInstance;
@@ -101,6 +103,12 @@ namespace Toshi {
 
 		TBOOL IsCreated() const { return m_eFlags & Flags_Created; }
 		TBOOL IsLoaded() const { return m_eFlags & Flags_Loaded; }
+
+		const TModelLOD& GetLOD(TUINT32 a_uiLOD)
+		{
+			TASSERT(a_uiLOD < MAX_NUM_LODS);
+			return m_LODs[a_uiLOD];
+		}
 
 	public:
 		static TBOOL GetSkeletonAssetSymbolName(const char* a_szFileName, const char*& a_rSymbolName, TUINT8& a_rNameLen, TTRB* a_pTRB);

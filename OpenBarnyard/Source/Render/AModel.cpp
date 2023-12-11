@@ -39,6 +39,35 @@ void AModel::Update(TFLOAT a_fDeltaTime)
 	}
 }
 
+void AModel::Render(TUINT8 a_uiFlags)
+{
+	for (TUINT i = 0; i < m_uiNumModelInstances; i++)
+	{
+		auto& pModelInstance = m_aModelInstances[i];
+		auto eFlags = pModelInstance->m_eFlags;
+
+		if (((eFlags >> 4 & 1) == a_uiFlags && (eFlags & 2) != 0) && (eFlags & 1) != 0)
+		{
+			auto pT2Instance = pModelInstance->GetT2Instance();
+			auto pModel = pT2Instance->GetInstance()->GetModel();
+
+			auto& transform = pT2Instance->GetTransform();
+			auto& transformScale = transform.GetScale();
+			auto& lod = pModel->GetLOD(0);
+
+			TFLOAT fRadiusScale = TMath::Max(TMath::Max(transformScale.x, transformScale.y), transformScale.z);
+			TFLOAT fRadius = lod.BoundingSphere.GetRadius() * fRadiusScale;
+
+			Toshi::TMatrix44 transformMatrix;
+			transform.GetLocalMatrixImp(transformMatrix);
+
+			Toshi::TVector3 boundingPos;
+			Toshi::TMatrix44::TransformVector(boundingPos, transformMatrix, lod.BoundingSphere.GetOrigin());
+			pT2Instance->Render(pModelInstance->GetClipFlags(), boundingPos);
+		}
+	}
+}
+
 AModelInstanceRef* AModel::CreateInstance(AModelInstanceRef& a_rOutRef)
 {
 	// TODO: use this name in debug?
@@ -151,6 +180,7 @@ AModelInstance::AModelInstance(AModel* a_pModel, T2ModelInstance* a_pT2Instance,
 	m_Unknown1[2] = 1.0f;
 	m_Unknown1[3] = 1.0f;
 	m_pModel = a_pModel;
+	m_uiClipFlags = 0x3F;
 	m_pT2ModelInstance = a_pT2Instance;
 	m_eFlags = 0b00001001;
 
@@ -168,6 +198,7 @@ AModelInstance::AModelInstance()
 	m_Unknown1[3] = 1.0f;
 	m_pModel = TNULL;
 	m_pT2ModelInstance = TNULL;
+	m_uiClipFlags = 0x3F;
 	m_eFlags = 0b00011000;
 }
 

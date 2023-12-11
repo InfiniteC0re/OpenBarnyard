@@ -27,6 +27,8 @@ public:
 		ChangeEvent_DisabledSkeletonUpdate,
 	};
 
+	friend class AModel;
+
 public:
 	AModelInstance();
 	AModelInstance(AModel* a_pModel, Toshi::T2ModelInstance* a_pT2Instance, TBOOL a_bEnableSkeletonUpdate);
@@ -35,6 +37,8 @@ public:
 
 	AModel* GetModel() const { return m_pModel; }
 	Toshi::T2ModelInstance* GetT2Instance() const { return m_pT2ModelInstance; }
+	TUINT GetClipFlags() const { return m_uiClipFlags; }
+
 	TBOOL IsUpdatingSkeleton() const { return m_eFlags & Flags_UpdatingSkeleton; }
 
 private:
@@ -43,6 +47,7 @@ private:
 private:
 	TFLOAT m_Unknown1[4];
 	AModel* m_pModel;
+	TUINT m_uiClipFlags;
 	// ...
 	Toshi::T2ModelInstance* m_pT2ModelInstance;
 	Toshi::TEmitter<AModelInstance, ChangeEvent> m_ChangeEmitter;
@@ -62,6 +67,8 @@ public:
 	virtual ~AModel();
 
 	void Update(TFLOAT a_fDeltaTime);
+	void Render(TUINT8 a_uiFlags);
+
 	AModelInstanceRef* CreateInstance(AModelInstanceRef& a_rOutRef);
 
 	const Toshi::TPString8& GetName() const { return m_Name; }
