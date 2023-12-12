@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "AHooks.h"
 #include <BYardSDK/AGUI2.h>
+#include <BYardSDK/ATerrain.h>
 #include <detours.h>
 
 void AHooks::Initialise()
@@ -187,7 +188,26 @@ void AHooks::Initialise()
 			}
 		};
 
-		
+
+		DetourAttach((PVOID*)&OriginalMethod, _methodHolder::hook);
+	}
+
+	{
+		// ATerrain::FUN_005eab00
+		using t_OriginalMethod = void(__fastcall*)(ATerrain* pThis, void* _EDX);
+		static t_OriginalMethod OriginalMethod = (t_OriginalMethod)(0x005eab00);
+
+		struct _methodHolder
+		{
+			static void __fastcall hook(
+				ATerrain* pThis, void* _EDX
+			)
+			{
+				OriginalMethod(pThis, _EDX);
+			}
+		};
+
+
 		DetourAttach((PVOID*)&OriginalMethod, _methodHolder::hook);
 	}
 

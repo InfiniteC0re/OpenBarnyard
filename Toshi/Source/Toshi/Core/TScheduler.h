@@ -82,7 +82,7 @@ namespace Toshi
 		void DeleteTask(TTask* task)
 		{
 			task->OnPreDestroy();
-			DeleteTaskRecurse(task->Attached());
+			DeleteTaskRecurse(task->Child());
 			DeleteTaskAtomic(task);
 		}
 
@@ -91,8 +91,8 @@ namespace Toshi
 			TASSERT(task->IsDying());
 			task->OnPreDestroy();
 
-			DeleteTaskRecurse(task->Attached());
-			DeleteTaskAtomic(task->Attached());
+			DeleteTaskRecurse(task->Child());
+			DeleteTaskAtomic(task->Child());
 		}
 
 	private:
@@ -104,7 +104,7 @@ namespace Toshi
 			{
 				currentTask->GetFlags() |= TTask::State_Dying;
 				
-				if (currentTask->Attached() != TNULL)
+				if (currentTask->Child() != TNULL)
 				{
 					DestroyTaskRecurse(currentTask);
 				}
@@ -132,10 +132,10 @@ namespace Toshi
 
 		void DestroyAllTasks()
 		{
-			if (m_TaskTree.AttachedToRoot() != TNULL)
+			if (m_TaskTree.ChildOfRoot() != TNULL)
 			{
-				DestroyTaskRecurse(m_TaskTree.AttachedToRoot());
-				DestroyDyingTasks(m_TaskTree.AttachedToRoot());
+				DestroyTaskRecurse(m_TaskTree.ChildOfRoot());
+				DestroyDyingTasks(m_TaskTree.ChildOfRoot());
 			}
 		}
 

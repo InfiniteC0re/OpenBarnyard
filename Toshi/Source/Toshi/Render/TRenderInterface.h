@@ -157,7 +157,7 @@ namespace Toshi {
 			while (m_bHasDyingResources)
 			{
 				m_bHasDyingResources = TFALSE;
-				DestroyDyingResources(m_Resources.AttachedToRoot());
+				DestroyDyingResources(m_Resources.ChildOfRoot());
 			}
 		}
 

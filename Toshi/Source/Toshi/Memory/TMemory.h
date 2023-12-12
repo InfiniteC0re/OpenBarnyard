@@ -74,7 +74,9 @@ namespace Toshi {
 		{
 			HALMemInfo();
 
-			TUINT m_Unknown[26];
+			TUINT m_Unknown1[10];
+			TUINT m_uiMemUsage;
+			TUINT m_Unknown2[15];
 		};
 
 	public:
@@ -102,7 +104,6 @@ namespace Toshi {
 		}
 
 		void DumpMemInfo();
-		void GetHALMemInfo(HALMemInfo& a_rHALMemInfo);
 		void PrintDebug(const char* a_szFormat, ...);
 
 	private:
@@ -111,6 +112,7 @@ namespace Toshi {
 
 	public:
 		static void GetMemInfo(MemInfo& a_rMemInfo, MemBlock* a_pMemBlock);
+		static void GetHALMemInfo(HALMemInfo& a_rHALMemInfo);
 		static TBOOL Initialise(TUINT a_uiHeapSize, TUINT a_uiReservedSize);
 		static void Deinitialise();
 		static TUINT MapSizeToFreeList(TUINT a_uiSize);

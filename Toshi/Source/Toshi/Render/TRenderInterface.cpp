@@ -121,7 +121,7 @@ namespace Toshi {
 		{
 			m_bHasDyingResources = TTRUE;
 			resource->AddState(TResourceState_Dying);
-			DestroyResourceRecurse(resource->GetAttached());
+			DestroyResourceRecurse(resource->GetChild());
 			resource->Invalidate();
 		}
 	}
@@ -141,9 +141,9 @@ namespace Toshi {
 					m_bHasDyingResources = TTRUE;
 					resource->AddState(TResourceState_Dying);
 
-					if (resource->GetAttached() != TNULL)
+					if (resource->GetChild() != TNULL)
 					{
-						DestroyResourceRecurse(resource->GetAttached());
+						DestroyResourceRecurse(resource->GetChild());
 					}
 
 					resource->Invalidate();
@@ -286,7 +286,7 @@ namespace Toshi {
 
 	void TRenderInterface::DestroySystemResources()
 	{
-		DestroyResourceRecurse(m_Resources.AttachedToRoot());
+		DestroyResourceRecurse(m_Resources.ChildOfRoot());
 		FlushDyingResources();
 	}
 
@@ -312,7 +312,7 @@ namespace Toshi {
 					next = (TResource*)0x0;
 				}
 				if ((pRes2->m_State & 4) == 0) {
-					pRes2 = pRes2->GetAttached();
+					pRes2 = pRes2->GetChild();
 					if (pRes2 != (TResource*)0x0) {
 						DestroyDyingResources(pRes2);
 					}
@@ -322,7 +322,7 @@ namespace Toshi {
 						pRes1 = next;
 						resources = next;
 					}
-					pTVar1 = pRes2->GetAttached();
+					pTVar1 = pRes2->GetChild();
 					while (pTVar1 != (TResource*)0x0) {
 						pRes1 = pTVar1->GetNextResource();
 						if (pRes1 == pTVar1) {
@@ -341,7 +341,7 @@ namespace Toshi {
 
 	void TRenderInterface::DeleteResource(TResource* resources)
 	{
-		DeleteResourceRecurse(resources->Attached());
+		DeleteResourceRecurse(resources->Child());
 		DeleteResourceAtomic(resources);
 	}
 
@@ -361,7 +361,7 @@ namespace Toshi {
 	{
 		if (a_pResource)
 		{
-			DeleteResourceRecurse(a_pResource->Attached());
+			DeleteResourceRecurse(a_pResource->Child());
 
 			TASSERT(TFALSE == a_pResource->IsValid());
 

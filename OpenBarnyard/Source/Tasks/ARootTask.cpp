@@ -295,29 +295,29 @@ void ARootTask::CreateGameSystem()
 	// Reorder tasks?
 	if (m_pInputHandler)
 	{
-		m_pInputHandler->AttachTo(m_pInputHandler->Parent());
+		m_pInputHandler->SetParent(m_pInputHandler->Parent());
 	}
 
 	if (m_pMoviePlayer)
 	{
-		m_pMoviePlayer->AttachTo(m_pMoviePlayer->Parent());
+		m_pMoviePlayer->SetParent(m_pMoviePlayer->Parent());
 	}
 
 	if (m_pGUISystem)
 	{
-		m_pGUISystem->AttachTo(m_pGUISystem->Parent());
+		m_pGUISystem->SetParent(m_pGUISystem->Parent());
 	}
 
 	if (m_pGameStateController)
 	{
-		m_pGameStateController->AttachTo(m_pGameStateController->Parent());
+		m_pGameStateController->SetParent(m_pGameStateController->Parent());
 	}
 
 	// ...
 
 	if (m_pRenderer)
 	{
-		m_pRenderer->AttachTo(m_pRenderer->Parent());
+		m_pRenderer->SetParent(m_pRenderer->Parent());
 	}
 
 	m_bGameSystemCreated = TTRUE;

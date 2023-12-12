@@ -13,6 +13,7 @@
 #include <Platform/DX8/TTextureResourceHAL_DX8.h>
 
 #include TOSHI_MULTIRENDER(TRenderInterface)
+#include TOSHI_MULTIRENDER(TVertexBlockResource)
 
 #include "AppBoot.h"
 #include "Tasks/ADummyTask.h"
@@ -129,6 +130,8 @@ TBOOL AApplication::OnCreate(int argc, char** argv)
 
 	TTextureResourceHAL::ms_oFreeList.SetCapacity(690);
 	TTextureResourceHAL::ms_oFreeList.SetGrowSize(0);
+	TVertexBlockResource::ms_oFreeList.SetCapacity(500);
+	TVertexBlockResource::ms_oFreeList.SetGrowSize(0);
 
 	ALocaleManager* pLocaleManager = T2Locale::CreateSingleton<ALocaleManager>();
 	TTODO("Create some instances of some classes");

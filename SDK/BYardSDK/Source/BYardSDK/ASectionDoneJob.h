@@ -1,6 +1,6 @@
 #pragma once
 #include "ATRBLoaderJob.h"
-#include "Terrain/ATerrainVISGroup.h"
+#include "ATerrainVISGroup.h"
 
 class ASectionDoneJob :
 	public AMainThreadJob

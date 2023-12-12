@@ -24,6 +24,8 @@ namespace Toshi
 		static constexpr size_t MAXNAMELEN = 14;
 		friend TRenderInterface;
 
+		using t_RecurseCb = TBOOL(*)(TResource* a_pResource, void* a_pUserData);
+
 	public:
 		TResource()
 		{
@@ -38,8 +40,8 @@ namespace Toshi
 		virtual TBOOL Validate();
 		virtual void Invalidate();
 		virtual void DestroyResource();
-		virtual TBOOL Unknown1() { return TTRUE; }
-		virtual TBOOL Unknown2() { return TTRUE; }
+		virtual TBOOL TryInvalidate() { return TTRUE; }
+		virtual TBOOL TryValidate() { return TTRUE; }
 		virtual void OnDestroy();
 
 		TBOOL IsDead() const { return m_State & TResourceState_Dead; }
@@ -53,10 +55,13 @@ namespace Toshi
 		void SetState(TResourceState newState) { m_State = newState; }
 		void AddState(TResourceState state) { m_State |= state; }
 		
-		void SetParent(TResource* parent) { m_Parent = parent; }
+		void SetParent(TResource* a_pParent);
 
 		const char* GetName() const { return m_Name; }
 		void SetName(const char* name);
+
+		TBOOL RecurseSimple(t_RecurseCb a_pCallback, TResource* a_pResource, void* a_pUserData);
+		static TBOOL Recurse(t_RecurseCb a_pCallback, TResource* a_pResource, TBOOL a_bFlag, void* a_pUserData);
 
 		TRenderInterface* GetRenderer() const
 		{
@@ -78,9 +83,9 @@ namespace Toshi
 			return TNode::Next();
 		}
 
-		TResource* GetAttached() const
+		TResource* GetChild() const
 		{
-			return TNode::Attached();
+			return TNode::Child();
 		}
 
 		TResource* GetLastResource() const

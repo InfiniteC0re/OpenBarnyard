@@ -39,7 +39,7 @@ namespace Toshi
 		virtual void OnDeactivate();
 
 		void Activate(TBOOL activate);
-		void AttachTo(TTask* a_pAttachTo);
+		void SetParent(TTask* a_pAttachTo);
 
 		TUINT32& GetFlags() { return m_State; }
 		TBOOL IsCreated() const { return m_State & State_Created; }

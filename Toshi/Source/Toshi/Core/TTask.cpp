@@ -51,7 +51,7 @@ namespace Toshi
 
 	TBOOL TTask::Reset()
 	{
-		TTask* firstAttached = Attached();
+		TTask* firstAttached = Child();
 		TTask* node = firstAttached;
 		TBOOL result = TTRUE;
 
@@ -124,7 +124,7 @@ namespace Toshi
 		}
 	}
 
-	void TTask::AttachTo(TTask* a_pAttachTo)
+	void TTask::SetParent(TTask* a_pAttachTo)
 	{
 		if (this != Parent() && a_pAttachTo != TNULL)
 		{

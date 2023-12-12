@@ -9,6 +9,7 @@
 #include "Input/AInputHandler.h"
 #include "Movie/AMoviePlayer.h"
 
+#include TOSHI_MULTIRENDER(TVertexFactoryResource)
 #include TOSHI_MULTIRENDER(TTextureFactoryHAL)
 #include TOSHI_MULTIRENDER(TRenderInterface)
 
@@ -99,14 +100,73 @@ TBOOL ARenderer::CreateTRenderResources()
 
 	auto pRenderer = TSTATICCAST(TRenderD3DInterface*, TRenderInterface::GetSingleton());
 
-	TResource* pTextureFactory = pRenderer->CreateResource(
-		TClass::Find("TTextureFactoryHAL"),
-		"TextureFactory",
-		TNULL
-	);
+	{
+		auto pResource = TSTATICCAST(
+			TVertexFactoryResource*,
+			pRenderer->CreateResource(
+				TClass::Find("TVertexFactoryResource"),
+				"VFSYSVNDUV1",
+				TNULL
+			)
+		);
 
-	pRenderer->SetResourceExplicit(pTextureFactory, TRenderInterface::SYSRESOURCE_TEXTUREFACTORY);
-	pTextureFactory->Create();
+		pRenderer->SetResourceExplicit(pResource, TRenderInterface::SYSRESOURCE_VFSYSVNDUV1);
+
+		TVertexFactoryFormat vertexFormat;
+		vertexFormat.m_uiNumStreams = 1;
+		vertexFormat.m_aStreamFormats[0].m_uiVertexSize = 24;
+		vertexFormat.m_aStreamFormats[0].m_Unk = 0;
+		pResource->Create(&vertexFormat, 54050, 0);
+	}
+
+	{
+		auto pResource = TSTATICCAST(
+			TVertexFactoryResource*,
+			pRenderer->CreateResource(
+				TClass::Find("TVertexFactoryResource"),
+				"VFSKIN",
+				TNULL
+			)
+		);
+
+		pRenderer->SetResourceExplicit(pResource, TRenderInterface::SYSRESOURCE_VFSKIN);
+
+		TVertexFactoryFormat vertexFormat;
+		vertexFormat.m_uiNumStreams = 1;
+		vertexFormat.m_aStreamFormats[0].m_uiVertexSize = 40;
+		vertexFormat.m_aStreamFormats[0].m_Unk = 0;
+		pResource->Create(&vertexFormat, 54050, 0);
+	}
+
+	{
+		auto pResource = TSTATICCAST(
+			TVertexFactoryResource*,
+			pRenderer->CreateResource(
+				TClass::Find("TVertexFactoryResource"),
+				"VFWORLD",
+				TNULL
+			)
+		);
+
+		pRenderer->SetResourceExplicit(pResource, TRenderInterface::SYSRESOURCE_VFWORLD);
+
+		TVertexFactoryFormat vertexFormat;
+		vertexFormat.m_uiNumStreams = 1;
+		vertexFormat.m_aStreamFormats[0].m_uiVertexSize = 44;
+		vertexFormat.m_aStreamFormats[0].m_Unk = 0;
+		pResource->Create(&vertexFormat, 54050, 0);
+	}
+
+	{
+		auto pResource = pRenderer->CreateResource(
+			TClass::Find("TTextureFactoryHAL"),
+			"TextureFactory",
+			TNULL
+		);
+
+		pRenderer->SetResourceExplicit(pResource, TRenderInterface::SYSRESOURCE_TEXTUREFACTORY);
+		pResource->Create();
+	}
 
 	return TTRUE;
 }

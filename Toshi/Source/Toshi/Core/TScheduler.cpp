@@ -79,8 +79,8 @@ namespace Toshi
 			m_DeltaTime *= m_DebugDeltaTimeMult;
 		}
 
-		DestroyDyingTasks(m_TaskTree.AttachedToRoot());
-		UpdateActiveTasks(m_TaskTree.AttachedToRoot());
+		DestroyDyingTasks(m_TaskTree.ChildOfRoot());
+		UpdateActiveTasks(m_TaskTree.ChildOfRoot());
 	}
 
 	void TScheduler::DeleteTaskAtomic(TTask* task)
@@ -100,9 +100,9 @@ namespace Toshi
 				}
 			}
 
-			if (task->Attached() != TNULL)
+			if (task->Child() != TNULL)
 			{
-				TTask* node = task->Attached()->Attached();
+				TTask* node = task->Child()->Child();
 
 				while (node != TNULL)
 				{
@@ -136,9 +136,9 @@ namespace Toshi
 
 				if (!currentTask->IsDying())
 				{
-					if (currentTask->Attached() != TNULL)
+					if (currentTask->Child() != TNULL)
 					{
-						DestroyDyingTasks(currentTask->Attached());
+						DestroyDyingTasks(currentTask->Child());
 					}
 				}
 				else
@@ -165,9 +165,9 @@ namespace Toshi
 				recurse = currentTask->OnUpdate(m_DeltaTime);
 			}
 
-			if (currentTask->Attached() != TNULL && recurse)
+			if (currentTask->Child() != TNULL && recurse)
 			{
-				UpdateActiveTasks(currentTask->Attached());
+				UpdateActiveTasks(currentTask->Child());
 			}
 
 			currentTask = nextTask;
