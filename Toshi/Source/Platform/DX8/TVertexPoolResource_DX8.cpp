@@ -241,4 +241,23 @@ namespace Toshi {
 		return Parent();
 	}
 
+	TBOOL TVertexPoolResource::GetHALBuffer(TVertexBlockResource::HALBuffer* a_pHALBuffer)
+	{
+		TVALIDPTR(a_pHALBuffer);
+
+		if (Validate())
+		{
+			auto pVertexBlock = GetVertexBlock();
+			TVALIDPTR(pVertexBlock);
+
+			if (pVertexBlock->GetHALBuffer(a_pHALBuffer))
+			{
+				a_pHALBuffer->uiVertexOffset = m_uiVertexOffset;
+				return TTRUE;
+			}
+		}
+
+		return TFALSE;
+	}
+
 }

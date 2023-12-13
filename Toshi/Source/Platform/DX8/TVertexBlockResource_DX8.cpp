@@ -1,4 +1,5 @@
 #include "ToshiPCH.h"
+#include "TVertexPoolResource_DX8.h"
 #include "TVertexBlockResource_DX8.h"
 #include "TVertexFactoryResource_DX8.h"
 #include "TRenderInterface_DX8.h"
@@ -63,9 +64,9 @@ namespace Toshi {
 
 		auto pRenderer = TRenderD3DInterface::Interface();
 		auto& vertexFormat = m_pFactory->GetVertexFormat();
-		m_uiNumStreams = vertexFormat.m_uiNumStreams;
+		m_HALBuffer.uiNumStreams = vertexFormat.m_uiNumStreams;
 
-		for (TUINT i = 0; i < m_uiNumStreams; i++)
+		for (TUINT i = 0; i < m_HALBuffer.uiNumStreams; i++)
 		{
 			UINT length = vertexFormat.m_aStreamFormats[i].m_uiVertexSize * m_uiMaxVertices;
 			DWORD usage = D3DUSAGE_WRITEONLY;
@@ -86,7 +87,7 @@ namespace Toshi {
 				usage,
 				0,
 				(m_uiFlags & 1) ? D3DPOOL_MANAGED : D3DPOOL_DEFAULT,
-				&m_apVertexBuffers[i]
+				&m_HALBuffer.apVertexBuffers[i]
 			);
 
 			if (FAILED(hRes))
@@ -118,19 +119,19 @@ namespace Toshi {
 		TMemory::HALMemInfo memInfoHAL;
 		TMemory::GetHALMemInfo(memInfoHAL);
 
-		for (TUINT i = 0; i < m_uiNumStreams; i++)
+		for (TUINT i = 0; i < m_HALBuffer.uiNumStreams; i++)
 		{
-			if (m_apVertexBuffers[i])
+			if (m_HALBuffer.apVertexBuffers[i])
 			{
-				m_apVertexBuffers[i]->Release();
-				m_apVertexBuffers[i] = TNULL;
+				m_HALBuffer.apVertexBuffers[i]->Release();
+				m_HALBuffer.apVertexBuffers[i] = TNULL;
 				s_iCurrentNumHALCreated -= 1;
 				s_iTotalNumHALDestroyed += 1;
 				s_iCurrentVertexBufferBytesAllocated -= m_pFactory->GetVertexFormat().m_aStreamFormats[i].m_uiVertexSize * m_uiMaxVertices;
 			}
 		}
 
-		m_uiNumStreams = 0;
+		m_HALBuffer.uiNumStreams = 0;
 
 		TMemory::GetHALMemInfo(memInfoHAL);
 		s_iHALMemoryUsage = s_iHALMemoryUsage - memInfoHAL.m_uiMemUsage;
@@ -296,7 +297,7 @@ namespace Toshi {
 
 		for (TUINT i = 0; i < a_pLockBuffer->uiNumStreams; i++)
 		{
-			HRESULT hRes = m_apVertexBuffers[i]->Lock(
+			HRESULT hRes = m_HALBuffer.apVertexBuffers[i]->Lock(
 				a_pLockBuffer->uiOffset * vertexFormat.m_aStreamFormats[i].m_uiVertexSize,
 				uiNumVertices * vertexFormat.m_aStreamFormats[i].m_uiVertexSize,
 				&a_pLockBuffer->apStreams[i],
@@ -321,7 +322,7 @@ namespace Toshi {
 		{
 			for (TUINT i = 0; i < m_pFactory->GetVertexFormat().m_uiNumStreams; i++)
 			{
-				HRESULT hRes = m_apVertexBuffers[i]->Unlock();
+				HRESULT hRes = m_HALBuffer.apVertexBuffers[i]->Unlock();
 
 				if (FAILED(hRes))
 				{
@@ -342,16 +343,33 @@ namespace Toshi {
 		m_uiVerticesUsed = 0;
 		m_uiLockCount = 0;
 		m_Unk1 = 0;
-		m_uiNumStreams = 0;
-		m_Unk2 = 0;
-		m_apVertexBuffers[0] = TNULL;
-		m_apVertexBuffers[1] = TNULL;
-		m_apVertexBuffers[2] = TNULL;
-		m_apVertexBuffers[3] = TNULL;
-		m_apVertexBuffers[4] = TNULL;
-		m_apVertexBuffers[5] = TNULL;
-		m_apVertexBuffers[6] = TNULL;
-		m_apVertexBuffers[7] = TNULL;
+	}
+
+	TBOOL TVertexBlockResource::GetHALBuffer(HALBuffer* a_pHALBuffer) const
+	{
+		TVALIDPTR(a_pHALBuffer);
+
+		if (a_pHALBuffer)
+		{
+			*a_pHALBuffer = m_HALBuffer;
+			return TTRUE;
+		}
+
+		return TFALSE;
+	}
+
+	TVertexBlockResource::HALBuffer::HALBuffer()
+	{
+		uiNumStreams = 0;
+		uiVertexOffset = 0;
+		apVertexBuffers[0] = TNULL;
+		apVertexBuffers[1] = TNULL;
+		apVertexBuffers[2] = TNULL;
+		apVertexBuffers[3] = TNULL;
+		apVertexBuffers[4] = TNULL;
+		apVertexBuffers[5] = TNULL;
+		apVertexBuffers[6] = TNULL;
+		apVertexBuffers[7] = TNULL;
 	}
 
 }

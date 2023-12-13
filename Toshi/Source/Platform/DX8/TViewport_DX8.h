@@ -11,7 +11,9 @@ namespace Toshi {
 	class TViewportHAL : public Toshi::TViewport
 	{
 	public:
-		
+		TViewportHAL(TBOOL a_bFlag) :
+			TViewport(a_bFlag)
+		{ }
 	};
 
 }

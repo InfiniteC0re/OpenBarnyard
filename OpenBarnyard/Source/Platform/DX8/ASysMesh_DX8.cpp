@@ -6,6 +6,11 @@
 
 TOSHI_NAMESPACE_USING
 
+ASysMeshHAL::ASysMeshHAL()
+{
+	m_iZBias = 0;
+}
+
 TBOOL ASysMeshHAL::Render()
 {
 	if (ms_bStopRendering == FALSE)

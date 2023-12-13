@@ -27,11 +27,12 @@ public:
 	const Toshi::TGenericEmitter& GetRenderGUIEmitter() const { return m_RenderGUIEmitter; }
 
 private:
+	void CreateMainViewport();
 	void RenderGUI();
 
 private:
 	Toshi::TViewport* m_pViewport;
-	Toshi::TCameraObject m_pCameraObject;
+	Toshi::TCameraObject* m_pCameraObject;
 	Toshi::TViewport* m_pHALViewport1;
 	Toshi::TViewport* m_pHALViewport2;
 	TFLOAT m_fFar;

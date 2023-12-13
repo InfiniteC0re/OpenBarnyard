@@ -15,6 +15,8 @@ namespace Toshi {
 		void ComputeOrthographicProjection();
 		void ComputeOrthographicFrustum();
 
+		const TMatrix44& GetProjectionMatrix() const { return m_Projection; }
+
 	private:
 		TMatrix44 m_Projection;
 	};

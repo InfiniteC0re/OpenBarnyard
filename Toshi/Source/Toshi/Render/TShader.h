@@ -40,9 +40,8 @@ namespace Toshi {
 		virtual TBOOL Create();
 		virtual TBOOL Validate();
 		virtual void Invalidate();
-		virtual const char* GetShaderPrefix() = 0;
-		virtual TBOOL Unk1() { return TTRUE; }
-		virtual TBOOL Unk2() { return TTRUE; }
+		virtual TBOOL TryInvalidate() { return TTRUE; }
+		virtual TBOOL TryValidate() { return TTRUE; }
 		virtual void Render(TRenderPacket* pPacket) = 0;
 
 		TBOOL IsCreated() const { return m_State & State_Created; }

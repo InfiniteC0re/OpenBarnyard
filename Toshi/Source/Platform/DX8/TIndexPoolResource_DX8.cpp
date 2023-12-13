@@ -201,4 +201,23 @@ namespace Toshi {
 		return TNULL;
 	}
 
+	TBOOL TIndexPoolResource::GetHALBuffer(TIndexBlockResource::HALBuffer* a_pHALBuffer)
+	{
+		TVALIDPTR(a_pHALBuffer);
+
+		if (Validate())
+		{
+			auto pIndexBlock = GetIndexBlock();
+			TVALIDPTR(pIndexBlock);
+
+			if (pIndexBlock->GetHALBuffer(a_pHALBuffer))
+			{
+				a_pHALBuffer->uiIndexOffset = m_uiIndexOffset;
+				return TTRUE;
+			}
+		}
+
+		return TFALSE;
+	}
+
 }

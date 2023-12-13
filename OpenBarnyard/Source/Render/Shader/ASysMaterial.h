@@ -1,4 +1,6 @@
 #pragma once
+#include "ASysShader.h"
+
 #include <Toshi/Render/TMaterial.h>
 
 TOBJECT(ASysMaterial, Toshi::TMaterial, TFALSE)
@@ -6,7 +8,18 @@ TOBJECT(ASysMaterial, Toshi::TMaterial, TFALSE)
 public:
 	enum BLENDMODE
 	{
-		BLENDMODE_DEFAULT
+		BLENDMODE_DEFAULT,
+		BLENDMODE_1,
+		BLENDMODE_2,
+		BLENDMODE_3,
+		BLENDMODE_4,
+		BLENDMODE_5,
+		BLENDMODE_6,
+		BLENDMODE_7,
+		BLENDMODE_8,
+		BLENDMODE_9,
+		BLENDMODE_10,
+		BLENDMODE_NUMOF,
 	};
 
 public:
@@ -16,8 +29,21 @@ public:
 	virtual TBOOL Create(BLENDMODE a_eBlendMode);
 	virtual void SetBlendMode(BLENDMODE a_eBlendMode);
 
-private:
-	Toshi::TVector4 m_Vec1;
+	void SetTexture(Toshi::TTexture* a_pTexture)
+	{
+		m_pTexture = a_pTexture;
+	}
+
+	ASysShader* GetSysShader() const
+	{
+		return TSTATICCAST(ASysShader*, GetShader());
+	}
+
+protected:
+	Toshi::TTexture* m_pTexture;
+	TUINT m_Unk1;
+	TUINT m_Unk2;
+	TUINT m_Unk3;
 	BLENDMODE m_eBlendMode;
 	Toshi::TVector4 m_Vec3;
 };

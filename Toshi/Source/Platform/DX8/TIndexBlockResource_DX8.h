@@ -1,13 +1,14 @@
 #pragma once
-#include "TIndexPoolResource_DX8.h"
-
 #include "Toshi/Core/TFreeList.h"
 #include "Toshi/Render/TResource.h"
+#include "Toshi/Render/TIndexPoolResourceInterface.h"
 #include "Toshi/Render/TIndexFactoryResourceInterface.h"
 
 #include <d3d8.h>
 
 namespace Toshi {
+
+	class TIndexPoolResource;
 
 	TOBJECT(TIndexBlockResource, TResource, TTRUE)
 	{
@@ -19,6 +20,14 @@ namespace Toshi {
 		void operator delete(void* ptr, void* where) { delete ptr; }
 
 		static TFreeList ms_oFreeList;
+
+	public:
+		struct HALBuffer
+		{
+			TUINT16 uiIndexOffset = 0;
+			TUINT16 uiUnknown;
+			IDirect3DIndexBuffer8* pIndexBuffer = TNULL;
+		};
 
 	public:
 		TIndexBlockResource();
@@ -42,6 +51,8 @@ namespace Toshi {
 		TBOOL CreateHAL();
 		void DestroyHAL();
 
+		TBOOL GetHALBuffer(HALBuffer* a_pHALBuffer) const;
+
 	private:
 		inline static TINT s_iHALMemoryUsage;
 
@@ -53,8 +64,7 @@ namespace Toshi {
 		TUINT m_uiIndicesUsed;
 		TUINT m_uiLockCount;
 		TUINT m_Unk1;
-		TUINT16 m_Unk2;
-		IDirect3DIndexBuffer8* m_pIndexBuffer;
+		HALBuffer m_HALBuffer;
 	};
 
 }

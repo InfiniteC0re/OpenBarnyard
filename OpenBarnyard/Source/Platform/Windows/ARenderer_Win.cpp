@@ -13,6 +13,9 @@
 #include TOSHI_MULTIRENDER(TIndexFactoryResource)
 #include TOSHI_MULTIRENDER(TTextureFactoryHAL)
 #include TOSHI_MULTIRENDER(TRenderInterface)
+#include TOSHI_MULTIRENDER(TViewport)
+
+#include TOSHI_MULTIRENDER(ASysShaderHAL)
 
 TOSHI_NAMESPACE_USING
 
@@ -292,6 +295,9 @@ TBOOL ARenderer::OnCreate()
 
 	if (bCreatedTRender)
 	{
+		(new ASysShaderHAL())->Create();
+		CreateMainViewport();
+
 		AModelLoader::CreateSingleton();
 		AMaterialLibraryManager::CreateSingleton();
 	}
@@ -330,4 +336,52 @@ TBOOL ARenderer::OnUpdate(float a_fDeltaTime)
 void ARenderer::ForceUpdate30FPS()
 {
 	OnUpdate(0.03333334f);
+}
+
+void ARenderer::CreateMainViewport()
+{
+	auto pDisplayParams = Toshi::TRenderInterface::GetSingleton()->GetCurrentDisplayParams();
+	
+	m_pViewport = new TViewport(TTRUE);
+	m_pViewport->SetX(0);
+	m_pViewport->SetY(0);
+	m_pViewport->SetWidth(TFLOAT(pDisplayParams->uiWidth));
+	m_pViewport->SetHeight(TFLOAT(pDisplayParams->uiHeight));
+	m_pViewport->SetMinZ(0.2f);
+	m_pViewport->SetMaxZ(1.0f);
+	m_pViewport->AllowBackgroundClear(TTRUE);
+	m_pViewport->AllowDepthClear(TTRUE);
+	m_pViewport->SetBackgroundColor(128, 128, 128, 0);
+	m_pViewport->Enable(TTRUE);
+	m_pViewport->EnableDefaultBeginRender(TTRUE);
+	m_pViewport->SetMemoryAllocatorBlock(AMemory::GetMemBlock(AMemory::POOL_Viewport));
+
+	m_pHALViewport1 = new TViewportHAL(TTRUE);
+	m_pHALViewport1->SetX(0);
+	m_pHALViewport1->SetY(0);
+	m_pHALViewport1->SetWidth(TFLOAT(pDisplayParams->uiWidth));
+	m_pHALViewport1->SetHeight(TFLOAT(pDisplayParams->uiHeight));
+	m_pHALViewport1->SetMinZ(0.2f);
+	m_pHALViewport1->SetMaxZ(1.0f);
+	m_pHALViewport1->AllowDepthClear(TFALSE);
+	m_pHALViewport1->AllowBackgroundClear(TTRUE);
+	m_pHALViewport1->SetBackgroundColor(0, 0, 0, 0);
+	m_pHALViewport1->Enable(TTRUE);
+	m_pHALViewport1->EnableDefaultBeginRender(TTRUE);
+	m_pHALViewport1->SetMemoryAllocatorBlock(AMemory::GetMemBlock(AMemory::POOL_Viewport));
+
+	m_pHALViewport2 = new TViewportHAL(TTRUE);
+	m_pHALViewport2->SetX(0);
+	m_pHALViewport2->SetY(0);
+	m_pHALViewport2->SetWidth(TFLOAT(pDisplayParams->uiWidth));
+	m_pHALViewport2->SetHeight(TFLOAT(pDisplayParams->uiHeight));
+	m_pHALViewport2->SetMinZ(0.2f);
+	m_pHALViewport2->SetMaxZ(1.0f);
+	m_pHALViewport2->AllowBackgroundClear(TFALSE);
+	m_pHALViewport2->AllowDepthClear(TFALSE);
+	m_pHALViewport2->Enable(TTRUE);
+	m_pHALViewport2->EnableDefaultBeginRender(TTRUE);
+	m_pHALViewport2->SetMemoryAllocatorBlock(AMemory::GetMemBlock(AMemory::POOL_Viewport));
+
+	m_pCameraObject = new TCameraObject();
 }

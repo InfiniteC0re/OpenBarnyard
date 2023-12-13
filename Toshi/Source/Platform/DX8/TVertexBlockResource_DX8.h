@@ -1,13 +1,14 @@
 #pragma once
-#include "TVertexPoolResource_DX8.h"
-
 #include "Toshi/Core/TFreeList.h"
 #include "Toshi/Render/TResource.h"
+#include "Toshi/Render/TVertexPoolResourceInterface.h"
 #include "Toshi/Render/TVertexFactoryResourceInterface.h"
 
 #include <d3d8.h>
 
 namespace Toshi {
+
+	class TVertexPoolResource;
 
 	TOBJECT(TVertexBlockResource, TResource, TTRUE)
 	{
@@ -19,6 +20,16 @@ namespace Toshi {
 		void operator delete(void* ptr, void* where) { delete ptr; }
 
 		static TFreeList ms_oFreeList;
+
+	public:
+		struct HALBuffer
+		{
+			HALBuffer();
+
+			TUINT uiNumStreams;
+			TUINT16 uiVertexOffset;
+			IDirect3DVertexBuffer8* apVertexBuffers[TVertexFactoryFormat::MAX_NUM_STREAMS];
+		};
 
 	public:
 		TVertexBlockResource();
@@ -38,9 +49,11 @@ namespace Toshi {
 		void Unlock();
 
 		TBOOL Create(TVertexFactoryResourceInterface* a_pFactory, TUINT16 a_uiMaxVertices, TUINT32 a_uiFlags);
+		
 		TBOOL CreateHAL();
-
 		void DestroyHAL();
+
+		TBOOL GetHALBuffer(HALBuffer* a_pHALBuffer) const;
 
 	private:
 		inline static TINT s_iCurrentNumHALCreated;
@@ -59,9 +72,7 @@ namespace Toshi {
 		TUINT m_uiVerticesUsed;
 		TUINT m_uiLockCount;
 		TUINT m_Unk1;
-		TUINT m_uiNumStreams;
-		TUINT16 m_Unk2;
-		IDirect3DVertexBuffer8* m_apVertexBuffers[TVertexFactoryFormat::MAX_NUM_STREAMS];
+		HALBuffer m_HALBuffer;
 	};
 
 }

@@ -1,4 +1,5 @@
 #pragma once
+#include "TIndexBlockResource_DX8.h"
 #include "Toshi/Render/TIndexPoolResourceInterface.h"
 
 namespace Toshi {
@@ -24,6 +25,8 @@ namespace Toshi {
 
 		TResource* GetParent();
 		TIndexBlockResource* GetIndexBlock();
+
+		TBOOL GetHALBuffer(TIndexBlockResource::HALBuffer* a_pHALBuffer);
 
 	private:
 		TUINT16 m_uiIndexOffset;

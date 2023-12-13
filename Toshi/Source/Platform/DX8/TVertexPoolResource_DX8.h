@@ -1,4 +1,6 @@
 #pragma once
+#include "TVertexBlockResource_DX8.h"
+
 #include "Toshi/Render/TVertexPoolResourceInterface.h"
 
 namespace Toshi {
@@ -24,6 +26,8 @@ namespace Toshi {
 
 		TResource* GetParent();
 		TVertexBlockResource* GetVertexBlock();
+
+		TBOOL GetHALBuffer(TVertexBlockResource::HALBuffer* a_pHALBuffer);
 
 	private:
 		TUINT16 m_uiVertexOffset;

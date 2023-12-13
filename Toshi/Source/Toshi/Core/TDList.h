@@ -264,16 +264,19 @@ namespace Toshi
 		void Insert(TNode* node)
 		{
 			int priority = node->m_iPriority;
+
 			if (priority < 0)
 			{
 				TNode* curNode = GetRoot().m_Next;
+
 				while (curNode != &GetRoot() && curNode->m_iPriority <= priority)
 				{
-					curNode = curNode->m_Next->m_Next;
+					curNode = curNode->m_Next;
 				}
+
 				node->m_Next = curNode;
-				node->m_Prev = curNode->m_Next->m_Prev;
-				curNode->m_Next->m_Prev = node;
+				node->m_Prev = curNode->m_Prev;
+				curNode->m_Prev = node;
 				node->m_Prev->m_Next = node;
 			}
 			else

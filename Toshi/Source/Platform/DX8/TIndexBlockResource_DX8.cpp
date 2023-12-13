@@ -1,4 +1,5 @@
 #include "ToshiPCH.h"
+#include "TIndexPoolResource_DX8.h"
 #include "TIndexBlockResource_DX8.h"
 #include "TIndexFactoryResource_DX8.h"
 #include "TRenderInterface_DX8.h"
@@ -17,8 +18,6 @@ namespace Toshi {
 		m_uiIndicesUsed = 0;
 		m_uiLockCount = 0;
 		m_Unk1 = 0;
-		m_Unk2 = 0;
-		m_pIndexBuffer = TNULL;
 	}
 
 	TBOOL TIndexBlockResource::AttachPool(TIndexPoolResource* a_pPool)
@@ -164,7 +163,7 @@ namespace Toshi {
 			usage,
 			D3DFMT_INDEX16,
 			(m_uiFlags & 1) ? D3DPOOL_MANAGED : D3DPOOL_DEFAULT,
-			&m_pIndexBuffer
+			&m_HALBuffer.pIndexBuffer
 		);
 
 		if (FAILED(hRes))
@@ -184,10 +183,10 @@ namespace Toshi {
 		TMemory::HALMemInfo memInfoHAL;
 		TMemory::GetHALMemInfo(memInfoHAL);
 
-		if (m_pIndexBuffer)
+		if (m_HALBuffer.pIndexBuffer)
 		{
-			m_pIndexBuffer->Release();
-			m_pIndexBuffer = TNULL;
+			m_HALBuffer.pIndexBuffer->Release();
+			m_HALBuffer.pIndexBuffer = TNULL;
 		}
 
 		TMemory::GetHALMemInfo(memInfoHAL);
@@ -240,7 +239,7 @@ namespace Toshi {
 			}
 		}
 
-		HRESULT hRes = m_pIndexBuffer->Lock(
+		HRESULT hRes = m_HALBuffer.pIndexBuffer->Lock(
 			a_pLockBuffer->uiOffset * sizeof(TIndexType),
 			uiNumIndices * sizeof(TIndexType),
 			(BYTE**)&a_pLockBuffer->pBuffer,
@@ -262,7 +261,7 @@ namespace Toshi {
 
 		if (m_uiLockCount > 0)
 		{
-			HRESULT hRes = m_pIndexBuffer->Unlock();
+			HRESULT hRes = m_HALBuffer.pIndexBuffer->Unlock();
 
 			if (FAILED(hRes))
 			{
@@ -306,6 +305,19 @@ namespace Toshi {
 		}
 
 		m_uiIndicesUsed += a_iChange;
+	}
+
+	TBOOL TIndexBlockResource::GetHALBuffer(HALBuffer* a_pHALBuffer) const
+	{
+		TVALIDPTR(a_pHALBuffer);
+
+		if (a_pHALBuffer)
+		{
+			*a_pHALBuffer = m_HALBuffer;
+			return TTRUE;
+		}
+
+		return TFALSE;
 	}
 
 }

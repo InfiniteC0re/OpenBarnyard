@@ -18,7 +18,7 @@ namespace Toshi
 		enum Flags_ : Flags
 		{
 			Flags_NULL         = 0,
-			Flags_Unk1         = BITFIELD(0),
+			Flags_NO_CULL      = BITFIELD(0),
 			Flags_Unk2         = BITFIELD(1),
 			Flags_Unk3         = BITFIELD(2),
 			Flags_Unk4         = BITFIELD(3),
@@ -39,38 +39,20 @@ namespace Toshi
 			m_Name[0] = '\0';
 		}
 
-		virtual ~TMaterial() = default;
+		virtual ~TMaterial();
 
-		virtual void OnDestroy()
-		{
-			TASSERT(TTRUE == IsCreated());
-			m_Flags &= ~Flags_Created;
-		}
+		virtual void OnDestroy();
+		virtual TBOOL Create();
+		virtual void PreRender();
+		virtual void PostRender();
 
-		virtual TBOOL Create()
-		{
-			TASSERT(TFALSE == IsCreated());
-			m_Flags |= Flags_Created;
-			return TTRUE;
-		}
-
-		virtual void PreRender()
-		{
-
-		}
-
-		virtual void PostRender()
-		{
-
-		}
-
-		void SetOwnerShader(TShader* pShader)
+		void SetShader(TShader* pShader)
 		{
 			TASSERT(TNULL == m_pOwnerShader);
 			m_pOwnerShader = pShader;
 		}
 
-		TShader* GetOwnerShader() const
+		TShader* GetShader() const
 		{
 			return m_pOwnerShader;
 		}
@@ -108,9 +90,9 @@ namespace Toshi
 		{
 			if (set)
 			{
-				if (flag & (Flags_Unk1 | Flags_Unk2 | Flags_Unk3))
+				if (flag & (Flags_NO_CULL | Flags_Unk2 | Flags_Unk3))
 				{
-					m_Flags &= ~(Flags_Unk1 | Flags_Unk2 | Flags_Unk3);
+					m_Flags &= ~(Flags_NO_CULL | Flags_Unk2 | Flags_Unk3);
 				}
 
 				m_Flags |= flag;

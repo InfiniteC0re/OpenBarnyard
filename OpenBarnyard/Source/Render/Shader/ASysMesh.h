@@ -23,7 +23,7 @@ public:
 	virtual void Unlock(TUINT32 a_uiNumVertices, TUINT32 a_uiNumIndices);
 	virtual Toshi::TVertexPoolResourceInterface* GetVertexPool();
 	virtual Toshi::TIndexPoolResourceInterface* GetIndexPool();
-	virtual void SetZBias(TINT a_iZBias) = 0; // ?
+	virtual void SetZBias(TINT a_iZBias) = 0;
 
 	TBOOL IsLocked() const { return m_uiFlags & 0x8000; }
 
