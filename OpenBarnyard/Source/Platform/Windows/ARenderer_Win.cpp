@@ -10,6 +10,7 @@
 #include "Movie/AMoviePlayer.h"
 
 #include TOSHI_MULTIRENDER(TVertexFactoryResource)
+#include TOSHI_MULTIRENDER(TIndexFactoryResource)
 #include TOSHI_MULTIRENDER(TTextureFactoryHAL)
 #include TOSHI_MULTIRENDER(TRenderInterface)
 
@@ -155,6 +156,23 @@ TBOOL ARenderer::CreateTRenderResources()
 		vertexFormat.m_aStreamFormats[0].m_uiVertexSize = 44;
 		vertexFormat.m_aStreamFormats[0].m_Unk = 0;
 		pResource->Create(&vertexFormat, 54050, 0);
+	}
+
+	{
+		auto pResource = TSTATICCAST(
+			TIndexFactoryResource*,
+			pRenderer->CreateResource(
+				TClass::Find("TIndexFactoryResource"),
+				"IFSYS",
+				TNULL
+			)
+		);
+
+		pRenderer->SetResourceExplicit(pResource, TRenderInterface::SYSRESOURCE_IFSYS);
+
+		TIndexFactoryFormat indexFormat;
+		indexFormat.m_uiUnk = 2;
+		pResource->Create(&indexFormat, 64700, 0);
 	}
 
 	{

@@ -273,7 +273,7 @@ namespace Toshi {
 				Validate();
 				uiNumVertices = a_uiNumVertices;
 
-				if (m_uiMaxVertices < uiUnk1 + uiNumVertices)
+				if (m_uiMaxVertices < m_uiOffset + uiNumVertices)
 				{
 					uiFlags = D3DLOCK_DISCARD | D3DLOCK_NOSYSLOCK;
 					a_pLockBuffer->m_uiOffset = 0;
