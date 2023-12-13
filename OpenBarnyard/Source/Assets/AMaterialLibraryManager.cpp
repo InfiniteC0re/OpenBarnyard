@@ -8,8 +8,6 @@
 #include "Locale/ALocaleManager.h"
 #include "ALoadScreen.h"
 
-#include TOSHI_MULTIRENDER(TRenderInterface)
-
 TOSHI_NAMESPACE_USING
 
 AMaterialLibraryManager::AMaterialLibraryManager() :
@@ -149,8 +147,7 @@ void AMaterialLibraryManager::UnloadLibrary(const TPString8& a_rLibName, TBOOL a
 		matlibName = TPString8(localisedAssetName);
 	}
 
-	auto pRenderer = TSTATICCAST(TRenderD3DInterface*, TRenderInterface::GetSingleton());
-	pRenderer->BeginEndScene();
+	TRenderInterface::GetSingleton()->BeginEndSceneHAL();
 
 	auto pMatlibNode = m_LoadedLibraries.FindNode(matlibName);
 	

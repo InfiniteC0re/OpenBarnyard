@@ -28,16 +28,16 @@ namespace Toshi {
 
 	TVertexPoolResourceInterface::LockBuffer::LockBuffer()
 	{
-		m_uiNumStreams = 0;
-		m_uiOffset = 0;
-		m_apStreams[0] = TNULL;
-		m_apStreams[1] = TNULL;
-		m_apStreams[2] = TNULL;
-		m_apStreams[3] = TNULL;
-		m_apStreams[4] = TNULL;
-		m_apStreams[5] = TNULL;
-		m_apStreams[6] = TNULL;
-		m_apStreams[7] = TNULL;
+		uiNumStreams = 0;
+		uiOffset = 0;
+		apStreams[0] = TNULL;
+		apStreams[1] = TNULL;
+		apStreams[2] = TNULL;
+		apStreams[3] = TNULL;
+		apStreams[4] = TNULL;
+		apStreams[5] = TNULL;
+		apStreams[6] = TNULL;
+		apStreams[7] = TNULL;
 	}
 
 }

@@ -205,15 +205,15 @@ namespace Toshi {
 
 							if (pPool->m_uiFlags & 1)
 							{
-								pPool->m_uiVertexOffset = pPair->GetSecond().m_uiOffset;
-								pPair->GetSecond().m_uiOffset += pPool->GetNumVertices();
+								pPool->m_uiVertexOffset = pPair->GetSecond().uiOffset;
+								pPair->GetSecond().uiOffset += pPool->GetNumVertices();
 
 								for (TUINT i = 0; i < vertexFormat.GetNumStreams(); i++)
 								{
 									auto uiVertexSize = vertexFormat.m_aStreamFormats[i].m_uiVertexSize;
 
 									TUtil::MemCopy(
-										pPair->GetSecond().m_apStreams[i] + pPool->m_uiVertexOffset * uiVertexSize,
+										pPair->GetSecond().apStreams[i] + pPool->m_uiVertexOffset * uiVertexSize,
 										pPool->GetManagedStream(i),
 										pPool->GetNumVertices() * uiVertexSize
 									);
@@ -250,7 +250,7 @@ namespace Toshi {
 		TVALIDPTR(a_pLockBuffer);
 
 		auto& vertexFormat = m_pFactory->GetVertexFormat();
-		a_pLockBuffer->m_uiNumStreams = vertexFormat.m_uiNumStreams;
+		a_pLockBuffer->uiNumStreams = vertexFormat.m_uiNumStreams;
 
 		DWORD uiFlags;
 		TUINT uiNumVertices = 0;
@@ -259,7 +259,7 @@ namespace Toshi {
 		if (uiUnk1 == 1)
 		{
 			uiFlags = D3DLOCK_NOSYSLOCK;
-			a_pLockBuffer->m_uiOffset = 0;
+			a_pLockBuffer->uiOffset = 0;
 		}
 		else
 		{
@@ -276,13 +276,13 @@ namespace Toshi {
 				if (m_uiMaxVertices < m_uiOffset + uiNumVertices)
 				{
 					uiFlags = D3DLOCK_DISCARD | D3DLOCK_NOSYSLOCK;
-					a_pLockBuffer->m_uiOffset = 0;
+					a_pLockBuffer->uiOffset = 0;
 					m_uiOffset = uiNumVertices;
 				}
 				else
 				{
 					uiFlags = D3DLOCK_NOOVERWRITE | D3DLOCK_NOSYSLOCK;
-					a_pLockBuffer->m_uiOffset = m_uiOffset;
+					a_pLockBuffer->uiOffset = m_uiOffset;
 					m_uiOffset += uiNumVertices;
 				}
 			}
@@ -290,16 +290,16 @@ namespace Toshi {
 			{
 				Validate();
 				uiFlags = D3DLOCK_DISCARD | D3DLOCK_NOSYSLOCK;
-				a_pLockBuffer->m_uiOffset = 0;
+				a_pLockBuffer->uiOffset = 0;
 			}
 		}
 
-		for (TUINT i = 0; i < a_pLockBuffer->m_uiNumStreams; i++)
+		for (TUINT i = 0; i < a_pLockBuffer->uiNumStreams; i++)
 		{
 			HRESULT hRes = m_apVertexBuffers[i]->Lock(
-				a_pLockBuffer->m_uiOffset * vertexFormat.m_aStreamFormats[i].m_uiVertexSize,
+				a_pLockBuffer->uiOffset * vertexFormat.m_aStreamFormats[i].m_uiVertexSize,
 				uiNumVertices * vertexFormat.m_aStreamFormats[i].m_uiVertexSize,
-				&a_pLockBuffer->m_apStreams[i],
+				&a_pLockBuffer->apStreams[i],
 				uiFlags
 			);
 

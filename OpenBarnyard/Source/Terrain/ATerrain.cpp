@@ -4,8 +4,6 @@
 #include "Assets/AAssetStreaming.h"
 #include "ALoadScreen.h"
 
-#include TOSHI_MULTIRENDER(TRenderInterface)
-
 TOSHI_NAMESPACE_USING
 
 ATerrain::ATerrain(TINT a_iUnused1, TINT a_iUnused2, TINT a_iPreloadTerrainBlockSize, TINT a_iStartVISGroup)
@@ -221,7 +219,7 @@ void ATerrain::Update()
 
 				if (pGroup->IsLODLoaded(pInfo->eLODType) && !pGroup->IsLODEmpty(pInfo->eLODType))
 				{
-					TRenderD3DInterface::Interface()->BeginEndScene();
+					TRenderInterface::GetSingleton()->BeginEndSceneHAL();
 					pGroup->DestroyLOD(pInfo->eLODType);
 					QueueStreamingAssets();
 				}

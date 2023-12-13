@@ -152,6 +152,8 @@ namespace Toshi {
 
 		TRenderAdapter::Mode::Device* FindDevice(const DISPLAYPARAMS& a_rDisplayParams);
 
+		void BeginEndSceneHAL();
+
 		void FlushDyingResources()
 		{
 			while (m_bHasDyingResources)

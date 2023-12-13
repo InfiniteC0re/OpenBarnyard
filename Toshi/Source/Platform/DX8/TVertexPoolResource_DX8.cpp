@@ -116,11 +116,11 @@ namespace Toshi {
 
 			if (uiUnk1 == 1)
 			{
-				a_pLockBuffer->m_uiNumStreams = GetFactory()->GetVertexFormat().GetNumStreams();
+				a_pLockBuffer->uiNumStreams = GetFactory()->GetVertexFormat().GetNumStreams();
 
-				for (TUINT i = 0; i < a_pLockBuffer->m_uiNumStreams; i++)
+				for (TUINT i = 0; i < a_pLockBuffer->uiNumStreams; i++)
 				{
-					a_pLockBuffer->m_apStreams[i] = m_apManagedStreams[i];
+					a_pLockBuffer->apStreams[i] = m_apManagedStreams[i];
 				}
 
 				return TTRUE;
@@ -131,7 +131,7 @@ namespace Toshi {
 
 				if (GetVertexBlock()->Lock(a_pLockBuffer, 0))
 				{
-					m_uiVertexOffset = a_pLockBuffer->m_uiOffset;
+					m_uiVertexOffset = a_pLockBuffer->uiOffset;
 					return TTRUE;
 				}
 			}
@@ -141,7 +141,7 @@ namespace Toshi {
 
 				if (GetVertexBlock()->Lock(a_pLockBuffer, GetMaxVertices()))
 				{
-					m_uiVertexOffset = a_pLockBuffer->m_uiOffset;
+					m_uiVertexOffset = a_pLockBuffer->uiOffset;
 					return TTRUE;
 				}
 			}

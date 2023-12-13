@@ -11,9 +11,9 @@ namespace Toshi {
 		{
 			LockBuffer();
 
-			TUINT m_uiNumStreams;
-			TUINT32 m_uiOffset;
-			unsigned char* m_apStreams[TVertexFactoryFormat::MAX_NUM_STREAMS];
+			TUINT uiNumStreams;
+			TUINT32 uiOffset;
+			unsigned char* apStreams[TVertexFactoryFormat::MAX_NUM_STREAMS];
 		};
 
 	public:

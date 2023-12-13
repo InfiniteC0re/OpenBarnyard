@@ -76,8 +76,6 @@ namespace Toshi {
 		void SetTextureAddress(DWORD a_iStage, TINT a_eType, TINT a_iUnk);
 		void Clear(TINT a_iX, TINT a_iY, TINT a_iWidth, TINT a_iHeight, TUINT8 a_eClearFlags, TUINT8 a_uiColorR, TUINT8 a_uiColorG, TUINT8 a_uiColorB, TFLOAT a_fZ, TUINT a_uiStencil);
 
-		void BeginEndScene();
-
 		void Exit()
 		{
 			m_bExited = TTRUE;

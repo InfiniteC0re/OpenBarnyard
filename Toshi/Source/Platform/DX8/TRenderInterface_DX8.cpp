@@ -11,6 +11,16 @@
 
 namespace Toshi {
 	
+	void TRenderInterface::BeginEndSceneHAL()
+	{
+		auto pHAL = TSTATICCAST(TRenderD3DInterface*, this);
+
+		if (S_OK == pHAL->GetDirect3DDevice()->BeginScene())
+		{
+			pHAL->GetDirect3DDevice()->EndScene();
+		}
+	}
+
 	TRenderD3DInterface::TRenderD3DInterface()
 	{
 		m_pDirect3D = TNULL;
@@ -677,14 +687,6 @@ namespace Toshi {
 			a_fZ,
 			a_uiStencil
 		);
-	}
-
-	void TRenderD3DInterface::BeginEndScene()
-	{
-		if (S_OK == m_pDirectDevice->BeginScene())
-		{
-			m_pDirectDevice->EndScene();
-		}
 	}
 
 	TBOOL TRenderD3DInterface::IsTextureFormatSupported(int a_eTextureFormat)

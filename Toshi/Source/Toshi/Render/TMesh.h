@@ -85,6 +85,11 @@ namespace Toshi
 			return m_State & State_Created;
 		}
 
+		TBOOL IsValidated() const
+		{
+			return m_State & State_Validated;
+		}
+
 	protected:
 		~TMesh()
 		{

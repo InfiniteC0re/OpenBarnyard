@@ -9,8 +9,6 @@
 
 #include <Toshi/Input/TInputDeviceKeyboard.h>
 
-#include TOSHI_MULTIRENDER(TRenderInterface)
-
 TOSHI_NAMESPACE_USING
 
 AGameState::AGameState()
@@ -94,8 +92,7 @@ void AGameState::OnDeactivate()
 
 void AGameState::Destroy()
 {
-	auto pRender = TSTATICCAST(Toshi::TRenderD3DInterface*, Toshi::TRenderInterface::GetSingleton());
-	pRender->BeginEndScene();
+	TRenderInterface::GetSingleton()->BeginEndSceneHAL();
 
 	Deactivate();
 
@@ -105,8 +102,7 @@ void AGameState::Destroy()
 
 void AGameState::Destroy(TBOOL a_bDeactivate)
 {
-	auto pRender = TSTATICCAST(Toshi::TRenderD3DInterface*, Toshi::TRenderInterface::GetSingleton());
-	pRender->BeginEndScene();
+	TRenderInterface::GetSingleton()->BeginEndSceneHAL();
 
 	if (a_bDeactivate)
 	{

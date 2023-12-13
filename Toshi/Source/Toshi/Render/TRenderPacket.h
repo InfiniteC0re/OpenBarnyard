@@ -46,9 +46,9 @@ namespace Toshi {
 			return m_oModelView;
 		}
 
-		void SetModelViewMatrix(TMatrix44* a_pMatrix44)
+		void SetModelViewMatrix(TMatrix44& a_rMatrix44)
 		{
-			m_oModelView = *a_pMatrix44;
+			m_oModelView = a_rMatrix44;
 		}
 
 		TVector3& GetLightColour()
