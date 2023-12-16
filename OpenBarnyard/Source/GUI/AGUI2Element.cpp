@@ -340,3 +340,10 @@ void AGUI2Element::GetScreenTransform(AGUI2Transform& a_rOutTransform)
 
 	AGUI2Transform::Multiply(a_rOutTransform, transform1, transform2);
 }
+
+void AGUI2Element::GetInvScreenTransform(AGUI2Transform& a_rOutTransform)
+{
+	AGUI2Transform transform;
+	GetScreenTransform(transform);
+	transform.GetInverse(a_rOutTransform);
+}

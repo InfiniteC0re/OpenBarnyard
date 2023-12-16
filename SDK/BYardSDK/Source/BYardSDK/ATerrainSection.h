@@ -6,7 +6,7 @@
 
 class AMaterialLibrary;
 
-class ATerrainVISGroup
+class ATerrainSection
 {
 public:
 	struct ModelData : 
@@ -58,7 +58,7 @@ public:
 	TBOOL IsLODEmpty(ATerrainLODType a_eLODType) const { return (m_eFlags & (64 << (a_eLODType & 0x1f))); }
 	void SetLODEmpty(ATerrainLODType a_eLODType, TBOOL a_bEmpty);
 
-private:
+public:
 	const char* m_szName;
 	const char** m_ppHighLODNames;
 	const char** m_ppLowLODNames;

@@ -59,7 +59,7 @@ project "BYModCore"
 
 		defines
 		{
-			"TOSHI_SDK",
+			"TOSHI_MODLOADER",
 			"TOSHI_SKU_WINDOWS"
 		}
 

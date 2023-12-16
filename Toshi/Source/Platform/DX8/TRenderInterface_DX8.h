@@ -58,6 +58,7 @@ namespace Toshi {
 		virtual void ForceEnableColourCorrection(TBOOL a_bEnable);
 		virtual TBOOL IsColourCorrection();
 
+		TMSWindow* GetWindow() { return &m_Window; }
 		TPriList<TOrderTable>& GetOrderTables() { return m_OrderTables; }
 		IDirect3D8* GetDirect3D() const { return m_pDirect3D; }
 		IDirect3DDevice8* GetDirect3DDevice() const { return m_pDirectDevice; }

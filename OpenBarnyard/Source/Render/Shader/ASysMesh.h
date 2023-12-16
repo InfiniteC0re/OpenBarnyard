@@ -18,7 +18,7 @@ public:
 	virtual TBOOL Validate() override;
 	virtual void Invalidate() override;
 	virtual TBOOL Create(void* a_pUnk, const char* a_szSomeString);
-	virtual TBOOL Create(TUINT32 a_uiFlags, TUINT16 a_uiMaxVertices, TUINT16 a_uiMaxIndices);
+	virtual TBOOL CreatePools(TUINT32 a_uiFlags, TUINT16 a_uiMaxVertices, TUINT16 a_uiMaxIndices);
 	virtual TBOOL Lock(LockBuffer& a_rLockBuffer);
 	virtual void Unlock(TUINT32 a_uiNumVertices, TUINT32 a_uiNumIndices);
 	virtual Toshi::TVertexPoolResourceInterface* GetVertexPool();

@@ -1,39 +1,39 @@
 #include "pch.h"
-#include "ATerrainVISGroup.h"
+#include "ATerrainSection.h"
 #include "ATerrain.h"
 #include "AAssetStreaming.h"
 
-void ATerrainVISGroup::LoadCollision()
+void ATerrainSection::LoadCollision()
 {
 	
 }
 
-void ATerrainVISGroup::LoadModels(ATerrainLODType a_eLODType)
+void ATerrainSection::LoadModels(ATerrainLODType a_eLODType)
 {
 	
 }
 
-void ATerrainVISGroup::LoadMatlib(ATerrainLODType a_eLODType)
+void ATerrainSection::LoadMatlib(ATerrainLODType a_eLODType)
 {
 	
 }
 
-void ATerrainVISGroup::UnloadMatlib(ATerrainLODType a_eLODType)
+void ATerrainSection::UnloadMatlib(ATerrainLODType a_eLODType)
 {
 	
 }
 
-void ATerrainVISGroup::DestroyLOD(ATerrainLODType a_eLODType)
+void ATerrainSection::DestroyLOD(ATerrainLODType a_eLODType)
 {
 	
 }
 
-void ATerrainVISGroup::RemoveFromStreamingQueue()
+void ATerrainSection::RemoveFromStreamingQueue()
 {
 	
 }
 
-TBOOL ATerrainVISGroup::IsMatLibLoaded(ATerrainLODType a_eLODType) const
+TBOOL ATerrainSection::IsMatLibLoaded(ATerrainLODType a_eLODType) const
 {
 	TASSERT(a_eLODType == ATerrainLODType_High || a_eLODType == ATerrainLODType_Low);
 
@@ -47,7 +47,7 @@ TBOOL ATerrainVISGroup::IsMatLibLoaded(ATerrainLODType a_eLODType) const
 	}
 }
 
-void ATerrainVISGroup::SetLODQueued(ATerrainLODType a_eLODType, TBOOL a_bQueued)
+void ATerrainSection::SetLODQueued(ATerrainLODType a_eLODType, TBOOL a_bQueued)
 {
 	TASSERT(a_eLODType == ATerrainLODType_High || a_eLODType == ATerrainLODType_Low);
 
@@ -61,7 +61,7 @@ void ATerrainVISGroup::SetLODQueued(ATerrainLODType a_eLODType, TBOOL a_bQueued)
 	}
 }
 
-void ATerrainVISGroup::SetLODLoaded(ATerrainLODType a_eLODType, TBOOL a_bLoaded)
+void ATerrainSection::SetLODLoaded(ATerrainLODType a_eLODType, TBOOL a_bLoaded)
 {
 	TASSERT(a_eLODType == ATerrainLODType_High || a_eLODType == ATerrainLODType_Low);
 
@@ -75,7 +75,7 @@ void ATerrainVISGroup::SetLODLoaded(ATerrainLODType a_eLODType, TBOOL a_bLoaded)
 	}
 }
 
-void ATerrainVISGroup::SetLODLoading(ATerrainLODType a_eLODType, TBOOL a_bLoading)
+void ATerrainSection::SetLODLoading(ATerrainLODType a_eLODType, TBOOL a_bLoading)
 {
 	TASSERT(a_eLODType == ATerrainLODType_High || a_eLODType == ATerrainLODType_Low);
 
@@ -89,7 +89,7 @@ void ATerrainVISGroup::SetLODLoading(ATerrainLODType a_eLODType, TBOOL a_bLoadin
 	}
 }
 
-void ATerrainVISGroup::SetLODEmpty(ATerrainLODType a_eLODType, TBOOL a_bEmpty)
+void ATerrainSection::SetLODEmpty(ATerrainLODType a_eLODType, TBOOL a_bEmpty)
 {
 	TASSERT(a_eLODType == ATerrainLODType_High || a_eLODType == ATerrainLODType_Low);
 
@@ -103,7 +103,7 @@ void ATerrainVISGroup::SetLODEmpty(ATerrainLODType a_eLODType, TBOOL a_bEmpty)
 	}
 }
 
-ATerrainVISGroup::ModelData::~ModelData()
+ATerrainSection::ModelData::~ModelData()
 {
 	
 }

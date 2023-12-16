@@ -23,7 +23,7 @@ public:
 
 	void MoveCursor(TFLOAT a_fDeltaX, TFLOAT a_fDeltaY);
 
-private:
+public:
 	Toshi::TVector2 m_CursorPos;
 	Toshi::TVector2 m_BoundingStart;
 	Toshi::TVector2 m_BoundingEnd;

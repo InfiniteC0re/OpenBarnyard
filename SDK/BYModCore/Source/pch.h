@@ -23,3 +23,5 @@
 #include <Toshi/Utils/TUtil.h>
 #include <Toshi/Thread/TMutexLock.h>
 #include <Toshi/Strings/TStringManager.h>
+
+#include "ModLoader.h"

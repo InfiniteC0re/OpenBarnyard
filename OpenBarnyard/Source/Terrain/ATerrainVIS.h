@@ -1,5 +1,5 @@
 #pragma once
-#include "ATerrainVISGroup.h"
+#include "ATerrainSection.h"
 #include "ATerrainLocator.h"
 #include "ATerrainLODBlock.h"
 #include "Assets/AMaterialLibrary.h"
@@ -20,7 +20,7 @@ class ATerrainVIS
 {
 public:
 	friend class ATerrain;
-	friend class ATerrainVISGroup;
+	friend class ATerrainSection;
 
 public:
 	void LoadSkeleton();
@@ -35,8 +35,8 @@ private:
 	AMaterialLibrary* m_pMaterialLibrary;
 	Toshi::TTRB* m_pMaterialLibraryTRB;
 	ATerrainLocatorManager* m_pLocatorManager;
-	TINT32 m_iNumGroups;
-	ATerrainVISGroup* m_pGroups;
+	TINT32 m_iNumSections;
+	ATerrainSection* m_pSections;
 	TUINT32 m_uiHighBlockSize;
 	TINT32 m_iNumHighBlocks;
 	ATerrainLODBlock** m_ppHighBlocks;

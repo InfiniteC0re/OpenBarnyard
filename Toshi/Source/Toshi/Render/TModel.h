@@ -114,7 +114,16 @@ namespace Toshi {
 		TBOOL IsCreated() const { return m_eFlags & Flags_Created; }
 		TBOOL IsLoaded() const { return m_eFlags & Flags_Loaded; }
 
-		const TModelLOD& GetLOD(TUINT32 a_uiLOD)
+		void SetNumLODs(TINT a_iNumLODs) { m_iLODCount = a_iNumLODs; }
+		TINT GetNumLODs() const { return m_iLODCount; }
+
+		TModelLOD& GetLOD(TUINT32 a_uiLOD)
+		{
+			TASSERT(a_uiLOD < MAX_NUM_LODS);
+			return m_LODs[a_uiLOD];
+		}
+
+		const TModelLOD& GetLOD(TUINT32 a_uiLOD) const
 		{
 			TASSERT(a_uiLOD < MAX_NUM_LODS);
 			return m_LODs[a_uiLOD];

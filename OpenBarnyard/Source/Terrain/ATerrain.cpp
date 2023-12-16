@@ -66,10 +66,10 @@ ATerrain::ATerrain(TINT a_iUnused1, TINT a_iUnused2, TINT a_iPreloadTerrainBlock
 	}
 
 	TTODO("Call FUN_00619040() and initialise some other values");
-	m_iCurrentGroup = a_iStartVISGroup;
-	m_iPreviousGroup = -1;
+	m_iCurrentSection = a_iStartVISGroup;
+	m_iPreviousSection = -1;
 	m_cbOnVISGroupChanged = TNULL;
-	m_fnGetCurrentVISGroup = GetCurrentVISGroupIndex;
+	m_fnGetCurrentVISGroup = GetCurrentSectionID;
 }
 
 ATerrain::~ATerrain()
@@ -90,13 +90,13 @@ void ATerrain::Update()
 
 		if (iCurrentGroup != -1)
 		{
-			m_iCurrentGroup = iCurrentGroup;
+			m_iCurrentSection = iCurrentGroup;
 		}
 	}
 
-	if (m_iCurrentGroup >= 0)
+	if (m_iCurrentSection >= 0)
 	{
-		if (m_iPreviousGroup != m_iCurrentGroup)
+		if (m_iPreviousSection != m_iCurrentSection)
 		{
 			UseBlocksInCurrentVIS(ATerrainLODType_High);
 			UseBlocksInCurrentVIS(ATerrainLODType_Low);
@@ -106,13 +106,13 @@ void ATerrain::Update()
 
 			if (m_cbOnVISGroupChanged)
 			{
-				auto pPrevious = m_iPreviousGroup >= 0 ? &m_pTerrainVIS->m_pGroups[m_iPreviousGroup] : TNULL;
-				auto pCurrent = m_iCurrentGroup >= 0 ? &m_pTerrainVIS->m_pGroups[m_iCurrentGroup] : TNULL;
+				auto pPrevious = m_iPreviousSection >= 0 ? &m_pTerrainVIS->m_pSections[m_iPreviousSection] : TNULL;
+				auto pCurrent = m_iCurrentSection >= 0 ? &m_pTerrainVIS->m_pSections[m_iCurrentSection] : TNULL;
 
 				m_cbOnVISGroupChanged(pPrevious, pCurrent);
 			}
 
-			m_iPreviousGroup = m_iCurrentGroup;
+			m_iPreviousSection = m_iCurrentSection;
 			QueueStreamingAssets();
 		}
 
@@ -123,10 +123,10 @@ void ATerrain::Update()
 
 		TBOOL bSkipLoadingModels = TFALSE;
 
-		for (TINT i = 0; i < m_pTerrainVIS->m_iNumGroups; i++)
+		for (TINT i = 0; i < m_pTerrainVIS->m_iNumSections; i++)
 		{
-			if (m_pTerrainVIS->m_pGroups[i].IsLODLoading(ATerrainLODType_High) ||
-				m_pTerrainVIS->m_pGroups[i].IsLODLoading(ATerrainLODType_Low))
+			if (m_pTerrainVIS->m_pSections[i].IsLODLoading(ATerrainLODType_High) ||
+				m_pTerrainVIS->m_pSections[i].IsLODLoading(ATerrainLODType_Low))
 			{
 				// There are already some models loading, don't create any new jobs
 				bSkipLoadingModels = TTRUE;
@@ -138,12 +138,12 @@ void ATerrain::Update()
 		{
 			if (HasAnyLODsQueued())
 			{
-				auto pGroups = m_pTerrainVIS->m_pGroups;
+				auto pGroups = m_pTerrainVIS->m_pSections;
 
 				if (m_pOrderDVIS)
 				{
 					// Use precomputed order of queued groups to load
-					auto pDVIS = &m_pOrderDVIS[m_iCurrentGroup];
+					auto pDVIS = &m_pOrderDVIS[m_iCurrentSection];
 					
 					for (TINT i = 0; i < pDVIS->iCount; i++)
 					{
@@ -160,13 +160,13 @@ void ATerrain::Update()
 				else
 				{
 					// Brute force order of queued groups to load
-					if (pGroups[m_iCurrentGroup].IsLODQueued(ATerrainLODType_High))
+					if (pGroups[m_iCurrentSection].IsLODQueued(ATerrainLODType_High))
 					{
-						pGroups[m_iCurrentGroup].LoadModels(ATerrainLODType_High);
+						pGroups[m_iCurrentSection].LoadModels(ATerrainLODType_High);
 					}
 					else
 					{
-						for (TINT i = 0; i < m_pTerrainVIS->m_iNumGroups; i++)
+						for (TINT i = 0; i < m_pTerrainVIS->m_iNumSections; i++)
 						{
 							if (pGroups[i].IsLODQueued(ATerrainLODType_High))
 							{
@@ -187,10 +187,10 @@ void ATerrain::Update()
 		TFIXME("Restore value of m_fnGetCurrentVISGroup if it was saved");
 
 		// Wait till queued LODs are ready
-		for (TINT i = 0; i < m_pTerrainVIS->m_iNumGroups; i++)
+		for (TINT i = 0; i < m_pTerrainVIS->m_iNumSections; i++)
 		{
-			if (m_pTerrainVIS->m_pGroups[i].IsLODQueued(ATerrainLODType_High) ||
-				m_pTerrainVIS->m_pGroups[i].IsLODQueued(ATerrainLODType_Low))
+			if (m_pTerrainVIS->m_pSections[i].IsLODQueued(ATerrainLODType_High) ||
+				m_pTerrainVIS->m_pSections[i].IsLODQueued(ATerrainLODType_Low))
 			{
 				FlushJobs();
 				return;
@@ -198,10 +198,10 @@ void ATerrain::Update()
 		}
 
 		// Wait till all LODs are loaded
-		for (TINT i = 0; i < m_pTerrainVIS->m_iNumGroups; i++)
+		for (TINT i = 0; i < m_pTerrainVIS->m_iNumSections; i++)
 		{
-			if (m_pTerrainVIS->m_pGroups[i].IsLODLoading(ATerrainLODType_High) ||
-				m_pTerrainVIS->m_pGroups[i].IsLODLoading(ATerrainLODType_Low))
+			if (m_pTerrainVIS->m_pSections[i].IsLODLoading(ATerrainLODType_High) ||
+				m_pTerrainVIS->m_pSections[i].IsLODLoading(ATerrainLODType_Low))
 			{
 				FlushJobs();
 				return;
@@ -210,12 +210,12 @@ void ATerrain::Update()
 
 		if (m_pOrderDVIS)
 		{
-			auto pDVIS = &m_pOrderDVIS[m_iCurrentGroup];
+			auto pDVIS = &m_pOrderDVIS[m_iCurrentSection];
 
 			for (TINT i = 0; i < pDVIS->iCount; i++)
 			{
 				auto pInfo = &pDVIS->pInfo[i];
-				auto pGroup = &m_pTerrainVIS->m_pGroups[pInfo->uiGroupIndex];
+				auto pGroup = &m_pTerrainVIS->m_pSections[pInfo->uiGroupIndex];
 
 				if (pGroup->IsLODLoaded(pInfo->eLODType) && !pGroup->IsLODEmpty(pInfo->eLODType))
 				{
@@ -239,9 +239,9 @@ TBOOL ATerrain::IsLoaded() const
 
 	if (m_pTerrainVIS->GetLocatorManager() && m_pTerrainVIS->GetLocatorManager()->GetTRB())
 	{
-		for (TINT i = 0; i < m_pTerrainVIS->m_iNumGroups; i++)
+		for (TINT i = 0; i < m_pTerrainVIS->m_iNumSections; i++)
 		{
-			if (HASFLAG(m_pTerrainVIS->m_pGroups[i].m_eFlags & 0xF3C))
+			if (HASFLAG(m_pTerrainVIS->m_pSections[i].m_eFlags & 0xF3C))
 			{
 				return TFALSE;
 			}
@@ -343,9 +343,9 @@ void ATerrain::LoadFromFile(const char* a_szFilePath, TBOOL a_bLoadLater, TBOOL 
 
 	if (!m_bPersistantCollision)
 	{
-		for (TINT i = 0; i < m_pTerrainVIS->m_iNumGroups; i++)
+		for (TINT i = 0; i < m_pTerrainVIS->m_iNumSections; i++)
 		{
-			m_pTerrainVIS->m_pGroups[i].LoadCollision();
+			m_pTerrainVIS->m_pSections[i].LoadCollision();
 		}
 	}
 
@@ -376,7 +376,7 @@ void ATerrain::WaitUntilLoaded()
 	}
 }
 
-void ATerrain::DestroyModelData(ATerrainVISGroup::ModelData* a_pModelData)
+void ATerrain::DestroyModelData(ATerrainSection::ModelData* a_pModelData)
 {
 	TVALIDPTR(a_pModelData);
 
@@ -407,7 +407,7 @@ void ATerrain::UseBlocksInCurrentVIS(ATerrainLODType a_eLODType)
 		ppBlocks = m_pTerrainVIS->m_ppLowBlocks;
 	}
 
-	auto pCurrentVISGroup = m_pTerrainVIS->m_pGroups + m_iCurrentGroup;
+	auto pCurrentVISGroup = m_pTerrainVIS->m_pSections + m_iCurrentSection;
 
 	for (TINT i = 0; i < iNumBlocks; i++)
 	{
@@ -422,10 +422,10 @@ void ATerrain::UseBlocksInCurrentVIS(ATerrainLODType a_eLODType)
 		{
 			auto pVIS = m_pTerrainVIS;
 
-			for (TINT k = 0; k < pVIS->m_iNumGroups; k++)
+			for (TINT k = 0; k < pVIS->m_iNumSections; k++)
 			{
-				if (pCurrentVISGroup->m_pOtherGroupsLODs[k] == a_eLODType &&
-					pBlock->m_pVISGroup == &pVIS->m_pGroups[k])
+				if (pCurrentVISGroup->m_pVisibility[k] == a_eLODType &&
+					pBlock->m_pVISGroup == &pVIS->m_pSections[k])
 				{
 					pBlock->SetUsed();
 				}
@@ -436,17 +436,17 @@ void ATerrain::UseBlocksInCurrentVIS(ATerrainLODType a_eLODType)
 
 void ATerrain::QueueStreamingAssets()
 {
-	TASSERT(m_iCurrentGroup != -1);
+	TASSERT(m_iCurrentSection != -1);
 
-	auto pCurrentGroup = &m_pTerrainVIS->m_pGroups[m_iCurrentGroup];
+	auto pCurrentGroup = &m_pTerrainVIS->m_pSections[m_iCurrentSection];
 
-	for (TINT i = 0; i < m_pTerrainVIS->m_iNumGroups; i++)
+	for (TINT i = 0; i < m_pTerrainVIS->m_iNumSections; i++)
 	{
-		auto eLODType = pCurrentGroup->m_pOtherGroupsLODs[i];
+		auto eLODType = pCurrentGroup->m_pVisibility[i];
 
 		if (eLODType > ATerrainLODType_None)
 		{
-			auto pGroup = &m_pTerrainVIS->m_pGroups[i];
+			auto pGroup = &m_pTerrainVIS->m_pSections[i];
 
 			if ((pGroup->m_eFlags & (21 << eLODType)) == 0)
 			{
@@ -456,7 +456,7 @@ void ATerrain::QueueStreamingAssets()
 	}
 
 	if (!HASFLAG(pCurrentGroup->m_eFlags &
-		(ATerrainVISGroup::FLAGS_HIGH_LOD_LOADED | ATerrainVISGroup::FLAGS_HIGH_LOD_LOADING)))
+		(ATerrainSection::FLAGS_HIGH_LOD_LOADED | ATerrainSection::FLAGS_HIGH_LOD_LOADING)))
 	{
 		pCurrentGroup->SetLODQueued(ATerrainLODType_High, TTRUE);
 	}
@@ -464,19 +464,19 @@ void ATerrain::QueueStreamingAssets()
 
 void ATerrain::UnqueueStreamingAssets()
 {
-	for (TINT i = 0; i < m_pTerrainVIS->m_iNumGroups; i++)
+	for (TINT i = 0; i < m_pTerrainVIS->m_iNumSections; i++)
 	{
-		m_pTerrainVIS->m_pGroups[i].RemoveFromStreamingQueue();
+		m_pTerrainVIS->m_pSections[i].RemoveFromStreamingQueue();
 	}
 }
 
 TBOOL ATerrain::HasAnyLODsQueued()
 {
-	for (TINT i = 0; i < m_pTerrainVIS->m_iNumGroups; i++)
+	for (TINT i = 0; i < m_pTerrainVIS->m_iNumSections; i++)
 	{
-		auto pGroup = &m_pTerrainVIS->m_pGroups[i];
+		auto pGroup = &m_pTerrainVIS->m_pSections[i];
 
-		if (pGroup->m_eFlags & (ATerrainVISGroup::FLAGS_HIGH_LOD_QUEUED | ATerrainVISGroup::FLAGS_LOW_LOD_QUEUED))
+		if (pGroup->m_eFlags & (ATerrainSection::FLAGS_HIGH_LOD_QUEUED | ATerrainSection::FLAGS_LOW_LOD_QUEUED))
 		{
 			return TTRUE;
 		}
@@ -485,7 +485,7 @@ TBOOL ATerrain::HasAnyLODsQueued()
 	return TFALSE;
 }
 
-ATerrainLODBlock* ATerrain::AllocateLODBlock(ATerrainLODType a_eLODType, ATerrainVISGroup* a_pVISGroup)
+ATerrainLODBlock* ATerrain::AllocateLODBlock(ATerrainLODType a_eLODType, ATerrainSection* a_pVISGroup)
 {
 	TINT iNumBlocks;
 	ATerrainLODBlock** ppBlocks;
@@ -611,17 +611,17 @@ void ATerrain::MoveAllFinishedJobs(Toshi::T2SList<JobSlot>& a_rFreeJobs, Toshi::
 
 void ATerrain::CancelUnrequiredJobs()
 {
-	if (m_iCurrentGroup != m_iPreviousGroup && m_iPreviousGroup >= 0)
+	if (m_iCurrentSection != m_iPreviousSection && m_iPreviousSection >= 0)
 	{
-		for (TINT i = 0; i < m_pTerrainVIS->m_iNumGroups; i++)
+		for (TINT i = 0; i < m_pTerrainVIS->m_iNumSections; i++)
 		{
-			auto pGroup = &m_pTerrainVIS->m_pGroups[i];
+			auto pGroup = &m_pTerrainVIS->m_pSections[i];
 
-			if (pGroup->m_eFlags & (ATerrainVISGroup::FLAGS_HIGH_LOD_LOADING | ATerrainVISGroup::FLAGS_LOW_LOD_LOADING))
+			if (pGroup->m_eFlags & (ATerrainSection::FLAGS_HIGH_LOD_LOADING | ATerrainSection::FLAGS_LOW_LOD_LOADING))
 			{
 				if (i < 0) return;
-				if (pGroup->m_pOtherGroupsLODs[i] == ((pGroup->m_eFlags >> 2) - 1) % ATerrainLODType_NUMOF) return;
-				if (i == m_iCurrentGroup) return;
+				if (pGroup->m_pVisibility[i] == ((pGroup->m_eFlags >> 2) - 1) % ATerrainLODType_NUMOF) return;
+				if (i == m_iCurrentSection) return;
 
 				AAssetStreaming::GetSingleton()->CancelAllJobs();
 				return;
@@ -635,13 +635,13 @@ void ATerrain::UpdateNightMaterials()
 	TIMPLEMENT();
 }
 
-TINT ATerrain::GetCurrentVISGroupIndex()
+TINT ATerrain::GetCurrentSectionID()
 {
 	TIMPLEMENT();
 	return 0;
 }
 
-TINT ATerrain::GetPersistantVISGroupIndex()
+TINT ATerrain::GetPersistantSectionID()
 {
 	return ms_iPersistantVISGroupIndex;
 }
@@ -694,7 +694,7 @@ void ATerrainManager::StartLoading()
 
 	if (ATerrain::ms_bAutoVIS)
 	{
-		pTerrain->m_fnGetCurrentVISGroup = ATerrain::GetPersistantVISGroupIndex;
+		pTerrain->m_fnGetCurrentVISGroup = ATerrain::GetPersistantSectionID;
 	}
 
 	pTerrain->Update();
@@ -712,6 +712,6 @@ void ATerrainManager::StartLoading()
 
 	if (ATerrain::ms_bAutoVIS)
 	{
-		pTerrain->m_fnGetCurrentVISGroup = ATerrain::GetCurrentVISGroupIndex;
+		pTerrain->m_fnGetCurrentVISGroup = ATerrain::GetCurrentSectionID;
 	}
 }

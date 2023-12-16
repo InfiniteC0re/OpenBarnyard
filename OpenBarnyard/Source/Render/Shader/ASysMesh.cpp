@@ -72,7 +72,7 @@ TBOOL ASysMesh::Create(void* a_pUnk, const char* a_szSomeString)
 	return TMesh::Create();
 }
 
-TBOOL ASysMesh::Create(TUINT32 a_uiResourcesFlags, TUINT16 a_uiMaxVertices, TUINT16 a_uiMaxIndices)
+TBOOL ASysMesh::CreatePools(TUINT32 a_uiResourcesFlags, TUINT16 a_uiMaxVertices, TUINT16 a_uiMaxIndices)
 {
 	m_uiFlags = a_uiResourcesFlags;
 	m_uiMaxVertices = a_uiMaxVertices;
@@ -146,7 +146,8 @@ TBOOL ASysMesh::CreateResource()
 		uiIndexPoolFlags = 1;
 	}
 
-	m_pIndexPool = pIndexFactory->CreatePoolResource(m_uiMaxVertices, uiIndexPoolFlags);
+
+	m_pIndexPool = pIndexFactory->CreatePoolResource(m_uiMaxVertices, (-(TUINT)((m_uiFlags & 0x40) != 0) & 0xfffffff8) + 16 | uiIndexPoolFlags);
 	TVALIDPTR(m_pIndexPool);
 
 	return TTRUE;

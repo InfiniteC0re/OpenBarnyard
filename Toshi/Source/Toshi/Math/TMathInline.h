@@ -14,13 +14,13 @@ namespace Toshi
 		constexpr char TINT8_MIN = INT8_MIN;
 		constexpr unsigned char TUINT8_MAX = UINT8_MAX;
 
-		constexpr short TINT16_MAX = INT16_MAX;
-		constexpr short TINT16_MIN = INT16_MIN;
-		constexpr short TUINT16_MAX = UINT16_MAX;
+		constexpr TUINT TINT16_MAX = INT16_MAX;
+		constexpr TUINT TINT16_MIN = INT16_MIN;
+		constexpr TUINT TUINT16_MAX = UINT16_MAX;
 
-		constexpr int TINT32_MAX = INT32_MAX;
-		constexpr int TINT32_MIN = INT32_MIN;
-		constexpr int TUINT32_MAX = UINT32_MAX;
+		constexpr TINT TINT32_MAX = INT32_MAX;
+		constexpr TINT TINT32_MIN = INT32_MIN;
+		constexpr TUINT TUINT32_MAX = UINT32_MAX;
 
 		constexpr unsigned short MAXWCHAR = WCHAR_MAX;
 

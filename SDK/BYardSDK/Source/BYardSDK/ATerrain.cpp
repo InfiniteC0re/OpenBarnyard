@@ -23,7 +23,7 @@ void ATerrain::WaitUntilLoaded()
 	
 }
 
-void ATerrain::DestroyModelData(ATerrainVISGroup::ModelData* a_pModelData)
+void ATerrain::DestroyModelData(ATerrainSection::ModelData* a_pModelData)
 {
 	
 }
@@ -48,7 +48,7 @@ TBOOL ATerrain::HasAnyLODsQueued()
 	return TFALSE;
 }
 
-ATerrainLODBlock* ATerrain::AllocateLODBlock(ATerrainLODType a_eLODType, ATerrainVISGroup* a_pVISGroup)
+ATerrainLODBlock* ATerrain::AllocateLODBlock(ATerrainLODType a_eLODType, ATerrainSection* a_pVISGroup)
 {
 	return TNULL;
 }

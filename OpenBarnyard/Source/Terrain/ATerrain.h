@@ -39,7 +39,7 @@ public:
 	friend class ATerrainManager;
 
 	using t_GetCurrentVISGroup = TINT(*)();
-	using t_OnVISGroupChanged = void(*)(ATerrainVISGroup* a_pCurrent, ATerrainVISGroup* a_pPrevious);
+	using t_OnVISGroupChanged = void(*)(ATerrainSection* a_pCurrent, ATerrainSection* a_pPrevious);
 
 public:
 	ATerrain(TINT a_iUnused1, TINT a_iUnused2, TINT a_iPreloadTerrainBlockSize, TINT a_iStartVISGroup);
@@ -53,7 +53,7 @@ public:
 	
 	void WaitUntilLoaded();
 
-	void DestroyModelData(ATerrainVISGroup::ModelData* a_pModelData);
+	void DestroyModelData(ATerrainSection::ModelData* a_pModelData);
 
 	void UseBlocksInCurrentVIS(ATerrainLODType a_eLODType);
 
@@ -65,7 +65,7 @@ public:
 
 	void CancelUnrequiredJobs();
 	
-	ATerrainLODBlock* AllocateLODBlock(ATerrainLODType a_eLODType, ATerrainVISGroup* a_pVISGroup);
+	ATerrainLODBlock* AllocateLODBlock(ATerrainLODType a_eLODType, ATerrainSection* a_pVISGroup);
 
 	TBOOL IsCollisionPersistant() const { return m_bPersistantCollision; }
 	
@@ -180,8 +180,8 @@ private:
 	void MoveAllFinishedJobs(Toshi::T2SList<JobSlot>& a_rFreeJobs, Toshi::T2SList<JobSlot>& a_rUsedJobs);
 
 private:
-	static TINT GetCurrentVISGroupIndex();
-	static TINT GetPersistantVISGroupIndex();
+	static TINT GetCurrentSectionID();
+	static TINT GetPersistantSectionID();
 
 	inline static TINT ms_iPersistantVISGroupIndex = -1;
 	inline static TBOOL ms_bAutoVIS = TFALSE;
@@ -192,7 +192,7 @@ private:
 	Toshi::TVector4 m_Vector3;
 	Toshi::TVector4 m_Vector4;
 	// ...
-	Toshi::T2SList<ATerrainVISGroup::ModelData> m_ModelDatas;
+	Toshi::T2SList<ATerrainSection::ModelData> m_ModelDatas;
 	// ...
 	t_OnVISGroupChanged m_cbOnVISGroupChanged;
 	AModelLoaderJob m_aModelLoaderJobs[MAX_NUM_MODEL_LOADER_JOBS];
@@ -226,8 +226,8 @@ private:
 	ATerrainVIS* m_pTerrainVIS;
 	ATerrainOrderDVIS* m_pOrderDVIS;
 	// ...
-	TINT m_iCurrentGroup;
-	TINT m_iPreviousGroup;
+	TINT m_iCurrentSection;
+	TINT m_iPreviousSection;
 	TINT m_iPreloadTerrainBlockSize;
 	t_GetCurrentVISGroup m_fnGetCurrentVISGroup;
 	// ...

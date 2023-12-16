@@ -14,11 +14,22 @@ public:
 	AModLoaderTask();
 	~AModLoaderTask();
 
+	TBOOL OnCreate() override;
 	TBOOL OnUpdate(TFLOAT a_fDeltaTime) override;
 
-	void AddModInstance(AModInstance* a_pModInstance) { m_LoadedMods.PushBack(a_pModInstance); }
+	void LoadMods();
 
-	AGUI2TextBox* GetTextBox() { return m_pTextBox; }
+	Toshi::T2DList<AModInstance>& GetMods()
+	{
+		return m_LoadedMods;
+	}
+
+private:
+	void AddModInstance(AModInstance* a_pModInstance)
+	{
+		m_LoadedMods.PushBack(a_pModInstance);
+		m_uiNumMods += 1;
+	}
 
 private:
 	static void AGUI2MainPostRenderCallback();
@@ -26,5 +37,6 @@ private:
 private:
 	TFLOAT m_fTotalTime;
 	Toshi::T2DList<AModInstance> m_LoadedMods;
+	TUINT m_uiNumMods;
 	AGUI2TextBox* m_pTextBox;
 };

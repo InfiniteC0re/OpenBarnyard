@@ -5,23 +5,17 @@ class AModInstance :
 	public Toshi::T2DList<AModInstance>::Node
 {
 public:
-	using t_UpdateMod = TBOOL(*)(TFLOAT a_fDeltaTime);
-
-public:
-	AModInstance(t_UpdateMod a_fnUpdateCallback) :
-		m_fnUpdateCallback(a_fnUpdateCallback)
-	{ }
-
-	TBOOL Update(TFLOAT a_fDeltaTime)
+	AModInstance() = default;
+	
+	virtual ~AModInstance()
 	{
-		if (m_fnUpdateCallback)
-		{
-			return m_fnUpdateCallback(a_fDeltaTime);
-		}
-
-		return TTRUE;
+		OnUnload();
 	}
 
-private:
-	t_UpdateMod m_fnUpdateCallback;
+	virtual TBOOL OnLoad() = 0;
+	virtual void OnUnload() { }
+	virtual TBOOL OnUpdate(TFLOAT a_fDeltaTime) { return TTRUE; }
+	virtual void OnImGuiRender() = 0;
+	virtual TBOOL HasSettingsUI() { return TFALSE; }
+	virtual const char* GetName() = 0;
 };

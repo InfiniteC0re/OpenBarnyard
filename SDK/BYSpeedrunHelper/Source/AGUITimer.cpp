@@ -63,7 +63,10 @@ void AGUITimer::Update(TFLOAT a_fDeltaTime)
 
 void AGUITimer::Render()
 {
-	m_pTextBox->PreRender();
-	m_pTextBox->Render();
-	m_pTextBox->PostRender();
+	if (m_pTextBox && m_bIsVisible)
+	{
+		m_pTextBox->PreRender();
+		m_pTextBox->Render();
+		m_pTextBox->PostRender();
+	}
 }

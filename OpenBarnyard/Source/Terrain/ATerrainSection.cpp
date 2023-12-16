@@ -1,18 +1,18 @@
 #include "pch.h"
-#include "ATerrainVISGroup.h"
+#include "ATerrainSection.h"
 #include "ATerrain.h"
 #include "Assets/AAssetStreaming.h"
 #include "Assets/AMaterialLibraryManager.h"
 
-void ATerrainVISGroup::LoadCollision()
+void ATerrainSection::LoadCollision()
 {
 	auto pTerrain = ATerrain::GetSingleton();
 
-	if (m_szCollisionFile[0] != '\0')
+	if (m_szCollisionFilename[0] != '\0')
 	{
 		auto pBlock = (pTerrain->IsCollisionPersistant()) ?
 			pTerrain->GetVIS()->m_pPersistantTerrainBlock : 
-			m_ppHighLODBlocks[m_ui8AllocCollisionBlock];
+			m_ppHighLODBlocks[m_iCollisionMemBlockID];
 
 		m_pCollisionModelData = new (pBlock->GetMemBlock()) ModelData();
 
@@ -23,7 +23,7 @@ void ATerrainVISGroup::LoadCollision()
 		pModelLoaderJob->InitJob(
 			&m_pCollisionModelData->m_ModelRef,
 			pTRB,
-			m_szCollisionFile,
+			m_szCollisionFilename,
 			pTerrain->IsCollisionPersistant()
 		);
 
@@ -36,7 +36,7 @@ void ATerrainVISGroup::LoadCollision()
 	}
 }
 
-void ATerrainVISGroup::LoadModels(ATerrainLODType a_eLODType)
+void ATerrainSection::LoadModels(ATerrainLODType a_eLODType)
 {
 	TASSERT(a_eLODType == ATerrainLODType_High || a_eLODType == ATerrainLODType_Low);
 
@@ -49,16 +49,16 @@ void ATerrainVISGroup::LoadModels(ATerrainLODType a_eLODType)
 
 		if (a_eLODType == ATerrainLODType_High)
 		{
-			iNumLODs = m_iNumHighLODs;
-			ppLODNames = m_ppHighLODNames;
+			iNumLODs = m_iNumHighModelFiles;
+			ppLODNames = m_pszHighModelFiles;
 		}
 		else
 		{
-			iNumLODs = m_iNumLowLODs;
-			ppLODNames = m_ppLowLODNames;
+			iNumLODs = m_iNumLowModelFiles;
+			ppLODNames = m_pszLowModelFiles;
 		}
 
-		if (iNumLODs == 0 && m_szCollisionFile[0] == '\0')
+		if (iNumLODs == 0 && m_szCollisionFilename[0] == '\0')
 		{
 			SetLODQueued(a_eLODType, TFALSE);
 			SetLODEmpty(a_eLODType, TTRUE);
@@ -72,13 +72,13 @@ void ATerrainVISGroup::LoadModels(ATerrainLODType a_eLODType)
 
 			if (a_eLODType == ATerrainLODType_High)
 			{
-				uiNumLODBlocks = m_ui16NumHighLODBlocks;
+				uiNumLODBlocks = m_iNumHighMemBlocksUsed;
 				ppLODBlocks = m_ppHighLODBlocks;
 				pLODToBlock = m_pHighLODToBlock;
 			}
 			else
 			{
-				uiNumLODBlocks = m_ui16NumLowLODBlocks;
+				uiNumLODBlocks = m_iNumLowMemBlocksUsed;
 				ppLODBlocks = m_ppLowLODBlocks;
 				pLODToBlock = m_pLowLODToBlock;
 			}
@@ -140,7 +140,7 @@ void ATerrainVISGroup::LoadModels(ATerrainLODType a_eLODType)
 	}	
 }
 
-void ATerrainVISGroup::LoadMatlib(ATerrainLODType a_eLODType)
+void ATerrainSection::LoadMatlib(ATerrainLODType a_eLODType)
 {
 	TASSERT(a_eLODType == ATerrainLODType_High || a_eLODType == ATerrainLODType_Low);
 
@@ -149,14 +149,14 @@ void ATerrainVISGroup::LoadMatlib(ATerrainLODType a_eLODType)
 
 	if (a_eLODType == ATerrainLODType_High)
 	{
-		if (m_szHighLODMatLibName[0] == '\0') return;
-		uiAllocAtBlock = m_ui8AllocMatlibsHighBlock;
+		if (m_szHighMatLibFilename[0] == '\0') return;
+		uiAllocAtBlock = m_iHighMatLibMemBlockID;
 		ppBlocks = m_ppHighLODBlocks;
 	}
 	else
 	{
-		if (m_szLowLODMatLibName[0] == '\0') return;
-		uiAllocAtBlock = m_ui8AllocMatlibsLowBlock;
+		if (m_szLowMatLibFilename[0] == '\0') return;
+		uiAllocAtBlock = m_iLowMatLibMemBlockID;
 		ppBlocks = m_ppLowLODBlocks;
 	}
 
@@ -168,20 +168,20 @@ void ATerrainVISGroup::LoadMatlib(ATerrainLODType a_eLODType)
 		m_pMatLibHighTRB = new (pBlock->GetMemBlock()) Toshi::TTRB();
 		pBlock->SetupTRB(m_pMatLibHighTRB, pBlock);
 
-		pMatlibJob->InitJob(m_szHighLODMatLibName, m_pMatLibHighTRB, m_pMatLibHigh, pBlock->GetMemBlock());
+		pMatlibJob->InitJob(m_szHighMatLibFilename, m_pMatLibHighTRB, m_pMatLibHigh, pBlock->GetMemBlock());
 	}
 	else
 	{
 		m_pMatLibLowTRB = new (pBlock->GetMemBlock()) Toshi::TTRB();
 		pBlock->SetupTRB(m_pMatLibLowTRB, pBlock);
 
-		pMatlibJob->InitJob(m_szLowLODMatLibName, m_pMatLibLowTRB, m_pMatLibLow, pBlock->GetMemBlock());
+		pMatlibJob->InitJob(m_szLowMatLibFilename, m_pMatLibLowTRB, m_pMatLibLow, pBlock->GetMemBlock());
 	}
 
 	AAssetStreaming::GetSingleton()->AddMainThreadJob(pMatlibJob);
 }
 
-void ATerrainVISGroup::UnloadMatlib(ATerrainLODType a_eLODType)
+void ATerrainSection::UnloadMatlib(ATerrainLODType a_eLODType)
 {
 	TASSERT(a_eLODType == ATerrainLODType_High || a_eLODType == ATerrainLODType_Low);
 
@@ -217,13 +217,13 @@ void ATerrainVISGroup::UnloadMatlib(ATerrainLODType a_eLODType)
 	}
 }
 
-void ATerrainVISGroup::DestroyLOD(ATerrainLODType a_eLODType)
+void ATerrainSection::DestroyLOD(ATerrainLODType a_eLODType)
 {
 	TASSERT(a_eLODType == ATerrainLODType_High || a_eLODType == ATerrainLODType_Low);
 
 	auto pTerrain = ATerrain::GetSingleton();
 
-	TINT iNumLODs = (a_eLODType == ATerrainLODType_High) ? m_iNumHighLODs : m_iNumLowLODs;
+	TINT iNumLODs = (a_eLODType == ATerrainLODType_High) ? m_iNumHighModelFiles : m_iNumLowModelFiles;
 	for (TINT i = 0; i < iNumLODs; i++)
 	{
 		if (m_ppLODModelsData[a_eLODType][i])
@@ -245,7 +245,7 @@ void ATerrainVISGroup::DestroyLOD(ATerrainLODType a_eLODType)
 			m_pCollisionModelData = TNULL;
 		}
 
-		for (TUINT i = 0; i < m_ui16NumHighLODBlocks; i++)
+		for (TUINT i = 0; i < m_iNumHighMemBlocksUsed; i++)
 		{
 			auto pBlock = m_ppHighLODBlocks[i];
 
@@ -260,7 +260,7 @@ void ATerrainVISGroup::DestroyLOD(ATerrainLODType a_eLODType)
 	}
 	else
 	{
-		for (TUINT i = 0; i < m_ui16NumLowLODBlocks; i++)
+		for (TUINT i = 0; i < m_iNumLowMemBlocksUsed; i++)
 		{
 			auto pBlock = m_ppLowLODBlocks[i];
 
@@ -278,7 +278,7 @@ void ATerrainVISGroup::DestroyLOD(ATerrainLODType a_eLODType)
 	SetLODEmpty(a_eLODType, TFALSE);
 }
 
-void ATerrainVISGroup::RemoveFromStreamingQueue()
+void ATerrainSection::RemoveFromStreamingQueue()
 {
 	for (TINT i = 0; i < ATerrainLODType_NUMOF; i++)
 	{
@@ -289,12 +289,12 @@ void ATerrainVISGroup::RemoveFromStreamingQueue()
 
 			if (i == ATerrainLODType_High)
 			{
-				uiNumLODBlocks = m_ui16NumHighLODBlocks;
+				uiNumLODBlocks = m_iNumHighMemBlocksUsed;
 				ppLODBlocks = m_ppHighLODBlocks;
 			}
 			else
 			{
-				uiNumLODBlocks = m_ui16NumLowLODBlocks;
+				uiNumLODBlocks = m_iNumLowMemBlocksUsed;
 				ppLODBlocks = m_ppLowLODBlocks;
 			}
 
@@ -308,7 +308,7 @@ void ATerrainVISGroup::RemoveFromStreamingQueue()
 	}
 }
 
-TBOOL ATerrainVISGroup::IsMatLibLoaded(ATerrainLODType a_eLODType) const
+TBOOL ATerrainSection::IsMatLibLoaded(ATerrainLODType a_eLODType) const
 {
 	TASSERT(a_eLODType == ATerrainLODType_High || a_eLODType == ATerrainLODType_Low);
 
@@ -322,7 +322,7 @@ TBOOL ATerrainVISGroup::IsMatLibLoaded(ATerrainLODType a_eLODType) const
 	}
 }
 
-void ATerrainVISGroup::SetLODQueued(ATerrainLODType a_eLODType, TBOOL a_bQueued)
+void ATerrainSection::SetLODQueued(ATerrainLODType a_eLODType, TBOOL a_bQueued)
 {
 	TASSERT(a_eLODType == ATerrainLODType_High || a_eLODType == ATerrainLODType_Low);
 
@@ -336,7 +336,7 @@ void ATerrainVISGroup::SetLODQueued(ATerrainLODType a_eLODType, TBOOL a_bQueued)
 	}
 }
 
-void ATerrainVISGroup::SetLODLoaded(ATerrainLODType a_eLODType, TBOOL a_bLoaded)
+void ATerrainSection::SetLODLoaded(ATerrainLODType a_eLODType, TBOOL a_bLoaded)
 {
 	TASSERT(a_eLODType == ATerrainLODType_High || a_eLODType == ATerrainLODType_Low);
 
@@ -350,7 +350,7 @@ void ATerrainVISGroup::SetLODLoaded(ATerrainLODType a_eLODType, TBOOL a_bLoaded)
 	}
 }
 
-void ATerrainVISGroup::SetLODLoading(ATerrainLODType a_eLODType, TBOOL a_bLoading)
+void ATerrainSection::SetLODLoading(ATerrainLODType a_eLODType, TBOOL a_bLoading)
 {
 	TASSERT(a_eLODType == ATerrainLODType_High || a_eLODType == ATerrainLODType_Low);
 
@@ -364,7 +364,7 @@ void ATerrainVISGroup::SetLODLoading(ATerrainLODType a_eLODType, TBOOL a_bLoadin
 	}
 }
 
-void ATerrainVISGroup::SetLODEmpty(ATerrainLODType a_eLODType, TBOOL a_bEmpty)
+void ATerrainSection::SetLODEmpty(ATerrainLODType a_eLODType, TBOOL a_bEmpty)
 {
 	TASSERT(a_eLODType == ATerrainLODType_High || a_eLODType == ATerrainLODType_Low);
 
@@ -378,7 +378,7 @@ void ATerrainVISGroup::SetLODEmpty(ATerrainLODType a_eLODType, TBOOL a_bEmpty)
 	}
 }
 
-ATerrainVISGroup::ModelData::~ModelData()
+ATerrainSection::ModelData::~ModelData()
 {
 	TIMPLEMENT();
 

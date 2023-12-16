@@ -4,6 +4,8 @@
 
 #include <BYardSDK/AGUI2FontManager.h>
 
+#include <filesystem>
+
 void AModLoaderTask::AGUI2MainPostRenderCallback()
 {
 	AModLoaderTask::GetSingleton()->m_pTextBox->PreRender();
@@ -23,7 +25,7 @@ AModLoaderTask::AModLoaderTask()
 	m_pTextBox->SetText(L"ModLoader works!");
 	m_pTextBox->SetInFront();
 
-	AddHook(Hook_AGUI2_MainPostRenderCallback, HookType_Before, AGUI2MainPostRenderCallback);
+	AHooks::AddHook(Hook_AGUI2_MainPostRenderCallback, HookType_Before, AGUI2MainPostRenderCallback);
 }
 
 AModLoaderTask::~AModLoaderTask()
@@ -50,10 +52,71 @@ TBOOL AModLoaderTask::OnUpdate(TFLOAT a_fDeltaTime)
 
 	for (auto it = m_LoadedMods.Begin(); it != m_LoadedMods.End(); it++)
 	{
-		TBOOL bResult = it->Update(a_fDeltaTime);
+		TBOOL bResult = it->OnUpdate(a_fDeltaTime);
 		TASSERT(bResult != TFALSE);
 	}
 
 	m_fTotalTime += a_fDeltaTime;
 	return TTRUE;
+}
+
+TBOOL AModLoaderTask::OnCreate()
+{
+	LoadMods();
+
+	static wchar_t s_wcsBuffer[32];
+	const wchar_t* wcsFormat = (m_uiNumMods != 1) ? L"Loaded %d mods!" : L"Loaded %d mod!";
+	Toshi::TStringManager::String16Format(s_wcsBuffer, 32, wcsFormat, m_uiNumMods);
+	m_pTextBox->SetText(s_wcsBuffer);
+
+	return TTRUE;
+}
+
+void AModLoaderTask::LoadMods()
+{
+	for (const auto& entry : std::filesystem::directory_iterator(L"Mods"))
+	{
+		if (entry.path().extension().compare(L".dll") == 0)
+		{
+			const wchar_t* dll = entry.path().native().c_str();
+
+			char dllPath[MAX_PATH];
+			Toshi::TStringManager::StringUnicodeToChar(dllPath, entry.path().native().c_str(), -1);
+
+			HMODULE hModModule = LoadLibraryW(dll);
+			auto fnCreateModInstance = TREINTERPRETCAST(t_CreateModInstance, GetProcAddress(hModModule, "CreateModInstance"));
+
+			if (fnCreateModInstance)
+			{
+				AModInstance* pModInstance = fnCreateModInstance();
+
+				if (pModInstance)
+				{
+					TOSHI_INFO("Trying to initialise '{0}'", pModInstance->GetName());
+
+					if (pModInstance->OnLoad())
+					{
+						TOSHI_INFO("  Successfully initialised!");
+						AddModInstance(pModInstance);
+					}
+					else
+					{
+						TOSHI_ERROR("  Couldn't initialise!");
+						delete pModInstance;
+						FreeLibrary(hModModule);
+					}
+				}
+				else
+				{
+
+					TOSHI_ERROR("{0}: CreateModInstance returned TFALSE!", dllPath);
+				}
+			}
+			else
+			{
+				TOSHI_ERROR("{0}: CreateModInstance is not found!", dllPath);
+				FreeLibrary(hModModule);
+			}
+		}
+	}
 }

@@ -19,8 +19,9 @@ public:
 	void Hide() { m_bIsVisible = TFALSE; }
 	void Reset() { m_fTotalTime = 0.0f; }
 
+	TBOOL& IsVisible()  { return m_bIsVisible; }
+
 	TFLOAT GetTotalTime() const { return m_fTotalTime; }
-	TBOOL IsVisible() const { return m_bIsVisible; }
 	TBOOL IsStopped() const { return m_bIsStopped; }
 
 private:

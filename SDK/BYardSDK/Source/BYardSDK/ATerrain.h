@@ -40,7 +40,7 @@ public:
 	friend class ATerrainManager;
 
 	using t_GetCurrentVISGroup = TINT(*)();
-	using t_OnVISGroupChanged = void(*)(ATerrainVISGroup* a_pCurrent, ATerrainVISGroup* a_pPrevious);
+	using t_OnVISGroupChanged = void(*)(ATerrainSection* a_pCurrent, ATerrainSection* a_pPrevious);
 
 public:
 	virtual ~ATerrain() = default;
@@ -53,7 +53,7 @@ public:
 	
 	void WaitUntilLoaded();
 
-	void DestroyModelData(ATerrainVISGroup::ModelData* a_pModelData);
+	void DestroyModelData(ATerrainSection::ModelData* a_pModelData);
 
 	void UseBlocksInCurrentVIS(ATerrainLODType a_eLODType);
 
@@ -65,7 +65,7 @@ public:
 
 	void CancelUnrequiredJobs();
 	
-	ATerrainLODBlock* AllocateLODBlock(ATerrainLODType a_eLODType, ATerrainVISGroup* a_pVISGroup);
+	ATerrainLODBlock* AllocateLODBlock(ATerrainLODType a_eLODType, ATerrainSection* a_pVISGroup);
 
 	TBOOL IsCollisionPersistant() const { return m_bPersistantCollision; }
 	
@@ -192,7 +192,7 @@ public:
 	Toshi::TVector4 m_ShadowColor;
 	Toshi::TVector4 m_AmbientColor;
 	char PAD1[8];
-	Toshi::T2SList<ATerrainVISGroup::ModelData> m_ModelDatas;
+	Toshi::T2SList<ATerrainSection::ModelData> m_ModelDatas;
 	char PAD2[8];
 	t_OnVISGroupChanged m_cbOnVISGroupChanged;
 	AModelLoaderJob m_aModelLoaderJobs[MAX_NUM_MODEL_LOADER_JOBS];

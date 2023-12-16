@@ -6,7 +6,7 @@
 #include <Toshi/Render/TModelRegistry.h>
 #include <Toshi2/T2SList.h>
 
-class ATerrainVISGroup
+class ATerrainSection
 {
 public:
 	struct ModelData : 
@@ -60,30 +60,34 @@ public:
 
 private:
 	const char* m_szName;
-	const char** m_ppHighLODNames;
-	const char** m_ppLowLODNames;
-	TINT32 m_iNumHighLODs;
-	TINT32 m_iNumLowLODs;
+	const char** m_pszHighModelFiles;
+	const char** m_pszLowModelFiles;
+	TINT32 m_iNumHighModelFiles;
+	TINT32 m_iNumLowModelFiles;
+
 	TUINT32 m_Unk1;
 	TUINT32 m_Unk2;
-	const char* m_szCollisionFile;
+	const char* m_szCollisionFilename;
 	ModelData* m_pCollisionModelData;
 	ModelData** m_ppLODModelsData[ATerrainLODType_NUMOF];
-	const char* m_szHighLODMatLibName;
+	
+	const char* m_szHighMatLibFilename;
 	Toshi::TTRB* m_pMatLibHighTRB;
 	AMaterialLibrary* m_pMatLibHigh;
-	const char* m_szLowLODMatLibName;
+	
+	const char* m_szLowMatLibFilename;
 	Toshi::TTRB* m_pMatLibLowTRB;
 	AMaterialLibrary* m_pMatLibLow;
-	ATerrainLODType* m_pOtherGroupsLODs;
+
+	ATerrainLODType* m_pVisibility;
 	TUINT32 m_eFlags;
-	TUINT16 m_ui16NumHighLODBlocks;
-	TUINT16 m_ui16NumLowLODBlocks;
+	TUINT16 m_iNumHighMemBlocksUsed;
+	TUINT16 m_iNumLowMemBlocksUsed;
 	ATerrainLODBlock** m_ppHighLODBlocks;
 	ATerrainLODBlock** m_ppLowLODBlocks;
 	TUINT8* m_pHighLODToBlock;
 	TUINT8* m_pLowLODToBlock;
-	TUINT8 m_ui8AllocCollisionBlock;
-	TUINT8 m_ui8AllocMatlibsHighBlock;
-	TUINT8 m_ui8AllocMatlibsLowBlock;
+	TUINT8 m_iCollisionMemBlockID;
+	TUINT8 m_iHighMatLibMemBlockID;
+	TUINT8 m_iLowMatLibMemBlockID;
 };

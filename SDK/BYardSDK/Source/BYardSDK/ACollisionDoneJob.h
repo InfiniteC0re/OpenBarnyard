@@ -1,6 +1,6 @@
 #pragma once
 #include "ATRBLoaderJob.h"
-#include "ATerrainVISGroup.h"
+#include "ATerrainSection.h"
 
 class ACollisionDoneJob :
 	public AMainThreadJob
@@ -10,9 +10,9 @@ public:
 	virtual TBOOL RunJob() override;
 	virtual TBOOL CancelJob() override;
 
-	void InitJob(ATerrainVISGroup* a_pVISGroup, TBOOL a_bFlag);
+	void InitJob(ATerrainSection* a_pVISGroup, TBOOL a_bFlag);
 
 private:
-	ATerrainVISGroup* m_pVISGroup;
+	ATerrainSection* m_pVISGroup;
 	TBOOL m_bFlag;
 };

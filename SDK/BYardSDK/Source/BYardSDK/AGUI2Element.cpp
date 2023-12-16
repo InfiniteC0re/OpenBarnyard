@@ -126,6 +126,11 @@ void AGUI2Element::GetScreenTransform(AGUI2Transform& a_rOutTransform)
 	CALL_THIS(0x006c2690, AGUI2Element*, AGUI2Element*, this, AGUI2Transform&, a_rOutTransform);
 }
 
+void AGUI2Element::GetInvScreenTransform(AGUI2Transform& a_rOutTransform)
+{
+	CALL_THIS(0x006c29d0, AGUI2Element*, AGUI2Element*, this, AGUI2Transform&, a_rOutTransform);
+}
+
 AGUI2Element* AGUI2Element::CreateFromEngine()
 {
 	return CALL_THIS(0x006c2b10, AGUI2Element*, AGUI2Element*, new AGUI2Element);

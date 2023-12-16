@@ -31,7 +31,7 @@ void ASysShaderHAL::Flush()
 	pDevice->SetTextureStageState(0, D3DTSS_ALPHAARG2, 1);
 	pDevice->SetTextureStageState(1, D3DTSS_COLOROP, 1);
 	pDevice->SetTextureStageState(1, D3DTSS_ALPHAOP, 1);
-	pDevice->SetVertexShader(0x142);
+	pDevice->SetVertexShader(D3DFVF_TEX1 | D3DFVF_DIFFUSE | D3DFVF_XYZ);
 
 	static Toshi::TMatrix44 s_Identity;
 	static TUINT s_IdentityCreated;
@@ -82,7 +82,7 @@ void ASysShaderHAL::StartFlush()
 	pDevice->SetTextureStageState(0, D3DTSS_ALPHAARG2, 1);
 	pDevice->SetTextureStageState(1, D3DTSS_COLOROP, 1);
 	pDevice->SetTextureStageState(1, D3DTSS_ALPHAOP, 1);
-	pDevice->SetVertexShader(0x142);
+	pDevice->SetVertexShader(D3DFVF_TEX1 | D3DFVF_DIFFUSE | D3DFVF_XYZ);
 
 	static Toshi::TMatrix44 s_Identity;
 	static TUINT s_IdentityCreated;

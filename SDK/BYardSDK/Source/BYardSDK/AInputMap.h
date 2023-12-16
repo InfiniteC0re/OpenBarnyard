@@ -84,3 +84,5 @@ enum AInputCommand
 	AInputCommand_Horn = 80,
 	AInputCommand_CUSTOM_COMMAND = 77,
 };
+
+class AInputMap;

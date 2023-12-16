@@ -111,6 +111,7 @@ public:
 	virtual TBOOL IsPointInside(const Toshi::TVector2& a_rPoint);
 
 	void GetScreenTransform(AGUI2Transform& a_rOutTransform);
+	void GetInvScreenTransform(AGUI2Transform& a_rOutTransform);
 
 	static AGUI2Element* CreateFromEngine();
 

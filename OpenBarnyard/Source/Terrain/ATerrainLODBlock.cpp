@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "ATerrainLODBlock.h"
-#include "ATerrainVISGroup.h"
+#include "ATerrainSection.h"
 
 #include <Toshi/Core/TSystem.h>
 #include <Toshi/Core/TScheduler.h>
@@ -63,7 +63,7 @@ void ATerrainLODBlock::UpdateLastAccessTime()
 	m_fLastAccessTime = g_oSystemManager.GetScheduler()->GetTotalTime();
 }
 
-void ATerrainLODBlock::Assign(ATerrainVISGroup* a_pVISGroup, ATerrainLODType a_eLODType)
+void ATerrainLODBlock::Assign(ATerrainSection* a_pVISGroup, ATerrainLODType a_eLODType)
 {
 	if (m_pVISGroup)
 	{

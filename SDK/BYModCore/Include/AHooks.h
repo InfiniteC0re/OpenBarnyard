@@ -1,51 +1,62 @@
 #pragma once
-#include "BYardSDK/AGUISlideshow.h"
+#include <BYardSDK/AGUISlideshow.h>
+#include <BYardSDK/ATerrain.h>
 
 #include <Toshi2/T2Vector.h>
 
-extern "C" {
+enum Hook
+{
+	Hook_AGUI2_MainPostRenderCallback,
+	Hook_AGUISlideshow_ProcessInput,
+	Hook_ATerrain_Render,
+	Hook_AModelLoader_LoadTRBCallback,
+	Hook_NewGameStarted,
+	Hook_NUMOF,
+};
 
-	enum Hook
+enum HookType
+{
+	HookType_Before,
+	HookType_After,
+	HookType_NUMOF
+};
+
+class MODCORE_API AHooks
+{
+public:
+	constexpr static TUINT MAX_NUM_CALLBACKS = 16;
+
+	struct GUI2
 	{
-		Hook_AGUI2_MainPostRenderCallback,
-		Hook_AGUISlideshow_ProcessInput,
-		Hook_NewGameStarted,
-		Hook_NUMOF,
+		using t_MainPostRenderCallback = void(*)();
+		inline static Toshi::T2Vector<t_MainPostRenderCallback, MAX_NUM_CALLBACKS> MainPostRenderCallback[HookType_NUMOF];
 	};
 
-	enum HookType
+	struct GUISlideshow
 	{
-		HookType_Before,
-		HookType_After,
-		HookType_NUMOF
+		using t_ProcessInput = TBOOL(*)(AGUISlideshow* a_pSlideshow, Toshi::TInputInterface::InputEvent* a_pEvent);
+		inline static Toshi::T2Vector<t_ProcessInput, MAX_NUM_CALLBACKS> ProcessInput[HookType_NUMOF];
 	};
 
-	class AHooks
+	struct Terrain
 	{
-	public:
-		constexpr static TUINT MAX_NUM_CALLBACKS = 16;
-
-		struct GUI2
-		{
-			using t_MainPostRenderCallback = void(*)();
-			inline static Toshi::T2Vector<t_MainPostRenderCallback, MAX_NUM_CALLBACKS> MainPostRenderCallback[HookType_NUMOF];
-		};
-
-		struct GUISlideshow
-		{
-			using t_ProcessInput = TBOOL(*)(AGUISlideshow* a_pSlideshow, Toshi::TInputInterface::InputEvent* a_pEvent);
-			inline static Toshi::T2Vector<t_ProcessInput, MAX_NUM_CALLBACKS> ProcessInput[HookType_NUMOF];
-		};
-
-		struct Uncategorized
-		{
-			using t_NewGameStarted = void(*)();
-			inline static Toshi::T2Vector<t_NewGameStarted, MAX_NUM_CALLBACKS> NewGameStarted[HookType_NUMOF];
-		};
-
-	public:
-		static void Initialise();
+		using t_Render = void(*)(ATerrain* a_pTerrain);
+		inline static Toshi::T2Vector<t_Render, MAX_NUM_CALLBACKS> Render[HookType_NUMOF];
 	};
 
-	TBOOL __declspec(dllexport) AddHook(Hook a_eHook, HookType a_eHookType, void* a_pCallback);
-}
+	struct ModelLoader
+	{
+		using t_LoadTRBCallback = TBOOL(*)(Toshi::TModel* a_pModel);
+		inline static Toshi::T2Vector<t_LoadTRBCallback, MAX_NUM_CALLBACKS> LoadTRBCallback[HookType_NUMOF];
+	};
+
+	struct Uncategorized
+	{
+		using t_NewGameStarted = void(*)();
+		inline static Toshi::T2Vector<t_NewGameStarted, MAX_NUM_CALLBACKS> NewGameStarted[HookType_NUMOF];
+	};
+
+public:
+	static void Initialise();
+	TBOOL static AddHook(Hook a_eHook, HookType a_eHookType, void* a_pCallback);
+};

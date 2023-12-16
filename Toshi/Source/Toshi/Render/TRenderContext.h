@@ -159,6 +159,7 @@ namespace Toshi {
 		TRenderInterface* m_pRenderer;                 // 0x0004
 		FLAG m_eFlags;                                 // 0x0008
 		TUINT m_eClipFlags;                            // 0x000C
+		TUINT m_Unk;                                   // 0x0010
 		CameraMode m_eCameraMode;                      // 0x0014
 		Params m_oParams;                              // 0x0018
 		PROJECTIONPARAMS m_ProjParams;                 // 0x0030
