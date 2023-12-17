@@ -1,10 +1,10 @@
 #pragma once
 
 template <class T, size_t Address>
-class AHookedSingleton
+class THookedSingleton
 {
 public:
-	AHookedSingleton() = delete;
+	THookedSingleton() = delete;
 
 	static TBOOL IsSingletonCreated() { return (*ms_ppSingleton) != TNULL; }
 	static T* GetSingleton() { return *ms_ppSingleton; }

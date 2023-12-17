@@ -7,6 +7,7 @@
 #include <BYardSDK/AGUI2.h>
 
 #include <Toshi/Input/TInputDeviceKeyboard.h>
+#include <Platform/Windows/TMSWindow.h>
 
 MEMBER_HOOK(0x006b4a20, Toshi::TMemory, TMemory_Free, TBOOL, void* a_pMem)
 {
@@ -21,9 +22,35 @@ MEMBER_HOOK(0x006b5230, Toshi::TMemory, TMemory_Alloc, void*, TUINT a_uiSize, TI
 HOOK(0x006b4ba0, TMemory_GetMemInfo, void, Toshi::TMemory::MemInfo& a_rMemInfo, Toshi::TMemory::MemBlock* a_pBlock)
 {
 	auto pBlock = (*(Toshi::TMemory**)0x007ce1d4)->GetGlobalBlock();
-
-	TOSHI_INFO(pBlock->m_szName);
 	Toshi::TMemory::GetMemInfo(a_rMemInfo, pBlock);
+}
+
+MEMBER_HOOK(0x006da4d0, Toshi::TMSWindow, TMSWindow_SetPosition, void, TUINT x, TUINT y, TUINT width, TUINT height)
+{
+	if (IsWindowed())
+	{
+		// Fix window size when in windowed mode
+		RECT rect;
+		rect.left = x;
+		rect.top = y;
+		rect.right = width;
+		rect.bottom = height;
+
+		if (TRUE == AdjustWindowRectEx(
+			&rect,
+			GetWindowLongA(GetHWND(), GWL_STYLE),
+			FALSE,
+			GetWindowLongA(GetHWND(), GWL_EXSTYLE)
+		))
+		{
+			x = rect.left;
+			y = rect.top;
+			width = rect.right;
+			height = rect.bottom;
+		}
+	}
+	
+	CallOriginal(x, y, width, height);
 }
 
 MEMBER_HOOK(0x0059dac0, AGUISlideshow, AGUISlideshow_ProcessInput, TBOOL, Toshi::TInputInterface::InputEvent* a_pEvent)
@@ -62,7 +89,7 @@ HOOK(0x0042ab30, FUN_0042ab30, void)
 		AHooks::Uncategorized::NewGameStarted[HookType_Before][i]();
 	}
 
-	*(TINT*)0x007817ec = 1;
+	CallOriginal();
 
 	for (TUINT i = 0; i < AHooks::Uncategorized::NewGameStarted[HookType_After].Size(); i++)
 	{
@@ -88,8 +115,24 @@ HOOK(0x00635410, AGUI2_MainPostRenderCallback, void)
 MEMBER_HOOK(0x00635440, AGUI2, AGUI2_Constructor, AGUI2*)
 {
 	CallOriginal();
-	m_bShowMemStatsInfo = TTRUE;
 	return this;
+}
+
+MEMBER_HOOK(0x006357d0, AGUI2, AGUI2_OnUpdate, TBOOL, TFLOAT a_fDeltaTime)
+{
+	if (m_bShowMemStatsInfo) m_oMemStats.Show();
+	else m_oMemStats.Hide();
+
+	if (m_bShowFPSInfo) m_oFPS.Show();
+	else m_oFPS.Hide();
+
+	if (m_bShowPlayerInfo) m_oPlayerInfo.Show();
+	else m_oPlayerInfo.Hide();
+
+	if (m_bShowTexturesInfo) m_oTexturesInfo.Show();
+	else m_oTexturesInfo.Hide();
+
+	return CallOriginal(a_fDeltaTime);
 }
 
 MEMBER_HOOK(0x004293d0, AGameStateController, AGameStateController_ProcessInput, TBOOL, Toshi::TInputInterface::InputEvent* a_pInputEvent)
@@ -142,10 +185,12 @@ void AHooks::Initialise()
 	InstallHook<TMemory_Free>();
 	InstallHook<TMemory_Alloc>();
 	InstallHook<TMemory_GetMemInfo>();
+	InstallHook<TMSWindow_SetPosition>();
 	InstallHook<AGUISlideshow_ProcessInput>();
 	InstallHook<FUN_0042ab30>();
 	InstallHook<AGUI2_MainPostRenderCallback>();
 	InstallHook<AGUI2_Constructor>();
+	InstallHook<AGUI2_OnUpdate>();
 	InstallHook<AGameStateController_ProcessInput>();
 	InstallHook<ATerrain_Render>();
 	InstallHook<AModelLoader_AModelLoaderLoadTRBCallback>();

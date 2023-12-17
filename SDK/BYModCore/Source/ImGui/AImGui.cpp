@@ -11,7 +11,9 @@
 #include <BYardSDK/AGameState.h>
 #include <BYardSDK/AGameStateController.h>
 #include <BYardSDK/AGUI2MouseCursor.h>
-#include <BYardSDK/AHookedRenderD3DInterface.h>
+#include <BYardSDK/THookedRenderD3DInterface.h>
+
+#include <Toshi/Strings/TPString8.h>
 
 void AImGUI_RenderCallback()
 {
@@ -33,7 +35,7 @@ AImGUI::AImGUI()
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
 
-	io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\Bahnschrift.ttf", 15.0f);
+	io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\Bahnschrift.ttf", 17.0f);
 
 	ImGuiStyle& style = ImGui::GetStyle();
 	style.Colors[ImGuiCol_Text] = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
@@ -89,7 +91,7 @@ AImGUI::AImGUI()
 	style.FramePadding = ImVec2(12, 5);
 	style.WindowBorderSize = 0.0f;
 
-	auto pRender = AHookedRenderD3DInterface::GetSingleton();
+	auto pRender = THookedRenderD3DInterface::GetSingleton();
 	ImGui_ImplDX8_Init(pRender->GetDirect3DDevice());
 	ImGui_ImplWin32_Init(pRender->GetWindow()->GetHWND());
 	m_DisplayParams = *pRender->GetCurrentDisplayParams();
@@ -154,6 +156,82 @@ void AImGUI::Render()
 	{
 		auto pModLoader = AModLoaderTask::GetSingleton();
 		auto pMods = &pModLoader->GetMods();
+
+		if (ImGui::BeginTabItem("ModCore"))
+		{
+			ImGui::TextColored(ImColor(200, 200, 200, 255), "AGUI2");
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 3);
+
+			ImGui::Checkbox("Show FPS", &AGUI2::GetSingleton()->m_bShowFPSInfo);
+			ImGui::Checkbox("Show Player Info", &AGUI2::GetSingleton()->m_bShowPlayerInfo);
+			ImGui::Checkbox("Show Textures Info", &AGUI2::GetSingleton()->m_bShowTexturesInfo);
+			ImGui::Checkbox("Show Memory Info", &AGUI2::GetSingleton()->m_bShowMemStatsInfo);
+
+			ImGui::TextColored(ImColor(200, 200, 200, 255), "AGameStateController");
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 3);
+
+			if (ImGui::Button("Load AFrontEndDebugSSeqState"))
+			{
+				Toggle();
+
+				auto pDebugSSeqGameState = TSTATICCAST(AGameState*, TMalloc(15300));
+				CALL_THIS(0x00407f70, AGameState*, AGameState*, pDebugSSeqGameState);
+
+				AGameStateController::GetSingleton()->PushState(pDebugSSeqGameState);
+			}
+
+			static const char* MINIGAME_LIST[] = {
+				"AChickenFireMinigameState",
+				"AGolfMiniGameState",
+				"AStatuesMiniGameState",
+				"ACarChaseMiniGameState",
+				"AGateCrashMiniGameState",
+				"ABarnYardPoolMiniGameState",
+				"ABikeRaceMicroGame",
+				"AChasingChicksMiniGame",
+				"AVeggiePatchDefenderGame",
+				"ACowTippingMiniGameState",
+				"ATapperMiniGameState",
+				"ADartMiniGame",
+				"AWhackARaccMiniGameState",
+				"ATeaseMrsBeadyGame",
+				"AHoneyCollectingGame",
+				"APrecisionSquirt",
+				"AChickenCoopDefender",
+				"AFinalMissionMiniGameState"
+			};
+
+			static TUINT NUM_MINIGAMES = sizeof(MINIGAME_LIST) / sizeof(*MINIGAME_LIST);
+
+			static TINT s_iSelectedMiniGame = 0;
+
+			if (ImGui::BeginCombo("AMiniGame", MINIGAME_LIST[s_iSelectedMiniGame]))
+			{
+				for (TINT i = 0; i < NUM_MINIGAMES; i++)
+				{
+					TBOOL bIsSelected = s_iSelectedMiniGame == i;
+					ImGui::Selectable(MINIGAME_LIST[i], &bIsSelected);
+
+					if (bIsSelected)
+					{
+						s_iSelectedMiniGame = i;
+					}
+				}
+
+				ImGui::EndCombo();
+			}
+
+			if (ImGui::Button("Load MiniGame"))
+			{
+				Toggle();
+				class AMiniGameManager;
+				auto pMiniGameManager = *(AMiniGameManager**)0x0078266c;
+
+				CALL_THIS(0x00469890, AMiniGameManager*, void, pMiniGameManager, const Toshi::TPString8&, MINIGAME_LIST[s_iSelectedMiniGame]);
+			}
+
+			ImGui::EndTabItem();
+		}
 
 		for (auto it = pMods->Begin(); it != pMods->End(); it++)
 		{

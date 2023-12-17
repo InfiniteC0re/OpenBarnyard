@@ -20,7 +20,7 @@ AModLoaderTask::AModLoaderTask()
 	auto pFont = AGUI2FontManager::FindFont("Rekord18");
 	m_pTextBox = AGUI2TextBox::CreateFromEngine();
 	m_pTextBox->SetAttachment(AGUI2Element::Anchor_MiddleCenter, AGUI2Element::Pivot_TopCenter);
-	m_pTextBox->Create(pFont, 200.0f);
+	m_pTextBox->Create(pFont, 300.0f);
 	m_pTextBox->SetTransform(0, -285.0f);
 	m_pTextBox->SetText(L"ModLoader works!");
 	m_pTextBox->SetInFront();
@@ -64,9 +64,9 @@ TBOOL AModLoaderTask::OnCreate()
 {
 	LoadMods();
 
-	static wchar_t s_wcsBuffer[32];
-	const wchar_t* wcsFormat = (m_uiNumMods != 1) ? L"Loaded %d mods!" : L"Loaded %d mod!";
-	Toshi::TStringManager::String16Format(s_wcsBuffer, 32, wcsFormat, m_uiNumMods);
+	static wchar_t s_wcsBuffer[64];
+	const wchar_t* wcsFormat = (m_uiNumMods != 1) ? L"Loaded %d mods!\n%ls" : L"Loaded %d mod!\n%ls";
+	Toshi::TStringManager::String16Format(s_wcsBuffer, 64, wcsFormat, m_uiNumMods, L"Press ~ to open menu.");
 	m_pTextBox->SetText(s_wcsBuffer);
 
 	return TTRUE;

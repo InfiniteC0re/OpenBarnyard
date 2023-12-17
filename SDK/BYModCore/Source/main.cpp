@@ -14,6 +14,7 @@
 #include "BYardSDK/AGUISlideshow.h"
 
 #include <Toshi/Core/THPTimer.h>
+#include <Toshi/Utils/TUtil.h>
 
 #include <stdio.h>
 #include <windows.h>
@@ -34,6 +35,9 @@ DWORD WINAPI MainThread(HMODULE hModule)
 	TFLOAT fWidth, fHeight;
 	AGUI2::GetSingleton()->GetDimensions(fWidth, fHeight);
 	TOSHI_INFO("AGUI2 is ready! (Dimensions: {0}x{1})", fWidth, fHeight);
+	
+	Toshi::TUtil::CreateTPStringPool();
+	Toshi::TUtil::SetTPStringPool(**(Toshi::TPString8Pool***)0x007ce230);
 
 	// Create AModLoaderTask
 	Toshi::TTask* pRootTask = *(Toshi::TTask**)0x0077de78;

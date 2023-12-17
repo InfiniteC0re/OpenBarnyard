@@ -6,13 +6,13 @@
 #include "AGUI2MouseCursor.h"
 #include "AGUI2TextureSection.h"
 #include "THookedObject.h"
-#include "AHookedSingleton.h"
+#include "THookedSingleton.h"
 
 #include <Toshi/Core/TTask.h>
 
 class AGUI2 : 
 	public Toshi::TTask,
-	public AHookedSingleton<AGUI2, 0x007b4ff4>
+	public THookedSingleton<AGUI2, 0x007b4ff4>
 {
 public:
 	virtual TBOOL OnCreate() = 0;

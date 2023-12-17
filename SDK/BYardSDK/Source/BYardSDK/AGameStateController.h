@@ -1,6 +1,6 @@
 #pragma once
 #include "AGameState.h"
-#include "AHookedSingleton.h"
+#include "THookedSingleton.h"
 #include "AGUI2Rectangle.h"
 
 #include <Toshi/Core/TTask.h>
@@ -8,7 +8,7 @@
 #include <Toshi2/T2DynamicVector.h>
 
 TOBJECT(AGameStateController, Toshi::TTask, TFALSE),
-	public AHookedSingleton<AGameStateController, 0x00781788>
+	public THookedSingleton<AGameStateController, 0x00781788>
 {
 public:
 	virtual TBOOL OnCreate() override;

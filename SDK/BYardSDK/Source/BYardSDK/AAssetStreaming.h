@@ -1,11 +1,11 @@
 #pragma once
 #include "AMainThreadJob.h"
-#include "AHookedSingleton.h"
+#include "THookedSingleton.h"
 
 #include <Toshi/File/TFileStream.h>
 
 class AAssetStreaming :
-	public AHookedSingleton<AAssetStreaming, 0x0079b114>
+	public THookedSingleton<AAssetStreaming, 0x0079b114>
 {
 public:
 	void Update();

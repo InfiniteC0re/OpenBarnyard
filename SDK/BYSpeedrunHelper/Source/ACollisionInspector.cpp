@@ -5,7 +5,7 @@
 
 #include <BYardSDK/ASysShader.h>
 #include <BYardSDK/ASysMesh.h>
-#include <BYardSDK/AHookedRenderD3DInterface.h>
+#include <BYardSDK/THookedRenderD3DInterface.h>
 
 ACollisionInspector::ACollisionInspector()
 {
@@ -79,7 +79,7 @@ TBOOL ACollisionInspector::AModelLoader_LoadTRBCallback(Toshi::TModel* a_pModel)
 
 				if (!ms_pCollisionMaterial)
 				{
-					auto pRender = AHookedRenderD3DInterface::GetSingleton();
+					auto pRender = THookedRenderD3DInterface::GetSingleton();
 					ms_pCollisionMaterial = ASysShader::GetSingleton()->CreateMaterial("collision");
 					ms_pCollisionMaterial->SetBlendMode(ASysMaterial::BLENDMODE_1);
 					ms_pCollisionMaterial->SetTexture(pRender->GetInvalidTexture());

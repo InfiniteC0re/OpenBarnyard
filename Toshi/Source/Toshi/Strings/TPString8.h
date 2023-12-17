@@ -126,7 +126,12 @@ namespace Toshi {
 
 	private:
 		T2Allocator* m_pAllocator;
+		TUINT m_Unk1;
 		T2Map<const char*, TPooledString8*, TPooledString8::Comparator> m_oMap;
+		TUINT m_Unk2;
+		TUINT m_Unk3;
+		TUINT m_Unk4;
+		TUINT m_Unk5;
 	};
 
 	class TPString8

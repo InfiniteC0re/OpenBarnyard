@@ -6,12 +6,12 @@
 #include "ASkeletonDoneJob.h"
 #include "ACollisionDoneJob.h"
 #include "ASectionDoneJob.h"
-#include "AHookedSingleton.h"
+#include "THookedSingleton.h"
 
 #include <Toshi2/T2SimpleArray.h>
 
 class ATerrain :
-	public AHookedSingleton<ATerrain, 0x00796300>
+	public THookedSingleton<ATerrain, 0x00796300>
 {
 public:
 	constexpr static TUINT MAX_NUM_MODEL_LOADER_JOBS = 128;

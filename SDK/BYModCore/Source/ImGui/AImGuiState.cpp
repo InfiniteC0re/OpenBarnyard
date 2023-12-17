@@ -4,7 +4,7 @@
 #include "imgui.h"
 
 #include <BYardSDK/ARootTask.h>
-#include <BYardSDK/AHookedRenderD3DInterface.h>
+#include <BYardSDK/THookedRenderD3DInterface.h>
 #include <BYardSDK/AGUI2.h>
 
 #include <Toshi/Input/TInputDeviceKeyboard.h>
@@ -16,7 +16,7 @@ AImGuiState::AImGuiState()
 
 TBOOL AImGuiState::OnUpdate(TFLOAT a_fDeltaTime)
 {
-	auto pRender = AHookedRenderD3DInterface::GetSingleton();
+	auto pRender = THookedRenderD3DInterface::GetSingleton();
 	auto pDisplayParams = pRender->GetCurrentDisplayParams();
 
 	Toshi::TVector2 transformedCursorPos = AGUI2::GetSingleton()->m_oMouseCursor.m_CursorPos;
