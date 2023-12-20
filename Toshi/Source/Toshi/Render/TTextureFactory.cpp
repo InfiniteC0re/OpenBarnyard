@@ -45,6 +45,12 @@ namespace Toshi {
 		}
 	}
 
+	TNodeList<TTextureFactory::NameEntry>* TTextureFactory::GetList(TUINT a_uiList)
+	{
+		TASSERT(a_uiList < NUM_LISTS);
+		return &m_aLists[a_uiList];
+	}
+
 	TTexture* TTextureFactory::FindTexture(const char* a_szName) const
 	{
 		auto pList = &m_aLists[HashName(a_szName)];

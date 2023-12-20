@@ -42,6 +42,8 @@ namespace Toshi {
 		virtual TTexture* CreateEx(void* a_pData, TUINT a_uiDataSize, TUINT a_uiWidth, TUINT a_uiHeight, TUINT a_uiMipLevels, TTEXTURERESOURCEFORMAT a_eFormat, BOOL a_bNoMipLevels) = 0;
 		virtual TTexture* CreateFromT2Texture(T2Texture* a_pTexture) = 0;
 
+		TNodeList<NameEntry>* GetList(TUINT a_uiList);
+
 		TTexture* FindTexture(const char* a_szName) const;
 		NameEntry* RegisterTexture(const char* a_szName, TTexture* a_pTexture);
 		void DeregisterTexture(TTexture* a_pTexture);

@@ -7,8 +7,12 @@
 #include <AHooks.h>
 
 #include <BYardSDK/AGUI2.h>
+#include <BYardSDK/THookedRenderD3DInterface.h>
 
 #include <Toshi/Core/THPTimer.h>
+#include <Toshi/File/TFile.h>
+
+TOSHI_NAMESPACE_USING
 
 AGUITimer g_Timer;
 
@@ -32,7 +36,6 @@ public:
 			AHooks::AddHook(Hook_AGUI2_MainPostRenderCallback, HookType_Before, AGUI2_MainPostRenderCallback))
 		{
 			ACollisionInspector::CreateSingleton();
-			g_Timer.Create();
 			return TTRUE;
 		}
 
@@ -50,10 +53,28 @@ public:
 		
 	}
 
+	void OnRenderInterfaceReady(Toshi::TRenderD3DInterface* a_pRenderInterface) override
+	{
+		TRenderInterface::SetSingletonExplicit(
+			THookedRenderD3DInterface::GetSingleton()
+		);
+	}
+
+	void OnAGUI2Ready() override
+	{
+		g_Timer.Create();
+	}
+
 	void OnImGuiRender() override
 	{
 		ImGui::Checkbox("Show Timer", &g_Timer.IsVisible());
 		ImGui::Checkbox("Show Collision", &ACollisionInspector::GetSingleton()->IsCollisionVisible());
+
+		if (ImGui::Button("Start Timer")) g_Timer.Start();
+		ImGui::SameLine();
+		if (ImGui::Button("Stop Timer")) g_Timer.Stop();
+		ImGui::SameLine();
+		if (ImGui::Button("Reset Timer")) g_Timer.Reset();
 	}
 	
 	TBOOL HasSettingsUI() override
@@ -71,8 +92,9 @@ extern "C"
 {
 	MODLOADER_EXPORT AModInstance* CreateModInstance()
 	{
-		Toshi::TMemory::Initialise(8 * 1024 * 1024, 0);
-		Toshi::TLog::Create("BYSpeedrunHelper");
+		TMemory::Initialise(8 * 1024 * 1024, 0);
+		TFileManager::Create();
+		TLog::Create("BYSpeedrunHelper");
 
 		return new ABYSpeedrunHelper();
 	}

@@ -1,4 +1,4 @@
-project "BYModCore"
+project "BYTexturePacks"
 	language "C++"
 	cppdialect "C++20"
 	staticruntime "on"
@@ -16,7 +16,7 @@ project "BYModCore"
 	{
 		"Toshi",
 		"BYardSDK",
-		"detours.lib"
+		"BYModCore"
 	}
 	
 	libdirs
@@ -36,9 +36,9 @@ project "BYModCore"
 	includedirs
 	{
 		"Source",
-		"Include",
 		"%{wks.location}/Toshi/Source",
 		"%{wks.location}/SDK/BYardSDK/Source",
+		"%{wks.location}/SDK/BYModCore/Include",
 		"%{IncludeDir.spdlog}",
 		"%{IncludeDir.detours}"
 	}
@@ -59,8 +59,8 @@ project "BYModCore"
 
 		defines
 		{
-			"TOSHI_MODLOADER",
 			"TOSHI_SDK",
+			"TOSHI_MODLOADER_CLIENT",
 			"TOSHI_SKU_WINDOWS"
 		}
 

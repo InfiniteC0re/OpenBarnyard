@@ -170,7 +170,7 @@ void AImGUI::Render()
 			ImGui::TextColored(ImColor(200, 200, 200, 255), "AGameStateController");
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 3);
 
-			if (ImGui::Button("Load AFrontEndDebugSSeqState"))
+			if (ImGui::Button("Open SSeq Debug Menu"))
 			{
 				Toggle();
 
@@ -180,54 +180,71 @@ void AImGUI::Render()
 				AGameStateController::GetSingleton()->PushState(pDebugSSeqGameState);
 			}
 
-			static const char* MINIGAME_LIST[] = {
-				"AChickenFireMinigameState",
-				"AGolfMiniGameState",
-				"AStatuesMiniGameState",
-				"ACarChaseMiniGameState",
-				"AGateCrashMiniGameState",
-				"ABarnYardPoolMiniGameState",
-				"ABikeRaceMicroGame",
-				"AChasingChicksMiniGame",
-				"AVeggiePatchDefenderGame",
-				"ACowTippingMiniGameState",
-				"ATapperMiniGameState",
-				"ADartMiniGame",
-				"AWhackARaccMiniGameState",
-				"ATeaseMrsBeadyGame",
-				"AHoneyCollectingGame",
-				"APrecisionSquirt",
-				"AChickenCoopDefender",
-				"AFinalMissionMiniGameState"
-			};
-
-			static TUINT NUM_MINIGAMES = sizeof(MINIGAME_LIST) / sizeof(*MINIGAME_LIST);
-
-			static TINT s_iSelectedMiniGame = 0;
-
-			if (ImGui::BeginCombo("AMiniGame", MINIGAME_LIST[s_iSelectedMiniGame]))
-			{
-				for (TINT i = 0; i < NUM_MINIGAMES; i++)
-				{
-					TBOOL bIsSelected = s_iSelectedMiniGame == i;
-					ImGui::Selectable(MINIGAME_LIST[i], &bIsSelected);
-
-					if (bIsSelected)
-					{
-						s_iSelectedMiniGame = i;
-					}
-				}
-
-				ImGui::EndCombo();
-			}
-
-			if (ImGui::Button("Load MiniGame"))
+			if (ImGui::Button("test"))
 			{
 				Toggle();
-				class AMiniGameManager;
-				auto pMiniGameManager = *(AMiniGameManager**)0x0078266c;
+				//AGameStateController::GetSingleton()->ReplaceState(new AGameState);
+				*(TUINT*)(0x007817ec) = 1;
+				CALL_THIS(0x00651a90, void*, void, *(void**)0x007b5ea8);
+				AGameStateController::GetSingleton()->m_eFlags |= 0x20;
+				CALL_THIS(0x00429580, AGameStateController*, void, AGameStateController::GetSingleton(), TINT, 0x2002);
+				//AGameStateController::GetSingleton()->GetCurrentState()->Remove();
+			}
 
-				CALL_THIS(0x00469890, AMiniGameManager*, void, pMiniGameManager, const Toshi::TPString8&, MINIGAME_LIST[s_iSelectedMiniGame]);
+			auto pPrevState = AGameStateController::GetSingleton()->GetPreviousState();
+
+			if (pPrevState->IsExactly((Toshi::TClass*)0x00781b0c))
+			{
+				static const char* MINIGAME_LIST[] = {
+					"AChickenFireMinigameState",
+					"AGolfMiniGameState",
+					"AStatuesMiniGameState",
+					"ACarChaseMiniGameState",
+					"AGateCrashMiniGameState",
+					"ABarnYardPoolMiniGameState",
+					"ABikeRaceMicroGame",
+					"AChasingChicksMiniGame",
+					"AVeggiePatchDefenderGame",
+					"ACowTippingMiniGameState",
+					"ATapperMiniGameState",
+					"ADartMiniGame",
+					"AWhackARaccMiniGameState",
+					"ATeaseMrsBeadyGame",
+					"AHoneyCollectingGame",
+					"APrecisionSquirt",
+					"AChickenCoopDefender"
+				};
+
+				static TUINT NUM_MINIGAMES = sizeof(MINIGAME_LIST) / sizeof(*MINIGAME_LIST);
+
+				static TINT s_iSelectedMiniGame = 0;
+
+				if (ImGui::BeginCombo("##AMiniGame", MINIGAME_LIST[s_iSelectedMiniGame]))
+				{
+					for (TINT i = 0; i < NUM_MINIGAMES; i++)
+					{
+						TBOOL bIsSelected = s_iSelectedMiniGame == i;
+						ImGui::Selectable(MINIGAME_LIST[i], &bIsSelected);
+
+						if (bIsSelected)
+						{
+							s_iSelectedMiniGame = i;
+						}
+					}
+
+					ImGui::EndCombo();
+				}
+
+				ImGui::SameLine();
+				if (ImGui::Button("Load MiniGame"))
+				{
+					Toggle();
+
+					class AMiniGameManager;
+					auto pMiniGameManager = *(AMiniGameManager**)0x0078266c;
+
+					CALL_THIS(0x00469890, AMiniGameManager*, void, pMiniGameManager, const Toshi::TPString8&, MINIGAME_LIST[s_iSelectedMiniGame]);
+				}
 			}
 
 			ImGui::EndTabItem();
@@ -251,4 +268,14 @@ void AImGUI::Render()
 	ImGui::End();
 
 	EndScene();
+}
+
+void AImGUI::OnD3DDeviceLost()
+{
+	ImGui_ImplDX8_InvalidateDeviceObjects();
+}
+
+void AImGUI::OnD3DDeviceFound()
+{
+	ImGui_ImplDX8_CreateDeviceObjects();
 }

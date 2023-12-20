@@ -12,6 +12,7 @@
 #include "BYardSDK/AGUI2TextBox.h"
 #include "BYardSDK/AGUI2FontManager.h"
 #include "BYardSDK/AGUISlideshow.h"
+#include "BYardSDK/THookedRenderD3DInterface.h"
 
 #include <Toshi/Core/THPTimer.h>
 #include <Toshi/Utils/TUtil.h>
@@ -24,7 +25,7 @@ AModLoaderTask* g_pModLoaderTask = TNULL;
 
 DWORD WINAPI MainThread(HMODULE hModule)
 {
-	TOSHI_INFO("ModLoader thread has been started!");
+	TOSHI_INFO("BYModCore thread has been started!");
 	TOSHI_INFO("Waiting for Toshi systems to be loaded...");
 
 	// Wait until AGUI2 is ready to use
@@ -38,13 +39,11 @@ DWORD WINAPI MainThread(HMODULE hModule)
 	
 	Toshi::TUtil::CreateTPStringPool();
 	Toshi::TUtil::SetTPStringPool(**(Toshi::TPString8Pool***)0x007ce230);
-
-	// Create AModLoaderTask
-	Toshi::TTask* pRootTask = *(Toshi::TTask**)0x0077de78;
-	auto pScheduler = CALL_THIS(0x006bbc10, Toshi::TSystemManager*, Toshi::TScheduler*, (Toshi::TSystemManager*)0x007ce640);
-	g_pModLoaderTask = CALL_THIS(0x006bcbf0, Toshi::TScheduler*, AModLoaderTask*, pScheduler, Toshi::TClass*, &TGetClass(AModLoaderTask), Toshi::TTask*, pRootTask);
 	
-	return g_pModLoaderTask->Create() && AImGUI::CreateSingleton() != TNULL;
+	g_pModLoaderTask->OnAGUI2Ready();
+	AImGUI::CreateSingleton();
+
+	return TTRUE;
 }
 
 BOOL WINAPI exit_handler(DWORD dwCtrlType)
@@ -84,9 +83,16 @@ DWORD APIENTRY DllMain(HMODULE hModule, DWORD reason, LPVOID reserved)
 		SetConsoleCtrlHandler(exit_handler, TRUE);
 
 		TOSHI_INFO("Log system was successfully initialised!");
-		TOSHI_INFO("Starting main thread...");
+		TOSHI_INFO("Starting BYModCore thread...");
 
-		CloseHandle(CreateThread(0, 0, (LPTHREAD_START_ROUTINE)MainThread, hModule, 0, 0));
+		// Create AModLoaderTask
+		auto pScheduler = CALL_THIS(0x006bbc10, Toshi::TSystemManager*, Toshi::TScheduler*, (Toshi::TSystemManager*)0x007ce640);
+		g_pModLoaderTask = CALL_THIS(0x006bcbf0, Toshi::TScheduler*, AModLoaderTask*, pScheduler, Toshi::TClass*, &TGetClass(AModLoaderTask), Toshi::TTask*, TNULL);
+
+		if (g_pModLoaderTask->Create())
+		{
+			CloseHandle(CreateThread(0, 0, (LPTHREAD_START_ROUTINE)MainThread, hModule, 0, 0));
+		}
 
 		return TTRUE;
 	}

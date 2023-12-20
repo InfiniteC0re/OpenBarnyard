@@ -16,6 +16,8 @@ public:
 
 	TBOOL OnCreate() override;
 	TBOOL OnUpdate(TFLOAT a_fDeltaTime) override;
+	void OnAGUI2Ready();
+	void OnRenderInterfaceReady();
 
 	void LoadMods();
 
@@ -39,4 +41,5 @@ private:
 	Toshi::T2DList<AModInstance> m_LoadedMods;
 	TUINT m_uiNumMods;
 	AGUI2TextBox* m_pTextBox;
+	TBOOL m_bLoaded;
 };

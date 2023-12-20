@@ -52,6 +52,11 @@ namespace Toshi {
 
 		TBOOL CreateFromFileDDS(TUINT a_uiWidth, TUINT a_uiHeight, TUINT a_uiLevels, const char* a_szFile);
 
+		void SetD3DTexture(IDirect3DTexture8* a_pD3DTexture)
+		{
+			m_pD3DTexture = a_pD3DTexture;
+		}
+
 		IDirect3DTexture8* GetD3DTexture()
 		{
 			return m_pD3DTexture;

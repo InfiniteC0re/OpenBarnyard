@@ -31,6 +31,11 @@ public:
 		return m_oStates.Back();
 	}
 
+	AGameState* GetPreviousState()
+	{
+		return m_oStates[m_oStates.Size() - 2];
+	}
+
 	TBOOL IsCurrentState(Toshi::TClass* a_pClass)
 	{
 		return GetCurrentState()->IsA(a_pClass);
@@ -39,7 +44,7 @@ public:
 private:
 	void InsertGameState(AGameState* a_pGameState);
 
-private:
+public:
 	TUINT m_Unk1;
 	Toshi::T2Vector<AGameState*, 10> m_oStates;
 	void* m_VectorData[5];

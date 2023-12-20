@@ -19,15 +19,7 @@ namespace Toshi {
 
 		~T2Texture()
 		{
-			if (m_pD3DTexture)
-			{
-				m_pD3DTexture->Release();
-			}
-
-			if (m_pData)
-			{
-				delete m_pData;
-			}
+			Unload();
 		}
 
 		void SetData(void* a_pData, TUINT a_uiDataSize)
@@ -37,6 +29,8 @@ namespace Toshi {
 		}
 
 		HRESULT Load();
+
+		void Unload();
 
 		const D3DXIMAGE_INFO& GetImageInfo() const
 		{

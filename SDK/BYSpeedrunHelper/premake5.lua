@@ -59,6 +59,7 @@ project "BYSpeedrunHelper"
 
 		defines
 		{
+			"TOSHI_SDK",
 			"TOSHI_MODLOADER_CLIENT",
 			"TOSHI_SKU_WINDOWS"
 		}

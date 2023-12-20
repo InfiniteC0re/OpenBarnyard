@@ -1,4 +1,5 @@
 #pragma once
+#include <BYardSDK/AMaterialLibraryManager.h>
 #include <BYardSDK/AGUISlideshow.h>
 #include <BYardSDK/ATerrain.h>
 
@@ -11,6 +12,7 @@ enum Hook
 	Hook_ATerrain_Render,
 	Hook_AModelLoader_LoadTRBCallback,
 	Hook_NewGameStarted,
+	Hook_MaterialLibrary_LoadTTLData,
 	Hook_NUMOF,
 };
 
@@ -48,6 +50,12 @@ public:
 	{
 		using t_LoadTRBCallback = TBOOL(*)(Toshi::TModel* a_pModel);
 		inline static Toshi::T2Vector<t_LoadTRBCallback, MAX_NUM_CALLBACKS> LoadTRBCallback[HookType_NUMOF];
+	};
+
+	struct MaterialLibrary
+	{
+		using t_LoadTTLData = TBOOL(*)(AMaterialLibrary* a_pMatLib, AMaterialLibrary::TTL* a_pTTL);
+		inline static Toshi::T2Vector<t_LoadTTLData, MAX_NUM_CALLBACKS> LoadTTLData[HookType_NUMOF];
 	};
 
 	struct Uncategorized

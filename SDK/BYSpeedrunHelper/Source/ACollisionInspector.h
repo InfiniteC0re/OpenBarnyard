@@ -21,5 +21,5 @@ private:
 	static void ATerrain_Render(ATerrain* a_pTerrain);
 
 private:
-	TBOOL m_bCollisionVisible = TTRUE;
+	TBOOL m_bCollisionVisible = TFALSE;
 };

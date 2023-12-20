@@ -2,28 +2,26 @@
 #include "AHooks.h"
 #include "AModLoaderTask.h"
 
+#include <BYardSDK/THookedRenderD3DInterface.h>
 #include <BYardSDK/AGUI2FontManager.h>
 
 #include <filesystem>
 
 void AModLoaderTask::AGUI2MainPostRenderCallback()
 {
-	AModLoaderTask::GetSingleton()->m_pTextBox->PreRender();
-	AModLoaderTask::GetSingleton()->m_pTextBox->Render();
-	AModLoaderTask::GetSingleton()->m_pTextBox->PostRender();
+	if (AModLoaderTask::GetSingleton()->m_pTextBox)
+	{
+		AModLoaderTask::GetSingleton()->m_pTextBox->PreRender();
+		AModLoaderTask::GetSingleton()->m_pTextBox->Render();
+		AModLoaderTask::GetSingleton()->m_pTextBox->PostRender();
+	}
 }
 
 AModLoaderTask::AModLoaderTask()
 {
 	m_fTotalTime = 0.0f;
-
-	auto pFont = AGUI2FontManager::FindFont("Rekord18");
-	m_pTextBox = AGUI2TextBox::CreateFromEngine();
-	m_pTextBox->SetAttachment(AGUI2Element::Anchor_MiddleCenter, AGUI2Element::Pivot_TopCenter);
-	m_pTextBox->Create(pFont, 300.0f);
-	m_pTextBox->SetTransform(0, -285.0f);
-	m_pTextBox->SetText(L"ModLoader works!");
-	m_pTextBox->SetInFront();
+	m_bLoaded = TFALSE;
+	m_pTextBox = TNULL;
 
 	AHooks::AddHook(Hook_AGUI2_MainPostRenderCallback, HookType_Before, AGUI2MainPostRenderCallback);
 }
@@ -36,7 +34,7 @@ AModLoaderTask::~AModLoaderTask()
 
 TBOOL AModLoaderTask::OnUpdate(TFLOAT a_fDeltaTime)
 {
-	if (m_pTextBox->IsVisible())
+	if (m_pTextBox && m_pTextBox->IsVisible())
 	{
 		TFLOAT fAlpha = (m_fTotalTime - 3.0f) / 0.8f;
 		Toshi::TMath::Clip(fAlpha, 0.0f, 1.0f);
@@ -63,11 +61,6 @@ TBOOL AModLoaderTask::OnUpdate(TFLOAT a_fDeltaTime)
 TBOOL AModLoaderTask::OnCreate()
 {
 	LoadMods();
-
-	static wchar_t s_wcsBuffer[64];
-	const wchar_t* wcsFormat = (m_uiNumMods != 1) ? L"Loaded %d mods!\n%ls" : L"Loaded %d mod!\n%ls";
-	Toshi::TStringManager::String16Format(s_wcsBuffer, 64, wcsFormat, m_uiNumMods, L"Press ~ to open menu.");
-	m_pTextBox->SetText(s_wcsBuffer);
 
 	return TTRUE;
 }
@@ -118,5 +111,42 @@ void AModLoaderTask::LoadMods()
 				FreeLibrary(hModModule);
 			}
 		}
+	}
+
+	m_bLoaded = TTRUE;
+}
+
+void AModLoaderTask::OnAGUI2Ready()
+{
+	auto pFont = AGUI2FontManager::FindFont("Rekord18");
+	m_pTextBox = AGUI2TextBox::CreateFromEngine();
+	m_pTextBox->SetAttachment(AGUI2Element::Anchor_MiddleCenter, AGUI2Element::Pivot_TopCenter);
+	m_pTextBox->Create(pFont, 300.0f);
+	m_pTextBox->SetTransform(0, -285.0f);
+	m_pTextBox->SetText(L"ModLoader works!");
+	m_pTextBox->SetInFront();
+
+	if (m_bLoaded)
+	{
+		static wchar_t s_wcsBuffer[64];
+		const wchar_t* wcsFormat = (m_uiNumMods != 1) ? L"Loaded %d mods!\n%ls" : L"Loaded %d mod!\n%ls";
+		Toshi::TStringManager::String16Format(s_wcsBuffer, 64, wcsFormat, m_uiNumMods, L"Press ~ to open menu.");
+		m_pTextBox->SetText(s_wcsBuffer);
+	}
+
+	for (auto it = m_LoadedMods.Begin(); it != m_LoadedMods.End(); it++)
+	{
+		it->OnAGUI2Ready();
+	}
+}
+
+void AModLoaderTask::OnRenderInterfaceReady()
+{
+	auto pRender = THookedRenderD3DInterface::GetSingleton();
+	TASSERT(TNULL != pRender);
+
+	for (auto it = m_LoadedMods.Begin(); it != m_LoadedMods.End(); it++)
+	{
+		it->OnRenderInterfaceReady(pRender);
 	}
 }

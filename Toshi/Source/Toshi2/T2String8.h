@@ -97,7 +97,7 @@ namespace Toshi
 			return TNULL;
 		}
 
-		static const char* FindString(const char* str, char* substr)
+		static const char* FindString(const char* str, const char* substr)
 		{
 			return strstr(str, substr);
 		}

@@ -53,4 +53,19 @@ namespace Toshi {
 		return hRes;
 	}
 
+	void T2Texture::Unload()
+	{
+		if (m_pD3DTexture)
+		{
+			m_pD3DTexture->Release();
+			m_pD3DTexture = TNULL;
+		}
+
+		if (m_pData)
+		{
+			delete m_pData;
+			m_pData = TNULL;
+		}
+	}
+
 }

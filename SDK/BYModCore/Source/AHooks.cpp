@@ -2,12 +2,18 @@
 #include "AHooks.h"
 #include "AImGUI.h"
 #include "HookHelpers/HookHelpers.h"
+#include "AModLoaderTask.h"
 
 #include <BYardSDK/AGameStateController.h>
+#include <BYardSDK/THookedRenderD3DInterface.h>
 #include <BYardSDK/AGUI2.h>
+#include <BYardSDK/ARenderer.h>
 
 #include <Toshi/Input/TInputDeviceKeyboard.h>
 #include <Platform/Windows/TMSWindow.h>
+#include <Platform/DX8/TRenderInterface_DX8.h>
+
+extern AModLoaderTask* g_pModLoaderTask;
 
 MEMBER_HOOK(0x006b4a20, Toshi::TMemory, TMemory_Free, TBOOL, void* a_pMem)
 {
@@ -23,6 +29,57 @@ HOOK(0x006b4ba0, TMemory_GetMemInfo, void, Toshi::TMemory::MemInfo& a_rMemInfo, 
 {
 	auto pBlock = (*(Toshi::TMemory**)0x007ce1d4)->GetGlobalBlock();
 	Toshi::TMemory::GetMemInfo(a_rMemInfo, pBlock);
+}
+
+MEMBER_HOOK(0x006c6de0, Toshi::TRenderD3DInterface, TRenderD3DInterface_OnD3DDeviceLost, void)
+{
+	CallOriginal();
+	AImGUI::GetSingleton()->OnD3DDeviceLost();
+}
+
+MEMBER_HOOK(0x006c6e80, Toshi::TRenderD3DInterface, TRenderD3DInterface_OnD3DDeviceFound, void)
+{
+	CallOriginal();
+	AImGUI::GetSingleton()->OnD3DDeviceFound();
+}
+
+MEMBER_HOOK(0x006154c0, ARenderer, ARenderer_CreateTRender, TBOOL)
+{
+	TBOOL bResult = CallOriginal();
+
+	Toshi::TRenderInterface::SetSingletonExplicit(
+		THookedRenderD3DInterface::GetSingleton()
+	);
+
+	g_pModLoaderTask->OnRenderInterfaceReady();
+
+	return bResult;
+}
+
+MEMBER_HOOK(0x00615d20, AMaterialLibrary, AMaterialLibrary_LoadTTLData, TBOOL, AMaterialLibrary::TTL* a_pTTL)
+{
+	for (TUINT i = 0; i < AHooks::MaterialLibrary::LoadTTLData[HookType_Before].Size(); i++)
+	{
+		if (AHooks::MaterialLibrary::LoadTTLData[HookType_Before][i](this, a_pTTL))
+		{
+			return TTRUE;
+		}
+	}
+
+	if (!CallOriginal(a_pTTL))
+	{
+		for (TUINT i = 0; i < AHooks::MaterialLibrary::LoadTTLData[HookType_After].Size(); i++)
+		{
+			if (AHooks::MaterialLibrary::LoadTTLData[HookType_After][i](this, a_pTTL))
+			{
+				return TTRUE;
+			}
+		}
+
+		return TFALSE;
+	}
+
+	return TTRUE;
 }
 
 MEMBER_HOOK(0x006da4d0, Toshi::TMSWindow, TMSWindow_SetPosition, void, TUINT x, TUINT y, TUINT width, TUINT height)
@@ -194,6 +251,9 @@ void AHooks::Initialise()
 	InstallHook<AGameStateController_ProcessInput>();
 	InstallHook<ATerrain_Render>();
 	InstallHook<AModelLoader_AModelLoaderLoadTRBCallback>();
+	InstallHook<AMaterialLibrary_LoadTTLData>();
+	InstallHook<ARenderer_CreateTRender>();
+	InstallHook<TRenderD3DInterface_OnD3DDeviceLost>();
 }
 
 TBOOL AHooks::AddHook(Hook a_eHook, HookType a_eHookType, void* a_pCallback)
@@ -214,6 +274,9 @@ TBOOL AHooks::AddHook(Hook a_eHook, HookType a_eHookType, void* a_pCallback)
 		return TTRUE;
 	case Hook_AModelLoader_LoadTRBCallback:
 		AHooks::ModelLoader::LoadTRBCallback[a_eHookType].PushBack(TSTATICCAST(AHooks::ModelLoader::t_LoadTRBCallback, a_pCallback));
+		return TTRUE;
+	case Hook_MaterialLibrary_LoadTTLData:
+		AHooks::MaterialLibrary::LoadTTLData[a_eHookType].PushBack(TSTATICCAST(AHooks::MaterialLibrary::t_LoadTTLData, a_pCallback));
 		return TTRUE;
 	}
 

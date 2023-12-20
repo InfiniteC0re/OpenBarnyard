@@ -15,6 +15,8 @@ public:
 	void BeginScene();
 	void EndScene();
 	void Render();
+	void OnD3DDeviceLost();
+	void OnD3DDeviceFound();
 
 	void Enable(TBOOL a_bEnabled)
 	{

@@ -13,7 +13,7 @@ namespace Toshi {
 		static char* String8Copy(char* dst, const char* src, size_t size = -1) { return T2String8::Copy(dst, src, size); }
 		static char* String8CopySafe(char* dst, const char* src, size_t size = -1) { return T2String8::CopySafe(dst, src, size); }
 		static const char* String8FindChar(const char* str, char character) { return T2String8::FindChar(str, character); }
-		static const char* String8FindString(const char* str, char* substr) { return T2String8::FindString(str, substr); }
+		static const char* String8FindString(const char* str, const char* substr) { return T2String8::FindString(str, substr); }
 		static size_t String8Length(const char* str) { return T2String8::Length(str); }
 		static void String8ToLowerCase(char* str) { T2String8::ToLowerCase(str); }
 		static TFLOAT String8ToFloat(const char* str) { return T2String8::StringToFloat(str); }
