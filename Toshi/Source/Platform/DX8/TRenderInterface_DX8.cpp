@@ -321,11 +321,10 @@ namespace Toshi {
 		const char* errString = GetErrorString(a_eError);
 		const char* errDescription = GetErrorDescription(a_eError);
 
-		TString8 string;
-		string.Format("> %s: D3D Error [%s] : Description [%s] !\n", a_szInfo, errString, errDescription);
+		TString8 string = TString8::Format("> %s: D3D Error [%s] : Description [%s] !\n", a_szInfo, errString, errDescription);
 		OutputDebugStringA(string);
 		
-		TASSERT(TFALSE, string);
+		TASSERT(TFALSE, string.GetString());
 	}
 
 	TBOOL TRenderD3DInterface::Destroy()
