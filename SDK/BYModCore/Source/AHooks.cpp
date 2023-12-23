@@ -6,6 +6,7 @@
 
 #include <BYardSDK/AGameStateController.h>
 #include <BYardSDK/THookedRenderD3DInterface.h>
+#include <BYardSDK/AAssetLoader.h>
 #include <BYardSDK/AGUI2.h>
 #include <BYardSDK/ARenderer.h>
 
@@ -29,6 +30,20 @@ HOOK(0x006b4ba0, TMemory_GetMemInfo, void, Toshi::TMemory::MemInfo& a_rMemInfo, 
 {
 	auto pBlock = (*(Toshi::TMemory**)0x007ce1d4)->GetGlobalBlock();
 	Toshi::TMemory::GetMemInfo(a_rMemInfo, pBlock);
+}
+
+MEMBER_HOOK(0x006c1d40, Toshi::TModelRegistry, TModelRegistry_CreateModel, Toshi::TModelRegistryEntry*, const char* a_szFileName, Toshi::TModelPtr& a_rModelRef, Toshi::TTRB* a_pAssetTRB)
+{
+	TOSHI_INFO(a_szFileName);
+
+	return CallOriginal(a_szFileName, a_rModelRef, TNULL);
+}
+
+class AFrontEndMiniGameState2 {};
+
+MEMBER_HOOK(0x00409ce0, AFrontEndMiniGameState2, AFrontEndMiniGameState2_CTOR, void, TBOOL a_bHideVariantSelector)
+{
+	CallOriginal(TFALSE);
 }
 
 MEMBER_HOOK(0x006c6de0, Toshi::TRenderD3DInterface, TRenderD3DInterface_OnD3DDeviceLost, void)
@@ -84,27 +99,26 @@ MEMBER_HOOK(0x00615d20, AMaterialLibrary, AMaterialLibrary_LoadTTLData, TBOOL, A
 
 MEMBER_HOOK(0x006da4d0, Toshi::TMSWindow, TMSWindow_SetPosition, void, TUINT x, TUINT y, TUINT width, TUINT height)
 {
-	if (IsWindowed())
+	if (TTRUE)
 	{
 		// Fix window size when in windowed mode
-		RECT rect;
+		/*RECT rect;
 		rect.left = x;
 		rect.top = y;
 		rect.right = width;
 		rect.bottom = height;
 
-		if (TRUE == AdjustWindowRectEx(
+		if (TRUE == AdjustWindowRect(
 			&rect,
 			GetWindowLongA(GetHWND(), GWL_STYLE),
-			FALSE,
-			GetWindowLongA(GetHWND(), GWL_EXSTYLE)
+			FALSE
 		))
 		{
 			x = rect.left;
 			y = rect.top;
 			width = rect.right;
 			height = rect.bottom;
-		}
+		}*/
 	}
 	
 	CallOriginal(x, y, width, height);
@@ -253,7 +267,10 @@ void AHooks::Initialise()
 	InstallHook<AModelLoader_AModelLoaderLoadTRBCallback>();
 	InstallHook<AMaterialLibrary_LoadTTLData>();
 	InstallHook<ARenderer_CreateTRender>();
+	InstallHook<AFrontEndMiniGameState2_CTOR>();
 	InstallHook<TRenderD3DInterface_OnD3DDeviceLost>();
+	InstallHook<TRenderD3DInterface_OnD3DDeviceFound>();
+	InstallHook<TModelRegistry_CreateModel>();
 }
 
 TBOOL AHooks::AddHook(Hook a_eHook, HookType a_eHookType, void* a_pCallback)

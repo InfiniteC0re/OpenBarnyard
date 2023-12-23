@@ -23,6 +23,7 @@ group "Engine"
 
 group "Tools"
 	include "Tools/AssetPack"
+	include "Tools/TMDLC"
 		
 group "Third-Party"
 	include "Toshi/Vendor/Opcode"

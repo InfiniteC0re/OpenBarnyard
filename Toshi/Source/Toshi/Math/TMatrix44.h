@@ -199,7 +199,7 @@ namespace Toshi
 			*this = temp;
 		}
 
-		TBOOL Invert(TMatrix44& a_rRight);
+		TBOOL Invert(const TMatrix44& a_rRight);
 
 		void InvertOrthogonal(const TMatrix44& a_rRight);
 		void InvertOrthonormal();

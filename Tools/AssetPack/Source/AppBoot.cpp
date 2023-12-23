@@ -37,6 +37,7 @@ int main(int argc, char** argv)
 
 		if (assetPack.Load(filepath))
 		{
+			//assetPack.Save("C:\\Users\\InfiniteC0re\\Desktop\\asset.trb");
 			AAssetUnpacker::Unpack(assetPack, outputDir, args.IsUsingBTEC());
 		}
 	}

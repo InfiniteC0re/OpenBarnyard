@@ -24,6 +24,8 @@ public:
 	}
 
 	TBOOL Load(const char* a_szFileName);
+	void Save(const char* a_szFileName);
+
 	Asset_t* GetAssetFromSymbol(const Toshi::TPString8& a_rSymbolName);
 
 	PTRB::TRBF* GetTRBFile() { return &m_TRBFile; }

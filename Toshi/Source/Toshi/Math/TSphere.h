@@ -98,6 +98,7 @@ namespace Toshi {
 		{
 			m_Origin = a_rSphere.m_Origin;
 			m_fRadius = a_rSphere.m_fRadius;
+			return *this;
 		}
 
 		__forceinline TVector3& GetOrigin()

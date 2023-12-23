@@ -15,7 +15,7 @@ TOSHI_NAMESPACE_USING
 
 #define TEXTURE_PACK_PATH "Data\\TextureOverride\\"
 
-TMutex g_DumpMutex;
+TMutex g_LoadMutex;
 TINT g_iNumDumpEvents = 0;
 TBOOL g_bDumpTextures = TTRUE;
 TBOOL g_bAutoReload = TTRUE;
@@ -46,7 +46,7 @@ void DumpTexture(const Toshi::TString8& a_rFilePath, const void* a_pData, TUINT3
 
 TBOOL MaterialLibrary_LoadTTLData(AMaterialLibrary* a_pMatLib, AMaterialLibrary::TTL* a_pTTLData)
 {
-	TMutexLock lock(g_DumpMutex);
+	TMutexLock lock(g_LoadMutex);
 
 	auto pTTL = TSTATICCAST(AMaterialLibrary::TTL*, a_pTTLData);
 
@@ -164,13 +164,47 @@ void ReloadTexture(Toshi::T2Texture* a_pT2Texture, void* a_pData, TUINT a_uiData
 	}
 }
 
+void RestoreTexture(const Toshi::TString8& a_rTextureName, TBOOL a_bForceDump = TFALSE)
+{
+	AMaterialLibrary* pLibrary;
+	auto pAppTexture = AMaterialLibraryManager::List::GetSingleton()->FindTexture(a_rTextureName, &pLibrary, TNULL);
+
+	TTRB trb;
+
+	if (trb.Load(pLibrary->m_Path) == TTRB::ERROR_OK)
+	{
+		auto pTTL = trb.CastSymbol<AMaterialLibrary::TTL>("TTL");
+
+		for (TINT i = 0; i < pTTL->m_iNumTextures; i++)
+		{
+			auto pTexInfo = &pTTL->m_pTextureInfos[i];
+
+			if (pTexInfo->m_bIsT2Texture == TRUE &&
+				a_rTextureName == pTexInfo->m_szFileName)
+			{
+				ReloadTexture(pAppTexture->pTexture, pTexInfo->m_pData, pTexInfo->m_uiDataSize);
+
+				if (g_bDumpTextures || a_bForceDump)
+				{
+					TString8 dumpFilePath = TEXTURE_PACK_PATH;
+					dumpFilePath.Concat(a_rTextureName, a_rTextureName.Length() - 3);
+					dumpFilePath += "dds";
+
+					DumpTexture(dumpFilePath, pTexInfo->m_pData, pTexInfo->m_uiDataSize);
+				}
+
+				pAppTexture->pTexture->SetData(TNULL, 0);
+				break;
+			}
+		}
+	}
+}
+
 void ReloadTexture(const Toshi::TString8& a_rTextureName)
 {
 	TString8 texFilePath = TEXTURE_PACK_PATH;
 	texFilePath.Concat(a_rTextureName, a_rTextureName.Length() - 3);
 	texFilePath += "dds";
-
-	TBOOL bDump = TFALSE;
 
 	if (Toshi::TFile* pFile = TFile::Create(texFilePath, TFile::FileMode_Read))
 	{
@@ -208,29 +242,7 @@ void ReloadTexture(const Toshi::TString8& a_rTextureName)
 	else
 	{
 		// Restore original texture from the material library
-		AMaterialLibrary* pLibrary;
-		auto pAppTexture = AMaterialLibraryManager::List::GetSingleton()->FindTexture(a_rTextureName, &pLibrary, TNULL);
-
-		TTRB trb;
-
-		if (trb.Load(pLibrary->m_Path) == TTRB::ERROR_OK)
-		{
-			auto pTTL = trb.CastSymbol<AMaterialLibrary::TTL>("TTL");
-
-			for (TINT i = 0; i < pTTL->m_iNumTextures; i++)
-			{
-				auto pTexInfo = &pTTL->m_pTextureInfos[i];
-
-				if (pTexInfo->m_bIsT2Texture == TRUE &&
-					a_rTextureName == pTexInfo->m_szFileName)
-				{
-					ReloadTexture(pAppTexture->pTexture, pTexInfo->m_pData, pTexInfo->m_uiDataSize);
-					DumpTexture(texFilePath, pTexInfo->m_pData, pTexInfo->m_uiDataSize);
-					pAppTexture->pTexture->SetData(TNULL, 0);
-					break;
-				}
-			}
-		}
+		RestoreTexture(a_rTextureName);
 	}
 }
 
@@ -266,6 +278,10 @@ void ReloadAllTextures()
 				TFree(pFileData);
 				pFile->Destroy();
 			}
+			else
+			{
+				RestoreTexture(pAppTexture->Name);
+			}
 		}
 	}
 }
@@ -297,7 +313,7 @@ public:
 
 				if (g_bAutoReload)
 				{
-					TMutexLock lock(g_DumpMutex);
+					TMutexLock lock(g_LoadMutex);
 
 					while (TTRUE)
 					{
@@ -390,7 +406,7 @@ public:
 	{
 		m_pWatcher = new ATexturePackWatcher();
 		m_pWatcher->Init("Data\\TextureOverride");
-		m_pWatcher->Create(32, TThread::THREAD_PRIORITY_IDLE, 0);
+		m_pWatcher->Create(32, TThread::THREAD_PRIORITY_LOWEST, 0);
 
 		return AHooks::AddHook(Hook_MaterialLibrary_LoadTTLData, HookType_Before, MaterialLibrary_LoadTTLData);
 	}
@@ -445,7 +461,7 @@ extern "C"
 		TFileManager::Create();
 		TLog::Create("ABYTexturePacks");
 
-		g_DumpMutex.Create();
+		g_LoadMutex.Create();
 
 		return new ABYTexturePacks();
 	}

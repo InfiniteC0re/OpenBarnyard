@@ -87,21 +87,28 @@ namespace Toshi {
 	class TSkeletonBone
 	{
 	public:
+		TQuaternion& GetRotation() { return m_Rotation; }
 		const TQuaternion& GetRotation() const { return m_Rotation; }
+
+		TMatrix44& GetTransform() { return m_Transform; }
 		const TMatrix44& GetTransform() const { return m_Transform; }
-		const TMatrix44& GetTransformInv() const { return m_TransformInv; }
+		
+		TMatrix44& GetTransformInv() { return m_TransformInv; }
 		const TVector3& GetPosition() const { return m_Position; }
+
+		TUINT8 GetNameLength() const { return m_iNameLength; }
 		const char* GetName() const { return m_szName; }
+		
 		int GetParentBone() const { return m_iParentBone; }
 
-	private:
+	public:
 		TQuaternion m_Rotation;
 		TMatrix44 m_Transform;
 		TMatrix44 m_TransformInv;
-		const char* m_szName;
+		TUINT8 m_iNameLength;
+		char m_szName[31];
 		short m_iParentBone;
 		TVector3 m_Position;
-		char pad[12];
 	};
 
 	class TSkeleton
@@ -150,7 +157,7 @@ namespace Toshi {
 
 		TSkeleton& operator=(const TSkeleton& a_rSkeleton) { TIMPLEMENT(); }
 
-	private:
+	public:
 		short m_iBoneCount;                            // 0x00
 		short m_iManualBoneCount;                      // 0x02
 		short m_iSequenceCount;                        // 0x04

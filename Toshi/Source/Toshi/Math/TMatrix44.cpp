@@ -77,7 +77,7 @@ namespace Toshi
 		}
 	}
 
-	TBOOL TMatrix44::Invert(TMatrix44& a_rRight)
+	TBOOL TMatrix44::Invert(const TMatrix44& a_rRight)
 	{
 		assert(a_rRight.m_f14 == 0.0f);
 		assert(a_rRight.m_f24 == 0.0f);

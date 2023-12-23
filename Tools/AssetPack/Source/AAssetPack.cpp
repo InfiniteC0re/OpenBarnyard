@@ -94,6 +94,29 @@ TBOOL AAssetPack::Load(const char* a_szFileName)
 	return m_bLoaded;
 }
 
+void AAssetPack::Save(const char* a_szFileName)
+{
+	PTRB::TRBF outFile;
+
+	auto pSECT = outFile.GetSECT();
+	auto pSYMB = outFile.GetSYMB();
+
+	for (auto it = m_Assets.Begin(); it != m_Assets.End(); it++)
+	{
+		auto pInStack = it->pStack;
+		auto pOutStack = pSECT->CreateStack(pInStack);
+
+		for (auto symbol = it->RelatedSymbols.Begin(); !symbol.IsOver(); symbol++)
+		{
+			auto pInPtr = m_TRBFile.GetSYMB()->Find<char>(m_TRBFile.GetSECT(), symbol->GetString8());
+
+			pSYMB->Add(pOutStack, symbol->GetString8(), pOutStack->GetBuffer() + (pInPtr.get() - pInStack->GetBuffer()));
+		}
+	}
+
+	outFile.WriteToFile(a_szFileName);
+}
+
 AAssetPack::Asset_t* AAssetPack::GetAssetFromSymbol(const Toshi::TPString8& a_rSymbolName)
 {
 	auto ppResult = m_SymbolToAsset.Find(a_rSymbolName);
