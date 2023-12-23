@@ -3,8 +3,21 @@
 
 class AAssetBuilder
 {
-private:
-
 public:
+	AAssetBuilder()
+	{
 
+	}
+
+	~AAssetBuilder()
+	{
+		m_Files.Clear();
+	}
+
+	void Add(const Toshi::TString8& a_FileName);
+	void Save(const char* a_szFileName, TBOOL a_bCompress = TFALSE);
+
+private:
+	AAssetPack m_AssetPack;
+	Toshi::T2Vector<PTRB::TRBF, 1024> m_Files;
 };

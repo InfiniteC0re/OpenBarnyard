@@ -8,6 +8,7 @@
 #include <Toshi/Render/TTMDWin.h>
 #include <Plugins/PTRB.h>
 
+#include <assimp/cexport.h>
 #include <assimp/cimport.h>
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
@@ -15,6 +16,16 @@
 TOSHI_NAMESPACE_USING
 
 static TMemoryInitialiser s_MemoryInitialiser;
+
+static inline void SetFaceAndAdvance3(aiFace*& face, unsigned int a, unsigned int b, unsigned int c)
+{
+	face->mNumIndices = 3;
+	face->mIndices = new unsigned int[3];
+	face->mIndices[0] = a;
+	face->mIndices[1] = b;
+	face->mIndices[2] = c;
+	++face;
+}
 
 int main(int argc, char** argv)
 {
@@ -137,7 +148,7 @@ int main(int argc, char** argv)
 		}
 
 		const aiScene* pImportScene = aiImportFile(inFilepath, aiProcessPreset_TargetRealtime_MaxQuality);
-
+		
 		PTRB::TRBF outTRB;
 		auto pOutSECT = outTRB.GetSECT();
 		auto pOutSYMB = outTRB.GetSYMB();
@@ -387,6 +398,155 @@ int main(int argc, char** argv)
 		}
 
 		outTRB.WriteToFile(outFilepath.GetString(), args.IsUsingBTEC());
+	}
+	else if (args.GetMode() == AArgumentParser::Mode::Decompile)
+	{
+		PTRB::TRBF inTRB(args.GetInPath());
+
+		auto pInSECT = inTRB.GetSECT();
+		auto pInSYMB = inTRB.GetSYMB();
+
+		auto pInFileHeader = pInSYMB->Find<TTMDBase::FileHeader>(pInSECT, "FileHeader");
+		auto pInSkeletonHeader = pInSYMB->Find<TTMDBase::SkeletonHeader>(pInSECT, "SkeletonHeader");
+		auto pInSkeleton = pInSYMB->Find<TSkeleton>(pInSECT, "Skeleton");
+		auto pInMaterials = pInSYMB->Find<TTMDBase::Materials>(pInSECT, "Materials");
+		auto pInCollision = pInSYMB->Find<TTMDBase::Collision>(pInSECT, "Collision");
+		auto pInHeader = pInSYMB->Find<TTMDWin::TRBWinHeader>(pInSECT, "Header");
+
+		aiScene scene;
+		scene.mRootNode = new aiNode();
+
+		scene.mNumMaterials = pInMaterials->m_uiNumMaterials;
+		scene.mMaterials = new aiMaterial*[scene.mNumMaterials];
+
+		for (TUINT i = 0; i < scene.mNumMaterials; i++)
+		{
+			scene.mMaterials[i] = new aiMaterial();
+
+			aiString matName(pInMaterials->GetMaterial(i)->m_szMatName);
+
+			aiString texName(args.GetTexturesPath());
+			texName.Append(pInMaterials->GetMaterial(i)->m_szTextureFile);
+			texName.data[texName.length - 3] = 'd';
+			texName.data[texName.length - 2] = 'd';
+			texName.data[texName.length - 1] = 's';
+
+			scene.mMaterials[i]->AddProperty(
+				&matName,
+				AI_MATKEY_NAME
+			);
+
+			scene.mMaterials[i]->AddProperty(
+				&texName,
+				AI_MATKEY_TEXTURE_DIFFUSE(0)
+			);
+		}
+
+		auto pLOD = pInHeader->GetLOD(0);
+		TINT iMeshCount = pLOD->m_iMeshCount1 + pLOD->m_iMeshCount2;
+
+		TUINT uiTotalNumMeshes = 0;
+
+		for (TINT i = 0; i < iMeshCount; i++)
+		{
+			char szSymbolName[128];
+			TStringManager::String8Format(szSymbolName, sizeof(szSymbolName), "LOD0_Mesh_%d", i);
+
+			auto pInLODMesh = pInSYMB->Find<TTMDWin::TRBLODMesh>(pInSECT, szSymbolName);
+			uiTotalNumMeshes += pInLODMesh->m_uiNumSubMeshes;
+		}
+
+		scene.mNumMeshes = uiTotalNumMeshes;
+		scene.mMeshes = new aiMesh*[scene.mNumMeshes];
+
+		scene.mRootNode->mNumMeshes = scene.mNumMeshes;
+		scene.mRootNode->mMeshes = new unsigned int[scene.mRootNode->mNumMeshes];
+
+		for (TUINT i = 0; i < scene.mNumMeshes; i++)
+		{
+			scene.mRootNode->mMeshes[i] = i;
+		}
+
+		for (TINT i = 0; i < uiTotalNumMeshes;)
+		{
+			for (TINT k = 0; k < iMeshCount; k++)
+			{
+				char szSymbolName[128];
+				TStringManager::String8Format(szSymbolName, sizeof(szSymbolName), "LOD0_Mesh_%d", k);
+
+				auto pInLODMesh = pInSYMB->Find<TTMDWin::TRBLODMesh>(pInSECT, szSymbolName);
+
+				for (TUINT j = 0; j < pInLODMesh->m_uiNumSubMeshes; j++)
+				{
+					auto pInSubMesh = &pInLODMesh->m_pSubMeshes[j];
+					auto pMesh = new aiMesh();
+
+					// TODO: support exporting bones
+					//pMesh->mNumBones = pInSubMesh->m_uiNumBones;
+					//pMesh->mBones = new aiBone*[pMesh->mNumBones];
+					pMesh->mMaterialIndex = 0;
+					pMesh->mNumVertices = pInSubMesh->m_uiNumVertices1;
+					pMesh->mVertices = new aiVector3D[pMesh->mNumVertices];
+					pMesh->mNormals = new aiVector3D[pMesh->mNumVertices];
+					pMesh->mTextureCoords[0] = new aiVector3D[pMesh->mNumVertices];
+					pMesh->mNumUVComponents[0] = pMesh->mNumVertices;
+					pMesh->mPrimitiveTypes = aiPrimitiveType_TRIANGLE;
+					pMesh->mNumFaces = pInSubMesh->m_uiNumIndices - 2;
+
+					pMesh->mFaces = new aiFace[pMesh->mNumFaces];
+					auto facePtr = pMesh->mFaces;
+
+					for (TUINT h = 0; h < pMesh->mNumFaces; ++h)
+					{
+						//The ordering is to ensure that the triangles are all drawn with the same orientation
+						
+						if ((h + 1) % 2 == 0)
+						{
+							//For even n, vertices n + 1, n, and n + 2 define triangle n
+							SetFaceAndAdvance3(facePtr, pInSubMesh->m_pIndices[h + 1], pInSubMesh->m_pIndices[h], pInSubMesh->m_pIndices[h + 2]);
+						}
+						else
+						{
+							//For odd n, vertices n, n+1, and n+2 define triangle n
+							SetFaceAndAdvance3(facePtr, pInSubMesh->m_pIndices[h], pInSubMesh->m_pIndices[h + 1], pInSubMesh->m_pIndices[h + 2]);
+						}
+					}
+
+					for (TUINT h = 0; h < pInSubMesh->m_uiNumVertices1; h++)
+					{
+						auto pVertex = &pInSubMesh->m_pVertices[h];
+
+						pMesh->mVertices[h].x = pVertex->Position.x;
+						pMesh->mVertices[h].y = pVertex->Position.y;
+						pMesh->mVertices[h].z = pVertex->Position.z;
+						pMesh->mNormals[h].x = pVertex->Normal.x;
+						pMesh->mNormals[h].y = pVertex->Normal.y;
+						pMesh->mNormals[h].z = pVertex->Normal.z;
+						pMesh->mTextureCoords[0][h].x = pVertex->UV.x;
+						pMesh->mTextureCoords[0][h].y = pVertex->UV.y;
+						pMesh->mTextureCoords[0][h].z = 0.0f;
+					}
+
+					scene.mMeshes[i] = pMesh;
+					i++;
+				}
+			}
+		}
+
+		auto uiNumExportFormats = aiGetExportFormatCount();
+		const aiExportFormatDesc* pExportFormat = TNULL;
+
+		for (TUINT i = 0; i < uiNumExportFormats; i++)
+		{
+			pExportFormat = aiGetExportFormatDescription(i);
+
+			if (TStringManager::String8Compare(pExportFormat->fileExtension, "fbx") == 0)
+			{
+				break;
+			}
+		}
+
+		aiExportScene(&scene, pExportFormat->id, "C:\\Users\\InfiniteC0re\\Desktop\\exported.fbx", 0);
 	}
 
 	return 0;

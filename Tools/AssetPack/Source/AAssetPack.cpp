@@ -43,7 +43,7 @@ TBOOL AAssetPack::Load(const char* a_szFileName)
 
 			if (!pFound)
 			{
-				m_Assets.PushBack({ .Name = szAssetFileName, .Format = "trb", .pStack = pStack });
+				m_Assets.PushBack({ .Name = szAssetFileName, .Format = "trb", .pTRB = &m_TRBFile, .pStack = pStack });
 				auto pAsset = &m_Assets.Back();
 
 				TINT iAssetFileNameLength = TStringManager::String8Length(szAssetFileName);
@@ -94,27 +94,36 @@ TBOOL AAssetPack::Load(const char* a_szFileName)
 	return m_bLoaded;
 }
 
-void AAssetPack::Save(const char* a_szFileName)
+void AAssetPack::Save(const char* a_szFileName, TBOOL a_bCompress)
 {
 	PTRB::TRBF outFile;
 
 	auto pSECT = outFile.GetSECT();
 	auto pSYMB = outFile.GetSYMB();
 
-	for (auto it = m_Assets.Begin(); it != m_Assets.End(); it++)
+	for (auto asset = m_Assets.Begin(); asset != m_Assets.End(); asset++)
 	{
-		auto pInStack = it->pStack;
+		auto pInStack = asset->pStack;
 		auto pOutStack = pSECT->CreateStack(pInStack);
 
-		for (auto symbol = it->RelatedSymbols.Begin(); !symbol.IsOver(); symbol++)
+		for (auto symbol = asset->RelatedSymbols.Begin(); !symbol.IsOver(); symbol++)
 		{
-			auto pInPtr = m_TRBFile.GetSYMB()->Find<char>(m_TRBFile.GetSECT(), symbol->GetString8());
+			auto pInPtr = asset->pTRB->GetSYMB()->Find<char>(asset->pTRB->GetSECT(), symbol->GetString8());
+			void* pOutPtr = pOutStack->GetBuffer() + (pInPtr.get() - pInStack->GetBuffer());
 
-			pSYMB->Add(pOutStack, symbol->GetString8(), pOutStack->GetBuffer() + (pInPtr.get() - pInStack->GetBuffer()));
+			if (symbol->GetString8().Find(asset->Name) == 0)
+			{
+				pSYMB->Add(pOutStack, symbol->GetString8(), pOutPtr);
+			}
+			else
+			{
+				auto symbolName = TString8::Format("%s_%s", asset->Name.GetString8().GetString(), symbol->GetString8().GetString());
+				pSYMB->Add(pOutStack, symbolName, pOutPtr);
+			}
 		}
 	}
 
-	outFile.WriteToFile(a_szFileName);
+	outFile.WriteToFile(a_szFileName, a_bCompress);
 }
 
 AAssetPack::Asset_t* AAssetPack::GetAssetFromSymbol(const Toshi::TPString8& a_rSymbolName)

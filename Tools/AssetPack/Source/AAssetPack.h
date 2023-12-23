@@ -13,6 +13,7 @@ public:
 	{
 		Toshi::TPString8 Name;
 		char Format[4];
+		PTRB::TRBF* pTRB;
 		PTRB::SECT::Stack* pStack;
 		Toshi::T2DynamicArray<Toshi::TPString8> RelatedSymbols;
 	};
@@ -24,7 +25,7 @@ public:
 	}
 
 	TBOOL Load(const char* a_szFileName);
-	void Save(const char* a_szFileName);
+	void Save(const char* a_szFileName, TBOOL a_bCompress = TFALSE);
 
 	Asset_t* GetAssetFromSymbol(const Toshi::TPString8& a_rSymbolName);
 

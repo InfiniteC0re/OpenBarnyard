@@ -6,6 +6,7 @@ public:
 	enum class Mode
 	{
 		Compile,
+		Decompile,
 		Info
 	};
 
@@ -22,15 +23,17 @@ public:
 
 		if (IsDebuggerPresent())
 		{
-#if 1
+#if 0
 			m_mode = Mode::Compile;
 			m_useCompression = TFALSE;
 			m_inPath = "C:\\Users\\InfiniteC0re\\Desktop\\TMDLWS\\busha_01.fbx";
 			m_texturesPath = "C:\\Users\\InfiniteC0re\\Desktop\\TMDLWS\\Textures\\";
 			m_outPath = "C:\\Stuff\\Barnyard\\Game (ND)\\Data\\Models\\busha.trb";
 #else
-			m_mode = Mode::Info;
-			m_path1 = "C:\\Stuff\\Barnyard\\Game (ND)\\Data\\Models\\busha.trb";
+			m_mode = Mode::Decompile;
+			m_inPath = "C:\\Stuff\\Barnyard\\Game (ND)\\Data\\Models\\busha.trb";
+			m_texturesPath = "C:\\Users\\InfiniteC0re\\Desktop\\TMDLWS\\Textures\\";
+			m_outPath = "C:\\Users\\InfiniteC0re\\Desktop\\exported.trb";
 #endif
 		}
 		else
@@ -53,6 +56,13 @@ public:
 				{
 					TOSHI_TRACE("Found -c parameter");
 					m_mode = Mode::Compile;
+					ParseString(m_inPath);
+					ParseString(m_texturesPath);
+				}
+				else if (Toshi::TStringManager::String8Compare(*m_argv, "-d") == 0)
+				{
+					TOSHI_TRACE("Found -d parameter");
+					m_mode = Mode::Decompile;
 					ParseString(m_inPath);
 					ParseString(m_texturesPath);
 				}
