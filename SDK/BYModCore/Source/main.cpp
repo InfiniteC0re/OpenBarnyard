@@ -21,7 +21,11 @@
 #include <windows.h>
 
 HMODULE hModuleCore;
-AModLoaderTask* g_pModLoaderTask = TNULL;
+
+const char* GetModsDirectory()
+{
+	return "Mods\\";
+}
 
 DWORD WINAPI MainThread(HMODULE hModule)
 {
@@ -40,7 +44,7 @@ DWORD WINAPI MainThread(HMODULE hModule)
 	Toshi::TUtil::CreateTPStringPool();
 	Toshi::TUtil::SetTPStringPool(**(Toshi::TPString8Pool***)0x007ce230);
 	
-	g_pModLoaderTask->OnAGUI2Ready();
+	AGlobalModLoaderTask::Get()->OnAGUI2Ready();
 	AImGUI::CreateSingleton();
 
 	return TTRUE;
@@ -85,11 +89,7 @@ DWORD APIENTRY DllMain(HMODULE hModule, DWORD reason, LPVOID reserved)
 		TOSHI_INFO("Log system was successfully initialised!");
 		TOSHI_INFO("Starting BYModCore thread...");
 
-		// Create AModLoaderTask
-		auto pScheduler = CALL_THIS(0x006bbc10, Toshi::TSystemManager*, Toshi::TScheduler*, (Toshi::TSystemManager*)0x007ce640);
-		g_pModLoaderTask = CALL_THIS(0x006bcbf0, Toshi::TScheduler*, AModLoaderTask*, pScheduler, Toshi::TClass*, &TGetClass(AModLoaderTask), Toshi::TTask*, TNULL);
-
-		if (g_pModLoaderTask->Create())
+		if (AGlobalModLoaderTask::CreateSingleton()->Create())
 		{
 			CloseHandle(CreateThread(0, 0, (LPTHREAD_START_ROUTINE)MainThread, hModule, 0, 0));
 		}

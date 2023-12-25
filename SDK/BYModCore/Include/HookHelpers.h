@@ -4,9 +4,8 @@
 #include <cstddef>
 #include <cstdint>
 #include <type_traits>
-#include <detours.h>
 
-bool UnprotectMemory(void* memory, std::size_t size, unsigned long& oldProtect);
+MODCORE_API bool UnprotectMemory(void* memory, std::size_t size, unsigned long& oldProtect);
 
 template<typename T>
 inline bool UnprotectMemory(T& val, unsigned long& oldProtect)
@@ -26,7 +25,7 @@ inline bool UnprotectMemory(T& val)
     return UnprotectMemory(&val, sizeof(T));
 }
 
-bool WriteJump(void* jumpAddress, void* output);
+MODCORE_API bool WriteJump(void* jumpAddress, void* output);
 
 /* Hooks */
 #define CONST_MEMBER_HOOK(address, objName, hookName, returnType, ...)\
@@ -175,7 +174,7 @@ bool WriteJump(void* jumpAddress, void* output);
 \
     returnType hookName::_hook_obj::_inner_func(__VA_ARGS__)
 
-void InstallHook(void*& origFunc, void* hookFunc);
+MODCORE_API void InstallHook(void*& origFunc, void* hookFunc);
 
 template<typename ret_t, typename... args_t>
 inline void InstallHook(ret_t (*&origFunc)(args_t...),
@@ -234,7 +233,7 @@ inline bool UnprotectVTable(void** vtable, std::size_t virtualFuncCount)
     return UnprotectMemory(vtable, sizeof(void*) * virtualFuncCount);
 }
 
-void* InstallVTableHook(void** vtable,
+MODCORE_API void* InstallVTableHook(void** vtable,
     std::size_t virtualFuncIndex, void* hookFunc);
 
 template<typename ret_t, typename hook_obj_t, typename... args_t>

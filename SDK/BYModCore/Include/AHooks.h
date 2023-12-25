@@ -13,6 +13,7 @@ enum Hook
 	Hook_AModelLoader_LoadTRBCallback,
 	Hook_NewGameStarted,
 	Hook_MaterialLibrary_LoadTTLData,
+	Hook_TRenderInterface_SetLightColourMatrix,
 	Hook_NUMOF,
 };
 
@@ -56,6 +57,12 @@ public:
 	{
 		using t_LoadTTLData = TBOOL(*)(AMaterialLibrary* a_pMatLib, AMaterialLibrary::TTL* a_pTTL);
 		inline static Toshi::T2Vector<t_LoadTTLData, MAX_NUM_CALLBACKS> LoadTTLData[HookType_NUMOF];
+	};
+
+	struct RenderInterface
+	{
+		using t_SetLightColourMatrix = void(*)(Toshi::TRenderInterface* a_pRenderInterface, Toshi::TMatrix44* a_pLightColour);
+		inline static Toshi::T2Vector<t_SetLightColourMatrix, MAX_NUM_CALLBACKS> SetLightColourMatrix[HookType_NUMOF];
 	};
 
 	struct Uncategorized

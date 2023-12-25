@@ -17,7 +17,7 @@ void AAssetBuilder::Add(const TString8& a_FileName)
 		symbolDirName.Truncate(symbolDirName.FindReverse('.', -1));
 
 		auto pAsset = m_AssetPack.GetAssets().Push();
-		pAsset->Name = symbolDirName;
+		pAsset->Name = symbolDirName.MakeLower();
 		pAsset->pTRB = pTRB;
 		pAsset->pStack = pTRB->GetSECT()->GetStack(0);
 		
@@ -36,5 +36,5 @@ void AAssetBuilder::Add(const TString8& a_FileName)
 
 void AAssetBuilder::Save(const char* a_szFileName, TBOOL a_bCompress)
 {
-	m_AssetPack.Save(a_szFileName);
+	m_AssetPack.Save(a_szFileName, a_bCompress);
 }

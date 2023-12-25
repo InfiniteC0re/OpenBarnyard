@@ -75,7 +75,7 @@ int main(int argc, char** argv)
 			outPath = TString8::Format("%s.trb", args.GetAssetName());
 		}
 
-		assetBuilder.Save(outPath);
+		assetBuilder.Save(outPath, args.IsUsingBTEC());
 	}
 
 	return 0;

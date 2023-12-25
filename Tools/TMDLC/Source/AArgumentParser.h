@@ -30,8 +30,8 @@ public:
 			m_texturesPath = "C:\\Users\\InfiniteC0re\\Desktop\\TMDLWS\\Textures\\";
 			m_outPath = "C:\\Stuff\\Barnyard\\Game (ND)\\Data\\Models\\busha.trb";
 #else
-			m_mode = Mode::Decompile;
-			m_inPath = "C:\\Stuff\\Barnyard\\Game (ND)\\Data\\Models\\busha.trb";
+			m_mode = Mode::Info;
+			m_inPath = "C:\\Stuff\\Barnyard\\Game\\Data\\Models\\bn_crocodile.trb";
 			m_texturesPath = "C:\\Users\\InfiniteC0re\\Desktop\\TMDLWS\\Textures\\";
 			m_outPath = "C:\\Users\\InfiniteC0re\\Desktop\\exported.trb";
 #endif

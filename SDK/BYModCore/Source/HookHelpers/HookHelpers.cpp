@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "HookHelpers.h"
 
+#include <detours.h>
+
 bool UnprotectMemory(void* memory, std::size_t size, unsigned long& oldProtect)
 {
     return (VirtualProtect(memory, size, PAGE_EXECUTE_READWRITE, &oldProtect) != 0);

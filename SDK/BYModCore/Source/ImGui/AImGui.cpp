@@ -154,7 +154,7 @@ void AImGUI::Render()
 
 	if (ImGui::BeginTabBar("BYModCoreSettingsTabs"))
 	{
-		auto pModLoader = AModLoaderTask::GetSingleton();
+		auto pModLoader = AGlobalModLoaderTask::Get();
 		auto pMods = &pModLoader->GetMods();
 
 		if (ImGui::BeginTabItem("ModCore"))
@@ -180,7 +180,13 @@ void AImGUI::Render()
 				AGameStateController::GetSingleton()->PushState(pDebugSSeqGameState);
 			}
 
-			if (ImGui::Button("test"))
+			if (ImGui::Button("Hide GUI"))
+			{
+				Toggle();
+				CALL(0x00603210, void);
+			}
+
+			if (ImGui::Button("Start New Game (Experimental)"))
 			{
 				Toggle();
 				//AGameStateController::GetSingleton()->ReplaceState(new AGameState);
@@ -221,7 +227,7 @@ void AImGUI::Render()
 
 				if (ImGui::BeginCombo("##AMiniGame", MINIGAME_LIST[s_iSelectedMiniGame]))
 				{
-					for (TINT i = 0; i < NUM_MINIGAMES; i++)
+					for (TUINT i = 0; i < NUM_MINIGAMES; i++)
 					{
 						TBOOL bIsSelected = s_iSelectedMiniGame == i;
 						ImGui::Selectable(MINIGAME_LIST[i], &bIsSelected);

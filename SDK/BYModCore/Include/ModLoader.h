@@ -14,4 +14,6 @@
 #define MODCORE_API
 #endif
 
+MODCORE_API const char* GetModsDirectory();
+
 using t_CreateModInstance = AModInstance*(*)();

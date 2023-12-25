@@ -7,13 +7,15 @@
 
 #include <filesystem>
 
+TOSHI_NAMESPACE_USING
+
 void AModLoaderTask::AGUI2MainPostRenderCallback()
 {
-	if (AModLoaderTask::GetSingleton()->m_pTextBox)
+	if (AGlobalModLoaderTask::Get()->m_pTextBox)
 	{
-		AModLoaderTask::GetSingleton()->m_pTextBox->PreRender();
-		AModLoaderTask::GetSingleton()->m_pTextBox->Render();
-		AModLoaderTask::GetSingleton()->m_pTextBox->PostRender();
+		AGlobalModLoaderTask::Get()->m_pTextBox->PreRender();
+		AGlobalModLoaderTask::Get()->m_pTextBox->Render();
+		AGlobalModLoaderTask::Get()->m_pTextBox->PostRender();
 	}
 }
 
@@ -37,7 +39,7 @@ TBOOL AModLoaderTask::OnUpdate(TFLOAT a_fDeltaTime)
 	if (m_pTextBox && m_pTextBox->IsVisible())
 	{
 		TFLOAT fAlpha = (m_fTotalTime - 3.0f) / 0.8f;
-		Toshi::TMath::Clip(fAlpha, 0.0f, 1.0f);
+		TMath::Clip(fAlpha, 0.0f, 1.0f);
 
 		fAlpha *= fAlpha;
 		m_pTextBox->SetAlpha(1.0f - fAlpha);
@@ -67,14 +69,14 @@ TBOOL AModLoaderTask::OnCreate()
 
 void AModLoaderTask::LoadMods()
 {
-	for (const auto& entry : std::filesystem::directory_iterator(L"Mods"))
+	for (const auto& entry : std::filesystem::directory_iterator(GetModsDirectory()))
 	{
 		if (entry.path().extension().compare(L".dll") == 0)
 		{
 			const wchar_t* dll = entry.path().native().c_str();
 
 			char dllPath[MAX_PATH];
-			Toshi::TStringManager::StringUnicodeToChar(dllPath, entry.path().native().c_str(), -1);
+			TStringManager::StringUnicodeToChar(dllPath, entry.path().native().c_str(), -1);
 
 			HMODULE hModModule = LoadLibraryW(dll);
 			auto fnCreateModInstance = TREINTERPRETCAST(t_CreateModInstance, GetProcAddress(hModModule, "CreateModInstance"));
@@ -90,7 +92,8 @@ void AModLoaderTask::LoadMods()
 					if (pModInstance->OnLoad())
 					{
 						TOSHI_INFO("  Successfully initialised!");
-						AddModInstance(pModInstance);
+						m_LoadedMods.PushBack(pModInstance);
+						m_uiNumMods += 1;
 					}
 					else
 					{
@@ -113,6 +116,11 @@ void AModLoaderTask::LoadMods()
 		}
 	}
 
+	for (auto it = m_LoadedMods.Begin(); it != m_LoadedMods.End(); it++)
+	{
+		it->OnAllModsLoaded();
+	}
+
 	m_bLoaded = TTRUE;
 }
 
@@ -130,7 +138,7 @@ void AModLoaderTask::OnAGUI2Ready()
 	{
 		static wchar_t s_wcsBuffer[64];
 		const wchar_t* wcsFormat = (m_uiNumMods != 1) ? L"Loaded %d mods!\n%ls" : L"Loaded %d mod!\n%ls";
-		Toshi::TStringManager::String16Format(s_wcsBuffer, 64, wcsFormat, m_uiNumMods, L"Press ~ to open menu.");
+		TStringManager::String16Format(s_wcsBuffer, 64, wcsFormat, m_uiNumMods, L"Press ~ to open menu.");
 		m_pTextBox->SetText(s_wcsBuffer);
 	}
 
@@ -149,4 +157,45 @@ void AModLoaderTask::OnRenderInterfaceReady()
 	{
 		it->OnRenderInterfaceReady(pRender);
 	}
+}
+
+void AModLoaderTask::OnAppRendererReady()
+{
+	for (auto it = m_LoadedMods.Begin(); it != m_LoadedMods.End(); it++)
+	{
+		it->OnAppRendererReady();
+	}
+}
+
+T2DList<AModInstance>& AModLoaderTask::GetMods()
+{
+	return m_LoadedMods;
+}
+
+AGlobalModLoaderTask::AGlobalModLoaderTask()
+{
+	auto pScheduler = CALL_THIS(0x006bbc10, TSystemManager*, TScheduler*, (TSystemManager*)0x007ce640);
+	m_pTask = CALL_THIS(0x006bcbf0, TScheduler*, AModLoaderTask*, pScheduler, TClass*, &TGetClass(AModLoaderTask), TTask*, TNULL);
+}
+
+TBOOL AGlobalModLoaderTask::Create()
+{
+	TASSERT(TNULL != m_pTask);
+	return m_pTask->Create();
+}
+
+AModInstance* AGlobalModLoaderTask::FindMod(const char* a_szModName)
+{
+	auto pModLoader = Get();
+	auto pMods = &pModLoader->GetMods();
+
+	for (auto it = pMods->Begin(); it != pMods->End(); it++)
+	{
+		if (TStringManager::String8Compare(it->GetName(), a_szModName) == 0)
+		{
+			return it;
+		}
+	}
+
+	return TNULL;
 }

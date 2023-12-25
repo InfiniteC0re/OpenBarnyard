@@ -293,7 +293,7 @@ int main(int argc, char** argv)
 			pOutLOD->m_iShader = 0;
 
 			TFIXME("Calculate render volume of LOD");
-			pOutLOD->m_RenderVolume.Set(0.0f, 0.0f, 0.0f, 5.0f);
+			pOutLOD->m_RenderVolume.Set(0.0f, 0.0f, 0.0f, 5000.0f);
 
 			TINT iMeshCount = pOutLOD->m_iMeshCount1 + pOutLOD->m_iMeshCount2;
 
@@ -375,7 +375,7 @@ int main(int argc, char** argv)
 							pOutVertex->Bones[2] = 0;
 							pOutVertex->Bones[4] = 0;
 							pOutVertex->UV.x = pImportMesh->mTextureCoords[0][h].x;
-							pOutVertex->UV.y = pImportMesh->mTextureCoords[0][h].y;
+							pOutVertex->UV.y = pImportMesh->mTextureCoords[0][h].y * -1.0f;
 						}
 
 						auto pOutIndices = pStack->Alloc<TUINT16>(&pOutSubMesh->m_pIndices, pOutSubMesh->m_uiNumIndices);

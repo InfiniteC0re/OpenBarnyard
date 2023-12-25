@@ -1,4 +1,4 @@
-project "BYTexturePacks"
+project "BYWinterMod"
 	language "C++"
 	cppdialect "C++20"
 	staticruntime "on"
@@ -40,6 +40,7 @@ project "BYTexturePacks"
 		"%{wks.location}/Toshi/Source",
 		"%{wks.location}/SDK/BYardSDK/Source",
 		"%{wks.location}/SDK/BYModCore/Include",
+		"%{wks.location}/SDK/BYTexturePacks/Include",
 		"%{IncludeDir.spdlog}",
 		"%{IncludeDir.detours}"
 	}
