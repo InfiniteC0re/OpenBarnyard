@@ -28,19 +28,25 @@ public:
 		m_uValue.Pointer = TNULL;
 	}
 
-	PPropertyValue(int a_iValue)
+	PPropertyValue(TINT a_iValue)
 	{
 		m_eType = Type::Int;
 		m_uValue.Int = a_iValue;
 	}
 
-	PPropertyValue(float a_fValue)
+	PPropertyValue(TBOOL a_bValue)
+	{
+		m_eType = Type::Bool;
+		m_uValue.Bool = a_bValue;
+	}
+
+	PPropertyValue(TFLOAT a_fValue)
 	{
 		m_eType = Type::Float;
 		m_uValue.Float = a_fValue;
 	}
 
-	PPropertyValue(uint32_t a_uiValue)
+	PPropertyValue(TUINT32 a_uiValue)
 	{
 		m_eType = Type::UInt32;
 		m_uValue.UInt32 = a_uiValue;
@@ -75,25 +81,25 @@ public:
 		return m_eType;
 	}
 
-	bool GetBoolean() const
+	TBOOL GetBoolean() const
 	{
 		TASSERT(m_eType == Type::Bool);
 		return m_uValue.Bool;
 	}
 
-	float GetFloat() const
+	TFLOAT GetFloat() const
 	{
 		TASSERT(m_eType == Type::Float);
 		return m_uValue.Float;
 	}
 
-	int GetInteger() const
+	TINT GetInteger() const
 	{
 		TASSERT(m_eType == Type::Int);
 		return m_uValue.Int;
 	}
 
-	uint32_t GetUINT32() const
+	TUINT32 GetUINT32() const
 	{
 		TASSERT(m_eType == Type::UInt32);
 		return m_uValue.UInt32;
@@ -137,41 +143,46 @@ public:
 		return m_uValue.Array;
 	}
 
-	bool* GetBooleanPointer()
+	TBOOL* GetBooleanPointer()
 	{
 		TASSERT(m_eType == Type::Bool);
 		return &m_uValue.Bool;
 	}
 
-	float* GetFloatPointer()
+	TFLOAT* GetFloatPointer()
 	{
 		TASSERT(m_eType == Type::Float);
 		return &m_uValue.Float;
 	}
 
-	int* GetIntegerPointer()
+	TINT* GetIntegerPointer()
 	{
 		TASSERT(m_eType == Type::Int);
 		return &m_uValue.Int;
 	}
 
-	uint32_t* GetUINT32Pointer()
+	TUINT32* GetUINT32Pointer()
 	{
 		TASSERT(m_eType == Type::UInt32);
 		return &m_uValue.UInt32;
 	}
 
-	void SetInt(int a_iValue)
+	void SetInt(TINT a_iValue)
 	{
 		this->operator=(a_iValue);
 	}
 
-	void SetFloat(float a_fValue)
+	void SetBool(TBOOL a_bValue)
+	{
+		this->operator=(a_bValue);
+	}
+
+	void SetFloat(TFLOAT a_fValue)
 	{
 		this->operator=(a_fValue);
 	}
 
-	void SetUINT32(uint32_t a_uiValue)
+	void SetUINT32(TUINT32 a_uiValue)
 	{
 		this->operator=(a_uiValue);
 	}
@@ -181,21 +192,28 @@ public:
 		this->operator=(a_sValue);
 	}
 
-	PPropertyValue& operator=(int a_iValue)
+	PPropertyValue& operator=(TINT a_iValue)
 	{
 		TASSERT(m_eType == Type::Int);
 		m_uValue.Int = a_iValue;
 		return *this;
 	}
 
-	PPropertyValue& operator=(float a_fValue)
+	PPropertyValue& operator=(TBOOL a_bValue)
+	{
+		TASSERT(m_eType == Type::Bool);
+		m_uValue.Bool = a_bValue;
+		return *this;
+	}
+
+	PPropertyValue& operator=(TFLOAT a_fValue)
 	{
 		TASSERT(m_eType == Type::Float);
 		m_uValue.Float = a_fValue;
 		return *this;
 	}
 
-	PPropertyValue& operator=(uint32_t a_uiValue)
+	PPropertyValue& operator=(TUINT32 a_uiValue)
 	{
 		TASSERT(m_eType == Type::UInt32);
 		m_uValue.UInt32 = a_uiValue;
@@ -225,10 +243,10 @@ private:
 	union {
 		void* Pointer;
 		char* String;
-		float Float;
+		TFLOAT Float;
 		TBOOL Bool;
-		int Int;
-		uint32_t UInt32;
+		TINT Int;
+		TUINT32 UInt32;
 		class PProperties* Props;
 		class PPropertyValueArray* Array;
 	} m_uValue;
@@ -288,22 +306,27 @@ public:
 		return &m_pValues[a_iIndex];
 	}
 
-	uint32_t GetSize() const
+	TUINT32 GetSize() const
 	{
 		return m_iSize;
 	}
 
-	PPropertyValue* Add(int a_iValue)
+	PPropertyValue* Add(TINT a_iValue)
 	{
 		return AllocValue(PPropertyValue(a_iValue));
 	}
 
-	PPropertyValue* Add(float a_fValue)
+	PPropertyValue* Add(TBOOL a_bValue)
+	{
+		return AllocValue(PPropertyValue(a_bValue));
+	}
+
+	PPropertyValue* Add(TFLOAT a_fValue)
 	{
 		return AllocValue(PPropertyValue(a_fValue));
 	}
 
-	PPropertyValue* Add(uint32_t a_uiValue)
+	PPropertyValue* Add(TUINT32 a_uiValue)
 	{
 		return AllocValue(PPropertyValue(a_uiValue));
 	}
@@ -381,7 +404,7 @@ private:
 
 private:
 	PPropertyValue* m_pValues;
-	uint32_t m_iSize;
+	TUINT32 m_iSize;
 };
 
 class PPropertyName
@@ -475,19 +498,25 @@ public:
 			m_pValue = TNULL;
 		}
 
-		PProperty(const Toshi::TString8& a_sName, int a_iValue)
+		PProperty(const Toshi::TString8& a_sName, TINT a_iValue)
 		{
 			m_pName = new PPropertyName(a_sName);
 			m_pValue = new PPropertyValue(a_iValue);
 		}
 
-		PProperty(const Toshi::TString8& a_sName, float a_fValue)
+		PProperty(const Toshi::TString8& a_sName, TBOOL a_bValue)
+		{
+			m_pName = new PPropertyName(a_sName);
+			m_pValue = new PPropertyValue(a_bValue);
+		}
+
+		PProperty(const Toshi::TString8& a_sName, TFLOAT a_fValue)
 		{
 			m_pName = new PPropertyName(a_sName);
 			m_pValue = new PPropertyValue(a_fValue);
 		}
 
-		PProperty(const Toshi::TString8& a_sName, uint32_t a_uiValue)
+		PProperty(const Toshi::TString8& a_sName, TUINT32 a_uiValue)
 		{
 			m_pName = new PPropertyName(a_sName);
 			m_pValue = new PPropertyValue(a_uiValue);
@@ -683,22 +712,27 @@ public:
 		return m_pParent;
 	}
 
-	uint32_t GetPropertyCount() const
+	TUINT32 GetPropertyCount() const
 	{
 		return m_iCount;
 	}
 
-	PProperty* AddProperty(const Toshi::TString8& a_Name, int a_iValue)
+	PProperty* AddProperty(const Toshi::TString8& a_Name, TINT a_iValue)
 	{
 		return AllocProperty(PProperty(a_Name, a_iValue));
 	}
 
-	PProperty* AddProperty(const Toshi::TString8& a_Name, float a_fValue)
+	PProperty* AddPropertyBool(const Toshi::TString8& a_Name, TBOOL a_bValue)
+	{
+		return AllocProperty(PProperty(a_Name, a_bValue));
+	}
+
+	PProperty* AddProperty(const Toshi::TString8& a_Name, TFLOAT a_fValue)
 	{
 		return AllocProperty(PProperty(a_Name, a_fValue));
 	}
 
-	PProperty* AddProperty(const Toshi::TString8& a_Name, uint32_t a_uiValue)
+	PProperty* AddProperty(const Toshi::TString8& a_Name, TUINT32 a_uiValue)
 	{
 		return AllocProperty(PProperty(a_Name, a_uiValue));
 	}
@@ -769,7 +803,7 @@ private:
 private:
 	PProperties* m_pParent;
 	PProperty* m_pProperties;
-	uint32_t m_iCount;
+	TUINT32 m_iCount;
 };
 
 inline void PPropertyValue::Delete()
