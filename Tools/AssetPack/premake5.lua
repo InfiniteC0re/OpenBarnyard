@@ -16,6 +16,11 @@ project "AssetPack"
 	{
 		"Toshi"
 	}
+	
+	linkoptions
+	{
+		"/SAFESEH:NO"
+	}
 
 	files
 	{

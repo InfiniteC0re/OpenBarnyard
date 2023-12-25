@@ -11,6 +11,11 @@ project "ToolTemplate"
 	{
 		"Toshi"
 	}
+	
+	linkoptions
+	{
+		"/SAFESEH:NO"
+	}
 
 	files
 	{

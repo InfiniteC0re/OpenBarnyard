@@ -26,6 +26,8 @@ namespace Toshi
 	};
 }
 
+#ifndef TOSHI_NO_LOGS
+
 #ifdef TOSHI_USER_ENGINE
 
 // Engine log macros
@@ -43,5 +45,15 @@ namespace Toshi
 #define TOSHI_ERROR(...) Toshi::TLog::GetAppLogger()->error(__VA_ARGS__)
 #define TOSHI_TRACE(...) Toshi::TLog::GetAppLogger()->trace(__VA_ARGS__)
 #define TOSHI_CRITICAL(...) Toshi::TLog::GetAppLogger()->critical(__VA_ARGS__)
+
+#endif
+
+#else
+
+#define TOSHI_INFO(...)
+#define TOSHI_WARN(...)
+#define TOSHI_ERROR(...)
+#define TOSHI_TRACE(...)
+#define TOSHI_CRITICAL(...)
 
 #endif

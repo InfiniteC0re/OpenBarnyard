@@ -1,4 +1,4 @@
-project "TMDLC"
+project "TMDL"
 	language "C++"
 	cppdialect "C++20"
 	staticruntime "on"
@@ -15,6 +15,11 @@ project "TMDLC"
 	links
 	{
 		"Toshi"
+	}
+	
+	linkoptions
+	{
+		"/SAFESEH:NO"
 	}
 	
 	libdirs

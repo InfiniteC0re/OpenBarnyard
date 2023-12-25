@@ -19,6 +19,11 @@ project "BYModCore"
 		"detours.lib"
 	}
 	
+	linkoptions
+	{
+		"/SAFESEH:NO"
+	}
+	
 	libdirs
 	{
 		"%{LibDir.fmod}",

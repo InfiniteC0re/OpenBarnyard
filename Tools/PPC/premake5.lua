@@ -17,6 +17,11 @@ project "PPC"
 		"Toshi"
 	}
 	
+	linkoptions
+	{
+		"/SAFESEH:NO"
+	}
+	
 	files
 	{
 		"Source/**.h",

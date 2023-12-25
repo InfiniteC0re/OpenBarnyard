@@ -11,6 +11,7 @@ namespace Toshi
 
 	void TLog::Create(const char* a_szAppName)
 	{
+#ifndef TOSHI_NO_LOGS
 		if (!s_Created)
 		{
 			spdlog::set_pattern("%^[%H:%M:%S] [%n] %v%$");
@@ -22,13 +23,16 @@ namespace Toshi
 			s_AppLogger->set_level(spdlog::level::level_enum::trace);
 			s_Created = TTRUE;
 		}
+#endif
 	}
 
 	void TLog::Destroy()
 	{
+#ifndef TOSHI_NO_LOGS
 		spdlog::shutdown();
 		s_CoreLogger = TNULL;
 		s_AppLogger = TNULL;
 		s_Created = TFALSE;
+#endif
 	}
 }

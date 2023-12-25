@@ -53,7 +53,7 @@ MEMBER_HOOK(0x00662d90, AOptions, AOptions_IsResolutionCompatible, TBOOL, TUINT 
 
 		if (windowRect.right > a_uiWidth || windowRect.bottom > a_uiHeight)
 		{
-			const int msgBoxResult = MessageBoxW(NULL, L"It seems that you aren't using widescreen patch.\nDo you want the game to launch in you native resolution?", L"Barnyard", MB_YESNO);
+			const int msgBoxResult = MessageBoxW(NULL, L"It seems that you aren't using widescreen patch.\nDo you want the game to launch in your native resolution?", L"Barnyard", MB_YESNO);
 
 			if (msgBoxResult == IDYES)
 			{

@@ -15,6 +15,11 @@ project "BYardSDK"
 		"Toshi"
 	}
 	
+	linkoptions
+	{
+		"/SAFESEH:NO"
+	}
+	
 	libdirs
 	{
 		"%{LibDir.fmod}",

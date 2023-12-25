@@ -15,7 +15,8 @@ project "OpenBarnyard"
 	
 	linkoptions
 	{
-		"%{wks.location}/bin-int/" .. outputdir .. "/Toshi/Toshi.res"
+		"%{wks.location}/bin-int/" .. outputdir .. "/Toshi/Toshi.res",
+		"/SAFESEH:NO"
 	}
 
 	files

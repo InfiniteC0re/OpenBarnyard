@@ -19,6 +19,11 @@ project "BYTexturePacks"
 		"BYModCore"
 	}
 	
+	linkoptions
+	{
+		"/SAFESEH:NO"
+	}
+	
 	libdirs
 	{
 		"%{LibDir.fmod}",

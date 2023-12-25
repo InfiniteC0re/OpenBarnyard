@@ -23,7 +23,7 @@ group "Engine"
 
 group "Tools"
 	include "Tools/AssetPack"
-	include "Tools/TMDLC"
+	include "Tools/TMDL"
 	include "Tools/PPC"
 		
 group "Third-Party"

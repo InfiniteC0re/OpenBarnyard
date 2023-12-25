@@ -19,6 +19,11 @@ project "BYSpeedrunHelper"
 		"BYModCore"
 	}
 	
+	linkoptions
+	{
+		"/SAFESEH:NO"
+	}
+	
 	libdirs
 	{
 		"%{LibDir.fmod}",

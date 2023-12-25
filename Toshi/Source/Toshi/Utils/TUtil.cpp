@@ -8,6 +8,7 @@ namespace Toshi
 {
 	void TUtil::LogInitialise()
 	{
+#ifndef TOSHI_NO_LOGS
 		TLogFile* logfile = new TLogFile();
 		Toshi::TUtil::GetSingleton()->m_pLogFile1 = logfile;
 		Toshi::TUtil::GetSingleton()->m_pLogFile2 = logfile;
@@ -23,6 +24,7 @@ namespace Toshi
 		GetLog()->Create(filename, "Toshi 2.0", TFALSE);
 		GetLog()->AllowIndentation(TTRUE);
 		GetLog()->SetSimpleMode(TTRUE);
+#endif
 	}
 
 	void TUtil::Log(const char* format, ...)
