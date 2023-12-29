@@ -14,7 +14,7 @@ TOSHI_NAMESPACE_USING
 char g_szTexturePackName[64] = "Default";
 char g_szTexturePackPath[MAX_PATH] = "Mods\\TexturePacks\\Default\\";
 TMutex g_LoadMutex;
-TBOOL g_bDumpTextures = TTRUE;
+TBOOL g_bDumpTextures = TFALSE;
 TBOOL g_bAutoReload = TTRUE;
 THPTimer g_LastDumpTimer;
 
