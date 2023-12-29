@@ -24,6 +24,7 @@ AModLoaderTask::AModLoaderTask()
 	m_fTotalTime = 0.0f;
 	m_bLoaded = TFALSE;
 	m_pTextBox = TNULL;
+	m_uiNumMods = 0;
 
 	AHooks::AddHook(Hook_AGUI2_MainPostRenderCallback, HookType_Before, AGUI2MainPostRenderCallback);
 }
@@ -138,7 +139,7 @@ void AModLoaderTask::OnAGUI2Ready()
 	{
 		static wchar_t s_wcsBuffer[64];
 		const wchar_t* wcsFormat = (m_uiNumMods != 1) ? L"Loaded %d mods!\n%ls" : L"Loaded %d mod!\n%ls";
-		TStringManager::String16Format(s_wcsBuffer, 64, wcsFormat, m_uiNumMods, L"Press ~ to open menu.");
+		TStringManager::String16Format(s_wcsBuffer, 64, wcsFormat, m_uiNumMods, L"");
 		m_pTextBox->SetText(s_wcsBuffer);
 	}
 

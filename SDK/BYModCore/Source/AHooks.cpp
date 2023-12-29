@@ -135,6 +135,42 @@ MEMBER_HOOK(0x006c66b0, TRenderD3DInterface, TRenderD3DInterface_UpdateColourSet
 	return;
 }
 
+MEMBER_HOOK(0x006bb000, TTRB, TTRB_Load, TINT, const char* a_szFileName, TUINT a_uiUnk)
+{
+	TString8 filepath = a_szFileName;
+
+	for (TUINT i = 0; i < filepath.Length(); i++)
+		if (filepath[i] == '/') filepath[i] = '\\';
+
+	filepath.MakeLower();
+
+	auto pModLoaderTask = AGlobalModLoaderTask::Get();
+	auto pMods = &pModLoaderTask->GetMods();
+	TBOOL bFound = TFALSE;
+
+	for (auto it = pMods->Begin(); it != pMods->End(); it++)
+	{
+		auto pFileOverrides = it->GetFileOverrides();
+
+		if (pFileOverrides != TNULL)
+		{
+			auto pOrigFileName = pFileOverrides->GetOptionalProperty(filepath);
+			
+			if (pOrigFileName)
+			{
+				filepath = GetModsDirectory();
+				filepath += pOrigFileName->GetString();
+				bFound = TTRUE;
+				break;
+			}
+		}
+
+		if (bFound) break;
+	}
+
+	return CallOriginal(filepath, a_uiUnk);
+}
+
 MEMBER_HOOK(0x006cd220, Toshi::TCameraObject, TCameraObject_SetFOV, TFLOAT, TFLOAT a_fFOV)
 {
 	if (g_bBikeFOVPatch)
@@ -152,8 +188,6 @@ MEMBER_HOOK(0x006cd220, Toshi::TCameraObject, TCameraObject_SetFOV, TFLOAT, TFLO
 
 MEMBER_HOOK(0x006c1d40, TModelRegistry, TModelRegistry_CreateModel, TModelRegistryEntry*, const char* a_szFileName, TModelPtr& a_rModelRef, TTRB* a_pAssetTRB)
 {
-	TOSHI_INFO(a_szFileName);
-
 	TString8 filepath = a_szFileName;
 
 	for (TUINT i = 0; i < filepath.Length(); i++)
@@ -187,6 +221,11 @@ MEMBER_HOOK(0x006c1d40, TModelRegistry, TModelRegistry_CreateModel, TModelRegist
 		}
 
 		if (pFoundAsset) break;
+	}
+
+	if (TStringManager::String8FindString(a_szFileName, "busha.trb"))
+	{
+		TOSHI_INFO("Warning!");
 	}
 
 	return CallOriginal(a_szFileName, a_rModelRef, pFoundAsset ? pFoundAsset : a_pAssetTRB);
@@ -372,7 +411,7 @@ MEMBER_HOOK(0x006355a0, AGUI2, AGUI2_OnCreate, TBOOL)
 
 	if (g_uiWindowWidth >= 1280 && g_uiWindowWidth >= 768)
 	{
-		AGUI2::GetContext()->GetRootElement()->SetDimensions(1024, 768);
+		AGUI2::GetContext()->GetRootElement()->SetDimensions(936, 702);
 	}
 
 	return TTRUE;
@@ -472,6 +511,7 @@ void AHooks::Initialise()
 	InstallHook<ADisplayModes_Win_DoesModeExist>();
 	InstallHook<TCameraObject_SetFOV>();
 	InstallHook<TRenderD3DInterface_UpdateColourSettings>();
+	InstallHook<TTRB_Load>();
 }
 
 TBOOL AHooks::AddHook(Hook a_eHook, HookType a_eHookType, void* a_pCallback)

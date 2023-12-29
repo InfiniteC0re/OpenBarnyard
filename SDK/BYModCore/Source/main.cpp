@@ -73,12 +73,15 @@ DWORD APIENTRY DllMain(HMODULE hModule, DWORD reason, LPVOID reserved)
 	{
 	case DLL_PROCESS_ATTACH:
 	{
-		Toshi::TMemory::Initialise(8 * 1024 * 1024, 0);
+		Toshi::TMemory::Initialise(4 * 1024 * 1024, 0);
 		
+#ifndef TOSHI_NO_LOGS
 		AllocConsole();
 		FILE* fDummy;
 		freopen_s(&fDummy, "CONOUT$", "w", stdout);
 		hModuleCore = hModule;
+#endif
+
 		Toshi::TLog::Create("BYModCore");
 
 		// Initialise hooks

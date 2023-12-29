@@ -17,24 +17,29 @@ public:
 		m_inPath(TNULL),
 		m_texturesPath(TNULL),
 		m_outPath(TNULL),
-		m_keylib("MiscObj")
+		m_keylib("MiscObj"),
+		m_isTerrain(TFALSE),
+		m_bNoSkeleton(TTRUE)
 	{
 		m_useCompression = TFALSE;
 
 		if (IsDebuggerPresent())
 		{
-#if 0
-			m_mode = Mode::Compile;
-			m_useCompression = TFALSE;
-			m_inPath = "C:\\Users\\InfiniteC0re\\Desktop\\TMDLWS\\busha_01.fbx";
-			m_texturesPath = "C:\\Users\\InfiniteC0re\\Desktop\\TMDLWS\\Textures\\";
-			m_outPath = "C:\\Stuff\\Barnyard\\Game (ND)\\Data\\Models\\busha.trb";
-#else
-			m_mode = Mode::Info;
-			m_inPath = "C:\\Stuff\\Barnyard\\Game\\Data\\Models\\bn_crocodile.trb";
-			m_texturesPath = "C:\\Users\\InfiniteC0re\\Desktop\\TMDLWS\\Textures\\";
-			m_outPath = "C:\\Users\\InfiniteC0re\\Desktop\\exported.trb";
-#endif
+//#if 0
+//			m_mode = Mode::Compile;
+//			m_useCompression = TFALSE;
+//			m_isTerrain = TTRUE;
+//			m_inPath = "C:\\Users\\InfiniteC0re\\Desktop\\TMDLWS\\Barn_L0Mod0.fbx";
+//			m_texturesPath = "C:\\Users\\InfiniteC0re\\Desktop\\TMDLWS\\Textures\\";
+//			m_outPath = "C:\\Stuff\\Barnyard\\Game (ND)\\Data\\Terrain\\EnvMain\\Barn_L0Mod0.trb";
+//#else
+//			m_mode = Mode::Decompile;
+//			m_useCompression = TFALSE;
+//			m_isTerrain = TTRUE;
+//			m_inPath = "C:\\Stuff\\Barnyard\\Game (ND)\\Mods\\BYWinterMod\\DevTools\\Assets\\bn_crocodile.trb";
+//			m_texturesPath = "C:\\Users\\InfiniteC0re\\Desktop\\TMDLWS\\Textures\\";
+//			m_outPath = "C:\\Users\\InfiniteC0re\\Desktop\\TMDLWS\\bn_crocodile.fbx";
+//#endif
 		}
 		else
 		{
@@ -80,6 +85,12 @@ public:
 				{
 					TOSHI_TRACE("Found -keylib parameter");
 					ParseString(m_keylib);
+					m_bNoSkeleton = TFALSE;
+				}
+				else if (Toshi::TStringManager::String8Compare(*m_argv, "-terrain") == 0)
+				{
+					TOSHI_TRACE("Found -terrain parameter");
+					m_isTerrain = TTRUE;
 				}
 
 				m_argv++;
@@ -90,6 +101,8 @@ public:
 	Mode GetMode() const { return m_mode; }
 
 	TBOOL IsUsingBTEC() const { return m_useCompression; }
+	TBOOL IsTerrain() const { return m_isTerrain; }
+	TBOOL NoSkeleton() const { return m_bNoSkeleton; }
 
 	const char* GetInPath() const { return m_inPath; }
 	const char* GetTexturesPath() const { return m_texturesPath; }
@@ -123,6 +136,8 @@ private:
 	int m_argc;
 	Mode m_mode;
 	TBOOL m_useCompression;
+	TBOOL m_isTerrain;
+	TBOOL m_bNoSkeleton;
 	const char* m_inPath;
 	const char* m_texturesPath;
 	const char* m_outPath;

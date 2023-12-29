@@ -767,6 +767,24 @@ public:
 	{
 		return a_TRB.CastSymbol<PProperties>("Main");
 	}
+
+	__forceinline static const PProperties* LoadFromAsset(Toshi::TTRB* a_pTRB, const char* a_szFileName)
+	{
+		Toshi::TString8 symbolName = a_szFileName;
+		symbolName.MakeLower();
+		symbolName += "_Main";
+
+		return a_pTRB->CastSymbol<PProperties>(symbolName);
+	}
+
+	__forceinline static const PProperties* LoadFromAsset(Toshi::TTRB& a_TRB, const char* a_szFileName)
+	{
+		Toshi::TString8 symbolName = a_szFileName;
+		symbolName.MakeLower();
+		symbolName += "_Main";
+
+		return a_TRB.CastSymbol<PProperties>(symbolName);
+	}
 #endif
 
 private:

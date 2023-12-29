@@ -29,6 +29,16 @@ MEMBER_HOOK(0x006059f0, ABINKMoviePlayer, ABINKMoviePlayer_SetMovieFile, void, c
 	CallOriginal(a_szMovieFile);
 }
 
+class AOptions {};
+
+MEMBER_HOOK(0x00662eb0, AOptions, AOptions_LoadSettings, void)
+{
+	CallOriginal();
+
+	// Disable high detail grass
+	*(TBOOL*)(TUINT(this) + 0x30) = TFALSE;
+}
+
 TFLOAT g_afLightColour[4] = {
 	218 / 255.0f,
 	236 / 255.0f,
@@ -50,6 +60,7 @@ public:
 	TBOOL OnLoad() override
 	{
 		InstallHook<ABINKMoviePlayer_SetMovieFile>();
+		InstallHook<AOptions_LoadSettings>();
 		return AHooks::AddHook(Hook_TRenderInterface_SetLightColourMatrix, HookType_Before, TRenderInterface_SetLightColourMatrix);
 	}
 
@@ -116,6 +127,16 @@ public:
 	Toshi::TTRB* GetAssetFile() override
 	{
 		return m_pAssetTRB;
+	}
+
+	const PProperties* GetFileOverrides() override
+	{
+		if (m_pAssetTRB)
+		{
+			return PProperties::LoadFromAsset(m_pAssetTRB, "overrides");
+		}
+
+		return TNULL;
 	}
 
 	const char* GetName() override
