@@ -26,7 +26,7 @@ namespace Toshi {
 		//tfree(this);
 	}
 
-	TBOOL TSkeleton::Create(uint32_t param_1)
+	TBOOL TSkeleton::Create(TUINT32 param_1)
 	{
 		TIMPLEMENT();
 		return TFALSE;
@@ -57,7 +57,6 @@ namespace Toshi {
 		pInstance->m_fTotalWeight = 0.0f;
 		pInstance->m_iLastUpdateStateFrame = 0;
 		pInstance->m_iLastUpdateTimeFrame = 0;
-		pInstance->m_iUnk5 = -1;
 
 		for (int i = 0; i < GetAnimationMaxCount(); i++)
 		{
@@ -85,7 +84,7 @@ namespace Toshi {
 			m_fnQuatLerp = TQuaternion::Nlerp;
 	}
 
-	int TSkeleton::GetBoneID(const char* a_cBoneName, uint32_t a_iLength)
+	int TSkeleton::GetBoneID(const char* a_cBoneName, TUINT32 a_iLength)
 	{
 		for (short i = 0; i < m_iBoneCount; i++)
 		{
@@ -98,7 +97,7 @@ namespace Toshi {
 		return -1;
 	}
 
-	int TSkeleton::GetSequenceID(const char* a_sSequenceName, uint32_t a_iLength)
+	int TSkeleton::GetSequenceID(const char* a_sSequenceName, TUINT32 a_iLength)
 	{
 		for (short i = 0; i < m_iSequenceCount; i++)
 		{
@@ -111,7 +110,7 @@ namespace Toshi {
 		return -1;
 	}
 
-	void TSkeletonInstance::UpdateTime(float a_fDeltaTime)
+	void TSkeletonInstance::UpdateTime(TFLOAT a_fDeltaTime)
 	{
 		if (!m_BaseAnimations.IsEmpty() || (!m_OverlayAnimations.IsEmpty() &&
 			m_iLastUpdateTimeFrame != g_oSystemManager.GetFrameCount()))
@@ -151,7 +150,7 @@ namespace Toshi {
 			m_iLastUpdateStateFrame = g_oSystemManager.GetFrameCount();
 
 			const auto QInterpFn = m_pSkeleton->GetQInterpFn();
-			float fOneOverTotalWeight = 1.0f;
+			TFLOAT fOneOverTotalWeight = 1.0f;
 
 			if (1.0f < m_fTotalWeight)
 				fOneOverTotalWeight = 1.0f / m_fTotalWeight;
@@ -172,7 +171,7 @@ namespace Toshi {
 				}
 				else
 				{
-					float fWeightTotalRatio = 0.0f;
+					TFLOAT fWeightTotalRatio = 0.0f;
 					TBOOL bBoneHasState = TFALSE;
 
 					for (auto it = m_BaseAnimations.Begin(); it != m_BaseAnimations.End(); it++)
@@ -180,13 +179,13 @@ namespace Toshi {
 						auto pSeq = m_pSkeleton->GetSequence(it->GetSequence());
 						auto pSeqBone = pSeq->GetBone(i);
 
-						int iCurrentKeyframePos = (it->GetSeqTime() / pSeq->GetDuration()) * 65535;
+						TINT iCurrentKeyframePos = TINT((it->GetSeqTime() / pSeq->GetDuration()) * 65535);
 
-						unsigned short iLerpFromIndex;
-						unsigned short iLerpToIndex;
-						float fLerpProgress = pSeqBone->GetKeyPair(iCurrentKeyframePos, *it->GetBone(i), iLerpFromIndex, iLerpToIndex);
+						TUINT16 iLerpFromIndex;
+						TUINT16 iLerpToIndex;
+						TFLOAT fLerpProgress = pSeqBone->GetKeyPair(iCurrentKeyframePos, *it->GetBone(i), iLerpFromIndex, iLerpToIndex);
 						
-						float fWeightRatio = it->GetWeight() * fOneOverTotalWeight;
+						TFLOAT fWeightRatio = it->GetWeight() * fOneOverTotalWeight;
 
 						if (fWeightRatio > 0.0f && pSeqBone->GetKeyCount() != 0)
 						{
@@ -257,9 +256,9 @@ namespace Toshi {
 						{
 							int iCurrentKeyframePos = TINT((it->GetSeqTime() / pSeq->GetDuration()) * 65535);
 
-							unsigned short iLerpFromIndex;
-							unsigned short iLerpToIndex;
-							float fLerpProgress = pSeqBone->GetKeyPair(iCurrentKeyframePos, *it->GetBone(i), iLerpFromIndex, iLerpToIndex);
+							TUINT16 iLerpFromIndex;
+							TUINT16 iLerpToIndex;
+							TFLOAT fLerpProgress = pSeqBone->GetKeyPair(iCurrentKeyframePos, *it->GetBone(i), iLerpFromIndex, iLerpToIndex);
 
 							auto pFromKey = pSeqBone->GetKey(iLerpFromIndex);
 							auto pToKey = pSeqBone->GetKey(iLerpToIndex);
@@ -317,7 +316,7 @@ namespace Toshi {
 					rMatrix.Multiply(g_aForwardMatrices[iParentBone], boneTransform);
 				}
 
-				m_pBones[i].Multiply(rMatrix, pBone->GetTransformInv());
+				m_pBones[i].m_Transform.Multiply(rMatrix, pBone->GetTransformInv());
 			}
 		}
 	}
@@ -327,7 +326,7 @@ namespace Toshi {
 		if (a_iBone < m_pSkeleton->GetAutoBoneCount())
 		{
 			auto pBone = m_pSkeleton->GetBone(a_iBone);
-			a_rMatrix.Multiply(m_pBones[a_iBone], pBone->GetTransform());
+			a_rMatrix.Multiply(m_pBones[a_iBone].m_Transform, pBone->GetTransform());
 			return &a_rMatrix;
 		}
 
@@ -335,7 +334,7 @@ namespace Toshi {
 		return &a_rMatrix;
 	}
 
-	void TSkeletonInstance::RemoveAnimation(TAnimation* a_pAnimation, float a_fValue)
+	void TSkeletonInstance::RemoveAnimation(TAnimation* a_pAnimation, TFLOAT a_fValue)
 	{
 		TASSERT(TTRUE == a_pAnimation->IsActive());
 
@@ -347,7 +346,7 @@ namespace Toshi {
 		for (int i = 0; i < m_pSkeleton->GetAutoBoneCount(); i++)
 		{
 			m_pSkeleton->GetBone(i);
-			m_pBones[i].Identity();
+			m_pBones[i].m_Transform.Identity();
 		}
 	}
 
@@ -357,7 +356,7 @@ namespace Toshi {
 		delete this;
 	}
 
-	float TSkeletonSequenceBone::GetKeyPair(int a_iCurrentAnimTime, unsigned short& a_rCurrentKeyIndex, unsigned short& a_rLerpFromIndex, unsigned short& a_rLerpToIndex)
+	TFLOAT TSkeletonSequenceBone::GetKeyPair(int a_iCurrentAnimTime, TUINT16& a_rCurrentKeyIndex, TUINT16& a_rLerpFromIndex, TUINT16& a_rLerpToIndex)
 	{
 		auto pFirstKeyTime = *GetKey(0);
 

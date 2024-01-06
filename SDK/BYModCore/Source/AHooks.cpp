@@ -24,12 +24,14 @@ TFLOAT g_fOriginalFOV = 0.0f;
 
 MEMBER_HOOK(0x006b4a20, TMemory, TMemory_Free, TBOOL, void* a_pMem)
 {
-	return this->Free(a_pMem);
+	return CallOriginal(a_pMem);
+	//return this->Free(a_pMem);
 }
 
 MEMBER_HOOK(0x006b5230, TMemory, TMemory_Alloc, void*, TUINT a_uiSize, TINT a_uiAlignment, TMemory::MemBlock* a_pMemBlock, const char* a_szUnused1, TINT a_iUnused2)
 {
-	return this->Alloc(a_uiSize, a_uiAlignment, a_pMemBlock, a_szUnused1, a_iUnused2);
+	return CallOriginal(a_uiSize, a_uiAlignment, a_pMemBlock, a_szUnused1, a_iUnused2);
+	//return this->Alloc(a_uiSize, a_uiAlignment, a_pMemBlock, a_szUnused1, a_iUnused2);
 }
 
 HOOK(0x006b4ba0, TMemory_GetMemInfo, void, TMemory::MemInfo& a_rMemInfo, TMemory::MemBlock* a_pBlock)
@@ -324,10 +326,11 @@ MEMBER_HOOK(0x006da4d0, TMSWindow, TMSWindow_SetPosition, void, TUINT x, TUINT y
 		rect.right = width;
 		rect.bottom = height;
 
-		if (TRUE == AdjustWindowRect(
+		if (TRUE == AdjustWindowRectEx(
 			&rect,
 			GetWindowLongA(GetHWND(), GWL_STYLE),
-			FALSE
+			FALSE,
+			GetWindowLongA(GetHWND(), GWL_EXSTYLE)
 		))
 		{
 			x = rect.left;
@@ -486,8 +489,8 @@ HOOK(0x006114d0, AModelLoader_AModelLoaderLoadTRBCallback, TBOOL, TModel* a_pMod
 
 void AHooks::Initialise()
 {
-	InstallHook<TMemory_Free>();
-	InstallHook<TMemory_Alloc>();
+	//InstallHook<TMemory_Free>();
+	//InstallHook<TMemory_Alloc>();
 	InstallHook<TMemory_GetMemInfo>();
 	InstallHook<TMSWindow_SetPosition>();
 	InstallHook<AGUISlideshow_ProcessInput>();
@@ -509,7 +512,7 @@ void AHooks::Initialise()
 	InstallHook<TRenderInterface_SetLightColourMatrix>();
 	InstallHook<AOptions_IsResolutionCompatible>();
 	InstallHook<ADisplayModes_Win_DoesModeExist>();
-	InstallHook<TCameraObject_SetFOV>();
+	//InstallHook<TCameraObject_SetFOV>();
 	InstallHook<TRenderD3DInterface_UpdateColourSettings>();
 	InstallHook<TTRB_Load>();
 }

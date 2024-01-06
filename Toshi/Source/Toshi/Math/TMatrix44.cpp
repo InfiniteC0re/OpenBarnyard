@@ -144,7 +144,7 @@ namespace Toshi
 		m_f43 = -a_rRight.m_f43;
 		m_f44 = m_f44;
 
-		RotateVector(AsBasisVector4(3), *this, AsBasisVector4(0));
+		RotateVector(AsBasisVector4(3), *this, AsBasisVector4(3));
 	}
 
 	void TMatrix44::InvertOrthonormal()

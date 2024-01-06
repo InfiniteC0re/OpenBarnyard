@@ -31,6 +31,16 @@ namespace Toshi {
 			m_pMesh = a_pMesh;
 		}
 
+		TSkeletonInstance* GetSkeletonInstance() const
+		{
+			return m_pSkeletonInstance;
+		}
+
+		void SetSkeletonInstance(TSkeletonInstance* a_pSkeletonInstance)
+		{
+			m_pSkeletonInstance = a_pSkeletonInstance;
+		}
+
 		TMaterial* GetMaterial() const
 		{
 			return m_pMaterial;
@@ -49,6 +59,16 @@ namespace Toshi {
 		void SetModelViewMatrix(TMatrix44& a_rMatrix44)
 		{
 			m_oModelView = a_rMatrix44;
+		}
+
+		TVector3& GetAmbientColour()
+		{
+			return m_oAmbientColour;
+		}
+
+		const TVector3& GetAmbientColour() const
+		{
+			return m_oAmbientColour;
 		}
 
 		TVector3& GetLightColour()
@@ -71,6 +91,11 @@ namespace Toshi {
 			return m_oLightDirection;
 		}
 
+		TUINT8 GetUnk2()
+		{
+			return m_ui8Unk2;
+		}
+
 	private:
 		TRenderPacket* m_pNextPacket;
 		void* m_pUnk;
@@ -78,9 +103,7 @@ namespace Toshi {
 		TMatrix44 m_oModelView;
 		TSkeletonInstance* m_pSkeletonInstance;
 		TMaterial* m_pMaterial;
-		TFLOAT m_fAmbientColorR;
-		TFLOAT m_fAmbientColorG;
-		TFLOAT m_fAmbientColorB;
+		TVector3 m_oAmbientColour;
 		TVector3 m_oLightColour;
 		TVector3 m_oLightDirection;
 		TUINT8 m_ui8Unk1;

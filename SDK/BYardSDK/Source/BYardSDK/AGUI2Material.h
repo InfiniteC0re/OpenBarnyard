@@ -21,7 +21,7 @@ public:
 		m_eTextureAddress = a_eTextureAddress;
 	}
 
-private:
+public:
 	Toshi::TTexture* m_pTextureResource;
 	TUINT m_eBlendState;
 	TUINT m_eTextureAddress;

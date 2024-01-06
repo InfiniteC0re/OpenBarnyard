@@ -286,7 +286,6 @@ namespace Toshi {
 				}
 				else
 				{
-					TASSERT((TINT)pNextHole->m_pNextHole != 0x25);
 					pNextHole->m_pPrevHole->m_pNextHole = pNextHole->m_pNextHole;
 				}
 

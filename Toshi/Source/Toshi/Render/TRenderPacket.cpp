@@ -8,9 +8,7 @@ namespace Toshi {
 		m_pNextPacket = TNULL;
 		m_pUnk = TNULL;
 		m_pSkeletonInstance = TNULL;
-		m_fAmbientColorR = 0.24f;
-		m_fAmbientColorG = 0.24f;
-		m_fAmbientColorB = 0.24f;
+		m_oAmbientColour = { 0.24f, 0.24f, 0.24f };
 		m_oLightColour.x = 1.0f;
 		m_oLightColour.y = 1.0f;
 		m_oLightColour.z = 0.65f;
