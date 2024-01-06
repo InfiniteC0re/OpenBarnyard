@@ -41,6 +41,7 @@ project "BYGLRender"
 	{
 		"Source/**.h",
 		"Source/**.cpp",
+		"Source/**.c",
 	}
 
 	includedirs
@@ -69,6 +70,9 @@ project "BYGLRender"
 		"SPDLOG_WCHAR_TO_UTF8_SUPPORT",
 		"GLEW_STATIC"
 	}
+	
+	filter "files:**.c"
+		flags { "NoPCH" }
 
 	filter "system:windows"
 		systemversion "latest"
