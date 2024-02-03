@@ -1,8 +1,10 @@
 #include "pch.h"
 #include "ASysMaterialHAL_DX8.h"
 
-#include TOSHI_MULTIRENDER(TRenderInterface)
-#include TOSHI_MULTIRENDER(TTextureResourceHAL)
+#ifdef TOSHI_SKU_WINDOWS
+#include "Platform/DX8/TRenderInterface_DX8.h"
+#include "Platform/DX8/TTextureResourceHAL_DX8.h"
+#endif // TOSHI_SKU_WINDOWS
 
 TOSHI_NAMESPACE_USING
 

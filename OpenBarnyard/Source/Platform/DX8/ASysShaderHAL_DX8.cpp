@@ -3,10 +3,12 @@
 #include "ASysMaterialHAL_DX8.h"
 #include "ASysMesh_DX8.h"
 
-#include TOSHI_MULTIRENDER(TRenderInterface)
-#include TOSHI_MULTIRENDER(TRenderContext)
-#include TOSHI_MULTIRENDER(TVertexPoolResource)
-#include TOSHI_MULTIRENDER(TIndexPoolResource)
+#ifdef TOSHI_SKU_WINDOWS
+#include "Platform/DX8/TRenderInterface_DX8.h"
+#include "Platform/DX8/TRenderContext_DX8.h"
+#include "Platform/DX8/TVertexPoolResource_DX8.h"
+#include "Platform/DX8/TIndexPoolResource_DX8.h"
+#endif // TOSHI_SKU_WINDOWS
 
 TOSHI_NAMESPACE_USING
 

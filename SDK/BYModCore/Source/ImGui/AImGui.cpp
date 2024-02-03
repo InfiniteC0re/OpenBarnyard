@@ -167,6 +167,15 @@ void AImGUI::Render()
 			ImGui::Checkbox("Show Textures Info", &AGUI2::GetSingleton()->m_bShowTexturesInfo);
 			ImGui::Checkbox("Show Memory Info", &AGUI2::GetSingleton()->m_bShowMemStatsInfo);
 
+			extern TBOOL g_bNoCullingInRadiusOfObject;
+			extern TFLOAT g_fNoCullingAdditionalRadius;
+
+			ImGui::TextColored(ImColor(200, 200, 200, 255), "Culling Settings");
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 3);
+
+			ImGui::Checkbox("Disable culling in radius", &g_bNoCullingInRadiusOfObject);
+			ImGui::DragFloat("Additional radius", &g_fNoCullingAdditionalRadius);
+
 			ImGui::TextColored(ImColor(200, 200, 200, 255), "AGameStateController");
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 3);
 

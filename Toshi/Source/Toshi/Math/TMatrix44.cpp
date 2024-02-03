@@ -142,7 +142,7 @@ namespace Toshi
 		m_f41 = -a_rRight.m_f41;
 		m_f42 = -a_rRight.m_f42;
 		m_f43 = -a_rRight.m_f43;
-		m_f44 = m_f44;
+		m_f44 = a_rRight.m_f44;
 
 		RotateVector(AsBasisVector4(3), *this, AsBasisVector4(3));
 	}

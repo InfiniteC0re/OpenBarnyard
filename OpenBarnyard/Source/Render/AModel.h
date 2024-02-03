@@ -1,5 +1,6 @@
 #pragma once
 #include <Toshi/File/TTRB.h>
+#include <Toshi/Core/TRefCounted.h>
 #include <Toshi/Render/TModelRegistry.h>
 #include <Toshi/Strings/TPString8.h>
 

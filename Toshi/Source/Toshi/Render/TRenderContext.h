@@ -140,8 +140,8 @@ namespace Toshi {
 
 		const TPlane* GetWorldPlanes();
 
-		static TBOOL CullSphereToFrustumSimple(const TSphere& a_rSphere, const TPlane* a_pPlanes, int a_iUnused);
-		static TINT CullSphereToFrustum(const TSphere& a_rSphere, const TPlane* a_pPlanes, TINT a_iUnk1, TINT a_iUnk2);
+		static TBOOL CullSphereToFrustumSimple(const TSphere& a_rSphere, const TPlane* a_pPlanes, int a_iNumPlanes);
+		static TINT CullSphereToFrustum(const TSphere& a_rSphere, const TPlane* a_pPlanes, TINT a_iClipFlags, TINT a_iClipFlagsMask);
 
 		const TMatrix44& GetViewWorldMatrix();
 		const TMatrix44& GetWorldModelMatrix();

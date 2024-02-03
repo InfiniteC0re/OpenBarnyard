@@ -9,6 +9,7 @@
 #include <BYardSDK/AAssetLoader.h>
 #include <BYardSDK/AGUI2.h>
 #include <BYardSDK/ARenderer.h>
+#include <BYardSDK/ACamera.h>
 
 #include <Toshi/Input/TInputDeviceKeyboard.h>
 #include <Toshi/Render/TCameraObject.h>
@@ -275,6 +276,11 @@ MEMBER_HOOK(0x006154c0, ARenderer, ARenderer_CreateTRender, TBOOL)
 		THookedRenderD3DInterface::GetSingleton()
 	);
 
+	char* pTreesInSceneInfo = (char*)TMalloc(68 * 2048);
+
+	TOSHI_INFO("Begin: {}", fmt::ptr(pTreesInSceneInfo));
+	TOSHI_INFO("End: {}", fmt::ptr(pTreesInSceneInfo + 68 * 2048));
+
 	AGlobalModLoaderTask::Get()->OnRenderInterfaceReady();
 
 	return bResult;
@@ -487,6 +493,84 @@ HOOK(0x006114d0, AModelLoader_AModelLoaderLoadTRBCallback, TBOOL, TModel* a_pMod
 	return bRes;
 }
 
+TBOOL g_bNoCullingInRadiusOfObject = TTRUE;
+TFLOAT g_fNoCullingAdditionalRadius = 50.0f;
+
+HOOK(0x006cead0, TRenderContext_CullSphereToFrustumSimple, TBOOL, const TSphere& a_rSphere, const TPlane* a_pPlanes, int a_iNumPlane)
+{
+	if (g_bNoCullingInRadiusOfObject && ACameraManager::IsSingletonCreated())
+	{
+		auto pCamera = ACameraManager::GetSingleton()->GetCurrentCamera();
+		auto& vCameraTranslation = pCamera->m_Matrix.GetTranslation();
+
+		auto fDistance = TVector3::DistanceSq(a_rSphere.GetOrigin(), vCameraTranslation.AsVector3());
+
+		if (fDistance <= a_rSphere.GetRadius() + g_fNoCullingAdditionalRadius)
+		{
+			return TTRUE;
+		}
+	}
+
+	/*for (size_t i = 0; i < 6; i++)
+	{
+		TFLOAT fDist = TVector4::DotProduct3(a_rSphere.AsVector4(), a_pPlanes[i].AsVector4());
+
+		if (a_rSphere.GetRadius() < fDist - a_pPlanes[i].GetD())
+			return TFALSE;
+	}*/
+
+	return TTRUE;
+}
+
+HOOK(0x006cea40, TRenderContext_CullSphereToFrustum, TINT, const TSphere& a_rSphere, const TPlane* a_pPlanes, TINT a_iClipFlags, TINT a_iClipFlagsMask)
+{
+	if (g_bNoCullingInRadiusOfObject && ACameraManager::IsSingletonCreated())
+	{
+		auto pCamera = ACameraManager::GetSingleton()->GetCurrentCamera();
+		auto& vCameraTranslation = pCamera->m_Matrix.GetTranslation();
+
+		auto fDistance = TVector3::DistanceSq(a_rSphere.GetOrigin(), vCameraTranslation.AsVector3());
+
+		if (fDistance <= a_rSphere.GetRadius() + g_fNoCullingAdditionalRadius)
+		{
+			return a_iClipFlags;
+		}
+	}
+
+	return a_iClipFlags;
+
+	TINT iLeftPlanes = a_iClipFlags & a_iClipFlagsMask;
+	TINT iPlaneFlag = 1;
+
+	do {
+		if (iLeftPlanes == 0)
+		{
+			return a_iClipFlags;
+		}
+
+		if (iLeftPlanes & iPlaneFlag)
+		{
+			TFLOAT fDist = TVector4::DotProduct3(a_rSphere.AsVector4(), a_pPlanes->AsVector4()) - a_pPlanes->GetD();
+
+			if (a_rSphere.GetRadius() < fDist)
+			{
+				return -1;
+			}
+
+			if (fDist < -a_rSphere.GetRadius())
+			{
+				a_iClipFlags &= ~iPlaneFlag;
+			}
+
+			iLeftPlanes &= ~iPlaneFlag;
+		}
+
+		iPlaneFlag = iPlaneFlag << 1;
+		a_pPlanes++;
+
+	} while (TTRUE);
+}
+
 void AHooks::Initialise()
 {
 	//InstallHook<TMemory_Free>();
@@ -514,6 +598,8 @@ void AHooks::Initialise()
 	InstallHook<ADisplayModes_Win_DoesModeExist>();
 	//InstallHook<TCameraObject_SetFOV>();
 	InstallHook<TRenderD3DInterface_UpdateColourSettings>();
+	InstallHook<TRenderContext_CullSphereToFrustumSimple>();
+	InstallHook<TRenderContext_CullSphereToFrustum>();
 	InstallHook<TTRB_Load>();
 }
 

@@ -1,2 +1,5 @@
 #pragma once
-#include TOSHI_MULTIPLATFORM(TThread)
+
+#ifdef TOSHI_SKU_WINDOWS
+#include "Platform/Windows/TThread_Win.h"
+#endif // TOSHI_SKU_WINDOWS

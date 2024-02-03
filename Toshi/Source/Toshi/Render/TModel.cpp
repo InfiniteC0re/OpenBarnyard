@@ -1,7 +1,9 @@
 #include "ToshiPCH.h"
 #include "TModel.h"
 
-#include TOSHI_MULTIRENDER(TRenderInterface)
+#ifdef TOSHI_SKU_WINDOWS
+#include "Platform/DX8/TRenderInterface_DX8.h"
+#endif // TOSHI_SKU_WINDOWS
 
 namespace Toshi {
 	

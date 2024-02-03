@@ -92,7 +92,7 @@ namespace Toshi {
 		return m_aWorldPlanes;
 	}
 
-	TBOOL TRenderContext::CullSphereToFrustumSimple(const TSphere& a_rSphere, const TPlane* a_pPlanes, int a_iUnused)
+	TBOOL TRenderContext::CullSphereToFrustumSimple(const TSphere& a_rSphere, const TPlane* a_pPlanes, int a_iNumPlanes)
 	{
 		for (size_t i = 0; i < 6; i++)
 		{
@@ -105,15 +105,15 @@ namespace Toshi {
 		return TTRUE;
 	}
 
-	TINT TRenderContext::CullSphereToFrustum(const TSphere& a_rSphere, const TPlane* a_pPlanes, TINT a_iUnk1, TINT a_iUnk2)
+	TINT TRenderContext::CullSphereToFrustum(const TSphere& a_rSphere, const TPlane* a_pPlanes, TINT a_iClipFlags, TINT a_iClipFlagsMask)
 	{
-		TINT iLeftPlanes = a_iUnk1 & a_iUnk2;
+		TINT iLeftPlanes = a_iClipFlags & a_iClipFlagsMask;
 		TINT iPlaneFlag = 1;
 
 		do {
 			if (iLeftPlanes == 0)
 			{
-				return a_iUnk1;
+				return a_iClipFlags;
 			}
 
 			if (iLeftPlanes & iPlaneFlag)
@@ -127,7 +127,7 @@ namespace Toshi {
 
 				if (fDist < -a_rSphere.GetRadius())
 				{
-					a_iUnk1 &= ~iPlaneFlag;
+					a_iClipFlags &= ~iPlaneFlag;
 				}
 
 				iLeftPlanes &= ~iPlaneFlag;

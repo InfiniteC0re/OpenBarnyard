@@ -182,7 +182,7 @@ public:
 			{\n\
 				vec4 texColor = texture(tex0, o_TexCoord);\n\
 				if (texColor.a < 0.2f) discard;\n\
-				color = texture(tex0, o_TexCoord) * clamp(o_FinalColor, 0.0f, 1.0f);\n\
+				color = clamp(o_FinalColor, 0.0f, 1.0f);\n\
 			}"
 		);
 
@@ -436,7 +436,7 @@ public:
 		pShaderProgram->SetUniform("u_Model", modelMatrix);
 		pShaderProgram->SetUniform("u_AmbientColour", ambientColour);
 		pShaderProgram->SetUniform("u_LightDirection", lightDirWorld);
-		pShaderProgram->SetUniform("u_LightColour", lightColour);
+		pShaderProgram->SetUniform("u_LightColour", Toshi::TVector4(1.0f, 1.0f, 1.0f, 1.0f));
 		pShaderProgram->SetUniform("u_LightColourParams", Toshi::TVector4(1.0f, 0.0f, 0.0f, 1.0f));
 		pShaderProgram->SetUniform("u_ModelView", a_pRenderPacket->GetModelViewMatrix());
 

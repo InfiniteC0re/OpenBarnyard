@@ -3,7 +3,9 @@
 #include "GUI/AGUI2.h"
 #include "GUI/AGUI2Material.h"
 
-#include TOSHI_MULTIRENDER(TRenderInterface)
+#ifdef TOSHI_SKU_WINDOWS
+#include "Platform/DX8/TRenderInterface_DX8.h"
+#endif // TOSHI_SKU_WINDOWS
 
 #include <Toshi2/T2SimpleArray.h>
 #include <bink.h>

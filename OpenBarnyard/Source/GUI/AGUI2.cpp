@@ -6,7 +6,10 @@
 #include "Assets/AMaterialLibraryManager.h"
 
 #include <Toshi/Core/TSystem.h>
-#include TOSHI_MULTIRENDER(AGUI2Renderer)
+
+#ifdef TOSHI_SKU_WINDOWS
+#include "Platform/DX8/AGUI2Renderer_DX8.h"
+#endif // TOSHI_SKU_WINDOWS
 
 TOSHI_NAMESPACE_USING
 

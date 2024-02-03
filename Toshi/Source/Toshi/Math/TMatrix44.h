@@ -225,9 +225,28 @@ namespace Toshi
 
 		static void RotateVector(TVector4& a_rOutVector, const TMatrix44& a_rMatrix, const TVector4& a_rVector)
 		{
-			a_rOutVector.x = a_rMatrix.m_f31 * a_rVector.z + a_rMatrix.m_f21 * a_rVector.y + a_rMatrix.m_f11 * a_rVector.x;
-			a_rOutVector.y = a_rMatrix.m_f32 * a_rVector.z + a_rMatrix.m_f22 * a_rVector.y + a_rMatrix.m_f12 * a_rVector.x;
-			a_rOutVector.z = a_rMatrix.m_f13 * a_rVector.x + a_rMatrix.m_f23 * a_rVector.y + a_rMatrix.m_f33 * a_rVector.z;
+			float fVar1 = a_rMatrix.m_f32;
+			float fVar2 = a_rVector.z;
+			float fVar3 = a_rMatrix.m_f12;
+			float fVar4 = a_rVector.x;
+			float fVar5 = a_rMatrix.m_f22;
+			float fVar6 = a_rVector.y;
+			float fVar7 = a_rMatrix.m_f33;
+			float fVar8 = a_rVector.z;
+			float fVar9 = a_rMatrix.m_f13;
+			float fVar10 = a_rVector.x;
+			float fVar11 = a_rMatrix.m_f23;
+			float fVar12 = a_rVector.y;
+			float fVar13 = a_rMatrix.m_f31;
+			float fVar14 = a_rVector.z;
+			float fVar15 = a_rMatrix.m_f21;
+			float fVar16 = a_rVector.y;
+			float fVar17 = a_rMatrix.m_f11;
+			float fVar18 = a_rVector.x;
+
+			a_rOutVector.x = fVar17 * fVar18 + fVar15 * fVar16 + fVar13 * fVar14;
+			a_rOutVector.y = fVar5 * fVar6 + fVar3 * fVar4 + fVar1 * fVar2;
+			a_rOutVector.z = fVar11 * fVar12 + fVar9 * fVar10 + fVar7 * fVar8;
 			a_rOutVector.w = a_rVector.w;
 		}
 

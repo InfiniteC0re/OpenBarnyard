@@ -1,4 +1,6 @@
 #pragma once
+#include "Toshi/Math/TVector3.h"
+#include "Toshi/Math/TQuaternion.h"
 #include "Toshi/Core/TQList.h"
 #include "Toshi/File/TTRB.h"
 

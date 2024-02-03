@@ -1,4 +1,5 @@
 #pragma once
+#include "Toshi/Math/TVector3.h"
 
 namespace Toshi {
 

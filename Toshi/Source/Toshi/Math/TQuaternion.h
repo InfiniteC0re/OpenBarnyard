@@ -1,7 +1,9 @@
 #pragma once
+#include "Toshi/Math/TVector3.h"
+#include "Toshi/Math/TVector4.h"
 
-namespace Toshi
-{
+namespace Toshi {
+
 	class TQuaternion
 	{
 	public:
@@ -66,4 +68,5 @@ namespace Toshi
 	public:
 		TFLOAT x, y, z, w;
 	};
+
 }

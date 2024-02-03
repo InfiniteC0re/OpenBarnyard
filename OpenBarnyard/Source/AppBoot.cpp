@@ -12,9 +12,11 @@
 
 #include <Platform/DX8/TTextureResourceHAL_DX8.h>
 
-#include TOSHI_MULTIRENDER(TRenderInterface)
-#include TOSHI_MULTIRENDER(TVertexBlockResource)
-#include TOSHI_MULTIRENDER(TIndexBlockResource)
+#ifdef TOSHI_SKU_WINDOWS
+#include "Platform/DX8/TRenderInterface_DX8.h"
+#include "Platform/DX8/TVertexBlockResource_DX8.h"
+#include "Platform/DX8/TIndexBlockResource_DX8.h"
+#endif // TOSHI_SKU_WINDOWS
 
 #include "AppBoot.h"
 #include "Tasks/ADummyTask.h"

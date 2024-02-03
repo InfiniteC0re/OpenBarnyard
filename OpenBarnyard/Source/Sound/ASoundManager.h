@@ -2,7 +2,9 @@
 #include "AWaveBank.h"
 
 #include <Toshi/Strings/TPString8.h>
+#include <Toshi/Core/TTask.h>
 #include <Toshi/Core/TSystem.h>
+#include <Toshi/Math/TVector4.h>
 #include <Toshi2/T2Map.h>
 #include <Toshi2/T2DList.h>
 #include <Toshi2/T2SimpleArray.h>

@@ -258,25 +258,25 @@ namespace Toshi
 			return Iterator(m_iNumElements, this);
 		}
 
-		constexpr T& ValueAt(TUINT32 a_uiIndex)
+		T& ValueAt(TUINT32 a_uiIndex)
 		{
 			TASSERT(a_uiIndex < m_iNumElements);
 			return m_Items[a_uiIndex];
 		}
 
-		constexpr const T& ValueAt(TUINT32 a_uiIndex) const
+		const T& ValueAt(TUINT32 a_uiIndex) const
 		{
 			TASSERT(a_uiIndex < m_iNumElements);
 			return m_Items[a_uiIndex];
 		}
 
-		constexpr T& operator[](TUINT32 a_uiIndex)
+		T& operator[](TUINT32 a_uiIndex)
 		{
 			TASSERT(a_uiIndex < m_iNumElements);
 			return m_Items[a_uiIndex];
 		}
 
-		constexpr const T& operator[](TUINT32 a_uiIndex) const
+		const T& operator[](TUINT32 a_uiIndex) const
 		{
 			TASSERT(a_uiIndex < m_iNumElements);
 			return m_Items[a_uiIndex];

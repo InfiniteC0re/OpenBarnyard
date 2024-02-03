@@ -1,5 +1,8 @@
 #include "pch.h"
-#include TOSHI_MULTIRENDER(TTextureResourceHAL)
+
+#ifdef TOSHI_SKU_WINDOWS
+#include "Platform/DX8/TTextureResourceHAL_DX8.h"
+#endif // TOSHI_SKU_WINDOWS
 
 #include "ABINKMoviePlayer.h"
 

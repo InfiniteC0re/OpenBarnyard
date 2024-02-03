@@ -201,8 +201,8 @@ namespace Toshi {
 			for (auto it = m_AdapterList.Begin(); it != m_AdapterList.End(); it++)
 			{
 				file->CPrintf("Adapter       : %d\r\n", it->GetAdapterIndex());
-				file->CPrintf("  Driver      : %s\r\n", it->GetDriver());
-				file->CPrintf("  Description : %s\r\n", it->GetDriverDescription());
+				file->CPrintf("  Driver      : %s\r\n", it->GetDriver().GetString());
+				file->CPrintf("  Description : %s\r\n", it->GetDriverDescription().GetString());
 				file->CPrintf("  Product ID  : %u\r\n", it->GetProductID());
 				file->CPrintf("  Version     : %u\r\n", it->GetVersion());
 				file->CPrintf("  Sub-version : %u\r\n", it->GetSubVersion());

@@ -1,12 +1,6 @@
 #pragma once
 
-#ifdef TOSHI_SKU_WINDOWS
-#define TOSHI_MULTIPLATFORM(FILENAME) STRINGIFY(STRCAT_3(Platform/Windows/, FILENAME, _Win.h))
-#define TOSHI_MULTIRENDER(FILENAME) STRINGIFY(STRCAT_3(Platform/DX8/, FILENAME, _DX8.h))
-#ifdef TOSHI_SKU_REV_TO_Win
-#define TOSHI_MULTIPLATFORM(FILENAME) STRINGIFY(STRCAT_3(Platform/Revolution/, FILENAME, _Rev.h))
-#endif
-#else TOSHI_SKU_REVOLUTION
+#ifndef TOSHI_SKU_WINDOWS
 #error Unsupported platform
 #endif
 

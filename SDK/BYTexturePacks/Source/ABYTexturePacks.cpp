@@ -12,7 +12,7 @@
 #include "ABYTexturePacks.h"
 #include "ATextureUpdater.h"
 
-#include TOSHI_MULTIRENDER(TTextureResourceHAL)
+#include "Platform/DX8/TTextureResourceHAL_DX8.h"
 
 TOSHI_NAMESPACE_USING
 

@@ -1,4 +1,5 @@
 #pragma once
+#include <Toshi/Core/TTask.h>
 #include <Toshi/Input/TInputDeviceMouse.h>
 #include <Toshi/Input/TInputDeviceKeyboard.h>
 #include <Toshi/Input/TInputDeviceController.h>

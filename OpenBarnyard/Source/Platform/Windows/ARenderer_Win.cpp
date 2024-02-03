@@ -9,13 +9,15 @@
 #include "Input/AInputHandler.h"
 #include "Movie/AMoviePlayer.h"
 
-#include TOSHI_MULTIRENDER(TVertexFactoryResource)
-#include TOSHI_MULTIRENDER(TIndexFactoryResource)
-#include TOSHI_MULTIRENDER(TTextureFactoryHAL)
-#include TOSHI_MULTIRENDER(TRenderInterface)
-#include TOSHI_MULTIRENDER(TViewport)
+#ifdef TOSHI_SKU_WINDOWS
+#include "Platform/DX8/TVertexFactoryResource_DX8.h"
+#include "Platform/DX8/TIndexFactoryResource_DX8.h"
+#include "Platform/DX8/TTextureFactoryHAL_DX8.h"
+#include "Platform/DX8/TRenderInterface_DX8.h"
+#include "Platform/DX8/TViewport_DX8.h"
 
-#include TOSHI_MULTIRENDER(ASysShaderHAL)
+#include "Platform/DX8/ASysShaderHAL_DX8.h"
+#endif // TOSHI_SKU_WINDOWS
 
 TOSHI_NAMESPACE_USING
 

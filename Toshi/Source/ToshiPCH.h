@@ -17,7 +17,7 @@
 #include "Toshi/Memory/TMemory.h"
 #include "Toshi/Core/TColor.h"
 #include "Toshi/Core/TObject.h"
-#include "Toshi/Math/Math.h"
+#include "Toshi/Math/TMathInline.h"
 #include "Toshi/Utils/TSingleton.h"
 #include "Toshi/Utils/TUtil.h"
 #include "Toshi/Thread/TMutexLock.h"

@@ -67,6 +67,7 @@ namespace Toshi {
 
 		TMatrix44 transformMatrix;
 		m_TransformObject.GetLocalMatrixImp(transformMatrix);
+
 		TMatrix44::TransformVector(bounding.GetOrigin(), transformMatrix, bounding.GetOrigin());
 		
 		if (bounding.GetRadius() > 0.0f)

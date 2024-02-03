@@ -1,4 +1,5 @@
 #pragma once
+#include <Toshi/Core/TTask.h>
 
 TOBJECT(AMoviePlayer, Toshi::TTask, TFALSE),
 	public Toshi::TSingleton<AMoviePlayer>

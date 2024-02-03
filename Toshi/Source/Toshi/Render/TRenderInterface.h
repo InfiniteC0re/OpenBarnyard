@@ -7,7 +7,6 @@
 #include "Toshi/Render/TResource.h"
 #include "Toshi/Render/TAnimation.h"
 #include "Toshi/Render/TRenderAdapter.h"
-#include "Toshi/Render/TRenderParamTable.h"
 #include "Toshi/Render/TRenderCapture.h"
 #include "Toshi/Render/TRenderContext.h"
 #include "Toshi/Render/TModel.h"

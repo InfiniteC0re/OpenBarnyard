@@ -1,6 +1,8 @@
 #pragma once
 #include "Toshi/Core/TQList.h"
 #include "Toshi/Core/TSystem.h"
+#include "Toshi/Math/TQuaternion.h"
+#include "Toshi/Math/TMatrix44.h"
 #include "Toshi/Render/TAnimation.h"
 #include "Toshi/Render/ResourceName.h"
 

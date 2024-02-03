@@ -1,4 +1,5 @@
 #pragma once
+#include <Toshi/Core/TTask.h>
 
 TOBJECT(AGameSystemManager, Toshi::TTask, TTRUE)
 {

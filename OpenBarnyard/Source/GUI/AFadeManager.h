@@ -1,6 +1,8 @@
 #pragma once
 #include "AFade.h"
 
+#include <Toshi/Core/TTask.h>
+
 TOBJECT(AFadeManager, Toshi::TTask, TTRUE),
 	public Toshi::TSingleton<AFadeManager>
 {

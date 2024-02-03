@@ -1,2 +1,5 @@
 #pragma once
-#include TOSHI_MULTIPLATFORM(T2Mutex)
+
+#ifdef TOSHI_SKU_WINDOWS
+#include "Platform/Windows/T2Mutex_Win.h"
+#endif // TOSHI_SKU_WINDOWS
