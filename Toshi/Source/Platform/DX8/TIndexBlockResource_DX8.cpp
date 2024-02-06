@@ -7,7 +7,8 @@
 
 namespace Toshi {
 
-	TFreeList TIndexBlockResource::ms_oFreeList = TFreeList(sizeof(TIndexBlockResource), 0, 8);
+	TDEFINE_CLASS(TIndexBlockResource);
+	TDEFINE_FREELIST_ALLOCATOR(TIndexBlockResource);
 
 	TIndexBlockResource::TIndexBlockResource()
 	{

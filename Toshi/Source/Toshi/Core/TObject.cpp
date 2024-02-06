@@ -1,7 +1,19 @@
 #include "ToshiPCH.h"
 #include "TObject.h"
 
-namespace Toshi
-{
-	constinit TClass TObject::s_Class = TClass("TObject", TMAKEVERSION(1, 0), TObject::CreateTObject, TObject::CreateTObjectInPlace, sizeof(TObject));
+namespace Toshi {
+
+	TDEFINE_CLASS_COMPILETIME(TObject, 0, 2);
+
+	void TObject::Delete()
+	{
+		delete this;
+	}
+
+	TObject::~TObject()
+	{
+
+	}
+
 }
+

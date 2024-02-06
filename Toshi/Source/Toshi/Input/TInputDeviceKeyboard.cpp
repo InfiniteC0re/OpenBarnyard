@@ -129,6 +129,8 @@
 
 namespace Toshi {
 
+	TDEFINE_CLASS_NORUNTIME(TInputDeviceKeyboard);
+
 	int TInputDeviceKeyboard::ProcessVirtualButtons(EventEmitter& emitter, float flt)
 	{
 		emitter.Throw(TInputInterface::InputEvent(this, 0x20001, TInputInterface::EVENT_TYPE_UNKNOWN, m_mags[0], m_mags[1]));

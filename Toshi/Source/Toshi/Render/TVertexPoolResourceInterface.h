@@ -4,8 +4,11 @@
 
 namespace Toshi {
 
-	TOBJECT(TVertexPoolResourceInterface, TResource, TFALSE)
+	class TVertexPoolResourceInterface : public TResource
 	{
+	public:
+		TDECLARE_CLASS(TResource);
+
 	public:
 		struct LockBuffer
 		{

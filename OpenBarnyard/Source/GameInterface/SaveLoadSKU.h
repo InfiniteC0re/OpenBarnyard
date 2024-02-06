@@ -1,6 +1,10 @@
 #pragma once
+#include "GameInterface/AGameState.h"
 
-TOBJECT(SaveLoadSKU, AGameState, TTRUE)
+class SaveLoadSKU : public AGameState
 {
+public:
+	TDECLARE_CLASS(AGameState);
+
 	// Not implemented!
 };

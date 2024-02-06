@@ -2,6 +2,8 @@
 #include "TTextureFactory.h"
 #include "TTexture.h"
 
+TDEFINE_CLASS_NORUNTIME(Toshi::TTextureFactory);
+
 namespace Toshi {
 
 	TTextureFactory::NameEntry::NameEntry(const char* a_szName, TTexture* a_pTexture)

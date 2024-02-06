@@ -4,6 +4,8 @@
 
 TOSHI_NAMESPACE_USING
 
+TDEFINE_CLASS(AOptions);
+
 AOptions::AOptions()
 {
 	m_eUpdatedSettings = UpdatedSettings_None;
@@ -144,7 +146,7 @@ TBOOL AOptions::IsResolutionCompatible(TINT a_iWidth, TINT a_iHeight)
 		{ 1600, 1200 },
 	};
 
-	for (size_t i = 0; i < sizeof(s_Resolutions) / sizeof(*s_Resolutions); i++)
+	for (size_t i = 0; i < TARRAYSIZE(s_Resolutions); i++)
 	{
 		auto pResolution = &s_Resolutions[i];
 		

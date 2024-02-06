@@ -38,7 +38,7 @@ namespace Toshi {
 					D3DFMT_D32
 				};
 
-				static constexpr TUINT32 NUMDEPTHSTENCILFORMATS = sizeof(DEPTHSTENCILFORMATS) / sizeof(*DEPTHSTENCILFORMATS);
+				static constexpr TUINT32 NUMDEPTHSTENCILFORMATS = TARRAYSIZE(DEPTHSTENCILFORMATS);
 
 			public:
 				virtual TRenderAdapter::Mode* GetMode() const override;

@@ -1,13 +1,18 @@
 #pragma once
 #include "Toshi2/T2Iterator.h"
 
-namespace Toshi
-{
+namespace Toshi {
+
 	class TGenericDList
 	{
 	public:
 		class TNode
 		{
+		public:
+			friend TGenericDList;
+			template<class T> friend class TDList;
+			T2_DEFINE_ITERATOR_FRIEND();
+
 		protected:
 			TNode()
 			{
@@ -69,11 +74,6 @@ namespace Toshi
 				m_Next->m_Prev = m_Prev;
 				Reset();
 			}
-
-		public:
-			template<class T> friend class TDList;
-			template<class T, class Node> friend class T2Iterator;
-			friend TGenericDList;
 
 		public:
 			template<typename T>
@@ -327,10 +327,12 @@ namespace Toshi
 	class TPriList : public TGenericPriList
 	{
 	public:
+		T2_DEFINE_ITERATOR(T, TNode);
+
 		TPriList() { }
 
-		T2Iterator<T, TNode> Begin() { return TGenericPriList::Begin(); }
-		T2Iterator<T, TNode> End()   { return TGenericPriList::End(); }
+		Iterator_t Begin() { return TGenericPriList::Begin(); }
+		Iterator_t End()   { return TGenericPriList::End(); }
 		TBOOL IsLinked()              { return GetRoot().IsLinked(); }
 	};
 
@@ -338,12 +340,14 @@ namespace Toshi
 	class TDList : public TGenericDList
 	{
 	public:
+		T2_DEFINE_ITERATOR(T, TNode);
+
 		TDList() { }
 
 		T* Head()                    { return TGenericDList::Head()->As<T>(); }
 		T* Tail()                    { return TGenericDList::Tail()->As<T>(); }
-		T2Iterator<T, TNode> Begin() { return TGenericDList::Begin()->As<T>(); }
-		T2Iterator<T, TNode> End()   { return TGenericDList::End()->As<T>(); }
+		Iterator_t Begin() { return TGenericDList::Begin()->As<T>(); }
+		Iterator_t End()   { return TGenericDList::End()->As<T>(); }
 		TBOOL IsEmpty()               { return TGenericDList::IsEmpty(); }
 		TBOOL IsLinked()              { return m_Root.IsLinked(); }
 		void RemoveHead()            { TGenericDList::RemoveHead(); }

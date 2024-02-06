@@ -7,6 +7,8 @@
 
 namespace Toshi {
 
+	TDEFINE_CLASS(TInputDXInterface);
+
 	TBOOL TInputDXInterface::Initialise()
 	{
 		TASSERT(TNULL == m_poDirectInput8);

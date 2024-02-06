@@ -6,8 +6,11 @@ namespace Toshi {
 
 	class TIndexPoolResourceInterface;
 
-	TOBJECT(TIndexFactoryResourceInterface, TResource, TFALSE)
+	class TIndexFactoryResourceInterface : public TResource
 	{
+	public:
+		TDECLARE_CLASS(TResource);
+
 	public:
 		friend TIndexPoolResourceInterface;
 

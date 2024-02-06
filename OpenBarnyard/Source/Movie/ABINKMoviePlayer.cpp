@@ -13,6 +13,8 @@
 
 TOSHI_NAMESPACE_USING
 
+TDEFINE_CLASS(ABINKMoviePlayer);
+
 ABINKMoviePlayer::ABINKMoviePlayer()
 {
 	m_Bink = TNULL;

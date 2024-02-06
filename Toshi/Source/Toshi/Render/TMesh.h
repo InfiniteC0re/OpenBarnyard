@@ -5,9 +5,11 @@ namespace Toshi
 {
 	class TShader;
 
-	class TMesh :
-		public TGenericClassDerived<TMesh, TObject, "TMesh", TMAKEVERSION(1, 0), TFALSE>
+	class TMesh : public TObject
 	{
+	public:
+		TDECLARE_CLASS(TObject);
+
 	public:
 		using State = TUINT32;
 		enum State_ : State
@@ -25,32 +27,11 @@ namespace Toshi
 			m_State = State_None;
 		}
 
-		virtual TBOOL Validate()
-		{
-			m_State |= State_Validated;
-			return TTRUE;
-		}
-
-		virtual void Invalidate()
-		{
-			m_State &= ~State_Validated;
-		}
-
-		virtual TBOOL Create()
-		{
-			m_State |= State_Created;
-			return TTRUE;
-		}
-
-		virtual TBOOL Render()
-		{
-			return TTRUE;
-		}
-
-		virtual void OnDestroy()
-		{
-			m_State &= ~State_Created;
-		}
+		virtual TBOOL Validate();
+		virtual void Invalidate();
+		virtual TBOOL Create();
+		virtual TBOOL Render();
+		virtual void OnDestroy();
 
 		void DestroyResource()
 		{
@@ -91,10 +72,7 @@ namespace Toshi
 		}
 
 	protected:
-		~TMesh()
-		{
-
-		}
+		~TMesh() = default;
 
 	protected:
 		TMaterial* m_pMaterial;  // 0x04

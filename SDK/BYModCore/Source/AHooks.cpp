@@ -511,13 +511,13 @@ HOOK(0x006cead0, TRenderContext_CullSphereToFrustumSimple, TBOOL, const TSphere&
 		}
 	}
 
-	/*for (size_t i = 0; i < 6; i++)
+	for (size_t i = 0; i < 6; i++)
 	{
 		TFLOAT fDist = TVector4::DotProduct3(a_rSphere.AsVector4(), a_pPlanes[i].AsVector4());
 
 		if (a_rSphere.GetRadius() < fDist - a_pPlanes[i].GetD())
 			return TFALSE;
-	}*/
+	}
 
 	return TTRUE;
 }
@@ -536,8 +536,6 @@ HOOK(0x006cea40, TRenderContext_CullSphereToFrustum, TINT, const TSphere& a_rSph
 			return a_iClipFlags;
 		}
 	}
-
-	return a_iClipFlags;
 
 	TINT iLeftPlanes = a_iClipFlags & a_iClipFlagsMask;
 	TINT iPlaneFlag = 1;

@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "AMoviePlayer.h"
 
+TDEFINE_CLASS_NORUNTIME(AMoviePlayer);
+
 AMoviePlayer::AMoviePlayer()
 {
 	m_bCreated = TFALSE;

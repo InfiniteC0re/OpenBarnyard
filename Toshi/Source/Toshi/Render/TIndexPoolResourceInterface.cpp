@@ -3,6 +3,8 @@
 
 namespace Toshi {
 
+	TDEFINE_CLASS_NORUNTIME(TIndexPoolResourceInterface);
+
 	TIndexPoolResourceInterface::TIndexPoolResourceInterface()
 	{
 		m_pFactory = TNULL;

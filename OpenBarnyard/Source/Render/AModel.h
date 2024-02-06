@@ -9,9 +9,13 @@
 
 class AModel;
 
-TOBJECT(AModelInstance, Toshi::TObject, TTRUE),
+class AModelInstance :
+	public Toshi::TObject,
 	public Toshi::TRefCounted
 {
+public:
+	TDECLARE_CLASS(Toshi::TObject);
+
 public:
 	using Flags = TUINT8;
 	enum Flags_ : Flags

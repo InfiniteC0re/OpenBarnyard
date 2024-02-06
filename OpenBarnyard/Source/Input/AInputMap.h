@@ -93,8 +93,11 @@ enum AInputCommand
 	AInputCommand_CUSTOM_COMMAND = 77,
 };
 
-TOBJECT(AInputMap, Toshi::TObject, TFALSE)
+class AInputMap : public Toshi::TObject
 {
+public:
+	TDECLARE_CLASS(Toshi::TObject);
+
 public:
 	AInputMap(const Toshi::TPString8& a_rName) :
 		m_Name(a_rName),

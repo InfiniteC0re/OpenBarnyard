@@ -5,9 +5,11 @@
 
 namespace Toshi {
 
-	class TFileLexerUTF8 :
-		public TGenericClassDerived<TFileLexerUTF8, TObject, "TFileLexerUTF8", TMAKEVERSION(1, 0), TFALSE>
+	class TFileLexerUTF8 : public TObject
 	{
+	public:
+		TDECLARE_CLASS(TObject);
+
 	public:
 		struct Token
 		{

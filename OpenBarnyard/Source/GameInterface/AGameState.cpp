@@ -11,6 +11,8 @@
 
 TOSHI_NAMESPACE_USING
 
+TDEFINE_CLASS(AGameState);
+
 AGameState::AGameState()
 {
 	m_iOverlayColorIndex = 0;

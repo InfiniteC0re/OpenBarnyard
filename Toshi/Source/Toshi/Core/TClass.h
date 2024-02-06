@@ -1,56 +1,75 @@
 #pragma once
 
-#define TGetClass(X) X::s_Class
-
-namespace Toshi
-{
-	// TClassProps definitions
-	typedef class TObject* (*t_CreateTObject)();
-	typedef class TObject* (*t_CreateTObjectInPlace)(void*);
-	typedef void  (*t_InitializeStatic)();
-	typedef void  (*t_UninitializeStatic)();
-
-	// RecurseTree definitions
-	typedef TBOOL  (*t_RecurceTreeCheck)(class TClass*, void*);
-	typedef void  (*t_RecurceTreeBaseBeginCb)(class TClass*, void*);
-	typedef void  (*t_RecurceTreeBaseEndCb)(class TClass*, void*);
+namespace Toshi {
+	
+	class TObject;
 
 	class TClass
 	{
 	public:
-		// FIXME: Make correct order of arguments
-		TClass(const char* name, TClass* parent, TUINT32 version, TUINT32 size, TUINT32 alignment, t_CreateTObject fCreate, t_CreateTObjectInPlace m_CreateInPlace, t_InitializeStatic fInit, t_UninitializeStatic fUninit);
+		using CreateObject_t = TObject* (*)();
+		using CreateObjectInPlace_t = TObject * (*)(void* a_pPtr);
+		using Initialise_t = void(*)();
+		using Deinitialise_t = void(*)();
+
+		using RecurseTreeCheck_t = TBOOL(*)(TClass*, void*);
+		using RecurseTreeBaseBeginCb_t = void(*)(TClass*, void*);
+		using RecurseTreeBaseEndCb_t = void(*)(TClass*, void*);
+
+	public:
+		TClass(
+			const char* a_szName,
+			TClass* a_pParentClass,
+			CreateObject_t a_fnCreate,
+			CreateObjectInPlace_t a_fnCreateInPlace,
+			Initialise_t a_fnInitialise,
+			Deinitialise_t a_fnUnitialise,
+			TUINT16 a_uiVersionMajor,
+			TUINT16 a_uiVersionMinor,
+			TUINT32 a_uiClassSize,
+			TUINT32 a_uiClassAlignment
+		);
+
+		constexpr TClass(
+			const char* a_szName,
+			CreateObject_t a_fnCreate,
+			CreateObjectInPlace_t a_fnCreateInPlace,
+			Initialise_t a_fnInitialise,
+			Deinitialise_t a_fnUnitialise,
+			TUINT16 a_uiVersionMajor,
+			TUINT16 a_uiVersionMinor,
+			TUINT32 a_uiClassSize,
+			TUINT32 a_uiClassAlignment
+		) :
+			m_szName(a_szName),
+			m_pParent(TNULL),
+			m_pPrevious(TNULL),
+			m_pLastChildren(TNULL),
+			m_fnCreate(a_fnCreate),
+			m_fnCreateInPlace(a_fnCreateInPlace),
+			m_fnInitialise(a_fnInitialise),
+			m_fnDeinitialise(a_fnUnitialise),
+			m_uiVersionMajor(a_uiVersionMajor),
+			m_uiVersionMinor(a_uiVersionMinor),
+			m_uiClassSize(a_uiClassSize),
+			m_uiClassAlignment(a_uiClassAlignment),
+			m_bInitialised(TFALSE)
+		{ }
+
 		~TClass();
 
-		constexpr TClass(const char* name, TUINT32 version, t_CreateTObject fCreate, t_CreateTObjectInPlace fCreateInPlace, TUINT32 size)
-		{
-			m_Name = name;
-			m_Create = fCreate;
-			m_CreateInPlace = fCreateInPlace;
-			m_Initialize = TNULL;
-			m_Uninitialize = TNULL;
-			m_Parent = TNULL;
-			m_Previous = TNULL;
-			m_LastAttached = TNULL;
-			m_Version = 0;
-			m_Size = size;
-			m_Alignment = 0;
-			m_Initialized = TFALSE;
-		}
-
 		void Initialize();
-		void RecurseTree(t_RecurceTreeBaseBeginCb fBaseBegin, t_RecurceTreeBaseEndCb fBaseEnd, t_RecurceTreeCheck fCheck, void* custom);
-		void RecurseTree2(t_RecurceTreeBaseBeginCb fBaseBegin, t_RecurceTreeBaseEndCb fBaseEnd, t_RecurceTreeCheck fCheck, void* custom);
+		void RecurseTree(RecurseTreeBaseBeginCb_t fBaseBegin, RecurseTreeBaseEndCb_t fBaseEnd, RecurseTreeCheck_t fCheck, void* custom);
+		void RecurseTree2(RecurseTreeBaseBeginCb_t fBaseBegin, RecurseTreeBaseEndCb_t fBaseEnd, RecurseTreeCheck_t fCheck, void* custom);
 		class TObject* CreateObject() const;
 
 		TBOOL IsA(TClass* pClass);
 		TBOOL IsExactly(TClass* toCompare) const { return this == toCompare; }
-		TBOOL IsInitialized() const { return m_Initialized; }
-		TClass* GetParent() { return static_cast<TClass*>(m_Parent); }
-		const char* GetName() const { return m_Name; }
-		TUINT32 GetVersion() const { return m_Version; }
-		TUINT16 GetVersionMajor() const { return m_Version >> 16; }
-		TUINT16 GetVersionMinor() const { return m_Version & 0xFFFF; }
+		TBOOL IsInitialized() const { return m_bInitialised; }
+		TClass* GetParent() { return static_cast<TClass*>(m_pParent); }
+		const char* GetName() const { return m_szName; }
+		TUINT16 GetVersionMajor() const { return m_uiVersionMajor; }
+		TUINT16 GetVersionMinor() const { return m_uiVersionMinor; }
 		TUINT32 GetMaxSizeOfDerivedClasses();
 		TUINT32 GetMaxAlignmentOfDerivedClasses();
 
@@ -65,17 +84,18 @@ namespace Toshi
 		inline TBOOL operator==(const TClass* other) const { return this == other; }
 	
 	private:
-		const char* m_Name = 0;                                 // 0x00
-		t_CreateTObject m_Create = 0;                           // 0x04
-		t_CreateTObjectInPlace m_CreateInPlace = 0;             // 0x08
-		t_InitializeStatic m_Initialize = 0;                    // 0x0C
-		t_UninitializeStatic m_Uninitialize = 0;                // 0x10
-		TClass* m_Parent = 0;                                   // 0x14
-		TClass* m_Previous = 0;                                 // 0x18
-		TClass* m_LastAttached;                                 // 0x1C
-		TUINT32 m_Version = 0;                                  // 0x20
-		TUINT32 m_Size = 0;                                     // 0x24
-		TUINT32 m_Alignment = 0;                                // 0x28
-		TBOOL m_Initialized = 0;                                // 0x2C
+		const char* m_szName;                    // 0x00
+		CreateObject_t m_fnCreate;               // 0x04
+		CreateObjectInPlace_t m_fnCreateInPlace; // 0x08
+		Initialise_t m_fnInitialise;             // 0x0C
+		Deinitialise_t m_fnDeinitialise;         // 0x10
+		TClass* m_pParent;                       // 0x14
+		TClass* m_pPrevious;                     // 0x18
+		TClass* m_pLastChildren;                 // 0x1C
+		TUINT16 m_uiVersionMajor;                // 0x20
+		TUINT16 m_uiVersionMinor;                // 0x22
+		TUINT32 m_uiClassSize;                   // 0x24
+		TUINT32 m_uiClassAlignment;              // 0x28
+		TBOOL m_bInitialised;                    // 0x2C
 	};
 }

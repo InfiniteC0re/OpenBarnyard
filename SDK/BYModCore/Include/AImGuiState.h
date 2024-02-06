@@ -2,8 +2,11 @@
 #include <BYardSDK/AGameState.h>
 #include <Toshi/Input/TInputInterface.h>
 
-TOBJECT(AImGuiState, AGameState, TTRUE)
+class AImGuiState : public AGameState
 {
+public:
+	TDECLARE_CLASS(AGameState);
+
 public:
 	AImGuiState();
 

@@ -8,9 +8,11 @@ namespace Toshi {
 
 	class T2Texture;
 
-	class TTexture :
-		public TGenericClassDerived<TTexture, TResource, "TTexture", TMAKEVERSION(1, 0), TFALSE>
+	class TTexture : public TResource
 	{
+	public:
+		TDECLARE_CLASS(TResource);
+
 	public:
 		struct LOCKSTATE
 		{

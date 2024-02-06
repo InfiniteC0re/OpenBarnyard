@@ -3,6 +3,8 @@
 
 namespace Toshi {
 
+	TDEFINE_CLASS_NORUNTIME(TVertexFactoryResourceInterface);
+
 	TVertexFactoryResourceInterface::TVertexFactoryResourceInterface()
 	{
 		m_uiNumPools = 0;

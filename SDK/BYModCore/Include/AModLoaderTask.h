@@ -7,9 +7,11 @@
 
 #include <Toshi/Core/TTask.h>
 
-class AModLoaderTask :
-	public Toshi::TGenericClassDerived<AModLoaderTask, Toshi::TTask, "AModLoaderTask", TMAKEVERSION(1, 0), TTRUE>
+class AModLoaderTask : public Toshi::TTask
 {
+public:
+	TDECLARE_CLASS(Toshi::TTask);
+
 public:
 	MODCORE_API AModLoaderTask();
 	MODCORE_API ~AModLoaderTask();

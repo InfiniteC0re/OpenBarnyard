@@ -3,8 +3,10 @@
 #include "TSystem.h"
 #include "TTask.h"
 
-namespace Toshi
-{
+namespace Toshi {
+
+	TDEFINE_CLASS_NORUNTIME(TScheduler);
+
 	TFLOAT TScheduler::s_MaxTimeDeltaAllowed = 0.25f;
 	TFLOAT TScheduler::s_DebugSlowMaxTimeDeltaAllowed = 1.0f;
 

@@ -53,9 +53,12 @@ constexpr uint32_t TMAKEFOUR(const char str[4])
 #define TBREAK() 
 #endif // TBREAK
 
+#define TSTATICASSERT(...) static_assert(__VA_ARGS__, "Compile time assert failed: " #__VA_ARGS__)
 #define TREINTERPRETCAST(TYPE, VALUE) (reinterpret_cast<TYPE>(VALUE))
 #define TSTATICCAST(TYPE, VALUE) (static_cast<TYPE>(VALUE))
 #define TARRAYSIZE(ARRAY) (sizeof(ARRAY) / sizeof(*ARRAY))
+#define TINLINE inline
+#define TFORCEINLINE __forceinline
 
 #ifdef TOSHI_ENABLE_ASSERTS
 

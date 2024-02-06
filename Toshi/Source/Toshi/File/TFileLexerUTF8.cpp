@@ -3,6 +3,8 @@
 
 namespace Toshi {
 
+	TDEFINE_CLASS_NORUNTIME(TFileLexerUTF8);
+
 	TFileLexerUTF8::TFileLexerUTF8() :
 		m_oEmitter(this)
 	{

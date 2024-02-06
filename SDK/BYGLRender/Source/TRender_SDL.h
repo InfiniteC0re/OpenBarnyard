@@ -273,8 +273,11 @@ namespace Toshi {
 	};
 
 	class TRenderSDL :
-		public TGenericClassDerived<TRenderSDL, TRenderInterface, "TRenderSDL", TMAKEVERSION(1, 0), TFALSE>
+		public TRenderInterface
 	{
+	public:
+		TDECLARE_CLASS(TRenderInterface);
+
 	public:
 		TRenderSDL() = default;
 

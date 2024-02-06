@@ -3,8 +3,11 @@
 #include "Input/AInputMapManager.h"
 #include "GUI/AFade.h"
 
-TOBJECT(AMovieState, AGameState, TFALSE)
+class AMovieState : public AGameState
 {
+public:
+	TDECLARE_CLASS(AGameState);
+
 public:
 	AMovieState(const char* a_szName, TBOOL a_bFlag1, AGameState* a_pNextGameState, TBOOL a_bFlag2);
 

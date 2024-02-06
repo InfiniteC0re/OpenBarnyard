@@ -101,8 +101,8 @@ namespace Toshi {
 		protected T2GenericObjectPool
 	{
 	public:
-		static_assert(MaxNumber >= 2);
-		static_assert(sizeof(T) >= sizeof(T2GenericObjectPool::Object));
+		TSTATICASSERT(MaxNumber >= 2);
+		TSTATICASSERT(sizeof(T) >= sizeof(T2GenericObjectPool::Object));
 
 	public:
 		T2ObjectPool()

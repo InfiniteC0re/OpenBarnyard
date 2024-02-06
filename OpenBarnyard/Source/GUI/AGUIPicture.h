@@ -5,8 +5,11 @@
 #include <Toshi/Strings/TPString8.h>
 #include <Toshi2/T2SimpleArray.h>
 
-TOBJECT(AGUIPicture, Toshi::TObject, TFALSE)
+class AGUIPicture : public Toshi::TObject
 {
+public:
+	TDECLARE_CLASS(Toshi::TObject);
+
 public:
 	struct SplitRule
 	{
@@ -47,8 +50,6 @@ public:
 	void SetHidden() { m_bIsVisible = TFALSE; }
 
 	const Toshi::TPString8& GetName() const { return m_Name; }
-
-	static void InitialiseStatic();
 
 protected:
 	inline static SplitRule split_rules[6];

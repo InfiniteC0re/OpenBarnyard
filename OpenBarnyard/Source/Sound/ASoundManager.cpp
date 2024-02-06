@@ -4,6 +4,8 @@
 
 #include <fmod/fmod.h>
 
+TDEFINE_CLASS(ASoundManager);
+
 ASoundManager::ASoundManager()
 {
 	TIMPLEMENT();
@@ -50,7 +52,7 @@ TBOOL ASoundManager::OnCreate()
 		m_FreeListS4.PushBack(&m_pS4[i]);
 	}
 
-	for (TINT i = 0; i < sizeof(m_aS2) / sizeof(*m_aS2); i++)
+	for (TINT i = 0; i < TARRAYSIZE(m_aS2); i++)
 	{
 		m_FreeListS2.PushBack(&m_aS2[i]);
 	}

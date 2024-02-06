@@ -5,6 +5,8 @@
 #include "Memory/AMemory.h"
 #include "Terrain/ATerrain.h"
 
+TDEFINE_CLASS(AGUISystem);
+
 TPSTRING8_DECLARE(Start);
 TPSTRING8_DECLARE(ParkManager);
 

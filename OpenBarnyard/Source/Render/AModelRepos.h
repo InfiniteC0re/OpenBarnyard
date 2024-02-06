@@ -4,9 +4,13 @@
 #include <Toshi/Strings/TPString8.h>
 #include <Toshi2/T2Map.h>
 
-TOBJECT(AModelRepos, Toshi::TObject, TTRUE),
+class AModelRepos :
+	public Toshi::TObject,
 	public Toshi::TSingleton<AModelRepos>
 {
+public:
+	TDECLARE_CLASS(Toshi::TObject);
+
 public:
 	AModelRepos();
 	~AModelRepos();

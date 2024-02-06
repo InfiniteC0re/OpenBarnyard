@@ -3,6 +3,8 @@
 
 namespace Toshi {
 
+	TDEFINE_CLASS_NORUNTIME(TInputDeviceMouse);
+
 	TBOOL TInputDeviceMouse::GetDoodadProperties(Doodad a_iDoodad, TInputDevice::DoodadProperties& props) const
 	{
 		if (a_iDoodad < 0x30000 || AXIS_WHEEL < a_iDoodad)

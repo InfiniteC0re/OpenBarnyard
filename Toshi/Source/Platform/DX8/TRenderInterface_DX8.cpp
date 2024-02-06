@@ -10,6 +10,8 @@
 #include "Toshi/Render/TShader.h"
 
 namespace Toshi {
+
+	TDEFINE_CLASS(TRenderD3DInterface);
 	
 	void TRenderInterface::BeginEndSceneHAL()
 	{
@@ -298,7 +300,7 @@ namespace Toshi {
 
 	TBOOL TRenderD3DInterface::Create()
 	{
-		return Create(s_Class.GetName());
+		return Create(TClassObjectName.GetName());
 	}
 
 	void TRenderD3DInterface::FlushShaders()

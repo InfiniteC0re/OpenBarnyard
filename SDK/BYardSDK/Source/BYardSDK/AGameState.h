@@ -7,7 +7,7 @@
 #include <Toshi/Strings/TPString8.h>
 
 class AGameState :
-	public Toshi::TGenericClassDerived<AGameState, Toshi::TObject, "AGameState", TMAKEVERSION(1, 0), TTRUE>,
+	public Toshi::TObject,
 	public Toshi::T2DList<AGameState>::Node
 {
 public:

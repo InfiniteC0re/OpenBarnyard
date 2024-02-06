@@ -9,6 +9,8 @@
 
 #include <Toshi/Input/TInputDeviceKeyboard.h>
 
+TDEFINE_CLASS(AImGuiState);
+
 AImGuiState::AImGuiState()
 {
 	m_iOverlayColorIndex = 3;

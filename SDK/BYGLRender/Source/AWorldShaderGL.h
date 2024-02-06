@@ -141,8 +141,7 @@ public:
 				vec4 texColor = texture(tex0, textureCoord);\n\
 				if (texColor.a < 0.2) discard;\n\
 				vec3 shadow = vertexColor;\n\
-				color = mix(u_AmbientColor, u_ShadowColor, vec4(1 - vertexColor, 1.0f));\n\
-				color.rgb *= 0.75f;\n\
+				color = texColor * mix(u_AmbientColor, u_ShadowColor, vec4(1 - vertexColor, 1.0f));\n\
 			}"
 		);
 

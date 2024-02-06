@@ -2,10 +2,12 @@
 #include <Toshi/Locale/T2Locale.h>
 
 class AOptions :
-	public Toshi::TGenericClassDerived<AOptions, Toshi::TObject, "AOptions", TMAKEVERSION(1, 0), TTRUE>,
+	public Toshi::TObject,
 	public Toshi::TSingleton<AOptions>
 {
 public:
+	TDECLARE_CLASS(Toshi::TObject);
+
 	using UpdatedSettings = TUINT32;
 	enum UpdatedSettings_ : UpdatedSettings
 	{

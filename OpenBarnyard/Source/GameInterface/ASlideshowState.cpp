@@ -2,6 +2,7 @@
 #include "ASlideshowState.h"
 #include "AGameStateController.h"
 
+TDEFINE_CLASS_NORUNTIME(ASlideshowState);
 TPSTRING8_DECLARE(ASlideshowState);
 
 ASlideshowState::ASlideshowState(const AGUISlideshow::Params& a_rSlideShowParams, AGameState* a_pNextGameState, TBOOL a_bShouldLocalise)

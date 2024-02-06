@@ -7,9 +7,11 @@ namespace Toshi
 	class T2Material;
 	class TShader;
 
-	class TMaterial :
-		public TGenericClassDerived<TMaterial, TObject, "TMaterial", TMAKEVERSION(1, 0), TFALSE>
+	class TMaterial : public TObject
 	{
+	public:
+		TDECLARE_CLASS(TObject);
+
 	public:
 		static constexpr size_t MAXTEXTURES = 6;
 		static constexpr size_t NAMESIZELIMIT = 31;

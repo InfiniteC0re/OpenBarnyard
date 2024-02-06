@@ -2,6 +2,8 @@
 #include "AInputMap.h"
 #include "AInputMapManager.h"
 
+TDEFINE_CLASS_NORUNTIME(AInputMap);
+
 void AInputMap::LoadFromProperties(const PProperties& a_rProperties)
 {
 	m_oDoodadToCommandMap.Clear();

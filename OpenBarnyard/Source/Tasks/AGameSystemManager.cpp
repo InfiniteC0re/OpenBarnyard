@@ -3,6 +3,8 @@
 #include "Assets/AAssetStreaming.h"
 #include "Terrain/ATerrain.h"
 
+TDEFINE_CLASS(AGameSystemManager);
+
 TBOOL AGameSystemManager::OnCreate()
 {
 	TIMPLEMENT();

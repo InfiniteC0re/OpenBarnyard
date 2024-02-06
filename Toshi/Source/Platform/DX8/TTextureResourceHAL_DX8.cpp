@@ -8,7 +8,8 @@
 
 namespace Toshi {
 
-	TFreeList TTextureResourceHAL::ms_oFreeList = TFreeList(sizeof(TTextureResourceHAL), 0, 8);
+	TDEFINE_CLASS(TTextureResourceHAL);
+	TDEFINE_FREELIST_ALLOCATOR(TTextureResourceHAL);
 
 	TUINT TTextureResourceHAL::GetWidth()
 	{

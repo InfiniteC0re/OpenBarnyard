@@ -4,6 +4,8 @@
 #include "AGUISystem.h"
 #include "AGUI2.h"
 
+TDEFINE_CLASS(AGUISlideshow);
+
 AGUISlideshow::AGUISlideshow() :
 	m_Images(&Toshi::T2Allocator::s_GlobalAllocator, 64, 64)
 {

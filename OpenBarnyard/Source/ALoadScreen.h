@@ -13,7 +13,7 @@ public:
 		"Loader_Cow_02",
 	};
 
-	static constexpr TUINT32 NUM_LOAD_TEXTURES = sizeof(ms_LoadTextures) / sizeof(*ms_LoadTextures);
+	static constexpr TUINT32 NUM_LOAD_TEXTURES = TARRAYSIZE(ms_LoadTextures);
 	static constexpr TUINT32 NUM_LOAD_INDICATORS = 9;
 	static constexpr TFLOAT ICON_SWITCH_INTERVAL = 0.4f;
 

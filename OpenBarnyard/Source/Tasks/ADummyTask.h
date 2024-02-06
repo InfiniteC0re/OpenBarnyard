@@ -2,8 +2,11 @@
 #include <Toshi/Core/TTask.h>
 #include <Toshi/Strings/TString8.h>
 
-class ADummyTask : public Toshi::TGenericClassDerived<ADummyTask, Toshi::TTask, "ADummyTask", TMAKEVERSION(1, 0), TTRUE>
+class ADummyTask : public Toshi::TTask
 {
+public:
+	TDECLARE_CLASS(Toshi::TTask);
+
 public:
 	ADummyTask() = default;
 

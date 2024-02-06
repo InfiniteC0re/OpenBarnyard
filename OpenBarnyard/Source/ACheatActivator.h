@@ -1,7 +1,9 @@
 #pragma once
 
-TOBJECT(ACheatActivator, Toshi::TObject, TTRUE),
-public Toshi::TSingleton<ACheatActivator>
+class ACheatActivator : public Toshi::TObject,
+	public Toshi::TSingleton<ACheatActivator>
 {
+public:
+	TDECLARE_CLASS(Toshi::TObject);
 
 };

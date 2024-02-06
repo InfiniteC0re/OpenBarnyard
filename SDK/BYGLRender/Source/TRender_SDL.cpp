@@ -7,6 +7,8 @@
 
 namespace Toshi {
 
+	TDEFINE_CLASS(TRenderSDL);
+
 	TBOOL TRenderSDL::CreateDisplay(const DISPLAYPARAMS& a_rDisplayParams)
 	{
 		TASSERT(IsCreated() == TTRUE);

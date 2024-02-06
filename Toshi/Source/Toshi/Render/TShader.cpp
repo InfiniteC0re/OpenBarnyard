@@ -1,8 +1,10 @@
 #include "ToshiPCH.h"
 #include "TShader.h"
 
-namespace Toshi
-{
+namespace Toshi {
+
+	TDEFINE_CLASS_NORUNTIME(TShader);
+
 	TShader::TShader()
 	{
 		m_State = State_None;

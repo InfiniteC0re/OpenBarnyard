@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "AModelLoader.h"
 
+TDEFINE_CLASS(AModelLoader);
+
 AModelLoader::AModelLoader()
 {
 	TIMPLEMENT();

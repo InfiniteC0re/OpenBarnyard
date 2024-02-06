@@ -8,9 +8,12 @@
 #include <Toshi2/T2SList.h>
 
 class AMaterialLibraryManager : 
-	public Toshi::TGenericClassDerived<AMaterialLibraryManager, Toshi::TObject, "AMaterialLibraryManager", TMAKEVERSION(1, 0), TTRUE>,
+	public Toshi::TObject,
 	public Toshi::TSingleton<AMaterialLibraryManager>
 {
+public:
+	TDECLARE_CLASS(Toshi::TObject);
+
 public:
 	class List : 
 		public Toshi::TSingleton<List>

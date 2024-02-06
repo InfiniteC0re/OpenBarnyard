@@ -4,6 +4,8 @@
 
 TOSHI_NAMESPACE_USING
 
+TDEFINE_CLASS(AInputMapManager);
+
 AInputMapManager::AInputMapManager() :
 	m_pActiveInputMap(TNULL),
 	m_iNumPushedInputMaps(0),

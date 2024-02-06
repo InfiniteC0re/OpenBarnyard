@@ -11,6 +11,8 @@ namespace Toshi {
 		{
 		public:
 			friend TQList;
+			T2_DEFINE_ITERATOR_FRIEND();
+			T2_DEFINE_ITERATOR(T, TNode);
 
 		public:
 			TNode()
@@ -74,8 +76,6 @@ namespace Toshi {
 			T* m_pPrev;
 		};
 
-		using Iterator = T2Iterator<T, TNode>;
-
 	public:
 		TQList() = default;
 
@@ -98,12 +98,12 @@ namespace Toshi {
 			return pFirstElement;
 		}
 
-		Iterator Head() const
+		TNode::Iterator_t Head() const
 		{
 			return m_oRoot.m_pNext;
 		}
 
-		Iterator Begin() const
+		TNode::Iterator_t Begin() const
 		{
 			return m_oRoot.m_pNext;
 		}

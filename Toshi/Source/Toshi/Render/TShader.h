@@ -3,9 +3,11 @@
 
 namespace Toshi {
 	
-	class TShader :
-		public TGenericClassDerived<TShader, TObject, "TShader", TMAKEVERSION(1, 0), TFALSE>
+	class TShader : public TObject
 	{
+	public:
+		TDECLARE_CLASS(TObject);
+
 	public:
 		using State = TUINT32;
 		enum State_ : State

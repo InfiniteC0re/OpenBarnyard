@@ -1,13 +1,31 @@
 #pragma once
 #include <type_traits>
 
-namespace Toshi
-{
+#define T2_FOREACH(vecName, iteratorName) \
+    for (auto iteratorName = vecName.Begin(); iteratorName != vecName.End(); iteratorName++)
+
+#define T2_FOREACH_BACK(vecName, iteratorName) \
+	for (auto iteratorName = vecName.Tail(); iteratorName != vecName.End(); iteratorName--)
+
+#define T2_FOREACH_ARRAY(arrName, iteratorName) \
+    for (int iteratorName = 0; iteratorName < TARRAYSIZE(arrName); iteratorName++)
+
+#define T2_FOREACH_ARRAY_BACK(arrName, iteratorName) \
+	for (int iteratorName = TARRAYSIZE(arrName) - 1; iteratorName >= 0; iteratorName--)
+
+#define T2_DEFINE_ITERATOR_FRIEND() \
+	template<class T, class Node> friend class Toshi::T2Iterator
+
+#define T2_DEFINE_ITERATOR(TYPE, NODE_TYPE) \
+	using Iterator_t = Toshi::T2Iterator<TYPE, NODE_TYPE>
+
+namespace Toshi {
+
 	template <class T, class Node>
 	class T2Iterator
 	{
 	public:
-		static_assert(std::is_base_of<Node, T>::value, "T must be a descendant of Node");
+		TSTATICASSERT(std::is_base_of<Node, T>::value);
 
 		T2Iterator()
 		{
@@ -23,16 +41,6 @@ namespace Toshi
 		{
 			m_pPtr = pPtr;
 		}
-
-		/*TBOOL operator==(const T* ptr)
-		{
-			return m_pNode == ptr;
-		}*/
-
-		/*TBOOL operator!=(const T* ptr)
-		{
-			return m_pNode != ptr;
-		}*/
 
 		void operator=(const T2Iterator& other)
 		{
@@ -89,4 +97,5 @@ namespace Toshi
 	private:
 		T* m_pPtr;
 	};
+
 }

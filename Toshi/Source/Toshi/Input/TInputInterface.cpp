@@ -3,8 +3,10 @@
 #include "TInputDeviceKeyboard.h"
 #include "TInputDeviceMouse.h"
 
-namespace Toshi
-{
+namespace Toshi {
+
+	TDEFINE_CLASS_NORUNTIME(TInputInterface);
+
 	TInputDevice* TInputInterface::GetDeviceByIndex(TClass* a_pClass, TUINT a_uiIndex)
 	{
 		if (m_DeviceList.Count() == 0)

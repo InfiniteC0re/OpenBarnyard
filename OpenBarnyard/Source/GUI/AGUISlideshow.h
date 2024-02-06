@@ -5,9 +5,11 @@
 #include <Toshi/Strings/TPString8.h>
 #include <Toshi2/T2DynamicVector.h>
 
-TOBJECT(AGUISlideshow, Toshi::TObject, TTRUE)
+class AGUISlideshow : public Toshi::TObject
 {
 public:
+	TDECLARE_CLASS(Toshi::TObject);
+
 	using Flags = TUINT32;
 	enum Flags_ : Flags
 	{

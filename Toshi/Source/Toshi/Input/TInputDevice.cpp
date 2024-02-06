@@ -3,6 +3,8 @@
 
 namespace Toshi {
 
+	TDEFINE_CLASS_NORUNTIME(TInputDevice);
+
 	TInputDevice::TInputDevice() :
 		m_Repeats(0, 16),
 		m_Array2(0, 16)

@@ -10,15 +10,15 @@
 #include <Toshi/Strings/TPString8.h>
 #include <Toshi/Input/TInputInterface.h>
 
-#include <Platform/DX8/TTextureResourceHAL_DX8.h>
-
 #ifdef TOSHI_SKU_WINDOWS
-#include "Platform/DX8/TRenderInterface_DX8.h"
-#include "Platform/DX8/TVertexBlockResource_DX8.h"
-#include "Platform/DX8/TIndexBlockResource_DX8.h"
+#include <Platform/DX8/TTextureResourceHAL_DX8.h>
+#include <Platform/DX8/TRenderInterface_DX8.h>
+#include <Platform/DX8/TVertexBlockResource_DX8.h>
+#include <Platform/DX8/TIndexBlockResource_DX8.h>
 #endif // TOSHI_SKU_WINDOWS
 
 #include "AppBoot.h"
+#include "AClassHelper.h"
 #include "Tasks/ADummyTask.h"
 #include "Locale/ALocaleManager.h"
 #include "GUI/AGUI2.h"
@@ -70,6 +70,8 @@ static const char* GetOSName(OSVERSIONINFOEX& osVersionInfo)
 
 TOSHI_ENTRY
 {
+	AClassHelper::ReferenceTClasses();
+
 	static TMemoryInitialiser s_MemoryInitialiser;
 	LPSTR cmd = GetCommandLineA();
 

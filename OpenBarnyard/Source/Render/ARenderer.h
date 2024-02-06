@@ -10,9 +10,13 @@
 #include <Toshi/Render/TRenderInterface.h>
 #include <Toshi/Render/TRenderAdapter.h>
 
-TOBJECT(ARenderer, Toshi::TTask, TTRUE),
-public Toshi::TSingleton<ARenderer>
+class ARenderer :
+	public Toshi::TTask,
+	public Toshi::TSingleton<ARenderer>
 {
+public:
+	TDECLARE_CLASS(Toshi::TTask);
+
 public:
 	ARenderer();
 

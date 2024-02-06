@@ -10,16 +10,11 @@ namespace Toshi {
 
 	class TIndexPoolResource;
 
-	TOBJECT(TIndexBlockResource, TResource, TTRUE)
+	class TIndexBlockResource : public TResource
 	{
 	public:
-		void* operator new(size_t s) { return ms_oFreeList.New(sizeof(TIndexBlockResource)); }
-		void* operator new(size_t s, void* where) { return where; }
-
-		void operator delete(void* ptr) { ms_oFreeList.Delete(ptr); }
-		void operator delete(void* ptr, void* where) { delete ptr; }
-
-		static TFreeList ms_oFreeList;
+		TDECLARE_CLASS(TResource);
+		TDECLARE_FREELIST_ALLOCATOR(TIndexBlockResource)
 
 	public:
 		struct HALBuffer

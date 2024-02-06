@@ -8,6 +8,8 @@
 
 TOSHI_NAMESPACE_USING
 
+TDEFINE_CLASS(ASysMaterialHAL);
+
 ASysMaterialHAL::ASysMaterialHAL()
 {
 	m_pAssignedOrderTable = TNULL;

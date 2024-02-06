@@ -9,6 +9,8 @@
 
 TOSHI_NAMESPACE_USING
 
+TDEFINE_CLASS(AGUIMatlibPicture);
+
 void AGUIMatlibPicture::Flush()
 {
 	if (m_iNumRects1 != 0)

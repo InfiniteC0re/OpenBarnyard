@@ -9,9 +9,11 @@ namespace Toshi {
 	class TTexture;
 	class T2Texture;
 
-	class TTextureFactory : 
-		public TGenericClassDerived<TTextureFactory, TResource, "TTextureFactory", TMAKEVERSION(1, 0), TFALSE>
+	class TTextureFactory : public TResource
 	{
+	public:
+		TDECLARE_CLASS(TResource);
+
 	public:
 		class NameEntry : public TNodeList<NameEntry>::TNode
 		{

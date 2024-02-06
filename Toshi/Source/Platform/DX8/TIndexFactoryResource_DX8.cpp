@@ -6,6 +6,8 @@
 
 namespace Toshi {
 
+	TDEFINE_CLASS(TIndexFactoryResource);
+
 	TIndexBlockResource* TIndexFactoryResource::FindBlockResource(TIndexPoolResource* a_pResource)
 	{
 		if (a_pResource->GetFlags() & 2)

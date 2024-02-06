@@ -4,8 +4,11 @@
 
 #include <Toshi/Render/TOrderTable.h>
 
-TOBJECT(ASysMaterialHAL, ASysMaterial, TTRUE)
+class ASysMaterialHAL : public ASysMaterial
 {
+public:
+	TDECLARE_CLASS(ASysMaterial);
+
 public:
 	ASysMaterialHAL();
 	~ASysMaterialHAL();

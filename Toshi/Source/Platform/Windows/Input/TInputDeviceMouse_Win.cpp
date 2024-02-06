@@ -1,9 +1,11 @@
 #include "ToshiPCH.h"
 #include "TInputDeviceMouse_Win.h"
-#include <Platform/DX8/TRenderInterface_DX8.h>
-#include <Platform/Windows/Input/TInputInterface_Win.h>
+#include "Platform/DX8/TRenderInterface_DX8.h"
+#include "Platform/Windows/Input/TInputInterface_Win.h"
 
 namespace Toshi {
+
+	TDEFINE_CLASS(TInputDXDeviceMouse);
 
 	TBOOL TInputDXDeviceMouse::Acquire()
 	{

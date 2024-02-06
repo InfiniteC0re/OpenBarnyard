@@ -6,17 +6,11 @@
 
 namespace Toshi {
 
-	class TTextureResourceHAL :
-		public TGenericClassDerived<TTextureResourceHAL, TTexture, "TTextureResourceHAL", TMAKEVERSION(1, 0), TTRUE>
+	class TTextureResourceHAL : public TTexture
 	{
 	public:
-		void* operator new(size_t s) { return ms_oFreeList.New(sizeof(TTextureResourceHAL)); }
-		void* operator new(size_t s, void* where) { return where; }
-
-		void operator delete(void* ptr) { ms_oFreeList.Delete(ptr); }
-		void operator delete(void* ptr, void* where) { delete ptr; }
-
-		static TFreeList ms_oFreeList;
+		TDECLARE_CLASS(TTexture);
+		TDECLARE_FREELIST_ALLOCATOR(TTextureResourceHAL);
 
 	public:
 		TTextureResourceHAL()

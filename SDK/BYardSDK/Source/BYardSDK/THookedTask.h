@@ -6,10 +6,14 @@
 #include <Toshi/Core/TRefCounted.h>
 #include <Toshi/Core/TNodeTree.h>
 
-TOBJECT(THookedTask, Toshi::TObject, TTRUE),
+class THookedTask :
+	public Toshi::TObject,
 	public Toshi::TRefCounted,
 	public Toshi::TNodeTree<THookedTask>::TNode
 {
+public:
+	TDECLARE_CLASS(Toshi::TObject);
+
 public:
 	THookedTask()
 	{

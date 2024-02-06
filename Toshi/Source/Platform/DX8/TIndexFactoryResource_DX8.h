@@ -5,8 +5,11 @@
 
 namespace Toshi {
 
-	TOBJECT(TIndexFactoryResource, TIndexFactoryResourceInterface, TTRUE)
+	class TIndexFactoryResource : public TIndexFactoryResourceInterface
 	{
+	public:
+		TDECLARE_CLASS(TIndexFactoryResourceInterface);
+
 	public:
 		virtual TIndexPoolResourceInterface* CreatePoolResource(TUINT16 a_uiMaxStaticIndices, TUINT16 a_uiFlags);
 

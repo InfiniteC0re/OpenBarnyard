@@ -17,10 +17,12 @@ namespace Toshi
 	};
 
 	class TResource :
-		public TGenericClassDerived<TResource, TObject, "TResource", TMAKEVERSION(1, 0), TTRUE>,
+		public TObject,
 		public TNodeTree<TResource>::TNode
 	{
 	public:
+		TDECLARE_CLASS(TObject);
+
 		static constexpr size_t MAXNAMELEN = 14;
 		friend TRenderInterface;
 

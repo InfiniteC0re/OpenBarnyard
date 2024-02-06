@@ -6,9 +6,13 @@ namespace Toshi {
 	
 	class TInputDevice;
 
-	TOBJECT(TInputInterface, TObject, TFALSE),
+	class TInputInterface :
+		public TObject,
 		public TSingleton<TInputInterface>
 	{
+	public:
+		TDECLARE_CLASS(TObject);
+
 	public:
 		enum EVENT_TYPE
 		{
@@ -123,9 +127,12 @@ namespace Toshi {
 	};
 
 	class TInputDevice :
-		public TGenericClassDerived<TInputDevice, TObject, "TInputDevice", TMAKEVERSION(1, 0), TFALSE>,
+		public TObject,
 		public TNodeList<TInputDevice>::TNode
 	{
+	public:
+		TDECLARE_CLASS(TObject);
+
 	public:
 		static constexpr TINT INPUT_DEVICE_MOUSE_BUTTONS = 3;
 		static constexpr TINT INPUT_DEVICE_MOUSE_WHEEL = 4;

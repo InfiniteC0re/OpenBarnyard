@@ -9,9 +9,12 @@
 #include <Toshi/Core/TTask.h>
 
 class AGUI2 : 
-	public Toshi::TGenericClassDerived<AGUI2, Toshi::TTask, "AGUI2", TMAKEVERSION(1, 0), TTRUE>,
+	public Toshi::TTask,
 	public Toshi::TSingleton<AGUI2>
 {
+public:
+	TDECLARE_CLASS(Toshi::TTask);
+
 public:
 	AGUI2();
 

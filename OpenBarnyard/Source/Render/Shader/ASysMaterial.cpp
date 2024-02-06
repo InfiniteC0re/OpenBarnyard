@@ -3,6 +3,8 @@
 
 TOSHI_NAMESPACE_USING
 
+TDEFINE_CLASS_NORUNTIME(ASysMaterial);
+
 ASysMaterial::ASysMaterial()
 {
 	m_eBlendMode = BLENDMODE_DEFAULT;

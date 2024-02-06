@@ -3,9 +3,12 @@
 
 #include <Toshi/Core/TTask.h>
 
-TOBJECT(AFadeManager, Toshi::TTask, TTRUE),
+class AFadeManager : public Toshi::TTask,
 	public Toshi::TSingleton<AFadeManager>
 {
+public:
+	TDECLARE_CLASS(Toshi::TTask);
+
 public:
 	AFadeManager() = default;
 

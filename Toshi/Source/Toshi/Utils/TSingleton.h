@@ -23,7 +23,7 @@ namespace Toshi
 		template <typename D, typename ... Args>
 		__forceinline static D* CreateSingleton(Args&& ... args)
 		{
-			static_assert(std::is_base_of_v<T, D> == TTRUE);
+			TSTATICASSERT(std::is_base_of_v<T, D> == TTRUE);
 			return new D(std::forward<Args>(args)...);
 		}
 

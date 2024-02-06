@@ -6,6 +6,8 @@
 
 TOSHI_NAMESPACE_USING
 
+TDEFINE_CLASS(ASysMeshHAL);
+
 ASysMeshHAL::ASysMeshHAL()
 {
 	m_iZBias = 0;

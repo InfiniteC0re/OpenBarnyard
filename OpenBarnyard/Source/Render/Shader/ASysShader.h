@@ -4,9 +4,13 @@
 class ASysMaterial;
 class ASysMesh;
 
-TOBJECT(ASysShader, Toshi::TShader, TFALSE),
+class ASysShader :
+	public Toshi::TShader,
 	public Toshi::TSingleton<ASysShader>
 {
+public:
+	TDECLARE_CLASS(Toshi::TShader);
+
 public:
 	virtual ASysMaterial* CreateMaterial(const char* a_szName) = 0;
 	virtual ASysMesh* CreateMesh(const char* a_szName) = 0;

@@ -8,6 +8,8 @@
 
 TOSHI_NAMESPACE_USING
 
+TDEFINE_CLASS(AInputHandler);
+
 AInputHandler::AInputHandler()
 {
 	TIMPLEMENT();

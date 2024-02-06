@@ -43,6 +43,6 @@ namespace Toshi {
 		}
 	};
 
-	static_assert(sizeof(TColor) == 4);
+	TSTATICASSERT(sizeof(TColor) == 4);
 
 }

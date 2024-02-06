@@ -4,6 +4,8 @@
 
 TOSHI_NAMESPACE_USING
 
+TDEFINE_CLASS(AModelRepos);
+
 AModelRepos::AModelRepos() :
 	m_UsedModels(AMemory::GetAllocator(AMemory::POOL_Misc)),
 	m_Models2(AMemory::GetAllocator(AMemory::POOL_Misc))
@@ -41,7 +43,7 @@ AModel* AModelRepos::GetModel(const Toshi::TPString8& a_rName)
 
 AModel* AModelRepos::GetUnusedModel(const Toshi::TPString8& a_rName)
 {
-	for (auto it = m_UnusedModels.Begin(); it != m_UnusedModels.End(); it++)
+	T2_FOREACH(m_UnusedModels, it)
 	{
 		if (it->GetName() == a_rName)
 		{
@@ -54,12 +56,12 @@ AModel* AModelRepos::GetUnusedModel(const Toshi::TPString8& a_rName)
 
 void AModelRepos::Update(TFLOAT a_fDeltaTime)
 {
-	for (auto it = m_UsedModels.Begin(); it != m_UsedModels.End(); it++)
+	T2_FOREACH(m_UsedModels, it)
 	{
 		it->GetSecond()->Update(a_fDeltaTime);
 	}
 
-	for (auto it = m_Models2.Begin(); it != m_Models2.End(); it++)
+	T2_FOREACH(m_Models2, it)
 	{
 		it->GetSecond()->Update(a_fDeltaTime);
 	}

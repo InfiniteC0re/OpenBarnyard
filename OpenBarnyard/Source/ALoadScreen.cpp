@@ -23,7 +23,7 @@ ALoadScreen::~ALoadScreen()
 
 void ALoadScreen::Create()
 {
-	for (TUINT i = 0; i < NUM_LOAD_TEXTURES; i++)
+	T2_FOREACH_ARRAY(ms_LoadTextures, i)
 	{
 		TASSERT(m_aTextureSections[i] == TNULL, "ALoadScreen is already created");
 		m_aTextureSections[i] = AGUI2TextureSectionManager::GetTextureSection(ms_LoadTextures[i]);

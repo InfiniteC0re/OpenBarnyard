@@ -4,6 +4,8 @@
 
 namespace Toshi {
 
+	TDEFINE_CLASS_NORUNTIME(TRenderInterface);
+
 	TRenderInterface::TRenderInterface()
 	{
 		m_Unk1 = 0;

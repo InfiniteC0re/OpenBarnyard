@@ -7,9 +7,12 @@
 #include <Toshi2/T2Vector.h>
 #include <Toshi2/T2DynamicVector.h>
 
-TOBJECT(AGameStateController, Toshi::TTask, TTRUE),
+class AGameStateController : public Toshi::TTask,
 	public Toshi::TSingleton<AGameStateController>
 {
+public:
+	TDECLARE_CLASS(Toshi::TTask);
+
 public:
 	AGameStateController();
 	~AGameStateController();

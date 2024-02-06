@@ -7,7 +7,8 @@
 #include <Toshi2/T2Vector.h>
 #include <Toshi2/T2DynamicVector.h>
 
-TOBJECT(AGameStateController, Toshi::TTask, TFALSE),
+class AGameStateController :
+	public Toshi::TTask,
 	public THookedSingleton<AGameStateController, 0x00781788>
 {
 public:

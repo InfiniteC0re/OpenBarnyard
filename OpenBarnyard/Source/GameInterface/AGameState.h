@@ -7,10 +7,12 @@
 #include <Toshi/Input/TInputInterface.h>
 
 class AGameState :
-	public Toshi::TGenericClassDerived<AGameState, Toshi::TObject, "AGameState", TMAKEVERSION(1, 0), TTRUE>,
+	public Toshi::TObject,
 	public Toshi::T2DList<AGameState>::Node
 {
 public:
+	TDECLARE_CLASS(Toshi::TObject);
+
 	template <class Result, class... Args>
 	using t_ExecuteForChildCb = Result(AGameState::*)(Args... args);
 
@@ -102,7 +104,7 @@ public:
 	template <class... Args>
 	void ExecuteForAllChildStates(t_ExecuteForChildCb<void, Args...> a_fnCallback, TUINT32 a_uiOffset, Args... args)
 	{
-		for (auto it = m_ChildStates.Begin(); it != m_ChildStates.End(); it++)
+		T2_FOREACH(m_ChildStates, it)
 		{
 			auto pGameState = TREINTERPRETCAST(
 				AGameState*,
@@ -116,7 +118,7 @@ public:
 	template <class... Args>
 	TBOOL ExecuteForOneChildState(t_ExecuteForChildCb<TBOOL, Args...> a_fnCallback, TUINT32 a_uiOffset, Args... args)
 	{
-		for (auto it = m_ChildStates.Begin(); it != m_ChildStates.End(); it++)
+		T2_FOREACH(m_ChildStates, it)
 		{
 			auto pGameState = TREINTERPRETCAST(
 				AGameState*,

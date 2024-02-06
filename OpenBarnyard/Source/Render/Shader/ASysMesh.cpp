@@ -4,6 +4,8 @@
 
 TOSHI_NAMESPACE_USING
 
+TDEFINE_CLASS_NORUNTIME(ASysMesh);
+
 ASysMesh::ASysMesh()
 {
 	m_uiFlags = 0;

@@ -17,9 +17,12 @@ namespace Toshi {
 	class TViewport;
 
 	class TRenderInterface :
-		public TGenericClassDerived<TRenderInterface, TObject, "TRender", TMAKEVERSION(1, 0), TFALSE>,
+		public TObject,
 		public TSingleton<TRenderInterface>
 	{
+	public:
+		TDECLARE_CLASS(TObject);
+
 	public:
 		static constexpr size_t MAXNUMRESOURCES = 6000;
 		

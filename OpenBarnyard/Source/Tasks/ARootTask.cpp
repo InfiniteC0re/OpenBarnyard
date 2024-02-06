@@ -28,6 +28,8 @@
 
 TOSHI_NAMESPACE_USING
 
+TDEFINE_CLASS(ARootTask);
+
 ARootTask::ARootTask()
 {
 	TIMPLEMENT();

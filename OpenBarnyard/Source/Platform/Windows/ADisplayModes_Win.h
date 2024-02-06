@@ -2,8 +2,11 @@
 #include <Toshi2/T2Vector.h>
 
 class ADisplayModes_Win : 
-	public Toshi::TGenericClassDerived<ADisplayModes_Win, Toshi::TObject, "ADisplayModes_Win", TMAKEVERSION(1, 0), TTRUE>
+	public Toshi::TObject
 {
+public:
+	TDECLARE_CLASS(Toshi::TObject);
+
 public:
 	struct Mode
 	{

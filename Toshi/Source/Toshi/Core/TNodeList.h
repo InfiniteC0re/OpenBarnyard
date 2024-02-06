@@ -1,8 +1,8 @@
 #pragma once
 #include "Toshi2/T2Iterator.h"
 
-namespace Toshi
-{
+namespace Toshi {
+
 	template <class T>
 	class TNodeList
 	{
@@ -11,6 +11,7 @@ namespace Toshi
 		{
 		public:
 			friend TNodeList;
+			T2_DEFINE_ITERATOR(T, TNode);
 
 		public:
 			TNode()
@@ -201,22 +202,22 @@ namespace Toshi
 			return m_Count;
 		}
 
-		T2Iterator<T, TNode> Begin() const
+		TNode::Iterator_t Begin() const
 		{
 			return m_Head.m_Next;
 		}
 
-		T2Iterator<T, TNode> Head() const
+		TNode::Iterator_t Head() const
 		{
 			return m_Head.m_Next;
 		}
 
-		T2Iterator<T, TNode> Tail() const
+		TNode::Iterator_t Tail() const
 		{
 			return m_Head.m_Prev;
 		}
 
-		T2Iterator<T, TNode> End() const
+		TNode::Iterator_t End() const
 		{
 			return &m_Head;
 		}

@@ -2,8 +2,10 @@
 #include "TResource.h"
 #include "TRenderInterface.h"
 
-namespace Toshi
-{
+namespace Toshi {
+
+	TDEFINE_CLASS(TResource);
+
 	TResource::~TResource()
 	{
 		m_State |= TResourceState_Dead;

@@ -9,6 +9,8 @@
 
 TOSHI_NAMESPACE_USING
 
+TDEFINE_CLASS(AModLoaderTask);
+
 void AModLoaderTask::AGUI2MainPostRenderCallback()
 {
 	if (AGlobalModLoaderTask::Get()->m_pTextBox)

@@ -6,7 +6,8 @@
 class ASysMaterial;
 class ASysMesh;
 
-TOBJECT(ASysShader, Toshi::TShader, TFALSE),
+class ASysShader :
+	public Toshi::TShader,
 	public THookedSingleton<ASysShader, 0x0079a340>
 {
 public:

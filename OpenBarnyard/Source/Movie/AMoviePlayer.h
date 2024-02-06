@@ -1,9 +1,12 @@
 #pragma once
 #include <Toshi/Core/TTask.h>
 
-TOBJECT(AMoviePlayer, Toshi::TTask, TFALSE),
+class AMoviePlayer : public Toshi::TTask,
 	public Toshi::TSingleton<AMoviePlayer>
 {
+public:
+	TDECLARE_CLASS(Toshi::TTask);
+
 public:
 	AMoviePlayer();
 

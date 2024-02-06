@@ -6,8 +6,11 @@
 
 namespace Toshi {
 
-	TOBJECT(TInputDXDeviceKeyboard, TInputDeviceKeyboard, TTRUE)
+	class TInputDXDeviceKeyboard : public TInputDeviceKeyboard
 	{
+	public:
+		TDECLARE_CLASS(TInputDeviceKeyboard);
+
 	public:
 		struct KeyInfo
 		{

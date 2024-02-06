@@ -5,6 +5,8 @@
 
 namespace Toshi {
 
+	TDEFINE_CLASS(TTextureFactoryHAL);
+
 	TTexture* TTextureFactoryHAL::CreateTextureFromFile(const char* a_szFilePath, TUINT32 a_eTextureFlags)
 	{
 		TTexture* pTexture = FindTexture(a_szFilePath);

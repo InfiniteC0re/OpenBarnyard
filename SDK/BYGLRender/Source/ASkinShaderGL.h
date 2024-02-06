@@ -182,7 +182,7 @@ public:
 			{\n\
 				vec4 texColor = texture(tex0, o_TexCoord);\n\
 				if (texColor.a < 0.2f) discard;\n\
-				color = clamp(o_FinalColor, 0.0f, 1.0f);\n\
+				color = texColor * clamp(o_FinalColor, 0.0f, 1.0f);\n\
 			}"
 		);
 

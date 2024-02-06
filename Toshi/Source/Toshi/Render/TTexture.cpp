@@ -3,6 +3,8 @@
 
 namespace Toshi {
 
+	TDEFINE_CLASS_NORUNTIME(TTexture);
+
 	TTexture::TTexture()
 	{
 		m_eAddress = 0;

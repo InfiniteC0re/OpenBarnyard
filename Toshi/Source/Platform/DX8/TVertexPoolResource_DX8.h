@@ -7,8 +7,11 @@ namespace Toshi {
 
 	class TVertexBlockResource;
 
-	TOBJECT(TVertexPoolResource, TVertexPoolResourceInterface, TTRUE)
+	class TVertexPoolResource : public TVertexPoolResourceInterface
 	{
+	public:
+		TDECLARE_CLASS(TVertexPoolResourceInterface);
+
 	public:
 		friend TVertexBlockResource;
 

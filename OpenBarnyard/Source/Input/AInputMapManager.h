@@ -33,10 +33,12 @@ struct AInputCommandArray
 };
 
 class AInputMapManager :
-	public Toshi::TGenericClassDerived<AInputMapManager, Toshi::TObject, "AInputMapManager", TMAKEVERSION(1, 0), TTRUE>,
+	public Toshi::TObject,
 	public Toshi::TSingleton<AInputMapManager>
 {
 public:
+	TDECLARE_CLASS(Toshi::TObject);
+
 	using ActionId = TUINT32;
 
 	enum InputEvent : TUINT32

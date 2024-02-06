@@ -7,7 +7,8 @@
 
 namespace Toshi {
 
-	TFreeList TVertexBlockResource::ms_oFreeList = TFreeList(sizeof(TVertexBlockResource), 0, 8);
+	TDEFINE_CLASS(TVertexBlockResource, 0, 1);
+	TDEFINE_FREELIST_ALLOCATOR(TVertexBlockResource);
 
 	TBOOL TVertexBlockResource::AttachPool(TVertexPoolResource* a_pPool)
 	{

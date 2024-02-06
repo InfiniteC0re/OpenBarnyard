@@ -3,6 +3,8 @@
 
 namespace Toshi {
 
+	TDEFINE_CLASS_NORUNTIME(TVertexPoolResourceInterface);
+
 	TVertexPoolResourceInterface::TVertexPoolResourceInterface()
 	{
 		m_pFactory = TNULL;

@@ -3,8 +3,11 @@
 #include "GUI/AGUISlideshow.h"
 #include "Input/AInputMapManager.h"
 
-TOBJECT(ASlideshowState, AGameState, TFALSE)
+class ASlideshowState : public AGameState
 {
+public:
+	TDECLARE_CLASS(AGameState);
+
 public:
 	ASlideshowState(const AGUISlideshow::Params& a_rSlideShowParams, AGameState* a_pNextGameState, TBOOL a_bShouldLocalise);
 

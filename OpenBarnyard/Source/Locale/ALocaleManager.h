@@ -30,8 +30,8 @@ public:
 		Lang_NUMOF
 	};
 
-	constexpr static size_t NUM_LOCALES = sizeof(s_pLangDataFileNames) / sizeof(*s_pLangDataFileNames);
-	static_assert(Lang_NUMOF == NUM_LOCALES);
+	constexpr static size_t NUM_LOCALES = TARRAYSIZE(s_pLangDataFileNames);
+	TSTATICASSERT(Lang_NUMOF == NUM_LOCALES);
 
 public:
 	ALocaleManager() : T2Locale(Lang_NUMOF, 307200, Toshi::T2Allocator::s_GlobalAllocator.Malloc(307200))

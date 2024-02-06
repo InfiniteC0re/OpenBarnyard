@@ -6,7 +6,7 @@
 #include <Toshi/Input/TInputInterface.h>
 #include <Toshi2/T2DynamicVector.h>
 
-TOBJECT(AGUISlideshow, Toshi::TObject, TTRUE)
+class AGUISlideshow : public Toshi::TObject
 {
 public:
 	using Flags = TUINT32;

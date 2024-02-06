@@ -10,8 +10,11 @@
 #include <Toshi2/T2SimpleArray.h>
 #include <bink.h>
 
-TOBJECT(ABINKMoviePlayer, AMoviePlayer, TTRUE)
+class ABINKMoviePlayer : public AMoviePlayer
 {
+public:
+	TDECLARE_CLASS(AMoviePlayer);
+
 private:
 	struct Rect
 	{

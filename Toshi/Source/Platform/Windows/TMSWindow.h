@@ -7,11 +7,13 @@
 #include <windowsx.h>
 #include "../resource.h"
 
-namespace Toshi
-{
-	class TMSWindow :
-		public TGenericClassDerived<TMSWindow, TObject, "TMSWindow", TMAKEVERSION(1, 0), TFALSE>
+namespace Toshi {
+
+	class TMSWindow : public TObject
 	{
+	public:
+		TDECLARE_CLASS(TObject);
+
 	public:
 		static constexpr UINT s_PopupStyles = WS_POPUP | WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU;
 

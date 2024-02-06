@@ -21,6 +21,8 @@
 
 TOSHI_NAMESPACE_USING
 
+TDEFINE_CLASS(ARenderer);
+
 ARenderer::ARenderer() :
 	m_RenderGUIEmitter(this)
 {

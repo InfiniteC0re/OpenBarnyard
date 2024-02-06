@@ -1,8 +1,11 @@
 #pragma once
 #include "Render/Shader/ASysMesh.h"
 
-TOBJECT(ASysMeshHAL, ASysMesh, TTRUE)
+class ASysMeshHAL : public ASysMesh
 {
+public:
+	TDECLARE_CLASS(ASysMesh);
+
 public:
 	ASysMeshHAL();
 

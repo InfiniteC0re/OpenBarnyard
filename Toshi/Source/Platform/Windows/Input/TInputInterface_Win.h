@@ -4,8 +4,11 @@
 
 namespace Toshi
 {
-	TOBJECT(TInputDXInterface, TInputInterface, TTRUE)
+	class TInputDXInterface : public TInputInterface
 	{
+	public:
+		TDECLARE_CLASS(TInputInterface);
+
 	public:
 		TInputDXInterface()
 		{

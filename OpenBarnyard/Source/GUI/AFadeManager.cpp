@@ -3,6 +3,8 @@
 #include "Tasks/ARootTask.h"
 #include "GUI/AGUI2.h"
 
+TDEFINE_CLASS(AFadeManager);
+
 TBOOL AFadeManager::OnUpdate(TFLOAT a_fDeltaTime)
 {
 	if (!ARootTask::GetSingleton()->IsPaused())

@@ -4,6 +4,8 @@
 
 TOSHI_NAMESPACE_USING
 
+TDEFINE_CLASS_INIT_NORUNTIME(AGUIPicture);
+
 AGUIPicture::AGUIPicture()
 {
 	m_iUnknown1 = 0;
@@ -15,7 +17,7 @@ AGUIPicture::AGUIPicture()
 	m_fUnknown3 = -10.0f;
 }
 
-void AGUIPicture::InitialiseStatic()
+void AGUIPicture::InitialiseClass()
 {
 	constexpr TFLOAT TEX_SIZE = 256.0f;
 
@@ -52,6 +54,11 @@ void AGUIPicture::InitialiseStatic()
 
 		fValB += fValA;
 	}
+}
+
+void AGUIPicture::DeinitialiseClass()
+{
+
 }
 
 void AGUIPicture::SetFlag()

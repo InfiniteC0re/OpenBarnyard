@@ -5,6 +5,8 @@
 
 namespace Toshi {
 
+	TDEFINE_CLASS(TVertexPoolResource);
+
 	TVertexPoolResource::TVertexPoolResource()
 	{
 		m_uiVertexOffset = 0;

@@ -3,6 +3,8 @@
 
 namespace Toshi {
 
+	TDEFINE_CLASS_NORUNTIME(TIndexFactoryResourceInterface);
+
 	TIndexFactoryResourceInterface::TIndexFactoryResourceInterface()
 	{
 		m_uiNumPools = 0;

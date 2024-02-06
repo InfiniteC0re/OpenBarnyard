@@ -3,6 +3,8 @@
 
 TOSHI_NAMESPACE_USING
 
+TDEFINE_CLASS(AModelInstance);
+
 AModel::AModel(const TPString8& a_rName, TTRB* a_pTRB)
 {
 	m_uiID = ms_uiNumCreated;

@@ -3,9 +3,11 @@
 
 #include <Toshi/Render/TOrderTable.h>
 
-TOBJECT(ASysShaderHAL, ASysShader, TTRUE)
+class ASysShaderHAL : public ASysShader
 {
 public:
+	TDECLARE_CLASS(ASysShader);
+
 	static constexpr TUINT NUM_ORDER_TABLES = 4;
 
 public:

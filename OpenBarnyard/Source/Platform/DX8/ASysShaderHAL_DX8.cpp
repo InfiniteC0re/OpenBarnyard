@@ -12,6 +12,8 @@
 
 TOSHI_NAMESPACE_USING
 
+TDEFINE_CLASS(ASysShaderHAL);
+
 void ASysShaderHAL::Flush()
 {
 	Validate();

@@ -8,9 +8,11 @@ namespace Toshi
 {
 	class TTask;
 
-	class TScheduler :
-		public TGenericClassDerived<TScheduler, TObject, "TScheduler", TMAKEVERSION(1, 0), TFALSE>
+	class TScheduler : public TObject
 	{
+	public:
+		TDECLARE_CLASS(TObject);
+
 	public:
 		using t_DeltaTimeCalculator = TFLOAT(*)(TFLOAT a_fRealDT);
 

@@ -1,8 +1,10 @@
 #include "ToshiPCH.h"
 #include "TTask.h"
 
-namespace Toshi
-{
+namespace Toshi {
+
+	TDEFINE_CLASS_NORUNTIME(TTask);
+
 	TTask::TTask()
 	{
 		m_State = 0;

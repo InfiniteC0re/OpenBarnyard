@@ -3,8 +3,11 @@
 
 namespace Toshi
 {
-	TOBJECT(TInputDeviceKeyboard, TInputDevice, TFALSE)
+	class TInputDeviceKeyboard : public TInputDevice
 	{
+	public:
+		TDECLARE_CLASS(TInputDevice);
+
 	public:
 #pragma region KEYS
 		static const int VIRTKEY_SHIFT = 0x20002;

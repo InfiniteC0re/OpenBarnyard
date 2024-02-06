@@ -9,6 +9,8 @@
 
 namespace Toshi {
 
+	TDEFINE_CLASS(TMSWindow);
+
 	TMSWindow::TMSWindow()
 	{
 		m_HWND = NULL;

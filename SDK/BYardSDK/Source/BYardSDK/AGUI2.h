@@ -22,7 +22,6 @@ public:
 
 	TBOOL IsCursorVisible() const
 	{
-		sizeof(AGUI2);
 		return m_bShowMouseCursor;
 	}
 

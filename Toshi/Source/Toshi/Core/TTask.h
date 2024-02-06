@@ -8,10 +8,13 @@ namespace Toshi
 	class TScheduler;
 
 	class TTask :
-		public TGenericClassDerived<TTask, TObject, "TTask", TMAKEVERSION(1, 0), TFALSE>,
+		public TObject,
 		public TRefCounted,
 		public TNodeTree<TTask>::TNode
 	{
+	public:
+		TDECLARE_CLASS(TObject);
+
 	public:
 		friend TScheduler;
 

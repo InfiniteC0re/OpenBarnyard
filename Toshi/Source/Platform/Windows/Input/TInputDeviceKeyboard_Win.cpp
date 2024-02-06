@@ -3,6 +3,8 @@
 
 namespace Toshi {
 
+	TDEFINE_CLASS(TInputDXDeviceKeyboard);
+
 	TInputDXDeviceKeyboard::TInputDXDeviceKeyboard()
 	{
 		m_iSomeNum = 0;

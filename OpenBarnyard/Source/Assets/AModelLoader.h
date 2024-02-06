@@ -1,9 +1,12 @@
 #pragma once
 #include <Toshi/Render/TModel.h>
 
-TOBJECT(AModelLoader, Toshi::TObject, TTRUE),
+class AModelLoader : public Toshi::TObject,
 	public Toshi::TSingleton<AModelLoader>
 {
+public:
+	TDECLARE_CLASS(Toshi::TObject);
+
 public:
 	AModelLoader();
 

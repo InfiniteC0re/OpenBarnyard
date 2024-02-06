@@ -3,9 +3,11 @@
 
 #include <Toshi/Render/TMaterial.h>
 
-TOBJECT(ASysMaterial, Toshi::TMaterial, TFALSE)
+class ASysMaterial : public Toshi::TMaterial
 {
 public:
+	TDECLARE_CLASS(Toshi::TMaterial);
+
 	enum BLENDMODE
 	{
 		BLENDMODE_DEFAULT,

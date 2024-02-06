@@ -7,6 +7,8 @@
 
 namespace Toshi {
 
+	TDEFINE_CLASS(TVertexFactoryResource);
+
 	TVertexPoolResourceInterface* TVertexFactoryResource::CreatePoolResource(TUINT16 a_uiMaxStaticVertices, TUINT16 a_uiFlags)
 	{
 		auto pVertexPool = TSTATICCAST(

@@ -1,5 +1,21 @@
 #pragma once
 
+#define TDECLARE_FREELIST_ALLOCATOR(CLASS_NAME) \
+public: \
+	void* operator new(size_t s) { return ms_oFreeList.New(sizeof(CLASS_NAME)); } \
+	void* operator new(size_t s, void* where) { return where; } \
+	\
+	void operator delete(void* ptr) { ms_oFreeList.Delete(ptr); } \
+	void operator delete(void* ptr, void* where) { delete ptr; } \
+	\
+	static Toshi::TFreeList ms_oFreeList;
+
+#define TDEFINE_FREELIST_ALLOCATOR(CLASS_NAME) \
+	Toshi::TFreeList CLASS_NAME::ms_oFreeList = Toshi::TFreeList(sizeof(CLASS_NAME), 0, 8);
+
+#define TDEFINE_FREELIST_ALLOCATOR1(CLASS_NAME, GROW_SIZE) \
+	Toshi::TFreeList CLASS_NAME::ms_oFreeList = Toshi::TFreeList(sizeof(CLASS_NAME), 0, GROW_SIZE);
+
 namespace Toshi {
 
 	class TFreeList

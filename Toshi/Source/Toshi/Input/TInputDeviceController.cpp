@@ -3,6 +3,8 @@
 
 namespace Toshi {
 
+	TDEFINE_CLASS_NORUNTIME(TInputDeviceController);
+
 	TBOOL TInputDeviceController::GetDoodadProperties(Doodad a_iDoodad, DoodadProperties& a_rProperties) const
 	{
 		if (a_iDoodad < 0x10000 || 0x1001b < a_iDoodad)

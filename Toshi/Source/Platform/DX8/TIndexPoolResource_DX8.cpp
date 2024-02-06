@@ -5,6 +5,8 @@
 
 namespace Toshi {
 
+	TDEFINE_CLASS(TIndexPoolResource);
+
 	TIndexPoolResource::TIndexPoolResource()
 	{
 		m_uiIndexOffset = 0;

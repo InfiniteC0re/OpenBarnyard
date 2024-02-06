@@ -3,9 +3,13 @@
 #include "Toshi/Utils/TSingleton.h"
 #include "Toshi/Math/TRandom.h"
 
-TOBJECT(ARandom, Toshi::TObject, TTRUE),
+class ARandom :
+	public Toshi::TObject,
 	public Toshi::TSingleton<ARandom>
 {
+public:
+	TDECLARE_CLASS(Toshi::TObject);
+
 public:
 	ARandom()
 	{

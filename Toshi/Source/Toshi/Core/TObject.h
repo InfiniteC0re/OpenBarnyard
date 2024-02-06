@@ -5,78 +5,189 @@
 #include "Toshi/Memory/TMemory.h"
 #include "Toshi/Utils/TLog.h"
 
-#define TOBJECT(class_name, parent, instantiable) class class_name : \
-	public Toshi::TGenericClassDerived<class_name, parent, #class_name, TMAKEVERSION(1, 0), instantiable>
+#include <type_traits>
 
-template<size_t N>
-struct StringLiteral {
-	constexpr StringLiteral(const char(&str)[N]) {
-		std::copy_n(str, N, value);
-	}
+#define TClassObjectName ms_oClass
+#define TGetClass(CLASS) CLASS::TClassObjectName
 
-	char value[N];
-};
+//-----------------------------------------------------------------------------
+// Declares default methods used to register class in the dynamic class system.
+// Note: Doesn't declare ms_oClass object (Use TDECLARE_CLASS to auto-declare).
+//-----------------------------------------------------------------------------
+#define TDECLARE_CLASS_BODY(PARENT_CLASS) \
+public: \
+	using Parent_t = PARENT_CLASS; \
+	static constexpr Toshi::TClass* PARENTCLASS = &TGetClass(PARENT_CLASS); \
+	\
+	virtual Toshi::TClass* GetClass() override; \
+	\
+	static Toshi::TObject* CreateTObject(); \
+	static Toshi::TObject* CreateTObjectInPlace(void* a_pPtr); \
+	static void InitialiseClass(); \
+	static void DeinitialiseClass(); \
+	\
+	static TFORCEINLINE Toshi::TClass* GetClassStatic() { return std::addressof(TClassObjectName); }
 
-namespace Toshi
-{
+//-----------------------------------------------------------------------------
+// Declares default methods to register derived class and ms_oClass object.
+// Note: Use one of the TDEFINE_CLASS macros in a cpp file to register class.
+//-----------------------------------------------------------------------------
+#define TDECLARE_CLASS(PARENT_CLASS) \
+	TDECLARE_CLASS_BODY(PARENT_CLASS); \
+	static Toshi::TClass TClassObjectName;
+
+//-----------------------------------------------------------------------------
+// Declares default methods to register class and ms_oClass object.
+// Note: Use one of the TDEFINE_CLASS macros in a cpp file to register class.
+//-----------------------------------------------------------------------------
+#define TDECLARE_CLASS_COMPILETIME(PARENT_CLASS) \
+	TDECLARE_CLASS_BODY(PARENT_CLASS); \
+	static constinit Toshi::TClass TClassObjectName;
+
+//-----------------------------------------------------------------------------
+// Defines core methods of TObject and allows creating object at runtime.
+//-----------------------------------------------------------------------------
+#define TDEFINE_CLASS_CORE(CLASS) \
+	TSTATICASSERT(CLASS::IsTObject); \
+	TSTATICASSERT(std::is_base_of<CLASS::Parent_t, CLASS>::value && !std::is_same<CLASS::Parent_t, CLASS>::value); \
+	Toshi::TClass*  CLASS::GetClass() { return CLASS::GetClassStatic(); } \
+	Toshi::TObject* CLASS::CreateTObject() { return new CLASS(); } \
+	Toshi::TObject* CLASS::CreateTObjectInPlace(void* a_pPtr) { return new (a_pPtr) CLASS(); }
+
+//-----------------------------------------------------------------------------
+// Defines core methods of TObject and prohibits creating object at runtime.
+//-----------------------------------------------------------------------------
+#define TDEFINE_CLASS_CORE_NORUNTIME(CLASS) \
+	TSTATICASSERT(CLASS::IsTObject); \
+	TSTATICASSERT(std::is_base_of<CLASS::Parent_t, CLASS>::value && !std::is_same<CLASS::Parent_t, CLASS>::value); \
+	Toshi::TClass*  CLASS::GetClass() { return CLASS::GetClassStatic(); } \
+	Toshi::TObject* CLASS::CreateTObject() { TASSERT2(TFALSE, "This class cannot be created at runtime!"); return TNULL; } \
+	Toshi::TObject* CLASS::CreateTObjectInPlace(void* a_pPtr) { TASSERT2(TFALSE, "This class cannot be created at runtime!"); return TNULL; }
+
+//-----------------------------------------------------------------------------
+// Defines core methods of TObject and allows creating object at runtime.
+// Note: Doesn't have type checks.
+//-----------------------------------------------------------------------------
+#define TDEFINE_CLASS_CORE_COMPILETIME(CLASS) \
+	TSTATICASSERT(CLASS::IsTObject); \
+	Toshi::TClass*  CLASS::GetClass() { return CLASS::GetClassStatic(); } \
+	Toshi::TObject* CLASS::CreateTObject() { return new CLASS(); } \
+	Toshi::TObject* CLASS::CreateTObjectInPlace(void* a_pPtr) { return new (a_pPtr) CLASS(); }
+
+//-----------------------------------------------------------------------------
+// Defines core methods of TObject and allows creating object at runtime.
+// Also, adds empty InitialiseClass and DeinitialiseClass methods.
+//-----------------------------------------------------------------------------
+#define TDEFINE_CLASS_FULL(CLASS) \
+	TDEFINE_CLASS_CORE(CLASS) \
+	void CLASS::InitialiseClass() { } \
+	void CLASS::DeinitialiseClass() { }
+
+//-----------------------------------------------------------------------------
+// Defines core methods of TObject and prohibits creating object at runtime.
+// Also, adds empty InitialiseClass and DeinitialiseClass methods.
+//-----------------------------------------------------------------------------
+#define TDEFINE_CLASS_FULL_NORUNTIME(CLASS) \
+	TDEFINE_CLASS_CORE_NORUNTIME(CLASS) \
+	void CLASS::InitialiseClass() { } \
+	void CLASS::DeinitialiseClass() { }
+
+//-----------------------------------------------------------------------------
+// Defines core methods of TObject and allows creating object at runtime.
+// Also, adds empty InitialiseClass and DeinitialiseClass methods.
+// Note: Doesn't have type checks.
+//-----------------------------------------------------------------------------
+#define TDEFINE_CLASS_FULL_COMPILETIME(CLASS) \
+	TDEFINE_CLASS_CORE_COMPILETIME(CLASS) \
+	void CLASS::InitialiseClass() { } \
+	void CLASS::DeinitialiseClass() { }
+
+//-----------------------------------------------------------------------------
+// Defines all TObject methods and the ms_oClass object.
+// Note: Can be created at runtime.
+//-----------------------------------------------------------------------------
+#define TDEFINE_CLASS(...) CALL_OVERLOAD(TDEFINE_CLASS, __VA_ARGS__)
+#define TDEFINE_CLASS1(CLASS) \
+	TDEFINE_CLASS_FULL(CLASS) \
+	Toshi::TClass CLASS::TClassObjectName = Toshi::TClass(#CLASS, CLASS::PARENTCLASS, CLASS::CreateTObject, CLASS::CreateTObjectInPlace, CLASS::InitialiseClass, CLASS::DeinitialiseClass, 0, 1, sizeof(CLASS), alignof(CLASS));
+#define TDEFINE_CLASS3(CLASS, VER_MAJOR, VER_MINOR) \
+	TDEFINE_CLASS_FULL(CLASS) \
+	Toshi::TClass CLASS::TClassObjectName = Toshi::TClass(#CLASS, CLASS::PARENTCLASS, CLASS::CreateTObject, CLASS::CreateTObjectInPlace, CLASS::InitialiseClass, CLASS::DeinitialiseClass, VER_MAJOR, VER_MINOR, sizeof(CLASS), alignof(CLASS));
+
+//-----------------------------------------------------------------------------
+// Defines all TObject methods and the ms_oClass object.
+// Note: Cannot be created at runtime!
+//-----------------------------------------------------------------------------
+#define TDEFINE_CLASS_NORUNTIME1(CLASS) \
+	TDEFINE_CLASS_FULL_NORUNTIME(CLASS) \
+	Toshi::TClass CLASS::TClassObjectName = Toshi::TClass(#CLASS, CLASS::PARENTCLASS, CLASS::CreateTObject, CLASS::CreateTObjectInPlace, CLASS::InitialiseClass, CLASS::DeinitialiseClass, 0, 1, sizeof(CLASS), alignof(CLASS));
+#define TDEFINE_CLASS_NORUNTIME3(CLASS, VER_MAJOR, VER_MINOR) \
+	TDEFINE_CLASS_FULL_NORUNTIME(CLASS) \
+	Toshi::TClass CLASS::TClassObjectName = Toshi::TClass(#CLASS, CLASS::PARENTCLASS, CLASS::CreateTObject, CLASS::CreateTObjectInPlace, CLASS::InitialiseClass, CLASS::DeinitialiseClass, VER_MAJOR, VER_MINOR, sizeof(CLASS), alignof(CLASS));
+#define TDEFINE_CLASS_NORUNTIME(...) CALL_OVERLOAD(TDEFINE_CLASS_NORUNTIME, __VA_ARGS__)
+
+//-----------------------------------------------------------------------------
+// Defines core TObject methods and the ms_oClass object.
+// Provide InitialiseClass and DeinitialiseClass methods manually.
+// Note: Can be created at runtime.
+//-----------------------------------------------------------------------------
+#define TDEFINE_CLASS_INIT1(CLASS) \
+	TDEFINE_CLASS_CORE(CLASS) \
+	Toshi::TClass CLASS::TClassObjectName = Toshi::TClass(#CLASS, CLASS::PARENTCLASS, CLASS::CreateTObject, CLASS::CreateTObjectInPlace, CLASS::InitialiseClass, CLASS::DeinitialiseClass, 0, 1, sizeof(CLASS), alignof(CLASS));
+#define TDEFINE_CLASS_INIT3(CLASS, VER_MAJOR, VER_MINOR) \
+	TDEFINE_CLASS_CORE(CLASS) \
+	Toshi::TClass CLASS::TClassObjectName = Toshi::TClass(#CLASS, CLASS::PARENTCLASS, CLASS::CreateTObject, CLASS::CreateTObjectInPlace, CLASS::InitialiseClass, CLASS::DeinitialiseClass, VER_MAJOR, VER_MINOR, sizeof(CLASS), alignof(CLASS));
+#define TDEFINE_CLASS_INIT(...) CALL_OVERLOAD(TDEFINE_CLASS_INIT, __VA_ARGS__)
+
+//-----------------------------------------------------------------------------
+// Defines core TObject methods and the ms_oClass object.
+// Provide InitialiseClass and DeinitialiseClass methods manually.
+// Note: Cannot be created at runtime!
+//-----------------------------------------------------------------------------
+#define TDEFINE_CLASS_INIT_NORUNTIME1(CLASS) \
+	TDEFINE_CLASS_CORE_NORUNTIME(CLASS) \
+	Toshi::TClass CLASS::TClassObjectName = Toshi::TClass(#CLASS, CLASS::PARENTCLASS, CLASS::CreateTObject, CLASS::CreateTObjectInPlace, CLASS::InitialiseClass, CLASS::DeinitialiseClass, 0, 1, sizeof(CLASS), alignof(CLASS));
+#define TDEFINE_CLASS_INIT_NORUNTIME3(CLASS, VER_MAJOR, VER_MINOR) \
+	TDEFINE_CLASS_CORE_NORUNTIME(CLASS) \
+	Toshi::TClass CLASS::TClassObjectName = Toshi::TClass(#CLASS, CLASS::PARENTCLASS, CLASS::CreateTObject, CLASS::CreateTObjectInPlace, CLASS::InitialiseClass, CLASS::DeinitialiseClass, VER_MAJOR, VER_MINOR, sizeof(CLASS), alignof(CLASS));
+#define TDEFINE_CLASS_INIT_NORUNTIME(...) CALL_OVERLOAD(TDEFINE_CLASS_INIT_NORUNTIME, __VA_ARGS__)
+
+//-----------------------------------------------------------------------------
+// Defines all TObject methods and the ms_oClass object.
+// Note: ms_oClass object is created at compile time.
+//-----------------------------------------------------------------------------
+#define TDEFINE_CLASS_COMPILETIME(CLASS, VER_MAJOR, VER_MINOR) \
+	TDEFINE_CLASS_FULL_COMPILETIME(CLASS) \
+	constinit Toshi::TClass CLASS::TClassObjectName = Toshi::TClass(#CLASS, CLASS::CreateTObject, CLASS::CreateTObjectInPlace, CLASS::InitialiseClass, CLASS::DeinitialiseClass, VER_MAJOR, VER_MINOR, sizeof(CLASS), alignof(CLASS));
+
+namespace Toshi {
+
 	class TObject
 	{
 	public:
-		virtual TClass* GetClass() { return &s_Class; }
-		virtual void Delete() { delete this; };
-		virtual ~TObject() = default;
+		enum { IsTObject = TTRUE };
+		static constexpr Toshi::TClass* PARENTCLASS = TNULL;
 
-		static TObject* CreateTObject() { return TNULL; } 
-		static TObject* CreateTObjectInPlace(void* ptr) { return TNULL; }
+	public:
+		virtual Toshi::TClass* GetClass();
+		virtual void Delete();
+		virtual ~TObject();
 
-		TBOOL IsExactly(TClass* pClass) { return GetClass() == pClass; }
-		TBOOL IsA(TClass* pClass) { return GetClass()->IsA(pClass); }
+	public:
+		TBOOL IsExactly(TClass* a_pClass) { return GetClass() == a_pClass; }
+		TBOOL IsA(TClass* a_pClass) { return GetClass()->IsA(a_pClass); }
+
+	public:
+		static Toshi::TObject* CreateTObject();
+		static Toshi::TObject* CreateTObjectInPlace(void* a_pPtr);
+		static void InitialiseClass();
+		static void DeinitialiseClass();
+
+		static TFORCEINLINE TClass* GetClassStatic() { return std::addressof(TClassObjectName); }
 	
 	public:
-		static constinit TClass s_Class;
+		static constinit Toshi::TClass TClassObjectName;
 	};
 
-	template<class T, class Parent, StringLiteral Name, uint32_t Version, TBOOL Instantiable>
-	class TGenericClassDerived : public Parent
-	{
-	public:
-		virtual TClass* GetClass()
-		{
-			return std::addressof(s_Class);
-		}
-
-		static TObject* CreateTObject()
-		{
-			if constexpr (Instantiable) { return new T(); }
-			else { return TNULL; }
-		}
-
-		static TObject* CreateTObjectInPlace(void* ptr)
-		{
-			if constexpr (Instantiable) { return new (ptr) T(); }
-			else { return TNULL; }
-		}
-
-		static void InitialiseStatic()
-		{
-
-		}
-
-		static void UninitialiseStatic()
-		{
-
-		}
-
-		static constexpr TClass* GetClassStatic()
-		{
-			return std::addressof(s_Class);
-		}
-
-	public:
-		static TClass s_Class;
-	};
-
-	template <class T, class Parent, StringLiteral Name, uint32_t Version, TBOOL Instantiable>
-	TClass TGenericClassDerived<T, Parent, Name, Version, Instantiable>::s_Class = TClass(Name.value, &Parent::s_Class, Version, sizeof(T), alignof(T), T::CreateTObject, T::CreateTObjectInPlace, T::InitialiseStatic, T::UninitialiseStatic);
 }
 

@@ -3,6 +3,8 @@
 
 TOSHI_NAMESPACE_USING
 
+TDEFINE_CLASS_NORUNTIME(ASysShader);
+
 TBOOL ASysShader::IsLightScattering()
 {
 	return TFALSE;

@@ -3,9 +3,11 @@
 #include <Toshi/Render/TVertexPoolResourceInterface.h>
 #include <Toshi/Render/TIndexPoolResourceInterface.h>
 
-TOBJECT(ASysMesh, Toshi::TMesh, TFALSE)
+class ASysMesh : public Toshi::TMesh
 {
 public:
+	TDECLARE_CLASS(Toshi::TMesh);
+
 	struct LockBuffer
 	{
 		Toshi::TVertexPoolResourceInterface::LockBuffer VertexLock;

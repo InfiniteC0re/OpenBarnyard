@@ -3,6 +3,8 @@
 
 namespace Toshi {
 
+	TDEFINE_CLASS_NORUNTIME(TMaterial);
+
 	TMaterial::~TMaterial()
 	{
 

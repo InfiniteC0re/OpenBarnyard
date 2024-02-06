@@ -6,9 +6,12 @@
 #include <Toshi/Strings/TString8.h>
 
 class ARootTask :
-	public Toshi::TGenericClassDerived<ARootTask, Toshi::TTask, "ARootTask", TMAKEVERSION(1, 0), TTRUE>,
+	public Toshi::TTask,
 	public Toshi::TSingleton<ARootTask>
 {
+public:
+	TDECLARE_CLASS(Toshi::TTask);
+
 public:
 	ARootTask();
 

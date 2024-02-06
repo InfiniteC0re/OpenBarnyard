@@ -2,8 +2,11 @@
 #include "AGUIPicture.h"
 #include "Assets/AMaterialLibrary.h"
 
-TOBJECT(AGUIMatlibPicture, AGUIPicture, TTRUE)
+class AGUIMatlibPicture : public AGUIPicture
 {
+public:
+	TDECLARE_CLASS(AGUIPicture);
+
 public:
 	AGUIMatlibPicture();
 	~AGUIMatlibPicture();

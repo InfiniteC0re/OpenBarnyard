@@ -3,8 +3,11 @@
 
 namespace Toshi
 {
-	TOBJECT(TInputDeviceController, TInputDevice, TFALSE)
+	class TInputDeviceController : public TInputDevice
 	{
+	public:
+		TDECLARE_CLASS(TInputDevice);
+
 	public:
 		constexpr static TUINT NUM_BUTTONS = 8;
 

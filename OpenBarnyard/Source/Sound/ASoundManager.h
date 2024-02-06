@@ -9,10 +9,13 @@
 #include <Toshi2/T2DList.h>
 #include <Toshi2/T2SimpleArray.h>
 
-TOBJECT(ASoundManager, Toshi::TTask, TTRUE),
+class ASoundManager :
+	public Toshi::TTask,
 	public Toshi::TSingleton<ASoundManager>
 {
 public:
+	TDECLARE_CLASS(Toshi::TTask);
+
 	struct S1 : public Toshi::T2DList<S1>::Node
 	{
 
