@@ -35,7 +35,7 @@ namespace Toshi
 
 			va_list args;
 			va_start(args, format);
-			int size = T2String8::FormatV(str, sizeof(str), format, &args);
+			int size = T2String8::FormatV(str, sizeof(str), format, args);
 			va_end(args);
 
 #ifdef TOSHI_DEBUG
@@ -60,7 +60,7 @@ namespace Toshi
 			va_start(args, format);
 
 			char str[2048];
-			int size = T2String8::FormatV(str, sizeof(str), format, &args);
+			int size = T2String8::FormatV(str, sizeof(str), format, args);
 
 #ifdef TOSHI_DEBUG
 			str[size] = '\n';
@@ -85,7 +85,7 @@ namespace Toshi
 			va_start(vargs, format);
 
 			char str[1024];
-			int size = T2String8::FormatV(str, sizeof(str), format, &vargs);
+			int size = T2String8::FormatV(str, sizeof(str), format, vargs);
 			str[size] = '\n';
 			str[size + 1] = '\0';
 			OutputDebugStringA(str);

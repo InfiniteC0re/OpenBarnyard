@@ -11,17 +11,17 @@ namespace Toshi
 		static constexpr size_t SCRATCH_MEM_SIZE = 2048;
 
 	public:
-		static int FormatV(char* a_pcString, int size, const char* a_pcFormat, va_list* args)
+		static int FormatV(char* a_pcString, int size, const char* a_pcFormat, va_list args)
 		{
-			int iResult = _vsnprintf(a_pcString, size, a_pcFormat, *args);
+			int iResult = _vsnprintf(a_pcString, size, a_pcFormat, args);
 			TASSERT(iResult != -1, "PS2/GC/X360 do not correctly support _vsnprintf, this code will cause memory to be clobbered on those platforms! Increase the size of the destination string to avoid this problem");
 			a_pcString[size - 1] = '\0';
 			return iResult;
 		}
 
-		static int FormatV(char* a_pcString, const char* a_pcFormat, va_list* args)
+		static int FormatV(char* a_pcString, const char* a_pcFormat, va_list args)
 		{
-			int iResult = vsprintf(a_pcString, a_pcFormat, *args);
+			int iResult = vsprintf(a_pcString, a_pcFormat, args);
 			TASSERT(iResult != -1, "PS2/GC/X360 do not correctly support _vsnprintf, this code will cause memory to be clobbered on those platforms! Increase the size of the destination string to avoid this problem");
 			return iResult;
 		}
@@ -74,6 +74,12 @@ namespace Toshi
 		{
 			if (size != -1) return strncpy(dst, src, size);
 			return strcpy(dst, src);
+		}
+
+		static char* Concat(char* dst, const char* src, size_t size = -1)
+		{
+			if (size != -1) return strncat(dst, src, size);
+			return strcat(dst, src);
 		}
 
 		static char* CopySafe(char* dst, const char* src, size_t size)

@@ -24,7 +24,7 @@ namespace Toshi {
 
 			va_start(args, format);
 
-			T2String8::FormatV(str, size, format, &args);
+			T2String8::FormatV(str, size, format, args);
 
 			va_end(args);
 		}

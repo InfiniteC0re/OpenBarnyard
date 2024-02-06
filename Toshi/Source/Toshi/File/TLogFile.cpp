@@ -91,7 +91,7 @@ namespace Toshi
 			va_start(args, format);
 
 			char str[1024];
-			T2String8::FormatV(str, sizeof(str), format, &args);
+			T2String8::FormatV(str, sizeof(str), format, args);
 
 			va_end(args);
 
@@ -126,7 +126,7 @@ namespace Toshi
 
 			va_list args;
 			va_start(args, format);
-			m_pFile->VCPrintf(format, &args);
+			m_pFile->VCPrintf(format, args);
 			va_end(args);
 			m_pFile->CPrintf("\n");
 			m_typeCounts[type]++;

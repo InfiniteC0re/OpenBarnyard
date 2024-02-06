@@ -24,7 +24,7 @@ namespace Toshi
         virtual int PutWChar(wchar_t character) { return 0; }
         virtual int CPrintf(const char* format, ...);
         virtual int WPrintf(const wchar_t* format, ...);
-        virtual int VCPrintf(const char* format, va_list* vargs);
+        virtual int VCPrintf(const char* format, va_list vargs);
         virtual int VWPrintf(const wchar_t* format, ...) { return 0; }
 
         TBOOL LoadBuffer(DWORD bufferPos);
