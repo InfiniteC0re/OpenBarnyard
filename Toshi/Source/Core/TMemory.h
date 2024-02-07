@@ -83,7 +83,7 @@ namespace Toshi {
 		TMemory();
 		~TMemory();
 
-		void* Alloc(TUINT a_uiSize, TINT a_uiAlignment, MemBlock* a_pMemBlock, const char* a_szUnused1, TINT a_iUnused2);
+		void* Alloc(TUINT a_uiSize, TINT a_uiAlignment, MemBlock* a_pMemBlock, const char* a_szFileName, TINT a_iNumLine);
 		
 		TBOOL Free(void* a_pMem);
 
@@ -139,10 +139,20 @@ namespace Toshi {
 }
 
 void* TMalloc(TUINT a_uiSize);
-void* TMalloc(TUINT a_uiSize, Toshi::TMemory::MemBlock* a_pMemBlock, const char* a_szUnused1 = TNULL, TINT a_iUnused2 = -1);
+void* TMalloc(TUINT a_uiSize, Toshi::TMemory::MemBlock* a_pMemBlock, const char* a_szFileName = TNULL, TINT a_iNumLine = -1);
 void* TMemalign(TUINT a_uiSize, TINT a_iAlignment);
 void* TMemalign(TINT a_iAlignment, TUINT a_uiSize, Toshi::TMemory::MemBlock* a_pMemBlock);
 void TFree(void* a_pMem);
+
+inline void* __CRTDECL operator new(size_t size, const char* a_szFileName, TINT a_iNumLine)
+{
+	return TMalloc(size, TNULL, a_szFileName, a_iNumLine);
+}
+
+inline void* __CRTDECL operator new[](size_t size, const char* a_szFileName, TINT a_iNumLine)
+{
+	return TMalloc(size, TNULL, a_szFileName, a_iNumLine);
+}
 
 inline void* __CRTDECL operator new(size_t size, Toshi::TMemory::MemBlock* block)
 {

@@ -18,6 +18,29 @@ project "Toshi"
 		"winmm.lib",
 		"dinput8.lib"
 	}
+	
+	files
+	{
+		"Source/ToshiPCH.cpp",
+		"Source/Core/**.h",
+		"Source/Core/**.cpp",
+		"Source/Toshi/**.h",
+		"Source/Toshi/**.cpp",
+		"Source/File/**.h",
+		"Source/File/**.cpp",
+		"Source/Math/**.h",
+		"Source/Math/**.cpp",
+		"Source/Input/**.h",
+		"Source/Input/**.cpp",
+		"Source/Render/**.h",
+		"Source/Render/**.cpp",
+		"Source/T2Locale/**.h",
+		"Source/T2Locale/**.cpp",
+		"Source/Thread/**.h",
+		"Source/Thread/**.cpp",
+		"Source/Plugins/**.h",
+		"Source/Plugins/**.cpp"
+	}
 
 	includedirs
 	{
@@ -54,19 +77,10 @@ project "Toshi"
 		
 		files
 		{
-			"Source/ToshiPCH.h",
-			"Source/ToshiPCH.cpp",
-			"Source/Platform/Windows/**.h",
 			"Source/Platform/Windows/**.cpp",
 			"Source/Platform/Windows/**.c",
-			"Source/Platform/DX8/**.h",
 			"Source/Platform/DX8/**.cpp",
 			"Source/Platform/DX8/**.c",
-			"Source/Plugins**/**.h",
-			"Source/Plugins**/**.cpp",
-			"Source/Toshi**/**.h",
-			"Source/Toshi**/**.cpp",
-			"Source/Toshi**/**.c",
 			"Icons/*.ico",
 			"*.h",
 			"*.aps",

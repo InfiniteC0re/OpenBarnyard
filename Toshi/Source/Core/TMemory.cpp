@@ -70,7 +70,7 @@ namespace Toshi {
 		
 	}
 
-	void* TMemory::Alloc(TUINT a_uiSize, TINT a_uiAlignment, MemBlock* a_pMemBlock, const char* a_szUnused1, TINT a_iUnused2)
+	void* TMemory::Alloc(TUINT a_uiSize, TINT a_uiAlignment, MemBlock* a_pMemBlock, const char* a_szFileName, TINT a_iNumLine)
 	{
 		TMutexLock lock(ms_pGlobalMutex);
 
@@ -606,7 +606,7 @@ namespace Toshi {
 	}
 }
 
-void* TMalloc(TUINT a_uiSize, Toshi::TMemory::MemBlock* a_pMemBlock, const char* a_szUnused1, TINT a_iUnused2)
+void* TMalloc(TUINT a_uiSize, Toshi::TMemory::MemBlock* a_pMemBlock, const char* a_szFileName, TINT a_iNumLine)
 {
 	auto pMemManager = Toshi::TMemory::GetSingleton();
 
@@ -615,7 +615,7 @@ void* TMalloc(TUINT a_uiSize, Toshi::TMemory::MemBlock* a_pMemBlock, const char*
 		a_pMemBlock = pMemManager->GetGlobalBlock();
 	}
 
-	auto pMem = pMemManager->Alloc(a_uiSize, 16, a_pMemBlock, a_szUnused1, a_iUnused2);
+	auto pMem = pMemManager->Alloc(a_uiSize, 16, a_pMemBlock, a_szFileName, a_iNumLine);
 
 	if (!pMem)
 	{
