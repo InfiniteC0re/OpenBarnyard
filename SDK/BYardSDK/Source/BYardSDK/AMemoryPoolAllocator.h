@@ -1,5 +1,5 @@
 #pragma once
-#include <Toshi/Memory/TMemory.h>
+#include <Core/TMemory.h>
 
 class AMemoryPoolAllocator : public Toshi::T2Allocator
 {

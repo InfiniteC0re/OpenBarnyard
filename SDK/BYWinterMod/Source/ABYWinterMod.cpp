@@ -7,8 +7,8 @@
 #include <BYardSDK/AGUI2.h>
 #include <BYardSDK/THookedRenderD3DInterface.h>
 
-#include <Toshi/Core/THPTimer.h>
-#include <Toshi/File/TFile.h>
+#include <Toshi/THPTimer.h>
+#include <File/TFile.h>
 
 #include "ABYTexturePacks.h"
 

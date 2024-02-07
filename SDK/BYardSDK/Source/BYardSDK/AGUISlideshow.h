@@ -2,9 +2,9 @@
 #include "AInputMap.h"
 #include "AGUI2Rectangle.h"
 
-#include <Toshi/Strings/TPString8.h>
-#include <Toshi/Input/TInputInterface.h>
-#include <Toshi2/T2DynamicVector.h>
+#include <Toshi/TPString8.h>
+#include <Input/TInputInterface.h>
+#include <Toshi/T2DynamicVector.h>
 
 class AGUISlideshow : public Toshi::TObject
 {

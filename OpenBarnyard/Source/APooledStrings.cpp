@@ -1,5 +1,14 @@
+//-----------------------------------------------------------------------------
+// Contains information about predefined pooled strings.
+// Note: Automatically generated source file.
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+// Includes
+//-----------------------------------------------------------------------------
 #include "pch.h"
-#include <Toshi/Strings/TPString8.h>
+#include <Toshi/Toshi.h>
+#include <Toshi/TPString8.h>
 
 TOSHI_NAMESPACE_USING
 

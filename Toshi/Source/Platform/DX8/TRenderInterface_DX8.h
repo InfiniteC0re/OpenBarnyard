@@ -1,6 +1,6 @@
 #pragma once
-#include "Toshi/Render/TRenderInterface.h"
-#include "Toshi/Render/TOrderTable.h"
+#include "Render/TRenderInterface.h"
+#include "Render/TOrderTable.h"
 #include "TRenderAdapter_DX8.h"
 #include "TDebugText_DX8.h"
 

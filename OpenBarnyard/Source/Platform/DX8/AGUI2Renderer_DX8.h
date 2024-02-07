@@ -1,7 +1,7 @@
 #pragma once
 #include "GUI/AGUI2Renderer.h"
 
-#include <Toshi/Math/TMatrix44.h>
+#include <Math/TMatrix44.h>
 
 class AGUI2RendererDX8 : public AGUI2Renderer
 {

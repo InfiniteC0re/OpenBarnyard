@@ -3,7 +3,7 @@
 #include "TRenderInterface_DX8.h"
 #include "TVertexPoolResource_DX8.h"
 
-#include "Toshi2/T2Pair.h"
+#include "Toshi/T2Pair.h"
 
 namespace Toshi {
 

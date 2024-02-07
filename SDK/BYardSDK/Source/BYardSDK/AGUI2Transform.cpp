@@ -50,7 +50,7 @@ void AGUI2Transform::GetInverse(AGUI2Transform& a_rInverse) const
 	float fVar1;
 	float fVar2;
 
-	fVar2 = 1.0 / (m_Rotation[0].x * m_Rotation[1].y - m_Rotation[0].y * m_Rotation[1].x);
+	fVar2 = 1.0f / (m_Rotation[0].x * m_Rotation[1].y - m_Rotation[0].y * m_Rotation[1].x);
 	fVar1 = m_Rotation[1].x;
 	a_rInverse.m_Rotation[0].x = fVar2 * m_Rotation[0].x;
 	a_rInverse.m_Rotation[0].y = fVar2 * fVar1;

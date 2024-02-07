@@ -1,7 +1,7 @@
 #pragma once
-#include "Toshi/Core/Core.h"
-#include "Toshi/Utils/TLog.h"
-#include "Toshi/Strings/TStringManager.h"
+#include "Toshi/Toshi.h"
+#include "Toshi/TLog.h"
+#include "Toshi/TStringManager.h"
 
 class PPropertyValue
 {

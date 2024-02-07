@@ -1,7 +1,7 @@
 #pragma once
-#include "Toshi/Core/TObject.h"
-#include "Toshi/Utils/TSingleton.h"
-#include "Toshi/Math/TRandom.h"
+#include <Toshi/TObject.h>
+#include <Toshi/TSingleton.h>
+#include <Math/TRandom.h>
 
 class ARandom :
 	public Toshi::TObject,

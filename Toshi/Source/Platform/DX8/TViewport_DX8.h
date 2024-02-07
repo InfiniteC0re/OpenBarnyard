@@ -1,5 +1,5 @@
 #pragma once
-#include "Toshi/Render/TViewport.h"
+#include "Render/TViewport.h"
 
 namespace Toshi {
 

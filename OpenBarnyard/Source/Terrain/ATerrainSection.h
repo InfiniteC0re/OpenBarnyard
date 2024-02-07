@@ -3,8 +3,8 @@
 #include "Assets/AMaterialLibrary.h"
 #include "Render/AModel.h"
 
-#include <Toshi/Render/TModelRegistry.h>
-#include <Toshi2/T2SList.h>
+#include <Render/TModelRegistry.h>
+#include <Toshi/T2SList.h>
 
 class ATerrainSection
 {

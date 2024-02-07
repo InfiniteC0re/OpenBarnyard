@@ -1,5 +1,5 @@
 #pragma once
-#include <Toshi/Core/TTask.h>
+#include <Toshi/TTask.h>
 
 class AMoviePlayer : public Toshi::TTask,
 	public Toshi::TSingleton<AMoviePlayer>

@@ -1,5 +1,5 @@
 #pragma once
-#include "Toshi/Render/TTextureFactory.h"
+#include "Render/TTextureFactory.h"
 
 namespace Toshi {
 

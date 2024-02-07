@@ -1,7 +1,7 @@
 #pragma once
 #include "TIndexPoolResource_DX8.h"
 #include "TIndexBlockResource_DX8.h"
-#include "Toshi/Render/TIndexFactoryResourceInterface.h"
+#include "Render/TIndexFactoryResourceInterface.h"
 
 namespace Toshi {
 

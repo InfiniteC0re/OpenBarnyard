@@ -2,7 +2,7 @@
 #include "AGUI2Rectangle.h"
 #include "AGUI2TextureSection.h"
 
-#include <Toshi/Input/TInputDeviceMouse.h>
+#include <Input/TInputDeviceMouse.h>
 
 class AGUI2MouseCursor : public AGUI2Rectangle
 {

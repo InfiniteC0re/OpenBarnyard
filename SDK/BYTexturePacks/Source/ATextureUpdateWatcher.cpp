@@ -3,7 +3,7 @@
 
 #include <BYardSDK/THookedSystemManager.h>
 
-#include <Toshi/Core/TScheduler.h>
+#include <Toshi/TScheduler.h>
 
 TOSHI_NAMESPACE_USING
 

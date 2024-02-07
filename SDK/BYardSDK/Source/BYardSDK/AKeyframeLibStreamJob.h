@@ -1,8 +1,8 @@
 #pragma once
 #include "AMainThreadJob.h"
 
-#include <Toshi/Render/TAnimation.h>
-#include <Toshi/File/TFileStream.h>
+#include <Render/TAnimation.h>
+#include <File/TFileStream.h>
 
 class AKeyframeLibStreamJob : public Toshi::TFileStreamJob
 {

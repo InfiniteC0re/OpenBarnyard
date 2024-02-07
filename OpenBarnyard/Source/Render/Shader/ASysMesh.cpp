@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "ASysMesh.h"
-#include "Toshi/Render/TRenderInterface.h"
+#include "Render/TRenderInterface.h"
 
 TOSHI_NAMESPACE_USING
 

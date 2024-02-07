@@ -8,7 +8,7 @@
 #include "THookedObject.h"
 #include "THookedSingleton.h"
 
-#include <Toshi/Core/TTask.h>
+#include <Toshi/TTask.h>
 
 class AGUI2 : 
 	public Toshi::TTask,

@@ -2,7 +2,7 @@
 #include <BYardSDK/ATerrain.h>
 #include <BYardSDK/ASysMaterial.h>
 
-#include <Toshi/Render/TModel.h>
+#include <Render/TModel.h>
 
 class ACollisionInspector :
 	public Toshi::TSingleton<ACollisionInspector>

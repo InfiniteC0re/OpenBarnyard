@@ -1,9 +1,9 @@
 #pragma once
 #include "PProperties.h"
 #include "Plugins/PTRB.h"
-#include "Toshi/File/TTRB.h"
-#include "Toshi/Strings/TPString8.h"
-#include "Toshi2/T2Map.h"
+#include "File/TTRB.h"
+#include "Toshi/TPString8.h"
+#include "Toshi/T2Map.h"
 
 class PPropertiesWriter
 {

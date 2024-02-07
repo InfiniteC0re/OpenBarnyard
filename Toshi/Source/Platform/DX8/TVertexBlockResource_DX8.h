@@ -1,8 +1,8 @@
 #pragma once
-#include "Toshi/Core/TFreeList.h"
-#include "Toshi/Render/TResource.h"
-#include "Toshi/Render/TVertexPoolResourceInterface.h"
-#include "Toshi/Render/TVertexFactoryResourceInterface.h"
+#include "Toshi/TFreeList.h"
+#include "Render/TResource.h"
+#include "Render/TVertexPoolResourceInterface.h"
+#include "Render/TVertexFactoryResourceInterface.h"
 
 #include <d3d8.h>
 

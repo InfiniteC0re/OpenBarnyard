@@ -1,9 +1,10 @@
 #pragma once
-#include <Toshi/Strings/TPString8.h>
-#include <Toshi/File/TTRB.h>
-#include <Toshi2/T2Map.h>
-#include <Toshi2/T2DynamicArray.h>
-#include <Toshi2/T2Vector.h>
+#include <Toshi/TPString8.h>
+#include <Toshi/T2Map.h>
+#include <Toshi/T2DynamicArray.h>
+#include <Toshi/T2Vector.h>
+
+#include <File/TTRB.h>
 #include <Plugins/PTRB.h>
 
 class AAssetPack

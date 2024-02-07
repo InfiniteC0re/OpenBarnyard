@@ -1,6 +1,6 @@
 #pragma once
 #include <Toshi/Typedefs.h>
-#include <Toshi/Core/TGlobalEmitter.h>
+#include <Toshi/TGlobalEmitter.h>
 
 class AGameState;
 

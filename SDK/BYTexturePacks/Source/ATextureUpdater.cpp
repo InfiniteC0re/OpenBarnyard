@@ -5,7 +5,7 @@
 #include <BYardSDK/AGUI2.h>
 #include <BYardSDK/THookedSystemManager.h>
 
-#include <Toshi/Core/TScheduler.h>
+#include <Toshi/TScheduler.h>
 
 #include "Platform/DX8/TTextureResourceHAL_DX8.h"
 

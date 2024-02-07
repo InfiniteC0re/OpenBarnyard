@@ -4,11 +4,11 @@
 #include "Platform/Windows/ADisplayModes_Win.h"
 #endif // TOSHI_SKU_WINDOWS
 
-#include <Toshi/Core/TTask.h>
-#include <Toshi/Render/TViewport.h>
-#include <Toshi/Render/TCameraObject.h>
-#include <Toshi/Render/TRenderInterface.h>
-#include <Toshi/Render/TRenderAdapter.h>
+#include <Toshi/TTask.h>
+#include <Render/TViewport.h>
+#include <Render/TCameraObject.h>
+#include <Render/TRenderInterface.h>
+#include <Render/TRenderAdapter.h>
 
 class ARenderer :
 	public Toshi::TTask,

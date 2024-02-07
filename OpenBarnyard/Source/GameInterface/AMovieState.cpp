@@ -5,7 +5,7 @@
 #include "Movie/AMoviePlayer.h"
 #include "Locale/ALocaleManager.h"
 
-#include <Toshi/Input/TInputDeviceMouse.h>
+#include <Input/TInputDeviceMouse.h>
 
 TOSHI_NAMESPACE_USING
 

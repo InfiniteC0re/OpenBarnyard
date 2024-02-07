@@ -7,7 +7,7 @@
 #include "Platform/DX8/TRenderInterface_DX8.h"
 #endif // TOSHI_SKU_WINDOWS
 
-#include <Toshi2/T2SimpleArray.h>
+#include <Toshi/T2SimpleArray.h>
 #include <bink.h>
 
 class ABINKMoviePlayer : public AMoviePlayer

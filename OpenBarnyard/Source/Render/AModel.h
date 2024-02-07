@@ -1,11 +1,11 @@
 #pragma once
-#include <Toshi/File/TTRB.h>
-#include <Toshi/Core/TRefCounted.h>
-#include <Toshi/Render/TModelRegistry.h>
-#include <Toshi/Strings/TPString8.h>
+#include <File/TTRB.h>
+#include <Toshi/TRefCounted.h>
+#include <Render/TModelRegistry.h>
+#include <Toshi/TPString8.h>
 
-#include <Toshi2/T2DList.h>
-#include <Toshi2/T2ModelInstance.h>
+#include <Toshi/T2DList.h>
+#include <Toshi/T2ModelInstance.h>
 
 class AModel;
 

@@ -1,7 +1,7 @@
 #pragma once
 #include "Render/Shader/ASysShader.h"
 
-#include <Toshi/Render/TOrderTable.h>
+#include <Render/TOrderTable.h>
 
 class ASysShaderHAL : public ASysShader
 {

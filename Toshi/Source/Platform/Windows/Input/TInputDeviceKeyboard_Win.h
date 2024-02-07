@@ -1,6 +1,6 @@
 #pragma once
-#include "Toshi/Input/TInputDeviceKeyboard.h"
-#include "Toshi2/T2Array.h"
+#include "Input/TInputDeviceKeyboard.h"
+#include "Toshi/T2Array.h"
 
 #include "Includes.h"
 

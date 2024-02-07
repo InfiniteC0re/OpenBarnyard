@@ -1,10 +1,10 @@
 #pragma once
 #include "Memory/AMemory.h"
 
-#include <Toshi/File/TTRB.h>
-#include <Toshi/Strings/TPString8.h>
-#include <Toshi/Input/TInputInterface.h>
-#include <Toshi2/T2Map.h>
+#include <File/TTRB.h>
+#include <Toshi/TPString8.h>
+#include <Input/TInputInterface.h>
+#include <Toshi/T2Map.h>
 
 #include <Plugins/PPropertyParser/PProperties.h>
 

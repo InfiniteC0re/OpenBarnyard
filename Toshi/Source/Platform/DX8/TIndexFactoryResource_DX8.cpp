@@ -2,7 +2,7 @@
 #include "TIndexFactoryResource_DX8.h"
 #include "TRenderInterface_DX8.h"
 #include "TIndexBlockResource_DX8.h"
-#include "Toshi2/T2Pair.h"
+#include "Toshi/T2Pair.h"
 
 namespace Toshi {
 

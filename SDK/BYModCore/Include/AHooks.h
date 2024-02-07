@@ -3,7 +3,7 @@
 #include <BYardSDK/AGUISlideshow.h>
 #include <BYardSDK/ATerrain.h>
 
-#include <Toshi2/T2Vector.h>
+#include <Toshi/T2Vector.h>
 
 enum Hook
 {

@@ -3,7 +3,7 @@
 #include "GUI/AGUI2TextBox.h"
 #include "GUI/AGUI2TextureSection.h"
 
-#include <Toshi/Core/THPTimer.h>
+#include <Toshi/THPTimer.h>
 
 class ALoadScreen
 {

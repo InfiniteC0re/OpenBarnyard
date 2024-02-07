@@ -1,6 +1,6 @@
 #pragma once
-#include <Toshi/Render/TMaterial.h>
-#include <Toshi/Render/TTexture.h>
+#include <Render/TMaterial.h>
+#include <Render/TTexture.h>
 
 class AGUI2Material : public Toshi::TMaterial
 {

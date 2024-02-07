@@ -2,9 +2,9 @@
 #include "THookedObject.h"
 #include "SDKHooks.h"
 
-#include <Toshi/Core/TClass.h>
-#include <Toshi/Core/TRefCounted.h>
-#include <Toshi/Core/TNodeTree.h>
+#include <Toshi/TClass.h>
+#include <Toshi/TRefCounted.h>
+#include <Toshi/TNodeTree.h>
 
 class THookedTask :
 	public Toshi::TObject,

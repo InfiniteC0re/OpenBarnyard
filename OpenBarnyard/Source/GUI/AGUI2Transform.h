@@ -1,5 +1,5 @@
 #pragma once
-#include <Toshi/Math/TVector2.h>
+#include <Math/TVector2.h>
 
 class AGUI2Transform
 {

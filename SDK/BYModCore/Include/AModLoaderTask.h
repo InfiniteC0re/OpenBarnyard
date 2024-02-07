@@ -5,7 +5,7 @@
 #include <BYardSDK/THookedTask.h>
 #include <BYardSDK/SDKHooks.h>
 
-#include <Toshi/Core/TTask.h>
+#include <Toshi/TTask.h>
 
 class AModLoaderTask : public Toshi::TTask
 {

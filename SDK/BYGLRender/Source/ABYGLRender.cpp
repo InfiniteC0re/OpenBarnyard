@@ -7,10 +7,10 @@
 #include <BYardSDK/AGUI2.h>
 #include <BYardSDK/THookedRenderD3DInterface.h>
 
-#include <Toshi/Core/THPTimer.h>
-#include <Toshi/File/TFile.h>
-#include <Toshi/Render/TIndexPoolResource.h>
-#include <Toshi/Render/TVertexPoolResource.h>
+#include <Toshi/THPTimer.h>
+#include <File/TFile.h>
+#include <Render/TIndexPoolResource.h>
+#include <Render/TVertexPoolResource.h>
 #include <Platform/DX8/TRenderContext_DX8.h>
 
 #include "AWorldShaderGL.h"

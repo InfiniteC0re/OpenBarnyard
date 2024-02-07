@@ -3,7 +3,7 @@
 #include "AGUI2Material.h"
 #include "AGUI2TextureSection.h"
 
-#include <Toshi/Math/TVector4.h>
+#include <Math/TVector4.h>
 
 class AGUI2Rectangle : 
 	public AGUI2Element

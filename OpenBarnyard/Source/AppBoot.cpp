@@ -1,14 +1,18 @@
 #include "pch.h"
 
-#include <Toshi.h>
-#include <Toshi/Core/TArray.h>
-#include <Toshi/Core/TScheduler.h>
-#include <Toshi/Core/TSystem.h>
-#include <Toshi2/T2SimpleArray.h>
-#include <Toshi/Render/TRenderInterface.h>
-#include <Toshi/Render/TModelRegistry.h>
-#include <Toshi/Strings/TPString8.h>
-#include <Toshi/Input/TInputInterface.h>
+#include <Toshi/Toshi.h>
+#include <Toshi/TArray.h>
+#include <Toshi/TScheduler.h>
+#include <Toshi/TSystem.h>
+#include <Toshi/T2SimpleArray.h>
+#include <Toshi/TPString8.h>
+
+#include <Core/TMemoryInitialiser.h>
+
+#include <Render/TRenderInterface.h>
+#include <Render/TModelRegistry.h>
+
+#include <Input/TInputInterface.h>
 
 #ifdef TOSHI_SKU_WINDOWS
 #include <Platform/DX8/TTextureResourceHAL_DX8.h>

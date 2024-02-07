@@ -1,8 +1,8 @@
 #pragma once
 #include "AModel.h"
 
-#include <Toshi/Strings/TPString8.h>
-#include <Toshi2/T2Map.h>
+#include <Toshi/TPString8.h>
+#include <Toshi/T2Map.h>
 
 class AModelRepos :
 	public Toshi::TObject,

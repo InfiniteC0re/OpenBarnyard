@@ -1,6 +1,6 @@
 #include "ToshiPCH.h"
 #include "TDebugConsole_Win.h"
-#include "Toshi/Strings/TString8.h"
+#include "Toshi/TString8.h"
 
 #include <conio.h>
 

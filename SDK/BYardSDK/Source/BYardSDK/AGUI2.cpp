@@ -3,7 +3,7 @@
 #include "AGUI2TextureSectionManager.h"
 #include "SDKHooks.h"
 
-#include <Toshi/Core/TSystem.h>
+#include <Toshi/TSystem.h>
 
 TOSHI_NAMESPACE_USING
 

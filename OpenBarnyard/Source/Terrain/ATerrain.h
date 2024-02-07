@@ -7,7 +7,7 @@
 #include "Assets/ACollisionDoneJob.h"
 #include "Assets/ASectionDoneJob.h"
 
-#include <Toshi2/T2SimpleArray.h>
+#include <Toshi/T2SimpleArray.h>
 
 class ATerrain :
 	public Toshi::TSingleton<ATerrain>

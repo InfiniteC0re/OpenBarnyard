@@ -1,6 +1,6 @@
 #pragma once
-#include "Toshi/Render/TTexture.h"
-#include "Toshi/Core/TFreeList.h"
+#include "Render/TTexture.h"
+#include "Toshi/TFreeList.h"
 
 #include <d3dx8.h>
 

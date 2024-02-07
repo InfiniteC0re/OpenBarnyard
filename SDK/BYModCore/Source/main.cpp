@@ -14,8 +14,8 @@
 #include "BYardSDK/AGUISlideshow.h"
 #include "BYardSDK/THookedRenderD3DInterface.h"
 
-#include <Toshi/Core/THPTimer.h>
-#include <Toshi/Utils/TUtil.h>
+#include <Toshi/THPTimer.h>
+#include <Toshi/TUtil.h>
 
 #include <stdio.h>
 #include <windows.h>

@@ -13,7 +13,7 @@
 #include <BYardSDK/AGUI2MouseCursor.h>
 #include <BYardSDK/THookedRenderD3DInterface.h>
 
-#include <Toshi/Strings/TPString8.h>
+#include <Toshi/TPString8.h>
 
 void AImGUI_RenderCallback()
 {

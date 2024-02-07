@@ -1,9 +1,9 @@
 #pragma once
 #include "AGUI2Material.h"
 
-#include <Toshi/Math/TVector2.h>
-#include <Toshi/Strings/TPString8.h>
-#include <Toshi2/T2SimpleArray.h>
+#include <Math/TVector2.h>
+#include <Toshi/TPString8.h>
+#include <Toshi/T2SimpleArray.h>
 
 class AGUIPicture : public Toshi::TObject
 {

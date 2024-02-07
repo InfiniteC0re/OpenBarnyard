@@ -5,7 +5,7 @@
 #include "AGUI2TextureSectionManager.h"
 #include "Assets/AMaterialLibraryManager.h"
 
-#include <Toshi/Core/TSystem.h>
+#include <Toshi/TSystem.h>
 
 #ifdef TOSHI_SKU_WINDOWS
 #include "Platform/DX8/AGUI2Renderer_DX8.h"

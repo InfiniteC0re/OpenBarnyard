@@ -1,8 +1,8 @@
 #pragma once
-#include <Toshi/File/TTRB.h>
+#include <File/TTRB.h>
 
-#include <Toshi2/T2SimpleArray.h>
-#include <Toshi2/T2DList.h>
+#include <Toshi/T2SimpleArray.h>
+#include <Toshi/T2DList.h>
 
 #ifdef TOSHI_SKU_WINDOWS
 #include "Platform/DX8/T2Texture_DX8.h"

@@ -2,9 +2,9 @@
 #include "AGUI2Element.h"
 #include "AInputMap.h"
 
-#include <Toshi2/T2DList.h>
-#include <Toshi/Input/TInputInterface.h>
-#include <Toshi/Strings/TPString8.h>
+#include <Toshi/T2DList.h>
+#include <Input/TInputInterface.h>
+#include <Toshi/TPString8.h>
 
 class AGameState :
 	public Toshi::TObject,

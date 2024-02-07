@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "AMaterialLibraryManager.h"
 
-#include <Toshi/Render/TRenderInterface.h>
+#include <Render/TRenderInterface.h>
 #include <BYardSDK/SDKHooks.h>
 
 TOSHI_NAMESPACE_USING

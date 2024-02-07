@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Toshi2/T2ResourceManager.h"
+#include "Toshi/T2ResourceManager.h"
 
 
 

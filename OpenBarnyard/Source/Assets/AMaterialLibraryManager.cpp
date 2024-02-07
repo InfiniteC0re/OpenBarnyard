@@ -1,6 +1,6 @@
 #include "pch.h"
-#include <Toshi/Render/TRenderInterface.h>
-#include <Toshi/File/TTRB.h>
+#include <Render/TRenderInterface.h>
+#include <File/TTRB.h>
 
 #include "GUI/AGUISystem.h"
 #include "GUI/AGUI2TextureSectionManager.h"

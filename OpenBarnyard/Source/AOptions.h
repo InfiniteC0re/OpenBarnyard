@@ -1,5 +1,5 @@
 #pragma once
-#include <Toshi/Locale/T2Locale.h>
+#include <T2Locale/T2Locale.h>
 
 class AOptions :
 	public Toshi::TObject,

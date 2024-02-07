@@ -1,19 +1,19 @@
 #pragma once
-#include <Toshi2/T2Allocator.h>
-#include <Toshi/Locale/T2Locale.h>
+#include <Toshi/T2Allocator.h>
+#include <T2Locale/T2Locale.h>
 
 class ALocaleManager : public Toshi::T2Locale
 {
 public:
 	constexpr static const char* s_pLangDataFileNames[] = {
-		"Data/Locale/eng.trb",
-		"Data/Locale/eng-uk.trb",
-		"Data/Locale/jpn.trb",
-		"Data/Locale/ger.trb",
-		"Data/Locale/ita.trb",
-		"Data/Locale/spa.trb",
-		"Data/Locale/fre.trb",
-		"Data/Locale/nld.trb"
+		"Data/T2Locale/eng.trb",
+		"Data/T2Locale/eng-uk.trb",
+		"Data/T2Locale/jpn.trb",
+		"Data/T2Locale/ger.trb",
+		"Data/T2Locale/ita.trb",
+		"Data/T2Locale/spa.trb",
+		"Data/T2Locale/fre.trb",
+		"Data/T2Locale/nld.trb"
 	};
 
 	enum Lang_ : Lang

@@ -1,6 +1,7 @@
 #include "ToshiPCH.h"
-#include "Toshi2/T2Allocator.h"
-#include "Toshi/Utils/TUtil.h"
+#include "Toshi/T2Allocator.h"
+#include "Toshi/TUtil.h"
+
 #include <queue>
 
 namespace Toshi

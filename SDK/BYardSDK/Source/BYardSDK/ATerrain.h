@@ -8,7 +8,7 @@
 #include "ASectionDoneJob.h"
 #include "THookedSingleton.h"
 
-#include <Toshi2/T2SimpleArray.h>
+#include <Toshi/T2SimpleArray.h>
 
 class ATerrain :
 	public THookedSingleton<ATerrain, 0x00796300>

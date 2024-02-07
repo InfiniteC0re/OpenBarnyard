@@ -1,7 +1,7 @@
 #pragma once
 #include "AFade.h"
 
-#include <Toshi/Core/TTask.h>
+#include <Toshi/TTask.h>
 
 class AFadeManager : public Toshi::TTask,
 	public Toshi::TSingleton<AFadeManager>

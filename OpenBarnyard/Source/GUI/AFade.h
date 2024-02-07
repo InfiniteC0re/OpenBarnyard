@@ -1,9 +1,9 @@
 #pragma once
 #include "GUI/AGUI2Rectangle.h"
 
-#include <Toshi/Core/TColor.h>
-#include <Toshi/Core/TQList.h>
-#include <Toshi2/T2ObjectPool.h>
+#include <Toshi/TColor.h>
+#include <Toshi/TQList.h>
+#include <Toshi/T2ObjectPool.h>
 
 class AFade :
 	public Toshi::TQList<AFade>::TNode

@@ -2,8 +2,8 @@
 #include "ATerrainLODBlock.h"
 #include "ATerrainSection.h"
 
-#include <Toshi/Core/TSystem.h>
-#include <Toshi/Core/TScheduler.h>
+#include <Toshi/TSystem.h>
+#include <Toshi/TScheduler.h>
 
 TOSHI_NAMESPACE_USING
 

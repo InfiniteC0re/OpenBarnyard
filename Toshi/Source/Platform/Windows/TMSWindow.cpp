@@ -1,7 +1,7 @@
 #include "ToshiPCH.h"
 #include "TMSWindow.h"
-#include "Toshi/Core/TApplication.h"
-#include "Toshi/Core/TSystem.h"
+#include "Toshi/TApplication.h"
+#include "Toshi/TSystem.h"
 #include "Input/TInputInterface_Win.h"
 
 #include "Platform/Windows/Input/TInputDeviceMouse_Win.h"

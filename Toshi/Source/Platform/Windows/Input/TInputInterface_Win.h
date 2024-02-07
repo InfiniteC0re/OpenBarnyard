@@ -1,6 +1,6 @@
 #pragma once
 #include "Includes.h"
-#include "Toshi/Input/TInputInterface.h"
+#include "Input/TInputInterface.h"
 
 namespace Toshi
 {

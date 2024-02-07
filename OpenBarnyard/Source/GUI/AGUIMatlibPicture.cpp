@@ -4,8 +4,8 @@
 #include "Assets/AMaterialLibraryManager.h"
 #include "Assets/AAssetLoader.h"
 
-#include <Toshi/Render/TRenderInterface.h>
-#include <Toshi/Render/TTextureFactory.h>
+#include <Render/TRenderInterface.h>
+#include <Render/TTextureFactory.h>
 
 TOSHI_NAMESPACE_USING
 

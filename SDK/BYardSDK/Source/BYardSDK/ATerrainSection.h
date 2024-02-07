@@ -1,8 +1,8 @@
 #pragma once
 #include "ATerrainLODBlock.h"
 
-#include <Toshi/Render/TModelRegistry.h>
-#include <Toshi2/T2SList.h>
+#include <Render/TModelRegistry.h>
+#include <Toshi/T2SList.h>
 
 class AMaterialLibrary;
 

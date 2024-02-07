@@ -1,7 +1,7 @@
 #pragma once
-#include <Toshi/Core/TObject.h>
-#include <Toshi/Render/TRenderInterface.h>
-#include <Toshi/Strings/TString8.h>
+#include <Toshi/TObject.h>
+#include <Render/TRenderInterface.h>
+#include <Toshi/TString8.h>
 
 #include <SDL/SDL.h>
 

@@ -2,7 +2,7 @@
 #include "AMainThreadJob.h"
 #include "THookedSingleton.h"
 
-#include <Toshi/File/TFileStream.h>
+#include <File/TFileStream.h>
 
 class AAssetStreaming :
 	public THookedSingleton<AAssetStreaming, 0x0079b114>

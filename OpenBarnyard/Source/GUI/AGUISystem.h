@@ -3,8 +3,8 @@
 #include "AGUIMatlibPicture.h"
 
 #include <Plugins/GUI/PGUITRRenderObject.h>
-#include <Toshi/Strings/TPString8.h>
-#include <Toshi2/T2SimpleArray.h>
+#include <Toshi/TPString8.h>
+#include <Toshi/T2SimpleArray.h>
 
 class AGUISystem : public Toshi::TTask,
 	public Toshi::TSingleton<AGUISystem>

@@ -2,11 +2,15 @@
 #include "AArgumentParser.h"
 #include "NvTriStrip/NvTriStrip.h"
 
-#include <Toshi.h>
-#include <Toshi/Strings/TPString8.h>
-#include <Toshi/Render/TTMDBase.h>
-#include <Toshi/Render/TTMDWin.h>
-#include <Toshi/Render/TTerrainMDL.h>
+#include <Toshi/Toshi.h>
+#include <Toshi/TPString8.h>
+
+#include <Core/TMemoryInitialiser.h>
+
+#include <Render/TTMDBase.h>
+#include <Render/TTMDWin.h>
+#include <Render/TTerrainMDL.h>
+
 #include <Plugins/PTRB.h>
 
 #include <assimp/cexport.h>

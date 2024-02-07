@@ -1,6 +1,6 @@
 #pragma once
-#include <Toshi/File/TTRB.h>
-#include <Toshi2/T2DList.h>
+#include <Toshi/T2DList.h>
+#include <File/TTRB.h>
 
 #include <Plugins/PPropertyParser/PProperties.h>
 

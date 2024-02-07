@@ -7,7 +7,7 @@
 #include "TTextureFactoryHAL_DX8.h"
 #include "TTextureResourceHAL_DX8.h"
 
-#include "Toshi/Render/TShader.h"
+#include "Render/TShader.h"
 
 namespace Toshi {
 

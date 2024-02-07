@@ -1,6 +1,6 @@
 #pragma once
-#include <Toshi/File/TTSF.h>
-#include <Toshi/Strings/TString8.h>
+#include <File/TTSF.h>
+#include <Toshi/TString8.h>
 
 #ifndef __TOSHI_TTRB_H__
 #error Include TTRB.h to use this extension

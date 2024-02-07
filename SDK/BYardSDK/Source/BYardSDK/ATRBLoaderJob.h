@@ -1,7 +1,7 @@
 #pragma once
 #include "AMainThreadJob.h"
 
-#include <Toshi/File/TFileStream.h>
+#include <File/TFileStream.h>
 
 class ATRBLoaderJob : public AMainThreadJob
 {

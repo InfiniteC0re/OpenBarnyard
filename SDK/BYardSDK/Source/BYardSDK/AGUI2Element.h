@@ -3,9 +3,9 @@
 #include "SDKHooks.h"
 
 #include <Toshi/Typedefs.h>
-#include <Toshi/Math/TVector2.h>
+#include <Math/TVector2.h>
 
-#include <Toshi2/T2DList.h>
+#include <Toshi/T2DList.h>
 
 class AGUI2Element;
 

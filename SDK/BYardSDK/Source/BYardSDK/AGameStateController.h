@@ -3,9 +3,9 @@
 #include "THookedSingleton.h"
 #include "AGUI2Rectangle.h"
 
-#include <Toshi/Core/TTask.h>
-#include <Toshi2/T2Vector.h>
-#include <Toshi2/T2DynamicVector.h>
+#include <Toshi/TTask.h>
+#include <Toshi/T2Vector.h>
+#include <Toshi/T2DynamicVector.h>
 
 class AGameStateController :
 	public Toshi::TTask,

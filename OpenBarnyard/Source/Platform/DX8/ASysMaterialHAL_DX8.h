@@ -2,7 +2,7 @@
 #include "ASysShaderHAL_DX8.h"
 #include "Render/Shader/ASysMaterial.h"
 
-#include <Toshi/Render/TOrderTable.h>
+#include <Render/TOrderTable.h>
 
 class ASysMaterialHAL : public ASysMaterial
 {

@@ -1,7 +1,7 @@
 #pragma once
 #include "ASysShader.h"
 
-#include <Toshi/Render/TMaterial.h>
+#include <Render/TMaterial.h>
 
 class ASysMaterial : public Toshi::TMaterial
 {

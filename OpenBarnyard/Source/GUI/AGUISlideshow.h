@@ -2,8 +2,8 @@
 #include "AGUI2Rectangle.h"
 #include "GameInterface/AGameState.h"
 
-#include <Toshi/Strings/TPString8.h>
-#include <Toshi2/T2DynamicVector.h>
+#include <Toshi/TPString8.h>
+#include <Toshi/T2DynamicVector.h>
 
 class AGUISlideshow : public Toshi::TObject
 {

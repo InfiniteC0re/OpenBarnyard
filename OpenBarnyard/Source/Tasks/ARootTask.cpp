@@ -23,8 +23,8 @@
 #include "Terrain/ATerrain.h"
 
 #include <Plugins/PPropertyParser/PProperties.h>
-#include <Toshi/Core/TScheduler.h>
-#include <Toshi2/T2ObjectPool.h>
+#include <Toshi/TScheduler.h>
+#include <Toshi/T2ObjectPool.h>
 
 TOSHI_NAMESPACE_USING
 

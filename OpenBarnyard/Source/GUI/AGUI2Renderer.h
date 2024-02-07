@@ -2,7 +2,7 @@
 #include "AGUI2Material.h"
 #include "AGUI2Transform.h"
 
-#include <Toshi/Math/TVector2.h>
+#include <Math/TVector2.h>
 
 class AGUI2Renderer
 {

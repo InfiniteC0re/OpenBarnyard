@@ -1,7 +1,7 @@
 #pragma once
-#include <Toshi/Render/TMesh.h>
-#include <Toshi/Render/TVertexPoolResourceInterface.h>
-#include <Toshi/Render/TIndexPoolResourceInterface.h>
+#include <Render/TMesh.h>
+#include <Render/TVertexPoolResourceInterface.h>
+#include <Render/TIndexPoolResourceInterface.h>
 
 class ASysMesh :
 	public Toshi::TMesh

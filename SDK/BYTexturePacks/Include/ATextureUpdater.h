@@ -1,6 +1,6 @@
 #pragma once
-#include <Toshi/Thread/TThread.h>
-#include <Toshi/Thread/TMutexLock.h>
+#include <Thread/TThread.h>
+#include <Thread/TMutexLock.h>
 
 extern char g_szTexturePackName[64];
 extern char g_szTexturePackPath[MAX_PATH];

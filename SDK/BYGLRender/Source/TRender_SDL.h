@@ -1,11 +1,11 @@
 #pragma once
 #include "ASDLWindow.h"
 
-#include <Toshi/Render/TRenderInterface.h>
-#include <Toshi/Render/TRenderAdapter.h>
-#include <Toshi/Render/TOrderTable.h>
-#include <Toshi2/T2RedBlackTree.h>
-#include <Toshi2/T2Pair.h>
+#include <Render/TRenderInterface.h>
+#include <Render/TRenderAdapter.h>
+#include <Render/TOrderTable.h>
+#include <Toshi/T2RedBlackTree.h>
+#include <Toshi/T2Pair.h>
 
 #include <SDL/SDL.h>
 #include <GL/glew.h>

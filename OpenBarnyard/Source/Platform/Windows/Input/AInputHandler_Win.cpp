@@ -3,7 +3,7 @@
 #include "GameInterface/AGameStateController.h"
 #include "Tasks/ARootTask.h"
 
-#include <Toshi/Input/TInputInterface.h>
+#include <Input/TInputInterface.h>
 #include <Platform/Windows/Input/TInputInterface_Win.h>
 
 TOSHI_NAMESPACE_USING

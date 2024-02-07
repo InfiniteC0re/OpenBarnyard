@@ -2,7 +2,7 @@
 #include "imgui.h"
 #include "imgui_internal.h"
 
-#include <Toshi/Render/TRenderInterface.h>
+#include <Render/TRenderInterface.h>
 
 class MODCORE_API AImGUI :
 	public Toshi::TSingleton<AImGUI>

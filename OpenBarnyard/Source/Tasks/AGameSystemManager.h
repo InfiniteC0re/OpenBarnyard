@@ -1,5 +1,5 @@
 #pragma once
-#include <Toshi/Core/TTask.h>
+#include <Toshi/TTask.h>
 
 class AGameSystemManager : public Toshi::TTask
 {

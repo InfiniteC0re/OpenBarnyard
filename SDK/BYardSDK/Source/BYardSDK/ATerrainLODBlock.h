@@ -1,7 +1,7 @@
 #pragma once
 #include "AMemoryPoolAllocator.h"
-#include <Toshi/File/TTRB.h>
-#include <Toshi2/T2SList.h>
+#include <File/TTRB.h>
+#include <Toshi/T2SList.h>
 
 class ATerrainSection;
 

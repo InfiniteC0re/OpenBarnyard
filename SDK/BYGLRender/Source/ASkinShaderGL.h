@@ -2,7 +2,7 @@
 #include "TRender_SDL.h"
 #include "TTexture_SDL.h"
 
-#include <Toshi/Render/TTexture.h>
+#include <Render/TTexture.h>
 #include <Platform/DX8/TTextureResourceHAL_DX8.h>
 
 class ASkinMaterialWrapperGL :

@@ -1,9 +1,9 @@
 #pragma once
-#include <Toshi/Core/TTask.h>
-#include <Toshi/Input/TInputDeviceMouse.h>
-#include <Toshi/Input/TInputDeviceKeyboard.h>
-#include <Toshi/Input/TInputDeviceController.h>
-#include <Toshi2/T2Vector.h>
+#include <Toshi/TTask.h>
+#include <Input/TInputDeviceMouse.h>
+#include <Input/TInputDeviceKeyboard.h>
+#include <Input/TInputDeviceController.h>
+#include <Toshi/T2Vector.h>
 
 class AInputHandler : public Toshi::TTask,
 	public Toshi::TSingleton<AInputHandler>

@@ -1,6 +1,6 @@
 #pragma once
-#include <Toshi/Core/TTask.h>
-#include <Toshi/Core/TApplication.h>
+#include <Toshi/TTask.h>
+#include <Toshi/TApplication.h>
 
 #include "Tasks/ADummyTask.h"
 #include "Tasks/ARootTask.h"

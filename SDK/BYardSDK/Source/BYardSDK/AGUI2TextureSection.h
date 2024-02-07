@@ -1,8 +1,8 @@
 #pragma once
 #include "AGUI2Material.h"
 
-#include <Toshi/Math/TVector4.h>
-#include <Toshi/File/TTRB.h>
+#include <Math/TVector4.h>
+#include <File/TTRB.h>
 
 class AGUI2TextureSection
 {

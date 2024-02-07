@@ -1,5 +1,5 @@
 #pragma once
-#include <Toshi/Render/TRenderInterface.h>
+#include <Render/TRenderInterface.h>
 
 namespace Toshi {
 

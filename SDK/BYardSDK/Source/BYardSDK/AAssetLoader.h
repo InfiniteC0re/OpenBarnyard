@@ -1,5 +1,5 @@
 #pragma once
-#include <Toshi/File/TTRB.h>
+#include <File/TTRB.h>
 
 using AAssetType = TUINT;
 enum AAssetType_ : AAssetType

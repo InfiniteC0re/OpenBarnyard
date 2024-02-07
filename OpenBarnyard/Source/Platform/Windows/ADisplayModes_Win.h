@@ -1,5 +1,5 @@
 #pragma once
-#include <Toshi2/T2Vector.h>
+#include <Toshi/T2Vector.h>
 
 class ADisplayModes_Win : 
 	public Toshi::TObject

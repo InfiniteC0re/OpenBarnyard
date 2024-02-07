@@ -1,7 +1,7 @@
 #pragma once
 #include "ATRBLoaderJob.h"
 
-#include <Toshi/Render/TModelRegistry.h>
+#include <Render/TModelRegistry.h>
 
 class AModelLoaderJob :
 	public ATRBLoaderJob

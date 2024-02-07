@@ -1,5 +1,5 @@
 #pragma once
-#include "Toshi/Render/TDebugText.h"
+#include "Render/TDebugText.h"
 
 namespace Toshi {
 

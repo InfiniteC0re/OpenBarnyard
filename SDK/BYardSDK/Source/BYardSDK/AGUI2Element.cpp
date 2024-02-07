@@ -2,7 +2,7 @@
 #include "SDKHooks.h"
 #include "AGUI2Element.h"
 
-#include <Toshi/Render/TRenderInterface.h>
+#include <Render/TRenderInterface.h>
 
 AGUI2Element::AGUI2Element()
 {

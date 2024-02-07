@@ -1,7 +1,7 @@
-﻿using System;
-using System.IO;
-using System.Linq;
+﻿using System.Linq;
+using System;
 using System.Text;
+using System.IO;
 
 namespace PooledStrings
 {
@@ -17,8 +17,17 @@ namespace PooledStrings
                 Console.WriteLine("Output file: {0}", outFilePath);
 
                 StringBuilder sb = new StringBuilder();
+                sb.AppendLine("//-----------------------------------------------------------------------------");
+                sb.AppendLine("// Contains information about predefined pooled strings.");
+                sb.AppendLine("// Note: Automatically generated source file.");
+                sb.AppendLine("//-----------------------------------------------------------------------------");
+                sb.AppendLine("");
+                sb.AppendLine("//-----------------------------------------------------------------------------");
+                sb.AppendLine("// Includes");
+                sb.AppendLine("//-----------------------------------------------------------------------------");
                 sb.AppendLine("#include \"pch.h\"");
-                sb.AppendLine("#include <Toshi/Strings/TPString8.h>");
+                sb.AppendLine("#include <Toshi/Toshi.h>");
+                sb.AppendLine("#include <Toshi/TPString8.h>");
                 sb.AppendLine("");
                 sb.AppendLine("TOSHI_NAMESPACE_USING");
                 sb.AppendLine("");

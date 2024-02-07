@@ -1,5 +1,5 @@
 #pragma once
-#include <Toshi/Render/TShader.h>
+#include <Render/TShader.h>
 
 class ASysMaterial;
 class ASysMesh;

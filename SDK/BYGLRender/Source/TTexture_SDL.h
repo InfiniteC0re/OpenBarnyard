@@ -1,5 +1,5 @@
 #pragma once
-#include "Toshi2/T2Map.h"
+#include "Toshi/T2Map.h"
 
 #include <gl/glew.h>
 

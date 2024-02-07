@@ -1,10 +1,13 @@
 #include "pch.h"
 #include "AArgumentParser.h"
 
-#include <Toshi.h>
-#include <Toshi/Strings/TPString8.h>
-#include <Toshi/Render/TTMDBase.h>
-#include <Toshi/Render/TTMDWin.h>
+#include <Toshi/Toshi.h>
+#include <Toshi/TPString8.h>
+
+#include <Core/TMemoryInitialiser.h>
+
+#include <Render/TTMDBase.h>
+#include <Render/TTMDWin.h>
 
 #include <Plugins/PTRB.h>
 #include <Plugins/PPropertyParser/PPropertiesWriter.h>

@@ -1,6 +1,6 @@
 #pragma once
 #include <BYardSDK/AGameState.h>
-#include <Toshi/Input/TInputInterface.h>
+#include <Input/TInputInterface.h>
 
 class AImGuiState : public AGameState
 {

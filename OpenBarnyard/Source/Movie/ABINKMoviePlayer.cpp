@@ -6,8 +6,8 @@
 
 #include "ABINKMoviePlayer.h"
 
-#include <Toshi/Core/TSystem.h>
-#include <Toshi/Render/TTextureFactory.h>
+#include <Toshi/TSystem.h>
+#include <Render/TTextureFactory.h>
 
 #include <fmod/fmod.h>
 

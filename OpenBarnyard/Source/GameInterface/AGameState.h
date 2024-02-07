@@ -3,8 +3,8 @@
 #include "Input/AInputMapManager.h"
 #include "AGameStateControllerEvent.h"
 
-#include <Toshi2/T2DList.h>
-#include <Toshi/Input/TInputInterface.h>
+#include <Toshi/T2DList.h>
+#include <Input/TInputInterface.h>
 
 class AGameState :
 	public Toshi::TObject,

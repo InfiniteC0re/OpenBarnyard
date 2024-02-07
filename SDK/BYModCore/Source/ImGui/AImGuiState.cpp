@@ -7,7 +7,7 @@
 #include <BYardSDK/THookedRenderD3DInterface.h>
 #include <BYardSDK/AGUI2.h>
 
-#include <Toshi/Input/TInputDeviceKeyboard.h>
+#include <Input/TInputDeviceKeyboard.h>
 
 TDEFINE_CLASS(AImGuiState);
 

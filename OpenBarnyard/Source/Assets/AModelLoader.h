@@ -1,5 +1,5 @@
 #pragma once
-#include <Toshi/Render/TModel.h>
+#include <Render/TModel.h>
 
 class AModelLoader : public Toshi::TObject,
 	public Toshi::TSingleton<AModelLoader>

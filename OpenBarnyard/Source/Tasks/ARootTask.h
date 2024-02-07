@@ -2,8 +2,8 @@
 #include "AOptions.h"
 #include "Render/ARenderer.h"
 
-#include <Toshi/Core/TTask.h>
-#include <Toshi/Strings/TString8.h>
+#include <Toshi/TTask.h>
+#include <Toshi/TString8.h>
 
 class ARootTask :
 	public Toshi::TTask,

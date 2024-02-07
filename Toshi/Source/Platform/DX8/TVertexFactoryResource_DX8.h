@@ -1,7 +1,7 @@
 #pragma once
 #include "TVertexPoolResource_DX8.h"
 #include "TVertexBlockResource_DX8.h"
-#include "Toshi/Render/TVertexFactoryResourceInterface.h"
+#include "Render/TVertexFactoryResourceInterface.h"
 
 namespace Toshi {
 

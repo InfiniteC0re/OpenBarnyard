@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "ASDLWindow.h"
 
-#include <Toshi/Core/TApplication.h>
+#include <Toshi/TApplication.h>
 
 TOSHI_NAMESPACE_USING
 

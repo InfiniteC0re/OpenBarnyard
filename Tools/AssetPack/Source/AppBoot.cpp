@@ -3,8 +3,10 @@
 #include "AAssetBuilder.h"
 #include "AAssetUnpacker.h"
 
-#include <Toshi.h>
-#include <Toshi/Strings/TPString8.h>
+#include <Toshi/Toshi.h>
+#include <Toshi/TPString8.h>
+
+#include <Core/TMemoryInitialiser.h>
 
 #include <filesystem>
 

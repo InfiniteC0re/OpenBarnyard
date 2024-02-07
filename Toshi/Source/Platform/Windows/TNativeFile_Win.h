@@ -1,6 +1,6 @@
 #pragma once
 #include "Toshi/Typedefs.h"
-#include "Toshi/File/TFile.h"
+#include "File/TFile.h"
 
 namespace Toshi
 {

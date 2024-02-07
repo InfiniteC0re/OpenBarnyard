@@ -2,7 +2,7 @@
 #include "AGUI2Element.h"
 #include "AGUI2Font.h"
 
-#include <Toshi/Core/TColor.h>
+#include <Toshi/TColor.h>
 
 class AGUI2TextBox : public AGUI2Element
 {

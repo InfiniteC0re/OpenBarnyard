@@ -1,10 +1,10 @@
 #pragma once
 #include "AInputMap.h"
 
-#include <Toshi/Input/TInputInterface.h>
-#include <Toshi/Strings/TPString8.h>
-#include <Toshi2/T2Vector.h>
-#include <Toshi2/T2Map.h>
+#include <Input/TInputInterface.h>
+#include <Toshi/TPString8.h>
+#include <Toshi/T2Vector.h>
+#include <Toshi/T2Map.h>
 
 struct AInputCommandArray
 {

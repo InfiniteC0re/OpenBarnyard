@@ -1,11 +1,11 @@
 #pragma once
 #include "AMaterialLibrary.h"
 
-#include <Toshi/Strings/TPString8.h>
+#include <Toshi/TPString8.h>
 #include <Plugins/PPropertyParser/PProperties.h>
-#include <Toshi/Render/TTexture.h>
-#include <Toshi2/T2Map.h>
-#include <Toshi2/T2SList.h>
+#include <Render/TTexture.h>
+#include <Toshi/T2Map.h>
+#include <Toshi/T2SList.h>
 
 class AMaterialLibraryManager : 
 	public Toshi::TObject,

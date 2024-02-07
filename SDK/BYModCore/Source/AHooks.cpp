@@ -11,8 +11,8 @@
 #include <BYardSDK/ARenderer.h>
 #include <BYardSDK/ACamera.h>
 
-#include <Toshi/Input/TInputDeviceKeyboard.h>
-#include <Toshi/Render/TCameraObject.h>
+#include <Input/TInputDeviceKeyboard.h>
+#include <Render/TCameraObject.h>
 #include <Platform/Windows/TMSWindow.h>
 #include <Platform/DX8/TRenderInterface_DX8.h>
 

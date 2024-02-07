@@ -7,7 +7,7 @@
 #include "AppBoot.h"
 #include "AGameStateController.h"
 
-#include <Toshi/Input/TInputDeviceKeyboard.h>
+#include <Input/TInputDeviceKeyboard.h>
 
 TOSHI_NAMESPACE_USING
 

@@ -1,6 +1,6 @@
 #pragma once
-#include <Toshi/File/TTRB.h>
-#include <Toshi/Render/TTransformObject.h>
+#include <File/TTRB.h>
+#include <Render/TTransformObject.h>
 
 class ATerrainLocator
 {
