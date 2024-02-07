@@ -1,6 +1,12 @@
 #include "ToshiPCH.h"
 #include "TModel_DX8.h"
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include "Core/TMemoryDebugOn.h"
+
 namespace Toshi {
 
 	TBOOL TModelHAL::Create(TTMD* a_pTMD, TBOOL a_bLoad)

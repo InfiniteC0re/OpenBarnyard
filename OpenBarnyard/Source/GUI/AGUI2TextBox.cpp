@@ -1,6 +1,12 @@
 #include "pch.h"
 #include "AGUI2TextBox.h"
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include <Core/TMemoryDebugOn.h>
+
 AGUI2TextBox::AGUI2TextBox()
 {
 	m_bRenderShadow = TFALSE;

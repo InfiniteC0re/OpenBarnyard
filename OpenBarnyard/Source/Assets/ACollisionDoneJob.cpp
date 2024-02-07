@@ -1,6 +1,12 @@
 #include "pch.h"
 #include "ACollisionDoneJob.h"
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include <Core/TMemoryDebugOn.h>
+
 void ACollisionDoneJob::BeginJob()
 {
 

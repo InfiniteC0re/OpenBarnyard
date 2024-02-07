@@ -6,6 +6,12 @@
 
 #include <d3dtypes.h>
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include "Core/TMemoryDebugOn.h"
+
 namespace Toshi {
 
 	TDEFINE_CLASS(TTextureResourceHAL);

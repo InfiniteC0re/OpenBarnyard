@@ -4,6 +4,12 @@
 
 #include <Render/TRenderInterface.h>
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include <Core/TMemoryDebugOn.h>
+
 AGUI2Element::AGUI2Element()
 {
 	m_pParent = TNULL;

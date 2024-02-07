@@ -1,6 +1,12 @@
 #include "pch.h"
 #include "AMemory.h"
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include <Core/TMemoryDebugOn.h>
+
 TOSHI_NAMESPACE_USING
 
 void AMemory::CreatePool(POOL a_ePool)

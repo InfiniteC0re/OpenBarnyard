@@ -4,6 +4,12 @@
 #include "ATRBLoaderJob.h"
 #include "ALoadScreen.h"
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include <Core/TMemoryDebugOn.h>
+
 TOSHI_NAMESPACE_USING
 
 TBOOL AAssetLoader::Load(const char* a_szFileName, AAssetType a_eAssetType, TBOOL a_bUseStreaming)

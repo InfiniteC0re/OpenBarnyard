@@ -2,6 +2,12 @@
 #include "AGUIPicture.h"
 #include "AGUI2.h"
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include <Core/TMemoryDebugOn.h>
+
 TOSHI_NAMESPACE_USING
 
 TDEFINE_CLASS_INIT_NORUNTIME(AGUIPicture);

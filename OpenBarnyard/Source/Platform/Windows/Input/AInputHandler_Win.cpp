@@ -6,6 +6,12 @@
 #include <Input/TInputInterface.h>
 #include <Platform/Windows/Input/TInputInterface_Win.h>
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include <Core/TMemoryDebugOn.h>
+
 TOSHI_NAMESPACE_USING
 
 TDEFINE_CLASS(AInputHandler);

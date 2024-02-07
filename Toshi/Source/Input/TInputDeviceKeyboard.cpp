@@ -1,6 +1,12 @@
 #include "ToshiPCH.h"
 #include "TInputDeviceKeyboard.h"
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include "Core/TMemoryDebugOn.h"
+
 #define GET_KEY_FROM_DOODAD(a_iDoodad) \
 	((a_iDoodad) == VIRTKEY_SHIFT ? STRINGIFY(VIRTKEY_SHIFT) : \
 	(a_iDoodad) == VIRTKEY_CONTROL ? STRINGIFY(VIRTKEY_CONTROL) : \

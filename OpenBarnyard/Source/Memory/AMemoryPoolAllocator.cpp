@@ -1,6 +1,12 @@
 #include "pch.h"
 #include "AMemoryPoolAllocator.h"
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include <Core/TMemoryDebugOn.h>
+
 void* AMemoryPoolAllocator::Malloc(size_t size, size_t alignment)
 {
 	return TMemalign(alignment, size, m_pMemBlock);

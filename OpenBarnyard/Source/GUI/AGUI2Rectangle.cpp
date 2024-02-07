@@ -2,6 +2,12 @@
 #include "AGUI2Rectangle.h"
 #include "AGUI2.h"
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include <Core/TMemoryDebugOn.h>
+
 AGUI2Rectangle::AGUI2Rectangle()
 {
 	m_pMaterial = TNULL;

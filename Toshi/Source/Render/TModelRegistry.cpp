@@ -4,6 +4,12 @@
 
 #include "Toshi/T2ModelInstance.h"
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include "Core/TMemoryDebugOn.h"
+
 namespace Toshi {
 
 	TModelPtr::~TModelPtr()

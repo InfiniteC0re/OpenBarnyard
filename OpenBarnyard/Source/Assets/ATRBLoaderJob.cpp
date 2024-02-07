@@ -2,6 +2,12 @@
 #include "ATRBLoaderJob.h"
 #include "AAssetStreaming.h"
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include <Core/TMemoryDebugOn.h>
+
 void ATRBLoaderJob::BeginJob()
 {
 	AAssetStreaming::GetSingleton()->GetFileStream().AddStream(

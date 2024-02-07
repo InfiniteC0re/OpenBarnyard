@@ -2,6 +2,12 @@
 #include "Render/TViewport.h"
 #include "TRenderInterface_DX8.h"
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include "Core/TMemoryDebugOn.h"
+
 namespace Toshi {
 
 	void TViewport::BeginSKU()

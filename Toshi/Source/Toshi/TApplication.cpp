@@ -5,6 +5,12 @@
 #include "Toshi/TSystem.h"
 #include "File/TFile.h"
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include "Core/TMemoryDebugOn.h"
+
 namespace Toshi
 {
 	TApplication::TApplication()

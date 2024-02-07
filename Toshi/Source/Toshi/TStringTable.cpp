@@ -1,6 +1,12 @@
 #include "ToshiPCH.h"
 #include "TStringTable.h"
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include "Core/TMemoryDebugOn.h"
+
 namespace Toshi
 {
 	int TStringTable::GetStringID(const char* string)

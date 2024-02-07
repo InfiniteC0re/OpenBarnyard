@@ -26,6 +26,12 @@
 #include <Toshi/TScheduler.h>
 #include <Toshi/T2ObjectPool.h>
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include <Core/TMemoryDebugOn.h>
+
 TOSHI_NAMESPACE_USING
 
 TDEFINE_CLASS(ARootTask);

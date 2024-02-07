@@ -2,6 +2,12 @@
 #include "AMaterialLibrary.h"
 #include "AMaterialLibraryManager.h"
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include <Core/TMemoryDebugOn.h>
+
 AMaterialLibrary::AMaterialLibrary()
 {
 	m_iNumTextures = 0;

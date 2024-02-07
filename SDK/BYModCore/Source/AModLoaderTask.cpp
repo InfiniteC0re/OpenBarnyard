@@ -141,7 +141,7 @@ void AModLoaderTask::OnAGUI2Ready()
 	{
 		static wchar_t s_wcsBuffer[64];
 		const wchar_t* wcsFormat = (m_uiNumMods != 1) ? L"Loaded %d mods!\n%ls" : L"Loaded %d mod!\n%ls";
-		TStringManager::String16Format(s_wcsBuffer, 64, wcsFormat, m_uiNumMods, L"");
+		TStringManager::String16Format(s_wcsBuffer, TARRAYSIZE(s_wcsBuffer), wcsFormat, m_uiNumMods, L"");
 		m_pTextBox->SetText(s_wcsBuffer);
 	}
 

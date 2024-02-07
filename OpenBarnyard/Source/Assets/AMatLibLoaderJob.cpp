@@ -2,6 +2,12 @@
 #include "AMatLibLoaderJob.h"
 #include "AMaterialLibraryManager.h"
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include <Core/TMemoryDebugOn.h>
+
 void AMatLibLoaderJob::BeginJob()
 {
 	ATRBLoaderJob::InitJob(m_pTRB, m_FileName);

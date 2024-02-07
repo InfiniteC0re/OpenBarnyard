@@ -1,6 +1,12 @@
 #include "ToshiPCH.h"
 #include "TFileStream.h"
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include "Core/TMemoryDebugOn.h"
+
 namespace Toshi
 {
 	void TFileStream::Main()

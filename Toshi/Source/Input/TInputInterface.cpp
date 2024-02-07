@@ -3,6 +3,12 @@
 #include "TInputDeviceKeyboard.h"
 #include "TInputDeviceMouse.h"
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include "Core/TMemoryDebugOn.h"
+
 namespace Toshi {
 
 	TDEFINE_CLASS_NORUNTIME(TInputInterface);

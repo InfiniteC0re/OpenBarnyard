@@ -3,6 +3,12 @@
 #include "TSystem.h"
 #include "Toshi/Typedefs.h"
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include "Core/TMemoryDebugOn.h"
+
 namespace Toshi {
 
 	TClass::TClass(const char* a_szName, TClass* a_pParentClass, CreateObject_t a_fnCreate, CreateObjectInPlace_t a_fnCreateInPlace, Initialise_t a_fnInitialise, Deinitialise_t a_fnUnitialise, TUINT16 a_uiVersionMajor, TUINT16 a_uiVersionMinor, TUINT32 a_uiClassSize, TUINT32 a_uiClassAlignment) :

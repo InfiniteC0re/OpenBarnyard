@@ -2,6 +2,12 @@
 #include "TAnimation.h"
 #include "TSkeleton.h"
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include "Core/TMemoryDebugOn.h"
+
 namespace Toshi {
 
 	TBOOL TAnimation::UpdateTime(float a_fDeltaTime)

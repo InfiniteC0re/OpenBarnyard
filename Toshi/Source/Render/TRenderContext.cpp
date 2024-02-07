@@ -2,6 +2,12 @@
 #include "TRenderContext.h"
 #include "TRenderInterface.h"
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include "Core/TMemoryDebugOn.h"
+
 namespace Toshi {
 
 	TRenderContext::TRenderContext(TRenderInterface* pRender)

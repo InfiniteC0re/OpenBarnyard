@@ -1,6 +1,12 @@
 #include "ToshiPCH.h"
 #include "TSkeleton.h"
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include "Core/TMemoryDebugOn.h"
+
 namespace Toshi {
 
 	TSkeleton::TSkeleton()
@@ -44,7 +50,7 @@ namespace Toshi {
 		size_t iInstanceSize = sizeof(TSkeletonInstance) + sizeof(TSkeletonInstanceBone) * iAutoBoneCount + iAnimationSize * GetAnimationMaxCount();
 		TSkeletonInstance* pInstance;
 
-		pInstance = TSTATICCAST(TSkeletonInstance*, TMalloc(iInstanceSize, TNULL));
+		pInstance = TSTATICCAST(TSkeletonInstance*, TMalloc(iInstanceSize));
 
 		new (pInstance) TSkeletonInstance();
 		pInstance->m_pSkeleton = this;

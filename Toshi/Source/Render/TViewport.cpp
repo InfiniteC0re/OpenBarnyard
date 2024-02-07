@@ -1,6 +1,12 @@
 #include "ToshiPCH.h"
 #include "Render/TViewport.h"
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include "Core/TMemoryDebugOn.h"
+
 namespace Toshi {
 
 	TViewport::TViewport(TBOOL a_bFlag)

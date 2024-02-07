@@ -3,6 +3,7 @@
 #include "Toshi/TFreeList.h"
 
 #include <d3dx8.h>
+#include "Core/TMemoryDebugOff.h"
 
 namespace Toshi {
 

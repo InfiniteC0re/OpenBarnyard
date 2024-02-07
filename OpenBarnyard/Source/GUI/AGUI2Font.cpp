@@ -4,6 +4,12 @@
 
 #include <cwctype>
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include <Core/TMemoryDebugOn.h>
+
 TBOOL AGUI2Font::Create(AGUI2FontDef* a_pFontDef)
 {
 	TASSERT(a_pFontDef->uiNumMaterials != 0);

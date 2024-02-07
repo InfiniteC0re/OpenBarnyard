@@ -5,6 +5,12 @@
 #include "Platform/DX8/TRenderInterface_DX8.h"
 #endif // TOSHI_SKU_WINDOWS
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include "Core/TMemoryDebugOn.h"
+
 namespace Toshi {
 	
 	TModel::TModel()

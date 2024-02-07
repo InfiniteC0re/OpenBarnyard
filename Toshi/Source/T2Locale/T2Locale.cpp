@@ -1,6 +1,12 @@
 #include "ToshiPCH.h"
 #include "T2Locale.h"
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include "Core/TMemoryDebugOn.h"
+
 namespace Toshi
 {
 	T2Locale::T2Locale(int langCount, size_t bufferSize, void* buffer)

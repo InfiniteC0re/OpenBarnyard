@@ -1,6 +1,12 @@
 #include "ToshiPCH.h"
 #include "TMesh.h"
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include "Core/TMemoryDebugOn.h"
+
 namespace Toshi {
 
 	TDEFINE_CLASS_NORUNTIME(TMesh);

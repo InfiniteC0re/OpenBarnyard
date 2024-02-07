@@ -7,6 +7,12 @@
 #include <Render/TRenderInterface.h>
 #include <Render/TTextureFactory.h>
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include <Core/TMemoryDebugOn.h>
+
 TOSHI_NAMESPACE_USING
 
 TDEFINE_CLASS(AGUIMatlibPicture);

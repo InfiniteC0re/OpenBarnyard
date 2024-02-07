@@ -1,6 +1,12 @@
 #include "ToshiPCH.h"
 #include "THashTable.h"
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include "Core/TMemoryDebugOn.h"
+
 Toshi::THashTable::t_ItemCompareFunc Toshi::THashTable::DefaultItemCompareFunc = [](void* unk, void* unk2, int unk3)
 {
 	return Toshi::TUtil::MemCompare(unk, unk2, unk3) == 0;

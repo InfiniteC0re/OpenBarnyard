@@ -11,6 +11,12 @@
 #include "Platform/DX8/AGUI2Renderer_DX8.h"
 #endif // TOSHI_SKU_WINDOWS
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include <Core/TMemoryDebugOn.h>
+
 TOSHI_NAMESPACE_USING
 
 TDEFINE_CLASS(AGUI2);
@@ -102,7 +108,7 @@ TBOOL AGUI2::OnUpdate(TFLOAT a_fDeltaTime)
 
 			Toshi::TStringManager::String16Format(
 				m_wszMemStats,
-				sizeof(m_wszMemStats),
+				TARRAYSIZE(m_wszMemStats),
 				L"Mem Used: %u, Free: %u\nHoles: %u, Largest: %u",
 				memInfo.m_uiLogicTotalUsed,
 				memInfo.m_uiLogicTotalFree,
@@ -129,7 +135,7 @@ TBOOL AGUI2::OnUpdate(TFLOAT a_fDeltaTime)
 
 		Toshi::TStringManager::String16Format(
 			m_wszFPS,
-			sizeof(m_wszFPS),
+			TARRAYSIZE(m_wszFPS),
 			L"FPS: %0.02f",
 			s_FPS
 		);
@@ -158,7 +164,7 @@ TBOOL AGUI2::OnUpdate(TFLOAT a_fDeltaTime)
 
 		Toshi::TStringManager::String16Format(
 			m_wszTexturesInfo,
-			sizeof(m_wszTexturesInfo),
+			TARRAYSIZE(m_wszTexturesInfo),
 			L"Textures: (F:%d,U:%d)/%d",
 			iNumFreeTextures,
 			iNumUsedTextures,

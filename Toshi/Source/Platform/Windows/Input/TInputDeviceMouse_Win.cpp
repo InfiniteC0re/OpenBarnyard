@@ -3,6 +3,12 @@
 #include "Platform/DX8/TRenderInterface_DX8.h"
 #include "Platform/Windows/Input/TInputInterface_Win.h"
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include "Core/TMemoryDebugOn.h"
+
 namespace Toshi {
 
 	TDEFINE_CLASS(TInputDXDeviceMouse);

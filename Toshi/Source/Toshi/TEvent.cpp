@@ -1,5 +1,11 @@
 #include "ToshiPCH.h"
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include "Core/TMemoryDebugOn.h"
+
 namespace Toshi {
 
 	void TGenericListener::Connect(TGenericEmitter& a_rEmitter, void* a_pCaller, t_Callback a_pCallback, int a_iPriority)

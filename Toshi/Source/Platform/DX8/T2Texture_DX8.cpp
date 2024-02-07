@@ -3,6 +3,12 @@
 
 #include "TRenderInterface_DX8.h"
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include "Core/TMemoryDebugOn.h"
+
 namespace Toshi {
 
 	HRESULT T2Texture::Load()

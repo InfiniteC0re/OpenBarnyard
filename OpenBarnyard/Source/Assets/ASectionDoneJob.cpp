@@ -2,6 +2,12 @@
 #include "ASectionDoneJob.h"
 #include "Terrain/ATerrain.h"
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include <Core/TMemoryDebugOn.h>
+
 void ASectionDoneJob::BeginJob()
 {
 

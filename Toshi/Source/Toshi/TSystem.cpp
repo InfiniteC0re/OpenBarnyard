@@ -4,6 +4,12 @@
 
 #include "Toshi/TPString8.h"
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include "Core/TMemoryDebugOn.h"
+
 namespace Toshi
 {
 	TSystemManager g_oSystemManager;

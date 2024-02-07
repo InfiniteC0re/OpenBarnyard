@@ -2,6 +2,12 @@
 #include "TTextureFactory.h"
 #include "TTexture.h"
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include "Core/TMemoryDebugOn.h"
+
 TDEFINE_CLASS_NORUNTIME(Toshi::TTextureFactory);
 
 namespace Toshi {

@@ -5,9 +5,12 @@
 //       Include TMemoryDebugOn.h to enable debugging mode.
 //-----------------------------------------------------------------------------
 
-#if defined(TMEMORY_DEBUG_ENABLED)
+#ifdef TMEMORY_DEBUG_ENABLED
 
 #undef new
+#undef TMalloc1
+#undef TMalloc2
+#undef TMalloc
 #undef TMEMORY_DEBUG_ENABLED
 
-#endif
+#endif // TMEMORY_DEBUG_ENABLED

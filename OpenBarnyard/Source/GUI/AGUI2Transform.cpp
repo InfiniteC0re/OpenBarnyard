@@ -1,6 +1,12 @@
 #include "pch.h"
 #include "AGUI2Transform.h"
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include <Core/TMemoryDebugOn.h>
+
 void AGUI2Transform::Rotate(TFLOAT a_fAngle)
 {
 	TFLOAT fSin;

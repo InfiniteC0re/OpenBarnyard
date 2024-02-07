@@ -94,6 +94,10 @@ namespace Toshi {
 	class TPString8Pool
 	{
 	public:
+		// Doesn't initialise strings from TPString8Initialiser
+		TPString8Pool(T2Allocator* a_pAllocator);
+
+		// Initialises strings from TPString8Initialiser
 		TPString8Pool(int a_iUnknown1, int a_iUnknown2, T2Allocator* a_pAllocator, void* m_pUnknown3);
 
 		void Get(TPooledString8*& a_pOutString, const char* a_szString, bool* a_pWasInPool = TNULL);

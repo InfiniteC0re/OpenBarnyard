@@ -1,6 +1,12 @@
 #include "ToshiPCH.h"
 #include "TPString8.h"
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include "Core/TMemoryDebugOn.h"
+
 namespace Toshi {
 
 	void TPString8Pool::Get(TPooledString8*& a_pOutString, const char* a_szString, bool* a_pWasInPool)
@@ -35,11 +41,18 @@ namespace Toshi {
 		}
 	}
 
+	TPString8Pool::TPString8Pool(T2Allocator* a_pAllocator) :
+		m_pAllocator(a_pAllocator),
+		m_oMap(a_pAllocator)
+	{
+		// TODO: Initialise some unknown values
+	}
+
 	TPString8Pool::TPString8Pool(int a_iUnknown1, int a_iUnknown2, T2Allocator* a_pAllocator, void* m_pUnknown3) :
 		m_pAllocator(a_pAllocator),
 		m_oMap(a_pAllocator)
 	{
-		TTODO("Initialise some unknown values");
+		// TODO: Initialise some unknown values
 
 		for (auto it = TPString8Initialiser::Head(); it != TNULL; it = it->Next())
 		{

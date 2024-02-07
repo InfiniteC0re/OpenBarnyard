@@ -1,6 +1,12 @@
 #include "ToshiPCH.h"
 #include "T2DynamicVector.h"
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include "Core/TMemoryDebugOn.h"
+
 namespace Toshi {
 
 	void T2GenericDynamicVector::Reallocate(TINT a_iNewSize, TINT a_iElementSize)

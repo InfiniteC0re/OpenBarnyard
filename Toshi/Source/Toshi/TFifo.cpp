@@ -1,6 +1,12 @@
 #include "ToshiPCH.h"
 #include "TFifo.h"
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include "Core/TMemoryDebugOn.h"
+
 namespace Toshi
 {
 	TBOOL TGenericFifo::Create(char* a_pBuffer, int a_iMaxItems, int a_iItemSize)

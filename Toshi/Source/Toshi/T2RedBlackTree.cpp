@@ -1,6 +1,12 @@
 #include "ToshiPCH.h"
 #include "T2RedBlackTree.h"
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include "Core/TMemoryDebugOn.h"
+
 namespace Toshi
 {
 	constinit T2GenericRedBlackTreeNode T2GenericRedBlackTree::ms_oNil;

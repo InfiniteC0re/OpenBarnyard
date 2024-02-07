@@ -5,6 +5,12 @@
 #include "Toshi/TPString8.h"
 #include "Toshi/T2Map.h"
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include "Core/TMemoryDebugOn.h"
+
 class PPropertiesWriter
 {
 private:

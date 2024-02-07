@@ -1,6 +1,12 @@
 #include "ToshiPCH.h"
 #include "TString16.h"
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include "Core/TMemoryDebugOn.h"
+
 namespace Toshi
 {
 	TString16::TString16()

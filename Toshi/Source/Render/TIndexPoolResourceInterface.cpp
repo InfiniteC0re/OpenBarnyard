@@ -1,6 +1,12 @@
 #include "ToshiPCH.h"
 #include "TIndexPoolResourceInterface.h"
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include "Core/TMemoryDebugOn.h"
+
 namespace Toshi {
 
 	TDEFINE_CLASS_NORUNTIME(TIndexPoolResourceInterface);

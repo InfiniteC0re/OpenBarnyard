@@ -4,6 +4,12 @@
 
 #include <queue>
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include "Core/TMemoryDebugOn.h"
+
 namespace Toshi
 {
 	void TUtil::TrimLog(const char* fileName, size_t trimTo)

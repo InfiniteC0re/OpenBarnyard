@@ -2,6 +2,12 @@
 #include "TCompress.h"
 #include "BTECCompressor.h"
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include "Core/TMemoryDebugOn.h"
+
 namespace Toshi
 {
     int TCompress::usemaxoffset;

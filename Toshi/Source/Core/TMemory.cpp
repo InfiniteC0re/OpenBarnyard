@@ -3,26 +3,48 @@
 #include "Thread/TMutex.h"
 #include "Thread/TMutexLock.h"
 
+#ifdef TMEMORY_DEBUG
+#include "Core/TMemoryDebug.h"
+#include "Toshi/T2Allocator.h"
+#include "Toshi/T2DList.h"
+#endif // TMEMORY_DEBUG
+
 #define MEM_TO_HOLE(PTR) (((Hole*)(((TUINT)PTR) + 4)) - 1)
 
 void* __CRTDECL operator new(size_t size)
 {
+#ifdef TMEMORY_DEBUG
+	return TMalloc(size, TNULL, TMemory__FILE__, TMemory__LINE__);
+#else
 	return TMalloc(size, TNULL, TNULL, -1);
+#endif // TMEMORY_DEBUG
 }
 
 void* __CRTDECL operator new(size_t size, ::std::nothrow_t const&) noexcept
 {
+#ifdef TMEMORY_DEBUG
+	return TMalloc(size, TNULL, TMemory__FILE__, TMemory__LINE__);
+#else
 	return TMalloc(size, TNULL, TNULL, -1);
+#endif // TMEMORY_DEBUG
 }
 
 void* __CRTDECL operator new[](size_t size)
 {
+#ifdef TMEMORY_DEBUG
+	return TMalloc(size, TNULL, TMemory__FILE__, TMemory__LINE__);
+#else
 	return TMalloc(size, TNULL, TNULL, -1);
+#endif // TMEMORY_DEBUG
 }
 
 void* __CRTDECL operator new[](size_t size, ::std::nothrow_t const&) noexcept
 {
+#ifdef TMEMORY_DEBUG
+	return TMalloc(size, TNULL, TMemory__FILE__, TMemory__LINE__);
+#else
 	return TMalloc(size, TNULL, TNULL, -1);
+#endif // TMEMORY_DEBUG
 }
 
 void __CRTDECL operator delete(void* ptr) noexcept
@@ -52,6 +74,40 @@ void __CRTDECL operator delete[](void* ptr, size_t _Size) noexcept
 
 namespace Toshi {
 
+#ifdef TMEMORY_DEBUG
+
+	class TMemoryAllocationDebugInfo : public T2DList<TMemoryAllocationDebugInfo>::Node
+	{
+	public:
+		TMemoryAllocationDebugInfo()
+		{
+			SetMemory(TNULL);
+			SetFileName(TNULL);
+			SetLineNum(-1);
+		}
+
+		void* GetMemory() const { return m_pMemory; }
+		void SetMemory(void* a_pMemory) { m_pMemory = a_pMemory; }
+
+		const char* GetFileName() const { return m_szFileName; }
+		void SetFileName(const char* a_szFileName) { m_szFileName = a_szFileName; }
+
+		TINT GetLineNum() const { return m_iLineNum; }
+		void SetLineNum(TINT a_iLineNum) { m_iLineNum = a_iLineNum; }
+
+	private:
+		void* m_pMemory;
+		const char* m_szFileName;
+		TINT m_iLineNum;
+	};
+
+	static TMemoryAllocationDebugInfo g_MemoryDebugInfoSlots[65535];
+	static T2DList<TMemoryAllocationDebugInfo> g_FreeDebugInfoSlots;
+	static T2DList<TMemoryAllocationDebugInfo> g_UsedDebugInfoSlots;
+	static TUINT g_uiDebugNumTrackedAllocations = 0;
+
+#endif // TMEMORY_DEBUG
+
 	TMemory::TMemory()
 	{
 		m_TotalAllocatedSize = 0;
@@ -63,6 +119,13 @@ namespace Toshi {
 
 		m_bFlag1 = TFALSE;
 		m_bFlag2 = TTRUE;
+
+#ifdef TMEMORY_DEBUG
+		T2_FOREACH_ARRAY(g_MemoryDebugInfoSlots, i)
+		{
+			g_FreeDebugInfoSlots.PushBack(&g_MemoryDebugInfoSlots[i]);
+		}
+#endif // TMEMORY_DEBUG
 	}
 
 	TMemory::~TMemory()
@@ -70,7 +133,7 @@ namespace Toshi {
 		
 	}
 
-	void* TMemory::Alloc(TUINT a_uiSize, TINT a_uiAlignment, MemBlock* a_pMemBlock, const char* a_szFileName, TINT a_iNumLine)
+	void* TMemory::Alloc(TUINT a_uiSize, TINT a_uiAlignment, MemBlock* a_pMemBlock, const char* a_szFileName, TINT a_iLineNum)
 	{
 		TMutexLock lock(ms_pGlobalMutex);
 
@@ -109,6 +172,28 @@ namespace Toshi {
 		TUINT iDataEnd;
 		TUINT iDataSize;
 		Hole* pFreeList = TNULL;
+
+#ifdef TMEMORY_DEBUG
+		#include "TMemoryDebugOff.h"
+
+		auto SaveDebugInfo = [a_szFileName, a_iLineNum](void* pMem) {
+			if (pMem && a_szFileName)
+			{
+				TMemory__FILE__ = TNULL;
+				TMemory__LINE__ = -1;
+
+				TASSERT(!g_FreeDebugInfoSlots.IsEmpty(), "TMemory Debug: No empty slots left to save allocation info");
+
+				auto pDebugInfo = g_FreeDebugInfoSlots.PopFront();
+				pDebugInfo->SetMemory(pMem);
+				pDebugInfo->SetFileName(a_szFileName);
+				pDebugInfo->SetLineNum(a_iLineNum);
+
+				g_UsedDebugInfoSlots.PushBack(pDebugInfo);
+				g_uiDebugNumTrackedAllocations++;
+			}
+		};
+#endif // TMEMORY_DEBUG
 
 		for (TUINT i = uiFreeListId; i < NUM_FREE_LISTS; i++)
 		{
@@ -184,6 +269,9 @@ namespace Toshi {
 						a_pMemBlock->m_pHoles[uiNewFreeListId] = pNewHole;
 						*(Hole**)((TUINT)&pNewHole->m_pPrevHole + TMath::AlignNum(pNewHole->m_uiSize)) = pNewHole;
 
+#ifdef TMEMORY_DEBUG
+						SaveDebugInfo((void*)iDataStart);
+#endif // TMEMORY_DEBUG
 						return (void*)iDataStart;
 					}
 					else
@@ -212,6 +300,10 @@ namespace Toshi {
 						pHole->m_uiSize = ms_pSingleton->m_Unknown1 | iDataSize | 1;
 						pHole->m_pMemBlock = a_pMemBlock;
 
+#ifdef TMEMORY_DEBUG
+						SaveDebugInfo((void*)iDataStart);
+#endif // TMEMORY_DEBUG
+
 						return (void*)iDataStart;
 					}
 				}
@@ -224,6 +316,10 @@ namespace Toshi {
 
 		if (pFreeList)
 		{
+#ifdef TMEMORY_DEBUG
+			SaveDebugInfo((void*)iDataStart);
+#endif // TMEMORY_DEBUG
+
 			return (void*)iDataStart;
 		}
 
@@ -310,6 +406,21 @@ namespace Toshi {
 			}
 
 			pMemBlock->m_pHoles[uiHoleId] = pRootHole;
+
+#ifdef TMEMORY_DEBUG
+
+			T2_FOREACH_BACK(g_UsedDebugInfoSlots, slot)
+			{
+				if (slot->GetMemory() == a_pMem)
+				{
+					slot->Remove();
+					g_FreeDebugInfoSlots.PushBack(slot);
+					g_uiDebugNumTrackedAllocations--;
+					break;
+				}
+			}
+
+#endif // TMEMORY_DEBUG
 
 			return TTRUE;
 		}
@@ -606,7 +717,7 @@ namespace Toshi {
 	}
 }
 
-void* TMalloc(TUINT a_uiSize, Toshi::TMemory::MemBlock* a_pMemBlock, const char* a_szFileName, TINT a_iNumLine)
+void* TMalloc(TUINT a_uiSize, Toshi::TMemory::MemBlock* a_pMemBlock, const char* a_szFileName, TINT a_iLineNum)
 {
 	auto pMemManager = Toshi::TMemory::GetSingleton();
 
@@ -615,11 +726,26 @@ void* TMalloc(TUINT a_uiSize, Toshi::TMemory::MemBlock* a_pMemBlock, const char*
 		a_pMemBlock = pMemManager->GetGlobalBlock();
 	}
 
-	auto pMem = pMemManager->Alloc(a_uiSize, 16, a_pMemBlock, a_szFileName, a_iNumLine);
+	auto pMem = pMemManager->Alloc(a_uiSize, 16, a_pMemBlock, a_szFileName, a_iLineNum);
 
 	if (!pMem)
 	{
 		pMemManager->PrintDebug("Out of Toshi Memory on block [%s]\n", a_pMemBlock->m_szName);
+	}
+
+	return pMem;
+}
+
+void* TMalloc(TUINT a_uiSize, const char* a_szFileName, TINT a_iLineNum)
+{
+	auto pMemManager = Toshi::TMemory::GetSingleton();
+	auto pMemBlock = pMemManager->GetGlobalBlock();
+
+	auto pMem = pMemManager->Alloc(a_uiSize, 16, pMemBlock, a_szFileName, a_iLineNum);
+
+	if (!pMem)
+	{
+		pMemManager->PrintDebug("Out of Toshi Memory on block [%s]\n", pMemBlock->m_szName);
 	}
 
 	return pMem;

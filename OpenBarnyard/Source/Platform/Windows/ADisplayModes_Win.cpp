@@ -3,6 +3,12 @@
 
 #include <Platform/DX8/TRenderInterface_DX8.h>
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include <Core/TMemoryDebugOn.h>
+
 TOSHI_NAMESPACE_USING
 
 TDEFINE_CLASS(ADisplayModes_Win);

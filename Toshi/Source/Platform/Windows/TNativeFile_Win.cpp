@@ -1,6 +1,12 @@
 #include "ToshiPCH.h"
 #include "TNativeFile_Win.h"
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include "Core/TMemoryDebugOn.h"
+
 namespace Toshi
 {
     TBOOL TFileManager::Create()

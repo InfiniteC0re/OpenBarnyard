@@ -1,6 +1,12 @@
 #include "pch.h"
 #include "AModelLoader.h"
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include <Core/TMemoryDebugOn.h>
+
 TDEFINE_CLASS(AModelLoader);
 
 AModelLoader::AModelLoader()

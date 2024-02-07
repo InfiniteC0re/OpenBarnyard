@@ -2,6 +2,12 @@
 #include "AKeyLibLoaderJob.h"
 #include "AAssetStreaming.h"
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include <Core/TMemoryDebugOn.h>
+
 void AKeyLibLoaderJob::BeginJob()
 {
 	AAssetStreaming::GetSingleton()->GetFileStream().AddStream(

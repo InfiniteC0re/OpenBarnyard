@@ -3,6 +3,12 @@
 #include "AGUI2TextureSectionManager.h"
 #include "AGUI2.h"
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include <Core/TMemoryDebugOn.h>
+
 TOSHI_NAMESPACE_USING
 
 AGUI2MouseCursor::AGUI2MouseCursor()

@@ -2,6 +2,12 @@
 #include "TRenderInterface_DX8.h"
 #include "TRenderContext_DX8.h"
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include "Core/TMemoryDebugOn.h"
+
 namespace Toshi {
 
 	void TRenderContextD3D::ComputePerspectiveProjection()

@@ -3,7 +3,7 @@
 #include "Toshi/TString8.h"
 #include "../resource.h"
 
-using namespace Toshi;
+TOSHI_NAMESPACE_USING
 
 #ifdef TOSHI_ENABLE_ASSERTS
 

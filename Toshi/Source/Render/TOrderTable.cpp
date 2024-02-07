@@ -1,6 +1,12 @@
 #include "ToshiPCH.h"
 #include "Render/TShader.h"
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include "Core/TMemoryDebugOn.h"
+
 namespace Toshi {
 
 	void TOrderTable::CreateStaticData(uint32_t a_uiMaxMaterials, uint32_t a_uiMaxRenderPackets)

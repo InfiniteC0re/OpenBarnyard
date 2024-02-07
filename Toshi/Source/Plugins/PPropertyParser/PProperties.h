@@ -3,6 +3,12 @@
 #include "Toshi/TLog.h"
 #include "Toshi/TStringManager.h"
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include "Core/TMemoryDebugOn.h"
+
 class PPropertyValue
 {
 public:

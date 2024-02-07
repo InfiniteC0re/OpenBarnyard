@@ -7,7 +7,10 @@
 
 #if defined(TMEMORY_DEBUG) && !defined(TMEMORY_DEBUG_ENABLED)
 
-#define new new(__FILE__, __LINE__)
+#include "TMemoryDebug.h"
+
+#define new (TMemory__FILE__ = __FILE__, TMemory__LINE__ = __LINE__) && TFALSE ? TNULL : new
+#define TMalloc(...) TMalloc(__VA_ARGS__, __FILE__, __LINE__)
 #define TMEMORY_DEBUG_ENABLED
 
 #endif

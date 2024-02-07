@@ -3,6 +3,12 @@
 
 #include <Render/TRenderInterface.h>
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include <Core/TMemoryDebugOn.h>
+
 AKeyframeLibStreamJob::AKeyframeLibStreamJob() :
 	TFileStreamJob(TNULL)
 {

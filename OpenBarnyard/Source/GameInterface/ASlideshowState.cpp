@@ -2,6 +2,12 @@
 #include "ASlideshowState.h"
 #include "AGameStateController.h"
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include <Core/TMemoryDebugOn.h>
+
 TDEFINE_CLASS_NORUNTIME(ASlideshowState);
 TPSTRING8_DECLARE(ASlideshowState);
 

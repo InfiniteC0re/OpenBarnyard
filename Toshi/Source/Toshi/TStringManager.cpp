@@ -2,6 +2,12 @@
 #include "TStringManager.h"
 #include <string>
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include "Core/TMemoryDebugOn.h"
+
 namespace Toshi {
 
 	wchar_t* TStringManager::StringCharToUnicode(wchar_t* a_UnicodeString, const char* a_CharString, uint32_t a_iLength)

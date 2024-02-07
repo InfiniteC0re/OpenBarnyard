@@ -1,6 +1,12 @@
 #include "pch.h"
 #include "AGUI2FontManager.h"
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include <Core/TMemoryDebugOn.h>
+
 TOSHI_NAMESPACE_USING
 
 TBOOL AGUI2FontManager::Open(const char* a_szFileName)

@@ -3,6 +3,12 @@
 #include "TIndexBlockResource_DX8.h"
 #include "TIndexFactoryResource_DX8.h"
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include "Core/TMemoryDebugOn.h"
+
 namespace Toshi {
 
 	TDEFINE_CLASS(TIndexPoolResource);

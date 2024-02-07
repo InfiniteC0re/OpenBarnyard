@@ -1,6 +1,12 @@
 #include "pch.h"
 #include "AFade.h"
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include <Core/TMemoryDebugOn.h>
+
 AFade::AFade() :
 	m_FadeFromColor(255, 255, 255, 255),
 	m_FadeToColor(255, 255, 255, 255),

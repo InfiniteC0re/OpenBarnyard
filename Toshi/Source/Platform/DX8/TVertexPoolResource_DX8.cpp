@@ -3,6 +3,12 @@
 #include "TVertexFactoryResource_DX8.h"
 #include "TVertexBlockResource_DX8.h"
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include "Core/TMemoryDebugOn.h"
+
 namespace Toshi {
 
 	TDEFINE_CLASS(TVertexPoolResource);

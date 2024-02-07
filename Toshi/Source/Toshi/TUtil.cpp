@@ -4,6 +4,12 @@
 #include "Toshi/TError.h"
 #include "Render/TModelRegistry.h"
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include "Core/TMemoryDebugOn.h"
+
 namespace Toshi
 {
 	void TUtil::LogInitialise()

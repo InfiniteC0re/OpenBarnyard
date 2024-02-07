@@ -2,6 +2,12 @@
 #include "AInputMap.h"
 #include "AInputMapManager.h"
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include <Core/TMemoryDebugOn.h>
+
 TDEFINE_CLASS_NORUNTIME(AInputMap);
 
 void AInputMap::LoadFromProperties(const PProperties& a_rProperties)

@@ -3,6 +3,12 @@
 
 #include <Render/TRenderInterface.h>
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include <Core/TMemoryDebugOn.h>
+
 void AModelLoaderJob::BeginJob()
 {
 	m_pModel = Toshi::TRenderInterface::GetSingleton()->CreateModel(m_oStreamJob.GetFileName(), TFALSE);

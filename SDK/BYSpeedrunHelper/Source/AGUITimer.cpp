@@ -45,15 +45,15 @@ void AGUITimer::Update(TFLOAT a_fDeltaTime)
 
 		if (iHours != 0)
 		{
-			Toshi::TStringManager::String16Format(s_buffer, sizeof(s_buffer) / sizeof(wchar_t), L"%02d:%02d:%02d.%03d", iHours, iMinutes, iSeconds, iMilliseconds);
+			Toshi::TStringManager::String16Format(s_buffer, TARRAYSIZE(s_buffer), L"%02d:%02d:%02d.%03d", iHours, iMinutes, iSeconds, iMilliseconds);
 		}
 		else if (iMinutes != 0)
 		{
-			Toshi::TStringManager::String16Format(s_buffer, sizeof(s_buffer) / sizeof(wchar_t), L"%02d:%02d.%03d", iMinutes, iSeconds, iMilliseconds);
+			Toshi::TStringManager::String16Format(s_buffer, TARRAYSIZE(s_buffer), L"%02d:%02d.%03d", iMinutes, iSeconds, iMilliseconds);
 		}
 		else
 		{
-			Toshi::TStringManager::String16Format(s_buffer, sizeof(s_buffer) / sizeof(wchar_t), L"%d.%03d", iSeconds, iMilliseconds);
+			Toshi::TStringManager::String16Format(s_buffer, TARRAYSIZE(s_buffer), L"%d.%03d", iSeconds, iMilliseconds);
 		}
 
 		m_pTextBox->SetText(s_buffer);

@@ -1,6 +1,12 @@
 #include "ToshiPCH.h"
 #include "TRenderPacket.h"
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include "Core/TMemoryDebugOn.h"
+
 namespace Toshi {
 
 	TRenderPacket::TRenderPacket()

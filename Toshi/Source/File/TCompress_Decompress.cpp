@@ -1,6 +1,12 @@
 #include "ToshiPCH.h"
 #include "TCompress.h"
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include "Core/TMemoryDebugOn.h"
+
 namespace Toshi
 {
 	uintptr_t TCompress::Decompress(TFile* file, TCompress::Header* header, char* buffer, uint32_t bufferSize)

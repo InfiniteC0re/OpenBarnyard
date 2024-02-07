@@ -1,6 +1,12 @@
 #include "ToshiPCH.h"
 #include "TError.h"
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include "Core/TMemoryDebugOn.h"
+
 Toshi::TError::TError(uint32_t size1, uint32_t size2)
 {
 	m_size1 = size1;

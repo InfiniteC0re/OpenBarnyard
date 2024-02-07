@@ -3,6 +3,12 @@
 
 #include "Toshi/TSystem.h"
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include "Core/TMemoryDebugOn.h"
+
 namespace Toshi
 {
 	TString8::TString8(T2Allocator* allocator)

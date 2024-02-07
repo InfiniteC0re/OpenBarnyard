@@ -5,6 +5,7 @@
 #include "Render/TVertexFactoryResourceInterface.h"
 
 #include <d3d8.h>
+#include "Core/TMemoryDebugOff.h"
 
 namespace Toshi {
 

@@ -2,6 +2,12 @@
 #include "AGUI2.h"
 #include "AGUI2TextureSectionManager.h"
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include <Core/TMemoryDebugOn.h>
+
 TOSHI_NAMESPACE_USING
 
 TBOOL AGUI2TextureSectionManager::Open(const char* a_szFileName, Toshi::TTRB* a_pTRB)

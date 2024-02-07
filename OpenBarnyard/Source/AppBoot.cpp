@@ -27,6 +27,12 @@
 #include "Locale/ALocaleManager.h"
 #include "GUI/AGUI2.h"
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include <Core/TMemoryDebugOn.h>
+
 AApplication g_oTheApp;
 
 TOSHI_NAMESPACE_USING

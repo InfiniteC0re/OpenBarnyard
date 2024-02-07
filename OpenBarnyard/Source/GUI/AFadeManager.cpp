@@ -3,6 +3,12 @@
 #include "Tasks/ARootTask.h"
 #include "GUI/AGUI2.h"
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include <Core/TMemoryDebugOn.h>
+
 TDEFINE_CLASS(AFadeManager);
 
 TBOOL AFadeManager::OnUpdate(TFLOAT a_fDeltaTime)

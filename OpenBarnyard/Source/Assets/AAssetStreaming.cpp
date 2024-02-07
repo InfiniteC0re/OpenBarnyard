@@ -2,6 +2,12 @@
 #include "AAssetStreaming.h"
 #include "ATRBLoaderJob.h"
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include <Core/TMemoryDebugOn.h>
+
 AAssetStreaming::AAssetStreaming()
 {
 	m_pCurrentJob = TNULL;

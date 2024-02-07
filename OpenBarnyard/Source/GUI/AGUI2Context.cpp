@@ -2,6 +2,12 @@
 #include "AGUI2.h"
 #include "AGUI2Context.h"
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include <Core/TMemoryDebugOn.h>
+
 AGUI2Context::AGUI2Context()
 {
 	m_pRenderer = TNULL;

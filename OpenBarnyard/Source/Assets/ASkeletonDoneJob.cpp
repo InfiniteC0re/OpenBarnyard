@@ -1,6 +1,12 @@
 #include "pch.h"
 #include "ASkeletonDoneJob.h"
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include <Core/TMemoryDebugOn.h>
+
 void ASkeletonDoneJob::BeginJob()
 {
 

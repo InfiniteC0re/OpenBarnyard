@@ -2,6 +2,12 @@
 #include "TFile.h"
 #include "Thread/T2MutexLock.h"
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include "Core/TMemoryDebugOn.h"
+
 namespace Toshi
 {
 #pragma region TFile

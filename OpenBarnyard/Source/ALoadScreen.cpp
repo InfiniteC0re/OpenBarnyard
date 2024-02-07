@@ -7,6 +7,12 @@
 
 #include "Render/ARenderer.h"
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include <Core/TMemoryDebugOn.h>
+
 ALoadScreen::ALoadScreen()
 {
 	m_bIsLoadingScreen = TFALSE;

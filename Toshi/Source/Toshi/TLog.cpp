@@ -3,6 +3,12 @@
 
 #include <spdlog/sinks/stdout_color_sinks.h>
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include "Core/TMemoryDebugOn.h"
+
 namespace Toshi
 {
 	std::shared_ptr<spdlog::logger> TLog::s_CoreLogger;

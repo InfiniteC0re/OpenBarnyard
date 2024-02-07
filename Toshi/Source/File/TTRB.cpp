@@ -2,6 +2,12 @@
 #include "TTRB.h"
 #include "TTSF.h"
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include "Core/TMemoryDebugOn.h"
+
 namespace Toshi
 {
 	static constexpr TTRB::t_MemoryFuncAlloc s_cbDefAllocator = [](TTRB::AllocType alloctype, TUINT32 size, short unk1, TUINT32 unk2, void* userData)

@@ -2,6 +2,12 @@
 #include "TRenderInterface_DX8.h"
 #include "Render/TOrderTable.h"
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include "Core/TMemoryDebugOn.h"
+
 namespace Toshi {
 
 	TBOOL TOrderTable::Create(TShader* a_pShader, TINT a_iPriority)

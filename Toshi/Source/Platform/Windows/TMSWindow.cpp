@@ -7,6 +7,12 @@
 #include "Platform/Windows/Input/TInputDeviceMouse_Win.h"
 #include "Platform/DX8/TRenderInterface_DX8.h"
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include "Core/TMemoryDebugOn.h"
+
 namespace Toshi {
 
 	TDEFINE_CLASS(TMSWindow);

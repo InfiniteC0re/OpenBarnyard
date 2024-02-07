@@ -1,6 +1,12 @@
 #include "ToshiPCH.h"
 #include "TTSF.h"
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include "Core/TMemoryDebugOn.h"
+
 namespace Toshi {
 
 	TUINT32 TTSFI::Open(TFile* a_pFile)

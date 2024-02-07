@@ -2,6 +2,12 @@
 #include "AModelRepos.h"
 #include "Assets/AAssetLoader.h"
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include <Core/TMemoryDebugOn.h>
+
 TOSHI_NAMESPACE_USING
 
 TDEFINE_CLASS(AModelRepos);
