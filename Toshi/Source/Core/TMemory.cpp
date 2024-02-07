@@ -7,6 +7,7 @@
 #include "Core/TMemoryDebug.h"
 #include "Toshi/T2Allocator.h"
 #include "Toshi/T2DList.h"
+#include "Toshi/T2NamedPipeServer.h"
 #endif // TMEMORY_DEBUG
 
 #define MEM_TO_HOLE(PTR) (((Hole*)(((TUINT)PTR) + 4)) - 1)
@@ -105,6 +106,7 @@ namespace Toshi {
 	static T2DList<TMemoryAllocationDebugInfo> g_FreeDebugInfoSlots;
 	static T2DList<TMemoryAllocationDebugInfo> g_UsedDebugInfoSlots;
 	static TUINT g_uiDebugNumTrackedAllocations = 0;
+	static T2NamedPipeServer g_MemoryDebugPipeServer;
 
 #endif // TMEMORY_DEBUG
 
@@ -409,14 +411,17 @@ namespace Toshi {
 
 #ifdef TMEMORY_DEBUG
 
-			T2_FOREACH_BACK(g_UsedDebugInfoSlots, slot)
+			if (!g_UsedDebugInfoSlots.IsEmpty())
 			{
-				if (slot->GetMemory() == a_pMem)
+				T2_FOREACH_BACK(g_UsedDebugInfoSlots, slot)
 				{
-					slot->Remove();
-					g_FreeDebugInfoSlots.PushBack(slot);
-					g_uiDebugNumTrackedAllocations--;
-					break;
+					if (slot->GetMemory() == a_pMem)
+					{
+						slot->Remove();
+						g_FreeDebugInfoSlots.PushBack(slot);
+						g_uiDebugNumTrackedAllocations--;
+						break;
+					}
 				}
 			}
 
@@ -587,6 +592,47 @@ namespace Toshi {
 			uiResult = NUM_FREE_LISTS - 1;
 
 		return uiResult;
+	}
+
+	TBOOL TMemory::StartDebugPipe()
+	{
+#ifdef TMEMORY_DEBUG
+		static TUINT8 s_DebugInfoPipeBuffer[4 + 262 * TARRAYSIZE(g_MemoryDebugInfoSlots)];
+
+		g_MemoryDebugPipeServer.SetMemoryStreamUpdateCallback(
+			[](void*& a_rMemoryStream, TUINT& a_rDataSize) {
+				TUINT32* pNumAllocInfos = TREINTERPRETCAST(TUINT32*, s_DebugInfoPipeBuffer);
+				*pNumAllocInfos = g_uiDebugNumTrackedAllocations;
+
+				TUINT8* pAllocInfoCursor = TREINTERPRETCAST(TUINT8*, pNumAllocInfos + 1);
+
+				T2_FOREACH(g_UsedDebugInfoSlots, slot)
+				{
+					*(void**)pAllocInfoCursor = slot->GetMemory();
+					pAllocInfoCursor += 4;
+
+					*(TUINT16*)pAllocInfoCursor = (TUINT16)slot->GetLineNum();
+					pAllocInfoCursor += 2;
+
+					auto uiFileNameLength = TMath::Min(TUINT8(TStringManager::String8Length(slot->GetFileName())), TUINT8(255));
+
+					*(TUINT8*)pAllocInfoCursor = uiFileNameLength;
+					pAllocInfoCursor += 1;
+
+					TStringManager::String8Copy((char*)pAllocInfoCursor, slot->GetFileName(), uiFileNameLength);
+					pAllocInfoCursor += uiFileNameLength;
+				}
+
+				a_rMemoryStream = s_DebugInfoPipeBuffer;
+				a_rDataSize = TREINTERPRETCAST(TUINT8*, pAllocInfoCursor) - s_DebugInfoPipeBuffer;
+			}
+		);
+
+		return g_MemoryDebugPipeServer.Start("TOSHI-TMemory", 1000, 1, sizeof(s_DebugInfoPipeBuffer));
+#else
+		return TFALSE;
+#endif // TMEMORY_DEBUG
+
 	}
 
 	void TMemory::DumpMemInfo()

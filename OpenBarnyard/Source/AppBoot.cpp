@@ -86,6 +86,8 @@ TOSHI_ENTRY
 	LPSTR cmd = GetCommandLineA();
 
 	TUtil::ToshiCreate(cmd, 0, 0);
+	TMemory::StartDebugPipe();
+
 	g_oSystemManager.SetQuitCallback([]() {
 		TUtil::ToshiDestroy();
 		exit(0);

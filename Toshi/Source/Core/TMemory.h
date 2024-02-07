@@ -121,6 +121,8 @@ namespace Toshi {
 		static void Deinitialise();
 		static TUINT MapSizeToFreeList(TUINT a_uiSize);
 
+		static TBOOL StartDebugPipe();
+
 	private:
 		inline static class TMutex* ms_pGlobalMutex;
 
