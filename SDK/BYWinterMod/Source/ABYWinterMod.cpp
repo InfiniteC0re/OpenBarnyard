@@ -165,7 +165,7 @@ extern "C"
 	{
 		TMemory::Initialise(2 * 1024 * 1024, 0);
 		TFileManager::Create();
-		TLog::Create("BYWinterMod");
+		TUtil::Create();
 
 		return new ABYWinterMod();
 	}

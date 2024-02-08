@@ -30,7 +30,7 @@ void AAssetBuilder::Add(const TString8& a_FileName)
 	}
 	else
 	{
-		TOSHI_CRITICAL("Unable to read file {}", a_FileName.GetString());
+		TERROR("Unable to read file '%s'\n", a_FileName.GetString());
 	}
 }
 

@@ -1,8 +1,9 @@
 #pragma once
-#include "TSingleton.h"
-#include "TEvent.h"
-
 #include "File/TLogFile.h"
+#include "Toshi/TSingleton.h"
+#include "Toshi/TEvent.h"
+
+#include <Windows.h>
 
 namespace Toshi {
 
@@ -11,20 +12,36 @@ namespace Toshi {
 	class TUtil : public TSingleton<TUtil>
 	{
 	public:
+		struct LogEvent
+		{
+			constexpr LogEvent(TLogFile* a_pFile, TLogFile::Type a_eType, const char* a_szString) :
+				m_pFile(a_pFile),
+				m_eType(a_eType),
+				m_szString(a_szString)
+			{ }
+
+			TLogFile* m_pFile;
+			TLogFile::Type m_eType;
+			const char* m_szString;
+		};
+
+	public:
 		static TBOOL ToshiCreate(char* a_szCommandLine, TINT a_iArg2, TINT a_iArg3);
+		
 		static void ToshiDestroy();
 
 		static TBOOL CreateKernelInterface();
 
 		static void Create()
 		{
-			TUtil::CreateSingleton();
-			TUtil::GetSingletonSafe()->LogInitialise();
+			TUtil::CreateSingleton()->LogInitialise();
 			TUtil::CRCInitialise();
 		}
 		
 		static const char* GetTime();
+		
 		static void TrimLog(const char* fileExtension, size_t trimTo);
+
 		static void MemSet(void* ptr, size_t value, size_t size);
 		
 		static void* MemCopy(void* dst, const void* src, size_t size)
@@ -43,26 +60,27 @@ namespace Toshi {
 		}
 
 		static void LogInitialise();
-		static void Log(const char* format, ...);
-		static void Log(TLogFile::Type logtype, const char* format, ...);
-		static void LogConsole(const char* format, ...);
+
+		static void Log(const char* a_szFormat, ...);
+		static void Log(TLogFile::Type a_eLogType, const char* a_szFormat, ...);
+		
+		static void LogConsole(const char* a_szFormat, ...);
 		static void LogSet(TLogFile* a_logFile);
 
-		static TLogFile* GetLog()
-		{
-			return Toshi::TUtil::GetSingleton()->m_pLogFile2;
-		}
+		static TLogFile* GetCurrentLogFile() { return TUtil::GetSingleton()->m_pCurrentLogFile; }
+		
+		static TEmitter<TLogFile, LogEvent>& GetLogEmitter() { return TUtil::GetSingleton()->m_LogEmitter; }
 
 		static void LogDown()
 		{
-			TUtil* util = Toshi::TUtil::GetSingletonSafe();
-			util->m_pLogFile2->Down();
+			TUtil* util = TUtil::GetSingletonSafe();
+			util->m_pCurrentLogFile->Down();
 		}
 
 		static void LogUp()
 		{
-			TUtil* util = Toshi::TUtil::GetSingletonSafe();
-			util->m_pLogFile2->Up();
+			TUtil* util = TUtil::GetSingletonSafe();
+			util->m_pCurrentLogFile->Up();
 		}
 
 		static void CreateTPStringPool()
@@ -102,9 +120,9 @@ namespace Toshi {
 		inline static HANDLE ms_hGlobalMutex;
 
 	private:
-		TLogFile* m_pLogFile1;
-		TLogFile* m_pLogFile2;
-		TEmitter<TLogFile> m_Emitter;
+		TLogFile* m_pDefaultLogFile;
+		TLogFile* m_pCurrentLogFile;
+		TEmitter<TLogFile, LogEvent> m_LogEmitter;
 		
 	public:
 #pragma region CRC

@@ -75,7 +75,7 @@ TBOOL ACollisionInspector::AModelLoader_LoadTRBCallback(Toshi::TModel* a_pModel)
 		{
 			if (pCollision->uiNumMeshes > 0)
 			{
-				TOSHI_TRACE("Creating collision mesh through ASysShader...");
+				TDEBUG("Creating collision mesh through ASysShader...\n");
 
 				if (!ms_pCollisionMaterial)
 				{
@@ -135,11 +135,11 @@ TBOOL ACollisionInspector::AModelLoader_LoadTRBCallback(Toshi::TModel* a_pModel)
 							rLOD.ppMeshes[iOriginalNumMeshes + i] = pMesh;
 							rLOD.iNumMeshes += 1;
 
-							TOSHI_TRACE("  Done: {0} vertices, {1} indices", pMeshDef->NumVertices, pMeshDef->NumIndices);
+							TDEBUG("  Done: %u vertices, %u indices\n", pMeshDef->NumVertices, pMeshDef->NumIndices);
 						}
 						else
 						{
-							TOSHI_ERROR("  Unable to create collision mesh because is has too many indices!");
+							TERROR("  Unable to create collision mesh because is has too many indices!\n");
 						}
 					}
 				}

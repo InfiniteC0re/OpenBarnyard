@@ -238,7 +238,7 @@ namespace Toshi
             auto node = m_Root1.m_Ptr1;
             if (node == &m_Root1)
             {
-                TOSHI_ERROR("SlidingWindow::AllocSubstring: No free substrings!");
+                TERROR("SlidingWindow::AllocSubstring: No free substrings!\n");
                 TBREAK();
                 return;
             }

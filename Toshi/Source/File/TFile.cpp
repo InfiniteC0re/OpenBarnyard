@@ -30,11 +30,11 @@ namespace Toshi
 
 		if (pFile != TNULL)
 		{
-			TOSHI_TRACE("TFile::Create - Created file {0} with mode {1}", filename, mode);
+			TDEBUG("TFile::Create - Created file %s with mode %hu\n", filename.GetString(), mode);
 		}
 		else
 		{
-			TOSHI_TRACE("TFile::Create - Failed to create file {0} with mode {1}", filename, mode);
+			TDEBUG("TFile::Create - Failed to create file %s with mode %hu\n", filename.GetString(), mode);
 		}
 
 		return pFile;
@@ -81,8 +81,8 @@ namespace Toshi
 	{
 		// FUN_00685860
 		T2MutexLock mutexLock(m_Mutex);
-		TASSERT(TFileManager::FindFileSystem(pFS->GetName()) == TNULL, "This TFileSystem ({0}) is already mounted", pFS->GetName());
-		TASSERT(!pFS->IsLinked(), "TFileSystem shouldn't be linked");
+		TASSERT(TFileManager::FindFileSystem(pFS->GetName()) == TNULL);
+		TASSERT(!pFS->IsLinked());
 		
 		m_Invalidated.InsertTail(pFS);
 		InvalidateSystemPath();
@@ -125,16 +125,17 @@ namespace Toshi
 
 		if (pos >= 0)
 		{
-			TString8 str1;
-			TString8 str2;
+			TString8 fsName;
+			TString8 fileName;
 
-			str1.Copy(a_sName, pos);
-			str2.Copy(a_sName.GetString(pos + 1), -1);
-			TFileSystem* fs = FindFileSystem(str1);
+			fsName.Copy(a_sName, pos);
+			fileName.Copy(a_sName.GetString(pos + 1), -1);
 
-			if (fs != TNULL)
+			TFileSystem* pFileSystem = FindFileSystem(fsName);
+
+			if (pFileSystem != TNULL)
 			{
-				return fs->CreateFile(str2, flags);
+				return pFileSystem->CreateFile(fileName, flags);
 			}
 		}
 

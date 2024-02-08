@@ -32,6 +32,12 @@ namespace Toshi {
 			m_szBuffer[Size - 1] = '\0';
 		}
 
+		void FormatV(const char* a_szFormat, va_list a_Args)
+		{
+			T2String8::FormatV(m_szBuffer, Size, a_szFormat, a_Args);
+			m_szBuffer[Size - 1] = '\0';
+		}
+
 		void Append(const char* a_szString)
 		{
 			T2String8::Concat(m_szBuffer, a_szString);
@@ -52,5 +58,7 @@ namespace Toshi {
 	using T2FixedString128 = T2FixedString<128>;
 	using T2FixedString256 = T2FixedString<256>;
 	using T2FixedString512 = T2FixedString<512>;
+	using T2FixedString1024 = T2FixedString<1024>;
+	using T2FixedString2048 = T2FixedString<2048>;
 
 }

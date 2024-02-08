@@ -1,5 +1,6 @@
 #include "ToshiPCH.h"
 #include "TLogFile.h"
+#include "File/TFile.h"
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
@@ -7,8 +8,30 @@
 //-----------------------------------------------------------------------------
 #include "Core/TMemoryDebugOn.h"
 
-namespace Toshi
+static constexpr const char* cTypeStrings[]
 {
+	"Info",
+	"Warning",
+	"Error"
+};
+
+TSTATICASSERT(Toshi::TLogFile::Type_NUMOF == TARRAYSIZE(cTypeStrings));
+
+#if SUPPORT_COLOURED_LOGS
+
+static constexpr const char* cTypeColours[]
+{
+	"\033[32m",
+	"\033[93m",
+	"\033[91m"
+};
+
+TSTATICASSERT(Toshi::TLogFile::Type_NUMOF == TARRAYSIZE(cTypeColours));
+
+#endif // SUPPORT_COLOURED_LOGS
+
+namespace Toshi {
+
 	TLogFile::TLogFile()
 	{
 		m_pFile = TNULL;
@@ -19,6 +42,12 @@ namespace Toshi
 		*m_typeCounts = 0;
 		m_unk2 = TNULL;
 		m_unk3 = 0;
+	}
+
+	TLogFile::~TLogFile()
+	{
+		TASSERT(TNULL == m_pFile, "TFile must be NULL");
+		Close();
 	}
 
 	TLogFile::Error TLogFile::Create(const char* fileName, const char* str2, TBOOL writeExisting)
@@ -116,6 +145,27 @@ namespace Toshi
 	{
 		if (m_pFile != TNULL)
 		{
+#if SUPPORT_COLOURED_LOGS
+			if (m_bColouring)
+			{
+				m_pFile->CPrintf(cTypeColours[type]);
+			}
+
+			if (m_bIsSimpleMode)
+			{
+				if (m_bAllowIndentation)
+				{
+					m_pFile->CPrintf("[%s]: %s", cTypeStrings[type], m_LevelString);
+				}
+			}
+			else
+			{
+				char strTime[9];
+				_strtime(strTime);
+
+				m_pFile->CPrintf("[%s] [%s/%s] [%s]: %s", strTime, str1, str2 != TNULL ? str2 : "", cTypeStrings[type], !m_bAllowIndentation ? m_LevelString : "");
+			}
+#else // SUPPORT_COLOURED_LOGS
 			if (m_bIsSimpleMode)
 			{
 				if (m_bAllowIndentation)
@@ -125,16 +175,25 @@ namespace Toshi
 			}
 			else
 			{
-				char* strTime = { 0 };
-				strTime = _strtime(strTime);
+				char strTime[128];
+				_strtime(strTime);
+
 				m_pFile->CPrintf("%d [%s] [%s]: %s: %s: %s", m_iTotalLogCount, cTypeStrings[type], strTime, str1, str2 != TNULL ? str2 : "", !m_bAllowIndentation ? m_LevelString : "");
 			}
+#endif // SUPPORT_COLOURED_LOGS
 
 			va_list args;
 			va_start(args, format);
 			m_pFile->VCPrintf(format, args);
 			va_end(args);
-			m_pFile->CPrintf("\n");
+
+#if SUPPORT_COLOURED_LOGS
+			if (m_bColouring)
+			{
+				m_pFile->CPrintf("\033[0m");
+			}
+#endif // SUPPORT_COLOURED_LOGS
+
 			m_typeCounts[type]++;
 			m_iTotalLogCount++;
 		}

@@ -1,6 +1,4 @@
 #pragma once
-#include "Toshi/TLog.h"
-
 #include <type_traits>
 
 #define T2_FOREACH(vecName, iteratorName) \

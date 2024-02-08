@@ -1,6 +1,8 @@
 #include "ToshiPCH.h"
 #include "TThread_Win.h"
 
+#include <process.h>
+
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
 // Note: Should be the last include!

@@ -1,9 +1,10 @@
 #pragma once
-#include "File/TFile.h"
 
-namespace Toshi
-{
-	class TLogFile : public TSingleton<TLogFile>
+namespace Toshi {
+	
+	class TFile;
+
+	class TLogFile
 	{
 	private:
 		static constexpr uint32_t cLevelMax = 30;
@@ -17,15 +18,6 @@ namespace Toshi
 			Type_NUMOF,
 		};
 
-		static constexpr const char* cTypeStrings[]
-		{
-			"Info",
-			"Warning",
-			"Error"
-		};
-
-		TSTATICASSERT(Type_NUMOF == TARRAYSIZE(cTypeStrings));
-
 		enum class Error
 		{
 			OK,
@@ -35,12 +27,7 @@ namespace Toshi
 
 	public:
 		TLogFile();
-
-		~TLogFile()
-		{
-			TASSERT(TNULL == m_pFile, "TFile must be NULL");
-			Close();
-		}
+		~TLogFile();
 
 		Error Create(const char* fileName, const char* str2, TBOOL writeExisting);
 		void Close();
@@ -71,6 +58,13 @@ namespace Toshi
 			m_bIsSimpleMode = enable;
 		}
 
+#if SUPPORT_COLOURED_LOGS
+		void SetColouringMode(TBOOL a_bEnabled)
+		{
+			m_bColouring = a_bEnabled;
+		}
+#endif // SUPPORT_COLOURED_LOGS
+
 		int GetTypeCount(Type type) const
 		{
 			return m_typeCounts[type];
@@ -89,12 +83,16 @@ namespace Toshi
 	private:
 		TFile* m_pFile;                 // 0x00
 		int m_iTotalLogCount;           // 0x04
-		TBOOL m_bIsSimpleMode;           // 0x08
-		TBOOL m_bAllowIndentation;       // 0x09
+		TBOOL m_bIsSimpleMode;          // 0x08
+		TBOOL m_bAllowIndentation;      // 0x09
 		char m_LevelString[cLevelMax];  // 0x0A
 		uint32_t m_curLevel;            // 0x2C
 		int m_typeCounts[Type_NUMOF];   // 0x30
 		int* m_unk2;                    // 0x34
 		int m_unk3;                     // 0x38
+
+#if SUPPORT_COLOURED_LOGS
+		TBOOL m_bColouring = TTRUE;
+#endif // SUPPORT_COLOURED_LOGS
 	};
 }

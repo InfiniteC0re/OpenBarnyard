@@ -32,7 +32,6 @@ project "PPC"
 	{
 		"Source",
 		"%{wks.location}/Toshi/Source",
-		"%{IncludeDir.spdlog}"
 	}
 	
 	externalincludedirs 

@@ -32,13 +32,13 @@ namespace Toshi {
 				if (iErr == ERROR_NO_DATA)
 				{
 					DisconnectNamedPipe(m_pServer->m_hPipe);
-					TOSHI_TRACE("A client has disconnected from the '{0}' named pipe", m_pServer->m_szName);
+					TDEBUG("A client has disconnected from the '%s' named pipe\n", m_pServer->m_szName);
 					m_pServer->m_bHasClient = TFALSE;
 					bHasClient = TFALSE;
 				}
 				else if (iErr != ERROR_PIPE_CONNECTED)
 				{
-					TASSERT(TFALSE, "Failed ConnectNamedPipe: {0}", iErr);
+					TASSERT(TFALSE, "Failed ConnectNamedPipe");
 					bHasClient = TFALSE;
 				}
 			}
@@ -47,7 +47,7 @@ namespace Toshi {
 			{
 				if (m_pServer->m_bHasClient == TFALSE)
 				{
-					TOSHI_TRACE("A client has connected to the '{0}' named pipe", m_pServer->m_szName);
+					TDEBUG("A client has connected to the '%s' named pipe\n", m_pServer->m_szName);
 					m_pServer->m_bHasClient = TTRUE;
 				}
 
@@ -116,7 +116,7 @@ namespace Toshi {
 		m_pThread = new T2NamedPipeServerThread(this);
 		m_bStarted = m_pThread->Create(0, TThread::THREAD_PRIORITY_LOWEST, 0);
 
-		TOSHI_TRACE("Started named pipe '{0}'", m_szName);
+		TDEBUG("Started named pipe '%s'\n", m_szName);
 
 		TASSERT(TTRUE == m_bStarted);
 		return m_bStarted;

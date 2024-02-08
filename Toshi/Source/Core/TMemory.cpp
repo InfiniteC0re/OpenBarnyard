@@ -523,15 +523,13 @@ namespace Toshi {
 	{
 		va_list args;
 		va_start(args, a_szFormat);
+		
 		auto pBuffer = TStringManager::GetTempString8();
-		int iLen = vsprintf(pBuffer, a_szFormat, args);
+		vsprintf(pBuffer, a_szFormat, args);
 		OutputDebugStringA(pBuffer);
-		va_end(args);
+		TDEBUG(pBuffer);
 
-#ifdef TOSHI_DEBUG
-		pBuffer[iLen - 1] = '\0';
-		TOSHI_TRACE(pBuffer);
-#endif
+		va_end(args);
 	}
 
 	TBOOL TMemory::Initialise(TUINT a_uiHeapSize, TUINT a_uiReservedSize)

@@ -1,5 +1,4 @@
 IncludeDir = {}
-IncludeDir.spdlog = "%{wks.location}/Toshi/Vendor/spdlog/include"
 IncludeDir.fmod = "%{wks.location}/Toshi/Vendor/fmod/include"
 IncludeDir.trbf = "%{wks.location}/Tools/TRBF/Include"
 IncludeDir.libogg = "%{wks.location}/Toshi/Vendor/libogg/include"

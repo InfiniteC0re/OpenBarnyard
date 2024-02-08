@@ -4,10 +4,13 @@
 #include <Toshi/TPString8.h>
 #include <Toshi/TTask.h>
 #include <Toshi/TSystem.h>
-#include <Math/TVector4.h>
 #include <Toshi/T2Map.h>
 #include <Toshi/T2DList.h>
 #include <Toshi/T2SimpleArray.h>
+
+#include <File/TFile.h>
+
+#include <Math/TVector4.h>
 
 class ASoundManager :
 	public Toshi::TTask,

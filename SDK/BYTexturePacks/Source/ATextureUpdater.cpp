@@ -81,7 +81,7 @@ TBOOL MaterialLibrary_LoadTTLData(AMaterialLibrary* a_pMatLib, AMaterialLibrary:
 						}
 						else
 						{
-							TASSERT(!"ERROR: Couldn't read texture file: {0}", dumpFilePath);
+							TASSERT(!"ERROR: Couldn't read texture file");
 						}
 
 						pFile->Destroy();
@@ -236,7 +236,7 @@ void ATextureUpdater::ReloadTexture(const Toshi::TString8& a_rTextureName)
 		}
 		else
 		{
-			TASSERT(!"ERROR: Couldn't read texture file: {0}", texFilePath);
+			TASSERT(!"ERROR: Couldn't read texture file");
 		}
 
 		TFree(pFileData);
@@ -280,7 +280,7 @@ void ATextureUpdater::ReloadAllTextures()
 				}
 				else
 				{
-					TASSERT(!"Couldn't read texture file: {0}", texFilePath);
+					TASSERT(!"Couldn't read texture file");
 				}
 
 				TFree(pFileData);

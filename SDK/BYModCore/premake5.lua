@@ -44,7 +44,6 @@ project "BYModCore"
 		"Include",
 		"%{wks.location}/Toshi/Source",
 		"%{wks.location}/SDK/BYardSDK/Source",
-		"%{IncludeDir.spdlog}",
 		"%{IncludeDir.detours}"
 	}
 	

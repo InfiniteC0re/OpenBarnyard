@@ -37,7 +37,6 @@ project "OpenBarnyard"
 		"Source",
 		"%{wks.location}/Toshi/Source",
 		"%{wks.location}/Shared/Source",
-		"%{IncludeDir.spdlog}",
 		"%{IncludeDir.fmod}",
 		"%{IncludeDir.bink}",
 		"%{IncludeDir.libtheora}",

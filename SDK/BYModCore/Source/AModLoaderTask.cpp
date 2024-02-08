@@ -90,17 +90,17 @@ void AModLoaderTask::LoadMods()
 
 				if (pModInstance)
 				{
-					TOSHI_INFO("Trying to initialise '{0}'", pModInstance->GetName());
+					TINFO("Trying to initialise '%s'\n", pModInstance->GetName());
 
 					if (pModInstance->OnLoad())
 					{
-						TOSHI_INFO("  Successfully initialised!");
+						TINFO("  Successfully initialised!\n");
 						m_LoadedMods.PushBack(pModInstance);
 						m_uiNumMods += 1;
 					}
 					else
 					{
-						TOSHI_ERROR("  Couldn't initialise!");
+						TERROR("  Couldn't initialise!\n");
 						delete pModInstance;
 						FreeLibrary(hModModule);
 					}
@@ -108,12 +108,12 @@ void AModLoaderTask::LoadMods()
 				else
 				{
 
-					TOSHI_ERROR("{0}: CreateModInstance returned TFALSE!", dllPath);
+					TERROR("%s: CreateModInstance returned TFALSE!\n", dllPath);
 				}
 			}
 			else
 			{
-				TOSHI_ERROR("{0}: CreateModInstance is not found!", dllPath);
+				TERROR("%s: CreateModInstance is not found!\n", dllPath);
 				FreeLibrary(hModModule);
 			}
 		}

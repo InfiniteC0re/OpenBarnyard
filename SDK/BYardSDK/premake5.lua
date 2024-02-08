@@ -39,7 +39,6 @@ project "BYardSDK"
 		"Source",
 		"%{wks.location}/Toshi/Source",
 		"%{wks.location}/OpenBarnyard/Source",
-		"%{IncludeDir.spdlog}",
 		"%{IncludeDir.detours}"
 	}
 	

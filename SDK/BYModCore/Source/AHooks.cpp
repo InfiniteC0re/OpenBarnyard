@@ -72,11 +72,11 @@ MEMBER_HOOK(0x00662d90, AOptions, AOptions_IsResolutionCompatible, TBOOL, TUINT 
 					RegSetValueExA(hkey, "Height", NULL, REG_DWORD_LITTLE_ENDIAN, (BYTE*)&a_uiHeight, sizeof(a_uiHeight));
 					RegCloseKey(hkey);
 
-					TOSHI_INFO("Applied widescreen patch.");
+					TINFO("Applied widescreen patch.\n");
 				}
 				else
 				{
-					TOSHI_ERROR("Unable to open Software\\THQ\\Barnyard for writing (Status: {0})", status);
+					TERROR("Unable to open Software\\THQ\\Barnyard for writing (Status: %d)\n", status);
 				}
 			}
 		}
@@ -226,11 +226,6 @@ MEMBER_HOOK(0x006c1d40, TModelRegistry, TModelRegistry_CreateModel, TModelRegist
 		if (pFoundAsset) break;
 	}
 
-	if (TStringManager::String8FindString(a_szFileName, "busha.trb"))
-	{
-		TOSHI_INFO("Warning!");
-	}
-
 	return CallOriginal(a_szFileName, a_rModelRef, pFoundAsset ? pFoundAsset : a_pAssetTRB);
 }
 
@@ -275,11 +270,6 @@ MEMBER_HOOK(0x006154c0, ARenderer, ARenderer_CreateTRender, TBOOL)
 	TRenderInterface::SetSingletonExplicit(
 		THookedRenderD3DInterface::GetSingleton()
 	);
-
-	char* pTreesInSceneInfo = (char*)TMalloc(68 * 2048);
-
-	TOSHI_INFO("Begin: {}", fmt::ptr(pTreesInSceneInfo));
-	TOSHI_INFO("End: {}", fmt::ptr(pTreesInSceneInfo + 68 * 2048));
 
 	AGlobalModLoaderTask::Get()->OnRenderInterfaceReady();
 

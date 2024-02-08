@@ -24,28 +24,28 @@ public:
 		}
 		else
 		{
-			TOSHI_TRACE("Num arguments: {}", argc);
+			TDEBUG("Num arguments: %i\n", argc);
 
 			for (TINT i = 1; i < argc; i++)
 			{
 				if (*m_argv == TNULL) return;
 
-				TOSHI_TRACE("Parsing argument {}", *m_argv);
+				TDEBUG("Parsing argument %s\n", *m_argv);
 
 				if (Toshi::TStringManager::String8Compare(*m_argv, "-c") == 0)
 				{
-					TOSHI_TRACE("Found -c parameter");
+					TDEBUG("Found -c parameter\n");
 					m_mode = Mode::Compile;
 					ParseString(m_inPath);
 				}
 				else if (Toshi::TStringManager::String8Compare(*m_argv, "-o") == 0)
 				{
-					TOSHI_TRACE("Found -o parameter");
+					TDEBUG("Found -o parameter\n");
 					ParseString(m_outPath);
 				}
 				else if (Toshi::TStringManager::String8Compare(*m_argv, "-btec") == 0)
 				{
-					TOSHI_TRACE("Found -btec parameter");
+					TDEBUG("Found -btec parameter\n");
 					m_useCompression = TTRUE;
 				}
 
@@ -68,7 +68,7 @@ private:
 		{
 			if (!a_szDefault)
 			{
-				TOSHI_ERROR("Invalid usage");
+				TERROR("Invalid usage\n");
 				a_rOut = TNULL;
 				exit(1);
 			}

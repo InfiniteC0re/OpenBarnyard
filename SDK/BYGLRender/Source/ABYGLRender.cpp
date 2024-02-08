@@ -451,7 +451,7 @@ extern "C"
 	{
 		TMemory::Initialise(2 * 1024 * 1024, 0);
 		TFileManager::Create();
-		TLog::Create("BYGLRender");
+		TUtil::Create();
 
 		return new ABYGLRender();
 	}

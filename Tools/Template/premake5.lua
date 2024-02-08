@@ -27,7 +27,6 @@ project "ToolTemplate"
 	{
 		"Source",
 		"%{wks.location}/Toshi/Source",
-		"%{IncludeDir.spdlog}"
 	}
 	
 	defines

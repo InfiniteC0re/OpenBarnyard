@@ -48,18 +48,6 @@ namespace Toshi
         HANDLE m_Handle;   // 0x1C
     };
 
-    class TNativeFileSystem : public TFileSystem
-    {
-    public:
-        TNativeFileSystem(const char* name);
-
-        virtual TFile* CreateFile(TString8 const& fn, uint32_t flags) override;
-        virtual void DestroyFile(TFile*) override;
-        virtual TString8 MakeInternalPath(TString8 const&) { return {}; }
-        virtual TBOOL MakeDirectory(TString8 const&) override;
-        virtual TBOOL GetNextFile(TString8& fileName, uint32_t flags);
-    };
-
     class TFile
     {
     public:

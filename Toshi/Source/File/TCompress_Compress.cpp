@@ -46,8 +46,8 @@ namespace Toshi
     int TCompress::WriteOffset(uint32_t length, int offset, char*& data, TFile* file)
     {
         // 0068a8c0
-        TASSERT(length <= maxlength, "Length is greater than {0}", maxlength);
-        TASSERT(offset <= usemaxoffset, "Offset is greater than {0}", usemaxoffset);
+        TASSERT(length <= maxlength);
+        TASSERT(offset <= usemaxoffset);
 
         int writtenSize = 0;
         uint32_t dataSize = length;

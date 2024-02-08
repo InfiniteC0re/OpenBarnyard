@@ -26,6 +26,8 @@ project "Toshi"
 		"Source/Core/**.cpp",
 		"Source/Toshi/**.h",
 		"Source/Toshi/**.cpp",
+		"Source/ToshiTools/**.h",
+		"Source/ToshiTools/**.cpp",
 		"Source/File/**.h",
 		"Source/File/**.cpp",
 		"Source/Math/**.h",
@@ -46,7 +48,6 @@ project "Toshi"
 	{
 		"Source",
 		"Icons",
-		"%{IncludeDir.spdlog}",
 		"%{IncludeDir.fmod}",
 		"%{IncludeDir.stb}"
 	}
@@ -79,6 +80,7 @@ project "Toshi"
 		{
 			"Source/Platform/Windows/**.cpp",
 			"Source/Platform/Windows/**.c",
+			"Source/Platform/Windows/**.h",
 			"Source/Platform/DX8/**.cpp",
 			"Source/Platform/DX8/**.c",
 			"Icons/*.ico",

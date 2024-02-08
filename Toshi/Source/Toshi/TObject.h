@@ -1,8 +1,13 @@
 #pragma once
 #include "TClass.h"
-#include "TLog.h"
 
 #include <type_traits>
+
+//-----------------------------------------------------------------------------
+// Disabled memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include <Core/TMemoryDebugOff.h>
 
 #define TClassObjectName ms_oClass
 #define TGetClass(CLASS) CLASS::TClassObjectName
@@ -58,8 +63,8 @@ public: \
 	TSTATICASSERT(CLASS::IsTObject); \
 	TSTATICASSERT(std::is_base_of<CLASS::Parent_t, CLASS>::value && !std::is_same<CLASS::Parent_t, CLASS>::value); \
 	Toshi::TClass*  CLASS::GetClass() { return CLASS::GetClassStatic(); } \
-	Toshi::TObject* CLASS::CreateTObject() { TASSERT2(TFALSE, "This class cannot be created at runtime!"); return TNULL; } \
-	Toshi::TObject* CLASS::CreateTObjectInPlace(void* a_pPtr) { TASSERT2(TFALSE, "This class cannot be created at runtime!"); return TNULL; }
+	Toshi::TObject* CLASS::CreateTObject() { TASSERT(TFALSE, "This class cannot be created at runtime!"); return TNULL; } \
+	Toshi::TObject* CLASS::CreateTObjectInPlace(void* a_pPtr) { TASSERT(TFALSE, "This class cannot be created at runtime!"); return TNULL; }
 
 //-----------------------------------------------------------------------------
 // Defines core methods of TObject and allows creating object at runtime.

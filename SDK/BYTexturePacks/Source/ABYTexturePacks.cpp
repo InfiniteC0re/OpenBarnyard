@@ -114,7 +114,7 @@ extern "C"
 	{
 		TMemory::Initialise(64 * 1024 * 1024, 0);
 		TFileManager::Create();
-		TLog::Create("ABYTexturePacks");
+		TUtil::Create();
 
 		g_LoadMutex.Create();
 

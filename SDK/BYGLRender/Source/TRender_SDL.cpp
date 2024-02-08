@@ -85,7 +85,7 @@ namespace Toshi {
 
 		if (bResult)
 		{
-			TOSHI_INFO("Creating TRenderSDL");
+			TINFO("Creating TRenderSDL\n");
 
 			SDL_Init(SDL_INIT_VIDEO);
 			SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
@@ -121,12 +121,12 @@ namespace Toshi {
 				SDL_GL_MakeCurrent(m_Window.GetNativeWindow(), m_GLContext);
 
 				GLenum glewStatus = glewInit();
-				TASSERT(glewStatus == GLEW_OK, glewGetErrorString(glewStatus));
+				TASSERT(glewStatus == GLEW_OK, (const char*)glewGetErrorString(glewStatus));
 
 				return TTRUE;
 			}
 
-			TOSHI_CRITICAL("Failed to create Window");
+			TERROR("Failed to create Window\n");
 		}
 
 		return TFALSE;
@@ -182,8 +182,8 @@ namespace Toshi {
 			GLchar* log = new GLchar[logLength - 1];
 			glGetShaderInfoLog(shader.GetId(), logLength - 1, nullptr, log);
 
-			TOSHI_ERROR("Unable to compile shader");
-			TOSHI_ERROR("Error: {0}", log);
+			TERROR("Unable to compile shader\n");
+			TERROR("Error: %s\n", log);
 			delete[] log;
 		}
 

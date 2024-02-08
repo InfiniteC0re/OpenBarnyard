@@ -972,11 +972,11 @@ namespace PTRB
 		{
 			if (count > 1)
 			{
-				TOSHI_TRACE("Compressing progress: 0%");
+				TDEBUG("Compressing progress: 0%\n");
 			}
 			else
 			{
-				TOSHI_TRACE("Started BTEC compression...");
+				TDEBUG("Started BTEC compression...\n");
 			}
 		}
 		
@@ -991,11 +991,11 @@ namespace PTRB
 
 				if (count > 1)
 				{
-					TOSHI_TRACE("Compressing progress: {0:.1f}%", (double)ready / count * 100);
+					TDEBUG("Compressing progress: %.1f\n", (double)ready / count * 100);
 				}
 				else
 				{
-					TOSHI_TRACE("BTEC compression completed...");
+					TDEBUG("BTEC compression completed...\n");
 				}
 			}
 			else

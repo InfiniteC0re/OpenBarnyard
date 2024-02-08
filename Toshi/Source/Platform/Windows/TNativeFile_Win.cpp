@@ -7,28 +7,7 @@
 //-----------------------------------------------------------------------------
 #include "Core/TMemoryDebugOn.h"
 
-namespace Toshi
-{
-    TBOOL TFileManager::Create()
-    {
-        CreateCommon();
-        auto fileManager = TFileManager::GetSingletonSafe();
-
-        CHAR currentDir[0x200];
-        DWORD dirLength = GetCurrentDirectoryA(sizeof(currentDir), currentDir);
-        TASSERT(dirLength > 0, "The directory's length is 0");
-
-        TFileSystem* pFileSystem;
-        pFileSystem = new TNativeFileSystem("local");
-        pFileSystem->SetPrefix(currentDir);
-        pFileSystem = new TNativeFileSystem("abs");
-        pFileSystem->SetPrefix("");
-        pFileSystem = new TNativeFileSystem("null");
-
-        fileManager->SetSystemPath("local");
-
-        return TTRUE;
-    }
+namespace Toshi {
 
 #pragma region TNativeFileSystem
 
@@ -502,7 +481,7 @@ namespace Toshi
 
         if (dwDesiredAccess == 0)
         {
-            TOSHI_WARN("WARNING: File created with no access mode, assuming WRITEONLY\n");
+            TWARN("WARNING: File created with no access mode, assuming WRITEONLY\n");
             dwDesiredAccess = GENERIC_WRITE;
         }
 

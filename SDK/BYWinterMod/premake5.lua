@@ -46,7 +46,6 @@ project "BYWinterMod"
 		"%{wks.location}/SDK/BYardSDK/Source",
 		"%{wks.location}/SDK/BYModCore/Include",
 		"%{wks.location}/SDK/BYTexturePacks/Include",
-		"%{IncludeDir.spdlog}",
 		"%{IncludeDir.detours}"
 	}
 	

@@ -94,7 +94,7 @@ extern "C"
 	{
 		TMemory::Initialise(8 * 1024 * 1024, 0);
 		TFileManager::Create();
-		TLog::Create("BYSpeedrunHelper");
+		TUtil::Create();
 
 		return new ABYSpeedrunHelper();
 	}

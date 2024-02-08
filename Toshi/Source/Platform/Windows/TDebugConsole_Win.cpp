@@ -24,7 +24,7 @@ namespace Toshi
 		{
 			if (IsVisible())
 			{
-				TOSHI_WARN("Press any key to exit...");
+				TWARN("Press any key to exit...\n");
 				_getch();
 			}
 		}

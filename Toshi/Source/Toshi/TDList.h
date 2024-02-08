@@ -46,27 +46,11 @@ namespace Toshi {
 			}
 
 			TBOOL IsLinked() const { return this != m_Next; }
+
 			void Reset() { m_Next = this; m_Prev = this; }
 
-			void InsertAfter(TNode* node)
-			{
-				TASSERT(!IsLinked(), "TNode::InsertAfter - TNode shouldn't be linked");
-
-				m_Prev = node;
-				m_Next = node->m_Next;
-				node->m_Next = this;
-				m_Next->m_Prev = this;
-			}
-
-			void InsertBefore(TNode* node)
-			{
-				TASSERT(!IsLinked(), "TNode::InsertBefore - TNode shouldn't be linked");
-
-				m_Next = node;
-				m_Prev = node->m_Prev;
-				node->m_Prev = this;
-				m_Prev->m_Next = this;
-			}
+			void InsertAfter(TNode* node);
+			void InsertBefore(TNode* node);
 
 			void Remove()
 			{
@@ -181,27 +165,8 @@ namespace Toshi {
 				SetPriority(0);
 			}
 
-			void InsertAfter(TNode* node)
-			{
-				TASSERT(!IsLinked(), "TNode::InsertAfter - TNode shouldn't be linked");
-
-				m_iPriority = -0x8000;
-				m_Prev = node;
-				m_Next = node->m_Next;
-				node->m_Next = this;
-				m_Next->m_Prev = this;
-			}
-
-			void InsertBefore(TNode* node)
-			{
-				TASSERT(!IsLinked(), "TNode::InsertBefore - TNode shouldn't be linked");
-
-				m_iPriority = 0x7FFF;
-				m_Next = node;
-				m_Prev = node->m_Prev;
-				node->m_Prev = this;
-				m_Prev->m_Next = this;
-			}
+			void InsertAfter(TNode* node);
+			void InsertBefore(TNode* node);
 
 			void Remove()
 			{
@@ -255,54 +220,10 @@ namespace Toshi {
 		TNode* Begin() { return m_Next; }
 		TNode* End() { return &GetRoot(); }
 
-		void Insert(TNode* node, int iPriority)
-		{
-			node->SetPriority(iPriority);
-			Insert(node);
-		}
+		void Insert(TNode* node, int iPriority);
+		void Insert(TNode* node);
 
-		void Insert(TNode* node)
-		{
-			int priority = node->m_iPriority;
-
-			if (priority < 0)
-			{
-				TNode* curNode = GetRoot().m_Next;
-
-				while (curNode != &GetRoot() && curNode->m_iPriority <= priority)
-				{
-					curNode = curNode->m_Next;
-				}
-
-				node->m_Next = curNode;
-				node->m_Prev = curNode->m_Prev;
-				curNode->m_Prev = node;
-				node->m_Prev->m_Next = node;
-			}
-			else
-			{
-				TNode* curNode = GetRoot().m_Prev;
-				while (curNode != &GetRoot() && priority < curNode->m_iPriority)
-				{
-					curNode = curNode->m_Prev;
-				}
-				node->m_Prev = curNode;
-				node->m_Next = curNode->m_Next;
-				curNode->m_Next = node;
-				node->m_Next->m_Prev = node;
-			}
-		}
-
-		void RemoveAll()
-		{
-			auto pNode = m_Next;
-
-			while (pNode != &GetRoot())
-			{
-				pNode->Remove();
-				pNode = m_Next;
-			}
-		}
+		void RemoveAll();
 
 	protected:
 		TGenericPriList()
@@ -346,10 +267,10 @@ namespace Toshi {
 
 		T* Head()                    { return TGenericDList::Head()->As<T>(); }
 		T* Tail()                    { return TGenericDList::Tail()->As<T>(); }
-		Iterator_t Begin() { return TGenericDList::Begin()->As<T>(); }
-		Iterator_t End()   { return TGenericDList::End()->As<T>(); }
-		TBOOL IsEmpty()               { return TGenericDList::IsEmpty(); }
-		TBOOL IsLinked()              { return m_Root.IsLinked(); }
+		Iterator_t Begin()           { return TGenericDList::Begin()->As<T>(); }
+		Iterator_t End()             { return TGenericDList::End()->As<T>(); }
+		TBOOL IsEmpty()              { return TGenericDList::IsEmpty(); }
+		TBOOL IsLinked()             { return m_Root.IsLinked(); }
 		void RemoveHead()            { TGenericDList::RemoveHead(); }
 		void RemoveTail()            { TGenericDList::RemoveTail(); }
 	};

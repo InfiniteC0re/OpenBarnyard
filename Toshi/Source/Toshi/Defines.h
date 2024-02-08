@@ -38,18 +38,18 @@ constexpr TUINT32 TMAKEFOUR(const char str[4])
 #define TOSHI_NAMESPACE_USING using namespace Toshi;
 
 #ifdef TOSHI_DIST
-#define TOSHI_NO_LOGS
+	#define TOSHI_NO_LOGS
 #endif
 
 #ifdef TOSHI_DEBUG
-#ifdef TOSHI_SKU_WINDOWS
-#define TBREAK() __debugbreak()
-#define TOSHI_ENABLE_ASSERTS
-#endif // TOSHI_SKU_WINDOWS
+	#ifdef TOSHI_SKU_WINDOWS
+		#define TBREAK() __debugbreak()
+		#define TOSHI_ENABLE_ASSERTS
+	#endif // TOSHI_SKU_WINDOWS
 #endif // TOSHI_DEBUG
 
 #ifndef TBREAK
-#define TBREAK() 
+	#define TBREAK()
 #endif // TBREAK
 
 #define TSTATICASSERT(...) static_assert(__VA_ARGS__, "Compile time assert failed: " #__VA_ARGS__)
@@ -60,73 +60,33 @@ constexpr TUINT32 TMAKEFOUR(const char str[4])
 #define TFORCEINLINE __forceinline
 
 #ifdef TOSHI_ENABLE_ASSERTS
-
-typedef enum {
-	Ignore,
-	Break
-} AssertionAction;
-
-AssertionAction AssertionCallback(const char* file, int line, const char* expression);
-
-#define TFIREFLAG static TBOOL FIREFLAG = TFALSE; if (!FIREFLAG)
-#define TWIP() { TFIREFLAG { TOSHI_ERROR("Work in progress: {0}, at line {1}", __FUNCTION__, __LINE__); FIREFLAG = TTRUE; } }
-#define TWIP_D(DESC) { TFIREFLAG { TOSHI_ERROR("Work in progress: {0} ({1}, at line {2})", DESC, __FUNCTION__, __LINE__); FIREFLAG = TTRUE; } }
-#define TTODO(DESC) { TFIREFLAG { TOSHI_ERROR("TODO: {0} ({1}, at line {2})", DESC, __FUNCTION__, __LINE__); FIREFLAG = TTRUE; } }
-#define TFIXME(DESC) { TFIREFLAG { TOSHI_WARN("FIXME: {0} ({1}, at line {2})", DESC, __FUNCTION__, __LINE__); FIREFLAG = TTRUE; } }
-#define TIMPLEMENT() { TFIREFLAG { TOSHI_ERROR("{0} is not implemented", __FUNCTION__); FIREFLAG = TTRUE; } }
-#define TIMPLEMENT_D(DESC) { TFIREFLAG { TOSHI_ERROR("{0} is not implemented: {1}", __FUNCTION__, DESC); FIREFLAG = TTRUE; } }
-#define TASSERT_IMPL(X, ...) { TFIREFLAG if (!(X)) { TOSHI_ERROR(__VA_ARGS__); if (::AssertionCallback(__FILE__, __LINE__, #X) == AssertionAction::Break) TBREAK(); FIREFLAG = TTRUE; } }
-#define TASSERT1(X) TASSERT_IMPL(X, "TASSERT: {0} ({1}, at line {2})", #X, __FILE__, __LINE__)
-#define TASSERT2(X, TEXT) TASSERT_IMPL(X, TEXT)
-#define TASSERT3(X, TEXT, P1) TASSERT_IMPL(X, TEXT, P1)
-#define TASSERT(...) CALL_OVERLOAD(TASSERT, __VA_ARGS__)
-#define TVALIDPTR(PTR) TASSERT(PTR)
-
+	#define TFIREFLAG static TBOOL FIREFLAG = TFALSE; if (!FIREFLAG)
+	#define TWIP() { TFIREFLAG { TERROR("Work in progress: '%s', at line %d\n", __FUNCTION__, __LINE__); FIREFLAG = TTRUE; } }
+	#define TTODO(DESC) { TFIREFLAG { TERROR("TODO: %s ('%s', at line %d)\n", DESC, __FUNCTION__, __LINE__); FIREFLAG = TTRUE; } }
+	#define TFIXME(DESC) { TFIREFLAG { TWARN("FIXME: %s ('%s', at line %d)\n", DESC, __FUNCTION__, __LINE__); FIREFLAG = TTRUE; } }
+	#define TIMPLEMENT() { TFIREFLAG { TERROR("%s is not implemented\n", __FUNCTION__); FIREFLAG = TTRUE; } }
+	#define TIMPLEMENT_D(DESC) { TFIREFLAG { TERROR("%s is not implemented: %s\n", __FUNCTION__, DESC); FIREFLAG = TTRUE; } }
+	#define TASSERT(X, ...) { TFIREFLAG if (!(X)) { if (1 == TDebug_AssertHandler(#X, __FILE__, __LINE__, __VA_ARGS__)) TBREAK(); FIREFLAG = TTRUE; } }
+	#define TVALIDPTR(PTR) TASSERT(TDebug_IsValidAddress(PTR))
 #else // TOSHI_ENABLE_ASSERTS
-
-#define TWIP()
-#define TWIP_D(DESC)
-#define TTODO(DESC)
-#define TFIXME(DESC)
-#define TIMPLEMENT()
-#define TIMPLEMENT_D(DESC)
-#define TASSERT1(x, ...)
-#define TASSERT2(x, ...)
-#define TASSERT3(x, ...)
-#define TASSERT(x, ...)
-#define TVALIDPTR(PTR)
-
+	#define TWIP()
+	#define TTODO(DESC)
+	#define TFIXME(DESC)
+	#define TIMPLEMENT()
+	#define TIMPLEMENT_D(DESC)
+	#define TASSERT(X, ...)
+	#define TVALIDPTR(PTR)
 #endif // TOSHI_ENABLE_ASSERTS
 
 
 #ifndef TOSHI_NO_LOGS
-
-#ifdef TOSHI_USER_ENGINE
-
-// Engine log macros
-#define TOSHI_INFO(...) Toshi::TLog::GetCoreLogger()->info(__VA_ARGS__)
-#define TOSHI_WARN(...) Toshi::TLog::GetCoreLogger()->warn(__VA_ARGS__)
-#define TOSHI_ERROR(...) Toshi::TLog::GetCoreLogger()->error(__VA_ARGS__)
-#define TOSHI_TRACE(...) Toshi::TLog::GetCoreLogger()->trace(__VA_ARGS__)
-#define TOSHI_CRITICAL(...) Toshi::TLog::GetCoreLogger()->critical(__VA_ARGS__)
-
-#else
-
-// App log macros
-#define TOSHI_INFO(...) Toshi::TLog::GetAppLogger()->info(__VA_ARGS__)
-#define TOSHI_WARN(...) Toshi::TLog::GetAppLogger()->warn(__VA_ARGS__)
-#define TOSHI_ERROR(...) Toshi::TLog::GetAppLogger()->error(__VA_ARGS__)
-#define TOSHI_TRACE(...) Toshi::TLog::GetAppLogger()->trace(__VA_ARGS__)
-#define TOSHI_CRITICAL(...) Toshi::TLog::GetAppLogger()->critical(__VA_ARGS__)
-
-#endif
-
-#else
-
-#define TOSHI_INFO(...)
-#define TOSHI_WARN(...)
-#define TOSHI_ERROR(...)
-#define TOSHI_TRACE(...)
-#define TOSHI_CRITICAL(...)
-
-#endif
+	#define TINFO(...) Toshi::TUtil::Log(Toshi::TLogFile::Type_Info, __VA_ARGS__)
+	#define TWARN(...) Toshi::TUtil::Log(Toshi::TLogFile::Type_Warning, __VA_ARGS__)
+	#define TERROR(...) Toshi::TUtil::Log(Toshi::TLogFile::Type_Error, __VA_ARGS__)
+	#define TDEBUG(...) TDebug_FinalPrintf(__VA_ARGS__)
+#else // TOSHI_NO_LOGS
+	#define TINFO(...)
+	#define TWARN(...)
+	#define TERROR(...)
+	#define TDEBUG(...)
+#endif // TOSHI_NO_LOGS

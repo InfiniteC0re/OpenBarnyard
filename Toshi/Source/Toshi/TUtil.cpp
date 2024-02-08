@@ -2,7 +2,12 @@
 #include "TUtil.h"
 #include "Toshi/TSystem.h"
 #include "Toshi/TError.h"
+#include "Toshi/T2FixedString.h"
 #include "Render/TModelRegistry.h"
+
+#ifdef TOSHI_DEBUG
+#include <Platform/Windows/TConsoleFile_Win.h>
+#endif
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
@@ -10,109 +15,128 @@
 //-----------------------------------------------------------------------------
 #include "Core/TMemoryDebugOn.h"
 
-namespace Toshi
-{
+namespace Toshi {
+
 	void TUtil::LogInitialise()
 	{
 #ifndef TOSHI_NO_LOGS
-		TLogFile* logfile = new TLogFile();
-		Toshi::TUtil::GetSingleton()->m_pLogFile1 = logfile;
-		Toshi::TUtil::GetSingleton()->m_pLogFile2 = logfile;
+		TLogFile* logfile = new TLogFile;
+		TUtil::GetSingleton()->m_pDefaultLogFile = logfile;
+		TUtil::GetSingleton()->m_pCurrentLogFile = logfile;
 		
 		TrimLog("*.log", 9);
+		
 		time_t seconds;
 		time(&seconds);
-
 		tm* time = gmtime(&seconds);
 
 		char filename[256];
-		T2String8::Format(filename, "barnyard_%d%02d%02d_%02d_%02d_%02d.log", time->tm_year + 1900, time->tm_mon + 1, time->tm_mday, time->tm_hour, time->tm_min, time->tm_sec);
-		GetLog()->Create(filename, "Toshi 2.0", TFALSE);
-		GetLog()->AllowIndentation(TTRUE);
-		GetLog()->SetSimpleMode(TTRUE);
-#endif
-	}
-
-	void TUtil::Log(const char* format, ...)
-	{
-		if (GetLog() != TNULL)
-		{
-			char str[2048];
-
-			va_list args;
-			va_start(args, format);
-			int size = T2String8::FormatV(str, sizeof(str), format, args);
-			va_end(args);
 
 #ifdef TOSHI_DEBUG
-			str[size] = '\n';
-			str[size + 1] = '\0';
-			OutputDebugStringA(str);
-			str[size] = '\0';
-			TOSHI_TRACE(str);
-#endif
 
-			GetLog()->Log(TLogFile::Type_Info, "Toshi", "Kernel", str);
-			GetSingleton()->m_Emitter.Throw(GetLog());
-		}
+		const char* szFileSystemName = "console";
+
+		// Create console file system that will be able to open console for text output
+		new TConsoleFileSystem("console");
+
+#else  // TOSHI_DEBUG
+
+		const char* szFileSystemName = "local";
+
+#endif // TOSHI_DEBUG
+
+		T2String8::Format(
+			filename,
+			"%s:barnyard_%d%02d%02d_%02d_%02d_%02d.log",
+			szFileSystemName,
+			time->tm_year + 1900,
+			time->tm_mon + 1,
+			time->tm_mday,
+			time->tm_hour,
+			time->tm_min,
+			time->tm_sec
+		);
+		
+		GetCurrentLogFile()->Create(filename, "Toshi 2.0", TFALSE);
+		GetCurrentLogFile()->AllowIndentation(TTRUE);
+		GetCurrentLogFile()->SetSimpleMode(TFALSE);
+#else  // TOSHI_NO_LOGS
+		TUtil::GetSingleton()->m_pDefaultLogFile = TNULL;
+		TUtil::GetSingleton()->m_pCurrentLogFile = TNULL;
+#endif // TOSHI_NO_LOGS
 	}
 
-	void TUtil::Log(TLogFile::Type logtype, const char* format, ...)
+	void TUtil::Log(const char* a_szFormat, ...)
 	{
-
-		if (GetLog() != TNULL)
+		if (IsSingletonCreated() && GetCurrentLogFile())
 		{
+			auto pLogFile = GetCurrentLogFile();
+
+			T2FixedString2048 formatString;
+
 			va_list args;
-			va_start(args, format);
-
-			char str[2048];
-			int size = T2String8::FormatV(str, sizeof(str), format, args);
-
-#ifdef TOSHI_DEBUG
-			str[size] = '\n';
-			str[size + 1] = '\0';
-			OutputDebugStringA(str);
-			str[size] = '\0';
-			TOSHI_TRACE(str);
-#endif
-
+			va_start(args, a_szFormat);
+			formatString.FormatV(a_szFormat, args);
 			va_end(args);
 
-			GetLog()->Log(logtype, "Toshi", "Kernel", format, str);
-			GetSingleton()->m_Emitter.Throw(GetLog());
+			pLogFile->Log(TLogFile::Type_Info, "Toshi", "Kernel", formatString.Get());
+			GetLogEmitter().Throw(LogEvent(pLogFile, TLogFile::Type_Info, formatString.Get()));
 		}
 	}
 
-	void TUtil::LogConsole(const char* format, ...)
+	void TUtil::Log(TLogFile::Type a_eLogType, const char* a_szFormat, ...)
 	{
-		if (GetLog() != TNULL)
-		{
-			va_list vargs;
-			va_start(vargs, format);
+		auto pLogFile = GetCurrentLogFile();
 
-			char str[1024];
-			int size = T2String8::FormatV(str, sizeof(str), format, vargs);
-			str[size] = '\n';
-			str[size + 1] = '\0';
-			OutputDebugStringA(str);
-			str[size] = '\0';
-			TOSHI_TRACE(str);
+		if (pLogFile)
+		{
+			T2FixedString2048 formatString;
+
+			va_list args;
+			va_start(args, a_szFormat);
+			formatString.FormatV(a_szFormat, args);
+			va_end(args);
+
+			pLogFile->Log(a_eLogType, "Toshi", "Kernel", formatString.Get());
+			GetLogEmitter().Throw(LogEvent(pLogFile, a_eLogType, formatString.Get()));
 		}
 	}
 
-	void TUtil::LogSet(TLogFile* a_logFile)
+	void TUtil::LogConsole(const char* a_szFormat, ...)
+	{
+		auto pLogFile = GetCurrentLogFile();
+
+		if (pLogFile)
+		{
+			T2FixedString2048 formatString;
+
+			va_list args;
+			va_start(args, a_szFormat);
+			formatString.FormatV(a_szFormat, args);
+			va_end(args);
+
+			OutputDebugStringA(formatString.Get());
+			printf(formatString.Get());
+		}
+	}
+
+	void TUtil::LogSet(TLogFile* a_pLogFile)
 	{
 		Log("Changing log file.");
-		TUtil* util = Toshi::TUtil::GetSingletonSafe();
-		GetLog()->Close();
-		util->m_pLogFile2 = a_logFile == TNULL ? util->m_pLogFile1 : a_logFile;
+		TUtil* pUtil = TUtil::GetSingleton();
+
+		if (pUtil->m_pCurrentLogFile)
+		{
+			pUtil->m_pCurrentLogFile->Close();
+		}
+
+		pUtil->m_pCurrentLogFile = (!a_pLogFile) ? pUtil->m_pDefaultLogFile : a_pLogFile;
 	}
 
 	TBOOL TUtil::ToshiCreate(char* a_szCommandLine, TINT a_iArg2, TINT a_iArg3)
 	{
 		CreateKernelInterface();
 		// TODO: FUN_006c7fe0
-		TLog::Create();
 		TFileManager::Create();
 		CreateTPStringPool();
 		Create();
@@ -127,7 +151,6 @@ namespace Toshi
 		ReleaseMutex(ms_hGlobalMutex);
 #endif
 
-		TLog::Destroy();
 		TModelRegistry::Uninitialise();
 	}
 

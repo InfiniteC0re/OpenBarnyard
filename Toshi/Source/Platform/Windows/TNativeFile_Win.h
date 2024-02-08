@@ -1,9 +1,20 @@
 #pragma once
-#include "Toshi/Typedefs.h"
 #include "File/TFile.h"
 
-namespace Toshi
-{
+namespace Toshi {
+
+	class TNativeFileSystem : public TFileSystem
+	{
+	public:
+		TNativeFileSystem(const char* name);
+
+		virtual TFile* CreateFile(TString8 const& fn, uint32_t flags) override;
+		virtual void DestroyFile(TFile*) override;
+		virtual TString8 MakeInternalPath(TString8 const&) { return {}; }
+		virtual TBOOL MakeDirectory(TString8 const&) override;
+		virtual TBOOL GetNextFile(TString8& fileName, uint32_t flags);
+	};
+
     class TNativeFile : public TFile
     {
     public:
@@ -50,6 +61,7 @@ namespace Toshi
         DWORD m_WriteBufferUsed;     // 0x24
         TBOOL m_WriteBuffered;        // 0x28
     };
+
 }
 
 

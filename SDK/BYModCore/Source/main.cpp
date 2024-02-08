@@ -29,8 +29,8 @@ const char* GetModsDirectory()
 
 DWORD WINAPI MainThread(HMODULE hModule)
 {
-	TOSHI_INFO("BYModCore thread has been started!");
-	TOSHI_INFO("Waiting for Toshi systems to be loaded...");
+	TINFO("BYModCore thread has been started!\n");
+	TINFO("Waiting for Toshi systems to be loaded...\n");
 
 	// Wait until AGUI2 is ready to use
 	while (!AGUI2::IsSingletonCreated()) { Sleep(50); }
@@ -39,7 +39,7 @@ DWORD WINAPI MainThread(HMODULE hModule)
 	// Log info about AGUI2
 	TFLOAT fWidth, fHeight;
 	AGUI2::GetSingleton()->GetDimensions(fWidth, fHeight);
-	TOSHI_INFO("AGUI2 is ready! (Dimensions: {0}x{1})", fWidth, fHeight);
+	TINFO("AGUI2 is ready! (Dimensions: {%f}x{%f})\n", fWidth, fHeight);
 	
 	Toshi::TUtil::CreateTPStringPool();
 	Toshi::TUtil::SetTPStringPool(**(Toshi::TPString8Pool***)0x007ce230);
@@ -82,15 +82,15 @@ DWORD APIENTRY DllMain(HMODULE hModule, DWORD reason, LPVOID reserved)
 		hModuleCore = hModule;
 #endif
 
-		Toshi::TLog::Create("BYModCore");
+		Toshi::TUtil::Create();
 
 		// Initialise hooks
 		AHooks::Initialise();
 
 		SetConsoleCtrlHandler(exit_handler, TRUE);
 
-		TOSHI_INFO("Log system was successfully initialised!");
-		TOSHI_INFO("Starting BYModCore thread...");
+		TINFO("Log system was successfully initialised!\n");
+		TINFO("Starting BYModCore thread...\n");
 
 		if (AGlobalModLoaderTask::CreateSingleton()->Create())
 		{

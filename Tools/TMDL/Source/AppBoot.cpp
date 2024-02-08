@@ -34,9 +34,9 @@ static inline void SetFaceAndAdvance3(aiFace*& face, unsigned int a, unsigned in
 
 static void LogRenderGroup(TTerrainMDL::RenderGroup* a_pRenderGroup)
 {
-	TOSHI_INFO("      New render group:");
-	TOSHI_INFO(
-		"        Bounding: {} {} {} {}",
+	TINFO("      New render group:\n");
+	TINFO(
+		"        Bounding: %f %f %f %f\n",
 		a_pRenderGroup->m_BoundingSphere.GetOrigin().x,
 		a_pRenderGroup->m_BoundingSphere.GetOrigin().y,
 		a_pRenderGroup->m_BoundingSphere.GetOrigin().z,
@@ -53,8 +53,8 @@ static void LogRenderGroup(TTerrainMDL::RenderGroup* a_pRenderGroup)
 
 	if (bHasNext)
 	{
-		TOSHI_INFO(
-			"        Final bounding: {} {} {} {}",
+		TINFO(
+			"        Final bounding: %f %f %f %f\n",
 			a_pRenderGroup->m_BoundingSphere.GetOrigin().x,
 			a_pRenderGroup->m_BoundingSphere.GetOrigin().y,
 			a_pRenderGroup->m_BoundingSphere.GetOrigin().z,
@@ -90,7 +90,7 @@ int main(int argc, char** argv)
 
 		if (!bIsSkin && !bIsTerrain)
 		{
-			TOSHI_ERROR("Invalid input file!");
+			TERROR("Invalid input file!\n");
 			return 1;
 		}
 
@@ -98,37 +98,37 @@ int main(int argc, char** argv)
 		{
 			if (pInFileHeader->m_uiMagic != TMAKEFOUR("TMDL"))
 			{
-				TOSHI_ERROR("Invalid input file format!");
+				TERROR("Invalid input file format!\n");
 				return 1;
 			}
 
-			TOSHI_INFO("Successfully opened TMD file!");
-			TOSHI_INFO("  Version: {}.{}", pInFileHeader->m_uiVersionMajor, pInFileHeader->m_uiVersionMinor);
+			TINFO("Successfully opened TMD file!\n");
+			TINFO("  Version: %d.%d\n", pInFileHeader->m_uiVersionMajor, pInFileHeader->m_uiVersionMinor);
 		}
 		else if (bIsTerrain)
 		{
-			TOSHI_INFO("Successfully opened Terrain Model file!");
-			TOSHI_INFO("  Num Entries: {}", pInDatabase->m_uiNumEntries);
+			TINFO("Successfully opened Terrain Model file!\n");
+			TINFO("  Num Entries: %u\n", pInDatabase->m_uiNumEntries);
 
 			for (TUINT i = 0; i < pInDatabase->m_uiNumEntries; i++)
 			{
 				auto pEntry = pInDatabase->m_ppEntries[i];
-				TOSHI_INFO("  Entry {}:", i);
-				TOSHI_INFO("    Num Models: {}", pEntry->m_uiNumModels);
+				TINFO("  Entry %u:\n", i);
+				TINFO("    Num Models: %u\n", pEntry->m_uiNumModels);
 
 				for (TUINT k = 0; k < pEntry->m_uiNumModels; k++)
 				{
 					auto pModel = pEntry->m_ppModels[k];
-					TOSHI_INFO("    Model {}:", k);
-					TOSHI_INFO("      Num Meshes: {}", pModel->m_uiNumMeshes);
+					TINFO("    Model %u:\n", k);
+					TINFO("      Num Meshes: %u\n", pModel->m_uiNumMeshes);
 
 					for (TUINT j = 0; j < pModel->m_uiNumMeshes; j++)
 					{
-						TOSHI_INFO("      Mesh {}:", j);
+						TINFO("      Mesh %u:\n", j);
 						auto pMeshBounding = pModel->m_ppMeshBoundings[j];
 
-						TOSHI_INFO(
-							"        Bounding Sphere: {} {} {} {}",
+						TINFO(
+							"        Bounding Sphere: %f %f %f %f\n",
 							pMeshBounding->m_BoundingSphere.GetOrigin().x,
 							pMeshBounding->m_BoundingSphere.GetOrigin().y,
 							pMeshBounding->m_BoundingSphere.GetOrigin().z,
@@ -136,11 +136,11 @@ int main(int argc, char** argv)
 						);
 
 						auto pMesh = pMeshBounding->m_pMesh;
-						TOSHI_INFO("        Unk: {}", pMesh->m_Unk);
-						TOSHI_INFO("        Num Indices: {}", pMesh->m_uiNumIndices);
-						TOSHI_INFO("        Num Vertices 1: {}", pMesh->m_uiNumVertices1);
-						TOSHI_INFO("        Num Vertices 2: {}", pMesh->m_uiNumVertices2);
-						TOSHI_INFO("        Material Name: {}", pMesh->m_szMaterialName);
+						TINFO("        Unk: %u\n", pMesh->m_Unk);
+						TINFO("        Num Indices: %u\n", pMesh->m_uiNumIndices);
+						TINFO("        Num Vertices 1: %u\n", pMesh->m_uiNumVertices1);
+						TINFO("        Num Vertices 2: %u\n", pMesh->m_uiNumVertices2);
+						TINFO("        Material Name: %s\n", pMesh->m_szMaterialName);
 					}
 
 					LogRenderGroup(pModel->m_pRenderGroups);
@@ -150,38 +150,38 @@ int main(int argc, char** argv)
 		
 		if (bHasSkeleton)
 		{
-			TOSHI_INFO("  Keyframe Library: {}", pInSkeletonHeader->m_szTKLName);
-			TOSHI_INFO("  Translation Base Index: {}", pInSkeletonHeader->m_iTBaseIndex);
-			TOSHI_INFO("  Quaternion Base Index: {}", pInSkeletonHeader->m_iQBaseIndex);
-			TOSHI_INFO("  Scale Base Index: {}", pInSkeletonHeader->m_iSBaseIndex);
-			TOSHI_INFO("  Translation Key Count: {}", pInSkeletonHeader->m_iTKeyCount);
-			TOSHI_INFO("  Quaternion Key Count: {}", pInSkeletonHeader->m_iQKeyCount);
-			TOSHI_INFO("  Scale Key Count: {}", pInSkeletonHeader->m_iSKeyCount);
-			TOSHI_INFO("  Num Bones: {}", pInSkeleton->GetBoneCount());
+			TINFO("  Keyframe Library: %s\n", pInSkeletonHeader->m_szTKLName);
+			TINFO("  Translation Base Index: %i\n", pInSkeletonHeader->m_iTBaseIndex);
+			TINFO("  Quaternion Base Index: %i\n", pInSkeletonHeader->m_iQBaseIndex);
+			TINFO("  Scale Base Index: %i\n", pInSkeletonHeader->m_iSBaseIndex);
+			TINFO("  Translation Key Count: %i\n", pInSkeletonHeader->m_iTKeyCount);
+			TINFO("  Quaternion Key Count: %i\n", pInSkeletonHeader->m_iQKeyCount);
+			TINFO("  Scale Key Count: %i\n", pInSkeletonHeader->m_iSKeyCount);
+			TINFO("  Num Bones: %i\n", pInSkeleton->GetBoneCount());
 
 			for (TINT i = 0; i < pInSkeleton->GetBoneCount(); i++)
 			{
 				auto pBone = pInSkeleton->GetBone(i);
 
-				TOSHI_INFO("    {}:", pBone->GetName());
-				TOSHI_INFO("      Position: ({0}; {1}; {2})", pBone->GetPosition().x, pBone->GetPosition().y, pBone->GetPosition().z);
+				TINFO("    %s:\n", pBone->GetName());
+				TINFO("      Position: (%f; %f; %f)\n", pBone->GetPosition().x, pBone->GetPosition().y, pBone->GetPosition().z);
 			}
 		}
 
-		TOSHI_INFO("  Materials Size: {}", pInMaterials->m_uiSectionSize);
-		TOSHI_INFO("  Material Count: {}", pInMaterials->m_uiNumMaterials);
-		TOSHI_INFO("  Collision Model Count: {}", pInCollision->m_iNumModels);
-		TOSHI_INFO("  LOD Count: {}", pInHeader->m_iNumLODs);
-		TOSHI_INFO("  LOD Distance: {}", pInHeader->m_fLODDistance);
+		TINFO("  Materials Size: %u\n", pInMaterials->m_uiSectionSize);
+		TINFO("  Material Count: %u\n", pInMaterials->m_uiNumMaterials);
+		TINFO("  Collision Model Count: %i\n", pInCollision->m_iNumModels);
+		TINFO("  LOD Count: %i\n", pInHeader->m_iNumLODs);
+		TINFO("  LOD Distance: %f\n", pInHeader->m_fLODDistance);
 
 		for (TINT i = 0; i < pInHeader->m_iNumLODs; i++)
 		{
 			auto pLOD = pInHeader->GetLOD(i);
 			TINT iMeshCount = pLOD->m_iMeshCount1 + pLOD->m_iMeshCount2;
 
-			TOSHI_INFO("  Information about LOD{}:", i);
-			TOSHI_INFO("    Mesh Count: {}", iMeshCount);
-			TOSHI_INFO("    Shader Type: {}", pLOD->m_iShader);
+			TINFO("  Information about LOD%i:\n", i);
+			TINFO("    Mesh Count: %i\n", iMeshCount);
+			TINFO("    Shader Type: %i\n", pLOD->m_iShader);
 
 			if (bIsSkin)
 			{
@@ -192,28 +192,28 @@ int main(int argc, char** argv)
 
 					auto pInLODMesh = pInSYMB->Find<TTMDWin::TRBLODMesh>(pInSECT, szSymbolName);
 
-					TOSHI_INFO("    {}:", szSymbolName);
-					TOSHI_INFO("      Sub Mesh Count: {}", pInLODMesh->m_uiNumSubMeshes);
-					TOSHI_INFO("      Index Count: {}", pInLODMesh->m_uiNumIndices);
-					TOSHI_INFO("      Vertex Count: {}", pInLODMesh->m_uiNumVertices);
-					TOSHI_INFO("      Material Name: {}", pInLODMesh->m_szMaterialName);
+					TINFO("    %s:\n", szSymbolName);
+					TINFO("      Sub Mesh Count: %u\n", pInLODMesh->m_uiNumSubMeshes);
+					TINFO("      Index Count: %u\n", pInLODMesh->m_uiNumIndices);
+					TINFO("      Vertex Count: %u\n", pInLODMesh->m_uiNumVertices);
+					TINFO("      Material Name: %s\n", pInLODMesh->m_szMaterialName);
 
 					for (TUINT j = 0; j < pInLODMesh->m_uiNumSubMeshes; j++)
 					{
 						auto pSubMesh = &pInLODMesh->m_pSubMeshes[j];
 
-						TOSHI_INFO("      Sub Mesh {}:", j);
-						TOSHI_INFO("        Unk1: {}", pSubMesh->m_Unk1);
-						TOSHI_INFO("        Vertex Count 1: {}", pSubMesh->m_uiNumVertices1);
-						TOSHI_INFO("        Vertex Count 2: {}", pSubMesh->m_uiNumVertices2);
-						TOSHI_INFO("        Index Count: {}", pSubMesh->m_uiNumIndices);
-						TOSHI_INFO("        Bone Count: {}", pSubMesh->m_uiNumBones);
-						TOSHI_INFO("        Zero: {}", pSubMesh->m_Zero);
-						TOSHI_INFO("        Unk2: {}", pSubMesh->m_Unk2);
-						TOSHI_INFO("        Unk3: {}", pSubMesh->m_Unk3);
-						TOSHI_INFO("        Unk4: {}", pSubMesh->m_Unk4);
-						TOSHI_INFO("        Unk5: {}", pSubMesh->m_Unk5);
-						TOSHI_INFO("        Unk6: {}", pSubMesh->m_Unk6);
+						TINFO("      Sub Mesh %u:\n", j);
+						TINFO("        Unk1: %u\n", pSubMesh->m_Unk1);
+						TINFO("        Vertex Count 1: %u\n", pSubMesh->m_uiNumVertices1);
+						TINFO("        Vertex Count 2: %u\n", pSubMesh->m_uiNumVertices2);
+						TINFO("        Index Count: %u\n", pSubMesh->m_uiNumIndices);
+						TINFO("        Bone Count: %u\n", pSubMesh->m_uiNumBones);
+						TINFO("        Zero: %u\n", pSubMesh->m_Zero);
+						TINFO("        Unk2: %i\n", pSubMesh->m_Unk2);
+						TINFO("        Unk3: %i\n", pSubMesh->m_Unk3);
+						TINFO("        Unk4: %i\n", pSubMesh->m_Unk4);
+						TINFO("        Unk5: %i\n", pSubMesh->m_Unk5);
+						TINFO("        Unk6: %i\n", pSubMesh->m_Unk6);
 					}
 				}
 			}
@@ -668,7 +668,7 @@ int main(int argc, char** argv)
 					}
 					else
 					{
-						TOSHI_ERROR("Unable to generate tri strips from mesh!");
+						TERROR("Unable to generate tri strips from mesh!\n");
 					}
 
 					pOutSYMB->Add(pStack, szSymbolName, pOutMesh.get());

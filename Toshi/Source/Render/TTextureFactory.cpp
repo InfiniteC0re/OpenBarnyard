@@ -42,13 +42,7 @@ namespace Toshi {
 		{
 			for (auto it = m_aLists[i].Begin(); it != m_aLists[i].End(); it++)
 			{
-#if 1
-				TOSHI_TRACE("[{0}] Texture [{1}]: W={2} , H={3}", uiTexIndex++, it->GetName(), it->GetTexture()->GetWidth(), it->GetTexture()->GetHeight());
-#else
-				TString8 output;
-				output.Format("[%d] Texture [%s]: W=%d , H=%d\n", uiTexIndex++, it->GetName(), it->GetTexture()->GetWidth(), it->GetTexture()->GetHeight());
-				OutputDebugStringA(output);
-#endif
+				TDEBUG("[%d] Texture [%s]: W=%d , H=%d\n", uiTexIndex++, it->GetName(), it->GetTexture()->GetWidth(), it->GetTexture()->GetHeight());
 			}
 		}
 	}

@@ -38,7 +38,6 @@ project "TMDL"
 		"Source",
 		"Vendor/Assimp/include",
 		"%{wks.location}/Toshi/Source",
-		"%{IncludeDir.spdlog}"
 	}
 	
 	externalincludedirs 
@@ -63,7 +62,8 @@ project "TMDL"
 		defines
 		{
 			"TOSHI_CONSOLE",
-			"TOSHI_SKU_WINDOWS"
+			"TOSHI_SKU_WINDOWS",
+			"NOMINMAX"
 		}
 
 	filter "configurations:Debug"

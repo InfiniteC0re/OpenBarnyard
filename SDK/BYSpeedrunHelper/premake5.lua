@@ -44,7 +44,6 @@ project "BYSpeedrunHelper"
 		"%{wks.location}/Toshi/Source",
 		"%{wks.location}/SDK/BYardSDK/Source",
 		"%{wks.location}/SDK/BYModCore/Include",
-		"%{IncludeDir.spdlog}",
 		"%{IncludeDir.detours}"
 	}
 	

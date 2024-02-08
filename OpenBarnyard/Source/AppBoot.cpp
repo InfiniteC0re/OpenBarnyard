@@ -79,7 +79,7 @@ TOSHI_ENTRY
 	});
 
 	AMemory::CreatePool(AMemory::POOL_StringPool);
-	TUtil::Log("Build Version %s", "0.28");
+	TUtil::Log("Build Version %s\n", "0.28");
 
 	OSVERSIONINFOEX osVersionInfo = { sizeof(osVersionInfo) };
 	
@@ -98,9 +98,9 @@ TOSHI_ENTRY
 		}
 	}
 
-	TUtil::Log("Command Line: %s", szCommandLine);
-	TUtil::Log("OS Name: %s", osName);
-	TUtil::Log("OS Version: %d.%d Build:%d %s", osVersionInfo.dwMajorVersion, osVersionInfo.dwMinorVersion, osVersionInfo.dwBuildNumber, osVersionInfo.szCSDVersion);
+	TUtil::Log("Command Line: %s\n", szCommandLine);
+	TUtil::Log("OS Name: %s\n", osName);
+	TUtil::Log("OS Version: %d.%d Build:%d %s\n", osVersionInfo.dwMajorVersion, osVersionInfo.dwMinorVersion, osVersionInfo.dwBuildNumber, osVersionInfo.szCSDVersion);
 
 	HANDLE hBarnyardMutex = CreateMutexA(NULL, TTRUE, "BARNYARD");
 	TUtil::SetGlobalMutex(hBarnyardMutex);
@@ -123,7 +123,7 @@ TOSHI_ENTRY
 
 TBOOL AApplication::OnCreate(int argc, char** argv)
 {
-	TOSHI_INFO("Starting Barnyard...");
+	TINFO("Starting Barnyard...\n");
 
 	if (!CreateStringPool())
 		return TFALSE;

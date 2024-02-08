@@ -1,6 +1,5 @@
 #pragma once
 #include "Toshi/Toshi.h"
-#include "Toshi/TLog.h"
 #include "Toshi/TStringManager.h"
 
 //-----------------------------------------------------------------------------
