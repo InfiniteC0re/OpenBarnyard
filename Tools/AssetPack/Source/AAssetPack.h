@@ -1,7 +1,7 @@
 #pragma once
 #include <Toshi/TPString8.h>
 #include <Toshi/T2Map.h>
-#include <Toshi/T2DynamicArray.h>
+#include <Toshi/TArray.h>
 #include <Toshi/T2Vector.h>
 
 #include <File/TTRB.h>
@@ -16,7 +16,7 @@ public:
 		char Format[4];
 		PTRB::TRBF* pTRB;
 		PTRB::SECT::Stack* pStack;
-		Toshi::T2DynamicArray<Toshi::TPString8> RelatedSymbols;
+		Toshi::TArray<Toshi::TPString8> RelatedSymbols;
 	};
 
 public:

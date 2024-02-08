@@ -4,7 +4,7 @@
 
 #include <Toshi/TPString8.h>
 #include <Input/TInputInterface.h>
-#include <Toshi/T2DynamicVector.h>
+#include <ToshiTools/T2DynamicVector.h>
 
 class AGUISlideshow : public Toshi::TObject
 {

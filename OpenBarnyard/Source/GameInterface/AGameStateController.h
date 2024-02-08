@@ -5,7 +5,7 @@
 
 #include <Toshi/TTask.h>
 #include <Toshi/T2Vector.h>
-#include <Toshi/T2DynamicVector.h>
+#include <ToshiTools/T2DynamicVector.h>
 
 class AGameStateController : public Toshi::TTask,
 	public Toshi::TSingleton<AGameStateController>

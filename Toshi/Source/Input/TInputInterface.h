@@ -1,6 +1,6 @@
 #pragma once
 #include "Toshi/TNodeList.h"
-#include "Toshi/T2DynamicArray.h"
+#include "Toshi/TArray.h"
 
 namespace Toshi {
 	
@@ -221,8 +221,8 @@ namespace Toshi {
 
 	protected:
 		TUINT m_uiDeviceIndex;
-		T2DynamicArray<RepeatInfo> m_Repeats;
-		T2DynamicArray<void*> m_Array2;
+		TArray<RepeatInfo> m_Repeats;
+		TArray<void*> m_Array2;
 		TBOOL m_bUnknown;
 		TBOOL m_bIsAcquired;
 		TInputInterface* m_pInputInterface;

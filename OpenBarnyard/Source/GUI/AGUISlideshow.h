@@ -3,7 +3,7 @@
 #include "GameInterface/AGameState.h"
 
 #include <Toshi/TPString8.h>
-#include <Toshi/T2DynamicVector.h>
+#include <ToshiTools/T2DynamicVector.h>
 
 class AGUISlideshow : public Toshi::TObject
 {
