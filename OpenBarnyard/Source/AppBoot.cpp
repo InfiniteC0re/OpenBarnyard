@@ -1,10 +1,6 @@
 #include "pch.h"
-
 #include <Toshi/Toshi.h>
-#include <Toshi/TArray.h>
 #include <Toshi/TScheduler.h>
-#include <Toshi/TSystem.h>
-#include <Toshi/T2SimpleArray.h>
 #include <Toshi/TPString8.h>
 
 #include <Core/TMemoryInitialiser.h>
@@ -16,13 +12,12 @@
 
 #ifdef TOSHI_SKU_WINDOWS
 #include <Platform/DX8/TTextureResourceHAL_DX8.h>
-#include <Platform/DX8/TRenderInterface_DX8.h>
 #include <Platform/DX8/TVertexBlockResource_DX8.h>
 #include <Platform/DX8/TIndexBlockResource_DX8.h>
 #endif // TOSHI_SKU_WINDOWS
 
 #include "AppBoot.h"
-#include "AClassHelper.h"
+#include "AToshiClassReferenceHelper.h"
 #include "Tasks/ADummyTask.h"
 #include "Locale/ALocaleManager.h"
 #include "GUI/AGUI2.h"
@@ -48,31 +43,21 @@ static const char* GetOSName(OSVERSIONINFOEX& osVersionInfo)
 	TBOOL isWorkstation = osVersionInfo.wProductType == VER_NT_WORKSTATION;
 
 	if (osVersionInfo.dwMajorVersion == 10)
-	{
 		return isWorkstation ? "Windows 10" : "Windows Server 2016";
-	}
 
 	if (osVersionInfo.dwMajorVersion == 6)
 	{
 		if (osVersionInfo.dwMinorVersion == 0)
-		{
 			return isWorkstation ? "Windows Vista" : "Windows Server 2008";
-		}
 
 		if (osVersionInfo.dwMinorVersion == 1)
-		{
 			return isWorkstation ? "Windows 7" : "Windows Server 2008 R2";
-		}
 
 		if (osVersionInfo.dwMinorVersion == 2)
-		{
 			return isWorkstation ? "Windows 8" : "Windows Server 2012";
-		}
 
 		if (osVersionInfo.dwMinorVersion == 3)
-		{
 			return isWorkstation ? "Windows 8.1" : "Windows Server 2012 R2";
-		}
 	}
 
 	return "unknown";
@@ -80,31 +65,31 @@ static const char* GetOSName(OSVERSIONINFOEX& osVersionInfo)
 
 TOSHI_ENTRY
 {
-	AClassHelper::ReferenceTClasses();
-
+	static AToshiClassReferenceHelper s_ToshiClassReferencer;
 	static TMemoryInitialiser s_MemoryInitialiser;
-	LPSTR cmd = GetCommandLineA();
 
-	TUtil::ToshiCreate(cmd, 0, 0);
+	char* szCommandLine = GetCommandLineA();
+
+	TUtil::ToshiCreate(szCommandLine, 0, 0);
 	TMemory::StartDebugPipe();
 
 	g_oSystemManager.SetQuitCallback([]() {
 		TUtil::ToshiDestroy();
 		exit(0);
 	});
+
 	AMemory::CreatePool(AMemory::POOL_StringPool);
 	TUtil::Log("Build Version %s", "0.28");
 
-	OSVERSIONINFOEX osVersionInfo = { };
-	osVersionInfo.dwOSVersionInfoSize = sizeof(osVersionInfo);
-
+	OSVERSIONINFOEX osVersionInfo = { sizeof(osVersionInfo) };
+	
 	const char* osName = "unknown";
 	HMODULE ntdll = GetModuleHandleW(L"ntdll.dll");
 
 	if (ntdll != NULL)
 	{
 		typedef void (WINAPI* t_RtlGetVersion) (OSVERSIONINFOEX*);
-		auto RtlGetVersion = reinterpret_cast<t_RtlGetVersion>(GetProcAddress(ntdll, "RtlGetVersion"));
+		auto RtlGetVersion = TREINTERPRETCAST(t_RtlGetVersion, GetProcAddress(ntdll, "RtlGetVersion"));
 
 		if (RtlGetVersion != NULL)
 		{
@@ -113,13 +98,12 @@ TOSHI_ENTRY
 		}
 	}
 
-	TUtil::Log("Command Line: %s", cmd);
+	TUtil::Log("Command Line: %s", szCommandLine);
 	TUtil::Log("OS Name: %s", osName);
 	TUtil::Log("OS Version: %d.%d Build:%d %s", osVersionInfo.dwMajorVersion, osVersionInfo.dwMinorVersion, osVersionInfo.dwBuildNumber, osVersionInfo.szCSDVersion);
 
-	TUtil::SetGlobalMutex(
-		CreateMutexA(NULL, TTRUE, "BARNYARD")
-	);
+	HANDLE hBarnyardMutex = CreateMutexA(NULL, TTRUE, "BARNYARD");
+	TUtil::SetGlobalMutex(hBarnyardMutex);
 
 	if (GetLastError() == ERROR_ALREADY_EXISTS)
 	{
@@ -127,14 +111,13 @@ TOSHI_ENTRY
 		return 0;
 	}
 
-	TBOOL bCreated = g_oTheApp.Create("The Barnyard - (c) Blue Tongue Entertainment", 0, 0);
-
-	if (bCreated)
+	if (g_oTheApp.Create("The Barnyard - (c) Blue Tongue Entertainment", 0, 0))
 	{
 		g_oTheApp.Execute();
 	}
 
 	TUtil::ToshiDestroy();
+
 	return 0;
 }
 
@@ -160,32 +143,34 @@ TBOOL AApplication::OnCreate(int argc, char** argv)
 	TModelRegistry::Initialise();
 	pLocaleManager->SetLanguage(ALocaleManager::Lang_EnglishUK);
 
-	m_pRenderTask = TSTATICCAST(ADummyTask*, g_oSystemManager.GetScheduler()->CreateTask(&TGetClass(ADummyTask)));
+	auto pScheduler = g_oSystemManager.GetScheduler();
+
+	m_pRenderTask = pScheduler->CreateTask<ADummyTask>();
 	m_pRenderTask->Create();
 	m_pRenderTask->Activate(TTRUE);
 	m_pRenderTask->SetName("RenderTask");
 
-	m_pUpdate3Task = TSTATICCAST(ADummyTask*, g_oSystemManager.GetScheduler()->CreateTask(&TGetClass(ADummyTask)));
+	m_pUpdate3Task = pScheduler->CreateTask<ADummyTask>();
 	m_pUpdate3Task->Create();
 	m_pUpdate3Task->Activate(TTRUE);
 	m_pUpdate3Task->SetName("Update3");
 
-	m_pUpdate2Task = TSTATICCAST(ADummyTask*, g_oSystemManager.GetScheduler()->CreateTask(&TGetClass(ADummyTask)));
+	m_pUpdate2Task = pScheduler->CreateTask<ADummyTask>();
 	m_pUpdate2Task->Create();
 	m_pUpdate2Task->Activate(TTRUE);
 	m_pUpdate2Task->SetName("Update2");
 
-	m_pUpdate1Task = TSTATICCAST(ADummyTask*, g_oSystemManager.GetScheduler()->CreateTask(&TGetClass(ADummyTask)));
+	m_pUpdate1Task = pScheduler->CreateTask<ADummyTask>();
 	m_pUpdate1Task->Create();
 	m_pUpdate1Task->Activate(TTRUE);
 	m_pUpdate1Task->SetName("Update1");
 
-	m_pInputTask = TSTATICCAST(ADummyTask*, g_oSystemManager.GetScheduler()->CreateTask(&TGetClass(ADummyTask)));
+	m_pInputTask = pScheduler->CreateTask<ADummyTask>();
 	m_pInputTask->Create();
 	m_pInputTask->Activate(TTRUE);
 	m_pInputTask->SetName("InputTask");
 
-	m_pRootTask = TSTATICCAST(ARootTask*, g_oSystemManager.GetScheduler()->CreateTask(&TGetClass(ARootTask)));
+	m_pRootTask = pScheduler->CreateTask<ARootTask>();
 
 	if (m_pRootTask != TNULL)
 	{

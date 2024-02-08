@@ -18,14 +18,15 @@ namespace Toshi
 
 	public:
 		TScheduler();
+		~TScheduler();
 
-		virtual ~TScheduler() override
+		TTask* CreateTask(TClass* a_pClass, TTask* a_pParent = TNULL);
+
+		template <class T>
+		T* CreateTask(TTask* a_pParent = TNULL)
 		{
-			DestroyAllTasks();
+			return TSTATICCAST(T*, CreateTask(&TGetClass(T), a_pParent));
 		}
-
-		// Creates task from TClass and binds it to this scheduler
-		TTask* CreateTask(TClass* pClass, TTask* pParent = TNULL);
 		
 		void Update();
 

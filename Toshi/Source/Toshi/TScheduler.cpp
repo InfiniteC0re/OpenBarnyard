@@ -29,6 +29,11 @@ namespace Toshi {
 		m_DebugDeltaTimeMult = 1.0f;
 	}
 
+	TScheduler::~TScheduler()
+	{
+		DestroyAllTasks();
+	}
+
 	TTask* TScheduler::CreateTask(TClass* pClass, TTask* pParent)
 	{
 		TASSERT(pClass->IsA(&TGetClass(TTask)));

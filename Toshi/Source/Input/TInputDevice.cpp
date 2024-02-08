@@ -29,7 +29,7 @@ namespace Toshi {
 	{
 		TINT iNumProcessed = 0;
 
-		for (TINT i = 0; i < m_Repeats.GetNumElements(); i++)
+		for (TINT i = 0; i < m_Repeats.Size(); i++)
 		{
 			auto& rRepeat = m_Repeats[i];
 
@@ -46,15 +46,15 @@ namespace Toshi {
 			}
 			else
 			{
-				if (1 < m_Repeats.GetNumElements())
+				if (1 < m_Repeats.Size())
 				{
-					auto& rLastRepeat = m_Repeats[m_Repeats.GetNumElements() - 1];
+					auto& rLastRepeat = m_Repeats[m_Repeats.Size() - 1];
 					rRepeat.iDoodad = rLastRepeat.iDoodad;
 					rRepeat.fLeftTime = rLastRepeat.fLeftTime;
 					rRepeat.fRepeatTime = rLastRepeat.fRepeatTime;
 				}
 
-				if (0 < m_Repeats.GetNumElements())
+				if (0 < m_Repeats.Size())
 				{
 					m_Repeats.Pop();
 				}
@@ -86,7 +86,7 @@ namespace Toshi {
 
 	void TInputDevice::StopRepeat(Doodad a_iDoodad)
 	{
-		if (m_Repeats.GetNumElements() != 0)
+		if (m_Repeats.Size() != 0)
 		{
 			auto it = m_Repeats.Begin();
 
@@ -98,15 +98,15 @@ namespace Toshi {
 				if (it.IsOver()) return;
 			}
 
-			if (1 < m_Repeats.GetNumElements())
+			if (1 < m_Repeats.Size())
 			{
-				auto& rLastRepeat = m_Repeats[m_Repeats.GetNumElements() - 1];
+				auto& rLastRepeat = m_Repeats[m_Repeats.Size() - 1];
 				it->iDoodad = rLastRepeat.iDoodad;
 				it->fLeftTime = rLastRepeat.fLeftTime;
 				it->fRepeatTime = rLastRepeat.fRepeatTime;
 			}
 
-			if (0 < m_Repeats.GetNumElements())
+			if (0 < m_Repeats.Size())
 			{
 				m_Repeats.Pop();
 			}

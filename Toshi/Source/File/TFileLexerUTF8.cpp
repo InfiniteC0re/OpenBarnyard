@@ -140,7 +140,7 @@ namespace Toshi {
 	{
 		bool bAlreadyDefined = TFALSE;
 
-		for (int i = 0; i < m_Defines.GetNumElements(); i++)
+		for (int i = 0; i < m_Defines.Size(); i++)
 		{
 			if (m_Defines[i] == a_szDefinition)
 			{

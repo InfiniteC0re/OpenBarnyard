@@ -48,14 +48,16 @@ ARootTask::ARootTask()
 	m_pOptions = AOptions::CreateSingleton();
 	AMemory::CreatePool(AMemory::POOL_Sound);
 
-	m_pGUISystem = g_oSystemManager.GetScheduler()->CreateTask(&TGetClass(AGUISystem), this);
-	m_pGUI2 = g_oSystemManager.GetScheduler()->CreateTask(&TGetClass(AGUI2), this);
-	m_pRenderer = TSTATICCAST(ARenderer*, g_oSystemManager.GetScheduler()->CreateTask(&TGetClass(ARenderer), this));
-	m_pInputHandler = g_oSystemManager.GetScheduler()->CreateTask(&TGetClass(AInputHandler), this);
-	m_pGameStateController = g_oSystemManager.GetScheduler()->CreateTask(&TGetClass(AGameStateController), this);
-	m_pSoundManager = g_oSystemManager.GetScheduler()->CreateTask(&TGetClass(ASoundManager), this);
-	m_pMoviePlayer = g_oSystemManager.GetScheduler()->CreateTask(&TGetClass(ABINKMoviePlayer), this);
-	m_bGameSystemCreated = TFALSE;
+	auto pScheduler = g_oSystemManager.GetScheduler();
+
+	m_pGUISystem           = pScheduler->CreateTask<AGUISystem>(this);
+	m_pGUI2                = pScheduler->CreateTask<AGUI2>(this);
+	m_pRenderer            = pScheduler->CreateTask<ARenderer>(this);
+	m_pInputHandler        = pScheduler->CreateTask<AInputHandler>(this);
+	m_pGameStateController = pScheduler->CreateTask<AGameStateController>(this);
+	m_pSoundManager        = pScheduler->CreateTask<ASoundManager>(this);
+	m_pMoviePlayer         = pScheduler->CreateTask<ABINKMoviePlayer>(this);
+	m_bGameSystemCreated   = TFALSE;
 }
 
 TBOOL ARootTask::OnCreate()
@@ -276,7 +278,7 @@ void ARootTask::LoadStartupData()
 	TRenderInterface::GetSingleton()->FlushDyingResources();
 	AGUI2TextureSectionManager::UpdateMaterials();
 
-	auto pFadeManager = TSTATICCAST(AFadeManager*, g_oSystemManager.GetScheduler()->CreateTask(&TGetClass(AFadeManager), this));
+	auto pFadeManager = g_oSystemManager.GetScheduler()->CreateTask<AFadeManager>(this);
 	pFadeManager->Create();
 }
 
@@ -293,7 +295,7 @@ void ARootTask::CreateGameSystem()
 	ALoadScreen::GetGlobalInstance()->StartLoading(9, TTRUE);
 	
 	// ...
-	m_pGameSystemManager = g_oSystemManager.GetScheduler()->CreateTask(&TGetClass(AGameSystemManager), this);
+	m_pGameSystemManager = g_oSystemManager.GetScheduler()->CreateTask<AGameSystemManager>(this);
 	m_pGameSystemManager->Create();
 
 	ALoadScreen::GetGlobalInstance()->Update(1.0f, TTRUE);

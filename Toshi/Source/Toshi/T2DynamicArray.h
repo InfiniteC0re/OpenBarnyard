@@ -40,7 +40,7 @@ namespace Toshi {
 			void SetCurrentIndex(TINT a_iIndex) const
 			{
 				TASSERT(m_poArray);
-				TASSERT(a_iIndex < m_poArray->GetNumElements());
+				TASSERT(a_iIndex < m_poArray->Size());
 				m_iIndex = a_iIndex;
 			}
 
@@ -84,7 +84,7 @@ namespace Toshi {
 
 			bool IsOver() const
 			{
-				return (m_iIndex >= m_poArray->GetNumElements() || m_iIndex == -1);
+				return (m_iIndex >= m_poArray->Size() || m_iIndex == -1);
 			}
 
 			const T& Get() const
@@ -167,6 +167,30 @@ namespace Toshi {
 			}
 		}
 
+		void Resize(TINT a_iNewSize)
+		{
+			if (a_iNewSize != 0)
+			{
+				T* pNewBuffer = TSTATICCAST(T*, TMemalign(a_iNewSize * sizeof(T), alignof(T)));
+				size_t uiCopySize = TMath::Min(m_iNumElements, a_iNewSize);
+
+				TUtil::MemCopy(pNewBuffer, m_pData, sizeof(T) * uiCopySize);
+
+				m_iNumAllocElements = a_iNewSize;
+				TASSERT(m_iNumElements <= m_iNumAllocElements);
+
+				if (m_pData) TFree(m_pData);
+				m_pData = pNewBuffer;
+			}
+			else
+			{
+				if (m_pData) TFree(m_pData);
+				m_pData = TNULL;
+				m_iNumAllocElements = 0;
+				m_iNumElements = 0;
+			}
+		}
+
 		void Clear()
 		{
 			if (m_iNumAllocElements < 0)
@@ -193,12 +217,17 @@ namespace Toshi {
 			return Iterator(-1, *this);
 		}
 
-		TINT GetNumElements() const
+		TINT Size() const
 		{
 			return m_iNumElements;
 		}
 
-		TINT GetNumAllocElements() const
+		void SetSize(TINT a_iSize)
+		{
+			m_iNumElements = a_iSize;
+		}
+
+		TINT SizeAllocated() const
 		{
 			return m_iNumAllocElements;
 		}
@@ -251,35 +280,11 @@ namespace Toshi {
 			}
 		}
 
-		void Resize(TINT a_iNewSize)
-		{
-			if (a_iNewSize != 0)
-			{
-				T* pNewBuffer = TSTATICCAST(T*, TMemalign(a_iNewSize * sizeof(T), alignof(T)));
-				size_t uiCopySize = TMath::Min(m_iNumElements, a_iNewSize);
-
-				TUtil::MemCopy(pNewBuffer, m_pData, sizeof(T) * uiCopySize);
-
-				m_iNumAllocElements = a_iNewSize;
-				TASSERT(m_iNumElements <= m_iNumAllocElements);
-
-				if (m_pData) TFree(m_pData);
-				m_pData = pNewBuffer;
-			}
-			else
-			{
-				if (m_pData) TFree(m_pData);
-				m_pData = TNULL;
-				m_iNumAllocElements = 0;
-				m_iNumElements = 0;
-			}
-		}
-
 	private:
 		TINT m_iGrowSize;         // 0x0
 		TINT m_iNumElements;      // 0x4
 		TINT m_iNumAllocElements; // 0x8
-		T* m_pData;              // 0xC
+		T* m_pData;               // 0xC
 	};
 
 	template <class T>

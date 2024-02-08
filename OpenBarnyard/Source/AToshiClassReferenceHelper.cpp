@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "AClassHelper.h"
+#include "AToshiClassReferenceHelper.h"
 
 #ifdef TOSHI_SKU_WINDOWS
 #include <Platform/Windows/Input/TInputInterface_Win.h>
@@ -14,7 +14,7 @@
 
 TOSHI_NAMESPACE_USING
 
-void AClassHelper::ReferenceTClasses()
+AToshiClassReferenceHelper::AToshiClassReferenceHelper()
 {
 	TTextureFactoryHAL::GetClassStatic();
 	TInputDXInterface::GetClassStatic();
