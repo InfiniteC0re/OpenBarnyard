@@ -9,7 +9,8 @@
 
 TDEFINE_CLASS_NORUNTIME(AMoviePlayer);
 
-AMoviePlayer::AMoviePlayer()
+AMoviePlayer::AMoviePlayer() :
+	m_SomeEmitter(this)
 {
 	m_bCreated = TFALSE;
 	m_bIsFullscreen = TTRUE;

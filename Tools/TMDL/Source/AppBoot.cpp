@@ -65,7 +65,12 @@ static void LogRenderGroup(TTerrainMDL::RenderGroup* a_pRenderGroup)
 
 int main(int argc, char** argv)
 {
-	Toshi::TUtil::ToshiCreate(GetCommandLineA(), 0, 0);
+	TUtil::ToshiCreate(
+		TUtil::TOSHIParams{
+			.szCommandLine = GetCommandLineA()
+		}
+	);
+
 	TUtil::SetTPStringPool(new TPString8Pool(1024, 0, &T2Allocator::s_GlobalAllocator, TNULL));
 
 	AArgumentParser args(argv, argc);

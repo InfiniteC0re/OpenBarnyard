@@ -27,7 +27,7 @@ public:
 	virtual void Unk2(void* a_Unk) { }
 
 private:
-	Toshi::TEmitter<AMoviePlayer*, TBOOL> m_SomeEmitter;
+	Toshi::TEmitter<AMoviePlayer, TBOOL> m_SomeEmitter;
 	TBOOL m_bCreated;
 	TBOOL m_bIsFullscreen;
 	TBOOL m_bIsMuted;

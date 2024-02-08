@@ -20,6 +20,8 @@
 #include <stdio.h>
 #include <windows.h>
 
+TOSHI_NAMESPACE_USING
+
 HMODULE hModuleCore;
 
 const char* GetModsDirectory()
@@ -39,9 +41,8 @@ DWORD WINAPI MainThread(HMODULE hModule)
 	// Log info about AGUI2
 	TFLOAT fWidth, fHeight;
 	AGUI2::GetSingleton()->GetDimensions(fWidth, fHeight);
-	TINFO("AGUI2 is ready! (Dimensions: {%f}x{%f})\n", fWidth, fHeight);
+	TINFO("AGUI2 is ready! (Dimensions: %fx%f)\n", fWidth, fHeight);
 	
-	Toshi::TUtil::CreateTPStringPool();
 	Toshi::TUtil::SetTPStringPool(**(Toshi::TPString8Pool***)0x007ce230);
 	
 	AGlobalModLoaderTask::Get()->OnAGUI2Ready();
@@ -82,7 +83,13 @@ DWORD APIENTRY DllMain(HMODULE hModule, DWORD reason, LPVOID reserved)
 		hModuleCore = hModule;
 #endif
 
-		Toshi::TUtil::Create();
+		TUtil::ToshiCreate(
+			TUtil::TOSHIParams{
+				.szCommandLine = "",
+				.szLogFileName = "modcore",
+				.szLogAppName = "BYModCore"
+			}
+		);
 
 		// Initialise hooks
 		AHooks::Initialise();

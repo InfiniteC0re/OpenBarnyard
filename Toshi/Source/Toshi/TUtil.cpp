@@ -30,8 +30,6 @@ namespace Toshi {
 		time(&seconds);
 		tm* time = gmtime(&seconds);
 
-		char filename[256];
-
 #ifdef TOSHI_DEBUG
 
 		const char* szFileSystemName = "console";
@@ -45,10 +43,12 @@ namespace Toshi {
 
 #endif // TOSHI_DEBUG
 
-		T2String8::Format(
-			filename,
-			"%s:barnyard_%d%02d%02d_%02d_%02d_%02d.log",
+		T2FixedString256 filename;
+
+		filename.Format(
+			"%s:Logs\\%s_%d%02d%02d_%02d_%02d_%02d.log",
 			szFileSystemName,
+			ms_oToshiParams.szLogFileName,
 			time->tm_year + 1900,
 			time->tm_mon + 1,
 			time->tm_mday,
@@ -57,13 +57,40 @@ namespace Toshi {
 			time->tm_sec
 		);
 		
-		GetCurrentLogFile()->Create(filename, "Toshi 2.0", TFALSE);
+		GetCurrentLogFile()->Create(filename.Get(), "Toshi 2.0", TFALSE);
 		GetCurrentLogFile()->AllowIndentation(TTRUE);
 		GetCurrentLogFile()->SetSimpleMode(TFALSE);
-#else  // TOSHI_NO_LOGS
-		TUtil::GetSingleton()->m_pDefaultLogFile = TNULL;
-		TUtil::GetSingleton()->m_pCurrentLogFile = TNULL;
-#endif // TOSHI_NO_LOGS
+
+#ifdef SUPPORT_COLOURED_LOGS
+
+#ifdef TOSHI_DEBUG
+
+		GetCurrentLogFile()->SetColouringMode(TTRUE);
+#else
+
+		GetCurrentLogFile()->SetColouringMode(TFALSE);
+
+#endif // TOSHI_DEBUG
+
+#endif // SUPPORT_COLOURED_LOGS
+
+#endif // !TOSHI_NO_LOGS
+	}
+
+	void TUtil::CreateTPStringPool()
+	{
+		TASSERT(ms_poStringPool == TNULL);
+		ms_poStringPool = new TPString8Pool*;
+		*ms_poStringPool = TNULL;
+	}
+
+	void TUtil::DestroyTPStringPool()
+	{
+		if (ms_poStringPool)
+		{
+			delete ms_poStringPool;
+			ms_poStringPool = TNULL;
+		}
 	}
 
 	void TUtil::Log(const char* a_szFormat, ...)
@@ -79,7 +106,7 @@ namespace Toshi {
 			formatString.FormatV(a_szFormat, args);
 			va_end(args);
 
-			pLogFile->Log(TLogFile::Type_Info, "Toshi", "Kernel", formatString.Get());
+			pLogFile->Log(TLogFile::Type_Info, ms_oToshiParams.szLogAppName, ms_oToshiParams.szLogAppDirName, formatString.Get());
 			GetLogEmitter().Throw(LogEvent(pLogFile, TLogFile::Type_Info, formatString.Get()));
 		}
 	}
@@ -97,7 +124,7 @@ namespace Toshi {
 			formatString.FormatV(a_szFormat, args);
 			va_end(args);
 
-			pLogFile->Log(a_eLogType, "Toshi", "Kernel", formatString.Get());
+			pLogFile->Log(a_eLogType, ms_oToshiParams.szLogAppName, ms_oToshiParams.szLogAppDirName, formatString.Get());
 			GetLogEmitter().Throw(LogEvent(pLogFile, a_eLogType, formatString.Get()));
 		}
 	}
@@ -133,8 +160,16 @@ namespace Toshi {
 		pUtil->m_pCurrentLogFile = (!a_pLogFile) ? pUtil->m_pDefaultLogFile : a_pLogFile;
 	}
 
-	TBOOL TUtil::ToshiCreate(char* a_szCommandLine, TINT a_iArg2, TINT a_iArg3)
+	TUtil::TUtil() : m_LogEmitter(this)
 	{
+		m_pDefaultLogFile = TNULL;
+		m_pCurrentLogFile = TNULL;
+	}
+
+	TBOOL TUtil::ToshiCreate(const TOSHIParams& a_rToshiParams)
+	{
+		ms_oToshiParams = a_rToshiParams;
+
 		CreateKernelInterface();
 		// TODO: FUN_006c7fe0
 		TFileManager::Create();
@@ -154,53 +189,15 @@ namespace Toshi {
 		TModelRegistry::Uninitialise();
 	}
 
+	void TUtil::Create()
+	{
+		TUtil::CreateSingleton()->LogInitialise();
+		TUtil::CRCInitialise();
+	}
+
 	TBOOL TUtil::CreateKernelInterface()
 	{
 		return TSystemManager::Create();
-	}
-
-	void TUtil::MemSet(void* ptr, size_t value, size_t size)
-	{
-		if (size >= sizeof(void*))
-		{
-			size_t* pos = static_cast<size_t*>(ptr);
-			size_t  stepCount = size / sizeof(void*);
-			size -= stepCount * sizeof(void*);
-
-			for (; stepCount != 0; stepCount--) *(pos++) = value;
-
-			ptr = pos;
-		}
-
-		while (size > 0)
-		{
-			uint8_t stepSize = size & 0b11;
-			if (stepSize == 0) stepSize = 4;
-
-			if (size == 1)
-			{
-				*(uint8_t*)ptr = (uint8_t)value;
-			}
-			else
-			{
-				if (size == 2)
-				{
-					*(uint16_t*)ptr = (uint16_t)value;
-				}
-				else if (size == 3)
-				{
-					*(uint16_t*)ptr = (uint16_t)value;
-					*(uint8_t*)((uintptr_t)ptr + sizeof(uint16_t)) = (uint8_t)value;
-				}
-				else if (size == 4)
-				{
-					*(uint32_t*)ptr = (uint32_t)value;
-				}
-			}
-
-			ptr = reinterpret_cast<void*>((uintptr_t)ptr + stepSize);
-			size -= stepSize;
-		}
 	}
 
 	// Source: https://lentz.com.au/blog/tag/crc-table-generator

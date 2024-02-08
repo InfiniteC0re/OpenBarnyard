@@ -196,7 +196,8 @@ AModelInstance::AModelInstance(AModel* a_pModel, T2ModelInstance* a_pT2Instance,
 	m_pT2ModelInstance->GetInstance()->SetCustomRenderMethod(RenderInstanceCallback, this);
 }
 
-AModelInstance::AModelInstance()
+AModelInstance::AModelInstance() :
+	m_ChangeEmitter(this)
 {
 	TFIXME("Initialise some unknown members");
 

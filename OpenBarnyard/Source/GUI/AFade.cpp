@@ -10,7 +10,8 @@
 AFade::AFade() :
 	m_FadeFromColor(255, 255, 255, 255),
 	m_FadeToColor(255, 255, 255, 255),
-	m_fCurrentTime(0.0f)
+	m_fCurrentTime(0.0f),
+	m_FadeOverEmitter(this)
 {
 	
 }

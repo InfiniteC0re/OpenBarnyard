@@ -70,7 +70,13 @@ TOSHI_ENTRY
 
 	char* szCommandLine = GetCommandLineA();
 
-	TUtil::ToshiCreate(szCommandLine, 0, 0);
+	TUtil::ToshiCreate(
+		TUtil::TOSHIParams {
+			.szCommandLine=szCommandLine,
+			.szLogFileName="barnyard"
+		}
+	);
+
 	TMemory::StartDebugPipe();
 
 	g_oSystemManager.SetQuitCallback([]() {

@@ -84,7 +84,6 @@ namespace Toshi {
 	class TEmitter : public TGenericEmitter
 	{
 	public:
-		TEmitter() = default;
 		TEmitter(Owner* owner) : TGenericEmitter(owner) {}
 
 		void Throw(Data* pData) { TGenericEmitter::Throw(pData); }

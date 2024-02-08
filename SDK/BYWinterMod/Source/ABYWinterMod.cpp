@@ -164,8 +164,14 @@ extern "C"
 	MODLOADER_EXPORT AModInstance* CreateModInstance()
 	{
 		TMemory::Initialise(2 * 1024 * 1024, 0);
-		TFileManager::Create();
-		TUtil::Create();
+
+		TUtil::ToshiCreate(
+			TUtil::TOSHIParams{
+				.szCommandLine = "",
+				.szLogFileName = "wintermod",
+				.szLogAppName = "BYWinterMod"
+			}
+		);
 
 		return new ABYWinterMod();
 	}

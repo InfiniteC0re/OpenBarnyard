@@ -12,6 +12,10 @@ namespace Toshi {
 	class TUtil : public TSingleton<TUtil>
 	{
 	public:
+		//-----------------------------------------------------------------------------
+		// Class members
+		//-----------------------------------------------------------------------------
+
 		struct LogEvent
 		{
 			constexpr LogEvent(TLogFile* a_pFile, TLogFile::Type a_eType, const char* a_szString) :
@@ -25,104 +29,76 @@ namespace Toshi {
 			const char* m_szString;
 		};
 
-	public:
-		static TBOOL ToshiCreate(char* a_szCommandLine, TINT a_iArg2, TINT a_iArg3);
-		
-		static void ToshiDestroy();
-
-		static TBOOL CreateKernelInterface();
-
-		static void Create()
+		struct TOSHIParams
 		{
-			TUtil::CreateSingleton()->LogInitialise();
-			TUtil::CRCInitialise();
-		}
+			const char* szCommandLine = "";
+			const char* szLogFileName = "toshi";
+			const char* szLogAppName = "Toshi";
+			const char* szLogAppDirName = "Kernel";
+			TINT iUnused1 = 0;
+			TINT iUnused2 = 0;
+		};
+
+	public:
+		TUtil();
+
+	private:
+		TLogFile* m_pDefaultLogFile;
+		TLogFile* m_pCurrentLogFile;
+		TEmitter<TUtil, LogEvent> m_LogEmitter;
+
+	public:
+		//-----------------------------------------------------------------------------
+		// Static members
+		//-----------------------------------------------------------------------------
+
+		static TBOOL ToshiCreate(const TOSHIParams& a_rToshiParams);
+
+		static void ToshiDestroy();
 		
 		static const char* GetTime();
-		
-		static void TrimLog(const char* fileExtension, size_t trimTo);
 
-		static void MemSet(void* ptr, size_t value, size_t size);
-		
-		static void* MemCopy(void* dst, const void* src, size_t size)
-		{
-			return memcpy(dst, src, size);
-		}
-
-		static void MemClear(void* ptr, size_t size)
-		{
-			memset(ptr, 0, size);
-		}
-
-		static int MemCompare(void* ptr1, void* ptr2, int size)
-		{
-			return memcmp(ptr1, ptr2, size);
-		}
-
-		static void LogInitialise();
+		static void  MemSet(void* ptr, size_t value, size_t size) { std::memset(ptr, value, size); }
+		static void* MemCopy(void* dst, const void* src, size_t size) { return std::memcpy(dst, src, size); }
+		static void  MemClear(void* ptr, size_t size) { std::memset(ptr, 0, size); }
+		static int   MemCompare(void* ptr1, void* ptr2, int size) { return std::memcmp(ptr1, ptr2, size); }
 
 		static void Log(const char* a_szFormat, ...);
 		static void Log(TLogFile::Type a_eLogType, const char* a_szFormat, ...);
-		
+		static void TrimLog(const char* fileExtension, size_t trimTo);
+
+		static void LogDown() { TUtil::GetSingletonSafe()->m_pCurrentLogFile->Down(); }
+		static void LogUp() { TUtil::GetSingletonSafe()->m_pCurrentLogFile->Up(); }
+
 		static void LogConsole(const char* a_szFormat, ...);
 		static void LogSet(TLogFile* a_logFile);
 
 		static TLogFile* GetCurrentLogFile() { return TUtil::GetSingleton()->m_pCurrentLogFile; }
+		static TEmitter<TUtil, LogEvent>& GetLogEmitter() { return TUtil::GetSingleton()->m_LogEmitter; }
+
+		static void SetGlobalMutex(HANDLE a_hGlobalMutex) { ms_hGlobalMutex = a_hGlobalMutex; }
 		
-		static TEmitter<TLogFile, LogEvent>& GetLogEmitter() { return TUtil::GetSingleton()->m_LogEmitter; }
-
-		static void LogDown()
-		{
-			TUtil* util = TUtil::GetSingletonSafe();
-			util->m_pCurrentLogFile->Down();
-		}
-
-		static void LogUp()
-		{
-			TUtil* util = TUtil::GetSingletonSafe();
-			util->m_pCurrentLogFile->Up();
-		}
-
-		static void CreateTPStringPool()
-		{
-			TASSERT(ms_poStringPool == TNULL);
-			ms_poStringPool = new TPString8Pool*;
-			*ms_poStringPool = TNULL;
-		}
-
-		static void DestroyTPStringPool()
-		{
-			if (ms_poStringPool)
-			{
-				delete ms_poStringPool;
-				ms_poStringPool = TNULL;
-			}
-		}
-
+		static TPString8Pool* SetTPStringPool(TPString8Pool* a_pStringPool) { return std::exchange(*ms_poStringPool, a_pStringPool); }
+		
 		static TPString8Pool* GetTPStringPool()
 		{
 			TASSERT(ms_poStringPool != TNULL);
 			return *ms_poStringPool;
 		}
 
-		static TPString8Pool* SetTPStringPool(TPString8Pool* a_pStringPool)
-		{
-			return std::exchange(*ms_poStringPool, a_pStringPool);
-		}
+	private:
+		static void Create();
 
-		static void SetGlobalMutex(HANDLE a_hGlobalMutex)
-		{
-			ms_hGlobalMutex = a_hGlobalMutex;
-		}
+		static TBOOL CreateKernelInterface();
+
+		static void LogInitialise();
+		static void CreateTPStringPool();
+		static void DestroyTPStringPool();
 
 	private:
 		inline static TPString8Pool** ms_poStringPool;
 		inline static HANDLE ms_hGlobalMutex;
-
-	private:
-		TLogFile* m_pDefaultLogFile;
-		TLogFile* m_pCurrentLogFile;
-		TEmitter<TLogFile, LogEvent> m_LogEmitter;
+		inline static TOSHIParams ms_oToshiParams;
 		
 	public:
 #pragma region CRC

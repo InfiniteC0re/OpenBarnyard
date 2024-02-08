@@ -113,8 +113,14 @@ extern "C"
 	MODLOADER_EXPORT AModInstance* CreateModInstance()
 	{
 		TMemory::Initialise(64 * 1024 * 1024, 0);
-		TFileManager::Create();
-		TUtil::Create();
+
+		TUtil::ToshiCreate(
+			TUtil::TOSHIParams{
+				.szCommandLine = "",
+				.szLogFileName = "texturepack",
+				.szLogAppName = "BYTexturePacks"
+			}
+		);
 
 		g_LoadMutex.Create();
 
