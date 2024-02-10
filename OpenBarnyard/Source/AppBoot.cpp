@@ -70,12 +70,11 @@ TOSHI_ENTRY
 
 	char* szCommandLine = GetCommandLineA();
 
-	TUtil::ToshiCreate(
-		TUtil::TOSHIParams {
-			.szCommandLine=szCommandLine,
-			.szLogFileName="barnyard"
-		}
-	);
+	TUtil::TOSHIParams toshiParams;
+	toshiParams.szCommandLine = szCommandLine;
+	toshiParams.szLogFileName = "barnyard";
+
+	TUtil::ToshiCreate(toshiParams);
 
 	TMemory::StartDebugPipe();
 

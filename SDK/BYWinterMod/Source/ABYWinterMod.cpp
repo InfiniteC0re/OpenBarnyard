@@ -165,13 +165,12 @@ extern "C"
 	{
 		TMemory::Initialise(2 * 1024 * 1024, 0);
 
-		TUtil::ToshiCreate(
-			TUtil::TOSHIParams{
-				.szCommandLine = "",
-				.szLogFileName = "wintermod",
-				.szLogAppName = "BYWinterMod"
-			}
-		);
+		TUtil::TOSHIParams toshiParams;
+		toshiParams.szCommandLine = "";
+		toshiParams.szLogFileName = "wintermod";
+		toshiParams.szLogAppName = "BYWinterMod";
+
+		TUtil::ToshiCreate(toshiParams);
 
 		return new ABYWinterMod();
 	}

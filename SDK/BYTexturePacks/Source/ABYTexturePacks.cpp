@@ -114,13 +114,12 @@ extern "C"
 	{
 		TMemory::Initialise(64 * 1024 * 1024, 0);
 
-		TUtil::ToshiCreate(
-			TUtil::TOSHIParams{
-				.szCommandLine = "",
-				.szLogFileName = "texturepack",
-				.szLogAppName = "BYTexturePacks"
-			}
-		);
+		TUtil::TOSHIParams toshiParams;
+		toshiParams.szCommandLine = "";
+		toshiParams.szLogFileName = "texturepack";
+		toshiParams.szLogAppName = "BYTexturePacks";
+
+		TUtil::ToshiCreate(toshiParams);
 
 		g_LoadMutex.Create();
 

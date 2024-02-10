@@ -83,13 +83,12 @@ DWORD APIENTRY DllMain(HMODULE hModule, DWORD reason, LPVOID reserved)
 		hModuleCore = hModule;
 #endif
 
-		TUtil::ToshiCreate(
-			TUtil::TOSHIParams{
-				.szCommandLine = "",
-				.szLogFileName = "modcore",
-				.szLogAppName = "BYModCore"
-			}
-		);
+		TUtil::TOSHIParams toshiParams;
+		toshiParams.szCommandLine = "";
+		toshiParams.szLogFileName = "modcore";
+		toshiParams.szLogAppName = "BYModCore";
+
+		TUtil::ToshiCreate(toshiParams);
 
 		// Initialise hooks
 		AHooks::Initialise();

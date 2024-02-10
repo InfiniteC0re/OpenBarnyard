@@ -94,13 +94,12 @@ extern "C"
 	{
 		TMemory::Initialise(8 * 1024 * 1024, 0);
 		
-		TUtil::ToshiCreate(
-			TUtil::TOSHIParams{
-				.szCommandLine = "",
-				.szLogFileName = "speedrunhelper",
-				.szLogAppName = "BYSpeedrunHelper"
-			}
-		);
+		TUtil::TOSHIParams toshiParams;
+		toshiParams.szCommandLine = "";
+		toshiParams.szLogFileName = "speedrunhelper";
+		toshiParams.szLogAppName = "BYSpeedrunHelper";
+
+		TUtil::ToshiCreate(toshiParams);
 
 		return new ABYSpeedrunHelper();
 	}

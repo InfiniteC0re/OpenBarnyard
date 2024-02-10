@@ -74,12 +74,10 @@ void JsonToProperties(json& a_rJSON, PProperties& a_rProperties)
 
 int main(int argc, char** argv)
 {
-	TUtil::ToshiCreate(
-		TUtil::TOSHIParams{
-			.szCommandLine = GetCommandLineA()
-		}
-	);
+	TUtil::TOSHIParams toshiParams;
+	toshiParams.szCommandLine = GetCommandLineA();
 
+	TUtil::ToshiCreate(toshiParams);
 	TUtil::SetTPStringPool(new TPString8Pool(1024, 0, &T2Allocator::s_GlobalAllocator, TNULL));
 
 	AArgumentParser args(argv, argc);

@@ -451,13 +451,12 @@ extern "C"
 	{
 		TMemory::Initialise(2 * 1024 * 1024, 0);
 
-		TUtil::ToshiCreate(
-			TUtil::TOSHIParams{
-				.szCommandLine = "",
-				.szLogFileName = "glrender",
-				.szLogAppName = "BYGLRender"
-			}
-		);
+		TUtil::TOSHIParams toshiParams;
+		toshiParams.szCommandLine = "";
+		toshiParams.szLogFileName = "glrender";
+		toshiParams.szLogAppName = "BYGLRender";
+
+		TUtil::ToshiCreate(toshiParams);
 
 		return new ABYGLRender();
 	}
