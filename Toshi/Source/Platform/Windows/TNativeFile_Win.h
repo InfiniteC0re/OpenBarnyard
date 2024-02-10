@@ -6,49 +6,50 @@ namespace Toshi {
 	class TNativeFileSystem : public TFileSystem
 	{
 	public:
-		TNativeFileSystem(const char* name);
+		TNativeFileSystem(const TCHAR* name);
 
-		virtual TFile* CreateFile(TString8 const& fn, uint32_t flags) override;
-		virtual void DestroyFile(TFile*) override;
-		virtual TString8 MakeInternalPath(TString8 const&) { return {}; }
-		virtual TBOOL MakeDirectory(TString8 const&) override;
-		virtual TBOOL GetNextFile(TString8& fileName, uint32_t flags);
+        virtual TFile* CreateFile(const TString8& a_rcFileName, TFILEMODE a_eFileMode) override;
+        virtual void DestroyFile(TFile* a_pFile) override;
+        virtual TString8 MakeInternalPath(const TString8& a_rcPath) override { return {}; }
+        virtual TBOOL MakeDirectory(const TString8& a_rcDirectory) override;
+        virtual TBOOL GetNextFile(TString8& a_rOutFileName, TUINT32 a_uiFlags) override;
 	};
 
     class TNativeFile : public TFile
     {
     public:
-        static constexpr uint32_t BUFFER_SIZE = 0x800;
+        static constexpr TUINT32 BUFFER_SIZE = 0x800;
 
     public:
+        TNativeFile(TNativeFileSystem* a_pFileSystem);
         TNativeFile(const TNativeFile& other);
 
-        virtual size_t Read(void* dst, size_t size) override;
-        virtual size_t Write(const void* buffer, size_t size) override;
-        virtual TBOOL Seek(int offset, TFile::TSEEK seek) override;
-        virtual uint32_t Tell() override;
-        virtual DWORD GetSize() override;
-        virtual _FILETIME GetDate() override;
-        virtual int GetCChar() override;
-		virtual wchar_t GetWChar() override;
-        virtual int PutCChar(char character) { return 0; }
-        virtual int PutWChar(wchar_t character) { return 0; }
-        virtual int CPrintf(const char* format, ...);
-        virtual int WPrintf(const wchar_t* format, ...);
-        virtual int VCPrintf(const char* format, va_list vargs);
-        virtual int VWPrintf(const wchar_t* format, ...) { return 0; }
+		//-----------------------------------------------------------------------------
+        // TFile
+		//-----------------------------------------------------------------------------
+		virtual TUINT Read(void* a_pDst, TUINT a_uiSize) override;
+		virtual TUINT Write(const void* a_pSrc, TUINT a_uiSize) override;
+		virtual TBOOL Seek(TINT a_iOffset, TSEEK a_eOrigin = TSEEK_CUR) override;
+		virtual TUINT Tell() override;
+		virtual TUINT GetSize() override;
+		virtual _FILETIME GetDate() override;
+        virtual TCHAR GetCChar() override;
+        virtual TWCHAR GetWChar() override;
+        virtual TINT PutCChar(TCHAR a_cCharacter) override;
+        virtual TINT PutWChar(TWCHAR a_wcCharacter) override;
+		virtual TINT CPrintf(const TCHAR* a_szFormat, ...) override;
+		virtual TINT WPrintf(const TWCHAR* a_wszFormat, ...) override;
+		virtual TINT VCPrintf(const TCHAR* a_szFormat, va_list a_vargs) override;
+        virtual TINT VWPrintf(const TWCHAR* a_wszFormat, va_list a_vargs) override;
 
-        TBOOL LoadBuffer(DWORD bufferPos);
-        int FlushWriteBuffer();
-        int ReadUnbuffered(LPVOID dst, size_t size);
+		TBOOL Open(const TString8& a_FileName, TFILEMODE a_Mode);
 
-    protected:
-        TNativeFile(TNativeFileSystem* pFS);
+		void Close();
 
-        TBOOL Open(const TString8& a_FileName, FileMode a_Mode);
-        void Close();
-
-        friend TNativeFileSystem;
+    private:
+		TBOOL LoadBuffer(DWORD bufferPos);
+		TINT FlushWriteBuffer();
+		TINT ReadUnbuffered(LPVOID dst, TUINT size);
 
     private:
         HANDLE m_Handle;             // 0x8
@@ -56,8 +57,8 @@ namespace Toshi {
         DWORD m_RBufferPosition;     // 0x10
         DWORD m_PrevBufferPos;       // 0x14
         DWORD m_LastBufferSize;      // 0x18
-        char* m_RBuffer;             // 0x1C (read buffer)
-        char* m_WBuffer;             // 0x20 (write buffer)
+        TCHAR* m_RBuffer;             // 0x1C (read buffer)
+        TCHAR* m_WBuffer;             // 0x20 (write buffer)
         DWORD m_WriteBufferUsed;     // 0x24
         TBOOL m_WriteBuffered;        // 0x28
     };

@@ -26,14 +26,14 @@ namespace Toshi {
 			FLAG_DIRTY_VIEWMODELMATRIX = BITFIELD(9),
 		};
 
-		typedef uint32_t CameraMode;
+		typedef TUINT32 CameraMode;
 		enum CameraMode_ : CameraMode
 		{
 			CameraMode_Perspective,
 			CameraMode_Orthographic,
 		};
 
-		typedef uint32_t WORLDPLANE;
+		typedef TUINT32 WORLDPLANE;
 		enum WORLDPLANE_ : WORLDPLANE
 		{
 			WORLDPLANE_LEFT,
@@ -140,7 +140,7 @@ namespace Toshi {
 
 		const TPlane* GetWorldPlanes();
 
-		static TBOOL CullSphereToFrustumSimple(const TSphere& a_rSphere, const TPlane* a_pPlanes, int a_iNumPlanes);
+		static TBOOL CullSphereToFrustumSimple(const TSphere& a_rSphere, const TPlane* a_pPlanes, TINT a_iNumPlanes);
 		static TINT CullSphereToFrustum(const TSphere& a_rSphere, const TPlane* a_pPlanes, TINT a_iClipFlags, TINT a_iClipFlagsMask);
 
 		const TMatrix44& GetViewWorldMatrix();

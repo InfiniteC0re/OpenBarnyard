@@ -9,7 +9,7 @@
 
 namespace Toshi
 {
-	TBOOL TGenericFifo::Create(char* a_pBuffer, int a_iMaxItems, int a_iItemSize)
+	TBOOL TGenericFifo::Create(TCHAR* a_pBuffer, TINT a_iMaxItems, TINT a_iItemSize)
 	{
 		TASSERT(a_iMaxItems > 0, "Max items is less than zero");
 		TASSERT(a_iItemSize > 0, "Item size is less than zero");

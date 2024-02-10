@@ -11,17 +11,17 @@ namespace Toshi {
 
 #pragma region TNativeFileSystem
 
-    TNativeFileSystem::TNativeFileSystem(const char* name) : TFileSystem(name)
+    TNativeFileSystem::TNativeFileSystem(const TCHAR* name) : TFileSystem(name)
     {
         m_Handle = INVALID_HANDLE_VALUE;
         TFileManager::GetSingletonSafe()->MountFileSystem(this);
     }
 
-    TFile* TNativeFileSystem::CreateFile(TString8 const& fn, uint32_t flags)
+    TFile* TNativeFileSystem::CreateFile(const TString8& a_rcFileName, TFILEMODE a_eFileMode)
     {
         TNativeFile* nativeFile = new TNativeFile(this);
 
-        if (!nativeFile->Open(fn, flags))
+        if (!nativeFile->Open(a_rcFileName, a_eFileMode))
         {
             delete nativeFile;
             return TNULL;
@@ -44,7 +44,7 @@ namespace Toshi {
         return CreateDirectoryA(string, TNULL);
     }
 
-    TBOOL TNativeFileSystem::GetNextFile(TString8& fileName, uint32_t flags)
+    TBOOL TNativeFileSystem::GetNextFile(TString8& a_rOutFileName, TUINT32 a_uiFlags)
     {
         WIN32_FIND_DATAA findFileData;
 
@@ -57,15 +57,15 @@ namespace Toshi {
             }
             else if (findFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
             {
-                if ((flags & 1) != 0)
+                if ((a_uiFlags & 1) != 0)
                 {
-                    fileName = findFileData.cFileName;
+                    a_rOutFileName = findFileData.cFileName;
                     return TTRUE;
                 }
             }
-            else if ((flags & 2) != 0)
+            else if ((a_uiFlags & 2) != 0)
             {
-                fileName = findFileData.cFileName;
+                a_rOutFileName = findFileData.cFileName;
                 return TTRUE;
             }
         }
@@ -128,7 +128,7 @@ namespace Toshi {
         return TTRUE;
     }
 
-    int TNativeFile::FlushWriteBuffer()
+    TINT TNativeFile::FlushWriteBuffer()
     {
         DWORD lpNumberOfBytesWritten;
 
@@ -156,7 +156,7 @@ namespace Toshi {
         return lpNumberOfBytesWritten;
     }
 
-    int TNativeFile::ReadUnbuffered(LPVOID dst, size_t size)
+    TINT TNativeFile::ReadUnbuffered(LPVOID dst, TUINT size)
     {
         DWORD lpNumberOfBytesRead;
         FlushWriteBuffer();
@@ -184,19 +184,19 @@ namespace Toshi {
         return lpNumberOfBytesRead;
     }
 
-    size_t TNativeFile::Read(void* dst, size_t size)
+    TUINT TNativeFile::Read(void* a_pDst, TUINT a_uiSize)
     {
         FlushWriteBuffer();
 
-        if (size < 1) { return 0; }
+        if (a_uiSize < 1) return 0;
 
         if (m_RBuffer != TNULL)
         {
             DWORD readedCount = 0;
             DWORD startPos = m_Position;
             DWORD curBufferPos = startPos / BUFFER_SIZE * BUFFER_SIZE;
-            DWORD newBufferPos = (startPos + size) / BUFFER_SIZE * BUFFER_SIZE;
-            LPVOID curPosBuffer = dst;
+            DWORD newBufferPos = (startPos + a_uiSize) / BUFFER_SIZE * BUFFER_SIZE;
+            LPVOID curPosBuffer = a_pDst;
 
             if (curBufferPos != newBufferPos)
             {
@@ -206,9 +206,9 @@ namespace Toshi {
 
                     if (readCount > 0)
                     {
-                        memcpy(dst, m_RBuffer + startPos - curBufferPos, readCount);
+                        TUtil::MemCopy(a_pDst, m_RBuffer + startPos - curBufferPos, readCount);
                         
-                        curPosBuffer = (char*)dst + readCount;
+                        curPosBuffer = (TCHAR*)a_pDst + readCount;
                         m_Position += readCount;
                         readedCount = readCount;
                     }
@@ -219,8 +219,8 @@ namespace Toshi {
 
                 if (toReadCount > 0)
                 {
-                    uint32_t readed = ReadUnbuffered(curPosBuffer, toReadCount);
-                    curPosBuffer = (char*)curPosBuffer + readed;
+                    TUINT32 readed = ReadUnbuffered(curPosBuffer, toReadCount);
+                    curPosBuffer = (TCHAR*)curPosBuffer + readed;
                     readedCount += readed;
 
                     if (readed != toReadCount)
@@ -231,16 +231,16 @@ namespace Toshi {
                 }
             }
 
-            if (readedCount != size && LoadBuffer(curBufferPos))
+            if (readedCount != a_uiSize && LoadBuffer(curBufferPos))
             {
-                size -= readedCount;
+                a_uiSize -= readedCount;
                 DWORD bufferLeftSize = m_Position - curBufferPos;
                 DWORD readCount = m_LastBufferSize - bufferLeftSize;
-                readCount = TMath::Min<DWORD>(readCount, size);
+                readCount = TMath::Min<DWORD>(readCount, a_uiSize);
 
                 if (readCount > 0)
                 {
-                    memcpy(curPosBuffer, m_RBuffer + bufferLeftSize, readCount);
+                    TUtil::MemCopy(curPosBuffer, m_RBuffer + bufferLeftSize, readCount);
                     m_Position += readCount;
                     readedCount += readCount;
                 }
@@ -249,10 +249,10 @@ namespace Toshi {
             return readedCount;
         }
 
-        return ReadUnbuffered(dst, size);;
+        return ReadUnbuffered(a_pDst, a_uiSize);
     }
 
-    size_t TNativeFile::Write(const void* buffer, size_t size)
+    TUINT TNativeFile::Write(const void* buffer, TUINT size)
     {
         if (m_RBufferPosition != m_Position)
         {
@@ -312,27 +312,27 @@ namespace Toshi {
         return 0;
     }
 
-    uint32_t TNativeFile::Tell()
+    TUINT32 TNativeFile::Tell()
     {
         FlushWriteBuffer();
         return m_Position;
     }
 
-    TBOOL TNativeFile::Seek(int offset, TFile::TSEEK origin)
+    TBOOL TNativeFile::Seek(TINT a_iOffset, TSEEK a_eOrigin)
     {
         FlushWriteBuffer();
 
-        if (origin == TFile::TSEEK_SET)
+        if (a_eOrigin == TSEEK_SET)
         {
-            m_Position = offset;
+            m_Position = a_iOffset;
         }
-        else if (origin == TFile::TSEEK_CUR)
+        else if (a_eOrigin == TSEEK_CUR)
         {
-            m_Position += offset;
+            m_Position += a_iOffset;
         }
-        else if (origin == TFile::TSEEK_END)
+        else if (a_eOrigin == TSEEK_END)
         {
-            m_RBufferPosition = SetFilePointer(m_Handle, offset, TNULL, FILE_END);
+            m_RBufferPosition = SetFilePointer(m_Handle, a_iOffset, TNULL, FILE_END);
             
             if (m_RBufferPosition == INVALID_SET_FILE_POINTER && GetLastError() != NO_ERROR)
             {
@@ -347,58 +347,78 @@ namespace Toshi {
         return TTRUE;
     }
 
-    int TNativeFile::GetCChar()
+    TCHAR TNativeFile::GetCChar()
     {
         FlushWriteBuffer();
 
         if (m_RBuffer != TNULL)
         {
-            uint32_t curBufferPos = m_Position / BUFFER_SIZE * BUFFER_SIZE;
+            TUINT32 curBufferPos = m_Position / BUFFER_SIZE * BUFFER_SIZE;
             if ((curBufferPos == m_PrevBufferPos) && (m_Position - curBufferPos <= m_LastBufferSize - 1))
             {
-                char c = m_RBuffer[m_Position - curBufferPos];
+                TCHAR c = m_RBuffer[m_Position - curBufferPos];
                 m_Position += sizeof(c);
                 return c;
             }
         }
 
-		char result;
+		TCHAR result;
 		if (Read(&result, sizeof(result)) != sizeof(result))
 			return -1;
 
         return result;
     }
 
-	wchar_t TNativeFile::GetWChar()
+	TWCHAR TNativeFile::GetWChar()
 	{
 		FlushWriteBuffer();
 
 		if (m_RBuffer != TNULL)
 		{
-			uint32_t curBufferPos = m_Position / BUFFER_SIZE * BUFFER_SIZE;
+			TUINT32 curBufferPos = m_Position / BUFFER_SIZE * BUFFER_SIZE;
 			if ((curBufferPos == m_PrevBufferPos) && (m_Position - curBufferPos <= m_LastBufferSize - 1))
 			{
-				wchar_t c = *TREINTERPRETCAST(wchar_t*, &m_RBuffer[m_Position - curBufferPos]);
+				TWCHAR c = *TREINTERPRETCAST(TWCHAR*, &m_RBuffer[m_Position - curBufferPos]);
 				m_Position += sizeof(c);
 				return c;
 			}
 		}
 
-		wchar_t result;
+		TWCHAR result;
 		if (Read(&result, sizeof(result)) != sizeof(result))
 			return L'\xFFFF';
 
 		return result;
 	}
 
-	int TNativeFile::CPrintf(const char* format, ...)
+	TINT TNativeFile::PutCChar(TCHAR a_cCharacter)
+	{
+        if (Write(&a_cCharacter, 1) != 1)
+        {
+            return -1;
+        }
+
+        return a_cCharacter & 0xFF;
+	}
+
+	TINT TNativeFile::PutWChar(TWCHAR a_wcCharacter)
+	{
+		if (Write(&a_wcCharacter, 2) != 2)
+		{
+			return -1;
+		}
+
+		return a_wcCharacter & 0xFFFF;
+	}
+
+	TINT TNativeFile::CPrintf(const TCHAR* a_szFormat, ...)
     {
         va_list args; 
-        va_start(args, format);
+        va_start(args, a_szFormat);
 
-        char str[0x200];
+        TCHAR str[512];
 
-        int iResult = T2String8::FormatV(str, sizeof(str), format, args);
+        TINT iResult = T2String8::FormatV(str, TARRAYSIZE(str), a_szFormat, args);
 
         va_end(args);
 
@@ -407,34 +427,45 @@ namespace Toshi {
         return iResult;
     }
 
-    int TNativeFile::WPrintf(const wchar_t* format, ...)
+    TINT TNativeFile::WPrintf(const TWCHAR* a_wszFormat, ...)
     {
         va_list args;
-        va_start(args, format);
+        va_start(args, a_wszFormat);
 
-        wchar_t str[0x200];
+        TWCHAR str[512];
 
-        int iResult = T2String16::FormatV(str, sizeof(str), format, args);
+        TINT iResult = T2String16::FormatV(str, TARRAYSIZE(str), a_wszFormat, args);
 
-        Write(str, iResult);
+        Write(str, iResult * sizeof(TWCHAR));
 
         va_end(args);
 
         return iResult;
     }
 
-    int TNativeFile::VCPrintf(const char* format, va_list vargs)
+    TINT TNativeFile::VCPrintf(const TCHAR* a_szFormat, va_list a_vargs)
     {
-        char str[0x200];
+        TCHAR str[512];
 
-        int iResult = T2String8::FormatV(str, sizeof(str), format, vargs);
+        TINT iResult = T2String8::FormatV(str, TARRAYSIZE(str), a_szFormat, a_vargs);
 
         Write(str, iResult);
 
         return iResult;
     }
 
-    DWORD TNativeFile::GetSize()
+	TINT TNativeFile::VWPrintf(const TWCHAR* a_wszFormat, va_list a_vargs)
+	{
+        TWCHAR str[512];
+
+		TINT iResult = T2String16::FormatV(str, TARRAYSIZE(str), a_wszFormat, a_vargs);
+
+		Write(str, iResult * sizeof(TWCHAR));
+
+		return iResult;
+	}
+
+	TUINT TNativeFile::GetSize()
     {
         m_RBufferPosition = SetFilePointer(m_Handle, 0, TNULL, TSEEK_END);
         
@@ -460,7 +491,7 @@ namespace Toshi {
         return fLastWriteTime;
     }
 
-    TBOOL TNativeFile::Open(const TString8& a_FileName, FileMode a_Mode)
+    TBOOL TNativeFile::Open(const TString8& a_FileName, TFILEMODE a_Mode)
     {
         TASSERT(a_FileName.IsIndexValid(0), "TNativeFile::Open - wrong filename");
 
@@ -468,11 +499,11 @@ namespace Toshi {
         DWORD dwDesiredAccess = 0;
         DWORD dwShareMode = 0;
 
-        dwDesiredAccess |= (a_Mode & FileMode_Read)  ? GENERIC_READ  : dwDesiredAccess;
-        dwDesiredAccess |= (a_Mode & FileMode_Write) ? GENERIC_WRITE : dwDesiredAccess;
-        dwDesiredAccess |= (a_Mode & FileMode_ReadWrite) ? (GENERIC_READ | GENERIC_WRITE) : dwDesiredAccess;
+        dwDesiredAccess |= (a_Mode & TFILEMODE_READ)  ? GENERIC_READ  : dwDesiredAccess;
+        dwDesiredAccess |= (a_Mode & TFILEMODE_WRITE) ? GENERIC_WRITE : dwDesiredAccess;
+        dwDesiredAccess |= (a_Mode & TFILEMODE_READWRITE) ? (GENERIC_READ | GENERIC_WRITE) : dwDesiredAccess;
 
-        if (a_Mode & FileMode_CreateNew)
+        if (a_Mode & TFILEMODE_CREATENEW)
         {
             dwShareMode = FILE_SHARE_READ;
             dwCreationDisposition = CREATE_ALWAYS;
@@ -494,14 +525,14 @@ namespace Toshi {
             m_PrevBufferPos = -1;
             m_LastBufferSize = 0;
 
-            if (a_Mode & FileMode_NoBuffer)
+            if (a_Mode & TFILEMODE_NOBUFFER)
             {
                 m_WriteBuffered = TFALSE;
             }
             else
             {
-                m_RBuffer = (char*)TMalloc(BUFFER_SIZE);
-                m_WBuffer = (char*)TMalloc(BUFFER_SIZE);
+                m_RBuffer = (TCHAR*)TMalloc(BUFFER_SIZE);
+                m_WBuffer = (TCHAR*)TMalloc(BUFFER_SIZE);
                 m_WriteBuffered = TTRUE;
             }
         }

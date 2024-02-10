@@ -48,7 +48,7 @@ namespace Toshi {
 			TUINT m_uiNumSubMeshes;
 			TUINT32 m_uiNumIndices;
 			TUINT32 m_uiNumVertices;
-			char* m_szMaterialName;
+			TCHAR* m_szMaterialName;
 			SubMesh* m_pSubMeshes;
 		};
 

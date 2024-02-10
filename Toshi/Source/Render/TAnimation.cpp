@@ -30,7 +30,7 @@ namespace Toshi {
 					m_fSeqTime -= TMath::FloorToInt(m_fSeqTime / fSeqDuration) * fSeqDuration;
 					
 					// Reset states of all bones
-					for (int i = 0; i < pSkeleton->GetAutoBoneCount(); i++)
+					for (TINT i = 0; i < pSkeleton->GetAutoBoneCount(); i++)
 						*GetBone(i) = 0;
 				}
 			}

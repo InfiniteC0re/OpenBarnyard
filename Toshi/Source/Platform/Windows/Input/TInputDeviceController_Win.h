@@ -12,7 +12,7 @@ namespace Toshi
 		static TBOOL IsDirectInputController(LPCDIDEVICEINSTANCEA a_poDeviceInstance);
 		TBOOL const BindToDIDevice(HWND a_mainWindow, LPCDIDEVICEINSTANCEA a_poDeviceInstance, IDirectInputDevice8A* a_poDXInputDevice);
 		
-		static int CALLBACK EnumerateObjectCallback(LPCDIDEVICEOBJECTINSTANCEA a_poDeviceInstance, LPVOID a_pData)
+		static TINT CALLBACK EnumerateObjectCallback(LPCDIDEVICEOBJECTINSTANCEA a_poDeviceInstance, LPVOID a_pData)
 		{
 			return 1;
 		}

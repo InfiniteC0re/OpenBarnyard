@@ -21,7 +21,7 @@ namespace Toshi {
 			TUINT32 m_uiNumIndices;
 			TUINT32 m_uiNumVertices1;
 			TUINT32 m_uiNumVertices2;
-			char* m_szMaterialName;
+			TCHAR* m_szMaterialName;
 			WorldVertex* m_pVertices;
 			TUINT16* m_pIndices;
 		};
@@ -63,7 +63,7 @@ namespace Toshi {
 
 		struct Model
 		{
-			char m_MetaData[132];
+			TCHAR m_MetaData[132];
 			TUINT32 m_uiNumMeshes;
 			MeshBounding** m_ppMeshBoundings;
 			RenderGroup* m_pRenderGroups;

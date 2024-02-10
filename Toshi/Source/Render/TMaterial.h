@@ -16,7 +16,7 @@ namespace Toshi
 		static constexpr size_t MAXTEXTURES = 6;
 		static constexpr size_t NAMESIZELIMIT = 31;
 
-		typedef uint32_t Flags;
+		typedef TUINT32 Flags;
 		enum Flags_ : Flags
 		{
 			Flags_NULL         = 0,
@@ -59,24 +59,24 @@ namespace Toshi
 			return m_pOwnerShader;
 		}
 
-		void SetTextureNum(uint32_t a_iNumTextures)
+		void SetTextureNum(TUINT32 a_iNumTextures)
 		{
 			TASSERT(a_iNumTextures <= MAXTEXTURES);
 			m_iNumTex = a_iNumTextures;
 		}
 
-		void SetTexture(uint32_t a_iStage, TTexture* a_pTexture)
+		void SetTexture(TUINT32 a_iStage, TTexture* a_pTexture)
 		{
 			TASSERT(a_iStage < MAXTEXTURES);
 			m_pTextures[a_iStage] = a_pTexture;
 		}
 
-		TTexture* GetTexture(uint32_t a_iStage = 0) const
+		TTexture* GetTexture(TUINT32 a_iStage = 0) const
 		{
 			return m_pTextures[a_iStage];
 		}
 
-		void SetName(const char* name)
+		void SetName(const TCHAR* name)
 		{
 			if (name == TNULL)
 			{
@@ -124,8 +124,8 @@ namespace Toshi
 		Flags m_Flags;                      // 0x04
 		TShader* m_pOwnerShader;            // 0x08
 		TRegMaterial* m_pRegMaterial;       // 0x0C
-		uint32_t m_iNumTex;                 // 0x10
+		TUINT32 m_iNumTex;                 // 0x10
 		TTexture* m_pTextures[MAXTEXTURES]; // 0x14
-		char m_Name[NAMESIZELIMIT + 1];     // 0x2C
+		TCHAR m_Name[NAMESIZELIMIT + 1];     // 0x2C
 	};
 }

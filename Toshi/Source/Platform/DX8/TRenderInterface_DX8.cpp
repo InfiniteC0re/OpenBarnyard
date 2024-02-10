@@ -172,7 +172,7 @@ namespace Toshi {
 			m_pDirectDevice->ShowCursor(TRUE);
 
 			TUINT invalidTextureData[32];
-			for (int i = 0; i < 32; i++)
+			for (TINT i = 0; i < 32; i++)
 			{
 				invalidTextureData[i] = 0xff0fff0f;
 			}
@@ -319,15 +319,15 @@ namespace Toshi {
 		}
 	}
 
-	void TRenderD3DInterface::PrintError(TINT32 a_eError, const char* a_szInfo)
+	void TRenderD3DInterface::PrintError(TINT32 a_eError, const TCHAR* a_szInfo)
 	{
 		if (!a_szInfo)
 		{
 			a_szInfo = "D3D Error";
 		}
 
-		const char* errString = GetErrorString(a_eError);
-		const char* errDescription = GetErrorDescription(a_eError);
+		const TCHAR* errString = GetErrorString(a_eError);
+		const TCHAR* errDescription = GetErrorDescription(a_eError);
 
 		TString8 string = TString8::Format("> %s: D3D Error [%s] : Description [%s] !\n", a_szInfo, errString, errDescription);
 		OutputDebugStringA(string);
@@ -365,7 +365,7 @@ namespace Toshi {
 		}
 	}
 
-	void TRenderD3DInterface::RenderIndexPrimitive(int param_2, int param_3, int param_4, int param_5, int param_6, int param_7)
+	void TRenderD3DInterface::RenderIndexPrimitive(TINT param_2, TINT param_3, TINT param_4, TINT param_5, TINT param_6, TINT param_7)
 	{
 		TIMPLEMENT();
 	}
@@ -407,7 +407,7 @@ namespace Toshi {
 		delete a_pRenderCapture;
 	}
 
-	void* TRenderD3DInterface::CreateUnknown(const char* a_szName, int a_iUnk1, int a_iUnk2, int a_iUnk3)
+	void* TRenderD3DInterface::CreateUnknown(const TCHAR* a_szName, TINT a_iUnk1, TINT a_iUnk2, TINT a_iUnk3)
 	{
 		return TNULL;
 	}
@@ -428,7 +428,7 @@ namespace Toshi {
 		return pModel;
 	}
 
-	TModel* TRenderD3DInterface::CreateModel(const char* a_szFilePath, TBOOL a_bLoad)
+	TModel* TRenderD3DInterface::CreateModel(const TCHAR* a_szFilePath, TBOOL a_bLoad)
 	{
 		auto pModel = new TModelHAL();
 
@@ -444,7 +444,7 @@ namespace Toshi {
 		return pModel;
 	}
 
-	TModel* TRenderD3DInterface::CreateModel(const char* a_szFilePath, TBOOL a_bLoad, TTRB* a_pAssetTRB, TUINT8 a_ui8FileNameLen)
+	TModel* TRenderD3DInterface::CreateModel(const TCHAR* a_szFilePath, TBOOL a_bLoad, TTRB* a_pAssetTRB, TUINT8 a_ui8FileNameLen)
 	{
 		auto pModel = new TModelHAL();
 
@@ -696,7 +696,7 @@ namespace Toshi {
 		);
 	}
 
-	TBOOL TRenderD3DInterface::IsTextureFormatSupported(int a_eTextureFormat)
+	TBOOL TRenderD3DInterface::IsTextureFormatSupported(TINT a_eTextureFormat)
 	{
 		switch (a_eTextureFormat) {
 		case 1:
@@ -753,7 +753,7 @@ namespace Toshi {
 		MessageBoxA(NULL, text, caption, 0);
 	}
 
-	TBOOL TRenderD3DInterface::Create(const char* a_szWindowName)
+	TBOOL TRenderD3DInterface::Create(const TCHAR* a_szWindowName)
 	{
 		TASSERT(TFALSE == IsCreated());
 
@@ -839,9 +839,9 @@ namespace Toshi {
 		m_AcceleratorTable = CreateAcceleratorTableA(accel, 2);
 	}
 
-	const char* TRenderD3DInterface::GetErrorString(TINT32 a_eError)
+	const TCHAR* TRenderD3DInterface::GetErrorString(TINT32 a_eError)
 	{
-		const char* pcVar1;
+		const TCHAR* pcVar1;
 
 		if (a_eError < -0x7789feb0) {
 			if (a_eError == -0x7789feb1) {
@@ -2809,9 +2809,9 @@ namespace Toshi {
 		return pcVar1;
 	}
 
-	const char* TRenderD3DInterface::GetErrorDescription(TINT32 a_eError)
+	const TCHAR* TRenderD3DInterface::GetErrorDescription(TINT32 a_eError)
 	{
-		const char* pcVar1;
+		const TCHAR* pcVar1;
 		bool bVar2;
 
 		if (a_eError < -0x7789feb0) {

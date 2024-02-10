@@ -59,8 +59,8 @@ namespace Toshi
 		
 		void SetParent(TResource* a_pParent);
 
-		const char* GetName() const { return m_Name; }
-		void SetName(const char* name);
+		const TCHAR* GetName() const { return m_Name; }
+		void SetName(const TCHAR* name);
 
 		TBOOL RecurseSimple(t_RecurseCb a_pCallback, TResource* a_pResource, void* a_pUserData);
 		static TBOOL Recurse(t_RecurseCb a_pCallback, TResource* a_pResource, TBOOL a_bFlag, void* a_pUserData);
@@ -100,21 +100,21 @@ namespace Toshi
 			return TNode::m_Tree;
 		}
 
-		uint32_t GetUId() const
+		TUINT32 GetUId() const
 		{
 			return m_UId;
 		}
 
-		void SetUId(uint32_t uid)
+		void SetUId(TUINT32 uid)
 		{
 			m_UId = uid;
 		}
 
 	private:
 		TRenderInterface* m_Renderer;         // 0x18
-		char m_Name[MAXNAMELEN + 1]; // 0x1C
+		TCHAR m_Name[MAXNAMELEN + 1]; // 0x1C
 		TResourceState m_State;      // 0x2B
-		uint32_t m_UId;              // 0x2C
+		TUINT32 m_UId;              // 0x2C
 	};
 }
 

@@ -10,11 +10,11 @@ namespace Toshi
 			Reset();
 		}
 
-		uint32_t GetRaw32()
+		TUINT32 GetRaw32()
 		{
 			LARGE_INTEGER raw32;
 			QueryPerformanceCounter(&raw32);
-			return static_cast<uint32_t>(raw32.QuadPart);
+			return static_cast<TUINT32>(raw32.QuadPart);
 		}
 
 		int64_t GetRaw64()

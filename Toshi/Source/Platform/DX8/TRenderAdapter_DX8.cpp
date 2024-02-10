@@ -129,7 +129,7 @@ namespace Toshi {
 						pDevice->m_eFlags |= D3DCREATE_SOFTWARE_VERTEXPROCESSING;
 					}
 
-					for (int j = 0; j < Mode::Device::NUMDEPTHSTENCILFORMATS; j++)
+					for (TINT j = 0; j < Mode::Device::NUMDEPTHSTENCILFORMATS; j++)
 					{
 						if (Mode::Device::DEPTHSTENCILFORMATS[j] != D3DFMT_UNKNOWN)
 						{
@@ -176,12 +176,12 @@ namespace Toshi {
 		return m_uiModeIndex;
 	}
 
-	uint32_t TD3DAdapter::Mode::GetWidth() const
+	TUINT32 TD3DAdapter::Mode::GetWidth() const
 	{
 		return m_DisplayMode.Width;
 	}
 
-	uint32_t TD3DAdapter::Mode::GetHeight() const
+	TUINT32 TD3DAdapter::Mode::GetHeight() const
 	{
 		return m_DisplayMode.Height;
 	}
@@ -234,7 +234,7 @@ namespace Toshi {
 		return m_uiDeviceIndex;
 	}
 
-	const char* TD3DAdapter::Mode::Device::GetTypeString() const
+	const TCHAR* TD3DAdapter::Mode::Device::GetTypeString() const
 	{
 		return DEVICETYPESSTRINGS[m_uiDeviceIndex];
 	}

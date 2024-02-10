@@ -77,7 +77,7 @@ namespace Toshi {
 		float m_fNear;
 		float m_fFar;
 		float m_fFOV;
-		int m_Unk1;
+		TINT m_Unk1;
 		TRenderContext::CameraMode m_eMode;
 		float m_fCentreX;
 		float m_fCentreY;

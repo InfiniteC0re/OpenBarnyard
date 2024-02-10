@@ -5,7 +5,7 @@ namespace Toshi
 	class T2Mutex
 	{
 	public:
-		typedef uint32_t Flags;
+		typedef TUINT32 Flags;
 		enum Flags_ : Flags
 		{
 			Flags_Standard = 0,
@@ -13,7 +13,7 @@ namespace Toshi
 		};
 
 	public:
-		T2Mutex() = default;
+		constexpr T2Mutex() : m_Mutex(TNULL) { }
 		~T2Mutex() { Destroy(); }
 
 		// Returns TTRUE if success

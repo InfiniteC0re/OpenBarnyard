@@ -11,21 +11,24 @@ using TINT16 = int16_t;
 using TUINT16 = uint16_t;
 using TINT8 = int8_t;
 using TUINT8 = uint8_t;
+using TBYTE = uint8_t;
+using TCHAR = char;
+using TWCHAR = wchar_t;
 
 union TVersion {
-	uint32_t Value;
+	TUINT32 Value;
 
 	struct {
 		uint16_t Minor;
 		uint16_t Major;
 	} Parts;
 
-	void operator=(uint32_t version)
+	void operator=(TUINT32 version)
 	{
 		Value = version;
 	}
 
-	operator uint32_t&()
+	operator TUINT32&()
 	{
 		return Value;
 	}
@@ -37,7 +40,7 @@ union TVersion {
 
 #define _BYTE  uint8_t
 #define _WORD  uint16_t
-#define _DWORD uint32_t
+#define _DWORD TUINT32
 #define _QWORD uint64_t
 
 #define LOWBYTE(x)   (*((_BYTE*)&(x)))   // low byte

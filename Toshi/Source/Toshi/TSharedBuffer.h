@@ -196,7 +196,17 @@ namespace Toshi {
 
 		const T& At(TINT a_iIndex) const
 		{
-			return At(a_iIndex);
+			TASSERT(TMath::IntLog2(BUFSIZE) == m_iMainIndexShift);
+			TASSERT(m_oFreeList.Size() <= m_iNumBuffers);
+			TASSERT(a_iIndex < m_oArray.Size() * BUFSIZE);
+
+			TINT iSubIndex = m_iSubIndexMask & a_iIndex;
+			TINT iMainIndex = a_iIndex >> (m_iMainIndexShift % BUFSIZE);
+
+			TASSERT(iMainIndex < m_oArray.Size());
+			TASSERT(iSubIndex < BUFSIZE);
+
+			return m_oArray[iMainIndex]->GetElement(iSubIndex);
 		}
 
 		T& operator[](TINT a_iIndex)

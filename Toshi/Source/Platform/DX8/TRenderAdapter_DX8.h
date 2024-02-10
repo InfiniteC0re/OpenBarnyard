@@ -1,4 +1,5 @@
 #pragma once
+#include "Toshi/TString8.h"
 #include "Render/TRenderInterface.h"
 #include "Render/TRenderAdapter.h"
 
@@ -25,7 +26,7 @@ namespace Toshi {
 					D3DDEVTYPE_REF
 				};
 
-				static constexpr const char* DEVICETYPESSTRINGS[NUMSUPPORTEDDEVICES] = {
+				static constexpr const TCHAR* DEVICETYPESSTRINGS[NUMSUPPORTEDDEVICES] = {
 					"HAL",
 					"REF"
 				};
@@ -43,7 +44,7 @@ namespace Toshi {
 			public:
 				virtual TRenderAdapter::Mode* GetMode() const override;
 				virtual TUINT32 GetDeviceIndex() const override;
-				virtual const char* GetTypeString() const override;
+				virtual const TCHAR* GetTypeString() const override;
 				virtual TBOOL IsSoftware() const override;
 				virtual TBOOL CanRenderWindowed() const override;
 				virtual TBOOL SupportsHardwareTransfomations() const override;
@@ -75,8 +76,8 @@ namespace Toshi {
 		public:
 			virtual TRenderAdapter* GetAdapter() const override;
 			virtual size_t GetModeIndex() const override;
-			virtual uint32_t GetWidth() const override;
-			virtual uint32_t GetHeight() const override;
+			virtual TUINT32 GetWidth() const override;
+			virtual TUINT32 GetHeight() const override;
 			virtual TBOOL Is32Bit() const override;
 			virtual TBOOL Is16Bit() const override;
 			virtual TUINT32 GetRefreshRate() const override;

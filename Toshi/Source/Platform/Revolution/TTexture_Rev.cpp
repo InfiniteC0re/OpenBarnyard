@@ -3,7 +3,7 @@
 
 namespace Toshi
 {
-	int TTexture::GetBitsPerTexel(GXTexFmt a_texFmt)
+	TINT TTexture::GetBitsPerTexel(GXTexFmt a_texFmt)
 	{
 		switch (a_texFmt)
 		{
@@ -30,12 +30,12 @@ namespace Toshi
 		}
 	}
 
-	int TTexture::ComputeHash(const char* str)
+	TINT TTexture::ComputeHash(const TCHAR* str)
 	{
-		int hash = 0;
+		TINT hash = 0;
 		while (true)
 		{
-			unsigned char val = *str++;
+			TBYTE val = *str++;
 			if (val == '\0') break;
 			hash = hash * 0x11 + val;
 		}
@@ -81,14 +81,14 @@ namespace Toshi
 		}
 	}
 
-	void TTexture::InitRuntime(GXTexFmt a_texFmt, GXTlutFmt a_tlutFmt, unsigned int a_unk, unsigned int a_unk2, unsigned int a_unk3, unsigned int a_unk4, void* a_unk5, void* a_unk6, char const* a_szFileName)
+	void TTexture::InitRuntime(GXTexFmt a_texFmt, GXTlutFmt a_tlutFmt, TUINT a_unk, TUINT a_unk2, TUINT a_unk3, TUINT a_unk4, void* a_unk5, void* a_unk6, TCHAR const* a_szFileName)
 	{
 		m_pImageData = TNULL;
 		m_texFmt = a_texFmt;
 		m_tlutFmt = a_tlutFmt;
 		m_wrapS = GX_REPEAT;
 		m_wrapT = GX_REPEAT;
-		m_szFileName = (char*)a_szFileName;
+		m_szFileName = (TCHAR*)a_szFileName;
 		
 		m_iHash = ComputeHash(m_szFileName);
 
@@ -130,17 +130,17 @@ namespace Toshi
 	void TTexture::Swizzle32Bit()
 	{
 		uint8_t* buf;
-		uint32_t* imgPtr3;
-		uint32_t height = m_height;
-		uint32_t width = m_width;
+		TUINT32* imgPtr3;
+		TUINT32 height = m_height;
+		TUINT32 width = m_width;
 		for (size_t i = 0; i < m_mipMaps + 1; i++)
 		{
-			int iVar7 = 0;
-			uint32_t* imagePtr = reinterpret_cast<uint32_t*>(m_pImageData);
+			TINT iVar7 = 0;
+			TUINT32* imagePtr = reinterpret_cast<TUINT32*>(m_pImageData);
 			for (size_t j = 0; j < height; j += 4)
 			{
 				TUtil::MemCopy(buf, imagePtr + (iVar7 * 2), width * 16);
-				int iVar1 = 0;
+				TINT iVar1 = 0;
 				for (size_t k = 0; k < width; k += 4)
 				{
 					uint8_t* buf2 = buf + iVar1;
@@ -182,7 +182,7 @@ namespace Toshi
 		}
 	}
 
-	void TTexture::GetPhysicalSize(uint32_t& width, uint32_t& height, uint32_t bitsPerTexel)
+	void TTexture::GetPhysicalSize(TUINT32& width, TUINT32& height, TUINT32 bitsPerTexel)
 	{
 		if (bitsPerTexel < 16)
 		{

@@ -91,7 +91,7 @@ namespace Toshi
 
 	void T2GenericRedBlackTree::DeleteFixUp(T2GenericRedBlackTreeNode* pNode)
 	{
-		int uVar2;
+		TINT uVar2;
 		T2GenericRedBlackTreeNode* pTVar1;
 		T2GenericRedBlackTreeNode* pTVar3;
 		T2GenericRedBlackTreeNode* pTVar4;
@@ -250,7 +250,7 @@ namespace Toshi
 			pTVar1->m_pRight = y;
 		}
 
-		int oldRedValue = y->red;
+		TINT oldRedValue = y->red;
 		y->red = pNode->red;
 
 		if (oldRedValue == 0)

@@ -25,7 +25,7 @@ namespace Toshi {
 		return TTRUE;
 	}
 
-	TBOOL TModelHAL::Create(const char* a_szFileName, TBOOL a_bLoad)
+	TBOOL TModelHAL::Create(const TCHAR* a_szFileName, TBOOL a_bLoad)
 	{
 		m_eFlags |= Flags_Created;
 
@@ -41,7 +41,7 @@ namespace Toshi {
 		return TTRUE;
 	}
 
-	TBOOL TModelHAL::Create(const char* a_szFileName, TBOOL a_bLoad, TTRB* a_pAssetTRB, TUINT8 a_ui8FileNameLen)
+	TBOOL TModelHAL::Create(const TCHAR* a_szFileName, TBOOL a_bLoad, TTRB* a_pAssetTRB, TUINT8 a_ui8FileNameLen)
 	{
 		m_eFlags |= Flags_Created;
 
@@ -63,7 +63,7 @@ namespace Toshi {
 		delete this;
 	}
 
-	TBOOL TModelHAL::LoadFromFile(const char* a_szFileName)
+	TBOOL TModelHAL::LoadFromFile(const TCHAR* a_szFileName)
 	{
 		if (!IsLoaded())
 		{
@@ -118,7 +118,7 @@ namespace Toshi {
 		return TTRUE;
 	}
 
-	TBOOL TModelHAL::LoadTMDHAL(const char* a_szFileName, TTRB* a_pAssetTRB, TUINT8 a_ui8FileNameLen)
+	TBOOL TModelHAL::LoadTMDHAL(const TCHAR* a_szFileName, TTRB* a_pAssetTRB, TUINT8 a_ui8FileNameLen)
 	{
 		if (!IsLoaded())
 		{

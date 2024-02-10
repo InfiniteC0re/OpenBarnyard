@@ -92,7 +92,7 @@ namespace Toshi {
 		return TTRUE;
 	}
 
-	void TRenderInterface::RenderIndexPrimitive(int param_2, int param_3, int param_4, int param_5, int param_6, int param_7)
+	void TRenderInterface::RenderIndexPrimitive(TINT param_2, TINT param_3, TINT param_4, TINT param_5, TINT param_6, TINT param_7)
 	{
 
 	}
@@ -162,7 +162,7 @@ namespace Toshi {
 		}
 	}
 
-	TResource* TRenderInterface::CreateResource(TClass* pClass, const char* name, TResource* parent)
+	TResource* TRenderInterface::CreateResource(TClass* pClass, const TCHAR* name, TResource* parent)
 	{
 		TASSERT(pClass != TNULL, "TResource class is TNULL");
 		TASSERT(pClass->IsA(&TGetClass(TResource)), "TResource class is TNULL");
@@ -195,12 +195,12 @@ namespace Toshi {
 	{
 		TIMPLEMENT();
 
-		TFile* file = TFile::Create("TRenderInterface.txt", TFile::FileMode_CreateNew);
+		TFile* file = TFile::Create("TRenderInterface.txt", TFILEMODE_CREATENEW);
 
 		if (file != TNULL)
 		{
 			file->CPrintf("-\r\n");
-			char const* name = GetClass()->GetName();
+			TCHAR const* name = GetClass()->GetName();
 			uint16_t versionMajor = GetClass()->GetVersionMajor();
 			uint16_t versionMinor = GetClass()->GetVersionMinor();
 			file->CPrintf("Toshi rendering interface through object[\"%s\"] Version : %u.%u\r\n", name, versionMajor, versionMinor);
@@ -252,7 +252,7 @@ namespace Toshi {
 
 	}
 
-	TBOOL TRenderInterface::IsTextureFormatSupported(int a_eTextureFormat)
+	TBOOL TRenderInterface::IsTextureFormatSupported(TINT a_eTextureFormat)
 	{
 		return TTRUE;
 	}

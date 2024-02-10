@@ -206,7 +206,7 @@ namespace Toshi {
 
 				for (TUINT i = 0; i < vertexFormat.m_uiNumStreams; i++)
 				{
-					m_apManagedStreams[i] = new unsigned char[a_uiMaxVertices * vertexFormat.m_aStreamFormats[i].m_uiVertexSize];
+					m_apManagedStreams[i] = new TBYTE[a_uiMaxVertices * vertexFormat.m_aStreamFormats[i].m_uiVertexSize];
 					TVALIDPTR(m_apManagedStreams[i]);
 				}
 			}
@@ -217,7 +217,7 @@ namespace Toshi {
 		return TFALSE;
 	}
 
-	unsigned char* TVertexPoolResource::GetManagedStream(TUINT a_uiStream)
+	TBYTE* TVertexPoolResource::GetManagedStream(TUINT a_uiStream)
 	{
 		TASSERT(a_uiStream < m_pFactory->GetVertexFormat().GetNumStreams());
 

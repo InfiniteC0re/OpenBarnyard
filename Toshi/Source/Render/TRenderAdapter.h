@@ -1,8 +1,10 @@
 #pragma once
 #include "Toshi/TNodeList.h"
 
-namespace Toshi
-{
+namespace Toshi {
+	
+	class TString8;
+
 	class TRenderAdapter : public TNodeList<TRenderAdapter>::TNode
 	{
 	public:
@@ -17,7 +19,7 @@ namespace Toshi
 
 				virtual Mode* GetMode() const = 0;
 				virtual TUINT32 GetDeviceIndex() const = 0;
-				virtual const char* GetTypeString() const = 0;
+				virtual const TCHAR* GetTypeString() const = 0;
 				virtual TBOOL IsSoftware() const = 0;
 				virtual TBOOL CanRenderWindowed() const = 0;
 				virtual TBOOL SupportsHardwareTransfomations() const = 0;
@@ -31,8 +33,8 @@ namespace Toshi
 
 			virtual TRenderAdapter* GetAdapter() const = 0;
 			virtual size_t GetModeIndex() const = 0;
-			virtual uint32_t GetWidth() const = 0;
-			virtual uint32_t GetHeight() const = 0;
+			virtual TUINT32 GetWidth() const = 0;
+			virtual TUINT32 GetHeight() const = 0;
 			virtual TBOOL Is32Bit() const = 0;
 			virtual TBOOL Is16Bit() const = 0;
 			virtual TUINT32 GetRefreshRate() const = 0;

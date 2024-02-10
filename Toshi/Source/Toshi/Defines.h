@@ -1,7 +1,7 @@
 #pragma once
 #include "Toshi/Typedefs.h"
 
-constexpr TUINT32 TMAKEFOUR(const char str[4])
+constexpr TUINT32 TMAKEFOUR(const TCHAR str[4])
 {
 	return ((str[3] << 24) | (str[2] << 16) | (str[1] << 8) | str[0]);
 }

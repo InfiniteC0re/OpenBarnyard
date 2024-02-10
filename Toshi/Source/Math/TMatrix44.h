@@ -92,7 +92,7 @@ namespace Toshi
 			return { m_f41, m_f42, m_f43, m_f44 };
 		}
 
-		const TVector3& AsBasisVector3(int a_iIndex = 0) const
+		const TVector3& AsBasisVector3(TINT a_iIndex = 0) const
 		{
 			return *TREINTERPRETCAST(
 				TVector3*,
@@ -100,7 +100,7 @@ namespace Toshi
 			);
 		}
 
-		TVector3& AsBasisVector3(int a_iIndex = 0)
+		TVector3& AsBasisVector3(TINT a_iIndex = 0)
 		{
 			return *TREINTERPRETCAST(
 				TVector3*,
@@ -108,7 +108,7 @@ namespace Toshi
 			);
 		}
 
-		const TVector4& AsBasisVector4(int a_iIndex = 0) const
+		const TVector4& AsBasisVector4(TINT a_iIndex = 0) const
 		{
 			return *TREINTERPRETCAST(
 				TVector4*,
@@ -116,7 +116,7 @@ namespace Toshi
 			);
 		}
 
-		TVector4& AsBasisVector4(int a_iIndex = 0)
+		TVector4& AsBasisVector4(TINT a_iIndex = 0)
 		{
 			return *TREINTERPRETCAST(
 				TVector4*,

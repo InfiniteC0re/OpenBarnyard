@@ -89,7 +89,7 @@ namespace Toshi {
 		Stop();
 	}
 
-	TBOOL T2NamedPipeServer::Start(const char* a_szName, TUINT a_uiSendInterval, TUINT a_uiOutBufferSize, TUINT a_uiInBufferSize)
+	TBOOL T2NamedPipeServer::Start(const TCHAR* a_szName, TUINT a_uiSendInterval, TUINT a_uiOutBufferSize, TUINT a_uiInBufferSize)
 	{
 		TASSERT(TNULL != a_szName);
 		TASSERT(TFALSE == m_bStarted);

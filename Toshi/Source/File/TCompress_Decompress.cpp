@@ -9,7 +9,7 @@
 
 namespace Toshi
 {
-	uintptr_t TCompress::Decompress(TFile* file, TCompress::Header* header, char* buffer, uint32_t bufferSize)
+	uintptr_t TCompress::Decompress(TFile* file, TCompress::Header* header, TCHAR* buffer, TUINT32 bufferSize)
 	{
 		if (header->Magic != TMAKEFOUR("BTEC"))
 			return TCOMPRESS_ERROR_WRONG_MAGIC;
@@ -18,21 +18,21 @@ namespace Toshi
 		if (header->Size > bufferSize)
 			return TCOMPRESS_ERROR_WRONG_SIZE;
 
-		char* pBufferPos = buffer;
-		uint32_t compressedLeft = header->CompressedSize;
+		TCHAR* pBufferPos = buffer;
+		TUINT32 compressedLeft = header->CompressedSize;
 
 		while (compressedLeft > 0)
 		{
-			uint32_t chunkSize;
+			TUINT32 chunkSize;
 			TBOOL noOffset;
-			int offset;
+			TINT offset;
 
 			compressedLeft -= GetCommand(file, noOffset, chunkSize, offset);
 
 			if (!noOffset)
 			{
 				// The data is already unpacked so just copy it
-				char* unpackedData = pBufferPos - offset;
+				TCHAR* unpackedData = pBufferPos - offset;
 				
 				while (chunkSize > 0)
 				{
@@ -66,8 +66,8 @@ namespace Toshi
 
 	int8_t TCompress::GetHeader(TFile* file, TCompress::Header& btecHeader)
 	{
-		uint32_t headerSize = TCompress::HEADER_SIZE_12;
-		uint32_t savedPos = file->Tell();
+		TUINT32 headerSize = TCompress::HEADER_SIZE_12;
+		TUINT32 savedPos = file->Tell();
 		size_t readedSize = file->Read(&btecHeader, headerSize);
 
 		if (btecHeader.Version == TMAKEVERSION(1, 3))
@@ -78,13 +78,13 @@ namespace Toshi
 
 		if (readedSize != headerSize)
 		{
-			file->Seek(savedPos, TFile::TSEEK_SET);
+			file->Seek(savedPos, TSEEK_SET);
 			return TCOMPRESS_ERROR_WRONG_HEADERSIZE;
 		}
 
 		if (btecHeader.Magic != TMAKEFOUR("BTEC"))
 		{
-			file->Seek(savedPos, TFile::TSEEK_SET);
+			file->Seek(savedPos, TSEEK_SET);
 			return TCOMPRESS_ERROR_WRONG_MAGIC;
 		}
 
@@ -93,9 +93,9 @@ namespace Toshi
 
 	// With the help of Revel8n approach
 	// Could use some code cleanup
-	int TCompress::GetCommand(TFile* file, TBOOL& noOffset, uint32_t& size, int& offset)
+	TINT TCompress::GetCommand(TFile* file, TBOOL& noOffset, TUINT32& size, TINT& offset)
 	{
-		int read_count = file->Read(&size, 1);
+		TINT read_count = file->Read(&size, 1);
 		TBOOL isBigSize = size & BTECSizeFlag_BigSize;
 		noOffset = size & BTECSizeFlag_NoOffset;
 		offset = -1;

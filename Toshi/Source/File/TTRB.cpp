@@ -29,7 +29,7 @@ namespace Toshi
 		SetMemoryFunctions(s_cbDefAllocator, s_cbDefDeallocator, s_pDefAllocatorUserData);
 	}
 
-	TTRB::ERROR TTRB::Load(const char* a_szFilePath, TUINT32 a_uiUnknown)
+	TTRB::ERROR TTRB::Load(const TCHAR* a_szFilePath, TUINT32 a_uiUnknown)
 	{
 		// FUN_00686920
 		ERROR error = m_TTSFI.Open(a_szFilePath);
@@ -98,7 +98,7 @@ namespace Toshi
 
 				if (sectionName == TMAKEFOUR("HEAD"))
 				{
-					int numsections = (sectionSize - 4) / 0xC;
+					TINT numsections = (sectionSize - 4) / 0xC;
 
 					m_pHeader = static_cast<Header*>(m_MemAllocator(AllocType_Unk0, sizeof(Header) + sizeof(SecInfo) * numsections, 0, 0, m_MemUserData));
 					m_pHeader->m_ui32Version = { 0 };
@@ -107,7 +107,7 @@ namespace Toshi
 
 					TASSERT(m_pHeader->m_i32SectionCount == numsections, "HEAD section has wrong num of sections");
 
-					for (int i = 0; i < m_pHeader->m_i32SectionCount; i++)
+					for (TINT i = 0; i < m_pHeader->m_i32SectionCount; i++)
 					{
 						SecInfo* pSect = GetSectionInfo(i);
 
@@ -126,7 +126,7 @@ namespace Toshi
 				}
 				else if (sectionName == TMAKEFOUR("SECC"))
 				{
-					for (int i = 0; i < m_pHeader->m_i32SectionCount; i++)
+					for (TINT i = 0; i < m_pHeader->m_i32SectionCount; i++)
 					{
 						auto* secInfo = GetSectionInfo(i);
 
@@ -202,7 +202,7 @@ namespace Toshi
 			{
 				if (sectionName == TMAKEFOUR("SECT"))
 				{
-					for (int i = 0; i < m_pHeader->m_i32SectionCount; i++)
+					for (TINT i = 0; i < m_pHeader->m_i32SectionCount; i++)
 					{
 						SecInfo* pSect = GetSectionInfo(i);
 						ttsf.ReadRaw(pSect->m_Data, pSect->m_Size);
@@ -215,7 +215,7 @@ namespace Toshi
 					m_pHeader = static_cast<Header*>(m_MemAllocator(AllocType_Unk0, sectionSize, 0, 0, m_MemUserData));
 					ttsf.ReadHunkData(m_pHeader);
 
-					for (int i = 0; i < m_pHeader->m_i32SectionCount; i++)
+					for (TINT i = 0; i < m_pHeader->m_i32SectionCount; i++)
 					{
 						SecInfo* pSect = GetSectionInfo(i);
 						pSect->m_Unk1 = (pSect->m_Unk1 == 0) ? 16 : pSect->m_Unk1;
@@ -245,7 +245,7 @@ namespace Toshi
 		return result;
 	}
 
-	void* TTRB::GetSymbolAddress(const char* symbName)
+	void* TTRB::GetSymbolAddress(const TCHAR* symbName)
 	{
 		// FUN_00686d30
 		auto index = GetSymbolIndex(symbName);
@@ -253,20 +253,20 @@ namespace Toshi
 		if (m_SYMB != TNULL && index != -1 && index < m_SYMB->m_i32SymbCount)
 		{
 			auto entry = GetSymbol(index);
-			return static_cast<char*>(GetSection(entry->HDRX)) + entry->DataOffset;
+			return static_cast<TCHAR*>(GetSection(entry->HDRX)) + entry->DataOffset;
 		}
 
 		return TNULL;
 	}
 
-	int TTRB::GetSymbolIndex(const char* symbName)
+	TINT TTRB::GetSymbolIndex(const TCHAR* symbName)
 	{
 		// 00686c30
 		if (m_SYMB != TNULL)
 		{
 			short hash = HashString(symbName);
 
-			for (int i = 0; i < m_SYMB->m_i32SymbCount; i++)
+			for (TINT i = 0; i < m_SYMB->m_i32SymbCount; i++)
 			{
 				auto symbol = GetSymbol(i);
 
@@ -288,7 +288,7 @@ namespace Toshi
 		// FUN_006869d0
 		if (m_pHeader != TNULL)
 		{
-			for (int i = 0; i < m_pHeader->m_i32SectionCount; i++)
+			for (TINT i = 0; i < m_pHeader->m_i32SectionCount; i++)
 			{
 				auto sec = GetSectionInfo(i);
 

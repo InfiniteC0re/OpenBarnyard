@@ -23,7 +23,7 @@ namespace Toshi
 		Destroy();
 	}
 
-	TBOOL TApplication::Create(const char* appName, int argc, char** argv)
+	TBOOL TApplication::Create(const TCHAR* appName, TINT argc, TCHAR** argv)
 	{
 		m_oExitEvent.Connect(this, OnApplicationExitEvent);
 		m_Name = appName;
@@ -55,7 +55,7 @@ namespace Toshi
 		return OnDestroy();
 	}
 
-	TBOOL TApplication::OnCreate(int argc, char** argv)
+	TBOOL TApplication::OnCreate(TINT argc, TCHAR** argv)
 	{
 		m_Flags |= TApplicationFlag_Created;
 		return TTRUE;

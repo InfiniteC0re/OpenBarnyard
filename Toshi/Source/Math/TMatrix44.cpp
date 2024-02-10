@@ -41,8 +41,8 @@ namespace Toshi
 	{
 		/*float fVar2;
 		bool bVar3;
-		int iVar4;
-		int iVar5;
+		TINT iVar4;
+		TINT iVar5;
 
 		TMatrix44* pThis = this;
 
@@ -50,7 +50,7 @@ namespace Toshi
 		do {
 			iVar5 = 0;
 			while (true) {
-				fVar2 = (&a_rLeft.m_f11)[iVar5] * *(float*)((int)&a_rRight.m_f11 + iVar4);
+				fVar2 = (&a_rLeft.m_f11)[iVar5] * *(float*)((TINT)&a_rRight.m_f11 + iVar4);
 				if (3 < iVar5 + 1) break;
 				(&pThis->m_f11)[iVar5] = fVar2;
 				iVar5 = iVar5 + 1;
@@ -62,11 +62,11 @@ namespace Toshi
 
 		TASSERT((this != &a_rLeft) && (this != &a_rRight));
 
-		for (int i = 0; i < 4; i++)
+		for (TINT i = 0; i < 4; i++)
 		{
 			float* pBasis = AsBasisVector4(i).AsArray();
 
-			for (int k = 0; k < 4; k++)
+			for (TINT k = 0; k < 4; k++)
 			{
 				pBasis[k] =
 					a_rLeft.AsBasisVector4(3).AsArray()[k] * a_rRight.AsBasisVector4(i).w +

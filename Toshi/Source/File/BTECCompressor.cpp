@@ -37,7 +37,7 @@ namespace Toshi
         TFree(m_Buckets);
     }
 
-    void BTECCompressor::Initialize(char* buffer, size_t bufferSize, int maxoffset, int unk)
+    void BTECCompressor::Initialize(TCHAR* buffer, size_t bufferSize, TINT maxoffset, TINT unk)
     {
         // 0068ac60 +++
         m_DataEnd = buffer + bufferSize;
@@ -132,7 +132,7 @@ namespace Toshi
         }
     }
 
-    TBOOL BTECCompressor::FUN_0068af10(char* buffer, size_t bufferSize, char*& offset, size_t& dataSize)
+    TBOOL BTECCompressor::FUN_0068af10(TCHAR* buffer, size_t bufferSize, TCHAR*& offset, size_t& dataSize)
     {
         // +++
         offset = TNULL;
@@ -221,7 +221,7 @@ namespace Toshi
         return TTRUE;
     }
 
-    void BTECCompressor::AllocSubstring(char* buffer)
+    void BTECCompressor::AllocSubstring(TCHAR* buffer)
     {
         // 0068b180 +++
         m_Offsets[(BYTE)*buffer] = buffer;
@@ -252,7 +252,7 @@ namespace Toshi
             node->m_Unk4 = (void*)(m_DataEnd - buffer);
             node->m_Unk3 = buffer;
 
-            uint32_t hash = HashData(buffer, unknown);
+            TUINT32 hash = HashData(buffer, unknown);
 
             auto hashedNode = m_Buckets[i][hash % 256];
             node->m_Unk1 = hashedNode;
@@ -262,7 +262,7 @@ namespace Toshi
         }
     }
 
-    TBOOL BTECCompressor::FUN_0068b300(char* buffer, Bucket nodeBucket, size_t bufferSize, Node*& out1, Node*& out2)
+    TBOOL BTECCompressor::FUN_0068b300(TCHAR* buffer, Bucket nodeBucket, size_t bufferSize, Node*& out1, Node*& out2)
     {
         auto hash = HashData(buffer, bufferSize);
         auto hashedNode = nodeBucket[hash % 256];
@@ -273,7 +273,7 @@ namespace Toshi
 
         while (hashedNode != out2)
         {
-            int difference = Toshi::TUtil::MemCompare(out1->m_Unk3, buffer, bufferSize);
+            TINT difference = Toshi::TUtil::MemCompare(out1->m_Unk3, buffer, bufferSize);
             if (difference == 0) break;
 
             hashedNode = hashedNode->m_Unk1;

@@ -30,7 +30,7 @@ namespace Toshi
 		}
 
 	protected:
-		int red;
+		TINT red;
 		T2GenericRedBlackTreeNode* m_pLeft;
 		T2GenericRedBlackTreeNode* m_pRight;
 		T2GenericRedBlackTreeNode* m_pParent;
@@ -201,7 +201,7 @@ namespace Toshi
 				return &m_ppNode->m_Value;
 			}
 
-			Iterator operator++(int)
+			Iterator operator++(TINT)
 			{
 				Iterator prev = *this;
 				m_ppNode = TSTATICCAST(Node*, T2RedBlackTree::GetSuccessorOf(m_ppNode));
@@ -214,7 +214,7 @@ namespace Toshi
 				return *this;
 			}
 
-			Iterator operator--(int)
+			Iterator operator--(TINT)
 			{
 				Iterator prev = *this;
 				m_ppNode = TSTATICCAST(Node*, T2RedBlackTree::GetPredecessorOf(m_ppNode));

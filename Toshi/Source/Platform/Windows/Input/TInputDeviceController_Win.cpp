@@ -12,7 +12,7 @@ namespace Toshi {
 	TBOOL TInputDXDeviceController::IsDirectInputController(LPCDIDEVICEINSTANCEA a_poDeviceInstance)
 	{
 		TASSERT(a_poDeviceInstance != NULL);
-		char fmtStr[37];
+		TCHAR fmtStr[37];
 
 		T2String8::Format(fmtStr, "%08lX-%04hX-%04hX-%02hhX%02hhX-%02hhX%02hhX%02hhX%02hhX%02hhX%02hhX",
 			a_poDeviceInstance->guidProduct.Data1, a_poDeviceInstance->guidProduct.Data2,
@@ -22,11 +22,11 @@ namespace Toshi {
 			a_poDeviceInstance->guidProduct.Data4[5], a_poDeviceInstance->guidProduct.Data4[6],
 			a_poDeviceInstance->guidProduct.Data4[7]);
 
-		if (TStringManager::String8FindString(fmtStr, (char*)"09cc054c-0000-0000-0000-504944564944") == TNULL
-			&& TStringManager::String8FindString(fmtStr, (char*)"05C4054C-0000-0000-0000-504944564944") == TNULL
-			&& TStringManager::String8FindString(fmtStr, (char*)"00050925-0000-0000-0000-504944564944") == TNULL
-			&& TStringManager::String8FindString(fmtStr, (char*)"0268054C-0000-0000-0000-504944564944") == TNULL
-			&& TStringManager::String8FindString(fmtStr, (char*)"03088888-0000-0000-0000-504944564944") == TNULL)
+		if (TStringManager::String8FindString(fmtStr, (TCHAR*)"09cc054c-0000-0000-0000-504944564944") == TNULL
+			&& TStringManager::String8FindString(fmtStr, (TCHAR*)"05C4054C-0000-0000-0000-504944564944") == TNULL
+			&& TStringManager::String8FindString(fmtStr, (TCHAR*)"00050925-0000-0000-0000-504944564944") == TNULL
+			&& TStringManager::String8FindString(fmtStr, (TCHAR*)"0268054C-0000-0000-0000-504944564944") == TNULL
+			&& TStringManager::String8FindString(fmtStr, (TCHAR*)"03088888-0000-0000-0000-504944564944") == TNULL)
 		{
 			return TFALSE;
 		}

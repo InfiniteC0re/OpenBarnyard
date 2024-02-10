@@ -10,7 +10,7 @@
 
 namespace Toshi {
 	
-	constexpr int TANIMATION_MAXBONES = 128;
+	constexpr TINT TANIMATION_MAXBONES = 128;
 
 	using TAnimVector = TVector3;
 	using TAnimQuaternion = TQuaternion;
@@ -32,7 +32,7 @@ namespace Toshi {
 			Flags_UpdateStateOnRemove = BITFIELD(3),
 		};
 
-		using Mode = uint32_t;
+		using Mode = TUINT32;
 		enum Mode_ : Mode
 		{
 			MODE_UNK1,
@@ -69,13 +69,13 @@ namespace Toshi {
 		float GetBlendOutSpeed() const { return m_fBlendOutSpeed; }
 
 		TAnimationBone* GetBones() { return TREINTERPRETCAST(TAnimationBone*, this + 1); }
-		TAnimationBone* GetBone(int a_iIndex) { return &TREINTERPRETCAST(TAnimationBone*, this + 1)[a_iIndex]; }
+		TAnimationBone* GetBone(TINT a_iIndex) { return &TREINTERPRETCAST(TAnimationBone*, this + 1)[a_iIndex]; }
 
 	private:
 		TSkeletonInstance* m_pSkeletonInstance;
 		unsigned short m_iSeqID;
 		Flags m_eFlags;
-		int m_iUnk3;
+		TINT m_iUnk3;
 		Mode m_eMode;
 		float m_fSpeed;
 		float m_fWeight;
@@ -93,26 +93,26 @@ namespace Toshi {
 
 		struct TRBHeader
 		{
-			const char* m_szName;
+			const TCHAR* m_szName;
 			TVector3 m_SomeVector;
-			int m_iNumTranslations;
-			int m_iNumQuaternions;
-			int m_iNumScales;
-			int m_iTranslationSize;
-			int m_iQuaternionSize;
-			int m_iScaleSize;
+			TINT m_iNumTranslations;
+			TINT m_iNumQuaternions;
+			TINT m_iNumScales;
+			TINT m_iTranslationSize;
+			TINT m_iQuaternionSize;
+			TINT m_iScaleSize;
 			TAnimVector* m_pTranslations;
 			TAnimQuaternion* m_pQuaternions;
 			TAnimScale* m_pScales;
 		};
 
 	public:
-		static TKeyframeLibrary* CreateFromTRB(TTRB* a_pTRB, const char* a_szSymbolName);
+		static TKeyframeLibrary* CreateFromTRB(TTRB* a_pTRB, const TCHAR* a_szSymbolName);
 
 		void Delete();
 		void SetTRB(TTRB* a_pTRB) { m_pTRB = a_pTRB; }
 
-		const char* GetName() const
+		const TCHAR* GetName() const
 		{
 			return m_szName;
 		}
@@ -132,15 +132,15 @@ namespace Toshi {
 
 	private:
 		TUINT8 m_iNameLength;
-		char m_szName[31];
+		TCHAR m_szName[31];
 		TVector3 m_SomeVector;
-		int m_iReferenceCount;
-		int m_iNumTranslations;
-		int m_iNumQuaternions;
-		int m_iNumScales;
-		int m_iTranslationSize;
-		int m_iQuaternionSize;
-		int m_iScaleSize;
+		TINT m_iReferenceCount;
+		TINT m_iNumTranslations;
+		TINT m_iNumQuaternions;
+		TINT m_iNumScales;
+		TINT m_iTranslationSize;
+		TINT m_iQuaternionSize;
+		TINT m_iScaleSize;
 		TAnimVector* m_pTranslations;
 		TAnimQuaternion* m_pQuaternions;
 		TAnimScale* m_pScales;
@@ -153,46 +153,46 @@ namespace Toshi {
 		TKeyframeLibraryInstance();
 
 		TKeyframeLibrary* Create(TKeyframeLibrary* a_pLibrary);
-		TKeyframeLibrary* CreateEx(TKeyframeLibrary* a_pLibrary, int a_iTKeyCount, int a_iQKeyCount, int a_iSKeyCount, int a_iTBaseIndex, int a_iQBaseIndex, int a_iSBaseIndex);
+		TKeyframeLibrary* CreateEx(TKeyframeLibrary* a_pLibrary, TINT a_iTKeyCount, TINT a_iQKeyCount, TINT a_iSKeyCount, TINT a_iTBaseIndex, TINT a_iQBaseIndex, TINT a_iSBaseIndex);
 
 		void Destroy();
 
-		TAnimVector* GetT(int a_iIndex) const
+		TAnimVector* GetT(TINT a_iIndex) const
 		{
 			TASSERT(a_iIndex < m_iTKeyCount);
 			return &m_pTranslations[a_iIndex];
 		}
 
-		TAnimQuaternion* GetQ(int a_iIndex) const
+		TAnimQuaternion* GetQ(TINT a_iIndex) const
 		{
 			TASSERT(a_iIndex < m_iQKeyCount);
 			return &m_pQuaternions[a_iIndex];
 		}
 
-		TAnimScale GetS(int a_iIndex) const
+		TAnimScale GetS(TINT a_iIndex) const
 		{
 			TASSERT(a_iIndex < m_iQKeyCount);
 			return m_pScales[a_iIndex];
 		}
 
 		void SetLibrary(TKeyframeLibrary* a_pLibrary) { m_pLibrary = a_pLibrary; }
-		void SetTCount(int a_iTCount) { m_iTKeyCount = a_iTCount; }
-		void SetQCount(int a_iQCount) { m_iQKeyCount = a_iQCount; }
-		void SetSCount(int a_iSCount) { m_iSKeyCount = a_iSCount; }
+		void SetTCount(TINT a_iTCount) { m_iTKeyCount = a_iTCount; }
+		void SetQCount(TINT a_iQCount) { m_iQKeyCount = a_iQCount; }
+		void SetSCount(TINT a_iSCount) { m_iSKeyCount = a_iSCount; }
 
 		TKeyframeLibrary* GetLibrary() const { return m_pLibrary; }
-		int GetTCount() const { return m_iTKeyCount; }
-		int GetQCount() const { return m_iQKeyCount; }
-		int GetSCount() const { return m_iSKeyCount; }
+		TINT GetTCount() const { return m_iTKeyCount; }
+		TINT GetQCount() const { return m_iQKeyCount; }
+		TINT GetSCount() const { return m_iSKeyCount; }
 
 	private:
 		TKeyframeLibrary* m_pLibrary;
-		int m_iTBaseIndex;
-		int m_iQBaseIndex;
-		int m_iSBaseIndex;
-		int m_iTKeyCount;
-		int m_iQKeyCount;
-		int m_iSKeyCount;
+		TINT m_iTBaseIndex;
+		TINT m_iQBaseIndex;
+		TINT m_iSBaseIndex;
+		TINT m_iTKeyCount;
+		TINT m_iQKeyCount;
+		TINT m_iSKeyCount;
 		TAnimVector* m_pTranslations;
 		TAnimQuaternion* m_pQuaternions;
 		TAnimScale* m_pScales;
@@ -204,14 +204,14 @@ namespace Toshi {
 		TKeyframeLibraryManager() = default;
 		~TKeyframeLibraryManager() = default;
 
-		TKeyframeLibrary* GetLibrary(const char* a_szName);
+		TKeyframeLibrary* GetLibrary(const TCHAR* a_szName);
 
-		TKeyframeLibrary* LoadLibraryFromTRB(const char* a_szFilePath);
+		TKeyframeLibrary* LoadLibraryFromTRB(const TCHAR* a_szFilePath);
 		void UnloadLibrary(TKeyframeLibrary* a_pLibrary);
 
 	private:
 		TDList<TKeyframeLibrary> m_List;
-		int m_iNumLibraries = 0;
+		TINT m_iNumLibraries = 0;
 	};
 
 }

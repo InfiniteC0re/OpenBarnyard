@@ -28,19 +28,19 @@ namespace Toshi {
 		virtual DISPLAYPARAMS* GetCurrentDisplayParams() override;
 		virtual TBOOL Create() override;
 		virtual TBOOL Destroy() override;
-		virtual void RenderIndexPrimitive(int param_2, int param_3, int param_4, int param_5, int param_6, int param_7) override;
+		virtual void RenderIndexPrimitive(TINT param_2, TINT param_3, TINT param_4, TINT param_5, TINT param_6, TINT param_7) override;
 		virtual float GetPixelAspectRatio() override;
 		virtual TBOOL SetPixelAspectRatio(float a_fPixelAspectRatio) override;
 		virtual void FlushOrderTables() override;
-		virtual TBOOL IsTextureFormatSupported(int a_eTextureFormat) override;
+		virtual TBOOL IsTextureFormatSupported(TINT a_eTextureFormat) override;
 		virtual TBOOL Supports32BitTextures() override;
 		virtual TRenderContext* CreateRenderContext() override;
 		virtual TRenderCapture* CreateCapture() override;
 		virtual void DestroyCapture(TRenderCapture* a_pRenderCapture) override;
-		virtual void* CreateUnknown(const char* a_szName, int a_iUnk1, int a_iUnk2, int a_iUnk3) override;
+		virtual void* CreateUnknown(const TCHAR* a_szName, TINT a_iUnk1, TINT a_iUnk2, TINT a_iUnk3) override;
 		virtual TModel* CreateModel(TTMD* a_pTMD, TBOOL a_bLoad) override;
-		virtual TModel* CreateModel(const char* a_szFilePath, TBOOL a_bLoad) override;
-		virtual TModel* CreateModel(const char* a_szFilePath, TBOOL a_bLoad, TTRB* a_pAssetTRB, TUINT8 a_ui8FileNameLen) override;
+		virtual TModel* CreateModel(const TCHAR* a_szFilePath, TBOOL a_bLoad) override;
+		virtual TModel* CreateModel(const TCHAR* a_szFilePath, TBOOL a_bLoad, TTRB* a_pAssetTRB, TUINT8 a_ui8FileNameLen) override;
 		virtual void OnInitializationFailureDevice() override;
 		virtual void OnInitializationFailureDisplay() override;
 		virtual TDebugText* CreateDebugText() override;
@@ -67,7 +67,7 @@ namespace Toshi {
 
 		TBOOL IsTextureFormatSupportedImpl(D3DFORMAT a_eFormat);
 
-		TBOOL Create(const char* a_szWindowName);
+		TBOOL Create(const TCHAR* a_szWindowName);
 		void BuildAdapterDatabase();
 		void DestroyAccelTable();
 		void CreateAccelTable();
@@ -87,9 +87,9 @@ namespace Toshi {
 	public:
 		static void FlushShaders();
 
-		static void PrintError(TINT32 a_eError, const char* a_szInfo);
-		static const char* GetErrorString(TINT32 a_eError);
-		static const char* GetErrorDescription(TINT32 a_eError);
+		static void PrintError(TINT32 a_eError, const TCHAR* a_szInfo);
+		static const TCHAR* GetErrorString(TINT32 a_eError);
+		static const TCHAR* GetErrorDescription(TINT32 a_eError);
 
 		static TRenderD3DInterface* Interface()
 		{

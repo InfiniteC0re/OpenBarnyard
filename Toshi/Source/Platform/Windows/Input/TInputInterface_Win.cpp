@@ -244,7 +244,7 @@ namespace Toshi {
 		//{
 		//	TIMPLEMENT();
 
-		//	char fmtStr[37];
+		//	TCHAR fmtStr[37];
 		//	Toshi::T2String8::Format(fmtStr, "%08lX-%04hX-%04hX-%02hhX%02hhX-%02hhX%02hhX%02hhX%02hhX%02hhX%02hhX",
 		//		a_poDeviceInstance->guidProduct.Data1, a_poDeviceInstance->guidProduct.Data2,
 		//		a_poDeviceInstance->guidProduct.Data3, a_poDeviceInstance->guidProduct.Data4[0],

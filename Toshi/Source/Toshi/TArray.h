@@ -1,5 +1,10 @@
 #pragma once
-#include "Toshi/TArray.h"
+
+#define TARRAY_FOREACH(vecName, iteratorName) \
+    for (auto iteratorName = vecName.Begin(); !iteratorName.IsOver(); iteratorName++)
+
+#define TARRAY_FOREACH_BACK(vecName, iteratorName) \
+    for (auto iteratorName = vecName.Tail(); !iteratorName.IsOver(); iteratorName--)
 
 namespace Toshi {
 
@@ -211,6 +216,12 @@ namespace Toshi {
 		Iterator Begin()
 		{
 			return Iterator((m_iNumElements == 0) ? -1 : 0, *this);
+		}
+
+
+		Iterator Tail()
+		{
+			return Iterator((m_iNumElements == 0) ? -1 : m_iNumElements - 1, *this);
 		}
 
 		Iterator End()

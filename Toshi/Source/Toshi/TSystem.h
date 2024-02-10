@@ -38,7 +38,7 @@ namespace Toshi
 			return m_PauseEmitter;
 		}
 
-		uint32_t GetFrameCount() const
+		TUINT32 GetFrameCount() const
 		{
 			return m_pKernelInterface->GetNumFrames();
 		}

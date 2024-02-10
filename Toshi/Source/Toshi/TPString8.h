@@ -22,27 +22,27 @@ namespace Toshi {
 		class Comparator
 		{
 		public:
-			static TBOOL IsEqual(const char* a, const char* b)
+			static TBOOL IsEqual(const TCHAR* a, const TCHAR* b)
 			{
 				return TStringManager::String8Compare(a, b) == 0;
 			}
 
-			static TBOOL IsGreater(const char* a, const char* b)
+			static TBOOL IsGreater(const TCHAR* a, const TCHAR* b)
 			{
 				return TStringManager::String8Compare(a, b) > 0;
 			}
 
-			static TBOOL IsLess(const char* a, const char* b)
+			static TBOOL IsLess(const TCHAR* a, const TCHAR* b)
 			{
 				return TStringManager::String8Compare(a, b) < 0;
 			}
 
-			static TBOOL IsLessOrEqual(const char* a, const char* b)
+			static TBOOL IsLessOrEqual(const TCHAR* a, const TCHAR* b)
 			{
 				return TStringManager::String8Compare(a, b) <= 0;
 			}
 
-			static TBOOL IsGreaterOrEqual(const char* a, const char* b)
+			static TBOOL IsGreaterOrEqual(const TCHAR* a, const TCHAR* b)
 			{
 				return TStringManager::String8Compare(a, b) >= 0;
 			}
@@ -51,7 +51,7 @@ namespace Toshi {
 		friend class TPString8;
 
 	public:
-		TPooledString8(const char* a_szString, TPString8Pool* a_pPool, T2Allocator* a_pAllocator) :
+		TPooledString8(const TCHAR* a_szString, TPString8Pool* a_pPool, T2Allocator* a_pAllocator) :
 			m_oString(a_szString, a_pAllocator)
 		{
 			m_iRefCount = 0;
@@ -60,17 +60,17 @@ namespace Toshi {
 
 		void Delete();
 
-		int IncRefCount()
+		TINT IncRefCount()
 		{
 			return ++m_iRefCount;
 		}
 
-		int DecRefCount()
+		TINT DecRefCount()
 		{
 			return --m_iRefCount;
 		}
 
-		int GetRefCount() const
+		TINT GetRefCount() const
 		{
 			return m_iRefCount;
 		}
@@ -86,7 +86,7 @@ namespace Toshi {
 		}
 
 	private:
-		int m_iRefCount;
+		TINT m_iRefCount;
 		TString8 m_oString;
 		TPString8Pool* m_pPool;
 	};
@@ -98,9 +98,9 @@ namespace Toshi {
 		TPString8Pool(T2Allocator* a_pAllocator);
 
 		// Initialises strings from TPString8Initialiser
-		TPString8Pool(int a_iUnknown1, int a_iUnknown2, T2Allocator* a_pAllocator, void* m_pUnknown3);
+		TPString8Pool(TINT a_iUnknown1, TINT a_iUnknown2, T2Allocator* a_pAllocator, void* m_pUnknown3);
 
-		void Get(TPooledString8*& a_pOutString, const char* a_szString, bool* a_pWasInPool = TNULL);
+		void Get(TPooledString8*& a_pOutString, const TCHAR* a_szString, bool* a_pWasInPool = TNULL);
 
 		void Remove(TPooledString8* a_pString)
 		{
@@ -118,12 +118,12 @@ namespace Toshi {
 			return m_pAllocator;
 		}
 
-		T2Map<const char*, TPooledString8*, TPooledString8::Comparator>::Iterator Begin()
+		T2Map<const TCHAR*, TPooledString8*, TPooledString8::Comparator>::Iterator Begin()
 		{
 			return m_oMap.Begin();
 		}
 
-		T2Map<const char*, TPooledString8*, TPooledString8::Comparator>::Iterator End()
+		T2Map<const TCHAR*, TPooledString8*, TPooledString8::Comparator>::Iterator End()
 		{
 			return m_oMap.End();
 		}
@@ -131,7 +131,7 @@ namespace Toshi {
 	private:
 		T2Allocator* m_pAllocator;
 		TUINT m_Unk1;
-		T2Map<const char*, TPooledString8*, TPooledString8::Comparator> m_oMap;
+		T2Map<const TCHAR*, TPooledString8*, TPooledString8::Comparator> m_oMap;
 		TUINT m_Unk2;
 		TUINT m_Unk3;
 		TUINT m_Unk4;
@@ -178,12 +178,12 @@ namespace Toshi {
 			m_pPtr = TNULL;
 		}
 
-		__forceinline TPString8(const char* a_szString)
+		__forceinline TPString8(const TCHAR* a_szString)
 		{
 			TUtil::GetTPStringPool()->Get(m_pPtr, a_szString, TNULL);
 		}
 
-		__forceinline TPString8(TPString8Pool* a_pPool, const char* a_szString)
+		__forceinline TPString8(TPString8Pool* a_pPool, const TCHAR* a_szString)
 		{
 			a_pPool->Get(m_pPtr, a_szString, TNULL);
 		}
@@ -288,14 +288,14 @@ namespace Toshi {
 			return *this;
 		}
 
-		__forceinline TPString8& operator=(const char* a_szString)
+		__forceinline TPString8& operator=(const TCHAR* a_szString)
 		{
 			Decrement();
 			TUtil::GetTPStringPool()->Get(m_pPtr, a_szString, TNULL);
 			return *this;
 		}
 
-		__forceinline operator const char* () const
+		__forceinline operator const TCHAR* () const
 		{
 			return m_pPtr ? m_pPtr->m_oString.GetString() : ms_sEmpty.GetString();
 		}
@@ -337,7 +337,7 @@ namespace Toshi {
 		struct StringMap
 		{
 			TPString8* m_pString8;
-			const char* m_szCString;
+			const TCHAR* m_szCString;
 		};
 
 	public:

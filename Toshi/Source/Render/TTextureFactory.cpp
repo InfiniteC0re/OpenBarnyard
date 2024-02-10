@@ -12,7 +12,7 @@ TDEFINE_CLASS_NORUNTIME(Toshi::TTextureFactory);
 
 namespace Toshi {
 
-	TTextureFactory::NameEntry::NameEntry(const char* a_szName, TTexture* a_pTexture)
+	TTextureFactory::NameEntry::NameEntry(const TCHAR* a_szName, TTexture* a_pTexture)
 	{
 		auto uiNameLen = TStringManager::String8Length(a_szName);
 		TASSERT(uiNameLen < MAX_TEXTURENAMELEN);
@@ -53,7 +53,7 @@ namespace Toshi {
 		return &m_aLists[a_uiList];
 	}
 
-	TTexture* TTextureFactory::FindTexture(const char* a_szName) const
+	TTexture* TTextureFactory::FindTexture(const TCHAR* a_szName) const
 	{
 		auto pList = &m_aLists[HashName(a_szName)];
 		
@@ -68,7 +68,7 @@ namespace Toshi {
 		return TNULL;
 	}
 
-	TTextureFactory::NameEntry* TTextureFactory::RegisterTexture(const char* a_szName, TTexture* a_pTexture)
+	TTextureFactory::NameEntry* TTextureFactory::RegisterTexture(const TCHAR* a_szName, TTexture* a_pTexture)
 	{
 		auto pList = &m_aLists[HashName(a_szName)];
 		auto pEntry = new TTextureFactory::NameEntry(a_szName, a_pTexture);
@@ -92,7 +92,7 @@ namespace Toshi {
 		}
 	}
 
-	TUINT32 TTextureFactory::HashName(const char* a_szName)
+	TUINT32 TTextureFactory::HashName(const TCHAR* a_szName)
 	{
 		TUINT32 iHash = 0;
 

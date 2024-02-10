@@ -9,13 +9,13 @@ namespace Toshi{
 		TRefCounted(TRefCounted const&) { m_iRefCount = 0; }
 		~TRefCounted() { m_iRefCount = -1; }
 
-		int DecRefCount() { return m_iRefCount--; }
-		int GetRefCount() { return m_iRefCount; }
-		int IncRefCount() { return m_iRefCount++; }
+		TINT DecRefCount() { return m_iRefCount--; }
+		TINT GetRefCount() { return m_iRefCount; }
+		TINT IncRefCount() { return m_iRefCount++; }
 		TRefCounted& operator=(TRefCounted const&) { return *this; }
 
 	private:
-		int m_iRefCount;
+		TINT m_iRefCount;
 	};
 
 	/**

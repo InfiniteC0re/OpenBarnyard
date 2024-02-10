@@ -70,7 +70,7 @@ namespace Toshi {
 		static void Initialise();
 		static void Uninitialise();
 
-		static TModelRegistryEntry* CreateModel(const char* a_szFileName, TModelPtr& a_rModelRef, TTRB* a_pAssetTRB);
+		static TModelRegistryEntry* CreateModel(const TCHAR* a_szFileName, TModelPtr& a_rModelRef, TTRB* a_pAssetTRB);
 
 	public:
 		inline static T2SimpleArray<TModelRegistryEntry> ms_pEntries;
@@ -87,7 +87,7 @@ namespace Toshi {
 		TModelPtr() = default;
 		~TModelPtr();
 
-		TBOOL Create(const char* a_szFileName, TTRB* a_pTRB);
+		TBOOL Create(const TCHAR* a_szFileName, TTRB* a_pTRB);
 		T2ModelInstance* CreateInstance();
 
 		void SetModel(TModel* a_pModel) { m_pModel = a_pModel; }

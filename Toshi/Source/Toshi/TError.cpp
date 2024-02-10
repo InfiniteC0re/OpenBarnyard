@@ -7,12 +7,12 @@
 //-----------------------------------------------------------------------------
 #include "Core/TMemoryDebugOn.h"
 
-Toshi::TError::TError(uint32_t size1, uint32_t size2)
+Toshi::TError::TError(TUINT32 size1, TUINT32 size2)
 {
 	m_size1 = size1;
 	m_size2 = size2;
-	m_Buffer1 = new char[size1];
-	m_Buffer2 = new int[size2];
+	m_Buffer1 = new TCHAR[size1];
+	m_Buffer2 = new TINT[size2];
 	m_currentSize = 0;
 	m_currentSize2 = 0;
 }
@@ -23,7 +23,7 @@ Toshi::TError::~TError()
 	delete[] m_Buffer2;
 }
 
-void Toshi::TError::AddError(const char* error, ...)
+void Toshi::TError::AddError(const TCHAR* error, ...)
 {
 	if (m_currentSize2 < m_size2 && m_currentSize < m_size1)
 	{
@@ -33,7 +33,7 @@ void Toshi::TError::AddError(const char* error, ...)
 
 		va_start(args, error);
 
-		char str[0x400];
+		TCHAR str[0x400];
 
 		T2String8::Format(str, sizeof(str), error, args);
 

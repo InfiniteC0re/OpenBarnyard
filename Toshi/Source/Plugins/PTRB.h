@@ -130,7 +130,7 @@ namespace PTRB
 			};
 
 		public:
-			Stack(uint32_t index)
+			Stack(TUINT32 index)
 			{
 				m_Index = index;
 				m_Buffer = TNULL;
@@ -180,24 +180,24 @@ namespace PTRB
 				m_BufferPos = m_Buffer + newPos;
 			}
 
-			uint32_t SetIndex(uint32_t index)
+			TUINT32 SetIndex(TUINT32 index)
 			{
-				uint32_t oldIndex = m_Index;
+				TUINT32 oldIndex = m_Index;
 				m_Index = index;
 				return oldIndex;
 			}
 
-			void SetExpectedSize(uint32_t expectedSize) { m_ExpectedSize = expectedSize; }
+			void SetExpectedSize(TUINT32 expectedSize) { m_ExpectedSize = expectedSize; }
 
-			uint32_t GetExpectedSize() const { return m_ExpectedSize; }
+			TUINT32 GetExpectedSize() const { return m_ExpectedSize; }
 
-			uint32_t GetIndex() const { return m_Index; }
+			TUINT32 GetIndex() const { return m_Index; }
 
 			size_t GetPointerCount() const { return m_PtrList.size(); }
 
-			char* GetBuffer() const { return m_Buffer; }
+			TCHAR* GetBuffer() const { return m_Buffer; }
 
-			char* GetBufferPos() const { return m_BufferPos; }
+			TCHAR* GetBufferPos() const { return m_BufferPos; }
 
 			size_t GetBufferSize() const { return m_BufferSize; }
 
@@ -220,7 +220,7 @@ namespace PTRB
 				return reinterpret_cast<T*>(&m_Buffer[offset]);
 			}
 
-			void Write(size_t offset, char* value, int size)
+			void Write(size_t offset, TCHAR* value, TINT size)
 			{
 				TASSERT(offset >= 0 && offset < m_BufferSize, "Offset is out of buffer");
 				Toshi::TUtil::MemCopy(&m_Buffer[offset], value, size);
@@ -232,7 +232,7 @@ namespace PTRB
 			template <class T>
 			Ptr<T> Alloc(size_t count);
 
-			Ptr<char> AllocBytes(size_t Size);
+			Ptr<TCHAR> AllocBytes(size_t Size);
 
 			template <class T>
 			void WritePointer(T** outPtr, const T* ptr);
@@ -263,11 +263,11 @@ namespace PTRB
 			}
 
 		private:
-			uint32_t m_Index;
-			char* m_Buffer;
-			char* m_BufferPos;
+			TUINT32 m_Index;
+			TCHAR* m_Buffer;
+			TCHAR* m_BufferPos;
 			size_t m_BufferSize;
-			uint32_t m_ExpectedSize;
+			TUINT32 m_ExpectedSize;
 			std::vector<RelcPtr> m_PtrList;
 			std::vector<Stack*> m_DependentStacks;
 		};
@@ -325,7 +325,7 @@ namespace PTRB
 			m_SymbolNames.reserve(5);
 		}
 
-		bool Is(size_t index, const char* name)
+		bool Is(size_t index, const TCHAR* name)
 		{
 			TASSERT(index >= 0 && index < m_Symbols.size());
 			auto hash = Toshi::TTRB::HashString(name);
@@ -341,7 +341,7 @@ namespace PTRB
 			return false;
 		}
 
-		int FindIndex(SECT& sect, const char* name)
+		TINT FindIndex(SECT& sect, const TCHAR* name)
 		{
 			auto hash = Toshi::TTRB::HashString(name);
 
@@ -359,15 +359,15 @@ namespace PTRB
 			return -1;
 		}
 
-		int FindIndex(SECT* sect, const char* name)
+		TINT FindIndex(SECT* sect, const TCHAR* name)
 		{
 			return FindIndex(*sect, name);
 		}
 
 		template <class T>
-		SECT::Stack::Ptr<T> Find(SECT& sect, const char* name)
+		SECT::Stack::Ptr<T> Find(SECT& sect, const TCHAR* name)
 		{
-			int index = FindIndex(sect, name);
+			TINT index = FindIndex(sect, name);
 
 			if (index != -1)
 			{
@@ -379,14 +379,14 @@ namespace PTRB
 		}
 
 		template <class T>
-		SECT::Stack::Ptr<T> Find(SECT* sect, const char* name)
+		SECT::Stack::Ptr<T> Find(SECT* sect, const TCHAR* name)
 		{
 			return Find<T>(*sect, name);
 		}
 
-		SECT::Stack* FindStack(SECT& sect, const char* name)
+		SECT::Stack* FindStack(SECT& sect, const TCHAR* name)
 		{
-			int index = FindIndex(sect, name);
+			TINT index = FindIndex(sect, name);
 
 			if (index != -1)
 			{
@@ -397,7 +397,7 @@ namespace PTRB
 			return TNULL;
 		}
 
-		SECT::Stack* FindStack(SECT* sect, const char* name)
+		SECT::Stack* FindStack(SECT* sect, const TCHAR* name)
 		{
 			return FindStack(*sect, name);
 		}
@@ -440,13 +440,13 @@ namespace PTRB
 			return m_Symbols.size();
 		}
 
-		void Add(SECT::Stack* pStack, const char* name, void* ptr)
+		void Add(SECT::Stack* pStack, const TCHAR* name, void* ptr)
 		{
 			m_Symbols.emplace_back(pStack->GetIndex(), 0, 0, 0, pStack->GetOffset(ptr));
 			m_SymbolNames.push_back(name);
 		}
 
-		void UpdateSymbolsIndexes(SECT::Stack* pStack, uint32_t newIndex)
+		void UpdateSymbolsIndexes(SECT::Stack* pStack, TUINT32 newIndex)
 		{
 			auto stackIndex = pStack->GetIndex();
 
@@ -469,7 +469,7 @@ namespace PTRB
 			m_SymbolNames.erase(m_SymbolNames.begin() + index);
 		}
 
-		void RemoveAllWithStackIndex(int stackIndex)
+		void RemoveAllWithStackIndex(TINT stackIndex)
 		{
 			for (size_t i = 0; i < m_Symbols.size();)
 			{
@@ -488,8 +488,8 @@ namespace PTRB
 		{
 			TASSERT(m_Symbols.size() == m_SymbolNames.size(), "");
 
-			uint32_t nameOffset = 0;
-			uint32_t symbolCount = m_Symbols.size();
+			TUINT32 nameOffset = 0;
+			TUINT32 symbolCount = m_Symbols.size();
 			ttsfo.Write(symbolCount);
 
 			for (size_t i = 0; i < m_Symbols.size(); i++)
@@ -509,7 +509,7 @@ namespace PTRB
 
 		void Read(Toshi::TTSFI& ttsfi, SECT& sect)
 		{
-			uint32_t symbolCount = 0;
+			TUINT32 symbolCount = 0;
 			ttsfi.Read(&symbolCount);
 
 			// Read symbols
@@ -520,12 +520,12 @@ namespace PTRB
 			// Read symbol names
 			size_t namesSize = ttsfi.GetCurrentHunk().Size - symbolsSize;
 			m_SymbolNames.reserve(symbolCount);
-			char* namesBuffer = new char[namesSize];
+			TCHAR* namesBuffer = new TCHAR[namesSize];
 			ttsfi.ReadRaw(namesBuffer, namesSize);
 
 			for (auto& symbol : m_Symbols)
 			{
-				const char* symbolName = &namesBuffer[symbol.NameOffset];
+				const TCHAR* symbolName = &namesBuffer[symbol.NameOffset];
 				m_SymbolNames.push_back(symbolName);
 			}
 
@@ -686,7 +686,7 @@ namespace PTRB
 	{
 		ttsfi.Read(&m_Header);
 
-		for (int i = 0; i < m_Header.m_i32SectionCount; i++)
+		for (TINT i = 0; i < m_Header.m_i32SectionCount; i++)
 		{
 			Toshi::TTRB::SecInfo sectionInfo;
 			ttsfi.Read(&sectionInfo);
@@ -698,7 +698,7 @@ namespace PTRB
 
 	inline void RELC::Write(Toshi::TTSFO& ttsfo, SECT& sect)
 	{
-		uint32_t ptrCount = 0;
+		TUINT32 ptrCount = 0;
 		for (auto section : sect)
 		{
 			ptrCount += section->GetPointerCount();
@@ -723,16 +723,16 @@ namespace PTRB
 
 	inline void RELC::Read(Toshi::TTSFI& ttsfi, SECT& sect)
 	{
-		uint32_t ptrCount = 0;
+		TUINT32 ptrCount = 0;
 		ttsfi.Read(&ptrCount);
 
 		Toshi::TTRB::RELCEntry entry;
-		for (uint32_t i = 0; i < ptrCount; i++)
+		for (TUINT32 i = 0; i < ptrCount; i++)
 		{
 			ttsfi.Read(&entry);
 			auto stack = sect.GetStack(entry.HDRX1);
 			auto dataStack = sect.GetStack(entry.HDRX2);
-			uint32_t dataPtr = *(uint32_t*)(&stack->GetBuffer()[entry.Offset]);
+			TUINT32 dataPtr = *(TUINT32*)(&stack->GetBuffer()[entry.Offset]);
 			stack->AddRelocationPtr(entry.Offset, dataPtr, dataStack);
 		}
 
@@ -768,7 +768,7 @@ namespace PTRB
 	template<class T>
 	inline SECT::Stack::Ptr<T> SECT::Stack::Alloc()
 	{
-		m_BufferPos = TREINTERPRETCAST(char*, Toshi::TMath::AlignPointer(m_BufferPos));
+		m_BufferPos = TREINTERPRETCAST(TCHAR*, Toshi::TMath::AlignPointer(m_BufferPos));
 
 		constexpr size_t TSize = sizeof(T);
 		GrowBuffer(GetUsedSize() + TSize);
@@ -782,7 +782,7 @@ namespace PTRB
 	template<class T>
 	inline SECT::Stack::Ptr<T> SECT::Stack::Alloc(size_t count)
 	{
-		m_BufferPos = TREINTERPRETCAST(char*, Toshi::TMath::AlignPointer(m_BufferPos));
+		m_BufferPos = TREINTERPRETCAST(TCHAR*, Toshi::TMath::AlignPointer(m_BufferPos));
 
 		const size_t TSize = sizeof(T) * count;
 		GrowBuffer(GetUsedSize() + TSize);
@@ -797,7 +797,7 @@ namespace PTRB
 	inline SECT::Stack::Ptr<T> SECT::Stack::Alloc(T** outPtr, size_t count)
 	{
 		TASSERT((size_t)outPtr >= (size_t)m_Buffer && (size_t)outPtr < (size_t)m_Buffer + (size_t)m_BufferSize, "Out pointer is out of buffer");
-		m_BufferPos = TREINTERPRETCAST(char*, Toshi::TMath::AlignPointer(m_BufferPos));
+		m_BufferPos = TREINTERPRETCAST(TCHAR*, Toshi::TMath::AlignPointer(m_BufferPos));
 
 		const size_t TSize = sizeof(T) * count;
 		size_t outPtrOffset = GetOffset(outPtr);
@@ -816,7 +816,7 @@ namespace PTRB
 	inline SECT::Stack::Ptr<T> SECT::Stack::Alloc(T** outPtr)
 	{
 		TASSERT((size_t)outPtr >= (size_t)m_Buffer && (size_t)outPtr < (size_t)m_Buffer + (size_t)m_BufferSize, "Out pointer is out of buffer");
-		m_BufferPos = TREINTERPRETCAST(char*, Toshi::TMath::AlignPointer(m_BufferPos));
+		m_BufferPos = TREINTERPRETCAST(TCHAR*, Toshi::TMath::AlignPointer(m_BufferPos));
 
 		constexpr size_t TSize = sizeof(T) * Count;
 		size_t outPtrOffset = GetOffset(outPtr);
@@ -838,7 +838,7 @@ namespace PTRB
 		TASSERT((size_t)ptr >= (size_t)m_Buffer && (size_t)ptr < (size_t)m_Buffer + (size_t)m_BufferSize, "Pointer is out of buffer");
 
 		size_t outPtrOffset = GetOffset(outPtr);
-		Write<uint32_t>(outPtrOffset, TREINTERPRETCAST(uint32_t, ptr));
+		Write<TUINT32>(outPtrOffset, TREINTERPRETCAST(TUINT32, ptr));
 		AddRelocationPtr(outPtrOffset, GetOffset(ptr));
 	}
 
@@ -848,15 +848,15 @@ namespace PTRB
 		TASSERT((size_t)outPtr >= (size_t)m_Buffer && (size_t)outPtr < (size_t)m_Buffer + (size_t)m_BufferSize, "Out pointer is out of buffer");
 
 		size_t outPtrOffset = GetOffset(outPtr);
-		Write<uint32_t>(outPtrOffset, TREINTERPRETCAST(uint32_t, ptr.get()));
+		Write<TUINT32>(outPtrOffset, TREINTERPRETCAST(TUINT32, ptr.get()));
 		AddRelocationPtr(outPtrOffset, ptr.offset());
 	}
 
-	inline SECT::Stack::Ptr<char> SECT::Stack::AllocBytes(size_t Size)
+	inline SECT::Stack::Ptr<TCHAR> SECT::Stack::AllocBytes(size_t Size)
 	{
 		GrowBuffer(GetUsedSize() + Size);
 
-		char* allocated = reinterpret_cast<char*>(m_BufferPos);
+		TCHAR* allocated = reinterpret_cast<TCHAR*>(m_BufferPos);
 		m_BufferPos += Size;
 
 		return { this, allocated };
@@ -894,9 +894,9 @@ namespace PTRB
 		//TASSERT(size != m_BufferSize, "Size is the same");
 		//TASSERT(size > m_BufferSize, "Buffer can't shrink");
 
-		char* oldBuffer = m_Buffer;
+		TCHAR* oldBuffer = m_Buffer;
 		size_t usedSize = GetUsedSize();
-		m_Buffer = new char[size];
+		m_Buffer = new TCHAR[size];
 		m_BufferSize = size;
 
 		Toshi::TUtil::MemClear(m_Buffer, size);
@@ -942,7 +942,7 @@ namespace PTRB
 			delete pStack;
 
 			// Update indexes
-			uint32_t index = 0;
+			TUINT32 index = 0;
 			for (auto it = m_Stacks.begin(); it != m_Stacks.end(); it++)
 			{
 				auto stack = *it;

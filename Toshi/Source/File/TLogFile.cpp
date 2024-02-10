@@ -8,7 +8,7 @@
 //-----------------------------------------------------------------------------
 #include "Core/TMemoryDebugOn.h"
 
-static constexpr const char* cTypeStrings[]
+static constexpr const TCHAR* cTypeStrings[]
 {
 	"Info",
 	"Warning",
@@ -19,7 +19,7 @@ TSTATICASSERT(Toshi::TLogFile::Type_NUMOF == TARRAYSIZE(cTypeStrings));
 
 #if SUPPORT_COLOURED_LOGS
 
-static constexpr const char* cTypeColours[]
+static constexpr const TCHAR* cTypeColours[]
 {
 	"\033[32m",
 	"\033[93m",
@@ -50,7 +50,7 @@ namespace Toshi {
 		Close();
 	}
 
-	TLogFile::Error TLogFile::Create(const char* fileName, const char* str2, TBOOL writeExisting)
+	TLogFile::Error TLogFile::Create(const TCHAR* fileName, const TCHAR* str2, TBOOL writeExisting)
 	{
 		TASSERT(TNULL == m_pFile);
 		
@@ -62,9 +62,9 @@ namespace Toshi {
 		TIMPLEMENT_D("uVar1 = FUN_008289A0(fileName);");
 		TIMPLEMENT_D("FUN_00828A40(uVar1);");
 
-		TFile::FileMode fileMode = writeExisting ?
-			TFile::FileMode_NoBuffer | TFile::FileMode_Write :
-			TFile::FileMode_NoBuffer | TFile::FileMode_Write | TFile::FileMode_CreateNew;
+		TFILEMODE fileMode = writeExisting ?
+			TFILEMODE_NOBUFFER | TFILEMODE_WRITE :
+			TFILEMODE_NOBUFFER | TFILEMODE_WRITE | TFILEMODE_CREATENEW;
 
 		m_pFile = TFile::Create(fileName, fileMode);
 
@@ -75,7 +75,7 @@ namespace Toshi {
 
 		if (writeExisting)
 		{
-			m_pFile->Seek(0, TFile::TSEEK_END);
+			m_pFile->Seek(0, TSEEK_END);
 		}
 
 		m_iTotalLogCount = 0;
@@ -107,8 +107,8 @@ namespace Toshi {
 
 	void TLogFile::RecalcLevel()
 	{
-		m_curLevel = TMath::Min<uint32_t>(m_curLevel, cLevelMax);
-		m_curLevel = TMath::Max<uint32_t>(m_curLevel, 0);
+		m_curLevel = TMath::Min<TUINT32>(m_curLevel, cLevelMax);
+		m_curLevel = TMath::Max<TUINT32>(m_curLevel, 0);
 
 		for (size_t i = 0; i < m_curLevel; i++)
 		{
@@ -118,14 +118,14 @@ namespace Toshi {
 		m_LevelString[m_curLevel] = 0;
 	}
 
-	void TLogFile::Print(const char* format, ...)
+	void TLogFile::Print(const TCHAR* format, ...)
 	{
 		if (m_pFile != TNULL)
 		{
 			va_list args;
 			va_start(args, format);
 
-			char str[1024];
+			TCHAR str[1024];
 			T2String8::FormatV(str, sizeof(str), format, args);
 
 			va_end(args);
@@ -141,7 +141,7 @@ namespace Toshi {
 		}
 	}
 
-	void TLogFile::Log(Type type, const char* str1, const char* str2, const char* format, ...)
+	void TLogFile::Log(Type type, const TCHAR* str1, const TCHAR* str2, const TCHAR* format, ...)
 	{
 		if (m_pFile != TNULL)
 		{
@@ -160,7 +160,7 @@ namespace Toshi {
 			}
 			else
 			{
-				char strTime[9];
+				TCHAR strTime[9];
 				_strtime(strTime);
 
 				m_pFile->CPrintf("[%s] [%s/%s] [%s]: %s", strTime, str1, str2 != TNULL ? str2 : "", cTypeStrings[type], !m_bAllowIndentation ? m_LevelString : "");
@@ -175,7 +175,7 @@ namespace Toshi {
 			}
 			else
 			{
-				char strTime[128];
+				TCHAR strTime[128];
 				_strtime(strTime);
 
 				m_pFile->CPrintf("%d [%s] [%s]: %s: %s: %s", m_iTotalLogCount, cTypeStrings[type], strTime, str1, str2 != TNULL ? str2 : "", !m_bAllowIndentation ? m_LevelString : "");

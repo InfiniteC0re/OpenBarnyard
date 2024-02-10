@@ -47,7 +47,7 @@ namespace Toshi
 
 	void TRandom::Isaac()
 	{
-		unsigned int a, b, x, y, * m, * mm, * m2, * r, * mend;
+		TUINT a, b, x, y, * m, * mm, * m2, * r, * mend;
 		mm = m_pRandmem;
 		r = m_pRandrsl;
 		a = m_uiRandA;
@@ -70,8 +70,8 @@ namespace Toshi
 
 	void TRandom::RandInit()
 	{
-		uint32_t a, b, c, d, e, f, g, h;
-		int i;
+		TUINT32 a, b, c, d, e, f, g, h;
+		TINT i;
 
 		m_uiRandA = m_uiRandB = m_uiRandC = 0;
 
@@ -83,8 +83,8 @@ namespace Toshi
 			mix(a, b, c, d, e, f, g, h);
 		}
 
-		uint32_t* m = m_pRandmem;
-		uint32_t* r = m_pRandrsl;
+		TUINT32* m = m_pRandmem;
+		TUINT32* r = m_pRandrsl;
 
 		/* initialize using the contents of r[] as the seed */
 		for (i = 0; i < RANDSIZ; i += 8) {
@@ -136,7 +136,7 @@ namespace Toshi
 		m_uiRndCnt = RANDSIZ;
 	}
 
-	int TRandom::GetInt(uint32_t a_iLower, uint32_t a_iUpper)
+	TINT TRandom::GetInt(TUINT32 a_iLower, TUINT32 a_iUpper)
 	{
 		TASSERT(a_iUpper > a_iLower, "a_iLower can't be higher than a_iUpper");
 		
@@ -145,7 +145,7 @@ namespace Toshi
 		return a_iLower + (range * rand >> 0x20);
 	}
 
-	int TRandom::GetInt()
+	TINT TRandom::GetInt()
 	{
 		return RandRaw();
 	}
@@ -160,19 +160,19 @@ namespace Toshi
 		return (RandRaw() >> 1) * 9.313226E-10f * -1.0f;
 	}
 
-	void TRandom::SetSeed(unsigned int a_uiSeed)
+	void TRandom::SetSeed(TUINT a_uiSeed)
 	{
 		m_uiSeed = a_uiSeed;
 		RandInit();
 	}
 
-	uint32_t TRandom::RandRaw()
+	TUINT32 TRandom::RandRaw()
 	{
 		if (m_uiRndCnt-- == 0)
 		{
 			Isaac();
 			m_uiRndCnt = RANDSIZ - 1;
-			//return *(uint *)((int)this + 0x44);
+			//return *(uint *)((TINT)this + 0x44);
 		}
 		return m_pRandrsl[m_uiRndCnt];
 	}

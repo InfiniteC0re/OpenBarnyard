@@ -1,7 +1,7 @@
 #pragma once
 namespace Toshi
 {
-	template <typename T, int C>
+	template <typename T, TINT C>
 	class TStack
 	{
 	public:
@@ -46,7 +46,7 @@ namespace Toshi
 		}
 
 	private:
-		int m_iTop = -1;
+		TINT m_iTop = -1;
 		T m_pStack[C];
 	};
 }

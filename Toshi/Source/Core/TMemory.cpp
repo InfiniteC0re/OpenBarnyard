@@ -90,15 +90,15 @@ namespace Toshi {
 		void* GetMemory() const { return m_pMemory; }
 		void SetMemory(void* a_pMemory) { m_pMemory = a_pMemory; }
 
-		const char* GetFileName() const { return m_szFileName; }
-		void SetFileName(const char* a_szFileName) { m_szFileName = a_szFileName; }
+		const TCHAR* GetFileName() const { return m_szFileName; }
+		void SetFileName(const TCHAR* a_szFileName) { m_szFileName = a_szFileName; }
 
 		TINT GetLineNum() const { return m_iLineNum; }
 		void SetLineNum(TINT a_iLineNum) { m_iLineNum = a_iLineNum; }
 
 	private:
 		void* m_pMemory;
-		const char* m_szFileName;
+		const TCHAR* m_szFileName;
 		TINT m_iLineNum;
 	};
 
@@ -135,7 +135,7 @@ namespace Toshi {
 		
 	}
 
-	void* TMemory::Alloc(TUINT a_uiSize, TINT a_uiAlignment, MemBlock* a_pMemBlock, const char* a_szFileName, TINT a_iLineNum)
+	void* TMemory::Alloc(TUINT a_uiSize, TINT a_uiAlignment, MemBlock* a_pMemBlock, const TCHAR* a_szFileName, TINT a_iLineNum)
 	{
 		TMutexLock lock(ms_pGlobalMutex);
 
@@ -433,13 +433,13 @@ namespace Toshi {
 		return TFALSE;
 	}
 
-	TMemory::MemBlock* TMemory::CreateMemBlock(TUINT a_uiSize, const char* a_szName, MemBlock* a_pOwnerBlock)
+	TMemory::MemBlock* TMemory::CreateMemBlock(TUINT a_uiSize, const TCHAR* a_szName, MemBlock* a_pOwnerBlock)
 	{
 		void* pMem = Alloc(a_uiSize, 16, a_pOwnerBlock, TNULL, -1);
 		return CreateMemBlockInPlace(pMem, a_uiSize, a_szName);
 	}
 
-	TMemory::MemBlock* TMemory::CreateMemBlockInPlace(void* a_pMem, TUINT a_uiSize, const char* a_szName)
+	TMemory::MemBlock* TMemory::CreateMemBlockInPlace(void* a_pMem, TUINT a_uiSize, const TCHAR* a_szName)
 	{
 		TMutexLock lock(ms_pGlobalMutex);
 
@@ -519,7 +519,7 @@ namespace Toshi {
 		TStringManager::String8Copy(a_pMemBlock->m_szSignature, "xxxxxxx");
 	}
 
-	void TMemory::PrintDebug(const char* a_szFormat, ...)
+	void TMemory::PrintDebug(const TCHAR* a_szFormat, ...)
 	{
 		va_list args;
 		va_start(args, a_szFormat);
@@ -617,7 +617,7 @@ namespace Toshi {
 					*(TUINT8*)pAllocInfoCursor = uiFileNameLength;
 					pAllocInfoCursor += 1;
 
-					TStringManager::String8Copy((char*)pAllocInfoCursor, slot->GetFileName(), uiFileNameLength);
+					TStringManager::String8Copy((TCHAR*)pAllocInfoCursor, slot->GetFileName(), uiFileNameLength);
 					pAllocInfoCursor += uiFileNameLength;
 				}
 
@@ -761,7 +761,7 @@ namespace Toshi {
 	}
 }
 
-void* TMalloc(TUINT a_uiSize, Toshi::TMemory::MemBlock* a_pMemBlock, const char* a_szFileName, TINT a_iLineNum)
+void* TMalloc(TUINT a_uiSize, Toshi::TMemory::MemBlock* a_pMemBlock, const TCHAR* a_szFileName, TINT a_iLineNum)
 {
 	auto pMemManager = Toshi::TMemory::GetSingleton();
 
@@ -780,7 +780,7 @@ void* TMalloc(TUINT a_uiSize, Toshi::TMemory::MemBlock* a_pMemBlock, const char*
 	return pMem;
 }
 
-void* TMalloc(TUINT a_uiSize, const char* a_szFileName, TINT a_iLineNum)
+void* TMalloc(TUINT a_uiSize, const TCHAR* a_szFileName, TINT a_iLineNum)
 {
 	auto pMemManager = Toshi::TMemory::GetSingleton();
 	auto pMemBlock = pMemManager->GetGlobalBlock();

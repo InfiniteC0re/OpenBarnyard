@@ -1,5 +1,6 @@
 #include "ToshiPCH.h"
 #include "TString8.h"
+#include "TString16.h"
 
 #include "Toshi/TSystem.h"
 
@@ -9,8 +10,8 @@
 //-----------------------------------------------------------------------------
 #include "Core/TMemoryDebugOn.h"
 
-namespace Toshi
-{
+namespace Toshi {
+
 	TString8::TString8(T2Allocator* allocator)
 	{
 		Reset();
@@ -36,7 +37,7 @@ namespace Toshi
 		Copy(src, -1);
 	}
 
-	TString8::TString8(uint32_t size, T2Allocator* allocator)
+	TString8::TString8(TUINT32 size, T2Allocator* allocator)
 	{
 		Reset();
 		m_pAllocator = allocator == TNULL ? GetAllocator() : allocator;
@@ -50,16 +51,16 @@ namespace Toshi
 		Copy(src);
 	}
 
-	TString8::TString8(const char* src, T2Allocator* allocator)
+	TString8::TString8(const TCHAR* src, T2Allocator* allocator)
 	{
 		Reset();
 		m_pAllocator = allocator == TNULL ? GetAllocator() : allocator;
 		Copy(src);
 	}
 
-	void TString8::Copy(const TString16& src, uint32_t size)
+	void TString8::Copy(const TString16& src, TUINT32 size)
 	{
-		uint32_t srcLen = src.Length();
+		TUINT32 srcLen = src.Length();
 		TASSERT(srcLen <= 0xFFFFFF, "Too big string");
 
 		if (srcLen < size || size == -1) { size = srcLen; }
@@ -69,16 +70,16 @@ namespace Toshi
 		m_pBuffer[size] = 0;
 	}
 
-	void TString8::Copy(const char* src, uint32_t size)
+	void TString8::Copy(const TCHAR* src, TUINT32 size)
 	{
 		if (src != m_pBuffer)
 		{
-			size_t srcLen = src ? TStringManager::String8Length(src) : 0;
+			TUINT32 srcLen = src ? TStringManager::String8Length(src) : 0;
 			TASSERT(srcLen <= 0xFFFFFF, "Too big string");
 
 			if (srcLen < size || size == -1)
 			{
-				size = (uint32_t)srcLen;
+				size = (TUINT32)srcLen;
 			}
 
 			AllocBuffer(size, TTRUE);
@@ -88,30 +89,42 @@ namespace Toshi
 		}
 	}
 
-	int32_t TString8::Find(char character, uint32_t pos) const
+	void TString8::Copy(const TWCHAR* src, TUINT32 size)
+	{
+		TUINT32 srcLen = TStringManager::String16Length(src);
+		TASSERT(srcLen <= 0xFFFFFF, "Too big string");
+
+		if (srcLen < size || size == -1) { size = srcLen; }
+
+		AllocBuffer(size, TTRUE);
+		TStringManager::StringUnicodeToChar(m_pBuffer, src, size);
+		m_pBuffer[size] = 0;
+	}
+
+	TINT TString8::Find(TCHAR character, TUINT32 pos) const
 	{
 		if (!IsIndexValid(pos)) return -1;
 
-		const char* foundAt = strchr(&m_pBuffer[pos], character);
+		const TCHAR* foundAt = strchr(&m_pBuffer[pos], character);
 		if (foundAt == TNULL) return -1;
 
-		return (int32_t)(foundAt - m_pBuffer);
+		return (TINT)(foundAt - m_pBuffer);
 	}
 
-	int32_t TString8::Find(const char* substr, uint32_t pos) const
+	TINT TString8::Find(const TCHAR* substr, TUINT32 pos) const
 	{
 		if (!IsIndexValid(pos)) return -1;
 
-		const char* foundAt = strstr(GetString(pos), substr);
+		const TCHAR* foundAt = strstr(GetString(pos), substr);
 		if (foundAt == TNULL) return -1;
 
-		return (int32_t)(foundAt - m_pBuffer);
+		return (TINT)(foundAt - m_pBuffer);
 	}
 
-	TBOOL TString8::AllocBuffer(uint32_t a_iLength, TBOOL freeMemory)
+	TBOOL TString8::AllocBuffer(TUINT32 a_iLength, TBOOL freeMemory)
 	{
 		TBOOL hasChanged = TFALSE;
-		uint32_t currentLength = Length();
+		TUINT32 currentLength = Length();
 
 		TASSERT(a_iLength >= 0, "Length can't be less than 0");
 		TASSERT(a_iLength <= 0xFFFFFF, "Too big string");
@@ -129,7 +142,7 @@ namespace Toshi
 			}
 			else
 			{
-				int newExcessLen = (currentLength - a_iLength) + m_iExcessLen;
+				TINT newExcessLen = (currentLength - a_iLength) + m_iExcessLen;
 
 				if (newExcessLen < 0 || newExcessLen > 0xFF)
 				{
@@ -138,7 +151,7 @@ namespace Toshi
 						m_pAllocator->Free(m_pBuffer);
 					}
 
-					m_pBuffer = (char*)m_pAllocator->Malloc(a_iLength + 1);
+					m_pBuffer = (TCHAR*)m_pAllocator->Malloc(a_iLength + 1);
 					m_iExcessLen = 0;
 
 					hasChanged = TTRUE;
@@ -157,35 +170,35 @@ namespace Toshi
 		return hasChanged;
 	}
 
-	TString8 TString8::Format(const char* a_pcFormat, ...)
+	TString8 TString8::Format(const TCHAR* a_pcFormat, ...)
 	{
-		char buffer[0x400];
+		TCHAR buffer[0x400];
 		TString8 buffer2;
 		va_list args;
 
 		va_start(args, a_pcFormat);
 
 		// TASSERT is only in T2String8
-		int iResult = _vsnprintf(buffer, sizeof(buffer), a_pcFormat, args);
-		TASSERT(iResult != -1, "PS2/GC/X360 do not correctly support _vsnprintf, this code will cause memory to be clobbered on those platforms! Increase the size of the destination string to avoid this problem")
+		TINT iResult = _vsnprintf(buffer, sizeof(buffer), a_pcFormat, args);
+		TASSERT(iResult != -1, "PS2/GC/X360 do not correctly support _vsnprintf, this code will cause memory to be clobbered on those platforms! Increase the size of the destination string to avoid this problem");
 		buffer2.Copy(buffer, -1);
 		
 		return buffer2;
 	}
 
-	TString8& TString8::VFormat(const char* a_pcFormat, char* a_pcArgs)
+	TString8& TString8::VFormat(const TCHAR* a_pcFormat, va_list a_vargs)
 	{
-		char buffer[0x400];
+		TCHAR buffer[0x400];
 
 		// TASSERT is only in T2String8
-		int iResult = _vsnprintf(buffer, sizeof(buffer), a_pcFormat, a_pcArgs);
-		TASSERT(iResult != -1, "PS2/GC/X360 do not correctly support _vsnprintf, this code will cause memory to be clobbered on those platforms! Increase the size of the destination string to avoid this problem")
+		TINT iResult = _vsnprintf(buffer, sizeof(buffer), a_pcFormat, a_vargs);
+		TASSERT(iResult != -1, "PS2/GC/X360 do not correctly support _vsnprintf, this code will cause memory to be clobbered on those platforms! Increase the size of the destination string to avoid this problem");
 		Copy(buffer, -1);
 
 		return *this;
 	}
 
-	void TString8::ForceSetData(char* a_cString, int a_iLength)
+	void TString8::ForceSetData(TCHAR* a_cString, TINT a_iLength)
 	{
 		m_pBuffer = a_cString;
 
@@ -201,7 +214,7 @@ namespace Toshi
 		m_iExcessLen = 0;
 	}
 
-	int TString8::FindReverse(char a_findChar, int pos) const
+	TINT TString8::FindReverse(TCHAR a_findChar, TINT pos) const
 	{
 		if (pos == -1)
 		{
@@ -224,14 +237,14 @@ namespace Toshi
 		return -1;
 	}
 
-	void TString8::Truncate(uint32_t length)
+	void TString8::Truncate(TUINT32 length)
 	{
 		if (Length() < length)
 		{
 			length = Length();
 		}
 
-		char* oldBuffer = m_pBuffer;
+		TCHAR* oldBuffer = m_pBuffer;
 
 		TBOOL allocated = AllocBuffer(length, TFALSE);
 		if (allocated)
@@ -253,24 +266,24 @@ namespace Toshi
 		Reset();
 	}
 
-	const char* TString8::GetString(uint32_t a_iIndex) const
+	const TCHAR* TString8::GetString(TUINT32 a_iIndex) const
 	{
 		TASSERT(a_iIndex >= 0 && a_iIndex <= (TINT)m_iStrLen);
 		if (IsIndexValid(a_iIndex)) { return &m_pBuffer[a_iIndex]; }
 		return TNULL;
 	}
 
-	TString8& TString8::Concat(const char* str, uint32_t size)
+	TString8& TString8::Concat(const TCHAR* str, TUINT32 size)
 	{
-		uint32_t len = (uint32_t)TStringManager::String8Length(str);
+		TUINT32 len = (TUINT32)TStringManager::String8Length(str);
 		
 		if ((len < size) || (size == -1))
 		{
 			size = len;
 		}
 
-		uint32_t oldLength = m_iStrLen;
-		char* oldString = m_pBuffer;
+		TUINT32 oldLength = m_iStrLen;
+		TCHAR* oldString = m_pBuffer;
 
 		TBOOL allocated = AllocBuffer(m_iStrLen + size, TFALSE);
 
@@ -294,7 +307,7 @@ namespace Toshi
 		return *this;
 	}
 
-	int TString8::Compare(const char* a_pcString, int param_2) const
+	TINT TString8::Compare(const TCHAR* a_pcString, TINT param_2) const
 	{
 		TASSERT(a_pcString != TNULL, "TCString::CompareNoCase - Passed string cannot be TNULL");
 		TASSERT(IsIndexValid(0), "TCString::CompareNoCase - Index 0 is not valid");
@@ -305,9 +318,9 @@ namespace Toshi
 			return strncmp(GetString(), a_pcString, param_2);
 		}
 
-		const char* str = GetString();
-		char bVar1 = 0;
-		char bVar4 = 0;
+		const TCHAR* str = GetString();
+		TCHAR bVar1 = 0;
+		TCHAR bVar4 = 0;
 		while (TTRUE)
 		{
 			bVar1 = *str;
@@ -328,7 +341,7 @@ namespace Toshi
 		return bVar4 | 1;
 	}
 
-	int TString8::CompareNoCase(const char* a_pcString, int param_2) const
+	TINT TString8::CompareNoCase(const TCHAR* a_pcString, TINT param_2) const
 	{
 		TASSERT(a_pcString != TNULL, "TCString::CompareNoCase - Passed string cannot be TNULL");
 		TASSERT(IsIndexValid(0), "TCString::CompareNoCase - Index 0 is not valid");
@@ -344,7 +357,7 @@ namespace Toshi
 		return _strnicmp(GetString(), a_pcString, param_2);
 	}
 
-	TString8 TString8::Mid(uint32_t param_1, uint32_t param_2) const
+	TString8 TString8::Mid(TUINT32 param_1, TUINT32 param_2) const
 	{
 		if (param_2 < 0)
 		{
@@ -363,17 +376,17 @@ namespace Toshi
 		return str;
 	}
 
-	TString8& TString8::Concat(const TString16& str, uint32_t size)
+	TString8& TString8::Concat(const TString16& str, TUINT32 size)
 	{
-		uint32_t len = str.Length();
+		TUINT32 len = str.Length();
 
 		if ((len < size) || (size == -1))
 		{
 			size = len;
 		}
 
-		uint32_t oldLength = m_iStrLen;
-		char* oldString = m_pBuffer;
+		TUINT32 oldLength = m_iStrLen;
+		TCHAR* oldString = m_pBuffer;
 		
 		TBOOL allocated = AllocBuffer(m_iStrLen + size, TFALSE);
 		
@@ -401,12 +414,12 @@ namespace Toshi
 	{
 		if (m_iStrLen != 0)
 		{
-			char* iter = m_pBuffer;
-			char* endStr = m_pBuffer + m_iStrLen;
+			TCHAR* iter = m_pBuffer;
+			TCHAR* endStr = m_pBuffer + m_iStrLen;
 
 			do
 			{
-				char currentC = *iter++;
+				TCHAR currentC = *iter++;
 				if (currentC > '@' && currentC < '[') return TFALSE;
 
 			} while (iter < endStr);
@@ -419,12 +432,12 @@ namespace Toshi
 	{
 		if (m_iStrLen != 0)
 		{
-			char* iter = m_pBuffer;
-			char* endStr = m_pBuffer + m_iStrLen;
+			TCHAR* iter = m_pBuffer;
+			TCHAR* endStr = m_pBuffer + m_iStrLen;
 
 			do
 			{
-				char currentC = *iter++;
+				TCHAR currentC = *iter++;
 				if (currentC > '`' && currentC < '{') return TFALSE;
 
 			} while (iter < endStr);

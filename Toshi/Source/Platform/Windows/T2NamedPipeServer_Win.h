@@ -32,7 +32,7 @@ namespace Toshi {
 		T2NamedPipeServer();
 		~T2NamedPipeServer();
 
-		TBOOL Start(const char* a_szName, TUINT a_uiSendInterval, TUINT a_uiOutBufferSize = 1, TUINT a_uiInBufferSize = 64 * 1024);
+		TBOOL Start(const TCHAR* a_szName, TUINT a_uiSendInterval, TUINT a_uiOutBufferSize = 1, TUINT a_uiInBufferSize = 64 * 1024);
 		
 		void Stop();
 
@@ -41,7 +41,7 @@ namespace Toshi {
 
 	private:
 		T2NamedPipeServerThread* m_pThread;
-		const char* m_szName;
+		const TCHAR* m_szName;
 		UpdateStreamCallback_t m_fnUpdateStream;
 		TUINT m_uiSendInterval;
 		void* m_pMemory;

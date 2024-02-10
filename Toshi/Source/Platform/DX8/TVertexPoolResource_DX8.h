@@ -25,7 +25,7 @@ namespace Toshi {
 		virtual void Unlock(TUINT16 a_uiNewNumVertices) override;
 		virtual TBOOL Create(TVertexFactoryResourceInterface * a_pFactory, TUINT16 a_uiMaxVertices, TUINT16 a_uiFlags) override;
 
-		unsigned char* GetManagedStream(TUINT a_uiStream);
+		TBYTE* GetManagedStream(TUINT a_uiStream);
 
 		TResource* GetParent();
 		TVertexBlockResource* GetVertexBlock();
@@ -34,7 +34,7 @@ namespace Toshi {
 
 	private:
 		TUINT16 m_uiVertexOffset;
-		unsigned char* m_apManagedStreams[TVertexFactoryFormat::MAX_NUM_STREAMS];
+		TBYTE* m_apManagedStreams[TVertexFactoryFormat::MAX_NUM_STREAMS];
 		TUINT m_uiNumLocksAllTime;
 	};
 

@@ -34,41 +34,41 @@ namespace Toshi {
 
         struct Header
         {
-            uint32_t Magic;
+            TUINT32 Magic;
             TVersion Version;
-            uint32_t CompressedSize;
-            uint32_t Size;
-            uint32_t XorValue;
+            TUINT32 CompressedSize;
+            TUINT32 Size;
+            TUINT32 XorValue;
         };
 
         // Size of header that is common for any BTEC version
-        static constexpr uint32_t HEADER_SIZE_12 = sizeof(Header) - sizeof(Header::XorValue);
+        static constexpr TUINT32 HEADER_SIZE_12 = sizeof(Header) - sizeof(Header::XorValue);
 
         // Size of header that is common for BTEC 1.3
-        static constexpr uint32_t HEADER_SIZE_13 = sizeof(Header);
+        static constexpr TUINT32 HEADER_SIZE_13 = sizeof(Header);
 
 	public:
 		//-----------------------------------------------------------------------------
 		// Compressor
 		//-----------------------------------------------------------------------------
 
-		static constexpr int maxlength = 0x4000;
-		static int usemaxoffset;
+		static constexpr TINT maxlength = 0x4000;
+		static TINT usemaxoffset;
 
 	public:
-		static size_t Compress(TFile* file, char* data, uint32_t size, uint32_t unused, TBOOL isBigEndian);
+		static size_t Compress(TFile* file, TCHAR* data, TUINT32 size, TUINT32 unused, TBOOL isBigEndian);
 
 	private:
-		static int WriteOffset(uint32_t length, int offset, char*& data, TFile* file);
-		static int Write(uint32_t length, char*& data, TFile* file);
+		static TINT WriteOffset(TUINT32 length, TINT offset, TCHAR*& data, TFile* file);
+		static TINT Write(TUINT32 length, TCHAR*& data, TFile* file);
 
     public:
 		//-----------------------------------------------------------------------------
 		// Decompressor
 		//-----------------------------------------------------------------------------
 
-		static uintptr_t Decompress(TFile* file, TCompress::Header* header, char* buffer, uint32_t bufferSize);
+		static uintptr_t Decompress(TFile* file, TCompress::Header* header, TCHAR* buffer, TUINT32 bufferSize);
 		static int8_t GetHeader(TFile* file, TCompress::Header& btecHeader);
-		static int GetCommand(TFile* file, TBOOL& hasOffset, uint32_t& size, int& offset);
+		static TINT GetCommand(TFile* file, TBOOL& hasOffset, TUINT32& size, TINT& offset);
     };
 }

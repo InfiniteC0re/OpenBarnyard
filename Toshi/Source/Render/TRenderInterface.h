@@ -45,7 +45,7 @@ namespace Toshi {
 			SYSRESOURCE_NUMOF
 		};
 
-		typedef uint32_t ASPECT_RATIO;
+		typedef TUINT32 ASPECT_RATIO;
 		enum ASPECT_RATIO_ : ASPECT_RATIO
 		{
 			ASPECT_RATIO_4_3,
@@ -74,7 +74,7 @@ namespace Toshi {
 		virtual DISPLAYPARAMS* GetCurrentDisplayParams() = 0;
 		virtual TBOOL Create();
 		virtual TBOOL Destroy();
-		virtual void RenderIndexPrimitive(int param_2, int param_3, int param_4, int param_5, int param_6, int param_7);
+		virtual void RenderIndexPrimitive(TINT param_2, TINT param_3, TINT param_4, TINT param_5, TINT param_6, TINT param_7);
 		virtual void DumpStats();
 		virtual void GetScreenOffset(TVector2& a_rVec);
 		virtual void SetScreenOffset(const TVector2& a_rVec);
@@ -82,7 +82,7 @@ namespace Toshi {
 		virtual float GetPixelAspectRatio();
 		virtual TBOOL SetPixelAspectRatio(float a_fPixelAspectRatio);
 		virtual void FlushOrderTables();
-		virtual TBOOL IsTextureFormatSupported(int a_eTextureFormat);
+		virtual TBOOL IsTextureFormatSupported(TINT a_eTextureFormat);
 		virtual TBOOL Supports32BitTextures();
 		virtual TRenderContext* CreateRenderContext() = 0;
 		virtual TRenderCapture* CreateCapture() = 0;
@@ -90,10 +90,10 @@ namespace Toshi {
 		virtual void SetLightDirectionMatrix(const TMatrix44& a_rMatrix);
 		virtual void SetLightColourMatrix(const TMatrix44& a_rMatrix);
 		virtual void Unknown1(TViewport* a_pViewport);
-		virtual void* CreateUnknown(const char* a_szName, int a_iUnk1, int a_iUnk2, int a_iUnk3) = 0;
+		virtual void* CreateUnknown(const TCHAR* a_szName, TINT a_iUnk1, TINT a_iUnk2, TINT a_iUnk3) = 0;
 		virtual TModel* CreateModel(TTMD* a_pTMD, TBOOL a_bLoad) = 0;
-		virtual TModel* CreateModel(const char* a_szFilePath, TBOOL a_bLoad) = 0;
-		virtual TModel* CreateModel(const char* a_szFilePath, TBOOL a_bLoad, TTRB* a_pAssetTRB, TUINT8 a_ui8FileNameLen) = 0;
+		virtual TModel* CreateModel(const TCHAR* a_szFilePath, TBOOL a_bLoad) = 0;
+		virtual TModel* CreateModel(const TCHAR* a_szFilePath, TBOOL a_bLoad, TTRB* a_pAssetTRB, TUINT8 a_ui8FileNameLen) = 0;
 		virtual void OnInitializationFailureDevice();
 		virtual void OnInitializationFailureDisplay();
 		virtual TDebugText* CreateDebugText() = 0;
@@ -126,7 +126,7 @@ namespace Toshi {
 		}
 
 		// Creates resource and returns it
-		TResource* CreateResource(TClass* pClass, const char* name, TResource* parent);
+		TResource* CreateResource(TClass* pClass, const TCHAR* name, TResource* parent);
 
 		// Sets new render context and returns the old one
 		TRenderContext* SetCurrentRenderContext(TRenderContext* a_pRenderContext)

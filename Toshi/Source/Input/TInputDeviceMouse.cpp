@@ -36,7 +36,7 @@ namespace Toshi {
 		return TTRUE;
 	}
 
-	const char* TInputDeviceMouse::GetButtonFromDoodad(Doodad a_iDoodad) const
+	const TCHAR* TInputDeviceMouse::GetButtonFromDoodad(Doodad a_iDoodad) const
 	{
 		switch (a_iDoodad)
 		{

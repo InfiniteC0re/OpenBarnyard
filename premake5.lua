@@ -25,6 +25,7 @@ group "Tools"
 	include "Tools/AssetPack"
 	include "Tools/TMDL"
 	include "Tools/PPC"
+	include "Tools/TLocaleCompiler"
 		
 group "Third-Party"
 	include "Toshi/Vendor/Opcode"

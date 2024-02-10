@@ -14,10 +14,10 @@
 class PPropertiesWriter
 {
 private:
-	inline static Toshi::T2Map<const char*, PTRB::SECT::Stack::Ptr<char>, Toshi::TPooledString8::Comparator> s_aStringMap;
+	inline static Toshi::T2Map<const TCHAR*, PTRB::SECT::Stack::Ptr<TCHAR>, Toshi::TPooledString8::Comparator> s_aStringMap;
 
 private:
-	static PTRB::SECT::Stack::Ptr<char> GetStringPtr(const char* a_szString)
+	static PTRB::SECT::Stack::Ptr<TCHAR> GetStringPtr(const TCHAR* a_szString)
 	{
 		return *s_aStringMap.Find(a_szString);
 	}
@@ -107,7 +107,7 @@ private:
 		return properties;
 	}
 
-	static void AddStringToMap(const char* a_szString)
+	static void AddStringToMap(const TCHAR* a_szString)
 	{
 		if (s_aStringMap.Find(a_szString) == &s_aStringMap.End()->GetSecond())
 		{

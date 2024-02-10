@@ -16,7 +16,7 @@ namespace Toshi {
 
 			TUINT uiNumStreams;
 			TUINT32 uiOffset;
-			unsigned char* apStreams[TVertexFactoryFormat::MAX_NUM_STREAMS];
+			TBYTE* apStreams[TVertexFactoryFormat::MAX_NUM_STREAMS];
 		};
 
 	public:

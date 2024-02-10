@@ -60,7 +60,7 @@ public:
 	PPropertyValue(const Toshi::TString8& a_sValue)
 	{
 		m_eType = Type::String;
-		m_uValue.String = new char[a_sValue.Length() + 1];
+		m_uValue.String = new TCHAR[a_sValue.Length() + 1];
 		Toshi::TStringManager::String8Copy(m_uValue.String, a_sValue);
 	}
 
@@ -110,7 +110,7 @@ public:
 		return m_uValue.UInt32;
 	}
 
-	const char* GetString() const
+	const TCHAR* GetString() const
 	{
 		TASSERT(m_eType == Type::String);
 		return m_uValue.String;
@@ -231,7 +231,7 @@ public:
 
 		Delete();
 
-		m_uValue.String = new char[a_sValue.Length() + 1];
+		m_uValue.String = new TCHAR[a_sValue.Length() + 1];
 		Toshi::TStringManager::String8Copy(m_uValue.String, a_sValue);
 		return *this;
 	}
@@ -247,7 +247,7 @@ private:
 
 	union {
 		void* Pointer;
-		char* String;
+		TCHAR* String;
 		TFLOAT Float;
 		TBOOL Bool;
 		TINT Int;
@@ -425,13 +425,13 @@ public:
 
 	PPropertyName(const Toshi::TString8& a_sName)
 	{
-		m_szName = new char[a_sName.Length() + 1];
+		m_szName = new TCHAR[a_sName.Length() + 1];
 		Toshi::TStringManager::String8Copy(m_szName, a_sName);
 	}
 
 	PPropertyName(const PPropertyName& other)
 	{
-		m_szName = new char[Toshi::TStringManager::String8Length(other.m_szName) + 1];
+		m_szName = new TCHAR[Toshi::TStringManager::String8Length(other.m_szName) + 1];
 		Toshi::TStringManager::String8Copy(m_szName, other.m_szName);
 	}
 
@@ -450,11 +450,11 @@ public:
 	{
 		Delete();
 
-		m_szName = new char[a_sName.Length() + 1];
+		m_szName = new TCHAR[a_sName.Length() + 1];
 		Toshi::TStringManager::String8Copy(m_szName, a_sName);
 	}
 
-	const char* GetString() const
+	const TCHAR* GetString() const
 	{
 		return m_szName;
 	}
@@ -464,7 +464,7 @@ public:
 		return Toshi::TStringManager::String8Compare(m_szName, a_pName->m_szName) == 0;
 	}
 
-	TBOOL operator==(const char* a_szName) const
+	TBOOL operator==(const TCHAR* a_szName) const
 	{
 		return Toshi::TStringManager::String8Compare(m_szName, a_szName) == 0;
 	}
@@ -473,7 +473,7 @@ public:
 	{
 		Delete();
 
-		m_szName = new char[a_sName.Length() + 1];
+		m_szName = new TCHAR[a_sName.Length() + 1];
 		Toshi::TStringManager::String8Copy(m_szName, a_sName);
 	}
 
@@ -485,7 +485,7 @@ private:
 	}
 
 private:
-	char* m_szName;
+	TCHAR* m_szName;
 };
 
 class PProperties
@@ -699,7 +699,7 @@ public:
 		return m_pProperties[a_iIndex].GetValue();
 	}
 
-	const PPropertyValue* GetOptionalProperty(const char* a_szName) const
+	const PPropertyValue* GetOptionalProperty(const TCHAR* a_szName) const
 	{
 		for (size_t i = 0; i < m_iCount; i++)
 		{
@@ -773,7 +773,7 @@ public:
 		return a_TRB.CastSymbol<PProperties>("Main");
 	}
 
-	__forceinline static const PProperties* LoadFromAsset(Toshi::TTRB* a_pTRB, const char* a_szFileName)
+	__forceinline static const PProperties* LoadFromAsset(Toshi::TTRB* a_pTRB, const TCHAR* a_szFileName)
 	{
 		Toshi::TString8 symbolName = a_szFileName;
 		symbolName.MakeLower();
@@ -782,7 +782,7 @@ public:
 		return a_pTRB->CastSymbol<PProperties>(symbolName);
 	}
 
-	__forceinline static const PProperties* LoadFromAsset(Toshi::TTRB& a_TRB, const char* a_szFileName)
+	__forceinline static const PProperties* LoadFromAsset(Toshi::TTRB& a_TRB, const TCHAR* a_szFileName)
 	{
 		Toshi::TString8 symbolName = a_szFileName;
 		symbolName.MakeLower();

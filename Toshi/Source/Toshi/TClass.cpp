@@ -11,7 +11,7 @@
 
 namespace Toshi {
 
-	TClass::TClass(const char* a_szName, TClass* a_pParentClass, CreateObject_t a_fnCreate, CreateObjectInPlace_t a_fnCreateInPlace, Initialise_t a_fnInitialise, Deinitialise_t a_fnUnitialise, TUINT16 a_uiVersionMajor, TUINT16 a_uiVersionMinor, TUINT32 a_uiClassSize, TUINT32 a_uiClassAlignment) :
+	TClass::TClass(const TCHAR* a_szName, TClass* a_pParentClass, CreateObject_t a_fnCreate, CreateObjectInPlace_t a_fnCreateInPlace, Initialise_t a_fnInitialise, Deinitialise_t a_fnUnitialise, TUINT16 a_uiVersionMajor, TUINT16 a_uiVersionMinor, TUINT32 a_uiClassSize, TUINT32 a_uiClassAlignment) :
 		m_szName(a_szName),
 		m_pParent(a_pParentClass),
 		m_fnCreate(a_fnCreate),
@@ -89,12 +89,12 @@ namespace Toshi {
 		}
 	}
 
-	TClass* TClass::FindRecurse(const char* const& name, TClass* parent, TBOOL hasPrevious)
+	TClass* TClass::FindRecurse(const TCHAR* const& name, TClass* parent, TBOOL hasPrevious)
 	{
 		while (parent)
 		{
 			TClass* previous = hasPrevious ? parent->m_pPrevious : TNULL;
-			int difference = Toshi::TStringManager::String8CompareNoCase(parent->m_szName, name, -1);
+			TINT difference = Toshi::TStringManager::String8CompareNoCase(parent->m_szName, name, -1);
 
 			if (difference == 0)
 			{
@@ -117,7 +117,7 @@ namespace Toshi {
 		return TNULL;
 	}
 
-	TClass* TClass::Find(const char* name, TClass* parent)
+	TClass* TClass::Find(const TCHAR* name, TClass* parent)
 	{
 		if (parent == TNULL) parent = &TObject::TClassObjectName;
 		return FindRecurse(name, parent, TFALSE);

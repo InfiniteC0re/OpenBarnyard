@@ -28,7 +28,7 @@ namespace Toshi {
 		return CreateEx(a_pLibrary, a_pLibrary->m_iNumTranslations, a_pLibrary->m_iNumQuaternions, a_pLibrary->m_iNumScales, 0, 0, 0);
 	}
 
-	TKeyframeLibrary* TKeyframeLibraryInstance::CreateEx(TKeyframeLibrary* a_pLibrary, int a_iTKeyCount, int a_iQKeyCount, int a_iSKeyCount, int a_iTBaseIndex, int a_iQBaseIndex, int a_iSBaseIndex)
+	TKeyframeLibrary* TKeyframeLibraryInstance::CreateEx(TKeyframeLibrary* a_pLibrary, TINT a_iTKeyCount, TINT a_iQKeyCount, TINT a_iSKeyCount, TINT a_iTBaseIndex, TINT a_iQBaseIndex, TINT a_iSBaseIndex)
 	{
 		TKeyframeLibrary* pOldLibrary = m_pLibrary;
 

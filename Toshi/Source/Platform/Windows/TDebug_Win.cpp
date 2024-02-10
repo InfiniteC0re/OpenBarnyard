@@ -10,7 +10,7 @@
 
 TOSHI_NAMESPACE_USING
 
-char TDebug_ScratchMem[4096];
+TCHAR TDebug_ScratchMem[4096];
 BOOL TDebug_IsMutexCreated;
 T2Mutex TDebug_Mutex;
 
@@ -44,7 +44,7 @@ TBOOL TDebug_IsValidAddress(const void* a_pPtr)
 	return TFALSE;
 }
 
-void TDebug_FinalPrintf(const char* a_szFormat, ...)
+void TDebug_FinalPrintf(const TCHAR* a_szFormat, ...)
 {
 	va_list args;
 	va_start(args, a_szFormat);
@@ -52,13 +52,13 @@ void TDebug_FinalPrintf(const char* a_szFormat, ...)
 	va_end(args);
 }
 
-void TDebug_FinalVPrintf(const char* a_szFormat, va_list a_Args)
+void TDebug_FinalVPrintf(const TCHAR* a_szFormat, va_list a_Args)
 {
 	TDebug_FinalVSPrintf(a_szFormat, a_Args);
 	TDebug_OutputDebugString(TDebug_ScratchMem);
 }
 
-void TDebug_FinalSPrintf(const char* a_szFormat, ...)
+void TDebug_FinalSPrintf(const TCHAR* a_szFormat, ...)
 {
 	va_list args;
 	va_start(args, a_szFormat);
@@ -66,14 +66,14 @@ void TDebug_FinalSPrintf(const char* a_szFormat, ...)
 	va_end(args);
 }
 
-void TDebug_FinalVSPrintf(const char* a_szFormat, va_list a_Args)
+void TDebug_FinalVSPrintf(const TCHAR* a_szFormat, va_list a_Args)
 {
 	TDebug_AcquireMutex();
 	vsprintf(TDebug_ScratchMem, a_szFormat, a_Args);
 	TDebug_ReleaseMutex();
 }
 
-void TDebug_OutputDebugString(const char* a_szString)
+void TDebug_OutputDebugString(const TCHAR* a_szString)
 {
 	OutputDebugStringA(a_szString);
 	printf("%s", a_szString);
@@ -81,15 +81,15 @@ void TDebug_OutputDebugString(const char* a_szString)
 	TDebug_BroadcastDebugString(a_szString);
 }
 
-void TDebug_BroadcastDebugString(const char* a_szString)
+void TDebug_BroadcastDebugString(const TCHAR* a_szString)
 {
 	TIMPLEMENT();
 }
 
 #include "../resource.h"
 
-const char* TDebug_szAssertFilename;
-const char* TDebug_szAssertExpression;
+const TCHAR* TDebug_szAssertFilename;
+const TCHAR* TDebug_szAssertExpression;
 TUINT TDebug_uiAssertLineNumber;
 
 BOOL CALLBACK TDebug_AssertionDlgProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
@@ -136,7 +136,7 @@ BOOL CALLBACK TDebug_AssertionDlgProc(HWND hwnd, UINT Message, WPARAM wParam, LP
 	return TRUE;
 }
 
-TINT TDebug_AssertHandler(const char* a_szExpression, const char* a_szFileName, TUINT a_uiLineNumber, const char* a_szDescription)
+TINT TDebug_AssertHandler(const TCHAR* a_szExpression, const TCHAR* a_szFileName, TUINT a_uiLineNumber, const TCHAR* a_szDescription)
 {
 	TDebug_szAssertFilename = a_szFileName;
 	TDebug_szAssertExpression = a_szExpression;

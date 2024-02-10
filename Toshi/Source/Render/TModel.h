@@ -95,19 +95,19 @@ namespace Toshi {
 		TModel();
 
 		virtual TBOOL Create(TTMD* a_pTMD, TBOOL a_bLoad) = 0;
-		virtual TBOOL Create(const char* a_szFileName, TBOOL a_bLoad) = 0;
+		virtual TBOOL Create(const TCHAR* a_szFileName, TBOOL a_bLoad) = 0;
 		virtual void Delete() = 0;
-		virtual TBOOL LoadFromFile(const char* a_szFileName) = 0;
+		virtual TBOOL LoadFromFile(const TCHAR* a_szFileName) = 0;
 		virtual void Unload() = 0;
 		virtual ~TModel() = default;
 		virtual TBOOL GetUnknownFlag() = 0;
 
 		TBOOL LoadTRB();
 		TBOOL LoadTRB(TTRB* a_pTRB);
-		TBOOL LoadTRB(const char* a_szFileName, TTRB* a_pAssetTRB, TUINT8 a_ui8FileNameLen);
+		TBOOL LoadTRB(const TCHAR* a_szFileName, TTRB* a_pAssetTRB, TUINT8 a_ui8FileNameLen);
 		void UnloadTRB();
 
-		void* GetSymbol(const char* a_szSymbolName);
+		void* GetSymbol(const TCHAR* a_szSymbolName);
 
 		TModelInstance* CreateInstance();
 
@@ -130,7 +130,7 @@ namespace Toshi {
 		}
 
 	public:
-		static TBOOL GetSkeletonAssetSymbolName(const char* a_szFileName, const char*& a_rSymbolName, TUINT8& a_rNameLen, TTRB* a_pTRB);
+		static TBOOL GetSkeletonAssetSymbolName(const TCHAR* a_szFileName, const TCHAR*& a_rSymbolName, TUINT8& a_rNameLen, TTRB* a_pTRB);
 		
 		static void SetLoaderTMDCallback(t_ModelLoaderTMDCallback a_cbLoader) { ms_cbModelLoaderTMD = a_cbLoader; }
 		static void SetLoaderTRBCallback(t_ModelLoaderTRBCallback a_cbLoader) { ms_cbModelLoaderTRB = a_cbLoader; }
@@ -150,7 +150,7 @@ namespace Toshi {
 		void* m_pCollision;
 		void* m_pCollisionData;
 		TTRB* m_pTRB;
-		const char* m_szSymbolPrefix;
+		const TCHAR* m_szSymbolPrefix;
 		TUINT8 m_szSymbolPrefixLength;
 		TBOOL m_bIsAssetFile;
 	};

@@ -7,9 +7,9 @@ namespace Toshi
 	class T2Locale : public Toshi::TSingleton<T2Locale>
 	{
 	public:
-		using Lang = int32_t;
-		using LocaleId = int32_t;
-		using LocaleString = const wchar_t*;
+		using Lang = TINT32;
+		using LocaleId = TINT32;
+		using LocaleString = TWCHAR*;
 
 		struct LocaleStrings
 		{
@@ -22,13 +22,13 @@ namespace Toshi
 		T2Locale(const T2Locale&&) = delete;
 
 		virtual ~T2Locale();
-		virtual const char* GetLanguageFilename(Lang lang) = 0;
+		virtual const TCHAR* GetLanguageFilename(Lang lang) = 0;
 
 		void SetLanguage(Lang langid);
 		Lang GetLangId() const { return m_LangId; }
 
 	protected:
-		T2Locale(int langCount, size_t bufferSize, void* buffer);
+		T2Locale(TINT langCount, size_t bufferSize, void* buffer);
 
 		LocaleString Get(LocaleId locid)
 		{
@@ -40,7 +40,7 @@ namespace Toshi
 			return TNULL;
 		}
 
-		int GetNumStrings() const { return m_StringTable->m_numstrings; }
+		TINT GetNumStrings() const { return m_StringTable->m_numstrings; }
 		
 		static void* TRBAllocator(TTRB::AllocType alloctype, size_t size, short unk, size_t unk2, void* userData)
 		{
@@ -55,7 +55,7 @@ namespace Toshi
 		void* TRBAlloc(size_t size)
 		{
 			void* ptr = m_BufferPos;
-			m_BufferPos = static_cast<char*>(ptr) + size;
+			m_BufferPos = static_cast<TCHAR*>(ptr) + size;
 			return ptr;
 		}
 

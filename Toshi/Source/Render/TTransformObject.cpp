@@ -43,7 +43,7 @@ namespace Toshi {
 			*pPushTransform = *pPrevTransform;
 			TMatrix44::TransformVector(pPushTransform->GetTranslation().AsVector3(), *pPushTransform, GetTranslation());
 
-			for (int i = 0; i < 3; i++)
+			for (TINT i = 0; i < 3; i++)
 			{
 				switch (m_EulerOrder[i])
 				{
@@ -95,7 +95,7 @@ namespace Toshi {
 			outMatrix.Identity();
 			outMatrix.SetTranslation(m_Translation);
 
-			for (int i = 0; i < 3; i++)
+			for (TINT i = 0; i < 3; i++)
 			{
 				switch (m_EulerOrder[i])
 				{

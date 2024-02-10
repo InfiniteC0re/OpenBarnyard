@@ -10,15 +10,15 @@
 
 namespace Toshi
 {
-    int TCompress::usemaxoffset;
+    TINT TCompress::usemaxoffset;
 
-    int TCompress::Write(uint32_t length, char*& data, TFile* file)
+    TINT TCompress::Write(TUINT32 length, TCHAR*& data, TFile* file)
     {
         // 0068a830
         TASSERT(length <= maxlength);
 
-        int writtenSize = 0;
-        uint32_t dataSize = length;
+        TINT writtenSize = 0;
+        TUINT32 dataSize = length;
 
         length -= 1;
 
@@ -43,14 +43,14 @@ namespace Toshi
         return writtenSize;
     }
 
-    int TCompress::WriteOffset(uint32_t length, int offset, char*& data, TFile* file)
+    TINT TCompress::WriteOffset(TUINT32 length, TINT offset, TCHAR*& data, TFile* file)
     {
         // 0068a8c0
         TASSERT(length <= maxlength);
         TASSERT(offset <= usemaxoffset);
 
-        int writtenSize = 0;
-        uint32_t dataSize = length;
+        TINT writtenSize = 0;
+        TUINT32 dataSize = length;
 
         length -= 1;
         offset -= 1;
@@ -86,28 +86,28 @@ namespace Toshi
         return writtenSize;
     }
 
-    size_t TCompress::Compress(TFile* file, char* buffer, uint32_t size, uint32_t unused, TBOOL isBigEndian)
+    size_t TCompress::Compress(TFile* file, TCHAR* buffer, TUINT32 size, TUINT32 unused, TBOOL isBigEndian)
     {
         BTECCompressor compressor;
 
         usemaxoffset = 0x8000;
         compressor.Initialize(buffer, size, usemaxoffset, 3);
 
-        char* bufferPos = buffer;
-        char* bufferEnd = buffer + size;
+        TCHAR* bufferPos = buffer;
+        TCHAR* bufferEnd = buffer + size;
 
         auto initialPos = file->Tell();
-        file->Seek(TCompress::HEADER_SIZE_12, TFile::TSEEK_CUR);
+        file->Seek(TCompress::HEADER_SIZE_12, TSEEK_CUR);
 
         size_t compressedSize = 0;
         size_t chunkSize = 0;
-        char* chunkStart = TNULL;
+        TCHAR* chunkStart = TNULL;
 
         while (bufferPos < bufferEnd)
         {
             size_t uncompressedLeft = TMath::Min<size_t>(size - (bufferPos - buffer), maxlength);
 
-            char* offset = TNULL;
+            TCHAR* offset = TNULL;
             size_t dataSize = 0;
             TBOOL hasOffset = compressor.FUN_0068af10(bufferPos, uncompressedLeft, offset, dataSize);
 
@@ -165,9 +165,9 @@ namespace Toshi
             btecHeader.Size = PARSEDWORD_BIG(btecHeader.Size);
         }
 
-        file->Seek(initialPos, TFile::TSEEK_SET);
+        file->Seek(initialPos, TSEEK_SET);
         file->Write(&btecHeader, TCompress::HEADER_SIZE_12);
-        file->Seek(compressedSize, TFile::TSEEK_CUR);
+        file->Seek(compressedSize, TSEEK_CUR);
 
         return compressedSize;
     }

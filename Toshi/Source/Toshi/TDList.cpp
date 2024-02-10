@@ -53,7 +53,7 @@ namespace Toshi {
 
 	void TGenericPriList::Insert(TNode* node)
 	{
-		int priority = node->m_iPriority;
+		TINT priority = node->m_iPriority;
 
 		if (priority < 0)
 		{
@@ -83,7 +83,7 @@ namespace Toshi {
 		}
 	}
 
-	void TGenericPriList::Insert(TNode* node, int iPriority)
+	void TGenericPriList::Insert(TNode* node, TINT iPriority)
 	{
 		node->SetPriority(iPriority);
 		Insert(node);

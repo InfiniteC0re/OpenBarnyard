@@ -7,7 +7,7 @@ namespace Toshi {
 	public:
 
 	private:
-		int m_iNumCollisionModels;
+		TINT m_iNumCollisionModels;
 	};
 
 }

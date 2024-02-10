@@ -18,7 +18,7 @@ namespace Toshi {
 
 		struct LogEvent
 		{
-			constexpr LogEvent(TLogFile* a_pFile, TLogFile::Type a_eType, const char* a_szString) :
+			constexpr LogEvent(TLogFile* a_pFile, TLogFile::Type a_eType, const TCHAR* a_szString) :
 				m_pFile(a_pFile),
 				m_eType(a_eType),
 				m_szString(a_szString)
@@ -26,15 +26,18 @@ namespace Toshi {
 
 			TLogFile* m_pFile;
 			TLogFile::Type m_eType;
-			const char* m_szString;
+			const TCHAR* m_szString;
 		};
 
 		struct TOSHIParams
 		{
-			const char* szCommandLine = "";
-			const char* szLogFileName = "toshi";
-			const char* szLogAppName = "Toshi";
-			const char* szLogAppDirName = "Kernel";
+			TOSHIParams() noexcept {}
+
+			const TCHAR* szCommandLine = "";
+			const TCHAR* szLogFileName = "toshi";
+			const TCHAR* szLogAppName = "Toshi";
+			const TCHAR* szLogAppDirName = "Kernel";
+			TBOOL bLogToConsole = TTRUE;
 			TINT iUnused1 = 0;
 			TINT iUnused2 = 0;
 		};
@@ -56,21 +59,21 @@ namespace Toshi {
 
 		static void ToshiDestroy();
 		
-		static const char* GetTime();
+		static const TCHAR* GetTime();
 
 		static void  MemSet(void* ptr, size_t value, size_t size) { std::memset(ptr, value, size); }
 		static void* MemCopy(void* dst, const void* src, size_t size) { return std::memcpy(dst, src, size); }
 		static void  MemClear(void* ptr, size_t size) { std::memset(ptr, 0, size); }
-		static int   MemCompare(void* ptr1, void* ptr2, int size) { return std::memcmp(ptr1, ptr2, size); }
+		static TINT  MemCompare(void* ptr1, void* ptr2, TINT size) { return std::memcmp(ptr1, ptr2, size); }
 
-		static void Log(const char* a_szFormat, ...);
-		static void Log(TLogFile::Type a_eLogType, const char* a_szFormat, ...);
-		static void TrimLog(const char* fileExtension, size_t trimTo);
+		static void Log(const TCHAR* a_szFormat, ...);
+		static void Log(TLogFile::Type a_eLogType, const TCHAR* a_szFormat, ...);
+		static void TrimLog(const TCHAR* fileExtension, size_t trimTo);
 
 		static void LogDown() { TUtil::GetSingletonSafe()->m_pCurrentLogFile->Down(); }
 		static void LogUp() { TUtil::GetSingletonSafe()->m_pCurrentLogFile->Up(); }
 
-		static void LogConsole(const char* a_szFormat, ...);
+		static void LogConsole(const TCHAR* a_szFormat, ...);
 		static void LogSet(TLogFile* a_logFile);
 
 		static TLogFile* GetCurrentLogFile() { return TUtil::GetSingleton()->m_pCurrentLogFile; }
@@ -130,16 +133,16 @@ namespace Toshi {
 		#define CRC32POST(crc) (~(crc))         /* CRC Postconditioning before xmit  */
 
 		#define crc32upd(crctab,crc,c) \
-					  ((crctab)[((int) (crc) ^ (c)) & 0xff] ^ ((crc) >> 8))
+					  ((crctab)[((TINT) (crc) ^ (c)) & 0xff] ^ ((crc) >> 8))
 
 		#define CRC_TABSIZE (256)               /* Normal 256-entry table            */
 
 		//=============================================================================
 
-		inline static uint32_t s_aiCRC32LUT[CRC_TABSIZE] = {};
+		inline static TUINT32 s_aiCRC32LUT[CRC_TABSIZE] = {};
 
 		static void CRCInitialise();
-		static uint32_t CRC32(unsigned char* buffer, uint32_t len);
+		static TUINT32 CRC32(TBYTE* buffer, TUINT32 len);
 
 #pragma endregion
 

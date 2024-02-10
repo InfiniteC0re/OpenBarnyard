@@ -17,7 +17,7 @@ namespace Toshi
 	protected:
 		TGenericFifo() = default;
 
-		TBOOL Create(char* a_pBuffer, int a_iMaxItems, int a_iItemSize);
+		TBOOL Create(TCHAR* a_pBuffer, TINT a_iMaxItems, TINT a_iItemSize);
 		TBOOL Destroy();
 		TBOOL Push(void* a_pItem, Flags a_iFlags);
 		TBOOL Pop(void* a_pOut, Flags a_iFlags);
@@ -28,15 +28,15 @@ namespace Toshi
 #endif
 		TSemaphore m_Semaphore1;
 		TSemaphore m_Semaphore2;
-		int m_iItemSize;
-		int m_iMaxItems;
-		char* m_pDataBegin;
-		char* m_pDataEnd;
-		char* m_pDataPopCursor;
-		char* m_pDataPushCursor;
+		TINT m_iItemSize;
+		TINT m_iMaxItems;
+		TCHAR* m_pDataBegin;
+		TCHAR* m_pDataEnd;
+		TCHAR* m_pDataPopCursor;
+		TCHAR* m_pDataPushCursor;
 	};
 
-	template <class T, int MaxItems>
+	template <class T, TINT MaxItems>
 	class TFifo : public TGenericFifo
 	{
 	public:
@@ -61,6 +61,6 @@ namespace Toshi
 		}
 
 	private:
-		char m_Buffer[sizeof(T) * MaxItems];
+		TCHAR m_Buffer[sizeof(T) * MaxItems];
 	};
 }

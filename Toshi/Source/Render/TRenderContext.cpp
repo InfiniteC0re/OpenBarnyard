@@ -98,7 +98,7 @@ namespace Toshi {
 		return m_aWorldPlanes;
 	}
 
-	TBOOL TRenderContext::CullSphereToFrustumSimple(const TSphere& a_rSphere, const TPlane* a_pPlanes, int a_iNumPlanes)
+	TBOOL TRenderContext::CullSphereToFrustumSimple(const TSphere& a_rSphere, const TPlane* a_pPlanes, TINT a_iNumPlanes)
 	{
 		for (size_t i = 0; i < 6; i++)
 		{

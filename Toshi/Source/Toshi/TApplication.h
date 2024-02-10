@@ -24,7 +24,7 @@ namespace Toshi
 		TApplication();
 		virtual ~TApplication();
 		
-		virtual TBOOL OnCreate(int argc, char** argv);
+		virtual TBOOL OnCreate(TINT argc, TCHAR** argv);
 		virtual TBOOL OnUpdate(float deltaTime);
 		virtual TBOOL OnDestroy();
 		virtual TBOOL IsConsoleEnabled() { return TTRUE; }
@@ -35,7 +35,7 @@ namespace Toshi
 		}
 
 		// Returns TTRUE if success
-		TBOOL Create(const char* appName, int argc, char** argv);
+		TBOOL Create(const TCHAR* appName, TINT argc, TCHAR** argv);
 
 		// Destroys the application and sets the flag
 		void Destroy();
@@ -54,7 +54,7 @@ namespace Toshi
 
 	private:
 		TString8 m_Name;                                                   // 0x4
-		uint32_t m_Flags;                                                  // 0x10
+		TUINT32 m_Flags;                                                  // 0x10
 		TBOOL m_IsVerbose;                                                  // 0x14
 		TGlobalListener<TApplication, TApplicationExitEvent> m_oExitEvent; // 0x1C
 		TDebugConsole* m_pDebugConsole;

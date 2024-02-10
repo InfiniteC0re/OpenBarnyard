@@ -18,7 +18,7 @@ namespace Toshi {
 
 	public:
 		TClass(
-			const char* a_szName,
+			const TCHAR* a_szName,
 			TClass* a_pParentClass,
 			CreateObject_t a_fnCreate,
 			CreateObjectInPlace_t a_fnCreateInPlace,
@@ -31,7 +31,7 @@ namespace Toshi {
 		);
 
 		constexpr TClass(
-			const char* a_szName,
+			const TCHAR* a_szName,
 			CreateObject_t a_fnCreate,
 			CreateObjectInPlace_t a_fnCreateInPlace,
 			Initialise_t a_fnInitialise,
@@ -67,7 +67,7 @@ namespace Toshi {
 		TBOOL IsExactly(TClass* toCompare) const { return this == toCompare; }
 		TBOOL IsInitialized() const { return m_bInitialised; }
 		TClass* GetParent() { return static_cast<TClass*>(m_pParent); }
-		const char* GetName() const { return m_szName; }
+		const TCHAR* GetName() const { return m_szName; }
 		TUINT16 GetVersionMajor() const { return m_uiVersionMajor; }
 		TUINT16 GetVersionMinor() const { return m_uiVersionMinor; }
 		TUINT32 GetMaxSizeOfDerivedClasses();
@@ -77,14 +77,14 @@ namespace Toshi {
 		static TBOOL TryInitialize(TClass* tClass);
 		
 		// Looks for a class in parent
-		static TClass* FindRecurse(const char* const& name, TClass* parent, TBOOL hasPrevious);
-		static TClass* Find(const char* name, TClass* parent = TNULL);
+		static TClass* FindRecurse(const TCHAR* const& name, TClass* parent, TBOOL hasPrevious);
+		static TClass* Find(const TCHAR* name, TClass* parent = TNULL);
 
 	public:
 		inline TBOOL operator==(const TClass* other) const { return this == other; }
 	
 	private:
-		const char* m_szName;                    // 0x00
+		const TCHAR* m_szName;                    // 0x00
 		CreateObject_t m_fnCreate;               // 0x04
 		CreateObjectInPlace_t m_fnCreateInPlace; // 0x08
 		Initialise_t m_fnInitialise;             // 0x0C

@@ -5,22 +5,22 @@ namespace Toshi
 	class TStringTable
 	{
 	public:
-		TStringTable(const char* const* strings, int numStrings)
+		TStringTable(const TCHAR* const* strings, TINT numStrings)
 		{
 			m_Strings = strings;
 			m_NumStrings = numStrings;
 		}
 		
-		const char* GetStringFromID(int id)
+		const TCHAR* GetStringFromID(TINT id)
 		{
 			TASSERT(id >= 0 && id < m_NumStrings);
 			return m_Strings[id];
 		}
 
-		int GetStringID(const char* string);
+		TINT GetStringID(const TCHAR* string);
 
 	private:
-		const char* const* m_Strings;
-		int m_NumStrings;
+		const TCHAR* const* m_Strings;
+		TINT m_NumStrings;
 	};
 }

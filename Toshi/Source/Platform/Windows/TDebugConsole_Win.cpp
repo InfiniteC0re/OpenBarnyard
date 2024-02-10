@@ -54,12 +54,12 @@ namespace Toshi
 		// Generate title for the console so we can find it's HWND
 		LARGE_INTEGER time;
 		QueryPerformanceCounter(&time);
-		char timeHex[sizeof(time.QuadPart) + 1] = { 0 };
+		TCHAR timeHex[sizeof(time.QuadPart) + 1] = { 0 };
 		_ultoa_s((unsigned long)time.QuadPart, timeHex, 0x10);
 		str += timeHex;
 
 		// Save the current title
-		char lpConsoleTitle[256];
+		TCHAR lpConsoleTitle[256];
 		DWORD titleLength = GetConsoleTitleA(lpConsoleTitle, 256);
 		if (titleLength == 0) { return TNULL; }
 
@@ -79,18 +79,18 @@ namespace Toshi
 	  do {
 		cVar1 = *pcVar3;
 		pcVar3 = pcVar3 + 1;
-		pcVar3[(int)&uStack229 - (int)DAT_009823b0] = cVar1;
+		pcVar3[(TINT)&uStack229 - (TINT)DAT_009823b0] = cVar1;
 	  } while (cVar1 != '\0');
 	  puVar5 = local_1c;
 	  do {
-		cVar1 = *(char *)puVar5;
-		puVar5 = (undefined4 *)((int)puVar5 + 1);
+		cVar1 = *(TCHAR *)puVar5;
+		puVar5 = (undefined4 *)((TINT)puVar5 + 1);
 	  } while (cVar1 != '\0');
-	  uVar6 = (int)puVar5 - (int)local_1c;
+	  uVar6 = (TINT)puVar5 - (TINT)local_1c;
 	  puVar5 = &uStack229;
 	  do {
-		pcVar3 = (char *)((int)puVar5 + 1);
-		puVar5 = (undefined4 *)((int)puVar5 + 1);
+		pcVar3 = (TCHAR *)((TINT)puVar5 + 1);
+		puVar5 = (undefined4 *)((TINT)puVar5 + 1);
 	  } while (*pcVar3 != '\0');
 	  puVar7 = local_1c;
 	  for (uVar4 = uVar6 >> 2; uVar4 != 0; uVar4 = uVar4 - 1) {
@@ -100,8 +100,8 @@ namespace Toshi
 	  }
 	  for (uVar6 = uVar6 & 3; uVar6 != 0; uVar6 = uVar6 - 1) {
 		*(undefined *)puVar5 = *(undefined *)puVar7;
-		puVar7 = (undefined4 *)((int)puVar7 + 1);
-		puVar5 = (undefined4 *)((int)puVar5 + 1);
+		puVar7 = (undefined4 *)((TINT)puVar7 + 1);
+		puVar5 = (undefined4 *)((TINT)puVar5 + 1);
 	  }
 
 	  */

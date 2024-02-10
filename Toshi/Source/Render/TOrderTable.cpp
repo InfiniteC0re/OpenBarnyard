@@ -9,7 +9,7 @@
 
 namespace Toshi {
 
-	void TOrderTable::CreateStaticData(uint32_t a_uiMaxMaterials, uint32_t a_uiMaxRenderPackets)
+	void TOrderTable::CreateStaticData(TUINT32 a_uiMaxMaterials, TUINT32 a_uiMaxRenderPackets)
 	{
 		s_uiMaxRenderPackets = a_uiMaxRenderPackets;
 		s_uiNumRenderPackets = 0;

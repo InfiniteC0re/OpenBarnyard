@@ -8,7 +8,7 @@
 
 namespace Toshi {
 
-	void TGenericListener::Connect(TGenericEmitter& a_rEmitter, void* a_pCaller, t_Callback a_pCallback, int a_iPriority)
+	void TGenericListener::Connect(TGenericEmitter& a_rEmitter, void* a_pCaller, t_Callback a_pCallback, TINT a_iPriority)
 	{
 		TASSERT(IsLinked() == TFALSE);
 		m_pCaller = a_pCaller;

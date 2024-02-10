@@ -73,14 +73,14 @@ namespace Toshi {
 		}
 	}
 
-	void TResource::SetName(const char* name)
+	void TResource::SetName(const TCHAR* name)
 	{
 		// 006b5350
 		if (name == TNULL)
 		{
 			name = "res:";
 
-			char UIdStr[12];
+			TCHAR UIdStr[12];
 			T2String8::IntToString(m_UId, UIdStr, 0xE, 10);
 		}
 

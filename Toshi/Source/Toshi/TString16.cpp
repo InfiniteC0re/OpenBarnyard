@@ -1,98 +1,98 @@
 #include "ToshiPCH.h"
 #include "TString16.h"
 
+#include "Toshi/TSystem.h"
+
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
 // Note: Should be the last include!
 //-----------------------------------------------------------------------------
 #include "Core/TMemoryDebugOn.h"
 
-namespace Toshi
-{
-	TString16::TString16()
+namespace Toshi {
+
+	TString16::TString16(T2Allocator* allocator)
 	{
 		Reset();
+		m_pAllocator = allocator == TNULL ? GetAllocator() : allocator;
 		AllocBuffer(0, TTRUE);
 	}
 
-	TString16::TString16(uint32_t size)
+	TString16::TString16(TString16&& src, T2Allocator* allocator) noexcept
+	{
+		m_pAllocator = allocator == TNULL ? GetAllocator() : allocator;
+		TString16::m_iExcessLen = src.m_iExcessLen;
+		TString16::m_iStrLen = src.m_iStrLen;
+		TString16::m_pBuffer = src.m_pBuffer;
+		src.m_iExcessLen = 0;
+		src.m_iStrLen = 0;
+		src.m_pBuffer = NullWString;
+	}
+
+	TString16::TString16(const TString16& src, T2Allocator* allocator)
 	{
 		Reset();
-		AllocBuffer(size, TTRUE);
+		m_pAllocator = allocator == TNULL ? GetAllocator() : allocator;
+		Copy(src, -1);
 	}
 
-	TString16& TString16::Concat(const TString16& str, uint32_t size)
+	TString16::TString16(TUINT32 size, T2Allocator* allocator)
 	{
-		uint32_t len = str.Length();
-
-		if ((len < size) || (size == -1))
-		{
-			size = len;
-		}
-
-		uint32_t oldLength = m_iStrLen;
-		wchar_t* oldString = m_pBuffer;
-
-		TBOOL allocated = AllocBuffer(m_iStrLen + size, TFALSE);
-
-		if (allocated)
-		{
-			// since it has made a new buffer
-			// it need to copy the old string
-			// to the new buffer
-
-			TStringManager::String16Copy(m_pBuffer, oldString, -1);
-		}
-
-		TStringManager::String16Copy(m_pBuffer + oldLength * 2, str.GetString(), size);
-		m_pBuffer[m_iStrLen] = 0;
-
-		if (allocated && m_iStrLen != 0)
-		{
-			TFree(oldString);
-		}
-
-		return *this;
+		Reset();
+		m_pAllocator = allocator == TNULL ? GetAllocator() : allocator;
+		AllocBuffer(size);
 	}
 
-	TString16& TString16::Concat(const wchar_t* str, uint32_t size)
+	TString16::TString16(const TWCHAR* src, T2Allocator* allocator)
 	{
-		uint32_t len = TStringManager::String16Length(str);
-
-		if ((len < size) || (size == -1))
-		{
-			size = len;
-		}
-
-		uint32_t oldLength = m_iStrLen;
-		wchar_t* oldString = m_pBuffer;
-
-		TBOOL allocated = AllocBuffer(m_iStrLen + size, TFALSE);
-
-		if (allocated)
-		{
-			// since it has made a new buffer
-			// it need to copy the old string
-			// to the new buffer
-
-			TStringManager::String16Copy(m_pBuffer, oldString, -1);
-		}
-
-		TStringManager::String16Copy(m_pBuffer + oldLength * 2, str, size);
-		m_pBuffer[m_iStrLen] = 0;
-
-		if (allocated && m_iStrLen != 0)
-		{
-			TFree(oldString);
-		}
-
-		return *this;
+		Reset();
+		m_pAllocator = allocator == TNULL ? GetAllocator() : allocator;
+		Copy(src);
 	}
 
-	TBOOL TString16::AllocBuffer(uint32_t a_iLength, TBOOL freeMemory)
+	void TString16::Copy(const TWCHAR* src, TUINT32 size)
+	{
+		if (src != m_pBuffer)
+		{
+			TUINT32 srcLen = src ? TStringManager::String16Length(src) : 0;
+			TASSERT(srcLen <= 0xFFFFFF, "Too big string");
+
+			if (srcLen < size || size == -1)
+			{
+				size = (TUINT32)srcLen;
+			}
+
+			AllocBuffer(size, TTRUE);
+			TUtil::MemCopy(m_pBuffer, src, size * sizeof(TWCHAR));
+
+			m_pBuffer[size] = 0;
+		}
+	}
+
+	TINT TString16::Find(TWCHAR character, TUINT32 pos) const
+	{
+		if (!IsIndexValid(pos)) return -1;
+
+		const TWCHAR* foundAt = wcschr(&m_pBuffer[pos], character);
+		if (foundAt == TNULL) return -1;
+
+		return (TINT)(foundAt - m_pBuffer);
+	}
+
+	TINT TString16::Find(const TWCHAR* substr, TUINT32 pos) const
+	{
+		if (!IsIndexValid(pos)) return -1;
+
+		const TWCHAR* foundAt = wcsstr(GetString(pos), substr);
+		if (foundAt == TNULL) return -1;
+
+		return (TINT)(foundAt - m_pBuffer);
+	}
+
+	TBOOL TString16::AllocBuffer(TUINT32 a_iLength, TBOOL freeMemory)
 	{
 		TBOOL hasChanged = TFALSE;
-		uint32_t currentLength = Length();
+		TUINT32 currentLength = Length();
 
 		TASSERT(a_iLength >= 0, "Length can't be less than 0");
 		TASSERT(a_iLength <= 0xFFFFFF, "Too big string");
@@ -101,25 +101,25 @@ namespace Toshi
 		{
 			if (a_iLength == 0)
 			{
-				if (freeMemory) TFree(m_pBuffer);
+				if (freeMemory) m_pAllocator->Free(m_pBuffer);
 
-				m_pBuffer = m_aNull;
+				m_pBuffer = NullWString;
 				m_iExcessLen = 0;
 
 				hasChanged = TTRUE;
 			}
 			else
 			{
-				int newExcessLen = (currentLength - a_iLength * 2) + m_iExcessLen;
+				TINT newExcessLen = (currentLength - a_iLength) + m_iExcessLen;
 
 				if (newExcessLen < 0 || newExcessLen > 0xFF)
 				{
 					if (currentLength != 0 && freeMemory)
 					{
-						TFree(m_pBuffer);
+						m_pAllocator->Free(m_pBuffer);
 					}
 
-					m_pBuffer = (wchar_t*)TMalloc((a_iLength + 1) * 2);
+					m_pBuffer = (TWCHAR*)m_pAllocator->Malloc((a_iLength + 1) * sizeof(TWCHAR));
 					m_iExcessLen = 0;
 
 					hasChanged = TTRUE;
@@ -134,41 +134,245 @@ namespace Toshi
 			m_iStrLen = a_iLength;
 		}
 
-		if (freeMemory) m_pBuffer[0] = '\0';
+		if (freeMemory) m_pBuffer[0] = L'\0';
 		return hasChanged;
 	}
 
-	TString16 TString16::Mid(uint32_t param_1, uint32_t param_2) const
+	TString16 TString16::Format(const TWCHAR* a_pcFormat, ...)
+	{
+		TWCHAR buffer[0x400];
+		TString16 buffer2;
+		va_list args;
+
+		va_start(args, a_pcFormat);
+
+		TINT iResult = _vsnwprintf(buffer, sizeof(buffer), a_pcFormat, args);
+		TASSERT(iResult != -1, "PS2/GC/X360 do not correctly support _vsnprintf, this code will cause memory to be clobbered on those platforms! Increase the size of the destination string to avoid this problem");	
+		buffer2.Copy(buffer, -1);
+
+		return buffer2;
+	}
+
+	TString16& TString16::VFormat(const TWCHAR* a_pcFormat, va_list a_vargs)
+	{
+		TWCHAR buffer[0x400];
+
+		TINT iResult = _vsnwprintf(buffer, sizeof(buffer), a_pcFormat, a_vargs);
+		TASSERT(iResult != -1, "PS2/GC/X360 do not correctly support _vsnprintf, this code will cause memory to be clobbered on those platforms! Increase the size of the destination string to avoid this problem");
+		Copy(buffer, -1);
+
+		return *this;
+	}
+
+	void TString16::ForceSetData(TWCHAR* a_cString, TINT a_iLength)
+	{
+		m_pBuffer = a_cString;
+
+		if (a_iLength < 0)
+		{
+			m_iStrLen = TStringManager::String16Length(a_cString);
+		}
+		else
+		{
+			m_iStrLen = a_iLength;
+		}
+
+		m_iExcessLen = 0;
+	}
+
+	TINT TString16::FindReverse(TWCHAR a_findChar, TINT pos) const
+	{
+		if (pos == -1)
+		{
+			pos = m_iStrLen;
+		}
+		else
+		{
+			if (!IsIndexValid(pos)) return -1;
+		}
+
+
+		for (; pos > -1; pos--)
+		{
+			if (a_findChar == m_pBuffer[pos])
+			{
+				return pos;
+			}
+		}
+
+		return -1;
+	}
+
+	void TString16::Truncate(TUINT32 length)
+	{
+		if (Length() < length)
+		{
+			length = Length();
+		}
+
+		TWCHAR* oldBuffer = m_pBuffer;
+
+		TBOOL allocated = AllocBuffer(length, TFALSE);
+		if (allocated)
+		{
+			TStringManager::String16Copy(m_pBuffer, oldBuffer, length);
+		}
+
+		m_pBuffer[length] = 0;
+
+		if (allocated && Length() != 0)
+		{
+			m_pAllocator->Free(oldBuffer);
+		}
+	}
+
+	void TString16::FreeBuffer()
+	{
+		if (Length() != 0) m_pAllocator->Free(m_pBuffer);
+		Reset();
+	}
+
+	const TWCHAR* TString16::GetString(TUINT32 a_iIndex) const
+	{
+		TASSERT(a_iIndex >= 0 && a_iIndex <= (TINT)m_iStrLen);
+		if (IsIndexValid(a_iIndex)) { return &m_pBuffer[a_iIndex]; }
+		return TNULL;
+	}
+
+	TString16& TString16::Concat(const TWCHAR* str, TUINT32 size)
+	{
+		TUINT32 len = TStringManager::String16Length(str);
+
+		if ((len < size) || (size == -1))
+		{
+			size = len;
+		}
+
+		TUINT32 oldLength = m_iStrLen;
+		TWCHAR* oldString = m_pBuffer;
+
+		TBOOL allocated = AllocBuffer(m_iStrLen + size, TFALSE);
+
+		if (allocated)
+		{
+			// since it has made a new buffer
+			// it need to copy the old string
+			// to the new buffer
+
+			TStringManager::String16Copy(m_pBuffer, oldString, -1);
+		}
+
+		TStringManager::String16Copy(m_pBuffer + oldLength, str, size);
+		m_pBuffer[m_iStrLen] = 0;
+
+		if (allocated && oldLength != 0)
+		{
+			m_pAllocator->Free(oldString);
+		}
+
+		return *this;
+	}
+
+	TINT TString16::Compare(const TWCHAR* a_pcString, TINT param_2) const
+	{
+		TASSERT(a_pcString != TNULL, "TCString::CompareNoCase - Passed string cannot be TNULL");
+		TASSERT(IsIndexValid(0), "TCString::CompareNoCase - Index 0 is not valid");
+		TASSERT(GetString() != TNULL, "TCString::CompareNoCase - String cannot be TNULL");
+
+		if (param_2 != -1)
+		{
+			return wcsncmp(GetString(), a_pcString, param_2);
+		}
+
+		const TWCHAR* str = GetString();
+		TWCHAR bVar1 = 0;
+		TWCHAR bVar4 = 0;
+		while (TTRUE)
+		{
+			bVar1 = *str;
+			bVar4 = bVar1 < *a_pcString;
+
+			if (bVar1 != *a_pcString) break;
+			if (bVar1 == 0) return 0;
+
+			bVar1 = str[1];
+			bVar4 = bVar1 < a_pcString[1];
+
+			if (bVar1 != a_pcString[1]) break;
+			if (bVar1 == 0) return 0;
+
+			str += 2;
+			a_pcString += 2;
+		}
+		return bVar4 | 1;
+	}
+
+	TINT TString16::CompareNoCase(const TWCHAR* a_pcString, TINT param_2) const
+	{
+		TASSERT(a_pcString != TNULL, "TWString::CompareNoCase - Passed string cannot be TNULL");
+		TASSERT(IsIndexValid(0), "TWString::CompareNoCase - Index 0 is not valid");
+		TASSERT(GetString() != TNULL, "TWString::CompareNoCase - String cannot be TNULL");
+
+		if (param_2 == -1)
+		{
+			return _wcsicmp(GetString(), a_pcString);
+		}
+
+		TASSERT(IsIndexValid(0), "TWString::CompareNoCase - Index 0 is not valid");
+
+		return _wcsnicmp(GetString(), a_pcString, param_2);
+	}
+
+	TString16 TString16::Mid(TUINT32 param_1, TUINT32 param_2) const
 	{
 		if (param_2 < 0)
 		{
 			param_2 = 0;
 		}
-		else
+		else if (Length() <= param_2)
 		{
-			if (Length() <= param_2)
-			{
-				return TString16();
-			}
+			return TString16();
 		}
 
 		// Rewrite not correct
 		TString16 str = TString16(Length() - param_2);
-		TUtil::MemCopy(str.m_pBuffer, GetString(param_2), Length() - param_2);
+		TUtil::MemCopy(str.m_pBuffer, GetString(param_2), (Length() - param_2) * sizeof(TWCHAR));
 		m_pBuffer[m_iStrLen - param_2] = 0;
 
 		return str;
 	}
 
-	void TString16::Copy(const TString16& src, uint32_t size)
+	TBOOL TString16::IsAllLowerCase() const
 	{
-		uint32_t srcLen = src.Length();
-		TASSERT(srcLen <= 0xFFFFFF, "Too big string");
+		if (m_iStrLen != 0)
+		{
+			TWCHAR* iter = m_pBuffer;
+			TWCHAR* endStr = m_pBuffer + m_iStrLen;
 
-		if (srcLen < size || size == -1) { size = srcLen; }
+			do
+			{
+				TWCHAR currentC = *iter++;
+				if (!iswlower(currentC)) return TFALSE;
+			} while (iter < endStr);
+		}
 
-		AllocBuffer(size, TTRUE);
-		TUtil::MemCopy(m_pBuffer, src, size);
-		m_pBuffer[size] = 0;
+		return TTRUE;
+	}
+
+	TBOOL TString16::IsAllUpperCase() const
+	{
+		if (m_iStrLen != 0)
+		{
+			TWCHAR* iter = m_pBuffer;
+			TWCHAR* endStr = m_pBuffer + m_iStrLen;
+
+			do
+			{
+				TWCHAR currentC = *iter++;
+				if (!iswupper(currentC)) return TFALSE;
+			} while (iter < endStr);
+		}
+
+		return TTRUE;
 	}
 }

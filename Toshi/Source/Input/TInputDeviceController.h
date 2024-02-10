@@ -28,7 +28,7 @@ namespace Toshi
 		~TInputDeviceController() = default;
 
 		virtual TBOOL GetDoodadProperties(Doodad a_iDoodad, DoodadProperties& a_rProperties) const override;
-		virtual const char* GetButtonFromDoodad(Doodad a_iDoodad) const override;
+		virtual const TCHAR* GetButtonFromDoodad(Doodad a_iDoodad) const override;
 		virtual TBOOL IsDown(Doodad a_iDoodad) const override;
 		
 		virtual void SetVibration(VIBRATION_ACTUATOR a_eActuator, TFLOAT a_fValue);

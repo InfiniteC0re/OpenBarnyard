@@ -109,7 +109,7 @@ namespace Toshi {
 		return TTRUE;
 	}
 
-	TBOOL TTextureResourceHAL::Create(const char* a_szFileName, TUINT a_eTextureFlags)
+	TBOOL TTextureResourceHAL::Create(const TCHAR* a_szFileName, TUINT a_eTextureFlags)
 	{
 		if (!CreateResource(a_szFileName, a_eTextureFlags))
 		{
@@ -321,7 +321,7 @@ namespace Toshi {
 		return hRes == S_OK;
 	}
 
-	TBOOL TTextureResourceHAL::CreateFromFileDDS(TUINT a_uiWidth, TUINT a_uiHeight, TUINT a_uiLevels, const char* a_szFile)
+	TBOOL TTextureResourceHAL::CreateFromFileDDS(TUINT a_uiWidth, TUINT a_uiHeight, TUINT a_uiLevels, const TCHAR* a_szFile)
 	{
 		auto pRenderer = TSTATICCAST(TRenderD3DInterface*, GetRenderer());
 
@@ -350,7 +350,7 @@ namespace Toshi {
 		return hRes == S_OK;
 	}
 
-	TBOOL TTextureResourceHAL::IsPPM(const char* a_szName)
+	TBOOL TTextureResourceHAL::IsPPM(const TCHAR* a_szName)
 	{
 		auto iLen = TStringManager::String8Length(a_szName);
 

@@ -39,7 +39,7 @@ namespace Toshi {
 		delete this;
 	}
 
-	TKeyframeLibrary* TKeyframeLibrary::CreateFromTRB(TTRB* a_pTRB, const char* a_szSymbolName)
+	TKeyframeLibrary* TKeyframeLibrary::CreateFromTRB(TTRB* a_pTRB, const TCHAR* a_szSymbolName)
 	{
 		TVALIDPTR(a_pTRB);
 		TVALIDPTR(a_szSymbolName);

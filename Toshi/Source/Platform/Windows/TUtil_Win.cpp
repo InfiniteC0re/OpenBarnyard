@@ -12,7 +12,7 @@
 
 namespace Toshi
 {
-	void TUtil::TrimLog(const char* fileName, size_t trimTo)
+	void TUtil::TrimLog(const TCHAR* fileName, size_t trimTo)
 	{
 		// and yes they actually did it with std
 
@@ -51,10 +51,10 @@ namespace Toshi
 
 	}
 
-	const char* TUtil::GetTime()
+	const TCHAR* TUtil::GetTime()
 	{
 		time_t t = time(NULL);
-		char* str = ctime(&t);
+		TCHAR* str = ctime(&t);
 		return strtok(str, "\n");
 	}
 

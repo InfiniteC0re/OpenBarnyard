@@ -176,12 +176,12 @@ namespace Toshi {
 				m_Prev = this;
 			}
 
-			void SetPriority(int priority)
+			void SetPriority(TINT priority)
 			{
 				m_iPriority = priority;
 			}
 
-			int GetPriority() const
+			TINT GetPriority() const
 			{
 				return m_iPriority;
 			}
@@ -206,7 +206,7 @@ namespace Toshi {
 		public:
 			TNode* m_Next;
 			TNode* m_Prev;
-			int m_iPriority;
+			TINT m_iPriority;
 		};
 
 	public:
@@ -220,7 +220,7 @@ namespace Toshi {
 		TNode* Begin() { return m_Next; }
 		TNode* End() { return &GetRoot(); }
 
-		void Insert(TNode* node, int iPriority);
+		void Insert(TNode* node, TINT iPriority);
 		void Insert(TNode* node);
 
 		void RemoveAll();

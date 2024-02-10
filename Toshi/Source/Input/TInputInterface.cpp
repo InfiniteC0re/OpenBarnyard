@@ -154,7 +154,7 @@ namespace Toshi {
 		m_wszString[0] = L'\0';
 	}
 
-	TInputInterface::InputEvent::InputEvent(TInputDevice* a_pDevice, TINT a_iDoodad, EVENT_TYPE a_eEventType, wchar_t* a_wszString)
+	TInputInterface::InputEvent::InputEvent(TInputDevice* a_pDevice, TINT a_iDoodad, EVENT_TYPE a_eEventType, TWCHAR* a_wszString)
 	{
 		m_pSource = a_pDevice;
 		m_iDoodad = a_iDoodad;

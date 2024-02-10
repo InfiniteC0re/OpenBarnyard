@@ -57,7 +57,7 @@ namespace Toshi {
 		ms_pEntries.Destroy();
 	}
 
-	TModelRegistryEntry* TModelRegistry::CreateModel(const char* a_szFileName, TModelPtr& a_rModelRef, TTRB* a_pAssetTRB)
+	TModelRegistryEntry* TModelRegistry::CreateModel(const TCHAR* a_szFileName, TModelPtr& a_rModelRef, TTRB* a_pAssetTRB)
 	{
 		if (ms_oFreeList.IsEmpty())
 		{
@@ -65,7 +65,7 @@ namespace Toshi {
 			return TNULL;
 		}
 
-		char filepath[248];
+		TCHAR filepath[248];
 		auto iFileNameLen = TStringManager::String8Length(a_szFileName);
 		TStringManager::String8Copy(filepath, a_szFileName);
 
@@ -77,7 +77,7 @@ namespace Toshi {
 			}
 		}
 
-		auto crc32 = TUtil::CRC32(TREINTERPRETCAST(unsigned char*, filepath), iFileNameLen);
+		auto crc32 = TUtil::CRC32(TREINTERPRETCAST(TBYTE*, filepath), iFileNameLen);
 
 		for (auto it = ms_oUsedList.Begin(); it != ms_oUsedList.End(); it++)
 		{
@@ -93,7 +93,7 @@ namespace Toshi {
 		auto pEntry = ms_oFreeList.PopBack();
 		ms_oUsedList.PushFront(pEntry);
 
-		const char* szSkeletonSymbolName;
+		const TCHAR* szSkeletonSymbolName;
 		TUINT8 ui8NameLen = 0;
 
 		if (!a_pAssetTRB || !TModel::GetSkeletonAssetSymbolName(filepath, szSkeletonSymbolName, ui8NameLen, a_pAssetTRB))
@@ -109,7 +109,7 @@ namespace Toshi {
 		return pEntry;
 	}
 
-	TBOOL TModelPtr::Create(const char* a_szFileName, TTRB* a_pTRB)
+	TBOOL TModelPtr::Create(const TCHAR* a_szFileName, TTRB* a_pTRB)
 	{
 		m_pModel = TNULL;
 		m_pEntry = TModelRegistry::CreateModel(a_szFileName, *this, a_pTRB);

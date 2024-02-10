@@ -5,9 +5,7 @@
 #include "Toshi/T2FixedString.h"
 #include "Render/TModelRegistry.h"
 
-#ifdef TOSHI_DEBUG
 #include <Platform/Windows/TConsoleFile_Win.h>
-#endif
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
@@ -30,16 +28,16 @@ namespace Toshi {
 		time(&seconds);
 		tm* time = gmtime(&seconds);
 
-#ifdef TOSHI_DEBUG
-
-		const char* szFileSystemName = "console";
-
 		// Create console file system that will be able to open console for text output
 		new TConsoleFileSystem("console");
 
+#ifdef TOSHI_DEBUG
+
+		const TCHAR* szFileSystemName = "console";
+
 #else  // TOSHI_DEBUG
 
-		const char* szFileSystemName = "local";
+		const TCHAR* szFileSystemName = ms_oToshiParams.bLogToConsole ? "console" : "local";
 
 #endif // TOSHI_DEBUG
 
@@ -61,11 +59,12 @@ namespace Toshi {
 		GetCurrentLogFile()->AllowIndentation(TTRUE);
 		GetCurrentLogFile()->SetSimpleMode(TFALSE);
 
-#ifdef SUPPORT_COLOURED_LOGS
+#if SUPPORT_COLOURED_LOGS
 
 #ifdef TOSHI_DEBUG
 
 		GetCurrentLogFile()->SetColouringMode(TTRUE);
+
 #else
 
 		GetCurrentLogFile()->SetColouringMode(TFALSE);
@@ -93,7 +92,7 @@ namespace Toshi {
 		}
 	}
 
-	void TUtil::Log(const char* a_szFormat, ...)
+	void TUtil::Log(const TCHAR* a_szFormat, ...)
 	{
 		if (IsSingletonCreated() && GetCurrentLogFile())
 		{
@@ -111,7 +110,7 @@ namespace Toshi {
 		}
 	}
 
-	void TUtil::Log(TLogFile::Type a_eLogType, const char* a_szFormat, ...)
+	void TUtil::Log(TLogFile::Type a_eLogType, const TCHAR* a_szFormat, ...)
 	{
 		auto pLogFile = GetCurrentLogFile();
 
@@ -129,7 +128,7 @@ namespace Toshi {
 		}
 	}
 
-	void TUtil::LogConsole(const char* a_szFormat, ...)
+	void TUtil::LogConsole(const TCHAR* a_szFormat, ...)
 	{
 		auto pLogFile = GetCurrentLogFile();
 
@@ -203,11 +202,11 @@ namespace Toshi {
 	// Source: https://lentz.com.au/blog/tag/crc-table-generator
 	void TUtil::CRCInitialise()
 	{
-		uint32_t crc;
+		TUINT32 crc;
 
-		for (int i = 0; i < CRC_TABSIZE; i++) {
+		for (TINT i = 0; i < CRC_TABSIZE; i++) {
 			crc = i;
-			for (int j = 8; j > 0; j--) {
+			for (TINT j = 8; j > 0; j--) {
 				if (crc & 1)
 					crc = (crc >> 1) ^ CRC32POLY;
 				else
@@ -218,9 +217,9 @@ namespace Toshi {
 	}
 
 	// Source: https://lentz.com.au/blog/tag/crc-table-generator
-	uint32_t TUtil::CRC32(unsigned char* buffer, uint32_t len)
+	TUINT32 TUtil::CRC32(TBYTE* buffer, TUINT32 len)
 	{
-		uint32_t crc = 0;
+		TUINT32 crc = 0;
 
 		while (len--)
 			crc = crc32upd(s_aiCRC32LUT, crc, *buffer++);

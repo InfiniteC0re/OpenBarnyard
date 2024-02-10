@@ -2,7 +2,7 @@
 
 namespace Toshi
 {
-	constexpr const char* TDebugConsoleUUID = "{1B5D8052-529A-4c88-9DDE-EE523D440B00}";
+	constexpr const TCHAR* TDebugConsoleUUID = "{1B5D8052-529A-4c88-9DDE-EE523D440B00}";
 
 	class TDebugConsole
 	{

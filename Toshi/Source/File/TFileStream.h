@@ -56,17 +56,17 @@ namespace Toshi
 			m_trb->Load(m_fileName);
 		}
 
-		void Init(TTRB* trb, const char* fileName)
+		void Init(TTRB* trb, const TCHAR* fileName)
 		{
 			m_trb = trb;
 			T2String8::Copy(m_fileName, fileName, -1);
 		}
 
 		TTRB* GetTRB() const { return m_trb; }
-		const char* GetFileName() const { return m_fileName; }
+		const TCHAR* GetFileName() const { return m_fileName; }
 
 	public:
 		TTRB* m_trb;
-		char m_fileName[64];
+		TCHAR m_fileName[64];
 	};
 }

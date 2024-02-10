@@ -7,7 +7,7 @@ namespace Toshi
 	class TViewport
 	{
 	public:
-		using ChangeEvent = uint32_t;
+		using ChangeEvent = TUINT32;
 		enum ChangeEvent_ : ChangeEvent
 		{
 			ChangeEvent_BackgroundColor,

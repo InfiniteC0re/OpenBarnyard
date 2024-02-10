@@ -28,7 +28,7 @@ namespace Toshi
             Node* m_Ptr2;
             Node* m_Unk1;
             Node* m_Unk2;
-            char* m_Unk3;
+            TCHAR* m_Unk3;
             void* m_Unk4;
         };
 
@@ -38,19 +38,19 @@ namespace Toshi
         BTECCompressor();
         ~BTECCompressor();
 
-        void Initialize(char* buffer, size_t bufferSize, int maxoffset, int unk);
+        void Initialize(TCHAR* buffer, size_t bufferSize, TINT maxoffset, TINT unk);
         void FUN_0068ae40(size_t dataSize);
-        TBOOL FUN_0068af10(char* buffer, size_t bufferSize, char*& offset, size_t& dataSize);
-        void AllocSubstring(char* buffer);
+        TBOOL FUN_0068af10(TCHAR* buffer, size_t bufferSize, TCHAR*& offset, size_t& dataSize);
+        void AllocSubstring(TCHAR* buffer);
 
-        static TBOOL FUN_0068b300(char* buffer, Bucket nodeBucket, size_t bufferSize, Node*& out1, Node*& out2);
+        static TBOOL FUN_0068b300(TCHAR* buffer, Bucket nodeBucket, size_t bufferSize, Node*& out1, Node*& out2);
 
-        static uint32_t HashData(char* data, size_t size)
+        static TUINT32 HashData(TCHAR* data, size_t size)
         {
-            uint32_t hash = 0;
+            TUINT32 hash = 0;
             while (size != 0)
             {
-                hash = (uint32_t)*data ^ hash >> 0x1B ^ hash << 5;
+                hash = (TUINT32)*data ^ hash >> 0x1B ^ hash << 5;
                 size -= 1;
                 data += 1;
             }
@@ -59,16 +59,16 @@ namespace Toshi
         }
 
     private:
-        char* m_Buffer1;
-        uint32_t m_MaxOffset;
-        char* m_DataEnd;
-        char* m_Buffer2;
-        char* m_Buffer3;
+        TCHAR* m_Buffer1;
+        TUINT32 m_MaxOffset;
+        TCHAR* m_DataEnd;
+        TCHAR* m_Buffer2;
+        TCHAR* m_Buffer3;
         Node* m_SomeArray1;
         Node m_Root1;
         Node m_Root2;
-        char* m_Offsets[256];
+        TCHAR* m_Offsets[256];
         Bucket* m_Buckets;
-        uint32_t m_BucketCount;
+        TUINT32 m_BucketCount;
     };
 }

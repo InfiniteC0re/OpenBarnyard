@@ -68,7 +68,7 @@ namespace Toshi {
 		return LoadTRB();
 	}
 
-	TBOOL TModel::LoadTRB(const char* a_szFileName, TTRB* a_pAssetTRB, TUINT8 a_ui8FileNameLen)
+	TBOOL TModel::LoadTRB(const TCHAR* a_szFileName, TTRB* a_pAssetTRB, TUINT8 a_ui8FileNameLen)
 	{
 		if (!m_bIsAssetFile && m_pTRB)
 		{
@@ -122,11 +122,11 @@ namespace Toshi {
 		m_eFlags &= Flags_Loaded;
 	}
 
-	void* TModel::GetSymbol(const char* a_szSymbolName)
+	void* TModel::GetSymbol(const TCHAR* a_szSymbolName)
 	{
 		if (m_bIsAssetFile)
 		{
-			char symbolName[64];
+			TCHAR symbolName[64];
 			TStringManager::String8Copy(symbolName, m_szSymbolPrefix, m_szSymbolPrefixLength);
 			TStringManager::String8Copy(symbolName + m_szSymbolPrefixLength, a_szSymbolName);
 
@@ -156,7 +156,7 @@ namespace Toshi {
 		return pInstance;
 	}
 
-	TBOOL TModel::GetSkeletonAssetSymbolName(const char* a_szFileName, const char*& a_rSymbolName, TUINT8& a_rNameLen, TTRB* a_pTRB)
+	TBOOL TModel::GetSkeletonAssetSymbolName(const TCHAR* a_szFileName, const TCHAR*& a_rSymbolName, TUINT8& a_rNameLen, TTRB* a_pTRB)
 	{
 		auto iFilePathLength = TUINT8(TStringManager::String8Length(a_szFileName));
 		auto iFileNamePos = iFilePathLength - 1;
@@ -166,7 +166,7 @@ namespace Toshi {
 			iFileNamePos--;
 
 		iFileNamePos++;
-		char symbolName[64];
+		TCHAR symbolName[64];
 
 		auto iFileNameLength = iFilePathLength - iFileNamePos - 4;
 		a_rNameLen = iFileNameLength;

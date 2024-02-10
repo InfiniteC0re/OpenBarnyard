@@ -3,7 +3,6 @@
 #define __TOSHI_TTRB_H__
 #endif
 
-#include "Toshi/TString8.h"
 #include "File/TFile.h"
 #include "File/TCompress.h"
 
@@ -74,7 +73,7 @@ namespace Toshi {
 		TUINT32 ReadAlignmentPad()
 		{
 			TASSERT(m_pFile != TNULL, "File is TNULL");
-			static char s_AlignBuffer[4] = { 0, 0, 0, 0 };
+			static TCHAR s_AlignBuffer[4] = { 0, 0, 0, 0 };
 			uint8_t alignValue = 4 - (m_pFile->Tell() & 3);
 
 			if (alignValue != 4)
@@ -86,7 +85,7 @@ namespace Toshi {
 		}
 
 		TUINT32 Open(TFile* a_pFile);
-		TUINT32 Open(const char* a_szFilePath);
+		TUINT32 Open(const TCHAR* a_szFilePath);
 
 		TUINT32 PushForm();
 		TUINT32 PopForm();
@@ -111,7 +110,7 @@ namespace Toshi {
 		void Close(TBOOL free = TTRUE);
 
 		void ReadCompressed(void* buffer, TUINT32 size);
-		void CompressSection(TFile* file, char* unk, TUINT32 unk2, TUINT32 unk3) { TCompress::Compress(file, unk, unk2, unk3, m_Endianess); }
+		void CompressSection(TFile* file, TCHAR* unk, TUINT32 unk2, TUINT32 unk3) { TCompress::Compress(file, unk, unk2, unk3, m_Endianess); }
 
 		void LogUnknownSection();
 
@@ -156,7 +155,7 @@ namespace Toshi {
 		TUINT32 WriteAlignmentPad()
 		{
 			TASSERT(m_pFile != TNULL, "TTSFO is not created");
-			static char s_AlignBuffer[4] = { 0, 0, 0, 0 };
+			static TCHAR s_AlignBuffer[4] = { 0, 0, 0, 0 };
 			uint8_t alignValue = 4 - (m_pFile->Tell() & 3);
 
 			if (alignValue != 4)
@@ -174,7 +173,7 @@ namespace Toshi {
 		* @param magic - magic value which is placed after the first hunk
 		* @return TTRB::ERROR_OK if successful
 		*/
-		TTSFO::ERROR Create(const char* filepath, const char* magic = "TRBF", Endianess endianess = Endianess_Little);
+		TTSFO::ERROR Create(const TCHAR* filepath, const TCHAR* magic = "TRBF", Endianess endianess = Endianess_Little);
 
 		/**
 		* Closes the file.
@@ -188,7 +187,7 @@ namespace Toshi {
 		* @param name - 4 bytes long value which will be written after the hunk
 		* @return number of written bytes
 		*/
-		TUINT32 BeginForm(const char* name);
+		TUINT32 BeginForm(const TCHAR* name);
 
 		/**
 		* Ends the current form if it exists.
@@ -204,7 +203,7 @@ namespace Toshi {
 		* @param hunkName - 4 bytes long name of the hunk
 		* @return always TTRUE
 		*/
-		TBOOL OpenHunk(HunkMark* hunkMark, const char* hunkName);
+		TBOOL OpenHunk(HunkMark* hunkMark, const TCHAR* hunkName);
 
 		/**
 		* Closes the hunk.
@@ -240,7 +239,7 @@ namespace Toshi {
 		TUINT32 WriteCompressed(const void* buffer, TUINT32 size)
 		{
 			TASSERT(m_pFile != TNULL, "TTSFO is not created");
-			TUINT32 writtenSize = TCompress::Compress(m_pFile, (char*)buffer, size, 0, m_Endianess == Endianess_Big);
+			TUINT32 writtenSize = TCompress::Compress(m_pFile, (TCHAR*)buffer, size, 0, m_Endianess == Endianess_Big);
 			WriteAlignmentPad();
 			return writtenSize;
 		}
@@ -291,7 +290,7 @@ namespace Toshi {
 
 		struct SecInfo
 		{
-			char m_Unused[2]; // 0x0 (padding)
+			TCHAR m_Unused[2]; // 0x0 (padding)
 			TINT16 m_Unk1;    // 0x2
 			TUINT32 m_Size;   // 0x4
 			void* m_Data;     // 0x8
@@ -330,14 +329,14 @@ namespace Toshi {
 		~TTRB() { Close(); }
 
 		// Creates TFile and reads TRB from it
-		ERROR Load(const char* a_szFilePath, TUINT32 a_uiUnknown = 0);
+		ERROR Load(const TCHAR* a_szFilePath, TUINT32 a_uiUnknown = 0);
 
 		// Returns index of TTRBSymbol
-		int GetSymbolIndex(const char* symbName);
+		TINT GetSymbolIndex(const TCHAR* symbName);
 
 		// Returns pointer to data if found and TNULL if not
-		void* GetSymbolAddress(const char* symbName);
-		void* GetSymbolAddress(TTRBSymbol& symb) { return static_cast<char*>(GetSection(symb.HDRX)) + symb.DataOffset; }
+		void* GetSymbolAddress(const TCHAR* symbName);
+		void* GetSymbolAddress(TTRBSymbol& symb) { return static_cast<TCHAR*>(GetSection(symb.HDRX)) + symb.DataOffset; }
 
 		// Destroys TRB file and the content
 		void Close();
@@ -345,7 +344,7 @@ namespace Toshi {
 		static void SetDefaultMemoryFuncs(t_MemoryFuncAlloc allocator, t_MemoryFuncDealloc deallocator, void* allocatorUserData);
 
 		template<typename T>
-		T* CastSymbol(const char* symbName)
+		T* CastSymbol(const TCHAR* symbName)
 		{
 			return TSTATICCAST(T*, GetSymbolAddress(symbName));
 		}
@@ -365,12 +364,12 @@ namespace Toshi {
 			return reinterpret_cast<SecInfo*>(m_pHeader + 1);
 		}
 
-		SecInfo* GetSectionInfo(int index) const
+		SecInfo* GetSectionInfo(TINT index) const
 		{
 			return GetSectionInfoList() + index;
 		}
 
-		TTRBSymbol* GetSymbol(int index) const
+		TTRBSymbol* GetSymbol(TINT index) const
 		{
 			if (m_SYMB == TNULL)
 			{
@@ -384,9 +383,9 @@ namespace Toshi {
 			return TNULL;
 		}
 
-		TTRBSymbol* GetSymbol(char const* a_symbolName)
+		TTRBSymbol* GetSymbol(TCHAR const* a_symbolName)
 		{
-			int index = GetSymbolIndex(a_symbolName);
+			TINT index = GetSymbolIndex(a_symbolName);
 			if (index == -1)
 			{
 				return TNULL;
@@ -395,7 +394,7 @@ namespace Toshi {
 			return GetSymbol(index);
 		}
 
-		const char* GetSymbolName(int index) const
+		const TCHAR* GetSymbolName(TINT index) const
 		{
 			if (m_SYMB == TNULL)
 			{
@@ -405,14 +404,14 @@ namespace Toshi {
 			return GetSymbolName(reinterpret_cast<TTRBSymbol*>(m_SYMB + 1) + index);
 		}
 
-		const char* GetSymbolName(TTRBSymbol* symbol) const
+		const TCHAR* GetSymbolName(TTRBSymbol* symbol) const
 		{
 			if (m_SYMB == TNULL)
 			{
 				return TNULL;
 			}
 
-			return reinterpret_cast<const char*>(
+			return reinterpret_cast<const TCHAR*>(
 				reinterpret_cast<uintptr_t>(m_SYMB) +
 				GetSymbolTableSize(m_SYMB->m_i32SymbCount) +
 				symbol->NameOffset
@@ -426,10 +425,10 @@ namespace Toshi {
 
 		SYMB* GetSymbolTable() const { return m_SYMB; }
 
-		static TINT16 HashString(const char* str)
+		static TINT16 HashString(const TCHAR* str)
 		{
 			TINT16 hash = 0;
-			char character;
+			TCHAR character;
 
 			while (*str != '\0')
 			{
@@ -461,7 +460,7 @@ namespace Toshi {
 		TBOOL ProcessForm(TTSFI& ttsf);
 
 		// Returns pointer to section by index
-		inline void* GetSection(int index) { return GetSectionInfo(index)->m_Data; }
+		inline void* GetSection(TINT index) { return GetSectionInfo(index)->m_Data; }
 
 	private:
 		static void* s_pDefAllocatorUserData;

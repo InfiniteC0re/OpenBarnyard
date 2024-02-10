@@ -40,7 +40,7 @@ namespace Toshi {
 
 	TSkeletonInstance* TSkeleton::CreateInstance(TBOOL a_bSetBasePose)
 	{
-		if (TREINTERPRETCAST(int, m_fnQuatLerp) < 3)
+		if (TREINTERPRETCAST(TINT, m_fnQuatLerp) < 3)
 		{
 			SetQInterpFn(TREINTERPRETCAST(QUATINTERP, m_fnQuatLerp));
 		}
@@ -64,7 +64,7 @@ namespace Toshi {
 		pInstance->m_iLastUpdateStateFrame = 0;
 		pInstance->m_iLastUpdateTimeFrame = 0;
 
-		for (int i = 0; i < GetAnimationMaxCount(); i++)
+		for (TINT i = 0; i < GetAnimationMaxCount(); i++)
 		{
 			TAnimation* pAnimation = TREINTERPRETCAST(
 				TAnimation*,
@@ -90,7 +90,7 @@ namespace Toshi {
 			m_fnQuatLerp = TQuaternion::Nlerp;
 	}
 
-	int TSkeleton::GetBoneID(const char* a_cBoneName, TUINT32 a_iLength)
+	TINT TSkeleton::GetBoneID(const TCHAR* a_cBoneName, TUINT32 a_iLength)
 	{
 		for (short i = 0; i < m_iBoneCount; i++)
 		{
@@ -103,7 +103,7 @@ namespace Toshi {
 		return -1;
 	}
 
-	int TSkeleton::GetSequenceID(const char* a_sSequenceName, TUINT32 a_iLength)
+	TINT TSkeleton::GetSequenceID(const TCHAR* a_sSequenceName, TUINT32 a_iLength)
 	{
 		for (short i = 0; i < m_iSequenceCount; i++)
 		{
@@ -163,7 +163,7 @@ namespace Toshi {
 
 			TASSERT(m_pSkeleton->GetAutoBoneCount() < TANIMATION_MAXBONES);
 
-			for (int i = 0; i < m_pSkeleton->GetAutoBoneCount(); i++)
+			for (TINT i = 0; i < m_pSkeleton->GetAutoBoneCount(); i++)
 			{
 				TASSERT(i < TANIMATION_MAXBONES);
 
@@ -260,7 +260,7 @@ namespace Toshi {
 
 						if (!pSeqBone->Is2() && pSeqBone->GetKeyCount() != 0)
 						{
-							int iCurrentKeyframePos = TINT((it->GetSeqTime() / pSeq->GetDuration()) * 65535);
+							TINT iCurrentKeyframePos = TINT((it->GetSeqTime() / pSeq->GetDuration()) * 65535);
 
 							TUINT16 iLerpFromIndex;
 							TUINT16 iLerpToIndex;
@@ -299,7 +299,7 @@ namespace Toshi {
 				}
 			}
 
-			for (int i = 0; i < m_pSkeleton->GetAutoBoneCount(); i++)
+			for (TINT i = 0; i < m_pSkeleton->GetAutoBoneCount(); i++)
 			{
 				auto& rBoneCache = g_aBonesCaches[i];
 				auto& rMatrix = g_aForwardMatrices[i];
@@ -327,7 +327,7 @@ namespace Toshi {
 		}
 	}
 
-	TMatrix44* TSkeletonInstance::GetBoneTransformCurrent(int a_iBone, TMatrix44& a_rMatrix)
+	TMatrix44* TSkeletonInstance::GetBoneTransformCurrent(TINT a_iBone, TMatrix44& a_rMatrix)
 	{
 		if (a_iBone < m_pSkeleton->GetAutoBoneCount())
 		{
@@ -349,7 +349,7 @@ namespace Toshi {
 
 	void TSkeletonInstance::SetStateFromBasePose()
 	{
-		for (int i = 0; i < m_pSkeleton->GetAutoBoneCount(); i++)
+		for (TINT i = 0; i < m_pSkeleton->GetAutoBoneCount(); i++)
 		{
 			m_pSkeleton->GetBone(i);
 			m_pBones[i].m_Transform.Identity();
@@ -362,7 +362,7 @@ namespace Toshi {
 		delete this;
 	}
 
-	TFLOAT TSkeletonSequenceBone::GetKeyPair(int a_iCurrentAnimTime, TUINT16& a_rCurrentKeyIndex, TUINT16& a_rLerpFromIndex, TUINT16& a_rLerpToIndex)
+	TFLOAT TSkeletonSequenceBone::GetKeyPair(TINT a_iCurrentAnimTime, TUINT16& a_rCurrentKeyIndex, TUINT16& a_rLerpFromIndex, TUINT16& a_rLerpToIndex)
 	{
 		auto pFirstKeyTime = *GetKey(0);
 

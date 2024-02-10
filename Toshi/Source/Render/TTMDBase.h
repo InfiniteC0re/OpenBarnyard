@@ -16,7 +16,7 @@ namespace Toshi {
 
 		struct SkeletonHeader
 		{
-			char m_szTKLName[16];
+			TCHAR m_szTKLName[16];
 			TINT32 m_iTKeyCount;
 			TINT32 m_iQKeyCount;
 			TINT32 m_iSKeyCount;
@@ -27,8 +27,8 @@ namespace Toshi {
 
 		struct Material
 		{
-			char m_szMatName[104];
-			char m_szTextureFile[192];
+			TCHAR m_szMatName[104];
+			TCHAR m_szTextureFile[192];
 		};
 
 		struct Materials
@@ -53,7 +53,7 @@ namespace Toshi {
 			TUINT16* m_pIndices;
 			TUINT32 m_uiNumIndices;
 			TUINT32 m_uiNumCollTypes;
-			char** m_pszCollName;
+			TCHAR** m_pszCollName;
 			TUINT32 m_Unk3;
 		};
 

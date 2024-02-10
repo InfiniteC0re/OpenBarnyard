@@ -45,7 +45,7 @@ namespace Toshi {
 #endif
 	}
 
-	TFileLexerUTF8::TFileLexerUTF8(TFile* a_pInputStream, int a_iTokenLookaheadSize) :
+	TFileLexerUTF8::TFileLexerUTF8(TFile* a_pInputStream, TINT a_iTokenLookaheadSize) :
 		m_oEmitter(this)
 	{
 		m_pFile = 0;
@@ -94,7 +94,7 @@ namespace Toshi {
 
 	TBOOL TFileLexerUTF8::ComputePreprocessorAllow()
 	{
-		for (int i = 0; i < m_iSomeNum; i++)
+		for (TINT i = 0; i < m_iSomeNum; i++)
 		{
 			bool bFlag;
 
@@ -110,19 +110,19 @@ namespace Toshi {
 		return TTRUE;
 	}
 
-	void TFileLexerUTF8::SetCharacterLookaheadSize(int a_iLookaheadSize)
+	void TFileLexerUTF8::SetCharacterLookaheadSize(TINT a_iLookaheadSize)
 	{
 		TASSERT(m_pFile != TNULL);
 		TASSERT(m_piCharLookahead == TNULL);
 
-		int iIntCount = 1 << ((a_iLookaheadSize * 2 - 1) >> 0x17) + 0x81 & 0x1f;
+		TINT iIntCount = 1 << ((a_iLookaheadSize * 2 - 1) >> 0x17) + 0x81 & 0x1f;
 		m_iCharLookaheadSize = iIntCount;
 		m_iUnk3 = iIntCount;
 		m_iUnk4 = 0;
 		m_iUnk5 = 0;
-		m_piCharLookahead = new int[iIntCount];
+		m_piCharLookahead = new TINT[iIntCount];
 
-		for (int i = 0; i < iIntCount; i++)
+		for (TINT i = 0; i < iIntCount; i++)
 			m_piCharLookahead[i] = m_pFile->GetCChar();
 	}
 
@@ -136,11 +136,11 @@ namespace Toshi {
 		SetCharacterLookaheadSize(3);
 	}
 
-	void TFileLexerUTF8::Define(const char* a_szDefinition)
+	void TFileLexerUTF8::Define(const TCHAR* a_szDefinition)
 	{
 		bool bAlreadyDefined = TFALSE;
 
-		for (int i = 0; i < m_Defines.Size(); i++)
+		for (TINT i = 0; i < m_Defines.Size(); i++)
 		{
 			if (m_Defines[i] == a_szDefinition)
 			{

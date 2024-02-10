@@ -17,109 +17,104 @@ namespace Toshi {
 
 		}
 
-		virtual size_t Read(void* dst, size_t size) override
+		virtual TUINT Read(void* a_pDst, TUINT a_uiSize) override
 		{
 			TASSERT(!"Console doesn't support this");
 			return 0;
 		}
-		
-		virtual size_t Write(const void* buffer, size_t size) override
+
+		virtual TUINT Write(const void* a_pSrc, TUINT a_uiSize) override
 		{
 			TASSERT(!"Use Printf or VCPrintf");
 			return 0;
 		}
-		
-		virtual TBOOL Seek(int offset, TFile::TSEEK seek) override
-		{
-			TASSERT(!"Console doesn't support this");
-			return 0;
-		}
-		
-		virtual uint32_t Tell() override
-		{
-			TASSERT(!"Console doesn't support this");
-			return 0;
-		}
-		
-		virtual DWORD GetSize() override
-		{
-			TASSERT(!"Console doesn't support this");
-			return 0;
-		}
-		
-		virtual _FILETIME GetDate() override
-		{
-			TASSERT(!"Console doesn't support this");
-			return {};
-		}
-		
-		virtual int GetCChar() override
-		{
-			TASSERT(!"Console doesn't support this");
-			return 0;
-		}
-		
-		virtual wchar_t GetWChar() override
-		{
-			TASSERT(!"Console doesn't support this");
-			return 0;
-		}
-		
-		virtual int PutCChar(char character)
-		{
-			putchar(character);
-			return 0;
-		}
-		
-		virtual int PutWChar(wchar_t character)
+
+		virtual TBOOL Seek(TINT a_iOffset, TSEEK a_eOrigin = TSEEK_CUR) override
 		{
 			TASSERT(!"Console doesn't support this");
 			return 0;
 		}
 
-		virtual int CPrintf(const char* format, ...)
+		virtual TUINT Tell() override
+		{
+			TASSERT(!"Console doesn't support this");
+			return 0;
+		}
+
+		virtual TUINT GetSize() override
+		{
+			TASSERT(!"Console doesn't support this");
+			return 0;
+		}
+
+		virtual TCHAR GetCChar() override
+		{
+			TASSERT(!"Console doesn't support this");
+			return '\0';
+		}
+
+		virtual TWCHAR GetWChar() override
+		{
+			TASSERT(!"Console doesn't support this");
+			return L'\0';
+		}
+
+		virtual TINT PutCChar(TCHAR a_cCharacter) override
+		{
+			putchar(a_cCharacter);
+			return a_cCharacter & 0xFF;
+		}
+
+		virtual TINT PutWChar(TWCHAR a_wcCharacter) override
+		{
+			TASSERT(!"Console doesn't support this");
+			return a_wcCharacter & 0xFFFF;
+		}
+
+		virtual TINT CPrintf(const TCHAR* a_szFormat, ...) override
 		{
 			va_list args;
-			va_start(args, format);
+			va_start(args, a_szFormat);
 
-			char str[2048];
-			T2String8::FormatV(str, sizeof(str), format, args);
-			printf(str);
+			TCHAR str[2048];
+			T2String8::FormatV(str, sizeof(str), a_szFormat, args);
+			TINT iResult = printf(str);
 
 			va_end(args);
 
-			return 0;
+			return iResult;
 		}
-		
-		virtual int WPrintf(const wchar_t* format, ...)
-		{
-			TASSERT(!"Console doesn't support this");
-			return 0;
-		}
-		
-		virtual int VCPrintf(const char* format, va_list vargs)
-		{
-			char str[2048];
-			T2String8::FormatV(str, sizeof(str), format, vargs);
-			printf(str);
 
-			return 0;
-		}
-		
-		virtual int VWPrintf(const wchar_t* format, ...)
+		virtual TINT WPrintf(const TWCHAR* a_wszFormat, ...) override
 		{
 			TASSERT(!"Console doesn't support this");
 			return 0;
 		}
+
+		virtual TINT VCPrintf(const TCHAR* a_szFormat, va_list a_vargs) override
+		{
+			TCHAR str[2048];
+			T2String8::FormatV(str, sizeof(str), a_szFormat, a_vargs);
+			TINT iResult = printf(str);
+
+			return iResult;
+		}
+
+		virtual TINT VWPrintf(const TWCHAR* a_wszFormat, va_list a_vargs) override
+		{
+			TASSERT(!"Console doesn't support this");
+			return 0;
+		}
+
 	};
 
-	TConsoleFileSystem::TConsoleFileSystem(const char* a_szName) :
+	TConsoleFileSystem::TConsoleFileSystem(const TCHAR* a_szName) :
 		TFileSystem(a_szName)
 	{
 		TFileManager::GetSingletonSafe()->MountFileSystem(this);
 	}
 
-	TFile* TConsoleFileSystem::CreateFile(TString8 const& fn, uint32_t flags)
+	TFile* TConsoleFileSystem::CreateFile(const TString8& a_rcFileName, TFILEMODE a_eFileMode)
 	{
 		return new TConsoleFile(this);
 	}
@@ -132,17 +127,12 @@ namespace Toshi {
 		}
 	}
 
-	TString8 TConsoleFileSystem::MakeInternalPath(TString8 const&)
+	TString8 TConsoleFileSystem::MakeInternalPath(const TString8& a_rcPath)
 	{
 		return TString8();
 	}
 
-	TBOOL TConsoleFileSystem::MakeDirectory(TString8 const&)
-	{
-		return TFALSE;
-	}
-
-	TBOOL TConsoleFileSystem::GetNextFile(TString8& fileName, uint32_t flags)
+	TBOOL TConsoleFileSystem::MakeDirectory(const TString8& a_rcDirectory)
 	{
 		return TFALSE;
 	}

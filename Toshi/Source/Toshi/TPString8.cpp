@@ -9,7 +9,7 @@
 
 namespace Toshi {
 
-	void TPString8Pool::Get(TPooledString8*& a_pOutString, const char* a_szString, bool* a_pWasInPool)
+	void TPString8Pool::Get(TPooledString8*& a_pOutString, const TCHAR* a_szString, bool* a_pWasInPool)
 	{
 		a_pOutString = TNULL;
 
@@ -48,7 +48,7 @@ namespace Toshi {
 		// TODO: Initialise some unknown values
 	}
 
-	TPString8Pool::TPString8Pool(int a_iUnknown1, int a_iUnknown2, T2Allocator* a_pAllocator, void* m_pUnknown3) :
+	TPString8Pool::TPString8Pool(TINT a_iUnknown1, TINT a_iUnknown2, T2Allocator* a_pAllocator, void* m_pUnknown3) :
 		m_pAllocator(a_pAllocator),
 		m_oMap(a_pAllocator)
 	{

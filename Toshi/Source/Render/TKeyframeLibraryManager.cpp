@@ -9,7 +9,7 @@
 
 namespace Toshi {
 
-	TKeyframeLibrary* TKeyframeLibraryManager::GetLibrary(const char* a_szName)
+	TKeyframeLibrary* TKeyframeLibraryManager::GetLibrary(const TCHAR* a_szName)
 	{
 		for (auto it = m_List.Begin(); it != m_List.End(); it++)
 		{
@@ -22,7 +22,7 @@ namespace Toshi {
 		return TNULL;
 	}
 
-	TKeyframeLibrary* TKeyframeLibraryManager::LoadLibraryFromTRB(const char* a_szFilePath)
+	TKeyframeLibrary* TKeyframeLibraryManager::LoadLibraryFromTRB(const TCHAR* a_szFilePath)
 	{
 		TVALIDPTR(a_szFilePath);
 

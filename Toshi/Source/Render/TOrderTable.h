@@ -10,7 +10,7 @@ namespace Toshi
 	class TRegMaterial : public TNodeList<TRegMaterial>::TNode
 	{
 	public:
-		typedef uint32_t State;
+		typedef TUINT32 State;
 		enum State_ : State
 		{
 			State_Registered = BITFIELD(0),
@@ -123,7 +123,7 @@ namespace Toshi
 		TBOOL Create(TShader* a_pShader, TINT a_iPriority);
 
 	public:
-		static void CreateStaticData(uint32_t maxMaterials, uint32_t maxRenderPackets);
+		static void CreateStaticData(TUINT32 maxMaterials, TUINT32 maxRenderPackets);
 
 		static TRenderPacket* AllocRenderPacket()
 		{
@@ -132,14 +132,14 @@ namespace Toshi
 		}
 
 	public:
-		inline static uint32_t s_uiMaxRenderPackets = 0;
-		inline static uint32_t s_uiNumRenderPackets = 0;
-		inline static uint32_t s_uiMaxNumRenderPackets = 0;
-		inline static uint32_t s_uiOrigMaxRenderPackets = 0;
+		inline static TUINT32 s_uiMaxRenderPackets = 0;
+		inline static TUINT32 s_uiNumRenderPackets = 0;
+		inline static TUINT32 s_uiMaxNumRenderPackets = 0;
+		inline static TUINT32 s_uiOrigMaxRenderPackets = 0;
 		inline static T2SimpleArray<TRenderPacket> s_pRenderPackets;
 
-		inline static uint32_t s_uiMaxMaterials = 0;
-		inline static uint32_t s_uiNumRegisteredMaterials = 0;
+		inline static TUINT32 s_uiMaxMaterials = 0;
+		inline static TUINT32 s_uiNumRegisteredMaterials = 0;
 		inline static T2SimpleArray<TRegMaterial> s_pRegMaterials;
 		inline static TNodeList<TRegMaterial> s_llRegMatRegisteredList;
 		inline static TNodeList<TRegMaterial> s_llRegMatFreeList;

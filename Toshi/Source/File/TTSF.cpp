@@ -53,7 +53,7 @@ namespace Toshi {
 		return TTRB::ERROR_OK;
 	}
 
-	TUINT32 TTSFI::Open(const char* a_szFilePath)
+	TUINT32 TTSFI::Open(const TCHAR* a_szFilePath)
 	{
 		TFile* pFile = TFile::Create(a_szFilePath);
 		auto uiResult = Open(pFile);
@@ -89,7 +89,7 @@ namespace Toshi {
 		m_ReadPos = m_pFile->Tell() - fileInfo.FileStartOffset;
 
 		TUINT32 alignedPos = TMath::AlignNumUp(m_CurrentHunk.Size);
-		m_pFile->Seek(alignedPos - m_ReadPos, TFile::TSEEK_CUR);
+		m_pFile->Seek(alignedPos - m_ReadPos, TSEEK_CUR);
 		m_ReadPos = alignedPos;
 
 		return TTRB::ERROR_OK;
@@ -115,7 +115,7 @@ namespace Toshi {
 	{
 		// FUN_006880e0
 		TUINT32 alignedSize = TMath::AlignNumUp(m_CurrentHunk.Size);
-		m_pFile->Seek(alignedSize - m_ReadPos, TFile::TSEEK_CUR);
+		m_pFile->Seek(alignedSize - m_ReadPos, TSEEK_CUR);
 		m_ReadPos = alignedSize;
 
 		return TTRB::ERROR_OK;
@@ -171,7 +171,7 @@ namespace Toshi {
 		if (error == TCOMPRESS_ERROR_OK)
 		{
 			TUINT32 headerSize = m_pFile->Tell() - headerStart;
-			TCompress::Decompress(m_pFile, &header, (char*)buffer, size);
+			TCompress::Decompress(m_pFile, &header, (TCHAR*)buffer, size);
 			m_ReadPos += header.CompressedSize + headerSize;
 		}
 	}
@@ -179,7 +179,7 @@ namespace Toshi {
 	void TTSFI::LogUnknownSection()
 	{
 #ifdef TOSHI_DEBUG
-		char charName[sizeof(m_CurrentHunk.Name) + 1] = {};
+		TCHAR charName[sizeof(m_CurrentHunk.Name) + 1] = {};
 		*charName = m_CurrentHunk.Name;
 
 		TERROR("Unknown TRB section: %s\n", charName);
@@ -198,9 +198,9 @@ namespace Toshi {
 		m_CurrentHunk.Size = 0;
 	}
 
-	TTSFO::ERROR TTSFO::Create(const char* filepath, const char* magic, Endianess endianess)
+	TTSFO::ERROR TTSFO::Create(const TCHAR* filepath, const TCHAR* magic, Endianess endianess)
 	{
-		m_pFile = TFile::Create(filepath, TFile::FileMode_CreateNew | TFile::FileMode_Write);
+		m_pFile = TFile::Create(filepath, TFILEMODE_CREATENEW | TFILEMODE_WRITE);
 
 		if (m_pFile != TNULL)
 		{
@@ -238,7 +238,7 @@ namespace Toshi {
 		}
 	}
 
-	size_t TTSFO::BeginForm(const char* name)
+	size_t TTSFO::BeginForm(const TCHAR* name)
 	{
 		TASSERT(m_pFile != TNULL, "TTSFO is not created");
 
@@ -275,9 +275,9 @@ namespace Toshi {
 				formSize = PARSEDWORD_BIG(formSize);
 			}
 
-			m_pFile->Seek(formPosition + 4, TFile::TSEEK_SET);
+			m_pFile->Seek(formPosition + 4, TSEEK_SET);
 			Write(formSize);
-			m_pFile->Seek(oldPos, TFile::TSEEK_SET);
+			m_pFile->Seek(oldPos, TSEEK_SET);
 
 			return formSize;
 		}
@@ -285,7 +285,7 @@ namespace Toshi {
 		return 0;
 	}
 
-	TBOOL TTSFO::OpenHunk(HunkMark* hunkMark, const char* hunkName)
+	TBOOL TTSFO::OpenHunk(HunkMark* hunkMark, const TCHAR* hunkName)
 	{
 		TASSERT(hunkMark != TNULL, "HunkMark is TNULL");
 		hunkMark->Name = TMAKEFOUR(hunkName);
@@ -300,9 +300,9 @@ namespace Toshi {
 		TASSERT(hunkMark != TNULL, "HunkMark is TNULL");
 		auto oldPos = m_pFile->Tell();
 
-		m_pFile->Seek(hunkMark->Pos, TFile::TSEEK_SET);
+		m_pFile->Seek(hunkMark->Pos, TSEEK_SET);
 		WriteHunk(hunkMark->Name, TNULL, (oldPos - hunkMark->Pos) - sizeof(TTSF::Hunk));
-		m_pFile->Seek(oldPos, TFile::TSEEK_SET);
+		m_pFile->Seek(oldPos, TSEEK_SET);
 		TTSFO::WriteAlignmentPad();
 
 		return TTRUE;

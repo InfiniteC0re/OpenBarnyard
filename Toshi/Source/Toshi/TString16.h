@@ -1,46 +1,117 @@
 #pragma once
 #include "TString.h"
+#include "T2Allocator.h"
 
-namespace Toshi
-{
+namespace Toshi {
+
 	class TString16
 	{
 	public:
-		inline uint32_t Length() const { return m_iStrLen; }
-		
-	public:
-		TString16();
-		TString16(uint32_t size);
+		TString16(T2Allocator* allocator = TNULL);
+		TString16(TString16&& src, T2Allocator* allocator = TNULL) noexcept;
+		TString16(const TString16& src, T2Allocator* allocator = TNULL);
+		TString16(const TWCHAR* src, T2Allocator* allocator = TNULL);
+		TString16(TUINT32 size, T2Allocator* allocator = TNULL);
+		~TString16() { FreeBuffer(); }
+
+		void Copy(const TString16& src, TUINT32 size = -1) { Copy(src.m_pBuffer, size); }
+		void Copy(const TWCHAR* src, TUINT32 size = -1);
+
+		void FreeBuffer();
 
 		// Returns TTRUE if allocated memory
-		TBOOL AllocBuffer(uint32_t a_iLength, TBOOL freeMemory = TTRUE);
+		TBOOL AllocBuffer(TUINT32 size, TBOOL freeMemory = TTRUE);
 
-		TString16& Concat(const TString16& str, uint32_t size);
-		TString16& Concat(const wchar_t* str, uint32_t size);
+		static TString16 Format(const TWCHAR* a_pcFormat, ...);
+		TString16& VFormat(const TWCHAR* a_pcFormat, va_list a_vargs);
 
-		void Copy(const TString16& src, uint32_t size = -1);
+		void ForceSetData(TWCHAR* a_cString, TINT a_ilength);
+		void UndoForceSetData() { Reset(); }
 
-		TString16 Mid(uint32_t param_1, uint32_t param_2) const;
-		TString16 Left(uint32_t param_1) { return Mid(param_1, 0); }
+		TINT FindReverse(TWCHAR a_findChar, TINT pos) const;
 
-		inline TBOOL IsIndexValid(uint32_t index) const { return index <= m_iStrLen && index >= 0; }
-		inline const wchar_t* GetString(uint32_t index = 0) const { if (!IsIndexValid(index)) { return 0; } return m_pBuffer + index * 2; }
-		inline operator wchar_t* () const { return m_pBuffer; }
+		void Truncate(TUINT32 length);
+
+		// Returns position of specified character
+		TINT Find(TWCHAR character, TUINT32 pos = 0) const;
+
+		// Returns position of specified substring
+		TINT Find(const TWCHAR* substr, TUINT32 pos = 0) const;
+
+		// Returns string starting from specified index
+		const TWCHAR* GetString(TUINT32 index = 0) const;
+
+		TString16& Concat(const TString16& str, TUINT32 size = -1) { return Concat(str.m_pBuffer, size); };
+		TString16& Concat(const TWCHAR* src, TUINT32 size = -1);
+
+		TINT Compare(const TWCHAR*, TINT) const;
+		TINT CompareNoCase(const TWCHAR*, TINT) const;
+
+		TString16 Mid(TUINT32 param_1, TUINT32 param_2) const;
+		TString16 Right(TINT param_1) const { return Mid(param_1, Length() - param_1); }
+
+		TString16& MakeUpper() { _wcsupr(m_pBuffer); return *this; }
+		TString16& MakeLower() { _wcslwr(m_pBuffer); return *this; }
+
+		TUINT Length() const { return m_iStrLen; }
+		TUINT ExcessLength() const { return m_iExcessLen; }
+
+		TBOOL IsAllLowerCase() const;
+		TBOOL IsAllUpperCase() const;
+		TBOOL IsIndexValid(TUINT32 index) const { return index >= 0 && index <= Length(); }
+		TBOOL IsEmpty() const { return m_iStrLen == 0; }
+		TBOOL IsUnicode() const { return TFALSE; } // Who would have known?
+
+	public:
+		TString16 operator+(TWCHAR const* a_wszStr) const { TString16 str = TString16(*this); return std::move(str.Concat(a_wszStr)); }
+		TString16* operator+=(TWCHAR const* a_wszStr) { Concat(a_wszStr, -1); return this; }
+		TString16* operator+=(TString16& str) { Concat(str, -1); return this; }
+
+		TWCHAR& operator[](TINT index) { return m_pBuffer[index]; }
+		const TWCHAR& operator[](TINT index) const { return *GetString(index); }
+		operator const TWCHAR* () const { return m_pBuffer; }
+
+		TBOOL operator!() { return m_iStrLen == 0; }
+		TBOOL operator==(const TWCHAR* a_wszStr) const { return Compare(a_wszStr, -1) == 0; }
+		TBOOL operator==(const TString16& str) const { return Compare(str.m_pBuffer, -1) == 0; }
+		TBOOL operator!=(const TWCHAR* a_wszStr) const { return Compare(a_wszStr, -1) != 0; }
+		TBOOL operator!=(const TString16& str) const { return Compare(str.m_pBuffer, -1) != 0; }
+		TBOOL operator<(const TWCHAR* a_wszStr) const { return Compare(a_wszStr, -1) > -1; };
+		TBOOL operator<(const TString16& str) const { return Compare(str.m_pBuffer, -1) > -1; };
+		TBOOL operator<=(const TWCHAR* a_wszStr) const { return Compare(a_wszStr, -1) > 0; };
+		TBOOL operator<=(const TString16& str) const { return Compare(str.m_pBuffer, -1) > 0; };
+		
+		TString16& operator=(const TWCHAR* a_wszStr) { Copy(a_wszStr, -1); return *this; };
 		TString16& operator=(const TString16& str) { Copy(str, -1); return *this; };
+
 	private:
+		typedef T2Allocator* (*func_DefaultAllocatorCB)();
 
 		void Reset()
 		{
-			m_pBuffer = m_aNull;
+			m_pBuffer = NullWString;
 			m_iStrLen = 0;
 			m_iExcessLen = 0;
 		}
 
-		static inline wchar_t m_aNull[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
-		wchar_t* m_pBuffer = (wchar_t*)NullString;
-		uint8_t m_iExcessLen : 8 = 0;
-		uint32_t m_iStrLen : 24 = 0;
+		T2Allocator* GetAllocator()
+		{
+			return sm_pDefaultAllocatorCB();
+		}
+
+		static T2Allocator* GetDefaultAllocatorCB()
+		{
+			return &T2Allocator::s_GlobalAllocator;
+		}
+
+	private:
+		static inline func_DefaultAllocatorCB sm_pDefaultAllocatorCB = &GetDefaultAllocatorCB;
+
+	private:
+		TWCHAR* m_pBuffer = NullWString; // 0x0
+		TUINT32 m_iExcessLen : 8 = 0;    // 0x4
+		TUINT32 m_iStrLen : 24 = 0;      // 0x5
+		T2Allocator* m_pAllocator;       // 0x8
 	};
+
 }
-
-

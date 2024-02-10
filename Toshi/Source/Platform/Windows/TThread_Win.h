@@ -17,7 +17,7 @@ namespace Toshi
 	class TThread : public TDList<TThread>::TNode
 	{
 	public:
-		typedef int PRIORITY;
+		typedef TINT PRIORITY;
 		enum PRIORITY_ : PRIORITY
 		{
 			THREAD_MODE_BACKGROUND_BEGIN = 0x00010000,
@@ -40,7 +40,7 @@ namespace Toshi
 		static TBOOL GetPriority(void* a_hThreadHnd, PRIORITY& a_ePriority)
 		{
 			TASSERT(a_hThreadHnd != NULL, "Thread doesn't exist");
-			int iPriority = GetThreadPriority(a_hThreadHnd);
+			TINT iPriority = GetThreadPriority(a_hThreadHnd);
 			TASSERT(iPriority != THREAD_PRIORITY_ERROR_RETURN, "Couldn't get thread priority");
 			a_ePriority = iPriority;
 			return TTRUE;
@@ -55,7 +55,7 @@ namespace Toshi
 		}
 
 		static void Exit(TThread* a_pThread);
-		//static void Sleep(int milliSeconds) { usleep(100); }
+		//static void Sleep(TINT milliSeconds) { usleep(100); }
 
 		void* m_hThreadHnd; // 0xC
 		DWORD m_iThreadID;  // 0x10

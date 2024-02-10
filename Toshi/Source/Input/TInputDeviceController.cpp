@@ -30,7 +30,7 @@ namespace Toshi {
 		return TTRUE;
 	}
 
-	const char* TInputDeviceController::GetButtonFromDoodad(Doodad a_iDoodad) const
+	const TCHAR* TInputDeviceController::GetButtonFromDoodad(Doodad a_iDoodad) const
 	{
 		// TODO: Create constants for doodads
 

@@ -137,19 +137,19 @@ namespace Toshi {
 
 	TDEFINE_CLASS_NORUNTIME(TInputDeviceKeyboard);
 
-	int TInputDeviceKeyboard::ProcessVirtualButtons(EventEmitter& emitter, float flt)
+	TINT TInputDeviceKeyboard::ProcessVirtualButtons(EventEmitter& emitter, float flt)
 	{
 		emitter.Throw(TInputInterface::InputEvent(this, 0x20001, TInputInterface::EVENT_TYPE_UNKNOWN, m_mags[0], m_mags[1]));
 		TIMPLEMENT();
 		return 0;
 	}
 
-	const char* TInputDeviceKeyboard::GetButtonFromDoodad(Doodad a_iDoodad) const
+	const TCHAR* TInputDeviceKeyboard::GetButtonFromDoodad(Doodad a_iDoodad) const
 	{
 		return GET_KEY_FROM_DOODAD(a_iDoodad);
 	}
 
-	void TInputDeviceKeyboard::SetVirtStickDoodads(int a_iMapID, int x, int y, int z, int w)
+	void TInputDeviceKeyboard::SetVirtStickDoodads(TINT a_iMapID, TINT x, TINT y, TINT z, TINT w)
 	{
 		TASSERT(a_iMapID >= 0 && a_iMapID < VIRTSTK_DIRECTIONAL_MAPS);
 		m_VirtStickDoodads[a_iMapID][0] = x;
@@ -158,7 +158,7 @@ namespace Toshi {
 		m_VirtStickDoodads[a_iMapID][3] = w;
 	}
 
-	void TInputDeviceKeyboard::GetVirtStickDoodads(int a_iMapID, int& x, int& y, int& z, int& w)
+	void TInputDeviceKeyboard::GetVirtStickDoodads(TINT a_iMapID, TINT& x, TINT& y, TINT& z, TINT& w)
 	{
 		TASSERT(a_iMapID >= 0 && a_iMapID < VIRTSTK_DIRECTIONAL_MAPS);
 		x = m_VirtStickDoodads[a_iMapID][0];

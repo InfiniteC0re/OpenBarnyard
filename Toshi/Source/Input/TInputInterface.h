@@ -27,7 +27,7 @@ namespace Toshi {
 		{
 		public:
 			InputEvent(TInputDevice* a_pDevice, TINT a_iDoodad, EVENT_TYPE a_eEventType);
-			InputEvent(TInputDevice* a_pDevice, TINT a_iDoodad, EVENT_TYPE a_eEventType, wchar_t* a_wszString);
+			InputEvent(TInputDevice* a_pDevice, TINT a_iDoodad, EVENT_TYPE a_eEventType, TWCHAR* a_wszString);
 			InputEvent(TInputDevice* a_pDevice, TINT a_iDoodad, EVENT_TYPE a_eEventType, TINT a_iMagnitude1);
 			InputEvent(TInputDevice* a_pDevice, TINT a_iDoodad, EVENT_TYPE a_eEventType, TINT a_iMagnitude1, TINT a_iMagnitude2);
 			InputEvent(TInputDevice* a_pDevice, TINT a_iDoodad, EVENT_TYPE a_eEventType, TFLOAT a_fMagnitude1);
@@ -73,7 +73,7 @@ namespace Toshi {
 			TBOOL m_bIsMagnitudeFloat; // 0x08
 			int8_t m_iAxisCount;       // 0x09
 			TInputDevice* m_pSource;   // 0x0C
-			wchar_t m_wszString[4];    // 0x10
+			TWCHAR m_wszString[4];    // 0x10
 
 			union
 			{
@@ -170,7 +170,7 @@ namespace Toshi {
 		virtual void StopRepeat(Doodad a_iDoodad);
 		virtual void StopAllRepeats();
 		virtual TBOOL IsForceFeedbackDevice();
-		virtual const char* GetButtonFromDoodad(Doodad a_iDoodad) const = 0;
+		virtual const TCHAR* GetButtonFromDoodad(Doodad a_iDoodad) const = 0;
 		virtual TBOOL IsDown(Doodad a_iDoodad) const = 0;
 		virtual TINT GetAxisInt(Doodad a_iDoodad, TINT axis) const = 0;
 		virtual TINT GetAxisInt2(Doodad a_iDoodad, TINT axis) const { return GetAxisInt(a_iDoodad, axis); }

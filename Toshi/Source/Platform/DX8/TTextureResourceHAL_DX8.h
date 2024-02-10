@@ -35,7 +35,7 @@ namespace Toshi {
 		virtual void Unlock() override;
 		virtual void CreateFromT2Texture(T2Texture* a_pTexture) override;
 		virtual TBOOL Create(void* a_pData, TUINT a_uiDataSize, TUINT a_eTextureFlags, TUINT a_uiWidth, TUINT a_uiHeight) override;
-		virtual TBOOL Create(const char* a_szFileName, TUINT a_eTextureFlags) override;
+		virtual TBOOL Create(const TCHAR* a_szFileName, TUINT a_eTextureFlags) override;
 		virtual TBOOL CreateEx(void* a_pData, TUINT a_uiDataSize, TUINT a_uiWidth, TUINT a_uiHeight, TUINT a_uiMipLevels, TTEXTURERESOURCEFORMAT a_eFormat, BOOL a_bNoMipLevels) override;
 
 		TBOOL CreateFromFormat();
@@ -45,7 +45,7 @@ namespace Toshi {
 		TBOOL CreateFromMemoryDDS(TUINT a_uiWidth, TUINT a_uiHeight, TUINT a_uiLevels, void* a_pData);
 		TBOOL CreateFromMemory4444(TUINT a_uiWidth, TUINT a_uiHeight, TUINT a_uiLevels, void* a_pData);
 
-		TBOOL CreateFromFileDDS(TUINT a_uiWidth, TUINT a_uiHeight, TUINT a_uiLevels, const char* a_szFile);
+		TBOOL CreateFromFileDDS(TUINT a_uiWidth, TUINT a_uiHeight, TUINT a_uiLevels, const TCHAR* a_szFile);
 
 		void SetD3DTexture(IDirect3DTexture8* a_pD3DTexture)
 		{
@@ -58,7 +58,7 @@ namespace Toshi {
 		}
 
 	public:
-		static TBOOL IsPPM(const char* a_szName);
+		static TBOOL IsPPM(const TCHAR* a_szName);
 
 	private:
 		TINT m_iNumLocks;
@@ -73,8 +73,8 @@ namespace Toshi {
 		TTEXTURERESOURCEFORMAT m_eResourceFormat;
 		IDirect3DTexture8* m_pD3DTexture;
 		D3DXIMAGE_INFO m_ImageInfo;
-		int m_iUnk1;
-		int m_iUnk2;
+		TINT m_iUnk1;
+		TINT m_iUnk2;
 	};
 
 }

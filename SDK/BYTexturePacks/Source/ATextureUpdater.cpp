@@ -65,7 +65,7 @@ TBOOL MaterialLibrary_LoadTTLData(AMaterialLibrary* a_pMatLib, AMaterialLibrary:
 					dumpFilePath.Concat(pTexInfo->m_szFileName, TStringManager::String8Length(pTexInfo->m_szFileName) - 3);
 					dumpFilePath += "dds";
 
-					auto pFile = TFile::Create(dumpFilePath, TFile::FileMode_Read);
+					auto pFile = TFile::Create(dumpFilePath, TFILEMODE_READ);
 
 					if (pFile)
 					{
@@ -127,7 +127,7 @@ void ATextureUpdater::DumpTexture(const Toshi::TString8& a_rFilePath, const void
 		iSlashPos++;
 	}
 
-	auto pFile = TFile::Create(filepath, TFile::FileMode_Write | TFile::FileMode_CreateNew);
+	auto pFile = TFile::Create(filepath, TFILEMODE_WRITE | TFILEMODE_CREATENEW);
 
 	if (pFile)
 	{
@@ -209,7 +209,7 @@ void ATextureUpdater::ReloadTexture(const Toshi::TString8& a_rTextureName)
 	texFilePath.Concat(a_rTextureName, a_rTextureName.Length() - 3);
 	texFilePath += "dds";
 
-	if (Toshi::TFile* pFile = TFile::Create(texFilePath, TFile::FileMode_Read))
+	if (Toshi::TFile* pFile = TFile::Create(texFilePath, TFILEMODE_READ))
 	{
 		// Load texture data from raw file
 		auto uiFileSize = pFile->GetSize();
@@ -268,7 +268,7 @@ void ATextureUpdater::ReloadAllTextures()
 			texFilePath.Concat(pAppTexture->Name, TStringManager::String8Length(pAppTexture->Name) - 3);
 			texFilePath += "dds";
 
-			if (Toshi::TFile* pFile = TFile::Create(texFilePath, TFile::FileMode_Read))
+			if (Toshi::TFile* pFile = TFile::Create(texFilePath, TFILEMODE_READ))
 			{
 				auto uiFileSize = pFile->GetSize();
 				void* pFileData = TMalloc(uiFileSize);

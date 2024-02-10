@@ -23,33 +23,33 @@ namespace Toshi
 	public:
 		TRandom();
 
-		int GetInt();
-		int GetInt(uint32_t a_iLower, uint32_t a_iUpper);
-		inline int GetInt(uint32_t a_iUpper) { return GetInt(0, a_iUpper); };
+		TINT GetInt();
+		TINT GetInt(TUINT32 a_iLower, TUINT32 a_iUpper);
+		inline TINT GetInt(TUINT32 a_iUpper) { return GetInt(0, a_iUpper); };
 
 		float GetFloat();
 		float GetFloat2();
 
-		void SetSeed(unsigned int a_uiSeed);
+		void SetSeed(TUINT a_uiSeed);
 
-		uint32_t RandRaw();
+		TUINT32 RandRaw();
 		
-		inline uint32_t GetSeed() { return m_uiSeed; }
+		inline TUINT32 GetSeed() { return m_uiSeed; }
 
 	private:
 		void Isaac();
 		void RandInit();
 
 	private:
-		uint32_t m_uiSeed; // 0x0
-		uint32_t m_uiRndCnt; // 0x4
-		uint32_t m_pRandrsl[RANDSIZ]; //0x8
+		TUINT32 m_uiSeed; // 0x0
+		TUINT32 m_uiRndCnt; // 0x4
+		TUINT32 m_pRandrsl[RANDSIZ]; //0x8
 
-		uint32_t m_pRandmem[RANDSIZ]; // 0x48
+		TUINT32 m_pRandmem[RANDSIZ]; // 0x48
 
-		uint32_t m_uiRandA; // 0x88
-		uint32_t m_uiRandB; // 0x8C
-		uint32_t m_uiRandC; // 0x90
+		TUINT32 m_uiRandA; // 0x88
+		TUINT32 m_uiRandB; // 0x8C
+		TUINT32 m_uiRandC; // 0x90
 	};
 
 }

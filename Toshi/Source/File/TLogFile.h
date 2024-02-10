@@ -7,7 +7,7 @@ namespace Toshi {
 	class TLogFile
 	{
 	private:
-		static constexpr uint32_t cLevelMax = 30;
+		static constexpr TUINT32 cLevelMax = 30;
 
 	public:
 		enum Type
@@ -29,12 +29,12 @@ namespace Toshi {
 		TLogFile();
 		~TLogFile();
 
-		Error Create(const char* fileName, const char* str2, TBOOL writeExisting);
+		Error Create(const TCHAR* fileName, const TCHAR* str2, TBOOL writeExisting);
 		void Close();
 		void RecalcLevel();
-		void Print(const char* format, ...);
+		void Print(const TCHAR* format, ...);
 
-		void Log(Type type, const char* str1, const char* str2, const char* format, ...);
+		void Log(Type type, const TCHAR* str1, const TCHAR* str2, const TCHAR* format, ...);
 
 		void Down()
 		{
@@ -65,31 +65,31 @@ namespace Toshi {
 		}
 #endif // SUPPORT_COLOURED_LOGS
 
-		int GetTypeCount(Type type) const
+		TINT GetTypeCount(Type type) const
 		{
 			return m_typeCounts[type];
 		}
 
-		int GetTotalLogCount() const
+		TINT GetTotalLogCount() const
 		{
 			return m_iTotalLogCount;
 		}
 
-		const char* GetLevelString() const
+		const TCHAR* GetLevelString() const
 		{
 			return m_LevelString;
 		}
 
 	private:
 		TFile* m_pFile;                 // 0x00
-		int m_iTotalLogCount;           // 0x04
+		TINT m_iTotalLogCount;           // 0x04
 		TBOOL m_bIsSimpleMode;          // 0x08
 		TBOOL m_bAllowIndentation;      // 0x09
-		char m_LevelString[cLevelMax];  // 0x0A
-		uint32_t m_curLevel;            // 0x2C
-		int m_typeCounts[Type_NUMOF];   // 0x30
-		int* m_unk2;                    // 0x34
-		int m_unk3;                     // 0x38
+		TCHAR m_LevelString[cLevelMax];  // 0x0A
+		TUINT32 m_curLevel;            // 0x2C
+		TINT m_typeCounts[Type_NUMOF];   // 0x30
+		TINT* m_unk2;                    // 0x34
+		TINT m_unk3;                     // 0x38
 
 #if SUPPORT_COLOURED_LOGS
 		TBOOL m_bColouring = TTRUE;

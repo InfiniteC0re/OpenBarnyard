@@ -9,7 +9,7 @@
 
 namespace Toshi
 {
-	T2Locale::T2Locale(int langCount, size_t bufferSize, void* buffer)
+	T2Locale::T2Locale(TINT langCount, size_t bufferSize, void* buffer)
 	{
 		// 00662d40
 		m_pBuffer = buffer;

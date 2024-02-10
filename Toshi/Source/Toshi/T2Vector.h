@@ -86,14 +86,14 @@ namespace Toshi
 				return a_rOther.m_pVector == m_pVector && a_rOther.m_uiIndex <= m_uiIndex;
 			}
 
-			Iterator operator++(int) noexcept
+			Iterator operator++(TINT) noexcept
 			{
 				Iterator temp = *this;
 				m_uiIndex++;
 				return temp;
 			}
 
-			Iterator operator--(int) noexcept
+			Iterator operator--(TINT) noexcept
 			{
 				Iterator temp = *this;
 				m_uiIndex--;

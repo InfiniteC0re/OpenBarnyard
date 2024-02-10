@@ -8,10 +8,10 @@
 	for (auto iteratorName = vecName.Tail(); iteratorName != vecName.End(); iteratorName--)
 
 #define T2_FOREACH_ARRAY(arrName, iteratorName) \
-    for (int iteratorName = 0; iteratorName < TARRAYSIZE(arrName); iteratorName++)
+    for (TINT iteratorName = 0; iteratorName < TARRAYSIZE(arrName); iteratorName++)
 
 #define T2_FOREACH_ARRAY_BACK(arrName, iteratorName) \
-	for (int iteratorName = TARRAYSIZE(arrName) - 1; iteratorName >= 0; iteratorName--)
+	for (TINT iteratorName = TARRAYSIZE(arrName) - 1; iteratorName >= 0; iteratorName--)
 
 #define T2_DEFINE_ITERATOR_FRIEND() \
 	template<class T, class Node> friend class Toshi::T2Iterator
@@ -64,7 +64,7 @@ namespace Toshi {
 			return static_cast<T*>(m_pPtr);
 		}
 
-		T2Iterator operator++(int)
+		T2Iterator operator++(TINT)
 		{
 			TASSERT(m_pPtr != TNULL);
 			T2Iterator old = m_pPtr;
@@ -72,7 +72,7 @@ namespace Toshi {
 			return old;
 		}
 
-		T2Iterator operator--(int)
+		T2Iterator operator--(TINT)
 		{
 			TASSERT(m_pPtr != TNULL);
 			T2Iterator old = m_pPtr;

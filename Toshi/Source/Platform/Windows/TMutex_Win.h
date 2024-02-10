@@ -34,7 +34,7 @@ namespace Toshi
 		}
 
 		// Returns TTRUE if the state is signaled
-		TBOOL Lock(uint32_t flags = 0)
+		TBOOL Lock(TUINT32 flags = 0)
 		{
 			DWORD waitForMs = (flags & TMutexLockFlag_DoNotWait) ? 0 : INFINITE;
 			DWORD result = WaitForSingleObject(m_Handle, waitForMs);

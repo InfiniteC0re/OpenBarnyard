@@ -37,8 +37,8 @@ namespace Toshi {
 			TUINT m_uiTotalSize2;
 			Hole* m_pHoles[NUM_FREE_LISTS];
 			Hole* m_pFirstHole;
-			char m_szSignature[8];
-			char m_szName[52];
+			TCHAR m_szSignature[8];
+			TCHAR m_szName[52];
 			Hole m_RootHole;
 		};
 
@@ -87,12 +87,12 @@ namespace Toshi {
 		TMemory();
 		~TMemory();
 
-		void* Alloc(TUINT a_uiSize, TINT a_uiAlignment, MemBlock* a_pMemBlock, const char* a_szFileName, TINT a_iLineNum);
+		void* Alloc(TUINT a_uiSize, TINT a_uiAlignment, MemBlock* a_pMemBlock, const TCHAR* a_szFileName, TINT a_iLineNum);
 		
 		TBOOL Free(void* a_pMem);
 
-		MemBlock* CreateMemBlock(TUINT a_uiSize, const char* a_szName, MemBlock* a_pOwnerBlock);
-		MemBlock* CreateMemBlockInPlace(void* a_pMem, TUINT a_uiSize, const char* a_szName);
+		MemBlock* CreateMemBlock(TUINT a_uiSize, const TCHAR* a_szName, MemBlock* a_pOwnerBlock);
+		MemBlock* CreateMemBlockInPlace(void* a_pMem, TUINT a_uiSize, const TCHAR* a_szName);
 		void DestroyMemBlock(MemBlock* a_pMemBlock);
 
 		MemBlock* GetGlobalBlock() const
@@ -108,7 +108,7 @@ namespace Toshi {
 		}
 
 		void DumpMemInfo();
-		void PrintDebug(const char* a_szFormat, ...);
+		void PrintDebug(const TCHAR* a_szFormat, ...);
 
 	private:
 		TBOOL FreeMemBlock(MemBlock* a_pMemBlock);
@@ -145,8 +145,8 @@ namespace Toshi {
 }
 
 void* TMalloc(TUINT a_uiSize);
-void* TMalloc(TUINT a_uiSize, const char* a_szFileName, TINT a_iLineNum);
-void* TMalloc(TUINT a_uiSize, Toshi::TMemory::MemBlock* a_pMemBlock, const char* a_szFileName = TNULL, TINT a_iLineNum = -1);
+void* TMalloc(TUINT a_uiSize, const TCHAR* a_szFileName, TINT a_iLineNum);
+void* TMalloc(TUINT a_uiSize, Toshi::TMemory::MemBlock* a_pMemBlock, const TCHAR* a_szFileName = TNULL, TINT a_iLineNum = -1);
 void* TMemalign(TUINT a_uiSize, TINT a_iAlignment);
 void* TMemalign(TINT a_iAlignment, TUINT a_uiSize, Toshi::TMemory::MemBlock* a_pMemBlock);
 void TFree(void* a_pMem);

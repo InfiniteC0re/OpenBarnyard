@@ -27,6 +27,6 @@ namespace Toshi
 		~TInputDeviceMouse() = default;
 
 		virtual TBOOL GetDoodadProperties(Doodad a_iDoodad, TInputDevice::DoodadProperties& props) const override;
-		virtual const char* GetButtonFromDoodad(Doodad a_iDoodad) const override;
+		virtual const TCHAR* GetButtonFromDoodad(Doodad a_iDoodad) const override;
 	};
 }
