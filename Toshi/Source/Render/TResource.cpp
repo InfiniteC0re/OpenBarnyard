@@ -12,6 +12,14 @@ namespace Toshi {
 
 	TDEFINE_CLASS(TResource);
 
+	TResource::TResource()
+	{
+		m_State = 0;
+		m_UId = 0;
+		m_pRenderer = TNULL;
+		m_Name[0] = 0;
+	}
+
 	TResource::~TResource()
 	{
 		m_State |= TResourceState_Dead;
@@ -44,6 +52,16 @@ namespace Toshi {
 	void TResource::DestroyResource()
 	{
 		GetRenderer()->DestroyResource(this);
+	}
+
+	TBOOL TResource::TryInvalidate()
+	{
+		return TTRUE;
+	}
+
+	TBOOL TResource::TryValidate()
+	{
+		return TTRUE;
 	}
 
 	void TResource::OnDestroy()
@@ -96,7 +114,7 @@ namespace Toshi {
 		}
 		else
 		{
-			return Recurse(a_pCallback, GetChild(), TTRUE, a_pUserData);
+			return Recurse(a_pCallback, Child(), TTRUE, a_pUserData);
 		}
 	}
 
@@ -106,7 +124,7 @@ namespace Toshi {
 
 		while (pResource)
 		{
-			TResource* pNext = pResource->GetNextResource();
+			TResource* pNext = pResource->Next();
 
 			if (pNext == a_pResource || pNext == pResource || !a_bFlag)
 			{
@@ -115,7 +133,7 @@ namespace Toshi {
 
 			if (!a_pCallback(pResource, a_pUserData)) return TFALSE;
 
-			auto pAttached = pResource->GetChild();
+			auto pAttached = pResource->Child();
 			if (pAttached && !Recurse(a_pCallback, pResource, TTRUE, a_pUserData))
 			{
 				return TFALSE;
@@ -125,6 +143,26 @@ namespace Toshi {
 		}
 
 		return TTRUE;
+	}
+
+	Toshi::TRenderInterface* TResource::GetRenderer() const
+	{
+		return m_pRenderer;
+	}
+
+	void TResource::SetRenderer(TRenderInterface* pRenderer)
+	{
+		m_pRenderer = pRenderer;
+	}
+
+	TUINT32 TResource::GetUId() const
+	{
+		return m_UId;
+	}
+
+	void TResource::SetUId(TUINT32 uid)
+	{
+		m_UId = uid;
 	}
 
 }

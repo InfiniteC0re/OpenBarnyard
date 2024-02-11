@@ -19,8 +19,15 @@ public:
 public:
 	ASysMesh();
 
+	//-----------------------------------------------------------------------------
+	// Toshi::TMesh
+	//-----------------------------------------------------------------------------
 	virtual TBOOL Validate() override;
 	virtual void Invalidate() override;
+
+	//-----------------------------------------------------------------------------
+	// Own methods
+	//-----------------------------------------------------------------------------
 	virtual TBOOL Create(void* a_pUnk, const char* a_szSomeString);
 	virtual TBOOL CreatePools(TUINT32 a_uiFlags, TUINT16 a_uiMaxVertices, TUINT16 a_uiMaxIndices);
 	virtual TBOOL Lock(LockBuffer& a_rLockBuffer);
@@ -29,7 +36,7 @@ public:
 	virtual Toshi::TIndexPoolResourceInterface* GetIndexPool();
 	virtual void SetZBias(TINT a_iZBias) = 0;
 
-	TBOOL IsLocked() const { return m_uiFlags & 0x8000; }
+	TBOOL IsLocked() const { return m_uiFlags & FLAG_LOCKED; }
 
 private:
 	TBOOL CreateResource();

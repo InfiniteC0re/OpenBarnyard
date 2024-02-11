@@ -11,31 +11,83 @@ namespace Toshi {
 
 	TDEFINE_CLASS_NORUNTIME(TMesh);
 
-	TBOOL Toshi::TMesh::Validate()
+	TMesh::TMesh()
+	{
+		m_pOwnerShader = TNULL;
+		m_pMaterial = TNULL;
+		m_State = State_None;
+	}
+
+	TMesh::~TMesh()
+	{
+		m_pOwnerShader = TNULL;
+		m_pMaterial = TNULL;
+		m_State = State_None;
+	}
+
+	TBOOL TMesh::Validate()
 	{
 		m_State |= State_Validated;
 		return TTRUE;
 	}
 
-	void Toshi::TMesh::Invalidate()
+	void TMesh::Invalidate()
 	{
 		m_State &= ~State_Validated;
 	}
 
-	TBOOL Toshi::TMesh::Create()
+	TBOOL TMesh::Create()
 	{
 		m_State |= State_Created;
 		return TTRUE;
 	}
 
-	TBOOL Toshi::TMesh::Render()
+	TBOOL TMesh::Render()
 	{
 		return TTRUE;
 	}
 
-	void Toshi::TMesh::OnDestroy()
+	void TMesh::OnDestroy()
 	{
 		m_State &= ~State_Created;
+	}
+
+	void TMesh::DestroyResource()
+	{
+		Invalidate();
+		OnDestroy();
+		delete this;
+	}
+
+	void TMesh::SetMaterial(TMaterial* pMaterial)
+	{
+		m_pMaterial = pMaterial;
+	}
+
+	TMaterial* TMesh::GetMaterial() const
+	{
+		return m_pMaterial;
+	}
+
+	void TMesh::SetOwnerShader(TShader* pShader)
+	{
+		TASSERT(TNULL == m_pOwnerShader);
+		m_pOwnerShader = pShader;
+	}
+
+	TBOOL TMesh::IsCreated() const
+	{
+		return m_State & State_Created;
+	}
+
+	TBOOL TMesh::IsValidated() const
+	{
+		return m_State & State_Validated;
+	}
+
+	TShader* TMesh::GetOwnerShader()
+	{
+		return m_pOwnerShader;
 	}
 
 }

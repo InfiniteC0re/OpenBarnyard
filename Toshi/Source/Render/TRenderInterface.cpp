@@ -122,14 +122,14 @@ namespace Toshi {
 
 	void TRenderInterface::DestroyResource(TResource* resource)
 	{
-		TASSERT(TNULL != resource->GetTree(), "Resource doesn't have a tree");
+		TASSERT(TNULL != resource->Tree(), "Resource doesn't have a tree");
 		TASSERT(TFALSE == resource->IsDead(), "Resource is already dead");
 
 		if (resource->IsDying() == TFALSE)
 		{
 			m_bHasDyingResources = TTRUE;
 			resource->AddState(TResourceState_Dying);
-			DestroyResourceRecurse(resource->GetChild());
+			DestroyResourceRecurse(resource->Child());
 			resource->Invalidate();
 		}
 	}
@@ -138,20 +138,20 @@ namespace Toshi {
 	{
 		if (resource != TNULL)
 		{
-			TResource* lastResource = resource->GetLastResource();
+			TResource* lastResource = resource->Prev();
 
 			while (resource != TNULL)
 			{
-				TResource* nextResource = (resource != lastResource) ? resource->GetNextResource() : TNULL;
+				TResource* nextResource = (resource != lastResource) ? resource->Next() : TNULL;
 
 				if (resource->IsDying() == TFALSE)
 				{
 					m_bHasDyingResources = TTRUE;
 					resource->AddState(TResourceState_Dying);
 
-					if (resource->GetChild() != TNULL)
+					if (resource->Child() != TNULL)
 					{
-						DestroyResourceRecurse(resource->GetChild());
+						DestroyResourceRecurse(resource->Child());
 					}
 
 					resource->Invalidate();
@@ -160,6 +160,13 @@ namespace Toshi {
 				resource = nextResource;
 			}
 		}
+	}
+
+	void TRenderInterface::SetResourceExplicit(TResource* resource, SYSRESOURCE systemResource)
+	{
+		TASSERT(systemResource >= 0 && systemResource < SYSRESOURCE_NUMOF, "Unknown resource");
+		TASSERT(m_SystemResources[systemResource] == TNULL, "This resource has already been assigned!");
+		m_SystemResources[systemResource] = resource;
 	}
 
 	TResource* TRenderInterface::CreateResource(TClass* pClass, const TCHAR* name, TResource* parent)
@@ -315,12 +322,12 @@ namespace Toshi {
 		pRes2 = resources;
 		if (resources != (TResource*)0x0) {
 			do {
-				next = pRes2->GetNextResource();
+				next = pRes2->Next();
 				if (next == pRes1) {
 					next = (TResource*)0x0;
 				}
 				if ((pRes2->m_State & 4) == 0) {
-					pRes2 = pRes2->GetChild();
+					pRes2 = pRes2->Child();
 					if (pRes2 != (TResource*)0x0) {
 						DestroyDyingResources(pRes2);
 					}
@@ -330,9 +337,9 @@ namespace Toshi {
 						pRes1 = next;
 						resources = next;
 					}
-					pTVar1 = pRes2->GetChild();
+					pTVar1 = pRes2->Child();
 					while (pTVar1 != (TResource*)0x0) {
-						pRes1 = pTVar1->GetNextResource();
+						pRes1 = pTVar1->Next();
 						if (pRes1 == pTVar1) {
 							pRes1 = (TResource*)0x0;
 						}
@@ -357,7 +364,7 @@ namespace Toshi {
 	{
 		while (resource)
 		{
-			auto next = resource->GetNextResource();
+			auto next = resource->Next();
 			if (next == resource) next = TNULL;
 
 			DeleteResourceAtomic(resource);
@@ -471,6 +478,15 @@ namespace Toshi {
 			}
 
 			pAdapter++;
+		}
+	}
+
+	void TRenderInterface::FlushDyingResources()
+	{
+		while (m_bHasDyingResources)
+		{
+			m_bHasDyingResources = TFALSE;
+			DestroyDyingResources(m_Resources.ChildOfRoot());
 		}
 	}
 

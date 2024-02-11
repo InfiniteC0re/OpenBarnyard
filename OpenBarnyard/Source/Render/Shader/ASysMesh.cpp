@@ -97,10 +97,7 @@ TBOOL ASysMesh::CreatePools(TUINT32 a_uiResourcesFlags, TUINT16 a_uiMaxVertices,
 
 TBOOL ASysMesh::CreateResource()
 {
-	auto pVertexFactory = TSTATICCAST(
-		TVertexFactoryResourceInterface*,
-		TRenderInterface::GetSingleton()->GetSystemResource(TRenderInterface::SYSRESOURCE_VFSYSVNDUV1)
-	);
+	auto pVertexFactory = TRenderInterface::GetSingleton()->GetSystemResource<TVertexFactoryResourceInterface>(TRenderInterface::SYSRESOURCE_VFSYSVNDUV1);
 	TVALIDPTR(pVertexFactory);
 
 	TUINT16 uiVertexPoolFlags;
@@ -127,10 +124,7 @@ TBOOL ASysMesh::CreateResource()
 	m_pVertexPool = pVertexFactory->CreatePoolResource(m_uiMaxVertices, uiVertexPoolFlags);
 	TVALIDPTR(m_pVertexPool);
 
-	auto pIndexFactory = TSTATICCAST(
-		TIndexFactoryResourceInterface*,
-		TRenderInterface::GetSingleton()->GetSystemResource(TRenderInterface::SYSRESOURCE_IFSYS)
-	);
+	auto pIndexFactory = TRenderInterface::GetSingleton()->GetSystemResource<TIndexFactoryResourceInterface>(TRenderInterface::SYSRESOURCE_IFSYS);
 	TVALIDPTR(pIndexFactory);
 
 	TUINT16 uiIndexPoolFlags;
@@ -167,7 +161,7 @@ TBOOL ASysMesh::Lock(LockBuffer& a_rLockBuffer)
 	{
 		if (m_pIndexPool->Lock(&a_rLockBuffer.IndexLock))
 		{
-			m_uiFlags |= 0x8000;
+			m_uiFlags |= FLAG_LOCKED;
 			return TTRUE;
 		}
 	}
@@ -189,7 +183,7 @@ void ASysMesh::Unlock(TUINT32 a_uiNumVertices, TUINT32 a_uiNumIndices)
 
 	m_pVertexPool->Unlock(a_uiNumVertices);
 	m_pIndexPool->Unlock(a_uiNumIndices);
-	m_uiFlags &= 0x8000;
+	m_uiFlags &= FLAG_LOCKED;
 }
 
 Toshi::TVertexPoolResourceInterface* ASysMesh::GetVertexPool()

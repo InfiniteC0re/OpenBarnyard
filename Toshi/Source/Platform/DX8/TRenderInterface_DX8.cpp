@@ -177,7 +177,7 @@ namespace Toshi {
 				invalidTextureData[i] = 0xff0fff0f;
 			}
 
-			auto pTextureFactory = TSTATICCAST(TTextureFactoryHAL*, GetSystemResource(SYSRESOURCE_TEXTUREFACTORY));
+			auto pTextureFactory = GetSystemResource<TTextureFactoryHAL>(SYSRESOURCE_TEXTUREFACTORY);
 			m_pInvalidTexture = pTextureFactory->CreateTextureFromMemory(invalidTextureData, sizeof(invalidTextureData), 0x11, 8, 8);
 
 			EnableColourCorrection(TTRUE);

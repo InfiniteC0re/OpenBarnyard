@@ -111,19 +111,15 @@ namespace Toshi {
 		void DestroyResourceRecurse(TResource* resource);
 
 		// Returns system resource
-		TResource* GetSystemResource(SYSRESOURCE systemResource)
+		template <class T>
+		T* GetSystemResource(SYSRESOURCE systemResource)
 		{
 			TASSERT(systemResource >= 0 && systemResource < SYSRESOURCE_NUMOF, "Unknown resource");
-			return m_SystemResources[systemResource];
+			return TSTATICCAST(T*, m_SystemResources[systemResource]);
 		}
 
 		// Sets resource explicit
-		void SetResourceExplicit(TResource* resource, SYSRESOURCE systemResource)
-		{
-			TASSERT(systemResource >= 0 && systemResource < SYSRESOURCE_NUMOF, "Unknown resource");
-			TASSERT(m_SystemResources[systemResource] == TNULL, "This resource has already been assigned!");
-			m_SystemResources[systemResource] = resource;
-		}
+		void SetResourceExplicit(TResource* resource, SYSRESOURCE systemResource);
 
 		// Creates resource and returns it
 		TResource* CreateResource(TClass* pClass, const TCHAR* name, TResource* parent);
@@ -139,12 +135,16 @@ namespace Toshi {
 		TBOOL IsInScene() { return m_bInScene; }
 		TBOOL IsCreated() { return m_bCreated; }
 		TBOOL IsDisplayCreated() { return m_bDisplayCreated; }
+
 		TRenderContext* GetCurrentRenderContext() const { return m_pCurrentContext; }
 		TNodeList<TRenderAdapter>* GetAdapterList() { return &m_AdapterList; }
 		TKeyframeLibraryManager& GetKeyframeLibraryManager() { return m_KeyframeManager; }
+		TStack<TMatrix44, 20>& GetTransforms() { return m_Transforms; }
+		TTexture* GetInvalidTexture() { return m_pInvalidTexture; }
 
 		void DestroyAllShaderResources();
 
+		void FlushDyingResources();
 		void DestroyDyingResources(TResource* resources);
 		//void DestroyDyingResources();
 
@@ -154,26 +154,8 @@ namespace Toshi {
 
 		TRenderAdapter::Mode::Device* FindDevice(const DISPLAYPARAMS& a_rDisplayParams);
 
+
 		void BeginEndSceneHAL();
-
-		void FlushDyingResources()
-		{
-			while (m_bHasDyingResources)
-			{
-				m_bHasDyingResources = TFALSE;
-				DestroyDyingResources(m_Resources.ChildOfRoot());
-			}
-		}
-
-		TTexture* GetInvalidTexture()
-		{
-			return m_pInvalidTexture;
-		}
-
-		TStack<TMatrix44, 20>& GetTransforms()
-		{
-			return m_Transforms;
-		}
 
 	protected:
 		TUINT32 m_Unk1;                                  // 0x04

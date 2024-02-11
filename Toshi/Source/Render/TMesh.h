@@ -1,8 +1,8 @@
 #pragma once
 #include "TMaterial.h"
 
-namespace Toshi
-{
+namespace Toshi {
+
 	class TShader;
 
 	class TMesh : public TObject
@@ -19,60 +19,38 @@ namespace Toshi
 			State_Validated = BITFIELD(1),
 		};
 
-	public:
-		TMesh()
+		// These flags can be used by the client classes
+		using FLAG = TUINT32;
+		enum FLAG_ : FLAG
 		{
-			m_pOwnerShader = TNULL;
-			m_pMaterial = TNULL;
-			m_State = State_None;
-		}
+			FLAG_LOCKED = 0x8000
+		};
 
+	public:
+		TMesh();
+
+		//-----------------------------------------------------------------------------
+		// Own methods
+		//-----------------------------------------------------------------------------
 		virtual TBOOL Validate();
 		virtual void Invalidate();
 		virtual TBOOL Create();
 		virtual TBOOL Render();
 		virtual void OnDestroy();
 
-		void DestroyResource()
-		{
-			Invalidate();
-			OnDestroy();
-			delete this;
-		}
+		void DestroyResource();
 
-		void SetMaterial(TMaterial* pMaterial)
-		{
-			m_pMaterial = pMaterial;
-		}
+		TMaterial* GetMaterial() const;
+		void SetMaterial(TMaterial* pMaterial);
 
-		TMaterial* GetMaterial() const
-		{
-			return m_pMaterial;
-		}
+		TShader* GetOwnerShader();
+		void SetOwnerShader(TShader* pShader);
 
-		void SetOwnerShader(TShader* pShader)
-		{
-			TASSERT(TNULL == m_pOwnerShader);
-			m_pOwnerShader = pShader;
-		}
-
-		TShader* GetOwnerShader()
-		{
-			return m_pOwnerShader;
-		}
-
-		TBOOL IsCreated() const
-		{
-			return m_State & State_Created;
-		}
-
-		TBOOL IsValidated() const
-		{
-			return m_State & State_Validated;
-		}
+		TBOOL IsCreated() const;
+		TBOOL IsValidated() const;
 
 	protected:
-		~TMesh() = default;
+		~TMesh();
 
 	protected:
 		TMaterial* m_pMaterial;  // 0x04

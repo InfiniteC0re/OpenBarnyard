@@ -33,8 +33,11 @@ namespace Toshi {
 
 	public:
 		TShader();
-		virtual ~TShader();
+		~TShader();
 
+		//-----------------------------------------------------------------------------
+		// Own methods
+		//-----------------------------------------------------------------------------
 		virtual void OnDestroy();
 		virtual void Flush();
 		virtual void StartFlush() = 0;

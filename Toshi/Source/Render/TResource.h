@@ -1,8 +1,8 @@
 #pragma once
 #include "Toshi/TNodeTree.h"
 
-namespace Toshi
-{
+namespace Toshi {
+
 	class TRenderInterface;
 
 	typedef uint8_t TResourceState;
@@ -29,21 +29,15 @@ namespace Toshi
 		using t_RecurseCb = TBOOL(*)(TResource* a_pResource, void* a_pUserData);
 
 	public:
-		TResource()
-		{
-			m_State = 0;
-			m_UId = 0;
-			m_Renderer = TNULL;
-			m_Name[0] = 0;
-		}
+		TResource();
+		~TResource();
 
-		virtual ~TResource();
 		virtual TBOOL Create();
 		virtual TBOOL Validate();
 		virtual void Invalidate();
 		virtual void DestroyResource();
-		virtual TBOOL TryInvalidate() { return TTRUE; }
-		virtual TBOOL TryValidate() { return TTRUE; }
+		virtual TBOOL TryInvalidate();
+		virtual TBOOL TryValidate();
 		virtual void OnDestroy();
 
 		TBOOL IsDead() const { return m_State & TResourceState_Dead; }
@@ -65,56 +59,18 @@ namespace Toshi
 		TBOOL RecurseSimple(t_RecurseCb a_pCallback, TResource* a_pResource, void* a_pUserData);
 		static TBOOL Recurse(t_RecurseCb a_pCallback, TResource* a_pResource, TBOOL a_bFlag, void* a_pUserData);
 
-		TRenderInterface* GetRenderer() const
-		{
-			return m_Renderer;
-		}
+		TRenderInterface* GetRenderer() const;
+		void SetRenderer(TRenderInterface* pRenderer);
 
-		void SetRenderer(TRenderInterface* pRenderer)
-		{
-			m_Renderer = pRenderer;
-		}
-
-		TResource* Parent() const
-		{
-			return TNode::Parent();
-		}
-
-		TResource* GetNextResource() const
-		{
-			return TNode::Next();
-		}
-
-		TResource* GetChild() const
-		{
-			return TNode::Child();
-		}
-
-		TResource* GetLastResource() const
-		{
-			return TNode::Prev();
-		}
-
-		TNodeTree<TResource>* GetTree()
-		{
-			return TNode::m_Tree;
-		}
-
-		TUINT32 GetUId() const
-		{
-			return m_UId;
-		}
-
-		void SetUId(TUINT32 uid)
-		{
-			m_UId = uid;
-		}
+		TUINT32 GetUId() const;
+		void SetUId(TUINT32 uid);
 
 	private:
-		TRenderInterface* m_Renderer;         // 0x18
-		TCHAR m_Name[MAXNAMELEN + 1]; // 0x1C
-		TResourceState m_State;      // 0x2B
-		TUINT32 m_UId;              // 0x2C
+		TRenderInterface* m_pRenderer; // 0x18
+		TCHAR m_Name[MAXNAMELEN + 1];  // 0x1C
+		TResourceState m_State;        // 0x2B
+		TUINT32 m_UId;                 // 0x2C
 	};
+
 }
 
