@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "ASysMaterialHAL_DX8.h"
+#include "ASysMaterial_DX8.h"
 
 #ifdef TOSHI_SKU_WINDOWS
 #include "Platform/DX8/TRenderInterface_DX8.h"

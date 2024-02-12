@@ -85,7 +85,6 @@ namespace Toshi
 		{
 			m_pLastRegMat = TNULL;
 			m_pShader = TNULL;
-			m_pLastRegMat = TNULL;
 		}
 
 		~TOrderTable()

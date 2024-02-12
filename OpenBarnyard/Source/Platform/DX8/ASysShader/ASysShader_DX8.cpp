@@ -1,6 +1,6 @@
 #include "pch.h"
-#include "ASysShaderHAL_DX8.h"
-#include "ASysMaterialHAL_DX8.h"
+#include "ASysShader_DX8.h"
+#include "ASysMaterial_DX8.h"
 #include "ASysMesh_DX8.h"
 
 #ifdef TOSHI_SKU_WINDOWS

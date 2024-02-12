@@ -1,6 +1,6 @@
 #pragma once
-#include "ASysShaderHAL_DX8.h"
-#include "Render/Shader/ASysMaterial.h"
+#include "ASysShader_DX8.h"
+#include "Render/ASysShader/ASysMaterial.h"
 
 #include <Render/TOrderTable.h>
 
