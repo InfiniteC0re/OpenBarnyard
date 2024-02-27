@@ -68,6 +68,7 @@ TBOOL ARootTask::OnCreate()
 	AMemory::CreatePool(AMemory::POOL_Misc);
 	AMemory::CreatePool(AMemory::POOL_Collision);
 
+	// Initialise all classes
 	TGetClass(TObject).RecurseTree(
 		TNULL,
 		TNULL,
@@ -126,28 +127,22 @@ TBOOL ARootTask::OnUpdate(TFLOAT a_fDeltaTime)
 {
 	if (!IsGameSystemCreated())
 	{
-		if (!AGameStateController::GetSingleton()->IsCurrentState(&TGetClass(ASlideshowState)))
+		if (!AGameStateController::GetSingleton()->IsCurrentState(&TGetClass(ASlideshowState)) &&
+			!AGameStateController::GetSingleton()->IsCurrentState(&TGetClass(SaveLoadSKU)) &&
+			!AGameStateController::GetSingleton()->IsCurrentState(&TGetClass(AMovieState)) &&
+			!AGameStateController::GetSingleton()->IsCurrentState(&TGetClass(AMessagePopupState)))
 		{
-			if (!AGameStateController::GetSingleton()->IsCurrentState(&TGetClass(SaveLoadSKU)))
+			if (!m_bStartedGame)
 			{
-				if (!AGameStateController::GetSingleton()->IsCurrentState(&TGetClass(AMovieState)))
-				{
-					if (!AGameStateController::GetSingleton()->IsCurrentState(&TGetClass(AMessagePopupState)))
-					{
-						if (!m_bStartedGame)
-						{
-							CreateStartupGameStates();
-							return TTRUE;
-						}
-						else
-						{
-							ALoadScreen::GetGlobalInstance()->Create();
-							CreateGameSystem();
-							LoadFrontEnd();
-							return TTRUE;
-						}
-					}
-				}
+				CreateStartupGameStates();
+				return TTRUE;
+			}
+			else
+			{
+				ALoadScreen::GetGlobalInstance()->Create();
+				CreateGameSystem();
+				LoadFrontEnd();
+				return TTRUE;
 			}
 		}
 	}
@@ -258,28 +253,21 @@ void ARootTask::LoadStartupData()
 
 	trb.Close();
 
-	if (m_pGUI2)
+	if (m_pGUI2 && !m_pGUI2->Create())
 	{
-		if (!m_pGUI2->Create())
-		{
-			m_pGUI2 = TNULL;
-		}
+		m_pGUI2 = TNULL;
 	}
 
-	if (m_pGUISystem)
+	if (m_pGUISystem && !m_pGUISystem->Create())
 	{
-		if (!m_pGUISystem->Create())
-		{
-			m_pGUISystem = TNULL;
-		}
+		m_pGUISystem = TNULL;
 	}
 
 	TRenderInterface::GetSingleton()->FlushDyingResources();
 	TRenderInterface::GetSingleton()->FlushDyingResources();
 	AGUI2TextureSectionManager::UpdateMaterials();
 
-	auto pFadeManager = g_oSystemManager.GetScheduler()->CreateTask<AFadeManager>(this);
-	pFadeManager->Create();
+	g_oSystemManager.GetScheduler()->CreateTask<AFadeManager>(this)->Create();
 }
 
 TBOOL ARootTask::IsPaused() const
@@ -337,18 +325,6 @@ void ARootTask::CreateGameSystem()
 void ARootTask::LoadFrontEnd()
 {
 	TIMPLEMENT();
-
-	TSphere sphere = { 24.55160141f, -11.76614094f, -32.63951874f, 45.89837265f };
-	TPlane planes[6] = {
-		{ -0.3349758983f, 0.02605731972f, -0.9418663979f, 24.19716644f },
-		{ 0.9829545617f, 0.02605731972, 0.1819926798, 34.31285095f },
-		{ 0.3024052083f, -0.8847551942f, -0.3546254933f, 35.86272049f },
-		{ 0.2410077006f, 0.9284599423f, -0.2826256454f, 13.20540524f },
-		{ 0.6479786038f, 0.05211463198f, -0.759873569f, 57.51000977f },
-		{ -0.6479786038f, -0.05211463198f, 0.759873569f, 221.4899902f }
-	};
-
-	TRenderContext::CullSphereToFrustumSimple(sphere, planes, 6);
 
 	ATerrainManager::SetTerrain(
 		ATerrainManager::Terrain_FrontEnd,

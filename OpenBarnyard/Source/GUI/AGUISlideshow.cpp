@@ -34,14 +34,14 @@ Toshi::TPString8* AGUISlideshow::LocaliseBackgroundFileName(Toshi::TPString8& a_
 	return &a_rOutName;
 }
 
-void AGUISlideshow::LocaliseBackgroundFileName(Toshi::TPString8& a_rOutName, const char* a_szName)
+void AGUISlideshow::LocaliseBackgroundFileName(Toshi::TPString8& a_rOutName, const TCHAR* a_szName)
 {
-	char szFormattedName[256];
+	TCHAR szFormattedName[256];
 	auto eLang = ALocaleManager::GetSingleton()->GetLangId();
 
 	if (eLang != ALocaleManager::Lang_English && eLang != ALocaleManager::Lang_EnglishUK)
 	{
-		char szLang[4];
+		TCHAR szLang[4];
 		Toshi::TStringManager::String8Copy(
 			szLang,
 			ALocaleManager::Interface()->GetCurrentLanguageName(),

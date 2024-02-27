@@ -8,7 +8,7 @@
 class ALoadScreen
 {
 public:
-	static constexpr const char* ms_LoadTextures[] = {
+	static constexpr const TCHAR* ms_LoadTextures[] = {
 		"Loader_Cow_01",
 		"Loader_Cow_02",
 	};

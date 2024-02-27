@@ -9,7 +9,7 @@ public:
 	virtual void BeginJob() override;
 	virtual TBOOL RunJob() override;
 
-	void InitJob(Toshi::TTRB* a_pTRB, const char* a_szFileName);
+	void InitJob(Toshi::TTRB* a_pTRB, const TCHAR* a_szFileName);
 
 	Toshi::TTRBStreamJob& GetStream() { return m_oStreamJob; }
 

@@ -543,7 +543,7 @@ namespace PTRB
 	class TRBF
 	{
 	public:
-		static constexpr TVersion VERSION = { TMAKEVERSION(1, 1) };
+		static constexpr TVersion VERSION = { TVERSION(1, 1) };
 
 	public:
 		TRBF() : m_HDRX(VERSION) { }

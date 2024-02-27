@@ -26,10 +26,10 @@ namespace Toshi {
 		enum Flags_ : Flags
 		{
 			Flags_None = 0,
-			Flags_Active = BITFIELD(0),
-			Flags_Managed = BITFIELD(1),
-			Flags_Unknown2 = BITFIELD(2),
-			Flags_UpdateStateOnRemove = BITFIELD(3),
+			Flags_Active = BITFLAG(0),
+			Flags_Managed = BITFLAG(1),
+			Flags_Unknown2 = BITFLAG(2),
+			Flags_UpdateStateOnRemove = BITFLAG(3),
 		};
 
 		using Mode = TUINT32;

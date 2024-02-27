@@ -9,8 +9,8 @@ namespace Toshi
 
 	enum TApplicationFlag
 	{
-		TApplicationFlag_Created	= BITFIELD(0),
-		TApplicationFlag_Destroyed	= BITFIELD(1),
+		TApplicationFlag_Created	= BITFLAG(0),
+		TApplicationFlag_Destroyed	= BITFLAG(1),
 	};
 
 	struct TApplicationExitEvent

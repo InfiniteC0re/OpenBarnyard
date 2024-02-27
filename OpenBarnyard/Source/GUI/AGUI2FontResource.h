@@ -3,7 +3,7 @@
 
 struct AGUI2FontResource
 {
-	char* szFileName;
+	TCHAR* szFileName;
 	Toshi::TTRB oTRB;
 	TUINT uiRefCount;
 };

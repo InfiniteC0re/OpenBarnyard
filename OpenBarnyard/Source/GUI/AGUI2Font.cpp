@@ -31,7 +31,7 @@ TBOOL AGUI2Font::Create(AGUI2FontDef* a_pFontDef)
 	return TTRUE;
 }
 
-void AGUI2Font::DrawTextWrapped(const wchar_t* a_wszText, TFLOAT a_fX, TFLOAT a_fY, TFLOAT a_fWidth, TFLOAT a_fHeight, TUINT32 a_uiColour, TFLOAT a_fScale, TextAlign a_eAlign, void* a_fnCallback /*= TNULL*/)
+void AGUI2Font::DrawTextWrapped(const TWCHAR* a_wszText, TFLOAT a_fX, TFLOAT a_fY, TFLOAT a_fWidth, TFLOAT a_fHeight, TUINT32 a_uiColour, TFLOAT a_fScale, TextAlign a_eAlign, void* a_fnCallback /*= TNULL*/)
 {
 	auto pFontDef = m_pFontDef;
 
@@ -117,7 +117,7 @@ void AGUI2Font::DrawTextWrapped(const wchar_t* a_wszText, TFLOAT a_fX, TFLOAT a_
 	}
 }
 
-void AGUI2Font::DrawTextSingleLine(const wchar_t* a_wszText, TINT a_iTextLength, TFLOAT a_fX, TFLOAT a_fY, TUINT32 a_uiColour, TFLOAT a_fScale, void* a_fnCallback /*= TNULL*/)
+void AGUI2Font::DrawTextSingleLine(const TWCHAR* a_wszText, TINT a_iTextLength, TFLOAT a_fX, TFLOAT a_fY, TUINT32 a_uiColour, TFLOAT a_fScale, void* a_fnCallback /*= TNULL*/)
 {
 	auto pRenderer = AGUI2::GetRenderer();
 	pRenderer->SetColour(a_uiColour);
@@ -178,7 +178,7 @@ void AGUI2Font::DrawTextSingleLine(const wchar_t* a_wszText, TINT a_iTextLength,
 	}
 }
 
-TFLOAT AGUI2Font::GetTextHeightWrapped(const wchar_t* a_wszText, TFLOAT a_fMaxWidth, TFLOAT a_fScale)
+TFLOAT AGUI2Font::GetTextHeightWrapped(const TWCHAR* a_wszText, TFLOAT a_fMaxWidth, TFLOAT a_fScale)
 {
 	auto pFontDef = m_pFontDef;
 
@@ -262,7 +262,7 @@ TFLOAT AGUI2Font::GetTextHeightWrapped(const wchar_t* a_wszText, TFLOAT a_fMaxWi
 	}
 }
 
-TFLOAT AGUI2Font::GetTextWidth(const wchar_t* a_wszText, TFLOAT a_fScale)
+TFLOAT AGUI2Font::GetTextWidth(const TWCHAR* a_wszText, TFLOAT a_fScale)
 {
 	if (a_wszText && m_pFontDef)
 	{
@@ -276,7 +276,7 @@ TFLOAT AGUI2Font::GetTextWidth(const wchar_t* a_wszText, TFLOAT a_fScale)
 	return 0.0f;
 }
 
-TFLOAT AGUI2Font::GetTextWidth(const wchar_t* a_wszText, TINT a_iTextLength, TFLOAT a_fScale)
+TFLOAT AGUI2Font::GetTextWidth(const TWCHAR* a_wszText, TINT a_iTextLength, TFLOAT a_fScale)
 {
 	TINT iWidth = 0;
 	

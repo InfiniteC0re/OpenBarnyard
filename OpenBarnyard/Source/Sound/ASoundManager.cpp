@@ -110,7 +110,7 @@ void ASoundManager::PauseAllSound(TBOOL a_bPaused)
 	TIMPLEMENT();
 }
 
-TBOOL ASoundManager::LoadWaveBanks(const char* a_szFileName)
+TBOOL ASoundManager::LoadWaveBanks(const TCHAR* a_szFileName)
 {
 	TBOOL bOpened = AAssetLoader::Load(
 		"Data/Assets/lib_wavebank.trb",

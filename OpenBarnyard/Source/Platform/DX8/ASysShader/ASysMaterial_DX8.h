@@ -15,6 +15,7 @@ public:
 
 	virtual void PreRender() override;
 	virtual void PostRender() override;
+	virtual TBOOL Create(BLENDMODE a_eBlendMode) override;
 	virtual void SetBlendMode(BLENDMODE a_eBlendMode) override;
 
 	void SetOrderTable(Toshi::TOrderTable* a_pOrderTable);

@@ -6,6 +6,7 @@ public:
 	enum class Mode
 	{
 		Compile,
+		Decompile,
 	};
 
 public:
@@ -19,8 +20,8 @@ public:
 
 		if (IsDebuggerPresent())
 		{
-			m_mode = Mode::Compile;
-			m_inPath = "test.json";
+			m_mode = Mode::Decompile;
+			m_inPath = "editor_quests__1.trb";
 		}
 		else
 		{
@@ -36,6 +37,12 @@ public:
 				{
 					TDEBUG("Found -c parameter\n");
 					m_mode = Mode::Compile;
+					ParseString(m_inPath);
+				}
+				if (Toshi::TStringManager::String8Compare(*m_argv, "-d") == 0)
+				{
+					TDEBUG("Found -d parameter\n");
+					m_mode = Mode::Decompile;
 					ParseString(m_inPath);
 				}
 				else if (Toshi::TStringManager::String8Compare(*m_argv, "-o") == 0)

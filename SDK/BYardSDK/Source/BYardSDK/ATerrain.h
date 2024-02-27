@@ -55,7 +55,7 @@ public:
 
 	void DestroyModelData(ATerrainSection::ModelData* a_pModelData);
 
-	void UseBlocksInCurrentVIS(ATerrainLODType a_eLODType);
+	void UpdateUsedBlocks(ATerrainLODType a_eLODType);
 
 	void QueueStreamingAssets();
 
@@ -67,7 +67,7 @@ public:
 	
 	ATerrainLODBlock* AllocateLODBlock(ATerrainLODType a_eLODType, ATerrainSection* a_pVISGroup);
 
-	TBOOL IsCollisionPersistant() const { return m_bPersistantCollision; }
+	TBOOL IsCollisionStreamed() const { return m_bStreamCollision; }
 	
 	ATerrainVIS* GetVIS() const { return m_pTerrainVIS; }
 
@@ -219,7 +219,7 @@ public:
 	Toshi::T2SList<JobSlot> m_FreeSkeletonLoaderJobs;
 	Toshi::T2SList<JobSlot> m_UsedCollisionLoaderJobs;
 	Toshi::T2SList<JobSlot> m_FreeCollisionLoaderJobs;
-	TBOOL m_bPersistantCollision;
+	TBOOL m_bStreamCollision;
 	TBOOL m_bIsLoaded;
 	Toshi::TTRB m_VISTRB;
 	Toshi::TTRB m_TRB2;

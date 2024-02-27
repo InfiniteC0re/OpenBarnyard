@@ -10,7 +10,7 @@
 
 TOSHI_NAMESPACE_USING
 
-TBOOL AGUI2TextureSectionManager::Open(const char* a_szFileName, Toshi::TTRB* a_pTRB)
+TBOOL AGUI2TextureSectionManager::Open(const TCHAR* a_szFileName, Toshi::TTRB* a_pTRB)
 {
 	if (a_pTRB == TNULL)
 	{
@@ -34,7 +34,7 @@ TBOOL AGUI2TextureSectionManager::Open(const char* a_szFileName, Toshi::TTRB* a_
 			iFileNamePos--;
 
 		iFileNamePos++;
-		char symbolName[132] = { '\0' };
+		TCHAR symbolName[132] = { '\0' };
 
 		auto iFileNameLength = iFilePathLength - iFileNamePos - 4;
 		TStringManager::String8Copy(symbolName, a_szFileName + iFileNamePos, iFileNameLength);
@@ -68,7 +68,7 @@ void AGUI2TextureSectionManager::Close()
 	}
 }
 
-AGUI2TextureSection* AGUI2TextureSectionManager::GetTextureSection(const char* a_szSectionName)
+AGUI2TextureSection* AGUI2TextureSectionManager::GetTextureSection(const TCHAR* a_szSectionName)
 {
 	TASSERT(g_defblock && g_sections);
 

@@ -4,8 +4,8 @@
 
 #include <DirectXMath.h>
 
-namespace Toshi
-{
+namespace Toshi{ 
+
 	class TMatrix44
 	{
 	public:
@@ -274,6 +274,18 @@ namespace Toshi
 				a_rMatrix.m_f41, a_rMatrix.m_f42, a_rMatrix.m_f43, a_rMatrix.m_f44
 			);
 		}
+
+#ifdef TOSHI_SKU_WINDOWS
+		operator DirectX::FXMMATRIX& ()
+		{
+			return TREINTERPRETCAST(DirectX::FXMMATRIX&, *this);
+		}
+
+		operator const DirectX::FXMMATRIX& () const
+		{
+			return TREINTERPRETCAST(const DirectX::FXMMATRIX&, *this);
+		}
+#endif
 
 	public:
 		static TMatrix44 IDENTITY;

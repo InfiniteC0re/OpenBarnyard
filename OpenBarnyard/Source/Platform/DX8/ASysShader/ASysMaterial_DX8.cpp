@@ -53,6 +53,16 @@ void ASysMaterialHAL::SetOrderTable(Toshi::TOrderTable* a_pOrderTable)
 	}
 }
 
+TBOOL ASysMaterialHAL::Create(BLENDMODE a_eBlendMode)
+{
+	// This is a bug in the original code
+	// Should probably be ASysMaterial::SetBlendMode instead of just SetBlendMode
+	SetBlendMode(a_eBlendMode);
+	ASysMaterialHAL::SetBlendMode(a_eBlendMode);
+
+	return TMaterial::Create();
+}
+
 void ASysMaterialHAL::SetBlendMode(BLENDMODE a_eBlendMode)
 {
 	TASSERT(a_eBlendMode >= BLENDMODE_DEFAULT && a_eBlendMode < BLENDMODE_NUMOF);
@@ -82,7 +92,7 @@ void ASysMaterialHAL::SetBlendMode(BLENDMODE a_eBlendMode)
 		break;
 	}
 
-	m_eBlendMode = a_eBlendMode;
+	ASysMaterial::SetBlendMode(a_eBlendMode);
 }
 
 void ASysMaterialHAL::PreRender()

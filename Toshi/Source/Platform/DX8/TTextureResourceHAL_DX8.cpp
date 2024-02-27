@@ -17,6 +17,18 @@ namespace Toshi {
 	TDEFINE_CLASS(TTextureResourceHAL);
 	TDEFINE_FREELIST_ALLOCATOR(TTextureResourceHAL);
 
+	TTextureResourceHAL::TTextureResourceHAL()
+	{
+		m_iNumLocks = 0;
+		m_bLoadFromMemory = TFALSE;
+		m_bIsToshi2 = TFALSE;
+		m_pData = TNULL;
+		m_uiDataSize = 0;
+		m_pD3DTexture = TNULL;
+		m_eAddressUState = 0;
+		m_eAddressVState = 0;
+	}
+
 	TUINT TTextureResourceHAL::GetWidth()
 	{
 		Validate();
@@ -75,8 +87,8 @@ namespace Toshi {
 		m_uiMipLevels = a_pTexture->GetMipLevels();
 		m_bNoMipLevels = FALSE;
 		m_eResourceFormat = TTEXTURERESOURCEFORMAT::Unknown;
-		m_iUnk1 = 0;
-		m_iUnk2 = 0;
+		m_eAddressUState = 0;
+		m_eAddressVState = 0;
 		m_ImageInfo = a_pTexture->GetImageInfo();
 		m_pD3DTexture = a_pTexture->GetD3DTexture();
 
@@ -102,8 +114,8 @@ namespace Toshi {
 		m_bLoadFromMemory = TTRUE;
 		m_pData = a_pData;
 		m_uiDataSize = a_uiDataSize;
-		m_iUnk1 = 0;
-		m_iUnk2 = 0;
+		m_eAddressUState = 0;
+		m_eAddressVState = 0;
 
 		Validate();
 		return TTRUE;
@@ -117,8 +129,8 @@ namespace Toshi {
 		}
 
 		m_eTextureFlags = a_eTextureFlags;
-		m_iUnk1 = 0;
-		m_iUnk2 = 0;
+		m_eAddressUState = 0;
+		m_eAddressVState = 0;
 		m_bNoMipLevels = TRUE;
 
 		return TTRUE;
@@ -140,8 +152,8 @@ namespace Toshi {
 		m_eResourceFormat = a_eFormat;
 		m_bNoMipLevels = a_bNoMipLevels;
 		m_bLoadFromMemory = TTRUE;
-		m_iUnk1 = 0;
-		m_iUnk2 = 0;
+		m_eAddressUState = 0;
+		m_eAddressVState = 0;
 
 		Validate();
 		return TTRUE;

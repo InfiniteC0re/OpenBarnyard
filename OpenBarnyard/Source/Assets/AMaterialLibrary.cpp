@@ -69,7 +69,7 @@ TBOOL AMaterialLibrary::LoadTTLData(void* a_pTTLData)
 	return TTRUE;
 }
 
-TBOOL AMaterialLibrary::LoadTTLFile(const char* a_szFilePath)
+TBOOL AMaterialLibrary::LoadTTLFile(const TCHAR* a_szFilePath)
 {
 	m_TRB.Load(a_szFilePath);
 	LoadTTLData(m_TRB.GetSymbolAddress("TTL"));
@@ -112,7 +112,7 @@ void AMaterialLibrary::DestroyTextures()
 	m_TexturesArray.Destroy();
 }
 
-TINT AMaterialLibrary::FindTextureIndex(const char* a_szTextureName)
+TINT AMaterialLibrary::FindTextureIndex(const TCHAR* a_szTextureName)
 {
 	for (TINT i = 0; i < m_iNumTextures; i++)
 	{

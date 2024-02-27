@@ -18,7 +18,7 @@ public:
 public:
 	AGUI2MouseCursor();
 
-	TBOOL Create(const char* a_szPointerUpTexture, const char* a_szPointerDownTexture, TFLOAT a_fScalar);
+	TBOOL Create(const TCHAR* a_szPointerUpTexture, const TCHAR* a_szPointerDownTexture, TFLOAT a_fScalar);
 	void Update();
 
 	void MoveCursor(TFLOAT a_fDeltaX, TFLOAT a_fDeltaY);

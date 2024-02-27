@@ -5,6 +5,7 @@
 
 #include "TString8.h"
 #include "TStringManager.h"
+#include "Toshi/TRefCounted.h"
 #include "Toshi/T2Allocator.h"
 #include "Toshi/T2Map.h"
 #include "Toshi/TSystem.h"
@@ -16,7 +17,7 @@ namespace Toshi {
 
 	class TPString8Pool;
 
-	class TPooledString8
+	class TPooledString8 : public TRefCounted
 	{
 	public:
 		class Comparator
@@ -54,26 +55,10 @@ namespace Toshi {
 		TPooledString8(const TCHAR* a_szString, TPString8Pool* a_pPool, T2Allocator* a_pAllocator) :
 			m_oString(a_szString, a_pAllocator)
 		{
-			m_iRefCount = 0;
 			m_pPool = a_pPool;
 		}
 
 		void Delete();
-
-		TINT IncRefCount()
-		{
-			return ++m_iRefCount;
-		}
-
-		TINT DecRefCount()
-		{
-			return --m_iRefCount;
-		}
-
-		TINT GetRefCount() const
-		{
-			return m_iRefCount;
-		}
 
 		const TString8& GetString8() const
 		{
@@ -86,7 +71,6 @@ namespace Toshi {
 		}
 
 	private:
-		TINT m_iRefCount;
 		TString8 m_oString;
 		TPString8Pool* m_pPool;
 	};
@@ -173,56 +157,60 @@ namespace Toshi {
 		inline static const TString8 ms_sEmpty = TString8("");
 
 	public:
-		__forceinline TPString8()
+		TFORCEINLINE TPString8()
 		{
 			m_pPtr = TNULL;
 		}
 
-		__forceinline TPString8(const TCHAR* a_szString)
+		TFORCEINLINE TPString8(const TCHAR* a_szString)
 		{
 			TUtil::GetTPStringPool()->Get(m_pPtr, a_szString, TNULL);
 		}
 
-		__forceinline TPString8(TPString8Pool* a_pPool, const TCHAR* a_szString)
+		TFORCEINLINE TPString8(TPString8Pool* a_pPool, const TCHAR* a_szString)
 		{
 			a_pPool->Get(m_pPtr, a_szString, TNULL);
 		}
 
-		__forceinline TPString8(TPooledString8* a_pPooled)
+		TFORCEINLINE TPString8(TPooledString8* a_pPooled)
 		{
 			m_pPtr = a_pPooled;
 			Increment();
 		}
 
-		__forceinline TPString8(const TPString8& other)
+		TFORCEINLINE TPString8(const TPString8& a_rOther)
 		{
-			m_pPtr = other.m_pPtr;
+			m_pPtr = a_rOther.m_pPtr;
 			Increment();
 		}
 
-		TPString8(TPString8&& other) = delete;
+		TFORCEINLINE TPString8(TPString8&& a_rOther)
+		{
+			m_pPtr = a_rOther.m_pPtr;
+			a_rOther.m_pPtr = TNULL;
+		}
 
-		__forceinline ~TPString8()
+		TFORCEINLINE ~TPString8()
 		{
 			Decrement();
 		}
 
-		__forceinline const TString8& GetString8() const
+		TFORCEINLINE const TString8& GetString8() const
 		{
 			return m_pPtr ? m_pPtr->m_oString : ms_sEmpty;
 		}
 
-		__forceinline const TPooledString8* GetPooledString() const
+		TFORCEINLINE const TPooledString8* GetPooledString() const
 		{
 			return m_pPtr;
 		}
 
-		__forceinline TBOOL IsEmpty() const
+		TFORCEINLINE TBOOL IsEmpty() const
 		{
 			return m_pPtr == TNULL;
 		}
 
-		__forceinline void SetPooledString(TPooledString8* a_pPooledString)
+		TFORCEINLINE void SetPooledString(TPooledString8* a_pPooledString)
 		{
 			if (m_pPtr != a_pPooledString)
 			{
@@ -232,27 +220,27 @@ namespace Toshi {
 			}
 		}
 
-		__forceinline bool IsEqual(const TPString8& a_Other) const
+		TFORCEINLINE bool IsEqual(const TPString8& a_Other) const
 		{
 			return m_pPtr == a_Other.m_pPtr;
 		}
 
-		__forceinline bool IsEqual(const TPString8* a_pOther) const
+		TFORCEINLINE bool IsEqual(const TPString8* a_pOther) const
 		{
 			return m_pPtr == a_pOther->m_pPtr;
 		}
 
-		__forceinline bool operator==(const TPString8& a_Other) const
+		TFORCEINLINE bool operator==(const TPString8& a_Other) const
 		{
 			return m_pPtr == a_Other.m_pPtr;
 		}
 
-		__forceinline bool operator!=(const TPString8& a_Other) const
+		TFORCEINLINE bool operator!=(const TPString8& a_Other) const
 		{
 			return m_pPtr != a_Other.m_pPtr;
 		}
 
-		__forceinline TPString8& operator=(TPooledString8* a_pString)
+		TFORCEINLINE TPString8& operator=(TPooledString8* a_pString)
 		{
 			if (m_pPtr != a_pString)
 			{
@@ -264,7 +252,7 @@ namespace Toshi {
 			return *this;
 		}
 
-		__forceinline TPString8& operator=(const TPString8& other)
+		TFORCEINLINE TPString8& operator=(const TPString8& other)
 		{
 			if (m_pPtr != other.m_pPtr)
 			{
@@ -276,7 +264,7 @@ namespace Toshi {
 			return *this;
 		}
 
-		__forceinline TPString8& operator=(const TPString8* pOther)
+		TFORCEINLINE TPString8& operator=(const TPString8* pOther)
 		{
 			if (m_pPtr != pOther->m_pPtr)
 			{
@@ -288,30 +276,30 @@ namespace Toshi {
 			return *this;
 		}
 
-		__forceinline TPString8& operator=(const TCHAR* a_szString)
+		TFORCEINLINE TPString8& operator=(const TCHAR* a_szString)
 		{
 			Decrement();
 			TUtil::GetTPStringPool()->Get(m_pPtr, a_szString, TNULL);
 			return *this;
 		}
 
-		__forceinline operator const TCHAR* () const
+		TFORCEINLINE operator const TCHAR* () const
 		{
 			return m_pPtr ? m_pPtr->m_oString.GetString() : ms_sEmpty.GetString();
 		}
 
-		__forceinline operator const TString8*() const
+		TFORCEINLINE operator const TString8*() const
 		{
 			return m_pPtr ? &m_pPtr->m_oString : &ms_sEmpty;
 		}
 
-		__forceinline operator const TPooledString8*() const
+		TFORCEINLINE operator const TPooledString8*() const
 		{
 			return m_pPtr;
 		}
 
 	private:
-		__forceinline void Increment()
+		TFORCEINLINE void Increment()
 		{
 			if (m_pPtr)
 			{
@@ -319,7 +307,7 @@ namespace Toshi {
 			}
 		}
 
-		__forceinline void Decrement()
+		TFORCEINLINE void Decrement()
 		{
 			if (m_pPtr && m_pPtr->DecRefCount() == 0)
 			{
@@ -341,7 +329,7 @@ namespace Toshi {
 		};
 
 	public:
-		TPString8Initialiser(StringMap* a_pStrings, size_t a_iStringCount, TBOOL a_bFlag);
+		TPString8Initialiser(StringMap* a_pStrings, TUINT a_iStringCount, TBOOL a_bFlag);
 
 		void Initialise(TPString8Pool* a_pStringPool);
 
@@ -360,7 +348,7 @@ namespace Toshi {
 
 	private:
 		StringMap* m_pStrings;
-		size_t m_iCount;
+		TUINT m_iCount;
 		TPString8Initialiser* m_pNextInitialiser;
 		TBOOL m_bFlag;
 	};

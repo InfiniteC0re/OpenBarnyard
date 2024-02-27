@@ -14,7 +14,7 @@ namespace Toshi {
 	TMaterial::TMaterial()
 	{
 		m_Flags = Flags_NULL;
-		m_pOwnerShader = TNULL;
+		m_pShader = TNULL;
 		m_iNumTex = 0;
 		TUtil::MemClear(m_pTextures, sizeof(m_pTextures));
 		m_pRegMaterial = TNULL;
@@ -51,13 +51,13 @@ namespace Toshi {
 
 	void TMaterial::SetShader(TShader* pShader)
 	{
-		TASSERT(TNULL == m_pOwnerShader);
-		m_pOwnerShader = pShader;
+		TASSERT(TNULL == m_pShader);
+		m_pShader = pShader;
 	}
 
 	TShader* TMaterial::GetShader() const
 	{
-		return m_pOwnerShader;
+		return m_pShader;
 	}
 
 	void TMaterial::SetTextureNum(TUINT32 a_iNumTextures)

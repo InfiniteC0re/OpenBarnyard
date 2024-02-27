@@ -9,11 +9,11 @@ namespace Toshi
 	class TVector4
 	{
 	public:
-		TVector4() = default;
-		TVector4(TFLOAT x, TFLOAT y, TFLOAT z, TFLOAT w) { TVector4::x = x; TVector4::y = y; TVector4::z = z; TVector4::w = w; }
-		TVector4(TFLOAT floats[4]) { TVector4::x = floats[0]; TVector4::y = floats[1]; TVector4::z = floats[2]; TVector4::w = floats[3]; }
-		TVector4(const TVector3& other) { TVector4::x = other.x; TVector4::y = other.y; TVector4::z = other.z; TVector4::w = 1.0f; }
-		TVector4(const TVector4& other) { TVector4::x = other.x; TVector4::y = other.y; TVector4::z = other.z; TVector4::w = other.w; }
+		constexpr TVector4() = default;
+		constexpr TVector4(TFLOAT x, TFLOAT y, TFLOAT z, TFLOAT w) { TVector4::x = x; TVector4::y = y; TVector4::z = z; TVector4::w = w; }
+		constexpr TVector4(TFLOAT floats[4]) { TVector4::x = floats[0]; TVector4::y = floats[1]; TVector4::z = floats[2]; TVector4::w = floats[3]; }
+		constexpr TVector4(const TVector3& other) { TVector4::x = other.x; TVector4::y = other.y; TVector4::z = other.z; TVector4::w = 1.0f; }
+		constexpr TVector4(const TVector4& other) { TVector4::x = other.x; TVector4::y = other.y; TVector4::z = other.z; TVector4::w = other.w; }
 
 		void Set(const TVector3& vec) { TVector4::x = vec.x; TVector4::y = vec.y; TVector4::z = vec.z; TVector4::w = 1.0f; }
 		void Set(const TVector4& vec) { TVector4::x = vec.x; TVector4::y = vec.y; TVector4::z = vec.z; TVector4::w = vec.w; }
@@ -21,7 +21,7 @@ namespace Toshi
 		void Set(TFLOAT x, TFLOAT y, TFLOAT z, TFLOAT w) { TVector4::x = x; TVector4::y = y; TVector4::z = z; TVector4::w = w; }
 
 		void Normalise();
-		TBOOL isNormalised(float fVal = 0.05f) const { return (((1.0f - fVal) * (1.0f - fVal)) < MagnitudeSq()) && (((1.0f + fVal) * (1.0f + fVal)) >= MagnitudeSq()); }
+		TBOOL isNormalised(TFLOAT fVal = 0.05f) const { return (((1.0f - fVal) * (1.0f - fVal)) < MagnitudeSq()) && (((1.0f + fVal) * (1.0f + fVal)) >= MagnitudeSq()); }
 
 		void ProjectNormalToPlane(const TVector4& vec, const TVector4& vec2);
 
@@ -125,8 +125,8 @@ namespace Toshi
 			w = vec1.w;
 		}
 
-		void Lerp3(const TVector4& finish, float t) { Lerp3(*this, finish, t); }
-		void Lerp3(const TVector4& start, const TVector4& finish, float t)
+		void Lerp3(const TVector4& finish, TFLOAT t) { Lerp3(*this, finish, t); }
+		void Lerp3(const TVector4& start, const TVector4& finish, TFLOAT t)
 		{
 			TVector4 progress = finish - start;
 			progress.Multiply(t);
@@ -157,7 +157,7 @@ namespace Toshi
 		TFLOAT MagnitudeXZ() const { return TMath::Sqrt(x * x + z * z); }
 		TFLOAT MagnitudeSqXZ() const { return x * x + z * z; }
 
-		TVector4& Progress(const TVector4& a_rVec, float a_fScalar)
+		TVector4& Progress(const TVector4& a_rVec, TFLOAT a_fScalar)
 		{
 			x = a_rVec.x * a_fScalar;
 			y = a_rVec.y * a_fScalar;
@@ -184,12 +184,14 @@ namespace Toshi
 		void operator/=(const TVector4& other) { Divide(other); }
 		void operator*=(const TVector4& other) { Multiply(other); }
 
-		float* AsArray() { return reinterpret_cast<float*>(this); }
-		const float* AsArray() const { return reinterpret_cast<const float*>(this); }
-		TVector3& AsVector3() { return reinterpret_cast<TVector3&>(*this); }
-		const TVector3& AsVector3() const { return reinterpret_cast<const TVector3&>(*this); }
-		TVector2& AsVector2() { return reinterpret_cast<TVector2&>(*this); }
-		const TVector2& AsVector2() const { return reinterpret_cast<const TVector2&>(*this); }
+		TFLOAT* AsArray() { return TREINTERPRETCAST(TFLOAT*, this); }
+		const TFLOAT* AsArray() const { return TREINTERPRETCAST(const TFLOAT*, this); }
+
+		TVector3& AsVector3() { return TREINTERPRETCAST(TVector3&, *this); }
+		const TVector3& AsVector3() const { return TREINTERPRETCAST(const TVector3&, *this); }
+
+		TVector2& AsVector2() { return TREINTERPRETCAST(TVector2&, *this); }
+		const TVector2& AsVector2() const { return TREINTERPRETCAST(const TVector2&, *this); }
 
 		// DirectX Math
 
@@ -209,17 +211,19 @@ namespace Toshi
 		}
 
 	public:
-		static float Distance(const TVector4& vec1, const TVector4& vec2) { return (vec2 - vec1).Magnitude(); }
-		static float DistanceSq(const TVector4& vec1, const TVector4& vec2) { return (vec2 - vec1).MagnitudeSq(); }
-		static float DistanceXZ(const TVector4& vec1, const TVector4& vec2) { return (vec2 - vec1).MagnitudeXZ(); }
-		static float DistanceSqXZ(const TVector4& vec1, const TVector4& vec2) { return (vec2 - vec1).MagnitudeSqXZ(); }
+		static TFLOAT Distance(const TVector4& vec1, const TVector4& vec2) { return (vec2 - vec1).Magnitude(); }
+		static TFLOAT DistanceSq(const TVector4& vec1, const TVector4& vec2) { return (vec2 - vec1).MagnitudeSq(); }
+		static TFLOAT DistanceXZ(const TVector4& vec1, const TVector4& vec2) { return (vec2 - vec1).MagnitudeXZ(); }
+		static TFLOAT DistanceSqXZ(const TVector4& vec1, const TVector4& vec2) { return (vec2 - vec1).MagnitudeSqXZ(); }
 
-		float DotProduct(const TVector4& vec) const { return DotProduct3(*this, vec); }
-		static float DotProduct(const TVector4& vec1, const TVector4& vec2) { return DotProduct3(vec1, vec2); }
-		float DotProduct3(const TVector4& vec) const { return DotProduct3(*this, vec); }
-		static float DotProduct3(const TVector4& vec1, const TVector4& vec2) { return vec1.x * vec2.x + vec1.y * vec2.y + vec1.z * vec2.z; }
-		float DotProduct4(const TVector4& vec) const { return DotProduct4(*this, vec); }
-		static float DotProduct4(const TVector4& vec1, const TVector4& vec2) { return vec1.x * vec2.x + vec1.y * vec2.y + vec1.z * vec2.z + vec1.w * vec2.w; }
+		TFLOAT DotProduct(const TVector4& vec) const { return DotProduct3(*this, vec); }
+		static TFLOAT DotProduct(const TVector4& vec1, const TVector4& vec2) { return DotProduct3(vec1, vec2); }
+
+		TFLOAT DotProduct3(const TVector4& vec) const { return DotProduct3(*this, vec); }
+		static TFLOAT DotProduct3(const TVector4& vec1, const TVector4& vec2) { return vec1.x * vec2.x + vec1.y * vec2.y + vec1.z * vec2.z; }
+		
+		TFLOAT DotProduct4(const TVector4& vec) const { return DotProduct4(*this, vec); }
+		static TFLOAT DotProduct4(const TVector4& vec1, const TVector4& vec2) { return vec1.x * vec2.x + vec1.y * vec2.y + vec1.z * vec2.z + vec1.w * vec2.w; }
 
 	public:
 		static const TVector4 VEC_ZERO;

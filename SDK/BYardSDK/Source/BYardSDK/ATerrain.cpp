@@ -28,7 +28,7 @@ void ATerrain::DestroyModelData(ATerrainSection::ModelData* a_pModelData)
 	
 }
 
-void ATerrain::UseBlocksInCurrentVIS(ATerrainLODType a_eLODType)
+void ATerrain::UpdateUsedBlocks(ATerrainLODType a_eLODType)
 {
 	
 }

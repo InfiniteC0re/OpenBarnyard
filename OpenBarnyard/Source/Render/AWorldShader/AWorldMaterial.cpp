@@ -13,10 +13,10 @@ TDEFINE_CLASS_NORUNTIME(AWorldMaterial);
 
 AWorldMaterial::AWorldMaterial() :
 	m_eBlendMode(0),
-	m_iUnk1(0),
-	m_fUnk2(0.0),
-	m_iUnk3(0),
-	m_fUnk4(0.0)
+	m_fUVAnimX(0.0f),
+	m_fUVAnimY(0.0f),
+	m_fUVAnimSpeedX(0.0f),
+	m_fUVAnimSpeedY(0.0f)
 {
 	m_aTextures[0] = TNULL;
 	m_aTextures[1] = TNULL;
@@ -29,10 +29,10 @@ AWorldMaterial::~AWorldMaterial()
 
 }
 
-void AWorldMaterial::Create(BLENDMODE a_eBlendMode)
+TBOOL AWorldMaterial::Create(BLENDMODE a_eBlendMode)
 {
-	Create(a_eBlendMode);
-	TMaterial::Create();
+	SetBlendMode(a_eBlendMode);
+	return TMaterial::Create();
 }
 
 void AWorldMaterial::SetBlendMode(BLENDMODE a_eBlendMode)

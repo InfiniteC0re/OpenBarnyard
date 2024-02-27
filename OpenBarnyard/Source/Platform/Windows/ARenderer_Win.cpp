@@ -202,7 +202,7 @@ TBOOL ARenderer::CreateTRenderResources()
 	return TTRUE;
 }
 
-Toshi::TRenderAdapter::Mode::Device* ARenderer::FindSuitableDevice(TRenderInterface::DISPLAYPARAMS& a_rDisplayParams, bool a_bReverseOrder)
+TRenderAdapter::Mode::Device* ARenderer::FindSuitableDevice(TRenderInterface::DISPLAYPARAMS& a_rDisplayParams, bool a_bReverseOrder)
 {
 	auto pRenderer = TSTATICCAST(TRenderD3DInterface*, TRenderInterface::GetSingleton());
 	TRenderAdapter::Mode::Device* pDevice = TNULL;
@@ -345,12 +345,12 @@ TBOOL ARenderer::OnUpdate(float a_fDeltaTime)
 
 void ARenderer::ForceUpdate30FPS()
 {
-	OnUpdate(0.03333334f);
+	OnUpdate(1.0f / 30.0f);
 }
 
 void ARenderer::CreateMainViewport()
 {
-	auto pDisplayParams = Toshi::TRenderInterface::GetSingleton()->GetCurrentDisplayParams();
+	auto pDisplayParams = TRenderInterface::GetSingleton()->GetCurrentDisplayParams();
 	
 	m_pViewport = new TViewport(TTRUE);
 	m_pViewport->SetX(0);

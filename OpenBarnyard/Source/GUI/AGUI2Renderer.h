@@ -8,10 +8,10 @@ class AGUI2Renderer
 {
 public:
 	virtual ~AGUI2Renderer() = default;
-	virtual AGUI2Material* CreateMaterial(const char* a_szTextureName) = 0;
+	virtual AGUI2Material* CreateMaterial(const TCHAR* a_szTextureName) = 0;
 	virtual AGUI2Material* CreateMaterial(Toshi::TTexture* a_pTexture) = 0;
 	virtual void DestroyMaterial(AGUI2Material* a_pMaterial) = 0;
-	virtual Toshi::TTexture* GetTexture(const char* a_szTextureName) = 0;
+	virtual Toshi::TTexture* GetTexture(const TCHAR* a_szTextureName) = 0;
 	virtual TUINT GetWidth(AGUI2Material* a_pMaterial) = 0;
 	virtual TUINT GetHeight(AGUI2Material* a_pMaterial) = 0;
 	virtual void BeginScene() = 0;

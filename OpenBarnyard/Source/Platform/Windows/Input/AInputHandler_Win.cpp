@@ -36,7 +36,7 @@ AInputHandler::~AInputHandler()
 {
 	if (TInputInterface::GetSingleton())
 	{
-		delete TInputInterface::GetSingleton();
+		TInputInterface::DestroySingleton();
 	}
 }
 

@@ -28,7 +28,7 @@ void AKeyframeLibStreamJob::Process()
 	m_pLibrary = pLibrary;
 }
 
-void AKeyframeLibStreamJob::Init(const char* a_szFileName)
+void AKeyframeLibStreamJob::Init(const TCHAR* a_szFileName)
 {
 	Toshi::TStringManager::String8Copy(
 		m_szName,

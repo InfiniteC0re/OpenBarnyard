@@ -19,7 +19,7 @@ struct AGUI2FontDefCharacterData
 struct AGUI2FontDef
 {
 	void* Unk1;
-	const char* szTextureNames;
+	const TCHAR* szTextureNames;
 	TINT8 Unk2;
 	TUINT8 uiLinesMargin;
 	TUINT8 uiLineHeight;
@@ -46,12 +46,12 @@ public:
 
 	TBOOL Create(AGUI2FontDef* a_pFontDef);
 
-	void DrawTextWrapped(const wchar_t* a_wszText, TFLOAT a_fX, TFLOAT a_fY, TFLOAT a_fWidth, TFLOAT a_fHeight, TUINT32 a_uiColour, TFLOAT a_fScale, TextAlign a_eAlign, void* a_fnCallback = TNULL);
-	void DrawTextSingleLine(const wchar_t* a_wszText, TINT a_iTextLength, TFLOAT a_fX, TFLOAT a_fY, TUINT32 a_uiColour, TFLOAT a_fScale, void* a_fnCallback = TNULL);
+	void DrawTextWrapped(const TWCHAR* a_wszText, TFLOAT a_fX, TFLOAT a_fY, TFLOAT a_fWidth, TFLOAT a_fHeight, TUINT32 a_uiColour, TFLOAT a_fScale, TextAlign a_eAlign, void* a_fnCallback = TNULL);
+	void DrawTextSingleLine(const TWCHAR* a_wszText, TINT a_iTextLength, TFLOAT a_fX, TFLOAT a_fY, TUINT32 a_uiColour, TFLOAT a_fScale, void* a_fnCallback = TNULL);
 
-	TFLOAT GetTextHeightWrapped(const wchar_t* a_wszText, TFLOAT a_fMaxWidth, TFLOAT a_fScale);
-	TFLOAT GetTextWidth(const wchar_t* a_wszText, TFLOAT a_fScale);
-	TFLOAT GetTextWidth(const wchar_t* a_wszText, TINT a_iTextLength, TFLOAT a_fScale);
+	TFLOAT GetTextHeightWrapped(const TWCHAR* a_wszText, TFLOAT a_fMaxWidth, TFLOAT a_fScale);
+	TFLOAT GetTextWidth(const TWCHAR* a_wszText, TFLOAT a_fScale);
+	TFLOAT GetTextWidth(const TWCHAR* a_wszText, TINT a_iTextLength, TFLOAT a_fScale);
 
 private:
 	AGUI2FontDef* m_pFontDef = TNULL;
@@ -61,7 +61,7 @@ private:
 
 struct AGUI2FontRef
 {
-	char* szName;
+	TCHAR* szName;
 	AGUI2Font* pFont;
 	void* Unk1;
 	AGUI2FontResource* pFontResource;

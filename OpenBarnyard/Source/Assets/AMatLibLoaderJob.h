@@ -10,7 +10,7 @@ public:
 	virtual TBOOL RunJob() override;
 	virtual TBOOL CancelJob() override;
 
-	void InitJob(const char* a_szFileName, Toshi::TTRB* a_pTRB, AMaterialLibrary*& a_rpOutMatLib, Toshi::TMemory::MemBlock* a_pMemBlock);
+	void InitJob(const TCHAR* a_szFileName, Toshi::TTRB* a_pTRB, AMaterialLibrary*& a_rpOutMatLib, Toshi::TMemory::MemBlock* a_pMemBlock);
 
 private:
 	Toshi::TString8 m_FileName;

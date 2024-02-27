@@ -21,7 +21,7 @@ public:
 	enum Flags_ : Flags
 	{
 		Flags_None = 0,
-		Flags_UpdatingSkeleton = BITFIELD(0),
+		Flags_UpdatingSkeleton = BITFLAG(0),
 	};
 
 	enum ChangeEvent : TUINT32

@@ -10,7 +10,7 @@ public:
 public:
 	ADummyTask() = default;
 
-	void SetName(const char* a_szName)
+	void SetName(const TCHAR* a_szName)
 	{
 		m_Name = a_szName;
 	}

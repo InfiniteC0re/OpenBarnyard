@@ -22,7 +22,7 @@ public:
 	friend class ATerrainSection;
 
 public:
-	ATerrainLODBlock(TUINT a_uiHeapSize, const char* a_szName);
+	ATerrainLODBlock(TUINT a_uiHeapSize, const TCHAR* a_szName);
 	~ATerrainLODBlock();
 
 	void SetupTRB(Toshi::TTRB* a_pTRB, ATerrainLODBlock* a_pOther);

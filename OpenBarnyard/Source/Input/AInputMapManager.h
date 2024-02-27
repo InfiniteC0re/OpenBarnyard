@@ -44,11 +44,11 @@ public:
 	enum InputEvent : TUINT32
 	{
 		InputEvent_None = 0,
-		InputEvent_GoneDown = BITFIELD(Toshi::TInputInterface::EVENT_TYPE_GONE_DOWN),
-		InputEvent_GoneUp = BITFIELD(Toshi::TInputInterface::EVENT_TYPE_GONE_UP),
-		InputEvent_Repeat = BITFIELD(Toshi::TInputInterface::EVENT_TYPE_REPEAT),
-		InputEvent_Unknown = BITFIELD(Toshi::TInputInterface::EVENT_TYPE_UNKNOWN),
-		InputEvent_Moved = BITFIELD(Toshi::TInputInterface::EVENT_TYPE_MOVED),
+		InputEvent_GoneDown = BITFLAG(Toshi::TInputInterface::EVENT_TYPE_GONE_DOWN),
+		InputEvent_GoneUp = BITFLAG(Toshi::TInputInterface::EVENT_TYPE_GONE_UP),
+		InputEvent_Repeat = BITFLAG(Toshi::TInputInterface::EVENT_TYPE_REPEAT),
+		InputEvent_Unknown = BITFLAG(Toshi::TInputInterface::EVENT_TYPE_UNKNOWN),
+		InputEvent_Moved = BITFLAG(Toshi::TInputInterface::EVENT_TYPE_MOVED),
 	};
 
 	struct Command

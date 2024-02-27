@@ -74,7 +74,7 @@ void ASysMesh::DestroyResources()
 	m_uiMaxIndices = 0;
 }
 
-TBOOL ASysMesh::Create(void* a_pUnk, const char* a_szSomeString)
+TBOOL ASysMesh::Create(void* a_pUnk, const TCHAR* a_szSomeString)
 {
 	m_SomeString = a_szSomeString;
 	return TMesh::Create();

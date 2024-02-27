@@ -15,8 +15,8 @@ namespace Toshi {
 		enum State_ : State
 		{
 			State_None = 0,
-			State_Created = BITFIELD(0),
-			State_Validated = BITFIELD(1),
+			State_Created = BITFLAG(0),
+			State_Validated = BITFLAG(1),
 		};
 
 		// These flags can be used by the client classes

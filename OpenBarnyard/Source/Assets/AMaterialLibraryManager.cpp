@@ -96,7 +96,7 @@ void AMaterialLibraryManager::LoadLibrary(const Toshi::TPString8& a_rLibName, To
 			fileFormat = "16";
 		}
 
-		char matlibPath[128];
+		TCHAR matlibPath[128];
 		TStringManager::String8Format(
 			matlibPath,
 			sizeof(matlibPath),
@@ -247,7 +247,7 @@ void AMaterialLibraryManager::OnLibraryLoaded(TBOOL a_bUpdateGUIMaterials)
 	}
 }
 
-Toshi::TTexture* AMaterialLibraryManager::FindTexture(const char* a_szTextureName)
+Toshi::TTexture* AMaterialLibraryManager::FindTexture(const TCHAR* a_szTextureName)
 {
 	for (auto it = m_UsedTextures.Begin(); it != m_UsedTextures.End(); it = it->GetNext())
 	{
@@ -260,7 +260,7 @@ Toshi::TTexture* AMaterialLibraryManager::FindTexture(const char* a_szTextureNam
 	return TNULL;
 }
 
-AMaterialLibrary* AMaterialLibraryManager::List::CreateLibraryFromTRB(Toshi::TTRB* a_pTRB, const char* a_szFilePath)
+AMaterialLibrary* AMaterialLibraryManager::List::CreateLibraryFromTRB(Toshi::TTRB* a_pTRB, const TCHAR* a_szFilePath)
 {
 	auto pLibrary = new AMaterialLibrary;
 	pLibrary->SetPath(a_szFilePath);
@@ -275,7 +275,7 @@ AMaterialLibrary* AMaterialLibraryManager::List::CreateLibraryFromTRB(Toshi::TTR
 	return pLibrary;
 }
 
-AMaterialLibrary* AMaterialLibraryManager::List::CreateLibraryFromAsset(const char* a_szFilePath, Toshi::TTRB* a_pTRB)
+AMaterialLibrary* AMaterialLibraryManager::List::CreateLibraryFromAsset(const TCHAR* a_szFilePath, Toshi::TTRB* a_pTRB)
 {
 	auto pLibrary = new AMaterialLibrary;
 	pLibrary->SetPath(a_szFilePath);
@@ -292,7 +292,7 @@ AMaterialLibrary* AMaterialLibraryManager::List::CreateLibraryFromAsset(const ch
 
 		iFileNamePos++;
 
-		char symbolName[132];
+		TCHAR symbolName[132];
 		auto iLen = iFilePathLength - iFileNamePos - 4;
 		TStringManager::String8Copy(symbolName, a_szFilePath + iFileNamePos, iFilePathLength - iFileNamePos - 4);
 
@@ -333,7 +333,7 @@ AMaterialLibrary* AMaterialLibraryManager::List::CreateLibraryFromAsset(const ch
 	return pLibrary;
 }
 
-ATexture* AMaterialLibraryManager::List::FindTexture(const char* a_szTextureName, AMaterialLibrary** a_ppMaterialLibrary, TINT* a_pTextureIndex)
+ATexture* AMaterialLibraryManager::List::FindTexture(const TCHAR* a_szTextureName, AMaterialLibrary** a_ppMaterialLibrary, TINT* a_pTextureIndex)
 {
 	TINT iIndex = -1;
 	auto it = m_Libraries.Begin();

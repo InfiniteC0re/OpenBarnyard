@@ -9,11 +9,11 @@ public:
 	static constexpr TUINT MAX_NUM_FONT_REFS = 16;
 
 public:
-	static TBOOL Open(const char* a_szFileName);
+	static TBOOL Open(const TCHAR* a_szFileName);
 
-	static AGUI2Font* FindFont(const char* a_szFontName);
-	static AGUI2FontRef* FindFontRef(const char* a_szFontName);
-	static AGUI2FontResource* FindFontResource(const char* a_szResourceName);
+	static AGUI2Font* FindFont(const TCHAR* a_szFontName);
+	static AGUI2FontRef* FindFontRef(const TCHAR* a_szFontName);
+	static AGUI2FontResource* FindFontResource(const TCHAR* a_szResourceName);
 
 private:
 	static AGUI2FontRef* FindUnusedFontRef();

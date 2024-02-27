@@ -8,12 +8,12 @@ namespace Toshi {
 	typedef uint8_t TResourceState;
 	enum TResourceState_ : TResourceState
 	{
-		TResourceState_Valid       = BITFIELD(0),
-		TResourceState_Created     = BITFIELD(1),
-		TResourceState_Dying       = BITFIELD(2),
-		TResourceState_External    = BITFIELD(3),
-		TResourceState_Dead        = BITFIELD(4),
-		TResourceState_SceneObject = BITFIELD(5),
+		TResourceState_Valid       = BITFLAG(0),
+		TResourceState_Created     = BITFLAG(1),
+		TResourceState_Dying       = BITFLAG(2),
+		TResourceState_External    = BITFLAG(3),
+		TResourceState_Dead        = BITFLAG(4),
+		TResourceState_SceneObject = BITFLAG(5),
 	};
 
 	class TResource :

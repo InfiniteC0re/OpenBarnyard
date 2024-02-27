@@ -16,10 +16,10 @@ public:
 	inline static AGUI2TextureSection* g_sections = TNULL;
 
 public:
-	static TBOOL Open(const char* a_szFileName, Toshi::TTRB* a_pTRB);
+	static TBOOL Open(const TCHAR* a_szFileName, Toshi::TTRB* a_pTRB);
 	static void Close();
 
-	static AGUI2TextureSection* GetTextureSection(const char* a_szSectionName);
+	static AGUI2TextureSection* GetTextureSection(const TCHAR* a_szSectionName);
 
 	static void CreateMaterials();
 	static void DestroyMaterials();

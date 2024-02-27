@@ -20,8 +20,8 @@ public:
 	virtual TBOOL TryInvalidate() override;
 	virtual TBOOL TryValidate() override;
 	virtual void Render(Toshi::TRenderPacket* pPacket) override;
-	virtual ASysMaterial* CreateMaterial(const char* a_szName) override;
-	virtual ASysMesh* CreateMesh(const char* a_szName) override;
+	virtual ASysMaterial* CreateMaterial(const TCHAR* a_szName) override;
+	virtual ASysMesh* CreateMesh(const TCHAR* a_szName) override;
 
 	Toshi::TOrderTable* GetOrderTable(TUINT a_uiIndex)
 	{

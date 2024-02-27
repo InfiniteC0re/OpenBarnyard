@@ -33,12 +33,12 @@ AApplication g_oTheApp;
 TOSHI_NAMESPACE_USING
 
 #ifndef TOSHI_DIST
-#define TOSHI_ENTRY int main(int argc, char** argv)
+#define TOSHI_ENTRY int main(int argc, TCHAR** argv)
 #else
 #define TOSHI_ENTRY int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, INT cmdShow)
 #endif
 
-static const char* GetOSName(OSVERSIONINFOEX& osVersionInfo)
+static const TCHAR* GetOSName(OSVERSIONINFOEX& osVersionInfo)
 {
 	TBOOL isWorkstation = osVersionInfo.wProductType == VER_NT_WORKSTATION;
 
@@ -68,7 +68,7 @@ TOSHI_ENTRY
 	static AToshiClassReferenceHelper s_ToshiClassReferencer;
 	static TMemoryInitialiser s_MemoryInitialiser;
 
-	char* szCommandLine = GetCommandLineA();
+	TCHAR* szCommandLine = GetCommandLineA();
 
 	TUtil::TOSHIParams toshiParams;
 	toshiParams.szCommandLine = szCommandLine;
@@ -88,7 +88,7 @@ TOSHI_ENTRY
 
 	OSVERSIONINFOEX osVersionInfo = { sizeof(osVersionInfo) };
 	
-	const char* osName = "unknown";
+	const TCHAR* osName = "unknown";
 	HMODULE ntdll = GetModuleHandleW(L"ntdll.dll");
 
 	if (ntdll != NULL)
@@ -126,7 +126,7 @@ TOSHI_ENTRY
 	return 0;
 }
 
-TBOOL AApplication::OnCreate(int argc, char** argv)
+TBOOL AApplication::OnCreate(int argc, TCHAR** argv)
 {
 	TINFO("Starting Barnyard...\n");
 

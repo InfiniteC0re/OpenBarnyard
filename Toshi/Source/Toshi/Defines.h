@@ -8,22 +8,12 @@ constexpr TUINT32 TMAKEFOUR(const TCHAR str[4])
 
 #define ISZERO(X) ((X) == 0)
 #define HASFLAG(X) (!ISZERO(X))
-#define STRINGIFY(X) STRINGIFY2(X)    
-#define STRINGIFY2(X) #X
+#define STRINGIFY8(X) #X    
+#define STRINGIFY16(x) L##x
+#define STRINGIFY(X) STRINGIFY8(X)   
+#define BITFLAG(x) (1U << x)
 
-#define STRCAT(X, Y) STRCAT2(X, Y)
-#define STRCAT2(X, Y) X##Y
-#define STRCAT_2 CAT
-#define STRCAT_3(X, Y, Z) STRCAT(X, STRCAT(Y, Z))
-#define STRCAT_4(A, X, Y, Z) STRCAT(A, STRCAT_3(X, Y, Z))
-
-#define TDEPRECATED(...) [[deprecated(__VA_ARGS__)]]
-#define TMAKEVERSION(VER_MAJOR, VER_MINOR) ((VER_MAJOR << 16) | VER_MINOR)
-#define BITFIELD(x) (1U << x)
-
-#define _TS16(x) L##x
-
-#define GLUE(x, y) x y
+#define TVERSION(VER_MAJOR, VER_MINOR) ((VER_MAJOR << 16) | VER_MINOR)
 
 #define RETURN_ARG_COUNT(_1_, _2_, _3_, _4_, _5_, count, ...) count
 #define EXPAND_ARGS(args) RETURN_ARG_COUNT args
@@ -33,9 +23,13 @@ constexpr TUINT32 TMAKEFOUR(const TCHAR str[4])
 #define OVERLOAD_MACRO1(name, count) OVERLOAD_MACRO2(name, count)
 #define OVERLOAD_MACRO(name, count) OVERLOAD_MACRO1(name, count)
 
+#define GLUE(x, y) x y
 #define CALL_OVERLOAD(name, ...) GLUE(OVERLOAD_MACRO(name, COUNT_ARGS_MAX5(__VA_ARGS__)), (__VA_ARGS__))
 
-#define TOSHI_NAMESPACE_USING using namespace Toshi;
+#define TOSHI_NAMESPACE Toshi;
+#define TOSHI_NAMESPACE_USING using namespace TOSHI_NAMESPACE;
+#define TOSHI_NAMESPACE_START namespace TOSHI_NAMESPACE {
+#define TOSHI_NAMESPACE_END }
 
 #ifdef TOSHI_DIST
 	#define TOSHI_NO_LOGS

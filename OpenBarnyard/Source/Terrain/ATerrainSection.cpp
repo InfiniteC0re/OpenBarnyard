@@ -4,13 +4,19 @@
 #include "Assets/AAssetStreaming.h"
 #include "Assets/AMaterialLibraryManager.h"
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include <Core/TMemoryDebugOn.h>
+
 void ATerrainSection::LoadCollision()
 {
 	auto pTerrain = ATerrain::GetSingleton();
 
 	if (m_szCollisionFilename[0] != '\0')
 	{
-		auto pBlock = (pTerrain->IsCollisionPersistant()) ?
+		auto pBlock = (!pTerrain->IsCollisionStreamed()) ?
 			pTerrain->GetVIS()->m_pPersistantTerrainBlock : 
 			m_ppHighLODBlocks[m_iCollisionMemBlockID];
 
@@ -24,7 +30,7 @@ void ATerrainSection::LoadCollision()
 			&m_pCollisionModelData->m_ModelRef,
 			pTRB,
 			m_szCollisionFilename,
-			pTerrain->IsCollisionPersistant()
+			pTerrain->IsCollisionStreamed()
 		);
 
 		auto pCollisionJob = pTerrain->GetFreeCollisionLoaderJob();
@@ -44,7 +50,7 @@ void ATerrainSection::LoadModels(ATerrainLODType a_eLODType)
 
 	if (!IsLODLoading(a_eLODType) && !IsLODLoaded(a_eLODType))
 	{
-		const char** ppLODNames;
+		const TCHAR** ppLODNames;
 		TINT iNumLODs;
 
 		if (a_eLODType == ATerrainLODType_High)
@@ -99,7 +105,7 @@ void ATerrainSection::LoadModels(ATerrainLODType a_eLODType)
 				}
 			}
 
-			if (a_eLODType == ATerrainLODType_High && pTerrain->IsCollisionPersistant())
+			if (a_eLODType == ATerrainLODType_High && pTerrain->IsCollisionStreamed())
 			{
 				LoadCollision();
 			}
@@ -239,7 +245,7 @@ void ATerrainSection::DestroyLOD(ATerrainLODType a_eLODType)
 
 	if (a_eLODType == ATerrainLODType_High)
 	{
-		if (m_pCollisionModelData && pTerrain->IsCollisionPersistant())
+		if (m_pCollisionModelData && pTerrain->IsCollisionStreamed())
 		{
 			pTerrain->DestroyModelData(m_pCollisionModelData);
 			m_pCollisionModelData = TNULL;

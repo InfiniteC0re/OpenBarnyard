@@ -14,16 +14,16 @@ namespace Toshi {
 		typedef TUINT32 FLAG;
 		enum FLAG_ : FLAG
 		{
-			FLAG_DIRTY = BITFIELD(0),
-			FLAG_FOG = BITFIELD(1),
-			FLAG_HAS_MODELWORLDMATRIX = BITFIELD(2),
-			FLAG_HAS_VIEWWORLDMATRIX = BITFIELD(3),
-			FLAG_UNK3 = BITFIELD(4),
-			FLAG_UNK4 = BITFIELD(5),
-			FLAG_HAS_WORLDPLANES = BITFIELD(6),
-			FLAG_UNK6 = BITFIELD(7),
-			FLAG_DIRTY_WORLDMODELMATRIX = BITFIELD(8),
-			FLAG_DIRTY_VIEWMODELMATRIX = BITFIELD(9),
+			FLAG_DIRTY = BITFLAG(0),
+			FLAG_FOG = BITFLAG(1),
+			FLAG_HAS_MODELWORLDMATRIX = BITFLAG(2),
+			FLAG_HAS_VIEWWORLDMATRIX = BITFLAG(3),
+			FLAG_UNK3 = BITFLAG(4),
+			FLAG_UNK4 = BITFLAG(5),
+			FLAG_HAS_WORLDPLANES = BITFLAG(6),
+			FLAG_UNK6 = BITFLAG(7),
+			FLAG_DIRTY_WORLDMODELMATRIX = BITFLAG(8),
+			FLAG_DIRTY_VIEWMODELMATRIX = BITFLAG(9),
 		};
 
 		typedef TUINT32 CameraMode;
@@ -63,12 +63,11 @@ namespace Toshi {
 		};
 
 	protected:
-		void SetDirty(TBOOL enable) { enable ? m_eFlags |= FLAG_DIRTY : m_eFlags &= ~FLAG_DIRTY; }
-		void SetFlag(FLAG flag, TBOOL enable) { enable ? m_eFlags |= flag : m_eFlags &= ~flag; }
+		void SetDirty(TBOOL a_bDirty);
+		void SetFlag(FLAG a_eFlag, TBOOL a_bEnable);
 
-		void EnableFog(TBOOL enable) { enable ? m_eFlags |= FLAG_FOG : m_eFlags &= ~FLAG_FOG; }
-		TBOOL IsFogEnabled() const { return m_eFlags & FLAG_FOG; }
-		TBOOL IsDirty() const { return m_eFlags & FLAG_DIRTY; }
+		void EnableFog(TBOOL a_bEnable);
+		void SetFogDistance(TFLOAT a_fStart, TFLOAT a_fEnd);
 
 	public:
 		TRenderContext(TRenderInterface* pRender);
@@ -91,30 +90,14 @@ namespace Toshi {
 			m_eFlags = (m_eFlags & (~(FLAG_UNK3 | FLAG_UNK4 | FLAG_HAS_WORLDPLANES | FLAG_UNK6))) | FLAG_DIRTY;
 		}
 
-		Params& GetParams()
-		{
-			return m_oParams;
-		}
+		Params& GetParams() { return m_oParams; }
+		float GetX() const { return m_oParams.fX; }
+		float GetY() const { return m_oParams.fY; }
+		float GetWidth() const { return m_oParams.fWidth; }
+		float GetHeight() const { return m_oParams.fHeight; }
 
-		float GetX() const
-		{
-			return m_oParams.fX;
-		}
-
-		float GetY() const
-		{
-			return m_oParams.fY;
-		}
-
-		float GetWidth() const
-		{
-			return m_oParams.fWidth;
-		}
-
-		float GetHeight() const
-		{
-			return m_oParams.fHeight;
-		}
+		TBOOL IsFogEnabled() const { return m_eFlags & FLAG_FOG; }
+		TBOOL IsDirty() const { return m_eFlags & FLAG_DIRTY; }
 
 		TSkeletonInstance* GetSkeletonInstance() const
 		{
@@ -164,16 +147,21 @@ namespace Toshi {
 		Params m_oParams;                              // 0x0018
 		PROJECTIONPARAMS m_ProjParams;                 // 0x0030
 		TSkeletonInstance* m_pCurrentSkeletonInstance; // 0x0048
-		TMatrix44 m_oModelViewMatrix;                  // 0x0050
-		TMatrix44 m_oWorldViewMatrix;                  // 0x0090
-		TMatrix44 m_oModelWorldMatrix;                 // 0x00D0
-		TMatrix44 m_oViewWorldMatrix;                  // 0x0110
-		TPlane m_aFrustumPlanes1[6];                   // 0x01AC
-		TPlane m_aWorldPlanes[6];                      // 0x020C
-		TPlane m_aFrustumPlanes2[6];                   // 0x026C
+		TMatrix44 m_oModelViewMatrix;                  // 0x004C
+		TMatrix44 m_oWorldViewMatrix;                  // 0x008C
+		TMatrix44 m_oModelWorldMatrix;                 // 0x00CC
+		TMatrix44 m_oViewWorldMatrix;                  // 0x010C
+		TVector4 m_AmbientColor;                       // 0x014C
+		TVector4 m_FogColor;                           // 0x015C
+		// ...
+		TFLOAT m_fFogDistanceStart;                    // 0x01A0
+		TFLOAT m_fFogDistanceEnd;                      // 0x01A4
+		TPlane m_aFrustumPlanes1[6];                   // 0x01A8
+		TPlane m_aWorldPlanes[6];                      // 0x0208
+		TPlane m_aFrustumPlanes2[6];                   // 0x0268
 		// ...
 		TMatrix44 m_oWorldModelMatrix;                 // 0x032C
-		TMatrix44 m_oViewModelMatrix;                  // 0x036C
+		TMatrix44 m_oViewModelMatrix;                  // 0x0368
 	};
 
 }

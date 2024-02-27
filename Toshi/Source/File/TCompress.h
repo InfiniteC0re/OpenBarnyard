@@ -14,14 +14,14 @@ namespace Toshi {
 
     enum BTECSizeFlag
     {
-        BTECSizeFlag_BigSize = BITFIELD(6),
-        BTECSizeFlag_NoOffset = BITFIELD(7),
+        BTECSizeFlag_BigSize = BITFLAG(6),
+        BTECSizeFlag_NoOffset = BITFLAG(7),
         BTECSizeFlag_SizeMask = BTECSizeFlag_BigSize - 1,
     };
 
     enum BTECOffsetFlag
     {
-        BTECOffsetFlag_BigOffset = BITFIELD(7),
+        BTECOffsetFlag_BigOffset = BITFLAG(7),
         BTECOffsetFlag_OffsetMask = BTECOffsetFlag_BigOffset - 1,
     };
 

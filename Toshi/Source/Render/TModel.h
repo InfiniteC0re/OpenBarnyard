@@ -80,8 +80,8 @@ namespace Toshi {
 		enum Flags_ : Flags
 		{
 			Flags_None = 0,
-			Flags_Created = BITFIELD(0),
-			Flags_Loaded = BITFIELD(1),
+			Flags_Created = BITFLAG(0),
+			Flags_Loaded = BITFLAG(1),
 		};
 
 		using t_ModelLoaderTRBCallback = TBOOL(*)(TModel* a_pModel);

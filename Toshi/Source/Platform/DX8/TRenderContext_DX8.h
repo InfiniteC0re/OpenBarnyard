@@ -15,7 +15,15 @@ namespace Toshi {
 		void ComputeOrthographicProjection();
 		void ComputeOrthographicFrustum();
 
+		void EnableFogHAL();
+		void DisableFogHAL();
+
 		const TMatrix44& GetProjectionMatrix() const { return m_Projection; }
+
+		static TRenderContextD3D* Upcast(TRenderContext* a_pRenderContext)
+		{
+			return TSTATICCAST(TRenderContextD3D*, a_pRenderContext);
+		}
 
 	private:
 		TMatrix44 m_Projection;

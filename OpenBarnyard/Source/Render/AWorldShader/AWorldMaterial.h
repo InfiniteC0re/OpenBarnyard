@@ -18,14 +18,14 @@ public:
 	//-----------------------------------------------------------------------------
 	// Own methods
 	//-----------------------------------------------------------------------------
-	virtual void Create(BLENDMODE a_eBlendMode);
+	virtual TBOOL Create(BLENDMODE a_eBlendMode);
 	virtual void SetBlendMode(BLENDMODE a_eBlendMode);
 
 protected:
 	Toshi::TTexture* m_aTextures[MAX_TEXTURES];
 	BLENDMODE m_eBlendMode;
-	TINT m_iUnk1;
-	TFLOAT m_fUnk2;
-	TINT m_iUnk3;
-	TFLOAT m_fUnk4;
+	TFLOAT m_fUVAnimX;
+	TFLOAT m_fUVAnimY;
+	TFLOAT m_fUVAnimSpeedX;
+	TFLOAT m_fUVAnimSpeedY;
 };

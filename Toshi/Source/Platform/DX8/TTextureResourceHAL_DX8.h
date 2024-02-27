@@ -14,17 +14,7 @@ namespace Toshi {
 		TDECLARE_FREELIST_ALLOCATOR(TTextureResourceHAL);
 
 	public:
-		TTextureResourceHAL()
-		{
-			m_iNumLocks = 0;
-			m_bLoadFromMemory = TFALSE;
-			m_bIsToshi2 = TFALSE;
-			m_pData = TNULL;
-			m_uiDataSize = 0;
-			m_pD3DTexture = TNULL;
-			m_iUnk1 = 0;
-			m_iUnk2 = 0;
-		}
+		TTextureResourceHAL();
 
 		virtual TBOOL Validate() override;
 		virtual void Invalidate() override;
@@ -47,15 +37,16 @@ namespace Toshi {
 
 		TBOOL CreateFromFileDDS(TUINT a_uiWidth, TUINT a_uiHeight, TUINT a_uiLevels, const TCHAR* a_szFile);
 
-		void SetD3DTexture(IDirect3DTexture8* a_pD3DTexture)
-		{
-			m_pD3DTexture = a_pD3DTexture;
-		}
+		IDirect3DTexture8* GetD3DTexture() { return m_pD3DTexture; }
+		void SetD3DTexture(IDirect3DTexture8* a_pD3DTexture) { m_pD3DTexture = a_pD3DTexture; }
 
-		IDirect3DTexture8* GetD3DTexture()
-		{
-			return m_pD3DTexture;
-		}
+		TINT GetAddressUState() const { return m_eAddressUState; }
+		void SetAddressUState(TINT val) { m_eAddressUState = val; }
+
+		TINT GetAddressVState() const { return m_eAddressVState; }
+		void SetAddressVState(TINT val) { m_eAddressVState = val; }
+
+		static TTextureResourceHAL* Upcast(TTexture* a_pTexture) { return TSTATICCAST(TTextureResourceHAL*, a_pTexture); }
 
 	public:
 		static TBOOL IsPPM(const TCHAR* a_szName);
@@ -73,8 +64,8 @@ namespace Toshi {
 		TTEXTURERESOURCEFORMAT m_eResourceFormat;
 		IDirect3DTexture8* m_pD3DTexture;
 		D3DXIMAGE_INFO m_ImageInfo;
-		TINT m_iUnk1;
-		TINT m_iUnk2;
+		TINT m_eAddressUState;
+		TINT m_eAddressVState;
 	};
 
 }

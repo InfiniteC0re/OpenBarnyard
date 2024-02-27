@@ -138,6 +138,30 @@ namespace Toshi {
 		m_aFrustumPlanes2[WORLDPLANE_FAR] = m_aFrustumPlanes1[WORLDPLANE_FAR];
 	}
 
+	void TRenderContextD3D::EnableFogHAL()
+	{
+		auto pRenderer = TSTATICCAST(TRenderD3DInterface*, m_pRenderer);
+		auto pDevice = pRenderer->GetDirect3DDevice();
+
+		pDevice->SetRenderState(D3DRS_FOGENABLE, TRUE);
+		pDevice->SetRenderState(D3DRS_FOGTABLEMODE, D3DFOG_LINEAR);
+		pDevice->SetRenderState(
+			D3DRS_FOGCOLOR,
+			(((TUINT8(m_FogColor.x * 255.0f) << 8) | TUINT8(m_FogColor.y * 255.0f)) << 8) | TUINT8(m_FogColor.z * 255.0f)
+		);
+
+		pDevice->SetRenderState(D3DRS_FOGSTART, *TREINTERPRETCAST(DWORD*, &m_fFogDistanceStart));
+		pDevice->SetRenderState(D3DRS_FOGEND, *TREINTERPRETCAST(DWORD*, &m_fFogDistanceEnd));
+	}
+
+	void TRenderContextD3D::DisableFogHAL()
+	{
+		auto pRenderer = TSTATICCAST(TRenderD3DInterface*, m_pRenderer);
+		auto pDevice = pRenderer->GetDirect3DDevice();
+
+		pDevice->SetRenderState(D3DRS_FOGENABLE, FALSE);
+	}
+
 	void TRenderContextD3D::Update()
 	{
 		if (IsDirty())

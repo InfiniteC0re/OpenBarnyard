@@ -12,7 +12,7 @@
 
 TOSHI_NAMESPACE_USING
 
-TBOOL AAssetLoader::Load(const char* a_szFileName, AAssetType a_eAssetType, TBOOL a_bUseStreaming)
+TBOOL AAssetLoader::Load(const TCHAR* a_szFileName, AAssetType a_eAssetType, TBOOL a_bUseStreaming)
 {
 	if (!ms_pTRBFiles[a_eAssetType])
 	{
@@ -64,11 +64,11 @@ void AAssetLoader::Close(AAssetType a_eAssetType)
 	}
 }
 
-void* AAssetLoader::GetSymbolAddress(const char* a_szFileName, const char* a_szSymbolName, AAssetType a_eAssetType)
+void* AAssetLoader::GetSymbolAddress(const TCHAR* a_szFileName, const TCHAR* a_szSymbolName, AAssetType a_eAssetType)
 {
 	if (ms_pTRBFiles[a_eAssetType])
 	{
-		char szName[256];
+		TCHAR szName[256];
 		Toshi::TStringManager::String8Format(szName, sizeof(szName), "%s_%s", a_szFileName, a_szSymbolName);
 		return ms_pTRBFiles[a_eAssetType]->GetSymbolAddress(szName);
 	}

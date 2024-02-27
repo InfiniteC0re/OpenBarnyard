@@ -28,9 +28,9 @@ public:
 	ATerrainLocatorManager* GetLocatorManager() { return m_pLocatorManager; }
 
 private:
-	const char* m_szKeyLibrary;
-	const char* m_szMatLibrary;
-	const char* m_szSkelFilePath;
+	const TCHAR* m_szKeyLibrary;
+	const TCHAR* m_szMatLibrary;
+	const TCHAR* m_szSkelFilePath;
 	TUINT32 m_uiUnknown;
 	AMaterialLibrary* m_pMaterialLibrary;
 	Toshi::TTRB* m_pMaterialLibraryTRB;

@@ -13,8 +13,8 @@ namespace Toshi
 		typedef TUINT32 State;
 		enum State_ : State
 		{
-			State_Registered = BITFIELD(0),
-			State_Used = BITFIELD(1)
+			State_Registered = BITFLAG(0),
+			State_Used = BITFLAG(1)
 		};
 
 	public:

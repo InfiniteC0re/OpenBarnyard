@@ -13,7 +13,7 @@ public:
 	virtual TBOOL OnCreate() override;
 	virtual void OnDestroy() override;
 
-	virtual TBOOL PlayMovie(const char* a_szFileName, TUINT32 a_Unk) = 0;
+	virtual TBOOL PlayMovie(const TCHAR* a_szFileName, TUINT32 a_Unk) = 0;
 	virtual void StopMovie() = 0;
 	virtual void PauseMovie(TBOOL a_bPause) = 0;
 	virtual void Mute(TBOOL a_bMute = TTRUE) { m_bIsMuted = a_bMute; }

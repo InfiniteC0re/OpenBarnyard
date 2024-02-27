@@ -20,9 +20,9 @@ namespace Toshi
 
 		enum State
 		{
-			State_Created = BITFIELD(0),
-			State_Active = BITFIELD(1),
-			State_Dying = BITFIELD(2),
+			State_Created = BITFLAG(0),
+			State_Active = BITFLAG(1),
+			State_Dying = BITFLAG(2),
 		};
 
 	public:

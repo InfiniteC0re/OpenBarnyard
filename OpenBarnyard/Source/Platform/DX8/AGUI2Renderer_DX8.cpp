@@ -29,7 +29,7 @@ AGUI2RendererDX8::~AGUI2RendererDX8()
 	delete[] m_pTransforms;
 }
 
-AGUI2Material* AGUI2RendererDX8::CreateMaterial(const char* a_szTextureName)
+AGUI2Material* AGUI2RendererDX8::CreateMaterial(const TCHAR* a_szTextureName)
 {
 	return CreateMaterial(
 		GetTexture(a_szTextureName)
@@ -55,7 +55,7 @@ void AGUI2RendererDX8::DestroyMaterial(AGUI2Material* a_pMaterial)
 	}
 }
 
-Toshi::TTexture* AGUI2RendererDX8::GetTexture(const char* a_szTextureName)
+Toshi::TTexture* AGUI2RendererDX8::GetTexture(const TCHAR* a_szTextureName)
 {
 	return AMaterialLibraryManager::GetSingleton()->FindTexture(a_szTextureName);
 }

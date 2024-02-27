@@ -168,7 +168,7 @@ namespace Toshi
 								auto hdrx1 = GetSectionInfo(relcEntry.HDRX1);
 								auto hdrx2 = hdrx1;
 
-								if (m_pHeader->m_ui32Version.Value >= TMAKEVERSION(1, 0))
+								if (m_pHeader->m_ui32Version.Value >= TVERSION(1, 0))
 								{
 									hdrx2 = GetSectionInfo(relcEntry.HDRX2);
 								}

@@ -91,9 +91,14 @@ namespace Toshi {
 			return m_oLightDirection;
 		}
 
-		TUINT8 GetUnk2()
+		TUINT8 GetUnk2() const
 		{
 			return m_ui8Unk2;
+		}
+
+		TFLOAT GetAlpha() const
+		{
+			return m_fAlpha;
 		}
 
 	private:

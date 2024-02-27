@@ -11,7 +11,7 @@ public:
 	virtual TBOOL RunJob() override;
 	virtual TBOOL CancelJob() override;
 
-	void InitJob(Toshi::TModelPtr* a_pModelRef, Toshi::TTRB* a_pTRB, const char* a_szFileName, TBOOL a_bCanBeCanceled);
+	void InitJob(Toshi::TModelPtr* a_pModelRef, Toshi::TTRB* a_pTRB, const TCHAR* a_szFileName, TBOOL a_bCanBeCanceled);
 
 private:
 	Toshi::TModelPtr* m_pModelRef = TNULL;

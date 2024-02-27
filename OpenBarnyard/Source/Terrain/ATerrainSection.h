@@ -20,13 +20,13 @@ public:
 
 	enum FLAGS : TUINT32
 	{
-		FLAGS_HIGH_LOD_LOADED = BITFIELD(0),
-		FLAGS_LOW_LOD_LOADED = BITFIELD(1),
-		FLAGS_HIGH_LOD_LOADING = BITFIELD(2),
-		FLAGS_LOW_LOD_LOADING = BITFIELD(3),
-		FLAGS_HIGH_LOD_QUEUED = BITFIELD(4),
-		FLAGS_LOW_LOD_QUEUED = BITFIELD(5),
-		FLAGS_COLLISION_LOADING = BITFIELD(10)
+		FLAGS_HIGH_LOD_LOADED = BITFLAG(0),
+		FLAGS_LOW_LOD_LOADED = BITFLAG(1),
+		FLAGS_HIGH_LOD_LOADING = BITFLAG(2),
+		FLAGS_LOW_LOD_LOADING = BITFLAG(3),
+		FLAGS_HIGH_LOD_QUEUED = BITFLAG(4),
+		FLAGS_LOW_LOD_QUEUED = BITFLAG(5),
+		FLAGS_COLLISION_LOADING = BITFLAG(10)
 	};
 
 	friend class ATerrain;
@@ -59,23 +59,23 @@ public:
 	void SetLODEmpty(ATerrainLODType a_eLODType, TBOOL a_bEmpty);
 
 private:
-	const char* m_szName;
-	const char** m_pszHighModelFiles;
-	const char** m_pszLowModelFiles;
+	const TCHAR* m_szName;
+	const TCHAR** m_pszHighModelFiles;
+	const TCHAR** m_pszLowModelFiles;
 	TINT32 m_iNumHighModelFiles;
 	TINT32 m_iNumLowModelFiles;
 
 	TUINT32 m_Unk1;
 	TUINT32 m_Unk2;
-	const char* m_szCollisionFilename;
+	const TCHAR* m_szCollisionFilename;
 	ModelData* m_pCollisionModelData;
 	ModelData** m_ppLODModelsData[ATerrainLODType_NUMOF];
 	
-	const char* m_szHighMatLibFilename;
+	const TCHAR* m_szHighMatLibFilename;
 	Toshi::TTRB* m_pMatLibHighTRB;
 	AMaterialLibrary* m_pMatLibHigh;
 	
-	const char* m_szLowMatLibFilename;
+	const TCHAR* m_szLowMatLibFilename;
 	Toshi::TTRB* m_pMatLibLowTRB;
 	AMaterialLibrary* m_pMatLibLow;
 

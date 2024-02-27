@@ -218,7 +218,7 @@ void ASysShaderHAL::Render(Toshi::TRenderPacket* pPacket)
 	pDevice->SetRenderState(D3DRS_ZBIAS, 0);
 }
 
-ASysMaterial* ASysShaderHAL::CreateMaterial(const char* a_szName)
+ASysMaterial* ASysShaderHAL::CreateMaterial(const TCHAR* a_szName)
 {
 	Validate();
 
@@ -229,7 +229,7 @@ ASysMaterial* ASysShaderHAL::CreateMaterial(const char* a_szName)
 	return pMaterialHAL;
 }
 
-ASysMesh* ASysShaderHAL::CreateMesh(const char* a_szName)
+ASysMesh* ASysShaderHAL::CreateMesh(const TCHAR* a_szName)
 {
 	Validate();
 

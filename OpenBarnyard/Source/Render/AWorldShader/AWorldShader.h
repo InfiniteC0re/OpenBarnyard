@@ -27,8 +27,8 @@ public:
 	virtual void SetLightScattering(TBOOL a_bEnable);
 	virtual TBOOL IsAlphaBlendMaterial();
 	virtual void SetAlphaBlendMaterial(TBOOL a_bIsAlphaBlendMaterial);
-	virtual AWorldMaterial* CreateMaterial(const char* a_szName) = 0;
-	virtual AWorldMesh* CreateMesh(const char* a_szName) = 0;
+	virtual AWorldMaterial* CreateMaterial(const TCHAR* a_szName) = 0;
+	virtual AWorldMesh* CreateMesh(const TCHAR* a_szName) = 0;
 
 private:
 	TINT m_iUnk1;

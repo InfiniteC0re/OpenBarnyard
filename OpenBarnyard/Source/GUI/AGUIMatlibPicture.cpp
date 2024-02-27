@@ -107,7 +107,7 @@ void AGUIMatlibPicture::LoadMatLib()
 {
 	TString8 format("16");
 
-	char path[256];
+	TCHAR path[256];
 	TStringManager::String8Format(path, sizeof(path), "data/matlibs/%s.ttl", m_Name.GetString8().GetString());
 	
 	m_pMaterialLibrary = AMaterialLibraryManager::List::GetSingleton()->CreateLibraryFromAsset(

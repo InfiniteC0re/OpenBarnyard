@@ -13,7 +13,7 @@ namespace Toshi
 	{
 		if (header->Magic != TMAKEFOUR("BTEC"))
 			return TCOMPRESS_ERROR_WRONG_MAGIC;
-		if (header->Version != TMAKEVERSION(1, 2) && header->Version != TMAKEVERSION(1, 3))
+		if (header->Version != TVERSION(1, 2) && header->Version != TVERSION(1, 3))
 			return TCOMPRESS_ERROR_WRONG_VERSION;
 		if (header->Size > bufferSize)
 			return TCOMPRESS_ERROR_WRONG_SIZE;
@@ -49,7 +49,7 @@ namespace Toshi
 			}
 		}
 
-		if (header->Version == TMAKEVERSION(1, 3))
+		if (header->Version == TVERSION(1, 3))
 		{
 			pBufferPos = buffer;
 			for (size_t i = 0; i < header->Size; i++, pBufferPos++)
@@ -70,7 +70,7 @@ namespace Toshi
 		TUINT32 savedPos = file->Tell();
 		size_t readedSize = file->Read(&btecHeader, headerSize);
 
-		if (btecHeader.Version == TMAKEVERSION(1, 3))
+		if (btecHeader.Version == TVERSION(1, 3))
 		{
 			readedSize += file->Read(&btecHeader.XorValue, sizeof(TCompress::Header::XorValue));
 			headerSize += sizeof(TCompress::Header::XorValue);

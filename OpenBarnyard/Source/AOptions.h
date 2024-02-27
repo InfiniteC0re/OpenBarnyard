@@ -12,9 +12,9 @@ public:
 	enum UpdatedSettings_ : UpdatedSettings
 	{
 		UpdatedSettings_None = 0,
-		UpdatedSettings_Audio = BITFIELD(0),
-		UpdatedSettings_Language = BITFIELD(1),
-		UpdatedSettings_Input = BITFIELD(2),
+		UpdatedSettings_Audio = BITFLAG(0),
+		UpdatedSettings_Language = BITFLAG(1),
+		UpdatedSettings_Input = BITFLAG(2),
 		UpdatedSettings_ForceUpdate = 0xFFFFFFFFU,
 	};
 

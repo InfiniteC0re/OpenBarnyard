@@ -147,7 +147,7 @@ void ABINKMoviePlayer::OnDestroy()
 
 }
 
-TBOOL ABINKMoviePlayer::PlayMovie(const char* a_szFileName, TUINT32 a_Unk)
+TBOOL ABINKMoviePlayer::PlayMovie(const TCHAR* a_szFileName, TUINT32 a_Unk)
 {
 	TVALIDPTR(a_szFileName);
 
@@ -293,7 +293,7 @@ void ABINKMoviePlayer::Render(TFLOAT a_fDeltaTime)
 	}
 }
 
-void ABINKMoviePlayer::SetMovieFile(const char* a_szFile)
+void ABINKMoviePlayer::SetMovieFile(const TCHAR* a_szFile)
 {
 	TStringManager::String8Format(m_szMoviePath, sizeof(m_szMoviePath), "Data/Movies/%s.bik", a_szFile);
 }

@@ -7,7 +7,7 @@ public:
 	virtual void BeginJob() override;
 	virtual TBOOL RunJob() override;
 
-	void InitJob(const char* a_szFileName);
+	void InitJob(const TCHAR* a_szFileName);
 
 	AKeyframeLibStreamJob& GetStream() { return m_oStreamJob; }
 

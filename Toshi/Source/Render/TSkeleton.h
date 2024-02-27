@@ -57,7 +57,7 @@ namespace Toshi {
 	public:
 		enum Flag : TUINT16
 		{
-			FLAG_Overlay = BITFIELD(0),
+			FLAG_Overlay = BITFLAG(0),
 		};
 
 		enum LOOPMODE : TINT

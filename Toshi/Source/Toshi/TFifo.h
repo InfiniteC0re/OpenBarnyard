@@ -10,8 +10,8 @@ namespace Toshi
 		enum Flags_ : Flags
 		{
 			Flags_None          = 0,
-			Flags_PollSemaphore = BITFIELD(0),
-			Flags_NoSemaphore   = BITFIELD(1),
+			Flags_PollSemaphore = BITFLAG(0),
+			Flags_NoSemaphore   = BITFLAG(1),
 		};
 
 	protected:

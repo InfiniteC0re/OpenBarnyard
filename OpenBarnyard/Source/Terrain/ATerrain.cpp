@@ -4,6 +4,14 @@
 #include "Assets/AAssetStreaming.h"
 #include "ALoadScreen.h"
 
+#include <Toshi/T2FixedString.h>
+
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include <Core/TMemoryDebugOn.h>
+
 TOSHI_NAMESPACE_USING
 
 ATerrain::ATerrain(TINT a_iUnused1, TINT a_iUnused2, TINT a_iPreloadTerrainBlockSize, TINT a_iStartVISGroup)
@@ -98,8 +106,8 @@ void ATerrain::Update()
 	{
 		if (m_iPreviousSection != m_iCurrentSection)
 		{
-			UseBlocksInCurrentVIS(ATerrainLODType_High);
-			UseBlocksInCurrentVIS(ATerrainLODType_Low);
+			UpdateUsedBlocks(ATerrainLODType_High);
+			UpdateUsedBlocks(ATerrainLODType_Low);
 
 			UnqueueStreamingAssets();
 			CancelUnrequiredJobs();
@@ -253,7 +261,7 @@ TBOOL ATerrain::IsLoaded() const
 	return TFALSE;
 }
 
-void ATerrain::LoadFromFile(const char* a_szFilePath, TBOOL a_bLoadLater, TBOOL a_bPersistantCollision)
+void ATerrain::LoadFromFile(const TCHAR* a_szFilePath, TBOOL a_bLoadLater, TBOOL a_bStreamCollision)
 {
 	TFIXME("Do something with ATerrainSectionHudElement");
 
@@ -267,13 +275,14 @@ void ATerrain::LoadFromFile(const char* a_szFilePath, TBOOL a_bLoadLater, TBOOL 
 
 	if (m_VISTRB.GetSymbolAddress("preloadcollision"))
 	{
-		a_bPersistantCollision = TFALSE;
+		// We won't stream collision models if there's any preload collision
+		a_bStreamCollision = TFALSE;
 		m_iPreloadTerrainBlockSize = m_pTerrainVIS->m_uiPersistantTerrainBlockSize;
 	}
 
 	m_VISTRB.DeleteSymbolTable();
 
-	if (!a_bPersistantCollision)
+	if (!a_bStreamCollision)
 	{
 		m_pTerrainVIS->m_uiPersistantTerrainBlockSize = m_iPreloadTerrainBlockSize;
 	}
@@ -286,13 +295,14 @@ void ATerrain::LoadFromFile(const char* a_szFilePath, TBOOL a_bLoadLater, TBOOL 
 		);
 	}
 
+	// Create HighLOD blocks
 	if (m_pTerrainVIS->m_iNumHighBlocks > 0)
 	{
 		m_pTerrainVIS->m_ppHighBlocks = new ATerrainLODBlock*[m_pTerrainVIS->m_iNumHighBlocks];
 
 		for (TINT i = 0; i < m_pTerrainVIS->m_iNumHighBlocks; i++)
 		{
-			char szBlockName[64];
+			TCHAR szBlockName[64];
 			TStringManager::String8Format(szBlockName, sizeof(szBlockName), "Terrain_HighLOD_Block%d", i);
 
 			m_pTerrainVIS->m_ppHighBlocks[i] = new ATerrainLODBlock(
@@ -302,13 +312,14 @@ void ATerrain::LoadFromFile(const char* a_szFilePath, TBOOL a_bLoadLater, TBOOL 
 		}
 	}
 
+	// Create LowLOD blocks
 	if (m_pTerrainVIS->m_iNumLowBlocks > 0)
 	{
 		m_pTerrainVIS->m_ppLowBlocks = new ATerrainLODBlock*[m_pTerrainVIS->m_iNumLowBlocks];
 
 		for (TINT i = 0; i < m_pTerrainVIS->m_iNumLowBlocks; i++)
 		{
-			char szBlockName[64];
+			TCHAR szBlockName[64];
 			TStringManager::String8Format(szBlockName, sizeof(szBlockName), "Terrain_LowLOD_Block%d", i);
 
 			m_pTerrainVIS->m_ppLowBlocks[i] = new ATerrainLODBlock(
@@ -320,6 +331,7 @@ void ATerrain::LoadFromFile(const char* a_szFilePath, TBOOL a_bLoadLater, TBOOL 
 
 	m_pTerrainVIS->LoadSkeleton();
 	
+	// Load global matlib if it is specified
 	if (*m_pTerrainVIS->m_szMatLibrary != '\0')
 	{
 		auto pMatlibJob = GetFreeMatlibLoaderJob();
@@ -339,9 +351,10 @@ void ATerrain::LoadFromFile(const char* a_szFilePath, TBOOL a_bLoadLater, TBOOL 
 		AAssetStreaming::GetSingleton()->AddMainThreadJob(pMatlibJob);
 	}
 
-	m_bPersistantCollision = a_bPersistantCollision;
+	m_bStreamCollision = a_bStreamCollision;
 
-	if (!m_bPersistantCollision)
+	// If collision is not streamed, create jobs to load it for every section
+	if (!a_bStreamCollision)
 	{
 		for (TINT i = 0; i < m_pTerrainVIS->m_iNumSections; i++)
 		{
@@ -349,6 +362,7 @@ void ATerrain::LoadFromFile(const char* a_szFilePath, TBOOL a_bLoadLater, TBOOL 
 		}
 	}
 
+	// Wait until all assets are loaded
 	if (!a_bLoadLater)
 	{
 		while (AAssetStreaming::GetSingleton()->HasActiveJobs())
@@ -391,7 +405,7 @@ void ATerrain::DestroyModelData(ATerrainSection::ModelData* a_pModelData)
 	}
 }
 
-void ATerrain::UseBlocksInCurrentVIS(ATerrainLODType a_eLODType)
+void ATerrain::UpdateUsedBlocks(ATerrainLODType a_eLODType)
 {
 	TINT iNumBlocks;
 	ATerrainLODBlock** ppBlocks;
@@ -412,7 +426,7 @@ void ATerrain::UseBlocksInCurrentVIS(ATerrainLODType a_eLODType)
 	for (TINT i = 0; i < iNumBlocks; i++)
 	{
 		auto pBlock = ppBlocks[i];
-		pBlock->m_bIsUnused = TTRUE;
+		pBlock->SetUnused();
 
 		if (a_eLODType == ATerrainLODType_High && pBlock->m_pVISGroup == pCurrentVISGroup)
 		{
@@ -581,6 +595,108 @@ ATerrainLODBlock* ATerrain::AllocateLODBlock(ATerrainLODType a_eLODType, ATerrai
 	return TNULL;
 }
 
+ATRBLoaderJob* ATerrain::GetFreeTRBLoaderJob()
+{
+	TASSERT(m_FreeTRBLoaderJobs.Size() > 0, "No free ATRBLoaderJobs left!");
+
+	if (m_FreeTRBLoaderJobs.Size() > 0)
+	{
+		auto pTRBJobSlot = m_FreeTRBLoaderJobs.PopFront();
+		m_UsedTRBLoaderJobs.PushFront(pTRBJobSlot);
+
+		return TSTATICCAST(ATRBLoaderJob*, pTRBJobSlot->pJob);
+	}
+	else
+	{
+		return TNULL;
+	}
+}
+
+ASkeletonDoneJob* ATerrain::GetFreeSkeletonLoaderJob()
+{
+	TASSERT(m_FreeSkeletonLoaderJobs.Size() > 0, "No free ASkeletonDoneJobs left!");
+
+	if (m_FreeSkeletonLoaderJobs.Size() > 0)
+	{
+		auto pTRBJobSlot = m_FreeSkeletonLoaderJobs.PopFront();
+		m_UsedSkeletonLoaderJobs.PushFront(pTRBJobSlot);
+
+		return TSTATICCAST(ASkeletonDoneJob*, pTRBJobSlot->pJob);
+	}
+	else
+	{
+		return TNULL;
+	}
+}
+
+AMatLibLoaderJob* ATerrain::GetFreeMatlibLoaderJob()
+{
+	TASSERT(m_FreeMatlibLoaderJobs.Size() > 0, "No free AMatlibLoaderJobs left!");
+
+	if (m_FreeMatlibLoaderJobs.Size() > 0)
+	{
+		auto pTRBJobSlot = m_FreeMatlibLoaderJobs.PopFront();
+		m_UsedMatlibLoaderJobs.PushFront(pTRBJobSlot);
+
+		return TSTATICCAST(AMatLibLoaderJob*, pTRBJobSlot->pJob);
+	}
+	else
+	{
+		return TNULL;
+	}
+}
+
+ACollisionDoneJob* ATerrain::GetFreeCollisionLoaderJob()
+{
+	TASSERT(m_FreeCollisionLoaderJobs.Size() > 0, "No free ACollisionDoneJob left!");
+
+	if (m_FreeCollisionLoaderJobs.Size() > 0)
+	{
+		auto pTRBJobSlot = m_FreeCollisionLoaderJobs.PopFront();
+		m_UsedCollisionLoaderJobs.PushFront(pTRBJobSlot);
+
+		return TSTATICCAST(ACollisionDoneJob*, pTRBJobSlot->pJob);
+	}
+	else
+	{
+		return TNULL;
+	}
+}
+
+AModelLoaderJob* ATerrain::GetFreeModelLoaderJob()
+{
+	TASSERT(m_FreeModelLoaderJobs.Size() > 0, "No free AModelLoaderJob left!");
+
+	if (m_FreeModelLoaderJobs.Size() > 0)
+	{
+		auto pTRBJobSlot = m_FreeModelLoaderJobs.PopFront();
+		m_UsedModelLoaderJobs.PushFront(pTRBJobSlot);
+
+		return TSTATICCAST(AModelLoaderJob*, pTRBJobSlot->pJob);
+	}
+	else
+	{
+		return TNULL;
+	}
+}
+
+ASectionDoneJob* ATerrain::GetFreeSectionLoaderJob()
+{
+	TASSERT(m_FreeSectionLoaderJobs.Size() > 0, "No free ASectionDoneJob left!");
+
+	if (m_FreeSectionLoaderJobs.Size() > 0)
+	{
+		auto pTRBJobSlot = m_FreeSectionLoaderJobs.PopFront();
+		m_UsedSectionLoaderJobs.PushFront(pTRBJobSlot);
+
+		return TSTATICCAST(ASectionDoneJob*, pTRBJobSlot->pJob);
+	}
+	else
+	{
+		return TNULL;
+	}
+}
+
 void ATerrain::FlushJobs()
 {
 	MoveAllFinishedJobs(m_FreeModelLoaderJobs, m_UsedModelLoaderJobs);
@@ -673,9 +789,10 @@ void ATerrainManager::SetTerrain(TINT a_eTerrain, TBOOL a_bLoadLater, TBOOL a_bP
 		a_iStartVISGroup
 	);
 
-	char terrainFile[128];
-	TStringManager::String8Format(terrainFile, sizeof(terrainFile), "Data\\Terrain\\%s\\%s.trb", GetTerrainName(a_eTerrain), GetTerrainName(a_eTerrain));
-	ms_pCurrentTerrain->LoadFromFile(terrainFile, TTRUE, a_bPersistantCollision);
+	T2FixedString128 terrainFile;
+	terrainFile.Format("Data\\Terrain\\%s\\%s.trb", GetTerrainName(a_eTerrain), GetTerrainName(a_eTerrain));
+	
+	ms_pCurrentTerrain->LoadFromFile(terrainFile.Get(), TTRUE, a_bPersistantCollision);
 	ms_eCurrentLevel = a_eTerrain;
 
 	if (!a_bLoadLater)
@@ -704,6 +821,7 @@ void ATerrainManager::StartLoading()
 		TRenderInterface::GetSingleton()->Update(1.0f / 1000.0f);
 		AAssetStreaming::GetSingleton()->Update();
 		Sleep(20);
+
 		pTerrain->Update();
 		ALoadScreen::GetGlobalInstance()->Update();
 	}

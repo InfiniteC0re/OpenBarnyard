@@ -9,7 +9,7 @@ public:
 	TDECLARE_CLASS(AGameState);
 
 public:
-	AMovieState(const char* a_szName, TBOOL a_bFlag1, AGameState* a_pNextGameState, TBOOL a_bFlag2);
+	AMovieState(const TCHAR* a_szName, TBOOL a_bFlag1, AGameState* a_pNextGameState, TBOOL a_bFlag2);
 
 	virtual TBOOL ProcessInput(const Toshi::TInputInterface::InputEvent* a_pInputEvent) override;
 	virtual TBOOL ProcessCommand(AInputCommand a_eInputCommand, const Toshi::TInputInterface::InputEvent* a_pInputEvent, TBOOL& a_rStopEvents) override;

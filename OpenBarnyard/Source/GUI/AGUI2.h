@@ -48,10 +48,10 @@ private:
 	AGUI2TextBox m_oMemStats;
 	AGUI2TextBox m_oPlayerInfo;
 	AGUI2TextBox m_oTexturesInfo;
-	wchar_t m_wszMemStats[320];
-	wchar_t m_wszFPS[64];
-	wchar_t m_wszPlayerInfo[128];
-	wchar_t m_wszTexturesInfo[64];
+	TWCHAR m_wszMemStats[320];
+	TWCHAR m_wszFPS[64];
+	TWCHAR m_wszPlayerInfo[128];
+	TWCHAR m_wszTexturesInfo[64];
 	TBOOL m_bShowMemStatsInfo;
 	TBOOL m_bShowFPSInfo;
 	TBOOL m_bShowPlayerInfo;

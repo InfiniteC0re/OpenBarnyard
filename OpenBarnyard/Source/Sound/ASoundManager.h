@@ -58,7 +58,7 @@ public:
 	virtual TBOOL OnUpdate(TFLOAT a_fDeltaTime) override;
 	virtual void OnDestroy() override;
 
-	TBOOL LoadWaveBanks(const char* a_szFileName);
+	TBOOL LoadWaveBanks(const TCHAR* a_szFileName);
 	void PauseAllSound(TBOOL a_bPaused);
 
 private:

@@ -1,6 +1,12 @@
 #include "pch.h"
 #include "ATerrainLocator.h"
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include <Core/TMemoryDebugOn.h>
+
 void ATerrainLocatorManager::LoadFromTRB(Toshi::TTRB* a_pTRB)
 {
 	m_pTRB = a_pTRB;

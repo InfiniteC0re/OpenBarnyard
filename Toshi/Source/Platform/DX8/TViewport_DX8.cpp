@@ -32,7 +32,7 @@ namespace Toshi {
 		
 		if (eClearFlags != 0)
 		{
-			pRender->Clear(
+			pRender->ClearRegion(
 				DWORD(m_pRenderCtx->GetParams().fX),
 				DWORD(m_pRenderCtx->GetParams().fY),
 				DWORD(m_pRenderCtx->GetParams().fWidth),

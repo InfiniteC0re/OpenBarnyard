@@ -40,23 +40,26 @@ public:
 
 public:
 	AGameState();
-	virtual ~AGameState() = default;
+	~AGameState();
 
+	//-----------------------------------------------------------------------------
+	// Own methods
+	//-----------------------------------------------------------------------------
 	virtual TBOOL ProcessInput(const Toshi::TInputInterface::InputEvent* a_pInputEvent);
 	virtual TBOOL ProcessCommand(AInputCommand a_eInputCommand, const Toshi::TInputInterface::InputEvent* a_pInputEvent, TBOOL& a_rStopEvents);
 	virtual TBOOL Unknown1(void* a_pUnk1, void* a_pUnk2);
-	virtual void Unknown2(void* a_pUnk1) { }
-	virtual void Unknown3(void* a_pUnk1) { }
-	virtual void Unknown4(void* a_pUnk1) { }
-	virtual void Unknown5() { }
-	virtual TBOOL Unknown6() { return TTRUE; }
-	virtual TUINT32 GetSound() { return -1; }
-	virtual TBOOL Unknown7() { return TTRUE; }
-	virtual void Unknown8() { }
-	virtual void OnStarted() { }
-	virtual void Unknown10() { }
-	virtual void Unknown11(void* a_pUnk1, void* a_pUnk2) { }
-	virtual void Unknown12(void* a_pUnk1, void* a_pUnk2) { }
+	virtual void Unknown2(void* a_pUnk1);
+	virtual void Unknown3(void* a_pUnk1);
+	virtual void Unknown4(void* a_pUnk1);
+	virtual void Unknown5();
+	virtual TBOOL Unknown6();
+	virtual TUINT32 GetSound();
+	virtual TBOOL Unknown7();
+	virtual void Unknown8();
+	virtual void OnStarted();
+	virtual void Unknown10();
+	virtual void Unknown11(void* a_pUnk1, void* a_pUnk2);
+	virtual void Unknown12(void* a_pUnk1, void* a_pUnk2);
 	virtual TFLOAT GetFOV();
 	virtual TBOOL OnUpdate(TFLOAT a_fDeltaTime);
 	virtual void OnInsertion();
@@ -66,43 +69,20 @@ public:
 	virtual void OnActivate();
 	virtual void OnDeactivate();
 
-	void Destroy();
-	void Destroy(TBOOL a_bDeactivate);
-
 	TBOOL SendInputCommands(const Toshi::TInputInterface::InputEvent* a_pEvent);
 
 	void SetInputMap(const Toshi::TPString8& a_MapName);
 
-	void Activate()
-	{
-		OnActivate();
-
-		Toshi::TGlobalEmitter<AGameStateControllerEvent>::Throw(
-			AGameStateControllerEvent(this, AGameStateControllerEvent::Type_GameStateActivated)
-		);
-	}
-
-	void Deactivate()
-	{
-		OnDeactivate();
-
-		Toshi::TGlobalEmitter<AGameStateControllerEvent>::Throw(
-			AGameStateControllerEvent(
-				this,
-				AGameStateControllerEvent::Type_GameStateDeactivated
-			)
-		);
-	}
-
-	void Suspend()
-	{
-		OnSuspend();
-	}
-
+	void Activate();
+	void Deactivate();
+	void Suspend();
 	void Remove();
+	
+	void Destroy();
+	void Destroy(TBOOL a_bDeactivate);
 
-	template <class... Args>
-	void ExecuteForAllChildStates(t_ExecuteForChildCb<void, Args...> a_fnCallback, TUINT32 a_uiOffset, Args... args)
+	template <class RetT, class... Args>
+	void ExecuteForAllChildStates(t_ExecuteForChildCb<RetT, Args...> a_fnCallback, TUINT32 a_uiOffset, Args... args)
 	{
 		T2_FOREACH(m_ChildStates, it)
 		{
@@ -134,52 +114,6 @@ public:
 		}
 
 		return TFALSE;
-	}
-
-protected:
-	TBOOL ChildState_ProcessInput(const Toshi::TInputInterface::InputEvent* a_pInputEvent)
-	{
-		return ProcessInput(a_pInputEvent);
-	}
-
-	TBOOL ChildState_Unknown1(void* a_pUnk1, void* a_pUnk2)
-	{
-		return Unknown1(a_pUnk1, a_pUnk2);
-	}
-
-	void ChildState_OnUpdate(TFLOAT a_fDeltaTime)
-	{
-		OnUpdate(a_fDeltaTime);
-	}
-
-	void ChildState_OnInsertion()
-	{
-		OnInsertion();
-	}
-
-	void ChildState_OnRemoval()
-	{
-		Remove();
-	}
-
-	void ChildState_OnSuspend()
-	{
-		OnSuspend();
-	}
-
-	void ChildState_OnResume(AGameState* a_pPreviousState)
-	{
-		OnResume(a_pPreviousState);
-	}
-
-	void ChildState_OnActivate()
-	{
-		OnActivate();
-	}
-
-	void ChildState_OnDeactivate()
-	{
-		OnDeactivate();
 	}
 
 protected:

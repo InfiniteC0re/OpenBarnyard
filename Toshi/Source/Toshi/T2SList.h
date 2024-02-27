@@ -2,7 +2,16 @@
 #include "Toshi/Typedefs.h"
 
 namespace Toshi {
-
+	
+	//-----------------------------------------------------------------------------
+	// TOSHI 2.0 - Singly linked list
+	// Usage example:
+	// 
+	// class AMyClass : public Toshi::T2SList<AMyClass>::Node { ... };
+	// 
+	// Toshi::T2SList<AMyClass> list;
+	// list.PushBack(new AMyClass);
+	//-----------------------------------------------------------------------------
 	template <class T, TINT Unknown = 0>
 	class T2SList
 	{

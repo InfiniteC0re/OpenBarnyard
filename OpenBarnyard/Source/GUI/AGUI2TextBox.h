@@ -18,7 +18,7 @@ public:
 
 	void Create(AGUI2Font* a_pFont, TFLOAT a_fWidth);
 
-	void SetText(const wchar_t* a_wszText)
+	void SetText(const TWCHAR* a_wszText)
 	{
 		m_wszText = a_wszText;
 		m_bDimensionsDirty = TTRUE;
@@ -64,7 +64,7 @@ private:
 	TFLOAT m_fShadowOffsetX;
 	TFLOAT m_fShadowOffsetY;
 	TUINT32 m_uiShadowColour;
-	const wchar_t* m_wszText;
+	const TWCHAR* m_wszText;
 	AGUI2Font* m_pFont;
 	TFLOAT m_fScale;
 	AGUI2Font::TextAlign m_eTextAlign;

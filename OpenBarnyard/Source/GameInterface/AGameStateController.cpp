@@ -57,7 +57,7 @@ TBOOL AGameStateController::OnUpdate(TFLOAT a_fDeltaTime)
 		}
 		else
 		{
-			TTODO("FUN_00423de0((char *)0x0,true,(TPooledString8 *)0x0)");
+			TTODO("FUN_00423de0((TCHAR *)0x0,true,(TPooledString8 *)0x0)");
 			return TTRUE;
 		}
 	}

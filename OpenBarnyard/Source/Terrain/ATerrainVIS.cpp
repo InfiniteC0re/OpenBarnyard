@@ -3,6 +3,12 @@
 #include "ATerrain.h"
 #include "Assets/AAssetStreaming.h"
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include <Core/TMemoryDebugOn.h>
+
 void ATerrainVIS::LoadSkeleton()
 {
 	auto pTerrain = ATerrain::GetSingleton();

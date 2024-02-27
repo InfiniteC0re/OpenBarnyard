@@ -5,7 +5,7 @@
 class ALocaleManager : public Toshi::T2Locale
 {
 public:
-	constexpr static const char* s_pLangDataFileNames[] = {
+	constexpr static const TCHAR* s_pLangDataFileNames[] = {
 		"Data/Locale/eng.trb",
 		"Data/Locale/eng-uk.trb",
 		"Data/Locale/jpn.trb",
@@ -39,7 +39,7 @@ public:
 
 	}
 
-	virtual const char* GetLanguageFilename(Lang a_eLang) override;
+	virtual const TCHAR* GetLanguageFilename(Lang a_eLang) override;
 
 	LocaleString GetString(int a_iNumString) const
 	{
@@ -52,12 +52,12 @@ public:
 		return T2Locale::GetNumStrings();
 	}
 
-	const char* GetCurrentLanguageName()
+	const TCHAR* GetCurrentLanguageName()
 	{
 		return GetLanguageName(m_LangId);
 	}
 
-	static const char* GetLanguageName(Lang a_eLang)
+	static const TCHAR* GetLanguageName(Lang a_eLang)
 	{
 		switch (a_eLang)
 		{

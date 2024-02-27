@@ -311,12 +311,44 @@ namespace Toshi {
 
 	void TRenderD3DInterface::FlushShaders()
 	{
-		GetSingleton()->FlushOrderTables();
+		Interface()->FlushOrderTables();
 
 		for (auto it = TShader::sm_oShaderList.GetRootShader(); it != TNULL; it = it->GetNextShader())
 		{
 			it->Flush();
 		}
+	}
+
+	TBOOL TRenderD3DInterface::CreateVertexShader(const char* a_szFileName, const DWORD* a_pFunction, DWORD* a_pOutVertexShader)
+	{
+		auto pD3DDevice = Interface()->GetDirect3DDevice();
+		auto pCurrentDevice = Interface()->GetCurrentDevice();
+		auto bSupportsHardwareTransformations = pCurrentDevice->SupportsHardwareTransfomations();
+		
+		static constexpr DWORD s_ShaderDeclaration[] =
+		{
+		   D3DVSD_STREAM(0),
+		   D3DVSD_REG(D3DVSDE_POSITION, D3DVSDT_FLOAT3),
+		   D3DVSD_REG(D3DVSDE_BLENDWEIGHT, D3DVSDT_FLOAT3),
+		   D3DVSD_REG(D3DVSDE_BLENDINDICES, D3DVSDT_D3DCOLOR),
+		   D3DVSD_REG(D3DVSDE_NORMAL, D3DVSDT_FLOAT2),
+		   D3DVSD_END()
+		};
+
+		HRESULT hRes = pD3DDevice->CreateVertexShader(
+			s_ShaderDeclaration,
+			a_pFunction,
+			a_pOutVertexShader,
+			!bSupportsHardwareTransformations ? D3DCREATE_PUREDEVICE : 0
+		);
+
+		if (FAILED(hRes))
+		{
+			PrintError(hRes, "Failure to create the vertex shader!");
+			return TFALSE;
+		}
+
+		return TTRUE;
 	}
 
 	void TRenderD3DInterface::PrintError(TINT32 a_eError, const TCHAR* a_szInfo)
@@ -671,7 +703,7 @@ namespace Toshi {
 		m_pDirectDevice->SetTextureStageState(a_iStage, D3DTSS_ADDRESSV, DVar1);
 	}
 
-	void TRenderD3DInterface::Clear(TINT a_iX, TINT a_iY, TINT a_iWidth, TINT a_iHeight, TUINT8 a_eClearFlags, TUINT8 a_uiColorR, TUINT8 a_uiColorG, TUINT8 a_uiColorB, TFLOAT a_fZ, TUINT a_uiStencil)
+	void TRenderD3DInterface::ClearRegion(TINT a_iX, TINT a_iY, TINT a_iWidth, TINT a_iHeight, TUINT8 a_eClearFlags, TUINT8 a_uiColorR, TUINT8 a_uiColorG, TUINT8 a_uiColorB, TFLOAT a_fZ, TUINT a_uiStencil)
 	{
 		DWORD eFlags = (a_eClearFlags & 1) ? D3DCLEAR_TARGET : 0;
 

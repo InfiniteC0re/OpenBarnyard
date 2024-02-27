@@ -14,13 +14,13 @@ public:
 	enum Flags_ : Flags
 	{
 		Flags_None = 0,
-		Flags_Skippable = BITFIELD(0),
-		Flags_Unk1 = BITFIELD(1),
-		Flags_InstaSkippable = BITFIELD(2),
-		Flags_HasFadeIn = BITFIELD(3),
-		Flags_HasFadeOut = BITFIELD(4),
-		Flags_Repeat = BITFIELD(5),
-		Flags_Ended = BITFIELD(6),
+		Flags_Skippable = BITFLAG(0),
+		Flags_Unk1 = BITFLAG(1),
+		Flags_InstaSkippable = BITFLAG(2),
+		Flags_HasFadeIn = BITFLAG(3),
+		Flags_HasFadeOut = BITFLAG(4),
+		Flags_Repeat = BITFLAG(5),
+		Flags_Ended = BITFLAG(6),
 	};
 
 	struct Params
@@ -67,7 +67,7 @@ public:
 
 public:
 	static Toshi::TPString8* LocaliseBackgroundFileName(Toshi::TPString8& a_rOutName, const Toshi::TPString8& a_rName);
-	static void LocaliseBackgroundFileName(Toshi::TPString8& a_rOutName, const char* a_szName);
+	static void LocaliseBackgroundFileName(Toshi::TPString8& a_rOutName, const TCHAR* a_szName);
 
 protected:
 	AGameState::HUDParams* m_pHUDParams;

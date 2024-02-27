@@ -10,18 +10,49 @@
 
 namespace Toshi {
 
-	TRenderContext::TRenderContext(TRenderInterface* pRender)
+	void TRenderContext::SetDirty(TBOOL a_bDirty)
+	{
+		if (a_bDirty) m_eFlags |= FLAG_DIRTY;
+		else m_eFlags &= ~FLAG_DIRTY;
+	}
+
+	void TRenderContext::SetFlag(FLAG a_eFlag, TBOOL a_bEnable)
+	{
+		if (a_bEnable) m_eFlags |= a_eFlag;
+		else m_eFlags &= ~a_eFlag;
+	}
+
+	void TRenderContext::EnableFog(TBOOL a_bEnable)
+	{
+		if (a_bEnable) m_eFlags |= FLAG_FOG;
+		else m_eFlags &= ~FLAG_FOG;
+	}
+
+	void TRenderContext::SetFogDistance(TFLOAT a_fStart, TFLOAT a_fEnd)
+	{
+		m_fFogDistanceStart = a_fStart;
+		m_fFogDistanceEnd = a_fEnd;
+		m_eFlags |= FLAG_DIRTY;
+		m_eFlags &= ~(FLAG_UNK3 | FLAG_UNK4 | FLAG_HAS_WORLDPLANES | FLAG_UNK6);
+	}
+
+	TRenderContext::TRenderContext(TRenderInterface* a_pRenderer) :
+		m_pRenderer(a_pRenderer),
+		m_eFlags(FLAG_DIRTY),
+		m_eClipFlags(0x3F),
+		m_eCameraMode(CameraMode_Perspective),
+		m_pCurrentSkeletonInstance(TNULL),
+		m_AmbientColor(1.0f, 1.0f, 1.0f, 0.0f),
+		m_FogColor(1.0f, 1.0f, 1.0f, 0.0f),
+		m_fFogDistanceStart(10.0f),
+		m_fFogDistanceEnd(1000.0f)
 	{
 		TIMPLEMENT();
-		m_eFlags = FLAG_DIRTY;
-		m_eCameraMode = CameraMode_Perspective;
-		m_pCurrentSkeletonInstance = TNULL;
-		m_pRenderer = pRender;
 
 		// Setup viewport parameters
-		if (pRender->GetCurrentDevice() != TNULL)
+		if (m_pRenderer->GetCurrentDevice() != TNULL)
 		{
-			auto pDevice = pRender->GetCurrentDevice();
+			auto pDevice = m_pRenderer->GetCurrentDevice();
 			auto pMode = pDevice->GetMode();
 			m_oParams.fWidth = TFLOAT(pMode->GetWidth());
 			m_oParams.fHeight = TFLOAT(pMode->GetHeight());
@@ -52,6 +83,8 @@ namespace Toshi {
 		m_oModelViewMatrix.Identity();
 		m_oWorldViewMatrix.Identity();
 		m_eFlags |= FLAG_DIRTY_VIEWMODELMATRIX | FLAG_DIRTY_WORLDMODELMATRIX;
+
+		m_AmbientColor.Set(0.0f, 0.0f, 0.0f, 0.0f);
 	}
 
 	void TRenderContext::SetModelViewMatrix(const TMatrix44& a_rMatrix)

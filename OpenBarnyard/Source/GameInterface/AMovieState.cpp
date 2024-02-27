@@ -17,7 +17,7 @@ TOSHI_NAMESPACE_USING
 
 TDEFINE_CLASS_NORUNTIME(AMovieState);
 
-AMovieState::AMovieState(const char* a_szName, TBOOL a_bFlag1, AGameState* a_pNextGameState, TBOOL a_bFlag2)
+AMovieState::AMovieState(const TCHAR* a_szName, TBOOL a_bFlag1, AGameState* a_pNextGameState, TBOOL a_bFlag2)
 {
 	m_pNextGameState = a_pNextGameState;
 	m_bFlag1 = a_bFlag1;

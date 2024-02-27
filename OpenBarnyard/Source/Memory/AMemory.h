@@ -6,7 +6,7 @@
 class AMemoryPool
 {
 public:
-	constexpr AMemoryPool(const char* a_szName, int a_iHeapIndex, size_t a_uiSize, int a_iUnk1, int a_iUnk2) :
+	constexpr AMemoryPool(const TCHAR* a_szName, int a_iHeapIndex, size_t a_uiSize, int a_iUnk1, int a_iUnk2) :
 		m_szName(a_szName),
 		m_iHeapIndex(a_iHeapIndex),
 		m_uiSize(a_uiSize),
@@ -16,12 +16,12 @@ public:
 
 	}
 
-	const char* GetName() const { return m_szName; }
+	const TCHAR* GetName() const { return m_szName; }
 	int GetHeapIndex() const { return m_iHeapIndex; }
 	size_t GetSize() const { return m_uiSize; }
 
 private:
-	const char* m_szName;
+	const TCHAR* m_szName;
 	int m_iHeapIndex;
 	size_t m_uiSize;
 	int m_iUnk1;

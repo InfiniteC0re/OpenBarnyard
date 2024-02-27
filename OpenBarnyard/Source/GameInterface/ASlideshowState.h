@@ -11,6 +11,9 @@ public:
 public:
 	ASlideshowState(const AGUISlideshow::Params& a_rSlideShowParams, AGameState* a_pNextGameState, TBOOL a_bShouldLocalise);
 
+	//-----------------------------------------------------------------------------
+	// AGameState
+	//-----------------------------------------------------------------------------
 	virtual TBOOL ProcessInput(const Toshi::TInputInterface::InputEvent* a_pInputEvent) override;
 	virtual TBOOL ProcessCommand(AInputCommand a_eInputCommand, const Toshi::TInputInterface::InputEvent* a_pInputEvent, TBOOL& a_rStopEvents) override;
 	virtual TBOOL OnUpdate(TFLOAT a_fDeltaTime) override;

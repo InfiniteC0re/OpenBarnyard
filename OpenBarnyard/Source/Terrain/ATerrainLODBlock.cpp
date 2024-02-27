@@ -5,9 +5,15 @@
 #include <Toshi/TSystem.h>
 #include <Toshi/TScheduler.h>
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include <Core/TMemoryDebugOn.h>
+
 TOSHI_NAMESPACE_USING
 
-ATerrainLODBlock::ATerrainLODBlock(TUINT a_uiHeapSize, const char* a_szName)
+ATerrainLODBlock::ATerrainLODBlock(TUINT a_uiHeapSize, const TCHAR* a_szName)
 {
 	m_pAllocatedSize = TNULL;
 	m_pUnk2 = 0;

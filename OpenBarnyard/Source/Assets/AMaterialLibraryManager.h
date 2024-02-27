@@ -19,9 +19,9 @@ public:
 		public Toshi::TSingleton<List>
 	{
 	public:
-		AMaterialLibrary* CreateLibraryFromTRB(Toshi::TTRB* a_pTRB, const char* a_szFilePath);
-		AMaterialLibrary* CreateLibraryFromAsset(const char* a_szFilePath, Toshi::TTRB* a_pTRB);
-		ATexture* FindTexture(const char* a_szTextureName, AMaterialLibrary** a_ppMaterialLibrary, TINT* a_pTextureIndex);
+		AMaterialLibrary* CreateLibraryFromTRB(Toshi::TTRB* a_pTRB, const TCHAR* a_szFilePath);
+		AMaterialLibrary* CreateLibraryFromAsset(const TCHAR* a_szFilePath, Toshi::TTRB* a_pTRB);
+		ATexture* FindTexture(const TCHAR* a_szTextureName, AMaterialLibrary** a_ppMaterialLibrary, TINT* a_pTextureIndex);
 
 	private:
 		Toshi::T2DList<AMaterialLibrary> m_Libraries;
@@ -89,7 +89,7 @@ public:
 	void CreateTextures(AMaterialLibrary* a_pMatLibrary);
 	void OnLibraryLoaded(TBOOL a_bIsGUI);
 
-	Toshi::TTexture* FindTexture(const char* a_szTextureName);
+	Toshi::TTexture* FindTexture(const TCHAR* a_szTextureName);
 	TINT GetNumUsedTextures() const { return m_iNumUsedTextures; }
 	TINT GetNumFreeTextures() const { return m_iNumFreeTextures; }
 

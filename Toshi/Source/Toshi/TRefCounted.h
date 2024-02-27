@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Toshi{
+namespace Toshi {
 
 	class TRefCounted
 	{
@@ -14,12 +14,12 @@ namespace Toshi{
 		TINT IncRefCount() { return m_iRefCount++; }
 		TRefCounted& operator=(TRefCounted const&) { return *this; }
 
-	private:
+	protected:
 		TINT m_iRefCount;
 	};
 
 	/**
-	 * T should be TObject since on destruction TRef can call TObject::Delete
+	 * T should have Delete method
 	 */
 	template <class T>
 	class TRef
@@ -57,7 +57,7 @@ namespace Toshi{
 		const T* operator->() const { return m_pPtr; }
 
 	private:
-		__forceinline void Create(T* a_pPtr)
+		TFORCEINLINE void Create(T* a_pPtr)
 		{
 			Destroy();
 			m_pPtr = a_pPtr;
@@ -68,7 +68,7 @@ namespace Toshi{
 			}
 		}
 
-		__forceinline void Destroy()
+		TFORCEINLINE void Destroy()
 		{
 			if (m_pPtr && m_pPtr->DecRefCount() == 1)
 			{
@@ -78,7 +78,7 @@ namespace Toshi{
 			m_pPtr = TNULL;
 		}
 
-	private:
+	protected:
 		T* m_pPtr;
 	};
 }

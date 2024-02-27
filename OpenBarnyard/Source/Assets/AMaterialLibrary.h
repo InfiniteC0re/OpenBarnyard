@@ -19,26 +19,26 @@ public:
 		struct TexInfo
 		{
 			BOOL m_bIsT2Texture;
-			const char* m_szFileName;
+			const TCHAR* m_szFileName;
 			TUINT m_uiDataSize;
 			void* m_pData;
 		};
 
 		TINT m_iNumTextures;
 		TexInfo* m_pTextureInfos;
-		const char* m_szPackName;
+		const TCHAR* m_szPackName;
 	};
 
 public:
 	AMaterialLibrary();
 
 	TBOOL LoadTTLData(void* a_pTTLData);
-	TBOOL LoadTTLFile(const char* a_szFilePath);
+	TBOOL LoadTTLFile(const TCHAR* a_szFilePath);
 	TBOOL LoadTRBFile(Toshi::TTRB* a_pTRB);
 
 	void Destroy();
 
-	TINT FindTextureIndex(const char* a_szTextureName);
+	TINT FindTextureIndex(const TCHAR* a_szTextureName);
 
 	TINT GetNumTextures() const
 	{
@@ -51,7 +51,7 @@ public:
 		return m_pTextures + a_uiIndex;
 	}
 
-	void SetPath(const char* a_szFilePath)
+	void SetPath(const TCHAR* a_szFilePath)
 	{
 		m_Path = a_szFilePath;
 	}

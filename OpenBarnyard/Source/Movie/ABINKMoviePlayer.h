@@ -42,13 +42,13 @@ public:
 	virtual TBOOL OnUpdate(TFLOAT a_fDeltaTime) override;
 	virtual void OnDestroy() override;
 
-	virtual TBOOL PlayMovie(const char* a_szFileName, TUINT32 a_Unk) override;
+	virtual TBOOL PlayMovie(const TCHAR* a_szFileName, TUINT32 a_Unk) override;
 	virtual void StopMovie() override;
 	virtual void PauseMovie(TBOOL a_bPause) override;
 	virtual TBOOL IsMoviePlaying() override;
 	virtual TBOOL IsMoviePaused() override;
 	virtual void Render(TFLOAT a_fDeltaTime) override;
-	virtual void SetMovieFile(const char* a_szFile);
+	virtual void SetMovieFile(const TCHAR* a_szFile);
 
 private:
 	TBOOL CreateSurfaces();
@@ -61,7 +61,7 @@ private:
 	TBOOL m_bPlaying;
 	TBOOL m_bPaused;
 	TBOOL m_bVisible;
-	char m_szMoviePath[64];
+	TCHAR m_szMoviePath[64];
 	IDirect3DSurface8* m_pSurface;
 	TUINT m_eFormat;
 	TBOOL m_bVideoFitsBackBuffer;

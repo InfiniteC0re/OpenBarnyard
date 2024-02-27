@@ -19,14 +19,14 @@ namespace Toshi {
 		enum Flags_ : Flags
 		{
 			Flags_NULL         = 0,
-			Flags_NO_CULL      = BITFIELD(0),
-			Flags_Unk2         = BITFIELD(1),
-			Flags_Unk3         = BITFIELD(2),
-			Flags_Unk4         = BITFIELD(3),
-			Flags_Created      = BITFIELD(4),
-			Flags_NoDepthTest  = BITFIELD(27),
-			Flags_AlphaUpdate  = BITFIELD(28),
-			Flags_AlphaTexture = BITFIELD(31),
+			Flags_NO_CULL      = BITFLAG(0),
+			Flags_Unk2         = BITFLAG(1),
+			Flags_Unk3         = BITFLAG(2),
+			Flags_Unk4         = BITFLAG(3),
+			Flags_Created      = BITFLAG(4),
+			Flags_NoDepthTest  = BITFLAG(27),
+			Flags_AlphaUpdate  = BITFLAG(28),
+			Flags_AlphaTexture = BITFLAG(31),
 		};
 
 	public:
@@ -42,23 +42,23 @@ namespace Toshi {
 		virtual void PostRender();
 
 		TShader* GetShader() const;
-		void SetShader(TShader* pShader);
+		void SetShader(TShader* a_pShader);
 
 		TTexture* GetTexture(TUINT32 a_iStage = 0) const;
-		void SetTextureNum(TUINT32 a_iNumTextures);
 		void SetTexture(TUINT32 a_iStage, TTexture* a_pTexture);		
+		void SetTextureNum(TUINT32 a_iNumTextures);
 
-		void SetName(const TCHAR* name);
-		void SetFlag(Flags flag, TBOOL set = TFALSE);
+		void SetName(const TCHAR* a_szName);
+		void SetFlag(Flags a_eFlag, TBOOL a_bEnable);
+
+		TRegMaterial* GetRegMaterial() const;
+		void SetRegMaterial(TRegMaterial* a_pRegMaterial);
 
 		TBOOL IsCreated() const;
 
-		TRegMaterial* GetRegMaterial() const;
-		void SetRegMaterial(TRegMaterial* pRegMaterial);
-
 	protected:
 		Flags m_Flags;                      // 0x04
-		TShader* m_pOwnerShader;            // 0x08
+		TShader* m_pShader;                 // 0x08
 		TRegMaterial* m_pRegMaterial;       // 0x0C
 		TUINT32 m_iNumTex;                  // 0x10
 		TTexture* m_pTextures[MAXTEXTURES]; // 0x14

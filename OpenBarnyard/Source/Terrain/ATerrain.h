@@ -43,141 +43,82 @@ public:
 
 public:
 	ATerrain(TINT a_iUnused1, TINT a_iUnused2, TINT a_iPreloadTerrainBlockSize, TINT a_iStartVISGroup);
+	
 	virtual ~ATerrain();
 
+	/* Updates the current state of terrain including loading. */
 	void Update();
 
+	/**
+	 * @return TTRUE if no any assets are in loading at the current moment.
+	 */
 	TBOOL IsLoaded() const;
 
-	void LoadFromFile(const char* a_szFilePath, TBOOL a_bLoadLater, TBOOL a_bPersistantCollision);
+	/**
+	 * Loads information about terrain.
+	 * @param a_szFilePath path to the terrain info file
+	 * @param a_bLoadLater if TFALSE, doesn't pause thread to load all resources
+	 * @param a_bPreloadCollision if TFALSE, loads all collision objects at once
+	 */
+	void LoadFromFile(const TCHAR* a_szFilePath, TBOOL a_bLoadLater, TBOOL a_bStreamCollision);
 	
+	/* Blocks the thread until terrain is completely loaded. */
 	void WaitUntilLoaded();
 
+	/* Destroys terrain model */
 	void DestroyModelData(ATerrainSection::ModelData* a_pModelData);
 
-	void UseBlocksInCurrentVIS(ATerrainLODType a_eLODType);
+	/**
+	 * Sets visible blocks of specified LOD type to be used.
+	 * @param a_eLODType type of LODs to load (can be ATerrainLODType_High or ATerrainLODType_Low)
+	 */
+	void UpdateUsedBlocks(ATerrainLODType a_eLODType);
 
+	/* Queues needed LODs to be loaded based on the current section. */
 	void QueueStreamingAssets();
 
+	/* Cancels streaming of LODs in the current section. */
 	void UnqueueStreamingAssets();
 
+	/**
+	 * @return TTRUE if any LODs are planned to be loaded
+	 */
 	TBOOL HasAnyLODsQueued();
 
+	/* Cancels jobs that are not needed anymore (can happen after moving to other section). */
 	void CancelUnrequiredJobs();
 	
+	/**
+	 * Allocates free LODBlock of specified type and assigns it to the section.
+	 * @param a_eLODType type of the block you want to allocate
+	 * @param a_pVISGroup section you allocate the block for
+	 * @return allocated block
+	 */
 	ATerrainLODBlock* AllocateLODBlock(ATerrainLODType a_eLODType, ATerrainSection* a_pVISGroup);
 
-	TBOOL IsCollisionPersistant() const { return m_bPersistantCollision; }
+	/**
+	 * @return TTRUE if collision is not preloaded
+	 */
+	TBOOL IsCollisionStreamed() const { return m_bStreamCollision; }
 	
+	/**
+	 * @return visibility data of the currently loaded terrain
+	 */
 	ATerrainVIS* GetVIS() const { return m_pTerrainVIS; }
 
-	void FlushJobs();
-
-	ATRBLoaderJob* GetFreeTRBLoaderJob()
-	{
-		TASSERT(m_FreeTRBLoaderJobs.Size() > 0, "No free ATRBLoaderJobs left!");
-
-		if (m_FreeTRBLoaderJobs.Size() > 0)
-		{
-			auto pTRBJobSlot = m_FreeTRBLoaderJobs.PopFront();
-			m_UsedTRBLoaderJobs.PushFront(pTRBJobSlot);
-
-			return TSTATICCAST(ATRBLoaderJob*, pTRBJobSlot->pJob);
-		}
-		else
-		{
-			return TNULL;
-		}
-	}
-
-	ASkeletonDoneJob* GetFreeSkeletonLoaderJob()
-	{
-		TASSERT(m_FreeSkeletonLoaderJobs.Size() > 0, "No free ASkeletonDoneJobs left!");
-
-		if (m_FreeSkeletonLoaderJobs.Size() > 0)
-		{
-			auto pTRBJobSlot = m_FreeSkeletonLoaderJobs.PopFront();
-			m_UsedSkeletonLoaderJobs.PushFront(pTRBJobSlot);
-
-			return TSTATICCAST(ASkeletonDoneJob*, pTRBJobSlot->pJob);
-		}
-		else
-		{
-			return TNULL;
-		}
-	}
-
-	AMatLibLoaderJob* GetFreeMatlibLoaderJob()
-	{
-		TASSERT(m_FreeMatlibLoaderJobs.Size() > 0, "No free AMatlibLoaderJobs left!");
-
-		if (m_FreeMatlibLoaderJobs.Size() > 0)
-		{
-			auto pTRBJobSlot = m_FreeMatlibLoaderJobs.PopFront();
-			m_UsedMatlibLoaderJobs.PushFront(pTRBJobSlot);
-
-			return TSTATICCAST(AMatLibLoaderJob*, pTRBJobSlot->pJob);
-		}
-		else
-		{
-			return TNULL;
-		}
-	}
-
-	ACollisionDoneJob* GetFreeCollisionLoaderJob()
-	{
-		TASSERT(m_FreeCollisionLoaderJobs.Size() > 0, "No free ACollisionDoneJob left!");
-
-		if (m_FreeCollisionLoaderJobs.Size() > 0)
-		{
-			auto pTRBJobSlot = m_FreeCollisionLoaderJobs.PopFront();
-			m_UsedCollisionLoaderJobs.PushFront(pTRBJobSlot);
-
-			return TSTATICCAST(ACollisionDoneJob*, pTRBJobSlot->pJob);
-		}
-		else
-		{
-			return TNULL;
-		}
-	}
-
-	AModelLoaderJob* GetFreeModelLoaderJob()
-	{
-		TASSERT(m_FreeModelLoaderJobs.Size() > 0, "No free AModelLoaderJob left!");
-
-		if (m_FreeModelLoaderJobs.Size() > 0)
-		{
-			auto pTRBJobSlot = m_FreeModelLoaderJobs.PopFront();
-			m_UsedModelLoaderJobs.PushFront(pTRBJobSlot);
-
-			return TSTATICCAST(AModelLoaderJob*, pTRBJobSlot->pJob);
-		}
-		else
-		{
-			return TNULL;
-		}
-	}
-
-	ASectionDoneJob* GetFreeSectionLoaderJob()
-	{
-		TASSERT(m_FreeSectionLoaderJobs.Size() > 0, "No free ASectionDoneJob left!");
-
-		if (m_FreeSectionLoaderJobs.Size() > 0)
-		{
-			auto pTRBJobSlot = m_FreeSectionLoaderJobs.PopFront();
-			m_UsedSectionLoaderJobs.PushFront(pTRBJobSlot);
-
-			return TSTATICCAST(ASectionDoneJob*, pTRBJobSlot->pJob);
-		}
-		else
-		{
-			return TNULL;
-		}
-	}
+	ATRBLoaderJob* GetFreeTRBLoaderJob();
+	ASkeletonDoneJob* GetFreeSkeletonLoaderJob();
+	AMatLibLoaderJob* GetFreeMatlibLoaderJob();
+	ACollisionDoneJob* GetFreeCollisionLoaderJob();
+	AModelLoaderJob* GetFreeModelLoaderJob();
+	ASectionDoneJob* GetFreeSectionLoaderJob();
 
 private:
 	void UpdateNightMaterials();
 	void MoveAllFinishedJobs(Toshi::T2SList<JobSlot>& a_rFreeJobs, Toshi::T2SList<JobSlot>& a_rUsedJobs);
+	
+	/* Moves all finished jobs from used lists to free lists */
+	void FlushJobs();
 
 private:
 	static TINT GetCurrentSectionID();
@@ -219,7 +160,7 @@ private:
 	Toshi::T2SList<JobSlot> m_FreeSkeletonLoaderJobs;
 	Toshi::T2SList<JobSlot> m_UsedCollisionLoaderJobs;
 	Toshi::T2SList<JobSlot> m_FreeCollisionLoaderJobs;
-	TBOOL m_bPersistantCollision;
+	TBOOL m_bStreamCollision;
 	TBOOL m_bIsLoaded;
 	Toshi::TTRB m_VISTRB;
 	Toshi::TTRB m_TRB2;
@@ -302,7 +243,7 @@ public:
 
 	struct TerrainInfo
 	{
-		const char* szName;
+		const TCHAR* szName;
 		TUINT32 uiUnk;
 	};
 	
@@ -367,9 +308,10 @@ public:
 
 public:
 	static void SetTerrain(TINT a_eTerrain, TBOOL a_bLoadLater, TBOOL a_bStreamModels, TINT a_iUnused1, TINT a_iUnused2, TINT a_iPreloadTerrainBlockSize, TINT a_iStartVISGroup);
-	static constexpr const char* GetTerrainName(Terrain a_eTerrain) { return ms_aTerrains[a_eTerrain].szName; }
-
 	static void StartLoading();
+	
+	static constexpr const TCHAR* GetTerrainName(Terrain a_eTerrain) { return ms_aTerrains[a_eTerrain].szName; }
+
 
 private:
 	inline static ATerrain* ms_pCurrentTerrain;

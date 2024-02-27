@@ -15,10 +15,15 @@ namespace Toshi {
 	public:
 		TDECLARE_CLASS(TRenderInterface);
 
+		friend TMSWindow;
+
 	public:
 		TRenderD3DInterface();
 		~TRenderD3DInterface();
 
+		//-----------------------------------------------------------------------------
+		// TRenderInterface
+		//-----------------------------------------------------------------------------
 		virtual TBOOL CreateDisplay(const DISPLAYPARAMS& a_rParams) override;
 		virtual TBOOL DestroyDisplay() override;
 		virtual TBOOL Update(float a_fDeltaTime) override;
@@ -60,34 +65,47 @@ namespace Toshi {
 		virtual void ForceEnableColourCorrection(TBOOL a_bEnable);
 		virtual TBOOL IsColourCorrection();
 
+		TBOOL IsTextureFormatSupportedImpl(D3DFORMAT a_eFormat);
+
+		TBOOL Create(const TCHAR* a_szWindowName);
+		
+		void BuildAdapterDatabase();
+		
+		void DestroyAccelTable();
+		void CreateAccelTable();
+		
+		void GetCurrentColourRamp();
+		
+		TDebugD3DText* InitDebugText(TINT a_iBufferSize);
+		
+		void SetDeviceDefaultStates();
+		void SetTextureAddress(DWORD a_iStage, TINT a_eType, TINT a_iUnk);
+
+		void ClearRegion(TINT a_iX, TINT a_iY, TINT a_iWidth, TINT a_iHeight, TUINT8 a_eClearFlags, TUINT8 a_uiColorR, TUINT8 a_uiColorG, TUINT8 a_uiColorB, TFLOAT a_fZ, TUINT a_uiStencil);
+
+		void Exit() { m_bExited = TTRUE; }
+
 		TMSWindow* GetWindow() { return &m_Window; }
 		TPriList<TOrderTable>& GetOrderTables() { return m_OrderTables; }
 		IDirect3D8* GetDirect3D() const { return m_pDirect3D; }
 		IDirect3DDevice8* GetDirect3DDevice() const { return m_pDirectDevice; }
 
-		TBOOL IsTextureFormatSupportedImpl(D3DFORMAT a_eFormat);
-
-		TBOOL Create(const TCHAR* a_szWindowName);
-		void BuildAdapterDatabase();
-		void DestroyAccelTable();
-		void CreateAccelTable();
-		void OnD3DDeviceLost();
-		void OnD3DDeviceFound();
-		void GetCurrentColourRamp();
-		TDebugD3DText* InitDebugText(TINT a_iBufferSize);
-		void SetDeviceDefaultStates();
-		void SetTextureAddress(DWORD a_iStage, TINT a_eType, TINT a_iUnk);
-		void Clear(TINT a_iX, TINT a_iY, TINT a_iWidth, TINT a_iHeight, TUINT8 a_eClearFlags, TUINT8 a_uiColorR, TUINT8 a_uiColorG, TUINT8 a_uiColorB, TFLOAT a_fZ, TUINT a_uiStencil);
-
-		void Exit()
-		{
-			m_bExited = TTRUE;
-		}
-
 	public:
+		/* Flushes all order tables and shaders. */
 		static void FlushShaders();
 
+		/**
+		 * Compiles vertex shader in debug mode or takes compiled buffer to create shader.
+		 * @param a_szFileName name of the file containing shader source
+		 * @param a_pFunction compiled shader
+		 * @param a_pOutVertexShader pointer which will be used to store created shader
+		 * @return TTRUE if succeeded
+		 */
+		static TBOOL CreateVertexShader(const char* a_szFileName, const DWORD* a_pFunction, DWORD* a_pOutVertexShader);
+
+		/* Prints error text caused by some directx call. */
 		static void PrintError(TINT32 a_eError, const TCHAR* a_szInfo);
+		
 		static const TCHAR* GetErrorString(TINT32 a_eError);
 		static const TCHAR* GetErrorDescription(TINT32 a_eError);
 
@@ -95,6 +113,10 @@ namespace Toshi {
 		{
 			return TSTATICCAST(TRenderD3DInterface*, TRenderInterface::GetSingleton());
 		}
+
+	private:
+		void OnD3DDeviceLost();
+		void OnD3DDeviceFound();
 
 	private:
 		IDirect3D8* m_pDirect3D;

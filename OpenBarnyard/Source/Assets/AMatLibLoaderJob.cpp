@@ -42,7 +42,7 @@ TBOOL AMatLibLoaderJob::CancelJob()
 	return TTRUE;
 }
 
-void AMatLibLoaderJob::InitJob(const char* a_szFileName, Toshi::TTRB* a_pTRB, AMaterialLibrary*& a_rpOutMatLib, Toshi::TMemory::MemBlock* a_pMemBlock)
+void AMatLibLoaderJob::InitJob(const TCHAR* a_szFileName, Toshi::TTRB* a_pTRB, AMaterialLibrary*& a_rpOutMatLib, Toshi::TMemory::MemBlock* a_pMemBlock)
 {
 	m_FileName = a_szFileName;
 	m_pTRB = a_pTRB;

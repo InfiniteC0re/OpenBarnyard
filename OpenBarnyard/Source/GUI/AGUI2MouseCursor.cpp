@@ -27,7 +27,7 @@ AGUI2MouseCursor::AGUI2MouseCursor()
 	m_fRadialRadius = -1.0f;
 }
 
-TBOOL AGUI2MouseCursor::Create(const char* a_szPointerUpTexture, const char* a_szPointerDownTexture, TFLOAT a_fScalar)
+TBOOL AGUI2MouseCursor::Create(const TCHAR* a_szPointerUpTexture, const TCHAR* a_szPointerDownTexture, TFLOAT a_fScalar)
 {
 	m_pMouseDevice = TInputInterface::GetSingleton()->GetDeviceByIndex<TInputDeviceMouse>(0);
 

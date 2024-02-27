@@ -1,8 +1,17 @@
 #pragma once
 #include "T2Iterator.h"
 
-namespace Toshi
-{
+namespace Toshi {
+
+	//-----------------------------------------------------------------------------
+	// TOSHI 2.0 - Doubly linked list
+	// Usage example:
+	// 
+	// class AMyClass : public Toshi::T2DList<AMyClass>::Node { ... };
+	// 
+	// Toshi::T2DList<AMyClass> list;
+	// list.PushBack(new AMyClass);
+	//-----------------------------------------------------------------------------
 	class T2GenericDList
 	{
 	public:
@@ -252,4 +261,5 @@ namespace Toshi
 			return node;
 		}
 	};
+
 }

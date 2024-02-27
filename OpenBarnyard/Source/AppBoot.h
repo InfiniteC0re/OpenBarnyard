@@ -11,7 +11,7 @@ public:
 	AApplication() = default;
 	~AApplication() { }
 
-	virtual TBOOL OnCreate(int argc, char** argv) override;
+	virtual TBOOL OnCreate(int argc, TCHAR** argv) override;
 	virtual TBOOL OnUpdate(float deltaTime) override;
 
 	TBOOL CreateStringPool();

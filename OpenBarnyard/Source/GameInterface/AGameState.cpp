@@ -26,7 +26,7 @@ AGameState::AGameState()
 	m_pOwnerState = TNULL;
 	m_bWasInserted = TFALSE;
 	m_bIsActivated = TFALSE;
-	m_fFOV = Toshi::TMath::DegToRad(60.0f);
+	m_fFOV = TMath::DegToRad(60.0f);
 
 	auto pRootElement = AGUI2::GetRootElement();
 	m_GUIElement.SetDimensions(pRootElement->GetWidth(), pRootElement->GetHeight());
@@ -34,9 +34,14 @@ AGameState::AGameState()
 	m_GUIElement.Hide();
 }
 
-TBOOL AGameState::ProcessInput(const Toshi::TInputInterface::InputEvent* a_pInputEvent)
+AGameState::~AGameState()
 {
-	if (ExecuteForOneChildState(&AGameState::ChildState_ProcessInput, 0, a_pInputEvent))
+	
+}
+
+TBOOL AGameState::ProcessInput(const TInputInterface::InputEvent* a_pInputEvent)
+{
+	if (ExecuteForOneChildState(&AGameState::ProcessInput, 0, a_pInputEvent))
 	{
 		return TTRUE;
 	}
@@ -44,14 +49,74 @@ TBOOL AGameState::ProcessInput(const Toshi::TInputInterface::InputEvent* a_pInpu
 	return TFALSE == ARootTask::GetSingleton()->IsGameSystemCreated();
 }
 
-TBOOL AGameState::ProcessCommand(AInputCommand a_eInputCommand, const Toshi::TInputInterface::InputEvent* a_pInputEvent, TBOOL& a_rStopEvents)
+TBOOL AGameState::ProcessCommand(AInputCommand a_eInputCommand, const TInputInterface::InputEvent* a_pInputEvent, TBOOL& a_rStopEvents)
 {
 	return TFALSE;
 }
 
 TBOOL AGameState::Unknown1(void* a_pUnk1, void* a_pUnk2)
 {
-	return ExecuteForOneChildState(&AGameState::ChildState_Unknown1, 0, a_pUnk1, a_pUnk2);
+	return ExecuteForOneChildState(&AGameState::Unknown1, 0, a_pUnk1, a_pUnk2);
+}
+
+void AGameState::Unknown2(void* a_pUnk1)
+{
+
+}
+
+void AGameState::Unknown3(void* a_pUnk1)
+{
+
+}
+
+void AGameState::Unknown4(void* a_pUnk1)
+{
+
+}
+
+void AGameState::Unknown5()
+{
+
+}
+
+TBOOL AGameState::Unknown6()
+{
+	return TTRUE;
+}
+
+TUINT32 AGameState::GetSound()
+{
+	return -1;
+}
+
+TBOOL AGameState::Unknown7()
+{
+	return TTRUE;
+}
+
+void AGameState::Unknown8()
+{
+
+}
+
+void AGameState::OnStarted()
+{
+
+}
+
+void AGameState::Unknown10()
+{
+
+}
+
+void AGameState::Unknown11(void* a_pUnk1, void* a_pUnk2)
+{
+
+}
+
+void AGameState::Unknown12(void* a_pUnk1, void* a_pUnk2)
+{
+
 }
 
 TFLOAT AGameState::GetFOV()
@@ -61,41 +126,41 @@ TFLOAT AGameState::GetFOV()
 
 TBOOL AGameState::OnUpdate(TFLOAT a_fDeltaTime)
 {
-	ExecuteForAllChildStates(&AGameState::ChildState_OnUpdate, 0, a_fDeltaTime);
+	ExecuteForAllChildStates(&AGameState::OnUpdate, 0, a_fDeltaTime);
 	return TTRUE;
 }
 
 void AGameState::OnInsertion()
 {
 	m_bWasInserted = TTRUE;
-	ExecuteForAllChildStates(&AGameState::ChildState_OnInsertion, 0);
+	ExecuteForAllChildStates(&AGameState::OnInsertion, 0);
 }
 
 void AGameState::OnRemoval()
 {
-	ExecuteForAllChildStates(&AGameState::ChildState_OnRemoval, 0);
+	ExecuteForAllChildStates(&AGameState::OnRemoval, 0);
 }
 
 void AGameState::OnSuspend()
 {
-	ExecuteForAllChildStates(&AGameState::ChildState_OnSuspend, 0);
+	ExecuteForAllChildStates(&AGameState::OnSuspend, 0);
 }
 
 void AGameState::OnResume(AGameState* a_pPreviousState)
 {
-	ExecuteForAllChildStates(&AGameState::ChildState_OnResume, 0, a_pPreviousState);
+	ExecuteForAllChildStates(&AGameState::OnResume, 0, a_pPreviousState);
 }
 
 void AGameState::OnActivate()
 {
 	m_bIsActivated = TTRUE;
-	ExecuteForAllChildStates(&AGameState::ChildState_OnActivate, 0);
+	ExecuteForAllChildStates(&AGameState::OnActivate, 0);
 }
 
 void AGameState::OnDeactivate()
 {
 	m_bIsActivated = TFALSE;
-	ExecuteForAllChildStates(&AGameState::ChildState_OnDeactivate, 0);
+	ExecuteForAllChildStates(&AGameState::OnDeactivate, 0);
 }
 
 void AGameState::Destroy()
@@ -121,7 +186,7 @@ void AGameState::Destroy(TBOOL a_bDeactivate)
 	delete this;
 }
 
-TBOOL AGameState::SendInputCommands(const Toshi::TInputInterface::InputEvent* a_pEvent)
+TBOOL AGameState::SendInputCommands(const TInputInterface::InputEvent* a_pEvent)
 {
 	auto pInputHandler = AInputHandler::GetSingleton();
 	auto pInputManager = AInputMapManager::GetSingleton();
@@ -131,9 +196,10 @@ TBOOL AGameState::SendInputCommands(const Toshi::TInputInterface::InputEvent* a_
 	AInputCommandArray commands;
 	pInputManager->GetEventCommands(a_pEvent, commands);
 
-	if (a_pEvent->GetDoodad() == TInputDeviceKeyboard::KEY_F4 && pInputHandler->GetKeyboardDevice()->IsAltDown())
+	if (a_pEvent->GetDoodad() == TInputDeviceKeyboard::KEY_F4
+		&& pInputHandler->GetKeyboardDevice()->IsAltDown())
 	{
-		// Alt + F4
+		// Quit app if Alt + F4 was pressed
 		TTODO("FUN_00425980");
 		g_oTheApp.Destroy();
 	}
@@ -176,9 +242,35 @@ TBOOL AGameState::SendInputCommands(const Toshi::TInputInterface::InputEvent* a_
 	return TTRUE;
 }
 
-void AGameState::SetInputMap(const Toshi::TPString8& a_MapName)
+void AGameState::SetInputMap(const TPString8& a_MapName)
 {
 	m_pInputMap = AInputMapManager::GetSingleton()->FindMap(a_MapName);
+}
+
+void AGameState::Activate()
+{
+	OnActivate();
+
+	TGlobalEmitter<AGameStateControllerEvent>::Throw(
+		AGameStateControllerEvent(this, AGameStateControllerEvent::Type_GameStateActivated)
+	);
+}
+
+void AGameState::Deactivate()
+{
+	OnDeactivate();
+
+	TGlobalEmitter<AGameStateControllerEvent>::Throw(
+		AGameStateControllerEvent(
+			this,
+			AGameStateControllerEvent::Type_GameStateDeactivated
+		)
+	);
+}
+
+void AGameState::Suspend()
+{
+	OnSuspend();
 }
 
 void AGameState::Remove()
