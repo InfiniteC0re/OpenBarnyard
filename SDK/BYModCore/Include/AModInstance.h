@@ -27,7 +27,7 @@ public:
 	virtual void OnImGuiRender() { }
 	virtual TBOOL HasSettingsUI() { return TFALSE; }
 	virtual const char* GetName() = 0;
-	virtual TVersion GetVersion() { return { TMAKEVERSION(1, 0) }; }
+	virtual TVersion GetVersion() { return { TVERSION(1, 0) }; }
 	virtual Toshi::TTRB* GetAssetFile() { return TNULL; }
 	virtual const PProperties* GetFileOverrides() { return TNULL; }
 };
