@@ -3,8 +3,10 @@
 
 namespace Toshi {
 
+	class TRenderPacket;
 	class TRegMaterial;
 	class TShader;
+	class TMesh;
 
 	class TMaterial : public TObject
 	{
@@ -55,6 +57,8 @@ namespace Toshi {
 		void SetRegMaterial(TRegMaterial* a_pRegMaterial);
 
 		TBOOL IsCreated() const;
+
+		TRenderPacket* AddRenderPacket(TMesh* a_pMesh);
 
 	protected:
 		Flags m_Flags;                      // 0x04

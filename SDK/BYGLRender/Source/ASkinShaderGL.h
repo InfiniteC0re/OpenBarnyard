@@ -295,7 +295,7 @@ public:
 
 		auto pRenderContext = TSTATICCAST(
 			Toshi::TRenderContextD3D*,
-			THookedRenderD3DInterface::GetSingleton()->GetCurrentRenderContext()
+			THookedRenderD3DInterface::GetSingleton()->GetCurrentContext()
 		);
 
 		m_ProjectionMatrix = *(Toshi::TMatrix44*)(TUINT(pRenderContext) + 0x3C0);

@@ -67,7 +67,7 @@ namespace Toshi {
 			pPushTransform->Multiply(*pPrevTransform, m_Matrix);
 		}
 
-		pRender->GetCurrentRenderContext()->SetModelViewMatrix(pRender->GetTransforms().Top());
+		pRender->GetCurrentContext()->SetModelViewMatrix(pRender->GetTransforms().Top());
 	}
 
 	void TTransformObject::Pop()
@@ -75,7 +75,7 @@ namespace Toshi {
 		auto pRender = TRenderInterface::GetSingleton();
 
 		pRender->GetTransforms().Pop();
-		pRender->GetCurrentRenderContext()->SetModelViewMatrix(pRender->GetTransforms().Top());
+		pRender->GetCurrentContext()->SetModelViewMatrix(pRender->GetTransforms().Top());
 	}
 
 	Toshi::TVector3& TTransformObject::GetTranslation()

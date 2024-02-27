@@ -24,5 +24,10 @@ namespace Toshi {
 		m_ui8Unk1 = 255;
 	}
 
+	TRenderPacket::~TRenderPacket()
+	{
+
+	}
+
 }
 

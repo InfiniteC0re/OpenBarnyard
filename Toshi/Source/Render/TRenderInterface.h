@@ -136,7 +136,7 @@ namespace Toshi {
 		TBOOL IsCreated() { return m_bCreated; }
 		TBOOL IsDisplayCreated() { return m_bDisplayCreated; }
 
-		TRenderContext* GetCurrentRenderContext() const { return m_pCurrentContext; }
+		TRenderContext* GetCurrentContext() const { return m_pCurrentContext; }
 		TNodeList<TRenderAdapter>* GetAdapterList() { return &m_AdapterList; }
 		TKeyframeLibraryManager& GetKeyframeLibraryManager() { return m_KeyframeManager; }
 		TStack<TMatrix44, 20>& GetTransforms() { return m_Transforms; }

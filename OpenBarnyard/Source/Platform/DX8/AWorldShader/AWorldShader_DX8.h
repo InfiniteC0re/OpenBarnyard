@@ -34,32 +34,39 @@ public:
 	virtual void Render(Toshi::TRenderPacket* a_pRenderPacket) override;
 
 	//-----------------------------------------------------------------------------
+	// AWorldShader
+	//-----------------------------------------------------------------------------
+	virtual void EnableRenderEnvMap(TBOOL a_bEnable) override;
+
+	//-----------------------------------------------------------------------------
 	// Own methods
 	//-----------------------------------------------------------------------------
 
-	/**
-	 * Returns TTRUE if shaders are supported
-	 */
+	// Returns TTRUE if alpha blend material is enabled
+	virtual TBOOL IsAlphaBlendMaterial() override;
+
+	// Enabled alpha blend material
+	virtual void SetAlphaBlendMaterial(TBOOL a_bIsAlphaBlendMaterial) override;
+
+	// Creates AWorldMaterial and returns it
+	virtual AWorldMaterial* CreateMaterial(const TCHAR* a_szName) override;
+
+	// Creates AWorldMesh and returns it
+	virtual AWorldMesh* CreateMesh(const TCHAR* a_szName) override;
+
+	// Returns TTRUE if shaders are supported
 	virtual TBOOL IsHighEndMode();
 
-	/**
-	 * Enabled high end mode (compiled shader) if they are supported by hardware
-	 */
+	// Enables high end mode (compiled shader) if they are supported by hardware
 	virtual void SetHighEndMode(TBOOL a_bEnable);
 
-	/**
-	 * Returns TTRUE if shaders are supported by hardware
-	 */
+	// Returns TTRUE if shaders are supported by hardware
 	virtual TBOOL IsCapableShaders();
 
-	/**
-	 * Returns TTRUE if rendering of env map is enabled
-	 */
+	// Returns TTRUE if rendering of env map is enabled
 	virtual TBOOL IsRenderEnvMapEnabled();
 
-	/**
-	 * Probably used in debug mode but is stripped out in release
-	 */
+	// Probably used in debug mode but is stripped out in release
 	virtual void* CreateUnknown(void*, void*, void*, void*);
 
 	TUINT GetAlphaRef() const { return m_iAlphaRef; }
@@ -71,12 +78,13 @@ public:
 		return &m_aOrderTables[a_uiIndex];
 	}
 
-	static AWorldShaderHAL* Upcast(TShader* a_pShader)
+	static AWorldShaderHAL* Upcast(Toshi::TShader* a_pShader)
 	{
+		TASSERT(a_pShader->IsA(&ms_oClass));
 		return TSTATICCAST(AWorldShaderHAL*, a_pShader);
 	}
 
-	inline static TUINT s_RenderStateFlags = 0x1B;
+	inline static TUINT s_RenderStateFlags = 27;
 
 private:
 	void FlushLowEnd();

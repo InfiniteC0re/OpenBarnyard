@@ -85,6 +85,11 @@ namespace Toshi {
 		return m_State & State_Validated;
 	}
 
+	TBOOL TMesh::IsUnknownState1() const
+	{
+		return m_State & State_Unknown1;
+	}
+
 	TShader* TMesh::GetOwnerShader()
 	{
 		return m_pOwnerShader;

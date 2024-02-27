@@ -13,11 +13,12 @@ TOSHI_NAMESPACE_USING
 
 TDEFINE_CLASS_NORUNTIME(AWorldMesh);
 
-AWorldMesh::AWorldMesh()
+AWorldMesh::AWorldMesh() :
+	m_uiFlags(0),
+	m_uiMaxVertices(0),
+	m_pVertexPool(TNULL)
 {
-	m_uiFlags = 0;
-	m_uiMaxVertices = 0;
-	m_pVertexPool = TNULL;
+	
 }
 
 TBOOL AWorldMesh::Validate()
@@ -105,7 +106,7 @@ TBOOL AWorldMesh::CreateResource()
 	TVALIDPTR(pVertexFactory);
 
 	m_pVertexPool = pVertexFactory->CreatePoolResource(m_uiMaxVertices, 1);
-	m_pSomeArray.Create(1);
+	m_pSomeArray.Create(NUM_SUBMESHES);
 
 	return TTRUE;
 }

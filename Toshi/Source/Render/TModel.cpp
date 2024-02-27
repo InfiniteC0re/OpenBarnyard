@@ -212,7 +212,7 @@ namespace Toshi {
 		if (!m_fnCustomRenderCb)
 		{
 			m_pSkeletonInstance->UpdateState(TTRUE);
-			TRenderInterface::GetSingleton()->GetCurrentRenderContext()->SetSkeletonInstance(m_pSkeletonInstance);
+			TRenderInterface::GetSingleton()->GetCurrentContext()->SetSkeletonInstance(m_pSkeletonInstance);
 
 			for (TINT i = 0; i < m_pModel->m_LODs[m_iCurrentLOD].iNumMeshes; i++)
 			{

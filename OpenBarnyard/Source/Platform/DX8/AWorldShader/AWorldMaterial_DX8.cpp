@@ -20,7 +20,7 @@ TDEFINE_CLASS(AWorldMaterialHAL);
 
 AWorldMaterialHAL::AWorldMaterialHAL()
 {
-	m_pOtherMaterial = TNULL;
+	m_pAlphaBlendMaterial = TNULL;
 	m_pAssignedOrderTable = TNULL;
 
 	for (TUINT i = 0; i < MAX_TEXTURES; i++)
@@ -38,9 +38,9 @@ AWorldMaterialHAL::~AWorldMaterialHAL()
 		TOrderTable::DeregisterMaterial(m_pRegMaterial);
 	}
 
-	if (m_pOtherMaterial)
+	if (m_pAlphaBlendMaterial)
 	{
-		delete m_pOtherMaterial;
+		delete m_pAlphaBlendMaterial;
 	}
 }
 
@@ -142,7 +142,7 @@ void AWorldMaterialHAL::PreRender()
 void AWorldMaterialHAL::PostRender()
 {
 	auto pRenderInterface = TRenderD3DInterface::Interface();
-	auto pCurrentContext = TRenderContextD3D::Upcast(pRenderInterface->GetCurrentRenderContext());
+	auto pCurrentContext = TRenderContextD3D::Upcast(pRenderInterface->GetCurrentContext());
 	auto pD3DDevice = pRenderInterface->GetDirect3DDevice();
 
 	pD3DDevice->SetRenderState(D3DRS_COLORVERTEX, TRUE);
@@ -207,15 +207,15 @@ void AWorldMaterialHAL::SetBlendMode(BLENDMODE a_eBlendMode)
 
 void AWorldMaterialHAL::CopyToOtherMaterial()
 {
-	if (m_pOtherMaterial)
+	if (m_pAlphaBlendMaterial)
 	{
-		m_pOtherMaterial->m_iNumTex = m_iNumTex;
-		m_pOtherMaterial->m_aTextures[0] = m_aTextures[0];
-		m_pOtherMaterial->m_aTextures[1] = m_aTextures[1];
-		m_pOtherMaterial->m_aTextures[2] = m_aTextures[2];
-		m_pOtherMaterial->m_aTextures[3] = m_aTextures[3];
+		m_pAlphaBlendMaterial->m_iNumTex = m_iNumTex;
+		m_pAlphaBlendMaterial->m_aTextures[0] = m_aTextures[0];
+		m_pAlphaBlendMaterial->m_aTextures[1] = m_aTextures[1];
+		m_pAlphaBlendMaterial->m_aTextures[2] = m_aTextures[2];
+		m_pAlphaBlendMaterial->m_aTextures[3] = m_aTextures[3];
 
-		m_pOtherMaterial->SetFlag(Flags_Unk2, TTRUE);
+		m_pAlphaBlendMaterial->SetFlag(Flags_Unk2, TTRUE);
 	}
 }
 
@@ -255,7 +255,7 @@ void AWorldMaterialHAL::SetupRenderer()
 	}
 
 	auto pRenderInterface = TRenderD3DInterface::Interface();
-	auto pCurrentContext = TRenderContextD3D::Upcast(pRenderInterface->GetCurrentRenderContext());
+	auto pCurrentContext = TRenderContextD3D::Upcast(pRenderInterface->GetCurrentContext());
 	auto pD3DDevice = pRenderInterface->GetDirect3DDevice();
 	pD3DDevice->SetVertexShaderConstant(7, &vOffsets, 1);
 

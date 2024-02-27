@@ -10,96 +10,37 @@ namespace Toshi {
 	{
 	public:
 		TRenderPacket();
+		~TRenderPacket();
 
-		TRenderPacket* GetNextPacket()
-		{
-			return m_pNextPacket;
-		}
-		
-		void SetNextPacket(TRenderPacket* a_pNextPacket)
-		{
-			m_pNextPacket = a_pNextPacket;
-		}
+		TRenderPacket* GetNextPacket() { return m_pNextPacket; }
+		void SetNextPacket(TRenderPacket* a_pNextPacket) { m_pNextPacket = a_pNextPacket; }
 
-		TMesh* GetMesh() const
-		{
-			return m_pMesh;
-		}
+		TMesh* GetMesh() const { return m_pMesh; }
+		void SetMesh(TMesh* a_pMesh) { m_pMesh = a_pMesh; }
 
-		void SetMesh(TMesh* a_pMesh)
-		{
-			m_pMesh = a_pMesh;
-		}
+		TSkeletonInstance* GetSkeletonInstance() const { return m_pSkeletonInstance; }
+		void SetSkeletonInstance(TSkeletonInstance* a_pSkeletonInstance) { m_pSkeletonInstance = a_pSkeletonInstance; }
 
-		TSkeletonInstance* GetSkeletonInstance() const
-		{
-			return m_pSkeletonInstance;
-		}
+		TMaterial* GetMaterial() const { return m_pMaterial; }
+		void SetMaterial(TMaterial* pMaterial) { m_pMaterial = pMaterial; }
 
-		void SetSkeletonInstance(TSkeletonInstance* a_pSkeletonInstance)
-		{
-			m_pSkeletonInstance = a_pSkeletonInstance;
-		}
+		TMatrix44& GetModelViewMatrix() { return m_oModelView; }
+		void SetModelViewMatrix(TMatrix44& a_rMatrix44) { m_oModelView = a_rMatrix44; }
 
-		TMaterial* GetMaterial() const
-		{
-			return m_pMaterial;
-		}
+		TVector3& GetAmbientColour() { return m_oAmbientColour; }
+		const TVector3& GetAmbientColour() const { return m_oAmbientColour; }
 
-		void SetMaterial(TMaterial* pMaterial)
-		{
-			m_pMaterial = pMaterial;
-		}
+		TVector3& GetLightColour() { return m_oLightColour; }
+		const TVector3& GetLightColour() const { return m_oLightColour; }
 
-		TMatrix44& GetModelViewMatrix()
-		{
-			return m_oModelView;
-		}
+		TVector3& GetLightDirection() { return m_oLightDirection; }
+		const TVector3& GetLightDirection() const { return m_oLightDirection; }
 
-		void SetModelViewMatrix(TMatrix44& a_rMatrix44)
-		{
-			m_oModelView = a_rMatrix44;
-		}
+		TUINT8 GetUnk2() const { return m_ui8Unk2; }
+		void SetUnk2(TUINT8 val) { m_ui8Unk2 = val; }
 
-		TVector3& GetAmbientColour()
-		{
-			return m_oAmbientColour;
-		}
-
-		const TVector3& GetAmbientColour() const
-		{
-			return m_oAmbientColour;
-		}
-
-		TVector3& GetLightColour()
-		{
-			return m_oLightColour;
-		}
-
-		const TVector3& GetLightColour() const
-		{
-			return m_oLightColour;
-		}
-
-		TVector3& GetLightDirection()
-		{
-			return m_oLightDirection;
-		}
-
-		const TVector3& GetLightDirection() const
-		{
-			return m_oLightDirection;
-		}
-
-		TUINT8 GetUnk2() const
-		{
-			return m_ui8Unk2;
-		}
-
-		TFLOAT GetAlpha() const
-		{
-			return m_fAlpha;
-		}
+		TFLOAT GetAlpha() const { return m_fAlpha; }
+		void SetAlpha(TFLOAT val) { m_fAlpha = val; }
 
 	private:
 		TRenderPacket* m_pNextPacket;

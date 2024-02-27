@@ -45,7 +45,8 @@ namespace Toshi {
 		m_AmbientColor(1.0f, 1.0f, 1.0f, 0.0f),
 		m_FogColor(1.0f, 1.0f, 1.0f, 0.0f),
 		m_fFogDistanceStart(10.0f),
-		m_fFogDistanceEnd(1000.0f)
+		m_fFogDistanceEnd(1000.0f),
+		m_fAlphaBlend(1.0f)
 	{
 		TIMPLEMENT();
 

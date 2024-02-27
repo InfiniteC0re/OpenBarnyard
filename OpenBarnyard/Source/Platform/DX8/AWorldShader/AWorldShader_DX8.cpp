@@ -1,9 +1,15 @@
 #include "pch.h"
 #include "AWorldShader_DX8.h"
+#include "AWorldMaterial_DX8.h"
+#include "AWorldMesh_DX8.h"
 
 #include <Render/TRenderPacket.h>
 #include <Platform/DX8/TRenderInterface_DX8.h>
 #include <Platform/DX8/TRenderContext_DX8.h>
+#include <Platform/DX8/TVertexBlockResource_DX8.h>
+#include <Platform/DX8/TVertexPoolResource_DX8.h>
+#include <Platform/DX8/TIndexBlockResource_DX8.h>
+#include <Platform/DX8/TIndexPoolResource_DX8.h>
 #include <d3d8.h>
 
 //-----------------------------------------------------------------------------
@@ -14,7 +20,7 @@
 
 TOSHI_NAMESPACE_USING
 
-TDEFINE_CLASS_NORUNTIME(AWorldShaderHAL);
+TDEFINE_CLASS(AWorldShaderHAL);
 
 AWorldShaderHAL::AWorldShaderHAL() :
 	m_ShadowColour(0.3f, 0.3f, 0.3f, 1.0f),
@@ -40,7 +46,7 @@ void AWorldShaderHAL::Flush()
 	if (IsValidated())
 	{
 		auto pRenderInterface = TRenderD3DInterface::Interface();
-		auto pCurrentContext = TRenderContextD3D::Upcast(pRenderInterface->GetCurrentRenderContext());
+		auto pCurrentContext = TRenderContextD3D::Upcast(pRenderInterface->GetCurrentContext());
 		auto pDevice = pRenderInterface->GetDirect3DDevice();
 
 		if (!IsHighEndMode())
@@ -86,7 +92,7 @@ void AWorldShaderHAL::StartFlush()
 	if (IsValidated())
 	{
 		auto pRenderInterface = TRenderD3DInterface::Interface();
-		auto pCurrentContext = TRenderContextD3D::Upcast(pRenderInterface->GetCurrentRenderContext());
+		auto pCurrentContext = TRenderContextD3D::Upcast(pRenderInterface->GetCurrentContext());
 		auto pDevice = pRenderInterface->GetDirect3DDevice();
 
 		pDevice->SetTextureStageState(0, D3DTSS_ADDRESSU, 1);
@@ -188,7 +194,19 @@ TBOOL AWorldShaderHAL::Validate()
 
 void AWorldShaderHAL::Invalidate()
 {
-	TASSERT(!"Not implemented yet");
+	if (!IsValidated()) return;
+
+	if (!IsHighEndMode())
+	{
+		TASSERT(!"Not implemented for low end mode yet but should never get here on modern hardware anyways");
+	}
+	else if (m_hVertexShader != 0)
+	{
+		TRenderD3DInterface::DestroyVertexShader(m_hVertexShader);
+		m_hVertexShader = 0;
+	}
+
+	TShader::Invalidate();
 }
 
 TBOOL AWorldShaderHAL::TryInvalidate()
@@ -208,7 +226,7 @@ void AWorldShaderHAL::Render(TRenderPacket* a_pRenderPacket)
 	if (IsHighEndMode() && a_pRenderPacket && a_pRenderPacket->GetMesh())
 	{
 		auto pRenderInterface = TRenderD3DInterface::Interface();
-		auto pCurrentContext = TRenderContextD3D::Upcast(pRenderInterface->GetCurrentRenderContext());
+		auto pCurrentContext = TRenderContextD3D::Upcast(pRenderInterface->GetCurrentContext());
 		auto pDevice = pRenderInterface->GetDirect3DDevice();
 
 		auto mMVP = DirectX::XMMatrixTranspose(
@@ -216,8 +234,6 @@ void AWorldShaderHAL::Render(TRenderPacket* a_pRenderPacket)
 		);
 
 		pDevice->SetVertexShaderConstant(0, &mMVP, 4);
-
-		static TUINT s_RenderStateFlags = 27;
 
 		if (a_pRenderPacket->GetAlpha() >= 1.0f || isnan(a_pRenderPacket->GetAlpha()))
 		{
@@ -232,9 +248,110 @@ void AWorldShaderHAL::Render(TRenderPacket* a_pRenderPacket)
 			pDevice->SetRenderState(D3DRS_ALPHAREF, TUINT8(m_iAlphaRef * a_pRenderPacket->GetAlpha()));
 			s_RenderStateFlags |= 24;
 		}
+
+		auto pMesh = AWorldMeshHAL::Upcast(a_pRenderPacket->GetMesh());
+		auto pMaterial = AWorldMaterialHAL::Upcast(pMesh->GetMaterial());
+
+		if (pMaterial->GetBlendMode() != 0 || a_pRenderPacket->GetAlpha() < 1.0f)
+		{
+			if (ISZERO(s_RenderStateFlags & 0x1b))
+			{
+				pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+				s_RenderStateFlags |= 0x1b;
+			}
+		}
+		else if (!ISZERO(s_RenderStateFlags & 0x1b))
+		{
+			pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
+			s_RenderStateFlags &= ~0x1b;
+		}
+
+		TVector4 vSomeConst;
+		vSomeConst.x = 0.0f;
+		vSomeConst.y = 1.0f;
+
+		if (pMesh->IsUnknownState1())
+		{
+			vSomeConst.x = 1.0f;
+			vSomeConst.y = 0.0f;
+		}
+
+		vSomeConst.w = 1.0f;
+		vSomeConst.z = 0.0f;
+
+		pDevice->SetVertexShaderConstant(8, &vSomeConst, 1);
+
+		// Set vertices
+		auto pVertexPool = TVertexPoolResource::Upcast(pMesh->GetVertexPool());
+		TVALIDPTR(pVertexPool);
+
+		TVertexBlockResource::HALBuffer vertexBuffer;
+		pVertexPool->GetHALBuffer(&vertexBuffer);
+
+		pDevice->SetStreamSource(0, vertexBuffer.apVertexBuffers[0], 44);
+
+		// Set indices
+		auto pIndexPool = TIndexPoolResource::Upcast(pMesh->GetSubMesh(0)->pIndexPool);
+		TVALIDPTR(pIndexPool);
+
+		TIndexBlockResource::HALBuffer indexBuffer;
+		pIndexPool->GetHALBuffer(&indexBuffer);
+
+		pDevice->SetIndices(indexBuffer.pIndexBuffer, vertexBuffer.uiVertexOffset);
+
+		// Draw mesh
+		pDevice->DrawIndexedPrimitive(
+			D3DPT_TRIANGLESTRIP,
+			0,
+			pVertexPool->GetNumVertices(),
+			indexBuffer.uiIndexOffset,
+			pIndexPool->GetNumIndices() - 2
+		);
+	}
+}
+
+void AWorldShaderHAL::EnableRenderEnvMap(TBOOL a_bEnable)
+{
+	m_bRenderEnvMap = a_bEnable;
+}
+
+TBOOL AWorldShaderHAL::IsAlphaBlendMaterial()
+{
+	return m_bAlphaBlendMaterial;
+}
+
+void AWorldShaderHAL::SetAlphaBlendMaterial(TBOOL a_bIsAlphaBlendMaterial)
+{
+	m_bAlphaBlendMaterial = a_bIsAlphaBlendMaterial;
+}
+
+AWorldMaterial* AWorldShaderHAL::CreateMaterial(const TCHAR* a_szName)
+{
+	Validate();
+
+	auto pMaterial = new AWorldMaterialHAL();
+	pMaterial->SetShader(this);
+
+	if (AWorldShaderHAL::IsAlphaBlendMaterial())
+	{
+		auto pAlphaBlendMaterial = new AWorldMaterialHAL();
+		pAlphaBlendMaterial->SetShader(this);
+		pAlphaBlendMaterial->Create(1);
+		
+		pMaterial->SetAlphaBlendMaterial(pAlphaBlendMaterial);
 	}
 
-	// TODO...
+	return pMaterial;
+}
+
+AWorldMesh* AWorldShaderHAL::CreateMesh(const TCHAR* a_szName)
+{
+	Validate();
+
+	auto pMesh = new AWorldMeshHAL();
+	pMesh->SetOwnerShader(this);
+
+	return pMesh;
 }
 
 TBOOL AWorldShaderHAL::IsHighEndMode()
@@ -278,13 +395,14 @@ TBOOL AWorldShaderHAL::IsRenderEnvMapEnabled()
 
 void* AWorldShaderHAL::CreateUnknown(void*, void*, void*, void*)
 {
+	TASSERT(!"What's this?");
 	return TNULL;
 }
 
 void AWorldShaderHAL::FlushLowEnd()
 {
 	auto pRenderInterface = TRenderD3DInterface::Interface();
-	auto pCurrentContext = TRenderContextD3D::Upcast(pRenderInterface->GetCurrentRenderContext());
+	auto pCurrentContext = TRenderContextD3D::Upcast(pRenderInterface->GetCurrentContext());
 	auto pDevice = pRenderInterface->GetDirect3DDevice();
 
 	pDevice->SetVertexShader(D3DFVF_TEX1 | D3DFVF_DIFFUSE | D3DFVF_SPECULAR | D3DFVF_NORMAL | D3DFVF_XYZ);

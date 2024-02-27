@@ -103,6 +103,8 @@ namespace Toshi {
 		 */
 		static TBOOL CreateVertexShader(const char* a_szFileName, const DWORD* a_pFunction, DWORD* a_pOutVertexShader);
 
+		static void DestroyVertexShader(DWORD a_hVertexShader);
+		
 		/* Prints error text caused by some directx call. */
 		static void PrintError(TINT32 a_eError, const TCHAR* a_szInfo);
 		

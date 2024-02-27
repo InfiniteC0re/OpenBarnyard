@@ -26,7 +26,7 @@ namespace Toshi {
 		if (m_bEnabled)
 		{
 			auto pRender = TRenderInterface::GetSingleton();
-			auto pRenderContext = pRender->GetCurrentRenderContext();
+			auto pRenderContext = pRender->GetCurrentContext();
 
 			TRenderContext::PROJECTIONPARAMS projParams = pRenderContext->GetProjectionParams();
 			projParams.m_Centre = { m_fCentreX * pRenderContext->GetWidth(), m_fCentreY * pRenderContext->GetHeight() };

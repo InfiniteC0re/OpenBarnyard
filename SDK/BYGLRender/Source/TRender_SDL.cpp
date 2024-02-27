@@ -22,7 +22,7 @@ namespace Toshi {
 
 		m_DisplayParams = a_rDisplayParams;
 
-		GetCurrentRenderContext()->SetViewportParameters({
+		GetCurrentContext()->SetViewportParameters({
 			.fX = 0.0f,
 			.fY = 0.0f,
 			.fWidth = (float)m_DisplayParams.uiWidth,

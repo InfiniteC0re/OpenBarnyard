@@ -351,6 +351,13 @@ namespace Toshi {
 		return TTRUE;
 	}
 
+	void TRenderD3DInterface::DestroyVertexShader(DWORD a_hVertexShader)
+	{
+		auto pD3DDevice = Interface()->GetDirect3DDevice();
+		HRESULT hRes = pD3DDevice->DeleteVertexShader(a_hVertexShader);
+		TASSERT(SUCCEEDED(hRes));
+	}
+
 	void TRenderD3DInterface::PrintError(TINT32 a_eError, const TCHAR* a_szInfo)
 	{
 		if (!a_szInfo)

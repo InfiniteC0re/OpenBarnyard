@@ -133,6 +133,9 @@ namespace Toshi {
 		TMatrix44& GetModelViewMatrix() { return m_oModelViewMatrix; }
 		TMatrix44& GetWorldViewMatrix() { return m_oWorldViewMatrix; }
 
+		TFLOAT GetAlphaBlend() const { return m_fAlphaBlend; }
+		void SetAlphaBlend(TFLOAT val) { m_fAlphaBlend = val; }
+
 		const PROJECTIONPARAMS& GetProjectionParams() const
 		{
 			return m_ProjParams;
@@ -162,6 +165,7 @@ namespace Toshi {
 		// ...
 		TMatrix44 m_oWorldModelMatrix;                 // 0x032C
 		TMatrix44 m_oViewModelMatrix;                  // 0x0368
+		TFLOAT m_fAlphaBlend;                          // 0x03A8
 	};
 
 }

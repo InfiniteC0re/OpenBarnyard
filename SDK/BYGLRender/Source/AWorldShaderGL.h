@@ -155,7 +155,7 @@ public:
 
 		auto pRenderContext = TSTATICCAST(
 			Toshi::TRenderContextD3D*,
-			THookedRenderD3DInterface::GetSingleton()->GetCurrentRenderContext()
+			THookedRenderD3DInterface::GetSingleton()->GetCurrentContext()
 		);
 
 		m_VAO.SetAttribPointer(0, 3, GL_FLOAT, sizeof(WorldVertex), (void*)offsetof(WorldVertex, Position));

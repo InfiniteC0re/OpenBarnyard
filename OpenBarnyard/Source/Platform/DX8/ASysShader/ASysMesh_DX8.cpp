@@ -23,10 +23,10 @@ TBOOL ASysMeshHAL::Render()
 {
 	if (ms_bStopRendering == FALSE)
 	{
-		auto pRenderPacket = GetMaterial()->GetRegMaterial()->AddRenderPacket(this);
+		auto pRenderPacket = GetMaterial()->AddRenderPacket(this);
 
 		pRenderPacket->SetModelViewMatrix(
-			TRenderInterface::GetSingleton()->GetCurrentRenderContext()->GetModelViewMatrix()
+			TRenderInterface::GetSingleton()->GetCurrentContext()->GetModelViewMatrix()
 		);
 	}
 

@@ -1,5 +1,6 @@
 #include "ToshiPCH.h"
 #include "TMaterial.h"
+#include "TOrderTable.h"
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
@@ -109,6 +110,14 @@ namespace Toshi {
 	TBOOL TMaterial::IsCreated() const
 	{
 		return m_Flags & Flags_Created;
+	}
+
+	TRenderPacket* TMaterial::AddRenderPacket(TMesh* a_pMesh)
+	{
+		TVALIDPTR(a_pMesh);
+		TVALIDPTR(m_pRegMaterial);
+
+		return m_pRegMaterial->AddRenderPacket(a_pMesh);
 	}
 
 	void TMaterial::SetRegMaterial(TRegMaterial* pRegMaterial)

@@ -41,7 +41,7 @@ namespace Toshi {
 	TBOOL T2ModelInstance::Render(TUINT a_uiClipFlags, const TVector3& a_rBounding)
 	{
 		TIMPLEMENT();
-		auto pContext = TRenderInterface::GetSingleton()->GetCurrentRenderContext();
+		auto pContext = TRenderInterface::GetSingleton()->GetCurrentContext();
 		
 		m_pModelInstance->SetLOD(0);
 
@@ -58,7 +58,7 @@ namespace Toshi {
 
 	TBOOL T2ModelInstance::RenderIfVisible()
 	{
-		auto pContext = TRenderInterface::GetSingleton()->GetCurrentRenderContext();
+		auto pContext = TRenderInterface::GetSingleton()->GetCurrentContext();
 		auto pModel = m_pModelInstance->GetModel();
 		auto& lod = pModel->GetLOD(0);
 

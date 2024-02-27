@@ -27,7 +27,7 @@ void ASysShaderHAL::Flush()
 	auto pDevice = TRenderD3DInterface::Interface()->GetDirect3DDevice();
 	auto pRenderContext = TSTATICCAST(
 		TRenderContextD3D*,
-		TRenderD3DInterface::Interface()->GetCurrentRenderContext()
+		TRenderD3DInterface::Interface()->GetCurrentContext()
 	);
 
 	pDevice->SetTextureStageState(0, D3DTSS_MINFILTER, 2);
@@ -78,7 +78,7 @@ void ASysShaderHAL::StartFlush()
 	auto pDevice = TRenderD3DInterface::Interface()->GetDirect3DDevice();
 	auto pRenderContext = TSTATICCAST(
 		TRenderContextD3D*,
-		TRenderD3DInterface::Interface()->GetCurrentRenderContext()
+		TRenderD3DInterface::Interface()->GetCurrentContext()
 	);
 
 	pDevice->SetTextureStageState(0, D3DTSS_MINFILTER, 2);
@@ -179,8 +179,8 @@ void ASysShaderHAL::Render(Toshi::TRenderPacket* pPacket)
 	pDevice->SetTransform(D3DTS_WORLDMATRIX(0), (D3DMATRIX*)&pPacket->GetModelViewMatrix());
 	pDevice->SetRenderState(D3DRS_ZBIAS, pMeshHAL->GetZBias());
 	
-	auto pVertexPool = TSTATICCAST(TVertexPoolResource*, pMeshHAL->GetVertexPool());
-	auto pIndexPool = TSTATICCAST(TIndexPoolResource*, pMeshHAL->GetIndexPool());
+	auto pVertexPool = TVertexPoolResource::Upcast(pMeshHAL->GetVertexPool());
+	auto pIndexPool = TIndexPoolResource::Upcast(pMeshHAL->GetIndexPool());
 
 	TVertexBlockResource::HALBuffer vertexHALBuffer;
 	pVertexPool->GetHALBuffer(&vertexHALBuffer);

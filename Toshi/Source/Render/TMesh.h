@@ -17,6 +17,7 @@ namespace Toshi {
 			State_None = 0,
 			State_Created = BITFLAG(0),
 			State_Validated = BITFLAG(1),
+			State_Unknown1 = BITFLAG(2),
 		};
 
 		// These flags can be used by the client classes
@@ -41,13 +42,14 @@ namespace Toshi {
 		void DestroyResource();
 
 		TMaterial* GetMaterial() const;
-		void SetMaterial(TMaterial* pMaterial);
+		void SetMaterial(TMaterial* a_pMaterial);
 
 		TShader* GetOwnerShader();
-		void SetOwnerShader(TShader* pShader);
+		void SetOwnerShader(TShader* a_pShader);
 
 		TBOOL IsCreated() const;
 		TBOOL IsValidated() const;
+		TBOOL IsUnknownState1() const;
 
 	protected:
 		~TMesh();

@@ -31,6 +31,12 @@ namespace Toshi {
 
 		TBOOL GetHALBuffer(TIndexBlockResource::HALBuffer* a_pHALBuffer);
 
+		static TIndexPoolResource* Upcast(TIndexPoolResourceInterface* a_pResource)
+		{
+			TASSERT(a_pResource->IsA(&ms_oClass));
+			return TSTATICCAST(TIndexPoolResource*, a_pResource);
+		}
+
 	private:
 		TUINT16 m_uiIndexOffset;
 		TIndexType* m_pIndices;
