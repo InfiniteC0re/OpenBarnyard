@@ -77,7 +77,7 @@ constexpr TUINT32 TMAKEFOUR(const TCHAR str[4])
 	#define TINFO(...) Toshi::TUtil::Log(Toshi::TLogFile::Type_Info, __VA_ARGS__)
 	#define TWARN(...) Toshi::TUtil::Log(Toshi::TLogFile::Type_Warning, __VA_ARGS__)
 	#define TERROR(...) Toshi::TUtil::Log(Toshi::TLogFile::Type_Error, __VA_ARGS__)
-	#define TDEBUG(...) TDebug_FinalPrintf(__VA_ARGS__)
+	#define TTRACE(...) TDebug_FinalPrintf(__VA_ARGS__)
 #else // TOSHI_NO_LOGS
 	#define TINFO(...)
 	#define TWARN(...)

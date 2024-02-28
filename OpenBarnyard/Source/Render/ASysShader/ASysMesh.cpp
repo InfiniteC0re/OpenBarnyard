@@ -97,7 +97,7 @@ TBOOL ASysMesh::CreatePools(TUINT32 a_uiResourcesFlags, TUINT16 a_uiMaxVertices,
 
 TBOOL ASysMesh::CreateResource()
 {
-	auto pVertexFactory = TRenderInterface::GetSingleton()->GetSystemResource<TVertexFactoryResourceInterface>(TRenderInterface::SYSRESOURCE_VFSYSVNDUV1);
+	auto pVertexFactory = TRenderInterface::GetSingleton()->GetSystemResource<TVertexFactoryResourceInterface>(SYSRESOURCE_VFSYSVNDUV1);
 	TVALIDPTR(pVertexFactory);
 
 	TUINT16 uiVertexPoolFlags;
@@ -124,7 +124,7 @@ TBOOL ASysMesh::CreateResource()
 	m_pVertexPool = pVertexFactory->CreatePoolResource(m_uiMaxVertices, uiVertexPoolFlags);
 	TVALIDPTR(m_pVertexPool);
 
-	auto pIndexFactory = TRenderInterface::GetSingleton()->GetSystemResource<TIndexFactoryResourceInterface>(TRenderInterface::SYSRESOURCE_IFSYS);
+	auto pIndexFactory = TRenderInterface::GetSingleton()->GetSystemResource<TIndexFactoryResourceInterface>(SYSRESOURCE_IFSYS);
 	TVALIDPTR(pIndexFactory);
 
 	TUINT16 uiIndexPoolFlags;

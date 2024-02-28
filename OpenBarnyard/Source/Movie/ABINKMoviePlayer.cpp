@@ -455,7 +455,7 @@ TBOOL ABINKMoviePlayer::Rect::Create(int a_iPosX, int a_iPosY, int a_iWidth, int
 
 	auto uiDataSize = iPixelSize * uiWidth * uiHeight;
 	pData = new TUINT8[uiDataSize];
-	auto pTexFactory = TRenderInterface::GetSingleton()->GetSystemResource<TTextureFactory>(TRenderInterface::SYSRESOURCE_TEXTUREFACTORY);
+	auto pTexFactory = TRenderInterface::GetSingleton()->GetSystemResource<TTextureFactory>(SYSRESOURCE_TEXTUREFACTORY);
 
 	pTexture = pTexFactory->CreateEx(pData, uiDataSize, uiWidth, uiHeight, 1, a_eFormat, 4);
 	pTexture->SetAddress(2);

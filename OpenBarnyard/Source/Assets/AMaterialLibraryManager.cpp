@@ -218,7 +218,7 @@ void AMaterialLibraryManager::UnloadTexturesOfLibrary(AMaterialLibrary* a_pMater
 
 void AMaterialLibraryManager::CreateTextures(AMaterialLibrary* a_pMatLibrary)
 {
-	auto pTextureFactory = TRenderInterface::GetSingleton()->GetSystemResource<TTextureFactory>(TRenderInterface::SYSRESOURCE_TEXTUREFACTORY);
+	auto pTextureFactory = TRenderInterface::GetSingleton()->GetSystemResource<TTextureFactory>(SYSRESOURCE_TEXTUREFACTORY);
 	
 	for (TINT i = 0; i < a_pMatLibrary->GetNumTextures(); i++)
 	{

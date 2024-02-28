@@ -83,7 +83,7 @@ int main(int argc, char** argv)
 		auto pInDatabase = pInSYMB->Find<TTerrainMDL::TRBHeader>(pInSECT, "Database");
 		auto pInSkeletonHeader = pInSYMB->Find<TTMDBase::SkeletonHeader>(pInSECT, "SkeletonHeader");
 		auto pInSkeleton = pInSYMB->Find<TSkeleton>(pInSECT, "Skeleton");
-		auto pInMaterials = pInSYMB->Find<TTMDBase::Materials>(pInSECT, "Materials");
+		auto pInMaterials = pInSYMB->Find<TTMDBase::MaterialsHeader>(pInSECT, "Materials");
 		auto pInCollision = pInSYMB->Find<TTMDBase::Collision>(pInSECT, "Collision");
 		auto pInHeader = pInSYMB->Find<TTMDWin::TRBWinHeader>(pInSECT, "Header");
 
@@ -139,7 +139,6 @@ int main(int argc, char** argv)
 						);
 
 						auto pMesh = pMeshBounding->m_pMesh;
-						TINFO("        Unk: %u\n", pMesh->m_Unk);
 						TINFO("        Num Indices: %u\n", pMesh->m_uiNumIndices);
 						TINFO("        Num Vertices 1: %u\n", pMesh->m_uiNumVertices1);
 						TINFO("        Num Vertices 2: %u\n", pMesh->m_uiNumVertices2);
@@ -171,8 +170,8 @@ int main(int argc, char** argv)
 			}
 		}
 
-		TINFO("  Materials Size: %u\n", pInMaterials->m_uiSectionSize);
-		TINFO("  Material Count: %u\n", pInMaterials->m_uiNumMaterials);
+		TINFO("  Materials Size: %u\n", pInMaterials->uiSectionSize);
+		TINFO("  Material Count: %d\n", pInMaterials->iNumMaterials);
 		TINFO("  Collision Model Count: %i\n", pInCollision->m_iNumModels);
 		TINFO("  LOD Count: %i\n", pInHeader->m_iNumLODs);
 		TINFO("  LOD Distance: %f\n", pInHeader->m_fLODDistance);
@@ -184,7 +183,7 @@ int main(int argc, char** argv)
 
 			TINFO("  Information about LOD%i:\n", i);
 			TINFO("    Mesh Count: %i\n", iMeshCount);
-			TINFO("    Shader Type: %i\n", pLOD->m_iShader);
+			TINFO("    Shader Type: %i\n", pLOD->m_eShader);
 
 			if (bIsSkin)
 			{
@@ -315,7 +314,7 @@ int main(int argc, char** argv)
 						TASSERT(uiNumPrimGroups == 1);
 
 						auto pExportMesh = pStack->Alloc<TTerrainMDL::Mesh>(&pMeshBounding->m_pMesh);
-						pExportMesh->m_Unk = 0;
+						pExportMesh->m_pRealMesh = TNULL;
 						pExportMesh->m_uiNumIndices = apPrimitiveGroups[0].numIndices;
 						pExportMesh->m_uiNumVertices1 = pImportMesh->mNumVertices;
 						pExportMesh->m_uiNumVertices2 = pImportMesh->mNumVertices;
@@ -506,11 +505,11 @@ int main(int argc, char** argv)
 		}
 
 		// TTMDBase::Materials
-		auto pOutMaterials = pStack->Alloc<TTMDBase::Materials>();
-		pOutMaterials->m_uiNumMaterials = pImportScene->mNumMaterials;
-		pOutMaterials->m_uiSectionSize = pOutMaterials->m_uiNumMaterials * sizeof(TTMDBase::Material);
+		auto pOutMaterials = pStack->Alloc<TTMDBase::MaterialsHeader>();
+		pOutMaterials->iNumMaterials = pImportScene->mNumMaterials;
+		pOutMaterials->uiSectionSize = pOutMaterials->iNumMaterials * sizeof(TTMDBase::Material);
 
-		auto pMaterials = pStack->Alloc<TTMDBase::Material>(pOutMaterials->m_uiNumMaterials);
+		auto pMaterials = pStack->Alloc<TTMDBase::Material>(pOutMaterials->iNumMaterials);
 
 		for (TUINT i = 0; i < pImportScene->mNumMaterials; i++)
 		{
@@ -535,8 +534,8 @@ int main(int argc, char** argv)
 				texPath[texPath.Length() - 1] = 'a';
 			}
 
-			TStringManager::String8Copy(pMaterial->m_szMatName, pImportMaterial->GetName().C_Str());
-			TStringManager::String8Copy(pMaterial->m_szTextureFile, texPath);
+			TStringManager::String8Copy(pMaterial->szMatName, pImportMaterial->GetName().C_Str());
+			TStringManager::String8Copy(pMaterial->szTextureFile, texPath);
 		}
 
 		pOutSYMB->Add(pStack, "Materials", pOutMaterials.get());
@@ -564,12 +563,7 @@ int main(int argc, char** argv)
 			pOutLOD->m_iMeshCount1 = pImportScene->mNumMeshes;
 			pOutLOD->m_iMeshCount2 = 0;
 
-			/*
-			* MODELSHADER_SKIN = 0
-			* MODELSHADER_WORLD = 2
-			* MODELSHADER_GRASS = 4
-			*/
-			pOutLOD->m_iShader = args.IsTerrain() ? 2 : 0;
+			pOutLOD->m_eShader = args.IsTerrain() ? TTMDWin::ST_WORLD : TTMDWin::ST_SKIN;
 
 			TFIXME("Calculate render volume of LOD");
 			pOutLOD->m_RenderVolume.Set(0.0f, 0.0f, 0.0f, 5000.0f);
@@ -709,7 +703,7 @@ int main(int argc, char** argv)
 		auto pInDatabase = pInSYMB->Find<TTerrainMDL::TRBHeader>(pInSECT, "Database");
 		auto pInSkeletonHeader = pInSYMB->Find<TTMDBase::SkeletonHeader>(pInSECT, "SkeletonHeader");
 		auto pInSkeleton = pInSYMB->Find<TSkeleton>(pInSECT, "Skeleton");
-		auto pInMaterials = pInSYMB->Find<TTMDBase::Materials>(pInSECT, "Materials");
+		auto pInMaterials = pInSYMB->Find<TTMDBase::MaterialsHeader>(pInSECT, "Materials");
 		auto pInCollision = pInSYMB->Find<TTMDBase::Collision>(pInSECT, "Collision");
 		auto pInHeader = pInSYMB->Find<TTMDWin::TRBWinHeader>(pInSECT, "Header");
 
@@ -720,17 +714,17 @@ int main(int argc, char** argv)
 		aiScene scene;
 		scene.mRootNode = new aiNode();
 
-		scene.mNumMaterials = pInMaterials->m_uiNumMaterials;
+		scene.mNumMaterials = pInMaterials->iNumMaterials;
 		scene.mMaterials = new aiMaterial*[scene.mNumMaterials];
 
 		for (TUINT i = 0; i < scene.mNumMaterials; i++)
 		{
 			scene.mMaterials[i] = new aiMaterial();
 
-			aiString matName(pInMaterials->GetMaterial(i)->m_szMatName);
+			aiString matName(pInMaterials->GetMaterial(i)->szMatName);
 
 			aiString texName(args.GetTexturesPath());
-			texName.Append(pInMaterials->GetMaterial(i)->m_szTextureFile);
+			texName.Append(pInMaterials->GetMaterial(i)->szTextureFile);
 			texName.data[texName.length - 3] = 'd';
 			texName.data[texName.length - 2] = 'd';
 			texName.data[texName.length - 1] = 's';
@@ -773,7 +767,7 @@ int main(int argc, char** argv)
 				scene.mRootNode->mMeshes[i] = i;
 			}
 
-			for (TINT i = 0; i < uiTotalNumMeshes;)
+			for (TUINT i = 0; i < uiTotalNumMeshes;)
 			{
 				for (TINT k = 0; k < iMeshCount; k++)
 				{

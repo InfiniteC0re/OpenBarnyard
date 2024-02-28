@@ -17,6 +17,7 @@
 #include "Platform/DX8/TViewport_DX8.h"
 
 #include "Platform/DX8/ASysShader/ASysShader_DX8.h"
+#include "Platform/DX8/AWorldShader/AWorldShader_DX8.h"
 #endif // TOSHI_SKU_WINDOWS
 
 //-----------------------------------------------------------------------------
@@ -124,7 +125,7 @@ TBOOL ARenderer::CreateTRenderResources()
 			)
 		);
 
-		pRenderer->SetResourceExplicit(pResource, TRenderInterface::SYSRESOURCE_VFSYSVNDUV1);
+		pRenderer->SetResourceExplicit(pResource, SYSRESOURCE_VFSYSVNDUV1);
 
 		TVertexFactoryFormat vertexFormat;
 		vertexFormat.m_uiNumStreams = 1;
@@ -143,7 +144,7 @@ TBOOL ARenderer::CreateTRenderResources()
 			)
 		);
 
-		pRenderer->SetResourceExplicit(pResource, TRenderInterface::SYSRESOURCE_VFSKIN);
+		pRenderer->SetResourceExplicit(pResource, SYSRESOURCE_VFSKIN);
 
 		TVertexFactoryFormat vertexFormat;
 		vertexFormat.m_uiNumStreams = 1;
@@ -162,7 +163,7 @@ TBOOL ARenderer::CreateTRenderResources()
 			)
 		);
 
-		pRenderer->SetResourceExplicit(pResource, TRenderInterface::SYSRESOURCE_VFWORLD);
+		pRenderer->SetResourceExplicit(pResource, SYSRESOURCE_VFWORLD);
 
 		TVertexFactoryFormat vertexFormat;
 		vertexFormat.m_uiNumStreams = 1;
@@ -181,7 +182,7 @@ TBOOL ARenderer::CreateTRenderResources()
 			)
 		);
 
-		pRenderer->SetResourceExplicit(pResource, TRenderInterface::SYSRESOURCE_IFSYS);
+		pRenderer->SetResourceExplicit(pResource, SYSRESOURCE_IFSYS);
 
 		TIndexFactoryFormat indexFormat;
 		indexFormat.m_uiUnk = 2;
@@ -195,7 +196,7 @@ TBOOL ARenderer::CreateTRenderResources()
 			TNULL
 		);
 
-		pRenderer->SetResourceExplicit(pResource, TRenderInterface::SYSRESOURCE_TEXTUREFACTORY);
+		pRenderer->SetResourceExplicit(pResource, SYSRESOURCE_TEXTUREFACTORY);
 		pResource->Create();
 	}
 
@@ -305,6 +306,7 @@ TBOOL ARenderer::OnCreate()
 
 	if (bCreatedTRender)
 	{
+		(new AWorldShaderHAL())->Create();
 		(new ASysShaderHAL())->Create();
 		CreateMainViewport();
 

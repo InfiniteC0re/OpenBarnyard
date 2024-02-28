@@ -140,7 +140,7 @@ void ATextureUpdater::DumpTexture(const Toshi::TString8& a_rFilePath, const void
 
 void ATextureUpdater::ReloadTexture(Toshi::T2Texture* a_pT2Texture, void* a_pData, TUINT a_uiDataSize)
 {
-	auto pTexFactory = THookedRenderD3DInterface::GetSingleton()->GetSystemResource<TTextureFactory>(TRenderInterface::SYSRESOURCE_TEXTUREFACTORY);
+	auto pTexFactory = THookedRenderD3DInterface::GetSingleton()->GetSystemResource<TTextureFactory>(SYSRESOURCE_TEXTUREFACTORY);
 
 	auto pOldD3DTexture = a_pT2Texture->GetD3DTexture();
 	a_pT2Texture->Unload();

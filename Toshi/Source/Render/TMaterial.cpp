@@ -50,6 +50,12 @@ namespace Toshi {
 
 	}
 
+	void TMaterial::Destroy()
+	{
+		OnDestroy();
+		delete this;
+	}
+
 	void TMaterial::SetShader(TShader* pShader)
 	{
 		TASSERT(TNULL == m_pShader);
@@ -71,6 +77,11 @@ namespace Toshi {
 	{
 		TASSERT(a_iStage < MAXTEXTURES);
 		m_pTextures[a_iStage] = a_pTexture;
+	}
+
+	TUINT32 TMaterial::GetTextureNum() const
+	{
+		return m_iNumTex;
 	}
 
 	TTexture* TMaterial::GetTexture(TUINT32 a_iStage /*= 0*/) const

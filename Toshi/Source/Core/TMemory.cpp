@@ -527,7 +527,7 @@ namespace Toshi {
 		auto pBuffer = TStringManager::GetTempString8();
 		vsprintf(pBuffer, a_szFormat, args);
 		OutputDebugStringA(pBuffer);
-		TDEBUG(pBuffer);
+		TTRACE(pBuffer);
 
 		va_end(args);
 	}

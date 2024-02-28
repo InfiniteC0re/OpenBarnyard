@@ -23,6 +23,12 @@ public:
 
 	AWorldMaterial::BLENDMODE GetBlendMode() const { return m_eBlendMode; }
 
+	void SetTexture(TUINT a_uiStage, Toshi::TTexture* a_pTexture)
+	{
+		TASSERT(a_uiStage < MAX_TEXTURES);
+		m_aTextures[a_uiStage] = a_pTexture;
+	}
+
 protected:
 	Toshi::TTexture* m_aTextures[MAX_TEXTURES];
 	BLENDMODE m_eBlendMode;

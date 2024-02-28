@@ -109,37 +109,32 @@ namespace Toshi {
 	TBOOL TResource::RecurseSimple(t_RecurseCb a_pCallback, TResource* a_pResource, void* a_pUserData)
 	{
 		if (a_pResource)
-		{
 			return Recurse(a_pCallback, a_pResource, TFALSE, a_pUserData);
-		}
 		else
-		{
 			return Recurse(a_pCallback, Child(), TTRUE, a_pUserData);
-		}
 	}
 
 	TBOOL TResource::Recurse(t_RecurseCb a_pCallback, TResource* a_pResource, TBOOL a_bFlag, void* a_pUserData)
 	{
 		TResource* pResource = a_pResource;
 
-		while (pResource)
+		if (a_pResource)
 		{
 			TResource* pNext = pResource->Next();
 
-			if (pNext == a_pResource || pNext == pResource || !a_bFlag)
+			while (pNext != TNULL)
 			{
-				pNext = TNULL;
+				if (pNext == a_pResource || pNext == pResource || !a_bFlag)
+					pNext = TNULL;
+
+				if (!a_pCallback(pResource, a_pUserData))
+					return TFALSE;
+				
+				if (pResource->Child() && !Recurse(a_pCallback, pResource->Child(), TTRUE, a_pUserData))
+					return TFALSE;
+
+				pResource = pNext;
 			}
-
-			if (!a_pCallback(pResource, a_pUserData)) return TFALSE;
-
-			auto pAttached = pResource->Child();
-			if (pAttached && !Recurse(a_pCallback, pResource, TTRUE, a_pUserData))
-			{
-				return TFALSE;
-			}
-
-			pResource = pNext;
 		}
 
 		return TTRUE;

@@ -25,17 +25,17 @@ public:
 		}
 		else
 		{
-			TDEBUG("Num arguments: %i\n", argc);
+			TTRACE("Num arguments: %i\n", argc);
 
 			for (TINT i = 1; i < argc; i++)
 			{
 				if (*m_argv == TNULL) return;
 
-				TDEBUG("Parsing argument %s\n", *m_argv);
+				TTRACE("Parsing argument %s\n", *m_argv);
 
 				if (Toshi::TStringManager::String8Compare(*m_argv, "-p") == 0)
 				{
-					TDEBUG("Found -p parameter\n");
+					TTRACE("Found -p parameter\n");
 
 					m_mode = Mode::Pack;
 					ParseString(m_inPath);
@@ -43,18 +43,18 @@ public:
 				}
 				else if (Toshi::TStringManager::String8Compare(*m_argv, "-u") == 0)
 				{
-					TDEBUG("Found -u parameter\n");
+					TTRACE("Found -u parameter\n");
 					m_mode = Mode::Unpack;
 					ParseString(m_inPath);
 				}
 				else if (Toshi::TStringManager::String8Compare(*m_argv, "-btec") == 0)
 				{
-					TDEBUG("Found -btec parameter\n");
+					TTRACE("Found -btec parameter\n");
 					m_useCompression = TTRUE;
 				}
 				else if (Toshi::TStringManager::String8Compare(*m_argv, "-o") == 0)
 				{
-					TDEBUG("Found -o parameter\n");
+					TTRACE("Found -o parameter\n");
 					ParseString(m_outPath);
 				}
 

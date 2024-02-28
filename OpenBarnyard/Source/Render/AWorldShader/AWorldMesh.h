@@ -12,9 +12,9 @@ public:
 
 	struct SubMesh
 	{
-		TUINT32 m_uiUnk1 = 0;
-		TUINT16 m_uiUnk2 = 0;
-		TUINT16 m_uiUnk3 = 0;
+		TMesh* pAssociatedMesh = 0;
+		TUINT16 uiUnk2 = 0;
+		TUINT16 uiNumVertices = 0;
 		Toshi::TIndexPoolResourceInterface* pIndexPool = TNULL;
 	};
 
@@ -35,7 +35,7 @@ public:
 	//-----------------------------------------------------------------------------
 	// Own methods
 	//-----------------------------------------------------------------------------
-	virtual void Create(TUINT32 a_uiUnknown, TUINT16 a_uiMaxVertices);
+	virtual void Create(TUINT32 a_uiFlags, TUINT16 a_uiMaxVertices);
 	virtual TBOOL Lock(LockBuffer& a_rLockBuffer);
 	virtual void Unlock(TUINT32 a_uiNumVertices);
 	virtual Toshi::TVertexPoolResourceInterface* GetVertexPool();
@@ -43,7 +43,7 @@ public:
 	SubMesh* GetSubMesh(TUINT a_uiIndex)
 	{
 		TASSERT(a_uiIndex < NUM_SUBMESHES);
-		return &m_pSomeArray[a_uiIndex];
+		return &m_pSubMeshes[a_uiIndex];
 	}
 
 private:
@@ -53,5 +53,5 @@ protected:
 	TUINT32 m_uiFlags;
 	TUINT16 m_uiMaxVertices;
 	Toshi::TVertexPoolResourceInterface* m_pVertexPool;
-	Toshi::T2SimpleArray<SubMesh> m_pSomeArray;
+	Toshi::T2SimpleArray<SubMesh> m_pSubMeshes;
 };

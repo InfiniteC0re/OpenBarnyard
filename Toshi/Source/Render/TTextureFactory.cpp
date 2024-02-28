@@ -42,7 +42,7 @@ namespace Toshi {
 		{
 			for (auto it = m_aLists[i].Begin(); it != m_aLists[i].End(); it++)
 			{
-				TDEBUG("[%d] Texture [%s]: W=%d , H=%d\n", uiTexIndex++, it->GetName(), it->GetTexture()->GetWidth(), it->GetTexture()->GetHeight());
+				TTRACE("[%d] Texture [%s]: W=%d , H=%d\n", uiTexIndex++, it->GetName(), it->GetTexture()->GetWidth(), it->GetTexture()->GetHeight());
 			}
 		}
 	}

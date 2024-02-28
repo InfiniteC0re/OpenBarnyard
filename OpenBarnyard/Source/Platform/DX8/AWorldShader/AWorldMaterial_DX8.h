@@ -28,7 +28,7 @@ public:
 	//-----------------------------------------------------------------------------
 	// Own methods
 	//-----------------------------------------------------------------------------
-	virtual void CopyToOtherMaterial();
+	virtual void CopyToAlphaBlendMaterial();
 
 	void SetOrderTable(Toshi::TOrderTable* a_pOrderTable);
 

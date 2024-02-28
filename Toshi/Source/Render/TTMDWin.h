@@ -35,11 +35,18 @@ namespace Toshi {
 			TINT32 m_Unk6;
 		};
 
+		enum EShaderType
+		{
+			ST_SKIN = 0,
+			ST_WORLD = 2,
+			ST_GRASS = 4,
+		};
+
 		struct TRBLODHeader
 		{
 			TINT m_iMeshCount1;
 			TINT m_iMeshCount2;
-			TINT m_iShader;
+			EShaderType m_eShader;
 			TSphere m_RenderVolume;
 		};
 

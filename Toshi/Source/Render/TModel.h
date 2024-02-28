@@ -90,6 +90,7 @@ namespace Toshi {
 		static constexpr TUINT MAX_NUM_LODS = 5;
 
 		friend TModelInstance;
+		friend AModelLoader;
 
 	public:
 		TModel();
@@ -105,6 +106,7 @@ namespace Toshi {
 		TBOOL LoadTRB();
 		TBOOL LoadTRB(TTRB* a_pTRB);
 		TBOOL LoadTRB(const TCHAR* a_szFileName, TTRB* a_pAssetTRB, TUINT8 a_ui8FileNameLen);
+
 		void UnloadTRB();
 
 		void* GetSymbol(const TCHAR* a_szSymbolName);
@@ -128,6 +130,9 @@ namespace Toshi {
 			TASSERT(a_uiLOD < MAX_NUM_LODS);
 			return m_LODs[a_uiLOD];
 		}
+
+		template <class T>
+		T* CastSymbol(const TCHAR* a_szSymbolName) { return TSTATICCAST(T*, GetSymbol(a_szSymbolName)); }
 
 	public:
 		static TBOOL GetSkeletonAssetSymbolName(const TCHAR* a_szFileName, const TCHAR*& a_rSymbolName, TUINT8& a_rNameLen, TTRB* a_pTRB);

@@ -185,6 +185,7 @@ TBOOL AWorldShaderHAL::Validate()
 
 		if (!TRenderD3DInterface::CreateVertexShader("AWorldShader_D3D8_Win.vsh", s_VertexShaderFunction, &m_hVertexShader))
 		{
+			TASSERT(!"Couldn't create vertex shader");
 			return TFALSE;
 		}
 	}
@@ -385,7 +386,7 @@ TBOOL AWorldShaderHAL::IsCapableShaders()
 		pDevice->GetDeviceCaps(&caps);
 	}
 
-	return ((caps.MaxStreams & 0xFFFF) > 256) && (caps.PresentationIntervals & 0x10000);
+	return ((caps.VertexShaderVersion & 0xFFFF) > 256) && (caps.DevCaps & 0x10000);
 }
 
 TBOOL AWorldShaderHAL::IsRenderEnvMapEnabled()

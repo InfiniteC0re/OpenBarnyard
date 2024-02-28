@@ -27,11 +27,11 @@ namespace Toshi {
 
 		if (pFile != TNULL)
 		{
-			TDEBUG("TFile::Create - Created file %s with mode %hu\n", filename.GetString(), mode);
+			TTRACE("TFile::Create - Created file %s with mode %hu\n", filename.GetString(), mode);
 		}
 		else
 		{
-			TDEBUG("TFile::Create - Failed to create file %s with mode %hu\n", filename.GetString(), mode);
+			TTRACE("TFile::Create - Failed to create file %s with mode %hu\n", filename.GetString(), mode);
 		}
 
 		return pFile;

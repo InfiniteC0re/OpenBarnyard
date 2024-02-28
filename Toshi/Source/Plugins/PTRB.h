@@ -972,11 +972,11 @@ namespace PTRB
 		{
 			if (count > 1)
 			{
-				TDEBUG("Compressing progress: 0%\n");
+				TTRACE("Compressing progress: 0%\n");
 			}
 			else
 			{
-				TDEBUG("Started BTEC compression...\n");
+				TTRACE("Started BTEC compression...\n");
 			}
 		}
 		
@@ -991,11 +991,11 @@ namespace PTRB
 
 				if (count > 1)
 				{
-					TDEBUG("Compressing progress: %.1f\n", (double)ready / count * 100);
+					TTRACE("Compressing progress: %.1f\n", (double)ready / count * 100);
 				}
 				else
 				{
-					TDEBUG("BTEC compression completed...\n");
+					TTRACE("BTEC compression completed...\n");
 				}
 			}
 			else

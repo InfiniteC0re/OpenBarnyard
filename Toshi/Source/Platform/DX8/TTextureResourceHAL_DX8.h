@@ -46,6 +46,9 @@ namespace Toshi {
 		TINT GetAddressVState() const { return m_eAddressVState; }
 		void SetAddressVState(TINT val) { m_eAddressVState = val; }
 
+		D3DXIMAGE_INFO& GetImageInfo() { return m_ImageInfo; }
+		const D3DXIMAGE_INFO& GetImageInfo() const { return m_ImageInfo; }
+
 		static TTextureResourceHAL* Upcast(TTexture* a_pTexture) { return TSTATICCAST(TTextureResourceHAL*, a_pTexture); }
 
 	public:

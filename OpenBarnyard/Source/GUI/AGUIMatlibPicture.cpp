@@ -62,7 +62,7 @@ void AGUIMatlibPicture::Cache()
 			m_pImages.Create(6);
 			LoadMatLib();
 
-			auto pTexFactory = TRenderInterface::GetSingleton()->GetSystemResource<TTextureFactory>(TRenderInterface::SYSRESOURCE_TEXTUREFACTORY);
+			auto pTexFactory = TRenderInterface::GetSingleton()->GetSystemResource<TTextureFactory>(SYSRESOURCE_TEXTUREFACTORY);
 
 			for (TINT i = 0; i < m_iNumRects2; i++)
 			{

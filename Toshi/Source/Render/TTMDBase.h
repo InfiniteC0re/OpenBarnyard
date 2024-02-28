@@ -27,21 +27,21 @@ namespace Toshi {
 
 		struct Material
 		{
-			TCHAR m_szMatName[104];
-			TCHAR m_szTextureFile[192];
+			TCHAR szMatName[104];
+			TCHAR szTextureFile[192];
 		};
 
-		struct Materials
+		struct MaterialsHeader
 		{
-			TUINT32 m_uiZero1;
-			TUINT32 m_uiZero2;
-			TUINT32 m_uiNumMaterials;
-			TUINT32 m_uiSectionSize;
+			TUINT32 uiZero1;
+			TUINT32 uiZero2;
+			TINT32 iNumMaterials;
+			TUINT32 uiSectionSize;
 
-			Material* GetMaterial(TUINT a_uiIndex)
+			Material* GetMaterial(TINT a_iIndex)
 			{
-				TASSERT(a_uiIndex < m_uiNumMaterials);
-				return TREINTERPRETCAST(Material*, this + 1) + a_uiIndex;
+				TASSERT(a_iIndex >= 0 && a_iIndex < iNumMaterials);
+				return TREINTERPRETCAST(Material*, this + 1) + a_iIndex;
 			}
 		};
 

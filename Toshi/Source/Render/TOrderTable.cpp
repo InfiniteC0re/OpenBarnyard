@@ -9,7 +9,7 @@
 
 namespace Toshi {
 
-	void TOrderTable::CreateStaticData(TUINT32 a_uiMaxMaterials, TUINT32 a_uiMaxRenderPackets)
+	void TOrderTable::CreateStaticData(TUINT a_uiMaxMaterials, TUINT a_uiMaxRenderPackets)
 	{
 		s_uiMaxRenderPackets = a_uiMaxRenderPackets;
 		s_uiNumRenderPackets = 0;
@@ -27,11 +27,30 @@ namespace Toshi {
 		}
 	}
 
+	TOrderTable::TOrderTable()
+	{
+		m_pLastRegMat = TNULL;
+		m_pShader = TNULL;
+	}
+
+	TOrderTable::~TOrderTable()
+	{
+		if (s_pRegMaterials.GetArray())
+		{
+			DeregisterAllMaterials();
+			s_llRegMatFreeList.RemoveAll();
+
+			s_pRegMaterials.Destroy();
+		}
+
+		s_pRenderPackets.Destroy();
+	}
+
 	void TOrderTable::Render()
 	{
-		for (auto it = m_pLastRegMat; it != TNULL; it = m_pLastRegMat->Next())
+		for (auto it = m_pLastRegMat; it != TNULL; it = it->GetNextRegMat())
 		{
-			m_pLastRegMat->Render();
+			it->Render();
 		}
 
 		s_uiNumRenderPackets = 0;
@@ -47,7 +66,7 @@ namespace Toshi {
 
 		m_pShader->StartFlush();
 
-		for (auto it = m_pLastRegMat; it != TNULL; it = it->GetNextUsedMaterial())
+		for (auto it = m_pLastRegMat; it != TNULL; it = it->GetNextRegMat())
 		{
 			it->Render();
 		}
@@ -107,6 +126,16 @@ namespace Toshi {
 		while (!s_llRegMatRegisteredList.IsEmpty())
 		{
 			DeregisterMaterial(s_llRegMatRegisteredList.Head());
+		}
+	}
+
+	void TOrderTable::UseMaterial(TRegMaterial* a_pRegMat)
+	{
+		if (!HASFLAG(a_pRegMat->GetFlags() & TRegMaterial::State_Used))
+		{
+			a_pRegMat->SetFlags(a_pRegMat->GetFlags() | TRegMaterial::State_Used);
+			a_pRegMat->SetNextRegMat(m_pLastRegMat);
+			m_pLastRegMat = a_pRegMat;
 		}
 	}
 

@@ -205,7 +205,7 @@ void AWorldMaterialHAL::SetBlendMode(BLENDMODE a_eBlendMode)
 	AWorldMaterial::SetBlendMode(a_eBlendMode);
 }
 
-void AWorldMaterialHAL::CopyToOtherMaterial()
+void AWorldMaterialHAL::CopyToAlphaBlendMaterial()
 {
 	if (m_pAlphaBlendMaterial)
 	{

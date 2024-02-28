@@ -49,19 +49,19 @@ void AWorldMesh::OnDestroy()
 		m_pVertexPool = TNULL;
 	}
 
-	m_pSomeArray.Destroy();
+	m_pSubMeshes.Destroy();
 	m_uiFlags = 0;
 	m_uiMaxVertices = 0;
 
 	TMesh::OnDestroy();
 }
 
-void AWorldMesh::Create(TUINT32 a_uiUnknown, TUINT16 a_uiMaxVertices)
+void AWorldMesh::Create(TUINT32 a_uiFlags, TUINT16 a_uiMaxVertices)
 {
 	TASSERT(!IsCreated());
 
 	m_uiMaxVertices = a_uiMaxVertices;
-	m_uiFlags = a_uiUnknown;
+	m_uiFlags = a_uiFlags;
 
 	if (CreateResource())
 	{
@@ -102,11 +102,11 @@ TVertexPoolResourceInterface* AWorldMesh::GetVertexPool()
 
 TBOOL AWorldMesh::CreateResource()
 {
-	auto pVertexFactory = TRenderInterface::GetSingleton()->GetSystemResource<TVertexFactoryResourceInterface>(TRenderInterface::SYSRESOURCE_VFWORLD);
+	auto pVertexFactory = TRenderInterface::GetSingleton()->GetSystemResource<TVertexFactoryResourceInterface>(SYSRESOURCE_VFWORLD);
 	TVALIDPTR(pVertexFactory);
 
 	m_pVertexPool = pVertexFactory->CreatePoolResource(m_uiMaxVertices, 1);
-	m_pSomeArray.Create(NUM_SUBMESHES);
+	m_pSubMeshes.Create(NUM_SUBMESHES);
 
 	return TTRUE;
 }

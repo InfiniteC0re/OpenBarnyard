@@ -5,6 +5,8 @@
 
 namespace Toshi {
 
+	class TMesh;
+	
 	namespace TTerrainMDL {
 
 		struct WorldVertex
@@ -17,10 +19,10 @@ namespace Toshi {
 
 		struct Mesh
 		{
-			TUINT32 m_Unk;
+			Toshi::TMesh* m_pRealMesh;
 			TUINT32 m_uiNumIndices;
 			TUINT32 m_uiNumVertices1;
-			TUINT32 m_uiNumVertices2;
+			TUINT16 m_uiNumVertices2;
 			TCHAR* m_szMaterialName;
 			WorldVertex* m_pVertices;
 			TUINT16* m_pIndices;
@@ -47,6 +49,8 @@ namespace Toshi {
 		{
 			TSphere m_BoundingSphere;
 			RenderGroup* m_pNextGroup;
+
+			TBOOL IsDataNext() const { return m_pNextGroup == TNULL; }
 
 			RenderGroupData* GetData()
 			{

@@ -24,17 +24,20 @@ namespace Toshi {
 			Flags_NO_CULL      = BITFLAG(0),
 			Flags_Unk2         = BITFLAG(1),
 			Flags_Unk3         = BITFLAG(2),
-			Flags_Unk4         = BITFLAG(3),
+			Flags_Glow         = BITFLAG(3),
 			Flags_Created      = BITFLAG(4),
 			Flags_NoDepthTest  = BITFLAG(27),
 			Flags_AlphaUpdate  = BITFLAG(28),
 			Flags_AlphaTexture = BITFLAG(31),
 		};
 
+		friend TRegMaterial;
+
 	public:
 		TMaterial();
 		~TMaterial();
 
+	protected:
 		//-----------------------------------------------------------------------------
 		// Own methods
 		//-----------------------------------------------------------------------------
@@ -43,11 +46,16 @@ namespace Toshi {
 		virtual void PreRender();
 		virtual void PostRender();
 
+	public:
+		void Destroy();
+
 		TShader* GetShader() const;
 		void SetShader(TShader* a_pShader);
 
 		TTexture* GetTexture(TUINT32 a_iStage = 0) const;
-		void SetTexture(TUINT32 a_iStage, TTexture* a_pTexture);		
+		void SetTexture(TUINT32 a_iStage, TTexture* a_pTexture);	
+
+		TUINT32 GetTextureNum() const;
 		void SetTextureNum(TUINT32 a_iNumTextures);
 
 		void SetName(const TCHAR* a_szName);
