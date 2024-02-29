@@ -13,10 +13,10 @@ namespace Toshi {
 	void TViewport::BeginSKU()
 	{
 		D3DVIEWPORT8 viewport;
-		viewport.X = DWORD(m_pRenderCtx->GetParams().fX);
-		viewport.Y = DWORD(m_pRenderCtx->GetParams().fY);
-		viewport.Width = DWORD(m_pRenderCtx->GetParams().fWidth);
-		viewport.Height = DWORD(m_pRenderCtx->GetParams().fHeight);
+		viewport.X = DWORD(m_pRenderCtx->GetViewportParameters().fX);
+		viewport.Y = DWORD(m_pRenderCtx->GetViewportParameters().fY);
+		viewport.Width = DWORD(m_pRenderCtx->GetViewportParameters().fWidth);
+		viewport.Height = DWORD(m_pRenderCtx->GetViewportParameters().fHeight);
 		viewport.MinZ = 0.0f;
 		viewport.MaxZ = 1.0f;
 
@@ -33,10 +33,10 @@ namespace Toshi {
 		if (eClearFlags != 0)
 		{
 			pRender->ClearRegion(
-				DWORD(m_pRenderCtx->GetParams().fX),
-				DWORD(m_pRenderCtx->GetParams().fY),
-				DWORD(m_pRenderCtx->GetParams().fWidth),
-				DWORD(m_pRenderCtx->GetParams().fHeight),
+				DWORD(m_pRenderCtx->GetViewportParameters().fX),
+				DWORD(m_pRenderCtx->GetViewportParameters().fY),
+				DWORD(m_pRenderCtx->GetViewportParameters().fWidth),
+				DWORD(m_pRenderCtx->GetViewportParameters().fHeight),
 				eClearFlags,
 				r,
 				g,

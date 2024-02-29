@@ -52,6 +52,14 @@ namespace Toshi {
 		m_State &= ~State_Created;
 	}
 
+	void TMesh::SetFlags(State a_eFlags, BOOL a_bEnable)
+	{
+		if (a_bEnable)
+			m_State |= a_eFlags;
+		else
+			m_State &= ~a_eFlags;
+	}
+
 	void TMesh::DestroyResource()
 	{
 		Invalidate();

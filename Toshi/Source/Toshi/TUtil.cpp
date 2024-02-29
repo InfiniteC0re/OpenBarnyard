@@ -3,7 +3,7 @@
 #include "Toshi/TSystem.h"
 #include "Toshi/TError.h"
 #include "Toshi/T2FixedString.h"
-#include "Render/TModelRegistry.h"
+#include "Render/TModelManager.h"
 
 #include <Platform/Windows/TConsoleFile_Win.h>
 
@@ -185,7 +185,7 @@ namespace Toshi {
 		ReleaseMutex(ms_hGlobalMutex);
 #endif
 
-		TModelRegistry::Uninitialise();
+		TModelManager::Uninitialise();
 	}
 
 	void TUtil::Create()

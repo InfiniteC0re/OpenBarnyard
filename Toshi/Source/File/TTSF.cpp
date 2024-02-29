@@ -63,9 +63,9 @@ namespace Toshi {
 
 	TUINT32 TTSFI::PushForm()
 	{
-		if (m_CurrentHunk.Name != TMAKEFOUR("FORM") &&
-			m_CurrentHunk.Name != TMAKEFOUR("TSFL") &&
-			m_CurrentHunk.Name != TMAKEFOUR("TSFB"))
+		if (m_CurrentHunk.Name != TMakeFour("FORM") &&
+			m_CurrentHunk.Name != TMakeFour("TSFL") &&
+			m_CurrentHunk.Name != TMakeFour("TSFB"))
 		{
 			return TTRB::ERROR_WRONG_MAGIC;
 		}
@@ -124,7 +124,7 @@ namespace Toshi {
 	TUINT8 TTSFI::ReadFORM(TFORM* section)
 	{
 		// FUN_00688120
-		if (m_CurrentHunk.Name != TMAKEFOUR("FORM"))
+		if (m_CurrentHunk.Name != TMakeFour("FORM"))
 		{
 			return TTRB::ERROR_WRONG_MAGIC;
 		}
@@ -136,7 +136,7 @@ namespace Toshi {
 
 	TUINT8 TTSFI::ReadHunkData(void* dst)
 	{
-		if (m_CurrentHunk.Name == TMAKEFOUR("FORM"))
+		if (m_CurrentHunk.Name == TMakeFour("FORM"))
 		{
 			return TTRB::ERROR_FORM_MAGIC;
 		}
@@ -204,12 +204,12 @@ namespace Toshi {
 
 		if (m_pFile != TNULL)
 		{
-			TTSF::Hunk hunk{ TMAKEFOUR("TSFL"), 0 };
-			TUINT32 magicValue = TMAKEFOUR(magic);
+			TTSF::Hunk hunk{ TMakeFour("TSFL"), 0 };
+			TUINT32 magicValue = TMakeFour(magic);
 
 			if (endianess == Endianess_Big)
 			{
-				hunk.Name = TMAKEFOUR("TSFB");
+				hunk.Name = TMakeFour("TSFB");
 				hunk.Size = PARSEDWORD_BIG(hunk.Size);
 			}
 
@@ -242,8 +242,8 @@ namespace Toshi {
 	{
 		TASSERT(m_pFile != TNULL, "TTSFO is not created");
 
-		TTSF::Hunk hunk{ TMAKEFOUR("FORM"), 0 };
-		auto nameValue = TMAKEFOUR(name);
+		TTSF::Hunk hunk{ TMakeFour("FORM"), 0 };
+		auto nameValue = TMakeFour(name);
 
 		if (m_Endianess == Endianess_Big)
 		{
@@ -288,7 +288,7 @@ namespace Toshi {
 	TBOOL TTSFO::OpenHunk(HunkMark* hunkMark, const TCHAR* hunkName)
 	{
 		TASSERT(hunkMark != TNULL, "HunkMark is TNULL");
-		hunkMark->Name = TMAKEFOUR(hunkName);
+		hunkMark->Name = TMakeFour(hunkName);
 		hunkMark->Pos = m_pFile->Tell();
 
 		WriteHunk(hunkMark->Name, TNULL, 0);

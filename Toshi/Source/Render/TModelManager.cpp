@@ -1,5 +1,5 @@
 #include "ToshiPCH.h"
-#include "TModelRegistry.h"
+#include "TModelManager.h"
 #include "TRenderInterface.h"
 
 #include "Toshi/T2ModelInstance.h"
@@ -22,7 +22,7 @@ namespace Toshi {
 				{
 					m_pModel->Delete();
 					m_pEntry->Remove();
-					TModelRegistry::ms_oFreeList.PushBack(m_pEntry);
+					TModelManager::ms_oFreeList.PushBack(m_pEntry);
 
 					m_pModel = TNULL;
 					m_pEntry = TNULL;
@@ -43,13 +43,13 @@ namespace Toshi {
 		}
 	}
 
-	void TModelRegistry::Initialise()
+	void TModelManager::Initialise()
 	{
 		TASSERT(ms_pEntries.GetArray() == TNULL);
 		ms_pEntries.Create(MAX_NUM_MODELS);
 	}
 
-	void TModelRegistry::Uninitialise()
+	void TModelManager::Uninitialise()
 	{
 		TASSERT(ms_pEntries.GetArray() != TNULL);
 		ms_oUsedList.Clear();
@@ -57,7 +57,7 @@ namespace Toshi {
 		ms_pEntries.Destroy();
 	}
 
-	TModelRegistryEntry* TModelRegistry::CreateModel(const TCHAR* a_szFileName, TModelPtr& a_rModelRef, TTRB* a_pAssetTRB)
+	TModelManager::ModelNode* TModelManager::CreateModel(const TCHAR* a_szFileName, TModelPtr& a_rModelRef, TTRB* a_pAssetTRB)
 	{
 		if (ms_oFreeList.IsEmpty())
 		{
@@ -112,7 +112,7 @@ namespace Toshi {
 	TBOOL TModelPtr::Create(const TCHAR* a_szFileName, TTRB* a_pTRB)
 	{
 		m_pModel = TNULL;
-		m_pEntry = TModelRegistry::CreateModel(a_szFileName, *this, a_pTRB);
+		m_pEntry = TModelManager::CreateModel(a_szFileName, *this, a_pTRB);
 
 		return m_pModel != TNULL;
 	}

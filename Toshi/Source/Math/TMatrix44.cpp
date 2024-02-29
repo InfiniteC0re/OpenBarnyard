@@ -52,12 +52,12 @@ namespace Toshi
 			while (true) {
 				fVar2 = (&a_rLeft.m_f11)[iVar5] * *(float*)((TINT)&a_rRight.m_f11 + iVar4);
 				if (3 < iVar5 + 1) break;
-				(&pThis->m_f11)[iVar5] = fVar2;
+				(&pm_f11)[iVar5] = fVar2;
 				iVar5 = iVar5 + 1;
 			}
-			(&pThis->m_f11)[iVar5] = fVar2;
+			(&pm_f11)[iVar5] = fVar2;
 			iVar4 = iVar4 + 0x10;
-			pThis = (TMatrix44*)&pThis->m_f21;
+			pThis = (TMatrix44*)&pm_f21;
 		} while (iVar4 < 0x40);*/
 
 		TASSERT((this != &a_rLeft) && (this != &a_rRight));
@@ -127,24 +127,44 @@ namespace Toshi
 		TASSERT(a_rRight.m_f34 == 0.0f);
 		TASSERT(a_rRight.m_f44 == 1.0f);
 
-		m_f11 = a_rRight.m_f11;
-		m_f12 = a_rRight.m_f21;
-		m_f13 = a_rRight.m_f31;
-		m_f14 = a_rRight.m_f14;
-		m_f21 = a_rRight.m_f12;
-		m_f22 = a_rRight.m_f22;
-		m_f23 = a_rRight.m_f32;
-		m_f24 = a_rRight.m_f24;
-		m_f31 = a_rRight.m_f13;
-		m_f32 = a_rRight.m_f23;
-		m_f33 = a_rRight.m_f33;
-		m_f34 = a_rRight.m_f34;
-		m_f41 = -a_rRight.m_f41;
-		m_f42 = -a_rRight.m_f42;
-		m_f43 = -a_rRight.m_f43;
-		m_f44 = a_rRight.m_f44;
+		TFLOAT fVar7 = a_rRight.m_f13;
+		TFLOAT fVar1 = a_rRight.m_f44;
+		TFLOAT fVar2 = a_rRight.m_f43;
+		TFLOAT fVar8 = a_rRight.m_f24;
+		TFLOAT fVar3 = a_rRight.m_f42;
+		TFLOAT fVar9 = a_rRight.m_f32;
+		TFLOAT fVar4 = a_rRight.m_f41;
+		TFLOAT fVar10 = a_rRight.m_f22;
+		TFLOAT fVar5 = a_rRight.m_f34;
+		TFLOAT fVar11 = a_rRight.m_f12;
+		TFLOAT fVar6 = a_rRight.m_f33;
+		TFLOAT fVar12 = a_rRight.m_f14;
+		TFLOAT fVar13 = a_rRight.m_f31;
+		TFLOAT fVar14 = a_rRight.m_f21;
+		TFLOAT fVar15 = a_rRight.m_f11;
 
+		m_f32 = a_rRight.m_f23;
+		m_f11 = fVar15;
+		m_f33 = fVar6;
+		m_f13 = fVar13;
+		m_f34 = fVar5;
+		m_f21 = fVar11;
+		m_f41 = -fVar4;
+		m_f23 = fVar9;
+		m_f42 = -fVar3;
+		m_f31 = fVar7;
+		m_f43 = -fVar2;
+		m_f12 = fVar14;
+		m_f44 = fVar1;
+		m_f14 = fVar12;
+		m_f22 = fVar10;
+		m_f24 = fVar8;
 		RotateVector(AsBasisVector4(3), *this, AsBasisVector4(3));
+	}
+
+	void TMatrix44::InvertOrthogonal()
+	{
+		InvertOrthogonal(*this);
 	}
 
 	void TMatrix44::InvertOrthonormal()

@@ -25,21 +25,21 @@ public:
 
 		if (IsDebuggerPresent())
 		{
-//#if 0
-//			m_mode = Mode::Compile;
-//			m_useCompression = TFALSE;
-//			m_isTerrain = TTRUE;
-//			m_inPath = "C:\\Users\\InfiniteC0re\\Desktop\\TMDLWS\\Barn_L0Mod0.fbx";
-//			m_texturesPath = "C:\\Users\\InfiniteC0re\\Desktop\\TMDLWS\\Textures\\";
-//			m_outPath = "C:\\Stuff\\Barnyard\\Game (ND)\\Data\\Terrain\\EnvMain\\Barn_L0Mod0.trb";
-//#else
-//			m_mode = Mode::Decompile;
-//			m_useCompression = TFALSE;
-//			m_isTerrain = TTRUE;
-//			m_inPath = "C:\\Stuff\\Barnyard\\Game (ND)\\Mods\\BYWinterMod\\DevTools\\Assets\\bn_crocodile.trb";
-//			m_texturesPath = "C:\\Users\\InfiniteC0re\\Desktop\\TMDLWS\\Textures\\";
-//			m_outPath = "C:\\Users\\InfiniteC0re\\Desktop\\TMDLWS\\bn_crocodile.fbx";
-//#endif
+#if 1
+			m_mode = Mode::Info;
+			m_useCompression = TFALSE;
+			//m_isTerrain = TTRUE;
+			m_inPath = "C:\\Stuff\\Barnyard\\Game (ND)\\Data\\Terrain\\EnvMain\\Barn_L0Mod0.trb";
+			//m_texturesPath = "C:\\Users\\InfiniteC0re\\Desktop\\TMDLWS\\Textures\\";
+			//m_outPath = "C:\\Stuff\\Barnyard\\Game (ND)\\Data\\Terrain\\EnvMain\\Barn_L0Mod0.trb";
+#else
+			m_mode = Mode::Decompile;
+			m_useCompression = TFALSE;
+			m_isTerrain = TTRUE;
+			m_inPath = "C:\\Stuff\\Barnyard\\Game (ND)\\Mods\\BYWinterMod\\DevTools\\Assets\\bn_crocodile.trb";
+			m_texturesPath = "C:\\Users\\InfiniteC0re\\Desktop\\TMDLWS\\Textures\\";
+			m_outPath = "C:\\Users\\InfiniteC0re\\Desktop\\TMDLWS\\bn_crocodile.fbx";
+#endif
 		}
 		else
 		{

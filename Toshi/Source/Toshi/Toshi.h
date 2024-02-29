@@ -6,6 +6,7 @@
 #include "Toshi/Typedefs.h"
 #include "Toshi/Platform.h"
 #include "Toshi/Endianness.h"
+#include "Toshi/Helpers.h"
 
 #include "Toshi/TDebug.h"
 #include "Toshi/TUtil.h"

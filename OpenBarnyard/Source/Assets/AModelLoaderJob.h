@@ -1,7 +1,7 @@
 #pragma once
 #include "ATRBLoaderJob.h"
 
-#include <Render/TModelRegistry.h>
+#include <Render/TModelManager.h>
 
 class AModelLoaderJob :
 	public ATRBLoaderJob

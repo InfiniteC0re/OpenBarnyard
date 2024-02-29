@@ -1,5 +1,5 @@
 #pragma once
-#include "Render/TModelRegistry.h"
+#include "Render/TModelManager.h"
 #include "Render/TTransformObject.h"
 
 namespace Toshi {

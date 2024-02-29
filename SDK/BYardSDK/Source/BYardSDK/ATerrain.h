@@ -53,7 +53,7 @@ public:
 	
 	void WaitUntilLoaded();
 
-	void DestroyModelData(ATerrainSection::ModelData* a_pModelData);
+	void DestroyModelData(ATerrainSection::ModelNode* a_pModelData);
 
 	void UpdateUsedBlocks(ATerrainLODType a_eLODType);
 
@@ -192,7 +192,7 @@ public:
 	Toshi::TVector4 m_ShadowColor;
 	Toshi::TVector4 m_AmbientColor;
 	char PAD1[8];
-	Toshi::T2SList<ATerrainSection::ModelData> m_ModelDatas;
+	Toshi::T2SList<ATerrainSection::ModelNode> m_ModelDatas;
 	char PAD2[8];
 	t_OnVISGroupChanged m_cbOnVISGroupChanged;
 	AModelLoaderJob m_aModelLoaderJobs[MAX_NUM_MODEL_LOADER_JOBS];

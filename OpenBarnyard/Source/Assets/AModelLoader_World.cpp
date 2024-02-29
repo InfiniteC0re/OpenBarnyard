@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "AModelLoader.h"
+#include "World/AWorldVIS.h"
 
 #ifdef TOSHI_SKU_WINDOWS
 #include "Platform/DX8/AWorldShader/AWorldMesh_DX8.h"
@@ -7,7 +8,6 @@
 #endif // TOSHI_SKU_WINDOWS
 
 #include <Render/TRenderInterface.h>
-#include <Render/TTerrainMDL.h>
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
@@ -20,29 +20,29 @@ TOSHI_NAMESPACE_USING
 static TUINT s_iMeshIndex = 0;
 static TClass* s_pWorldMaterialClass = TNULL;
 
-static void LoadFromRenderGroups(TTerrainMDL::RenderGroup* a_pRenderGroup, TTerrainMDL::Model*& a_ppModel, TModelLOD* a_pModelLOD)
+static void LoadFromRenderGroups(CellSphereTreeBranchNode* a_pRenderGroup, Cell*& a_ppModel, TModelLOD* a_pModelLOD)
 {
 	TVALIDPTR(a_pRenderGroup);
 
 	// Load sub groups
 	auto pShader = AWorldShaderHAL::Upcast(AWorldShader::GetSingleton());
 	auto pRenderGroup = a_pRenderGroup;
-	while (!pRenderGroup->IsDataNext())
+	while (!pRenderGroup->IsLeaf())
 	{
 		LoadFromRenderGroups(pRenderGroup->GetSubGroup(), a_ppModel, a_pModelLOD);
-		pRenderGroup = pRenderGroup->m_pNextGroup;
+		pRenderGroup = pRenderGroup->m_pRight;
 	}
 
-	TASSERT(pRenderGroup->IsDataNext());
+	TASSERT(pRenderGroup->IsLeaf());
 	auto pRenderData = pRenderGroup->GetData();
 
 	for (TUINT i = 0; i < pRenderData->m_uiNumMeshes; i++)
 	{
-		auto pTerrainMesh = a_ppModel->m_ppMeshBoundings[pRenderData->GetMeshIndex(i)]->m_pMesh;
+		auto pTerrainMesh = a_ppModel->ppCellMeshSpheres[pRenderData->GetMeshIndex(i)]->m_pMesh;
 		auto pMesh = pShader->CreateMesh(TNULL);
 		
-		pMesh->Create(0, pTerrainMesh->m_uiNumVertices1);
-		pTerrainMesh->m_pRealMesh = pMesh;
+		pMesh->Create(0, pTerrainMesh->uiNumVertices1);
+		pTerrainMesh->pMesh = pMesh;
 
 		if (TNULL == s_pWorldMaterialClass)
 		{
@@ -51,7 +51,7 @@ static void LoadFromRenderGroups(TTerrainMDL::RenderGroup* a_pRenderGroup, TTerr
 
 		TVALIDPTR(s_pWorldMaterialClass);
 
-		pMesh->SetMaterial(AModelLoader::CreateMaterial(pShader, pTerrainMesh->m_szMaterialName));
+		pMesh->SetMaterial(AModelLoader::CreateMaterial(pShader, pTerrainMesh->szMaterialName));
 		a_pModelLOD->ppMeshes[s_iMeshIndex++] = pMesh;
 
 		auto pSubMesh = pMesh->GetSubMesh(0);
@@ -63,21 +63,21 @@ static void LoadFromRenderGroups(TTerrainMDL::RenderGroup* a_pRenderGroup, TTerr
 			auto pIndexFactory = TRenderInterface::GetSingleton()->GetSystemResource<TIndexFactoryResourceInterface>(SYSRESOURCE_IFSYS);
 			TVALIDPTR(pIndexFactory);
 
-			pSubMesh->pIndexPool = pIndexFactory->CreatePoolResource(pTerrainMesh->m_uiNumIndices, 9);
+			pSubMesh->pIndexPool = pIndexFactory->CreatePoolResource(pTerrainMesh->uiNumIndices, 9);
 		}
 
-		pSubMesh->uiNumVertices = pTerrainMesh->m_uiNumVertices2;
+		pSubMesh->uiNumVertices = pTerrainMesh->uiNumVertices2;
 
 		// Write vertices
-		if (pTerrainMesh->m_uiNumVertices1 != 0)
+		if (pTerrainMesh->uiNumVertices1 != 0)
 		{
 			AWorldMesh::LockBuffer lockBuffer;
 			TBOOL bLocked = pMesh->Lock(lockBuffer);
 
 			if (bLocked)
 			{
-				TUtil::MemCopy(lockBuffer.apStreams[0], pTerrainMesh->m_pVertices, sizeof(TTerrainMDL::WorldVertex) * pTerrainMesh->m_uiNumVertices1);
-				pMesh->Unlock(pTerrainMesh->m_uiNumVertices1);
+				TUtil::MemCopy(lockBuffer.apStreams[0], pTerrainMesh->pVertices, sizeof(WorldVertex) * pTerrainMesh->uiNumVertices1);
+				pMesh->Unlock(pTerrainMesh->uiNumVertices1);
 			}
 			else
 			{
@@ -86,14 +86,14 @@ static void LoadFromRenderGroups(TTerrainMDL::RenderGroup* a_pRenderGroup, TTerr
 		}
 
 		// Write indices
-		if (pTerrainMesh->m_uiNumIndices != 0)
+		if (pTerrainMesh->uiNumIndices != 0)
 		{
 			TVALIDPTR(pSubMesh->pIndexPool);
 			TIndexPoolResourceInterface::LockBuffer lockBuffer;
 
 			pSubMesh->pIndexPool->Lock(&lockBuffer);
-			TUtil::MemCopy(lockBuffer.pBuffer, pTerrainMesh->m_pIndices, pTerrainMesh->m_uiNumIndices * sizeof(TUINT16));
-			pSubMesh->pIndexPool->Unlock(pTerrainMesh->m_uiNumIndices);
+			TUtil::MemCopy(lockBuffer.pBuffer, pTerrainMesh->pIndices, pTerrainMesh->uiNumIndices * sizeof(TUINT16));
+			pSubMesh->pIndexPool->Unlock(pTerrainMesh->uiNumIndices);
 		}
 	}
 }
@@ -104,16 +104,16 @@ void AModelLoader::LoadWorldLOD(Toshi::TModel* a_pModel, TINT a_iLODIndex, Toshi
 	TVALIDPTR(a_pLOD);
 
 	s_iMeshIndex = 0;
-	auto pDatabase = a_pModel->CastSymbol<TTerrainMDL::TRBHeader>("Database");
+	auto pDatabase = a_pModel->CastSymbol<WorldDatabase>("Database");
 
-	for (TUINT i = 0; i < pDatabase->m_uiNumEntries; i++)
+	for (TUINT i = 0; i < pDatabase->m_uiNumWorlds; i++)
 	{
-		auto pEntry = pDatabase->m_ppEntries[i];
+		auto pWorld = pDatabase->m_ppWorlds[i];
 		
-		for (TUINT k = 0; k < pEntry->m_uiNumModels; k++)
+		for (TINT k = 0; k < pWorld->m_iNumCells; k++)
 		{
-			auto pModel = pEntry->m_ppModels[k];
-			LoadFromRenderGroups(pModel->m_pRenderGroups, pModel, a_pLOD);
+			auto pModel = pWorld->m_ppCells[k];
+			LoadFromRenderGroups(pModel->pTreeBranchNodes, pModel, a_pLOD);
 		}
 	}
 }

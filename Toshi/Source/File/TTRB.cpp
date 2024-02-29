@@ -36,7 +36,7 @@ namespace Toshi
 
 		if (error == ERROR_OK)
 		{
-			if (m_TTSFI.m_Magic == TMAKEFOUR("TRBF"))
+			if (m_TTSFI.m_Magic == TMakeFour("TRBF"))
 			{
 				m_UNK = a_uiUnknown;
 
@@ -94,9 +94,9 @@ namespace Toshi
 				sectionSize = ttsf.m_CurrentHunk.Size;
 				leftSize -= TMath::AlignNumUp(sectionSize) + sizeof(Toshi::TTSF::Hunk);
 
-				if (TMAKEFOUR("HEAD") < sectionName) break;
+				if (TMakeFour("HEAD") < sectionName) break;
 
-				if (sectionName == TMAKEFOUR("HEAD"))
+				if (sectionName == TMakeFour("HEAD"))
 				{
 					TINT numsections = (sectionSize - 4) / 0xC;
 
@@ -119,12 +119,12 @@ namespace Toshi
 
 					ttsf.SkipHunk();
 				}
-				else if (sectionName == TMAKEFOUR("SYMB"))
+				else if (sectionName == TMakeFour("SYMB"))
 				{
 					m_SYMB = static_cast<SYMB*>(m_MemAllocator(AllocType_Unk2, ttsf.m_CurrentHunk.Size, 0, 0, m_MemUserData));
 					ttsf.ReadHunkData(m_SYMB);
 				}
-				else if (sectionName == TMAKEFOUR("SECC"))
+				else if (sectionName == TMakeFour("SECC"))
 				{
 					for (TINT i = 0; i < m_pHeader->m_i32SectionCount; i++)
 					{
@@ -138,7 +138,7 @@ namespace Toshi
 
 					ttsf.SkipHunk();
 				}
-				else if (sectionName == TMAKEFOUR("RELC"))
+				else if (sectionName == TMakeFour("RELC"))
 				{
 					TUINT32 relocCount = 0;
 					TUINT32 curReloc = 0;
@@ -198,9 +198,9 @@ namespace Toshi
 				fileSize = leftSize;
 			}
 
-			if (sectionName != TMAKEFOUR("FORM"))
+			if (sectionName != TMakeFour("FORM"))
 			{
-				if (sectionName == TMAKEFOUR("SECT"))
+				if (sectionName == TMakeFour("SECT"))
 				{
 					for (TINT i = 0; i < m_pHeader->m_i32SectionCount; i++)
 					{
@@ -210,7 +210,7 @@ namespace Toshi
 
 					ttsf.SkipHunk();
 				}
-				else if (sectionName == TMAKEFOUR("HDRX"))
+				else if (sectionName == TMakeFour("HDRX"))
 				{
 					m_pHeader = static_cast<Header*>(m_MemAllocator(AllocType_Unk0, sectionSize, 0, 0, m_MemUserData));
 					ttsf.ReadHunkData(m_pHeader);

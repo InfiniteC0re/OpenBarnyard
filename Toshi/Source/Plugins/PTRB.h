@@ -573,19 +573,19 @@ namespace PTRB
 
 					switch (ttsfi.GetCurrentHunk().Name)
 					{
-					case TMAKEFOUR("HDRX"):
+					case TMakeFour("HDRX"):
 						m_HDRX.Read(ttsfi, m_SECT);
 						break;
-					case TMAKEFOUR("SECT"):
+					case TMakeFour("SECT"):
 						m_SECT.Read(ttsfi);
 						break;
-					case TMAKEFOUR("SECC"):
+					case TMakeFour("SECC"):
 						m_SECT.Read(ttsfi, true);
 						break;
-					case TMAKEFOUR("RELC"):
+					case TMakeFour("RELC"):
 						m_RELC.Read(ttsfi, m_SECT);
 						break;
-					case TMAKEFOUR("SYMB"):
+					case TMakeFour("SYMB"):
 						m_SYMB.Read(ttsfi, m_SECT);
 						break;
 					}

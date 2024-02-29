@@ -25,8 +25,8 @@ namespace Toshi {
 	class TTSF
 	{
 	public:
-		static constexpr TUINT32 IDMAGICB = TMAKEFOUR("TSFB");
-		static constexpr TUINT32 IDMAGICL = TMAKEFOUR("TSFL");
+		static constexpr TUINT32 IDMAGICB = TMakeFour("TSFB");
+		static constexpr TUINT32 IDMAGICL = TMakeFour("TSFL");
 
 		typedef uint8_t Endianess;
 		enum Endianess_ : Endianess

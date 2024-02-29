@@ -23,7 +23,7 @@ void ATerrain::WaitUntilLoaded()
 	
 }
 
-void ATerrain::DestroyModelData(ATerrainSection::ModelData* a_pModelData)
+void ATerrain::DestroyModelData(ATerrainSection::ModelNode* a_pModelData)
 {
 	
 }

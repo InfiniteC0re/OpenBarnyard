@@ -6,7 +6,7 @@
 #include <Core/TMemoryInitialiser.h>
 
 #include <Render/TRenderInterface.h>
-#include <Render/TModelRegistry.h>
+#include <Render/TModelManager.h>
 
 #include <Input/TInputInterface.h>
 
@@ -145,7 +145,7 @@ TBOOL AApplication::OnCreate(int argc, TCHAR** argv)
 	ALocaleManager* pLocaleManager = T2Locale::CreateSingleton<ALocaleManager>();
 	TTODO("Create some instances of some classes");
 
-	TModelRegistry::Initialise();
+	TModelManager::Initialise();
 	pLocaleManager->SetLanguage(ALocaleManager::Lang_EnglishUK);
 
 	auto pScheduler = g_oSystemManager.GetScheduler();

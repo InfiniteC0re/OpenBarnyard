@@ -201,6 +201,7 @@ namespace Toshi{
 
 		TBOOL Invert(const TMatrix44& a_rRight);
 
+		void InvertOrthogonal();
 		void InvertOrthogonal(const TMatrix44& a_rRight);
 		void InvertOrthonormal();
 

@@ -66,7 +66,7 @@ public:
 	void WaitUntilLoaded();
 
 	/* Destroys terrain model */
-	void DestroyModelData(ATerrainSection::ModelData* a_pModelData);
+	void DestroyModelData(ATerrainSection::ModelNode* a_pModelData);
 
 	/**
 	 * Sets visible blocks of specified LOD type to be used.
@@ -133,7 +133,7 @@ private:
 	Toshi::TVector4 m_Vector3;
 	Toshi::TVector4 m_Vector4;
 	// ...
-	Toshi::T2SList<ATerrainSection::ModelData> m_ModelDatas;
+	Toshi::T2SList<ATerrainSection::ModelNode> m_ModelDatas;
 	// ...
 	t_OnVISGroupChanged m_cbOnVISGroupChanged;
 	AModelLoaderJob m_aModelLoaderJobs[MAX_NUM_MODEL_LOADER_JOBS];

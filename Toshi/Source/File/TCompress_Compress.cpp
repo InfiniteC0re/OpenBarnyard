@@ -152,7 +152,7 @@ namespace Toshi
         }
 
         TCompress::Header btecHeader;
-        btecHeader.Magic = TMAKEFOUR("BTEC");
+        btecHeader.Magic = TMakeFour("BTEC");
         btecHeader.Version = TVERSION(1, 2);
         btecHeader.CompressedSize = compressedSize;
         btecHeader.Size = size;

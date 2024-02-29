@@ -2,20 +2,22 @@
 #include "ATerrainLODBlock.h"
 #include "Assets/AMaterialLibrary.h"
 #include "Render/AModel.h"
+#include "World/AWorldVIS.h"
 
-#include <Render/TModelRegistry.h>
+#include <Render/TModelManager.h>
 #include <Toshi/T2SList.h>
 
 class ATerrainSection
 {
 public:
-	struct ModelData : 
-		Toshi::T2SList<ModelData>::Node
+	struct ModelNode : 
+		Toshi::T2SList<ModelNode>::Node
 	{
-		~ModelData();
+		~ModelNode();
 
 		Toshi::TModelPtr m_ModelRef;
 		Toshi::T2ModelInstance* m_pModelInstance;
+		AWorldVis m_WorldVis;
 	};
 
 	enum FLAGS : TUINT32
@@ -68,8 +70,8 @@ private:
 	TUINT32 m_Unk1;
 	TUINT32 m_Unk2;
 	const TCHAR* m_szCollisionFilename;
-	ModelData* m_pCollisionModelData;
-	ModelData** m_ppLODModelsData[ATerrainLODType_NUMOF];
+	ModelNode* m_pCollisionModelData;
+	ModelNode** m_ppLODModelsData[ATerrainLODType_NUMOF];
 	
 	const TCHAR* m_szHighMatLibFilename;
 	Toshi::TTRB* m_pMatLibHighTRB;

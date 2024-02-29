@@ -103,7 +103,7 @@ void ATerrainSection::SetLODEmpty(ATerrainLODType a_eLODType, TBOOL a_bEmpty)
 	}
 }
 
-ATerrainSection::ModelData::~ModelData()
+ATerrainSection::ModelNode::~ModelNode()
 {
 	
 }

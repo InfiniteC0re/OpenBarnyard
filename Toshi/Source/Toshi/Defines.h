@@ -1,11 +1,6 @@
 #pragma once
 #include "Toshi/Typedefs.h"
 
-constexpr TUINT32 TMAKEFOUR(const TCHAR str[4])
-{
-	return ((str[3] << 24) | (str[2] << 16) | (str[1] << 8) | str[0]);
-}
-
 #define ISZERO(X) ((X) == 0)
 #define HASFLAG(X) (!ISZERO(X))
 #define STRINGIFY8(X) #X    

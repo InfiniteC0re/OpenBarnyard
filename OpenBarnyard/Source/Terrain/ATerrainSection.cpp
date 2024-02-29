@@ -20,7 +20,7 @@ void ATerrainSection::LoadCollision()
 			pTerrain->GetVIS()->m_pPersistantTerrainBlock : 
 			m_ppHighLODBlocks[m_iCollisionMemBlockID];
 
-		m_pCollisionModelData = new (pBlock->GetMemBlock()) ModelData();
+		m_pCollisionModelData = new (pBlock->GetMemBlock()) ModelNode();
 
 		auto pTRB = new (pBlock->GetMemBlock()) Toshi::TTRB();
 		pBlock->SetupTRB(pTRB, pBlock);
@@ -117,7 +117,7 @@ void ATerrainSection::LoadModels(ATerrainLODType a_eLODType)
 				if (m_ppLODModelsData[a_eLODType][i] == TNULL)
 				{
 					auto pBlock = ppLODBlocks[pLODToBlock[i]];
-					auto pModelData = new (pBlock->GetMemBlock()) ModelData();
+					auto pModelData = new (pBlock->GetMemBlock()) ModelNode();
 
 					auto pTRB = new (pBlock->GetMemBlock()) Toshi::TTRB();
 					pBlock->SetupTRB(pTRB, pBlock);
@@ -384,7 +384,7 @@ void ATerrainSection::SetLODEmpty(ATerrainLODType a_eLODType, TBOOL a_bEmpty)
 	}
 }
 
-ATerrainSection::ModelData::~ModelData()
+ATerrainSection::ModelNode::~ModelNode()
 {
 	TIMPLEMENT();
 

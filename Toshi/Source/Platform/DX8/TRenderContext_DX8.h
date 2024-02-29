@@ -11,8 +11,9 @@ namespace Toshi {
 		virtual void Update() override;
 
 		void ComputePerspectiveProjection();
-		void ComputePerspectiveFrustum();
 		void ComputeOrthographicProjection();
+
+		void ComputePerspectiveFrustum();
 		void ComputeOrthographicFrustum();
 
 		void EnableFogHAL();

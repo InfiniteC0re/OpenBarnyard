@@ -44,22 +44,22 @@ namespace Toshi {
 			WORLDPLANE_FAR,
 		};
 
-		struct Params
+		struct VIEWPORTPARAMS
 		{
-			float fX;
-			float fY;
-			float fWidth;
-			float fHeight;
-			float fMinZ;
-			float fMaxZ;
+			TFLOAT fX;
+			TFLOAT fY;
+			TFLOAT fWidth;
+			TFLOAT fHeight;
+			TFLOAT fMinZ;
+			TFLOAT fMaxZ;
 		};
 
 		struct PROJECTIONPARAMS
 		{
 			TVector2 m_Centre;
 			TVector2 m_Proj;
-			float m_fNearClip;
-			float m_fFarClip;
+			TFLOAT m_fNearClip;
+			TFLOAT m_fFarClip;
 		};
 
 	protected:
@@ -72,59 +72,37 @@ namespace Toshi {
 	public:
 		TRenderContext(TRenderInterface* pRender);
 
+		//-----------------------------------------------------------------------------
+		// Own methods
+		//-----------------------------------------------------------------------------
 		virtual void SetModelViewMatrix(const TMatrix44& a_rMatrix);
 		virtual void SetWorldViewMatrix(const TMatrix44& a_rMatrix);
 		virtual void Update() = 0;
 
-		void SetProjectionParams(const PROJECTIONPARAMS& params);
+		const PROJECTIONPARAMS& GetProjectionParams() const { return m_ProjParams; }
+		void SetProjectionParams(const PROJECTIONPARAMS& a_rParams);
 
-		void SetViewportParameters(const Params& params)
-		{
-			m_oParams = params;
-			m_eFlags = (m_eFlags & (~(FLAG_UNK3 | FLAG_UNK4 | FLAG_HAS_WORLDPLANES | FLAG_UNK6))) | FLAG_DIRTY;
-		}
+		const VIEWPORTPARAMS& GetViewportParameters() const { return m_oViewportParams; }
+		void SetViewportParameters(const VIEWPORTPARAMS& a_rParams);
 
-		void SetCameraMode(CameraMode cameraMode)
-		{
-			m_eCameraMode = cameraMode;
-			m_eFlags = (m_eFlags & (~(FLAG_UNK3 | FLAG_UNK4 | FLAG_HAS_WORLDPLANES | FLAG_UNK6))) | FLAG_DIRTY;
-		}
+		CameraMode GetCameraMode() { return m_eCameraMode; }
+		void SetCameraMode(CameraMode a_eCameraMode);
 
-		Params& GetParams() { return m_oParams; }
-		float GetX() const { return m_oParams.fX; }
-		float GetY() const { return m_oParams.fY; }
-		float GetWidth() const { return m_oParams.fWidth; }
-		float GetHeight() const { return m_oParams.fHeight; }
+		TFLOAT GetX() const { return m_oViewportParams.fX; }
+		TFLOAT GetY() const { return m_oViewportParams.fY; }
+		TFLOAT GetWidth() const { return m_oViewportParams.fWidth; }
+		TFLOAT GetHeight() const { return m_oViewportParams.fHeight; }
 
 		TBOOL IsFogEnabled() const { return m_eFlags & FLAG_FOG; }
 		TBOOL IsDirty() const { return m_eFlags & FLAG_DIRTY; }
 
-		TSkeletonInstance* GetSkeletonInstance() const
-		{
-			return m_pCurrentSkeletonInstance;
-		}
+		TSkeletonInstance* GetSkeletonInstance() const { return m_pCurrentSkeletonInstance; }
+		void SetSkeletonInstance(TSkeletonInstance* a_pSkeletonInstance) { m_pCurrentSkeletonInstance = a_pSkeletonInstance; }
 
-		void SetSkeletonInstance(TSkeletonInstance* a_pSkeletonInstance)
-		{
-			m_pCurrentSkeletonInstance = a_pSkeletonInstance;
-		}
-
-		TUINT GetClipFlags() const
-		{
-			return m_eClipFlags;
-		}
-
-		TUINT SetClipFlags(TUINT a_uiClipFlags)
-		{
-			auto uiOldFlags = m_eClipFlags;
-			m_eClipFlags = a_uiClipFlags;
-			return uiOldFlags;
-		}
+		TUINT GetClipFlags() const;
+		TUINT SetClipFlags(TUINT a_uiClipFlags);
 
 		const TPlane* GetWorldPlanes();
-
-		static TBOOL CullSphereToFrustumSimple(const TSphere& a_rSphere, const TPlane* a_pPlanes, TINT a_iNumPlanes);
-		static TINT CullSphereToFrustum(const TSphere& a_rSphere, const TPlane* a_pPlanes, TINT a_iClipFlags, TINT a_iClipFlagsMask);
 
 		const TMatrix44& GetViewWorldMatrix();
 		const TMatrix44& GetWorldModelMatrix();
@@ -133,13 +111,16 @@ namespace Toshi {
 		TMatrix44& GetModelViewMatrix() { return m_oModelViewMatrix; }
 		TMatrix44& GetWorldViewMatrix() { return m_oWorldViewMatrix; }
 
+		const TPlane* GetFrustumPlanes() const { return m_aFrustumPlanes1; }
+
 		TFLOAT GetAlphaBlend() const { return m_fAlphaBlend; }
 		void SetAlphaBlend(TFLOAT val) { m_fAlphaBlend = val; }
 
-		const PROJECTIONPARAMS& GetProjectionParams() const
-		{
-			return m_ProjParams;
-		}
+		static void ComputePerspectiveProjection(TMatrix44& a_rOutProjection, const VIEWPORTPARAMS& a_rViewportParams, const PROJECTIONPARAMS a_rProjParams);
+		static void ComputeOrthographicProjection(TMatrix44& a_rOutProjection, const VIEWPORTPARAMS& a_rViewportParams, const PROJECTIONPARAMS a_rProjParams);
+
+		static TBOOL CullSphereToFrustumSimple(const TSphere& a_rSphere, const TPlane* a_pPlanes, TINT a_iNumPlanes);
+		static TINT CullSphereToFrustum(const TSphere& a_rSphere, const TPlane* a_pPlanes, TINT a_iClipFlags, TINT a_iClipFlagsMask);
 
 	protected:
 		TRenderInterface* m_pRenderer;                 // 0x0004
@@ -147,7 +128,7 @@ namespace Toshi {
 		TUINT m_eClipFlags;                            // 0x000C
 		TUINT m_Unk;                                   // 0x0010
 		CameraMode m_eCameraMode;                      // 0x0014
-		Params m_oParams;                              // 0x0018
+		VIEWPORTPARAMS m_oViewportParams;              // 0x0018
 		PROJECTIONPARAMS m_ProjParams;                 // 0x0030
 		TSkeletonInstance* m_pCurrentSkeletonInstance; // 0x0048
 		TMatrix44 m_oModelViewMatrix;                  // 0x004C

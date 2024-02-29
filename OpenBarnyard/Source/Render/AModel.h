@@ -1,7 +1,7 @@
 #pragma once
 #include <File/TTRB.h>
 #include <Toshi/TRefCounted.h>
-#include <Render/TModelRegistry.h>
+#include <Render/TModelManager.h>
 #include <Toshi/TPString8.h>
 
 #include <Toshi/T2DList.h>

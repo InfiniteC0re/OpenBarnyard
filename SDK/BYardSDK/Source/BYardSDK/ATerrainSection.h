@@ -1,7 +1,7 @@
 #pragma once
 #include "ATerrainLODBlock.h"
 
-#include <Render/TModelRegistry.h>
+#include <Render/TModelManager.h>
 #include <Toshi/T2SList.h>
 
 class AMaterialLibrary;
@@ -9,10 +9,10 @@ class AMaterialLibrary;
 class ATerrainSection
 {
 public:
-	struct ModelData : 
-		Toshi::T2SList<ModelData>::Node
+	struct ModelNode : 
+		Toshi::T2SList<ModelNode>::Node
 	{
-		~ModelData();
+		~ModelNode();
 
 		Toshi::TModelPtr m_ModelRef;
 		Toshi::T2ModelInstance* m_pModelInstance;
@@ -67,8 +67,8 @@ public:
 	TUINT32 m_Unk1;
 	TUINT32 m_Unk2;
 	const char* m_szCollisionFile;
-	ModelData* m_pCollisionModelData;
-	ModelData** m_ppLODModelsData[ATerrainLODType_NUMOF];
+	ModelNode* m_pCollisionModelData;
+	ModelNode** m_ppLODModelsData[ATerrainLODType_NUMOF];
 	const char* m_szHighLODMatLibName;
 	Toshi::TTRB* m_pMatLibHighTRB;
 	AMaterialLibrary* m_pMatLibHigh;

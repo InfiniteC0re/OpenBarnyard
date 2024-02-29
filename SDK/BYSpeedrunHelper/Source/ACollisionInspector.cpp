@@ -176,7 +176,7 @@ void ACollisionInspector::ATerrain_Render(ATerrain* a_pTerrain)
 
 						if (pModel && pModel->GetNumLODs() > 0 && pModel->GetLOD(0).iNumMeshes > 0)
 						{
-							CALL_THIS(0x005e9380, ATerrainSection::ModelData*, void, pModelData);
+							CALL_THIS(0x005e9380, ATerrainSection::ModelNode*, void, pModelData);
 						}
 					}
 				}

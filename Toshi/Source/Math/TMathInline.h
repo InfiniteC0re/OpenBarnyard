@@ -112,4 +112,9 @@ namespace Toshi
 		// aligns value to 4 bytes up (f.e. 7 => 8, 8 => 8, 9 => 12)
 		inline TUINT32 AlignNumUp(TUINT32 num) { return ((num + 3) & UINT32_ALIGN_VALUE); }
 	};
+
+	constexpr TBOOL TIsAlignedAddress(const void* a_pPointer, TUINT32 a_uiAlignment)
+	{
+		return ISZERO(uintptr_t(a_pPointer) & (a_uiAlignment - 1));
+	}
 }

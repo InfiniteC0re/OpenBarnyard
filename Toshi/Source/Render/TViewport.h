@@ -100,7 +100,7 @@ namespace Toshi
 
 		void SetX(float value)
 		{
-			TRenderContext::Params params = m_pRenderCtx->GetParams();
+			TRenderContext::VIEWPORTPARAMS params = m_pRenderCtx->GetViewportParameters();
 
 			if (params.fX != value)
 			{
@@ -112,7 +112,7 @@ namespace Toshi
 
 		void SetY(float value)
 		{
-			TRenderContext::Params params = m_pRenderCtx->GetParams();
+			TRenderContext::VIEWPORTPARAMS params = m_pRenderCtx->GetViewportParameters();
 
 			if (params.fY != value)
 			{
@@ -124,7 +124,7 @@ namespace Toshi
 
 		void SetWidth(float value)
 		{
-			TRenderContext::Params params = m_pRenderCtx->GetParams();
+			TRenderContext::VIEWPORTPARAMS params = m_pRenderCtx->GetViewportParameters();
 
 			if (params.fWidth != value)
 			{
@@ -136,7 +136,7 @@ namespace Toshi
 
 		void SetHeight(float value)
 		{
-			TRenderContext::Params params = m_pRenderCtx->GetParams();
+			TRenderContext::VIEWPORTPARAMS params = m_pRenderCtx->GetViewportParameters();
 
 			if (params.fHeight != value)
 			{
@@ -148,7 +148,7 @@ namespace Toshi
 
 		void SetMinZ(float value)
 		{
-			TRenderContext::Params params = m_pRenderCtx->GetParams();
+			TRenderContext::VIEWPORTPARAMS params = m_pRenderCtx->GetViewportParameters();
 
 			if (params.fMinZ != value)
 			{
@@ -160,7 +160,7 @@ namespace Toshi
 
 		void SetMaxZ(float value)
 		{
-			TRenderContext::Params params = m_pRenderCtx->GetParams();
+			TRenderContext::VIEWPORTPARAMS params = m_pRenderCtx->GetViewportParameters();
 
 			if (params.fMaxZ != value)
 			{

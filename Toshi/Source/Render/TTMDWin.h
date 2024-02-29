@@ -35,7 +35,7 @@ namespace Toshi {
 			TINT32 m_Unk6;
 		};
 
-		enum EShaderType
+		enum EShaderType : TUINT
 		{
 			ST_SKIN = 0,
 			ST_WORLD = 2,

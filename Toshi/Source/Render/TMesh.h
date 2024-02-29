@@ -39,6 +39,8 @@ namespace Toshi {
 		virtual TBOOL Render();
 		virtual void OnDestroy();
 
+		void SetFlags(State a_eFlags, BOOL a_bEnable);
+
 		void DestroyResource();
 
 		TMaterial* GetMaterial() const;

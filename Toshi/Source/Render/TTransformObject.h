@@ -20,12 +20,13 @@ public:
 	void Pop();
 
 	TVector3& GetTranslation();
-	void GetLocalMatrixImp(TMatrix44& outMatrix);
+	void GetLocalMatrixImp(TMatrix44& a_rOutMatrix);
 
-	void SetEulerOrder(TUINT8 x, TUINT8 y, TUINT8 z);
-	void SetTranslate(const TVector3& translation);
-	void SetQuat(const TQuaternion& quaternion);
-	void SetMatrix(const TMatrix44& matrix);
+	void SetEuler(const TVector3& a_rEuler);
+	void SetEulerOrder(TUINT8 a_uiX, TUINT8 a_uiy, TUINT8 a_uiz);
+	void SetTranslate(const TVector3& a_rRranslation);
+	void SetQuat(const TQuaternion& a_rQuaternion);
+	void SetMatrix(const TMatrix44& a_rMatrix);
 
 	void ResetChangedState()
 	{
@@ -48,22 +49,22 @@ public:
 	}
 
 private:
-	void RotateX(float angle)
+	void RotateX(TFLOAT a_fAngle)
 	{
 		TASSERT(Mode::Euler == GetMode());
-		m_Matrix.RotateX(angle);
+		m_Matrix.RotateX(a_fAngle);
 	}
 
-	void RotateY(float angle)
+	void RotateY(TFLOAT a_fAngle)
 	{
 		TASSERT(Mode::Euler == GetMode());
-		m_Matrix.RotateY(angle);
+		m_Matrix.RotateY(a_fAngle);
 	}
 
-	void RotateZ(float angle)
+	void RotateZ(TFLOAT a_fAngle)
 	{
 		TASSERT(Mode::Euler == GetMode());
-		m_Matrix.RotateZ(angle);
+		m_Matrix.RotateZ(a_fAngle);
 	}
 
 private:
