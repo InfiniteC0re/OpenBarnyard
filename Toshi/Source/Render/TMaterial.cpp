@@ -101,7 +101,7 @@ namespace Toshi {
 		}
 	}
 
-	void TMaterial::SetFlag(Flags flag, TBOOL set /*= TFALSE*/)
+	void TMaterial::SetFlags(Flags flag, TBOOL set /*= TFALSE*/)
 	{
 		if (set)
 		{

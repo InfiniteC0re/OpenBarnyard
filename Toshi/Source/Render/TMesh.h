@@ -18,6 +18,7 @@ namespace Toshi {
 			State_Created = BITFLAG(0),
 			State_Validated = BITFLAG(1),
 			State_Unknown1 = BITFLAG(2),
+			State_Glow = BITFLAG(3)
 		};
 
 		// These flags can be used by the client classes

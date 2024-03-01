@@ -400,6 +400,19 @@ void* AWorldShaderHAL::CreateUnknown(void*, void*, void*, void*)
 	return TNULL;
 }
 
+void AWorldShaderHAL::SetColours(const Toshi::TVector4& a_rShadowColour, const Toshi::TVector4 a_rAmbientColour)
+{
+	m_ShadowColour = a_rShadowColour;
+	m_AmbientColour = a_rAmbientColour;
+
+	Toshi::TMath::Clip(m_ShadowColour.x, 0.0f, 1.0f);
+	Toshi::TMath::Clip(m_ShadowColour.y, 0.0f, 1.0f);
+	Toshi::TMath::Clip(m_ShadowColour.z, 0.0f, 1.0f);
+	Toshi::TMath::Clip(m_AmbientColour.x, 0.0f, 1.0f);
+	Toshi::TMath::Clip(m_AmbientColour.y, 0.0f, 1.0f);
+	Toshi::TMath::Clip(m_AmbientColour.z, 0.0f, 1.0f);
+}
+
 void AWorldShaderHAL::FlushLowEnd()
 {
 	auto pRenderInterface = TRenderD3DInterface::Interface();

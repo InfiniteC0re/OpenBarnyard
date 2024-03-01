@@ -10,14 +10,37 @@
 class ATerrainSection
 {
 public:
-	struct ModelNode : 
-		Toshi::T2SList<ModelNode>::Node
+	class ModelNode : 
+		public Toshi::T2SList<ModelNode>::Node
 	{
+	public:
+		using ModelNodeFlags = TUINT8;
+		enum ModelNodeFlags_ : ModelNodeFlags
+		{
+			MNF_NONE = 0,
+			MNF_USE_LIGHTING = BITFLAG(0),
+			MNF_GLOW = BITFLAG(1),
+		};
+
+		static constexpr TUINT TYPE_NAME_MAX_SIZE = 14;
+
+	public:
+		ModelNode();
 		~ModelNode();
 
+		void SetUseLighting(TBOOL a_bUseLighting);
+		void SetGlow(TBOOL a_bIsGlow);
+
+		TBOOL IsUsingLighting() const { return !ISZERO(m_eFlags & MNF_USE_LIGHTING); }
+
+	public:
 		Toshi::TModelPtr m_ModelRef;
 		Toshi::T2ModelInstance* m_pModelInstance;
 		AWorldVis m_WorldVis;
+		// ...
+		char m_szType[TYPE_NAME_MAX_SIZE + 1];
+		ModelNodeFlags m_eFlags;
+		TBOOL m_bCreated;
 	};
 
 	enum FLAGS : TUINT32
@@ -60,6 +83,39 @@ public:
 	TBOOL IsLODEmpty(ATerrainLODType a_eLODType) const { return (m_eFlags & (64 << (a_eLODType & 0x1f))); }
 	void SetLODEmpty(ATerrainLODType a_eLODType, TBOOL a_bEmpty);
 
+	void GetLODNames(ATerrainLODType a_eLODType, const TCHAR**& a_rLODs, TINT& a_rNumLODs)
+	{
+		if (a_eLODType == ATerrainLODType_High)
+		{
+			a_rLODs = m_pszHighModelFiles;
+			a_rNumLODs = m_iNumHighModelFiles;
+		}
+		else
+		{
+			a_rLODs = m_pszLowModelFiles;
+			a_rNumLODs = m_iNumLowModelFiles;
+		}
+	}
+
+	void GetLODBlocks(ATerrainLODType a_eLODType, ATerrainLODBlock**& a_rMemBlocks, TUINT16& a_rNumMemBlocks)
+	{
+		if (a_eLODType == ATerrainLODType_High)
+		{
+			a_rMemBlocks = m_ppHighLODBlocks;
+			a_rNumMemBlocks = m_iNumHighMemBlocksUsed;
+		}
+		else
+		{
+			a_rMemBlocks = m_ppLowLODBlocks;
+			a_rNumMemBlocks = m_iNumLowMemBlocksUsed;
+		}
+	}
+
+	TINT GetLODCount(ATerrainLODType a_eLODType)
+	{
+		return (a_eLODType == ATerrainLODType_High) ? m_iNumHighModelFiles : m_iNumLowModelFiles;
+	}
+
 private:
 	const TCHAR* m_szName;
 	const TCHAR** m_pszHighModelFiles;
@@ -67,8 +123,7 @@ private:
 	TINT32 m_iNumHighModelFiles;
 	TINT32 m_iNumLowModelFiles;
 
-	TUINT32 m_Unk1;
-	TUINT32 m_Unk2;
+	TUINT8* m_aLODFlags[2];
 	const TCHAR* m_szCollisionFilename;
 	ModelNode* m_pCollisionModelData;
 	ModelNode** m_ppLODModelsData[ATerrainLODType_NUMOF];

@@ -10,6 +10,11 @@
 
 namespace Toshi {
 
+	T2ModelInstance::T2ModelInstance()
+	{
+		m_SomeVector.w = 1.0f;
+	}
+
 	void T2ModelInstance::Create(TModelPtr* a_pModelPtr)
 	{
 		m_eFlags |= 0b00001000;

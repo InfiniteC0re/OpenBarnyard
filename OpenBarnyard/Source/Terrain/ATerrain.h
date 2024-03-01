@@ -40,6 +40,7 @@ public:
 
 	using t_GetCurrentVISGroup = TINT(*)();
 	using t_OnVISGroupChanged = void(*)(ATerrainSection* a_pCurrent, ATerrainSection* a_pPrevious);
+	using t_OnModelNodeReady = void(*)(ATerrainSection::ModelNode* a_pModelNode);
 
 public:
 	ATerrain(TINT a_iUnused1, TINT a_iUnused2, TINT a_iPreloadTerrainBlockSize, TINT a_iStartVISGroup);
@@ -88,6 +89,9 @@ public:
 	/* Cancels jobs that are not needed anymore (can happen after moving to other section). */
 	void CancelUnrequiredJobs();
 	
+	// Creates a model and setups rendering methods for it
+	ATerrainSection::ModelNode* CreateModelInstance(ATerrainSection::ModelNode* a_pModelNode, const char* a_szModelName, const char* a_szType);
+
 	/**
 	 * Allocates free LODBlock of specified type and assigns it to the section.
 	 * @param a_eLODType type of the block you want to allocate
@@ -113,6 +117,8 @@ public:
 	AModelLoaderJob* GetFreeModelLoaderJob();
 	ASectionDoneJob* GetFreeSectionLoaderJob();
 
+	t_OnModelNodeReady GetOnModelNodeReadyCallback() const { return m_cbOnModelNodeReady; }
+
 private:
 	void UpdateNightMaterials();
 	void MoveAllFinishedJobs(Toshi::T2SList<JobSlot>& a_rFreeJobs, Toshi::T2SList<JobSlot>& a_rUsedJobs);
@@ -135,6 +141,7 @@ private:
 	// ...
 	Toshi::T2SList<ATerrainSection::ModelNode> m_ModelDatas;
 	// ...
+	t_OnModelNodeReady m_cbOnModelNodeReady;
 	t_OnVISGroupChanged m_cbOnVISGroupChanged;
 	AModelLoaderJob m_aModelLoaderJobs[MAX_NUM_MODEL_LOADER_JOBS];
 	AMatLibLoaderJob m_aMatlibLoaderJobs[MAX_NUM_MATLIB_LOADER_JOBS];

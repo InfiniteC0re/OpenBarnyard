@@ -202,6 +202,11 @@ namespace Toshi {
 		m_iCurrentLOD = 0;
 	}
 
+	void TModelInstance::Update(TFLOAT a_fDeltaTime)
+	{
+		m_pSkeletonInstance->UpdateTime(a_fDeltaTime);
+	}
+
 	void TModelInstance::Render()
 	{
 		if (m_fnPreRenderCb)
@@ -226,6 +231,27 @@ namespace Toshi {
 		}
 	}
 
+	void TModelInstance::SetPreRenderCallback(t_PreRenderCB a_fnCallback)
+	{
+		m_fnPreRenderCb = a_fnCallback;
+	}
+
+	void TModelInstance::SetCustomRenderMethod(t_CustomRenderCB a_fnCallback, void* a_pUserData)
+	{
+		m_fnCustomRenderCb = a_fnCallback;
+		m_pCustomRenderCbUserData = a_pUserData;
+	}
+
+	void TModelInstance::SetLOD(TINT32 a_iLOD)
+	{
+		m_iCurrentLOD = a_iLOD;
+	}
+
+	TINT32 TModelInstance::GetLOD()
+	{
+		return m_iCurrentLOD;
+	}
+
 	void TModelInstance::Delete()
 	{
 		if (m_pSkeletonInstance)
@@ -237,6 +263,16 @@ namespace Toshi {
 		m_pModel->m_iNumInstances--;
 		m_pModel = TNULL;
 		delete this;
+	}
+
+	Toshi::TModel* TModelInstance::GetModel() const
+	{
+		return m_pModel;
+	}
+
+	Toshi::TSkeletonInstance* TModelInstance::GetSkeletonInstance() const
+	{
+		return m_pSkeletonInstance;
 	}
 
 }

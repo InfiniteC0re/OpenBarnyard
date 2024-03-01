@@ -215,7 +215,7 @@ void AWorldMaterialHAL::CopyToAlphaBlendMaterial()
 		m_pAlphaBlendMaterial->m_aTextures[2] = m_aTextures[2];
 		m_pAlphaBlendMaterial->m_aTextures[3] = m_aTextures[3];
 
-		m_pAlphaBlendMaterial->SetFlag(Flags_Unk2, TTRUE);
+		m_pAlphaBlendMaterial->SetFlags(Flags_Unk2, TTRUE);
 	}
 }
 

@@ -13,7 +13,7 @@ public:
 	void InitJob(ATerrainSection* a_pVISGroup, ATerrainLODType a_eLODType);
 
 private:
-	ATerrainSection* m_pVISGroup;
+	ATerrainSection* m_pSection;
 	TUINT m_eLODType;
 	TBOOL m_bIsCanceled;
 };

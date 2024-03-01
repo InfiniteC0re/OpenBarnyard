@@ -46,7 +46,7 @@ private:
 	TTask* m_pSoundManager;        // 0x44
 	TBOOL m_bTerrainIsReady;       // 0x54
 	TBOOL m_bPaused;               // 0x55
-	TBOOL m_bStopRenderingWorld;   // 0x56
+	TBOOL m_bStopRenderingScene;   // 0x56
 	TBOOL m_bGameSystemCreated;    // 0x57
 	TBOOL m_bStartedGame;
 };

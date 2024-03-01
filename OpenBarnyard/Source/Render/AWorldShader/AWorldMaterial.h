@@ -29,6 +29,12 @@ public:
 		m_aTextures[a_uiStage] = a_pTexture;
 	}
 
+	static AWorldMaterial* Upcast(Toshi::TMaterial* a_pMaterial)
+	{
+		TASSERT(a_pMaterial->IsA(&ms_oClass));
+		return TSTATICCAST(AWorldMaterial*, a_pMaterial);
+	}
+
 protected:
 	Toshi::TTexture* m_aTextures[MAX_TEXTURES];
 	BLENDMODE m_eBlendMode;

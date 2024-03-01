@@ -138,7 +138,7 @@ int main(int argc, char** argv)
 							pMeshBounding->m_BoundingSphere.GetRadius()
 						);
 
-						auto pMesh = pMeshBounding->m_pMesh;
+						auto pMesh = pMeshBounding->m_pCellMesh;
 						TINFO("        Num Indices: %u\n", pMesh->uiNumIndices);
 						TINFO("        Num Vertices 1: %u\n", pMesh->uiNumVertices1);
 						TINFO("        Num Vertices 2: %u\n", pMesh->uiNumVertices2);

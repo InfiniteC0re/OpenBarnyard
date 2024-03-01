@@ -10,10 +10,10 @@ public:
 	virtual TBOOL RunJob() override;
 	virtual TBOOL CancelJob() override;
 
-	void InitJob(ATerrainSection* a_pVISGroup, ATerrainLODType a_eLODType);
+	void InitJob(ATerrainSection* a_pSection, ATerrainLODType a_eLODType);
 
 private:
-	ATerrainSection* m_pVISGroup;
+	ATerrainSection* m_pSection;
 	TUINT m_eLODType;
 	TBOOL m_bIsCanceled;
 };

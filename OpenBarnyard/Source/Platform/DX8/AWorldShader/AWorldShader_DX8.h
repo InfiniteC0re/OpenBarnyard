@@ -69,6 +69,8 @@ public:
 	// Probably used in debug mode but is stripped out in release
 	virtual void* CreateUnknown(void*, void*, void*, void*);
 
+	void SetColours(const Toshi::TVector4& a_rShadowColour, const Toshi::TVector4 a_rAmbientColour);
+
 	TUINT GetAlphaRef() const { return m_iAlphaRef; }
 	void SetAlphaRef(TUINT val) { m_iAlphaRef = val; }
 

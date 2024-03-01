@@ -38,7 +38,7 @@ static void LoadFromRenderGroups(CellSphereTreeBranchNode* a_pRenderGroup, Cell*
 
 	for (TUINT i = 0; i < pRenderData->m_uiNumMeshes; i++)
 	{
-		auto pTerrainMesh = a_ppModel->ppCellMeshSpheres[pRenderData->GetMeshIndex(i)]->m_pMesh;
+		auto pTerrainMesh = a_ppModel->ppCellMeshSpheres[pRenderData->GetMeshIndex(i)]->m_pCellMesh;
 		auto pMesh = pShader->CreateMesh(TNULL);
 		
 		pMesh->Create(0, pTerrainMesh->uiNumVertices1);

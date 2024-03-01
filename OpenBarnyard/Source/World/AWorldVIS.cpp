@@ -64,7 +64,7 @@ void AWorldVis::Build(const Toshi::TMatrix44& a_rModelView, const Toshi::TMatrix
 	Build(a_rModelView, a_rProjection, a_iCellIndex, cullBox);
 }
 
-// Seems to be unused in Barnyard
+// Seems to be unused in Barnyard and even de Blob
 static TUINT s_uiBuildFlags = 0;
 
 void AWorldVis::Build(const Toshi::TMatrix44& a_rModelView, const Toshi::TMatrix44& a_rProjection, TINT a_iCellIndex, const CullBox& a_rCullBox)

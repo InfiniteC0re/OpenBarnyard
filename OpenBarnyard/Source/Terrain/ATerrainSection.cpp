@@ -3,12 +3,15 @@
 #include "ATerrain.h"
 #include "Assets/AAssetStreaming.h"
 #include "Assets/AMaterialLibraryManager.h"
+#include "Render/AWorldShader/AWorldMaterial.h"
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
 // Note: Should be the last include!
 //-----------------------------------------------------------------------------
 #include <Core/TMemoryDebugOn.h>
+
+TOSHI_NAMESPACE_USING
 
 void ATerrainSection::LoadCollision()
 {
@@ -22,7 +25,7 @@ void ATerrainSection::LoadCollision()
 
 		m_pCollisionModelData = new (pBlock->GetMemBlock()) ModelNode();
 
-		auto pTRB = new (pBlock->GetMemBlock()) Toshi::TTRB();
+		auto pTRB = new (pBlock->GetMemBlock()) TTRB();
 		pBlock->SetupTRB(pTRB, pBlock);
 
 		auto pModelLoaderJob = pTerrain->GetFreeModelLoaderJob();
@@ -50,19 +53,8 @@ void ATerrainSection::LoadModels(ATerrainLODType a_eLODType)
 
 	if (!IsLODLoading(a_eLODType) && !IsLODLoaded(a_eLODType))
 	{
-		const TCHAR** ppLODNames;
-		TINT iNumLODs;
-
-		if (a_eLODType == ATerrainLODType_High)
-		{
-			iNumLODs = m_iNumHighModelFiles;
-			ppLODNames = m_pszHighModelFiles;
-		}
-		else
-		{
-			iNumLODs = m_iNumLowModelFiles;
-			ppLODNames = m_pszLowModelFiles;
-		}
+		const TCHAR** ppLODNames; TINT iNumLODs;
+		GetLODNames(a_eLODType, ppLODNames, iNumLODs);
 
 		if (iNumLODs == 0 && m_szCollisionFilename[0] == '\0')
 		{
@@ -72,24 +64,12 @@ void ATerrainSection::LoadModels(ATerrainLODType a_eLODType)
 		}
 		else
 		{
-			TUINT16 uiNumLODBlocks;
-			ATerrainLODBlock** ppLODBlocks;
-			TUINT8* pLODToBlock;
+			ATerrainLODBlock** ppLODBlocks; TUINT16 uiNumMemBlocks;
+			GetLODBlocks(a_eLODType, ppLODBlocks, uiNumMemBlocks);
 
-			if (a_eLODType == ATerrainLODType_High)
-			{
-				uiNumLODBlocks = m_iNumHighMemBlocksUsed;
-				ppLODBlocks = m_ppHighLODBlocks;
-				pLODToBlock = m_pHighLODToBlock;
-			}
-			else
-			{
-				uiNumLODBlocks = m_iNumLowMemBlocksUsed;
-				ppLODBlocks = m_ppLowLODBlocks;
-				pLODToBlock = m_pLowLODToBlock;
-			}
+			TUINT8* pLODToBlock = (a_eLODType == ATerrainLODType_High) ? m_pHighLODToBlock : m_pLowLODToBlock;
 
-			for (TINT i = 0; i < uiNumLODBlocks; i++)
+			for (TINT i = 0; i < uiNumMemBlocks; i++)
 			{
 				if (ppLODBlocks[i] == TNULL)
 				{
@@ -119,7 +99,7 @@ void ATerrainSection::LoadModels(ATerrainLODType a_eLODType)
 					auto pBlock = ppLODBlocks[pLODToBlock[i]];
 					auto pModelData = new (pBlock->GetMemBlock()) ModelNode();
 
-					auto pTRB = new (pBlock->GetMemBlock()) Toshi::TTRB();
+					auto pTRB = new (pBlock->GetMemBlock()) TTRB();
 					pBlock->SetupTRB(pTRB, pBlock);
 					m_ppLODModelsData[a_eLODType][i] = pModelData;
 
@@ -171,14 +151,14 @@ void ATerrainSection::LoadMatlib(ATerrainLODType a_eLODType)
 
 	if (a_eLODType == ATerrainLODType_High)
 	{
-		m_pMatLibHighTRB = new (pBlock->GetMemBlock()) Toshi::TTRB();
+		m_pMatLibHighTRB = new (pBlock->GetMemBlock()) TTRB();
 		pBlock->SetupTRB(m_pMatLibHighTRB, pBlock);
 
 		pMatlibJob->InitJob(m_szHighMatLibFilename, m_pMatLibHighTRB, m_pMatLibHigh, pBlock->GetMemBlock());
 	}
 	else
 	{
-		m_pMatLibLowTRB = new (pBlock->GetMemBlock()) Toshi::TTRB();
+		m_pMatLibLowTRB = new (pBlock->GetMemBlock()) TTRB();
 		pBlock->SetupTRB(m_pMatLibLowTRB, pBlock);
 
 		pMatlibJob->InitJob(m_szLowMatLibFilename, m_pMatLibLowTRB, m_pMatLibLow, pBlock->GetMemBlock());
@@ -228,8 +208,8 @@ void ATerrainSection::DestroyLOD(ATerrainLODType a_eLODType)
 	TASSERT(a_eLODType == ATerrainLODType_High || a_eLODType == ATerrainLODType_Low);
 
 	auto pTerrain = ATerrain::GetSingleton();
+	TINT iNumLODs = GetLODCount(a_eLODType);
 
-	TINT iNumLODs = (a_eLODType == ATerrainLODType_High) ? m_iNumHighModelFiles : m_iNumLowModelFiles;
 	for (TINT i = 0; i < iNumLODs; i++)
 	{
 		if (m_ppLODModelsData[a_eLODType][i])
@@ -290,19 +270,8 @@ void ATerrainSection::RemoveFromStreamingQueue()
 	{
 		if (IsLODQueued(i))
 		{
-			TUINT16 uiNumLODBlocks;
-			ATerrainLODBlock** ppLODBlocks;
-
-			if (i == ATerrainLODType_High)
-			{
-				uiNumLODBlocks = m_iNumHighMemBlocksUsed;
-				ppLODBlocks = m_ppHighLODBlocks;
-			}
-			else
-			{
-				uiNumLODBlocks = m_iNumLowMemBlocksUsed;
-				ppLODBlocks = m_ppLowLODBlocks;
-			}
+			ATerrainLODBlock** ppLODBlocks; TUINT16 uiNumLODBlocks;
+			GetLODBlocks(i, ppLODBlocks, uiNumLODBlocks);
 
 			for (TINT k = 0; k < uiNumLODBlocks; k++)
 			{
@@ -384,12 +353,55 @@ void ATerrainSection::SetLODEmpty(ATerrainLODType a_eLODType, TBOOL a_bEmpty)
 	}
 }
 
+ATerrainSection::ModelNode::ModelNode() :
+	m_eFlags(MNF_NONE),
+	m_bCreated(TFALSE)
+{
+	m_szType[0] = '\0';
+}
+
 ATerrainSection::ModelNode::~ModelNode()
 {
-	TIMPLEMENT();
+	TIMPLEMENT_D("Destroy collision data");
 
 	if (m_pModelInstance)
 	{
 		m_pModelInstance->Delete();
+	}
+}
+
+void ATerrainSection::ModelNode::SetUseLighting(TBOOL a_bUseLighting)
+{
+	if (a_bUseLighting)
+		m_eFlags |= MNF_USE_LIGHTING;
+	else
+		m_eFlags &= ~MNF_USE_LIGHTING;
+}
+
+void ATerrainSection::ModelNode::SetGlow(TBOOL a_bIsGlow)
+{
+	if (a_bIsGlow)
+		m_eFlags |= MNF_GLOW;
+	else
+		m_eFlags &= ~MNF_GLOW;
+
+	if (TNULL != m_pModelInstance)
+	{
+		auto pModel = m_pModelInstance->GetModelRef()->GetModel();
+
+		for (TINT i = 0; i < pModel->GetNumLODs(); i++)
+		{
+			auto& rLOD = pModel->GetLOD(i);
+
+			for (TINT k = 0; k < rLOD.iNumMeshes; k++)
+			{
+				auto pMesh = rLOD.ppMeshes[k];
+				auto pMaterial = AWorldMaterial::Upcast(pMesh->GetMaterial());
+
+				pMesh->SetFlags(TMesh::State_Glow, TTRUE);
+				pMaterial->SetFlags(TMaterial::Flags_Glow, a_bIsGlow);
+				pMaterial->SetBlendMode(3);
+			}
+		}
 	}
 }

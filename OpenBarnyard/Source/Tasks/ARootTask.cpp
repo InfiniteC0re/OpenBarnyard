@@ -43,7 +43,7 @@ ARootTask::ARootTask()
 	m_bStartedGame = TFALSE;
 	m_bTerrainIsReady = TFALSE;
 	m_bPaused = TFALSE;
-	m_bStopRenderingWorld = TFALSE;
+	m_bStopRenderingScene = TFALSE;
 	m_bGameSystemCreated = TFALSE;
 	m_pOptions = AOptions::CreateSingleton();
 	AMemory::CreatePool(AMemory::POOL_Sound);

@@ -32,37 +32,18 @@ namespace Toshi {
 	public:
 		TModelInstance(TModel* a_pModel);
 
-		void Update(TFLOAT a_fDeltaTime)
-		{
-			m_pSkeletonInstance->UpdateTime(a_fDeltaTime);
-		}
-
+		void Update(TFLOAT a_fDeltaTime);
 		void Render();
-
-		void SetPreRenderCallback(t_PreRenderCB a_fnCallback)
-		{
-			m_fnPreRenderCb = a_fnCallback;
-		}
-
-		void SetCustomRenderMethod(t_CustomRenderCB a_fnCallback, void* a_pUserData)
-		{
-			m_fnCustomRenderCb = a_fnCallback;
-			m_pCustomRenderCbUserData = a_pUserData;
-		}
-
-		void SetLOD(TUINT32 a_uiLOD)
-		{
-			m_iCurrentLOD = a_uiLOD;
-		}
-
-		TUINT32 GetLOD()
-		{
-			return m_iCurrentLOD;
-		}
-
 		void Delete();
 
-		TModel* GetModel() { return m_pModel; }
+		void SetPreRenderCallback(t_PreRenderCB a_fnCallback);
+		void SetCustomRenderMethod(t_CustomRenderCB a_fnCallback, void* a_pUserData);
+
+		TINT32 GetLOD();
+		void SetLOD(TINT32 a_iLOD);
+
+		TModel* GetModel() const;
+		TSkeletonInstance* GetSkeletonInstance() const;
 
 	private:
 		TModel* m_pModel;
@@ -70,7 +51,7 @@ namespace Toshi {
 		t_PreRenderCB m_fnPreRenderCb;
 		t_CustomRenderCB m_fnCustomRenderCb;
 		void* m_pCustomRenderCbUserData;
-		TUINT32 m_iCurrentLOD;
+		TINT32 m_iCurrentLOD;
 	};
 
 	class TModel
@@ -106,6 +87,8 @@ namespace Toshi {
 		TBOOL LoadTRB();
 		TBOOL LoadTRB(TTRB* a_pTRB);
 		TBOOL LoadTRB(const TCHAR* a_szFileName, TTRB* a_pAssetTRB, TUINT8 a_ui8FileNameLen);
+
+		TTRB* GetTRB() const { return m_pTRB; }
 
 		void UnloadTRB();
 

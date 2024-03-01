@@ -1,10 +1,16 @@
 #include "pch.h"
 #include "ATerrain.h"
 #include "Tasks/ARootTask.h"
+#include "Assets/AAssetLoader.h"
 #include "Assets/AAssetStreaming.h"
 #include "ALoadScreen.h"
 
 #include <Toshi/T2FixedString.h>
+
+#ifdef TOSHI_SKU_WINDOWS
+#include "Platform/DX8/AWorldShader/AWorldMesh_DX8.h"
+#include "Platform/DX8/AWorldShader/AWorldShader_DX8.h"
+#endif
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
@@ -76,6 +82,7 @@ ATerrain::ATerrain(TINT a_iUnused1, TINT a_iUnused2, TINT a_iPreloadTerrainBlock
 	TTODO("Call FUN_00619040() and initialise some other values");
 	m_iCurrentSection = a_iStartVISGroup;
 	m_iPreviousSection = -1;
+	m_cbOnModelNodeReady = TNULL;
 	m_cbOnVISGroupChanged = TNULL;
 	m_fnGetCurrentVISGroup = GetCurrentSectionID;
 }
@@ -723,6 +730,187 @@ void ATerrain::MoveAllFinishedJobs(Toshi::T2SList<JobSlot>& a_rFreeJobs, Toshi::
 
 		it = pNext;
 	}
+}
+
+#ifdef TOSHI_SKU_WINDOWS
+
+static void RenderWorldWin(TModelInstance* a_pModelInstance)
+{
+	auto pSkeletonInstance = a_pModelInstance->GetSkeletonInstance();
+
+	if (TNULL != pSkeletonInstance)
+	{
+		pSkeletonInstance->UpdateState(TFALSE);
+	}
+
+	TRenderInterface::GetSingleton()->GetCurrentContext()->SetSkeletonInstance(pSkeletonInstance);
+
+	auto pModel = a_pModelInstance->GetModel();
+	auto pLOD = &pModel->GetLOD(a_pModelInstance->GetLOD());
+
+	for (TINT i = 0; pLOD->iNumMeshes; i++)
+	{
+		TVALIDPTR(pLOD->ppMeshes[i]);
+		pLOD->ppMeshes[i]->Render();
+	}
+}
+
+static void RenderNothing(TModelInstance* a_pModelInstance)
+{
+
+}
+
+static void RenderCellMeshDefault(CellMeshSphere* a_pMeshSphere, RenderData* a_pRenderData)
+{
+	TVALIDPTR(a_pMeshSphere);
+	a_pMeshSphere->m_pCellMesh->pMesh->Render();
+}
+
+static void RenderCellMeshWin(CellMeshSphere* a_pMeshSphere, RenderData* a_pRenderData)
+{
+	TVALIDPTR(a_pMeshSphere);
+	TTODO("Calculate real lighting colour");
+
+	TVector4 colour;
+	colour.x = 0.3f;
+	colour.y = 0.3f;
+	colour.z = 0.1952941f;
+	colour.w = 1.0f;
+
+	AWorldShaderHAL::Upcast(AWorldShader::GetSingleton())->SetColours(colour, colour);
+	a_pMeshSphere->m_pCellMesh->pMesh->Render();
+}
+
+static void RenderWorldVisWin(TModelInstance* a_pModelInstance, void* a_pModelNode)
+{
+	auto pModel = a_pModelInstance->GetModel();
+	auto pModelNode = TSTATICCAST(ATerrainSection::ModelNode*, a_pModelNode);
+
+	if (TNULL != pModel->GetTRB())
+	{
+		auto pWorldDatabase = pModel->CastSymbol<WorldDatabase>("Database");
+		TASSERT(TNULL != pWorldDatabase);
+
+		if (TNULL != pWorldDatabase)
+		{
+			auto pRenderContext = TRenderInterface::GetSingleton()->GetCurrentContext();
+
+			// Save alpha blend value to restore it after rendering
+			TFLOAT fAlphaBlend = pRenderContext->GetAlphaBlend();
+
+			TMatrix44 projection;
+			pRenderContext->ComputePerspectiveProjection(
+				projection,
+				pRenderContext->GetViewportParameters(),
+				pRenderContext->GetProjectionParams()
+			);
+
+			TMatrix44 modelView = pRenderContext->GetModelViewMatrix();
+
+			const TBOOL bIsDefaultRenderer =
+				(pModelNode->m_WorldVis.m_pfnRenderCallback == RenderCellMeshDefault);
+
+			// If using lighting, specify method that calculates lighting
+			if (bIsDefaultRenderer && pModelNode->IsUsingLighting())
+				pModelNode->m_WorldVis.m_pfnRenderCallback = RenderCellMeshWin;
+
+			// Build visibility and render
+			pModelNode->m_WorldVis.Reset();
+			pModelNode->m_WorldVis.Build(modelView, projection, 0);
+			pModelNode->m_WorldVis.Render(modelView);
+
+			// Set render method back to default
+			if (bIsDefaultRenderer)
+				pModelNode->m_WorldVis.m_pfnRenderCallback = RenderCellMeshDefault;
+
+			pRenderContext->SetAlphaBlend(fAlphaBlend);
+		}
+	}
+}
+
+#endif // TOSHI_SKU_WINDOWS
+
+ATerrainSection::ModelNode* ATerrain::CreateModelInstance(ATerrainSection::ModelNode* a_pModelNode, const char* a_szModelName, const char* a_szType)
+{
+	// Make sure model is created
+	auto pModel = a_pModelNode->m_ModelRef.GetModel();
+	if (!pModel || !pModel->IsCreated())
+	{
+		a_pModelNode->m_ModelRef.Create(
+			a_szModelName,
+			AAssetLoader::GetAssetTRB(AAssetType_ModelLib)
+		);
+	}
+
+	auto pInstance = a_pModelNode->m_ModelRef.CreateInstance();
+	auto pInstanceTransform = &pInstance->GetTransform();
+
+	pInstanceTransform->SetEuler(TVector3(1.570796f, 0.0f, 0.0f));
+	pInstanceTransform->SetTranslate(TVector3::VEC_ZERO);
+	
+	TMatrix44 collisionLocalMatrix;
+	pInstanceTransform->GetLocalMatrixImp(collisionLocalMatrix);
+	pInstanceTransform->SetMatrix(collisionLocalMatrix);
+
+	a_pModelNode->m_pModelInstance = pInstance;
+
+	pInstance->GetSomeVector().w = 1.0f;
+	pInstance->GetSomeVector().z = 1.0f;
+	pInstance->GetSomeVector().x = 10000000.0f;
+	pInstance->GetSomeVector().y = 10000001.0f;
+	pInstance->EnableSkeletonUpdate();
+	pInstance->EnableUnknown1();
+
+	TTODO("Create collision model set");
+
+	auto pModelInstance = pInstance->GetInstance();
+	pModel = pModelInstance->GetModel();
+
+	auto pWorldDatabase = pModel->CastSymbol<WorldDatabase>("Database");
+
+	if (TNULL == pWorldDatabase)
+	{
+		// Render as a simple model
+		pModelInstance->SetPreRenderCallback(RenderWorldWin);
+	}
+	else
+	{
+		// Render WorldVIS
+		auto& rLOD = pModel->GetLOD(0);
+
+		if (rLOD.iNumMeshes < 1)
+		{
+			// Nothing to render here
+			pModelInstance->SetPreRenderCallback(RenderNothing);
+		}
+		else
+		{
+			pModelInstance->SetCustomRenderMethod(RenderWorldVisWin, a_pModelNode);
+			a_pModelNode->m_WorldVis.Create(pWorldDatabase->m_ppWorlds[0]);
+
+			TBOOL bIsWorldMesh = rLOD.ppMeshes[0]->IsA(&TGetClass(AWorldMesh));
+
+			if (bIsWorldMesh)
+			{
+				a_pModelNode->m_WorldVis.m_pfnRenderCallback = RenderCellMeshDefault;
+				TTODO("Setup materials");
+			}
+			else
+			{
+				a_pModelNode->m_WorldVis.m_pfnRenderCallback = RenderCellMeshDefault;
+			}
+		}
+	}
+
+	if (TNULL != a_szType)
+	{
+		TASSERT(TStringManager::String8Length(a_szType) <= ATerrainSection::ModelNode::TYPE_NAME_MAX_SIZE);
+		TStringManager::String8Copy(a_pModelNode->m_szType, a_szType, ATerrainSection::ModelNode::TYPE_NAME_MAX_SIZE);
+	}
+	
+	m_ModelDatas.PushBack(a_pModelNode);
+	a_pModelNode->m_bCreated = TTRUE;
+	return a_pModelNode;
 }
 
 void ATerrain::CancelUnrequiredJobs()

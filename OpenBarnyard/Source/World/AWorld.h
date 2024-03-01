@@ -80,7 +80,7 @@ struct CellMesh
 struct CellMeshSphere
 {
 	Toshi::TSphere m_BoundingSphere;
-	CellMesh* m_pMesh;
+	CellMesh* m_pCellMesh;
 };
 
 struct CellSphereTreeLeafNode

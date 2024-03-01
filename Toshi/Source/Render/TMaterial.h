@@ -59,7 +59,7 @@ namespace Toshi {
 		void SetTextureNum(TUINT32 a_iNumTextures);
 
 		void SetName(const TCHAR* a_szName);
-		void SetFlag(Flags a_eFlag, TBOOL a_bEnable);
+		void SetFlags(Flags a_eFlag, TBOOL a_bEnable);
 
 		TRegMaterial* GetRegMaterial() const;
 		void SetRegMaterial(TRegMaterial* a_pRegMaterial);

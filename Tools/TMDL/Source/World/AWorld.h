@@ -40,7 +40,7 @@ struct CellMesh
 struct CellMeshSphere
 {
 	Toshi::TSphere m_BoundingSphere;
-	CellMesh* m_pMesh;
+	CellMesh* m_pCellMesh;
 };
 
 struct CellSphereTreeLeafNode
@@ -85,7 +85,7 @@ struct Cell
 
 struct World
 {
-	TUINT32 m_iNumCells;
+	TINT32 m_iNumCells;
 	Cell** m_ppCells;
 };
 
