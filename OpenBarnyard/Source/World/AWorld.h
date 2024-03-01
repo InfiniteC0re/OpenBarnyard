@@ -34,13 +34,20 @@ struct Plane
 	TUINT uiClipFlag;
 };
 
+enum FrustumIntersectSphereResult
+{
+	FISR_ALL_VISIBLE,
+	FISR_NOT_VISIBLE,
+	FISR_PARTIALLY_VISIBLE,
+};
+
 class Frustum
 {
 public:
 	Frustum();
 
 	void InitReduce();
-	TINT IntersectSphereReduce(const Toshi::TSphere& a_rSphere);
+	FrustumIntersectSphereResult IntersectSphereReduce(const Toshi::TSphere& a_rSphere);
 
 	void Transform(const Frustum& a_rFrustum, const Toshi::TMatrix44& a_rMatrix);
 
@@ -80,7 +87,7 @@ struct CellSphereTreeLeafNode
 {
 	TUINT32 m_uiNumMeshes;
 
-	TUINT16 GetMeshIndex(TUINT32 a_uiIndex)
+	TUINT16& GetMeshIndex(TUINT32 a_uiIndex)
 	{
 		TASSERT(a_uiIndex < m_uiNumMeshes);
 		return *((TUINT16*)(this + 1) + a_uiIndex);
@@ -94,16 +101,21 @@ struct CellSphereTreeBranchNode
 
 	TBOOL IsLeaf() const { return m_pRight == TNULL; }
 
-	CellSphereTreeLeafNode* GetData()
+	CellSphereTreeLeafNode* GetLeafNode()
 	{
 		TASSERT(IsLeaf());
 		return (CellSphereTreeLeafNode*)(this + 1);
 	}
 
-	CellSphereTreeBranchNode* GetSubGroup()
+	CellSphereTreeBranchNode* GetSubNode()
 	{
 		TASSERT(!IsLeaf());
 		return (CellSphereTreeBranchNode*)(this + 1);
+	}
+
+	CellSphereTreeBranchNode* GetPrevNode()
+	{
+		return (CellSphereTreeBranchNode*)(this - 1);
 	}
 };
 

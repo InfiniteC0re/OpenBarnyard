@@ -47,7 +47,7 @@ static void LogRenderGroup(CellSphereTreeBranchNode* a_pRenderGroup)
 
 	while (a_pRenderGroup->m_pRight)
 	{
-		LogRenderGroup(a_pRenderGroup->GetSubGroup());
+		LogRenderGroup(a_pRenderGroup->GetSubNode());
 		a_pRenderGroup = a_pRenderGroup->m_pRight;
 	}
 

@@ -115,7 +115,7 @@ int main(int argc, char** argv)
 
 				if (pOutFile)
 				{
-					for (TUINT i = 0; i < pLocaleStrings->m_numstrings; i++)
+					for (TINT i = 0; i < pLocaleStrings->m_numstrings; i++)
 					{
 						auto pString = pLocaleStrings->Strings[i];
 						T2FixedWString2048 finalString;

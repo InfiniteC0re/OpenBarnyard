@@ -6,6 +6,13 @@ class AWorldVis
 public:
 	static constexpr TUINT MAX_VISIBLE_CELLS = 1;
 
+	struct StackValue
+	{
+		CellSphereTreeBranchNode* pNextNode;
+		CellSphereTreeBranchNode* pPrevNode;
+		TINT iInitialPlaneCount;
+	};
+
 	using t_RenderCallback = void(*)(CellMeshSphere* a_pMeshSphere, RenderData* a_pRenderData);
 
 public:
@@ -23,7 +30,8 @@ public:
 	void RenderLeafNodeIntersect(CellSphereTreeBranchNode* a_pNode, RenderData* a_pRenderData);
 
 private:
-	inline static TCHAR* s_pStack;
+	inline static StackValue* s_pStack;
+	static constexpr TUINT s_iStackSize = 100;
 
 public:
 	World* m_pWorld;

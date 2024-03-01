@@ -46,7 +46,7 @@ namespace Toshi {
 		}
 
 		auto iAutoBoneCount = GetAutoBoneCount();
-		size_t iAnimationSize = iAutoBoneCount * sizeof(TAnimationBone) + TMath::AlignNum(sizeof(TAnimation));
+		size_t iAnimationSize = iAutoBoneCount * sizeof(TAnimationBone) + TAlignNumDown(sizeof(TAnimation));
 		size_t iInstanceSize = sizeof(TSkeletonInstance) + sizeof(TSkeletonInstanceBone) * iAutoBoneCount + iAnimationSize * GetAnimationMaxCount();
 		TSkeletonInstance* pInstance;
 

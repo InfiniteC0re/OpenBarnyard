@@ -132,7 +132,8 @@ static void CreatePortalFrustum(Frustum& a_rFrustum, CullBox& a_rCullBox, TMatri
 
 void AWorldVis::Render(const Toshi::TMatrix44& a_rModelView)
 {
-	TCHAR aStack[1212];
+	// Create stack values and store pointer to the array to use it later
+	StackValue aStack[s_iStackSize + 1];
 	AWorldVis::s_pStack = aStack;
 
 	if (TNULL != m_pfnRenderCallback)
@@ -174,8 +175,6 @@ void AWorldVis::Render(const Toshi::TMatrix44& a_rModelView)
 
 void AWorldVis::RenderTreeIntersectNonRecurse(CellSphereTreeBranchNode* a_pNode, RenderData* a_pRenderData)
 {
-	TIMPLEMENT();
-
 	auto pRightNode = a_pNode->m_pRight;
 	auto pNode = a_pNode;
 
@@ -184,6 +183,95 @@ void AWorldVis::RenderTreeIntersectNonRecurse(CellSphereTreeBranchNode* a_pNode,
 		pNode = pRightNode;
 		pRightNode = pRightNode->m_pRight;
 	}
+
+	CellSphereTreeBranchNode endNode;
+	endNode.m_BoundingSphere = TSphere(0.0f, 0.0f, 0.0f, 0.0f);
+	endNode.m_pRight = (CellSphereTreeBranchNode*)TAlignPointer(&pNode->GetLeafNode()->GetMeshIndex(pNode->GetLeafNode()->m_uiNumMeshes));
+
+	auto pStackValue1 = s_pStack + 0;
+	auto pStackValue2 = s_pStack + 1;
+
+	pStackValue1->pNextNode = a_pNode;
+	pStackValue1->pPrevNode = &endNode;
+	pStackValue1->iInitialPlaneCount = a_pRenderData->pFrustum->iActivePlaneCount;
+
+	pStackValue2->pNextNode = a_pNode;
+	pStackValue2->pPrevNode = &endNode;
+	pStackValue2->iInitialPlaneCount = a_pRenderData->pFrustum->iActivePlaneCount;
+
+	TINT iNumVisibleSpheres = 0;
+
+	for (;;)
+	{
+		auto pStackValue2Node = pStackValue2->pNextNode;
+		a_pRenderData->pFrustum->iActivePlaneCount = pStackValue2->iInitialPlaneCount;
+
+		if (pStackValue2Node->IsLeaf())
+		{
+			RenderLeafNodeIntersect(pStackValue2Node, a_pRenderData);
+			iNumVisibleSpheres -= 1;
+
+			pStackValue2 = pStackValue1 - 1;
+			pStackValue2->pNextNode = pStackValue2->pNextNode->m_pRight;
+			pStackValue1 = pStackValue2;
+		}
+		else
+		{
+			FrustumIntersectSphereResult eIntersectResult =
+				a_pRenderData->pFrustum->IntersectSphereReduce(pStackValue2Node->m_BoundingSphere);
+
+			if (eIntersectResult == FISR_ALL_VISIBLE)
+			{
+				// The whole node is visible so just render everything
+				TINT iCurrentActivePlaneCount = a_pRenderData->pFrustum->iActivePlaneCount;
+				a_pRenderData->pFrustum->iActivePlaneCount = 0;
+
+				auto pEndNode = pStackValue2->pPrevNode->m_pRight;
+				while (pStackValue2Node < pEndNode)
+				{
+					if (pStackValue2Node->IsLeaf())
+					{
+						for (TUINT i = 0; i < pStackValue2Node->GetLeafNode()->m_uiNumMeshes; i++)
+						{
+							m_pfnRenderCallback(
+								a_pRenderData->pCell->ppCellMeshSpheres[pStackValue2Node->GetLeafNode()->GetMeshIndex(i)],
+								a_pRenderData
+							);
+						}
+
+						pStackValue2Node = (CellSphereTreeBranchNode*)TAlignPointer(&pStackValue2Node->GetLeafNode()->GetMeshIndex(pStackValue2Node->GetLeafNode()->m_uiNumMeshes));
+					}
+					else
+					{
+						pStackValue2Node = pStackValue2Node->GetSubNode();
+					}
+				}
+
+				a_pRenderData->pFrustum->iActivePlaneCount = iCurrentActivePlaneCount;
+			}
+			else if (eIntersectResult == FISR_NOT_VISIBLE)
+			{
+				// This node is not visible at all so just skip it
+				iNumVisibleSpheres--;
+				pStackValue2 = pStackValue1 - 1;
+				pStackValue2->pNextNode = pStackValue2->pNextNode->m_pRight;
+				pStackValue1 = pStackValue2;
+			}
+			else
+			{
+				// This node is partially visible so let's
+				// check what leaf nodes are actually visible
+				iNumVisibleSpheres++;
+				pStackValue2 = pStackValue1 + 1;
+				pStackValue2->iInitialPlaneCount = a_pRenderData->pFrustum->iActivePlaneCount;
+				pStackValue2->pNextNode = pStackValue2Node->GetSubNode();
+				pStackValue2->pPrevNode = pStackValue2Node;
+				pStackValue1 = pStackValue2;
+			}
+		}
+
+		if (iNumVisibleSpheres < 0) break;
+	}
 }
 
 void AWorldVis::RenderLeafNodeIntersect(CellSphereTreeBranchNode* a_pNode, RenderData* a_pRenderData)
@@ -191,9 +279,9 @@ void AWorldVis::RenderLeafNodeIntersect(CellSphereTreeBranchNode* a_pNode, Rende
 	// Use this to restore active planes after reduce intersect
 	TINT iActivePlaneCount = a_pRenderData->pFrustum->iActivePlaneCount;
 
-	for (TUINT i = 0; i < a_pNode->GetData()->m_uiNumMeshes; i++)
+	for (TUINT i = 0; i < a_pNode->GetLeafNode()->m_uiNumMeshes; i++)
 	{
-		CellMeshSphere* pMeshSphere = a_pRenderData->pCell->ppCellMeshSpheres[a_pNode->GetData()->GetMeshIndex(i)];
+		CellMeshSphere* pMeshSphere = a_pRenderData->pCell->ppCellMeshSpheres[a_pNode->GetLeafNode()->GetMeshIndex(i)];
 		TINT iIntersectResult = a_pRenderData->pFrustum->IntersectSphereReduce(pMeshSphere->m_BoundingSphere);
 
 		if (iIntersectResult != -1)

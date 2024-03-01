@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "AWorldMesh.h"
+#include "Assets/AModelLoader.h"
 
 #include <Render/TRenderInterface.h>
 
@@ -41,7 +42,7 @@ void AWorldMesh::Invalidate()
 
 void AWorldMesh::OnDestroy()
 {
-	TTODO("Call AModelLoader::DestroyMaterial\n");
+	AModelLoader::DestroyMaterial(GetMaterial());
 
 	if (m_pVertexPool)
 	{

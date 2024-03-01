@@ -88,7 +88,7 @@ namespace Toshi {
 		m_CurrentHunk.Size = fileInfo.FileSize;
 		m_ReadPos = m_pFile->Tell() - fileInfo.FileStartOffset;
 
-		TUINT32 alignedPos = TMath::AlignNumUp(m_CurrentHunk.Size);
+		TUINT32 alignedPos = TAlignNumUp(m_CurrentHunk.Size);
 		m_pFile->Seek(alignedPos - m_ReadPos, TSEEK_CUR);
 		m_ReadPos = alignedPos;
 
@@ -114,7 +114,7 @@ namespace Toshi {
 	TUINT8 TTSFI::SkipHunk()
 	{
 		// FUN_006880e0
-		TUINT32 alignedSize = TMath::AlignNumUp(m_CurrentHunk.Size);
+		TUINT32 alignedSize = TAlignNumUp(m_CurrentHunk.Size);
 		m_pFile->Seek(alignedSize - m_ReadPos, TSEEK_CUR);
 		m_ReadPos = alignedSize;
 

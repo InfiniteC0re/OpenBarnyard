@@ -92,7 +92,7 @@ namespace Toshi
 
 				sectionName = ttsf.m_CurrentHunk.Name;
 				sectionSize = ttsf.m_CurrentHunk.Size;
-				leftSize -= TMath::AlignNumUp(sectionSize) + sizeof(Toshi::TTSF::Hunk);
+				leftSize -= TAlignNumUp(sectionSize) + sizeof(Toshi::TTSF::Hunk);
 
 				if (TMakeFour("HEAD") < sectionName) break;
 

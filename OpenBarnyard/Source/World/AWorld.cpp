@@ -30,14 +30,14 @@ void Frustum::InitReduce()
 	}
 }
 
-TINT Frustum::IntersectSphereReduce(const Toshi::TSphere& a_rSphere)
+FrustumIntersectSphereResult Frustum::IntersectSphereReduce(const Toshi::TSphere& a_rSphere)
 {
 	for (TINT i = 0; i < iActivePlaneCount;)
 	{
 		TFLOAT fDistance = TVector4::DotProduct3(a_rSphere.AsVector4(), apActivePlanes[i]->AsVector4()) - apActivePlanes[i]->GetD();
 	
 		if (a_rSphere.GetRadius() < fDistance)
-			return 1;
+			return FISR_NOT_VISIBLE;
 
 		if (a_rSphere.GetRadius() <= -fDistance)
 		{
@@ -50,7 +50,10 @@ TINT Frustum::IntersectSphereReduce(const Toshi::TSphere& a_rSphere)
 		}
 	}
 
-	return (iActivePlaneCount == 0) ? 0 : 2;
+	if (iActivePlaneCount == 0)
+		return FISR_ALL_VISIBLE;
+	
+	return FISR_PARTIALLY_VISIBLE;
 }
 
 void Frustum::Transform(const Frustum& a_rFrustum, const Toshi::TMatrix44& a_rMatrix)

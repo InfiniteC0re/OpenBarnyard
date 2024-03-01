@@ -93,28 +93,5 @@ namespace Toshi
 		
 		template <typename T>
 		inline const T& Max(const T& a, const T& b) { if (a < b) { return b; } else { return a; } }
-
-		inline uintptr_t AlignPointer(uintptr_t ptr) { return ((ptr + 3) & SIZE_T_ALIGN_VALUE); }
-		inline uintptr_t AlignPointer(void* ptr) { return AlignPointer(TREINTERPRETCAST(uintptr_t, ptr)); }
-
-#if INTPTR_MAX == INT64_MAX
-		// x64 only
-
-		// aligns value to 4 bytes down (f.e. 7 => 4, 8 => 8, 9 => 8)
-		inline size_t AlignNum(size_t num) { return (num & SIZE_T_ALIGN_VALUE); }
-
-		// aligns value to 4 bytes up (f.e. 7 => 8, 8 => 8, 9 => 12)
-		inline size_t AlignNumUp(size_t num) { return ((num + 3) & SIZE_T_ALIGN_VALUE); }
-#endif
-		// aligns value to 4 bytes down (f.e. 7 => 4, 8 => 8, 9 => 8)
-		inline TUINT32 AlignNum(TUINT32 num) { return (num & UINT32_ALIGN_VALUE); }
-
-		// aligns value to 4 bytes up (f.e. 7 => 8, 8 => 8, 9 => 12)
-		inline TUINT32 AlignNumUp(TUINT32 num) { return ((num + 3) & UINT32_ALIGN_VALUE); }
-	};
-
-	constexpr TBOOL TIsAlignedAddress(const void* a_pPointer, TUINT32 a_uiAlignment)
-	{
-		return ISZERO(uintptr_t(a_pPointer) & (a_uiAlignment - 1));
 	}
 }

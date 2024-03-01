@@ -677,7 +677,7 @@ namespace PTRB
 		for (SECT::Stack* stack : sect)
 		{
 			Toshi::TTRB::SecInfo sectionInfo = {};
-			sectionInfo.m_Size = Toshi::TMath::AlignNumUp(stack->GetUsedSize());
+			sectionInfo.m_Size = TAlignNumUp(stack->GetUsedSize());
 			ttsfo.Write(sectionInfo);
 		}
 	}
@@ -768,7 +768,7 @@ namespace PTRB
 	template<class T>
 	inline SECT::Stack::Ptr<T> SECT::Stack::Alloc()
 	{
-		m_BufferPos = TREINTERPRETCAST(TCHAR*, Toshi::TMath::AlignPointer(m_BufferPos));
+		m_BufferPos = TREINTERPRETCAST(TCHAR*, TAlignPointer(m_BufferPos));
 
 		constexpr size_t TSize = sizeof(T);
 		GrowBuffer(GetUsedSize() + TSize);
@@ -782,7 +782,7 @@ namespace PTRB
 	template<class T>
 	inline SECT::Stack::Ptr<T> SECT::Stack::Alloc(size_t count)
 	{
-		m_BufferPos = TREINTERPRETCAST(TCHAR*, Toshi::TMath::AlignPointer(m_BufferPos));
+		m_BufferPos = TREINTERPRETCAST(TCHAR*, TAlignPointer(m_BufferPos));
 
 		const size_t TSize = sizeof(T) * count;
 		GrowBuffer(GetUsedSize() + TSize);
@@ -797,7 +797,7 @@ namespace PTRB
 	inline SECT::Stack::Ptr<T> SECT::Stack::Alloc(T** outPtr, size_t count)
 	{
 		TASSERT((size_t)outPtr >= (size_t)m_Buffer && (size_t)outPtr < (size_t)m_Buffer + (size_t)m_BufferSize, "Out pointer is out of buffer");
-		m_BufferPos = TREINTERPRETCAST(TCHAR*, Toshi::TMath::AlignPointer(m_BufferPos));
+		m_BufferPos = TREINTERPRETCAST(TCHAR*, TAlignPointer(m_BufferPos));
 
 		const size_t TSize = sizeof(T) * count;
 		size_t outPtrOffset = GetOffset(outPtr);
@@ -816,7 +816,7 @@ namespace PTRB
 	inline SECT::Stack::Ptr<T> SECT::Stack::Alloc(T** outPtr)
 	{
 		TASSERT((size_t)outPtr >= (size_t)m_Buffer && (size_t)outPtr < (size_t)m_Buffer + (size_t)m_BufferSize, "Out pointer is out of buffer");
-		m_BufferPos = TREINTERPRETCAST(TCHAR*, Toshi::TMath::AlignPointer(m_BufferPos));
+		m_BufferPos = TREINTERPRETCAST(TCHAR*, TAlignPointer(m_BufferPos));
 
 		constexpr size_t TSize = sizeof(T) * Count;
 		size_t outPtrOffset = GetOffset(outPtr);

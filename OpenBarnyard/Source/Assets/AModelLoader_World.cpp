@@ -29,12 +29,12 @@ static void LoadFromRenderGroups(CellSphereTreeBranchNode* a_pRenderGroup, Cell*
 	auto pRenderGroup = a_pRenderGroup;
 	while (!pRenderGroup->IsLeaf())
 	{
-		LoadFromRenderGroups(pRenderGroup->GetSubGroup(), a_ppModel, a_pModelLOD);
+		LoadFromRenderGroups(pRenderGroup->GetSubNode(), a_ppModel, a_pModelLOD);
 		pRenderGroup = pRenderGroup->m_pRight;
 	}
 
 	TASSERT(pRenderGroup->IsLeaf());
-	auto pRenderData = pRenderGroup->GetData();
+	auto pRenderData = pRenderGroup->GetLeafNode();
 
 	for (TUINT i = 0; i < pRenderData->m_uiNumMeshes; i++)
 	{

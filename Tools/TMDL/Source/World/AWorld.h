@@ -61,13 +61,13 @@ struct CellSphereTreeBranchNode
 
 	TBOOL IsLeaf() const { return m_pRight == TNULL; }
 
-	CellSphereTreeLeafNode* GetData()
+	CellSphereTreeLeafNode* GetLeafNode()
 	{
 		TASSERT(m_pRight == TNULL);
 		return (CellSphereTreeLeafNode*)(this + 1);
 	}
 
-	CellSphereTreeBranchNode* GetSubGroup()
+	CellSphereTreeBranchNode* GetSubNode()
 	{
 		TASSERT(m_pRight != TNULL);
 		return (CellSphereTreeBranchNode*)(this + 1);
