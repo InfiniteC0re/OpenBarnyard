@@ -7,6 +7,7 @@ namespace Toshi {
 
 	class TRenderInterface;
 	class TSkeletonInstance;
+	class TCameraObject;
 
 	class TRenderContext
 	{
@@ -66,11 +67,9 @@ namespace Toshi {
 		void SetDirty(TBOOL a_bDirty);
 		void SetFlag(FLAG a_eFlag, TBOOL a_bEnable);
 
-		void EnableFog(TBOOL a_bEnable);
-		void SetFogDistance(TFLOAT a_fStart, TFLOAT a_fEnd);
-
 	public:
 		TRenderContext(TRenderInterface* pRender);
+		~TRenderContext();
 
 		//-----------------------------------------------------------------------------
 		// Own methods
@@ -87,6 +86,9 @@ namespace Toshi {
 
 		CameraMode GetCameraMode() { return m_eCameraMode; }
 		void SetCameraMode(CameraMode a_eCameraMode);
+
+		void EnableFog(TBOOL a_bEnable);
+		void SetFogDistance(TFLOAT a_fStart, TFLOAT a_fEnd);
 
 		TFLOAT GetX() const { return m_oViewportParams.fX; }
 		TFLOAT GetY() const { return m_oViewportParams.fY; }
@@ -112,6 +114,9 @@ namespace Toshi {
 		TMatrix44& GetWorldViewMatrix() { return m_oWorldViewMatrix; }
 
 		const TPlane* GetFrustumPlanes() const { return m_aFrustumPlanes1; }
+
+		void SetCameraObject(TCameraObject* a_pCameraObject) { m_pCurrentCameraObject = a_pCameraObject; }
+		TCameraObject* GetCameraObject() const { return m_pCurrentCameraObject; }
 
 		TFLOAT GetAlphaBlend() const { return m_fAlphaBlend; }
 		void SetAlphaBlend(TFLOAT val) { m_fAlphaBlend = val; }
@@ -147,6 +152,8 @@ namespace Toshi {
 		TMatrix44 m_oWorldModelMatrix;                 // 0x032C
 		TMatrix44 m_oViewModelMatrix;                  // 0x0368
 		TFLOAT m_fAlphaBlend;                          // 0x03A8
+		// ...
+		TCameraObject* m_pCurrentCameraObject;         // 0x03BC
 	};
 
 }

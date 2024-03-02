@@ -2,7 +2,7 @@
 #include "TQuaternion.h"
 #include "TPlane.h"
 
-#include <DirectXMath.h>
+#include <d3dx8math.h>
 
 namespace Toshi{ 
 
@@ -277,14 +277,14 @@ namespace Toshi{
 		}
 
 #ifdef TOSHI_SKU_WINDOWS
-		operator DirectX::FXMMATRIX& ()
+		operator D3DXMATRIX* ()
 		{
-			return TREINTERPRETCAST(DirectX::FXMMATRIX&, *this);
+			return TREINTERPRETCAST(D3DXMATRIX*, this);
 		}
 
-		operator const DirectX::FXMMATRIX& () const
+		operator const D3DXMATRIX* () const
 		{
-			return TREINTERPRETCAST(const DirectX::FXMMATRIX&, *this);
+			return TREINTERPRETCAST(const D3DXMATRIX*, this);
 		}
 #endif
 

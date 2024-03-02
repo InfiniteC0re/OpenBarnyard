@@ -2,6 +2,7 @@
 #include "ATerrainLODBlock.h"
 #include "Assets/AMaterialLibrary.h"
 #include "Render/AModel.h"
+#include "Render/AWorldShader/AWorldMaterial.h"
 #include "World/AWorldVIS.h"
 
 #include <Render/TModelManager.h>
@@ -28,15 +29,19 @@ public:
 		ModelNode();
 		~ModelNode();
 
+		void Render();
+
 		void SetUseLighting(TBOOL a_bUseLighting);
 		void SetGlow(TBOOL a_bIsGlow);
 
 		TBOOL IsUsingLighting() const { return !ISZERO(m_eFlags & MNF_USE_LIGHTING); }
+		AWorldMaterial* GetAnimatedMaterial() const { return m_pAnimatedMaterial; }
 
 	public:
 		Toshi::TModelPtr m_ModelRef;
 		Toshi::T2ModelInstance* m_pModelInstance;
 		AWorldVis m_WorldVis;
+		AWorldMaterial* m_pAnimatedMaterial;
 		// ...
 		char m_szType[TYPE_NAME_MAX_SIZE + 1];
 		ModelNodeFlags m_eFlags;
@@ -59,6 +64,10 @@ public:
 	friend class ACollisionDoneJob;
 
 public:
+	// Draws models of specified LOD
+	// Note: if trying to draw high LOD that is not loaded, low LOW will draw
+	void Draw(ATerrainLODType a_eLODType);
+
 	void LoadCollision();
 	void LoadModels(ATerrainLODType a_eLODType);
 	void LoadMatlib(ATerrainLODType a_eLODType);

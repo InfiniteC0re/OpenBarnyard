@@ -25,7 +25,7 @@ namespace Toshi {
 	{
 		auto pRender = TRenderInterface::GetSingleton();
 
-		auto pPrevTransform = &pRender->GetTransforms().Pop();
+		auto pPrevTransform = &pRender->GetTransforms().Top();
 
 		pRender->GetTransforms().PushNull();
 		auto pPushTransform = &pRender->GetTransforms().Top();

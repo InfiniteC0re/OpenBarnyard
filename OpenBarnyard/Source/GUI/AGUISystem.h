@@ -20,6 +20,7 @@ public:
 	virtual void OnDestroy() override;
 
 	void SetPicture(const Toshi::TPString8& a_rName);
+	void ResetPicture();
 
 	PGUITRRenderObject* GetRenderObject(TUINT a_uiIndex)
 	{

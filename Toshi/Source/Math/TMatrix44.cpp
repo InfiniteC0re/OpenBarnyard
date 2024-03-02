@@ -1,8 +1,6 @@
 #include "ToshiPCH.h"
 #include "TMatrix44.h"
 
-#include <DirectXMath.h>
-
 namespace Toshi
 {
 	TMatrix44 TMatrix44::IDENTITY(
@@ -27,14 +25,23 @@ namespace Toshi
 		m_f21 = m_f13 * m_f32 - m_f12 * m_f33;
 	}
 
-	void TMatrix44::LookAtDirection(const Toshi::TVector4& vec, const Toshi::TVector4& vec2)
+	void TMatrix44::LookAtDirection(const Toshi::TVector4& a_rDirection, const Toshi::TVector4& a_rUpAxis)
 	{
-		TVector4 v;
-		TVector4 v2;
-		v.ProjectNormalToPlane(vec2, vec);
-		v.Multiply(-1.0f);
-		v2.CrossProduct(v, vec);
-		Set(v2.x, v2.y, v2.z, 0.0f, v.x, v.y, v.z, 0.0f, vec.x, vec.y, vec.z, vec.w, m_f41, m_f42, m_f43, m_f44);
+		TVector4 vProjection;
+		TVector4 vCrossProduct;
+
+		vProjection.ProjectNormalToPlane(a_rUpAxis, a_rDirection);
+		vProjection.Multiply(-1.0f);
+		vCrossProduct.CrossProduct(vProjection, a_rDirection);
+
+		AsBasisVector4(0) = vCrossProduct;
+		AsBasisVector4(0).w = 0.0f;
+
+		AsBasisVector4(1) = vProjection;
+		AsBasisVector4(1).w = 0.0f;
+
+		AsBasisVector4(2) = a_rDirection;
+		AsBasisVector4(2).w = 0.0f;
 	}
 
 	void TMatrix44::Multiply(const TMatrix44& a_rLeft, const TMatrix44& a_rRight)
@@ -79,10 +86,10 @@ namespace Toshi
 
 	TBOOL TMatrix44::Invert(const TMatrix44& a_rRight)
 	{
-		assert(a_rRight.m_f14 == 0.0f);
-		assert(a_rRight.m_f24 == 0.0f);
-		assert(a_rRight.m_f34 == 0.0f);
-		assert(a_rRight.m_f44 == 1.0f);
+		TASSERT(a_rRight.m_f14 == 0.0f);
+		TASSERT(a_rRight.m_f24 == 0.0f);
+		TASSERT(a_rRight.m_f34 == 0.0f);
+		TASSERT(a_rRight.m_f44 == 1.0f);
 
 		float fVal1 = a_rRight.m_f22 * a_rRight.m_f33 - a_rRight.m_f23 * a_rRight.m_f32;
 		float fVal2 = -(a_rRight.m_f12 * a_rRight.m_f33 - a_rRight.m_f13 * a_rRight.m_f32);

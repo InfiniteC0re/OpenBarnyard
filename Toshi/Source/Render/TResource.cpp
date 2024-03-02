@@ -116,25 +116,28 @@ namespace Toshi {
 
 	TBOOL TResource::Recurse(t_RecurseCb a_pCallback, TResource* a_pResource, TBOOL a_bFlag, void* a_pUserData)
 	{
-		TResource* pResource = a_pResource;
+		TResource* pRes = a_pResource;
 
-		if (a_pResource)
+		if (TNULL != a_pResource)
 		{
-			TResource* pNext = pResource->Next();
+			TResource* pNext;
 
-			while (pNext != TNULL)
+			do
 			{
-				if (pNext == a_pResource || pNext == pResource || !a_bFlag)
+				pNext = pRes->Next();
+
+				if (pNext == a_pResource || pNext == pRes || !a_bFlag)
 					pNext = TNULL;
 
-				if (!a_pCallback(pResource, a_pUserData))
-					return TFALSE;
-				
-				if (pResource->Child() && !Recurse(a_pCallback, pResource->Child(), TTRUE, a_pUserData))
+				if (!a_pCallback(pRes, a_pUserData))
 					return TFALSE;
 
-				pResource = pNext;
-			}
+				if (pRes->Child() && !Recurse(a_pCallback, pRes->Child(), TTRUE, a_pUserData))
+					return TFALSE;
+
+				pRes = pNext;
+
+			} while (pNext != TNULL);
 		}
 
 		return TTRUE;

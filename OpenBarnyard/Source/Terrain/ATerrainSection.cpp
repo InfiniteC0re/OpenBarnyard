@@ -5,6 +5,13 @@
 #include "Assets/AMaterialLibraryManager.h"
 #include "Render/AWorldShader/AWorldMaterial.h"
 
+#include <Toshi/TScheduler.h>
+
+#ifdef TOSHI_SKU_WINDOWS
+#include "Platform/DX8/AWorldShader/AWorldMaterial_DX8.h"
+#include "Platform/DX8/AWorldShader/AWorldShader_DX8.h"
+#endif // TOSHI_SKU_WINDOWS
+
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
 // Note: Should be the last include!
@@ -12,6 +19,32 @@
 #include <Core/TMemoryDebugOn.h>
 
 TOSHI_NAMESPACE_USING
+
+void ATerrainSection::Draw(ATerrainLODType a_eLODType)
+{
+	TASSERT(a_eLODType != ATerrainLODType_None);
+
+	if (a_eLODType == ATerrainLODType_High && IsLODLoaded(ATerrainLODType_High))
+	{
+		// Draw models of the high LOD
+		for (TINT i = 0; i < m_iNumHighModelFiles; i++)
+		{
+			m_ppLODModelsData[ATerrainLODType_High][i]->Render();
+		}
+	}
+	else
+	{
+		// High LOD is still loading so let's check if we can render low LOD instead
+		if (IsLODLoaded(ATerrainLODType_Low))
+		{
+			// Draw models of the low LOD
+			for (TINT i = 0; i < m_iNumLowModelFiles; i++)
+			{
+				m_ppLODModelsData[ATerrainLODType_Low][i]->Render();
+			}
+		}
+	}
+}
 
 void ATerrainSection::LoadCollision()
 {
@@ -355,7 +388,8 @@ void ATerrainSection::SetLODEmpty(ATerrainLODType a_eLODType, TBOOL a_bEmpty)
 
 ATerrainSection::ModelNode::ModelNode() :
 	m_eFlags(MNF_NONE),
-	m_bCreated(TFALSE)
+	m_bCreated(TFALSE),
+	m_pAnimatedMaterial(TNULL)
 {
 	m_szType[0] = '\0';
 }
@@ -367,6 +401,35 @@ ATerrainSection::ModelNode::~ModelNode()
 	if (m_pModelInstance)
 	{
 		m_pModelInstance->Delete();
+	}
+}
+
+void ATerrainSection::ModelNode::Render()
+{
+	if (m_bCreated)
+	{
+		if (m_pAnimatedMaterial)
+		{
+			auto pScheduler = g_oSystemManager.GetScheduler();
+			auto pMaterial = AWorldMaterialHAL::Upcast(m_pAnimatedMaterial);
+
+			pMaterial->AddUVOffsetY(1, pScheduler->GetCurrentDeltaTime() * 0.02f);
+
+			if (1.0 <= pMaterial->GetUVOffsetY(1))
+				pMaterial->AddUVOffsetY(1, -1.0f);
+		}
+
+		auto pTerrain = ATerrain::GetSingleton();
+		auto pShader = AWorldShaderHAL::Upcast(AWorldShader::GetSingleton());
+
+		if (m_eFlags & MNF_USE_LIGHTING)
+			pShader->SetColours(pTerrain->GetLitShadowColor(), pTerrain->GetLitAmbientColor());
+
+		m_pModelInstance->EnableSkeletonUpdate();
+		m_pModelInstance->RenderIfVisible();
+
+		if (m_eFlags & MNF_USE_LIGHTING)
+			pShader->SetColours(pTerrain->GetDefaultShadowColor(), pTerrain->GetDefaultAmbientColor());
 	}
 }
 

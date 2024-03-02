@@ -93,11 +93,7 @@ namespace Toshi
 		static void CreateStaticData(TUINT a_uiMaxMaterials, TUINT a_uiMaxRenderPackets);
 
 		// Allocates render packet from the memory allocated by CreateStaticData
-		static TRenderPacket* AllocRenderPacket()
-		{
-			TRenderPacket* packet = &s_pRenderPackets[s_uiNumRenderPackets++];
-			return s_uiNumRenderPackets < s_uiMaxRenderPackets ? &s_pRenderPackets[s_uiNumRenderPackets] : TNULL;
-		}
+		static TRenderPacket* AllocRenderPacket();
 
 	public:
 		inline static TUINT s_uiMaxRenderPackets = 0;

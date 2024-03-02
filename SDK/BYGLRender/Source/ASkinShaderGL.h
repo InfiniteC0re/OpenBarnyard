@@ -462,8 +462,7 @@ public:
 			static Toshi::TMatrix44 s_BoneTransforms[28];
 			for (TINT k = 0; k < iSubMeshNumBones; k++)
 			{
-				*(DirectX::XMMATRIX*)(&s_BoneTransforms[k]) =
-					DirectX::XMMatrixTranspose(*(DirectX::XMMATRIX*)&pSkeletonInstance->GetBone(pSubMeshBones[k]).m_Transform);
+				D3DXMatrixTranspose(s_BoneTransforms[k], pSkeletonInstance->GetBone(pSubMeshBones[k]).m_Transform);
 			}
 
 			pShaderProgram->SetUniform("u_BoneTransforms", s_BoneTransforms, iSubMeshNumBones);

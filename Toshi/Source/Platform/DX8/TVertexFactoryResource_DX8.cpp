@@ -25,6 +25,8 @@ namespace Toshi {
 		TVALIDPTR(pVertexPool);
 
 		pVertexPool->Create(this, a_uiMaxStaticVertices, a_uiFlags);
+		CreatePool(a_uiMaxStaticVertices, a_uiFlags);
+
 		return pVertexPool;
 	}
 
@@ -32,7 +34,7 @@ namespace Toshi {
 	{
 		auto pVertexBlock = TSTATICCAST(
 			TVertexBlockResource*,
-			GetRenderer()->CreateResource(&TGetClass(TVertexPoolResource), TNULL, this)
+			GetRenderer()->CreateResource(&TGetClass(TVertexBlockResource), TNULL, this)
 		);
 
 		TVALIDPTR(pVertexBlock);

@@ -230,9 +230,9 @@ void AWorldShaderHAL::Render(TRenderPacket* a_pRenderPacket)
 		auto pCurrentContext = TRenderContextD3D::Upcast(pRenderInterface->GetCurrentContext());
 		auto pDevice = pRenderInterface->GetDirect3DDevice();
 
-		auto mMVP = DirectX::XMMatrixTranspose(
-			DirectX::XMMatrixMultiply(a_pRenderPacket->GetModelViewMatrix(), pCurrentContext->GetProjectionMatrix())
-		);
+		D3DXMATRIX mMVP;
+		D3DXMatrixMultiply(&mMVP, a_pRenderPacket->GetModelViewMatrix(), pCurrentContext->GetProjectionMatrix());
+		D3DXMatrixTranspose(&mMVP, &mMVP);
 
 		pDevice->SetVertexShaderConstant(0, &mMVP, 4);
 

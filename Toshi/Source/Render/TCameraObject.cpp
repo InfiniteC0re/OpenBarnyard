@@ -64,7 +64,7 @@ namespace Toshi {
 
 			TMatrix44 matrix;
 			m_TransformObject.GetLocalMatrixImp(matrix);
-			matrix.InvertOrthonormal();
+			matrix.InvertOrthogonal();
 
 			pRenderContext->SetWorldViewMatrix(matrix);
 			pRenderContext->SetModelViewMatrix(matrix);

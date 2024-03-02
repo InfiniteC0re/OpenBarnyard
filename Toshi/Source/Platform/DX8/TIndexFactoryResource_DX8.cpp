@@ -72,6 +72,8 @@ namespace Toshi {
 		TVALIDPTR(pIndexPool);
 
 		pIndexPool->Create(this, a_uiMaxStaticIndices, a_uiFlags);
+		CreatePool(a_uiMaxStaticIndices, a_uiFlags);
+
 		return pIndexPool;
 	}
 

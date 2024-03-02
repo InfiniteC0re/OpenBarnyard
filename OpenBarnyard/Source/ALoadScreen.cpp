@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "ALoadScreen.h"
+#include "GUI/AGUISystem.h"
 #include "GUI/AGUI2.h"
 #include "GUI/AGUI2TextureSectionManager.h"
 #include "GUI/AGUI2FontManager.h"
@@ -12,6 +13,11 @@
 // Note: Should be the last include!
 //-----------------------------------------------------------------------------
 #include <Core/TMemoryDebugOn.h>
+
+TOSHI_NAMESPACE_USING
+
+// Global definition
+ALoadScreen g_oLoadScreen;
 
 ALoadScreen::ALoadScreen()
 {
@@ -147,6 +153,41 @@ void ALoadScreen::Update(TFLOAT a_fDeltaTime, TBOOL a_bRender)
 			UpdateUI(a_bRender);
 		}
 	}
+}
+
+void ALoadScreen::ResetIndicators(TBOOL a_bRender)
+{
+	if (m_bIsLoadingScreen)
+	{
+		m_iNumCowIcons = 0;
+		m_iCowPos = 0;
+
+		UpdateUI(a_bRender);
+	}
+}
+
+void ALoadScreen::Reset()
+{
+	if (m_bFlag)
+	{
+		AGUISystem::GetSingleton()->SetPicture(TPString8());
+		AGUISystem::GetSingleton()->ResetPicture();
+	}
+
+	m_bFlag = TFALSE;
+	m_oTimer.Reset();
+	m_fTimer = 0.8f;
+
+	for (TUINT i = 0; i < NUM_LOAD_INDICATORS; i++)
+	{
+		auto pRectangle = &m_aRectangles[i];
+		pRectangle->Hide();
+	}
+
+	m_CanvasElement.Hide();
+	m_TextBox.Hide();
+
+	m_bIsLoadingScreen = TFALSE;
 }
 
 void ALoadScreen::UpdateUI(TBOOL a_bRender)

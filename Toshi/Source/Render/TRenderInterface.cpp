@@ -187,10 +187,9 @@ namespace Toshi {
 			}
 
 			m_Resources.Insert(parent, pResource);
-			pResource->SetUId(m_ResourceCount);
+			pResource->SetUId(m_ResourceCount++);
 			pResource->SetRenderer(this);
 			pResource->SetName(name);
-			m_ResourceCount += 1;
 
 			return pResource;
 		}

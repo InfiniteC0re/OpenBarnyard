@@ -1,7 +1,11 @@
 #include "pch.h"
 #include "AGameSystemManager.h"
 #include "Assets/AAssetStreaming.h"
+#include "Render/AModelRepos.h"
+#include "Cameras/ACameraManager.h"
 #include "Terrain/ATerrain.h"
+
+#include <Toshi/TScheduler.h>
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
@@ -11,9 +15,17 @@
 
 TDEFINE_CLASS(AGameSystemManager);
 
+TOSHI_NAMESPACE_USING
+
 TBOOL AGameSystemManager::OnCreate()
 {
 	TIMPLEMENT();
+
+	TGetClass(AModelRepos).CreateObject();
+
+	auto pScheduler = g_oSystemManager.GetScheduler();
+	pScheduler->CreateTask<ACameraManager>(this)->Create();
+
 	AAssetStreaming::CreateSingleton()->SetFlag(TFALSE);
 
 	return TTRUE;

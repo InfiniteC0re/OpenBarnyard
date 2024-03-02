@@ -184,6 +184,8 @@ namespace Toshi {
 				m_pIndices = new TIndexType[a_uiMaxIndices];
 				TVALIDPTR(m_pIndices);
 			}
+
+			return TTRUE;
 		}
 
 		return TFALSE;
@@ -218,7 +220,7 @@ namespace Toshi {
 			auto pIndexBlock = GetIndexBlock();
 			TVALIDPTR(pIndexBlock);
 
-			if (pIndexBlock->GetHALBuffer(a_pHALBuffer))
+			if (pIndexBlock->Validate() && pIndexBlock->GetHALBuffer(a_pHALBuffer))
 			{
 				a_pHALBuffer->uiIndexOffset = m_uiIndexOffset;
 				return TTRUE;

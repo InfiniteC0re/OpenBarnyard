@@ -35,6 +35,14 @@ public:
 	AWorldMaterialHAL* GetAlphaBlendMaterial() const { return m_pAlphaBlendMaterial; }
 	void SetAlphaBlendMaterial(AWorldMaterialHAL* val) { m_pAlphaBlendMaterial = val; }
 
+	TFLOAT GetUVOffsetX(TUINT a_uiTextureIndex) { TASSERT(a_uiTextureIndex < MAX_TEXTURES); return m_aUVOffsetsX[a_uiTextureIndex]; }
+	void SetUVOffsetX(TUINT a_uiTextureIndex, TFLOAT a_fOffset) { TASSERT(a_uiTextureIndex < MAX_TEXTURES); m_aUVOffsetsX[a_uiTextureIndex] = a_fOffset; }
+	void AddUVOffsetX(TUINT a_uiTextureIndex, TFLOAT a_fOffset) { TASSERT(a_uiTextureIndex < MAX_TEXTURES); m_aUVOffsetsX[a_uiTextureIndex] += a_fOffset; }
+
+	TFLOAT GetUVOffsetY(TUINT a_uiTextureIndex) { TASSERT(a_uiTextureIndex < MAX_TEXTURES); return m_aUVOffsetsY[a_uiTextureIndex]; }
+	void SetUVOffsetY(TUINT a_uiTextureIndex, TFLOAT a_fOffset) { TASSERT(a_uiTextureIndex < MAX_TEXTURES); m_aUVOffsetsY[a_uiTextureIndex] = a_fOffset; }
+	void AddUVOffsetY(TUINT a_uiTextureIndex, TFLOAT a_fOffset) { TASSERT(a_uiTextureIndex < MAX_TEXTURES); m_aUVOffsetsY[a_uiTextureIndex] += a_fOffset; }
+
 	static AWorldMaterialHAL* Upcast(Toshi::TMaterial* a_pMaterial)
 	{
 		TASSERT(a_pMaterial->IsA(&ms_oClass));

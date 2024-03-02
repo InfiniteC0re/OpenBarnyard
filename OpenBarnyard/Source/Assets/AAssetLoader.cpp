@@ -33,7 +33,7 @@ TBOOL AAssetLoader::Load(const TCHAR* a_szFileName, AAssetType a_eAssetType, TBO
 
 		while (AAssetStreaming::GetSingleton()->HasActiveJobs())
 		{
-			ALoadScreen::GetGlobalInstance()->Update(1.0f, TTRUE);
+			g_oLoadScreen.Update(1.0f, TTRUE);
 			Sleep(5);
 			AAssetStreaming::GetSingleton()->Update();
 		}

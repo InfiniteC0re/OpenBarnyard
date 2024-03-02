@@ -78,7 +78,7 @@ namespace Toshi {
 			UINT length = vertexFormat.m_aStreamFormats[i].m_uiVertexSize * m_uiMaxVertices;
 			DWORD usage = D3DUSAGE_WRITEONLY;
 
-			if (m_uiFlags & 1)
+			if (ISZERO(m_uiFlags & 1))
 			{
 				usage = D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY;
 				m_uiOffset = 0;

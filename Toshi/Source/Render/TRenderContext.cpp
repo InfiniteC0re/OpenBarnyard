@@ -42,6 +42,7 @@ namespace Toshi {
 		m_eClipFlags(0x3F),
 		m_eCameraMode(CameraMode_Perspective),
 		m_pCurrentSkeletonInstance(TNULL),
+		m_pCurrentCameraObject(TNULL),
 		m_AmbientColor(1.0f, 1.0f, 1.0f, 0.0f),
 		m_FogColor(1.0f, 1.0f, 1.0f, 0.0f),
 		m_fFogDistanceStart(10.0f),
@@ -86,6 +87,11 @@ namespace Toshi {
 		m_eFlags |= FLAG_DIRTY_VIEWMODELMATRIX | FLAG_DIRTY_WORLDMODELMATRIX;
 
 		m_AmbientColor.Set(0.0f, 0.0f, 0.0f, 0.0f);
+	}
+
+	TRenderContext::~TRenderContext()
+	{
+
 	}
 
 	void TRenderContext::SetModelViewMatrix(const TMatrix44& a_rMatrix)

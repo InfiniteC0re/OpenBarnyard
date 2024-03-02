@@ -44,15 +44,15 @@ public:
 
 public:
 	ATerrain(TINT a_iUnused1, TINT a_iUnused2, TINT a_iPreloadTerrainBlockSize, TINT a_iStartVISGroup);
-	
 	virtual ~ATerrain();
 
-	/* Updates the current state of terrain including loading. */
+	// Updates the current state of terrain including loading
 	void Update();
 
-	/**
-	 * @return TTRUE if no any assets are in loading at the current moment.
-	 */
+	// Renders current section
+	void Render();
+
+	// Return TTRUE if no any assets are in loading at the current moment
 	TBOOL IsLoaded() const;
 
 	/**
@@ -117,7 +117,12 @@ public:
 	AModelLoaderJob* GetFreeModelLoaderJob();
 	ASectionDoneJob* GetFreeSectionLoaderJob();
 
-	t_OnModelNodeReady GetOnModelNodeReadyCallback() const { return m_cbOnModelNodeReady; }
+	const Toshi::TVector4& GetDefaultShadowColor() const { return m_DefaultShadowColor; }
+	const Toshi::TVector4& GetDefaultAmbientColor() const { return m_DefaultAmbientColor; }
+	const Toshi::TVector4& GetLitShadowColor() const { return m_LitShadowColor; }
+	const Toshi::TVector4& GetLitAmbientColor() const { return m_LitAmbientColor; }
+
+	t_OnModelNodeReady GetOnModelNodeReadyCallback() const { return m_cbOnModelLoaded; }
 
 private:
 	void UpdateNightMaterials();
@@ -134,14 +139,15 @@ private:
 	inline static TBOOL ms_bAutoVIS = TFALSE;
 
 private:
-	Toshi::TVector4 m_Vector1;
-	Toshi::TVector4 m_Vector2;
-	Toshi::TVector4 m_Vector3;
-	Toshi::TVector4 m_Vector4;
-	// ...
+	Toshi::TVector4 m_LitShadowColor;
+	Toshi::TVector4 m_LitAmbientColor;
+	Toshi::TVector4 m_DefaultShadowColor;
+	Toshi::TVector4 m_DefaultAmbientColor;
+	TFLOAT m_fUnused3;
+	TBOOL m_bUnused4;
 	Toshi::T2SList<ATerrainSection::ModelNode> m_ModelDatas;
-	// ...
-	t_OnModelNodeReady m_cbOnModelNodeReady;
+	t_OnModelNodeReady m_cbOnCollsionModelLoaded;
+	t_OnModelNodeReady m_cbOnModelLoaded;
 	t_OnVISGroupChanged m_cbOnVISGroupChanged;
 	AModelLoaderJob m_aModelLoaderJobs[MAX_NUM_MODEL_LOADER_JOBS];
 	AMatLibLoaderJob m_aMatlibLoaderJobs[MAX_NUM_MATLIB_LOADER_JOBS];

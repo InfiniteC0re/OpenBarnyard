@@ -74,6 +74,9 @@ public:
 	TUINT GetAlphaRef() const { return m_iAlphaRef; }
 	void SetAlphaRef(TUINT val) { m_iAlphaRef = val; }
 
+	const Toshi::TVector4& GetShadowColour() const { return m_ShadowColour; }
+	const Toshi::TVector4& GetAmbientColour() const { return m_AmbientColour; }
+
 	Toshi::TOrderTable* GetOrderTable(TUINT a_uiIndex)
 	{
 		TASSERT(a_uiIndex < NUM_ORDER_TABLES);

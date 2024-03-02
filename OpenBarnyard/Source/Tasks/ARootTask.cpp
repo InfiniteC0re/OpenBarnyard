@@ -41,7 +41,7 @@ ARootTask::ARootTask()
 	TIMPLEMENT();
 
 	m_bStartedGame = TFALSE;
-	m_bTerrainIsReady = TFALSE;
+	m_bRenderWorld = TFALSE;
 	m_bPaused = TFALSE;
 	m_bStopRenderingScene = TFALSE;
 	m_bGameSystemCreated = TFALSE;
@@ -139,7 +139,7 @@ TBOOL ARootTask::OnUpdate(TFLOAT a_fDeltaTime)
 			}
 			else
 			{
-				ALoadScreen::GetGlobalInstance()->Create();
+				g_oLoadScreen.Create();
 				CreateGameSystem();
 				LoadFrontEnd();
 				return TTRUE;
@@ -148,7 +148,7 @@ TBOOL ARootTask::OnUpdate(TFLOAT a_fDeltaTime)
 	}
 
 	TTODO("FUN_00427e70");
-	ALoadScreen::GetGlobalInstance()->Update(1.0f, TTRUE);
+	g_oLoadScreen.Update(1.0f, TTRUE);
 
 	return TTRUE;
 }
@@ -280,15 +280,15 @@ void ARootTask::CreateGameSystem()
 	TIMPLEMENT();
 
 	AFadeManager::GetSingleton()->StopAllFades();
-	ALoadScreen::GetGlobalInstance()->StartLoading(9, TTRUE);
+	g_oLoadScreen.StartLoading(9, TTRUE);
 	
 	// ...
 	m_pGameSystemManager = g_oSystemManager.GetScheduler()->CreateTask<AGameSystemManager>(this);
 	m_pGameSystemManager->Create();
 
-	ALoadScreen::GetGlobalInstance()->Update(1.0f, TTRUE);
-	ALoadScreen::GetGlobalInstance()->Update(1.0f, TTRUE);
-	ALoadScreen::GetGlobalInstance()->Update(1.0f, TTRUE);
+	g_oLoadScreen.Update(1.0f, TTRUE);
+	g_oLoadScreen.Update(1.0f, TTRUE);
+	g_oLoadScreen.Update(1.0f, TTRUE);
 
 	// Reorder tasks?
 	if (m_pInputHandler)
@@ -326,15 +326,19 @@ void ARootTask::LoadFrontEnd()
 {
 	TIMPLEMENT();
 
-	ATerrainManager::SetTerrain(
-		ATerrainManager::Terrain_FrontEnd,
-		TTRUE,
-		TTRUE,
-		0,
-		0,
-		0,
-		0
-	);
-
+	ATerrainManager::SetTerrain(ATerrainManager::Terrain_FrontEnd, TTRUE, TTRUE, 0, 0, 0, 0);
 	ATerrainManager::StartLoading();
+
+	GetSingleton()->SetRenderWorld(TTRUE);
+
+	// Hide loading screen
+	g_oLoadScreen.Reset();
+	g_oLoadScreen.SetLoadingState(TFALSE, TTRUE);
+
+	// Fade screen from black
+	AFadeManager::GetSingleton()->StartFade(
+		AFade::Color(255, 0, 0, 0),
+		AFade::Color(0, 0, 0, 0),
+		1.0f
+	);
 }

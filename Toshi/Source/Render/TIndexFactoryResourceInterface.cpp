@@ -26,5 +26,11 @@ namespace Toshi {
 		return TResource::Create();
 	}
 
+	Toshi::TIndexPoolResourceInterface* TIndexFactoryResourceInterface::CreatePool(TUINT16 a_uiMaxStaticIndices, TUINT32 a_uiFlags)
+	{
+		m_uiNumPools += 1;
+		return TNULL;
+	}
+
 }
 

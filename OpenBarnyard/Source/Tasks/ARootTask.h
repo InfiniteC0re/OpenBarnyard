@@ -27,8 +27,10 @@ public:
 	TBOOL IsPaused() const;
 	TBOOL IsGameSystemCreated() const { return m_bGameSystemCreated; }
 
-	void SetTerrainReady(TBOOL a_bReady) { m_bTerrainIsReady = a_bReady; }
-	TBOOL IsTerrainReady() { return m_bTerrainIsReady; }
+	void SetRenderWorld(TBOOL a_bReady) { m_bRenderWorld = a_bReady; }
+	TBOOL IsRenderWorld() { return m_bRenderWorld; }
+
+	TBOOL ShouldRenderMainScene() const { return !m_bStopRenderingScene; }
 
 private:
 	void CreateGameSystem();
@@ -44,7 +46,7 @@ private:
 	TTask* m_pMoviePlayer;         // 0x3C
 	TTask* m_pGameSystemManager;   // 0x40
 	TTask* m_pSoundManager;        // 0x44
-	TBOOL m_bTerrainIsReady;       // 0x54
+	TBOOL m_bRenderWorld;          // 0x54
 	TBOOL m_bPaused;               // 0x55
 	TBOOL m_bStopRenderingScene;   // 0x56
 	TBOOL m_bGameSystemCreated;    // 0x57

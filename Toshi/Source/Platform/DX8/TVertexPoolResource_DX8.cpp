@@ -258,7 +258,7 @@ namespace Toshi {
 			auto pVertexBlock = GetVertexBlock();
 			TVALIDPTR(pVertexBlock);
 
-			if (pVertexBlock->GetHALBuffer(a_pHALBuffer))
+			if (pVertexBlock->Validate() && pVertexBlock->GetHALBuffer(a_pHALBuffer))
 			{
 				a_pHALBuffer->uiVertexOffset = m_uiVertexOffset;
 				return TTRUE;

@@ -1,9 +1,10 @@
 #include "pch.h"
 #include "AGUI2.h"
 #include "Assets/AAssetLoader.h"
+#include "Assets/AMaterialLibraryManager.h"
+#include "Cameras/ACameraManager.h"
 #include "AGUI2FontManager.h"
 #include "AGUI2TextureSectionManager.h"
-#include "Assets/AMaterialLibraryManager.h"
 
 #include <Toshi/TSystem.h>
 
@@ -28,7 +29,7 @@ AGUI2::AGUI2()
 
 	m_bShowMemStatsInfo = TTRUE;
 	m_bShowFPSInfo = TTRUE;
-	m_bShowPlayerInfo = TFALSE;
+	m_bShowPlayerInfo = TTRUE;
 	m_bShowTexturesInfo = TTRUE;
 }
 
@@ -103,10 +104,10 @@ TBOOL AGUI2::OnUpdate(TFLOAT a_fDeltaTime)
 
 		if (s_UpdateTimer >= 1.0f)
 		{
-			Toshi::TMemory::MemInfo memInfo;
-			Toshi::TMemory::GetSingleton()->GetMemInfo(memInfo, TNULL);
+			TMemory::MemInfo memInfo;
+			TMemory::GetSingleton()->GetMemInfo(memInfo, TNULL);
 
-			Toshi::TStringManager::String16Format(
+			TStringManager::String16Format(
 				m_wszMemStats,
 				TARRAYSIZE(m_wszMemStats),
 				L"Mem Used: %u, Free: %u\nHoles: %u, Largest: %u",
@@ -129,11 +130,11 @@ TBOOL AGUI2::OnUpdate(TFLOAT a_fDeltaTime)
 
 		if (s_UpdateTimer > 0.1f)
 		{
-			s_FPS = Toshi::g_oSystemManager.GetFPS();
+			s_FPS = g_oSystemManager.GetFPS();
 			s_UpdateTimer = 0.0f;
 		}
 
-		Toshi::TStringManager::String16Format(
+		TStringManager::String16Format(
 			m_wszFPS,
 			TARRAYSIZE(m_wszFPS),
 			L"FPS: %0.02f",
@@ -154,7 +155,44 @@ TBOOL AGUI2::OnUpdate(TFLOAT a_fDeltaTime)
 
 	if (m_bShowPlayerInfo)
 	{
-		TTODO("Debug info about player");
+		TWCHAR wszPlayerInfo[128];
+		TStringManager::String16Format(wszPlayerInfo, TARRAYSIZE(wszPlayerInfo), L"");
+		TTODO("Print debug info about player");
+
+		TWCHAR wszCameraInfo[128];
+		TStringManager::String16Format(wszCameraInfo, TARRAYSIZE(wszCameraInfo), L"");
+
+		auto pCameraManager = ACameraManager::GetSingleton();
+
+		if (TNULL != pCameraManager)
+		{
+			auto pCamera = pCameraManager->GetCurrentCamera();
+
+			if (pCamera)
+			{
+				auto vCamTranslation = pCamera->GetMatrix().GetTranslation4();
+
+				TStringManager::String16Format(
+					wszCameraInfo,
+					TARRAYSIZE(wszCameraInfo),
+					L"%s: (%0.02f, %0.02f, %0.02f)",
+					L"Cam",
+					vCamTranslation.x,
+					vCamTranslation.y,
+					vCamTranslation.z
+				);
+			}
+
+		}
+
+		TStringManager::String16Format(
+			m_wszPlayerInfo,
+			TARRAYSIZE(m_wszPlayerInfo),
+			L"%s",
+			wszCameraInfo
+		);
+
+		m_oPlayerInfo.SetText(m_wszPlayerInfo);
 	}
 
 	if (m_bShowTexturesInfo)
@@ -162,7 +200,7 @@ TBOOL AGUI2::OnUpdate(TFLOAT a_fDeltaTime)
 		auto iNumFreeTextures = AMaterialLibraryManager::GetSingleton()->GetNumFreeTextures();
 		auto iNumUsedTextures = AMaterialLibraryManager::GetSingleton()->GetNumUsedTextures();
 
-		Toshi::TStringManager::String16Format(
+		TStringManager::String16Format(
 			m_wszTexturesInfo,
 			TARRAYSIZE(m_wszTexturesInfo),
 			L"Textures: (F:%d,U:%d)/%d",

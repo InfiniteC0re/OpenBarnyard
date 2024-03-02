@@ -187,10 +187,10 @@ private:
 	inline static TBOOL ms_bAutoVIS = TFALSE;
 
 public:
-	Toshi::TVector4 m_Vector1;
-	Toshi::TVector4 m_Vector2;
-	Toshi::TVector4 m_ShadowColor;
-	Toshi::TVector4 m_AmbientColor;
+	Toshi::TVector4 m_LitShadowColor;
+	Toshi::TVector4 m_LitAmbientColor;
+	Toshi::TVector4 m_DefaultShadowColor;
+	Toshi::TVector4 m_DefaultAmbientColor;
 	char PAD1[8];
 	Toshi::T2SList<ATerrainSection::ModelNode> m_ModelDatas;
 	char PAD2[8];

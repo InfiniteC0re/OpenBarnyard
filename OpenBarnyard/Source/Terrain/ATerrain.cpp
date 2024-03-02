@@ -82,7 +82,11 @@ ATerrain::ATerrain(TINT a_iUnused1, TINT a_iUnused2, TINT a_iPreloadTerrainBlock
 	TTODO("Call FUN_00619040() and initialise some other values");
 	m_iCurrentSection = a_iStartVISGroup;
 	m_iPreviousSection = -1;
-	m_cbOnModelNodeReady = TNULL;
+	m_bUnused4 = TFALSE;
+	// ...
+	m_fUnused3 = 0.0f;
+	m_cbOnCollsionModelLoaded = TNULL;
+	m_cbOnModelLoaded = TNULL;
 	m_cbOnVISGroupChanged = TNULL;
 	m_fnGetCurrentVISGroup = GetCurrentSectionID;
 }
@@ -243,6 +247,65 @@ void ATerrain::Update()
 	}
 
 	FlushJobs();
+}
+
+static TFLOAT s_ShadowColor2Multiplier = 0.6f;
+
+void ATerrain::Render()
+{
+	m_pTerrainVIS->m_pPersistantTerrainBlock->UpdateLastAccessTime();
+
+	auto pRenderContext = TRenderInterface::GetSingleton()->GetCurrentContext();
+	auto pCameraObject = pRenderContext->GetCameraObject();
+
+	if (pCameraObject)
+	{
+		auto pWorldShader = AWorldShaderHAL::Upcast(AWorldShader::GetSingleton());
+
+		m_DefaultShadowColor = pWorldShader->GetShadowColour();
+		m_DefaultAmbientColor = pWorldShader->GetAmbientColour();
+
+		m_LitShadowColor.x = 0.5f;
+		m_LitShadowColor.y = 0.5f;
+		m_LitShadowColor.z = 0.3254902f;
+		m_LitShadowColor.w = 1.0f;
+		m_LitShadowColor.Multiply(s_ShadowColor2Multiplier);
+
+		m_LitAmbientColor = m_LitShadowColor;
+		m_bUnused4 = TFALSE;
+		m_fUnused3 = 1.0f;
+		m_bUnused4 = TTRUE;
+
+		auto pTerrainVIS = m_pTerrainVIS;
+
+		if (TNULL != pTerrainVIS)
+		{
+			// Reset current section if it is out of range
+			if (pTerrainVIS->m_iNumSections <= m_iCurrentSection || m_iCurrentSection < 0)
+			{
+				m_iCurrentSection = 0;
+			}
+
+			auto pSections = pTerrainVIS->m_pSections;
+			auto iCurrentSection = m_iCurrentSection;
+			auto pCurrentSection = &pSections[iCurrentSection];
+
+			if (TNULL == m_pOrderDVIS)
+			{
+				pCurrentSection->Draw(ATerrainLODType_High);
+			}
+
+			for (TINT i = 0; i < m_pTerrainVIS->m_iNumSections; i++)
+			{
+				ATerrainLODType eSectionVisibility = pCurrentSection->m_pVisibility[i];
+
+				if (eSectionVisibility != ATerrainLODType_None)
+				{
+					pSections[i].Draw(eSectionVisibility);
+				}
+			}
+		}
+	}
 }
 
 TBOOL ATerrain::IsLoaded() const
@@ -854,10 +917,10 @@ ATerrainSection::ModelNode* ATerrain::CreateModelInstance(ATerrainSection::Model
 
 	a_pModelNode->m_pModelInstance = pInstance;
 
-	pInstance->GetSomeVector().w = 1.0f;
-	pInstance->GetSomeVector().z = 1.0f;
-	pInstance->GetSomeVector().x = 10000000.0f;
-	pInstance->GetSomeVector().y = 10000001.0f;
+	pInstance->GetSomeVector1().x = 1.0f;
+	pInstance->GetSomeVector1().y = 1.0f;
+	pInstance->GetSomeVector2().x = 10000000.0f;
+	pInstance->GetSomeVector2().y = 10000001.0f;
 	pInstance->EnableSkeletonUpdate();
 	pInstance->EnableUnknown1();
 
@@ -956,7 +1019,7 @@ void ATerrainManager::SetTerrain(TINT a_eTerrain, TBOOL a_bLoadLater, TBOOL a_bP
 
 	if (a_eTerrain == ms_eCurrentLevel) return;
 
-	ARootTask::GetSingleton()->SetTerrainReady(TFALSE);
+	ARootTask::GetSingleton()->SetRenderWorld(TFALSE);
 	
 	if (ms_pCurrentTerrain)
 	{
@@ -988,7 +1051,7 @@ void ATerrainManager::SetTerrain(TINT a_eTerrain, TBOOL a_bLoadLater, TBOOL a_bP
 		StartLoading();
 	}
 
-	ARootTask::GetSingleton()->SetTerrainReady(TTRUE);
+	ARootTask::GetSingleton()->SetRenderWorld(TTRUE);
 }
 
 void ATerrainManager::StartLoading()
@@ -1011,7 +1074,7 @@ void ATerrainManager::StartLoading()
 		Sleep(20);
 
 		pTerrain->Update();
-		ALoadScreen::GetGlobalInstance()->Update();
+		g_oLoadScreen.Update();
 	}
 
 	pTerrain->m_bIsLoaded = TTRUE;

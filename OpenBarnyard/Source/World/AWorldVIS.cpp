@@ -186,7 +186,7 @@ void AWorldVis::RenderTreeIntersectNonRecurse(CellSphereTreeBranchNode* a_pNode,
 
 	CellSphereTreeBranchNode endNode;
 	endNode.m_BoundingSphere = TSphere(0.0f, 0.0f, 0.0f, 0.0f);
-	endNode.m_pRight = (CellSphereTreeBranchNode*)TAlignPointer(&pNode->GetLeafNode()->GetMeshIndex(pNode->GetLeafNode()->m_uiNumMeshes));
+	endNode.m_pRight = pNode->GetLeafNode()->End();
 
 	auto pStackValue1 = s_pStack + 0;
 	auto pStackValue2 = s_pStack + 1;
@@ -239,7 +239,7 @@ void AWorldVis::RenderTreeIntersectNonRecurse(CellSphereTreeBranchNode* a_pNode,
 							);
 						}
 
-						pStackValue2Node = (CellSphereTreeBranchNode*)TAlignPointer(&pStackValue2Node->GetLeafNode()->GetMeshIndex(pStackValue2Node->GetLeafNode()->m_uiNumMeshes));
+						pStackValue2Node = pStackValue2Node->GetLeafNode()->End();
 					}
 					else
 					{
@@ -249,15 +249,8 @@ void AWorldVis::RenderTreeIntersectNonRecurse(CellSphereTreeBranchNode* a_pNode,
 
 				a_pRenderData->pFrustum->iActivePlaneCount = iCurrentActivePlaneCount;
 			}
-			else if (eIntersectResult == FISR_NOT_VISIBLE)
-			{
-				// This node is not visible at all so just skip it
-				iNumVisibleSpheres--;
-				pStackValue2 = pStackValue1 - 1;
-				pStackValue2->pNextNode = pStackValue2->pNextNode->m_pRight;
-				pStackValue1 = pStackValue2;
-			}
-			else
+			
+			if (eIntersectResult == FISR_PARTIALLY_VISIBLE)
 			{
 				// This node is partially visible so let's
 				// check what leaf nodes are actually visible
@@ -266,6 +259,14 @@ void AWorldVis::RenderTreeIntersectNonRecurse(CellSphereTreeBranchNode* a_pNode,
 				pStackValue2->iInitialPlaneCount = a_pRenderData->pFrustum->iActivePlaneCount;
 				pStackValue2->pNextNode = pStackValue2Node->GetSubNode();
 				pStackValue2->pPrevNode = pStackValue2Node;
+				pStackValue1 = pStackValue2;
+			}
+			else
+			{
+				// Skip this node is already rendered or just not visible
+				iNumVisibleSpheres--;
+				pStackValue2 = pStackValue1 - 1;
+				pStackValue2->pNextNode = pStackValue2->pNextNode->m_pRight;
 				pStackValue1 = pStackValue2;
 			}
 		}

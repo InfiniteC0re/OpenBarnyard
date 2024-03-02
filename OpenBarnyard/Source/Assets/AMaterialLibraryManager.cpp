@@ -67,7 +67,7 @@ void AMaterialLibraryManager::LoadFromProperties(const PPropertyValue* a_pProper
 			}
 
 			LoadLibrary(matlibName, a_pTRB, TFALSE);
-			ALoadScreen::GetGlobalInstance()->Update(1.0f, TTRUE);
+			g_oLoadScreen.Update(1.0f, TTRUE);
 		}
 
 		TRenderInterface::GetSingleton()->FlushDyingResources();
@@ -78,7 +78,7 @@ void AMaterialLibraryManager::LoadFromProperties(const PPropertyValue* a_pProper
 			AGUI2TextureSectionManager::UpdateMaterials();
 		}
 
-		ALoadScreen::GetGlobalInstance()->Update(1.0f, TTRUE);
+		g_oLoadScreen.Update(1.0f, TTRUE);
 	}
 }
 

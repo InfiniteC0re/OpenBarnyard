@@ -11,6 +11,8 @@
 //-----------------------------------------------------------------------------
 #include <Core/TMemoryDebugOn.h>
 
+TOSHI_NAMESPACE_USING
+
 TDEFINE_CLASS(AGUISystem);
 
 TPSTRING8_DECLARE(Start);
@@ -118,4 +120,10 @@ void AGUISystem::SetPicture(const Toshi::TPString8& a_rName)
 		m_MatLibPicture.Create(a_rName);
 		m_MatLibPicture.SetHidden();
 	}
+}
+
+void AGUISystem::ResetPicture()
+{
+	m_MatLibPicture.Flush();
+	m_MatLibPicture.Create(TPString8());
 }

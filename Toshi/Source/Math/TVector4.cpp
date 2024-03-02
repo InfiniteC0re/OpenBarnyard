@@ -13,14 +13,20 @@ namespace Toshi
 
 	void TVector4::Normalise()
 	{
-		if (MagnitudeSq() != 0.0f)
+		TFLOAT fMagnitudeSq = MagnitudeSq();
+
+		if (fMagnitudeSq != 0.0f)
 		{
-			float magnitude = TMath::OneOverSqrt(MagnitudeSq());
-			Set({ x * magnitude, y * magnitude, z * magnitude, 1.0f });
+			TFLOAT fMultiplier = TMath::OneOverSqrt(fMagnitudeSq);
+			x *= fMultiplier;
+			y *= fMultiplier;
+			z *= fMultiplier;
 		}
 		else
 		{
-			Set({ 0.0f, 0.0f, 1.0f, 1.0f });
+			x = 0.0f;
+			y = 0.0f;
+			z = 1.0f;
 		}
 	}
 

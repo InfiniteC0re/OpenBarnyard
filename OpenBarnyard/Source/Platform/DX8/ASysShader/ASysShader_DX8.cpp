@@ -189,7 +189,7 @@ void ASysShaderHAL::Render(Toshi::TRenderPacket* pPacket)
 	pIndexPool->GetHALBuffer(&indexHALBuffer);
 
 	pDevice->SetStreamSource(0, vertexHALBuffer.apVertexBuffers[0], 24);
-	pDevice->SetIndices(indexHALBuffer.pIndexBuffer, indexHALBuffer.uiIndexOffset);
+	pDevice->SetIndices(indexHALBuffer.pIndexBuffer, vertexHALBuffer.uiVertexOffset);
 
 	if (ms_bRenderEnabled)
 	{

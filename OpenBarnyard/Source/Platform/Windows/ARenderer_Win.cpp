@@ -1,11 +1,14 @@
 #include "pch.h"
 #include "AppBoot.h"
 #include "Assets/AMaterialLibraryManager.h"
+#include "Assets/AModelLoader.h"
+#include "Render/AModelRepos.h"
+#include "Terrain/ATerrain.h"
 #include "GUI/AGUISystem.h"
 #include "GUI/AGUI2.h"
 #include "GUI/AGUI2TextureSectionManager.h"
-#include "Assets/AModelLoader.h"
 #include "Render/ARenderer.h"
+#include "Cameras/ACameraManager.h"
 #include "Input/AInputHandler.h"
 #include "Movie/AMoviePlayer.h"
 
@@ -31,7 +34,16 @@ TOSHI_NAMESPACE_USING
 TDEFINE_CLASS(ARenderer);
 
 ARenderer::ARenderer() :
-	m_RenderGUIEmitter(this)
+	m_RenderGUIEmitter(this),
+	m_AnimationUpdateStartEmitter(this),
+	m_AnimationUpdateEndEmitter(this),
+	m_pViewport(TNULL),
+	m_pCameraObject(TNULL),
+	m_pHALViewport1(TNULL),
+	m_pHALViewport2(TNULL),
+	m_bRenderGUI(TTRUE),
+	m_fNear(1.0f),
+	m_fFar(280.0f)
 {
 
 }
@@ -317,31 +329,131 @@ TBOOL ARenderer::OnCreate()
 	return bCreatedTRender;
 }
 
-TBOOL ARenderer::OnUpdate(float a_fDeltaTime)
+void ARenderer::UpdateMainCamera(const Toshi::TMatrix44& a_rTransformMatrix, const ACamera* a_pCamera)
+{
+	m_pCameraObject->SetProjectionCentreX(a_pCamera->m_fProjectionCentreX);
+	m_pCameraObject->SetProjectionCentreY(a_pCamera->m_fProjectionCentreY);
+	m_pCameraObject->SetFOV(a_pCamera->m_fFOV);
+	m_pCameraObject->GetTransformObject().SetMatrix(a_rTransformMatrix);
+	m_pCameraObject->SetFar(m_fFar);
+	m_pCameraObject->SetNear(m_fNear);
+}
+
+void ARenderer::RenderMainScene(TFLOAT a_fDeltaTime)
+{
+	if (ARootTask::GetSingleton()->ShouldRenderMainScene())
+	{
+		auto pViewport = m_pViewport;
+		auto pViewportContext = pViewport->GetRenderContext();
+		auto pCameraObject = m_pCameraObject;
+
+		pViewport->AllowDepthClear(TTRUE);
+
+		auto pRender = TRenderD3DInterface::Interface();
+		auto pOldContext = pRender->SetCurrentRenderContext(pViewportContext);
+
+		auto& rTransformStack = pRender->GetTransforms();
+		rTransformStack.Reset();
+		rTransformStack.Top().Identity();
+
+		pViewport->Begin();
+		pCameraObject->Render();
+
+		if (!ARootTask::GetSingleton()->IsPaused())
+		{
+			TBOOL bFlag1;
+			m_AnimationUpdateStartEmitter.Throw(&bFlag1);
+
+			AModelRepos::GetSingleton()->Update(a_fDeltaTime);
+			TTODO("AAnimatableObjectManager::UpdateAttachedObjects");
+
+			TBOOL bFlag2;
+			m_AnimationUpdateEndEmitter.Throw(&bFlag2);
+		}
+
+		pViewportContext->SetCameraObject(pCameraObject);
+		rTransformStack.Push(pViewportContext->GetWorldViewMatrix());
+		
+		pRender->FlushShaders();
+		pViewportContext->EnableFog(TTRUE);
+
+		if (ATerrain::GetSingleton())
+		{
+			ATerrain::GetSingleton()->Render();
+		}
+
+		pRender->FlushShaders();
+		rTransformStack.Pop();
+		pViewport->End();
+
+		//m_pHALViewport2->Begin();
+		//m_pHALViewport2->End();
+
+		pViewport->AllowBackgroundClear(TTRUE);
+		pViewport->AllowDepthClear(TTRUE);
+
+		pRender->SetCurrentRenderContext(pOldContext);
+	}
+}
+
+TBOOL ARenderer::OnUpdate(TFLOAT a_fDeltaTime)
 {
 	TIMPLEMENT();
 
-	auto pRenderer = TSTATICCAST(TRenderD3DInterface*, TRenderInterface::GetSingleton());
+	auto pRender = TRenderD3DInterface::Interface();
 
 	if (g_oTheApp.IsDestroyed())
-	{
 		return TTRUE;
-	}
 
-	pRenderer->Update(a_fDeltaTime);
+	TBOOL bMoviePlaying = AMoviePlayer::IsSingletonCreated() && AMoviePlayer::GetSingleton()->IsMoviePlaying();
 
-	if (!g_oSystemManager.IsPaused())
+	pRender->Update(a_fDeltaTime);
+
+	if (g_oSystemManager.IsPaused())
+		return TFALSE;
+
+	auto pRootTask = ARootTask::GetSingleton();
+
+	if (pRootTask->IsGameSystemCreated())
 	{
-		pRenderer->BeginScene();
+		auto pRenderContext = TRenderInterface::GetSingleton()->GetCurrentContext();
 
-		if (AMoviePlayer::IsSingletonCreated() && AMoviePlayer::GetSingleton()->IsMoviePlaying())
+		pRender->BeginScene();
+
+		if (bMoviePlaying)
 		{
 			AMoviePlayer::GetSingleton()->Render(a_fDeltaTime);
 		}
+		else if (pRootTask->IsRenderWorld())
+		{
+			const ACamera* pCamera = ACameraManager::GetSingleton()->GetCurrentCamera();
+			const TMatrix44 oCamMatrix = pCamera->GetMatrix();
 
-		RenderGUI();
+			UpdateMainCamera(oCamMatrix, pCamera);
+			m_pViewport->AllowDepthClear(TFALSE);
 
-		pRenderer->EndScene();
+			pRenderContext->EnableFog(TTRUE);
+			RenderMainScene(a_fDeltaTime);
+		}
+
+		if (m_bRenderGUI)
+			RenderGUI();
+
+		pRender->EndScene();
+		return TTRUE;
+	}
+	else
+	{
+		pRender->BeginScene();
+
+		if (bMoviePlaying)
+			AMoviePlayer::GetSingleton()->Render(a_fDeltaTime);
+
+		if (m_bRenderGUI)
+			RenderGUI();
+
+		pRender->EndScene();
+		return TTRUE;
 	}
 }
 

@@ -26,14 +26,16 @@ namespace Toshi {
 		void EnableUnknown1() { m_eFlags |= 4; }
 		void DisableUnknown1() { m_eFlags &= ~4; }
 
-		TVector4& GetSomeVector() { return m_SomeVector; }
+		TVector2& GetSomeVector1() { return m_SomeVector1; }
+		TVector2& GetSomeVector2() { return m_SomeVector2; }
 
 	private:
 		TModelPtr* m_pModelRef = TNULL;
 		TModelInstance* m_pModelInstance = TNULL;
 		TTransformObject m_TransformObject;
 		// ...
-		TVector4 m_SomeVector;
+		TVector2 m_SomeVector1;
+		TVector2 m_SomeVector2;
 		// ...
 		TUINT8 m_eFlags = 3;
 	};

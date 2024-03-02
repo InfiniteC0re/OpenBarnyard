@@ -2,7 +2,7 @@
 #include "Math/TVector3.h"
 #include "Math/TVector2.h"
 
-#include <DirectXMath.h>
+#include <d3dx8math.h>
 
 namespace Toshi
 {
@@ -192,23 +192,6 @@ namespace Toshi
 
 		TVector2& AsVector2() { return TREINTERPRETCAST(TVector2&, *this); }
 		const TVector2& AsVector2() const { return TREINTERPRETCAST(const TVector2&, *this); }
-
-		// DirectX Math
-
-		TVector4(const DirectX::XMFLOAT4& vector)
-		{
-			*(DirectX::XMFLOAT4*)this = vector;
-		}
-
-		TVector4(const DirectX::XMVECTOR& vector)
-		{
-			*(DirectX::XMVECTOR*)this = vector;
-		}
-
-		const DirectX::XMVECTOR& XMM() const
-		{
-			return *(DirectX::XMVECTOR*)this;
-		}
 
 	public:
 		static TFLOAT Distance(const TVector4& vec1, const TVector4& vec2) { return (vec2 - vec1).Magnitude(); }

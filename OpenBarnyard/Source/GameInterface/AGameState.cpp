@@ -121,7 +121,7 @@ void AGameState::Unknown12(void* a_pUnk1, void* a_pUnk2)
 
 TFLOAT AGameState::GetFOV()
 {
-	return ACamera::s_fCurrentFOV;
+	return ACamera::sm_fCurrentFOV;
 }
 
 TBOOL AGameState::OnUpdate(TFLOAT a_fDeltaTime)

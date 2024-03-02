@@ -25,12 +25,9 @@ public:
 	void StartLoading(TINT a_iUnused, TBOOL a_bRender);
 	void SetLoadingState(TBOOL a_bIsLoading, TBOOL a_bUpdateUI);
 	void Update(TFLOAT a_fDeltaTime = 1.0f, TBOOL a_bRender = TTRUE);
-
-	static ALoadScreen* GetGlobalInstance()
-	{
-		static ALoadScreen s_Instance;
-		return &s_Instance;
-	}
+	void ResetIndicators(TBOOL a_bRender);
+	
+	void Reset();
 
 private:
 	void UpdateUI(TBOOL a_bRender);
@@ -51,3 +48,5 @@ private:
 	TFLOAT m_fTimer;
 	TFLOAT m_fTotalTime;
 };
+
+extern ALoadScreen g_oLoadScreen;

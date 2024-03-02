@@ -27,6 +27,13 @@ namespace Toshi {
 		}
 	}
 
+	TRenderPacket* TOrderTable::AllocRenderPacket()
+	{
+		TASSERT(s_uiNumRenderPackets + 1 < s_uiMaxRenderPackets);
+		TRenderPacket* packet = &s_pRenderPackets[s_uiNumRenderPackets++];
+		return s_uiNumRenderPackets < s_uiMaxRenderPackets ? &s_pRenderPackets[s_uiNumRenderPackets] : TNULL;
+	}
+
 	TOrderTable::TOrderTable()
 	{
 		m_pLastRegMat = TNULL;

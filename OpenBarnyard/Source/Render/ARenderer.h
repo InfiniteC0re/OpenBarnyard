@@ -1,4 +1,5 @@
 #pragma once
+#include "Cameras/ACamera.h"
 
 #ifdef TOSHI_SKU_WINDOWS
 #include "Platform/Windows/ADisplayModes_Win.h"
@@ -21,10 +22,12 @@ public:
 	ARenderer();
 
 	virtual TBOOL OnCreate() override;
-	virtual TBOOL OnUpdate(float a_fDeltaTime) override;
+	virtual TBOOL OnUpdate(TFLOAT a_fDeltaTime) override;
 
 	TBOOL CreateTRender();
 	TBOOL CreateTRenderResources();
+
+	void UpdateMainCamera(const Toshi::TMatrix44& a_rTransformMatrix, const ACamera* a_pCamera);
 
 	void ForceUpdate30FPS();
 
@@ -36,6 +39,7 @@ public:
 private:
 	void CreateMainViewport();
 	void RenderGUI();
+	void RenderMainScene(TFLOAT a_fDeltaTime);
 
 private:
 	Toshi::TViewport* m_pViewport;
@@ -45,8 +49,9 @@ private:
 	TFLOAT m_fFar;
 	TFLOAT m_fNear;
 	TUINT32 m_eScreenCaptureStatus;
-	Toshi::TGenericEmitter m_AnimationUpdateStartEmitter;
-	Toshi::TGenericEmitter m_AnimationUpdateEndEmitter;
+	Toshi::TEmitter<ARenderer, TBOOL*> m_AnimationUpdateStartEmitter;
+	Toshi::TEmitter<ARenderer, TBOOL*> m_AnimationUpdateEndEmitter;
 	Toshi::TEmitter<ARenderer, TINT> m_RenderGUIEmitter;
+	TBOOL m_bRenderGUI;
 	ADisplayModes_Win m_DisplayModes;
 };
