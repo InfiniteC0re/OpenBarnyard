@@ -8,6 +8,7 @@ namespace Toshi {
 	{
 	public:
 		T2ModelInstance();
+		~T2ModelInstance();
 
 		void Create(TModelPtr* a_pModelPtr);
 		void Delete();

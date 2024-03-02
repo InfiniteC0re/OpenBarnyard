@@ -253,17 +253,55 @@ namespace Toshi{
 
 		static void TransformVector(TVector3& a_rOutVector, const TMatrix44& a_rMatrix, const TVector3& a_rVector)
 		{
+			TFLOAT fVar1 = a_rMatrix.m_f32;
+			TFLOAT fVar2 = a_rVector.z;
+			TFLOAT fVar3 = a_rMatrix.m_f12;
+			TFLOAT fVar4 = a_rVector.x;
+			TFLOAT fVar5 = a_rMatrix.m_f22;
+			TFLOAT fVar6 = a_rVector.y;
+			TFLOAT fVar7 = a_rMatrix.m_f42;
+			TFLOAT fVar8 = a_rMatrix.m_f33;
+			TFLOAT fVar9 = a_rVector.z;
+			TFLOAT fVar10 = a_rMatrix.m_f13;
+			TFLOAT fVar11 = a_rVector.x;
+			TFLOAT fVar12 = a_rMatrix.m_f23;
+			TFLOAT fVar13 = a_rVector.y;
+			TFLOAT fVar14 = a_rMatrix.m_f43;
 			a_rOutVector.x = a_rMatrix.m_f11 * a_rVector.x + a_rMatrix.m_f21 * a_rVector.y + a_rMatrix.m_f31 * a_rVector.z + a_rMatrix.m_f41;
-			a_rOutVector.y = a_rMatrix.m_f12 * a_rVector.x + a_rMatrix.m_f22 * a_rVector.y + a_rMatrix.m_f32 * a_rVector.z + a_rMatrix.m_f42;
-			a_rOutVector.z = a_rMatrix.m_f13 * a_rVector.x + a_rMatrix.m_f23 * a_rVector.y + a_rMatrix.m_f33 * a_rVector.z + a_rMatrix.m_f43;
+			a_rOutVector.y = fVar5 * fVar6 + fVar3 * fVar4 + fVar1 * fVar2 + fVar7;
+			a_rOutVector.z = fVar12 * fVar13 + fVar10 * fVar11 + fVar8 * fVar9 + fVar14;
 		}
 
 		static void TransformVector(TVector4& a_rOutVector, const TMatrix44& a_rMatrix, const TVector4& a_rVector)
 		{
-			a_rOutVector.x = a_rMatrix.m_f11 * a_rVector.x + a_rMatrix.m_f21 * a_rVector.y + a_rMatrix.m_f31 * a_rVector.z + a_rMatrix.m_f41 * a_rVector.w;
-			a_rOutVector.y = a_rMatrix.m_f12 * a_rVector.x + a_rMatrix.m_f22 * a_rVector.y + a_rMatrix.m_f32 * a_rVector.z + a_rMatrix.m_f42 * a_rVector.w;
-			a_rOutVector.z = a_rMatrix.m_f13 * a_rVector.x + a_rMatrix.m_f23 * a_rVector.y + a_rMatrix.m_f33 * a_rVector.z + a_rMatrix.m_f43 * a_rVector.w;
-			a_rOutVector.w = a_rMatrix.m_f14 * a_rVector.x + a_rMatrix.m_f24 * a_rVector.y + a_rMatrix.m_f34 * a_rVector.z + a_rMatrix.m_f44 * a_rVector.w;
+			TFLOAT fVar1 = a_rMatrix.m_f42;
+			TFLOAT fVar2 = a_rVector.w;
+			TFLOAT fVar3 = a_rMatrix.m_f12;
+			TFLOAT fVar4 = a_rVector.x;
+			TFLOAT fVar5 = a_rMatrix.m_f32;
+			TFLOAT fVar6 = a_rVector.z;
+			TFLOAT fVar7 = a_rMatrix.m_f22;
+			TFLOAT fVar8 = a_rVector.y;
+			TFLOAT fVar9 = a_rMatrix.m_f43;
+			TFLOAT fVar10 = a_rVector.w;
+			TFLOAT fVar11 = a_rMatrix.m_f13;
+			TFLOAT fVar12 = a_rVector.x;
+			TFLOAT fVar13 = a_rMatrix.m_f33;
+			TFLOAT fVar14 = a_rVector.z;
+			TFLOAT fVar15 = a_rMatrix.m_f23;
+			TFLOAT fVar16 = a_rVector.y;
+			TFLOAT fVar17 = a_rMatrix.m_f41;
+			TFLOAT fVar18 = a_rVector.w;
+			TFLOAT fVar19 = a_rMatrix.m_f31;
+			TFLOAT fVar20 = a_rVector.z;
+			TFLOAT fVar21 = a_rMatrix.m_f21;
+			TFLOAT fVar22 = a_rVector.y;
+			TFLOAT fVar23 = a_rMatrix.m_f11;
+			TFLOAT fVar24 = a_rVector.x;
+			a_rOutVector.w = a_rMatrix.m_f24 * a_rVector.y + a_rMatrix.m_f34 * a_rVector.z + a_rMatrix.m_f14 * a_rVector.x + a_rMatrix.m_f44 * a_rVector.w;
+			a_rOutVector.x = fVar23 * fVar24 + fVar21 * fVar22 + fVar19 * fVar20 + fVar17 * fVar18;
+			a_rOutVector.y = fVar7 * fVar8 + fVar5 * fVar6 + fVar3 * fVar4 + fVar1 * fVar2;
+			a_rOutVector.z = fVar15 * fVar16 + fVar13 * fVar14 + fVar11 * fVar12 + fVar9 * fVar10;
 		}
 
 		void operator=(const TMatrix44& a_rMatrix)

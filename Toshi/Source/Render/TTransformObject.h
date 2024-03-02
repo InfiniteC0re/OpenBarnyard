@@ -15,6 +15,7 @@ public:
 
 public:
 	TTransformObject();
+	~TTransformObject();
 
 	void Push();
 	void Pop();

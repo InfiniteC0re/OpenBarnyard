@@ -33,7 +33,7 @@ namespace Toshi
 	void TVector4::ProjectNormalToPlane(const TVector4& vec, const TVector4& vec2)
 	{
 		TVector4 crossProduct;
-		crossProduct.CrossProduct(vec, vec2);
+		crossProduct.CrossProduct(vec2, vec);
 		CrossProduct(crossProduct, vec2);
 		Normalise();
 	}

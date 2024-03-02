@@ -371,8 +371,8 @@ void ARenderer::RenderMainScene(TFLOAT a_fDeltaTime)
 			m_AnimationUpdateEndEmitter.Throw(&bFlag2);
 		}
 
-		pViewportContext->SetCameraObject(pCameraObject);
 		rTransformStack.Push(pViewportContext->GetWorldViewMatrix());
+		pViewportContext->SetCameraObject(pCameraObject);
 		
 		pRender->FlushShaders();
 		pViewportContext->EnableFog(TTRUE);

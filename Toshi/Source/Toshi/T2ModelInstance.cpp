@@ -15,6 +15,11 @@ namespace Toshi {
 		m_SomeVector2.y = 1.0f;
 	}
 
+	T2ModelInstance::~T2ModelInstance()
+	{
+
+	}
+
 	void T2ModelInstance::Create(TModelPtr* a_pModelPtr)
 	{
 		m_eFlags |= 0b00001000;

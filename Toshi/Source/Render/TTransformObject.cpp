@@ -11,7 +11,7 @@
 namespace Toshi {
 
 	TTransformObject::TTransformObject() :
-		m_eMode(Mode::Matrix),
+		m_eMode(Mode::Quat),
 		m_Quat(TQuaternion::IDENTITY),
 		m_Translation(TVector3::VEC_ZERO),
 		m_Scale(1.0f, 1.0f, 1.0f)
@@ -19,6 +19,11 @@ namespace Toshi {
 		m_EulerOrder[0] = 2;
 		m_EulerOrder[1] = 1;
 		m_EulerOrder[2] = 0;
+	}
+
+	TTransformObject::~TTransformObject()
+	{
+
 	}
 
 	void TTransformObject::Push()
@@ -86,35 +91,36 @@ namespace Toshi {
 		{
 			outMatrix.SetFromQuaternion(m_Quat);
 			outMatrix.SetTranslation(m_Translation);
+			outMatrix.Scale(m_Scale.x, m_Scale.y, m_Scale.z);
 		}
 		else if (m_eMode == Mode::Euler)
 		{
 			outMatrix.Identity();
-			outMatrix.SetTranslation(m_Translation);
+			outMatrix.SetTranslation(GetTranslation());
 
 			for (TINT i = 0; i < 3; i++)
 			{
 				switch (m_EulerOrder[i])
 				{
 				case 0:
-					RotateX(m_Euler.x);
+					outMatrix.RotateX(m_Euler.x);
 					break;
 				case 1:
-					RotateY(m_Euler.y);
+					outMatrix.RotateY(m_Euler.y);
 					break;
 				case 2:
-					RotateZ(m_Euler.z);
+					outMatrix.RotateZ(m_Euler.z);
 					break;
 				}
 			}
+
+			outMatrix.Scale(m_Scale.x, m_Scale.y, m_Scale.z);
 		}
 		else
 		{
 			TASSERT(m_eMode == Mode::Matrix);
 			outMatrix = m_Matrix;
 		}
-
-		m_Matrix.Scale(m_Scale.x, m_Scale.y, m_Scale.z);
 	}
 
 	void TTransformObject::SetEuler(const TVector3& a_rEuler)
