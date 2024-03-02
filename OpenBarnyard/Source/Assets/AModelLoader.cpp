@@ -93,7 +93,7 @@ AModelLoader::AModelLoader()
 	{
 		auto pWorldMaterial = AWorldShader::GetSingleton()->CreateMaterial(TNULL);
 		pWorldMaterial->Create(6);
-		pWorldMaterial->SetFlags(TMaterial::Flags_NO_CULL, TFALSE);
+		pWorldMaterial->SetFlags(TMaterial::FLAGS_NO_CULL, TFALSE);
 		pWorldMaterial->SetTexture(0, TNULL);
 		pWorldMaterial->SetTextureNum(1);
 
@@ -108,7 +108,7 @@ void AModelLoader::MaterialApplyFlags(Toshi::TMaterial* a_pMaterial, const TCHAR
 	{
 		if (TStringManager::String8Compare(ms_pGlowMaterials[i], a_szMaterialName) == 0)
 		{
-			a_pMaterial->SetFlags(TMaterial::Flags_Glow, TTRUE);
+			a_pMaterial->SetFlags(TMaterial::FLAGS_GLOW, TTRUE);
 			break;
 		}
 	}
@@ -118,7 +118,7 @@ void AModelLoader::MaterialApplyFlags(Toshi::TMaterial* a_pMaterial, const TCHAR
 	{
 		if (TStringManager::String8Compare(ms_pDoubleSidedMaterials[i], a_szMaterialName) == 0)
 		{
-			a_pMaterial->SetFlags(TMaterial::Flags_NO_CULL, TTRUE);
+			a_pMaterial->SetFlags(TMaterial::FLAGS_NO_CULL, TTRUE);
 			break;
 		}
 	}

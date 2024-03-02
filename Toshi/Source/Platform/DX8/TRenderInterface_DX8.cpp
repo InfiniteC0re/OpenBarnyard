@@ -319,20 +319,14 @@ namespace Toshi {
 		}
 	}
 
-	TBOOL TRenderD3DInterface::CreateVertexShader(const char* a_szFileName, const DWORD* a_pFunction, DWORD* a_pOutVertexShader)
+	TBOOL TRenderD3DInterface::CreateVertexShader(const DWORD* a_ShaderDeclaration, const DWORD* a_pFunction, DWORD* a_pOutVertexShader)
 	{
 		auto pD3DDevice = Interface()->GetDirect3DDevice();
 		auto pCurrentDevice = Interface()->GetCurrentDevice();
 		auto bSupportsHardwareTransformations = pCurrentDevice->SupportsHardwareTransfomations();
-		
-		static constexpr DWORD s_ShaderDeclaration[] =
-		{
-			   0x20000000,    0x40020000,    0x40020001,    0x40020002,
-			   0x40010003,    0xFFFFFFFF
-		};
 
 		HRESULT hRes = pD3DDevice->CreateVertexShader(
-			s_ShaderDeclaration,
+			a_ShaderDeclaration,
 			a_pFunction,
 			a_pOutVertexShader,
 			!bSupportsHardwareTransformations ? D3DCREATE_PUREDEVICE : 0

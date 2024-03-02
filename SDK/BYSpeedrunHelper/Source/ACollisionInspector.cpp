@@ -83,7 +83,7 @@ TBOOL ACollisionInspector::AModelLoader_LoadTRBCallback(Toshi::TModel* a_pModel)
 					ms_pCollisionMaterial = ASysShader::GetSingleton()->CreateMaterial("collision");
 					ms_pCollisionMaterial->SetBlendMode(ASysMaterial::BLENDMODE_1);
 					ms_pCollisionMaterial->SetTexture(pRender->GetInvalidTexture());
-					ms_pCollisionMaterial->SetFlags(Toshi::TMaterial::Flags_NO_CULL, TTRUE);
+					ms_pCollisionMaterial->SetFlags(Toshi::TMaterial::FLAGS_NO_CULL, TTRUE);
 				}
 
 				for (TINT j = 0; j < a_pModel->GetNumLODs(); j++)

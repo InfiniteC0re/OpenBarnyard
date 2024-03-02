@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "AWorldMesh.h"
+#include "ASkinMesh.h"
 #include "Assets/AModelLoader.h"
 
 #include <Render/TRenderInterface.h>
@@ -12,17 +12,27 @@
 
 TOSHI_NAMESPACE_USING
 
-TDEFINE_CLASS_NORUNTIME(AWorldMesh);
+TDEFINE_CLASS_NORUNTIME(ASkinMesh);
 
-AWorldMesh::AWorldMesh() :
-	m_uiFlags(0),
-	m_uiMaxVertices(0),
-	m_pVertexPool(TNULL)
+ASkinSubMesh::ASkinSubMesh() :
+	uiUnknown(0),
+	pIndexPool(TNULL),
+	uiNumVertices(0),
+	uiNumBones(0)
 {
-	
+
 }
 
-TBOOL AWorldMesh::Validate()
+ASkinSubMesh::~ASkinSubMesh()
+{
+	if (pIndexPool)
+	{
+		pIndexPool->DestroyResource();
+		pIndexPool = TNULL;
+	}
+}
+
+TBOOL ASkinMesh::Validate()
 {
 	if (!IsValidated())
 	{
@@ -35,25 +45,30 @@ TBOOL AWorldMesh::Validate()
 	return TTRUE;
 }
 
-void AWorldMesh::Invalidate()
+void ASkinMesh::Invalidate()
 {
 	BaseClass::Invalidate();
 }
 
-void AWorldMesh::OnDestroy()
+TBOOL ASkinMesh::Render()
+{
+	return TTRUE;
+}
+
+void ASkinMesh::OnDestroy()
 {
 	AModelLoader::DestroyMaterial(m_pMaterial);
 	DestroyResource();
-
 	BaseClass::OnDestroy();
 }
 
-void AWorldMesh::Create(TUINT32 a_uiFlags, TUINT16 a_uiMaxVertices)
+void ASkinMesh::Create(TUINT32 a_uiFlags, TUINT16 a_uiMaxVertices, TUINT16 a_uiNumSubMeshes)
 {
 	TASSERT(!IsCreated());
 
 	m_uiMaxVertices = a_uiMaxVertices;
 	m_uiFlags = a_uiFlags;
+	m_uiNumSubMeshes = a_uiNumSubMeshes;
 
 	if (CreateResource())
 	{
@@ -61,11 +76,11 @@ void AWorldMesh::Create(TUINT32 a_uiFlags, TUINT16 a_uiMaxVertices)
 	}
 	else
 	{
-		TASSERT(!"Couldn't create AWorldMesh");
+		TASSERT(!"Couldn't create ASkinMesh");
 	}
 }
 
-TBOOL AWorldMesh::Lock(LockBuffer& a_rLockBuffer)
+TBOOL ASkinMesh::Lock(LockBuffer& a_rLockBuffer)
 {
 	if (m_pVertexPool->Lock(&a_rLockBuffer))
 	{
@@ -76,7 +91,7 @@ TBOOL AWorldMesh::Lock(LockBuffer& a_rLockBuffer)
 	return TFALSE;
 }
 
-void AWorldMesh::Unlock(TUINT32 a_uiNumVertices)
+void ASkinMesh::Unlock(TUINT32 a_uiNumVertices)
 {
 	if (TINT16(a_uiNumVertices) == -1)
 	{
@@ -87,23 +102,23 @@ void AWorldMesh::Unlock(TUINT32 a_uiNumVertices)
 	m_uiFlags &= ~FLAG_LOCKED;
 }
 
-TVertexPoolResourceInterface* AWorldMesh::GetVertexPool()
+Toshi::TVertexPoolResourceInterface* ASkinMesh::GetVertexPool()
 {
 	return m_pVertexPool;
 }
 
-TBOOL AWorldMesh::CreateResource()
+TBOOL ASkinMesh::CreateResource()
 {
-	auto pVertexFactory = TRenderInterface::GetSingleton()->GetSystemResource<TVertexFactoryResourceInterface>(SYSRESOURCE_VFWORLD);
+	auto pVertexFactory = TRenderInterface::GetSingleton()->GetSystemResource<TVertexFactoryResourceInterface>(SYSRESOURCE_VFSKIN);
 	TVALIDPTR(pVertexFactory);
 
 	m_pVertexPool = pVertexFactory->CreatePoolResource(m_uiMaxVertices, 1);
-	m_pSubMeshes.Create(NUM_SUBMESHES);
+	m_pSubMeshes.Create(m_uiNumSubMeshes);
 
 	return TTRUE;
 }
 
-void AWorldMesh::DestroyResource()
+void ASkinMesh::DestroyResource()
 {
 	if (m_pVertexPool)
 	{

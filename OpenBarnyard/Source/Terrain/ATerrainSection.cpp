@@ -462,7 +462,7 @@ void ATerrainSection::ModelNode::SetGlow(TBOOL a_bIsGlow)
 				auto pMaterial = AWorldMaterial::Upcast(pMesh->GetMaterial());
 
 				pMesh->SetFlags(TMesh::State_Glow, TTRUE);
-				pMaterial->SetFlags(TMaterial::Flags_Glow, a_bIsGlow);
+				pMaterial->SetFlags(TMaterial::FLAGS_GLOW, a_bIsGlow);
 				pMaterial->SetBlendMode(3);
 			}
 		}

@@ -49,6 +49,8 @@ TBOOL ACameraManager::OnUpdate(TFLOAT a_fDeltaTime)
 	rvTranslation.y = -15 + sin(s_fTime / 3.0f) * 10.0f;
 
 	m_pCurrentCamera->LookAtDirection(vLookDirection);
+
+	return TTRUE;
 }
 
 ACamera* ACameraManager::GetCamera(TUINT a_uiCameraIndex) const

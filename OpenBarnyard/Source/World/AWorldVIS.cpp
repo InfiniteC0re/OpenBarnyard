@@ -200,6 +200,7 @@ void AWorldVis::RenderTreeIntersectNonRecurse(CellSphereTreeBranchNode* a_pNode,
 	pStackValue2->iInitialPlaneCount = a_pRenderData->pFrustum->iActivePlaneCount;
 
 	TINT iNumVisibleSpheres = 0;
+	pStackValue1 = pStackValue2;
 
 	for (;;)
 	{
@@ -249,7 +250,7 @@ void AWorldVis::RenderTreeIntersectNonRecurse(CellSphereTreeBranchNode* a_pNode,
 
 				a_pRenderData->pFrustum->iActivePlaneCount = iCurrentActivePlaneCount;
 			}
-			
+
 			if (eIntersectResult == FISR_PARTIALLY_VISIBLE)
 			{
 				// This node is partially visible so let's

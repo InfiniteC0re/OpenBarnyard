@@ -14,7 +14,7 @@ namespace Toshi {
 
 	TMaterial::TMaterial()
 	{
-		m_Flags = Flags_NULL;
+		m_Flags = FLAGS_NONE;
 		m_pShader = TNULL;
 		m_iNumTex = 0;
 		TUtil::MemClear(m_pTextures, sizeof(m_pTextures));
@@ -30,13 +30,13 @@ namespace Toshi {
 	void TMaterial::OnDestroy()
 	{
 		TASSERT(TTRUE == IsCreated());
-		m_Flags &= ~Flags_Created;
+		m_Flags &= ~FLAGS_CREATED;
 	}
 
 	TBOOL TMaterial::Create()
 	{
 		TASSERT(TFALSE == IsCreated());
-		m_Flags |= Flags_Created;
+		m_Flags |= FLAGS_CREATED;
 		return TTRUE;
 	}
 
@@ -105,9 +105,9 @@ namespace Toshi {
 	{
 		if (set)
 		{
-			if (flag & (Flags_NO_CULL | Flags_Unk2 | Flags_Unk3))
+			if (flag & (FLAGS_NO_CULL | FLAGS_HAS_BLENDMODE | FLAGS_UNK3))
 			{
-				m_Flags &= ~(Flags_NO_CULL | Flags_Unk2 | Flags_Unk3);
+				m_Flags &= ~(FLAGS_NO_CULL | FLAGS_HAS_BLENDMODE | FLAGS_UNK3);
 			}
 
 			m_Flags |= flag;
@@ -120,7 +120,7 @@ namespace Toshi {
 
 	TBOOL TMaterial::IsCreated() const
 	{
-		return m_Flags & Flags_Created;
+		return m_Flags & FLAGS_CREATED;
 	}
 
 	TRenderPacket* TMaterial::AddRenderPacket(TMesh* a_pMesh)

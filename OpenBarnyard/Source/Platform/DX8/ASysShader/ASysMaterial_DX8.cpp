@@ -115,7 +115,7 @@ void ASysMaterialHAL::PreRender()
 		pDevice->SetTexture(0, TNULL);
 	}
 
-	if (m_Flags & Flags_NO_CULL)
+	if (m_Flags & FLAGS_NO_CULL)
 	{
 		(pDevice->SetRenderState)(D3DRS_CULLMODE, D3DCULL_NONE);
 	}
@@ -166,7 +166,7 @@ void ASysMaterialHAL::PostRender()
 
 	pDevice->SetTexture(0, TNULL);
 
-	if (m_Flags & Flags_NO_CULL)
+	if (m_Flags & FLAGS_NO_CULL)
 	{
 		pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CW);
 	}

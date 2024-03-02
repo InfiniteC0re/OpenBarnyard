@@ -156,6 +156,17 @@ TBOOL AWorldShaderHAL::Create()
 	return AWorldShader::Create();
 }
 
+static TBOOL CreateWorldVertexShader(const char* a_szFileName, const DWORD* a_pFunction, DWORD* a_pOutVertexShader)
+{
+	static constexpr DWORD s_ShaderDeclaration[] =
+	{
+		   0x20000000,    0x40020000,    0x40020001,    0x40020002,
+		   0x40010003,    0xFFFFFFFF
+	};
+
+	return TRenderD3DInterface::CreateVertexShader(s_ShaderDeclaration, a_pFunction, a_pOutVertexShader);
+}
+
 TBOOL AWorldShaderHAL::Validate()
 {
 	if (IsValidated())
@@ -183,7 +194,7 @@ TBOOL AWorldShaderHAL::Validate()
 			0xFFFF
 		};
 
-		if (!TRenderD3DInterface::CreateVertexShader("AWorldShader_D3D8_Win.vsh", s_VertexShaderFunction, &m_hVertexShader))
+		if (!CreateWorldVertexShader("AWorldShader_D3D8_Win.vsh", s_VertexShaderFunction, &m_hVertexShader))
 		{
 			TASSERT(!"Couldn't create vertex shader");
 			return TFALSE;

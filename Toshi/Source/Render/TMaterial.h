@@ -20,15 +20,15 @@ namespace Toshi {
 		typedef TUINT32 Flags;
 		enum Flags_ : Flags
 		{
-			Flags_NULL         = 0,
-			Flags_NO_CULL      = BITFLAG(0),
-			Flags_Unk2         = BITFLAG(1),
-			Flags_Unk3         = BITFLAG(2),
-			Flags_Glow         = BITFLAG(3),
-			Flags_Created      = BITFLAG(4),
-			Flags_NoDepthTest  = BITFLAG(27),
-			Flags_AlphaUpdate  = BITFLAG(28),
-			Flags_AlphaTexture = BITFLAG(31),
+			FLAGS_NONE          = 0,
+			FLAGS_NO_CULL       = BITFLAG(0),
+			FLAGS_HAS_BLENDMODE = BITFLAG(1),
+			FLAGS_UNK3          = BITFLAG(2),
+			FLAGS_GLOW          = BITFLAG(3),
+			FLAGS_CREATED       = BITFLAG(4),
+			FLAGS_NO_DEPTH_TEST = BITFLAG(27),
+			FLAGS_ALPHAUPDATE   = BITFLAG(28),
+			FLAGS_ALPHATEXTURE  = BITFLAG(31),
 		};
 
 		friend TRegMaterial;

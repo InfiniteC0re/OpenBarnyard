@@ -5,44 +5,57 @@
 #include <Render/TVertexPoolResourceInterface.h>
 #include <Render/TIndexPoolResourceInterface.h>
 
-class AWorldMesh : public Toshi::TMesh
+class ASkinSubMesh
+{
+public:
+	ASkinSubMesh();
+	~ASkinSubMesh();
+
+public:
+	TUINT16 uiUnknown;
+	TUINT16 uiNumVertices;
+	Toshi::TIndexPoolResourceInterface* pIndexPool;
+	TUINT32 Zero;
+	TUINT32 Unk2;
+	TUINT32 Unk3;
+	TUINT32 Unk4;
+	TUINT32 Unk5;
+	TUINT32 Unk6;
+	TUINT32 uiNumBones;
+	TINT aBones[28];
+};
+
+class ASkinMesh :
+	public Toshi::TMesh
 {
 public:
 	TDECLARE_CLASS(Toshi::TMesh);
 
-	struct SubMesh
-	{
-		TMesh* pAssociatedMesh = 0;
-		TUINT16 uiUnk2 = 0;
-		TUINT16 uiNumVertices = 0;
-		Toshi::TIndexPoolResourceInterface* pIndexPool = TNULL;
-	};
-
-	static constexpr TUINT NUM_SUBMESHES = 1;
 	using LockBuffer = Toshi::TVertexPoolResourceInterface::LockBuffer;
 
 public:
-	AWorldMesh();
+	ASkinMesh();
+	~ASkinMesh();
 
 	//-----------------------------------------------------------------------------
 	// Toshi::TMesh
 	//-----------------------------------------------------------------------------
 	virtual TBOOL Validate() override;
 	virtual void Invalidate() override;
-	virtual TBOOL Render() = 0;
+	virtual TBOOL Render() override;
 	virtual void OnDestroy() override;
 
 	//-----------------------------------------------------------------------------
 	// Own methods
 	//-----------------------------------------------------------------------------
-	virtual void Create(TUINT32 a_uiFlags, TUINT16 a_uiMaxVertices);
+	virtual void Create(TUINT32 a_uiFlags, TUINT16 a_uiMaxVertices, TUINT16 a_uiNumSubMeshes);
 	virtual TBOOL Lock(LockBuffer& a_rLockBuffer);
 	virtual void Unlock(TUINT32 a_uiNumVertices);
 	virtual Toshi::TVertexPoolResourceInterface* GetVertexPool();
 
-	SubMesh* GetSubMesh(TUINT a_uiIndex)
+	ASkinSubMesh* GetSubMesh(TUINT16 a_uiIndex)
 	{
-		TASSERT(a_uiIndex < NUM_SUBMESHES);
+		TASSERT(a_uiIndex < m_uiNumSubMeshes);
 		return &m_pSubMeshes[a_uiIndex];
 	}
 
@@ -53,6 +66,8 @@ private:
 protected:
 	TUINT32 m_uiFlags;
 	TUINT16 m_uiMaxVertices;
+	TUINT16 m_uiNumSubMeshes;
 	Toshi::TVertexPoolResourceInterface* m_pVertexPool;
-	Toshi::T2SimpleArray<SubMesh> m_pSubMeshes;
+	Toshi::T2SimpleArray<ASkinSubMesh> m_pSubMeshes;
+	void* m_Unk;
 };

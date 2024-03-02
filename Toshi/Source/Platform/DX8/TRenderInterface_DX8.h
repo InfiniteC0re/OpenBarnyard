@@ -91,21 +91,13 @@ namespace Toshi {
 		IDirect3DDevice8* GetDirect3DDevice() const { return m_pDirectDevice; }
 
 	public:
-		/* Flushes all order tables and shaders. */
+		// Flushes all order tables and shaders
 		static void FlushShaders();
 
-		/**
-		 * Compiles vertex shader in debug mode or takes compiled buffer to create shader.
-		 * @param a_szFileName name of the file containing shader source
-		 * @param a_pFunction compiled shader
-		 * @param a_pOutVertexShader pointer which will be used to store created shader
-		 * @return TTRUE if succeeded
-		 */
-		static TBOOL CreateVertexShader(const char* a_szFileName, const DWORD* a_pFunction, DWORD* a_pOutVertexShader);
-
+		static TBOOL CreateVertexShader(const DWORD* a_ShaderDeclaration, const DWORD* a_pFunction, DWORD* a_pOutVertexShader);
 		static void DestroyVertexShader(DWORD a_hVertexShader);
 		
-		/* Prints error text caused by some directx call. */
+		// Prints error text caused by some directx call.
 		static void PrintError(TINT32 a_eError, const TCHAR* a_szInfo);
 		
 		static const TCHAR* GetErrorString(TINT32 a_eError);

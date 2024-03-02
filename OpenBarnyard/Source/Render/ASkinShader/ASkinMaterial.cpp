@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "AWorldMaterial.h"
+#include "ASkinMaterial.h"
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
@@ -9,33 +9,31 @@
 
 TOSHI_NAMESPACE_USING
 
-TDEFINE_CLASS_NORUNTIME(AWorldMaterial);
+TDEFINE_CLASS_NORUNTIME(ASkinMaterial);
 
-AWorldMaterial::AWorldMaterial() :
+ASkinMaterial::ASkinMaterial() :
 	m_eBlendMode(0),
-	m_fUVAnimX(0.0f),
-	m_fUVAnimY(0.0f),
-	m_fUVAnimSpeedX(0.0f),
-	m_fUVAnimSpeedY(0.0f)
+	m_pTexture(TNULL),
+	m_bFlag(TTRUE)
 {
-	m_aTextures[0] = TNULL;
-	m_aTextures[1] = TNULL;
-	m_aTextures[2] = TNULL;
-	m_aTextures[3] = TNULL;
+	m_apLightingTextures[LT_0] = TNULL;
+	m_apLightingTextures[LT_1] = TNULL;
+	m_apLightingTextures[LT_2] = TNULL;
+	m_apLightingTextures[LT_3] = TNULL;
 }
 
-AWorldMaterial::~AWorldMaterial()
+ASkinMaterial::~ASkinMaterial()
 {
 
 }
 
-TBOOL AWorldMaterial::Create(BLENDMODE a_eBlendMode)
+TBOOL ASkinMaterial::Create(BLENDMODE a_eBlendMode)
 {
 	SetBlendMode(a_eBlendMode);
 	return TMaterial::Create();
 }
 
-void AWorldMaterial::SetBlendMode(BLENDMODE a_eBlendMode)
+void ASkinMaterial::SetBlendMode(BLENDMODE a_eBlendMode)
 {
 	m_eBlendMode = a_eBlendMode;
 	m_Flags &= ~FLAGS_HAS_BLENDMODE;

@@ -215,7 +215,7 @@ void AWorldMaterialHAL::CopyToAlphaBlendMaterial()
 		m_pAlphaBlendMaterial->m_aTextures[2] = m_aTextures[2];
 		m_pAlphaBlendMaterial->m_aTextures[3] = m_aTextures[3];
 
-		m_pAlphaBlendMaterial->SetFlags(Flags_Unk2, TTRUE);
+		m_pAlphaBlendMaterial->SetFlags(FLAGS_HAS_BLENDMODE, TTRUE);
 	}
 }
 
@@ -280,7 +280,7 @@ void AWorldMaterialHAL::SetupRenderer()
 		break;
 	}
 
-	if (m_Flags & Flags_Unk2)
+	if (m_Flags & FLAGS_HAS_BLENDMODE)
 	{
 		pD3DDevice->SetRenderState(D3DRS_ALPHAREF, 1);
 		AWorldShaderHAL::Upcast(m_pShader)->SetAlphaRef(1);
