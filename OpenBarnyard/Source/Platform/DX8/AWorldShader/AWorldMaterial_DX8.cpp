@@ -52,7 +52,7 @@ void AWorldMaterialHAL::OnDestroy()
 		m_pAssignedOrderTable = TNULL;
 	}
 
-	AWorldMaterial::OnDestroy();
+	BaseClass::OnDestroy();
 }
 
 void AWorldMaterialHAL::PreRender()
@@ -167,7 +167,7 @@ void AWorldMaterialHAL::PostRender()
 TBOOL AWorldMaterialHAL::Create(BLENDMODE a_eBlendMode)
 {
 	SetBlendMode(a_eBlendMode);
-	return AWorldMaterial::Create(a_eBlendMode);
+	return BaseClass::Create(a_eBlendMode);
 }
 
 void AWorldMaterialHAL::SetBlendMode(BLENDMODE a_eBlendMode)
@@ -202,7 +202,7 @@ void AWorldMaterialHAL::SetBlendMode(BLENDMODE a_eBlendMode)
 		break;
 	}
 
-	AWorldMaterial::SetBlendMode(a_eBlendMode);
+	BaseClass::SetBlendMode(a_eBlendMode);
 }
 
 void AWorldMaterialHAL::CopyToAlphaBlendMaterial()

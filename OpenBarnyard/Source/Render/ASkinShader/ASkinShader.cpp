@@ -12,7 +12,7 @@ TOSHI_NAMESPACE_USING
 TDEFINE_CLASS_NORUNTIME(ASkinShader);
 
 ASkinShader::ASkinShader() :
-	m_Unk1(0),
+	m_SomeColour(0),
 	m_Unk2(128),
 	m_Unk3(1.0f),
 	m_Unk4(0)
@@ -65,27 +65,27 @@ void ASkinShader::SetAlphaBlendMaterial(TBOOL a_bIsAlphaBlendMaterial)
 
 }
 
-void ASkinShader::Unknown4(void*)
+void ASkinShader::EnableClouds(TBOOL a_bEnabled)
 {
 
 }
 
-TBOOL ASkinShader::Unknown5()
-{
-	return TFALSE;
-}
-
-TBOOL ASkinShader::Unknown6()
+TBOOL ASkinShader::IsEnabledClouds()
 {
 	return TFALSE;
 }
 
-void ASkinShader::Unknown7(void*)
+TBOOL ASkinShader::IsCapablePointLights()
+{
+	return TFALSE;
+}
+
+void ASkinShader::SetPointLights(TBOOL a_bEnabled)
 {
 
 }
 
-TBOOL ASkinShader::Unknown8()
+TBOOL ASkinShader::IsPointLightsEnabled()
 {
 	return TFALSE;
 }

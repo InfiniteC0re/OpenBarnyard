@@ -121,6 +121,11 @@ namespace Toshi {
 		TFLOAT GetAlphaBlend() const { return m_fAlphaBlend; }
 		void SetAlphaBlend(TFLOAT val) { m_fAlphaBlend = val; }
 
+		TFLOAT GetShadeCoeff() const { return m_fShadeCoeff; }
+		void SetShadeCoeff(TFLOAT val) { m_fShadeCoeff = val; }
+
+		const TVector4& GetAmbientColour() const { return m_AmbientColor; }
+
 		static void ComputePerspectiveProjection(TMatrix44& a_rOutProjection, const VIEWPORTPARAMS& a_rViewportParams, const PROJECTIONPARAMS a_rProjParams);
 		static void ComputeOrthographicProjection(TMatrix44& a_rOutProjection, const VIEWPORTPARAMS& a_rViewportParams, const PROJECTIONPARAMS a_rProjParams);
 
@@ -152,6 +157,8 @@ namespace Toshi {
 		TMatrix44 m_oWorldModelMatrix;                 // 0x032C
 		TMatrix44 m_oViewModelMatrix;                  // 0x0368
 		TFLOAT m_fAlphaBlend;                          // 0x03A8
+		// ...
+		TFLOAT m_fShadeCoeff;                          // 0x03B0
 		// ...
 		TCameraObject* m_pCurrentCameraObject;         // 0x03BC
 	};

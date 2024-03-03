@@ -21,6 +21,7 @@
 
 #include "Platform/DX8/ASysShader/ASysShader_DX8.h"
 #include "Platform/DX8/AWorldShader/AWorldShader_DX8.h"
+#include "Platform/DX8/ASkinShader/ASkinShader_DX8.h"
 #endif // TOSHI_SKU_WINDOWS
 
 //-----------------------------------------------------------------------------
@@ -319,6 +320,7 @@ TBOOL ARenderer::OnCreate()
 	if (bCreatedTRender)
 	{
 		(new AWorldShaderHAL())->Create();
+		(new ASkinShaderHAL())->Create();
 		(new ASysShaderHAL())->Create();
 		CreateMainViewport();
 

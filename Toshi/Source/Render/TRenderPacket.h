@@ -27,17 +27,17 @@ namespace Toshi {
 		TMatrix44& GetModelViewMatrix() { return m_oModelView; }
 		void SetModelViewMatrix(TMatrix44& a_rMatrix44) { m_oModelView = a_rMatrix44; }
 
-		TVector3& GetAmbientColour() { return m_oAmbientColour; }
+		void SetAmbientColour(const TVector3& a_rColour) { m_oAmbientColour = a_rColour; }
 		const TVector3& GetAmbientColour() const { return m_oAmbientColour; }
 
-		TVector3& GetLightColour() { return m_oLightColour; }
+		void SetLightColour(const TVector3& a_rColour) { m_oLightColour = a_rColour; }
 		const TVector3& GetLightColour() const { return m_oLightColour; }
 
-		TVector3& GetLightDirection() { return m_oLightDirection; }
+		void SetLightDirection(const TVector3& a_rDirection) { m_oLightDirection = a_rDirection; }
 		const TVector3& GetLightDirection() const { return m_oLightDirection; }
 
-		TUINT8 GetUnk2() const { return m_ui8Unk2; }
-		void SetUnk2(TUINT8 val) { m_ui8Unk2 = val; }
+		TUINT8 GetShadeCoeff() const { return m_ui8ShadeCoeff; }
+		void SetShadeCoeff(TUINT8 val) { m_ui8ShadeCoeff = val; }
 
 		TFLOAT GetAlpha() const { return m_fAlpha; }
 		void SetAlpha(TFLOAT val) { m_fAlpha = val; }
@@ -53,7 +53,7 @@ namespace Toshi {
 		TVector3 m_oLightColour;
 		TVector3 m_oLightDirection;
 		TUINT8 m_ui8Unk1;
-		TUINT8 m_ui8Unk2;
+		TUINT8 m_ui8ShadeCoeff;
 		TFLOAT m_fAlpha;
 	};
 

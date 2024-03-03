@@ -136,6 +136,9 @@ namespace Toshi {
 		TBOOL IsCreated() { return m_bCreated; }
 		TBOOL IsDisplayCreated() { return m_bDisplayCreated; }
 
+		const TMatrix44& GetLightDirection() const { return m_LightDirection; }
+		const TMatrix44& GetLightColour() const { return m_LightColour; }
+
 		TRenderContext* GetCurrentContext() const { return m_pCurrentContext; }
 		TNodeList<TRenderAdapter>* GetAdapterList() { return &m_AdapterList; }
 		TKeyframeLibraryManager& GetKeyframeLibraryManager() { return m_KeyframeManager; }
@@ -153,7 +156,6 @@ namespace Toshi {
 		void DeleteResourceAtomic(TResource* resources);
 
 		TRenderAdapter::Mode::Device* FindDevice(const DISPLAYPARAMS& a_rDisplayParams);
-
 
 		void BeginEndSceneHAL();
 

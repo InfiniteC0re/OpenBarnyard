@@ -29,17 +29,20 @@ public:
 	virtual void SetAlphaBlendMaterial(TBOOL a_bIsAlphaBlendMaterial);
 	virtual ASkinMaterial* CreateMaterial(const TCHAR* a_szName) = 0;
 	virtual ASkinMesh* CreateMesh(const TCHAR* a_szName) = 0;
-	virtual void Unknown1() = 0;
-	virtual void Unknown2() = 0;
-	virtual void Unknown3() = 0;
-	virtual void Unknown4(void*);
-	virtual TBOOL Unknown5();
-	virtual TBOOL Unknown6();
-	virtual void Unknown7(void*);
-	virtual TBOOL Unknown8();
+	virtual TINT AddLight(const Toshi::TVector3& a_rPosition, TFLOAT a_fIntensity) = 0;
+	virtual void SetLight(TINT a_iIndex, const Toshi::TVector3& a_rPosition, TFLOAT a_fIntensity) = 0;
+	virtual void RemoveLight(TINT a_iIndex) = 0;
+	virtual void EnableClouds(TBOOL a_bEnabled);
+	virtual TBOOL IsEnabledClouds();
+	virtual TBOOL IsCapablePointLights();
+	virtual void SetPointLights(TBOOL a_bEnabled);
+	virtual TBOOL IsPointLightsEnabled();
 
-private:
-	TINT m_Unk1;
+protected:
+	union {
+		TUINT8 m_SomeColourComponents[8];
+		TINT32 m_SomeColour;
+	};
 	TINT m_Unk2;
 	TFLOAT m_Unk3;
 	TINT m_Unk4;

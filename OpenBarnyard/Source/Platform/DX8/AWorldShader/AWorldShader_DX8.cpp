@@ -49,41 +49,42 @@ void AWorldShaderHAL::Flush()
 		auto pCurrentContext = TRenderContextD3D::Upcast(pRenderInterface->GetCurrentContext());
 		auto pDevice = pRenderInterface->GetDirect3DDevice();
 
-		if (!IsHighEndMode())
+		if (IsHighEndMode())
 		{
-			FlushLowEnd();
-			return;
+			Validate();
+			pDevice->SetVertexShader(m_hVertexShader);
+			pDevice->SetPixelShader(NULL);
+
+			static constexpr TVector4 s_SomeVector(1.0f, 1.0f, 1.0f, 1.0f);
+			pDevice->SetVertexShaderConstant(4, &m_AmbientColour, 1);
+			pDevice->SetVertexShaderConstant(5, &m_ShadowColour, 1);
+			pDevice->SetVertexShaderConstant(6, &s_SomeVector, 1);
+
+			pDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
+			pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
+			pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+			pDevice->SetRenderState(D3DRS_ALPHAFUNC, 5);
+
+			DWORD dwWasSpecularEnabled;
+			pDevice->GetRenderState(D3DRS_SPECULARENABLE, &dwWasSpecularEnabled);
+			pDevice->SetRenderState(D3DRS_SPECULARENABLE, FALSE);
+			pDevice->SetTextureStageState(0, D3DTSS_COLOROP, 4);
+			pDevice->SetTextureStageState(0, D3DTSS_COLORARG1, 2);
+			pDevice->SetTextureStageState(0, D3DTSS_COLORARG2, 0);
+			pDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, 4);
+			pDevice->SetTextureStageState(0, D3DTSS_ALPHAARG1, 2);
+			pDevice->SetTextureStageState(0, D3DTSS_ALPHAARG2, 0);
+			pDevice->SetTextureStageState(1, D3DTSS_COLOROP, 1);
+			pDevice->SetTextureStageState(1, D3DTSS_ALPHAOP, 1);
+			pDevice->SetRenderState(D3DRS_CULLMODE, m_bRenderEnvMap ? D3DCULL_CCW : D3DCULL_CW);
+			pDevice->SetRenderState(D3DRS_SPECULARENABLE, dwWasSpecularEnabled);
+			pDevice->SetRenderState(D3DRS_FOGENABLE, FALSE);
+			pDevice->SetPixelShader(0);
 		}
-
-		Validate();
-		pDevice->SetVertexShader(m_hVertexShader);
-		pDevice->SetPixelShader(NULL);
-
-		static constexpr TVector4 s_SomeVector(1.0f, 1.0f, 1.0f, 1.0f);
-		pDevice->SetVertexShaderConstant(4, &m_AmbientColour, 1);
-		pDevice->SetVertexShaderConstant(5, &m_ShadowColour, 1);
-		pDevice->SetVertexShaderConstant(6, &s_SomeVector, 1);
-
-		pDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
-		pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
-		pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
-		pDevice->SetRenderState(D3DRS_ALPHAFUNC, 5);
-		
-		DWORD dwWasSpecularEnabled;
-		pDevice->GetRenderState(D3DRS_SPECULARENABLE, &dwWasSpecularEnabled);
-		pDevice->SetRenderState(D3DRS_SPECULARENABLE, FALSE);
-		pDevice->SetTextureStageState(0, D3DTSS_COLOROP, 4);
-		pDevice->SetTextureStageState(0, D3DTSS_COLORARG1, 2);
-		pDevice->SetTextureStageState(0, D3DTSS_COLORARG2, 0);
-		pDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, 4);
-		pDevice->SetTextureStageState(0, D3DTSS_ALPHAARG1, 2);
-		pDevice->SetTextureStageState(0, D3DTSS_ALPHAARG2, 0);
-		pDevice->SetTextureStageState(1, D3DTSS_COLOROP, 1);
-		pDevice->SetTextureStageState(1, D3DTSS_ALPHAOP, 1);
-		pDevice->SetRenderState(D3DRS_CULLMODE, m_bRenderEnvMap ? D3DCULL_CCW : D3DCULL_CW);
-		pDevice->SetRenderState(D3DRS_SPECULARENABLE, dwWasSpecularEnabled);
-		pDevice->SetRenderState(D3DRS_FOGENABLE, FALSE);
-		pDevice->SetPixelShader(NULL);
+		else
+		{
+			SetupLowEndMode();
+		}
 	}
 }
 
@@ -100,7 +101,7 @@ void AWorldShaderHAL::StartFlush()
 		
 		if (!IsHighEndMode())
 		{
-			FlushLowEnd();
+			SetupLowEndMode();
 			return;
 		}
 
@@ -210,7 +211,7 @@ void AWorldShaderHAL::Invalidate()
 
 	if (!IsHighEndMode())
 	{
-		TASSERT(!"Not implemented for low end mode yet but should never get here on modern hardware anyways");
+		m_SomeList.DeleteAll();
 	}
 	else if (m_hVertexShader != 0)
 	{
@@ -424,7 +425,7 @@ void AWorldShaderHAL::SetColours(const Toshi::TVector4& a_rShadowColour, const T
 	Toshi::TMath::Clip(m_AmbientColour.z, 0.0f, 1.0f);
 }
 
-void AWorldShaderHAL::FlushLowEnd()
+void AWorldShaderHAL::SetupLowEndMode()
 {
 	auto pRenderInterface = TRenderD3DInterface::Interface();
 	auto pCurrentContext = TRenderContextD3D::Upcast(pRenderInterface->GetCurrentContext());

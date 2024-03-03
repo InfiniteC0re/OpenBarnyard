@@ -92,7 +92,7 @@ public:
 	inline static TUINT s_RenderStateFlags = 27;
 
 private:
-	void FlushLowEnd();
+	void SetupLowEndMode();
 
 private:
 	Toshi::TNodeList<AUnknown> m_SomeList;

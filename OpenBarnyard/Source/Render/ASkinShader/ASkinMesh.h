@@ -53,11 +53,8 @@ public:
 	virtual void Unlock(TUINT32 a_uiNumVertices);
 	virtual Toshi::TVertexPoolResourceInterface* GetVertexPool();
 
-	ASkinSubMesh* GetSubMesh(TUINT16 a_uiIndex)
-	{
-		TASSERT(a_uiIndex < m_uiNumSubMeshes);
-		return &m_pSubMeshes[a_uiIndex];
-	}
+	TUINT16 GetNumSubMeshes() const;
+	ASkinSubMesh* GetSubMesh(TUINT16 a_uiIndex);
 
 private:
 	TBOOL CreateResource();

@@ -29,6 +29,8 @@ public:
 	virtual TBOOL Create(BLENDMODE a_eBlendMode);
 	virtual void SetBlendMode(BLENDMODE a_eBlendMode);
 
+	BLENDMODE GetBlendMode() const { return m_eBlendMode; }
+
 protected:
 	Toshi::TTexture* m_pTexture;
 	Toshi::TTexture* m_apLightingTextures[LT_NUMOF];

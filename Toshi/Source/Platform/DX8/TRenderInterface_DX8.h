@@ -96,6 +96,9 @@ namespace Toshi {
 
 		static TBOOL CreateVertexShader(const DWORD* a_ShaderDeclaration, const DWORD* a_pFunction, DWORD* a_pOutVertexShader);
 		static void DestroyVertexShader(DWORD a_hVertexShader);
+
+		static TBOOL CreatePixelShader(const DWORD* a_pFunction, DWORD* a_pOutPixelShader);
+		static void DestroyPixelShader(DWORD a_hPixelShader);
 		
 		// Prints error text caused by some directx call.
 		static void PrintError(TINT32 a_eError, const TCHAR* a_szInfo);

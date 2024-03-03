@@ -326,7 +326,7 @@ void ARootTask::LoadFrontEnd()
 {
 	TIMPLEMENT();
 
-	ATerrainManager::SetTerrain(ATerrainManager::Terrain_FrontEnd, TTRUE, TTRUE, 0, 0, 0, 0);
+	ATerrainManager::SetTerrain(ATerrainManager::Terrain_EnvMain, TTRUE, TTRUE, 0, 0, 0, 0);
 	ATerrainManager::StartLoading();
 
 	GetSingleton()->SetRenderWorld(TTRUE);

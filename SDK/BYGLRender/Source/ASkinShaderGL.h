@@ -369,7 +369,7 @@ public:
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 			}
 
-			TFLOAT fLerpFactor = a_pRenderPacket->GetUnk2() * (1.0f / 255.0f);
+			TFLOAT fLerpFactor = a_pRenderPacket->GetShadeCoeff() * (1.0f / 255.0f);
 
 			pShaderProgram->SetUniform("u_LightingLerp1", Toshi::TVector4(1.0f - fLerpFactor, 1.0f - fLerpFactor, 1.0f - fLerpFactor, 0.0f));
 			pShaderProgram->SetUniform("u_LightingLerp2", Toshi::TVector4(fLerpFactor, fLerpFactor, fLerpFactor, 0.0f));

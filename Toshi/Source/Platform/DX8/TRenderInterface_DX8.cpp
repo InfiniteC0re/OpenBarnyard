@@ -348,6 +348,30 @@ namespace Toshi {
 		TASSERT(SUCCEEDED(hRes));
 	}
 
+	TBOOL TRenderD3DInterface::CreatePixelShader(const DWORD* a_pFunction, DWORD* a_pOutPixelShader)
+	{
+		auto pD3DDevice = Interface()->GetDirect3DDevice();
+		auto pCurrentDevice = Interface()->GetCurrentDevice();
+		auto bSupportsHardwareTransformations = pCurrentDevice->SupportsHardwareTransfomations();
+
+		HRESULT hRes = pD3DDevice->CreatePixelShader(a_pFunction, a_pOutPixelShader);
+
+		if (FAILED(hRes))
+		{
+			PrintError(hRes, "Failure to create the pixel shader!");
+			return TFALSE;
+		}
+
+		return TTRUE;
+	}
+
+	void TRenderD3DInterface::DestroyPixelShader(DWORD a_hPixelShader)
+	{
+		auto pD3DDevice = Interface()->GetDirect3DDevice();
+		HRESULT hRes = pD3DDevice->DeletePixelShader(a_hPixelShader);
+		TASSERT(SUCCEEDED(hRes));
+	}
+
 	void TRenderD3DInterface::PrintError(TINT32 a_eError, const TCHAR* a_szInfo)
 	{
 		if (!a_szInfo)

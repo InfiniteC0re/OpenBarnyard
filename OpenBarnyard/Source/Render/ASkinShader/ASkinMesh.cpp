@@ -32,6 +32,21 @@ ASkinSubMesh::~ASkinSubMesh()
 	}
 }
 
+ASkinMesh::ASkinMesh() :
+	m_uiFlags(0),
+	m_uiMaxVertices(0),
+	m_uiNumSubMeshes(0),
+	m_pVertexPool(TNULL),
+	m_Unk(TNULL)
+{
+
+}
+
+ASkinMesh::~ASkinMesh()
+{
+
+}
+
 TBOOL ASkinMesh::Validate()
 {
 	if (!IsValidated())
@@ -105,6 +120,17 @@ void ASkinMesh::Unlock(TUINT32 a_uiNumVertices)
 Toshi::TVertexPoolResourceInterface* ASkinMesh::GetVertexPool()
 {
 	return m_pVertexPool;
+}
+
+TUINT16 ASkinMesh::GetNumSubMeshes() const
+{
+	return m_uiNumSubMeshes;
+}
+
+ASkinSubMesh* ASkinMesh::GetSubMesh(TUINT16 a_uiIndex)
+{
+	TASSERT(a_uiIndex < m_uiNumSubMeshes);
+	return &m_pSubMeshes[a_uiIndex];
 }
 
 TBOOL ASkinMesh::CreateResource()
