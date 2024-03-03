@@ -422,7 +422,7 @@ TBOOL AModelLoader::AModelLoaderLoadTRBCallback(Toshi::TModel* a_pModel)
 		}
 		else if (pTRBLod->m_eShader == TTMDWin::ST_SKIN)
 		{
-			TTODO("Loading skin models is not yet implemented, skipping");
+			LoadSkinLOD(a_pModel, i, &a_pModel->m_LODs[i], pTRBLod);
 		}
 		else if (pTRBLod->m_eShader == TTMDWin::ST_GRASS)
 		{

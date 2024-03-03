@@ -14,6 +14,8 @@ public:
 
 	};
 
+	static constexpr TUINT NUM_ORDER_TABLES = 3;
+
 public:
 	ASkinShaderHAL();
 	~ASkinShaderHAL();
@@ -91,7 +93,7 @@ private:
 	DWORD m_hPixelShader;
 	TINT m_iAlphaRef;
 	TBOOL m_bRenderEnvMap;
-	Toshi::TOrderTable m_aOrderTables[3];
+	Toshi::TOrderTable m_aOrderTables[NUM_ORDER_TABLES];
 	TBOOL m_bHighEndSkinning;
 	TBOOL m_bLightScattering;
 	TBOOL m_bIsAlphaBlendMaterial;

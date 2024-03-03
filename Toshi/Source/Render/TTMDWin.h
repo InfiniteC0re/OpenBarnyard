@@ -19,8 +19,7 @@ namespace Toshi {
 
 		struct SubMesh
 		{
-			TUINT16 m_uiNumVertices1;
-			TUINT16 m_Unk1;
+			TUINT32 m_uiNumVertices1;
 			TUINT16 m_uiNumVertices2;
 			TUINT32 m_uiNumIndices;
 			TUINT32 m_uiNumBones;
