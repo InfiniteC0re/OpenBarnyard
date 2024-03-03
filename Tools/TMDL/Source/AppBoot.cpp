@@ -205,7 +205,6 @@ int main(int argc, char** argv)
 						auto pSubMesh = &pInLODMesh->m_pSubMeshes[j];
 
 						TINFO("      Sub Mesh %u:\n", j);
-						TINFO("        Unk1: %u\n", pSubMesh->m_Unk1);
 						TINFO("        Vertex Count 1: %u\n", pSubMesh->m_uiNumVertices1);
 						TINFO("        Vertex Count 2: %u\n", pSubMesh->m_uiNumVertices2);
 						TINFO("        Index Count: %u\n", pSubMesh->m_uiNumIndices);
