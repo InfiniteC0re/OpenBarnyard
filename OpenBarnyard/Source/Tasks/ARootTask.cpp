@@ -247,7 +247,7 @@ void ARootTask::LoadStartupData()
 
 	if (matlibProperty)
 	{
-		AMaterialLibraryManager::GetSingleton()->LoadFromProperties(
+		AMaterialLibraryManager::GetSingleton()->LoadLibrariesFromProperties(
 			matlibProperty,
 			AAssetLoader::GetAssetTRB(AAssetType_Startup),
 			TTRUE
@@ -329,8 +329,11 @@ void ARootTask::LoadFrontEnd()
 {
 	TIMPLEMENT();
 
+	AAssetLoader::LoadAssetPackFromLibrary("lib_frontend", TTRUE);
+	//ATerrainManager::SetTerrain(ATerrainManager::Terrain_EnvBensHill, TTRUE, TTRUE, 0, 0, 0, 0);
 	ATerrainManager::SetTerrain(ATerrainManager::Terrain_FrontEnd, TTRUE, TTRUE, 0, 0, 0, 0);
 	ATerrainManager::StartLoading();
+	AAssetLoader::CreateAssetsFromLibrary("lib_frontend");
 
 	GetSingleton()->SetRenderWorld(TTRUE);
 

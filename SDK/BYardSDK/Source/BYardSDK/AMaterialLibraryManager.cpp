@@ -6,7 +6,7 @@
 
 TOSHI_NAMESPACE_USING
 
-void AMaterialLibraryManager::LoadFromProperties(const PBPropertyValue* a_pProperty, Toshi::TTRB* a_pTRB, TBOOL a_bUpdateGUIMaterials)
+void AMaterialLibraryManager::LoadLibrariesFromProperties(const PBPropertyValue* a_pProperty, Toshi::TTRB* a_pTRB, TBOOL a_bUpdateGUIMaterials)
 {
 	CALL_THIS(0x00613ee0, AMaterialLibraryManager*, void, this, const PBPropertyValue*, a_pProperty, Toshi::TTRB*, a_pTRB, TBOOL, a_bUpdateGUIMaterials);
 }

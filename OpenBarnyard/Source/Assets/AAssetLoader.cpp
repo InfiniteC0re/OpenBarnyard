@@ -1,8 +1,14 @@
 #include "pch.h"
 #include "AAssetLoader.h"
 #include "AAssetStreaming.h"
+#include "AMaterialLibraryManager.h"
+#include "AKeyFrameLibraryManager.h"
 #include "ATRBLoaderJob.h"
 #include "ALoadScreen.h"
+
+#include <Toshi/TString8.h>
+#include <File/TTRB.h>
+#include <Plugins/PPropertyParser/PBProperties.h>
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
@@ -12,7 +18,91 @@
 
 TOSHI_NAMESPACE_USING
 
-TBOOL AAssetLoader::Load(const TCHAR* a_szFileName, AAssetType a_eAssetType, TBOOL a_bUseStreaming)
+static void TranslateLibraryName(Toshi::TString8& a_rOutName, const TCHAR* a_szLibraryName)
+{
+	TVALIDPTR(a_szLibraryName);
+	TTODO("Take day/night cycle and current story progress into account");
+
+	a_rOutName.Format("Data/%s.trb", a_szLibraryName);
+}
+
+TBOOL AAssetLoader::LoadAssetPackFromLibrary(const TCHAR* a_szLibraryName, TBOOL a_bStream)
+{
+	TString8 libFileName;
+	TranslateLibraryName(libFileName, a_szLibraryName);
+
+	TTRB libTrb;
+	auto eResult = libTrb.Load(libFileName);
+
+	if (eResult == TTRB::ERROR_OK)
+	{
+		auto pProperties = PBProperties::LoadFromTRB(libTrb);
+		TVALIDPTR(pProperties);
+
+		// Load asset pack
+		auto pModelLib = pProperties->GetOptionalProperty("modellib");
+
+		if (pModelLib)
+		{
+			TBOOL bResult = Load(pModelLib->GetString(), AAssetType_AssetPack, a_bStream);
+			TASSERT(bResult);
+		}
+
+		return TTRUE;
+	}
+	
+	return TFALSE;
+}
+
+TBOOL AAssetLoader::CreateAssetsFromLibrary(const TCHAR* a_szLibraryName)
+{
+	TString8 libFileName;
+	TranslateLibraryName(libFileName, a_szLibraryName);
+
+	TTRB libTrb;
+	auto eResult = libTrb.Load(libFileName);
+
+	if (eResult == TTRB::ERROR_OK)
+	{
+		auto pProperties = PBProperties::LoadFromTRB(libTrb);
+		TVALIDPTR(pProperties);
+
+		TFIXME("Create other assets");
+
+		// Load material libraries
+		auto pMatlibs = pProperties->GetOptionalProperty("matlib");
+
+		if (pMatlibs)
+		{
+			AMaterialLibraryManager::GetSingleton()->LoadLibrariesFromProperties(
+				pMatlibs,
+				GetAssetTRB(AAssetType_AssetPack),
+				TTRUE
+			);
+
+			g_oLoadScreen.Update(1.0f, TTRUE);
+		}
+
+		// Load keyframe libraries
+		auto pKeyframes = pProperties->GetOptionalProperty("keylib");
+
+		if (pKeyframes)
+		{
+			AKeyFrameLibraryManager::GetSingleton()->LoadLibrariesFromProperties(
+				pKeyframes,
+				GetAssetTRB(AAssetType_AssetPack)
+			);
+
+			g_oLoadScreen.Update(1.0f, TTRUE);
+		}
+
+		return TTRUE;
+	}
+
+	return TFALSE;
+}
+
+TBOOL AAssetLoader::Load(const TCHAR* a_szFileName, AAssetType a_eAssetType, TBOOL a_bStream)
 {
 	if (!ms_pTRBFiles[a_eAssetType])
 	{
@@ -24,7 +114,7 @@ TBOOL AAssetLoader::Load(const TCHAR* a_szFileName, AAssetType a_eAssetType, TBO
 		ms_pTRBFiles[a_eAssetType]->Close();
 	}	
 
-	if (a_bUseStreaming && AAssetStreaming::IsSingletonCreated())
+	if (a_bStream && AAssetStreaming::IsSingletonCreated())
 	{
 		ATRBLoaderJob trbLoaderJob;
 		trbLoaderJob.InitJob(ms_pTRBFiles[a_eAssetType], a_szFileName);
@@ -75,3 +165,4 @@ void* AAssetLoader::GetSymbolAddress(const TCHAR* a_szFileName, const TCHAR* a_s
 
 	return TNULL;
 }
+

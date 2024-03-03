@@ -26,7 +26,7 @@ AKeyFrameLibraryManager::~AKeyFrameLibraryManager()
 	UnloadAllLibraries();
 }
 
-void AKeyFrameLibraryManager::LoadLibrariesFromProperties(const PBPropertyValue* a_pArray, Toshi::TTRB& a_rTRB)
+void AKeyFrameLibraryManager::LoadLibrariesFromProperties(const PBPropertyValue* a_pArray, Toshi::TTRB* a_pTRB)
 {
 	if (TNULL != a_pArray)
 	{
@@ -34,7 +34,7 @@ void AKeyFrameLibraryManager::LoadLibrariesFromProperties(const PBPropertyValue*
 
 		for (TUINT i = 0; i < pArray->GetSize(); i++)
 		{
-			LoadLibrary(pArray->GetValue(i)->GetString(), &a_rTRB);
+			LoadLibrary(pArray->GetValue(i)->GetString(), a_pTRB);
 			g_oLoadScreen.Update(1.0f, TTRUE);
 		}
 

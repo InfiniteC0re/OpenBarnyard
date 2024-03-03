@@ -94,8 +94,25 @@ ATerrain::ATerrain(TINT a_iUnused1, TINT a_iUnused2, TINT a_iPreloadTerrainBlock
 ATerrain::~ATerrain()
 {
 	TIMPLEMENT();
-
 	m_bIsLoaded = TFALSE;
+
+	m_UsedModelLoaderJobs.Clear();
+	m_FreeModelLoaderJobs.Clear();
+	m_UsedUnknownLoaderJobs.Clear();
+	m_FreeUnknownLoaderJobs.Clear();
+	m_UsedSectionLoaderJobs.Clear();
+	m_FreeSectionLoaderJobs.Clear();
+	m_UsedKeylibLoaderJobs.Clear();
+	m_FreeKeylibLoaderJobs.Clear();
+	m_UsedMatlibLoaderJobs.Clear();
+	m_FreeMatlibLoaderJobs.Clear();
+	m_UsedTRBLoaderJobs.Clear();
+	m_FreeTRBLoaderJobs.Clear();
+	m_UsedSkeletonLoaderJobs.Clear();
+	m_FreeSkeletonLoaderJobs.Clear();
+	m_UsedCollisionLoaderJobs.Clear();
+	m_FreeCollisionLoaderJobs.Clear();
+
 	delete[] m_pJobs;
 }
 
@@ -901,7 +918,7 @@ ATerrainSection::ModelNode* ATerrain::CreateModelInstance(ATerrainSection::Model
 	{
 		a_pModelNode->m_ModelRef.Create(
 			a_szModelName,
-			AAssetLoader::GetAssetTRB(AAssetType_ModelLib)
+			AAssetLoader::GetAssetTRB(AAssetType_AssetPack)
 		);
 	}
 

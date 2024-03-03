@@ -31,17 +31,17 @@ AModelLoader::AModelLoader()
 	}
 
 	// Load material properties
-	const TBOOL bAssetPackLoaded = AAssetLoader::GetAssetTRB(AAssetType_ModelLib) != TNULL;
+	const TBOOL bAssetPackLoaded = AAssetLoader::GetAssetTRB(AAssetType_AssetPack) != TNULL;
 
 	if (bAssetPackLoaded)
 	{
 		// Use asset pack
-		ms_pWorldEndRender       = AAssetLoader::GetSymbolAddress("materialproperties", "WorldEndRender", AAssetType_ModelLib);
-		ms_pWorldStartRender     = AAssetLoader::GetSymbolAddress("materialproperties", "WorldStartRender", AAssetType_ModelLib);
-		ms_pWorldUVOffsetsPerSec = AAssetLoader::GetSymbolAddress("materialproperties", "WorldUVOffsetsPerSec", AAssetType_ModelLib);
-		ms_pAlphaRefMaterials    = AAssetLoader::CastSymbol<AlphaRefMaterial>("materialproperties", "AlphaRefMaterials", AAssetType_ModelLib);
-		ms_pClampedMaterials     = AAssetLoader::CastSymbol<ClampedMaterial>("materialproperties", "ClampedMaterials", AAssetType_ModelLib);
-		ms_pGlowMaterials        = AAssetLoader::CastSymbol<const TCHAR*>("materialproperties", "GlowMaterials", AAssetType_ModelLib);
+		ms_pWorldEndRender       = AAssetLoader::GetSymbolAddress("materialproperties", "WorldEndRender", AAssetType_AssetPack);
+		ms_pWorldStartRender     = AAssetLoader::GetSymbolAddress("materialproperties", "WorldStartRender", AAssetType_AssetPack);
+		ms_pWorldUVOffsetsPerSec = AAssetLoader::GetSymbolAddress("materialproperties", "WorldUVOffsetsPerSec", AAssetType_AssetPack);
+		ms_pAlphaRefMaterials    = AAssetLoader::CastSymbol<AlphaRefMaterial>("materialproperties", "AlphaRefMaterials", AAssetType_AssetPack);
+		ms_pClampedMaterials     = AAssetLoader::CastSymbol<ClampedMaterial>("materialproperties", "ClampedMaterials", AAssetType_AssetPack);
+		ms_pGlowMaterials        = AAssetLoader::CastSymbol<const TCHAR*>("materialproperties", "GlowMaterials", AAssetType_AssetPack);
 	}
 	else
 	{
@@ -70,7 +70,7 @@ AModelLoader::AModelLoader()
 	
 	// Load double sided materials
 	ms_pDoubleSidedMaterials = (bAssetPackLoaded) ?
-		AAssetLoader::CastSymbol<const TCHAR*>("materialproperties", "DoubleSidedMaterials", AAssetType_ModelLib) :
+		AAssetLoader::CastSymbol<const TCHAR*>("materialproperties", "DoubleSidedMaterials", AAssetType_AssetPack) :
 		m_oTRB.CastSymbol<const TCHAR*>("DoubleSidedMaterials");
 
 	// Count double sided materials

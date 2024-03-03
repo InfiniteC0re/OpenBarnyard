@@ -36,7 +36,7 @@ TBOOL AGameSystemManager::OnCreate()
 	{
 		AKeyFrameLibraryManager::GetSingleton()->LoadLibrariesFromProperties(
 			pKeylibProperty,
-			startupLibTrb
+			&startupLibTrb
 		);
 	}
 

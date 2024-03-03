@@ -4,7 +4,7 @@
 using AAssetType = TUINT;
 enum AAssetType_ : AAssetType
 {
-	AAssetType_ModelLib,
+	AAssetType_AssetPack,
 	AAssetType_Startup,
 	AAssetType_WaveBank,
 	AAssetType_NUMOF,

@@ -77,7 +77,7 @@ AModel* AModelRepos::CreateNewModel(const Toshi::TPString8& a_rName, Toshi::TTRB
 {
 	if (!a_pTRB)
 	{
-		a_pTRB = AAssetLoader::GetAssetTRB(AAssetType_ModelLib);
+		a_pTRB = AAssetLoader::GetAssetTRB(AAssetType_AssetPack);
 	}
 
 	TVALIDPTR(a_pTRB);

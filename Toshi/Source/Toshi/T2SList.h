@@ -144,7 +144,7 @@ namespace Toshi {
 
 			while (pNode != End())
 			{
-				T* pNext = TSTATICCAST(T*, pNode->m_pNext);
+				T* pNext = pNode->GetNext();
 				pNode->m_pNext = pNode;
 				pNode = pNext;
 			}
