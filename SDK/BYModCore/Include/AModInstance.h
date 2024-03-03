@@ -2,7 +2,7 @@
 #include <Toshi/T2DList.h>
 #include <File/TTRB.h>
 
-#include <Plugins/PPropertyParser/PProperties.h>
+#include <Plugins/PPropertyParser/PBProperties.h>
 
 #include <BYardSDK/THookedRenderD3DInterface.h>
 
@@ -29,5 +29,5 @@ public:
 	virtual const char* GetName() = 0;
 	virtual TVersion GetVersion() { return { TVERSION(1, 0) }; }
 	virtual Toshi::TTRB* GetAssetFile() { return TNULL; }
-	virtual const PProperties* GetFileOverrides() { return TNULL; }
+	virtual const PBProperties* GetFileOverrides() { return TNULL; }
 };

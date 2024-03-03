@@ -104,7 +104,7 @@ public:
 			m_pAssetTRB = new TTRB;
 
 			if (TTRB::ERROR_OK == m_pAssetTRB->Load(
-				TString8::Format("%s\\BYWinterMod\\BYWinterMod.trb", GetModsDirectory())
+				TString8::VarArgs("%s\\BYWinterMod\\BYWinterMod.trb", GetModsDirectory())
 			))
 			{
 				m_pMatLib = AMaterialLibraryManager::List::GetSingleton()->CreateLibraryFromAsset(
@@ -129,11 +129,11 @@ public:
 		return m_pAssetTRB;
 	}
 
-	const PProperties* GetFileOverrides() override
+	const PBProperties* GetFileOverrides() override
 	{
 		if (m_pAssetTRB)
 		{
-			return PProperties::LoadFromAsset(m_pAssetTRB, "overrides");
+			return PBProperties::LoadFromAsset(m_pAssetTRB, "overrides");
 		}
 
 		return TNULL;

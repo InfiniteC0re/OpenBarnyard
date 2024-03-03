@@ -27,8 +27,10 @@ namespace Toshi {
 		// Returns TTRUE if allocated memory
 		TBOOL AllocBuffer(TUINT32 size, TBOOL freeMemory = TTRUE);
 
-		static TString8 Format(const TCHAR* a_pcFormat, ...);
+		TString8& Format(const TCHAR* a_pcFormat, ...);
 		TString8& VFormat(const TCHAR* a_pcFormat, va_list a_vargs);
+		
+		static TString8 VarArgs(const TCHAR* a_pcFormat, ...);
 
 		void UndoForceSetData() { Reset(); }
 		void ForceSetData(TCHAR* a_cString, TINT a_ilength);

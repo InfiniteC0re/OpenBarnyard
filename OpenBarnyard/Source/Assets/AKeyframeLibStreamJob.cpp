@@ -9,6 +9,8 @@
 //-----------------------------------------------------------------------------
 #include <Core/TMemoryDebugOn.h>
 
+TOSHI_NAMESPACE_USING
+
 AKeyframeLibStreamJob::AKeyframeLibStreamJob() :
 	TFileStreamJob(TNULL)
 {
@@ -19,20 +21,16 @@ AKeyframeLibStreamJob::AKeyframeLibStreamJob() :
 void AKeyframeLibStreamJob::Process()
 {
 	m_pLibrary = TNULL;
-	auto pLibrary =
-		Toshi::TRenderInterface::GetSingleton()->GetKeyframeLibraryManager().LoadLibraryFromTRB(
-			m_szName
-		);
-
+	auto pLibrary = TRenderInterface::GetSingleton()->GetKeyframeLibraryManager().LoadLibrary(m_szName);
 	m_szName[0] = '\0';
 	m_pLibrary = pLibrary;
 }
 
 void AKeyframeLibStreamJob::Init(const TCHAR* a_szFileName)
 {
-	Toshi::TStringManager::String8Copy(
+	TStringManager::String8Copy(
 		m_szName,
 		a_szFileName,
-		Toshi::TMath::Min(Toshi::TStringManager::String8Length(a_szFileName), sizeof(m_szName))
+		TMath::Min(TStringManager::String8Length(a_szFileName), sizeof(m_szName))
 	);
 }

@@ -174,54 +174,69 @@ namespace Toshi
 		class Iterator
 		{
 		public:
-			Iterator(Node* ppNode) : m_ppNode(ppNode) { }
+			TFORCEINLINE Iterator(Node* ppNode) : m_ppNode(ppNode) { }
 
-			TBOOL operator==(const Node* a_pNode) const
+			TFORCEINLINE Iterator Next()
 			{
-				return m_ppNode == a_pNode;
-			}
-
-			TBOOL operator==(const Iterator& other) const
-			{
-				return m_ppNode == other.m_ppNode;
-			}
-
-			TBOOL operator==(const T& other) const
-			{
-				return m_ppNode == other;
-			}
-
-			T& operator*() const
-			{
-				return m_ppNode->m_Value;
-			}
-
-			T* operator->() const
-			{
-				return &m_ppNode->m_Value;
-			}
-
-			Iterator operator++(TINT)
-			{
-				Iterator prev = *this;
+				Iterator next = *this;
 				m_ppNode = TSTATICCAST(Node*, T2RedBlackTree::GetSuccessorOf(m_ppNode));
-				return prev;
+				return next;
 			}
 
-			Iterator& operator++()
-			{
-				m_ppNode = TSTATICCAST(Node*, T2RedBlackTree::GetSuccessorOf(m_ppNode));
-				return *this;
-			}
-
-			Iterator operator--(TINT)
+			TFORCEINLINE Iterator Prev()
 			{
 				Iterator prev = *this;
 				m_ppNode = TSTATICCAST(Node*, T2RedBlackTree::GetPredecessorOf(m_ppNode));
 				return prev;
 			}
 
-			Iterator& operator--()
+			TFORCEINLINE Node* GetNode()
+			{
+				return m_ppNode;
+			}
+
+			TFORCEINLINE TBOOL operator==(const Node* a_pNode) const
+			{
+				return m_ppNode == a_pNode;
+			}
+
+			TFORCEINLINE TBOOL operator==(const Iterator& other) const
+			{
+				return m_ppNode == other.m_ppNode;
+			}
+
+			TFORCEINLINE TBOOL operator==(const T& other) const
+			{
+				return m_ppNode == other;
+			}
+
+			TFORCEINLINE T& operator*() const
+			{
+				return m_ppNode->m_Value;
+			}
+
+			TFORCEINLINE T* operator->() const
+			{
+				return &m_ppNode->m_Value;
+			}
+
+			TFORCEINLINE Iterator operator++(TINT)
+			{
+				return Next();
+			}
+
+			TFORCEINLINE Iterator& operator++()
+			{
+				m_ppNode = TSTATICCAST(Node*, T2RedBlackTree::GetSuccessorOf(m_ppNode));
+				return *this;
+			}
+
+			TFORCEINLINE Iterator operator--(TINT)
+			{
+				return Prev();
+			}
+
+			TFORCEINLINE Iterator& operator--()
 			{
 				m_ppNode = TSTATICCAST(Node*, T2RedBlackTree::GetPredecessorOf(m_ppNode));
 				return *this;

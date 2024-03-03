@@ -170,20 +170,18 @@ namespace Toshi {
 		return hasChanged;
 	}
 
-	TString8 TString8::Format(const TCHAR* a_pcFormat, ...)
+	TString8& TString8::Format(const TCHAR* a_pcFormat, ...)
 	{
-		TCHAR buffer[0x400];
-		TString8 buffer2;
 		va_list args;
-
 		va_start(args, a_pcFormat);
-
 		// TASSERT is only in T2String8
+
+		TCHAR buffer[1024];
 		TINT iResult = _vsnprintf(buffer, sizeof(buffer), a_pcFormat, args);
 		TASSERT(iResult != -1, "PS2/GC/X360 do not correctly support _vsnprintf, this code will cause memory to be clobbered on those platforms! Increase the size of the destination string to avoid this problem");
-		buffer2.Copy(buffer, -1);
-		
-		return buffer2;
+		Copy(buffer, -1);
+
+		return *this;
 	}
 
 	TString8& TString8::VFormat(const TCHAR* a_pcFormat, va_list a_vargs)
@@ -196,6 +194,22 @@ namespace Toshi {
 		Copy(buffer, -1);
 
 		return *this;
+	}
+
+	TString8 TString8::VarArgs(const TCHAR* a_pcFormat, ...)
+	{
+		TCHAR buffer[0x400];
+		TString8 buffer2;
+		va_list args;
+
+		va_start(args, a_pcFormat);
+
+		// TASSERT is only in T2String8
+		TINT iResult = _vsnprintf(buffer, sizeof(buffer), a_pcFormat, args);
+		TASSERT(iResult != -1, "PS2/GC/X360 do not correctly support _vsnprintf, this code will cause memory to be clobbered on those platforms! Increase the size of the destination string to avoid this problem");
+		buffer2.Copy(buffer, -1);
+
+		return buffer2;
 	}
 
 	void TString8::ForceSetData(TCHAR* a_cString, TINT a_iLength)

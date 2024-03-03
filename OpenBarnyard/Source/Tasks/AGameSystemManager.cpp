@@ -1,11 +1,13 @@
 #include "pch.h"
 #include "AGameSystemManager.h"
 #include "Assets/AAssetStreaming.h"
+#include "Assets/AKeyFrameLibraryManager.h"
 #include "Render/AModelRepos.h"
 #include "Cameras/ACameraManager.h"
 #include "Terrain/ATerrain.h"
 
 #include <Toshi/TScheduler.h>
+#include <Plugins/PPropertyParser/PBProperties.h>
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
@@ -20,6 +22,23 @@ TOSHI_NAMESPACE_USING
 TBOOL AGameSystemManager::OnCreate()
 {
 	TIMPLEMENT();
+
+	// Load keylibs from the startup library
+	TString8 startupLibFileName;
+	startupLibFileName.Format("Data/%s.trb", "lib_startup");
+
+	TTRB startupLibTrb;
+	startupLibTrb.Load(startupLibFileName);
+	auto pProperties = PBProperties::LoadFromTRB(startupLibTrb);
+	auto pKeylibProperty = pProperties->GetOptionalProperty("keylib");
+
+	if (pKeylibProperty)
+	{
+		AKeyFrameLibraryManager::GetSingleton()->LoadLibrariesFromProperties(
+			pKeylibProperty,
+			startupLibTrb
+		);
+	}
 
 	TGetClass(AModelRepos).CreateObject();
 

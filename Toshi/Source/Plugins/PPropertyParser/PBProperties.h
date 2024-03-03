@@ -1,6 +1,7 @@
 #pragma once
 #include "Toshi/Toshi.h"
 #include "Toshi/TStringManager.h"
+#include "Toshi/TString8.h"
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
@@ -8,7 +9,7 @@
 //-----------------------------------------------------------------------------
 #include "Core/TMemoryDebugOn.h"
 
-class PPropertyValue
+class PBPropertyValue
 {
 public:
 	enum class Type
@@ -27,59 +28,59 @@ public:
 	friend class PPropertiesWriter;
 
 public:
-	PPropertyValue()
+	PBPropertyValue()
 	{
 		m_eType = Type::Int;
 		m_uValue.Pointer = TNULL;
 	}
 
-	PPropertyValue(TINT a_iValue)
+	PBPropertyValue(TINT a_iValue)
 	{
 		m_eType = Type::Int;
 		m_uValue.Int = a_iValue;
 	}
 
-	PPropertyValue(TBOOL a_bValue)
+	PBPropertyValue(TBOOL a_bValue)
 	{
 		m_eType = Type::Bool;
 		m_uValue.Bool = a_bValue;
 	}
 
-	PPropertyValue(TFLOAT a_fValue)
+	PBPropertyValue(TFLOAT a_fValue)
 	{
 		m_eType = Type::Float;
 		m_uValue.Float = a_fValue;
 	}
 
-	PPropertyValue(TUINT32 a_uiValue)
+	PBPropertyValue(TUINT32 a_uiValue)
 	{
 		m_eType = Type::UInt32;
 		m_uValue.UInt32 = a_uiValue;
 	}
 
-	PPropertyValue(const Toshi::TString8& a_sValue)
+	PBPropertyValue(const Toshi::TString8& a_sValue)
 	{
 		m_eType = Type::String;
 		m_uValue.String = new TCHAR[a_sValue.Length() + 1];
 		Toshi::TStringManager::String8Copy(m_uValue.String, a_sValue);
 	}
 
-	PPropertyValue(class PProperties* a_pProperties)
+	PBPropertyValue(class PBProperties* a_pProperties)
 	{
 		m_eType = Type::Props;
 		m_uValue.Props = a_pProperties;
 	}
 
-	PPropertyValue(class PPropertyValueArray* a_pArray)
+	PBPropertyValue(class PBPropertyValueArray* a_pArray)
 	{
 		m_eType = Type::Array;
 		m_uValue.Array = a_pArray;
 	}
 
-	PPropertyValue(const PPropertyValue& other);
-	PPropertyValue(PPropertyValue&& other) noexcept;
+	PBPropertyValue(const PBPropertyValue& other);
+	PBPropertyValue(PBPropertyValue&& other) noexcept;
 
-	~PPropertyValue();
+	~PBPropertyValue();
 
 	Type GetType() const
 	{
@@ -124,25 +125,25 @@ public:
 	}
 #endif
 
-	const class PProperties* GetProperties() const
+	const class PBProperties* GetProperties() const
 	{
 		TASSERT(m_eType == Type::Props);
 		return m_uValue.Props;
 	}
 
-	const class PPropertyValueArray* GetArray() const
+	const class PBPropertyValueArray* GetArray() const
 	{
 		TASSERT(m_eType == Type::Array);
 		return m_uValue.Array;
 	}
 
-	class PProperties* GetProperties()
+	class PBProperties* GetProperties()
 	{
 		TASSERT(m_eType == Type::Props);
 		return m_uValue.Props;
 	}
 
-	class PPropertyValueArray* GetArray()
+	class PBPropertyValueArray* GetArray()
 	{
 		TASSERT(m_eType == Type::Array);
 		return m_uValue.Array;
@@ -197,35 +198,35 @@ public:
 		this->operator=(a_sValue);
 	}
 
-	PPropertyValue& operator=(TINT a_iValue)
+	PBPropertyValue& operator=(TINT a_iValue)
 	{
 		TASSERT(m_eType == Type::Int);
 		m_uValue.Int = a_iValue;
 		return *this;
 	}
 
-	PPropertyValue& operator=(TBOOL a_bValue)
+	PBPropertyValue& operator=(TBOOL a_bValue)
 	{
 		TASSERT(m_eType == Type::Bool);
 		m_uValue.Bool = a_bValue;
 		return *this;
 	}
 
-	PPropertyValue& operator=(TFLOAT a_fValue)
+	PBPropertyValue& operator=(TFLOAT a_fValue)
 	{
 		TASSERT(m_eType == Type::Float);
 		m_uValue.Float = a_fValue;
 		return *this;
 	}
 
-	PPropertyValue& operator=(TUINT32 a_uiValue)
+	PBPropertyValue& operator=(TUINT32 a_uiValue)
 	{
 		TASSERT(m_eType == Type::UInt32);
 		m_uValue.UInt32 = a_uiValue;
 		return *this;
 	}
 
-	PPropertyValue& operator=(const Toshi::TString8& a_sValue)
+	PBPropertyValue& operator=(const Toshi::TString8& a_sValue)
 	{
 		TASSERT(m_eType == Type::String);
 
@@ -236,8 +237,8 @@ public:
 		return *this;
 	}
 
-	PPropertyValue& operator=(const PPropertyValue& other);
-	PPropertyValue& operator=(PPropertyValue&& other) noexcept;
+	PBPropertyValue& operator=(const PBPropertyValue& other);
+	PBPropertyValue& operator=(PBPropertyValue&& other) noexcept;
 
 private:
 	void Delete();
@@ -252,28 +253,28 @@ private:
 		TBOOL Bool;
 		TINT Int;
 		TUINT32 UInt32;
-		class PProperties* Props;
-		class PPropertyValueArray* Array;
+		class PBProperties* Props;
+		class PBPropertyValueArray* Array;
 	} m_uValue;
 };
 
-class PPropertyValueArray
+class PBPropertyValueArray
 {
 public:
 	friend class PPropertiesWriter;
 
 public:
-	PPropertyValueArray()
+	PBPropertyValueArray()
 	{
 		m_pValues = TNULL;
 		m_iSize = 0;
 	}
 
-	PPropertyValueArray(const PPropertyValueArray& other)
+	PBPropertyValueArray(const PBPropertyValueArray& other)
 	{
 		if (other.m_iSize != 0)
 		{
-			m_pValues = new PPropertyValue[other.m_iSize];
+			m_pValues = new PBPropertyValue[other.m_iSize];
 
 			for (size_t i = 0; i < other.m_iSize; i++)
 				m_pValues[i] = other.m_pValues[i];
@@ -286,7 +287,7 @@ public:
 		m_iSize = other.m_iSize;
 	}
 
-	PPropertyValueArray(PPropertyValueArray&& other) noexcept
+	PBPropertyValueArray(PBPropertyValueArray&& other) noexcept
 	{
 		m_pValues = other.m_pValues;
 		m_iSize = other.m_iSize;
@@ -294,18 +295,18 @@ public:
 		other.m_iSize = 0;
 	}
 
-	~PPropertyValueArray()
+	~PBPropertyValueArray()
 	{
 		Delete();
 	}
 
-	PPropertyValue* GetValue(size_t a_iIndex)
+	PBPropertyValue* GetValue(size_t a_iIndex)
 	{
 		TASSERT(m_iSize > a_iIndex);
 		return &m_pValues[a_iIndex];
 	}
 
-	const PPropertyValue* GetValue(size_t a_iIndex) const
+	const PBPropertyValue* GetValue(size_t a_iIndex) const
 	{
 		TASSERT(m_iSize > a_iIndex);
 		return &m_pValues[a_iIndex];
@@ -316,48 +317,48 @@ public:
 		return m_iSize;
 	}
 
-	PPropertyValue* Add(TINT a_iValue)
+	PBPropertyValue* Add(TINT a_iValue)
 	{
-		return AllocValue(PPropertyValue(a_iValue));
+		return AllocValue(PBPropertyValue(a_iValue));
 	}
 
-	PPropertyValue* Add(TBOOL a_bValue)
+	PBPropertyValue* Add(TBOOL a_bValue)
 	{
-		return AllocValue(PPropertyValue(a_bValue));
+		return AllocValue(PBPropertyValue(a_bValue));
 	}
 
-	PPropertyValue* Add(TFLOAT a_fValue)
+	PBPropertyValue* Add(TFLOAT a_fValue)
 	{
-		return AllocValue(PPropertyValue(a_fValue));
+		return AllocValue(PBPropertyValue(a_fValue));
 	}
 
-	PPropertyValue* Add(TUINT32 a_uiValue)
+	PBPropertyValue* Add(TUINT32 a_uiValue)
 	{
-		return AllocValue(PPropertyValue(a_uiValue));
+		return AllocValue(PBPropertyValue(a_uiValue));
 	}
 
-	PPropertyValue* Add(const Toshi::TString8& a_sValue)
+	PBPropertyValue* Add(const Toshi::TString8& a_sValue)
 	{
-		return AllocValue(PPropertyValue(a_sValue));
+		return AllocValue(PBPropertyValue(a_sValue));
 	}
 
-	PPropertyValue* operator[](size_t a_iIndex)
-	{
-		return GetValue(a_iIndex);
-	}
-
-	const PPropertyValue* operator[](size_t a_iIndex) const
+	PBPropertyValue* operator[](size_t a_iIndex)
 	{
 		return GetValue(a_iIndex);
 	}
 
-	PPropertyValueArray& operator=(const PPropertyValueArray& other)
+	const PBPropertyValue* operator[](size_t a_iIndex) const
+	{
+		return GetValue(a_iIndex);
+	}
+
+	PBPropertyValueArray& operator=(const PBPropertyValueArray& other)
 	{
 		Delete();
 
 		if (other.m_iSize != 0)
 		{
-			m_pValues = new PPropertyValue[other.m_iSize];
+			m_pValues = new PBPropertyValue[other.m_iSize];
 
 			for (size_t i = 0; i < other.m_iSize; i++)
 				m_pValues[i] = other.m_pValues[i];
@@ -366,7 +367,7 @@ public:
 		}
 	}
 
-	PPropertyValueArray& operator=(PPropertyValueArray&& other) noexcept
+	PBPropertyValueArray& operator=(PBPropertyValueArray&& other) noexcept
 	{
 		Delete();
 
@@ -377,11 +378,11 @@ public:
 	}
 
 private:
-	PPropertyValue* AllocValue(PPropertyValue&& a_Value)
+	PBPropertyValue* AllocValue(PBPropertyValue&& a_Value)
 	{
 		if (m_pValues != TNULL)
 		{
-			auto newValues = new PPropertyValue[m_iSize + 1];
+			auto newValues = new PBPropertyValue[m_iSize + 1];
 
 			for (size_t i = 0; i < m_iSize; i++)
 				newValues[i] = std::move(m_pValues[i]);
@@ -393,7 +394,7 @@ private:
 		}
 		else
 		{
-			m_pValues = new PPropertyValue[1];
+			m_pValues = new PBPropertyValue[1];
 			m_iSize = 1;
 		}
 
@@ -408,40 +409,40 @@ private:
 	}
 
 private:
-	PPropertyValue* m_pValues;
+	PBPropertyValue* m_pValues;
 	TUINT32 m_iSize;
 };
 
-class PPropertyName
+class PBPropertyName
 {
 public:
 	friend class PPropertiesWriter;
 
 public:
-	PPropertyName()
+	PBPropertyName()
 	{
 		m_szName = TNULL;
 	}
 
-	PPropertyName(const Toshi::TString8& a_sName)
+	PBPropertyName(const Toshi::TString8& a_sName)
 	{
 		m_szName = new TCHAR[a_sName.Length() + 1];
 		Toshi::TStringManager::String8Copy(m_szName, a_sName);
 	}
 
-	PPropertyName(const PPropertyName& other)
+	PBPropertyName(const PBPropertyName& other)
 	{
 		m_szName = new TCHAR[Toshi::TStringManager::String8Length(other.m_szName) + 1];
 		Toshi::TStringManager::String8Copy(m_szName, other.m_szName);
 	}
 
-	PPropertyName(PPropertyName&& other) noexcept
+	PBPropertyName(PBPropertyName&& other) noexcept
 	{
 		m_szName = other.m_szName;
 		other.m_szName = TNULL;
 	}
 
-	~PPropertyName()
+	~PBPropertyName()
 	{
 		Delete();
 	}
@@ -459,7 +460,7 @@ public:
 		return m_szName;
 	}
 
-	TBOOL operator==(PPropertyName* a_pName) const
+	TBOOL operator==(PBPropertyName* a_pName) const
 	{
 		return Toshi::TStringManager::String8Compare(m_szName, a_pName->m_szName) == 0;
 	}
@@ -469,7 +470,7 @@ public:
 		return Toshi::TStringManager::String8Compare(m_szName, a_szName) == 0;
 	}
 
-	PPropertyName operator=(const Toshi::TString8& a_sName)
+	PBPropertyName operator=(const Toshi::TString8& a_sName)
 	{
 		Delete();
 
@@ -488,70 +489,70 @@ private:
 	TCHAR* m_szName;
 };
 
-class PProperties
+class PBProperties
 {
 public:
-	class PProperty
+	class PBProperty
 	{
 	public:
 		friend class PPropertiesWriter;
 
 	public:
-		PProperty()
+		PBProperty()
 		{
 			m_pName = TNULL;
 			m_pValue = TNULL;
 		}
 
-		PProperty(const Toshi::TString8& a_sName, TINT a_iValue)
+		PBProperty(const Toshi::TString8& a_sName, TINT a_iValue)
 		{
-			m_pName = new PPropertyName(a_sName);
-			m_pValue = new PPropertyValue(a_iValue);
+			m_pName = new PBPropertyName(a_sName);
+			m_pValue = new PBPropertyValue(a_iValue);
 		}
 
-		PProperty(const Toshi::TString8& a_sName, TBOOL a_bValue)
+		PBProperty(const Toshi::TString8& a_sName, TBOOL a_bValue)
 		{
-			m_pName = new PPropertyName(a_sName);
-			m_pValue = new PPropertyValue(a_bValue);
+			m_pName = new PBPropertyName(a_sName);
+			m_pValue = new PBPropertyValue(a_bValue);
 		}
 
-		PProperty(const Toshi::TString8& a_sName, TFLOAT a_fValue)
+		PBProperty(const Toshi::TString8& a_sName, TFLOAT a_fValue)
 		{
-			m_pName = new PPropertyName(a_sName);
-			m_pValue = new PPropertyValue(a_fValue);
+			m_pName = new PBPropertyName(a_sName);
+			m_pValue = new PBPropertyValue(a_fValue);
 		}
 
-		PProperty(const Toshi::TString8& a_sName, TUINT32 a_uiValue)
+		PBProperty(const Toshi::TString8& a_sName, TUINT32 a_uiValue)
 		{
-			m_pName = new PPropertyName(a_sName);
-			m_pValue = new PPropertyValue(a_uiValue);
+			m_pName = new PBPropertyName(a_sName);
+			m_pValue = new PBPropertyValue(a_uiValue);
 		}
 
-		PProperty(const Toshi::TString8& a_sName, const Toshi::TString8& a_sValue)
+		PBProperty(const Toshi::TString8& a_sName, const Toshi::TString8& a_sValue)
 		{
-			m_pName = new PPropertyName(a_sName);
-			m_pValue = new PPropertyValue(a_sValue);
+			m_pName = new PBPropertyName(a_sName);
+			m_pValue = new PBPropertyValue(a_sValue);
 		}
 
-		PProperty(const Toshi::TString8& a_sName, PProperties* a_pProperties)
+		PBProperty(const Toshi::TString8& a_sName, PBProperties* a_pProperties)
 		{
-			m_pName = new PPropertyName(a_sName);
-			m_pValue = new PPropertyValue(a_pProperties);
+			m_pName = new PBPropertyName(a_sName);
+			m_pValue = new PBPropertyValue(a_pProperties);
 		}
 
-		PProperty(const Toshi::TString8& a_sName, PPropertyValueArray* a_pArray)
+		PBProperty(const Toshi::TString8& a_sName, PBPropertyValueArray* a_pArray)
 		{
-			m_pName = new PPropertyName(a_sName);
-			m_pValue = new PPropertyValue(a_pArray);
+			m_pName = new PBPropertyName(a_sName);
+			m_pValue = new PBPropertyValue(a_pArray);
 		}
 
-		PProperty(const PProperty& other)
+		PBProperty(const PBProperty& other)
 		{
-			m_pName = new PPropertyName(*other.m_pName);
-			m_pValue = new PPropertyValue(*other.m_pValue);
+			m_pName = new PBPropertyName(*other.m_pName);
+			m_pValue = new PBPropertyValue(*other.m_pValue);
 		}
 
-		PProperty(PProperty&& other) noexcept
+		PBProperty(PBProperty&& other) noexcept
 		{
 			m_pName = other.m_pName;
 			m_pValue = other.m_pValue;
@@ -559,42 +560,42 @@ public:
 			other.m_pValue = TNULL;
 		}
 
-		~PProperty()
+		~PBProperty()
 		{
 			Delete();
 		}
 
-		PPropertyName& GetName()
+		PBPropertyName& GetName()
 		{
 			return *m_pName;
 		}
 
-		PPropertyValue* GetValue()
+		PBPropertyValue* GetValue()
 		{
 			return m_pValue;
 		}
 
-		const PPropertyName& GetName() const
+		const PBPropertyName& GetName() const
 		{
 			return *m_pName;
 		}
 
-		const PPropertyValue* GetValue() const
+		const PBPropertyValue* GetValue() const
 		{
 			return m_pValue;
 		}
 
-		PProperty& operator=(const PProperty& other)
+		PBProperty& operator=(const PBProperty& other)
 		{
 			Delete();
 
-			m_pName = new PPropertyName(*other.m_pName);
-			m_pValue = new PPropertyValue(*other.m_pValue);
+			m_pName = new PBPropertyName(*other.m_pName);
+			m_pValue = new PBPropertyValue(*other.m_pValue);
 
 			return *this;
 		}
 
-		PProperty& operator=(PProperty&& other) noexcept
+		PBProperty& operator=(PBProperty&& other) noexcept
 		{
 			Delete();
 
@@ -617,34 +618,34 @@ public:
 		}
 
 	private:
-		PPropertyName* m_pName;
-		PPropertyValue* m_pValue;
+		PBPropertyName* m_pName;
+		PBPropertyValue* m_pValue;
 	};
 
 	friend class PPropertiesWriter;
 
 public:
-	PProperties()
+	PBProperties()
 	{
 		m_pParent = TNULL;
 		m_pProperties = TNULL;
 		m_iCount = 0;
 	}
 
-	PProperties(const PProperties& other)
+	PBProperties(const PBProperties& other)
 	{
 		m_pParent = other.m_pParent;
 
 		if (other.m_pProperties != TNULL)
 		{
-			m_pProperties = new PProperty[other.m_iCount];
+			m_pProperties = new PBProperty[other.m_iCount];
 
 			for (size_t i = 0; i < other.m_iCount; i++)
 			{
 				m_pProperties[i] = other.m_pProperties[i];
 				auto pValue = m_pProperties[i].GetValue();
 
-				if (pValue->GetType() == PPropertyValue::Type::Props)
+				if (pValue->GetType() == PBPropertyValue::Type::Props)
 				{
 					pValue->GetProperties()->m_pParent = this;
 				}
@@ -658,7 +659,7 @@ public:
 		m_iCount = other.m_iCount;
 	}
 
-	PProperties(PProperties&& other) noexcept
+	PBProperties(PBProperties&& other) noexcept
 	{
 		m_pParent = other.m_pParent;
 		m_pProperties = other.m_pProperties;
@@ -668,38 +669,38 @@ public:
 		other.m_iCount = 0;
 	}
 
-	~PProperties()
+	~PBProperties()
 	{
 		Delete();
 	}
 
-	PProperty* Begin()
+	PBProperty* Begin()
 	{
 		return m_pProperties;
 	}
 
-	PProperty* End()
+	PBProperty* End()
 	{
 		return m_pProperties + m_iCount;
 	}
 
-	const PProperty* Begin() const
+	const PBProperty* Begin() const
 	{
 		return m_pProperties;
 	}
 
-	const PProperty* End() const
+	const PBProperty* End() const
 	{
 		return m_pProperties + m_iCount;
 	}
 
-	const PPropertyValue* GetProperty(size_t a_iIndex) const
+	const PBPropertyValue* GetProperty(size_t a_iIndex) const
 	{
 		TASSERT(m_iCount > a_iIndex);
 		return m_pProperties[a_iIndex].GetValue();
 	}
 
-	const PPropertyValue* GetOptionalProperty(const TCHAR* a_szName) const
+	const PBPropertyValue* GetOptionalProperty(const TCHAR* a_szName) const
 	{
 		for (size_t i = 0; i < m_iCount; i++)
 		{
@@ -712,7 +713,7 @@ public:
 		return TNULL;
 	}
 
-	const PProperties* GetParentProperties() const
+	const PBProperties* GetParentProperties() const
 	{
 		return m_pParent;
 	}
@@ -722,82 +723,82 @@ public:
 		return m_iCount;
 	}
 
-	PProperty* AddProperty(const Toshi::TString8& a_Name, TINT a_iValue)
+	PBProperty* AddProperty(const Toshi::TString8& a_Name, TINT a_iValue)
 	{
-		return AllocProperty(PProperty(a_Name, a_iValue));
+		return AllocProperty(PBProperty(a_Name, a_iValue));
 	}
 
-	PProperty* AddPropertyBool(const Toshi::TString8& a_Name, TBOOL a_bValue)
+	PBProperty* AddPropertyBool(const Toshi::TString8& a_Name, TBOOL a_bValue)
 	{
-		return AllocProperty(PProperty(a_Name, a_bValue));
+		return AllocProperty(PBProperty(a_Name, a_bValue));
 	}
 
-	PProperty* AddProperty(const Toshi::TString8& a_Name, TFLOAT a_fValue)
+	PBProperty* AddProperty(const Toshi::TString8& a_Name, TFLOAT a_fValue)
 	{
-		return AllocProperty(PProperty(a_Name, a_fValue));
+		return AllocProperty(PBProperty(a_Name, a_fValue));
 	}
 
-	PProperty* AddProperty(const Toshi::TString8& a_Name, TUINT32 a_uiValue)
+	PBProperty* AddProperty(const Toshi::TString8& a_Name, TUINT32 a_uiValue)
 	{
-		return AllocProperty(PProperty(a_Name, a_uiValue));
+		return AllocProperty(PBProperty(a_Name, a_uiValue));
 	}
 
-	PProperty* AddProperty(const Toshi::TString8& a_Name, const Toshi::TString8& a_sValue)
+	PBProperty* AddProperty(const Toshi::TString8& a_Name, const Toshi::TString8& a_sValue)
 	{
-		return AllocProperty(PProperty(a_Name, a_sValue));
+		return AllocProperty(PBProperty(a_Name, a_sValue));
 	}
 
-	PProperty* AddProperties(const Toshi::TString8& a_Name)
+	PBProperty* AddProperties(const Toshi::TString8& a_Name)
 	{
-		PProperties* pProperties = new PProperties;
+		PBProperties* pProperties = new PBProperties;
 		pProperties->m_pParent = this;
 
-		return AllocProperty(PProperty(a_Name, pProperties));
+		return AllocProperty(PBProperty(a_Name, pProperties));
 	}
 
-	PProperty* AddPropertyArray(const Toshi::TString8& a_Name)
+	PBProperty* AddPropertyArray(const Toshi::TString8& a_Name)
 	{
-		PPropertyValueArray* pArray = new PPropertyValueArray;
+		PBPropertyValueArray* pArray = new PBPropertyValueArray;
 
-		return AllocProperty(PProperty(a_Name, pArray));
+		return AllocProperty(PBProperty(a_Name, pArray));
 	}
 
 #ifdef __TOSHI_TTRB_H__
-	__forceinline static const PProperties* LoadFromTRB(Toshi::TTRB* a_pTRB)
+	__forceinline static const PBProperties* LoadFromTRB(Toshi::TTRB* a_pTRB)
 	{
-		return a_pTRB->CastSymbol<PProperties>("Main");
+		return a_pTRB->CastSymbol<PBProperties>("Main");
 	}
 
-	__forceinline static const PProperties* LoadFromTRB(Toshi::TTRB& a_TRB)
+	__forceinline static const PBProperties* LoadFromTRB(Toshi::TTRB& a_TRB)
 	{
-		return a_TRB.CastSymbol<PProperties>("Main");
+		return a_TRB.CastSymbol<PBProperties>("Main");
 	}
 
-	__forceinline static const PProperties* LoadFromAsset(Toshi::TTRB* a_pTRB, const TCHAR* a_szFileName)
+	__forceinline static const PBProperties* LoadFromAsset(Toshi::TTRB* a_pTRB, const TCHAR* a_szFileName)
 	{
 		Toshi::TString8 symbolName = a_szFileName;
 		symbolName.MakeLower();
 		symbolName += "_Main";
 
-		return a_pTRB->CastSymbol<PProperties>(symbolName);
+		return a_pTRB->CastSymbol<PBProperties>(symbolName);
 	}
 
-	__forceinline static const PProperties* LoadFromAsset(Toshi::TTRB& a_TRB, const TCHAR* a_szFileName)
+	__forceinline static const PBProperties* LoadFromAsset(Toshi::TTRB& a_TRB, const TCHAR* a_szFileName)
 	{
 		Toshi::TString8 symbolName = a_szFileName;
 		symbolName.MakeLower();
 		symbolName += "_Main";
 
-		return a_TRB.CastSymbol<PProperties>(symbolName);
+		return a_TRB.CastSymbol<PBProperties>(symbolName);
 	}
 #endif
 
 private:
-	PProperty* AllocProperty(PProperty&& a_Property)
+	PBProperty* AllocProperty(PBProperty&& a_Property)
 	{
 		if (m_pProperties != TNULL)
 		{
-			auto newProperties = new PProperty[m_iCount + 1];
+			auto newProperties = new PBProperty[m_iCount + 1];
 
 			for (size_t i = 0; i < m_iCount; i++)
 				newProperties[i] = std::move(m_pProperties[i]);
@@ -809,7 +810,7 @@ private:
 		}
 		else
 		{
-			m_pProperties = new PProperty[1];
+			m_pProperties = new PBProperty[1];
 			m_iCount = 1;
 		}
 
@@ -824,12 +825,12 @@ private:
 	}
 
 private:
-	PProperties* m_pParent;
-	PProperty* m_pProperties;
+	PBProperties* m_pParent;
+	PBProperty* m_pProperties;
 	TUINT32 m_iCount;
 };
 
-inline void PPropertyValue::Delete()
+inline void PBPropertyValue::Delete()
 {
 	if (m_uValue.Pointer)
 	{
@@ -842,38 +843,38 @@ inline void PPropertyValue::Delete()
 	}
 }
 
-inline PPropertyValue::PPropertyValue(const PPropertyValue& other)
+inline PBPropertyValue::PBPropertyValue(const PBPropertyValue& other)
 {
 	m_eType = other.m_eType;
 	m_uValue.Pointer = TNULL;
 
 	if (other.m_eType == Type::Array)
-		m_uValue.Array = new PPropertyValueArray(*other.m_uValue.Array);
+		m_uValue.Array = new PBPropertyValueArray(*other.m_uValue.Array);
 	else if (other.m_eType == Type::Props)
-		m_uValue.Props = new PProperties(*other.m_uValue.Props);
+		m_uValue.Props = new PBProperties(*other.m_uValue.Props);
 	else if (other.m_eType == Type::String)
 		SetString(other.m_uValue.String);
 	else
 		m_uValue = other.m_uValue;
 }
 
-inline PPropertyValue::PPropertyValue(PPropertyValue&& other) noexcept
+inline PBPropertyValue::PBPropertyValue(PBPropertyValue&& other) noexcept
 {
 	m_eType = other.m_eType;
 	m_uValue.Pointer = other.m_uValue.Pointer;
 	other.m_uValue.Pointer = TNULL;
 }
 
-inline PPropertyValue& PPropertyValue::operator=(const PPropertyValue& other)
+inline PBPropertyValue& PBPropertyValue::operator=(const PBPropertyValue& other)
 {
 	Delete();
 
 	m_eType = other.m_eType;
 
 	if (other.m_eType == Type::Array)
-		m_uValue.Array = new PPropertyValueArray(*other.m_uValue.Array);
+		m_uValue.Array = new PBPropertyValueArray(*other.m_uValue.Array);
 	else if (other.m_eType == Type::Props)
-		m_uValue.Props = new PProperties(*other.m_uValue.Props);
+		m_uValue.Props = new PBProperties(*other.m_uValue.Props);
 	else if (other.m_eType == Type::String)
 		SetString(other.m_uValue.String);
 	else
@@ -882,7 +883,7 @@ inline PPropertyValue& PPropertyValue::operator=(const PPropertyValue& other)
 	return *this;
 }
 
-inline PPropertyValue& PPropertyValue::operator=(PPropertyValue&& other) noexcept
+inline PBPropertyValue& PBPropertyValue::operator=(PBPropertyValue&& other) noexcept
 {
 	Delete();
 
@@ -893,7 +894,7 @@ inline PPropertyValue& PPropertyValue::operator=(PPropertyValue&& other) noexcep
 	return *this;
 }
 
-inline PPropertyValue::~PPropertyValue()
+inline PBPropertyValue::~PBPropertyValue()
 {
 	Delete();
 }

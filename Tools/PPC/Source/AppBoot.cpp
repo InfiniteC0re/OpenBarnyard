@@ -22,7 +22,7 @@ using json = nlohmann::json;
 
 static TMemoryInitialiser s_MemoryInitialiser;
 
-void JsonToProperties(json& a_rJSON, PProperties& a_rProperties)
+void JsonToProperties(json& a_rJSON, PBProperties& a_rProperties)
 {
 	for (auto it = a_rJSON.begin(); it != a_rJSON.end(); it++)
 	{
@@ -74,37 +74,37 @@ void JsonToProperties(json& a_rJSON, PProperties& a_rProperties)
 	}
 }
 
-void PropertiesToXml(tinyxml2::XMLElement* a_pRootElement, const PProperties* a_pProperties);
+void PropertiesToXml(tinyxml2::XMLElement* a_pRootElement, const PBProperties* a_pProperties);
 
-void PropertyValueToXml(tinyxml2::XMLElement* a_pRootElement, const PPropertyValue* a_pValue)
+void PropertyValueToXml(tinyxml2::XMLElement* a_pRootElement, const PBPropertyValue* a_pValue)
 {
 	switch (a_pValue->GetType())
 	{
-	case PPropertyValue::Type::String:
+	case PBPropertyValue::Type::String:
 		a_pRootElement->SetAttribute("type", "string");
 		a_pRootElement->SetAttribute("value", a_pValue->GetString());
 		break;
-	case PPropertyValue::Type::Float:
+	case PBPropertyValue::Type::Float:
 		a_pRootElement->SetAttribute("type", "float");
 		a_pRootElement->SetAttribute("value", a_pValue->GetFloat());
 		break;
-	case PPropertyValue::Type::Bool:
+	case PBPropertyValue::Type::Bool:
 		a_pRootElement->SetAttribute("type", "bool");
 		a_pRootElement->SetAttribute("value", a_pValue->GetBoolean());
 		break;
-	case PPropertyValue::Type::Int:
+	case PBPropertyValue::Type::Int:
 		a_pRootElement->SetAttribute("type", "int");
 		a_pRootElement->SetAttribute("value", a_pValue->GetInteger());
 		break;
-	case PPropertyValue::Type::UInt32:
+	case PBPropertyValue::Type::UInt32:
 		a_pRootElement->SetAttribute("type", "uint");
 		a_pRootElement->SetAttribute("value", a_pValue->GetUINT32());
 		break;
-	case PPropertyValue::Type::Props:
+	case PBPropertyValue::Type::Props:
 		a_pRootElement->SetAttribute("type", "property");
 		PropertiesToXml(a_pRootElement, a_pValue->GetProperties());
 		break;
-	case PPropertyValue::Type::Array:
+	case PBPropertyValue::Type::Array:
 		a_pRootElement->SetAttribute("type", "array");
 		auto pArray = a_pValue->GetArray();
 
@@ -120,7 +120,7 @@ void PropertyValueToXml(tinyxml2::XMLElement* a_pRootElement, const PPropertyVal
 }
 
 
-void PropertiesToXml(tinyxml2::XMLElement* a_pRootElement, const PProperties* a_pProperties)
+void PropertiesToXml(tinyxml2::XMLElement* a_pRootElement, const PBProperties* a_pProperties)
 {
 	T2_FOREACH((*a_pProperties), it)
 	{
@@ -257,7 +257,7 @@ int main(int argc, char** argv)
 			json document = json::parse(pFileData);
 			delete[] pFileData;
 
-			PProperties properties;
+			PBProperties properties;
 			JsonToProperties(document, properties);
 
 			TString8 inFilepath = args.GetInPath();
@@ -278,11 +278,11 @@ int main(int argc, char** argv)
 
 				if (inputFileDirName.Length() != 0)
 				{
-					outFilepath = TString8::Format("%s%s.trb", inputFileDirName.GetString(), inputFileName.GetString());
+					outFilepath = TString8::VarArgs("%s%s.trb", inputFileDirName.GetString(), inputFileName.GetString());
 				}
 				else
 				{
-					outFilepath = TString8::Format("%s.trb", inputFileName.GetString());
+					outFilepath = TString8::VarArgs("%s.trb", inputFileName.GetString());
 				}
 			}
 			else
@@ -313,11 +313,11 @@ int main(int argc, char** argv)
 
 			if (inputFileDirName.Length() != 0)
 			{
-				outFilepath = TString8::Format("%s%s.xml", inputFileDirName.GetString(), inputFileName.GetString());
+				outFilepath = TString8::VarArgs("%s%s.xml", inputFileDirName.GetString(), inputFileName.GetString());
 			}
 			else
 			{
-				outFilepath = TString8::Format("%s.xml", inputFileName.GetString());
+				outFilepath = TString8::VarArgs("%s.xml", inputFileName.GetString());
 			}
 		}
 		else
@@ -328,7 +328,7 @@ int main(int argc, char** argv)
 		TTRB inTrb;
 		if (inTrb.Load(inFilepath) == TTRB::ERROR_OK)
 		{
-			auto pProperties = PProperties::LoadFromTRB(inTrb);
+			auto pProperties = PBProperties::LoadFromTRB(inTrb);
 
 			tinyxml2::XMLDocument doc;
 			doc.InsertEndChild(doc.NewDeclaration());

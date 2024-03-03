@@ -171,7 +171,8 @@ TString8* AModel::GenerateInstanceName(TString8& a_rOutName, const TPString8& a_
 	TString8 name;
 	GetNameFromPath(a_FilePath, name);
 
-	TString8 debugName = TString8::Format("%s%i", name.GetString(), ms_uiDebugObjectIndex % 1000);
+	TString8 debugName;
+	debugName.Format("%s%i", name.GetString(), ms_uiDebugObjectIndex % 1000);
 	ms_uiDebugObjectIndex += 1;
 
 	a_rOutName = debugName;

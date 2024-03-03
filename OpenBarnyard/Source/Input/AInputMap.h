@@ -6,7 +6,7 @@
 #include <Input/TInputInterface.h>
 #include <Toshi/T2Map.h>
 
-#include <Plugins/PPropertyParser/PProperties.h>
+#include <Plugins/PPropertyParser/PBProperties.h>
 
 enum AInputCommand
 {
@@ -108,7 +108,7 @@ public:
 
 	const Toshi::TPString8& GetName() const { return m_Name; }
 
-	void LoadFromProperties(const PProperties& a_rProperties);
+	void LoadFromProperties(const PBProperties& a_rProperties);
 	Toshi::T2Map<Toshi::TInputDevice::Doodad, AInputCommand>& GetCommandMap() { return m_oDoodadToCommandMap; }
 
 private:

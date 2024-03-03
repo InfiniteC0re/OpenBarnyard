@@ -117,7 +117,7 @@ void AAssetPack::Save(const char* a_szFileName, TBOOL a_bCompress)
 			}
 			else
 			{
-				auto symbolName = TString8::Format("%s_%s", asset->Name.GetString8().GetString(), symbol->GetString8().GetString());
+				auto symbolName = TString8::VarArgs("%s_%s", asset->Name.GetString8().GetString(), symbol->GetString8().GetString());
 				pSYMB->Add(pOutStack, symbolName, pOutPtr);
 			}
 		}

@@ -10,7 +10,7 @@
 
 TDEFINE_CLASS_NORUNTIME(AInputMap);
 
-void AInputMap::LoadFromProperties(const PProperties& a_rProperties)
+void AInputMap::LoadFromProperties(const PBProperties& a_rProperties)
 {
 	m_oDoodadToCommandMap.Clear();
 	

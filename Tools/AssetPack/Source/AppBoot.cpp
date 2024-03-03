@@ -73,11 +73,11 @@ int main(int argc, char** argv)
 
 		if (args.GetOutPath())
 		{
-			outPath = TString8::Format("%s\\%s.trb", args.GetOutPath(), args.GetAssetName());
+			outPath = TString8::VarArgs("%s\\%s.trb", args.GetOutPath(), args.GetAssetName());
 		}
 		else
 		{
-			outPath = TString8::Format("%s.trb", args.GetAssetName());
+			outPath = TString8::VarArgs("%s.trb", args.GetAssetName());
 		}
 
 		assetBuilder.Save(outPath, args.IsUsingBTEC());

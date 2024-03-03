@@ -382,7 +382,7 @@ namespace Toshi {
 		const TCHAR* errString = GetErrorString(a_eError);
 		const TCHAR* errDescription = GetErrorDescription(a_eError);
 
-		TString8 string = TString8::Format("> %s: D3D Error [%s] : Description [%s] !\n", a_szInfo, errString, errDescription);
+		TString8 string = TString8::VarArgs("> %s: D3D Error [%s] : Description [%s] !\n", a_szInfo, errString, errDescription);
 		OutputDebugStringA(string);
 		
 		TASSERT(TFALSE, string.GetString());

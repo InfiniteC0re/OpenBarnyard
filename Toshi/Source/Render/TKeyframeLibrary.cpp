@@ -48,8 +48,9 @@ namespace Toshi {
 		TRBHeader* pTRBHeader = TSTATICCAST(TRBHeader*, a_pTRB->GetSymbolAddress(a_szSymbolName));
 
 		auto iNameLen = TStringManager::String8Length(pTRBHeader->m_szName);
-		TStringManager::String8Copy(pLibrary->m_szName, pTRBHeader->m_szName, TMath::Min(iNameLen, sizeof(pLibrary->m_szName)));
+		pLibrary->m_iNameLength = iNameLen;
 		
+		TStringManager::String8Copy(pLibrary->m_szName, pTRBHeader->m_szName, TMath::Min(iNameLen, sizeof(pLibrary->m_szName)));
 		pLibrary->m_iReferenceCount = 0;
 		pLibrary->m_SomeVector = pTRBHeader->m_SomeVector;
 		pLibrary->m_iNumTranslations = pTRBHeader->m_iNumTranslations;

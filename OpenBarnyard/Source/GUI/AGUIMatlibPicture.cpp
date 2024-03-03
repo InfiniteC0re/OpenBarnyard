@@ -66,9 +66,10 @@ void AGUIMatlibPicture::Cache()
 
 			for (TINT i = 0; i < m_iNumRects2; i++)
 			{
-				auto texName = TString8::Format("%s_%d.tga", m_Name.GetString8().GetString(), i + 1);
-				auto iTexIndex = m_pMaterialLibrary->FindTextureIndex(texName);
+				TString8 texName;
+				texName.Format("%s_%d.tga", m_Name.GetString8().GetString(), i + 1);
 
+				auto iTexIndex = m_pMaterialLibrary->FindTextureIndex(texName);
 				auto pTexture = pTexFactory->CreateFromT2Texture(m_pMaterialLibrary->GetTexture(iTexIndex)->pTexture);
 
 				m_pImages[i].pTexture = pTexture;

@@ -4,7 +4,7 @@
 #include <BYardSDK/THookedObject.h>
 
 #include <Toshi/TPString8.h>
-#include <Plugins/PPropertyParser/PProperties.h>
+#include <Plugins/PPropertyParser/PBProperties.h>
 #include <Render/TTexture.h>
 #include <File/TTRB.h>
 #include <Toshi/T2Map.h>
@@ -84,7 +84,7 @@ public:
 	static constexpr TUINT MAX_NUM_TEXTURES = 600;
 
 public:
-	void LoadFromProperties(const PPropertyValue* a_pProperty, Toshi::TTRB* a_pTRB, TBOOL a_bUpdateGUIMaterials);
+	void LoadFromProperties(const PBPropertyValue* a_pProperty, Toshi::TTRB* a_pTRB, TBOOL a_bUpdateGUIMaterials);
 	void LoadLibrary(const Toshi::TPString8& a_rLibName, Toshi::TTRB* a_pTRB, TBOOL a_bIsGUI);
 	void UnloadLibrary(const Toshi::TPString8& a_rLibName, TBOOL a_bUnused);
 

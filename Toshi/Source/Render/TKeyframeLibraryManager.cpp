@@ -22,7 +22,7 @@ namespace Toshi {
 		return TNULL;
 	}
 
-	TKeyframeLibrary* TKeyframeLibraryManager::LoadLibraryFromTRB(const TCHAR* a_szFilePath)
+	TKeyframeLibrary* TKeyframeLibraryManager::LoadLibrary(const TCHAR* a_szFilePath)
 	{
 		TVALIDPTR(a_szFilePath);
 
@@ -40,6 +40,16 @@ namespace Toshi {
 		m_iNumLibraries++;
 
 		pLibrary->SetTRB(pTRB);
+		return pLibrary;
+	}
+
+	TKeyframeLibrary* TKeyframeLibraryManager::LoadLibrary(TTRB* a_pTRB, const TCHAR* a_szSymbolName)
+	{
+		TKeyframeLibrary* pLibrary = TKeyframeLibrary::CreateFromTRB(a_pTRB, a_szSymbolName);
+
+		m_List.InsertHead(pLibrary);
+		m_iNumLibraries++;
+
 		return pLibrary;
 	}
 

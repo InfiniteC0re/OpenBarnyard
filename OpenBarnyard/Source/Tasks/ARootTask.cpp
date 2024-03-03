@@ -22,7 +22,7 @@
 #include "ALoadScreen.h"
 #include "Terrain/ATerrain.h"
 
-#include <Plugins/PPropertyParser/PProperties.h>
+#include <Plugins/PPropertyParser/PBProperties.h>
 #include <Toshi/TScheduler.h>
 #include <Toshi/T2ObjectPool.h>
 
@@ -236,10 +236,13 @@ void ARootTask::CreateStartupGameStates()
 
 void ARootTask::LoadStartupData()
 {
-	TTRB trb;
-	trb.Load(TString8::Format("Data/%s.trb", "lib_startup"));
+	TString8 startupLibPath;
+	startupLibPath.Format("Data/%s.trb", "lib_startup");
 
-	auto properties = PProperties::LoadFromTRB(trb);
+	TTRB trb;
+	trb.Load(startupLibPath);
+
+	auto properties = PBProperties::LoadFromTRB(trb);
 	auto matlibProperty = properties->GetOptionalProperty("matlib");
 
 	if (matlibProperty)
@@ -326,7 +329,7 @@ void ARootTask::LoadFrontEnd()
 {
 	TIMPLEMENT();
 
-	ATerrainManager::SetTerrain(ATerrainManager::Terrain_EnvMain, TTRUE, TTRUE, 0, 0, 0, 0);
+	ATerrainManager::SetTerrain(ATerrainManager::Terrain_FrontEnd, TTRUE, TTRUE, 0, 0, 0, 0);
 	ATerrainManager::StartLoading();
 
 	GetSingleton()->SetRenderWorld(TTRUE);

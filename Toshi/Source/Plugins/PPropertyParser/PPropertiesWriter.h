@@ -1,5 +1,5 @@
 #pragma once
-#include "PProperties.h"
+#include "PBProperties.h"
 #include "Plugins/PTRB.h"
 #include "File/TTRB.h"
 #include "Toshi/TPString8.h"
@@ -22,34 +22,34 @@ private:
 		return *s_aStringMap.Find(a_szString);
 	}
 
-	static void DumpValue(PTRB::SECT::Stack::Ptr<PPropertyValue> a_ptrValue, const PPropertyValue& a_OrigValue, PTRB::SECT::Stack* a_pStack, PTRB::SECT::Stack::Ptr<PProperties>* a_pParentProperties)
+	static void DumpValue(PTRB::SECT::Stack::Ptr<PBPropertyValue> a_ptrValue, const PBPropertyValue& a_OrigValue, PTRB::SECT::Stack* a_pStack, PTRB::SECT::Stack::Ptr<PBProperties>* a_pParentProperties)
 	{
 		a_ptrValue->m_eType = a_OrigValue.GetType();
 
 		switch (a_ptrValue->m_eType)
 		{
-		case PPropertyValue::Type::Bool:
+		case PBPropertyValue::Type::Bool:
 			a_ptrValue->m_uValue.Bool = a_OrigValue.GetBoolean();
 			break;
-		case PPropertyValue::Type::Int:
+		case PBPropertyValue::Type::Int:
 			a_ptrValue->m_uValue.Int = a_OrigValue.GetInteger();
 			break;
-		case PPropertyValue::Type::UInt32:
+		case PBPropertyValue::Type::UInt32:
 			a_ptrValue->m_uValue.UInt32 = a_OrigValue.GetUINT32();
 			break;
-		case PPropertyValue::Type::Float:
+		case PBPropertyValue::Type::Float:
 			a_ptrValue->m_uValue.Float = a_OrigValue.GetFloat();
 			break;
-		case PPropertyValue::Type::String:
+		case PBPropertyValue::Type::String:
 			a_pStack->WritePointer(&a_ptrValue->m_uValue.String, GetStringPtr(a_OrigValue.GetString()));
 			break;
-		case PPropertyValue::Type::Props:
+		case PBPropertyValue::Type::Props:
 		{
 			auto properties = DumpProperties(*a_OrigValue.GetProperties(), a_pStack, a_pParentProperties);
 			a_pStack->WritePointer(&a_ptrValue->m_uValue.Props, properties);
 			break;
 		}
-		case PPropertyValue::Type::Array:
+		case PBPropertyValue::Type::Array:
 		{
 			auto arraySize = a_OrigValue.GetArray()->GetSize();
 			auto pArray = a_pStack->Alloc(&a_ptrValue->m_uValue.Array);
@@ -66,12 +66,12 @@ private:
 		}
 	}
 
-	static PTRB::SECT::Stack::Ptr<PProperties> DumpProperties(const PProperties& a_oProperties, PTRB::SECT::Stack* a_pStack, PTRB::SECT::Stack::Ptr<PProperties>* a_pParentProperties = TNULL)
+	static PTRB::SECT::Stack::Ptr<PBProperties> DumpProperties(const PBProperties& a_oProperties, PTRB::SECT::Stack* a_pStack, PTRB::SECT::Stack::Ptr<PBProperties>* a_pParentProperties = TNULL)
 	{
-		auto properties = a_pStack->Alloc<PProperties>();
+		auto properties = a_pStack->Alloc<PBProperties>();
 
 		properties->m_iCount = a_oProperties.GetPropertyCount();
-		auto props = a_pStack->Alloc<PProperties::PProperty>(&properties->m_pProperties, properties->m_iCount);
+		auto props = a_pStack->Alloc<PBProperties::PBProperty>(&properties->m_pProperties, properties->m_iCount);
 
 		const TBOOL bIsRoot = a_oProperties.GetParentProperties() == TNULL;
 
@@ -97,8 +97,8 @@ private:
 			auto& origProp = a_oProperties.Begin()[i];
 
 			auto prop = props + i;
-			auto propName = a_pStack->Alloc<PPropertyName>(&prop->m_pName);
-			auto propValue = a_pStack->Alloc<PPropertyValue>(&prop->m_pValue);
+			auto propName = a_pStack->Alloc<PBPropertyName>(&prop->m_pName);
+			auto propValue = a_pStack->Alloc<PBPropertyValue>(&prop->m_pValue);
 			
 			a_pStack->WritePointer(&propName->m_szName, GetStringPtr(origProp.GetName().GetString()));
 			DumpValue(propValue, *origProp.GetValue(), a_pStack, &properties);
@@ -115,7 +115,7 @@ private:
 		}
 	}
 
-	static void FillStringMap(const PProperties& a_oProperties)
+	static void FillStringMap(const PBProperties& a_oProperties)
 	{
 		for (auto it = a_oProperties.Begin(); it != a_oProperties.End(); it++)
 		{
@@ -127,18 +127,18 @@ private:
 
 			switch (propType)
 			{
-			case PPropertyValue::Type::Props:
+			case PBPropertyValue::Type::Props:
 				FillStringMap(*propValue->GetProperties());
 				break;
-			case PPropertyValue::Type::String:
+			case PBPropertyValue::Type::String:
 				AddStringToMap(propValue->GetString());
 				break;
-			case PPropertyValue::Type::Array:
+			case PBPropertyValue::Type::Array:
 				for (size_t i = 0; i < propValue->GetArray()->GetSize(); i++)
 				{
 					auto arrayValue = propValue->GetArray()->GetValue(i);
 
-					if (arrayValue->GetType() == PPropertyValue::Type::String)
+					if (arrayValue->GetType() == PBPropertyValue::Type::String)
 					{
 						AddStringToMap(arrayValue->GetString());
 					}
@@ -149,7 +149,7 @@ private:
 	}
 
 public:
-	static TBOOL WriteTRB(const Toshi::TString8& a_sFilePath, const PProperties& a_oProperties, TBOOL a_bCompress = TFALSE)
+	static TBOOL WriteTRB(const Toshi::TString8& a_sFilePath, const PBProperties& a_oProperties, TBOOL a_bCompress = TFALSE)
 	{
 		TASSERT(a_oProperties.GetParentProperties() == TNULL);
 

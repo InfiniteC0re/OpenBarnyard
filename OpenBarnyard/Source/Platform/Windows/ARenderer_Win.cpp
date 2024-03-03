@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "AppBoot.h"
 #include "Assets/AMaterialLibraryManager.h"
+#include "Assets/AKeyFrameLibraryManager.h"
 #include "Assets/AModelLoader.h"
 #include "Render/AModelRepos.h"
 #include "Terrain/ATerrain.h"
@@ -326,6 +327,7 @@ TBOOL ARenderer::OnCreate()
 
 		AModelLoader::CreateSingleton();
 		AMaterialLibraryManager::CreateSingleton();
+		AKeyFrameLibraryManager::CreateSingleton();
 	}
 
 	return bCreatedTRender;

@@ -28,15 +28,18 @@ AInputMapManager::AInputMapManager() :
 
 TBOOL AInputMapManager::ReadControlsData()
 {
+	TString8 controlsFilePath;
+	controlsFilePath.Format("Data/Options/%s.trb", "Controls_Win");
+
 	TTRB trb;
-	auto eLoadResult = trb.Load(TString8::Format("Data/Options/%s.trb", "Controls_Win"));
+	auto eLoadResult = trb.Load(controlsFilePath);
 
 	if (eLoadResult != TTRB::ERROR_OK)
 	{
 		return TFALSE;
 	}
 
-	auto properties = PProperties::LoadFromTRB(trb);
+	auto properties = PBProperties::LoadFromTRB(trb);
 	
 	while (m_InputMaps.Size() != 0)
 	{

@@ -195,6 +195,11 @@ namespace Toshi {
 			Decrement();
 		}
 
+		TFORCEINLINE const TCHAR* GetString() const
+		{
+			return m_pPtr ? m_pPtr->m_oString.GetString() : ms_sEmpty.GetString();
+		}
+
 		TFORCEINLINE const TString8& GetString8() const
 		{
 			return m_pPtr ? m_pPtr->m_oString : ms_sEmpty;

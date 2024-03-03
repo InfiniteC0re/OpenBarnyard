@@ -34,7 +34,7 @@ AMaterialLibraryManager::AMaterialLibraryManager() :
 	}
 }
 
-void AMaterialLibraryManager::LoadFromProperties(const PPropertyValue* a_pProperty, Toshi::TTRB* a_pTRB, TBOOL a_bUpdateGUIMaterials)
+void AMaterialLibraryManager::LoadFromProperties(const PBPropertyValue* a_pProperty, Toshi::TTRB* a_pTRB, TBOOL a_bUpdateGUIMaterials)
 {
 	if (a_pProperty)
 	{

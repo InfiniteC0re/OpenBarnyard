@@ -2,7 +2,7 @@
 #include "AMaterialLibrary.h"
 
 #include <Toshi/TPString8.h>
-#include <Plugins/PPropertyParser/PProperties.h>
+#include <Plugins/PPropertyParser/PBProperties.h>
 #include <Render/TTexture.h>
 #include <Toshi/T2Map.h>
 #include <Toshi/T2SList.h>
@@ -82,7 +82,7 @@ public:
 public:
 	AMaterialLibraryManager();
 
-	void LoadFromProperties(const PPropertyValue* a_pProperty, Toshi::TTRB* a_pTRB, TBOOL a_bUpdateGUIMaterials);
+	void LoadFromProperties(const PBPropertyValue* a_pProperty, Toshi::TTRB* a_pTRB, TBOOL a_bUpdateGUIMaterials);
 	void LoadLibrary(const Toshi::TPString8& a_rLibName, Toshi::TTRB* a_pTRB, TBOOL a_bIsGUI);
 	void UnloadLibrary(const Toshi::TPString8& a_rLibName, TBOOL a_bUnused);
 

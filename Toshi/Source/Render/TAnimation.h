@@ -206,7 +206,9 @@ namespace Toshi {
 
 		TKeyframeLibrary* GetLibrary(const TCHAR* a_szName);
 
-		TKeyframeLibrary* LoadLibraryFromTRB(const TCHAR* a_szFilePath);
+		TKeyframeLibrary* LoadLibrary(const TCHAR* a_szFilePath);
+		TKeyframeLibrary* LoadLibrary(TTRB* a_pTRB, const TCHAR* a_szSymbolName);
+
 		void UnloadLibrary(TKeyframeLibrary* a_pLibrary);
 
 	private:
