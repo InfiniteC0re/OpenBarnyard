@@ -8,25 +8,25 @@
 //-----------------------------------------------------------------------------
 #include "Core/TMemoryDebugOn.h"
 
-static constexpr const TCHAR* cTypeStrings[]
+static constexpr const TCHAR* kTypeStrings[]
 {
 	"Info",
 	"Warning",
 	"Error"
 };
 
-TSTATICASSERT(Toshi::TLogFile::Type_NUMOF == TARRAYSIZE(cTypeStrings));
+TSTATICASSERT(Toshi::TLogFile::Type_NUMOF == TARRAYSIZE(kTypeStrings));
 
 #if SUPPORT_COLOURED_LOGS
 
-static constexpr const TCHAR* cTypeColours[]
+static constexpr const WORD kTypeColours[]
 {
-	"\033[32m",
-	"\033[93m",
-	"\033[91m"
+	FOREGROUND_GREEN,
+	FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_GREEN,
+	FOREGROUND_INTENSITY | FOREGROUND_RED
 };
 
-TSTATICASSERT(Toshi::TLogFile::Type_NUMOF == TARRAYSIZE(cTypeColours));
+TSTATICASSERT(Toshi::TLogFile::Type_NUMOF == TARRAYSIZE(kTypeColours));
 
 #endif // SUPPORT_COLOURED_LOGS
 
@@ -95,7 +95,7 @@ namespace Toshi {
 
 		for (size_t i = 0; i < 3; i++)
 		{
-			Print("%s count = %d\n", cTypeStrings[i], m_typeCounts[i]);
+			Print("%s count = %d\n", kTypeStrings[i], m_typeCounts[i]);
 		}
 
 		if (m_pFile != TNULL)
@@ -145,17 +145,26 @@ namespace Toshi {
 	{
 		if (m_pFile != TNULL)
 		{
-#if SUPPORT_COLOURED_LOGS
+#if SUPPORT_COLOURED_LOGS && defined(TOSHI_SKU_WINDOWS)
+			HANDLE hStd;
+			WORD wOldColorAttrs;
+			
 			if (m_bColouring)
 			{
-				m_pFile->CPrintf(cTypeColours[type]);
+				hStd = GetStdHandle(STD_OUTPUT_HANDLE);
+			
+				CONSOLE_SCREEN_BUFFER_INFO csbiInfo;
+				GetConsoleScreenBufferInfo(hStd, &csbiInfo);
+				wOldColorAttrs = csbiInfo.wAttributes;
+
+				SetConsoleTextAttribute(hStd, kTypeColours[type]);
 			}
 
 			if (m_bIsSimpleMode)
 			{
 				if (m_bAllowIndentation)
 				{
-					m_pFile->CPrintf("[%s]: %s", cTypeStrings[type], m_LevelString);
+					m_pFile->CPrintf("[%s]: %s", kTypeStrings[type], m_LevelString);
 				}
 			}
 			else
@@ -163,14 +172,14 @@ namespace Toshi {
 				TCHAR strTime[9];
 				_strtime(strTime);
 
-				m_pFile->CPrintf("[%s] [%s/%s] [%s]: %s", strTime, str1, str2 != TNULL ? str2 : "", cTypeStrings[type], !m_bAllowIndentation ? m_LevelString : "");
+				m_pFile->CPrintf("[%s] [%s/%s] [%s]: %s", strTime, str1, str2 != TNULL ? str2 : "", kTypeStrings[type], !m_bAllowIndentation ? m_LevelString : "");
 			}
-#else // SUPPORT_COLOURED_LOGS
+#else // SUPPORT_COLOURED_LOGS && defined(TOSHI_SKU_WINDOWS)
 			if (m_bIsSimpleMode)
 			{
 				if (m_bAllowIndentation)
 				{
-					m_pFile->CPrintf("%d [%s]: %s", m_iTotalLogCount, cTypeStrings[type], m_LevelString);
+					m_pFile->CPrintf("%d [%s]: %s", m_iTotalLogCount, kTypeStrings[type], m_LevelString);
 				}
 			}
 			else
@@ -178,21 +187,21 @@ namespace Toshi {
 				TCHAR strTime[128];
 				_strtime(strTime);
 
-				m_pFile->CPrintf("%d [%s] [%s]: %s: %s: %s", m_iTotalLogCount, cTypeStrings[type], strTime, str1, str2 != TNULL ? str2 : "", !m_bAllowIndentation ? m_LevelString : "");
+				m_pFile->CPrintf("%d [%s] [%s]: %s: %s: %s", m_iTotalLogCount, kTypeStrings[type], strTime, str1, str2 != TNULL ? str2 : "", !m_bAllowIndentation ? m_LevelString : "");
 			}
-#endif // SUPPORT_COLOURED_LOGS
+#endif // SUPPORT_COLOURED_LOGS && defined(TOSHI_SKU_WINDOWS)
 
 			va_list args;
 			va_start(args, format);
 			m_pFile->VCPrintf(format, args);
 			va_end(args);
 
-#if SUPPORT_COLOURED_LOGS
+#if SUPPORT_COLOURED_LOGS && defined(TOSHI_SKU_WINDOWS)
 			if (m_bColouring)
 			{
-				m_pFile->CPrintf("\033[0m");
+				SetConsoleTextAttribute(hStd, wOldColorAttrs);
 			}
-#endif // SUPPORT_COLOURED_LOGS
+#endif // SUPPORT_COLOURED_LOGS && defined(TOSHI_SKU_WINDOWS)
 
 			m_typeCounts[type]++;
 			m_iTotalLogCount++;
