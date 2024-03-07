@@ -77,6 +77,12 @@ typedef uint32_t ai_uint32;
 #include <new>    // for std::nothrow_t
 #include <string> // for aiString::Set(const std::string&)
 
+//-----------------------------------------------------------------------------
+// Disables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include <Core/TMemoryDebugOff.h>
+
 namespace Assimp {
 //! @cond never
 namespace Intern {
