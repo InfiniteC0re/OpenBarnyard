@@ -28,6 +28,6 @@ Then compile the generated solution and that's it
 
 ## Thirdparty libraries
 - [premake](https://github.com/premake/premake-core)
-- [spdlog](https://github.com/gabime/spdlog)
+- [tracy](https://github.com/wolfpld/tracy)
 - [fmod](https://fmod.com/)
 - [Opcode](http://www.codercorner.com/Opcode.htm)

@@ -78,7 +78,7 @@ int main(int argc, char** argv)
 				auto pLocaleStrings = pOutStack->Alloc<T2Locale::LocaleStrings>();
 				
 				pLocaleStrings->m_numstrings = foundStrings.Size();
-				pOutStack->Alloc<TWCHAR*>(&pLocaleStrings->Strings, foundStrings.Size());
+				pOutStack->Alloc<T2LocalisedString>(&pLocaleStrings->Strings, foundStrings.Size());
 
 				TARRAY_FOREACH(foundStrings, str)
 				{

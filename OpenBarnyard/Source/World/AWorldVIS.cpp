@@ -51,6 +51,8 @@ void AWorldVis::Reset()
 
 void AWorldVis::Build(const Toshi::TMatrix44& a_rModelView, const Toshi::TMatrix44& a_rProjection, TINT a_iCellIndex)
 {
+	TPROFILER_SCOPE();
+
 	TMatrix44 viewModel = a_rModelView;
 	viewModel.InvertOrthogonal();
 	m_ViewModelPos = viewModel.GetTranslation().AsVector3();
@@ -69,6 +71,8 @@ static TUINT s_uiBuildFlags = 0;
 
 void AWorldVis::Build(const Toshi::TMatrix44& a_rModelView, const Toshi::TMatrix44& a_rProjection, TINT a_iCellIndex, const CullBox& a_rCullBox)
 {
+	TPROFILER_SCOPE();
+
 	TASSERT(a_iCellIndex < m_pWorld->m_iNumCells);
 
 	if (ISZERO(s_uiBuildFlags & 1))
@@ -132,6 +136,8 @@ static void CreatePortalFrustum(Frustum& a_rFrustum, CullBox& a_rCullBox, TMatri
 
 void AWorldVis::Render(const Toshi::TMatrix44& a_rModelView)
 {
+	TPROFILER_SCOPE();
+
 	// Create stack values and store pointer to the array to use it later
 	StackValue aStack[s_iStackSize + 1];
 	AWorldVis::s_pStack = aStack;

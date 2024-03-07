@@ -16,6 +16,8 @@ void AMatLibLoaderJob::BeginJob()
 
 TBOOL AMatLibLoaderJob::RunJob()
 {
+	TPROFILER_SCOPE();
+
 	if (m_oStreamJob.IsProcessed())
 	{
 		TASSERT(TNULL != m_pMemBlock);

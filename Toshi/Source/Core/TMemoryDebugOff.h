@@ -5,12 +5,12 @@
 //       Include TMemoryDebugOn.h to enable debugging mode.
 //-----------------------------------------------------------------------------
 
-#ifdef TMEMORY_DEBUG_ENABLED
+#ifdef TOSHI_PROFILER_MEMORY_ENABLED
 
 #undef new
 #undef TMalloc1
 #undef TMalloc2
 #undef TMalloc
-#undef TMEMORY_DEBUG_ENABLED
+#undef TOSHI_PROFILER_MEMORY_ENABLED
 
-#endif // TMEMORY_DEBUG_ENABLED
+#endif // TOSHI_PROFILER_MEMORY_ENABLED

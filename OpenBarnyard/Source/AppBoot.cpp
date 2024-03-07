@@ -76,8 +76,6 @@ TOSHI_ENTRY
 
 	TUtil::ToshiCreate(toshiParams);
 
-	TMemory::StartDebugPipe();
-
 	g_oSystemManager.SetQuitCallback([]() {
 		TUtil::ToshiDestroy();
 		exit(0);

@@ -28,6 +28,8 @@ AKeyFrameLibraryManager::~AKeyFrameLibraryManager()
 
 void AKeyFrameLibraryManager::LoadLibrariesFromProperties(const PBPropertyValue* a_pArray, Toshi::TTRB* a_pTRB)
 {
+	TPROFILER_SCOPE();
+
 	if (TNULL != a_pArray)
 	{
 		auto pArray = a_pArray->GetArray();
@@ -44,6 +46,8 @@ void AKeyFrameLibraryManager::LoadLibrariesFromProperties(const PBPropertyValue*
 
 TBOOL AKeyFrameLibraryManager::LoadLibrary(const Toshi::TPString8& a_rLibraryName, TTRB* a_pTRB)
 {
+	TPROFILER_SCOPE();
+
 	auto pResultNode = m_Libraries.FindNode(a_rLibraryName);
 
 	if (pResultNode != m_Libraries.End())
@@ -94,6 +98,8 @@ TBOOL AKeyFrameLibraryManager::LoadLibrary(const Toshi::TPString8& a_rLibraryNam
 
 TBOOL AKeyFrameLibraryManager::UnrefLibrary(const Toshi::TPString8& a_rLibraryName)
 {
+	TPROFILER_SCOPE();
+
 	auto pResultNode = m_Libraries.FindNode(a_rLibraryName);
 
 	if (pResultNode != m_Libraries.End())
@@ -121,6 +127,8 @@ TBOOL AKeyFrameLibraryManager::UnrefLibrary(const Toshi::TPString8& a_rLibraryNa
 
 void AKeyFrameLibraryManager::UnloadAllLibraries()
 {
+	TPROFILER_SCOPE();
+
 	for (auto it = m_Libraries.Begin(); it != m_Libraries.End();)
 	{
 		auto pCurrentNode = it.GetNode();
@@ -135,6 +143,8 @@ void AKeyFrameLibraryManager::UnloadAllLibraries()
 
 void AKeyFrameLibraryManager::UnloadLibrary(LibraryMap::Node*& a_rLibrary)
 {
+	TPROFILER_SCOPE();
+
 	if (a_rLibrary != m_Libraries.End())
 	{
 		auto pKeyFrameLibMngr = &TRenderInterface::GetSingleton()->GetKeyframeLibraryManager();

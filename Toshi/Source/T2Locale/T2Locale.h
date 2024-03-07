@@ -4,6 +4,8 @@
 
 namespace Toshi
 {
+	using T2LocalisedString = TWCHAR*;
+
 	class T2Locale : public Toshi::TSingleton<T2Locale>
 	{
 	public:
@@ -12,7 +14,7 @@ namespace Toshi
 		struct LocaleStrings
 		{
 			TINT32 m_numstrings;
-			TWCHAR** Strings;
+			T2LocalisedString* Strings;
 		};
 
 	public:
@@ -26,7 +28,7 @@ namespace Toshi
 		Lang GetLanguage() const;
 
 		TINT GetNumStrings() const;
-		TWCHAR* GetString(TINT a_iNumString);
+		T2LocalisedString GetString(TINT a_iNumString);
 
 	protected:
 		T2Locale(TINT langCount, size_t bufferSize, void* buffer);

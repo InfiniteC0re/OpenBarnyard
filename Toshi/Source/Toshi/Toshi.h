@@ -5,6 +5,7 @@
 #include "Toshi/Defines.h"
 #include "Toshi/Typedefs.h"
 #include "Toshi/Platform.h"
+#include "Toshi/Profiler.h"
 #include "Toshi/Endianness.h"
 #include "Toshi/Helpers.h"
 

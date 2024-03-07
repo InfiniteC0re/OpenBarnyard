@@ -32,6 +32,8 @@ namespace Toshi
 	TTRB::ERROR TTRB::Load(const TCHAR* a_szFilePath, TUINT32 a_uiUnknown)
 	{
 		// FUN_00686920
+		TPROFILER_SCOPE();
+
 		ERROR error = m_TTSFI.Open(a_szFilePath);
 
 		if (error == ERROR_OK)
@@ -247,7 +249,6 @@ namespace Toshi
 
 	void* TTRB::GetSymbolAddress(const TCHAR* symbName)
 	{
-		// FUN_00686d30
 		auto index = GetSymbolIndex(symbName);
 
 		if (m_SYMB != TNULL && index != -1 && index < m_SYMB->m_i32SymbCount)
@@ -261,7 +262,6 @@ namespace Toshi
 
 	TINT TTRB::GetSymbolIndex(const TCHAR* symbName)
 	{
-		// 00686c30
 		if (m_SYMB != TNULL)
 		{
 			short hash = HashString(symbName);

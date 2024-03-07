@@ -22,6 +22,8 @@ static TClass* s_pSkinMaterialClass = TNULL;
 
 void AModelLoader::LoadSkinLOD(Toshi::TModel* a_pModel, TINT a_iLODIndex, Toshi::TModelLOD* a_pLOD, Toshi::TTMDWin::TRBLODHeader* a_pLODHeader)
 {
+	TPROFILER_SCOPE();
+
 	auto pShader = TCastClass<ASkinShaderHAL>(ASkinShader::GetSingleton());
 	
 	TINT iMeshCount = a_pLODHeader->m_iMeshCount1 + a_pLODHeader->m_iMeshCount2;

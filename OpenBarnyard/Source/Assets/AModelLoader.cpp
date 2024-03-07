@@ -168,6 +168,8 @@ void AModelLoader::MaterialApplyAlphaRef(Toshi::TMaterial* a_pMaterial, const TC
 
 Toshi::TMaterial* AModelLoader::CreateMaterial(Toshi::TShader* a_pShader, const TCHAR* a_szMaterialName)
 {
+	TPROFILER_SCOPE();
+
 	char prefixName[32];
 
 	if (a_pShader->IsA(&TGetClass(AWorldShader)))
@@ -257,6 +259,8 @@ Toshi::TMaterial* AModelLoader::CreateMaterial(Toshi::TShader* a_pShader, const 
 
 void AModelLoader::DestroyMaterial(Toshi::TMaterial* a_pMaterial)
 {
+	TPROFILER_SCOPE();
+
 	TINT iId = 0;
 	TINT16 iIndex;
 
@@ -301,6 +305,8 @@ void AModelLoader::DestroyMaterial(Toshi::TMaterial* a_pMaterial)
 
 void AModelLoader::AddMaterial(const Toshi::TString8& a_rName, MaterialNode* a_pMaterialNode)
 {
+	TPROFILER_SCOPE();
+
 	TINT iMaxIndex = ms_iNumCreatedMaterials;
 	TINT iMaterialIndex = ms_iNumCreatedMaterials / 2;
 
@@ -340,6 +346,8 @@ void AModelLoader::AddMaterial(const Toshi::TString8& a_rName, MaterialNode* a_p
 
 Toshi::TMaterial* AModelLoader::FindMaterial(const Toshi::TString8& a_rName)
 {
+	TPROFILER_SCOPE();
+
 	TINT iMaxIndex = ms_iNumCreatedMaterials;
 	TINT iMaterialIndex = ms_iNumCreatedMaterials / 2;
 
@@ -395,6 +403,8 @@ TBOOL AModelLoader::AModelLoaderLoadTMDCallback(Toshi::TModel* a_pModel)
 
 TBOOL AModelLoader::AModelLoaderLoadTRBCallback(Toshi::TModel* a_pModel)
 {
+	TPROFILER_SCOPE();
+
 	TTODO("Load collision data");
 
 	TTMDWin::TRBWinHeader* pHeader = a_pModel->CastSymbol<TTMDWin::TRBWinHeader>("Header");

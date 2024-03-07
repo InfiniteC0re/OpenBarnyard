@@ -262,6 +262,8 @@ Toshi::TTexture* AMaterialLibraryManager::FindTexture(const TCHAR* a_szTextureNa
 
 AMaterialLibrary* AMaterialLibraryManager::List::CreateLibraryFromTRB(Toshi::TTRB* a_pTRB, const TCHAR* a_szFilePath)
 {
+	TPROFILER_SCOPE();
+
 	auto pLibrary = new AMaterialLibrary;
 	pLibrary->SetPath(a_szFilePath);
 
@@ -277,6 +279,8 @@ AMaterialLibrary* AMaterialLibraryManager::List::CreateLibraryFromTRB(Toshi::TTR
 
 AMaterialLibrary* AMaterialLibraryManager::List::CreateLibraryFromAsset(const TCHAR* a_szFilePath, Toshi::TTRB* a_pTRB)
 {
+	TPROFILER_SCOPE();
+	
 	auto pLibrary = new AMaterialLibrary;
 	pLibrary->SetPath(a_szFilePath);
 

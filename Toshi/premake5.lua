@@ -22,6 +22,7 @@ project "Toshi"
 	files
 	{
 		"Source/ToshiPCH.cpp",
+		"Source/Profiler/TracyClient.cpp",
 		"Source/Core/**.h",
 		"Source/Core/**.cpp",
 		"Source/Toshi/**.h",
@@ -66,11 +67,13 @@ project "Toshi"
 	defines
 	{
 		"TOSHI_USER_ENGINE",
-		"SPDLOG_WCHAR_TO_UTF8_SUPPORT",
 		"_CRT_SECURE_NO_WARNINGS"
 	}
 	
 	filter "files:**.c"
+		flags { "NoPCH" }
+		
+	filter "files:Source/Profiler/**.*"
 		flags { "NoPCH" }
 
 	filter "system:windows"

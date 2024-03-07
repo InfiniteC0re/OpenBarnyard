@@ -466,6 +466,8 @@ void ATerrain::LoadFromFile(const TCHAR* a_szFilePath, TBOOL a_bLoadLater, TBOOL
 
 void ATerrain::WaitUntilLoaded()
 {
+	TPROFILER_SCOPE();
+
 	while (TTRUE)
 	{
 		Update();
@@ -1073,8 +1075,9 @@ void ATerrainManager::SetTerrain(TINT a_eTerrain, TBOOL a_bLoadLater, TBOOL a_bP
 
 void ATerrainManager::StartLoading()
 {
-	auto pTerrain = ATerrain::GetSingleton();
+	TPROFILER_SCOPE();
 
+	auto pTerrain = ATerrain::GetSingleton();
 	pTerrain->m_bIsLoaded = TFALSE;
 
 	if (ATerrain::ms_bAutoVIS)

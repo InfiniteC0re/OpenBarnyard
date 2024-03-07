@@ -73,7 +73,7 @@ namespace Toshi
 		return m_StringTable->m_numstrings;
 	}
 
-	TWCHAR* T2Locale::GetString(TINT a_iNumString)
+	T2LocalisedString T2Locale::GetString(TINT a_iNumString)
 	{
 		TASSERT(a_iNumString >= 0 && a_iNumString < GetNumStrings());
 		return m_StringTable->Strings[a_iNumString];

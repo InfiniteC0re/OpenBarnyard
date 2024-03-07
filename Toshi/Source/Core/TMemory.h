@@ -2,9 +2,9 @@
 #include "Toshi/TNodeList.h"
 #include "Toshi/TSingleton.h"
 
-#ifdef TMEMORY_DEBUG
+#ifdef TOSHI_PROFILER_MEMORY
 #include "TMemoryDebug.h"
-#endif // TMEMORY_DEBUG
+#endif // TOSHI_PROFILER_MEMORY
 
 namespace Toshi {
 
@@ -121,8 +121,6 @@ namespace Toshi {
 		static void Deinitialise();
 		static TUINT MapSizeToFreeList(TUINT a_uiSize);
 
-		static TBOOL StartDebugPipe();
-
 	private:
 		inline static class TMutex* ms_pGlobalMutex;
 
@@ -133,7 +131,7 @@ namespace Toshi {
 		TNodeList<MemBlockSlot> m_UsedBlocks;
 		TNodeList<MemBlockSlot> m_FreeBlocks;
 		MemBlockSlot m_aBlockSlots[NUM_BLOCK_SLOTS];
-		void* m_pMainBlockMemory;
+		void* m_pMemory;
 		MemBlock* m_pGlobalBlock;
 		TUINT m_Unknown1;
 		TUINT m_Unknown2;
@@ -153,20 +151,20 @@ void TFree(void* a_pMem);
 
 inline void* __CRTDECL operator new(size_t size, Toshi::TMemory::MemBlock* block)
 {
-#ifdef TMEMORY_DEBUG
+#ifdef TOSHI_PROFILER_MEMORY
 	return TMalloc(size, block, TMemory__FILE__, TMemory__LINE__);
 #else
 	return TMalloc(size, block, TNULL, -1);
-#endif // TMEMORY_DEBUG
+#endif // TOSHI_PROFILER_MEMORY
 }
 
 inline void* __CRTDECL operator new[](size_t size, Toshi::TMemory::MemBlock* block)
 {
-#ifdef TMEMORY_DEBUG
+#ifdef TOSHI_PROFILER_MEMORY
 	return TMalloc(size, block, TMemory__FILE__, TMemory__LINE__);
 #else
 	return TMalloc(size, block, TNULL, -1);
-#endif // TMEMORY_DEBUG
+#endif // TOSHI_PROFILER_MEMORY
 }
 
 inline void __CRTDECL operator delete(void* ptr, Toshi::TMemory::MemBlock* block) noexcept

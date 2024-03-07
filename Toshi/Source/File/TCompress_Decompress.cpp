@@ -11,6 +11,8 @@ namespace Toshi
 {
 	uintptr_t TCompress::Decompress(TFile* file, TCompress::Header* header, TCHAR* buffer, TUINT32 bufferSize)
 	{
+		TPROFILER_SCOPE();
+
 		if (header->Magic != TMakeFour("BTEC"))
 			return TCOMPRESS_ERROR_WRONG_MAGIC;
 		if (header->Version != TVERSION(1, 2) && header->Version != TVERSION(1, 3))

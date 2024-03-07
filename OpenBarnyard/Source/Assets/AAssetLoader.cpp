@@ -28,6 +28,8 @@ static void TranslateLibraryName(Toshi::TString8& a_rOutName, const TCHAR* a_szL
 
 TBOOL AAssetLoader::LoadAssetPackFromLibrary(const TCHAR* a_szLibraryName, TBOOL a_bStream)
 {
+	TPROFILER_SCOPE();
+
 	TString8 libFileName;
 	TranslateLibraryName(libFileName, a_szLibraryName);
 
@@ -56,6 +58,8 @@ TBOOL AAssetLoader::LoadAssetPackFromLibrary(const TCHAR* a_szLibraryName, TBOOL
 
 TBOOL AAssetLoader::CreateAssetsFromLibrary(const TCHAR* a_szLibraryName)
 {
+	TPROFILER_SCOPE();
+
 	TString8 libFileName;
 	TranslateLibraryName(libFileName, a_szLibraryName);
 
@@ -104,6 +108,8 @@ TBOOL AAssetLoader::CreateAssetsFromLibrary(const TCHAR* a_szLibraryName)
 
 TBOOL AAssetLoader::Load(const TCHAR* a_szFileName, AAssetType a_eAssetType, TBOOL a_bStream)
 {
+	TPROFILER_SCOPE();
+
 	if (!ms_pTRBFiles[a_eAssetType])
 	{
 		// Create TTRB if it doesn't exist

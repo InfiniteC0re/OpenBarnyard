@@ -53,13 +53,12 @@ project "OpenBarnyard"
 	
 	defines
 	{
-		"TOSHI_USER_CLIENT",
-		"SPDLOG_WCHAR_TO_UTF8_SUPPORT"
+		"TOSHI_USER_CLIENT"
 	}
 	
 	prebuildcommands
 	{
-		"\"%{wks.location}/DevTools/PooledStrings.exe\" \"%{prj.location}Source\\APooledStrings.txt\" \"%{prj.location}Source\\APooledStrings.cpp\""
+		"\"%{wks.location}/DevTools/PooledStrings/PooledStrings.exe\" \"%{prj.location}Source\\APooledStrings.txt\" \"%{prj.location}Source\\APooledStrings.cpp\""
 	}
 	
 	postbuildcommands

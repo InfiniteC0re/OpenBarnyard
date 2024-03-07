@@ -3,49 +3,46 @@
 #include "Thread/TMutex.h"
 #include "Thread/TMutexLock.h"
 
-#ifdef TMEMORY_DEBUG
-#include "Core/TMemoryDebug.h"
-#include "Toshi/T2Allocator.h"
-#include "Toshi/T2DList.h"
-#include "Toshi/T2NamedPipeServer.h"
-#endif // TMEMORY_DEBUG
+#ifdef TOSHI_PROFILER_MEMORY
+#include "Profiler/tracy/Tracy.hpp"
+#endif // TOSHI_PROFILER_MEMORY
 
 #define MEM_TO_HOLE(PTR) (((Hole*)(((TUINT)PTR) + 4)) - 1)
 
 void* __CRTDECL operator new(size_t size)
 {
-#ifdef TMEMORY_DEBUG
+#ifdef TOSHI_PROFILER_MEMORY
 	return TMalloc(size, TNULL, TMemory__FILE__, TMemory__LINE__);
 #else
 	return TMalloc(size, TNULL, TNULL, -1);
-#endif // TMEMORY_DEBUG
+#endif // TOSHI_PROFILER_MEMORY
 }
 
 void* __CRTDECL operator new(size_t size, ::std::nothrow_t const&) noexcept
 {
-#ifdef TMEMORY_DEBUG
+#ifdef TOSHI_PROFILER_MEMORY
 	return TMalloc(size, TNULL, TMemory__FILE__, TMemory__LINE__);
 #else
 	return TMalloc(size, TNULL, TNULL, -1);
-#endif // TMEMORY_DEBUG
+#endif // TOSHI_PROFILER_MEMORY
 }
 
 void* __CRTDECL operator new[](size_t size)
 {
-#ifdef TMEMORY_DEBUG
+#ifdef TOSHI_PROFILER_MEMORY
 	return TMalloc(size, TNULL, TMemory__FILE__, TMemory__LINE__);
 #else
 	return TMalloc(size, TNULL, TNULL, -1);
-#endif // TMEMORY_DEBUG
+#endif // TOSHI_PROFILER_MEMORY
 }
 
 void* __CRTDECL operator new[](size_t size, ::std::nothrow_t const&) noexcept
 {
-#ifdef TMEMORY_DEBUG
+#ifdef TOSHI_PROFILER_MEMORY
 	return TMalloc(size, TNULL, TMemory__FILE__, TMemory__LINE__);
 #else
 	return TMalloc(size, TNULL, TNULL, -1);
-#endif // TMEMORY_DEBUG
+#endif // TOSHI_PROFILER_MEMORY
 }
 
 void __CRTDECL operator delete(void* ptr) noexcept
@@ -75,41 +72,6 @@ void __CRTDECL operator delete[](void* ptr, size_t _Size) noexcept
 
 namespace Toshi {
 
-#ifdef TMEMORY_DEBUG
-
-	class TMemoryAllocationDebugInfo : public T2DList<TMemoryAllocationDebugInfo>::Node
-	{
-	public:
-		TMemoryAllocationDebugInfo()
-		{
-			SetMemory(TNULL);
-			SetFileName(TNULL);
-			SetLineNum(-1);
-		}
-
-		void* GetMemory() const { return m_pMemory; }
-		void SetMemory(void* a_pMemory) { m_pMemory = a_pMemory; }
-
-		const TCHAR* GetFileName() const { return m_szFileName; }
-		void SetFileName(const TCHAR* a_szFileName) { m_szFileName = a_szFileName; }
-
-		TINT GetLineNum() const { return m_iLineNum; }
-		void SetLineNum(TINT a_iLineNum) { m_iLineNum = a_iLineNum; }
-
-	private:
-		void* m_pMemory;
-		const TCHAR* m_szFileName;
-		TINT m_iLineNum;
-	};
-
-	static TMemoryAllocationDebugInfo g_MemoryDebugInfoSlots[65535];
-	static T2DList<TMemoryAllocationDebugInfo> g_FreeDebugInfoSlots;
-	static T2DList<TMemoryAllocationDebugInfo> g_UsedDebugInfoSlots;
-	static TUINT g_uiDebugNumTrackedAllocations = 0;
-	static T2NamedPipeServer g_MemoryDebugPipeServer;
-
-#endif // TMEMORY_DEBUG
-
 	TMemory::TMemory()
 	{
 		m_TotalAllocatedSize = 0;
@@ -121,13 +83,6 @@ namespace Toshi {
 
 		m_bFlag1 = TFALSE;
 		m_bFlag2 = TTRUE;
-
-#ifdef TMEMORY_DEBUG
-		T2_FOREACH_ARRAY(g_MemoryDebugInfoSlots, i)
-		{
-			g_FreeDebugInfoSlots.PushBack(&g_MemoryDebugInfoSlots[i]);
-		}
-#endif // TMEMORY_DEBUG
 	}
 
 	TMemory::~TMemory()
@@ -175,27 +130,16 @@ namespace Toshi {
 		TUINT iDataSize;
 		Hole* pFreeList = TNULL;
 
-#ifdef TMEMORY_DEBUG
+#ifdef TOSHI_PROFILER_MEMORY
 		#include "TMemoryDebugOff.h"
 
-		auto SaveDebugInfo = [a_szFileName, a_iLineNum](void* pMem) {
-			if (pMem && a_szFileName)
+		auto SaveDebugInfo = [a_szFileName, a_iLineNum, a_uiSize](void* pMem) {
+			if (pMem)
 			{
-				TMemory__FILE__ = TNULL;
-				TMemory__LINE__ = -1;
-
-				TASSERT(!g_FreeDebugInfoSlots.IsEmpty(), "TMemory Debug: No empty slots left to save allocation info");
-
-				auto pDebugInfo = g_FreeDebugInfoSlots.PopFront();
-				pDebugInfo->SetMemory(pMem);
-				pDebugInfo->SetFileName(a_szFileName);
-				pDebugInfo->SetLineNum(a_iLineNum);
-
-				g_UsedDebugInfoSlots.PushBack(pDebugInfo);
-				g_uiDebugNumTrackedAllocations++;
+				TracyAlloc(pMem, a_uiSize);
 			}
 		};
-#endif // TMEMORY_DEBUG
+#endif // TOSHI_PROFILER_MEMORY
 
 		for (TUINT i = uiFreeListId; i < NUM_FREE_LISTS; i++)
 		{
@@ -271,9 +215,9 @@ namespace Toshi {
 						a_pMemBlock->m_pHoles[uiNewFreeListId] = pNewHole;
 						*(Hole**)((TUINT)&pNewHole->m_pPrevHole + TAlignNumDown(pNewHole->m_uiSize)) = pNewHole;
 
-#ifdef TMEMORY_DEBUG
+#ifdef TOSHI_PROFILER_MEMORY
 						SaveDebugInfo((void*)iDataStart);
-#endif // TMEMORY_DEBUG
+#endif // TOSHI_PROFILER_MEMORY
 						return (void*)iDataStart;
 					}
 					else
@@ -302,9 +246,11 @@ namespace Toshi {
 						pHole->m_uiSize = ms_pSingleton->m_Unknown1 | iDataSize | 1;
 						pHole->m_pMemBlock = a_pMemBlock;
 
-#ifdef TMEMORY_DEBUG
+#ifdef TOSHI_PROFILER_MEMORY
+
 						SaveDebugInfo((void*)iDataStart);
-#endif // TMEMORY_DEBUG
+
+#endif // TOSHI_PROFILER_MEMORY
 
 						return (void*)iDataStart;
 					}
@@ -318,9 +264,11 @@ namespace Toshi {
 
 		if (pFreeList)
 		{
-#ifdef TMEMORY_DEBUG
+#ifdef TOSHI_PROFILER_MEMORY
+
 			SaveDebugInfo((void*)iDataStart);
-#endif // TMEMORY_DEBUG
+
+#endif // TOSHI_PROFILER_MEMORY
 
 			return (void*)iDataStart;
 		}
@@ -333,15 +281,18 @@ namespace Toshi {
 		return TNULL;
 	}
 
-	TBOOL TMemory::Free(void* a_pMem)
+	TBOOL TMemory::Free(void* a_pAllocated)
 	{
 		TMutexLock lock(ms_pGlobalMutex);
 
-		TUINT uiMem = TREINTERPRETCAST(TUINT, a_pMem);
+		TUINT uiMem = TREINTERPRETCAST(TUINT, a_pAllocated);
 
-		if ((uiMem & 3) == 0 && a_pMem != TNULL)
+		if ((uiMem & 3) == 0 && a_pAllocated != TNULL)
 		{
-			auto pRootHole = MEM_TO_HOLE(a_pMem);
+			auto pMemBase = GetSingleton();
+			TASSERT(a_pAllocated <= (((TUINT8*)pMemBase->m_pMemory)+pMemBase->m_MainBlockSize));
+
+			auto pRootHole = MEM_TO_HOLE(a_pAllocated);
 			auto pMemBlock = pRootHole->m_pMemBlock;
 			auto uiSize = TAlignNumDown(pRootHole->m_uiSize);
 			auto ppHole = &pRootHole->m_pNextHole;
@@ -367,7 +318,6 @@ namespace Toshi {
 				{
 					pHole->m_pPrevHole->m_pNextHole = *ppHole;
 				}
-
 
 				if (*ppHole)
 				{
@@ -409,23 +359,11 @@ namespace Toshi {
 
 			pMemBlock->m_pHoles[uiHoleId] = pRootHole;
 
-#ifdef TMEMORY_DEBUG
+#ifdef TOSHI_PROFILER_MEMORY
 
-			if (!g_UsedDebugInfoSlots.IsEmpty())
-			{
-				T2_FOREACH_BACK(g_UsedDebugInfoSlots, slot)
-				{
-					if (slot->GetMemory() == a_pMem)
-					{
-						slot->Remove();
-						g_FreeDebugInfoSlots.PushBack(slot);
-						g_uiDebugNumTrackedAllocations--;
-						break;
-					}
-				}
-			}
+			TracyFree(a_pAllocated);
 
-#endif // TMEMORY_DEBUG
+#endif // TOSHI_PROFILER_MEMORY
 
 			return TTRUE;
 		}
@@ -537,7 +475,7 @@ namespace Toshi {
 		auto tmemory = TSTATICCAST(TMemory, calloc(sizeof(TMemory), 1));
 		new (tmemory) TMemory();
 
-		tmemory->m_pMainBlockMemory = TNULL;
+		tmemory->m_pMemory = TNULL;
 		tmemory->m_pGlobalBlock = TNULL;
 		tmemory->m_Unknown1 = 0;
 		tmemory->m_Unknown2 = 0;
@@ -548,9 +486,9 @@ namespace Toshi {
 		tmemory->m_ReservedSize = a_uiReservedSize;
 		tmemory->m_TotalAllocatedSize = (a_uiHeapSize == 0) ? 128 * 1024 * 1024 : a_uiHeapSize;
 		tmemory->m_MainBlockSize = tmemory->m_TotalAllocatedSize - a_uiReservedSize;
-		tmemory->m_pMainBlockMemory = malloc(tmemory->m_TotalAllocatedSize);
+		tmemory->m_pMemory = malloc(tmemory->m_TotalAllocatedSize);
 		tmemory->m_pGlobalBlock = tmemory->CreateMemBlockInPlace(
-			tmemory->m_pMainBlockMemory,
+			tmemory->m_pMemory,
 			tmemory->m_TotalAllocatedSize,
 			"Toshi"
 		);
@@ -562,7 +500,7 @@ namespace Toshi {
 	{
 		TASSERT(TTRUE == IsSingletonCreated());
 		auto pMemManager = TMemory::GetSingleton();
-		auto pMainBlockMemory = pMemManager->m_pMainBlockMemory;
+		auto pMainBlockMemory = pMemManager->m_pMemory;
 
 		pMemManager->m_UsedBlocks.RemoveAll();
 		pMemManager->m_FreeBlocks.RemoveAll();
@@ -590,47 +528,6 @@ namespace Toshi {
 			uiResult = NUM_FREE_LISTS - 1;
 
 		return uiResult;
-	}
-
-	TBOOL TMemory::StartDebugPipe()
-	{
-#ifdef TMEMORY_DEBUG
-		static TUINT8 s_DebugInfoPipeBuffer[4 + 262 * TARRAYSIZE(g_MemoryDebugInfoSlots)];
-
-		g_MemoryDebugPipeServer.SetMemoryStreamUpdateCallback(
-			[](void*& a_rMemoryStream, TUINT& a_rDataSize) {
-				TUINT32* pNumAllocInfos = TREINTERPRETCAST(TUINT32*, s_DebugInfoPipeBuffer);
-				*pNumAllocInfos = g_uiDebugNumTrackedAllocations;
-
-				TUINT8* pAllocInfoCursor = TREINTERPRETCAST(TUINT8*, pNumAllocInfos + 1);
-
-				T2_FOREACH(g_UsedDebugInfoSlots, slot)
-				{
-					*(void**)pAllocInfoCursor = slot->GetMemory();
-					pAllocInfoCursor += 4;
-
-					*(TUINT16*)pAllocInfoCursor = (TUINT16)slot->GetLineNum();
-					pAllocInfoCursor += 2;
-
-					auto uiFileNameLength = TMath::Min(TUINT8(TStringManager::String8Length(slot->GetFileName())), TUINT8(255));
-
-					*(TUINT8*)pAllocInfoCursor = uiFileNameLength;
-					pAllocInfoCursor += 1;
-
-					TStringManager::String8Copy((TCHAR*)pAllocInfoCursor, slot->GetFileName(), uiFileNameLength);
-					pAllocInfoCursor += uiFileNameLength;
-				}
-
-				a_rMemoryStream = s_DebugInfoPipeBuffer;
-				a_rDataSize = TREINTERPRETCAST(TUINT8*, pAllocInfoCursor) - s_DebugInfoPipeBuffer;
-			}
-		);
-
-		return g_MemoryDebugPipeServer.Start("TOSHI-TMemory", 1000, 1, sizeof(s_DebugInfoPipeBuffer));
-#else
-		return TFALSE;
-#endif // TMEMORY_DEBUG
-
 	}
 
 	void TMemory::DumpMemInfo()

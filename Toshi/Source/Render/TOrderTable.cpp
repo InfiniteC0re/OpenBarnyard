@@ -55,6 +55,8 @@ namespace Toshi {
 
 	void TOrderTable::Render()
 	{
+		TPROFILER_SCOPE();
+
 		for (auto it = m_pLastRegMat; it != TNULL; it = it->GetNextRegMat())
 		{
 			it->Render();
@@ -66,6 +68,8 @@ namespace Toshi {
 
 	void TOrderTable::Flush()
 	{
+		TPROFILER_SCOPE();
+
 		if (s_uiMaxNumRenderPackets < s_uiNumRenderPackets)
 		{
 			s_uiMaxNumRenderPackets = s_uiNumRenderPackets;
@@ -148,6 +152,8 @@ namespace Toshi {
 
 	void TRegMaterial::Render()
 	{
+		TPROFILER_SCOPE();
+
 		m_pMaterial->PreRender();
 
 		for (auto pPacket = m_pLastRenderPacket; pPacket != TNULL; pPacket = pPacket->GetNextPacket())

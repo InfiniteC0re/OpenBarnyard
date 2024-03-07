@@ -100,6 +100,8 @@ static void LoadFromRenderGroups(CellSphereTreeBranchNode* a_pRenderGroup, Cell*
 
 void AModelLoader::LoadWorldLOD(Toshi::TModel* a_pModel, TINT a_iLODIndex, Toshi::TModelLOD* a_pLOD)
 {
+	TPROFILER_SCOPE();
+
 	TVALIDPTR(a_pModel);
 	TVALIDPTR(a_pLOD);
 

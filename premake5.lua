@@ -11,6 +11,15 @@ workspace "OpenBarnyard"
 	targetdir ("%{wks.location}/bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("%{wks.location}/bin-int/" .. outputdir .. "/%{prj.name}")
 	
+	editandcontinue "Off"
+	
+	defines
+	{
+		"TOSHI_PROFILER",
+		"TOSHI_PROFILER_MEMORY",
+		"TRACY_ENABLE"
+	}
+	
 	filter "options:arch=x86"
 		architecture "x86"
 		
