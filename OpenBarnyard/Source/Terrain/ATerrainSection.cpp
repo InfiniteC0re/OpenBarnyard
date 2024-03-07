@@ -411,7 +411,7 @@ void ATerrainSection::ModelNode::Render()
 		if (m_pAnimatedMaterial)
 		{
 			auto pScheduler = g_oSystemManager.GetScheduler();
-			auto pMaterial = AWorldMaterialHAL::Upcast(m_pAnimatedMaterial);
+			auto pMaterial = TCastClass<AWorldMaterialHAL>(m_pAnimatedMaterial);
 
 			pMaterial->AddUVOffsetY(1, pScheduler->GetCurrentDeltaTime() * 0.02f);
 
@@ -420,7 +420,7 @@ void ATerrainSection::ModelNode::Render()
 		}
 
 		auto pTerrain = ATerrain::GetSingleton();
-		auto pShader = AWorldShaderHAL::Upcast(AWorldShader::GetSingleton());
+		auto pShader = TCastClass<AWorldShaderHAL>(AWorldShader::GetSingleton());
 
 		if (m_eFlags & MNF_USE_LIGHTING)
 			pShader->SetColours(pTerrain->GetLitShadowColor(), pTerrain->GetLitAmbientColor());
@@ -459,7 +459,7 @@ void ATerrainSection::ModelNode::SetGlow(TBOOL a_bIsGlow)
 			for (TINT k = 0; k < rLOD.iNumMeshes; k++)
 			{
 				auto pMesh = rLOD.ppMeshes[k];
-				auto pMaterial = AWorldMaterial::Upcast(pMesh->GetMaterial());
+				auto pMaterial = TCastClass<AWorldMaterial>(pMesh->GetMaterial());
 
 				pMesh->SetFlags(TMesh::State_Glow, TTRUE);
 				pMaterial->SetFlags(TMaterial::FLAGS_GLOW, a_bIsGlow);

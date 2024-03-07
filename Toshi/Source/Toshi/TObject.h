@@ -193,3 +193,21 @@ namespace Toshi {
 
 }
 
+//-----------------------------------------------------------------------------
+// Casts TObject to the specified TClass
+//-----------------------------------------------------------------------------
+template <class TClass>
+TFORCEINLINE TClass* TCastClass(Toshi::TObject* a_pObject)
+{
+	if (a_pObject)
+	{
+		if (a_pObject->IsA(&TGetClass(TClass)))
+		{
+			return TSTATICCAST(TClass, a_pObject);
+		}
+
+		TASSERT(!"Invalid call of TCastClass");
+	}
+
+	return TNULL;
+}

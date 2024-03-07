@@ -65,7 +65,7 @@ void AWorldMaterialHAL::PreRender()
 	// Setup textures
 	for (TUINT i = 0; i < TARRAYSIZE(m_aTextures); i++)
 	{
-		auto pTexture = TTextureResourceHAL::Upcast(m_aTextures[i]);
+		auto pTexture = TCastClass<TTextureResourceHAL>(m_aTextures[i]);
 
 		if (pTexture == TNULL)
 		{
@@ -152,7 +152,7 @@ void AWorldMaterialHAL::PostRender()
 	pD3DDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
 	pD3DDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
 
-	AWorldShaderHAL::Upcast(m_pShader)->SetAlphaRef(128);
+	TCastClass<AWorldShaderHAL>(m_pShader)->SetAlphaRef(128);
 	pCurrentContext->DisableFogHAL();
 
 	if (m_iNumTex > 1)
@@ -172,7 +172,7 @@ TBOOL AWorldMaterialHAL::Create(BLENDMODE a_eBlendMode)
 
 void AWorldMaterialHAL::SetBlendMode(BLENDMODE a_eBlendMode)
 {
-	auto pShader = AWorldShaderHAL::Upcast(m_pShader);
+	auto pShader = TCastClass<AWorldShaderHAL>(m_pShader);
 
 	switch (a_eBlendMode)
 	{
@@ -283,12 +283,12 @@ void AWorldMaterialHAL::SetupRenderer()
 	if (m_Flags & FLAGS_HAS_BLENDMODE)
 	{
 		pD3DDevice->SetRenderState(D3DRS_ALPHAREF, 1);
-		AWorldShaderHAL::Upcast(m_pShader)->SetAlphaRef(1);
+		TCastClass<AWorldShaderHAL>(m_pShader)->SetAlphaRef(1);
 	}
 	else
 	{
 		pD3DDevice->SetRenderState(D3DRS_ALPHAREF, 128);
-		AWorldShaderHAL::Upcast(m_pShader)->SetAlphaRef(128);
+		TCastClass<AWorldShaderHAL>(m_pShader)->SetAlphaRef(128);
 	}
 
 	pD3DDevice->SetRenderState(D3DRS_COLORVERTEX, FALSE);

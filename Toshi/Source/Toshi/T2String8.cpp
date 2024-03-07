@@ -146,7 +146,7 @@ namespace Toshi
 	{
 		while (*str)
 		{
-			*str = TSTATICCAST(TCHAR, tolower(*str));
+			*str = TCHAR(tolower(*str));
 			str++;
 		}
 	}
@@ -155,7 +155,7 @@ namespace Toshi
 	{
 		while (*str)
 		{
-			*str = TSTATICCAST(TCHAR, toupper(*str));
+			*str = TCHAR(toupper(*str));
 			str++;
 		}
 	}

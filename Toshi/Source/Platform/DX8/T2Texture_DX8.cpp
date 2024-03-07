@@ -15,7 +15,7 @@ namespace Toshi {
 	{
 		TASSERT(m_pData != TNULL && m_uiDataSize != 0);
 
-		auto pRender = TSTATICCAST(TRenderD3DInterface*, TRenderInterface::GetSingleton());
+		auto pRender = TSTATICCAST(TRenderD3DInterface, TRenderInterface::GetSingleton());
 		auto pD3DDevice = pRender->GetDirect3DDevice();
 
 		HRESULT hRes = D3DXGetImageInfoFromFileInMemory(m_pData, m_uiDataSize, &m_ImageInfo);

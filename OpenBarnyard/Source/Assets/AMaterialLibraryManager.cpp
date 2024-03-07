@@ -43,7 +43,7 @@ void AMaterialLibraryManager::LoadLibrariesFromProperties(const PBPropertyValue*
 		for (TUINT i = 0; i < pArray->GetSize(); i++)
 		{
 			auto matlibName = pArray->GetValue(i)->GetTPString8();
-			auto eLangId = ALocaleManager::GetSingleton()->GetLangId();
+			auto eLangId = ALocaleManager::GetSingleton()->GetLanguage();
 
 			TBOOL bLocaliseAsset;
 
@@ -132,7 +132,7 @@ void AMaterialLibraryManager::LoadLibrary(const Toshi::TPString8& a_rLibName, To
 void AMaterialLibraryManager::UnloadLibrary(const TPString8& a_rLibName, TBOOL a_bUnused)
 {
 	TPString8 matlibName = a_rLibName;
-	auto eLangId = ALocaleManager::GetSingleton()->GetLangId();
+	auto eLangId = ALocaleManager::GetSingleton()->GetLanguage();
 
 	TBOOL bLocaliseAsset;
 

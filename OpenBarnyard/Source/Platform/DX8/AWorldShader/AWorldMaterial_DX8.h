@@ -43,12 +43,6 @@ public:
 	void SetUVOffsetY(TUINT a_uiTextureIndex, TFLOAT a_fOffset) { TASSERT(a_uiTextureIndex < MAX_TEXTURES); m_aUVOffsetsY[a_uiTextureIndex] = a_fOffset; }
 	void AddUVOffsetY(TUINT a_uiTextureIndex, TFLOAT a_fOffset) { TASSERT(a_uiTextureIndex < MAX_TEXTURES); m_aUVOffsetsY[a_uiTextureIndex] += a_fOffset; }
 
-	static AWorldMaterialHAL* Upcast(Toshi::TMaterial* a_pMaterial)
-	{
-		TASSERT(a_pMaterial->IsA(&ms_oClass));
-		return TSTATICCAST(AWorldMaterialHAL*, a_pMaterial);
-	}
-
 private:
 	void SetupRenderer();
 

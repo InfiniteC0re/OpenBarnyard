@@ -84,8 +84,8 @@ namespace Toshi {
 					{
 						if (a_pResource->IsExactly(&TGetClass(TIndexPoolResource)))
 						{
-							auto pPool = TSTATICCAST(TIndexPoolResource*, a_pResource);
-							auto pPair = TSTATICCAST(Pair*, a_pUserData);
+							auto pPool = TSTATICCAST(TIndexPoolResource, a_pResource);
+							auto pPair = TSTATICCAST(Pair, a_pUserData);
 
 							if (pPool->m_uiFlags & 1)
 							{

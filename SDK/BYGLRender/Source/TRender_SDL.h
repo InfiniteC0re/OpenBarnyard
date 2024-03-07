@@ -323,7 +323,7 @@ namespace Toshi {
 		TDebugText* CreateDebugText() override;
 		void DestroyDebugText() override;
 
-		static TRenderSDL* Interface() { return TSTATICCAST(TRenderSDL*, GetSingleton()); }
+		static TRenderSDL* Interface() { return TSTATICCAST(TRenderSDL, GetSingleton()); }
 
 	private:
 		ASDLWindow m_Window;

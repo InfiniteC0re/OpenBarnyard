@@ -53,7 +53,7 @@ ARenderer::ARenderer() :
 TBOOL ARenderer::CreateTRender()
 {
 	auto pRendererClass = TClass::Find("TRenderD3DInterface");
-	auto pRenderer = TSTATICCAST(TRenderD3DInterface*, pRendererClass->CreateObject());
+	auto pRenderer = TSTATICCAST(TRenderD3DInterface, pRendererClass->CreateObject());
 
 	TFIXME("Call FUN_006c8010(DAT_007cf02c,&local_38) but not sure if it has any use");
 
@@ -127,11 +127,11 @@ TBOOL ARenderer::CreateTRenderResources()
 {
 	TIMPLEMENT();
 
-	auto pRenderer = TSTATICCAST(TRenderD3DInterface*, TRenderInterface::GetSingleton());
+	auto pRenderer = TSTATICCAST(TRenderD3DInterface, TRenderInterface::GetSingleton());
 
 	{
 		auto pResource = TSTATICCAST(
-			TVertexFactoryResource*,
+			TVertexFactoryResource,
 			pRenderer->CreateResource(
 				TClass::Find("TVertexFactoryResource"),
 				"VFSYSVNDUV1",
@@ -150,7 +150,7 @@ TBOOL ARenderer::CreateTRenderResources()
 
 	{
 		auto pResource = TSTATICCAST(
-			TVertexFactoryResource*,
+			TVertexFactoryResource,
 			pRenderer->CreateResource(
 				TClass::Find("TVertexFactoryResource"),
 				"VFSKIN",
@@ -169,7 +169,7 @@ TBOOL ARenderer::CreateTRenderResources()
 
 	{
 		auto pResource = TSTATICCAST(
-			TVertexFactoryResource*,
+			TVertexFactoryResource,
 			pRenderer->CreateResource(
 				TClass::Find("TVertexFactoryResource"),
 				"VFWORLD",
@@ -188,7 +188,7 @@ TBOOL ARenderer::CreateTRenderResources()
 
 	{
 		auto pResource = TSTATICCAST(
-			TIndexFactoryResource*,
+			TIndexFactoryResource,
 			pRenderer->CreateResource(
 				TClass::Find("TIndexFactoryResource"),
 				"IFSYS",
@@ -219,7 +219,7 @@ TBOOL ARenderer::CreateTRenderResources()
 
 TRenderAdapter::Mode::Device* ARenderer::FindSuitableDevice(TRenderInterface::DISPLAYPARAMS& a_rDisplayParams, bool a_bReverseOrder)
 {
-	auto pRenderer = TSTATICCAST(TRenderD3DInterface*, TRenderInterface::GetSingleton());
+	auto pRenderer = TSTATICCAST(TRenderD3DInterface, TRenderInterface::GetSingleton());
 	TRenderAdapter::Mode::Device* pDevice = TNULL;
 
 	if (a_bReverseOrder)
@@ -286,7 +286,7 @@ TRenderAdapter::Mode::Device* ARenderer::FindSuitableDevice(TRenderInterface::DI
 
 void ARenderer::RenderGUI()
 {
-	auto pRender = TSTATICCAST(TRenderD3DInterface*, TRenderInterface::GetSingleton());
+	auto pRender = TSTATICCAST(TRenderD3DInterface, TRenderInterface::GetSingleton());
 	auto pViewport = AGUISystem::GetSingleton()->GetRenderObject(0)->GetViewport();
 
 	auto pOldContext = pRender->SetCurrentRenderContext(pViewport->GetRenderContext());;

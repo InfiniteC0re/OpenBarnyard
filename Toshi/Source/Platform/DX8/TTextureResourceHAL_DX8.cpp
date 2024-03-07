@@ -189,7 +189,7 @@ namespace Toshi {
 
 	TBOOL TTextureResourceHAL::CreateFromMemory888(TUINT a_uiWidth, TUINT a_uiHeight, TUINT a_uiLevels, void* a_pData)
 	{
-		auto pRenderer = TSTATICCAST(TRenderD3DInterface*, GetRenderer());
+		auto pRenderer = TSTATICCAST(TRenderD3DInterface, GetRenderer());
 
 		HRESULT hCreateRes = pRenderer->GetDirect3DDevice()->CreateTexture(
 			a_uiWidth,
@@ -208,8 +208,8 @@ namespace Toshi {
 
 			if (a_uiHeight != 0)
 			{
-				TUINT8* pTexPixel = TSTATICCAST(TUINT8*, rect.pBits);
-				TUINT8* pDataPixel = TSTATICCAST(TUINT8*, a_pData);
+				TUINT8* pTexPixel = TSTATICCAST(TUINT8, rect.pBits);
+				TUINT8* pDataPixel = TSTATICCAST(TUINT8, a_pData);
 
 				for (TUINT i = a_uiHeight; i != 0; i--)
 				{
@@ -252,7 +252,7 @@ namespace Toshi {
 
 	TBOOL TTextureResourceHAL::CreateFromMemory4444(TUINT a_uiWidth, TUINT a_uiHeight, TUINT a_uiLevels, void* a_pData)
 	{
-		auto pRenderer = TSTATICCAST(TRenderD3DInterface*, GetRenderer());
+		auto pRenderer = TSTATICCAST(TRenderD3DInterface, GetRenderer());
 
 		HRESULT hCreateRes = pRenderer->GetDirect3DDevice()->CreateTexture(
 			a_uiWidth,
@@ -271,8 +271,8 @@ namespace Toshi {
 
 			if (a_uiHeight != 0)
 			{
-				TUINT16* pTexPixel = TSTATICCAST(TUINT16*, rect.pBits);
-				TUINT16* pDataPixel = TSTATICCAST(TUINT16*, a_pData);
+				TUINT16* pTexPixel = TSTATICCAST(TUINT16, rect.pBits);
+				TUINT16* pDataPixel = TSTATICCAST(TUINT16, a_pData);
 
 				for (TUINT i = a_uiHeight; i != 0; i--)
 				{
@@ -305,7 +305,7 @@ namespace Toshi {
 
 	TBOOL TTextureResourceHAL::CreateFromMemoryDDS(TUINT a_uiWidth, TUINT a_uiHeight, TUINT a_uiLevels, void* a_pData)
 	{
-		auto pRenderer = TSTATICCAST(TRenderD3DInterface*, GetRenderer());
+		auto pRenderer = TSTATICCAST(TRenderD3DInterface, GetRenderer());
 
 		HRESULT hRes = D3DXCreateTextureFromFileInMemoryEx(
 			pRenderer->GetDirect3DDevice(),
@@ -335,7 +335,7 @@ namespace Toshi {
 
 	TBOOL TTextureResourceHAL::CreateFromFileDDS(TUINT a_uiWidth, TUINT a_uiHeight, TUINT a_uiLevels, const TCHAR* a_szFile)
 	{
-		auto pRenderer = TSTATICCAST(TRenderD3DInterface*, GetRenderer());
+		auto pRenderer = TSTATICCAST(TRenderD3DInterface, GetRenderer());
 
 		HRESULT hRes = D3DXCreateTextureFromFileExA(
 			pRenderer->GetDirect3DDevice(),
@@ -381,7 +381,7 @@ namespace Toshi {
 			return TTRUE;
 		}
 
-		auto pRenderer = TSTATICCAST(TRenderD3DInterface*, GetRenderer());
+		auto pRenderer = TSTATICCAST(TRenderD3DInterface, GetRenderer());
 
 		if (m_bLoadFromMemory)
 		{

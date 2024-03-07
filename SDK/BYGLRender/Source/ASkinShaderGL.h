@@ -294,7 +294,7 @@ public:
 		glPolygonMode(GL_BACK, GL_FILL);
 
 		auto pRenderContext = TSTATICCAST(
-			Toshi::TRenderContextD3D*,
+			Toshi::TRenderContextD3D,
 			THookedRenderD3DInterface::GetSingleton()->GetCurrentContext()
 		);
 
@@ -308,7 +308,7 @@ public:
 		auto pMesh = a_pRenderPacket->GetMesh();
 		auto pVertexPool = *TREINTERPRETCAST(Toshi::TVertexPoolResource**, TUINT(pMesh) + 0x18);
 
-		auto pMaterial = TSTATICCAST(ASkinMaterialWrapperGL*, pMesh->GetMaterial());
+		auto pMaterial = TSTATICCAST(ASkinMaterialWrapperGL, pMesh->GetMaterial());
 
 		Toshi::TGLShaderProgram* pShaderProgram = TNULL;
 

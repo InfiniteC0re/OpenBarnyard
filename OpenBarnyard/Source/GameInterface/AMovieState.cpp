@@ -82,7 +82,7 @@ void AMovieState::OnInsertion()
 
 	if (m_FileName == TPString8("Attract"))
 	{
-		switch (ALocaleManager::Interface()->GetLangId())
+		switch (ALocaleManager::Interface()->GetLanguage())
 		{
 		case ALocaleManager::Lang_German:
 			m_FileName = "AttractD";

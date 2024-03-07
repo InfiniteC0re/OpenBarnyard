@@ -80,7 +80,7 @@ namespace Toshi {
 
 	void TFreeList::Delete(void* a_Ptr)
 	{
-		Node* pNode = TSTATICCAST(Node*, a_Ptr);
+		Node* pNode = TSTATICCAST(Node, a_Ptr);
 
 		if (m_LastNode.pNext != TNULL)
 		{

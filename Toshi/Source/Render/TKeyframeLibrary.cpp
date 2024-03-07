@@ -45,7 +45,7 @@ namespace Toshi {
 		TVALIDPTR(a_szSymbolName);
 
 		TKeyframeLibrary* pLibrary = new TKeyframeLibrary;
-		TRBHeader* pTRBHeader = TSTATICCAST(TRBHeader*, a_pTRB->GetSymbolAddress(a_szSymbolName));
+		TRBHeader* pTRBHeader = TSTATICCAST(TRBHeader, a_pTRB->GetSymbolAddress(a_szSymbolName));
 
 		auto iNameLen = TStringManager::String8Length(pTRBHeader->m_szName);
 		pLibrary->m_iNameLength = iNameLen;

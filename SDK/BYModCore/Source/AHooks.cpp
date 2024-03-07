@@ -596,25 +596,25 @@ TBOOL AHooks::AddHook(Hook a_eHook, HookType a_eHookType, void* a_pCallback)
 	switch (a_eHook)
 	{
 	case Hook_AGUI2_MainPostRenderCallback:
-		AHooks::GUI2::MainPostRenderCallback[a_eHookType].PushBack(TSTATICCAST(AHooks::GUI2::t_MainPostRenderCallback, a_pCallback));
+		AHooks::GUI2::MainPostRenderCallback[a_eHookType].PushBack(TREINTERPRETCAST(AHooks::GUI2::t_MainPostRenderCallback, a_pCallback));
 		return TTRUE;
 	case Hook_AGUISlideshow_ProcessInput:
-		AHooks::GUISlideshow::ProcessInput[a_eHookType].PushBack(TSTATICCAST(AHooks::GUISlideshow::t_ProcessInput, a_pCallback));
+		AHooks::GUISlideshow::ProcessInput[a_eHookType].PushBack(TREINTERPRETCAST(AHooks::GUISlideshow::t_ProcessInput, a_pCallback));
 		return TTRUE;
 	case Hook_NewGameStarted:
-		AHooks::Uncategorized::NewGameStarted[a_eHookType].PushBack(TSTATICCAST(AHooks::Uncategorized::t_NewGameStarted, a_pCallback));
+		AHooks::Uncategorized::NewGameStarted[a_eHookType].PushBack(TREINTERPRETCAST(AHooks::Uncategorized::t_NewGameStarted, a_pCallback));
 		return TTRUE;
 	case Hook_ATerrain_Render:
-		AHooks::Terrain::Render[a_eHookType].PushBack(TSTATICCAST(AHooks::Terrain::t_Render, a_pCallback));
+		AHooks::Terrain::Render[a_eHookType].PushBack(TREINTERPRETCAST(AHooks::Terrain::t_Render, a_pCallback));
 		return TTRUE;
 	case Hook_AModelLoader_LoadTRBCallback:
-		AHooks::ModelLoader::LoadTRBCallback[a_eHookType].PushBack(TSTATICCAST(AHooks::ModelLoader::t_LoadTRBCallback, a_pCallback));
+		AHooks::ModelLoader::LoadTRBCallback[a_eHookType].PushBack(TREINTERPRETCAST(AHooks::ModelLoader::t_LoadTRBCallback, a_pCallback));
 		return TTRUE;
 	case Hook_MaterialLibrary_LoadTTLData:
-		AHooks::MaterialLibrary::LoadTTLData[a_eHookType].PushBack(TSTATICCAST(AHooks::MaterialLibrary::t_LoadTTLData, a_pCallback));
+		AHooks::MaterialLibrary::LoadTTLData[a_eHookType].PushBack(TREINTERPRETCAST(AHooks::MaterialLibrary::t_LoadTTLData, a_pCallback));
 		return TTRUE;
 	case Hook_TRenderInterface_SetLightColourMatrix:
-		AHooks::RenderInterface::SetLightColourMatrix[a_eHookType].PushBack(TSTATICCAST(AHooks::RenderInterface::t_SetLightColourMatrix, a_pCallback));
+		AHooks::RenderInterface::SetLightColourMatrix[a_eHookType].PushBack(TREINTERPRETCAST(AHooks::RenderInterface::t_SetLightColourMatrix, a_pCallback));
 		return TTRUE;
 	}
 

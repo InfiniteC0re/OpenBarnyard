@@ -25,7 +25,7 @@ namespace Toshi
 		template <class T>
 		T* CreateTask(TTask* a_pParent = TNULL)
 		{
-			return TSTATICCAST(T*, CreateTask(&TGetClass(T), a_pParent));
+			return TSTATICCAST(T, CreateTask(&TGetClass(T), a_pParent));
 		}
 		
 		void Update();

@@ -22,7 +22,7 @@ public:
 
 	ASysShaderHAL* GetSysShaderHAL() const
 	{
-		return TSTATICCAST(ASysShaderHAL*, GetShader());
+		return TSTATICCAST(ASysShaderHAL, GetShader());
 	}
 
 private:

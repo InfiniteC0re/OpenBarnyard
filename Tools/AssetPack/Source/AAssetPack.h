@@ -14,8 +14,8 @@ public:
 	{
 		Toshi::TPString8 Name;
 		char Format[4];
-		PTRB::TRBF* pTRB;
-		PTRB::SECT::Stack* pStack;
+		PTRBWriter* pTRB;
+		PTRBSections::MemoryStream* pStack;
 		Toshi::TArray<Toshi::TPString8> RelatedSymbols;
 	};
 
@@ -30,14 +30,14 @@ public:
 
 	Asset_t* GetAssetFromSymbol(const Toshi::TPString8& a_rSymbolName);
 
-	PTRB::TRBF* GetTRBFile() { return &m_TRBFile; }
+	PTRBWriter* GetTRBFile() { return &m_TRBFile; }
 
 	Toshi::T2Vector<Asset_t, 1024>& GetAssets() { return m_Assets; }
 
 	TBOOL IsLoaded() const { return m_bLoaded; }
 
 private:
-	PTRB::TRBF m_TRBFile;
+	PTRBWriter m_TRBFile;
 	TBOOL m_bLoaded;
 	Toshi::TPString8 m_FileName;
 	Toshi::T2Vector<Asset_t, 1024> m_Assets;

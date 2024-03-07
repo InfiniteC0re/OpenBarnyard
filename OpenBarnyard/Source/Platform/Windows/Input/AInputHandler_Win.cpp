@@ -95,7 +95,7 @@ TBOOL AInputHandler::ProcessInputEvent(Toshi::TInputInterface* a_pInputInterface
 			if (a_pEvent->GetEventType() == Toshi::TInputInterface::EVENT_TYPE_GONE_DOWN &&
 				pInputSource == m_Devices[0])
 			{
-				m_pMainController = TSTATICCAST(TInputDeviceController*, pInputSource);
+				m_pMainController = TSTATICCAST(TInputDeviceController, pInputSource);
 			}
 		}
 	}

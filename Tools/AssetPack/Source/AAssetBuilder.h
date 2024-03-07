@@ -19,5 +19,5 @@ public:
 
 private:
 	AAssetPack m_AssetPack;
-	Toshi::T2Vector<PTRB::TRBF, 1024> m_Files;
+	Toshi::T2Vector<PTRBWriter, 1024> m_Files;
 };

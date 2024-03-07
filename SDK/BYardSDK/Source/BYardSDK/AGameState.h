@@ -82,7 +82,7 @@ public:
 		{
 			auto pGameState = TREINTERPRETCAST(
 				AGameState*,
-				TREINTERPRETCAST(uintptr_t, TSTATICCAST(AGameState*, it)) + a_uiOffset
+				TREINTERPRETCAST(uintptr_t, TSTATICCAST(AGameState, it)) + a_uiOffset
 			);
 
 			(pGameState->*a_fnCallback)(args...);
@@ -96,7 +96,7 @@ public:
 		{
 			auto pGameState = TREINTERPRETCAST(
 				AGameState*,
-				TREINTERPRETCAST(uintptr_t, TSTATICCAST(AGameState*, it)) + a_uiOffset
+				TREINTERPRETCAST(uintptr_t, TSTATICCAST(AGameState, it)) + a_uiOffset
 			);
 
 			TBOOL bResult = (pGameState->*a_fnCallback)(args...);

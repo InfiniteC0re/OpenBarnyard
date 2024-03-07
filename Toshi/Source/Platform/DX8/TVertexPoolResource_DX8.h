@@ -32,12 +32,6 @@ namespace Toshi {
 
 		TBOOL GetHALBuffer(TVertexBlockResource::HALBuffer* a_pHALBuffer);
 
-		static TVertexPoolResource* Upcast(TVertexPoolResourceInterface* a_pResource)
-		{
-			TASSERT(a_pResource->IsA(&ms_oClass));
-			return TSTATICCAST(TVertexPoolResource*, a_pResource);
-		}
-
 	private:
 		TUINT16 m_uiVertexOffset;
 		TBYTE* m_apManagedStreams[TVertexFactoryFormat::MAX_NUM_STREAMS];

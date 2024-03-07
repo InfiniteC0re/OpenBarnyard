@@ -54,7 +54,7 @@ void ASkinMaterialHAL::PreRender()
 	auto pRender = TRenderD3DInterface::Interface();
 	auto pD3DDevice = pRender->GetDirect3DDevice();
 
-	TTextureResourceHAL* pTexture = TTextureResourceHAL::Upcast(m_pTexture);
+	TTextureResourceHAL* pTexture = TCastClass<TTextureResourceHAL>(m_pTexture);
 	TTextureResourceHAL* pLT0Texture = TNULL;
 	TTextureResourceHAL* pLT1Texture = TNULL;
 
@@ -62,8 +62,8 @@ void ASkinMaterialHAL::PreRender()
 	
 	if (m_bIsSkin)
 	{
-		pLT0Texture = TTextureResourceHAL::Upcast(m_apLightingTextures[LT_0]);
-		pLT1Texture = TTextureResourceHAL::Upcast(m_apLightingTextures[LT_1]);
+		pLT0Texture = TCastClass<TTextureResourceHAL>(m_apLightingTextures[LT_0]);
+		pLT1Texture = TCastClass<TTextureResourceHAL>(m_apLightingTextures[LT_1]);
 
 		pRender->SetTextureAddress(1, 2, -1);
 		pRender->SetTextureAddress(2, 2, -1);
@@ -134,7 +134,7 @@ void ASkinMaterialHAL::PreRender()
 	if (m_Flags & FLAGS_NO_CULL)
 		pD3DDevice->SetRenderState(D3DRS_CULLMODE, 1);
 
-	auto pShader = ASkinShaderHAL::Upcast(GetShader());
+	auto pShader = TCastClass<ASkinShaderHAL>(GetShader());
 	pShader->SetAlphaRef((m_Flags & FLAGS_HAS_BLENDMODE) ? 1 : 128);
 
 	pD3DDevice->SetRenderState(D3DRS_COLORVERTEX, 0);
@@ -150,7 +150,7 @@ void ASkinMaterialHAL::PostRender()
 {
 	auto pRender = TRenderD3DInterface::Interface();
 	auto pD3DDevice = pRender->GetDirect3DDevice();
-	auto pShader = ASkinShaderHAL::Upcast(GetShader());
+	auto pShader = TCastClass<ASkinShaderHAL>(GetShader());
 
 	pD3DDevice->SetRenderState(D3DRS_COLORVERTEX, TRUE);
 	pD3DDevice->SetTexture(0, TNULL);
@@ -178,7 +178,7 @@ TBOOL ASkinMaterialHAL::Create(BLENDMODE a_eBlendMode)
 
 void ASkinMaterialHAL::SetBlendMode(BLENDMODE a_eBlendMode)
 {
-	auto pShader = ASkinShaderHAL::Upcast(GetShader());
+	auto pShader = TCastClass<ASkinShaderHAL>(GetShader());
 
 	switch (a_eBlendMode)
 	{
@@ -241,10 +241,10 @@ void ASkinMaterialHAL::SetOrderTable(Toshi::TOrderTable* a_pOrderTable)
 Toshi::TTextureResourceHAL* ASkinMaterialHAL::GetLightingTexture(ELightingTexture a_eTexture) const
 {
 	TASSERT(a_eTexture < LT_NUMOF);
-	return TTextureResourceHAL::Upcast(m_apLightingTextures[a_eTexture]);
+	return TCastClass<TTextureResourceHAL>(m_apLightingTextures[a_eTexture]);
 }
 
 Toshi::TTextureResourceHAL* ASkinMaterialHAL::GetSomeTexture() const
 {
-	return Toshi::TTextureResourceHAL::Upcast(m_pSomeTexture);
+	return TCastClass<TTextureResourceHAL>(m_pSomeTexture);
 }

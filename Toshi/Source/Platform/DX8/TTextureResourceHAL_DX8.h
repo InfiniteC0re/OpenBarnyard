@@ -49,8 +49,6 @@ namespace Toshi {
 		D3DXIMAGE_INFO& GetImageInfo() { return m_ImageInfo; }
 		const D3DXIMAGE_INFO& GetImageInfo() const { return m_ImageInfo; }
 
-		static TTextureResourceHAL* Upcast(TTexture* a_pTexture) { return TSTATICCAST(TTextureResourceHAL*, a_pTexture); }
-
 	public:
 		static TBOOL IsPPM(const TCHAR* a_szName);
 

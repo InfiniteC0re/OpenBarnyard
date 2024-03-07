@@ -20,7 +20,7 @@ TBOOL AGUI2TextureSectionManager::Open(const TCHAR* a_szFileName, Toshi::TTRB* a
 		if (g_trb->Load(a_szFileName) != TTRB::ERROR_OK)
 			return TFALSE;
 
-		g_defblock = TSTATICCAST(TRBHeader*, g_trb->GetSymbolAddress("texturesections"));
+		g_defblock = TSTATICCAST(TRBHeader, g_trb->GetSymbolAddress("texturesections"));
 	}
 	else
 	{
@@ -43,7 +43,7 @@ TBOOL AGUI2TextureSectionManager::Open(const TCHAR* a_szFileName, Toshi::TTRB* a
 		TStringManager::String8ToLowerCase(symbolName);
 		TStringManager::String8Copy(symbolName + iFileNameLength + 1, "texturesections");
 
-		g_defblock = TSTATICCAST(TRBHeader*, g_trb->GetSymbolAddress(symbolName));
+		g_defblock = TSTATICCAST(TRBHeader, g_trb->GetSymbolAddress(symbolName));
 	}
 
 	g_sections = g_defblock->m_pSections;

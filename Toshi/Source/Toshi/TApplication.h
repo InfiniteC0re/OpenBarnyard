@@ -31,7 +31,7 @@ namespace Toshi
 
 		static void OnApplicationExitEvent(void* a_pApp, const TApplicationExitEvent& a_rEvent)
 		{
-			TSTATICCAST(TApplication*, a_pApp)->Destroy();
+			TSTATICCAST(TApplication, a_pApp)->Destroy();
 		}
 
 		// Returns TTRUE if success

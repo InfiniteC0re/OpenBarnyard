@@ -69,7 +69,7 @@ TBOOL ACollisionInspector::AModelLoader_LoadTRBCallback(Toshi::TModel* a_pModel)
 			CollisionMeshDef_t* pMeshDef;
 		};
 
-		auto pCollision = TSTATICCAST(Collision_t*, a_pModel->GetSymbol("Collision"));
+		auto pCollision = TSTATICCAST(Collision_t, a_pModel->GetSymbol("Collision"));
 
 		if (pCollision)
 		{

@@ -22,7 +22,7 @@ TBOOL MaterialLibrary_LoadTTLData(AMaterialLibrary* a_pMatLib, AMaterialLibrary:
 {
 	TMutexLock lock(g_LoadMutex);
 
-	auto pTTL = TSTATICCAST(AMaterialLibrary::TTL*, a_pTTLData);
+	auto pTTL = TSTATICCAST(AMaterialLibrary::TTL, a_pTTLData);
 
 	auto pLibList = AMaterialLibraryManager::List::GetSingleton();
 	TINT iNumTextures = 0;

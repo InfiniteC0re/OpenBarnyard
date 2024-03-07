@@ -74,10 +74,10 @@ int main(int argc, char** argv)
 	AArgumentParser args(argv, argc);
 	if (args.GetMode() == AArgumentParser::Mode::Info)
 	{
-		PTRB::TRBF inTRB(args.GetInPath());
+		PTRBWriter inTRB(args.GetInPath());
 
-		auto pInSECT = inTRB.GetSECT();
-		auto pInSYMB = inTRB.GetSYMB();
+		auto pInSECT = inTRB.GetSections();
+		auto pInSYMB = inTRB.GetSymbols();
 
 		auto pInFileHeader = pInSYMB->Find<TTMDBase::FileHeader>(pInSECT, "FileHeader");
 		auto pInDatabase = pInSYMB->Find<WorldDatabase>(pInSECT, "Database");
@@ -251,11 +251,11 @@ int main(int argc, char** argv)
 
 		//const aiScene* pImportScene = aiImportFile(inFilepath, aiProcessPreset_TargetRealtime_MaxQuality);
 		//
-		//PTRB::TRBF outTRB;
-		//auto pOutSECT = outTRB.GetSECT();
-		//auto pOutSYMB = outTRB.GetSYMB();
+		//TRBF outTRB;
+		//auto pOutSECT = outTRB.GetSections();
+		//auto pOutSYMB = outTRB.GetSymbols();
 
-		//auto pStack = pOutSECT->CreateStack();
+		//auto pStack = pOutSECT->CreateStream();
 
 		//if (args.IsTerrain())
 		//{
@@ -693,10 +693,10 @@ int main(int argc, char** argv)
 		//TString8 inputFileName = inFilepath.GetString(inFilepath.FindReverse('\\', -1) + 1);
 		//inputFileName.Truncate(inputFileName.FindReverse('.', -1));
 
-		//PTRB::TRBF inTRB(inFilepath.GetString());
+		//TRBF inTRB(inFilepath.GetString());
 
-		//auto pInSECT = inTRB.GetSECT();
-		//auto pInSYMB = inTRB.GetSYMB();
+		//auto pInSECT = inTRB.GetSections();
+		//auto pInSYMB = inTRB.GetSymbols();
 
 		//auto pInFileHeader = pInSYMB->Find<TTMDBase::FileHeader>(pInSECT, "FileHeader");
 		//auto pInDatabase = pInSYMB->Find<TTerrainMDL::World>(pInSECT, "Database");

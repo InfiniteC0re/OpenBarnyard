@@ -108,7 +108,7 @@ namespace Toshi {
 
 		static TRenderD3DInterface* Interface()
 		{
-			return TSTATICCAST(TRenderD3DInterface*, TRenderInterface::GetSingleton());
+			return TSTATICCAST(TRenderD3DInterface, TRenderInterface::GetSingleton());
 		}
 
 	private:

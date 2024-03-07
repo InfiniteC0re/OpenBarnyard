@@ -183,7 +183,7 @@ void AImGUI::Render()
 			{
 				Toggle();
 
-				auto pDebugSSeqGameState = TSTATICCAST(AGameState*, TMalloc(15300));
+				auto pDebugSSeqGameState = TSTATICCAST(AGameState, TMalloc(15300));
 				CALL_THIS(0x00407f70, AGameState*, AGameState*, pDebugSSeqGameState);
 
 				AGameStateController::GetSingleton()->PushState(pDebugSSeqGameState);

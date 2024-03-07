@@ -100,7 +100,7 @@ namespace Toshi {
 
 	void TRenderContextD3D::EnableFogHAL()
 	{
-		auto pRenderer = TSTATICCAST(TRenderD3DInterface*, m_pRenderer);
+		auto pRenderer = TSTATICCAST(TRenderD3DInterface, m_pRenderer);
 		auto pDevice = pRenderer->GetDirect3DDevice();
 
 		pDevice->SetRenderState(D3DRS_FOGENABLE, TRUE);
@@ -116,10 +116,20 @@ namespace Toshi {
 
 	void TRenderContextD3D::DisableFogHAL()
 	{
-		auto pRenderer = TSTATICCAST(TRenderD3DInterface*, m_pRenderer);
+		auto pRenderer = TSTATICCAST(TRenderD3DInterface, m_pRenderer);
 		auto pDevice = pRenderer->GetDirect3DDevice();
 
 		pDevice->SetRenderState(D3DRS_FOGENABLE, FALSE);
+	}
+
+	TRenderContextD3D::TRenderContextD3D(TRenderInterface* a_pRenderer) : TRenderContext(a_pRenderer)
+	{
+
+	}
+
+	TRenderContextD3D::~TRenderContextD3D()
+	{
+
 	}
 
 	void TRenderContextD3D::Update()
@@ -137,7 +147,7 @@ namespace Toshi {
 				ComputeOrthographicFrustum();
 			}
 
-			auto pRenderer = TSTATICCAST(TRenderD3DInterface*, m_pRenderer);
+			auto pRenderer = TSTATICCAST(TRenderD3DInterface, m_pRenderer);
 			pRenderer->GetDirect3DDevice()->SetTransform(D3DTS_VIEW, TREINTERPRETCAST(D3DMATRIX*, &TMatrix44::IDENTITY));
 			pRenderer->GetDirect3DDevice()->SetTransform(D3DTS_PROJECTION, TREINTERPRETCAST(D3DMATRIX*, &m_Projection));
 		}

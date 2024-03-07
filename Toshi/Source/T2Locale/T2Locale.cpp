@@ -40,6 +40,16 @@ namespace Toshi
 		}
 	}
 
+	void* T2Locale::TRBAllocator(TTRB::AllocType alloctype, size_t size, short unk, size_t unk2, void* userData)
+	{
+		return TSTATICCAST(T2Locale, userData)->TRBAlloc(size);
+	}
+
+	void T2Locale::TRBDeallocator(TTRB::AllocType alloctype, void* ptr, short unk, size_t unk2, void* userData)
+	{
+		// T2Locale doesn't have deallocator
+	}
+
 	void T2Locale::SetLanguage(Lang langid)
 	{
 		// 00662e30
@@ -52,4 +62,21 @@ namespace Toshi
 			m_LangId = langid;
 		}
 	}
+
+	Toshi::T2Locale::Lang T2Locale::GetLanguage() const
+	{
+		return m_LangId;
+	}
+
+	TINT T2Locale::GetNumStrings() const
+	{
+		return m_StringTable->m_numstrings;
+	}
+
+	TWCHAR* T2Locale::GetString(TINT a_iNumString)
+	{
+		TASSERT(a_iNumString >= 0 && a_iNumString < GetNumStrings());
+		return m_StringTable->Strings[a_iNumString];
+	}
+
 }

@@ -15,7 +15,7 @@ AMaterialLibrary::AMaterialLibrary()
 
 TBOOL AMaterialLibrary::LoadTTLData(void* a_pTTLData)
 {
-	TTL* pTTL = TSTATICCAST(TTL*, a_pTTLData);
+	TTL* pTTL = TSTATICCAST(TTL, a_pTTLData);
 
 	auto pLibList = AMaterialLibraryManager::List::GetSingleton();
 	TINT iNumTextures = 0;

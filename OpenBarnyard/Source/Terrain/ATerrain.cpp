@@ -277,7 +277,7 @@ void ATerrain::Render()
 
 	if (pCameraObject)
 	{
-		auto pWorldShader = AWorldShaderHAL::Upcast(AWorldShader::GetSingleton());
+		auto pWorldShader = TCastClass<AWorldShaderHAL>(AWorldShader::GetSingleton());
 
 		m_DefaultShadowColor = pWorldShader->GetShadowColour();
 		m_DefaultAmbientColor = pWorldShader->GetAmbientColour();
@@ -691,7 +691,7 @@ ATRBLoaderJob* ATerrain::GetFreeTRBLoaderJob()
 		auto pTRBJobSlot = m_FreeTRBLoaderJobs.PopFront();
 		m_UsedTRBLoaderJobs.PushFront(pTRBJobSlot);
 
-		return TSTATICCAST(ATRBLoaderJob*, pTRBJobSlot->pJob);
+		return TSTATICCAST(ATRBLoaderJob, pTRBJobSlot->pJob);
 	}
 	else
 	{
@@ -708,7 +708,7 @@ ASkeletonDoneJob* ATerrain::GetFreeSkeletonLoaderJob()
 		auto pTRBJobSlot = m_FreeSkeletonLoaderJobs.PopFront();
 		m_UsedSkeletonLoaderJobs.PushFront(pTRBJobSlot);
 
-		return TSTATICCAST(ASkeletonDoneJob*, pTRBJobSlot->pJob);
+		return TSTATICCAST(ASkeletonDoneJob, pTRBJobSlot->pJob);
 	}
 	else
 	{
@@ -725,7 +725,7 @@ AMatLibLoaderJob* ATerrain::GetFreeMatlibLoaderJob()
 		auto pTRBJobSlot = m_FreeMatlibLoaderJobs.PopFront();
 		m_UsedMatlibLoaderJobs.PushFront(pTRBJobSlot);
 
-		return TSTATICCAST(AMatLibLoaderJob*, pTRBJobSlot->pJob);
+		return TSTATICCAST(AMatLibLoaderJob, pTRBJobSlot->pJob);
 	}
 	else
 	{
@@ -742,7 +742,7 @@ ACollisionDoneJob* ATerrain::GetFreeCollisionLoaderJob()
 		auto pTRBJobSlot = m_FreeCollisionLoaderJobs.PopFront();
 		m_UsedCollisionLoaderJobs.PushFront(pTRBJobSlot);
 
-		return TSTATICCAST(ACollisionDoneJob*, pTRBJobSlot->pJob);
+		return TSTATICCAST(ACollisionDoneJob, pTRBJobSlot->pJob);
 	}
 	else
 	{
@@ -759,7 +759,7 @@ AModelLoaderJob* ATerrain::GetFreeModelLoaderJob()
 		auto pTRBJobSlot = m_FreeModelLoaderJobs.PopFront();
 		m_UsedModelLoaderJobs.PushFront(pTRBJobSlot);
 
-		return TSTATICCAST(AModelLoaderJob*, pTRBJobSlot->pJob);
+		return TSTATICCAST(AModelLoaderJob, pTRBJobSlot->pJob);
 	}
 	else
 	{
@@ -776,7 +776,7 @@ ASectionDoneJob* ATerrain::GetFreeSectionLoaderJob()
 		auto pTRBJobSlot = m_FreeSectionLoaderJobs.PopFront();
 		m_UsedSectionLoaderJobs.PushFront(pTRBJobSlot);
 
-		return TSTATICCAST(ASectionDoneJob*, pTRBJobSlot->pJob);
+		return TSTATICCAST(ASectionDoneJob, pTRBJobSlot->pJob);
 	}
 	else
 	{
@@ -857,14 +857,14 @@ static void RenderCellMeshWin(CellMeshSphere* a_pMeshSphere, RenderData* a_pRend
 	colour.z = 0.1952941f;
 	colour.w = 1.0f;
 
-	AWorldShaderHAL::Upcast(AWorldShader::GetSingleton())->SetColours(colour, colour);
+	TCastClass<AWorldShaderHAL>(AWorldShader::GetSingleton())->SetColours(colour, colour);
 	a_pMeshSphere->m_pCellMesh->pMesh->Render();
 }
 
 static void RenderWorldVisWin(TModelInstance* a_pModelInstance, void* a_pModelNode)
 {
 	auto pModel = a_pModelInstance->GetModel();
-	auto pModelNode = TSTATICCAST(ATerrainSection::ModelNode*, a_pModelNode);
+	auto pModelNode = TSTATICCAST(ATerrainSection::ModelNode, a_pModelNode);
 
 	if (TNULL != pModel->GetTRB())
 	{

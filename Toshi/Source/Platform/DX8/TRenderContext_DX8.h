@@ -6,7 +6,8 @@ namespace Toshi {
 	class TRenderContextD3D : public TRenderContext
 	{
 	public:
-		TRenderContextD3D(TRenderInterface* a_pRenderer) : TRenderContext(a_pRenderer) { }
+		TRenderContextD3D(TRenderInterface* a_pRenderer);
+		~TRenderContextD3D();
 
 		virtual void Update() override;
 
@@ -23,7 +24,7 @@ namespace Toshi {
 
 		static TRenderContextD3D* Upcast(TRenderContext* a_pRenderContext)
 		{
-			return TSTATICCAST(TRenderContextD3D*, a_pRenderContext);
+			return TSTATICCAST(TRenderContextD3D, a_pRenderContext);
 		}
 
 	private:

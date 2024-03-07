@@ -156,7 +156,7 @@ namespace Toshi {
 
 			if (m_iNumAllocElements > 0)
 			{
-				m_pData = TSTATICCAST(T*, TMemalign(m_iNumAllocElements * sizeof(T), alignof(T)));
+				m_pData = TSTATICCAST(T, TMemalign(m_iNumAllocElements * sizeof(T), alignof(T)));
 			}
 			else
 			{
@@ -177,7 +177,7 @@ namespace Toshi {
 		{
 			if (a_iNewSize != 0)
 			{
-				T* pNewBuffer = TSTATICCAST(T*, TMemalign(a_iNewSize * sizeof(T), alignof(T)));
+				T* pNewBuffer = TSTATICCAST(T, TMemalign(a_iNewSize * sizeof(T), alignof(T)));
 				size_t uiCopySize = TMath::Min(m_iNumElements, a_iNewSize);
 
 				TUtil::MemCopy(pNewBuffer, m_pData, sizeof(T) * uiCopySize);

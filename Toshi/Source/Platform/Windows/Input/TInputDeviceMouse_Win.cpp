@@ -235,17 +235,17 @@ namespace Toshi {
 		{
 			if (coord == 0)
 			{
-				return TSTATICCAST(TFLOAT, m_iDeltaPositionX);
+				return TFLOAT(m_iDeltaPositionX);
 			}
 
 			if (coord == 1)
 			{
-				return TSTATICCAST(TFLOAT, m_iDeltaPositionY);
+				return TFLOAT(m_iDeltaPositionY);
 			}
 		}
 		else if (a_iDoodad == AXIS_WHEEL)
 		{
-			return TSTATICCAST(TFLOAT, m_iDeltaPositionZ);
+			return TFLOAT(m_iDeltaPositionZ);
 		}
 
 		return 0.0f;

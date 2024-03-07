@@ -28,7 +28,7 @@ namespace Toshi {
 		{
 			size_t uiAllocDataSize = sizeof(AllocateData) + sizeof(T) * a_uiSize;
 			
-			AllocateData* pAllocData = TSTATICCAST(AllocateData*, TMalloc(uiAllocDataSize));
+			AllocateData* pAllocData = TSTATICCAST(AllocateData, TMalloc(uiAllocDataSize));
 			T* pArrayData = TREINTERPRETCAST(T*, pAllocData + 1);
 
 			if (pAllocData)

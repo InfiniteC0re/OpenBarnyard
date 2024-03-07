@@ -57,7 +57,7 @@ namespace Toshi {
 
 	void TD3DAdapter::EnumerateOutputs(TRenderInterface* a_pRenderer)
 	{
-		TRenderD3DInterface* pRenderer = TSTATICCAST(TRenderD3DInterface*, a_pRenderer);
+		TRenderD3DInterface* pRenderer = TSTATICCAST(TRenderD3DInterface, a_pRenderer);
 		
 		TUINT32 uiAdapterIndex = GetAdapterIndex();
 		TUINT32 uiNumSupportedDevices = GetNumSupportedDevices();
@@ -74,7 +74,7 @@ namespace Toshi {
 
 			for (TUINT32 k = 0; k < uiNumSupportedDevices; k++)
 			{
-				auto pDevice = TSTATICCAST(TD3DAdapter::Mode::Device*, pMode->GetDevice(k));
+				auto pDevice = TSTATICCAST(TD3DAdapter::Mode::Device, pMode->GetDevice(k));
 
 				pDevice->SetOwnerMode(pMode);
 				pDevice->SetDeviceIndex(k);
@@ -218,10 +218,10 @@ namespace Toshi {
 	{
 		if (a_uiColourDepth == 16)
 		{
-			return TSTATICCAST(D3DFORMAT, (-(TUINT32)((*(TUINT8*)&(m_DisplayMode).Format & 0x17) != 0) & 0xfffffff9) + D3DFMT_X4R4G4B4);
+			return D3DFORMAT((-(TUINT32)((*(TUINT8*)&(m_DisplayMode).Format & 0x17) != 0) & 0xfffffff9) + D3DFMT_X4R4G4B4);
 		}
 
-		return TSTATICCAST(D3DFORMAT, (a_uiColourDepth != 32) - 1 & 0x16);
+		return D3DFORMAT((a_uiColourDepth != 32) - 1 & 0x16);
 	}
 
 	TRenderAdapter::Mode* TD3DAdapter::Mode::Device::GetMode() const

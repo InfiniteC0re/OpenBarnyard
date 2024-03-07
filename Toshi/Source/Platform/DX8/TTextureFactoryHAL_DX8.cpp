@@ -20,7 +20,7 @@ namespace Toshi {
 		if (!pTexture)
 		{
 			pTexture = TSTATICCAST(
-				TTexture*,
+				TTexture,
 				GetRenderer()->CreateResource(
 					TClass::Find("TTextureResourceHAL"),
 					TNULL,
@@ -49,7 +49,7 @@ namespace Toshi {
 		T2String8::IntToString(++s_iNumMemTextures, s_szName + 5, 16);
 
 		TTexture* pTexture = TSTATICCAST(
-			TTexture*,
+			TTexture,
 			GetRenderer()->CreateResource(
 				TClass::Find("TTextureResourceHAL"),
 				TNULL,
@@ -76,7 +76,7 @@ namespace Toshi {
 		T2String8::IntToString(++s_iNumMemTextures, s_szName + 5, 16);
 
 		TTexture* pTexture = TSTATICCAST(
-			TTexture*,
+			TTexture,
 			GetRenderer()->CreateResource(
 				TClass::Find("TTextureResourceHAL"),
 				TNULL,
@@ -103,7 +103,7 @@ namespace Toshi {
 		T2String8::IntToString(++s_iNumMemTextures, s_szName + 5, 16);
 
 		TTexture* pTexture = TSTATICCAST(
-			TTexture*,
+			TTexture,
 			GetRenderer()->CreateResource(
 				TClass::Find("TTextureResourceHAL"),
 				TNULL,

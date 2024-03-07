@@ -72,7 +72,7 @@ TUINT AGUI2RendererDX8::GetHeight(AGUI2Material* a_pMaterial)
 
 void AGUI2RendererDX8::BeginScene()
 {
-	auto pRender = TSTATICCAST(TRenderD3DInterface*, TRenderInterface::GetSingleton());
+	auto pRender = TSTATICCAST(TRenderD3DInterface, TRenderInterface::GetSingleton());
 	auto pD3DDevice = pRender->GetDirect3DDevice();
 
 	TRenderD3DInterface::FlushShaders();
@@ -139,7 +139,7 @@ void AGUI2RendererDX8::BeginScene()
 
 void AGUI2RendererDX8::EndScene()
 {
-	auto pRender = TSTATICCAST(TRenderD3DInterface*, TRenderInterface::GetSingleton());
+	auto pRender = TSTATICCAST(TRenderD3DInterface, TRenderInterface::GetSingleton());
 	auto pD3DDevice = pRender->GetDirect3DDevice();
 
 	pD3DDevice->SetRenderState(D3DRS_ZWRITEENABLE, 1);
@@ -163,7 +163,7 @@ void AGUI2RendererDX8::EndScene()
 
 void AGUI2RendererDX8::ResetRenderer()
 {
-	auto pRender = TSTATICCAST(TRenderD3DInterface*, TRenderInterface::GetSingleton());
+	auto pRender = TSTATICCAST(TRenderD3DInterface, TRenderInterface::GetSingleton());
 	auto pD3DDevice = pRender->GetDirect3DDevice();
 
 	pD3DDevice->SetRenderState(D3DRS_BLENDOP, 1);
@@ -187,7 +187,7 @@ void AGUI2RendererDX8::ResetRenderer()
 
 void AGUI2RendererDX8::PrepareRenderer()
 {
-	auto pRender = TSTATICCAST(TRenderD3DInterface*, TRenderInterface::GetSingleton());
+	auto pRender = TSTATICCAST(TRenderD3DInterface, TRenderInterface::GetSingleton());
 	auto pD3DDevice = pRender->GetDirect3DDevice();
 
 	auto pDisplayParams = pRender->GetCurrentDisplayParams();
@@ -239,7 +239,7 @@ void AGUI2RendererDX8::PrepareRenderer()
 
 void AGUI2RendererDX8::SetMaterial(AGUI2Material* a_pMaterial)
 {
-	auto pRender = TSTATICCAST(TRenderD3DInterface*, TRenderInterface::GetSingleton());
+	auto pRender = TSTATICCAST(TRenderD3DInterface, TRenderInterface::GetSingleton());
 	auto pD3DDevice = pRender->GetDirect3DDevice();
 
 	if (a_pMaterial == m_pMaterial)
@@ -270,7 +270,7 @@ void AGUI2RendererDX8::SetMaterial(AGUI2Material* a_pMaterial)
 	}
 	else
 	{
-		auto pTexture = TSTATICCAST(Toshi::TTextureResourceHAL*, a_pMaterial->m_pTextureResource);
+		auto pTexture = TSTATICCAST(Toshi::TTextureResourceHAL, a_pMaterial->m_pTextureResource);
 		pTexture->Validate();
 		
 		pD3DDevice->SetTexture(0, pTexture->GetD3DTexture());
@@ -444,7 +444,7 @@ void AGUI2RendererDX8::SetColour(TUINT32 a_uiColour)
 
 void AGUI2RendererDX8::SetupViewport(TFLOAT a_fVal1, TFLOAT a_fVal2, TFLOAT a_fVal3, TFLOAT a_fVal4)
 {
-	auto pRender = TSTATICCAST(TRenderD3DInterface*, TRenderInterface::GetSingleton());
+	auto pRender = TSTATICCAST(TRenderD3DInterface, TRenderInterface::GetSingleton());
 	auto pD3DDevice = pRender->GetDirect3DDevice();
 
 	auto pDisplayParams = pRender->GetCurrentDisplayParams();
@@ -506,7 +506,7 @@ void AGUI2RendererDX8::SetupViewport(TFLOAT a_fVal1, TFLOAT a_fVal2, TFLOAT a_fV
 
 void AGUI2RendererDX8::SetupViewport()
 {
-	auto pRender = TSTATICCAST(TRenderD3DInterface*, TRenderInterface::GetSingleton());
+	auto pRender = TSTATICCAST(TRenderD3DInterface, TRenderInterface::GetSingleton());
 	auto pD3DDevice = pRender->GetDirect3DDevice();
 
 	auto pDisplayParams = pRender->GetCurrentDisplayParams();
@@ -562,7 +562,7 @@ void AGUI2RendererDX8::RenderRectangle(const Toshi::TVector2& a, const Toshi::TV
 	sm_Vertices[3].Colour = m_uiColour;
 	sm_Vertices[3].UV = { uv2.x, uv2.y };
 
-	auto pRender = TSTATICCAST(TRenderD3DInterface*, TRenderInterface::GetSingleton());
+	auto pRender = TSTATICCAST(TRenderD3DInterface, TRenderInterface::GetSingleton());
 	pRender->GetDirect3DDevice()->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, sm_Vertices, sizeof(Vertex));
 }
 
@@ -589,7 +589,7 @@ void AGUI2RendererDX8::RenderLine(const Toshi::TVector2& a, const Toshi::TVector
 	sm_Vertices[1].Colour = m_uiColour;
 	sm_Vertices[1].UV = { 0.0f, 0.0f };
 
-	auto pRender = TSTATICCAST(TRenderD3DInterface*, TRenderInterface::GetSingleton());
+	auto pRender = TSTATICCAST(TRenderD3DInterface, TRenderInterface::GetSingleton());
 	pRender->GetDirect3DDevice()->DrawPrimitiveUP(D3DPT_LINELIST, 1, sm_Vertices, sizeof(Vertex));
 
 	SetMaterial(pMaterial);
@@ -613,7 +613,7 @@ void AGUI2RendererDX8::RenderLine(TFLOAT x1, TFLOAT y1, TFLOAT x2, TFLOAT y2)
 	sm_Vertices[1].Colour = m_uiColour;
 	sm_Vertices[1].UV = { 0.0f, 0.0f };
 
-	auto pRender = TSTATICCAST(TRenderD3DInterface*, TRenderInterface::GetSingleton());
+	auto pRender = TSTATICCAST(TRenderD3DInterface, TRenderInterface::GetSingleton());
 	pRender->GetDirect3DDevice()->DrawPrimitiveUP(D3DPT_LINELIST, 1, sm_Vertices, sizeof(Vertex));
 
 	SetMaterial(pMaterial);
@@ -649,7 +649,7 @@ void AGUI2RendererDX8::RenderOutlineRectangle(const Toshi::TVector2& a, const To
 	sm_Vertices[4].Colour = m_uiColour;
 	sm_Vertices[4].UV = { 0.0f, 0.0f };
 
-	auto pRender = TSTATICCAST(TRenderD3DInterface*, TRenderInterface::GetSingleton());
+	auto pRender = TSTATICCAST(TRenderD3DInterface, TRenderInterface::GetSingleton());
 	pRender->GetDirect3DDevice()->DrawPrimitiveUP(D3DPT_LINESTRIP, 4, sm_Vertices, sizeof(Vertex));
 	
 	SetMaterial(pMaterial);
@@ -681,7 +681,7 @@ void AGUI2RendererDX8::RenderFilledRectangle(const Toshi::TVector2& a, const Tos
 	sm_Vertices[3].Colour = m_uiColour;
 	sm_Vertices[3].UV = { 0.0f, 0.0f };
 
-	auto pRender = TSTATICCAST(TRenderD3DInterface*, TRenderInterface::GetSingleton());
+	auto pRender = TSTATICCAST(TRenderD3DInterface, TRenderInterface::GetSingleton());
 	pRender->GetDirect3DDevice()->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, sm_Vertices, sizeof(Vertex));
 
 	SetMaterial(pMaterial);
@@ -705,7 +705,7 @@ void AGUI2RendererDX8::ResetZCoordinate()
 
 void AGUI2RendererDX8::UpdateTransform()
 {
-	auto pRender = TSTATICCAST(TRenderD3DInterface*, TRenderInterface::GetSingleton());
+	auto pRender = TSTATICCAST(TRenderD3DInterface, TRenderInterface::GetSingleton());
 	AGUI2Transform* pTransform = m_pTransforms + m_iTransformCount;
 
 	TMatrix44 worldMatrix;
@@ -735,7 +735,7 @@ void AGUI2RendererDX8::UpdateTransform()
 
 void AGUI2RendererDX8::SetupProjectionMatrix(TMatrix44& a_rOutMatrix, TINT a_iLeft, TINT a_iRight, TINT a_iTop, TINT a_iBottom)
 {
-	auto pRender = TSTATICCAST(TRenderD3DInterface*, TRenderInterface::GetSingleton());
+	auto pRender = TSTATICCAST(TRenderD3DInterface, TRenderInterface::GetSingleton());
 	auto pDisplayParams = pRender->GetCurrentDisplayParams();
 
 	a_rOutMatrix = {

@@ -37,7 +37,7 @@ Toshi::TPString8* AGUISlideshow::LocaliseBackgroundFileName(Toshi::TPString8& a_
 void AGUISlideshow::LocaliseBackgroundFileName(Toshi::TPString8& a_rOutName, const TCHAR* a_szName)
 {
 	TCHAR szFormattedName[256];
-	auto eLang = ALocaleManager::GetSingleton()->GetLangId();
+	auto eLang = ALocaleManager::GetSingleton()->GetLanguage();
 
 	if (eLang != ALocaleManager::Lang_English && eLang != ALocaleManager::Lang_EnglishUK)
 	{

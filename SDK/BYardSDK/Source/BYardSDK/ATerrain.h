@@ -82,7 +82,7 @@ public:
 			auto pTRBJobSlot = m_FreeTRBLoaderJobs.PopFront();
 			m_UsedTRBLoaderJobs.PushFront(pTRBJobSlot);
 
-			return TSTATICCAST(ATRBLoaderJob*, pTRBJobSlot->pJob);
+			return TSTATICCAST(ATRBLoaderJob, pTRBJobSlot->pJob);
 		}
 		else
 		{
@@ -99,7 +99,7 @@ public:
 			auto pTRBJobSlot = m_FreeSkeletonLoaderJobs.PopFront();
 			m_UsedSkeletonLoaderJobs.PushFront(pTRBJobSlot);
 
-			return TSTATICCAST(ASkeletonDoneJob*, pTRBJobSlot->pJob);
+			return TSTATICCAST(ASkeletonDoneJob, pTRBJobSlot->pJob);
 		}
 		else
 		{
@@ -116,7 +116,7 @@ public:
 			auto pTRBJobSlot = m_FreeMatlibLoaderJobs.PopFront();
 			m_UsedMatlibLoaderJobs.PushFront(pTRBJobSlot);
 
-			return TSTATICCAST(AMatLibLoaderJob*, pTRBJobSlot->pJob);
+			return TSTATICCAST(AMatLibLoaderJob, pTRBJobSlot->pJob);
 		}
 		else
 		{
@@ -133,7 +133,7 @@ public:
 			auto pTRBJobSlot = m_FreeCollisionLoaderJobs.PopFront();
 			m_UsedCollisionLoaderJobs.PushFront(pTRBJobSlot);
 
-			return TSTATICCAST(ACollisionDoneJob*, pTRBJobSlot->pJob);
+			return TSTATICCAST(ACollisionDoneJob, pTRBJobSlot->pJob);
 		}
 		else
 		{
@@ -150,7 +150,7 @@ public:
 			auto pTRBJobSlot = m_FreeModelLoaderJobs.PopFront();
 			m_UsedModelLoaderJobs.PushFront(pTRBJobSlot);
 
-			return TSTATICCAST(AModelLoaderJob*, pTRBJobSlot->pJob);
+			return TSTATICCAST(AModelLoaderJob, pTRBJobSlot->pJob);
 		}
 		else
 		{
@@ -167,7 +167,7 @@ public:
 			auto pTRBJobSlot = m_FreeSectionLoaderJobs.PopFront();
 			m_UsedSectionLoaderJobs.PushFront(pTRBJobSlot);
 
-			return TSTATICCAST(ASectionDoneJob*, pTRBJobSlot->pJob);
+			return TSTATICCAST(ASectionDoneJob, pTRBJobSlot->pJob);
 		}
 		else
 		{

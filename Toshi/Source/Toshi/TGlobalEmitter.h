@@ -108,7 +108,7 @@ namespace Toshi {
 	public:
 		virtual void ThrowGlobal() const
 		{
-			TGlobalEmitter<T>::Throw(*TSTATICCAST(const T*, this));
+			TGlobalEmitter<T>::Throw(*TSTATICCAST(const T, this));
 			TGlobalEmitter<TGenericGlobalEvent>::Throw(TGenericGlobalEvent(this));
 		}
 	};

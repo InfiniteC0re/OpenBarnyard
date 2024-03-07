@@ -34,7 +34,7 @@ namespace Toshi {
 			return TTRUE;
 		}
 
-		auto pFactory = TSTATICCAST(TVertexFactoryResource*, GetFactory());
+		auto pFactory = TSTATICCAST(TVertexFactoryResource, GetFactory());
 		auto pBlock = pFactory->FindBlockResource(this);
 
 		if (!pBlock)
@@ -172,7 +172,7 @@ namespace Toshi {
 				{
 					if (GetParent()->GetClass()->IsA(&TGetClass(TVertexBlockResource)))
 					{
-						auto pVertexBlock = TSTATICCAST(TVertexBlockResource*, GetParent());
+						auto pVertexBlock = TSTATICCAST(TVertexBlockResource, GetParent());
 						pVertexBlock->ChildVertexUsedChanged(iChange);
 					}
 				}
@@ -233,7 +233,7 @@ namespace Toshi {
 	{
 		if (Parent()->IsExactly(&TGetClass(TVertexBlockResource)))
 		{
-			return TSTATICCAST(TVertexBlockResource*, Parent());
+			return TSTATICCAST(TVertexBlockResource, Parent());
 		}
 
 		return TNULL;

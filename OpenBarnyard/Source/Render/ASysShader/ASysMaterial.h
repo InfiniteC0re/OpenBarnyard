@@ -38,7 +38,7 @@ public:
 
 	ASysShader* GetSysShader() const
 	{
-		return TSTATICCAST(ASysShader*, GetShader());
+		return TSTATICCAST(ASysShader, GetShader());
 	}
 
 protected:

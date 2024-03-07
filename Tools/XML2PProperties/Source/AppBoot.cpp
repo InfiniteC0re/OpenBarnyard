@@ -96,11 +96,11 @@ void PropertyValueToXml(tinyxml2::XMLElement* a_pRootElement, const PBPropertyVa
 		a_pRootElement->SetAttribute("type", "int");
 		a_pRootElement->SetAttribute("value", a_pValue->GetInteger());
 		break;
-	case PBPropertyValue::Type::UInt32:
+	case PBPropertyValue::Type::LocaleString:
 		a_pRootElement->SetAttribute("type", "uint");
 		a_pRootElement->SetAttribute("value", a_pValue->GetUINT32());
 		break;
-	case PBPropertyValue::Type::Props:
+	case PBPropertyValue::Type::Properties:
 		a_pRootElement->SetAttribute("type", "property");
 		PropertiesToXml(a_pRootElement, a_pValue->GetProperties());
 		break;

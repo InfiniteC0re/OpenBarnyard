@@ -31,7 +31,7 @@ public:
 	static T* CastSymbol(const TCHAR* a_szFileName, const TCHAR* a_szSymbolName, AAssetType a_eAssetType)
 	{
 		return TSTATICCAST(
-			T*,
+			T,
 			GetSymbolAddress(a_szFileName, a_szSymbolName, a_eAssetType)
 		);
 	}

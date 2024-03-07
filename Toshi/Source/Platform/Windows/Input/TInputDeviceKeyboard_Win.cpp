@@ -118,7 +118,7 @@ namespace Toshi {
 
 				for (DWORD i = 0; i < dwNumElements; i++)
 				{
-					HandleKeyChange(emitter, aDeviceData[i].dwOfs, TSTATICCAST(uint8_t, aDeviceData[i].dwData));
+					HandleKeyChange(emitter, aDeviceData[i].dwOfs, TUINT8(aDeviceData[i].dwData));
 
 					if (aDeviceData[i].dwData != 0)
 						iNumProcessed++;
@@ -206,9 +206,9 @@ namespace Toshi {
 #pragma warning( default : 4309 )
 
 		if (!IsShiftDown())
-			s_Buffer[0] = TSTATICCAST(TWCHAR, s_TranslateArrayLowerCase[doodad - 0x20000]);
+			s_Buffer[0] = TWCHAR(s_TranslateArrayLowerCase[doodad - 0x20000]);
 		else
-			s_Buffer[0] = TSTATICCAST(TWCHAR, s_TranslateArrayUpperCase[doodad - 0x20000]);
+			s_Buffer[0] = TWCHAR(s_TranslateArrayUpperCase[doodad - 0x20000]);
 
 		s_Buffer[1] = L'\0';
 		return s_Buffer;

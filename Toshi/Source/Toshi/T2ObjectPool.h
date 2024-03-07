@@ -31,7 +31,7 @@ namespace Toshi {
 
 		virtual void Free(void* a_pPtr) override
 		{
-			ReturnObject(TSTATICCAST(Object*, a_pPtr));
+			ReturnObject(TSTATICCAST(Object, a_pPtr));
 		}
 
 		virtual TBOOL CanAllocate(size_t size) override
@@ -125,7 +125,7 @@ namespace Toshi {
 		T* AllocateObject()
 		{
 			TASSERT(TTRUE == CanAllocate(ObjectSize));
-			return TSTATICCAST(T*, Malloc(ObjectSize));
+			return TSTATICCAST(T, Malloc(ObjectSize));
 		}
 
 		void FreeObject(T* a_pObject)
@@ -232,7 +232,7 @@ namespace Toshi {
 		TClassType* AllocateObject()
 		{
 			TASSERT(TTRUE == CanAllocate(m_uiObjectSize));
-			return TSTATICCAST(TClassType*, Malloc(m_uiObjectSize));
+			return TSTATICCAST(TClassType, Malloc(m_uiObjectSize));
 		}
 
 		void FreeObject(TClassType* a_pObject)

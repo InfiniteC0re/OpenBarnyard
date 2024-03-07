@@ -346,7 +346,7 @@ namespace Toshi {
 		template<typename T>
 		T* CastSymbol(const TCHAR* symbName)
 		{
-			return TSTATICCAST(T*, GetSymbolAddress(symbName));
+			return TSTATICCAST(T, GetSymbolAddress(symbName));
 		}
 
 		static TUINT32 GetSymbolTableSize(TUINT32 count)

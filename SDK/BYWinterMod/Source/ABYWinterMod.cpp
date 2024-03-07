@@ -80,7 +80,7 @@ public:
 
 	void OnAllModsLoaded()
 	{
-		auto pTexturePacksMod = TSTATICCAST(ABYTexturePacks*, AGlobalModLoaderTask::FindMod("BYTexturePacks"));
+		auto pTexturePacksMod = TSTATICCAST(ABYTexturePacks, AGlobalModLoaderTask::FindMod("BYTexturePacks"));
 
 		if (pTexturePacksMod)
 		{

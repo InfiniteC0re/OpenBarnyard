@@ -9,9 +9,9 @@ void AAssetBuilder::Add(const TString8& a_FileName)
 	
 	if (pTRB->ReadFromFile(a_FileName.GetString()))
 	{
-		TASSERT(pTRB->GetSECT()->GetStackCount() > 0);
+		TASSERT(pTRB->GetSections()->GetStackCount() > 0);
 
-		auto pSYMB = pTRB->GetSYMB();
+		auto pSYMB = pTRB->GetSymbols();
 
 		TString8 symbolDirName = a_FileName.GetString(a_FileName.FindReverse('\\', -1) + 1);
 		symbolDirName.Truncate(symbolDirName.FindReverse('.', -1));
@@ -19,7 +19,7 @@ void AAssetBuilder::Add(const TString8& a_FileName)
 		auto pAsset = m_AssetPack.GetAssets().Push();
 		pAsset->Name = symbolDirName.MakeLower();
 		pAsset->pTRB = pTRB;
-		pAsset->pStack = pTRB->GetSECT()->GetStack(0);
+		pAsset->pStack = pTRB->GetSections()->GetStack(0);
 		
 		for (TUINT i = 0; i < pSYMB->GetCount(); i++)
 		{

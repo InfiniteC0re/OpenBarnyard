@@ -205,8 +205,8 @@ namespace Toshi {
 					{
 						if (a_pResource->IsExactly(&TGetClass(TVertexPoolResource)))
 						{
-							auto pPool = TSTATICCAST(TVertexPoolResource*, a_pResource);
-							auto pPair = TSTATICCAST(Pair*, a_pUserData);
+							auto pPool = TSTATICCAST(TVertexPoolResource, a_pResource);
+							auto pPair = TSTATICCAST(Pair, a_pUserData);
 
 							auto pFactory = pPool->GetFactory();
 							auto vertexFormat = pFactory->GetVertexFormat();

@@ -115,7 +115,7 @@ namespace Toshi {
 		T* GetSystemResource(SYSRESOURCE systemResource)
 		{
 			TASSERT(systemResource >= 0 && systemResource < SYSRESOURCE_NUMOF, "Unknown resource");
-			return TSTATICCAST(T*, m_SystemResources[systemResource]);
+			return TSTATICCAST(T, m_SystemResources[systemResource]);
 		}
 
 		// Sets resource explicit

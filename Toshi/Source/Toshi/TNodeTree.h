@@ -240,7 +240,7 @@ namespace Toshi
 
 		T* GetRoot()
 		{
-			return TSTATICCAST(T*, &m_Root);
+			return TSTATICCAST(T, &m_Root);
 		}
 
 		T* ChildOfRoot()

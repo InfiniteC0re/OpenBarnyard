@@ -18,7 +18,7 @@ namespace Toshi {
 	TVertexPoolResourceInterface* TVertexFactoryResource::CreatePoolResource(TUINT16 a_uiMaxStaticVertices, TUINT16 a_uiFlags)
 	{
 		auto pVertexPool = TSTATICCAST(
-			TVertexPoolResource*,
+			TVertexPoolResource,
 			GetRenderer()->CreateResource(&TGetClass(TVertexPoolResource), TNULL, this)
 		);
 
@@ -33,7 +33,7 @@ namespace Toshi {
 	TVertexBlockResource* TVertexFactoryResource::CreateBlockResource(TUINT16 a_uiMaxVertices, TUINT32 a_uiFlags)
 	{
 		auto pVertexBlock = TSTATICCAST(
-			TVertexBlockResource*,
+			TVertexBlockResource,
 			GetRenderer()->CreateResource(&TGetClass(TVertexBlockResource), TNULL, this)
 		);
 
@@ -56,11 +56,11 @@ namespace Toshi {
 		TResource::RecurseSimple(
 			[](TResource* a_pResource, void* a_pUserData)
 			{
-				auto pPair = TSTATICCAST(Pair*, a_pUserData);
+				auto pPair = TSTATICCAST(Pair, a_pUserData);
 
 				if (a_pResource->IsA(&TGetClass(TVertexBlockResource)))
 				{
-					auto pBlockResource = TSTATICCAST(TVertexBlockResource*, a_pResource);
+					auto pBlockResource = TSTATICCAST(TVertexBlockResource, a_pResource);
 
 					if (pBlockResource->CanFit(pPair->GetSecond()) && !pBlockResource->IsDying())
 					{

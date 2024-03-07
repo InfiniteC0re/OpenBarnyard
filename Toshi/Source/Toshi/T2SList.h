@@ -29,7 +29,7 @@ namespace Toshi {
 
 			T* GetNext() const
 			{
-				return TSTATICCAST(T*, m_pNext);
+				return TSTATICCAST(T, m_pNext);
 			}
 
 			TBOOL IsLinked() const
@@ -109,7 +109,7 @@ namespace Toshi {
 			T* pBack = Back();
 			T* pNodeBefore = FindNodeBefore(pBack);
 
-			pNodeBefore->m_pNext = TSTATICCAST(T*, &m_oRoot);
+			pNodeBefore->m_pNext = TSTATICCAST(T, &m_oRoot);
 			pBack->m_pNext = pBack;
 
 			return pBack;
@@ -129,7 +129,7 @@ namespace Toshi {
 
 			while (a_pFrom != a_pTo)
 			{
-				T* pNext = TSTATICCAST(T*, a_pFrom->m_pNext);
+				T* pNext = TSTATICCAST(T, a_pFrom->m_pNext);
 				a_pFrom->m_pNext = a_pFrom;
 				a_pFrom = pNext;
 			}
@@ -149,7 +149,7 @@ namespace Toshi {
 				pNode = pNext;
 			}
 
-			m_oRoot.m_pNext = TSTATICCAST(T*, &m_oRoot);
+			m_oRoot.m_pNext = TSTATICCAST(T, &m_oRoot);
 		}
 
 		TUINT Size()

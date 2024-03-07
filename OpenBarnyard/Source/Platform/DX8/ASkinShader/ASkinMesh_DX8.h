@@ -12,10 +12,4 @@ public:
 	//-----------------------------------------------------------------------------
 	virtual TBOOL Render() override;
 
-	static ASkinMeshHAL* Upcast(Toshi::TMesh* a_pMesh)
-	{
-		TASSERT(a_pMesh->IsA(&ms_oClass));
-		return TSTATICCAST(ASkinMeshHAL*, a_pMesh);
-	}
-
 };

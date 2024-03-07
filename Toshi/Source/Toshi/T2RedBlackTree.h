@@ -179,14 +179,14 @@ namespace Toshi
 			TFORCEINLINE Iterator Next()
 			{
 				Iterator next = *this;
-				m_ppNode = TSTATICCAST(Node*, T2RedBlackTree::GetSuccessorOf(m_ppNode));
+				m_ppNode = TSTATICCAST(Node, T2RedBlackTree::GetSuccessorOf(m_ppNode));
 				return next;
 			}
 
 			TFORCEINLINE Iterator Prev()
 			{
 				Iterator prev = *this;
-				m_ppNode = TSTATICCAST(Node*, T2RedBlackTree::GetPredecessorOf(m_ppNode));
+				m_ppNode = TSTATICCAST(Node, T2RedBlackTree::GetPredecessorOf(m_ppNode));
 				return prev;
 			}
 
@@ -227,7 +227,7 @@ namespace Toshi
 
 			TFORCEINLINE Iterator& operator++()
 			{
-				m_ppNode = TSTATICCAST(Node*, T2RedBlackTree::GetSuccessorOf(m_ppNode));
+				m_ppNode = TSTATICCAST(Node, T2RedBlackTree::GetSuccessorOf(m_ppNode));
 				return *this;
 			}
 
@@ -238,7 +238,7 @@ namespace Toshi
 
 			TFORCEINLINE Iterator& operator--()
 			{
-				m_ppNode = TSTATICCAST(Node*, T2RedBlackTree::GetPredecessorOf(m_ppNode));
+				m_ppNode = TSTATICCAST(Node, T2RedBlackTree::GetPredecessorOf(m_ppNode));
 				return *this;
 			}
 
@@ -271,7 +271,7 @@ namespace Toshi
 		{
 			while (GetNumElements() > 0)
 			{
-				auto pNode = TSTATICCAST(Node*, GetFirstNode());
+				auto pNode = TSTATICCAST(Node, GetFirstNode());
 				Delete(pNode);
 			}
 		}
@@ -299,8 +299,8 @@ namespace Toshi
 			pNode->m_pLeft = &ms_oNil;
 			pNode->m_pRight = &ms_oNil;
 
-			Node* pCurrentNode = TSTATICCAST(Node*, m_oRoot.m_pLeft);
-			Node* pInsertTo = TSTATICCAST(Node*, &m_oRoot);
+			Node* pCurrentNode = TSTATICCAST(Node, m_oRoot.m_pLeft);
+			Node* pInsertTo = TSTATICCAST(Node, &m_oRoot);
 
 			while (pCurrentNode != &ms_oNil)
 			{
@@ -308,11 +308,11 @@ namespace Toshi
 
 				if (pCurrentNode->IsLeftNodeNext(value))
 				{
-					pCurrentNode = TSTATICCAST(Node*, pCurrentNode->m_pLeft);
+					pCurrentNode = TSTATICCAST(Node, pCurrentNode->m_pLeft);
 				}
 				else
 				{
-					pCurrentNode = TSTATICCAST(Node*, pCurrentNode->m_pRight);
+					pCurrentNode = TSTATICCAST(Node, pCurrentNode->m_pRight);
 				}
 			}
 
@@ -334,7 +334,7 @@ namespace Toshi
 
 		Iterator Find(Node*& foundNode, const T& value)
 		{
-			Node* pCurrentNode = TSTATICCAST(Node*, m_oRoot.m_pLeft);
+			Node* pCurrentNode = TSTATICCAST(Node, m_oRoot.m_pLeft);
 
 			while (pCurrentNode != &ms_oNil)
 			{
@@ -346,21 +346,21 @@ namespace Toshi
 
 				if (pCurrentNode->IsLeftNodeNext(value))
 				{
-					pCurrentNode = TSTATICCAST(Node*, pCurrentNode->m_pLeft);
+					pCurrentNode = TSTATICCAST(Node, pCurrentNode->m_pLeft);
 				}
 				else
 				{
-					pCurrentNode = TSTATICCAST(Node*, pCurrentNode->m_pRight);
+					pCurrentNode = TSTATICCAST(Node, pCurrentNode->m_pRight);
 				}
 			}
 
-			foundNode = TSTATICCAST(Node*, &m_oRoot);
+			foundNode = TSTATICCAST(Node, &m_oRoot);
 			return foundNode;
 		}
 
 		Iterator FindNext(Node*& foundNode, Node*& nextAfter, const T& value)
 		{
-			Node* pNode = TSTATICCAST(Node*, GetSuccessorOf(nextAfter));
+			Node* pNode = TSTATICCAST(Node, GetSuccessorOf(nextAfter));
 
 			if (pNode->operator==(value))
 			{
@@ -368,7 +368,7 @@ namespace Toshi
 				return foundNode;
 			}
 
-			foundNode = TSTATICCAST(Node*, &m_oRoot);
+			foundNode = TSTATICCAST(Node, &m_oRoot);
 			return foundNode;
 		}
 	};

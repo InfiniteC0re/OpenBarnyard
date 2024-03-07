@@ -114,7 +114,7 @@ namespace Toshi {
 		template <class C>
 		C* GetDeviceByIndex(TUINT a_uiIndex = 0)
 		{
-			C* pDevice = TSTATICCAST(C*, GetDeviceByIndex(&TGetClass(C), a_uiIndex));
+			C* pDevice = TSTATICCAST(C, GetDeviceByIndex(&TGetClass(C), a_uiIndex));
 			TASSERT(pDevice == TNULL || pDevice->GetClass()->IsA(&TGetClass(C)));
 			return pDevice;
 		}

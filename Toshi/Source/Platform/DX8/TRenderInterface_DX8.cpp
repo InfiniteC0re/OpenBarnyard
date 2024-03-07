@@ -21,7 +21,7 @@ namespace Toshi {
 	
 	void TRenderInterface::BeginEndSceneHAL()
 	{
-		auto pHAL = TSTATICCAST(TRenderD3DInterface*, this);
+		auto pHAL = TSTATICCAST(TRenderD3DInterface, this);
 
 		if (S_OK == pHAL->GetDirect3DDevice()->BeginScene())
 		{
@@ -68,7 +68,7 @@ namespace Toshi {
 			return TFALSE;
 		}
 
-		m_pDevice = TSTATICCAST(TD3DAdapter::Mode::Device*, FindDevice(a_rParams));
+		m_pDevice = TSTATICCAST(TD3DAdapter::Mode::Device, FindDevice(a_rParams));
 		m_oDisplayParams = a_rParams;
 
 		if (m_pDevice)
@@ -104,9 +104,9 @@ namespace Toshi {
 			m_PresentParams.BackBufferWidth = pDisplayParams->uiWidth;
 			m_PresentParams.BackBufferHeight = pDisplayParams->uiHeight;
 
-			auto pDevice = TSTATICCAST(TD3DAdapter::Mode::Device*, GetCurrentDevice());
-			auto pMode = TSTATICCAST(TD3DAdapter::Mode*, pDevice->GetMode());
-			auto pAdapter = TSTATICCAST(TD3DAdapter*, pMode->GetAdapter());
+			auto pDevice = TSTATICCAST(TD3DAdapter::Mode::Device, GetCurrentDevice());
+			auto pMode = TSTATICCAST(TD3DAdapter::Mode, pDevice->GetMode());
+			auto pAdapter = TSTATICCAST(TD3DAdapter, pMode->GetAdapter());
 			auto uiAdapterIndex = pAdapter->GetAdapterIndex();
 
 			if (pDisplayParams->bWindowed)

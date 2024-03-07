@@ -23,14 +23,14 @@ TBOOL AWorldMeshHAL::Render()
 
 	TMaterial* pMaterial;
 
-	if (!AWorldShaderHAL::Upcast(m_pOwnerShader)->IsAlphaBlendMaterial() ||
+	if (!TCastClass<AWorldShaderHAL>(m_pOwnerShader)->IsAlphaBlendMaterial() ||
 		pCurrentContext->GetAlphaBlend() >= 1.0f)
 	{
-		pMaterial = AWorldMaterialHAL::Upcast(m_pMaterial);
+		pMaterial = TCastClass<AWorldMaterialHAL>(m_pMaterial);
 	}
 	else
 	{
-		pMaterial = AWorldMaterialHAL::Upcast(m_pMaterial)->GetAlphaBlendMaterial();
+		pMaterial = TCastClass<AWorldMaterialHAL>(m_pMaterial)->GetAlphaBlendMaterial();
 	}
 
 	auto pRenderPacket = pMaterial->AddRenderPacket(this);

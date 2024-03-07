@@ -41,8 +41,8 @@ int main(int argc, char** argv)
 			TINFO("Opened file for input!\n");
 			TINFO("Reading input file...\n");
 
-			PTRB::TRBF outTrbFile;
-			auto pOutStack = outTrbFile.GetSECT()->CreateStack();
+			PTRBWriter outTrbFile;
+			auto pOutStack = outTrbFile.GetSections()->CreateStream();
 
 			// Read file data into a buffer
 			auto uiFileSize = pTextFile->GetSize();
@@ -78,7 +78,7 @@ int main(int argc, char** argv)
 				auto pLocaleStrings = pOutStack->Alloc<T2Locale::LocaleStrings>();
 				
 				pLocaleStrings->m_numstrings = foundStrings.Size();
-				pOutStack->Alloc<T2Locale::LocaleString>(&pLocaleStrings->Strings, foundStrings.Size());
+				pOutStack->Alloc<TWCHAR*>(&pLocaleStrings->Strings, foundStrings.Size());
 
 				TARRAY_FOREACH(foundStrings, str)
 				{
@@ -88,7 +88,7 @@ int main(int argc, char** argv)
 					T2String16::Copy(pLocaleStrings->Strings[iIndex], str.Get());
 				}
 
-				outTrbFile.GetSYMB()->Add(pOutStack, "LocaleStrings", pLocaleStrings.get());
+				outTrbFile.GetSymbols()->Add(pOutStack, "LocaleStrings", pLocaleStrings.get());
 				outTrbFile.WriteToFile(args.GetOutPath());
 			}
 			else

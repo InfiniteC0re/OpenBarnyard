@@ -25,7 +25,7 @@ static void LoadFromRenderGroups(CellSphereTreeBranchNode* a_pRenderGroup, Cell*
 	TVALIDPTR(a_pRenderGroup);
 
 	// Load sub groups
-	auto pShader = AWorldShaderHAL::Upcast(AWorldShader::GetSingleton());
+	auto pShader = TCastClass<AWorldShaderHAL>(AWorldShader::GetSingleton());
 	auto pRenderGroup = a_pRenderGroup;
 	while (!pRenderGroup->IsLeaf())
 	{

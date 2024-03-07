@@ -101,7 +101,7 @@ void ASysMaterialHAL::PreRender()
 
 	if (m_pTexture)
 	{
-		TTextureResourceHAL* pTextureHAL = TSTATICCAST(TTextureResourceHAL*, m_pTexture);
+		TTextureResourceHAL* pTextureHAL = TSTATICCAST(TTextureResourceHAL, m_pTexture);
 		pTextureHAL->Validate();
 
 		if (pTextureHAL->GetD3DTexture())

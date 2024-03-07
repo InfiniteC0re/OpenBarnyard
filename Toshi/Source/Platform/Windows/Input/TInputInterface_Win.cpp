@@ -78,7 +78,7 @@ namespace Toshi {
 
 	BOOL TInputDXInterface::EnumerateDeviceCallback(LPCDIDEVICEINSTANCEA a_poDeviceInstance, LPVOID poDXInputInterface)
 	{
-		TInputDXInterface* pInputInterface = TSTATICCAST(TInputDXInterface*, poDXInputInterface);
+		TInputDXInterface* pInputInterface = TSTATICCAST(TInputDXInterface, poDXInputInterface);
 		
 		TASSERT(poDXInputInterface != NULL);
 		TASSERT(a_poDeviceInstance != NULL);

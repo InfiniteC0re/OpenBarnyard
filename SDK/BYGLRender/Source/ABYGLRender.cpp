@@ -26,7 +26,7 @@ TBOOL g_bRenderSkinWireframe = TFALSE;
 
 TBOOL MaterialLibrary_LoadTTLData(AMaterialLibrary* a_pMatLib, AMaterialLibrary::TTL* a_pTTLData)
 {
-	auto pTTL = TSTATICCAST(AMaterialLibrary::TTL*, a_pTTLData);
+	auto pTTL = TSTATICCAST(AMaterialLibrary::TTL, a_pTTLData);
 
 	auto pLibList = AMaterialLibraryManager::List::GetSingleton();
 	TINT iNumTextures = 0;
@@ -157,7 +157,7 @@ MEMBER_HOOK(0x0064eb90, AGUI2RendererDX8, AGUI2Renderer_SetMaterial, void, AGUI2
 
 		if (a_pMaterial)
 		{
-			auto pTextureResource = TSTATICCAST(TTextureResourceHAL*, a_pMaterial->m_pTextureResource);
+			auto pTextureResource = TSTATICCAST(TTextureResourceHAL, a_pMaterial->m_pTextureResource);
 
 			if (pTextureResource)
 			{

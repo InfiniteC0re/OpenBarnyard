@@ -15,7 +15,7 @@ TDEFINE_CLASS(ADisplayModes_Win);
 
 void ADisplayModes_Win::Initialise()
 {
-	auto pRenderer = TSTATICCAST(TRenderD3DInterface*, TRenderInterface::GetSingleton());
+	auto pRenderer = TSTATICCAST(TRenderD3DInterface, TRenderInterface::GetSingleton());
 	auto pAdapterList = pRenderer->GetAdapterList();
 
 	for (auto pAdapter = pAdapterList->Begin(); pAdapter != pAdapterList->End(); pAdapter++)

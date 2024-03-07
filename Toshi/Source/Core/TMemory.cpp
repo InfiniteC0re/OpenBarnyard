@@ -534,7 +534,7 @@ namespace Toshi {
 
 	TBOOL TMemory::Initialise(TUINT a_uiHeapSize, TUINT a_uiReservedSize)
 	{
-		auto tmemory = TSTATICCAST(TMemory*, calloc(sizeof(TMemory), 1));
+		auto tmemory = TSTATICCAST(TMemory, calloc(sizeof(TMemory), 1));
 		new (tmemory) TMemory();
 
 		tmemory->m_pMainBlockMemory = TNULL;
@@ -542,7 +542,7 @@ namespace Toshi {
 		tmemory->m_Unknown1 = 0;
 		tmemory->m_Unknown2 = 0;
 
-		ms_pGlobalMutex = TSTATICCAST(TMutex*, malloc(sizeof(TMutex)));
+		ms_pGlobalMutex = TSTATICCAST(TMutex, malloc(sizeof(TMutex)));
 		new (ms_pGlobalMutex) TMutex();
 
 		tmemory->m_ReservedSize = a_uiReservedSize;

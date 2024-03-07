@@ -33,11 +33,11 @@ namespace Toshi {
 	{
 		TASSERT(m_eFlags & Flags_Created);
 
-		auto pSkeletonHeader = TSTATICCAST(TTMDBase::SkeletonHeader*, GetSymbol("SkeletonHeader"));
+		auto pSkeletonHeader = TSTATICCAST(TTMDBase::SkeletonHeader, GetSymbol("SkeletonHeader"));
 
 		if (pSkeletonHeader)
 		{
-			m_pSkeleton = TSTATICCAST(TSkeleton*, GetSymbol("Skeleton"));
+			m_pSkeleton = TSTATICCAST(TSkeleton, GetSymbol("Skeleton"));
 			auto pLibrary = TRenderInterface::GetSingleton()->GetKeyframeLibraryManager().GetLibrary(pSkeletonHeader->m_szTKLName);
 			m_pSkeleton->GetKeyLibraryInstance().CreateEx(
 				pLibrary,
@@ -50,7 +50,7 @@ namespace Toshi {
 			);
 		}
 
-		m_pCollision = *TSTATICCAST(void**, GetSymbol("Collision"));
+		m_pCollision = *TSTATICCAST(void*, GetSymbol("Collision"));
 		TTODO("Load collision data");
 
 		TASSERT(ms_cbModelLoaderTRB != TNULL, "Loader callback is not specified");

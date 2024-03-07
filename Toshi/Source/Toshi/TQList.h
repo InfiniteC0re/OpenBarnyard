@@ -17,16 +17,16 @@ namespace Toshi {
 		public:
 			TNode()
 			{
-				m_pNext = TSTATICCAST(T*, this);
-				m_pPrev = TSTATICCAST(T*, this);
+				m_pNext = TSTATICCAST(T, this);
+				m_pPrev = TSTATICCAST(T, this);
 			}
 
 			~TNode()
 			{
 				m_pPrev->m_pNext = m_pNext;
 				m_pNext->m_pPrev = m_pPrev;
-				m_pNext = TSTATICCAST(T*, this);
-				m_pPrev = TSTATICCAST(T*, this);
+				m_pNext = TSTATICCAST(T, this);
+				m_pPrev = TSTATICCAST(T, this);
 			}
 
 			TBOOL IsLinked() const
@@ -48,27 +48,27 @@ namespace Toshi {
 			void InsertAfter(TNode* a_pNode)
 			{
 				TASSERT(TFALSE == IsLinked());
-				m_pPrev = TSTATICCAST(T*, a_pNode);
+				m_pPrev = TSTATICCAST(T, a_pNode);
 				m_pNext = a_pNode->m_pNext;
-				a_pNode->m_pNext = TSTATICCAST(T*, this);
-				m_pNext->m_pPrev = TSTATICCAST(T*, this);
+				a_pNode->m_pNext = TSTATICCAST(T, this);
+				m_pNext->m_pPrev = TSTATICCAST(T, this);
 			}
 
 			void InsertBefore(TNode* a_pNode)
 			{
 				TASSERT(TFALSE == IsLinked());
-				m_pNext = TSTATICCAST(T*, a_pNode);
+				m_pNext = TSTATICCAST(T, a_pNode);
 				m_pPrev = a_pNode->m_pPrev;
-				a_pNode->m_pPrev = TSTATICCAST(T*, this);
-				m_pPrev->m_pNext = TSTATICCAST(T*, this);
+				a_pNode->m_pPrev = TSTATICCAST(T, this);
+				m_pPrev->m_pNext = TSTATICCAST(T, this);
 			}
 
 			void Remove()
 			{
 				m_pPrev->m_pNext = m_pNext;
 				m_pNext->m_pPrev = m_pPrev;
-				m_pNext = TSTATICCAST(T*, this);
-				m_pPrev = TSTATICCAST(T*, this);
+				m_pNext = TSTATICCAST(T, this);
+				m_pPrev = TSTATICCAST(T, this);
 			}
 
 		private:

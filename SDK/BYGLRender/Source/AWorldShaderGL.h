@@ -154,7 +154,7 @@ public:
 		auto pAmbientColor = (Toshi::TVector4*)(*(TUINT*)(0x0079a854) + 0x100);
 
 		auto pRenderContext = TSTATICCAST(
-			Toshi::TRenderContextD3D*,
+			Toshi::TRenderContextD3D,
 			THookedRenderD3DInterface::GetSingleton()->GetCurrentContext()
 		);
 

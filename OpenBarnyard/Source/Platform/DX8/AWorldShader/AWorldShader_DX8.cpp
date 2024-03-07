@@ -262,8 +262,8 @@ void AWorldShaderHAL::Render(TRenderPacket* a_pRenderPacket)
 			s_RenderStateFlags |= 24;
 		}
 
-		auto pMesh = AWorldMeshHAL::Upcast(a_pRenderPacket->GetMesh());
-		auto pMaterial = AWorldMaterialHAL::Upcast(pMesh->GetMaterial());
+		auto pMesh = TCastClass<AWorldMeshHAL>(a_pRenderPacket->GetMesh());
+		auto pMaterial = TCastClass<AWorldMaterialHAL>(pMesh->GetMaterial());
 
 		if (pMaterial->GetBlendMode() != 0 || a_pRenderPacket->GetAlpha() < 1.0f)
 		{
@@ -295,7 +295,7 @@ void AWorldShaderHAL::Render(TRenderPacket* a_pRenderPacket)
 		pDevice->SetVertexShaderConstant(8, &vSomeConst, 1);
 
 		// Set vertices
-		auto pVertexPool = TVertexPoolResource::Upcast(pMesh->GetVertexPool());
+		auto pVertexPool = TCastClass<TVertexPoolResource>(pMesh->GetVertexPool());
 		TVALIDPTR(pVertexPool);
 
 		TVertexBlockResource::HALBuffer vertexBuffer;
@@ -304,7 +304,7 @@ void AWorldShaderHAL::Render(TRenderPacket* a_pRenderPacket)
 		pDevice->SetStreamSource(0, vertexBuffer.apVertexBuffers[0], 44);
 
 		// Set indices
-		auto pIndexPool = TIndexPoolResource::Upcast(pMesh->GetSubMesh(0)->pIndexPool);
+		auto pIndexPool = TCastClass<TIndexPoolResource>(pMesh->GetSubMesh(0)->pIndexPool);
 		TVALIDPTR(pIndexPool);
 
 		TIndexBlockResource::HALBuffer indexBuffer;

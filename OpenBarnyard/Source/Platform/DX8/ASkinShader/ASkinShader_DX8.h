@@ -66,12 +66,6 @@ public:
 		return &m_aOrderTables[a_uiIndex];
 	}
 
-	static ASkinShaderHAL* Upcast(Toshi::TShader* a_pShader)
-	{
-		TASSERT(a_pShader->IsA(&ms_oClass));
-		return TSTATICCAST(ASkinShaderHAL*, a_pShader);
-	}
-
 private:
 	void RenderLowEnd(Toshi::TRenderPacket* a_pRenderPacket);
 	void SetupLowEndMode();

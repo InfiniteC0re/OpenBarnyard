@@ -63,7 +63,7 @@ namespace Toshi {
 			}
 
 			m_oFreeList.SetSize(a_iNumBuffers);
-			m_pNodeArray = TSTATICCAST(TNode*, TMalloc(sizeof(TNode) * m_iNumBuffers));
+			m_pNodeArray = TSTATICCAST(TNode, TMalloc(sizeof(TNode) * m_iNumBuffers));
 
 			for (TINT i = 0; i < m_iNumBuffers; i++)
 			{

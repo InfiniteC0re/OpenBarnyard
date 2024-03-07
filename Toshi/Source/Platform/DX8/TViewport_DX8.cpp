@@ -23,7 +23,7 @@ namespace Toshi {
 		TUINT8 r, g, b, a;
 		GetBackgroundColor(r, g, b, a);
 
-		auto pRender = TSTATICCAST(TRenderD3DInterface*, TRenderInterface::GetSingleton());
+		auto pRender = TSTATICCAST(TRenderD3DInterface, TRenderInterface::GetSingleton());
 		auto pD3DDevice = pRender->GetDirect3DDevice();
 
 		pD3DDevice->SetViewport(&viewport);

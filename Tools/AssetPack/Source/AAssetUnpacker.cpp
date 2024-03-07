@@ -14,16 +14,16 @@ TBOOL AAssetUnpacker::Unpack(AAssetPack& a_rAssetPack, const Toshi::TString8& a_
 		{
 			auto pAsset = &assets[i];
 
-			auto pInSECT = pTRB->GetSECT();
-			auto pInSYMB = pTRB->GetSYMB();
+			auto pInSECT = pTRB->GetSections();
+			auto pInSYMB = pTRB->GetSymbols();
 
 			auto pRelatedSymbols = &pAsset->RelatedSymbols;
 
-			PTRB::TRBF outTrbFile;
-			auto pOutSECT = outTrbFile.GetSECT();
-			auto pOutSYMB = outTrbFile.GetSYMB();
+			PTRBWriter outTrbFile;
+			auto pOutSECT = outTrbFile.GetSections();
+			auto pOutSYMB = outTrbFile.GetSymbols();
 
-			auto pOutStack = pOutSECT->CreateStack(pAsset->pStack);
+			auto pOutStack = pOutSECT->CreateStream(pAsset->pStack);
 
 			for (auto it = pRelatedSymbols->Begin(); !it.IsOver(); it++)
 			{

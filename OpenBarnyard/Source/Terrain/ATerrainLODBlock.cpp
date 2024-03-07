@@ -47,7 +47,7 @@ void ATerrainLODBlock::SetupTRB(TTRB* a_pTRB, ATerrainLODBlock* a_pOther)
 	a_pTRB->SetMemoryFunctions(
 		[](TTRB::AllocType alloctype, TUINT32 size, TINT16 unk1, TUINT32 unk2, void* userData) -> void*
 		{
-			auto pBlock = TSTATICCAST(ATerrainLODBlock*, userData);
+			auto pBlock = TSTATICCAST(ATerrainLODBlock, userData);
 
 			if (pBlock->m_pAllocatedSize)
 			{

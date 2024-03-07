@@ -117,7 +117,7 @@ TBOOL ABINKMoviePlayer::OnUpdate(TFLOAT a_fDeltaTime)
 			auto ppRenderSurface = &m_pSurface;
 
 			if (m_bVideoFitsBackBuffer ||
-				TSTATICCAST(TTextureResourceHAL*, m_pRects[0].pTexture)->GetD3DTexture()->GetSurfaceLevel(0, ppRenderSurface) == S_OK)
+				TSTATICCAST(TTextureResourceHAL, m_pRects[0].pTexture)->GetD3DTexture()->GetSurfaceLevel(0, ppRenderSurface) == S_OK)
 			{
 				D3DLOCKED_RECT rect;
 				if (S_OK == (*ppRenderSurface)->LockRect(&rect, TNULL, 0))

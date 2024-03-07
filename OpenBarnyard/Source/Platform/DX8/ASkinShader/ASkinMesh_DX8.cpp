@@ -26,14 +26,14 @@ TBOOL ASkinMeshHAL::Render()
 	{
 		TMaterial* pMaterial;
 
-		if (!ASkinShaderHAL::Upcast(m_pOwnerShader)->IsAlphaBlendMaterial() ||
+		if (!TCastClass<ASkinShaderHAL>(m_pOwnerShader)->IsAlphaBlendMaterial() ||
 			pCurrentContext->GetAlphaBlend() >= 1.0f)
 		{
-			pMaterial = ASkinMaterialHAL::Upcast(m_pMaterial);
+			pMaterial = TCastClass<ASkinMaterialHAL>(m_pMaterial);
 		}
 		else
 		{
-			pMaterial = ASkinMaterialHAL::Upcast(m_pMaterial)->GetAlphaBlendMaterial();
+			pMaterial = TCastClass<ASkinMaterialHAL>(m_pMaterial)->GetAlphaBlendMaterial();
 		}
 
 		auto pRenderPacket = pMaterial->AddRenderPacket(this);

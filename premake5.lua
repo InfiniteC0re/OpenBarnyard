@@ -24,7 +24,7 @@ group "Engine"
 group "Tools"
 	include "Tools/AssetPack"
 	include "Tools/TMDL"
-	include "Tools/PPC"
+	include "Tools/XML2PProperties"
 	include "Tools/TLocaleCompiler"
 		
 group "Third-Party"

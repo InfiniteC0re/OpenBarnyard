@@ -182,7 +182,7 @@ TBOOL ASkinShaderHAL::Validate()
 			
 			auto pRenderInterface = TRenderD3DInterface::Interface();
 			auto pD3DDevice = pRenderInterface->GetDirect3DDevice();
-			auto pDevice = TSTATICCAST(TD3DAdapter::Mode::Device*, pRenderInterface->GetCurrentDevice());
+			auto pDevice = TSTATICCAST(TD3DAdapter::Mode::Device, pRenderInterface->GetCurrentDevice());
 
 			if (pDevice->GetD3DCaps().PixelShaderVersion < 0xffff0104)
 			{
@@ -272,8 +272,8 @@ void ASkinShaderHAL::Render(Toshi::TRenderPacket* a_pRenderPacket)
 	{
 		if (a_pRenderPacket && a_pRenderPacket->GetMesh())
 		{
-			auto pMesh = ASkinMeshHAL::Upcast(a_pRenderPacket->GetMesh());
-			auto pMaterial = ASkinMaterialHAL::Upcast(pMesh->GetMaterial());
+			auto pMesh = TCastClass<ASkinMeshHAL>(a_pRenderPacket->GetMesh());
+			auto pMaterial = TCastClass<ASkinMaterialHAL>(pMesh->GetMaterial());
 
 			if (pMesh->GetNumSubMeshes() == 0) return;
 
@@ -307,7 +307,7 @@ void ASkinShaderHAL::Render(Toshi::TRenderPacket* a_pRenderPacket)
 				TUINT ui8ShadeCoeff = a_pRenderPacket->GetShadeCoeff();
 				TFLOAT fShadeCoeff = a_pRenderPacket->GetShadeCoeff() * (1.0f / 255.0f);
 
-				auto pDevice = TSTATICCAST(TD3DAdapter::Mode::Device*, pRenderInterface->GetCurrentDevice());
+				auto pDevice = TSTATICCAST(TD3DAdapter::Mode::Device, pRenderInterface->GetCurrentDevice());
 
 				if (pDevice->GetD3DCaps().PixelShaderVersion < 0xffff0104)
 				{
@@ -482,7 +482,7 @@ void ASkinShaderHAL::Render(Toshi::TRenderPacket* a_pRenderPacket)
 				sm_eRenderStateFlags &= ~0x1b;
 			}
 
-			auto pVertexPool = TVertexPoolResource::Upcast(pMesh->GetVertexPool());
+			auto pVertexPool = TCastClass<TVertexPoolResource>(pMesh->GetVertexPool());
 
 			TVertexBlockResource::HALBuffer vertexHALBuffer;
 			pVertexPool->GetHALBuffer(&vertexHALBuffer);
@@ -505,7 +505,7 @@ void ASkinShaderHAL::Render(Toshi::TRenderPacket* a_pRenderPacket)
 					iCurrentRegister += 3;
 				}
 
-				auto pIndexPool = TIndexPoolResource::Upcast(pSubMesh->pIndexPool);
+				auto pIndexPool = TCastClass<TIndexPoolResource>(pSubMesh->pIndexPool);
 				TVALIDPTR(pIndexPool);
 
 				TIndexBlockResource::HALBuffer indexHALBuffer;

@@ -83,12 +83,6 @@ public:
 		return &m_aOrderTables[a_uiIndex];
 	}
 
-	static AWorldShaderHAL* Upcast(Toshi::TShader* a_pShader)
-	{
-		TASSERT(a_pShader->IsA(&ms_oClass));
-		return TSTATICCAST(AWorldShaderHAL*, a_pShader);
-	}
-
 	inline static TUINT s_RenderStateFlags = 27;
 
 private:

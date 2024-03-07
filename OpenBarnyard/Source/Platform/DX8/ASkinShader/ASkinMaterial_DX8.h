@@ -43,12 +43,6 @@ public:
 	Toshi::TTextureResourceHAL* GetLightingTexture(ELightingTexture a_eTexture) const;
 	Toshi::TTextureResourceHAL* GetSomeTexture() const;
 
-	static ASkinMaterialHAL* Upcast(Toshi::TMaterial* a_pMaterial)
-	{
-		TASSERT(a_pMaterial->IsA(&ms_oClass));
-		return TSTATICCAST(ASkinMaterialHAL*, a_pMaterial);
-	}
-
 private:
 	ASkinMaterialHAL* m_pAlphaBlendMaterial;
 	Toshi::TOrderTable* m_pAssignedOrderTable;

@@ -34,46 +34,18 @@ public:
 	TSTATICASSERT(Lang_NUMOF == NUM_LOCALES);
 
 public:
-	ALocaleManager() : T2Locale(Lang_NUMOF, 307200, Toshi::T2Allocator::s_GlobalAllocator.Malloc(307200))
-	{
-
-	}
+	ALocaleManager();
+	~ALocaleManager();
 
 	virtual const TCHAR* GetLanguageFilename(Lang a_eLang) override;
 
-	LocaleString GetString(int a_iNumString) const
-	{
-		TASSERT(a_iNumString >= 0 && a_iNumString < GetNumStrings());
-		return m_StringTable->Strings[a_iNumString];
-	}
+	const TCHAR* GetCurrentLanguageName();
 
-	int GetNumStrings() const
-	{
-		return T2Locale::GetNumStrings();
-	}
+	static const TCHAR* GetLanguageName(Lang a_eLang);
 
-	const TCHAR* GetCurrentLanguageName()
+	TFORCEINLINE static ALocaleManager* Interface()
 	{
-		return GetLanguageName(m_LangId);
-	}
-
-	static const TCHAR* GetLanguageName(Lang a_eLang)
-	{
-		switch (a_eLang)
-		{
-		case Lang_Japanese: return "JPN";
-		case Lang_German: return "DEU";
-		case Lang_Italian: return "ITA";
-		case Lang_Spanish: return "ESL";
-		case Lang_French: return "FRE";
-		case Lang_Netherlandic: return "NLD";
-		default: return "ENG";
-		}
-	}
-
-	static ALocaleManager* Interface()
-	{
-		return TSTATICCAST(ALocaleManager*, T2Locale::GetSingletonSafe());
+		return TSTATICCAST(ALocaleManager, T2Locale::GetSingletonSafe());
 	}
 
 private:

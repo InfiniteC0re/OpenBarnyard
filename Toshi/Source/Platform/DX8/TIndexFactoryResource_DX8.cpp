@@ -27,11 +27,11 @@ namespace Toshi {
 		TResource::RecurseSimple(
 			[](TResource* a_pResource, void* a_pUserData)
 			{
-				auto pPair = TSTATICCAST(Pair*, a_pUserData);
+				auto pPair = TSTATICCAST(Pair, a_pUserData);
 
 				if (a_pResource->IsA(&TGetClass(TIndexBlockResource)))
 				{
-					auto pBlockResource = TSTATICCAST(TIndexBlockResource*, a_pResource);
+					auto pBlockResource = TSTATICCAST(TIndexBlockResource, a_pResource);
 
 					if (pBlockResource->CanFit(pPair->GetSecond()) && !pBlockResource->IsDying())
 					{
@@ -52,7 +52,7 @@ namespace Toshi {
 	TIndexBlockResource* TIndexFactoryResource::CreateBlockResource(TUINT16 a_uiMaxIndices, TUINT32 a_uiFlags)
 	{
 		auto pIndexBlock = TSTATICCAST(
-			TIndexBlockResource*,
+			TIndexBlockResource,
 			GetRenderer()->CreateResource(&TGetClass(TIndexBlockResource), TNULL, this)
 		);
 
@@ -65,7 +65,7 @@ namespace Toshi {
 	TIndexPoolResourceInterface* TIndexFactoryResource::CreatePoolResource(TUINT16 a_uiMaxStaticIndices, TUINT16 a_uiFlags)
 	{
 		auto pIndexPool = TSTATICCAST(
-			TIndexPoolResource*,
+			TIndexPoolResource,
 			GetRenderer()->CreateResource(&TGetClass(TIndexPoolResource), TNULL, this)
 		);
 

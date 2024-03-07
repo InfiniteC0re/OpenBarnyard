@@ -140,7 +140,7 @@ void AModelLoader::MaterialApplyClamp(Toshi::TMaterial* a_pMaterial, const TCHAR
 	{
 		if (a_pTexture)
 		{
-			auto pTexture = TTextureResourceHAL::Upcast(a_pTexture);
+			auto pTexture = TCastClass<TTextureResourceHAL>(a_pTexture);
 
 			if (pClampedMaterial->eAddressUState > 0)
 				pTexture->SetAddressUState(2);
@@ -192,7 +192,7 @@ Toshi::TMaterial* AModelLoader::CreateMaterial(Toshi::TShader* a_pShader, const 
 
 	if (pTMDMaterial)
 	{
-		pTexture = TTextureResourceHAL::Upcast(
+		pTexture = TCastClass<TTextureResourceHAL>(
 			AMaterialLibraryManager::GetSingleton()->FindTexture(pTMDMaterial->szTextureFile)
 		);
 
@@ -201,7 +201,7 @@ Toshi::TMaterial* AModelLoader::CreateMaterial(Toshi::TShader* a_pShader, const 
 	else
 	{
 		TTRACE("Couldn't find texture for material '%s'", a_szMaterialName);
-		pTexture = TTextureResourceHAL::Upcast(TRenderD3DInterface::Interface()->GetInvalidTexture());
+		pTexture = TCastClass<TTextureResourceHAL>(TRenderD3DInterface::Interface()->GetInvalidTexture());
 		szTextureName = "invalid";
 	}
 
@@ -215,7 +215,7 @@ Toshi::TMaterial* AModelLoader::CreateMaterial(Toshi::TShader* a_pShader, const 
 
 	if (a_pShader->IsA(&TGetClass(AWorldShader)))
 	{
-		auto pShader = AWorldShaderHAL::Upcast(a_pShader);
+		auto pShader = TCastClass<AWorldShaderHAL>(a_pShader);
 		auto pMaterial = pShader->CreateMaterial(TNULL);
 		pMaterial->Create(bIsAlpha ? 1 : 0);
 		pMaterial->SetTexture(0, pTexture);

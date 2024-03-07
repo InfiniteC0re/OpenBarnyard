@@ -34,7 +34,7 @@ namespace Toshi {
     {
         if (file != TNULL)
         {
-            TSTATICCAST(TNativeFile*, file)->Close();
+            TSTATICCAST(TNativeFile, file)->Close();
             delete file;
         }
     }

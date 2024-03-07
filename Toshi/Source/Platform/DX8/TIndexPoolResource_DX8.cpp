@@ -27,7 +27,7 @@ namespace Toshi {
 			return TTRUE;
 		}
 
-		auto pFactory = TSTATICCAST(TIndexFactoryResource*, GetFactory());
+		auto pFactory = TSTATICCAST(TIndexFactoryResource, GetFactory());
 		auto pBlock = pFactory->FindBlockResource(this);
 
 		if (!pBlock)
@@ -151,7 +151,7 @@ namespace Toshi {
 				{
 					if (GetParent()->GetClass()->IsA(&TGetClass(TIndexBlockResource)))
 					{
-						auto pIndexBlock = TSTATICCAST(TIndexBlockResource*, GetParent());
+						auto pIndexBlock = TSTATICCAST(TIndexBlockResource, GetParent());
 						pIndexBlock->ChildIndexUsedChanged(iChange);
 					}
 				}
@@ -205,7 +205,7 @@ namespace Toshi {
 	{
 		if (Parent()->IsExactly(&TGetClass(TIndexBlockResource)))
 		{
-			return TSTATICCAST(TIndexBlockResource*, Parent());
+			return TSTATICCAST(TIndexBlockResource, Parent());
 		}
 
 		return TNULL;

@@ -1,4 +1,11 @@
 #pragma once
+//-----------------------------------------------------------------------------
+// This plugin allows reading PProperties from it's binary format which is used
+// in TRB files. Before bnary format was introduced in TOSHI 2.0, PProperties
+// were stored in .ini files and parsed using TFileLexer.
+// Use XML2PProperties to create TRB files from XML/JSON input and backwards.
+//-----------------------------------------------------------------------------
+
 #include "Toshi/Toshi.h"
 #include "Toshi/TStringManager.h"
 #include "Toshi/TString8.h"
@@ -15,14 +22,14 @@ public:
 	enum class Type
 	{
 		Int,
-		Unknown1,
+		UInt32,
 		Float,
 		Bool,
-		Props,
-		Unknown2,
+		Properties,
+		PropertyName,
 		Array,
 		String,
-		UInt32
+		LocaleString
 	};
 
 	friend class PPropertiesWriter;
@@ -67,8 +74,8 @@ public:
 
 	PBPropertyValue(class PBProperties* a_pProperties)
 	{
-		m_eType = Type::Props;
-		m_uValue.Props = a_pProperties;
+		m_eType = Type::Properties;
+		m_uValue.Properties = a_pProperties;
 	}
 
 	PBPropertyValue(class PBPropertyValueArray* a_pArray)
@@ -107,7 +114,7 @@ public:
 
 	TUINT32 GetUINT32() const
 	{
-		TASSERT(m_eType == Type::UInt32);
+		TASSERT(m_eType == Type::LocaleString);
 		return m_uValue.UInt32;
 	}
 
@@ -127,8 +134,8 @@ public:
 
 	const class PBProperties* GetProperties() const
 	{
-		TASSERT(m_eType == Type::Props);
-		return m_uValue.Props;
+		TASSERT(m_eType == Type::Properties);
+		return m_uValue.Properties;
 	}
 
 	const class PBPropertyValueArray* GetArray() const
@@ -139,8 +146,8 @@ public:
 
 	class PBProperties* GetProperties()
 	{
-		TASSERT(m_eType == Type::Props);
-		return m_uValue.Props;
+		TASSERT(m_eType == Type::Properties);
+		return m_uValue.Properties;
 	}
 
 	class PBPropertyValueArray* GetArray()
@@ -169,7 +176,7 @@ public:
 
 	TUINT32* GetUINT32Pointer()
 	{
-		TASSERT(m_eType == Type::UInt32);
+		TASSERT(m_eType == Type::LocaleString);
 		return &m_uValue.UInt32;
 	}
 
@@ -221,7 +228,7 @@ public:
 
 	PBPropertyValue& operator=(TUINT32 a_uiValue)
 	{
-		TASSERT(m_eType == Type::UInt32);
+		TASSERT(m_eType == Type::LocaleString);
 		m_uValue.UInt32 = a_uiValue;
 		return *this;
 	}
@@ -253,7 +260,7 @@ private:
 		TBOOL Bool;
 		TINT Int;
 		TUINT32 UInt32;
-		class PBProperties* Props;
+		class PBProperties* Properties;
 		class PBPropertyValueArray* Array;
 	} m_uValue;
 };
@@ -645,7 +652,7 @@ public:
 				m_pProperties[i] = other.m_pProperties[i];
 				auto pValue = m_pProperties[i].GetValue();
 
-				if (pValue->GetType() == PBPropertyValue::Type::Props)
+				if (pValue->GetType() == PBPropertyValue::Type::Properties)
 				{
 					pValue->GetProperties()->m_pParent = this;
 				}
@@ -836,8 +843,8 @@ inline void PBPropertyValue::Delete()
 	{
 		if (m_eType == Type::Array)
 			delete m_uValue.Array;
-		else if (m_eType == Type::Props)
-			delete m_uValue.Props;
+		else if (m_eType == Type::Properties)
+			delete m_uValue.Properties;
 		else if (m_eType == Type::String)
 			delete[] m_uValue.String;
 	}
@@ -850,8 +857,8 @@ inline PBPropertyValue::PBPropertyValue(const PBPropertyValue& other)
 
 	if (other.m_eType == Type::Array)
 		m_uValue.Array = new PBPropertyValueArray(*other.m_uValue.Array);
-	else if (other.m_eType == Type::Props)
-		m_uValue.Props = new PBProperties(*other.m_uValue.Props);
+	else if (other.m_eType == Type::Properties)
+		m_uValue.Properties = new PBProperties(*other.m_uValue.Properties);
 	else if (other.m_eType == Type::String)
 		SetString(other.m_uValue.String);
 	else
@@ -873,8 +880,8 @@ inline PBPropertyValue& PBPropertyValue::operator=(const PBPropertyValue& other)
 
 	if (other.m_eType == Type::Array)
 		m_uValue.Array = new PBPropertyValueArray(*other.m_uValue.Array);
-	else if (other.m_eType == Type::Props)
-		m_uValue.Props = new PBProperties(*other.m_uValue.Props);
+	else if (other.m_eType == Type::Properties)
+		m_uValue.Properties = new PBProperties(*other.m_uValue.Properties);
 	else if (other.m_eType == Type::String)
 		SetString(other.m_uValue.String);
 	else

@@ -12,8 +12,8 @@ TBOOL AAssetPack::Load(const char* a_szFileName)
 
 	if (bReaded)
 	{
-		auto pInSECT = m_TRBFile.GetSECT();
-		auto pInSYMB = m_TRBFile.GetSYMB();
+		auto pInSECT = m_TRBFile.GetSections();
+		auto pInSYMB = m_TRBFile.GetSymbols();
 
 		for (TUINT i = 0; i < pInSYMB->GetCount(); i++)
 		{
@@ -96,19 +96,19 @@ TBOOL AAssetPack::Load(const char* a_szFileName)
 
 void AAssetPack::Save(const char* a_szFileName, TBOOL a_bCompress)
 {
-	PTRB::TRBF outFile;
+	PTRBWriter outFile;
 
-	auto pSECT = outFile.GetSECT();
-	auto pSYMB = outFile.GetSYMB();
+	auto pSECT = outFile.GetSections();
+	auto pSYMB = outFile.GetSymbols();
 
 	for (auto asset = m_Assets.Begin(); asset != m_Assets.End(); asset++)
 	{
 		auto pInStack = asset->pStack;
-		auto pOutStack = pSECT->CreateStack(pInStack);
+		auto pOutStack = pSECT->CreateStream(pInStack);
 
 		for (auto symbol = asset->RelatedSymbols.Begin(); !symbol.IsOver(); symbol++)
 		{
-			auto pInPtr = asset->pTRB->GetSYMB()->Find<char>(asset->pTRB->GetSECT(), symbol->GetString8());
+			auto pInPtr = asset->pTRB->GetSymbols()->Find<char>(asset->pTRB->GetSections(), symbol->GetString8());
 			void* pOutPtr = pOutStack->GetBuffer() + (pInPtr.get() - pInStack->GetBuffer());
 
 			if (symbol->GetString8().Find(asset->Name) == 0)

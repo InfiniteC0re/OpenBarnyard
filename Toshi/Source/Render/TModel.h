@@ -115,7 +115,7 @@ namespace Toshi {
 		}
 
 		template <class T>
-		T* CastSymbol(const TCHAR* a_szSymbolName) { return TSTATICCAST(T*, GetSymbol(a_szSymbolName)); }
+		T* CastSymbol(const TCHAR* a_szSymbolName) { return TSTATICCAST(T, GetSymbol(a_szSymbolName)); }
 
 	public:
 		static TBOOL GetSkeletonAssetSymbolName(const TCHAR* a_szFileName, const TCHAR*& a_rSymbolName, TUINT8& a_rNameLen, TTRB* a_pTRB);

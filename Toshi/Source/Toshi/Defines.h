@@ -43,7 +43,7 @@
 
 #define TSTATICASSERT(...) static_assert(__VA_ARGS__, "Compile time assert failed: " #__VA_ARGS__)
 #define TREINTERPRETCAST(TYPE, VALUE) (reinterpret_cast<TYPE>(VALUE))
-#define TSTATICCAST(TYPE, VALUE) (static_cast<TYPE>(VALUE))
+#define TSTATICCAST(POINTERTYPE, VALUE) (static_cast<POINTERTYPE*>(VALUE))
 #define TARRAYSIZE(ARRAY) (sizeof(ARRAY) / sizeof(*ARRAY))
 #define TINLINE inline
 #define TFORCEINLINE __forceinline
@@ -56,6 +56,7 @@
 	#define TIMPLEMENT() { TFIREFLAG { TERROR("%s is not implemented\n", __FUNCTION__); FIREFLAG = TTRUE; } }
 	#define TIMPLEMENT_D(DESC) { TFIREFLAG { TERROR("%s is not implemented: %s\n", __FUNCTION__, DESC); FIREFLAG = TTRUE; } }
 	#define TASSERT(X, ...) { TFIREFLAG if (!(X)) { if (1 == TDebug_AssertHandler(#X, __FILE__, __LINE__, __VA_ARGS__)) TBREAK(); FIREFLAG = TTRUE; } }
+	#define TASSERT_NO_CHECK(X, ...) TDebug_AssertHandler(#X, __FILE__, __LINE__, __VA_ARGS__))
 	#define TVALIDPTR(PTR) TASSERT(TDebug_IsValidAddress(PTR))
 #else // TOSHI_ENABLE_ASSERTS
 	#define TWIP()

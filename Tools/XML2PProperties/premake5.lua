@@ -1,4 +1,4 @@
-project "PPC"
+project "XML2PProperties"
 	language "C++"
 	cppdialect "C++20"
 	staticruntime "on"
