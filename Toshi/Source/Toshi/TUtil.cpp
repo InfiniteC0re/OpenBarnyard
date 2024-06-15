@@ -3,6 +3,7 @@
 #include "Toshi/TSystem.h"
 #include "Toshi/TError.h"
 #include "Toshi/T2FixedString.h"
+#include "File/TLogFile.h"
 #include "Render/TModelManager.h"
 
 #include <Platform/Windows/TConsoleFile_Win.h>
@@ -28,24 +29,10 @@ namespace Toshi {
 		time(&seconds);
 		tm* time = gmtime(&seconds);
 
-		// Create console file system that will be able to open console for text output
-		new TConsoleFileSystem("console");
-
-#ifdef TOSHI_DEBUG
-
-		const TCHAR* szFileSystemName = "console";
-
-#else  // TOSHI_DEBUG
-
-		const TCHAR* szFileSystemName = ms_oToshiParams.bLogToConsole ? "console" : "local";
-
-#endif // TOSHI_DEBUG
-
 		T2FixedString256 filename;
 
 		filename.Format(
-			"%s:Logs\\%s_%d%02d%02d_%02d_%02d_%02d.log",
-			szFileSystemName,
+			"Logs\\%s_%d%02d%02d_%02d_%02d_%02d.log",
 			ms_oToshiParams.szLogFileName,
 			time->tm_year + 1900,
 			time->tm_mon + 1,
@@ -57,23 +44,8 @@ namespace Toshi {
 		
 		GetCurrentLogFile()->Create(filename.Get(), "Toshi 2.0", TFALSE);
 		GetCurrentLogFile()->AllowIndentation(TTRUE);
-		GetCurrentLogFile()->SetSimpleMode(TFALSE);
-
-#if SUPPORT_COLOURED_LOGS
-
-#ifdef TOSHI_DEBUG
-
-		GetCurrentLogFile()->SetColouringMode(TTRUE);
-
-#else
-
-		GetCurrentLogFile()->SetColouringMode(TFALSE);
-
-#endif // TOSHI_DEBUG
-
-#endif // SUPPORT_COLOURED_LOGS
-
-#endif // !TOSHI_NO_LOGS
+		GetCurrentLogFile()->SetSimpleMode(TTRUE);
+#endif // TOSHI_NO_LOGS
 	}
 
 	void TUtil::CreateTPStringPool()
@@ -92,7 +64,7 @@ namespace Toshi {
 		}
 	}
 
-	void TUtil::Log(const TCHAR* a_szFormat, ...)
+	void TUtil::Log( const TCHAR* a_szFormat, ... )
 	{
 		if (IsSingletonCreated() && GetCurrentLogFile())
 		{
@@ -105,12 +77,12 @@ namespace Toshi {
 			formatString.FormatV(a_szFormat, args);
 			va_end(args);
 
-			pLogFile->Log(TLogFile::Type_Info, ms_oToshiParams.szLogAppName, ms_oToshiParams.szLogAppDirName, formatString.Get());
-			GetLogEmitter().Throw(LogEvent(pLogFile, TLogFile::Type_Info, formatString.Get()));
+			pLogFile->Log(LogType_Info, ms_oToshiParams.szLogAppName, ms_oToshiParams.szLogAppDirName, formatString.Get());
+			GetLogEmitter().Throw(LogEvent(pLogFile, LogType_Info, formatString.Get()));
 		}
 	}
 
-	void TUtil::Log(TLogFile::Type a_eLogType, const TCHAR* a_szFormat, ...)
+	void TUtil::Log(LogType a_eLogType, const TCHAR* a_szFormat, ...)
 	{
 		auto pLogFile = GetCurrentLogFile();
 
@@ -128,7 +100,17 @@ namespace Toshi {
 		}
 	}
 
-	void TUtil::LogConsole(const TCHAR* a_szFormat, ...)
+	void TUtil::LogDown()
+	{
+		TUtil::GetSingletonSafe()->m_pCurrentLogFile->Down();
+	}
+
+	void TUtil::LogUp()
+	{
+		TUtil::GetSingletonSafe()->m_pCurrentLogFile->Up();
+	}
+
+	void TUtil::LogConsole( const TCHAR* a_szFormat, ... )
 	{
 		auto pLogFile = GetCurrentLogFile();
 

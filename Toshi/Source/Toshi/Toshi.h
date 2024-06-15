@@ -1,8 +1,5 @@
 #pragma once
 
-// FIXME: refactor this and move console logs code away from TLogFile
-#define SUPPORT_COLOURED_LOGS 1
-
 #include "Toshi/Defines.h"
 #include "Toshi/Typedefs.h"
 #include "Toshi/Platform.h"

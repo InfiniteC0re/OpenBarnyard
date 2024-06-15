@@ -69,9 +69,9 @@
 #endif // TOSHI_ENABLE_ASSERTS
 
 #ifndef TOSHI_NO_LOGS
-	#define TINFO(...) Toshi::TUtil::Log(Toshi::TLogFile::Type_Info, __VA_ARGS__)
-	#define TWARN(...) Toshi::TUtil::Log(Toshi::TLogFile::Type_Warning, __VA_ARGS__)
-	#define TERROR(...) Toshi::TUtil::Log(Toshi::TLogFile::Type_Error, __VA_ARGS__)
+	#define TINFO(...) Toshi::TUtil::Log(Toshi::TUtil::LogType_Info, __VA_ARGS__)
+	#define TWARN(...) Toshi::TUtil::Log(Toshi::TUtil::LogType_Warning, __VA_ARGS__)
+	#define TERROR(...) Toshi::TUtil::Log(Toshi::TUtil::LogType_Error, __VA_ARGS__)
 	#define TTRACE(...) TDebug_FinalPrintf(__VA_ARGS__)
 #else // TOSHI_NO_LOGS
 	#define TINFO(...)

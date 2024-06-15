@@ -1,5 +1,4 @@
 #pragma once
-#include "File/TLogFile.h"
 #include "Toshi/TSingleton.h"
 #include "Toshi/TEvent.h"
 
@@ -8,6 +7,7 @@
 namespace Toshi {
 
 	class TPString8Pool;
+	class TLogFile;
 
 	class TUtil : public TSingleton<TUtil>
 	{
@@ -16,16 +16,39 @@ namespace Toshi {
 		// Class members
 		//-----------------------------------------------------------------------------
 
+		enum LogType
+		{
+			LogType_Info,
+			LogType_Warning,
+			LogType_Error,
+			LogType_NUMOF
+		};
+
+		static constexpr const TCHAR* LogTypeToString( LogType a_eType )
+		{
+			constexpr const TCHAR* kTypeStrings[]
+			{
+				"Info",
+				"Warning",
+				"Error"
+			};
+
+			TSTATICASSERT( Toshi::TUtil::LogType_NUMOF == TARRAYSIZE( kTypeStrings ) );
+
+			return a_eType >= LogType_Info && a_eType < LogType_NUMOF ?
+				kTypeStrings[ a_eType ] : "UNKNOWN";
+		}
+
 		struct LogEvent
 		{
-			constexpr LogEvent(TLogFile* a_pFile, TLogFile::Type a_eType, const TCHAR* a_szString) :
+			constexpr LogEvent(TLogFile* a_pFile, LogType a_eType, const TCHAR* a_szString) :
 				m_pFile(a_pFile),
 				m_eType(a_eType),
 				m_szString(a_szString)
 			{ }
 
 			TLogFile* m_pFile;
-			TLogFile::Type m_eType;
+			LogType m_eType;
 			const TCHAR* m_szString;
 		};
 
@@ -66,12 +89,16 @@ namespace Toshi {
 		static void  MemClear(void* ptr, TSIZE size) { std::memset(ptr, 0, size); }
 		static TINT  MemCompare(const void* ptr1, const void* ptr2, TSIZE size) { return std::memcmp(ptr1, ptr2, size); }
 
+		//-----------------------------------------------------------------------------
+		// Logging
+		//-----------------------------------------------------------------------------
+
 		static void Log(const TCHAR* a_szFormat, ...);
-		static void Log(TLogFile::Type a_eLogType, const TCHAR* a_szFormat, ...);
+		static void Log(LogType a_eLogType, const TCHAR* a_szFormat, ...);
 		static void TrimLog(const TCHAR* fileExtension, TSIZE trimTo);
 
-		static void LogDown() { TUtil::GetSingletonSafe()->m_pCurrentLogFile->Down(); }
-		static void LogUp() { TUtil::GetSingletonSafe()->m_pCurrentLogFile->Up(); }
+		static void LogDown();
+		static void LogUp();
 
 		static void LogConsole(const TCHAR* a_szFormat, ...);
 		static void LogSet(TLogFile* a_logFile);
@@ -87,6 +114,11 @@ namespace Toshi {
 		{
 			TASSERT(ms_poStringPool != TNULL);
 			return *ms_poStringPool;
+		}
+
+		static const TOSHIParams& GetToshiParameters()
+		{
+			return ms_oToshiParams;
 		}
 
 	private:
