@@ -37,7 +37,7 @@ namespace Toshi {
 		Copy(src, -1);
 	}
 
-	TString8::TString8(TUINT32 size, T2Allocator* allocator)
+	TString8::TString8(TINT size, T2Allocator* allocator)
 	{
 		Reset();
 		m_pAllocator = allocator == TNULL ? GetAllocator() : allocator;
@@ -58,9 +58,9 @@ namespace Toshi {
 		Copy(src);
 	}
 
-	void TString8::Copy(const TString16& src, TUINT32 size)
+	void TString8::Copy(const TString16& src, TINT size)
 	{
-		TUINT32 srcLen = src.Length();
+		TINT srcLen = src.Length();
 		TASSERT(srcLen <= 0xFFFFFF, "Too big string");
 
 		if (srcLen < size || size == -1) { size = srcLen; }
@@ -70,16 +70,16 @@ namespace Toshi {
 		m_pBuffer[size] = 0;
 	}
 
-	void TString8::Copy(const TCHAR* src, TUINT32 size)
+	void TString8::Copy(const TCHAR* src, TINT size)
 	{
 		if (src != m_pBuffer)
 		{
-			TUINT32 srcLen = src ? TStringManager::String8Length(src) : 0;
+			TINT srcLen = src ? TINT(TStringManager::String8Length(src)) : 0;
 			TASSERT(srcLen <= 0xFFFFFF, "Too big string");
 
 			if (srcLen < size || size == -1)
 			{
-				size = (TUINT32)srcLen;
+				size = srcLen;
 			}
 
 			AllocBuffer(size, TTRUE);
@@ -89,9 +89,9 @@ namespace Toshi {
 		}
 	}
 
-	void TString8::Copy(const TWCHAR* src, TUINT32 size)
+	void TString8::Copy(const TWCHAR* src, TINT size)
 	{
-		TUINT32 srcLen = TStringManager::String16Length(src);
+		TINT srcLen = TINT(TStringManager::String16Length(src));
 		TASSERT(srcLen <= 0xFFFFFF, "Too big string");
 
 		if (srcLen < size || size == -1) { size = srcLen; }
@@ -101,7 +101,7 @@ namespace Toshi {
 		m_pBuffer[size] = 0;
 	}
 
-	TINT TString8::Find(TCHAR character, TUINT32 pos) const
+	TINT TString8::Find(TCHAR character, TINT pos) const
 	{
 		if (!IsIndexValid(pos)) return -1;
 
@@ -111,7 +111,7 @@ namespace Toshi {
 		return (TINT)(foundAt - m_pBuffer);
 	}
 
-	TINT TString8::Find(const TCHAR* substr, TUINT32 pos) const
+	TINT TString8::Find(const TCHAR* substr, TINT pos) const
 	{
 		if (!IsIndexValid(pos)) return -1;
 
@@ -121,7 +121,7 @@ namespace Toshi {
 		return (TINT)(foundAt - m_pBuffer);
 	}
 
-	TBOOL TString8::AllocBuffer(TUINT32 a_iLength, TBOOL freeMemory)
+	TBOOL TString8::AllocBuffer(TINT a_iLength, TBOOL a_bFreeMemory)
 	{
 		TBOOL hasChanged = TFALSE;
 		TUINT32 currentLength = Length();
@@ -133,7 +133,7 @@ namespace Toshi {
 		{
 			if (a_iLength == 0)
 			{
-				if (freeMemory) m_pAllocator->Free(m_pBuffer);
+				if (a_bFreeMemory) m_pAllocator->Free(m_pBuffer);
 
 				m_pBuffer = NullString;
 				m_iExcessLen = 0;
@@ -146,7 +146,7 @@ namespace Toshi {
 
 				if (newExcessLen < 0 || newExcessLen > 0xFF)
 				{
-					if (currentLength != 0 && freeMemory)
+					if (currentLength != 0 && a_bFreeMemory)
 					{
 						m_pAllocator->Free(m_pBuffer);
 					}
@@ -166,7 +166,7 @@ namespace Toshi {
 			m_iStrLen = a_iLength;
 		}
 
-		if (freeMemory) m_pBuffer[0] = '\0';
+		if (a_bFreeMemory) m_pBuffer[0] = '\0';
 		return hasChanged;
 	}
 
@@ -218,7 +218,7 @@ namespace Toshi {
 
 		if (a_iLength < 0)
 		{
-			m_iStrLen = TStringManager::String8Length(a_cString);
+			m_iStrLen = TINT(TStringManager::String8Length(a_cString));
 		}
 		else
 		{
@@ -251,7 +251,7 @@ namespace Toshi {
 		return -1;
 	}
 
-	void TString8::Truncate(TUINT32 length)
+	void TString8::Truncate(TINT length)
 	{
 		if (Length() < length)
 		{
@@ -280,23 +280,23 @@ namespace Toshi {
 		Reset();
 	}
 
-	const TCHAR* TString8::GetString(TUINT32 a_iIndex) const
+	const TCHAR* TString8::GetString(TINT a_iIndex) const
 	{
 		TASSERT(a_iIndex >= 0 && a_iIndex <= (TINT)m_iStrLen);
 		if (IsIndexValid(a_iIndex)) { return &m_pBuffer[a_iIndex]; }
 		return TNULL;
 	}
 
-	TString8& TString8::Concat(const TCHAR* str, TUINT32 size)
+	TString8& TString8::Concat(const TCHAR* str, TINT size)
 	{
-		TUINT32 len = (TUINT32)TStringManager::String8Length(str);
+		TINT len = TINT(TStringManager::String8Length(str));
 		
 		if ((len < size) || (size == -1))
 		{
 			size = len;
 		}
 
-		TUINT32 oldLength = m_iStrLen;
+		TINT oldLength = m_iStrLen;
 		TCHAR* oldString = m_pBuffer;
 
 		TBOOL allocated = AllocBuffer(m_iStrLen + size, TFALSE);
@@ -371,7 +371,7 @@ namespace Toshi {
 		return _strnicmp(GetString(), a_pcString, param_2);
 	}
 
-	TString8 TString8::Mid(TUINT32 param_1, TUINT32 param_2) const
+	TString8 TString8::Mid(TINT param_1, TINT param_2) const
 	{
 		if (param_2 < 0)
 		{
@@ -390,9 +390,9 @@ namespace Toshi {
 		return str;
 	}
 
-	TString8& TString8::Concat(const TString16& str, TUINT32 size)
+	TString8& TString8::Concat(const TString16& str, TINT size)
 	{
-		TUINT32 len = str.Length();
+		TINT len = str.Length();
 
 		if ((len < size) || (size == -1))
 		{
@@ -407,7 +407,7 @@ namespace Toshi {
 		if (allocated)
 		{
 			// since it has made a new buffer
-			// it need to copy the old string
+			// it needs to copy the old string
 			// to the new buffer
 
 			TStringManager::String8Copy(m_pBuffer, oldString, -1);

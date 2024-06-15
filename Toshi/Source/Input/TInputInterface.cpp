@@ -20,7 +20,7 @@ namespace Toshi {
 			return TNULL;
 		}
 
-		for (auto it = m_DeviceList.Begin(); it != m_DeviceList.End(); it++)
+		for (auto it = m_DeviceList.Begin(); it != m_DeviceList.End(); ++it)
 		{
 			if (it->GetClass()->IsA(a_pClass))
 			{
@@ -60,7 +60,7 @@ namespace Toshi {
 	{
 		TBOOL bResult = TTRUE;
 
-		for (auto it = m_DeviceList.Begin(); it != m_DeviceList.End(); it++)
+		for (auto it = m_DeviceList.Begin(); it != m_DeviceList.End(); ++it)
 		{
 			bResult &= it->Acquire();
 		}
@@ -72,7 +72,7 @@ namespace Toshi {
 	{
 		TBOOL bResult = TTRUE;
 
-		for (auto it = m_DeviceList.Begin(); it != m_DeviceList.End(); it++)
+		for (auto it = m_DeviceList.Begin(); it != m_DeviceList.End(); ++it)
 		{
 			bResult &= it->Unacquire();
 		}
@@ -84,7 +84,7 @@ namespace Toshi {
 	{
 		TBOOL bResult = TTRUE;
 
-		for (auto it = m_DeviceList.Begin(); it != m_DeviceList.End(); it++)
+		for (auto it = m_DeviceList.Begin(); it != m_DeviceList.End(); ++it)
 		{
 			bResult &= it->Flush();
 		}
@@ -106,7 +106,7 @@ namespace Toshi {
 	{
 		TINT iNumProcessed = 0;
 
-		for (auto it = m_DeviceList.Begin(); it != m_DeviceList.End(); it++)
+		for (auto it = m_DeviceList.Begin(); it != m_DeviceList.End(); ++it)
 		{
 			if (it->IsAcquired())
 			{
@@ -114,7 +114,7 @@ namespace Toshi {
 			}
 		}
 
-		for (auto it = m_DeviceList.Begin(); it != m_DeviceList.End(); it++)
+		for (auto it = m_DeviceList.Begin(); it != m_DeviceList.End(); ++it)
 		{
 			if (it->IsAcquired())
 			{
@@ -127,7 +127,7 @@ namespace Toshi {
 
 	void TInputInterface::StopAllRepeats()
 	{
-		for (auto it = m_DeviceList.Begin(); it != m_DeviceList.End(); it++)
+		for (auto it = m_DeviceList.Begin(); it != m_DeviceList.End(); ++it)
 		{
 			it->StopAllRepeats();
 		}
@@ -135,7 +135,7 @@ namespace Toshi {
 
 	void TInputInterface::ReleaseAllDevices()
 	{
-		for (auto it = m_DeviceList.Begin(); it != m_DeviceList.End(); it++)
+		for (auto it = m_DeviceList.Begin(); it != m_DeviceList.End(); ++it)
 		{
 			it->Unacquire();
 			it->Release();

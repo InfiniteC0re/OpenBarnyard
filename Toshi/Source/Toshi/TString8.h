@@ -14,18 +14,18 @@ namespace Toshi {
 		TString8(const TString8& src, T2Allocator* allocator = TNULL);
 		TString8(const TString16& src, T2Allocator* allocator = TNULL);
 		TString8(const TCHAR* src, T2Allocator* allocator = TNULL);
-		TString8(TUINT32 size, T2Allocator* allocator = TNULL);
+		TString8(TINT size, T2Allocator* allocator = TNULL);
 		~TString8() { FreeBuffer(); }
 
-		void Copy(const TString8& src, TUINT32 size = -1) { Copy(src.m_pBuffer, size); }
-		void Copy(const TString16& src, TUINT32 size = -1);
-		void Copy(const TCHAR* src, TUINT32 size = -1);
-		void Copy(const TWCHAR* src, TUINT32 size = -1);
+		void Copy(const TString8& src, TINT size = -1) { Copy(src.m_pBuffer, size); }
+		void Copy(const TString16& src, TINT size = -1);
+		void Copy(const TCHAR* src, TINT size = -1);
+		void Copy(const TWCHAR* src, TINT size = -1);
 
 		void FreeBuffer();
 
 		// Returns TTRUE if allocated memory
-		TBOOL AllocBuffer(TUINT32 size, TBOOL freeMemory = TTRUE);
+		TBOOL AllocBuffer(TINT a_iLength, TBOOL a_bFreeMemory = TTRUE);
 
 		TString8& Format(const TCHAR* a_pcFormat, ...);
 		TString8& VFormat(const TCHAR* a_pcFormat, va_list a_vargs);
@@ -33,40 +33,40 @@ namespace Toshi {
 		static TString8 VarArgs(const TCHAR* a_pcFormat, ...);
 
 		void UndoForceSetData() { Reset(); }
-		void ForceSetData(TCHAR* a_cString, TINT a_ilength);
+		void ForceSetData(TCHAR* a_pchString, TINT a_iLength);
 
 		TINT FindReverse(TCHAR a_findChar, TINT pos) const;
 
-		void Truncate(TUINT32 length);
+		void Truncate(TINT length);
 
 		// Returns position of specified character
-		TINT Find(TCHAR character, TUINT32 pos = 0) const;
+		TINT Find(TCHAR character, TINT pos = 0) const;
 
 		// Returns position of specified substring
-		TINT Find(const TCHAR* substr, TUINT32 pos = 0) const;
+		TINT Find(const TCHAR* substr, TINT pos = 0) const;
 
-		// Returns string starting from specified index
-		const TCHAR* GetString(TUINT32 index = 0) const;
+		// Returns string starting from specified a_iIndex
+		const TCHAR* GetString(TINT a_iIndex = 0) const;
 
-		TString8& Concat(const TString8& str, TUINT32 size = -1) { return Concat(str.m_pBuffer, size); };
-		TString8& Concat(const TString16& src, TUINT32 size = -1);
-		TString8& Concat(const TCHAR* src, TUINT32 size = -1);
+		TString8& Concat(const TString8& str, TINT size = -1) { return Concat(str.m_pBuffer, size); };
+		TString8& Concat(const TString16& src, TINT size = -1);
+		TString8& Concat(const TCHAR* src, TINT size = -1);
 
 		TINT Compare(const TCHAR*, TINT) const;
 		TINT CompareNoCase(const TCHAR*, TINT) const;
 
-		TString8 Mid(TUINT32 param_1, TUINT32 param_2) const;
+		TString8 Mid(TINT param_1, TINT param_2) const;
 		TString8 Right(TINT param_1) const { return Mid(param_1, Length() - param_1); }
 
 		TString8& MakeUpper() { _strupr(m_pBuffer); return *this; }
 		TString8& MakeLower() { _strlwr(m_pBuffer); return *this; }
 
-		TUINT Length() const { return m_iStrLen; }
+		TINT Length() const { return m_iStrLen; }
 		TUINT ExcessLength() const { return m_iExcessLen; }
 
 		TBOOL IsAllLowerCase() const;
 		TBOOL IsAllUpperCase() const;
-		TBOOL IsIndexValid(TUINT32 index) const { return index >= 0 && index <= Length(); }
+		TBOOL IsIndexValid(TINT a_iIndex) const { return a_iIndex >= 0 && a_iIndex <= Length(); }
 		TBOOL IsEmpty() const { return m_iStrLen == 0; }
 		TBOOL IsUnicode() const { return TFALSE; } // Who would have known?
 
@@ -75,8 +75,8 @@ namespace Toshi {
 		TString8* operator+=(TCHAR const* cstr) { Concat(cstr, -1); return this; }
 		TString8* operator+=(TString8& str) { Concat(str, -1); return this; }
 
-		TCHAR& operator[](TINT index) { return m_pBuffer[index]; }
-		const TCHAR& operator[](TINT index) const { return *GetString(index); }
+		TCHAR& operator[](TINT a_iIndex) { return m_pBuffer[a_iIndex]; }
+		const TCHAR& operator[](TINT a_iIndex) const { return *GetString(a_iIndex); }
 		operator const TCHAR* () const { return m_pBuffer; }
 
 		TBOOL operator!() { return m_iStrLen == 0; }
@@ -120,7 +120,7 @@ namespace Toshi {
 	private:
 		TCHAR* m_pBuffer = NullString; // 0x0
 		TUINT32 m_iExcessLen : 8 = 0;  // 0x4
-		TUINT32 m_iStrLen : 24 = 0;    // 0x5
+		TINT32 m_iStrLen : 24 = 0;     // 0x5
 		T2Allocator* m_pAllocator;     // 0x8
 	};
 

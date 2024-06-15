@@ -125,7 +125,7 @@ namespace Toshi {
 			m_fTotalWeight = 0.0f;
 
 			// Update base animations
-			for (auto pAnim = m_BaseAnimations.Begin(); pAnim != m_BaseAnimations.End(); pAnim++)
+			T2_FOREACH(m_BaseAnimations, pAnim)
 			{
 				if (pAnim->UpdateTime(a_fDeltaTime))
 				{
@@ -135,7 +135,7 @@ namespace Toshi {
 			}
 
 			// Update overlay animations
-			for (auto pAnim = m_OverlayAnimations.Begin(); pAnim != m_OverlayAnimations.End(); pAnim++)
+			T2_FOREACH(m_OverlayAnimations, pAnim)
 			{
 				pAnim->UpdateTime(a_fDeltaTime);
 			}
@@ -180,7 +180,7 @@ namespace Toshi {
 					TFLOAT fWeightTotalRatio = 0.0f;
 					TBOOL bBoneHasState = TFALSE;
 
-					for (auto it = m_BaseAnimations.Begin(); it != m_BaseAnimations.End(); it++)
+					T2_FOREACH(m_BaseAnimations, it)
 					{
 						auto pSeq = m_pSkeleton->GetSequence(it->GetSequence());
 						auto pSeqBone = pSeq->GetBone(i);
@@ -251,7 +251,7 @@ namespace Toshi {
 					}
 				}
 
-				for (auto it = m_OverlayAnimations.Begin(); it != m_OverlayAnimations.End(); it++)
+				T2_FOREACH(m_OverlayAnimations, it)
 				{
 					if (it->GetWeight() != 0)
 					{

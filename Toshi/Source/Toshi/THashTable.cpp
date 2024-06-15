@@ -7,117 +7,162 @@
 //-----------------------------------------------------------------------------
 #include "Core/TMemoryDebugOn.h"
 
-Toshi::THashTable::t_ItemCompareFunc Toshi::THashTable::DefaultItemCompareFunc = [](void* unk, void* unk2, TINT unk3)
-{
-	return Toshi::TUtil::MemCompare(unk, unk2, unk3) == 0;
-};
+namespace Toshi {
 
-Toshi::THashTable::t_ItemHashFunc Toshi::THashTable::DefaultItemHashFunc = [](void* unk, TINT unk2, TINT unk3)
-{
-	uint8_t* buffer = reinterpret_cast<uint8_t*>(unk);
-
-	TUINT32 hash = 0;
-
-	while (unk2 != 0)
+	THashTable::t_ItemCompareFunc THashTable::DefaultItemCompareFunc = [](const void* a_pMem1, const void* a_pMem2, TSIZE a_iSize)
 	{
-		hash = (hash * 0x10) + *buffer++;
-		if ((hash & 0xF0000000) != 0)
-		{
-			hash = hash ^ (hash & 0xF0000000) >> 24 ^ (hash & 0xF0000000);
-		}
-		unk2--;
-	}
+		return TUtil::MemCompare(a_pMem1, a_pMem2, a_iSize) == 0;
+	};
 
-	return hash - (hash / unk3) * unk3;
-};
-
-void* Toshi::THashTable::Insert(void* a_pData)
-{
-	TASSERT(0 != m_iItemSize);
-
-	void* a_pBuckets = GetBuckets();
-	if (a_pBuckets == TNULL) return TNULL;
-
-	void* foundBucket = Find(a_pData);
-
-	return foundBucket ? foundBucket : Append(a_pData);
-}
-
-void* Toshi::THashTable::Find(void* a_pData)
-{
-	TASSERT(0 != m_iItemSize);
-	TINT* a_pBuckets = GetBuckets();
-
-	if (a_pBuckets != TNULL)
+	THashTable::t_ItemHashFunc THashTable::DefaultItemHashFunc = [](const void* a_pMem, TSIZE a_iSize, TUINT32 a_uiMaxValue)
 	{
-		TUINT32 hash = m_ItemHashFunc(a_pData, m_iItemSize, m_iBucketSize);
-		TINT a_bucket = a_pBuckets[hash];
+		const TBYTE* pBuffer = TREINTERPRETCAST(const TBYTE*, a_pMem);
+		TUINT32 uiHash = 0;
 
-		while (a_bucket != -1)
+		while (a_iSize != 0)
 		{
-			Item& item = m_pSmth[a_bucket];
-			TBOOL bRes = m_ItemCompareFunc(a_pData, (TINT*)m_pItems + m_iItemSize * (TINT)item.value, m_iItemSize);
-			if (bRes) return &item;
-			a_bucket = item.key;
+			uiHash = (uiHash * 0x10) + *pBuffer++;
+			if ((uiHash & 0xF0000000) != 0)
+			{
+				uiHash = uiHash ^ (uiHash & 0xF0000000) >> 24 ^ (uiHash & 0xF0000000);
+			}
+			a_iSize--;
 		}
-	}
 
-	return TNULL;
-}
+		return uiHash - (uiHash / a_uiMaxValue) * a_uiMaxValue;
+	};
 
-void* Toshi::THashTable::Append(void* a_pData)
-{
-	TASSERT(0 != m_iItemSize);
-
-	if (m_pBuckets != TNULL)
+	THashTable::THashTable()
 	{
-		TASSERT(!((m_iHashNodeCount == m_iHashNodeCountTotal) || (m_iItemCount == m_iItemCountTotal)));
-		if (!((m_iHashNodeCount == m_iHashNodeCountTotal) || (m_iItemCount == m_iItemCountTotal)))
-		{
-			TUINT32 hash = m_ItemHashFunc(a_pData, m_iItemSize, m_iBucketSize);
-
-			m_pSmth[m_iHashNodeCountTotal].key = m_pBuckets[hash];
-			m_pSmth[m_iHashNodeCountTotal].value = (void*)m_iItemCount;
-
-			TUtil::MemCopy((TINT*)m_pItems + m_iItemCount * m_iItemSize, a_pData, m_iItemSize);
-
-			m_pBuckets[hash] = m_iHashNodeCountTotal;
-
-			m_iItemCount++;
-			m_iHashNodeCountTotal++;
-
-			return &m_pSmth[m_iHashNodeCountTotal];
-		}
-	}
-	return TNULL;
-}
-
-TBOOL Toshi::THashTable::Create(TINT a_iItemCountTotal, TINT a_iItemSize, TINT a_iBucketSize, TINT a_iHashNodeCount)
-{
-	if (m_pBuckets == TNULL)
-	{
-		if (a_iHashNodeCount < a_iItemCountTotal)
-		{
-			a_iHashNodeCount = a_iItemCountTotal;
-		}
-		m_iBucketSize = a_iBucketSize;
-		m_iItemSize = a_iItemSize;
+		m_iBucketSize = 0;
+		m_iItemSize = 0;
 		m_iItemCount = 0;
-		m_iItemCountTotal = a_iItemCountTotal;
-		m_iHashNodeCount = a_iHashNodeCount;
-		m_pBuckets = new TINT[m_iBucketSize];
-		m_pSmth = new Item[m_iHashNodeCount];
-		m_pItems = new TINT[m_iItemSize * m_iItemCountTotal];
+		m_iItemCountTotal = 0;
+		m_iHashNodeCount = 0;
+		m_iHashNodeCountTotal = 0;
+		m_pHashToBucketId = TNULL;
+		m_pBuckets = TNULL;
+		m_pItems = TNULL;
+		m_ItemHashFunc = TNULL;
+		m_ItemCompareFunc = TNULL;
+	}
 
-		SetItemHashFunction(DefaultItemHashFunc);
-		SetItemCompareFunction(DefaultItemCompareFunc);
+	THashTable::~THashTable()
+	{
+		Destroy();
+	}
 
-		for (TINT i = 0; i < m_iBucketSize; i++)
+	void THashTable::DeleteBucketMemory()
+	{
+		delete[] m_pHashToBucketId;
+		m_pHashToBucketId = TNULL;
+	}
+
+	void THashTable::Destroy()
+	{
+		DeleteBucketMemory();
+
+		delete[] m_pBuckets;
+		m_pBuckets = TNULL;
+
+		TFree(m_pItems);
+		m_pItems = TNULL;
+	}
+
+	THashTable::Bucket* THashTable::Insert(void* a_pData)
+	{
+		TASSERT(0 != m_iItemSize);
+
+		if (TNULL == GetHashToBucketIds())
+			return TNULL;
+
+		THashTable::Bucket* pFoundBucket = Find(a_pData);
+		return (pFoundBucket) ? pFoundBucket : Append(a_pData);
+	}
+
+	THashTable::Bucket* THashTable::Find(void* a_pData)
+	{
+		TASSERT(0 != m_iItemSize);
+		TINT* pBuckets = GetHashToBucketIds();
+
+		if (pBuckets != TNULL)
 		{
-			m_pBuckets[i] = -1;
+			TUINT32 uiHash = m_ItemHashFunc(a_pData, m_iItemSize, m_iBucketSize);
+			TINT iBucket = pBuckets[uiHash];
+
+			while (iBucket != INVALID_BUCKET_ID)
+			{
+				Bucket& item = m_pBuckets[iBucket];
+				
+				if (m_ItemCompareFunc(a_pData, m_pItems + m_iItemSize * item.iItemIndex, m_iItemSize))
+					return &item;
+
+				iBucket = item.iNextBucketId;
+			}
 		}
 
-		return TTRUE;
+		return TNULL;
 	}
-	return TFALSE;
+
+	THashTable::Bucket* THashTable::Append(void* a_pData)
+	{
+		TASSERT(0 != m_iItemSize);
+
+		if (m_pHashToBucketId != TNULL)
+		{
+			TASSERT(!((m_iHashNodeCount == m_iHashNodeCountTotal) || (m_iItemCount == m_iItemCountTotal)));
+			
+			if (!((m_iHashNodeCount == m_iHashNodeCountTotal) || (m_iItemCount == m_iItemCountTotal)))
+			{
+				TUINT32 uiHash = m_ItemHashFunc(a_pData, m_iItemSize, m_iBucketSize);
+
+				m_pBuckets[m_iHashNodeCountTotal].iNextBucketId = m_pHashToBucketId[uiHash];
+				m_pBuckets[m_iHashNodeCountTotal].iItemIndex = m_iItemCount;
+
+				TUtil::MemCopy(m_pItems + m_iItemCount * m_iItemSize, a_pData, m_iItemSize);
+
+				m_pHashToBucketId[uiHash] = m_iHashNodeCountTotal;
+
+				m_iItemCount++;
+				m_iHashNodeCountTotal++;
+
+				return &m_pBuckets[m_iHashNodeCountTotal];
+			}
+		}
+
+		return TNULL;
+	}
+
+	TBOOL THashTable::Create(TINT a_iItemCountTotal, TINT a_iItemSize, TINT a_iBucketSize, TINT a_iHashNodeCount)
+	{
+		if (m_pHashToBucketId == TNULL)
+		{
+			if (a_iHashNodeCount < a_iItemCountTotal)
+			{
+				a_iHashNodeCount = a_iItemCountTotal;
+			}
+
+			m_iBucketSize = a_iBucketSize;
+			m_iItemSize = a_iItemSize;
+			m_iItemCount = 0;
+			m_iItemCountTotal = a_iItemCountTotal;
+			m_iHashNodeCount = a_iHashNodeCount;
+			m_pHashToBucketId = new TINT[m_iBucketSize];
+			m_pBuckets = new Bucket[m_iHashNodeCount];
+			m_pItems = TSTATICCAST(TBYTE, TMemalign(m_iItemSize * m_iItemCountTotal, 16));
+
+			SetItemHashFunction(DefaultItemHashFunc);
+			SetItemCompareFunction(DefaultItemCompareFunc);
+
+			for (TINT i = 0; i < m_iBucketSize; i++)
+			{
+				m_pHashToBucketId[i] = INVALID_BUCKET_ID;
+			}
+
+			return TTRUE;
+		}
+
+		return TFALSE;
+	}
+
 }

@@ -1,80 +1,56 @@
 #pragma once
-namespace Toshi
-{
+
+namespace Toshi {
+
 	class THashTable
 	{
 	public:
-
-		struct Item 
+		struct Bucket
 		{
-			TUINT32 key;
-			void* value;
+			TUINT iNextBucketId;
+			TINT iItemIndex;
 		};
 
-		using t_ItemCompareFunc = TBOOL (*) (void* unk, void* unk2, TINT unk3);
-		using t_ItemHashFunc = TUINT32 (*) (void* unk, TINT unk2, TINT unk3);
+		inline static constexpr TINT INVALID_BUCKET_ID = -1;
 
-		TINT m_iBucketSize;	                 // 0x0
-		TINT m_iItemSize;                     // 0x4
-		TINT m_iItemCount;                    // 0x8
-		TINT m_iItemCountTotal;               // 0xC
-		TINT m_iHashNodeCount;                // 0x10
-		TINT m_iHashNodeCountTotal;           // 0x14
-		TINT* m_pBuckets;                     // 0x18
-		Item* m_pSmth;                       // 0x1C
-		void* m_pItems;                      // 0x20
-		t_ItemHashFunc m_ItemHashFunc;       // 0x24
-		t_ItemCompareFunc m_ItemCompareFunc; // 0x28
+		using t_ItemCompareFunc = TBOOL (*) (const void* a_pMem1, const void* a_pMem2, TSIZE a_iSize);
+		using t_ItemHashFunc = TUINT32 (*) (const void* a_pMem, TSIZE a_iSize, TUINT32 a_uiMaxValue);
 
 	public:
+		THashTable();
+		~THashTable();
 
-		THashTable()
-		{
-			m_iBucketSize = 0;
-			m_iItemSize = 0;
-			m_iItemCount = 0;
-			m_iItemCountTotal = 0;
-			m_iHashNodeCount = 0;
-			m_iHashNodeCountTotal = 0;
-			m_pBuckets = TNULL;
-			m_pSmth = TNULL;
-			m_pItems = TNULL;
-			m_ItemHashFunc = TNULL;
-			m_ItemCompareFunc = TNULL;
-		}
-
-		static t_ItemCompareFunc DefaultItemCompareFunc;
-		static t_ItemHashFunc DefaultItemHashFunc;
-
-		TINT* GetBuckets() const { return m_pBuckets; }
+		TINT* GetHashToBucketIds() const { return m_pHashToBucketId; }
 		TINT GetItemCount() const { return m_iItemCount; }
 		void* GetItemArray() const { return m_pItems; }
 
-		void DeleteBucketMemory()
-		{
-			delete[] m_pBuckets;
-			m_pBuckets = TNULL;
-		}
+		void DeleteBucketMemory();
+		void Destroy();
 
-		void Destroy()
-		{
-			delete[] m_pBuckets;
-			m_pBuckets = TNULL;
-			delete[] m_pSmth;
-			m_pSmth = TNULL;
-			delete[] m_pItems;
-			m_pItems = TNULL;
-		}
+		Bucket* Find(void* a_pData);
+		Bucket* Insert(void* a_pData);
+		Bucket* Append(void* a_pData);
 
-
-		void* Insert(void* a_pData);
-		void* Find(void* a_pData);
-		void* Append(void* a_pData);
-
-		TBOOL Create(TINT a_iItemCountTotal, TINT a_iItemSize, TINT unk, TINT a_iHashNodeCount);
+		TBOOL Create(TINT a_iItemCountTotal, TINT a_iItemSize, TINT a_iBucketSize, TINT a_iHashNodeCount);
 		void SetItemCompareFunction(t_ItemCompareFunc a_HashCompareFunc) { m_ItemCompareFunc = a_HashCompareFunc; }
 		void SetItemHashFunction(t_ItemHashFunc a_HashCompareFunc) { m_ItemHashFunc = a_HashCompareFunc; }
+
+	private:
+		static t_ItemCompareFunc DefaultItemCompareFunc;
+		static t_ItemHashFunc DefaultItemHashFunc;
+
+	private:
+		TINT m_iBucketSize;	                 // 0x0
+		TINT m_iItemSize;                    // 0x4
+		TINT m_iItemCount;                   // 0x8
+		TINT m_iItemCountTotal;              // 0xC
+		TINT m_iHashNodeCount;               // 0x10
+		TINT m_iHashNodeCountTotal;          // 0x14
+		TINT* m_pHashToBucketId;             // 0x18
+		Bucket* m_pBuckets;                  // 0x1C
+		TBYTE* m_pItems;                     // 0x20
+		t_ItemHashFunc m_ItemHashFunc;       // 0x24
+		t_ItemCompareFunc m_ItemCompareFunc; // 0x28
 	};
+
 }
-
-

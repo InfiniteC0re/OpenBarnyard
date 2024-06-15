@@ -5,10 +5,10 @@ namespace Toshi
 	class TVector3
 	{
 	public:
-		TVector3() = default;
-		TVector3(TFLOAT x, TFLOAT y, TFLOAT z) { Set(x, y, z); }
-		TVector3(TFLOAT floats[3]) { Set(floats); }
-		TVector3(const TVector3& other) { Set(other.x, other.y, other.z); }
+		constexpr TVector3() = default;
+		constexpr TVector3(TFLOAT x, TFLOAT y, TFLOAT z) { Set(x, y, z); }
+		constexpr TVector3(TFLOAT floats[3]) { Set(floats); }
+		constexpr TVector3(const TVector3& other) { Set(other.x, other.y, other.z); }
 
 		void Clip(TFLOAT fVal, TFLOAT fVal2);
 		void CrossProduct(const TVector3&, const TVector3&);
@@ -19,12 +19,12 @@ namespace Toshi
 
 		void Normalize();
 
-		void Set(const TVector3& vec) { TVector3::x = vec.x; TVector3::y = vec.y; TVector3::z = vec.z; }
-		void Set(TFLOAT floats[3]) { TVector3::x = floats[0]; TVector3::y = floats[1]; TVector3::z = floats[2]; }
-		void Set(TFLOAT x, TFLOAT y, TFLOAT z) { TVector3::x = x; TVector3::y = y; TVector3::z = z; }
+		constexpr void Set(const TVector3& vec) { TVector3::x = vec.x; TVector3::y = vec.y; TVector3::z = vec.z; }
+		constexpr void Set(TFLOAT floats[3]) { TVector3::x = floats[0]; TVector3::y = floats[1]; TVector3::z = floats[2]; }
+		constexpr void Set(TFLOAT x, TFLOAT y, TFLOAT z) { TVector3::x = x; TVector3::y = y; TVector3::z = z; }
 
-		void Lerp(const TVector3& finish, float t) { Lerp(*this, finish, t); }
-		void Lerp(const TVector3& start, const TVector3& finish, float t)
+		constexpr void Lerp(const TVector3& finish, float t) { Lerp(*this, finish, t); }
+		constexpr void Lerp(const TVector3& start, const TVector3& finish, float t)
 		{
 			TVector3 progress = finish - start;
 			progress.Multiply(t);
@@ -32,26 +32,26 @@ namespace Toshi
 			Set(start + progress);
 		}
 
-		void Add(const TVector3& vec)
+		constexpr void Add(const TVector3& vec)
 		{
 			x += vec.x;
 			y += vec.y;
 			z += vec.z;
 		}
 
-		void Add(const TVector3& a, const TVector3& b)
+		constexpr void Add(const TVector3& a, const TVector3& b)
 		{
 			Set(a + b);
 		}
 
-		void Divide(const TVector3& vec)
+		constexpr void Divide(const TVector3& vec)
 		{
 			x /= vec.x;
 			y /= vec.y;
 			z /= vec.z;
 		}
 
-		void Divide(TFLOAT scalar)
+		constexpr void Divide(TFLOAT scalar)
 		{
 			TFLOAT ratio = 1.0f / scalar;
 			x *= ratio;
@@ -59,37 +59,37 @@ namespace Toshi
 			z *= ratio;
 		}
 
-		void Divide(const TVector3& vec1, const TVector3& vec2)
+		constexpr void Divide(const TVector3& vec1, const TVector3& vec2)
 		{
 			Set(vec1 / vec2);
 		}
 
-		void Divide(const TVector3& vec, TFLOAT scalar)
+		constexpr void Divide(const TVector3& vec, TFLOAT scalar)
 		{
 			Set(vec);
 			Divide(scalar);
 		}
 
-		void Multiply(const TVector3& vec)
+		constexpr void Multiply(const TVector3& vec)
 		{
 			x *= vec.x;
 			y *= vec.y;
 			z *= vec.z;
 		}
 
-		void Multiply(TFLOAT scalar)
+		constexpr void Multiply(TFLOAT scalar)
 		{
 			x *= scalar;
 			y *= scalar;
 			z *= scalar;
 		}
 
-		void Multiply(const TVector3& vec1, const TVector3& vec2)
+		constexpr void Multiply(const TVector3& vec1, const TVector3& vec2)
 		{
 			Set(vec1 * vec2);
 		}
 
-		void Multiply(const TVector3& vec, TFLOAT scalar)
+		constexpr void Multiply(const TVector3& vec, TFLOAT scalar)
 		{
 			Set(vec);
 			Multiply(scalar);
@@ -99,21 +99,21 @@ namespace Toshi
 		void Abs() { Set(TMath::Abs(x), TMath::Abs(y), TMath::Abs(z)); }
 
 		TFLOAT Magnitude() const { return TMath::Sqrt(x * x + y * y + z * z); }
-		TFLOAT MagnitudeSq() const { return x * x + y * y + z * z; }
+		constexpr TFLOAT MagnitudeSq() const { return x * x + y * y + z * z; }
 
-		TVector3 operator+(const TVector3& other) const { return { x + other.x, y + other.y, z + other.z }; }
-		TVector3 operator-(const TVector3& other) const { return { x - other.x, y - other.y, z - other.z }; }
-		TVector3 operator*(const TVector3& other) const { return { x * other.x, y * other.y, z * other.z }; }
-		TVector3 operator/(const TVector3& other) const { return { x / other.x, y / other.y, z / other.z }; }
+		constexpr TVector3 operator+(const TVector3& other) const { return { x + other.x, y + other.y, z + other.z }; }
+		constexpr TVector3 operator-(const TVector3& other) const { return { x - other.x, y - other.y, z - other.z }; }
+		constexpr TVector3 operator*(const TVector3& other) const { return { x * other.x, y * other.y, z * other.z }; }
+		constexpr TVector3 operator/(const TVector3& other) const { return { x / other.x, y / other.y, z / other.z }; }
 
-		void operator=(const TVector3& other)  { Set(other); }
-		void operator+=(const TVector3& other) { Add(other); }
-		void operator/=(const TVector3& other) { Divide(other); }
+		constexpr void operator=(const TVector3& other) { Set(other); }
+		constexpr void operator+=(const TVector3& other) { Add(other); }
+		constexpr void operator/=(const TVector3& other) { Divide(other); }
 
 	public:
 		static TFLOAT Distance(const TVector3& vec1, const TVector3& vec2) { return (vec2 - vec1).Magnitude(); }
-		static TFLOAT DistanceSq(const TVector3& vec1, const TVector3& vec2) { return (vec2 - vec1).MagnitudeSq(); }
-		static TFLOAT DotProduct(const TVector3& vec1, const TVector3& vec2) { return vec1.x * vec2.x + vec1.y * vec2.y + vec1.z * vec2.z; }
+		static constexpr TFLOAT DistanceSq(const TVector3& vec1, const TVector3& vec2) { return (vec2 - vec1).MagnitudeSq(); }
+		static constexpr TFLOAT DotProduct(const TVector3& vec1, const TVector3& vec2) { return vec1.x * vec2.x + vec1.y * vec2.y + vec1.z * vec2.z; }
 
 	public:
 		static const TVector3 VEC_ZERO;

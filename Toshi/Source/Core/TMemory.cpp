@@ -534,7 +534,7 @@ namespace Toshi {
 	{
 		MemInfo memInfo;
 
-		for (auto it = m_UsedBlocks.Tail(); it != m_UsedBlocks.End(); it--)
+		for (auto it = m_UsedBlocks.Tail(); it != m_UsedBlocks.End(); --it)
 		{
 			GetMemInfo(memInfo, it->m_pPtr);
 

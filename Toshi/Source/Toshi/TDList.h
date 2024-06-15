@@ -18,13 +18,16 @@ namespace Toshi {
 			{
 				Reset();
 			}
+			
+			TNode(const TNode& a_rOther)
+			{
+				m_Next = a_rOther.m_Next;
+				m_Prev = a_rOther.m_Prev;
+			}
 
 			~TNode()
 			{
-				m_Next->m_Prev = m_Prev;
-				m_Prev->m_Next = m_Next;
-				m_Next = this;
-				m_Prev = this;
+				Remove();
 			}
 
 			TNode* Next() const
@@ -144,6 +147,17 @@ namespace Toshi {
 			TNode()
 			{
 				Reset();
+			}
+
+			TNode(const TNode& a_rOther)
+			{
+				m_Next = a_rOther.m_Next;
+				m_Prev = a_rOther.m_Prev;
+			}
+
+			~TNode()
+			{
+				Remove();
 			}
 
 			TNode* Next() const { return m_Next; }

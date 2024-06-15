@@ -99,7 +99,7 @@ int main(int argc, char** argv)
 
 		if (bIsSkin)
 		{
-			if (pInFileHeader->m_uiMagic != TMakeFour("TMDL"))
+			if (pInFileHeader->m_uiMagic != TFourCC("TMDL"))
 			{
 				TERROR("Invalid input file format!\n");
 				return 1;

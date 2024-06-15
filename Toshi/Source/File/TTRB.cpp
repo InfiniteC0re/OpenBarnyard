@@ -38,7 +38,7 @@ namespace Toshi
 
 		if (error == ERROR_OK)
 		{
-			if (m_TTSFI.m_Magic == TMakeFour("TRBF"))
+			if (m_TTSFI.m_Magic == TFourCC("TRBF"))
 			{
 				m_UNK = a_uiUnknown;
 
@@ -68,8 +68,8 @@ namespace Toshi
 	TBOOL TTRB::ProcessForm(TTSFI& ttsf)
 	{
 		// FUN_00686f10
-		static constexpr TUINT32 s_RELCEntriesLimit = 0x200;
-		RELCEntry relcEntries[s_RELCEntriesLimit];
+		static constexpr TUINT32 MAX_RELC_NUM_BATCH = 512;
+		RELCEntry relcEntries[MAX_RELC_NUM_BATCH];
 
 		TINT32 fileSize = ttsf.m_CurrentHunk.Size - 4;
 		TINT32 leftSize = fileSize;
@@ -96,9 +96,9 @@ namespace Toshi
 				sectionSize = ttsf.m_CurrentHunk.Size;
 				leftSize -= TAlignNumUp(sectionSize) + sizeof(Toshi::TTSF::Hunk);
 
-				if (TMakeFour("HEAD") < sectionName) break;
+				if (TFourCC("HEAD") < sectionName) break;
 
-				if (sectionName == TMakeFour("HEAD"))
+				if (sectionName == TFourCC("HEAD"))
 				{
 					TINT numsections = (sectionSize - 4) / 0xC;
 
@@ -121,12 +121,12 @@ namespace Toshi
 
 					ttsf.SkipHunk();
 				}
-				else if (sectionName == TMakeFour("SYMB"))
+				else if (sectionName == TFourCC("SYMB"))
 				{
 					m_SYMB = static_cast<SYMB*>(m_MemAllocator(AllocType_Unk2, ttsf.m_CurrentHunk.Size, 0, 0, m_MemUserData));
 					ttsf.ReadHunkData(m_SYMB);
 				}
-				else if (sectionName == TMakeFour("SECC"))
+				else if (sectionName == TFourCC("SECC"))
 				{
 					for (TINT i = 0; i < m_pHeader->m_i32SectionCount; i++)
 					{
@@ -140,7 +140,7 @@ namespace Toshi
 
 					ttsf.SkipHunk();
 				}
-				else if (sectionName == TMakeFour("RELC"))
+				else if (sectionName == TFourCC("RELC"))
 				{
 					TUINT32 relocCount = 0;
 					TUINT32 curReloc = 0;
@@ -159,8 +159,8 @@ namespace Toshi
 							TUINT32 relocReadCount = relocCount - readedRelocs;
 
 							// limit count of RELCs to read
-							relocReadCount = TMath::Min(relocReadCount, s_RELCEntriesLimit);
-							ttsf.ReadRaw(relcEntries, relocReadCount << 3);
+							relocReadCount = TMath::Min(relocReadCount, MAX_RELC_NUM_BATCH);
+							ttsf.Read(relcEntries, relocReadCount);
 							curReloc = readedRelocs + relocReadCount;
 
 							auto& header = *m_pHeader;
@@ -177,6 +177,7 @@ namespace Toshi
 
 								// this won't work in x64 because pointers in TRB files are always 4 bytes
 								// need some workaround to support x64 again
+								TSTATICASSERT(sizeof(void*) == 4);
 								uintptr_t* ptr = reinterpret_cast<uintptr_t*>((uintptr_t)hdrx1->m_Data + relcEntry.Offset);
 								*ptr += (uintptr_t)hdrx2->m_Data;
 							}
@@ -191,18 +192,14 @@ namespace Toshi
 				{
 					// Unknown section
 					ttsf.SkipHunk();
-
-#ifdef TOSHI_DEBUG
-					ttsf.LogUnknownSection();
-#endif
 				}
 
 				fileSize = leftSize;
 			}
 
-			if (sectionName != TMakeFour("FORM"))
+			if (sectionName != TFourCC("FORM"))
 			{
-				if (sectionName == TMakeFour("SECT"))
+				if (sectionName == TFourCC("SECT"))
 				{
 					for (TINT i = 0; i < m_pHeader->m_i32SectionCount; i++)
 					{
@@ -212,9 +209,9 @@ namespace Toshi
 
 					ttsf.SkipHunk();
 				}
-				else if (sectionName == TMakeFour("HDRX"))
+				else if (sectionName == TFourCC("HDRX"))
 				{
-					m_pHeader = static_cast<Header*>(m_MemAllocator(AllocType_Unk0, sectionSize, 0, 0, m_MemUserData));
+					m_pHeader = TSTATICCAST(Header, m_MemAllocator(AllocType_Unk0, sectionSize, 0, 0, m_MemUserData));
 					ttsf.ReadHunkData(m_pHeader);
 
 					for (TINT i = 0; i < m_pHeader->m_i32SectionCount; i++)
@@ -228,10 +225,6 @@ namespace Toshi
 				{
 					// Unknown section
 					ttsf.SkipHunk();
-
-#ifdef TOSHI_DEBUG
-					ttsf.LogUnknownSection();
-#endif
 				}
 
 				fileSize = leftSize;
@@ -312,4 +305,25 @@ namespace Toshi
 			TASSERT(deallocator != TNULL);
 		}
 	}
+
+	TUINT32 TTSFI::ReadAlignmentPad()
+	{
+		TASSERT(m_pFile != TNULL, "File is TNULL");
+
+		static TCHAR s_AlignBuffer[4];
+		TUINT8 alignValue = 4 - (m_pFile->Tell() & 3);
+
+		if (alignValue != 4)
+		{
+			return m_pFile->Read(s_AlignBuffer, alignValue);
+		}
+
+		return 0;
+	}
+
+	void TTSFI::ReadRaw(void* dst, TUINT32 size)
+	{
+		m_ReadPos += m_pFile->Read(dst, size);
+	}
+
 }

@@ -45,7 +45,7 @@ namespace Toshi {
 	public:
 		static void Throw(const T& a_rData)
 		{
-			for (auto it = sm_oListeners.Begin(); it != sm_oListeners.End(); it++)
+			for (auto it = sm_oListeners.Begin(); it != sm_oListeners.End(); ++it)
 			{
 				it->Execute(a_rData);
 			}

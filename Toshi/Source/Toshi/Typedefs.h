@@ -5,34 +5,19 @@ using TFLOAT = float;
 using TBOOL = bool;
 using TINT = int;
 using TUINT = unsigned int;
+using TSIZE = size_t;
+using TINT64 = int64_t;
+using TUINT64 = uint64_t;
 using TINT32 = int32_t;
 using TUINT32 = uint32_t;
 using TINT16 = int16_t;
 using TUINT16 = uint16_t;
 using TINT8 = int8_t;
 using TUINT8 = uint8_t;
+using TUINTPTR = uintptr_t;
 using TBYTE = uint8_t;
 using TCHAR = char;
 using TWCHAR = wchar_t;
-
-union TVersion {
-	TUINT32 Value;
-
-	struct {
-		uint16_t Minor;
-		uint16_t Major;
-	} Parts;
-
-	void operator=(TUINT32 version)
-	{
-		Value = version;
-	}
-
-	operator TUINT32&()
-	{
-		return Value;
-	}
-};
 
 #define TNULL nullptr
 #define TFALSE false

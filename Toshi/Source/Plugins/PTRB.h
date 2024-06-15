@@ -35,9 +35,9 @@ class PTRBSymbols;
 class PTRBHeader
 {
 public:
-	PTRBHeader(TVersion version);
+	PTRBHeader(Toshi::TVersion version);
 
-	void SetVersion(TVersion version);
+	void SetVersion(Toshi::TVersion version);
 	void SetSectionCount(int32_t count);
 	void Write(Toshi::TTSFO& ttsfo, PTRBSections& sect);
 	void Read(Toshi::TTSFI& ttsfi, PTRBSections& sect);
@@ -552,7 +552,7 @@ private:
 class PTRBWriter
 {
 public:
-	static constexpr TVersion VERSION = { TVERSION(1, 1) };
+	static constexpr Toshi::TVersion VERSION = { TVERSION(1, 1) };
 
 public:
 	PTRBWriter() : m_HDRX(VERSION) { }
@@ -582,19 +582,19 @@ public:
 
 				switch (ttsfi.GetCurrentHunk().Name)
 				{
-				case TMakeFour("HDRX"):
+				case TFourCC("HDRX"):
 					m_HDRX.Read(ttsfi, m_SECT);
 					break;
-				case TMakeFour("SECT"):
+				case TFourCC("SECT"):
 					m_SECT.Read(ttsfi);
 					break;
-				case TMakeFour("SECC"):
+				case TFourCC("SECC"):
 					m_SECT.Read(ttsfi, true);
 					break;
-				case TMakeFour("RELC"):
+				case TFourCC("RELC"):
 					m_RELC.Read(ttsfi, m_SECT);
 					break;
-				case TMakeFour("SYMB"):
+				case TFourCC("SYMB"):
 					m_SYMB.Read(ttsfi, m_SECT);
 					break;
 				}
@@ -663,13 +663,13 @@ private:
 	PTRBSymbols m_SYMB;
 };
 
-inline PTRBHeader::PTRBHeader(TVersion version)
+inline PTRBHeader::PTRBHeader(Toshi::TVersion version)
 {
 	m_Header.m_ui32Version = version;
 	m_Header.m_i32SectionCount = 0;
 }
 
-inline void PTRBHeader::SetVersion(TVersion version)
+inline void PTRBHeader::SetVersion(Toshi::TVersion version)
 {
 	m_Header.m_ui32Version = version;
 }

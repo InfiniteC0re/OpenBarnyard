@@ -29,7 +29,7 @@ namespace Toshi {
 			TUINT32 Value32;
 		};
 
-		__forceinline constexpr TColor() { }
+		TColor() = default;
 
 		__forceinline constexpr TColor(TUINT32 a_uiColor) :
 			Value32(a_uiColor) { }

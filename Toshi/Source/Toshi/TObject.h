@@ -194,7 +194,7 @@ namespace Toshi {
 }
 
 //-----------------------------------------------------------------------------
-// Casts TObject to the specified TClass
+// Safely casts TObject to the specified TClass
 //-----------------------------------------------------------------------------
 template <class T>
 TFORCEINLINE T* TCastClass(Toshi::TObject* a_pObject)

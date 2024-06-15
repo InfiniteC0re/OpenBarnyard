@@ -11,16 +11,16 @@ namespace Toshi {
 		TString16(TString16&& src, T2Allocator* allocator = TNULL) noexcept;
 		TString16(const TString16& src, T2Allocator* allocator = TNULL);
 		TString16(const TWCHAR* src, T2Allocator* allocator = TNULL);
-		TString16(TUINT32 size, T2Allocator* allocator = TNULL);
+		TString16(TINT size, T2Allocator* allocator = TNULL);
 		~TString16() { FreeBuffer(); }
 
-		void Copy(const TString16& src, TUINT32 size = -1) { Copy(src.m_pBuffer, size); }
-		void Copy(const TWCHAR* src, TUINT32 size = -1);
+		void Copy(const TString16& src, TINT size = -1) { Copy(src.m_pBuffer, size); }
+		void Copy(const TWCHAR* src, TINT size = -1);
 
 		void FreeBuffer();
 
 		// Returns TTRUE if allocated memory
-		TBOOL AllocBuffer(TUINT32 size, TBOOL freeMemory = TTRUE);
+		TBOOL AllocBuffer(TINT size, TBOOL freeMemory = TTRUE);
 
 		static TString16 Format(const TWCHAR* a_pcFormat, ...);
 		TString16& VFormat(const TWCHAR* a_pcFormat, va_list a_vargs);
@@ -30,35 +30,35 @@ namespace Toshi {
 
 		TINT FindReverse(TWCHAR a_findChar, TINT pos) const;
 
-		void Truncate(TUINT32 length);
+		void Truncate(TINT length);
 
 		// Returns position of specified character
-		TINT Find(TWCHAR character, TUINT32 pos = 0) const;
+		TINT Find(TWCHAR character, TINT pos = 0) const;
 
 		// Returns position of specified substring
-		TINT Find(const TWCHAR* substr, TUINT32 pos = 0) const;
+		TINT Find(const TWCHAR* substr, TINT pos = 0) const;
 
 		// Returns string starting from specified index
-		const TWCHAR* GetString(TUINT32 index = 0) const;
+		const TWCHAR* GetString(TINT index = 0) const;
 
-		TString16& Concat(const TString16& str, TUINT32 size = -1) { return Concat(str.m_pBuffer, size); };
-		TString16& Concat(const TWCHAR* src, TUINT32 size = -1);
+		TString16& Concat(const TString16& str, TINT size = -1) { return Concat(str.m_pBuffer, size); };
+		TString16& Concat(const TWCHAR* src, TINT size = -1);
 
 		TINT Compare(const TWCHAR*, TINT) const;
 		TINT CompareNoCase(const TWCHAR*, TINT) const;
 
-		TString16 Mid(TUINT32 param_1, TUINT32 param_2) const;
+		TString16 Mid(TINT param_1, TINT param_2) const;
 		TString16 Right(TINT param_1) const { return Mid(param_1, Length() - param_1); }
 
 		TString16& MakeUpper() { _wcsupr(m_pBuffer); return *this; }
 		TString16& MakeLower() { _wcslwr(m_pBuffer); return *this; }
 
-		TUINT Length() const { return m_iStrLen; }
+		TINT Length() const { return m_iStrLen; }
 		TUINT ExcessLength() const { return m_iExcessLen; }
 
 		TBOOL IsAllLowerCase() const;
 		TBOOL IsAllUpperCase() const;
-		TBOOL IsIndexValid(TUINT32 index) const { return index >= 0 && index <= Length(); }
+		TBOOL IsIndexValid(TINT index) const { return index >= 0 && index <= Length(); }
 		TBOOL IsEmpty() const { return m_iStrLen == 0; }
 		TBOOL IsUnicode() const { return TFALSE; } // Who would have known?
 
@@ -110,7 +110,7 @@ namespace Toshi {
 	private:
 		TWCHAR* m_pBuffer = NullWString; // 0x0
 		TUINT32 m_iExcessLen : 8 = 0;    // 0x4
-		TUINT32 m_iStrLen : 24 = 0;      // 0x5
+		TINT32 m_iStrLen : 24 = 0;       // 0x5
 		T2Allocator* m_pAllocator;       // 0x8
 	};
 

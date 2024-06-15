@@ -18,7 +18,7 @@ public:
 		TUINT8 G;
 		TUINT8 B;
 
-		constexpr Color() { }
+		constexpr Color() = default;
 
 		constexpr Color(TUINT8 a_uiA, TUINT8 a_uiR, TUINT8 a_uiG, TUINT8 a_uiB) :
 			A(a_uiA), R(a_uiR), G(a_uiG), B(a_uiB) { }

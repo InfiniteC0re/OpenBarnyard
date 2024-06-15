@@ -18,12 +18,12 @@ void ADisplayModes_Win::Initialise()
 	auto pRenderer = TSTATICCAST(TRenderD3DInterface, TRenderInterface::GetSingleton());
 	auto pAdapterList = pRenderer->GetAdapterList();
 
-	for (auto pAdapter = pAdapterList->Begin(); pAdapter != pAdapterList->End(); pAdapter++)
+	T2_FOREACH(*pAdapterList, pAdapter)
 	{
 		auto uiNumSupportedDevices = pAdapter->GetNumSupportedDevices();
 		auto pModeList = pAdapter->GetModeList();
 
-		for (auto pMode = pModeList->Begin(); pMode != pModeList->End(); pMode++)
+		T2_FOREACH(*pModeList, pMode)
 		{
 			for (TUINT32 i = 0; i < uiNumSupportedDevices; i++)
 			{
@@ -77,7 +77,7 @@ void ADisplayModes_Win::Initialise()
 
 TBOOL ADisplayModes_Win::IsModeExists(const TUINT32& a_rWidth, const TUINT32& a_rHeight, const TUINT32& a_rColourDepth)
 {
-	for (auto it = m_Modes.Begin(); it != m_Modes.End(); it++)
+	T2_FOREACH(m_Modes, it)
 	{
 		if (it->m_uiWidth == a_rWidth && it->m_uiHeight == a_rHeight && it->m_uiColourDepth == a_rColourDepth)
 		{

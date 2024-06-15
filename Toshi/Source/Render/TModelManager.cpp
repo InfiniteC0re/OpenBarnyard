@@ -79,7 +79,7 @@ namespace Toshi {
 
 		auto crc32 = TUtil::CRC32(TREINTERPRETCAST(TBYTE*, filepath), iFileNameLen);
 
-		for (auto it = ms_oUsedList.Begin(); it != ms_oUsedList.End(); it++)
+		for (auto it = ms_oUsedList.Begin(); it != ms_oUsedList.End(); ++it)
 		{
 			if (it->GetCRC32() == crc32)
 			{

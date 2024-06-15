@@ -9,7 +9,7 @@ namespace Toshi
 	class T2String8
 	{
 	public:
-		static constexpr size_t SCRATCH_MEM_SIZE = 2048;
+		static constexpr TSIZE SCRATCH_MEM_SIZE = 2048;
 
 	public:
 		static TINT FormatV(TCHAR* a_pcString, TINT size, const TCHAR* a_pcFormat, va_list args);
@@ -18,19 +18,19 @@ namespace Toshi
 		static TINT Format(TCHAR* a_pcString, TINT size, const TCHAR* a_pcFormat, ...);
 		static TINT Format(TCHAR* a_pcString, const TCHAR* a_pcFormat, ...);
 
-		static TINT Compare(const TCHAR* str1, const TCHAR* str2, size_t size);
-		static TINT CompareNoCase(const TCHAR* str1, const TCHAR* str2, size_t size = -1);
+		static TINT Compare(const TCHAR* str1, const TCHAR* str2, TSIZE size);
+		static TINT CompareNoCase(const TCHAR* str1, const TCHAR* str2, TSIZE size = -1);
 
-		static TCHAR* Copy(TCHAR* dst, const TCHAR* src, size_t size = -1);
-		static TCHAR* CopySafe(TCHAR* dst, const TCHAR* src, size_t size);
+		static TCHAR* Copy(TCHAR* dst, const TCHAR* src, TSIZE size = -1);
+		static TCHAR* CopySafe(TCHAR* dst, const TCHAR* src, TSIZE size);
 
-		static TCHAR* Concat(TCHAR* dst, const TCHAR* src, size_t size = -1);
+		static TCHAR* Concat(TCHAR* dst, const TCHAR* src, TSIZE size = -1);
 
 		static TCHAR* FindChar(TCHAR* str, TCHAR character);
 		static const TCHAR* FindChar(const TCHAR* str, TCHAR character);
 		static const TCHAR* FindString(const TCHAR* str, const TCHAR* substr);
 
-		static size_t Length(const TCHAR* str);
+		static TSIZE Length(const TCHAR* str);
 
 		static TBOOL IsLowerCase(const TCHAR* str);
 		static TBOOL IsUpperCase(const TCHAR* str);

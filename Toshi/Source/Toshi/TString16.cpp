@@ -36,7 +36,7 @@ namespace Toshi {
 		Copy(src, -1);
 	}
 
-	TString16::TString16(TUINT32 size, T2Allocator* allocator)
+	TString16::TString16(TINT size, T2Allocator* allocator)
 	{
 		Reset();
 		m_pAllocator = allocator == TNULL ? GetAllocator() : allocator;
@@ -50,16 +50,16 @@ namespace Toshi {
 		Copy(src);
 	}
 
-	void TString16::Copy(const TWCHAR* src, TUINT32 size)
+	void TString16::Copy(const TWCHAR* src, TINT size)
 	{
 		if (src != m_pBuffer)
 		{
-			TUINT32 srcLen = src ? TStringManager::String16Length(src) : 0;
+			TINT srcLen = src ? (TINT)TStringManager::String16Length(src) : 0;
 			TASSERT(srcLen <= 0xFFFFFF, "Too big string");
 
 			if (srcLen < size || size == -1)
 			{
-				size = (TUINT32)srcLen;
+				size = srcLen;
 			}
 
 			AllocBuffer(size, TTRUE);
@@ -69,7 +69,7 @@ namespace Toshi {
 		}
 	}
 
-	TINT TString16::Find(TWCHAR character, TUINT32 pos) const
+	TINT TString16::Find(TWCHAR character, TINT pos) const
 	{
 		if (!IsIndexValid(pos)) return -1;
 
@@ -79,7 +79,7 @@ namespace Toshi {
 		return (TINT)(foundAt - m_pBuffer);
 	}
 
-	TINT TString16::Find(const TWCHAR* substr, TUINT32 pos) const
+	TINT TString16::Find(const TWCHAR* substr, TINT pos) const
 	{
 		if (!IsIndexValid(pos)) return -1;
 
@@ -89,10 +89,10 @@ namespace Toshi {
 		return (TINT)(foundAt - m_pBuffer);
 	}
 
-	TBOOL TString16::AllocBuffer(TUINT32 a_iLength, TBOOL freeMemory)
+	TBOOL TString16::AllocBuffer(TINT a_iLength, TBOOL freeMemory)
 	{
 		TBOOL hasChanged = TFALSE;
-		TUINT32 currentLength = Length();
+		TINT currentLength = Length();
 
 		TASSERT(a_iLength >= 0, "Length can't be less than 0");
 		TASSERT(a_iLength <= 0xFFFFFF, "Too big string");
@@ -203,7 +203,7 @@ namespace Toshi {
 		return -1;
 	}
 
-	void TString16::Truncate(TUINT32 length)
+	void TString16::Truncate(TINT length)
 	{
 		if (Length() < length)
 		{
@@ -232,23 +232,23 @@ namespace Toshi {
 		Reset();
 	}
 
-	const TWCHAR* TString16::GetString(TUINT32 a_iIndex) const
+	const TWCHAR* TString16::GetString(TINT a_iIndex) const
 	{
-		TASSERT(a_iIndex >= 0 && a_iIndex <= (TINT)m_iStrLen);
+		TASSERT(a_iIndex >= 0 && a_iIndex <= m_iStrLen);
 		if (IsIndexValid(a_iIndex)) { return &m_pBuffer[a_iIndex]; }
 		return TNULL;
 	}
 
-	TString16& TString16::Concat(const TWCHAR* str, TUINT32 size)
+	TString16& TString16::Concat(const TWCHAR* str, TINT size)
 	{
-		TUINT32 len = TStringManager::String16Length(str);
+		TINT len = (TINT)TStringManager::String16Length(str);
 
 		if ((len < size) || (size == -1))
 		{
 			size = len;
 		}
 
-		TUINT32 oldLength = m_iStrLen;
+		TINT oldLength = m_iStrLen;
 		TWCHAR* oldString = m_pBuffer;
 
 		TBOOL allocated = AllocBuffer(m_iStrLen + size, TFALSE);
@@ -323,7 +323,7 @@ namespace Toshi {
 		return _wcsnicmp(GetString(), a_pcString, param_2);
 	}
 
-	TString16 TString16::Mid(TUINT32 param_1, TUINT32 param_2) const
+	TString16 TString16::Mid(TINT param_1, TINT param_2) const
 	{
 		if (param_2 < 0)
 		{

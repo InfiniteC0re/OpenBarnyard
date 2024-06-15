@@ -2,16 +2,16 @@
 #include <type_traits>
 
 #define T2_FOREACH(vecName, iteratorName) \
-    for (auto iteratorName = vecName.Begin(); iteratorName != vecName.End(); iteratorName++)
+    for (auto iteratorName = (vecName).Begin(); iteratorName != (vecName).End(); ++iteratorName)
 
 #define T2_FOREACH_BACK(vecName, iteratorName) \
-	for (auto iteratorName = vecName.Tail(); iteratorName != vecName.End(); iteratorName--)
+	for (auto iteratorName = (vecName).Tail(); iteratorName != (vecName).End(); --iteratorName)
 
 #define T2_FOREACH_ARRAY(arrName, iteratorName) \
-    for (TINT iteratorName = 0; iteratorName < TARRAYSIZE(arrName); iteratorName++)
+    for (TINT iteratorName = 0; iteratorName < TARRAYSIZE(arrName); ++iteratorName)
 
 #define T2_FOREACH_ARRAY_BACK(arrName, iteratorName) \
-	for (TINT iteratorName = TARRAYSIZE(arrName) - 1; iteratorName >= 0; iteratorName--)
+	for (TINT iteratorName = TARRAYSIZE(arrName) - 1; iteratorName >= 0; --iteratorName)
 
 #define T2_DEFINE_ITERATOR_FRIEND() \
 	template<class T, class Node> friend class Toshi::T2Iterator
@@ -40,6 +40,11 @@ namespace Toshi {
 		T2Iterator(T* pPtr)
 		{
 			m_pPtr = pPtr;
+		}
+
+		T2Iterator(const T2Iterator& other)
+		{
+			m_pPtr = other.m_pPtr;
 		}
 
 		void operator=(const T2Iterator& other)

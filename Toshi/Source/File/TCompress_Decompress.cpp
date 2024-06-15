@@ -13,7 +13,7 @@ namespace Toshi
 	{
 		TPROFILER_SCOPE();
 
-		if (header->Magic != TMakeFour("BTEC"))
+		if (header->Magic != TFourCC("BTEC"))
 			return TCOMPRESS_ERROR_WRONG_MAGIC;
 		if (header->Version != TVERSION(1, 2) && header->Version != TVERSION(1, 3))
 			return TCOMPRESS_ERROR_WRONG_VERSION;
@@ -84,7 +84,7 @@ namespace Toshi
 			return TCOMPRESS_ERROR_WRONG_HEADERSIZE;
 		}
 
-		if (btecHeader.Magic != TMakeFour("BTEC"))
+		if (btecHeader.Magic != TFourCC("BTEC"))
 		{
 			file->Seek(savedPos, TSEEK_SET);
 			return TCOMPRESS_ERROR_WRONG_MAGIC;

@@ -69,7 +69,7 @@ namespace Toshi {
 
 	public:
 		TRenderContext(TRenderInterface* pRender);
-		~TRenderContext();
+		virtual ~TRenderContext();
 
 		//-----------------------------------------------------------------------------
 		// Own methods
@@ -126,8 +126,8 @@ namespace Toshi {
 
 		const TVector4& GetAmbientColour() const { return m_AmbientColor; }
 
-		static void ComputePerspectiveProjection(TMatrix44& a_rOutProjection, const VIEWPORTPARAMS& a_rViewportParams, const PROJECTIONPARAMS a_rProjParams);
-		static void ComputeOrthographicProjection(TMatrix44& a_rOutProjection, const VIEWPORTPARAMS& a_rViewportParams, const PROJECTIONPARAMS a_rProjParams);
+		static void ComputePerspectiveProjection(TMatrix44& a_rOutProjection, const VIEWPORTPARAMS& a_rViewportParams, const PROJECTIONPARAMS& a_rProjParams);
+		static void ComputeOrthographicProjection(TMatrix44& a_rOutProjection, const VIEWPORTPARAMS& a_rViewportParams, const PROJECTIONPARAMS& a_rProjParams);
 
 		static TBOOL CullSphereToFrustumSimple(const TSphere& a_rSphere, const TPlane* a_pPlanes, TINT a_iNumPlanes);
 		static TINT CullSphereToFrustum(const TSphere& a_rSphere, const TPlane* a_pPlanes, TINT a_iClipFlags, TINT a_iClipFlagsMask);

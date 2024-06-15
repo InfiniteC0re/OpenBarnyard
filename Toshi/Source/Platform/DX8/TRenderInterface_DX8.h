@@ -85,10 +85,10 @@ namespace Toshi {
 
 		void Exit() { m_bExited = TTRUE; }
 
-		TMSWindow* GetWindow() { return &m_Window; }
-		TPriList<TOrderTable>& GetOrderTables() { return m_OrderTables; }
-		IDirect3D8* GetDirect3D() const { return m_pDirect3D; }
-		IDirect3DDevice8* GetDirect3DDevice() const { return m_pDirectDevice; }
+		TFORCEINLINE TMSWindow* GetWindow() { return &m_Window; }
+		TFORCEINLINE TPriList<TOrderTable>& GetOrderTables() { return m_OrderTables; }
+		TFORCEINLINE IDirect3D8* GetDirect3D() const { return m_pDirect3D; }
+		TFORCEINLINE IDirect3DDevice8* GetDirect3DDevice() const { return m_pDirectDevice; }
 
 	public:
 		// Flushes all order tables and shaders
@@ -106,7 +106,7 @@ namespace Toshi {
 		static const TCHAR* GetErrorString(TINT32 a_eError);
 		static const TCHAR* GetErrorDescription(TINT32 a_eError);
 
-		static TRenderD3DInterface* Interface()
+		static TFORCEINLINE TRenderD3DInterface* Interface()
 		{
 			return TSTATICCAST(TRenderD3DInterface, TRenderInterface::GetSingleton());
 		}

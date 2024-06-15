@@ -61,14 +61,14 @@ namespace Toshi {
 		
 		static const TCHAR* GetTime();
 
-		static void  MemSet(void* ptr, size_t value, size_t size) { std::memset(ptr, value, size); }
-		static void* MemCopy(void* dst, const void* src, size_t size) { return std::memcpy(dst, src, size); }
-		static void  MemClear(void* ptr, size_t size) { std::memset(ptr, 0, size); }
-		static TINT  MemCompare(void* ptr1, void* ptr2, TINT size) { return std::memcmp(ptr1, ptr2, size); }
+		static void  MemSet(void* ptr, TSIZE value, TSIZE size) { std::memset(ptr, value, size); }
+		static void* MemCopy(void* dst, const void* src, TSIZE size) { return std::memcpy(dst, src, size); }
+		static void  MemClear(void* ptr, TSIZE size) { std::memset(ptr, 0, size); }
+		static TINT  MemCompare(const void* ptr1, const void* ptr2, TSIZE size) { return std::memcmp(ptr1, ptr2, size); }
 
 		static void Log(const TCHAR* a_szFormat, ...);
 		static void Log(TLogFile::Type a_eLogType, const TCHAR* a_szFormat, ...);
-		static void TrimLog(const TCHAR* fileExtension, size_t trimTo);
+		static void TrimLog(const TCHAR* fileExtension, TSIZE trimTo);
 
 		static void LogDown() { TUtil::GetSingletonSafe()->m_pCurrentLogFile->Down(); }
 		static void LogUp() { TUtil::GetSingletonSafe()->m_pCurrentLogFile->Up(); }

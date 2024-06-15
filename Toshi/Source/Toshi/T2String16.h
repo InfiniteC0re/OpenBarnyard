@@ -15,16 +15,16 @@ namespace Toshi
 		static TINT FormatV(TWCHAR* a_pcString, TINT size, const TWCHAR* a_pcFormat, va_list args);
 		static TINT FormatV(TWCHAR* a_pcString, const TWCHAR* a_pcFormat, va_list args);
 
-		static TINT Compare(const TWCHAR* str1, const TWCHAR* str2, size_t size);
-		static TINT CompareNoCase(const TWCHAR* str1, const TWCHAR* str2, size_t size);
+		static TINT Compare(const TWCHAR* str1, const TWCHAR* str2, TSIZE size);
+		static TINT CompareNoCase(const TWCHAR* str1, const TWCHAR* str2, TSIZE size);
 
-		static TWCHAR* Copy(TWCHAR* dst, const TWCHAR* src, size_t size = -1);
-		static TWCHAR* CopySafe(TWCHAR* dst, const TWCHAR* src, size_t size);
+		static TWCHAR* Copy(TWCHAR* dst, const TWCHAR* src, TSIZE size = -1);
+		static TWCHAR* CopySafe(TWCHAR* dst, const TWCHAR* src, TSIZE size);
 
 		static const TWCHAR* FindChar(const TWCHAR* str, TWCHAR character);
 		static const TWCHAR* FindString(const TWCHAR* str, TWCHAR* substr);
 
-		static size_t Length(const TWCHAR* str);
+		static TSIZE Length(const TWCHAR* str);
 
 		static T2Allocator* GetDefaultAllocatorCB()
 		{

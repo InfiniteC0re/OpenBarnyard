@@ -63,9 +63,9 @@ namespace Toshi {
 
 	TUINT32 TTSFI::PushForm()
 	{
-		if (m_CurrentHunk.Name != TMakeFour("FORM") &&
-			m_CurrentHunk.Name != TMakeFour("TSFL") &&
-			m_CurrentHunk.Name != TMakeFour("TSFB"))
+		if (m_CurrentHunk.Name != TFourCC("FORM") &&
+			m_CurrentHunk.Name != TFourCC("TSFL") &&
+			m_CurrentHunk.Name != TFourCC("TSFB"))
 		{
 			return TTRB::ERROR_WRONG_MAGIC;
 		}
@@ -124,7 +124,7 @@ namespace Toshi {
 	TUINT8 TTSFI::ReadFORM(TFORM* section)
 	{
 		// FUN_00688120
-		if (m_CurrentHunk.Name != TMakeFour("FORM"))
+		if (m_CurrentHunk.Name != TFourCC("FORM"))
 		{
 			return TTRB::ERROR_WRONG_MAGIC;
 		}
@@ -136,7 +136,7 @@ namespace Toshi {
 
 	TUINT8 TTSFI::ReadHunkData(void* dst)
 	{
-		if (m_CurrentHunk.Name == TMakeFour("FORM"))
+		if (m_CurrentHunk.Name == TFourCC("FORM"))
 		{
 			return TTRB::ERROR_FORM_MAGIC;
 		}
@@ -176,16 +176,6 @@ namespace Toshi {
 		}
 	}
 
-	void TTSFI::LogUnknownSection()
-	{
-#ifdef TOSHI_DEBUG
-		TCHAR charName[sizeof(m_CurrentHunk.Name) + 1] = {};
-		*charName = m_CurrentHunk.Name;
-
-		TERROR("Unknown TRB section: %s\n", charName);
-#endif
-	}
-
 	TTSFI::TTSFI()
 	{
 		m_pFile = TNULL;
@@ -204,12 +194,12 @@ namespace Toshi {
 
 		if (m_pFile != TNULL)
 		{
-			TTSF::Hunk hunk{ TMakeFour("TSFL"), 0 };
-			TUINT32 magicValue = TMakeFour(magic);
+			TTSF::Hunk hunk{ TFourCC("TSFL"), 0 };
+			TUINT32 magicValue = TFourCC(magic);
 
 			if (endianess == Endianess_Big)
 			{
-				hunk.Name = TMakeFour("TSFB");
+				hunk.Name = TFourCC("TSFB");
 				hunk.Size = PARSEDWORD_BIG(hunk.Size);
 			}
 
@@ -242,8 +232,8 @@ namespace Toshi {
 	{
 		TASSERT(m_pFile != TNULL, "TTSFO is not created");
 
-		TTSF::Hunk hunk{ TMakeFour("FORM"), 0 };
-		auto nameValue = TMakeFour(name);
+		TTSF::Hunk hunk{ TFourCC("FORM"), 0 };
+		auto nameValue = TFourCC(name);
 
 		if (m_Endianess == Endianess_Big)
 		{
@@ -288,7 +278,7 @@ namespace Toshi {
 	TBOOL TTSFO::OpenHunk(HunkMark* hunkMark, const TCHAR* hunkName)
 	{
 		TASSERT(hunkMark != TNULL, "HunkMark is TNULL");
-		hunkMark->Name = TMakeFour(hunkName);
+		hunkMark->Name = TFourCC(hunkName);
 		hunkMark->Pos = m_pFile->Tell();
 
 		WriteHunk(hunkMark->Name, TNULL, 0);

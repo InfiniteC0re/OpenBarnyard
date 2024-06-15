@@ -85,10 +85,7 @@ namespace Toshi {
 		};
 
 	public:
-		T2GenericDList()
-		{
-			
-		}
+		T2GenericDList() = default;
 		
 		~T2GenericDList()
 		{

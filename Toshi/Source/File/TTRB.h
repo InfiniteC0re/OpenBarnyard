@@ -3,6 +3,8 @@
 #define __TOSHI_TTRB_H__
 #endif
 
+#include "Toshi/TVersion.h"
+
 #include "File/TFile.h"
 #include "File/TCompress.h"
 
@@ -25,10 +27,10 @@ namespace Toshi {
 	class TTSF
 	{
 	public:
-		static constexpr TUINT32 IDMAGICB = TMakeFour("TSFB");
-		static constexpr TUINT32 IDMAGICL = TMakeFour("TSFL");
+		static constexpr TUINT32 IDMAGICB = TFourCC("TSFB");
+		static constexpr TUINT32 IDMAGICL = TFourCC("TSFL");
 
-		typedef uint8_t Endianess;
+		typedef TUINT8 Endianess;
 		enum Endianess_ : Endianess
 		{
 			Endianess_Little,
@@ -70,19 +72,7 @@ namespace Toshi {
 		TTSFI();
 		~TTSFI() { Close(); }
 
-		TUINT32 ReadAlignmentPad()
-		{
-			TASSERT(m_pFile != TNULL, "File is TNULL");
-			static TCHAR s_AlignBuffer[4] = { 0, 0, 0, 0 };
-			uint8_t alignValue = 4 - (m_pFile->Tell() & 3);
-
-			if (alignValue != 4)
-			{
-				return m_pFile->Read(s_AlignBuffer, alignValue);
-			}
-
-			return 0;
-		}
+		TUINT32 ReadAlignmentPad();
 
 		TUINT32 Open(TFile* a_pFile);
 		TUINT32 Open(const TCHAR* a_szFilePath);
@@ -90,18 +80,11 @@ namespace Toshi {
 		TUINT32 PushForm();
 		TUINT32 PopForm();
 
-		template<class T>
-		void Read(T* dst)
-		{
-			m_ReadPos += m_pFile->Read(dst, sizeof(T));
-		}
+		void ReadRaw(void* dst, TUINT32 size);
 
-		void ReadRaw(void* dst, TUINT32 size)
-		{
-			m_ReadPos += m_pFile->Read(dst, size);
-		}
+		template<class T> void Read(T* a_pDst) { m_ReadPos += m_pFile->Read(a_pDst, sizeof(T)); }
+		template<class T> void Read(T* a_pDst, TUINT a_uiCount) { m_ReadPos += m_pFile->Read(a_pDst, a_uiCount * sizeof(T)); }
 
-		// Sections related stuff
 		TUINT8 ReadHunk();
 		TUINT8 SkipHunk();
 		TUINT8 ReadFORM(TFORM* section);
@@ -112,9 +95,7 @@ namespace Toshi {
 		void ReadCompressed(void* buffer, TUINT32 size);
 		void CompressSection(TFile* file, TCHAR* unk, TUINT32 unk2, TUINT32 unk3) { TCompress::Compress(file, unk, unk2, unk3, m_Endianess); }
 
-		void LogUnknownSection();
-
-		const Hunk& GetCurrentHunk() { return m_CurrentHunk; }
+		const Hunk& GetCurrentHunk() const { return m_CurrentHunk; }
 
 	private:
 		TUINT32 m_FileInfoCount; // 0x8
@@ -129,7 +110,7 @@ namespace Toshi {
 	class TTSFO : public TTSF
 	{
 	public:
-		typedef uint8_t ERROR;
+		typedef TUINT8 ERROR;
 		enum ERROR_ : ERROR
 		{
 			ERROR_OK,
@@ -156,7 +137,7 @@ namespace Toshi {
 		{
 			TASSERT(m_pFile != TNULL, "TTSFO is not created");
 			static TCHAR s_AlignBuffer[4] = { 0, 0, 0, 0 };
-			uint8_t alignValue = 4 - (m_pFile->Tell() & 3);
+			TUINT8 alignValue = 4 - (m_pFile->Tell() & 3);
 
 			if (alignValue != 4)
 			{
@@ -246,9 +227,9 @@ namespace Toshi {
 
 		void WriteBool(TBOOL value) { Write(value); }
 		void WriteInt8(int8_t value) { Write(value); }
-		void WriteUInt8(uint8_t value) { Write(value); }
+		void WriteUInt8(TUINT8 value) { Write(value); }
 		void WriteUInt16(TUINT16 value) { Write(value); }
-		void WriteInt32(int32_t value) { Write(value); }
+		void WriteInt32(TINT32 value) { Write(value); }
 		void WriteUInt32(TUINT32 value) { Write(value); }
 		void WriteFloat(float value) { Write(value); }
 		void WriteVector3(TVector3& value) { Write(value); }
@@ -263,7 +244,7 @@ namespace Toshi {
 	class TTRB
 	{
 	public:
-		typedef uint8_t ERROR;
+		typedef TUINT8 ERROR;
 		enum ERROR_ : ERROR
 		{
 			ERROR_OK                   = 0,
@@ -277,7 +258,7 @@ namespace Toshi {
 			ERROR_NO_FILEINFO_ON_STACK = 8,
 		};
 
-		typedef uint8_t AllocType;
+		typedef TUINT8 AllocType;
 		enum AllocType_ : AllocType
 		{
 			AllocType_Unk0 = 0,
@@ -300,7 +281,7 @@ namespace Toshi {
 		struct Header
 		{
 			TVersion m_ui32Version;
-			int32_t m_i32SectionCount;
+			TINT32 m_i32SectionCount;
 		};
 
 		struct RELCEntry
@@ -321,7 +302,7 @@ namespace Toshi {
 
 		struct SYMB
 		{
-			int32_t m_i32SymbCount;
+			TINT32 m_i32SymbCount;
 		};
 
 	public:

@@ -11,14 +11,14 @@ TOSHI_NAMESPACE_USING
 
 TDEFINE_CLASS(AModelInstance);
 
-AModel::AModel(const TPString8& a_rName, TTRB* a_pTRB)
+AModel::AModel(const TPString8& a_rName, TTRB* a_pTRB) :
+	m_Name(a_rName),
+	m_uiID(ms_uiNumCreated),
+	m_pModelPtr(TNULL),
+	m_uiNumModelInstances(0),
+	m_Vec1(TVector3::VEC_ZERO),
+	m_Vec2(TVector3::VEC_ZERO)
 {
-	m_uiID = ms_uiNumCreated;
-	m_pModelPtr = TNULL;
-	m_Name = a_rName;
-	m_uiNumModelInstances = 0;
-	m_Vec1 = TVector3::VEC_ZERO;
-	m_Vec2 = TVector3::VEC_ZERO;
 	m_pModelPtr = AModel::Create(a_rName, a_pTRB);
 
 	ms_uiNumCreated += 1;
@@ -130,8 +130,8 @@ void AModel::GetNameFromPath(const TPString8& a_FilePath, TString8& a_rName)
 	}
 	else
 	{
-		TUINT iPos1 = 0;
-		TUINT iPos2;
+		TINT iPos1 = 0;
+		TINT iPos2;
 
 		do {
 			iPos2 = iPos1;

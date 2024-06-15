@@ -48,13 +48,13 @@ namespace Toshi {
 		return iResult;
 	}
 
-	TINT T2String16::Compare(const TWCHAR* str1, const TWCHAR* str2, size_t size)
+	TINT T2String16::Compare(const TWCHAR* str1, const TWCHAR* str2, TSIZE size)
 	{
 		if (size != -1) return wcsncmp(str1, str2, size);
 		return wcscmp(str1, str2);
 	}
 
-	TINT T2String16::CompareNoCase(const TWCHAR* str1, const TWCHAR* str2, size_t size)
+	TINT T2String16::CompareNoCase(const TWCHAR* str1, const TWCHAR* str2, TSIZE size)
 	{
 		if (size != -1) {
 			return _wcsnicmp(str1, str2, size);
@@ -63,15 +63,15 @@ namespace Toshi {
 		return _wcsicmp(str1, str2);
 	}
 
-	TWCHAR* T2String16::Copy(TWCHAR* dst, const TWCHAR* src, size_t size)
+	TWCHAR* T2String16::Copy(TWCHAR* dst, const TWCHAR* src, TSIZE size)
 	{
 		if (size != -1) return wcsncpy(dst, src, size);
 		return wcscpy(dst, src);
 	}
 
-	TWCHAR* T2String16::CopySafe(TWCHAR* dst, const TWCHAR* src, size_t size)
+	TWCHAR* T2String16::CopySafe(TWCHAR* dst, const TWCHAR* src, TSIZE size)
 	{
-		size_t srcLen = Length(src);
+		TSIZE srcLen = Length(src);
 		size = TMath::Min(size - 1, srcLen);
 		wcsncpy(dst, src, size);
 		dst[size] = L'\x0000';
@@ -95,7 +95,7 @@ namespace Toshi {
 		return wcsstr(str, substr);
 	}
 
-	size_t T2String16::Length(const TWCHAR* str)
+	TSIZE T2String16::Length(const TWCHAR* str)
 	{
 		if (str != TNULL) return wcslen(str);
 		return -1;

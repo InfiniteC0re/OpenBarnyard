@@ -27,7 +27,7 @@ namespace Toshi {
 	{
 		m_Prefix = a_rcPrefix;
 
-		for (TUINT32 i = 0; i < m_Prefix.Length(); i++)
+		for (TINT32 i = 0; i < m_Prefix.Length(); i++)
 		{
 			if (m_Prefix[i] == '/')
 			{

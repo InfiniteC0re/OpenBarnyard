@@ -47,8 +47,8 @@ namespace Toshi {
 		TKeyframeLibrary* pLibrary = new TKeyframeLibrary;
 		TRBHeader* pTRBHeader = TSTATICCAST(TRBHeader, a_pTRB->GetSymbolAddress(a_szSymbolName));
 
-		auto iNameLen = TStringManager::String8Length(pTRBHeader->m_szName);
-		pLibrary->m_iNameLength = iNameLen;
+		TSIZE iNameLen = TStringManager::String8Length(pTRBHeader->m_szName);
+		pLibrary->m_iNameLength = TUINT8(iNameLen);
 		
 		TStringManager::String8Copy(pLibrary->m_szName, pTRBHeader->m_szName, TMath::Min(iNameLen, sizeof(pLibrary->m_szName)));
 		pLibrary->m_iReferenceCount = 0;

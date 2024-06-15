@@ -361,27 +361,33 @@ public:
 
 	PBPropertyValueArray& operator=(const PBPropertyValueArray& other)
 	{
-		Delete();
-
-		if (other.m_iSize != 0)
+		if (this != &other)
 		{
-			m_pValues = new PBPropertyValue[other.m_iSize];
+			Delete();
 
-			for (size_t i = 0; i < other.m_iSize; i++)
-				m_pValues[i] = other.m_pValues[i];
+			if (other.m_iSize != 0)
+			{
+				m_pValues = new PBPropertyValue[other.m_iSize];
 
-			m_iSize = other.m_iSize;
+				for (size_t i = 0; i < other.m_iSize; i++)
+					m_pValues[i] = other.m_pValues[i];
+
+				m_iSize = other.m_iSize;
+			}
 		}
 	}
 
 	PBPropertyValueArray& operator=(PBPropertyValueArray&& other) noexcept
 	{
-		Delete();
+		if (this != &other)
+		{
+			Delete();
 
-		m_pValues = other.m_pValues;
-		m_iSize = other.m_iSize;
-		other.m_pValues = TNULL;
-		other.m_iSize = 0;
+			m_pValues = other.m_pValues;
+			m_iSize = other.m_iSize;
+			other.m_pValues = TNULL;
+			other.m_iSize = 0;
+		}
 	}
 
 private:

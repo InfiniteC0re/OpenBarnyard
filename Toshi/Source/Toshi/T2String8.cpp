@@ -53,13 +53,13 @@ namespace Toshi
 		return iResult;
 	}
 
-	TINT T2String8::Compare(const TCHAR* str1, const TCHAR* str2, size_t size)
+	TINT T2String8::Compare(const TCHAR* str1, const TCHAR* str2, TSIZE size)
 	{
 		if (size != -1) return strncmp(str1, str2, size);
 		return strcmp(str1, str2);
 	}
 
-	TINT T2String8::CompareNoCase(const TCHAR* str1, const TCHAR* str2, size_t size /*= -1*/)
+	TINT T2String8::CompareNoCase(const TCHAR* str1, const TCHAR* str2, TSIZE size /*= -1*/)
 	{
 		if (size != -1) {
 			return _strnicmp(str1, str2, size);
@@ -68,21 +68,21 @@ namespace Toshi
 		return _stricmp(str1, str2);
 	}
 
-	TCHAR* T2String8::Copy(TCHAR* dst, const TCHAR* src, size_t size /*= -1*/)
+	TCHAR* T2String8::Copy(TCHAR* dst, const TCHAR* src, TSIZE size /*= -1*/)
 	{
 		if (size != -1) return strncpy(dst, src, size);
 		return strcpy(dst, src);
 	}
 
-	TCHAR* T2String8::Concat(TCHAR* dst, const TCHAR* src, size_t size /*= -1*/)
+	TCHAR* T2String8::Concat(TCHAR* dst, const TCHAR* src, TSIZE size /*= -1*/)
 	{
 		if (size != -1) return strncat(dst, src, size);
 		return strcat(dst, src);
 	}
 
-	TCHAR* T2String8::CopySafe(TCHAR* dst, const TCHAR* src, size_t size)
+	TCHAR* T2String8::CopySafe(TCHAR* dst, const TCHAR* src, TSIZE size)
 	{
-		size_t srcLen = Length(src);
+		TSIZE srcLen = Length(src);
 		size = TMath::Min(size - 1, srcLen);
 		strncpy(dst, src, size);
 		dst[size] = L'\x0000';
@@ -118,7 +118,7 @@ namespace Toshi
 		return strstr(str, substr);
 	}
 
-	size_t T2String8::Length(const TCHAR* str)
+	TSIZE T2String8::Length(const TCHAR* str)
 	{
 		if (str != TNULL) return strlen(str);
 		return -1;

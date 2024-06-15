@@ -66,7 +66,7 @@ namespace Toshi {
 
 	TBOOL TInputDevice::StartRepeat(Doodad a_iDoodad, TFLOAT a_fFirstRepeatTime, TFLOAT a_fRepeatTime)
 	{
-		for (auto it = m_Repeats.Begin(); it.IsOver() == TFALSE; it++)
+		for (auto it = m_Repeats.Begin(); it.IsOver() == TFALSE; ++it)
 		{
 			if (it->iDoodad == a_iDoodad)
 			{
@@ -93,8 +93,8 @@ namespace Toshi {
 			TINT iIndex = 0;
 			while (it->iDoodad != a_iDoodad)
 			{
-				it++;
-				iIndex++;
+				++it;
+				++iIndex;
 				if (it.IsOver()) return;
 			}
 

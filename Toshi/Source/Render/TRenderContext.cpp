@@ -134,7 +134,7 @@ namespace Toshi {
 		m_eFlags = (m_eFlags & (~(FLAG_UNK3 | FLAG_UNK4 | FLAG_HAS_WORLDPLANES | FLAG_UNK6))) | FLAG_DIRTY;
 	}
 
-	void TRenderContext::ComputePerspectiveProjection(TMatrix44& a_rOutProjection, const VIEWPORTPARAMS& a_rViewportParams, const PROJECTIONPARAMS a_rProjParams)
+	void TRenderContext::ComputePerspectiveProjection(TMatrix44& a_rOutProjection, const VIEWPORTPARAMS& a_rViewportParams, const PROJECTIONPARAMS& a_rProjParams)
 	{
 		a_rOutProjection.m_f11 = (a_rProjParams.m_Proj.x * 2.0f) / a_rViewportParams.fWidth;
 		a_rOutProjection.m_f12 = 0.0f;
@@ -154,7 +154,7 @@ namespace Toshi {
 		a_rOutProjection.m_f44 = 0.0f;
 	}
 
-	void TRenderContext::ComputeOrthographicProjection(TMatrix44& a_rOutProjection, const VIEWPORTPARAMS& a_rViewportParams, const PROJECTIONPARAMS a_rProjParams)
+	void TRenderContext::ComputeOrthographicProjection(TMatrix44& a_rOutProjection, const VIEWPORTPARAMS& a_rViewportParams, const PROJECTIONPARAMS& a_rProjParams)
 	{
 		TASSERT(a_rProjParams.m_Proj.x != 0.0f);
 		TASSERT(a_rProjParams.m_Proj.y != 0.0f);

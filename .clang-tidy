@@ -1,0 +1,22 @@
+Checks: >
+  -*,
+  readability-identifier-naming
+
+CheckOptions:
+  readability-identifier-naming.ParameterPrefix: a_
+  readability-identifier-naming.ParameterCase: CamelCase
+  readability-identifier-naming.ParameterPackCase: On
+  readability-identifier-naming.ParameterHungarianPrefix: On
+  readability-identifier-naming.HungarianNotation.UserDefinedType.TUINT: ui
+  readability-identifier-naming.HungarianNotation.UserDefinedType.TUINT32: ui
+  readability-identifier-naming.HungarianNotation.UserDefinedType.TUINT16: ui16
+  readability-identifier-naming.HungarianNotation.UserDefinedType.TUINT8: ui8
+  readability-identifier-naming.HungarianNotation.UserDefinedType.TINT: i
+  readability-identifier-naming.HungarianNotation.UserDefinedType.TINT32: i
+  readability-identifier-naming.HungarianNotation.UserDefinedType.TINT16: i16
+  readability-identifier-naming.HungarianNotation.UserDefinedType.TINT8: i8
+  readability-identifier-naming.HungarianNotation.UserDefinedType.TCHAR: c
+  readability-identifier-naming.HungarianNotation.UserDefinedType.TWCHAR: wc
+  readability-identifier-naming.HungarianNotation.UserDefinedType.TBOOL: b
+  readability-identifier-naming.HungarianNotation.UserDefinedType.TFLOAT: f
+  

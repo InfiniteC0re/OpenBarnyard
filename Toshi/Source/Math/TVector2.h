@@ -5,7 +5,7 @@ namespace Toshi
 	class TVector2
 	{
 	public:
-		TVector2() { }
+		TVector2() = default;
 		TVector2(TFLOAT x, TFLOAT y) { Set(x, y); }
 		TVector2(TFLOAT coords[2]) { Set(coords[0], coords[1]); }
 		TVector2(const TVector2& other) { Set(other); }
@@ -91,7 +91,7 @@ namespace Toshi
 		TFLOAT Magnitude() const { return TMath::Sqrt(x * x + y * y); }
 		TFLOAT MagnitudeSq() const { return x * x + y * y; }
 
-		TBOOL IsEqual(const TVector2& vec) { return TMath::Abs(x - x) < 0.00001 && TMath::Abs(y - y) < 0.00001; }
+		TBOOL IsEqual(const TVector2& vec) { return TMath::Abs(x - vec.x) < 0.00001f && TMath::Abs(y - vec.y) < 0.00001f; }
 
 		TVector2 operator+(const TVector2& other) const { return { x + other.x, y + other.y }; }
 		TVector2 operator-(const TVector2& other) const { return { x - other.x, y - other.y }; }

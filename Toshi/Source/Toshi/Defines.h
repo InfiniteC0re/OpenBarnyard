@@ -1,12 +1,11 @@
 #pragma once
-#include "Toshi/Typedefs.h"
 
 #define ISZERO(X) ((X) == 0)
 #define HASFLAG(X) (!ISZERO(X))
-#define STRINGIFY8(X) #X    
+#define STRINGIFY8(X) #X
 #define STRINGIFY16(x) L##x
-#define STRINGIFY(X) STRINGIFY8(X)   
-#define BITFLAG(x) (1U << x)
+#define STRINGIFY(X) STRINGIFY8(X)
+#define BITFLAG(x) (1U << (x))
 
 #define TVERSION(VER_MAJOR, VER_MINOR) ((VER_MAJOR << 16) | VER_MINOR)
 
@@ -21,7 +20,7 @@
 #define GLUE(x, y) x y
 #define CALL_OVERLOAD(name, ...) GLUE(OVERLOAD_MACRO(name, COUNT_ARGS_MAX5(__VA_ARGS__)), (__VA_ARGS__))
 
-#define TOSHI_NAMESPACE Toshi;
+#define TOSHI_NAMESPACE Toshi
 #define TOSHI_NAMESPACE_USING using namespace TOSHI_NAMESPACE;
 #define TOSHI_NAMESPACE_START namespace TOSHI_NAMESPACE {
 #define TOSHI_NAMESPACE_END }
@@ -45,6 +44,7 @@
 #define TREINTERPRETCAST(TYPE, VALUE) (reinterpret_cast<TYPE>(VALUE))
 #define TSTATICCAST(POINTERTYPE, VALUE) (static_cast<POINTERTYPE*>(VALUE))
 #define TARRAYSIZE(ARRAY) (sizeof(ARRAY) / sizeof(*ARRAY))
+#define TALIGNAS(VALUE) alignas(VALUE)
 #define TINLINE inline
 #define TFORCEINLINE __forceinline
 
@@ -67,7 +67,6 @@
 	#define TASSERT(X, ...)
 	#define TVALIDPTR(PTR)
 #endif // TOSHI_ENABLE_ASSERTS
-
 
 #ifndef TOSHI_NO_LOGS
 	#define TINFO(...) Toshi::TUtil::Log(Toshi::TLogFile::Type_Info, __VA_ARGS__)
