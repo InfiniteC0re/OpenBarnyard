@@ -218,7 +218,6 @@ namespace Toshi {
 			return Iterator((m_iNumElements == 0) ? -1 : 0, *this);
 		}
 
-
 		Iterator Tail()
 		{
 			return Iterator((m_iNumElements == 0) ? -1 : m_iNumElements - 1, *this);

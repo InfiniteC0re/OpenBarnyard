@@ -180,4 +180,20 @@ namespace Toshi
 		return TFLOAT(atof(src));
 	}
 
+	TCHAR* T2String8::SkipSpaces( TCHAR* str )
+	{
+		TCHAR* pszCursor = str;
+		while ( isspace( *pszCursor ) ) pszCursor++;
+
+		return pszCursor;
+	}
+
+	const TCHAR* T2String8::SkipSpaces( const TCHAR* str )
+	{
+		const TCHAR* pszCursor = str;
+		while ( isspace( *pszCursor ) ) pszCursor++;
+
+		return pszCursor;
+	}
+
 }
