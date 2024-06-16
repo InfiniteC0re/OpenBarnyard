@@ -43,7 +43,7 @@ HOOK(0x006b4ba0, TMemory_GetMemInfo, void, TMemory::MemInfo& a_rMemInfo, TMemory
 
 class AOptions { };
 
-MEMBER_HOOK(0x00662d90, AOptions, AOptions_IsResolutionCompatible, TBOOL, TUINT a_uiWidth, TUINT a_uiHeight)
+MEMBER_HOOK(0x00662d90, AOptions, AOptions_IsResolutionCompatible, TBOOL, TINT a_iWidth, TINT a_iHeight)
 {
 	TBOOL* pIsWindowed = (TBOOL*)((TUINT(this) + 0x20));
 	TINT* pWidth = (TINT*)((TUINT(this) + 0x24));
@@ -54,22 +54,22 @@ MEMBER_HOOK(0x00662d90, AOptions, AOptions_IsResolutionCompatible, TBOOL, TUINT 
 		RECT windowRect;
 		GetWindowRect(GetDesktopWindow(), &windowRect);
 
-		if (windowRect.right > a_uiWidth || windowRect.bottom > a_uiHeight)
+		if (windowRect.right > a_iWidth || windowRect.bottom > a_iHeight)
 		{
 			const int msgBoxResult = MessageBoxW(NULL, L"It seems that you aren't using widescreen patch.\nDo you want the game to launch in your native resolution?", L"Barnyard", MB_YESNO);
 
 			if (msgBoxResult == IDYES)
 			{
-				a_uiWidth = windowRect.right;
-				a_uiHeight = windowRect.bottom;
+				a_iWidth = windowRect.right;
+				a_iHeight = windowRect.bottom;
 
 				HKEY hkey;
 				LSTATUS status = RegCreateKeyExA(HKEY_CURRENT_USER, "Software\\THQ\\Barnyard", NULL, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hkey, NULL);
 
 				if (status == 0)
 				{
-					RegSetValueExA(hkey, "Width", NULL, REG_DWORD_LITTLE_ENDIAN, (BYTE*)&a_uiWidth, sizeof(a_uiWidth));
-					RegSetValueExA(hkey, "Height", NULL, REG_DWORD_LITTLE_ENDIAN, (BYTE*)&a_uiHeight, sizeof(a_uiHeight));
+					RegSetValueExA(hkey, "Width", NULL, REG_DWORD_LITTLE_ENDIAN, (BYTE*)&a_iWidth, sizeof(a_iWidth));
+					RegSetValueExA(hkey, "Height", NULL, REG_DWORD_LITTLE_ENDIAN, (BYTE*)&a_iHeight, sizeof(a_iHeight));
 					RegCloseKey(hkey);
 
 					TINFO("Applied widescreen patch.\n");
@@ -88,7 +88,7 @@ MEMBER_HOOK(0x00662d90, AOptions, AOptions_IsResolutionCompatible, TBOOL, TUINT 
 	constexpr TFLOAT ASPECT_RATIO_15_9 = 15.0f / 9.0f;
 	constexpr TFLOAT ASPECT_RATIO_16_9 = 16.0f / 9.0f;
 
-	TFLOAT fCurrentAspectRatio = TFLOAT(a_uiWidth) / TFLOAT(a_uiHeight);
+	TFLOAT fCurrentAspectRatio = TFLOAT(a_iWidth) / TFLOAT(a_iHeight);
 	TFLOAT* pFOV = (TFLOAT*)0x007822ac;
 
 	if (TMath::Abs(fCurrentAspectRatio - ASPECT_RATIO_5_4) <= 0.1f)
@@ -115,11 +115,11 @@ MEMBER_HOOK(0x00662d90, AOptions, AOptions_IsResolutionCompatible, TBOOL, TUINT 
 		g_bBikeFOVPatch = TTRUE;
 	}
 
-	*pWidth = a_uiWidth;
-	*pHeight = a_uiHeight;
+	*pWidth = a_iWidth;
+	*pHeight = a_iHeight;
 
-	g_uiWindowWidth = a_uiWidth;
-	g_uiWindowHeight = a_uiHeight;
+	g_uiWindowWidth = a_iWidth;
+	g_uiWindowHeight = a_iHeight;
 
 	g_fOriginalFOV = *pFOV;
 
@@ -142,7 +142,7 @@ MEMBER_HOOK(0x006bb000, TTRB, TTRB_Load, TINT, const char* a_szFileName, TUINT a
 {
 	TString8 filepath = a_szFileName;
 
-	for (TUINT i = 0; i < filepath.Length(); i++)
+	for (TINT i = 0; i < filepath.Length(); i++)
 		if (filepath[i] == '/') filepath[i] = '\\';
 
 	filepath.MakeLower();
@@ -193,7 +193,7 @@ MEMBER_HOOK(0x006c1d40, TModelManager, TModelRegistry_CreateModel, TModelManager
 {
 	TString8 filepath = a_szFileName;
 
-	for (TUINT i = 0; i < filepath.Length(); i++)
+	for (TINT i = 0; i < filepath.Length(); i++)
 		if (filepath[i] == '/') filepath[i] = '\\';
 
 	TString8 inputFileName = filepath.GetString(filepath.FindReverse('\\', -1) + 1);

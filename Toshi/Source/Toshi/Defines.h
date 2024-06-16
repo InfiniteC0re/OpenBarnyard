@@ -68,6 +68,8 @@
 	#define TVALIDPTR(PTR)
 #endif // TOSHI_ENABLE_ASSERTS
 
+#define TUNREACHABLE() { TASSERT( TFALSE, "Unreachable code is reached!" ); __assume(0); }
+
 #ifndef TOSHI_NO_LOGS
 	#define TINFO(...) Toshi::TUtil::Log(Toshi::TUtil::LogType_Info, __VA_ARGS__)
 	#define TWARN(...) Toshi::TUtil::Log(Toshi::TUtil::LogType_Warning, __VA_ARGS__)

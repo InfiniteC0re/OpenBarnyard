@@ -1,8 +1,6 @@
 #pragma once
 #include "Toshi/TString8.h"
-#include "Toshi/T2String8.h"
-#include "Toshi/T2FixedString.h"
-#include "Toshi/T2String8Parser.h"
+#include "Toshi/T2String.h"
 #include "Toshi/TArray.h"
 
 namespace Toshi {

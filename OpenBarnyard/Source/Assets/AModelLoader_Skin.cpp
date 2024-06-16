@@ -7,7 +7,7 @@
 #include "Platform/DX8/ASkinShader/ASkinMaterial_DX8.h"
 #endif // TOSHI_SKU_WINDOWS
 
-#include <Toshi/T2FixedString.h>
+#include <Toshi/T2String.h>
 #include <Render/TRenderInterface.h>
 
 //-----------------------------------------------------------------------------

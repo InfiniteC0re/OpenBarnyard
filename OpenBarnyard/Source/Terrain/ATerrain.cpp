@@ -5,7 +5,7 @@
 #include "Assets/AAssetStreaming.h"
 #include "ALoadScreen.h"
 
-#include <Toshi/T2FixedString.h>
+#include <Toshi/T2String.h>
 
 #ifdef TOSHI_SKU_WINDOWS
 #include "Platform/DX8/AWorldShader/AWorldMesh_DX8.h"

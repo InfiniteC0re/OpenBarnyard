@@ -1,0 +1,373 @@
+#pragma once
+#include "T2CharTraits.h"
+#include "T2StringTraits.h"
+#include "T2String8.h"
+#include "T2String16.h"
+
+namespace Toshi {
+
+	//-----------------------------------------------------------------------------
+	// Purpose: Template wrapper for constant strings that allows using an interface
+	// instead of static methods from T2String8 or T2String16.
+	// 
+	// Use T2ConstString8 to work with TCHAR strings
+	// Use T2ConstString16 to work with TWCHAR strings
+	// Note: To support other encodings, pass your own StringTraits class.
+	//-----------------------------------------------------------------------------
+	template <class StringTraits = T2StringTraits<TCHAR>>
+	class T2ConstString
+	{
+	public:
+		using CharType = typename StringTraits::CharType;
+
+	public:
+		TFORCEINLINE constexpr T2ConstString( const CharType* a_pszString ) :
+			m_pszString( a_pszString )
+		{ }
+
+		TFORCEINLINE constexpr T2ConstString() :
+			m_pszString( TNULL )
+		{ }
+
+		TFORCEINLINE constexpr T2ConstString( const T2ConstString& a_rOther ) :
+			m_pszString( a_rOther.m_pszString )
+		{ }
+
+		TFORCEINLINE TSIZE Length() const { return StringTraits::Length( m_pszString ); }
+		TFORCEINLINE TBOOL IsLowerCase() const { return StringTraits::IsLowerCase( m_pszString ); }
+		TFORCEINLINE TBOOL IsUpperCase() const { return StringTraits::IsUpperCase( m_pszString ); }
+
+		TFORCEINLINE const CharType* FindChar( CharType a_cCharacter ) { return StringTraits::FindChar( m_pszString, a_cCharacter ); }
+		TFORCEINLINE const CharType* FindString( const CharType* a_pszSubstr ) { return StringTraits::FindString( m_pszString, a_pszSubstr ); }
+		TFORCEINLINE const CharType* SkipSpaces() { return StringTraits::SkipSpaces( m_pszString ); }
+
+		TFORCEINLINE constexpr T2ConstString& operator=( const CharType* a_pszString )
+		{
+			m_pszString = a_pszString;
+			return *this;
+		}
+
+		TFORCEINLINE constexpr T2ConstString operator+( int a_iSize ) const { return T2ConstString( m_pszString + a_iSize ); }
+		TFORCEINLINE constexpr T2ConstString operator-( int a_iSize ) const { return T2ConstString( m_pszString - a_iSize ); }
+		TFORCEINLINE constexpr T2ConstString operator+=( int a_iSize ) { m_pszString += a_iSize; return *this; }
+		TFORCEINLINE constexpr T2ConstString operator-=( int a_iSize ) { m_pszString -= a_iSize; return *this; }
+
+		TFORCEINLINE constexpr operator const CharType* ( ) const { return m_pszString; }
+
+	private:
+		const CharType* m_pszString;
+	};
+
+	using T2ConstString8 = T2ConstString<T2StringTraits<TCHAR>>;
+	using T2ConstString16 = T2ConstString<T2StringTraits<TWCHAR>>;
+
+	//-----------------------------------------------------------------------------
+	// Purpose: Wrapper for a constant size string that has an interface.
+	// Note: To support other encodings, pass your own StringTraits class.
+	//-----------------------------------------------------------------------------
+	template <TSIZE Size, typename TStringTraits = T2StringTraits<TCHAR>>
+	class T2FixedString
+	{
+	public:
+		TSTATICASSERT( Size > 0 );
+		TSTATICASSERT( Size <= 4096 );
+
+		using StringTraits = TStringTraits;
+		using CharTraits = typename StringTraits::CharTraits;
+		using CharType = typename StringTraits::CharType;
+
+	public:
+		constexpr T2FixedString()
+		{
+			m_szBuffer[ 0 ] = CharTraits::NullChar;
+		}
+
+		T2FixedString( const CharType* a_szString )
+		{
+			Copy( a_szString );
+		}
+
+		void Copy( const CharType* a_szString )
+		{
+			StringTraits::CopySafe( m_szBuffer, a_szString, Size );
+		}
+
+		/**
+		 * Parses a line from specified buffer and saves it.
+		 * @param a_szString buffer to parse buffer
+		 * @param a_uiSize size of the a_szString buffer
+		 * @param a_pStringLength if not TNULL, string length is saved there
+		 * @param a_bTrimSpaces if TTRUE, removes spaces at the start and at the end
+		 * @return number of characters to skip in the buffer
+		 */
+		TINT ParseLine( const CharType* a_szString, TINT a_uiSize = -1, TINT* a_pStringLength = TNULL, TBOOL a_bTrimStartSpaces = TTRUE, TBOOL a_bTrimEndSpaces = TTRUE )
+		{
+			TINT uiPos = 0;
+			TINT uiStringPos = 0;
+			TBOOL bTextStarted = TFALSE;
+
+			if ( a_uiSize == -1 )
+				a_uiSize = INT_MAX;
+
+			while ( uiPos < Size && uiStringPos < a_uiSize && a_szString[ uiStringPos ] != '\0' )
+			{
+				if ( a_szString[ uiStringPos ] != '\n' )
+				{
+					// Trim spaced at the start of the string
+					if ( !bTextStarted && a_bTrimStartSpaces )
+					{
+						bTextStarted = !CharTraits::IsSpace( a_szString[ uiStringPos ] );
+
+						if ( !bTextStarted )
+						{
+							uiStringPos++;
+							continue;
+						}
+					}
+
+					m_szBuffer[ uiPos++ ] = a_szString[ uiStringPos++ ];
+				}
+				else
+				{
+					break;
+				}
+			}
+
+			uiPos -= 1;
+
+			if ( a_bTrimEndSpaces )
+			{
+				while ( uiPos >= 0 && m_szBuffer[ uiPos ] != '\n' && CharTraits::IsSpace( m_szBuffer[ uiPos ] ) )
+				{
+					uiPos--;
+				}
+			}
+
+			m_szBuffer[ uiPos + 1 ] = CharTraits::NullChar;
+
+			if ( a_pStringLength )
+			{
+				*a_pStringLength = uiPos + 1;
+			}
+
+			return uiStringPos + 1;
+		}
+
+		void Format( const CharType* a_szFormat, ... )
+		{
+			va_list args;
+
+			va_start( args, a_szFormat );
+			StringTraits::FormatV( m_szBuffer, Size, a_szFormat, args );
+			va_end( args );
+
+			m_szBuffer[ Size - 1 ] = CharTraits::NullChar;
+		}
+
+		void FormatV( const CharType* a_szFormat, va_list a_Args )
+		{
+			StringTraits::FormatV( m_szBuffer, Size, a_szFormat, a_Args );
+			m_szBuffer[ Size - 1 ] = CharTraits::NullChar;
+		}
+
+		void Append( const CharType* a_szString )
+		{
+			StringTraits::Concat( m_szBuffer, a_szString );
+		}
+
+		void Clear()
+		{
+			m_szBuffer[ 0 ] = CharTraits::NullChar;
+		}
+
+		TUINT Length()
+		{
+			return StringTraits::Length( m_szBuffer );
+		}
+
+		constexpr CharType* Get()
+		{
+			return m_szBuffer;
+		}
+
+		constexpr const CharType* Get() const
+		{
+			return m_szBuffer;
+		}
+
+		constexpr CharType* Get( TUINT a_uiIndex )
+		{
+			TASSERT( a_uiIndex < Size );
+			return &m_szBuffer[ a_uiIndex ];
+		}
+
+		constexpr const CharType* Get( TUINT a_uiIndex ) const
+		{
+			TASSERT( a_uiIndex < Size );
+			return &m_szBuffer[ a_uiIndex ];
+		}
+
+		constexpr CharType& operator[]( TUINT a_uiIndex )
+		{
+			return *Get( a_uiIndex );
+		}
+
+		constexpr const CharType& operator[]( TUINT a_uiIndex ) const
+		{
+			return *Get( a_uiIndex );
+		}
+
+	private:
+		CharType m_szBuffer[ Size ];
+	};
+
+	using T2FixedString32 = T2FixedString<32, T2StringTraits<TCHAR>>;
+	using T2FixedString64 = T2FixedString<64, T2StringTraits<TCHAR>>;
+	using T2FixedString128 = T2FixedString<128, T2StringTraits<TCHAR>>;
+	using T2FixedString256 = T2FixedString<256, T2StringTraits<TCHAR>>;
+	using T2FixedString512 = T2FixedString<512, T2StringTraits<TCHAR>>;
+	using T2FixedString1024 = T2FixedString<1024, T2StringTraits<TCHAR>>;
+	using T2FixedString2048 = T2FixedString<2048, T2StringTraits<TCHAR>>;
+	using T2FixedString4096 = T2FixedString<4096, T2StringTraits<TCHAR>>;
+
+	using T2FixedWString32 = T2FixedString<32, T2StringTraits<TWCHAR>>;
+	using T2FixedWString64 = T2FixedString<64, T2StringTraits<TWCHAR>>;
+	using T2FixedWString128 = T2FixedString<128, T2StringTraits<TWCHAR>>;
+	using T2FixedWString256 = T2FixedString<256, T2StringTraits<TWCHAR>>;
+	using T2FixedWString512 = T2FixedString<512, T2StringTraits<TWCHAR>>;
+	using T2FixedWString1024 = T2FixedString<1024, T2StringTraits<TWCHAR>>;
+	using T2FixedWString2048 = T2FixedString<2048, T2StringTraits<TWCHAR>>;
+	using T2FixedWString4096 = T2FixedString<4096, T2StringTraits<TWCHAR>>;
+
+	//-----------------------------------------------------------------------------
+	// Purpose: Wrapper class that makes parsing text data easier.
+	// Note: To support other encodings, pass your own StringTraits class.
+	//-----------------------------------------------------------------------------
+	template <class StringTraits = T2StringTraits<TCHAR>>
+	class T2StringParser
+	{
+	public:
+		using CharType = typename StringTraits::CharType;
+		using ConstString = T2ConstString<StringTraits>;
+
+	public:
+		T2StringParser( ConstString a_pchBuffer, TSIZE a_uiBufferSize = -1 )
+		{
+			SetBuffer( a_pchBuffer, a_uiBufferSize );
+		}
+
+		T2StringParser()
+		{
+			m_uiBufferSize = 0;
+		}
+
+		void SetBuffer( ConstString a_pchBuffer, TSIZE a_uiBufferSize = -1 )
+		{
+			m_Buffer = a_pchBuffer;
+			m_BufferPos = a_pchBuffer;
+
+			if ( a_pchBuffer )
+				m_uiBufferSize = ( a_uiBufferSize == -1 ) ? a_pchBuffer.Length() : a_uiBufferSize;
+			else
+				m_uiBufferSize = 0;
+
+			m_BufferEnd = m_Buffer + m_uiBufferSize;
+		}
+
+		void Reset()
+		{
+			m_BufferPos = m_Buffer;
+		}
+
+		TSIZE Tell() const
+		{
+			return m_BufferPos - m_Buffer;
+		}
+
+		void Set( TSIZE a_uiPos )
+		{
+			m_BufferPos = m_Buffer + a_uiPos;
+		}
+
+		TBOOL PeekToken( CharType* a_pszToken, TSIZE a_uiTokenMaxSize )
+		{
+			TASSERT( TNULL != a_pszToken );
+			TASSERT( a_uiTokenMaxSize > 1 );
+
+			TSIZE uiSizeLeft = a_uiTokenMaxSize;
+			CharType* pchCopyCursor = a_pszToken;
+			ConstString cursor = m_BufferPos.SkipSpaces();
+
+			TBOOL bIsInQuotes = TFALSE;
+			TBOOL bIsPrevCharEscape = TFALSE;
+			TBOOL bIsValid = TFALSE;
+
+			// Copy until we have the last byte for the \0 character or the buffer is over
+			while ( uiSizeLeft > 1 && cursor < m_BufferEnd )
+			{
+				CharType cChar = *cursor;
+				TBOOL bIsEscapeChar = cChar == '\\';
+				TBOOL bIsBreakToken = isspace( cChar );
+
+				if ( !bIsPrevCharEscape && ( cChar == '"' || cChar == '\'' ) )
+				{
+					bIsInQuotes = !bIsInQuotes;
+
+					if ( !bIsInQuotes )
+					{
+						// The quotes are closed so the token is over
+						cursor += 1;
+						bIsValid = TTRUE;
+						break;
+					}
+				}
+				else if ( !bIsInQuotes && bIsBreakToken )
+				{
+					// Break (stop) character is found and it's not in quotes
+					cursor += 1;
+					bIsValid = TTRUE;
+					break;
+				}
+				else
+				{
+					// Copy the character
+					*( pchCopyCursor++ ) = cChar;
+				}
+
+				cursor += 1;
+				bIsPrevCharEscape = bIsEscapeChar;
+			}
+
+			if ( cursor >= m_BufferEnd && !bIsInQuotes )
+				bIsValid = TTRUE;
+
+			m_BufferLastPeek = cursor;
+			*pchCopyCursor = '\0';
+			return bIsValid;
+		}
+
+		TBOOL ReadToken( CharType* a_pszToken, TSIZE a_uiTokenMaxSize )
+		{
+			TBOOL bResult = PeekToken( a_pszToken, a_uiTokenMaxSize );
+			m_BufferPos = m_BufferLastPeek;
+
+			return bResult;
+		}
+
+		TBOOL IsOver() const
+		{
+			return m_BufferPos >= m_BufferEnd;
+		}
+
+	private:
+		ConstString m_Buffer;
+		ConstString m_BufferPos;
+		ConstString m_BufferEnd;
+		ConstString m_BufferLastPeek;
+		TSIZE m_uiBufferSize;
+	};
+
+	using T2String8Parser = T2StringParser<T2StringTraits<TCHAR>>;
+	using T2String16Parser = T2StringParser<T2StringTraits<TWCHAR>>;
+
+}

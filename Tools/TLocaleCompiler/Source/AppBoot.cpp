@@ -6,7 +6,7 @@
 #include <Toshi/Toshi.h>
 #include <Toshi/TString8.h>
 #include <Toshi/TString16.h>
-#include <Toshi/T2FixedWString.h>
+#include <Toshi/T2String.h>
 #include <Toshi/TArray.h>
 
 #include <T2Locale/T2Locale.h>

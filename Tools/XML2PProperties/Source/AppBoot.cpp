@@ -263,7 +263,7 @@ int main(int argc, char** argv)
 			TString8 inFilepath = args.GetInPath();
 			TString8 outFilepath;
 
-			for (TUINT i = 0; i < inFilepath.Length(); i++)
+			for (TINT i = 0; i < inFilepath.Length(); i++)
 			{
 				if (inFilepath[i] == '/') inFilepath[i] = '\\';
 			}
@@ -298,7 +298,7 @@ int main(int argc, char** argv)
 		TString8 inFilepath = args.GetInPath();
 		TString8 outFilepath;
 
-		for (TUINT i = 0; i < inFilepath.Length(); i++)
+		for (TINT i = 0; i < inFilepath.Length(); i++)
 		{
 			if (inFilepath[i] == '/') inFilepath[i] = '\\';
 		}

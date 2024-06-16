@@ -37,9 +37,9 @@ namespace Toshi {
 			while ( !m_Parser.IsOver() )
 			{
 				TBOOL bReadToken = m_Parser.ReadToken( szToken, sizeof( szToken ) );
-				TASSERT( TTRUE == bReadToken );
-
-				m_ParsedParams.Push( szToken );
+				
+				if ( bReadToken )
+					m_ParsedParams.Push( szToken );
 			}
 		}
 	}

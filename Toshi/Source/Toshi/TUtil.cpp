@@ -2,7 +2,7 @@
 #include "TUtil.h"
 #include "Toshi/TSystem.h"
 #include "Toshi/TError.h"
-#include "Toshi/T2FixedString.h"
+#include "Toshi/T2String.h"
 #include "File/TLogFile.h"
 #include "Render/TModelManager.h"
 

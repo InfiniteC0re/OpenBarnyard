@@ -27,7 +27,7 @@ int main(int argc, char** argv)
 	{
 		TString8 filepath = args.GetInPath();
 
-		for (TUINT i = 0; i < filepath.Length(); i++)
+		for (TINT i = 0; i < filepath.Length(); i++)
 			if (filepath[i] == '/') filepath[i] = '\\';
 
 		TString8 inputFileName = filepath.GetString(filepath.FindReverse('\\', -1) + 1);
@@ -50,7 +50,7 @@ int main(int argc, char** argv)
 	{
 		TString8 filepath = args.GetInPath();
 
-		for (TUINT i = 0; i < filepath.Length(); i++)
+		for (TINT i = 0; i < filepath.Length(); i++)
 			if (filepath[i] == '/') filepath[i] = '\\';
 
 		TString8 inputFileName = filepath.GetString(filepath.FindReverse('\\', -1) + 1);

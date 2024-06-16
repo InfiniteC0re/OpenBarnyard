@@ -1,7 +1,7 @@
 #include "ToshiPCH.h"
 #include "T2NamedPipeServer_Win.h"
 
-#include "Toshi/T2FixedString.h"
+#include "Toshi/T2String.h"
 
 #include <Windows.h>
 
