@@ -1,5 +1,4 @@
 #include "pch.h"
-#include "AArgumentParser.h"
 #include "AAssetBuilder.h"
 #include "AAssetUnpacker.h"
 
@@ -7,6 +6,7 @@
 #include <Toshi/TPString8.h>
 
 #include <Core/TMemoryInitialiser.h>
+#include <ToshiTools/T2CommandLine.h>
 
 #include <filesystem>
 
@@ -22,10 +22,16 @@ int main(int argc, char** argv)
 	TUtil::ToshiCreate(toshiParams);
 	TUtil::SetTPStringPool(new TPString8Pool(1024, 0, &T2Allocator::s_GlobalAllocator, TNULL));
 
-	AArgumentParser args(argv, argc);
-	if (args.GetMode() == AArgumentParser::Mode::Unpack)
+	T2CommandLine commandLine( GetCommandLineA() );
+	auto strPackPath = commandLine.GetParameterValue( "-p" );
+	auto strUnpackFile = commandLine.GetParameterValue( "-u" );
+	auto strOutPath = commandLine.GetParameterValue( "-o" );
+	auto strAssetName = commandLine.GetParameterValue( "-asset", "pack");
+	auto bIsBtec = commandLine.HasParameter( "-btec" );
+
+	if ( strUnpackFile )
 	{
-		TString8 filepath = args.GetInPath();
+		TString8 filepath = strUnpackFile;
 
 		for (TINT i = 0; i < filepath.Length(); i++)
 			if (filepath[i] == '/') filepath[i] = '\\';
@@ -43,22 +49,24 @@ int main(int argc, char** argv)
 
 		if (assetPack.Load(filepath))
 		{
-			AAssetUnpacker::Unpack(assetPack, outputDir, args.IsUsingBTEC());
+			AAssetUnpacker::Unpack(assetPack, outputDir, bIsBtec );
 		}
 	}
-	else if (args.GetMode() == AArgumentParser::Mode::Pack)
+	else if ( strPackPath )
 	{
-		TString8 filepath = args.GetInPath();
+		TString8 filepath = strPackPath;
 
 		for (TINT i = 0; i < filepath.Length(); i++)
 			if (filepath[i] == '/') filepath[i] = '\\';
 
 		TString8 inputFileName = filepath.GetString(filepath.FindReverse('\\', -1) + 1);
-		inputFileName.Truncate(inputFileName.FindReverse('.', -1));
+
+		TINT iDotPos = inputFileName.FindReverse( '.', -1 );
+		if ( iDotPos > 0 ) inputFileName.Truncate(inputFileName.FindReverse('.', -1));
 
 		AAssetBuilder assetBuilder;
 
-		for (const auto& entry : std::filesystem::directory_iterator(args.GetInPath()))
+		for (const auto& entry : std::filesystem::directory_iterator( filepath.GetString() ))
 		{
 			auto wcsPath = entry.path().native().c_str();
 
@@ -71,16 +79,16 @@ int main(int argc, char** argv)
 		TString8 outPath;
 		TString8 assetName;
 
-		if (args.GetOutPath())
+		if ( strOutPath )
 		{
-			outPath = TString8::VarArgs("%s\\%s.trb", args.GetOutPath(), args.GetAssetName());
+			outPath = TString8::VarArgs("%s\\%s.trb", strOutPath, strAssetName );
 		}
 		else
 		{
-			outPath = TString8::VarArgs("%s.trb", args.GetAssetName());
+			outPath = TString8::VarArgs("%s.trb", strAssetName );
 		}
 
-		assetBuilder.Save(outPath, args.IsUsingBTEC());
+		assetBuilder.Save(outPath, bIsBtec);
 	}
 
 	return 0;

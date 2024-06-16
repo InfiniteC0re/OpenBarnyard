@@ -77,7 +77,9 @@ namespace Toshi {
 
 		TCHAR& operator[](TINT a_iIndex) { return m_pBuffer[a_iIndex]; }
 		const TCHAR& operator[](TINT a_iIndex) const { return *GetString(a_iIndex); }
-		operator const TCHAR* () const { return m_pBuffer; }
+		
+		operator const TCHAR* ( ) const { return m_pBuffer; }
+		operator const TBOOL ( ) const { return !IsEmpty(); }
 
 		TBOOL operator!() { return m_iStrLen == 0; }
 		TBOOL operator==(const TCHAR* cstr) const { return Compare(cstr, -1) == 0; }

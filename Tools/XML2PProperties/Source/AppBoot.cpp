@@ -1,5 +1,4 @@
 #include "pch.h"
-#include "AArgumentParser.h"
 
 #include <Toshi/Toshi.h>
 #include <Toshi/TPString8.h>
@@ -12,6 +11,8 @@
 
 #include <Plugins/PTRB.h>
 #include <Plugins/PPropertyParser/PPropertiesWriter.h>
+
+#include <ToshiTools/T2CommandLine.h>
 
 #include "json.hpp"
 #include "tinyxml2.h"
@@ -217,6 +218,12 @@ int main(int argc, char** argv)
 	TUtil::ToshiCreate(toshiParams);
 	TUtil::SetTPStringPool(new TPString8Pool(1024, 0, &T2Allocator::s_GlobalAllocator, TNULL));
 
+	T2CommandLine commandLine( GetCommandLineA() );
+	auto strCompileFile = commandLine.GetParameterValue( "-c" );
+	auto strDecompileFile = commandLine.GetParameterValue( "-d" );
+	auto strOutPath = commandLine.GetParameterValue( "-o" );
+	auto bIsBtec = commandLine.HasParameter( "-btec" );
+
 	tinyxml2::XMLDocument activitysets;
 	tinyxml2::XMLDocument interactions;
 
@@ -241,10 +248,9 @@ int main(int argc, char** argv)
 
 	return 0;
 
-	AArgumentParser args(argv, argc);
-	if (args.GetMode() == AArgumentParser::Mode::Compile)
+	if ( strCompileFile )
 	{
-		auto pJSONFile = TFile::Create(args.GetInPath());
+		auto pJSONFile = TFile::Create( strCompileFile );
 
 		if (pJSONFile)
 		{
@@ -260,7 +266,7 @@ int main(int argc, char** argv)
 			PBProperties properties;
 			JsonToProperties(document, properties);
 
-			TString8 inFilepath = args.GetInPath();
+			TString8 inFilepath = strCompileFile;
 			TString8 outFilepath;
 
 			for (TINT i = 0; i < inFilepath.Length(); i++)
@@ -268,7 +274,7 @@ int main(int argc, char** argv)
 				if (inFilepath[i] == '/') inFilepath[i] = '\\';
 			}
 
-			if (!args.GetOutPath())
+			if (!outFilepath)
 			{
 				TString8 inputFileDirName;
 				inputFileDirName.Copy(inFilepath, inFilepath.FindReverse('\\', -1) + 1);
@@ -287,15 +293,15 @@ int main(int argc, char** argv)
 			}
 			else
 			{
-				outFilepath = args.GetOutPath();
+				outFilepath = outFilepath;
 			}
 
-			PPropertiesWriter::WriteTRB(outFilepath, properties, args.IsUsingBTEC());
+			PPropertiesWriter::WriteTRB(outFilepath, properties, bIsBtec);
 		}
 	}
-	else if (args.GetMode() == AArgumentParser::Mode::Decompile)
+	else if (strDecompileFile)
 	{
-		TString8 inFilepath = args.GetInPath();
+		TString8 inFilepath = strDecompileFile;
 		TString8 outFilepath;
 
 		for (TINT i = 0; i < inFilepath.Length(); i++)
@@ -303,7 +309,7 @@ int main(int argc, char** argv)
 			if (inFilepath[i] == '/') inFilepath[i] = '\\';
 		}
 
-		if (!args.GetOutPath())
+		if (!strOutPath)
 		{
 			TString8 inputFileDirName;
 			inputFileDirName.Copy(inFilepath, inFilepath.FindReverse('\\', -1) + 1);
@@ -322,7 +328,7 @@ int main(int argc, char** argv)
 		}
 		else
 		{
-			outFilepath = args.GetOutPath();
+			outFilepath = strOutPath;
 		}
 
 		TTRB inTrb;

@@ -1,5 +1,4 @@
 #include "pch.h"
-#include "AArgumentParser.h"
 #include "NvTriStrip/NvTriStrip.h"
 #include "World/AWorldVIS.h"
 
@@ -12,6 +11,8 @@
 #include <Render/TTMDWin.h>
 
 #include <Plugins/PTRB.h>
+
+#include <ToshiTools/T2CommandLine.h>
 
 #include <assimp/cexport.h>
 #include <assimp/cimport.h>
@@ -71,10 +72,19 @@ int main(int argc, char** argv)
 	TUtil::ToshiCreate(toshiParams);
 	TUtil::SetTPStringPool(new TPString8Pool(1024, 0, &T2Allocator::s_GlobalAllocator, TNULL));
 
-	AArgumentParser args(argv, argc);
-	if (args.GetMode() == AArgumentParser::Mode::Info)
+	T2CommandLine commandLine( GetCommandLineA() );
+	auto strInfoFile = commandLine.GetParameterValue( "-i" );
+	auto strCompileFile = commandLine.GetParameterValue( "-c" );
+	auto strDecompileFile = commandLine.GetParameterValue( "-d" );
+	auto strTexturesPath = commandLine.GetParameterValue( "-d" );
+	auto strOutPath = commandLine.GetParameterValue( "-o" );
+	auto strKeyLib = commandLine.GetParameterValue( "-keylib" );
+	auto bParamIsBtec = commandLine.HasParameter( "-btec" );
+	auto bParamIsTerrain = commandLine.HasParameter( "-terrain" );
+
+	if ( strInfoFile )
 	{
-		PTRBWriter inTRB(args.GetInPath());
+		PTRBWriter inTRB( strInfoFile.GetString() );
 
 		auto pInSECT = inTRB.GetSections();
 		auto pInSYMB = inTRB.GetSymbols();
@@ -220,7 +230,7 @@ int main(int argc, char** argv)
 			}
 		}
 	}
-	else if (args.GetMode() == AArgumentParser::Mode::Compile)
+	else if (strCompileFile)
 	{
 		//TString8 inFilepath = args.GetInPath();
 		//TString8 texturesPath = args.GetTexturesPath();
@@ -674,7 +684,7 @@ int main(int argc, char** argv)
 
 		//outTRB.WriteToFile(outFilepath.GetString(), args.IsUsingBTEC());
 	}
-	else if (args.GetMode() == AArgumentParser::Mode::Decompile)
+	else if (strDecompileFile)
 	{
 		//TString8 inFilepath = args.GetInPath();
 		//TString8 texturesPath = args.GetTexturesPath();

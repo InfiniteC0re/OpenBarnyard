@@ -48,14 +48,14 @@ namespace Toshi {
 	{
 		TASSERT( m_bInitialised );
 
-		if ( *a_pIndex )
+		if ( a_pIndex )
 			*a_pIndex = -1;
 
 		TARRAY_FOREACH( m_ParsedParams, it )
 		{
 			if ( it.Get() == a_pszParameter )
 			{
-				if ( *a_pIndex )
+				if ( a_pIndex )
 					*a_pIndex = it.GetCurrentIndex();
 
 				return TTRUE;
