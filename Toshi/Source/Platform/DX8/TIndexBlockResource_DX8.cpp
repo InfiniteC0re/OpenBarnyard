@@ -289,14 +289,14 @@ namespace Toshi {
 
 	TBOOL TIndexBlockResource::CanFit(TIndexPoolResource* a_pPoolResource) const
 	{
-		if (!HASFLAG(m_uiFlags & 1))
+		if (!HASANYFLAG(m_uiFlags, 1))
 		{
-			if (m_uiFlags & 4 && a_pPoolResource->m_uiFlags & 4)
+			if (HASANYFLAG(m_uiFlags, 4) && HASANYFLAG(a_pPoolResource->m_uiFlags, 4))
 			{
 				return TTRUE;
 			}
 		}
-		else if (a_pPoolResource->m_uiFlags & 1)
+		else if (HASANYFLAG(a_pPoolResource->m_uiFlags, 1))
 		{
 			return m_uiMaxIndices > a_pPoolResource->GetNumIndices() + m_uiIndicesUsed;
 		}

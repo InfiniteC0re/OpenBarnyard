@@ -8,6 +8,8 @@ public: \
 	void operator delete(void* ptr) { ms_oFreeList.Delete(ptr); } \
 	void operator delete(void* ptr, void* where) { delete ptr; } \
 	\
+	static void SetupFreeList(TINT a_iCapacity, TINT a_iGrowSize) { ms_oFreeList.SetCapacity(a_iCapacity); ms_oFreeList.SetGrowSize(a_iGrowSize); }\
+	\
 	static Toshi::TFreeList ms_oFreeList;
 
 #define TDEFINE_FREELIST_ALLOCATOR(CLASS_NAME) \

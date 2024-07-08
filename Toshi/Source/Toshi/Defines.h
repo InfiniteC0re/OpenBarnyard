@@ -1,7 +1,9 @@
 #pragma once
 
 #define ISZERO(X) ((X) == 0)
-#define HASFLAG(X) (!ISZERO(X))
+#define NOTZERO(X) (!ISZERO(X))
+#define HASANYFLAG(STATE, FLAG) (!(ISZERO((STATE) & (FLAG))))
+#define HASALLFLAGS(STATE, FLAGS) (((STATE) & (FLAGS)) == (FLAGS))
 #define STRINGIFY8(X) #X
 #define STRINGIFY16(x) L##x
 #define STRINGIFY(X) STRINGIFY8(X)

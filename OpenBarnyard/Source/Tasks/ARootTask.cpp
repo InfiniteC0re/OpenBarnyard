@@ -21,6 +21,7 @@
 #include "Movie/ABINKMoviePlayer.h"
 #include "ALoadScreen.h"
 #include "Terrain/ATerrain.h"
+#include "Terrain/ABYardTerrainManager.h"
 
 #include <Plugins/PPropertyParser/PBProperties.h>
 #include <Toshi/TScheduler.h>
@@ -331,8 +332,8 @@ void ARootTask::LoadFrontEnd()
 
 	AAssetLoader::LoadAssetPackFromLibrary("lib_frontend", TTRUE);
 	//ATerrainManager::SetTerrain(ATerrainManager::Terrain_EnvBensHill, TTRUE, TTRUE, 0, 0, 0, 0);
-	ATerrainManager::SetTerrain(ATerrainManager::Terrain_FrontEnd, TTRUE, TTRUE, 0, 0, 0, 0);
-	ATerrainManager::StartLoading();
+	ABYardTerrainManager::SetTerrain(ABYardTerrainManager::Terrain_FrontEnd, TTRUE, TTRUE, 0, 0, 0, 0);
+	ABYardTerrainManager::StartLoading();
 	AAssetLoader::CreateAssetsFromLibrary("lib_frontend");
 
 	GetSingleton()->SetRenderWorld(TTRUE);

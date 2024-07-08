@@ -13,8 +13,6 @@ public:
 
 	virtual TBOOL OnCreate(int argc, TCHAR** argv) override;
 	virtual TBOOL OnUpdate(float deltaTime) override;
-
-	TBOOL CreateStringPool();
 	
 public:
 	ARootTask* m_pRootTask;

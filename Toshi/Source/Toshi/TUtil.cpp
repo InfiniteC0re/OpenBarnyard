@@ -29,7 +29,7 @@ namespace Toshi {
 		time(&seconds);
 		tm* time = gmtime(&seconds);
 
-		T2FixedString256 filename;
+		T2FormatString256 filename;
 
 		filename.Format(
 			"Logs\\%s_%d%02d%02d_%02d_%02d_%02d.log",
@@ -70,7 +70,7 @@ namespace Toshi {
 		{
 			auto pLogFile = GetCurrentLogFile();
 
-			T2FixedString2048 formatString;
+			T2FormatString2048 formatString;
 
 			va_list args;
 			va_start(args, a_szFormat);
@@ -88,7 +88,7 @@ namespace Toshi {
 
 		if (pLogFile)
 		{
-			T2FixedString2048 formatString;
+			T2FormatString2048 formatString;
 
 			va_list args;
 			va_start(args, a_szFormat);
@@ -116,7 +116,7 @@ namespace Toshi {
 
 		if (pLogFile)
 		{
-			T2FixedString2048 formatString;
+			T2FormatString2048 formatString;
 
 			va_list args;
 			va_start(args, a_szFormat);

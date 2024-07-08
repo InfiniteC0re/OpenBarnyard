@@ -59,7 +59,7 @@ public:
 
 		TBOOL IsEventTypeAllowed(Toshi::TInputInterface::EVENT_TYPE a_eEventType)
 		{
-			return HASFLAG(uiEventType & (1 << (a_eEventType & 0x1F)));
+			return HASANYFLAG(uiEventType, (1 << (a_eEventType & 0x1F)));
 		}
 	};
 

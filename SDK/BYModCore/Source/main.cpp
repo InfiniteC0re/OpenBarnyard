@@ -35,8 +35,8 @@ DWORD WINAPI MainThread(HMODULE hModule)
 	TINFO("Waiting for Toshi systems to be loaded...\n");
 
 	// Wait until AGUI2 is ready to use
-	while (!AGUI2::IsSingletonCreated()) { Sleep(50); }
-	while (!AGUI2::GetSingleton()->GetRootElement()) { Sleep(50); }
+	while (!AGUI2::IsSingletonCreated()) { ThreadSleep(50); }
+	while (!AGUI2::GetSingleton()->GetRootElement()) { ThreadSleep(50); }
 
 	// Log info about AGUI2
 	TFLOAT fWidth, fHeight;

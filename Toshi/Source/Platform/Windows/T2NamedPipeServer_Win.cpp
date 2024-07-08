@@ -68,7 +68,7 @@ namespace Toshi {
 				}
 			}
 
-			Sleep(m_pServer->m_uiSendInterval);
+			ThreadSleep(m_pServer->m_uiSendInterval);
 		}
 	}
 
@@ -97,7 +97,7 @@ namespace Toshi {
 		m_uiSendInterval = a_uiSendInterval;
 		m_szName = a_szName;
 
-		T2FixedString256 pipeName;
+		T2FormatString256 pipeName;
 		pipeName.Format("\\\\.\\pipe\\%s", a_szName);
 
 		m_hPipe = CreateNamedPipeA(

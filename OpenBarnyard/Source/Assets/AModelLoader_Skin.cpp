@@ -30,7 +30,7 @@ void AModelLoader::LoadSkinLOD(Toshi::TModel* a_pModel, TINT a_iLODIndex, Toshi:
 
 	for (TINT i = 0; i < iMeshCount; i++)
 	{
-		T2FixedString128 symbolName;
+		T2FormatString128 symbolName;
 		symbolName.Format("LOD%d_Mesh_%d", a_iLODIndex, i);
 
 		auto pTRBMesh = a_pModel->CastSymbol<TTMDWin::TRBLODMesh>(symbolName.Get());

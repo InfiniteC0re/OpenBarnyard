@@ -64,7 +64,7 @@ void ATextureUpdateWatcher::Main()
 								sFileName[name_len - 2] = 'g';
 								sFileName[name_len - 1] = 'a';
 
-								Sleep(50);
+								ThreadSleep(50);
 								ATextureUpdater::ReloadTexture(sFileName);
 							}
 							}

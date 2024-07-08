@@ -20,7 +20,7 @@ namespace Toshi {
 		m_fTotalTime += m_fSpeed * a_fDeltaTime;
 		m_fSeqTime += m_fSpeed * a_fDeltaTime;
 
-		if (pSeq->GetUnk2() == 0 && !HASFLAG(m_eFlags & Flags_Managed))
+		if (pSeq->GetUnk2() == 0 && !HASANYFLAG(m_eFlags, Flags_Managed))
 		{
 			if (0.0f <= m_fSpeed || 0.0f <= m_fSeqTime)
 			{
@@ -69,7 +69,7 @@ namespace Toshi {
 		}
 		else if (m_eMode == MODE_UNK2)
 		{
-			if (HASFLAG(m_eFlags & Flags_Managed) && fSeqDuration <= m_fTotalTime)
+			if (HASANYFLAG(m_eFlags, Flags_Managed) && fSeqDuration <= m_fTotalTime)
 			{
 				m_eMode = MODE_UNK3;
 				return TTRUE;
@@ -82,7 +82,7 @@ namespace Toshi {
 			if (m_fWeight <= 0.0f)
 			{
 				m_pSkeletonInstance->RemoveAnimation(this, 0.0f);
-				return HASFLAG(m_eFlags & Flags_UpdateStateOnRemove);
+				return HASANYFLAG(m_eFlags, Flags_UpdateStateOnRemove);
 			}
 		}
 

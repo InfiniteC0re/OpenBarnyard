@@ -140,7 +140,7 @@ namespace Toshi {
 				pAnim->UpdateTime(a_fDeltaTime);
 			}
 
-			if (HASFLAG(m_iFlags & 1))
+			if (HASANYFLAG(m_iFlags, 1))
 			{
 				m_iFlags &= ~1;
 				UpdateState(TFALSE);

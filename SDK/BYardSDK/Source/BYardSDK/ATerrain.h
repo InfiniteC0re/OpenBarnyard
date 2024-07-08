@@ -37,7 +37,7 @@ public:
 	};
 
 	friend ATerrainVIS;
-	friend class ATerrainManager;
+	friend class ABYardTerrainManager;
 
 	using t_GetCurrentVISGroup = TINT(*)();
 	using t_OnVISGroupChanged = void(*)(ATerrainSection* a_pCurrent, ATerrainSection* a_pPrevious);
@@ -234,7 +234,7 @@ public:
 	TINT m_iNumChunks;
 };
 
-class ATerrainManager
+class ABYardTerrainManager
 {
 public:
 	using Terrain = TUINT32;

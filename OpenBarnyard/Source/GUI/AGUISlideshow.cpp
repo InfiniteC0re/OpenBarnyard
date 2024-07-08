@@ -160,12 +160,12 @@ void AGUISlideshow::Update(TFLOAT a_fDeltaTime)
 
 TBOOL AGUISlideshow::IsSlideshowOver()
 {
-	if (!HASFLAG(m_eFlags & Flags_Repeat))
+	if (!HASANYFLAG(m_eFlags, Flags_Repeat))
 	{
 		return m_ImageIterator.IsOver();
 	}
 
-	if (!HASFLAG(m_eFlags & Flags_Ended) && (m_fUnk4 <= 0.0f || m_fUnk2 <= m_fUnk4))
+	if (!HASANYFLAG(m_eFlags, Flags_Ended) && (m_fUnk4 <= 0.0f || m_fUnk2 <= m_fUnk4))
 	{
 		return TFALSE;
 	}
@@ -182,7 +182,7 @@ void AGUISlideshow::SwitchToNextSlide(TBOOL a_bUnused)
 
 	if (m_ImageIterator.IsOver())
 	{
-		if (!HASFLAG(m_eFlags & Flags_Repeat)) return;
+		if (!HASANYFLAG(m_eFlags, Flags_Repeat)) return;
 		m_ImageIterator = m_Images;
 	}
 
@@ -291,7 +291,7 @@ TBOOL AGUISlideshow::ProcessInput(const Toshi::TInputInterface::InputEvent* a_pE
 
 TBOOL AGUISlideshow::ProcessCommand(AInputCommand a_eCommand)
 {
-	if (((a_eCommand != AInputCommand_Back && a_eCommand != AInputCommand_Cancel && a_eCommand != AInputCommand_Quit) || !HASFLAG(m_eFlags & Flags_Unk1)) && !HASFLAG(m_eFlags & Flags_InstaSkippable))
+	if (((a_eCommand != AInputCommand_Back && a_eCommand != AInputCommand_Cancel && a_eCommand != AInputCommand_Quit) ||!HASANYFLAG(m_eFlags, Flags_Unk1)) && !HASANYFLAG(m_eFlags, Flags_InstaSkippable))
 	{
 		if (m_eFlags & Flags_Skippable)
 		{

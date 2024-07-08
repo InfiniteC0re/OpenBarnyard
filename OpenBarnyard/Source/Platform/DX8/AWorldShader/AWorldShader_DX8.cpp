@@ -460,7 +460,7 @@ void AWorldShaderHAL::SetupLowEndMode()
 	static TUINT s_uiIdentityMatrixFlags;
 	static TMatrix44 s_uiIdentityMatrix;
 
-	if (!HASFLAG(s_uiIdentityMatrixFlags & 1))
+	if (!HASANYFLAG(s_uiIdentityMatrixFlags, 1))
 	{
 		s_uiIdentityMatrixFlags |= 1;
 		s_uiIdentityMatrix = TMatrix44::IDENTITY;

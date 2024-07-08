@@ -62,7 +62,7 @@ int main( int argc, char** argv )
 			{
 				TArray<TString16> foundStrings;
 
-				T2FixedWString2048 localeString;
+				T2FormatWString2048 localeString;
 				wchar_t* pFileStart = TREINTERPRETCAST( wchar_t*, pFileBuffer );
 				wchar_t* pFileEnd = TREINTERPRETCAST( wchar_t*, pFileBuffer + uiFileSize );
 				wchar_t* pFileCursor = TREINTERPRETCAST( wchar_t*, pFileBuffer );
@@ -120,7 +120,7 @@ int main( int argc, char** argv )
 					for ( TINT i = 0; i < pLocaleStrings->m_numstrings; i++ )
 					{
 						auto pString = pLocaleStrings->Strings[ i ];
-						T2FixedWString2048 finalString;
+						T2FormatWString2048 finalString;
 						TUINT iPos = 0;
 
 						while ( *pString != L'\0' )

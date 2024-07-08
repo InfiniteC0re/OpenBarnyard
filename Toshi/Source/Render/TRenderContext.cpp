@@ -196,7 +196,7 @@ namespace Toshi {
 
 	const TPlane* TRenderContext::GetWorldPlanes()
 	{
-		if (!HASFLAG(m_eFlags & FLAG_HAS_WORLDPLANES))
+		if (!HASANYFLAG(m_eFlags, FLAG_HAS_WORLDPLANES))
 		{
 			auto& viewWorld = GetViewWorldMatrix();
 
@@ -260,7 +260,7 @@ namespace Toshi {
 
 	const TMatrix44& TRenderContext::GetViewWorldMatrix()
 	{
-		if (!HASFLAG(m_eFlags & FLAG_HAS_VIEWWORLDMATRIX))
+		if (!HASANYFLAG(m_eFlags, FLAG_HAS_VIEWWORLDMATRIX))
 		{
 			m_oViewWorldMatrix.InvertOrthogonal(m_oWorldViewMatrix);
 			m_eFlags |= FLAG_HAS_VIEWWORLDMATRIX;
@@ -271,7 +271,7 @@ namespace Toshi {
 
 	const TMatrix44& TRenderContext::GetModelWorldMatrix()
 	{
-		if (!HASFLAG(m_eFlags & FLAG_HAS_MODELWORLDMATRIX))
+		if (!HASANYFLAG(m_eFlags, FLAG_HAS_MODELWORLDMATRIX))
 		{
 			m_oModelWorldMatrix.Multiply(GetViewWorldMatrix(), m_oModelViewMatrix);
 			m_eFlags |= FLAG_HAS_MODELWORLDMATRIX;
@@ -282,7 +282,7 @@ namespace Toshi {
 
 	const TMatrix44& TRenderContext::GetViewModelMatrix()
 	{
-		if (HASFLAG(m_eFlags & FLAG_DIRTY_VIEWMODELMATRIX))
+		if (HASANYFLAG(m_eFlags, FLAG_DIRTY_VIEWMODELMATRIX))
 		{
 			m_oViewModelMatrix.Invert(m_oModelViewMatrix);
 			m_eFlags &= ~FLAG_DIRTY_VIEWMODELMATRIX;
@@ -293,7 +293,7 @@ namespace Toshi {
 
 	const TMatrix44& TRenderContext::GetWorldModelMatrix()
 	{
-		if (HASFLAG(m_eFlags & FLAG_DIRTY_WORLDMODELMATRIX))
+		if (HASANYFLAG(m_eFlags, FLAG_DIRTY_WORLDMODELMATRIX))
 		{
 			m_oViewModelMatrix.Invert(m_oModelViewMatrix);
 			m_eFlags &= ~FLAG_DIRTY_WORLDMODELMATRIX;

@@ -50,7 +50,7 @@ TBOOL AGameStateController::OnUpdate(TFLOAT a_fDeltaTime)
 	{
 		m_eFlags = eFlags & 0xffef;
 
-		if (HASFLAG(eFlags & 0x1000))
+		if (HASANYFLAG(eFlags, 0x1000))
 		{
 			TTODO("FUN_00424000(false)");
 			return TTRUE;
@@ -66,7 +66,7 @@ TBOOL AGameStateController::OnUpdate(TFLOAT a_fDeltaTime)
 	{
 		TTODO("This section");
 
-		if (!HASFLAG(m_eFlags & 7))
+		if (!HASANYFLAG(m_eFlags, 7))
 		{
 			m_oStates.Back()->OnUpdate(a_fDeltaTime);
 		}

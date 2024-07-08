@@ -104,7 +104,7 @@ namespace Toshi {
 		static void LogSet(TLogFile* a_logFile);
 
 		static TLogFile* GetCurrentLogFile() { return TUtil::GetSingleton()->m_pCurrentLogFile; }
-		static TEmitter<TUtil, LogEvent>& GetLogEmitter() { return TUtil::GetSingleton()->m_LogEmitter; }
+		static TEmitter<TUtil, TUtil::LogEvent>& GetLogEmitter() { return TUtil::GetSingleton()->m_LogEmitter; }
 
 		static void SetGlobalMutex(HANDLE a_hGlobalMutex) { ms_hGlobalMutex = a_hGlobalMutex; }
 		

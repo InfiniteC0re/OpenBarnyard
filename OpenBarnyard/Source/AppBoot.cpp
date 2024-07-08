@@ -124,21 +124,28 @@ TOSHI_ENTRY
 	return 0;
 }
 
+static TBOOL CreateStringPool()
+{
+	auto pStringPool = new TPString8Pool( 1024, 0, AMemory::GetAllocator( AMemory::POOL_StringPool ), TNULL );
+
+	TUtil::SetTPStringPool( pStringPool );
+	pStringPool->InitialiseStatic();
+
+	return TTRUE;
+}
+
 TBOOL AApplication::OnCreate(int argc, TCHAR** argv)
 {
 	TINFO("Starting Barnyard...\n");
 
+	// Create string pool before anything else
 	if (!CreateStringPool())
 		return TFALSE;
 
-	TTextureResourceHAL::ms_oFreeList.SetCapacity(690);
-	TTextureResourceHAL::ms_oFreeList.SetGrowSize(0);
-
-	TVertexBlockResource::ms_oFreeList.SetCapacity(500);
-	TVertexBlockResource::ms_oFreeList.SetGrowSize(0);
-
-	TIndexBlockResource::ms_oFreeList.SetCapacity(350);
-	TIndexBlockResource::ms_oFreeList.SetGrowSize(0);
+	// Intialise free lists for rendering objects
+	TTextureResourceHAL::SetupFreeList( 690, 0 );
+	TVertexBlockResource::SetupFreeList( 500, 0 );
+	TIndexBlockResource::SetupFreeList( 350, 0 );
 
 	ALocaleManager* pLocaleManager = T2Locale::CreateSingleton<ALocaleManager>();
 	TTODO("Create some instances of some classes");
@@ -188,15 +195,5 @@ TBOOL AApplication::OnCreate(int argc, TCHAR** argv)
 
 TBOOL AApplication::OnUpdate(float deltaTime)
 {
-	return TTRUE;
-}
-
-TBOOL AApplication::CreateStringPool()
-{
-	auto pStringPool = new TPString8Pool(1024, 0, AMemory::GetAllocator(AMemory::POOL_StringPool), TNULL);
-
-	TUtil::SetTPStringPool(pStringPool);
-	pStringPool->InitialiseStatic();
-
 	return TTRUE;
 }

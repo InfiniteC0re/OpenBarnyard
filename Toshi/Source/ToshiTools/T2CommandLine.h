@@ -23,7 +23,7 @@ namespace Toshi {
 		const TCHAR* GetNextParameter( const TCHAR* a_pszParameter );
 
 	private:
-		T2FixedString<4096> m_szCommandLine;
+		T2FormatString<4096> m_szCommandLine;
 		T2String8Parser m_Parser;
 		TArray<TString8> m_ParsedParams;
 		TBOOL m_bInitialised;

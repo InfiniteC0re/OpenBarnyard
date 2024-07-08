@@ -10,7 +10,7 @@ namespace Toshi {
 	private:
 		struct AllocateData
 		{
-			size_t m_uiSize;
+			TSIZE m_uiSize;
 		};
 
 	public:
@@ -24,9 +24,9 @@ namespace Toshi {
 			Destroy();
 		}
 
-		void Create(size_t a_uiSize)
+		void Create(TSIZE a_uiSize)
 		{
-			size_t uiAllocDataSize = sizeof(AllocateData) + sizeof(T) * a_uiSize;
+			TSIZE uiAllocDataSize = sizeof(AllocateData) + sizeof(T) * a_uiSize;
 			
 			AllocateData* pAllocData = TSTATICCAST(AllocateData, TMalloc(uiAllocDataSize));
 			T* pArrayData = TREINTERPRETCAST(T*, pAllocData + 1);
@@ -48,7 +48,7 @@ namespace Toshi {
 		{
 			if (m_pArray)
 			{
-				for (size_t i = 0; i < GetSize(); i++)
+				for (TSIZE i = 0; i < GetSize(); i++)
 				{
 					m_pArray[i].~T();
 				}
@@ -63,17 +63,17 @@ namespace Toshi {
 			return m_pArray;
 		}
 
-		size_t GetSize() const
+		TSIZE GetSize() const
 		{
 			return GetAllocatedData()->m_uiSize;
 		}
 
-		T& operator[](size_t a_uiIndex)
+		T& operator[](TSIZE a_uiIndex)
 		{
 			return m_pArray[a_uiIndex];
 		}
 
-		const T& operator[](size_t a_uiIndex) const
+		const T& operator[](TSIZE a_uiIndex) const
 		{
 			return m_pArray[a_uiIndex];
 		}
@@ -81,7 +81,7 @@ namespace Toshi {
 	private:
 		AllocateData* GetAllocatedData() const
 		{
-			return TREINTERPRETCAST(AllocateData*, TREINTERPRETCAST(uintptr_t, m_pArray) - sizeof(AllocateData));
+			return TREINTERPRETCAST(AllocateData*, TREINTERPRETCAST(TUINTPTR, m_pArray) - sizeof(AllocateData));
 		}
 
 	private:

@@ -388,7 +388,7 @@ namespace Toshi {
 			// Load from memory
 			if (m_pData && m_uiDataSize != 0)
 			{
-				if (HASFLAG(m_eTextureFlags & 0x40))
+				if (HASANYFLAG(m_eTextureFlags, 0x40))
 				{
 					if (!CreateFromFormat())
 					{

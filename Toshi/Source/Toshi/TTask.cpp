@@ -36,7 +36,7 @@ namespace Toshi {
 				return TFALSE;
 			}
 
-			auto oldState = m_State;
+			TUINT32 oldState = m_State;
 			m_State |= State_Created;
 			Activate(TTRUE);
 		}
@@ -114,8 +114,8 @@ namespace Toshi {
 
 	void TTask::Activate(TBOOL activate)
 	{
-		uint8_t oldState = m_State;
-		uint8_t newFlags = activate ? State_Active : 0;
+		TUINT8 oldState = m_State;
+		TUINT8 newFlags = activate ? State_Active : 0;
 
 		m_State = (m_State & ~State_Active) | newFlags;
 

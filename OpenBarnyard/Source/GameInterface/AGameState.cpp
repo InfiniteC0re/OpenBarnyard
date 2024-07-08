@@ -28,8 +28,9 @@ AGameState::AGameState()
 	m_bIsActivated = TFALSE;
 	m_fFOV = TMath::DegToRad(60.0f);
 
-	auto pRootElement = AGUI2::GetRootElement();
+	AGUI2Element* pRootElement = AGUI2::GetRootElement();
 	m_GUIElement.SetDimensions(pRootElement->GetWidth(), pRootElement->GetHeight());
+
 	pRootElement->AddChildTail(m_GUIElement);
 	m_GUIElement.Hide();
 }

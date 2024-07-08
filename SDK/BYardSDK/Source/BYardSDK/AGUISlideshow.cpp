@@ -37,7 +37,7 @@ TBOOL AGUISlideshow::ProcessInput(const Toshi::TInputInterface::InputEvent* a_pE
 
 TBOOL AGUISlideshow::ProcessCommand(AInputCommand a_eCommand)
 {
-	if (((a_eCommand != AInputCommand_Back && a_eCommand != AInputCommand_Cancel && a_eCommand != AInputCommand_Quit) || !HASFLAG(m_eFlags & Flags_Unk1)) && !HASFLAG(m_eFlags & Flags_InstaSkippable))
+	if (((a_eCommand != AInputCommand_Back && a_eCommand != AInputCommand_Cancel && a_eCommand != AInputCommand_Quit) || !HASANYFLAG(m_eFlags, Flags_Unk1)) && !HASANYFLAG(m_eFlags, Flags_InstaSkippable))
 	{
 		if (m_eFlags & Flags_Skippable)
 		{

@@ -611,7 +611,7 @@ namespace Toshi {
 		{
 			D3DCAPS8 caps;
 			HRESULT hRes = m_pDirectDevice->GetDeviceCaps(&caps);
-			m_bCapableColourCorrection = SUCCEEDED(hRes) && HASFLAG(caps.AdapterOrdinal & 0x20000);
+			m_bCapableColourCorrection = SUCCEEDED(hRes) && HASANYFLAG(caps.AdapterOrdinal, 0x20000);
 		}
 
 		return m_bCapableColourCorrection;

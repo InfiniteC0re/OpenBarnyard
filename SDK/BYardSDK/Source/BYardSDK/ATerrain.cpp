@@ -84,12 +84,12 @@ TINT ATerrain::GetPersistantVISGroupIndex()
 	return ms_iPersistantVISGroupIndex;
 }
 
-void ATerrainManager::SetTerrain(TINT a_eTerrain, TBOOL a_bLoadLater, TBOOL a_bPersistantCollision, TINT a_iUnused1, TINT a_iUnused2, TINT a_iPreloadTerrainBlockSize, TINT a_iStartVISGroup)
+void ABYardTerrainManager::SetTerrain(TINT a_eTerrain, TBOOL a_bLoadLater, TBOOL a_bPersistantCollision, TINT a_iUnused1, TINT a_iUnused2, TINT a_iPreloadTerrainBlockSize, TINT a_iStartVISGroup)
 {
 	
 }
 
-void ATerrainManager::StartLoading()
+void ABYardTerrainManager::StartLoading()
 {
 	
 }

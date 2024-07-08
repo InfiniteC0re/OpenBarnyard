@@ -66,7 +66,7 @@ namespace Toshi {
 	// Note: To support other encodings, pass your own StringTraits class.
 	//-----------------------------------------------------------------------------
 	template <TSIZE Size, typename TStringTraits = T2StringTraits<TCHAR>>
-	class T2FixedString
+	class T2FormatString
 	{
 	public:
 		TSTATICASSERT( Size > 0 );
@@ -77,12 +77,12 @@ namespace Toshi {
 		using CharType = typename StringTraits::CharType;
 
 	public:
-		constexpr T2FixedString()
+		constexpr T2FormatString()
 		{
 			m_szBuffer[ 0 ] = CharTraits::NullChar;
 		}
 
-		T2FixedString( const CharType* a_szString )
+		T2FormatString( const CharType* a_szString )
 		{
 			Copy( a_szString );
 		}
@@ -221,23 +221,23 @@ namespace Toshi {
 		CharType m_szBuffer[ Size ];
 	};
 
-	using T2FixedString32 = T2FixedString<32, T2StringTraits<TCHAR>>;
-	using T2FixedString64 = T2FixedString<64, T2StringTraits<TCHAR>>;
-	using T2FixedString128 = T2FixedString<128, T2StringTraits<TCHAR>>;
-	using T2FixedString256 = T2FixedString<256, T2StringTraits<TCHAR>>;
-	using T2FixedString512 = T2FixedString<512, T2StringTraits<TCHAR>>;
-	using T2FixedString1024 = T2FixedString<1024, T2StringTraits<TCHAR>>;
-	using T2FixedString2048 = T2FixedString<2048, T2StringTraits<TCHAR>>;
-	using T2FixedString4096 = T2FixedString<4096, T2StringTraits<TCHAR>>;
+	using T2FormatString32 = T2FormatString<32, T2StringTraits<TCHAR>>;
+	using T2FormatString64 = T2FormatString<64, T2StringTraits<TCHAR>>;
+	using T2FormatString128 = T2FormatString<128, T2StringTraits<TCHAR>>;
+	using T2FormatString256 = T2FormatString<256, T2StringTraits<TCHAR>>;
+	using T2FormatString512 = T2FormatString<512, T2StringTraits<TCHAR>>;
+	using T2FormatString1024 = T2FormatString<1024, T2StringTraits<TCHAR>>;
+	using T2FormatString2048 = T2FormatString<2048, T2StringTraits<TCHAR>>;
+	using T2FormatString4096 = T2FormatString<4096, T2StringTraits<TCHAR>>;
 
-	using T2FixedWString32 = T2FixedString<32, T2StringTraits<TWCHAR>>;
-	using T2FixedWString64 = T2FixedString<64, T2StringTraits<TWCHAR>>;
-	using T2FixedWString128 = T2FixedString<128, T2StringTraits<TWCHAR>>;
-	using T2FixedWString256 = T2FixedString<256, T2StringTraits<TWCHAR>>;
-	using T2FixedWString512 = T2FixedString<512, T2StringTraits<TWCHAR>>;
-	using T2FixedWString1024 = T2FixedString<1024, T2StringTraits<TWCHAR>>;
-	using T2FixedWString2048 = T2FixedString<2048, T2StringTraits<TWCHAR>>;
-	using T2FixedWString4096 = T2FixedString<4096, T2StringTraits<TWCHAR>>;
+	using T2FormatWString32 = T2FormatString<32, T2StringTraits<TWCHAR>>;
+	using T2FormatWString64 = T2FormatString<64, T2StringTraits<TWCHAR>>;
+	using T2FormatWString128 = T2FormatString<128, T2StringTraits<TWCHAR>>;
+	using T2FormatWString256 = T2FormatString<256, T2StringTraits<TWCHAR>>;
+	using T2FormatWString512 = T2FormatString<512, T2StringTraits<TWCHAR>>;
+	using T2FormatWString1024 = T2FormatString<1024, T2StringTraits<TWCHAR>>;
+	using T2FormatWString2048 = T2FormatString<2048, T2StringTraits<TWCHAR>>;
+	using T2FormatWString4096 = T2FormatString<4096, T2StringTraits<TWCHAR>>;
 
 	//-----------------------------------------------------------------------------
 	// Purpose: Wrapper class that makes parsing text data easier.

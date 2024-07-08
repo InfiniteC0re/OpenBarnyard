@@ -115,7 +115,7 @@ namespace Toshi {
 
 	void TOrderTable::DeregisterMaterial(TRegMaterial* pRegMat)
 	{
-		if (HASFLAG(pRegMat->GetFlags() & TRegMaterial::State_Registered))
+		if (HASANYFLAG(pRegMat->GetFlags(), TRegMaterial::State_Registered))
 		{
 			TASSERT(s_uiNumRenderPackets == 0);
 
@@ -142,7 +142,7 @@ namespace Toshi {
 
 	void TOrderTable::UseMaterial(TRegMaterial* a_pRegMat)
 	{
-		if (!HASFLAG(a_pRegMat->GetFlags() & TRegMaterial::State_Used))
+		if (!HASANYFLAG(a_pRegMat->GetFlags(), TRegMaterial::State_Used))
 		{
 			a_pRegMat->SetFlags(a_pRegMat->GetFlags() | TRegMaterial::State_Used);
 			a_pRegMat->SetNextRegMat(m_pLastRegMat);

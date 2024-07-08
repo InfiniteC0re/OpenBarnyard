@@ -81,7 +81,7 @@ namespace Toshi
 
 		// Set the genereated title and wait for 50ms so it's applied
 		SetConsoleTitleA( str );
-		Sleep( 50 );
+		ThreadSleep( 50 );
 
 		// Find a window with the generated title and restore it
 		HWND consoleHWND = FindWindowA( TNULL, str );
