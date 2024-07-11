@@ -26,6 +26,7 @@
 #include <Plugins/PPropertyParser/PBProperties.h>
 #include <Toshi/TScheduler.h>
 #include <Toshi/T2ObjectPool.h>
+#include <ToshiTools/T2REDatabase.h>
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
@@ -40,6 +41,8 @@ TDEFINE_CLASS(ARootTask);
 ARootTask::ARootTask()
 {
 	TIMPLEMENT();
+
+	g_pREDatabase->Dump();
 
 	m_bStartedGame = TFALSE;
 	m_bRenderWorld = TFALSE;

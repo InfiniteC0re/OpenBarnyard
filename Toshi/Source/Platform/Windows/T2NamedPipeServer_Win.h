@@ -9,7 +9,7 @@ namespace Toshi {
 	class T2NamedPipeServerThread : public TThread
 	{
 	public:
-		T2NamedPipeServerThread(T2NamedPipeServer* a_pServer);
+		T2NamedPipeServerThread( T2NamedPipeServer* a_pServer );
 
 		virtual void Main() override;
 
@@ -26,21 +26,26 @@ namespace Toshi {
 	public:
 		friend T2NamedPipeServerThread;
 
-		using UpdateStreamCallback_t = void(*)(void*& a_rMemoryStream, TUINT& a_rDataSize);
+		using UpdateStreamCallback_t = void( * )( void*& a_rMemoryStream, TUINT& a_rDataSize, void* a_pUserData );
 
 	public:
 		T2NamedPipeServer();
 		~T2NamedPipeServer();
 
-		TBOOL Start(const TCHAR* a_szName, TUINT a_uiSendInterval, TUINT a_uiOutBufferSize = 1, TUINT a_uiInBufferSize = 64 * 1024);
-		
+		TBOOL Start( const TCHAR* a_szName, TUINT a_uiSendInterval, TUINT a_uiOutBufferSize = 1, TUINT a_uiInBufferSize = 64 * 1024 );
+
 		void Stop();
 
-		void SetMemoryStreamUpdateCallback(UpdateStreamCallback_t a_fnUpdateCallback);
-		void SetMemoryStream(void* a_pMemory, TUINT a_uiSize);
+		void SetMemoryStreamUpdateCallback( UpdateStreamCallback_t a_fnUpdateCallback );
+		void SetMemoryStream( void* a_pMemory, TUINT a_uiSize );
+
+		void SetUserData( void* a_pUserData ) { m_pUserData = a_pUserData; }
+
+		TBOOL HasConnectedClient() const { return m_bHasClient; }
 
 	private:
 		T2NamedPipeServerThread* m_pThread;
+		void* m_pUserData;
 		const TCHAR* m_szName;
 		UpdateStreamCallback_t m_fnUpdateStream;
 		TUINT m_uiSendInterval;

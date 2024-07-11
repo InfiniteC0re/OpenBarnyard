@@ -8,6 +8,7 @@
 #define STRINGIFY16(x) L##x
 #define STRINGIFY(X) STRINGIFY8(X)
 #define BITFLAG(x) (1U << (x))
+#define CONCATTOKEN(x, y) x ## y
 
 #define TVERSION(VER_MAJOR, VER_MINOR) ((VER_MAJOR << 16) | VER_MINOR)
 

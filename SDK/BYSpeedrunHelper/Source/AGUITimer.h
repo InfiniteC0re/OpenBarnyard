@@ -10,23 +10,24 @@ public:
 
 	void Create();
 
-	void Update(TFLOAT a_fDeltaTime);
+	void Update();
 	void Render();
 
-	void Start() { m_bIsStopped = TFALSE; }
-	void Stop() { m_bIsStopped = TTRUE; }
 	void Show() { m_bIsVisible = TTRUE; }
 	void Hide() { m_bIsVisible = TFALSE; }
 	void Reset() { m_fTotalTime = 0.0f; }
 
+	void SetTime( FLOAT a_fTime ) { m_fTotalTime = a_fTime; }
+
 	TBOOL& IsVisible()  { return m_bIsVisible; }
+	TBOOL IsValid()     { return m_pTextBox; }
 
 	TFLOAT GetTotalTime() const { return m_fTotalTime; }
-	TBOOL IsStopped() const { return m_bIsStopped; }
+
+	static void GetTime( TFLOAT fTime, TINT& iMilliseconds, TINT& iSeconds, TINT& iMinutes, TINT& iHours );
 
 private:
 	AGUI2TextBox* m_pTextBox;
 	TFLOAT m_fTotalTime;
 	TBOOL m_bIsVisible;
-	TBOOL m_bIsStopped;
 };

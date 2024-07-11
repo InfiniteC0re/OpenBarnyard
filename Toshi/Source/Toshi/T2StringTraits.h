@@ -23,7 +23,7 @@ namespace Toshi {
 		static TINT Format( CharType* a_pcString, TINT size, const CharType* a_pcFormat, ... ) { TUNREACHABLE(); }
 		static TINT Format( CharType* a_pcString, const CharType* a_pcFormat, ... ) { TUNREACHABLE(); }
 
-		static TINT Compare( const CharType* str1, const CharType* str2, TSIZE size ) { TUNREACHABLE(); }
+		static TINT Compare( const CharType* str1, const CharType* str2, TSIZE size = -1 ) { TUNREACHABLE(); }
 		static TINT CompareNoCase( const CharType* str1, const CharType* str2, TSIZE size = -1 ) { TUNREACHABLE(); }
 
 		static CharType* Copy( CharType* dst, const CharType* src, TSIZE size = -1 ) { TUNREACHABLE(); }
@@ -95,7 +95,7 @@ namespace Toshi {
 	}
 
 	template <>
-	TINLINE TINT T2StringTraits<TCHAR>::Compare( const CharType* str1, const CharType* str2, TSIZE size )
+	TINLINE TINT T2StringTraits<TCHAR>::Compare( const CharType* str1, const CharType* str2, TSIZE size /*= -1 */ )
 	{
 		return T2String8::Compare( str1, str2, size );
 	}
@@ -255,7 +255,7 @@ namespace Toshi {
 	}
 
 	template <>
-	TINLINE TINT T2StringTraits<TWCHAR>::Compare( const CharType* str1, const CharType* str2, TSIZE size )
+	TINLINE TINT T2StringTraits<TWCHAR>::Compare( const CharType* str1, const CharType* str2, TSIZE size /*= -1 */ )
 	{
 		return T2String16::Compare( str1, str2, size );
 	}

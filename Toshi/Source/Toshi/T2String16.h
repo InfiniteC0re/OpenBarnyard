@@ -12,17 +12,17 @@ namespace Toshi {
 		static constexpr TSIZE SCRATCH_MEM_SIZE = 512;
 
 	public:
-		static TINT Format(TWCHAR* a_pcString, TINT size, const TWCHAR* a_pcFormat, ...);
-		static TINT Format(TWCHAR* a_pcString, const TWCHAR* a_pcFormat, ...);
-		
-		static TINT FormatV(TWCHAR* a_pcString, TINT size, const TWCHAR* a_pcFormat, va_list args);
-		static TINT FormatV(TWCHAR* a_pcString, const TWCHAR* a_pcFormat, va_list args);
+		static TINT Format( TWCHAR* a_pcString, TINT size, const TWCHAR* a_pcFormat, ... );
+		static TINT Format( TWCHAR* a_pcString, const TWCHAR* a_pcFormat, ... );
 
-		static TINT Compare(const TWCHAR* str1, const TWCHAR* str2, TSIZE size);
-		static TINT CompareNoCase(const TWCHAR* str1, const TWCHAR* str2, TSIZE size);
+		static TINT FormatV( TWCHAR* a_pcString, TINT size, const TWCHAR* a_pcFormat, va_list args );
+		static TINT FormatV( TWCHAR* a_pcString, const TWCHAR* a_pcFormat, va_list args );
 
-		static TWCHAR* Copy(TWCHAR* dst, const TWCHAR* src, TSIZE size = -1);
-		static TWCHAR* CopySafe(TWCHAR* dst, const TWCHAR* src, TSIZE size);
+		static TINT Compare( const TWCHAR* str1, const TWCHAR* str2, TSIZE size = -1 );
+		static TINT CompareNoCase( const TWCHAR* str1, const TWCHAR* str2, TSIZE size = -1 );
+
+		static TWCHAR* Copy( TWCHAR* dst, const TWCHAR* src, TSIZE size = -1 );
+		static TWCHAR* CopySafe( TWCHAR* dst, const TWCHAR* src, TSIZE size );
 
 		static TWCHAR* Concat( TWCHAR* dst, const TWCHAR* src, TSIZE size = -1 );
 
@@ -32,7 +32,7 @@ namespace Toshi {
 		static TWCHAR* FindString( TWCHAR* str, const TWCHAR* substr );
 		static const TWCHAR* FindString( const TWCHAR* str, const TWCHAR* substr );
 
-		static TSIZE Length(const TWCHAR* str);
+		static TSIZE Length( const TWCHAR* str );
 
 		static TBOOL IsLowerCase( const TWCHAR* str );
 		static TBOOL IsUpperCase( const TWCHAR* str );

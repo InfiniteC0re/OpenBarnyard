@@ -2,7 +2,7 @@
 
 namespace Toshi
 {
-	template<typename T, size_t MaxSize>
+	template<typename T, TSIZE MaxSize>
 	class T2Vector
 	{
 	public:
@@ -12,11 +12,11 @@ namespace Toshi
 			friend class T2Vector;
 
 		public:
-			Iterator(T2Vector* a_pVector) : m_uiIndex(0), m_pVector(a_pVector) { }
-			Iterator(TUINT32 a_uiIndex, T2Vector* a_pVector) : m_uiIndex(a_uiIndex), m_pVector(a_pVector) { }
-			Iterator(const Iterator& a_rOther) : m_uiIndex(a_rOther.m_uiIndex), m_pVector(a_rOther.m_pVector) { }
+			constexpr Iterator(T2Vector* a_pVector) : m_uiIndex(0), m_pVector(a_pVector) { }
+			constexpr Iterator(TSIZE a_uiIndex, T2Vector* a_pVector) : m_uiIndex(a_uiIndex), m_pVector(a_pVector) { }
+			constexpr Iterator(const Iterator& a_rOther) : m_uiIndex(a_rOther.m_uiIndex), m_pVector(a_rOther.m_pVector) { }
 
-			TUINT32 Index() const noexcept
+			constexpr TSIZE Index() const noexcept
 			{
 				return m_uiIndex;
 			}
@@ -86,58 +86,58 @@ namespace Toshi
 				return a_rOther.m_pVector == m_pVector && a_rOther.m_uiIndex <= m_uiIndex;
 			}
 
-			Iterator operator++(TINT) noexcept
+			constexpr Iterator operator++(TINT) noexcept
 			{
 				Iterator temp = *this;
 				m_uiIndex++;
 				return temp;
 			}
 
-			Iterator operator--(TINT) noexcept
+			constexpr Iterator operator--(TINT) noexcept
 			{
 				Iterator temp = *this;
 				m_uiIndex--;
 				return temp;
 			}
 
-			Iterator& operator++() noexcept
+			constexpr Iterator& operator++() noexcept
 			{
 				m_uiIndex++;
 				return *this;
 			}
 
-			Iterator& operator--() noexcept
+			constexpr Iterator& operator--() noexcept
 			{
 				m_uiIndex--;
 				return *this;
 			}
 
-			Iterator& operator=(const Iterator& a_rOther) noexcept
+			constexpr Iterator& operator=(const Iterator& a_rOther) noexcept
 			{
 				m_uiIndex = a_rOther.m_uiIndex;
 				m_pVector = a_rOther.m_pVector;
 			}
 
-			Iterator operator+(TUINT32 a_uiValue) const noexcept
+			Iterator operator+(TSIZE a_uiValue) const noexcept
 			{
 				TASSERT(m_uiIndex + a_uiValue < m_pVector->Size());
 				return Iterator(m_uiIndex + a_uiValue, m_pVector);
 			}
 
-			Iterator operator-(TUINT32 a_uiValue) const noexcept
+			Iterator operator-(TSIZE a_uiValue) const noexcept
 			{
 				TASSERT(m_uiIndex - a_uiValue < m_pVector->Size());
 				return Iterator(m_uiIndex - a_uiValue, m_pVector);
 			}
 
-			Iterator& operator+=(TUINT32 a_uiValue) const noexcept
+			Iterator& operator+=(TSIZE a_uiValue) const noexcept
 			{
 				TASSERT(m_uiIndex + a_uiValue < m_pVector->Size());
 				m_uiIndex += a_uiValue;
 				return *this;
 			}
 
-			Iterator& operator-=(TUINT32 a_uiValue) const noexcept
+			Iterator& operator-=(TSIZE a_uiValue) const noexcept
 			{
 				TASSERT(m_uiIndex - a_uiValue < m_pVector->Size());
 				m_uiIndex -= a_uiValue;
@@ -145,12 +145,12 @@ namespace Toshi
 			}
 
 		private:
-			TUINT32 m_uiIndex;
+			TSIZE m_uiIndex;
 			T2Vector* m_pVector;
 		};
 
 	public:
-		constexpr static TUINT32 CAPACITY = MaxSize;
+		constexpr static TSIZE CAPACITY = MaxSize;
 
 	public:
 		T2Vector()
@@ -179,7 +179,7 @@ namespace Toshi
 
 		void Clear()
 		{
-			for (TUINT32 i = 0; i < Size(); i++)
+			for (TSIZE i = 0; i < Size(); i++)
 				m_Items[i].~T();
 
 			m_iNumElements = 0;
@@ -198,13 +198,13 @@ namespace Toshi
 
 		void Erase(const Iterator& a_rIterator)
 		{
-			TUINT32 uiItemIndex = a_rIterator.Index();
+			TSIZE uiItemIndex = a_rIterator.Index();
 			TASSERT(uiItemIndex < m_iNumElements);
 
 			if (uiItemIndex + 1 < Size())
 			{
-				for (TUINT32 i = uiItemIndex + 1; i < Size(); i++)
-					m_Items[i - 1] = m_Items[i];
+				for ( TSIZE i = uiItemIndex + 1; i < Size(); i++ )
+					m_Items[ i - 1 ] = std::move( m_Items[ i ] );
 			}
 			else
 			{
@@ -214,9 +214,14 @@ namespace Toshi
 			m_iNumElements--;
 		}
 
-		TUINT32 Size() const
+		TSIZE Size() const
 		{
 			return m_iNumElements;
+		}
+
+		constexpr TSIZE Capacity() const
+		{
+			return CAPACITY;
 		}
 
 		TBOOL IsEmpty() const
@@ -238,8 +243,8 @@ namespace Toshi
 
 		T& Back()
 		{
-			TASSERT(m_iNumElements > 0);
-			return m_Items[m_iNumElements - 1];
+			TASSERT( m_iNumElements > 0 );
+			return m_Items[ m_iNumElements - 1 ];
 		}
 
 		const T& Back() const
@@ -248,42 +253,42 @@ namespace Toshi
 			return m_Items[m_iNumElements - 1];
 		}
 
-		Iterator Begin()
+		constexpr Iterator Begin()
 		{
 			return Iterator(this);
 		}
 
-		Iterator End()
+		constexpr Iterator End()
 		{
 			return Iterator(m_iNumElements, this);
 		}
 
-		T& ValueAt(TUINT32 a_uiIndex)
+		T& ValueAt(TSIZE a_uiIndex)
 		{
 			TASSERT(a_uiIndex < m_iNumElements);
 			return m_Items[a_uiIndex];
 		}
 
-		const T& ValueAt(TUINT32 a_uiIndex) const
+		const T& ValueAt(TSIZE a_uiIndex) const
 		{
 			TASSERT(a_uiIndex < m_iNumElements);
 			return m_Items[a_uiIndex];
 		}
 
-		T& operator[](TUINT32 a_uiIndex)
+		T& operator[](TSIZE a_uiIndex)
 		{
 			TASSERT(a_uiIndex < m_iNumElements);
 			return m_Items[a_uiIndex];
 		}
 
-		const T& operator[](TUINT32 a_uiIndex) const
+		const T& operator[](TSIZE a_uiIndex) const
 		{
 			TASSERT(a_uiIndex < m_iNumElements);
 			return m_Items[a_uiIndex];
 		}
 
 	private:
-		TUINT32 m_iNumElements;
+		TSIZE m_iNumElements;
 		T m_Items[MaxSize];
 	};
 };

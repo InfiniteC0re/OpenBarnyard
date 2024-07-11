@@ -13,12 +13,12 @@ workspace "OpenBarnyard"
 	
 	editandcontinue "Off"
 	
-	defines
-	{
-		"TOSHI_PROFILER",
-		"TOSHI_PROFILER_MEMORY",
-		"TRACY_ENABLE"
-	}
+	--defines
+	--{
+	--	"TOSHI_PROFILER",
+	--	"TOSHI_PROFILER_MEMORY",
+	--	"TRACY_ENABLE"
+	--}
 	
 	filter "options:arch=x86"
 		architecture "x86"

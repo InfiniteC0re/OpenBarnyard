@@ -18,7 +18,7 @@ namespace Toshi {
 		static TINT Format( TCHAR* a_pcString, TINT size, const TCHAR* a_pcFormat, ... );
 		static TINT Format( TCHAR* a_pcString, const TCHAR* a_pcFormat, ... );
 
-		static TINT Compare( const TCHAR* str1, const TCHAR* str2, TSIZE size );
+		static TINT Compare( const TCHAR* str1, const TCHAR* str2, TSIZE size = -1 );
 		static TINT CompareNoCase( const TCHAR* str1, const TCHAR* str2, TSIZE size = -1 );
 
 		static TCHAR* Copy( TCHAR* dst, const TCHAR* src, TSIZE size = -1 );

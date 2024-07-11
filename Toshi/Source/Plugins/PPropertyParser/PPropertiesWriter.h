@@ -4,6 +4,7 @@
 #include "File/TTRB.h"
 #include "Toshi/TPString8.h"
 #include "Toshi/T2Map.h"
+#include "Toshi/T2String.h"
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
@@ -14,7 +15,7 @@
 class PPropertiesWriter
 {
 private:
-	inline static Toshi::T2Map<const TCHAR*, PTRBSections::MemoryStream::Ptr<TCHAR>, Toshi::TPooledString8::Comparator> s_aStringMap;
+	inline static Toshi::T2Map<const TCHAR*, PTRBSections::MemoryStream::Ptr<TCHAR>, Toshi::T2String8Comparator> s_aStringMap;
 
 private:
 	static PTRBSections::MemoryStream::Ptr<TCHAR> GetStringPtr(const TCHAR* a_szString)

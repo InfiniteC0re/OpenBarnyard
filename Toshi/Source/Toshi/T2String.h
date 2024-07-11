@@ -70,7 +70,6 @@ namespace Toshi {
 	{
 	public:
 		TSTATICASSERT( Size > 0 );
-		TSTATICASSERT( Size <= 4096 );
 
 		using StringTraits = TStringTraits;
 		using CharTraits = typename StringTraits::CharTraits;
@@ -370,4 +369,43 @@ namespace Toshi {
 	using T2String8Parser = T2StringParser<T2StringTraits<TCHAR>>;
 	using T2String16Parser = T2StringParser<T2StringTraits<TWCHAR>>;
 
+	//-----------------------------------------------------------------------------
+	// Purpose: Wrapper class that allows other classes to compare strings.
+	// Note: To support other encodings, pass your own StringTraits class.
+	//-----------------------------------------------------------------------------
+	template <class StringTraits = T2StringTraits<TCHAR>>
+	class T2StringComparator
+	{
+	public:
+		using CharType = typename StringTraits::CharType;
+
+	public:
+		static TBOOL IsEqual( const CharType* a, const CharType* b )
+		{
+			return StringTraits::Compare( a, b ) == 0;
+		}
+
+		static TBOOL IsGreater( const CharType* a, const CharType* b )
+		{
+			return StringTraits::Compare( a, b ) > 0;
+		}
+
+		static TBOOL IsLess( const CharType* a, const CharType* b )
+		{
+			return StringTraits::Compare( a, b ) < 0;
+		}
+
+		static TBOOL IsLessOrEqual( const CharType* a, const CharType* b )
+		{
+			return StringTraits::Compare( a, b ) <= 0;
+		}
+
+		static TBOOL IsGreaterOrEqual( const CharType* a, const CharType* b )
+		{
+			return StringTraits::Compare( a, b ) >= 0;
+		}
+	};
+
+	using T2String8Comparator = T2StringComparator<T2StringTraits<TCHAR>>;
+	using T2String16Comparator = T2StringComparator<T2StringTraits<TWCHAR>>;
 }

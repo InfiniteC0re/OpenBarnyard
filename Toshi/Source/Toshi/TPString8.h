@@ -8,6 +8,7 @@
 #include "Toshi/TRefCounted.h"
 #include "Toshi/T2Allocator.h"
 #include "Toshi/T2Map.h"
+#include "Toshi/T2String.h"
 #include "Toshi/TSystem.h"
 
 #define TPSTRING8_DECLARE(STR) extern Toshi::TPString8 g_str_##STR
@@ -20,35 +21,6 @@ namespace Toshi {
 	class TPooledString8 : public TRefCounted
 	{
 	public:
-		class Comparator
-		{
-		public:
-			static TBOOL IsEqual(const TCHAR* a, const TCHAR* b)
-			{
-				return TStringManager::String8Compare(a, b) == 0;
-			}
-
-			static TBOOL IsGreater(const TCHAR* a, const TCHAR* b)
-			{
-				return TStringManager::String8Compare(a, b) > 0;
-			}
-
-			static TBOOL IsLess(const TCHAR* a, const TCHAR* b)
-			{
-				return TStringManager::String8Compare(a, b) < 0;
-			}
-
-			static TBOOL IsLessOrEqual(const TCHAR* a, const TCHAR* b)
-			{
-				return TStringManager::String8Compare(a, b) <= 0;
-			}
-
-			static TBOOL IsGreaterOrEqual(const TCHAR* a, const TCHAR* b)
-			{
-				return TStringManager::String8Compare(a, b) >= 0;
-			}
-		};
-
 		friend class TPString8;
 
 	public:
@@ -102,12 +74,12 @@ namespace Toshi {
 			return m_pAllocator;
 		}
 
-		T2Map<const TCHAR*, TPooledString8*, TPooledString8::Comparator>::Iterator Begin()
+		T2Map<const TCHAR*, TPooledString8*, T2String8Comparator>::Iterator Begin()
 		{
 			return m_oMap.Begin();
 		}
 
-		T2Map<const TCHAR*, TPooledString8*, TPooledString8::Comparator>::Iterator End()
+		T2Map<const TCHAR*, TPooledString8*, T2String8Comparator>::Iterator End()
 		{
 			return m_oMap.End();
 		}
@@ -115,7 +87,7 @@ namespace Toshi {
 	private:
 		T2Allocator* m_pAllocator;
 		TUINT m_Unk1;
-		T2Map<const TCHAR*, TPooledString8*, TPooledString8::Comparator> m_oMap;
+		T2Map<const TCHAR*, TPooledString8*, T2String8Comparator> m_oMap;
 		TUINT m_Unk2;
 		TUINT m_Unk3;
 		TUINT m_Unk4;
