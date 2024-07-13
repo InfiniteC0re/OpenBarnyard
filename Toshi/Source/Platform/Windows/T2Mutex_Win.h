@@ -28,6 +28,8 @@ namespace Toshi
 		// Destroys mutex
 		void Destroy();
 
+		operator TBOOL() const { return m_Mutex; }
+
 	private:
 		void* m_Mutex;
 	};

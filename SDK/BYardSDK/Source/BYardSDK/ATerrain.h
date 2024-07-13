@@ -371,7 +371,8 @@ public:
 
 	static void StartLoading();
 
-private:
+public:
 	inline static ATerrain* ms_pCurrentTerrain;
-	inline static Terrain ms_eCurrentLevel = Terrain_EnvBeadyFarm;
+	inline static Terrain* ms_pCurrentLevel = TREINTERPRETCAST( Terrain*, 0x00772800 );
+	inline static Terrain& ms_eCurrentLevel = *ms_pCurrentLevel;
 };

@@ -24,7 +24,7 @@ public:
 
 	TFLOAT GetTotalTime() const { return m_fTotalTime; }
 
-	static void GetTime( TFLOAT fTime, TINT& iMilliseconds, TINT& iSeconds, TINT& iMinutes, TINT& iHours );
+	static void GetTime( TFLOAT a_fTime, TINT& a_iMilliseconds, TINT& a_iSeconds, TINT& a_iMinutes, TINT& a_iHours );
 
 private:
 	AGUI2TextBox* m_pTextBox;

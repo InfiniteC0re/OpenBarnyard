@@ -14,12 +14,18 @@ public:
 	ASplitsServer();
 
 	void StartRun();
-	void EndRun();
+	void EndRun( TINT a_iMilliseconds, TINT a_iSeconds, TINT a_iMinutes, TINT a_iHours );
+	
 	void Reset();
+	
 	void Resume();
 	void Pause();
-	void Split();
-	void SendTime( TINT iMilliseconds, TINT iSeconds, TINT iMinutes, TINT iHours );
+
+	void SetLoadingStart();
+	void SetLoadingEnd();
+
+	void Split( TINT a_iMilliseconds, TINT a_iSeconds, TINT a_iMinutes, TINT a_iHours );
+	void SendTime( TINT a_iMilliseconds, TINT a_iSeconds, TINT a_iMinutes, TINT a_iHours );
 
 private:
 	void WriteString( const char* a_pchBuffer );

@@ -69,10 +69,10 @@ void AGUITimer::Render()
 	}
 }
 
-void AGUITimer::GetTime( TFLOAT fTime, TINT& iMilliseconds, TINT& iSeconds, TINT& iMinutes, TINT& iHours )
+void AGUITimer::GetTime( TFLOAT a_fTime, TINT& a_iMilliseconds, TINT& a_iSeconds, TINT& a_iMinutes, TINT& a_iHours )
 {
-	iMilliseconds = TMath::FloorToInt( fmod( fTime, 1.0f ) * 1000 );
-	iSeconds = TMath::FloorToInt( fmod( fTime, 60.0f ) );
-	iMinutes = TMath::FloorToInt( fTime / 60.0f );
-	iHours = TMath::FloorToInt( fTime / 3600.0f );
+	a_iMilliseconds = TMath::FloorToInt( fmod( a_fTime, 1.0f ) * 1000 );
+	a_iSeconds = TMath::FloorToInt( fmod( a_fTime, 60.0f ) );
+	a_iMinutes = TMath::FloorToInt( fmod( a_fTime / 60.0f, 60.0f ) );
+	a_iHours = TMath::FloorToInt( a_fTime / 3600.0f );
 }

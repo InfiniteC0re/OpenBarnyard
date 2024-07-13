@@ -51,20 +51,9 @@ ASplitsServer::ASplitsServer() :
 		// If anything is ready to send, process and send the data
 		if ( pSplits->m_QueuedEvents.Size() > 0 )
 		{
-			// Calculate size of all messages
-			TSIZE uiAllMsgSize = 0;
-
-			for ( TSIZE i = 0; i < pSplits->m_QueuedEvents.Size(); i++ )
-			{
-				const char* pchMsg = pSplits->m_QueuedEvents[ i ];
-				TUINT uiMsgLen = T2String8::Length( pchMsg );
-
-				uiAllMsgSize += sizeof(TUINT32) + uiMsgLen + 1;
-			}
-
 			// Initialise header
 			MsgQueueHeader_t* pHeader = (MsgQueueHeader_t*)pSplits->m_Buffer;
-			pHeader->uiTotalSize = sizeof( MsgQueueHeader_t ) + uiAllMsgSize;
+			pHeader->uiTotalSize = 0;
 			pHeader->uiNumMessages = pSplits->m_QueuedEvents.Size();
 			
 			pSplits->m_uiBufferSize = sizeof( MsgQueueHeader_t );
@@ -94,6 +83,9 @@ ASplitsServer::ASplitsServer() :
 			pSplits->m_QueuedEvents.Clear();
 			pSplits->m_Buffer[ pSplits->m_uiBufferSize++ ] = '\0';
 
+			// Write all messages size
+			pHeader->uiTotalSize = pSplits->m_uiBufferSize;
+
 			if ( pSplits->m_uiBufferSize > 8 )
 			{
 				// Send values to the named pipe class
@@ -112,12 +104,14 @@ void ASplitsServer::StartRun()
 	WriteString( "1" );
 }
 
-void ASplitsServer::EndRun()
+void ASplitsServer::EndRun( TINT a_iMilliseconds, TINT a_iSeconds, TINT a_iMinutes, TINT a_iHours )
 {
 	if ( !m_NamedPipe.HasConnectedClient() )
 		return;
 
-	WriteString( "2" );
+	T2FormatString256 fmtStr;
+	fmtStr.Format( "2%d_%d_%d_%d", a_iHours, a_iMinutes, a_iSeconds, a_iMilliseconds );
+	WriteString( fmtStr.Get() );
 }
 
 void ASplitsServer::Reset()
@@ -144,22 +138,39 @@ void ASplitsServer::Pause()
 	WriteString( "5" );
 }
 
-void ASplitsServer::Split()
+void ASplitsServer::SetLoadingStart()
 {
 	if ( !m_NamedPipe.HasConnectedClient() )
 		return;
 
-	WriteString( "6" );
+	WriteString( "8" );
 }
 
-void ASplitsServer::SendTime( TINT iMilliseconds, TINT iSeconds, TINT iMinutes, TINT iHours )
+void ASplitsServer::SetLoadingEnd()
+{
+	if ( !m_NamedPipe.HasConnectedClient() )
+		return;
+
+	WriteString( "9" );
+}
+
+void ASplitsServer::Split( TINT a_iMilliseconds, TINT a_iSeconds, TINT a_iMinutes, TINT a_iHours )
 {
 	if ( !m_NamedPipe.HasConnectedClient() )
 		return;
 
 	T2FormatString256 fmtStr;
+	fmtStr.Format( "6%d_%d_%d_%d", a_iHours, a_iMinutes, a_iSeconds, a_iMilliseconds );
+	WriteString( fmtStr.Get() );
+}
 
-	fmtStr.Format( "7%d_%d_%d_%d", iHours, iMinutes, iSeconds, iMilliseconds );
+void ASplitsServer::SendTime( TINT a_iMilliseconds, TINT a_iSeconds, TINT a_iMinutes, TINT a_iHours )
+{
+	if ( !m_NamedPipe.HasConnectedClient() )
+		return;
+
+	T2FormatString256 fmtStr;
+	fmtStr.Format( "7%d_%d_%d_%d", a_iHours, a_iMinutes, a_iSeconds, a_iMilliseconds );
 	WriteString( fmtStr.Get() );
 }
 

@@ -22,7 +22,11 @@ public:
 	void Create();
 
 	void Start();
+	void End();
+
 	void Reset();
+
+	void Split();
 
 	void Resume();
 	void Pause();
@@ -32,9 +36,19 @@ public:
 
 	AGUITimer& GetUIElement() { return m_UITimer; }
 
+	void SetIsLoadingScreen( TBOOL a_bLoadingScreen );
+
+	TFLOAT GetRunTime() const { return m_flTime; }
+	TFLOAT GetLoadingTime() const { return m_flTotalLoadingTime; }
+	TFLOAT GetTotalTime() const { return m_flTime + m_flTotalLoadingTime; }
+
 private:
 	ATimerThread* m_pTimerThread;
 	AGUITimer m_UITimer;
 	TFLOAT m_flTime;
 	TBOOL m_bPaused;
+
+	TBOOL m_bIsLoading;
+	Toshi::THPTimer m_LoadingTimer;
+	TFLOAT m_flTotalLoadingTime;
 };

@@ -75,7 +75,7 @@ TBOOL ACollisionInspector::AModelLoader_LoadTRBCallback(Toshi::TModel* a_pModel)
 		{
 			if (pCollision->uiNumMeshes > 0)
 			{
-				TTRACE("Creating collision mesh through ASysShader...\n");
+				//TTRACE("Creating collision mesh through ASysShader...\n");
 
 				if (!ms_pCollisionMaterial)
 				{
@@ -135,7 +135,7 @@ TBOOL ACollisionInspector::AModelLoader_LoadTRBCallback(Toshi::TModel* a_pModel)
 							rLOD.ppMeshes[iOriginalNumMeshes + i] = pMesh;
 							rLOD.iNumMeshes += 1;
 
-							TTRACE("  Done: %u vertices, %u indices\n", pMeshDef->NumVertices, pMeshDef->NumIndices);
+							//TTRACE("  Done: %u vertices, %u indices\n", pMeshDef->NumVertices, pMeshDef->NumIndices);
 						}
 						else
 						{

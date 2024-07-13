@@ -10,9 +10,9 @@ namespace Toshi {
 	class T2GenericObjectPool : protected T2Allocator
 	{
 	protected:
-		struct Object
+		struct UnusedObject
 		{
-			Object* pNextObject;
+			UnusedObject* pNextObject;
 		};
 
 	public:
@@ -31,7 +31,7 @@ namespace Toshi {
 
 		virtual void Free(void* a_pPtr) override
 		{
-			ReturnObject(TSTATICCAST(Object, a_pPtr));
+			ReturnObject(TSTATICCAST(UnusedObject, a_pPtr));
 		}
 
 		virtual TBOOL CanAllocate(size_t size) override
@@ -55,15 +55,15 @@ namespace Toshi {
 		}
 
 	protected:
-		void Initialise(Object* a_pObjects, TUINT a_uiMaxNumber, TUINT a_uiObjectSize)
+		void Initialise(UnusedObject* a_pObjects, TUINT a_uiMaxNumber, TUINT a_uiObjectSize)
 		{
 			TASSERT(a_uiMaxNumber > 1);
 			m_pHead = a_pObjects;
-			Object* pObject = a_pObjects;
+			UnusedObject* pObject = a_pObjects;
 
 			for (TUINT i = a_uiMaxNumber - 1; i != 0; i--)
 			{
-				Object* pNext = TREINTERPRETCAST(Object*, TREINTERPRETCAST(uintptr_t, pObject) + a_uiObjectSize);
+				UnusedObject* pNext = TREINTERPRETCAST(UnusedObject*, TREINTERPRETCAST(TUINTPTR, pObject) + a_uiObjectSize);
 				pObject->pNextObject = pNext;
 				pObject = pNext;
 			}
@@ -71,14 +71,14 @@ namespace Toshi {
 			pObject->pNextObject = TNULL;
 		}
 
-		Object* GetObject()
+		UnusedObject* GetObject()
 		{
-			Object* pNode = m_pHead;
+			UnusedObject* pNode = m_pHead;
 			m_pHead = m_pHead->pNextObject;
 			return pNode;
 		}
 
-		void ReturnObject(Object* a_pObject)
+		void ReturnObject(UnusedObject* a_pObject)
 		{
 			a_pObject->pNextObject = m_pHead;
 			m_pHead = a_pObject;
@@ -93,7 +93,7 @@ namespace Toshi {
 		}
 
 	protected:
-		Object* m_pHead;
+		UnusedObject* m_pHead;
 	};
 
 	template <class T, TUINT MaxNumber, TUINT ObjectSize = sizeof(T), TUINT Alignment = alignof(T)>
@@ -102,13 +102,13 @@ namespace Toshi {
 	{
 	public:
 		TSTATICASSERT(MaxNumber >= 2);
-		TSTATICASSERT(sizeof(T) >= sizeof(T2GenericObjectPool::Object));
+		TSTATICASSERT(sizeof(T) >= sizeof(T2GenericObjectPool::UnusedObject));
 
 	public:
 		T2ObjectPool()
 		{
 			T2GenericObjectPool::Initialise(
-				TREINTERPRETCAST(T2GenericObjectPool::Object*, GetObjects()),
+				TREINTERPRETCAST(T2GenericObjectPool::UnusedObject*, GetObjects()),
 				MaxNumber,
 				ObjectSize
 			);
@@ -154,8 +154,8 @@ namespace Toshi {
 		virtual TBOOL IsAddressInPool(const void* a_pAddress)
 		{
 			return
-				(TREINTERPRETCAST(uintptr_t, this) + sizeof(T2GenericObjectPool)) <= TREINTERPRETCAST(uintptr_t, a_pAddress) &&
-				TREINTERPRETCAST(uintptr_t, a_pAddress) < (TREINTERPRETCAST(uintptr_t, this) + sizeof(T2GenericObjectPool) + (MaxNumber * ObjectSize));
+				(TREINTERPRETCAST(TUINTPTR, this) + sizeof(T2GenericObjectPool)) <= TREINTERPRETCAST(TUINTPTR, a_pAddress) &&
+				TREINTERPRETCAST(TUINTPTR, a_pAddress) < (TREINTERPRETCAST(TUINTPTR, this) + sizeof(T2GenericObjectPool) + (MaxNumber * ObjectSize));
 		}
 
 	private:
@@ -170,7 +170,7 @@ namespace Toshi {
 		}
 
 	private:
-		TUINT8 m_aObjects[MaxNumber * ObjectSize];
+		TBYTE m_aObjects[MaxNumber * ObjectSize];
 	};
 
 	template <class TClassType>
@@ -201,7 +201,7 @@ namespace Toshi {
 
 			TVALIDPTR(m_pData);
 			T2GenericObjectPool::Initialise(
-				TREINTERPRETCAST(T2GenericObjectPool::Object*, m_pData),
+				TREINTERPRETCAST(T2GenericObjectPool::UnusedObject*, m_pData),
 				m_iMaxNumber,
 				m_uiObjectSize
 			);
@@ -261,8 +261,8 @@ namespace Toshi {
 		virtual TBOOL IsAddressInPool(const void* a_pAddress)
 		{
 			return
-				TREINTERPRETCAST(uintptr_t, m_pData) <= TREINTERPRETCAST(uintptr_t, a_pAddress) &&
-				TREINTERPRETCAST(uintptr_t, a_pAddress) < TREINTERPRETCAST(uintptr_t, m_pData) + (m_iMaxNumber * m_uiObjectSize);
+				TREINTERPRETCAST(TUINTPTR, m_pData) <= TREINTERPRETCAST(TUINTPTR, a_pAddress) &&
+				TREINTERPRETCAST(TUINTPTR, a_pAddress) < TREINTERPRETCAST(TUINTPTR, m_pData) + (m_iMaxNumber * m_uiObjectSize);
 		}
 
 	private:
