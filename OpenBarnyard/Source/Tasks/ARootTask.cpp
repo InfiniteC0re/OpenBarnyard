@@ -42,8 +42,6 @@ ARootTask::ARootTask()
 {
 	TIMPLEMENT();
 
-	g_pREDatabase->Dump();
-
 	m_bStartedGame = TFALSE;
 	m_bRenderWorld = TFALSE;
 	m_bPaused = TFALSE;

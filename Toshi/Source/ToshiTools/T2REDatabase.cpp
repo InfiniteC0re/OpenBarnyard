@@ -79,11 +79,4 @@ T2REDatabase::ClassMemberInfo* T2REDatabase::ClassInfo::AddMember( const TCHAR* 
 	return pInfo;
 }
 
-struct test
-{
-	int a;
-};
-
-REDB_MEMBER( test, int, a );
-
 TOSHI_NAMESPACE_END

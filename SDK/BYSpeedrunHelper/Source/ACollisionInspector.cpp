@@ -9,8 +9,9 @@
 
 ACollisionInspector::ACollisionInspector()
 {
-	AHooks::AddHook(Hook_AModelLoader_LoadTRBCallback, HookType_After, AModelLoader_LoadTRBCallback);
-	AHooks::AddHook(Hook_ATerrain_Render, HookType_After, ATerrain_Render);
+	// commented because sometimes it causes the game to crash
+	//AHooks::AddHook(Hook_AModelLoader_LoadTRBCallback, HookType_After, AModelLoader_LoadTRBCallback);
+	//AHooks::AddHook(Hook_ATerrain_Render, HookType_After, ATerrain_Render);
 }
 
 void ACollisionInspector::SetCollisionVisible(TBOOL a_bVisible)
@@ -93,7 +94,19 @@ TBOOL ACollisionInspector::AModelLoader_LoadTRBCallback(Toshi::TModel* a_pModel)
 					auto ppOldMeshes = rLOD.ppMeshes;
 					auto iOriginalNumMeshes = rLOD.iNumMeshes;
 
-					rLOD.ppMeshes = new Toshi::TMesh*[rLOD.iNumMeshes + pCollision->uiNumMeshes];
+					TUINT uiNumValidCollMeshes = 0;
+					for ( TUINT i = 0; i < pCollision->uiNumMeshes; i++ )
+					{
+						auto pMeshDef = &pCollision->pMeshDef[ i ];
+
+						if ( pMeshDef->NumIndices <= Toshi::TMath::TUINT16_MAX )
+						{
+							uiNumValidCollMeshes++;
+						}
+					}
+
+					rLOD.ppMeshes = new Toshi::TMesh*[rLOD.iNumMeshes + uiNumValidCollMeshes];
+					Toshi::TUtil::MemClear( rLOD.ppMeshes, sizeof( Toshi::TMesh* ) * ( rLOD.iNumMeshes + uiNumValidCollMeshes ) );
 
 					if (rLOD.iNumMeshes > 0)
 					{
@@ -132,8 +145,7 @@ TBOOL ACollisionInspector::AModelLoader_LoadTRBCallback(Toshi::TModel* a_pModel)
 							}
 
 							pMesh->Unlock(pMeshDef->NumVertices, pMeshDef->NumIndices);
-							rLOD.ppMeshes[iOriginalNumMeshes + i] = pMesh;
-							rLOD.iNumMeshes += 1;
+							rLOD.ppMeshes[ rLOD.iNumMeshes++ ] = pMesh;
 
 							//TTRACE("  Done: %u vertices, %u indices\n", pMeshDef->NumVertices, pMeshDef->NumIndices);
 						}

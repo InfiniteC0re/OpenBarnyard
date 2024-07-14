@@ -30,10 +30,11 @@ namespace Toshi
 		
 		void Update();
 
-		TFLOAT GetDebugDeltaTime() const
-		{
-			return m_DebugDeltaTime;
-		}
+		TFLOAT& GetDebugDeltaTime() { return m_DebugDeltaTime; }
+		TFLOAT GetDebugDeltaTime() const { return m_DebugDeltaTime; }
+
+		TFLOAT& GetDebugDeltaTimeMult() { return m_DebugDeltaTimeMult; }
+		TFLOAT GetDebugDeltaTimeMult() const { return m_DebugDeltaTimeMult; }
 
 		void SetDebugDeltaTimeMult(TBOOL useDebugDeltaTimeMult, TFLOAT debugDeltaTimeMult = 1.0f)
 		{
@@ -161,7 +162,9 @@ namespace Toshi
 		t_DeltaTimeCalculator m_fnDeltaTimeCalculator;
 		TBOOL m_UseDebugDeltaTime;
 		TFLOAT m_DebugDeltaTime;
+		TFLOAT m_Unk1;
 		// ...
+		TBOOL m_Unk2;
 		TBOOL m_UseDebugDeltaTimeMult;
 		TFLOAT m_DebugDeltaTimeMult;
 	};

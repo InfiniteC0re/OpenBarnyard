@@ -224,30 +224,6 @@ int main(int argc, char** argv)
 	auto strOutPath = commandLine.GetParameterValue( "-o" );
 	auto bIsBtec = commandLine.HasParameter( "-btec" );
 
-	tinyxml2::XMLDocument activitysets;
-	tinyxml2::XMLDocument interactions;
-
-	interactions.LoadFile("editor_quests__1.xml");
-	TranslateDocument(interactions.FirstChildElement("PProperties"));
-
-	interactions.SaveFile("editor_quests__1_Merged.xml");
-
-	//activitysets.LoadFile("ActivitySets1.xml");
-	//interactions.LoadFile("AllInteractions.xml");
-
-	//TranslateDocument(activitysets.FirstChildElement("PProperties"));
-	//TranslateDocument(interactions.FirstChildElement("PProperties"));
-
-	//JoinInteractionsRecurse(
-	//	&interactions,
-	//	activitysets.FirstChildElement("PProperties")->FirstChildElement("activityset"),
-	//	interactions.FirstChildElement("PProperties")
-	//);
-
-	//interactions.SaveFile("AllInteractions_Joined.xml");
-
-	return 0;
-
 	if ( strCompileFile )
 	{
 		auto pJSONFile = TFile::Create( strCompileFile );

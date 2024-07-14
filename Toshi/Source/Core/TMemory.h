@@ -20,7 +20,7 @@ namespace Toshi {
 
 		struct Hole
 		{
-			Hole* m_Unk1;
+			Hole* m_pOwnerHole;
 			TUINT m_uiSize;
 			union {
 				Hole* m_pNextHole;
