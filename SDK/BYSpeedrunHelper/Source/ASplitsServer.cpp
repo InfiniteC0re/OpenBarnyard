@@ -27,10 +27,10 @@ ASplitsServer::ASplitsServer() :
 		MAX_BUFFER_SIZE
 	);
 
-	m_pMemBlock = TMemory::GetSingleton()->CreateMemBlock(
+	m_pMemBlock = g_pMemory->CreateMemBlock(
 		128 * 1024,
 		"Autosplitter",
-		TMemory::GetSingleton()->GetGlobalBlock()
+		g_pMemory->GetGlobalBlock()
 	);
 
 	TASSERT( m_pMemBlock != TNULL );

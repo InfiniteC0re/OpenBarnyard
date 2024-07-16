@@ -6,7 +6,7 @@ namespace Toshi
 	class TInputDeviceMouse : public TInputDevice
 	{
 	public:
-		TDECLARE_CLASS(TInputDevice);
+		TDECLARE_CLASS(TInputDeviceMouse, TInputDevice);
 
 	public:
 		static constexpr TINT BUTTON_1 = 0x30001;

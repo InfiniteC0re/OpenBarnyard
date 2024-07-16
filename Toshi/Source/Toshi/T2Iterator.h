@@ -47,6 +47,16 @@ namespace Toshi {
 			m_pPtr = other.m_pPtr;
 		}
 
+		T* Get()
+		{
+			return m_pPtr;
+		}
+
+		const T* Get() const
+		{
+			return m_pPtr;
+		}
+
 		void operator=(const T2Iterator& other)
 		{
 			m_pPtr = other.m_pPtr;

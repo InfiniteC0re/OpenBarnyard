@@ -7,7 +7,7 @@
 class ASysMaterialHAL : public ASysMaterial
 {
 public:
-	TDECLARE_CLASS(ASysMaterial);
+	TDECLARE_CLASS(ASysMaterialHAL, ASysMaterial);
 
 public:
 	ASysMaterialHAL();

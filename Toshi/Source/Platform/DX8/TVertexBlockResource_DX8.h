@@ -14,8 +14,13 @@ namespace Toshi {
 	class TVertexBlockResource : public TResource
 	{
 	public:
-		TDECLARE_CLASS(TResource);
-		TDECLARE_FREELIST_ALLOCATOR(TVertexBlockResource)
+		TDECLARE_CLASS( TVertexBlockResource, TResource );
+		TDECLARE_FREELIST_ALLOCATOR( TVertexBlockResource );
+
+		static TVertexBlockResource* CreateNew()
+		{
+			return new TVertexBlockResource();
+		}
 
 	public:
 		struct HALBuffer

@@ -9,7 +9,7 @@ class AInputHandler : public Toshi::TTask,
 	public Toshi::TSingleton<AInputHandler>
 {
 public:
-	TDECLARE_CLASS(Toshi::TTask);
+	TDECLARE_CLASS(AInputHandler, Toshi::TTask);
 
 public:
 	AInputHandler();

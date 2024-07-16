@@ -16,7 +16,7 @@ class ARenderer :
 	public Toshi::TSingleton<ARenderer>
 {
 public:
-	TDECLARE_CLASS(Toshi::TTask);
+	TDECLARE_CLASS(ARenderer, Toshi::TTask);
 
 public:
 	ARenderer();

@@ -8,7 +8,7 @@
 class AGUIPicture : public Toshi::TObject
 {
 public:
-	TDECLARE_CLASS(Toshi::TObject);
+	TDECLARE_CLASS(AGUIPicture, Toshi::TObject);
 
 public:
 	struct SplitRule

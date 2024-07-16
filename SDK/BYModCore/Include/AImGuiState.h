@@ -5,7 +5,7 @@
 class AImGuiState : public AGameState
 {
 public:
-	TDECLARE_CLASS(AGameState);
+	TDECLARE_CLASS(AImGuiState, AGameState);
 
 public:
 	AImGuiState();

@@ -11,7 +11,7 @@ class AGameState :
 	public Toshi::T2DList<AGameState>::Node
 {
 public:
-	TDECLARE_CLASS(Toshi::TObject);
+	TDECLARE_CLASS(AGameState, Toshi::TObject);
 
 	template <class Result, class... Args>
 	using t_ExecuteForChildCb = Result(AGameState::*)(Args... args);

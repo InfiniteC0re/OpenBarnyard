@@ -12,7 +12,7 @@ class THookedTask :
 	public Toshi::TNodeTree<THookedTask>::TNode
 {
 public:
-	TDECLARE_CLASS(Toshi::TObject);
+	TDECLARE_CLASS(THookedTask, Toshi::TObject);
 
 public:
 	THookedTask()

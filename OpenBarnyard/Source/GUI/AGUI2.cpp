@@ -105,7 +105,7 @@ TBOOL AGUI2::OnUpdate(TFLOAT a_fDeltaTime)
 		if (s_UpdateTimer >= 1.0f)
 		{
 			TMemory::MemInfo memInfo;
-			TMemory::GetSingleton()->GetMemInfo(memInfo, TNULL);
+			g_pMemory->GetMemInfo(memInfo, TNULL);
 
 			TStringManager::String16Format(
 				m_wszMemStats,

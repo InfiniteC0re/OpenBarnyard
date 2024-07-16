@@ -16,8 +16,9 @@
 // Declares default methods used to register class in the dynamic class system.
 // Note: Doesn't declare ms_oClass object (Use TDECLARE_CLASS to auto-declare).
 //-----------------------------------------------------------------------------
-#define TDECLARE_CLASS_BODY(PARENT_CLASS) \
+#define TDECLARE_CLASS_BODY(THIS_CLASS, PARENT_CLASS) \
 public: \
+	using ThisClass = THIS_CLASS; \
 	using BaseClass = PARENT_CLASS; \
 	static constexpr Toshi::TClass* PARENTCLASS = &TGetClass(PARENT_CLASS); \
 	\
@@ -34,16 +35,16 @@ public: \
 // Declares default methods to register derived class and ms_oClass object.
 // Note: Use one of the TDEFINE_CLASS macros in a cpp file to register class.
 //-----------------------------------------------------------------------------
-#define TDECLARE_CLASS(PARENT_CLASS) \
-	TDECLARE_CLASS_BODY(PARENT_CLASS); \
+#define TDECLARE_CLASS(THIS_CLASS, PARENT_CLASS) \
+	TDECLARE_CLASS_BODY(THIS_CLASS, PARENT_CLASS); \
 	static Toshi::TClass TClassObjectName;
 
 //-----------------------------------------------------------------------------
 // Declares default methods to register class and ms_oClass object.
 // Note: Use one of the TDEFINE_CLASS macros in a cpp file to register class.
 //-----------------------------------------------------------------------------
-#define TDECLARE_CLASS_COMPILETIME(PARENT_CLASS) \
-	TDECLARE_CLASS_BODY(PARENT_CLASS); \
+#define TDECLARE_CLASS_COMPILETIME(THIS_CLASS, PARENT_CLASS) \
+	TDECLARE_CLASS_BODY(THIS_CLASS, PARENT_CLASS); \
 	static constinit Toshi::TClass TClassObjectName;
 
 //-----------------------------------------------------------------------------

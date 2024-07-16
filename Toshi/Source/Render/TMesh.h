@@ -8,7 +8,7 @@ namespace Toshi {
 	class TMesh : public TObject
 	{
 	public:
-		TDECLARE_CLASS(TObject);
+		TDECLARE_CLASS(TMesh, TObject);
 
 	public:
 		using State = TUINT32;

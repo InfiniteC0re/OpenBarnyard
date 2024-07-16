@@ -6,7 +6,7 @@ namespace Toshi
 	class TInputDeviceKeyboard : public TInputDevice
 	{
 	public:
-		TDECLARE_CLASS(TInputDevice);
+		TDECLARE_CLASS(TInputDeviceKeyboard, TInputDevice);
 
 	public:
 #pragma region KEYS

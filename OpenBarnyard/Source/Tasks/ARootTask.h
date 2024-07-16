@@ -10,7 +10,7 @@ class ARootTask :
 	public Toshi::TSingleton<ARootTask>
 {
 public:
-	TDECLARE_CLASS(Toshi::TTask);
+	TDECLARE_CLASS(ARootTask, Toshi::TTask);
 
 public:
 	ARootTask();

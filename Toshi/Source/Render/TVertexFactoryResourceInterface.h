@@ -9,7 +9,7 @@ namespace Toshi {
 	class TVertexFactoryResourceInterface : public TResource
 	{
 	public:
-		TDECLARE_CLASS(TResource);
+		TDECLARE_CLASS(TVertexFactoryResourceInterface, TResource);
 
 	public:
 		friend TVertexPoolResourceInterface;

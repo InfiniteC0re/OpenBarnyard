@@ -10,7 +10,7 @@ class AWorldShader :
 	public Toshi::TSingleton<AWorldShader>
 {
 public:
-	TDECLARE_CLASS(Toshi::TShader);
+	TDECLARE_CLASS(AWorldShader, Toshi::TShader);
 
 public:
 	AWorldShader();

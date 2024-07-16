@@ -13,8 +13,13 @@ namespace Toshi {
 	class TIndexBlockResource : public TResource
 	{
 	public:
-		TDECLARE_CLASS(TResource);
-		TDECLARE_FREELIST_ALLOCATOR(TIndexBlockResource)
+		TDECLARE_CLASS( TIndexBlockResource, TResource );
+		TDECLARE_FREELIST_ALLOCATOR( TIndexBlockResource );
+
+		static TIndexBlockResource* CreateNew()
+		{
+			return new TIndexBlockResource();
+		}
 
 	public:
 		struct HALBuffer
@@ -24,9 +29,10 @@ namespace Toshi {
 			IDirect3DIndexBuffer8* pIndexBuffer = TNULL;
 		};
 
-	public:
+	private:
 		TIndexBlockResource();
 
+	public:
 		virtual TBOOL Validate() override;
 		virtual void Invalidate() override;
 		virtual TBOOL TryInvalidate() override;

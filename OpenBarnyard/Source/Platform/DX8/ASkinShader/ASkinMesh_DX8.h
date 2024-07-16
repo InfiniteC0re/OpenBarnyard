@@ -4,7 +4,7 @@
 class ASkinMeshHAL : public ASkinMesh
 {
 public:
-	TDECLARE_CLASS(ASkinMesh);
+	TDECLARE_CLASS(ASkinMeshHAL, ASkinMesh);
 
 public:
 	//-----------------------------------------------------------------------------

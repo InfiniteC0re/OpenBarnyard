@@ -40,7 +40,7 @@ namespace Toshi {
 		public TSingleton<TRenderInterface>
 	{
 	public:
-		TDECLARE_CLASS(TObject);
+		TDECLARE_CLASS(TRenderInterface, TObject);
 
 	public:
 		static constexpr size_t MAXNUMRESOURCES = 6000;

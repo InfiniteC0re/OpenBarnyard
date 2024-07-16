@@ -7,7 +7,7 @@ namespace Toshi {
 	class TIndexPoolResourceInterface : public TResource
 	{
 	public:
-		TDECLARE_CLASS(TResource);
+		TDECLARE_CLASS(TIndexPoolResourceInterface, TResource);
 
 	public:
 		struct LockBuffer

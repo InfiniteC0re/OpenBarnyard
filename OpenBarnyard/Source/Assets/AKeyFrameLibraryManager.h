@@ -11,7 +11,7 @@ class AKeyFrameLibraryManager :
 	public Toshi::TSingleton<AKeyFrameLibraryManager>
 {
 public:
-	TDECLARE_CLASS(Toshi::TObject);
+	TDECLARE_CLASS(AKeyFrameLibraryManager, Toshi::TObject);
 
 	using LibraryMap = Toshi::T2Map<Toshi::TPString8, Toshi::TKeyframeLibrary*, Toshi::TPString8::Comparator>;
 

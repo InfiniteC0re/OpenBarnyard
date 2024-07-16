@@ -5,7 +5,7 @@ class ACameraHelper :
 	public Toshi::TObject
 {
 public:
-	TDECLARE_CLASS(Toshi::TObject);
+	TDECLARE_CLASS(ACameraHelper, Toshi::TObject);
 
 public:
 	ACameraHelper();

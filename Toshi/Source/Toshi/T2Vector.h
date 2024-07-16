@@ -160,7 +160,7 @@ namespace Toshi
 
 		T* Push()
 		{
-			return new (&m_Items[m_iNumElements++]) T();
+			return TConstruct(&m_Items[m_iNumElements++]);
 		}
 
 		void PushBack(const T& item)

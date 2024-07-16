@@ -5,7 +5,7 @@
 class AWorldMaterial : public Toshi::TMaterial
 {
 public:
-	TDECLARE_CLASS(Toshi::TMaterial);
+	TDECLARE_CLASS(AWorldMaterial, Toshi::TMaterial);
 
 	static constexpr TUINT MAX_TEXTURES = 4;
 

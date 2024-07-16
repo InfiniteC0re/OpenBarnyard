@@ -11,7 +11,7 @@ namespace Toshi {
 	class TTexture : public TResource
 	{
 	public:
-		TDECLARE_CLASS(TResource);
+		TDECLARE_CLASS(TTexture, TResource);
 
 	public:
 		struct LOCKSTATE

@@ -7,7 +7,7 @@
 class ASkinShaderHAL : public ASkinShader
 {
 public:
-	TDECLARE_CLASS(ASkinShader);
+	TDECLARE_CLASS(ASkinShaderHAL, ASkinShader);
 
 	struct AUnknown : Toshi::TNodeList<AUnknown>::TNode
 	{

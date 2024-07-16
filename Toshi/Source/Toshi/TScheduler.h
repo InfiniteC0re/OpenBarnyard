@@ -11,7 +11,7 @@ namespace Toshi
 	class TScheduler : public TObject
 	{
 	public:
-		TDECLARE_CLASS(TObject);
+		TDECLARE_CLASS(TScheduler, TObject);
 
 	public:
 		using t_DeltaTimeCalculator = TFLOAT(*)(TFLOAT a_fRealDT);

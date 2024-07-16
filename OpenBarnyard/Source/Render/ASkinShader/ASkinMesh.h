@@ -29,7 +29,7 @@ class ASkinMesh :
 	public Toshi::TMesh
 {
 public:
-	TDECLARE_CLASS(Toshi::TMesh);
+	TDECLARE_CLASS(ASkinMesh, Toshi::TMesh);
 
 	using LockBuffer = Toshi::TVertexPoolResourceInterface::LockBuffer;
 

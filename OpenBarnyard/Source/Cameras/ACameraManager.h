@@ -8,7 +8,7 @@ class ACameraManager :
 	public Toshi::TSingleton<ACameraManager>
 {
 public:
-	TDECLARE_CLASS(Toshi::TTask);
+	TDECLARE_CLASS(ACameraManager, Toshi::TTask);
 
 	static constexpr TUINT MAX_CAMERAS = 4;
 

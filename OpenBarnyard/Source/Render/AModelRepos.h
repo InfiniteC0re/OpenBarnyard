@@ -9,7 +9,7 @@ class AModelRepos :
 	public Toshi::TSingleton<AModelRepos>
 {
 public:
-	TDECLARE_CLASS(Toshi::TObject);
+	TDECLARE_CLASS(AModelRepos, Toshi::TObject);
 
 public:
 	AModelRepos();

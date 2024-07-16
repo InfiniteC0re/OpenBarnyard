@@ -6,7 +6,7 @@
 class ASysMaterial : public Toshi::TMaterial
 {
 public:
-	TDECLARE_CLASS(Toshi::TMaterial);
+	TDECLARE_CLASS(ASysMaterial, Toshi::TMaterial);
 
 	enum BLENDMODE
 	{

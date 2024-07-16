@@ -6,7 +6,7 @@
 class ASlideshowState : public AGameState
 {
 public:
-	TDECLARE_CLASS(AGameState);
+	TDECLARE_CLASS(ASlideshowState, AGameState);
 
 public:
 	ASlideshowState(const AGUISlideshow::Params& a_rSlideShowParams, AGameState* a_pNextGameState, TBOOL a_bShouldLocalise);

@@ -4,7 +4,7 @@
 class SaveLoadSKU : public AGameState
 {
 public:
-	TDECLARE_CLASS(AGameState);
+	TDECLARE_CLASS(SaveLoadSKU, AGameState);
 
 	// Not implemented!
 };

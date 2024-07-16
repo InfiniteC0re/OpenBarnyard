@@ -5,7 +5,7 @@ class ADisplayModes_Win :
 	public Toshi::TObject
 {
 public:
-	TDECLARE_CLASS(Toshi::TObject);
+	TDECLARE_CLASS(ADisplayModes_Win, Toshi::TObject);
 
 public:
 	struct Mode

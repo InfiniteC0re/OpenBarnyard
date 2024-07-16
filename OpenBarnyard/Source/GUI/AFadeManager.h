@@ -7,7 +7,7 @@ class AFadeManager : public Toshi::TTask,
 	public Toshi::TSingleton<AFadeManager>
 {
 public:
-	TDECLARE_CLASS(Toshi::TTask);
+	TDECLARE_CLASS(AFadeManager, Toshi::TTask);
 
 public:
 	AFadeManager() = default;

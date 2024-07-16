@@ -20,11 +20,12 @@ public:
 		Reset();
 		m_TimeSyncMutex.Create();
 		m_flSyncTimerTime = 0.1f;
+		m_bClosed = TFALSE;
 	}
 
 	virtual void Main() override
 	{
-		while ( TTRUE )
+		while ( !m_bClosed )
 		{
 			m_Timer.Update();
 			TFLOAT flDelta = m_Timer.GetDelta();
@@ -48,6 +49,13 @@ public:
 
 			ThreadSleep( 10 );
 		}
+
+		delete this;
+	}
+
+	void Close()
+	{
+		m_bClosed = TTRUE;
 	}
 
 public:
@@ -55,6 +63,7 @@ public:
 	THPTimer m_Timer;
 	TFLOAT m_flSyncTimerTime;
 	T2Mutex m_TimeSyncMutex;
+	TBOOL m_bClosed;
 };
 
 ARunTimer::ARunTimer()
@@ -68,8 +77,7 @@ ARunTimer::~ARunTimer()
 {
 	if ( m_pTimerThread )
 	{
-		TThread::Exit( m_pTimerThread );
-		delete m_pTimerThread;
+		m_pTimerThread->Close();
 		m_pTimerThread = TNULL;
 	}
 }

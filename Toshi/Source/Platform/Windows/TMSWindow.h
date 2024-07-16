@@ -12,7 +12,7 @@ namespace Toshi {
 	class TMSWindow : public TObject
 	{
 	public:
-		TDECLARE_CLASS(TObject);
+		TDECLARE_CLASS(TMSWindow, TObject);
 
 	public:
 		static constexpr UINT s_PopupStyles = WS_POPUP | WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU;

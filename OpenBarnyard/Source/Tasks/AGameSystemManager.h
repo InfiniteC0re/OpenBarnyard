@@ -4,7 +4,7 @@
 class AGameSystemManager : public Toshi::TTask
 {
 public:
-	TDECLARE_CLASS(Toshi::TTask);
+	TDECLARE_CLASS(AGameSystemManager, Toshi::TTask);
 
 public:
 	virtual TBOOL OnCreate() override;

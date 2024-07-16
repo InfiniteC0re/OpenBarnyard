@@ -23,14 +23,13 @@ ATerrainLODBlock::ATerrainLODBlock(TUINT a_uiHeapSize, const TCHAR* a_szName)
 	m_uiHeapSize = a_uiHeapSize;
 	m_bIsUnused = TTRUE;
 
-	auto pMemManager = TMemory::GetSingleton();
-	m_pCreatedMemBlock = pMemManager->CreateMemBlock(m_uiHeapSize, a_szName, pMemManager->GetGlobalBlock());
+	m_pCreatedMemBlock = g_pMemory->CreateMemBlock(m_uiHeapSize, a_szName, g_pMemory->GetGlobalBlock());
 	m_Allocator.SetMemBlock(m_pCreatedMemBlock);
 }
 
 ATerrainLODBlock::~ATerrainLODBlock()
 {
-	TMemory::GetSingleton()->DestroyMemBlock(m_pCreatedMemBlock);
+	g_pMemory->DestroyMemBlock(m_pCreatedMemBlock);
 	m_pCreatedMemBlock = (TMemory::MemBlock*)1;
 	m_Allocator.SetMemBlock(TNULL);
 

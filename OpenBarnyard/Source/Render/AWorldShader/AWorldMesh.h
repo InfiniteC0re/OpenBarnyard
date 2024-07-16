@@ -8,7 +8,7 @@
 class AWorldMesh : public Toshi::TMesh
 {
 public:
-	TDECLARE_CLASS(Toshi::TMesh);
+	TDECLARE_CLASS(AWorldMesh, Toshi::TMesh);
 
 	struct SubMesh
 	{

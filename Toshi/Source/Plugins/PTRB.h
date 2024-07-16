@@ -777,7 +777,7 @@ inline void PTRBSections::MemoryStream::SetCrossPointer(T** outPtr, Ptr<T> ptr)
 template<class T>
 inline PTRBSections::MemoryStream::Ptr<T> PTRBSections::MemoryStream::Alloc()
 {
-	m_BufferPos = TREINTERPRETCAST(TCHAR*, TAlignPointer(m_BufferPos));
+	m_BufferPos = TREINTERPRETCAST(TCHAR*, TAlignPointerUp(m_BufferPos));
 
 	constexpr TUINT TSize = sizeof(T);
 	GrowBuffer(GetUsedSize() + TSize);
@@ -791,7 +791,7 @@ inline PTRBSections::MemoryStream::Ptr<T> PTRBSections::MemoryStream::Alloc()
 template<class T>
 inline PTRBSections::MemoryStream::Ptr<T> PTRBSections::MemoryStream::Alloc(TUINT count)
 {
-	m_BufferPos = TREINTERPRETCAST(TCHAR*, TAlignPointer(m_BufferPos));
+	m_BufferPos = TREINTERPRETCAST(TCHAR*, TAlignPointerUp(m_BufferPos));
 
 	const TUINT TSize = sizeof(T) * count;
 	GrowBuffer(GetUsedSize() + TSize);
@@ -806,7 +806,7 @@ template<class T>
 inline PTRBSections::MemoryStream::Ptr<T> PTRBSections::MemoryStream::Alloc(T** outPtr, TUINT count)
 {
 	TASSERT((TUINT)outPtr >= (TUINT)m_Buffer && (TUINT)outPtr < (TUINT)m_Buffer + (TUINT)m_BufferSize, "Out pointer is out of buffer");
-	m_BufferPos = TREINTERPRETCAST(TCHAR*, TAlignPointer(m_BufferPos));
+	m_BufferPos = TREINTERPRETCAST(TCHAR*, TAlignPointerUp(m_BufferPos));
 
 	const TUINT TSize = sizeof(T) * count;
 	TUINT outPtrOffset = GetOffset(outPtr);
@@ -825,7 +825,7 @@ template<class T, TUINT Count>
 inline PTRBSections::MemoryStream::Ptr<T> PTRBSections::MemoryStream::Alloc(T** outPtr)
 {
 	TASSERT((TUINT)outPtr >= (TUINT)m_Buffer && (TUINT)outPtr < (TUINT)m_Buffer + (TUINT)m_BufferSize, "Out pointer is out of buffer");
-	m_BufferPos = TREINTERPRETCAST(TCHAR*, TAlignPointer(m_BufferPos));
+	m_BufferPos = TREINTERPRETCAST(TCHAR*, TAlignPointerUp(m_BufferPos));
 
 	constexpr TUINT TSize = sizeof(T) * Count;
 	TUINT outPtrOffset = GetOffset(outPtr);

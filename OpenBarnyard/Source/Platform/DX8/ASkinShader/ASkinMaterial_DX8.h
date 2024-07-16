@@ -7,7 +7,7 @@
 class ASkinMaterialHAL : public ASkinMaterial
 {
 public:
-	TDECLARE_CLASS(ASkinMaterial);
+	TDECLARE_CLASS(ASkinMaterialHAL, ASkinMaterial);
 
 public:
 	ASkinMaterialHAL();

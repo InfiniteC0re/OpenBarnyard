@@ -7,7 +7,7 @@
 class AWorldShaderHAL : public AWorldShader
 {
 public:
-	TDECLARE_CLASS(AWorldShader);
+	TDECLARE_CLASS(AWorldShaderHAL, AWorldShader);
 
 	struct AUnknown : Toshi::TNodeList<AUnknown>::TNode
 	{

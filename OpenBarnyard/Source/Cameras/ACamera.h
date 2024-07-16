@@ -5,7 +5,7 @@ class ACamera :
 	public Toshi::TObject
 {
 public:
-	TDECLARE_CLASS(Toshi::TObject);
+	TDECLARE_CLASS(ACamera, Toshi::TObject);
 
 	static TFLOAT sm_fCurrentFOV;
 	static const Toshi::TVector4 sm_vWorldUp;

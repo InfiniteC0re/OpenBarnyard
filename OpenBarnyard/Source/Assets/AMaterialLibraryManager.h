@@ -12,7 +12,7 @@ class AMaterialLibraryManager :
 	public Toshi::TSingleton<AMaterialLibraryManager>
 {
 public:
-	TDECLARE_CLASS(Toshi::TObject);
+	TDECLARE_CLASS(AMaterialLibraryManager, Toshi::TObject);
 
 public:
 	class List : 

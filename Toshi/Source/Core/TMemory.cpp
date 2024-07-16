@@ -4,10 +4,12 @@
 #include "Thread/TMutexLock.h"
 
 #ifdef TOSHI_PROFILER_MEMORY
-#include "Profiler/tracy/Tracy.hpp"
+//#include "Profiler/tracy/Tracy.hpp"
 #endif // TOSHI_PROFILER_MEMORY
 
 #define MEM_TO_HOLE(PTR) (((Hole*)(((TUINT)PTR) + sizeof(void*))) - 1)
+
+#include "TMemoryDebugOff.h"
 
 void* __CRTDECL operator new( size_t size )
 {
@@ -72,11 +74,16 @@ void __CRTDECL operator delete[]( void* ptr, size_t _Size ) noexcept
 
 namespace Toshi {
 
+	TMemory* g_pMemory = TNULL;
+
 	TMemory::TMemory()
 	{
+		TASSERT( g_pMemory == TNULL );
+		g_pMemory = this;
+
 		m_TotalAllocatedSize = 0;
 
-		for ( TINT i = 0; i < NUM_BLOCK_SLOTS; i++ )
+		for ( TINT i = 0; i < TMEMORY_NUM_BLOCK_SLOTS; i++ )
 		{
 			m_FreeBlocks.InsertTail( m_aBlockSlots[ i ] );
 		}
@@ -87,7 +94,7 @@ namespace Toshi {
 
 	TMemory::~TMemory()
 	{
-
+		g_pMemory = TNULL;
 	}
 
 	// General utility macro
@@ -123,422 +130,242 @@ namespace Toshi {
 #define CALL_12(ADDR, RET_TYPE, TYPE1, VALUE1, TYPE2, VALUE2, TYPE3, VALUE3, TYPE4, VALUE4, TYPE5, VALUE5) ((RET_TYPE(__stdcall*)(TYPE1, TYPE2, TYPE3, TYPE4, TYPE5))(ADDR))(VALUE1, VALUE2, VALUE3, VALUE4, VALUE5)
 #define CALL(...) PP_MACRO_OVERLOAD(CALL, __VA_ARGS__)
 
-	void* TMemory::Alloc( TUINT a__uiSize, TINT a__uiAlignment, MemBlock* a__pMemBlock, const TCHAR* a_szFileName, TINT a_iLineNum )
+	void* TMemory::Alloc( TUINT a_uiSize, TINT a_uiAlignment, MemBlock* a_pMemBlock, const TCHAR* a_szFileName, TINT a_iLineNum )
 	{
-		//return CALL_THIS(0x006b5230, TMemory*, void*, this, TUINT, a__uiSize, TINT, a__uiAlignment, MemBlock*, a__pMemBlock, const TCHAR*, a_szFileName, TINT, a_iLineNum );
+		TMUTEX_LOCK_SCOPE( ms_pGlobalMutex );
 
-		int v6; // ebx
-		int v7; // edi
-		unsigned int v8; // esi
-		int v9; // ebp
-		unsigned int v11; // edi
-		unsigned int v12; // eax
-		_DWORD* v13; // ecx
-		unsigned int v14; // edi
-		int v15; // ebx
-		int v16; // edx
-		int v17; // eax
-		_DWORD* v18; // eax
-		_DWORD* v19; // edx
-		int v20; // ebp
-		int v21; // eax
-		_DWORD* v22; // eax
-		_DWORD* v23; // ebp
-		unsigned int v24; // edi
-		_DWORD* v25; // ecx
-		int v26; // ebp
-		unsigned int v27; // eax
-		unsigned int v28; // eax
-		int v29; // edx
-		int v30; // [esp+10h] [ebp-Ch] BYREF
-		unsigned int v31; // [esp+14h] [ebp-8h]
-		int v32; // [esp+18h] [ebp-4h]
-		unsigned int v33; // [esp+20h] [ebp+4h]
-		_DWORD** v34; // [esp+24h] [ebp+8h]
-		int v35; // [esp+28h] [ebp+Ch]
+		TUINT uiAllocationSize = a_uiSize;
+		TUINT uiAlignment = a_uiAlignment;
 
-		TUINT a_uiSize = (TUINT)a__uiSize;
-		TUINT a_uiAlignment = (TUINT)a__uiAlignment;
-		TUINT a_pMemBlock = (TUINT)a__pMemBlock;
+		if ( uiAllocationSize < 4 )
+			uiAllocationSize = 4;
 
-		v6 = (int)this;
-		v32 = (int)this;
-		TMutexLock lock( ms_pGlobalMutex );
-		v7 = a_uiSize;
-		v8 = 0;
-		if ( a_uiSize < 4 )
-			v7 = 4;
-		v9 = a_uiAlignment;
-		if ( a_uiAlignment < 0x10 )
-			v9 = 16;
-		if ( !a_pMemBlock )
-			a_pMemBlock = *(_DWORD*)( v6 + 2096 );
-		if ( !v7 )
+		if ( uiAlignment < 16 )
 		{
-			TDebug_FinalPrintf( "Out of Toshi Memory on block [%s]\n", a_pMemBlock + 64 );
-			return 0;
+			uiAlignment = 16;
 		}
-		v11 = ( v7 + 3 ) & 0xFFFFFFFC;
-		v33 = v11;
-		v12 = MapSizeToFreeList( v11 );
-		v31 = v12;
-		if ( v12 >= 9 )
-			goto LABEL_20;
-		v34 = (_DWORD**)( a_pMemBlock + 4 * v12 + 16 );
-		do
+		else if ( uiAlignment < TMEMORY_ROUNDUP )
 		{
-			v13 = *v34;
-			if ( *v34 )
-			{
-				while ( 1 )
-				{
-					v8 = ~( v9 - 1 ) & ( (unsigned int)v13 + v9 + 11 );
-					v14 = (unsigned int)v13 + ( v13[ 1 ] & 0xFFFFFFFC ) - v8 + 12;
-					if ( (unsigned int)v13 + ( v13[ 1 ] & 0xFFFFFFFC ) + 12 > v8 && v14 >= v33 )
-						break;
-					v13 = (_DWORD*)v13[ 2 ];
-					if ( !v13 )
-					{
-						//LOBYTE( v11 ) = v33;
-						goto LABEL_17;
-					}
-				}
-				if ( *v13 )
-				{
-					*(_DWORD*)( *v13 + 4 ) = *(_DWORD*)( *v13 + 4 ) & 3 | ( v8 - *v13 - 24 );
-					v12 = v31;
-				}
-				else if ( (_DWORD*)( v8 - 12 ) != v13 )
-				{
-					v15 = a_pMemBlock;
-					*(_DWORD*)( a_pMemBlock + 52 ) = v8 - 12;
-LABEL_25:
-					if ( v14 > v33 + 16 )
-					{
-						v20 = v13[ 3 ];
-						if ( v20 )
-							*(_DWORD*)( v20 + 8 ) = v13[ 2 ];
-						else
-							*(_DWORD*)( v15 + 4 * v12 + 16 ) = v13[ 2 ];
-						v21 = v13[ 2 ];
-						if ( v21 )
-							*(_DWORD*)( v21 + 12 ) = v13[ 3 ];
-						v22 = (_DWORD*)( v8 - 12 );
-						if ( v13 != (_DWORD*)( v8 - 12 ) )
-						{
-							v23 = (_DWORD*)( (char*)v13 + ( v13[ 1 ] & 0xFFFFFFFC ) + 12 );
-							*v22 = *v13;
-							*v23 = (TUINT32)v22;
-						}
-						v22[ 1 ] = v14 | m_Unknown1 | 1;
-						v24 = v22[ 1 ] & 0xFFFFFFFC;
-						v22[ 2 ] = v15;
-						v25 = (_DWORD*)( v8 + v33 );
-						v25[ 1 ] = v24 - v33 - 12;
-						v26 = m_Unknown1;
-						v22[ 2 ] = v15;
-						v22[ 1 ] = v26 | v33 | 1;
-						*v25 = (TUINT32)v22;
-						*(float*)&v35 = (float)(int)( ( *(_DWORD*)( v8 + v33 + 4 ) & 0xFFFFFFFC ) - 1 );
-						v27 = ( v35 >> 23 ) - 127;
-						if ( ( v27 & 1 ) != 0 )
-							++v27;
-						v28 = v27 >> 1;
-						if ( v28 )
-							--v28;
-						if ( v28 >= 9 )
-							v28 = 8;
-						v29 = *(_DWORD*)( v15 + 4 * v28 + 16 );
-						v25[ 2 ] = v29;
-						if ( v29 )
-							*(_DWORD*)( v29 + 12 ) = (TUINT32)v25;
-						v25[ 3 ] = 0;
-						*(_DWORD*)( v15 + 4 * v28 + 16 ) = (TUINT32)v25;
-						*(_DWORD*)( (char*)v25 + ( v25[ 1 ] & 0xFFFFFFFC ) + 12 ) = (TUINT32)v25;
-						return (void*)v8;
-					}
-					else
-					{
-						v16 = v13[ 3 ];
-						if ( v16 )
-							*(_DWORD*)( v16 + 8 ) = v13[ 2 ];
-						else
-							*(_DWORD*)( v15 + 4 * v12 + 16 ) = v13[ 2 ];
-						v17 = v13[ 2 ];
-						if ( v17 )
-							*(_DWORD*)( v17 + 12 ) = v13[ 3 ];
-						v18 = (_DWORD*)( v8 - 12 );
-						if ( v13 != (_DWORD*)( v8 - 12 ) )
-						{
-							v19 = (_DWORD*)( (char*)v13 + ( v13[ 1 ] & 0xFFFFFFFC ) + 12 );
-							*v18 = *v13;
-							*v19 = (TUINT32)v18;
-						}
-						v18[ 1 ] = v14 | m_Unknown1 | 1;
-						v18[ 2 ] = v15;
-						return (void*)v8;
-					}
-				}
-				v15 = a_pMemBlock;
-				goto LABEL_25;
-			}
-LABEL_17:
-			v31 = ++v12;
-			++v34;
-		} while ( v12 < 9 );
-		if ( v13 )
-			goto LABEL_21;
-		v6 = v32;
-LABEL_20:
-		TDebug_FinalPrintf( "Out of Toshi Memory on block [%s]\n", a_pMemBlock + 64 );
-		TDebug_FinalPrintf( "Requested memory block size: %d\n", v11 );
-		DumpMemInfo();
-		v8 = 0;
-LABEL_21:
-		return (void*)v8;
+			TDebug_FinalPrintf( "MEMORY ERROR: CANT ALLOC Alignment(%d)<TMEMORY_ROUNDUP\n", uiAlignment );
+			DebugPrintHALMemInfo( "Out of Toshi Memory on block [%s]\n", a_pMemBlock->m_szName );
+			TASSERT( TFALSE );
+			return TNULL;
+		}
 
-//		TMutexLock lock( ms_pGlobalMutex );
-//
-//		if ( a_uiSize < 4 )
-//		{
-//			a_uiSize = 4;
-//		}
-//
-//		if ( a_uiAlignment < 16 )
-//		{
-//			a_uiAlignment = 16;
-//		}
-//		else if ( a_uiAlignment < 4 )
-//		{
-//			PrintDebug( "Out of Toshi Memory on block [%s]\n", a_pMemBlock->m_szName );
-//			TASSERT( TFALSE );
-//			return TNULL;
-//		}
-//
-//		if ( !a_pMemBlock )
-//		{
-//			a_pMemBlock = m_pGlobalBlock;
-//		}
-//
-//		if ( a_uiSize == 0 )
-//		{
-//			PrintDebug( "Out of Toshi Memory on block [%s]\n", a_pMemBlock->m_szName );
-//			TASSERT( TFALSE );
-//			return TNULL;
-//		}
-//
-//		a_uiSize = TAlignNumUp( a_uiSize );
-//		TUINT uiFreeListId = MapSizeToFreeList( a_uiSize );
-//
-//		TUINT iDataStart = 0;
-//		TUINT iDataEnd;
-//		TUINT iDataSize;
-//		Hole* pFreeList = TNULL;
-//
-//#ifdef TOSHI_PROFILER_MEMORY
-//#include "TMemoryDebugOff.h"
-//
-//		auto SaveDebugInfo = [ a_szFileName, a_iLineNum, a_uiSize ]( void* pMem ) {
-//			if ( pMem )
-//			{
-//				TracyAlloc( pMem, a_uiSize );
-//			}
-//		};
-//#endif // TOSHI_PROFILER_MEMORY
-//
-//		for ( TUINT i = uiFreeListId; i < NUM_FREE_LISTS; i++ )
-//		{
-//			pFreeList = a_pMemBlock->m_pHoles[ i ];
-//
-//			while ( pFreeList != TNULL )
-//			{
-//				iDataEnd = TREINTERPRETCAST( TUINT, &pFreeList->m_pPrevHole ) + TAlignNumDown( pFreeList->m_uiSize );
-//				iDataStart = TREINTERPRETCAST( TUINT, &pFreeList->m_pNextHole ) + a_uiAlignment + 3 & ~( a_uiAlignment - 1 );
-//				iDataSize = iDataEnd - iDataStart;
-//
-//				if ( iDataStart < iDataEnd && a_uiSize <= iDataSize )
-//				{
-//					auto pHole = MEM_TO_HOLE( iDataStart );
-//					auto unk1 = pFreeList->m_Unk1;
-//
-//					if ( unk1 == TNULL )
-//					{
-//						if ( pHole != pFreeList )
-//						{
-//							a_pMemBlock->m_pFirstHole = pHole;
-//						}
-//					}
-//					else
-//					{
-//						unk1->m_uiSize = (TUINT)( iDataStart + ( -0x18 - (TUINT)unk1 ) ) | unk1->m_uiSize & 3;
-//					}
-//
-//					if ( a_uiSize + sizeof( Hole ) < iDataSize )
-//					{
-//						if ( pFreeList->m_pPrevHole == TNULL )
-//						{
-//							a_pMemBlock->m_pHoles[ i ] = pFreeList->m_pNextHole;
-//						}
-//						else
-//						{
-//							pFreeList->m_pPrevHole->m_pNextHole = pFreeList->m_pNextHole;
-//						}
-//
-//						if ( pFreeList->m_pNextHole != TNULL )
-//						{
-//							pFreeList->m_pNextHole->m_pPrevHole = pFreeList->m_pPrevHole;
-//						}
-//
-//						if ( pFreeList != pHole )
-//						{
-//							auto uiSize = pFreeList->m_uiSize;
-//							pHole->m_Unk1 = pFreeList->m_Unk1;
-//							*(Hole**)( (TUINT)&pFreeList->m_pPrevHole + TAlignNumDown( uiSize ) ) = pHole;
-//						}
-//
-//						pHole->m_uiSize = GetSingleton()->m_Unknown1 | iDataSize | 1;
-//						pHole->m_pMemBlock = a_pMemBlock;
-//
-//						auto pNewHole = (Hole*)( iDataStart + a_uiSize );
-//						pNewHole->m_uiSize = ( ( TAlignNumDown( pHole->m_uiSize ) - iDataStart ) - a_uiSize ) + (TUINT)pHole;
-//
-//						pHole->m_pMemBlock = a_pMemBlock;
-//						pHole->m_uiSize = (TINT)pNewHole + ( -0xc - (TINT)pHole ) | ms_pSingleton->m_Unknown1 | 1;
-//						pNewHole->m_Unk1 = pHole;
-//
-//						TUINT uiNewFreeListId = MapSizeToFreeList( pNewHole->m_uiSize );
-//
-//						auto pOldHole = a_pMemBlock->m_pHoles[ uiNewFreeListId ];
-//						pNewHole->m_pNextHole = pOldHole;
-//
-//						if ( pOldHole != TNULL )
-//						{
-//							pOldHole->m_pPrevHole = pNewHole;
-//						}
-//
-//						pNewHole->m_pPrevHole = TNULL;
-//						a_pMemBlock->m_pHoles[ uiNewFreeListId ] = pNewHole;
-//						*(Hole**)( (TUINT)&pNewHole->m_pPrevHole + TAlignNumDown( pNewHole->m_uiSize ) ) = pNewHole;
-//
-//#ifdef TOSHI_PROFILER_MEMORY
-//						SaveDebugInfo( (void*)iDataStart );
-//#endif // TOSHI_PROFILER_MEMORY
-//						return (void*)iDataStart;
-//					}
-//					else
-//					{
-//						if ( pFreeList->m_pPrevHole == TNULL )
-//						{
-//							a_pMemBlock->m_pHoles[ i ] = pFreeList->m_pNextHole;
-//						}
-//						else
-//						{
-//							pFreeList->m_pPrevHole->m_pNextHole = pFreeList->m_pNextHole;
-//						}
-//
-//						if ( pFreeList->m_pNextHole != TNULL )
-//						{
-//							pFreeList->m_pNextHole->m_pPrevHole = pFreeList->m_pPrevHole;
-//						}
-//
-//						if ( pFreeList != pHole )
-//						{
-//							auto uiSize = pFreeList->m_uiSize;
-//							pHole->m_Unk1 = pFreeList->m_Unk1;
-//							*(Hole**)( (TUINT)&pFreeList->m_pPrevHole + TAlignNumDown( uiSize ) ) = pHole;
-//						}
-//
-//						pHole->m_uiSize = ms_pSingleton->m_Unknown1 | iDataSize | 1;
-//						pHole->m_pMemBlock = a_pMemBlock;
-//
-//#ifdef TOSHI_PROFILER_MEMORY
-//
-//						SaveDebugInfo( (void*)iDataStart );
-//
-//#endif // TOSHI_PROFILER_MEMORY
-//
-//						return (void*)iDataStart;
-//					}
-//				}
-//
-//				pFreeList = pFreeList->m_pNextHole;
-//			}
-//
-//			pFreeList = TNULL;
-//		}
-//
-//		if ( pFreeList )
-//		{
-//#ifdef TOSHI_PROFILER_MEMORY
-//
-//			SaveDebugInfo( (void*)iDataStart );
-//
-//#endif // TOSHI_PROFILER_MEMORY
-//
-//			return (void*)iDataStart;
-//		}
-//
-//		PrintDebug( "Out of Toshi Memory on block [%s]\n", a_pMemBlock->m_szName );
-//		PrintDebug( "Requested memory block size: %d\n", a_uiSize );
-//		DumpMemInfo();
-//		TASSERT( TFALSE );
-//
-//		return TNULL;
+		// Use global block if it's not specified
+		if ( a_pMemBlock == TNULL )
+			a_pMemBlock = m_pGlobalBlock;
+
+		if ( uiAllocationSize == 0 )
+		{
+			DebugPrintHALMemInfo( "Out of Toshi Memory on block [%s]\n", a_pMemBlock->m_szName );
+			TASSERT( TFALSE );
+			return TNULL;
+		}
+
+		uiAllocationSize = TAlignNumUp( uiAllocationSize );
+
+		void* pAllocatedMemory = TNULL;
+		Hole* pFreeList = TNULL;
+
+#ifdef TOSHI_PROFILER_MEMORY
+#include "TMemoryDebugOff.h"
+
+		auto SaveDebugInfo = [ a_szFileName, a_iLineNum, uiAllocationSize ]( void* pMem ) {
+			if ( pMem )
+			{
+				TracyAlloc( pMem, uiAllocationSize );
+			}
+		};
+#else  // TOSHI_PROFILER_MEMORY
+#define SaveDebugInfo(...)
+#endif // !TOSHI_PROFILER_MEMORY
+
+		TUINT uiId = MapSizeToFreeList( uiAllocationSize );
+
+		if ( uiId >= TMEMORY_NUM_FREELISTS )
+			goto OUT_OF_MEMORY;
+
+		for ( ; uiId < TMEMORY_NUM_FREELISTS; ++uiId )
+		{
+			pFreeList = a_pMemBlock->m_pHoles[ uiId ];
+
+			// Find a hole that can allocate the required number of bytes
+			TUINTPTR iDataRegionStart;
+			TUINTPTR iDataRegionEnd;
+			TUINTPTR iDataRegionSize;
+
+			while ( pFreeList != TNULL )
+			{
+				pAllocatedMemory = TAlignPointerUp( pFreeList->GetDataRegionStart(), uiAlignment );
+
+				iDataRegionStart = TREINTERPRETCAST( TUINTPTR, pAllocatedMemory );
+				iDataRegionEnd = TREINTERPRETCAST( TUINTPTR, pFreeList->GetDataRegionEnd() );
+				iDataRegionSize = iDataRegionEnd - iDataRegionStart;
+
+				// Check if the allocation fits this hole
+				if ( iDataRegionEnd > iDataRegionStart && iDataRegionSize >= uiAllocationSize )
+					break;
+
+				// Go for a next hole split from this one
+				pFreeList = pFreeList->m_pNextHole;
+			}
+
+			// This freelist can't be used, let's check for the next
+			if ( pFreeList == TNULL )
+				continue;
+
+			Hole* pAllocationHole = MEM_TO_HOLE( iDataRegionStart );
+
+			if ( Hole* pOwnerHole = pFreeList->m_pOwnerHole )
+			{
+				// This line probably has a bug which presents in the original code but idk
+				pOwnerHole->m_uiSize = ( iDataRegionStart - (TUINTPTR)pFreeList->m_pOwnerHole - 24 )
+					| ( pOwnerHole->m_uiSize & TMEMORY_FLAGS_MASK );
+			}
+			else if ( pAllocationHole != pFreeList )
+			{
+				// Seems that due to alignment we have a gap between start of the
+				// data region and the actual address we gonna return so let's
+				// make sure we don't lost this pointer
+				a_pMemBlock->m_pFirstHole = pAllocationHole;
+			}
+
+			{
+				// Unlink the hole from the linked list
+				if ( Hole* pPrevHole = pFreeList->m_pPrevHole )
+					pPrevHole->m_pNextHole = pFreeList->m_pNextHole;        // Remove reference to this hole from the previous one
+				else
+					a_pMemBlock->m_pHoles[ uiId ] = pFreeList->m_pNextHole; // Since this is the first hole, it's stored in the memblock's list
+
+				// Remove reference to this hole from the next one
+				if ( Hole* pNextHole = pFreeList->m_pNextHole )
+					pNextHole->m_pPrevHole = pFreeList->m_pPrevHole;
+			}
+
+			// I have no clue what it does but I won't lose sleep over this
+			if ( pFreeList != pAllocationHole )
+			{
+				Hole** ppHole = (Hole**)pFreeList->GetDataRegionEnd();
+				pAllocationHole->m_pOwnerHole = pFreeList->m_pOwnerHole;
+				*ppHole = pAllocationHole;
+			}
+
+			// Make sure the hole has correct info about it's size and memblock
+			pAllocationHole->m_uiSize = iDataRegionSize | g_pMemory->m_uiGlobalHoleFlags | TMEMORY_FLAGS_HOLE_USED;
+			pAllocationHole->m_pMemBlock = a_pMemBlock;
+
+			// Check if we can split the hole in two
+			if ( iDataRegionSize > uiAllocationSize + TMEMORY_ALLOC_HOLE_SIZE )
+			{
+				// We can split it!
+
+				TUINT uiOldHoleSize = TAlignNumDown( pAllocationHole->m_uiSize );
+
+				// Create a new hole right after the allocated data
+				Hole* pNewHole = (Hole*)( iDataRegionStart + uiAllocationSize );
+
+				// Set size of the new hole
+				pNewHole->m_uiSize = uiOldHoleSize - uiAllocationSize - TMEMORY_ALLOC_RESERVED_SIZE;
+				pNewHole->m_pOwnerHole = pAllocationHole;
+
+				// Update size of the old hole and mark it as used
+				pAllocationHole->m_pMemBlock = a_pMemBlock;
+				pAllocationHole->m_uiSize = uiAllocationSize | g_pMemory->m_uiGlobalHoleFlags | TMEMORY_FLAGS_HOLE_USED;
+
+				// Place the new hole in the memblock's list
+				TUINT uiNewHoleId = MapSizeToFreeList( pNewHole->m_uiSize );
+				Hole* pOldHole = a_pMemBlock->m_pHoles[ uiNewHoleId ];
+
+				pNewHole->m_pPrevHole = TNULL;
+				pNewHole->m_pNextHole = pOldHole;
+
+				if ( pOldHole )
+					pOldHole->m_pPrevHole = pNewHole;
+
+				a_pMemBlock->m_pHoles[ uiNewHoleId ] = pNewHole;
+
+				// Save pointer to the hole right at the end of the data region (probably for some validation)
+				*(Hole**)( pNewHole->GetDataRegionEnd() ) = pNewHole;
+
+				SaveDebugInfo( pAllocatedMemory );
+				return pAllocatedMemory;
+			}
+			else
+			{
+				// Damn, we can't split this one but it surely can fit the allocation
+
+				SaveDebugInfo( pAllocatedMemory );
+				return pAllocatedMemory;
+			}
+		}
+
+		if ( pFreeList )
+		{
+			SaveDebugInfo( pAllocatedMemory );
+			return pAllocatedMemory;
+		}
+
+OUT_OF_MEMORY:
+		DebugPrintHALMemInfo( "Out of Toshi Memory on block [%s]\n", a_pMemBlock->m_szName );
+		DebugPrintHALMemInfo( "Requested memory block size: %d\n", uiAllocationSize );
+		DumpMemInfo();
+		pAllocatedMemory = TNULL;
+
+		TASSERT( TFALSE );
+		return pAllocatedMemory;
 	}
 
-	TBOOL TMemory::Free( void* a_pAllocated )
+	TBOOL TMemory::Free( const void* a_pAllocated )
 	{
-		//return CALL_THIS(0x006b4a20, TMemory*, TBOOL, this, void*, a_pAllocated );
+		return CALL_THIS(0x006b4a20, TMemory*, TBOOL, this, const void*, a_pAllocated );
 
-		TMutexLock lock( ms_pGlobalMutex );
+		TMUTEX_LOCK_SCOPE( ms_pGlobalMutex );
 
-		TUINTPTR uiMemAddr = TREINTERPRETCAST( TUINTPTR, a_pAllocated );
+		TUINTPTR uiAllocatedAddr = TREINTERPRETCAST( TUINTPTR, a_pAllocated );
 
-		if ( a_pAllocated && ( uiMemAddr & 3 ) == 0 )
+		if ( a_pAllocated && TIsPointerAligned( a_pAllocated ) )
 		{
-			Hole* pThisHole = MEM_TO_HOLE( uiMemAddr );
+			Hole* pThisHole = MEM_TO_HOLE( a_pAllocated );
 			MemBlock* pThisMemBlock = pThisHole->m_pMemBlock;
 
 			TUINT uiAllocatedSize = TAlignNumDown( pThisHole->m_uiSize );
-			Hole* pNextMemHole = TREINTERPRETCAST( Hole*, uiMemAddr + uiAllocatedSize );
+			Hole* pNextMemHole = (Hole*)( uiAllocatedAddr + uiAllocatedSize );
 
 			Hole* pOwnerHole = pThisHole->m_pOwnerHole;
-			Hole** ppNextUsedHole = &pThisHole->m_pNextHole;
+			Hole** ppNextHole = &pThisHole->m_pNextHole;
 
 			pThisHole->m_uiSize = uiAllocatedSize;
 
-			if ( pOwnerHole && ( pOwnerHole->m_uiSize & 1 ) == 0 )
+			// If has owner and it's not used, merge with it
+			if ( pOwnerHole && !HASANYFLAG( pOwnerHole->m_uiSize, TMEMORY_FLAGS_HOLE_USED ) )
 			{
-				// Merge with the owner hole
-
 				TUINT uiOwnerHoleSize = pOwnerHole->m_uiSize;
-				pOwnerHole->m_uiSize = uiAllocatedSize + ( sizeof( Hole ) - sizeof( void* ) ) + TAlignNumDown( uiOwnerHoleSize ) | uiOwnerHoleSize & 3;
+				pOwnerHole->m_uiSize = uiAllocatedSize + TMEMORY_ALLOC_RESERVED_SIZE + TAlignNumDown( uiOwnerHoleSize ) | uiOwnerHoleSize & TMEMORY_FLAGS_MASK;
 
 				pNextMemHole->m_pOwnerHole = pOwnerHole;
-				ppNextUsedHole = &pOwnerHole->m_pNextHole;
+				ppNextHole = &pOwnerHole->m_pNextHole;
 
 				if ( pOwnerHole->m_pPrevHole == TNULL )
 				{
-					// There's no other hole made of this one
 					TUINT uiMappedHoleId = MapSizeToFreeList( TAlignNumDown( uiOwnerHoleSize ) );
-					pThisMemBlock->m_pHoles[ uiMappedHoleId ] = *ppNextUsedHole;
+					pThisMemBlock->m_pHoles[ uiMappedHoleId ] = *ppNextHole;
 				}
 				else
 				{
-					// Some other hole created from the owner still exists
-					pOwnerHole->m_pPrevHole->m_pNextHole = *ppNextUsedHole;
+					pOwnerHole->m_pPrevHole->m_pNextHole = *ppNextHole;
 				}
 
 				pThisHole = pOwnerHole;
 
-				if ( *ppNextUsedHole )
+				if ( *ppNextHole )
 				{
-					// Update previous hole of the next used hole
-					( *ppNextUsedHole )->m_pPrevHole = pOwnerHole->m_pPrevHole;
+					( *ppNextHole )->m_pPrevHole = pOwnerHole->m_pPrevHole;
 				}
 			}
 
-			if ( pNextMemHole && ( pNextMemHole->m_uiSize & 1 ) == 0 )
+			// If the next lying hole is not used, merge with it
+			if ( pNextMemHole && !HASANYFLAG( pNextMemHole->m_uiSize, TMEMORY_FLAGS_HOLE_USED ) )
 			{
 				if ( pNextMemHole->m_pPrevHole == TNULL )
 				{
@@ -557,15 +384,15 @@ LABEL_21:
 
 				TUINT uiSize = TAlignNumDown( pNextMemHole->m_uiSize );
 
-				pThisHole->m_uiSize = uiSize + ( sizeof( Hole ) - sizeof( void* ) ) + TAlignNumDown( pThisHole->m_uiSize ) | pThisHole->m_uiSize & 3;
-				*(TMemory::Hole**)( (TUINTPTR)&pNextMemHole->m_pPrevHole + uiSize ) = pThisHole;
+				pThisHole->m_uiSize = uiSize + TMEMORY_ALLOC_RESERVED_SIZE + TAlignNumDown( pThisHole->m_uiSize ) | pThisHole->m_uiSize & TMEMORY_FLAGS_MASK;
+				*(Hole**)( pNextMemHole->GetDataRegionEnd() ) = pThisHole;
 			}
 
 			TUINT uiMappedHoleId = MapSizeToFreeList( TAlignNumDown( pThisHole->m_uiSize ) );
 			pThisHole->m_pPrevHole = TNULL;
 
 			Hole* pOldHole = pThisMemBlock->m_pHoles[ uiMappedHoleId ];
-			*ppNextUsedHole = pOldHole;
+			*ppNextHole = pOldHole;
 
 			if ( pOldHole != TNULL )
 			{
@@ -594,7 +421,7 @@ LABEL_21:
 
 	TMemory::MemBlock* TMemory::CreateMemBlockInPlace( void* a_pMem, TUINT a_uiSize, const TCHAR* a_szName )
 	{
-		TMutexLock lock( ms_pGlobalMutex );
+		TMUTEX_LOCK_SCOPE( ms_pGlobalMutex );
 
 		if ( a_pMem && a_uiSize != 0 && !m_FreeBlocks.IsEmpty() )
 		{
@@ -612,7 +439,7 @@ LABEL_21:
 
 			if ( uiBlockTotalSize != 0 )
 			{
-				constexpr TUINT CHUNK_RESERVED_SIZE = ( sizeof( MemBlock ) + 12 );
+				constexpr TUINT CHUNK_RESERVED_SIZE = ( sizeof( MemBlock ) + ( sizeof( Hole ) - sizeof( void* ) ) );
 
 				pBlock->m_uiTotalSize1 = uiBlockTotalSize;
 				TUtil::MemClear( pBlock->m_pHoles, sizeof( pBlock->m_pHoles ) );
@@ -631,7 +458,7 @@ LABEL_21:
 				pBlockFooter->m_pBlockOwner = TNULL;
 				pBlockFooter->m_Unk4 = 0;
 				pBlockFooter->m_Unk1 = 0;
-				pBlockFooter->m_Unk2 = GetSingleton()->m_Unknown1 | 1;
+				pBlockFooter->m_Unk2 = g_pMemory->m_uiGlobalHoleFlags | TMEMORY_FLAGS_HOLE_USED;
 				pBlockFooter->m_pBlockOwner = pBlock;
 
 				pBlock->m_pNextBlock = pBlock;
@@ -652,9 +479,14 @@ LABEL_21:
 		Free( a_pMemBlock );
 	}
 
+	Toshi::TMemory::MemBlock* TMemory::GetGlobalBlock() const
+	{
+		return m_pGlobalBlock;
+	}
+
 	TBOOL TMemory::FreeMemBlock( MemBlock* a_pMemBlock )
 	{
-		TMutexLock lock( ms_pGlobalMutex );
+		TMUTEX_LOCK_SCOPE( ms_pGlobalMutex );
 
 		SetMemBlockUnused( a_pMemBlock );
 		a_pMemBlock->m_pSlot->Remove();
@@ -672,19 +504,6 @@ LABEL_21:
 		TStringManager::String8Copy( a_pMemBlock->m_szSignature, "xxxxxxx" );
 	}
 
-	void TMemory::PrintDebug( const TCHAR* a_szFormat, ... )
-	{
-		va_list args;
-		va_start( args, a_szFormat );
-
-		auto pBuffer = TStringManager::GetTempString8();
-		vsprintf( pBuffer, a_szFormat, args );
-		OutputDebugStringA( pBuffer );
-		TTRACE( pBuffer );
-
-		va_end( args );
-	}
-
 	TBOOL TMemory::Initialise( TUINT a_uiHeapSize, TUINT a_uiReservedSize )
 	{
 		auto tmemory = TSTATICCAST( TMemory, calloc( sizeof( TMemory ), 1 ) );
@@ -692,7 +511,7 @@ LABEL_21:
 
 		tmemory->m_pMemory = TNULL;
 		tmemory->m_pGlobalBlock = TNULL;
-		tmemory->m_Unknown1 = 0;
+		tmemory->m_uiGlobalHoleFlags = 0;
 		tmemory->m_Unknown2 = 0;
 
 		ms_pGlobalMutex = TSTATICCAST( TMutex, malloc( sizeof( TMutex ) ) );
@@ -713,15 +532,14 @@ LABEL_21:
 
 	void TMemory::Deinitialise()
 	{
-		TASSERT( TTRUE == IsSingletonCreated() );
-		auto pMemManager = TMemory::GetSingleton();
-		auto pMainBlockMemory = pMemManager->m_pMemory;
+		TASSERT( g_pMemory != TNULL );
+		auto pMainBlockMemory = g_pMemory->m_pMemory;
 
-		pMemManager->m_UsedBlocks.RemoveAll();
-		pMemManager->m_FreeBlocks.RemoveAll();
-		pMemManager->~TMemory();
+		g_pMemory->m_UsedBlocks.RemoveAll();
+		g_pMemory->m_FreeBlocks.RemoveAll();
+		g_pMemory->~TMemory();
 
-		free( pMemManager );
+		free( g_pMemory );
 		free( pMainBlockMemory );
 	}
 
@@ -739,10 +557,17 @@ LABEL_21:
 		if ( uiResult != 0 )
 			uiResult = uiResult - 1;
 
-		if ( uiResult >= NUM_FREE_LISTS )
-			uiResult = NUM_FREE_LISTS - 1;
+		if ( uiResult >= TMEMORY_NUM_FREELISTS )
+			uiResult = TMEMORY_NUM_FREELISTS - 1;
 
 		return uiResult;
+	}
+
+	TMemory::MemBlock* TMemory::SetGlobalBlock( MemBlock* a_pMemBlock )
+	{
+		MemBlock* pOldMemBlock = m_pGlobalBlock;
+		m_pGlobalBlock = a_pMemBlock;
+		return pOldMemBlock;
 	}
 
 	void TMemory::DumpMemInfo()
@@ -753,36 +578,44 @@ LABEL_21:
 		{
 			GetMemInfo( memInfo, it->m_pPtr );
 
-			PrintDebug( "Pool: \'%s\'\n", it->m_pPtr->m_szName );
-			PrintDebug( "\tLargest Hole    : %d\n", memInfo.m_uiLargestHole );
-			PrintDebug( "\tSmallest Hole   : %d\n", memInfo.m_uiSmallestHole );
-			PrintDebug( "\tLargest Process : %d\n", memInfo.m_uiLargestProcess );
-			PrintDebug( "\tSmallest Process: %d\n", memInfo.m_uiSmallestProcess );
-			PrintDebug( "\tTotal Free      : %d\n", memInfo.m_uiTotalFree );
-			PrintDebug( "\tTotal Used      : %d\n", memInfo.m_uiTotalUsed );
-			PrintDebug( "\tTotal Size      : %d\n", memInfo.m_uiTotalSize );
-			PrintDebug( "\tLogic Total Free: %d\n", memInfo.m_uiLogicTotalFree );
-			PrintDebug( "\tLogic Total Used: %d\n", memInfo.m_uiLogicTotalUsed );
-			PrintDebug( "\tLogic Total Size: %d\n", memInfo.m_uiLogicTotalSize );
+			DebugPrintHALMemInfo( "Pool: \'%s\'\n", it->m_pPtr->m_szName );
+			DebugPrintHALMemInfo( "\tLargest Hole    : %d\n", memInfo.m_uiLargestHole );
+			DebugPrintHALMemInfo( "\tSmallest Hole   : %d\n", memInfo.m_uiSmallestHole );
+			DebugPrintHALMemInfo( "\tLargest Process : %d\n", memInfo.m_uiLargestProcess );
+			DebugPrintHALMemInfo( "\tSmallest Process: %d\n", memInfo.m_uiSmallestProcess );
+			DebugPrintHALMemInfo( "\tTotal Free      : %d\n", memInfo.m_uiTotalFree );
+			DebugPrintHALMemInfo( "\tTotal Used      : %d\n", memInfo.m_uiTotalUsed );
+			DebugPrintHALMemInfo( "\tTotal Size      : %d\n", memInfo.m_uiTotalSize );
+			DebugPrintHALMemInfo( "\tLogic Total Free: %d\n", memInfo.m_uiLogicTotalFree );
+			DebugPrintHALMemInfo( "\tLogic Total Used: %d\n", memInfo.m_uiLogicTotalUsed );
+			DebugPrintHALMemInfo( "\tLogic Total Size: %d\n", memInfo.m_uiLogicTotalSize );
 
 			TFLOAT fLogicTotalUsed = TMath::Abs( TFLOAT( memInfo.m_uiLogicTotalUsed ) );
 			TFLOAT fLogicTotalSize = TMath::Abs( TFLOAT( memInfo.m_uiLogicTotalSize ) );
-			PrintDebug( "\t%%Logical Used   : %f\n", ( fLogicTotalUsed / fLogicTotalSize ) * 100.0 );
+			DebugPrintHALMemInfo( "\t%%Logical Used   : %f\n", ( fLogicTotalUsed / fLogicTotalSize ) * 100.0 );
 
 			TFLOAT fTotalUsed = TMath::Abs( TFLOAT( memInfo.m_uiTotalUsed ) );
 			TFLOAT fTotalSize = TMath::Abs( TFLOAT( memInfo.m_uiTotalSize ) );
-			PrintDebug( "\t%%Used\t          : %f\n", ( fTotalUsed / fTotalSize ) * 100.0 );
-			PrintDebug( "------\n\n" );
+			DebugPrintHALMemInfo( "\t%%Used\t          : %f\n", ( fTotalUsed / fTotalSize ) * 100.0 );
+			DebugPrintHALMemInfo( "------\n\n" );
 		}
+	}
+
+	void TMemory::DebugPrintHALMemInfo( const TCHAR* a_szFormat, ... )
+	{
+		va_list args;
+		va_start( args, a_szFormat );
+		TDebug_FinalVPrintf( a_szFormat, args );
+		va_end( args );
 	}
 
 	void TMemory::GetMemInfo( MemInfo& a_rMemInfo, MemBlock* a_pMemBlock )
 	{
-		TMutexLock lock( ms_pGlobalMutex );
+		TMUTEX_LOCK_SCOPE( ms_pGlobalMutex );
 
 		if ( !a_pMemBlock )
 		{
-			a_pMemBlock = GetSingleton()->m_pGlobalBlock;
+			a_pMemBlock = g_pMemory->m_pGlobalBlock;
 		}
 
 		a_rMemInfo.m_uiUnk3 = 28;
@@ -815,7 +648,7 @@ LABEL_21:
 
 		while ( TAlignNumDown( uiHoleSize ) != 0 )
 		{
-			a_rMemInfo.m_uiUnk3 += 12;
+			a_rMemInfo.m_uiUnk3 += sizeof( Hole ) - sizeof( void* );
 			uiHoleSize = TAlignNumDown( pHole->m_uiSize );
 
 			if ( ( pHole->m_uiSize & 1 ) == 0 )
@@ -849,6 +682,7 @@ LABEL_21:
 				}
 			}
 
+			auto pOldHole = pHole;
 			pHole = (Hole*)( (TUINT)&pHole->m_pPrevHole + uiHoleSize );
 			uiHoleSize = pHole->m_uiSize;
 		}
@@ -864,6 +698,7 @@ LABEL_21:
 
 	void TMemory::GetHALMemInfo( HALMemInfo& a_rHALMemInfo )
 	{
+
 		TUtil::MemClear( &a_rHALMemInfo, sizeof( a_rHALMemInfo ) );
 	}
 
@@ -875,18 +710,16 @@ LABEL_21:
 
 void* TMalloc( TUINT a_uiSize, Toshi::TMemory::MemBlock* a_pMemBlock, const TCHAR* a_szFileName, TINT a_iLineNum )
 {
-	auto pMemManager = Toshi::TMemory::GetSingleton();
-
 	if ( !a_pMemBlock )
 	{
-		a_pMemBlock = pMemManager->GetGlobalBlock();
+		a_pMemBlock = Toshi::g_pMemory->GetGlobalBlock();
 	}
 
-	auto pMem = pMemManager->Alloc( a_uiSize, 16, a_pMemBlock, a_szFileName, a_iLineNum );
+	auto pMem = Toshi::g_pMemory->Alloc( a_uiSize, 16, a_pMemBlock, a_szFileName, a_iLineNum );
 
 	if ( !pMem )
 	{
-		pMemManager->PrintDebug( "Out of Toshi Memory on block [%s]\n", a_pMemBlock->m_szName );
+		Toshi::TMemory::DebugPrintHALMemInfo( "Out of Toshi Memory on block [%s]\n", a_pMemBlock->m_szName );
 	}
 
 	return pMem;
@@ -894,14 +727,13 @@ void* TMalloc( TUINT a_uiSize, Toshi::TMemory::MemBlock* a_pMemBlock, const TCHA
 
 void* TMalloc( TUINT a_uiSize, const TCHAR* a_szFileName, TINT a_iLineNum )
 {
-	auto pMemManager = Toshi::TMemory::GetSingleton();
-	auto pMemBlock = pMemManager->GetGlobalBlock();
+	auto pMemBlock = Toshi::g_pMemory->GetGlobalBlock();
 
-	auto pMem = pMemManager->Alloc( a_uiSize, 16, pMemBlock, a_szFileName, a_iLineNum );
+	auto pMem = Toshi::g_pMemory->Alloc( a_uiSize, 16, pMemBlock, a_szFileName, a_iLineNum );
 
 	if ( !pMem )
 	{
-		pMemManager->PrintDebug( "Out of Toshi Memory on block [%s]\n", pMemBlock->m_szName );
+		Toshi::TMemory::DebugPrintHALMemInfo( "Out of Toshi Memory on block [%s]\n", pMemBlock->m_szName );
 	}
 
 	return pMem;
@@ -909,14 +741,13 @@ void* TMalloc( TUINT a_uiSize, const TCHAR* a_szFileName, TINT a_iLineNum )
 
 void* TMalloc( TUINT a_uiSize )
 {
-	auto pMemManager = Toshi::TMemory::GetSingleton();
-	auto pMemBlock = pMemManager->GetGlobalBlock();
+	auto pMemBlock = Toshi::g_pMemory->GetGlobalBlock();
 
-	auto pMem = pMemManager->Alloc( a_uiSize, 16, pMemBlock, TNULL, -1 );
+	auto pMem = Toshi::g_pMemory->Alloc( a_uiSize, 16, pMemBlock, TNULL, -1 );
 
 	if ( !pMem )
 	{
-		pMemManager->PrintDebug( "Out of Toshi Memory on block [%s]\n", pMemBlock->m_szName );
+		Toshi::TMemory::DebugPrintHALMemInfo( "Out of Toshi Memory on block [%s]\n", pMemBlock->m_szName );
 	}
 
 	return pMem;
@@ -924,18 +755,16 @@ void* TMalloc( TUINT a_uiSize )
 
 void* TMemalign( TINT a_iAlignment, TUINT a_uiSize, Toshi::TMemory::MemBlock* a_pMemBlock )
 {
-	auto pMemManager = Toshi::TMemory::GetSingleton();
-
 	if ( !a_pMemBlock )
 	{
-		a_pMemBlock = pMemManager->GetGlobalBlock();
+		a_pMemBlock = Toshi::g_pMemory->GetGlobalBlock();
 	}
 
-	auto pMem = pMemManager->Alloc( a_uiSize, a_iAlignment, a_pMemBlock, TNULL, -1 );
+	auto pMem = Toshi::g_pMemory->Alloc( a_uiSize, a_iAlignment, a_pMemBlock, TNULL, -1 );
 
 	if ( !pMem )
 	{
-		pMemManager->PrintDebug( "Out of Toshi Memory on block [%s]\n", a_pMemBlock->m_szName );
+		Toshi::TMemory::DebugPrintHALMemInfo( "Out of Toshi Memory on block [%s]\n", a_pMemBlock->m_szName );
 	}
 
 	return pMem;
@@ -943,14 +772,13 @@ void* TMemalign( TINT a_iAlignment, TUINT a_uiSize, Toshi::TMemory::MemBlock* a_
 
 void* TMemalign( TUINT a_uiSize, TINT a_iAlignment )
 {
-	auto pMemManager = Toshi::TMemory::GetSingleton();
-	auto pMemBlock = pMemManager->GetGlobalBlock();
+	auto pMemBlock = Toshi::g_pMemory->GetGlobalBlock();
 
-	auto pMem = pMemManager->Alloc( a_uiSize, a_iAlignment, pMemBlock, TNULL, -1 );
+	auto pMem = Toshi::g_pMemory->Alloc( a_uiSize, a_iAlignment, pMemBlock, TNULL, -1 );
 
 	if ( !pMem )
 	{
-		pMemManager->PrintDebug( "Out of Toshi Memory on block [%s]\n", pMemBlock->m_szName );
+		Toshi::TMemory::DebugPrintHALMemInfo( "Out of Toshi Memory on block [%s]\n", pMemBlock->m_szName );
 	}
 
 	return pMem;
@@ -958,5 +786,5 @@ void* TMemalign( TUINT a_uiSize, TINT a_iAlignment )
 
 void TFree( void* a_pMem )
 {
-	Toshi::TMemory::GetSingleton()->Free( a_pMem );
+	Toshi::g_pMemory->Free( a_pMem );
 }

@@ -7,7 +7,7 @@ namespace Toshi
 	class TInputDXInterface : public TInputInterface
 	{
 	public:
-		TDECLARE_CLASS(TInputInterface);
+		TDECLARE_CLASS(TInputDXInterface, TInputInterface);
 
 	public:
 		TInputDXInterface()

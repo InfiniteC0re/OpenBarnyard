@@ -26,7 +26,7 @@ TBOOL ASectionDoneJob::RunJob()
 		m_pSection->GetLODBlocks(m_eLODType, ppLODBlocks, uiNumMemBlocks);
 
 		// Set memory block of the LOD
-		auto pOldMemBlock = TMemory::GetSingleton()->SetGlobalBlock(ppLODBlocks[uiNumMemBlocks - 1]->GetMemBlock());
+		auto pOldMemBlock = g_pMemory->SetGlobalBlock(ppLODBlocks[uiNumMemBlocks - 1]->GetMemBlock());
 
 		for (TINT i = 0; i < iNumLODs; i++)
 		{
@@ -46,7 +46,7 @@ TBOOL ASectionDoneJob::RunJob()
 		m_pSection->SetLODEmpty(m_eLODType, TTRUE);
 
 		// Restore memory block
-		TMemory::GetSingleton()->SetGlobalBlock(pOldMemBlock);
+		g_pMemory->SetGlobalBlock(pOldMemBlock);
 
 		// Execute model node ready event if it is assigned
 		auto cbModelNodeReady = ATerrain::GetSingleton()->GetOnModelNodeReadyCallback();

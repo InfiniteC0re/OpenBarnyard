@@ -12,7 +12,7 @@ namespace Toshi {
 	class TTextureFactory : public TResource
 	{
 	public:
-		TDECLARE_CLASS(TResource);
+		TDECLARE_CLASS(TTextureFactory, TResource);
 
 	public:
 		class NameEntry : public TNodeList<NameEntry>::TNode

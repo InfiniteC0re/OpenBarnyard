@@ -9,7 +9,7 @@ namespace Toshi {
 	class TInputDXDeviceKeyboard : public TInputDeviceKeyboard
 	{
 	public:
-		TDECLARE_CLASS(TInputDeviceKeyboard);
+		TDECLARE_CLASS(TInputDXDeviceKeyboard, TInputDeviceKeyboard);
 
 	public:
 		struct KeyInfo

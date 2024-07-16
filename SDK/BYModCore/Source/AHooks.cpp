@@ -562,7 +562,7 @@ HOOK(0x006cea40, TRenderContext_CullSphereToFrustum, TINT, const TSphere& a_rSph
 void AHooks::Initialise()
 {
 	//InstallHook<TMemory_Free>();
-	//InstallHook<TMemory_Alloc>();
+	InstallHook<TMemory_Alloc>();
 	InstallHook<TMemory_GetMemInfo>();
 	InstallHook<TMSWindow_SetPosition>();
 	InstallHook<AGUISlideshow_ProcessInput>();

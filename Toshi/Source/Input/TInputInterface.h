@@ -11,7 +11,7 @@ namespace Toshi {
 		public TSingleton<TInputInterface>
 	{
 	public:
-		TDECLARE_CLASS(TObject);
+		TDECLARE_CLASS(TInputInterface, TObject);
 
 	public:
 		enum EVENT_TYPE
@@ -131,7 +131,7 @@ namespace Toshi {
 		public TNodeList<TInputDevice>::TNode
 	{
 	public:
-		TDECLARE_CLASS(TObject);
+		TDECLARE_CLASS(TInputDevice, TObject);
 
 	public:
 		static constexpr TINT INPUT_DEVICE_MOUSE_BUTTONS = 3;

@@ -10,12 +10,18 @@ namespace Toshi {
 	class TTextureResourceHAL : public TTexture
 	{
 	public:
-		TDECLARE_CLASS(TTexture);
+		TDECLARE_CLASS(TTextureResourceHAL, TTexture);
 		TDECLARE_FREELIST_ALLOCATOR(TTextureResourceHAL);
 
-	public:
+		static TTextureResourceHAL* CreateNew()
+		{
+			return new TTextureResourceHAL();
+		}
+
+	private:
 		TTextureResourceHAL();
 
+	public:
 		virtual TBOOL Validate() override;
 		virtual void Invalidate() override;
 

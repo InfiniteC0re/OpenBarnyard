@@ -7,7 +7,7 @@ namespace Toshi {
 	class TVertexPoolResourceInterface : public TResource
 	{
 	public:
-		TDECLARE_CLASS(TResource);
+		TDECLARE_CLASS(TVertexPoolResourceInterface, TResource);
 
 	public:
 		struct LockBuffer

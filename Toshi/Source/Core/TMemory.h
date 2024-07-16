@@ -1,20 +1,30 @@
 #pragma once
 #include "Toshi/TNodeList.h"
-#include "Toshi/TSingleton.h"
 
 #ifdef TOSHI_PROFILER_MEMORY
 #include "TMemoryDebug.h"
 #endif // TOSHI_PROFILER_MEMORY
 
+#define TMEMORY_ROUNDUP 4 
+#define TMEMORY_FLAGS_HOLE_USED 1
+#define TMEMORY_FLAGS_MASK ((1 << 2) - 1)
+#define TMEMORY_NUM_FREELISTS 9
+#define TMEMORY_NUM_BLOCK_SLOTS 128
+#define TMEMORY_ALLOC_HOLE_SIZE sizeof( Toshi::TMemory::Hole )
+#define TMEMORY_ALLOC_RESERVED_SIZE ( TMEMORY_ALLOC_HOLE_SIZE - sizeof( void* ) )
+
 namespace Toshi {
 
-	class TMemory :
-		public TSingleton<TMemory>
+	extern class TMemory* g_pMemory;
+
+	//-----------------------------------------------------------------------------
+	// Purpose: Manages memory allocations and deallocations.
+	// NOTE: Alloc and Free methods are not valid since they can crash the game
+	// when the modloader forces the original game to use our custom methods.
+	//-----------------------------------------------------------------------------
+	class TMemory
 	{
 	public:
-		static constexpr TUINT NUM_BLOCK_SLOTS = 128;
-		static constexpr TUINT NUM_FREE_LISTS = 9;
-
 		struct MemBlock;
 		struct MemBlockSlot;
 
@@ -26,7 +36,12 @@ namespace Toshi {
 				Hole* m_pNextHole;
 				MemBlock* m_pMemBlock;
 			};
+
+			// Only used when the hole is split
 			Hole* m_pPrevHole;
+
+			void* GetDataRegionStart() const { return (void*)( &m_pPrevHole ); }
+			void* GetDataRegionEnd() const { return (void*)( ( (TUINTPTR)&m_pPrevHole + TAlignNumDown( m_uiSize ) ) ); }
 		};
 
 		struct MemBlock
@@ -35,10 +50,10 @@ namespace Toshi {
 			TUINT m_uiTotalSize1;
 			MemBlock* m_pNextBlock;
 			TUINT m_uiTotalSize2;
-			Hole* m_pHoles[NUM_FREE_LISTS];
+			Hole* m_pHoles[ TMEMORY_NUM_FREELISTS ];
 			Hole* m_pFirstHole;
-			TCHAR m_szSignature[8];
-			TCHAR m_szName[52];
+			TCHAR m_szSignature[ 8 ];
+			TCHAR m_szName[ 52 ];
 			Hole m_RootHole;
 		};
 
@@ -78,48 +93,38 @@ namespace Toshi {
 		{
 			HALMemInfo();
 
-			TUINT m_Unknown1[10];
+			TUINT m_Unknown1[ 10 ];
 			TUINT m_uiMemUsage;
-			TUINT m_Unknown2[15];
+			TUINT m_Unknown2[ 15 ];
 		};
 
 	public:
 		TMemory();
 		~TMemory();
 
-		void* Alloc(TUINT a_uiSize, TINT a_uiAlignment, MemBlock* a_pMemBlock, const TCHAR* a_szFileName, TINT a_iLineNum);
-		
-		TBOOL Free(void* a_pMem);
+		void* Alloc( TUINT a_uiSize, TINT a_uiAlignment, MemBlock* a_pMemBlock, const TCHAR* a_szFileName, TINT a_iLineNum );
+		TBOOL Free( const void* a_pMem );
 
-		MemBlock* CreateMemBlock(TUINT a_uiSize, const TCHAR* a_szName, MemBlock* a_pOwnerBlock);
-		MemBlock* CreateMemBlockInPlace(void* a_pMem, TUINT a_uiSize, const TCHAR* a_szName);
-		void DestroyMemBlock(MemBlock* a_pMemBlock);
+		MemBlock* CreateMemBlock( TUINT a_uiSize, const TCHAR* a_szName, MemBlock* a_pOwnerBlock );
+		MemBlock* CreateMemBlockInPlace( void* a_pMem, TUINT a_uiSize, const TCHAR* a_szName );
+		void DestroyMemBlock( MemBlock* a_pMemBlock );
 
-		MemBlock* GetGlobalBlock() const
-		{
-			return m_pGlobalBlock;
-		}
-
-		MemBlock* SetGlobalBlock(MemBlock* a_pMemBlock)
-		{
-			auto pOldMemBlock = m_pGlobalBlock;
-			m_pGlobalBlock = a_pMemBlock;
-			return pOldMemBlock;
-		}
+		MemBlock* GetGlobalBlock() const;
+		MemBlock* SetGlobalBlock( MemBlock* a_pMemBlock );
 
 		void DumpMemInfo();
-		void PrintDebug(const TCHAR* a_szFormat, ...);
 
 	private:
-		TBOOL FreeMemBlock(MemBlock* a_pMemBlock);
-		void SetMemBlockUnused(MemBlock* a_pMemBlock);
+		TBOOL FreeMemBlock( MemBlock* a_pMemBlock );
+		void SetMemBlockUnused( MemBlock* a_pMemBlock );
 
 	public:
-		static void GetMemInfo(MemInfo& a_rMemInfo, MemBlock* a_pMemBlock);
-		static void GetHALMemInfo(HALMemInfo& a_rHALMemInfo);
-		static TBOOL Initialise(TUINT a_uiHeapSize, TUINT a_uiReservedSize);
+		static void GetMemInfo( MemInfo& a_rMemInfo, MemBlock* a_pMemBlock );
+		static void GetHALMemInfo( HALMemInfo& a_rHALMemInfo );
+		static TBOOL Initialise( TUINT a_uiHeapSize, TUINT a_uiReservedSize );
 		static void Deinitialise();
-		static TUINT MapSizeToFreeList(TUINT a_uiSize);
+		static TUINT MapSizeToFreeList( TUINT a_uiSize );
+		static void DebugPrintHALMemInfo( const TCHAR* a_szFormat, ... );
 
 	private:
 		inline static class TMutex* ms_pGlobalMutex;
@@ -130,10 +135,10 @@ namespace Toshi {
 		TUINT m_MainBlockSize;
 		TNodeList<MemBlockSlot> m_UsedBlocks;
 		TNodeList<MemBlockSlot> m_FreeBlocks;
-		MemBlockSlot m_aBlockSlots[NUM_BLOCK_SLOTS];
+		MemBlockSlot m_aBlockSlots[ TMEMORY_NUM_BLOCK_SLOTS ];
 		void* m_pMemory;
 		MemBlock* m_pGlobalBlock;
-		TUINT m_Unknown1;
+		TUINT m_uiGlobalHoleFlags;
 		TUINT m_Unknown2;
 		TBOOL m_bFlag1;
 		TBOOL m_bFlag2;
@@ -142,37 +147,73 @@ namespace Toshi {
 
 }
 
-void* TMalloc(TUINT a_uiSize);
-void* TMalloc(TUINT a_uiSize, const TCHAR* a_szFileName, TINT a_iLineNum);
-void* TMalloc(TUINT a_uiSize, Toshi::TMemory::MemBlock* a_pMemBlock, const TCHAR* a_szFileName = TNULL, TINT a_iLineNum = -1);
-void* TMemalign(TUINT a_uiSize, TINT a_iAlignment);
-void* TMemalign(TINT a_iAlignment, TUINT a_uiSize, Toshi::TMemory::MemBlock* a_pMemBlock);
-void TFree(void* a_pMem);
+void* TMalloc( TUINT a_uiSize );
+void* TMalloc( TUINT a_uiSize, const TCHAR* a_szFileName, TINT a_iLineNum );
+void* TMalloc( TUINT a_uiSize, Toshi::TMemory::MemBlock* a_pMemBlock, const TCHAR* a_szFileName = TNULL, TINT a_iLineNum = -1 );
+void* TMemalign( TUINT a_uiSize, TINT a_iAlignment );
+void* TMemalign( TINT a_iAlignment, TUINT a_uiSize, Toshi::TMemory::MemBlock* a_pMemBlock );
 
-inline void* __CRTDECL operator new(size_t size, Toshi::TMemory::MemBlock* block)
+void TFree( void* a_pMem );
+
+//-----------------------------------------------------------------------------
+// Purpose: Calls constructor of type T on the specified pointer.
+//-----------------------------------------------------------------------------
+template<class T, class... Args>
+TFORCEINLINE T* TConstruct( T* a_pMemory, Args&& ...args )
+{
+	return new ( a_pMemory ) T( std::forward<Args>( args )... );
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: Calls constructor of type T on the specified pointer N times.
+//-----------------------------------------------------------------------------
+template<class T, class... Args>
+TFORCEINLINE T* TConstructArray( T* a_pMemory, TUINT a_uiNumTimes, Args&& ...args )
+{
+	for ( TUINT i = 0; i < a_uiNumTimes; i++ )
+	{
+		new ( a_pMemory + i ) T( std::forward<Args>( args )... );
+	}
+
+	return a_pMemory;
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: Calls destructor on the specified pointer.
+//-----------------------------------------------------------------------------
+template<class T>
+TFORCEINLINE void TDestruct( T* a_pPtr )
+{
+	if ( a_pPtr )
+	{
+		a_pPtr->~T();
+	}
+}
+
+inline void* __CRTDECL operator new( size_t size, Toshi::TMemory::MemBlock* block )
 {
 #ifdef TOSHI_PROFILER_MEMORY
-	return TMalloc(size, block, TMemory__FILE__, TMemory__LINE__);
+	return TMalloc( size, block, TMemory__FILE__, TMemory__LINE__ );
 #else
-	return TMalloc(size, block, TNULL, -1);
+	return TMalloc( size, block, TNULL, -1 );
 #endif // TOSHI_PROFILER_MEMORY
 }
 
-inline void* __CRTDECL operator new[](size_t size, Toshi::TMemory::MemBlock* block)
+inline void* __CRTDECL operator new[]( size_t size, Toshi::TMemory::MemBlock* block )
 {
 #ifdef TOSHI_PROFILER_MEMORY
-	return TMalloc(size, block, TMemory__FILE__, TMemory__LINE__);
+	return TMalloc( size, block, TMemory__FILE__, TMemory__LINE__ );
 #else
-	return TMalloc(size, block, TNULL, -1);
+	return TMalloc( size, block, TNULL, -1 );
 #endif // TOSHI_PROFILER_MEMORY
 }
 
-inline void __CRTDECL operator delete(void* ptr, Toshi::TMemory::MemBlock* block) noexcept
+inline void __CRTDECL operator delete( void* ptr, Toshi::TMemory::MemBlock* block ) noexcept
 {
-	TFree(ptr);
+	TFree( ptr );
 }
 
-inline void __CRTDECL operator delete[](void* ptr, Toshi::TMemory::MemBlock* block) noexcept
+inline void __CRTDECL operator delete[]( void* ptr, Toshi::TMemory::MemBlock* block ) noexcept
 {
-	TFree(ptr);
+	TFree( ptr );
 }

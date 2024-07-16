@@ -8,7 +8,7 @@
 class ASysMesh : public Toshi::TMesh
 {
 public:
-	TDECLARE_CLASS(Toshi::TMesh);
+	TDECLARE_CLASS(ASysMesh, Toshi::TMesh);
 
 	struct LockBuffer
 	{

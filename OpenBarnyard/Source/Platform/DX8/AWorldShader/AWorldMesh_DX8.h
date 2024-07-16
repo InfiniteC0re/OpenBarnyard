@@ -4,7 +4,7 @@
 class AWorldMeshHAL : public AWorldMesh
 {
 public:
-	TDECLARE_CLASS(AWorldMesh);
+	TDECLARE_CLASS(AWorldMeshHAL, AWorldMesh);
 
 public:
 	//-----------------------------------------------------------------------------

@@ -4,7 +4,7 @@
 class ASkinMaterial :
 	public Toshi::TMaterial
 {
-	TDECLARE_CLASS(Toshi::TMaterial);
+	TDECLARE_CLASS(ASkinMaterial, Toshi::TMaterial);
 
 public:
 	using ELightingTexture = TUINT;

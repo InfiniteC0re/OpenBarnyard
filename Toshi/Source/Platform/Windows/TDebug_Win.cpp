@@ -83,7 +83,7 @@ void TDebug_OutputDebugString(const TCHAR* a_szString)
 
 void TDebug_BroadcastDebugString(const TCHAR* a_szString)
 {
-	TIMPLEMENT();
+	//TIMPLEMENT();
 }
 
 #include "../resource.h"

@@ -5,7 +5,7 @@ class AMoviePlayer : public Toshi::TTask,
 	public Toshi::TSingleton<AMoviePlayer>
 {
 public:
-	TDECLARE_CLASS(Toshi::TTask);
+	TDECLARE_CLASS(AMoviePlayer, Toshi::TTask);
 
 public:
 	AMoviePlayer();

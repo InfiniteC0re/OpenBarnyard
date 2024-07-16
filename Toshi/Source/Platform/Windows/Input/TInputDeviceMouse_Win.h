@@ -7,7 +7,7 @@ namespace Toshi
 	class TInputDXDeviceMouse : public TInputDeviceMouse
 	{
 	public:
-		TDECLARE_CLASS(TInputDeviceMouse);
+		TDECLARE_CLASS(TInputDXDeviceMouse, TInputDeviceMouse);
 
 	public:
 		TInputDXDeviceMouse()

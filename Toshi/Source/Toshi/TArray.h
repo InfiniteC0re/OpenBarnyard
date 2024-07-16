@@ -256,7 +256,7 @@ namespace Toshi {
 		T* Push(const T& element)
 		{
 			GrowBy(1);
-			return new (&m_pData[m_iNumElements++]) T(element);
+			return TConstruct (&m_pData[m_iNumElements++], element);
 		}
 
 		T& Pop()

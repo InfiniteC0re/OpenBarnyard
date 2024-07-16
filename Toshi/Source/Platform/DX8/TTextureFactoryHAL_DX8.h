@@ -6,7 +6,7 @@ namespace Toshi {
 	class TTextureFactoryHAL : public TTextureFactory
 	{
 	public:
-		TDECLARE_CLASS(TTextureFactory);
+		TDECLARE_CLASS(TTextureFactoryHAL, TTextureFactory);
 
 	public:
 		TTexture* CreateTextureFromFile(const TCHAR* a_szFilePath, TUINT32 a_eTextureFlags) override;

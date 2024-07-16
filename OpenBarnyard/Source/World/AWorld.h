@@ -95,7 +95,7 @@ struct CellSphereTreeLeafNode
 
 	struct CellSphereTreeBranchNode* End()
 	{
-		return (struct CellSphereTreeBranchNode*)TAlignPointer(((TUINT16*)(this + 1)) + m_uiNumMeshes);
+		return (struct CellSphereTreeBranchNode*)TAlignPointerUp(((TUINT16*)(this + 1)) + m_uiNumMeshes);
 	}
 };
 

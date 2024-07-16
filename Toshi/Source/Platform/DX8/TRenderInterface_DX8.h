@@ -13,7 +13,7 @@ namespace Toshi {
 	class TRenderD3DInterface : public TRenderInterface
 	{
 	public:
-		TDECLARE_CLASS(TRenderInterface);
+		TDECLARE_CLASS(TRenderD3DInterface, TRenderInterface);
 
 		friend TMSWindow;
 

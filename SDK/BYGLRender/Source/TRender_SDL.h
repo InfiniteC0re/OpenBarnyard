@@ -276,7 +276,7 @@ namespace Toshi {
 		public TRenderInterface
 	{
 	public:
-		TDECLARE_CLASS(TRenderInterface);
+		TDECLARE_CLASS(TRenderSDL, TRenderInterface);
 
 	public:
 		TRenderSDL() = default;

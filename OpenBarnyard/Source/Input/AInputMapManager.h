@@ -37,7 +37,7 @@ class AInputMapManager :
 	public Toshi::TSingleton<AInputMapManager>
 {
 public:
-	TDECLARE_CLASS(Toshi::TObject);
+	TDECLARE_CLASS(AInputMapManager, Toshi::TObject);
 
 	using ActionId = TUINT32;
 

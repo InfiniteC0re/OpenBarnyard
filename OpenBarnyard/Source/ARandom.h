@@ -8,7 +8,7 @@ class ARandom :
 	public Toshi::TSingleton<ARandom>
 {
 public:
-	TDECLARE_CLASS(Toshi::TObject);
+	TDECLARE_CLASS(ARandom, Toshi::TObject);
 
 public:
 	ARandom()

@@ -6,7 +6,7 @@
 class AMovieState : public AGameState
 {
 public:
-	TDECLARE_CLASS(AGameState);
+	TDECLARE_CLASS(AMovieState, AGameState);
 
 public:
 	AMovieState(const TCHAR* a_szName, TBOOL a_bFlag1, AGameState* a_pNextGameState, TBOOL a_bFlag2);

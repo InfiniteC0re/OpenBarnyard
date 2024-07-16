@@ -11,7 +11,7 @@ namespace Toshi {
 	class TMaterial : public TObject
 	{
 	public:
-		TDECLARE_CLASS(TObject);
+		TDECLARE_CLASS(TMaterial, TObject);
 
 	public:
 		static constexpr TUINT MAXTEXTURES = 6;

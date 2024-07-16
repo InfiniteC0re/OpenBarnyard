@@ -4,7 +4,7 @@
 class AMessagePopupState : public AGameState
 {
 public:
-	TDECLARE_CLASS(AGameState);
+	TDECLARE_CLASS(AMessagePopupState, AGameState);
 
 	// Not implemented!
 };

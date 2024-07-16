@@ -5,7 +5,7 @@
 class ADummyTask : public Toshi::TTask
 {
 public:
-	TDECLARE_CLASS(Toshi::TTask);
+	TDECLARE_CLASS(ADummyTask, Toshi::TTask);
 
 public:
 	ADummyTask() = default;

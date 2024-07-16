@@ -6,7 +6,7 @@
 class AWorldMaterialHAL : public AWorldMaterial
 {
 public:
-	TDECLARE_CLASS(AWorldMaterial);
+	TDECLARE_CLASS(AWorldMaterialHAL, AWorldMaterial);
 
 public:
 	AWorldMaterialHAL();

@@ -17,7 +17,7 @@ class ASoundManager :
 	public Toshi::TSingleton<ASoundManager>
 {
 public:
-	TDECLARE_CLASS(Toshi::TTask);
+	TDECLARE_CLASS(ASoundManager, Toshi::TTask);
 
 	struct S1 : public Toshi::T2DList<S1>::Node
 	{

@@ -5,7 +5,7 @@
 class AGUIMatlibPicture : public AGUIPicture
 {
 public:
-	TDECLARE_CLASS(AGUIPicture);
+	TDECLARE_CLASS(AGUIMatlibPicture, AGUIPicture);
 
 public:
 	AGUIMatlibPicture();

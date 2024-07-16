@@ -11,7 +11,7 @@ class AGameStateController : public Toshi::TTask,
 	public Toshi::TSingleton<AGameStateController>
 {
 public:
-	TDECLARE_CLASS(Toshi::TTask);
+	TDECLARE_CLASS(AGameStateController, Toshi::TTask);
 
 public:
 	AGameStateController();

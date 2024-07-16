@@ -13,7 +13,7 @@ class AGUI2 :
 	public Toshi::TSingleton<AGUI2>
 {
 public:
-	TDECLARE_CLASS(Toshi::TTask);
+	TDECLARE_CLASS(AGUI2, Toshi::TTask);
 
 public:
 	AGUI2();

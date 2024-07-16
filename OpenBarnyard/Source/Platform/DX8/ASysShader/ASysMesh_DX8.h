@@ -4,7 +4,7 @@
 class ASysMeshHAL : public ASysMesh
 {
 public:
-	TDECLARE_CLASS(ASysMesh);
+	TDECLARE_CLASS(ASysMeshHAL, ASysMesh);
 
 public:
 	ASysMeshHAL();

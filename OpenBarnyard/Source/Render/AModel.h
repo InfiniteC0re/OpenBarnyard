@@ -14,7 +14,7 @@ class AModelInstance :
 	public Toshi::TRefCounted
 {
 public:
-	TDECLARE_CLASS(Toshi::TObject);
+	TDECLARE_CLASS(AModelInstance, Toshi::TObject);
 
 public:
 	using Flags = TUINT8;

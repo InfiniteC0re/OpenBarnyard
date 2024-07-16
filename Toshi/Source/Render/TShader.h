@@ -6,7 +6,7 @@ namespace Toshi {
 	class TShader : public TObject
 	{
 	public:
-		TDECLARE_CLASS(TObject);
+		TDECLARE_CLASS(TShader, TObject);
 
 	public:
 		using State = TUINT32;

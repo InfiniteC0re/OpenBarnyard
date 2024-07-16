@@ -13,7 +13,7 @@
 class ABINKMoviePlayer : public AMoviePlayer
 {
 public:
-	TDECLARE_CLASS(AMoviePlayer);
+	TDECLARE_CLASS(ABINKMoviePlayer, AMoviePlayer);
 
 private:
 	struct Rect

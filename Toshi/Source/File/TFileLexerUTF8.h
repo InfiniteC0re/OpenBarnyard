@@ -8,7 +8,7 @@ namespace Toshi {
 	class TFileLexerUTF8 : public TObject
 	{
 	public:
-		TDECLARE_CLASS(TObject);
+		TDECLARE_CLASS(TFileLexerUTF8, TObject);
 
 	public:
 		struct Token

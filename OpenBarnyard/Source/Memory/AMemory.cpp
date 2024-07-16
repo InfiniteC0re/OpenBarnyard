@@ -17,7 +17,7 @@ void AMemory::CreatePool(POOL a_ePool)
 	TMemory::MemBlock* pAllocOnHeap = (rPool.GetHeapIndex() == a_ePool) ?
 		TNULL : s_aMemBlocks[rPool.GetHeapIndex()];
 
-	s_aMemBlocks[a_ePool] = TMemory::GetSingleton()->CreateMemBlock(
+	s_aMemBlocks[a_ePool] = g_pMemory->CreateMemBlock(
 		rPool.GetSize(),
 		rPool.GetName(),
 		pAllocOnHeap

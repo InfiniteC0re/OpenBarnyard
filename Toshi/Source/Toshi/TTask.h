@@ -13,7 +13,7 @@ namespace Toshi
 		public TNodeTree<TTask>::TNode
 	{
 	public:
-		TDECLARE_CLASS(TObject);
+		TDECLARE_CLASS(TTask, TObject);
 
 	public:
 		friend TScheduler;

@@ -10,7 +10,7 @@ class AGUISystem : public Toshi::TTask,
 	public Toshi::TSingleton<AGUISystem>
 {
 public:
-	TDECLARE_CLASS(Toshi::TTask);
+	TDECLARE_CLASS(AGUISystem, Toshi::TTask);
 	static constexpr TUINT NUM_RENDER_OBJECTS = 2;
 
 public:

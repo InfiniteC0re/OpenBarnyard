@@ -10,7 +10,7 @@ class ASkinShader :
 	public Toshi::TSingleton<ASkinShader>
 {
 public:
-	TDECLARE_CLASS(Toshi::TShader);
+	TDECLARE_CLASS(ASkinShader, Toshi::TShader);
 
 public:
 	ASkinShader();

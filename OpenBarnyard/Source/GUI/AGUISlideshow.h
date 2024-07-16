@@ -8,7 +8,7 @@
 class AGUISlideshow : public Toshi::TObject
 {
 public:
-	TDECLARE_CLASS(Toshi::TObject);
+	TDECLARE_CLASS(AGUISlideshow, Toshi::TObject);
 
 	using Flags = TUINT32;
 	enum Flags_ : Flags

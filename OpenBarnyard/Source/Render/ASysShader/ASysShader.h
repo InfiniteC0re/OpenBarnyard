@@ -9,7 +9,7 @@ class ASysShader :
 	public Toshi::TSingleton<ASysShader>
 {
 public:
-	TDECLARE_CLASS(Toshi::TShader);
+	TDECLARE_CLASS(ASysShader, Toshi::TShader);
 
 public:
 	virtual ASysMaterial* CreateMaterial(const TCHAR* a_szName) = 0;

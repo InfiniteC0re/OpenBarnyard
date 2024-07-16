@@ -15,7 +15,7 @@ class AModelLoader : public Toshi::TObject,
 	public Toshi::TSingleton<AModelLoader>
 {
 public:
-	TDECLARE_CLASS(Toshi::TObject);
+	TDECLARE_CLASS(AModelLoader, Toshi::TObject);
 
 	struct MaterialNode : public Toshi::T2DList<MaterialNode>::Node
 	{

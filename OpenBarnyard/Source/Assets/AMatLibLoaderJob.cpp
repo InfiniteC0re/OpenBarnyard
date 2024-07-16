@@ -8,6 +8,8 @@
 //-----------------------------------------------------------------------------
 #include <Core/TMemoryDebugOn.h>
 
+TOSHI_NAMESPACE_USING
+
 void AMatLibLoaderJob::BeginJob()
 {
 	ATRBLoaderJob::InitJob(m_pTRB, m_FileName);
@@ -21,8 +23,7 @@ TBOOL AMatLibLoaderJob::RunJob()
 	if (m_oStreamJob.IsProcessed())
 	{
 		TASSERT(TNULL != m_pMemBlock);
-		auto pMemManager = Toshi::TMemory::GetSingleton();
-		auto pOldMemBlock = pMemManager->SetGlobalBlock(m_pMemBlock);
+		auto pOldMemBlock = g_pMemory->SetGlobalBlock(m_pMemBlock);
 
 		m_pMatLib = AMaterialLibraryManager::List::GetSingleton()->CreateLibraryFromTRB(m_oStreamJob.GetTRB(), m_FileName);
 		AMaterialLibraryManager::GetSingleton()->CreateTextures(m_pMatLib);
@@ -32,7 +33,7 @@ TBOOL AMatLibLoaderJob::RunJob()
 			*m_ppOutMatLib = m_pMatLib;
 		}
 
-		pMemManager->SetGlobalBlock(pOldMemBlock);
+		g_pMemory->SetGlobalBlock(pOldMemBlock);
 		return TTRUE;
 	}
 

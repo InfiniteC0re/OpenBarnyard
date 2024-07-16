@@ -9,7 +9,7 @@
 
 ACollisionInspector::ACollisionInspector()
 {
-	// commented because sometimes it causes the game to crash
+	// commented because currently it creates too many holes in memory so the game can even run out of memory
 	//AHooks::AddHook(Hook_AModelLoader_LoadTRBCallback, HookType_After, AModelLoader_LoadTRBCallback);
 	//AHooks::AddHook(Hook_ATerrain_Render, HookType_After, ATerrain_Render);
 }
@@ -105,13 +105,13 @@ TBOOL ACollisionInspector::AModelLoader_LoadTRBCallback(Toshi::TModel* a_pModel)
 						}
 					}
 
-					rLOD.ppMeshes = new Toshi::TMesh*[rLOD.iNumMeshes + uiNumValidCollMeshes];
+					rLOD.ppMeshes = (Toshi::TMesh**)TMalloc( sizeof( Toshi::TMesh* ) * ( rLOD.iNumMeshes + uiNumValidCollMeshes ) );
 					Toshi::TUtil::MemClear( rLOD.ppMeshes, sizeof( Toshi::TMesh* ) * ( rLOD.iNumMeshes + uiNumValidCollMeshes ) );
 
 					if (rLOD.iNumMeshes > 0)
 					{
 						Toshi::TUtil::MemCopy(rLOD.ppMeshes, ppOldMeshes, rLOD.iNumMeshes * sizeof(Toshi::TMesh*));
-						delete[] ppOldMeshes;
+						TFree(ppOldMeshes);
 						ppOldMeshes = TNULL;
 					}
 

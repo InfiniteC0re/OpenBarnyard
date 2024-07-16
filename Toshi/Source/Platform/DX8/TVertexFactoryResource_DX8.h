@@ -8,7 +8,7 @@ namespace Toshi {
 	class TVertexFactoryResource : public TVertexFactoryResourceInterface
 	{
 	public:
-		TDECLARE_CLASS(TVertexFactoryResourceInterface);
+		TDECLARE_CLASS(TVertexFactoryResource, TVertexFactoryResourceInterface);
 
 	public:
 		virtual TVertexPoolResourceInterface* CreatePoolResource(TUINT16 a_uiMaxStaticVertices, TUINT16 a_uiFlags);

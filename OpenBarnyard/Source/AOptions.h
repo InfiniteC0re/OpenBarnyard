@@ -6,7 +6,7 @@ class AOptions :
 	public Toshi::TSingleton<AOptions>
 {
 public:
-	TDECLARE_CLASS(Toshi::TObject);
+	TDECLARE_CLASS(AOptions, Toshi::TObject);
 
 	using UpdatedSettings = TUINT32;
 	enum UpdatedSettings_ : UpdatedSettings

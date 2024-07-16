@@ -4,6 +4,6 @@ class ACheatActivator : public Toshi::TObject,
 	public Toshi::TSingleton<ACheatActivator>
 {
 public:
-	TDECLARE_CLASS(Toshi::TObject);
+	TDECLARE_CLASS(ACheatActivator, Toshi::TObject);
 
 };

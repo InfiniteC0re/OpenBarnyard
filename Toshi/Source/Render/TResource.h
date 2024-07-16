@@ -21,7 +21,7 @@ namespace Toshi {
 		public TNodeTree<TResource>::TNode
 	{
 	public:
-		TDECLARE_CLASS(TObject);
+		TDECLARE_CLASS(TResource, TObject);
 
 		static constexpr size_t MAXNAMELEN = 14;
 		friend TRenderInterface;
