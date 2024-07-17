@@ -562,8 +562,8 @@ HOOK(0x006cea40, TRenderContext_CullSphereToFrustum, TINT, const TSphere& a_rSph
 void AHooks::Initialise()
 {
 	//InstallHook<TMemory_Free>();
-	InstallHook<TMemory_Alloc>();
-	InstallHook<TMemory_GetMemInfo>();
+	//InstallHook<TMemory_Alloc>();
+	//InstallHook<TMemory_GetMemInfo>();
 	InstallHook<TMSWindow_SetPosition>();
 	InstallHook<AGUISlideshow_ProcessInput>();
 	InstallHook<FUN_0042ab30>();
@@ -586,8 +586,8 @@ void AHooks::Initialise()
 	InstallHook<ADisplayModes_Win_DoesModeExist>();
 	//InstallHook<TCameraObject_SetFOV>();
 	InstallHook<TRenderD3DInterface_UpdateColourSettings>();
-	InstallHook<TRenderContext_CullSphereToFrustumSimple>();
-	InstallHook<TRenderContext_CullSphereToFrustum>();
+	//InstallHook<TRenderContext_CullSphereToFrustumSimple>();
+	//InstallHook<TRenderContext_CullSphereToFrustum>();
 	InstallHook<TTRB_Load>();
 }
 

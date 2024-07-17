@@ -7,8 +7,7 @@
 //#include "Profiler/tracy/Tracy.hpp"
 #endif // TOSHI_PROFILER_MEMORY
 
-#define MEM_TO_HOLE(PTR) (((Hole*)(((TUINT)PTR) + sizeof(void*))) - 1)
-
+#define MEM_TO_NODE(PTR) (((MemNode*)(((TUINT)PTR) + sizeof(void*))) - 1)
 #include "TMemoryDebugOff.h"
 
 void* __CRTDECL operator new( size_t size )
@@ -132,285 +131,235 @@ namespace Toshi {
 
 	void* TMemory::Alloc( TUINT a_uiSize, TINT a_uiAlignment, MemBlock* a_pMemBlock, const TCHAR* a_szFileName, TINT a_iLineNum )
 	{
+		//return CALL_THIS( 0x006b5230, TMemory*, void*, this, TUINT, a_uiSize, TINT, a_uiAlignment, MemBlock*, a_pMemBlock, const TCHAR*, a_szFileName, TINT, a_iLineNum );
+
 		TMUTEX_LOCK_SCOPE( ms_pGlobalMutex );
 
-		TUINT uiAllocationSize = a_uiSize;
-		TUINT uiAlignment = a_uiAlignment;
+		volatile TUINT uiSize = a_uiSize;
+		volatile TUINT uiAlignment = a_uiAlignment;
+		MemBlock* pMemBlock = a_pMemBlock;
 
-		if ( uiAllocationSize < 4 )
-			uiAllocationSize = 4;
+		if ( uiSize < 4 )
+			uiSize = 4;
 
 		if ( uiAlignment < 16 )
-		{
 			uiAlignment = 16;
-		}
-		else if ( uiAlignment < TMEMORY_ROUNDUP )
+
+		if ( uiAlignment < TMEMORY_ROUNDUP )
 		{
 			TDebug_FinalPrintf( "MEMORY ERROR: CANT ALLOC Alignment(%d)<TMEMORY_ROUNDUP\n", uiAlignment );
-			DebugPrintHALMemInfo( "Out of Toshi Memory on block [%s]\n", a_pMemBlock->m_szName );
+			DebugPrintHALMemInfo( "Out of Toshi Memory on block [%s]\n", pMemBlock->m_szName );
 			TASSERT( TFALSE );
 			return TNULL;
 		}
 
-		// Use global block if it's not specified
-		if ( a_pMemBlock == TNULL )
-			a_pMemBlock = m_pGlobalBlock;
-
-		if ( uiAllocationSize == 0 )
+		if ( !pMemBlock )
 		{
-			DebugPrintHALMemInfo( "Out of Toshi Memory on block [%s]\n", a_pMemBlock->m_szName );
-			TASSERT( TFALSE );
-			return TNULL;
+			pMemBlock = m_pGlobalBlock;
 		}
 
-		uiAllocationSize = TAlignNumUp( uiAllocationSize );
+		volatile TUINT uiAlignedSize = TAlignNumUp( uiSize );
+		volatile TUINT uiRequiredSize = uiAlignedSize + sizeof( MemNode );
 
-		void* pAllocatedMemory = TNULL;
-		Hole* pFreeList = TNULL;
+		MemNode* pMemNode = TNULL;
 
-#ifdef TOSHI_PROFILER_MEMORY
-#include "TMemoryDebugOff.h"
+		volatile void* pAllocatedAddress;
+		volatile TUINTPTR uiDataRegionStart;
+		volatile TUINTPTR uiDataRegionEnd;
+		volatile TUINTPTR uiDataRegionSize;
 
-		auto SaveDebugInfo = [ a_szFileName, a_iLineNum, uiAllocationSize ]( void* pMem ) {
-			if ( pMem )
-			{
-				TracyAlloc( pMem, uiAllocationSize );
-			}
-		};
-#else  // TOSHI_PROFILER_MEMORY
-#define SaveDebugInfo(...)
-#endif // !TOSHI_PROFILER_MEMORY
+		volatile TUINT uiNodeId = MapSizeToFreeList( uiAlignedSize );
 
-		TUINT uiId = MapSizeToFreeList( uiAllocationSize );
-
-		if ( uiId >= TMEMORY_NUM_FREELISTS )
-			goto OUT_OF_MEMORY;
-
-		for ( ; uiId < TMEMORY_NUM_FREELISTS; ++uiId )
+		// Find a hole that can allocate the required number of bytes
+		for ( ; uiNodeId < TMEMORY_NUM_FREELISTS; uiNodeId++ )
 		{
-			pFreeList = a_pMemBlock->m_pHoles[ uiId ];
+			pMemNode = pMemBlock->m_apHoles[ uiNodeId ];
 
-			// Find a hole that can allocate the required number of bytes
-			TUINTPTR iDataRegionStart;
-			TUINTPTR iDataRegionEnd;
-			TUINTPTR iDataRegionSize;
-
-			while ( pFreeList != TNULL )
+			while ( pMemNode != TNULL )
 			{
-				pAllocatedMemory = TAlignPointerUp( pFreeList->GetDataRegionStart(), uiAlignment );
+				pAllocatedAddress = TAlignPointerUp( pMemNode->GetDataRegionStart(), uiAlignment );
+				uiDataRegionStart = TREINTERPRETCAST( TUINTPTR, pAllocatedAddress );
+				uiDataRegionEnd = TREINTERPRETCAST( TUINTPTR, pMemNode->GetDataRegionEnd() );
+				uiDataRegionSize = uiDataRegionEnd - uiDataRegionStart;
 
-				iDataRegionStart = TREINTERPRETCAST( TUINTPTR, pAllocatedMemory );
-				iDataRegionEnd = TREINTERPRETCAST( TUINTPTR, pFreeList->GetDataRegionEnd() );
-				iDataRegionSize = iDataRegionEnd - iDataRegionStart;
-
-				// Check if the allocation fits this hole
-				if ( iDataRegionEnd > iDataRegionStart && iDataRegionSize >= uiAllocationSize )
+				if ( uiDataRegionEnd > uiDataRegionStart && uiDataRegionSize >= uiAlignedSize )
 					break;
 
-				// Go for a next hole split from this one
-				pFreeList = pFreeList->m_pNextHole;
+				// This freelist can't be used, let's check for the next
+				pMemNode = pMemNode->pNextHole;
 			}
 
-			// This freelist can't be used, let's check for the next
-			if ( pFreeList == TNULL )
-				continue;
-
-			Hole* pAllocationHole = MEM_TO_HOLE( iDataRegionStart );
-
-			if ( Hole* pOwnerHole = pFreeList->m_pOwnerHole )
-			{
-				// This line probably has a bug which presents in the original code but idk
-				pOwnerHole->m_uiSize = ( iDataRegionStart - (TUINTPTR)pFreeList->m_pOwnerHole - 24 )
-					| ( pOwnerHole->m_uiSize & TMEMORY_FLAGS_MASK );
-			}
-			else if ( pAllocationHole != pFreeList )
-			{
-				// Seems that due to alignment we have a gap between start of the
-				// data region and the actual address we gonna return so let's
-				// make sure we don't lost this pointer
-				a_pMemBlock->m_pFirstHole = pAllocationHole;
-			}
-
-			{
-				// Unlink the hole from the linked list
-				if ( Hole* pPrevHole = pFreeList->m_pPrevHole )
-					pPrevHole->m_pNextHole = pFreeList->m_pNextHole;        // Remove reference to this hole from the previous one
-				else
-					a_pMemBlock->m_pHoles[ uiId ] = pFreeList->m_pNextHole; // Since this is the first hole, it's stored in the memblock's list
-
-				// Remove reference to this hole from the next one
-				if ( Hole* pNextHole = pFreeList->m_pNextHole )
-					pNextHole->m_pPrevHole = pFreeList->m_pPrevHole;
-			}
-
-			// I have no clue what it does but I won't lose sleep over this
-			if ( pFreeList != pAllocationHole )
-			{
-				Hole** ppHole = (Hole**)pFreeList->GetDataRegionEnd();
-				pAllocationHole->m_pOwnerHole = pFreeList->m_pOwnerHole;
-				*ppHole = pAllocationHole;
-			}
-
-			// Make sure the hole has correct info about it's size and memblock
-			pAllocationHole->m_uiSize = iDataRegionSize | g_pMemory->m_uiGlobalHoleFlags | TMEMORY_FLAGS_HOLE_USED;
-			pAllocationHole->m_pMemBlock = a_pMemBlock;
-
-			// Check if we can split the hole in two
-			if ( iDataRegionSize > uiAllocationSize + TMEMORY_ALLOC_HOLE_SIZE )
-			{
-				// We can split it!
-
-				TUINT uiOldHoleSize = TAlignNumDown( pAllocationHole->m_uiSize );
-
-				// Create a new hole right after the allocated data
-				Hole* pNewHole = (Hole*)( iDataRegionStart + uiAllocationSize );
-
-				// Set size of the new hole
-				pNewHole->m_uiSize = uiOldHoleSize - uiAllocationSize - TMEMORY_ALLOC_RESERVED_SIZE;
-				pNewHole->m_pOwnerHole = pAllocationHole;
-
-				// Update size of the old hole and mark it as used
-				pAllocationHole->m_pMemBlock = a_pMemBlock;
-				pAllocationHole->m_uiSize = uiAllocationSize | g_pMemory->m_uiGlobalHoleFlags | TMEMORY_FLAGS_HOLE_USED;
-
-				// Place the new hole in the memblock's list
-				TUINT uiNewHoleId = MapSizeToFreeList( pNewHole->m_uiSize );
-				Hole* pOldHole = a_pMemBlock->m_pHoles[ uiNewHoleId ];
-
-				pNewHole->m_pPrevHole = TNULL;
-				pNewHole->m_pNextHole = pOldHole;
-
-				if ( pOldHole )
-					pOldHole->m_pPrevHole = pNewHole;
-
-				a_pMemBlock->m_pHoles[ uiNewHoleId ] = pNewHole;
-
-				// Save pointer to the hole right at the end of the data region (probably for some validation)
-				*(Hole**)( pNewHole->GetDataRegionEnd() ) = pNewHole;
-
-				SaveDebugInfo( pAllocatedMemory );
-				return pAllocatedMemory;
-			}
-			else
-			{
-				// Damn, we can't split this one but it surely can fit the allocation
-
-				SaveDebugInfo( pAllocatedMemory );
-				return pAllocatedMemory;
-			}
+			if ( pMemNode )
+				break;
 		}
 
-		if ( pFreeList )
+		if ( !pMemNode )
 		{
-			SaveDebugInfo( pAllocatedMemory );
-			return pAllocatedMemory;
+			DebugPrintHALMemInfo( "Out of Toshi Memory on block [%s]\n", pMemBlock->m_szName );
+			DebugPrintHALMemInfo( "Requested memory block size: %d\n", uiAlignedSize );
+			DumpMemInfo();
+
+			TASSERT( TFALSE );
+			return TNULL;
 		}
 
-OUT_OF_MEMORY:
-		DebugPrintHALMemInfo( "Out of Toshi Memory on block [%s]\n", a_pMemBlock->m_szName );
-		DebugPrintHALMemInfo( "Requested memory block size: %d\n", uiAllocationSize );
-		DumpMemInfo();
-		pAllocatedMemory = TNULL;
+		MemNode* pAllocNode = MEM_TO_NODE( pAllocatedAddress );
 
-		TASSERT( TFALSE );
-		return pAllocatedMemory;
+		if ( volatile MemNode* pOwner = pMemNode->pOwner )
+		{
+			pOwner->uiSize = ( uiDataRegionStart - (TUINTPTR)pOwner - 24 ) | pOwner->uiSize & TMEMORY_FLAGS_MASK;
+		}
+		else if ( pAllocNode != pMemNode )
+		{
+			// Seems that due to alignment we have a gap between start of the
+			// data region and the actual address we gonna return so let's
+			// make sure we don't lost this pointer
+			pMemBlock->m_pFirstHole = pAllocNode;
+		}
+
+		// Check if we can split the hole in two
+		if ( uiDataRegionSize > uiRequiredSize )
+		{
+			// We can split it!
+
+			// Unlink the hole from the linked list
+			if ( volatile MemNode* pPrev = pMemNode->pPrevHole )
+				pPrev->pNextHole = pMemNode->pNextHole;
+			else
+				pMemBlock->m_apHoles[ uiNodeId ] = pMemNode->pNextHole;
+
+			// Remove reference to this hole from the next one
+			if ( volatile MemNode* pNext = pMemNode->pNextHole )
+				pNext->pPrevHole = pMemNode->pPrevHole;
+
+			if ( pMemNode != pAllocNode )
+			{
+				TUINT uiNodeSize = GetNodeSize( pMemNode );
+				pAllocNode->pOwner = pMemNode->pOwner;
+				*(MemNode**)((TUINTPTR)pMemNode->GetDataRegionStart() + uiNodeSize) = pAllocNode;
+			}
+
+			// Create a new hole right after the allocated data
+			MemNode* pNewNode = TREINTERPRETCAST( MemNode*, uiDataRegionStart + uiAlignedSize );
+
+			SetProcess( pMemBlock, pAllocNode, uiDataRegionSize );
+			SetHoleSize( pNewNode, (TUINTPTR)pAllocNode + GetNodeSize( pAllocNode ) - uiDataRegionStart - uiAlignedSize );
+			SetProcess( pMemBlock, pAllocNode, uiAlignedSize + uiDataRegionStart - (TUINTPTR)pAllocNode - TMEMORY_ALLOC_RESERVED_SIZE );
+			pNewNode->pOwner = pAllocNode;
+
+			// Place the new hole in the memblock's list
+
+			TUINT uiNewHoleId = MapSizeToFreeList( GetNodeSize( pNewNode ) );
+
+			MemNode* pOldNode = pMemBlock->m_apHoles[ uiNewHoleId ];
+			pNewNode->pNextHole = pOldNode;
+
+			if ( pOldNode )
+				pOldNode->pPrevHole = pNewNode;
+
+			pNewNode->pPrevHole = TNULL;
+			pMemBlock->m_apHoles[ uiNewHoleId ] = pNewNode;
+
+			// Save pointer to the hole right at the end of the data region (probably for some validation)
+			*(MemNode* volatile*)pNewNode->GetDataRegionEnd() = pNewNode;
+
+			return (void*)pAllocatedAddress;
+		}
+		else
+		{
+			// Damn, we can't split this one but it surely can fit the allocation
+
+			// Unlink the hole from the linked list
+			if ( volatile MemNode* pPrev = pMemNode->pPrevHole )
+				pPrev->pNextHole = pMemNode->pNextHole;
+			else
+				pMemBlock->m_apHoles[ uiNodeId ] = pMemNode->pNextHole;
+
+			// Remove reference to this hole from the next one
+			if ( volatile MemNode* pNext = pMemNode->pNextHole )
+				pNext->pPrevHole = pMemNode->pPrevHole;
+
+			if ( pMemNode != pAllocNode )
+			{
+				TUINT uiNodeSize = GetNodeSize( pMemNode );
+				pAllocNode->pOwner = pMemNode->pOwner;
+				*(MemNode* volatile*)( (TUINTPTR)pMemNode->GetDataRegionStart() + uiNodeSize ) = pAllocNode;
+			}
+
+			SetProcess( pMemBlock, pAllocNode, uiDataRegionSize );
+
+			return (void*)pAllocatedAddress;
+		}
 	}
 
 	TBOOL TMemory::Free( const void* a_pAllocated )
 	{
-		return CALL_THIS(0x006b4a20, TMemory*, TBOOL, this, const void*, a_pAllocated );
+		//return CALL_THIS( 0x006b4a20, TMemory*, TBOOL, this, const void*, a_pAllocated );
 
 		TMUTEX_LOCK_SCOPE( ms_pGlobalMutex );
 
-		TUINTPTR uiAllocatedAddr = TREINTERPRETCAST( TUINTPTR, a_pAllocated );
-
-		if ( a_pAllocated && TIsPointerAligned( a_pAllocated ) )
+		if ( !a_pAllocated || !TIsPointerAligned( a_pAllocated ) )
 		{
-			Hole* pThisHole = MEM_TO_HOLE( a_pAllocated );
-			MemBlock* pThisMemBlock = pThisHole->m_pMemBlock;
-
-			TUINT uiAllocatedSize = TAlignNumDown( pThisHole->m_uiSize );
-			Hole* pNextMemHole = (Hole*)( uiAllocatedAddr + uiAllocatedSize );
-
-			Hole* pOwnerHole = pThisHole->m_pOwnerHole;
-			Hole** ppNextHole = &pThisHole->m_pNextHole;
-
-			pThisHole->m_uiSize = uiAllocatedSize;
-
-			// If has owner and it's not used, merge with it
-			if ( pOwnerHole && !HASANYFLAG( pOwnerHole->m_uiSize, TMEMORY_FLAGS_HOLE_USED ) )
-			{
-				TUINT uiOwnerHoleSize = pOwnerHole->m_uiSize;
-				pOwnerHole->m_uiSize = uiAllocatedSize + TMEMORY_ALLOC_RESERVED_SIZE + TAlignNumDown( uiOwnerHoleSize ) | uiOwnerHoleSize & TMEMORY_FLAGS_MASK;
-
-				pNextMemHole->m_pOwnerHole = pOwnerHole;
-				ppNextHole = &pOwnerHole->m_pNextHole;
-
-				if ( pOwnerHole->m_pPrevHole == TNULL )
-				{
-					TUINT uiMappedHoleId = MapSizeToFreeList( TAlignNumDown( uiOwnerHoleSize ) );
-					pThisMemBlock->m_pHoles[ uiMappedHoleId ] = *ppNextHole;
-				}
-				else
-				{
-					pOwnerHole->m_pPrevHole->m_pNextHole = *ppNextHole;
-				}
-
-				pThisHole = pOwnerHole;
-
-				if ( *ppNextHole )
-				{
-					( *ppNextHole )->m_pPrevHole = pOwnerHole->m_pPrevHole;
-				}
-			}
-
-			// If the next lying hole is not used, merge with it
-			if ( pNextMemHole && !HASANYFLAG( pNextMemHole->m_uiSize, TMEMORY_FLAGS_HOLE_USED ) )
-			{
-				if ( pNextMemHole->m_pPrevHole == TNULL )
-				{
-					TUINT uiMappedHoleId = MapSizeToFreeList( TAlignNumDown( pNextMemHole->m_uiSize ) );
-					pThisMemBlock->m_pHoles[ uiMappedHoleId ] = pNextMemHole->m_pNextHole;
-				}
-				else
-				{
-					pNextMemHole->m_pPrevHole->m_pNextHole = pNextMemHole->m_pNextHole;
-				}
-
-				if ( pNextMemHole->m_pNextHole != TNULL )
-				{
-					pNextMemHole->m_pNextHole->m_pPrevHole = pNextMemHole->m_pPrevHole;
-				}
-
-				TUINT uiSize = TAlignNumDown( pNextMemHole->m_uiSize );
-
-				pThisHole->m_uiSize = uiSize + TMEMORY_ALLOC_RESERVED_SIZE + TAlignNumDown( pThisHole->m_uiSize ) | pThisHole->m_uiSize & TMEMORY_FLAGS_MASK;
-				*(Hole**)( pNextMemHole->GetDataRegionEnd() ) = pThisHole;
-			}
-
-			TUINT uiMappedHoleId = MapSizeToFreeList( TAlignNumDown( pThisHole->m_uiSize ) );
-			pThisHole->m_pPrevHole = TNULL;
-
-			Hole* pOldHole = pThisMemBlock->m_pHoles[ uiMappedHoleId ];
-			*ppNextHole = pOldHole;
-
-			if ( pOldHole != TNULL )
-			{
-				pOldHole->m_pPrevHole = pThisHole;
-			}
-
-			pThisMemBlock->m_pHoles[ uiMappedHoleId ] = pThisHole;
-
-#ifdef TOSHI_PROFILER_MEMORY
-
-			TracyFree( a_pAllocated );
-
-#endif // TOSHI_PROFILER_MEMORY
-
-			return TTRUE;
+			// Can't free TNULL or unaligned pointer
+			return TFALSE;
 		}
 
-		return TFALSE;
+		MemNode* pAllocationNode = MEM_TO_NODE( a_pAllocated );
+		
+		TUINT uiAllocationSize = GetNodeSize( pAllocationNode );
+		MemBlock* pMemBlock = GetProcessMemBlock( pAllocationNode );
+
+		SetHoleSize( pAllocationNode, uiAllocationSize );
+
+		MemNode* pNextLyingNode = (MemNode*)pAllocationNode->GetDataRegionEnd();
+		MemNode* pOwner = pAllocationNode->pOwner;
+
+		MemNode** ppNextNode = &pAllocationNode->pNextHole;
+
+		if ( pOwner && !IsProcess( pOwner ) )
+		{
+			pAllocationNode = pOwner;
+			TUINT uiOwnerSize = GetNodeSize( pOwner );
+
+			ExtendNodeSize( pOwner, uiAllocationSize + uiOwnerSize + TMEMORY_ALLOC_RESERVED_SIZE );
+			pNextLyingNode->pOwner = pOwner;
+			ppNextNode = &pOwner->pNextHole;
+
+			if ( MemNode* pPrev = pOwner->pPrevHole )
+				pPrev->pNextHole = pOwner->pNextHole;
+			else
+				pMemBlock->m_apHoles[ MapSizeToFreeList( uiOwnerSize ) ] = pOwner->pNextHole;
+
+			if ( MemNode* pNext = pOwner->pNextHole )
+				pNext->pPrevHole = pOwner->pPrevHole;
+		}
+
+		if ( !IsProcess( pNextLyingNode ) )
+		{
+			TUINT uiNextNodeSize = GetNodeSize( pNextLyingNode );
+
+			if ( MemNode* pPrev = pNextLyingNode->pPrevHole )
+				pPrev->pNextHole = pNextLyingNode->pNextHole;
+			else
+				pMemBlock->m_apHoles[ MapSizeToFreeList( uiNextNodeSize ) ] = pNextLyingNode->pNextHole;
+
+			if ( MemNode* pNext = pNextLyingNode->pNextHole )
+				pNext->pPrevHole = pNextLyingNode->pPrevHole;
+
+			ExtendNodeSize( pAllocationNode, GetNodeSize( pAllocationNode ) + GetNodeSize( pNextLyingNode ) + TMEMORY_ALLOC_RESERVED_SIZE );
+			*(MemNode**)pNextLyingNode->GetDataRegionEnd() = pAllocationNode;
+		}
+
+		TUINT uiId = MapSizeToFreeList( GetNodeSize( pAllocationNode ) );
+		pAllocationNode->pPrevHole = TNULL;
+		*ppNextNode = pMemBlock->m_apHoles[ uiId ];
+
+		if ( *ppNextNode )
+			( *ppNextNode )->pPrevHole = pAllocationNode;
+
+		pMemBlock->m_apHoles[ uiId ] = pAllocationNode;
+
+		return TTRUE;
 	}
 
 	TMemory::MemBlock* TMemory::CreateMemBlock( TUINT a_uiSize, const TCHAR* a_szName, MemBlock* a_pOwnerBlock )
@@ -439,26 +388,26 @@ OUT_OF_MEMORY:
 
 			if ( uiBlockTotalSize != 0 )
 			{
-				constexpr TUINT CHUNK_RESERVED_SIZE = ( sizeof( MemBlock ) + ( sizeof( Hole ) - sizeof( void* ) ) );
+				constexpr TUINT CHUNK_RESERVED_SIZE = ( sizeof( MemBlock ) + ( sizeof( MemNode ) - sizeof( void* ) ) );
 
 				pBlock->m_uiTotalSize1 = uiBlockTotalSize;
-				TUtil::MemClear( pBlock->m_pHoles, sizeof( pBlock->m_pHoles ) );
+				TUtil::MemClear( pBlock->m_apHoles, sizeof( pBlock->m_apHoles ) );
 				pBlock->m_pFirstHole = &pBlock->m_RootHole;
 
 				auto pHole = &pBlock->m_RootHole;
-				pHole->m_uiSize = uiBlockTotalSize - CHUNK_RESERVED_SIZE;
-				pHole->m_pNextHole = TNULL;
-				pHole->m_pPrevHole = TNULL;
-				pHole->m_pOwnerHole = TNULL;
+				pHole->uiSize = uiBlockTotalSize - CHUNK_RESERVED_SIZE;
+				pHole->pNextHole = TNULL;
+				pHole->pPrevHole = TNULL;
+				pHole->pOwner = TNULL;
 
 				auto uiFreeListId = MapSizeToFreeList( uiBlockTotalSize - CHUNK_RESERVED_SIZE );
-				pBlock->m_pHoles[ uiFreeListId ] = pHole;
+				pBlock->m_apHoles[ uiFreeListId ] = pHole;
 
 				auto pBlockFooter = TREINTERPRETCAST( MemBlockFooter*, TREINTERPRETCAST( TUINT32, pBlock ) + uiBlockTotalSize ) - 1;
 				pBlockFooter->m_pBlockOwner = TNULL;
 				pBlockFooter->m_Unk4 = 0;
 				pBlockFooter->m_Unk1 = 0;
-				pBlockFooter->m_Unk2 = g_pMemory->m_uiGlobalHoleFlags | TMEMORY_FLAGS_HOLE_USED;
+				pBlockFooter->m_Unk2 = g_pMemory->m_uiGlobalFlags | TMEMORY_FLAGS_HOLE_PROCESS;
 				pBlockFooter->m_pBlockOwner = pBlock;
 
 				pBlock->m_pNextBlock = pBlock;
@@ -504,6 +453,43 @@ OUT_OF_MEMORY:
 		TStringManager::String8Copy( a_pMemBlock->m_szSignature, "xxxxxxx" );
 	}
 
+	Toshi::TMemory::MemNode* TMemory::GetMemNodeFromAddress( void* a_pMem )
+	{
+		if ( !a_pMem || HASANYFLAG( TREINTERPRETCAST( TUINTPTR, a_pMem ), TMEMORY_FLAGS_MASK ) )
+			return TNULL;
+
+		MemNode* pMemNode = MEM_TO_NODE( a_pMem );
+		TVALIDPTR( pMemNode );
+
+		return pMemNode;
+	}
+
+	int TMemory::TestMemIntegrity( MemBlock* a_pMemBlock )
+	{
+		// TODO: this method is cut in the release build
+		return 0;
+	}
+
+	int TMemory::DebugTestMemoryBlock( MemBlock* a_pMemBlock )
+	{
+		TIMPLEMENT();
+		DebugPrintHALMemInfo( "TMemory: DebugTestMemoryBlock:" );
+
+		MemBlock* pMemBlock = a_pMemBlock;
+
+		if ( !pMemBlock )
+		{
+			pMemBlock = g_pMemory->m_pGlobalBlock;
+		}
+
+		MemInfo memInfo;
+		GetMemInfo( memInfo, pMemBlock );
+
+		// ...
+
+		return 0;
+	}
+
 	TBOOL TMemory::Initialise( TUINT a_uiHeapSize, TUINT a_uiReservedSize )
 	{
 		auto tmemory = TSTATICCAST( TMemory, calloc( sizeof( TMemory ), 1 ) );
@@ -511,7 +497,7 @@ OUT_OF_MEMORY:
 
 		tmemory->m_pMemory = TNULL;
 		tmemory->m_pGlobalBlock = TNULL;
-		tmemory->m_uiGlobalHoleFlags = 0;
+		tmemory->m_uiGlobalFlags = 0;
 		tmemory->m_Unknown2 = 0;
 
 		ms_pGlobalMutex = TSTATICCAST( TMutex, malloc( sizeof( TMutex ) ) );
@@ -644,14 +630,14 @@ OUT_OF_MEMORY:
 		a_rMemInfo.m_uiUnk4 = uiUnk;
 
 		auto pHole = a_pMemBlock->m_pFirstHole;
-		TUINT uiHoleSize = pHole->m_uiSize;
+		TUINT uiHoleSize = pHole->uiSize;
 
 		while ( TAlignNumDown( uiHoleSize ) != 0 )
 		{
-			a_rMemInfo.m_uiUnk3 += sizeof( Hole ) - sizeof( void* );
-			uiHoleSize = TAlignNumDown( pHole->m_uiSize );
+			a_rMemInfo.m_uiUnk3 += sizeof( MemNode ) - sizeof( void* );
+			uiHoleSize = TAlignNumDown( pHole->uiSize );
 
-			if ( ( pHole->m_uiSize & 1 ) == 0 )
+			if ( ( pHole->uiSize & 1 ) == 0 )
 			{
 				a_rMemInfo.m_iNumHoles += 1;
 				a_rMemInfo.m_uiTotalFree += uiHoleSize;
@@ -683,8 +669,8 @@ OUT_OF_MEMORY:
 			}
 
 			auto pOldHole = pHole;
-			pHole = (Hole*)( (TUINT)&pHole->m_pPrevHole + uiHoleSize );
-			uiHoleSize = pHole->m_uiSize;
+			pHole = (MemNode*)( (TUINT)&pHole->pPrevHole + uiHoleSize );
+			uiHoleSize = pHole->uiSize;
 		}
 
 		a_rMemInfo.m_uiLogicTotalFree = a_rMemInfo.m_uiTotalFree;

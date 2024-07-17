@@ -61,7 +61,7 @@ ASplitsServer::ASplitsServer() :
 			// Copy events to the buffer
 			for ( TSIZE i = 0; i < pSplits->m_QueuedEvents.Size(); i++ )
 			{
-				const char* pchMsg = pSplits->m_QueuedEvents[ i ];
+				TCHAR* pchMsg = pSplits->m_QueuedEvents[ i ];
 				TUINT uiMsgLen = T2String8::Length( pchMsg );
 
 				// Store message length
@@ -77,7 +77,7 @@ ASplitsServer::ASplitsServer() :
 				pSplits->m_Buffer[ pSplits->m_uiBufferSize ] = ';';
 
 				// Free the allocated memory
-				delete[] pchMsg;
+				TFree( pchMsg );
 			}
 
 			pSplits->m_QueuedEvents.Clear();
@@ -174,7 +174,7 @@ void ASplitsServer::SendTime( TINT a_iMilliseconds, TINT a_iSeconds, TINT a_iMin
 	WriteString( fmtStr.Get() );
 }
 
-void ASplitsServer::WriteString( const char* a_pchBuffer )
+void ASplitsServer::WriteString( const TCHAR* a_pchBuffer )
 {
 	if ( !m_NamedPipe.HasConnectedClient() || m_QueuedEvents.Size() >= m_QueuedEvents.Capacity() )
 		return;
@@ -182,11 +182,9 @@ void ASplitsServer::WriteString( const char* a_pchBuffer )
 	T2MUTEX_LOCK_SCOPE( m_EventsMutex );
 
 	TUINT uiSize = T2String8::Length( a_pchBuffer );
-	char* pchMsg = new ( m_pMemBlock ) char[ uiSize + 1 ];
+	TCHAR* pchMsg = (TCHAR*)TMalloc( uiSize + 1, m_pMemBlock );
 	
-	for ( TSIZE i = 0; i < uiSize; i++ )
-		pchMsg[ i ] = a_pchBuffer[ i ];
-	
+	T2String8::Copy( pchMsg, a_pchBuffer, uiSize );
 	pchMsg[ uiSize ] = '\0';
 
 	m_QueuedEvents.PushBack( pchMsg );

@@ -6,12 +6,12 @@
 #endif // TOSHI_PROFILER_MEMORY
 
 #define TMEMORY_ROUNDUP 4 
-#define TMEMORY_FLAGS_HOLE_USED 1
+#define TMEMORY_FLAGS_HOLE_PROCESS 1
 #define TMEMORY_FLAGS_MASK ((1 << 2) - 1)
 #define TMEMORY_NUM_FREELISTS 9
 #define TMEMORY_NUM_BLOCK_SLOTS 128
-#define TMEMORY_ALLOC_HOLE_SIZE sizeof( Toshi::TMemory::Hole )
-#define TMEMORY_ALLOC_RESERVED_SIZE ( TMEMORY_ALLOC_HOLE_SIZE - sizeof( void* ) )
+#define TMEMORY_ALLOC_MEMNODE_SIZE sizeof( Toshi::TMemory::MemNode )
+#define TMEMORY_ALLOC_RESERVED_SIZE ( TMEMORY_ALLOC_MEMNODE_SIZE - sizeof( void* ) )
 
 namespace Toshi {
 
@@ -28,20 +28,22 @@ namespace Toshi {
 		struct MemBlock;
 		struct MemBlockSlot;
 
-		struct Hole
+		class MemNode
 		{
-			Hole* m_pOwnerHole;
-			TUINT m_uiSize;
+		public:
+			void* GetDataRegionStart() const { return (void*)( &pPrevHole ); }
+			void* GetDataRegionEnd() const { return (void*)( ( (TUINTPTR)&pPrevHole + TAlignNumDown( uiSize ) ) ); }
+
+		public:
+			MemNode* pOwner;
+			TUINT uiSize;
 			union {
-				Hole* m_pNextHole;
-				MemBlock* m_pMemBlock;
+				MemNode* pNextHole;
+				MemBlock* pMemBlock;
 			};
 
 			// Only used when the hole is split
-			Hole* m_pPrevHole;
-
-			void* GetDataRegionStart() const { return (void*)( &m_pPrevHole ); }
-			void* GetDataRegionEnd() const { return (void*)( ( (TUINTPTR)&m_pPrevHole + TAlignNumDown( m_uiSize ) ) ); }
+			MemNode* pPrevHole;
 		};
 
 		struct MemBlock
@@ -50,11 +52,11 @@ namespace Toshi {
 			TUINT m_uiTotalSize1;
 			MemBlock* m_pNextBlock;
 			TUINT m_uiTotalSize2;
-			Hole* m_pHoles[ TMEMORY_NUM_FREELISTS ];
-			Hole* m_pFirstHole;
+			MemNode* m_apHoles[ TMEMORY_NUM_FREELISTS ];
+			MemNode* m_pFirstHole;
 			TCHAR m_szSignature[ 8 ];
 			TCHAR m_szName[ 52 ];
-			Hole m_RootHole;
+			MemNode m_RootHole;
 		};
 
 		struct MemBlockFooter
@@ -105,6 +107,9 @@ namespace Toshi {
 		void* Alloc( TUINT a_uiSize, TINT a_uiAlignment, MemBlock* a_pMemBlock, const TCHAR* a_szFileName, TINT a_iLineNum );
 		TBOOL Free( const void* a_pMem );
 
+		void* SysAlloc( TSIZE a_uiSize );
+		void SysFree( void* a_pMem );
+
 		MemBlock* CreateMemBlock( TUINT a_uiSize, const TCHAR* a_szName, MemBlock* a_pOwnerBlock );
 		MemBlock* CreateMemBlockInPlace( void* a_pMem, TUINT a_uiSize, const TCHAR* a_szName );
 		void DestroyMemBlock( MemBlock* a_pMemBlock );
@@ -112,11 +117,24 @@ namespace Toshi {
 		MemBlock* GetGlobalBlock() const;
 		MemBlock* SetGlobalBlock( MemBlock* a_pMemBlock );
 
+		TUINT GetGlobalFlags() const { return m_uiGlobalFlags; }
+
 		void DumpMemInfo();
 
 	private:
 		TBOOL FreeMemBlock( MemBlock* a_pMemBlock );
 		void SetMemBlockUnused( MemBlock* a_pMemBlock );
+
+		static MemNode* GetMemNodeFromAddress( void* a_pMem );
+		static void ExtendNodeSize( MemNode* a_pNode, TUINT a_uiExtendSize ) { a_pNode->uiSize = a_uiExtendSize | (a_pNode->uiSize & TMEMORY_FLAGS_MASK); }
+		static void SetHoleSize( MemNode* a_pNode, TUINT a_uiHoleSize ) { a_pNode->uiSize = a_uiHoleSize; }
+		static TBOOL IsProcess( MemNode* a_pNode ) { return HASANYFLAG( a_pNode->uiSize, TMEMORY_FLAGS_HOLE_PROCESS ); }
+		static void SetProcess( MemBlock* a_pMemBlock, MemNode* a_pNode, TUINT a_uiHoleSize ) { a_pNode->uiSize = a_uiHoleSize | g_pMemory->GetGlobalFlags() | TMEMORY_FLAGS_HOLE_PROCESS; a_pNode->pMemBlock = a_pMemBlock; }
+		static TUINT GetNodeSize( MemNode* a_pNode ) { return TAlignNumDown( a_pNode->uiSize ); }
+		static MemBlock* GetProcessMemBlock( MemNode* a_pNode ) { return a_pNode->pMemBlock; }
+		static void ConvertProcessToHole( MemNode* a_pNode ) { a_pNode->uiSize &= ~TMEMORY_FLAGS_MASK; }
+		static int TestMemIntegrity( MemBlock* a_pMemBlock );
+		static int DebugTestMemoryBlock( MemBlock* a_pMemBlock );
 
 	public:
 		static void GetMemInfo( MemInfo& a_rMemInfo, MemBlock* a_pMemBlock );
@@ -138,7 +156,7 @@ namespace Toshi {
 		MemBlockSlot m_aBlockSlots[ TMEMORY_NUM_BLOCK_SLOTS ];
 		void* m_pMemory;
 		MemBlock* m_pGlobalBlock;
-		TUINT m_uiGlobalHoleFlags;
+		TUINT m_uiGlobalFlags;
 		TUINT m_Unknown2;
 		TBOOL m_bFlag1;
 		TBOOL m_bFlag2;
