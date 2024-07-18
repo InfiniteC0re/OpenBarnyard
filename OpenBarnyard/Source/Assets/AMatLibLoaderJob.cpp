@@ -23,7 +23,7 @@ TBOOL AMatLibLoaderJob::RunJob()
 	if (m_oStreamJob.IsProcessed())
 	{
 		TASSERT(TNULL != m_pMemBlock);
-		auto pOldMemBlock = g_pMemory->SetGlobalBlock(m_pMemBlock);
+		TMemory::MemBlock* pOldMemBlock = g_pMemory->SetGlobalBlock(m_pMemBlock);
 
 		m_pMatLib = AMaterialLibraryManager::List::GetSingleton()->CreateLibraryFromTRB(m_oStreamJob.GetTRB(), m_FileName);
 		AMaterialLibraryManager::GetSingleton()->CreateTextures(m_pMatLib);

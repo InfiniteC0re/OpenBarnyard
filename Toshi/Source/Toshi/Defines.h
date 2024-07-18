@@ -77,10 +77,12 @@
 	#define TINFO(...) Toshi::TUtil::Log(Toshi::TUtil::LogType_Info, __VA_ARGS__)
 	#define TWARN(...) Toshi::TUtil::Log(Toshi::TUtil::LogType_Warning, __VA_ARGS__)
 	#define TERROR(...) Toshi::TUtil::Log(Toshi::TUtil::LogType_Error, __VA_ARGS__)
+	#define TCRITICAL(...) Toshi::TUtil::Log(Toshi::TUtil::LogType_Critical, __VA_ARGS__)
 	#define TTRACE(...) TDebug_FinalPrintf(__VA_ARGS__)
 #else // TOSHI_NO_LOGS
 	#define TINFO(...)
 	#define TWARN(...)
 	#define TERROR(...)
-	#define TDEBUG(...)
+	#define TCRITICAL(...)
+	#define TTRACE(...)
 #endif // TOSHI_NO_LOGS

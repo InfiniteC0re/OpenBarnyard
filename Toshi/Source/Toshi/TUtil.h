@@ -21,6 +21,7 @@ namespace Toshi {
 			LogType_Info,
 			LogType_Warning,
 			LogType_Error,
+			LogType_Critical,
 			LogType_NUMOF
 		};
 
@@ -30,7 +31,8 @@ namespace Toshi {
 			{
 				"Info",
 				"Warning",
-				"Error"
+				"Error",
+				"Critical"
 			};
 
 			TSTATICASSERT( Toshi::TUtil::LogType_NUMOF == TARRAYSIZE( kTypeStrings ) );

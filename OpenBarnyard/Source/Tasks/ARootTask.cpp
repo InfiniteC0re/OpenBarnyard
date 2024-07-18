@@ -26,7 +26,6 @@
 #include <Plugins/PPropertyParser/PBProperties.h>
 #include <Toshi/TScheduler.h>
 #include <Toshi/T2ObjectPool.h>
-#include <ToshiTools/T2REDatabase.h>
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.

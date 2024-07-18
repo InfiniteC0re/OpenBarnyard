@@ -3,8 +3,9 @@
 #include "Thread/TMutex.h"
 #include "Thread/TMutexLock.h"
 
-TOSHI_NAMESPACE_START
+#ifndef TMEMORY_USE_DLMALLOC
 
+TOSHI_NAMESPACE_START
 
 void* TMemory::SysAlloc( TSIZE a_uiSize )
 {
@@ -21,3 +22,5 @@ void TMemory::SysFree( void* a_pMem )
 }
 
 TOSHI_NAMESPACE_END
+
+#endif // !TMEMORY_USE_DLMALLOC

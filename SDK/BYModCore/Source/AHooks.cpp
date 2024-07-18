@@ -25,14 +25,14 @@ TFLOAT g_fOriginalFOV = 0.0f;
 
 MEMBER_HOOK(0x006b4a20, TMemory, TMemory_Free, TBOOL, void* a_pMem)
 {
-	//return CallOriginal(a_pMem);
-	return this->Free(a_pMem);
+	return CallOriginal(a_pMem);
+	//return this->Free(a_pMem);
 }
 
 MEMBER_HOOK(0x006b5230, TMemory, TMemory_Alloc, void*, TUINT a_uiSize, TINT a_uiAlignment, TMemory::MemBlock* a_pMemBlock, const char* a_szUnused1, TINT a_iUnused2)
 {
-	//return CallOriginal(a_uiSize, a_uiAlignment, a_pMemBlock, a_szUnused1, a_iUnused2);
-	return this->Alloc(a_uiSize, a_uiAlignment, a_pMemBlock, a_szUnused1, a_iUnused2);
+	return CallOriginal(a_uiSize, a_uiAlignment, a_pMemBlock, a_szUnused1, a_iUnused2);
+	//return this->Alloc(a_uiSize, a_uiAlignment, a_pMemBlock, a_szUnused1, a_iUnused2);
 }
 
 HOOK(0x006b4ba0, TMemory_GetMemInfo, void, TMemory::MemInfo& a_rMemInfo, TMemory::MemBlock* a_pBlock)

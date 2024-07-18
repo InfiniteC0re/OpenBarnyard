@@ -13,12 +13,13 @@ workspace "OpenBarnyard"
 	
 	editandcontinue "Off"
 	
-	--defines
-	--{
+	defines
+	{
+		"TMEMORY_USE_DLMALLOC",
 	--	"TOSHI_PROFILER",
 	--	"TOSHI_PROFILER_MEMORY",
 	--	"TRACY_ENABLE"
-	--}
+	}
 	
 	filter "options:arch=x86"
 		architecture "x86"
