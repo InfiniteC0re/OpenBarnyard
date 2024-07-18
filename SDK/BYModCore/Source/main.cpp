@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "AHooks.h"
 #include "ModLoader.h"
+#include "HookHelpers.h"
 #include "AModLoaderTask.h"
 #include "AImGUI.h"
 
@@ -15,6 +16,7 @@
 #include "BYardSDK/THookedRenderD3DInterface.h"
 
 #include <Toshi/THPTimer.h>
+#include <Toshi/TApplication.h>
 #include <Toshi/TUtil.h>
 
 #include <stdio.h>
@@ -27,6 +29,14 @@ HMODULE hModuleCore;
 const char* GetModsDirectory()
 {
 	return "Mods\\";
+}
+
+MEMBER_HOOK( 0x006c17f0, TApplication, TApplication_Create, TBOOL, const TCHAR* a_pchName, TINT a_iArgc, TCHAR** a_ppArgv )
+{
+	// Create the modloader task
+	AGlobalModLoaderTask::CreateSingleton()->Create();
+
+	return CallOriginal( a_pchName, a_iArgc, a_ppArgv );
 }
 
 DWORD WINAPI MainThread(HMODULE hModule)
@@ -43,7 +53,7 @@ DWORD WINAPI MainThread(HMODULE hModule)
 	AGUI2::GetSingleton()->GetDimensions(fWidth, fHeight);
 	TINFO("AGUI2 is ready! (Dimensions: %fx%f)\n", fWidth, fHeight);
 	
-	Toshi::TUtil::SetTPStringPool(**(Toshi::TPString8Pool***)0x007ce230);
+	TUtil::SetTPStringPool(**(TPString8Pool***)0x007ce230);
 	
 	AGlobalModLoaderTask::Get()->OnAGUI2Ready();
 	AImGUI::CreateSingleton();
@@ -74,7 +84,7 @@ DWORD APIENTRY DllMain(HMODULE hModule, DWORD reason, LPVOID reserved)
 	{
 	case DLL_PROCESS_ATTACH:
 	{
-		Toshi::TMemory::Initialise(4 * 1024 * 1024, 0);
+		TMemory::Initialise(4 * 1024 * 1024, 0);
 		
 #ifndef TOSHI_NO_LOGS
 		AllocConsole();
@@ -92,16 +102,14 @@ DWORD APIENTRY DllMain(HMODULE hModule, DWORD reason, LPVOID reserved)
 
 		// Initialise hooks
 		AHooks::Initialise();
+		InstallHook<TApplication_Create>();
 
 		SetConsoleCtrlHandler(exit_handler, TRUE);
 
 		TINFO("Log system was successfully initialised!\n");
 		TINFO("Starting BYModCore thread...\n");
 
-		if (AGlobalModLoaderTask::CreateSingleton()->Create())
-		{
-			CloseHandle(CreateThread(0, 0, (LPTHREAD_START_ROUTINE)MainThread, hModule, 0, 0));
-		}
+		CloseHandle( CreateThread( 0, 0, (LPTHREAD_START_ROUTINE)MainThread, hModule, 0, 0 ) );
 
 		return TTRUE;
 	}

@@ -19,13 +19,14 @@ public:
 	const TCHAR* GetName() const { return m_szName; }
 	int GetHeapIndex() const { return m_iHeapIndex; }
 	size_t GetSize() const { return m_uiSize; }
+	TINT GetUnk2() const { return m_iUnk2; }
 
 private:
 	const TCHAR* m_szName;
-	int m_iHeapIndex;
+	TINT m_iHeapIndex;
 	size_t m_uiSize;
-	int m_iUnk1;
-	int m_iUnk2;
+	TINT m_iUnk1;
+	TINT m_iUnk2;
 };
 
 class AMemory

@@ -24,6 +24,11 @@ namespace Toshi {
 		public:
 			Node()
 			{
+				Reset();
+			}
+
+			void Reset()
+			{
 				m_pNext = this;
 			}
 
@@ -52,6 +57,13 @@ namespace Toshi {
 		~T2SList()
 		{
 			Clear();
+		}
+
+		// Calling this won't clear the list so the items will still be linked to each other!
+		// Use this only if you're sure the nodes are freed
+		void Reset()
+		{
+			m_oRoot.Reset();
 		}
 
 		T* Begin()

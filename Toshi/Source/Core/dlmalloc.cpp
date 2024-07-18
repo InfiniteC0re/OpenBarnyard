@@ -1,4 +1,7 @@
 #include "ToshiPCH.h"
+
+#ifdef TMEMORY_USE_DLMALLOC
+
 #include "dlmalloc.h"
 
 /*------------------------------ internal #includes ---------------------- */
@@ -4857,3 +4860,5 @@ History:
          structure of old version,  but most details differ.)
 
 */
+
+#endif // TMEMORY_USE_DLMALLOC

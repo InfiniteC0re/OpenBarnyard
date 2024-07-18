@@ -17,6 +17,9 @@ struct MsgQueueHeader_t
 	TUINT uiNumMessages;
 };
 
+static TCHAR s_szBuffer[ 8192 ];
+static TUINT s_uiBufferPos = 0;
+
 ASplitsServer::ASplitsServer() :
 	m_uiBufferSize(0)
 {
@@ -30,7 +33,8 @@ ASplitsServer::ASplitsServer() :
 	m_pMemBlock = g_pMemory->CreateMemBlock(
 		128 * 1024,
 		"Autosplitter",
-		g_pMemory->GetGlobalBlock()
+		g_pMemory->GetGlobalBlock(),
+		0
 	);
 
 	TASSERT( m_pMemBlock != TNULL );
@@ -75,10 +79,10 @@ ASplitsServer::ASplitsServer() :
 				}
 
 				pSplits->m_Buffer[ pSplits->m_uiBufferSize ] = ';';
-
-				// Free the allocated memory
-				TFree( pchMsg );
 			}
+
+			// Reset buffer pos
+			s_uiBufferPos = 0;
 
 			pSplits->m_QueuedEvents.Clear();
 			pSplits->m_Buffer[ pSplits->m_uiBufferSize++ ] = '\0';
@@ -176,16 +180,16 @@ void ASplitsServer::SendTime( TINT a_iMilliseconds, TINT a_iSeconds, TINT a_iMin
 
 void ASplitsServer::WriteString( const TCHAR* a_pchBuffer )
 {
-	if ( !m_NamedPipe.HasConnectedClient() || m_QueuedEvents.Size() >= m_QueuedEvents.Capacity() )
+	if ( !m_NamedPipe.HasConnectedClient() || m_QueuedEvents.Size() >= m_QueuedEvents.Capacity() || s_uiBufferPos >= TARRAYSIZE( s_szBuffer ) )
 		return;
 
 	T2MUTEX_LOCK_SCOPE( m_EventsMutex );
 
 	TUINT uiSize = T2String8::Length( a_pchBuffer );
-	TCHAR* pchMsg = (TCHAR*)TMalloc( uiSize + 1, m_pMemBlock );
 	
-	T2String8::Copy( pchMsg, a_pchBuffer, uiSize );
-	pchMsg[ uiSize ] = '\0';
+	T2String8::Copy( s_szBuffer + s_uiBufferPos, a_pchBuffer, uiSize );
+	s_szBuffer[ s_uiBufferPos + uiSize ] = '\0';
 
-	m_QueuedEvents.PushBack( pchMsg );
+	m_QueuedEvents.PushBack( s_szBuffer + s_uiBufferPos );
+	s_uiBufferPos += uiSize + 1;
 }

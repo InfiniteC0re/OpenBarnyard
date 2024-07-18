@@ -10,6 +10,8 @@
 #include <BYardSDK/AGUI2.h>
 #include <BYardSDK/ARenderer.h>
 #include <BYardSDK/ACamera.h>
+#include <BYardSDK/THookedSingleton.h>
+#include <BYardSDK/THookedMemory.h>
 
 #include <Input/TInputDeviceKeyboard.h>
 #include <Render/TCameraObject.h>
@@ -23,22 +25,181 @@ TUINT g_uiWindowHeight = 0;
 TBOOL g_bBikeFOVPatch = TFALSE;
 TFLOAT g_fOriginalFOV = 0.0f;
 
+// Replacing this method since it's all useless now but can crash the game
+HOOK( 0x006b4cb0, TMemory_UnkMethod, TBOOL, TMemory::MemBlock* a_pMemBlock )
+{
+#ifdef TMEMORY_USE_DLMALLOC
+
+	return TTRUE;
+
+#else  // TMEMORY_USE_DLMALLOC
+
+	return CallOriginal( a_pMemBlock );
+
+#endif
+}
+
+HOOK( 0x006b5740, TMemory_Initialise, TBOOL, TUINT a_uiHeapSize, TUINT a_uiReservedSize, TUINT a_uiUnused )
+{
+#ifdef TMEMORY_USE_DLMALLOC
+
+	// Allocate TMemory
+	TMemory* pMemory = (TMemory*)GlobalAlloc( GMEM_ZEROINIT, sizeof( TMemory ) );
+
+	new ( pMemory ) TMemory();
+	THookedMemory::SetSingleton( pMemory );
+
+	// Allocate TMemory_dlmalloc
+	TMemoryDL* pMemModule = (TMemoryDL*)GlobalAlloc( GMEM_ZEROINIT, sizeof( TMemoryDL ) );
+
+	// Set minimum heap size
+	if ( a_uiHeapSize == 0 )
+		a_uiHeapSize = 256 * 1024 * 1024;
+
+	new ( pMemModule ) TMemoryDL( TMemoryDL::Flags_Standard, a_uiHeapSize + a_uiReservedSize );
+	pMemory->SetMemModule( pMemModule );
+
+	// Initialise the memory block
+	TBOOL bInitialised = pMemModule->Init() == TMemoryDL::Error_Ok;
+
+	pMemory->m_pGlobalBlock = pMemModule->GetHeap();
+
+	return bInitialised;
+
+#else  // TMEMORY_USE_DLMALLOC
+	
+	return CallOriginal( a_uiHeapSize, a_uiReservedSize, a_uiUnused );
+
+#endif
+}
+
+MEMBER_HOOK( 0x006b5510, TMemory, TMemory_CreateMemBlock, TMemory::MemBlock*, TUINT a_uiSize, const TCHAR* a_szName, TMemory::MemBlock* a_pOwnerBlock, TINT a_iUnused )
+{
+#ifdef TMEMORY_USE_DLMALLOC
+
+	TMemoryDL* pMemModule = THookedMemory::GetSingleton()->GetMemModule();
+	
+	if ( !a_pOwnerBlock )
+		a_pOwnerBlock = pMemModule->GetHeap();
+	
+	return pMemModule->dlheapcreatesubheap( a_pOwnerBlock, a_uiSize + 1024 * 4, TMemoryHeapFlags_UseMutex, a_szName );
+
+#else  // TMEMORY_USE_DLMALLOC
+
+	return CallOriginal( a_uiSize, a_szName, a_pOwnerBlock, a_iUnused );
+
+#endif // !TMEMORY_USE_DLMALLOC
+}
+
+MEMBER_HOOK( 0x006b5090, TMemory, TMemory_DestroyMemBlock, void, TMemory::MemBlock* a_pMemBlock )
+{
+#ifdef TMEMORY_USE_DLMALLOC
+
+	TMemoryDL* pMemModule = THookedMemory::GetSingleton()->GetMemModule();
+	pMemModule->dlheapdestroy( a_pMemBlock );
+
+#else  // TMEMORY_USE_DLMALLOC
+
+	CallOriginal( a_pMemBlock );
+
+#endif // !TMEMORY_USE_DLMALLOC
+}
+
+HOOK( 0x006b4ba0, TMemory_GetMemInfo, void, TMemory::MemInfo* a_pMemInfo, TMemory::MemBlock* a_pMemBlock )
+{
+#ifdef TMEMORY_USE_DLMALLOC
+
+	THookedMemory::GetSingleton()->GetMemInfo( *a_pMemInfo, a_pMemBlock );
+
+#else  // TMEMORY_USE_DLMALLOC
+
+	CallOriginal( a_pMemInfo, a_pMemBlock );
+
+#endif // !TMEMORY_USE_DLMALLOC
+}
+
+MEMBER_HOOK( 0x006b4b80, TMemory, TMemory_SetGlobalBlock, TMemory::MemBlock*, TMemory::MemBlock* a_pMemBlock )
+{
+#ifdef TMEMORY_USE_DLMALLOC
+
+	TMemoryDL* pMemModule = THookedMemory::GetSingleton()->GetMemModule();
+	MemBlock* pOldHeap = pMemModule->GetHeap();
+	
+	m_pGlobalBlock = a_pMemBlock;
+	pMemModule->SetHeap( a_pMemBlock );
+
+	return pOldHeap;
+
+#else  // TMEMORY_USE_DLMALLOC
+
+	return CallOriginal( a_pMemBlock );
+
+#endif // !TMEMORY_USE_DLMALLOC
+}
+
 MEMBER_HOOK(0x006b4a20, TMemory, TMemory_Free, TBOOL, void* a_pMem)
 {
-	return CallOriginal(a_pMem);
-	//return this->Free(a_pMem);
+#ifdef TMEMORY_USE_DLMALLOC
+
+	TMemoryDL* pMemModule = THookedMemory::GetSingleton()->GetMemModule();
+	pMemModule->GetContext().Free( a_pMem );
+
+	return TTRUE;
+
+#else  // TMEMORY_USE_DLMALLOC
+
+	return CallOriginal( a_pMem );
+
+#endif // !TMEMORY_USE_DLMALLOC
 }
 
-MEMBER_HOOK(0x006b5230, TMemory, TMemory_Alloc, void*, TUINT a_uiSize, TINT a_uiAlignment, TMemory::MemBlock* a_pMemBlock, const char* a_szUnused1, TINT a_iUnused2)
-{
+MEMBER_HOOK(0x006b5230, TMemory, TMemory_Alloc, void*, TUINT a_uiSize, TUINT a_uiAlignment, TMemory::MemBlock* a_pMemBlock, const char* a_szUnused1, TINT a_iUnused2)
+{	
+#ifdef TMEMORY_USE_DLMALLOC
+
+	if ( a_uiSize < 4 )
+		a_uiSize = 4;
+
+	if ( a_uiAlignment < 16 )
+		a_uiAlignment = 16;
+
+	if ( a_pMemBlock == TNULL )
+		a_pMemBlock = THookedMemory::GetSingleton()->GetMemModule()->GetHeap();
+
+	// HACK [7/18/2024 InfiniteC0re]
+	// For some reason there's some buffer overflow somewhere in the original code?
+	// To reproduce, start chicken launch or sharp squirter from the antics menu and return
+	// back to the menu and the game will crash.
+	a_uiSize += 32;
+	
+	return a_pMemBlock->Memalign( a_uiAlignment, a_uiSize );
+
+#else  // TMEMORY_USE_DLMALLOC
+
 	return CallOriginal(a_uiSize, a_uiAlignment, a_pMemBlock, a_szUnused1, a_iUnused2);
-	//return this->Alloc(a_uiSize, a_uiAlignment, a_pMemBlock, a_szUnused1, a_iUnused2);
+
+#endif // !TMEMORY_USE_DLMALLOC
 }
 
-HOOK(0x006b4ba0, TMemory_GetMemInfo, void, TMemory::MemInfo& a_rMemInfo, TMemory::MemBlock* a_pBlock)
+class ACollisionObjectModel { TCHAR PADDING[ 0xA4 ]; };
+class AInstanceManager_CollObjectModel :
+	public ACollisionObjectModel,
+	public T2SList<AInstanceManager_CollObjectModel>::Node
 {
-	auto pBlock = (*(TMemory**)0x007ce1d4)->GetGlobalBlock();
-	TMemory::GetMemInfo(a_rMemInfo, pBlock);
+	
+};
+
+MEMBER_HOOK(0x005dfac0, AInstanceManager_CollObjectModel, CollObjectModel_DCTOR, void )
+{
+	TCHAR* pInstanceManager = *(TCHAR**)0x0078deb0;
+
+	auto pList1 = ( T2SList<AInstanceManager_CollObjectModel>* )(pInstanceManager + 0xefa0);
+	auto pList2 = ( T2SList<AInstanceManager_CollObjectModel>* )(pInstanceManager + 0xefa4);
+
+	pList1->Reset();
+	pList2->Reset();
+
+	CallOriginal();
 }
 
 class AOptions { };
@@ -174,7 +335,7 @@ MEMBER_HOOK(0x006bb000, TTRB, TTRB_Load, TINT, const char* a_szFileName, TUINT a
 	return CallOriginal(filepath, a_uiUnk);
 }
 
-MEMBER_HOOK(0x006cd220, Toshi::TCameraObject, TCameraObject_SetFOV, TFLOAT, TFLOAT a_fFOV)
+MEMBER_HOOK(0x006cd220, TCameraObject, TCameraObject_SetFOV, TFLOAT, TFLOAT a_fFOV)
 {
 	if (g_bBikeFOVPatch)
 	{
@@ -561,11 +722,16 @@ HOOK(0x006cea40, TRenderContext_CullSphereToFrustum, TINT, const TSphere& a_rSph
 
 void AHooks::Initialise()
 {
-	//InstallHook<TMemory_Free>();
-	//InstallHook<TMemory_Alloc>();
-	//InstallHook<TMemory_GetMemInfo>();
-	InstallHook<TMSWindow_SetPosition>();
-	InstallHook<AGUISlideshow_ProcessInput>();
+	InstallHook<TMemory_UnkMethod>();
+	InstallHook<TMemory_Initialise>();
+	InstallHook<TMemory_DestroyMemBlock>();
+	InstallHook<TMemory_CreateMemBlock>();
+	InstallHook<TMemory_SetGlobalBlock>();
+	InstallHook<TMemory_Free>();
+	InstallHook<TMemory_Alloc>();
+	InstallHook<TMemory_GetMemInfo>();
+	//InstallHook<TMSWindow_SetPosition>();
+	//InstallHook<AGUISlideshow_ProcessInput>();
 	InstallHook<FUN_0042ab30>();
 	InstallHook<AGUI2_MainPostRenderCallback>();
 	InstallHook<AGUI2_Constructor>();
@@ -585,10 +751,11 @@ void AHooks::Initialise()
 	InstallHook<AOptions_IsResolutionCompatible>();
 	InstallHook<ADisplayModes_Win_DoesModeExist>();
 	//InstallHook<TCameraObject_SetFOV>();
-	InstallHook<TRenderD3DInterface_UpdateColourSettings>();
+	//InstallHook<TRenderD3DInterface_UpdateColourSettings>();
 	//InstallHook<TRenderContext_CullSphereToFrustumSimple>();
 	//InstallHook<TRenderContext_CullSphereToFrustum>();
-	InstallHook<TTRB_Load>();
+	//InstallHook<TTRB_Load>();
+	InstallHook<CollObjectModel_DCTOR>();
 }
 
 TBOOL AHooks::AddHook(Hook a_eHook, HookType a_eHookType, void* a_pCallback)

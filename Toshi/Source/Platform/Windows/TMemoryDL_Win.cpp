@@ -92,37 +92,38 @@ namespace Toshi {
 
     void TMemoryDL::Shutdown()
     {
-        DestroyHeap( s_GlobalHeap );
-        s_GlobalHeap = TNULL;
+        dlheapdestroy( g_pMemoryDL->m_GlobalHeap );
+        g_pMemoryDL->m_GlobalHeap = TNULL;
 
-        if ( TMemoryDL::s_Context.s_Heap )
+        if ( g_pMemoryDL->m_Context.s_Heap )
         {
-            HeapFree( TMemoryDL::s_Context.s_Sysheap, NULL, TMemoryDL::s_Context.s_Heap );
+            HeapFree( g_pMemoryDL->m_Context.s_Sysheap, NULL, g_pMemoryDL->m_Context.s_Heap );
         }
 
         if ( TMemoryDL::GetFlags() & Flags_Standard )
         {
             // Reset callbacks so no external libraries can malloc or free anything
-            TMemoryDL::s_Context.s_cbMalloc = []( TSIZE size ) -> void* { return TNULL; };
-            TMemoryDL::s_Context.s_cbCalloc = []( TSIZE nitems, TSIZE size ) -> void* { return TNULL; };
-            TMemoryDL::s_Context.s_cbRealloc = []( void* ptr, TSIZE size ) -> void* { return TNULL; };
-            TMemoryDL::s_Context.s_cbMemalign = []( TSIZE alignment, TSIZE size ) -> void* { return TNULL; };
-            TMemoryDL::s_Context.s_cbFree = []( void* ptr ) -> void { };
-            TMemoryDL::s_Context.s_cbIdk = []( void* ptr, TSIZE size ) -> void { };
+            g_pMemoryDL->m_Context.s_cbMalloc = []( TMemoryDL* pMemModule, TSIZE size ) -> void* { return TNULL; };
+            g_pMemoryDL->m_Context.s_cbCalloc = []( TMemoryDL* pMemModule, TSIZE nitems, TSIZE size ) -> void* { return TNULL; };
+            g_pMemoryDL->m_Context.s_cbRealloc = []( TMemoryDL* pMemModule, void* ptr, TSIZE size ) -> void* { return TNULL; };
+            g_pMemoryDL->m_Context.s_cbMemalign = []( TMemoryDL* pMemModule, TSIZE alignment, TSIZE size ) -> void* { return TNULL; };
+            g_pMemoryDL->m_Context.s_cbFree = []( TMemoryDL* pMemModule, void* ptr ) -> void { };
+            g_pMemoryDL->m_Context.s_cbIdk = []( TMemoryDL* pMemModule, void* ptr, TSIZE size ) -> void { };
         }
 
-        TUtil::MemSet( &TMemoryDL::s_Context, 0, sizeof( TMemoryDL::s_Context ) );
+        TUtil::MemSet( &g_pMemoryDL->m_Context, 0, sizeof( m_Context ) );
     }
 
     TMemoryDL::Error TMemoryDL::Init()
     {
         // 0x006fb9d0
-        TASSERT( TMemoryDL::s_Context.s_Sysheap == NULL, "TMemoryDL is already initialized" );
+        TASSERT( m_Context.s_Sysheap == NULL, "TMemoryDL is already initialized" );
 
-        TMemoryDL::s_Context.s_Sysheap = GetProcessHeap();
-        TMemoryDL::s_GlobalMutex.Create();
+        m_Context.m_pMemModule = this;
+        m_Context.s_Sysheap = GetProcessHeap();
+        m_Mutex.Create();
 
-        if ( TMemoryDL::s_Context.s_Sysheap == NULL )
+        if ( m_Context.s_Sysheap == NULL )
         {
             return Error_Heap;
         }
@@ -130,94 +131,57 @@ namespace Toshi {
         // Check if we should use default memory management methods
         if ( m_Flags & Flags_NativeMethods )
         {
-            TMemoryDL::s_Context.s_cbMalloc = TMemoryDLContext::MallocNative;
-            TMemoryDL::s_Context.s_cbCalloc = TMemoryDLContext::CallocNative;
-            TMemoryDL::s_Context.s_cbRealloc = TMemoryDLContext::ReallocNative;
-            TMemoryDL::s_Context.s_cbMemalign = TMemoryDLContext::MemalignNative;
-            TMemoryDL::s_Context.s_cbFree = TMemoryDLContext::FreeNative;
-            TMemoryDL::s_Context.s_cbIdk = TMemoryDLContext::IdkNative;
+            m_Context.s_cbMalloc = TMemoryDLContext::MallocNative;
+            m_Context.s_cbCalloc = TMemoryDLContext::CallocNative;
+            m_Context.s_cbRealloc = TMemoryDLContext::ReallocNative;
+            m_Context.s_cbMemalign = TMemoryDLContext::MemalignNative;
+            m_Context.s_cbFree = TMemoryDLContext::FreeNative;
+            m_Context.s_cbIdk = TMemoryDLContext::IdkNative;
 
             return Error_Ok;
         }
 
         // Allocate memory for the heap
-        TMemoryDL::s_Context.s_Heap = HeapAlloc( TMemoryDL::s_Context.s_Sysheap, NULL, m_GlobalSize );
+        m_Context.s_Heap = HeapAlloc( m_Context.s_Sysheap, HEAP_ZERO_MEMORY, m_GlobalSize );
 
         // Save pointers to our own functions
-        if ( TMemoryDL::s_Context.s_Heap == NULL )
+        if ( m_Context.s_Heap == NULL )
         {
             return Error_Heap;
         }
 
-        TMemoryDL::s_Context.s_cbMalloc = []( TSIZE size ) -> void*
+        m_Context.s_cbMalloc = []( TMemoryDL* pMemModule, TSIZE size ) -> void*
         {
-#ifdef TOSHI_DEBUG
-            void* ptr = TMemoryDL::dlheapmalloc( TMemoryDL::s_GlobalHeap, size );
-            mchunkptr chunk = mem2chunk( ptr );
-            s_NumAllocatedBytes += chunksize( chunk );
-            return ptr;
-#else
-            return TMemoryDL::dlheapmalloc( TMemoryDL::s_GlobalHeap, size );
-#endif // TOSHI_DEBUG
+            return pMemModule->dlheapmalloc( pMemModule->GetHeap(), size );
         };
 
-        TMemoryDL::s_Context.s_cbCalloc = []( TSIZE nitems, TSIZE size ) -> void*
+        m_Context.s_cbCalloc = []( TMemoryDL* pMemModule, TSIZE nitems, TSIZE size ) -> void*
         {
-#ifdef TOSHI_DEBUG
-            void* ptr = TMemoryDL::dlheapcalloc( TMemoryDL::s_GlobalHeap, nitems, size );
-            mchunkptr chunk = mem2chunk( ptr );
-            s_NumAllocatedBytes += chunksize( chunk );
-            return ptr;
-#else
-            return TMemoryDL::dlheapcalloc( TMemoryDL::s_GlobalHeap, nitems, size );
-#endif // TOSHI_DEBUG
+            return pMemModule->dlheapcalloc( pMemModule->GetHeap(), nitems, size );
         };
 
-        TMemoryDL::s_Context.s_cbRealloc = []( void* ptr, TSIZE size ) -> void*
+        m_Context.s_cbRealloc = []( TMemoryDL* pMemModule, void* ptr, TSIZE size ) -> void*
         {
-#ifdef TOSHI_DEBUG
-            mchunkptr oldChunk = mem2chunk( ptr );
-            s_NumAllocatedBytes -= chunksize( oldChunk );
-            ptr = TMemoryDL::dlheaprealloc( TMemoryDL::s_GlobalHeap, ptr, size );
-            mchunkptr newChunk = mem2chunk( ptr );
-            s_NumAllocatedBytes += chunksize( newChunk );
-            return ptr;
-#else
-            return TMemoryDL::dlheaprealloc( TMemoryDL::s_GlobalHeap, ptr, size );
-#endif // TOSHI_DEBUG
+
+            return pMemModule->dlheaprealloc( pMemModule->GetHeap(), ptr, size );
         };
 
-        TMemoryDL::s_Context.s_cbMemalign = []( TSIZE alignment, TSIZE size ) -> void*
+        m_Context.s_cbMemalign = []( TMemoryDL* pMemModule, TSIZE alignment, TSIZE size ) -> void*
         {
-#ifdef TOSHI_DEBUG
-            void* ptr = TMemoryDL::dlheapmemalign( TMemoryDL::s_GlobalHeap, alignment, size );
-            mchunkptr chunk = mem2chunk( ptr );
-            s_NumAllocatedBytes += chunksize( chunk );
-            return ptr;
-#else
-            return TMemoryDL::dlheapmemalign( TMemoryDL::s_GlobalHeap, alignment, size );
-#endif // TOSHI_DEBUG
+            return pMemModule->dlheapmemalign( pMemModule->GetHeap(), alignment, size );
         };
 
-        TMemoryDL::s_Context.s_cbFree = []( void* ptr ) -> void
+        m_Context.s_cbFree = []( TMemoryDL* pMemModule, void* ptr ) -> void
         {
-#ifdef TOSHI_DEBUG
-            if ( ptr && get_mspace_from_ptr( ptr ) == TMemoryDL::s_GlobalHeap->GetMSpace() )
-            {
-                mchunkptr chunk = mem2chunk( ptr );
-                s_NumAllocatedBytes -= chunksize( chunk );
-            }
-#endif // TOSHI_DEBUG
-
-            TMemoryDL::dlheapfree( TMemoryDL::s_GlobalHeap, ptr );
+            pMemModule->dlheapfree( pMemModule->GetHeap(), ptr );
         };
 
-        TMemoryDL::s_Context.s_cbIdk = []( void* ptr, TSIZE size ) -> void
+        m_Context.s_cbIdk = []( TMemoryDL* pMemModule, void* ptr, TSIZE size ) -> void
         {
 
         };
 
-        s_GlobalHeap = CreateHeapInPlace( TMemoryDL::s_Context.s_Heap, m_GlobalSize, TMemoryHeapFlags_UseMutex, "global" );
+        m_GlobalHeap = CreateHeapInPlace( m_Context.s_Heap, m_GlobalSize, TMemoryHeapFlags_UseMutex, "global" );
         return Error_Ok;
     }
 }

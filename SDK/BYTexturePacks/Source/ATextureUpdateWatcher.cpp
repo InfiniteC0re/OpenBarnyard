@@ -9,7 +9,7 @@ TOSHI_NAMESPACE_USING
 
 void ATextureUpdateWatcher::Main()
 {
-	m_Overlapped.hEvent = CreateEvent(NULL, FALSE, 0, NULL);
+	m_Overlapped.hEvent = CreateEvent( NULL, FALSE, 0, NULL );
 
 	ReadDirectoryChangesW(
 		m_hFile, m_ChangeBuf, 1024, TRUE,
@@ -19,62 +19,62 @@ void ATextureUpdateWatcher::Main()
 		NULL, &m_Overlapped, NULL
 	);
 
-	while (TTRUE)
+	while ( TTRUE )
 	{
-		DWORD result = WaitForSingleObject(m_Overlapped.hEvent, 0);
+		DWORD result = WaitForSingleObject( m_Overlapped.hEvent, 0 );
 
-		if (m_bDestroyed)
+		if ( m_bDestroyed )
 		{
-			CloseHandle(m_hFile);
-			delete this;
+			CloseHandle( m_hFile );
+			Exit( this );
 			return;
 		}
 
-		if (result == WAIT_OBJECT_0)
+		if ( result == WAIT_OBJECT_0 )
 		{
 			DWORD bytes_transferred;
-			GetOverlappedResult(m_hFile, &m_Overlapped, &bytes_transferred, FALSE);
+			GetOverlappedResult( m_hFile, &m_Overlapped, &bytes_transferred, FALSE );
 			FILE_NOTIFY_INFORMATION* event = (FILE_NOTIFY_INFORMATION*)m_ChangeBuf;
 
-			if (g_bAutoReload)
+			if ( g_bAutoReload )
 			{
-				TMutexLock lock(g_LoadMutex);
+				TMutexLock lock( g_LoadMutex );
 
-				while (TTRUE)
+				while ( TTRUE )
 				{
-					DWORD name_len = event->FileNameLength / sizeof(wchar_t);
+					DWORD name_len = event->FileNameLength / sizeof( wchar_t );
 
-					static char sFileName[MAX_PATH];
-					TStringManager::StringUnicodeToChar(sFileName, event->FileName, name_len);
-					TBOOL bIsDDS = T2String8::CompareNoCase(sFileName + name_len - 4, ".dds") == 0;
+					static char sFileName[ MAX_PATH ];
+					TStringManager::StringUnicodeToChar( sFileName, event->FileName, name_len );
+					TBOOL bIsDDS = T2String8::CompareNoCase( sFileName + name_len - 4, ".dds" ) == 0;
 
-					if (bIsDDS)
+					if ( bIsDDS )
 					{
 						g_LastDumpTimer.Update();
 
-						if (g_LastDumpTimer.GetDelta() > 1.0f)
+						if ( g_LastDumpTimer.GetDelta() > 1.0f )
 						{
-							switch (event->Action)
+							switch ( event->Action )
 							{
 							case FILE_ACTION_ADDED:
 							case FILE_ACTION_MODIFIED:
 							case FILE_ACTION_REMOVED:
 							{
-								sFileName[name_len - 3] = 't';
-								sFileName[name_len - 2] = 'g';
-								sFileName[name_len - 1] = 'a';
+								sFileName[ name_len - 3 ] = 't';
+								sFileName[ name_len - 2 ] = 'g';
+								sFileName[ name_len - 1 ] = 'a';
 
-								ThreadSleep(50);
-								ATextureUpdater::ReloadTexture(sFileName);
+								ThreadSleep( 50 );
+								ATextureUpdater::ReloadTexture( sFileName );
 							}
 							}
 						}
 					}
 
 					// Are there more events to handle?
-					if (event->NextEntryOffset)
+					if ( event->NextEntryOffset )
 					{
-						*((TUINT8**)&event) += event->NextEntryOffset;
+						*( (TUINT8**)&event ) += event->NextEntryOffset;
 					}
 					else
 					{
@@ -95,7 +95,7 @@ void ATextureUpdateWatcher::Main()
 	}
 }
 
-void ATextureUpdateWatcher::Init(const char* a_szPath)
+void ATextureUpdateWatcher::Init( const char* a_szPath )
 {
 	m_szPath = a_szPath;
 

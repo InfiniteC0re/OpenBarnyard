@@ -116,7 +116,7 @@ public:
 	void* SysAlloc( TSIZE a_uiSize );
 	void SysFree( void* a_pMem );
 
-	MemBlock* CreateMemBlock( TUINT a_uiSize, const TCHAR* a_szName, MemBlock* a_pOwnerBlock );
+	MemBlock* CreateMemBlock( TUINT a_uiSize, const TCHAR* a_szName, MemBlock* a_pOwnerBlock, TINT a_iUnused );
 	MemBlock* CreateMemBlockInPlace( void* a_pMem, TUINT a_uiSize, const TCHAR* a_szName );
 	void DestroyMemBlock( MemBlock* a_pMemBlock );
 
@@ -145,7 +145,7 @@ private:
 public:
 	static void GetMemInfo( MemInfo& a_rMemInfo, MemBlock* a_pMemBlock );
 	static void GetHALMemInfo( HALMemInfo& a_rHALMemInfo );
-	static TBOOL Initialise( TUINT a_uiHeapSize, TUINT a_uiReservedSize );
+	static TBOOL Initialise( TUINT a_uiHeapSize, TUINT a_uiReservedSize, TUINT a_uiUnused = 0 );
 	static void Deinitialise();
 	static TUINT MapSizeToFreeList( TUINT a_uiSize );
 	static void DebugPrintHALMemInfo( const TCHAR* a_szFormat, ... );
@@ -212,22 +212,27 @@ public:
 public:
 	TMemory();
 
-	MemBlock* CreateMemBlock( TUINT a_uiSize, const TCHAR* a_szName, MemBlock* a_pOwnerBlock );
+	MemBlock* CreateMemBlock( TUINT a_uiSize, const TCHAR* a_szName, MemBlock* a_pOwnerBlock, TINT a_iUnused );
 	MemBlock* CreateMemBlockInPlace( void* a_pMem, TUINT a_uiSize, const TCHAR* a_szName );
 	void DestroyMemBlock( MemBlock* a_pMemBlock );
 
 	MemBlock* GetGlobalBlock() const;
 	MemBlock* SetGlobalBlock( MemBlock* a_pMemBlock );
 
+	void SetMemModule( TMemoryDL* a_pMemModule ) { m_pMemModule = a_pMemModule; }
+	TMemoryDL* GetMemModule() { return m_pMemModule; }
+
 public:
-	static TBOOL Initialise( TUINT a_uiHeapSize, TUINT a_uiReservedSize );
+	static TBOOL Initialise( TUINT a_uiHeapSize, TUINT a_uiReservedSize, TUINT a_uiUnused = 0 );
 	static void Deinitialise();
 
 	static void GetMemInfo( MemInfo& a_rMemInfo, MemBlock* a_pMemBlock );
 	static void GetHALMemInfo( HALMemInfo& a_rHALMemInfo );
 
-private:
+public:
 	TMemoryDL* m_pMemModule;
+	TCHAR PADDING[2092];
+	MemBlock* m_pGlobalBlock;
 };
 
 extern TMemory* g_pMemory;

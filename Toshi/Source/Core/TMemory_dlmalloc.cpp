@@ -4,6 +4,8 @@
 
 TOSHI_NAMESPACE_START
 
+TMemoryDL* g_pMemoryDL = TNULL;
+
 void TMemoryDL::OutOfMem( TMemoryDLHeap* heap, TSIZE size )
 {
 	// 006fc7c0
@@ -26,12 +28,12 @@ void* TMemoryDL::dlheapmalloc( TMemoryDLHeap* heap, TSIZE size )
 		return TMemoryDLHeap::AllocAsPile( heap, size, 4 );
 	}
 
-	if ( heap->m_Flags & TMemoryHeapFlags_UseMutex ) TMemoryDL::AcquireMutex();
+	if ( heap->m_Flags & TMemoryHeapFlags_UseMutex ) AcquireMutex();
 
 	void* chunk = mspace_malloc( heap->m_MSpace, size );
 	if ( chunk == TNULL ) TMemoryDL::OutOfMem( heap, size );
 
-	if ( heap->m_Flags & TMemoryHeapFlags_UseMutex ) TMemoryDL::ReleaseMutex();
+	if ( heap->m_Flags & TMemoryHeapFlags_UseMutex ) ReleaseMutex();
 	return chunk;
 }
 
@@ -43,12 +45,12 @@ void* TMemoryDL::dlheapcalloc( TMemoryDLHeap* heap, TSIZE nitems, TSIZE size )
 		return TMemoryDLHeap::AllocAsPile( heap, nitems * size, 4 );
 	}
 
-	if ( heap->m_Flags & TMemoryHeapFlags_UseMutex ) TMemoryDL::AcquireMutex();
+	if ( heap->m_Flags & TMemoryHeapFlags_UseMutex ) AcquireMutex();
 
 	void* chunk = mspace_calloc( heap->m_MSpace, nitems, size );
 	if ( chunk == TNULL ) TMemoryDL::OutOfMem( heap, size );
 
-	if ( heap->m_Flags & TMemoryHeapFlags_UseMutex ) TMemoryDL::ReleaseMutex();
+	if ( heap->m_Flags & TMemoryHeapFlags_UseMutex ) ReleaseMutex();
 	return chunk;
 }
 
@@ -60,12 +62,12 @@ void* TMemoryDL::dlheapmemalign( TMemoryDLHeap* heap, TSIZE alignment, TSIZE siz
 		return TMemoryDLHeap::AllocAsPile( heap, size, 4 );
 	}
 
-	if ( heap->m_Flags & TMemoryHeapFlags_UseMutex ) TMemoryDL::AcquireMutex();
+	if ( heap->m_Flags & TMemoryHeapFlags_UseMutex ) AcquireMutex();
 
 	void* chunk = mspace_memalign( heap->m_MSpace, alignment, size );
 	if ( chunk == TNULL ) TMemoryDL::OutOfMem( heap, size );
 
-	if ( heap->m_Flags & TMemoryHeapFlags_UseMutex ) TMemoryDL::ReleaseMutex();
+	if ( heap->m_Flags & TMemoryHeapFlags_UseMutex ) ReleaseMutex();
 	return chunk;
 }
 
@@ -74,12 +76,12 @@ void* TMemoryDL::dlheaprealloc( TMemoryDLHeap* heap, void* mem, TSIZE newsize )
 	// 006fc5f0
 	TASSERT( ( heap->m_Flags & TMemoryHeapFlags_AllocAsPile ) == 0, "Cannot realloc on pile" );
 
-	if ( heap->m_Flags & TMemoryHeapFlags_UseMutex ) TMemoryDL::AcquireMutex();
+	if ( heap->m_Flags & TMemoryHeapFlags_UseMutex ) AcquireMutex();
 
 	void* chunk = mspace_realloc( heap->m_MSpace, mem, newsize );
 	if ( chunk == TNULL ) TMemoryDL::OutOfMem( heap, newsize );
 
-	if ( heap->m_Flags & TMemoryHeapFlags_UseMutex ) TMemoryDL::ReleaseMutex();
+	if ( heap->m_Flags & TMemoryHeapFlags_UseMutex ) ReleaseMutex();
 	return chunk;
 }
 
@@ -87,11 +89,11 @@ void TMemoryDL::dlheapfree( TMemoryDLHeap* heap, void* mem )
 {
 	TASSERT( ( heap->m_Flags & TMemoryHeapFlags_AllocAsPile ) == 0, "Cannot free pile memory" );
 
-	if ( heap->m_Flags & TMemoryHeapFlags_UseMutex ) TMemoryDL::AcquireMutex();
+	if ( heap->m_Flags & TMemoryHeapFlags_UseMutex ) AcquireMutex();
 
 	mspace_free( heap->m_MSpace, mem );
 
-	if ( heap->m_Flags & TMemoryHeapFlags_UseMutex ) TMemoryDL::ReleaseMutex();
+	if ( heap->m_Flags & TMemoryHeapFlags_UseMutex ) ReleaseMutex();
 }
 
 void TMemoryDL::dlheapdestroy( TMemoryDLHeap* heap )
@@ -104,7 +106,7 @@ void TMemoryDL::dlheapdestroy( TMemoryDLHeap* heap )
 
 		if ( heap->m_SubHeapBuffer != TNULL )
 		{
-			TFree( heap->m_SubHeapBuffer );
+			GetContext().Free( heap->m_SubHeapBuffer );
 			heap->m_SubHeapBuffer = TNULL;
 		}
 	}
@@ -123,6 +125,7 @@ TMemoryDLHeap* TMemoryDL::dlheapcreatesubheap( TMemoryDLHeap* heap, TSIZE size, 
 		{
 			subHeap = static_cast<TMemoryDLHeap*>( mem );
 
+			subHeap->m_pOwnerBlock = this;
 			subHeap->m_Flags = flags;
 			subHeap->m_MSpace = TNULL;
 			subHeap->m_PileData = reinterpret_cast<char*>( subHeap + 1 );
@@ -150,7 +153,7 @@ TMemoryDLHeap* TMemoryDL::dlheapcreatesubheap( TMemoryDLHeap* heap, TSIZE size, 
 		}
 		else
 		{
-			TFree( mem );
+			GetContext().Free( mem );
 		}
 	}
 
@@ -170,6 +173,7 @@ TMemoryDLHeap* TMemoryDL::dlheapcreateinplace( void* ptr, TSIZE heapSize, TMemor
 
 	if ( heap->m_MSpace != TNULL )
 	{
+		heap->m_pOwnerBlock = this;
 		heap->m_Flags = flags;
 		heap->SetName( name );
 

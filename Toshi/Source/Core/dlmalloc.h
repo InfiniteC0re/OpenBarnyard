@@ -517,6 +517,8 @@ MAX_RELEASE_CHECK_RATE   default: 4095 unless not HAVE_MMAP
   improvement at the expense of carrying around more memory.
 */
 
+#ifdef TMEMORY_USE_DLMALLOC
+
 /* Version identifier to allow people to support multiple versions */
 #ifndef DLMALLOC_VERSION
 #define DLMALLOC_VERSION 20806
@@ -1405,3 +1407,5 @@ extern "C" {
 #ifdef __cplusplus
 }  /* end of extern "C" */
 #endif /* __cplusplus */
+
+#endif // TMEMORY_USE_DLMALLOC

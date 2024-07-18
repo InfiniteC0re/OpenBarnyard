@@ -6,35 +6,46 @@
 
 TOSHI_NAMESPACE_START
 
+class TMemoryDL;
+
 class TMemoryDLContext
 {
 private:
-    inline static auto MallocNative = []( TSIZE size ) -> void* { return malloc( size ); };
-    inline static auto CallocNative = []( TSIZE nitems, TSIZE size ) -> void* { return calloc( nitems, size ); };
-    inline static auto ReallocNative = []( void* ptr, TSIZE size ) -> void* { return realloc( ptr, size ); };
-    inline static auto MemalignNative = []( TSIZE alignment, TSIZE size ) -> void* { return malloc( size ); };
-    inline static auto FreeNative = []( void* ptr ) -> void { free( ptr ); };
-    inline static auto IdkNative = []( void* ptr, TSIZE size ) -> void { };
+    inline static auto MallocNative = []( TMemoryDL* pMemModule, TSIZE size ) -> void* { return malloc( size ); };
+    inline static auto CallocNative = []( TMemoryDL* pMemModule, TSIZE nitems, TSIZE size ) -> void* { return calloc( nitems, size ); };
+    inline static auto ReallocNative = []( TMemoryDL* pMemModule, void* ptr, TSIZE size ) -> void* { return realloc( ptr, size ); };
+    inline static auto MemalignNative = []( TMemoryDL* pMemModule, TSIZE alignment, TSIZE size ) -> void* { return malloc( size ); };
+    inline static auto FreeNative = []( TMemoryDL* pMemModule, void* ptr ) -> void { free( ptr ); };
+    inline static auto IdkNative = []( TMemoryDL* pMemModule, void* ptr, TSIZE size ) -> void { };
 
-    friend class TMemoryDL;
+    friend TMemoryDL;
 
 public:
-    typedef void* ( *t_Malloc )( TSIZE size );
-    typedef void* ( *t_Calloc )( TSIZE nitems, TSIZE size );
-    typedef void* ( *t_Realloc )( void* ptr, TSIZE size );
-    typedef void  ( *t_Idk )( void* ptr, TSIZE size );
-    typedef void* ( *t_Memalign )( TSIZE alignment, TSIZE size );
-    typedef void  ( *t_Free )( void* ptr );
+    typedef void* ( *t_Malloc )( TMemoryDL* pMemModule, TSIZE size );
+    typedef void* ( *t_Calloc )( TMemoryDL* pMemModule, TSIZE nitems, TSIZE size );
+    typedef void* ( *t_Realloc )( TMemoryDL* pMemModule, void* ptr, TSIZE size );
+    typedef void  ( *t_Idk )( TMemoryDL* pMemModule, void* ptr, TSIZE size );
+    typedef void* ( *t_Memalign )( TMemoryDL* pMemModule, TSIZE alignment, TSIZE size );
+    typedef void  ( *t_Free )( TMemoryDL* pMemModule, void* ptr );
 
+public:
+    void* Malloc( TSIZE size ) { return s_cbMalloc( m_pMemModule, size ); }
+	void* Calloc( TSIZE nitems, TSIZE size ) { return s_cbCalloc( m_pMemModule, nitems, size ); }
+	void* Realloc( void* ptr, TSIZE size ) { return s_cbRealloc( m_pMemModule, ptr, size ); }
+	void* Memalign( TSIZE alignment, TSIZE size ) { return s_cbMemalign( m_pMemModule, alignment, size ); }
+	void  Free( void* ptr ) { s_cbFree( m_pMemModule, ptr ); }
+
+public:
     t_Malloc s_cbMalloc = MallocNative;
     t_Calloc s_cbCalloc = CallocNative;
     t_Realloc s_cbRealloc = ReallocNative;
     t_Idk s_cbIdk = IdkNative;
     t_Memalign s_cbMemalign = MemalignNative;
     t_Free s_cbFree = FreeNative;
-
+    
     void* s_Sysheap = TNULL;
     void* s_Heap = TNULL;
+    TMemoryDL* m_pMemModule;
 };
 
 class TMemoryDLHeap;
@@ -46,10 +57,12 @@ enum TMemoryHeapFlags_ : TMemoryDLHeapFlags
     TMemoryHeapFlags_AllocAsPile = BITFLAG( 2 ),
 };
 
+extern class TMemoryDL* g_pMemoryDL;
+
 class TMemoryDL
 {
 public:
-    static constexpr int HEAP_MAXNAME = 15;
+    static constexpr int HEAP_MAXNAME = 51;
 
     typedef TUINT32 Flags;
     typedef TUINT32 Error;
@@ -69,35 +82,33 @@ public:
 
 public:
     TMemoryDL( Flags flags = Flags_Standard, BlockSize blockSize = 640 * 1024 * 1024 ) :
-        m_Flags( flags ), m_GlobalSize( blockSize ) {
-        s_pSingleton = this;
-    }
+        m_Flags( flags ), m_GlobalSize( blockSize ), m_NumAllocatedBytes( 0 ) { }
 
-    static void               dlheapfree( TMemoryDLHeap* heap, void* mem );
-    static void               dlheapdestroy( TMemoryDLHeap* heap );
-    static void*              dlheapmalloc( TMemoryDLHeap* heap, TSIZE size );
-    static void*              dlheapcalloc( TMemoryDLHeap* heap, TSIZE nitems, TSIZE size );
-    static void*              dlheaprealloc( TMemoryDLHeap* heap, void* mem, TSIZE newsize );
-    static void*              dlheapmemalign( TMemoryDLHeap* heap, TSIZE alignment, TSIZE size );
-    static TMemoryDLHeap*     dlheapcreateinplace( void* ptr, TSIZE heapSize, TMemoryDLHeapFlags flags, const TCHAR name[ HEAP_MAXNAME ] );
-    static TMemoryDLHeap*     dlheapcreatesubheap( TMemoryDLHeap* heap, TSIZE size, TMemoryDLHeapFlags flags, const TCHAR name[ HEAP_MAXNAME ] );
-    static TMemoryDLHeap*     dlheapcreate( TMemoryDLHeap* heap, TSIZE size, TMemoryDLHeapFlags flags, const TCHAR name[ HEAP_MAXNAME ] ) { return TMemoryDL::dlheapcreatesubheap( heap, size, flags, name ); }
+    void                      SetHeap( TMemoryDLHeap* a_pHeap ) { m_GlobalHeap = a_pHeap; }
+	TMemoryDLHeap*            GetHeap() { return m_GlobalHeap; }
+    TMemoryDLContext&         GetContext() { return m_Context; }
 
-    static TMemoryDLHeap*     CreateHeapInPlace( void* ptr, TSIZE heapSize, TMemoryDLHeapFlags flags, const TCHAR name[ HEAP_MAXNAME ] ) { return TMemoryDL::dlheapcreateinplace( ptr, heapSize, flags, name ); }
-    static TMemoryDLHeap*     CreateHeap( TSIZE size, TMemoryDLHeapFlags flags, const TCHAR name[ HEAP_MAXNAME ] ) { return TMemoryDL::dlheapcreate( s_GlobalHeap, size, flags, name ); }
-    static void               DestroyHeap( TMemoryDLHeap* heap ) { TMemoryDL::dlheapdestroy( heap ); }
+public:
+    void               dlheapfree( TMemoryDLHeap* heap, void* mem );
+    void               dlheapdestroy( TMemoryDLHeap* heap );
+    void*              dlheapmalloc( TMemoryDLHeap* heap, TSIZE size );
+    void*              dlheapcalloc( TMemoryDLHeap* heap, TSIZE nitems, TSIZE size );
+    void*              dlheaprealloc( TMemoryDLHeap* heap, void* mem, TSIZE newsize );
+    void*              dlheapmemalign( TMemoryDLHeap* heap, TSIZE alignment, TSIZE size );
+    TMemoryDLHeap*     dlheapcreateinplace( void* ptr, TSIZE heapSize, TMemoryDLHeapFlags flags, const TCHAR name[ HEAP_MAXNAME ] );
+    TMemoryDLHeap*     dlheapcreatesubheap( TMemoryDLHeap* heap, TSIZE size, TMemoryDLHeapFlags flags, const TCHAR name[ HEAP_MAXNAME ] );
+    TMemoryDLHeap*     dlheapcreate( TMemoryDLHeap* heap, TSIZE size, TMemoryDLHeapFlags flags, const TCHAR name[ HEAP_MAXNAME ] ) { return TMemoryDL::dlheapcreatesubheap( heap, size, flags, name ); }
 
-    static void               OutOfMem( TMemoryDLHeap* heap, TSIZE size );
-    static void               Shutdown();
+    TMemoryDLHeap*     CreateHeapInPlace( void* ptr, TSIZE heapSize, TMemoryDLHeapFlags flags, const TCHAR name[ HEAP_MAXNAME ] ) { return TMemoryDL::dlheapcreateinplace( ptr, heapSize, flags, name ); }
 
-	static void               SetGlobalHeap( TMemoryDLHeap* a_pHeap ) { s_GlobalHeap = a_pHeap; }
-	static TMemoryDLHeap*     GetGlobalHeap() { return s_GlobalHeap; }
-    static void               AcquireMutex() { TMemoryDL::s_GlobalMutex.Lock(); }
-    static void               ReleaseMutex() { TMemoryDL::s_GlobalMutex.Unlock(); }
-    static unsigned long long GetNumOfAllocatedBytes() { return s_NumAllocatedBytes; }
+    void               OutOfMem( TMemoryDLHeap* heap, TSIZE size );
+    void               Shutdown();
+    void               AcquireMutex() { m_Mutex.Lock(); }
+    void               ReleaseMutex() { m_Mutex.Unlock(); }
+    unsigned long long GetNumOfAllocatedBytes() { return m_NumAllocatedBytes; }
 
 private:
-    static Flags              GetFlags() { return s_pSingleton->m_Flags; }
+    Flags              GetFlags() { return m_Flags; }
 
 public:
     /*
@@ -108,31 +119,29 @@ public:
     Error Init();
 
 public:
-    inline static TMemoryDLContext s_Context;
 
 private:
-    inline static TMemoryDLHeap* s_GlobalHeap;
-    inline static T2Mutex s_GlobalMutex;
-    inline static TMemoryDL* s_pSingleton;
-    inline static unsigned long long s_NumAllocatedBytes;
 
 private:
     Flags m_Flags;
     BlockSize m_GlobalSize;
+    TMemoryDLHeap* m_GlobalHeap;
+    TMemoryDLContext m_Context;
+    T2Mutex m_Mutex;
+	unsigned long long m_NumAllocatedBytes;
 };
 
 class TMemoryDLHeap
 {
 public:
-    friend class TMemoryDL;
+    friend TMemoryDL;
 
 public:
-    void* Malloc( TSIZE size ) { return TMemoryDL::dlheapmalloc( this, size ); }
-    static void* Malloc( TMemoryDLHeap* heap, TSIZE size ) { return TMemoryDL::dlheapmalloc( heap, size ); }
-    void* Calloc( TSIZE nitems, TSIZE size ) { return TMemoryDL::dlheapcalloc( this, nitems, size ); }
-    void* Realloc( void* mem, TSIZE newsize ) { return TMemoryDL::dlheaprealloc( this, mem, newsize ); }
-    void* Memalign( TSIZE alignment, TSIZE size ) { return TMemoryDL::dlheapmemalign( this, alignment, size ); }
-    void  Free( void* mem ) { TMemoryDL::dlheapfree( this, mem ); }
+    void* Malloc( TSIZE size ) { return m_pOwnerBlock->dlheapmalloc( this, size ); }
+    void* Calloc( TSIZE nitems, TSIZE size ) { return m_pOwnerBlock->dlheapcalloc( this, nitems, size ); }
+    void* Realloc( void* mem, TSIZE newsize ) { return m_pOwnerBlock->dlheaprealloc( this, mem, newsize ); }
+    void* Memalign( TSIZE alignment, TSIZE size ) { return m_pOwnerBlock->dlheapmemalign( this, alignment, size ); }
+    void  Free( void* mem ) { m_pOwnerBlock->dlheapfree( this, mem ); }
 
     void SetName( const TCHAR* name )
     {
@@ -149,6 +158,7 @@ private:
     static void* AllocAsPile( TMemoryDLHeap* heap, TSIZE size, TSIZE alignment = 4 );
 
 private:
+    TMemoryDL* m_pOwnerBlock;
     TMemoryDLHeapFlags m_Flags;
     T2Mutex m_Mutex;
     TCHAR* m_SubHeapBuffer;
@@ -159,48 +169,3 @@ private:
 };
 
 TOSHI_NAMESPACE_END
-
-//inline static void* TMalloc(TSIZE size)
-//{
-//    return Toshi::TMemoryDL::s_Context.s_cbMalloc(size);
-//}
-//
-//inline static void* TCalloc(TSIZE nitems, TSIZE size)
-//{
-//    return Toshi::TMemoryDL::s_Context.s_cbCalloc(nitems, size);
-//}
-//
-//inline static void* TRealloc(void* mem, TSIZE newsize)
-//{
-//    return Toshi::TMemoryDL::s_Context.s_cbRealloc(mem, newsize);
-//}
-//
-//inline static void* TMemalign(TSIZE alignment, TSIZE size)
-//{
-//    return Toshi::TMemoryDL::s_Context.s_cbMemalign(alignment, size);
-//}
-//
-//inline static void TFree(void* mem)
-//{
-//    Toshi::TMemoryDL::s_Context.s_cbFree(mem);
-//}
-//
-//inline void* __CRTDECL operator new(size_t size, Toshi::TMemoryDLHeap* heap)
-//{
-//    return Toshi::TMemoryDLHeap::Malloc(heap, size);
-//}
-//
-//inline void* __CRTDECL operator new[]( size_t size, Toshi::TMemoryDLHeap* heap)
-//{
-//    return Toshi::TMemoryDLHeap::Malloc(heap, size);
-//}
-//
-//inline void __CRTDECL operator delete(void* ptr, Toshi::TMemoryDLHeap* heap) noexcept
-//{
-//    heap->Free(ptr);
-//}
-//
-//inline void __CRTDECL operator delete[](void* ptr, Toshi::TMemoryDLHeap* heap) noexcept
-//{
-//    heap->Free(ptr);
-//}

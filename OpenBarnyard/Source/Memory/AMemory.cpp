@@ -20,7 +20,8 @@ void AMemory::CreatePool(POOL a_ePool)
 	s_aMemBlocks[a_ePool] = g_pMemory->CreateMemBlock(
 		rPool.GetSize(),
 		rPool.GetName(),
-		pAllocOnHeap
+		pAllocOnHeap,
+		rPool.GetUnk2()
 	);
 
 	s_AllocatorList.aAllocators[a_ePool].SetMemBlock(s_aMemBlocks[a_ePool]);

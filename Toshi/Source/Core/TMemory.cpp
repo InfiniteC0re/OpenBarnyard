@@ -365,7 +365,7 @@ TBOOL TMemory::Free( const void* a_pAllocated )
 	return TTRUE;
 }
 
-TMemory::MemBlock* TMemory::CreateMemBlock( TUINT a_uiSize, const TCHAR* a_szName, MemBlock* a_pOwnerBlock )
+TMemory::MemBlock* TMemory::CreateMemBlock( TUINT a_uiSize, const TCHAR* a_szName, MemBlock* a_pOwnerBlock, TINT a_iUnused )
 {
 	void* pMem = Alloc( a_uiSize, 16, a_pOwnerBlock, TNULL, -1 );
 	return CreateMemBlockInPlace( pMem, a_uiSize, a_szName );
@@ -493,7 +493,7 @@ int TMemory::DebugTestMemoryBlock( MemBlock* a_pMemBlock )
 	return 0;
 }
 
-TBOOL TMemory::Initialise( TUINT a_uiHeapSize, TUINT a_uiReservedSize )
+TBOOL TMemory::Initialise( TUINT a_uiHeapSize, TUINT a_uiReservedSize, TUINT a_uiUnused )
 {
 	auto tmemory = TSTATICCAST( TMemory, calloc( sizeof( TMemory ), 1 ) );
 	new ( tmemory ) TMemory();
@@ -786,11 +786,10 @@ TMemory* g_pMemory = TNULL;
 
 TMemory::TMemory()
 {
-	g_pMemory = this;
 	m_pMemModule = TNULL;
 }
 
-TBOOL TMemory::Initialise( TUINT a_uiHeapSize, TUINT a_uiReservedSize )
+TBOOL TMemory::Initialise( TUINT a_uiHeapSize, TUINT a_uiReservedSize, TUINT a_uiUnused/* = 0*/)
 {
 	TASSERT( g_pMemory == TNULL );
 
@@ -809,9 +808,14 @@ TBOOL TMemory::Initialise( TUINT a_uiHeapSize, TUINT a_uiReservedSize )
 
 	new ( pMemModule ) TMemoryDL( TMemoryDL::Flags_Standard, a_uiHeapSize + a_uiReservedSize );
 	g_pMemory->m_pMemModule = pMemModule;
+	g_pMemoryDL = pMemModule;
 
 	// Initialise the memory block
-	return pMemModule->Init() == TMemoryDL::Error_Ok;
+	TBOOL bInitialised = pMemModule->Init() == TMemoryDL::Error_Ok;
+
+	g_pMemory->m_pGlobalBlock = g_pMemoryDL->GetHeap();
+
+	return bInitialised;
 }
 
 void TMemory::Deinitialise()
@@ -826,35 +830,36 @@ void TMemory::Deinitialise()
 	g_pMemory = TNULL;
 }
 
-TMemory::MemBlock* TMemory::CreateMemBlock( TUINT a_uiSize, const TCHAR* a_szName, MemBlock* a_pOwnerBlock )
+TMemory::MemBlock* TMemory::CreateMemBlock( TUINT a_uiSize, const TCHAR* a_szName, MemBlock* a_pOwnerBlock, TINT a_iUnused )
 {
 	if ( !a_pOwnerBlock )
-		a_pOwnerBlock = m_pMemModule->GetGlobalHeap();
+		a_pOwnerBlock = m_pMemModule->GetHeap();
 
-	return TMemoryDL::dlheapcreatesubheap( a_pOwnerBlock, a_uiSize, TMemoryHeapFlags_UseMutex, a_szName );
+	return g_pMemoryDL->dlheapcreatesubheap( a_pOwnerBlock, a_uiSize, TMemoryHeapFlags_UseMutex, a_szName );
 }
 
 TMemory::MemBlock* TMemory::CreateMemBlockInPlace( void* a_pMem, TUINT a_uiSize, const TCHAR* a_szName )
 {
 	TVALIDPTR( a_pMem );
 
-	return TMemoryDL::dlheapcreateinplace( a_pMem, a_uiSize, TMemoryHeapFlags_UseMutex, a_szName );
+	return g_pMemoryDL->dlheapcreateinplace( a_pMem, a_uiSize, TMemoryHeapFlags_UseMutex, a_szName );
 }
 
 void TMemory::DestroyMemBlock( MemBlock* a_pMemBlock )
 {
-	TMemoryDL::dlheapdestroy( a_pMemBlock );
+	g_pMemoryDL->dlheapdestroy( a_pMemBlock );
 }
 
 TMemory::MemBlock* TMemory::GetGlobalBlock() const
 {
-	return TMemoryDL::GetGlobalHeap();
+	return g_pMemoryDL->GetHeap();
 }
 
 TMemory::MemBlock* TMemory::SetGlobalBlock( MemBlock* a_pMemBlock )
 {
-	MemBlock* pOldHeap = TMemoryDL::GetGlobalHeap();
-	TMemoryDL::SetGlobalHeap( a_pMemBlock );
+	MemBlock* pOldHeap = g_pMemoryDL->GetHeap();
+	m_pGlobalBlock = a_pMemBlock;
+	g_pMemoryDL->SetHeap( a_pMemBlock );
 	return pOldHeap;
 }
 
@@ -874,7 +879,7 @@ void* TMalloc( TUINT a_uiSize, Toshi::TMemory::MemBlock* a_pMemBlock, const TCHA
 {
 	if ( !a_pMemBlock )
 	{
-		a_pMemBlock = Toshi::TMemoryDL::GetGlobalHeap();
+		a_pMemBlock = Toshi::g_pMemoryDL->GetHeap();
 	}
 
 	return a_pMemBlock->Malloc( a_uiSize );
@@ -882,19 +887,19 @@ void* TMalloc( TUINT a_uiSize, Toshi::TMemory::MemBlock* a_pMemBlock, const TCHA
 
 void* TMalloc( TUINT a_uiSize, const TCHAR* a_szFileName, TINT a_iLineNum )
 {
-	return Toshi::TMemoryDL::s_Context.s_cbMalloc( a_uiSize );
+	return Toshi::g_pMemoryDL->GetContext().Malloc( a_uiSize );
 }
 
 void* TMalloc( TUINT a_uiSize )
 {
-	return Toshi::TMemoryDL::s_Context.s_cbMalloc( a_uiSize );
+	return Toshi::g_pMemoryDL->GetContext().Malloc( a_uiSize );
 }
 
 void* TMemalign( TUINT a_uiAlignment, TUINT a_uiSize, Toshi::TMemory::MemBlock* a_pMemBlock )
 {
 	if ( !a_pMemBlock )
 	{
-		a_pMemBlock = Toshi::TMemoryDL::GetGlobalHeap();
+		a_pMemBlock = Toshi::g_pMemoryDL->GetHeap();
 	}
 
 	return a_pMemBlock->Memalign( a_uiAlignment, a_uiSize );
@@ -902,12 +907,12 @@ void* TMemalign( TUINT a_uiAlignment, TUINT a_uiSize, Toshi::TMemory::MemBlock* 
 
 void* TMemalign( TUINT a_uiSize, TUINT a_uiAlignment )
 {
-	return Toshi::TMemoryDL::s_Context.s_cbMemalign( a_uiAlignment, a_uiSize );
+	return Toshi::g_pMemoryDL->GetContext().Memalign( a_uiAlignment, a_uiSize );
 }
 
 void TFree( void* a_pMem )
 {
-	Toshi::TMemoryDL::s_Context.s_cbFree( a_pMem );
+	Toshi::g_pMemoryDL->GetContext().Free( a_pMem );
 }
 
 #endif // TMEMORY_USE_DLMALLOC

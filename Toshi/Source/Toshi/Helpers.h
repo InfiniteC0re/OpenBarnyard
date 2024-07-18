@@ -26,33 +26,33 @@ TFORCEINLINE TBOOL TIsPointerAligned( const void* a_pPointer, TUINT a_uiAlignmen
 }
 
 template <class T>
-TFORCEINLINE constexpr T* TAlignPointerUp( T* a_pMem, TINT a_iAlignment = sizeof( T* ) )
+TFORCEINLINE constexpr T* TAlignPointerUp( T* a_pMem, TUINT a_uiAlignment = sizeof( T* ) )
 {
 	return TREINTERPRETCAST(
 		T*,
-		( TUINTPTR( a_pMem ) + ( a_iAlignment - 1 ) ) & ( ~( a_iAlignment - 1 ) )
+		( TUINTPTR( a_pMem ) + ( a_uiAlignment - 1 ) ) & ( ~( a_uiAlignment - 1U ) )
 	);
 }
 
 template <class T>
-TFORCEINLINE constexpr T* TAlignPointerDown( T* a_pMem, TINT a_iAlignment = sizeof( T* ) )
+TFORCEINLINE constexpr T* TAlignPointerDown( T* a_pMem, TUINT a_uiAlignment = sizeof( T* ) )
 {
 	return TREINTERPRETCAST(
 		T*,
-		( TUINTPTR( a_pMem ) ) & ( ~( a_iAlignment - 1 ) )
+		( TUINTPTR( a_pMem ) ) & ( ~( a_uiAlignment - 1U ) )
 	);
 }
 
 template <class T>
-TFORCEINLINE constexpr T TAlignNumDown( T a_iValue, TINT a_iAlignment = 4 )
+TFORCEINLINE constexpr T TAlignNumDown( T a_iValue, TUINT a_uiAlignment = 4 )
 {
 	TSTATICASSERT( std::is_arithmetic<T>::value );
-	return a_iValue & (T)( ~( a_iAlignment - 1 ) );
+	return a_iValue & (T)( ~( a_uiAlignment - 1U ) );
 }
 
 template <class T>
-TFORCEINLINE constexpr T TAlignNumUp( T a_iValue, TINT a_iAlignment = 4 )
+TFORCEINLINE constexpr T TAlignNumUp( T a_iValue, TUINT a_uiAlignment = 4 )
 {
 	TSTATICASSERT( std::is_arithmetic<T>::value );
-	return ( a_iValue + ( a_iAlignment - 1 ) ) & (T)( ~( a_iAlignment - 1 ) );
+	return ( a_iValue + ( a_uiAlignment - 1U ) ) & (T)( ~( a_uiAlignment - 1U ) );
 }
