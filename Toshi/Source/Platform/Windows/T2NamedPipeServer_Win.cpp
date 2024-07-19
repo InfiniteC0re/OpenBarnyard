@@ -127,7 +127,7 @@ namespace Toshi {
 	{
 		if ( m_bStarted && m_pThread )
 		{
-			TThread::Exit( m_pThread );
+			m_pThread->Destroy();
 
 			delete m_pThread;
 			m_pThread = TNULL;

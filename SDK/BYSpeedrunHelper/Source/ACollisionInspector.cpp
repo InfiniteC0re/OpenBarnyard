@@ -7,11 +7,18 @@
 #include <BYardSDK/ASysMesh.h>
 #include <BYardSDK/THookedRenderD3DInterface.h>
 
+#include <ToshiTools/T2CommandLine.h>
+
+extern TBOOL g_bIsExperimentalMode;
+
 ACollisionInspector::ACollisionInspector()
 {
-	// commented because currently it creates too many holes in memory so the game can even run out of memory
-	//AHooks::AddHook(Hook_AModelLoader_LoadTRBCallback, HookType_After, AModelLoader_LoadTRBCallback);
-	//AHooks::AddHook(Hook_ATerrain_Render, HookType_After, ATerrain_Render);
+	if ( g_bIsExperimentalMode )
+	{
+		// NOTE: it creates too many holes in memory so the game can even run out of memory and crash
+		AHooks::AddHook(Hook_AModelLoader_LoadTRBCallback, HookType_After, AModelLoader_LoadTRBCallback);
+		AHooks::AddHook(Hook_ATerrain_Render, HookType_After, ATerrain_Render);
+	}
 }
 
 void ACollisionInspector::SetCollisionVisible(TBOOL a_bVisible)

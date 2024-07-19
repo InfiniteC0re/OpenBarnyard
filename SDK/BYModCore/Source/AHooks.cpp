@@ -165,12 +165,6 @@ MEMBER_HOOK(0x006b5230, TMemory, TMemory_Alloc, void*, TUINT a_uiSize, TUINT a_u
 
 	if ( a_pMemBlock == TNULL )
 		a_pMemBlock = THookedMemory::GetSingleton()->GetMemModule()->GetHeap();
-
-	// HACK [7/18/2024 InfiniteC0re]
-	// For some reason there's some buffer overflow somewhere in the original code?
-	// To reproduce, start chicken launch or sharp squirter from the antics menu and return
-	// back to the menu and the game will crash.
-	a_uiSize += 32;
 	
 	return a_pMemBlock->Memalign( a_uiAlignment, a_uiSize );
 
@@ -195,6 +189,15 @@ MEMBER_HOOK(0x005dfac0, AInstanceManager_CollObjectModel, CollObjectModel_DCTOR,
 
 	auto pList1 = ( T2SList<AInstanceManager_CollObjectModel>* )(pInstanceManager + 0xefa0);
 	auto pList2 = ( T2SList<AInstanceManager_CollObjectModel>* )(pInstanceManager + 0xefa4);
+
+	// HACK [7/18/2024 InfiniteC0re]
+	// For some reason the original game doesn't clear both the lists before destroying this
+	// type of objects and it can cause the game to crash during unloading a level sometimes.
+	// 
+	// To reproduce, start chicken launch or sharp squirter from the antics menu and return
+	// back to the menu and the game will crash
+	// 
+	// Chasing Chicks crash is NOT related to this one!
 
 	pList1->Reset();
 	pList2->Reset();
@@ -731,7 +734,7 @@ void AHooks::Initialise()
 	InstallHook<TMemory_Alloc>();
 	InstallHook<TMemory_GetMemInfo>();
 	//InstallHook<TMSWindow_SetPosition>();
-	//InstallHook<AGUISlideshow_ProcessInput>();
+	InstallHook<AGUISlideshow_ProcessInput>();
 	InstallHook<FUN_0042ab30>();
 	InstallHook<AGUI2_MainPostRenderCallback>();
 	InstallHook<AGUI2_Constructor>();
@@ -751,10 +754,10 @@ void AHooks::Initialise()
 	InstallHook<AOptions_IsResolutionCompatible>();
 	InstallHook<ADisplayModes_Win_DoesModeExist>();
 	//InstallHook<TCameraObject_SetFOV>();
-	//InstallHook<TRenderD3DInterface_UpdateColourSettings>();
+	InstallHook<TRenderD3DInterface_UpdateColourSettings>();
 	//InstallHook<TRenderContext_CullSphereToFrustumSimple>();
 	//InstallHook<TRenderContext_CullSphereToFrustum>();
-	//InstallHook<TTRB_Load>();
+	InstallHook<TTRB_Load>();
 	InstallHook<CollObjectModel_DCTOR>();
 }
 

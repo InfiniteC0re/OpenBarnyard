@@ -15,7 +15,7 @@ workspace "OpenBarnyard"
 	
 	defines
 	{
-		"TMEMORY_USE_DLMALLOC",
+	--	"TMEMORY_USE_DLMALLOC",
 	--	"TOSHI_PROFILER",
 	--	"TOSHI_PROFILER_MEMORY",
 	--	"TRACY_ENABLE"

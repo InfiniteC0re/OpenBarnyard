@@ -23,6 +23,7 @@ public:
 	void OnAppRendererReady();
 
 	void LoadMods();
+	void UnloadMods();
 
 	Toshi::T2DList<AModInstance>& GetMods();
 
@@ -44,6 +45,7 @@ public:
 	AGlobalModLoaderTask();
 
 	TBOOL Create();
+	void Destroy();
 
 	static AModLoaderTask* Get() { return GetSingleton()->m_pTask; }
 	static AModInstance* FindMod(const char* a_szModName);

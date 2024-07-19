@@ -100,6 +100,11 @@ ASplitsServer::ASplitsServer() :
 	} );
 }
 
+void ASplitsServer::StopServer()
+{
+	m_NamedPipe.Stop();
+}
+
 void ASplitsServer::StartRun()
 {
 	if ( !m_NamedPipe.HasConnectedClient() )

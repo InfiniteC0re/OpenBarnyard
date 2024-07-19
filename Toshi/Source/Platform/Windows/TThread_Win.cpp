@@ -41,7 +41,41 @@ namespace Toshi
 		return TTRUE;
 	}
 
-	void TThread::Exit(TThread* a_pThread)
+	TBOOL TThread::Destroy()
+	{
+		TASSERT( m_iThreadID != GetCurrentThreadId() );
+
+		BOOL bResult = TerminateThread( m_hThreadHnd, 0 );
+		TASSERT( bResult != FALSE );
+
+		bResult = CloseHandle( m_hThreadHnd );
+		TASSERT( bResult != FALSE );
+
+		TThreadManager::GetSingletonSafe()->RemoveThread( this );
+		m_hThreadHnd = NULL;
+		m_iThreadID = -1;
+
+		return TTRUE;
+	}
+
+	TBOOL TThread::GetPriority( void* a_hThreadHnd, PRIORITY& a_ePriority )
+	{
+		TASSERT( a_hThreadHnd != NULL, "Thread doesn't exist" );
+		TINT iPriority = GetThreadPriority( a_hThreadHnd );
+		TASSERT( iPriority != THREAD_PRIORITY_ERROR_RETURN, "Couldn't get thread priority" );
+		a_ePriority = iPriority;
+		return TTRUE;
+	}
+
+	TBOOL TThread::SetPriority( void* a_hThreadHnd, PRIORITY a_ePriority )
+	{
+		TASSERT( a_hThreadHnd != NULL, "Thread doesn't exist" );
+		BOOL bResult = SetThreadPriority( a_hThreadHnd, a_ePriority );
+		TASSERT( bResult != FALSE, "Couldn't set priority" );
+		return TTRUE;
+	}
+
+	void TThread::Exit( TThread* a_pThread )
 	{
 		TASSERT(a_pThread->m_iThreadID == GetCurrentThreadId(), "Thread cannot be closed outside");
 
@@ -54,4 +88,19 @@ namespace Toshi
 
 		_endthreadex(0);
 	}
+
+	void TThreadManager::RemoveThread( TThread* a_pThread )
+	{
+		EnterCriticalSection( &m_CriticalSection );
+		a_pThread->Remove();
+		LeaveCriticalSection( &m_CriticalSection );
+	}
+
+	void TThreadManager::InsertThread( TThread* a_pThread )
+	{
+		EnterCriticalSection( &m_CriticalSection );
+		m_Threads.PushFront( a_pThread );
+		LeaveCriticalSection( &m_CriticalSection );
+	}
+
 }

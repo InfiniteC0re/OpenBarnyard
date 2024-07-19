@@ -2,6 +2,7 @@
 #include "Core/TMemory_dlmalloc.h"
 #include "Core/dlmalloc.h"
 
+#ifdef TMEMORY_USE_DLMALLOC
 
 /* ------------------- TSIZE and alignment properties -------------------- */
 
@@ -185,3 +186,5 @@ namespace Toshi {
         return Error_Ok;
     }
 }
+
+#endif // TMEMORY_USE_DLMALLOC

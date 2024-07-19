@@ -26,6 +26,9 @@ TOSHI_NAMESPACE_USING
 
 HMODULE hModuleCore;
 
+static T2CommandLine g_CommandLine;
+const T2CommandLine* g_pCommandLine = &g_CommandLine;
+
 const char* GetModsDirectory()
 {
 	return "Mods\\";
@@ -37,6 +40,21 @@ MEMBER_HOOK( 0x006c17f0, TApplication, TApplication_Create, TBOOL, const TCHAR* 
 	AGlobalModLoaderTask::CreateSingleton()->Create();
 
 	return CallOriginal( a_pchName, a_iArgc, a_ppArgv );
+}
+
+MEMBER_HOOK( 0x006c1760, TApplication, TApplication_Destroy, void )
+{
+	AGlobalModLoaderTask::Get()->UnloadMods();
+	CallOriginal();
+}
+
+HOOK( 0x004042c0, ToshiDestroy, void )
+{
+	AGlobalModLoaderTask::Get()->UnloadMods();
+	CallOriginal();
+
+	// Temporary solution
+	ExitProcess( 0 );
 }
 
 DWORD WINAPI MainThread(HMODULE hModule)
@@ -86,7 +104,7 @@ DWORD APIENTRY DllMain(HMODULE hModule, DWORD reason, LPVOID reserved)
 	{
 		TMemory::Initialise(4 * 1024 * 1024, 0);
 		
-#ifndef TOSHI_NO_LOGS
+#ifndef TOSHI_DEBUG
 		AllocConsole();
 		FILE* fDummy;
 		freopen_s(&fDummy, "CONOUT$", "w", stdout);
@@ -100,9 +118,13 @@ DWORD APIENTRY DllMain(HMODULE hModule, DWORD reason, LPVOID reserved)
 
 		TUtil::ToshiCreate(toshiParams);
 
+		g_CommandLine.Create( GetCommandLineA() );
+
 		// Initialise hooks
 		AHooks::Initialise();
 		InstallHook<TApplication_Create>();
+		InstallHook<TApplication_Destroy>();
+		InstallHook<ToshiDestroy>();
 
 		SetConsoleCtrlHandler(exit_handler, TRUE);
 

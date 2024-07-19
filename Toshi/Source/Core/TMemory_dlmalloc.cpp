@@ -4,6 +4,8 @@
 
 TOSHI_NAMESPACE_START
 
+#ifdef TMEMORY_USE_DLMALLOC
+
 TMemoryDL* g_pMemoryDL = TNULL;
 
 void TMemoryDL::OutOfMem( TMemoryDLHeap* heap, TSIZE size )
@@ -213,5 +215,7 @@ void* TMemoryDLHeap::AllocAsPile( TMemoryDLHeap* heap, TSIZE size, TSIZE alignme
 
 	return allocated;
 }
+
+#endif // TMEMORY_USE_DLMALLOC
 
 TOSHI_NAMESPACE_END

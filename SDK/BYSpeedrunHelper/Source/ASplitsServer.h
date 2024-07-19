@@ -13,6 +13,8 @@ public:
 public:
 	ASplitsServer();
 
+	void StopServer();
+
 	void StartRun();
 	void EndRun( TINT a_iMilliseconds, TINT a_iSeconds, TINT a_iMinutes, TINT a_iHours );
 	

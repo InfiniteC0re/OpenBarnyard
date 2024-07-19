@@ -44,7 +44,7 @@ namespace Toshi {
 		}
 	}
 
-	TBOOL T2CommandLine::HasParameter( const TCHAR* a_pszParameter, TINT* a_pIndex /*= TNULL */ )
+	TBOOL T2CommandLine::HasParameter( const TCHAR* a_pszParameter, TINT* a_pIndex /*= TNULL */ ) const
 	{
 		TASSERT( m_bInitialised );
 
@@ -65,7 +65,7 @@ namespace Toshi {
 		return TFALSE;
 	}
 
-	TString8 T2CommandLine::GetParameterValue( const TCHAR* a_pszParameter, const TCHAR* a_pszDefaultValue )
+	TString8 T2CommandLine::GetParameterValue( const TCHAR* a_pszParameter, const TCHAR* a_pszDefaultValue ) const
 	{
 		TASSERT( m_bInitialised );
 
@@ -77,7 +77,7 @@ namespace Toshi {
 		return a_pszDefaultValue;
 	}
 
-	const TCHAR* T2CommandLine::GetNextParameter( const TCHAR* a_pszParameter )
+	const TCHAR* T2CommandLine::GetNextParameter( const TCHAR* a_pszParameter ) const
 	{
 		TINT iParamIndex;
 		TBOOL bHasParam = HasParameter( a_pszParameter, &iParamIndex );

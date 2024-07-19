@@ -16,10 +16,15 @@
 #include <Toshi/THPTimer.h>
 #include <T2Locale/T2Locale.h>
 #include <File/TFile.h>
+#include <ToshiTools/T2CommandLine.h>
 
 TOSHI_NAMESPACE_USING
 
 ARunTimer g_Timer;
+AGUI2TextBox* g_pExperimentalModeText = TNULL;
+
+const T2CommandLine* g_pCommandLine;
+TBOOL g_bIsExperimentalMode = TFALSE;
 
 class AQuestManager :
 	public Toshi::TTask
@@ -87,6 +92,13 @@ void NewGameStarted()
 void AGUI2_MainPostRenderCallback()
 {
 	g_Timer.Render();
+
+	if ( g_pExperimentalModeText )
+	{
+		g_pExperimentalModeText->PreRender();
+		g_pExperimentalModeText->Render();
+		g_pExperimentalModeText->PostRender();
+	}
 }
 
 class ABYSpeedrunHelper : public AModInstance
@@ -119,7 +131,7 @@ public:
 
 	void OnUnload() override
 	{
-
+		g_Timer.Destroy();
 	}
 
 	void OnRenderInterfaceReady( Toshi::TRenderD3DInterface* a_pRenderInterface ) override
@@ -132,20 +144,42 @@ public:
 	void OnAGUI2Ready() override
 	{
 		g_Timer.Create();
+
+		if ( g_bIsExperimentalMode )
+		{
+			TFLOAT fWidth, fHeight;
+			AGUI2::GetSingleton()->GetDimensions( fWidth, fHeight );
+
+			auto pFont = AGUI2FontManager::FindFont( "Rekord18" );
+			g_pExperimentalModeText = AGUI2TextBox::CreateFromEngine();
+			
+			g_pExperimentalModeText->Create( pFont, 400.0f );
+			g_pExperimentalModeText->SetText( L"Experimental mode!" );
+			g_pExperimentalModeText->SetColour( TCOLOR( 255, 0, 0 ) );
+			g_pExperimentalModeText->SetTransform( 0.0f, -fHeight / 2 + 32.0f );
+			g_pExperimentalModeText->SetAlpha( 1.0f );
+			g_pExperimentalModeText->SetTextAlign( AGUI2Font::TextAlign_Center );
+			g_pExperimentalModeText->SetInFront();
+			g_pExperimentalModeText->SetAttachment( AGUI2Element::Anchor_MiddleCenter, AGUI2Element::Pivot_MiddleCenter );
+		}
 	}
 
 	void OnImGuiRender() override
 	{
 		ImGui::Checkbox( "Show Timer", &g_Timer.GetUIElement().IsVisible() );
-		ImGui::Checkbox( "Show Collision", &ACollisionInspector::GetSingleton()->IsCollisionVisible() );
 
-		if ( ImGui::Button( "Restart Timer" ) ) g_Timer.Start();
-		ImGui::SameLine();
-		if ( ImGui::Button( "Resume Timer" ) ) g_Timer.Resume();
-		ImGui::SameLine();
-		if ( ImGui::Button( "Pause Timer" ) ) g_Timer.Pause();
-		ImGui::SameLine();
-		if ( ImGui::Button( "Reset Timer" ) ) g_Timer.Reset();
+		if ( g_bIsExperimentalMode )
+		{
+			ImGui::Checkbox( "Show Collision", &ACollisionInspector::GetSingleton()->IsCollisionVisible() );
+	
+			if ( ImGui::Button( "Restart Timer" ) ) g_Timer.Start();
+			ImGui::SameLine();
+			if ( ImGui::Button( "Resume Timer" ) ) g_Timer.Resume();
+			ImGui::SameLine();
+			if ( ImGui::Button( "Pause Timer" ) ) g_Timer.Pause();
+			ImGui::SameLine();
+			if ( ImGui::Button( "Reset Timer" ) ) g_Timer.Reset();
+		}
 	}
 
 	TBOOL HasSettingsUI() override
@@ -161,7 +195,7 @@ public:
 
 extern "C"
 {
-	MODLOADER_EXPORT AModInstance* CreateModInstance()
+	MODLOADER_EXPORT AModInstance* CreateModInstance( const T2CommandLine* a_pCommandLine )
 	{
 		TMemory::Initialise( 8 * 1024 * 1024, 0 );
 
@@ -171,6 +205,9 @@ extern "C"
 		toshiParams.szLogAppName = "BYSpeedrunHelper";
 
 		TUtil::ToshiCreate( toshiParams );
+
+		g_pCommandLine = a_pCommandLine;
+		g_bIsExperimentalMode = g_pCommandLine->HasParameter( "-experimental" );
 
 		return new ABYSpeedrunHelper();
 	}

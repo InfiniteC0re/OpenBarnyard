@@ -1,6 +1,8 @@
 #pragma once
 #include "AModInstance.h"
 
+#include <ToshiTools/T2CommandLine.h>
+
 #include <Windows.h>
 
 #define MODLOADER_EXPORT __declspec(dllexport)
@@ -16,4 +18,4 @@
 
 MODCORE_API const char* GetModsDirectory();
 
-using t_CreateModInstance = AModInstance*(*)();
+using t_CreateModInstance = AModInstance*(*)( const Toshi::T2CommandLine* a_pCommandLine );

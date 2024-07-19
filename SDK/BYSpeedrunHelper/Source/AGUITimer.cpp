@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "AGUITimer.h"
 
+#include <BYardSDK/AGUI2.h>
+
 #include <Toshi/THPTimer.h>
 #include <Thread/TThread.h>
 
@@ -24,12 +26,15 @@ AGUITimer::~AGUITimer()
 
 void AGUITimer::Create()
 {
+	TFLOAT fWidth, fHeight;
+	AGUI2::GetSingleton()->GetDimensions( fWidth, fHeight );
+
 	auto pFont = AGUI2FontManager::FindFont( "Rekord18" );
 	m_pTextBox = AGUI2TextBox::CreateFromEngine();
 	m_pTextBox->Create( pFont, 200.0f );
 	m_pTextBox->SetText( L"00:00:00.000" );
 	m_pTextBox->SetColour( TCOLOR( 253, 226, 1 ) );
-	m_pTextBox->SetTransform( -394.0f, 0.0f );
+	m_pTextBox->SetTransform( -fWidth / 2 + 6.0f, 0.0f );
 	m_pTextBox->SetAlpha( 1.0f );
 	m_pTextBox->SetInFront();
 	m_pTextBox->SetTextAlign( AGUI2Font::TextAlign_Left );

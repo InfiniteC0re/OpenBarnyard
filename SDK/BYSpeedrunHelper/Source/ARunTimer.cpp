@@ -17,15 +17,13 @@ public:
 	ATimerThread( ARunTimer* a_pRunTimer ) :
 		m_pRunTimer( a_pRunTimer )
 	{
-		Reset();
 		m_TimeSyncMutex.Create();
 		m_flSyncTimerTime = 0.1f;
-		m_bClosed = TFALSE;
 	}
 
 	virtual void Main() override
 	{
-		while ( !m_bClosed )
+		while ( TTRUE )
 		{
 			m_Timer.Update();
 			TFLOAT flDelta = m_Timer.GetDelta();
@@ -49,13 +47,6 @@ public:
 
 			ThreadSleep( 10 );
 		}
-
-		delete this;
-	}
-
-	void Close()
-	{
-		m_bClosed = TTRUE;
 	}
 
 public:
@@ -75,11 +66,7 @@ ARunTimer::ARunTimer()
 
 ARunTimer::~ARunTimer()
 {
-	if ( m_pTimerThread )
-	{
-		m_pTimerThread->Close();
-		m_pTimerThread = TNULL;
-	}
+	Destroy();
 }
 
 void ARunTimer::Create()
@@ -90,9 +77,20 @@ void ARunTimer::Create()
 	m_pTimerThread->Create( 128, TThread::THREAD_PRIORITY_LOWEST, 0 );
 }
 
+void ARunTimer::Destroy()
+{
+	ASplitsServer::GetSingleton()->StopServer();
+	
+	if ( m_pTimerThread )
+	{
+		m_pTimerThread->Destroy();
+		delete m_pTimerThread;
+		m_pTimerThread = TNULL;
+	}
+}
+
 void ARunTimer::Reset()
 {
-	m_pTimerThread->Reset();
 	m_flTotalLoadingTime = 0.0f;
 	m_flTime = 0.0f;
 	m_bPaused = TTRUE;
@@ -113,7 +111,6 @@ void ARunTimer::Split()
 
 void ARunTimer::Start()
 {
-	m_pTimerThread->Reset();
 	m_flTotalLoadingTime = 0.0f;
 	m_flTime = 0.0f;
 	m_bPaused = TFALSE;

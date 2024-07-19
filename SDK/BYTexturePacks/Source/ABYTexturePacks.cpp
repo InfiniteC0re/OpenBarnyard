@@ -110,7 +110,7 @@ const char* ABYTexturePacks::GetName()
 
 extern "C"
 {
-	MODLOADER_EXPORT AModInstance* CreateModInstance()
+	MODLOADER_EXPORT AModInstance* CreateModInstance( const T2CommandLine* a_pCommandLine )
 	{
 		TMemory::Initialise(64 * 1024 * 1024, 0);
 

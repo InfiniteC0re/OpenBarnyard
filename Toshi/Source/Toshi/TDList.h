@@ -41,24 +41,24 @@ namespace Toshi {
 			}
 
 		public:
-			TNode& operator=(const TNode& node)
+			TBOOL IsLinked() const
 			{
-				m_Next = node.m_Next;
-				m_Prev = node.m_Prev;
-				return *this;
+				return this != m_Next;
 			}
 
-			TBOOL IsLinked() const { return this != m_Next; }
-
-			void Reset() { m_Next = this; m_Prev = this; }
+			void Reset()
+			{
+				m_Next = this;
+				m_Prev = this;
+			}
 
 			void InsertAfter(TNode* node);
 			void InsertBefore(TNode* node);
 
 			void Remove()
 			{
-				m_Prev->m_Next = m_Next;
 				m_Next->m_Prev = m_Prev;
+				m_Prev->m_Next = m_Next;
 				Reset();
 			}
 
@@ -116,12 +116,9 @@ namespace Toshi {
 
 		void RemoveAll()
 		{
-			auto pNode = m_Root.Next();
-
-			while (pNode != &m_Root)
+			while ( !IsEmpty() )
 			{
-				pNode->Remove();
-				pNode = m_Root.Next();
+				RemoveHead();
 			}
 		}
 

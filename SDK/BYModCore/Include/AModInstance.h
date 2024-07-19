@@ -30,4 +30,7 @@ public:
 	virtual Toshi::TVersion GetVersion() { return { TVERSION(1, 0) }; }
 	virtual Toshi::TTRB* GetAssetFile() { return TNULL; }
 	virtual const PBProperties* GetFileOverrides() { return TNULL; }
+
+public:
+	HMODULE m_hModule;
 };

@@ -83,20 +83,20 @@ namespace Toshi
 			return &m_TaskTree;
 		}
 
-		void DeleteTask(TTask* task)
+		void DeleteTask( TTask* a_pTask )
 		{
-			task->OnPreDestroy();
-			DeleteTaskRecurse(task->Child());
-			DeleteTaskAtomic(task);
+			a_pTask->OnPreDestroy();
+			DeleteTaskRecurse( a_pTask->Child() );
+			DeleteTaskAtomic( a_pTask );
 		}
 
-		void DestroyTask(TTask* task)
+		void DestroyTask( TTask* a_pTask )
 		{
-			TASSERT(task->IsDying());
-			task->OnPreDestroy();
+			TASSERT( a_pTask->IsDying() );
+			a_pTask->OnPreDestroy();
 
-			DeleteTaskRecurse(task->Child());
-			DeleteTaskAtomic(task->Child());
+			DeleteTaskRecurse( a_pTask->Child() );
+			DeleteTaskAtomic( a_pTask->Child() );
 		}
 
 	private:

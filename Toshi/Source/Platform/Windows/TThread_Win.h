@@ -10,11 +10,11 @@
 #undef THREAD_PRIORITY_NORMAL
 #undef THREAD_PRIORITY_TIME_CRITICAL
 
-#include "Toshi/TDList.h"
+#include "Toshi/T2DList.h"
 
 namespace Toshi
 {
-	class TThread : public TDList<TThread>::TNode
+	class TThread : public T2DList<TThread>::Node
 	{
 	public:
 		typedef TINT PRIORITY;
@@ -36,23 +36,10 @@ namespace Toshi
 		virtual ~TThread() { };
 
 		TBOOL Create(size_t a_iStackSize, PRIORITY a_ePriority, uint8_t flag);
+		TBOOL Destroy();
 
-		static TBOOL GetPriority(void* a_hThreadHnd, PRIORITY& a_ePriority)
-		{
-			TASSERT(a_hThreadHnd != NULL, "Thread doesn't exist");
-			TINT iPriority = GetThreadPriority(a_hThreadHnd);
-			TASSERT(iPriority != THREAD_PRIORITY_ERROR_RETURN, "Couldn't get thread priority");
-			a_ePriority = iPriority;
-			return TTRUE;
-		}
-
-		static TBOOL SetPriority(void* a_hThreadHnd, PRIORITY a_ePriority)
-		{
-			TASSERT(a_hThreadHnd != NULL, "Thread doesn't exist");
-			BOOL bResult = SetThreadPriority(a_hThreadHnd, a_ePriority);
-			TASSERT(bResult != FALSE, "Couldn't set priority");
-			return TTRUE;
-		}
+		static TBOOL GetPriority(void* a_hThreadHnd, PRIORITY& a_ePriority);
+		static TBOOL SetPriority(void* a_hThreadHnd, PRIORITY a_ePriority);
 
 		static void Exit(TThread* a_pThread);
 		//static void Sleep(TINT milliSeconds) { usleep(100); }
@@ -69,25 +56,14 @@ namespace Toshi
 		void Create() { InitializeCriticalSection(&m_CriticalSection); }
 		void Delete() { DeleteCriticalSection(&m_CriticalSection); }
 
-		void RemoveThread(TThread* a_pThread)
-		{
-			EnterCriticalSection(&m_CriticalSection);
-			a_pThread->Remove();
-			LeaveCriticalSection(&m_CriticalSection);
-		}
-
-		void InsertThread(TThread* a_pThread)
-		{
-			EnterCriticalSection(&m_CriticalSection);
-			a_pThread->InsertAfter(m_Threads.Begin());
-			LeaveCriticalSection(&m_CriticalSection);
-		}
+		void RemoveThread(TThread* a_pThread);
+		void InsertThread(TThread* a_pThread);
 
 		friend class TThread;
 
 	private:
 		CRITICAL_SECTION m_CriticalSection;
-		TDList<TThread> m_Threads;
+		T2DList<TThread> m_Threads;
 	};
 }
 

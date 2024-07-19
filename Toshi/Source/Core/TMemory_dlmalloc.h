@@ -6,6 +6,8 @@
 
 TOSHI_NAMESPACE_START
 
+#ifdef TMEMORY_USE_DLMALLOC
+
 class TMemoryDL;
 
 class TMemoryDLContext
@@ -167,5 +169,7 @@ private:
     TUINT32 m_PileSize;
     TCHAR m_Name[ TMemoryDL::HEAP_MAXNAME + 1 ];
 };
+
+#endif // TMEMORY_USE_DLMALLOC
 
 TOSHI_NAMESPACE_END

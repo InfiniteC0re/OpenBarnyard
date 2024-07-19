@@ -20,6 +20,7 @@ public:
 	~ARunTimer();
 
 	void Create();
+	void Destroy();
 
 	void Start();
 	void End();
