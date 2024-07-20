@@ -104,7 +104,7 @@ DWORD APIENTRY DllMain(HMODULE hModule, DWORD reason, LPVOID reserved)
 	{
 		TMemory::Initialise(4 * 1024 * 1024, 0);
 		
-#ifndef TOSHI_DEBUG
+#ifdef TOSHI_DEBUG
 		AllocConsole();
 		FILE* fDummy;
 		freopen_s(&fDummy, "CONOUT$", "w", stdout);
