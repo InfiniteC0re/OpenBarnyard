@@ -3,7 +3,6 @@
 
 #include <Math/TVector2.h>
 #include <Toshi/TPString8.h>
-#include <Toshi/T2SimpleArray.h>
 
 class AGUIPicture : public Toshi::TObject
 {
@@ -58,8 +57,8 @@ protected:
 	TINT m_iUnknown1;
 	TINT m_iNumRects1;
 	TINT m_iNumRects2;
-	Toshi::T2SimpleArray<Rectangle> m_pRectangles;
-	Toshi::T2SimpleArray<Image> m_pImages;
+	Rectangle* m_pRectangles;
+	Image* m_pImages;
 	Toshi::TPString8 m_Name;
 	TBOOL m_bIsVisible;
 	TBOOL m_bFlag;

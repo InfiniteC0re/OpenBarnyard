@@ -139,7 +139,7 @@ TBOOL ASkinMesh::CreateResource()
 	TVALIDPTR(pVertexFactory);
 
 	m_pVertexPool = pVertexFactory->CreatePoolResource(m_uiMaxVertices, 1);
-	m_pSubMeshes.Create(m_uiNumSubMeshes);
+	m_pSubMeshes = new ASkinSubMesh[m_uiNumSubMeshes];
 
 	return TTRUE;
 }
@@ -152,7 +152,7 @@ void ASkinMesh::DestroyResource()
 		m_pVertexPool = TNULL;
 	}
 
-	m_pSubMeshes.Destroy();
+	delete[] m_pSubMeshes;
 	m_uiFlags = 0;
 	m_uiMaxVertices = 0;
 }

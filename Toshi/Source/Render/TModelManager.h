@@ -1,7 +1,6 @@
 #pragma once
 #include "TModel.h"
 #include "Toshi/T2DList.h"
-#include "Toshi/T2SimpleArray.h"
 
 namespace Toshi {
 
@@ -72,7 +71,7 @@ namespace Toshi {
 		static ModelNode* CreateModel(const TCHAR* a_szFileName, TModelPtr& a_rModelRef, TTRB* a_pAssetTRB);
 
 	public:
-		inline static T2SimpleArray<ModelNode> ms_pEntries;
+		inline static ModelNode* ms_pEntries;
 		inline static T2DList<ModelNode> ms_oUsedList;
 		inline static T2DList<ModelNode> ms_oFreeList;
 	};

@@ -51,7 +51,7 @@ TBOOL ASoundManager::OnCreate()
 		}
 	, 0);
 
-	m_pS4.Create(32);
+	m_pS4 = new S4[32];
 
 	for (TINT i = 0; i < 32; i++)
 	{
@@ -79,7 +79,7 @@ void ASoundManager::OnDestroy()
 {
 	m_UnkList1.Clear();
 	m_FreeListS4.Clear();
-	m_pS4.Destroy();
+	delete[] m_pS4;
 	m_PauseListener.Disconnect();
 }
 

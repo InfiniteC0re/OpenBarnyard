@@ -21,7 +21,7 @@ void AGUIMatlibPicture::Flush()
 {
 	if (m_iNumRects1 != 0)
 	{
-		if (m_pImages.GetArray() != TNULL)
+		if (m_pImages != TNULL)
 		{
 			for (TINT i = 0; i < m_iNumRects2; i++)
 			{
@@ -35,10 +35,10 @@ void AGUIMatlibPicture::Flush()
 				m_pImages[i].pMaterial = TNULL;
 			}
 
-			m_pImages.Destroy();
+			delete[] m_pImages;
 
 			m_iNumRects2 = 0;
-			m_pRectangles.Destroy();
+			delete[] m_pRectangles;
 
 			m_iNumRects1 = 0;
 			UnloadMatLib();
@@ -56,10 +56,10 @@ void AGUIMatlibPicture::Cache()
 		if (!m_Name.IsEmpty())
 		{
 			m_iNumRects1 = 6;
-			m_pRectangles.Create(6);
+			m_pRectangles = new Rectangle[6];
 
 			m_iNumRects2 = 6;
-			m_pImages.Create(6);
+			m_pImages = new Image[6];
 			LoadMatLib();
 
 			auto pTexFactory = TRenderInterface::GetSingleton()->GetSystemResource<TTextureFactory>(SYSRESOURCE_TEXTUREFACTORY);

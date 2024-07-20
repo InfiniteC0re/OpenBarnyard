@@ -45,16 +45,16 @@ namespace Toshi {
 
 	void TModelManager::Initialise()
 	{
-		TASSERT(ms_pEntries.GetArray() == TNULL);
-		ms_pEntries.Create(MAX_NUM_MODELS);
+		TASSERT( ms_pEntries == TNULL);
+		ms_pEntries = new ModelNode[ MAX_NUM_MODELS ];
 	}
 
 	void TModelManager::Uninitialise()
 	{
-		TASSERT(ms_pEntries.GetArray() != TNULL);
+		TASSERT( ms_pEntries != TNULL);
 		ms_oUsedList.Clear();
 		ms_oFreeList.Clear();
-		ms_pEntries.Destroy();
+		delete[] ms_pEntries;
 	}
 
 	TModelManager::ModelNode* TModelManager::CreateModel(const TCHAR* a_szFileName, TModelPtr& a_rModelRef, TTRB* a_pAssetTRB)

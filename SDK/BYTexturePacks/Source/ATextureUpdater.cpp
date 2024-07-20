@@ -42,8 +42,8 @@ TBOOL MaterialLibrary_LoadTTLData(AMaterialLibrary* a_pMatLib, AMaterialLibrary:
 		iNumTextures = pTTL->m_iNumTextures;
 	}
 
-	a_pMatLib->m_TexturesArray.Create(iNumTextures);
-	a_pMatLib->m_pTextures = a_pMatLib->m_TexturesArray.GetArray();
+	a_pMatLib->m_pTexturesArray = new ATexture[ iNumTextures ];
+	a_pMatLib->m_pTextures = a_pMatLib->m_pTexturesArray;
 	a_pMatLib->m_iNumTextures = iNumTextures;
 
 	for (TINT i = 0; i < iNumTextures; i++)
@@ -220,7 +220,7 @@ void ATextureUpdater::ReloadTexture(const Toshi::TString8& a_rTextureName)
 			{
 				for (TINT i = 0; i < pLibrary->GetNumTextures(); i++)
 				{
-					auto pAppTexture = &pLibrary->m_TexturesArray[i];
+					auto pAppTexture = &pLibrary->m_pTexturesArray[i];
 
 					if (pAppTexture->Name == a_rTextureName)
 					{
@@ -259,7 +259,7 @@ void ATextureUpdater::ReloadAllTextures()
 	{
 		for (TINT i = 0; i < it->GetNumTextures(); i++)
 		{
-			auto pAppTexture = &it->m_TexturesArray[i];
+			auto pAppTexture = &it->m_pTexturesArray[i];
 
 			TString8 texFilePath = g_szTexturePackPath;
 			texFilePath.Concat(pAppTexture->Name, TStringManager::String8Length(pAppTexture->Name) - 3);

@@ -3,7 +3,6 @@
 
 #include <File/TTRB.h>
 
-#include <Toshi/T2SimpleArray.h>
 #include <Toshi/T2DList.h>
 
 #ifdef TOSHI_SKU_WINDOWS
@@ -64,7 +63,7 @@ private:
 
 private:
 	Toshi::TString8 m_Path;
-	Toshi::T2SimpleArray<ATexture> m_TexturesArray;
+	ATexture* m_pTexturesArray;
 	ATexture* m_pTextures;
 	TINT m_iNumTextures;
 	Toshi::TTRB m_TRB;

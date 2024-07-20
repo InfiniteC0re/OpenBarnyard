@@ -6,7 +6,6 @@
 #include <Toshi/TSystem.h>
 #include <Toshi/T2Map.h>
 #include <Toshi/T2DList.h>
-#include <Toshi/T2SimpleArray.h>
 
 #include <File/TFile.h>
 
@@ -78,7 +77,7 @@ private:
 	TINT m_iMinHWChannels;           // 0x4FAC
 	TINT m_iNumChannels;             // 0x4FB0
 	PauseListener m_PauseListener;   // 0x4FB8
-	Toshi::T2SimpleArray<S4> m_pS4;  // 0x4FCC
+	S4* m_pS4;                       // 0x4FCC
 	Toshi::T2DList<S4> m_FreeListS4; // 0x4FD0
 	Toshi::T2DList<S4> m_UnkList1;   // 0x4FD8
 	Toshi::T2DList<S2> m_FreeListS2; // 0x4FE8

@@ -7,7 +7,6 @@
 #include "Platform/DX8/TRenderInterface_DX8.h"
 #endif // TOSHI_SKU_WINDOWS
 
-#include <Toshi/T2SimpleArray.h>
 #include <bink.h>
 
 class ABINKMoviePlayer : public AMoviePlayer
@@ -65,6 +64,6 @@ private:
 	IDirect3DSurface8* m_pSurface;
 	TUINT m_eFormat;
 	TBOOL m_bVideoFitsBackBuffer;
-	Toshi::T2SimpleArray<Rect> m_pRects;
+	Rect* m_pRects;
 	TINT m_iNumRects;
 };

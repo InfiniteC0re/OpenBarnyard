@@ -4,7 +4,6 @@
 
 #include <Plugins/GUI/PGUITRRenderObject.h>
 #include <Toshi/TPString8.h>
-#include <Toshi/T2SimpleArray.h>
 
 class AGUISystem : public Toshi::TTask,
 	public Toshi::TSingleton<AGUISystem>
@@ -43,7 +42,7 @@ private:
 	TUINT m_Unk1;
 	Toshi::TGenericListener m_SomeListener;
 	Toshi::TListener<ARenderer, TINT, AGUISystem> m_RenderGUIListener;
-	Toshi::T2SimpleArray<Toshi::TPString8> m_pStrings;
+	Toshi::TPString8* m_pStrings;
 	AGUIMatlibPicture m_MatLibPicture;
 	TUINT m_Unk2;
 	TUINT m_Unk3;

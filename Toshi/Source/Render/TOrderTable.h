@@ -1,7 +1,6 @@
 #pragma once
 #include "TRenderPacket.h"
 #include "Toshi/TNodeList.h"
-#include "Toshi/T2SimpleArray.h"
 
 namespace Toshi
 {
@@ -100,11 +99,11 @@ namespace Toshi
 		inline static TUINT s_uiNumRenderPackets = 0;
 		inline static TUINT s_uiMaxNumRenderPackets = 0;
 		inline static TUINT s_uiOrigMaxRenderPackets = 0;
-		inline static T2SimpleArray<TRenderPacket> s_pRenderPackets;
+		inline static TRenderPacket* s_pRenderPackets;
 
 		inline static TUINT s_uiMaxMaterials = 0;
 		inline static TUINT s_uiNumRegisteredMaterials = 0;
-		inline static T2SimpleArray<TRegMaterial> s_pRegMaterials;
+		inline static TRegMaterial* s_pRegMaterials;
 		inline static TNodeList<TRegMaterial> s_llRegMatRegisteredList;
 		inline static TNodeList<TRegMaterial> s_llRegMatFreeList;
 

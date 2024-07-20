@@ -1,6 +1,4 @@
 #pragma once
-#include <Toshi/T2SimpleArray.h>
-
 #include <Render/TMesh.h>
 #include <Render/TVertexPoolResourceInterface.h>
 #include <Render/TIndexPoolResourceInterface.h>
@@ -54,5 +52,5 @@ protected:
 	TUINT32 m_uiFlags;
 	TUINT16 m_uiMaxVertices;
 	Toshi::TVertexPoolResourceInterface* m_pVertexPool;
-	Toshi::T2SimpleArray<SubMesh> m_pSubMeshes;
+	SubMesh* m_pSubMeshes;
 };

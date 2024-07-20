@@ -103,7 +103,7 @@ TBOOL ABINKMoviePlayer::OnUpdate(TFLOAT a_fDeltaTime)
 		{
 			if (!m_bVideoFitsBackBuffer || !m_pSurface)
 			{
-				if (!m_pRects.GetArray())
+				if (!m_pRects)
 				{
 					if (!CreateSurfaces())
 					{
@@ -313,7 +313,7 @@ TBOOL ABINKMoviePlayer::CreateAGUISurfaces(TUINT a_uiWidth, TUINT a_uiHeight, D3
 		TUINT uiMaxTextureHeight = caps.MaxTextureHeight;
 
 		m_iNumRects = ((uiHeight - 1) + uiMaxTextureHeight) / uiMaxTextureHeight * ((uiWidth - 1) + uiMaxTextureWidth) / uiMaxTextureWidth;
-		m_pRects.Create(m_iNumRects);
+		m_pRects = new Rect[m_iNumRects];
 
 		auto pDisplayParams = TRenderD3DInterface::Interface()->GetCurrentDisplayParams();
 
@@ -375,7 +375,7 @@ TBOOL ABINKMoviePlayer::CreateAGUISurfaces(TUINT a_uiWidth, TUINT a_uiHeight, D3
 				if (!bCreated)
 				{
 					TASSERT(TFALSE, "ABINKMoviePlayer: Unable to create rectangle");
-					m_pRects.Destroy();
+					delete[] m_pRects;
 					return TFALSE;
 				}
 
@@ -401,7 +401,7 @@ void ABINKMoviePlayer::DestroySurfaces()
 		m_pSurface = TNULL;
 	}
 
-	m_pRects.Destroy();
+	delete[] m_pRects;
 	m_iNumRects = 0;
 }
 

@@ -98,7 +98,7 @@ TBOOL AWorldMesh::CreateResource()
 	TVALIDPTR(pVertexFactory);
 
 	m_pVertexPool = pVertexFactory->CreatePoolResource(m_uiMaxVertices, 1);
-	m_pSubMeshes.Create(NUM_SUBMESHES);
+	m_pSubMeshes = new SubMesh[NUM_SUBMESHES];
 
 	return TTRUE;
 }
@@ -111,7 +111,7 @@ void AWorldMesh::DestroyResource()
 		m_pVertexPool = TNULL;
 	}
 
-	m_pSubMeshes.Destroy();
+	delete[] m_pSubMeshes;
 	m_uiFlags = 0;
 	m_uiMaxVertices = 0;
 }

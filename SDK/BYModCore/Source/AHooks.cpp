@@ -472,8 +472,8 @@ TBOOL MaterialLibrary_LoadTTLData( AMaterialLibrary* a_pMatLib, AMaterialLibrary
 		iNumTextures = pTTL->m_iNumTextures;
 	}
 
-	a_pMatLib->m_TexturesArray.Create( iNumTextures );
-	a_pMatLib->m_pTextures = a_pMatLib->m_TexturesArray.GetArray();
+	a_pMatLib->m_pTexturesArray = new ATexture[ iNumTextures ];
+	a_pMatLib->m_pTextures = a_pMatLib->m_pTexturesArray;
 	a_pMatLib->m_iNumTextures = iNumTextures;
 
 	// Calculate maximum texture size to preallocate a buffer
