@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "ASoundManager.h"
 #include "Assets/AAssetLoader.h"
-#include "AWaveBankFMODFSBStream.h"
+#include "AWaveBankFMODFSB.h"
 
 #include <Plugins/PPropertyParser/PBProperties.h>
 
@@ -155,7 +155,7 @@ AWaveBank* ASoundManager::AllocateWaveBank( const Toshi::TPString8& a_strBank, c
 	if ( a_strType == TPString8( "File" ) )
 	{
 		// Load from a file
-		return new AWaveBankFMODFSBStream( a_strBank, a_strPath );
+		return new AWaveBankFMODFSB( a_strBank, a_strPath );
 	}
 	else if ( a_strType == TPString8( "Stream" ) )
 	{

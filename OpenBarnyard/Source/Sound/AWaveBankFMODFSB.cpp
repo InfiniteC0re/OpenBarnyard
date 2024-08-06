@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "AWaveBankFMODFSBStream.h"
+#include "AWaveBankFMODFSB.h"
 
 #include "Locale/ALocaleManager.h"
 
@@ -28,18 +28,18 @@ TSTATICASSERT( ALocaleManager::NUM_LOCALES == TARRAYSIZE( s_pLangSoundDirectorie
 
 TBOOL g_bIsLoadingFSBFile = TFALSE;
 
-AWaveBankFMODFSBStream::AWaveBankFMODFSBStream( const Toshi::TPString8& a_strBank, const Toshi::TPString8& a_strPath ) : 
+AWaveBankFMODFSB::AWaveBankFMODFSB( const Toshi::TPString8& a_strBank, const Toshi::TPString8& a_strPath ) : 
 	AWaveBank( a_strBank, a_strPath, TFALSE )
 {
 
 }
 
-TBOOL AWaveBankFMODFSBStream::IsReady() const
+TBOOL AWaveBankFMODFSB::IsReady() const
 {
 	return FMUSIC_GetOpenState( (FMUSIC_MODULE*)m_FileHandle ) == 0;
 }
 
-AWaveBank::LOADRESULT AWaveBankFMODFSBStream::Load( TBOOL a_bLocalise )
+AWaveBank::LOADRESULT AWaveBankFMODFSB::Load( TBOOL a_bLocalise )
 {
 	if ( m_iNumLoads > 0 || m_FileHandle != TNULL )
 	{
@@ -121,7 +121,7 @@ AWaveBank::LOADRESULT AWaveBankFMODFSBStream::Load( TBOOL a_bLocalise )
 	return LOADRESULT_ERR;
 }
 
-AWaveBank::UNLOADRESULT AWaveBankFMODFSBStream::Unload()
+AWaveBank::UNLOADRESULT AWaveBankFMODFSB::Unload()
 {
 	if ( m_iNumLoads != 0 && --m_iNumLoads < 1 && m_FileHandle )
 	{
