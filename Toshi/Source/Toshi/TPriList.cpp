@@ -37,9 +37,9 @@ void TGenericPriList::Insert( TNode* a_pNode )
 
 	if ( iPriority < 0 )
 	{
-		TNode* pCurNode = m_oRoot.m_pNext;
+		TNode* pCurNode = m_pNext;
 
-		while ( pCurNode != &m_oRoot && pCurNode->m_iPriority <= iPriority )
+		while ( pCurNode != End() && pCurNode->m_iPriority <= iPriority )
 		{
 			pCurNode = pCurNode->m_pNext;
 		}
@@ -51,8 +51,8 @@ void TGenericPriList::Insert( TNode* a_pNode )
 	}
 	else
 	{
-		TNode* pCurNode = m_oRoot.m_pPrev;
-		while ( pCurNode != &m_oRoot && iPriority < pCurNode->m_iPriority )
+		TNode* pCurNode = m_pPrev;
+		while ( pCurNode != End() && iPriority < pCurNode->m_iPriority )
 		{
 			pCurNode = pCurNode->m_pPrev;
 		}
@@ -71,12 +71,12 @@ void TGenericPriList::Insert( TNode* a_pNode, TINT iPriority )
 
 void TGenericPriList::RemoveAll()
 {
-	TNode* pNode = m_oRoot.Next();
+	TNode* pNode = m_pNext;
 
-	while ( pNode != &m_oRoot )
+	while ( pNode != End() )
 	{
 		pNode->Remove();
-		pNode = m_oRoot.Next();
+		pNode = m_pNext;
 	}
 }
 
@@ -119,11 +119,10 @@ void TGenericPriList::TNode::Remove()
 	m_pPrev = this;
 }
 
-TGenericPriList::TGenericPriList() :
-	m_oRoot( TNode::Unitiailised )
+TGenericPriList::TGenericPriList()
 {
-	m_oRoot.m_pNext = &m_oRoot;
-	m_oRoot.m_pPrev = &m_oRoot;
+	m_pNext = End();
+	m_pPrev = End();
 }
 
 TGenericPriList::~TGenericPriList()

@@ -1,4 +1,6 @@
 #pragma once
+#include <Toshi/TString8.h>
+
 #include <Render/TMesh.h>
 #include <Render/TVertexPoolResourceInterface.h>
 #include <Render/TIndexPoolResourceInterface.h>

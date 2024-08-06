@@ -116,15 +116,11 @@ namespace Toshi {
 		};
 
 	public:
-		void InsertHead( TNode* a_pNode ) { a_pNode->InsertAfter( &m_oRoot ); }
-		void InsertTail( TNode* a_pNode ) { a_pNode->InsertBefore( &m_oRoot ); }
-		void RemoveHead() { if ( !IsEmpty() ) m_oRoot.m_pNext->Remove(); }
-		void RemoveTail() { if ( !IsEmpty() ) m_oRoot.m_pPrev->Remove(); }
-		TBOOL IsEmpty() { return m_oRoot.m_pNext == &m_oRoot; }
-		TNode* Head() { return m_oRoot.m_pNext; }
-		TNode* Tail() { return m_oRoot.m_pPrev; }
-		TNode* Begin() { return m_oRoot.m_pNext; }
-		TNode* End() { return &m_oRoot; }
+		TBOOL IsEmpty() { return m_pNext == End(); }
+		TNode* Head() { return m_pNext; }
+		TNode* Tail() { return m_pPrev; }
+		TNode* Begin() { return m_pNext; }
+		TNode* End() { return (TNode*)this; }
 
 		void Insert( TNode* a_pNode, TINT iPriority );
 		void Insert( TNode* a_pNode );
@@ -136,7 +132,8 @@ namespace Toshi {
 		~TGenericPriList();
 
 	private:
-		TNode m_oRoot;
+		TNode* m_pNext;
+		TNode* m_pPrev;
 	};
 
 	template <class T>
@@ -149,7 +146,7 @@ namespace Toshi {
 
 		Iterator_t Begin() { return TGenericPriList::Begin(); }
 		Iterator_t End() { return TGenericPriList::End(); }
-		TBOOL IsLinked() { return m_oRoot.IsLinked(); }
+		TBOOL IsLinked() { return !IsEmpty(); }
 	};
 
 	template <class T>

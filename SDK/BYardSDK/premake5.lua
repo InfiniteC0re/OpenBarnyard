@@ -1,9 +1,12 @@
 project "BYardSDK"
+	kind "StaticLib"
 	language "C++"
 	cppdialect "C++20"
 	staticruntime "on"
 	characterset "ASCII"
-	kind "SharedItems"
+
+	pchheader "pch.h"
+	pchsource "Source/pch.cpp"
 	
 	ignoredefaultlibraries
 	{
@@ -38,7 +41,6 @@ project "BYardSDK"
 	{
 		"Source",
 		"%{wks.location}/Toshi/Source",
-		"%{wks.location}/OpenBarnyard/Source",
 		"%{IncludeDir.detours}"
 	}
 	
@@ -63,19 +65,16 @@ project "BYardSDK"
 		}
 
 	filter "configurations:Debug"
-		kind "SharedLib"
 		runtime "Debug"
 		defines "TOSHI_DEBUG"
 		symbols "On"
 
 	filter "configurations:Release"
-		kind "SharedLib"
 		runtime "Release"
 		defines "TOSHI_RELEASE"
 		optimize "On"
 
 	filter "configurations:Dist"
-		kind "SharedLib"
 		runtime "Release"
 		defines "TOSHI_DIST"
 		optimize "On"

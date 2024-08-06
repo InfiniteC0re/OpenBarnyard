@@ -55,7 +55,6 @@ project "BYGLRender"
 		"%{wks.location}/SDK/BYGLRender/Vendor/sdl2/include",
 		"%{wks.location}/SDK/BYGLRender/Vendor/glm/include",
 		"%{wks.location}/SDK/BYGLRender/Vendor/glew/include"
-		
 	}
 	
 	externalincludedirs 
