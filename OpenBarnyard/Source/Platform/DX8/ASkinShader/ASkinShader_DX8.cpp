@@ -272,8 +272,8 @@ void ASkinShaderHAL::Render(Toshi::TRenderPacket* a_pRenderPacket)
 	{
 		if (a_pRenderPacket && a_pRenderPacket->GetMesh())
 		{
-			auto pMesh = TCastClass<ASkinMeshHAL>(a_pRenderPacket->GetMesh());
-			auto pMaterial = TCastClass<ASkinMaterialHAL>(pMesh->GetMaterial());
+			auto pMesh = TSTATICCAST(ASkinMeshHAL, a_pRenderPacket->GetMesh());
+			auto pMaterial = TSTATICCAST(ASkinMaterialHAL, pMesh->GetMaterial());
 
 			if (pMesh->GetNumSubMeshes() == 0) return;
 
@@ -482,7 +482,7 @@ void ASkinShaderHAL::Render(Toshi::TRenderPacket* a_pRenderPacket)
 				sm_eRenderStateFlags &= ~0x1b;
 			}
 
-			auto pVertexPool = TCastClass<TVertexPoolResource>(pMesh->GetVertexPool());
+			auto pVertexPool = TSTATICCAST(TVertexPoolResource, pMesh->GetVertexPool());
 
 			TVertexBlockResource::HALBuffer vertexHALBuffer;
 			pVertexPool->GetHALBuffer(&vertexHALBuffer);
@@ -505,7 +505,7 @@ void ASkinShaderHAL::Render(Toshi::TRenderPacket* a_pRenderPacket)
 					iCurrentRegister += 3;
 				}
 
-				auto pIndexPool = TCastClass<TIndexPoolResource>(pSubMesh->pIndexPool);
+				auto pIndexPool = TSTATICCAST(TIndexPoolResource, pSubMesh->pIndexPool);
 				TVALIDPTR(pIndexPool);
 
 				TIndexBlockResource::HALBuffer indexHALBuffer;

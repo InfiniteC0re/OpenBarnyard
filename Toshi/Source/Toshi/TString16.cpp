@@ -11,22 +11,26 @@
 
 namespace Toshi {
 
+	TString16::TString16()
+	{
+		Reset();
+		m_pAllocator = GetAllocator();
+	}
+
 	TString16::TString16(T2Allocator* allocator)
 	{
 		Reset();
 		m_pAllocator = allocator == TNULL ? GetAllocator() : allocator;
-		AllocBuffer(0, TTRUE);
 	}
 
-	TString16::TString16(TString16&& src, T2Allocator* allocator) noexcept
+	TString16::TString16(TString16&& src) noexcept
 	{
-		m_pAllocator = allocator == TNULL ? GetAllocator() : allocator;
+		TString16::m_pAllocator = src.m_pAllocator;
 		TString16::m_iExcessLen = src.m_iExcessLen;
 		TString16::m_iStrLen = src.m_iStrLen;
 		TString16::m_pBuffer = src.m_pBuffer;
-		src.m_iExcessLen = 0;
-		src.m_iStrLen = 0;
-		src.m_pBuffer = NullWString;
+		src.Reset();
+		src.m_pAllocator = GetAllocator();
 	}
 
 	TString16::TString16(const TString16& src, T2Allocator* allocator)
@@ -232,10 +236,17 @@ namespace Toshi {
 		Reset();
 	}
 
-	const TWCHAR* TString16::GetString(TINT a_iIndex) const
+	const TWCHAR* TString16::GetString( TINT a_iIndex ) const
 	{
-		TASSERT(a_iIndex >= 0 && a_iIndex <= m_iStrLen);
-		if (IsIndexValid(a_iIndex)) { return &m_pBuffer[a_iIndex]; }
+		TASSERT( a_iIndex >= 0 && a_iIndex <= m_iStrLen );
+		if ( IsIndexValid( a_iIndex ) ) { return &m_pBuffer[ a_iIndex ]; }
+		return TNULL;
+	}
+
+	TWCHAR* TString16::GetStringUnsafe( TINT a_iIndex )
+	{
+		TASSERT( a_iIndex >= 0 && a_iIndex <= m_iStrLen );
+		if ( IsIndexValid( a_iIndex ) ) { return &m_pBuffer[ a_iIndex ]; }
 		return TNULL;
 	}
 
@@ -323,23 +334,33 @@ namespace Toshi {
 		return _wcsnicmp(GetString(), a_pcString, param_2);
 	}
 
-	TString16 TString16::Mid(TINT param_1, TINT param_2) const
+	TString16 TString16::Mid(TINT a_iFirst, TINT a_iCount ) const
 	{
-		if (param_2 < 0)
+		if ( a_iFirst < 0 )
 		{
-			param_2 = 0;
+			a_iFirst = 0;
 		}
-		else if (Length() <= param_2)
+		else if ( Length() <= a_iFirst )
 		{
+			// Can't return string bigger that the original
 			return TString16();
 		}
 
-		// Rewrite not correct
-		TString16 str = TString16(Length() - param_2);
-		TUtil::MemCopy(str.m_pBuffer, GetString(param_2), (Length() - param_2) * sizeof(TWCHAR));
-		m_pBuffer[m_iStrLen - param_2] = 0;
+		if ( a_iCount < 0 || Length() < a_iFirst + a_iCount )
+		{
+			a_iCount = Length() - a_iFirst;
+		}
 
-		return str;
+		TString16 strResult( a_iCount, TNULL );
+		TUtil::MemCopy( strResult.GetStringUnsafe(), GetString( a_iFirst ), a_iCount * 2 );
+		strResult[ a_iCount ] = '\0';
+
+		return strResult;
+	}
+
+	TString16 TString16::Right( TINT a_iFrom ) const
+	{
+		return Mid( a_iFrom, Length() - a_iFrom );
 	}
 
 	TBOOL TString16::IsAllLowerCase() const

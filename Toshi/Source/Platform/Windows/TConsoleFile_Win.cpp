@@ -132,9 +132,4 @@ namespace Toshi {
 		return TString8();
 	}
 
-	TBOOL TConsoleFileSystem::MakeDirectory( const TString8& a_rcDirectory )
-	{
-		return TFALSE;
-	}
-
 }

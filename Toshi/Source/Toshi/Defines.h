@@ -9,6 +9,7 @@
 #define STRINGIFY(X) STRINGIFY8(X)
 #define BITFLAG(x) (1U << (x))
 #define CONCATTOKEN(x, y) x ## y
+#define OVERRIDE override
 
 #define TVERSION(VER_MAJOR, VER_MINOR) ((VER_MAJOR << 16) | VER_MINOR)
 
@@ -50,6 +51,11 @@
 #define TALIGNAS(VALUE) alignas(VALUE)
 #define TINLINE inline
 #define TFORCEINLINE __forceinline
+
+#define TANONYMOUSVAR_1(X, Y) CONCATTOKEN(X, Y)
+#define TANONYMOUSVAR(TYPE) TYPE TANONYMOUSVAR_1(_anonymous, __COUNTER__)
+
+#define TDECLARE_POINTER_HANDLE(NAME) typedef void* NAME
 
 #ifdef TOSHI_ENABLE_ASSERTS
 	#define TFIREFLAG static TBOOL FIREFLAG = TFALSE; if (!FIREFLAG)

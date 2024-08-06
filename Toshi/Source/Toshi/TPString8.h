@@ -144,7 +144,7 @@ namespace Toshi {
 			a_pPool->Get(m_pPtr, a_szString, TNULL);
 		}
 
-		TFORCEINLINE TPString8(TPooledString8* a_pPooled)
+		TFORCEINLINE explicit TPString8(TPooledString8* a_pPooled)
 		{
 			m_pPtr = a_pPooled;
 			Increment();
@@ -169,7 +169,7 @@ namespace Toshi {
 
 		TFORCEINLINE const TCHAR* GetString() const
 		{
-			return m_pPtr ? m_pPtr->m_oString.GetString() : ms_sEmpty.GetString();
+			return GetString8().GetString();
 		}
 
 		TFORCEINLINE const TString8& GetString8() const

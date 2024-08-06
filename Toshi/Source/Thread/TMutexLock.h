@@ -1,8 +1,7 @@
 #pragma once
 #include "TMutex.h"
 
-#define TMUTEX_LOCK_SCOPE_NAMED( mutex, name ) Toshi::TMutexLock CONCATTOKEN(_mutex_lock_, name) ( mutex )
-#define TMUTEX_LOCK_SCOPE( mutex ) TMUTEX_LOCK_SCOPE_NAMED( mutex, __COUNTER__ )
+#define TMUTEX_LOCK_SCOPE( mutex ) TANONYMOUSVAR( Toshi::TMutexLock ) ( mutex )
 
 namespace Toshi
 {

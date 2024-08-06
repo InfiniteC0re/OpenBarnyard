@@ -26,10 +26,4 @@ namespace Toshi {
 		return TString8();
 	}
 
-	TBOOL TNullFileSystem::MakeDirectory(const TString8& a_rcDirectory)
-	{
-		TIMPLEMENT();
-		return TFALSE;
-	}
-
 }

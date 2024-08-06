@@ -408,19 +408,20 @@ void ATerrainSection::ModelNode::Render()
 {
 	if (m_bCreated)
 	{
-		if (m_pAnimatedMaterial)
+		AWorldMaterialHAL* pAnimatedMaterial = TDYNAMICCAST(AWorldMaterialHAL, m_pAnimatedMaterial);
+		
+		if ( pAnimatedMaterial )
 		{
-			auto pScheduler = g_oSystemManager.GetScheduler();
-			auto pMaterial = TCastClass<AWorldMaterialHAL>(m_pAnimatedMaterial);
+			TScheduler* pScheduler = g_oSystemManager.GetScheduler();
 
-			pMaterial->AddUVOffsetY(1, pScheduler->GetCurrentDeltaTime() * 0.02f);
+			pAnimatedMaterial->AddUVOffsetY(1, pScheduler->GetCurrentDeltaTime() * 0.02f);
 
-			if (1.0 <= pMaterial->GetUVOffsetY(1))
-				pMaterial->AddUVOffsetY(1, -1.0f);
+			if (1.0 <= pAnimatedMaterial->GetUVOffsetY(1))
+				pAnimatedMaterial->AddUVOffsetY(1, -1.0f);
 		}
 
-		auto pTerrain = ATerrain::GetSingleton();
-		auto pShader = TCastClass<AWorldShaderHAL>(AWorldShader::GetSingleton());
+		ATerrain* pTerrain = ATerrain::GetSingleton();
+		AWorldShaderHAL* pShader = TSTATICCAST(AWorldShaderHAL, AWorldShader::GetSingleton());
 
 		if (m_eFlags & MNF_USE_LIGHTING)
 			pShader->SetColours(pTerrain->GetLitShadowColor(), pTerrain->GetLitAmbientColor());
@@ -459,7 +460,7 @@ void ATerrainSection::ModelNode::SetGlow(TBOOL a_bIsGlow)
 			for (TINT k = 0; k < rLOD.iNumMeshes; k++)
 			{
 				auto pMesh = rLOD.ppMeshes[k];
-				auto pMaterial = TCastClass<AWorldMaterial>(pMesh->GetMaterial());
+				auto pMaterial = TSTATICCAST(AWorldMaterial, pMesh->GetMaterial());
 
 				pMesh->SetFlags(TMesh::State_Glow, TTRUE);
 				pMaterial->SetFlags(TMaterial::FLAGS_GLOW, a_bIsGlow);

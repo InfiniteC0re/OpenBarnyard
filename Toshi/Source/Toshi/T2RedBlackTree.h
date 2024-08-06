@@ -371,6 +371,11 @@ namespace Toshi
 			foundNode = TSTATICCAST(Node, &m_oRoot);
 			return foundNode;
 		}
+
+		TSIZE Size() const
+		{
+			return GetNumElements();
+		}
 	};
 
 }

@@ -140,7 +140,7 @@ void AModelLoader::MaterialApplyClamp(Toshi::TMaterial* a_pMaterial, const TCHAR
 	{
 		if (a_pTexture)
 		{
-			auto pTexture = TCastClass<TTextureResourceHAL>(a_pTexture);
+			auto pTexture = TDYNAMICCAST( TTextureResourceHAL, a_pTexture );
 
 			if (pClampedMaterial->eAddressUState > 0)
 				pTexture->SetAddressUState(2);
@@ -194,7 +194,8 @@ Toshi::TMaterial* AModelLoader::CreateMaterial(Toshi::TShader* a_pShader, const 
 
 	if (pTMDMaterial)
 	{
-		pTexture = TCastClass<TTextureResourceHAL>(
+		pTexture = TDYNAMICCAST(
+			TTextureResourceHAL,
 			AMaterialLibraryManager::GetSingleton()->FindTexture(pTMDMaterial->szTextureFile)
 		);
 
@@ -203,7 +204,10 @@ Toshi::TMaterial* AModelLoader::CreateMaterial(Toshi::TShader* a_pShader, const 
 	else
 	{
 		TTRACE("Couldn't find texture for material '%s'", a_szMaterialName);
-		pTexture = TCastClass<TTextureResourceHAL>(TRenderD3DInterface::Interface()->GetInvalidTexture());
+		pTexture = TDYNAMICCAST(
+			TTextureResourceHAL,
+			TRenderD3DInterface::Interface()->GetInvalidTexture()
+		);
 		szTextureName = "invalid";
 	}
 
@@ -217,7 +221,7 @@ Toshi::TMaterial* AModelLoader::CreateMaterial(Toshi::TShader* a_pShader, const 
 
 	if (a_pShader->IsA(&TGetClass(AWorldShader)))
 	{
-		auto pShader = TCastClass<AWorldShaderHAL>(a_pShader);
+		auto pShader = TDYNAMICCAST(AWorldShaderHAL, a_pShader);
 		auto pMaterial = pShader->CreateMaterial(TNULL);
 		pMaterial->Create(bIsAlpha ? 1 : 0);
 		pMaterial->SetTexture(0, pTexture);
@@ -429,21 +433,21 @@ TBOOL AModelLoader::AModelLoaderLoadTRBCallback(Toshi::TModel* a_pModel)
 		{
 		LoadAsWorldModel:
 			LoadWorldLOD(a_pModel, i, &a_pModel->m_LODs[i]);
+			continue;
 		}
 		else if (pTRBLod->m_eShader == TTMDWin::ST_SKIN)
 		{
 			LoadSkinLOD(a_pModel, i, &a_pModel->m_LODs[i], pTRBLod);
+			continue;
 		}
 		else if (pTRBLod->m_eShader == TTMDWin::ST_GRASS)
 		{
 			TTRACE("Loading grass models is not yet implemented, loading as world model\n");
 			goto LoadAsWorldModel;
 		}
-		else
-		{
-			TASSERT(!"The model is using unknown shader");
-			return TFALSE;
-		}
+		
+		TASSERT( !"The model is using an unknown shader" );
+		return TFALSE;
 	}
 	
 	return TTRUE;

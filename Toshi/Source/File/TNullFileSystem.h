@@ -16,10 +16,9 @@ namespace Toshi {
 		//-----------------------------------------------------------------------------
 		// TFileSystem
 		//-----------------------------------------------------------------------------
-		virtual TFile* CreateFile(const TString8& a_rcFileName, TFILEMODE a_eFileMode) override;
-		virtual void DestroyFile(TFile* a_pFile) override;
-		virtual TString8 MakeInternalPath(const TString8& a_rcPath) override;
-		virtual TBOOL MakeDirectory(const TString8& a_rcDirectory) override;
+		virtual TFile* CreateFile(const TString8& a_rcFileName, TFILEMODE a_eFileMode) OVERRIDE;
+		virtual void DestroyFile(TFile* a_pFile) OVERRIDE;
+		virtual TString8 MakeInternalPath(const TString8& a_rcPath) OVERRIDE;
 	};
 
 }

@@ -25,6 +25,8 @@ int main( int argc, char** argv )
 
 	TUtil::ToshiCreate( toshiParams );
 
+	TString8 str1("hello!");
+	str1.Mid( 1, 2 );
 }
 
 //#include "pch.h"

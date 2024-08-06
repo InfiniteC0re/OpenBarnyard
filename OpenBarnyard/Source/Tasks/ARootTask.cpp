@@ -285,6 +285,8 @@ void ARootTask::CreateGameSystem()
 
 	AFadeManager::GetSingleton()->StopAllFades();
 	g_oLoadScreen.StartLoading(9, TTRUE);
+
+	ASoundManager::GetSingleton()->LoadWaveBanks( "soundmetadata" );
 	
 	// ...
 	m_pGameSystemManager = g_oSystemManager.GetScheduler()->CreateTask<AGameSystemManager>(this);

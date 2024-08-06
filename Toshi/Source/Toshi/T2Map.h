@@ -29,6 +29,11 @@ namespace Toshi {
 			m_RedBlackTree.DeleteAll();
 		}
 
+		TSIZE Size() const
+		{
+			return m_RedBlackTree.Size();
+		}
+
 		ValueType* Insert(const KeyType& key, const ValueType& value)
 		{
 			Node* result = TNULL;

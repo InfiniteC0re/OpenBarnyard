@@ -48,4 +48,9 @@ public:
 	virtual size_t GetCapacity() override;
 };
 
+TFORCEINLINE T2Allocator* GetGlobalAllocator()
+{
+	return &T2Allocator::s_GlobalAllocator;
+}
+
 }

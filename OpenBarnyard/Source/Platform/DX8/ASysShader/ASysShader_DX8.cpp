@@ -179,8 +179,8 @@ void ASysShaderHAL::Render(Toshi::TRenderPacket* pPacket)
 	pDevice->SetTransform(D3DTS_WORLDMATRIX(0), (D3DMATRIX*)&pPacket->GetModelViewMatrix());
 	pDevice->SetRenderState(D3DRS_ZBIAS, pMeshHAL->GetZBias());
 	
-	auto pVertexPool = TCastClass<TVertexPoolResource>(pMeshHAL->GetVertexPool());
-	auto pIndexPool = TCastClass<TIndexPoolResource>(pMeshHAL->GetIndexPool());
+	auto pVertexPool = TDYNAMICCAST(TVertexPoolResource, pMeshHAL->GetVertexPool());
+	auto pIndexPool = TDYNAMICCAST(TIndexPoolResource, pMeshHAL->GetIndexPool());
 
 	TVertexBlockResource::HALBuffer vertexHALBuffer;
 	pVertexPool->GetHALBuffer(&vertexHALBuffer);

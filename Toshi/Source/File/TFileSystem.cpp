@@ -20,7 +20,7 @@ namespace Toshi {
 	{
 		//???
 		// m_iStringCount = m_iStringCount
-		m_Handle = NULL;
+		m_NextFileHandle = NULL;
 	}
 
 	void TFileSystem::SetPrefix(const TString8& a_rcPrefix)
@@ -34,6 +34,14 @@ namespace Toshi {
 				m_Prefix[i] = '\\';
 			}
 		}
+	}
+
+	TBOOL TFileSystem::ToNative( const TString8& a_rcPath, TNativeFileInfo& a_rOutInfo )
+	{
+		a_rOutInfo.InternalPath = MakeInternalPath( a_rcPath );
+		a_rOutInfo.Offset = 0;
+		a_rOutInfo.Length = 0;
+		return TTRUE;
 	}
 
 	TFileSystem& TFileSystem::operator=(TFileSystem& a_rFileSystem)

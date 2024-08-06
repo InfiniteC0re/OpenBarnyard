@@ -277,7 +277,7 @@ void ATerrain::Render()
 
 	if (pCameraObject)
 	{
-		auto pWorldShader = TCastClass<AWorldShaderHAL>(AWorldShader::GetSingleton());
+		auto pWorldShader = TDYNAMICCAST(AWorldShaderHAL, AWorldShader::GetSingleton());
 
 		m_DefaultShadowColor = pWorldShader->GetShadowColour();
 		m_DefaultAmbientColor = pWorldShader->GetAmbientColour();
@@ -861,7 +861,7 @@ static void RenderCellMeshWin(CellMeshSphere* a_pMeshSphere, RenderData* a_pRend
 	colour.z = 0.1952941f;
 	colour.w = 1.0f;
 
-	TCastClass<AWorldShaderHAL>(AWorldShader::GetSingleton())->SetColours(colour, colour);
+	TDYNAMICCAST(AWorldShaderHAL, AWorldShader::GetSingleton())->SetColours(colour, colour);
 	a_pMeshSphere->m_pCellMesh->pMesh->Render();
 }
 

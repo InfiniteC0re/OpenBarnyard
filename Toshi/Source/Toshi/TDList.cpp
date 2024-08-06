@@ -7,97 +7,104 @@
 //-----------------------------------------------------------------------------
 #include "Core/TMemoryDebugOn.h"
 
-namespace Toshi {
+TOSHI_NAMESPACE_START
 
-	void TGenericDList::TNode::InsertAfter(TNode* node)
-	{
-		TASSERT(!IsLinked(), "TNode::InsertAfter - TNode shouldn't be linked");
+TGenericDList::TNode::TNode()
+{
+	Reset();
+}
 
-		m_Prev = node;
-		m_Next = node->m_Next;
-		node->m_Next = this;
-		m_Next->m_Prev = this;
-	}
-
-	void TGenericDList::TNode::InsertBefore(TNode* node)
-	{
-		TASSERT(!IsLinked(), "TNode::InsertBefore - TNode shouldn't be linked");
-
-		m_Next = node;
-		m_Prev = node->m_Prev;
-		node->m_Prev = this;
-		m_Prev->m_Next = this;
-	}
-
-	void TGenericPriList::TNode::InsertAfter(TNode* node)
-	{
-		TASSERT(!IsLinked(), "TNode::InsertAfter - TNode shouldn't be linked");
-
-		m_iPriority = -0x8000;
-		m_Prev = node;
-		m_Next = node->m_Next;
-		node->m_Next = this;
-		m_Next->m_Prev = this;
-	}
-
-	void TGenericPriList::TNode::InsertBefore(TNode* node)
-	{
-		TASSERT(!IsLinked(), "TNode::InsertBefore - TNode shouldn't be linked");
-
-		m_iPriority = 0x7FFF;
-		m_Next = node;
-		m_Prev = node->m_Prev;
-		node->m_Prev = this;
-		m_Prev->m_Next = this;
-	}
-
-	void TGenericPriList::Insert(TNode* node)
-	{
-		TINT priority = node->m_iPriority;
-
-		if (priority < 0)
-		{
-			TNode* curNode = GetRoot().m_Next;
-
-			while (curNode != &GetRoot() && curNode->m_iPriority <= priority)
-			{
-				curNode = curNode->m_Next;
-			}
-
-			node->m_Next = curNode;
-			node->m_Prev = curNode->m_Prev;
-			curNode->m_Prev = node;
-			node->m_Prev->m_Next = node;
-		}
-		else
-		{
-			TNode* curNode = GetRoot().m_Prev;
-			while (curNode != &GetRoot() && priority < curNode->m_iPriority)
-			{
-				curNode = curNode->m_Prev;
-			}
-			node->m_Prev = curNode;
-			node->m_Next = curNode->m_Next;
-			curNode->m_Next = node;
-			node->m_Next->m_Prev = node;
-		}
-	}
-
-	void TGenericPriList::Insert(TNode* node, TINT iPriority)
-	{
-		node->SetPriority(iPriority);
-		Insert(node);
-	}
-
-	void TGenericPriList::RemoveAll()
-	{
-		auto pNode = m_Next;
-
-		while (pNode != &GetRoot())
-		{
-			pNode->Remove();
-			pNode = m_Next;
-		}
-	}
+TGenericDList::TNode::TNode( TUninitialised )
+{
 
 }
+
+TGenericDList::TNode::~TNode()
+{
+	Remove();
+}
+
+void TGenericDList::TNode::InsertAfter( TNode* a_pNode )
+{
+	TASSERT( !IsLinked(), "TNode::InsertAfter - TNode shouldn't be linked" );
+
+	m_pPrev = a_pNode;
+	m_pNext = a_pNode->m_pNext;
+	a_pNode->m_pNext = this;
+	m_pNext->m_pPrev = this;
+}
+
+void TGenericDList::TNode::InsertBefore( TNode* a_pNode )
+{
+	TASSERT( !IsLinked(), "TNode::InsertBefore - TNode shouldn't be linked" );
+
+	m_pNext = a_pNode;
+	m_pPrev = a_pNode->m_pPrev;
+	a_pNode->m_pPrev = this;
+	m_pPrev->m_pNext = this;
+}
+
+void TGenericDList::TNode::Remove()
+{
+	m_pNext->m_pPrev = m_pPrev;
+	m_pPrev->m_pNext = m_pNext;
+	Reset();
+}
+
+void TGenericDList::TNode::Reset()
+{
+	m_pPrev = this;
+	m_pNext = this;
+}
+
+void TGenericDList::InsertSegmentAfter( TNode* a_pNode1, TNode* a_pNode2, TNode* a_pNode3 )
+{
+	a_pNode1->m_pNext = a_pNode3;
+	a_pNode2->m_pPrev = a_pNode3->m_pPrev;
+	a_pNode1->m_pNext->m_pPrev = a_pNode1;
+	a_pNode2->m_pPrev->m_pNext = a_pNode2;
+}
+
+void TGenericDList::InsertSegmentBefore( TNode* a_pNode1, TNode* a_pNode2, TNode* a_pNode3 )
+{
+	a_pNode2->m_pPrev = a_pNode3;
+	a_pNode1->m_pNext = a_pNode3->m_pNext;
+	a_pNode2->m_pPrev->m_pNext = a_pNode2;
+	a_pNode1->m_pNext->m_pPrev = a_pNode1;
+}
+
+TGenericDList::TGenericDList()
+{
+
+}
+
+TGenericDList::~TGenericDList()
+{
+	RemoveAll();
+}
+
+void TGenericDList::InsertSegmentAtHead( TNode* a_pNode1, TNode* a_pNode2 )
+{
+	a_pNode1->m_pNext = &m_oRoot;
+	a_pNode2->m_pPrev = m_oRoot.m_pPrev;
+	a_pNode1->m_pNext->m_pPrev = a_pNode1;
+	a_pNode2->m_pPrev->m_pNext = a_pNode2;
+}
+
+void TGenericDList::InsertSegmentAtTail( TNode* a_pNode1, TNode* a_pNode2 )
+{
+	a_pNode2->m_pPrev = &m_oRoot;
+	a_pNode1->m_pNext = m_oRoot.m_pNext;
+	a_pNode2->m_pPrev->m_pNext = a_pNode2;
+	a_pNode1->m_pNext->m_pPrev = a_pNode1;
+}
+
+void TGenericDList::RemoveAll()
+{
+	while ( !IsEmpty() )
+	{
+		RemoveHead();
+	}
+}
+
+TOSHI_NAMESPACE_END

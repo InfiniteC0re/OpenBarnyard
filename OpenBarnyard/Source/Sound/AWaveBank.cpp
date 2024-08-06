@@ -1,0 +1,102 @@
+#include "pch.h"
+#include "AWaveBank.h"
+#include "ASoundManager.h"
+
+#include <ToshiTools/T2DynamicVector.h>
+
+#include <Plugins/PPropertyParser/PBProperties.h>
+
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include "Core/TMemoryDebugOn.h"
+
+TOSHI_NAMESPACE_USING
+
+AWaveBank::AWaveBank( const Toshi::TPString8& a_strBank, const Toshi::TPString8& a_strPath, TBOOL a_bSetFrequency )
+{
+	m_iNumWaves = 0;
+	m_iNumLoads = 0;
+	m_strBank = a_strBank;
+	m_strPath = a_strPath;
+	m_pWaves = TNULL;
+	
+	m_FileHandle = TNULL;
+	m_bSetFrequency = a_bSetFrequency;
+
+	ASoundManager::ms_WaveBanks.Insert( a_strBank, this );
+}
+
+AWaveSampleHandle AWaveBank::GetWaveSample( TUINT a_uiNumSample ) const
+{
+	return m_pWaves[ a_uiNumSample ].pSampleHandle;
+}
+
+void AWaveBank::Unknown( void* a_Unknown )
+{
+
+}
+
+AWaveBank::~AWaveBank()
+{
+	ASoundManager::ms_WaveBanks.Remove( m_strBank );
+	delete[] m_pWaves;
+}
+
+void AWaveBank::ParseWavesData( const PBProperties* a_pBankProperties, TUINT a_uiForcedFlags )
+{
+	TVALIDPTR( a_pBankProperties );
+
+	m_iNumWaves = 0;
+
+	T2DynamicVector<AWave> vecWaves( GetGlobalAllocator(), 128, 128 );
+
+	for ( TUINT i = 0; i < a_pBankProperties->GetPropertyCount(); i++ )
+	{
+		const PBProperties::PBProperty* pProperty = a_pBankProperties->GetProperty( i );
+
+		// Skip any properties other than Wave
+		if ( pProperty->GetName().GetString()[ 0 ] != 'W' ) continue;
+
+		TUINT uiFrequency = 22050;
+		TFLOAT fLength = 0.0f;
+		TUINT uiFlags = a_uiForcedFlags;
+
+		const PBProperties* pWaveProperties = pProperty->GetValue()->GetProperties();
+
+		// Parse flags
+		const PBPropertyValue* pFlagsProperty = pWaveProperties->GetOptionalProperty( "flags" );
+		if ( pFlagsProperty && uiFlags == 0 ) uiFlags = pFlagsProperty->GetUINT32();
+
+		// Parse frequency
+		const PBPropertyValue* pFreqProperty = pWaveProperties->GetOptionalProperty( "frequency" );
+		if ( pFreqProperty )
+		{
+			if ( m_bSetFrequency )
+				uiFrequency = pFreqProperty->GetInteger();
+			else
+				uiFrequency = ASoundManager::GetSingleton()->m_uiGlobalFrequency;
+		}
+
+		// Parse length
+		const PBPropertyValue* pLengthProperty = pWaveProperties->GetOptionalProperty( "length" );
+		if ( pLengthProperty )
+		{
+			if ( pLengthProperty->GetType() == PBPropertyValue::Type::Float )
+				fLength = pLengthProperty->GetFloat();
+			else
+				fLength = TFLOAT( pLengthProperty->GetInteger() );
+		}
+
+		vecWaves.EmplaceBack( uiFlags, uiFrequency, fLength, TNULL, -1 );
+		m_iNumWaves += 1;
+	}
+
+	// Allocate the actual array that will store info about samples
+	m_pWaves = new AWave[ m_iNumWaves ];
+
+	// Copy data from the vector
+	for ( TINT i = 0; i < m_iNumWaves; i++ )
+		m_pWaves[ i ] = vecWaves[ i ];
+}

@@ -30,8 +30,8 @@ public:
 		Lang_NUMOF
 	};
 
-	constexpr static size_t NUM_LOCALES = TARRAYSIZE(s_pLangDataFileNames);
-	TSTATICASSERT(Lang_NUMOF == NUM_LOCALES);
+	constexpr static TSIZE NUM_LOCALES = TARRAYSIZE( s_pLangDataFileNames );
+	TSTATICASSERT( Lang_NUMOF == NUM_LOCALES );
 
 public:
 	ALocaleManager();
