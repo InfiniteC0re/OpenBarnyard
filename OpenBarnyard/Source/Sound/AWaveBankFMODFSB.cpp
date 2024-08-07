@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "AWaveBankFMODFSB.h"
+#include "ASoundManager.h"
 
 #include "Locale/ALocaleManager.h"
 
@@ -48,7 +49,7 @@ AWaveBank::LOADRESULT AWaveBankFMODFSB::Load( LOADFLAGS a_uiFlags, TINT a_iBuffe
 	}
 
 	TString8 strFileName;
-	strFileName += SOUNDS_BASE_DIRECTORY;
+	strFileName += ASoundManager::SOUNDS_BASE_DIRECTORY;
 	strFileName += "FSB/";
 
 	if ( a_uiFlags & LOADFLAGS_LOCALISE )

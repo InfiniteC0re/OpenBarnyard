@@ -35,7 +35,7 @@ AWaveBank::LOADRESULT AWaveBankFMODFSBStream::Load( LOADFLAGS a_uiFlags, TINT a_
 	}
 
 	TString8 strFileName;
-	strFileName += SOUNDS_BASE_DIRECTORY;
+	strFileName += ASoundManager::SOUNDS_BASE_DIRECTORY;
 	strFileName += "FSB/";
 
 	strFileName += m_strPath.GetString8();

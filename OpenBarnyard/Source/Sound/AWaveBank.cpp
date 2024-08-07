@@ -94,7 +94,7 @@ void AWaveBank::ParseWavesData( const PBProperties* a_pBankProperties, TUINT a_u
 	}
 
 	// Allocate the actual array that will store info about samples
-	m_pWaves = new AWave[ m_iNumWaves ];
+	m_pWaves = new ( AMemory::GetMemBlock( AMemory::POOL_Sound ) ) AWave[ m_iNumWaves ];
 
 	// Copy data from the vector
 	for ( TINT i = 0; i < m_iNumWaves; i++ )

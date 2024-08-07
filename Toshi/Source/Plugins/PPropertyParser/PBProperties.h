@@ -94,6 +94,11 @@ public:
 		return m_eType;
 	}
 
+	void* GetRaw() const
+	{
+		return m_uValue.Pointer;
+	}
+
 	TBOOL GetBoolean() const
 	{
 		TASSERT( m_eType == Type::Bool );
@@ -264,6 +269,43 @@ private:
 		class PBPropertyValueArray* Array;
 	} m_uValue;
 };
+
+class PBProperties;
+class PBPropertyValueArray;
+
+template <typename T>
+struct PBPropertiesTypeCast { };
+
+template <>
+struct PBPropertiesTypeCast<TINT> { static constexpr PBPropertyValue::Type type = PBPropertyValue::Type::Int; };
+
+template <>
+struct PBPropertiesTypeCast<TUINT32> { static constexpr PBPropertyValue::Type type = PBPropertyValue::Type::UInt32; };
+
+template <>
+struct PBPropertiesTypeCast<TFLOAT> { static constexpr PBPropertyValue::Type type = PBPropertyValue::Type::Float; };
+
+template <>
+struct PBPropertiesTypeCast<TBOOL> { static constexpr PBPropertyValue::Type type = PBPropertyValue::Type::Bool; };
+
+template <>
+struct PBPropertiesTypeCast<PBProperties*> { static constexpr PBPropertyValue::Type type = PBPropertyValue::Type::Properties; };
+
+template <>
+struct PBPropertiesTypeCast<PBPropertyValueArray*> { static constexpr PBPropertyValue::Type type = PBPropertyValue::Type::Array; };
+
+template <>
+struct PBPropertiesTypeCast<TCHAR*> { static constexpr PBPropertyValue::Type type = PBPropertyValue::Type::String; };
+
+template <>
+struct PBPropertiesTypeCast<const TCHAR*> { static constexpr PBPropertyValue::Type type = PBPropertyValue::Type::String; };
+
+#ifdef __TOSHI_TPSTRING8_H__
+
+template <>
+struct PBPropertiesTypeCast<Toshi::TPString8> { static constexpr PBPropertyValue::Type type = PBPropertyValue::Type::String; };
+
+#endif // __TOSHI_TPSTRING8_H__
 
 class PBPropertyValueArray
 {
@@ -731,6 +773,21 @@ public:
 		}
 
 		return TNULL;
+	}
+
+	template <typename T>
+	TBOOL GetOptionalPropertyValue( T& a_rOutValue, const TCHAR* a_szName ) const
+	{
+		const PBPropertyValue* pFoundProperty = GetOptionalProperty( a_szName );
+
+		if ( pFoundProperty && pFoundProperty->GetType() == PBPropertiesTypeCast<T>::type )
+		{
+			void* rawValue = pFoundProperty->GetRaw();
+			a_rOutValue = *TREINTERPRETCAST( T*, &rawValue );
+			return TTRUE;
+		}
+
+		return TFALSE;
 	}
 
 #ifdef __TOSHI_TPSTRING8_H__

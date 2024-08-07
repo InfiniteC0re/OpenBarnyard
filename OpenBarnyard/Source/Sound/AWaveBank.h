@@ -28,8 +28,6 @@ public:
 		UNLOADRESULT_OK = 0
 	};
 
-	static constexpr const TCHAR* SOUNDS_BASE_DIRECTORY = "Data/Sound/";
-
 public:
 	AWaveBank( const Toshi::TPString8& a_strBank, const Toshi::TPString8& a_strPath, TBOOL a_bSetFrequency );
 

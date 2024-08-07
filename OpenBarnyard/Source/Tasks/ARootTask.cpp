@@ -286,7 +286,7 @@ void ARootTask::CreateGameSystem()
 	AFadeManager::GetSingleton()->StopAllFades();
 	g_oLoadScreen.StartLoading(9, TTRUE);
 
-	ASoundManager::GetSingleton()->LoadWaveBanks( "soundmetadata" );
+	ASoundManager::GetSingleton()->LoadWaveBanksInfo( "soundmetadata" );
 	
 	// ...
 	m_pGameSystemManager = g_oSystemManager.GetScheduler()->CreateTask<AGameSystemManager>(this);
@@ -328,23 +328,32 @@ void ARootTask::CreateGameSystem()
 	OnActivate();
 }
 
+TPSTRING8_DECLARE( ui );
 TPSTRING8_DECLARE( music );
 
 void ARootTask::LoadFrontEnd()
 {
 	TIMPLEMENT();
+	ASoundManager* pSoundManager = ASoundManager::GetSingleton();
+
+	// Load ui & music soundbanks
+	pSoundManager->LoadSoundBank( TPS8( ui ), TFALSE, TTRUE );
+	pSoundManager->LoadSoundBank( TPS8( music ), TFALSE, TFALSE );
 
 	AAssetLoader::LoadAssetPackFromLibrary("lib_frontend", TTRUE);
+
 	//ATerrainManager::SetTerrain(ATerrainManager::Terrain_EnvBensHill, TTRUE, TTRUE, 0, 0, 0, 0);
 	ABYardTerrainManager::SetTerrain(ABYardTerrainManager::Terrain_FrontEnd, TTRUE, TTRUE, 0, 0, 0, 0);
 	ABYardTerrainManager::StartLoading();
 	AAssetLoader::CreateAssetsFromLibrary("lib_frontend");
 
-	// Load music wave bank
-	ASoundManager* pSoundManager = ASoundManager::GetSingleton();
+	// Load music wavebank samples
 	ASoundManager::ms_bShouldUpdateLoadingScreen = TTRUE;
-	pSoundManager->LoadBankSamples( TPS8( music ), AWaveBank::LOADFLAGS_NONE, -1 );
+	pSoundManager->LoadWaveBankSamples( TPS8( music ), AWaveBank::LOADFLAGS_NONE, -1 );
 	ASoundManager::ms_bShouldUpdateLoadingScreen = TFALSE;
+
+	// Load music samples
+	pSoundManager->LoadSoundBankSamples( TPS8( music ) );
 
 	GetSingleton()->SetRenderWorld(TTRUE);
 

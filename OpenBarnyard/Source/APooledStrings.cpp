@@ -62,6 +62,7 @@ TPString8 g_str_bkg_bluetongue;
 TPString8 g_str_bkg_fmod;
 TPString8 g_str_DialogInputMap;
 TPString8 g_str_music;
+TPString8 g_str_ui;
 
 static TPString8Initialiser::StringMap oInitStrMap[] = 
 {
@@ -114,7 +115,8 @@ static TPString8Initialiser::StringMap oInitStrMap[] =
 	{ &g_str_bkg_fmod,                         "bkg_fmod" },
 	{ &g_str_DialogInputMap,                   "DialogInputMap" },
 	{ &g_str_music,                            "music" },
+	{ &g_str_ui,                               "ui" },
 };
 
-static TPString8Initialiser oInitStrNode(oInitStrMap, 49, TTRUE);
+static TPString8Initialiser oInitStrNode(oInitStrMap, 50, TTRUE);
 

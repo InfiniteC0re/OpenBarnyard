@@ -1,5 +1,6 @@
 #pragma once
 #include "AWaveBank.h"
+#include "ASoundBank.h"
 
 #include <Toshi/TPString8.h>
 #include <Toshi/TTask.h>
@@ -48,6 +49,8 @@ public:
 
 	using PauseListener = Toshi::TListener<Toshi::TSystemManager, TBOOL, ASoundManager>;
 
+	static constexpr const TCHAR* SOUNDS_BASE_DIRECTORY = "Data/Sound/";
+
 	friend AWaveBank;
 
 public:
@@ -59,16 +62,48 @@ public:
 	virtual TBOOL OnUpdate(TFLOAT a_fDeltaTime) override;
 	virtual void OnDestroy() override;
 
+	void PauseAllSound(TBOOL a_bPaused);
+
+	//-----------------------------------------------------------------------------
+	// Wavebanks
+	// ----------------------------------------------------------------------------
+	// They are storing information about different packs of files (usually .fsb
+	// if FMOD is being used) and their samples. Samples store technical info about
+	// flags, frequency and length making sure the sounds from soundbanks can get
+	// this information when neccessary.
+	//-----------------------------------------------------------------------------
+
 	// Returns pointer to a loaded wavebank or TNULL if not found
 	AWaveBank* FindWaveBank( const Toshi::TPString8& a_rcName );
 
 	// Loads info about all wavebanks from a specified PProperties file
-	TBOOL LoadWaveBanks( const TCHAR* a_szFileName );
+	TBOOL LoadWaveBanksInfo( const TCHAR* a_szFileName );
 
 	// Loads all samples (f.e. from fsb file) of a specified bank
-	TBOOL LoadBankSamples( const Toshi::TPString8& a_rcName, AWaveBank::LOADFLAGS a_eLoadFlags, TINT a_iBufferSize );
+	TBOOL LoadWaveBankSamples( const Toshi::TPString8& a_rcName, AWaveBank::LOADFLAGS a_eLoadFlags, TINT a_iBufferSize );
 
-	void PauseAllSound(TBOOL a_bPaused);
+	//-----------------------------------------------------------------------------
+	// Soundbanks
+	// ----------------------------------------------------------------------------
+	// Unlike wavebanks, soundbanks store info about how each sound should be
+	// played by the engine. Such info includes volume, pitch, various
+	// randomizations and much much more...
+	//-----------------------------------------------------------------------------
+	// The sounds can be stored either with ASound or ASoundEx class.
+	// ASound class doesn't store any advanced settings for the sound.
+	// ASoundEx class allows sounds to have different volume, pitch and more.
+	//-----------------------------------------------------------------------------
+
+	// Returns pointer to a loaded soundbank or TNULL if not found
+	ASoundBank* FindSoundBank( const Toshi::TPString8& a_rcName );
+
+	// Loads soundbank if it's not loaded yet.
+	// If a_bSimpleSound is TFALSE, sounds are created from ASoundEx allowing many settings to be set from the properties file.
+	// Returns TTRUE if was (now) loaded.
+	TBOOL LoadSoundBank( const Toshi::TPString8& a_rcName, TBOOL a_bSimpleSound, TBOOL a_bLoadImmediately );
+
+	// Initialises sounds of the sound bank
+	void LoadSoundBankSamples( const Toshi::TPString8& a_rcName );
 
 public:
 	// Whether ALoadScreen should be updated while loading audio stream or not
@@ -77,8 +112,10 @@ public:
 private:
 	TBOOL Initialise();
 
-	static AWaveBank* LoadWaveBankFromAsset( const Toshi::TString8& a_strName, TUINT32 a_uiForcedFlags );
-	static AWaveBank* AllocateWaveBank( const Toshi::TPString8& a_strBank, const Toshi::TPString8& a_strLibrary, const Toshi::TPString8& a_strType, const Toshi::TPString8& a_strPath );
+	AWaveBank* LoadWaveBankFromAsset( const Toshi::TString8& a_strName, TUINT32 a_uiForcedFlags );
+	AWaveBank* AllocateWaveBank( const Toshi::TPString8& a_strBank, const Toshi::TPString8& a_strLibrary, const Toshi::TPString8& a_strType, const Toshi::TPString8& a_strPath );
+
+	TBOOL LoadSoundBankImpl( const TCHAR* a_szName, TBOOL a_bSimpleSound, TBOOL a_bLoadImmediately );
 
 private:
 	inline static Toshi::TFileSystem* ms_pFileSystem;
@@ -86,6 +123,8 @@ private:
 
 private:
 	Toshi::T2Map<Toshi::TPString8, TSIZE, Toshi::TPString8::Comparator> m_CategoryIndices; // 0x80
+	Toshi::T2Map<TINT, ASoundEx*> m_SoundIdToSoundEx;                                      // 0x80
+	Toshi::T2Map<TINT, ASound*> m_SoundIdToSound;                                          // 0x80
 	CameraData m_CameraData;                                                               // 0xC8
 	S1 m_aS1[128];                                                                         // 0x108
 	S2 m_aS2[8];                                                                           // 0x4D08
@@ -99,5 +138,6 @@ private:
 	S4* m_pS4;                                                                             // 0x4FCC
 	Toshi::T2DList<S4> m_FreeListS4;                                                       // 0x4FD0
 	Toshi::T2DList<S4> m_UnkList1;                                                         // 0x4FD8
+	Toshi::T2DList<ASoundBank> m_SoundBanks;                                               // 0x4FE0
 	Toshi::T2DList<S2> m_FreeListS2;                                                       // 0x4FE8
 };

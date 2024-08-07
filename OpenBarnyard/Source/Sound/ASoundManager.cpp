@@ -1,8 +1,10 @@
 #include "pch.h"
 #include "ASoundManager.h"
+#include "ASound.h"
 #include "Assets/AAssetLoader.h"
 #include "AWaveBankFMODFSB.h"
 #include "AWaveBankFMODFSBStream.h"
+#include "ALoadScreen.h"
 
 #include <Plugins/PPropertyParser/PBProperties.h>
 
@@ -167,6 +169,149 @@ AWaveBank* ASoundManager::AllocateWaveBank( const Toshi::TPString8& a_strBank, c
 	return TNULL;
 }
 
+TBOOL ASoundManager::LoadSoundBankImpl( const TCHAR* a_szName, TBOOL a_bSimpleSound, TBOOL a_bLoadImmediately )
+{
+	// TEMPORARY HACK: disable advanced sound since it's not implemented
+	a_bSimpleSound = TTRUE;
+
+	g_oLoadScreen.Update();
+
+	TString8 strFileName = SOUNDS_BASE_DIRECTORY;
+	strFileName += "soundbank_";
+	strFileName += a_szName;
+	strFileName += ".trb";
+
+	TTRB trb;
+	TTRB::ERROR eTrbLoadResult = trb.Load( strFileName );
+
+	if ( eTrbLoadResult != TTRB::ERROR_OK )
+	{
+		TERROR( "Unable to load soundbank: %s\n", strFileName.GetString() );
+		return TFALSE;
+	}
+	
+	auto& rcProperties = *PBProperties::LoadFromTRB( trb );
+
+	// Delete symbol table for some small optimisation
+	trb.DeleteSymbolTable();
+
+	TBOOL bNoErrors = TTRUE;
+
+	T2_FOREACH( rcProperties, soundbank )
+	{
+		const PBProperties* pSoundsProperties = soundbank->GetValue()->GetProperties();
+
+		TINT iNumSounds;
+		TBOOL bHasNumSounds = pSoundsProperties->GetOptionalPropertyValue( iNumSounds, "numsounds" );
+	
+		if ( !bHasNumSounds )
+		{
+			TASSERT( !"Invalid format of the soundbank property" );
+			return TFALSE;
+		}
+
+		if ( iNumSounds == 0 )
+		{
+			return TTRUE;
+		}
+
+		// Allocate soundbank
+		ASoundBank* pSoundBank = new ( AMemory::GetMemBlock( AMemory::POOL_Sound ) ) ASoundBank( iNumSounds );
+		m_SoundBanks.PushBack( pSoundBank );
+
+		if ( a_bSimpleSound )
+		{
+			pSoundBank->m_pSounds = new ( AMemory::GetMemBlock( AMemory::POOL_Sound ) ) ASound[ iNumSounds ];
+		}
+		else
+		{
+			TASSERT( !"ASoundEx is not supported" );
+		}
+
+		pSoundsProperties->GetOptionalStringProperty( pSoundBank->m_strName, "name" );
+
+		TINT iLocalised;
+		pSoundsProperties->GetOptionalPropertyValue( iLocalised, "localised" );
+
+		TINT iSoundIndex = 0;
+		T2_FOREACH( *pSoundsProperties, it )
+		{
+			// Skip anything that doesn't even look like 'Sound' property
+			if ( it->GetName().GetString()[ 0 ] != 'S' )
+				continue;
+
+			auto pSoundProperties = it->GetValue()->GetProperties();
+
+			TINT iSoundId;
+			pSoundProperties->GetOptionalPropertyValue( iSoundId, "id" );
+
+			if ( a_bSimpleSound )
+			{
+				ASound* pSound = &pSoundBank->m_pSounds[ iSoundIndex ];
+
+				pSound->m_iId = iSoundId;
+				m_SoundIdToSound.Insert( iSoundId, pSound );
+
+				if ( !pSoundProperties->GetOptionalPropertyValue( pSound->m_iFlags, "flags" ) )
+				{
+					bNoErrors = TFALSE;
+					TASSERT( !"No flags property specified in the soundbank" );
+				}
+
+				PBPropertyValueArray* pBanks = TNULL;
+				if ( !pSoundProperties->GetOptionalPropertyValue( pBanks, "banks" ) )
+				{
+					bNoErrors = TFALSE;
+					TASSERT( !"No banks property specified in the soundbank" );
+					continue;
+				}
+
+				PBPropertyValueArray* pWaves;
+				if ( bNoErrors && pSoundProperties->GetOptionalPropertyValue( pWaves, "waves" ) )
+				{
+					TASSERT( pBanks->GetSize() >= 1 );
+					TASSERT( pWaves->GetSize() >= 1 );
+
+					TPString8 strSoundBankName = pBanks->GetValue( 0 )->GetTPString8();
+					AWaveBank* pWaveBank = FindWaveBank( strSoundBankName );
+
+					if ( a_bLoadImmediately )
+					{
+						LoadWaveBankSamples( strSoundBankName, iLocalised != 0 ? AWaveBank::LOADFLAGS_LOCALISE : AWaveBank::LOADFLAGS_NONE, -1 );
+					}
+
+					pSound->m_pWaveBank = pWaveBank;
+					pSound->m_iWaveId = pWaves->GetValue( 0 )->GetInteger();
+				}
+			}
+			else
+			{
+				TASSERT( !"Not supported" );
+			}
+
+			iSoundIndex++;
+		}
+
+		if ( bNoErrors )
+		{
+			if ( a_bLoadImmediately )
+				pSoundBank->Load();
+		}
+		else
+		{
+			pSoundBank->Remove();
+			delete pSoundBank;
+		}
+	}
+
+	TUINT uiCurrentAlloced;
+	TUINT uiMaxAlloced;
+	FSOUND_GetMemoryStats( &uiCurrentAlloced, &uiMaxAlloced );
+	TINFO( "LoadSoundBank result: name=%s; success=%d; currentalloced=%u; maxalloced=%u\n", a_szName, bNoErrors, uiCurrentAlloced, uiMaxAlloced );
+
+	return bNoErrors;
+}
+
 TBOOL ASoundManager::Initialise()
 {
 	FSOUND_Init(44100, m_iMinHWChannels + m_iNumChannels, 0);
@@ -194,7 +339,7 @@ void ASoundManager::PauseAllSound(TBOOL a_bPaused)
 	TIMPLEMENT();
 }
 
-TBOOL ASoundManager::LoadWaveBanks(const TCHAR* a_szFileName)
+TBOOL ASoundManager::LoadWaveBanksInfo(const TCHAR* a_szFileName)
 {
 	TBOOL bOpened = AAssetLoader::Load(
 		"Data/Assets/lib_wavebank.trb",
@@ -240,7 +385,7 @@ TBOOL ASoundManager::LoadWaveBanks(const TCHAR* a_szFileName)
 	return TTRUE;
 }
 
-TBOOL ASoundManager::LoadBankSamples( const Toshi::TPString8& a_rcName, AWaveBank::LOADFLAGS a_eLoadFlags, TINT a_iBufferSize )
+TBOOL ASoundManager::LoadWaveBankSamples( const Toshi::TPString8& a_rcName, AWaveBank::LOADFLAGS a_eLoadFlags, TINT a_iBufferSize )
 {
 	if ( a_rcName.GetPooledString() && !a_rcName.GetPooledString()->GetString8().IsEmpty() )
 	{
@@ -253,4 +398,36 @@ TBOOL ASoundManager::LoadBankSamples( const Toshi::TPString8& a_rcName, AWaveBan
 	}
 
 	return TFALSE;
+}
+
+ASoundBank* ASoundManager::FindSoundBank( const Toshi::TPString8& a_rcName )
+{
+	T2_FOREACH( m_SoundBanks, it )
+	{
+		if ( it->m_strName == a_rcName )
+			return it;
+	}
+
+	return TNULL;
+}
+
+TBOOL ASoundManager::LoadSoundBank( const Toshi::TPString8& a_rcName, TBOOL a_bSoundEx, TBOOL a_bLoadImmediately )
+{
+	if ( a_rcName.GetPooledString() && !a_rcName.GetPooledString()->GetString8().IsEmpty() )
+	{
+		if ( FindSoundBank( a_rcName ) == TNULL )
+		{
+			return LoadSoundBankImpl( a_rcName, a_bSoundEx, a_bLoadImmediately );
+		}
+	}
+
+	return TFALSE;
+}
+
+void ASoundManager::LoadSoundBankSamples( const Toshi::TPString8& a_rcName )
+{
+	if ( ASoundBank* pSoundBank = FindSoundBank( a_rcName ) )
+	{
+		pSoundBank->Load();
+	}
 }

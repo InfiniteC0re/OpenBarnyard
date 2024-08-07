@@ -129,10 +129,9 @@ namespace Toshi {
 		inline static const TString8 ms_sEmpty = TString8("");
 
 	public:
-		TFORCEINLINE TPString8()
-		{
-			m_pPtr = TNULL;
-		}
+		TFORCEINLINE constexpr TPString8() :
+			m_pPtr( TNULL )
+		{ }
 
 		TFORCEINLINE TPString8(const TCHAR* a_szString)
 		{

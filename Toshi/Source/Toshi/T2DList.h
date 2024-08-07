@@ -23,11 +23,10 @@ namespace Toshi {
 			T2_DEFINE_ITERATOR_FRIEND();
 
 		public:
-			Node()
-			{
-				m_pPrev = this;
-				m_pNext = this;
-			}
+			constexpr Node() :
+				m_pPrev(this),
+				m_pNext(this)
+			{ }
 
 			~Node()
 			{
