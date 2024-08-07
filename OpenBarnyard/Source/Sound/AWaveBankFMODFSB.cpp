@@ -39,7 +39,7 @@ TBOOL AWaveBankFMODFSB::IsReady() const
 	return FMUSIC_GetOpenState( (FMUSIC_MODULE*)m_FileHandle ) == 0;
 }
 
-AWaveBank::LOADRESULT AWaveBankFMODFSB::Load( TBOOL a_bLocalise )
+AWaveBank::LOADRESULT AWaveBankFMODFSB::Load( LOADFLAGS a_uiFlags, TINT a_iBufferSize )
 {
 	if ( m_iNumLoads > 0 || m_FileHandle != TNULL )
 	{
@@ -51,7 +51,7 @@ AWaveBank::LOADRESULT AWaveBankFMODFSB::Load( TBOOL a_bLocalise )
 	strFileName += SOUNDS_BASE_DIRECTORY;
 	strFileName += "FSB/";
 
-	if ( a_bLocalise )
+	if ( a_uiFlags & LOADFLAGS_LOCALISE )
 	{
 		ALocaleManager::Lang iLangId = ALocaleManager::Lang_UNKNOWN;
 		T2Locale* pLocale = T2Locale::GetSingleton();
@@ -66,6 +66,9 @@ AWaveBank::LOADRESULT AWaveBankFMODFSB::Load( TBOOL a_bLocalise )
 	}
 
 	strFileName += m_strPath.GetString8();
+	strFileName += ".";
+	strFileName += "fsb";
+
 	TFileManager* pFileManager = TFileManager::GetSingleton();
 
 	TNativeFileInfo oFileInfo;

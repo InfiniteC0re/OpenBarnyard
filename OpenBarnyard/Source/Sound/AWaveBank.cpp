@@ -67,7 +67,7 @@ void AWaveBank::ParseWavesData( const PBProperties* a_pBankProperties, TUINT a_u
 
 		// Parse flags
 		const PBPropertyValue* pFlagsProperty = pWaveProperties->GetOptionalProperty( "flags" );
-		if ( pFlagsProperty && uiFlags == 0 ) uiFlags = pFlagsProperty->GetUINT32();
+		if ( pFlagsProperty && uiFlags == 0 ) uiFlags = pFlagsProperty->GetInteger();
 
 		// Parse frequency
 		const PBPropertyValue* pFreqProperty = pWaveProperties->GetOptionalProperty( "frequency" );

@@ -328,6 +328,8 @@ void ARootTask::CreateGameSystem()
 	OnActivate();
 }
 
+TPSTRING8_DECLARE( music );
+
 void ARootTask::LoadFrontEnd()
 {
 	TIMPLEMENT();
@@ -337,6 +339,12 @@ void ARootTask::LoadFrontEnd()
 	ABYardTerrainManager::SetTerrain(ABYardTerrainManager::Terrain_FrontEnd, TTRUE, TTRUE, 0, 0, 0, 0);
 	ABYardTerrainManager::StartLoading();
 	AAssetLoader::CreateAssetsFromLibrary("lib_frontend");
+
+	// Load music wave bank
+	ASoundManager* pSoundManager = ASoundManager::GetSingleton();
+	ASoundManager::ms_bShouldUpdateLoadingScreen = TTRUE;
+	pSoundManager->LoadBankSamples( TPS8( music ), AWaveBank::LOADFLAGS_NONE, -1 );
+	ASoundManager::ms_bShouldUpdateLoadingScreen = TFALSE;
 
 	GetSingleton()->SetRenderWorld(TTRUE);
 

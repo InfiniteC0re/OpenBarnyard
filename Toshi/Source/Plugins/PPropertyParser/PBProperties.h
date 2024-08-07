@@ -114,7 +114,7 @@ public:
 
 	TUINT32 GetUINT32() const
 	{
-		TASSERT( m_eType == Type::LocaleString );
+		TASSERT( m_eType == Type::UInt32 );
 		return m_uValue.UInt32;
 	}
 

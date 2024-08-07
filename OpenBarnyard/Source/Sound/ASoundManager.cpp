@@ -2,6 +2,7 @@
 #include "ASoundManager.h"
 #include "Assets/AAssetLoader.h"
 #include "AWaveBankFMODFSB.h"
+#include "AWaveBankFMODFSBStream.h"
 
 #include <Plugins/PPropertyParser/PBProperties.h>
 
@@ -88,9 +89,9 @@ void ASoundManager::OnDestroy()
 	m_PauseListener.Disconnect();
 }
 
-AWaveBank* ASoundManager::FindWaveBank( const TPString8& a_rName )
+AWaveBank* ASoundManager::FindWaveBank( const TPString8& a_rcName )
 {
-	auto pFoundNode = ms_WaveBanks.FindNode( a_rName );
+	auto pFoundNode = ms_WaveBanks.FindNode( a_rcName );
 
 	return ( pFoundNode != ms_WaveBanks.End() ) ? pFoundNode->GetValue()->GetSecond() : TNULL;
 }
@@ -160,7 +161,7 @@ AWaveBank* ASoundManager::AllocateWaveBank( const Toshi::TPString8& a_strBank, c
 	else if ( a_strType == TPString8( "Stream" ) )
 	{
 		// Load from a stream
-		TASSERT(!"Not supported yet")
+		return new AWaveBankFMODFSBStream( a_strBank, a_strPath );
 	}
 
 	return TNULL;
@@ -237,4 +238,19 @@ TBOOL ASoundManager::LoadWaveBanks(const TCHAR* a_szFileName)
 	AAssetLoader::Close( AAssetType_WaveBank );
 
 	return TTRUE;
+}
+
+TBOOL ASoundManager::LoadBankSamples( const Toshi::TPString8& a_rcName, AWaveBank::LOADFLAGS a_eLoadFlags, TINT a_iBufferSize )
+{
+	if ( a_rcName.GetPooledString() && !a_rcName.GetPooledString()->GetString8().IsEmpty() )
+	{
+		AWaveBank* pWaveBank = FindWaveBank( a_rcName );
+
+		if ( pWaveBank )
+		{
+			return pWaveBank->Load( a_eLoadFlags, a_iBufferSize ) == AWaveBank::LOADRESULT_OK;
+		}
+	}
+
+	return TFALSE;
 }

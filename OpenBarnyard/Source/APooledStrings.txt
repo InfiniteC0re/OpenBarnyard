@@ -46,3 +46,4 @@ bkg_Bink_Big
 bkg_bluetongue
 bkg_fmod
 DialogInputMap
+music

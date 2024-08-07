@@ -59,18 +59,26 @@ public:
 	virtual TBOOL OnUpdate(TFLOAT a_fDeltaTime) override;
 	virtual void OnDestroy() override;
 
-	AWaveBank* FindWaveBank( const Toshi::TPString8& a_rName );
+	// Returns pointer to a loaded wavebank or TNULL if not found
+	AWaveBank* FindWaveBank( const Toshi::TPString8& a_rcName );
 
-	TBOOL LoadWaveBanks(const TCHAR* a_szFileName);
+	// Loads info about all wavebanks from a specified PProperties file
+	TBOOL LoadWaveBanks( const TCHAR* a_szFileName );
+
+	// Loads all samples (f.e. from fsb file) of a specified bank
+	TBOOL LoadBankSamples( const Toshi::TPString8& a_rcName, AWaveBank::LOADFLAGS a_eLoadFlags, TINT a_iBufferSize );
 
 	void PauseAllSound(TBOOL a_bPaused);
+
+public:
+	// Whether ALoadScreen should be updated while loading audio stream or not
+	inline static TBOOL ms_bShouldUpdateLoadingScreen = TFALSE;
 
 private:
 	TBOOL Initialise();
 
 	static AWaveBank* LoadWaveBankFromAsset( const Toshi::TString8& a_strName, TUINT32 a_uiForcedFlags );
 	static AWaveBank* AllocateWaveBank( const Toshi::TPString8& a_strBank, const Toshi::TPString8& a_strLibrary, const Toshi::TPString8& a_strType, const Toshi::TPString8& a_strPath );
-
 
 private:
 	inline static Toshi::TFileSystem* ms_pFileSystem;
