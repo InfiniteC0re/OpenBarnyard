@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "ASoundManager.h"
 #include "ASound.h"
+#include "ASoundEx.h"
 #include "Assets/AAssetLoader.h"
 #include "AWaveBankFMODFSB.h"
 #include "AWaveBankFMODFSBStream.h"

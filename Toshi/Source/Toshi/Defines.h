@@ -24,6 +24,24 @@
 #define GLUE(x, y) x y
 #define CALL_OVERLOAD(name, ...) GLUE(OVERLOAD_MACRO(name, COUNT_ARGS_MAX5(__VA_ARGS__)), (__VA_ARGS__))
 
+#ifdef TOSHI_DYNAMIC_LINKING
+
+#ifdef TOSHI_USER_ENGINE
+
+#define TOSHI_API declspec( dllexport )
+
+#else // TOSHI_USER_ENGINE
+
+#define TOSHI_API declspec( dllimport )
+
+#endif // !TOSHI_USER_ENGINE
+
+#else // TOSHI_DYNAMIC_LINKING
+
+#define TOSHI_API 
+
+#endif // !TOSHI_DYNAMIC_LINKING
+
 #define TOSHI_NAMESPACE Toshi
 #define TOSHI_NAMESPACE_USING using namespace TOSHI_NAMESPACE;
 #define TOSHI_NAMESPACE_START namespace TOSHI_NAMESPACE {

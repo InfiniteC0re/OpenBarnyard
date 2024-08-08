@@ -50,6 +50,7 @@ public:
 	using PauseListener = Toshi::TListener<Toshi::TSystemManager, TBOOL, ASoundManager>;
 
 	static constexpr const TCHAR* SOUNDS_BASE_DIRECTORY = "Data/Sound/";
+	static constexpr TUINT MAX_NUM_CATEGORIES = 16;
 
 	friend AWaveBank;
 
