@@ -6,7 +6,12 @@ class TOSHI_API TBitArray
 {
 public:
 	// Constructors/destructor
-	constexpr TBitArray();
+	constexpr TBitArray() :
+		m_pBuffer( TNULL ),
+		m_uiInitialisedWith( 0 ),
+		m_iSize( 0 )
+	{ }
+
 	TBitArray( TINT a_iNumBits, TINT a_iInitialiseWith );
 
 	~TBitArray();

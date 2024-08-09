@@ -167,7 +167,7 @@ public:
 	T* EmplaceBack( Args&& ...args )
 	{
 		TASSERT( m_iNumElements < CAPACITY );
-		return TConstruct<T>( AtUnsafe( m_iNumElements++ ), std::forward<Args>( args )... );
+		return TConstruct<T>( &AtUnsafe( m_iNumElements++ ), std::forward<Args>( args )... );
 	}
 
 	void PushBack( const T& item = T() )

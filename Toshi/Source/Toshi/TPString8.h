@@ -183,7 +183,7 @@ namespace Toshi {
 
 		TFORCEINLINE TBOOL IsEmpty() const
 		{
-			return m_pPtr == TNULL;
+			return m_pPtr == TNULL || m_pPtr->GetString8().Length() == 0;
 		}
 
 		TFORCEINLINE void SetPooledString(TPooledString8* a_pPooledString)

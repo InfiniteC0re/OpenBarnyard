@@ -12,14 +12,6 @@ TOSHI_NAMESPACE_START
 #define MIN_NUM_BITS    ( 8 * sizeof( TUINT32 ) )
 #define BIT_SUBNUM_MASK ( MIN_NUM_BITS - 1 )
 
-constexpr TBitArray::TBitArray() :
-	m_pBuffer( TNULL ),
-	m_uiInitialisedWith( 0 ),
-	m_iSize( 0 )
-{
-
-}
-
 TBitArray::TBitArray( TINT a_iNumBits, TINT a_iInitialiseWith )
 {
 	Create( a_iNumBits, a_iInitialiseWith );

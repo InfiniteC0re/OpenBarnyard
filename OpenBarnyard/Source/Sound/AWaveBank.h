@@ -34,9 +34,12 @@ public:
 	virtual TBOOL IsReady() const = 0;
 	virtual LOADRESULT Load( LOADFLAGS a_uiFlags, TINT a_iBufferSize ) = 0;
 	virtual UNLOADRESULT Unload() = 0;
-	virtual AWaveSampleHandle GetWaveSample( TUINT a_uiNumSample ) const;
+	virtual AWaveSampleHandle GetWaveSample( TINT a_iWaveIndex ) const;
 	virtual void Unknown( void* a_Unknown ); // empty in the original
 	virtual ~AWaveBank();
+
+	void SetWaveFlag1( TINT a_iWaveIndex );
+	void SetWaveFlag2( TINT a_iWaveIndex );
 
 	void ParseWavesData( const PBProperties* a_pBankProperties, TUINT a_uiForcedFlags );
 

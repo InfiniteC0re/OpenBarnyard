@@ -28,9 +28,10 @@ AWaveBank::AWaveBank( const Toshi::TPString8& a_strBank, const Toshi::TPString8&
 	ASoundManager::ms_WaveBanks.Insert( a_strBank, this );
 }
 
-AWaveSampleHandle AWaveBank::GetWaveSample( TUINT a_uiNumSample ) const
+AWaveSampleHandle AWaveBank::GetWaveSample( TINT a_iWaveIndex ) const
 {
-	return m_pWaves[ a_uiNumSample ].pSampleHandle;
+	TASSERT( a_iWaveIndex < m_iNumWaves );
+	return m_pWaves[ a_iWaveIndex ].pSampleHandle;
 }
 
 void AWaveBank::Unknown( void* a_Unknown )
@@ -42,6 +43,20 @@ AWaveBank::~AWaveBank()
 {
 	ASoundManager::ms_WaveBanks.Remove( m_strBank );
 	delete[] m_pWaves;
+}
+
+void AWaveBank::SetWaveFlag1( TINT a_iWaveIndex )
+{
+	TASSERT( a_iWaveIndex < m_iNumWaves );
+	m_pWaves[ a_iWaveIndex ].uiFlags &= ~2;
+	m_pWaves[ a_iWaveIndex ].uiFlags |= 1;
+}
+
+void AWaveBank::SetWaveFlag2( TINT a_iWaveIndex )
+{
+	TASSERT( a_iWaveIndex < m_iNumWaves );
+	m_pWaves[ a_iWaveIndex ].uiFlags &= ~1;
+	m_pWaves[ a_iWaveIndex ].uiFlags |= 2;
 }
 
 void AWaveBank::ParseWavesData( const PBProperties* a_pBankProperties, TUINT a_uiForcedFlags )

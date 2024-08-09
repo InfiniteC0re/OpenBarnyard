@@ -19,7 +19,7 @@
 
 TOSHI_NAMESPACE_USING
 
-TDEFINE_CLASS(ASoundManager);
+TDEFINE_CLASS( ASoundManager );
 
 ASoundManager::ASoundManager()
 {
@@ -28,7 +28,7 @@ ASoundManager::ASoundManager()
 	m_iMinHWChannels = 32;
 	m_iNumChannels = 32;
 
-	ms_pFileSystem = TFileManager::GetSingleton()->FindFileSystem("local");
+	ms_pFileSystem = TFileManager::GetSingleton()->FindFileSystem( "local" );
 }
 
 ASoundManager::~ASoundManager()
@@ -54,28 +54,28 @@ TBOOL ASoundManager::OnCreate()
 	m_PauseListener.Connect(
 		g_oSystemManager.GetPauseEmitter(),
 		this,
-		[](ASoundManager* a_pSndMngr, TSystemManager* a_pSysMngr, TBOOL* a_pPaused) {
-			a_pSndMngr->PauseAllSound(*a_pPaused);
-			return TTRUE;
-		}
-	, 0);
+		[]( ASoundManager* a_pSndMngr, TSystemManager* a_pSysMngr, TBOOL* a_pPaused ) {
+		a_pSndMngr->PauseAllSound( *a_pPaused );
+		return TTRUE;
+	}
+	, 0 );
 
-	m_pS4 = new S4[32];
+	m_pS4 = new S4[ 32 ];
 
-	for (TINT i = 0; i < 32; i++)
+	for ( TINT i = 0; i < 32; i++ )
 	{
-		m_FreeListS4.PushBack(&m_pS4[i]);
+		m_FreeListS4.PushBack( &m_pS4[ i ] );
 	}
 
-	for (TINT i = 0; i < TARRAYSIZE(m_aS2); i++)
+	for ( TINT i = 0; i < TARRAYSIZE( m_aS2 ); i++ )
 	{
-		m_FreeListS2.PushBack(&m_aS2[i]);
+		m_FreeListS2.PushBack( &m_aS2[ i ] );
 	}
 
 	return TTRUE;
 }
 
-TBOOL ASoundManager::OnUpdate(TFLOAT a_fDeltaTime)
+TBOOL ASoundManager::OnUpdate( TFLOAT a_fDeltaTime )
 {
 	TIMPLEMENT();
 	m_fTotalTime += a_fDeltaTime;
@@ -141,7 +141,7 @@ AWaveBank* ASoundManager::LoadWaveBankFromAsset( const Toshi::TString8& a_strNam
 
 	// Create the actual wavebank from the parameters
 	AWaveBank* pWaveBank = AllocateWaveBank( strWaveWankBankName, strWaveBankLibrary, strWaveBankType, strWaveBankPath );
-	
+
 	pWaveBank->ParseWavesData( pBankProperties, a_uiForcedFlags );
 
 	return pWaveBank;
@@ -170,11 +170,10 @@ AWaveBank* ASoundManager::AllocateWaveBank( const Toshi::TPString8& a_strBank, c
 	return TNULL;
 }
 
+TPSTRING8_DECLARE( default );
+
 TBOOL ASoundManager::LoadSoundBankImpl( const TCHAR* a_szName, TBOOL a_bSimpleSound, TBOOL a_bLoadImmediately )
 {
-	// TEMPORARY HACK: disable advanced sound since it's not implemented
-	a_bSimpleSound = TTRUE;
-
 	g_oLoadScreen.Update();
 
 	TString8 strFileName = SOUNDS_BASE_DIRECTORY;
@@ -190,7 +189,7 @@ TBOOL ASoundManager::LoadSoundBankImpl( const TCHAR* a_szName, TBOOL a_bSimpleSo
 		TERROR( "Unable to load soundbank: %s\n", strFileName.GetString() );
 		return TFALSE;
 	}
-	
+
 	auto& rcProperties = *PBProperties::LoadFromTRB( trb );
 
 	// Delete symbol table for some small optimisation
@@ -204,7 +203,7 @@ TBOOL ASoundManager::LoadSoundBankImpl( const TCHAR* a_szName, TBOOL a_bSimpleSo
 
 		TINT iNumSounds;
 		TBOOL bHasNumSounds = pSoundsProperties->GetOptionalPropertyValue( iNumSounds, "numsounds" );
-	
+
 		if ( !bHasNumSounds )
 		{
 			TASSERT( !"Invalid format of the soundbank property" );
@@ -226,7 +225,7 @@ TBOOL ASoundManager::LoadSoundBankImpl( const TCHAR* a_szName, TBOOL a_bSimpleSo
 		}
 		else
 		{
-			TASSERT( !"ASoundEx is not supported" );
+			pSoundBank->m_pSoundsEx = new ( AMemory::GetMemBlock( AMemory::POOL_Sound ) ) ASoundEx[ iNumSounds ];
 		}
 
 		pSoundsProperties->GetOptionalStringProperty( pSoundBank->m_strName, "name" );
@@ -248,6 +247,7 @@ TBOOL ASoundManager::LoadSoundBankImpl( const TCHAR* a_szName, TBOOL a_bSimpleSo
 
 			if ( a_bSimpleSound )
 			{
+				// Initialise ASound
 				ASound* pSound = &pSoundBank->m_pSounds[ iSoundIndex ];
 
 				pSound->m_iId = iSoundId;
@@ -287,7 +287,256 @@ TBOOL ASoundManager::LoadSoundBankImpl( const TCHAR* a_szName, TBOOL a_bSimpleSo
 			}
 			else
 			{
-				TASSERT( !"Not supported" );
+				// Initialise ASoundEx
+				ASoundEx* pSoundEx = &pSoundBank->m_pSoundsEx[ iSoundIndex ];
+
+				pSoundEx->m_iId = iSoundId;
+				m_SoundIdToSoundEx.Insert( iSoundId, pSoundEx );
+
+				// Get category
+				TPString8 strCategory;
+				if ( bNoErrors && pSoundProperties->GetOptionalStringProperty( strCategory, "category" ) )
+				{
+					// Find category and store it's index
+					auto pFoundCategory = m_CategoryIndices.FindNode(
+						( strCategory.GetPooledString() || strCategory.GetString8().Length() == 0 ) ? TPS8( default ) : strCategory
+					);
+
+					TASSERT( pFoundCategory != m_CategoryIndices.End() );
+					pSoundEx->m_uiCategoryIndex = pFoundCategory->GetValue()->GetSecond();
+
+					// Get flags
+					if ( pSoundProperties->GetOptionalPropertyValue( pSoundEx->m_iFlags, "flags" ) )
+					{
+						// Get mindist and priority
+						pSoundProperties->GetOptionalPropertyValue( pSoundEx->m_fMinDist, "mindist" );
+						pSoundProperties->GetOptionalPropertyValue( pSoundEx->m_ui8Priority, "priority" );
+
+						// Get banks and waves
+						PBPropertyValueArray* pBanks;
+						PBPropertyValueArray* pWaves;
+
+						// Load info about the waves
+						if ( pSoundProperties->GetOptionalPropertyValue( pBanks, "banks" ) &&
+							 pSoundProperties->GetOptionalPropertyValue( pWaves, "waves" ) )
+						{
+							pSoundEx->m_vecWaves.Reserve( pBanks->GetSize() );
+
+							for ( TUINT i = 0; i < pBanks->GetSize(); i++ )
+							{
+								// Find the wavebank
+								TPString8 strWaveBankName = pBanks->GetValue( i )->GetTPString8();
+								AWaveBank* pWaveBank = FindWaveBank( strWaveBankName );
+								TVALIDPTR( pWaveBank );
+
+								if ( a_bLoadImmediately && !strWaveBankName.IsEmpty() && pWaveBank )
+								{
+									pWaveBank->Load( iLocalised != 0 ? AWaveBank::LOADFLAGS_LOCALISE : AWaveBank::LOADFLAGS_NONE, -1 );
+								}
+
+								if ( pWaveBank != TNULL )
+								{
+									ASoundEx::Wave oWave;
+									oWave.m_pWaveBank = pWaveBank;
+									oWave.m_iId = pWaves->GetValue( i )->GetInteger();
+
+									pSoundEx->m_vecWaves.PushBack( oWave );
+
+									if ( pSoundEx->m_iFlags & 4 )
+										pWaveBank->SetWaveFlag2( oWave.m_iId );
+									else
+										pWaveBank->SetWaveFlag1( oWave.m_iId );
+								}
+								else
+								{
+									bNoErrors = TFALSE;
+								}
+							}
+
+							// Read volumes of the waves
+							PBPropertyValueArray* pVolumes;
+							if ( bNoErrors && pSoundProperties->GetOptionalPropertyValue( pVolumes, "volumes" ) )
+							{
+								for ( TUINT i = 0; i < pVolumes->GetSize(); i++ )
+								{
+									TFLOAT fVolume = pVolumes->GetValue( i )->GetFloat();
+									pSoundEx->m_vecWaves[ i ].m_fVolume = fVolume;
+								}
+							}
+							else
+							{
+								TASSERT( !"Error while parsing sound settings" );
+								bNoErrors = TFALSE;
+								continue;
+							}
+
+							// Read randomization settings for the volumes
+							PBPropertyValueArray* pVolrand;
+							if ( pSoundProperties->GetOptionalPropertyValue( pVolrand, "volrand" ) )
+							{
+								for ( TUINT i = 0; i < pVolrand->GetSize(); i += 2 )
+								{
+									TFLOAT fVolMin = pVolrand->GetValue( i + 0 )->GetFloat();
+									TFLOAT fVolMax = pVolrand->GetValue( i + 1 )->GetFloat();
+									
+									pSoundEx->m_vecWaves[ i / 2 ].m_fMinVolume = fVolMin;
+									pSoundEx->m_vecWaves[ i / 2 ].m_fMaxVolume = fVolMax;
+								}
+							}
+							else
+							{
+								TASSERT( !"Error while parsing sound settings" );
+								bNoErrors = TFALSE;
+								continue;
+							}
+
+							// Read pitches of the waves
+							PBPropertyValueArray* pPitches;
+							if ( pSoundProperties->GetOptionalPropertyValue( pPitches, "pitches" ) )
+							{
+								for ( TUINT i = 0; i < pPitches->GetSize(); i++ )
+								{
+									TFLOAT fPitch = pPitches->GetValue( i )->GetFloat();
+									pSoundEx->m_vecWaves[ i ].m_fPitch = fPitch;
+								}
+							}
+							else
+							{
+								TASSERT( !"Error while parsing sound settings" );
+								bNoErrors = TFALSE;
+								continue;
+							}
+
+							// Read randomization settings for the pitches
+							PBPropertyValueArray* pPitchrand;
+							if ( pSoundProperties->GetOptionalPropertyValue( pPitchrand, "pitchrand" ) )
+							{
+								for ( TUINT i = 0; i < pPitchrand->GetSize(); i += 2 )
+								{
+									TFLOAT fPitchMin = pPitchrand->GetValue( i + 0 )->GetFloat();
+									TFLOAT fPitchMax = pPitchrand->GetValue( i + 1 )->GetFloat();
+
+									pSoundEx->m_vecWaves[ i / 2 ].m_fMinPitch = fPitchMin;
+									pSoundEx->m_vecWaves[ i / 2 ].m_fMaxPitch = fPitchMax;
+								}
+							}
+							else
+							{
+								TASSERT( !"Error while parsing sound settings" );
+								bNoErrors = TFALSE;
+								continue;
+							}
+
+							// Read start offsets of the waves
+							PBPropertyValueArray* pStarts;
+							if ( pSoundProperties->GetOptionalPropertyValue( pStarts, "starts" ) )
+							{
+								for ( TUINT i = 0; i < pStarts->GetSize(); i++ )
+								{
+									TFLOAT fStart = pStarts->GetValue( i )->GetFloat();
+									pSoundEx->m_vecWaves[ i ].m_fStart = fStart;
+								}
+							}
+							else
+							{
+								TASSERT( !"Error while parsing sound settings" );
+								bNoErrors = TFALSE;
+								continue;
+							}
+
+							// Read var delays of the waves
+							PBPropertyValueArray* pVarDelays;
+							if ( pSoundProperties->GetOptionalPropertyValue( pVarDelays, "vardelays" ) )
+							{
+								for ( TUINT i = 0; i < pVarDelays->GetSize(); i++ )
+								{
+									TFLOAT fVarDelay = pVarDelays->GetValue( i )->GetFloat();
+									pSoundEx->m_vecWaves[ i ].m_fVarDelay = fVarDelay;
+								}
+							}
+							else
+							{
+								TASSERT( !"Error while parsing sound settings" );
+								bNoErrors = TFALSE;
+								continue;
+							}
+							
+							// Read tracks of the waves
+							PBPropertyValueArray* pTracks;
+							if ( pSoundProperties->GetOptionalPropertyValue( pTracks, "tracks" ) )
+							{
+								pSoundEx->m_vecTracks.Reserve( pTracks->GetSize() );
+
+								for ( TUINT i = 0; i < pTracks->GetSize(); i++ )
+								{
+									pSoundEx->m_vecTracks.EmplaceBack( pTracks->GetValue( i )->GetInteger() );
+								}
+							}
+							else
+							{
+								TASSERT( !"Error while parsing sound settings" );
+								bNoErrors = TFALSE;
+								continue;
+							}
+
+							// Read weights of the waves
+							PBPropertyValueArray* pWeights;
+							if ( pSoundProperties->GetOptionalPropertyValue( pWeights, "weights" ) )
+							{
+								for ( TUINT i = 0; i < pWeights->GetSize(); i++ )
+								{
+									TFLOAT fWeight = pVarDelays->GetValue( i )->GetFloat();
+									pSoundEx->m_vecWaves[ i ].m_iWeight = TMath::Round( fWeight );
+								}
+							}
+							else
+							{
+								TASSERT( !"Error while parsing sound settings" );
+								bNoErrors = TFALSE;
+								continue;
+							}
+
+							// Read trackloop settings of the waves
+							PBPropertyValueArray* pTrackloop;
+							if ( pSoundProperties->GetOptionalPropertyValue( pTrackloop, "trackloop" ) )
+							{
+								// Each bit represents a track and if it's set to 1, loop is enabled
+								pSoundEx->m_TrackLoop.Create( pTrackloop->GetSize(), 0 );
+
+								for ( TUINT i = 0; i < pTrackloop->GetSize(); i++ )
+								{
+									if ( pVarDelays->GetValue( i )->GetRaw() != 0 )
+									{
+										pSoundEx->m_TrackLoop.SetBit( i, 1 );
+									}
+								}
+							}
+							else
+							{
+								TASSERT( !"Error while parsing sound settings" );
+								bNoErrors = TFALSE;
+								continue;
+							}
+
+							// Read loopstarts of the waves
+							PBPropertyValueArray* pLoopStarts;
+							if ( pSoundProperties->GetOptionalPropertyValue( pLoopStarts, "loopstarts" ) )
+							{
+								for ( TUINT i = 0; i < pLoopStarts->GetSize(); i++ )
+								{
+									TINT iLoopStart = pLoopStarts->GetValue( i )->GetInteger();
+									pSoundEx->m_vecLoopStarts.PushBack( iLoopStart );
+								}
+							}
+							else
+							{
+								TASSERT( !"Error while parsing sound settings" );
+								bNoErrors = TFALSE;
+								continue;
+							}
+						}
+					}
+				}
 			}
 
 			iSoundIndex++;
@@ -315,32 +564,32 @@ TBOOL ASoundManager::LoadSoundBankImpl( const TCHAR* a_szName, TBOOL a_bSimpleSo
 
 TBOOL ASoundManager::Initialise()
 {
-	FSOUND_Init(44100, m_iMinHWChannels + m_iNumChannels, 0);
+	FSOUND_Init( 44100, m_iMinHWChannels + m_iNumChannels, 0 );
 
 	TINT num2DC, num3DC, numDC;
-	FSOUND_GetNumHWChannels(&num2DC, &num3DC, &numDC);
+	FSOUND_GetNumHWChannels( &num2DC, &num3DC, &numDC );
 	FSOUND_GetMaxChannels();
 	FSOUND_Close();
 
-	TBOOL bRes = FSOUND_SetMinHardwareChannels(m_bUseMinHardwareChannels ? m_iMinHWChannels : 0);
-	FSOUND_Init(44100, m_iNumChannels, 0);
-	FSOUND_GetNumHWChannels(&num2DC, &num3DC, &numDC);
+	TBOOL bRes = FSOUND_SetMinHardwareChannels( m_bUseMinHardwareChannels ? m_iMinHWChannels : 0 );
+	FSOUND_Init( 44100, m_iNumChannels, 0 );
+	FSOUND_GetNumHWChannels( &num2DC, &num3DC, &numDC );
 	FSOUND_GetMaxChannels();
-	FSOUND_Stream_SetBufferSize(2000);
-	FSOUND_SetBufferSize(100);
-	FSOUND_3D_SetDistanceFactor(1.0f);
-	FSOUND_3D_SetRolloffFactor(1.0f);
-	FSOUND_3D_SetDopplerFactor(1.0f);
+	FSOUND_Stream_SetBufferSize( 2000 );
+	FSOUND_SetBufferSize( 100 );
+	FSOUND_3D_SetDistanceFactor( 1.0f );
+	FSOUND_3D_SetRolloffFactor( 1.0f );
+	FSOUND_3D_SetDopplerFactor( 1.0f );
 
 	return bRes;
 }
 
-void ASoundManager::PauseAllSound(TBOOL a_bPaused)
+void ASoundManager::PauseAllSound( TBOOL a_bPaused )
 {
 	TIMPLEMENT();
 }
 
-TBOOL ASoundManager::LoadWaveBanksInfo(const TCHAR* a_szFileName)
+TBOOL ASoundManager::LoadWaveBanksInfo( const TCHAR* a_szFileName )
 {
 	TBOOL bOpened = AAssetLoader::Load(
 		"Data/Assets/lib_wavebank.trb",
@@ -348,9 +597,9 @@ TBOOL ASoundManager::LoadWaveBanksInfo(const TCHAR* a_szFileName)
 		TTRUE
 	);
 
-	if (!bOpened) return TFALSE;
+	if ( !bOpened ) return TFALSE;
 
-	const PBProperties* pProperties = 
+	const PBProperties* pProperties =
 		AAssetLoader::CastSymbol<const PBProperties>( a_szFileName, PBProperties::TRB_SECTION_NAME, AAssetType_WaveBank );
 	TVALIDPTR( pProperties );
 

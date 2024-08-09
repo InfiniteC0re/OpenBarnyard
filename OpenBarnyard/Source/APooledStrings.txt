@@ -48,3 +48,4 @@ bkg_fmod
 DialogInputMap
 music
 ui
+default

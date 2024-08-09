@@ -12,7 +12,7 @@ public:
 public:
 
 private:
-	TINT32 m_iId;
+	TINT m_iId;
 	TINT m_iFlags;
 	AWaveBank* m_pWaveBank;
 	ASoundWaveId m_iWaveId;

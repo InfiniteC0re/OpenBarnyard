@@ -107,8 +107,8 @@ public:
 
 	TFLOAT GetFloat() const
 	{
-		TASSERT( m_eType == Type::Float );
-		return m_uValue.Float;
+		TASSERT( m_eType == Type::Float || m_eType == Type::Int );
+		return m_eType == Type::Float ? m_uValue.Float : TFLOAT( m_uValue.Int );
 	}
 
 	TINT GetInteger() const
@@ -278,6 +278,18 @@ struct PBPropertiesTypeCast { };
 
 template <>
 struct PBPropertiesTypeCast<TINT> { static constexpr PBPropertyValue::Type type = PBPropertyValue::Type::Int; };
+
+template <>
+struct PBPropertiesTypeCast<TINT8> { static constexpr PBPropertyValue::Type type = PBPropertyValue::Type::Int; };
+
+template <>
+struct PBPropertiesTypeCast<TINT16> { static constexpr PBPropertyValue::Type type = PBPropertyValue::Type::Int; };
+
+template <>
+struct PBPropertiesTypeCast<TUINT8> { static constexpr PBPropertyValue::Type type = PBPropertyValue::Type::Int; };
+
+template <>
+struct PBPropertiesTypeCast<TUINT16> { static constexpr PBPropertyValue::Type type = PBPropertyValue::Type::Int; };
 
 template <>
 struct PBPropertiesTypeCast<TUINT32> { static constexpr PBPropertyValue::Type type = PBPropertyValue::Type::UInt32; };
@@ -782,8 +794,17 @@ public:
 
 		if ( pFoundProperty && pFoundProperty->GetType() == PBPropertiesTypeCast<T>::type )
 		{
-			void* rawValue = pFoundProperty->GetRaw();
-			a_rOutValue = *TREINTERPRETCAST( T*, &rawValue );
+			if constexpr ( PBPropertiesTypeCast<T>::type == PBPropertyValue::Type::Float )
+			{
+				// Asking for a float value, can be got from a real float or from an integer
+				a_rOutValue = pFoundProperty->GetFloat();
+			}
+			else
+			{
+				void* rawValue = pFoundProperty->GetRaw();
+				a_rOutValue = *TREINTERPRETCAST( T*, &rawValue );
+			}
+
 			return TTRUE;
 		}
 
@@ -795,7 +816,7 @@ public:
 	{
 		auto pProperty = GetOptionalProperty( a_strName.GetString() );
 
-		if ( pProperty && pProperty->GetType() == PBPropertyValue::Type::String )
+		if ( pProperty )
 		{
 			a_rOutString = pProperty->GetTPString8();
 			return TTRUE;

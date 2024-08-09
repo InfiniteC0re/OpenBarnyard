@@ -5,7 +5,7 @@ TOSHI_NAMESPACE_USING
 
 void AAssetBuilder::Add(const TString8& a_FileName)
 {
-	auto pTRB = m_Files.Push();
+	auto pTRB = m_Files.EmplaceBack();
 	
 	if (pTRB->ReadFromFile(a_FileName.GetString()))
 	{
@@ -16,7 +16,7 @@ void AAssetBuilder::Add(const TString8& a_FileName)
 		TString8 symbolDirName = a_FileName.GetString(a_FileName.FindReverse('\\', -1) + 1);
 		symbolDirName.Truncate(symbolDirName.FindReverse('.', -1));
 
-		auto pAsset = m_AssetPack.GetAssets().Push();
+		auto pAsset = m_AssetPack.GetAssets().EmplaceBack();
 		pAsset->Name = symbolDirName.MakeLower();
 		pAsset->pTRB = pTRB;
 		pAsset->pStack = pTRB->GetSections()->GetStack(0);
