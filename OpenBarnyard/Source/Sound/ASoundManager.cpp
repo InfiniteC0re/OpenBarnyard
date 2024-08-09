@@ -117,7 +117,7 @@ AWaveBank* ASoundManager::LoadWaveBankFromAsset( const Toshi::TString8& a_strNam
 
 	// Get the bank name
 	TPString8 strWaveWankBankName;
-	pBankProperties->GetOptionalStringProperty( strWaveWankBankName, "name" );
+	pBankProperties->GetOptionalPropertyValue( strWaveWankBankName, "name" );
 
 	TINT iNameCmpRslt = strWaveWankBankName.GetString8().Compare( a_strName, -1 );
 	auto pExistingWaveBank = ms_WaveBanks.FindNode( strWaveWankBankName );
@@ -228,7 +228,7 @@ TBOOL ASoundManager::LoadSoundBankImpl( const TCHAR* a_szName, TBOOL a_bSimpleSo
 			pSoundBank->m_pSoundsEx = new ( AMemory::GetMemBlock( AMemory::POOL_Sound ) ) ASoundEx[ iNumSounds ];
 		}
 
-		pSoundsProperties->GetOptionalStringProperty( pSoundBank->m_strName, "name" );
+		pSoundsProperties->GetOptionalPropertyValue( pSoundBank->m_strName, "name" );
 
 		TINT iLocalised;
 		pSoundsProperties->GetOptionalPropertyValue( iLocalised, "localised" );
@@ -295,7 +295,7 @@ TBOOL ASoundManager::LoadSoundBankImpl( const TCHAR* a_szName, TBOOL a_bSimpleSo
 
 				// Get category
 				TPString8 strCategory;
-				if ( bNoErrors && pSoundProperties->GetOptionalStringProperty( strCategory, "category" ) )
+				if ( bNoErrors && pSoundProperties->GetOptionalPropertyValue( strCategory, "category" ) )
 				{
 					// Find category and store it's index
 					auto pFoundCategory = m_CategoryIndices.FindNode(

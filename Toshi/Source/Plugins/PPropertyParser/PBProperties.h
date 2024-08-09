@@ -795,10 +795,15 @@ public:
 		if ( pFoundProperty && pFoundProperty->GetType() == PBPropertiesTypeCast<T>::type )
 		{
 			if constexpr ( PBPropertiesTypeCast<T>::type == PBPropertyValue::Type::Float )
-			{
-				// Asking for a float value, can be got from a real float or from an integer
 				a_rOutValue = pFoundProperty->GetFloat();
-			}
+			else if constexpr ( PBPropertiesTypeCast<T>::type == PBPropertyValue::Type::Int )
+				a_rOutValue = pFoundProperty->GetInteger();
+			else if constexpr ( PBPropertiesTypeCast<T>::type == PBPropertyValue::Type::Bool )
+				a_rOutValue = pFoundProperty->GetBoolean();
+			else if constexpr ( PBPropertiesTypeCast<T>::type == PBPropertyValue::Type::UInt32 )
+				a_rOutValue = pFoundProperty->GetUINT32();
+			else if constexpr ( PBPropertiesTypeCast<T>::type == PBPropertyValue::Type::String )
+				a_rOutValue = pFoundProperty->GetString();
 			else
 			{
 				void* rawValue = pFoundProperty->GetRaw();
@@ -810,21 +815,6 @@ public:
 
 		return TFALSE;
 	}
-
-#ifdef __TOSHI_TPSTRING8_H__
-	TBOOL GetOptionalStringProperty( Toshi::TPString8& a_rOutString, const Toshi::TPString8& a_strName ) const
-	{
-		auto pProperty = GetOptionalProperty( a_strName.GetString() );
-
-		if ( pProperty )
-		{
-			a_rOutString = pProperty->GetTPString8();
-			return TTRUE;
-		}
-
-		return TFALSE;
-	}
-#endif
 
 	const PBProperties* GetParentProperties() const
 	{
