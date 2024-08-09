@@ -1,6 +1,12 @@
 #include "ToshiPCH.h"
 #include "TBitArray.h"
 
+//-----------------------------------------------------------------------------
+// Enables memory debugging.
+// Note: Should be the last include!
+//-----------------------------------------------------------------------------
+#include "Core/TMemoryDebugOn.h"
+
 TOSHI_NAMESPACE_START
 
 #define MIN_NUM_BITS    ( 8 * sizeof( TUINT32 ) )
@@ -17,6 +23,11 @@ constexpr TBitArray::TBitArray() :
 TBitArray::TBitArray( TINT a_iNumBits, TINT a_iInitialiseWith )
 {
 	Create( a_iNumBits, a_iInitialiseWith );
+}
+
+TBitArray::~TBitArray()
+{
+	Destroy();
 }
 
 TINT TBitArray::GetNumAllocatedBytes() const
@@ -248,11 +259,6 @@ void TBitArray::Create( TINT a_iNumBits, TINT a_iInitialiseWith )
 	TVALIDPTR( m_pBuffer );
 
 	Reset();
-}
-
-TBitArray::~TBitArray()
-{
-	Destroy();
 }
 
 TOSHI_NAMESPACE_END
