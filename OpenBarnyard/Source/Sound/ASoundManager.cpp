@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "ASoundManager.h"
 #include "ASound.h"
-#include "ASoundEx.h"
+#include "ASoundAdvanced.h"
 #include "Assets/AAssetLoader.h"
 #include "AWaveBankFMODFSB.h"
 #include "AWaveBankFMODFSBStream.h"
@@ -225,7 +225,7 @@ TBOOL ASoundManager::LoadSoundBankImpl( const TCHAR* a_szName, TBOOL a_bSimpleSo
 		}
 		else
 		{
-			pSoundBank->m_pSoundsEx = new ( AMemory::GetMemBlock( AMemory::POOL_Sound ) ) ASoundEx[ iNumSounds ];
+			pSoundBank->m_pSoundsEx = new ( AMemory::GetMemBlock( AMemory::POOL_Sound ) ) ASoundAdvanced[ iNumSounds ];
 		}
 
 		pSoundsProperties->GetOptionalPropertyValue( pSoundBank->m_strName, "name" );
@@ -288,7 +288,7 @@ TBOOL ASoundManager::LoadSoundBankImpl( const TCHAR* a_szName, TBOOL a_bSimpleSo
 			else
 			{
 				// Initialise ASoundEx
-				ASoundEx* pSoundEx = &pSoundBank->m_pSoundsEx[ iSoundIndex ];
+				ASoundAdvanced* pSoundEx = &pSoundBank->m_pSoundsEx[ iSoundIndex ];
 
 				pSoundEx->m_iId = iSoundId;
 				m_SoundIdToSoundEx.Insert( iSoundId, pSoundEx );
@@ -336,7 +336,7 @@ TBOOL ASoundManager::LoadSoundBankImpl( const TCHAR* a_szName, TBOOL a_bSimpleSo
 
 								if ( pWaveBank != TNULL )
 								{
-									ASoundEx::Wave oWave;
+									ASoundAdvanced::Wave oWave;
 									oWave.m_pWaveBank = pWaveBank;
 									oWave.m_iId = pWaves->GetValue( i )->GetInteger();
 

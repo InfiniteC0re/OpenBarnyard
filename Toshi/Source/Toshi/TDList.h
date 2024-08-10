@@ -144,8 +144,8 @@ namespace Toshi {
 
 		TPriList() { }
 
-		Iterator_t Begin() { return TGenericPriList::Begin(); }
-		Iterator_t End() { return TGenericPriList::End(); }
+		Iterator Begin() { return TGenericPriList::Begin(); }
+		Iterator End() { return TGenericPriList::End(); }
 		TBOOL IsLinked() { return !IsEmpty(); }
 	};
 
@@ -159,8 +159,8 @@ namespace Toshi {
 
 		T* Head() { return TGenericDList::Head()->As<T>(); }
 		T* Tail() { return TGenericDList::Tail()->As<T>(); }
-		Iterator_t Begin() { return TGenericDList::Begin()->As<T>(); }
-		Iterator_t End() { return TGenericDList::End()->As<T>(); }
+		Iterator Begin() { return TGenericDList::Begin()->As<T>(); }
+		Iterator End() { return TGenericDList::End()->As<T>(); }
 		TBOOL IsEmpty() { return TGenericDList::IsEmpty(); }
 		TBOOL IsLinked() { return m_oRoot.IsLinked(); }
 		void RemoveHead() { TGenericDList::RemoveHead(); }

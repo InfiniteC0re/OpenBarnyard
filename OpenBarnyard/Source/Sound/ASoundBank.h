@@ -1,6 +1,6 @@
 #pragma once
 #include "ASound.h"
-#include "ASoundEx.h"
+#include "ASoundAdvanced.h"
 
 #include <Toshi/T2DList.h>
 #include <Toshi/TPString8.h>
@@ -35,6 +35,6 @@ public:
 private:
 	TINT m_iNumSounds;
 	Toshi::TPString8 m_strName;
-	ASoundEx* m_pSoundsEx;
+	ASoundAdvanced* m_pSoundsEx;
 	ASound* m_pSounds;
 };

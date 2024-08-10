@@ -865,7 +865,7 @@ namespace Toshi {
 			pAdapter->GetMode().SetD3DDisplayMode(displayMode);
 			pAdapter->EnumerateOutputs(this);
 
-			GetAdapterList()->InsertTail(*pAdapter);
+			GetAdapterList()->InsertTail(pAdapter);
 		}
 	}
 

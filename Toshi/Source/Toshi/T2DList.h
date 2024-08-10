@@ -24,8 +24,8 @@ namespace Toshi {
 
 		public:
 			constexpr Node() :
-				m_pPrev(this),
-				m_pNext(this)
+				m_pPrev( this ),
+				m_pNext( this )
 			{ }
 
 			~Node()
@@ -147,7 +147,7 @@ namespace Toshi {
 		}
 
 	protected:
-		Node m_oRoot;
+		mutable Node m_oRoot;
 	};
 
 	template <class T>
@@ -167,52 +167,52 @@ namespace Toshi {
 			TASSERT( IsEmpty() );
 		}
 
-		Iterator_t Head() const
+		Iterator Head() const
 		{
 			TASSERT( !IsEmpty() );
 			return m_oRoot.Next();
 		}
 
-		Iterator_t Tail() const
+		Iterator Tail() const
 		{
 			TASSERT( !IsEmpty() );
 			return m_oRoot.Prev();
 		}
 
-		Iterator_t Begin() const
+		Iterator Begin() const
 		{
 			return m_oRoot.Next();
 		}
 
-		const Node* End() const
+		Iterator End() const
 		{
 			return &m_oRoot;
 		}
 
-		void Begin( Iterator_t& begin ) const
-		{
-			begin = m_oRoot.Next();
-		}
-
-		void End( const Node& end ) const
-		{
-			end = &m_oRoot;
-		}
-
-		Iterator_t Front() const
+		Iterator RBegin() const
 		{
 			return m_oRoot.Next();
 		}
 
-		Iterator_t Back() const
+		Iterator REnd() const
+		{
+			return &m_oRoot;
+		}
+
+		Iterator Front() const
+		{
+			return m_oRoot.Next();
+		}
+
+		Iterator Back() const
 		{
 			return m_oRoot.Prev();
 		}
 
-		void Delete( const Iterator_t& iter )
+		void Delete( const Iterator& iter )
 		{
 			iter->Remove();
-			delete static_cast<T*>( iter );
+			delete TSTATICCAST( T, iter );
 		}
 
 		void DeleteAll()
@@ -223,7 +223,7 @@ namespace Toshi {
 			}
 		}
 
-		void Erase( const Iterator_t& iter )
+		void Erase( const Iterator& iter )
 		{
 			iter->Remove();
 		}

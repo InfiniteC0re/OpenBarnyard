@@ -124,7 +124,7 @@ private:
 
 private:
 	Toshi::T2Map<Toshi::TPString8, TSIZE, Toshi::TPString8::Comparator> m_CategoryIndices; // 0x80
-	Toshi::T2Map<TINT, ASoundEx*> m_SoundIdToSoundEx;                                      // 0x80
+	Toshi::T2Map<TINT, ASoundAdvanced*> m_SoundIdToSoundEx;                                      // 0x80
 	Toshi::T2Map<TINT, ASound*> m_SoundIdToSound;                                          // 0x80
 	CameraData m_CameraData;                                                               // 0xC8
 	S1 m_aS1[128];                                                                         // 0x108

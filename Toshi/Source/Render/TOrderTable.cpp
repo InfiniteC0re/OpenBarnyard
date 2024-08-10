@@ -23,7 +23,7 @@ namespace Toshi {
 		for ( size_t i = 0; i < s_uiMaxMaterials; i++ )
 		{
 			s_pRegMaterials[ i ].SetOrderTable( TNULL );
-			s_llRegMatFreeList.InsertTail( s_pRegMaterials[ i ] );
+			s_llRegMatFreeList.InsertTail( &s_pRegMaterials[ i ] );
 		}
 	}
 
@@ -101,8 +101,8 @@ namespace Toshi {
 		if ( s_llRegMatFreeList.IsEmpty() )
 			return TNULL;
 
-		TRegMaterial* pRegMat = s_llRegMatFreeList.RemoveHead()->As<TRegMaterial>();
-		s_llRegMatRegisteredList.InsertTail( *pRegMat );
+		TRegMaterial* pRegMat = s_llRegMatFreeList.RemoveHead();
+		s_llRegMatRegisteredList.InsertTail( pRegMat );
 		s_uiNumRegisteredMaterials += 1;
 
 		pRegMat->SetFlags( TRegMaterial::State_Registered );
@@ -122,7 +122,7 @@ namespace Toshi {
 			auto pMaterial = pRegMat->GetMaterial();
 
 			pRegMat->Remove();
-			s_llRegMatFreeList.InsertHead( *pRegMat );
+			s_llRegMatFreeList.InsertHead( pRegMat );
 			s_uiNumRegisteredMaterials -= 1;
 
 			pRegMat->SetFlags( 0 );

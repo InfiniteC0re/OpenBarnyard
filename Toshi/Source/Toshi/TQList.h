@@ -98,12 +98,12 @@ namespace Toshi {
 			return pFirstElement;
 		}
 
-		TNode::Iterator_t Head() const
+		TNode::Iterator Head() const
 		{
 			return m_oRoot.m_pNext;
 		}
 
-		TNode::Iterator_t Begin() const
+		TNode::Iterator Begin() const
 		{
 			return m_oRoot.m_pNext;
 		}

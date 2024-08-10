@@ -74,7 +74,7 @@ namespace Toshi {
 		auto pEntry = new TTextureFactory::NameEntry(a_szName, a_pTexture);
 
 		a_pTexture->m_pNameEntry = pEntry;
-		pList->InsertHead(*pEntry);
+		pList->InsertHead(pEntry);
 
 		return a_pTexture->m_pNameEntry;
 	}

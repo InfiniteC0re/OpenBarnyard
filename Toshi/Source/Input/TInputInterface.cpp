@@ -42,7 +42,7 @@ namespace Toshi {
 	{
 		if (device != TNULL)
 		{
-			m_DeviceList.InsertTail(*device);
+			m_DeviceList.InsertTail(device);
 			device->SetInputInterface(this);
 		}
 	}
@@ -140,7 +140,7 @@ namespace Toshi {
 			it->Unacquire();
 			it->Release();
 			it->Remove();
-			delete it;
+			delete it.Get();
 		}
 	}
 

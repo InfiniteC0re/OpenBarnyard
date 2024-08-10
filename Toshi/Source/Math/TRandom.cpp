@@ -42,7 +42,7 @@ namespace Toshi
 	TRandom::TRandom()
 	{
 		THPTimer timer = THPTimer();
-		SetSeed(timer.GetRaw32());
+		SetSeed( timer.GetRaw32() );
 	}
 
 	void TRandom::Isaac()
@@ -51,17 +51,17 @@ namespace Toshi
 		mm = m_pRandmem;
 		r = m_pRandrsl;
 		a = m_uiRandA;
-		b = cut(m_uiRandB + (++m_uiRandC));
+		b = cut( m_uiRandB + ( ++m_uiRandC ) );
 
 		m = mm;
-		mend = m2 = m + (RANDSIZ / 2);
-		while (m < mend) {
-			shuffle(a, b, mm, m, m2, r, x);
+		mend = m2 = m + ( RANDSIZ / 2 );
+		while ( m < mend ) {
+			shuffle( a, b, mm, m, m2, r, x );
 		}
 
 		m2 = mm;
-		while (m2 < mend) {
-			shuffle(a, b, mm, m, m2, r, x);
+		while ( m2 < mend ) {
+			shuffle( a, b, mm, m, m2, r, x );
 		}
 
 		m_uiRandA = a;
@@ -79,70 +79,70 @@ namespace Toshi
 		a = b = c = d = e = f = g = h = 0x9e3779b9 + m_uiSeed;
 
 		/* scramble it */
-		for (i = 0; i < RANDSIZL; i++) {
-			mix(a, b, c, d, e, f, g, h);
+		for ( i = 0; i < RANDSIZL; i++ ) {
+			mix( a, b, c, d, e, f, g, h );
 		}
 
 		TUINT32* m = m_pRandmem;
 		TUINT32* r = m_pRandrsl;
 
 		/* initialize using the contents of r[] as the seed */
-		for (i = 0; i < RANDSIZ; i += 8) {
-			a += r[i];
-			b += r[i + 1];
-			c += r[i + 2];
-			d += r[i + 3];
-			e += r[i + 4];
-			f += r[i + 5];
-			g += r[i + 6];
-			h += r[i + 7];
+		for ( i = 0; i < RANDSIZ; i += 8 ) {
+			a += r[ i ];
+			b += r[ i + 1 ];
+			c += r[ i + 2 ];
+			d += r[ i + 3 ];
+			e += r[ i + 4 ];
+			f += r[ i + 5 ];
+			g += r[ i + 6 ];
+			h += r[ i + 7 ];
 
-			mix(a, b, c, d, e, f, g, h);
+			mix( a, b, c, d, e, f, g, h );
 
-			m[i] = a;
-			m[i + 1] = b;
-			m[i + 2] = c;
-			m[i + 3] = d;
-			m[i + 4] = e;
-			m[i + 5] = f;
-			m[i + 6] = g;
-			m[i + 7] = h;
+			m[ i ] = a;
+			m[ i + 1 ] = b;
+			m[ i + 2 ] = c;
+			m[ i + 3 ] = d;
+			m[ i + 4 ] = e;
+			m[ i + 5 ] = f;
+			m[ i + 6 ] = g;
+			m[ i + 7 ] = h;
 		}
 
 		/* do a second pass to make all of the seed affect all of m */
-		for (i = 0; i < RANDSIZ; i += 8) {
-			a += m[i];
-			b += m[i + 1];
-			c += m[i + 2];
-			d += m[i + 3];
-			e += m[i + 4];
-			f += m[i + 5];
-			g += m[i + 6];
-			h += m[i + 7];
+		for ( i = 0; i < RANDSIZ; i += 8 ) {
+			a += m[ i ];
+			b += m[ i + 1 ];
+			c += m[ i + 2 ];
+			d += m[ i + 3 ];
+			e += m[ i + 4 ];
+			f += m[ i + 5 ];
+			g += m[ i + 6 ];
+			h += m[ i + 7 ];
 
-			mix(a, b, c, d, e, f, g, h);
+			mix( a, b, c, d, e, f, g, h );
 
-			m[i] = a;
-			m[i + 1] = b;
-			m[i + 2] = c;
-			m[i + 3] = d;
-			m[i + 4] = e;
-			m[i + 5] = f;
-			m[i + 6] = g;
-			m[i + 7] = h;
+			m[ i ] = a;
+			m[ i + 1 ] = b;
+			m[ i + 2 ] = c;
+			m[ i + 3 ] = d;
+			m[ i + 4 ] = e;
+			m[ i + 5 ] = f;
+			m[ i + 6 ] = g;
+			m[ i + 7 ] = h;
 		}
 
 		Isaac();
 		m_uiRndCnt = RANDSIZ;
 	}
 
-	TINT TRandom::GetInt(TUINT32 a_iLower, TUINT32 a_iUpper)
+	TINT TRandom::GetInt( TUINT32 a_iLower, TUINT32 a_iUpper )
 	{
-		TASSERT(a_iUpper > a_iLower, "a_iLower can't be higher than a_iUpper");
-		
+		TASSERT( a_iUpper > a_iLower, "a_iLower can't be higher than a_iUpper" );
+
 		unsigned long long rand = RandRaw();
 		unsigned long long range = a_iUpper - a_iLower;
-		return a_iLower + (range * rand >> 0x20);
+		return a_iLower + ( range * rand >> 32 );
 	}
 
 	TINT TRandom::GetInt()
@@ -150,17 +150,22 @@ namespace Toshi
 		return RandRaw();
 	}
 
-	float TRandom::GetFloat()
+	TFLOAT TRandom::GetFloat()
 	{
-		return (RandRaw() >> 1) * 4.656613E-10f;
+		return ( RandRaw() >> 1 ) * 4.6566129E-10f;
 	}
 
-	float TRandom::GetFloat2()
+	TFLOAT TRandom::GetFloatMinMax( TUINT32 a_iLower, TUINT32 a_iUpper )
 	{
-		return (RandRaw() >> 1) * 9.313226E-10f * -1.0f;
+		return (TFLOAT)( RandRaw() >> 1 ) * 4.6566129E-10f * a_iUpper + a_iLower;
 	}
 
-	void TRandom::SetSeed(TUINT a_uiSeed)
+	TFLOAT TRandom::GetFloat2()
+	{
+		return ( RandRaw() >> 1 ) * 9.3132257E-10f * -1.0f;
+	}
+
+	void TRandom::SetSeed( TUINT a_uiSeed )
 	{
 		m_uiSeed = a_uiSeed;
 		RandInit();
@@ -168,13 +173,14 @@ namespace Toshi
 
 	TUINT32 TRandom::RandRaw()
 	{
-		if (m_uiRndCnt-- == 0)
+		if ( ( m_uiRndCnt-- ) != 0 )
 		{
-			Isaac();
-			m_uiRndCnt = RANDSIZ - 1;
-			//return *(uint *)((TINT)this + 0x44);
+			return m_pRandrsl[ m_uiRndCnt ];
 		}
-		return m_pRandrsl[m_uiRndCnt];
+
+		Isaac();
+		m_uiRndCnt = RANDSIZ - 1;
+		return m_pRandrsl[ RANDSIZ - 1 ];
 	}
 
 }

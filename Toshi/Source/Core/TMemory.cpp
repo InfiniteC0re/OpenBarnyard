@@ -87,7 +87,7 @@ TMemory::TMemory()
 
 	for ( TINT i = 0; i < TMEMORY_NUM_BLOCK_SLOTS; i++ )
 	{
-		m_FreeBlocks.InsertTail( m_aBlockSlots[ i ] );
+		m_FreeBlocks.InsertTail( &m_aBlockSlots[ i ] );
 	}
 
 	m_bFlag1 = TFALSE;
@@ -383,7 +383,7 @@ TMemory::MemBlock* TMemory::CreateMemBlockInPlace( void* a_pMem, TUINT a_uiSize,
 		if ( pBlock )
 		{
 			auto pSlot = m_FreeBlocks.RemoveHead();
-			m_UsedBlocks.InsertHead( *pSlot );
+			m_UsedBlocks.InsertHead( pSlot );
 
 			pBlock->m_pSlot = pSlot;
 			pBlock->m_pSlot->m_pPtr = pBlock;
@@ -442,7 +442,7 @@ TBOOL TMemory::FreeMemBlock( MemBlock* a_pMemBlock )
 
 	SetMemBlockUnused( a_pMemBlock );
 	a_pMemBlock->m_pSlot->Remove();
-	m_FreeBlocks.InsertHead( *a_pMemBlock->m_pSlot );
+	m_FreeBlocks.InsertHead( a_pMemBlock->m_pSlot );
 
 	return TTRUE;
 }
@@ -450,7 +450,7 @@ TBOOL TMemory::FreeMemBlock( MemBlock* a_pMemBlock )
 void TMemory::SetMemBlockUnused( MemBlock* a_pMemBlock )
 {
 	a_pMemBlock->m_pSlot->Remove();
-	m_FreeBlocks.InsertHead( *a_pMemBlock->m_pSlot );
+	m_FreeBlocks.InsertHead( a_pMemBlock->m_pSlot );
 
 	CreateMemBlockInPlace( a_pMemBlock, a_pMemBlock->m_uiTotalSize1, "_unused" );
 	TStringManager::String8Copy( a_pMemBlock->m_szSignature, "xxxxxxx" );

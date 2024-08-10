@@ -24,17 +24,17 @@ namespace Toshi
 		TRandom();
 
 		TINT GetInt();
-		TINT GetInt(TUINT32 a_iLower, TUINT32 a_iUpper);
-		inline TINT GetInt(TUINT32 a_iUpper) { return GetInt(0, a_iUpper); };
+		TINT GetInt( TUINT32 a_iLower, TUINT32 a_iUpper );
+		TINT GetInt( TUINT32 a_iUpper ) { return GetInt( 0, a_iUpper ); };
 
-		float GetFloat();
-		float GetFloat2();
-
-		void SetSeed(TUINT a_uiSeed);
+		TFLOAT GetFloat();
+		TFLOAT GetFloatMinMax( TUINT32 a_iLower, TUINT32 a_iUpper );
+		TFLOAT GetFloat2();
 
 		TUINT32 RandRaw();
-		
-		inline TUINT32 GetSeed() { return m_uiSeed; }
+
+		void SetSeed( TUINT a_uiSeed );
+		TUINT32 GetSeed() const { return m_uiSeed; }
 
 	private:
 		void Isaac();
@@ -43,9 +43,9 @@ namespace Toshi
 	private:
 		TUINT32 m_uiSeed; // 0x0
 		TUINT32 m_uiRndCnt; // 0x4
-		TUINT32 m_pRandrsl[RANDSIZ]; //0x8
+		TUINT32 m_pRandrsl[ RANDSIZ ]; //0x8
 
-		TUINT32 m_pRandmem[RANDSIZ]; // 0x48
+		TUINT32 m_pRandmem[ RANDSIZ ]; // 0x48
 
 		TUINT32 m_uiRandA; // 0x88
 		TUINT32 m_uiRandB; // 0x8C

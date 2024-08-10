@@ -12,6 +12,7 @@
 #include "Toshi/TUtil.h"
 #include "Toshi/TSingleton.h"
 #include "Toshi/TObject.h"
+#include "Toshi/T2Iterator.h"
 
 #include "Core/TMemory.h"
 

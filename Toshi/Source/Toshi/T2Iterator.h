@@ -17,7 +17,7 @@
 	template<class T, class Node> friend class Toshi::T2Iterator
 
 #define T2_DEFINE_ITERATOR(TYPE, NODE_TYPE) \
-	using Iterator_t = Toshi::T2Iterator<TYPE, NODE_TYPE>
+	using Iterator = Toshi::T2Iterator<TYPE, NODE_TYPE>
 
 namespace Toshi {
 

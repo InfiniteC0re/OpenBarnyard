@@ -8,7 +8,7 @@
 
 class AWaveBank;
 
-class ASoundEx
+class ASoundAdvanced
 {
 public:
 	friend class ASoundManager;
@@ -30,7 +30,7 @@ public:
 	};
 
 public:
-	ASoundEx() :
+	ASoundAdvanced() :
 		m_iFlags(0),
 		m_iId(0),
 		m_uiCategoryIndex(0),

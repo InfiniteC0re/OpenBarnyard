@@ -162,7 +162,7 @@ namespace Toshi {
 				}
 			}
 
-			GetModeList()->InsertTail(*pMode);
+			GetModeList()->InsertTail(pMode);
 		}
 	}
 
