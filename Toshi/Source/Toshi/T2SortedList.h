@@ -4,9 +4,10 @@
 
 TOSHI_NAMESPACE_START
 
-// This is an example of a comparator
+//  1 => go to the next node
+// -1 => push before a_rcVal2
 template <class T>
-struct T2SortedListDefaultComparator
+struct T2SortedListDefaultSortResults
 {
 	TINT operator()( const T& a_rcVal1, const T& a_rcVal2 ) const
 	{
@@ -17,7 +18,7 @@ struct T2SortedListDefaultComparator
 	}
 };
 
-template <typename T, typename Container = T2DList<T>, typename Comparator = T2SortedListDefaultComparator<T>>
+template <typename T, typename Container = T2DList<T>, typename SortResults = T2SortedListDefaultSortResults<T>>
 class T2SortedList : private Container
 {
 public:
@@ -30,11 +31,9 @@ public:
 
 	Iterator FindInsertionPoint( const T& a_rcValue )
 	{
-		Comparator comparator;
-
 		T2_FOREACH( *this, it )
 		{
-			if ( comparator( a_rcValue, *it.Get() ) < 0 )
+			if ( SortResults()()( a_rcValue, *it.Get() ) < 0 )
 				return it;
 		}
 
@@ -47,17 +46,15 @@ public:
 		return &a_rValue;
 	}
 
-	Iterator Push( T* a_pValue )
-	{
-		return Push( *a_pValue );
-	}
+	Iterator Push( T* a_pValue ) { return Push( *a_pValue ); }
 
-	void Delete( const Iterator& a_rcIt ) { Container::Delete( a_rcIt ); }
+	void Delete( Iterator a_It ) { Container::Delete( a_It ); }
 	void DeleteAll() { Container::DeleteAll(); }
 
-	void Erase( const Iterator& a_rcIt ) { Container::Erase( a_rcIt ); }
+	void Erase( Iterator a_It ) { Container::Erase( a_It ); }
 
 	TBOOL IsEmpty() const { return Container::IsEmpty(); }
+	TUINT Size() const { return Container::Size(); }
 
 	Iterator Head() const { return Container::Head(); }
 	Iterator Tail() const { return Container::Tail(); }

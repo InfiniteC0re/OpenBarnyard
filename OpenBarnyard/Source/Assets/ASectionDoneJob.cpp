@@ -31,7 +31,7 @@ TBOOL ASectionDoneJob::RunJob()
 		for (TINT i = 0; i < iNumLODs; i++)
 		{
 			auto pModelNode = m_pSection->m_ppLODModelsData[m_eLODType][i];
-			ATerrain::GetSingleton()->CreateModelInstance(pModelNode, "", TNULL);
+			ATerrainInterface::GetSingleton()->CreateModelInstance(pModelNode, "", TNULL);
 
 			if (!ISZERO(m_pSection->m_aLODFlags[m_eLODType][i] & 1))
 			{
@@ -49,7 +49,7 @@ TBOOL ASectionDoneJob::RunJob()
 		g_pMemory->SetGlobalBlock(pOldMemBlock);
 
 		// Execute model node ready event if it is assigned
-		auto cbModelNodeReady = ATerrain::GetSingleton()->GetOnModelNodeReadyCallback();
+		auto cbModelNodeReady = ATerrainInterface::GetSingleton()->GetOnModelNodeReadyCallback();
 
 		if (TNULL != cbModelNodeReady)
 		{
@@ -69,7 +69,7 @@ TBOOL ASectionDoneJob::RunJob()
 		m_pSection->SetLODEmpty(m_eLODType, TFALSE);
 		m_pSection->DestroyLOD(m_eLODType);
 
-		ATerrain::GetSingleton()->QueueStreamingAssets();
+		ATerrainInterface::GetSingleton()->QueueStreamingAssets();
 		return TTRUE;
 	}
 

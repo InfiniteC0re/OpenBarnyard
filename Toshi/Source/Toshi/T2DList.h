@@ -134,16 +134,16 @@ namespace Toshi {
 			return TFALSE;
 		}
 
-		size_t Size() const
+		TUINT Size() const
 		{
-			size_t size = 0;
+			TUINT uiSize = 0;
 
 			for ( Node* pNode = m_oRoot.m_pNext; pNode != &m_oRoot; pNode = pNode->m_pNext )
 			{
-				size += 1;
+				uiSize++;
 			}
 
-			return size;
+			return uiSize;
 		}
 
 	protected:
@@ -209,7 +209,7 @@ namespace Toshi {
 			return m_oRoot.Prev();
 		}
 
-		void Delete( const Iterator& iter )
+		void Delete( Iterator iter )
 		{
 			iter->Remove();
 			delete TSTATICCAST( T, iter );
@@ -223,7 +223,7 @@ namespace Toshi {
 			}
 		}
 
-		void Erase( const Iterator& iter )
+		void Erase( Iterator iter )
 		{
 			iter->Remove();
 		}

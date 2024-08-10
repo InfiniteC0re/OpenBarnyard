@@ -139,7 +139,7 @@ public:
 	static constexpr const TCHAR* GetTerrainName( Terrain a_eTerrain ) { return ms_aTerrains[ a_eTerrain ].szName; }
 
 private:
-	inline static ATerrain* ms_pCurrentTerrain;
+	inline static ATerrainInterface* ms_pCurrentTerrain;
 	inline static Terrain ms_eCurrentLevel = Terrain_EnvBeadyFarm;
 };
 

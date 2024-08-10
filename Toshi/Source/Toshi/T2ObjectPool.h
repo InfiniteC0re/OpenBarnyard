@@ -19,12 +19,12 @@ namespace Toshi {
 		virtual ~T2GenericObjectPool() = default;
 
 	protected:
-		virtual void* Malloc(size_t a_uiSize, size_t a_uiAlignment) override
+		virtual void* Malloc(TSIZE a_uiSize, TSIZE a_uiAlignment) override
 		{
 			return TNULL;
 		}
 
-		virtual void* Malloc(size_t a_uiSize) override
+		virtual void* Malloc(TSIZE a_uiSize) override
 		{
 			return GetObject();
 		}
@@ -34,17 +34,17 @@ namespace Toshi {
 			ReturnObject(TSTATICCAST(UnusedObject, a_pPtr));
 		}
 
-		virtual TBOOL CanAllocate(size_t size) override
+		virtual TBOOL CanAllocate(TSIZE size) override
 		{
 			return m_pHead != TNULL;
 		}
 
-		virtual void* TryMalloc(size_t size, size_t alignment) override
+		virtual void* TryMalloc(TSIZE size, TSIZE alignment) override
 		{
 			return TNULL;
 		}
 
-		virtual void* TryMalloc(size_t size) override
+		virtual void* TryMalloc(TSIZE size) override
 		{
 			if (m_pHead != TNULL)
 			{
@@ -141,12 +141,12 @@ namespace Toshi {
 			Free(a_pObject);
 		}
 
-		virtual size_t GetUsedSize() override
+		virtual TSIZE GetUsedSize() override
 		{
 			return (MaxNumber - GetNumFreeObjects()) * ObjectSize;
 		}
 
-		virtual size_t GetCapacity() override
+		virtual TSIZE GetCapacity() override
 		{
 			return MaxNumber * ObjectSize;
 		}
@@ -171,6 +171,96 @@ namespace Toshi {
 
 	private:
 		TBYTE m_aObjects[MaxNumber * ObjectSize];
+	};
+
+	template <class T>
+	class T2DynamicObjectPool :
+		protected T2GenericObjectPool
+	{
+	public:
+		T2DynamicObjectPool( T2Allocator* a_pAllocator, TINT a_iMaxNumber )
+		{
+			TVALIDPTR( a_pAllocator );
+			m_iMaxNumber = a_iMaxNumber;
+			m_pAllocator = a_pAllocator;
+
+			TUINT32 uiClassSize = sizeof( T );
+			TUINT32 uiClassAlignment = alignof( T );
+			m_uiObjectSize = ( uiClassSize - 1 ) + uiClassAlignment & ~( uiClassAlignment - 1U );
+
+			TASSERT( m_uiObjectSize >= sizeof( T ) && uiClassAlignment > 0 );
+
+			if ( m_iMaxNumber < 1 )
+			{
+				m_pData = TNULL;
+			}
+			else
+			{
+				m_pData = m_pAllocator->Malloc( m_iMaxNumber * m_uiObjectSize, uiClassAlignment );
+			}
+
+			TVALIDPTR( m_pData );
+			T2GenericObjectPool::Initialise(
+				TREINTERPRETCAST( T2GenericObjectPool::UnusedObject*, m_pData ),
+				m_iMaxNumber,
+				m_uiObjectSize
+			);
+		}
+
+		virtual ~T2DynamicObjectPool()
+		{
+			m_pAllocator->Free( m_pData );
+		}
+
+		template<class... Args>
+		T* NewObject( Args&& ...args )
+		{
+			TASSERT( TTRUE == CanAllocate( m_uiObjectSize ) );
+			T* pValue = new ( Malloc( m_uiObjectSize ) ) T( std::forward<Args>( args )... );
+			return pValue;
+		}
+
+		T* AllocateObject()
+		{
+			TASSERT( TTRUE == CanAllocate( m_uiObjectSize ) );
+			return TSTATICCAST( T, Malloc( m_uiObjectSize ) );
+		}
+
+		void FreeObject( T* a_pObject )
+		{
+			TASSERT( TTRUE == IsAddressInPool( a_pObject ) );
+			Free( a_pObject );
+		}
+
+		void DeleteObject( T* a_pObject )
+		{
+			TASSERT( TTRUE == IsAddressInPool( a_pObject ) );
+			a_pObject->~T();
+			Free( a_pObject );
+		}
+
+		virtual TSIZE GetUsedSize() override
+		{
+			return ( m_iMaxNumber - GetNumFreeObjects() ) * m_uiObjectSize;
+		}
+
+		virtual TSIZE GetCapacity() override
+		{
+			return m_iMaxNumber * m_uiObjectSize;
+		}
+
+		virtual TBOOL IsAddressInPool( const void* a_pAddress )
+		{
+			return
+				TREINTERPRETCAST( TUINTPTR, m_pData ) <= TREINTERPRETCAST( TUINTPTR, a_pAddress ) &&
+				TREINTERPRETCAST( TUINTPTR, a_pAddress ) < TREINTERPRETCAST( TUINTPTR, m_pData ) + ( m_iMaxNumber * m_uiObjectSize );
+		}
+
+	private:
+		T2Allocator* m_pAllocator;
+		TINT m_iMaxNumber;
+		TUINT m_uiObjectSize;
+		void* m_pData;
 	};
 
 	template <class TClassType>
@@ -248,12 +338,12 @@ namespace Toshi {
 			Free(a_pObject);
 		}
 
-		virtual size_t GetUsedSize() override
+		virtual TSIZE GetUsedSize() override
 		{
 			return (m_iMaxNumber - GetNumFreeObjects()) * m_uiObjectSize;
 		}
 
-		virtual size_t GetCapacity() override
+		virtual TSIZE GetCapacity() override
 		{
 			return m_iMaxNumber * m_uiObjectSize;
 		}

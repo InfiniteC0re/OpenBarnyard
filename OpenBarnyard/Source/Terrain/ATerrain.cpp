@@ -20,7 +20,7 @@
 
 TOSHI_NAMESPACE_USING
 
-ATerrain::ATerrain(TINT a_iUnused1, TINT a_iUnused2, TINT a_iPreloadTerrainBlockSize, TINT a_iStartVISGroup)
+ATerrainInterface::ATerrainInterface(TINT a_iUnused1, TINT a_iUnused2, TINT a_iPreloadTerrainBlockSize, TINT a_iStartVISGroup)
 {
 	m_bIsLoaded = TTRUE;
 	m_pTerrainVIS = TNULL;
@@ -91,7 +91,7 @@ ATerrain::ATerrain(TINT a_iUnused1, TINT a_iUnused2, TINT a_iPreloadTerrainBlock
 	m_fnGetCurrentVISGroup = GetCurrentSectionID;
 }
 
-ATerrain::~ATerrain()
+ATerrainInterface::~ATerrainInterface()
 {
 	TIMPLEMENT();
 	m_bIsLoaded = TFALSE;
@@ -116,7 +116,7 @@ ATerrain::~ATerrain()
 	delete[] m_pJobs;
 }
 
-void ATerrain::Update()
+void ATerrainInterface::Update()
 {
 	if (!m_pTerrainVIS) return;
 
@@ -268,7 +268,7 @@ void ATerrain::Update()
 
 static TFLOAT s_ShadowColor2Multiplier = 0.6f;
 
-void ATerrain::Render()
+void ATerrainInterface::Render()
 {
 	m_pTerrainVIS->m_pPersistantTerrainBlock->UpdateLastAccessTime();
 
@@ -325,7 +325,7 @@ void ATerrain::Render()
 	}
 }
 
-TBOOL ATerrain::IsLoaded() const
+TBOOL ATerrainInterface::IsLoaded() const
 {
 	if (m_pTerrainVIS == TNULL)
 	{
@@ -348,7 +348,7 @@ TBOOL ATerrain::IsLoaded() const
 	return TFALSE;
 }
 
-void ATerrain::LoadFromFile(const TCHAR* a_szFilePath, TBOOL a_bLoadLater, TBOOL a_bStreamCollision)
+void ATerrainInterface::LoadFromFile(const TCHAR* a_szFilePath, TBOOL a_bLoadLater, TBOOL a_bStreamCollision)
 {
 	TFIXME("Do something with ATerrainSectionHudElement");
 
@@ -464,7 +464,7 @@ void ATerrain::LoadFromFile(const TCHAR* a_szFilePath, TBOOL a_bLoadLater, TBOOL
 	m_bIsLoaded = TTRUE;
 }
 
-void ATerrain::WaitUntilLoaded()
+void ATerrainInterface::WaitUntilLoaded()
 {
 	TPROFILER_SCOPE();
 
@@ -479,13 +479,13 @@ void ATerrain::WaitUntilLoaded()
 	}
 }
 
-void ATerrain::DestroyModelData(ATerrainSection::ModelNode* a_pModelData)
+void ATerrainInterface::DestroyModelData(ATerrainSection::ModelNode* a_pModelData)
 {
 	TVALIDPTR(a_pModelData);
 
 	if (a_pModelData->IsLinked())
 	{
-		m_ModelDatas.Remove(a_pModelData, a_pModelData);
+		m_ModelDatas.Erase(a_pModelData);
 	}
 
 	if (a_pModelData)
@@ -494,7 +494,7 @@ void ATerrain::DestroyModelData(ATerrainSection::ModelNode* a_pModelData)
 	}
 }
 
-void ATerrain::UpdateUsedBlocks(ATerrainLODType a_eLODType)
+void ATerrainInterface::UpdateUsedBlocks(ATerrainLODType a_eLODType)
 {
 	TINT iNumBlocks;
 	ATerrainLODBlock** ppBlocks;
@@ -537,7 +537,7 @@ void ATerrain::UpdateUsedBlocks(ATerrainLODType a_eLODType)
 	}
 }
 
-void ATerrain::QueueStreamingAssets()
+void ATerrainInterface::QueueStreamingAssets()
 {
 	TASSERT(m_iCurrentSection != -1);
 
@@ -567,7 +567,7 @@ void ATerrain::QueueStreamingAssets()
 	}
 }
 
-void ATerrain::UnqueueStreamingAssets()
+void ATerrainInterface::UnqueueStreamingAssets()
 {
 	for (TINT i = 0; i < m_pTerrainVIS->m_iNumSections; i++)
 	{
@@ -575,7 +575,7 @@ void ATerrain::UnqueueStreamingAssets()
 	}
 }
 
-TBOOL ATerrain::HasAnyLODsQueued()
+TBOOL ATerrainInterface::HasAnyLODsQueued()
 {
 	for (TINT i = 0; i < m_pTerrainVIS->m_iNumSections; i++)
 	{
@@ -590,7 +590,7 @@ TBOOL ATerrain::HasAnyLODsQueued()
 	return TFALSE;
 }
 
-ATerrainLODBlock* ATerrain::AllocateLODBlock(ATerrainLODType a_eLODType, ATerrainSection* a_pVISGroup)
+ATerrainLODBlock* ATerrainInterface::AllocateLODBlock(ATerrainLODType a_eLODType, ATerrainSection* a_pVISGroup)
 {
 	TINT iNumBlocks;
 	ATerrainLODBlock** ppBlocks;
@@ -686,7 +686,7 @@ ATerrainLODBlock* ATerrain::AllocateLODBlock(ATerrainLODType a_eLODType, ATerrai
 	return TNULL;
 }
 
-ATRBLoaderJob* ATerrain::GetFreeTRBLoaderJob()
+ATRBLoaderJob* ATerrainInterface::GetFreeTRBLoaderJob()
 {
 	TASSERT(m_FreeTRBLoaderJobs.Size() > 0, "No free ATRBLoaderJobs left!");
 
@@ -703,7 +703,7 @@ ATRBLoaderJob* ATerrain::GetFreeTRBLoaderJob()
 	}
 }
 
-ASkeletonDoneJob* ATerrain::GetFreeSkeletonLoaderJob()
+ASkeletonDoneJob* ATerrainInterface::GetFreeSkeletonLoaderJob()
 {
 	TASSERT(m_FreeSkeletonLoaderJobs.Size() > 0, "No free ASkeletonDoneJobs left!");
 
@@ -720,7 +720,7 @@ ASkeletonDoneJob* ATerrain::GetFreeSkeletonLoaderJob()
 	}
 }
 
-AMatLibLoaderJob* ATerrain::GetFreeMatlibLoaderJob()
+AMatLibLoaderJob* ATerrainInterface::GetFreeMatlibLoaderJob()
 {
 	TASSERT(m_FreeMatlibLoaderJobs.Size() > 0, "No free AMatlibLoaderJobs left!");
 
@@ -737,7 +737,7 @@ AMatLibLoaderJob* ATerrain::GetFreeMatlibLoaderJob()
 	}
 }
 
-ACollisionDoneJob* ATerrain::GetFreeCollisionLoaderJob()
+ACollisionDoneJob* ATerrainInterface::GetFreeCollisionLoaderJob()
 {
 	TASSERT(m_FreeCollisionLoaderJobs.Size() > 0, "No free ACollisionDoneJob left!");
 
@@ -754,7 +754,7 @@ ACollisionDoneJob* ATerrain::GetFreeCollisionLoaderJob()
 	}
 }
 
-AModelLoaderJob* ATerrain::GetFreeModelLoaderJob()
+AModelLoaderJob* ATerrainInterface::GetFreeModelLoaderJob()
 {
 	TASSERT(m_FreeModelLoaderJobs.Size() > 0, "No free AModelLoaderJob left!");
 
@@ -771,7 +771,7 @@ AModelLoaderJob* ATerrain::GetFreeModelLoaderJob()
 	}
 }
 
-ASectionDoneJob* ATerrain::GetFreeSectionLoaderJob()
+ASectionDoneJob* ATerrainInterface::GetFreeSectionLoaderJob()
 {
 	TASSERT(m_FreeSectionLoaderJobs.Size() > 0, "No free ASectionDoneJob left!");
 
@@ -788,7 +788,7 @@ ASectionDoneJob* ATerrain::GetFreeSectionLoaderJob()
 	}
 }
 
-void ATerrain::FlushJobs()
+void ATerrainInterface::FlushJobs()
 {
 	MoveAllFinishedJobs(m_FreeModelLoaderJobs, m_UsedModelLoaderJobs);
 	MoveAllFinishedJobs(m_FreeUnknownLoaderJobs, m_UsedUnknownLoaderJobs);
@@ -800,15 +800,15 @@ void ATerrain::FlushJobs()
 	MoveAllFinishedJobs(m_FreeCollisionLoaderJobs, m_UsedCollisionLoaderJobs);
 }
 
-void ATerrain::MoveAllFinishedJobs(Toshi::T2SList<JobSlot>& a_rFreeJobs, Toshi::T2SList<JobSlot>& a_rUsedJobs)
+void ATerrainInterface::MoveAllFinishedJobs(Toshi::T2SList<JobSlot>& a_rFreeJobs, Toshi::T2SList<JobSlot>& a_rUsedJobs)
 {
 	for (auto it = a_rUsedJobs.Begin(); it != a_rUsedJobs.End(); )
 	{
-		auto pNext = it->GetNext();
+		auto pNext = it->Next();
 
 		if (!it->pJob->IsRunning())
 		{
-			a_rUsedJobs.Remove(it, it);
+			a_rUsedJobs.Erase(it);
 			a_rFreeJobs.PushFront(it);
 		}
 
@@ -914,7 +914,7 @@ static void RenderWorldVisWin(TModelInstance* a_pModelInstance, void* a_pModelNo
 
 #endif // TOSHI_SKU_WINDOWS
 
-ATerrainSection::ModelNode* ATerrain::CreateModelInstance(ATerrainSection::ModelNode* a_pModelNode, const char* a_szModelName, const char* a_szType)
+ATerrainSection::ModelNode* ATerrainInterface::CreateModelInstance(ATerrainSection::ModelNode* a_pModelNode, const char* a_szModelName, const char* a_szType)
 {
 	// Make sure model is created
 	auto pModel = a_pModelNode->m_ModelRef.GetModel();
@@ -997,7 +997,7 @@ ATerrainSection::ModelNode* ATerrain::CreateModelInstance(ATerrainSection::Model
 	return a_pModelNode;
 }
 
-void ATerrain::CancelUnrequiredJobs()
+void ATerrainInterface::CancelUnrequiredJobs()
 {
 	if (m_iCurrentSection != m_iPreviousSection && m_iPreviousSection >= 0)
 	{
@@ -1018,18 +1018,18 @@ void ATerrain::CancelUnrequiredJobs()
 	}
 }
 
-void ATerrain::UpdateNightMaterials()
+void ATerrainInterface::UpdateNightMaterials()
 {
 	TIMPLEMENT();
 }
 
-TINT ATerrain::GetCurrentSectionID()
+TINT ATerrainInterface::GetCurrentSectionID()
 {
 	TIMPLEMENT();
 	return 0;
 }
 
-TINT ATerrain::GetPersistantSectionID()
+TINT ATerrainInterface::GetPersistantSectionID()
 {
 	return ms_iPersistantVISGroupIndex;
 }

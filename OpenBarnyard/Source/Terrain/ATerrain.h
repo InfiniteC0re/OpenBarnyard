@@ -7,8 +7,8 @@
 #include "Assets/ACollisionDoneJob.h"
 #include "Assets/ASectionDoneJob.h"
 
-class ATerrain :
-	public Toshi::TSingleton<ATerrain>
+class ATerrainInterface :
+	public Toshi::TSingleton<ATerrainInterface>
 {
 public:
 	constexpr static TUINT MAX_NUM_MODEL_LOADER_JOBS = 128;
@@ -41,8 +41,8 @@ public:
 	using t_OnModelNodeReady = void(*)(ATerrainSection::ModelNode* a_pModelNode);
 
 public:
-	ATerrain(TINT a_iUnused1, TINT a_iUnused2, TINT a_iPreloadTerrainBlockSize, TINT a_iStartVISGroup);
-	virtual ~ATerrain();
+	ATerrainInterface(TINT a_iUnused1, TINT a_iUnused2, TINT a_iPreloadTerrainBlockSize, TINT a_iStartVISGroup);
+	virtual ~ATerrainInterface();
 
 	// Updates the current state of terrain including loading
 	void Update();

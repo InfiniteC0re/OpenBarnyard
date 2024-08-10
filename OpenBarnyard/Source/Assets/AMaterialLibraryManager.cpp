@@ -195,21 +195,24 @@ void AMaterialLibraryManager::DestroyLibrary(LibrariesMap::Node*& a_rpMaterialLi
 
 void AMaterialLibraryManager::UnloadTexturesOfLibrary(AMaterialLibrary* a_pMaterialLibrary)
 {
-	for (auto it = m_UsedTextures.Begin(); it != m_UsedTextures.End(); it = it->GetNext())
+	for (auto it = m_UsedTextures.Begin(); it != m_UsedTextures.End(); )
 	{
+		auto pNextNode = it->Next();
+
 		if (it->GetLibrary() == a_pMaterialLibrary)
 		{
-			AMaterialLibraryManager::TextureSlot* pRemovedSlot;
-			m_UsedTextures.Remove(pRemovedSlot, it);
+			auto removedSlot = m_UsedTextures.Erase(it);
 			m_iNumUsedTextures -= 1;
 
-			pRemovedSlot->GetTexture()->DestroyResource();
-			pRemovedSlot->SetTexture(TNULL);
-			pRemovedSlot->ResetName();
+			removedSlot->GetTexture()->DestroyResource();
+			removedSlot->SetTexture(TNULL);
+			removedSlot->ResetName();
 
-			m_FreeTextures.PushFront(pRemovedSlot);
+			m_FreeTextures.PushFront( removedSlot );
 			m_iNumFreeTextures += 1;
 		}
+
+		it = it->Next();
 	}
 
 	TRenderInterface::GetSingleton()->FlushDyingResources();
@@ -249,7 +252,7 @@ void AMaterialLibraryManager::OnLibraryLoaded(TBOOL a_bUpdateGUIMaterials)
 
 Toshi::TTexture* AMaterialLibraryManager::FindTexture(const TCHAR* a_szTextureName)
 {
-	for (auto it = m_UsedTextures.Begin(); it != m_UsedTextures.End(); it = it->GetNext())
+	for (auto it = m_UsedTextures.Begin(); it != m_UsedTextures.End(); it = it->Next())
 	{
 		if (Toshi::TStringManager::String8CompareNoCase(it->GetName(), a_szTextureName) == 0)
 		{

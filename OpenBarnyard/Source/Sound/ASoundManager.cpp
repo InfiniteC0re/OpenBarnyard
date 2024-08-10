@@ -3,6 +3,7 @@
 #include "ASound.h"
 #include "ASoundAdvanced.h"
 #include "Assets/AAssetLoader.h"
+#include "Memory/AMemory.h"
 #include "AWaveBankFMODFSB.h"
 #include "AWaveBankFMODFSBStream.h"
 #include "ALoadScreen.h"
@@ -21,12 +22,25 @@ TOSHI_NAMESPACE_USING
 
 TDEFINE_CLASS( ASoundManager );
 
-ASoundManager::ASoundManager()
+#define MAX_NUM_SOUND_EVENTS 256
+
+ASoundManager::ASoundManager() :
+	m_SoundEventPool( AMemory::GetAllocator( AMemory::POOL_Sound ), MAX_NUM_SOUND_EVENTS ),
+	m_CategoryIndices( AMemory::GetAllocator( AMemory::POOL_Sound ) ),
+	m_SoundIdToSoundEx( AMemory::GetAllocator( AMemory::POOL_Sound ) ),
+	m_SoundIdToSound( AMemory::GetAllocator( AMemory::POOL_Sound ) )
 {
 	TIMPLEMENT();
+	m_iLastAvailableSoundExSlot = -1;
+	m_fCurrentTime = 0.0f;
+
+	TUtil::MemClear( &m_aEventHandlers, sizeof( m_aEventHandlers ) );
+
+	m_bMuted = TFALSE;
 	m_bUseMinHardwareChannels = TTRUE;
 	m_iMinHWChannels = 32;
 	m_iNumChannels = 32;
+	m_iGlobalFrequency = 22050;
 
 	ms_pFileSystem = TFileManager::GetSingleton()->FindFileSystem( "local" );
 }
@@ -78,7 +92,7 @@ TBOOL ASoundManager::OnCreate()
 TBOOL ASoundManager::OnUpdate( TFLOAT a_fDeltaTime )
 {
 	TIMPLEMENT();
-	m_fTotalTime += a_fDeltaTime;
+	m_fCurrentTime += a_fDeltaTime;
 
 	FSOUND_Update();
 	return TTRUE;
@@ -680,4 +694,31 @@ void ASoundManager::LoadSoundBankSamples( const Toshi::TPString8& a_rcName )
 	{
 		pSoundBank->Load();
 	}
+}
+
+ASoundManager::Cue::Cue()
+{
+	bUsed = TFALSE;
+	pSoundAdvanced = TNULL;
+	fStartTime = 0.0f;
+	fStartTime2 = 0.0f;
+	vecPosition = TVector4::VEC_ZERO;
+	fVolume = 1.0f;
+	fFrequency = 1.0f;
+}
+
+ASoundManager::Cue::~Cue()
+{
+
+}
+
+ASoundManager::SoundEventList::SoundEventList()
+{
+	pEventList = new ListContainer;
+}
+
+ASoundManager::SoundEventList::~SoundEventList()
+{
+	if ( pEventList )
+		delete pEventList;
 }

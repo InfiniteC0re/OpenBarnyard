@@ -57,6 +57,18 @@ namespace Toshi {
 			return m_pPtr;
 		}
 
+		T2Iterator Next() const
+		{
+			TASSERT( m_pPtr != TNULL );
+			return T2Iterator { m_pPtr->Next() };
+		}
+
+		T2Iterator Prev() const
+		{
+			TASSERT( m_pPtr != TNULL );
+			return T2Iterator { m_pPtr->Prev() };
+		}
+
 		void operator=(const T2Iterator& other)
 		{
 			m_pPtr = other.m_pPtr;

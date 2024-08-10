@@ -37,16 +37,13 @@ public:
 	ALocaleManager();
 	~ALocaleManager();
 
-	virtual const TCHAR* GetLanguageFilename(Lang a_eLang) override;
+	virtual const TCHAR* GetLanguageFilename( Lang a_eLang ) override;
 
 	const TCHAR* GetCurrentLanguageName();
+	const TCHAR* GetVOLocaleDir( Lang a_eLang );
 
-	static const TCHAR* GetLanguageName(Lang a_eLang);
+public:
+	static const TCHAR* GetLanguageName( Lang a_eLang );
 
-	TFORCEINLINE static ALocaleManager* Interface()
-	{
-		return TSTATICCAST(ALocaleManager, T2Locale::GetSingletonSafe());
-	}
-
-private:
+	static ALocaleManager* Interface() { return TSTATICCAST( ALocaleManager, ms_pSingleton ); }
 };

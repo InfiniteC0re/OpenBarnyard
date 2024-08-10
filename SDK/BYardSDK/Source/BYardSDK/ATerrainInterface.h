@@ -8,8 +8,8 @@
 #include "ASectionDoneJob.h"
 #include "THookedSingleton.h"
 
-class ATerrain :
-	public THookedSingleton<ATerrain, 0x00796300>
+class ATerrainInterface :
+	public THookedSingleton<ATerrainInterface, 0x00796300>
 {
 public:
 	constexpr static TUINT MAX_NUM_MODEL_LOADER_JOBS = 128;
@@ -41,7 +41,7 @@ public:
 	using t_OnVISGroupChanged = void(*)(ATerrainSection* a_pCurrent, ATerrainSection* a_pPrevious);
 
 public:
-	virtual ~ATerrain() = default;
+	virtual ~ATerrainInterface() = default;
 
 	void Update();
 
@@ -370,7 +370,7 @@ public:
 	static void StartLoading();
 
 public:
-	inline static ATerrain* ms_pCurrentTerrain;
+	inline static ATerrainInterface* ms_pCurrentTerrain;
 	inline static Terrain* ms_pCurrentLevel = TREINTERPRETCAST( Terrain*, 0x00772800 );
 	inline static Terrain& ms_eCurrentLevel = *ms_pCurrentLevel;
 };

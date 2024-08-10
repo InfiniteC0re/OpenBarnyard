@@ -20,7 +20,7 @@ struct ATerrainOrderDVIS
 class ATerrainVIS
 {
 public:
-	friend class ATerrain;
+	friend class ATerrainInterface;
 	friend class ATerrainSection;
 
 public:

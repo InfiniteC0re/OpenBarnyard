@@ -53,7 +53,7 @@ void ATerrainLODBlock::SetupTRB(TTRB* a_pTRB, ATerrainLODBlock* a_pOther)
 				*pBlock->m_pAllocatedSize += size;
 			}
 
-			return TMemalign(128, size, pBlock->GetNext()->m_pCreatedMemBlock);
+			return TMemalign(128, size, pBlock->Next()->m_pCreatedMemBlock);
 		},
 		[](TTRB::AllocType alloctype, void* ptr, TINT16 unk1, TUINT32 unk2, void* userData)
 		{

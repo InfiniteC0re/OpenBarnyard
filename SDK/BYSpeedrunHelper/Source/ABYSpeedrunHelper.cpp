@@ -11,7 +11,7 @@
 #include <BYardSDK/AGUI2.h>
 #include <BYardSDK/AGameStateController.h>
 #include <BYardSDK/THookedRenderD3DInterface.h>
-#include <BYardSDK/ATerrain.h>
+#include <BYardSDK/ATerrainInterface.h>
 
 #include <Toshi/THPTimer.h>
 #include <T2Locale/T2Locale.h>

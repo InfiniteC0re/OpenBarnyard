@@ -1,5 +1,5 @@
 #pragma once
-#include <BYardSDK/ATerrain.h>
+#include <BYardSDK/ATerrainInterface.h>
 #include <BYardSDK/ASysMaterial.h>
 
 #include <Render/TModel.h>
@@ -18,7 +18,7 @@ private:
 
 private:
 	static TBOOL AModelLoader_LoadTRBCallback(Toshi::TModel* a_pModel);
-	static void ATerrain_Render(ATerrain* a_pTerrain);
+	static void ATerrain_Render(ATerrainInterface* a_pTerrain);
 
 private:
 	TBOOL m_bCollisionVisible = TTRUE;

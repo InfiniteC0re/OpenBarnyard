@@ -1,7 +1,7 @@
 #pragma once
 #include <BYardSDK/AMaterialLibraryManager.h>
 #include <BYardSDK/AGUISlideshow.h>
-#include <BYardSDK/ATerrain.h>
+#include <BYardSDK/ATerrainInterface.h>
 
 #include <Toshi/T2Vector.h>
 
@@ -43,7 +43,7 @@ public:
 
 	struct Terrain
 	{
-		using t_Render = void(*)(ATerrain* a_pTerrain);
+		using t_Render = void(*)(ATerrainInterface* a_pTerrain);
 		inline static Toshi::T2Vector<t_Render, MAX_NUM_CALLBACKS> Render[HookType_NUMOF];
 	};
 

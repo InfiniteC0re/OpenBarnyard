@@ -48,7 +48,7 @@ void ATerrainSection::Draw(ATerrainLODType a_eLODType)
 
 void ATerrainSection::LoadCollision()
 {
-	auto pTerrain = ATerrain::GetSingleton();
+	auto pTerrain = ATerrainInterface::GetSingleton();
 
 	if (m_szCollisionFilename[0] != '\0')
 	{
@@ -82,7 +82,7 @@ void ATerrainSection::LoadModels(ATerrainLODType a_eLODType)
 {
 	TASSERT(a_eLODType == ATerrainLODType_High || a_eLODType == ATerrainLODType_Low);
 
-	auto pTerrain = ATerrain::GetSingleton();
+	auto pTerrain = ATerrainInterface::GetSingleton();
 
 	if (!IsLODLoading(a_eLODType) && !IsLODLoaded(a_eLODType))
 	{
@@ -180,7 +180,7 @@ void ATerrainSection::LoadMatlib(ATerrainLODType a_eLODType)
 	}
 
 	auto pBlock = ppBlocks[uiAllocAtBlock];
-	auto pMatlibJob = ATerrain::GetSingleton()->GetFreeMatlibLoaderJob();
+	auto pMatlibJob = ATerrainInterface::GetSingleton()->GetFreeMatlibLoaderJob();
 
 	if (a_eLODType == ATerrainLODType_High)
 	{
@@ -240,7 +240,7 @@ void ATerrainSection::DestroyLOD(ATerrainLODType a_eLODType)
 {
 	TASSERT(a_eLODType == ATerrainLODType_High || a_eLODType == ATerrainLODType_Low);
 
-	auto pTerrain = ATerrain::GetSingleton();
+	auto pTerrain = ATerrainInterface::GetSingleton();
 	TINT iNumLODs = GetLODCount(a_eLODType);
 
 	for (TINT i = 0; i < iNumLODs; i++)
@@ -420,7 +420,7 @@ void ATerrainSection::ModelNode::Render()
 				pAnimatedMaterial->AddUVOffsetY(1, -1.0f);
 		}
 
-		ATerrain* pTerrain = ATerrain::GetSingleton();
+		ATerrainInterface* pTerrain = ATerrainInterface::GetSingleton();
 		AWorldShaderHAL* pShader = TSTATICCAST(AWorldShaderHAL, AWorldShader::GetSingleton());
 
 		if (m_eFlags & MNF_USE_LIGHTING)

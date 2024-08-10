@@ -14,19 +14,6 @@
 
 TOSHI_NAMESPACE_USING
 
-static const TCHAR* s_pLangSoundDirectories[] = {
-	"",
-	"",
-	"",
-	"GER/",
-	"",
-	"SPA/",
-	"FRE/",
-	""
-};
-
-TSTATICASSERT( ALocaleManager::NUM_LOCALES == TARRAYSIZE( s_pLangSoundDirectories ) );
-
 TBOOL g_bIsLoadingFSBFile = TFALSE;
 
 AWaveBankFMODFSB::AWaveBankFMODFSB( const Toshi::TPString8& a_strBank, const Toshi::TPString8& a_strPath ) : 
@@ -55,7 +42,7 @@ AWaveBank::LOADRESULT AWaveBankFMODFSB::Load( LOADFLAGS a_uiFlags, TINT a_iBuffe
 	if ( a_uiFlags & LOADFLAGS_LOCALISE )
 	{
 		ALocaleManager::Lang iLangId = ALocaleManager::Lang_UNKNOWN;
-		T2Locale* pLocale = T2Locale::GetSingleton();
+		ALocaleManager* pLocale = ALocaleManager::Interface();
 
 		if ( pLocale )
 			iLangId = pLocale->GetLanguage();
@@ -63,7 +50,7 @@ AWaveBank::LOADRESULT AWaveBankFMODFSB::Load( LOADFLAGS a_uiFlags, TINT a_iBuffe
 		if ( iLangId == ALocaleManager::Lang_UNKNOWN )
 			iLangId = ALocaleManager::Lang_English;
 
-		strFileName += s_pLangSoundDirectories[ iLangId ];
+		strFileName += pLocale->GetVOLocaleDir( iLangId );
 	}
 
 	strFileName += m_strPath.GetString8();

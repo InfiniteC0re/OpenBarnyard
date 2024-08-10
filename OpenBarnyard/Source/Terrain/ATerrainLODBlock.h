@@ -17,7 +17,7 @@ class ATerrainLODBlock :
 	public Toshi::T2SList<ATerrainLODBlock>::Node
 {
 public:
-	friend class ATerrain;
+	friend class ATerrainInterface;
 	friend class ATerrainVIS;
 	friend class ATerrainSection;
 

@@ -43,7 +43,7 @@ void AMaterialLibraryManager::OnLibraryLoaded(TBOOL a_bUpdateGUIMaterials)
 
 Toshi::TTexture* AMaterialLibraryManager::FindTexture(const char* a_szTextureName)
 {
-	for (auto it = m_UsedTextures.Begin(); it != m_UsedTextures.End(); it = it->GetNext())
+	for (auto it = m_UsedTextures.Begin(); it != m_UsedTextures.End(); it = it->Next())
 	{
 		if (Toshi::TStringManager::String8CompareNoCase(it->GetName(), a_szTextureName) == 0)
 		{

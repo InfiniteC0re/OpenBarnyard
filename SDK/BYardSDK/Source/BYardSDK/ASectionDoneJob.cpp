@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "ASectionDoneJob.h"
-#include "ATerrain.h"
+#include "ATerrainInterface.h"
 
 void ASectionDoneJob::BeginJob()
 {

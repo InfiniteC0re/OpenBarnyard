@@ -171,7 +171,7 @@ TBOOL ACollisionInspector::AModelLoader_LoadTRBCallback(Toshi::TModel* a_pModel)
 	return TFALSE;
 }
 
-void ACollisionInspector::ATerrain_Render(ATerrain* a_pTerrain)
+void ACollisionInspector::ATerrain_Render(ATerrainInterface* a_pTerrain)
 {
 	if (ACollisionInspector::GetSingleton()->m_bCollisionVisible)
 	{

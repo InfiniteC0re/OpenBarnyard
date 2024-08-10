@@ -34,7 +34,7 @@ void ABYardTerrainManager::SetTerrain( TINT a_eTerrain, TBOOL a_bLoadLater, TBOO
 		a_iStartVISGroup = 0;
 	}
 
-	ms_pCurrentTerrain = new ATerrain(
+	ms_pCurrentTerrain = new ATerrainInterface(
 		a_iUnused1,
 		a_iUnused2,
 		a_iPreloadTerrainBlockSize < 1 ? 0x2200000 : a_iPreloadTerrainBlockSize,
@@ -59,12 +59,12 @@ void ABYardTerrainManager::StartLoading()
 {
 	TPROFILER_SCOPE();
 
-	auto pTerrain = ATerrain::GetSingleton();
+	auto pTerrain = ATerrainInterface::GetSingleton();
 	pTerrain->m_bIsLoaded = TFALSE;
 
-	if ( ATerrain::ms_bAutoVIS )
+	if ( ATerrainInterface::ms_bAutoVIS )
 	{
-		pTerrain->m_fnGetCurrentVISGroup = ATerrain::GetPersistantSectionID;
+		pTerrain->m_fnGetCurrentVISGroup = ATerrainInterface::GetPersistantSectionID;
 	}
 
 	pTerrain->Update();
@@ -81,8 +81,8 @@ void ABYardTerrainManager::StartLoading()
 
 	pTerrain->m_bIsLoaded = TTRUE;
 
-	if ( ATerrain::ms_bAutoVIS )
+	if ( ATerrainInterface::ms_bAutoVIS )
 	{
-		pTerrain->m_fnGetCurrentVISGroup = ATerrain::GetCurrentSectionID;
+		pTerrain->m_fnGetCurrentVISGroup = ATerrainInterface::GetCurrentSectionID;
 	}
 }

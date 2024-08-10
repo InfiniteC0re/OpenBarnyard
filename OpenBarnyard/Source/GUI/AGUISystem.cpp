@@ -104,9 +104,9 @@ void AGUISystem::SetPicture(const Toshi::TPString8& a_rName)
 
 	if (bShowPicture)
 	{
-		if (ATerrain::IsSingletonCreated())
+		if (ATerrainInterface::IsSingletonCreated())
 		{
-			ATerrain::GetSingleton()->WaitUntilLoaded();
+			ATerrainInterface::GetSingleton()->WaitUntilLoaded();
 		}
 
 		m_MatLibPicture.Create(a_rName);

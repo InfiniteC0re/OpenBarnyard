@@ -142,12 +142,13 @@ TBOOL AApplication::OnCreate(int argc, TCHAR** argv)
 	if (!CreateStringPool())
 		return TFALSE;
 
+	ALocaleManager* pLocaleManager = T2Locale::CreateSingleton<ALocaleManager>();
+
 	// Intialise free lists for rendering objects
 	TTextureResourceHAL::SetupFreeList( 690, 0 );
 	TVertexBlockResource::SetupFreeList( 500, 0 );
 	TIndexBlockResource::SetupFreeList( 350, 0 );
 
-	ALocaleManager* pLocaleManager = T2Locale::CreateSingleton<ALocaleManager>();
 	TTODO("Create some instances of some classes");
 
 	TModelManager::Initialise();

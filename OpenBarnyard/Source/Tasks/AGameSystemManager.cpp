@@ -56,9 +56,9 @@ TBOOL AGameSystemManager::OnUpdate(TFLOAT a_fDeltaTime)
 
 	AAssetStreaming::GetSingleton()->Update();
 
-	if (ATerrain::IsSingletonCreated())
+	if (ATerrainInterface::IsSingletonCreated())
 	{
-		ATerrain::GetSingleton()->Update();
+		ATerrainInterface::GetSingleton()->Update();
 	}
 
 	return TTRUE;

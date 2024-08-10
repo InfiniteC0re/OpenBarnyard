@@ -691,7 +691,7 @@ MEMBER_HOOK( 0x004293d0, AGameStateController, AGameStateController_ProcessInput
 	return CallOriginal( a_pInputEvent );
 }
 
-MEMBER_HOOK( 0x005ea8b0, ATerrain, ATerrain_Render, void )
+MEMBER_HOOK( 0x005ea8b0, ATerrainInterface, ATerrain_Render, void )
 {
 	for ( TUINT i = 0; i < AHooks::Terrain::Render[ HookType_Before ].Size(); i++ )
 	{

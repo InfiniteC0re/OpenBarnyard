@@ -74,7 +74,7 @@ void AWaveBank::ParseWavesData( const PBProperties* a_pBankProperties, TUINT a_u
 		// Skip any properties other than Wave
 		if ( pProperty->GetName().GetString()[ 0 ] != 'W' ) continue;
 
-		TUINT uiFrequency = 22050;
+		TINT iFrequency = 22050;
 		TFLOAT fLength = 0.0f;
 		TUINT uiFlags = a_uiForcedFlags;
 
@@ -89,9 +89,9 @@ void AWaveBank::ParseWavesData( const PBProperties* a_pBankProperties, TUINT a_u
 		if ( pFreqProperty )
 		{
 			if ( m_bSetFrequency )
-				uiFrequency = pFreqProperty->GetInteger();
+				iFrequency = pFreqProperty->GetInteger();
 			else
-				uiFrequency = ASoundManager::GetSingleton()->m_uiGlobalFrequency;
+				iFrequency = ASoundManager::GetSingleton()->m_iGlobalFrequency;
 		}
 
 		// Parse length
@@ -104,7 +104,7 @@ void AWaveBank::ParseWavesData( const PBProperties* a_pBankProperties, TUINT a_u
 				fLength = TFLOAT( pLengthProperty->GetInteger() );
 		}
 
-		vecWaves.EmplaceBack( uiFlags, uiFrequency, fLength, TNULL, -1 );
+		vecWaves.EmplaceBack( uiFlags, iFrequency, fLength, TNULL, -1 );
 		m_iNumWaves += 1;
 	}
 

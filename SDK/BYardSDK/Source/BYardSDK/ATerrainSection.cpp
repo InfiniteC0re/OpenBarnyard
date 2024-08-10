@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "ATerrainSection.h"
-#include "ATerrain.h"
+#include "ATerrainInterface.h"
 #include "AAssetStreaming.h"
 
 void ATerrainSection::LoadCollision()

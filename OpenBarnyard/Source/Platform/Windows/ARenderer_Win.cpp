@@ -381,9 +381,9 @@ void ARenderer::RenderMainScene(TFLOAT a_fDeltaTime)
 		pRender->FlushShaders();
 		pViewportContext->EnableFog(TTRUE);
 
-		if (ATerrain::GetSingleton())
+		if (ATerrainInterface::GetSingleton())
 		{
-			ATerrain::GetSingleton()->Render();
+			ATerrainInterface::GetSingleton()->Render();
 		}
 
 		pRender->FlushShaders();

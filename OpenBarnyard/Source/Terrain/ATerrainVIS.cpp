@@ -11,7 +11,7 @@
 
 void ATerrainVIS::LoadSkeleton()
 {
-	auto pTerrain = ATerrain::GetSingleton();
+	auto pTerrain = ATerrainInterface::GetSingleton();
 	auto pPersistantBlock = pTerrain->m_pTerrainVIS->m_pPersistantTerrainBlock;
 
 	m_pLocatorManager = new (pPersistantBlock->GetMemBlock()) ATerrainLocatorManager();

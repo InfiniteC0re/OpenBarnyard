@@ -2,24 +2,14 @@
 #include "Toshi/Typedefs.h"
 
 namespace Toshi {
-	
-	//-----------------------------------------------------------------------------
-	// TOSHI 2.0 - Singly linked list
-	// Usage example:
-	// 
-	// class AMyClass : public Toshi::T2SList<AMyClass>::Node { ... };
-	// 
-	// Toshi::T2SList<AMyClass> list;
-	// list.PushBack(new AMyClass);
-	//-----------------------------------------------------------------------------
-	template <class T, TINT Unknown = 0>
-	class T2SList
+
+	class TOSHI_API T2GenericSList
 	{
 	public:
 		class Node
 		{
 		public:
-			friend class T2SList;
+			friend class T2GenericSList;
 
 		public:
 			Node()
@@ -32,9 +22,9 @@ namespace Toshi {
 				m_pNext = this;
 			}
 
-			T* GetNext() const
+			Node* Next() const
 			{
-				return TSTATICCAST(T, m_pNext);
+				return m_pNext;
 			}
 
 			TBOOL IsLinked() const
@@ -42,9 +32,9 @@ namespace Toshi {
 				return m_pNext != this;
 			}
 
-			void InsertAfter(Node* a_pNode)
+			void InsertAfter( Node* a_pNode )
 			{
-				TASSERT(!IsLinked());
+				TASSERT( !IsLinked() );
 				m_pNext = a_pNode->m_pNext;
 				a_pNode->m_pNext = this;
 			}
@@ -54,10 +44,8 @@ namespace Toshi {
 		};
 
 	public:
-		~T2SList()
-		{
-			Clear();
-		}
+		T2GenericSList() = default;
+		~T2GenericSList() = default;
 
 		// Calling this won't clear the list so the items will still be linked to each other!
 		// Use this only if you're sure the nodes are freed
@@ -66,14 +54,24 @@ namespace Toshi {
 			m_oRoot.Reset();
 		}
 
-		T* Begin()
+		Node* Begin() const
 		{
-			return m_oRoot.GetNext();
+			return m_oRoot.Next();
 		}
 
-		T* End()
+		Node* RBegin() const
 		{
-			return TREINTERPRETCAST(T*, &m_oRoot);
+			return m_oRoot.Next();
+		}
+
+		Node* End() const
+		{
+			return &m_oRoot;
+		}
+
+		Node* REnd() const
+		{
+			return &m_oRoot;
 		}
 
 		TBOOL IsLinked() const
@@ -81,11 +79,11 @@ namespace Toshi {
 			return m_oRoot.m_pNext != &m_oRoot;
 		}
 
-		T* Back()
+		Node* Back() const
 		{
-			T* pBack = End();
+			Node* pBack = End();
 
-			for (auto it = Begin(); it != End(); it = it->GetNext())
+			for ( auto it = Begin(); it != End(); it = it->Next() )
 			{
 				pBack = it;
 			}
@@ -93,55 +91,55 @@ namespace Toshi {
 			return pBack;
 		}
 
-		T* FindNodeBefore(T* a_pNode)
+		Node* FindNodeBefore( Node* a_pNode )
 		{
-			T* pResult = End();
+			Node* pResult = End();
 
-			for (auto it = Begin(); it != a_pNode; it = it->GetNext())
+			for ( auto it = Begin(); it != a_pNode; it = it->Next() )
 			{
-				TASSERT(it != End());
+				TASSERT( it != End() );
 				pResult = it;
 			}
 
 			return pResult;
 		}
 
-		void PushBack(T* a_pNode)
+		void PushBack( Node* a_pNode )
 		{
-			a_pNode->InsertAfter(Back());
+			a_pNode->InsertAfter( Back() );
 		}
 
-		void PushFront(T* a_pNode)
+		void PushFront( Node* a_pNode )
 		{
-			a_pNode->InsertAfter(&m_oRoot);
+			a_pNode->InsertAfter( &m_oRoot );
 		}
 
-		T* PopBack()
+		Node* PopBack()
 		{
-			T* pBack = Back();
-			T* pNodeBefore = FindNodeBefore(pBack);
+			Node* pBack = Back();
+			Node* pNodeBefore = FindNodeBefore( pBack );
 
-			pNodeBefore->m_pNext = TSTATICCAST(T, &m_oRoot);
+			pNodeBefore->m_pNext = &m_oRoot;
 			pBack->m_pNext = pBack;
 
 			return pBack;
 		}
 
-		T* PopFront()
+		Node* PopFront()
 		{
-			T* pNode = Begin();
+			Node* pNode = Begin();
 			m_oRoot.m_pNext = pNode->m_pNext;
 			pNode->m_pNext = pNode;
 			return pNode;
 		}
 
-		T* Erase(T* a_pFrom, T* a_pTo)
+		Node* Erase( Node* a_pFrom, Node* a_pTo )
 		{
-			T* pNodeBefore = FindNodeBefore(a_pFrom);
+			Node* pNodeBefore = FindNodeBefore( a_pFrom );
 
-			while (a_pFrom != a_pTo)
+			while ( a_pFrom != a_pTo )
 			{
-				T* pNext = TSTATICCAST(T, a_pFrom->m_pNext);
+				Node* pNext = a_pFrom->m_pNext;
 				a_pFrom->m_pNext = a_pFrom;
 				a_pFrom = pNext;
 			}
@@ -152,23 +150,23 @@ namespace Toshi {
 
 		void Clear()
 		{
-			T* pNode = Begin();
+			Node* pNode = Begin();
 
-			while (pNode != End())
+			while ( pNode != End() )
 			{
-				T* pNext = pNode->GetNext();
+				Node* pNext = pNode->Next();
 				pNode->m_pNext = pNode;
 				pNode = pNext;
 			}
 
-			m_oRoot.m_pNext = TSTATICCAST(T, &m_oRoot);
+			m_oRoot.m_pNext = &m_oRoot;
 		}
 
-		TUINT Size()
+		TUINT Size() const
 		{
 			TUINT uiSize = 0;
 
-			for (auto it = Begin(); it != End(); it = it->GetNext())
+			for ( auto it = Begin(); it != End(); it = it->Next() )
 			{
 				uiSize++;
 			}
@@ -176,25 +174,86 @@ namespace Toshi {
 			return uiSize;
 		}
 
-		T* Transfer(T* a_pNode, T2SList& a_rList)
+		Node* Transfer( Node* a_pNode, T2GenericSList& a_rList )
 		{
-			T* pNodeBefore = FindNodeBefore(a_pNode);
+			Node* pNodeBefore = FindNodeBefore( a_pNode );
 			pNodeBefore->m_pNext = a_pNode->m_pNext;
 			a_pNode->m_pNext = a_pNode;
-			a_rList.PushBack(a_pNode);
+			a_rList.PushBack( a_pNode );
 
 			return pNodeBefore;
 		}
 
-		T* Remove(T*& a_rpRemovedNode, T* a_pNode)
+	private:
+		mutable Node m_oRoot;
+	};
+
+	//-----------------------------------------------------------------------------
+	// TOSHI 2.0 - Singly linked list
+	// Usage example:
+	// 
+	// class AMyClass : public Toshi::T2SList<AMyClass>::Node { ... };
+	// 
+	// Toshi::T2SList<AMyClass> list;
+	// list.PushBack(new AMyClass);
+	//-----------------------------------------------------------------------------
+	template <class T, TINT Unknown = 0>
+	class T2SList : public T2GenericSList
+	{
+	public:
+		class Node : public T2GenericSList::Node
 		{
-			Erase(a_pNode, a_pNode->GetNext());
-			a_rpRemovedNode = a_pNode;
-			return a_rpRemovedNode;
+		public:
+			T* Next() const
+			{
+				return TSTATICCAST( T, T2GenericSList::Node::Next() );
+			}
+
+			T* Prev() const
+			{
+				TASSERT( !"Nah, you can't do this" );
+				return TNULL;
+			}
+		};
+
+		T2_DEFINE_ITERATOR_FRIEND();
+		T2_DEFINE_ITERATOR( T, T2GenericSList::Node );
+
+	public:
+		T2SList() { }
+		~T2SList() { Clear(); }
+
+		void Delete( Iterator iter )
+		{
+			iter->Remove();
+			delete TSTATICCAST( T, iter );
 		}
 
-	private:
-		Node m_oRoot;
+		void DeleteAll()
+		{
+			while ( Begin() != End() )
+			{
+				Delete( Begin() );
+			}
+		}
+
+		Iterator Begin() const { return T2GenericSList::Begin(); }
+		Iterator RBegin() const { return T2GenericSList::RBegin(); }
+
+		Iterator End() const { return T2GenericSList::End(); }
+		Iterator REnd() const { return T2GenericSList::REnd(); }
+
+		Iterator Head() const { return T2GenericSList::Begin(); }
+		Iterator Back() const { return T2GenericSList::Back(); }
+
+		Iterator FindNodeBefore( Iterator a_Node ) { return T2GenericSList::FindNodeBefore( a_Node ); }
+
+		Iterator PopBack() { return T2GenericSList::PopBack(); }
+		Iterator PopFront() { return T2GenericSList::PopFront(); }
+
+		Iterator Erase( Iterator a_Iterator ) { return T2GenericSList::Erase( a_Iterator, a_Iterator.Next() ); }
+		Iterator Erase( Iterator a_From, Iterator a_To ) { return T2GenericSList::Erase( a_From, a_To ); }
+		Iterator Transfer( Node* a_pNode, T2GenericSList& a_rList ) { return T2GenericSList::Transfer( a_pNode, a_rList ); }
 	};
 
 }

@@ -59,7 +59,7 @@ public:
 		FLAGS_COLLISION_LOADING = BITFLAG(10)
 	};
 
-	friend class ATerrain;
+	friend class ATerrainInterface;
 	friend class ASectionDoneJob;
 	friend class ACollisionDoneJob;
 
