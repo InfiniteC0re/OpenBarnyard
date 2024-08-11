@@ -26,7 +26,7 @@ namespace Toshi
 		TFree(ptr);
 	}
 
-	TBOOL T2GlobalAllocator::CanAllocate(size_t size)
+	TBOOL T2GlobalAllocator::CanAllocate(size_t size) const
 	{
 		return TTRUE;
 	}
@@ -41,12 +41,12 @@ namespace Toshi
 		return TMemalign(size, alignment);
 	}
 
-	size_t T2GlobalAllocator::GetUsedSize()
+	size_t T2GlobalAllocator::GetUsedSize() const
 	{
 		return 0;
 	}
 
-	size_t T2GlobalAllocator::GetCapacity()
+	size_t T2GlobalAllocator::GetCapacity() const
 	{
 		return 0;
 	}

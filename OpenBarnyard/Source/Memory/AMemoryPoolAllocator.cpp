@@ -22,7 +22,7 @@ void AMemoryPoolAllocator::Free(void* ptr)
 	TFree(ptr);
 }
 
-TBOOL AMemoryPoolAllocator::CanAllocate(size_t size)
+TBOOL AMemoryPoolAllocator::CanAllocate(size_t size) const
 {
 	return TTRUE;
 }
@@ -37,12 +37,12 @@ void* AMemoryPoolAllocator::TryMalloc(size_t size)
 	return TMalloc(size, m_pMemBlock);
 }
 
-size_t AMemoryPoolAllocator::GetUsedSize()
+size_t AMemoryPoolAllocator::GetUsedSize() const
 {
 	return 0;
 }
 
-size_t AMemoryPoolAllocator::GetCapacity()
+size_t AMemoryPoolAllocator::GetCapacity() const
 {
 	return 0;
 }

@@ -392,7 +392,7 @@ TBOOL ASoundManager::LoadSoundBankImpl( const TCHAR* a_szName, TBOOL a_bSimpleSo
 								{
 									TFLOAT fVolMin = pVolrand->GetValue( i + 0 )->GetFloat();
 									TFLOAT fVolMax = pVolrand->GetValue( i + 1 )->GetFloat();
-									
+
 									pSoundEx->m_vecWaves[ i / 2 ].m_fMinVolume = fVolMin;
 									pSoundEx->m_vecWaves[ i / 2 ].m_fMaxVolume = fVolMax;
 								}
@@ -474,7 +474,7 @@ TBOOL ASoundManager::LoadSoundBankImpl( const TCHAR* a_szName, TBOOL a_bSimpleSo
 								bNoErrors = TFALSE;
 								continue;
 							}
-							
+
 							// Read tracks of the waves
 							PBPropertyValueArray* pTracks;
 							if ( pSoundProperties->GetOptionalPropertyValue( pTracks, "tracks" ) )
@@ -696,6 +696,74 @@ void ASoundManager::LoadSoundBankSamples( const Toshi::TPString8& a_rcName )
 	}
 }
 
+ASoundManager::SoundEvent* ASoundManager::CreateSoundEvent( SOUNDEVENT a_eEventType, TFLOAT a_fDelay, Cue* a_pCue, ASoundAdvanced::Wave* a_pWave, PlayingSound* a_pPlayingSound, TUINT a_uiFlags, TINT a_iTrackIndex )
+{
+	TVALIDPTR( a_pCue );
+	TASSERT( m_SoundEventPool.CanAllocate() );
+
+	if ( m_SoundEventPool.CanAllocate() )
+	{
+		SoundEvent* pEvent = m_SoundEventPool.NewObject( a_eEventType, m_fCurrentTime + a_fDelay, a_pCue, a_pWave, a_pPlayingSound, a_uiFlags, a_iTrackIndex );
+		TVALIDPTR( pEvent );
+
+		AddEventToCue( a_pCue, pEvent );
+		return pEvent;
+	}
+
+	return TNULL;
+}
+
+ASoundManager::SoundEvent* ASoundManager::CreateSoundEvent( SOUNDEVENT a_eEventType, TFLOAT a_fDelay, Cue* a_pCue, ASoundAdvanced::Wave* a_pWave, TFLOAT a_fCustomParam1, PlayingSound* a_pPlayingSound, TUINT a_uiFlags, TINT a_iTrackIndex )
+{
+	TVALIDPTR( a_pCue );
+	TASSERT( m_SoundEventPool.CanAllocate() );
+
+	if ( m_SoundEventPool.CanAllocate() )
+	{
+		SoundEvent* pEvent = m_SoundEventPool.NewObject( a_eEventType, m_fCurrentTime + a_fDelay, a_pCue, a_pWave, a_fCustomParam1, a_pPlayingSound, a_uiFlags, a_iTrackIndex );
+		TVALIDPTR( pEvent );
+
+		AddEventToCue( a_pCue, pEvent );
+		return pEvent;
+	}
+
+	return TNULL;
+}
+
+ASoundManager::SoundEvent* ASoundManager::CreateSoundEvent( SOUNDEVENT a_eEventType, TFLOAT a_fDelay, Cue* a_pCue, ASoundAdvanced::Wave* a_pWave, const EventParameters& a_rcCustomParams, PlayingSound* a_pPlayingSound, TUINT a_uiFlags, TINT a_iTrackIndex )
+{
+	TVALIDPTR( a_pCue );
+	TASSERT( m_SoundEventPool.CanAllocate() );
+
+	if ( m_SoundEventPool.CanAllocate() )
+	{
+		SoundEvent* pEvent = m_SoundEventPool.NewObject( a_eEventType, m_fCurrentTime + a_fDelay, a_pCue, a_pWave, a_rcCustomParams, a_pPlayingSound, a_uiFlags, a_iTrackIndex );
+		TVALIDPTR( pEvent );
+
+		AddEventToCue( a_pCue, pEvent );
+		return pEvent;
+	}
+
+	return TNULL;
+}
+
+void ASoundManager::AddEventToCue( Cue* a_pCue, SoundEvent* a_pSoundEvent )
+{
+	TVALIDPTR( a_pCue );
+	TVALIDPTR( a_pSoundEvent );
+
+	SoundEvent* pFirstEvent = ( !a_pCue->EventList->IsEmpty() ) ? a_pCue->EventList->Begin() : TNULL;
+	a_pCue->EventList->Push( a_pSoundEvent );
+
+	// If first event in the list changed, reinsert the list in m_QueuedEventLists
+	// to make sure the ordering is right. It's important because the sorting method
+	// is taking the first event into account when sorting the lists
+	if ( pFirstEvent != a_pCue->EventList->Begin() )
+	{
+		m_QueuedEventLists.ReInsert( a_pCue->EventList );
+	}
+}
+
 ASoundManager::Cue::Cue()
 {
 	bUsed = TFALSE;
@@ -714,11 +782,48 @@ ASoundManager::Cue::~Cue()
 
 ASoundManager::SoundEventList::SoundEventList()
 {
-	pEventList = new ListContainer;
+	m_pEventList = new ListContainer;
 }
 
 ASoundManager::SoundEventList::~SoundEventList()
 {
-	if ( pEventList )
-		delete pEventList;
+	if ( m_pEventList )
+		delete m_pEventList;
+}
+
+ASoundManager::SoundEvent::SoundEvent( SOUNDEVENT a_eEventType, TFLOAT a_fStartTime, Cue* a_pCue, ASoundAdvanced::Wave* a_pWave, PlayingSound* a_pPlayingSound, TUINT a_uiFlags, TINT a_iTrackIndex ) :
+	pWave( a_pWave ),
+	eEventType( a_eEventType ),
+	pPlayingSound( a_pPlayingSound ),
+	uiFlags( a_uiFlags ),
+	pCue( a_pCue ),
+	fStartTime( a_fStartTime ),
+	iTrackIndex( a_iTrackIndex )
+{
+
+}
+
+ASoundManager::SoundEvent::SoundEvent( SOUNDEVENT a_eEventType, TFLOAT a_fStartTime, Cue* a_pCue, ASoundAdvanced::Wave* a_pWave, TFLOAT a_fCustomParam1, PlayingSound* a_pPlayingSound, TUINT a_uiFlags, TINT a_iTrackIndex ) :
+	pWave( a_pWave ),
+	eEventType( a_eEventType ),
+	pPlayingSound( a_pPlayingSound ),
+	uiFlags( a_uiFlags ),
+	pCue( a_pCue ),
+	fStartTime( a_fStartTime ),
+	iTrackIndex( a_iTrackIndex )
+{
+	oParameters[ 0 ] = a_fCustomParam1;
+}
+
+ASoundManager::SoundEvent::SoundEvent( SOUNDEVENT a_eEventType, TFLOAT a_fStartTime, Cue* a_pCue, ASoundAdvanced::Wave* a_pWave, const EventParameters& a_rcCustomParams, PlayingSound* a_pPlayingSound, TUINT a_uiFlags, TINT a_iTrackIndex ) :
+	pWave( a_pWave ),
+	eEventType( a_eEventType ),
+	pPlayingSound( a_pPlayingSound ),
+	uiFlags( a_uiFlags ),
+	pCue( a_pCue ),
+	fStartTime( a_fStartTime ),
+	iTrackIndex( a_iTrackIndex ),
+	oParameters( a_rcCustomParams )
+{
+
 }

@@ -33,7 +33,7 @@ public:
 	{
 		T2_FOREACH( *this, it )
 		{
-			if ( SortResults()()( a_rcValue, *it.Get() ) < 0 )
+			if ( SortResults()( a_rcValue, *it.Get() ) < 0 )
 				return it;
 		}
 
@@ -47,6 +47,21 @@ public:
 	}
 
 	Iterator Push( T* a_pValue ) { return Push( *a_pValue ); }
+
+	// Removes element from the list and adds it again to make sure the order is right
+	Iterator ReInsert( T& a_rValue )
+	{
+		if ( a_rValue.IsLinked() )
+			Erase( &a_rValue );
+
+		return Push( a_rValue );
+	}
+
+	// Removes element from the list and adds it again to make sure the order is right
+	Iterator ReInsert( T* a_pValue )
+	{
+		return ReInsert( *a_pValue );
+	}
 
 	void Delete( Iterator a_It ) { Container::Delete( a_It ); }
 	void DeleteAll() { Container::DeleteAll(); }
