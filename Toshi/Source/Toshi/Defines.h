@@ -48,18 +48,18 @@
 #define TOSHI_NAMESPACE_END }
 
 #ifdef TOSHI_DIST
-	#define TOSHI_NO_LOGS
+#define TOSHI_NO_LOGS
 #endif
 
 #ifdef TOSHI_DEBUG
-	#ifdef TOSHI_SKU_WINDOWS
-		#define TBREAK() __debugbreak()
-		#define TOSHI_ENABLE_ASSERTS
-	#endif // TOSHI_SKU_WINDOWS
+#ifdef TOSHI_SKU_WINDOWS
+#define TBREAK() __debugbreak()
+#define TOSHI_ENABLE_ASSERTS
+#endif // TOSHI_SKU_WINDOWS
 #endif // TOSHI_DEBUG
 
 #ifndef TBREAK
-	#define TBREAK()
+#define TBREAK()
 #endif // TBREAK
 
 #define TSTATICASSERT(...) static_assert(__VA_ARGS__, "Compile time assert failed: " #__VA_ARGS__)
@@ -73,40 +73,43 @@
 #define TANONYMOUSVAR_1(X, Y) CONCATTOKEN(X, Y)
 #define TANONYMOUSVAR(TYPE) TYPE TANONYMOUSVAR_1(_anonymous, __COUNTER__)
 
+#define TDEPRECATED [[deprecated]]
+#define TDEPRECATED_REASON(REASON) [[deprecated(REASON)]]
+
 #define TDECLARE_POINTER_HANDLE(NAME) typedef void* NAME
 
 #ifdef TOSHI_ENABLE_ASSERTS
-	#define TFIREFLAG static TBOOL FIREFLAG = TFALSE; if (!FIREFLAG)
-	#define TWIP() { TFIREFLAG { TERROR("Work in progress: '%s', at line %d\n", __FUNCTION__, __LINE__); FIREFLAG = TTRUE; } }
-	#define TTODO(DESC) { TFIREFLAG { TERROR("TODO: %s ('%s', at line %d)\n", DESC, __FUNCTION__, __LINE__); FIREFLAG = TTRUE; } }
-	#define TFIXME(DESC) { TFIREFLAG { TWARN("FIXME: %s ('%s', at line %d)\n", DESC, __FUNCTION__, __LINE__); FIREFLAG = TTRUE; } }
-	#define TIMPLEMENT() { TFIREFLAG { TERROR("%s is not implemented\n", __FUNCTION__); FIREFLAG = TTRUE; } }
-	#define TIMPLEMENT_D(DESC) { TFIREFLAG { TERROR("%s is not implemented: %s\n", __FUNCTION__, DESC); FIREFLAG = TTRUE; } }
-	#define TASSERT(X, ...) { TFIREFLAG if (!(X)) { if (1 == TDebug_AssertHandler(#X, __FILE__, __LINE__, __VA_ARGS__)) TBREAK(); FIREFLAG = TTRUE; } }
-	#define TASSERT_NO_CHECK(X, ...) TDebug_AssertHandler(#X, __FILE__, __LINE__, __VA_ARGS__))
-	#define TVALIDPTR(PTR) TASSERT(TDebug_IsValidAddress(PTR))
+#define TFIREFLAG static TBOOL FIREFLAG = TFALSE; if (!FIREFLAG)
+#define TWIP() { TFIREFLAG { TERROR("Work in progress: '%s', at line %d\n", __FUNCTION__, __LINE__); FIREFLAG = TTRUE; } }
+#define TTODO(DESC) { TFIREFLAG { TERROR("TODO: %s ('%s', at line %d)\n", DESC, __FUNCTION__, __LINE__); FIREFLAG = TTRUE; } }
+#define TFIXME(DESC) { TFIREFLAG { TWARN("FIXME: %s ('%s', at line %d)\n", DESC, __FUNCTION__, __LINE__); FIREFLAG = TTRUE; } }
+#define TIMPLEMENT() { TFIREFLAG { TERROR("%s is not implemented\n", __FUNCTION__); FIREFLAG = TTRUE; } }
+#define TIMPLEMENT_D(DESC) { TFIREFLAG { TERROR("%s is not implemented: %s\n", __FUNCTION__, DESC); FIREFLAG = TTRUE; } }
+#define TASSERT(X, ...) { TFIREFLAG if (!(X)) { if (1 == TDebug_AssertHandler(#X, __FILE__, __LINE__, __VA_ARGS__)) TBREAK(); FIREFLAG = TTRUE; } }
+#define TASSERT_NO_CHECK(X, ...) TDebug_AssertHandler(#X, __FILE__, __LINE__, __VA_ARGS__))
+#define TVALIDPTR(PTR) TASSERT(TDebug_IsValidAddress(PTR))
 #else // TOSHI_ENABLE_ASSERTS
-	#define TWIP()
-	#define TTODO(DESC)
-	#define TFIXME(DESC)
-	#define TIMPLEMENT()
-	#define TIMPLEMENT_D(DESC)
-	#define TASSERT(X, ...)
-	#define TVALIDPTR(PTR)
+#define TWIP()
+#define TTODO(DESC)
+#define TFIXME(DESC)
+#define TIMPLEMENT()
+#define TIMPLEMENT_D(DESC)
+#define TASSERT(X, ...)
+#define TVALIDPTR(PTR)
 #endif // TOSHI_ENABLE_ASSERTS
 
 #define TUNREACHABLE() { TASSERT( TFALSE, "Unreachable code is reached!" ); __assume(0); }
 
 #ifndef TOSHI_NO_LOGS
-	#define TINFO(...) Toshi::TUtil::Log(Toshi::TUtil::LogType_Info, __VA_ARGS__)
-	#define TWARN(...) Toshi::TUtil::Log(Toshi::TUtil::LogType_Warning, __VA_ARGS__)
-	#define TERROR(...) Toshi::TUtil::Log(Toshi::TUtil::LogType_Error, __VA_ARGS__)
-	#define TCRITICAL(...) Toshi::TUtil::Log(Toshi::TUtil::LogType_Critical, __VA_ARGS__)
-	#define TTRACE(...) TDebug_FinalPrintf(__VA_ARGS__)
+#define TINFO(...) Toshi::TUtil::Log(Toshi::TUtil::LogType_Info, __VA_ARGS__)
+#define TWARN(...) Toshi::TUtil::Log(Toshi::TUtil::LogType_Warning, __VA_ARGS__)
+#define TERROR(...) Toshi::TUtil::Log(Toshi::TUtil::LogType_Error, __VA_ARGS__)
+#define TCRITICAL(...) Toshi::TUtil::Log(Toshi::TUtil::LogType_Critical, __VA_ARGS__)
+#define TTRACE(...) TDebug_FinalPrintf(__VA_ARGS__)
 #else // TOSHI_NO_LOGS
-	#define TINFO(...)
-	#define TWARN(...)
-	#define TERROR(...)
-	#define TCRITICAL(...)
-	#define TTRACE(...)
+#define TINFO(...)
+#define TWARN(...)
+#define TERROR(...)
+#define TCRITICAL(...)
+#define TTRACE(...)
 #endif // TOSHI_NO_LOGS

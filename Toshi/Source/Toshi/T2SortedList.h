@@ -4,8 +4,9 @@
 
 TOSHI_NAMESPACE_START
 
-//  1 => go to the next node
-// -1 => push before a_rcVal2
+// -1 => push right here before a_rcVal2
+//  0 => they are equal, add new element after it to preserve original ordering
+//  1 => should add somewhere after a_rcVal2, so go to the next node
 template <class T>
 struct T2SortedListDefaultSortResults
 {

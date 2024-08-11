@@ -18,8 +18,8 @@ public:
 		AWaveBank* m_pWaveBank = TNULL;
 		TINT m_iId = -1;
 		TFLOAT m_fVolume = 1.0f;
-		TFLOAT m_fMinVolume = 0.0f;
-		TFLOAT m_fMaxVolume = 0.0f;
+		TFLOAT m_fMinVolumeMultiplier = 0.0f;
+		TFLOAT m_fMaxVolumeMultiplier = 0.0f;
 		TFLOAT m_fPitch = 1.0f;
 		TFLOAT m_fMinPitch = 0.0f;
 		TFLOAT m_fMaxPitch = 0.0f;

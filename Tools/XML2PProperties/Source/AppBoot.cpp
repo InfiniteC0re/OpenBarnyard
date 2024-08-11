@@ -13,8 +13,27 @@
 #include <Plugins/PPropertyParser/PPropertiesWriter.h>
 
 #include <ToshiTools/T2CommandLine.h>
+#include <ToshiTools/T2TestingFramework.h>
 
 TOSHI_NAMESPACE_USING
+
+T2_TEST( "Test", "Category" )
+{
+	T2_TEST_REQUIRE( 1 > 2 );
+	T2_TEST_REQUIRE( 5 > 2 );
+}
+
+T2_TEST( "Length", "TString8" )
+{
+	TString8 str( "Hello!" );
+	T2_TEST_REQUIRE( str.Length() == 6 );
+}
+
+T2_TEST( "MakeUpper", "TString8" )
+{
+	TString8 str( "tetsfbwjfj" );
+	T2_TEST_REQUIRE( str.MakeUpper() == "TETSFBWJFJ" );
+}
 
 int main( int argc, char** argv )
 {
@@ -25,8 +44,25 @@ int main( int argc, char** argv )
 
 	TUtil::ToshiCreate( toshiParams );
 
-	TString8 str1("hello!");
-	str1.Mid( 1, 2 );
+	if ( g_pTestingFramework )
+	{
+		TTRACE( "Starting tests...\n" );
+
+		TINT iNumFails = g_pTestingFramework->RunTests(
+			[]( T2TestingFramework::Test* pTest, T2TestingFramework::Check* pCheck )
+			{
+				// Fail
+				TTRACE( "- Failed check \'%s\' in the '%s::%s' test\n", pCheck->pchStatement, pTest->pCategory->pchName, pTest->pchName );
+			},
+			[]( T2TestingFramework::Test* pTest, T2TestingFramework::Check* pCheck )
+			{
+				TTRACE( "+ Succeded check \'%s\' in the '%s::%s' test\n", pCheck->pchStatement, pTest->pCategory->pchName, pTest->pchName );
+				// Success
+			}
+		);
+
+		TTRACE( "Finished the tests with %d fail(s).\n", iNumFails );
+	}
 }
 
 //#include "pch.h"

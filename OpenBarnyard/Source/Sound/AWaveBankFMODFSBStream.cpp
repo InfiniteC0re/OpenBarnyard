@@ -49,7 +49,6 @@ AWaveBank::LOADRESULT AWaveBankFMODFSBStream::Load( LOADFLAGS a_uiFlags, TINT a_
 
 	TASSERT( TTRUE == bGotFileInfo );
 
-	// For some reason flags here are used as buffer size
 	TINT iBufferSize = ( a_iBufferSize <= 0 ) ? 2000 : a_iBufferSize;
 	FSOUND_Stream_SetBufferSize( TINT( iBufferSize ) );
 

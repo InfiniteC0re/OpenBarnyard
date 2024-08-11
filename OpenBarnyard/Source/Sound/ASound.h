@@ -4,7 +4,8 @@ using ASoundWaveId = TINT32;
 
 class AWaveBank;
 
-class ASound
+// Note: seems to be deprecated since never actually created or played
+class TDEPRECATED ASound
 {
 public:
 	friend class ASoundManager;

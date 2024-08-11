@@ -394,8 +394,8 @@ TBOOL ASoundManager::LoadSoundBankImpl( const TCHAR* a_szName, TBOOL a_bSimpleSo
 									TFLOAT fVolMin = pVolrand->GetValue( i + 0 )->GetFloat();
 									TFLOAT fVolMax = pVolrand->GetValue( i + 1 )->GetFloat();
 
-									pSoundEx->m_vecWaves[ i / 2 ].m_fMinVolume = fVolMin;
-									pSoundEx->m_vecWaves[ i / 2 ].m_fMaxVolume = fVolMax;
+									pSoundEx->m_vecWaves[ i / 2 ].m_fMinVolumeMultiplier = fVolMin;
+									pSoundEx->m_vecWaves[ i / 2 ].m_fMaxVolumeMultiplier = fVolMax;
 								}
 							}
 							else
@@ -726,7 +726,7 @@ void ASoundManager::CreatePlaySoundEvent( Cue* a_pCue, TINT a_iTrackIndex, TINT 
 			{
 				ASoundAdvanced::Wave* pWave = &pSound->m_vecWaves[ i ];
 
-				TFLOAT fVolumeMultiplier = pRandom->GetFloatMinMax( pWave->m_fMinVolume, pWave->m_fMaxVolume );
+				TFLOAT fVolumeMultiplier = pRandom->GetFloatMinMax( pWave->m_fMinVolumeMultiplier, pWave->m_fMaxVolumeMultiplier );
 				TFLOAT fVolume = fVolumeMultiplier * pWave->m_fVolume;
 				TMath::Clip( fVolume, 0.0f, 1.0f );
 
