@@ -155,9 +155,9 @@ namespace Toshi
 		return ( RandRaw() >> 1 ) * 4.6566129E-10f;
 	}
 
-	TFLOAT TRandom::GetFloatMinMax( TUINT32 a_iLower, TUINT32 a_iUpper )
+	TFLOAT TRandom::GetFloatMinMax( TFLOAT a_fLower, TFLOAT a_fUpper )
 	{
-		return (TFLOAT)( RandRaw() >> 1 ) * 4.6566129E-10f * a_iUpper + a_iLower;
+		return (TFLOAT)( RandRaw() >> 1 ) * 4.6566129E-10f * a_fUpper + a_fLower;
 	}
 
 	TFLOAT TRandom::GetFloat2()

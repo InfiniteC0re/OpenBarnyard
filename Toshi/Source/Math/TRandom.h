@@ -28,7 +28,7 @@ namespace Toshi
 		TINT GetInt( TUINT32 a_iUpper ) { return GetInt( 0, a_iUpper ); };
 
 		TFLOAT GetFloat();
-		TFLOAT GetFloatMinMax( TUINT32 a_iLower, TUINT32 a_iUpper );
+		TFLOAT GetFloatMinMax( TFLOAT a_fLower, TFLOAT a_fUpper );
 		TFLOAT GetFloat2();
 
 		TUINT32 RandRaw();

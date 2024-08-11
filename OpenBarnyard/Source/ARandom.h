@@ -16,5 +16,7 @@ public:
 		
 	}
 
+	// TODO: Add interface for TRandom
+
 	Toshi::TRandom m_oRandom;
 };

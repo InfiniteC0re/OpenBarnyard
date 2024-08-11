@@ -7,6 +7,7 @@
 #include "AWaveBankFMODFSB.h"
 #include "AWaveBankFMODFSBStream.h"
 #include "ALoadScreen.h"
+#include "ARandom.h"
 
 #include <Plugins/PPropertyParser/PBProperties.h>
 
@@ -693,6 +694,69 @@ void ASoundManager::LoadSoundBankSamples( const Toshi::TPString8& a_rcName )
 	if ( ASoundBank* pSoundBank = FindSoundBank( a_rcName ) )
 	{
 		pSoundBank->Load();
+	}
+}
+
+void ASoundManager::CreatePlaySoundEvent( Cue* a_pCue, TINT a_iTrackIndex, TINT a_iFirstWaveIndex, TINT a_iLastWaveIndex, TUINT a_uiFlags, TFLOAT a_fDelay1, TFLOAT a_fDelay2 )
+{
+	TVALIDPTR( a_pCue );
+
+	ASoundAdvanced* pSound = a_pCue->pSoundAdvanced;
+	TVALIDPTR( pSound );
+
+	TUINT uiFlags = a_uiFlags;
+
+	TINT iLoopStart = pSound->m_vecLoopStarts[ a_iTrackIndex ];
+	if ( iLoopStart > 0 || iLoopStart == -1 )
+	{
+		uiFlags &= ~2;
+	}
+
+	TRandom* pRandom = &ARandom::GetSingleton()->m_oRandom;
+
+	if ( !HASANYFLAG( uiFlags, 8 ) )
+	{
+		TASSERT( a_iFirstWaveIndex >= a_iLastWaveIndex );
+
+		if ( pSound->m_vecTracks[a_iTrackIndex] < 2 )
+		{
+			TINT iNumLeftWaves = a_iLastWaveIndex - a_iFirstWaveIndex;
+			
+			for ( TINT i = a_iFirstWaveIndex; iNumLeftWaves > 0; iNumLeftWaves-- )
+			{
+				ASoundAdvanced::Wave* pWave = &pSound->m_vecWaves[ i ];
+
+				TFLOAT fVolumeMultiplier = pRandom->GetFloatMinMax( pWave->m_fMinVolume, pWave->m_fMaxVolume );
+				TFLOAT fVolume = fVolumeMultiplier * pWave->m_fVolume;
+				TMath::Clip( fVolume, 0.0f, 1.0f );
+
+				EventParameters oParams;
+				oParams[ 0 ] = fVolume;
+				oParams[ 1 ] = pRandom->GetFloatMinMax( pWave->m_fMinPitch, pWave->m_fMaxPitch );
+				oParams[ 2 ] = 0.0f;
+
+				TFLOAT fStartDelay = pWave->m_fStart + pRandom->GetFloat() * pWave->m_fVarDelay;
+				if ( a_fDelay1 != -1.0f ) fStartDelay += a_fDelay1;
+				if ( a_fDelay2 != -1.0f ) fStartDelay += a_fDelay2;
+
+				SoundEvent* pEvent = CreateSoundEvent(
+					( uiFlags & 16 ) ? SOUNDEVENT_PlayAudio : SOUNDEVENT_PlayStream,
+					fStartDelay,
+					a_pCue,
+					pWave,
+					oParams,
+					TNULL,
+					uiFlags,
+					a_iTrackIndex
+				);
+
+				TVALIDPTR( pEvent );
+			}
+		}
+	}
+	else
+	{
+		TASSERT( !"Not implemented" );
 	}
 }
 

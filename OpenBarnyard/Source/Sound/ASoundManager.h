@@ -50,6 +50,7 @@ public:
 	enum SOUNDEVENT : TUINT
 	{
 		SOUNDEVENT_PlayAudio,
+		SOUNDEVENT_PlayStream,
 		// ...
 		SOUNDEVENT_NUMOF,
 	};
@@ -105,17 +106,13 @@ public:
 			TFLOAT fStartTime1 = a_rcVal1.fStartTime;
 			TFLOAT fStartTime2 = a_rcVal2.fStartTime;
 
-			TBOOL bIsNan1 = Toshi::TMath::IsNaN( fStartTime1 );
-			TBOOL bIsNan2 = Toshi::TMath::IsNaN( fStartTime1 );
-			TBOOL bAnyNan = bIsNan1 || bIsNan2;
+			if ( fStartTime1 > fStartTime2 )
+				return 1;
 
-			if ( bAnyNan || fStartTime1 == fStartTime2 || fStartTime1 < fStartTime2 )
-			{
-				if ( ( bAnyNan || fStartTime1 < fStartTime2 ) != bAnyNan )
-					return -1;
-			}
+			if ( fStartTime1 >= fStartTime2 )
+				return 0;
 
-			return 0;
+			return -1;
 		}
 	};
 	
@@ -140,19 +137,13 @@ public:
 	{
 		TINT operator()( const SoundEventList& a_rcVal1, const SoundEventList& a_rcVal2 ) const
 		{
-			if ( a_rcVal1->Size() == 0 )
-			{
-				// The list we are adding is empty
+			if ( a_rcVal1->Size() <= 0 )
 				return ( a_rcVal2->Size() == 0 ) ? 0 : -1;
-			}
 
-			if ( a_rcVal2->Size() > 0 )
-			{
-				// Both lists aren't empty so compare by their first events
-				return SoundEventSortResults()( *a_rcVal1->Begin(), *a_rcVal2->Begin() );
-			}
+			if ( a_rcVal2->Size() <= 0 )
+				return 1;
 
-			return 1;
+			return SoundEventSortResults()( *a_rcVal1->Begin(), *a_rcVal2->Begin() );
 		}
 	};
 
@@ -243,6 +234,8 @@ public:
 	void LoadSoundBankSamples( const Toshi::TPString8& a_rcName );
 
 private:
+	void CreatePlaySoundEvent( Cue* a_pCue, TINT a_iTrackIndex, TINT a_iFirstWaveIndex, TINT a_iLastWaveIndex, TUINT a_uiFlags, TFLOAT a_fDelay1, TFLOAT a_fDelay2 );
+
 	// Allocates new SoundEvent and adds it to the specified cue
 	SoundEvent* CreateSoundEvent( SOUNDEVENT a_eEventType, TFLOAT a_fDelay, Cue* a_pCue, ASoundAdvanced::Wave* a_pWave, PlayingSound* a_pPlayingSound, TUINT a_uiFlags, TINT a_iTrackIndex );
 
