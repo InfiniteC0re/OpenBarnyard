@@ -5,20 +5,20 @@
 class AGUIMatlibPicture : public AGUIPicture
 {
 public:
-	TDECLARE_CLASS(AGUIMatlibPicture, AGUIPicture);
+    TDECLARE_CLASS( AGUIMatlibPicture, AGUIPicture );
 
 public:
-	AGUIMatlibPicture();
-	~AGUIMatlibPicture();
+    AGUIMatlibPicture();
+    ~AGUIMatlibPicture();
 
-	virtual void Flush() override;
-	virtual void Cache() override;
-	virtual void Create(const Toshi::TPString8 & a_rName) override;
-
-private:
-	void LoadMatLib();
-	void UnloadMatLib();
+    virtual void Flush() override;
+    virtual void Cache() override;
+    virtual void Create( const Toshi::TPString8& a_rName ) override;
 
 private:
-	AMaterialLibrary* m_pMaterialLibrary;
+    void LoadMatLib();
+    void UnloadMatLib();
+
+private:
+    AMaterialLibrary* m_pMaterialLibrary;
 };

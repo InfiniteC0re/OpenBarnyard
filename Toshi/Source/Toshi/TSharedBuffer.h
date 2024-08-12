@@ -2,225 +2,226 @@
 #include "Toshi/Typedefs.h"
 #include "Toshi/TArray.h"
 
-namespace Toshi {
-	
-	//-----------------------------------------------------------------------------
-	// Use this to create shared buffer of type T.
-	// Call TSharedBuffer<>::Create() specifying number of buffers to create.
-	// Note: Max possible number of elements is BUFSIZE * m_iNumBuffers.
-	//-----------------------------------------------------------------------------
-	template <typename T, TINT BUFSIZE, TINT IDENTIFIER>
-	class TSharedBuffer
-	{
-	public:
-		class TNode
-		{
-		public:
-			T& GetElement(TINT a_iIndex)
-			{
-				TASSERT(a_iIndex < BUFSIZE);
-				return m_aElements[a_iIndex];
-			}
+namespace Toshi
+{
 
-			const T& GetElement(TINT a_iIndex) const
-			{
-				return GetElement(a_iIndex);
-			}
+//-----------------------------------------------------------------------------
+// Use this to create shared buffer of type T.
+// Call TSharedBuffer<>::Create() specifying number of buffers to create.
+// Note: Max possible number of elements is BUFSIZE * m_iNumBuffers.
+//-----------------------------------------------------------------------------
+template < typename T, TINT BUFSIZE, TINT IDENTIFIER >
+class TSharedBuffer
+{
+public:
+    class TNode
+    {
+    public:
+        T& GetElement( TINT a_iIndex )
+        {
+            TASSERT( a_iIndex < BUFSIZE );
+            return m_aElements[ a_iIndex ];
+        }
 
-			T& operator[](TINT a_iIndex)
-			{
-				return GetElement(a_iIndex);
-			}
+        const T& GetElement( TINT a_iIndex ) const
+        {
+            return GetElement( a_iIndex );
+        }
 
-			const T& operator[](TINT a_iIndex) const
-			{
-				return GetElement(a_iIndex);
-			}
+        T& operator[]( TINT a_iIndex )
+        {
+            return GetElement( a_iIndex );
+        }
 
-		private:
-			union
-			{
-				TUINT8 m_aMemoryBuffer[sizeof(T) * BUFSIZE];
-				T m_aElements[BUFSIZE];
-			};
-		};
+        const T& operator[]( TINT a_iIndex ) const
+        {
+            return GetElement( a_iIndex );
+        }
 
-	public:
-		//-----------------------------------------------------------------------------
-		// Static definitions
-		//-----------------------------------------------------------------------------
+    private:
+        union
+        {
+            TUINT8 m_aMemoryBuffer[ sizeof( T ) * BUFSIZE ];
+            T      m_aElements[ BUFSIZE ];
+        };
+    };
 
-		static void CreateSharedBuffers(TINT a_iNumBuffers)
-		{
-			TASSERT(m_iNumBuffers == 0);
-			TASSERT(m_pNodeArray == TNULL);
+public:
+    //-----------------------------------------------------------------------------
+    // Static definitions
+    //-----------------------------------------------------------------------------
 
-			m_iNumBuffers = a_iNumBuffers;
-			
-			if (a_iNumBuffers > m_oFreeList.SizeAllocated())
-			{
-				m_oFreeList.Resize(a_iNumBuffers);
-			}
+    static void CreateSharedBuffers( TINT a_iNumBuffers )
+    {
+        TASSERT( m_iNumBuffers == 0 );
+        TASSERT( m_pNodeArray == TNULL );
 
-			m_oFreeList.SetSize(a_iNumBuffers);
-			m_pNodeArray = TSTATICCAST(TNode, TMalloc(sizeof(TNode) * m_iNumBuffers));
+        m_iNumBuffers = a_iNumBuffers;
 
-			for (TINT i = 0; i < m_iNumBuffers; i++)
-			{
-				m_oFreeList[i] = &m_pNodeArray[i];
-			}
+        if ( a_iNumBuffers > m_oFreeList.SizeAllocated() )
+        {
+            m_oFreeList.Resize( a_iNumBuffers );
+        }
 
-			TASSERT(m_oFreeList.Size() <= m_iNumBuffers);
-			TASSERT((1 << TMath::IntLog2(BUFSIZE)) == BUFSIZE);
+        m_oFreeList.SetSize( a_iNumBuffers );
+        m_pNodeArray = TSTATICCAST( TNode, TMalloc( sizeof( TNode ) * m_iNumBuffers ) );
 
-			m_iMainIndexShift = TMath::IntLog2(BUFSIZE);
-			m_iSubIndexMask = (1 << TMath::IntLog2(BUFSIZE)) - 1;
-		}
+        for ( TINT i = 0; i < m_iNumBuffers; i++ )
+        {
+            m_oFreeList[ i ] = &m_pNodeArray[ i ];
+        }
 
-		static void DestroySharedBuffers()
-		{
-			TASSERT(m_oFreeList.Size() <= m_iNumBuffers);
-			TASSERT(TFALSE == IsAnyBuffersUsed());
+        TASSERT( m_oFreeList.Size() <= m_iNumBuffers );
+        TASSERT( ( 1 << TMath::IntLog2( BUFSIZE ) ) == BUFSIZE );
 
-			m_oFreeList.Clear();
+        m_iMainIndexShift = TMath::IntLog2( BUFSIZE );
+        m_iSubIndexMask   = ( 1 << TMath::IntLog2( BUFSIZE ) ) - 1;
+    }
 
-			TVALIDPTR(m_pNodeArray);
-			TFree(m_pNodeArray);
+    static void DestroySharedBuffers()
+    {
+        TASSERT( m_oFreeList.Size() <= m_iNumBuffers );
+        TASSERT( TFALSE == IsAnyBuffersUsed() );
 
-			m_iNumBuffers = 0;
-			m_pNodeArray = TNULL;
-		}
+        m_oFreeList.Clear();
 
-		static TBOOL IsAnyBuffersUsed()
-		{
-			return m_iNumBuffers != m_oFreeList.Size();
-		}
+        TVALIDPTR( m_pNodeArray );
+        TFree( m_pNodeArray );
 
-	private:
-		inline static TNode* m_pNodeArray;
-		inline static TINT m_iNumBuffers;
-		inline static TINT m_iMainIndexShift;
-		inline static TINT m_iSubIndexMask;
-		inline static TArray<TNode*> m_oFreeList;
+        m_iNumBuffers = 0;
+        m_pNodeArray  = TNULL;
+    }
 
-	public:
-		//-----------------------------------------------------------------------------
-		// Member definitions
-		//-----------------------------------------------------------------------------
+    static TBOOL IsAnyBuffersUsed()
+    {
+        return m_iNumBuffers != m_oFreeList.Size();
+    }
 
-		TSharedBuffer() :
-			m_oArray(4, 10)
-		{
-			TASSERT((1 << TMath::IntLog2(BUFSIZE)) == BUFSIZE);
-		}
+private:
+    inline static TNode*           m_pNodeArray;
+    inline static TINT             m_iNumBuffers;
+    inline static TINT             m_iMainIndexShift;
+    inline static TINT             m_iSubIndexMask;
+    inline static TArray< TNode* > m_oFreeList;
 
-		~TSharedBuffer()
-		{
-			SetSize(0);
-		}
+public:
+    //-----------------------------------------------------------------------------
+    // Member definitions
+    //-----------------------------------------------------------------------------
 
-		TUINT GetSize() const
-		{
-			return m_oArray.Size() << m_iMainIndexShift;
-		}
+    TSharedBuffer() :
+        m_oArray( 4, 10 )
+    {
+        TASSERT( ( 1 << TMath::IntLog2( BUFSIZE ) ) == BUFSIZE );
+    }
 
-		TBOOL SetSize(TINT a_iSize)
-		{
-			TASSERT(a_iSize >= 0);
-			TASSERT(m_oFreeList.Size() <= m_iNumBuffers);
-			TASSERT(TMath::IntLog2(BUFSIZE) == m_iMainIndexShift);
+    ~TSharedBuffer()
+    {
+        SetSize( 0 );
+    }
 
-			TINT iDesiredNumNodes = a_iSize >> (m_iMainIndexShift % BUFSIZE);
+    TUINT GetSize() const
+    {
+        return m_oArray.Size() << m_iMainIndexShift;
+    }
 
-			if (0 < (m_iSubIndexMask & a_iSize))
-			{
-				iDesiredNumNodes += 1;
-			}
+    TBOOL SetSize( TINT a_iSize )
+    {
+        TASSERT( a_iSize >= 0 );
+        TASSERT( m_oFreeList.Size() <= m_iNumBuffers );
+        TASSERT( TMath::IntLog2( BUFSIZE ) == m_iMainIndexShift );
 
-			TASSERT(iDesiredNumNodes >= 0);
-			
-			if (m_oArray.Size() != iDesiredNumNodes)
-			{
-				if (10 < iDesiredNumNodes) return TFALSE;
+        TINT iDesiredNumNodes = a_iSize >> ( m_iMainIndexShift % BUFSIZE );
 
-				if (iDesiredNumNodes < m_oArray.Size())
-				{
-					// Removing elements from m_oArray
+        if ( 0 < ( m_iSubIndexMask & a_iSize ) )
+        {
+            iDesiredNumNodes += 1;
+        }
 
-					while (iDesiredNumNodes < m_oArray.Size())
-					{
-						// Remove the last element from array and store in the freelist
-						m_oFreeList.Push(m_oArray.Pop());
-					}
+        TASSERT( iDesiredNumNodes >= 0 );
 
-					TASSERT(m_oArray.Size() == iDesiredNumNodes);
-					TASSERT(m_oFreeList.Size() <= m_iNumBuffers);
-				}
-				else
-				{
-					// Adding new elements to m_oArray
+        if ( m_oArray.Size() != iDesiredNumNodes )
+        {
+            if ( 10 < iDesiredNumNodes ) return TFALSE;
 
-					if (m_oFreeList.Size() < 1) return TFALSE;
+            if ( iDesiredNumNodes < m_oArray.Size() )
+            {
+                // Removing elements from m_oArray
 
-					while (m_oArray.Size() < iDesiredNumNodes)
-					{
-						if (m_oFreeList.Size() < 1) return TFALSE;
+                while ( iDesiredNumNodes < m_oArray.Size() )
+                {
+                    // Remove the last element from array and store in the freelist
+                    m_oFreeList.Push( m_oArray.Pop() );
+                }
 
-						TASSERT(m_oArray.Size() < m_oArray.SizeAllocated());
+                TASSERT( m_oArray.Size() == iDesiredNumNodes );
+                TASSERT( m_oFreeList.Size() <= m_iNumBuffers );
+            }
+            else
+            {
+                // Adding new elements to m_oArray
 
-						m_oArray.Push(m_oFreeList.Pop());
-					}
+                if ( m_oFreeList.Size() < 1 ) return TFALSE;
 
-					TASSERT(m_oArray.Size() == iDesiredNumNodes);
-					TASSERT(m_oFreeList.Size() <= m_iNumBuffers);
-				}
-			}
+                while ( m_oArray.Size() < iDesiredNumNodes )
+                {
+                    if ( m_oFreeList.Size() < 1 ) return TFALSE;
 
-			return TTRUE;
-		}
+                    TASSERT( m_oArray.Size() < m_oArray.SizeAllocated() );
 
-		T& At(TINT a_iIndex)
-		{
-			TASSERT(TMath::IntLog2(BUFSIZE) == m_iMainIndexShift);
-			TASSERT(m_oFreeList.Size() <= m_iNumBuffers);
-			TASSERT(a_iIndex < m_oArray.Size() * BUFSIZE);
+                    m_oArray.Push( m_oFreeList.Pop() );
+                }
 
-			TINT iSubIndex = m_iSubIndexMask & a_iIndex;
-			TINT iMainIndex = a_iIndex >> (m_iMainIndexShift % BUFSIZE);
+                TASSERT( m_oArray.Size() == iDesiredNumNodes );
+                TASSERT( m_oFreeList.Size() <= m_iNumBuffers );
+            }
+        }
 
-			TASSERT(iMainIndex < m_oArray.Size());
-			TASSERT(iSubIndex < BUFSIZE);
+        return TTRUE;
+    }
 
-			return m_oArray[iMainIndex]->GetElement(iSubIndex);
-		}
+    T& At( TINT a_iIndex )
+    {
+        TASSERT( TMath::IntLog2( BUFSIZE ) == m_iMainIndexShift );
+        TASSERT( m_oFreeList.Size() <= m_iNumBuffers );
+        TASSERT( a_iIndex < m_oArray.Size() * BUFSIZE );
 
-		const T& At(TINT a_iIndex) const
-		{
-			TASSERT(TMath::IntLog2(BUFSIZE) == m_iMainIndexShift);
-			TASSERT(m_oFreeList.Size() <= m_iNumBuffers);
-			TASSERT(a_iIndex < m_oArray.Size() * BUFSIZE);
+        TINT iSubIndex  = m_iSubIndexMask & a_iIndex;
+        TINT iMainIndex = a_iIndex >> ( m_iMainIndexShift % BUFSIZE );
 
-			TINT iSubIndex = m_iSubIndexMask & a_iIndex;
-			TINT iMainIndex = a_iIndex >> (m_iMainIndexShift % BUFSIZE);
+        TASSERT( iMainIndex < m_oArray.Size() );
+        TASSERT( iSubIndex < BUFSIZE );
 
-			TASSERT(iMainIndex < m_oArray.Size());
-			TASSERT(iSubIndex < BUFSIZE);
+        return m_oArray[ iMainIndex ]->GetElement( iSubIndex );
+    }
 
-			return m_oArray[iMainIndex]->GetElement(iSubIndex);
-		}
+    const T& At( TINT a_iIndex ) const
+    {
+        TASSERT( TMath::IntLog2( BUFSIZE ) == m_iMainIndexShift );
+        TASSERT( m_oFreeList.Size() <= m_iNumBuffers );
+        TASSERT( a_iIndex < m_oArray.Size() * BUFSIZE );
 
-		T& operator[](TINT a_iIndex)
-		{
-			return At(a_iIndex);
-		}
+        TINT iSubIndex  = m_iSubIndexMask & a_iIndex;
+        TINT iMainIndex = a_iIndex >> ( m_iMainIndexShift % BUFSIZE );
 
-		const T& operator[](TINT a_iIndex) const
-		{
-			return At(a_iIndex);
-		}
+        TASSERT( iMainIndex < m_oArray.Size() );
+        TASSERT( iSubIndex < BUFSIZE );
 
-	private:
-		TArray<TNode*> m_oArray;
-	};
+        return m_oArray[ iMainIndex ]->GetElement( iSubIndex );
+    }
 
-}
+    T& operator[]( TINT a_iIndex )
+    {
+        return At( a_iIndex );
+    }
+
+    const T& operator[]( TINT a_iIndex ) const
+    {
+        return At( a_iIndex );
+    }
+
+private:
+    TArray< TNode* > m_oArray;
+};
+
+} // namespace Toshi

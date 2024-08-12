@@ -4,8 +4,7 @@
 
 namespace Toshi
 {
-	class TInputWiinDeviceController : public TInputDXDeviceController
-	{
-
-	};
-}
+class TInputWiinDeviceController : public TInputDXDeviceController
+{
+};
+} // namespace Toshi

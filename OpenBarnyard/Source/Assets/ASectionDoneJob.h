@@ -3,17 +3,17 @@
 #include "Terrain/ATerrainSection.h"
 
 class ASectionDoneJob :
-	public AMainThreadJob
+    public AMainThreadJob
 {
 public:
-	virtual void BeginJob() override;
-	virtual TBOOL RunJob() override;
-	virtual TBOOL CancelJob() override;
+    virtual void  BeginJob() override;
+    virtual TBOOL RunJob() override;
+    virtual TBOOL CancelJob() override;
 
-	void InitJob(ATerrainSection* a_pSection, ATerrainLODType a_eLODType);
+    void InitJob( ATerrainSection* a_pSection, ATerrainLODType a_eLODType );
 
 private:
-	ATerrainSection* m_pSection;
-	TUINT m_eLODType;
-	TBOOL m_bIsCanceled;
+    ATerrainSection* m_pSection;
+    TUINT            m_eLODType;
+    TBOOL            m_bIsCanceled;
 };

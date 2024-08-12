@@ -7,4 +7,4 @@
 //-----------------------------------------------------------------------------
 #include <Core/TMemoryDebugOn.h>
 
-TDEFINE_CLASS(ACheatActivator);
+TDEFINE_CLASS( ACheatActivator );

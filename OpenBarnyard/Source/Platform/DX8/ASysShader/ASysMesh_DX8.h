@@ -4,19 +4,19 @@
 class ASysMeshHAL : public ASysMesh
 {
 public:
-	TDECLARE_CLASS(ASysMeshHAL, ASysMesh);
+    TDECLARE_CLASS( ASysMeshHAL, ASysMesh );
 
 public:
-	ASysMeshHAL();
+    ASysMeshHAL();
 
-	virtual TBOOL Render() override;
-	virtual void SetZBias(TINT a_iZBias) override;
+    virtual TBOOL Render() override;
+    virtual void  SetZBias( TINT a_iZBias ) override;
 
-	TINT GetZBias() const { return m_iZBias; }
+    TINT GetZBias() const { return m_iZBias; }
 
 public:
-	inline static BOOL ms_bStopRendering;
+    inline static BOOL ms_bStopRendering;
 
 private:
-	TINT m_iZBias;
+    TINT m_iZBias;
 };

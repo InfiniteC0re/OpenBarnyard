@@ -1,75 +1,76 @@
 #pragma once
 #include "THPTimer.h"
 
-namespace Toshi {
-	
-	class TScheduler;
+namespace Toshi
+{
 
-	class TKernelInterface
-	{
-	public:
-		using t_QuitCallback = void(*)();
+class TScheduler;
 
-	public:
-		TKernelInterface();
+class TKernelInterface
+{
+public:
+    using t_QuitCallback = void ( * )();
 
-		void Update();
+public:
+    TKernelInterface();
 
-		THPTimer& GetTimer()
-		{
-			return m_Timer;
-		}
+    void Update();
 
-		TUINT GetNumFrames() const
-		{
-			return m_uiNumFrames;
-		}
+    THPTimer& GetTimer()
+    {
+        return m_Timer;
+    }
 
-		TScheduler* GetScheduler() const
-		{
-			return m_Scheduler;
-		}
+    TUINT GetNumFrames() const
+    {
+        return m_uiNumFrames;
+    }
 
-		void SetScheduler(TScheduler* a_pScheduler)
-		{
-			m_Scheduler = a_pScheduler;
-		}
+    TScheduler* GetScheduler() const
+    {
+        return m_Scheduler;
+    }
 
-		TBOOL IsPaused() const
-		{
-			return m_bIsPaused;
-		}
+    void SetScheduler( TScheduler* a_pScheduler )
+    {
+        m_Scheduler = a_pScheduler;
+    }
 
-		TBOOL SetPaused(TBOOL a_bPaused)
-		{
-			TBOOL bOldState = m_bIsPaused;
-			m_bIsPaused = a_bPaused;
-			return bOldState;
-		}
+    TBOOL IsPaused() const
+    {
+        return m_bIsPaused;
+    }
 
-		TFLOAT GetFPS() const
-		{
-			return 1.0f / m_Timer.GetDelta();
-		}
+    TBOOL SetPaused( TBOOL a_bPaused )
+    {
+        TBOOL bOldState = m_bIsPaused;
+        m_bIsPaused     = a_bPaused;
+        return bOldState;
+    }
 
-		void SetQuitCallback(t_QuitCallback a_fnQuitCallback)
-		{
-			m_fnQuitCallback = a_fnQuitCallback;
-		}
+    TFLOAT GetFPS() const
+    {
+        return 1.0f / m_Timer.GetDelta();
+    }
 
-	private:
-		TUINT m_Unk1;
-		TScheduler* m_Scheduler;
-		TBOOL m_bIsPaused;
-		TUINT32 m_Unk2;
-		THPTimer m_Timer;
-		TUINT32 m_Unk3;
-		TFLOAT m_fSecond;
-		TFLOAT m_fAverageFps;
-		TUINT32 m_uiNumFrames;
-		TBOOL m_Unk4;
-		t_QuitCallback m_fnQuitCallback;
-		TUINT32 m_Unk6;
-	};
+    void SetQuitCallback( t_QuitCallback a_fnQuitCallback )
+    {
+        m_fnQuitCallback = a_fnQuitCallback;
+    }
 
-}
+private:
+    TUINT          m_Unk1;
+    TScheduler*    m_Scheduler;
+    TBOOL          m_bIsPaused;
+    TUINT32        m_Unk2;
+    THPTimer       m_Timer;
+    TUINT32        m_Unk3;
+    TFLOAT         m_fSecond;
+    TFLOAT         m_fAverageFps;
+    TUINT32        m_uiNumFrames;
+    TBOOL          m_Unk4;
+    t_QuitCallback m_fnQuitCallback;
+    TUINT32        m_Unk6;
+};
+
+} // namespace Toshi

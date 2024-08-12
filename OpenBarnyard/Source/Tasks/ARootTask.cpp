@@ -35,297 +35,299 @@
 
 TOSHI_NAMESPACE_USING
 
-TDEFINE_CLASS(ARootTask);
+TDEFINE_CLASS( ARootTask );
 
 ARootTask::ARootTask()
 {
-	TIMPLEMENT();
+    TIMPLEMENT();
 
-	m_bStartedGame = TFALSE;
-	m_bRenderWorld = TFALSE;
-	m_bPaused = TFALSE;
-	m_bStopRenderingScene = TFALSE;
-	m_bGameSystemCreated = TFALSE;
-	m_pOptions = AOptions::CreateSingleton();
-	AMemory::CreatePool(AMemory::POOL_Sound);
+    m_bStartedGame        = TFALSE;
+    m_bRenderWorld        = TFALSE;
+    m_bPaused             = TFALSE;
+    m_bStopRenderingScene = TFALSE;
+    m_bGameSystemCreated  = TFALSE;
+    m_pOptions            = AOptions::CreateSingleton();
+    AMemory::CreatePool( AMemory::POOL_Sound );
 
-	auto pScheduler = g_oSystemManager.GetScheduler();
+    auto pScheduler = g_oSystemManager.GetScheduler();
 
-	m_pGUISystem           = pScheduler->CreateTask<AGUISystem>(this);
-	m_pGUI2                = pScheduler->CreateTask<AGUI2>(this);
-	m_pRenderer            = pScheduler->CreateTask<ARenderer>(this);
-	m_pInputHandler        = pScheduler->CreateTask<AInputHandler>(this);
-	m_pGameStateController = pScheduler->CreateTask<AGameStateController>(this);
-	m_pSoundManager        = pScheduler->CreateTask<ASoundManager>(this);
-	m_pMoviePlayer         = pScheduler->CreateTask<ABINKMoviePlayer>(this);
-	m_bGameSystemCreated   = TFALSE;
+    m_pGUISystem           = pScheduler->CreateTask< AGUISystem >( this );
+    m_pGUI2                = pScheduler->CreateTask< AGUI2 >( this );
+    m_pRenderer            = pScheduler->CreateTask< ARenderer >( this );
+    m_pInputHandler        = pScheduler->CreateTask< AInputHandler >( this );
+    m_pGameStateController = pScheduler->CreateTask< AGameStateController >( this );
+    m_pSoundManager        = pScheduler->CreateTask< ASoundManager >( this );
+    m_pMoviePlayer         = pScheduler->CreateTask< ABINKMoviePlayer >( this );
+    m_bGameSystemCreated   = TFALSE;
 }
 
 TBOOL ARootTask::OnCreate()
 {
-	TIMPLEMENT();
+    TIMPLEMENT();
 
-	AMemory::CreatePool(AMemory::POOL_Viewport);
-	AMemory::CreatePool(AMemory::POOL_Misc);
-	AMemory::CreatePool(AMemory::POOL_Collision);
+    AMemory::CreatePool( AMemory::POOL_Viewport );
+    AMemory::CreatePool( AMemory::POOL_Misc );
+    AMemory::CreatePool( AMemory::POOL_Collision );
 
-	// Initialise all classes
-	TGetClass(TObject).RecurseTree(
-		TNULL,
-		TNULL,
-		[](TClass* a_pClass, void*)
-		{
-			if (!a_pClass->IsInitialized())
-			{
-				a_pClass->Initialize();
-			}
+    // Initialise all classes
+    TGetClass( TObject ).RecurseTree(
+        TNULL,
+        TNULL,
+        []( TClass* a_pClass, void* ) {
+            if ( !a_pClass->IsInitialized() )
+            {
+                a_pClass->Initialize();
+            }
 
-			return TTRUE;
-		},
-		TNULL
-	);
+            return TTRUE;
+        },
+        TNULL );
 
-	AAssetLoader::Load("data\\assets\\lib_startup.trb", AAssetType_Startup, TTRUE);
+    AAssetLoader::Load( "data\\assets\\lib_startup.trb", AAssetType_Startup, TTRUE );
 
-	if (m_pRenderer)
-	{
-		if (!m_pRenderer->Create())
-		{
-			m_pRenderer = TNULL;
-		}
-	}
+    if ( m_pRenderer )
+    {
+        if ( !m_pRenderer->Create() )
+        {
+            m_pRenderer = TNULL;
+        }
+    }
 
-	if (!m_pRenderer)
-	{
-		return TFALSE;
-	}
+    if ( !m_pRenderer )
+    {
+        return TFALSE;
+    }
 
-	m_pInputHandler->Create();
-	m_pSoundManager->Create();
+    m_pInputHandler->Create();
+    m_pSoundManager->Create();
 
-	ARandom::CreateSingleton();
+    ARandom::CreateSingleton();
 
-	if (m_pMoviePlayer)
-	{
-		m_pMoviePlayer->Create();
-	}
+    if ( m_pMoviePlayer )
+    {
+        m_pMoviePlayer->Create();
+    }
 
-	TGetClass(AInputMapManager).CreateObject();
-	AInputMapManager::GetSingleton()->ReadControlsData();
+    TGetClass( AInputMapManager ).CreateObject();
+    AInputMapManager::GetSingleton()->ReadControlsData();
 
-	LoadStartupData();
-	m_pGameStateController->Create();
+    LoadStartupData();
+    m_pGameStateController->Create();
 
-	AGUISystem::AllowBackgroundClear(TTRUE);
-	ARenderer::GetSingleton()->ForceUpdate30FPS();
-	ARenderer::GetSingleton()->ForceUpdate30FPS();
-	AGUISystem::AllowBackgroundClear(TFALSE);
-	
-	return TTRUE;
+    AGUISystem::AllowBackgroundClear( TTRUE );
+    ARenderer::GetSingleton()->ForceUpdate30FPS();
+    ARenderer::GetSingleton()->ForceUpdate30FPS();
+    AGUISystem::AllowBackgroundClear( TFALSE );
+
+    return TTRUE;
 }
 
-TBOOL ARootTask::OnUpdate(TFLOAT a_fDeltaTime)
+TBOOL ARootTask::OnUpdate( TFLOAT a_fDeltaTime )
 {
-	if (!IsGameSystemCreated())
-	{
-		if (!AGameStateController::GetSingleton()->IsCurrentState(&TGetClass(ASlideshowState)) &&
-			!AGameStateController::GetSingleton()->IsCurrentState(&TGetClass(SaveLoadSKU)) &&
-			!AGameStateController::GetSingleton()->IsCurrentState(&TGetClass(AMovieState)) &&
-			!AGameStateController::GetSingleton()->IsCurrentState(&TGetClass(AMessagePopupState)))
-		{
-			if (!m_bStartedGame)
-			{
-				CreateStartupGameStates();
-				return TTRUE;
-			}
-			else
-			{
-				g_oLoadScreen.Create();
-				CreateGameSystem();
-				LoadFrontEnd();
-				return TTRUE;
-			}
-		}
-	}
+    if ( !IsGameSystemCreated() )
+    {
+        if ( !AGameStateController::GetSingleton()->IsCurrentState( &TGetClass( ASlideshowState ) ) &&
+             !AGameStateController::GetSingleton()->IsCurrentState( &TGetClass( SaveLoadSKU ) ) &&
+             !AGameStateController::GetSingleton()->IsCurrentState( &TGetClass( AMovieState ) ) &&
+             !AGameStateController::GetSingleton()->IsCurrentState( &TGetClass( AMessagePopupState ) ) )
+        {
+            if ( !m_bStartedGame )
+            {
+                CreateStartupGameStates();
+                return TTRUE;
+            }
+            else
+            {
+                g_oLoadScreen.Create();
+                CreateGameSystem();
+                LoadFrontEnd();
+                return TTRUE;
+            }
+        }
+    }
 
-	TTODO("FUN_00427e70");
-	g_oLoadScreen.Update(1.0f, TTRUE);
+    TTODO( "FUN_00427e70" );
+    g_oLoadScreen.Update( 1.0f, TTRUE );
 
-	return TTRUE;
+    return TTRUE;
 }
 
-void ARootTask::OnChildDied(TClass* a_pClass, TTask* a_pDeletedTask)
+void ARootTask::OnChildDied( TClass* a_pClass, TTask* a_pDeletedTask )
 {
-	if (a_pDeletedTask == m_pGUISystem) m_pGUISystem = TNULL;
-	else if (a_pDeletedTask == m_pGUI2) m_pGUI2 = TNULL;
-	else if (a_pDeletedTask == m_pInputHandler) m_pInputHandler = TNULL;
-	else if (a_pDeletedTask == m_pRenderer) m_pRenderer = TNULL;
-	else if (a_pDeletedTask == m_pGameStateController) m_pGameStateController = TNULL;
-	else if (a_pDeletedTask == m_pMoviePlayer) m_pMoviePlayer = TNULL;
+    if ( a_pDeletedTask == m_pGUISystem ) m_pGUISystem = TNULL;
+    else if ( a_pDeletedTask == m_pGUI2 )
+        m_pGUI2 = TNULL;
+    else if ( a_pDeletedTask == m_pInputHandler )
+        m_pInputHandler = TNULL;
+    else if ( a_pDeletedTask == m_pRenderer )
+        m_pRenderer = TNULL;
+    else if ( a_pDeletedTask == m_pGameStateController )
+        m_pGameStateController = TNULL;
+    else if ( a_pDeletedTask == m_pMoviePlayer )
+        m_pMoviePlayer = TNULL;
 }
 
 void ARootTask::OnActivate()
 {
-	if (m_pGUISystem) m_pGUISystem->Activate(TTRUE);
-	if (m_pGUI2) m_pGUI2->Activate(TTRUE);
-	if (m_pRenderer) m_pRenderer->Activate(TTRUE);
-	if (m_pInputHandler) m_pInputHandler->Activate(TTRUE);
-	if (m_pGameStateController) m_pGameStateController->Activate(TTRUE);
-	if (m_pMoviePlayer) m_pMoviePlayer->Activate(TTRUE);
-	
-	if (m_bGameSystemCreated)
-	{
-		TTODO("Activate three more tasks");
-	}
+    if ( m_pGUISystem ) m_pGUISystem->Activate( TTRUE );
+    if ( m_pGUI2 ) m_pGUI2->Activate( TTRUE );
+    if ( m_pRenderer ) m_pRenderer->Activate( TTRUE );
+    if ( m_pInputHandler ) m_pInputHandler->Activate( TTRUE );
+    if ( m_pGameStateController ) m_pGameStateController->Activate( TTRUE );
+    if ( m_pMoviePlayer ) m_pMoviePlayer->Activate( TTRUE );
+
+    if ( m_bGameSystemCreated )
+    {
+        TTODO( "Activate three more tasks" );
+    }
 }
 
 void ARootTask::OnDeactivate()
 {
-	if (m_pGUISystem) m_pGUISystem->Activate(TTRUE);
-	if (m_pGUI2) m_pGUI2->Activate(TTRUE);
-	if (m_pRenderer) m_pRenderer->Activate(TTRUE);
-	if (m_pInputHandler) m_pInputHandler->Activate(TTRUE);
-	if (m_pGameStateController) m_pGameStateController->Activate(TTRUE);
-	if (m_pMoviePlayer) m_pMoviePlayer->Activate(TTRUE);
+    if ( m_pGUISystem ) m_pGUISystem->Activate( TTRUE );
+    if ( m_pGUI2 ) m_pGUI2->Activate( TTRUE );
+    if ( m_pRenderer ) m_pRenderer->Activate( TTRUE );
+    if ( m_pInputHandler ) m_pInputHandler->Activate( TTRUE );
+    if ( m_pGameStateController ) m_pGameStateController->Activate( TTRUE );
+    if ( m_pMoviePlayer ) m_pMoviePlayer->Activate( TTRUE );
 
-	TTODO("Deactivate two more tasks");
+    TTODO( "Deactivate two more tasks" );
 }
 
-TPSTRING8_DECLARE(bkg_by_legal1);
-TPSTRING8_DECLARE(bkg_Bink_Big);
-TPSTRING8_DECLARE(bkg_bluetongue);
-TPSTRING8_DECLARE(bkg_fmod);
+TPSTRING8_DECLARE( bkg_by_legal1 );
+TPSTRING8_DECLARE( bkg_Bink_Big );
+TPSTRING8_DECLARE( bkg_bluetongue );
+TPSTRING8_DECLARE( bkg_fmod );
 
 void ARootTask::CreateStartupGameStates()
 {
-	TIMPLEMENT();
+    TIMPLEMENT();
 
-	auto attractMovie = new AMovieState("Attract", TFALSE, TNULL, TFALSE);
-	auto bluetongueMovie = new AMovieState("BTE", TFALSE, attractMovie, TFALSE);
-	auto thqMovie = new AMovieState("THQ", TFALSE, bluetongueMovie, TFALSE);
-	auto nickmovsMovie = new AMovieState("NickMovs", TFALSE, thqMovie, TFALSE);
+    auto attractMovie    = new AMovieState( "Attract", TFALSE, TNULL, TFALSE );
+    auto bluetongueMovie = new AMovieState( "BTE", TFALSE, attractMovie, TFALSE );
+    auto thqMovie        = new AMovieState( "THQ", TFALSE, bluetongueMovie, TFALSE );
+    auto nickmovsMovie   = new AMovieState( "NickMovs", TFALSE, thqMovie, TFALSE );
 
-	AGUISlideshow::Params slideshowSettings = {
-		.iUnk1 = 0,
-		.bSlideSkippable = TTRUE,
-		.bUnk2 = TFALSE,
-		.bInstaSkippable = TFALSE,
-		.bHasFadeIn = TTRUE,
-		.bHasFadeOut = TTRUE,
-		.bRepeat = TFALSE,
-		.bDelayAppear = TFALSE,
-		.fDuration = 2.0f,
-		.fFadeInTime = 1.0f,
-		.fFadeOutTime = 0.5f,
-		.fUnk5 = -1.0f,
-	};
+    AGUISlideshow::Params slideshowSettings = {
+        .iUnk1           = 0,
+        .bSlideSkippable = TTRUE,
+        .bUnk2           = TFALSE,
+        .bInstaSkippable = TFALSE,
+        .bHasFadeIn      = TTRUE,
+        .bHasFadeOut     = TTRUE,
+        .bRepeat         = TFALSE,
+        .bDelayAppear    = TFALSE,
+        .fDuration       = 2.0f,
+        .fFadeInTime     = 1.0f,
+        .fFadeOutTime    = 0.5f,
+        .fUnk5           = -1.0f,
+    };
 
-	auto fmodSlide = new ASlideshowState(slideshowSettings, nickmovsMovie, TFALSE);
-	fmodSlide->AddSlide(TPS8(bkg_fmod));
+    auto fmodSlide = new ASlideshowState( slideshowSettings, nickmovsMovie, TFALSE );
+    fmodSlide->AddSlide( TPS8( bkg_fmod ) );
 
-	auto binkSlide = new ASlideshowState(slideshowSettings, fmodSlide, TFALSE);
-	binkSlide->AddSlide(TPS8(bkg_Bink_Big));
+    auto binkSlide = new ASlideshowState( slideshowSettings, fmodSlide, TFALSE );
+    binkSlide->AddSlide( TPS8( bkg_Bink_Big ) );
 
-	slideshowSettings.fDuration = 5.0f;
-	auto legalSlide = new ASlideshowState(slideshowSettings, binkSlide, TTRUE);
-	legalSlide->AddSlide(TPS8(bkg_by_legal1));
+    slideshowSettings.fDuration = 5.0f;
+    auto legalSlide             = new ASlideshowState( slideshowSettings, binkSlide, TTRUE );
+    legalSlide->AddSlide( TPS8( bkg_by_legal1 ) );
 
-	AGameStateController::GetSingleton()->PushState(legalSlide);
+    AGameStateController::GetSingleton()->PushState( legalSlide );
 
-	m_bStartedGame = TTRUE;
+    m_bStartedGame = TTRUE;
 }
 
 void ARootTask::LoadStartupData()
 {
-	TString8 startupLibPath;
-	startupLibPath.Format("Data/%s.trb", "lib_startup");
+    TString8 startupLibPath;
+    startupLibPath.Format( "Data/%s.trb", "lib_startup" );
 
-	TTRB trb;
-	trb.Load(startupLibPath);
+    TTRB trb;
+    trb.Load( startupLibPath );
 
-	auto properties = PBProperties::LoadFromTRB(trb);
-	auto matlibProperty = properties->GetOptionalProperty("matlib");
+    auto properties     = PBProperties::LoadFromTRB( trb );
+    auto matlibProperty = properties->GetOptionalProperty( "matlib" );
 
-	if (matlibProperty)
-	{
-		AMaterialLibraryManager::GetSingleton()->LoadLibrariesFromProperties(
-			matlibProperty,
-			AAssetLoader::GetAssetTRB(AAssetType_Startup),
-			TTRUE
-		);
-	}
+    if ( matlibProperty )
+    {
+        AMaterialLibraryManager::GetSingleton()->LoadLibrariesFromProperties(
+            matlibProperty,
+            AAssetLoader::GetAssetTRB( AAssetType_Startup ),
+            TTRUE );
+    }
 
-	trb.Close();
+    trb.Close();
 
-	if (m_pGUI2 && !m_pGUI2->Create())
-	{
-		m_pGUI2 = TNULL;
-	}
+    if ( m_pGUI2 && !m_pGUI2->Create() )
+    {
+        m_pGUI2 = TNULL;
+    }
 
-	if (m_pGUISystem && !m_pGUISystem->Create())
-	{
-		m_pGUISystem = TNULL;
-	}
+    if ( m_pGUISystem && !m_pGUISystem->Create() )
+    {
+        m_pGUISystem = TNULL;
+    }
 
-	TRenderInterface::GetSingleton()->FlushDyingResources();
-	TRenderInterface::GetSingleton()->FlushDyingResources();
-	AGUI2TextureSectionManager::UpdateMaterials();
+    TRenderInterface::GetSingleton()->FlushDyingResources();
+    TRenderInterface::GetSingleton()->FlushDyingResources();
+    AGUI2TextureSectionManager::UpdateMaterials();
 
-	g_oSystemManager.GetScheduler()->CreateTask<AFadeManager>(this)->Create();
+    g_oSystemManager.GetScheduler()->CreateTask< AFadeManager >( this )->Create();
 }
 
 TBOOL ARootTask::IsPaused() const
 {
-	return m_bPaused || g_oSystemManager.IsPaused();
+    return m_bPaused || g_oSystemManager.IsPaused();
 }
 
 void ARootTask::CreateGameSystem()
 {
-	TIMPLEMENT();
+    TIMPLEMENT();
 
-	AFadeManager::GetSingleton()->StopAllFades();
-	g_oLoadScreen.StartLoading(9, TTRUE);
+    AFadeManager::GetSingleton()->StopAllFades();
+    g_oLoadScreen.StartLoading( 9, TTRUE );
 
-	ASoundManager::GetSingleton()->LoadWaveBanksInfo( "soundmetadata" );
-	
-	// ...
-	m_pGameSystemManager = g_oSystemManager.GetScheduler()->CreateTask<AGameSystemManager>(this);
-	m_pGameSystemManager->Create();
+    ASoundManager::GetSingleton()->LoadWaveBanksInfo( "soundmetadata" );
 
-	g_oLoadScreen.Update(1.0f, TTRUE);
-	g_oLoadScreen.Update(1.0f, TTRUE);
-	g_oLoadScreen.Update(1.0f, TTRUE);
+    // ...
+    m_pGameSystemManager = g_oSystemManager.GetScheduler()->CreateTask< AGameSystemManager >( this );
+    m_pGameSystemManager->Create();
 
-	// Reorder tasks?
-	if (m_pInputHandler)
-	{
-		m_pInputHandler->SetParent(m_pInputHandler->Parent());
-	}
+    g_oLoadScreen.Update( 1.0f, TTRUE );
+    g_oLoadScreen.Update( 1.0f, TTRUE );
+    g_oLoadScreen.Update( 1.0f, TTRUE );
 
-	if (m_pMoviePlayer)
-	{
-		m_pMoviePlayer->SetParent(m_pMoviePlayer->Parent());
-	}
+    // Reorder tasks?
+    if ( m_pInputHandler )
+    {
+        m_pInputHandler->SetParent( m_pInputHandler->Parent() );
+    }
 
-	if (m_pGUISystem)
-	{
-		m_pGUISystem->SetParent(m_pGUISystem->Parent());
-	}
+    if ( m_pMoviePlayer )
+    {
+        m_pMoviePlayer->SetParent( m_pMoviePlayer->Parent() );
+    }
 
-	if (m_pGameStateController)
-	{
-		m_pGameStateController->SetParent(m_pGameStateController->Parent());
-	}
+    if ( m_pGUISystem )
+    {
+        m_pGUISystem->SetParent( m_pGUISystem->Parent() );
+    }
 
-	// ...
+    if ( m_pGameStateController )
+    {
+        m_pGameStateController->SetParent( m_pGameStateController->Parent() );
+    }
 
-	if (m_pRenderer)
-	{
-		m_pRenderer->SetParent(m_pRenderer->Parent());
-	}
+    // ...
 
-	m_bGameSystemCreated = TTRUE;
-	OnActivate();
+    if ( m_pRenderer )
+    {
+        m_pRenderer->SetParent( m_pRenderer->Parent() );
+    }
+
+    m_bGameSystemCreated = TTRUE;
+    OnActivate();
 }
 
 TPSTRING8_DECLARE( ui );
@@ -333,38 +335,37 @@ TPSTRING8_DECLARE( music );
 
 void ARootTask::LoadFrontEnd()
 {
-	TIMPLEMENT();
-	ASoundManager* pSoundManager = ASoundManager::GetSingleton();
+    TIMPLEMENT();
+    ASoundManager* pSoundManager = ASoundManager::GetSingleton();
 
-	// Load ui & music soundbanks
-	pSoundManager->LoadSoundBank( TPS8( ui ), TFALSE, TTRUE );
-	pSoundManager->LoadSoundBank( TPS8( music ), TFALSE, TFALSE );
+    // Load ui & music soundbanks
+    pSoundManager->LoadSoundBank( TPS8( ui ), TFALSE, TTRUE );
+    pSoundManager->LoadSoundBank( TPS8( music ), TFALSE, TFALSE );
 
-	AAssetLoader::LoadAssetPackFromLibrary("lib_frontend", TTRUE);
+    AAssetLoader::LoadAssetPackFromLibrary( "lib_frontend", TTRUE );
 
-	//ATerrainManager::SetTerrain(ATerrainManager::Terrain_EnvBensHill, TTRUE, TTRUE, 0, 0, 0, 0);
-	ABYardTerrainManager::SetTerrain(ABYardTerrainManager::Terrain_FrontEnd, TTRUE, TTRUE, 0, 0, 0, 0);
-	ABYardTerrainManager::StartLoading();
-	AAssetLoader::CreateAssetsFromLibrary("lib_frontend");
+    //ATerrainManager::SetTerrain(ATerrainManager::Terrain_EnvBensHill, TTRUE, TTRUE, 0, 0, 0, 0);
+    ABYardTerrainManager::SetTerrain( ABYardTerrainManager::Terrain_FrontEnd, TTRUE, TTRUE, 0, 0, 0, 0 );
+    ABYardTerrainManager::StartLoading();
+    AAssetLoader::CreateAssetsFromLibrary( "lib_frontend" );
 
-	// Load music wavebank samples
-	ASoundManager::ms_bShouldUpdateLoadingScreen = TTRUE;
-	pSoundManager->LoadWaveBankSamples( TPS8( music ), AWaveBank::LOADFLAGS_NONE, -1 );
-	ASoundManager::ms_bShouldUpdateLoadingScreen = TFALSE;
+    // Load music wavebank samples
+    ASoundManager::ms_bShouldUpdateLoadingScreen = TTRUE;
+    pSoundManager->LoadWaveBankSamples( TPS8( music ), AWaveBank::LOADFLAGS_NONE, -1 );
+    ASoundManager::ms_bShouldUpdateLoadingScreen = TFALSE;
 
-	// Load music samples
-	pSoundManager->LoadSoundBankSamples( TPS8( music ) );
+    // Load music samples
+    pSoundManager->LoadSoundBankSamples( TPS8( music ) );
 
-	GetSingleton()->SetRenderWorld(TTRUE);
+    GetSingleton()->SetRenderWorld( TTRUE );
 
-	// Hide loading screen
-	g_oLoadScreen.Reset();
-	g_oLoadScreen.SetLoadingState(TFALSE, TTRUE);
+    // Hide loading screen
+    g_oLoadScreen.Reset();
+    g_oLoadScreen.SetLoadingState( TFALSE, TTRUE );
 
-	// Fade screen from black
-	AFadeManager::GetSingleton()->StartFade(
-		AFade::Color(255, 0, 0, 0),
-		AFade::Color(0, 0, 0, 0),
-		1.0f
-	);
+    // Fade screen from black
+    AFadeManager::GetSingleton()->StartFade(
+        AFade::Color( 255, 0, 0, 0 ),
+        AFade::Color( 0, 0, 0, 0 ),
+        1.0f );
 }

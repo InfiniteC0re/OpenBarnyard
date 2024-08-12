@@ -8,17 +8,18 @@
 //-----------------------------------------------------------------------------
 #include "Core/TMemoryDebugOn.h"
 
-namespace Toshi {
+namespace Toshi
+{
 
-	TBOOL TOrderTable::Create(TShader* a_pShader, TINT a_iPriority)
-	{
-		m_pLastRegMat = TNULL;
-		m_pShader = a_pShader;
-		
-		TNode::SetPriority(a_iPriority);
-		TRenderD3DInterface::Interface()->GetOrderTables().Insert(this);
+TBOOL TOrderTable::Create( TShader* a_pShader, TINT a_iPriority )
+{
+    m_pLastRegMat = TNULL;
+    m_pShader     = a_pShader;
 
-		return TTRUE;
-	}
+    TNode::SetPriority( a_iPriority );
+    TRenderD3DInterface::Interface()->GetOrderTables().Insert( this );
 
+    return TTRUE;
 }
+
+} // namespace Toshi

@@ -7,5 +7,4 @@
 //-----------------------------------------------------------------------------
 #include <Core/TMemoryDebugOn.h>
 
-TDEFINE_CLASS(SaveLoadSKU);
-
+TDEFINE_CLASS( SaveLoadSKU );

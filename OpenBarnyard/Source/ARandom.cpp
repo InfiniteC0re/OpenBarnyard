@@ -7,4 +7,4 @@
 //-----------------------------------------------------------------------------
 #include <Core/TMemoryDebugOn.h>
 
-TDEFINE_CLASS(ARandom);
+TDEFINE_CLASS( ARandom );

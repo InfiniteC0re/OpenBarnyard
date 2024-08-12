@@ -9,45 +9,45 @@
 
 namespace Toshi
 {
-	T2GlobalAllocator T2Allocator::s_GlobalAllocator;
+T2GlobalAllocator T2Allocator::s_GlobalAllocator;
 
-	void* T2GlobalAllocator::Malloc(size_t size)
-	{
-		return TMalloc(size);
-	}
-
-	void* T2GlobalAllocator::Malloc(size_t size, size_t alignment)
-	{
-		return TMemalign(size, alignment);
-	}
-
-	void T2GlobalAllocator::Free(void* ptr)
-	{
-		TFree(ptr);
-	}
-
-	TBOOL T2GlobalAllocator::CanAllocate(size_t size) const
-	{
-		return TTRUE;
-	}
-
-	void* T2GlobalAllocator::TryMalloc(size_t size)
-	{
-		return TMalloc(size);
-	}
-
-	void* T2GlobalAllocator::TryMalloc(size_t size, size_t alignment)
-	{
-		return TMemalign(size, alignment);
-	}
-
-	size_t T2GlobalAllocator::GetUsedSize() const
-	{
-		return 0;
-	}
-
-	size_t T2GlobalAllocator::GetCapacity() const
-	{
-		return 0;
-	}
+void* T2GlobalAllocator::Malloc( size_t size )
+{
+    return TMalloc( size );
 }
+
+void* T2GlobalAllocator::Malloc( size_t size, size_t alignment )
+{
+    return TMemalign( size, alignment );
+}
+
+void T2GlobalAllocator::Free( void* ptr )
+{
+    TFree( ptr );
+}
+
+TBOOL T2GlobalAllocator::CanAllocate( size_t size ) const
+{
+    return TTRUE;
+}
+
+void* T2GlobalAllocator::TryMalloc( size_t size )
+{
+    return TMalloc( size );
+}
+
+void* T2GlobalAllocator::TryMalloc( size_t size, size_t alignment )
+{
+    return TMemalign( size, alignment );
+}
+
+size_t T2GlobalAllocator::GetUsedSize() const
+{
+    return 0;
+}
+
+size_t T2GlobalAllocator::GetCapacity() const
+{
+    return 0;
+}
+} // namespace Toshi

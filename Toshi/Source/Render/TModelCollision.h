@@ -1,13 +1,13 @@
 #pragma once
 
-namespace Toshi {
+namespace Toshi
+{
 
-	class TModelCollision
-	{
-	public:
+class TModelCollision
+{
+public:
+private:
+    TINT m_iNumCollisionModels;
+};
 
-	private:
-		TINT m_iNumCollisionModels;
-	};
-
-}
+} // namespace Toshi

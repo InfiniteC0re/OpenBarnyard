@@ -9,25 +9,24 @@
 
 void ACollisionDoneJob::BeginJob()
 {
-
 }
 
 TBOOL ACollisionDoneJob::RunJob()
 {
-	TIMPLEMENT();
+    TIMPLEMENT();
 
-	m_pVISGroup->m_eFlags &= ~ATerrainSection::FLAGS_COLLISION_LOADING;
-	return TTRUE;
+    m_pVISGroup->m_eFlags &= ~ATerrainSection::FLAGS_COLLISION_LOADING;
+    return TTRUE;
 }
 
 TBOOL ACollisionDoneJob::CancelJob()
 {
-	TIMPLEMENT();
-	return TFALSE;
+    TIMPLEMENT();
+    return TFALSE;
 }
 
-void ACollisionDoneJob::InitJob(ATerrainSection* a_pVISGroup, TBOOL a_bFlag)
+void ACollisionDoneJob::InitJob( ATerrainSection* a_pVISGroup, TBOOL a_bFlag )
 {
-	m_pVISGroup = a_pVISGroup;
-	m_bFlag = a_bFlag;
+    m_pVISGroup = a_pVISGroup;
+    m_bFlag     = a_bFlag;
 }

@@ -7,74 +7,72 @@
 
 namespace Toshi
 {
-	class TScheduler;
-	class TPString8Pool;
+class TScheduler;
+class TPString8Pool;
 
-	class TSystemManager
-	{
-	public:
-		friend TScheduler;
+class TSystemManager
+{
+public:
+    friend TScheduler;
 
-	public:
-		TSystemManager();
-	
-		void Update();
+public:
+    TSystemManager();
 
-		TFLOAT GetFPS() const
-		{
-			return m_pKernelInterface->GetFPS();
-		}
+    void Update();
 
-		TBOOL Pause(TBOOL a_bPause)
-		{
-			TBOOL bOldState = m_pKernelInterface->SetPaused(a_bPause);
-			m_PauseEmitter.Throw(&a_bPause);
+    TFLOAT GetFPS() const
+    {
+        return m_pKernelInterface->GetFPS();
+    }
 
-			return bOldState;
-		}
+    TBOOL Pause( TBOOL a_bPause )
+    {
+        TBOOL bOldState = m_pKernelInterface->SetPaused( a_bPause );
+        m_PauseEmitter.Throw( &a_bPause );
 
-		TEmitter<TSystemManager, TBOOL>& GetPauseEmitter()
-		{
-			return m_PauseEmitter;
-		}
+        return bOldState;
+    }
 
-		TUINT32 GetFrameCount() const
-		{
-			return m_pKernelInterface->GetNumFrames();
-		}
+    TEmitter< TSystemManager, TBOOL >& GetPauseEmitter()
+    {
+        return m_PauseEmitter;
+    }
 
-		THPTimer& GetTimer()
-		{
-			return m_pKernelInterface->GetTimer();
-		}
+    TUINT32 GetFrameCount() const
+    {
+        return m_pKernelInterface->GetNumFrames();
+    }
 
-		TScheduler* GetScheduler() const
-		{
-			return m_pKernelInterface->GetScheduler();
-		}
+    THPTimer& GetTimer()
+    {
+        return m_pKernelInterface->GetTimer();
+    }
 
-		TBOOL IsPaused() const
-		{
-			return m_pKernelInterface->IsPaused();
-		}
+    TScheduler* GetScheduler() const
+    {
+        return m_pKernelInterface->GetScheduler();
+    }
 
-		void SetQuitCallback(TKernelInterface::t_QuitCallback a_fnQuitCallback)
-		{
-			m_pKernelInterface->SetQuitCallback(a_fnQuitCallback);
-		}
+    TBOOL IsPaused() const
+    {
+        return m_pKernelInterface->IsPaused();
+    }
 
-	public:
-		static TBOOL Create();
+    void SetQuitCallback( TKernelInterface::t_QuitCallback a_fnQuitCallback )
+    {
+        m_pKernelInterface->SetQuitCallback( a_fnQuitCallback );
+    }
 
-	private:
-		inline static TBOOL ms_bWasEverUpdated;
+public:
+    static TBOOL Create();
 
-	private:
-		TEmitter<TSystemManager, TBOOL> m_PauseEmitter;
-		TKernelInterface* m_pKernelInterface;
-	};
+private:
+    inline static TBOOL ms_bWasEverUpdated;
 
-	extern TSystemManager g_oSystemManager;
-}
+private:
+    TEmitter< TSystemManager, TBOOL > m_PauseEmitter;
+    TKernelInterface*                 m_pKernelInterface;
+};
 
-
+extern TSystemManager g_oSystemManager;
+} // namespace Toshi

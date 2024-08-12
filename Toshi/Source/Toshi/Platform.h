@@ -6,10 +6,10 @@ class TString8;
 
 enum class Platform
 {
-	Wii,
-	Unk2,
-	PC,
-	Unk3
+    Wii,
+    Unk2,
+    PC,
+    Unk3
 };
 
 void ThreadSleep( TUINT dwMilliseconds );

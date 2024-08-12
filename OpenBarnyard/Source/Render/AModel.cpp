@@ -9,234 +9,233 @@
 
 TOSHI_NAMESPACE_USING
 
-TDEFINE_CLASS(AModelInstance);
+TDEFINE_CLASS( AModelInstance );
 
-AModel::AModel(const TPString8& a_rName, TTRB* a_pTRB) :
-	m_Name(a_rName),
-	m_uiID(ms_uiNumCreated),
-	m_pModelPtr(TNULL),
-	m_uiNumModelInstances(0),
-	m_Vec1(TVector3::VEC_ZERO),
-	m_Vec2(TVector3::VEC_ZERO)
+AModel::AModel( const TPString8& a_rName, TTRB* a_pTRB ) :
+    m_Name( a_rName ),
+    m_uiID( ms_uiNumCreated ),
+    m_pModelPtr( TNULL ),
+    m_uiNumModelInstances( 0 ),
+    m_Vec1( TVector3::VEC_ZERO ),
+    m_Vec2( TVector3::VEC_ZERO )
 {
-	m_pModelPtr = AModel::Create(a_rName, a_pTRB);
+    m_pModelPtr = AModel::Create( a_rName, a_pTRB );
 
-	ms_uiNumCreated += 1;
+    ms_uiNumCreated += 1;
 }
 
 AModel::~AModel()
 {
-	if (m_pModelPtr)
-	{
-		delete m_pModelPtr;
-	}
+    if ( m_pModelPtr )
+    {
+        delete m_pModelPtr;
+    }
 }
 
-void AModel::Update(TFLOAT a_fDeltaTime)
+void AModel::Update( TFLOAT a_fDeltaTime )
 {
-	TIMPLEMENT();
+    TIMPLEMENT();
 
-	for (TUINT i = 0; i < m_uiNumModelInstances; i++)
-	{
-		auto pInstance = m_aModelInstances[i].Get();
+    for ( TUINT i = 0; i < m_uiNumModelInstances; i++ )
+    {
+        auto pInstance = m_aModelInstances[ i ].Get();
 
-		if (pInstance->IsUpdatingSkeleton())
-		{
-			pInstance->GetT2Instance()->Update(a_fDeltaTime);
-		}
-	}
+        if ( pInstance->IsUpdatingSkeleton() )
+        {
+            pInstance->GetT2Instance()->Update( a_fDeltaTime );
+        }
+    }
 }
 
-void AModel::Render(TUINT8 a_uiFlags)
+void AModel::Render( TUINT8 a_uiFlags )
 {
-	for (TUINT i = 0; i < m_uiNumModelInstances; i++)
-	{
-		auto& pModelInstance = m_aModelInstances[i];
-		auto eFlags = pModelInstance->m_eFlags;
+    for ( TUINT i = 0; i < m_uiNumModelInstances; i++ )
+    {
+        auto& pModelInstance = m_aModelInstances[ i ];
+        auto  eFlags         = pModelInstance->m_eFlags;
 
-		if (((eFlags >> 4 & 1) == a_uiFlags && (eFlags & 2) != 0) && (eFlags & 1) != 0)
-		{
-			auto pT2Instance = pModelInstance->GetT2Instance();
-			auto pModel = pT2Instance->GetInstance()->GetModel();
+        if ( ( ( eFlags >> 4 & 1 ) == a_uiFlags && ( eFlags & 2 ) != 0 ) && ( eFlags & 1 ) != 0 )
+        {
+            auto pT2Instance = pModelInstance->GetT2Instance();
+            auto pModel      = pT2Instance->GetInstance()->GetModel();
 
-			auto& transform = pT2Instance->GetTransform();
-			auto& transformScale = transform.GetScale();
-			auto& lod = pModel->GetLOD(0);
+            auto& transform      = pT2Instance->GetTransform();
+            auto& transformScale = transform.GetScale();
+            auto& lod            = pModel->GetLOD( 0 );
 
-			TFLOAT fRadiusScale = TMath::Max(TMath::Max(transformScale.x, transformScale.y), transformScale.z);
-			TFLOAT fRadius = lod.BoundingSphere.GetRadius() * fRadiusScale;
+            TFLOAT fRadiusScale = TMath::Max( TMath::Max( transformScale.x, transformScale.y ), transformScale.z );
+            TFLOAT fRadius      = lod.BoundingSphere.GetRadius() * fRadiusScale;
 
-			Toshi::TMatrix44 transformMatrix;
-			transform.GetLocalMatrixImp(transformMatrix);
+            Toshi::TMatrix44 transformMatrix;
+            transform.GetLocalMatrixImp( transformMatrix );
 
-			Toshi::TVector3 boundingPos;
-			Toshi::TMatrix44::TransformVector(boundingPos, transformMatrix, lod.BoundingSphere.GetOrigin());
-			pT2Instance->Render(pModelInstance->GetClipFlags(), boundingPos);
-		}
-	}
+            Toshi::TVector3 boundingPos;
+            Toshi::TMatrix44::TransformVector( boundingPos, transformMatrix, lod.BoundingSphere.GetOrigin() );
+            pT2Instance->Render( pModelInstance->GetClipFlags(), boundingPos );
+        }
+    }
 }
 
-AModelInstanceRef* AModel::CreateInstance(AModelInstanceRef& a_rOutRef)
+AModelInstanceRef* AModel::CreateInstance( AModelInstanceRef& a_rOutRef )
 {
-	// TODO: use this name in debug?
-	TString8 instanceName;
-	GenerateInstanceName(instanceName, m_Name);
+    // TODO: use this name in debug?
+    TString8 instanceName;
+    GenerateInstanceName( instanceName, m_Name );
 
-	AModelInstanceRef modelInstanceRef = new AModelInstance(
-		this,
-		m_pModelPtr->CreateInstance(),
-		TFALSE
-	);
+    AModelInstanceRef modelInstanceRef = new AModelInstance(
+        this,
+        m_pModelPtr->CreateInstance(),
+        TFALSE );
 
-	m_aModelInstances[m_uiNumModelInstances++] = modelInstanceRef;
-	a_rOutRef = modelInstanceRef;
+    m_aModelInstances[ m_uiNumModelInstances++ ] = modelInstanceRef;
+    a_rOutRef                                    = modelInstanceRef;
 
-	return &a_rOutRef;
+    return &a_rOutRef;
 }
 
-TModelPtr* AModel::Create(const TPString8& a_rFilePath, TTRB* a_pTRB)
+TModelPtr* AModel::Create( const TPString8& a_rFilePath, TTRB* a_pTRB )
 {
-	// TODO: use this name in debug?
-	TString8 modelName;
-	GetNameFromPath(a_rFilePath, modelName);
+    // TODO: use this name in debug?
+    TString8 modelName;
+    GetNameFromPath( a_rFilePath, modelName );
 
-	auto pModelPtr = new TModelPtr();
+    auto pModelPtr = new TModelPtr();
 
-	if (pModelPtr)
-	{
-		TString8 filepath = a_rFilePath.GetString8();
-		filepath.MakeLower();
+    if ( pModelPtr )
+    {
+        TString8 filepath = a_rFilePath.GetString8();
+        filepath.MakeLower();
 
-		if (filepath.Find(".trb") < 0 &&
-			filepath.Find(".trz") < 0)
-		{
-			filepath += ".trb";
-		}
+        if ( filepath.Find( ".trb" ) < 0 &&
+             filepath.Find( ".trz" ) < 0 )
+        {
+            filepath += ".trb";
+        }
 
-		pModelPtr->Create(filepath, a_pTRB);
-		TFIXME("Call FUN_0060dcc0");
-	}
+        pModelPtr->Create( filepath, a_pTRB );
+        TFIXME( "Call FUN_0060dcc0" );
+    }
 
-	return pModelPtr;
+    return pModelPtr;
 }
 
-void AModel::GetNameFromPath(const TPString8& a_FilePath, TString8& a_rName)
+void AModel::GetNameFromPath( const TPString8& a_FilePath, TString8& a_rName )
 {
-	TString8 name = a_FilePath.GetString8();
+    TString8 name = a_FilePath.GetString8();
 
-	if (name.Length() <= 8)
-	{
-		a_rName = name;
-	}
-	else
-	{
-		TINT iPos1 = 0;
-		TINT iPos2;
+    if ( name.Length() <= 8 )
+    {
+        a_rName = name;
+    }
+    else
+    {
+        TINT iPos1 = 0;
+        TINT iPos2;
 
-		do {
-			iPos2 = iPos1;
-			iPos1 = name.Find('\\', iPos1 + 1);
-		} while (-1 < iPos1);
+        do {
+            iPos2 = iPos1;
+            iPos1 = name.Find( '\\', iPos1 + 1 );
+        } while ( -1 < iPos1 );
 
-		do {
-			iPos1 = iPos2;
-			iPos2 = name.Find('/', iPos1 + 1);
-		} while (-1 < iPos2);
+        do {
+            iPos1 = iPos2;
+            iPos2 = name.Find( '/', iPos1 + 1 );
+        } while ( -1 < iPos2 );
 
-		if (iPos1 < 0 || name.Length() - 1 <= iPos1) iPos1 = 0;
-		iPos1 += 1;
-		iPos2 = name.Find('_', iPos1);
-		if (iPos2 < 0) iPos2 = name.Length() - 1;
+        if ( iPos1 < 0 || name.Length() - 1 <= iPos1 ) iPos1 = 0;
+        iPos1 += 1;
+        iPos2 = name.Find( '_', iPos1 );
+        if ( iPos2 < 0 ) iPos2 = name.Length() - 1;
 
-		TUINT iSize = iPos2 - iPos1;
-		
-		if (iSize < 1)
-		{
-			iPos1 = 0;
-			iSize = 8;
-		}
-		else if (8 < iSize)
-		{
-			iSize = 8;
-		}
+        TUINT iSize = iPos2 - iPos1;
 
-		a_rName.Copy(name.GetString(iPos1), iSize);
-	}
+        if ( iSize < 1 )
+        {
+            iPos1 = 0;
+            iSize = 8;
+        }
+        else if ( 8 < iSize )
+        {
+            iSize = 8;
+        }
+
+        a_rName.Copy( name.GetString( iPos1 ), iSize );
+    }
 }
 
-TString8* AModel::GenerateInstanceName(TString8& a_rOutName, const TPString8& a_FilePath)
+TString8* AModel::GenerateInstanceName( TString8& a_rOutName, const TPString8& a_FilePath )
 {
-	static TUINT ms_uiDebugObjectIndex = 0;
+    static TUINT ms_uiDebugObjectIndex = 0;
 
-	TString8 name;
-	GetNameFromPath(a_FilePath, name);
+    TString8 name;
+    GetNameFromPath( a_FilePath, name );
 
-	TString8 debugName;
-	debugName.Format("%s%i", name.GetString(), ms_uiDebugObjectIndex % 1000);
-	ms_uiDebugObjectIndex += 1;
+    TString8 debugName;
+    debugName.Format( "%s%i", name.GetString(), ms_uiDebugObjectIndex % 1000 );
+    ms_uiDebugObjectIndex += 1;
 
-	a_rOutName = debugName;
-	return &a_rOutName;
+    a_rOutName = debugName;
+    return &a_rOutName;
 }
 
-AModelInstance::AModelInstance(AModel* a_pModel, T2ModelInstance* a_pT2Instance, TBOOL a_bEnableSkeletonUpdate) :
-	m_ChangeEmitter(this)
+AModelInstance::AModelInstance( AModel* a_pModel, T2ModelInstance* a_pT2Instance, TBOOL a_bEnableSkeletonUpdate ) :
+    m_ChangeEmitter( this )
 {
-	TFIXME("Initialise some unknown members");
+    TFIXME( "Initialise some unknown members" );
 
-	m_Unknown1[0] = 1.0f;
-	m_Unknown1[1] = 1.0f;
-	m_Unknown1[2] = 1.0f;
-	m_Unknown1[3] = 1.0f;
-	m_pModel = a_pModel;
-	m_uiClipFlags = 0x3F;
-	m_pT2ModelInstance = a_pT2Instance;
-	m_eFlags = 0b00001001;
+    m_Unknown1[ 0 ]    = 1.0f;
+    m_Unknown1[ 1 ]    = 1.0f;
+    m_Unknown1[ 2 ]    = 1.0f;
+    m_Unknown1[ 3 ]    = 1.0f;
+    m_pModel           = a_pModel;
+    m_uiClipFlags      = 0x3F;
+    m_pT2ModelInstance = a_pT2Instance;
+    m_eFlags           = 0b00001001;
 
-	SetSkeletonUpdating(a_bEnableSkeletonUpdate);
-	m_pT2ModelInstance->GetInstance()->SetCustomRenderMethod(RenderInstanceCallback, this);
+    SetSkeletonUpdating( a_bEnableSkeletonUpdate );
+    m_pT2ModelInstance->GetInstance()->SetCustomRenderMethod( RenderInstanceCallback, this );
 }
 
 AModelInstance::AModelInstance() :
-	m_ChangeEmitter(this)
+    m_ChangeEmitter( this )
 {
-	TFIXME("Initialise some unknown members");
+    TFIXME( "Initialise some unknown members" );
 
-	m_Unknown1[0] = 1.0f;
-	m_Unknown1[1] = 1.0f;
-	m_Unknown1[2] = 1.0f;
-	m_Unknown1[3] = 1.0f;
-	m_pModel = TNULL;
-	m_pT2ModelInstance = TNULL;
-	m_uiClipFlags = 0x3F;
-	m_eFlags = 0b00011000;
+    m_Unknown1[ 0 ]    = 1.0f;
+    m_Unknown1[ 1 ]    = 1.0f;
+    m_Unknown1[ 2 ]    = 1.0f;
+    m_Unknown1[ 3 ]    = 1.0f;
+    m_pModel           = TNULL;
+    m_pT2ModelInstance = TNULL;
+    m_uiClipFlags      = 0x3F;
+    m_eFlags           = 0b00011000;
 }
 
-void AModelInstance::RenderInstanceCallback(TModelInstance* a_pInstance, void* a_pUserData)
+void AModelInstance::RenderInstanceCallback( TModelInstance* a_pInstance, void* a_pUserData )
 {
-	TIMPLEMENT();
+    TIMPLEMENT();
 }
 
-void AModelInstance::SetSkeletonUpdating(TBOOL a_bUpdating)
+void AModelInstance::SetSkeletonUpdating( TBOOL a_bUpdating )
 {
-	if (a_bUpdating)
-	{
-		if (!IsUpdatingSkeleton())
-		{
-			m_pT2ModelInstance->EnableSkeletonUpdate();
-			m_ChangeEmitter.Throw(ChangeEvent_EnabledSkeletonUpdate);
-		}
+    if ( a_bUpdating )
+    {
+        if ( !IsUpdatingSkeleton() )
+        {
+            m_pT2ModelInstance->EnableSkeletonUpdate();
+            m_ChangeEmitter.Throw( ChangeEvent_EnabledSkeletonUpdate );
+        }
 
-		m_eFlags |= Flags_UpdatingSkeleton;
-	}
-	else
-	{
-		if (IsUpdatingSkeleton())
-		{
-			m_pT2ModelInstance->DisableSkeletonUpdate();
-			m_ChangeEmitter.Throw(ChangeEvent_DisabledSkeletonUpdate);
-		}
+        m_eFlags |= Flags_UpdatingSkeleton;
+    }
+    else
+    {
+        if ( IsUpdatingSkeleton() )
+        {
+            m_pT2ModelInstance->DisableSkeletonUpdate();
+            m_ChangeEmitter.Throw( ChangeEvent_DisabledSkeletonUpdate );
+        }
 
-		m_eFlags &= ~Flags_UpdatingSkeleton;
-	}
+        m_eFlags &= ~Flags_UpdatingSkeleton;
+    }
 }

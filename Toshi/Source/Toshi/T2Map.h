@@ -3,104 +3,105 @@
 #include "T2RedBlackTree.h"
 #include "Toshi/TComparator.h"
 
-namespace Toshi {
+namespace Toshi
+{
 
-	template <class KeyType, class ValueType, class Comparator = TComparator<KeyType>>
-	class T2Map
-	{
-	public:
-		using Pair = T2Pair<KeyType, ValueType, Comparator>;
-		using Iterator = T2RedBlackTree<Pair>::Iterator;
-		using Node = T2RedBlackTree<Pair>::Node;
+template < class KeyType, class ValueType, class Comparator = TComparator< KeyType > >
+class T2Map
+{
+public:
+    using Pair     = T2Pair< KeyType, ValueType, Comparator >;
+    using Iterator = T2RedBlackTree< Pair >::Iterator;
+    using Node     = T2RedBlackTree< Pair >::Node;
 
-	public:
-		T2Map(T2Allocator* a_pAllocator = &T2Allocator::s_GlobalAllocator) : m_RedBlackTree(a_pAllocator)
-		{
+public:
+    T2Map( T2Allocator* a_pAllocator = &T2Allocator::s_GlobalAllocator ) :
+        m_RedBlackTree( a_pAllocator )
+    {
+    }
 
-		}
+    ~T2Map()
+    {
+        Clear();
+    }
 
-		~T2Map()
-		{
-			Clear();
-		}
+    void Clear()
+    {
+        m_RedBlackTree.DeleteAll();
+    }
 
-		void Clear()
-		{
-			m_RedBlackTree.DeleteAll();
-		}
+    TSIZE Size() const
+    {
+        return m_RedBlackTree.Size();
+    }
 
-		TSIZE Size() const
-		{
-			return m_RedBlackTree.Size();
-		}
+    ValueType* Insert( const KeyType& key, const ValueType& value )
+    {
+        Node* result = TNULL;
+        m_RedBlackTree.Insert( result, { key, value } );
 
-		ValueType* Insert(const KeyType& key, const ValueType& value)
-		{
-			Node* result = TNULL;
-			m_RedBlackTree.Insert(result, { key, value });
+        return &result->GetValue()->GetSecond();
+    }
 
-			return &result->GetValue()->GetSecond();
-		}
+    void Remove( const KeyType& key )
+    {
+        Node* result;
+        m_RedBlackTree.Find( result, { key } );
 
-		void Remove(const KeyType& key)
-		{
-			Node* result;
-			m_RedBlackTree.Find(result, { key });
+        TASSERT( result != End() );
+        m_RedBlackTree.Delete( result );
+    }
 
-			TASSERT(result != End());
-			m_RedBlackTree.Delete(result);
-		}
+    void RemoveNode( Node* a_pNode )
+    {
+        TASSERT( TNULL != a_pNode && a_pNode != End() );
+        m_RedBlackTree.Delete( a_pNode );
+    }
 
-		void RemoveNode(Node* a_pNode)
-		{
-			TASSERT(TNULL != a_pNode && a_pNode != End());
-			m_RedBlackTree.Delete(a_pNode);
-		}
+    ValueType* Find( const KeyType& key )
+    {
+        Node* result;
+        m_RedBlackTree.Find( result, { key } );
 
-		ValueType* Find(const KeyType& key)
-		{
-			Node* result;
-			m_RedBlackTree.Find(result, { key });
+        return result ? &result->GetValue()->GetSecond() : &m_RedBlackTree.End()->GetSecond();
+    }
 
-			return result ? &result->GetValue()->GetSecond() : &m_RedBlackTree.End()->GetSecond();
-		}
+    Node* FindNode( const KeyType& key )
+    {
+        Node* result;
+        m_RedBlackTree.Find( result, { key } );
 
-		Node* FindNode(const KeyType& key)
-		{
-			Node* result;
-			m_RedBlackTree.Find(result, { key });
+        return result;
+    }
 
-			return result;
-		}
+    Node* FindNext( Node* a_pNode, const KeyType& a_rKey )
+    {
+        Node* result;
+        m_RedBlackTree.FindNext( result, a_pNode, { a_rKey } );
 
-		Node* FindNext(Node* a_pNode, const KeyType& a_rKey)
-		{
-			Node* result;
-			m_RedBlackTree.FindNext(result, a_pNode, { a_rKey });
+        return result ? &result->GetValue()->GetSecond() : &m_RedBlackTree.End()->GetSecond();
+    }
 
-			return result ? &result->GetValue()->GetSecond() : &m_RedBlackTree.End()->GetSecond();
-		}
+    Node* FindNextNode( Node* a_pNode, const KeyType& a_rKey )
+    {
+        Node* result;
+        m_RedBlackTree.FindNext( result, a_pNode, { a_rKey } );
 
-		Node* FindNextNode(Node* a_pNode, const KeyType& a_rKey)
-		{
-			Node* result;
-			m_RedBlackTree.FindNext(result, a_pNode, { a_rKey });
+        return result;
+    }
 
-			return result;
-		}
+    Iterator Begin()
+    {
+        return m_RedBlackTree.Begin();
+    }
 
-		Iterator Begin()
-		{
-			return m_RedBlackTree.Begin();
-		}
+    Iterator End()
+    {
+        return m_RedBlackTree.End();
+    }
 
-		Iterator End()
-		{
-			return m_RedBlackTree.End();
-		}
+private:
+    T2RedBlackTree< Pair > m_RedBlackTree;
+};
 
-	private:
-		T2RedBlackTree<Pair> m_RedBlackTree;
-	};
-
-}
+} // namespace Toshi

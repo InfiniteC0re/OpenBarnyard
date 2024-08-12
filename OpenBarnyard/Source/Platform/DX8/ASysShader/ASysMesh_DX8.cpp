@@ -12,28 +12,27 @@
 
 TOSHI_NAMESPACE_USING
 
-TDEFINE_CLASS(ASysMeshHAL);
+TDEFINE_CLASS( ASysMeshHAL );
 
 ASysMeshHAL::ASysMeshHAL()
 {
-	m_iZBias = 0;
+    m_iZBias = 0;
 }
 
 TBOOL ASysMeshHAL::Render()
 {
-	if (ms_bStopRendering == FALSE)
-	{
-		auto pRenderPacket = GetMaterial()->AddRenderPacket(this);
+    if ( ms_bStopRendering == FALSE )
+    {
+        auto pRenderPacket = GetMaterial()->AddRenderPacket( this );
 
-		pRenderPacket->SetModelViewMatrix(
-			TRenderInterface::GetSingleton()->GetCurrentContext()->GetModelViewMatrix()
-		);
-	}
+        pRenderPacket->SetModelViewMatrix(
+            TRenderInterface::GetSingleton()->GetCurrentContext()->GetModelViewMatrix() );
+    }
 
-	return TTRUE;
+    return TTRUE;
 }
 
-void ASysMeshHAL::SetZBias(TINT a_iZBias)
+void ASysMeshHAL::SetZBias( TINT a_iZBias )
 {
-	m_iZBias = a_iZBias;
+    m_iZBias = a_iZBias;
 }

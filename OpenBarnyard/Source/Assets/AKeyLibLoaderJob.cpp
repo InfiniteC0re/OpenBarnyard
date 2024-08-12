@@ -10,27 +10,26 @@
 
 void AKeyLibLoaderJob::BeginJob()
 {
-	AAssetStreaming::GetSingleton()->GetFileStream().AddStream(
-		&m_oStreamJob
-	);
+    AAssetStreaming::GetSingleton()->GetFileStream().AddStream(
+        &m_oStreamJob );
 }
 
 TBOOL AKeyLibLoaderJob::RunJob()
 {
-	if (m_oStreamJob.IsProcessed())
-	{
-		if (m_ppOutKeyframeLib)
-		{
-			*m_ppOutKeyframeLib = m_oStreamJob.GetLibrary();
-		}
+    if ( m_oStreamJob.IsProcessed() )
+    {
+        if ( m_ppOutKeyframeLib )
+        {
+            *m_ppOutKeyframeLib = m_oStreamJob.GetLibrary();
+        }
 
-		return TTRUE;
-	}
+        return TTRUE;
+    }
 
-	return TFALSE;
+    return TFALSE;
 }
 
-void AKeyLibLoaderJob::InitJob(const TCHAR* a_szFileName)
+void AKeyLibLoaderJob::InitJob( const TCHAR* a_szFileName )
 {
-	m_oStreamJob.Init(a_szFileName);
+    m_oStreamJob.Init( a_szFileName );
 }

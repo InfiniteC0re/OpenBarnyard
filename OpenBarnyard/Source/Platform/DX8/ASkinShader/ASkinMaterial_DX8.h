@@ -7,47 +7,47 @@
 class ASkinMaterialHAL : public ASkinMaterial
 {
 public:
-	TDECLARE_CLASS(ASkinMaterialHAL, ASkinMaterial);
+    TDECLARE_CLASS( ASkinMaterialHAL, ASkinMaterial );
 
 public:
-	ASkinMaterialHAL();
-	~ASkinMaterialHAL();
+    ASkinMaterialHAL();
+    ~ASkinMaterialHAL();
 
-	//-----------------------------------------------------------------------------
-	// Toshi::TMaterial
-	//-----------------------------------------------------------------------------
-	virtual void OnDestroy() override;
-	virtual void PreRender() override;
-	virtual void PostRender() override;
+    //-----------------------------------------------------------------------------
+    // Toshi::TMaterial
+    //-----------------------------------------------------------------------------
+    virtual void OnDestroy() override;
+    virtual void PreRender() override;
+    virtual void PostRender() override;
 
-	//-----------------------------------------------------------------------------
-	// ASkinMaterial
-	//-----------------------------------------------------------------------------
-	virtual TBOOL Create(BLENDMODE a_eBlendMode) override;
-	virtual void SetBlendMode(BLENDMODE a_eBlendMode) override;
+    //-----------------------------------------------------------------------------
+    // ASkinMaterial
+    //-----------------------------------------------------------------------------
+    virtual TBOOL Create( BLENDMODE a_eBlendMode ) override;
+    virtual void  SetBlendMode( BLENDMODE a_eBlendMode ) override;
 
-	//-----------------------------------------------------------------------------
-	// Own methods
-	//-----------------------------------------------------------------------------
-	virtual void CopyToAlphaBlendMaterial();
+    //-----------------------------------------------------------------------------
+    // Own methods
+    //-----------------------------------------------------------------------------
+    virtual void CopyToAlphaBlendMaterial();
 
-	void SetOrderTable(Toshi::TOrderTable* a_pOrderTable);
+    void SetOrderTable( Toshi::TOrderTable* a_pOrderTable );
 
-	ASkinMaterialHAL* GetAlphaBlendMaterial() const { return m_pAlphaBlendMaterial; }
-	void SetAlphaBlendMaterial(ASkinMaterialHAL* val) { m_pAlphaBlendMaterial = val; }
+    ASkinMaterialHAL* GetAlphaBlendMaterial() const { return m_pAlphaBlendMaterial; }
+    void              SetAlphaBlendMaterial( ASkinMaterialHAL* val ) { m_pAlphaBlendMaterial = val; }
 
-	TBOOL IsSkin() const { return m_bIsSkin; }
-	TBOOL HasLighting1Tex() const { return m_bHasLighting1Tex; }
-	TBOOL HasLighting2Tex() const { return m_bHasLighting2Tex; }
+    TBOOL IsSkin() const { return m_bIsSkin; }
+    TBOOL HasLighting1Tex() const { return m_bHasLighting1Tex; }
+    TBOOL HasLighting2Tex() const { return m_bHasLighting2Tex; }
 
-	Toshi::TTextureResourceHAL* GetLightingTexture(ELightingTexture a_eTexture) const;
-	Toshi::TTextureResourceHAL* GetSomeTexture() const;
+    Toshi::TTextureResourceHAL* GetLightingTexture( ELightingTexture a_eTexture ) const;
+    Toshi::TTextureResourceHAL* GetSomeTexture() const;
 
 private:
-	ASkinMaterialHAL* m_pAlphaBlendMaterial;
-	Toshi::TOrderTable* m_pAssignedOrderTable;
-	TBOOL m_bIsSkin;
-	TBOOL m_bHasLighting1Tex;
-	TBOOL m_bHasLighting2Tex;
-	Toshi::TTexture* m_pSomeTexture;
+    ASkinMaterialHAL*   m_pAlphaBlendMaterial;
+    Toshi::TOrderTable* m_pAssignedOrderTable;
+    TBOOL               m_bIsSkin;
+    TBOOL               m_bHasLighting1Tex;
+    TBOOL               m_bHasLighting2Tex;
+    Toshi::TTexture*    m_pSomeTexture;
 };

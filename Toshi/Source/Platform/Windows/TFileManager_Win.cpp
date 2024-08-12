@@ -7,24 +7,25 @@
 //-----------------------------------------------------------------------------
 #include <Core/TMemoryDebugOn.h>
 
-namespace Toshi {
+namespace Toshi
+{
 
-	TBOOL TFileManager::Create()
-	{
-		CreateCommon();
-		auto fileManager = TFileManager::GetSingletonSafe();
+TBOOL TFileManager::Create()
+{
+    CreateCommon();
+    auto fileManager = TFileManager::GetSingletonSafe();
 
-		CHAR currentDir[0x200];
-		DWORD dirLength = GetCurrentDirectoryA(sizeof(currentDir), currentDir);
-		TASSERT(dirLength > 0, "The directory's length is 0");
+    CHAR  currentDir[ 0x200 ];
+    DWORD dirLength = GetCurrentDirectoryA( sizeof( currentDir ), currentDir );
+    TASSERT( dirLength > 0, "The directory's length is 0" );
 
-		(new TNativeFileSystem("local"))->SetPrefix(currentDir);
-		(new TNativeFileSystem("abs"))->SetPrefix("");
-		(new TNativeFileSystem("null"))->SetPrefix("");
+    ( new TNativeFileSystem( "local" ) )->SetPrefix( currentDir );
+    ( new TNativeFileSystem( "abs" ) )->SetPrefix( "" );
+    ( new TNativeFileSystem( "null" ) )->SetPrefix( "" );
 
-		fileManager->SetSystemPath("local");
+    fileManager->SetSystemPath( "local" );
 
-		return TTRUE;
-	}
-
+    return TTRUE;
 }
+
+} // namespace Toshi

@@ -9,39 +9,38 @@
 
 TOSHI_NAMESPACE_USING
 
-TDEFINE_CLASS_NORUNTIME(AWorldMaterial);
+TDEFINE_CLASS_NORUNTIME( AWorldMaterial );
 
 AWorldMaterial::AWorldMaterial() :
-	m_eBlendMode(0),
-	m_fUVAnimX(0.0f),
-	m_fUVAnimY(0.0f),
-	m_fUVAnimSpeedX(0.0f),
-	m_fUVAnimSpeedY(0.0f)
+    m_eBlendMode( 0 ),
+    m_fUVAnimX( 0.0f ),
+    m_fUVAnimY( 0.0f ),
+    m_fUVAnimSpeedX( 0.0f ),
+    m_fUVAnimSpeedY( 0.0f )
 {
-	m_aTextures[0] = TNULL;
-	m_aTextures[1] = TNULL;
-	m_aTextures[2] = TNULL;
-	m_aTextures[3] = TNULL;
+    m_aTextures[ 0 ] = TNULL;
+    m_aTextures[ 1 ] = TNULL;
+    m_aTextures[ 2 ] = TNULL;
+    m_aTextures[ 3 ] = TNULL;
 }
 
 AWorldMaterial::~AWorldMaterial()
 {
-
 }
 
-TBOOL AWorldMaterial::Create(BLENDMODE a_eBlendMode)
+TBOOL AWorldMaterial::Create( BLENDMODE a_eBlendMode )
 {
-	SetBlendMode(a_eBlendMode);
-	return TMaterial::Create();
+    SetBlendMode( a_eBlendMode );
+    return TMaterial::Create();
 }
 
-void AWorldMaterial::SetBlendMode(BLENDMODE a_eBlendMode)
+void AWorldMaterial::SetBlendMode( BLENDMODE a_eBlendMode )
 {
-	m_eBlendMode = a_eBlendMode;
-	m_Flags &= ~FLAGS_HAS_BLENDMODE;
+    m_eBlendMode = a_eBlendMode;
+    m_Flags &= ~FLAGS_HAS_BLENDMODE;
 
-	if (a_eBlendMode != 0)
-	{
-		m_Flags |= FLAGS_HAS_BLENDMODE;
-	}
+    if ( a_eBlendMode != 0 )
+    {
+        m_Flags |= FLAGS_HAS_BLENDMODE;
+    }
 }

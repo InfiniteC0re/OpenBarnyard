@@ -1,12 +1,12 @@
 #pragma once
 
-namespace Toshi {
+namespace Toshi
+{
 
-	class TRenderCapture
-	{
-	public:
-		TRenderCapture() = default;
+class TRenderCapture
+{
+public:
+    TRenderCapture() = default;
+};
 
-	};
-
-}
+} // namespace Toshi

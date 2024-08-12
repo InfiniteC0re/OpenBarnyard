@@ -10,188 +10,188 @@
 
 TOSHI_NAMESPACE_USING
 
-TDEFINE_CLASS_NORUNTIME(ASysMesh);
+TDEFINE_CLASS_NORUNTIME( ASysMesh );
 
 ASysMesh::ASysMesh()
 {
-	m_uiFlags = 0;
-	m_uiMaxVertices = 0;
-	m_uiMaxIndices = 0;
-	m_pVertexPool = TNULL;
-	m_pIndexPool = TNULL;
-	m_bFlag1 = TFALSE;
-	m_bFlag2 = TFALSE;
+    m_uiFlags       = 0;
+    m_uiMaxVertices = 0;
+    m_uiMaxIndices  = 0;
+    m_pVertexPool   = TNULL;
+    m_pIndexPool    = TNULL;
+    m_bFlag1        = TFALSE;
+    m_bFlag2        = TFALSE;
 }
 
 TBOOL ASysMesh::Validate()
 {
-	if (IsValidated())
-	{
-		if (m_SomeString.Length() == 0 && (!m_pVertexPool || !m_pIndexPool))
-		{
-			return TFALSE;
-		}
+    if ( IsValidated() )
+    {
+        if ( m_SomeString.Length() == 0 && ( !m_pVertexPool || !m_pIndexPool ) )
+        {
+            return TFALSE;
+        }
 
-		m_pVertexPool->Validate();
-		m_pIndexPool->Validate();
-		TMesh::Validate();
-	}
+        m_pVertexPool->Validate();
+        m_pIndexPool->Validate();
+        TMesh::Validate();
+    }
 
-	return TTRUE;
+    return TTRUE;
 }
 
 void ASysMesh::Invalidate()
 {
-	if (m_pVertexPool && m_pIndexPool)
-	{
-		DestroyResources();
-	}
+    if ( m_pVertexPool && m_pIndexPool )
+    {
+        DestroyResources();
+    }
 
-	if (IsValidated())
-	{
-		TMesh::Invalidate();
-	}
+    if ( IsValidated() )
+    {
+        TMesh::Invalidate();
+    }
 }
 
 void ASysMesh::DestroyResources()
 {
-	TRenderInterface::GetSingleton()->BeginEndSceneHAL();
+    TRenderInterface::GetSingleton()->BeginEndSceneHAL();
 
-	if (m_pVertexPool)
-	{
-		TRenderInterface::GetSingleton()->DestroyResource(m_pVertexPool);
-		m_pVertexPool = TNULL;
-	}
+    if ( m_pVertexPool )
+    {
+        TRenderInterface::GetSingleton()->DestroyResource( m_pVertexPool );
+        m_pVertexPool = TNULL;
+    }
 
-	if (m_pIndexPool)
-	{
-		TRenderInterface::GetSingleton()->DestroyResource(m_pIndexPool);
-		m_pIndexPool = TNULL;
-	}
+    if ( m_pIndexPool )
+    {
+        TRenderInterface::GetSingleton()->DestroyResource( m_pIndexPool );
+        m_pIndexPool = TNULL;
+    }
 
-	m_uiFlags = 0;
-	m_uiMaxVertices = 0;
-	m_uiMaxIndices = 0;
+    m_uiFlags       = 0;
+    m_uiMaxVertices = 0;
+    m_uiMaxIndices  = 0;
 }
 
-TBOOL ASysMesh::Create(void* a_pUnk, const TCHAR* a_szSomeString)
+TBOOL ASysMesh::Create( void* a_pUnk, const TCHAR* a_szSomeString )
 {
-	m_SomeString = a_szSomeString;
-	return TMesh::Create();
+    m_SomeString = a_szSomeString;
+    return TMesh::Create();
 }
 
-TBOOL ASysMesh::CreatePools(TUINT32 a_uiResourcesFlags, TUINT16 a_uiMaxVertices, TUINT16 a_uiMaxIndices)
+TBOOL ASysMesh::CreatePools( TUINT32 a_uiResourcesFlags, TUINT16 a_uiMaxVertices, TUINT16 a_uiMaxIndices )
 {
-	m_uiFlags = a_uiResourcesFlags;
-	m_uiMaxVertices = a_uiMaxVertices;
-	m_uiMaxIndices = a_uiMaxIndices;
+    m_uiFlags       = a_uiResourcesFlags;
+    m_uiMaxVertices = a_uiMaxVertices;
+    m_uiMaxIndices  = a_uiMaxIndices;
 
-	if (!CreateResource())
-	{
-		return TFALSE;
-	}
+    if ( !CreateResource() )
+    {
+        return TFALSE;
+    }
 
-	TMesh::Create();
-	return TTRUE;
+    TMesh::Create();
+    return TTRUE;
 }
 
 TBOOL ASysMesh::CreateResource()
 {
-	auto pVertexFactory = TRenderInterface::GetSingleton()->GetSystemResource<TVertexFactoryResourceInterface>(SYSRESOURCE_VFSYSVNDUV1);
-	TVALIDPTR(pVertexFactory);
+    auto pVertexFactory = TRenderInterface::GetSingleton()->GetSystemResource< TVertexFactoryResourceInterface >( SYSRESOURCE_VFSYSVNDUV1 );
+    TVALIDPTR( pVertexFactory );
 
-	TUINT16 uiVertexPoolFlags;
+    TUINT16 uiVertexPoolFlags;
 
-	if ((m_uiFlags & 1) == 0)
-	{
-		if ((m_uiFlags & 2) == 0)
-		{
-			if ((m_uiFlags & 4) != 0)
-			{
-				uiVertexPoolFlags = 4;
-			}
-		}
-		else
-		{
-			uiVertexPoolFlags = 2;
-		}
-	}
-	else
-	{
-		uiVertexPoolFlags = 1;
-	}
+    if ( ( m_uiFlags & 1 ) == 0 )
+    {
+        if ( ( m_uiFlags & 2 ) == 0 )
+        {
+            if ( ( m_uiFlags & 4 ) != 0 )
+            {
+                uiVertexPoolFlags = 4;
+            }
+        }
+        else
+        {
+            uiVertexPoolFlags = 2;
+        }
+    }
+    else
+    {
+        uiVertexPoolFlags = 1;
+    }
 
-	m_pVertexPool = pVertexFactory->CreatePoolResource(m_uiMaxVertices, uiVertexPoolFlags);
-	TVALIDPTR(m_pVertexPool);
+    m_pVertexPool = pVertexFactory->CreatePoolResource( m_uiMaxVertices, uiVertexPoolFlags );
+    TVALIDPTR( m_pVertexPool );
 
-	auto pIndexFactory = TRenderInterface::GetSingleton()->GetSystemResource<TIndexFactoryResourceInterface>(SYSRESOURCE_IFSYS);
-	TVALIDPTR(pIndexFactory);
+    auto pIndexFactory = TRenderInterface::GetSingleton()->GetSystemResource< TIndexFactoryResourceInterface >( SYSRESOURCE_IFSYS );
+    TVALIDPTR( pIndexFactory );
 
-	TUINT16 uiIndexPoolFlags;
+    TUINT16 uiIndexPoolFlags;
 
-	if ((m_uiFlags & 8) == 0)
-	{
-		if ((m_uiFlags & 0x10) == 0)
-		{
-			if ((m_uiFlags & 0x20) != 0)
-			{
-				uiIndexPoolFlags = 4;
-			}
-		}
-		else
-		{
-			uiIndexPoolFlags = 2;
-		}
-	}
-	else
-	{
-		uiIndexPoolFlags = 1;
-	}
+    if ( ( m_uiFlags & 8 ) == 0 )
+    {
+        if ( ( m_uiFlags & 0x10 ) == 0 )
+        {
+            if ( ( m_uiFlags & 0x20 ) != 0 )
+            {
+                uiIndexPoolFlags = 4;
+            }
+        }
+        else
+        {
+            uiIndexPoolFlags = 2;
+        }
+    }
+    else
+    {
+        uiIndexPoolFlags = 1;
+    }
 
 
-	m_pIndexPool = pIndexFactory->CreatePoolResource(m_uiMaxVertices, (-(TUINT)((m_uiFlags & 0x40) != 0) & 0xfffffff8) + 16 | uiIndexPoolFlags);
-	TVALIDPTR(m_pIndexPool);
+    m_pIndexPool = pIndexFactory->CreatePoolResource( m_uiMaxVertices, ( -(TUINT)( ( m_uiFlags & 0x40 ) != 0 ) & 0xfffffff8 ) + 16 | uiIndexPoolFlags );
+    TVALIDPTR( m_pIndexPool );
 
-	return TTRUE;
+    return TTRUE;
 }
 
-TBOOL ASysMesh::Lock(LockBuffer& a_rLockBuffer)
+TBOOL ASysMesh::Lock( LockBuffer& a_rLockBuffer )
 {
-	if (m_pVertexPool->Lock(&a_rLockBuffer.VertexLock))
-	{
-		if (m_pIndexPool->Lock(&a_rLockBuffer.IndexLock))
-		{
-			m_uiFlags |= FLAG_LOCKED;
-			return TTRUE;
-		}
-	}
+    if ( m_pVertexPool->Lock( &a_rLockBuffer.VertexLock ) )
+    {
+        if ( m_pIndexPool->Lock( &a_rLockBuffer.IndexLock ) )
+        {
+            m_uiFlags |= FLAG_LOCKED;
+            return TTRUE;
+        }
+    }
 
-	return TFALSE;
+    return TFALSE;
 }
 
-void ASysMesh::Unlock(TUINT32 a_uiNumVertices, TUINT32 a_uiNumIndices)
+void ASysMesh::Unlock( TUINT32 a_uiNumVertices, TUINT32 a_uiNumIndices )
 {
-	if (TINT16(a_uiNumVertices) == -1)
-	{
-		a_uiNumVertices = m_pVertexPool->GetNumVertices();
-	}
+    if ( TINT16( a_uiNumVertices ) == -1 )
+    {
+        a_uiNumVertices = m_pVertexPool->GetNumVertices();
+    }
 
-	if (TINT16(a_uiNumIndices) == -1)
-	{
-		a_uiNumIndices = m_pIndexPool->GetNumIndices();
-	}
+    if ( TINT16( a_uiNumIndices ) == -1 )
+    {
+        a_uiNumIndices = m_pIndexPool->GetNumIndices();
+    }
 
-	m_pVertexPool->Unlock(a_uiNumVertices);
-	m_pIndexPool->Unlock(a_uiNumIndices);
-	m_uiFlags &= FLAG_LOCKED;
+    m_pVertexPool->Unlock( a_uiNumVertices );
+    m_pIndexPool->Unlock( a_uiNumIndices );
+    m_uiFlags &= FLAG_LOCKED;
 }
 
 Toshi::TVertexPoolResourceInterface* ASysMesh::GetVertexPool()
 {
-	return m_pVertexPool;
+    return m_pVertexPool;
 }
 
 Toshi::TIndexPoolResourceInterface* ASysMesh::GetIndexPool()
 {
-	return m_pIndexPool;
+    return m_pIndexPool;
 }

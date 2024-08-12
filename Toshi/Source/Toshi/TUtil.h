@@ -4,145 +4,145 @@
 
 #include <Windows.h>
 
-namespace Toshi {
+namespace Toshi
+{
 
-	class TPString8Pool;
-	class TLogFile;
+class TPString8Pool;
+class TLogFile;
 
-	class TUtil : public TSingleton<TUtil>
-	{
-	public:
-		//-----------------------------------------------------------------------------
-		// Class members
-		//-----------------------------------------------------------------------------
+class TUtil : public TSingleton< TUtil >
+{
+public:
+    //-----------------------------------------------------------------------------
+    // Class members
+    //-----------------------------------------------------------------------------
 
-		enum LogType
-		{
-			LogType_Info,
-			LogType_Warning,
-			LogType_Error,
-			LogType_Critical,
-			LogType_NUMOF
-		};
+    enum LogType
+    {
+        LogType_Info,
+        LogType_Warning,
+        LogType_Error,
+        LogType_Critical,
+        LogType_NUMOF
+    };
 
-		static constexpr const TCHAR* LogTypeToString( LogType a_eType )
-		{
-			constexpr const TCHAR* kTypeStrings[]
-			{
-				"Info",
-				"Warning",
-				"Error",
-				"Critical"
-			};
+    static constexpr const TCHAR* LogTypeToString( LogType a_eType )
+    {
+        constexpr const TCHAR* kTypeStrings[]{
+            "Info",
+            "Warning",
+            "Error",
+            "Critical" };
 
-			TSTATICASSERT( Toshi::TUtil::LogType_NUMOF == TARRAYSIZE( kTypeStrings ) );
+        TSTATICASSERT( Toshi::TUtil::LogType_NUMOF == TARRAYSIZE( kTypeStrings ) );
 
-			return a_eType >= LogType_Info && a_eType < LogType_NUMOF ?
-				kTypeStrings[ a_eType ] : "UNKNOWN";
-		}
+        return a_eType >= LogType_Info && a_eType < LogType_NUMOF ?
+            kTypeStrings[ a_eType ] :
+            "UNKNOWN";
+    }
 
-		struct LogEvent
-		{
-			constexpr LogEvent(TLogFile* a_pFile, LogType a_eType, const TCHAR* a_szString) :
-				m_pFile(a_pFile),
-				m_eType(a_eType),
-				m_szString(a_szString)
-			{ }
+    struct LogEvent
+    {
+        constexpr LogEvent( TLogFile* a_pFile, LogType a_eType, const TCHAR* a_szString ) :
+            m_pFile( a_pFile ),
+            m_eType( a_eType ),
+            m_szString( a_szString )
+        {}
 
-			TLogFile* m_pFile;
-			LogType m_eType;
-			const TCHAR* m_szString;
-		};
+        TLogFile*    m_pFile;
+        LogType      m_eType;
+        const TCHAR* m_szString;
+    };
 
-		struct TOSHIParams
-		{
-			TOSHIParams() noexcept {}
+    struct TOSHIParams
+    {
+        TOSHIParams() noexcept {}
 
-			const TCHAR* szCommandLine = "";
-			const TCHAR* szLogFileName = "toshi";
-			const TCHAR* szLogAppName = "Toshi";
-			const TCHAR* szLogAppDirName = "Kernel";
-			TBOOL bLogToConsole = TTRUE;
-			TINT iUnused1 = 0;
-			TINT iUnused2 = 0;
-		};
+        const TCHAR* szCommandLine   = "";
+        const TCHAR* szLogFileName   = "toshi";
+        const TCHAR* szLogAppName    = "Toshi";
+        const TCHAR* szLogAppDirName = "Kernel";
+        TBOOL        bLogToConsole   = TTRUE;
+        TINT         iUnused1        = 0;
+        TINT         iUnused2        = 0;
+    };
 
-	public:
-		TUtil();
+public:
+    TUtil();
 
-	private:
-		TLogFile* m_pDefaultLogFile;
-		TLogFile* m_pCurrentLogFile;
-		TEmitter<TUtil, LogEvent> m_LogEmitter;
+private:
+    TLogFile*                   m_pDefaultLogFile;
+    TLogFile*                   m_pCurrentLogFile;
+    TEmitter< TUtil, LogEvent > m_LogEmitter;
 
-	public:
-		//-----------------------------------------------------------------------------
-		// Static members
-		//-----------------------------------------------------------------------------
+public:
+    //-----------------------------------------------------------------------------
+    // Static members
+    //-----------------------------------------------------------------------------
 
-		static TBOOL ToshiCreate(const TOSHIParams& a_rToshiParams);
+    static TBOOL ToshiCreate( const TOSHIParams& a_rToshiParams );
 
-		static void ToshiDestroy();
-		
-		static const TCHAR* GetTime();
+    static void ToshiDestroy();
 
-		static void  MemSet(void* ptr, TSIZE value, TSIZE size) { std::memset(ptr, value, size); }
-		static void* MemCopy(void* dst, const void* src, TSIZE size) { return std::memcpy(dst, src, size); }
-		static void  MemClear(void* ptr, TSIZE size) { std::memset(ptr, 0, size); }
-		static TINT  MemCompare(const void* ptr1, const void* ptr2, TSIZE size) { return std::memcmp(ptr1, ptr2, size); }
+    static const TCHAR* GetTime();
 
-		//-----------------------------------------------------------------------------
-		// Logging
-		//-----------------------------------------------------------------------------
+    static void  MemSet( void* ptr, TSIZE value, TSIZE size ) { std::memset( ptr, value, size ); }
+    static void* MemCopy( void* dst, const void* src, TSIZE size ) { return std::memcpy( dst, src, size ); }
+    static void  MemClear( void* ptr, TSIZE size ) { std::memset( ptr, 0, size ); }
+    static TINT  MemCompare( const void* ptr1, const void* ptr2, TSIZE size ) { return std::memcmp( ptr1, ptr2, size ); }
 
-		static void Log(const TCHAR* a_szFormat, ...);
-		static void Log(LogType a_eLogType, const TCHAR* a_szFormat, ...);
-		static void TrimLog(const TCHAR* fileExtension, TSIZE trimTo);
+    //-----------------------------------------------------------------------------
+    // Logging
+    //-----------------------------------------------------------------------------
 
-		static void LogDown();
-		static void LogUp();
+    static void Log( const TCHAR* a_szFormat, ... );
+    static void Log( LogType a_eLogType, const TCHAR* a_szFormat, ... );
+    static void TrimLog( const TCHAR* fileExtension, TSIZE trimTo );
 
-		static void LogConsole(const TCHAR* a_szFormat, ...);
-		static void LogSet(TLogFile* a_logFile);
+    static void LogDown();
+    static void LogUp();
 
-		static TLogFile* GetCurrentLogFile() { return TUtil::GetSingleton()->m_pCurrentLogFile; }
-		static TEmitter<TUtil, TUtil::LogEvent>& GetLogEmitter() { return TUtil::GetSingleton()->m_LogEmitter; }
+    static void LogConsole( const TCHAR* a_szFormat, ... );
+    static void LogSet( TLogFile* a_logFile );
 
-		static void SetGlobalMutex(HANDLE a_hGlobalMutex) { ms_hGlobalMutex = a_hGlobalMutex; }
-		
-		static TPString8Pool* SetTPStringPool(TPString8Pool* a_pStringPool) { return std::exchange(*ms_poStringPool, a_pStringPool); }
-		
-		static TPString8Pool* GetTPStringPool()
-		{
-			TASSERT(ms_poStringPool != TNULL);
-			return *ms_poStringPool;
-		}
+    static TLogFile*                           GetCurrentLogFile() { return TUtil::GetSingleton()->m_pCurrentLogFile; }
+    static TEmitter< TUtil, TUtil::LogEvent >& GetLogEmitter() { return TUtil::GetSingleton()->m_LogEmitter; }
 
-		static const TOSHIParams& GetToshiParameters()
-		{
-			return ms_oToshiParams;
-		}
+    static void SetGlobalMutex( HANDLE a_hGlobalMutex ) { ms_hGlobalMutex = a_hGlobalMutex; }
 
-	private:
-		static void Create();
+    static TPString8Pool* SetTPStringPool( TPString8Pool* a_pStringPool ) { return std::exchange( *ms_poStringPool, a_pStringPool ); }
 
-		static TBOOL CreateKernelInterface();
+    static TPString8Pool* GetTPStringPool()
+    {
+        TASSERT( ms_poStringPool != TNULL );
+        return *ms_poStringPool;
+    }
 
-		static void LogInitialise();
-		static void CreateTPStringPool();
-		static void DestroyTPStringPool();
+    static const TOSHIParams& GetToshiParameters()
+    {
+        return ms_oToshiParams;
+    }
 
-	private:
-		inline static TPString8Pool** ms_poStringPool;
-		inline static HANDLE ms_hGlobalMutex;
-		inline static TOSHIParams ms_oToshiParams;
-		
-	public:
+private:
+    static void Create();
+
+    static TBOOL CreateKernelInterface();
+
+    static void LogInitialise();
+    static void CreateTPStringPool();
+    static void DestroyTPStringPool();
+
+private:
+    inline static TPString8Pool** ms_poStringPool;
+    inline static HANDLE          ms_hGlobalMutex;
+    inline static TOSHIParams     ms_oToshiParams;
+
+public:
 #pragma region CRC
 
-		// Source: https://lentz.com.au/blog/tag/crc-table-generator
+// Source: https://lentz.com.au/blog/tag/crc-table-generator
 
-		/*
+/*
 			LICENCE
 
 			This package may be freely distributed provided the files remain together,
@@ -160,25 +160,24 @@ namespace Toshi {
 			this licence and disclaimer.
 		*/
 
-		/* ------------------------------------------------------------------------- */
-		/* CRC-32 CCITT                                                              */
-		/* ------------------------------------------------------------------------- */
-		#define CRC32POLY      (0xEDB88320L)    /* Generator polynomial number       */
-		#define CRC32POST(crc) (~(crc))         /* CRC Postconditioning before xmit  */
+/* ------------------------------------------------------------------------- */
+/* CRC-32 CCITT                                                              */
+/* ------------------------------------------------------------------------- */
+#define CRC32POLY        ( 0xEDB88320L ) /* Generator polynomial number       */
+#define CRC32POST( crc ) ( ~( crc ) )    /* CRC Postconditioning before xmit  */
 
-		#define crc32upd(crctab,crc,c) \
-					  ((crctab)[((TINT) (crc) ^ (c)) & 0xff] ^ ((crc) >> 8))
+#define crc32upd( crctab, crc, c ) \
+    ( ( crctab )[ ( (TINT)( crc ) ^ ( c ) ) & 0xff ] ^ ( ( crc ) >> 8 ) )
 
-		#define CRC_TABSIZE (256)               /* Normal 256-entry table            */
+#define CRC_TABSIZE ( 256 ) /* Normal 256-entry table            */
 
-		//=============================================================================
+    //=============================================================================
 
-		inline static TUINT32 s_aiCRC32LUT[CRC_TABSIZE] = {};
+    inline static TUINT32 s_aiCRC32LUT[ CRC_TABSIZE ] = {};
 
-		static void CRCInitialise();
-		static TUINT32 CRC32(TBYTE* buffer, TUINT32 len);
+    static void    CRCInitialise();
+    static TUINT32 CRC32( TBYTE* buffer, TUINT32 len );
 
 #pragma endregion
-
-	};
-}
+};
+} // namespace Toshi

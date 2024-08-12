@@ -7,27 +7,29 @@
 //-----------------------------------------------------------------------------
 #include "Core/TMemoryDebugOn.h"
 
-namespace Toshi
+TOSHI_NAMESPACE_START
+
+void TFileStream::Main()
 {
-	void TFileStream::Main()
-	{
-		TFileStreamJob* pJob;
+    TFileStreamJob* pJob;
 
-		do {
-			do {
-				m_Jobs.Pop(pJob);
-				pJob->Process();
-				pJob->m_bIsProcessed = TTRUE;
-			} while (pJob->m_pSemaphore == TNULL);
+    while ( TTRUE )
+    {
+        do
+        {
+            m_Jobs.Pop( pJob );
+            pJob->Process();
+            pJob->m_bIsProcessed = TTRUE;
+        } while ( pJob->m_pSemaphore == TNULL );
 
-			pJob->m_pSemaphore->Signal();
-
-		} while (TTRUE);
-	}
-
-	void TFileStream::AddStream(TFileStreamJob* job)
-	{
-		job->m_bIsProcessed = TFALSE;
-		m_Jobs.Push(&job);
-	}
+        pJob->m_pSemaphore->Signal();
+    }
 }
+
+void TFileStream::AddStream( TFileStreamJob* job )
+{
+    job->m_bIsProcessed = TFALSE;
+    m_Jobs.Push( &job );
+}
+
+TOSHI_NAMESPACE_END

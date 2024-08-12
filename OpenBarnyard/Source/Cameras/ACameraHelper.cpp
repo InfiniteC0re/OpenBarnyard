@@ -9,34 +9,31 @@
 
 TOSHI_NAMESPACE_USING
 
-TDEFINE_CLASS_NORUNTIME(ACameraHelper);
+TDEFINE_CLASS_NORUNTIME( ACameraHelper );
 
 ACameraHelper::ACameraHelper()
 {
-
 }
 
 ACameraHelper::~ACameraHelper()
 {
-
 }
 
 void ACameraHelper::UpdateCurrentCamera()
 {
-	TIMPLEMENT();
+    TIMPLEMENT();
 }
 
-void ACameraHelper::GetCameraPosition(Toshi::TVector4& a_rPosition) const
+void ACameraHelper::GetCameraPosition( Toshi::TVector4& a_rPosition ) const
 {
-	TIMPLEMENT();
+    TIMPLEMENT();
 }
 
-void ACameraHelper::Unk7(void*)
+void ACameraHelper::Unk7( void* )
 {
-
 }
 
 TFLOAT ACameraHelper::GetFOV() const
 {
-	return ACamera::sm_fCurrentFOV;
+    return ACamera::sm_fCurrentFOV;
 }

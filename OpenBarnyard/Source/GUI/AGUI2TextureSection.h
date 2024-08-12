@@ -7,32 +7,31 @@
 class AGUI2TextureSection
 {
 public:
-	void SetMaterial(AGUI2Material* a_pMaterial);
-	
-	const TCHAR* GetName() const;
-	const TCHAR* GetTextureFile() const;
-	AGUI2Material* GetMaterial();
+    void SetMaterial( AGUI2Material* a_pMaterial );
 
-	Toshi::TVector4& GetUVPoint1();
-	Toshi::TVector4& GetUVPoint2();
+    const TCHAR*   GetName() const;
+    const TCHAR*   GetTextureFile() const;
+    AGUI2Material* GetMaterial();
 
-	TFLOAT GetWidth() const;
-	TFLOAT GetHeight() const;
+    Toshi::TVector4& GetUVPoint1();
+    Toshi::TVector4& GetUVPoint2();
 
-	TINT GetPoint1X() const;
-	TINT GetPoint1Y() const;
-	TINT GetPoint2X() const;
-	TINT GetPoint2Y() const;
+    TFLOAT GetWidth() const;
+    TFLOAT GetHeight() const;
+
+    TINT GetPoint1X() const;
+    TINT GetPoint1Y() const;
+    TINT GetPoint2X() const;
+    TINT GetPoint2Y() const;
 
 private:
-	const TCHAR* m_szName;
-	const TCHAR* m_szTextureFile;
-	TINT m_iPoint1X;
-	TINT m_iPoint1Y;
-	TINT m_iPoint2X;
-	TINT m_iPoint2Y;
-	AGUI2Material* m_pMaterial;
-	Toshi::TVector4 m_UV1;
-	Toshi::TVector4 m_UV2;
+    const TCHAR*    m_szName;
+    const TCHAR*    m_szTextureFile;
+    TINT            m_iPoint1X;
+    TINT            m_iPoint1Y;
+    TINT            m_iPoint2X;
+    TINT            m_iPoint2Y;
+    AGUI2Material*  m_pMaterial;
+    Toshi::TVector4 m_UV1;
+    Toshi::TVector4 m_UV2;
 };
-

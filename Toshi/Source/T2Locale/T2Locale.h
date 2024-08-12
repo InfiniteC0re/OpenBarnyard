@@ -4,52 +4,51 @@
 
 namespace Toshi
 {
-	using T2LocalisedString = TWCHAR*;
+using T2LocalisedString = TWCHAR*;
 
-	class T2Locale : public Toshi::TSingleton<T2Locale>
-	{
-	public:
-		using Lang = TINT32;
-		
-		struct LocaleStrings
-		{
-			TINT32 m_numstrings;
-			T2LocalisedString* Strings;
-		};
+class T2Locale : public Toshi::TSingleton< T2Locale >
+{
+public:
+    using Lang = TINT32;
 
-	public:
-		T2Locale(const T2Locale&) = delete;
-		T2Locale(const T2Locale&&) = delete;
+    struct LocaleStrings
+    {
+        TINT32             m_numstrings;
+        T2LocalisedString* Strings;
+    };
 
-		virtual ~T2Locale();
-		virtual const TCHAR* GetLanguageFilename(Lang lang) = 0;
+public:
+    T2Locale( const T2Locale& )  = delete;
+    T2Locale( const T2Locale&& ) = delete;
 
-		void SetLanguage(Lang langid);
-		Lang GetLanguage() const;
+    virtual ~T2Locale();
+    virtual const TCHAR* GetLanguageFilename( Lang lang ) = 0;
 
-		TINT GetNumStrings() const;
-		T2LocalisedString GetString(TINT a_iNumString);
+    void SetLanguage( Lang langid );
+    Lang GetLanguage() const;
 
-	protected:
-		T2Locale(TINT langCount, size_t bufferSize, void* buffer);
-		
-		static void* TRBAllocator(TTRB::AllocType alloctype, size_t size, short unk, size_t unk2, void* userData);
-		static void TRBDeallocator(TTRB::AllocType alloctype, void* ptr, short unk, size_t unk2, void* userData);
+    TINT              GetNumStrings() const;
+    T2LocalisedString GetString( TINT a_iNumString );
 
-		void* TRBAlloc(size_t size)
-		{
-			void* ptr = m_BufferPos;
-			m_BufferPos = static_cast<TCHAR*>(ptr) + size;
-			return ptr;
-		}
+protected:
+    T2Locale( TINT langCount, size_t bufferSize, void* buffer );
 
-	protected:
-		TTRB m_Locale;                // 0x04
-		void* m_pBuffer;              // 0x18
-		void* m_BufferPos;            // 0x1C
-		LocaleStrings* m_StringTable; // 0x20
-		Lang m_LangId;                // 0x24
-		TBOOL m_bOwnsBuffer;          // 0x28
-	};
-}
+    static void* TRBAllocator( TTRB::AllocType alloctype, size_t size, short unk, size_t unk2, void* userData );
+    static void  TRBDeallocator( TTRB::AllocType alloctype, void* ptr, short unk, size_t unk2, void* userData );
 
+    void* TRBAlloc( size_t size )
+    {
+        void* ptr   = m_BufferPos;
+        m_BufferPos = static_cast< TCHAR* >( ptr ) + size;
+        return ptr;
+    }
+
+protected:
+    TTRB           m_Locale;      // 0x04
+    void*          m_pBuffer;     // 0x18
+    void*          m_BufferPos;   // 0x1C
+    LocaleStrings* m_StringTable; // 0x20
+    Lang           m_LangId;      // 0x24
+    TBOOL          m_bOwnsBuffer; // 0x28
+};
+} // namespace Toshi

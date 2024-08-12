@@ -5,58 +5,58 @@
 
 namespace Toshi
 {
-	class TDebugConsole;
+class TDebugConsole;
 
-	enum TApplicationFlag
-	{
-		TApplicationFlag_Created	= BITFLAG(0),
-		TApplicationFlag_Destroyed	= BITFLAG(1),
-	};
+enum TApplicationFlag
+{
+    TApplicationFlag_Created   = BITFLAG( 0 ),
+    TApplicationFlag_Destroyed = BITFLAG( 1 ),
+};
 
-	struct TApplicationExitEvent
-	{
-		TBOOL m_bLockedCursor;
-	};
+struct TApplicationExitEvent
+{
+    TBOOL m_bLockedCursor;
+};
 
-	class TApplication
-	{
-	public:
-		TApplication();
-		virtual ~TApplication();
-		
-		virtual TBOOL OnCreate(TINT argc, TCHAR** argv);
-		virtual TBOOL OnUpdate(float deltaTime);
-		virtual TBOOL OnDestroy();
-		virtual TBOOL IsConsoleEnabled() { return TTRUE; }
+class TApplication
+{
+public:
+    TApplication();
+    virtual ~TApplication();
 
-		static void OnApplicationExitEvent(void* a_pApp, const TApplicationExitEvent& a_rEvent)
-		{
-			TSTATICCAST(TApplication, a_pApp)->Destroy();
-		}
+    virtual TBOOL OnCreate( TINT argc, TCHAR** argv );
+    virtual TBOOL OnUpdate( float deltaTime );
+    virtual TBOOL OnDestroy();
+    virtual TBOOL IsConsoleEnabled() { return TTRUE; }
 
-		// Returns TTRUE if success
-		TBOOL Create(const TCHAR* appName, TINT argc, TCHAR** argv);
+    static void OnApplicationExitEvent( void* a_pApp, const TApplicationExitEvent& a_rEvent )
+    {
+        TSTATICCAST( TApplication, a_pApp )->Destroy();
+    }
 
-		// Destroys the application and sets the flag
-		void Destroy();
+    // Returns TTRUE if success
+    TBOOL Create( const TCHAR* appName, TINT argc, TCHAR** argv );
 
-		// Returns TTRUE if the application is created
-		TBOOL IsCreated() { return m_Flags & TApplicationFlag_Created; }
+    // Destroys the application and sets the flag
+    void Destroy();
 
-		// Returns TTRUE if the application is destroyed
-		TBOOL IsDestroyed() { return m_Flags & TApplicationFlag_Destroyed; }
+    // Returns TTRUE if the application is created
+    TBOOL IsCreated() { return m_Flags & TApplicationFlag_Created; }
 
-		// Sets new state
-		void SetVerbose(TBOOL state) { m_IsVerbose = state; }
+    // Returns TTRUE if the application is destroyed
+    TBOOL IsDestroyed() { return m_Flags & TApplicationFlag_Destroyed; }
 
-		// Executes the application and starts the loop
-		TBOOL Execute();
+    // Sets new state
+    void SetVerbose( TBOOL state ) { m_IsVerbose = state; }
 
-	private:
-		TString8 m_Name;                                                   // 0x4
-		TUINT32 m_Flags;                                                  // 0x10
-		TBOOL m_IsVerbose;                                                  // 0x14
-		TGlobalListener<TApplication, TApplicationExitEvent> m_oExitEvent; // 0x1C
-		TDebugConsole* m_pDebugConsole;
-	};
-}
+    // Executes the application and starts the loop
+    TBOOL Execute();
+
+private:
+    TString8                                               m_Name;       // 0x4
+    TUINT32                                                m_Flags;      // 0x10
+    TBOOL                                                  m_IsVerbose;  // 0x14
+    TGlobalListener< TApplication, TApplicationExitEvent > m_oExitEvent; // 0x1C
+    TDebugConsole*                                         m_pDebugConsole;
+};
+} // namespace Toshi

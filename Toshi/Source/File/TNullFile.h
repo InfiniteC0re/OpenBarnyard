@@ -3,16 +3,14 @@
 
 namespace Toshi
 {
-	class TNullFile : TFile
-	{
-		TINT m_iBytesWritten;
-	protected:
+class TNullFile : TFile
+{
+    TINT m_iBytesWritten;
 
-		inline void Close() { }
-	public:
-		inline TINT GetBytesWritten() { return m_iBytesWritten; }
+protected:
+    inline void Close() {}
 
-	};
-}
-
-
+public:
+    inline TINT GetBytesWritten() { return m_iBytesWritten; }
+};
+} // namespace Toshi

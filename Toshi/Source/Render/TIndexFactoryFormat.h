@@ -1,12 +1,13 @@
 #pragma once
 
-namespace Toshi {
+namespace Toshi
+{
 
-	using TIndexType = TUINT16;
+using TIndexType = TUINT16;
 
-	struct TIndexFactoryFormat
-	{
-		TUINT m_uiUnk = 0;
-	};
+struct TIndexFactoryFormat
+{
+    TUINT m_uiUnk = 0;
+};
 
-}
+} // namespace Toshi

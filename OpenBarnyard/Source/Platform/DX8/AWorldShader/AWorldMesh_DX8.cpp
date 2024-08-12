@@ -14,28 +14,28 @@
 
 TOSHI_NAMESPACE_USING
 
-TDEFINE_CLASS(AWorldMeshHAL);
+TDEFINE_CLASS( AWorldMeshHAL );
 
 TBOOL AWorldMeshHAL::Render()
 {
-	auto pRenderInterface = TRenderD3DInterface::Interface();
-	auto pCurrentContext = TRenderContextD3D::Upcast(pRenderInterface->GetCurrentContext());
+    auto pRenderInterface = TRenderD3DInterface::Interface();
+    auto pCurrentContext  = TRenderContextD3D::Upcast( pRenderInterface->GetCurrentContext() );
 
-	TMaterial* pMaterial;
+    TMaterial* pMaterial;
 
-	if (!TSTATICCAST(AWorldShaderHAL, m_pOwnerShader)->IsAlphaBlendMaterial() ||
-		pCurrentContext->GetAlphaBlend() >= 1.0f)
-	{
-		pMaterial = TSTATICCAST(AWorldMaterialHAL, m_pMaterial);
-	}
-	else
-	{
-		pMaterial = TSTATICCAST(AWorldMaterialHAL, m_pMaterial)->GetAlphaBlendMaterial();
-	}
+    if ( !TSTATICCAST( AWorldShaderHAL, m_pOwnerShader )->IsAlphaBlendMaterial() ||
+         pCurrentContext->GetAlphaBlend() >= 1.0f )
+    {
+        pMaterial = TSTATICCAST( AWorldMaterialHAL, m_pMaterial );
+    }
+    else
+    {
+        pMaterial = TSTATICCAST( AWorldMaterialHAL, m_pMaterial )->GetAlphaBlendMaterial();
+    }
 
-	auto pRenderPacket = pMaterial->AddRenderPacket(this);
-	pRenderPacket->SetModelViewMatrix(pCurrentContext->GetModelViewMatrix());
-	pRenderPacket->SetAlpha(1.0f);
+    auto pRenderPacket = pMaterial->AddRenderPacket( this );
+    pRenderPacket->SetModelViewMatrix( pCurrentContext->GetModelViewMatrix() );
+    pRenderPacket->SetAlpha( 1.0f );
 
-	return TTRUE;
+    return TTRUE;
 }

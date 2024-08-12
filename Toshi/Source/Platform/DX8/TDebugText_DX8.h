@@ -1,12 +1,12 @@
 #pragma once
 #include "Render/TDebugText.h"
 
-namespace Toshi {
+namespace Toshi
+{
 
-	class TDebugD3DText : public TDebugText
-	{
-	public:
+class TDebugD3DText : public TDebugText
+{
+public:
+};
 
-	};
-
-}
+} // namespace Toshi

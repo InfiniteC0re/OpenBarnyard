@@ -1,17 +1,18 @@
 #pragma once
 #include "T2Mutex.h"
 
-#define T2MUTEX_LOCK_SCOPE( mutex ) TANONYMOUSVAR( Toshi::T2MutexLock ) ( mutex )
+#define T2MUTEX_LOCK_SCOPE( mutex ) TANONYMOUSVAR( Toshi::T2MutexLock )( mutex )
 
 namespace Toshi
 {
-	class T2MutexLock
-	{
-	public:
-		T2MutexLock(T2Mutex& mutex) : m_Mutex(mutex) { m_Mutex.Lock(); }
-		~T2MutexLock() { m_Mutex.Unlock(); }
+class T2MutexLock
+{
+public:
+    T2MutexLock( T2Mutex& mutex ) :
+        m_Mutex( mutex ) { m_Mutex.Lock(); }
+    ~T2MutexLock() { m_Mutex.Unlock(); }
 
-	private:
-		T2Mutex& m_Mutex;
-	};
-}
+private:
+    T2Mutex& m_Mutex;
+};
+} // namespace Toshi

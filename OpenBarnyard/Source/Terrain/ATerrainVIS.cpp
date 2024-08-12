@@ -11,20 +11,20 @@
 
 void ATerrainVIS::LoadSkeleton()
 {
-	auto pTerrain = ATerrainInterface::GetSingleton();
-	auto pPersistantBlock = pTerrain->m_pTerrainVIS->m_pPersistantTerrainBlock;
+    auto pTerrain         = ATerrainInterface::GetSingleton();
+    auto pPersistantBlock = pTerrain->m_pTerrainVIS->m_pPersistantTerrainBlock;
 
-	m_pLocatorManager = new (pPersistantBlock->GetMemBlock()) ATerrainLocatorManager();
-	auto pTRB = new (pPersistantBlock->GetMemBlock()) Toshi::TTRB();
+    m_pLocatorManager = new ( pPersistantBlock->GetMemBlock() ) ATerrainLocatorManager();
+    auto pTRB         = new ( pPersistantBlock->GetMemBlock() ) Toshi::TTRB();
 
-	pPersistantBlock->SetupTRB(pTRB, pPersistantBlock);
+    pPersistantBlock->SetupTRB( pTRB, pPersistantBlock );
 
-	auto pTRBJob = pTerrain->GetFreeTRBLoaderJob();
-	pTRBJob->InitJob(pTRB, m_szSkelFilePath);
+    auto pTRBJob = pTerrain->GetFreeTRBLoaderJob();
+    pTRBJob->InitJob( pTRB, m_szSkelFilePath );
 
-	auto pSkeletonJob = pTerrain->GetFreeSkeletonLoaderJob();
-	pSkeletonJob->InitJob(this, pTRBJob);
+    auto pSkeletonJob = pTerrain->GetFreeSkeletonLoaderJob();
+    pSkeletonJob->InitJob( this, pTRBJob );
 
-	AAssetStreaming::GetSingleton()->AddMainThreadJob(pTRBJob);
-	AAssetStreaming::GetSingleton()->AddMainThreadJob(pSkeletonJob);
+    AAssetStreaming::GetSingleton()->AddMainThreadJob( pTRBJob );
+    AAssetStreaming::GetSingleton()->AddMainThreadJob( pSkeletonJob );
 }

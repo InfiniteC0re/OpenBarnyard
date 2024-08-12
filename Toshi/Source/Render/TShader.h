@@ -1,85 +1,87 @@
 #pragma once
 #include "TOrderTable.h"
 
-namespace Toshi {
-	
-	class TShader : public TObject
-	{
-	public:
-		TDECLARE_CLASS(TShader, TObject);
+namespace Toshi
+{
 
-	public:
-		using State = TUINT32;
-		enum State_ : State
-		{
-			State_None      = 0,
-			State_Created   = BITFLAG(0),
-			State_Validated = BITFLAG(1),
-		};
+class TShader : public TObject
+{
+public:
+    TDECLARE_CLASS( TShader, TObject );
 
-		class TShaderList
-		{
-		public:
-			TShaderList() : m_pRoot(TNULL) { }
+public:
+    using State = TUINT32;
+    enum State_ : State
+    {
+        State_None      = 0,
+        State_Created   = BITFLAG( 0 ),
+        State_Validated = BITFLAG( 1 ),
+    };
 
-			void AddShader(TShader* pShader);
-			void RemoveShader(TShader* pShader);
+    class TShaderList
+    {
+    public:
+        TShaderList() :
+            m_pRoot( TNULL ) {}
 
-			TShader* GetRootShader() { return m_pRoot; }
+        void AddShader( TShader* pShader );
+        void RemoveShader( TShader* pShader );
 
-		private:
-			TShader* m_pRoot;
-		};
+        TShader* GetRootShader() { return m_pRoot; }
 
-	public:
-		TShader();
-		~TShader();
+    private:
+        TShader* m_pRoot;
+    };
 
-		//-----------------------------------------------------------------------------
-		// Own methods
-		//-----------------------------------------------------------------------------
+public:
+    TShader();
+    ~TShader();
 
-		/* Called before shader is destroyed. */
-		virtual void OnDestroy();
+    //-----------------------------------------------------------------------------
+    // Own methods
+    //-----------------------------------------------------------------------------
 
-		/* Additional call to flush something more? */
-		virtual void Flush();
+    /* Called before shader is destroyed. */
+    virtual void OnDestroy();
 
-		/* Setup render state before rendering meshes. */
-		virtual void StartFlush() = 0;
+    /* Additional call to flush something more? */
+    virtual void Flush();
 
-		/* Restore render states after all rendering is done. */
-		virtual void EndFlush() = 0;
+    /* Setup render state before rendering meshes. */
+    virtual void StartFlush() = 0;
 
-		/* Do some initial setups, f.e. create order tables. */
-		virtual TBOOL Create();
+    /* Restore render states after all rendering is done. */
+    virtual void EndFlush() = 0;
 
-		/* Make sure the shader is ready to use. */
-		virtual TBOOL Validate();
+    /* Do some initial setups, f.e. create order tables. */
+    virtual TBOOL Create();
 
-		/* We don't need the shader, at least for now. */
-		virtual void Invalidate();
+    /* Make sure the shader is ready to use. */
+    virtual TBOOL Validate();
 
-		/* Why? I don't know */
-		virtual TBOOL TryInvalidate() { return TTRUE; }
-		
-		/* Why? I don't know */
-		virtual TBOOL TryValidate() { return TTRUE; }
-		
-		/* Renders the mesh stored in the render packet containing other useful info. */
-		virtual void Render(TRenderPacket* a_pRenderPacket) = 0;
+    /* We don't need the shader, at least for now. */
+    virtual void Invalidate();
 
-		TBOOL IsCreated() const { return m_State & State_Created; }
-		TBOOL IsValidated() const { return m_State & State_Validated; }
+    /* Why? I don't know */
+    virtual TBOOL TryInvalidate() { return TTRUE; }
 
-		TShader* GetNextShader() { return m_pNextShader; }
+    /* Why? I don't know */
+    virtual TBOOL TryValidate() { return TTRUE; }
 
-	public:
-		inline static TShaderList sm_oShaderList;
+    /* Renders the mesh stored in the render packet containing other useful info. */
+    virtual void Render( TRenderPacket* a_pRenderPacket ) = 0;
 
-	private:
-		State m_State;
-		TShader* m_pNextShader;
-	};
+    TBOOL IsCreated() const { return m_State & State_Created; }
+    TBOOL IsValidated() const { return m_State & State_Validated; }
 
-}
+    TShader* GetNextShader() { return m_pNextShader; }
+
+public:
+    inline static TShaderList sm_oShaderList;
+
+private:
+    State    m_State;
+    TShader* m_pNextShader;
+};
+
+} // namespace Toshi

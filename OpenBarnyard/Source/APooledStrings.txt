@@ -1,51 +1,50 @@
 AnimControllerType
-AnimObjTypes
-AnimatableObjectType
-AnimationTransition
-AutoTransition
-BlendInTime
-BlendOutTime
-Bone
-BreakPoint
-Breakpoint
-CullWhenClipping
-DefaultBlendInTime
-DefaultBlendOutTime
-DefaultFinishType
-DefaultSpeed
-DefaultWeight
-EndOfAnim
-ExportedName
-FinishType
-Include
-Instant
-LinkFrom
-LinkTo
-Loop
-Model
-Models
-Name
-NamedAnimation
-NamedAnimationSet
-Radius
-Render
-Reverse
-Shadow
-Speed
-Static
-Time
-TransitionName
-Type
-UserRender
-null
-ParkManager
-Start
-ASlideshowState
-bkg_by_legal1
-bkg_Bink_Big
-bkg_bluetongue
-bkg_fmod
-DialogInputMap
-music
-ui
-default
+    AnimObjTypes
+        AnimatableObjectType
+            AnimationTransition
+                AutoTransition
+                    BlendInTime
+                        BlendOutTime
+                            Bone
+                                BreakPoint
+                                    Breakpoint
+                                        CullWhenClipping
+                                            DefaultBlendInTime
+                                                DefaultBlendOutTime
+                                                    DefaultFinishType
+                                                        DefaultSpeed
+                                                            DefaultWeight
+                                                                EndOfAnim
+                                                                    ExportedName
+                                                                        FinishType
+                                                                            Include
+                                                                                Instant
+                                                                                    LinkFrom
+                                                                                        LinkTo
+                                                                                            Loop
+                                                                                                Model
+                                                                                                    Models
+                                                                                                        Name
+                                                                                                            NamedAnimation
+                                                                                                                NamedAnimationSet
+                                                                                                                    Radius
+                                                                                                                        Render
+                                                                                                                            Reverse
+                                                                                                                                Shadow
+                                                                                                                                    Speed
+                                                                                                                                        Static
+                                                                                                                                            Time
+                                                                                                                                                TransitionName
+                                                                                                                                                    Type
+                                                                                                                                                        UserRender
+                                                                                                                                                            null
+                                                                                                                                                                ParkManager
+                                                                                                                                                                    Start
+                                                                                                                                                                        ASlideshowState
+                                                                                                                                                                            bkg_by_legal1
+                                                                                                                                                                                bkg_Bink_Big
+                                                                                                                                                                                    bkg_bluetongue
+                                                                                                                                                                                        bkg_fmod
+                                                                                                                                                                                            DialogInputMap
+                                                                                                                                                                                                music
+                                                                                                                                                                                                    ui default

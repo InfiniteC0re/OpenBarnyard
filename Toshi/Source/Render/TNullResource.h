@@ -4,10 +4,7 @@
 
 namespace Toshi
 {
-	class TNullResource : TResource
-	{
-
-	};
-}
-
-
+class TNullResource : TResource
+{
+};
+} // namespace Toshi

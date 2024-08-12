@@ -2,39 +2,40 @@
 #include "TIndexBlockResource_DX8.h"
 #include "Render/TIndexPoolResourceInterface.h"
 
-namespace Toshi {
+namespace Toshi
+{
 
-	class TIndexBlockResource;
+class TIndexBlockResource;
 
-	class TIndexPoolResource : public TIndexPoolResourceInterface
-	{
-	public:
-		TDECLARE_CLASS(TIndexPoolResource, TIndexPoolResourceInterface);
+class TIndexPoolResource : public TIndexPoolResourceInterface
+{
+public:
+    TDECLARE_CLASS( TIndexPoolResource, TIndexPoolResourceInterface );
 
-	public:
-		friend TIndexBlockResource;
+public:
+    friend TIndexBlockResource;
 
-	public:
-		TIndexPoolResource();
+public:
+    TIndexPoolResource();
 
-		virtual TBOOL Validate() override;
-		virtual void Invalidate() override;
-		virtual void OnDestroy() override;
-		virtual TBOOL Lock(LockBuffer * a_pLockBuffer) override;
-		virtual void Unlock(TUINT16 a_uiNewNumIndices) override;
-		virtual TBOOL Create(TIndexFactoryResourceInterface* a_pFactory, TUINT16 a_uiMaxIndices, TUINT16 a_uiFlags) override;
+    virtual TBOOL Validate() override;
+    virtual void  Invalidate() override;
+    virtual void  OnDestroy() override;
+    virtual TBOOL Lock( LockBuffer* a_pLockBuffer ) override;
+    virtual void  Unlock( TUINT16 a_uiNewNumIndices ) override;
+    virtual TBOOL Create( TIndexFactoryResourceInterface* a_pFactory, TUINT16 a_uiMaxIndices, TUINT16 a_uiFlags ) override;
 
-		TUINT16* GetIndices() { return (m_uiLockCount == 0) ? m_pIndices : TNULL; }
+    TUINT16* GetIndices() { return ( m_uiLockCount == 0 ) ? m_pIndices : TNULL; }
 
-		TResource* GetParent();
-		TIndexBlockResource* GetIndexBlock();
+    TResource*           GetParent();
+    TIndexBlockResource* GetIndexBlock();
 
-		TBOOL GetHALBuffer(TIndexBlockResource::HALBuffer* a_pHALBuffer);
+    TBOOL GetHALBuffer( TIndexBlockResource::HALBuffer* a_pHALBuffer );
 
-	private:
-		TUINT16 m_uiIndexOffset;
-		TIndexType* m_pIndices;
-		TUINT m_uiNumLocksAllTime;
-	};
+private:
+    TUINT16     m_uiIndexOffset;
+    TIndexType* m_pIndices;
+    TUINT       m_uiNumLocksAllTime;
+};
 
-}
+} // namespace Toshi

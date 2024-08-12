@@ -15,51 +15,50 @@
 //-----------------------------------------------------------------------------
 #include <Core/TMemoryDebugOn.h>
 
-TDEFINE_CLASS(AGameSystemManager);
+TDEFINE_CLASS( AGameSystemManager );
 
 TOSHI_NAMESPACE_USING
 
 TBOOL AGameSystemManager::OnCreate()
 {
-	TIMPLEMENT();
+    TIMPLEMENT();
 
-	// Load keylibs from the startup library
-	TString8 startupLibFileName;
-	startupLibFileName.Format("Data/%s.trb", "lib_startup");
+    // Load keylibs from the startup library
+    TString8 startupLibFileName;
+    startupLibFileName.Format( "Data/%s.trb", "lib_startup" );
 
-	TTRB startupLibTrb;
-	startupLibTrb.Load(startupLibFileName);
-	auto pProperties = PBProperties::LoadFromTRB(startupLibTrb);
-	auto pKeylibProperty = pProperties->GetOptionalProperty("keylib");
+    TTRB startupLibTrb;
+    startupLibTrb.Load( startupLibFileName );
+    auto pProperties     = PBProperties::LoadFromTRB( startupLibTrb );
+    auto pKeylibProperty = pProperties->GetOptionalProperty( "keylib" );
 
-	if (pKeylibProperty)
-	{
-		AKeyFrameLibraryManager::GetSingleton()->LoadLibrariesFromProperties(
-			pKeylibProperty,
-			&startupLibTrb
-		);
-	}
+    if ( pKeylibProperty )
+    {
+        AKeyFrameLibraryManager::GetSingleton()->LoadLibrariesFromProperties(
+            pKeylibProperty,
+            &startupLibTrb );
+    }
 
-	TGetClass(AModelRepos).CreateObject();
+    TGetClass( AModelRepos ).CreateObject();
 
-	auto pScheduler = g_oSystemManager.GetScheduler();
-	pScheduler->CreateTask<ACameraManager>(this)->Create();
+    auto pScheduler = g_oSystemManager.GetScheduler();
+    pScheduler->CreateTask< ACameraManager >( this )->Create();
 
-	AAssetStreaming::CreateSingleton()->SetFlag(TFALSE);
+    AAssetStreaming::CreateSingleton()->SetFlag( TFALSE );
 
-	return TTRUE;
+    return TTRUE;
 }
 
-TBOOL AGameSystemManager::OnUpdate(TFLOAT a_fDeltaTime)
+TBOOL AGameSystemManager::OnUpdate( TFLOAT a_fDeltaTime )
 {
-	TIMPLEMENT();
+    TIMPLEMENT();
 
-	AAssetStreaming::GetSingleton()->Update();
+    AAssetStreaming::GetSingleton()->Update();
 
-	if (ATerrainInterface::IsSingletonCreated())
-	{
-		ATerrainInterface::GetSingleton()->Update();
-	}
+    if ( ATerrainInterface::IsSingletonCreated() )
+    {
+        ATerrainInterface::GetSingleton()->Update();
+    }
 
-	return TTRUE;
+    return TTRUE;
 }

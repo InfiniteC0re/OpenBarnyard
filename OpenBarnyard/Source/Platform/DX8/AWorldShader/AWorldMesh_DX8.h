@@ -4,12 +4,11 @@
 class AWorldMeshHAL : public AWorldMesh
 {
 public:
-	TDECLARE_CLASS(AWorldMeshHAL, AWorldMesh);
+    TDECLARE_CLASS( AWorldMeshHAL, AWorldMesh );
 
 public:
-	//-----------------------------------------------------------------------------
-	// Toshi::TMesh
-	//-----------------------------------------------------------------------------
-	virtual TBOOL Render() override;
-
+    //-----------------------------------------------------------------------------
+    // Toshi::TMesh
+    //-----------------------------------------------------------------------------
+    virtual TBOOL Render() override;
 };

@@ -5,46 +5,45 @@
 #include <Plugins/GUI/PGUITRRenderObject.h>
 #include <Toshi/TPString8.h>
 
-class AGUISystem : public Toshi::TTask,
-	public Toshi::TSingleton<AGUISystem>
+class AGUISystem : public Toshi::TTask, public Toshi::TSingleton< AGUISystem >
 {
 public:
-	TDECLARE_CLASS(AGUISystem, Toshi::TTask);
-	static constexpr TUINT NUM_RENDER_OBJECTS = 2;
+    TDECLARE_CLASS( AGUISystem, Toshi::TTask );
+    static constexpr TUINT NUM_RENDER_OBJECTS = 2;
 
 public:
-	AGUISystem();
+    AGUISystem();
 
-	virtual TBOOL OnCreate() override;
-	virtual void OnDestroy() override;
+    virtual TBOOL OnCreate() override;
+    virtual void  OnDestroy() override;
 
-	void SetPicture(const Toshi::TPString8& a_rName);
-	void ResetPicture();
+    void SetPicture( const Toshi::TPString8& a_rName );
+    void ResetPicture();
 
-	PGUITRRenderObject* GetRenderObject(TUINT a_uiIndex)
-	{
-		TASSERT(a_uiIndex < NUM_RENDER_OBJECTS);
-		return m_pRenderObjects[a_uiIndex];
-	}
+    PGUITRRenderObject* GetRenderObject( TUINT a_uiIndex )
+    {
+        TASSERT( a_uiIndex < NUM_RENDER_OBJECTS );
+        return m_pRenderObjects[ a_uiIndex ];
+    }
 
-	AGUIMatlibPicture& GetMatlibPicture()
-	{
-		return m_MatLibPicture;
-	}
+    AGUIMatlibPicture& GetMatlibPicture()
+    {
+        return m_MatLibPicture;
+    }
 
 public:
-	static void AllowBackgroundClear(TBOOL a_bAllow);
+    static void AllowBackgroundClear( TBOOL a_bAllow );
 
 private:
-	static TBOOL OnGUIRender(AGUISystem* a_pGUISystem, ARenderer* a_pRenderer, TINT* a_pUnknown);
+    static TBOOL OnGUIRender( AGUISystem* a_pGUISystem, ARenderer* a_pRenderer, TINT* a_pUnknown );
 
 private:
-	TUINT m_Unk1;
-	Toshi::TGenericListener m_SomeListener;
-	Toshi::TListener<ARenderer, TINT, AGUISystem> m_RenderGUIListener;
-	Toshi::TPString8* m_pStrings;
-	AGUIMatlibPicture m_MatLibPicture;
-	TUINT m_Unk2;
-	TUINT m_Unk3;
-	PGUITRRenderObject* m_pRenderObjects[NUM_RENDER_OBJECTS];
+    TUINT                                           m_Unk1;
+    Toshi::TGenericListener                         m_SomeListener;
+    Toshi::TListener< ARenderer, TINT, AGUISystem > m_RenderGUIListener;
+    Toshi::TPString8*                               m_pStrings;
+    AGUIMatlibPicture                               m_MatLibPicture;
+    TUINT                                           m_Unk2;
+    TUINT                                           m_Unk3;
+    PGUITRRenderObject*                             m_pRenderObjects[ NUM_RENDER_OBJECTS ];
 };
