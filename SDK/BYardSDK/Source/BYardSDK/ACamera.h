@@ -10,9 +10,9 @@ public:
 
 public:
 	Toshi::TMatrix44 m_Matrix;
-	TFLOAT m_fFOV;
-	TFLOAT m_fProjectionCentreX;
-	TFLOAT m_fProjectionCentreY;
+	TFLOAT			 m_fFOV;
+	TFLOAT			 m_fProjectionCentreX;
+	TFLOAT			 m_fProjectionCentreY;
 };
 
 struct ACameraManager :
@@ -20,6 +20,6 @@ struct ACameraManager :
 {
 	ACamera* GetCurrentCamera()
 	{
-		return (ACamera*)((char*)this + 0x88);
+		return (ACamera*)( (char*)this + 0x88 );
 	}
 };

@@ -3,7 +3,6 @@
 
 void ACollisionDoneJob::BeginJob()
 {
-
 }
 
 TBOOL ACollisionDoneJob::RunJob()
@@ -16,8 +15,8 @@ TBOOL ACollisionDoneJob::CancelJob()
 	return TFALSE;
 }
 
-void ACollisionDoneJob::InitJob(ATerrainSection* a_pVISGroup, TBOOL a_bFlag)
+void ACollisionDoneJob::InitJob( ATerrainSection* a_pVISGroup, TBOOL a_bFlag )
 {
 	m_pVISGroup = a_pVISGroup;
-	m_bFlag = a_bFlag;
+	m_bFlag		= a_bFlag;
 }

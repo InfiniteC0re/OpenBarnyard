@@ -3,43 +3,43 @@
 
 TOSHI_NAMESPACE_USING
 
-TBOOL AGUI2FontManager::Open(const char* a_szFileName)
+TBOOL AGUI2FontManager::Open( const char* a_szFileName )
 {
-	auto pResource = FindFontResource(a_szFileName);
+	auto pResource = FindFontResource( a_szFileName );
 
-	if (pResource)
+	if ( pResource )
 	{
 		pResource->uiRefCount++;
 		return TTRUE;
 	}
 
 	pResource = FindUnusedFontResource();
-	TASSERT(pResource != TNULL);
+	TASSERT( pResource != TNULL );
 
-	if (!pResource)
+	if ( !pResource )
 	{
 		return TFALSE;
 	}
 
-	if (pResource->oTRB.Load(a_szFileName) != TTRB::ERROR_OK)
+	if ( pResource->oTRB.Load( a_szFileName ) != TTRB::ERROR_OK )
 	{
 		return TFALSE;
 	}
 
-	pResource->szFileName = new char[TStringManager::String8Length(a_szFileName) + 1];
-	TStringManager::String8Copy(pResource->szFileName, a_szFileName);
+	pResource->szFileName = new char[ TStringManager::String8Length( a_szFileName ) + 1 ];
+	TStringManager::String8Copy( pResource->szFileName, a_szFileName );
 
 	pResource->uiRefCount++;
-	CreateFontFromResource(pResource);
+	CreateFontFromResource( pResource );
 
 	return TTRUE;
 }
 
-AGUI2Font* AGUI2FontManager::FindFont(const char* a_szFontName)
+AGUI2Font* AGUI2FontManager::FindFont( const char* a_szFontName )
 {
-	auto pRef = FindFontRef(a_szFontName);
+	auto pRef = FindFontRef( a_szFontName );
 
-	if (pRef)
+	if ( pRef )
 	{
 		pRef->uiNumRefs += 1;
 		return pRef->pFont;
@@ -48,15 +48,15 @@ AGUI2Font* AGUI2FontManager::FindFont(const char* a_szFontName)
 	return TNULL;
 }
 
-AGUI2FontRef* AGUI2FontManager::FindFontRef(const char* a_szFontName)
+AGUI2FontRef* AGUI2FontManager::FindFontRef( const char* a_szFontName )
 {
-	for (TUINT i = 0; i < MAX_NUM_FONT_REFS; i++)
+	for ( TUINT i = 0; i < MAX_NUM_FONT_REFS; i++ )
 	{
-		if (s_fontrefs[i].pFontResource != TNULL)
+		if ( s_fontrefs[ i ].pFontResource != TNULL )
 		{
-			if (TStringManager::String8CompareNoCase(s_fontrefs[i].szName, a_szFontName) == 0)
+			if ( TStringManager::String8CompareNoCase( s_fontrefs[ i ].szName, a_szFontName ) == 0 )
 			{
-				return &s_fontrefs[i];
+				return &s_fontrefs[ i ];
 			}
 		}
 	}
@@ -64,15 +64,15 @@ AGUI2FontRef* AGUI2FontManager::FindFontRef(const char* a_szFontName)
 	return TNULL;
 }
 
-AGUI2FontResource* AGUI2FontManager::FindFontResource(const char* a_szResourceName)
+AGUI2FontResource* AGUI2FontManager::FindFontResource( const char* a_szResourceName )
 {
-	for (TUINT i = 0; i < MAX_NUM_LOADED_FONTS; i++)
+	for ( TUINT i = 0; i < MAX_NUM_LOADED_FONTS; i++ )
 	{
-		if (s_fontresources[i].uiRefCount > 0)
+		if ( s_fontresources[ i ].uiRefCount > 0 )
 		{
-			if (TStringManager::String8CompareNoCase(s_fontresources[i].szFileName, a_szResourceName) == 0)
+			if ( TStringManager::String8CompareNoCase( s_fontresources[ i ].szFileName, a_szResourceName ) == 0 )
 			{
-				return &s_fontresources[i];
+				return &s_fontresources[ i ];
 			}
 		}
 	}
@@ -82,11 +82,11 @@ AGUI2FontResource* AGUI2FontManager::FindFontResource(const char* a_szResourceNa
 
 AGUI2FontRef* AGUI2FontManager::FindUnusedFontRef()
 {
-	for (TUINT i = 0; i < MAX_NUM_FONT_REFS; i++)
+	for ( TUINT i = 0; i < MAX_NUM_FONT_REFS; i++ )
 	{
-		if (s_fontrefs[i].pFontResource == TNULL)
+		if ( s_fontrefs[ i ].pFontResource == TNULL )
 		{
-			return &s_fontrefs[i];
+			return &s_fontrefs[ i ];
 		}
 	}
 
@@ -95,43 +95,43 @@ AGUI2FontRef* AGUI2FontManager::FindUnusedFontRef()
 
 AGUI2FontResource* AGUI2FontManager::FindUnusedFontResource()
 {
-	for (TUINT i = 0; i < MAX_NUM_LOADED_FONTS; i++)
+	for ( TUINT i = 0; i < MAX_NUM_LOADED_FONTS; i++ )
 	{
-		if (s_fontresources[i].uiRefCount == 0)
+		if ( s_fontresources[ i ].uiRefCount == 0 )
 		{
-			return &s_fontresources[i];
+			return &s_fontresources[ i ];
 		}
 	}
 
 	return TNULL;
 }
 
-void AGUI2FontManager::CreateFontFromResource(AGUI2FontResource* a_pFontResource)
+void AGUI2FontManager::CreateFontFromResource( AGUI2FontResource* a_pFontResource )
 {
 	auto& trb = a_pFontResource->oTRB;
 
-	for (TINT i = 0; i < trb.GetNumSymbols(); i++)
+	for ( TINT i = 0; i < trb.GetNumSymbols(); i++ )
 	{
-		auto pSymbol = trb.GetSymbol(i);
-		auto pSymbolName = trb.GetSymbolName(pSymbol);
+		auto pSymbol	 = trb.GetSymbol( i );
+		auto pSymbolName = trb.GetSymbolName( pSymbol );
 
-		auto pFontRef = FindFontRef(pSymbolName);
+		auto pFontRef = FindFontRef( pSymbolName );
 
-		if (pFontRef == TNULL)
+		if ( pFontRef == TNULL )
 		{
 			pFontRef = FindUnusedFontRef();
-			TASSERT(pFontRef != TNULL);
+			TASSERT( pFontRef != TNULL );
 
-			if (pFontRef == TNULL) return;
+			if ( pFontRef == TNULL ) return;
 
-			pFontRef->szName = new char[TStringManager::String8Length(pSymbolName) + 1];
-			TStringManager::String8Copy(pFontRef->szName, pSymbolName);
+			pFontRef->szName = new char[ TStringManager::String8Length( pSymbolName ) + 1 ];
+			TStringManager::String8Copy( pFontRef->szName, pSymbolName );
 
-			auto pFontDef = trb.CastSymbol<AGUI2FontDef>(pSymbolName);
+			auto pFontDef	= trb.CastSymbol<AGUI2FontDef>( pSymbolName );
 			pFontRef->pFont = new AGUI2Font();
-			pFontRef->pFont->Create(pFontDef);
+			pFontRef->pFont->Create( pFontDef );
 			pFontRef->pFontResource = a_pFontResource;
-			pFontRef->Unk1 = TNULL;
+			pFontRef->Unk1			= TNULL;
 		}
 	}
 }

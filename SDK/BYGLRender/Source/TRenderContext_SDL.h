@@ -1,30 +1,31 @@
 #pragma once
 #include <Render/TRenderInterface.h>
 
-namespace Toshi {
+namespace Toshi
+{
 
-	class TRenderContextSDL : public TRenderContext
+class TRenderContextSDL : public TRenderContext
+{
+public:
+	TRenderContextSDL( TRenderInterface* a_pRender ) :
+		TRenderContext( a_pRender )
 	{
-	public:
-		TRenderContextSDL(TRenderInterface* a_pRender) : TRenderContext(a_pRender)
-		{
+	}
 
-		}
+	TMatrix44& GetProjectionMatrix()
+	{
+		return m_Projection;
+	}
 
-		TMatrix44& GetProjectionMatrix()
-		{
-			return m_Projection;
-		}
+	void ComputePerspectiveProjection();
+	void ComputePerspectiveFrustum();
+	void ComputeOrthographicProjection();
+	void ComputeOrthographicFrustum();
 
-		void ComputePerspectiveProjection();
-		void ComputePerspectiveFrustum();
-		void ComputeOrthographicProjection();
-		void ComputeOrthographicFrustum();
+	virtual void Update() override;
 
-		virtual void Update() override;
+private:
+	TMatrix44 m_Projection;
+};
 
-	private:
-		TMatrix44 m_Projection;
-	};
-
-}
+} // namespace Toshi

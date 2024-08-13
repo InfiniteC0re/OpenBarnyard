@@ -7,24 +7,23 @@
 //-----------------------------------------------------------------------------
 #include <Core/TMemoryDebugOn.h>
 
-namespace Toshi
-{
+TOSHI_NAMESPACE_START
 
 TFile* TNullFileSystem::CreateFile( const TString8& a_rcFileName, TFILEMODE a_eFileMode )
 {
-    TIMPLEMENT();
-    return TNULL;
+	TIMPLEMENT();
+	return TNULL;
 }
 
 void TNullFileSystem::DestroyFile( TFile* )
 {
-    TIMPLEMENT();
+	TIMPLEMENT();
 }
 
 TString8 TNullFileSystem::MakeInternalPath( const TString8& a_rcPath )
 {
-    TIMPLEMENT();
-    return TString8();
+	TIMPLEMENT();
+	return TString8();
 }
 
-} // namespace Toshi
+TOSHI_NAMESPACE_END

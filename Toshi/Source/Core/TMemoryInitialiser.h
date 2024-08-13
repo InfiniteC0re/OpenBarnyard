@@ -2,8 +2,7 @@
 #include "TMemory.h"
 #include "Toshi/Typedefs.h"
 
-namespace Toshi
-{
+TOSHI_NAMESPACE_START
 
 class TMemoryInitialiser
 {
@@ -30,4 +29,4 @@ public:
     }
 };
 
-} // namespace Toshi
+TOSHI_NAMESPACE_END

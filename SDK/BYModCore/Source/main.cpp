@@ -57,85 +57,85 @@ HOOK( 0x004042c0, ToshiDestroy, void )
 	ExitProcess( 0 );
 }
 
-DWORD WINAPI MainThread(HMODULE hModule)
+DWORD WINAPI MainThread( HMODULE hModule )
 {
-	TINFO("BYModCore thread has been started!\n");
-	TINFO("Waiting for Toshi systems to be loaded...\n");
+	TINFO( "BYModCore thread has been started!\n" );
+	TINFO( "Waiting for Toshi systems to be loaded...\n" );
 
 	// Wait until AGUI2 is ready to use
-	while (!AGUI2::IsSingletonCreated()) { ThreadSleep(50); }
-	while (!AGUI2::GetSingleton()->GetRootElement()) { ThreadSleep(50); }
+	while ( !AGUI2::IsSingletonCreated() ) { ThreadSleep( 50 ); }
+	while ( !AGUI2::GetSingleton()->GetRootElement() ) { ThreadSleep( 50 ); }
 
 	// Log info about AGUI2
 	TFLOAT fWidth, fHeight;
-	AGUI2::GetSingleton()->GetDimensions(fWidth, fHeight);
-	TINFO("AGUI2 is ready! (Dimensions: %fx%f)\n", fWidth, fHeight);
-	
-	TUtil::SetTPStringPool(**(TPString8Pool***)0x007ce230);
-	
+	AGUI2::GetSingleton()->GetDimensions( fWidth, fHeight );
+	TINFO( "AGUI2 is ready! (Dimensions: %fx%f)\n", fWidth, fHeight );
+
+	TUtil::SetTPStringPool( **(TPString8Pool***)0x007ce230 );
+
 	AGlobalModLoaderTask::Get()->OnAGUI2Ready();
 	AImGUI::CreateSingleton();
 
 	return TTRUE;
 }
 
-BOOL WINAPI exit_handler(DWORD dwCtrlType)
+BOOL WINAPI exit_handler( DWORD dwCtrlType )
 {
-	switch (dwCtrlType)
+	switch ( dwCtrlType )
 	{
-	case CTRL_C_EVENT:
-		return TRUE;
-	case CTRL_BREAK_EVENT:
-		return TRUE;
-	case CTRL_CLOSE_EVENT:
-		return TRUE;
-	default:
-		return FALSE;
+		case CTRL_C_EVENT:
+			return TRUE;
+		case CTRL_BREAK_EVENT:
+			return TRUE;
+		case CTRL_CLOSE_EVENT:
+			return TRUE;
+		default:
+			return FALSE;
 	}
 
 	return TRUE;
 }
 
-DWORD APIENTRY DllMain(HMODULE hModule, DWORD reason, LPVOID reserved)
+DWORD APIENTRY DllMain( HMODULE hModule, DWORD reason, LPVOID reserved )
 {
-	switch (reason)
+	switch ( reason )
 	{
-	case DLL_PROCESS_ATTACH:
-	{
-		TMemory::Initialise(4 * 1024 * 1024, 0);
-		
+		case DLL_PROCESS_ATTACH:
+		{
+			TMemory::Initialise( 4 * 1024 * 1024, 0 );
+
 #ifdef TOSHI_DEBUG
-		AllocConsole();
-		FILE* fDummy;
-		freopen_s(&fDummy, "CONOUT$", "w", stdout);
-		hModuleCore = hModule;
+			AllocConsole();
+			FILE* fDummy;
+			freopen_s( &fDummy, "CONOUT$", "w", stdout );
+			hModuleCore = hModule;
 #endif
 
-		TUtil::TOSHIParams toshiParams;
-		toshiParams.szCommandLine = "";
-		toshiParams.szLogFileName = "modcore";
-		toshiParams.szLogAppName = "BYModCore";
+			TUtil::TOSHIParams toshiParams;
+			toshiParams.szCommandLine = "";
+			toshiParams.szLogFileName = "modcore";
+			toshiParams.szLogAppName  = "BYModCore";
 
-		TUtil::ToshiCreate(toshiParams);
+			TUtil::ToshiCreate( toshiParams );
 
-		g_CommandLine.Create( GetCommandLineA() );
+			g_CommandLine.Create( GetCommandLineA() );
 
-		// Initialise hooks
-		AHooks::Initialise();
-		InstallHook<TApplication_Create>();
-		InstallHook<TApplication_Destroy>();
-		InstallHook<ToshiDestroy>();
+			// Initialise hooks
+			AHooks::Initialise();
+			InstallHook<TApplication_Create>();
+			InstallHook<TApplication_Destroy>();
+			InstallHook<ToshiDestroy>();
 
-		SetConsoleCtrlHandler(exit_handler, TRUE);
+			SetConsoleCtrlHandler( exit_handler, TRUE );
 
-		TINFO("Log system was successfully initialised!\n");
-		TINFO("Starting BYModCore thread...\n");
+			TINFO( "Log system was successfully initialised!\n" );
+			TINFO( "Starting BYModCore thread...\n" );
 
-		CloseHandle( CreateThread( 0, 0, (LPTHREAD_START_ROUTINE)MainThread, hModule, 0, 0 ) );
+			CloseHandle( CreateThread( 0, 0, (LPTHREAD_START_ROUTINE)MainThread, hModule, 0, 0 ) );
 
-		return TTRUE;
-	}
-	default:
-		return TFALSE;
+			return TTRUE;
+		}
+		default:
+			return TFALSE;
 	}
 }

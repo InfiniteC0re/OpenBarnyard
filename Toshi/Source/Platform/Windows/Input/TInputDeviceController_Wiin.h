@@ -2,9 +2,10 @@
 
 #include "TInputDeviceController_Win.h"
 
-namespace Toshi
-{
+TOSHI_NAMESPACE_START
+
 class TInputWiinDeviceController : public TInputDXDeviceController
 {
 };
-} // namespace Toshi
+
+TOSHI_NAMESPACE_END

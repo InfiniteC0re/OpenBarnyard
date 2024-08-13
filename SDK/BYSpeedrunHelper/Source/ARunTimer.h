@@ -45,11 +45,11 @@ public:
 
 private:
 	ATimerThread* m_pTimerThread;
-	AGUITimer m_UITimer;
-	TFLOAT m_flTime;
-	TBOOL m_bPaused;
+	AGUITimer	  m_UITimer;
+	TFLOAT		  m_flTime;
+	TBOOL		  m_bPaused;
 
-	TBOOL m_bIsLoading;
+	TBOOL			m_bIsLoading;
 	Toshi::THPTimer m_LoadingTimer;
-	TFLOAT m_flTotalLoadingTime;
+	TFLOAT			m_flTotalLoadingTime;
 };

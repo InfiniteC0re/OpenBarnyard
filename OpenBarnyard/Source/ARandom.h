@@ -4,18 +4,18 @@
 #include <Math/TRandom.h>
 
 class ARandom :
-    public Toshi::TObject,
-    public Toshi::TSingleton< ARandom >
+	public Toshi::TObject,
+	public Toshi::TSingleton<ARandom>
 {
 public:
-    TDECLARE_CLASS( ARandom, Toshi::TObject );
+	TDECLARE_CLASS( ARandom, Toshi::TObject );
 
 public:
-    ARandom()
-    {
-    }
+	ARandom()
+	{
+	}
 
-    // TODO: Add interface for TRandom
+	// TODO: Add interface for TRandom
 
-    Toshi::TRandom m_oRandom;
+	Toshi::TRandom m_oRandom;
 };

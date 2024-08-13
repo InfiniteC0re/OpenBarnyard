@@ -37,7 +37,7 @@ public:
 			if ( m_flSyncTimerTime <= 0.0f && !m_pRunTimer->m_bPaused )
 			{
 				T2MUTEX_LOCK_SCOPE( m_TimeSyncMutex );
-				
+
 				TINT iMilliseconds, iSeconds, iMinutes, iHours;
 				AGUITimer::GetTime( m_pRunTimer->GetRunTime(), iMilliseconds, iSeconds, iMinutes, iHours );
 
@@ -51,17 +51,17 @@ public:
 
 public:
 	ARunTimer* m_pRunTimer;
-	THPTimer m_Timer;
-	TFLOAT m_flSyncTimerTime;
-	T2Mutex m_TimeSyncMutex;
-	TBOOL m_bClosed;
+	THPTimer   m_Timer;
+	TFLOAT	   m_flSyncTimerTime;
+	T2Mutex	   m_TimeSyncMutex;
+	TBOOL	   m_bClosed;
 };
 
 ARunTimer::ARunTimer()
 {
 	m_pTimerThread = TNULL;
-	m_flTime = 0.0f;
-	m_bPaused = TTRUE;
+	m_flTime	   = 0.0f;
+	m_bPaused	   = TTRUE;
 }
 
 ARunTimer::~ARunTimer()
@@ -80,7 +80,7 @@ void ARunTimer::Create()
 void ARunTimer::Destroy()
 {
 	ASplitsServer::GetSingleton()->StopServer();
-	
+
 	if ( m_pTimerThread )
 	{
 		m_pTimerThread->Destroy();
@@ -92,8 +92,8 @@ void ARunTimer::Destroy()
 void ARunTimer::Reset()
 {
 	m_flTotalLoadingTime = 0.0f;
-	m_flTime = 0.0f;
-	m_bPaused = TTRUE;
+	m_flTime			 = 0.0f;
+	m_bPaused			 = TTRUE;
 
 	ASplitsServer::GetSingleton()->Reset();
 }
@@ -104,7 +104,7 @@ void ARunTimer::Split()
 		return;
 
 	TINT iMilliseconds, iSeconds, iMinutes, iHours;
-	AGUITimer::GetTime( GetRunTime(), iMilliseconds, iSeconds, iMinutes, iHours);
+	AGUITimer::GetTime( GetRunTime(), iMilliseconds, iSeconds, iMinutes, iHours );
 
 	ASplitsServer::GetSingleton()->Split( iMilliseconds, iSeconds, iMinutes, iHours );
 }
@@ -112,8 +112,8 @@ void ARunTimer::Split()
 void ARunTimer::Start()
 {
 	m_flTotalLoadingTime = 0.0f;
-	m_flTime = 0.0f;
-	m_bPaused = TFALSE;
+	m_flTime			 = 0.0f;
+	m_bPaused			 = TFALSE;
 
 	ASplitsServer::GetSingleton()->StartRun();
 }
@@ -124,7 +124,7 @@ void ARunTimer::End()
 		return;
 
 	m_bPaused = TTRUE;
-	
+
 	TINT iMilliseconds, iSeconds, iMinutes, iHours;
 	AGUITimer::GetTime( GetRunTime(), iMilliseconds, iSeconds, iMinutes, iHours );
 
@@ -184,11 +184,11 @@ void ARunTimer::SetIsLoadingScreen( TBOOL a_bLoadingScreen )
 
 		TFLOAT flLoadingTime = m_LoadingTimer.GetDelta();
 		m_flTotalLoadingTime += flLoadingTime;
-		
+
 		ASplitsServer::GetSingleton()->SetLoadingEnd();
 
 		TTRACE( "Loading has ended and it took %.2f seconds... Total time spent while loading: %.2f seconds\n", flLoadingTime, m_flTotalLoadingTime );
 	}
-	
+
 	m_bIsLoading = a_bLoadingScreen;
 }

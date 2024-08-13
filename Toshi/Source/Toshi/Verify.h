@@ -16,5 +16,5 @@ TSTATICASSERT( sizeof( TUINT64 ) == 8 );
 TSTATICASSERT( sizeof( void* ) == 4 );
 
 #ifndef TOSHI_SKU_WINDOWS
-#    error At the moment, Windows is the only supported OS
+#	error At the moment, Windows is the only supported OS
 #endif

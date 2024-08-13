@@ -1,9 +1,8 @@
 #pragma once
 
-namespace Toshi
-{
+TOSHI_NAMESPACE_START
 
-inline static TCHAR NullString[ 8 ]  = { 0, 0, 0, 0, 0, 0, 0, 0 };
+inline static TCHAR NullString[ 8 ]	 = { 0, 0, 0, 0, 0, 0, 0, 0 };
 inline static WCHAR NullWString[ 8 ] = { 0, 0, 0, 0, 0, 0, 0, 0 };
 
-} // namespace Toshi
+TOSHI_NAMESPACE_END

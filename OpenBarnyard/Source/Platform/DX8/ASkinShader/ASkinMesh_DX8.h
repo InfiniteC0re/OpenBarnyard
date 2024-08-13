@@ -4,11 +4,11 @@
 class ASkinMeshHAL : public ASkinMesh
 {
 public:
-    TDECLARE_CLASS( ASkinMeshHAL, ASkinMesh );
+	TDECLARE_CLASS( ASkinMeshHAL, ASkinMesh );
 
 public:
-    //-----------------------------------------------------------------------------
-    // Toshi::TMesh
-    //-----------------------------------------------------------------------------
-    virtual TBOOL Render() override;
+	//-----------------------------------------------------------------------------
+	// Toshi::TMesh
+	//-----------------------------------------------------------------------------
+	virtual TBOOL Render() override;
 };

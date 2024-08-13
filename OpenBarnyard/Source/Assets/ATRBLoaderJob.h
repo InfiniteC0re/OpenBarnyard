@@ -6,13 +6,13 @@
 class ATRBLoaderJob : public AMainThreadJob
 {
 public:
-    virtual void  BeginJob() override;
-    virtual TBOOL RunJob() override;
+	virtual void  BeginJob() override;
+	virtual TBOOL RunJob() override;
 
-    void InitJob( Toshi::TTRB* a_pTRB, const TCHAR* a_szFileName );
+	void InitJob( Toshi::TTRB* a_pTRB, const TCHAR* a_szFileName );
 
-    Toshi::TTRBStreamJob& GetStream() { return m_oStreamJob; }
+	Toshi::TTRBStreamJob& GetStream() { return m_oStreamJob; }
 
 protected:
-    Toshi::TTRBStreamJob m_oStreamJob;
+	Toshi::TTRBStreamJob m_oStreamJob;
 };

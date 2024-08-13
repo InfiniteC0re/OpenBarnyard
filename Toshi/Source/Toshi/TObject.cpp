@@ -7,18 +7,17 @@
 //-----------------------------------------------------------------------------
 #include "Core/TMemoryDebugOn.h"
 
-namespace Toshi
-{
+TOSHI_NAMESPACE_START
 
 TDEFINE_CLASS_COMPILETIME( TObject, 0, 2 );
 
 void TObject::Delete()
 {
-    delete this;
+	delete this;
 }
 
 TObject::~TObject()
 {
 }
 
-} // namespace Toshi
+TOSHI_NAMESPACE_END

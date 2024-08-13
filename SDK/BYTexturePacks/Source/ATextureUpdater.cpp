@@ -11,27 +11,27 @@
 
 TOSHI_NAMESPACE_USING
 
-char g_szTexturePackName[64] = "Default";
-char g_szTexturePackPath[MAX_PATH] = "Mods\\TexturePacks\\Default\\";
-TMutex g_LoadMutex;
-TBOOL g_bDumpTextures = TTRUE;
-TBOOL g_bAutoReload = TTRUE;
+char	 g_szTexturePackName[ 64 ]		 = "Default";
+char	 g_szTexturePackPath[ MAX_PATH ] = "Mods\\TexturePacks\\Default\\";
+TMutex	 g_LoadMutex;
+TBOOL	 g_bDumpTextures = TTRUE;
+TBOOL	 g_bAutoReload	 = TTRUE;
 THPTimer g_LastDumpTimer;
 
-TBOOL MaterialLibrary_LoadTTLData(AMaterialLibrary* a_pMatLib, AMaterialLibrary::TTL* a_pTTLData)
+TBOOL MaterialLibrary_LoadTTLData( AMaterialLibrary* a_pMatLib, AMaterialLibrary::TTL* a_pTTLData )
 {
-	TMutexLock lock(g_LoadMutex);
+	TMutexLock lock( g_LoadMutex );
 
-	auto pTTL = TSTATICCAST(AMaterialLibrary::TTL, a_pTTLData);
+	auto pTTL = TSTATICCAST( AMaterialLibrary::TTL, a_pTTLData );
 
-	auto pLibList = AMaterialLibraryManager::List::GetSingleton();
+	auto pLibList	  = AMaterialLibraryManager::List::GetSingleton();
 	TINT iNumTextures = 0;
 
-	if (AMaterialLibrary::ms_bSkipLoadedTextures)
+	if ( AMaterialLibrary::ms_bSkipLoadedTextures )
 	{
-		for (TINT i = 0; i < pTTL->m_iNumTextures; i++)
+		for ( TINT i = 0; i < pTTL->m_iNumTextures; i++ )
 		{
-			if (!pLibList->FindTexture(pTTL->m_pTextureInfos[i].m_szFileName, TNULL, TNULL))
+			if ( !pLibList->FindTexture( pTTL->m_pTextureInfos[ i ].m_szFileName, TNULL, TNULL ) )
 			{
 				iNumTextures++;
 			}
@@ -43,64 +43,64 @@ TBOOL MaterialLibrary_LoadTTLData(AMaterialLibrary* a_pMatLib, AMaterialLibrary:
 	}
 
 	a_pMatLib->m_pTexturesArray = new ATexture[ iNumTextures ];
-	a_pMatLib->m_pTextures = a_pMatLib->m_pTexturesArray;
-	a_pMatLib->m_iNumTextures = iNumTextures;
+	a_pMatLib->m_pTextures		= a_pMatLib->m_pTexturesArray;
+	a_pMatLib->m_iNumTextures	= iNumTextures;
 
-	for (TINT i = 0; i < iNumTextures; i++)
+	for ( TINT i = 0; i < iNumTextures; i++ )
 	{
-		auto pTexInfo = &pTTL->m_pTextureInfos[i];
+		auto pTexInfo = &pTTL->m_pTextureInfos[ i ];
 
-		if (!AMaterialLibrary::ms_bSkipLoadedTextures || !pLibList->FindTexture(pTexInfo->m_szFileName, TNULL, TNULL))
+		if ( !AMaterialLibrary::ms_bSkipLoadedTextures || !pLibList->FindTexture( pTexInfo->m_szFileName, TNULL, TNULL ) )
 		{
-			TASSERT(pTexInfo->m_bIsT2Texture == TRUE, "No support of other texture types");
-			a_pMatLib->m_pTextures[i].Name = pTexInfo->m_szFileName;
+			TASSERT( pTexInfo->m_bIsT2Texture == TRUE, "No support of other texture types" );
+			a_pMatLib->m_pTextures[ i ].Name = pTexInfo->m_szFileName;
 
-			if (pTexInfo->m_bIsT2Texture == TRUE)
+			if ( pTexInfo->m_bIsT2Texture == TRUE )
 			{
 				auto pTexture = new T2Texture;
 
-				if (pTexture)
+				if ( pTexture )
 				{
 					TString8 dumpFilePath = g_szTexturePackPath;
-					dumpFilePath.Concat(pTexInfo->m_szFileName, TStringManager::String8Length(pTexInfo->m_szFileName) - 3);
+					dumpFilePath.Concat( pTexInfo->m_szFileName, TStringManager::String8Length( pTexInfo->m_szFileName ) - 3 );
 					dumpFilePath += "dds";
 
-					auto pFile = TFile::Create(dumpFilePath, TFILEMODE_READ);
+					auto pFile = TFile::Create( dumpFilePath, TFILEMODE_READ );
 
-					if (pFile)
+					if ( pFile )
 					{
 						// Load texture from Data\\TextureOverride
-						auto uiFileSize = pFile->GetSize();
-						void* pFileData = TMalloc(uiFileSize);
+						auto  uiFileSize = pFile->GetSize();
+						void* pFileData	 = TMalloc( uiFileSize );
 
-						if (pFile->Read(pFileData, uiFileSize) == uiFileSize)
+						if ( pFile->Read( pFileData, uiFileSize ) == uiFileSize )
 						{
-							pTexture->SetData(pFileData, uiFileSize);
+							pTexture->SetData( pFileData, uiFileSize );
 							pTexture->Load();
-							pTexture->SetData(TNULL, 0);
+							pTexture->SetData( TNULL, 0 );
 						}
 						else
 						{
-							TASSERT(!"ERROR: Couldn't read texture file");
+							TASSERT( !"ERROR: Couldn't read texture file" );
 						}
 
 						pFile->Destroy();
-						TFree(pFileData);
+						TFree( pFileData );
 					}
 					else
 					{
-						pTexture->SetData(pTexInfo->m_pData, pTexInfo->m_uiDataSize);
+						pTexture->SetData( pTexInfo->m_pData, pTexInfo->m_uiDataSize );
 						pTexture->Load();
-						pTexture->SetData(TNULL, 0);
+						pTexture->SetData( TNULL, 0 );
 
-						if (g_bDumpTextures)
+						if ( g_bDumpTextures )
 						{
-							ATextureUpdater::DumpTexture(dumpFilePath, pTexInfo->m_pData, pTexInfo->m_uiDataSize);
+							ATextureUpdater::DumpTexture( dumpFilePath, pTexInfo->m_pData, pTexInfo->m_uiDataSize );
 						}
 					}
 				}
 
-				a_pMatLib->m_pTextures[i].pTexture = pTexture;
+				a_pMatLib->m_pTextures[ i ].pTexture = pTexture;
 			}
 		}
 	}
@@ -110,182 +110,182 @@ TBOOL MaterialLibrary_LoadTTLData(AMaterialLibrary* a_pMatLib, AMaterialLibrary:
 
 ATextureUpdater::ATextureUpdater()
 {
-	AHooks::AddHook(Hook_MaterialLibrary_LoadTTLData, HookType_Before, MaterialLibrary_LoadTTLData);
+	AHooks::AddHook( Hook_MaterialLibrary_LoadTTLData, HookType_Before, MaterialLibrary_LoadTTLData );
 }
 
-void ATextureUpdater::DumpTexture(const Toshi::TString8& a_rFilePath, const void* a_pData, TUINT32 a_uiDataSize)
+void ATextureUpdater::DumpTexture( const Toshi::TString8& a_rFilePath, const void* a_pData, TUINT32 a_uiDataSize )
 {
-	TINT iSlashPos = 0;
-	Toshi::TString8 filepath = a_rFilePath;
+	TINT			iSlashPos = 0;
+	Toshi::TString8 filepath  = a_rFilePath;
 
 	// Create directory for the dump
-	while (iSlashPos = filepath.Find('\\', iSlashPos), iSlashPos >= 0)
+	while ( iSlashPos = filepath.Find( '\\', iSlashPos ), iSlashPos >= 0 )
 	{
-		filepath[iSlashPos] = '\0';
-		CreateDirectoryA(filepath, NULL);
-		filepath[iSlashPos] = '\\';
+		filepath[ iSlashPos ] = '\0';
+		CreateDirectoryA( filepath, NULL );
+		filepath[ iSlashPos ] = '\\';
 		iSlashPos++;
 	}
 
-	auto pFile = TFile::Create(filepath, TFILEMODE_WRITE | TFILEMODE_CREATENEW);
+	auto pFile = TFile::Create( filepath, TFILEMODE_WRITE | TFILEMODE_CREATENEW );
 
-	if (pFile)
+	if ( pFile )
 	{
 		// Dump texture
 		g_LastDumpTimer.Reset();
-		pFile->Write(a_pData, a_uiDataSize);
+		pFile->Write( a_pData, a_uiDataSize );
 		pFile->Destroy();
 	}
 }
 
-void ATextureUpdater::ReloadTexture(Toshi::T2Texture* a_pT2Texture, void* a_pData, TUINT a_uiDataSize)
+void ATextureUpdater::ReloadTexture( Toshi::T2Texture* a_pT2Texture, void* a_pData, TUINT a_uiDataSize )
 {
-	auto pTexFactory = THookedRenderD3DInterface::GetSingleton()->GetSystemResource<TTextureFactory>(SYSRESOURCE_TEXTUREFACTORY);
+	auto pTexFactory = THookedRenderD3DInterface::GetSingleton()->GetSystemResource<TTextureFactory>( SYSRESOURCE_TEXTUREFACTORY );
 
 	auto pOldD3DTexture = a_pT2Texture->GetD3DTexture();
 	a_pT2Texture->Unload();
 
-	a_pT2Texture->SetData(a_pData, a_uiDataSize);
+	a_pT2Texture->SetData( a_pData, a_uiDataSize );
 	a_pT2Texture->Load();
 
-	for (TINT k = 0; k < TTextureFactory::NUM_LISTS; k++)
+	for ( TINT k = 0; k < TTextureFactory::NUM_LISTS; k++ )
 	{
-		auto pList = pTexFactory->GetList(k);
+		auto pList = pTexFactory->GetList( k );
 
-		for (auto pEntry = pList->Begin(); pEntry != pList->End(); pEntry++)
+		for ( auto pEntry = pList->Begin(); pEntry != pList->End(); pEntry++ )
 		{
 			auto pTex = (Toshi::TTextureResourceHAL*)pEntry->GetTexture();
 
-			if (pTex->GetD3DTexture() == pOldD3DTexture)
+			if ( pTex->GetD3DTexture() == pOldD3DTexture )
 			{
-				pTex->SetD3DTexture(a_pT2Texture->GetD3DTexture());
+				pTex->SetD3DTexture( a_pT2Texture->GetD3DTexture() );
 			}
 		}
 	}
 }
 
-void ATextureUpdater::RestoreTexture(const Toshi::TString8& a_rTextureName, TBOOL a_bForceDump)
+void ATextureUpdater::RestoreTexture( const Toshi::TString8& a_rTextureName, TBOOL a_bForceDump )
 {
 	AMaterialLibrary* pLibrary;
-	auto pAppTexture = AMaterialLibraryManager::List::GetSingleton()->FindTexture(a_rTextureName, &pLibrary, TNULL);
+	auto			  pAppTexture = AMaterialLibraryManager::List::GetSingleton()->FindTexture( a_rTextureName, &pLibrary, TNULL );
 
 	TTRB trb;
 
-	if (trb.Load(pLibrary->m_Path) == TTRB::ERROR_OK)
+	if ( trb.Load( pLibrary->m_Path ) == TTRB::ERROR_OK )
 	{
-		auto pTTL = trb.CastSymbol<AMaterialLibrary::TTL>("TTL");
+		auto pTTL = trb.CastSymbol<AMaterialLibrary::TTL>( "TTL" );
 
-		for (TINT i = 0; i < pTTL->m_iNumTextures; i++)
+		for ( TINT i = 0; i < pTTL->m_iNumTextures; i++ )
 		{
-			auto pTexInfo = &pTTL->m_pTextureInfos[i];
+			auto pTexInfo = &pTTL->m_pTextureInfos[ i ];
 
-			if (pTexInfo->m_bIsT2Texture == TRUE &&
-				a_rTextureName == pTexInfo->m_szFileName)
+			if ( pTexInfo->m_bIsT2Texture == TRUE &&
+				 a_rTextureName == pTexInfo->m_szFileName )
 			{
-				ReloadTexture(pAppTexture->pTexture, pTexInfo->m_pData, pTexInfo->m_uiDataSize);
+				ReloadTexture( pAppTexture->pTexture, pTexInfo->m_pData, pTexInfo->m_uiDataSize );
 
-				if (g_bDumpTextures || a_bForceDump)
+				if ( g_bDumpTextures || a_bForceDump )
 				{
 					TString8 dumpFilePath = g_szTexturePackPath;
-					dumpFilePath.Concat(a_rTextureName, a_rTextureName.Length() - 3);
+					dumpFilePath.Concat( a_rTextureName, a_rTextureName.Length() - 3 );
 					dumpFilePath += "dds";
 
-					DumpTexture(dumpFilePath, pTexInfo->m_pData, pTexInfo->m_uiDataSize);
+					DumpTexture( dumpFilePath, pTexInfo->m_pData, pTexInfo->m_uiDataSize );
 				}
 
-				pAppTexture->pTexture->SetData(TNULL, 0);
+				pAppTexture->pTexture->SetData( TNULL, 0 );
 				break;
 			}
 		}
 	}
 }
 
-void ATextureUpdater::ReloadTexture(const Toshi::TString8& a_rTextureName)
+void ATextureUpdater::ReloadTexture( const Toshi::TString8& a_rTextureName )
 {
 	TString8 texFilePath = g_szTexturePackPath;
-	texFilePath.Concat(a_rTextureName, a_rTextureName.Length() - 3);
+	texFilePath.Concat( a_rTextureName, a_rTextureName.Length() - 3 );
 	texFilePath += "dds";
 
-	if (Toshi::TFile* pFile = TFile::Create(texFilePath, TFILEMODE_READ))
+	if ( Toshi::TFile* pFile = TFile::Create( texFilePath, TFILEMODE_READ ) )
 	{
 		// Load texture data from raw file
-		auto uiFileSize = pFile->GetSize();
-		void* pFileData = TMalloc(uiFileSize);
+		auto  uiFileSize = pFile->GetSize();
+		void* pFileData	 = TMalloc( uiFileSize );
 
-		if (pFile->Read(pFileData, uiFileSize) == uiFileSize)
+		if ( pFile->Read( pFileData, uiFileSize ) == uiFileSize )
 		{
 			auto pLibraries = &AMaterialLibraryManager::List::GetSingleton()->m_Libraries;
 
-			for (auto pLibrary = pLibraries->Begin(); pLibrary != pLibraries->End(); pLibrary++)
+			for ( auto pLibrary = pLibraries->Begin(); pLibrary != pLibraries->End(); pLibrary++ )
 			{
-				for (TINT i = 0; i < pLibrary->GetNumTextures(); i++)
+				for ( TINT i = 0; i < pLibrary->GetNumTextures(); i++ )
 				{
-					auto pAppTexture = &pLibrary->m_pTexturesArray[i];
+					auto pAppTexture = &pLibrary->m_pTexturesArray[ i ];
 
-					if (pAppTexture->Name == a_rTextureName)
+					if ( pAppTexture->Name == a_rTextureName )
 					{
 						// Load texture data from raw file
-						ReloadTexture(pAppTexture->pTexture, pFileData, uiFileSize);
-						pAppTexture->pTexture->SetData(TNULL, 0);
+						ReloadTexture( pAppTexture->pTexture, pFileData, uiFileSize );
+						pAppTexture->pTexture->SetData( TNULL, 0 );
 					}
 				}
 			}
 		}
 		else
 		{
-			TASSERT(!"ERROR: Couldn't read texture file");
+			TASSERT( !"ERROR: Couldn't read texture file" );
 		}
 
-		TFree(pFileData);
+		TFree( pFileData );
 		pFile->Destroy();
 	}
 	else
 	{
 		// Restore original texture from the material library
-		RestoreTexture(a_rTextureName);
+		RestoreTexture( a_rTextureName );
 	}
 }
 
 void ATextureUpdater::ReloadAllTextures()
 {
-	if (!AMaterialLibraryManager::List::IsSingletonCreated())
+	if ( !AMaterialLibraryManager::List::IsSingletonCreated() )
 	{
 		return;
 	}
 
 	auto pLibraries = &AMaterialLibraryManager::List::GetSingleton()->m_Libraries;
 
-	for (auto it = pLibraries->Begin(); it != pLibraries->End(); it++)
+	for ( auto it = pLibraries->Begin(); it != pLibraries->End(); it++ )
 	{
-		for (TINT i = 0; i < it->GetNumTextures(); i++)
+		for ( TINT i = 0; i < it->GetNumTextures(); i++ )
 		{
-			auto pAppTexture = &it->m_pTexturesArray[i];
+			auto pAppTexture = &it->m_pTexturesArray[ i ];
 
 			TString8 texFilePath = g_szTexturePackPath;
-			texFilePath.Concat(pAppTexture->Name, TStringManager::String8Length(pAppTexture->Name) - 3);
+			texFilePath.Concat( pAppTexture->Name, TStringManager::String8Length( pAppTexture->Name ) - 3 );
 			texFilePath += "dds";
 
-			if (Toshi::TFile* pFile = TFile::Create(texFilePath, TFILEMODE_READ))
+			if ( Toshi::TFile* pFile = TFile::Create( texFilePath, TFILEMODE_READ ) )
 			{
-				auto uiFileSize = pFile->GetSize();
-				void* pFileData = TMalloc(uiFileSize);
+				auto  uiFileSize = pFile->GetSize();
+				void* pFileData	 = TMalloc( uiFileSize );
 
-				if (pFile->Read(pFileData, uiFileSize) == uiFileSize)
+				if ( pFile->Read( pFileData, uiFileSize ) == uiFileSize )
 				{
-					ReloadTexture(pAppTexture->pTexture, pFileData, uiFileSize);
-					pAppTexture->pTexture->SetData(TNULL, 0);
+					ReloadTexture( pAppTexture->pTexture, pFileData, uiFileSize );
+					pAppTexture->pTexture->SetData( TNULL, 0 );
 				}
 				else
 				{
-					TASSERT(!"Couldn't read texture file");
+					TASSERT( !"Couldn't read texture file" );
 				}
 
-				TFree(pFileData);
+				TFree( pFileData );
 				pFile->Destroy();
 			}
 			else
 			{
-				RestoreTexture(pAppTexture->Name);
+				RestoreTexture( pAppTexture->Name );
 			}
 		}
 	}

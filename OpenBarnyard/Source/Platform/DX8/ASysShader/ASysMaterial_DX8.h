@@ -7,24 +7,24 @@
 class ASysMaterialHAL : public ASysMaterial
 {
 public:
-    TDECLARE_CLASS( ASysMaterialHAL, ASysMaterial );
+	TDECLARE_CLASS( ASysMaterialHAL, ASysMaterial );
 
 public:
-    ASysMaterialHAL();
-    ~ASysMaterialHAL();
+	ASysMaterialHAL();
+	~ASysMaterialHAL();
 
-    virtual void  PreRender() override;
-    virtual void  PostRender() override;
-    virtual TBOOL Create( BLENDMODE a_eBlendMode ) override;
-    virtual void  SetBlendMode( BLENDMODE a_eBlendMode ) override;
+	virtual void  PreRender() override;
+	virtual void  PostRender() override;
+	virtual TBOOL Create( BLENDMODE a_eBlendMode ) override;
+	virtual void  SetBlendMode( BLENDMODE a_eBlendMode ) override;
 
-    void SetOrderTable( Toshi::TOrderTable* a_pOrderTable );
+	void SetOrderTable( Toshi::TOrderTable* a_pOrderTable );
 
-    ASysShaderHAL* GetSysShaderHAL() const
-    {
-        return TSTATICCAST( ASysShaderHAL, GetShader() );
-    }
+	ASysShaderHAL* GetSysShaderHAL() const
+	{
+		return TSTATICCAST( ASysShaderHAL, GetShader() );
+	}
 
 private:
-    Toshi::TOrderTable* m_pAssignedOrderTable;
+	Toshi::TOrderTable* m_pAssignedOrderTable;
 };

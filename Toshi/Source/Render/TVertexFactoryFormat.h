@@ -1,22 +1,21 @@
 #pragma once
 
-namespace Toshi
-{
+TOSHI_NAMESPACE_START
 
 struct TVertexStreamFormat
 {
-    TUINT16 m_uiVertexSize = 0;
-    TUINT   m_Unk          = 0;
+	TUINT16 m_uiVertexSize = 0;
+	TUINT	m_Unk		   = 0;
 };
 
 struct TVertexFactoryFormat
 {
-    static constexpr TUINT MAX_NUM_STREAMS = 8;
+	static constexpr TUINT MAX_NUM_STREAMS = 8;
 
-    TUINT               m_uiNumStreams = 0;
-    TVertexStreamFormat m_aStreamFormats[ MAX_NUM_STREAMS ];
+	TUINT				m_uiNumStreams = 0;
+	TVertexStreamFormat m_aStreamFormats[ MAX_NUM_STREAMS ];
 
-    TUINT GetNumStreams() const { return m_uiNumStreams; }
+	TUINT GetNumStreams() const { return m_uiNumStreams; }
 };
 
-} // namespace Toshi
+TOSHI_NAMESPACE_END

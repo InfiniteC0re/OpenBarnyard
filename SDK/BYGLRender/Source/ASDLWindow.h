@@ -8,7 +8,7 @@
 class ASDLWindowListener
 {
 public:
-	virtual TBOOL OnEvent(const SDL_Event& a_rEvent) = 0;
+	virtual TBOOL OnEvent( const SDL_Event& a_rEvent ) = 0;
 };
 
 class ASDLWindow
@@ -16,14 +16,14 @@ class ASDLWindow
 public:
 	ASDLWindow() = default;
 
-	TBOOL Create(Toshi::TRenderInterface* a_pRender, const char* a_szTitle);
+	TBOOL Create( Toshi::TRenderInterface* a_pRender, const char* a_szTitle );
 
 	void Update();
 
-	void SetFullscreen(TBOOL a_bFullScreen);
-	void SetPosition(int a_iX, int a_iY, int a_iWidth, int a_iHeight);
+	void SetFullscreen( TBOOL a_bFullScreen );
+	void SetPosition( int a_iX, int a_iY, int a_iWidth, int a_iHeight );
 
-	void SetListener(ASDLWindowListener* a_pListener)
+	void SetListener( ASDLWindowListener* a_pListener )
 	{
 		m_pListener = a_pListener;
 	}
@@ -34,7 +34,7 @@ public:
 	}
 
 private:
-	SDL_Window* m_pWindow = TNULL;
-	ASDLWindowListener* m_pListener;
+	SDL_Window*				 m_pWindow = TNULL;
+	ASDLWindowListener*		 m_pListener;
 	Toshi::TRenderInterface* m_pRender;
 };

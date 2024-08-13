@@ -19,8 +19,8 @@ public:
 
 	void SetTime( FLOAT a_fTime ) { m_fTotalTime = a_fTime; }
 
-	TBOOL& IsVisible()  { return m_bIsVisible; }
-	TBOOL IsValid()     { return m_pTextBox; }
+	TBOOL& IsVisible() { return m_bIsVisible; }
+	TBOOL  IsValid() { return m_pTextBox; }
 
 	TFLOAT GetTotalTime() const { return m_fTotalTime; }
 
@@ -28,6 +28,6 @@ public:
 
 private:
 	AGUI2TextBox* m_pTextBox;
-	TFLOAT m_fTotalTime;
-	TBOOL m_bIsVisible;
+	TFLOAT		  m_fTotalTime;
+	TBOOL		  m_bIsVisible;
 };

@@ -4,5 +4,5 @@
 
 AGUI2Material::AGUI2Material()
 {
-	CALL_THIS(0x0064e450, AGUI2Material*, AGUI2Material*, this);
+	CALL_THIS( 0x0064e450, AGUI2Material*, AGUI2Material*, this );
 }

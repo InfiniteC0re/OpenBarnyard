@@ -21,21 +21,19 @@ static TCHAR s_szBuffer[ 8192 ];
 static TUINT s_uiBufferPos = 0;
 
 ASplitsServer::ASplitsServer() :
-	m_uiBufferSize(0)
+	m_uiBufferSize( 0 )
 {
 	m_NamedPipe.Start(
 		"BYSpeedrunHelper",
 		100,
 		0,
-		MAX_BUFFER_SIZE
-	);
+		MAX_BUFFER_SIZE );
 
 	m_pMemBlock = g_pMemory->CreateMemBlock(
 		128 * 1024,
 		"Autosplitter",
 		g_pMemory->GetGlobalBlock(),
-		0
-	);
+		0 );
 
 	TASSERT( m_pMemBlock != TNULL );
 
@@ -43,30 +41,29 @@ ASplitsServer::ASplitsServer() :
 	TASSERT( bCreatedMutex == TTRUE );
 
 	m_NamedPipe.SetUserData( this );
-	m_NamedPipe.SetMemoryStreamUpdateCallback( []( void*& a_rMemoryStream, TUINT& a_rDataSize, void* a_pUserData )
-	{
+	m_NamedPipe.SetMemoryStreamUpdateCallback( []( void*& a_rMemoryStream, TUINT& a_rDataSize, void* a_pUserData ) {
 		ASplitsServer* pSplits = (ASplitsServer*)a_pUserData;
 		T2MUTEX_LOCK_SCOPE( pSplits->m_EventsMutex );
 
 		// Reset buffer
 		a_rMemoryStream = TNULL;
-		a_rDataSize = 0;
+		a_rDataSize		= 0;
 
 		// If anything is ready to send, process and send the data
 		if ( pSplits->m_QueuedEvents.Size() > 0 )
 		{
 			// Initialise header
 			MsgQueueHeader_t* pHeader = (MsgQueueHeader_t*)pSplits->m_Buffer;
-			pHeader->uiTotalSize = 0;
-			pHeader->uiNumMessages = pSplits->m_QueuedEvents.Size();
-			
+			pHeader->uiTotalSize	  = 0;
+			pHeader->uiNumMessages	  = pSplits->m_QueuedEvents.Size();
+
 			pSplits->m_uiBufferSize = sizeof( MsgQueueHeader_t );
 
 			// Copy events to the buffer
 			for ( TSIZE i = 0; i < pSplits->m_QueuedEvents.Size(); i++ )
 			{
-				TCHAR* pchMsg = pSplits->m_QueuedEvents[ i ];
-				TUINT uiMsgLen = T2String8::Length( pchMsg );
+				TCHAR* pchMsg	= pSplits->m_QueuedEvents[ i ];
+				TUINT  uiMsgLen = T2String8::Length( pchMsg );
 
 				// Store message length
 				*(TUINT32*)( pSplits->m_Buffer + pSplits->m_uiBufferSize ) = uiMsgLen;
@@ -94,7 +91,7 @@ ASplitsServer::ASplitsServer() :
 			{
 				// Send values to the named pipe class
 				a_rMemoryStream = pSplits->m_Buffer;
-				a_rDataSize = pSplits->m_uiBufferSize;
+				a_rDataSize		= pSplits->m_uiBufferSize;
 			}
 		}
 	} );
@@ -191,7 +188,7 @@ void ASplitsServer::WriteString( const TCHAR* a_pchBuffer )
 	T2MUTEX_LOCK_SCOPE( m_EventsMutex );
 
 	TUINT uiSize = T2String8::Length( a_pchBuffer );
-	
+
 	T2String8::Copy( s_szBuffer + s_uiBufferPos, a_pchBuffer, uiSize );
 	s_szBuffer[ s_uiBufferPos + uiSize ] = '\0';
 

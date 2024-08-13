@@ -9,7 +9,7 @@
 
 #include "TMemoryDebugOff.h"
 
-void* __CRTDECL operator new( size_t size )
+void* __CRTDECL operator new( TSIZE size )
 {
 #ifdef TOSHI_PROFILER_MEMORY
     return TMalloc( size, TNULL, TMemory__FILE__, TMemory__LINE__ );
@@ -18,7 +18,7 @@ void* __CRTDECL operator new( size_t size )
 #endif // TOSHI_PROFILER_MEMORY
 }
 
-void* __CRTDECL operator new( size_t size, ::std::nothrow_t const& ) noexcept
+void* __CRTDECL operator new( TSIZE size, ::std::nothrow_t const& ) noexcept
 {
 #ifdef TOSHI_PROFILER_MEMORY
     return TMalloc( size, TNULL, TMemory__FILE__, TMemory__LINE__ );
@@ -27,7 +27,7 @@ void* __CRTDECL operator new( size_t size, ::std::nothrow_t const& ) noexcept
 #endif // TOSHI_PROFILER_MEMORY
 }
 
-void* __CRTDECL operator new[]( size_t size )
+void* __CRTDECL operator new[]( TSIZE size )
 {
 #ifdef TOSHI_PROFILER_MEMORY
     return TMalloc( size, TNULL, TMemory__FILE__, TMemory__LINE__ );
@@ -36,7 +36,7 @@ void* __CRTDECL operator new[]( size_t size )
 #endif // TOSHI_PROFILER_MEMORY
 }
 
-void* __CRTDECL operator new[]( size_t size, ::std::nothrow_t const& ) noexcept
+void* __CRTDECL operator new[]( TSIZE size, ::std::nothrow_t const& ) noexcept
 {
 #ifdef TOSHI_PROFILER_MEMORY
     return TMalloc( size, TNULL, TMemory__FILE__, TMemory__LINE__ );
@@ -65,7 +65,7 @@ void __CRTDECL operator delete[]( void* ptr, ::std::nothrow_t const& ) noexcept
     TFree( ptr );
 }
 
-void __CRTDECL operator delete[]( void* ptr, size_t _Size ) noexcept
+void __CRTDECL operator delete[]( void* ptr, TSIZE _Size ) noexcept
 {
     TFree( ptr );
 }

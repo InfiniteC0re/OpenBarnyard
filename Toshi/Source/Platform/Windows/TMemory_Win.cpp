@@ -9,16 +9,16 @@ TOSHI_NAMESPACE_START
 
 void* TMemory::SysAlloc( TSIZE a_uiSize )
 {
-    void* pMem = GlobalAlloc( 64, a_uiSize );
-    TVALIDPTR( pMem );
+	void* pMem = GlobalAlloc( 64, a_uiSize );
+	TVALIDPTR( pMem );
 
-    return pMem;
+	return pMem;
 }
 
 void TMemory::SysFree( void* a_pMem )
 {
-    TASSERT( TNULL != a_pMem );
-    GlobalFree( a_pMem );
+	TASSERT( TNULL != a_pMem );
+	GlobalFree( a_pMem );
 }
 
 TOSHI_NAMESPACE_END

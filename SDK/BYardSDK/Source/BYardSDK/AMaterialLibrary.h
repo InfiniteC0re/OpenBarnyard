@@ -3,14 +3,14 @@
 #include <Toshi/T2DList.h>
 
 #ifdef TOSHI_SKU_WINDOWS
-#include "Platform/DX8/T2Texture_DX8.h"
+#	include "Platform/DX8/T2Texture_DX8.h"
 #endif // TOSHI_SKU_WINDOWS
 
 class ATexture
 {
 public:
 	Toshi::T2Texture* pTexture;
-	Toshi::TString8 Name;
+	Toshi::TString8	  Name;
 };
 
 class AMaterialLibrary :
@@ -21,40 +21,40 @@ public:
 	{
 		struct TexInfo
 		{
-			BOOL m_bIsT2Texture;
+			BOOL		m_bIsT2Texture;
 			const char* m_szFileName;
-			TUINT m_uiDataSize;
-			void* m_pData;
+			TUINT		m_uiDataSize;
+			void*		m_pData;
 		};
 
-		TINT m_iNumTextures;
-		TexInfo* m_pTextureInfos;
+		TINT		m_iNumTextures;
+		TexInfo*	m_pTextureInfos;
 		const char* m_szPackName;
 	};
 
 public:
 	AMaterialLibrary();
 
-	TBOOL LoadTTLData(void* a_pTTLData);
-	TBOOL LoadTTLFile(const char* a_szFilePath);
-	TBOOL LoadTRBFile(Toshi::TTRB* a_pTRB);
+	TBOOL LoadTTLData( void* a_pTTLData );
+	TBOOL LoadTTLFile( const char* a_szFilePath );
+	TBOOL LoadTRBFile( Toshi::TTRB* a_pTRB );
 
 	void Destroy();
 
-	TINT FindTextureIndex(const char* a_szTextureName);
+	TINT FindTextureIndex( const char* a_szTextureName );
 
 	TINT GetNumTextures() const
 	{
 		return m_iNumTextures;
 	}
 
-	ATexture* GetTexture(TINT a_uiIndex)
+	ATexture* GetTexture( TINT a_uiIndex )
 	{
-		TASSERT(a_uiIndex < m_iNumTextures);
+		TASSERT( a_uiIndex < m_iNumTextures );
 		return m_pTextures + a_uiIndex;
 	}
 
-	void SetPath(const char* a_szFilePath)
+	void SetPath( const char* a_szFilePath )
 	{
 		m_Path = a_szFilePath;
 	}
@@ -67,8 +67,8 @@ public:
 
 public:
 	Toshi::TString8 m_Path;
-	ATexture* m_pTexturesArray;
-	ATexture* m_pTextures;
-	TINT m_iNumTextures;
-	Toshi::TTRB m_TRB;
+	ATexture*		m_pTexturesArray;
+	ATexture*		m_pTextures;
+	TINT			m_iNumTextures;
+	Toshi::TTRB		m_TRB;
 };

@@ -1,12 +1,11 @@
 #pragma once
 #include "Render/TDebugText.h"
 
-namespace Toshi
-{
+TOSHI_NAMESPACE_START
 
 class TDebugD3DText : public TDebugText
 {
 public:
 };
 
-} // namespace Toshi
+TOSHI_NAMESPACE_END

@@ -14,10 +14,9 @@ void ATextureUpdateWatcher::Main()
 	ReadDirectoryChangesW(
 		m_hFile, m_ChangeBuf, 1024, TRUE,
 		FILE_NOTIFY_CHANGE_FILE_NAME |
-		FILE_NOTIFY_CHANGE_DIR_NAME |
-		FILE_NOTIFY_CHANGE_LAST_WRITE,
-		NULL, &m_Overlapped, NULL
-	);
+			FILE_NOTIFY_CHANGE_DIR_NAME |
+			FILE_NOTIFY_CHANGE_LAST_WRITE,
+		NULL, &m_Overlapped, NULL );
 
 	while ( TTRUE )
 	{
@@ -56,17 +55,17 @@ void ATextureUpdateWatcher::Main()
 						{
 							switch ( event->Action )
 							{
-							case FILE_ACTION_ADDED:
-							case FILE_ACTION_MODIFIED:
-							case FILE_ACTION_REMOVED:
-							{
-								sFileName[ name_len - 3 ] = 't';
-								sFileName[ name_len - 2 ] = 'g';
-								sFileName[ name_len - 1 ] = 'a';
+								case FILE_ACTION_ADDED:
+								case FILE_ACTION_MODIFIED:
+								case FILE_ACTION_REMOVED:
+								{
+									sFileName[ name_len - 3 ] = 't';
+									sFileName[ name_len - 2 ] = 'g';
+									sFileName[ name_len - 1 ] = 'a';
 
-								ThreadSleep( 50 );
-								ATextureUpdater::ReloadTexture( sFileName );
-							}
+									ThreadSleep( 50 );
+									ATextureUpdater::ReloadTexture( sFileName );
+								}
 							}
 						}
 					}
@@ -87,10 +86,9 @@ void ATextureUpdateWatcher::Main()
 			ReadDirectoryChangesW(
 				m_hFile, m_ChangeBuf, 1024, TRUE,
 				FILE_NOTIFY_CHANGE_FILE_NAME |
-				FILE_NOTIFY_CHANGE_DIR_NAME |
-				FILE_NOTIFY_CHANGE_LAST_WRITE,
-				NULL, &m_Overlapped, NULL
-			);
+					FILE_NOTIFY_CHANGE_DIR_NAME |
+					FILE_NOTIFY_CHANGE_LAST_WRITE,
+				NULL, &m_Overlapped, NULL );
 		}
 	}
 }
@@ -106,8 +104,7 @@ void ATextureUpdateWatcher::Init( const char* a_szPath )
 		NULL,
 		OPEN_EXISTING,
 		FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OVERLAPPED,
-		NULL
-	);
+		NULL );
 }
 
 void ATextureUpdateWatcher::Destroy()

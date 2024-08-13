@@ -3,38 +3,38 @@
 
 TOSHI_NAMESPACE_USING
 
-void AAssetBuilder::Add(const TString8& a_FileName)
+void AAssetBuilder::Add( const TString8& a_FileName )
 {
 	auto pTRB = m_Files.EmplaceBack();
-	
-	if (pTRB->ReadFromFile(a_FileName.GetString()))
+
+	if ( pTRB->ReadFromFile( a_FileName.GetString() ) )
 	{
-		TASSERT(pTRB->GetSections()->GetStackCount() > 0);
+		TASSERT( pTRB->GetSections()->GetStackCount() > 0 );
 
 		auto pSYMB = pTRB->GetSymbols();
 
-		TString8 symbolDirName = a_FileName.GetString(a_FileName.FindReverse('\\', -1) + 1);
-		symbolDirName.Truncate(symbolDirName.FindReverse('.', -1));
+		TString8 symbolDirName = a_FileName.GetString( a_FileName.FindReverse( '\\', -1 ) + 1 );
+		symbolDirName.Truncate( symbolDirName.FindReverse( '.', -1 ) );
 
-		auto pAsset = m_AssetPack.GetAssets().EmplaceBack();
-		pAsset->Name = symbolDirName.MakeLower();
-		pAsset->pTRB = pTRB;
-		pAsset->pStack = pTRB->GetSections()->GetStack(0);
-		
-		for (TUINT i = 0; i < pSYMB->GetCount(); i++)
+		auto pAsset	   = m_AssetPack.GetAssets().EmplaceBack();
+		pAsset->Name   = symbolDirName.MakeLower();
+		pAsset->pTRB   = pTRB;
+		pAsset->pStack = pTRB->GetSections()->GetStack( 0 );
+
+		for ( TUINT i = 0; i < pSYMB->GetCount(); i++ )
 		{
-			pAsset->RelatedSymbols.Push(pSYMB->GetName(i).GetString());
+			pAsset->RelatedSymbols.Push( pSYMB->GetName( i ).GetString() );
 		}
 
-		TStringManager::String8Copy(pAsset->Format, a_FileName.GetString(a_FileName.Length() - 3), 4);
+		TStringManager::String8Copy( pAsset->Format, a_FileName.GetString( a_FileName.Length() - 3 ), 4 );
 	}
 	else
 	{
-		TERROR("Unable to read file '%s'\n", a_FileName.GetString());
+		TERROR( "Unable to read file '%s'\n", a_FileName.GetString() );
 	}
 }
 
-void AAssetBuilder::Save(const char* a_szFileName, TBOOL a_bCompress)
+void AAssetBuilder::Save( const char* a_szFileName, TBOOL a_bCompress )
 {
-	m_AssetPack.Save(a_szFileName, a_bCompress);
+	m_AssetPack.Save( a_szFileName, a_bCompress );
 }

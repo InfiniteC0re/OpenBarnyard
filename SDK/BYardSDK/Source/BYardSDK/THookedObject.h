@@ -3,12 +3,15 @@
 class THookedObject
 {
 public:
-	enum { IsTObject = TTRUE };
+	enum
+	{
+		IsTObject = TTRUE
+	};
 	static constexpr Toshi::TClass* PARENTCLASS = TNULL;
 
 public:
 	virtual Toshi::TClass* GetClass();
-	virtual void Delete();
+	virtual void		   Delete();
 	virtual ~THookedObject();
 
 public:
@@ -22,6 +25,6 @@ public:
 	static TFORCEINLINE Toshi::TClass* GetClassStatic() { return std::addressof( TClassObjectName ); }
 
 public:
-	inline static Toshi::TClass* ms_pClass = TREINTERPRETCAST( Toshi::TClass*, 0x0077cf30 );
+	inline static Toshi::TClass* ms_pClass		  = TREINTERPRETCAST( Toshi::TClass*, 0x0077cf30 );
 	inline static Toshi::TClass& TClassObjectName = *ms_pClass;
 };

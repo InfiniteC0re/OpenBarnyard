@@ -27,24 +27,24 @@ public:
 	ASysMaterial();
 
 	virtual TBOOL Create() override;
-	virtual TBOOL Create(BLENDMODE a_eBlendMode);
-	virtual void SetBlendMode(BLENDMODE a_eBlendMode);
+	virtual TBOOL Create( BLENDMODE a_eBlendMode );
+	virtual void  SetBlendMode( BLENDMODE a_eBlendMode );
 
-	void SetTexture(Toshi::TTexture* a_pTexture)
+	void SetTexture( Toshi::TTexture* a_pTexture )
 	{
 		m_pTexture = a_pTexture;
 	}
 
 	ASysShader* GetSysShader() const
 	{
-		return TSTATICCAST(ASysShader, GetShader());
+		return TSTATICCAST( ASysShader, GetShader() );
 	}
 
 protected:
 	Toshi::TTexture* m_pTexture;
-	TUINT m_Unk1;
-	TUINT m_Unk2;
-	TUINT m_Unk3;
-	BLENDMODE m_eBlendMode;
-	Toshi::TVector4 m_Vec3;
+	TUINT			 m_Unk1;
+	TUINT			 m_Unk2;
+	TUINT			 m_Unk3;
+	BLENDMODE		 m_eBlendMode;
+	Toshi::TVector4	 m_Vec3;
 };

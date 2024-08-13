@@ -1,11 +1,10 @@
 #pragma once
 #include "Render/TRenderCapture.h"
 
-namespace Toshi
-{
+TOSHI_NAMESPACE_START
 
 class TRenderCaptureD3D : public TRenderCapture
 {
 };
 
-} // namespace Toshi
+TOSHI_NAMESPACE_END

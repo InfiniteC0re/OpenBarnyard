@@ -24,9 +24,9 @@ int main( int argc, char** argv )
 	TUtil::ToshiCreate( toshiParams );
 
 	T2CommandLine commandLine( GetCommandLineA() );
-	auto strOutPath = commandLine.GetParameterValue( "-o" );
-	auto strExportFile = commandLine.GetParameterValue( "-e" );
-	auto strCompileFile = commandLine.GetParameterValue( "-c" );
+	auto		  strOutPath	 = commandLine.GetParameterValue( "-o" );
+	auto		  strExportFile	 = commandLine.GetParameterValue( "-e" );
+	auto		  strCompileFile = commandLine.GetParameterValue( "-c" );
 
 	if ( !strOutPath )
 	{
@@ -44,14 +44,14 @@ int main( int argc, char** argv )
 			TINFO( "Reading input file...\n" );
 
 			PTRBWriter outTrbFile;
-			auto pOutStack = outTrbFile.GetSections()->CreateStream();
+			auto	   pOutStack = outTrbFile.GetSections()->CreateStream();
 
 			// Read file data into a buffer
-			auto uiFileSize = pTextFile->GetSize();
+			auto  uiFileSize  = pTextFile->GetSize();
 			char* pFileBuffer = new char[ uiFileSize + 2 ];
 
 			pTextFile->Read( pFileBuffer, uiFileSize );
-			pFileBuffer[ uiFileSize ] = '\0';
+			pFileBuffer[ uiFileSize ]	  = '\0';
 			pFileBuffer[ uiFileSize + 1 ] = '\0';
 			pTextFile->Destroy();
 
@@ -63,9 +63,9 @@ int main( int argc, char** argv )
 				TArray<TString16> foundStrings;
 
 				T2FormatWString2048 localeString;
-				wchar_t* pFileStart = TREINTERPRETCAST( wchar_t*, pFileBuffer );
-				wchar_t* pFileEnd = TREINTERPRETCAST( wchar_t*, pFileBuffer + uiFileSize );
-				wchar_t* pFileCursor = TREINTERPRETCAST( wchar_t*, pFileBuffer );
+				wchar_t*			pFileStart	= TREINTERPRETCAST( wchar_t*, pFileBuffer );
+				wchar_t*			pFileEnd	= TREINTERPRETCAST( wchar_t*, pFileBuffer + uiFileSize );
+				wchar_t*			pFileCursor = TREINTERPRETCAST( wchar_t*, pFileBuffer );
 
 				while ( pFileCursor < pFileEnd )
 				{
@@ -119,9 +119,9 @@ int main( int argc, char** argv )
 				{
 					for ( TINT i = 0; i < pLocaleStrings->m_numstrings; i++ )
 					{
-						auto pString = pLocaleStrings->Strings[ i ];
+						auto				pString = pLocaleStrings->Strings[ i ];
 						T2FormatWString2048 finalString;
-						TUINT iPos = 0;
+						TUINT				iPos = 0;
 
 						while ( *pString != L'\0' )
 						{

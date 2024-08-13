@@ -3,19 +3,18 @@
 #include "TVertexBlockResource_DX8.h"
 #include "Render/TVertexFactoryResourceInterface.h"
 
-namespace Toshi
-{
+TOSHI_NAMESPACE_START
 
 class TVertexFactoryResource : public TVertexFactoryResourceInterface
 {
 public:
-    TDECLARE_CLASS( TVertexFactoryResource, TVertexFactoryResourceInterface );
+	TDECLARE_CLASS( TVertexFactoryResource, TVertexFactoryResourceInterface );
 
 public:
-    virtual TVertexPoolResourceInterface* CreatePoolResource( TUINT16 a_uiMaxStaticVertices, TUINT16 a_uiFlags );
+	virtual TVertexPoolResourceInterface* CreatePoolResource( TUINT16 a_uiMaxStaticVertices, TUINT16 a_uiFlags );
 
-    TVertexBlockResource* FindBlockResource( TVertexPoolResource* a_pResource );
-    TVertexBlockResource* CreateBlockResource( TUINT16 a_uiMaxVertices, TUINT32 a_uiFlags );
+	TVertexBlockResource* FindBlockResource( TVertexPoolResource* a_pResource );
+	TVertexBlockResource* CreateBlockResource( TUINT16 a_uiMaxVertices, TUINT32 a_uiFlags );
 };
 
-} // namespace Toshi
+TOSHI_NAMESPACE_END

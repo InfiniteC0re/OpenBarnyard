@@ -1,47 +1,47 @@
 #include "pch.h"
 #include "AMemoryPoolAllocator.h"
 
-void* AMemoryPoolAllocator::Malloc(size_t size, size_t alignment)
+void* AMemoryPoolAllocator::Malloc( TSIZE size, TSIZE alignment )
 {
-	return TMemalign(alignment, size, m_pMemBlock);
+	return TMemalign( alignment, size, m_pMemBlock );
 }
 
-void* AMemoryPoolAllocator::Malloc(size_t size)
+void* AMemoryPoolAllocator::Malloc( TSIZE size )
 {
-	return TMalloc(size, m_pMemBlock);
+	return TMalloc( size, m_pMemBlock );
 }
 
-void AMemoryPoolAllocator::Free(void* ptr)
+void AMemoryPoolAllocator::Free( void* ptr )
 {
-	TFree(ptr);
+	TFree( ptr );
 }
 
-TBOOL AMemoryPoolAllocator::CanAllocate(size_t size) const
+TBOOL AMemoryPoolAllocator::CanAllocate( TSIZE size ) const
 {
 	return TTRUE;
 }
 
-void* AMemoryPoolAllocator::TryMalloc(size_t size, size_t alignment)
+void* AMemoryPoolAllocator::TryMalloc( TSIZE size, TSIZE alignment )
 {
-	return TMemalign(alignment, size, m_pMemBlock);
+	return TMemalign( alignment, size, m_pMemBlock );
 }
 
-void* AMemoryPoolAllocator::TryMalloc(size_t size)
+void* AMemoryPoolAllocator::TryMalloc( TSIZE size )
 {
-	return TMalloc(size, m_pMemBlock);
+	return TMalloc( size, m_pMemBlock );
 }
 
-size_t AMemoryPoolAllocator::GetUsedSize() const
+TSIZE AMemoryPoolAllocator::GetUsedSize() const
 {
 	return 0;
 }
 
-size_t AMemoryPoolAllocator::GetCapacity() const
+TSIZE AMemoryPoolAllocator::GetCapacity() const
 {
 	return 0;
 }
 
 void AMemoryPoolAllocator::Unknown()
 {
-	TASSERT(TFALSE);
+	TASSERT( TFALSE );
 }

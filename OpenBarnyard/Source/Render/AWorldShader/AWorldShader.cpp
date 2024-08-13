@@ -13,8 +13,8 @@ TDEFINE_CLASS_NORUNTIME( AWorldShader );
 
 AWorldShader::AWorldShader()
 {
-    m_fUnk2 = 0.5f;
-    m_pUnk3 = TNULL;
+	m_fUnk2 = 0.5f;
+	m_pUnk3 = TNULL;
 }
 
 AWorldShader::~AWorldShader()
@@ -27,7 +27,7 @@ void AWorldShader::EnableRenderEnvMap( TBOOL a_bEnable )
 
 TBOOL AWorldShader::IsHighEndSkinning()
 {
-    return TTRUE;
+	return TTRUE;
 }
 
 void AWorldShader::EnableHighEndSkinning( TBOOL a_bEnable )
@@ -36,12 +36,12 @@ void AWorldShader::EnableHighEndSkinning( TBOOL a_bEnable )
 
 TBOOL AWorldShader::IsCapableHighEndSkinning()
 {
-    return TTRUE;
+	return TTRUE;
 }
 
 TBOOL AWorldShader::IsLightScattering()
 {
-    return TFALSE;
+	return TFALSE;
 }
 
 void AWorldShader::SetLightScattering( TBOOL a_bEnable )
@@ -50,7 +50,7 @@ void AWorldShader::SetLightScattering( TBOOL a_bEnable )
 
 TBOOL AWorldShader::IsAlphaBlendMaterial()
 {
-    return TFALSE;
+	return TFALSE;
 }
 
 void AWorldShader::SetAlphaBlendMaterial( TBOOL a_bIsAlphaBlendMaterial )

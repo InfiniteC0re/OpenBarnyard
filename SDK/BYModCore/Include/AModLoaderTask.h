@@ -10,17 +10,17 @@
 class AModLoaderTask : public Toshi::TTask
 {
 public:
-	TDECLARE_CLASS(AModLoaderTask, Toshi::TTask);
+	TDECLARE_CLASS( AModLoaderTask, Toshi::TTask );
 
 public:
 	MODCORE_API AModLoaderTask();
 	MODCORE_API ~AModLoaderTask();
 
 	TBOOL OnCreate() override;
-	TBOOL OnUpdate(TFLOAT a_fDeltaTime) override;
-	void OnAGUI2Ready();
-	void OnRenderInterfaceReady();
-	void OnAppRendererReady();
+	TBOOL OnUpdate( TFLOAT a_fDeltaTime ) override;
+	void  OnAGUI2Ready();
+	void  OnRenderInterfaceReady();
+	void  OnAppRendererReady();
 
 	void LoadMods();
 	void UnloadMods();
@@ -31,11 +31,11 @@ private:
 	static void AGUI2MainPostRenderCallback();
 
 private:
-	TFLOAT m_fTotalTime;
+	TFLOAT						 m_fTotalTime;
 	Toshi::T2DList<AModInstance> m_LoadedMods;
-	TUINT m_uiNumMods;
-	AGUI2TextBox* m_pTextBox;
-	TBOOL m_bLoaded;
+	TUINT						 m_uiNumMods;
+	AGUI2TextBox*				 m_pTextBox;
+	TBOOL						 m_bLoaded;
 };
 
 class MODCORE_API AGlobalModLoaderTask :
@@ -45,12 +45,11 @@ public:
 	AGlobalModLoaderTask();
 
 	TBOOL Create();
-	void Destroy();
+	void  Destroy();
 
 	static AModLoaderTask* Get() { return GetSingleton()->m_pTask; }
-	static AModInstance* FindMod(const char* a_szModName);
+	static AModInstance*   FindMod( const char* a_szModName );
 
 private:
 	AModLoaderTask* m_pTask;
 };
-

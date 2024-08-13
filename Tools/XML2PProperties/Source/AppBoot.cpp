@@ -49,17 +49,14 @@ int main( int argc, char** argv )
 		TTRACE( "Starting tests...\n" );
 
 		TINT iNumFails = g_pTestingFramework->RunTests(
-			[]( T2TestingFramework::Test* pTest, T2TestingFramework::Check* pCheck )
-			{
+			[]( T2TestingFramework::Test* pTest, T2TestingFramework::Check* pCheck ) {
 				// Fail
 				TTRACE( "- Failed check \'%s\' in the '%s::%s' test\n", pCheck->pchStatement, pTest->pCategory->pchName, pTest->pchName );
 			},
-			[]( T2TestingFramework::Test* pTest, T2TestingFramework::Check* pCheck )
-			{
+			[]( T2TestingFramework::Test* pTest, T2TestingFramework::Check* pCheck ) {
 				TTRACE( "+ Succeded check \'%s\' in the '%s::%s' test\n", pCheck->pchStatement, pTest->pCategory->pchName, pTest->pchName );
 				// Success
-			}
-		);
+			} );
 
 		TTRACE( "Finished the tests with %d fail(s).\n", iNumFails );
 	}
@@ -152,8 +149,8 @@ int main( int argc, char** argv )
 //		a_pRootElement->SetAttribute("type", "string");
 //		a_pRootElement->SetAttribute("value", a_pValue->GetString());
 //		break;
-//	case PBPropertyValue::Type::Float:
-//		a_pRootElement->SetAttribute("type", "float");
+//	case PBPropertyValue::Type::TFLOAT:
+//		a_pRootElement->SetAttribute("type", "TFLOAT");
 //		a_pRootElement->SetAttribute("value", a_pValue->GetFloat());
 //		break;
 //	case PBPropertyValue::Type::Bool:
@@ -391,7 +388,7 @@ int main( int argc, char** argv )
 //			doc.InsertEndChild(pRootElement);
 //			doc.SaveFile(outFilepath);
 //		}
-//		
+//
 //	}
 //
 //	return 0;

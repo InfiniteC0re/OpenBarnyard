@@ -6,30 +6,30 @@
 #include <Math/TVector4.h>
 
 class AGUI2Rectangle :
-    public AGUI2Element
+	public AGUI2Element
 {
 public:
-    AGUI2Rectangle();
+	AGUI2Rectangle();
 
-    virtual void Render() override;
+	virtual void Render() override;
 
-    /**
+	/**
 	 * Sets material and UVs from AGUI2TextureSection.
 	 * 
 	 * @param a_pTexSection can be TNULL
 	 */
-    void SetTextureSection( AGUI2TextureSection* a_pTexSection );
+	void SetTextureSection( AGUI2TextureSection* a_pTexSection );
 
-    /**
+	/**
 	 * Initialises rectangle with it's width and height.
 	 */
-    void Create( TFLOAT a_fWidth, TFLOAT a_fHeight )
-    {
-        AGUI2Element::SetDimensions( a_fWidth, a_fHeight );
-    }
+	void Create( TFLOAT a_fWidth, TFLOAT a_fHeight )
+	{
+		AGUI2Element::SetDimensions( a_fWidth, a_fHeight );
+	}
 
 protected:
-    AGUI2Material*  m_pMaterial;
-    Toshi::TVector4 m_UV1;
-    Toshi::TVector4 m_UV2;
+	AGUI2Material*	m_pMaterial;
+	Toshi::TVector4 m_UV1;
+	Toshi::TVector4 m_UV2;
 };

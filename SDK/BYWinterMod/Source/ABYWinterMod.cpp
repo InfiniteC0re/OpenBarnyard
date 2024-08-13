@@ -16,42 +16,44 @@
 
 TOSHI_NAMESPACE_USING
 
-class ABINKMoviePlayer {};
+class ABINKMoviePlayer
+{};
 
-MEMBER_HOOK(0x006059f0, ABINKMoviePlayer, ABINKMoviePlayer_SetMovieFile, void, const char* a_szMovieFile)
+MEMBER_HOOK( 0x006059f0, ABINKMoviePlayer, ABINKMoviePlayer_SetMovieFile, void, const char* a_szMovieFile )
 {
-	if (TStringManager::String8FindString(a_szMovieFile, "Attract") != TNULL)
+	if ( TStringManager::String8FindString( a_szMovieFile, "Attract" ) != TNULL )
 	{
-		TStringManager::String8Format((char*)(TUINT(this) + 0x37), 64, "%s\\BYWinterMod\\intro_new.bik", GetModsDirectory());
+		TStringManager::String8Format( (char*)( TUINT( this ) + 0x37 ), 64, "%s\\BYWinterMod\\intro_new.bik", GetModsDirectory() );
 		return;
 	}
 
-	CallOriginal(a_szMovieFile);
+	CallOriginal( a_szMovieFile );
 }
 
-class AOptions {};
+class AOptions
+{};
 
-MEMBER_HOOK(0x00662eb0, AOptions, AOptions_LoadSettings, void)
+MEMBER_HOOK( 0x00662eb0, AOptions, AOptions_LoadSettings, void )
 {
 	CallOriginal();
 
 	// Disable high detail grass
-	*(TBOOL*)(TUINT(this) + 0x30) = TFALSE;
+	*(TBOOL*)( TUINT( this ) + 0x30 ) = TFALSE;
 }
 
-TFLOAT g_afLightColour[4] = {
+TFLOAT g_afLightColour[ 4 ] = {
 	218 / 255.0f,
 	236 / 255.0f,
 	254 / 255.0f,
 	255 / 255.0f
 };
 
-void TRenderInterface_SetLightColourMatrix(Toshi::TRenderInterface* a_pRenderInterface, Toshi::TMatrix44* a_pLightColour)
+void TRenderInterface_SetLightColourMatrix( Toshi::TRenderInterface* a_pRenderInterface, Toshi::TMatrix44* a_pLightColour )
 {
-	a_pLightColour->m_f11 = g_afLightColour[0];
-	a_pLightColour->m_f12 = g_afLightColour[1];
-	a_pLightColour->m_f13 = g_afLightColour[2];
-	a_pLightColour->m_f14 = g_afLightColour[3];
+	a_pLightColour->m_f11 = g_afLightColour[ 0 ];
+	a_pLightColour->m_f12 = g_afLightColour[ 1 ];
+	a_pLightColour->m_f13 = g_afLightColour[ 2 ];
+	a_pLightColour->m_f14 = g_afLightColour[ 3 ];
 }
 
 class ABYWinterMod : public AModInstance
@@ -61,17 +63,17 @@ public:
 	{
 		InstallHook<ABINKMoviePlayer_SetMovieFile>();
 		InstallHook<AOptions_LoadSettings>();
-		return AHooks::AddHook(Hook_TRenderInterface_SetLightColourMatrix, HookType_Before, TRenderInterface_SetLightColourMatrix);
+		return AHooks::AddHook( Hook_TRenderInterface_SetLightColourMatrix, HookType_Before, TRenderInterface_SetLightColourMatrix );
 	}
 
-	TBOOL OnUpdate(TFLOAT a_fDeltaTime) override
+	TBOOL OnUpdate( TFLOAT a_fDeltaTime ) override
 	{
 		return TTRUE;
 	}
 
 	void OnUnload() override
 	{
-		if (m_pMatLib)
+		if ( m_pMatLib )
 		{
 			m_pMatLib->Destroy();
 			m_pMatLib = TNULL;
@@ -80,39 +82,35 @@ public:
 
 	void OnAllModsLoaded()
 	{
-		auto pTexturePacksMod = TSTATICCAST(ABYTexturePacks, AGlobalModLoaderTask::FindMod("BYTexturePacks"));
+		auto pTexturePacksMod = TSTATICCAST( ABYTexturePacks, AGlobalModLoaderTask::FindMod( "BYTexturePacks" ) );
 
-		if (pTexturePacksMod)
+		if ( pTexturePacksMod )
 		{
-			pTexturePacksMod->SetTexturePack("Winter");
+			pTexturePacksMod->SetTexturePack( "Winter" );
 		}
 	}
 
-	void OnRenderInterfaceReady(Toshi::TRenderD3DInterface* a_pRenderInterface) override
+	void OnRenderInterfaceReady( Toshi::TRenderD3DInterface* a_pRenderInterface ) override
 	{
 		TRenderInterface::SetSingletonExplicit(
-			THookedRenderD3DInterface::GetSingleton()
-		);
+			THookedRenderD3DInterface::GetSingleton() );
 	}
 
 	void OnAppRendererReady() override
 	{
 		static TBOOL s_bLoaded = TFALSE;
 
-		if (!s_bLoaded)
+		if ( !s_bLoaded )
 		{
 			m_pAssetTRB = new TTRB;
 
-			if (TTRB::ERROR_OK == m_pAssetTRB->Load(
-				TString8::VarArgs("%s\\BYWinterMod\\BYWinterMod.trb", GetModsDirectory())
-			))
+			if ( TTRB::ERROR_OK == m_pAssetTRB->Load( TString8::VarArgs( "%s\\BYWinterMod\\BYWinterMod.trb", GetModsDirectory() ) ) )
 			{
 				m_pMatLib = AMaterialLibraryManager::List::GetSingleton()->CreateLibraryFromAsset(
 					"BYWinterMatlib.ttl",
-					m_pAssetTRB
-				);
+					m_pAssetTRB );
 
-				AMaterialLibraryManager::GetSingleton()->CreateTextures(m_pMatLib);
+				AMaterialLibraryManager::GetSingleton()->CreateTextures( m_pMatLib );
 			}
 			else
 			{
@@ -131,9 +129,9 @@ public:
 
 	const PBProperties* GetFileOverrides() override
 	{
-		if (m_pAssetTRB)
+		if ( m_pAssetTRB )
 		{
-			return PBProperties::LoadFromAsset(m_pAssetTRB, "overrides");
+			return PBProperties::LoadFromAsset( m_pAssetTRB, "overrides" );
 		}
 
 		return TNULL;
@@ -146,7 +144,7 @@ public:
 
 	void OnImGuiRender() override
 	{
-		ImGui::ColorEdit4("Lighting Colour", g_afLightColour);
+		ImGui::ColorEdit4( "Lighting Colour", g_afLightColour );
 	}
 
 	TBOOL HasSettingsUI() override
@@ -155,22 +153,22 @@ public:
 	}
 
 private:
-	Toshi::TTRB* m_pAssetTRB = TNULL;
-	AMaterialLibrary* m_pMatLib = TNULL;
+	Toshi::TTRB*	  m_pAssetTRB = TNULL;
+	AMaterialLibrary* m_pMatLib	  = TNULL;
 };
 
 extern "C"
 {
 	MODLOADER_EXPORT AModInstance* CreateModInstance( const T2CommandLine* a_pCommandLine )
 	{
-		TMemory::Initialise(2 * 1024 * 1024, 0);
+		TMemory::Initialise( 2 * 1024 * 1024, 0 );
 
 		TUtil::TOSHIParams toshiParams;
 		toshiParams.szCommandLine = "";
 		toshiParams.szLogFileName = "wintermod";
-		toshiParams.szLogAppName = "BYWinterMod";
+		toshiParams.szLogAppName  = "BYWinterMod";
 
-		TUtil::ToshiCreate(toshiParams);
+		TUtil::ToshiCreate( toshiParams );
 
 		return new ABYWinterMod();
 	}

@@ -7,88 +7,87 @@
 //-----------------------------------------------------------------------------
 #include "Core/TMemoryDebugOn.h"
 
-namespace Toshi
-{
+TOSHI_NAMESPACE_START
 
 T2CommandLine::T2CommandLine( T2ConstString8 a_pchCommandLine )
 {
-    Create( a_pchCommandLine );
+	Create( a_pchCommandLine );
 }
 
 T2CommandLine::T2CommandLine()
 {
-    m_szCommandLine[ 0 ] = '\0';
-    m_bInitialised       = TFALSE;
+	m_szCommandLine[ 0 ] = '\0';
+	m_bInitialised		 = TFALSE;
 }
 
 void T2CommandLine::Create( T2ConstString8 a_pchCommandLine )
 {
-    if ( a_pchCommandLine )
-    {
-        TSIZE uiCommandLineLength = a_pchCommandLine.Length();
-        m_szCommandLine.Copy( a_pchCommandLine );
-        m_bInitialised = TTRUE;
+	if ( a_pchCommandLine )
+	{
+		TSIZE uiCommandLineLength = a_pchCommandLine.Length();
+		m_szCommandLine.Copy( a_pchCommandLine );
+		m_bInitialised = TTRUE;
 
-        m_Parser.SetBuffer( a_pchCommandLine, uiCommandLineLength );
+		m_Parser.SetBuffer( a_pchCommandLine, uiCommandLineLength );
 
-        // Parse the parameters
-        m_ParsedParams.Clear();
+		// Parse the parameters
+		m_ParsedParams.Clear();
 
-        char szToken[ 1024 ];
-        while ( !m_Parser.IsOver() )
-        {
-            TBOOL bReadToken = m_Parser.ReadToken( szToken, sizeof( szToken ) );
+		char szToken[ 1024 ];
+		while ( !m_Parser.IsOver() )
+		{
+			TBOOL bReadToken = m_Parser.ReadToken( szToken, sizeof( szToken ) );
 
-            if ( bReadToken )
-                m_ParsedParams.Push( szToken );
-        }
-    }
+			if ( bReadToken )
+				m_ParsedParams.Push( szToken );
+		}
+	}
 }
 
 TBOOL T2CommandLine::HasParameter( const TCHAR* a_pszParameter, TINT* a_pIndex /*= TNULL */ ) const
 {
-    TASSERT( m_bInitialised );
+	TASSERT( m_bInitialised );
 
-    if ( a_pIndex )
-        *a_pIndex = -1;
+	if ( a_pIndex )
+		*a_pIndex = -1;
 
-    TARRAY_FOREACH( m_ParsedParams, it )
-    {
-        if ( it.Get() == a_pszParameter )
-        {
-            if ( a_pIndex )
-                *a_pIndex = it.GetCurrentIndex();
+	TARRAY_FOREACH( m_ParsedParams, it )
+	{
+		if ( it.Get() == a_pszParameter )
+		{
+			if ( a_pIndex )
+				*a_pIndex = it.GetCurrentIndex();
 
-            return TTRUE;
-        }
-    }
+			return TTRUE;
+		}
+	}
 
-    return TFALSE;
+	return TFALSE;
 }
 
 TString8 T2CommandLine::GetParameterValue( const TCHAR* a_pszParameter, const TCHAR* a_pszDefaultValue ) const
 {
-    TASSERT( m_bInitialised );
+	TASSERT( m_bInitialised );
 
-    const TCHAR* pszValue = GetNextParameter( a_pszParameter );
+	const TCHAR* pszValue = GetNextParameter( a_pszParameter );
 
-    if ( pszValue )
-        return pszValue;
+	if ( pszValue )
+		return pszValue;
 
-    return a_pszDefaultValue;
+	return a_pszDefaultValue;
 }
 
 const TCHAR* T2CommandLine::GetNextParameter( const TCHAR* a_pszParameter ) const
 {
-    TINT  iParamIndex;
-    TBOOL bHasParam = HasParameter( a_pszParameter, &iParamIndex );
+	TINT  iParamIndex;
+	TBOOL bHasParam = HasParameter( a_pszParameter, &iParamIndex );
 
-    if ( bHasParam && iParamIndex + 1 < m_ParsedParams.Size() )
-    {
-        return m_ParsedParams[ iParamIndex + 1 ];
-    }
+	if ( bHasParam && iParamIndex + 1 < m_ParsedParams.Size() )
+	{
+		return m_ParsedParams[ iParamIndex + 1 ];
+	}
 
-    return TNULL;
+	return TNULL;
 }
 
-} // namespace Toshi
+TOSHI_NAMESPACE_END

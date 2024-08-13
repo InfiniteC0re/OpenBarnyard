@@ -1,8 +1,7 @@
 #pragma once
 #include "TVector4.h"
 
-namespace Toshi
-{
+TOSHI_NAMESPACE_START
 
 namespace TMath
 {
@@ -11,4 +10,4 @@ TBOOL ConeVsSphere( const TVector4& a_rvConePosition, const TVector4& a_rvConeDi
 
 }
 
-} // namespace Toshi
+TOSHI_NAMESPACE_END

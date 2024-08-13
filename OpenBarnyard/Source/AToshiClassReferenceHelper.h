@@ -7,5 +7,5 @@
 class AToshiClassReferenceHelper
 {
 public:
-    AToshiClassReferenceHelper();
+	AToshiClassReferenceHelper();
 };

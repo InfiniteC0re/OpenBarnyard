@@ -31,47 +31,47 @@ public:
 
 	struct GUI2
 	{
-		using t_MainPostRenderCallback = void(*)();
-		inline static Toshi::T2Vector<t_MainPostRenderCallback, MAX_NUM_CALLBACKS> MainPostRenderCallback[HookType_NUMOF];
+		using t_MainPostRenderCallback = void ( * )();
+		inline static Toshi::T2Vector<t_MainPostRenderCallback, MAX_NUM_CALLBACKS> MainPostRenderCallback[ HookType_NUMOF ];
 	};
 
 	struct GUISlideshow
 	{
-		using t_ProcessInput = TBOOL(*)(AGUISlideshow* a_pSlideshow, Toshi::TInputInterface::InputEvent* a_pEvent);
-		inline static Toshi::T2Vector<t_ProcessInput, MAX_NUM_CALLBACKS> ProcessInput[HookType_NUMOF];
+		using t_ProcessInput = TBOOL ( * )( AGUISlideshow* a_pSlideshow, Toshi::TInputInterface::InputEvent* a_pEvent );
+		inline static Toshi::T2Vector<t_ProcessInput, MAX_NUM_CALLBACKS> ProcessInput[ HookType_NUMOF ];
 	};
 
 	struct Terrain
 	{
-		using t_Render = void(*)(ATerrainInterface* a_pTerrain);
-		inline static Toshi::T2Vector<t_Render, MAX_NUM_CALLBACKS> Render[HookType_NUMOF];
+		using t_Render = void ( * )( ATerrainInterface* a_pTerrain );
+		inline static Toshi::T2Vector<t_Render, MAX_NUM_CALLBACKS> Render[ HookType_NUMOF ];
 	};
 
 	struct ModelLoader
 	{
-		using t_LoadTRBCallback = TBOOL(*)(Toshi::TModel* a_pModel);
-		inline static Toshi::T2Vector<t_LoadTRBCallback, MAX_NUM_CALLBACKS> LoadTRBCallback[HookType_NUMOF];
+		using t_LoadTRBCallback = TBOOL ( * )( Toshi::TModel* a_pModel );
+		inline static Toshi::T2Vector<t_LoadTRBCallback, MAX_NUM_CALLBACKS> LoadTRBCallback[ HookType_NUMOF ];
 	};
 
 	struct MaterialLibrary
 	{
-		using t_LoadTTLData = TBOOL(*)(AMaterialLibrary* a_pMatLib, AMaterialLibrary::TTL* a_pTTL);
-		inline static Toshi::T2Vector<t_LoadTTLData, MAX_NUM_CALLBACKS> LoadTTLData[HookType_NUMOF];
+		using t_LoadTTLData = TBOOL ( * )( AMaterialLibrary* a_pMatLib, AMaterialLibrary::TTL* a_pTTL );
+		inline static Toshi::T2Vector<t_LoadTTLData, MAX_NUM_CALLBACKS> LoadTTLData[ HookType_NUMOF ];
 	};
 
 	struct RenderInterface
 	{
-		using t_SetLightColourMatrix = void(*)(Toshi::TRenderInterface* a_pRenderInterface, Toshi::TMatrix44* a_pLightColour);
-		inline static Toshi::T2Vector<t_SetLightColourMatrix, MAX_NUM_CALLBACKS> SetLightColourMatrix[HookType_NUMOF];
+		using t_SetLightColourMatrix = void ( * )( Toshi::TRenderInterface* a_pRenderInterface, Toshi::TMatrix44* a_pLightColour );
+		inline static Toshi::T2Vector<t_SetLightColourMatrix, MAX_NUM_CALLBACKS> SetLightColourMatrix[ HookType_NUMOF ];
 	};
 
 	struct Uncategorized
 	{
-		using t_NewGameStarted = void(*)();
-		inline static Toshi::T2Vector<t_NewGameStarted, MAX_NUM_CALLBACKS> NewGameStarted[HookType_NUMOF];
+		using t_NewGameStarted = void ( * )();
+		inline static Toshi::T2Vector<t_NewGameStarted, MAX_NUM_CALLBACKS> NewGameStarted[ HookType_NUMOF ];
 	};
 
 public:
 	static void Initialise();
-	TBOOL static AddHook(Hook a_eHook, HookType a_eHookType, void* a_pCallback);
+	TBOOL static AddHook( Hook a_eHook, HookType a_eHookType, void* a_pCallback );
 };

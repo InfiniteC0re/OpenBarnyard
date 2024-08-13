@@ -8,12 +8,12 @@ class AWaveBank;
 class TDEPRECATED ASound
 {
 public:
-    friend class ASoundManager;
+	friend class ASoundManager;
 
 public:
 private:
-    TINT         m_iId;
-    TINT         m_iFlags;
-    AWaveBank*   m_pWaveBank;
-    ASoundWaveId m_iWaveId;
+	TINT		 m_iId;
+	TINT		 m_iFlags;
+	AWaveBank*	 m_pWaveBank;
+	ASoundWaveId m_iWaveId;
 };

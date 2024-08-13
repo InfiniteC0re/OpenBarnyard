@@ -10,51 +10,51 @@
 //-----------------------------------------------------------------------------
 #include "Core/TMemoryDebugOn.h"
 
-namespace Toshi
-{
+TOSHI_NAMESPACE_START
+
 void TUtil::TrimLog( const TCHAR* fileName, TSIZE trimTo )
 {
-    // and yes they actually did it with std
+	// and yes they actually did it with std
 
-    WIN32_FIND_DATAA          ffd;
-    std::queue< std::string > queue;
+	WIN32_FIND_DATAA		ffd;
+	std::queue<std::string> queue;
 
-    HANDLE hFind = FindFirstFileA( fileName, &ffd );
+	HANDLE hFind = FindFirstFileA( fileName, &ffd );
 
-    if ( INVALID_HANDLE_VALUE == hFind )
-    {
-        FindClose( hFind );
-        return;
-    }
+	if ( INVALID_HANDLE_VALUE == hFind )
+	{
+		FindClose( hFind );
+		return;
+	}
 
-    do
-    {
-        if ( ffd.dwFileAttributes & FILE_ATTRIBUTE_ARCHIVE )
-        {
-            queue.push( ffd.cFileName );
-        }
+	do
+	{
+		if ( ffd.dwFileAttributes & FILE_ATTRIBUTE_ARCHIVE )
+		{
+			queue.push( ffd.cFileName );
+		}
 
-        BOOL found = FindNextFileA( hFind, &ffd );
+		BOOL found = FindNextFileA( hFind, &ffd );
 
-        if ( !found )
-        {
-            FindClose( hFind );
-            do
-            {
-                DeleteFileA( queue.front().c_str() );
-                queue.pop();
-            } while ( queue.size() > trimTo );
-            return;
-        }
+		if ( !found )
+		{
+			FindClose( hFind );
+			do
+			{
+				DeleteFileA( queue.front().c_str() );
+				queue.pop();
+			} while ( queue.size() > trimTo );
+			return;
+		}
 
-    } while ( TTRUE );
+	} while ( TTRUE );
 }
 
 const TCHAR* TUtil::GetTime()
 {
-    time_t t   = time( NULL );
-    TCHAR* str = ctime( &t );
-    return strtok( str, "\n" );
+	time_t t   = time( NULL );
+	TCHAR* str = ctime( &t );
+	return strtok( str, "\n" );
 }
 
 // Note from AdventureT: GetUnixSeconds is 1:1 just time() from <time.h>
@@ -83,4 +83,5 @@ const TCHAR* TUtil::GetTime()
 //	if (pOut != NULL) { *pOut = result; }
 //	return result;
 //}
-} // namespace Toshi
+
+TOSHI_NAMESPACE_END

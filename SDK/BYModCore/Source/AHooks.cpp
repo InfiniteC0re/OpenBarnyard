@@ -20,10 +20,10 @@
 
 TOSHI_NAMESPACE_USING
 
-TUINT g_uiWindowWidth = 0;
-TUINT g_uiWindowHeight = 0;
-TBOOL g_bBikeFOVPatch = TFALSE;
-TFLOAT g_fOriginalFOV = 0.0f;
+TUINT  g_uiWindowWidth	= 0;
+TUINT  g_uiWindowHeight = 0;
+TBOOL  g_bBikeFOVPatch	= TFALSE;
+TFLOAT g_fOriginalFOV	= 0.0f;
 
 // Replacing this method since it's all useless now but can crash the game
 HOOK( 0x006b4cb0, TMemory_UnkMethod, TBOOL, TMemory::MemBlock* a_pMemBlock )
@@ -32,7 +32,7 @@ HOOK( 0x006b4cb0, TMemory_UnkMethod, TBOOL, TMemory::MemBlock* a_pMemBlock )
 
 	return TTRUE;
 
-#else  // TMEMORY_USE_DLMALLOC
+#else // TMEMORY_USE_DLMALLOC
 
 	return CallOriginal( a_pMemBlock );
 
@@ -66,7 +66,7 @@ HOOK( 0x006b5740, TMemory_Initialise, TBOOL, TUINT a_uiHeapSize, TUINT a_uiReser
 
 	return bInitialised;
 
-#else  // TMEMORY_USE_DLMALLOC
+#else // TMEMORY_USE_DLMALLOC
 
 	return CallOriginal( a_uiHeapSize, a_uiReservedSize, a_uiUnused );
 
@@ -84,7 +84,7 @@ MEMBER_HOOK( 0x006b5510, TMemory, TMemory_CreateMemBlock, TMemory::MemBlock*, TU
 
 	return pMemModule->dlheapcreatesubheap( a_pOwnerBlock, a_uiSize + 1024 * 4, TMemoryHeapFlags_UseMutex, a_szName );
 
-#else  // TMEMORY_USE_DLMALLOC
+#else // TMEMORY_USE_DLMALLOC
 
 	return CallOriginal( a_uiSize, a_szName, a_pOwnerBlock, a_iUnused );
 
@@ -98,7 +98,7 @@ MEMBER_HOOK( 0x006b5090, TMemory, TMemory_DestroyMemBlock, void, TMemory::MemBlo
 	TMemoryDL* pMemModule = THookedMemory::GetSingleton()->GetMemModule();
 	pMemModule->dlheapdestroy( a_pMemBlock );
 
-#else  // TMEMORY_USE_DLMALLOC
+#else // TMEMORY_USE_DLMALLOC
 
 	CallOriginal( a_pMemBlock );
 
@@ -111,7 +111,7 @@ HOOK( 0x006b4ba0, TMemory_GetMemInfo, void, TMemory::MemInfo* a_pMemInfo, TMemor
 
 	THookedMemory::GetSingleton()->GetMemInfo( *a_pMemInfo, a_pMemBlock );
 
-#else  // TMEMORY_USE_DLMALLOC
+#else // TMEMORY_USE_DLMALLOC
 
 	CallOriginal( a_pMemInfo, a_pMemBlock );
 
@@ -123,14 +123,14 @@ MEMBER_HOOK( 0x006b4b80, TMemory, TMemory_SetGlobalBlock, TMemory::MemBlock*, TM
 #ifdef TMEMORY_USE_DLMALLOC
 
 	TMemoryDL* pMemModule = THookedMemory::GetSingleton()->GetMemModule();
-	MemBlock* pOldHeap = pMemModule->GetHeap();
+	MemBlock*  pOldHeap	  = pMemModule->GetHeap();
 
 	m_pGlobalBlock = a_pMemBlock;
 	pMemModule->SetHeap( a_pMemBlock );
 
 	return pOldHeap;
 
-#else  // TMEMORY_USE_DLMALLOC
+#else // TMEMORY_USE_DLMALLOC
 
 	return CallOriginal( a_pMemBlock );
 
@@ -146,7 +146,7 @@ MEMBER_HOOK( 0x006b4a20, TMemory, TMemory_Free, TBOOL, void* a_pMem )
 
 	return TTRUE;
 
-#else  // TMEMORY_USE_DLMALLOC
+#else // TMEMORY_USE_DLMALLOC
 
 	return CallOriginal( a_pMem );
 
@@ -168,35 +168,37 @@ MEMBER_HOOK( 0x006b5230, TMemory, TMemory_Alloc, void*, TUINT a_uiSize, TUINT a_
 
 	return a_pMemBlock->Memalign( a_uiAlignment, a_uiSize );
 
-#else  // TMEMORY_USE_DLMALLOC
+#else // TMEMORY_USE_DLMALLOC
 
 	return CallOriginal( a_uiSize, a_uiAlignment, a_pMemBlock, a_szUnused1, a_iUnused2 );
 
 #endif // !TMEMORY_USE_DLMALLOC
 }
 
-class ACollisionObjectModel { TCHAR PADDING[ 0xA4 ]; };
+class ACollisionObjectModel
+{
+	TCHAR PADDING[ 0xA4 ];
+};
 class AInstanceManager_CollObjectModel :
 	public ACollisionObjectModel,
 	public T2SList<AInstanceManager_CollObjectModel>::Node
 {
-
 };
 
 MEMBER_HOOK( 0x005dfac0, AInstanceManager_CollObjectModel, CollObjectModel_DCTOR, void )
 {
 	TCHAR* pInstanceManager = *(TCHAR**)0x0078deb0;
 
-	auto pList1 = ( T2SList<AInstanceManager_CollObjectModel>* )( pInstanceManager + 0xefa0 );
-	auto pList2 = ( T2SList<AInstanceManager_CollObjectModel>* )( pInstanceManager + 0xefa4 );
+	auto pList1 = (T2SList<AInstanceManager_CollObjectModel>*)( pInstanceManager + 0xefa0 );
+	auto pList2 = (T2SList<AInstanceManager_CollObjectModel>*)( pInstanceManager + 0xefa4 );
 
 	// HACK [7/18/2024 InfiniteC0re]
 	// For some reason the original game doesn't clear both the lists before destroying this
 	// type of objects and it can cause the game to crash during unloading a level sometimes.
-	// 
+	//
 	// To reproduce, start chicken launch or sharp squirter from the antics menu and return
 	// back to the menu and the game will crash
-	// 
+	//
 	// Chasing Chicks crash is NOT related to this one!
 
 	pList1->Reset();
@@ -205,13 +207,14 @@ MEMBER_HOOK( 0x005dfac0, AInstanceManager_CollObjectModel, CollObjectModel_DCTOR
 	CallOriginal();
 }
 
-class AOptions { };
+class AOptions
+{};
 
 MEMBER_HOOK( 0x00662d90, AOptions, AOptions_IsResolutionCompatible, TBOOL, TINT a_iWidth, TINT a_iHeight )
 {
 	TBOOL* pIsWindowed = (TBOOL*)( ( TUINT( this ) + 0x20 ) );
-	TINT* pWidth = (TINT*)( ( TUINT( this ) + 0x24 ) );
-	TINT* pHeight = (TINT*)( ( TUINT( this ) + 0x28 ) );
+	TINT*  pWidth	   = (TINT*)( ( TUINT( this ) + 0x24 ) );
+	TINT*  pHeight	   = (TINT*)( ( TUINT( this ) + 0x28 ) );
 
 	if ( *pIsWindowed == TFALSE )
 	{
@@ -224,10 +227,10 @@ MEMBER_HOOK( 0x00662d90, AOptions, AOptions_IsResolutionCompatible, TBOOL, TINT 
 
 			if ( msgBoxResult == IDYES )
 			{
-				a_iWidth = windowRect.right;
+				a_iWidth  = windowRect.right;
 				a_iHeight = windowRect.bottom;
 
-				HKEY hkey;
+				HKEY	hkey;
 				LSTATUS status = RegCreateKeyExA( HKEY_CURRENT_USER, "Software\\THQ\\Barnyard", NULL, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hkey, NULL );
 
 				if ( status == 0 )
@@ -246,14 +249,14 @@ MEMBER_HOOK( 0x00662d90, AOptions, AOptions_IsResolutionCompatible, TBOOL, TINT 
 		}
 	}
 
-	constexpr TFLOAT ASPECT_RATIO_5_4 = 5.0f / 4.0f;
+	constexpr TFLOAT ASPECT_RATIO_5_4	= 5.0f / 4.0f;
 	constexpr TFLOAT ASPECT_RATIO_25_16 = 25.0f / 16.0f;
 	constexpr TFLOAT ASPECT_RATIO_16_10 = 16.0f / 10.0f;
-	constexpr TFLOAT ASPECT_RATIO_15_9 = 15.0f / 9.0f;
-	constexpr TFLOAT ASPECT_RATIO_16_9 = 16.0f / 9.0f;
+	constexpr TFLOAT ASPECT_RATIO_15_9	= 15.0f / 9.0f;
+	constexpr TFLOAT ASPECT_RATIO_16_9	= 16.0f / 9.0f;
 
-	TFLOAT fCurrentAspectRatio = TFLOAT( a_iWidth ) / TFLOAT( a_iHeight );
-	TFLOAT* pFOV = (TFLOAT*)0x007822ac;
+	TFLOAT	fCurrentAspectRatio = TFLOAT( a_iWidth ) / TFLOAT( a_iHeight );
+	TFLOAT* pFOV				= (TFLOAT*)0x007822ac;
 
 	if ( TMath::Abs( fCurrentAspectRatio - ASPECT_RATIO_5_4 ) <= 0.1f )
 	{
@@ -265,24 +268,24 @@ MEMBER_HOOK( 0x00662d90, AOptions, AOptions_IsResolutionCompatible, TBOOL, TINT 
 	}
 	else if ( TMath::Abs( fCurrentAspectRatio - ASPECT_RATIO_16_10 ) <= 0.1f )
 	{
-		*pFOV = 1.2244f;
+		*pFOV			= 1.2244f;
 		g_bBikeFOVPatch = TTRUE;
 	}
 	else if ( TMath::Abs( fCurrentAspectRatio - ASPECT_RATIO_15_9 ) <= 0.1f )
 	{
-		*pFOV = 1.24655f;
+		*pFOV			= 1.24655f;
 		g_bBikeFOVPatch = TTRUE;
 	}
 	else if ( TMath::Abs( fCurrentAspectRatio - ASPECT_RATIO_16_9 ) <= 0.1f )
 	{
-		*pFOV = 1.313f;
+		*pFOV			= 1.313f;
 		g_bBikeFOVPatch = TTRUE;
 	}
 
-	*pWidth = a_iWidth;
+	*pWidth	 = a_iWidth;
 	*pHeight = a_iHeight;
 
-	g_uiWindowWidth = a_iWidth;
+	g_uiWindowWidth	 = a_iWidth;
 	g_uiWindowHeight = a_iHeight;
 
 	g_fOriginalFOV = *pFOV;
@@ -290,7 +293,8 @@ MEMBER_HOOK( 0x00662d90, AOptions, AOptions_IsResolutionCompatible, TBOOL, TINT 
 	return TFALSE;
 }
 
-class ADisplayModes_Win { };
+class ADisplayModes_Win
+{};
 
 MEMBER_HOOK( 0x00614d70, ADisplayModes_Win, ADisplayModes_Win_DoesModeExist, TBOOL, TINT& a_rWidth, TINT& a_rHeight, TUINT& a_rColourDepth )
 {
@@ -311,9 +315,9 @@ MEMBER_HOOK( 0x006bb000, TTRB, TTRB_Load, TINT, const char* a_szFileName, TUINT 
 
 	filepath.MakeLower();
 
-	auto pModLoaderTask = AGlobalModLoaderTask::Get();
-	auto pMods = &pModLoaderTask->GetMods();
-	TBOOL bFound = TFALSE;
+	auto  pModLoaderTask = AGlobalModLoaderTask::Get();
+	auto  pMods			 = &pModLoaderTask->GetMods();
+	TBOOL bFound		 = TFALSE;
 
 	for ( auto it = pMods->Begin(); it != pMods->End(); it++ )
 	{
@@ -363,9 +367,9 @@ MEMBER_HOOK( 0x006c1d40, TModelManager, TModelRegistry_CreateModel, TModelManage
 	TString8 inputFileName = filepath.GetString( filepath.FindReverse( '\\', -1 ) + 1 );
 	inputFileName.Truncate( inputFileName.FindReverse( '.', -1 ) );
 
-	auto pModLoaderTask = AGlobalModLoaderTask::Get();
-	auto pMods = &pModLoaderTask->GetMods();
-	TTRB* pFoundAsset = TNULL;
+	auto  pModLoaderTask = AGlobalModLoaderTask::Get();
+	auto  pMods			 = &pModLoaderTask->GetMods();
+	TTRB* pFoundAsset	 = TNULL;
 
 	for ( auto it = pMods->Begin(); it != pMods->End(); it++ )
 	{
@@ -408,7 +412,8 @@ MEMBER_HOOK( 0x006bf6b0, TRenderInterface, TRenderInterface_SetLightColourMatrix
 	}
 }
 
-class AFrontEndMiniGameState2 {};
+class AFrontEndMiniGameState2
+{};
 
 MEMBER_HOOK( 0x00409ce0, AFrontEndMiniGameState2, AFrontEndMiniGameState2_CTOR, void, TBOOL a_bHideVariantSelector )
 {
@@ -432,8 +437,7 @@ MEMBER_HOOK( 0x006154c0, ARenderer, ARenderer_CreateTRender, TBOOL )
 	TBOOL bResult = CallOriginal();
 
 	TRenderInterface::SetSingletonExplicit(
-		THookedRenderD3DInterface::GetSingleton()
-	);
+		THookedRenderD3DInterface::GetSingleton() );
 
 	AGlobalModLoaderTask::Get()->OnRenderInterfaceReady();
 
@@ -454,7 +458,7 @@ TBOOL MaterialLibrary_LoadTTLData( AMaterialLibrary* a_pMatLib, AMaterialLibrary
 {
 	auto pTTL = TSTATICCAST( AMaterialLibrary::TTL, a_pTTLData );
 
-	auto pLibList = AMaterialLibraryManager::List::GetSingleton();
+	auto pLibList	  = AMaterialLibraryManager::List::GetSingleton();
 	TINT iNumTextures = 0;
 
 	if ( AMaterialLibrary::ms_bSkipLoadedTextures )
@@ -473,8 +477,8 @@ TBOOL MaterialLibrary_LoadTTLData( AMaterialLibrary* a_pMatLib, AMaterialLibrary
 	}
 
 	a_pMatLib->m_pTexturesArray = new ATexture[ iNumTextures ];
-	a_pMatLib->m_pTextures = a_pMatLib->m_pTexturesArray;
-	a_pMatLib->m_iNumTextures = iNumTextures;
+	a_pMatLib->m_pTextures		= a_pMatLib->m_pTexturesArray;
+	a_pMatLib->m_iNumTextures	= iNumTextures;
 
 	// Calculate maximum texture size to preallocate a buffer
 	TSIZE uiMaxTextureSize = 0;
@@ -559,21 +563,16 @@ MEMBER_HOOK( 0x006da4d0, TMSWindow, TMSWindow_SetPosition, void, TUINT x, TUINT 
 	{
 		// Fix window size when in windowed mode
 		RECT rect;
-		rect.left = x;
-		rect.top = y;
-		rect.right = width;
+		rect.left	= x;
+		rect.top	= y;
+		rect.right	= width;
 		rect.bottom = height;
 
-		if ( TRUE == AdjustWindowRectEx(
-			&rect,
-			GetWindowLongA( GetHWND(), GWL_STYLE ),
-			FALSE,
-			GetWindowLongA( GetHWND(), GWL_EXSTYLE )
-		) )
+		if ( TRUE == AdjustWindowRectEx( &rect, GetWindowLongA( GetHWND(), GWL_STYLE ), FALSE, GetWindowLongA( GetHWND(), GWL_EXSTYLE ) ) )
 		{
-			x = rect.left;
-			y = rect.top;
-			width = rect.right;
+			x	   = rect.left;
+			y	   = rect.top;
+			width  = rect.right;
 			height = rect.bottom;
 		}
 	}
@@ -725,14 +724,14 @@ HOOK( 0x006114d0, AModelLoader_AModelLoaderLoadTRBCallback, TBOOL, TModel* a_pMo
 	return bRes;
 }
 
-TBOOL g_bNoCullingInRadiusOfObject = TTRUE;
+TBOOL  g_bNoCullingInRadiusOfObject = TTRUE;
 TFLOAT g_fNoCullingAdditionalRadius = 50.0f;
 
 HOOK( 0x006cead0, TRenderContext_CullSphereToFrustumSimple, TBOOL, const TSphere& a_rSphere, const TPlane* a_pPlanes, int a_iNumPlane )
 {
 	if ( g_bNoCullingInRadiusOfObject && ACameraManager::IsSingletonCreated() )
 	{
-		auto pCamera = ACameraManager::GetSingleton()->GetCurrentCamera();
+		auto  pCamera			 = ACameraManager::GetSingleton()->GetCurrentCamera();
 		auto& vCameraTranslation = pCamera->m_Matrix.GetTranslation();
 
 		auto fDistance = TVector3::DistanceSq( a_rSphere.GetOrigin(), vCameraTranslation.AsVector3() );
@@ -743,7 +742,7 @@ HOOK( 0x006cead0, TRenderContext_CullSphereToFrustumSimple, TBOOL, const TSphere
 		}
 	}
 
-	for ( size_t i = 0; i < 6; i++ )
+	for ( TSIZE i = 0; i < 6; i++ )
 	{
 		TFLOAT fDist = TVector4::DotProduct3( a_rSphere.AsVector4(), a_pPlanes[ i ].AsVector4() );
 
@@ -758,7 +757,7 @@ HOOK( 0x006cea40, TRenderContext_CullSphereToFrustum, TINT, const TSphere& a_rSp
 {
 	if ( g_bNoCullingInRadiusOfObject && ACameraManager::IsSingletonCreated() )
 	{
-		auto pCamera = ACameraManager::GetSingleton()->GetCurrentCamera();
+		auto  pCamera			 = ACameraManager::GetSingleton()->GetCurrentCamera();
 		auto& vCameraTranslation = pCamera->m_Matrix.GetTranslation();
 
 		auto fDistance = TVector3::DistanceSq( a_rSphere.GetOrigin(), vCameraTranslation.AsVector3() );
@@ -770,7 +769,7 @@ HOOK( 0x006cea40, TRenderContext_CullSphereToFrustum, TINT, const TSphere& a_rSp
 	}
 
 	TINT iLeftPlanes = a_iClipFlags & a_iClipFlagsMask;
-	TINT iPlaneFlag = 1;
+	TINT iPlaneFlag	 = 1;
 
 	do {
 		if ( iLeftPlanes == 0 )
@@ -843,27 +842,27 @@ TBOOL AHooks::AddHook( Hook a_eHook, HookType a_eHookType, void* a_pCallback )
 {
 	switch ( a_eHook )
 	{
-	case Hook_AGUI2_MainPostRenderCallback:
-		AHooks::GUI2::MainPostRenderCallback[ a_eHookType ].PushBack( TREINTERPRETCAST( AHooks::GUI2::t_MainPostRenderCallback, a_pCallback ) );
-		return TTRUE;
-	case Hook_AGUISlideshow_ProcessInput:
-		AHooks::GUISlideshow::ProcessInput[ a_eHookType ].PushBack( TREINTERPRETCAST( AHooks::GUISlideshow::t_ProcessInput, a_pCallback ) );
-		return TTRUE;
-	case Hook_NewGameStarted:
-		AHooks::Uncategorized::NewGameStarted[ a_eHookType ].PushBack( TREINTERPRETCAST( AHooks::Uncategorized::t_NewGameStarted, a_pCallback ) );
-		return TTRUE;
-	case Hook_ATerrain_Render:
-		AHooks::Terrain::Render[ a_eHookType ].PushBack( TREINTERPRETCAST( AHooks::Terrain::t_Render, a_pCallback ) );
-		return TTRUE;
-	case Hook_AModelLoader_LoadTRBCallback:
-		AHooks::ModelLoader::LoadTRBCallback[ a_eHookType ].PushBack( TREINTERPRETCAST( AHooks::ModelLoader::t_LoadTRBCallback, a_pCallback ) );
-		return TTRUE;
-	case Hook_MaterialLibrary_LoadTTLData:
-		AHooks::MaterialLibrary::LoadTTLData[ a_eHookType ].PushBack( TREINTERPRETCAST( AHooks::MaterialLibrary::t_LoadTTLData, a_pCallback ) );
-		return TTRUE;
-	case Hook_TRenderInterface_SetLightColourMatrix:
-		AHooks::RenderInterface::SetLightColourMatrix[ a_eHookType ].PushBack( TREINTERPRETCAST( AHooks::RenderInterface::t_SetLightColourMatrix, a_pCallback ) );
-		return TTRUE;
+		case Hook_AGUI2_MainPostRenderCallback:
+			AHooks::GUI2::MainPostRenderCallback[ a_eHookType ].PushBack( TREINTERPRETCAST( AHooks::GUI2::t_MainPostRenderCallback, a_pCallback ) );
+			return TTRUE;
+		case Hook_AGUISlideshow_ProcessInput:
+			AHooks::GUISlideshow::ProcessInput[ a_eHookType ].PushBack( TREINTERPRETCAST( AHooks::GUISlideshow::t_ProcessInput, a_pCallback ) );
+			return TTRUE;
+		case Hook_NewGameStarted:
+			AHooks::Uncategorized::NewGameStarted[ a_eHookType ].PushBack( TREINTERPRETCAST( AHooks::Uncategorized::t_NewGameStarted, a_pCallback ) );
+			return TTRUE;
+		case Hook_ATerrain_Render:
+			AHooks::Terrain::Render[ a_eHookType ].PushBack( TREINTERPRETCAST( AHooks::Terrain::t_Render, a_pCallback ) );
+			return TTRUE;
+		case Hook_AModelLoader_LoadTRBCallback:
+			AHooks::ModelLoader::LoadTRBCallback[ a_eHookType ].PushBack( TREINTERPRETCAST( AHooks::ModelLoader::t_LoadTRBCallback, a_pCallback ) );
+			return TTRUE;
+		case Hook_MaterialLibrary_LoadTTLData:
+			AHooks::MaterialLibrary::LoadTTLData[ a_eHookType ].PushBack( TREINTERPRETCAST( AHooks::MaterialLibrary::t_LoadTTLData, a_pCallback ) );
+			return TTRUE;
+		case Hook_TRenderInterface_SetLightColourMatrix:
+			AHooks::RenderInterface::SetLightColourMatrix[ a_eHookType ].PushBack( TREINTERPRETCAST( AHooks::RenderInterface::t_SetLightColourMatrix, a_pCallback ) );
+			return TTRUE;
 	}
 
 	return TFALSE;

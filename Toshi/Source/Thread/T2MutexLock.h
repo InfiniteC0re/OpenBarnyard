@@ -3,16 +3,17 @@
 
 #define T2MUTEX_LOCK_SCOPE( mutex ) TANONYMOUSVAR( Toshi::T2MutexLock )( mutex )
 
-namespace Toshi
-{
+TOSHI_NAMESPACE_START
+
 class T2MutexLock
 {
 public:
-    T2MutexLock( T2Mutex& mutex ) :
-        m_Mutex( mutex ) { m_Mutex.Lock(); }
-    ~T2MutexLock() { m_Mutex.Unlock(); }
+	T2MutexLock( T2Mutex& mutex ) :
+		m_Mutex( mutex ) { m_Mutex.Lock(); }
+	~T2MutexLock() { m_Mutex.Unlock(); }
 
 private:
-    T2Mutex& m_Mutex;
+	T2Mutex& m_Mutex;
 };
-} // namespace Toshi
+
+TOSHI_NAMESPACE_END

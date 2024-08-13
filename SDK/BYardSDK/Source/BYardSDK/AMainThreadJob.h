@@ -9,8 +9,8 @@ public:
 
 public:
 	virtual ~AMainThreadJob() = default;
-	virtual void BeginJob() = 0;
-	virtual TBOOL RunJob() = 0;
+	virtual void  BeginJob()  = 0;
+	virtual TBOOL RunJob()	  = 0;
 	virtual TBOOL CancelJob() { return TFALSE; }
 
 	TBOOL IsRunning() const { return m_bIsRunning; }

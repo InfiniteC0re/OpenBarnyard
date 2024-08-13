@@ -23,64 +23,62 @@ TOSHI_NAMESPACE_USING
 
 static TMemoryInitialiser s_MemoryInitialiser;
 
-static inline void SetFaceAndAdvance3(aiFace*& face, unsigned int a, unsigned int b, unsigned int c)
+static inline void SetFaceAndAdvance3( aiFace*& face, unsigned int a, unsigned int b, unsigned int c )
 {
-	face->mNumIndices = 3;
-	face->mIndices = new unsigned int[3];
-	face->mIndices[0] = a;
-	face->mIndices[1] = b;
-	face->mIndices[2] = c;
+	face->mNumIndices	= 3;
+	face->mIndices		= new unsigned int[ 3 ];
+	face->mIndices[ 0 ] = a;
+	face->mIndices[ 1 ] = b;
+	face->mIndices[ 2 ] = c;
 	++face;
 }
 
-static void LogRenderGroup(CellSphereTreeBranchNode* a_pRenderGroup)
+static void LogRenderGroup( CellSphereTreeBranchNode* a_pRenderGroup )
 {
-	TINFO("      New render group:\n");
+	TINFO( "      New render group:\n" );
 	TINFO(
 		"        Bounding: %f %f %f %f\n",
 		a_pRenderGroup->m_BoundingSphere.GetOrigin().x,
 		a_pRenderGroup->m_BoundingSphere.GetOrigin().y,
 		a_pRenderGroup->m_BoundingSphere.GetOrigin().z,
-		a_pRenderGroup->m_BoundingSphere.GetRadius()
-	);
+		a_pRenderGroup->m_BoundingSphere.GetRadius() );
 
 	TBOOL bHasNext = a_pRenderGroup->m_pRight;
 
-	while (a_pRenderGroup->m_pRight)
+	while ( a_pRenderGroup->m_pRight )
 	{
-		LogRenderGroup(a_pRenderGroup->GetSubNode());
+		LogRenderGroup( a_pRenderGroup->GetSubNode() );
 		a_pRenderGroup = a_pRenderGroup->m_pRight;
 	}
 
-	if (bHasNext)
+	if ( bHasNext )
 	{
 		TINFO(
 			"        Final bounding: %f %f %f %f\n",
 			a_pRenderGroup->m_BoundingSphere.GetOrigin().x,
 			a_pRenderGroup->m_BoundingSphere.GetOrigin().y,
 			a_pRenderGroup->m_BoundingSphere.GetOrigin().z,
-			a_pRenderGroup->m_BoundingSphere.GetRadius()
-		);
+			a_pRenderGroup->m_BoundingSphere.GetRadius() );
 	}
 }
 
-int main(int argc, char** argv)
+int main( int argc, char** argv )
 {
 	TUtil::TOSHIParams toshiParams;
 	toshiParams.szCommandLine = GetCommandLineA();
 
-	TUtil::ToshiCreate(toshiParams);
-	TUtil::SetTPStringPool(new TPString8Pool(1024, 0, &T2Allocator::s_GlobalAllocator, TNULL));
+	TUtil::ToshiCreate( toshiParams );
+	TUtil::SetTPStringPool( new TPString8Pool( 1024, 0, &T2Allocator::s_GlobalAllocator, TNULL ) );
 
 	T2CommandLine commandLine( GetCommandLineA() );
-	auto strInfoFile = commandLine.GetParameterValue( "-i" );
-	auto strCompileFile = commandLine.GetParameterValue( "-c" );
-	auto strDecompileFile = commandLine.GetParameterValue( "-d" );
-	auto strTexturesPath = commandLine.GetParameterValue( "-d" );
-	auto strOutPath = commandLine.GetParameterValue( "-o" );
-	auto strKeyLib = commandLine.GetParameterValue( "-keylib" );
-	auto bParamIsBtec = commandLine.HasParameter( "-btec" );
-	auto bParamIsTerrain = commandLine.HasParameter( "-terrain" );
+	auto		  strInfoFile	   = commandLine.GetParameterValue( "-i" );
+	auto		  strCompileFile   = commandLine.GetParameterValue( "-c" );
+	auto		  strDecompileFile = commandLine.GetParameterValue( "-d" );
+	auto		  strTexturesPath  = commandLine.GetParameterValue( "-d" );
+	auto		  strOutPath	   = commandLine.GetParameterValue( "-o" );
+	auto		  strKeyLib		   = commandLine.GetParameterValue( "-keylib" );
+	auto		  bParamIsBtec	   = commandLine.HasParameter( "-btec" );
+	auto		  bParamIsTerrain  = commandLine.HasParameter( "-terrain" );
 
 	if ( strInfoFile )
 	{
@@ -89,148 +87,147 @@ int main(int argc, char** argv)
 		auto pInSECT = inTRB.GetSections();
 		auto pInSYMB = inTRB.GetSymbols();
 
-		auto pInFileHeader = pInSYMB->Find<TTMDBase::FileHeader>(pInSECT, "FileHeader");
-		auto pInDatabase = pInSYMB->Find<WorldDatabase>(pInSECT, "Database");
-		auto pInSkeletonHeader = pInSYMB->Find<TTMDBase::SkeletonHeader>(pInSECT, "SkeletonHeader");
-		auto pInSkeleton = pInSYMB->Find<TSkeleton>(pInSECT, "Skeleton");
-		auto pInMaterials = pInSYMB->Find<TTMDBase::MaterialsHeader>(pInSECT, "Materials");
-		auto pInCollision = pInSYMB->Find<TTMDBase::Collision>(pInSECT, "Collision");
-		auto pInHeader = pInSYMB->Find<TTMDWin::TRBWinHeader>(pInSECT, "Header");
+		auto pInFileHeader	   = pInSYMB->Find<TTMDBase::FileHeader>( pInSECT, "FileHeader" );
+		auto pInDatabase	   = pInSYMB->Find<WorldDatabase>( pInSECT, "Database" );
+		auto pInSkeletonHeader = pInSYMB->Find<TTMDBase::SkeletonHeader>( pInSECT, "SkeletonHeader" );
+		auto pInSkeleton	   = pInSYMB->Find<TSkeleton>( pInSECT, "Skeleton" );
+		auto pInMaterials	   = pInSYMB->Find<TTMDBase::MaterialsHeader>( pInSECT, "Materials" );
+		auto pInCollision	   = pInSYMB->Find<TTMDBase::Collision>( pInSECT, "Collision" );
+		auto pInHeader		   = pInSYMB->Find<TTMDWin::TRBWinHeader>( pInSECT, "Header" );
 
-		const TBOOL bIsSkin = pInFileHeader;
-		const TBOOL bIsTerrain = pInDatabase;
+		const TBOOL bIsSkin		 = pInFileHeader;
+		const TBOOL bIsTerrain	 = pInDatabase;
 		const TBOOL bHasSkeleton = pInSkeletonHeader;
 
-		if (!bIsSkin && !bIsTerrain)
+		if ( !bIsSkin && !bIsTerrain )
 		{
-			TERROR("Invalid input file!\n");
+			TERROR( "Invalid input file!\n" );
 			return 1;
 		}
 
-		if (bIsSkin)
+		if ( bIsSkin )
 		{
-			if (pInFileHeader->m_uiMagic != TFourCC("TMDL"))
+			if ( pInFileHeader->m_uiMagic != TFourCC( "TMDL" ) )
 			{
-				TERROR("Invalid input file format!\n");
+				TERROR( "Invalid input file format!\n" );
 				return 1;
 			}
 
-			TINFO("Successfully opened TMD file!\n");
-			TINFO("  Version: %d.%d\n", pInFileHeader->m_uiVersionMajor, pInFileHeader->m_uiVersionMinor);
+			TINFO( "Successfully opened TMD file!\n" );
+			TINFO( "  Version: %d.%d\n", pInFileHeader->m_uiVersionMajor, pInFileHeader->m_uiVersionMinor );
 		}
-		else if (bIsTerrain)
+		else if ( bIsTerrain )
 		{
-			TINFO("Successfully opened Terrain Model file!\n");
-			TINFO("  Num Entries: %u\n", pInDatabase->m_uiNumWorlds);
+			TINFO( "Successfully opened Terrain Model file!\n" );
+			TINFO( "  Num Entries: %u\n", pInDatabase->m_uiNumWorlds );
 
-			for (TUINT i = 0; i < pInDatabase->m_uiNumWorlds; i++)
+			for ( TUINT i = 0; i < pInDatabase->m_uiNumWorlds; i++ )
 			{
-				auto pEntry = pInDatabase->m_ppWorlds[i];
-				TINFO("  Entry %u:\n", i);
-				TINFO("    Num Models: %d\n", pEntry->m_iNumCells);
+				auto pEntry = pInDatabase->m_ppWorlds[ i ];
+				TINFO( "  Entry %u:\n", i );
+				TINFO( "    Num Models: %d\n", pEntry->m_iNumCells );
 
-				for (TINT k = 0; k < pEntry->m_iNumCells; k++)
+				for ( TINT k = 0; k < pEntry->m_iNumCells; k++ )
 				{
-					auto pModel = pEntry->m_ppCells[k];
-					TINFO("    Model %u:\n", k);
-					TINFO("      Num Meshes: %u\n", pModel->uiNumMeshes);
+					auto pModel = pEntry->m_ppCells[ k ];
+					TINFO( "    Model %u:\n", k );
+					TINFO( "      Num Meshes: %u\n", pModel->uiNumMeshes );
 
-					for (TUINT j = 0; j < pModel->uiNumMeshes; j++)
+					for ( TUINT j = 0; j < pModel->uiNumMeshes; j++ )
 					{
-						TINFO("      Mesh %u:\n", j);
-						auto pMeshBounding = pModel->ppCellMeshSpheres[j];
+						TINFO( "      Mesh %u:\n", j );
+						auto pMeshBounding = pModel->ppCellMeshSpheres[ j ];
 
 						TINFO(
 							"        Bounding Sphere: %f %f %f %f\n",
 							pMeshBounding->m_BoundingSphere.GetOrigin().x,
 							pMeshBounding->m_BoundingSphere.GetOrigin().y,
 							pMeshBounding->m_BoundingSphere.GetOrigin().z,
-							pMeshBounding->m_BoundingSphere.GetRadius()
-						);
+							pMeshBounding->m_BoundingSphere.GetRadius() );
 
 						auto pMesh = pMeshBounding->m_pCellMesh;
-						TINFO("        Num Indices: %u\n", pMesh->uiNumIndices);
-						TINFO("        Num Vertices 1: %u\n", pMesh->uiNumVertices1);
-						TINFO("        Num Vertices 2: %u\n", pMesh->uiNumVertices2);
-						TINFO("        Material Name: %s\n", pMesh->szMaterialName);
+						TINFO( "        Num Indices: %u\n", pMesh->uiNumIndices );
+						TINFO( "        Num Vertices 1: %u\n", pMesh->uiNumVertices1 );
+						TINFO( "        Num Vertices 2: %u\n", pMesh->uiNumVertices2 );
+						TINFO( "        Material Name: %s\n", pMesh->szMaterialName );
 					}
 
-					LogRenderGroup(pModel->pTreeBranchNodes);
+					LogRenderGroup( pModel->pTreeBranchNodes );
 				}
 			}
 		}
-		
-		if (bHasSkeleton)
+
+		if ( bHasSkeleton )
 		{
-			TINFO("  Keyframe Library: %s\n", pInSkeletonHeader->m_szTKLName);
-			TINFO("  Translation Base Index: %i\n", pInSkeletonHeader->m_iTBaseIndex);
-			TINFO("  Quaternion Base Index: %i\n", pInSkeletonHeader->m_iQBaseIndex);
-			TINFO("  Scale Base Index: %i\n", pInSkeletonHeader->m_iSBaseIndex);
-			TINFO("  Translation Key Count: %i\n", pInSkeletonHeader->m_iTKeyCount);
-			TINFO("  Quaternion Key Count: %i\n", pInSkeletonHeader->m_iQKeyCount);
-			TINFO("  Scale Key Count: %i\n", pInSkeletonHeader->m_iSKeyCount);
-			TINFO("  Num Bones: %i\n", pInSkeleton->GetBoneCount());
+			TINFO( "  Keyframe Library: %s\n", pInSkeletonHeader->m_szTKLName );
+			TINFO( "  Translation Base Index: %i\n", pInSkeletonHeader->m_iTBaseIndex );
+			TINFO( "  Quaternion Base Index: %i\n", pInSkeletonHeader->m_iQBaseIndex );
+			TINFO( "  Scale Base Index: %i\n", pInSkeletonHeader->m_iSBaseIndex );
+			TINFO( "  Translation Key Count: %i\n", pInSkeletonHeader->m_iTKeyCount );
+			TINFO( "  Quaternion Key Count: %i\n", pInSkeletonHeader->m_iQKeyCount );
+			TINFO( "  Scale Key Count: %i\n", pInSkeletonHeader->m_iSKeyCount );
+			TINFO( "  Num Bones: %i\n", pInSkeleton->GetBoneCount() );
 
-			for (TINT i = 0; i < pInSkeleton->GetBoneCount(); i++)
+			for ( TINT i = 0; i < pInSkeleton->GetBoneCount(); i++ )
 			{
-				auto pBone = pInSkeleton->GetBone(i);
+				auto pBone = pInSkeleton->GetBone( i );
 
-				TINFO("    %s:\n", pBone->GetName());
-				TINFO("      Position: (%f; %f; %f)\n", pBone->GetPosition().x, pBone->GetPosition().y, pBone->GetPosition().z);
+				TINFO( "    %s:\n", pBone->GetName() );
+				TINFO( "      Position: (%f; %f; %f)\n", pBone->GetPosition().x, pBone->GetPosition().y, pBone->GetPosition().z );
 			}
 		}
 
-		TINFO("  Materials Size: %u\n", pInMaterials->uiSectionSize);
-		TINFO("  Material Count: %d\n", pInMaterials->iNumMaterials);
-		TINFO("  Collision Model Count: %i\n", pInCollision->m_iNumModels);
-		TINFO("  LOD Count: %i\n", pInHeader->m_iNumLODs);
-		TINFO("  LOD Distance: %f\n", pInHeader->m_fLODDistance);
+		TINFO( "  Materials Size: %u\n", pInMaterials->uiSectionSize );
+		TINFO( "  Material Count: %d\n", pInMaterials->iNumMaterials );
+		TINFO( "  Collision Model Count: %i\n", pInCollision->m_iNumModels );
+		TINFO( "  LOD Count: %i\n", pInHeader->m_iNumLODs );
+		TINFO( "  LOD Distance: %f\n", pInHeader->m_fLODDistance );
 
-		for (TINT i = 0; i < pInHeader->m_iNumLODs; i++)
+		for ( TINT i = 0; i < pInHeader->m_iNumLODs; i++ )
 		{
-			auto pLOD = pInHeader->GetLOD(i);
+			auto pLOD		= pInHeader->GetLOD( i );
 			TINT iMeshCount = pLOD->m_iMeshCount1 + pLOD->m_iMeshCount2;
 
-			TINFO("  Information about LOD%i:\n", i);
-			TINFO("    Mesh Count: %i\n", iMeshCount);
-			TINFO("    Shader Type: %i\n", pLOD->m_eShader);
+			TINFO( "  Information about LOD%i:\n", i );
+			TINFO( "    Mesh Count: %i\n", iMeshCount );
+			TINFO( "    Shader Type: %i\n", pLOD->m_eShader );
 
-			if (bIsSkin)
+			if ( bIsSkin )
 			{
-				for (TINT k = 0; k < iMeshCount; k++)
+				for ( TINT k = 0; k < iMeshCount; k++ )
 				{
-					char szSymbolName[128];
-					TStringManager::String8Format(szSymbolName, sizeof(szSymbolName), "LOD%d_Mesh_%d", i, k);
+					char szSymbolName[ 128 ];
+					TStringManager::String8Format( szSymbolName, sizeof( szSymbolName ), "LOD%d_Mesh_%d", i, k );
 
-					auto pInLODMesh = pInSYMB->Find<TTMDWin::TRBLODMesh>(pInSECT, szSymbolName);
+					auto pInLODMesh = pInSYMB->Find<TTMDWin::TRBLODMesh>( pInSECT, szSymbolName );
 
-					TINFO("    %s:\n", szSymbolName);
-					TINFO("      Sub Mesh Count: %u\n", pInLODMesh->m_uiNumSubMeshes);
-					TINFO("      Index Count: %u\n", pInLODMesh->m_uiNumIndices);
-					TINFO("      Vertex Count: %u\n", pInLODMesh->m_uiNumVertices);
-					TINFO("      Material Name: %s\n", pInLODMesh->m_szMaterialName);
+					TINFO( "    %s:\n", szSymbolName );
+					TINFO( "      Sub Mesh Count: %u\n", pInLODMesh->m_uiNumSubMeshes );
+					TINFO( "      Index Count: %u\n", pInLODMesh->m_uiNumIndices );
+					TINFO( "      Vertex Count: %u\n", pInLODMesh->m_uiNumVertices );
+					TINFO( "      Material Name: %s\n", pInLODMesh->m_szMaterialName );
 
-					for (TUINT j = 0; j < pInLODMesh->m_uiNumSubMeshes; j++)
+					for ( TUINT j = 0; j < pInLODMesh->m_uiNumSubMeshes; j++ )
 					{
-						auto pSubMesh = &pInLODMesh->m_pSubMeshes[j];
+						auto pSubMesh = &pInLODMesh->m_pSubMeshes[ j ];
 
-						TINFO("      Sub Mesh %u:\n", j);
-						TINFO("        Vertex Count 1: %u\n", pSubMesh->m_uiNumVertices1);
-						TINFO("        Vertex Count 2: %u\n", pSubMesh->m_uiNumVertices2);
-						TINFO("        Index Count: %u\n", pSubMesh->m_uiNumIndices);
-						TINFO("        Bone Count: %u\n", pSubMesh->m_uiNumBones);
-						TINFO("        Zero: %u\n", pSubMesh->m_Zero);
-						TINFO("        Unk2: %i\n", pSubMesh->m_Unk2);
-						TINFO("        Unk3: %i\n", pSubMesh->m_Unk3);
-						TINFO("        Unk4: %i\n", pSubMesh->m_Unk4);
-						TINFO("        Unk5: %i\n", pSubMesh->m_Unk5);
-						TINFO("        Unk6: %i\n", pSubMesh->m_Unk6);
+						TINFO( "      Sub Mesh %u:\n", j );
+						TINFO( "        Vertex Count 1: %u\n", pSubMesh->m_uiNumVertices1 );
+						TINFO( "        Vertex Count 2: %u\n", pSubMesh->m_uiNumVertices2 );
+						TINFO( "        Index Count: %u\n", pSubMesh->m_uiNumIndices );
+						TINFO( "        Bone Count: %u\n", pSubMesh->m_uiNumBones );
+						TINFO( "        Zero: %u\n", pSubMesh->m_Zero );
+						TINFO( "        Unk2: %i\n", pSubMesh->m_Unk2 );
+						TINFO( "        Unk3: %i\n", pSubMesh->m_Unk3 );
+						TINFO( "        Unk4: %i\n", pSubMesh->m_Unk4 );
+						TINFO( "        Unk5: %i\n", pSubMesh->m_Unk5 );
+						TINFO( "        Unk6: %i\n", pSubMesh->m_Unk6 );
 					}
 				}
 			}
 		}
 	}
-	else if (strCompileFile)
+	else if ( strCompileFile )
 	{
 		//TString8 inFilepath = args.GetInPath();
 		//TString8 texturesPath = args.GetTexturesPath();
@@ -286,7 +283,7 @@ int main(int argc, char** argv)
 		//			TASSERT(k < 1, "Importing few models into a single file is not implemeted yet!");
 
 		//			auto pModel = pStack->Alloc<TTerrainMDL::Model>(&pEntry->m_ppModels[0]);
-		//			
+		//
 		//			TUtil::MemClear(pModel->m_MetaData, sizeof(pModel->m_MetaData));
 		//			pModel->m_uiNumMeshes = pImportScene->mNumMeshes;
 
@@ -304,7 +301,7 @@ int main(int argc, char** argv)
 		//				auto pMeshBounding = pStack->Alloc<TTerrainMDL::MeshBounding>(&pModel->m_ppMeshBoundings[j]);
 
 		//				auto pImportMesh = pImportScene->mMeshes[j];
-		//				
+		//
 		//				std::vector<TUINT16> indices;
 		//				indices.reserve(pImportMesh->mNumFaces * 3);
 
@@ -410,7 +407,7 @@ int main(int argc, char** argv)
 		//			fGlobalBoundingRadius = TMath::Max(fGlobalBoundingMaxZ - fGlobalBoundingMinZ, fGlobalBoundingRadius);
 
 		//			auto pGlobalRenderGroup = pStack->Alloc<TTerrainMDL::RenderGroup>(&pModel->m_pRenderGroups);
-		//			
+		//
 		//			pGlobalRenderGroup->m_BoundingSphere.Set(
 		//				fGlobalBoundingCenterX,
 		//				fGlobalBoundingCenterY,
@@ -684,7 +681,7 @@ int main(int argc, char** argv)
 
 		//outTRB.WriteToFile(outFilepath.GetString(), args.IsUsingBTEC());
 	}
-	else if (strDecompileFile)
+	else if ( strDecompileFile )
 	{
 		//TString8 inFilepath = args.GetInPath();
 		//TString8 texturesPath = args.GetTexturesPath();

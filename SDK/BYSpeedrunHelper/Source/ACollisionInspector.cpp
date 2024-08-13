@@ -16,12 +16,12 @@ ACollisionInspector::ACollisionInspector()
 	if ( g_bIsExperimentalMode )
 	{
 		// NOTE: it creates too many holes in memory so the game can even run out of memory and crash
-		AHooks::AddHook(Hook_AModelLoader_LoadTRBCallback, HookType_After, AModelLoader_LoadTRBCallback);
-		AHooks::AddHook(Hook_ATerrain_Render, HookType_After, ATerrain_Render);
+		AHooks::AddHook( Hook_AModelLoader_LoadTRBCallback, HookType_After, AModelLoader_LoadTRBCallback );
+		AHooks::AddHook( Hook_ATerrain_Render, HookType_After, ATerrain_Render );
 	}
 }
 
-void ACollisionInspector::SetCollisionVisible(TBOOL a_bVisible)
+void ACollisionInspector::SetCollisionVisible( TBOOL a_bVisible )
 {
 	m_bCollisionVisible = a_bVisible;
 }
@@ -31,15 +31,15 @@ class ASysCollisionMesh : public ASysMesh
 public:
 	virtual TBOOL Render() override
 	{
-		if (ACollisionInspector::GetSingleton()->IsCollisionVisible())
+		if ( ACollisionInspector::GetSingleton()->IsCollisionVisible() )
 		{
-			return CALL_THIS(0x005f1430, ASysCollisionMesh*, TBOOL, this);
+			return CALL_THIS( 0x005f1430, ASysCollisionMesh*, TBOOL, this );
 		}
 
 		return TTRUE;
 	}
 
-	virtual void SetZBias(TINT a_iZBias) override
+	virtual void SetZBias( TINT a_iZBias ) override
 	{
 		m_iZBias = a_iZBias;
 	}
@@ -48,57 +48,57 @@ private:
 	TINT m_iZBias = 0;
 };
 
-TBOOL ACollisionInspector::AModelLoader_LoadTRBCallback(Toshi::TModel* a_pModel)
+TBOOL ACollisionInspector::AModelLoader_LoadTRBCallback( Toshi::TModel* a_pModel )
 {
-	if (a_pModel->GetNumLODs() >= 1)
+	if ( a_pModel->GetNumLODs() >= 1 )
 	{
 		struct CollisionMeshDef_t
 		{
-			TUINT32 Unk1;
+			TUINT32			 Unk1;
 			Toshi::TVector3* pVertices;
-			TUINT32 NumVertices;
-			TUINT16* pIndices;
-			TUINT32 NumIndices;
-			TUINT32 uiNumCollTypes;
-			const char** pszCollName;
-			TUINT32 Unk3;
+			TUINT32			 NumVertices;
+			TUINT16*		 pIndices;
+			TUINT32			 NumIndices;
+			TUINT32			 uiNumCollTypes;
+			const char**	 pszCollName;
+			TUINT32			 Unk3;
 		};
 
 		struct ASysMeshVertex_t
 		{
 			Toshi::TVector3 Position;
-			TUINT32 Diffuse;
+			TUINT32			Diffuse;
 			Toshi::TVector2 UV;
 		};
 
 		struct Collision_t
 		{
-			TUINT uiNumMeshes;
+			TUINT				uiNumMeshes;
 			CollisionMeshDef_t* pMeshDef;
 		};
 
-		auto pCollision = TSTATICCAST(Collision_t, a_pModel->GetSymbol("Collision"));
+		auto pCollision = TSTATICCAST( Collision_t, a_pModel->GetSymbol( "Collision" ) );
 
-		if (pCollision)
+		if ( pCollision )
 		{
-			if (pCollision->uiNumMeshes > 0)
+			if ( pCollision->uiNumMeshes > 0 )
 			{
 				//TTRACE("Creating collision mesh through ASysShader...\n");
 
-				if (!ms_pCollisionMaterial)
+				if ( !ms_pCollisionMaterial )
 				{
-					auto pRender = THookedRenderD3DInterface::GetSingleton();
-					ms_pCollisionMaterial = ASysShader::GetSingleton()->CreateMaterial("collision");
-					ms_pCollisionMaterial->SetBlendMode(ASysMaterial::BLENDMODE_1);
-					ms_pCollisionMaterial->SetTexture(pRender->GetInvalidTexture());
-					ms_pCollisionMaterial->SetFlags(Toshi::TMaterial::FLAGS_NO_CULL, TTRUE);
+					auto pRender		  = THookedRenderD3DInterface::GetSingleton();
+					ms_pCollisionMaterial = ASysShader::GetSingleton()->CreateMaterial( "collision" );
+					ms_pCollisionMaterial->SetBlendMode( ASysMaterial::BLENDMODE_1 );
+					ms_pCollisionMaterial->SetTexture( pRender->GetInvalidTexture() );
+					ms_pCollisionMaterial->SetFlags( Toshi::TMaterial::FLAGS_NO_CULL, TTRUE );
 				}
 
-				for (TINT j = 0; j < a_pModel->GetNumLODs(); j++)
+				for ( TINT j = 0; j < a_pModel->GetNumLODs(); j++ )
 				{
-					auto& rLOD = a_pModel->GetLOD(j);
+					auto& rLOD = a_pModel->GetLOD( j );
 
-					auto ppOldMeshes = rLOD.ppMeshes;
+					auto ppOldMeshes		= rLOD.ppMeshes;
 					auto iOriginalNumMeshes = rLOD.iNumMeshes;
 
 					TUINT uiNumValidCollMeshes = 0;
@@ -115,50 +115,50 @@ TBOOL ACollisionInspector::AModelLoader_LoadTRBCallback(Toshi::TModel* a_pModel)
 					rLOD.ppMeshes = (Toshi::TMesh**)TMalloc( sizeof( Toshi::TMesh* ) * ( rLOD.iNumMeshes + uiNumValidCollMeshes ) );
 					Toshi::TUtil::MemClear( rLOD.ppMeshes, sizeof( Toshi::TMesh* ) * ( rLOD.iNumMeshes + uiNumValidCollMeshes ) );
 
-					if (rLOD.iNumMeshes > 0)
+					if ( rLOD.iNumMeshes > 0 )
 					{
-						Toshi::TUtil::MemCopy(rLOD.ppMeshes, ppOldMeshes, rLOD.iNumMeshes * sizeof(Toshi::TMesh*));
-						TFree(ppOldMeshes);
+						Toshi::TUtil::MemCopy( rLOD.ppMeshes, ppOldMeshes, rLOD.iNumMeshes * sizeof( Toshi::TMesh* ) );
+						TFree( ppOldMeshes );
 						ppOldMeshes = TNULL;
 					}
 
-					for (TUINT i = 0; i < pCollision->uiNumMeshes; i++)
+					for ( TUINT i = 0; i < pCollision->uiNumMeshes; i++ )
 					{
-						auto pMeshDef = &pCollision->pMeshDef[i];
+						auto pMeshDef = &pCollision->pMeshDef[ i ];
 
-						if (pMeshDef->NumIndices <= Toshi::TMath::TUINT16_MAX)
+						if ( pMeshDef->NumIndices <= Toshi::TMath::TUINT16_MAX )
 						{
 							auto pMesh = new ASysCollisionMesh;
-							pMesh->SetOwnerShader(ASysShader::GetSingleton());
-							pMesh->SetMaterial(ms_pCollisionMaterial);
-							pMesh->CreatePools(9, pMeshDef->NumVertices, pMeshDef->NumIndices);
-							pMesh->SetZBias(32);
+							pMesh->SetOwnerShader( ASysShader::GetSingleton() );
+							pMesh->SetMaterial( ms_pCollisionMaterial );
+							pMesh->CreatePools( 9, pMeshDef->NumVertices, pMeshDef->NumIndices );
+							pMesh->SetZBias( 32 );
 
 							ASysMesh::LockBuffer lockBuffer;
-							pMesh->Lock(lockBuffer);
+							pMesh->Lock( lockBuffer );
 
-							ASysMeshVertex_t* pVertex = (ASysMeshVertex_t*)lockBuffer.VertexLock.apStreams[0];
+							ASysMeshVertex_t* pVertex = (ASysMeshVertex_t*)lockBuffer.VertexLock.apStreams[ 0 ];
 
-							for (TUINT k = 0; k < pMeshDef->NumVertices; k++)
+							for ( TUINT k = 0; k < pMeshDef->NumVertices; k++ )
 							{
-								pVertex[k].Position = pMeshDef->pVertices[k];
-								pVertex[k].Diffuse = 0x50800000;
-								pVertex[k].UV = { 1.0f, 1.0f };
+								pVertex[ k ].Position = pMeshDef->pVertices[ k ];
+								pVertex[ k ].Diffuse  = 0x50800000;
+								pVertex[ k ].UV		  = { 1.0f, 1.0f };
 							}
 
-							for (TUINT k = 0; k < pMeshDef->NumIndices; k++)
+							for ( TUINT k = 0; k < pMeshDef->NumIndices; k++ )
 							{
-								lockBuffer.IndexLock.pBuffer[k] = pMeshDef->pIndices[k];
+								lockBuffer.IndexLock.pBuffer[ k ] = pMeshDef->pIndices[ k ];
 							}
 
-							pMesh->Unlock(pMeshDef->NumVertices, pMeshDef->NumIndices);
+							pMesh->Unlock( pMeshDef->NumVertices, pMeshDef->NumIndices );
 							rLOD.ppMeshes[ rLOD.iNumMeshes++ ] = pMesh;
 
 							//TTRACE("  Done: %u vertices, %u indices\n", pMeshDef->NumVertices, pMeshDef->NumIndices);
 						}
 						else
 						{
-							TERROR("  Unable to create collision mesh because is has too many indices!\n");
+							TERROR( "  Unable to create collision mesh because is has too many indices!\n" );
 						}
 					}
 				}
@@ -171,31 +171,31 @@ TBOOL ACollisionInspector::AModelLoader_LoadTRBCallback(Toshi::TModel* a_pModel)
 	return TFALSE;
 }
 
-void ACollisionInspector::ATerrain_Render(ATerrainInterface* a_pTerrain)
+void ACollisionInspector::ATerrain_Render( ATerrainInterface* a_pTerrain )
 {
-	if (ACollisionInspector::GetSingleton()->m_bCollisionVisible)
+	if ( ACollisionInspector::GetSingleton()->m_bCollisionVisible )
 	{
 		auto iCurrGroup = a_pTerrain->m_iCurrentGroup;
 
-		if (iCurrGroup != -1)
+		if ( iCurrGroup != -1 )
 		{
-			auto pCurrentGroup = &a_pTerrain->m_pTerrainVIS->m_pSections[iCurrGroup];
+			auto pCurrentGroup	= &a_pTerrain->m_pTerrainVIS->m_pSections[ iCurrGroup ];
 			auto pCollModelData = pCurrentGroup->m_pCollisionModelData;
 
-			for (TINT i = 0; i < a_pTerrain->m_pTerrainVIS->m_iNumSections; i++)
+			for ( TINT i = 0; i < a_pTerrain->m_pTerrainVIS->m_iNumSections; i++ )
 			{
-				if (pCurrentGroup->m_pOtherGroupsLODs[i] != ATerrainLODType_None)
+				if ( pCurrentGroup->m_pOtherGroupsLODs[ i ] != ATerrainLODType_None )
 				{
-					auto pGroup = &a_pTerrain->m_pTerrainVIS->m_pSections[i];
+					auto pGroup		= &a_pTerrain->m_pTerrainVIS->m_pSections[ i ];
 					auto pModelData = pGroup->m_pCollisionModelData;
 
-					if (pModelData)
+					if ( pModelData )
 					{
 						auto pModel = pModelData->m_ModelRef.GetModel();
 
-						if (pModel && pModel->GetNumLODs() > 0 && pModel->GetLOD(0).iNumMeshes > 0)
+						if ( pModel && pModel->GetNumLODs() > 0 && pModel->GetLOD( 0 ).iNumMeshes > 0 )
 						{
-							CALL_THIS(0x005e9380, ATerrainSection::ModelNode*, void, pModelData);
+							CALL_THIS( 0x005e9380, ATerrainSection::ModelNode*, void, pModelData );
 						}
 					}
 				}

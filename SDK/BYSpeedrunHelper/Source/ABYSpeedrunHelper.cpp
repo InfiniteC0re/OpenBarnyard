@@ -20,29 +20,29 @@
 
 TOSHI_NAMESPACE_USING
 
-ARunTimer g_Timer;
+ARunTimer	  g_Timer;
 AGUI2TextBox* g_pExperimentalModeText = TNULL;
 
 const T2CommandLine* g_pCommandLine;
-TBOOL g_bIsExperimentalMode = TFALSE;
+TBOOL				 g_bIsExperimentalMode = TFALSE;
 
 class AQuestManager :
 	public Toshi::TTask
 {
 public:
 	TCHAR MARGIN[ 408 ];
-	TINT m_iCurTier;
-	TINT m_iCurAct;
+	TINT  m_iCurTier;
+	TINT  m_iCurAct;
 };
 
 MEMBER_HOOK( 0x005ce150, AQuestManager, AQuestManager_FUNC, void, TCHAR* a_pUnk1, TBOOL a_bUnk2, TBOOL a_bUpdateProgress )
 {
-	TINT iOldAct = m_iCurAct;
+	TINT iOldAct  = m_iCurAct;
 	TINT iOldTier = m_iCurTier;
 
 	CallOriginal( a_pUnk1, a_bUnk2, a_bUpdateProgress );
 
-	if ( a_bUpdateProgress && ( iOldAct < m_iCurAct || iOldTier < m_iCurTier ))
+	if ( a_bUpdateProgress && ( iOldAct < m_iCurAct || iOldTier < m_iCurTier ) )
 	{
 		TTRACE( "Split! Old State: (%d, %d); Currect State: (%d, %d)\n", iOldAct, iOldTier, m_iCurAct, m_iCurTier );
 		g_Timer.Split();
@@ -57,7 +57,7 @@ MEMBER_HOOK( 0x006be7b0, T2Locale, T2Locale_GetString, const TWCHAR*, TINT a_iNu
 		if ( ABYardTerrainManager::ms_eCurrentLevel != ABYardTerrainManager::Terrain_CowTipping )
 		{
 			static TClass* pCowTippingGameClass = TClass::Find( "ACowTippingMiniGameState", &TGetClass( THookedObject ) );
-			AGameState* pCurrentGameState = AGameStateController::GetSingleton()->GetCurrentState();
+			AGameState*	   pCurrentGameState	= AGameStateController::GetSingleton()->GetCurrentState();
 
 			if ( pCurrentGameState->IsExactly( pCowTippingGameClass ) )
 			{
@@ -70,7 +70,8 @@ MEMBER_HOOK( 0x006be7b0, T2Locale, T2Locale_GetString, const TWCHAR*, TINT a_iNu
 	return CallOriginal( a_iNumString );
 }
 
-class ALoadScreen { };
+class ALoadScreen
+{};
 
 MEMBER_HOOK( 0x0042b160, ALoadScreen, ALoadScreen_StartLoading, void, TINT a_iUnused, TBOOL a_bRender )
 {
@@ -137,8 +138,7 @@ public:
 	void OnRenderInterfaceReady( Toshi::TRenderD3DInterface* a_pRenderInterface ) override
 	{
 		TRenderInterface::SetSingletonExplicit(
-			THookedRenderD3DInterface::GetSingleton()
-		);
+			THookedRenderD3DInterface::GetSingleton() );
 	}
 
 	void OnAGUI2Ready() override
@@ -150,9 +150,9 @@ public:
 			TFLOAT fWidth, fHeight;
 			AGUI2::GetSingleton()->GetDimensions( fWidth, fHeight );
 
-			auto pFont = AGUI2FontManager::FindFont( "Rekord18" );
+			auto pFont				= AGUI2FontManager::FindFont( "Rekord18" );
 			g_pExperimentalModeText = AGUI2TextBox::CreateFromEngine();
-			
+
 			g_pExperimentalModeText->Create( pFont, 400.0f );
 			g_pExperimentalModeText->SetText( L"Experimental mode!" );
 			g_pExperimentalModeText->SetColour( TCOLOR( 255, 0, 0 ) );
@@ -171,7 +171,7 @@ public:
 		if ( g_bIsExperimentalMode )
 		{
 			ImGui::Checkbox( "Show Collision", &ACollisionInspector::GetSingleton()->IsCollisionVisible() );
-	
+
 			if ( ImGui::Button( "Restart Timer" ) ) g_Timer.Start();
 			ImGui::SameLine();
 			if ( ImGui::Button( "Resume Timer" ) ) g_Timer.Resume();
@@ -202,11 +202,11 @@ extern "C"
 		TUtil::TOSHIParams toshiParams;
 		toshiParams.szCommandLine = "";
 		toshiParams.szLogFileName = "speedrunhelper";
-		toshiParams.szLogAppName = "BYSpeedrunHelper";
+		toshiParams.szLogAppName  = "BYSpeedrunHelper";
 
 		TUtil::ToshiCreate( toshiParams );
 
-		g_pCommandLine = a_pCommandLine;
+		g_pCommandLine		  = a_pCommandLine;
 		g_bIsExperimentalMode = g_pCommandLine->HasParameter( "-experimental" );
 
 		return new ABYSpeedrunHelper();

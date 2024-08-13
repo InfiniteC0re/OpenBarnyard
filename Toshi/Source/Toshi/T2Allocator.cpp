@@ -7,47 +7,48 @@
 //-----------------------------------------------------------------------------
 #include "Core/TMemoryDebugOn.h"
 
-namespace Toshi
-{
+TOSHI_NAMESPACE_START
+
 T2GlobalAllocator T2Allocator::s_GlobalAllocator;
 
-void* T2GlobalAllocator::Malloc( size_t size )
+void* T2GlobalAllocator::Malloc( TSIZE size )
 {
-    return TMalloc( size );
+	return TMalloc( size );
 }
 
-void* T2GlobalAllocator::Malloc( size_t size, size_t alignment )
+void* T2GlobalAllocator::Malloc( TSIZE size, TSIZE alignment )
 {
-    return TMemalign( size, alignment );
+	return TMemalign( size, alignment );
 }
 
 void T2GlobalAllocator::Free( void* ptr )
 {
-    TFree( ptr );
+	TFree( ptr );
 }
 
-TBOOL T2GlobalAllocator::CanAllocate( size_t size ) const
+TBOOL T2GlobalAllocator::CanAllocate( TSIZE size ) const
 {
-    return TTRUE;
+	return TTRUE;
 }
 
-void* T2GlobalAllocator::TryMalloc( size_t size )
+void* T2GlobalAllocator::TryMalloc( TSIZE size )
 {
-    return TMalloc( size );
+	return TMalloc( size );
 }
 
-void* T2GlobalAllocator::TryMalloc( size_t size, size_t alignment )
+void* T2GlobalAllocator::TryMalloc( TSIZE size, TSIZE alignment )
 {
-    return TMemalign( size, alignment );
+	return TMemalign( size, alignment );
 }
 
-size_t T2GlobalAllocator::GetUsedSize() const
+TSIZE T2GlobalAllocator::GetUsedSize() const
 {
-    return 0;
+	return 0;
 }
 
-size_t T2GlobalAllocator::GetCapacity() const
+TSIZE T2GlobalAllocator::GetCapacity() const
 {
-    return 0;
+	return 0;
 }
-} // namespace Toshi
+
+TOSHI_NAMESPACE_END

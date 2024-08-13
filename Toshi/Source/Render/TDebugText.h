@@ -1,12 +1,11 @@
 #pragma once
 
-namespace Toshi
-{
+TOSHI_NAMESPACE_START
 
 class TDebugText
 {
 public:
-    TDebugText() = default;
+	TDebugText() = default;
 };
 
-} // namespace Toshi
+TOSHI_NAMESPACE_END

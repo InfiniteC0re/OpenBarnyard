@@ -13,7 +13,7 @@ TDEFINE_CLASS_NORUNTIME( ASysShader );
 
 TBOOL ASysShader::IsLightScattering()
 {
-    return TFALSE;
+	return TFALSE;
 }
 
 void ASysShader::SetLightScattering( TBOOL a_bEnabled )

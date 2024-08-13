@@ -4,30 +4,30 @@
 #include "SDKHooks.h"
 
 AGUISlideshow::AGUISlideshow() :
-	m_Images(&Toshi::T2Allocator::s_GlobalAllocator, 64, 64)
+	m_Images( &Toshi::T2Allocator::s_GlobalAllocator, 64, 64 )
 {
-	CALL_THIS(0x0059d810, AGUISlideshow*, void, this);
+	CALL_THIS( 0x0059d810, AGUISlideshow*, void, this );
 }
 
-void AGUISlideshow::SwitchToNextSlide(TBOOL a_bUnused)
+void AGUISlideshow::SwitchToNextSlide( TBOOL a_bUnused )
 {
-	CALL_THIS(0x0059d810, AGUISlideshow*, void, this, TBOOL, a_bUnused);
+	CALL_THIS( 0x0059d810, AGUISlideshow*, void, this, TBOOL, a_bUnused );
 }
 
-TBOOL AGUISlideshow::ProcessInput(const Toshi::TInputInterface::InputEvent* a_pEvent)
+TBOOL AGUISlideshow::ProcessInput( const Toshi::TInputInterface::InputEvent* a_pEvent )
 {
-	if (a_pEvent->GetEventType() == Toshi::TInputInterface::EVENT_TYPE_GONE_DOWN)
+	if ( a_pEvent->GetEventType() == Toshi::TInputInterface::EVENT_TYPE_GONE_DOWN )
 	{
-		if (m_eFlags & Flags_InstaSkippable)
+		if ( m_eFlags & Flags_InstaSkippable )
 		{
 			m_ImageIterator = m_Images.End();
 			m_eFlags |= Flags_Ended;
 			return TTRUE;
 		}
 
-		if (m_eFlags & Flags_Skippable)
+		if ( m_eFlags & Flags_Skippable )
 		{
-			SwitchToNextSlide(TTRUE);
+			SwitchToNextSlide( TTRUE );
 			return TTRUE;
 		}
 	}
@@ -35,13 +35,13 @@ TBOOL AGUISlideshow::ProcessInput(const Toshi::TInputInterface::InputEvent* a_pE
 	return TFALSE;
 }
 
-TBOOL AGUISlideshow::ProcessCommand(AInputCommand a_eCommand)
+TBOOL AGUISlideshow::ProcessCommand( AInputCommand a_eCommand )
 {
-	if (((a_eCommand != AInputCommand_Back && a_eCommand != AInputCommand_Cancel && a_eCommand != AInputCommand_Quit) || !HASANYFLAG(m_eFlags, Flags_Unk1)) && !HASANYFLAG(m_eFlags, Flags_InstaSkippable))
+	if ( ( ( a_eCommand != AInputCommand_Back && a_eCommand != AInputCommand_Cancel && a_eCommand != AInputCommand_Quit ) || !HASANYFLAG( m_eFlags, Flags_Unk1 ) ) && !HASANYFLAG( m_eFlags, Flags_InstaSkippable ) )
 	{
-		if (m_eFlags & Flags_Skippable)
+		if ( m_eFlags & Flags_Skippable )
 		{
-			SwitchToNextSlide(TTRUE);
+			SwitchToNextSlide( TTRUE );
 			return TTRUE;
 		}
 

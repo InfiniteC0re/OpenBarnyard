@@ -1,8 +1,7 @@
 #pragma once
 #include "File/TFile.h"
 
-namespace Toshi
-{
+TOSHI_NAMESPACE_START
 
 //-----------------------------------------------------------------------------
 // Use this to redirect log information to the console.
@@ -10,14 +9,14 @@ namespace Toshi
 class TConsoleFileSystem : public TFileSystem
 {
 public:
-    TConsoleFileSystem( const TCHAR* a_szName );
+	TConsoleFileSystem( const TCHAR* a_szName );
 
-    //-----------------------------------------------------------------------------
-    // TFileSystem
-    //-----------------------------------------------------------------------------
-    virtual TFile*   CreateFile( const TString8& a_rcFileName, TFILEMODE a_eFileMode ) OVERRIDE;
-    virtual void     DestroyFile( TFile* a_pFile ) OVERRIDE;
-    virtual TString8 MakeInternalPath( const TString8& a_rcPath ) OVERRIDE;
+	//-----------------------------------------------------------------------------
+	// TFileSystem
+	//-----------------------------------------------------------------------------
+	virtual TFile*	 CreateFile( const TString8& a_rcFileName, TFILEMODE a_eFileMode ) OVERRIDE;
+	virtual void	 DestroyFile( TFile* a_pFile ) OVERRIDE;
+	virtual TString8 MakeInternalPath( const TString8& a_rcPath ) OVERRIDE;
 };
 
-} // namespace Toshi
+TOSHI_NAMESPACE_END

@@ -3,8 +3,7 @@
 #include "Math/TSphere.h"
 #include "Toshi/TStack.h"
 
-namespace Toshi
-{
+TOSHI_NAMESPACE_START
 
 class TRenderInterface;
 class TSkeletonInstance;
@@ -13,155 +12,155 @@ class TCameraObject;
 class TRenderContext
 {
 public:
-    typedef TUINT32 FLAG;
-    enum FLAG_ : FLAG
-    {
-        FLAG_DIRTY                  = BITFLAG( 0 ),
-        FLAG_FOG                    = BITFLAG( 1 ),
-        FLAG_HAS_MODELWORLDMATRIX   = BITFLAG( 2 ),
-        FLAG_HAS_VIEWWORLDMATRIX    = BITFLAG( 3 ),
-        FLAG_UNK3                   = BITFLAG( 4 ),
-        FLAG_UNK4                   = BITFLAG( 5 ),
-        FLAG_HAS_WORLDPLANES        = BITFLAG( 6 ),
-        FLAG_UNK6                   = BITFLAG( 7 ),
-        FLAG_DIRTY_WORLDMODELMATRIX = BITFLAG( 8 ),
-        FLAG_DIRTY_VIEWMODELMATRIX  = BITFLAG( 9 ),
-    };
+	typedef TUINT32 FLAG;
+	enum FLAG_ : FLAG
+	{
+		FLAG_DIRTY					= BITFLAG( 0 ),
+		FLAG_FOG					= BITFLAG( 1 ),
+		FLAG_HAS_MODELWORLDMATRIX	= BITFLAG( 2 ),
+		FLAG_HAS_VIEWWORLDMATRIX	= BITFLAG( 3 ),
+		FLAG_UNK3					= BITFLAG( 4 ),
+		FLAG_UNK4					= BITFLAG( 5 ),
+		FLAG_HAS_WORLDPLANES		= BITFLAG( 6 ),
+		FLAG_UNK6					= BITFLAG( 7 ),
+		FLAG_DIRTY_WORLDMODELMATRIX = BITFLAG( 8 ),
+		FLAG_DIRTY_VIEWMODELMATRIX	= BITFLAG( 9 ),
+	};
 
-    typedef TUINT32 CameraMode;
-    enum CameraMode_ : CameraMode
-    {
-        CameraMode_Perspective,
-        CameraMode_Orthographic,
-    };
+	typedef TUINT32 CameraMode;
+	enum CameraMode_ : CameraMode
+	{
+		CameraMode_Perspective,
+		CameraMode_Orthographic,
+	};
 
-    typedef TUINT32 WORLDPLANE;
-    enum WORLDPLANE_ : WORLDPLANE
-    {
-        WORLDPLANE_LEFT,
-        WORLDPLANE_RIGHT,
-        WORLDPLANE_BOTTOM,
-        WORLDPLANE_TOP,
-        WORLDPLANE_NEAR,
-        WORLDPLANE_FAR,
-    };
+	typedef TUINT32 WORLDPLANE;
+	enum WORLDPLANE_ : WORLDPLANE
+	{
+		WORLDPLANE_LEFT,
+		WORLDPLANE_RIGHT,
+		WORLDPLANE_BOTTOM,
+		WORLDPLANE_TOP,
+		WORLDPLANE_NEAR,
+		WORLDPLANE_FAR,
+	};
 
-    struct VIEWPORTPARAMS
-    {
-        TFLOAT fX;
-        TFLOAT fY;
-        TFLOAT fWidth;
-        TFLOAT fHeight;
-        TFLOAT fMinZ;
-        TFLOAT fMaxZ;
-    };
+	struct VIEWPORTPARAMS
+	{
+		TFLOAT fX;
+		TFLOAT fY;
+		TFLOAT fWidth;
+		TFLOAT fHeight;
+		TFLOAT fMinZ;
+		TFLOAT fMaxZ;
+	};
 
-    struct PROJECTIONPARAMS
-    {
-        TVector2 m_Centre;
-        TVector2 m_Proj;
-        TFLOAT   m_fNearClip;
-        TFLOAT   m_fFarClip;
-    };
+	struct PROJECTIONPARAMS
+	{
+		TVector2 m_Centre;
+		TVector2 m_Proj;
+		TFLOAT	 m_fNearClip;
+		TFLOAT	 m_fFarClip;
+	};
 
 protected:
-    void SetDirty( TBOOL a_bDirty );
-    void SetFlag( FLAG a_eFlag, TBOOL a_bEnable );
+	void SetDirty( TBOOL a_bDirty );
+	void SetFlag( FLAG a_eFlag, TBOOL a_bEnable );
 
 public:
-    TRenderContext( TRenderInterface* pRender );
-    virtual ~TRenderContext();
+	TRenderContext( TRenderInterface* pRender );
+	virtual ~TRenderContext();
 
-    //-----------------------------------------------------------------------------
-    // Own methods
-    //-----------------------------------------------------------------------------
-    virtual void SetModelViewMatrix( const TMatrix44& a_rMatrix );
-    virtual void SetWorldViewMatrix( const TMatrix44& a_rMatrix );
-    virtual void Update() = 0;
+	//-----------------------------------------------------------------------------
+	// Own methods
+	//-----------------------------------------------------------------------------
+	virtual void SetModelViewMatrix( const TMatrix44& a_rMatrix );
+	virtual void SetWorldViewMatrix( const TMatrix44& a_rMatrix );
+	virtual void Update() = 0;
 
-    const PROJECTIONPARAMS& GetProjectionParams() const { return m_ProjParams; }
-    void                    SetProjectionParams( const PROJECTIONPARAMS& a_rParams );
+	const PROJECTIONPARAMS& GetProjectionParams() const { return m_ProjParams; }
+	void					SetProjectionParams( const PROJECTIONPARAMS& a_rParams );
 
-    const VIEWPORTPARAMS& GetViewportParameters() const { return m_oViewportParams; }
-    void                  SetViewportParameters( const VIEWPORTPARAMS& a_rParams );
+	const VIEWPORTPARAMS& GetViewportParameters() const { return m_oViewportParams; }
+	void				  SetViewportParameters( const VIEWPORTPARAMS& a_rParams );
 
-    CameraMode GetCameraMode() { return m_eCameraMode; }
-    void       SetCameraMode( CameraMode a_eCameraMode );
+	CameraMode GetCameraMode() { return m_eCameraMode; }
+	void	   SetCameraMode( CameraMode a_eCameraMode );
 
-    void EnableFog( TBOOL a_bEnable );
-    void SetFogDistance( TFLOAT a_fStart, TFLOAT a_fEnd );
+	void EnableFog( TBOOL a_bEnable );
+	void SetFogDistance( TFLOAT a_fStart, TFLOAT a_fEnd );
 
-    TFLOAT GetX() const { return m_oViewportParams.fX; }
-    TFLOAT GetY() const { return m_oViewportParams.fY; }
-    TFLOAT GetWidth() const { return m_oViewportParams.fWidth; }
-    TFLOAT GetHeight() const { return m_oViewportParams.fHeight; }
+	TFLOAT GetX() const { return m_oViewportParams.fX; }
+	TFLOAT GetY() const { return m_oViewportParams.fY; }
+	TFLOAT GetWidth() const { return m_oViewportParams.fWidth; }
+	TFLOAT GetHeight() const { return m_oViewportParams.fHeight; }
 
-    TBOOL IsFogEnabled() const { return m_eFlags & FLAG_FOG; }
-    TBOOL IsDirty() const { return m_eFlags & FLAG_DIRTY; }
+	TBOOL IsFogEnabled() const { return m_eFlags & FLAG_FOG; }
+	TBOOL IsDirty() const { return m_eFlags & FLAG_DIRTY; }
 
-    TSkeletonInstance* GetSkeletonInstance() const { return m_pCurrentSkeletonInstance; }
-    void               SetSkeletonInstance( TSkeletonInstance* a_pSkeletonInstance ) { m_pCurrentSkeletonInstance = a_pSkeletonInstance; }
+	TSkeletonInstance* GetSkeletonInstance() const { return m_pCurrentSkeletonInstance; }
+	void			   SetSkeletonInstance( TSkeletonInstance* a_pSkeletonInstance ) { m_pCurrentSkeletonInstance = a_pSkeletonInstance; }
 
-    TUINT GetClipFlags() const;
-    TUINT SetClipFlags( TUINT a_uiClipFlags );
+	TUINT GetClipFlags() const;
+	TUINT SetClipFlags( TUINT a_uiClipFlags );
 
-    const TPlane* GetWorldPlanes();
+	const TPlane* GetWorldPlanes();
 
-    const TMatrix44& GetViewWorldMatrix();
-    const TMatrix44& GetWorldModelMatrix();
-    const TMatrix44& GetModelWorldMatrix();
-    const TMatrix44& GetViewModelMatrix();
-    TMatrix44&       GetModelViewMatrix() { return m_oModelViewMatrix; }
-    TMatrix44&       GetWorldViewMatrix() { return m_oWorldViewMatrix; }
+	const TMatrix44& GetViewWorldMatrix();
+	const TMatrix44& GetWorldModelMatrix();
+	const TMatrix44& GetModelWorldMatrix();
+	const TMatrix44& GetViewModelMatrix();
+	TMatrix44&		 GetModelViewMatrix() { return m_oModelViewMatrix; }
+	TMatrix44&		 GetWorldViewMatrix() { return m_oWorldViewMatrix; }
 
-    const TPlane* GetFrustumPlanes() const { return m_aFrustumPlanes1; }
+	const TPlane* GetFrustumPlanes() const { return m_aFrustumPlanes1; }
 
-    void           SetCameraObject( TCameraObject* a_pCameraObject ) { m_pCurrentCameraObject = a_pCameraObject; }
-    TCameraObject* GetCameraObject() const { return m_pCurrentCameraObject; }
+	void		   SetCameraObject( TCameraObject* a_pCameraObject ) { m_pCurrentCameraObject = a_pCameraObject; }
+	TCameraObject* GetCameraObject() const { return m_pCurrentCameraObject; }
 
-    TFLOAT GetAlphaBlend() const { return m_fAlphaBlend; }
-    void   SetAlphaBlend( TFLOAT val ) { m_fAlphaBlend = val; }
+	TFLOAT GetAlphaBlend() const { return m_fAlphaBlend; }
+	void   SetAlphaBlend( TFLOAT val ) { m_fAlphaBlend = val; }
 
-    TFLOAT GetShadeCoeff() const { return m_fShadeCoeff; }
-    void   SetShadeCoeff( TFLOAT val ) { m_fShadeCoeff = val; }
+	TFLOAT GetShadeCoeff() const { return m_fShadeCoeff; }
+	void   SetShadeCoeff( TFLOAT val ) { m_fShadeCoeff = val; }
 
-    const TVector4& GetAmbientColour() const { return m_AmbientColor; }
+	const TVector4& GetAmbientColour() const { return m_AmbientColor; }
 
-    static void ComputePerspectiveProjection( TMatrix44& a_rOutProjection, const VIEWPORTPARAMS& a_rViewportParams, const PROJECTIONPARAMS& a_rProjParams );
-    static void ComputeOrthographicProjection( TMatrix44& a_rOutProjection, const VIEWPORTPARAMS& a_rViewportParams, const PROJECTIONPARAMS& a_rProjParams );
+	static void ComputePerspectiveProjection( TMatrix44& a_rOutProjection, const VIEWPORTPARAMS& a_rViewportParams, const PROJECTIONPARAMS& a_rProjParams );
+	static void ComputeOrthographicProjection( TMatrix44& a_rOutProjection, const VIEWPORTPARAMS& a_rViewportParams, const PROJECTIONPARAMS& a_rProjParams );
 
-    static TBOOL CullSphereToFrustumSimple( const TSphere& a_rSphere, const TPlane* a_pPlanes, TINT a_iNumPlanes );
-    static TINT  CullSphereToFrustum( const TSphere& a_rSphere, const TPlane* a_pPlanes, TINT a_iClipFlags, TINT a_iClipFlagsMask );
+	static TBOOL CullSphereToFrustumSimple( const TSphere& a_rSphere, const TPlane* a_pPlanes, TINT a_iNumPlanes );
+	static TINT	 CullSphereToFrustum( const TSphere& a_rSphere, const TPlane* a_pPlanes, TINT a_iClipFlags, TINT a_iClipFlagsMask );
 
 protected:
-    TRenderInterface*  m_pRenderer;                // 0x0004
-    FLAG               m_eFlags;                   // 0x0008
-    TUINT              m_eClipFlags;               // 0x000C
-    TUINT              m_Unk;                      // 0x0010
-    CameraMode         m_eCameraMode;              // 0x0014
-    VIEWPORTPARAMS     m_oViewportParams;          // 0x0018
-    PROJECTIONPARAMS   m_ProjParams;               // 0x0030
-    TSkeletonInstance* m_pCurrentSkeletonInstance; // 0x0048
-    TMatrix44          m_oModelViewMatrix;         // 0x004C
-    TMatrix44          m_oWorldViewMatrix;         // 0x008C
-    TMatrix44          m_oModelWorldMatrix;        // 0x00CC
-    TMatrix44          m_oViewWorldMatrix;         // 0x010C
-    TVector4           m_AmbientColor;             // 0x014C
-    TVector4           m_FogColor;                 // 0x015C
-    // ...
-    TFLOAT m_fFogDistanceStart;    // 0x01A0
-    TFLOAT m_fFogDistanceEnd;      // 0x01A4
-    TPlane m_aFrustumPlanes1[ 6 ]; // 0x01A8
-    TPlane m_aWorldPlanes[ 6 ];    // 0x0208
-    TPlane m_aFrustumPlanes2[ 6 ]; // 0x0268
-    // ...
-    TMatrix44 m_oWorldModelMatrix; // 0x032C
-    TMatrix44 m_oViewModelMatrix;  // 0x0368
-    TFLOAT    m_fAlphaBlend;       // 0x03A8
-    // ...
-    TFLOAT m_fShadeCoeff; // 0x03B0
-    // ...
-    TCameraObject* m_pCurrentCameraObject; // 0x03BC
+	TRenderInterface*  m_pRenderer;				   // 0x0004
+	FLAG			   m_eFlags;				   // 0x0008
+	TUINT			   m_eClipFlags;			   // 0x000C
+	TUINT			   m_Unk;					   // 0x0010
+	CameraMode		   m_eCameraMode;			   // 0x0014
+	VIEWPORTPARAMS	   m_oViewportParams;		   // 0x0018
+	PROJECTIONPARAMS   m_ProjParams;			   // 0x0030
+	TSkeletonInstance* m_pCurrentSkeletonInstance; // 0x0048
+	TMatrix44		   m_oModelViewMatrix;		   // 0x004C
+	TMatrix44		   m_oWorldViewMatrix;		   // 0x008C
+	TMatrix44		   m_oModelWorldMatrix;		   // 0x00CC
+	TMatrix44		   m_oViewWorldMatrix;		   // 0x010C
+	TVector4		   m_AmbientColor;			   // 0x014C
+	TVector4		   m_FogColor;				   // 0x015C
+	// ...
+	TFLOAT m_fFogDistanceStart;	   // 0x01A0
+	TFLOAT m_fFogDistanceEnd;	   // 0x01A4
+	TPlane m_aFrustumPlanes1[ 6 ]; // 0x01A8
+	TPlane m_aWorldPlanes[ 6 ];	   // 0x0208
+	TPlane m_aFrustumPlanes2[ 6 ]; // 0x0268
+	// ...
+	TMatrix44 m_oWorldModelMatrix; // 0x032C
+	TMatrix44 m_oViewModelMatrix;  // 0x0368
+	TFLOAT	  m_fAlphaBlend;	   // 0x03A8
+	// ...
+	TFLOAT m_fShadeCoeff; // 0x03B0
+	// ...
+	TCameraObject* m_pCurrentCameraObject; // 0x03BC
 };
 
-} // namespace Toshi
+TOSHI_NAMESPACE_END

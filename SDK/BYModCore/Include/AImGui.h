@@ -18,7 +18,7 @@ public:
 	void OnD3DDeviceLost();
 	void OnD3DDeviceFound();
 
-	void Enable(TBOOL a_bEnabled)
+	void Enable( TBOOL a_bEnabled )
 	{
 		m_bEnabled = a_bEnabled;
 	}
@@ -30,5 +30,5 @@ public:
 
 private:
 	Toshi::TRenderInterface::DISPLAYPARAMS m_DisplayParams;
-	TBOOL m_bEnabled = TFALSE;
+	TBOOL								   m_bEnabled = TFALSE;
 };

@@ -2,9 +2,10 @@
 
 #include "Render/TResource.h"
 
-namespace Toshi
-{
+TOSHI_NAMESPACE_START
+
 class TNullResource : TResource
 {
 };
-} // namespace Toshi
+
+TOSHI_NAMESPACE_END

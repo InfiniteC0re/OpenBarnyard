@@ -1,8 +1,7 @@
 #pragma once
 #include "Render/TViewport.h"
 
-namespace Toshi
-{
+TOSHI_NAMESPACE_START
 
 /**
 	 * !!!
@@ -12,9 +11,9 @@ namespace Toshi
 class TViewportHAL : public Toshi::TViewport
 {
 public:
-    TViewportHAL( TBOOL a_bFlag ) :
-        TViewport( a_bFlag )
-    {}
+	TViewportHAL( TBOOL a_bFlag ) :
+		TViewport( a_bFlag )
+	{}
 };
 
-} // namespace Toshi
+TOSHI_NAMESPACE_END

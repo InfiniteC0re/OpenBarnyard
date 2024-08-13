@@ -3,40 +3,39 @@
 
 #include "Render/TVertexPoolResourceInterface.h"
 
-namespace Toshi
-{
+TOSHI_NAMESPACE_START
 
 class TVertexBlockResource;
 
 class TVertexPoolResource : public TVertexPoolResourceInterface
 {
 public:
-    TDECLARE_CLASS( TVertexPoolResource, TVertexPoolResourceInterface );
+	TDECLARE_CLASS( TVertexPoolResource, TVertexPoolResourceInterface );
 
 public:
-    friend TVertexBlockResource;
+	friend TVertexBlockResource;
 
 public:
-    TVertexPoolResource();
+	TVertexPoolResource();
 
-    virtual TBOOL Validate() override;
-    virtual void  Invalidate() override;
-    virtual void  OnDestroy() override;
-    virtual TBOOL Lock( LockBuffer* a_pLockBuffer ) override;
-    virtual void  Unlock( TUINT16 a_uiNewNumVertices ) override;
-    virtual TBOOL Create( TVertexFactoryResourceInterface* a_pFactory, TUINT16 a_uiMaxVertices, TUINT16 a_uiFlags ) override;
+	virtual TBOOL Validate() override;
+	virtual void  Invalidate() override;
+	virtual void  OnDestroy() override;
+	virtual TBOOL Lock( LockBuffer* a_pLockBuffer ) override;
+	virtual void  Unlock( TUINT16 a_uiNewNumVertices ) override;
+	virtual TBOOL Create( TVertexFactoryResourceInterface* a_pFactory, TUINT16 a_uiMaxVertices, TUINT16 a_uiFlags ) override;
 
-    TBYTE* GetManagedStream( TUINT a_uiStream );
+	TBYTE* GetManagedStream( TUINT a_uiStream );
 
-    TResource*            GetParent();
-    TVertexBlockResource* GetVertexBlock();
+	TResource*			  GetParent();
+	TVertexBlockResource* GetVertexBlock();
 
-    TBOOL GetHALBuffer( TVertexBlockResource::HALBuffer* a_pHALBuffer );
+	TBOOL GetHALBuffer( TVertexBlockResource::HALBuffer* a_pHALBuffer );
 
 private:
-    TUINT16 m_uiVertexOffset;
-    TBYTE*  m_apManagedStreams[ TVertexFactoryFormat::MAX_NUM_STREAMS ];
-    TUINT   m_uiNumLocksAllTime;
+	TUINT16 m_uiVertexOffset;
+	TBYTE*	m_apManagedStreams[ TVertexFactoryFormat::MAX_NUM_STREAMS ];
+	TUINT	m_uiNumLocksAllTime;
 };
 
-} // namespace Toshi
+TOSHI_NAMESPACE_END

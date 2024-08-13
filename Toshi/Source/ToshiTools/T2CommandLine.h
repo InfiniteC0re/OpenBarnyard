@@ -3,8 +3,7 @@
 #include "Toshi/T2String.h"
 #include "Toshi/TArray.h"
 
-namespace Toshi
-{
+TOSHI_NAMESPACE_START
 
 //-----------------------------------------------------------------------------
 // Purpose: Allows to easily operate with command line parameters
@@ -12,22 +11,22 @@ namespace Toshi
 class T2CommandLine
 {
 public:
-    T2CommandLine();
-    T2CommandLine( T2ConstString8 a_pchCommandLine );
+	T2CommandLine();
+	T2CommandLine( T2ConstString8 a_pchCommandLine );
 
-    void Create( T2ConstString8 a_pchCommandLine );
+	void Create( T2ConstString8 a_pchCommandLine );
 
-    TBOOL    HasParameter( const TCHAR* a_pszParameter, TINT* a_pIndex = TNULL ) const;
-    TString8 GetParameterValue( const TCHAR* a_pszParameter, const TCHAR* a_pszDefaultValue = TNULL ) const;
-
-private:
-    const TCHAR* GetNextParameter( const TCHAR* a_pszParameter ) const;
+	TBOOL	 HasParameter( const TCHAR* a_pszParameter, TINT* a_pIndex = TNULL ) const;
+	TString8 GetParameterValue( const TCHAR* a_pszParameter, const TCHAR* a_pszDefaultValue = TNULL ) const;
 
 private:
-    T2FormatString< 4096 >     m_szCommandLine;
-    T2String8Parser            m_Parser;
-    mutable TArray< TString8 > m_ParsedParams;
-    TBOOL                      m_bInitialised;
+	const TCHAR* GetNextParameter( const TCHAR* a_pszParameter ) const;
+
+private:
+	T2FormatString<4096>	 m_szCommandLine;
+	T2String8Parser			 m_Parser;
+	mutable TArray<TString8> m_ParsedParams;
+	TBOOL					 m_bInitialised;
 };
 
-} // namespace Toshi
+TOSHI_NAMESPACE_END

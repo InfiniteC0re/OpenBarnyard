@@ -16,16 +16,16 @@
 
 TOSHI_NAMESPACE_USING
 
-void ABYTexturePacks::SetTexturePack(const char* a_szName)
+void ABYTexturePacks::SetTexturePack( const char* a_szName )
 {
 	auto pModLoader = AGlobalModLoaderTask::Get();
-	TStringManager::String8Copy(g_szTexturePackName, a_szName);
+	TStringManager::String8Copy( g_szTexturePackName, a_szName );
 	UpdateTexturePackPath();
 }
 
 void ABYTexturePacks::UpdateTexturePackPath()
 {
-	if (m_pTexWatcher)
+	if ( m_pTexWatcher )
 	{
 		m_pTexWatcher->Destroy();
 		m_pTexWatcher = TNULL;
@@ -33,66 +33,63 @@ void ABYTexturePacks::UpdateTexturePackPath()
 
 	TStringManager::String8Format(
 		g_szTexturePackPath,
-		sizeof(g_szTexturePackPath),
+		sizeof( g_szTexturePackPath ),
 		"Mods\\TexturePacks\\%s\\",
-		g_szTexturePackName
-	);
+		g_szTexturePackName );
 
 	m_pTexWatcher = new ATextureUpdateWatcher();
-	m_pTexWatcher->Init(g_szTexturePackPath);
-	m_pTexWatcher->Create(32, TThread::THREAD_PRIORITY_LOWEST, 0);
+	m_pTexWatcher->Init( g_szTexturePackPath );
+	m_pTexWatcher->Create( 32, TThread::THREAD_PRIORITY_LOWEST, 0 );
 
 	ATextureUpdater::ReloadAllTextures();
 }
 
 TBOOL ABYTexturePacks::OnLoad()
 {
-	SetTexturePack("Default");
+	SetTexturePack( "Default" );
 	ATextureUpdater::CreateSingleton();
 
 	return TTRUE;
 }
 
-TBOOL ABYTexturePacks::OnUpdate(TFLOAT a_fDeltaTime)
+TBOOL ABYTexturePacks::OnUpdate( TFLOAT a_fDeltaTime )
 {
 	return TTRUE;
 }
 
 void ABYTexturePacks::OnUnload()
 {
-
 }
 
-void ABYTexturePacks::OnRenderInterfaceReady(Toshi::TRenderD3DInterface* a_pRenderInterface)
+void ABYTexturePacks::OnRenderInterfaceReady( Toshi::TRenderD3DInterface* a_pRenderInterface )
 {
 	TRenderInterface::SetSingletonExplicit(
-		THookedRenderD3DInterface::GetSingleton()
-	);
+		THookedRenderD3DInterface::GetSingleton() );
 }
 
 void ABYTexturePacks::OnImGuiRender()
 {
-	static char s_InputTexturePackName[64];
+	static char s_InputTexturePackName[ 64 ];
 
-	ImGui::InputText("##TexturePackName", s_InputTexturePackName, 64);
+	ImGui::InputText( "##TexturePackName", s_InputTexturePackName, 64 );
 	ImGui::SameLine();
-	
-	if (ImGui::Button("Load"))
+
+	if ( ImGui::Button( "Load" ) )
 	{
-		if (s_InputTexturePackName[0] == '\0')
+		if ( s_InputTexturePackName[ 0 ] == '\0' )
 		{
-			SetTexturePack("Default");
+			SetTexturePack( "Default" );
 		}
 		else
 		{
-			SetTexturePack(s_InputTexturePackName);
+			SetTexturePack( s_InputTexturePackName );
 		}
 	}
 
-	ImGui::Checkbox("Dump Textures", &g_bDumpTextures);
-	ImGui::Checkbox("Auto Reload", &g_bAutoReload);
+	ImGui::Checkbox( "Dump Textures", &g_bDumpTextures );
+	ImGui::Checkbox( "Auto Reload", &g_bAutoReload );
 
-	if (ImGui::Button("Reload Textures"))
+	if ( ImGui::Button( "Reload Textures" ) )
 	{
 		ATextureUpdater::ReloadAllTextures();
 	}
@@ -112,14 +109,14 @@ extern "C"
 {
 	MODLOADER_EXPORT AModInstance* CreateModInstance( const T2CommandLine* a_pCommandLine )
 	{
-		TMemory::Initialise(64 * 1024 * 1024, 0);
+		TMemory::Initialise( 64 * 1024 * 1024, 0 );
 
 		TUtil::TOSHIParams toshiParams;
 		toshiParams.szCommandLine = "";
 		toshiParams.szLogFileName = "texturepack";
-		toshiParams.szLogAppName = "BYTexturePacks";
+		toshiParams.szLogAppName  = "BYTexturePacks";
 
-		TUtil::ToshiCreate(toshiParams);
+		TUtil::ToshiCreate( toshiParams );
 
 		g_LoadMutex.Create();
 

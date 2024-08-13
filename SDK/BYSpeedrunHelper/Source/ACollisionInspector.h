@@ -11,14 +11,14 @@ public:
 	ACollisionInspector();
 
 	TBOOL& IsCollisionVisible() { return m_bCollisionVisible; }
-	void SetCollisionVisible(TBOOL a_bVisible);
+	void   SetCollisionVisible( TBOOL a_bVisible );
 
 private:
 	inline static ASysMaterial* ms_pCollisionMaterial;
 
 private:
-	static TBOOL AModelLoader_LoadTRBCallback(Toshi::TModel* a_pModel);
-	static void ATerrain_Render(ATerrainInterface* a_pTerrain);
+	static TBOOL AModelLoader_LoadTRBCallback( Toshi::TModel* a_pModel );
+	static void	 ATerrain_Render( ATerrainInterface* a_pTerrain );
 
 private:
 	TBOOL m_bCollisionVisible = TTRUE;

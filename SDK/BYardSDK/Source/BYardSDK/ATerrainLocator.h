@@ -5,23 +5,22 @@
 class ATerrainLocator
 {
 public:
-
 private:
 	Toshi::TQuaternion m_Rotation;
-	Toshi::TVector3 m_Position;
+	Toshi::TVector3	   m_Position;
 };
 
 class ATerrainLocatorManager
 {
 public:
-	void LoadFromTRB(Toshi::TTRB* a_pTRB);
+	void LoadFromTRB( Toshi::TTRB* a_pTRB );
 
 	Toshi::TTRB* GetTRB() { return m_pTRB; }
 
 private:
-	Toshi::TTRB* m_pTRB;
-	void* m_pLocators;
-	void* m_pLocatorVIS;
+	Toshi::TTRB*			m_pTRB;
+	void*					m_pLocators;
+	void*					m_pLocatorVIS;
 	Toshi::TTransformObject m_TransformObject;
-	TBOOL m_bCreatedGrowings;
+	TBOOL					m_bCreatedGrowings;
 };

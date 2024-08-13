@@ -6,12 +6,12 @@ class ASkeletonDoneJob :
 	public AMainThreadJob
 {
 public:
-	virtual void BeginJob() override;
+	virtual void  BeginJob() override;
 	virtual TBOOL RunJob() override;
 
-	void InitJob(ATerrainVIS* a_pVIS, ATRBLoaderJob* a_pTRBJob);
+	void InitJob( ATerrainVIS* a_pVIS, ATRBLoaderJob* a_pTRBJob );
 
 private:
-	ATerrainVIS* m_pVIS;
+	ATerrainVIS*   m_pVIS;
 	ATRBLoaderJob* m_pTRBLoaderJob;
 };

@@ -7,74 +7,73 @@
 #include <d3d8.h>
 #include "Core/TMemoryDebugOff.h"
 
-namespace Toshi
-{
+TOSHI_NAMESPACE_START
 
 class TVertexPoolResource;
 
 class TVertexBlockResource : public TResource
 {
 public:
-    TDECLARE_CLASS( TVertexBlockResource, TResource );
-    TDECLARE_FREELIST_ALLOCATOR( TVertexBlockResource );
+	TDECLARE_CLASS( TVertexBlockResource, TResource );
+	TDECLARE_FREELIST_ALLOCATOR( TVertexBlockResource );
 
-    static TVertexBlockResource* CreateNew()
-    {
-        return new TVertexBlockResource();
-    }
-
-public:
-    struct HALBuffer
-    {
-        HALBuffer();
-
-        TUINT                   uiNumStreams;
-        TUINT16                 uiVertexOffset;
-        IDirect3DVertexBuffer8* apVertexBuffers[ TVertexFactoryFormat::MAX_NUM_STREAMS ];
-    };
+	static TVertexBlockResource* CreateNew()
+	{
+		return new TVertexBlockResource();
+	}
 
 public:
-    TVertexBlockResource();
+	struct HALBuffer
+	{
+		HALBuffer();
 
-    virtual TBOOL Validate() override;
-    virtual void  Invalidate() override;
-    virtual TBOOL TryInvalidate() override;
-    virtual TBOOL TryValidate() override;
+		TUINT					uiNumStreams;
+		TUINT16					uiVertexOffset;
+		IDirect3DVertexBuffer8* apVertexBuffers[ TVertexFactoryFormat::MAX_NUM_STREAMS ];
+	};
 
-    TBOOL AttachPool( TVertexPoolResource* a_pPool );
-    TBOOL DettachPool( TVertexPoolResource* a_pPool );
-    TBOOL CanFit( TVertexPoolResource* a_pPoolResource ) const;
+public:
+	TVertexBlockResource();
 
-    void ChildVertexUsedChanged( TINT a_iChange );
+	virtual TBOOL Validate() override;
+	virtual void  Invalidate() override;
+	virtual TBOOL TryInvalidate() override;
+	virtual TBOOL TryValidate() override;
 
-    TBOOL Lock( TVertexPoolResourceInterface::LockBuffer* a_pLockBuffer, TUINT16 a_uiNumVertices );
-    void  Unlock();
+	TBOOL AttachPool( TVertexPoolResource* a_pPool );
+	TBOOL DettachPool( TVertexPoolResource* a_pPool );
+	TBOOL CanFit( TVertexPoolResource* a_pPoolResource ) const;
 
-    TBOOL Create( TVertexFactoryResourceInterface* a_pFactory, TUINT16 a_uiMaxVertices, TUINT32 a_uiFlags );
+	void ChildVertexUsedChanged( TINT a_iChange );
 
-    TBOOL CreateHAL();
-    void  DestroyHAL();
+	TBOOL Lock( TVertexPoolResourceInterface::LockBuffer* a_pLockBuffer, TUINT16 a_uiNumVertices );
+	void  Unlock();
 
-    TBOOL GetHALBuffer( HALBuffer* a_pHALBuffer ) const;
+	TBOOL Create( TVertexFactoryResourceInterface* a_pFactory, TUINT16 a_uiMaxVertices, TUINT32 a_uiFlags );
+
+	TBOOL CreateHAL();
+	void  DestroyHAL();
+
+	TBOOL GetHALBuffer( HALBuffer* a_pHALBuffer ) const;
 
 private:
-    inline static TINT s_iCurrentNumHALCreated;
-    inline static TINT s_iTotalNumHALCreated;
-    inline static TINT s_iTotalNumHALDestroyed;
-    inline static TINT s_iCurrentVertexBufferBytesAllocated;
-    inline static TINT s_iTotalVertexBufferBytesAllocated;
-    inline static TINT s_iHALMemoryUsage;
-    inline static TINT s_iWastedVertexBufferBytesAllocated;
+	inline static TINT s_iCurrentNumHALCreated;
+	inline static TINT s_iTotalNumHALCreated;
+	inline static TINT s_iTotalNumHALDestroyed;
+	inline static TINT s_iCurrentVertexBufferBytesAllocated;
+	inline static TINT s_iTotalVertexBufferBytesAllocated;
+	inline static TINT s_iHALMemoryUsage;
+	inline static TINT s_iWastedVertexBufferBytesAllocated;
 
 protected:
-    TVertexFactoryResourceInterface* m_pFactory;
-    TUINT                            m_uiFlags;
-    TUINT16                          m_uiMaxVertices;
-    TUINT                            m_uiOffset;
-    TUINT                            m_uiVerticesUsed;
-    TUINT                            m_uiLockCount;
-    TUINT                            m_Unk1;
-    HALBuffer                        m_HALBuffer;
+	TVertexFactoryResourceInterface* m_pFactory;
+	TUINT							 m_uiFlags;
+	TUINT16							 m_uiMaxVertices;
+	TUINT							 m_uiOffset;
+	TUINT							 m_uiVerticesUsed;
+	TUINT							 m_uiLockCount;
+	TUINT							 m_Unk1;
+	HALBuffer						 m_HALBuffer;
 };
 
-} // namespace Toshi
+TOSHI_NAMESPACE_END

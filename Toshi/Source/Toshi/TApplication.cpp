@@ -11,64 +11,65 @@
 //-----------------------------------------------------------------------------
 #include "Core/TMemoryDebugOn.h"
 
-namespace Toshi
-{
+TOSHI_NAMESPACE_START
+
 TApplication::TApplication()
 {
-    m_Flags = 0;
+	m_Flags = 0;
 }
 
 TApplication::~TApplication()
 {
-    Destroy();
+	Destroy();
 }
 
 TBOOL TApplication::Create( const TCHAR* appName, TINT argc, TCHAR** argv )
 {
-    m_oExitEvent.Connect( this, OnApplicationExitEvent );
-    m_Name = appName;
+	m_oExitEvent.Connect( this, OnApplicationExitEvent );
+	m_Name = appName;
 
-    m_pDebugConsole = new TDebugConsole;
+	m_pDebugConsole = new TDebugConsole;
 
-    if ( IsConsoleEnabled() )
-        m_pDebugConsole->Show( TTRUE );
+	if ( IsConsoleEnabled() )
+		m_pDebugConsole->Show( TTRUE );
 
-    return OnCreate( argc, argv );
+	return OnCreate( argc, argv );
 }
 
 void TApplication::Destroy()
 {
-    m_Flags |= TApplicationFlag_Destroyed;
+	m_Flags |= TApplicationFlag_Destroyed;
 }
 
 TBOOL TApplication::Execute()
 {
-    TASSERT( TApplication::IsCreated() == TTRUE );
+	TASSERT( TApplication::IsCreated() == TTRUE );
 
-    TBOOL bUpdateResult = TTRUE;
-    while ( bUpdateResult && !IsDestroyed() )
-    {
-        g_oSystemManager.Update();
-        bUpdateResult = OnUpdate( g_oSystemManager.GetTimer().GetDelta() );
-    }
+	TBOOL bUpdateResult = TTRUE;
+	while ( bUpdateResult && !IsDestroyed() )
+	{
+		g_oSystemManager.Update();
+		bUpdateResult = OnUpdate( g_oSystemManager.GetTimer().GetDelta() );
+	}
 
-    return OnDestroy();
+	return OnDestroy();
 }
 
 TBOOL TApplication::OnCreate( TINT argc, TCHAR** argv )
 {
-    m_Flags |= TApplicationFlag_Created;
-    return TTRUE;
+	m_Flags |= TApplicationFlag_Created;
+	return TTRUE;
 }
 
-TBOOL TApplication::OnUpdate( float deltaTime )
+TBOOL TApplication::OnUpdate( TFLOAT deltaTime )
 {
-    return ( m_Flags & TApplicationFlag_Destroyed ) == 0;
+	return ( m_Flags & TApplicationFlag_Destroyed ) == 0;
 }
 
 TBOOL TApplication::OnDestroy()
 {
-    m_oExitEvent.Disconnect();
-    return TTRUE;
+	m_oExitEvent.Disconnect();
+	return TTRUE;
 }
-} // namespace Toshi
+
+TOSHI_NAMESPACE_END

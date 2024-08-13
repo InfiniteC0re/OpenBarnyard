@@ -8,7 +8,6 @@ TBOOL ASysShader::IsLightScattering()
 	return TFALSE;
 }
 
-void ASysShader::SetLightScattering(TBOOL a_bEnabled)
+void ASysShader::SetLightScattering( TBOOL a_bEnabled )
 {
-
 }

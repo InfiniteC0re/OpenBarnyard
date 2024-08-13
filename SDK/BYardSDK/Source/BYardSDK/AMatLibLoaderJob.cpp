@@ -3,7 +3,6 @@
 
 void AMatLibLoaderJob::BeginJob()
 {
-	
 }
 
 TBOOL AMatLibLoaderJob::RunJob()
@@ -16,7 +15,6 @@ TBOOL AMatLibLoaderJob::CancelJob()
 	return TTRUE;
 }
 
-void AMatLibLoaderJob::InitJob(const char* a_szFileName, Toshi::TTRB* a_pTRB, AMaterialLibrary*& a_rpOutMatLib, Toshi::TMemory::MemBlock* a_pMemBlock)
+void AMatLibLoaderJob::InitJob( const char* a_szFileName, Toshi::TTRB* a_pTRB, AMaterialLibrary*& a_rpOutMatLib, Toshi::TMemory::MemBlock* a_pMemBlock )
 {
-	
 }

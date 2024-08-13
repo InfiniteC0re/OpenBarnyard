@@ -2,36 +2,35 @@
 #include "TResource.h"
 #include "TIndexFactoryFormat.h"
 
-namespace Toshi
-{
+TOSHI_NAMESPACE_START
 
 class TIndexPoolResourceInterface;
 
 class TIndexFactoryResourceInterface : public TResource
 {
 public:
-    TDECLARE_CLASS( TIndexFactoryResourceInterface, TResource );
+	TDECLARE_CLASS( TIndexFactoryResourceInterface, TResource );
 
 public:
-    friend TIndexPoolResourceInterface;
+	friend TIndexPoolResourceInterface;
 
 public:
-    TIndexFactoryResourceInterface();
+	TIndexFactoryResourceInterface();
 
-    virtual TBOOL                        Create( TIndexFactoryFormat* a_pIndexFormat, TUINT16 a_uiMaxStaticIndices, TUINT32 a_uiFlags );
-    virtual TIndexPoolResourceInterface* CreatePoolResource( TUINT16 a_uiMaxStaticIndices, TUINT16 a_uiFlags ) = 0;
+	virtual TBOOL						 Create( TIndexFactoryFormat* a_pIndexFormat, TUINT16 a_uiMaxStaticIndices, TUINT32 a_uiFlags );
+	virtual TIndexPoolResourceInterface* CreatePoolResource( TUINT16 a_uiMaxStaticIndices, TUINT16 a_uiFlags ) = 0;
 
-    const TIndexFactoryFormat& GetIndexFormat() const { return m_IndexFormat; }
-    TUINT16                    GetMaxStaticIndices() const { return m_uiMaxStaticIndices; }
-
-protected:
-    TIndexPoolResourceInterface* CreatePool( TUINT16 a_uiMaxStaticIndices, TUINT32 a_uiFlags );
+	const TIndexFactoryFormat& GetIndexFormat() const { return m_IndexFormat; }
+	TUINT16					   GetMaxStaticIndices() const { return m_uiMaxStaticIndices; }
 
 protected:
-    TUINT               m_uiNumPools;
-    TIndexFactoryFormat m_IndexFormat;
-    TUINT16             m_uiMaxStaticIndices;
-    TUINT               m_uiFlags;
+	TIndexPoolResourceInterface* CreatePool( TUINT16 a_uiMaxStaticIndices, TUINT32 a_uiFlags );
+
+protected:
+	TUINT				m_uiNumPools;
+	TIndexFactoryFormat m_IndexFormat;
+	TUINT16				m_uiMaxStaticIndices;
+	TUINT				m_uiFlags;
 };
 
-} // namespace Toshi
+TOSHI_NAMESPACE_END

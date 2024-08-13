@@ -1,5 +1,4 @@
 #include "pch.h"
 #include "THookedTask.h"
 
-TDEFINE_CLASS(THookedTask);
-
+TDEFINE_CLASS( THookedTask );

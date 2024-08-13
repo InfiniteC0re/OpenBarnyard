@@ -1,12 +1,11 @@
 #pragma once
 
-namespace Toshi
-{
+TOSHI_NAMESPACE_START
 
 class TRenderCapture
 {
 public:
-    TRenderCapture() = default;
+	TRenderCapture() = default;
 };
 
-} // namespace Toshi
+TOSHI_NAMESPACE_END

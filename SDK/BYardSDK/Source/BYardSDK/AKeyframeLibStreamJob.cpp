@@ -4,18 +4,16 @@
 #include <Render/TRenderInterface.h>
 
 AKeyframeLibStreamJob::AKeyframeLibStreamJob() :
-	TFileStreamJob(TNULL)
+	TFileStreamJob( TNULL )
 {
-	m_pLibrary = TNULL;
-	m_szName[0] = '\0';
+	m_pLibrary	  = TNULL;
+	m_szName[ 0 ] = '\0';
 }
 
 void AKeyframeLibStreamJob::Process()
 {
-	
 }
 
-void AKeyframeLibStreamJob::Init(const char* a_szFileName)
+void AKeyframeLibStreamJob::Init( const char* a_szFileName )
 {
-	
 }
