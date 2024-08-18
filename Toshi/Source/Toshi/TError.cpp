@@ -9,10 +9,10 @@
 
 Toshi::TError::TError( TUINT32 size1, TUINT32 size2 )
 {
-	m_size1		   = size1;
-	m_size2		   = size2;
-	m_Buffer1	   = new TCHAR[ size1 ];
-	m_Buffer2	   = new TINT[ size2 ];
+	m_size1        = size1;
+	m_size2        = size2;
+	m_Buffer1      = new TCHAR[ size1 ];
+	m_Buffer2      = new TINT[ size2 ];
 	m_currentSize  = 0;
 	m_currentSize2 = 0;
 }

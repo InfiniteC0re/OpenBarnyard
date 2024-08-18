@@ -7,7 +7,7 @@ class TStringTable
 public:
 	TStringTable( const TCHAR* const* strings, TINT numStrings )
 	{
-		m_Strings	 = strings;
+		m_Strings    = strings;
 		m_NumStrings = numStrings;
 	}
 
@@ -21,7 +21,7 @@ public:
 
 private:
 	const TCHAR* const* m_Strings;
-	TINT				m_NumStrings;
+	TINT                m_NumStrings;
 };
 
 TOSHI_NAMESPACE_END

@@ -11,10 +11,10 @@ TOSHI_NAMESPACE_USING
 
 AWorldVis::AWorldVis()
 {
-	m_pWorld		 = TNULL;
-	m_pModels		 = TNULL;
-	m_iSomeNum1		 = 0;
-	m_iSomeNum2		 = 0;
+	m_pWorld         = TNULL;
+	m_pModels        = TNULL;
+	m_iSomeNum1      = 0;
+	m_iSomeNum2      = 0;
 	m_fnSomeCallback = TNULL;
 }
 

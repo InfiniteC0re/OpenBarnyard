@@ -20,14 +20,14 @@ int main( int argc, char** argv )
 	toshiParams.szCommandLine = GetCommandLineA();
 
 	TUtil::ToshiCreate( toshiParams );
-	TUtil::SetTPStringPool( new TPString8Pool( 1024, 0, &T2Allocator::s_GlobalAllocator, TNULL ) );
+	TUtil::SetTPStringPool( new TPString8Pool( 1024, 0, Toshi::GetGlobalAllocator(), TNULL ) );
 
 	T2CommandLine commandLine( GetCommandLineA() );
-	auto		  strPackPath	= commandLine.GetParameterValue( "-p" );
-	auto		  strUnpackFile = commandLine.GetParameterValue( "-u" );
-	auto		  strOutPath	= commandLine.GetParameterValue( "-o" );
-	auto		  strAssetName	= commandLine.GetParameterValue( "-asset", "pack" );
-	auto		  bIsBtec		= commandLine.HasParameter( "-btec" );
+	auto          strPackPath   = commandLine.GetParameterValue( "-p" );
+	auto          strUnpackFile = commandLine.GetParameterValue( "-u" );
+	auto          strOutPath    = commandLine.GetParameterValue( "-o" );
+	auto          strAssetName  = commandLine.GetParameterValue( "-asset", "pack" );
+	auto          bIsBtec       = commandLine.HasParameter( "-btec" );
 
 	if ( strUnpackFile )
 	{

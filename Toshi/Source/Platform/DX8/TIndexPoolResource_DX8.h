@@ -26,15 +26,15 @@ public:
 
 	TUINT16* GetIndices() { return ( m_uiLockCount == 0 ) ? m_pIndices : TNULL; }
 
-	TResource*			 GetParent();
+	TResource*           GetParent();
 	TIndexBlockResource* GetIndexBlock();
 
 	TBOOL GetHALBuffer( TIndexBlockResource::HALBuffer* a_pHALBuffer );
 
 private:
-	TUINT16		m_uiIndexOffset;
+	TUINT16     m_uiIndexOffset;
 	TIndexType* m_pIndices;
-	TUINT		m_uiNumLocksAllTime;
+	TUINT       m_uiNumLocksAllTime;
 };
 
 TOSHI_NAMESPACE_END

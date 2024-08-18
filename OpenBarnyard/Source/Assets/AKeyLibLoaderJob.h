@@ -12,6 +12,6 @@ public:
 	AKeyframeLibStreamJob& GetStream() { return m_oStreamJob; }
 
 protected:
-	AKeyframeLibStreamJob	  m_oStreamJob;
+	AKeyframeLibStreamJob     m_oStreamJob;
 	Toshi::TKeyframeLibrary** m_ppOutKeyframeLib;
 };

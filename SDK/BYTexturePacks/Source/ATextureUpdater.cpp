@@ -11,11 +11,11 @@
 
 TOSHI_NAMESPACE_USING
 
-char	 g_szTexturePackName[ 64 ]		 = "Default";
-char	 g_szTexturePackPath[ MAX_PATH ] = "Mods\\TexturePacks\\Default\\";
-TMutex	 g_LoadMutex;
-TBOOL	 g_bDumpTextures = TTRUE;
-TBOOL	 g_bAutoReload	 = TTRUE;
+char     g_szTexturePackName[ 64 ]       = "Default";
+char     g_szTexturePackPath[ MAX_PATH ] = "Mods\\TexturePacks\\Default\\";
+TMutex   g_LoadMutex;
+TBOOL    g_bDumpTextures = TTRUE;
+TBOOL    g_bAutoReload   = TTRUE;
 THPTimer g_LastDumpTimer;
 
 TBOOL MaterialLibrary_LoadTTLData( AMaterialLibrary* a_pMatLib, AMaterialLibrary::TTL* a_pTTLData )
@@ -24,7 +24,7 @@ TBOOL MaterialLibrary_LoadTTLData( AMaterialLibrary* a_pMatLib, AMaterialLibrary
 
 	auto pTTL = TSTATICCAST( AMaterialLibrary::TTL, a_pTTLData );
 
-	auto pLibList	  = AMaterialLibraryManager::List::GetSingleton();
+	auto pLibList     = AMaterialLibraryManager::List::GetSingleton();
 	TINT iNumTextures = 0;
 
 	if ( AMaterialLibrary::ms_bSkipLoadedTextures )
@@ -43,8 +43,8 @@ TBOOL MaterialLibrary_LoadTTLData( AMaterialLibrary* a_pMatLib, AMaterialLibrary
 	}
 
 	a_pMatLib->m_pTexturesArray = new ATexture[ iNumTextures ];
-	a_pMatLib->m_pTextures		= a_pMatLib->m_pTexturesArray;
-	a_pMatLib->m_iNumTextures	= iNumTextures;
+	a_pMatLib->m_pTextures      = a_pMatLib->m_pTexturesArray;
+	a_pMatLib->m_iNumTextures   = iNumTextures;
 
 	for ( TINT i = 0; i < iNumTextures; i++ )
 	{
@@ -71,7 +71,7 @@ TBOOL MaterialLibrary_LoadTTLData( AMaterialLibrary* a_pMatLib, AMaterialLibrary
 					{
 						// Load texture from Data\\TextureOverride
 						auto  uiFileSize = pFile->GetSize();
-						void* pFileData	 = TMalloc( uiFileSize );
+						void* pFileData  = TMalloc( uiFileSize );
 
 						if ( pFile->Read( pFileData, uiFileSize ) == uiFileSize )
 						{
@@ -115,7 +115,7 @@ ATextureUpdater::ATextureUpdater()
 
 void ATextureUpdater::DumpTexture( const Toshi::TString8& a_rFilePath, const void* a_pData, TUINT32 a_uiDataSize )
 {
-	TINT			iSlashPos = 0;
+	TINT            iSlashPos = 0;
 	Toshi::TString8 filepath  = a_rFilePath;
 
 	// Create directory for the dump
@@ -167,7 +167,7 @@ void ATextureUpdater::ReloadTexture( Toshi::T2Texture* a_pT2Texture, void* a_pDa
 void ATextureUpdater::RestoreTexture( const Toshi::TString8& a_rTextureName, TBOOL a_bForceDump )
 {
 	AMaterialLibrary* pLibrary;
-	auto			  pAppTexture = AMaterialLibraryManager::List::GetSingleton()->FindTexture( a_rTextureName, &pLibrary, TNULL );
+	auto              pAppTexture = AMaterialLibraryManager::List::GetSingleton()->FindTexture( a_rTextureName, &pLibrary, TNULL );
 
 	TTRB trb;
 
@@ -180,7 +180,7 @@ void ATextureUpdater::RestoreTexture( const Toshi::TString8& a_rTextureName, TBO
 			auto pTexInfo = &pTTL->m_pTextureInfos[ i ];
 
 			if ( pTexInfo->m_bIsT2Texture == TRUE &&
-				 a_rTextureName == pTexInfo->m_szFileName )
+			     a_rTextureName == pTexInfo->m_szFileName )
 			{
 				ReloadTexture( pAppTexture->pTexture, pTexInfo->m_pData, pTexInfo->m_uiDataSize );
 
@@ -210,7 +210,7 @@ void ATextureUpdater::ReloadTexture( const Toshi::TString8& a_rTextureName )
 	{
 		// Load texture data from raw file
 		auto  uiFileSize = pFile->GetSize();
-		void* pFileData	 = TMalloc( uiFileSize );
+		void* pFileData  = TMalloc( uiFileSize );
 
 		if ( pFile->Read( pFileData, uiFileSize ) == uiFileSize )
 		{
@@ -268,7 +268,7 @@ void ATextureUpdater::ReloadAllTextures()
 			if ( Toshi::TFile* pFile = TFile::Create( texFilePath, TFILEMODE_READ ) )
 			{
 				auto  uiFileSize = pFile->GetSize();
-				void* pFileData	 = TMalloc( uiFileSize );
+				void* pFileData  = TMalloc( uiFileSize );
 
 				if ( pFile->Read( pFileData, uiFileSize ) == uiFileSize )
 				{

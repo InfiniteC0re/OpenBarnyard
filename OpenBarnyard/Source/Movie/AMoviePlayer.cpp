@@ -10,12 +10,12 @@
 TDEFINE_CLASS_NORUNTIME( AMoviePlayer );
 
 AMoviePlayer::AMoviePlayer() :
-	m_SomeEmitter( this )
+    m_SomeEmitter( this )
 {
-	m_bCreated		= TFALSE;
+	m_bCreated      = TFALSE;
 	m_bIsFullscreen = TTRUE;
-	m_bIsMuted		= TFALSE;
-	m_bIsHidden		= TTRUE;
+	m_bIsMuted      = TFALSE;
+	m_bIsHidden     = TTRUE;
 }
 
 TBOOL AMoviePlayer::OnCreate()

@@ -6,7 +6,7 @@
 #include <Platform/DX8/TTextureResourceHAL_DX8.h>
 
 class ASkinMaterialWrapperGL :
-	public Toshi::TMaterial
+    public Toshi::TMaterial
 {
 public:
 	void PreRenderGL()
@@ -22,8 +22,8 @@ public:
 				if ( m_pTexture != pInvalidNative )
 				{
 					auto pTexManagerSDL = Toshi::TTextureManagerSDL::GetSingleton();
-					m_pTextures[ 0 ]	= TREINTERPRETCAST( Toshi::TTexture*, pTexManagerSDL->GetGLAssociation( pD3DTexture ) );
-					m_pTextures[ 1 ]	= TREINTERPRETCAST( Toshi::TTexture*, pD3DTexture );
+					m_pTextures[ 0 ]    = TREINTERPRETCAST( Toshi::TTexture*, pTexManagerSDL->GetGLAssociation( pD3DTexture ) );
+					m_pTextures[ 1 ]    = TREINTERPRETCAST( Toshi::TTexture*, pD3DTexture );
 
 					if ( m_pLighting1 )
 					{
@@ -84,25 +84,25 @@ public:
 	Toshi::TTextureResourceHAL* m_pLighting2;
 	Toshi::TTextureResourceHAL* m_pLighting3;
 	Toshi::TTextureResourceHAL* m_pLighting4;
-	TINT						m_iBlendMode;
-	TINT						UNK1;
-	TINT						UNK2;
-	TINT						UNK3;
-	TBOOL						m_bIsSkin; // ?
-	TBOOL						m_bFlag2;
-	TBOOL						m_bFlag3;
+	TINT                        m_iBlendMode;
+	TINT                        UNK1;
+	TINT                        UNK2;
+	TINT                        UNK3;
+	TBOOL                       m_bIsSkin; // ?
+	TBOOL                       m_bFlag2;
+	TBOOL                       m_bFlag3;
 };
 
 class ASkinShaderGL :
-	public Toshi::TSingleton<ASkinShaderGL>
+    public Toshi::TSingleton<ASkinShaderGL>
 {
 public:
 	struct SkinVertex
 	{
 		Toshi::TVector3 Position;
 		Toshi::TVector3 Normal;
-		TUINT8			Weights[ 4 ];
-		TUINT8			Bones[ 4 ];
+		TUINT8          Weights[ 4 ];
+		TUINT8          Bones[ 4 ];
 		Toshi::TVector2 UV;
 	};
 
@@ -110,12 +110,12 @@ public:
 	ASkinShaderGL()
 	{
 		m_VAO = Toshi::TRenderSDL::CreateVertexArray(
-			Toshi::TRenderSDL::CreateVertexBuffer( TNULL, 0, GL_DYNAMIC_DRAW ),
-			Toshi::TRenderSDL::CreateIndexBuffer( TNULL, 0, GL_DYNAMIC_DRAW ) );
+		    Toshi::TRenderSDL::CreateVertexBuffer( TNULL, 0, GL_DYNAMIC_DRAW ),
+		    Toshi::TRenderSDL::CreateIndexBuffer( TNULL, 0, GL_DYNAMIC_DRAW ) );
 
 		m_VertexShader = Toshi::TRenderSDL::CompileShader(
-			GL_VERTEX_SHADER,
-			"#version 400\n\
+		    GL_VERTEX_SHADER,
+		    "#version 400\n\
 			\
 			layout(location = 0) in vec3 a_Position;\n\
 			layout(location = 1) in vec3 a_Normal;\n\
@@ -164,8 +164,8 @@ public:
 			}" );
 
 		m_PixelShader = Toshi::TRenderSDL::CompileShader(
-			GL_FRAGMENT_SHADER,
-			"#version 400\n\
+		    GL_FRAGMENT_SHADER,
+		    "#version 400\n\
 			in vec2 o_TexCoord;\n\
 			in vec3 o_Normal;\n\
 			in vec3 o_Position;\n\
@@ -186,8 +186,8 @@ public:
 		m_ShaderProgram = Toshi::TRenderSDL::CreateShaderProgram( m_VertexShader, m_PixelShader );
 
 		m_VertexShaderHD = Toshi::TRenderSDL::CompileShader(
-			GL_VERTEX_SHADER,
-			"#version 400\n\
+		    GL_VERTEX_SHADER,
+		    "#version 400\n\
 			\
 			layout(location = 0) in vec3 a_Position;\n\
 			layout(location = 1) in vec3 a_Normal;\n\
@@ -239,8 +239,8 @@ public:
 			}" );
 
 		m_PixelShaderHD = Toshi::TRenderSDL::CompileShader(
-			GL_FRAGMENT_SHADER,
-			"#version 400\n\
+		    GL_FRAGMENT_SHADER,
+		    "#version 400\n\
 			in vec2 o_TexCoord;\n\
 			in vec3 o_Normal;\n\
 			in vec3 o_Position;\n\
@@ -289,8 +289,8 @@ public:
 		glPolygonMode( GL_BACK, GL_FILL );
 
 		auto pRenderContext = TSTATICCAST(
-			Toshi::TRenderContextD3D,
-			THookedRenderD3DInterface::GetSingleton()->GetCurrentContext() );
+		    Toshi::TRenderContextD3D,
+		    THookedRenderD3DInterface::GetSingleton()->GetCurrentContext() );
 
 		m_ProjectionMatrix = *(Toshi::TMatrix44*)( TUINT( pRenderContext ) + 0x3C0 );
 		m_WorldViewMatrix  = *(Toshi::TMatrix44*)( TUINT( pRenderContext ) + 0x8C );
@@ -299,7 +299,7 @@ public:
 
 	void Render( Toshi::TRenderPacket* a_pRenderPacket )
 	{
-		auto pMesh		 = a_pRenderPacket->GetMesh();
+		auto pMesh       = a_pRenderPacket->GetMesh();
 		auto pVertexPool = *TREINTERPRETCAST( Toshi::TVertexPoolResource**, TUINT( pMesh ) + 0x18 );
 
 		auto pMaterial = TSTATICCAST( ASkinMaterialWrapperGL, pMesh->GetMaterial() );
@@ -402,7 +402,7 @@ public:
 		Toshi::TMatrix44 modelMatrix;
 		modelMatrix.Multiply( m_ViewWorldMatrix, a_pRenderPacket->GetModelViewMatrix() );
 
-		auto&			 modelView = a_pRenderPacket->GetModelViewMatrix();
+		auto&            modelView = a_pRenderPacket->GetModelViewMatrix();
 		Toshi::TMatrix44 worldModelView;
 
 		for ( TINT i = 0; i < 4; i++ )
@@ -424,7 +424,7 @@ public:
 		lightDirWorld.Normalize();
 
 		Toshi::TVector4 ambientColour = a_pRenderPacket->GetAmbientColour();
-		Toshi::TVector4 lightColour	  = a_pRenderPacket->GetLightColour();
+		Toshi::TVector4 lightColour   = a_pRenderPacket->GetLightColour();
 
 		auto pSkeletonInstance = a_pRenderPacket->GetSkeletonInstance();
 
@@ -439,7 +439,7 @@ public:
 
 		for ( TUINT16 i = 0; i < uiNumSubMeshes; i++ )
 		{
-			auto pSubMesh	= ( *TREINTERPRETCAST( TUINT*, TUINT( pMesh ) + 0x1C ) ) + 0x94 * i;
+			auto pSubMesh   = ( *TREINTERPRETCAST( TUINT*, TUINT( pMesh ) + 0x1C ) ) + 0x94 * i;
 			auto pIndexPool = *TREINTERPRETCAST( Toshi::TIndexPoolResource**, TUINT( pSubMesh ) + 0x4 );
 
 			Toshi::TIndexBlockResource::HALBuffer indexHAL;
@@ -452,7 +452,7 @@ public:
 
 			// Update bones
 			auto iSubMeshNumBones = *TREINTERPRETCAST( TINT32*, TUINT( pSubMesh ) + 0x20 );
-			auto pSubMeshBones	  = TREINTERPRETCAST( TUINT32*, TUINT( pSubMesh ) + 0x24 );
+			auto pSubMeshBones    = TREINTERPRETCAST( TUINT32*, TUINT( pSubMesh ) + 0x24 );
 
 			static Toshi::TMatrix44 s_BoneTransforms[ 28 ];
 			for ( TINT k = 0; k < iSubMeshNumBones; k++ )
@@ -472,13 +472,13 @@ private:
 	Toshi::TGLVertexArrayRef m_VAO;
 
 	// Usual shader
-	Toshi::TGLShaderRef		m_VertexShader;
-	Toshi::TGLShaderRef		m_PixelShader;
+	Toshi::TGLShaderRef     m_VertexShader;
+	Toshi::TGLShaderRef     m_PixelShader;
 	Toshi::TGLShaderProgram m_ShaderProgram;
 
 	// Shader with lighting
-	Toshi::TGLShaderRef		m_VertexShaderHD;
-	Toshi::TGLShaderRef		m_PixelShaderHD;
+	Toshi::TGLShaderRef     m_VertexShaderHD;
+	Toshi::TGLShaderRef     m_PixelShaderHD;
 	Toshi::TGLShaderProgram m_ShaderProgramHD;
 
 	Toshi::TMatrix44 m_WorldViewMatrix;

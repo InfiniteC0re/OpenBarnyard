@@ -17,20 +17,20 @@ public:
 public:
 	TIndexFactoryResourceInterface();
 
-	virtual TBOOL						 Create( TIndexFactoryFormat* a_pIndexFormat, TUINT16 a_uiMaxStaticIndices, TUINT32 a_uiFlags );
+	virtual TBOOL                        Create( TIndexFactoryFormat* a_pIndexFormat, TUINT16 a_uiMaxStaticIndices, TUINT32 a_uiFlags );
 	virtual TIndexPoolResourceInterface* CreatePoolResource( TUINT16 a_uiMaxStaticIndices, TUINT16 a_uiFlags ) = 0;
 
 	const TIndexFactoryFormat& GetIndexFormat() const { return m_IndexFormat; }
-	TUINT16					   GetMaxStaticIndices() const { return m_uiMaxStaticIndices; }
+	TUINT16                    GetMaxStaticIndices() const { return m_uiMaxStaticIndices; }
 
 protected:
 	TIndexPoolResourceInterface* CreatePool( TUINT16 a_uiMaxStaticIndices, TUINT32 a_uiFlags );
 
 protected:
-	TUINT				m_uiNumPools;
+	TUINT               m_uiNumPools;
 	TIndexFactoryFormat m_IndexFormat;
-	TUINT16				m_uiMaxStaticIndices;
-	TUINT				m_uiFlags;
+	TUINT16             m_uiMaxStaticIndices;
+	TUINT               m_uiFlags;
 };
 
 TOSHI_NAMESPACE_END

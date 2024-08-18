@@ -7,25 +7,25 @@ class AMemoryPool
 {
 public:
 	constexpr AMemoryPool( const TCHAR* a_szName, int a_iHeapIndex, size_t a_uiSize, int a_iUnk1, int a_iUnk2 ) :
-		m_szName( a_szName ),
-		m_iHeapIndex( a_iHeapIndex ),
-		m_uiSize( a_uiSize ),
-		m_iUnk1( a_iUnk1 ),
-		m_iUnk2( a_iUnk2 )
+	    m_szName( a_szName ),
+	    m_iHeapIndex( a_iHeapIndex ),
+	    m_uiSize( a_uiSize ),
+	    m_iUnk1( a_iUnk1 ),
+	    m_iUnk2( a_iUnk2 )
 	{
 	}
 
 	const TCHAR* GetName() const { return m_szName; }
-	int			 GetHeapIndex() const { return m_iHeapIndex; }
-	size_t		 GetSize() const { return m_uiSize; }
-	TINT		 GetUnk2() const { return m_iUnk2; }
+	int          GetHeapIndex() const { return m_iHeapIndex; }
+	size_t       GetSize() const { return m_uiSize; }
+	TINT         GetUnk2() const { return m_iUnk2; }
 
 private:
 	const TCHAR* m_szName;
-	TINT		 m_iHeapIndex;
-	size_t		 m_uiSize;
-	TINT		 m_iUnk1;
-	TINT		 m_iUnk2;
+	TINT         m_iHeapIndex;
+	size_t       m_uiSize;
+	TINT         m_iUnk1;
+	TINT         m_iUnk2;
 };
 
 class AMemory
@@ -47,12 +47,12 @@ public:
 
 	struct AllocatorList
 	{
-		void*				 Unknown;
+		void*                Unknown;
 		AMemoryPoolAllocator aAllocators[ POOL_NUMOF ];
 	};
 
 	inline static Toshi::TMemory::MemBlock* s_aMemBlocks[ POOL_NUMOF ];
-	inline static AllocatorList				s_AllocatorList;
+	inline static AllocatorList             s_AllocatorList;
 
 	inline static constexpr AMemoryPool s_aPools[ POOL_NUMOF ] = {
 #define DEFINE_MEMORY_POOL( NAME, SIZE, UNK1, UNK2 ) AMemoryPool( #NAME, NAME, SIZE, UNK1, UNK2 )
@@ -68,7 +68,7 @@ public:
 	};
 
 public:
-	static void						 CreatePool( POOL a_ePool );
-	static Toshi::T2Allocator*		 GetAllocator( POOL a_ePool );
+	static void                      CreatePool( POOL a_ePool );
+	static Toshi::T2Allocator*       GetAllocator( POOL a_ePool );
 	static Toshi::TMemory::MemBlock* GetMemBlock( POOL a_ePool );
 };

@@ -36,9 +36,9 @@ T2TestingFramework::TestAutoReg::TestAutoReg( const TCHAR* a_pchTestName, const 
 		g_pTestingFramework = New<T2TestingFramework>();
 
 	g_pTestingFramework->RegisterTest(
-		a_pchTestName,
-		g_pTestingFramework->RegisterCategory( a_pchCategoryName ),
-		a_fnMethod );
+	    a_pchTestName,
+	    g_pTestingFramework->RegisterCategory( a_pchCategoryName ),
+	    a_fnMethod );
 }
 
 T2TestingFramework::Category* T2TestingFramework::FindCategory( const TCHAR* a_pchName )
@@ -62,7 +62,7 @@ T2TestingFramework::Category* T2TestingFramework::RegisterCategory( const TCHAR*
 
 	if ( !pCategory )
 	{
-		pCategory		   = New<Category>();
+		pCategory          = New<Category>();
 		pCategory->pchName = a_pchName;
 		pCategory->pNext   = m_pHeadCategory;
 
@@ -77,18 +77,18 @@ T2TestingFramework::Test* T2TestingFramework::RegisterTest( const TCHAR* a_pchTe
 	if ( !a_pCategory )
 		return TNULL;
 
-	Test* pTest		 = New<Test>();
-	pTest->pchName	 = a_pchTestName;
+	Test* pTest      = New<Test>();
+	pTest->pchName   = a_pchTestName;
 	pTest->pCategory = a_pCategory;
-	pTest->fnMethod	 = a_fnMethod;
-	pTest->pNext	 = a_pCategory->pHeadTest;
+	pTest->fnMethod  = a_fnMethod;
+	pTest->pNext     = a_pCategory->pHeadTest;
 
 	a_pCategory->pHeadTest = pTest;
 
 	return pTest;
 }
 
-T2TestingFramework::FailCallback_t	  g_fnFailCallback;
+T2TestingFramework::FailCallback_t    g_fnFailCallback;
 T2TestingFramework::SuccessCallback_t g_fnSuccessCallback;
 
 void T2TestingFramework::SignalRequirementResult( Test* a_pTest, const TCHAR* a_pchFileName, TINT a_iLineNum, const TCHAR* a_pchStatement, TBOOL a_bFailed )
@@ -96,12 +96,12 @@ void T2TestingFramework::SignalRequirementResult( Test* a_pTest, const TCHAR* a_
 	if ( !a_pTest )
 		return;
 
-	Check* pCheck		 = New<Check>();
-	pCheck->pchFileName	 = a_pchFileName;
+	Check* pCheck        = New<Check>();
+	pCheck->pchFileName  = a_pchFileName;
 	pCheck->pchStatement = a_pchStatement;
-	pCheck->iLineNum	 = a_iLineNum;
-	pCheck->bFailed		 = a_bFailed;
-	pCheck->pNext		 = a_pTest->pHeadCheck;
+	pCheck->iLineNum     = a_iLineNum;
+	pCheck->bFailed      = a_bFailed;
+	pCheck->pNext        = a_pTest->pHeadCheck;
 
 	a_pTest->pHeadCheck = pCheck;
 
@@ -120,11 +120,11 @@ void T2TestingFramework::SignalRequirementResult( Test* a_pTest, const TCHAR* a_
 
 TINT T2TestingFramework::RunTests( FailCallback_t a_fnFailCallback /* = TNULL*/, SuccessCallback_t a_fnSuccessCallback /* = TNULL */ )
 {
-	TINT	  iNumFails = 0;
+	TINT      iNumFails = 0;
 	Category* pCategory = m_pHeadCategory;
 
 	// Update callbacks
-	g_fnFailCallback	= a_fnFailCallback;
+	g_fnFailCallback    = a_fnFailCallback;
 	g_fnSuccessCallback = a_fnSuccessCallback;
 
 	while ( pCategory )
@@ -147,14 +147,14 @@ TINT T2TestingFramework::RunTests( FailCallback_t a_fnFailCallback /* = TNULL*/,
 			}
 
 			m_pCurrentTest = TNULL;
-			pTest		   = pTest->pNext;
+			pTest          = pTest->pNext;
 		}
 
 		pCategory = pCategory->pNext;
 	}
 
 	// Reset callbacks
-	g_fnFailCallback	= TNULL;
+	g_fnFailCallback    = TNULL;
 	g_fnSuccessCallback = TNULL;
 
 	return iNumFails;

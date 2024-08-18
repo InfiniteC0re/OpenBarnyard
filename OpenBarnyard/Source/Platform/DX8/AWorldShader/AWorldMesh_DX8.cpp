@@ -24,7 +24,7 @@ TBOOL AWorldMeshHAL::Render()
 	TMaterial* pMaterial;
 
 	if ( !TSTATICCAST( AWorldShaderHAL, m_pOwnerShader )->IsAlphaBlendMaterial() ||
-		 pCurrentContext->GetAlphaBlend() >= 1.0f )
+	     pCurrentContext->GetAlphaBlend() >= 1.0f )
 	{
 		pMaterial = TSTATICCAST( AWorldMaterialHAL, m_pMaterial );
 	}

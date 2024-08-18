@@ -22,7 +22,7 @@ TBOOL T2Mutex::Lock( Flags flags )
 	TASSERT( m_Mutex != NULL, "Mutex is NULL" );
 
 	DWORD waitForMs = ( flags & Flags_DoNotWait ) ? 0 : INFINITE;
-	DWORD result	= WaitForSingleObject( m_Mutex, waitForMs );
+	DWORD result    = WaitForSingleObject( m_Mutex, waitForMs );
 
 	return result == WAIT_OBJECT_0;
 }

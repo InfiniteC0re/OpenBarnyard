@@ -11,17 +11,17 @@ TOSHI_NAMESPACE_START
 
 TViewport::TViewport( TBOOL a_bFlag )
 {
-	m_MemAllocatorBlock		= TNULL;
-	m_pRenderCtx			= TRenderInterface::GetSingleton()->CreateRenderContext();
-	m_ColorR				= 0;
-	m_ColorG				= 0;
-	m_ColorB				= 0;
-	m_ColorA				= 0;
+	m_MemAllocatorBlock     = TNULL;
+	m_pRenderCtx            = TRenderInterface::GetSingleton()->CreateRenderContext();
+	m_ColorR                = 0;
+	m_ColorG                = 0;
+	m_ColorB                = 0;
+	m_ColorA                = 0;
 	m_bAllowBackgroundClear = TTRUE;
-	m_bAllowDepthClear		= TTRUE;
-	m_bDefaultBeginRender	= TTRUE;
-	m_bEnable				= TTRUE;
-	m_bInViewport			= TFALSE;
+	m_bAllowDepthClear      = TTRUE;
+	m_bDefaultBeginRender   = TTRUE;
+	m_bEnable               = TTRUE;
+	m_bInViewport           = TFALSE;
 
 	SetWidth( -1.0f );
 	SetHeight( -1.0f );
@@ -147,7 +147,7 @@ void TViewport::SetMemoryAllocatorBlock( TMemory::MemBlock* a_pMemBlock )
 
 TBOOL TViewport::EnableDefaultBeginRender( TBOOL enable )
 {
-	TBOOL oldState		  = m_bDefaultBeginRender;
+	TBOOL oldState        = m_bDefaultBeginRender;
 	m_bDefaultBeginRender = enable;
 	return oldState;
 }
@@ -159,7 +159,7 @@ void TViewport::Enable( TBOOL enable )
 
 TBOOL TViewport::AllowDepthClear( TBOOL allow )
 {
-	TBOOL oldState	   = m_bAllowDepthClear;
+	TBOOL oldState     = m_bAllowDepthClear;
 	m_bAllowDepthClear = allow;
 	ChangeSKU( ChangeEvent_DepthClear );
 	return oldState;
@@ -167,7 +167,7 @@ TBOOL TViewport::AllowDepthClear( TBOOL allow )
 
 TBOOL TViewport::AllowBackgroundClear( TBOOL allow )
 {
-	TBOOL oldState			= m_bAllowBackgroundClear;
+	TBOOL oldState          = m_bAllowBackgroundClear;
 	m_bAllowBackgroundClear = allow;
 	ChangeSKU( ChangeEvent_BackgroundClear );
 	return oldState;

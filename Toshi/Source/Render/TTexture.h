@@ -30,9 +30,9 @@ public:
 	virtual TUINT GetHeight() = 0;
 	virtual TBOOL Lock( LOCKSTATE& a_rLockState );
 	virtual void  Unlock();
-	virtual void  CreateFromT2Texture( T2Texture* a_pTexture )															= 0;
+	virtual void  CreateFromT2Texture( T2Texture* a_pTexture )                                                          = 0;
 	virtual TBOOL Create( void* a_pData, TUINT a_uiDataSize, TUINT a_eTextureFlags, TUINT a_uiWidth, TUINT a_uiHeight ) = 0;
-	virtual TBOOL Create( const TCHAR* a_szFileName, TUINT a_eTextureFlags )											= 0;
+	virtual TBOOL Create( const TCHAR* a_szFileName, TUINT a_eTextureFlags )                                            = 0;
 	virtual TBOOL CreateEx( void* a_pData, TUINT a_uiDataSize, TUINT a_uiWidth, TUINT a_uiHeight, TUINT a_uiMipLevels, TTEXTURERESOURCEFORMAT a_eFormat, BOOL a_bNoMipLevels );
 
 	void SetAddress( TUINT a_eAddress )
@@ -61,8 +61,8 @@ public:
 	}
 
 protected:
-	TUINT						m_eAddress;
-	TUINT						m_eTextureFlags;
+	TUINT                       m_eAddress;
+	TUINT                       m_eTextureFlags;
 	TTextureFactory::NameEntry* m_pNameEntry;
 };
 

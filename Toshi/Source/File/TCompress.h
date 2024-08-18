@@ -6,10 +6,10 @@ TOSHI_NAMESPACE_START
 
 enum TCOMPRESS_ERROR
 {
-	TCOMPRESS_ERROR_OK				 = 0,
-	TCOMPRESS_ERROR_WRONG_MAGIC		 = -1,
-	TCOMPRESS_ERROR_WRONG_VERSION	 = -2,
-	TCOMPRESS_ERROR_WRONG_SIZE		 = -3,
+	TCOMPRESS_ERROR_OK               = 0,
+	TCOMPRESS_ERROR_WRONG_MAGIC      = -1,
+	TCOMPRESS_ERROR_WRONG_VERSION    = -2,
+	TCOMPRESS_ERROR_WRONG_SIZE       = -3,
 	TCOMPRESS_ERROR_WRONG_HEADERSIZE = -4
 };
 
@@ -35,11 +35,11 @@ public:
 
 	struct Header
 	{
-		TUINT32	 Magic;
+		TUINT32  Magic;
 		TVersion Version;
-		TUINT32	 CompressedSize;
-		TUINT32	 Size;
-		TUINT32	 XorValue;
+		TUINT32  CompressedSize;
+		TUINT32  Size;
+		TUINT32  XorValue;
 	};
 
 	// Size of header that is common for any BTEC version
@@ -54,7 +54,7 @@ public:
 	//-----------------------------------------------------------------------------
 
 	static constexpr TINT maxlength = 0x4000;
-	static TINT			  usemaxoffset;
+	static TINT           usemaxoffset;
 
 public:
 	static size_t Compress( TFile* file, TCHAR* data, TUINT32 size, TUINT32 unused, TBOOL isBigEndian );
@@ -69,8 +69,8 @@ public:
 	//-----------------------------------------------------------------------------
 
 	static uintptr_t Decompress( TFile* file, TCompress::Header* header, TCHAR* buffer, TUINT32 bufferSize );
-	static int8_t	 GetHeader( TFile* file, TCompress::Header& btecHeader );
-	static TINT		 GetCommand( TFile* file, TBOOL& hasOffset, TUINT32& size, TINT& offset );
+	static int8_t    GetHeader( TFile* file, TCompress::Header& btecHeader );
+	static TINT      GetCommand( TFile* file, TBOOL& hasOffset, TUINT32& size, TINT& offset );
 };
 
 TOSHI_NAMESPACE_END

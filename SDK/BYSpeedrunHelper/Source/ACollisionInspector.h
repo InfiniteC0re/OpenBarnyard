@@ -5,7 +5,7 @@
 #include <Render/TModel.h>
 
 class ACollisionInspector :
-	public Toshi::TSingleton<ACollisionInspector>
+    public Toshi::TSingleton<ACollisionInspector>
 {
 public:
 	ACollisionInspector();
@@ -18,7 +18,7 @@ private:
 
 private:
 	static TBOOL AModelLoader_LoadTRBCallback( Toshi::TModel* a_pModel );
-	static void	 ATerrain_Render( ATerrainInterface* a_pTerrain );
+	static void  ATerrain_Render( ATerrainInterface* a_pTerrain );
 
 private:
 	TBOOL m_bCollisionVisible = TTRUE;

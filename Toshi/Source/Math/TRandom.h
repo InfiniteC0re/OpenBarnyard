@@ -12,7 +12,7 @@ MODIFIED:
 // mix with source: https://github.com/jawnsy/Math-Random-ISAAC-XS/blob/master/src/rand.c
 
 #define RANDSIZL ( 4 ) /* 8 for crypto, 4 for simulations (aka Toshi uses 4) */
-#define RANDSIZ	 ( 1 << RANDSIZL )
+#define RANDSIZ  ( 1 << RANDSIZL )
 
 #include "Toshi/THPTimer.h"
 
@@ -33,7 +33,7 @@ public:
 
 	TUINT32 RandRaw();
 
-	void	SetSeed( TUINT a_uiSeed );
+	void    SetSeed( TUINT a_uiSeed );
 	TUINT32 GetSeed() const { return m_uiSeed; }
 
 private:
@@ -41,8 +41,8 @@ private:
 	void RandInit();
 
 private:
-	TUINT32 m_uiSeed;			   // 0x0
-	TUINT32 m_uiRndCnt;			   // 0x4
+	TUINT32 m_uiSeed;              // 0x0
+	TUINT32 m_uiRndCnt;            // 0x4
 	TUINT32 m_pRandrsl[ RANDSIZ ]; //0x8
 
 	TUINT32 m_pRandmem[ RANDSIZ ]; // 0x48

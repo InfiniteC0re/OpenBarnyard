@@ -5,7 +5,7 @@ TOSHI_NAMESPACE_USING
 
 TBOOL AAssetPack::Load( const char* a_szFileName )
 {
-	m_FileName	  = a_szFileName;
+	m_FileName    = a_szFileName;
 	TBOOL bReaded = m_TRBFile.ReadFromFile( a_szFileName );
 
 	m_bLoaded = TFALSE;
@@ -17,8 +17,8 @@ TBOOL AAssetPack::Load( const char* a_szFileName )
 
 		for ( TUINT i = 0; i < pInSYMB->GetCount(); i++ )
 		{
-			TString8 name	= pInSYMB->GetName( i );
-			auto	 pStack = pInSYMB->GetStack( pInSECT, i );
+			TString8 name   = pInSYMB->GetName( i );
+			auto     pStack = pInSYMB->GetStack( pInSECT, i );
 
 			char szAssetFileName[ MAX_PATH ];
 			auto iUnderlinePos = name.FindReverse( '_', -1 );
@@ -50,8 +50,8 @@ TBOOL AAssetPack::Load( const char* a_szFileName )
 
 				for ( TUINT k = i; k < pInSYMB->GetCount(); k++ )
 				{
-					TString8 inSymbolName	  = pInSYMB->GetName( k );
-					auto	 pInSymbolAddress = pInSYMB->GetByIndex<char>( pInSECT, k );
+					TString8 inSymbolName     = pInSYMB->GetName( k );
+					auto     pInSymbolAddress = pInSYMB->GetByIndex<char>( pInSECT, k );
 
 					if ( pInSymbolAddress.stack() == pAsset->pStack )
 					{

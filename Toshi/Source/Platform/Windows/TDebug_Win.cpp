@@ -10,8 +10,8 @@
 
 TOSHI_NAMESPACE_USING
 
-TCHAR	TDebug_ScratchMem[ 4096 ];
-BOOL	TDebug_IsMutexCreated;
+TCHAR   TDebug_ScratchMem[ 4096 ];
+BOOL    TDebug_IsMutexCreated;
 T2Mutex TDebug_Mutex;
 
 void TDebug_AcquireMutex()
@@ -33,10 +33,10 @@ void TDebug_ReleaseMutex()
 TBOOL TDebug_IsValidAddress( const void* a_pPtr )
 {
 	if ( a_pPtr != TNULL &&
-		 a_pPtr != (void*)0xcdcdcdcd &&
-		 a_pPtr != (void*)0xdeaddead &&
-		 a_pPtr != (void*)0xbeefbeef &&
-		 a_pPtr >= (void*)0x4f )
+	     a_pPtr != (void*)0xcdcdcdcd &&
+	     a_pPtr != (void*)0xdeaddead &&
+	     a_pPtr != (void*)0xbeefbeef &&
+	     a_pPtr >= (void*)0x4f )
 	{
 		return TTRUE;
 	}
@@ -90,7 +90,7 @@ void TDebug_BroadcastDebugString( const TCHAR* a_szString )
 
 const TCHAR* TDebug_szAssertFilename;
 const TCHAR* TDebug_szAssertExpression;
-TUINT		 TDebug_uiAssertLineNumber;
+TUINT        TDebug_uiAssertLineNumber;
 
 BOOL CALLBACK TDebug_AssertionDlgProc( HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam )
 {
@@ -138,7 +138,7 @@ BOOL CALLBACK TDebug_AssertionDlgProc( HWND hwnd, UINT Message, WPARAM wParam, L
 
 TINT TDebug_AssertHandler( const TCHAR* a_szExpression, const TCHAR* a_szFileName, TUINT a_uiLineNumber, const TCHAR* a_szDescription )
 {
-	TDebug_szAssertFilename	  = a_szFileName;
+	TDebug_szAssertFilename   = a_szFileName;
 	TDebug_szAssertExpression = a_szExpression;
 	TDebug_uiAssertLineNumber = a_uiLineNumber;
 
@@ -148,11 +148,11 @@ TINT TDebug_AssertHandler( const TCHAR* a_szExpression, const TCHAR* a_szFileNam
 		hWnd = GetLastActivePopup( hWnd );
 
 	INT_PTR result = DialogBoxParamA(
-		GetModuleHandleA( NULL ),
-		MAKEINTRESOURCEA( IDD_ASSERT ),
-		hWnd,
-		TDebug_AssertionDlgProc,
-		NULL );
+	    GetModuleHandleA( NULL ),
+	    MAKEINTRESOURCEA( IDD_ASSERT ),
+	    hWnd,
+	    TDebug_AssertionDlgProc,
+	    NULL );
 
 	return ( result != -1 ) ? result : 1;
 }

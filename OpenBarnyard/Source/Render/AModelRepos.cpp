@@ -13,8 +13,8 @@ TOSHI_NAMESPACE_USING
 TDEFINE_CLASS( AModelRepos );
 
 AModelRepos::AModelRepos() :
-	m_UsedModels( AMemory::GetAllocator( AMemory::POOL_Misc ) ),
-	m_Models2( AMemory::GetAllocator( AMemory::POOL_Misc ) )
+    m_UsedModels( AMemory::GetAllocator( AMemory::POOL_Misc ) ),
+    m_Models2( AMemory::GetAllocator( AMemory::POOL_Misc ) )
 {
 }
 
@@ -95,8 +95,8 @@ AModelInstance* AModelRepos::InstantiateModel( AModel* a_pModel )
 
 AModelInstance* AModelRepos::InstantiateNewModel( const Toshi::TPString8& a_rName, Toshi::TTRB* a_pTRB )
 {
-	AModel* pModel		= TNULL;
-	auto	pModels2Res = m_Models2.FindNode( a_rName );
+	AModel* pModel      = TNULL;
+	auto    pModels2Res = m_Models2.FindNode( a_rName );
 
 	if ( pModels2Res == m_Models2.End() )
 	{
@@ -126,8 +126,8 @@ void AModelRepos::CreateInModels2( const Toshi::TPString8& a_rName, Toshi::TTRB*
 {
 	if ( m_Models2.FindNode( a_rName ) == m_Models2.End() )
 	{
-		AModel* pModel		   = TNULL;
-		auto	pUsedModelsRes = m_UsedModels.FindNode( a_rName );
+		AModel* pModel         = TNULL;
+		auto    pUsedModelsRes = m_UsedModels.FindNode( a_rName );
 
 		if ( pUsedModelsRes == m_UsedModels.End() )
 		{

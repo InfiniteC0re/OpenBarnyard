@@ -143,16 +143,16 @@ public:
 		}
 
 	private:
-		TINT	 m_iIndex;	// 0x0
+		TINT     m_iIndex;  // 0x0
 		Storage* m_poArray; // 0x4
 	};
 
 public:
 	TGenericArray( TINT a_iGrowSize, TINT a_iSize )
 	{
-		m_iGrowSize			= a_iGrowSize;
+		m_iGrowSize         = a_iGrowSize;
 		m_iNumAllocElements = a_iSize;
-		m_iNumElements		= 0;
+		m_iNumElements      = 0;
 
 		if ( m_iNumAllocElements > 0 )
 		{
@@ -177,7 +177,7 @@ public:
 	{
 		if ( a_iNewSize != 0 )
 		{
-			T*	   pNewBuffer = TSTATICCAST( T, TMemalign( a_iNewSize * sizeof( T ), alignof( T ) ) );
+			T*     pNewBuffer = TSTATICCAST( T, TMemalign( a_iNewSize * sizeof( T ), alignof( T ) ) );
 			size_t uiCopySize = TMath::Min( m_iNumElements, a_iNewSize );
 
 			TUtil::MemCopy( pNewBuffer, m_pData, sizeof( T ) * uiCopySize );
@@ -191,9 +191,9 @@ public:
 		else
 		{
 			if ( m_pData ) TFree( m_pData );
-			m_pData				= TNULL;
+			m_pData             = TNULL;
 			m_iNumAllocElements = 0;
-			m_iNumElements		= 0;
+			m_iNumElements      = 0;
 		}
 	}
 
@@ -292,10 +292,10 @@ private:
 	}
 
 private:
-	TINT m_iGrowSize;		  // 0x0
-	TINT m_iNumElements;	  // 0x4
+	TINT m_iGrowSize;         // 0x0
+	TINT m_iNumElements;      // 0x4
 	TINT m_iNumAllocElements; // 0x8
-	T*	 m_pData;			  // 0xC
+	T*   m_pData;             // 0xC
 };
 
 template <class T>
@@ -303,7 +303,7 @@ class TArray : public TGenericArray<T>
 {
 public:
 	TArray( TINT a_iGrowSize = 10, TINT a_iSize = 0 ) :
-		TGenericArray<T>( a_iGrowSize, a_iSize )
+	    TGenericArray<T>( a_iGrowSize, a_iSize )
 	{
 	}
 };

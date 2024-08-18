@@ -26,8 +26,8 @@ AWorldMaterialHAL::AWorldMaterialHAL()
 	for ( TUINT i = 0; i < MAX_TEXTURES; i++ )
 	{
 		m_aHasUVOffsets[ i ] = TFALSE;
-		m_aUVOffsetsX[ i ]	 = 0.0f;
-		m_aUVOffsetsY[ i ]	 = 0.0f;
+		m_aUVOffsetsX[ i ]   = 0.0f;
+		m_aUVOffsetsY[ i ]   = 0.0f;
 	}
 }
 
@@ -58,7 +58,7 @@ void AWorldMaterialHAL::OnDestroy()
 void AWorldMaterialHAL::PreRender()
 {
 	auto pRenderInterface = TRenderD3DInterface::Interface();
-	auto pD3DDevice		  = pRenderInterface->GetDirect3DDevice();
+	auto pD3DDevice       = pRenderInterface->GetDirect3DDevice();
 
 	AWorldShaderHAL::s_RenderStateFlags = 0x1B;
 
@@ -133,8 +133,8 @@ void AWorldMaterialHAL::PreRender()
 
 	// Save current UV offset
 	m_aHasUVOffsets[ 0 ] = TTRUE;
-	m_aUVOffsetsX[ 0 ]	 = m_fUVAnimX;
-	m_aUVOffsetsY[ 0 ]	 = m_fUVAnimY;
+	m_aUVOffsetsX[ 0 ]   = m_fUVAnimX;
+	m_aUVOffsetsY[ 0 ]   = m_fUVAnimY;
 
 	SetupRenderer();
 }
@@ -143,7 +143,7 @@ void AWorldMaterialHAL::PostRender()
 {
 	auto pRenderInterface = TRenderD3DInterface::Interface();
 	auto pCurrentContext  = TRenderContextD3D::Upcast( pRenderInterface->GetCurrentContext() );
-	auto pD3DDevice		  = pRenderInterface->GetDirect3DDevice();
+	auto pD3DDevice       = pRenderInterface->GetDirect3DDevice();
 
 	pD3DDevice->SetRenderState( D3DRS_COLORVERTEX, TRUE );
 	pD3DDevice->SetTexture( 0, NULL );
@@ -209,7 +209,7 @@ void AWorldMaterialHAL::CopyToAlphaBlendMaterial()
 {
 	if ( m_pAlphaBlendMaterial )
 	{
-		m_pAlphaBlendMaterial->m_iNumTex		= m_iNumTex;
+		m_pAlphaBlendMaterial->m_iNumTex        = m_iNumTex;
 		m_pAlphaBlendMaterial->m_aTextures[ 0 ] = m_aTextures[ 0 ];
 		m_pAlphaBlendMaterial->m_aTextures[ 1 ] = m_aTextures[ 1 ];
 		m_pAlphaBlendMaterial->m_aTextures[ 2 ] = m_aTextures[ 2 ];
@@ -256,7 +256,7 @@ void AWorldMaterialHAL::SetupRenderer()
 
 	auto pRenderInterface = TRenderD3DInterface::Interface();
 	auto pCurrentContext  = TRenderContextD3D::Upcast( pRenderInterface->GetCurrentContext() );
-	auto pD3DDevice		  = pRenderInterface->GetDirect3DDevice();
+	auto pD3DDevice       = pRenderInterface->GetDirect3DDevice();
 	pD3DDevice->SetVertexShaderConstant( 7, &vOffsets, 1 );
 
 	// Setup render state for the selected blending state

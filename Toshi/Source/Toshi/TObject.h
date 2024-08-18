@@ -18,16 +18,16 @@
 //-----------------------------------------------------------------------------
 #define TDECLARE_CLASS_BODY( THIS_CLASS, PARENT_CLASS )                       \
 public:                                                                       \
-	using ThisClass								= THIS_CLASS;                 \
-	using BaseClass								= PARENT_CLASS;               \
+	using ThisClass                             = THIS_CLASS;                 \
+	using BaseClass                             = PARENT_CLASS;               \
 	static constexpr Toshi::TClass* PARENTCLASS = &TGetClass( PARENT_CLASS ); \
                                                                               \
 	virtual Toshi::TClass* GetClass() override;                               \
                                                                               \
 	static Toshi::TObject* CreateTObject();                                   \
 	static Toshi::TObject* CreateTObjectInPlace( void* a_pPtr );              \
-	static void			   InitialiseClass();                                 \
-	static void			   DeinitialiseClass();                               \
+	static void            InitialiseClass();                                 \
+	static void            DeinitialiseClass();                               \
                                                                               \
 	static TFORCEINLINE Toshi::TClass* GetClassStatic() { return std::addressof( TClassObjectName ); }
 
@@ -53,7 +53,7 @@ public:                                                                       \
 #define TDEFINE_CLASS_CORE( CLASS )                                                                                    \
 	TSTATICASSERT( CLASS::IsTObject );                                                                                 \
 	TSTATICASSERT( std::is_base_of<CLASS::BaseClass, CLASS>::value && !std::is_same<CLASS::BaseClass, CLASS>::value ); \
-	Toshi::TClass*	CLASS::GetClass() { return CLASS::GetClassStatic(); }                                              \
+	Toshi::TClass*  CLASS::GetClass() { return CLASS::GetClassStatic(); }                                              \
 	Toshi::TObject* CLASS::CreateTObject() { return new CLASS(); }                                                     \
 	Toshi::TObject* CLASS::CreateTObjectInPlace( void* a_pPtr ) { return new ( a_pPtr ) CLASS(); }
 
@@ -63,7 +63,7 @@ public:                                                                       \
 #define TDEFINE_CLASS_CORE_NORUNTIME( CLASS )                                                                          \
 	TSTATICASSERT( CLASS::IsTObject );                                                                                 \
 	TSTATICASSERT( std::is_base_of<CLASS::BaseClass, CLASS>::value && !std::is_same<CLASS::BaseClass, CLASS>::value ); \
-	Toshi::TClass*	CLASS::GetClass() { return CLASS::GetClassStatic(); }                                              \
+	Toshi::TClass*  CLASS::GetClass() { return CLASS::GetClassStatic(); }                                              \
 	Toshi::TObject* CLASS::CreateTObject()                                                                             \
 	{                                                                                                                  \
 		TASSERT( TFALSE, "This class cannot be created at runtime!" );                                                 \
@@ -81,7 +81,7 @@ public:                                                                       \
 //-----------------------------------------------------------------------------
 #define TDEFINE_CLASS_CORE_COMPILETIME( CLASS )                           \
 	TSTATICASSERT( CLASS::IsTObject );                                    \
-	Toshi::TClass*	CLASS::GetClass() { return CLASS::GetClassStatic(); } \
+	Toshi::TClass*  CLASS::GetClass() { return CLASS::GetClassStatic(); } \
 	Toshi::TObject* CLASS::CreateTObject() { return new CLASS(); }        \
 	Toshi::TObject* CLASS::CreateTObjectInPlace( void* a_pPtr ) { return new ( a_pPtr ) CLASS(); }
 
@@ -184,7 +184,7 @@ public:
 
 public:
 	virtual Toshi::TClass* GetClass();
-	virtual void		   Delete();
+	virtual void           Delete();
 	virtual ~TObject();
 
 public:
@@ -194,8 +194,8 @@ public:
 public:
 	static Toshi::TObject* CreateTObject();
 	static Toshi::TObject* CreateTObjectInPlace( void* a_pPtr );
-	static void			   InitialiseClass();
-	static void			   DeinitialiseClass();
+	static void            InitialiseClass();
+	static void            DeinitialiseClass();
 
 	static TFORCEINLINE TClass* GetClassStatic() { return std::addressof( TClassObjectName ); }
 

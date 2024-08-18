@@ -22,7 +22,7 @@ TBOOL ASectionDoneJob::RunJob()
 		TINT iNumLODs = m_pSection->GetLODCount( m_eLODType );
 
 		ATerrainLODBlock** ppLODBlocks;
-		TUINT16			   uiNumMemBlocks;
+		TUINT16            uiNumMemBlocks;
 		m_pSection->GetLODBlocks( m_eLODType, ppLODBlocks, uiNumMemBlocks );
 
 		// Set memory block of the LOD
@@ -84,7 +84,7 @@ TBOOL ASectionDoneJob::CancelJob()
 
 void ASectionDoneJob::InitJob( ATerrainSection* a_pVISGroup, ATerrainLODType a_eLODType )
 {
-	m_eLODType	  = a_eLODType;
-	m_pSection	  = a_pVISGroup;
+	m_eLODType    = a_eLODType;
+	m_pSection    = a_pVISGroup;
 	m_bIsCanceled = TFALSE;
 }

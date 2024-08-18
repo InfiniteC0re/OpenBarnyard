@@ -112,7 +112,7 @@ void AGUI2FontManager::CreateFontFromResource( AGUI2FontResource* a_pFontResourc
 
 	for ( TINT i = 0; i < trb.GetNumSymbols(); i++ )
 	{
-		auto pSymbol	 = trb.GetSymbol( i );
+		auto pSymbol     = trb.GetSymbol( i );
 		auto pSymbolName = trb.GetSymbolName( pSymbol );
 
 		auto pFontRef = FindFontRef( pSymbolName );
@@ -127,11 +127,11 @@ void AGUI2FontManager::CreateFontFromResource( AGUI2FontResource* a_pFontResourc
 			pFontRef->szName = new char[ TStringManager::String8Length( pSymbolName ) + 1 ];
 			TStringManager::String8Copy( pFontRef->szName, pSymbolName );
 
-			auto pFontDef	= trb.CastSymbol<AGUI2FontDef>( pSymbolName );
+			auto pFontDef   = trb.CastSymbol<AGUI2FontDef>( pSymbolName );
 			pFontRef->pFont = new AGUI2Font();
 			pFontRef->pFont->Create( pFontDef );
 			pFontRef->pFontResource = a_pFontResource;
-			pFontRef->Unk1			= TNULL;
+			pFontRef->Unk1          = TNULL;
 		}
 	}
 }

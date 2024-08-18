@@ -19,7 +19,7 @@ TOSHI_NAMESPACE_START
 void TUtil::LogInitialise()
 {
 #ifndef TOSHI_NO_LOGS
-	TLogFile* logfile						 = new TLogFile;
+	TLogFile* logfile                        = new TLogFile;
 	TUtil::GetSingleton()->m_pDefaultLogFile = logfile;
 	TUtil::GetSingleton()->m_pCurrentLogFile = logfile;
 
@@ -32,14 +32,14 @@ void TUtil::LogInitialise()
 	T2FormatString256 filename;
 
 	filename.Format(
-		"Logs\\%s_%d%02d%02d_%02d_%02d_%02d.log",
-		ms_oToshiParams.szLogFileName,
-		time->tm_year + 1900,
-		time->tm_mon + 1,
-		time->tm_mday,
-		time->tm_hour,
-		time->tm_min,
-		time->tm_sec );
+	    "Logs\\%s_%d%02d%02d_%02d_%02d_%02d.log",
+	    ms_oToshiParams.szLogFileName,
+	    time->tm_year + 1900,
+	    time->tm_mon + 1,
+	    time->tm_mday,
+	    time->tm_hour,
+	    time->tm_min,
+	    time->tm_sec );
 
 	GetCurrentLogFile()->Create( filename.Get(), "Toshi 2.0", TFALSE );
 	GetCurrentLogFile()->AllowIndentation( TTRUE );
@@ -50,7 +50,7 @@ void TUtil::LogInitialise()
 void TUtil::CreateTPStringPool()
 {
 	TASSERT( ms_poStringPool == TNULL );
-	ms_poStringPool	 = new TPString8Pool*;
+	ms_poStringPool  = new TPString8Pool*;
 	*ms_poStringPool = TNULL;
 }
 
@@ -141,7 +141,7 @@ void TUtil::LogSet( TLogFile* a_pLogFile )
 }
 
 TUtil::TUtil() :
-	m_LogEmitter( this )
+    m_LogEmitter( this )
 {
 	m_pDefaultLogFile = TNULL;
 	m_pCurrentLogFile = TNULL;

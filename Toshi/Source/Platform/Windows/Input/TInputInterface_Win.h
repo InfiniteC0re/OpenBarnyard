@@ -13,8 +13,8 @@ public:
 	TInputDXInterface()
 	{
 		m_poDirectInput8 = NULL;
-		m_hMainWindow	 = NULL;
-		m_bExclusive	 = TTRUE;
+		m_hMainWindow    = NULL;
+		m_bExclusive     = TTRUE;
 	}
 
 	virtual ~TInputDXInterface() override
@@ -55,8 +55,8 @@ private:
 
 private:
 	LPDIRECTINPUT8A m_poDirectInput8; // 0x30
-	HWND			m_hMainWindow;	  // 0x34
-	TBOOL			m_bExclusive;	  // 0x38
+	HWND            m_hMainWindow;    // 0x34
+	TBOOL           m_bExclusive;     // 0x38
 };
 
 TOSHI_NAMESPACE_END

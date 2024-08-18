@@ -15,7 +15,7 @@ public:
 protected:
 	TGenericGlobalListener()
 	{
-		m_pReceiver	 = TNULL;
+		m_pReceiver  = TNULL;
 		m_fnCallback = TNULL;
 	}
 
@@ -28,7 +28,7 @@ protected:
 	void DisconnectImpl();
 
 protected:
-	void*		  m_pReceiver;
+	void*         m_pReceiver;
 	EventCallback m_fnCallback;
 };
 
@@ -73,7 +73,7 @@ template <class T>
 inline void TGenericGlobalListener<T>::ConnectImpl( void* pReceiver, EventCallback fnCallback )
 {
 	TASSERT( TNULL == m_pReceiver );
-	m_pReceiver	 = pReceiver;
+	m_pReceiver  = pReceiver;
 	m_fnCallback = fnCallback;
 	TGlobalEmitter<T>::sm_oListeners.Push( this );
 }
@@ -82,7 +82,7 @@ template <class T>
 inline void TGenericGlobalListener<T>::DisconnectImpl()
 {
 	TGlobalEmitter<T>::sm_oListeners.Remove( this );
-	m_pReceiver	 = TNULL;
+	m_pReceiver  = TNULL;
 	m_fnCallback = TNULL;
 }
 
@@ -93,7 +93,7 @@ class TGenericGlobalEvent
 {
 public:
 	TGenericGlobalEvent( const void* a_pData ) :
-		m_pData( a_pData ) {}
+	    m_pData( a_pData ) {}
 
 public:
 	const void* m_pData;

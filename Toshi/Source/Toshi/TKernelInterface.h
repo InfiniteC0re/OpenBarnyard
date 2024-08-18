@@ -43,7 +43,7 @@ public:
 	TBOOL SetPaused( TBOOL a_bPaused )
 	{
 		TBOOL bOldState = m_bIsPaused;
-		m_bIsPaused		= a_bPaused;
+		m_bIsPaused     = a_bPaused;
 		return bOldState;
 	}
 
@@ -58,18 +58,18 @@ public:
 	}
 
 private:
-	TUINT		   m_Unk1;
-	TScheduler*	   m_Scheduler;
-	TBOOL		   m_bIsPaused;
-	TUINT32		   m_Unk2;
-	THPTimer	   m_Timer;
-	TUINT32		   m_Unk3;
-	TFLOAT		   m_fSecond;
-	TFLOAT		   m_fAverageFps;
-	TUINT32		   m_uiNumFrames;
-	TBOOL		   m_Unk4;
+	TUINT          m_Unk1;
+	TScheduler*    m_Scheduler;
+	TBOOL          m_bIsPaused;
+	TUINT32        m_Unk2;
+	THPTimer       m_Timer;
+	TUINT32        m_Unk3;
+	TFLOAT         m_fSecond;
+	TFLOAT         m_fAverageFps;
+	TUINT32        m_uiNumFrames;
+	TBOOL          m_Unk4;
 	t_QuitCallback m_fnQuitCallback;
-	TUINT32		   m_Unk6;
+	TUINT32        m_Unk6;
 };
 
 TOSHI_NAMESPACE_END

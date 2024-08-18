@@ -4,7 +4,7 @@
 #include "SDKHooks.h"
 
 AGUISlideshow::AGUISlideshow() :
-	m_Images( &Toshi::T2Allocator::s_GlobalAllocator, 64, 64 )
+    m_Images( Toshi::GetGlobalAllocator(), 64, 64 )
 {
 	CALL_THIS( 0x0059d810, AGUISlideshow*, void, this );
 }

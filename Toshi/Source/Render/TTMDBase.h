@@ -36,7 +36,7 @@ struct MaterialsHeader
 {
 	TUINT32 uiZero1;
 	TUINT32 uiZero2;
-	TINT32	iNumMaterials;
+	TINT32  iNumMaterials;
 	TUINT32 uiSectionSize;
 
 	Material* GetMaterial( TINT a_iIndex )
@@ -48,19 +48,19 @@ struct MaterialsHeader
 
 struct CollisionModel
 {
-	TUINT32	  m_Unk1;
+	TUINT32   m_Unk1;
 	TVector3* m_pVertices;
-	TUINT32	  m_uiNumVertices;
+	TUINT32   m_uiNumVertices;
 	TUINT16*  m_pIndices;
-	TUINT32	  m_uiNumIndices;
-	TUINT32	  m_uiNumCollTypes;
-	TCHAR**	  m_pszCollName;
-	TUINT32	  m_Unk3;
+	TUINT32   m_uiNumIndices;
+	TUINT32   m_uiNumCollTypes;
+	TCHAR**   m_pszCollName;
+	TUINT32   m_Unk3;
 };
 
 struct Collision
 {
-	TINT			m_iNumModels;
+	TINT            m_iNumModels;
 	CollisionModel* m_pModels;
 };
 

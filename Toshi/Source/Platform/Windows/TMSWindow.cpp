@@ -19,9 +19,9 @@ TDEFINE_CLASS( TMSWindow );
 
 TMSWindow::TMSWindow()
 {
-	m_HWND		 = NULL;
-	m_pRenderer	 = TNULL;
-	m_bWindowed	 = TTRUE;
+	m_HWND       = NULL;
+	m_pRenderer  = TNULL;
+	m_bWindowed  = TTRUE;
 	m_bDestroyed = TFALSE;
 	m_bIsFocused = TFALSE;
 
@@ -32,7 +32,7 @@ TMSWindow::TMSWindow()
 	SystemParametersInfoA( SPI_GETSTICKYKEYS, sizeof( STICKYKEYS ), &ms_StickyKeys, 0 );
 
 	STICKYKEYS newStickyKeys = { sizeof( STICKYKEYS ) };
-	newStickyKeys.dwFlags	 = 0;
+	newStickyKeys.dwFlags    = 0;
 	SystemParametersInfoA( SPI_SETSTICKYKEYS, sizeof( STICKYKEYS ), &newStickyKeys, 0 );
 }
 
@@ -67,7 +67,7 @@ void TMSWindow::Update( TFLOAT a_fDeltaTime )
 		else
 		{
 			m_bIsFocused = TTRUE;
-			LONG uStyle	 = GetWindowLongA( m_HWND, GWL_STYLE );
+			LONG uStyle  = GetWindowLongA( m_HWND, GWL_STYLE );
 			SetWindowLongA( m_HWND, GWL_STYLE, uStyle | WS_SYSMENU );
 			return;
 		}
@@ -118,7 +118,7 @@ void TMSWindow::UnregisterWindowClass()
 
 		DestroyWindow( m_HWND );
 		m_bDestroyed = TTRUE;
-		m_HWND		 = NULL;
+		m_HWND       = NULL;
 	}
 
 	if ( m_pRenderer != TNULL )
@@ -139,7 +139,7 @@ void TMSWindow::SetFocused( TBOOL a_bFocused )
 			SystemParametersInfoA( SPI_GETSTICKYKEYS, sizeof( STICKYKEYS ), &ms_StickyKeys, 0 );
 
 			STICKYKEYS newStickyKeys = { sizeof( STICKYKEYS ) };
-			newStickyKeys.dwFlags	 = 0;
+			newStickyKeys.dwFlags    = 0;
 			SystemParametersInfoA( SPI_SETSTICKYKEYS, sizeof( STICKYKEYS ), &newStickyKeys, 0 );
 		}
 		else
@@ -162,13 +162,13 @@ TBOOL TMSWindow::Create( TRenderInterface* renderer, LPCSTR title )
 	m_pRenderer = renderer;
 
 	WNDCLASSA wndClass = {
-		.style		   = 3,
+		.style         = 3,
 		.lpfnWndProc   = WndProc,
-		.cbClsExtra	   = 0,
-		.cbWndExtra	   = 0,
-		.hInstance	   = m_ModuleHandle,
-		.hIcon		   = NULL,
-		.hCursor	   = LoadCursorA( NULL, IDC_ARROW ),
+		.cbClsExtra    = 0,
+		.cbWndExtra    = 0,
+		.hInstance     = m_ModuleHandle,
+		.hIcon         = NULL,
+		.hCursor       = LoadCursorA( NULL, IDC_ARROW ),
 		.hbrBackground = (HBRUSH)GetStockObject( 1 ),
 		.lpszMenuName  = NULL,
 		.lpszClassName = TGetClass( TRenderD3DInterface ).GetName()
@@ -176,18 +176,18 @@ TBOOL TMSWindow::Create( TRenderInterface* renderer, LPCSTR title )
 
 	RegisterClassA( &wndClass );
 	m_HWND = CreateWindowExA(
-		0,
-		TGetClass( TRenderD3DInterface ).GetName(),
-		title,
-		0x86c00000,
-		100,
-		100,
-		0,
-		0,
-		NULL,
-		NULL,
-		m_ModuleHandle,
-		this );
+	    0,
+	    TGetClass( TRenderD3DInterface ).GetName(),
+	    title,
+	    0x86c00000,
+	    100,
+	    100,
+	    0,
+	    0,
+	    NULL,
+	    NULL,
+	    m_ModuleHandle,
+	    this );
 
 	if ( !m_HWND ) return TFALSE;
 
@@ -205,7 +205,7 @@ LRESULT CALLBACK TMSWindow::WndProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM
 	{
 		if ( uMsg == WM_ACTIVATEAPP )
 		{
-			TMSWindow*			 pWindow   = TREINTERPRETCAST( TMSWindow*, GetWindowLongA( hWnd, GWL_USERDATA ) );
+			TMSWindow*           pWindow   = TREINTERPRETCAST( TMSWindow*, GetWindowLongA( hWnd, GWL_USERDATA ) );
 			TRenderD3DInterface* pRenderer = TREINTERPRETCAST( TRenderD3DInterface*, pWindow->m_pRenderer );
 
 			if ( !pWindow->m_bDestroyed )

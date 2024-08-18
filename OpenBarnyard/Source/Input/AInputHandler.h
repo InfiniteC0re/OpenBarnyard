@@ -31,10 +31,10 @@ private:
 	TBOOL ProcessInputEvent( Toshi::TInputInterface* a_pInputInterface, Toshi::TInputInterface::InputEvent* a_pEvent );
 
 private:
-	Toshi::TInputDeviceMouse*				 m_pMouseDevice;
-	Toshi::TInputDeviceKeyboard*			 m_pKeyboardDevice;
+	Toshi::TInputDeviceMouse*                m_pMouseDevice;
+	Toshi::TInputDeviceKeyboard*             m_pKeyboardDevice;
 	Toshi::T2Vector<Toshi::TInputDevice*, 8> m_Devices;
-	Toshi::TInputDeviceController*			 m_pMainController;
+	Toshi::TInputDeviceController*           m_pMainController;
 	// ...
 	Toshi::TListener<Toshi::TInputInterface, Toshi::TInputInterface::InputEvent, AInputHandler> m_InputListener;
 	// ...

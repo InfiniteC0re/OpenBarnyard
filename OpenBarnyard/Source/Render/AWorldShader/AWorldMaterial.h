@@ -31,9 +31,9 @@ public:
 
 protected:
 	Toshi::TTexture* m_aTextures[ MAX_TEXTURES ];
-	BLENDMODE		 m_eBlendMode;
-	TFLOAT			 m_fUVAnimX;
-	TFLOAT			 m_fUVAnimY;
-	TFLOAT			 m_fUVAnimSpeedX;
-	TFLOAT			 m_fUVAnimSpeedY;
+	BLENDMODE        m_eBlendMode;
+	TFLOAT           m_fUVAnimX;
+	TFLOAT           m_fUVAnimY;
+	TFLOAT           m_fUVAnimSpeedX;
+	TFLOAT           m_fUVAnimSpeedY;
 };

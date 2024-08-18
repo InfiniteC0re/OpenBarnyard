@@ -7,9 +7,9 @@ template <typename T>
 class TSingleton
 {
 public:
-	TSingleton( const TSingleton& )				= delete;
-	TSingleton( const TSingleton&& )			= delete;
-	TSingleton& operator=( const TSingleton& )	= delete;
+	TSingleton( const TSingleton& )             = delete;
+	TSingleton( const TSingleton&& )            = delete;
+	TSingleton& operator=( const TSingleton& )  = delete;
 	TSingleton& operator=( const TSingleton&& ) = delete;
 
 	// Creates Singleton instance and returns it

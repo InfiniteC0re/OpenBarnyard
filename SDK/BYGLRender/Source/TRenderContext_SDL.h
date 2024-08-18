@@ -8,7 +8,7 @@ class TRenderContextSDL : public TRenderContext
 {
 public:
 	TRenderContextSDL( TRenderInterface* a_pRender ) :
-		TRenderContext( a_pRender )
+	    TRenderContext( a_pRender )
 	{
 	}
 

@@ -20,19 +20,19 @@ public:
 
 	void SetText( const TWCHAR* a_wszText )
 	{
-		m_wszText		   = a_wszText;
+		m_wszText          = a_wszText;
 		m_bDimensionsDirty = TTRUE;
 	}
 
 	void SetScale( TFLOAT a_fScale )
 	{
-		m_fScale		   = a_fScale;
+		m_fScale           = a_fScale;
 		m_bDimensionsDirty = TTRUE;
 	}
 
 	void SetShadow( TBOOL a_bEnabled, TUINT32 a_uiColour )
 	{
-		m_bRenderShadow	 = a_bEnabled;
+		m_bRenderShadow  = a_bEnabled;
 		m_uiShadowColour = a_uiColour;
 	}
 
@@ -60,14 +60,14 @@ private:
 	void RenderText( void* a_fnCallback );
 
 private:
-	TBOOL				 m_bRenderShadow;
-	TFLOAT				 m_fShadowOffsetX;
-	TFLOAT				 m_fShadowOffsetY;
-	TUINT32				 m_uiShadowColour;
-	const TWCHAR*		 m_wszText;
-	AGUI2Font*			 m_pFont;
-	TFLOAT				 m_fScale;
+	TBOOL                m_bRenderShadow;
+	TFLOAT               m_fShadowOffsetX;
+	TFLOAT               m_fShadowOffsetY;
+	TUINT32              m_uiShadowColour;
+	const TWCHAR*        m_wszText;
+	AGUI2Font*           m_pFont;
+	TFLOAT               m_fScale;
 	AGUI2Font::TextAlign m_eTextAlign;
-	TBOOL				 m_bDimensionsDirty;
-	TBOOL				 m_bUnkFlag2;
+	TBOOL                m_bDimensionsDirty;
+	TBOOL                m_bUnkFlag2;
 };

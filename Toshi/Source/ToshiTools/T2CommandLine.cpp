@@ -17,7 +17,7 @@ T2CommandLine::T2CommandLine( T2ConstString8 a_pchCommandLine )
 T2CommandLine::T2CommandLine()
 {
 	m_szCommandLine[ 0 ] = '\0';
-	m_bInitialised		 = TFALSE;
+	m_bInitialised       = TFALSE;
 }
 
 void T2CommandLine::Create( T2ConstString8 a_pchCommandLine )

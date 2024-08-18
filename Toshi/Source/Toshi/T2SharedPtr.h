@@ -15,7 +15,7 @@ private:
 	{
 #ifdef TOSHI2_ENABLE_SHARED_PTR_VALIDATION
 		TUINT32 uiMagic;
-		void*	pObjectRaw;
+		void*   pObjectRaw;
 #endif // TOSHI2_ENABLE_SHARED_PTR_VALIDATION
 
 		TUINT uiNumRefs;
@@ -28,7 +28,7 @@ private:
 public:
 	// Constructor
 	T2SharedPtr() :
-		m_pRawPtr( TNULL )
+	    m_pRawPtr( TNULL )
 	{}
 
 	// Copy constructor
@@ -43,7 +43,7 @@ public:
 	// Move constructor
 	T2SharedPtr( T2SharedPtr&& a_rOther )
 	{
-		m_pRawPtr		   = a_rOther.m_pRawPtr;
+		m_pRawPtr          = a_rOther.m_pRawPtr;
 		a_rOther.m_pRawPtr = TNULL;
 
 		if ( m_pRawPtr )
@@ -63,13 +63,13 @@ public:
 		return m_pRawPtr;
 	}
 
-	T*		 Get() { return TREINTERPRETCAST( T*, m_pRawPtr ); }
+	T*       Get() { return TREINTERPRETCAST( T*, m_pRawPtr ); }
 	const T* Get() const { return TREINTERPRETCAST( const T*, m_pRawPtr ); }
 
 	operator T*() { return Get(); }
 	operator const T*() const { return Get(); }
 
-	T*		 operator->() { return Get(); }
+	T*       operator->() { return Get(); }
 	const T* operator->() const { return Get(); }
 
 	T2SharedPtr& operator=( const T2SharedPtr& a_rOther )
@@ -90,8 +90,8 @@ public:
 	static T2SharedPtr New( Args&&... args )
 	{
 		// Allocate memory
-		TCHAR* pMem	   = (TCHAR*)TMalloc( sizeof( T ) + sizeof( SharedPtrData_t ) );
-		T*	   pObject = new ( pMem + sizeof( SharedPtrData_t ) ) T( std::forward<Args>( args )... );
+		TCHAR* pMem    = (TCHAR*)TMalloc( sizeof( T ) + sizeof( SharedPtrData_t ) );
+		T*     pObject = new ( pMem + sizeof( SharedPtrData_t ) ) T( std::forward<Args>( args )... );
 
 		// Create shared pointer object
 		T2SharedPtr sharedPointer;
@@ -104,7 +104,7 @@ public:
 
 #ifdef TOSHI2_ENABLE_SHARED_PTR_VALIDATION
 		// This can be used to make sure the object was actually created with T2SharedPtr::New
-		pPtrData->uiMagic	 = VALIDATION_MAGIC;
+		pPtrData->uiMagic    = VALIDATION_MAGIC;
 		pPtrData->pObjectRaw = pObject;
 #endif // TOSHI2_ENABLE_SHARED_PTR_VALIDATION
 
@@ -143,8 +143,8 @@ private:
 		TASSERT( TTRUE == IsValid() );
 		DebugValidate();
 
-		SharedPtrData_t* pPtrData	  = AccessPtrData();
-		TUINT			 uiOldNumRefs = pPtrData->uiNumRefs--;
+		SharedPtrData_t* pPtrData     = AccessPtrData();
+		TUINT            uiOldNumRefs = pPtrData->uiNumRefs--;
 
 		if ( uiOldNumRefs == 1 )
 		{

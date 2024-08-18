@@ -5,7 +5,7 @@
 #include <ToshiTools/T2NamedPipeServer.h>
 
 class ASplitsServer :
-	public Toshi::TSingleton<ASplitsServer>
+    public Toshi::TSingleton<ASplitsServer>
 {
 public:
 	static constexpr TSIZE MAX_BUFFER_SIZE = 65535;
@@ -34,9 +34,9 @@ private:
 
 private:
 	Toshi::T2NamedPipeServer   m_NamedPipe;
-	Toshi::T2Mutex			   m_EventsMutex;
+	Toshi::T2Mutex             m_EventsMutex;
 	Toshi::T2Vector<char*, 64> m_QueuedEvents;
 	Toshi::TMemory::MemBlock*  m_pMemBlock;
-	TCHAR					   m_Buffer[ MAX_BUFFER_SIZE ];
-	TSIZE					   m_uiBufferSize;
+	TCHAR                      m_Buffer[ MAX_BUFFER_SIZE ];
+	TSIZE                      m_uiBufferSize;
 };

@@ -12,7 +12,7 @@ TOSHI_NAMESPACE_START
 #pragma region TNativeFileSystem
 
 TNativeFileSystem::TNativeFileSystem( const TCHAR* name ) :
-	TFileSystem( name )
+    TFileSystem( name )
 {
 	m_NextFileHandle = INVALID_HANDLE_VALUE;
 	TFileManager::GetSingletonSafe()->MountFileSystem( this );
@@ -54,8 +54,8 @@ TString8 TNativeFileSystem::MakeInternalPath( const TString8& a_rcPath )
 {
 	// Check if it's already an absolute path
 	if ( a_rcPath.Compare( "//", 2 ) == 0 ||
-		 a_rcPath.Compare( "\\\\", 2 ) == 0 ||
-		 ( a_rcPath.Length() >= 2 && a_rcPath[ 1 ] == ':' ) )
+	     a_rcPath.Compare( "\\\\", 2 ) == 0 ||
+	     ( a_rcPath.Length() >= 2 && a_rcPath[ 1 ] == ':' ) )
 	{
 		// Seems that the path is already an absolute path
 		TString8 strInternalPath = a_rcPath;
@@ -88,16 +88,16 @@ TBOOL TNativeFileSystem::GetFirstFile( const TString8& a_rcPath, TString8& a_rOu
 
 	// Okay... I know using TString8::Mid here is kinda original but that's how it works in the original
 	const char* pchFilter =
-		( strPath.Mid( strPath.Length() - 1, 1 ).Compare( "\\" ) != 0 &&
-		  strPath.Mid( strPath.Length() - 1, 1 ).Compare( "/" ) != 0 ) ?
-		"\\*" :
-		"*";
+	    ( strPath.Mid( strPath.Length() - 1, 1 ).Compare( "\\" ) != 0 &&
+	      strPath.Mid( strPath.Length() - 1, 1 ).Compare( "/" ) != 0 ) ?
+	    "\\*" :
+	    "*";
 
 	strPath += pchFilter;
 
 	WIN32_FIND_DATAA oFindData;
-	HANDLE			 hFirstFile = FindFirstFileA( strPath, &oFindData );
-	m_NextFileHandle			= hFirstFile;
+	HANDLE           hFirstFile = FindFirstFileA( strPath, &oFindData );
+	m_NextFileHandle            = hFirstFile;
 
 	if ( hFirstFile != INVALID_HANDLE_VALUE )
 	{
@@ -155,31 +155,31 @@ TBOOL TNativeFileSystem::GetNextFile( TString8& a_rOutFileName, TUINT8 a_ui8Flag
 #pragma endregion
 
 TNativeFile::TNativeFile( TNativeFileSystem* pFS ) :
-	TFile( pFS )
+    TFile( pFS )
 {
-	m_Handle		  = INVALID_HANDLE_VALUE;
-	m_Position		  = -1;
+	m_Handle          = INVALID_HANDLE_VALUE;
+	m_Position        = -1;
 	m_RBufferPosition = -1;
-	m_PrevBufferPos	  = -1;
+	m_PrevBufferPos   = -1;
 	m_LastBufferSize  = 0;
-	m_RBuffer		  = TNULL;
-	m_WBuffer		  = TNULL;
+	m_RBuffer         = TNULL;
+	m_WBuffer         = TNULL;
 	m_WriteBufferUsed = 0;
-	m_WriteBuffered	  = TTRUE;
+	m_WriteBuffered   = TTRUE;
 }
 
 TNativeFile::TNativeFile( const TNativeFile& other ) :
-	TFile( other )
+    TFile( other )
 {
-	m_Handle		  = other.m_Handle;
-	m_Position		  = other.m_Position;
+	m_Handle          = other.m_Handle;
+	m_Position        = other.m_Position;
 	m_RBufferPosition = other.m_RBufferPosition;
-	m_PrevBufferPos	  = other.m_PrevBufferPos;
+	m_PrevBufferPos   = other.m_PrevBufferPos;
 	m_LastBufferSize  = other.m_LastBufferSize;
-	m_RBuffer		  = other.m_RBuffer;
-	m_WBuffer		  = other.m_WBuffer;
+	m_RBuffer         = other.m_RBuffer;
+	m_WBuffer         = other.m_WBuffer;
 	m_WriteBufferUsed = other.m_WriteBufferUsed;
-	m_WriteBuffered	  = other.m_WriteBuffered;
+	m_WriteBuffered   = other.m_WriteBuffered;
 }
 
 TBOOL TNativeFile::LoadBuffer( DWORD bufferPos )
@@ -203,7 +203,7 @@ TBOOL TNativeFile::LoadBuffer( DWORD bufferPos )
 
 		m_RBufferPosition += lpNumberOfBytesRead;
 		m_LastBufferSize = lpNumberOfBytesRead;
-		m_PrevBufferPos	 = bufferPos;
+		m_PrevBufferPos  = bufferPos;
 	}
 
 	return TTRUE;
@@ -232,7 +232,7 @@ TINT TNativeFile::FlushWriteBuffer()
 	}
 
 	m_RBufferPosition += lpNumberOfBytesWritten;
-	m_Position		  = m_RBufferPosition;
+	m_Position        = m_RBufferPosition;
 	m_WriteBufferUsed = 0;
 	return lpNumberOfBytesWritten;
 }
@@ -273,8 +273,8 @@ TUINT TNativeFile::Read( void* a_pDst, TUINT a_uiSize )
 
 	if ( m_RBuffer != TNULL )
 	{
-		DWORD  readedCount	= 0;
-		DWORD  startPos		= m_Position;
+		DWORD  readedCount  = 0;
+		DWORD  startPos     = m_Position;
 		DWORD  curBufferPos = startPos / BUFFER_SIZE * BUFFER_SIZE;
 		DWORD  newBufferPos = ( startPos + a_uiSize ) / BUFFER_SIZE * BUFFER_SIZE;
 		LPVOID curPosBuffer = a_pDst;
@@ -296,7 +296,7 @@ TUINT TNativeFile::Read( void* a_pDst, TUINT a_uiSize )
 			}
 
 			DWORD toReadCount = newBufferPos - m_Position;
-			curBufferPos	  = newBufferPos;
+			curBufferPos      = newBufferPos;
 
 			if ( toReadCount > 0 )
 			{
@@ -316,8 +316,8 @@ TUINT TNativeFile::Read( void* a_pDst, TUINT a_uiSize )
 		{
 			a_uiSize -= readedCount;
 			DWORD bufferLeftSize = m_Position - curBufferPos;
-			DWORD readCount		 = m_LastBufferSize - bufferLeftSize;
-			readCount			 = TMath::Min<DWORD>( readCount, a_uiSize );
+			DWORD readCount      = m_LastBufferSize - bufferLeftSize;
+			readCount            = TMath::Min<DWORD>( readCount, a_uiSize );
 
 			if ( readCount > 0 )
 			{
@@ -577,8 +577,8 @@ TBOOL TNativeFile::Open( const TString8& a_FileName, TFILEMODE a_Mode )
 	TASSERT( a_FileName.IsIndexValid( 0 ), "TNativeFile::Open - wrong filename" );
 
 	DWORD dwCreationDisposition = OPEN_EXISTING;
-	DWORD dwDesiredAccess		= 0;
-	DWORD dwShareMode			= 0;
+	DWORD dwDesiredAccess       = 0;
+	DWORD dwShareMode           = 0;
 
 	dwDesiredAccess |= ( a_Mode & TFILEMODE_READ ) ? GENERIC_READ : dwDesiredAccess;
 	dwDesiredAccess |= ( a_Mode & TFILEMODE_WRITE ) ? GENERIC_WRITE : dwDesiredAccess;
@@ -586,7 +586,7 @@ TBOOL TNativeFile::Open( const TString8& a_FileName, TFILEMODE a_Mode )
 
 	if ( a_Mode & TFILEMODE_CREATENEW )
 	{
-		dwShareMode			  = FILE_SHARE_READ;
+		dwShareMode           = FILE_SHARE_READ;
 		dwCreationDisposition = CREATE_ALWAYS;
 		dwDesiredAccess |= GENERIC_WRITE;
 	}
@@ -601,9 +601,9 @@ TBOOL TNativeFile::Open( const TString8& a_FileName, TFILEMODE a_Mode )
 
 	if ( m_Handle != INVALID_HANDLE_VALUE )
 	{
-		m_Position		  = 0;
+		m_Position        = 0;
 		m_RBufferPosition = 0;
-		m_PrevBufferPos	  = -1;
+		m_PrevBufferPos   = -1;
 		m_LastBufferSize  = 0;
 
 		if ( a_Mode & TFILEMODE_NOBUFFER )
@@ -612,8 +612,8 @@ TBOOL TNativeFile::Open( const TString8& a_FileName, TFILEMODE a_Mode )
 		}
 		else
 		{
-			m_RBuffer		= (TCHAR*)TMalloc( BUFFER_SIZE );
-			m_WBuffer		= (TCHAR*)TMalloc( BUFFER_SIZE );
+			m_RBuffer       = (TCHAR*)TMalloc( BUFFER_SIZE );
+			m_WBuffer       = (TCHAR*)TMalloc( BUFFER_SIZE );
 			m_WriteBuffered = TTRUE;
 		}
 	}
@@ -630,10 +630,10 @@ void TNativeFile::Close()
 	FlushWriteBuffer();
 	CloseHandle( m_Handle );
 
-	m_Handle		  = INVALID_HANDLE_VALUE;
-	m_Position		  = -1;
+	m_Handle          = INVALID_HANDLE_VALUE;
+	m_Position        = -1;
 	m_RBufferPosition = -1;
-	m_PrevBufferPos	  = -1;
+	m_PrevBufferPos   = -1;
 	m_LastBufferSize  = -1;
 
 	if ( m_RBuffer != TNULL )

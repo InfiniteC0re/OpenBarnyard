@@ -41,23 +41,23 @@ ARootTask::ARootTask()
 {
 	TIMPLEMENT();
 
-	m_bStartedGame		  = TFALSE;
-	m_bRenderWorld		  = TFALSE;
-	m_bPaused			  = TFALSE;
+	m_bStartedGame        = TFALSE;
+	m_bRenderWorld        = TFALSE;
+	m_bPaused             = TFALSE;
 	m_bStopRenderingScene = TFALSE;
 	m_bGameSystemCreated  = TFALSE;
-	m_pOptions			  = AOptions::CreateSingleton();
+	m_pOptions            = AOptions::CreateSingleton();
 	AMemory::CreatePool( AMemory::POOL_Sound );
 
 	auto pScheduler = g_oSystemManager.GetScheduler();
 
-	m_pGUISystem		   = pScheduler->CreateTask<AGUISystem>( this );
-	m_pGUI2				   = pScheduler->CreateTask<AGUI2>( this );
-	m_pRenderer			   = pScheduler->CreateTask<ARenderer>( this );
-	m_pInputHandler		   = pScheduler->CreateTask<AInputHandler>( this );
+	m_pGUISystem           = pScheduler->CreateTask<AGUISystem>( this );
+	m_pGUI2                = pScheduler->CreateTask<AGUI2>( this );
+	m_pRenderer            = pScheduler->CreateTask<ARenderer>( this );
+	m_pInputHandler        = pScheduler->CreateTask<AInputHandler>( this );
 	m_pGameStateController = pScheduler->CreateTask<AGameStateController>( this );
-	m_pSoundManager		   = pScheduler->CreateTask<ASoundManager>( this );
-	m_pMoviePlayer		   = pScheduler->CreateTask<ABINKMoviePlayer>( this );
+	m_pSoundManager        = pScheduler->CreateTask<ASoundManager>( this );
+	m_pMoviePlayer         = pScheduler->CreateTask<ABINKMoviePlayer>( this );
 	m_bGameSystemCreated   = TFALSE;
 }
 
@@ -71,17 +71,17 @@ TBOOL ARootTask::OnCreate()
 
 	// Initialise all classes
 	TGetClass( TObject ).RecurseTree(
-		TNULL,
-		TNULL,
-		[]( TClass* a_pClass, void* ) {
-			if ( !a_pClass->IsInitialized() )
-			{
-				a_pClass->Initialize();
-			}
+	    TNULL,
+	    TNULL,
+	    []( TClass* a_pClass, void* ) {
+		    if ( !a_pClass->IsInitialized() )
+		    {
+			    a_pClass->Initialize();
+		    }
 
-			return TTRUE;
-		},
-		TNULL );
+		    return TTRUE;
+	    },
+	    TNULL );
 
 	AAssetLoader::Load( "data\\assets\\lib_startup.trb", AAssetType_Startup, TTRUE );
 
@@ -127,9 +127,9 @@ TBOOL ARootTask::OnUpdate( TFLOAT a_fDeltaTime )
 	if ( !IsGameSystemCreated() )
 	{
 		if ( !AGameStateController::GetSingleton()->IsCurrentState( &TGetClass( ASlideshowState ) ) &&
-			 !AGameStateController::GetSingleton()->IsCurrentState( &TGetClass( SaveLoadSKU ) ) &&
-			 !AGameStateController::GetSingleton()->IsCurrentState( &TGetClass( AMovieState ) ) &&
-			 !AGameStateController::GetSingleton()->IsCurrentState( &TGetClass( AMessagePopupState ) ) )
+		     !AGameStateController::GetSingleton()->IsCurrentState( &TGetClass( SaveLoadSKU ) ) &&
+		     !AGameStateController::GetSingleton()->IsCurrentState( &TGetClass( AMovieState ) ) &&
+		     !AGameStateController::GetSingleton()->IsCurrentState( &TGetClass( AMessagePopupState ) ) )
 		{
 			if ( !m_bStartedGame )
 			{
@@ -203,24 +203,24 @@ void ARootTask::CreateStartupGameStates()
 {
 	TIMPLEMENT();
 
-	auto attractMovie	 = new AMovieState( "Attract", TFALSE, TNULL, TFALSE );
+	auto attractMovie    = new AMovieState( "Attract", TFALSE, TNULL, TFALSE );
 	auto bluetongueMovie = new AMovieState( "BTE", TFALSE, attractMovie, TFALSE );
-	auto thqMovie		 = new AMovieState( "THQ", TFALSE, bluetongueMovie, TFALSE );
-	auto nickmovsMovie	 = new AMovieState( "NickMovs", TFALSE, thqMovie, TFALSE );
+	auto thqMovie        = new AMovieState( "THQ", TFALSE, bluetongueMovie, TFALSE );
+	auto nickmovsMovie   = new AMovieState( "NickMovs", TFALSE, thqMovie, TFALSE );
 
 	AGUISlideshow::Params slideshowSettings = {
-		.iUnk1			 = 0,
+		.iUnk1           = 0,
 		.bSlideSkippable = TTRUE,
-		.bUnk2			 = TFALSE,
+		.bUnk2           = TFALSE,
 		.bInstaSkippable = TFALSE,
-		.bHasFadeIn		 = TTRUE,
-		.bHasFadeOut	 = TTRUE,
-		.bRepeat		 = TFALSE,
-		.bDelayAppear	 = TFALSE,
-		.fDuration		 = 2.0f,
-		.fFadeInTime	 = 1.0f,
-		.fFadeOutTime	 = 0.5f,
-		.fUnk5			 = -1.0f,
+		.bHasFadeIn      = TTRUE,
+		.bHasFadeOut     = TTRUE,
+		.bRepeat         = TFALSE,
+		.bDelayAppear    = TFALSE,
+		.fDuration       = 2.0f,
+		.fFadeInTime     = 1.0f,
+		.fFadeOutTime    = 0.5f,
+		.fUnk5           = -1.0f,
 	};
 
 	auto fmodSlide = new ASlideshowState( slideshowSettings, nickmovsMovie, TFALSE );
@@ -230,7 +230,7 @@ void ARootTask::CreateStartupGameStates()
 	binkSlide->AddSlide( TPS8( bkg_Bink_Big ) );
 
 	slideshowSettings.fDuration = 5.0f;
-	auto legalSlide				= new ASlideshowState( slideshowSettings, binkSlide, TTRUE );
+	auto legalSlide             = new ASlideshowState( slideshowSettings, binkSlide, TTRUE );
 	legalSlide->AddSlide( TPS8( bkg_by_legal1 ) );
 
 	AGameStateController::GetSingleton()->PushState( legalSlide );
@@ -246,15 +246,15 @@ void ARootTask::LoadStartupData()
 	TTRB trb;
 	trb.Load( startupLibPath );
 
-	auto properties		= PBProperties::LoadFromTRB( trb );
+	auto properties     = PBProperties::LoadFromTRB( trb );
 	auto matlibProperty = properties->GetOptionalProperty( "matlib" );
 
 	if ( matlibProperty )
 	{
 		AMaterialLibraryManager::GetSingleton()->LoadLibrariesFromProperties(
-			matlibProperty,
-			AAssetLoader::GetAssetTRB( AAssetType_Startup ),
-			TTRUE );
+		    matlibProperty,
+		    AAssetLoader::GetAssetTRB( AAssetType_Startup ),
+		    TTRUE );
 	}
 
 	trb.Close();
@@ -365,7 +365,7 @@ void ARootTask::LoadFrontEnd()
 
 	// Fade screen from black
 	AFadeManager::GetSingleton()->StartFade(
-		AFade::Color( 255, 0, 0, 0 ),
-		AFade::Color( 0, 0, 0, 0 ),
-		1.0f );
+	    AFade::Color( 255, 0, 0, 0 ),
+	    AFade::Color( 0, 0, 0, 0 ),
+	    1.0f );
 }

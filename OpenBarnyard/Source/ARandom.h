@@ -4,8 +4,8 @@
 #include <Math/TRandom.h>
 
 class ARandom :
-	public Toshi::TObject,
-	public Toshi::TSingleton<ARandom>
+    public Toshi::TObject,
+    public Toshi::TSingleton<ARandom>
 {
 public:
 	TDECLARE_CLASS( ARandom, Toshi::TObject );

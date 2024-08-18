@@ -1,6 +1,6 @@
 #pragma once
 #ifndef __TOSHI_TPSTRING8_H__
-#	define __TOSHI_TPSTRING8_H__
+#  define __TOSHI_TPSTRING8_H__
 #endif
 
 #include "TString8.h"
@@ -13,7 +13,7 @@
 #include "Toshi/TFreeList.h"
 
 #define TPSTRING8_DECLARE( STR ) extern Toshi::TPString8 g_str_##STR
-#define TPS8( STR )				 ( g_str_##STR )
+#define TPS8( STR )              ( g_str_##STR )
 
 TOSHI_NAMESPACE_START
 
@@ -28,7 +28,7 @@ public:
 
 public:
 	TPooledString8( const TCHAR* a_szString, TPString8Pool* a_pPool, T2Allocator* a_pAllocator ) :
-		m_oString( a_szString, a_pAllocator )
+	    m_oString( a_szString, a_pAllocator )
 	{
 		m_pPool = a_pPool;
 	}
@@ -36,11 +36,11 @@ public:
 	void Delete();
 
 	const TString8& GetString8() const { return m_oString; }
-	TPString8Pool*	GetStringPool() const { return m_pPool; }
-	TBOOL			IsPooled() const { return m_pPool != TNULL; }
+	TPString8Pool*  GetStringPool() const { return m_pPool; }
+	TBOOL           IsPooled() const { return m_pPool != TNULL; }
 
 private:
-	TString8	   m_oString;
+	TString8       m_oString;
 	TPString8Pool* m_pPool;
 };
 
@@ -82,13 +82,13 @@ public:
 	}
 
 private:
-	T2Allocator*											  m_pAllocator;
-	TUINT													  m_Unk1;
+	T2Allocator*                                              m_pAllocator;
+	TUINT                                                     m_Unk1;
 	T2Map<const TCHAR*, TPooledString8*, T2String8Comparator> m_oMap;
-	TUINT													  m_Unk2;
-	TUINT													  m_Unk3;
-	TUINT													  m_Unk4;
-	TUINT													  m_Unk5;
+	TUINT                                                     m_Unk2;
+	TUINT                                                     m_Unk3;
+	TUINT                                                     m_Unk4;
+	TUINT                                                     m_Unk5;
 };
 
 class TPString8
@@ -127,7 +127,7 @@ public:
 
 public:
 	TFORCEINLINE constexpr TPString8() :
-		m_pPtr( TNULL )
+	    m_pPtr( TNULL )
 	{}
 
 	TFORCEINLINE TPString8( const TCHAR* a_szString )
@@ -154,7 +154,7 @@ public:
 
 	TFORCEINLINE TPString8( TPString8&& a_rOther )
 	{
-		m_pPtr			= a_rOther.m_pPtr;
+		m_pPtr          = a_rOther.m_pPtr;
 		a_rOther.m_pPtr = TNULL;
 	}
 
@@ -297,7 +297,7 @@ class TPString8Initialiser
 public:
 	struct StringMap
 	{
-		TPString8*	 m_pString8;
+		TPString8*   m_pString8;
 		const TCHAR* m_szCString;
 	};
 
@@ -315,10 +315,10 @@ private:
 	inline static TPString8Initialiser* ms_pHeadInitialiser;
 
 private:
-	StringMap*			  m_pStrings;
-	TUINT				  m_iCount;
+	StringMap*            m_pStrings;
+	TUINT                 m_iCount;
 	TPString8Initialiser* m_pNextInitialiser;
-	TBOOL				  m_bCanReinitialise;
+	TBOOL                 m_bCanReinitialise;
 };
 
 TOSHI_NAMESPACE_END

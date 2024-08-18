@@ -17,7 +17,7 @@ TBOOL AMaterialLibrary::LoadTTLData( void* a_pTTLData )
 {
 	TTL* pTTL = TSTATICCAST( TTL, a_pTTLData );
 
-	auto pLibList	  = AMaterialLibraryManager::List::GetSingleton();
+	auto pLibList     = AMaterialLibraryManager::List::GetSingleton();
 	TINT iNumTextures = 0;
 
 	if ( ms_bSkipLoadedTextures )
@@ -36,8 +36,8 @@ TBOOL AMaterialLibrary::LoadTTLData( void* a_pTTLData )
 	}
 
 	m_pTexturesArray = new ATexture[ iNumTextures ];
-	m_pTextures		 = m_pTexturesArray;
-	m_iNumTextures	 = iNumTextures;
+	m_pTextures      = m_pTexturesArray;
+	m_iNumTextures   = iNumTextures;
 
 	for ( TINT i = 0; i < iNumTextures; i++ )
 	{
@@ -107,7 +107,7 @@ void AMaterialLibrary::DestroyTextures()
 		}
 	}
 
-	m_pTextures	   = TNULL;
+	m_pTextures    = TNULL;
 	m_iNumTextures = 0;
 	delete[] m_pTexturesArray;
 }

@@ -4,10 +4,10 @@
 #include "ASysMesh_DX8.h"
 
 #ifdef TOSHI_SKU_WINDOWS
-#	include "Platform/DX8/TRenderInterface_DX8.h"
-#	include "Platform/DX8/TRenderContext_DX8.h"
-#	include "Platform/DX8/TVertexPoolResource_DX8.h"
-#	include "Platform/DX8/TIndexPoolResource_DX8.h"
+#  include "Platform/DX8/TRenderInterface_DX8.h"
+#  include "Platform/DX8/TRenderContext_DX8.h"
+#  include "Platform/DX8/TVertexPoolResource_DX8.h"
+#  include "Platform/DX8/TIndexPoolResource_DX8.h"
 #endif // TOSHI_SKU_WINDOWS
 
 //-----------------------------------------------------------------------------
@@ -24,10 +24,10 @@ void ASysShaderHAL::Flush()
 {
 	Validate();
 
-	auto pDevice		= TRenderD3DInterface::Interface()->GetDirect3DDevice();
+	auto pDevice        = TRenderD3DInterface::Interface()->GetDirect3DDevice();
 	auto pRenderContext = TSTATICCAST(
-		TRenderContextD3D,
-		TRenderD3DInterface::Interface()->GetCurrentContext() );
+	    TRenderContextD3D,
+	    TRenderD3DInterface::Interface()->GetCurrentContext() );
 
 	pDevice->SetTextureStageState( 0, D3DTSS_MINFILTER, 2 );
 	pDevice->SetTextureStageState( 0, D3DTSS_MAGFILTER, 2 );
@@ -43,7 +43,7 @@ void ASysShaderHAL::Flush()
 	pDevice->SetVertexShader( D3DFVF_TEX1 | D3DFVF_DIFFUSE | D3DFVF_XYZ );
 
 	static Toshi::TMatrix44 s_Identity;
-	static TUINT			s_IdentityCreated;
+	static TUINT            s_IdentityCreated;
 
 	if ( ( s_IdentityCreated & 1 ) == 0 )
 	{
@@ -74,10 +74,10 @@ void ASysShaderHAL::StartFlush()
 {
 	Validate();
 
-	auto pDevice		= TRenderD3DInterface::Interface()->GetDirect3DDevice();
+	auto pDevice        = TRenderD3DInterface::Interface()->GetDirect3DDevice();
 	auto pRenderContext = TSTATICCAST(
-		TRenderContextD3D,
-		TRenderD3DInterface::Interface()->GetCurrentContext() );
+	    TRenderContextD3D,
+	    TRenderD3DInterface::Interface()->GetCurrentContext() );
 
 	pDevice->SetTextureStageState( 0, D3DTSS_MINFILTER, 2 );
 	pDevice->SetTextureStageState( 0, D3DTSS_MAGFILTER, 2 );
@@ -93,7 +93,7 @@ void ASysShaderHAL::StartFlush()
 	pDevice->SetVertexShader( D3DFVF_TEX1 | D3DFVF_DIFFUSE | D3DFVF_XYZ );
 
 	static Toshi::TMatrix44 s_Identity;
-	static TUINT			s_IdentityCreated;
+	static TUINT            s_IdentityCreated;
 
 	if ( ( s_IdentityCreated & 1 ) == 0 )
 	{
@@ -171,14 +171,14 @@ void ASysShaderHAL::Render( Toshi::TRenderPacket* pPacket )
 {
 	TASSERT( pPacket->GetMesh()->IsExactly( &TGetClass( ASysMeshHAL ) ) );
 
-	auto		 pDevice  = TRenderD3DInterface::Interface()->GetDirect3DDevice();
+	auto         pDevice  = TRenderD3DInterface::Interface()->GetDirect3DDevice();
 	ASysMeshHAL* pMeshHAL = TSTATICCAST( ASysMeshHAL, pPacket->GetMesh() );
 
 	pDevice->SetTransform( D3DTS_WORLDMATRIX( 0 ), (D3DMATRIX*)&pPacket->GetModelViewMatrix() );
 	pDevice->SetRenderState( D3DRS_ZBIAS, pMeshHAL->GetZBias() );
 
 	auto pVertexPool = TDYNAMICCAST( TVertexPoolResource, pMeshHAL->GetVertexPool() );
-	auto pIndexPool	 = TDYNAMICCAST( TIndexPoolResource, pMeshHAL->GetIndexPool() );
+	auto pIndexPool  = TDYNAMICCAST( TIndexPoolResource, pMeshHAL->GetIndexPool() );
 
 	TVertexBlockResource::HALBuffer vertexHALBuffer;
 	pVertexPool->GetHALBuffer( &vertexHALBuffer );
@@ -194,20 +194,20 @@ void ASysShaderHAL::Render( Toshi::TRenderPacket* pPacket )
 		if ( pIndexPool->GetFlags() & 8 )
 		{
 			pDevice->DrawIndexedPrimitive(
-				D3DPT_TRIANGLESTRIP,
-				0,
-				pVertexPool->GetNumVertices(),
-				indexHALBuffer.uiIndexOffset,
-				pIndexPool->GetNumIndices() - 2 );
+			    D3DPT_TRIANGLESTRIP,
+			    0,
+			    pVertexPool->GetNumVertices(),
+			    indexHALBuffer.uiIndexOffset,
+			    pIndexPool->GetNumIndices() - 2 );
 		}
 		else
 		{
 			pDevice->DrawIndexedPrimitive(
-				D3DPT_TRIANGLELIST,
-				0,
-				pVertexPool->GetNumVertices(),
-				indexHALBuffer.uiIndexOffset,
-				pIndexPool->GetNumIndices() / 3 );
+			    D3DPT_TRIANGLELIST,
+			    0,
+			    pVertexPool->GetNumVertices(),
+			    indexHALBuffer.uiIndexOffset,
+			    pIndexPool->GetNumIndices() / 3 );
 		}
 	}
 

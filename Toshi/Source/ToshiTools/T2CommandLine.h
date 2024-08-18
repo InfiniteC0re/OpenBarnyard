@@ -16,17 +16,17 @@ public:
 
 	void Create( T2ConstString8 a_pchCommandLine );
 
-	TBOOL	 HasParameter( const TCHAR* a_pszParameter, TINT* a_pIndex = TNULL ) const;
+	TBOOL    HasParameter( const TCHAR* a_pszParameter, TINT* a_pIndex = TNULL ) const;
 	TString8 GetParameterValue( const TCHAR* a_pszParameter, const TCHAR* a_pszDefaultValue = TNULL ) const;
 
 private:
 	const TCHAR* GetNextParameter( const TCHAR* a_pszParameter ) const;
 
 private:
-	T2FormatString<4096>	 m_szCommandLine;
-	T2String8Parser			 m_Parser;
+	T2FormatString<4096>     m_szCommandLine;
+	T2String8Parser          m_Parser;
 	mutable TArray<TString8> m_ParsedParams;
-	TBOOL					 m_bInitialised;
+	TBOOL                    m_bInitialised;
 };
 
 TOSHI_NAMESPACE_END

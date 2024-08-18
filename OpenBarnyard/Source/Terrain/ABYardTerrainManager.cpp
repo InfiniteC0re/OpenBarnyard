@@ -35,10 +35,10 @@ void ABYardTerrainManager::SetTerrain( TINT a_eTerrain, TBOOL a_bLoadLater, TBOO
 	}
 
 	ms_pCurrentTerrain = new ATerrainInterface(
-		a_iUnused1,
-		a_iUnused2,
-		a_iPreloadTerrainBlockSize < 1 ? 0x2200000 : a_iPreloadTerrainBlockSize,
-		a_iStartVISGroup );
+	    a_iUnused1,
+	    a_iUnused2,
+	    a_iPreloadTerrainBlockSize < 1 ? 0x2200000 : a_iPreloadTerrainBlockSize,
+	    a_iStartVISGroup );
 
 	T2FormatString128 terrainFile;
 	terrainFile.Format( "Data\\Terrain\\%s\\%s.trb", GetTerrainName( a_eTerrain ), GetTerrainName( a_eTerrain ) );
@@ -58,7 +58,7 @@ void ABYardTerrainManager::StartLoading()
 {
 	TPROFILER_SCOPE();
 
-	auto pTerrain		  = ATerrainInterface::GetSingleton();
+	auto pTerrain         = ATerrainInterface::GetSingleton();
 	pTerrain->m_bIsLoaded = TFALSE;
 
 	if ( ATerrainInterface::ms_bAutoVIS )

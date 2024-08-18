@@ -11,28 +11,28 @@
 #include <Toshi/T2SList.h>
 
 #ifdef LoadLibrary
-#	undef LoadLibrary
+#  undef LoadLibrary
 #endif
 
 class AMaterialLibraryManager :
-	public THookedObject,
-	public THookedSingleton<AMaterialLibraryManager, 0x007b4660>
+    public THookedObject,
+    public THookedSingleton<AMaterialLibraryManager, 0x007b4660>
 {
 public:
 	class List :
-		public THookedSingleton<List, 0x007b46c8>
+	    public THookedSingleton<List, 0x007b46c8>
 	{
 	public:
 		AMaterialLibrary* CreateLibraryFromTRB( Toshi::TTRB* a_pTRB, const char* a_szFilePath );
 		AMaterialLibrary* CreateLibraryFromAsset( const char* a_szFilePath, Toshi::TTRB* a_pTRB );
-		ATexture*		  FindTexture( const char* a_szTextureName, AMaterialLibrary** a_ppMaterialLibrary, TINT* a_pTextureIndex );
+		ATexture*         FindTexture( const char* a_szTextureName, AMaterialLibrary** a_ppMaterialLibrary, TINT* a_pTextureIndex );
 
 	public:
 		Toshi::T2DList<AMaterialLibrary> m_Libraries;
 	};
 
 	class TextureSlot :
-		public Toshi::T2SList<TextureSlot>::Node
+	    public Toshi::T2SList<TextureSlot>::Node
 	{
 	public:
 		TextureSlot() = default;
@@ -75,7 +75,7 @@ public:
 
 	private:
 		Toshi::TTexture*  m_pTexture;
-		Toshi::TString8	  m_Name;
+		Toshi::TString8   m_Name;
 		AMaterialLibrary* m_pMaterialLibrary;
 	};
 
@@ -92,8 +92,8 @@ public:
 	void OnLibraryLoaded( TBOOL a_bIsGUI );
 
 	Toshi::TTexture* FindTexture( const char* a_szTextureName );
-	TINT			 GetNumUsedTextures() const { return m_iNumUsedTextures; }
-	TINT			 GetNumFreeTextures() const { return m_iNumFreeTextures; }
+	TINT             GetNumUsedTextures() const { return m_iNumUsedTextures; }
+	TINT             GetNumFreeTextures() const { return m_iNumFreeTextures; }
 
 	void UnloadTexturesOfLibrary( AMaterialLibrary* a_pMaterialLibrary );
 
@@ -102,10 +102,10 @@ private:
 
 public:
 	Toshi::T2Map<Toshi::TPString8, int, Toshi::TPString8::Comparator> m_NumRefLibraries;
-	LibrariesMap													  m_LoadedLibraries;
-	TextureSlot														  m_aSlots[ MAX_NUM_TEXTURES ];
-	Toshi::T2SList<TextureSlot>										  m_UsedTextures;
-	Toshi::T2SList<TextureSlot>										  m_FreeTextures;
-	TINT															  m_iNumUsedTextures;
-	TINT															  m_iNumFreeTextures;
+	LibrariesMap                                                      m_LoadedLibraries;
+	TextureSlot                                                       m_aSlots[ MAX_NUM_TEXTURES ];
+	Toshi::T2SList<TextureSlot>                                       m_UsedTextures;
+	Toshi::T2SList<TextureSlot>                                       m_FreeTextures;
+	TINT                                                              m_iNumUsedTextures;
+	TINT                                                              m_iNumFreeTextures;
 };

@@ -17,21 +17,21 @@ struct CullBox
 struct CellSettings
 {
 	CellSettings* pNext;
-	CullBox		  oCullBox;
-	TINT		  Unknown;
+	CullBox       oCullBox;
+	TINT          Unknown;
 };
 
 struct CellNode
 {
-	TINT		  iCellIndex;
+	TINT          iCellIndex;
 	CellSettings* pCellSettings;
-	TINT		  Unknown;
+	TINT          Unknown;
 };
 
 struct Plane
 {
 	Toshi::TPlane oPlane;
-	TUINT		  uiClipFlag;
+	TUINT         uiClipFlag;
 };
 
 enum FrustumIntersectSphereResult
@@ -46,16 +46,16 @@ class Frustum
 public:
 	Frustum();
 
-	void						 InitReduce();
+	void                         InitReduce();
 	FrustumIntersectSphereResult IntersectSphereReduce( const Toshi::TSphere& a_rSphere );
 
 	void Transform( const Frustum& a_rFrustum, const Toshi::TMatrix44& a_rMatrix );
 
 public:
-	TUINT16		   aUnknown[ 6 ];
-	Plane		   aFrustumPlanes[ 6 ];
+	TUINT16        aUnknown[ 6 ];
+	Plane          aFrustumPlanes[ 6 ];
 	Toshi::TPlane* apActivePlanes[ 6 ];
-	TINT		   iActivePlaneCount;
+	TINT           iActivePlaneCount;
 };
 
 struct WorldVertex
@@ -69,18 +69,18 @@ struct WorldVertex
 struct CellMesh
 {
 	Toshi::TMesh* pMesh;
-	TUINT32		  uiNumIndices;
-	TUINT32		  uiNumVertices1;
-	TUINT16		  uiNumVertices2;
-	TCHAR*		  szMaterialName;
+	TUINT32       uiNumIndices;
+	TUINT32       uiNumVertices1;
+	TUINT16       uiNumVertices2;
+	TCHAR*        szMaterialName;
 	WorldVertex*  pVertices;
-	TUINT16*	  pIndices;
+	TUINT16*      pIndices;
 };
 
 struct CellMeshSphere
 {
 	Toshi::TSphere m_BoundingSphere;
-	CellMesh*	   m_pCellMesh;
+	CellMesh*      m_pCellMesh;
 };
 
 struct CellSphereTreeLeafNode
@@ -101,7 +101,7 @@ struct CellSphereTreeLeafNode
 
 struct CellSphereTreeBranchNode
 {
-	Toshi::TSphere			  m_BoundingSphere;
+	Toshi::TSphere            m_BoundingSphere;
 	CellSphereTreeBranchNode* m_pRight;
 
 	TBOOL IsLeaf() const { return m_pRight == TNULL; }
@@ -132,13 +132,13 @@ struct Cell
 		FLAGS_BUILDING = BITFLAG( 0 )
 	};
 
-	FLAGS					  uiFlags;
-	TCHAR					  UNKNOWNDATA1[ 108 ];
-	TINT					  m_iSomeCount;
-	TCHAR					  UNKNOWNDATA2[ 12 ];
-	CellNode*				  pNode;
-	TUINT32					  uiNumMeshes;
-	CellMeshSphere**		  ppCellMeshSpheres;
+	FLAGS                     uiFlags;
+	TCHAR                     UNKNOWNDATA1[ 108 ];
+	TINT                      m_iSomeCount;
+	TCHAR                     UNKNOWNDATA2[ 12 ];
+	CellNode*                 pNode;
+	TUINT32                   uiNumMeshes;
+	CellMeshSphere**          ppCellMeshSpheres;
 	CellSphereTreeBranchNode* pTreeBranchNodes;
 };
 
@@ -156,6 +156,6 @@ struct WorldDatabase
 
 struct RenderData
 {
-	Cell*	 pCell;
+	Cell*    pCell;
 	Frustum* pFrustum;
 };

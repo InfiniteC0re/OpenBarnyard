@@ -3,7 +3,7 @@
 #include "ATerrainSection.h"
 
 class ASectionDoneJob :
-	public AMainThreadJob
+    public AMainThreadJob
 {
 public:
 	virtual void  BeginJob() override;
@@ -14,6 +14,6 @@ public:
 
 private:
 	ATerrainSection* m_pSection;
-	TUINT			 m_eLODType;
-	TBOOL			 m_bIsCanceled;
+	TUINT            m_eLODType;
+	TBOOL            m_bIsCanceled;
 };

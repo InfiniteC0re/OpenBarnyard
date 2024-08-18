@@ -14,8 +14,8 @@ TOSHI_NAMESPACE_START
 struct TModelLOD
 {
 	TSphere BoundingSphere = TSphere( 0.0f, 0.0f, 0.0f, 0.0f );
-	TINT	iNumMeshes	   = 0;
-	TMesh** ppMeshes	   = TNULL;
+	TINT    iNumMeshes     = 0;
+	TMesh** ppMeshes       = TNULL;
 };
 
 struct TTMD;
@@ -26,7 +26,7 @@ class TModelInstance
 public:
 	friend class TModel;
 
-	using t_PreRenderCB	   = void ( * )( TModelInstance* a_pInstance );
+	using t_PreRenderCB    = void ( * )( TModelInstance* a_pInstance );
 	using t_CustomRenderCB = void ( * )( TModelInstance* a_pInstance, void* a_pUserData );
 
 public:
@@ -42,16 +42,16 @@ public:
 	TINT32 GetLOD();
 	void   SetLOD( TINT32 a_iLOD );
 
-	TModel*			   GetModel() const;
+	TModel*            GetModel() const;
 	TSkeletonInstance* GetSkeletonInstance() const;
 
 private:
-	TModel*			   m_pModel;
+	TModel*            m_pModel;
 	TSkeletonInstance* m_pSkeletonInstance;
-	t_PreRenderCB	   m_fnPreRenderCb;
+	t_PreRenderCB      m_fnPreRenderCb;
 	t_CustomRenderCB   m_fnCustomRenderCb;
-	void*			   m_pCustomRenderCbUserData;
-	TINT32			   m_iCurrentLOD;
+	void*              m_pCustomRenderCbUserData;
+	TINT32             m_iCurrentLOD;
 };
 
 class TModel
@@ -60,7 +60,7 @@ public:
 	using Flags = TUINT32;
 	enum Flags_ : Flags
 	{
-		Flags_None	  = 0,
+		Flags_None    = 0,
 		Flags_Created = BITFLAG( 0 ),
 		Flags_Loaded  = BITFLAG( 1 ),
 	};
@@ -76,13 +76,13 @@ public:
 public:
 	TModel();
 
-	virtual TBOOL Create( TTMD* a_pTMD, TBOOL a_bLoad )				 = 0;
+	virtual TBOOL Create( TTMD* a_pTMD, TBOOL a_bLoad )              = 0;
 	virtual TBOOL Create( const TCHAR* a_szFileName, TBOOL a_bLoad ) = 0;
-	virtual void  Delete()											 = 0;
-	virtual TBOOL LoadFromFile( const TCHAR* a_szFileName )			 = 0;
-	virtual void  Unload()											 = 0;
-	virtual ~TModel()												 = default;
-	virtual TBOOL GetUnknownFlag()									 = 0;
+	virtual void  Delete()                                           = 0;
+	virtual TBOOL LoadFromFile( const TCHAR* a_szFileName )          = 0;
+	virtual void  Unload()                                           = 0;
+	virtual ~TModel()                                                = default;
+	virtual TBOOL GetUnknownFlag()                                   = 0;
 
 	TBOOL LoadTRB();
 	TBOOL LoadTRB( TTRB* a_pTRB );
@@ -128,19 +128,19 @@ private:
 	inline static t_ModelLoaderTRBCallback ms_cbModelLoaderTRB;
 
 protected:
-	Flags		 m_eFlags;
-	TINT		 m_iNumInstances;
-	TINT		 m_iLODCount;
-	TFLOAT		 m_fLODDistance; // ?
-	TSkeleton*	 m_pSkeleton;
-	TModelLOD	 m_LODs[ MAX_NUM_LODS ];
-	TFLOAT		 m_aUnk1[ 4 ];
-	void*		 m_pCollision;
-	void*		 m_pCollisionData;
-	TTRB*		 m_pTRB;
+	Flags        m_eFlags;
+	TINT         m_iNumInstances;
+	TINT         m_iLODCount;
+	TFLOAT       m_fLODDistance; // ?
+	TSkeleton*   m_pSkeleton;
+	TModelLOD    m_LODs[ MAX_NUM_LODS ];
+	TFLOAT       m_aUnk1[ 4 ];
+	void*        m_pCollision;
+	void*        m_pCollisionData;
+	TTRB*        m_pTRB;
 	const TCHAR* m_szSymbolPrefix;
-	TUINT8		 m_szSymbolPrefixLength;
-	TBOOL		 m_bIsAssetFile;
+	TUINT8       m_szSymbolPrefixLength;
+	TBOOL        m_bIsAssetFile;
 };
 
 TOSHI_NAMESPACE_END

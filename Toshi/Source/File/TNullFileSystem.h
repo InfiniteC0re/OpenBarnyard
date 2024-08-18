@@ -4,12 +4,12 @@
 TOSHI_NAMESPACE_START
 
 class TNullFileSystem :
-	public TFileSystem,
-	public TSingleton<TNullFileSystem>
+    public TFileSystem,
+    public TSingleton<TNullFileSystem>
 {
 public:
 	TNullFileSystem( const TCHAR* name ) :
-		TFileSystem( name )
+	    TFileSystem( name )
 	{
 		TFileManager::GetSingletonSafe()->MountFileSystem( this );
 	}
@@ -17,8 +17,8 @@ public:
 	//-----------------------------------------------------------------------------
 	// TFileSystem
 	//-----------------------------------------------------------------------------
-	virtual TFile*	 CreateFile( const TString8& a_rcFileName, TFILEMODE a_eFileMode ) OVERRIDE;
-	virtual void	 DestroyFile( TFile* a_pFile ) OVERRIDE;
+	virtual TFile*   CreateFile( const TString8& a_rcFileName, TFILEMODE a_eFileMode ) OVERRIDE;
+	virtual void     DestroyFile( TFile* a_pFile ) OVERRIDE;
 	virtual TString8 MakeInternalPath( const TString8& a_rcPath ) OVERRIDE;
 };
 

@@ -4,11 +4,11 @@
 #include "AMaterialLibraryManager.h"
 
 #ifdef TOSHI_SKU_WINDOWS
-#	include "Platform/DX8/AWorldShader/AWorldShader_DX8.h"
+#  include "Platform/DX8/AWorldShader/AWorldShader_DX8.h"
 
-#	include <Render/TTMDWin.h>
-#	include <Platform/DX8/TRenderInterface_DX8.h>
-#	include <Platform/DX8/TTextureResourceHAL_DX8.h>
+#  include <Render/TTMDWin.h>
+#  include <Platform/DX8/TRenderInterface_DX8.h>
+#  include <Platform/DX8/TTextureResourceHAL_DX8.h>
 #endif // TOSHI_SKU_WINDOWS
 
 
@@ -36,23 +36,23 @@ AModelLoader::AModelLoader()
 	if ( bAssetPackLoaded )
 	{
 		// Use asset pack
-		ms_pWorldEndRender		 = AAssetLoader::GetSymbolAddress( "materialproperties", "WorldEndRender", AAssetType_AssetPack );
-		ms_pWorldStartRender	 = AAssetLoader::GetSymbolAddress( "materialproperties", "WorldStartRender", AAssetType_AssetPack );
+		ms_pWorldEndRender       = AAssetLoader::GetSymbolAddress( "materialproperties", "WorldEndRender", AAssetType_AssetPack );
+		ms_pWorldStartRender     = AAssetLoader::GetSymbolAddress( "materialproperties", "WorldStartRender", AAssetType_AssetPack );
 		ms_pWorldUVOffsetsPerSec = AAssetLoader::GetSymbolAddress( "materialproperties", "WorldUVOffsetsPerSec", AAssetType_AssetPack );
-		ms_pAlphaRefMaterials	 = AAssetLoader::CastSymbol<AlphaRefMaterial>( "materialproperties", "AlphaRefMaterials", AAssetType_AssetPack );
-		ms_pClampedMaterials	 = AAssetLoader::CastSymbol<ClampedMaterial>( "materialproperties", "ClampedMaterials", AAssetType_AssetPack );
-		ms_pGlowMaterials		 = AAssetLoader::CastSymbol<const TCHAR*>( "materialproperties", "GlowMaterials", AAssetType_AssetPack );
+		ms_pAlphaRefMaterials    = AAssetLoader::CastSymbol<AlphaRefMaterial>( "materialproperties", "AlphaRefMaterials", AAssetType_AssetPack );
+		ms_pClampedMaterials     = AAssetLoader::CastSymbol<ClampedMaterial>( "materialproperties", "ClampedMaterials", AAssetType_AssetPack );
+		ms_pGlowMaterials        = AAssetLoader::CastSymbol<const TCHAR*>( "materialproperties", "GlowMaterials", AAssetType_AssetPack );
 	}
 	else
 	{
 		// Load from file
 		m_oTRB.Load( "Data\\MiscTextures\\MaterialProperties.trb" );
-		ms_pWorldEndRender		 = m_oTRB.GetSymbolAddress( "WorldEndRender" );
-		ms_pWorldStartRender	 = m_oTRB.GetSymbolAddress( "WorldStartRender" );
+		ms_pWorldEndRender       = m_oTRB.GetSymbolAddress( "WorldEndRender" );
+		ms_pWorldStartRender     = m_oTRB.GetSymbolAddress( "WorldStartRender" );
 		ms_pWorldUVOffsetsPerSec = m_oTRB.GetSymbolAddress( "WorldUVOffsetsPerSec" );
-		ms_pAlphaRefMaterials	 = m_oTRB.CastSymbol<AlphaRefMaterial>( "AlphaRefMaterials" );
-		ms_pClampedMaterials	 = m_oTRB.CastSymbol<ClampedMaterial>( "ClampedMaterials" );
-		ms_pGlowMaterials		 = m_oTRB.CastSymbol<const TCHAR*>( "GlowMaterials" );
+		ms_pAlphaRefMaterials    = m_oTRB.CastSymbol<AlphaRefMaterial>( "AlphaRefMaterials" );
+		ms_pClampedMaterials     = m_oTRB.CastSymbol<ClampedMaterial>( "ClampedMaterials" );
+		ms_pGlowMaterials        = m_oTRB.CastSymbol<const TCHAR*>( "GlowMaterials" );
 	}
 
 	TModel::SetLoaderTMDCallback( AModelLoaderLoadTMDCallback );
@@ -60,7 +60,7 @@ AModelLoader::AModelLoader()
 
 	// Count glow materials
 	ms_iNumGlowMaterials = 0;
-	auto pGlowMaterial	 = ms_pGlowMaterials;
+	auto pGlowMaterial   = ms_pGlowMaterials;
 
 	while ( *pGlowMaterial )
 	{
@@ -70,12 +70,12 @@ AModelLoader::AModelLoader()
 
 	// Load double sided materials
 	ms_pDoubleSidedMaterials = ( bAssetPackLoaded ) ?
-		AAssetLoader::CastSymbol<const TCHAR*>( "materialproperties", "DoubleSidedMaterials", AAssetType_AssetPack ) :
-		m_oTRB.CastSymbol<const TCHAR*>( "DoubleSidedMaterials" );
+	    AAssetLoader::CastSymbol<const TCHAR*>( "materialproperties", "DoubleSidedMaterials", AAssetType_AssetPack ) :
+	    m_oTRB.CastSymbol<const TCHAR*>( "DoubleSidedMaterials" );
 
 	// Count double sided materials
 	ms_iNumDoubleSidedMaterials = 0;
-	auto pDoubleSidedMaterial	= ms_pDoubleSidedMaterials;
+	auto pDoubleSidedMaterial   = ms_pDoubleSidedMaterials;
 
 	while ( *pDoubleSidedMaterial )
 	{
@@ -189,14 +189,14 @@ Toshi::TMaterial* AModelLoader::CreateMaterial( Toshi::TShader* a_pShader, const
 	if ( pResultMaterial ) return pResultMaterial;
 
 	TTextureResourceHAL* pTexture;
-	const char*			 szTextureName;
-	auto				 pTMDMaterial = FindMaterialInModel( a_szMaterialName );
+	const char*          szTextureName;
+	auto                 pTMDMaterial = FindMaterialInModel( a_szMaterialName );
 
 	if ( pTMDMaterial )
 	{
 		pTexture = TDYNAMICCAST(
-			TTextureResourceHAL,
-			AMaterialLibraryManager::GetSingleton()->FindTexture( pTMDMaterial->szTextureFile ) );
+		    TTextureResourceHAL,
+		    AMaterialLibraryManager::GetSingleton()->FindTexture( pTMDMaterial->szTextureFile ) );
 
 		szTextureName = pTMDMaterial->szTextureFile;
 	}
@@ -204,18 +204,18 @@ Toshi::TMaterial* AModelLoader::CreateMaterial( Toshi::TShader* a_pShader, const
 	{
 		TTRACE( "Couldn't find texture for material '%s'", a_szMaterialName );
 		pTexture = TDYNAMICCAST(
-			TTextureResourceHAL,
-			TRenderD3DInterface::Interface()->GetInvalidTexture() );
+		    TTextureResourceHAL,
+		    TRenderD3DInterface::Interface()->GetInvalidTexture() );
 		szTextureName = "invalid";
 	}
 
 	TVALIDPTR( pTexture );
 
-	auto		eTextureFormat = pTexture->GetImageInfo().Format;
-	const TBOOL bIsAlpha	   = eTextureFormat == D3DFMT_A8R8G8B8 ||
-		eTextureFormat == D3DFMT_A4R4G4B4 ||
-		eTextureFormat == D3DFMT_A8R3G3B2 ||
-		eTextureFormat == D3DFMT_DXT5;
+	auto        eTextureFormat = pTexture->GetImageInfo().Format;
+	const TBOOL bIsAlpha       = eTextureFormat == D3DFMT_A8R8G8B8 ||
+	    eTextureFormat == D3DFMT_A4R4G4B4 ||
+	    eTextureFormat == D3DFMT_A8R3G3B2 ||
+	    eTextureFormat == D3DFMT_DXT5;
 
 	if ( a_pShader->IsA( &TGetClass( AWorldShader ) ) )
 	{
@@ -239,9 +239,9 @@ Toshi::TMaterial* AModelLoader::CreateMaterial( Toshi::TShader* a_pShader, const
 	MaterialApplyAlphaRef( pResultMaterial, a_szMaterialName, pTexture );
 
 	TASSERT( !ms_oFreeMaterials.IsEmpty() );
-	auto pMatNode		= ms_oFreeMaterials.PopFront();
+	auto pMatNode       = ms_oFreeMaterials.PopFront();
 	pMatNode->pMaterial = pResultMaterial;
-	pMatNode->iNumRefs	= 1;
+	pMatNode->iNumRefs  = 1;
 
 	TStringManager::String8Copy( pMatNode->szTextureName, szTextureName, TARRAYSIZE( pMatNode->szTextureName ) );
 	TStringManager::String8Copy( pMatNode->szName, materialName, TARRAYSIZE( pMatNode->szName ) );
@@ -309,10 +309,10 @@ void AModelLoader::AddMaterial( const Toshi::TString8& a_rName, MaterialNode* a_
 {
 	TPROFILER_SCOPE();
 
-	TINT iMaxIndex		= ms_iNumCreatedMaterials;
+	TINT iMaxIndex      = ms_iNumCreatedMaterials;
 	TINT iMaterialIndex = ms_iNumCreatedMaterials / 2;
 
-	TINT iOffset	= 0;
+	TINT iOffset    = 0;
 	TINT iCmpResult = 0;
 
 	while ( iOffset <= iMaterialIndex )
@@ -320,15 +320,15 @@ void AModelLoader::AddMaterial( const Toshi::TString8& a_rName, MaterialNode* a_
 		if ( iMaxIndex <= iMaterialIndex ) break;
 
 		auto pMatNode = &ms_oNodesAlloc[ ms_oMaterialIds[ iMaterialIndex ] ];
-		iCmpResult	  = TStringManager::String8Compare( a_rName, pMatNode->szName );
+		iCmpResult    = TStringManager::String8Compare( a_rName, pMatNode->szName );
 
 		if ( -1 < iCmpResult )
 		{
-			iOffset		   = iMaterialIndex + 1;
+			iOffset        = iMaterialIndex + 1;
 			iMaterialIndex = iMaxIndex;
 		}
 
-		iMaxIndex	   = iMaterialIndex;
+		iMaxIndex      = iMaterialIndex;
 		iMaterialIndex = iOffset + ( iMaterialIndex - iOffset ) / 2;
 	}
 
@@ -350,7 +350,7 @@ Toshi::TMaterial* AModelLoader::FindMaterial( const Toshi::TString8& a_rName )
 {
 	TPROFILER_SCOPE();
 
-	TINT iMaxIndex		= ms_iNumCreatedMaterials;
+	TINT iMaxIndex      = ms_iNumCreatedMaterials;
 	TINT iMaterialIndex = ms_iNumCreatedMaterials / 2;
 
 	TINT iOffset = 0;
@@ -359,7 +359,7 @@ Toshi::TMaterial* AModelLoader::FindMaterial( const Toshi::TString8& a_rName )
 	{
 		if ( iMaxIndex <= iMaterialIndex ) break;
 
-		auto pMatNode	= &ms_oNodesAlloc[ ms_oMaterialIds[ iMaterialIndex ] ];
+		auto pMatNode   = &ms_oNodesAlloc[ ms_oMaterialIds[ iMaterialIndex ] ];
 		TINT iCmpResult = TStringManager::String8Compare( a_rName, pMatNode->szName );
 
 		if ( iCmpResult == 0 )
@@ -374,11 +374,11 @@ Toshi::TMaterial* AModelLoader::FindMaterial( const Toshi::TString8& a_rName )
 
 		if ( iCmpResult > -1 )
 		{
-			iOffset		   = iMaterialIndex + 1;
+			iOffset        = iMaterialIndex + 1;
 			iMaterialIndex = iMaxIndex;
 		}
 
-		iMaxIndex	   = iMaterialIndex;
+		iMaxIndex      = iMaterialIndex;
 		iMaterialIndex = iOffset + ( iMaterialIndex - iOffset ) / 2;
 	}
 
@@ -409,22 +409,22 @@ TBOOL AModelLoader::AModelLoaderLoadTRBCallback( Toshi::TModel* a_pModel )
 
 	TTODO( "Load collision data" );
 
-	TTMDWin::TRBWinHeader*	   pHeader	  = a_pModel->CastSymbol<TTMDWin::TRBWinHeader>( "Header" );
+	TTMDWin::TRBWinHeader*     pHeader    = a_pModel->CastSymbol<TTMDWin::TRBWinHeader>( "Header" );
 	TTMDBase::MaterialsHeader* pMaterials = a_pModel->CastSymbol<TTMDBase::MaterialsHeader>( "Materials" );
 
 	// Copy info about materials of the current model
 	TUtil::MemCopy( ms_oCurrentModelMaterials, pMaterials + 1, pMaterials->uiSectionSize );
 	ms_oCurrentModelMaterialsHeader = *pMaterials;
 
-	a_pModel->m_iLODCount	 = pHeader->m_iNumLODs;
+	a_pModel->m_iLODCount    = pHeader->m_iNumLODs;
 	a_pModel->m_fLODDistance = pHeader->m_fLODDistance;
 
 	for ( TINT i = 0; i < pHeader->m_iNumLODs; i++ )
 	{
 		auto pTRBLod = pHeader->GetLOD( i );
 
-		a_pModel->m_LODs[ i ].iNumMeshes	 = pTRBLod->m_iMeshCount1 + pTRBLod->m_iMeshCount2;
-		a_pModel->m_LODs[ i ].ppMeshes		 = new TMesh*[ a_pModel->m_LODs[ i ].iNumMeshes ];
+		a_pModel->m_LODs[ i ].iNumMeshes     = pTRBLod->m_iMeshCount1 + pTRBLod->m_iMeshCount2;
+		a_pModel->m_LODs[ i ].ppMeshes       = new TMesh*[ a_pModel->m_LODs[ i ].iNumMeshes ];
 		a_pModel->m_LODs[ i ].BoundingSphere = pTRBLod->m_RenderVolume;
 
 		if ( pTRBLod->m_eShader == TTMDWin::ST_WORLD )

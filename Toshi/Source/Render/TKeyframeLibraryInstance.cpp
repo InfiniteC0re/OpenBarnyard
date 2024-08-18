@@ -11,16 +11,16 @@ TOSHI_NAMESPACE_START
 
 TKeyframeLibraryInstance::TKeyframeLibraryInstance()
 {
-	m_pLibrary		= TNULL;
-	m_iTBaseIndex	= 0;
-	m_iQBaseIndex	= 0;
-	m_iSBaseIndex	= 0;
-	m_iTKeyCount	= 0;
-	m_iQKeyCount	= 0;
-	m_iSKeyCount	= 0;
+	m_pLibrary      = TNULL;
+	m_iTBaseIndex   = 0;
+	m_iQBaseIndex   = 0;
+	m_iSBaseIndex   = 0;
+	m_iTKeyCount    = 0;
+	m_iQKeyCount    = 0;
+	m_iSKeyCount    = 0;
 	m_pTranslations = TNULL;
-	m_pQuaternions	= TNULL;
-	m_pScales		= TNULL;
+	m_pQuaternions  = TNULL;
+	m_pScales       = TNULL;
 }
 
 TKeyframeLibrary* TKeyframeLibraryInstance::Create( TKeyframeLibrary* a_pLibrary )
@@ -39,15 +39,15 @@ TKeyframeLibrary* TKeyframeLibraryInstance::CreateEx( TKeyframeLibrary* a_pLibra
 	{
 		a_pLibrary->IncreaseRefCount();
 
-		m_iTKeyCount	= a_iTKeyCount;
-		m_iQKeyCount	= a_iQKeyCount;
-		m_iTBaseIndex	= a_iTBaseIndex;
-		m_iQBaseIndex	= a_iQBaseIndex;
-		m_iSBaseIndex	= a_iSBaseIndex;
-		m_iSKeyCount	= a_iSKeyCount;
+		m_iTKeyCount    = a_iTKeyCount;
+		m_iQKeyCount    = a_iQKeyCount;
+		m_iTBaseIndex   = a_iTBaseIndex;
+		m_iQBaseIndex   = a_iQBaseIndex;
+		m_iSBaseIndex   = a_iSBaseIndex;
+		m_iSKeyCount    = a_iSKeyCount;
 		m_pTranslations = a_pLibrary->m_pTranslations + a_iTBaseIndex;
-		m_pQuaternions	= a_pLibrary->m_pQuaternions + a_iQBaseIndex;
-		m_pScales		= a_pLibrary->m_pScales + a_iSBaseIndex;
+		m_pQuaternions  = a_pLibrary->m_pQuaternions + a_iQBaseIndex;
+		m_pScales       = a_pLibrary->m_pScales + a_iSBaseIndex;
 	}
 
 	return pOldLibrary;

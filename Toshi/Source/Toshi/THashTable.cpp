@@ -15,7 +15,7 @@ THashTable::t_ItemCompareFunc THashTable::DefaultItemCompareFunc = []( const voi
 
 THashTable::t_ItemHashFunc THashTable::DefaultItemHashFunc = []( const void* a_pMem, TSIZE a_iSize, TUINT32 a_uiMaxValue ) {
 	const TBYTE* pBuffer = TREINTERPRETCAST( const TBYTE*, a_pMem );
-	TUINT32		 uiHash	 = 0;
+	TUINT32      uiHash  = 0;
 
 	while ( a_iSize != 0 )
 	{
@@ -32,17 +32,17 @@ THashTable::t_ItemHashFunc THashTable::DefaultItemHashFunc = []( const void* a_p
 
 THashTable::THashTable()
 {
-	m_iBucketSize		  = 0;
-	m_iItemSize			  = 0;
-	m_iItemCount		  = 0;
-	m_iItemCountTotal	  = 0;
-	m_iHashNodeCount	  = 0;
+	m_iBucketSize         = 0;
+	m_iItemSize           = 0;
+	m_iItemCount          = 0;
+	m_iItemCountTotal     = 0;
+	m_iHashNodeCount      = 0;
 	m_iHashNodeCountTotal = 0;
-	m_pHashToBucketId	  = TNULL;
-	m_pBuckets			  = TNULL;
-	m_pItems			  = TNULL;
-	m_ItemHashFunc		  = TNULL;
-	m_ItemCompareFunc	  = TNULL;
+	m_pHashToBucketId     = TNULL;
+	m_pBuckets            = TNULL;
+	m_pItems              = TNULL;
+	m_ItemHashFunc        = TNULL;
+	m_ItemCompareFunc     = TNULL;
 }
 
 THashTable::~THashTable()
@@ -85,8 +85,8 @@ THashTable::Bucket* THashTable::Find( void* a_pData )
 
 	if ( pBuckets != TNULL )
 	{
-		TUINT32 uiHash	= m_ItemHashFunc( a_pData, m_iItemSize, m_iBucketSize );
-		TINT	iBucket = pBuckets[ uiHash ];
+		TUINT32 uiHash  = m_ItemHashFunc( a_pData, m_iItemSize, m_iBucketSize );
+		TINT    iBucket = pBuckets[ uiHash ];
 
 		while ( iBucket != INVALID_BUCKET_ID )
 		{
@@ -115,7 +115,7 @@ THashTable::Bucket* THashTable::Append( void* a_pData )
 			TUINT32 uiHash = m_ItemHashFunc( a_pData, m_iItemSize, m_iBucketSize );
 
 			m_pBuckets[ m_iHashNodeCountTotal ].iNextBucketId = m_pHashToBucketId[ uiHash ];
-			m_pBuckets[ m_iHashNodeCountTotal ].iItemIndex	  = m_iItemCount;
+			m_pBuckets[ m_iHashNodeCountTotal ].iItemIndex    = m_iItemCount;
 
 			TUtil::MemCopy( m_pItems + m_iItemCount * m_iItemSize, a_pData, m_iItemSize );
 
@@ -140,14 +140,14 @@ TBOOL THashTable::Create( TINT a_iItemCountTotal, TINT a_iItemSize, TINT a_iBuck
 			a_iHashNodeCount = a_iItemCountTotal;
 		}
 
-		m_iBucketSize	  = a_iBucketSize;
-		m_iItemSize		  = a_iItemSize;
-		m_iItemCount	  = 0;
+		m_iBucketSize     = a_iBucketSize;
+		m_iItemSize       = a_iItemSize;
+		m_iItemCount      = 0;
 		m_iItemCountTotal = a_iItemCountTotal;
 		m_iHashNodeCount  = a_iHashNodeCount;
 		m_pHashToBucketId = new TINT[ m_iBucketSize ];
-		m_pBuckets		  = new Bucket[ m_iHashNodeCount ];
-		m_pItems		  = TSTATICCAST( TBYTE, TMemalign( m_iItemSize * m_iItemCountTotal, 16 ) );
+		m_pBuckets        = new Bucket[ m_iHashNodeCount ];
+		m_pItems          = TSTATICCAST( TBYTE, TMemalign( m_iItemSize * m_iItemCountTotal, 16 ) );
 
 		SetItemHashFunction( DefaultItemHashFunc );
 		SetItemCompareFunction( DefaultItemCompareFunc );

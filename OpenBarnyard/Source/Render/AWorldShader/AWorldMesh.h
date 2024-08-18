@@ -10,14 +10,14 @@ public:
 
 	struct SubMesh
 	{
-		TMesh*								pAssociatedMesh = 0;
-		TUINT16								uiUnk2			= 0;
-		TUINT16								uiNumVertices	= 0;
-		Toshi::TIndexPoolResourceInterface* pIndexPool		= TNULL;
+		TMesh*                              pAssociatedMesh = 0;
+		TUINT16                             uiUnk2          = 0;
+		TUINT16                             uiNumVertices   = 0;
+		Toshi::TIndexPoolResourceInterface* pIndexPool      = TNULL;
 	};
 
 	static constexpr TUINT NUM_SUBMESHES = 1;
-	using LockBuffer					 = Toshi::TVertexPoolResourceInterface::LockBuffer;
+	using LockBuffer                     = Toshi::TVertexPoolResourceInterface::LockBuffer;
 
 public:
 	AWorldMesh();
@@ -33,9 +33,9 @@ public:
 	//-----------------------------------------------------------------------------
 	// Own methods
 	//-----------------------------------------------------------------------------
-	virtual void								 Create( TUINT32 a_uiFlags, TUINT16 a_uiMaxVertices );
-	virtual TBOOL								 Lock( LockBuffer& a_rLockBuffer );
-	virtual void								 Unlock( TUINT32 a_uiNumVertices );
+	virtual void                                 Create( TUINT32 a_uiFlags, TUINT16 a_uiMaxVertices );
+	virtual TBOOL                                Lock( LockBuffer& a_rLockBuffer );
+	virtual void                                 Unlock( TUINT32 a_uiNumVertices );
 	virtual Toshi::TVertexPoolResourceInterface* GetVertexPool();
 
 	SubMesh* GetSubMesh( TUINT a_uiIndex )
@@ -49,8 +49,8 @@ private:
 	void  DestroyResource();
 
 protected:
-	TUINT32								 m_uiFlags;
-	TUINT16								 m_uiMaxVertices;
+	TUINT32                              m_uiFlags;
+	TUINT16                              m_uiMaxVertices;
 	Toshi::TVertexPoolResourceInterface* m_pVertexPool;
-	SubMesh*							 m_pSubMeshes;
+	SubMesh*                             m_pSubMeshes;
 };

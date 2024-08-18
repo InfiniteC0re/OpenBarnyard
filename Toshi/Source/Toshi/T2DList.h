@@ -25,16 +25,16 @@ public:
 
 	public:
 		constexpr Node() :
-			m_pPrev( this ),
-			m_pNext( this )
+		    m_pPrev( this ),
+		    m_pNext( this )
 		{}
 
 		~Node()
 		{
 			m_pNext->m_pPrev = m_pPrev;
 			m_pPrev->m_pNext = m_pNext;
-			m_pNext			 = this;
-			m_pPrev			 = this;
+			m_pNext          = this;
+			m_pPrev          = this;
 		}
 
 		TBOOL IsLinked() const
@@ -45,19 +45,19 @@ public:
 		void InsertBefore( Node* pInsertBefore )
 		{
 			TASSERT( !IsLinked() );
-			m_pNext				   = pInsertBefore;
-			m_pPrev				   = pInsertBefore->m_pPrev;
+			m_pNext                = pInsertBefore;
+			m_pPrev                = pInsertBefore->m_pPrev;
 			pInsertBefore->m_pPrev = this;
-			m_pPrev->m_pNext	   = this;
+			m_pPrev->m_pNext       = this;
 		}
 
 		void InsertAfter( Node* pInsertAfter )
 		{
 			TASSERT( !IsLinked() );
-			m_pPrev				  = pInsertAfter;
-			m_pNext				  = pInsertAfter->m_pNext;
+			m_pPrev               = pInsertAfter;
+			m_pNext               = pInsertAfter->m_pNext;
 			pInsertAfter->m_pNext = this;
-			m_pNext->m_pPrev	  = this;
+			m_pNext->m_pPrev      = this;
 		}
 
 		void Remove()
@@ -65,8 +65,8 @@ public:
 			TASSERT( IsLinked() );
 			m_pPrev->m_pNext = this->m_pNext;
 			m_pNext->m_pPrev = this->m_pPrev;
-			m_pNext			 = this;
-			m_pPrev			 = this;
+			m_pNext          = this;
+			m_pPrev          = this;
 		}
 
 		Node* Next() const

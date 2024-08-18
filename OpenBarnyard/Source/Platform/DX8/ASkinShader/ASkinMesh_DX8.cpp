@@ -27,7 +27,7 @@ TBOOL ASkinMeshHAL::Render()
 		TMaterial* pMaterial;
 
 		if ( !TDYNAMICCAST( ASkinShaderHAL, m_pOwnerShader )->IsAlphaBlendMaterial() ||
-			 pCurrentContext->GetAlphaBlend() >= 1.0f )
+		     pCurrentContext->GetAlphaBlend() >= 1.0f )
 		{
 			pMaterial = TDYNAMICCAST( ASkinMaterialHAL, m_pMaterial );
 		}

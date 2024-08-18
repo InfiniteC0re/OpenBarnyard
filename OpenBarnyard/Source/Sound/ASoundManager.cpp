@@ -26,22 +26,22 @@ TDEFINE_CLASS( ASoundManager );
 #define MAX_NUM_SOUND_EVENTS 256
 
 ASoundManager::ASoundManager() :
-	m_SoundEventPool( AMemory::GetAllocator( AMemory::POOL_Sound ), MAX_NUM_SOUND_EVENTS ),
-	m_CategoryIndices( AMemory::GetAllocator( AMemory::POOL_Sound ) ),
-	m_SoundIdToSoundEx( AMemory::GetAllocator( AMemory::POOL_Sound ) ),
-	m_SoundIdToSound( AMemory::GetAllocator( AMemory::POOL_Sound ) )
+    m_SoundEventPool( AMemory::GetAllocator( AMemory::POOL_Sound ), MAX_NUM_SOUND_EVENTS ),
+    m_CategoryIndices( AMemory::GetAllocator( AMemory::POOL_Sound ) ),
+    m_SoundIdToSoundEx( AMemory::GetAllocator( AMemory::POOL_Sound ) ),
+    m_SoundIdToSound( AMemory::GetAllocator( AMemory::POOL_Sound ) )
 {
 	TIMPLEMENT();
 	m_iLastAvailableSoundExSlot = -1;
-	m_fCurrentTime				= 0.0f;
+	m_fCurrentTime              = 0.0f;
 
 	TUtil::MemClear( &m_aEventHandlers, sizeof( m_aEventHandlers ) );
 
-	m_bMuted				  = TFALSE;
+	m_bMuted                  = TFALSE;
 	m_bUseMinHardwareChannels = TTRUE;
-	m_iMinHWChannels		  = 32;
-	m_iNumChannels			  = 32;
-	m_iGlobalFrequency		  = 22050;
+	m_iMinHWChannels          = 32;
+	m_iNumChannels            = 32;
+	m_iGlobalFrequency        = 22050;
 
 	ms_pFileSystem = TFileManager::GetSingleton()->FindFileSystem( "local" );
 }
@@ -67,13 +67,13 @@ TBOOL ASoundManager::OnCreate()
 {
 	Initialise();
 	m_PauseListener.Connect(
-		g_oSystemManager.GetPauseEmitter(),
-		this,
-		[]( ASoundManager* a_pSndMngr, TSystemManager* a_pSysMngr, TBOOL* a_pPaused ) {
-			a_pSndMngr->PauseAllSound( *a_pPaused );
-			return TTRUE;
-		},
-		0 );
+	    g_oSystemManager.GetPauseEmitter(),
+	    this,
+	    []( ASoundManager* a_pSndMngr, TSystemManager* a_pSysMngr, TBOOL* a_pPaused ) {
+		    a_pSndMngr->PauseAllSound( *a_pPaused );
+		    return TTRUE;
+	    },
+	    0 );
 
 	m_pS4 = new S4[ 32 ];
 
@@ -125,7 +125,7 @@ AWaveBank* ASoundManager::LoadWaveBankFromAsset( const Toshi::TString8& a_strNam
 
 	// Get PProperties symbol of the currently loaded sound asset file
 	const PBProperties* pProperties =
-		AAssetLoader::CastSymbol<const PBProperties>( strBankFileName, PBProperties::TRB_SECTION_NAME, AAssetType_WaveBank );
+	    AAssetLoader::CastSymbol<const PBProperties>( strBankFileName, PBProperties::TRB_SECTION_NAME, AAssetType_WaveBank );
 	TVALIDPTR( pProperties );
 
 	const PBProperties* pBankProperties = pProperties->Begin()->GetValue()->GetProperties();
@@ -134,25 +134,25 @@ AWaveBank* ASoundManager::LoadWaveBankFromAsset( const Toshi::TString8& a_strNam
 	TPString8 strWaveWankBankName;
 	pBankProperties->GetOptionalPropertyValue( strWaveWankBankName, "name" );
 
-	TINT iNameCmpRslt		 = strWaveWankBankName.GetString8().Compare( a_strName, -1 );
-	auto pExistingWaveBank	 = ms_WaveBanks.FindNode( strWaveWankBankName );
+	TINT iNameCmpRslt        = strWaveWankBankName.GetString8().Compare( a_strName, -1 );
+	auto pExistingWaveBank   = ms_WaveBanks.FindNode( strWaveWankBankName );
 	auto pWaveBankVersionVal = pBankProperties->GetOptionalProperty( "version" );
 
 	// Store wavebank library
-	auto	  pWaveBankLibraryVal = pBankProperties->GetOptionalProperty( "library" );
+	auto      pWaveBankLibraryVal = pBankProperties->GetOptionalProperty( "library" );
 	TPString8 strWaveBankLibrary  = ( pWaveBankLibraryVal ) ? pWaveBankLibraryVal->GetTPString8() : TNULL;
 
 	// Store wavebank type
-	auto	  pWaveBankTypeVal = pBankProperties->GetOptionalProperty( "type" );
+	auto      pWaveBankTypeVal = pBankProperties->GetOptionalProperty( "type" );
 	TPString8 strWaveBankType  = ( pWaveBankTypeVal ) ? pWaveBankTypeVal->GetTPString8() : TNULL;
 
 	// Store wavebank path
-	auto	  pWaveBankPathVal = pBankProperties->GetOptionalProperty( "path" );
+	auto      pWaveBankPathVal = pBankProperties->GetOptionalProperty( "path" );
 	TPString8 strWaveBankPath  = ( pWaveBankPathVal ) ? pWaveBankPathVal->GetTPString8() : TNULL;
 
 	// Store wavebank extension
-	auto	  pWaveBankExtensionVal = pBankProperties->GetOptionalProperty( "extension" );
-	TPString8 strWaveBankExtension	= ( pWaveBankExtensionVal ) ? pWaveBankExtensionVal->GetTPString8() : TNULL;
+	auto      pWaveBankExtensionVal = pBankProperties->GetOptionalProperty( "extension" );
+	TPString8 strWaveBankExtension  = ( pWaveBankExtensionVal ) ? pWaveBankExtensionVal->GetTPString8() : TNULL;
 
 	// Create the actual wavebank from the parameters
 	AWaveBank* pWaveBank = AllocateWaveBank( strWaveWankBankName, strWaveBankLibrary, strWaveBankType, strWaveBankPath );
@@ -196,7 +196,7 @@ TBOOL ASoundManager::LoadSoundBankImpl( const TCHAR* a_szName, TBOOL a_bSimpleSo
 	strFileName += a_szName;
 	strFileName += ".trb";
 
-	TTRB		trb;
+	TTRB        trb;
 	TTRB::ERROR eTrbLoadResult = trb.Load( strFileName );
 
 	if ( eTrbLoadResult != TTRB::ERROR_OK )
@@ -289,7 +289,7 @@ TBOOL ASoundManager::LoadSoundBankImpl( const TCHAR* a_szName, TBOOL a_bSimpleSo
 					TASSERT( pWaves->GetSize() >= 1 );
 
 					TPString8  strSoundBankName = pBanks->GetValue( 0 )->GetTPString8();
-					AWaveBank* pWaveBank		= FindWaveBank( strSoundBankName );
+					AWaveBank* pWaveBank        = FindWaveBank( strSoundBankName );
 
 					if ( a_bLoadImmediately )
 					{
@@ -297,7 +297,7 @@ TBOOL ASoundManager::LoadSoundBankImpl( const TCHAR* a_szName, TBOOL a_bSimpleSo
 					}
 
 					pSound->m_pWaveBank = pWaveBank;
-					pSound->m_iWaveId	= pWaves->GetValue( 0 )->GetInteger();
+					pSound->m_iWaveId   = pWaves->GetValue( 0 )->GetInteger();
 				}
 			}
 			else
@@ -314,7 +314,7 @@ TBOOL ASoundManager::LoadSoundBankImpl( const TCHAR* a_szName, TBOOL a_bSimpleSo
 				{
 					// Find category and store it's index
 					auto pFoundCategory = m_CategoryIndices.FindNode(
-						( strCategory.GetPooledString() || strCategory.GetString8().Length() == 0 ) ? TPS8( default ) : strCategory );
+					    ( strCategory.GetPooledString() || strCategory.GetString8().Length() == 0 ) ? TPS8( default ) : strCategory );
 
 					TASSERT( pFoundCategory != m_CategoryIndices.End() );
 					pSoundEx->m_uiCategoryIndex = pFoundCategory->GetValue()->GetSecond();
@@ -332,7 +332,7 @@ TBOOL ASoundManager::LoadSoundBankImpl( const TCHAR* a_szName, TBOOL a_bSimpleSo
 
 						// Load info about the waves
 						if ( pSoundProperties->GetOptionalPropertyValue( pBanks, "banks" ) &&
-							 pSoundProperties->GetOptionalPropertyValue( pWaves, "waves" ) )
+						     pSoundProperties->GetOptionalPropertyValue( pWaves, "waves" ) )
 						{
 							pSoundEx->m_vecWaves.Reserve( pBanks->GetSize() );
 
@@ -340,7 +340,7 @@ TBOOL ASoundManager::LoadSoundBankImpl( const TCHAR* a_szName, TBOOL a_bSimpleSo
 							{
 								// Find the wavebank
 								TPString8  strWaveBankName = pBanks->GetValue( i )->GetTPString8();
-								AWaveBank* pWaveBank	   = FindWaveBank( strWaveBankName );
+								AWaveBank* pWaveBank       = FindWaveBank( strWaveBankName );
 								TVALIDPTR( pWaveBank );
 
 								if ( a_bLoadImmediately && !strWaveBankName.IsEmpty() && pWaveBank )
@@ -352,7 +352,7 @@ TBOOL ASoundManager::LoadSoundBankImpl( const TCHAR* a_szName, TBOOL a_bSimpleSo
 								{
 									ASoundAdvanced::Wave oWave;
 									oWave.m_pWaveBank = pWaveBank;
-									oWave.m_iId		  = pWaves->GetValue( i )->GetInteger();
+									oWave.m_iId       = pWaves->GetValue( i )->GetInteger();
 
 									pSoundEx->m_vecWaves.PushBack( oWave );
 
@@ -373,7 +373,7 @@ TBOOL ASoundManager::LoadSoundBankImpl( const TCHAR* a_szName, TBOOL a_bSimpleSo
 							{
 								for ( TUINT i = 0; i < pVolumes->GetSize(); i++ )
 								{
-									TFLOAT fVolume						= pVolumes->GetValue( i )->GetFloat();
+									TFLOAT fVolume                      = pVolumes->GetValue( i )->GetFloat();
 									pSoundEx->m_vecWaves[ i ].m_fVolume = fVolume;
 								}
 							}
@@ -410,7 +410,7 @@ TBOOL ASoundManager::LoadSoundBankImpl( const TCHAR* a_szName, TBOOL a_bSimpleSo
 							{
 								for ( TUINT i = 0; i < pPitches->GetSize(); i++ )
 								{
-									TFLOAT fPitch					   = pPitches->GetValue( i )->GetFloat();
+									TFLOAT fPitch                      = pPitches->GetValue( i )->GetFloat();
 									pSoundEx->m_vecWaves[ i ].m_fPitch = fPitch;
 								}
 							}
@@ -447,7 +447,7 @@ TBOOL ASoundManager::LoadSoundBankImpl( const TCHAR* a_szName, TBOOL a_bSimpleSo
 							{
 								for ( TUINT i = 0; i < pStarts->GetSize(); i++ )
 								{
-									TFLOAT fStart					   = pStarts->GetValue( i )->GetFloat();
+									TFLOAT fStart                      = pStarts->GetValue( i )->GetFloat();
 									pSoundEx->m_vecWaves[ i ].m_fStart = fStart;
 								}
 							}
@@ -464,7 +464,7 @@ TBOOL ASoundManager::LoadSoundBankImpl( const TCHAR* a_szName, TBOOL a_bSimpleSo
 							{
 								for ( TUINT i = 0; i < pVarDelays->GetSize(); i++ )
 								{
-									TFLOAT fVarDelay					  = pVarDelays->GetValue( i )->GetFloat();
+									TFLOAT fVarDelay                      = pVarDelays->GetValue( i )->GetFloat();
 									pSoundEx->m_vecWaves[ i ].m_fVarDelay = fVarDelay;
 								}
 							}
@@ -499,7 +499,7 @@ TBOOL ASoundManager::LoadSoundBankImpl( const TCHAR* a_szName, TBOOL a_bSimpleSo
 							{
 								for ( TUINT i = 0; i < pWeights->GetSize(); i++ )
 								{
-									TFLOAT fWeight						= pVarDelays->GetValue( i )->GetFloat();
+									TFLOAT fWeight                      = pVarDelays->GetValue( i )->GetFloat();
 									pSoundEx->m_vecWaves[ i ].m_iWeight = TMath::Round( fWeight );
 								}
 							}
@@ -604,14 +604,14 @@ void ASoundManager::PauseAllSound( TBOOL a_bPaused )
 TBOOL ASoundManager::LoadWaveBanksInfo( const TCHAR* a_szFileName )
 {
 	TBOOL bOpened = AAssetLoader::Load(
-		"Data/Assets/lib_wavebank.trb",
-		AAssetType_WaveBank,
-		TTRUE );
+	    "Data/Assets/lib_wavebank.trb",
+	    AAssetType_WaveBank,
+	    TTRUE );
 
 	if ( !bOpened ) return TFALSE;
 
 	const PBProperties* pProperties =
-		AAssetLoader::CastSymbol<const PBProperties>( a_szFileName, PBProperties::TRB_SECTION_NAME, AAssetType_WaveBank );
+	    AAssetLoader::CastSymbol<const PBProperties>( a_szFileName, PBProperties::TRB_SECTION_NAME, AAssetType_WaveBank );
 	TVALIDPTR( pProperties );
 
 	auto pWaveBanksVal = pProperties->GetOptionalProperty( "Wavebanks" );
@@ -723,7 +723,7 @@ void ASoundManager::CreatePlaySoundEvent( Cue* a_pCue, TINT a_iTrackIndex, TINT 
 				ASoundAdvanced::Wave* pWave = &pSound->m_vecWaves[ i ];
 
 				TFLOAT fVolumeMultiplier = pRandom->GetFloatMinMax( pWave->m_fMinVolumeMultiplier, pWave->m_fMaxVolumeMultiplier );
-				TFLOAT fVolume			 = fVolumeMultiplier * pWave->m_fVolume;
+				TFLOAT fVolume           = fVolumeMultiplier * pWave->m_fVolume;
 				TMath::Clip( fVolume, 0.0f, 1.0f );
 
 				EventParameters oParams;
@@ -736,14 +736,14 @@ void ASoundManager::CreatePlaySoundEvent( Cue* a_pCue, TINT a_iTrackIndex, TINT 
 				if ( a_fDelay2 != -1.0f ) fStartDelay += a_fDelay2;
 
 				SoundEvent* pEvent = CreateSoundEvent(
-					( uiFlags & 16 ) ? SOUNDEVENT_PlayAudio : SOUNDEVENT_PlayStream,
-					fStartDelay,
-					a_pCue,
-					pWave,
-					oParams,
-					TNULL,
-					uiFlags,
-					a_iTrackIndex );
+				    ( uiFlags & 16 ) ? SOUNDEVENT_PlayAudio : SOUNDEVENT_PlayStream,
+				    fStartDelay,
+				    a_pCue,
+				    pWave,
+				    oParams,
+				    TNULL,
+				    uiFlags,
+				    a_iTrackIndex );
 
 				TVALIDPTR( pEvent );
 			}
@@ -825,13 +825,13 @@ void ASoundManager::AddEventToCue( Cue* a_pCue, SoundEvent* a_pSoundEvent )
 
 ASoundManager::Cue::Cue()
 {
-	bUsed		   = TFALSE;
+	bUsed          = TFALSE;
 	pSoundAdvanced = TNULL;
-	fStartTime	   = 0.0f;
-	fStartTime2	   = 0.0f;
-	vecPosition	   = TVector4::VEC_ZERO;
-	fVolume		   = 1.0f;
-	fFrequency	   = 1.0f;
+	fStartTime     = 0.0f;
+	fStartTime2    = 0.0f;
+	vecPosition    = TVector4::VEC_ZERO;
+	fVolume        = 1.0f;
+	fFrequency     = 1.0f;
 }
 
 ASoundManager::Cue::~Cue()
@@ -850,36 +850,36 @@ ASoundManager::SoundEventList::~SoundEventList()
 }
 
 ASoundManager::SoundEvent::SoundEvent( SOUNDEVENT a_eEventType, TFLOAT a_fStartTime, Cue* a_pCue, ASoundAdvanced::Wave* a_pWave, PlayingSound* a_pPlayingSound, TUINT a_uiFlags, TINT a_iTrackIndex ) :
-	pWave( a_pWave ),
-	eEventType( a_eEventType ),
-	pPlayingSound( a_pPlayingSound ),
-	uiFlags( a_uiFlags ),
-	pCue( a_pCue ),
-	fStartTime( a_fStartTime ),
-	iTrackIndex( a_iTrackIndex )
+    pWave( a_pWave ),
+    eEventType( a_eEventType ),
+    pPlayingSound( a_pPlayingSound ),
+    uiFlags( a_uiFlags ),
+    pCue( a_pCue ),
+    fStartTime( a_fStartTime ),
+    iTrackIndex( a_iTrackIndex )
 {
 }
 
 ASoundManager::SoundEvent::SoundEvent( SOUNDEVENT a_eEventType, TFLOAT a_fStartTime, Cue* a_pCue, ASoundAdvanced::Wave* a_pWave, TFLOAT a_fCustomParam1, PlayingSound* a_pPlayingSound, TUINT a_uiFlags, TINT a_iTrackIndex ) :
-	pWave( a_pWave ),
-	eEventType( a_eEventType ),
-	pPlayingSound( a_pPlayingSound ),
-	uiFlags( a_uiFlags ),
-	pCue( a_pCue ),
-	fStartTime( a_fStartTime ),
-	iTrackIndex( a_iTrackIndex )
+    pWave( a_pWave ),
+    eEventType( a_eEventType ),
+    pPlayingSound( a_pPlayingSound ),
+    uiFlags( a_uiFlags ),
+    pCue( a_pCue ),
+    fStartTime( a_fStartTime ),
+    iTrackIndex( a_iTrackIndex )
 {
 	oParameters[ 0 ] = a_fCustomParam1;
 }
 
 ASoundManager::SoundEvent::SoundEvent( SOUNDEVENT a_eEventType, TFLOAT a_fStartTime, Cue* a_pCue, ASoundAdvanced::Wave* a_pWave, const EventParameters& a_rcCustomParams, PlayingSound* a_pPlayingSound, TUINT a_uiFlags, TINT a_iTrackIndex ) :
-	pWave( a_pWave ),
-	eEventType( a_eEventType ),
-	pPlayingSound( a_pPlayingSound ),
-	uiFlags( a_uiFlags ),
-	pCue( a_pCue ),
-	fStartTime( a_fStartTime ),
-	iTrackIndex( a_iTrackIndex ),
-	oParameters( a_rcCustomParams )
+    pWave( a_pWave ),
+    eEventType( a_eEventType ),
+    pPlayingSound( a_pPlayingSound ),
+    uiFlags( a_uiFlags ),
+    pCue( a_pCue ),
+    fStartTime( a_fStartTime ),
+    iTrackIndex( a_iTrackIndex ),
+    oParameters( a_rcCustomParams )
 {
 }

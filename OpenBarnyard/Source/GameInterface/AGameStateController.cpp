@@ -16,7 +16,7 @@ TOSHI_NAMESPACE_USING
 TDEFINE_CLASS( AGameStateController );
 
 AGameStateController::AGameStateController() :
-	m_UnkVector( m_VectorData, TARRAYSIZE( m_VectorData ), 0 )
+    m_UnkVector( m_VectorData, TARRAYSIZE( m_VectorData ), 0 )
 {
 	// Incomplete
 	m_eFlags = 0;
@@ -88,7 +88,7 @@ void AGameStateController::OnDestroy()
 void AGameStateController::InsertGameState( AGameState* a_pGameState )
 {
 	TGlobalEmitter<AGameStateControllerEvent>::Throw(
-		AGameStateControllerEvent( a_pGameState, AGameStateControllerEvent::Type_GameStateBeingAdded ) );
+	    AGameStateControllerEvent( a_pGameState, AGameStateControllerEvent::Type_GameStateBeingAdded ) );
 
 	m_oStates.PushBack( a_pGameState );
 	a_pGameState->OnInsertion();

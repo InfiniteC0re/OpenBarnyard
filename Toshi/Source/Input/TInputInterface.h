@@ -7,8 +7,8 @@ TOSHI_NAMESPACE_START
 class TInputDevice;
 
 class TInputInterface :
-	public TObject,
-	public TSingleton<TInputInterface>
+    public TObject,
+    public TSingleton<TInputInterface>
 {
 public:
 	TDECLARE_CLASS( TInputInterface, TObject );
@@ -68,12 +68,12 @@ public:
 		}
 
 	public:
-		TINT		  m_iDoodad;		   // 0x00
-		EVENT_TYPE	  m_eEventType;		   // 0x04
-		TBOOL		  m_bIsMagnitudeFloat; // 0x08
-		int8_t		  m_iAxisCount;		   // 0x09
-		TInputDevice* m_pSource;		   // 0x0C
-		TWCHAR		  m_wszString[ 4 ];	   // 0x10
+		TINT          m_iDoodad;           // 0x00
+		EVENT_TYPE    m_eEventType;        // 0x04
+		TBOOL         m_bIsMagnitudeFloat; // 0x08
+		int8_t        m_iAxisCount;        // 0x09
+		TInputDevice* m_pSource;           // 0x0C
+		TWCHAR        m_wszString[ 4 ];    // 0x10
 
 		union
 		{
@@ -86,13 +86,13 @@ public:
 
 public:
 	TInputInterface() :
-		m_InputEventEmitter( this )
+	    m_InputEventEmitter( this )
 	{
 		m_bIsExclusiveMode = TFALSE;
 	}
 
-	~TInputInterface()			 = default;
-	virtual TBOOL Initialise()	 = 0;
+	~TInputInterface()           = default;
+	virtual TBOOL Initialise()   = 0;
 	virtual TBOOL Deinitialise() = 0;
 	virtual TBOOL AcquireAll();
 	virtual TBOOL UnacquireAll();
@@ -120,25 +120,25 @@ public:
 	}
 
 private:
-	TBOOL					m_bIsExclusiveMode;	 // 0x04
-	TNodeList<TInputDevice> m_DeviceList;		 // 0x08
-	EventEmitter			m_InputEventEmitter; // 0x18
-	TGenericEmitter			m_Emitter2;			 // 0x24
+	TBOOL                   m_bIsExclusiveMode;  // 0x04
+	TNodeList<TInputDevice> m_DeviceList;        // 0x08
+	EventEmitter            m_InputEventEmitter; // 0x18
+	TGenericEmitter         m_Emitter2;          // 0x24
 };
 
 class TInputDevice :
-	public TObject,
-	public TNodeList<TInputDevice>::TNode
+    public TObject,
+    public TNodeList<TInputDevice>::TNode
 {
 public:
 	TDECLARE_CLASS( TInputDevice, TObject );
 
 public:
 	static constexpr TINT INPUT_DEVICE_MOUSE_BUTTONS = 3;
-	static constexpr TINT INPUT_DEVICE_MOUSE_WHEEL	 = 4;
+	static constexpr TINT INPUT_DEVICE_MOUSE_WHEEL   = 4;
 
 	using EventEmitter = TInputInterface::EventEmitter;
-	using Doodad	   = TINT;
+	using Doodad       = TINT;
 
 	struct DoodadProperties
 	{
@@ -157,27 +157,27 @@ public:
 	TInputDevice();
 	~TInputDevice() = default;
 
-	virtual TBOOL		 Acquire()					= 0;
-	virtual TBOOL		 Unacquire()				= 0;
-	virtual void		 Release()					= 0;
-	virtual void		 Update( TFLOAT deltaTime ) = 0;
-	virtual TBOOL		 Flush();
-	virtual TINT		 ProcessEvents( EventEmitter& emitter, TFLOAT deltaTime )						= 0;
-	virtual TINT		 GetButtonCount() const															= 0;
-	virtual TINT		 GetAxisCount() const															= 0;
-	virtual TBOOL		 GetDoodadProperties( Doodad a_iDoodad, DoodadProperties& a_rProperties ) const = 0;
-	virtual TBOOL		 StartRepeat( Doodad a_iDoodad, TFLOAT a_fFirstRepeatTime, TFLOAT a_fRepeatTime );
-	virtual void		 StopRepeat( Doodad a_iDoodad );
-	virtual void		 StopAllRepeats();
-	virtual TBOOL		 IsForceFeedbackDevice();
-	virtual const TCHAR* GetButtonFromDoodad( Doodad a_iDoodad ) const	 = 0;
-	virtual TBOOL		 IsDown( Doodad a_iDoodad ) const				 = 0;
-	virtual TINT		 GetAxisInt( Doodad a_iDoodad, TINT axis ) const = 0;
-	virtual TINT		 GetAxisInt2( Doodad a_iDoodad, TINT axis ) const { return GetAxisInt( a_iDoodad, axis ); }
-	virtual TFLOAT		 GetAxisFloat( Doodad a_iDoodad, TINT axis ) const = 0;
-	virtual TFLOAT		 GetAxisFloat2( Doodad a_iDoodad, TINT axis ) const { return GetAxisFloat( a_iDoodad, axis ); }
-	virtual TBOOL		 IsEnabled() const = 0;
-	virtual void		 ThrowRepeatEvent( EventEmitter& emitter, RepeatInfo* repeatInfo, TFLOAT deltaTime );
+	virtual TBOOL        Acquire()                  = 0;
+	virtual TBOOL        Unacquire()                = 0;
+	virtual void         Release()                  = 0;
+	virtual void         Update( TFLOAT deltaTime ) = 0;
+	virtual TBOOL        Flush();
+	virtual TINT         ProcessEvents( EventEmitter& emitter, TFLOAT deltaTime )                       = 0;
+	virtual TINT         GetButtonCount() const                                                         = 0;
+	virtual TINT         GetAxisCount() const                                                           = 0;
+	virtual TBOOL        GetDoodadProperties( Doodad a_iDoodad, DoodadProperties& a_rProperties ) const = 0;
+	virtual TBOOL        StartRepeat( Doodad a_iDoodad, TFLOAT a_fFirstRepeatTime, TFLOAT a_fRepeatTime );
+	virtual void         StopRepeat( Doodad a_iDoodad );
+	virtual void         StopAllRepeats();
+	virtual TBOOL        IsForceFeedbackDevice();
+	virtual const TCHAR* GetButtonFromDoodad( Doodad a_iDoodad ) const   = 0;
+	virtual TBOOL        IsDown( Doodad a_iDoodad ) const                = 0;
+	virtual TINT         GetAxisInt( Doodad a_iDoodad, TINT axis ) const = 0;
+	virtual TINT         GetAxisInt2( Doodad a_iDoodad, TINT axis ) const { return GetAxisInt( a_iDoodad, axis ); }
+	virtual TFLOAT       GetAxisFloat( Doodad a_iDoodad, TINT axis ) const = 0;
+	virtual TFLOAT       GetAxisFloat2( Doodad a_iDoodad, TINT axis ) const { return GetAxisFloat( a_iDoodad, axis ); }
+	virtual TBOOL        IsEnabled() const = 0;
+	virtual void         ThrowRepeatEvent( EventEmitter& emitter, RepeatInfo* repeatInfo, TFLOAT deltaTime );
 
 	TBOOL IsAcquired() const
 	{
@@ -217,14 +217,14 @@ protected:
 	static constexpr TUINT MAX_DEVICE_COUNT = 14;
 
 	inline static TInputDevice* s_aDevices[ MAX_DEVICE_COUNT ];
-	inline static TUINT			s_uiDeviceCount;
+	inline static TUINT         s_uiDeviceCount;
 
 protected:
-	TUINT			   m_uiDeviceIndex;
+	TUINT              m_uiDeviceIndex;
 	TArray<RepeatInfo> m_Repeats;
-	TArray<void*>	   m_Array2;
-	TBOOL			   m_bUnknown;
-	TBOOL			   m_bIsAcquired;
+	TArray<void*>      m_Array2;
+	TBOOL              m_bUnknown;
+	TBOOL              m_bIsAcquired;
 	TInputInterface*   m_pInputInterface;
 };
 

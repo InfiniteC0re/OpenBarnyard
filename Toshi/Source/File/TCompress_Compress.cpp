@@ -17,8 +17,8 @@ TINT TCompress::Write( TUINT32 length, TCHAR*& data, TFile* file )
 	// 0068a830
 	TASSERT( length <= maxlength );
 
-	TINT	writtenSize = 0;
-	TUINT32 dataSize	= length;
+	TINT    writtenSize = 0;
+	TUINT32 dataSize    = length;
 
 	length -= 1;
 
@@ -31,9 +31,9 @@ TINT TCompress::Write( TUINT32 length, TCHAR*& data, TFile* file )
 	else
 	{
 		// 14 bits value
-		auto len		  = length;
+		auto len          = length;
 		LOWBYTE( length ) = HIGHBYTE( length ) | ( BTECSizeFlag_NoOffset | BTECSizeFlag_BigSize );
-		BYTE1( length )	  = len;
+		BYTE1( length )   = len;
 		writtenSize += file->Write( &length, 2 );
 	}
 
@@ -49,8 +49,8 @@ TINT TCompress::WriteOffset( TUINT32 length, TINT offset, TCHAR*& data, TFile* f
 	TASSERT( length <= maxlength );
 	TASSERT( offset <= usemaxoffset );
 
-	TINT	writtenSize = 0;
-	TUINT32 dataSize	= length;
+	TINT    writtenSize = 0;
+	TUINT32 dataSize    = length;
 
 	length -= 1;
 	offset -= 1;
@@ -62,9 +62,9 @@ TINT TCompress::WriteOffset( TUINT32 length, TINT offset, TCHAR*& data, TFile* f
 	}
 	else
 	{
-		auto len		  = length;
+		auto len          = length;
 		LOWBYTE( length ) = HIGHBYTE( length ) | BTECSizeFlag_BigSize;
-		BYTE1( length )	  = len;
+		BYTE1( length )   = len;
 		writtenSize += file->Write( &length, 2 );
 	}
 
@@ -75,9 +75,9 @@ TINT TCompress::WriteOffset( TUINT32 length, TINT offset, TCHAR*& data, TFile* f
 	}
 	else
 	{
-		auto _offset	  = offset;
+		auto _offset      = offset;
 		LOWBYTE( offset ) = HIGHBYTE( offset ) | BTECOffsetFlag_BigOffset;
-		BYTE1( offset )	  = _offset;
+		BYTE1( offset )   = _offset;
 		writtenSize += file->Write( &offset, 2 );
 	}
 
@@ -100,15 +100,15 @@ TSIZE TCompress::Compress( TFile* file, TCHAR* buffer, TUINT32 size, TUINT32 unu
 	file->Seek( TCompress::HEADER_SIZE_12, TSEEK_CUR );
 
 	TSIZE  compressedSize = 0;
-	TSIZE  chunkSize	  = 0;
-	TCHAR* chunkStart	  = TNULL;
+	TSIZE  chunkSize      = 0;
+	TCHAR* chunkStart     = TNULL;
 
 	while ( bufferPos < bufferEnd )
 	{
 		TSIZE uncompressedLeft = TMath::Min<TSIZE>( size - ( bufferPos - buffer ), maxlength );
 
-		TCHAR* offset	 = TNULL;
-		TSIZE  dataSize	 = 0;
+		TCHAR* offset    = TNULL;
+		TSIZE  dataSize  = 0;
 		TBOOL  hasOffset = compressor.FUN_0068af10( bufferPos, uncompressedLeft, offset, dataSize );
 
 		if ( hasOffset == TFALSE || dataSize < 3 )
@@ -152,17 +152,17 @@ TSIZE TCompress::Compress( TFile* file, TCHAR* buffer, TUINT32 size, TUINT32 unu
 	}
 
 	TCompress::Header btecHeader;
-	btecHeader.Magic		  = TFourCC( "BTEC" );
-	btecHeader.Version		  = TVERSION( 1, 2 );
+	btecHeader.Magic          = TFourCC( "BTEC" );
+	btecHeader.Version        = TVERSION( 1, 2 );
 	btecHeader.CompressedSize = compressedSize;
-	btecHeader.Size			  = size;
+	btecHeader.Size           = size;
 
 	if ( isBigEndian )
 	{
-		btecHeader.Magic		  = PARSEDWORD_BIG( btecHeader.Magic );
-		btecHeader.Version		  = PARSEDWORD_BIG( btecHeader.Version );
+		btecHeader.Magic          = PARSEDWORD_BIG( btecHeader.Magic );
+		btecHeader.Version        = PARSEDWORD_BIG( btecHeader.Version );
 		btecHeader.CompressedSize = PARSEDWORD_BIG( btecHeader.CompressedSize );
-		btecHeader.Size			  = PARSEDWORD_BIG( btecHeader.Size );
+		btecHeader.Size           = PARSEDWORD_BIG( btecHeader.Size );
 	}
 
 	file->Seek( initialPos, TSEEK_SET );

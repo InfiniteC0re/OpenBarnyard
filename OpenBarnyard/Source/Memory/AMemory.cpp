@@ -13,16 +13,16 @@ void AMemory::CreatePool( POOL a_ePool )
 {
 	TASSERT( a_ePool >= POOL_None && a_ePool < POOL_NUMOF );
 
-	auto&			   rPool		= s_aPools[ a_ePool ];
+	auto&              rPool        = s_aPools[ a_ePool ];
 	TMemory::MemBlock* pAllocOnHeap = ( rPool.GetHeapIndex() == a_ePool ) ?
-		TNULL :
-		s_aMemBlocks[ rPool.GetHeapIndex() ];
+	    TNULL :
+	    s_aMemBlocks[ rPool.GetHeapIndex() ];
 
 	s_aMemBlocks[ a_ePool ] = g_pMemory->CreateMemBlock(
-		rPool.GetSize(),
-		rPool.GetName(),
-		pAllocOnHeap,
-		rPool.GetUnk2() );
+	    rPool.GetSize(),
+	    rPool.GetName(),
+	    pAllocOnHeap,
+	    rPool.GetUnk2() );
 
 	s_AllocatorList.aAllocators[ a_ePool ].SetMemBlock( s_aMemBlocks[ a_ePool ] );
 }

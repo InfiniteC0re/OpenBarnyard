@@ -14,7 +14,7 @@ class T2StringTraits
 {
 public:
 	using CharTraits = TCharTraits;
-	using CharType	 = typename TCharTraits::CharType;
+	using CharType   = typename TCharTraits::CharType;
 
 public:
 	static TINT FormatV( CharType* a_pcString, TINT size, const CharType* a_pcFormat, va_list args ) { TUNREACHABLE(); }
@@ -31,9 +31,9 @@ public:
 
 	static CharType* Concat( CharType* dst, const CharType* src, TSIZE size = -1 ) { TUNREACHABLE(); }
 
-	static CharType*	   FindChar( CharType* str, CharType character ) { TUNREACHABLE(); }
+	static CharType*       FindChar( CharType* str, CharType character ) { TUNREACHABLE(); }
 	static const CharType* FindChar( const CharType* str, CharType character ) { TUNREACHABLE(); }
-	static CharType*	   FindString( CharType* str, const CharType* substr ) { TUNREACHABLE(); }
+	static CharType*       FindString( CharType* str, const CharType* substr ) { TUNREACHABLE(); }
 	static const CharType* FindString( const CharType* str, const CharType* substr ) { TUNREACHABLE(); }
 
 	static TSIZE Length( const CharType* str ) { TUNREACHABLE(); }
@@ -47,10 +47,10 @@ public:
 	static void IntToString( TINT value, CharType* dst, TINT unused, TINT radix ) { TUNREACHABLE(); }
 	static void IntToString( TINT value, CharType* dst, TINT radix ) { TUNREACHABLE(); }
 
-	static TINT	  StringToInt( const CharType* src ) { TUNREACHABLE(); }
+	static TINT   StringToInt( const CharType* src ) { TUNREACHABLE(); }
 	static TFLOAT StringToFloat( const CharType* src ) { TUNREACHABLE(); }
 
-	static CharType*	   SkipSpaces( CharType* str ) { TUNREACHABLE(); }
+	static CharType*       SkipSpaces( CharType* str ) { TUNREACHABLE(); }
 	static const CharType* SkipSpaces( const CharType* str ) { TUNREACHABLE(); }
 };
 

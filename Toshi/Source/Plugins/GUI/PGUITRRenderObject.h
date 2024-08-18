@@ -33,8 +33,8 @@ public:
 	}
 
 private:
-	TUINT				m_Unk1;
+	TUINT               m_Unk1;
 	PGUITRRenderObject* m_pUnk2;
-	Toshi::TViewport*	m_pViewport;
-	TUINT				m_uiIndex;
+	Toshi::TViewport*   m_pViewport;
+	TUINT               m_uiIndex;
 };

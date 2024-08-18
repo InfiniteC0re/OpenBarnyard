@@ -15,9 +15,9 @@ TOSHI_NAMESPACE_USING
 TDEFINE_CLASS_NORUNTIME( AWorldMesh );
 
 AWorldMesh::AWorldMesh() :
-	m_uiFlags( 0 ),
-	m_uiMaxVertices( 0 ),
-	m_pVertexPool( TNULL )
+    m_uiFlags( 0 ),
+    m_uiMaxVertices( 0 ),
+    m_pVertexPool( TNULL )
 {
 }
 
@@ -52,7 +52,7 @@ void AWorldMesh::Create( TUINT32 a_uiFlags, TUINT16 a_uiMaxVertices )
 	TASSERT( !IsCreated() );
 
 	m_uiMaxVertices = a_uiMaxVertices;
-	m_uiFlags		= a_uiFlags;
+	m_uiFlags       = a_uiFlags;
 
 	if ( CreateResource() )
 	{
@@ -111,6 +111,6 @@ void AWorldMesh::DestroyResource()
 	}
 
 	delete[] m_pSubMeshes;
-	m_uiFlags		= 0;
+	m_uiFlags       = 0;
 	m_uiMaxVertices = 0;
 }

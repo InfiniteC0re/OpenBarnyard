@@ -13,7 +13,7 @@ TOSHI_NAMESPACE_START
 TBOOL TAnimation::UpdateTime( TFLOAT a_fDeltaTime )
 {
 	auto pSkeleton = m_pSkeletonInstance->GetSkeleton();
-	auto pSeq	   = pSkeleton->GetSequence( m_iSeqID );
+	auto pSeq      = pSkeleton->GetSequence( m_iSeqID );
 
 	auto fSeqDuration = pSeq->GetDuration();
 
@@ -64,7 +64,7 @@ TBOOL TAnimation::UpdateTime( TFLOAT a_fDeltaTime )
 		if ( m_fDestWeight <= m_fWeight )
 		{
 			m_fWeight = m_fDestWeight;
-			m_eMode	  = MODE_UNK2;
+			m_eMode   = MODE_UNK2;
 		}
 	}
 	else if ( m_eMode == MODE_UNK2 )
@@ -99,7 +99,7 @@ TFLOAT TAnimation::SetDestWeight( TFLOAT a_fDestWeight, TFLOAT a_fBlendInSpeed )
 {
 	TFLOAT fOldValue = m_fDestWeight;
 
-	m_fDestWeight	= a_fDestWeight;
+	m_fDestWeight   = a_fDestWeight;
 	m_fBlendInSpeed = a_fBlendInSpeed;
 
 	if ( 0.0f < a_fBlendInSpeed )
@@ -109,7 +109,7 @@ TFLOAT TAnimation::SetDestWeight( TFLOAT a_fDestWeight, TFLOAT a_fBlendInSpeed )
 	else
 	{
 		m_fWeight = a_fDestWeight;
-		m_eMode	  = MODE_UNK2;
+		m_eMode   = MODE_UNK2;
 	}
 
 	return fOldValue;

@@ -20,8 +20,8 @@ TDEFINE_CLASS_NORUNTIME( AMovieState );
 AMovieState::AMovieState( const TCHAR* a_szName, TBOOL a_bFlag1, AGameState* a_pNextGameState, TBOOL a_bFlag2 )
 {
 	m_pNextGameState = a_pNextGameState;
-	m_bFlag1		 = a_bFlag1;
-	m_bFlag2		 = a_bFlag2;
+	m_bFlag1         = a_bFlag1;
+	m_bFlag2         = a_bFlag2;
 	m_HUDParams.SetFlags( 0 );
 	m_FileName = a_szName;
 }
@@ -34,7 +34,7 @@ TBOOL AMovieState::ProcessInput( const TInputInterface::InputEvent* a_pInputEven
 	}
 
 	if ( a_pInputEvent->GetEventType() == TInputInterface::EVENT_TYPE_GONE_DOWN &&
-		 a_pInputEvent->GetDoodad() == TInputDeviceMouse::BUTTON_1 )
+	     a_pInputEvent->GetDoodad() == TInputDeviceMouse::BUTTON_1 )
 	{
 		SkipMovie( TFALSE );
 		return TTRUE;
@@ -51,8 +51,8 @@ TBOOL AMovieState::ProcessCommand( AInputCommand a_eInputCommand, const TInputIn
 	}
 
 	if ( a_eInputCommand == AInputCommand_OK ||
-		 a_eInputCommand == AInputCommand_Cancel ||
-		 a_eInputCommand == AInputCommand_Start )
+	     a_eInputCommand == AInputCommand_Cancel ||
+	     a_eInputCommand == AInputCommand_Start )
 	{
 		SkipMovie( TFALSE );
 		return TTRUE;
@@ -123,12 +123,12 @@ void AMovieState::SkipMovie( TBOOL a_bFastSkip )
 
 			auto pFade = AFadeManager::GetSingleton()->StartFade( fadeFrom, fadeTo, 0.5f );
 			m_FadeOverListener.Connect(
-				pFade->GetFadeOverEmitter(),
-				this,
-				[]( AMovieState* a_pMovieState, AFade* a_pFade, TBOOL* ) {
-					return a_pMovieState->EndMovieImmediately();
-				},
-				0 );
+			    pFade->GetFadeOverEmitter(),
+			    this,
+			    []( AMovieState* a_pMovieState, AFade* a_pFade, TBOOL* ) {
+				    return a_pMovieState->EndMovieImmediately();
+			    },
+			    0 );
 		}
 	}
 	else

@@ -16,7 +16,7 @@
 TOSHI_NAMESPACE_USING
 
 AWaveBankFMODFSBStream::AWaveBankFMODFSBStream( const TPString8& a_strBank, const TPString8& a_strPath ) :
-	AWaveBank( a_strBank, a_strPath, TTRUE )
+    AWaveBank( a_strBank, a_strPath, TTRUE )
 {
 }
 
@@ -44,7 +44,7 @@ AWaveBank::LOADRESULT AWaveBankFMODFSBStream::Load( LOADFLAGS a_uiFlags, TINT a_
 	TFileManager* pFileManager = TFileManager::GetSingleton();
 
 	TNativeFileInfo oFileInfo;
-	TBOOL			bGotFileInfo = pFileManager->GetFileInfo( strFileName, oFileInfo );
+	TBOOL           bGotFileInfo = pFileManager->GetFileInfo( strFileName, oFileInfo );
 
 	TASSERT( TTRUE == bGotFileInfo );
 
@@ -53,8 +53,8 @@ AWaveBank::LOADRESULT AWaveBankFMODFSBStream::Load( LOADFLAGS a_uiFlags, TINT a_
 
 	// Open the FSB stream
 	TUINT uiStreamOpenMode =
-		( FSOUND_NONBLOCKING | FSOUND_SIGNED | FSOUND_MONO | FSOUND_16BITS ) |
-		( ( m_pWaves->uiFlags & 2 ) ? FSOUND_HW3D : FSOUND_HW2D );
+	    ( FSOUND_NONBLOCKING | FSOUND_SIGNED | FSOUND_MONO | FSOUND_16BITS ) |
+	    ( ( m_pWaves->uiFlags & 2 ) ? FSOUND_HW3D : FSOUND_HW2D );
 
 	FSOUND_STREAM* pStream = FSOUND_Stream_Open( oFileInfo.InternalPath, uiStreamOpenMode, oFileInfo.Offset, oFileInfo.Length );
 	TVALIDPTR( pStream );
@@ -80,8 +80,8 @@ AWaveBank::LOADRESULT AWaveBankFMODFSBStream::Load( LOADFLAGS a_uiFlags, TINT a_
 
 		for ( TINT i = 0; i < m_iNumWaves; i++ )
 		{
-			AWave* pWave		 = &m_pWaves[ i ];
-			pWave->iIndex		 = i;
+			AWave* pWave         = &m_pWaves[ i ];
+			pWave->iIndex        = i;
 			pWave->pSampleHandle = pStream;
 			pWave->uiFlags |= ( 4 | 8 );
 		}
@@ -112,9 +112,9 @@ AWaveBank::UNLOADRESULT AWaveBankFMODFSBStream::Unload()
 		// Reset the waves
 		for ( TINT i = 0; i < m_iNumWaves; i++ )
 		{
-			AWave* pWave		 = &m_pWaves[ i ];
+			AWave* pWave         = &m_pWaves[ i ];
 			pWave->pSampleHandle = TNULL;
-			pWave->iIndex		 = -1;
+			pWave->iIndex        = -1;
 			pWave->uiFlags &= ~( 4 | 8 );
 		}
 

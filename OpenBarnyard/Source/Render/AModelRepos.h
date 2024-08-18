@@ -5,8 +5,8 @@
 #include <Toshi/T2Map.h>
 
 class AModelRepos :
-	public Toshi::TObject,
-	public Toshi::TSingleton<AModelRepos>
+    public Toshi::TObject,
+    public Toshi::TSingleton<AModelRepos>
 {
 public:
 	TDECLARE_CLASS( AModelRepos, Toshi::TObject );
@@ -31,7 +31,7 @@ private:
 	void UnloadAllModels();
 
 private:
-	Toshi::T2DList<AModel>												  m_UnusedModels;
+	Toshi::T2DList<AModel>                                                m_UnusedModels;
 	Toshi::T2Map<Toshi::TPString8, AModel*, Toshi::TPString8::Comparator> m_UsedModels;
 	Toshi::T2Map<Toshi::TPString8, AModel*, Toshi::TPString8::Comparator> m_Models2;
 };

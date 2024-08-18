@@ -2,15 +2,15 @@
 #include <Thread/TThread.h>
 #include <Thread/TMutexLock.h>
 
-extern char			   g_szTexturePackName[ 64 ];
-extern char			   g_szTexturePackPath[ MAX_PATH ];
+extern char            g_szTexturePackName[ 64 ];
+extern char            g_szTexturePackPath[ MAX_PATH ];
 extern Toshi::TMutex   g_LoadMutex;
-extern TBOOL		   g_bDumpTextures;
-extern TBOOL		   g_bAutoReload;
+extern TBOOL           g_bDumpTextures;
+extern TBOOL           g_bAutoReload;
 extern Toshi::THPTimer g_LastDumpTimer;
 
 class ATextureUpdateWatcher :
-	public Toshi::TThread
+    public Toshi::TThread
 {
 public:
 	virtual void Main() override;
@@ -20,14 +20,14 @@ public:
 
 private:
 	const char* m_szPath;
-	HANDLE		m_hFile;
-	OVERLAPPED	m_Overlapped;
-	TUINT8		m_ChangeBuf[ 1024 ];
-	TBOOL		m_bDestroyed = TFALSE;
+	HANDLE      m_hFile;
+	OVERLAPPED  m_Overlapped;
+	TUINT8      m_ChangeBuf[ 1024 ];
+	TBOOL       m_bDestroyed = TFALSE;
 };
 
 class ATextureUpdater :
-	public Toshi::TSingleton<ATextureUpdater>
+    public Toshi::TSingleton<ATextureUpdater>
 {
 public:
 	ATextureUpdater();

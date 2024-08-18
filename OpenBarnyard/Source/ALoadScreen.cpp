@@ -22,10 +22,10 @@ ALoadScreen g_oLoadScreen;
 ALoadScreen::ALoadScreen()
 {
 	m_bIsLoadingScreen = TFALSE;
-	m_bFlag			   = TFALSE;
-	m_iNumCowIcons	   = 1;
-	m_fTotalTime	   = 0.0f;
-	m_fTimer		   = 0.8f;
+	m_bFlag            = TFALSE;
+	m_iNumCowIcons     = 1;
+	m_fTotalTime       = 0.0f;
+	m_fTimer           = 0.8f;
 }
 
 ALoadScreen::~ALoadScreen()
@@ -58,7 +58,7 @@ void ALoadScreen::Create()
 	for ( TUINT i = 0; i < NUM_LOAD_INDICATORS; i++ )
 	{
 		auto pTexSection = m_aTextureSections[ i % NUM_LOAD_TEXTURES ];
-		auto pRectangle	 = &m_aRectangles[ i ];
+		auto pRectangle  = &m_aRectangles[ i ];
 
 		pRectangle->SetDimensions( pTexSection->GetWidth(), pTexSection->GetHeight() );
 		pRectangle->SetTextureSection( pTexSection );
@@ -70,7 +70,7 @@ void ALoadScreen::Create()
 		fRectPosX += ( fWidth * 0.8f ) / NUM_LOAD_INDICATORS;
 	}
 
-	auto pFont			= AGUI2FontManager::FindFont( "Rekord26" );
+	auto pFont          = AGUI2FontManager::FindFont( "Rekord26" );
 	auto pLoadingString = ALocaleManager::Interface()->GetString( 1123 );
 
 	m_TextBox.Create( pFont, pFont->GetTextWidth( pLoadingString, 1.0f ) );
@@ -83,7 +83,7 @@ void ALoadScreen::Create()
 	pRootElement->AddChildTail( m_TextBox );
 	m_oTimer.Reset();
 
-	m_fTimer	 = 0.8f;
+	m_fTimer     = 0.8f;
 	m_fTotalTime = 0.0f;
 }
 
@@ -98,11 +98,11 @@ void ALoadScreen::StartLoading( TINT a_iUnused, TBOOL a_bRender )
 
 	m_TextBox.Show();
 	m_iNumCowIcons = 1;
-	m_iCowPos	   = 0;
-	m_bFlag		   = TFALSE;
+	m_iCowPos      = 0;
+	m_bFlag        = TFALSE;
 
 	m_oTimer.Reset();
-	m_fTimer	 = 0.0f;
+	m_fTimer     = 0.0f;
 	m_fTotalTime = 0.0f;
 
 	for ( TUINT i = 0; i < NUM_LOAD_INDICATORS; i++ )
@@ -161,7 +161,7 @@ void ALoadScreen::ResetIndicators( TBOOL a_bRender )
 	if ( m_bIsLoadingScreen )
 	{
 		m_iNumCowIcons = 0;
-		m_iCowPos	   = 0;
+		m_iCowPos      = 0;
 
 		UpdateUI( a_bRender );
 	}

@@ -23,7 +23,7 @@ public:
 	void Pop();
 
 	TVector3& GetTranslation();
-	void	  GetLocalMatrixImp( TMatrix44& a_rOutMatrix );
+	void      GetLocalMatrixImp( TMatrix44& a_rOutMatrix );
 
 	void SetEuler( const TVector3& a_rEuler );
 	void SetEulerOrder( TUINT8 a_uiX, TUINT8 a_uiy, TUINT8 a_uiz );
@@ -73,16 +73,16 @@ private:
 private:
 	union
 	{
-		TMatrix44	m_Matrix;
+		TMatrix44   m_Matrix;
 		TQuaternion m_Quat;
-		TVector3	m_Euler;
+		TVector3    m_Euler;
 	};
 
-	Mode	 m_eMode;
+	Mode     m_eMode;
 	TVector3 m_Translation;
 	TVector3 m_Scale;
-	TUINT8	 m_EulerOrder[ 3 ];
-	TBOOL	 m_bChanged;
+	TUINT8   m_EulerOrder[ 3 ];
+	TBOOL    m_bChanged;
 };
 
 TOSHI_NAMESPACE_END

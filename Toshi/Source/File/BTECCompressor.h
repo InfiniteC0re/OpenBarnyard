@@ -59,15 +59,15 @@ public:
 	}
 
 private:
-	TCHAR*	m_Buffer1;
+	TCHAR*  m_Buffer1;
 	TUINT32 m_MaxOffset;
-	TCHAR*	m_DataEnd;
-	TCHAR*	m_Buffer2;
-	TCHAR*	m_Buffer3;
-	Node*	m_SomeArray1;
-	Node	m_Root1;
-	Node	m_Root2;
-	TCHAR*	m_Offsets[ 256 ];
+	TCHAR*  m_DataEnd;
+	TCHAR*  m_Buffer2;
+	TCHAR*  m_Buffer3;
+	Node*   m_SomeArray1;
+	Node    m_Root1;
+	Node    m_Root2;
+	TCHAR*  m_Offsets[ 256 ];
 	Bucket* m_Buckets;
 	TUINT32 m_BucketCount;
 };

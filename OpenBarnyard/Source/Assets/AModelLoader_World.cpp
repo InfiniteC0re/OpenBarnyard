@@ -3,8 +3,8 @@
 #include "World/AWorldVIS.h"
 
 #ifdef TOSHI_SKU_WINDOWS
-#	include "Platform/DX8/AWorldShader/AWorldMesh_DX8.h"
-#	include "Platform/DX8/AWorldShader/AWorldShader_DX8.h"
+#  include "Platform/DX8/AWorldShader/AWorldMesh_DX8.h"
+#  include "Platform/DX8/AWorldShader/AWorldShader_DX8.h"
 #endif // TOSHI_SKU_WINDOWS
 
 #include <Render/TRenderInterface.h>
@@ -17,7 +17,7 @@
 
 TOSHI_NAMESPACE_USING
 
-static TUINT   s_iMeshIndex			 = 0;
+static TUINT   s_iMeshIndex          = 0;
 static TClass* s_pWorldMaterialClass = TNULL;
 
 static void LoadFromRenderGroups( CellSphereTreeBranchNode* a_pRenderGroup, Cell*& a_ppModel, TModelLOD* a_pModelLOD )
@@ -25,7 +25,7 @@ static void LoadFromRenderGroups( CellSphereTreeBranchNode* a_pRenderGroup, Cell
 	TVALIDPTR( a_pRenderGroup );
 
 	// Load sub groups
-	auto pShader	  = TDYNAMICCAST( AWorldShaderHAL, AWorldShader::GetSingleton() );
+	auto pShader      = TDYNAMICCAST( AWorldShaderHAL, AWorldShader::GetSingleton() );
 	auto pRenderGroup = a_pRenderGroup;
 	while ( !pRenderGroup->IsLeaf() )
 	{
@@ -39,7 +39,7 @@ static void LoadFromRenderGroups( CellSphereTreeBranchNode* a_pRenderGroup, Cell
 	for ( TUINT i = 0; i < pRenderData->m_uiNumMeshes; i++ )
 	{
 		auto pTerrainMesh = a_ppModel->ppCellMeshSpheres[ pRenderData->GetMeshIndex( i ) ]->m_pCellMesh;
-		auto pMesh		  = pShader->CreateMesh( TNULL );
+		auto pMesh        = pShader->CreateMesh( TNULL );
 
 		pMesh->Create( 0, pTerrainMesh->uiNumVertices1 );
 		pTerrainMesh->pMesh = pMesh;
@@ -54,7 +54,7 @@ static void LoadFromRenderGroups( CellSphereTreeBranchNode* a_pRenderGroup, Cell
 		pMesh->SetMaterial( AModelLoader::CreateMaterial( pShader, pTerrainMesh->szMaterialName ) );
 		a_pModelLOD->ppMeshes[ s_iMeshIndex++ ] = pMesh;
 
-		auto pSubMesh			  = pMesh->GetSubMesh( 0 );
+		auto pSubMesh             = pMesh->GetSubMesh( 0 );
 		pSubMesh->pAssociatedMesh = pMesh;
 
 		// Create index pool
@@ -72,7 +72,7 @@ static void LoadFromRenderGroups( CellSphereTreeBranchNode* a_pRenderGroup, Cell
 		if ( pTerrainMesh->uiNumVertices1 != 0 )
 		{
 			AWorldMesh::LockBuffer lockBuffer;
-			TBOOL				   bLocked = pMesh->Lock( lockBuffer );
+			TBOOL                  bLocked = pMesh->Lock( lockBuffer );
 
 			if ( bLocked )
 			{

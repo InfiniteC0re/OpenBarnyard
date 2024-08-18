@@ -17,8 +17,8 @@ public:
 	TBOOL Render( TUINT a_uiClipFlags, const TVector3& a_rBounding );
 	TBOOL RenderIfVisible();
 
-	TModelPtr*		  GetModelRef() { return m_pModelRef; }
-	TModelInstance*	  GetInstance() { return m_pModelInstance; }
+	TModelPtr*        GetModelRef() { return m_pModelRef; }
+	TModelInstance*   GetInstance() { return m_pModelInstance; }
 	TTransformObject& GetTransform() { return m_TransformObject; }
 
 	void EnableSkeletonUpdate() { m_eFlags |= 1; }
@@ -31,8 +31,8 @@ public:
 	TVector2& GetSomeVector2() { return m_SomeVector2; }
 
 private:
-	TModelPtr*		 m_pModelRef	  = TNULL;
-	TModelInstance*	 m_pModelInstance = TNULL;
+	TModelPtr*       m_pModelRef      = TNULL;
+	TModelInstance*  m_pModelInstance = TNULL;
 	TTransformObject m_TransformObject;
 	// ...
 	TVector2 m_SomeVector1;

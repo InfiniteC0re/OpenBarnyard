@@ -24,10 +24,10 @@ class T2SortedList : private Container
 {
 public:
 	using Iterator = Container::Iterator;
-	using Node	   = Container::Node;
+	using Node     = Container::Node;
 
 public:
-	T2SortedList()	= default;
+	T2SortedList()  = default;
 	~T2SortedList() = default;
 
 	Iterator FindInsertionPoint( const T& a_rcValue )

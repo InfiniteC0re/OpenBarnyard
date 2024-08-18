@@ -15,22 +15,22 @@ public:
 protected:
 	constexpr T2GenericRedBlackTreeNode()
 	{
-		red		  = 0;
-		m_pLeft	  = this;
+		red       = 0;
+		m_pLeft   = this;
 		m_pRight  = this;
 		m_pParent = this;
 	}
 
 	T2GenericRedBlackTreeNode( T2GenericRedBlackTreeNode* pNil )
 	{
-		red		  = 0;
-		m_pLeft	  = pNil;
+		red       = 0;
+		m_pLeft   = pNil;
 		m_pRight  = pNil;
 		m_pParent = pNil;
 	}
 
 protected:
-	TINT					   red;
+	TINT                       red;
 	T2GenericRedBlackTreeNode* m_pLeft;
 	T2GenericRedBlackTreeNode* m_pRight;
 	T2GenericRedBlackTreeNode* m_pParent;
@@ -40,7 +40,7 @@ class T2GenericRedBlackTree
 {
 protected:
 	T2GenericRedBlackTree( T2Allocator* pAllocator ) :
-		m_oRoot( ms_oNil )
+	    m_oRoot( ms_oNil )
 	{
 		m_pAllocator   = pAllocator;
 		m_iNumElements = 0;
@@ -63,11 +63,11 @@ protected:
 
 	T2GenericRedBlackTreeNode* GetFirstNode();
 	T2GenericRedBlackTreeNode* Insert( T2GenericRedBlackTreeNode* pNode );
-	void					   DeleteFixUp( T2GenericRedBlackTreeNode* pNode );
+	void                       DeleteFixUp( T2GenericRedBlackTreeNode* pNode );
 	T2GenericRedBlackTreeNode* DeleteNode( T2GenericRedBlackTreeNode* pNode );
 
-	void							  LeftRotate( T2GenericRedBlackTreeNode* pNode );
-	void							  RightRotate( T2GenericRedBlackTreeNode* pNode );
+	void                              LeftRotate( T2GenericRedBlackTreeNode* pNode );
+	void                              RightRotate( T2GenericRedBlackTreeNode* pNode );
 	static T2GenericRedBlackTreeNode* GetSuccessorOf( T2GenericRedBlackTreeNode* pNode );
 	static T2GenericRedBlackTreeNode* GetPredecessorOf( T2GenericRedBlackTreeNode* pNode );
 
@@ -82,9 +82,9 @@ protected:
 	static constinit T2GenericRedBlackTreeNode ms_oNil;
 
 protected:
-	T2Allocator*			  m_pAllocator;
+	T2Allocator*              m_pAllocator;
 	T2GenericRedBlackTreeNode m_oRoot;
-	size_t					  m_iNumElements;
+	size_t                    m_iNumElements;
 };
 
 template <class T>
@@ -96,7 +96,7 @@ public:
 
 public:
 	T2RedBlackTreeNode( const T& value ) :
-		m_Value( value )
+	    m_Value( value )
 	{
 	}
 
@@ -176,19 +176,19 @@ public:
 	{
 	public:
 		TFORCEINLINE Iterator( Node* ppNode ) :
-			m_ppNode( ppNode ) {}
+		    m_ppNode( ppNode ) {}
 
 		TFORCEINLINE Iterator Next()
 		{
 			Iterator next = *this;
-			m_ppNode	  = TSTATICCAST( Node, T2RedBlackTree::GetSuccessorOf( m_ppNode ) );
+			m_ppNode      = TSTATICCAST( Node, T2RedBlackTree::GetSuccessorOf( m_ppNode ) );
 			return next;
 		}
 
 		TFORCEINLINE Iterator Prev()
 		{
 			Iterator prev = *this;
-			m_ppNode	  = TSTATICCAST( Node, T2RedBlackTree::GetPredecessorOf( m_ppNode ) );
+			m_ppNode      = TSTATICCAST( Node, T2RedBlackTree::GetPredecessorOf( m_ppNode ) );
 			return prev;
 		}
 
@@ -249,8 +249,8 @@ public:
 	};
 
 public:
-	T2RedBlackTree( T2Allocator* pAllocator = &T2Allocator::s_GlobalAllocator ) :
-		T2GenericRedBlackTree( pAllocator )
+	T2RedBlackTree( T2Allocator* pAllocator = GetGlobalAllocator() ) :
+	    T2GenericRedBlackTree( pAllocator )
 	{
 	}
 
@@ -297,12 +297,12 @@ public:
 
 	void Insert( Node*& insertedNode, const T& value )
 	{
-		Node* pNode		= m_pAllocator->New<Node>( value );
-		pNode->m_pLeft	= &ms_oNil;
+		Node* pNode     = m_pAllocator->New<Node>( value );
+		pNode->m_pLeft  = &ms_oNil;
 		pNode->m_pRight = &ms_oNil;
 
 		Node* pCurrentNode = TSTATICCAST( Node, m_oRoot.m_pLeft );
-		Node* pInsertTo	   = TSTATICCAST( Node, &m_oRoot );
+		Node* pInsertTo    = TSTATICCAST( Node, &m_oRoot );
 
 		while ( pCurrentNode != &ms_oNil )
 		{

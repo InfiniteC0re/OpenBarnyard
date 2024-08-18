@@ -37,8 +37,8 @@ void AGUI2Rectangle::SetTextureSection( AGUI2TextureSection* a_pTexSection )
 	if ( a_pTexSection )
 	{
 		m_pMaterial = a_pTexSection->GetMaterial();
-		m_UV1		= a_pTexSection->GetUVPoint1();
-		m_UV2		= a_pTexSection->GetUVPoint2();
+		m_UV1       = a_pTexSection->GetUVPoint1();
+		m_UV2       = a_pTexSection->GetUVPoint2();
 	}
 	else
 	{

@@ -30,8 +30,8 @@ void TRenderContextD3D::ComputePerspectiveFrustum()
 	TASSERT( TMath::IsFinite( m_ProjParams.m_Centre.x ) && ( !TMath::IsNaN( m_ProjParams.m_Centre.x ) ) );
 	TASSERT( TMath::IsFinite( m_ProjParams.m_Centre.y ) && ( !TMath::IsNaN( m_ProjParams.m_Centre.y ) ) );
 
-	TFLOAT	 fVal1 = 1.0f / m_ProjParams.m_Proj.x;
-	TFLOAT	 fVal2 = 1.0f / m_ProjParams.m_Proj.y;
+	TFLOAT   fVal1 = 1.0f / m_ProjParams.m_Proj.x;
+	TFLOAT   fVal2 = 1.0f / m_ProjParams.m_Proj.y;
 	TVector4 vec1  = TVector4( -m_ProjParams.m_Centre.x * fVal1, ( m_oViewportParams.fHeight - m_ProjParams.m_Centre.y ) * fVal2, 1.0f, 0.0f );
 	TVector4 vec2  = TVector4( ( m_oViewportParams.fWidth - m_ProjParams.m_Centre.x ) * fVal1, vec1.y, 1.0f, 0.0f );
 	TVector4 vec3  = TVector4( vec2.x, -m_ProjParams.m_Centre.y * fVal2, 1.0f, 0.0f );
@@ -57,9 +57,9 @@ void TRenderContextD3D::ComputePerspectiveFrustum()
 	m_aFrustumPlanes2[ WORLDPLANE_LEFT ]   = m_aFrustumPlanes1[ WORLDPLANE_LEFT ];
 	m_aFrustumPlanes2[ WORLDPLANE_RIGHT ]  = m_aFrustumPlanes1[ WORLDPLANE_RIGHT ];
 	m_aFrustumPlanes2[ WORLDPLANE_BOTTOM ] = m_aFrustumPlanes1[ WORLDPLANE_BOTTOM ];
-	m_aFrustumPlanes2[ WORLDPLANE_TOP ]	   = m_aFrustumPlanes1[ WORLDPLANE_TOP ];
+	m_aFrustumPlanes2[ WORLDPLANE_TOP ]    = m_aFrustumPlanes1[ WORLDPLANE_TOP ];
 	m_aFrustumPlanes2[ WORLDPLANE_NEAR ]   = m_aFrustumPlanes1[ WORLDPLANE_NEAR ];
-	m_aFrustumPlanes2[ WORLDPLANE_FAR ]	   = m_aFrustumPlanes1[ WORLDPLANE_FAR ];
+	m_aFrustumPlanes2[ WORLDPLANE_FAR ]    = m_aFrustumPlanes1[ WORLDPLANE_FAR ];
 }
 
 void TRenderContextD3D::ComputeOrthographicFrustum()
@@ -74,12 +74,12 @@ void TRenderContextD3D::ComputeOrthographicFrustum()
 	TASSERT( TMath::IsFinite( m_ProjParams.m_Centre.x ) && ( !TMath::IsNaN( m_ProjParams.m_Centre.x ) ) );
 	TASSERT( TMath::IsFinite( m_ProjParams.m_Centre.y ) && ( !TMath::IsNaN( m_ProjParams.m_Centre.y ) ) );
 
-	TFLOAT fWidth	= m_oViewportParams.fWidth;
-	TFLOAT fHeight	= m_oViewportParams.fHeight;
+	TFLOAT fWidth   = m_oViewportParams.fWidth;
+	TFLOAT fHeight  = m_oViewportParams.fHeight;
 	TFLOAT fCentreX = m_ProjParams.m_Centre.x;
 	TFLOAT fCentreY = m_ProjParams.m_Centre.y;
-	TFLOAT fVal1	= 1.0f / m_ProjParams.m_Proj.x;
-	TFLOAT fVal2	= 1.0f / m_ProjParams.m_Proj.y;
+	TFLOAT fVal1    = 1.0f / m_ProjParams.m_Proj.x;
+	TFLOAT fVal2    = 1.0f / m_ProjParams.m_Proj.y;
 
 	// Setup planes
 	m_aFrustumPlanes1[ WORLDPLANE_LEFT ].Set( -1.0f, 0.0f, 0.0f, fCentreX * fVal1 );
@@ -93,9 +93,9 @@ void TRenderContextD3D::ComputeOrthographicFrustum()
 	m_aFrustumPlanes2[ WORLDPLANE_LEFT ]   = m_aFrustumPlanes1[ WORLDPLANE_LEFT ];
 	m_aFrustumPlanes2[ WORLDPLANE_RIGHT ]  = m_aFrustumPlanes1[ WORLDPLANE_RIGHT ];
 	m_aFrustumPlanes2[ WORLDPLANE_BOTTOM ] = m_aFrustumPlanes1[ WORLDPLANE_BOTTOM ];
-	m_aFrustumPlanes2[ WORLDPLANE_TOP ]	   = m_aFrustumPlanes1[ WORLDPLANE_TOP ];
+	m_aFrustumPlanes2[ WORLDPLANE_TOP ]    = m_aFrustumPlanes1[ WORLDPLANE_TOP ];
 	m_aFrustumPlanes2[ WORLDPLANE_NEAR ]   = m_aFrustumPlanes1[ WORLDPLANE_NEAR ];
-	m_aFrustumPlanes2[ WORLDPLANE_FAR ]	   = m_aFrustumPlanes1[ WORLDPLANE_FAR ];
+	m_aFrustumPlanes2[ WORLDPLANE_FAR ]    = m_aFrustumPlanes1[ WORLDPLANE_FAR ];
 }
 
 void TRenderContextD3D::EnableFogHAL()
@@ -106,8 +106,8 @@ void TRenderContextD3D::EnableFogHAL()
 	pDevice->SetRenderState( D3DRS_FOGENABLE, TRUE );
 	pDevice->SetRenderState( D3DRS_FOGTABLEMODE, D3DFOG_LINEAR );
 	pDevice->SetRenderState(
-		D3DRS_FOGCOLOR,
-		( ( ( TUINT8( m_FogColor.x * 255.0f ) << 8 ) | TUINT8( m_FogColor.y * 255.0f ) ) << 8 ) | TUINT8( m_FogColor.z * 255.0f ) );
+	    D3DRS_FOGCOLOR,
+	    ( ( ( TUINT8( m_FogColor.x * 255.0f ) << 8 ) | TUINT8( m_FogColor.y * 255.0f ) ) << 8 ) | TUINT8( m_FogColor.z * 255.0f ) );
 
 	pDevice->SetRenderState( D3DRS_FOGSTART, *TREINTERPRETCAST( DWORD*, &m_fFogDistanceStart ) );
 	pDevice->SetRenderState( D3DRS_FOGEND, *TREINTERPRETCAST( DWORD*, &m_fFogDistanceEnd ) );
@@ -122,7 +122,7 @@ void TRenderContextD3D::DisableFogHAL()
 }
 
 TRenderContextD3D::TRenderContextD3D( TRenderInterface* a_pRenderer ) :
-	TRenderContext( a_pRenderer )
+    TRenderContext( a_pRenderer )
 {
 }
 

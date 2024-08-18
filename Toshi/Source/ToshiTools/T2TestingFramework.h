@@ -3,9 +3,9 @@
 #define T2_TEST1( TEST_NAME, CATEGORY_NAME, TEST_ID )                                                                                                                                  \
 	namespace JustMakingSureTheMacroIsCalledOutsideOfAnyMethod                                                                                                                         \
 	{}                                                                                                                                                                                 \
-	void										  CONCATTOKEN( s_T2TestingFrameworkTest_, TEST_ID )();                                                                                 \
+	void                                          CONCATTOKEN( s_T2TestingFrameworkTest_, TEST_ID )();                                                                                 \
 	static Toshi::T2TestingFramework::TestAutoReg CONCATTOKEN( s_T2TestingFrameworkAutoReg_, TEST_ID )( TEST_NAME, CATEGORY_NAME, CONCATTOKEN( s_T2TestingFrameworkTest_, TEST_ID ) ); \
-	void										  CONCATTOKEN( s_T2TestingFrameworkTest_, TEST_ID )()
+	void                                          CONCATTOKEN( s_T2TestingFrameworkTest_, TEST_ID )()
 
 #define T2_TEST( TEST_NAME, CATEGORY_NAME ) T2_TEST1( TEST_NAME, CATEGORY_NAME, __COUNTER__ )
 
@@ -32,33 +32,33 @@ public:
 
 	struct Category
 	{
-		Category*	 pNext			= TNULL;
-		const TCHAR* pchName		= TNULL;
-		Test*		 pHeadTest		= TNULL;
-		TINT		 iNumTotalFails = 0;
+		Category*    pNext          = TNULL;
+		const TCHAR* pchName        = TNULL;
+		Test*        pHeadTest      = TNULL;
+		TINT         iNumTotalFails = 0;
 	};
 
 	struct Check
 	{
-		Check*		 pNext		   = TNULL;
+		Check*       pNext         = TNULL;
 		const TCHAR* pchFileName   = TNULL;
 		const TCHAR* pchStatement  = TNULL;
-		TINT		 iLineNum : 31 = -1;
-		TBOOL		 bFailed : 1   = TFALSE;
+		TINT         iLineNum : 31 = -1;
+		TBOOL        bFailed : 1   = TFALSE;
 	};
 
 	struct Test
 	{
-		Test*		 pNext			  = TNULL;
-		const TCHAR* pchName		  = TNULL;
-		Category*	 pCategory		  = TNULL;
-		TestMethod_t fnMethod		  = TNULL;
-		TINT		 bWasExecuted : 1 = TFALSE;
-		TINT		 iNumFails : 31	  = 0;
-		Check*		 pHeadCheck		  = TNULL;
+		Test*        pNext            = TNULL;
+		const TCHAR* pchName          = TNULL;
+		Category*    pCategory        = TNULL;
+		TestMethod_t fnMethod         = TNULL;
+		TINT         bWasExecuted : 1 = TFALSE;
+		TINT         iNumFails : 31   = 0;
+		Check*       pHeadCheck       = TNULL;
 	};
 
-	using FailCallback_t	= void ( * )( Test* a_pTest, Check* a_pCheck );
+	using FailCallback_t    = void ( * )( Test* a_pTest, Check* a_pCheck );
 	using SuccessCallback_t = void ( * )( Test* a_pTest, Check* a_pCheck );
 
 public:
@@ -86,7 +86,7 @@ public:
 
 private:
 	Category* m_pHeadCategory = TNULL;
-	Test*	  m_pCurrentTest  = TNULL;
+	Test*     m_pCurrentTest  = TNULL;
 };
 
 extern T2TestingFramework* g_pTestingFramework;

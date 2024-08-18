@@ -95,7 +95,7 @@ public:
 	{
 		TASSERT( m_pPtr != TNULL );
 		T2Iterator old = m_pPtr;
-		m_pPtr		   = static_cast<T*>( m_pPtr->Next() );
+		m_pPtr         = static_cast<T*>( m_pPtr->Next() );
 		return old;
 	}
 
@@ -103,7 +103,7 @@ public:
 	{
 		TASSERT( m_pPtr != TNULL );
 		T2Iterator old = m_pPtr;
-		m_pPtr		   = static_cast<T*>( m_pPtr->Prev() );
+		m_pPtr         = static_cast<T*>( m_pPtr->Prev() );
 		return old;
 	}
 

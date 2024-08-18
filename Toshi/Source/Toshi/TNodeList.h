@@ -12,21 +12,21 @@ protected:
 
 	public:
 		constexpr TNode() :
-			m_pNext( this ),
-			m_pPrev( this ),
-			m_pList( TNULL )
+		    m_pNext( this ),
+		    m_pPrev( this ),
+		    m_pList( TNULL )
 		{}
 
 		constexpr TNode( const TNode& a_rcNode ) :
-			m_pNext( a_rcNode.m_pNext ),
-			m_pPrev( a_rcNode.m_pPrev ),
-			m_pList( a_rcNode.m_pList )
+		    m_pNext( a_rcNode.m_pNext ),
+		    m_pPrev( a_rcNode.m_pPrev ),
+		    m_pList( a_rcNode.m_pList )
 		{}
 
 		TNode( TNode&& a_rNode ) :
-			m_pNext( a_rNode.m_pNext ),
-			m_pPrev( a_rNode.m_pPrev ),
-			m_pList( a_rNode.m_pList )
+		    m_pNext( a_rNode.m_pNext ),
+		    m_pPrev( a_rNode.m_pPrev ),
+		    m_pList( a_rNode.m_pList )
 		{
 			a_rNode.m_pList = TNULL;
 			a_rNode.m_pNext = TNULL;
@@ -38,30 +38,30 @@ protected:
 
 		void Remove() { GetList()->Remove( this ); }
 
-		void			  SetList( TGenericNodeList* list ) { m_pList = list; }
+		void              SetList( TGenericNodeList* list ) { m_pList = list; }
 		TGenericNodeList* GetList() const { return m_pList; }
 
 		TBOOL IsLinked() const { return m_pList != TNULL; }
 
 	protected:
 		TGenericNodeList* m_pList;
-		TNode*			  m_pNext;
-		TNode*			  m_pPrev;
+		TNode*            m_pNext;
+		TNode*            m_pPrev;
 	};
 
 	class TOSHI_API Iterator
 	{
 	public:
 		constexpr Iterator() :
-			m_pPtr( TNULL )
+		    m_pPtr( TNULL )
 		{}
 
 		constexpr Iterator( TNode* a_pPtr ) :
-			m_pPtr( a_pPtr )
+		    m_pPtr( a_pPtr )
 		{}
 
 		constexpr Iterator( const Iterator& other ) :
-			m_pPtr( other.m_pPtr )
+		    m_pPtr( other.m_pPtr )
 		{}
 
 		TNode* Get() const
@@ -100,7 +100,7 @@ protected:
 		{
 			TASSERT( m_pPtr != TNULL );
 			Iterator old = m_pPtr;
-			m_pPtr		 = m_pPtr->Next();
+			m_pPtr       = m_pPtr->Next();
 			return old;
 		}
 
@@ -108,7 +108,7 @@ protected:
 		{
 			TASSERT( m_pPtr != TNULL );
 			Iterator old = m_pPtr;
-			m_pPtr		 = m_pPtr->Prev();
+			m_pPtr       = m_pPtr->Prev();
 			return old;
 		}
 
@@ -145,10 +145,10 @@ public:
 	{
 		TASSERT( !newNode->IsLinked() );
 		newNode->SetList( this );
-		newNode->m_pNext			  = insertAfter->m_pNext;
-		newNode->m_pPrev			  = insertAfter;
+		newNode->m_pNext              = insertAfter->m_pNext;
+		newNode->m_pPrev              = insertAfter;
 		insertAfter->m_pNext->m_pPrev = newNode;
-		insertAfter->m_pNext		  = newNode;
+		insertAfter->m_pNext          = newNode;
 		m_iCount++;
 	}
 
@@ -156,10 +156,10 @@ public:
 	{
 		TASSERT( !newNode->IsLinked() );
 		newNode->SetList( this );
-		newNode->m_pNext			   = insertBefore;
-		newNode->m_pPrev			   = insertBefore->m_pPrev;
+		newNode->m_pNext               = insertBefore;
+		newNode->m_pPrev               = insertBefore->m_pPrev;
 		insertBefore->m_pPrev->m_pNext = newNode;
-		insertBefore->m_pPrev		   = newNode;
+		insertBefore->m_pPrev          = newNode;
 		m_iCount++;
 	}
 
@@ -169,8 +169,8 @@ public:
 		pNode->SetList( TNULL );
 		pNode->m_pPrev->m_pNext = pNode->m_pNext;
 		pNode->m_pNext->m_pPrev = pNode->m_pPrev;
-		pNode->m_pNext			= pNode;
-		pNode->m_pPrev			= pNode;
+		pNode->m_pNext          = pNode;
+		pNode->m_pPrev          = pNode;
 		m_iCount--;
 		TASSERT( pNode->IsLinked() == TFALSE );
 		return pNode;
@@ -240,7 +240,7 @@ public:
 
 protected:
 	mutable TNode m_oRoot;
-	TINT		  m_iCount;
+	TINT          m_iCount;
 };
 
 template <class T>
@@ -260,15 +260,15 @@ public:
 		constexpr Iterator() {}
 
 		Iterator( T* a_pPtr ) :
-			TGenericNodeList::Iterator( a_pPtr )
+		    TGenericNodeList::Iterator( a_pPtr )
 		{}
 
 		Iterator( TNode* a_pPtr ) :
-			TGenericNodeList::Iterator( a_pPtr )
+		    TGenericNodeList::Iterator( a_pPtr )
 		{}
 
 		Iterator( const TGenericNodeList::Iterator& other ) :
-			TGenericNodeList::Iterator( other )
+		    TGenericNodeList::Iterator( other )
 		{}
 
 		T* Get()

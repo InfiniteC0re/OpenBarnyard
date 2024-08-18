@@ -12,8 +12,8 @@ public:
 	using State = TUINT32;
 	enum State_ : State
 	{
-		State_None		= 0,
-		State_Created	= BITFLAG( 0 ),
+		State_None      = 0,
+		State_Created   = BITFLAG( 0 ),
 		State_Validated = BITFLAG( 1 ),
 	};
 
@@ -21,7 +21,7 @@ public:
 	{
 	public:
 		TShaderList() :
-			m_pRoot( TNULL ) {}
+		    m_pRoot( TNULL ) {}
 
 		void AddShader( TShader* pShader );
 		void RemoveShader( TShader* pShader );
@@ -79,7 +79,7 @@ public:
 	inline static TShaderList sm_oShaderList;
 
 private:
-	State	 m_State;
+	State    m_State;
 	TShader* m_pNextShader;
 };
 

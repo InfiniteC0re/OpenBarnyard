@@ -17,13 +17,13 @@ class TGLShaderRef
 {
 public:
 	TGLShaderRef() :
-		m_uiId( 0 ) {}
+	    m_uiId( 0 ) {}
 
 	TGLShaderRef( GLuint a_uiId ) :
-		m_uiId( a_uiId ) {}
+	    m_uiId( a_uiId ) {}
 
 	TGLShaderRef( const TGLShaderRef& a_rOther ) :
-		m_uiId( a_rOther.m_uiId ) {}
+	    m_uiId( a_rOther.m_uiId ) {}
 
 	GLuint GetId() const { return m_uiId; }
 
@@ -37,18 +37,18 @@ class TGLShaderProgram
 {
 public:
 	TGLShaderProgram() :
-		m_uiProgram( 0 ), m_VShader( 0 ), m_FShader( 0 ) {}
+	    m_uiProgram( 0 ), m_VShader( 0 ), m_FShader( 0 ) {}
 
 	TGLShaderProgram( const TGLShaderRef& a_VShader, const TGLShaderRef& a_FShader ) :
-		m_uiProgram( 0 ),
-		m_VShader( a_VShader ),
-		m_FShader( a_FShader )
+	    m_uiProgram( 0 ),
+	    m_VShader( a_VShader ),
+	    m_FShader( a_FShader )
 	{}
 
 	TGLShaderProgram( const TGLShaderProgram& a_rOther ) :
-		m_uiProgram( a_rOther.m_uiProgram ),
-		m_VShader( a_rOther.m_VShader ),
-		m_FShader( a_rOther.m_FShader )
+	    m_uiProgram( a_rOther.m_uiProgram ),
+	    m_VShader( a_rOther.m_VShader ),
+	    m_FShader( a_rOther.m_FShader )
 	{}
 
 	void Create()
@@ -169,13 +169,13 @@ public:
 	TGLShaderProgram& operator=( const TGLShaderProgram& a_rOther )
 	{
 		m_uiProgram = a_rOther.m_uiProgram;
-		m_VShader	= a_rOther.m_VShader;
-		m_FShader	= a_rOther.m_FShader;
+		m_VShader   = a_rOther.m_VShader;
+		m_FShader   = a_rOther.m_FShader;
 		return *this;
 	}
 
 private:
-	GLuint		 m_uiProgram;
+	GLuint       m_uiProgram;
 	TGLShaderRef m_VShader;
 	TGLShaderRef m_FShader;
 };
@@ -185,13 +185,13 @@ class TGLBufferRef
 {
 public:
 	TGLBufferRef() :
-		m_uiId( 0 ) {}
+	    m_uiId( 0 ) {}
 
 	TGLBufferRef( GLuint a_uiId ) :
-		m_uiId( a_uiId ) {}
+	    m_uiId( a_uiId ) {}
 
 	TGLBufferRef( const TGLBufferRef& a_rOther ) :
-		m_uiId( a_rOther.m_uiId ) {}
+	    m_uiId( a_rOther.m_uiId ) {}
 
 	GLuint GetId() const { return m_uiId; }
 
@@ -219,21 +219,21 @@ class TGLVertexArrayRef
 {
 public:
 	TGLVertexArrayRef() :
-		m_uiId( 0 ) {}
+	    m_uiId( 0 ) {}
 
 	TGLVertexArrayRef( GLuint a_uiId ) :
-		m_uiId( a_uiId ) {}
+	    m_uiId( a_uiId ) {}
 
 	TGLVertexArrayRef( GLuint a_uiId, TGLVertexBuffer a_VertexBuffer, TGLIndexBuffer a_IndexBuffer ) :
-		m_uiId( a_uiId ),
-		m_VertexBuffer( a_VertexBuffer ),
-		m_IndexBuffer( a_IndexBuffer )
+	    m_uiId( a_uiId ),
+	    m_VertexBuffer( a_VertexBuffer ),
+	    m_IndexBuffer( a_IndexBuffer )
 	{}
 
 	TGLVertexArrayRef( const TGLVertexArrayRef& a_rOther ) :
-		m_uiId( a_rOther.m_uiId ),
-		m_VertexBuffer( a_rOther.m_VertexBuffer ),
-		m_IndexBuffer( a_rOther.m_IndexBuffer )
+	    m_uiId( a_rOther.m_uiId ),
+	    m_VertexBuffer( a_rOther.m_VertexBuffer ),
+	    m_IndexBuffer( a_rOther.m_IndexBuffer )
 	{}
 
 	void SetAttribPointer( GLuint a_uiIndex, GLint a_iNumComponents, GLenum a_eType, GLsizei a_iStride, const void* a_pOffset, GLboolean a_bNormalized = GL_FALSE )
@@ -268,18 +268,18 @@ public:
 	void Destroy() { glDeleteVertexArrays( 1, &m_uiId ); }
 
 	TGLVertexBuffer GetVertexBuffer() { return m_VertexBuffer; }
-	TGLIndexBuffer	GetIndexBuffer() { return m_IndexBuffer; }
+	TGLIndexBuffer  GetIndexBuffer() { return m_IndexBuffer; }
 
 	operator bool() const { return m_uiId != 0; }
 
 private:
-	GLuint			m_uiId;
+	GLuint          m_uiId;
 	TGLVertexBuffer m_VertexBuffer;
-	TGLIndexBuffer	m_IndexBuffer;
+	TGLIndexBuffer  m_IndexBuffer;
 };
 
 class TRenderSDL :
-	public TRenderInterface
+    public TRenderInterface
 {
 public:
 	TDECLARE_CLASS( TRenderSDL, TRenderInterface );
@@ -287,14 +287,14 @@ public:
 public:
 	TRenderSDL() = default;
 
-	virtual TBOOL						  CreateDisplay( const DISPLAYPARAMS& a_rDisplayParams ) override;
-	virtual TBOOL						  DestroyDisplay() override { return TTRUE; }
-	virtual TBOOL						  Update( float a_fDeltaTime ) override;
-	virtual TBOOL						  BeginScene() override;
-	virtual TBOOL						  EndScene() override;
+	virtual TBOOL                         CreateDisplay( const DISPLAYPARAMS& a_rDisplayParams ) override;
+	virtual TBOOL                         DestroyDisplay() override { return TTRUE; }
+	virtual TBOOL                         Update( float a_fDeltaTime ) override;
+	virtual TBOOL                         BeginScene() override;
+	virtual TBOOL                         EndScene() override;
 	virtual TRenderAdapter::Mode::Device* GetCurrentDevice() override { return TNULL; }
-	virtual DISPLAYPARAMS*				  GetCurrentDisplayParams() override { return &m_DisplayParams; }
-	virtual TBOOL						  Create() override { return Create( "TOSHI SDL Application" ); }
+	virtual DISPLAYPARAMS*                GetCurrentDisplayParams() override { return &m_DisplayParams; }
+	virtual TBOOL                         Create() override { return Create( "TOSHI SDL Application" ); }
 
 	virtual TBOOL RecreateDisplay( DISPLAYPARAMS* a_pDisplayParams );
 	virtual void  ShowDeviceError();
@@ -307,37 +307,37 @@ public:
 
 	GLuint CreateTexture( GLsizei a_iWidth, GLsizei a_iHeight, GLenum a_eFormat, TBOOL a_bGenerateMipmap, const void* a_pData );
 
-	static TGLShaderRef		 CompileShader( GLenum a_eShader, const char* a_szSource );
-	static TGLShaderRef		 CompileShaderFromFile( GLenum a_eShader, const char* a_szFileName );
-	static TGLShaderProgram	 CreateShaderProgram( TGLShaderRef a_VertexShader, TGLShaderRef a_FragmentShader );
-	static TGLVertexBuffer	 CreateVertexBuffer( const void* a_pData, GLuint a_uiSize, GLenum a_eUsage );
-	static TGLIndexBuffer	 CreateIndexBuffer( const uint16_t* a_pIndices, unsigned int a_uiCount, GLenum a_eUsage );
+	static TGLShaderRef      CompileShader( GLenum a_eShader, const char* a_szSource );
+	static TGLShaderRef      CompileShaderFromFile( GLenum a_eShader, const char* a_szFileName );
+	static TGLShaderProgram  CreateShaderProgram( TGLShaderRef a_VertexShader, TGLShaderRef a_FragmentShader );
+	static TGLVertexBuffer   CreateVertexBuffer( const void* a_pData, GLuint a_uiSize, GLenum a_eUsage );
+	static TGLIndexBuffer    CreateIndexBuffer( const uint16_t* a_pIndices, unsigned int a_uiCount, GLenum a_eUsage );
 	static TGLVertexArrayRef CreateVertexArray();
 	static TGLVertexArrayRef CreateVertexArray( TGLVertexBuffer a_VertexBuffer, TGLIndexBuffer a_IndexBuffer );
 
-	ASDLWindow*			   GetWindow() { return &m_Window; }
+	ASDLWindow*            GetWindow() { return &m_Window; }
 	TPriList<TOrderTable>& GetOrderTables() { return m_OrderTables; }
-	SDL_GLContext		   GetDeviceContext() const { return m_GLContext; }
+	SDL_GLContext          GetDeviceContext() const { return m_GLContext; }
 
 	TRenderContext* CreateRenderContext() override;
 	TRenderCapture* CreateCapture() override;
-	void			DestroyCapture( TRenderCapture* a_pRenderCapture ) override;
-	void*			CreateUnknown( const char* a_szName, int a_iUnk1, int a_iUnk2, int a_iUnk3 ) override;
-	TModel*			CreateModel( TTMD* a_pTMD, TBOOL a_bLoad ) override;
-	TModel*			CreateModel( const char* a_szFilePath, TBOOL a_bLoad ) override;
-	TModel*			CreateModel( const char* a_szFilePath, TBOOL a_bLoad, TTRB* a_pAssetTRB, TUINT8 a_ui8FileNameLen ) override;
-	TDebugText*		CreateDebugText() override;
-	void			DestroyDebugText() override;
+	void            DestroyCapture( TRenderCapture* a_pRenderCapture ) override;
+	void*           CreateUnknown( const char* a_szName, int a_iUnk1, int a_iUnk2, int a_iUnk3 ) override;
+	TModel*         CreateModel( TTMD* a_pTMD, TBOOL a_bLoad ) override;
+	TModel*         CreateModel( const char* a_szFilePath, TBOOL a_bLoad ) override;
+	TModel*         CreateModel( const char* a_szFilePath, TBOOL a_bLoad, TTRB* a_pAssetTRB, TUINT8 a_ui8FileNameLen ) override;
+	TDebugText*     CreateDebugText() override;
+	void            DestroyDebugText() override;
 
 	static TRenderSDL* Interface() { return TSTATICCAST( TRenderSDL, GetSingleton() ); }
 
 private:
-	ASDLWindow			  m_Window;
-	uint32_t			  m_uiNumDrawnFrames = 0;
-	DISPLAYPARAMS		  m_DisplayParams;
+	ASDLWindow            m_Window;
+	uint32_t              m_uiNumDrawnFrames = 0;
+	DISPLAYPARAMS         m_DisplayParams;
 	TPriList<TOrderTable> m_OrderTables;
-	HACCEL				  m_hAccel	  = TNULL;
-	SDL_GLContext		  m_GLContext = TNULL;
+	HACCEL                m_hAccel    = TNULL;
+	SDL_GLContext         m_GLContext = TNULL;
 };
 
 } // namespace Toshi

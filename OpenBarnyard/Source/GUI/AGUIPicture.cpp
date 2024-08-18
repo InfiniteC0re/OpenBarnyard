@@ -14,13 +14,13 @@ TDEFINE_CLASS_INIT_NORUNTIME( AGUIPicture );
 
 AGUIPicture::AGUIPicture()
 {
-	m_iUnknown1	 = 0;
+	m_iUnknown1  = 0;
 	m_iNumRects1 = 0;
 	m_iNumRects2 = 0;
-	m_bFlag		 = TFALSE;
-	m_bLoaded	 = TFALSE;
+	m_bFlag      = TFALSE;
+	m_bLoaded    = TFALSE;
 	m_bIsVisible = TTRUE;
-	m_fUnknown3	 = -10.0f;
+	m_fUnknown3  = -10.0f;
 }
 
 void AGUIPicture::InitialiseClass()
@@ -35,28 +35,28 @@ void AGUIPicture::InitialiseClass()
 		fValA = ( i == 0 ) ? TEX_SIZE - 1.0f : 240.0f - fValB;
 
 		split_rules[ i * 3 + 0 ].iImageIndex = i * 3 + 0;
-		split_rules[ i * 3 + 0 ].Pos1		 = { -320.0f, -65.0f };
-		split_rules[ i * 3 + 0 ].Pos2		 = { fValB, fValA + fValB };
-		split_rules[ i * 3 + 0 ].UV1		 = { 0.0f, 0.9960938f };
-		split_rules[ i * 3 + 0 ].UV2		 = { 0.0f, fValA / TEX_SIZE };
-		split_rules[ i * 3 + 0 ].iUnk1		 = 0;
-		split_rules[ i * 3 + 0 ].iUnk2		 = 0;
+		split_rules[ i * 3 + 0 ].Pos1        = { -320.0f, -65.0f };
+		split_rules[ i * 3 + 0 ].Pos2        = { fValB, fValA + fValB };
+		split_rules[ i * 3 + 0 ].UV1         = { 0.0f, 0.9960938f };
+		split_rules[ i * 3 + 0 ].UV2         = { 0.0f, fValA / TEX_SIZE };
+		split_rules[ i * 3 + 0 ].iUnk1       = 0;
+		split_rules[ i * 3 + 0 ].iUnk2       = 0;
 
 		split_rules[ i * 3 + 1 ].iImageIndex = i * 3 + 1;
-		split_rules[ i * 3 + 1 ].Pos1		 = { -65.0f, 190.0f };
-		split_rules[ i * 3 + 1 ].Pos2		 = { fValB, fValA + fValB };
-		split_rules[ i * 3 + 1 ].UV1		 = { 0.0f, 0.9960938f };
-		split_rules[ i * 3 + 1 ].UV2		 = { 0.0f, fValA / TEX_SIZE };
-		split_rules[ i * 3 + 1 ].iUnk1		 = 0;
-		split_rules[ i * 3 + 1 ].iUnk2		 = 0;
+		split_rules[ i * 3 + 1 ].Pos1        = { -65.0f, 190.0f };
+		split_rules[ i * 3 + 1 ].Pos2        = { fValB, fValA + fValB };
+		split_rules[ i * 3 + 1 ].UV1         = { 0.0f, 0.9960938f };
+		split_rules[ i * 3 + 1 ].UV2         = { 0.0f, fValA / TEX_SIZE };
+		split_rules[ i * 3 + 1 ].iUnk1       = 0;
+		split_rules[ i * 3 + 1 ].iUnk2       = 0;
 
 		split_rules[ i * 3 + 2 ].iImageIndex = i * 3 + 2;
-		split_rules[ i * 3 + 2 ].Pos1		 = { 190.0f, 320.0f };
-		split_rules[ i * 3 + 2 ].Pos2		 = { fValB, fValA + fValB };
-		split_rules[ i * 3 + 2 ].UV1		 = { 0.0f, 1.015625f };
-		split_rules[ i * 3 + 2 ].UV2		 = { 0.0f, fValA / TEX_SIZE };
-		split_rules[ i * 3 + 2 ].iUnk1		 = 0;
-		split_rules[ i * 3 + 2 ].iUnk2		 = 0;
+		split_rules[ i * 3 + 2 ].Pos1        = { 190.0f, 320.0f };
+		split_rules[ i * 3 + 2 ].Pos2        = { fValB, fValA + fValB };
+		split_rules[ i * 3 + 2 ].UV1         = { 0.0f, 1.015625f };
+		split_rules[ i * 3 + 2 ].UV2         = { 0.0f, fValA / TEX_SIZE };
+		split_rules[ i * 3 + 2 ].iUnk1       = 0;
+		split_rules[ i * 3 + 2 ].iUnk2       = 0;
 
 		fValB += fValA;
 	}

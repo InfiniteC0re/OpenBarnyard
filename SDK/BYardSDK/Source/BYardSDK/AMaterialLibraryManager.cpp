@@ -77,7 +77,7 @@ AMaterialLibrary* AMaterialLibraryManager::List::CreateLibraryFromAsset( const c
 ATexture* AMaterialLibraryManager::List::FindTexture( const char* a_szTextureName, AMaterialLibrary** a_ppMaterialLibrary, TINT* a_pTextureIndex )
 {
 	TINT iIndex = -1;
-	auto it		= m_Libraries.Begin();
+	auto it     = m_Libraries.Begin();
 
 	while ( true )
 	{

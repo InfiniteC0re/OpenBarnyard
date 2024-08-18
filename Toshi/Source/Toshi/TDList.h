@@ -158,7 +158,7 @@ public:
 
 	Iterator Begin() { return TGenericPriList::Begin(); }
 	Iterator End() { return TGenericPriList::End(); }
-	TBOOL	 IsLinked() { return !IsEmpty(); }
+	TBOOL    IsLinked() { return !IsEmpty(); }
 };
 
 template <class T>
@@ -169,14 +169,14 @@ public:
 
 	TDList() {}
 
-	T*		 Head() { return TGenericDList::Head()->As<T>(); }
-	T*		 Tail() { return TGenericDList::Tail()->As<T>(); }
+	T*       Head() { return TGenericDList::Head()->As<T>(); }
+	T*       Tail() { return TGenericDList::Tail()->As<T>(); }
 	Iterator Begin() { return TGenericDList::Begin()->As<T>(); }
 	Iterator End() { return TGenericDList::End()->As<T>(); }
-	TBOOL	 IsEmpty() { return TGenericDList::IsEmpty(); }
-	TBOOL	 IsLinked() { return m_oRoot.IsLinked(); }
-	void	 RemoveHead() { TGenericDList::RemoveHead(); }
-	void	 RemoveTail() { TGenericDList::RemoveTail(); }
+	TBOOL    IsEmpty() { return TGenericDList::IsEmpty(); }
+	TBOOL    IsLinked() { return m_oRoot.IsLinked(); }
+	void     RemoveHead() { TGenericDList::RemoveHead(); }
+	void     RemoveTail() { TGenericDList::RemoveTail(); }
 };
 
 TOSHI_NAMESPACE_END

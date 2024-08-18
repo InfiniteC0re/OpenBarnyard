@@ -21,19 +21,19 @@ static TCHAR s_szBuffer[ 8192 ];
 static TUINT s_uiBufferPos = 0;
 
 ASplitsServer::ASplitsServer() :
-	m_uiBufferSize( 0 )
+    m_uiBufferSize( 0 )
 {
 	m_NamedPipe.Start(
-		"BYSpeedrunHelper",
-		100,
-		0,
-		MAX_BUFFER_SIZE );
+	    "BYSpeedrunHelper",
+	    100,
+	    0,
+	    MAX_BUFFER_SIZE );
 
 	m_pMemBlock = g_pMemory->CreateMemBlock(
-		128 * 1024,
-		"Autosplitter",
-		g_pMemory->GetGlobalBlock(),
-		0 );
+	    128 * 1024,
+	    "Autosplitter",
+	    g_pMemory->GetGlobalBlock(),
+	    0 );
 
 	TASSERT( m_pMemBlock != TNULL );
 
@@ -47,22 +47,22 @@ ASplitsServer::ASplitsServer() :
 
 		// Reset buffer
 		a_rMemoryStream = TNULL;
-		a_rDataSize		= 0;
+		a_rDataSize     = 0;
 
 		// If anything is ready to send, process and send the data
 		if ( pSplits->m_QueuedEvents.Size() > 0 )
 		{
 			// Initialise header
 			MsgQueueHeader_t* pHeader = (MsgQueueHeader_t*)pSplits->m_Buffer;
-			pHeader->uiTotalSize	  = 0;
-			pHeader->uiNumMessages	  = pSplits->m_QueuedEvents.Size();
+			pHeader->uiTotalSize      = 0;
+			pHeader->uiNumMessages    = pSplits->m_QueuedEvents.Size();
 
 			pSplits->m_uiBufferSize = sizeof( MsgQueueHeader_t );
 
 			// Copy events to the buffer
 			for ( TSIZE i = 0; i < pSplits->m_QueuedEvents.Size(); i++ )
 			{
-				TCHAR* pchMsg	= pSplits->m_QueuedEvents[ i ];
+				TCHAR* pchMsg   = pSplits->m_QueuedEvents[ i ];
 				TUINT  uiMsgLen = T2String8::Length( pchMsg );
 
 				// Store message length
@@ -91,7 +91,7 @@ ASplitsServer::ASplitsServer() :
 			{
 				// Send values to the named pipe class
 				a_rMemoryStream = pSplits->m_Buffer;
-				a_rDataSize		= pSplits->m_uiBufferSize;
+				a_rDataSize     = pSplits->m_uiBufferSize;
 			}
 		}
 	} );

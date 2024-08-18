@@ -49,25 +49,25 @@ public:
 	}
 
 private:
-	TBOOL				  m_bReverseButtons;
-	DWORD				  m_dwButtonCurrent;
-	DWORD				  m_dwButtonPrevious;
-	TINT				  m_iPositionX;
-	TINT				  m_iPositionY;
-	TINT				  m_iPositionZ;
-	TINT				  m_iDeltaPositionX;
-	TINT				  m_iDeltaPositionY;
-	TINT				  m_iDeltaPositionZ;
-	TINT				  m_iUnk1;
-	TINT				  m_iUnk2;
-	TINT				  m_iUnk3;
-	TINT				  m_iUnk4;
-	TINT				  m_iUnk5;
-	TINT				  m_iUnk6;
-	TINT				  m_iUnk7;
-	BOOL				  m_bInitiliased;
-	DIDEVICEINSTANCEA	  m_oDeviceInstance;
-	DIDEVCAPS			  m_DIDevCaps;
+	TBOOL                 m_bReverseButtons;
+	DWORD                 m_dwButtonCurrent;
+	DWORD                 m_dwButtonPrevious;
+	TINT                  m_iPositionX;
+	TINT                  m_iPositionY;
+	TINT                  m_iPositionZ;
+	TINT                  m_iDeltaPositionX;
+	TINT                  m_iDeltaPositionY;
+	TINT                  m_iDeltaPositionZ;
+	TINT                  m_iUnk1;
+	TINT                  m_iUnk2;
+	TINT                  m_iUnk3;
+	TINT                  m_iUnk4;
+	TINT                  m_iUnk5;
+	TINT                  m_iUnk6;
+	TINT                  m_iUnk7;
+	BOOL                  m_bInitiliased;
+	DIDEVICEINSTANCEA     m_oDeviceInstance;
+	DIDEVCAPS             m_DIDevCaps;
 	IDirectInputDevice8A* m_poDXInputDevice;
 };
 

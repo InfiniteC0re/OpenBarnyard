@@ -14,19 +14,19 @@ TDEFINE_CLASS_NORUNTIME( TRenderInterface );
 
 TRenderInterface::TRenderInterface()
 {
-	m_Unk1					 = 0;
+	m_Unk1                   = 0;
 	m_bCreateSystemResources = TTRUE;
-	m_bInScene				 = TFALSE;
-	m_bCreated				 = TFALSE;
-	m_bDisplayCreated		 = TFALSE;
+	m_bInScene               = TFALSE;
+	m_bCreated               = TFALSE;
+	m_bDisplayCreated        = TFALSE;
 	m_ScreenOffset.Set( 0.0f, 0.0f );
-	m_pCurrentContext	 = TNULL;
-	m_pCreatedContext	 = TNULL;
-	m_pDebugText		 = TNULL;
-	m_Unk2				 = TNULL;
-	m_pInvalidTexture	 = TNULL;
-	m_ResourceCount		 = 1;
-	m_iFrameCount		 = 0;
+	m_pCurrentContext    = TNULL;
+	m_pCreatedContext    = TNULL;
+	m_pDebugText         = TNULL;
+	m_Unk2               = TNULL;
+	m_pInvalidTexture    = TNULL;
+	m_ResourceCount      = 1;
+	m_iFrameCount        = 0;
 	m_bHasDyingResources = TFALSE;
 
 	m_Transforms.PushNull();
@@ -35,16 +35,16 @@ TRenderInterface::TRenderInterface()
 	TUtil::MemClear( m_SystemResources, sizeof( m_SystemResources ) );
 
 	m_LightColour.Set(
-		1.0f, 1.0f, 1.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, 0.0f );
+	    1.0f, 1.0f, 1.0f, 0.0f,
+	    0.0f, 0.0f, 0.0f, 0.0f,
+	    0.0f, 0.0f, 0.0f, 0.0f,
+	    0.0f, 0.0f, 0.0f, 0.0f );
 
 	m_LightDirection.Set(
-		-0.47f, -0.74f, 0.47f, 0.0f,
-		0.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, 0.0f );
+	    -0.47f, -0.74f, 0.47f, 0.0f,
+	    0.0f, 0.0f, 0.0f, 0.0f,
+	    0.0f, 0.0f, 0.0f, 0.0f,
+	    0.0f, 0.0f, 0.0f, 0.0f );
 }
 
 TRenderInterface::~TRenderInterface()
@@ -60,7 +60,7 @@ TBOOL TRenderInterface::Create()
 	if ( m_pCreatedContext )
 	{
 		SetCurrentRenderContext( m_pCreatedContext );
-		m_Unk2	   = CreateUnknown( "Render", 0, 0, 10 );
+		m_Unk2     = CreateUnknown( "Render", 0, 0, 10 );
 		m_bCreated = TTRUE;
 		return TTRUE;
 	}
@@ -85,7 +85,7 @@ TBOOL TRenderInterface::Destroy()
 	}
 
 	m_pCurrentContext = TNULL;
-	m_bCreated		  = TFALSE;
+	m_bCreated        = TFALSE;
 
 	return TTRUE;
 }
@@ -203,9 +203,9 @@ void TRenderInterface::DumpStats()
 	if ( file != TNULL )
 	{
 		file->CPrintf( "-\r\n" );
-		TCHAR const* name		  = GetClass()->GetName();
-		uint16_t	 versionMajor = GetClass()->GetVersionMajor();
-		uint16_t	 versionMinor = GetClass()->GetVersionMinor();
+		TCHAR const* name         = GetClass()->GetName();
+		uint16_t     versionMajor = GetClass()->GetVersionMajor();
+		uint16_t     versionMinor = GetClass()->GetVersionMinor();
 		file->CPrintf( "Toshi rendering interface through object[\"%s\"] Version : %u.%u\r\n", name, versionMajor, versionMinor );
 		file->CPrintf( "-\r\n" );
 
@@ -332,7 +332,7 @@ void TRenderInterface::DestroyDyingResources( TResource* resources )
 			{
 				if ( pRes2 == pRes1 )
 				{
-					pRes1	  = next;
+					pRes1     = next;
 					resources = next;
 				}
 				pTVar1 = pRes2->Child();
@@ -455,7 +455,7 @@ TRenderAdapter::Mode::Device* TRenderInterface::FindDevice( const DISPLAYPARAMS&
 					if ( uiWidth == a_rDisplayParams.uiWidth && uiHeight == a_rDisplayParams.uiHeight )
 					{
 						if ( pDevice->IsDepthStencilFormatSupported( a_rDisplayParams.eDepthStencilFormat ) &&
-							 bPassedColourDepth && bPassedWindowed )
+						     bPassedColourDepth && bPassedWindowed )
 						{
 							return pDevice;
 						}
@@ -468,7 +468,7 @@ TRenderAdapter::Mode::Device* TRenderInterface::FindDevice( const DISPLAYPARAMS&
 						if ( uiHeight < a_rDisplayParams.uiHeight ) continue;
 
 						if ( pDevice->IsDepthStencilFormatSupported( a_rDisplayParams.eDepthStencilFormat ) &&
-							 bPassedColourDepth && bPassedWindowed )
+						     bPassedColourDepth && bPassedWindowed )
 						{
 							return pDevice;
 						}

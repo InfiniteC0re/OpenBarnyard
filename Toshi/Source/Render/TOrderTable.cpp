@@ -14,10 +14,10 @@ void TOrderTable::CreateStaticData( TUINT a_uiMaxMaterials, TUINT a_uiMaxRenderP
 	s_uiMaxRenderPackets = a_uiMaxRenderPackets;
 	s_uiNumRenderPackets = 0;
 
-	s_pRenderPackets		 = new TRenderPacket[ a_uiMaxRenderPackets ];
+	s_pRenderPackets         = new TRenderPacket[ a_uiMaxRenderPackets ];
 	s_uiOrigMaxRenderPackets = a_uiMaxRenderPackets;
 
-	s_pRegMaterials	 = new TRegMaterial[ a_uiMaxMaterials ];
+	s_pRegMaterials  = new TRegMaterial[ a_uiMaxMaterials ];
 	s_uiMaxMaterials = a_uiMaxMaterials;
 
 	for ( TSIZE i = 0; i < s_uiMaxMaterials; i++ )
@@ -37,7 +37,7 @@ TRenderPacket* TOrderTable::AllocRenderPacket()
 TOrderTable::TOrderTable()
 {
 	m_pLastRegMat = TNULL;
-	m_pShader	  = TNULL;
+	m_pShader     = TNULL;
 }
 
 TOrderTable::~TOrderTable()
@@ -63,7 +63,7 @@ void TOrderTable::Render()
 	}
 
 	s_uiNumRenderPackets = 0;
-	m_pLastRegMat		 = TNULL;
+	m_pLastRegMat        = TNULL;
 }
 
 void TOrderTable::Flush()
@@ -85,7 +85,7 @@ void TOrderTable::Flush()
 	m_pShader->EndFlush();
 
 	s_uiNumRenderPackets = 0;
-	m_pLastRegMat		 = TNULL;
+	m_pLastRegMat        = TNULL;
 }
 
 TRegMaterial* TOrderTable::RegisterMaterial( TMaterial* pMat )

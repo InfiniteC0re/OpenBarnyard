@@ -14,12 +14,12 @@ TDEFINE_CLASS_NORUNTIME( TMaterial );
 
 TMaterial::TMaterial()
 {
-	m_Flags	  = FLAGS_NONE;
+	m_Flags   = FLAGS_NONE;
 	m_pShader = TNULL;
 	m_iNumTex = 0;
 	TUtil::MemClear( m_pTextures, sizeof( m_pTextures ) );
 	m_pRegMaterial = TNULL;
-	m_Name[ 0 ]	   = '\0';
+	m_Name[ 0 ]    = '\0';
 }
 
 TMaterial::~TMaterial()

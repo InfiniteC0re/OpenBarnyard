@@ -2,7 +2,7 @@
 #include <Toshi/T2Vector.h>
 
 class ADisplayModes_Win :
-	public Toshi::TObject
+    public Toshi::TObject
 {
 public:
 	TDECLARE_CLASS( ADisplayModes_Win, Toshi::TObject );

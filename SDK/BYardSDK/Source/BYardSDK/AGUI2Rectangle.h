@@ -30,7 +30,7 @@ public:
 	static AGUI2Rectangle* CreateFromEngine();
 
 protected:
-	AGUI2Material*	m_pMaterial;
+	AGUI2Material*  m_pMaterial;
 	Toshi::TVector4 m_UV1;
 	Toshi::TVector4 m_UV2;
 };

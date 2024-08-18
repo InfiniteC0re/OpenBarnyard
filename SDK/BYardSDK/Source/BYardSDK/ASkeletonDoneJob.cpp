@@ -12,6 +12,6 @@ TBOOL ASkeletonDoneJob::RunJob()
 
 void ASkeletonDoneJob::InitJob( ATerrainVIS* a_pVIS, ATRBLoaderJob* a_pTRBJob )
 {
-	m_pVIS			= a_pVIS;
+	m_pVIS          = a_pVIS;
 	m_pTRBLoaderJob = a_pTRBJob;
 }

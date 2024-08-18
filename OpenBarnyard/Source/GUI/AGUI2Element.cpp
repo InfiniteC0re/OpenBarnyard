@@ -12,15 +12,15 @@
 
 AGUI2Element::AGUI2Element()
 {
-	m_pParent		   = TNULL;
-	m_fWidth		   = 0.0f;
-	m_fHeight		   = 0.0f;
-	m_uiColour		   = 0xFFFFFFFF;
+	m_pParent          = TNULL;
+	m_fWidth           = 0.0f;
+	m_fHeight          = 0.0f;
+	m_uiColour         = 0xFFFFFFFF;
 	m_uiVisibilityMask = 0xFFFFFFFF;
-	m_cbPostRender	   = TNULL;
-	m_ePivot		   = Pivot_MiddleCenter;
-	m_eAnchor		   = Anchor_MiddleCenter;
-	m_eFlags		   = 3;
+	m_cbPostRender     = TNULL;
+	m_ePivot           = Pivot_MiddleCenter;
+	m_eAnchor          = Anchor_MiddleCenter;
+	m_eFlags           = 3;
 }
 
 void AGUI2Element::Tick( TFLOAT a_fDeltaTime )
@@ -203,7 +203,7 @@ void AGUI2Element::SetColour( TUINT32 a_uiColour )
 void AGUI2Element::SetAlpha( TFLOAT a_fAlpha )
 {
 	TUINT8 alpha8 = (TUINT8)( a_fAlpha * 255.0f );
-	m_uiColour	  = ( m_uiColour & 0x00FFFFFF ) | alpha8 << 24;
+	m_uiColour    = ( m_uiColour & 0x00FFFFFF ) | alpha8 << 24;
 }
 
 void AGUI2Element::SetShadowAlpha( TFLOAT a_fAlpha )
@@ -330,7 +330,7 @@ void AGUI2Element::GetScreenTransform( AGUI2Transform& a_rOutTransform )
 
 		transform1.m_Rotation[ 0 ] = { 1.0f, 0.0f };
 		transform1.m_Rotation[ 1 ] = { 0.0f, 1.0f };
-		transform1.m_Position	   = { pDisplayParams->uiWidth / 2.0f, pDisplayParams->uiHeight / 2.0f };
+		transform1.m_Position      = { pDisplayParams->uiWidth / 2.0f, pDisplayParams->uiHeight / 2.0f };
 
 		transform1.PreMultiply( pDisplayParams->uiWidth / fWidth, pDisplayParams->uiHeight / fHeight );
 		transform2 = GetTransform();

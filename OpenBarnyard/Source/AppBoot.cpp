@@ -11,9 +11,9 @@
 #include <Input/TInputInterface.h>
 
 #ifdef TOSHI_SKU_WINDOWS
-#	include <Platform/DX8/TTextureResourceHAL_DX8.h>
-#	include <Platform/DX8/TVertexBlockResource_DX8.h>
-#	include <Platform/DX8/TIndexBlockResource_DX8.h>
+#  include <Platform/DX8/TTextureResourceHAL_DX8.h>
+#  include <Platform/DX8/TVertexBlockResource_DX8.h>
+#  include <Platform/DX8/TIndexBlockResource_DX8.h>
 #endif // TOSHI_SKU_WINDOWS
 
 #include "AppBoot.h"
@@ -33,9 +33,9 @@ AApplication g_oTheApp;
 TOSHI_NAMESPACE_USING
 
 #ifndef TOSHI_DIST
-#	define TOSHI_ENTRY int main( int argc, TCHAR** argv )
+#  define TOSHI_ENTRY int main( int argc, TCHAR** argv )
 #else
-#	define TOSHI_ENTRY int WINAPI WinMain( HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, INT cmdShow )
+#  define TOSHI_ENTRY int WINAPI WinMain( HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, INT cmdShow )
 #endif
 
 static const TCHAR* GetOSName( OSVERSIONINFOEX& osVersionInfo )
@@ -66,7 +66,7 @@ static const TCHAR* GetOSName( OSVERSIONINFOEX& osVersionInfo )
 TOSHI_ENTRY
 {
 	static AToshiClassReferenceHelper s_ToshiClassReferencer;
-	static TMemoryInitialiser		  s_MemoryInitialiser;
+	static TMemoryInitialiser         s_MemoryInitialiser;
 
 	TCHAR* szCommandLine = GetCommandLineA();
 
@@ -87,7 +87,7 @@ TOSHI_ENTRY
 	OSVERSIONINFOEX osVersionInfo = { sizeof( osVersionInfo ) };
 
 	const TCHAR* osName = "unknown";
-	HMODULE		 ntdll	= GetModuleHandleW( L"ntdll.dll" );
+	HMODULE      ntdll  = GetModuleHandleW( L"ntdll.dll" );
 
 	if ( ntdll != NULL )
 	{

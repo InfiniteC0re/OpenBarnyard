@@ -15,8 +15,8 @@ TDEFINE_CLASS( TIndexPoolResource );
 
 TIndexPoolResource::TIndexPoolResource()
 {
-	m_uiIndexOffset		= 0;
-	m_pIndices			= TNULL;
+	m_uiIndexOffset     = 0;
+	m_pIndices          = TNULL;
 	m_uiNumLocksAllTime = 0;
 }
 
@@ -28,7 +28,7 @@ TBOOL TIndexPoolResource::Validate()
 	}
 
 	auto pFactory = TSTATICCAST( TIndexFactoryResource, GetFactory() );
-	auto pBlock	  = pFactory->FindBlockResource( this );
+	auto pBlock   = pFactory->FindBlockResource( this );
 
 	if ( !pBlock )
 	{
@@ -40,12 +40,12 @@ TBOOL TIndexPoolResource::Validate()
 		if ( uiUnk1 == 1 )
 		{
 			uiMaxVertices = pFactory->GetMaxStaticIndices();
-			uiFlags		  = 1;
+			uiFlags       = 1;
 		}
 		else if ( uiUnk1 == 2 )
 		{
 			uiMaxVertices = GetMaxIndices();
-			uiFlags		  = 2;
+			uiFlags       = 2;
 		}
 		else
 		{
@@ -55,7 +55,7 @@ TBOOL TIndexPoolResource::Validate()
 			}
 
 			uiMaxVertices = GetMaxIndices();
-			uiFlags		  = 4;
+			uiFlags       = 4;
 		}
 
 		pBlock = pFactory->CreateBlockResource( uiMaxVertices, uiFlags );

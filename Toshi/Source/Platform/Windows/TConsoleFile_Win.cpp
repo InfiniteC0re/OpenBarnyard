@@ -13,7 +13,7 @@ class TConsoleFile : public TFile
 {
 public:
 	TConsoleFile( TFileSystem* a_pFileSystem ) :
-		TFile( a_pFileSystem )
+	    TFile( a_pFileSystem )
 	{
 	}
 
@@ -108,7 +108,7 @@ public:
 };
 
 TConsoleFileSystem::TConsoleFileSystem( const TCHAR* a_szName ) :
-	TFileSystem( a_szName )
+    TFileSystem( a_szName )
 {
 	TFileManager::GetSingletonSafe()->MountFileSystem( this );
 }

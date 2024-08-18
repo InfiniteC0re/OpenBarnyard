@@ -13,9 +13,9 @@ TDEFINE_CLASS_NORUNTIME( TTexture );
 
 TTexture::TTexture()
 {
-	m_eAddress		= 0;
+	m_eAddress      = 0;
 	m_eTextureFlags = 0;
-	m_pNameEntry	= TNULL;
+	m_pNameEntry    = TNULL;
 }
 
 TTexture::~TTexture()

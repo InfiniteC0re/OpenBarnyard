@@ -11,10 +11,10 @@
 TOSHI_NAMESPACE_START
 
 TTransformObject::TTransformObject() :
-	m_eMode( Mode::Quat ),
-	m_Quat( TQuaternion::IDENTITY ),
-	m_Translation( TVector3::VEC_ZERO ),
-	m_Scale( 1.0f, 1.0f, 1.0f )
+    m_eMode( Mode::Quat ),
+    m_Quat( TQuaternion::IDENTITY ),
+    m_Translation( TVector3::VEC_ZERO ),
+    m_Scale( 1.0f, 1.0f, 1.0f )
 {
 	m_EulerOrder[ 0 ] = 2;
 	m_EulerOrder[ 1 ] = 1;
@@ -146,13 +146,13 @@ void TTransformObject::SetTranslate( const TVector3& translation )
 void TTransformObject::SetQuat( const TQuaternion& quaternion )
 {
 	m_eMode = Mode::Quat;
-	m_Quat	= quaternion;
+	m_Quat  = quaternion;
 }
 
 void TTransformObject::SetMatrix( const TMatrix44& matrix )
 {
-	m_eMode		  = Mode::Matrix;
-	m_Matrix	  = matrix;
+	m_eMode       = Mode::Matrix;
+	m_Matrix      = matrix;
 	m_Translation = matrix.GetTranslation3();
 }
 

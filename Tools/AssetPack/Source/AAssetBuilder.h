@@ -17,6 +17,6 @@ public:
 	void Save( const char* a_szFileName, TBOOL a_bCompress = TFALSE );
 
 private:
-	AAssetPack						  m_AssetPack;
+	AAssetPack                        m_AssetPack;
 	Toshi::T2Vector<PTRBWriter, 1024> m_Files;
 };

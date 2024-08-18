@@ -59,7 +59,7 @@ void AGUIMatlibPicture::Cache()
 			m_pRectangles = new Rectangle[ 6 ];
 
 			m_iNumRects2 = 6;
-			m_pImages	 = new Image[ 6 ];
+			m_pImages    = new Image[ 6 ];
 			LoadMatLib();
 
 			auto pTexFactory = TRenderInterface::GetSingleton()->GetSystemResource<TTextureFactory>( SYSRESOURCE_TEXTUREFACTORY );
@@ -72,7 +72,7 @@ void AGUIMatlibPicture::Cache()
 				auto iTexIndex = m_pMaterialLibrary->FindTextureIndex( texName );
 				auto pTexture  = pTexFactory->CreateFromT2Texture( m_pMaterialLibrary->GetTexture( iTexIndex )->pTexture );
 
-				m_pImages[ i ].pTexture	 = pTexture;
+				m_pImages[ i ].pTexture  = pTexture;
 				m_pImages[ i ].pMaterial = AGUI2::GetRenderer()->CreateMaterial( pTexture );
 				m_pImages[ i ].pMaterial->SetBlendState( 0 );
 				m_pImages[ i ].pMaterial->SetTextureAddress( 1 );
@@ -80,7 +80,7 @@ void AGUIMatlibPicture::Cache()
 
 			for ( TINT i = 0; i < m_iNumRects1; i++ )
 			{
-				auto pRect		  = &m_pRectangles[ i ];
+				auto pRect        = &m_pRectangles[ i ];
 				pRect->ppMaterial = &m_pImages[ AGUIPicture::split_rules[ i ].iImageIndex ].pMaterial;
 
 				( pRect->Pos1 ).y = AGUIPicture::split_rules[ i ].Pos2.x;
@@ -112,8 +112,8 @@ void AGUIMatlibPicture::LoadMatLib()
 	TStringManager::String8Format( path, sizeof( path ), "data/matlibs/%s.ttl", m_Name.GetString8().GetString() );
 
 	m_pMaterialLibrary = AMaterialLibraryManager::List::GetSingleton()->CreateLibraryFromAsset(
-		path,
-		AAssetLoader::GetAssetTRB( AAssetType_AssetPack ) );
+	    path,
+	    AAssetLoader::GetAssetTRB( AAssetType_AssetPack ) );
 }
 
 void AGUIMatlibPicture::UnloadMatLib()
@@ -122,7 +122,7 @@ void AGUIMatlibPicture::UnloadMatLib()
 
 	m_pMaterialLibrary->Destroy();
 	m_pMaterialLibrary = TNULL;
-	m_Name			   = TPString8();
+	m_Name             = TPString8();
 }
 
 AGUIMatlibPicture::AGUIMatlibPicture()

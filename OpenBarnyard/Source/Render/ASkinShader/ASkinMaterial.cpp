@@ -12,9 +12,9 @@ TOSHI_NAMESPACE_USING
 TDEFINE_CLASS_NORUNTIME( ASkinMaterial );
 
 ASkinMaterial::ASkinMaterial() :
-	m_eBlendMode( 0 ),
-	m_pTexture( TNULL ),
-	m_bFlag( TTRUE )
+    m_eBlendMode( 0 ),
+    m_pTexture( TNULL ),
+    m_bFlag( TTRUE )
 {
 	m_apLightingTextures[ LT_0 ] = TNULL;
 	m_apLightingTextures[ LT_1 ] = TNULL;

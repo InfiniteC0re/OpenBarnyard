@@ -12,11 +12,11 @@ void ATextureUpdateWatcher::Main()
 	m_Overlapped.hEvent = CreateEvent( NULL, FALSE, 0, NULL );
 
 	ReadDirectoryChangesW(
-		m_hFile, m_ChangeBuf, 1024, TRUE,
-		FILE_NOTIFY_CHANGE_FILE_NAME |
-			FILE_NOTIFY_CHANGE_DIR_NAME |
-			FILE_NOTIFY_CHANGE_LAST_WRITE,
-		NULL, &m_Overlapped, NULL );
+	    m_hFile, m_ChangeBuf, 1024, TRUE,
+	    FILE_NOTIFY_CHANGE_FILE_NAME |
+	        FILE_NOTIFY_CHANGE_DIR_NAME |
+	        FILE_NOTIFY_CHANGE_LAST_WRITE,
+	    NULL, &m_Overlapped, NULL );
 
 	while ( TTRUE )
 	{
@@ -84,11 +84,11 @@ void ATextureUpdateWatcher::Main()
 
 			// Queue the next event
 			ReadDirectoryChangesW(
-				m_hFile, m_ChangeBuf, 1024, TRUE,
-				FILE_NOTIFY_CHANGE_FILE_NAME |
-					FILE_NOTIFY_CHANGE_DIR_NAME |
-					FILE_NOTIFY_CHANGE_LAST_WRITE,
-				NULL, &m_Overlapped, NULL );
+			    m_hFile, m_ChangeBuf, 1024, TRUE,
+			    FILE_NOTIFY_CHANGE_FILE_NAME |
+			        FILE_NOTIFY_CHANGE_DIR_NAME |
+			        FILE_NOTIFY_CHANGE_LAST_WRITE,
+			    NULL, &m_Overlapped, NULL );
 		}
 	}
 }
@@ -98,13 +98,13 @@ void ATextureUpdateWatcher::Init( const char* a_szPath )
 	m_szPath = a_szPath;
 
 	m_hFile = CreateFileA(
-		m_szPath,
-		FILE_LIST_DIRECTORY,
-		FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
-		NULL,
-		OPEN_EXISTING,
-		FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OVERLAPPED,
-		NULL );
+	    m_szPath,
+	    FILE_LIST_DIRECTORY,
+	    FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
+	    NULL,
+	    OPEN_EXISTING,
+	    FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OVERLAPPED,
+	    NULL );
 }
 
 void ATextureUpdateWatcher::Destroy()

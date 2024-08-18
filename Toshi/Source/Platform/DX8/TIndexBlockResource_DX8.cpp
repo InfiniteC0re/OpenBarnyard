@@ -18,13 +18,13 @@ TDEFINE_FREELIST_ALLOCATOR( TIndexBlockResource );
 
 TIndexBlockResource::TIndexBlockResource()
 {
-	m_pFactory		= TNULL;
-	m_uiFlags		= 0;
-	m_uiMaxIndices	= 0;
-	m_uiOffset		= 0;
+	m_pFactory      = TNULL;
+	m_uiFlags       = 0;
+	m_uiMaxIndices  = 0;
+	m_uiOffset      = 0;
 	m_uiIndicesUsed = 0;
-	m_uiLockCount	= 0;
-	m_Unk1			= 0;
+	m_uiLockCount   = 0;
+	m_Unk1          = 0;
 }
 
 TBOOL TIndexBlockResource::AttachPool( TIndexPoolResource* a_pPool )
@@ -80,28 +80,28 @@ TBOOL TIndexBlockResource::Validate()
 			pair.m_First = this;
 
 			TResource::RecurseSimple(
-				[]( TResource* a_pResource, void* a_pUserData ) {
-					if ( a_pResource->IsExactly( &TGetClass( TIndexPoolResource ) ) )
-					{
-						auto pPool = TSTATICCAST( TIndexPoolResource, a_pResource );
-						auto pPair = TSTATICCAST( Pair, a_pUserData );
+			    []( TResource* a_pResource, void* a_pUserData ) {
+				    if ( a_pResource->IsExactly( &TGetClass( TIndexPoolResource ) ) )
+				    {
+					    auto pPool = TSTATICCAST( TIndexPoolResource, a_pResource );
+					    auto pPair = TSTATICCAST( Pair, a_pUserData );
 
-						if ( pPool->m_uiFlags & 1 )
-						{
-							pPool->m_uiIndexOffset = pPair->GetSecond().uiOffset;
-							pPair->GetSecond().uiOffset += pPool->GetNumIndices();
+					    if ( pPool->m_uiFlags & 1 )
+					    {
+						    pPool->m_uiIndexOffset = pPair->GetSecond().uiOffset;
+						    pPair->GetSecond().uiOffset += pPool->GetNumIndices();
 
-							TUtil::MemCopy(
-								pPair->GetSecond().pBuffer + pPool->m_uiIndexOffset,
-								pPool->GetIndices(),
-								pPool->GetNumIndices() * sizeof( TIndexType ) );
-						}
-					}
+						    TUtil::MemCopy(
+						        pPair->GetSecond().pBuffer + pPool->m_uiIndexOffset,
+						        pPool->GetIndices(),
+						        pPool->GetNumIndices() * sizeof( TIndexType ) );
+					    }
+				    }
 
-					return TTRUE;
-				},
-				this,
-				&pair );
+				    return TTRUE;
+			    },
+			    this,
+			    &pair );
 
 			Unlock();
 		}
@@ -149,11 +149,11 @@ TBOOL TIndexBlockResource::CreateHAL()
 	TMemory::GetHALMemInfo( memInfoHAL );
 
 	auto  pRenderer = TRenderD3DInterface::Interface();
-	DWORD usage		= D3DUSAGE_WRITEONLY;
+	DWORD usage     = D3DUSAGE_WRITEONLY;
 
 	if ( ISZERO( m_uiFlags & 1 ) )
 	{
-		usage	   = D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY;
+		usage      = D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY;
 		m_uiOffset = 0;
 	}
 
@@ -163,11 +163,11 @@ TBOOL TIndexBlockResource::CreateHAL()
 	}
 
 	HRESULT hRes = pRenderer->GetDirect3DDevice()->CreateIndexBuffer(
-		m_uiMaxIndices * sizeof( TIndexType ),
-		usage,
-		D3DFMT_INDEX16,
-		( m_uiFlags & 1 ) ? D3DPOOL_MANAGED : D3DPOOL_DEFAULT,
-		&m_HALBuffer.pIndexBuffer );
+	    m_uiMaxIndices * sizeof( TIndexType ),
+	    usage,
+	    D3DFMT_INDEX16,
+	    ( m_uiFlags & 1 ) ? D3DPOOL_MANAGED : D3DPOOL_DEFAULT,
+	    &m_HALBuffer.pIndexBuffer );
 
 	if ( FAILED( hRes ) )
 	{
@@ -202,11 +202,11 @@ TBOOL TIndexBlockResource::Lock( TIndexPoolResourceInterface::LockBuffer* a_pLoc
 
 	DWORD uiFlags;
 	TUINT uiNumIndices = 0;
-	TUINT uiUnk1	   = m_uiFlags & 7;
+	TUINT uiUnk1       = m_uiFlags & 7;
 
 	if ( uiUnk1 == 1 )
 	{
-		uiFlags					= D3DLOCK_NOSYSLOCK;
+		uiFlags                 = D3DLOCK_NOSYSLOCK;
 		a_pLockBuffer->uiOffset = 0;
 	}
 	else
@@ -223,13 +223,13 @@ TBOOL TIndexBlockResource::Lock( TIndexPoolResourceInterface::LockBuffer* a_pLoc
 
 			if ( m_uiMaxIndices < m_uiOffset + uiNumIndices )
 			{
-				uiFlags					= D3DLOCK_DISCARD | D3DLOCK_NOSYSLOCK;
+				uiFlags                 = D3DLOCK_DISCARD | D3DLOCK_NOSYSLOCK;
 				a_pLockBuffer->uiOffset = 0;
-				m_uiOffset				= uiNumIndices;
+				m_uiOffset              = uiNumIndices;
 			}
 			else
 			{
-				uiFlags					= D3DLOCK_NOOVERWRITE | D3DLOCK_NOSYSLOCK;
+				uiFlags                 = D3DLOCK_NOOVERWRITE | D3DLOCK_NOSYSLOCK;
 				a_pLockBuffer->uiOffset = m_uiOffset;
 				m_uiOffset += uiNumIndices;
 			}
@@ -237,16 +237,16 @@ TBOOL TIndexBlockResource::Lock( TIndexPoolResourceInterface::LockBuffer* a_pLoc
 		else
 		{
 			Validate();
-			uiFlags					= D3DLOCK_DISCARD | D3DLOCK_NOSYSLOCK;
+			uiFlags                 = D3DLOCK_DISCARD | D3DLOCK_NOSYSLOCK;
 			a_pLockBuffer->uiOffset = 0;
 		}
 	}
 
 	HRESULT hRes = m_HALBuffer.pIndexBuffer->Lock(
-		a_pLockBuffer->uiOffset * sizeof( TIndexType ),
-		uiNumIndices * sizeof( TIndexType ),
-		(BYTE**)&a_pLockBuffer->pBuffer,
-		uiFlags );
+	    a_pLockBuffer->uiOffset * sizeof( TIndexType ),
+	    uiNumIndices * sizeof( TIndexType ),
+	    (BYTE**)&a_pLockBuffer->pBuffer,
+	    uiFlags );
 
 	if ( FAILED( hRes ) )
 	{
@@ -276,9 +276,9 @@ void TIndexBlockResource::Unlock()
 
 TBOOL TIndexBlockResource::Create( TIndexFactoryResourceInterface* a_pFactory, TUINT16 a_uiMaxIndices, TUINT32 a_uiFlags )
 {
-	m_pFactory	   = a_pFactory;
+	m_pFactory     = a_pFactory;
 	m_uiMaxIndices = a_uiMaxIndices;
-	m_uiFlags	   = a_uiFlags;
+	m_uiFlags      = a_uiFlags;
 	return TResource::Create();
 }
 

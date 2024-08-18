@@ -24,18 +24,18 @@ enum TSEEK
 typedef TUINT16 TFILEMODE;
 enum TFILEMODE_ : TFILEMODE
 {
-	TFILEMODE_READ		= BITFLAG( 0 ),
-	TFILEMODE_WRITE		= BITFLAG( 1 ),
+	TFILEMODE_READ      = BITFLAG( 0 ),
+	TFILEMODE_WRITE     = BITFLAG( 1 ),
 	TFILEMODE_READWRITE = BITFLAG( 2 ),
 	TFILEMODE_CREATENEW = BITFLAG( 3 ),
-	TFILEMODE_NOBUFFER	= BITFLAG( 4 ),
+	TFILEMODE_NOBUFFER  = BITFLAG( 4 ),
 };
 
 struct TNativeFileInfo
 {
 	TString8 InternalPath;
-	TUINT32	 Offset;
-	TUINT32	 Length;
+	TUINT32  Offset;
+	TUINT32  Length;
 };
 
 // JPOG Matched
@@ -101,8 +101,8 @@ public:
 	TFileSystem& operator=( TFileSystem& a_rFileSystem );
 
 protected:
-	TString8		  m_Name;			// 0x0C
-	TString8		  m_Prefix;			// 0x18
+	TString8          m_Name;           // 0x0C
+	TString8          m_Prefix;         // 0x18
 	TFileLookupHandle m_NextFileHandle; // 0x1C
 };
 
@@ -240,7 +240,7 @@ public:
 
 	private:
 		const TString8& m_String;
-		int32_t			m_Position;
+		int32_t         m_Position;
 	};
 
 	inline static TMutex ms_oMutex;
@@ -255,7 +255,7 @@ public:
 	TFile* CreateFile( const TString8& a_strName, TFILEMODE flags );
 	TBOOL  GetFileInfo( const TString8& a_strPath, TNativeFileInfo& a_rNativeInfo );
 
-	TFileSystem*		FindFileSystem( const TString8& name );
+	TFileSystem*        FindFileSystem( const TString8& name );
 	static TFileSystem* FindFileSystem( TDList<TFileSystem>& list, const TString8& name );
 
 	TString8 MakeAbsolutePath( const TString8& a_rcRelativePath ) const;
@@ -286,12 +286,12 @@ private:
 	static void DestroyCommon();
 
 private:
-	TBOOL				m_IsValidated;		// 0x0
-	TString8			m_SysPath;			// 0x4
-	TString8			m_WorkingDirectory; // 0x10
-	TUINT32				m_ValidatedCount;	// 0x1C
-	TDList<TFileSystem> m_Validated;		// 0x20
-	TDList<TFileSystem> m_Invalidated;		// 0x28
+	TBOOL               m_IsValidated;      // 0x0
+	TString8            m_SysPath;          // 0x4
+	TString8            m_WorkingDirectory; // 0x10
+	TUINT32             m_ValidatedCount;   // 0x1C
+	TDList<TFileSystem> m_Validated;        // 0x20
+	TDList<TFileSystem> m_Invalidated;      // 0x28
 };
 
 TOSHI_NAMESPACE_END

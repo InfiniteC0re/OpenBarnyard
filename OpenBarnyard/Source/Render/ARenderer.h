@@ -2,7 +2,7 @@
 #include "Cameras/ACamera.h"
 
 #ifdef TOSHI_SKU_WINDOWS
-#	include "Platform/Windows/ADisplayModes_Win.h"
+#  include "Platform/Windows/ADisplayModes_Win.h"
 #endif // TOSHI_SKU_WINDOWS
 
 #include <Toshi/TTask.h>
@@ -12,8 +12,8 @@
 #include <Render/TRenderAdapter.h>
 
 class ARenderer :
-	public Toshi::TTask,
-	public Toshi::TSingleton<ARenderer>
+    public Toshi::TTask,
+    public Toshi::TSingleton<ARenderer>
 {
 public:
 	TDECLARE_CLASS( ARenderer, Toshi::TTask );
@@ -33,7 +33,7 @@ public:
 
 	Toshi::TRenderAdapter::Mode::Device* FindSuitableDevice( Toshi::TRenderInterface::DISPLAYPARAMS& a_rDisplayParams, bool a_bReverseOrder );
 
-	Toshi::TGenericEmitter&		  GetRenderGUIEmitter() { return m_RenderGUIEmitter; }
+	Toshi::TGenericEmitter&       GetRenderGUIEmitter() { return m_RenderGUIEmitter; }
 	const Toshi::TGenericEmitter& GetRenderGUIEmitter() const { return m_RenderGUIEmitter; }
 
 private:
@@ -42,16 +42,16 @@ private:
 	void RenderMainScene( TFLOAT a_fDeltaTime );
 
 private:
-	Toshi::TViewport*				   m_pViewport;
-	Toshi::TCameraObject*			   m_pCameraObject;
-	Toshi::TViewport*				   m_pHALViewport1;
-	Toshi::TViewport*				   m_pHALViewport2;
-	TFLOAT							   m_fFar;
-	TFLOAT							   m_fNear;
-	TUINT32							   m_eScreenCaptureStatus;
+	Toshi::TViewport*                  m_pViewport;
+	Toshi::TCameraObject*              m_pCameraObject;
+	Toshi::TViewport*                  m_pHALViewport1;
+	Toshi::TViewport*                  m_pHALViewport2;
+	TFLOAT                             m_fFar;
+	TFLOAT                             m_fNear;
+	TUINT32                            m_eScreenCaptureStatus;
 	Toshi::TEmitter<ARenderer, TBOOL*> m_AnimationUpdateStartEmitter;
 	Toshi::TEmitter<ARenderer, TBOOL*> m_AnimationUpdateEndEmitter;
 	Toshi::TEmitter<ARenderer, TINT>   m_RenderGUIEmitter;
-	TBOOL							   m_bRenderGUI;
-	ADisplayModes_Win				   m_DisplayModes;
+	TBOOL                              m_bRenderGUI;
+	ADisplayModes_Win                  m_DisplayModes;
 };

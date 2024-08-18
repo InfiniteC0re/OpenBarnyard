@@ -8,7 +8,7 @@ public:
 	{
 		m_Rotation[ 0 ] = { 1.0f, 0.0f };
 		m_Rotation[ 1 ] = { 0.0f, 1.0f };
-		m_Position		= { 0.0f, 0.0f };
+		m_Position      = { 0.0f, 0.0f };
 	}
 
 	void Rotate( TFLOAT a_fAngle );

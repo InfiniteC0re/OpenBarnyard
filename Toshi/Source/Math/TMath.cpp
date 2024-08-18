@@ -11,8 +11,8 @@ TBOOL TMath::ConeVsSphere( const TVector4& a_rvConePosition, const TVector4& a_r
 	TASSERT( a_fConeFOV < TMath::HALF_PI );
 	TASSERT( a_rvConeDirection.isNormalised() );
 
-	TVector3 direction	 = a_rvSpherePosition.AsVector3() - a_rvConePosition.AsVector3();
-	TFLOAT	 fDotProduct = TVector3::DotProduct( a_rvConeDirection.AsVector3(), direction );
+	TVector3 direction   = a_rvSpherePosition.AsVector3() - a_rvConePosition.AsVector3();
+	TFLOAT   fDotProduct = TVector3::DotProduct( a_rvConeDirection.AsVector3(), direction );
 
 	if ( fDotProduct > 0.0f && fDotProduct <= a_fSphereRadius )
 	{

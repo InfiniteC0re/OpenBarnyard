@@ -7,9 +7,9 @@ class TOSHI_API TBitArray
 public:
 	// Constructors/destructor
 	constexpr TBitArray() :
-		m_pBuffer( TNULL ),
-		m_uiInitialisedWith( 0 ),
-		m_iSize( 0 )
+	    m_pBuffer( TNULL ),
+	    m_uiInitialisedWith( 0 ),
+	    m_iSize( 0 )
 	{}
 
 	TBitArray( TINT a_iNumBits, TINT a_iInitialiseWith );
@@ -51,8 +51,8 @@ public:
 
 private:
 	TUINT32* m_pBuffer;
-	TINT	 m_iSize;
-	TUINT	 m_uiInitialisedWith;
+	TINT     m_iSize;
+	TUINT    m_uiInitialisedWith;
 };
 
 TOSHI_NAMESPACE_END

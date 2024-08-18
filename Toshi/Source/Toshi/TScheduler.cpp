@@ -13,20 +13,20 @@ TOSHI_NAMESPACE_START
 
 TDEFINE_CLASS_NORUNTIME( TScheduler );
 
-TFLOAT TScheduler::s_MaxTimeDeltaAllowed		  = 0.25f;
+TFLOAT TScheduler::s_MaxTimeDeltaAllowed          = 0.25f;
 TFLOAT TScheduler::s_DebugSlowMaxTimeDeltaAllowed = 1.0f;
 
 TScheduler::TScheduler()
 {
-	m_DeltaTime				= 0.0f;
-	m_TotalTime				= 0.0f;
-	m_MaxDeltaTime			= 0.25f;
-	m_uiNumFrames			= 0;
+	m_DeltaTime             = 0.0f;
+	m_TotalTime             = 0.0f;
+	m_MaxDeltaTime          = 0.25f;
+	m_uiNumFrames           = 0;
 	m_fnDeltaTimeCalculator = TNULL;
-	m_UseDebugDeltaTime		= TFALSE;
-	m_DebugDeltaTime		= 0.01f;
+	m_UseDebugDeltaTime     = TFALSE;
+	m_DebugDeltaTime        = 0.01f;
 	m_UseDebugDeltaTimeMult = TFALSE;
-	m_DebugDeltaTimeMult	= 1.0f;
+	m_DebugDeltaTimeMult    = 1.0f;
 }
 
 TScheduler::~TScheduler()
@@ -60,7 +60,7 @@ void TScheduler::Update()
 	}
 
 	TFLOAT fDeltaTime = g_oSystemManager.GetTimer().GetDelta();
-	m_DeltaTime		  = fDeltaTime;
+	m_DeltaTime       = fDeltaTime;
 	m_TotalTime += fDeltaTime;
 	m_uiNumFrames += 1;
 

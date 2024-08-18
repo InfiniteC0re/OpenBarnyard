@@ -23,12 +23,12 @@ TBOOL TRenderSDL::CreateDisplay( const DISPLAYPARAMS& a_rDisplayParams )
 
 	m_DisplayParams = a_rDisplayParams;
 
-	GetCurrentContext()->SetViewportParameters( { .fX	   = 0.0f,
-												  .fY	   = 0.0f,
-												  .fWidth  = (TFLOAT)m_DisplayParams.uiWidth,
-												  .fHeight = (TFLOAT)m_DisplayParams.uiHeight,
-												  .fMinZ   = 0.0f,
-												  .fMaxZ   = 1.0f } );
+	GetCurrentContext()->SetViewportParameters( { .fX      = 0.0f,
+	                                              .fY      = 0.0f,
+	                                              .fWidth  = (TFLOAT)m_DisplayParams.uiWidth,
+	                                              .fHeight = (TFLOAT)m_DisplayParams.uiHeight,
+	                                              .fMinZ   = 0.0f,
+	                                              .fMaxZ   = 1.0f } );
 
 	if ( !m_DisplayParams.bWindowed )
 	{
@@ -106,11 +106,11 @@ TBOOL TRenderSDL::Create( const char* a_szName )
 
 		ACCEL accels[ 2 ];
 		accels[ 0 ].fVirt = FVIRTKEY;
-		accels[ 0 ].key	  = VK_ESCAPE;
+		accels[ 0 ].key   = VK_ESCAPE;
 
 		accels[ 1 ].fVirt = FALT;
-		accels[ 1 ].key	  = VK_RETURN;
-		accels[ 1 ].cmd	  = 1;
+		accels[ 1 ].key   = VK_RETURN;
+		accels[ 1 ].cmd   = 1;
 
 		m_hAccel = CreateAcceleratorTableA( accels, sizeof( accels ) / sizeof( *accels ) );
 
@@ -191,9 +191,9 @@ TGLShaderRef TRenderSDL::CompileShader( GLenum a_eShader, const char* a_szSource
 
 TGLShaderRef TRenderSDL::CompileShaderFromFile( GLenum a_eShader, const char* a_szFileName )
 {
-	TFile* pFile	= TFile::Create( a_szFileName );
+	TFile* pFile    = TFile::Create( a_szFileName );
 	DWORD  fileSize = pFile->GetSize();
-	char*  srcData	= new char[ fileSize + 1 ];
+	char*  srcData  = new char[ fileSize + 1 ];
 	pFile->Read( srcData, fileSize );
 	srcData[ fileSize ] = '\0';
 	pFile->Destroy();

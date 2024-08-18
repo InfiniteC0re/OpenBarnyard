@@ -12,14 +12,14 @@ TOSHI_NAMESPACE_START
 
 TLogFile::TLogFile()
 {
-	m_pFile			 = TNULL;
+	m_pFile          = TNULL;
 	m_iTotalLogCount = 0;
-	m_bIsSimpleMode	 = TFALSE;
-	m_curLevel		 = 0;
-	*m_LevelString	 = 0;
-	*m_typeCounts	 = 0;
-	m_unk2			 = TNULL;
-	m_unk3			 = 0;
+	m_bIsSimpleMode  = TFALSE;
+	m_curLevel       = 0;
+	*m_LevelString   = 0;
+	*m_typeCounts    = 0;
+	m_unk2           = TNULL;
+	m_unk3           = 0;
 }
 
 TLogFile::~TLogFile()
@@ -41,8 +41,8 @@ TLogFile::Error TLogFile::Create( const TCHAR* fileName, const TCHAR* str2, TBOO
 	TIMPLEMENT_D( "FUN_00828A40(uVar1);" );
 
 	TFILEMODE fileMode = writeExisting ?
-		TFILEMODE_NOBUFFER | TFILEMODE_WRITE :
-		TFILEMODE_NOBUFFER | TFILEMODE_WRITE | TFILEMODE_CREATENEW;
+	    TFILEMODE_NOBUFFER | TFILEMODE_WRITE :
+	    TFILEMODE_NOBUFFER | TFILEMODE_WRITE | TFILEMODE_CREATENEW;
 
 	m_pFile = TFile::Create( fileName, fileMode );
 
@@ -57,8 +57,8 @@ TLogFile::Error TLogFile::Create( const TCHAR* fileName, const TCHAR* str2, TBOO
 	}
 
 	m_iTotalLogCount = 0;
-	*m_LevelString	 = 0;
-	m_curLevel		 = 0;
+	*m_LevelString   = 0;
+	m_curLevel       = 0;
 
 	m_pFile->CPrintf( "Log created [%s]:[%s]: %s\n", fileName, str2, TUtil::GetTime() );
 	m_pFile->CPrintf( "Compilation: %s\n", __TIMESTAMP__ );
@@ -128,10 +128,10 @@ void TLogFile::Log( TUtil::LogType type, const TCHAR* str1, const TCHAR* str2, c
 			if ( m_bAllowIndentation )
 			{
 				m_pFile->CPrintf(
-					"%d [%s]: %s",
-					m_iTotalLogCount,
-					TUtil::LogTypeToString( type ),
-					m_LevelString );
+				    "%d [%s]: %s",
+				    m_iTotalLogCount,
+				    TUtil::LogTypeToString( type ),
+				    m_LevelString );
 			}
 		}
 		else
@@ -140,13 +140,13 @@ void TLogFile::Log( TUtil::LogType type, const TCHAR* str1, const TCHAR* str2, c
 			_strtime( strTime );
 
 			m_pFile->CPrintf(
-				"%d [%s] [%s]: %s: %s: %s",
-				m_iTotalLogCount,
-				TUtil::LogTypeToString( type ),
-				strTime,
-				str1,
-				str2 != TNULL ? str2 : "",
-				!m_bAllowIndentation ? m_LevelString : "" );
+			    "%d [%s] [%s]: %s: %s: %s",
+			    m_iTotalLogCount,
+			    TUtil::LogTypeToString( type ),
+			    strTime,
+			    str1,
+			    str2 != TNULL ? str2 : "",
+			    !m_bAllowIndentation ? m_LevelString : "" );
 		}
 
 		va_list args;

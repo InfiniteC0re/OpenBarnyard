@@ -34,7 +34,7 @@ public:
 	void SetOrderTable( Toshi::TOrderTable* a_pOrderTable );
 
 	ASkinMaterialHAL* GetAlphaBlendMaterial() const { return m_pAlphaBlendMaterial; }
-	void			  SetAlphaBlendMaterial( ASkinMaterialHAL* val ) { m_pAlphaBlendMaterial = val; }
+	void              SetAlphaBlendMaterial( ASkinMaterialHAL* val ) { m_pAlphaBlendMaterial = val; }
 
 	TBOOL IsSkin() const { return m_bIsSkin; }
 	TBOOL HasLighting1Tex() const { return m_bHasLighting1Tex; }
@@ -44,10 +44,10 @@ public:
 	Toshi::TTextureResourceHAL* GetSomeTexture() const;
 
 private:
-	ASkinMaterialHAL*	m_pAlphaBlendMaterial;
+	ASkinMaterialHAL*   m_pAlphaBlendMaterial;
 	Toshi::TOrderTable* m_pAssignedOrderTable;
-	TBOOL				m_bIsSkin;
-	TBOOL				m_bHasLighting1Tex;
-	TBOOL				m_bHasLighting2Tex;
-	Toshi::TTexture*	m_pSomeTexture;
+	TBOOL               m_bIsSkin;
+	TBOOL               m_bHasLighting1Tex;
+	TBOOL               m_bHasLighting2Tex;
+	Toshi::TTexture*    m_pSomeTexture;
 };

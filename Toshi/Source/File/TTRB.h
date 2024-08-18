@@ -1,6 +1,6 @@
 #pragma once
 #ifndef __TOSHI_TTRB_H__
-#	define __TOSHI_TTRB_H__
+#  define __TOSHI_TTRB_H__
 #endif
 
 #include "Toshi/TVersion.h"
@@ -13,7 +13,7 @@
 #include "Math/TQuaternion.h"
 
 #ifdef ERROR
-#	undef ERROR
+#  undef ERROR
 #endif
 
 TOSHI_NAMESPACE_START
@@ -46,7 +46,7 @@ public:
 	struct FileInfo
 	{
 		TUINT32 FileStartOffset; // offset to TRBF
-		TUINT32 FileSize;		 // just the size
+		TUINT32 FileSize;        // just the size
 	};
 
 	struct Hunk
@@ -57,11 +57,11 @@ public:
 
 public:
 	TTSF() :
-		m_pFile( TNULL ) {}
+	    m_pFile( TNULL ) {}
 
 protected:
 	Endianess m_Endianess; // 0x0
-	TFile*	  m_pFile;	   // 0x4
+	TFile*    m_pFile;     // 0x4
 };
 
 class TTSFI : public TTSF
@@ -99,13 +99,13 @@ public:
 	const Hunk& GetCurrentHunk() const { return m_CurrentHunk; }
 
 private:
-	TUINT32	 m_FileInfoCount;  // 0x8
+	TUINT32  m_FileInfoCount;  // 0x8
 	FileInfo m_FileInfo[ 32 ]; // 0xC
-	Header	 m_Header;		   // 0x10C
-	TUINT32	 m_Magic;		   // 0x114
-	Hunk	 m_CurrentHunk;	   // 0x118
-	TBOOL	 m_UNKFLAG;		   // 0x120
-	TUINT32	 m_ReadPos;		   // 0x124
+	Header   m_Header;         // 0x10C
+	TUINT32  m_Magic;          // 0x114
+	Hunk     m_CurrentHunk;    // 0x118
+	TBOOL    m_UNKFLAG;        // 0x120
+	TUINT32  m_ReadPos;        // 0x124
 };
 
 class TTSFO : public TTSF
@@ -127,7 +127,7 @@ public:
 
 public:
 	TTSFO() :
-		m_PositionCount( 0 ), m_Positions() {}
+	    m_PositionCount( 0 ), m_Positions() {}
 	~TTSFO() { Close(); }
 
 	/**
@@ -139,7 +139,7 @@ public:
 	{
 		TASSERT( m_pFile != TNULL, "TTSFO is not created" );
 		static TCHAR s_AlignBuffer[ 4 ] = { 0, 0, 0, 0 };
-		TUINT8		 alignValue			= 4 - ( m_pFile->Tell() & 3 );
+		TUINT8       alignValue         = 4 - ( m_pFile->Tell() & 3 );
 
 		if ( alignValue != 4 )
 		{
@@ -249,14 +249,14 @@ public:
 	typedef TUINT8 ERROR;
 	enum ERROR_ : ERROR
 	{
-		ERROR_OK				   = 0,
-		ERROR_NO_HEADER			   = 1,
-		ERROR_NOT_TRBF			   = 2,
-		ERROR_PARSE_ERROR		   = 3,
-		ERROR_WRONG_MAGIC		   = 4,
-		ERROR_FORM_MAGIC		   = 5,
-		ERROR_NO_FILE			   = 6,
-		ERROR_NOT_TRB			   = 7,
+		ERROR_OK                   = 0,
+		ERROR_NO_HEADER            = 1,
+		ERROR_NOT_TRBF             = 2,
+		ERROR_PARSE_ERROR          = 3,
+		ERROR_WRONG_MAGIC          = 4,
+		ERROR_FORM_MAGIC           = 5,
+		ERROR_NO_FILE              = 6,
+		ERROR_NOT_TRB              = 7,
 		ERROR_NO_FILEINFO_ON_STACK = 8,
 	};
 
@@ -268,28 +268,28 @@ public:
 		AllocType_Unk2 = 2,
 	};
 
-	using t_MemoryFuncAlloc	  = void* (*)( AllocType alloctype, TUINT32 size, TINT16 unk1, TUINT32 unk2, void* userData );
+	using t_MemoryFuncAlloc   = void* (*)( AllocType alloctype, TUINT32 size, TINT16 unk1, TUINT32 unk2, void* userData );
 	using t_MemoryFuncDealloc = void ( * )( AllocType alloctype, void* ptr, TINT16 unk1, TUINT32 unk2, void* userData );
 
 	struct SecInfo
 	{
-		TCHAR	m_Unused[ 2 ]; // 0x0 (padding)
-		TINT16	m_Unk1;		   // 0x2
-		TUINT32 m_Size;		   // 0x4
-		void*	m_Data;		   // 0x8
-		TUINT32 m_Unk2;		   // 0xC
+		TCHAR   m_Unused[ 2 ]; // 0x0 (padding)
+		TINT16  m_Unk1;        // 0x2
+		TUINT32 m_Size;        // 0x4
+		void*   m_Data;        // 0x8
+		TUINT32 m_Unk2;        // 0xC
 	};
 
 	struct Header
 	{
 		TVersion m_ui32Version;
-		TINT32	 m_i32SectionCount;
+		TINT32   m_i32SectionCount;
 	};
 
 	struct RELCEntry
 	{
-		TINT16	HDRX1;	// HDRX of pointer
-		TINT16	HDRX2;	// HDRX of data
+		TINT16  HDRX1;  // HDRX of pointer
+		TINT16  HDRX2;  // HDRX of data
 		TUINT32 Offset; // Offset to pointer in HDRX1
 	};
 
@@ -298,7 +298,7 @@ public:
 		TUINT16 HDRX;
 		TUINT16 NameOffset;
 		TUINT16 Padding;
-		TINT16	NameHash;
+		TINT16  NameHash;
 		TUINT32 DataOffset;
 	};
 
@@ -395,9 +395,9 @@ public:
 		}
 
 		return reinterpret_cast<const TCHAR*>(
-			reinterpret_cast<uintptr_t>( m_SYMB ) +
-			GetSymbolTableSize( m_SYMB->m_i32SymbCount ) +
-			symbol->NameOffset );
+		    reinterpret_cast<uintptr_t>( m_SYMB ) +
+		    GetSymbolTableSize( m_SYMB->m_i32SymbCount ) +
+		    symbol->NameOffset );
 	}
 
 	TINT32 GetNumSymbols() const
@@ -415,7 +415,7 @@ public:
 		while ( *str != '\0' )
 		{
 			character = *( str++ );
-			hash	  = (TINT16)character + hash * 0x1f;
+			hash      = (TINT16)character + hash * 0x1f;
 		}
 
 		return hash;
@@ -423,9 +423,9 @@ public:
 
 	void SetMemoryFunctions( t_MemoryFuncAlloc allocator, t_MemoryFuncDealloc deallocator, void* userdata )
 	{
-		m_MemAllocator	 = allocator;
+		m_MemAllocator   = allocator;
 		m_MemDeallocator = deallocator;
-		m_MemUserData	 = userdata;
+		m_MemUserData    = userdata;
 	}
 
 	void DeleteSymbolTable()
@@ -448,13 +448,13 @@ private:
 	static void* s_pDefAllocatorUserData;
 
 private:
-	TTSFI				m_TTSFI;
-	TUINT32				m_UNK;
-	Header*				m_pHeader;
-	SYMB*				m_SYMB;
-	t_MemoryFuncAlloc	m_MemAllocator;
+	TTSFI               m_TTSFI;
+	TUINT32             m_UNK;
+	Header*             m_pHeader;
+	SYMB*               m_SYMB;
+	t_MemoryFuncAlloc   m_MemAllocator;
 	t_MemoryFuncDealloc m_MemDeallocator;
-	void*				m_MemUserData;
+	void*               m_MemUserData;
 };
 
 TOSHI_NAMESPACE_END

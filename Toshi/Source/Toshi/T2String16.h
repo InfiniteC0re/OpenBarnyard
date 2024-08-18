@@ -26,10 +26,10 @@ public:
 
 	static TWCHAR* Concat( TWCHAR* dst, const TWCHAR* src, TSIZE size = -1 );
 
-	static TWCHAR*		 FindChar( TWCHAR* str, TWCHAR character );
+	static TWCHAR*       FindChar( TWCHAR* str, TWCHAR character );
 	static const TWCHAR* FindChar( const TWCHAR* str, TWCHAR character );
 
-	static TWCHAR*		 FindString( TWCHAR* str, const TWCHAR* substr );
+	static TWCHAR*       FindString( TWCHAR* str, const TWCHAR* substr );
 	static const TWCHAR* FindString( const TWCHAR* str, const TWCHAR* substr );
 
 	static TSIZE Length( const TWCHAR* str );
@@ -43,20 +43,20 @@ public:
 	static void IntToString( TINT value, TWCHAR* dst, TINT unused, TINT radix );
 	static void IntToString( TINT value, TWCHAR* dst, TINT radix );
 
-	static TINT	  StringToInt( const TWCHAR* src );
+	static TINT   StringToInt( const TWCHAR* src );
 	static TFLOAT StringToFloat( const TWCHAR* src );
 
-	static TWCHAR*		 SkipSpaces( TWCHAR* str );
+	static TWCHAR*       SkipSpaces( TWCHAR* str );
 	static const TWCHAR* SkipSpaces( const TWCHAR* str );
 
 	static T2Allocator* GetDefaultAllocatorCB()
 	{
-		return &T2Allocator::s_GlobalAllocator;
+		return GetGlobalAllocator();
 	}
 
 public:
 	static inline T2Allocator* sm_pDefaultAllocatorCB = GetDefaultAllocatorCB();
-	static TWCHAR			   ms_aScratchMem[ SCRATCH_MEM_SIZE ];
+	static TWCHAR              ms_aScratchMem[ SCRATCH_MEM_SIZE ];
 };
 
 TOSHI_NAMESPACE_END

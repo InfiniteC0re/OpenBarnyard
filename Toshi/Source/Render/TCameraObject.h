@@ -74,15 +74,15 @@ public:
 	}
 
 private:
-	float					   m_fNear;
-	float					   m_fFar;
-	float					   m_fFOV;
-	TINT					   m_Unk1;
+	float                      m_fNear;
+	float                      m_fFar;
+	float                      m_fFOV;
+	TINT                       m_Unk1;
 	TRenderContext::CameraMode m_eMode;
-	float					   m_fCentreX;
-	float					   m_fCentreY;
-	TTransformObject		   m_TransformObject;
-	TBOOL					   m_bEnabled;
+	float                      m_fCentreX;
+	float                      m_fCentreY;
+	TTransformObject           m_TransformObject;
+	TBOOL                      m_bEnabled;
 };
 
 TOSHI_NAMESPACE_END

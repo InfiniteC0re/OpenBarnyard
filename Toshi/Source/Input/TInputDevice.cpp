@@ -12,11 +12,11 @@ TOSHI_NAMESPACE_START
 TDEFINE_CLASS_NORUNTIME( TInputDevice );
 
 TInputDevice::TInputDevice() :
-	m_Repeats( 0, 16 ),
-	m_Array2( 0, 16 )
+    m_Repeats( 0, 16 ),
+    m_Array2( 0, 16 )
 {
-	m_bUnknown		  = TFALSE;
-	m_bIsAcquired	  = TFALSE;
+	m_bUnknown        = TFALSE;
+	m_bIsAcquired     = TFALSE;
 	m_pInputInterface = TNULL;
 }
 
@@ -48,9 +48,9 @@ TINT TInputDevice::ProcessRepeats( EventEmitter& a_rEmitter, TFLOAT a_fDeltaTime
 		{
 			if ( 1 < m_Repeats.Size() )
 			{
-				auto& rLastRepeat	= m_Repeats[ m_Repeats.Size() - 1 ];
-				rRepeat.iDoodad		= rLastRepeat.iDoodad;
-				rRepeat.fLeftTime	= rLastRepeat.fLeftTime;
+				auto& rLastRepeat   = m_Repeats[ m_Repeats.Size() - 1 ];
+				rRepeat.iDoodad     = rLastRepeat.iDoodad;
+				rRepeat.fLeftTime   = rLastRepeat.fLeftTime;
 				rRepeat.fRepeatTime = rLastRepeat.fRepeatTime;
 			}
 
@@ -75,9 +75,9 @@ TBOOL TInputDevice::StartRepeat( Doodad a_iDoodad, TFLOAT a_fFirstRepeatTime, TF
 		}
 	}
 
-	m_Repeats.Push( { .iDoodad	   = a_iDoodad,
-					  .fLeftTime   = a_fFirstRepeatTime,
-					  .fRepeatTime = a_fRepeatTime } );
+	m_Repeats.Push( { .iDoodad     = a_iDoodad,
+	                  .fLeftTime   = a_fFirstRepeatTime,
+	                  .fRepeatTime = a_fRepeatTime } );
 
 	return TTRUE;
 }
@@ -99,9 +99,9 @@ void TInputDevice::StopRepeat( Doodad a_iDoodad )
 		if ( 1 < m_Repeats.Size() )
 		{
 			auto& rLastRepeat = m_Repeats[ m_Repeats.Size() - 1 ];
-			it->iDoodad		  = rLastRepeat.iDoodad;
-			it->fLeftTime	  = rLastRepeat.fLeftTime;
-			it->fRepeatTime	  = rLastRepeat.fRepeatTime;
+			it->iDoodad       = rLastRepeat.iDoodad;
+			it->fLeftTime     = rLastRepeat.fLeftTime;
+			it->fRepeatTime   = rLastRepeat.fRepeatTime;
 		}
 
 		if ( 0 < m_Repeats.Size() )
@@ -124,10 +124,10 @@ TBOOL TInputDevice::IsForceFeedbackDevice()
 void TInputDevice::ThrowRepeatEvent( EventEmitter& emitter, RepeatInfo* repeatInfo, TFLOAT flt )
 {
 	emitter.Throw(
-		TInputInterface::InputEvent(
-			this,
-			repeatInfo->iDoodad,
-			TInputInterface::EVENT_TYPE_REPEAT ) );
+	    TInputInterface::InputEvent(
+	        this,
+	        repeatInfo->iDoodad,
+	        TInputInterface::EVENT_TYPE_REPEAT ) );
 }
 
 TOSHI_NAMESPACE_END

@@ -15,8 +15,8 @@ TDEFINE_CLASS( TVertexPoolResource );
 
 TVertexPoolResource::TVertexPoolResource()
 {
-	m_uiVertexOffset		= 0;
-	m_uiNumLocksAllTime		= 0;
+	m_uiVertexOffset        = 0;
+	m_uiNumLocksAllTime     = 0;
 	m_apManagedStreams[ 0 ] = TNULL;
 	m_apManagedStreams[ 1 ] = TNULL;
 	m_apManagedStreams[ 2 ] = TNULL;
@@ -35,7 +35,7 @@ TBOOL TVertexPoolResource::Validate()
 	}
 
 	auto pFactory = TSTATICCAST( TVertexFactoryResource, GetFactory() );
-	auto pBlock	  = pFactory->FindBlockResource( this );
+	auto pBlock   = pFactory->FindBlockResource( this );
 
 	if ( !pBlock )
 	{
@@ -47,12 +47,12 @@ TBOOL TVertexPoolResource::Validate()
 		if ( uiUnk1 == 1 )
 		{
 			uiMaxVertices = pFactory->GetMaxStaticVertices();
-			uiFlags		  = 1;
+			uiFlags       = 1;
 		}
 		else if ( uiUnk1 == 2 )
 		{
 			uiMaxVertices = GetMaxVertices();
-			uiFlags		  = 2;
+			uiFlags       = 2;
 		}
 		else
 		{
@@ -62,7 +62,7 @@ TBOOL TVertexPoolResource::Validate()
 			}
 
 			uiMaxVertices = GetMaxVertices();
-			uiFlags		  = 4;
+			uiFlags       = 4;
 		}
 
 		pBlock = pFactory->CreateBlockResource( uiMaxVertices, uiFlags );

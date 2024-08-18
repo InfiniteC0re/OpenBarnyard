@@ -45,15 +45,15 @@ public:
 
 private:
 	T2NamedPipeServerThread* m_pThread;
-	void*					 m_pUserData;
-	const TCHAR*			 m_szName;
-	UpdateStreamCallback_t	 m_fnUpdateStream;
-	TUINT					 m_uiSendInterval;
-	void*					 m_pMemory;
-	TUINT					 m_uiMemorySize;
-	HANDLE					 m_hPipe;
-	TBOOL					 m_bHasClient;
-	TBOOL					 m_bStarted;
+	void*                    m_pUserData;
+	const TCHAR*             m_szName;
+	UpdateStreamCallback_t   m_fnUpdateStream;
+	TUINT                    m_uiSendInterval;
+	void*                    m_pMemory;
+	TUINT                    m_uiMemorySize;
+	HANDLE                   m_hPipe;
+	TBOOL                    m_bHasClient;
+	TBOOL                    m_bStarted;
 };
 
 TOSHI_NAMESPACE_END

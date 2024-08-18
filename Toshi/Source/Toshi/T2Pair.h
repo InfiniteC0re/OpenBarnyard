@@ -9,7 +9,7 @@ class T2Pair
 public:
 	T2Pair( const First& first, const Second& second )
 	{
-		m_First	 = first;
+		m_First  = first;
 		m_Second = second;
 	}
 
@@ -34,7 +34,7 @@ public:
 
 	void operator=( const T2Pair<First, Second, Comparator>& other )
 	{
-		m_First	 = other.m_First;
+		m_First  = other.m_First;
 		m_Second = other.m_Second;
 	}
 

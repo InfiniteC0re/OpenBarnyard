@@ -67,7 +67,7 @@ void TShader::TShaderList::RemoveShader( TShader* pShader )
 {
 	TShader* pCurrShader = m_pRoot;
 	TShader* pPrevShader = TNULL;
-	TBOOL	 bFound		 = TFALSE;
+	TBOOL    bFound      = TFALSE;
 
 	while ( pCurrShader )
 	{

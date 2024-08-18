@@ -23,7 +23,7 @@ unsigned long __stdcall ThreadEntry( void* userParam )
 
 TBOOL TThread::Create( TSIZE a_iStackSize, PRIORITY a_ePriority, uint8_t flag )
 {
-	m_iThreadID	 = -1;
+	m_iThreadID  = -1;
 	m_hThreadHnd = CreateThread( NULL, a_iStackSize, ThreadEntry, this, CREATE_SUSPENDED, &m_iThreadID );
 
 	TASSERT( m_hThreadHnd != NULL, "Couldn't create thread" );
@@ -53,7 +53,7 @@ TBOOL TThread::Destroy()
 
 	TThreadManager::GetSingletonSafe()->RemoveThread( this );
 	m_hThreadHnd = NULL;
-	m_iThreadID	 = -1;
+	m_iThreadID  = -1;
 
 	return TTRUE;
 }
@@ -84,7 +84,7 @@ void TThread::Exit( TThread* a_pThread )
 
 	TThreadManager::GetSingletonSafe()->RemoveThread( a_pThread );
 	a_pThread->m_hThreadHnd = NULL;
-	a_pThread->m_iThreadID	= -1;
+	a_pThread->m_iThreadID  = -1;
 
 	_endthreadex( 0 );
 }

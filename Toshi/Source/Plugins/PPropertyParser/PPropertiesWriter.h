@@ -52,9 +52,9 @@ private:
 			}
 			case PBPropertyValue::Type::Array:
 			{
-				auto arraySize	= a_OrigValue.GetArray()->GetSize();
-				auto pArray		= a_pStack->Alloc( &a_ptrValue->m_uValue.Array );
-				auto pValues	= a_pStack->Alloc( &pArray->m_pValues, arraySize );
+				auto arraySize  = a_OrigValue.GetArray()->GetSize();
+				auto pArray     = a_pStack->Alloc( &a_ptrValue->m_uValue.Array );
+				auto pValues    = a_pStack->Alloc( &pArray->m_pValues, arraySize );
 				pArray->m_iSize = arraySize;
 
 				for ( size_t i = 0; i < arraySize; i++ )
@@ -72,7 +72,7 @@ private:
 		auto properties = a_pStack->Alloc<PBProperties>();
 
 		properties->m_iCount = a_oProperties.GetPropertyCount();
-		auto props			 = a_pStack->Alloc<PBProperties::PBProperty>( &properties->m_pProperties, properties->m_iCount );
+		auto props           = a_pStack->Alloc<PBProperties::PBProperty>( &properties->m_pProperties, properties->m_iCount );
 
 		const TBOOL bIsRoot = a_oProperties.GetParentProperties() == TNULL;
 
@@ -97,7 +97,7 @@ private:
 		{
 			auto& origProp = a_oProperties.Begin()[ i ];
 
-			auto prop	   = props + i;
+			auto prop      = props + i;
 			auto propName  = a_pStack->Alloc<PBPropertyName>( &prop->m_pName );
 			auto propValue = a_pStack->Alloc<PBPropertyValue>( &prop->m_pValue );
 
@@ -155,8 +155,8 @@ public:
 		TASSERT( a_oProperties.GetParentProperties() == TNULL );
 
 		PTRBWriter trb;
-		auto	   sect = trb.GetSections();
-		auto	   symb = trb.GetSymbols();
+		auto       sect = trb.GetSections();
+		auto       symb = trb.GetSymbols();
 
 		auto stack = sect->CreateStream();
 

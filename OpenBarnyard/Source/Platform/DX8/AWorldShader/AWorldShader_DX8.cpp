@@ -23,17 +23,17 @@ TOSHI_NAMESPACE_USING
 TDEFINE_CLASS( AWorldShaderHAL );
 
 AWorldShaderHAL::AWorldShaderHAL() :
-	m_ShadowColour( 0.3f, 0.3f, 0.3f, 1.0f ),
-	m_AmbientColour( 1.0f, 1.0f, 1.0f, 1.0f )
+    m_ShadowColour( 0.3f, 0.3f, 0.3f, 1.0f ),
+    m_AmbientColour( 1.0f, 1.0f, 1.0f, 1.0f )
 {
 	m_hVertexShader = 0;
-	m_pUnk2			= TNULL;
-	m_iAlphaRef		= 128;
+	m_pUnk2         = TNULL;
+	m_iAlphaRef     = 128;
 
-	m_bIsHighEndMode	  = TTRUE;
+	m_bIsHighEndMode      = TTRUE;
 	m_bAlphaBlendMaterial = TFALSE;
-	m_bUnkFlag3			  = TFALSE;
-	m_bUnkFlag4			  = TFALSE;
+	m_bUnkFlag3           = TFALSE;
+	m_bUnkFlag4           = TFALSE;
 }
 
 AWorldShaderHAL::~AWorldShaderHAL()
@@ -46,7 +46,7 @@ void AWorldShaderHAL::Flush()
 	{
 		auto pRenderInterface = TRenderD3DInterface::Interface();
 		auto pCurrentContext  = TRenderContextD3D::Upcast( pRenderInterface->GetCurrentContext() );
-		auto pDevice		  = pRenderInterface->GetDirect3DDevice();
+		auto pDevice          = pRenderInterface->GetDirect3DDevice();
 
 		if ( IsHighEndMode() )
 		{
@@ -93,7 +93,7 @@ void AWorldShaderHAL::StartFlush()
 	{
 		auto pRenderInterface = TRenderD3DInterface::Interface();
 		auto pCurrentContext  = TRenderContextD3D::Upcast( pRenderInterface->GetCurrentContext() );
-		auto pDevice		  = pRenderInterface->GetDirect3DDevice();
+		auto pDevice          = pRenderInterface->GetDirect3DDevice();
 
 		pDevice->SetTextureStageState( 0, D3DTSS_ADDRESSU, 1 );
 		pDevice->SetTextureStageState( 0, D3DTSS_ADDRESSV, 1 );
@@ -136,7 +136,7 @@ void AWorldShaderHAL::StartFlush()
 void AWorldShaderHAL::EndFlush()
 {
 	auto pRenderInterface = TRenderD3DInterface::Interface();
-	auto pDevice		  = pRenderInterface->GetDirect3DDevice();
+	auto pDevice          = pRenderInterface->GetDirect3DDevice();
 
 	pDevice->SetRenderState( D3DRS_SPECULARENABLE, FALSE );
 	pDevice->SetRenderState( D3DRS_FOGENABLE, FALSE );
@@ -238,7 +238,7 @@ void AWorldShaderHAL::Render( TRenderPacket* a_pRenderPacket )
 	{
 		auto pRenderInterface = TRenderD3DInterface::Interface();
 		auto pCurrentContext  = TRenderContextD3D::Upcast( pRenderInterface->GetCurrentContext() );
-		auto pDevice		  = pRenderInterface->GetDirect3DDevice();
+		auto pDevice          = pRenderInterface->GetDirect3DDevice();
 
 		D3DXMATRIX mMVP;
 		D3DXMatrixMultiply( &mMVP, a_pRenderPacket->GetModelViewMatrix(), pCurrentContext->GetProjectionMatrix() );
@@ -260,7 +260,7 @@ void AWorldShaderHAL::Render( TRenderPacket* a_pRenderPacket )
 			s_RenderStateFlags |= 24;
 		}
 
-		auto pMesh	   = TSTATICCAST( AWorldMeshHAL, a_pRenderPacket->GetMesh() );
+		auto pMesh     = TSTATICCAST( AWorldMeshHAL, a_pRenderPacket->GetMesh() );
 		auto pMaterial = TSTATICCAST( AWorldMaterialHAL, pMesh->GetMaterial() );
 
 		if ( pMaterial->GetBlendMode() != 0 || a_pRenderPacket->GetAlpha() < 1.0f )
@@ -312,11 +312,11 @@ void AWorldShaderHAL::Render( TRenderPacket* a_pRenderPacket )
 
 		// Draw mesh
 		pDevice->DrawIndexedPrimitive(
-			D3DPT_TRIANGLESTRIP,
-			0,
-			pVertexPool->GetNumVertices(),
-			indexBuffer.uiIndexOffset,
-			pIndexPool->GetNumIndices() - 2 );
+		    D3DPT_TRIANGLESTRIP,
+		    0,
+		    pVertexPool->GetNumVertices(),
+		    indexBuffer.uiIndexOffset,
+		    pIndexPool->GetNumIndices() - 2 );
 	}
 }
 
@@ -379,7 +379,7 @@ TBOOL AWorldShaderHAL::IsCapableShaders()
 	D3DCAPS8 caps;
 
 	auto pRenderInterface = TRenderD3DInterface::Interface();
-	auto pDevice		  = pRenderInterface->GetDirect3DDevice();
+	auto pDevice          = pRenderInterface->GetDirect3DDevice();
 
 	if ( !pDevice )
 	{
@@ -411,7 +411,7 @@ void* AWorldShaderHAL::CreateUnknown( void*, void*, void*, void* )
 
 void AWorldShaderHAL::SetColours( const Toshi::TVector4& a_rShadowColour, const Toshi::TVector4 a_rAmbientColour )
 {
-	m_ShadowColour	= a_rShadowColour;
+	m_ShadowColour  = a_rShadowColour;
 	m_AmbientColour = a_rAmbientColour;
 
 	Toshi::TMath::Clip( m_ShadowColour.x, 0.0f, 1.0f );
@@ -426,7 +426,7 @@ void AWorldShaderHAL::SetupLowEndMode()
 {
 	auto pRenderInterface = TRenderD3DInterface::Interface();
 	auto pCurrentContext  = TRenderContextD3D::Upcast( pRenderInterface->GetCurrentContext() );
-	auto pDevice		  = pRenderInterface->GetDirect3DDevice();
+	auto pDevice          = pRenderInterface->GetDirect3DDevice();
 
 	pDevice->SetVertexShader( D3DFVF_TEX1 | D3DFVF_DIFFUSE | D3DFVF_SPECULAR | D3DFVF_NORMAL | D3DFVF_XYZ );
 	pDevice->SetPixelShader( NULL );
@@ -454,7 +454,7 @@ void AWorldShaderHAL::SetupLowEndMode()
 
 	pDevice->SetRenderState( D3DRS_CULLMODE, m_bRenderEnvMap ? D3DCULL_CCW : D3DCULL_CW );
 
-	static TUINT	 s_uiIdentityMatrixFlags;
+	static TUINT     s_uiIdentityMatrixFlags;
 	static TMatrix44 s_uiIdentityMatrix;
 
 	if ( !HASANYFLAG( s_uiIdentityMatrixFlags, 1 ) )

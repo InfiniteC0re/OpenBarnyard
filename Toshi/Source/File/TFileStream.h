@@ -12,16 +12,16 @@ public:
 
 public:
 	TFileStreamJob( TSemaphore* semaphore ) :
-		m_pSemaphore( semaphore ), m_bIsProcessed( TTRUE ) {}
+	    m_pSemaphore( semaphore ), m_bIsProcessed( TTRUE ) {}
 
 	virtual ~TFileStreamJob() = default;
-	virtual void Process()	  = 0;
+	virtual void Process()    = 0;
 
 	TBOOL IsProcessed() const { return m_bIsProcessed; }
 
 protected:
 	TSemaphore* m_pSemaphore;
-	TBOOL		m_bIsProcessed;
+	TBOOL       m_bIsProcessed;
 };
 
 class TFileStream : public TThread
@@ -45,9 +45,9 @@ class TTRBStreamJob : public TFileStreamJob
 {
 public:
 	TTRBStreamJob() :
-		TFileStreamJob( TNULL )
+	    TFileStreamJob( TNULL )
 	{
-		m_trb			= TNULL;
+		m_trb           = TNULL;
 		m_fileName[ 0 ] = '\0';
 	}
 
@@ -64,7 +64,7 @@ public:
 		T2String8::Copy( m_fileName, fileName, -1 );
 	}
 
-	TTRB*		 GetTRB() const { return m_trb; }
+	TTRB*        GetTRB() const { return m_trb; }
 	const TCHAR* GetFileName() const { return m_fileName; }
 
 public:

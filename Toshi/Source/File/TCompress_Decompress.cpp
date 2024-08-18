@@ -20,14 +20,14 @@ uintptr_t TCompress::Decompress( TFile* file, TCompress::Header* header, TCHAR* 
 	if ( header->Size > bufferSize )
 		return TCOMPRESS_ERROR_WRONG_SIZE;
 
-	TCHAR*	pBufferPos	   = buffer;
+	TCHAR*  pBufferPos     = buffer;
 	TUINT32 compressedLeft = header->CompressedSize;
 
 	while ( compressedLeft > 0 )
 	{
 		TUINT32 chunkSize;
-		TBOOL	noOffset;
-		TINT	offset;
+		TBOOL   noOffset;
+		TINT    offset;
 
 		compressedLeft -= GetCommand( file, noOffset, chunkSize, offset );
 
@@ -70,7 +70,7 @@ int8_t TCompress::GetHeader( TFile* file, TCompress::Header& btecHeader )
 {
 	TUINT32 headerSize = TCompress::HEADER_SIZE_12;
 	TUINT32 savedPos   = file->Tell();
-	TSIZE	readedSize = file->Read( &btecHeader, headerSize );
+	TSIZE   readedSize = file->Read( &btecHeader, headerSize );
 
 	if ( btecHeader.Version == TVERSION( 1, 3 ) )
 	{
@@ -98,9 +98,9 @@ int8_t TCompress::GetHeader( TFile* file, TCompress::Header& btecHeader )
 TINT TCompress::GetCommand( TFile* file, TBOOL& noOffset, TUINT32& size, TINT& offset )
 {
 	TINT  read_count = file->Read( &size, 1 );
-	TBOOL isBigSize	 = size & BTECSizeFlag_BigSize;
-	noOffset		 = size & BTECSizeFlag_NoOffset;
-	offset			 = -1;
+	TBOOL isBigSize  = size & BTECSizeFlag_BigSize;
+	noOffset         = size & BTECSizeFlag_NoOffset;
+	offset           = -1;
 
 	// by default size is 6 bits long
 	size &= BTECSizeFlag_SizeMask;

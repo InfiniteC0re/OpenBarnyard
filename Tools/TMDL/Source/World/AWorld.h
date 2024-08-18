@@ -29,18 +29,18 @@ struct WorldVertex
 struct CellMesh
 {
 	Toshi::TMesh* pMesh;
-	TUINT32		  uiNumIndices;
-	TUINT32		  uiNumVertices1;
-	TUINT16		  uiNumVertices2;
-	TCHAR*		  szMaterialName;
+	TUINT32       uiNumIndices;
+	TUINT32       uiNumVertices1;
+	TUINT16       uiNumVertices2;
+	TCHAR*        szMaterialName;
 	WorldVertex*  pVertices;
-	TUINT16*	  pIndices;
+	TUINT16*      pIndices;
 };
 
 struct CellMeshSphere
 {
 	Toshi::TSphere m_BoundingSphere;
-	CellMesh*	   m_pCellMesh;
+	CellMesh*      m_pCellMesh;
 };
 
 struct CellSphereTreeLeafNode
@@ -56,7 +56,7 @@ struct CellSphereTreeLeafNode
 
 struct CellSphereTreeBranchNode
 {
-	Toshi::TSphere			  m_BoundingSphere;
+	Toshi::TSphere            m_BoundingSphere;
 	CellSphereTreeBranchNode* m_pRight;
 
 	TBOOL IsLeaf() const { return m_pRight == TNULL; }
@@ -76,10 +76,10 @@ struct CellSphereTreeBranchNode
 
 struct Cell
 {
-	TCHAR					  m_MetaData[ 128 ];
-	TINT					  m_Unknown;
-	TUINT32					  uiNumMeshes;
-	CellMeshSphere**		  ppCellMeshSpheres;
+	TCHAR                     m_MetaData[ 128 ];
+	TINT                      m_Unknown;
+	TUINT32                   uiNumMeshes;
+	CellMeshSphere**          ppCellMeshSpheres;
 	CellSphereTreeBranchNode* pTreeBranchNodes;
 };
 

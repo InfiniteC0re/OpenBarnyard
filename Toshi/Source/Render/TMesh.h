@@ -14,11 +14,11 @@ public:
 	using State = TUINT32;
 	enum State_ : State
 	{
-		State_None		= 0,
-		State_Created	= BITFLAG( 0 ),
+		State_None      = 0,
+		State_Created   = BITFLAG( 0 ),
 		State_Validated = BITFLAG( 1 ),
-		State_Unknown1	= BITFLAG( 2 ),
-		State_Glow		= BITFLAG( 3 )
+		State_Unknown1  = BITFLAG( 2 ),
+		State_Glow      = BITFLAG( 3 )
 	};
 
 	// These flags can be used by the client classes
@@ -45,10 +45,10 @@ public:
 	void DestroyResource();
 
 	TMaterial* GetMaterial() const;
-	void	   SetMaterial( TMaterial* a_pMaterial );
+	void       SetMaterial( TMaterial* a_pMaterial );
 
 	TShader* GetOwnerShader();
-	void	 SetOwnerShader( TShader* a_pShader );
+	void     SetOwnerShader( TShader* a_pShader );
 
 	TBOOL IsCreated() const;
 	TBOOL IsValidated() const;
@@ -58,9 +58,9 @@ protected:
 	~TMesh();
 
 protected:
-	TMaterial* m_pMaterial;	   // 0x04
+	TMaterial* m_pMaterial;    // 0x04
 	TShader*   m_pOwnerShader; // 0x08
-	State	   m_State;		   // 0x0C
+	State      m_State;        // 0x0C
 };
 
 TOSHI_NAMESPACE_END

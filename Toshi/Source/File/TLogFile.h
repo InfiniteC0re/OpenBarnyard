@@ -38,20 +38,20 @@ public:
 	void  SetSimpleMode( TBOOL a_bEnable ) { m_bIsSimpleMode = a_bEnable; }
 	TBOOL IsSimpleMode() { return m_bIsSimpleMode; }
 
-	TINT		 GetTypeCount( TUtil::LogType a_eType ) const { return m_typeCounts[ a_eType ]; }
-	TINT		 GetTotalLogCount() const { return m_iTotalLogCount; }
+	TINT         GetTypeCount( TUtil::LogType a_eType ) const { return m_typeCounts[ a_eType ]; }
+	TINT         GetTotalLogCount() const { return m_iTotalLogCount; }
 	const TCHAR* GetLevelString() const { return m_LevelString; }
 
 private:
-	TFile*	m_pFile;							  // 0x00
-	TINT	m_iTotalLogCount;					  // 0x04
-	TBOOL	m_bIsSimpleMode;					  // 0x08
-	TBOOL	m_bAllowIndentation;				  // 0x09
-	TCHAR	m_LevelString[ cLevelMax ];			  // 0x0A
-	TUINT32 m_curLevel;							  // 0x2C
-	TINT	m_typeCounts[ TUtil::LogType_NUMOF ]; // 0x30
-	TINT*	m_unk2;								  // 0x34
-	TINT	m_unk3;								  // 0x38
+	TFile*  m_pFile;                              // 0x00
+	TINT    m_iTotalLogCount;                     // 0x04
+	TBOOL   m_bIsSimpleMode;                      // 0x08
+	TBOOL   m_bAllowIndentation;                  // 0x09
+	TCHAR   m_LevelString[ cLevelMax ];           // 0x0A
+	TUINT32 m_curLevel;                           // 0x2C
+	TINT    m_typeCounts[ TUtil::LogType_NUMOF ]; // 0x30
+	TINT*   m_unk2;                               // 0x34
+	TINT    m_unk3;                               // 0x38
 };
 
 TOSHI_NAMESPACE_END

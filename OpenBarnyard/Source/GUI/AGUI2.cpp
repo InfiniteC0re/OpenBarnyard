@@ -9,7 +9,7 @@
 #include <Toshi/TSystem.h>
 
 #ifdef TOSHI_SKU_WINDOWS
-#	include "Platform/DX8/AGUI2Renderer_DX8.h"
+#  include "Platform/DX8/AGUI2Renderer_DX8.h"
 #endif // TOSHI_SKU_WINDOWS
 
 //-----------------------------------------------------------------------------
@@ -24,12 +24,12 @@ TDEFINE_CLASS( AGUI2 );
 
 AGUI2::AGUI2()
 {
-	m_pRootElement	   = TNULL;
+	m_pRootElement     = TNULL;
 	m_bShowMouseCursor = TFALSE;
 
 	m_bShowMemStatsInfo = TTRUE;
-	m_bShowFPSInfo		= TTRUE;
-	m_bShowPlayerInfo	= TTRUE;
+	m_bShowFPSInfo      = TTRUE;
+	m_bShowPlayerInfo   = TTRUE;
 	m_bShowTexturesInfo = TTRUE;
 }
 
@@ -47,7 +47,7 @@ TBOOL AGUI2::OnCreate()
 	AGUI2TextureSectionManager::CreateMaterials();
 
 	auto pDebugCanvas = ms_pCurrentContext->GetDebugCanvas();
-	auto pFont		  = AGUI2FontManager::FindFont( "Rekord18" );
+	auto pFont        = AGUI2FontManager::FindFont( "Rekord18" );
 
 	// FPS stats
 	m_oFPS.Create( pFont, 600.0f );
@@ -112,13 +112,13 @@ TBOOL AGUI2::OnUpdate( TFLOAT a_fDeltaTime )
 			g_pMemory->GetMemInfo( memInfo, TNULL );
 
 			TStringManager::String16Format(
-				m_wszMemStats,
-				TARRAYSIZE( m_wszMemStats ),
-				L"Mem Used: %u, Free: %u\nHoles: %u, Largest: %u",
-				memInfo.m_uiLogicTotalUsed,
-				memInfo.m_uiLogicTotalFree,
-				memInfo.m_iNumHoles,
-				memInfo.m_uiLargestHole );
+			    m_wszMemStats,
+			    TARRAYSIZE( m_wszMemStats ),
+			    L"Mem Used: %u, Free: %u\nHoles: %u, Largest: %u",
+			    memInfo.m_uiLogicTotalUsed,
+			    memInfo.m_uiLogicTotalFree,
+			    memInfo.m_iNumHoles,
+			    memInfo.m_uiLargestHole );
 
 			m_oMemStats.SetText( m_wszMemStats );
 			s_UpdateTimer = 0.0f;
@@ -127,21 +127,21 @@ TBOOL AGUI2::OnUpdate( TFLOAT a_fDeltaTime )
 
 	if ( m_bShowFPSInfo )
 	{
-		static TFLOAT s_FPS			= 0.0f;
+		static TFLOAT s_FPS         = 0.0f;
 		static TFLOAT s_UpdateTimer = 0.0f;
 		s_UpdateTimer += a_fDeltaTime;
 
 		if ( s_UpdateTimer > 0.1f )
 		{
-			s_FPS		  = g_oSystemManager.GetFPS();
+			s_FPS         = g_oSystemManager.GetFPS();
 			s_UpdateTimer = 0.0f;
 		}
 
 		TStringManager::String16Format(
-			m_wszFPS,
-			TARRAYSIZE( m_wszFPS ),
-			L"FPS: %0.02f",
-			s_FPS );
+		    m_wszFPS,
+		    TARRAYSIZE( m_wszFPS ),
+		    L"FPS: %0.02f",
+		    s_FPS );
 
 		m_oFPS.SetText( m_wszFPS );
 
@@ -175,21 +175,21 @@ TBOOL AGUI2::OnUpdate( TFLOAT a_fDeltaTime )
 				auto vCamTranslation = pCamera->GetMatrix().GetTranslation4();
 
 				TStringManager::String16Format(
-					wszCameraInfo,
-					TARRAYSIZE( wszCameraInfo ),
-					L"%s: (%0.02f, %0.02f, %0.02f)",
-					L"Cam",
-					vCamTranslation.x,
-					vCamTranslation.y,
-					vCamTranslation.z );
+				    wszCameraInfo,
+				    TARRAYSIZE( wszCameraInfo ),
+				    L"%s: (%0.02f, %0.02f, %0.02f)",
+				    L"Cam",
+				    vCamTranslation.x,
+				    vCamTranslation.y,
+				    vCamTranslation.z );
 			}
 		}
 
 		TStringManager::String16Format(
-			m_wszPlayerInfo,
-			TARRAYSIZE( m_wszPlayerInfo ),
-			L"%s",
-			wszCameraInfo );
+		    m_wszPlayerInfo,
+		    TARRAYSIZE( m_wszPlayerInfo ),
+		    L"%s",
+		    wszCameraInfo );
 
 		m_oPlayerInfo.SetText( m_wszPlayerInfo );
 	}
@@ -200,12 +200,12 @@ TBOOL AGUI2::OnUpdate( TFLOAT a_fDeltaTime )
 		auto iNumUsedTextures = AMaterialLibraryManager::GetSingleton()->GetNumUsedTextures();
 
 		TStringManager::String16Format(
-			m_wszTexturesInfo,
-			TARRAYSIZE( m_wszTexturesInfo ),
-			L"Textures: (F:%d,U:%d)/%d",
-			iNumFreeTextures,
-			iNumUsedTextures,
-			AMaterialLibraryManager::MAX_NUM_TEXTURES );
+		    m_wszTexturesInfo,
+		    TARRAYSIZE( m_wszTexturesInfo ),
+		    L"Textures: (F:%d,U:%d)/%d",
+		    iNumFreeTextures,
+		    iNumUsedTextures,
+		    AMaterialLibraryManager::MAX_NUM_TEXTURES );
 
 		m_oTexturesInfo.SetText( m_wszTexturesInfo );
 

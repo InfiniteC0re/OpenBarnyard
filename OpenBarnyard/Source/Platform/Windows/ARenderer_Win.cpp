@@ -14,15 +14,15 @@
 #include "Movie/AMoviePlayer.h"
 
 #ifdef TOSHI_SKU_WINDOWS
-#	include "Platform/DX8/TVertexFactoryResource_DX8.h"
-#	include "Platform/DX8/TIndexFactoryResource_DX8.h"
-#	include "Platform/DX8/TTextureFactoryHAL_DX8.h"
-#	include "Platform/DX8/TRenderInterface_DX8.h"
-#	include "Platform/DX8/TViewport_DX8.h"
+#  include "Platform/DX8/TVertexFactoryResource_DX8.h"
+#  include "Platform/DX8/TIndexFactoryResource_DX8.h"
+#  include "Platform/DX8/TTextureFactoryHAL_DX8.h"
+#  include "Platform/DX8/TRenderInterface_DX8.h"
+#  include "Platform/DX8/TViewport_DX8.h"
 
-#	include "Platform/DX8/ASysShader/ASysShader_DX8.h"
-#	include "Platform/DX8/AWorldShader/AWorldShader_DX8.h"
-#	include "Platform/DX8/ASkinShader/ASkinShader_DX8.h"
+#  include "Platform/DX8/ASysShader/ASysShader_DX8.h"
+#  include "Platform/DX8/AWorldShader/AWorldShader_DX8.h"
+#  include "Platform/DX8/ASkinShader/ASkinShader_DX8.h"
 #endif // TOSHI_SKU_WINDOWS
 
 //-----------------------------------------------------------------------------
@@ -36,23 +36,23 @@ TOSHI_NAMESPACE_USING
 TDEFINE_CLASS( ARenderer );
 
 ARenderer::ARenderer() :
-	m_RenderGUIEmitter( this ),
-	m_AnimationUpdateStartEmitter( this ),
-	m_AnimationUpdateEndEmitter( this ),
-	m_pViewport( TNULL ),
-	m_pCameraObject( TNULL ),
-	m_pHALViewport1( TNULL ),
-	m_pHALViewport2( TNULL ),
-	m_bRenderGUI( TTRUE ),
-	m_fNear( 1.0f ),
-	m_fFar( 280.0f )
+    m_RenderGUIEmitter( this ),
+    m_AnimationUpdateStartEmitter( this ),
+    m_AnimationUpdateEndEmitter( this ),
+    m_pViewport( TNULL ),
+    m_pCameraObject( TNULL ),
+    m_pHALViewport1( TNULL ),
+    m_pHALViewport2( TNULL ),
+    m_bRenderGUI( TTRUE ),
+    m_fNear( 1.0f ),
+    m_fFar( 280.0f )
 {
 }
 
 TBOOL ARenderer::CreateTRender()
 {
 	auto pRendererClass = TClass::Find( "TRenderD3DInterface" );
-	auto pRenderer		= TSTATICCAST( TRenderD3DInterface, pRendererClass->CreateObject() );
+	auto pRenderer      = TSTATICCAST( TRenderD3DInterface, pRendererClass->CreateObject() );
 
 	TFIXME( "Call FUN_006c8010(DAT_007cf02c,&local_38) but not sure if it has any use" );
 
@@ -63,15 +63,15 @@ TBOOL ARenderer::CreateTRender()
 
 	CreateTRenderResources();
 
-	TINT  iWidth	   = 800;
-	TINT  iHeight	   = 600;
+	TINT  iWidth       = 800;
+	TINT  iHeight      = 600;
 	TINT  iColourDepth = 32;
-	TBOOL bWindowed	   = TTRUE;
+	TBOOL bWindowed    = TTRUE;
 
 	if ( AOptions::GetSingleton() )
 	{
-		iWidth	  = AOptions::GetSingleton()->GetWidth();
-		iHeight	  = AOptions::GetSingleton()->GetHeight();
+		iWidth    = AOptions::GetSingleton()->GetWidth();
+		iHeight   = AOptions::GetSingleton()->GetHeight();
 		bWindowed = AOptions::GetSingleton()->IsWindowed();
 		pRenderer->SetGamma( AOptions::GetSingleton()->GetGamma() );
 	}
@@ -79,16 +79,16 @@ TBOOL ARenderer::CreateTRender()
 	if ( !m_DisplayModes.IsModeExists( iWidth, iHeight, iColourDepth ) )
 	{
 		// Incompatible display mode
-		iWidth		 = 800;
-		iHeight		 = 600;
+		iWidth       = 800;
+		iHeight      = 600;
 		iColourDepth = 32;
 	}
 
 	TRenderInterface::DISPLAYPARAMS displayParams;
-	displayParams.uiWidth			  = iWidth;
-	displayParams.uiHeight			  = iHeight;
-	displayParams.bWindowed			  = bWindowed;
-	displayParams.uiColourDepth		  = 32;
+	displayParams.uiWidth             = iWidth;
+	displayParams.uiHeight            = iHeight;
+	displayParams.bWindowed           = bWindowed;
+	displayParams.uiColourDepth       = 32;
 	displayParams.eDepthStencilFormat = 0;
 
 	auto pDevice = FindSuitableDevice( displayParams, TTRUE );
@@ -98,7 +98,7 @@ TBOOL ARenderer::CreateTRender()
 		if ( displayParams.uiColourDepth == 32 )
 		{
 			displayParams.uiColourDepth = 16;
-			pDevice						= FindSuitableDevice( displayParams, TTRUE );
+			pDevice                     = FindSuitableDevice( displayParams, TTRUE );
 
 			if ( pDevice == 0 )
 			{
@@ -130,62 +130,62 @@ TBOOL ARenderer::CreateTRenderResources()
 
 	{
 		auto pResource = TSTATICCAST(
-			TVertexFactoryResource,
-			pRenderer->CreateResource(
-				TClass::Find( "TVertexFactoryResource" ),
-				"VFSYSVNDUV1",
-				TNULL ) );
+		    TVertexFactoryResource,
+		    pRenderer->CreateResource(
+		        TClass::Find( "TVertexFactoryResource" ),
+		        "VFSYSVNDUV1",
+		        TNULL ) );
 
 		pRenderer->SetResourceExplicit( pResource, SYSRESOURCE_VFSYSVNDUV1 );
 
 		TVertexFactoryFormat vertexFormat;
-		vertexFormat.m_uiNumStreams						  = 1;
+		vertexFormat.m_uiNumStreams                       = 1;
 		vertexFormat.m_aStreamFormats[ 0 ].m_uiVertexSize = 24;
-		vertexFormat.m_aStreamFormats[ 0 ].m_Unk		  = 0;
+		vertexFormat.m_aStreamFormats[ 0 ].m_Unk          = 0;
 		pResource->Create( &vertexFormat, 54050, 0 );
 	}
 
 	{
 		auto pResource = TSTATICCAST(
-			TVertexFactoryResource,
-			pRenderer->CreateResource(
-				TClass::Find( "TVertexFactoryResource" ),
-				"VFSKIN",
-				TNULL ) );
+		    TVertexFactoryResource,
+		    pRenderer->CreateResource(
+		        TClass::Find( "TVertexFactoryResource" ),
+		        "VFSKIN",
+		        TNULL ) );
 
 		pRenderer->SetResourceExplicit( pResource, SYSRESOURCE_VFSKIN );
 
 		TVertexFactoryFormat vertexFormat;
-		vertexFormat.m_uiNumStreams						  = 1;
+		vertexFormat.m_uiNumStreams                       = 1;
 		vertexFormat.m_aStreamFormats[ 0 ].m_uiVertexSize = 40;
-		vertexFormat.m_aStreamFormats[ 0 ].m_Unk		  = 0;
+		vertexFormat.m_aStreamFormats[ 0 ].m_Unk          = 0;
 		pResource->Create( &vertexFormat, 54050, 0 );
 	}
 
 	{
 		auto pResource = TSTATICCAST(
-			TVertexFactoryResource,
-			pRenderer->CreateResource(
-				TClass::Find( "TVertexFactoryResource" ),
-				"VFWORLD",
-				TNULL ) );
+		    TVertexFactoryResource,
+		    pRenderer->CreateResource(
+		        TClass::Find( "TVertexFactoryResource" ),
+		        "VFWORLD",
+		        TNULL ) );
 
 		pRenderer->SetResourceExplicit( pResource, SYSRESOURCE_VFWORLD );
 
 		TVertexFactoryFormat vertexFormat;
-		vertexFormat.m_uiNumStreams						  = 1;
+		vertexFormat.m_uiNumStreams                       = 1;
 		vertexFormat.m_aStreamFormats[ 0 ].m_uiVertexSize = 44;
-		vertexFormat.m_aStreamFormats[ 0 ].m_Unk		  = 0;
+		vertexFormat.m_aStreamFormats[ 0 ].m_Unk          = 0;
 		pResource->Create( &vertexFormat, 54050, 0 );
 	}
 
 	{
 		auto pResource = TSTATICCAST(
-			TIndexFactoryResource,
-			pRenderer->CreateResource(
-				TClass::Find( "TIndexFactoryResource" ),
-				"IFSYS",
-				TNULL ) );
+		    TIndexFactoryResource,
+		    pRenderer->CreateResource(
+		        TClass::Find( "TIndexFactoryResource" ),
+		        "IFSYS",
+		        TNULL ) );
 
 		pRenderer->SetResourceExplicit( pResource, SYSRESOURCE_IFSYS );
 
@@ -196,9 +196,9 @@ TBOOL ARenderer::CreateTRenderResources()
 
 	{
 		auto pResource = pRenderer->CreateResource(
-			TClass::Find( "TTextureFactoryHAL" ),
-			"TextureFactory",
-			TNULL );
+		    TClass::Find( "TTextureFactoryHAL" ),
+		    "TextureFactory",
+		    TNULL );
 
 		pRenderer->SetResourceExplicit( pResource, SYSRESOURCE_TEXTUREFACTORY );
 		pResource->Create();
@@ -209,33 +209,33 @@ TBOOL ARenderer::CreateTRenderResources()
 
 TRenderAdapter::Mode::Device* ARenderer::FindSuitableDevice( TRenderInterface::DISPLAYPARAMS& a_rDisplayParams, bool a_bReverseOrder )
 {
-	auto						  pRenderer = TSTATICCAST( TRenderD3DInterface, TRenderInterface::GetSingleton() );
-	TRenderAdapter::Mode::Device* pDevice	= TNULL;
+	auto                          pRenderer = TSTATICCAST( TRenderD3DInterface, TRenderInterface::GetSingleton() );
+	TRenderAdapter::Mode::Device* pDevice   = TNULL;
 
 	if ( a_bReverseOrder )
 	{
 		a_rDisplayParams.eDepthStencilFormat = 4;
-		pDevice								 = pRenderer->FindDevice( a_rDisplayParams );
+		pDevice                              = pRenderer->FindDevice( a_rDisplayParams );
 
 		if ( !pDevice )
 		{
 			a_rDisplayParams.eDepthStencilFormat = 2;
-			pDevice								 = pRenderer->FindDevice( a_rDisplayParams );
+			pDevice                              = pRenderer->FindDevice( a_rDisplayParams );
 
 			if ( !pDevice )
 			{
 				a_rDisplayParams.eDepthStencilFormat = 3;
-				pDevice								 = pRenderer->FindDevice( a_rDisplayParams );
+				pDevice                              = pRenderer->FindDevice( a_rDisplayParams );
 
 				if ( !pDevice )
 				{
 					a_rDisplayParams.eDepthStencilFormat = 0;
-					pDevice								 = pRenderer->FindDevice( a_rDisplayParams );
+					pDevice                              = pRenderer->FindDevice( a_rDisplayParams );
 
 					if ( !pDevice )
 					{
 						a_rDisplayParams.eDepthStencilFormat = 1;
-						pDevice								 = pRenderer->FindDevice( a_rDisplayParams );
+						pDevice                              = pRenderer->FindDevice( a_rDisplayParams );
 					}
 				}
 			}
@@ -243,28 +243,28 @@ TRenderAdapter::Mode::Device* ARenderer::FindSuitableDevice( TRenderInterface::D
 	}
 	else
 	{
-		pDevice								 = pRenderer->FindDevice( a_rDisplayParams );
+		pDevice                              = pRenderer->FindDevice( a_rDisplayParams );
 		a_rDisplayParams.eDepthStencilFormat = 0;
 
 		if ( !pDevice )
 		{
 			a_rDisplayParams.eDepthStencilFormat = 1;
-			pDevice								 = pRenderer->FindDevice( a_rDisplayParams );
+			pDevice                              = pRenderer->FindDevice( a_rDisplayParams );
 
 			if ( !pRenderer->FindDevice( a_rDisplayParams ) )
 			{
 				a_rDisplayParams.eDepthStencilFormat = 2;
-				pDevice								 = pRenderer->FindDevice( a_rDisplayParams );
+				pDevice                              = pRenderer->FindDevice( a_rDisplayParams );
 
 				if ( !pRenderer->FindDevice( a_rDisplayParams ) )
 				{
 					a_rDisplayParams.eDepthStencilFormat = 4;
-					pDevice								 = pRenderer->FindDevice( a_rDisplayParams );
+					pDevice                              = pRenderer->FindDevice( a_rDisplayParams );
 
 					if ( !pRenderer->FindDevice( a_rDisplayParams ) )
 					{
 						a_rDisplayParams.eDepthStencilFormat = 3;
-						pDevice								 = pRenderer->FindDevice( a_rDisplayParams );
+						pDevice                              = pRenderer->FindDevice( a_rDisplayParams );
 					}
 				}
 			}
@@ -338,13 +338,13 @@ void ARenderer::RenderMainScene( TFLOAT a_fDeltaTime )
 {
 	if ( ARootTask::GetSingleton()->ShouldRenderMainScene() )
 	{
-		auto pViewport		  = m_pViewport;
+		auto pViewport        = m_pViewport;
 		auto pViewportContext = pViewport->GetRenderContext();
-		auto pCameraObject	  = m_pCameraObject;
+		auto pCameraObject    = m_pCameraObject;
 
 		pViewport->AllowDepthClear( TTRUE );
 
-		auto pRender	 = TRenderD3DInterface::Interface();
+		auto pRender     = TRenderD3DInterface::Interface();
 		auto pOldContext = pRender->SetCurrentRenderContext( pViewportContext );
 
 		auto& rTransformStack = pRender->GetTransforms();
@@ -421,7 +421,7 @@ TBOOL ARenderer::OnUpdate( TFLOAT a_fDeltaTime )
 		}
 		else if ( pRootTask->IsRenderWorld() )
 		{
-			const ACamera*	pCamera	   = ACameraManager::GetSingleton()->GetCurrentCamera();
+			const ACamera*  pCamera    = ACameraManager::GetSingleton()->GetCurrentCamera();
 			const TMatrix44 oCamMatrix = pCamera->GetMatrix();
 
 			UpdateMainCamera( oCamMatrix, pCamera );

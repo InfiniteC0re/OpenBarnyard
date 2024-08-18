@@ -59,9 +59,9 @@ TBOOL TVertexBlockResource::DettachPool( TVertexPoolResource* a_pPool )
 
 TBOOL TVertexBlockResource::Create( TVertexFactoryResourceInterface* a_pFactory, TUINT16 a_uiMaxVertices, TUINT32 a_uiFlags )
 {
-	m_pFactory		= a_pFactory;
+	m_pFactory      = a_pFactory;
 	m_uiMaxVertices = a_uiMaxVertices;
-	m_uiFlags		= a_uiFlags;
+	m_uiFlags       = a_uiFlags;
 	return TResource::Create();
 }
 
@@ -69,18 +69,18 @@ TBOOL TVertexBlockResource::CreateHAL()
 {
 	DestroyHAL();
 
-	auto  pRenderer			 = TRenderD3DInterface::Interface();
-	auto& vertexFormat		 = m_pFactory->GetVertexFormat();
+	auto  pRenderer          = TRenderD3DInterface::Interface();
+	auto& vertexFormat       = m_pFactory->GetVertexFormat();
 	m_HALBuffer.uiNumStreams = vertexFormat.m_uiNumStreams;
 
 	for ( TUINT i = 0; i < m_HALBuffer.uiNumStreams; i++ )
 	{
 		UINT  length = vertexFormat.m_aStreamFormats[ i ].m_uiVertexSize * m_uiMaxVertices;
-		DWORD usage	 = D3DUSAGE_WRITEONLY;
+		DWORD usage  = D3DUSAGE_WRITEONLY;
 
 		if ( ISZERO( m_uiFlags & 1 ) )
 		{
-			usage	   = D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY;
+			usage      = D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY;
 			m_uiOffset = 0;
 		}
 
@@ -90,11 +90,11 @@ TBOOL TVertexBlockResource::CreateHAL()
 		}
 
 		HRESULT hRes = pRenderer->GetDirect3DDevice()->CreateVertexBuffer(
-			length,
-			usage,
-			0,
-			( m_uiFlags & 1 ) ? D3DPOOL_MANAGED : D3DPOOL_DEFAULT,
-			&m_HALBuffer.apVertexBuffers[ i ] );
+		    length,
+		    usage,
+		    0,
+		    ( m_uiFlags & 1 ) ? D3DPOOL_MANAGED : D3DPOOL_DEFAULT,
+		    &m_HALBuffer.apVertexBuffers[ i ] );
 
 		if ( FAILED( hRes ) )
 		{
@@ -200,36 +200,36 @@ TBOOL TVertexBlockResource::Validate()
 			pair.m_First = this;
 
 			TResource::RecurseSimple(
-				[]( TResource* a_pResource, void* a_pUserData ) {
-					if ( a_pResource->IsExactly( &TGetClass( TVertexPoolResource ) ) )
-					{
-						auto pPool = TSTATICCAST( TVertexPoolResource, a_pResource );
-						auto pPair = TSTATICCAST( Pair, a_pUserData );
+			    []( TResource* a_pResource, void* a_pUserData ) {
+				    if ( a_pResource->IsExactly( &TGetClass( TVertexPoolResource ) ) )
+				    {
+					    auto pPool = TSTATICCAST( TVertexPoolResource, a_pResource );
+					    auto pPair = TSTATICCAST( Pair, a_pUserData );
 
-						auto pFactory	  = pPool->GetFactory();
-						auto vertexFormat = pFactory->GetVertexFormat();
+					    auto pFactory     = pPool->GetFactory();
+					    auto vertexFormat = pFactory->GetVertexFormat();
 
-						if ( pPool->m_uiFlags & 1 )
-						{
-							pPool->m_uiVertexOffset = pPair->GetSecond().uiOffset;
-							pPair->GetSecond().uiOffset += pPool->GetNumVertices();
+					    if ( pPool->m_uiFlags & 1 )
+					    {
+						    pPool->m_uiVertexOffset = pPair->GetSecond().uiOffset;
+						    pPair->GetSecond().uiOffset += pPool->GetNumVertices();
 
-							for ( TUINT i = 0; i < vertexFormat.GetNumStreams(); i++ )
-							{
-								auto uiVertexSize = vertexFormat.m_aStreamFormats[ i ].m_uiVertexSize;
+						    for ( TUINT i = 0; i < vertexFormat.GetNumStreams(); i++ )
+						    {
+							    auto uiVertexSize = vertexFormat.m_aStreamFormats[ i ].m_uiVertexSize;
 
-								TUtil::MemCopy(
-									pPair->GetSecond().apStreams[ i ] + pPool->m_uiVertexOffset * uiVertexSize,
-									pPool->GetManagedStream( i ),
-									pPool->GetNumVertices() * uiVertexSize );
-							}
-						}
-					}
+							    TUtil::MemCopy(
+							        pPair->GetSecond().apStreams[ i ] + pPool->m_uiVertexOffset * uiVertexSize,
+							        pPool->GetManagedStream( i ),
+							        pPool->GetNumVertices() * uiVertexSize );
+						    }
+					    }
+				    }
 
-					return TTRUE;
-				},
-				this,
-				&pair );
+				    return TTRUE;
+			    },
+			    this,
+			    &pair );
 
 			Unlock();
 		}
@@ -253,16 +253,16 @@ TBOOL TVertexBlockResource::Lock( TVertexPoolResourceInterface::LockBuffer* a_pL
 {
 	TVALIDPTR( a_pLockBuffer );
 
-	auto& vertexFormat			= m_pFactory->GetVertexFormat();
+	auto& vertexFormat          = m_pFactory->GetVertexFormat();
 	a_pLockBuffer->uiNumStreams = vertexFormat.m_uiNumStreams;
 
 	DWORD uiFlags;
 	TUINT uiNumVertices = 0;
-	TUINT uiUnk1		= m_uiFlags & 7;
+	TUINT uiUnk1        = m_uiFlags & 7;
 
 	if ( uiUnk1 == 1 )
 	{
-		uiFlags					= D3DLOCK_NOSYSLOCK;
+		uiFlags                 = D3DLOCK_NOSYSLOCK;
 		a_pLockBuffer->uiOffset = 0;
 	}
 	else
@@ -279,13 +279,13 @@ TBOOL TVertexBlockResource::Lock( TVertexPoolResourceInterface::LockBuffer* a_pL
 
 			if ( m_uiMaxVertices < m_uiOffset + uiNumVertices )
 			{
-				uiFlags					= D3DLOCK_DISCARD | D3DLOCK_NOSYSLOCK;
+				uiFlags                 = D3DLOCK_DISCARD | D3DLOCK_NOSYSLOCK;
 				a_pLockBuffer->uiOffset = 0;
-				m_uiOffset				= uiNumVertices;
+				m_uiOffset              = uiNumVertices;
 			}
 			else
 			{
-				uiFlags					= D3DLOCK_NOOVERWRITE | D3DLOCK_NOSYSLOCK;
+				uiFlags                 = D3DLOCK_NOOVERWRITE | D3DLOCK_NOSYSLOCK;
 				a_pLockBuffer->uiOffset = m_uiOffset;
 				m_uiOffset += uiNumVertices;
 			}
@@ -293,7 +293,7 @@ TBOOL TVertexBlockResource::Lock( TVertexPoolResourceInterface::LockBuffer* a_pL
 		else
 		{
 			Validate();
-			uiFlags					= D3DLOCK_DISCARD | D3DLOCK_NOSYSLOCK;
+			uiFlags                 = D3DLOCK_DISCARD | D3DLOCK_NOSYSLOCK;
 			a_pLockBuffer->uiOffset = 0;
 		}
 	}
@@ -301,10 +301,10 @@ TBOOL TVertexBlockResource::Lock( TVertexPoolResourceInterface::LockBuffer* a_pL
 	for ( TUINT i = 0; i < a_pLockBuffer->uiNumStreams; i++ )
 	{
 		HRESULT hRes = m_HALBuffer.apVertexBuffers[ i ]->Lock(
-			a_pLockBuffer->uiOffset * vertexFormat.m_aStreamFormats[ i ].m_uiVertexSize,
-			uiNumVertices * vertexFormat.m_aStreamFormats[ i ].m_uiVertexSize,
-			&a_pLockBuffer->apStreams[ i ],
-			uiFlags );
+		    a_pLockBuffer->uiOffset * vertexFormat.m_aStreamFormats[ i ].m_uiVertexSize,
+		    uiNumVertices * vertexFormat.m_aStreamFormats[ i ].m_uiVertexSize,
+		    &a_pLockBuffer->apStreams[ i ],
+		    uiFlags );
 
 		if ( FAILED( hRes ) )
 		{
@@ -338,13 +338,13 @@ void TVertexBlockResource::Unlock()
 
 TVertexBlockResource::TVertexBlockResource()
 {
-	m_pFactory		 = TNULL;
-	m_uiFlags		 = 0;
-	m_uiMaxVertices	 = 0;
-	m_uiOffset		 = 0;
+	m_pFactory       = TNULL;
+	m_uiFlags        = 0;
+	m_uiMaxVertices  = 0;
+	m_uiOffset       = 0;
 	m_uiVerticesUsed = 0;
-	m_uiLockCount	 = 0;
-	m_Unk1			 = 0;
+	m_uiLockCount    = 0;
+	m_Unk1           = 0;
 }
 
 TBOOL TVertexBlockResource::GetHALBuffer( HALBuffer* a_pHALBuffer ) const
@@ -362,8 +362,8 @@ TBOOL TVertexBlockResource::GetHALBuffer( HALBuffer* a_pHALBuffer ) const
 
 TVertexBlockResource::HALBuffer::HALBuffer()
 {
-	uiNumStreams		 = 0;
-	uiVertexOffset		 = 0;
+	uiNumStreams         = 0;
+	uiVertexOffset       = 0;
 	apVertexBuffers[ 0 ] = TNULL;
 	apVertexBuffers[ 1 ] = TNULL;
 	apVertexBuffers[ 2 ] = TNULL;

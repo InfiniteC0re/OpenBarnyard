@@ -4,7 +4,7 @@
 #include <Render/TModelManager.h>
 
 class AModelLoaderJob :
-	public ATRBLoaderJob
+    public ATRBLoaderJob
 {
 public:
 	virtual void  BeginJob() override;
@@ -15,6 +15,6 @@ public:
 
 private:
 	Toshi::TModelPtr* m_pModelRef = TNULL;
-	Toshi::TModel*	  m_pModel	  = TNULL;
-	TBOOL			  m_bCanBeCanceled;
+	Toshi::TModel*    m_pModel    = TNULL;
+	TBOOL             m_bCanBeCanceled;
 };

@@ -15,8 +15,8 @@ TOSHI_NAMESPACE_USING
 TDEFINE_CLASS( AKeyFrameLibraryManager );
 
 AKeyFrameLibraryManager::AKeyFrameLibraryManager() :
-	m_Libraries( AMemory::GetAllocator( AMemory::POOL_Misc ) ),
-	m_LibrariesRefs( AMemory::GetAllocator( AMemory::POOL_Misc ) )
+    m_Libraries( AMemory::GetAllocator( AMemory::POOL_Misc ) ),
+    m_LibrariesRefs( AMemory::GetAllocator( AMemory::POOL_Misc ) )
 {
 }
 
@@ -58,8 +58,8 @@ TBOOL AKeyFrameLibraryManager::LoadLibrary( const Toshi::TPString8& a_rLibraryNa
 	}
 
 	TKeyframeLibrary* pKeyFrameLibrary;
-	auto			  pRenderInterface = TRenderInterface::GetSingleton();
-	auto			  pKeyFrameLibMngr = &pRenderInterface->GetKeyframeLibraryManager();
+	auto              pRenderInterface = TRenderInterface::GetSingleton();
+	auto              pKeyFrameLibMngr = &pRenderInterface->GetKeyframeLibraryManager();
 
 	if ( TNULL == a_pTRB )
 	{
@@ -103,7 +103,7 @@ TBOOL AKeyFrameLibraryManager::UnrefLibrary( const Toshi::TPString8& a_rLibraryN
 
 	if ( pResultNode != m_Libraries.End() )
 	{
-		auto pPair			= pResultNode->GetValue();
+		auto pPair          = pResultNode->GetValue();
 		auto pRefResultNode = m_LibrariesRefs.FindNode( pPair->GetFirst() );
 
 		if ( pRefResultNode != m_LibrariesRefs.End() )
@@ -131,7 +131,7 @@ void AKeyFrameLibraryManager::UnloadAllLibraries()
 	for ( auto it = m_Libraries.Begin(); it != m_Libraries.End(); )
 	{
 		auto pCurrentNode = it.GetNode();
-		auto pNext		  = it.Next();
+		auto pNext        = it.Next();
 		UnloadLibrary( pCurrentNode );
 		it = pNext;
 	}

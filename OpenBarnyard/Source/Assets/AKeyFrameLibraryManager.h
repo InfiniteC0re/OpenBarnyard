@@ -7,8 +7,8 @@
 #include <Toshi/T2Map.h>
 
 class AKeyFrameLibraryManager :
-	public Toshi::TObject,
-	public Toshi::TSingleton<AKeyFrameLibraryManager>
+    public Toshi::TObject,
+    public Toshi::TSingleton<AKeyFrameLibraryManager>
 {
 public:
 	TDECLARE_CLASS( AKeyFrameLibraryManager, Toshi::TObject );
@@ -33,6 +33,6 @@ private:
 	void UnloadAllLibraries();
 
 private:
-	LibraryMap														   m_Libraries;
+	LibraryMap                                                         m_Libraries;
 	Toshi::T2Map<Toshi::TPString8, TINT, Toshi::TPString8::Comparator> m_LibrariesRefs;
 };

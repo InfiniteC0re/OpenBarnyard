@@ -13,19 +13,19 @@
 TDEFINE_CLASS( AGUISlideshow );
 
 AGUISlideshow::AGUISlideshow() :
-	m_Images( &Toshi::T2Allocator::s_GlobalAllocator, 64, 64 )
+    m_Images( Toshi::GetGlobalAllocator(), 64, 64 )
 {
-	m_pHUDParams		= TNULL;
-	m_eFlags			= Flags_None;
-	m_bIsActive			= TFALSE;
+	m_pHUDParams        = TNULL;
+	m_eFlags            = Flags_None;
+	m_bIsActive         = TFALSE;
 	m_fCurrentSlideTime = 0.0f;
-	m_fUnk2				= 0.0f;
-	m_fDuration			= 1.0f;
-	m_fFadeInTime		= 0.0f;
-	m_fFadeOutTime		= 0.0f;
-	m_fUnk4				= -1.0f;
-	m_bIsAppearing		= TFALSE;
-	m_bShouldLocalise	= TFALSE;
+	m_fUnk2             = 0.0f;
+	m_fDuration         = 1.0f;
+	m_fFadeInTime       = 0.0f;
+	m_fFadeOutTime      = 0.0f;
+	m_fUnk4             = -1.0f;
+	m_bIsAppearing      = TFALSE;
+	m_bShouldLocalise   = TFALSE;
 }
 
 Toshi::TPString8* AGUISlideshow::LocaliseBackgroundFileName( Toshi::TPString8& a_rOutName, const Toshi::TPString8& a_rName )
@@ -43,9 +43,9 @@ void AGUISlideshow::LocaliseBackgroundFileName( Toshi::TPString8& a_rOutName, co
 	{
 		TCHAR szLang[ 4 ];
 		Toshi::TStringManager::String8Copy(
-			szLang,
-			ALocaleManager::Interface()->GetCurrentLanguageName(),
-			sizeof( szLang ) );
+		    szLang,
+		    ALocaleManager::Interface()->GetCurrentLanguageName(),
+		    sizeof( szLang ) );
 
 		szLang[ 1 ] = '\0';
 		Toshi::TStringManager::String8Format( szFormattedName, sizeof( szFormattedName ), "%s%s", a_szName, szLang );
@@ -59,9 +59,9 @@ void AGUISlideshow::Activate()
 {
 	TASSERT( m_Images.Size() > 0 );
 
-	m_ImageIterator		= m_Images;
+	m_ImageIterator     = m_Images;
 	m_fCurrentSlideTime = 0.0f;
-	m_fUnk2				= 0.0f;
+	m_fUnk2             = 0.0f;
 
 	if ( !m_bIsAppearing )
 	{
@@ -118,9 +118,9 @@ void AGUISlideshow::UpdateFadeOverlay()
 			LocaliseBackgroundFileName( pictureName, m_ImageIterator.Current() );
 			AGUISystem::GetSingleton()->SetPicture( pictureName );
 
-			m_bIsAppearing		= TFALSE;
+			m_bIsAppearing      = TFALSE;
 			m_fCurrentSlideTime = 0.0f;
-			fOpacity			= 1.0f;
+			fOpacity            = 1.0f;
 		}
 	}
 
@@ -209,7 +209,7 @@ TBOOL AGUISlideshow::Setup( AGameState::HUDParams* a_pHUDParams, const Params& a
 	}
 
 	m_bShouldLocalise = a_bShouldLocalise;
-	m_eFlags		  = Flags_None;
+	m_eFlags          = Flags_None;
 
 	if ( a_rParams.iUnk1 != 0 )
 	{
@@ -251,7 +251,7 @@ TBOOL AGUISlideshow::Setup( AGameState::HUDParams* a_pHUDParams, const Params& a
 	}
 
 	m_fDuration = a_rParams.fDuration;
-	m_fUnk4		= a_rParams.fUnk5;
+	m_fUnk4     = a_rParams.fUnk5;
 
 	TFLOAT fWidth, fHeight;
 	AGUI2::GetSingleton()->GetDimensions( fWidth, fHeight );
@@ -308,7 +308,7 @@ TBOOL AGUISlideshow::ProcessCommand( AInputCommand a_eCommand )
 
 void AGUISlideshow::Reset()
 {
-	m_ImageIterator		= m_Images;
+	m_ImageIterator     = m_Images;
 	m_fCurrentSlideTime = 0.0f;
-	m_fUnk2				= 0.0f;
+	m_fUnk2             = 0.0f;
 }

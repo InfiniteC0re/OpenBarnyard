@@ -26,24 +26,24 @@ public:
 	{
 		m_pNext->m_pPrev = m_pPrev;
 		m_pPrev->m_pNext = m_pNext;
-		m_pNext			 = this;
-		m_pPrev			 = this;
+		m_pNext          = this;
+		m_pPrev          = this;
 	}
 
 	void LinkAfter( AGUI2ElementNode& a_rNode )
 	{
-		m_pNext			 = &a_rNode;
-		m_pPrev			 = a_rNode.m_pPrev;
-		a_rNode.m_pPrev	 = this;
+		m_pNext          = &a_rNode;
+		m_pPrev          = a_rNode.m_pPrev;
+		a_rNode.m_pPrev  = this;
 		m_pPrev->m_pNext = this;
 	}
 
 	void LinkBefore( AGUI2ElementNode& a_rNode )
 	{
-		m_pNext					 = a_rNode.m_pNext;
-		m_pPrev					 = &a_rNode;
+		m_pNext                  = a_rNode.m_pNext;
+		m_pPrev                  = &a_rNode;
 		a_rNode.m_pNext->m_pPrev = this;
-		a_rNode.m_pNext			 = this;
+		a_rNode.m_pNext          = this;
 	}
 
 	AGUI2Element* GetNextElem() { return TREINTERPRETCAST( AGUI2Element*, m_pNext ); }
@@ -208,15 +208,15 @@ public:
 	inline static TUINT32 s_uiVisibilityMask = 0xFFFFFFFF;
 
 protected:
-	AGUI2Element*	 m_pParent;
-	AGUI2Transform	 m_oTransform;
+	AGUI2Element*    m_pParent;
+	AGUI2Transform   m_oTransform;
 	AGUI2ElementNode m_Children;
-	Anchor			 m_eAnchor;
-	Pivot			 m_ePivot;
-	TFLOAT			 m_fWidth;
-	TFLOAT			 m_fHeight;
-	TUINT32			 m_uiColour;
-	TUINT32			 m_eFlags;
-	t_PostRender	 m_cbPostRender;
-	TUINT32			 m_uiVisibilityMask;
+	Anchor           m_eAnchor;
+	Pivot            m_ePivot;
+	TFLOAT           m_fWidth;
+	TFLOAT           m_fHeight;
+	TUINT32          m_uiColour;
+	TUINT32          m_eFlags;
+	t_PostRender     m_cbPostRender;
+	TUINT32          m_uiVisibilityMask;
 };

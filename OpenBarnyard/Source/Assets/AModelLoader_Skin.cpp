@@ -2,9 +2,9 @@
 #include "AModelLoader.h"
 
 #ifdef TOSHI_SKU_WINDOWS
-#	include "Platform/DX8/ASkinShader/ASkinMesh_DX8.h"
-#	include "Platform/DX8/ASkinShader/ASkinShader_DX8.h"
-#	include "Platform/DX8/ASkinShader/ASkinMaterial_DX8.h"
+#  include "Platform/DX8/ASkinShader/ASkinMesh_DX8.h"
+#  include "Platform/DX8/ASkinShader/ASkinShader_DX8.h"
+#  include "Platform/DX8/ASkinShader/ASkinMaterial_DX8.h"
 #endif // TOSHI_SKU_WINDOWS
 
 #include <Toshi/T2String.h>
@@ -50,7 +50,7 @@ void AModelLoader::LoadSkinLOD( Toshi::TModel* a_pModel, TINT a_iLODIndex, Toshi
 
 		for ( TUINT k = 0; k < pTRBMesh->m_uiNumSubMeshes; k++ )
 		{
-			auto pSubMesh	 = pMesh->GetSubMesh( k );
+			auto pSubMesh    = pMesh->GetSubMesh( k );
 			auto pTRBSubMesh = &pTRBMesh->m_pSubMeshes[ k ];
 
 			TUtil::MemCopy( pSubMesh->aBones, pTRBSubMesh->m_pBones, pTRBSubMesh->m_uiNumBones * sizeof( TINT ) );
@@ -64,21 +64,21 @@ void AModelLoader::LoadSkinLOD( Toshi::TModel* a_pModel, TINT a_iLODIndex, Toshi
 				pSubMesh->pIndexPool = pIndexFactory->CreatePoolResource( pTRBMesh->m_uiNumIndices, 9 );
 			}
 
-			pSubMesh->uiNumBones	= pTRBSubMesh->m_uiNumBones;
+			pSubMesh->uiNumBones    = pTRBSubMesh->m_uiNumBones;
 			pSubMesh->uiNumVertices = pTRBSubMesh->m_uiNumVertices2;
-			pSubMesh->Zero			= pTRBSubMesh->m_Zero;
-			pSubMesh->Unk2			= pTRBSubMesh->m_Unk2;
-			pSubMesh->Unk3			= pTRBSubMesh->m_Unk3;
-			pSubMesh->Unk4			= pTRBSubMesh->m_Unk4;
-			pSubMesh->Unk5			= pTRBSubMesh->m_Unk5;
-			pSubMesh->Unk6			= pTRBSubMesh->m_Unk6;
+			pSubMesh->Zero          = pTRBSubMesh->m_Zero;
+			pSubMesh->Unk2          = pTRBSubMesh->m_Unk2;
+			pSubMesh->Unk3          = pTRBSubMesh->m_Unk3;
+			pSubMesh->Unk4          = pTRBSubMesh->m_Unk4;
+			pSubMesh->Unk5          = pTRBSubMesh->m_Unk5;
+			pSubMesh->Unk6          = pTRBSubMesh->m_Unk6;
 
 			if ( pTRBSubMesh->m_uiNumVertices1 != 0 )
 			{
 				auto pVertexPool = pMesh->GetVertexPool();
 
 				TVertexPoolResourceInterface::LockBuffer vertexLockBuffer;
-				TBOOL									 bLocked = pVertexPool->Lock( &vertexLockBuffer );
+				TBOOL                                    bLocked = pVertexPool->Lock( &vertexLockBuffer );
 
 				TASSERT( bLocked && "Couldn't lock vertex buffer" );
 

@@ -4,7 +4,7 @@
 #include "GUI/AGUI2Material.h"
 
 #ifdef TOSHI_SKU_WINDOWS
-#	include "Platform/DX8/TRenderInterface_DX8.h"
+#  include "Platform/DX8/TRenderInterface_DX8.h"
 #endif // TOSHI_SKU_WINDOWS
 
 #include <bink.h>
@@ -17,17 +17,17 @@ public:
 private:
 	struct Rect
 	{
-		TINT			 iPosX;
-		TINT			 iPosY;
-		TINT			 iWidth;
-		TINT			 iHeight;
-		Toshi::TVector2	 Pos1;
-		Toshi::TVector2	 Pos2;
-		Toshi::TVector2	 UV1;
-		Toshi::TVector2	 UV2;
-		AGUI2Material*	 pMaterial = TNULL;
+		TINT             iPosX;
+		TINT             iPosY;
+		TINT             iWidth;
+		TINT             iHeight;
+		Toshi::TVector2  Pos1;
+		Toshi::TVector2  Pos2;
+		Toshi::TVector2  UV1;
+		Toshi::TVector2  UV2;
+		AGUI2Material*   pMaterial = TNULL;
 		Toshi::TTexture* pTexture  = TNULL;
-		TUINT8*			 pData	   = TNULL;
+		TUINT8*          pData     = TNULL;
 
 		~Rect();
 
@@ -56,14 +56,14 @@ private:
 	void DestroySurfaces();
 
 private:
-	HBINK			   m_Bink;
-	TBOOL			   m_bPlaying;
-	TBOOL			   m_bPaused;
-	TBOOL			   m_bVisible;
-	TCHAR			   m_szMoviePath[ 64 ];
+	HBINK              m_Bink;
+	TBOOL              m_bPlaying;
+	TBOOL              m_bPaused;
+	TBOOL              m_bVisible;
+	TCHAR              m_szMoviePath[ 64 ];
 	IDirect3DSurface8* m_pSurface;
-	TUINT			   m_eFormat;
-	TBOOL			   m_bVideoFitsBackBuffer;
-	Rect*			   m_pRects;
-	TINT			   m_iNumRects;
+	TUINT              m_eFormat;
+	TBOOL              m_bVideoFitsBackBuffer;
+	Rect*              m_pRects;
+	TINT               m_iNumRects;
 };

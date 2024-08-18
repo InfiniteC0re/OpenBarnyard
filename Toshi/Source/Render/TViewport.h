@@ -58,17 +58,17 @@ public:
 	void GetBackgroundColor( TUINT8& r, TUINT8& g, TUINT8& b, TUINT8& a );
 
 private:
-	TMemory::MemBlock* m_MemAllocatorBlock;		// 0x00
-	TRenderContext*	   m_pRenderCtx;			// 0x04
-	TUINT8			   m_ColorR;				// 0x08
-	TUINT8			   m_ColorG;				// 0x09
-	TUINT8			   m_ColorB;				// 0x0A
-	TUINT8			   m_ColorA;				// 0x0B
-	TBOOL			   m_bAllowBackgroundClear; // 0x0C
-	TBOOL			   m_bAllowDepthClear;		// 0x0D
-	TBOOL			   m_bDefaultBeginRender;	// 0x0E
-	TBOOL			   m_bEnable;				// 0x0F
-	TBOOL			   m_bInViewport;			// 0x10
+	TMemory::MemBlock* m_MemAllocatorBlock;     // 0x00
+	TRenderContext*    m_pRenderCtx;            // 0x04
+	TUINT8             m_ColorR;                // 0x08
+	TUINT8             m_ColorG;                // 0x09
+	TUINT8             m_ColorB;                // 0x0A
+	TUINT8             m_ColorA;                // 0x0B
+	TBOOL              m_bAllowBackgroundClear; // 0x0C
+	TBOOL              m_bAllowDepthClear;      // 0x0D
+	TBOOL              m_bDefaultBeginRender;   // 0x0E
+	TBOOL              m_bEnable;               // 0x0F
+	TBOOL              m_bInViewport;           // 0x10
 };
 
 TOSHI_NAMESPACE_END

@@ -20,10 +20,10 @@ TPSTRING8_DECLARE( ParkManager );
 
 AGUISystem::AGUISystem()
 {
-	m_Unk1			= 0;
-	m_Unk2			= 0;
-	m_Unk3			= 0;
-	m_pStrings		= new Toshi::TPString8[ 2 ];
+	m_Unk1          = 0;
+	m_Unk2          = 0;
+	m_Unk3          = 0;
+	m_pStrings      = new Toshi::TPString8[ 2 ];
 	m_pStrings[ 0 ] = TPS8( ParkManager );
 	m_pStrings[ 1 ] = TPS8( Start );
 }
@@ -31,10 +31,10 @@ AGUISystem::AGUISystem()
 TBOOL AGUISystem::OnCreate()
 {
 	m_RenderGUIListener.Connect(
-		ARenderer::GetSingleton()->GetRenderGUIEmitter(),
-		this,
-		OnGUIRender,
-		0xffff8000 );
+	    ARenderer::GetSingleton()->GetRenderGUIEmitter(),
+	    this,
+	    OnGUIRender,
+	    0xffff8000 );
 
 	auto pDisplayParams = Toshi::TRenderInterface::GetSingleton()->GetCurrentDisplayParams();
 

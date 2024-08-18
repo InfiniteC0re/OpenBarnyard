@@ -24,7 +24,7 @@ public:
 	TBOOL AllocBuffer( TINT size, TBOOL freeMemory = TTRUE );
 
 	static TString16 Format( const TWCHAR* a_pcFormat, ... );
-	TString16&		 VFormat( const TWCHAR* a_pcFormat, va_list a_vargs );
+	TString16&       VFormat( const TWCHAR* a_pcFormat, va_list a_vargs );
 
 	void ForceSetData( TWCHAR* a_cString, TINT a_ilength );
 	void UndoForceSetData() { Reset(); }
@@ -94,7 +94,7 @@ public:
 		return this;
 	}
 
-	TWCHAR&		  operator[]( TINT index ) { return m_pBuffer[ index ]; }
+	TWCHAR&       operator[]( TINT index ) { return m_pBuffer[ index ]; }
 	const TWCHAR& operator[]( TINT index ) const { return *GetString( index ); }
 	operator const TWCHAR*() const { return m_pBuffer; }
 
@@ -124,8 +124,8 @@ private:
 
 	void Reset()
 	{
-		m_pBuffer	 = NullWString;
-		m_iStrLen	 = 0;
+		m_pBuffer    = NullWString;
+		m_iStrLen    = 0;
 		m_iExcessLen = 0;
 	}
 
@@ -136,17 +136,17 @@ private:
 
 	static T2Allocator* GetDefaultAllocatorCB()
 	{
-		return &T2Allocator::s_GlobalAllocator;
+		return GetGlobalAllocator();
 	}
 
 private:
 	static inline func_DefaultAllocatorCB sm_pDefaultAllocatorCB = &GetDefaultAllocatorCB;
 
 private:
-	TWCHAR*		 m_pBuffer		  = NullWString; // 0x0
-	TUINT32		 m_iExcessLen : 8 = 0;			 // 0x4
-	TINT32		 m_iStrLen : 24	  = 0;			 // 0x5
-	T2Allocator* m_pAllocator;					 // 0x8
+	TWCHAR*      m_pBuffer        = NullWString; // 0x0
+	TUINT32      m_iExcessLen : 8 = 0;           // 0x4
+	TINT32       m_iStrLen : 24   = 0;           // 0x5
+	T2Allocator* m_pAllocator;                   // 0x8
 };
 
 TOSHI_NAMESPACE_END

@@ -56,8 +56,8 @@ TString8::TString8( TString8&& src ) noexcept
 {
 	TString8::m_pAllocator = src.m_pAllocator;
 	TString8::m_iExcessLen = src.m_iExcessLen;
-	TString8::m_iStrLen	   = src.m_iStrLen;
-	TString8::m_pBuffer	   = src.m_pBuffer;
+	TString8::m_iStrLen    = src.m_iStrLen;
+	TString8::m_pBuffer    = src.m_pBuffer;
 	src.Reset();
 	src.m_pAllocator = GetAllocator();
 }
@@ -127,7 +127,7 @@ TINT TString8::Find( const TCHAR* substr, TINT pos ) const
 
 TBOOL TString8::AllocBuffer( TINT a_iLength, TBOOL a_bFreeMemory )
 {
-	TBOOL	hasChanged	  = TFALSE;
+	TBOOL   hasChanged    = TFALSE;
 	TUINT32 currentLength = Length();
 
 	TASSERT( a_iLength >= 0, "Length can't be less than 0" );
@@ -139,7 +139,7 @@ TBOOL TString8::AllocBuffer( TINT a_iLength, TBOOL a_bFreeMemory )
 		{
 			if ( a_bFreeMemory ) m_pAllocator->Free( m_pBuffer );
 
-			m_pBuffer	 = NullString;
+			m_pBuffer    = NullString;
 			m_iExcessLen = 0;
 
 			hasChanged = TTRUE;
@@ -155,7 +155,7 @@ TBOOL TString8::AllocBuffer( TINT a_iLength, TBOOL a_bFreeMemory )
 					m_pAllocator->Free( m_pBuffer );
 				}
 
-				m_pBuffer	 = (TCHAR*)m_pAllocator->Malloc( a_iLength + 1 );
+				m_pBuffer    = (TCHAR*)m_pAllocator->Malloc( a_iLength + 1 );
 				m_iExcessLen = 0;
 
 				hasChanged = TTRUE;
@@ -163,7 +163,7 @@ TBOOL TString8::AllocBuffer( TINT a_iLength, TBOOL a_bFreeMemory )
 			else
 			{
 				m_iExcessLen = newExcessLen;
-				hasChanged	 = TFALSE;
+				hasChanged   = TFALSE;
 			}
 		}
 
@@ -202,9 +202,9 @@ TString8& TString8::VFormat( const TCHAR* a_pcFormat, va_list a_vargs )
 
 TString8 TString8::VarArgs( const TCHAR* a_pcFormat, ... )
 {
-	TCHAR	 buffer[ 0x400 ];
+	TCHAR    buffer[ 0x400 ];
 	TString8 buffer2;
-	va_list	 args;
+	va_list  args;
 
 	va_start( args, a_pcFormat );
 
@@ -344,8 +344,8 @@ TINT TString8::Compare( const TCHAR* a_pcString, TINT param_2 ) const
 	}
 
 	const TCHAR* str   = GetString();
-	TCHAR		 bVar1 = 0;
-	TCHAR		 bVar4 = 0;
+	TCHAR        bVar1 = 0;
+	TCHAR        bVar4 = 0;
 	while ( TTRUE )
 	{
 		bVar1 = *str;
@@ -421,7 +421,7 @@ TString8& TString8::Concat( const TString16& str, TINT size )
 	}
 
 	TUINT32 oldLength = m_iStrLen;
-	TCHAR*	oldString = m_pBuffer;
+	TCHAR*  oldString = m_pBuffer;
 
 	TBOOL allocated = AllocBuffer( m_iStrLen + size, TFALSE );
 
@@ -449,7 +449,7 @@ TBOOL TString8::IsAllLowerCase() const
 {
 	if ( m_iStrLen != 0 )
 	{
-		TCHAR* iter	  = m_pBuffer;
+		TCHAR* iter   = m_pBuffer;
 		TCHAR* endStr = m_pBuffer + m_iStrLen;
 
 		do
@@ -467,7 +467,7 @@ TBOOL TString8::IsAllUpperCase() const
 {
 	if ( m_iStrLen != 0 )
 	{
-		TCHAR* iter	  = m_pBuffer;
+		TCHAR* iter   = m_pBuffer;
 		TCHAR* endStr = m_pBuffer + m_iStrLen;
 
 		do

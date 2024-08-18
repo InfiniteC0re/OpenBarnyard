@@ -11,14 +11,14 @@ TOSHI_NAMESPACE_USING
 
 TDEFINE_CLASS( ACamera );
 
-TFLOAT				  ACamera::sm_fCurrentFOV			= Toshi::TMath::DegToRad( 60.0f );
-const Toshi::TVector4 ACamera::sm_vWorldUp				= { 0.0f, -1.0f, 0.0f, 1.0f };
+TFLOAT                ACamera::sm_fCurrentFOV           = Toshi::TMath::DegToRad( 60.0f );
+const Toshi::TVector4 ACamera::sm_vWorldUp              = { 0.0f, -1.0f, 0.0f, 1.0f };
 const Toshi::TVector4 ACamera::sm_vInitialLookDirection = { 0.0f, 0.0f, 1.0f, 1.0f };
 
 ACamera::ACamera()
 {
-	m_Matrix			 = TMatrix44::IDENTITY;
-	m_fFOV				 = sm_fCurrentFOV;
+	m_Matrix             = TMatrix44::IDENTITY;
+	m_fFOV               = sm_fCurrentFOV;
 	m_fProjectionCentreX = 0.5f;
 	m_fProjectionCentreY = 0.5f;
 }

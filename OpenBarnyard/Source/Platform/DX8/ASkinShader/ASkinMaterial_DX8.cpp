@@ -17,10 +17,10 @@ TOSHI_NAMESPACE_USING
 TDEFINE_CLASS( ASkinMaterialHAL );
 
 ASkinMaterialHAL::ASkinMaterialHAL() :
-	m_pAlphaBlendMaterial( TNULL ),
-	m_pAssignedOrderTable( TNULL ),
-	m_pSomeTexture( TNULL ),
-	m_bIsSkin( TTRUE )
+    m_pAlphaBlendMaterial( TNULL ),
+    m_pAssignedOrderTable( TNULL ),
+    m_pSomeTexture( TNULL ),
+    m_bIsSkin( TTRUE )
 {
 }
 
@@ -50,10 +50,10 @@ void ASkinMaterialHAL::OnDestroy()
 
 void ASkinMaterialHAL::PreRender()
 {
-	auto pRender	= TRenderD3DInterface::Interface();
+	auto pRender    = TRenderD3DInterface::Interface();
 	auto pD3DDevice = pRender->GetDirect3DDevice();
 
-	TTextureResourceHAL* pTexture	 = TDYNAMICCAST( TTextureResourceHAL, m_pTexture );
+	TTextureResourceHAL* pTexture    = TDYNAMICCAST( TTextureResourceHAL, m_pTexture );
 	TTextureResourceHAL* pLT0Texture = TNULL;
 	TTextureResourceHAL* pLT1Texture = TNULL;
 
@@ -147,9 +147,9 @@ void ASkinMaterialHAL::PreRender()
 
 void ASkinMaterialHAL::PostRender()
 {
-	auto pRender	= TRenderD3DInterface::Interface();
+	auto pRender    = TRenderD3DInterface::Interface();
 	auto pD3DDevice = pRender->GetDirect3DDevice();
-	auto pShader	= TDYNAMICCAST( ASkinShaderHAL, GetShader() );
+	auto pShader    = TDYNAMICCAST( ASkinShaderHAL, GetShader() );
 
 	pD3DDevice->SetRenderState( D3DRS_COLORVERTEX, TRUE );
 	pD3DDevice->SetTexture( 0, TNULL );
@@ -208,8 +208,8 @@ void ASkinMaterialHAL::CopyToAlphaBlendMaterial()
 {
 	if ( TNULL != m_pAlphaBlendMaterial )
 	{
-		m_pAlphaBlendMaterial->m_iNumTex					= m_iNumTex;
-		m_pAlphaBlendMaterial->m_pTexture					= m_pTexture;
+		m_pAlphaBlendMaterial->m_iNumTex                    = m_iNumTex;
+		m_pAlphaBlendMaterial->m_pTexture                   = m_pTexture;
 		m_pAlphaBlendMaterial->m_apLightingTextures[ LT_0 ] = m_apLightingTextures[ LT_0 ];
 		m_pAlphaBlendMaterial->m_apLightingTextures[ LT_1 ] = m_apLightingTextures[ LT_1 ];
 		m_pAlphaBlendMaterial->m_apLightingTextures[ LT_2 ] = m_apLightingTextures[ LT_2 ];

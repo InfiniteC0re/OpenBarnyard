@@ -35,19 +35,19 @@ public:
 	//-----------------------------------------------------------------------------
 	// ASkinShader
 	//-----------------------------------------------------------------------------
-	virtual void		   EnableRenderEnvMap( TBOOL a_bEnable ) override;
-	virtual TBOOL		   IsHighEndSkinning() override;
-	virtual void		   EnableHighEndSkinning( TBOOL a_bEnable ) override;
-	virtual TBOOL		   IsCapableHighEndSkinning() override;
-	virtual TBOOL		   IsLightScattering() override;
-	virtual void		   SetLightScattering( TBOOL a_bEnable ) override;
-	virtual TBOOL		   IsAlphaBlendMaterial() override;
-	virtual void		   SetAlphaBlendMaterial( TBOOL a_bIsAlphaBlendMaterial ) override;
+	virtual void           EnableRenderEnvMap( TBOOL a_bEnable ) override;
+	virtual TBOOL          IsHighEndSkinning() override;
+	virtual void           EnableHighEndSkinning( TBOOL a_bEnable ) override;
+	virtual TBOOL          IsCapableHighEndSkinning() override;
+	virtual TBOOL          IsLightScattering() override;
+	virtual void           SetLightScattering( TBOOL a_bEnable ) override;
+	virtual TBOOL          IsAlphaBlendMaterial() override;
+	virtual void           SetAlphaBlendMaterial( TBOOL a_bIsAlphaBlendMaterial ) override;
 	virtual ASkinMaterial* CreateMaterial( const TCHAR* a_szName ) override;
-	virtual ASkinMesh*	   CreateMesh( const TCHAR* a_szName ) override;
-	virtual TINT		   AddLight( const Toshi::TVector3& a_rPosition, TFLOAT a_fIntensity ) override;
-	virtual void		   SetLight( TINT a_iIndex, const Toshi::TVector3& a_rPosition, TFLOAT a_fIntensity ) override;
-	virtual void		   RemoveLight( TINT a_iIndex ) override;
+	virtual ASkinMesh*     CreateMesh( const TCHAR* a_szName ) override;
+	virtual TINT           AddLight( const Toshi::TVector3& a_rPosition, TFLOAT a_fIntensity ) override;
+	virtual void           SetLight( TINT a_iIndex, const Toshi::TVector3& a_rPosition, TFLOAT a_fIntensity ) override;
+	virtual void           RemoveLight( TINT a_iIndex ) override;
 
 	//-----------------------------------------------------------------------------
 	// Own methods
@@ -73,26 +73,26 @@ private:
 	void CheckCPUFeature2();
 
 public:
-	inline static TUINT			   sm_eRenderStateFlags = 27;
+	inline static TUINT            sm_eRenderStateFlags = 27;
 	inline static Toshi::TMatrix44 sm_oWorldViewMatrix;
 	inline static Toshi::TMatrix44 sm_oViewModelMatrix;
 
 private:
 	// ...
 	Toshi::TNodeList<AUnknown> m_SomeList;
-	DWORD					   m_hUnknownPixelShader;
-	DWORD					   m_hVertexShader;
-	DWORD					   m_hVertexShaderHD;
-	DWORD					   m_hPixelShader;
-	TINT					   m_iAlphaRef;
-	TBOOL					   m_bRenderEnvMap;
-	Toshi::TOrderTable		   m_aOrderTables[ NUM_ORDER_TABLES ];
-	TBOOL					   m_bHighEndSkinning;
-	TBOOL					   m_bLightScattering;
-	TBOOL					   m_bIsAlphaBlendMaterial;
-	TFLOAT					   m_fAMDPatch1;
-	TFLOAT					   m_fAMDPatch2;
-	TBOOL					   m_bCPUSupportsFeature1;
-	TBOOL					   m_bCPUSupportsFeature2;
-	TBOOL					   m_bUnkFlag;
+	DWORD                      m_hUnknownPixelShader;
+	DWORD                      m_hVertexShader;
+	DWORD                      m_hVertexShaderHD;
+	DWORD                      m_hPixelShader;
+	TINT                       m_iAlphaRef;
+	TBOOL                      m_bRenderEnvMap;
+	Toshi::TOrderTable         m_aOrderTables[ NUM_ORDER_TABLES ];
+	TBOOL                      m_bHighEndSkinning;
+	TBOOL                      m_bLightScattering;
+	TBOOL                      m_bIsAlphaBlendMaterial;
+	TFLOAT                     m_fAMDPatch1;
+	TFLOAT                     m_fAMDPatch2;
+	TBOOL                      m_bCPUSupportsFeature1;
+	TBOOL                      m_bCPUSupportsFeature2;
+	TBOOL                      m_bUnkFlag;
 };

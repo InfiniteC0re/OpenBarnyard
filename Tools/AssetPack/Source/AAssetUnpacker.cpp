@@ -7,7 +7,7 @@ TBOOL AAssetUnpacker::Unpack( AAssetPack& a_rAssetPack, const Toshi::TString8& a
 {
 	if ( a_rAssetPack.IsLoaded() )
 	{
-		auto  pTRB	 = a_rAssetPack.GetTRBFile();
+		auto  pTRB   = a_rAssetPack.GetTRBFile();
 		auto& assets = a_rAssetPack.GetAssets();
 
 		for ( TUINT i = 0; i < assets.Size(); i++ )
@@ -20,20 +20,20 @@ TBOOL AAssetUnpacker::Unpack( AAssetPack& a_rAssetPack, const Toshi::TString8& a
 			auto pRelatedSymbols = &pAsset->RelatedSymbols;
 
 			PTRBWriter outTrbFile;
-			auto	   pOutSECT = outTrbFile.GetSections();
-			auto	   pOutSYMB = outTrbFile.GetSymbols();
+			auto       pOutSECT = outTrbFile.GetSections();
+			auto       pOutSYMB = outTrbFile.GetSymbols();
 
 			auto pOutStack = pOutSECT->CreateStream( pAsset->pStack );
 
 			for ( auto it = pRelatedSymbols->Begin(); !it.IsOver(); it++ )
 			{
-				auto	 pInSymbolAddress = pInSYMB->Find<char>( pInSECT, it->GetString8() );
-				TString8 outSymbolName	  = it->GetString8().GetString( pAsset->Name.GetString8().Length() + 1 );
+				auto     pInSymbolAddress = pInSYMB->Find<char>( pInSECT, it->GetString8() );
+				TString8 outSymbolName    = it->GetString8().GetString( pAsset->Name.GetString8().Length() + 1 );
 
 				pOutSYMB->Add(
-					pOutStack,
-					outSymbolName,
-					pOutStack->GetBuffer() + ( pInSymbolAddress.get() - pInSymbolAddress.stack()->GetBuffer() ) );
+				    pOutStack,
+				    outSymbolName,
+				    pOutStack->GetBuffer() + ( pInSymbolAddress.get() - pInSymbolAddress.stack()->GetBuffer() ) );
 			}
 
 			TString8 outPath = a_rOutPath;

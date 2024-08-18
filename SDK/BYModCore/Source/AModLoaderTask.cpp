@@ -27,9 +27,9 @@ void AModLoaderTask::AGUI2MainPostRenderCallback()
 AModLoaderTask::AModLoaderTask()
 {
 	m_fTotalTime = 0.0f;
-	m_bLoaded	 = TFALSE;
-	m_pTextBox	 = TNULL;
-	m_uiNumMods	 = 0;
+	m_bLoaded    = TFALSE;
+	m_pTextBox   = TNULL;
+	m_uiNumMods  = 0;
 
 	AHooks::AddHook( Hook_AGUI2_MainPostRenderCallback, HookType_Before, AGUI2MainPostRenderCallback );
 }
@@ -86,8 +86,8 @@ void AModLoaderTask::LoadMods()
 			char dllPath[ MAX_PATH ];
 			TStringManager::StringUnicodeToChar( dllPath, entry.path().native().c_str(), -1 );
 
-			HMODULE hModule				= LoadLibraryW( dll );
-			auto	fnCreateModInstance = TREINTERPRETCAST( t_CreateModInstance, GetProcAddress( hModule, "CreateModInstance" ) );
+			HMODULE hModule             = LoadLibraryW( dll );
+			auto    fnCreateModInstance = TREINTERPRETCAST( t_CreateModInstance, GetProcAddress( hModule, "CreateModInstance" ) );
 
 			if ( fnCreateModInstance )
 			{
@@ -198,7 +198,7 @@ T2DList<AModInstance>& AModLoaderTask::GetMods()
 AGlobalModLoaderTask::AGlobalModLoaderTask()
 {
 	auto pScheduler = CALL_THIS( 0x006bbc10, TSystemManager*, TScheduler*, (TSystemManager*)0x007ce640 );
-	m_pTask			= CALL_THIS( 0x006bcbf0, TScheduler*, AModLoaderTask*, pScheduler, TClass*, &TGetClass( AModLoaderTask ), TTask*, TNULL );
+	m_pTask         = CALL_THIS( 0x006bcbf0, TScheduler*, AModLoaderTask*, pScheduler, TClass*, &TGetClass( AModLoaderTask ), TTask*, TNULL );
 }
 
 TBOOL AGlobalModLoaderTask::Create()
@@ -216,7 +216,7 @@ void AGlobalModLoaderTask::Destroy()
 AModInstance* AGlobalModLoaderTask::FindMod( const char* a_szModName )
 {
 	auto pModLoader = Get();
-	auto pMods		= &pModLoader->GetMods();
+	auto pMods      = &pModLoader->GetMods();
 
 	for ( auto it = pMods->Begin(); it != pMods->End(); it++ )
 	{

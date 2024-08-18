@@ -24,15 +24,15 @@ public:
 	void MoveCursor( TFLOAT a_fDeltaX, TFLOAT a_fDeltaY );
 
 public:
-	Toshi::TVector2			  m_CursorPos;
-	Toshi::TVector2			  m_BoundingStart;
-	Toshi::TVector2			  m_BoundingEnd;
+	Toshi::TVector2           m_CursorPos;
+	Toshi::TVector2           m_BoundingStart;
+	Toshi::TVector2           m_BoundingEnd;
 	Toshi::TInputDeviceMouse* m_pMouseDevice;
-	AGUI2TextureSection*	  m_pPointerUpSection;
-	AGUI2TextureSection*	  m_pPointerDownSection;
-	TFLOAT					  m_fCursorAccelerations[ Acceleration_NUMOF ];
-	Acceleration			  m_eAccelerationType;
-	TBOOL					  m_bIsMouseDown;
-	Toshi::TVector2			  m_RadialFieldPos;
-	TFLOAT					  m_fRadialRadius;
+	AGUI2TextureSection*      m_pPointerUpSection;
+	AGUI2TextureSection*      m_pPointerDownSection;
+	TFLOAT                    m_fCursorAccelerations[ Acceleration_NUMOF ];
+	Acceleration              m_eAccelerationType;
+	TBOOL                     m_bIsMouseDown;
+	Toshi::TVector2           m_RadialFieldPos;
+	TFLOAT                    m_fRadialRadius;
 };

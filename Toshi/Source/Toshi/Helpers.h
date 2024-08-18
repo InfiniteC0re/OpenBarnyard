@@ -7,8 +7,8 @@ template <typename T>
 TFORCEINLINE void TSwapValues( T& a, T& b )
 {
 	T temp = std::move( a );
-	a	   = std::move( b );
-	b	   = std::move( temp );
+	a      = std::move( b );
+	b      = std::move( temp );
 }
 
 // Returns TUINT32 value that consists of the specified 4 characters
@@ -29,16 +29,16 @@ template <class T>
 TFORCEINLINE constexpr T* TAlignPointerUp( T* a_pMem, TUINT a_uiAlignment = sizeof( T* ) )
 {
 	return TREINTERPRETCAST(
-		T*,
-		( TUINTPTR( a_pMem ) + ( a_uiAlignment - 1 ) ) & ( ~( a_uiAlignment - 1U ) ) );
+	    T*,
+	    ( TUINTPTR( a_pMem ) + ( a_uiAlignment - 1 ) ) & ( ~( a_uiAlignment - 1U ) ) );
 }
 
 template <class T>
 TFORCEINLINE constexpr T* TAlignPointerDown( T* a_pMem, TUINT a_uiAlignment = sizeof( T* ) )
 {
 	return TREINTERPRETCAST(
-		T*,
-		( TUINTPTR( a_pMem ) ) & ( ~( a_uiAlignment - 1U ) ) );
+	    T*,
+	    ( TUINTPTR( a_pMem ) ) & ( ~( a_uiAlignment - 1U ) ) );
 }
 
 template <class T>

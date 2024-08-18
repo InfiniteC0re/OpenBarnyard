@@ -71,7 +71,7 @@ private:
 
 private:
 	TEmitter<TSystemManager, TBOOL> m_PauseEmitter;
-	TKernelInterface*				m_pKernelInterface;
+	TKernelInterface*               m_pKernelInterface;
 };
 
 extern TSystemManager g_oSystemManager;

@@ -28,7 +28,7 @@ private:
 	}
 
 private:
-	void*	   m_pCaller   = TNULL;
+	void*      m_pCaller   = TNULL;
 	t_Callback m_pCallback = TNULL;
 };
 
@@ -72,12 +72,12 @@ public:
 		m_pOwner = TNULL;
 	}
 
-	TPriList<TGenericListener>&		  GetListeners() { return m_Listeners; }
+	TPriList<TGenericListener>&       GetListeners() { return m_Listeners; }
 	const TPriList<TGenericListener>& GetListeners() const { return m_Listeners; }
 
 public:
 	TPriList<TGenericListener> m_Listeners;
-	void*					   m_pOwner;
+	void*                      m_pOwner;
 };
 
 template <typename Owner, typename Data = Owner>
@@ -85,7 +85,7 @@ class TEmitter : public TGenericEmitter
 {
 public:
 	TEmitter( Owner* owner ) :
-		TGenericEmitter( owner ) {}
+	    TGenericEmitter( owner ) {}
 
 	void Throw( Data* pData ) { TGenericEmitter::Throw( pData ); }
 	void Throw( Data&& data ) { TGenericEmitter::Throw( &data ); }
@@ -104,10 +104,10 @@ public:
 	void Connect( TGenericEmitter& a_rEmitter, Caller* a_pCaller, t_CallerCallback a_pCallback, TINT a_iPriority )
 	{
 		TGenericListener::Connect(
-			a_rEmitter,
-			a_pCaller,
-			TREINTERPRETCAST( t_Callback, a_pCallback ),
-			a_iPriority );
+		    a_rEmitter,
+		    a_pCaller,
+		    TREINTERPRETCAST( t_Callback, a_pCallback ),
+		    a_iPriority );
 	}
 };
 

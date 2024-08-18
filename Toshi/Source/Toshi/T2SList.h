@@ -35,7 +35,7 @@ public:
 		void InsertAfter( Node* a_pNode )
 		{
 			TASSERT( !IsLinked() );
-			m_pNext			 = a_pNode->m_pNext;
+			m_pNext          = a_pNode->m_pNext;
 			a_pNode->m_pNext = this;
 		}
 
@@ -116,20 +116,20 @@ public:
 
 	Node* PopBack()
 	{
-		Node* pBack		  = Back();
+		Node* pBack       = Back();
 		Node* pNodeBefore = FindNodeBefore( pBack );
 
 		pNodeBefore->m_pNext = &m_oRoot;
-		pBack->m_pNext		 = pBack;
+		pBack->m_pNext       = pBack;
 
 		return pBack;
 	}
 
 	Node* PopFront()
 	{
-		Node* pNode		= Begin();
+		Node* pNode     = Begin();
 		m_oRoot.m_pNext = pNode->m_pNext;
-		pNode->m_pNext	= pNode;
+		pNode->m_pNext  = pNode;
 		return pNode;
 	}
 
@@ -139,9 +139,9 @@ public:
 
 		while ( a_pFrom != a_pTo )
 		{
-			Node* pNext		 = a_pFrom->m_pNext;
+			Node* pNext      = a_pFrom->m_pNext;
 			a_pFrom->m_pNext = a_pFrom;
-			a_pFrom			 = pNext;
+			a_pFrom          = pNext;
 		}
 
 		pNodeBefore->m_pNext = a_pTo;
@@ -154,9 +154,9 @@ public:
 
 		while ( pNode != End() )
 		{
-			Node* pNext	   = pNode->Next();
+			Node* pNext    = pNode->Next();
 			pNode->m_pNext = pNode;
-			pNode		   = pNext;
+			pNode          = pNext;
 		}
 
 		m_oRoot.m_pNext = &m_oRoot;
@@ -176,9 +176,9 @@ public:
 
 	Node* Transfer( Node* a_pNode, T2GenericSList& a_rList )
 	{
-		Node* pNodeBefore	 = FindNodeBefore( a_pNode );
+		Node* pNodeBefore    = FindNodeBefore( a_pNode );
 		pNodeBefore->m_pNext = a_pNode->m_pNext;
-		a_pNode->m_pNext	 = a_pNode;
+		a_pNode->m_pNext     = a_pNode;
 		a_rList.PushBack( a_pNode );
 
 		return pNodeBefore;

@@ -27,15 +27,15 @@ public:
 
 	TBYTE* GetManagedStream( TUINT a_uiStream );
 
-	TResource*			  GetParent();
+	TResource*            GetParent();
 	TVertexBlockResource* GetVertexBlock();
 
 	TBOOL GetHALBuffer( TVertexBlockResource::HALBuffer* a_pHALBuffer );
 
 private:
 	TUINT16 m_uiVertexOffset;
-	TBYTE*	m_apManagedStreams[ TVertexFactoryFormat::MAX_NUM_STREAMS ];
-	TUINT	m_uiNumLocksAllTime;
+	TBYTE*  m_apManagedStreams[ TVertexFactoryFormat::MAX_NUM_STREAMS ];
+	TUINT   m_uiNumLocksAllTime;
 };
 
 TOSHI_NAMESPACE_END

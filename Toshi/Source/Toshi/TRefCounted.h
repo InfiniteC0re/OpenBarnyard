@@ -9,9 +9,9 @@ public:
 	TRefCounted( TRefCounted const& ) { m_iRefCount = 0; }
 	~TRefCounted() { m_iRefCount = -1; }
 
-	TINT		 DecRefCount() { return m_iRefCount--; }
-	TINT		 GetRefCount() { return m_iRefCount; }
-	TINT		 IncRefCount() { return m_iRefCount++; }
+	TINT         DecRefCount() { return m_iRefCount--; }
+	TINT         GetRefCount() { return m_iRefCount; }
+	TINT         IncRefCount() { return m_iRefCount++; }
 	TRefCounted& operator=( TRefCounted const& ) { return *this; }
 
 protected:
@@ -50,10 +50,10 @@ public:
 		return *this;
 	}
 
-	T*		 Get() { return m_pPtr; }
+	T*       Get() { return m_pPtr; }
 	const T* Get() const { return m_pPtr; }
 
-	T*		 operator->() { return m_pPtr; }
+	T*       operator->() { return m_pPtr; }
 	const T* operator->() const { return m_pPtr; }
 
 private:

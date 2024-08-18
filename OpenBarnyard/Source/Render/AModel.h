@@ -10,8 +10,8 @@
 class AModel;
 
 class AModelInstance :
-	public Toshi::TObject,
-	public Toshi::TRefCounted
+    public Toshi::TObject,
+    public Toshi::TRefCounted
 {
 public:
 	TDECLARE_CLASS( AModelInstance, Toshi::TObject );
@@ -20,7 +20,7 @@ public:
 	using Flags = TUINT8;
 	enum Flags_ : Flags
 	{
-		Flags_None			   = 0,
+		Flags_None             = 0,
 		Flags_UpdatingSkeleton = BITFLAG( 0 ),
 	};
 
@@ -40,9 +40,9 @@ public:
 
 	void SetSkeletonUpdating( TBOOL a_bUpdating );
 
-	AModel*					GetModel() const { return m_pModel; }
+	AModel*                 GetModel() const { return m_pModel; }
 	Toshi::T2ModelInstance* GetT2Instance() const { return m_pT2ModelInstance; }
-	TUINT					GetClipFlags() const { return m_uiClipFlags; }
+	TUINT                   GetClipFlags() const { return m_uiClipFlags; }
 
 	TBOOL IsUpdatingSkeleton() const { return m_eFlags & Flags_UpdatingSkeleton; }
 
@@ -50,19 +50,19 @@ private:
 	static void RenderInstanceCallback( Toshi::TModelInstance* a_pInstance, void* a_pUserData );
 
 private:
-	TFLOAT	m_Unknown1[ 4 ];
+	TFLOAT  m_Unknown1[ 4 ];
 	AModel* m_pModel;
-	TUINT	m_uiClipFlags;
+	TUINT   m_uiClipFlags;
 	// ...
-	Toshi::T2ModelInstance*						 m_pT2ModelInstance;
+	Toshi::T2ModelInstance*                      m_pT2ModelInstance;
 	Toshi::TEmitter<AModelInstance, ChangeEvent> m_ChangeEmitter;
-	Flags										 m_eFlags;
+	Flags                                        m_eFlags;
 };
 
 using AModelInstanceRef = Toshi::TRef<AModelInstance>;
 
 class AModel :
-	public Toshi::T2DList<AModel>::Node
+    public Toshi::T2DList<AModel>::Node
 {
 public:
 	static constexpr TUINT32 MAX_NUM_INSTANCES = 250;
@@ -80,18 +80,18 @@ public:
 
 public:
 	static Toshi::TModelPtr* Create( const Toshi::TPString8& a_rFilePath, Toshi::TTRB* a_pTRB );
-	static void				 GetNameFromPath( const Toshi::TPString8& a_FilePath, Toshi::TString8& a_rName );
-	static Toshi::TString8*	 GenerateInstanceName( Toshi::TString8& a_rOutName, const Toshi::TPString8& a_FilePath );
+	static void              GetNameFromPath( const Toshi::TPString8& a_FilePath, Toshi::TString8& a_rName );
+	static Toshi::TString8*  GenerateInstanceName( Toshi::TString8& a_rOutName, const Toshi::TPString8& a_FilePath );
 
 private:
 	inline static TUINT ms_uiNumCreated;
 
 private:
-	TUINT			  m_uiID;
+	TUINT             m_uiID;
 	Toshi::TModelPtr* m_pModelPtr;
 	Toshi::TPString8  m_Name;
-	TUINT			  m_uiNumModelInstances;
+	TUINT             m_uiNumModelInstances;
 	AModelInstanceRef m_aModelInstances[ MAX_NUM_INSTANCES ];
-	Toshi::TVector3	  m_Vec1;
-	Toshi::TVector3	  m_Vec2;
+	Toshi::TVector3   m_Vec1;
+	Toshi::TVector3   m_Vec2;
 };

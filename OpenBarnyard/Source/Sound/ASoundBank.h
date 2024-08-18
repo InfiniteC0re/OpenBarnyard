@@ -6,16 +6,16 @@
 #include <Toshi/TPString8.h>
 
 class ASoundBank :
-	public Toshi::T2DList<ASoundBank>::Node
+    public Toshi::T2DList<ASoundBank>::Node
 {
 public:
 	friend class ASoundManager;
 
 public:
 	constexpr ASoundBank( TINT a_iNumSounds ) :
-		m_iNumSounds( a_iNumSounds ),
-		m_pSoundsEx( TNULL ),
-		m_pSounds( TNULL )
+	    m_iNumSounds( a_iNumSounds ),
+	    m_pSoundsEx( TNULL ),
+	    m_pSounds( TNULL )
 	{}
 
 	~ASoundBank()
@@ -33,8 +33,8 @@ public:
 	}
 
 private:
-	TINT			 m_iNumSounds;
+	TINT             m_iNumSounds;
 	Toshi::TPString8 m_strName;
-	ASoundAdvanced*	 m_pSoundsEx;
-	ASound*			 m_pSounds;
+	ASoundAdvanced*  m_pSoundsEx;
+	ASound*          m_pSounds;
 };

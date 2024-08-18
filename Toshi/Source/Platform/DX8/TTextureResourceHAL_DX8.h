@@ -44,7 +44,7 @@ public:
 	TBOOL CreateFromFileDDS( TUINT a_uiWidth, TUINT a_uiHeight, TUINT a_uiLevels, const TCHAR* a_szFile );
 
 	IDirect3DTexture8* GetD3DTexture() { return m_pD3DTexture; }
-	void			   SetD3DTexture( IDirect3DTexture8* a_pD3DTexture ) { m_pD3DTexture = a_pD3DTexture; }
+	void               SetD3DTexture( IDirect3DTexture8* a_pD3DTexture ) { m_pD3DTexture = a_pD3DTexture; }
 
 	TINT GetAddressUState() const { return m_eAddressUState; }
 	void SetAddressUState( TINT val ) { m_eAddressUState = val; }
@@ -52,27 +52,27 @@ public:
 	TINT GetAddressVState() const { return m_eAddressVState; }
 	void SetAddressVState( TINT val ) { m_eAddressVState = val; }
 
-	D3DXIMAGE_INFO&		  GetImageInfo() { return m_ImageInfo; }
+	D3DXIMAGE_INFO&       GetImageInfo() { return m_ImageInfo; }
 	const D3DXIMAGE_INFO& GetImageInfo() const { return m_ImageInfo; }
 
 public:
 	static TBOOL IsPPM( const TCHAR* a_szName );
 
 private:
-	TINT				   m_iNumLocks;
-	TBOOL				   m_bLoadFromMemory;
-	TBOOL				   m_bIsToshi2;
-	void*				   m_pData;
-	TUINT				   m_uiDataSize;
-	TUINT				   m_uiWidth;
-	TUINT				   m_uiHeight;
-	TUINT				   m_uiMipLevels;
-	BOOL				   m_bNoMipLevels;
+	TINT                   m_iNumLocks;
+	TBOOL                  m_bLoadFromMemory;
+	TBOOL                  m_bIsToshi2;
+	void*                  m_pData;
+	TUINT                  m_uiDataSize;
+	TUINT                  m_uiWidth;
+	TUINT                  m_uiHeight;
+	TUINT                  m_uiMipLevels;
+	BOOL                   m_bNoMipLevels;
 	TTEXTURERESOURCEFORMAT m_eResourceFormat;
-	IDirect3DTexture8*	   m_pD3DTexture;
-	D3DXIMAGE_INFO		   m_ImageInfo;
-	TINT				   m_eAddressUState;
-	TINT				   m_eAddressVState;
+	IDirect3DTexture8*     m_pD3DTexture;
+	D3DXIMAGE_INFO         m_ImageInfo;
+	TINT                   m_eAddressUState;
+	TINT                   m_eAddressVState;
 };
 
 TOSHI_NAMESPACE_END

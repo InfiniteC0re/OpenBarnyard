@@ -113,7 +113,7 @@ public:
 	void Abs( const TVector3& vec3 ) { Set( TMath::Abs( vec3.x ), TMath::Abs( vec3.y ), TMath::Abs( vec3.z ) ); }
 	void Abs() { Set( TMath::Abs( x ), TMath::Abs( y ), TMath::Abs( z ) ); }
 
-	TFLOAT			 Magnitude() const { return TMath::Sqrt( x * x + y * y + z * z ); }
+	TFLOAT           Magnitude() const { return TMath::Sqrt( x * x + y * y + z * z ); }
 	constexpr TFLOAT MagnitudeSq() const { return x * x + y * y + z * z; }
 
 	constexpr TVector3 operator+( const TVector3& other ) const { return { x + other.x, y + other.y, z + other.z }; }
@@ -126,7 +126,7 @@ public:
 	constexpr void operator/=( const TVector3& other ) { Divide( other ); }
 
 public:
-	static TFLOAT			Distance( const TVector3& vec1, const TVector3& vec2 ) { return ( vec2 - vec1 ).Magnitude(); }
+	static TFLOAT           Distance( const TVector3& vec1, const TVector3& vec2 ) { return ( vec2 - vec1 ).Magnitude(); }
 	static constexpr TFLOAT DistanceSq( const TVector3& vec1, const TVector3& vec2 ) { return ( vec2 - vec1 ).MagnitudeSq(); }
 	static constexpr TFLOAT DotProduct( const TVector3& vec1, const TVector3& vec2 ) { return vec1.x * vec2.x + vec1.y * vec2.y + vec1.z * vec2.z; }
 

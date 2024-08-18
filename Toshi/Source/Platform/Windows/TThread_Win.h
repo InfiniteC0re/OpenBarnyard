@@ -21,13 +21,13 @@ public:
 	enum PRIORITY_ : PRIORITY
 	{
 		THREAD_MODE_BACKGROUND_BEGIN  = 0x00010000,
-		THREAD_MODE_BACKGROUND_END	  = 0x00020000,
+		THREAD_MODE_BACKGROUND_END    = 0x00020000,
 		THREAD_PRIORITY_ABOVE_NORMAL  = 1,
 		THREAD_PRIORITY_BELOW_NORMAL  = -1,
-		THREAD_PRIORITY_HIGHEST		  = 2,
-		THREAD_PRIORITY_IDLE		  = -15,
-		THREAD_PRIORITY_LOWEST		  = -2,
-		THREAD_PRIORITY_NORMAL		  = 0,
+		THREAD_PRIORITY_HIGHEST       = 2,
+		THREAD_PRIORITY_IDLE          = -15,
+		THREAD_PRIORITY_LOWEST        = -2,
+		THREAD_PRIORITY_NORMAL        = 0,
 		THREAD_PRIORITY_TIME_CRITICAL = 15
 	};
 
@@ -45,7 +45,7 @@ public:
 	//static void Sleep(TINT milliSeconds) { usleep(100); }
 
 	void* m_hThreadHnd; // 0xC
-	DWORD m_iThreadID;	// 0x10
+	DWORD m_iThreadID;  // 0x10
 };
 
 class TThreadManager : public TSingleton<TThreadManager>

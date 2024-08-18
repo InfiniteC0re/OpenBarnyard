@@ -70,7 +70,7 @@ public:
 	struct TerrainInfo
 	{
 		const TCHAR* szName;
-		TUINT32		 uiUnk;
+		TUINT32      uiUnk;
 	};
 
 	inline static constexpr TerrainInfo ms_aTerrains[ Terrain_NUMOF ] = {
@@ -140,5 +140,5 @@ public:
 
 private:
 	inline static ATerrainInterface* ms_pCurrentTerrain;
-	inline static Terrain			 ms_eCurrentLevel = Terrain_EnvBeadyFarm;
+	inline static Terrain            ms_eCurrentLevel = Terrain_EnvBeadyFarm;
 };

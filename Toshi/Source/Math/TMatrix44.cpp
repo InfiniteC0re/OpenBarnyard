@@ -4,22 +4,22 @@
 TOSHI_NAMESPACE_START
 
 TMatrix44 TMatrix44::IDENTITY(
-	1.0f,
-	0.0f,
-	0.0f,
-	0.0f,
-	0.0f,
-	1.0f,
-	0.0f,
-	0.0f,
-	0.0f,
-	0.0f,
-	1.0f,
-	0.0f,
-	0.0f,
-	0.0f,
-	0.0f,
-	1.0f );
+    1.0f,
+    0.0f,
+    0.0f,
+    0.0f,
+    0.0f,
+    1.0f,
+    0.0f,
+    0.0f,
+    0.0f,
+    0.0f,
+    1.0f,
+    0.0f,
+    0.0f,
+    0.0f,
+    0.0f,
+    1.0f );
 
 void TMatrix44::LookAtTarget( const TVector4& target, const TVector4& up )
 {
@@ -45,13 +45,13 @@ void TMatrix44::LookAtDirection( const Toshi::TVector4& a_rDirection, const Tosh
 	vProjection.Multiply( -1.0f );
 	vCrossProduct.CrossProduct( vProjection, a_rDirection );
 
-	AsBasisVector4( 0 )	  = vCrossProduct;
+	AsBasisVector4( 0 )   = vCrossProduct;
 	AsBasisVector4( 0 ).w = 0.0f;
 
-	AsBasisVector4( 1 )	  = vProjection;
+	AsBasisVector4( 1 )   = vProjection;
 	AsBasisVector4( 1 ).w = 0.0f;
 
-	AsBasisVector4( 2 )	  = a_rDirection;
+	AsBasisVector4( 2 )   = a_rDirection;
 	AsBasisVector4( 2 ).w = 0.0f;
 }
 
@@ -87,10 +87,10 @@ void TMatrix44::Multiply( const TMatrix44& a_rLeft, const TMatrix44& a_rRight )
 		for ( TINT k = 0; k < 4; k++ )
 		{
 			pBasis[ k ] =
-				a_rLeft.AsBasisVector4( 3 ).AsArray()[ k ] * a_rRight.AsBasisVector4( i ).w +
-				a_rLeft.AsBasisVector4( 2 ).AsArray()[ k ] * a_rRight.AsBasisVector4( i ).z +
-				a_rLeft.AsBasisVector4( 1 ).AsArray()[ k ] * a_rRight.AsBasisVector4( i ).y +
-				a_rLeft.AsBasisVector4( 0 ).AsArray()[ k ] * a_rRight.AsBasisVector4( i ).x;
+			    a_rLeft.AsBasisVector4( 3 ).AsArray()[ k ] * a_rRight.AsBasisVector4( i ).w +
+			    a_rLeft.AsBasisVector4( 2 ).AsArray()[ k ] * a_rRight.AsBasisVector4( i ).z +
+			    a_rLeft.AsBasisVector4( 1 ).AsArray()[ k ] * a_rRight.AsBasisVector4( i ).y +
+			    a_rLeft.AsBasisVector4( 0 ).AsArray()[ k ] * a_rRight.AsBasisVector4( i ).x;
 		}
 	}
 }
@@ -105,7 +105,7 @@ TBOOL TMatrix44::Invert( const TMatrix44& a_rRight )
 	TFLOAT fVal1 = a_rRight.m_f22 * a_rRight.m_f33 - a_rRight.m_f23 * a_rRight.m_f32;
 	TFLOAT fVal2 = -( a_rRight.m_f12 * a_rRight.m_f33 - a_rRight.m_f13 * a_rRight.m_f32 );
 	TFLOAT fVal3 = a_rRight.m_f12 * a_rRight.m_f23 - a_rRight.m_f13 * a_rRight.m_f22;
-	TFLOAT fDet	 = a_rRight.m_f11 * fVal1 + a_rRight.m_f21 * fVal2 + a_rRight.m_f31 * fVal3;
+	TFLOAT fDet  = a_rRight.m_f11 * fVal1 + a_rRight.m_f21 * fVal2 + a_rRight.m_f31 * fVal3;
 
 	if ( fDet == 0.0 )
 	{

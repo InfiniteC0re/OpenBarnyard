@@ -43,9 +43,9 @@ public:
 
 protected:
 	Toshi::TTexture* m_pTexture;
-	TUINT			 m_Unk1;
-	TUINT			 m_Unk2;
-	TUINT			 m_Unk3;
-	BLENDMODE		 m_eBlendMode;
-	Toshi::TVector4	 m_Vec3;
+	TUINT            m_Unk1;
+	TUINT            m_Unk2;
+	TUINT            m_Unk3;
+	BLENDMODE        m_eBlendMode;
+	Toshi::TVector4  m_Vec3;
 };

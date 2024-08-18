@@ -38,12 +38,12 @@ private:
 	static TBOOL OnGUIRender( AGUISystem* a_pGUISystem, ARenderer* a_pRenderer, TINT* a_pUnknown );
 
 private:
-	TUINT										  m_Unk1;
-	Toshi::TGenericListener						  m_SomeListener;
+	TUINT                                         m_Unk1;
+	Toshi::TGenericListener                       m_SomeListener;
 	Toshi::TListener<ARenderer, TINT, AGUISystem> m_RenderGUIListener;
-	Toshi::TPString8*							  m_pStrings;
-	AGUIMatlibPicture							  m_MatLibPicture;
-	TUINT										  m_Unk2;
-	TUINT										  m_Unk3;
-	PGUITRRenderObject*							  m_pRenderObjects[ NUM_RENDER_OBJECTS ];
+	Toshi::TPString8*                             m_pStrings;
+	AGUIMatlibPicture                             m_MatLibPicture;
+	TUINT                                         m_Unk2;
+	TUINT                                         m_Unk3;
+	PGUITRRenderObject*                           m_pRenderObjects[ NUM_RENDER_OBJECTS ];
 };

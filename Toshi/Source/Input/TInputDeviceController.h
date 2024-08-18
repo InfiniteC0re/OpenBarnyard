@@ -20,16 +20,16 @@ public:
 	TInputDeviceController()
 	{
 		m_CurrentState = new TBOOL[ NUM_BUTTONS ];
-		m_OldState	   = new TBOOL[ NUM_BUTTONS ];
+		m_OldState     = new TBOOL[ NUM_BUTTONS ];
 		TUtil::MemClear( m_CurrentState, sizeof( *m_CurrentState ) * NUM_BUTTONS );
 		TUtil::MemClear( m_OldState, sizeof( *m_OldState ) * NUM_BUTTONS );
 	}
 
 	~TInputDeviceController() = default;
 
-	virtual TBOOL		 GetDoodadProperties( Doodad a_iDoodad, DoodadProperties& a_rProperties ) const override;
+	virtual TBOOL        GetDoodadProperties( Doodad a_iDoodad, DoodadProperties& a_rProperties ) const override;
 	virtual const TCHAR* GetButtonFromDoodad( Doodad a_iDoodad ) const override;
-	virtual TBOOL		 IsDown( Doodad a_iDoodad ) const override;
+	virtual TBOOL        IsDown( Doodad a_iDoodad ) const override;
 
 	virtual void  SetVibration( VIBRATION_ACTUATOR a_eActuator, TFLOAT a_fValue );
 	virtual TBOOL WasDown( Doodad a_iDoodad ) const;
@@ -39,9 +39,9 @@ public:
 
 private:
 	TBOOL* m_CurrentState; // 0x3C
-	TBOOL* m_OldState;	   // 0x40
-	TFLOAT m_fMag1;		   // 0x44
-	TFLOAT m_fMag2;		   // 0x48
+	TBOOL* m_OldState;     // 0x40
+	TFLOAT m_fMag1;        // 0x44
+	TFLOAT m_fMag2;        // 0x48
 };
 
 TOSHI_NAMESPACE_END

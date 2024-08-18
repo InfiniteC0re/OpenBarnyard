@@ -90,7 +90,7 @@ BOOL TInputDXInterface::EnumerateDeviceCallback( LPCDIDEVICEINSTANCEA a_poDevice
 		case DI8DEVTYPE_KEYBOARD:
 		{
 			LPDIRECTINPUTDEVICE8A pInputDevice;
-			HRESULT				  hRes = pInputInterface->m_poDirectInput8->CreateDevice( a_poDeviceInstance->guidInstance, &pInputDevice, NULL );
+			HRESULT               hRes = pInputInterface->m_poDirectInput8->CreateDevice( a_poDeviceInstance->guidInstance, &pInputDevice, NULL );
 
 			if ( hRes == DI_OK )
 			{
@@ -103,11 +103,11 @@ BOOL TInputDXInterface::EnumerateDeviceCallback( LPCDIDEVICEINSTANCEA a_poDevice
 					if ( bRes )
 					{
 						DIPROPDWORD oProperty;
-						oProperty.dwData			= 0x20;
-						oProperty.diph.dwSize		= sizeof( DIPROPDWORD );
+						oProperty.dwData            = 0x20;
+						oProperty.diph.dwSize       = sizeof( DIPROPDWORD );
 						oProperty.diph.dwHeaderSize = sizeof( DIPROPHEADER );
-						oProperty.diph.dwObj		= 0;
-						oProperty.diph.dwHow		= DIPH_DEVICE;
+						oProperty.diph.dwObj        = 0;
+						oProperty.diph.dwHow        = DIPH_DEVICE;
 
 						HRESULT hRes = pInputDevice->SetProperty( DIPROP_BUFFERSIZE, &oProperty.diph );
 
@@ -115,8 +115,8 @@ BOOL TInputDXInterface::EnumerateDeviceCallback( LPCDIDEVICEINSTANCEA a_poDevice
 							return DIENUM_STOP;
 
 						hRes = pInputDevice->SetCooperativeLevel(
-							pInputInterface->GetMainWindow(),
-							pInputInterface->GetExclusiveMode() ? ( DISCL_NOWINKEY | DISCL_FOREGROUND | DISCL_EXCLUSIVE ) : ( DISCL_NONEXCLUSIVE | DISCL_BACKGROUND ) );
+						    pInputInterface->GetMainWindow(),
+						    pInputInterface->GetExclusiveMode() ? ( DISCL_NOWINKEY | DISCL_FOREGROUND | DISCL_EXCLUSIVE ) : ( DISCL_NONEXCLUSIVE | DISCL_BACKGROUND ) );
 
 						if ( hRes == DI_OK )
 						{
@@ -137,8 +137,8 @@ BOOL TInputDXInterface::EnumerateDeviceCallback( LPCDIDEVICEINSTANCEA a_poDevice
 		case DI8DEVTYPE_MOUSE:
 		{
 			LPDIRECTINPUTDEVICE8A pInputDevice;
-			auto				  pMouse = pInputInterface->GetDeviceByIndex<TInputDXDeviceMouse>( 0 );
-			auto				  hRes	 = pInput8->CreateDevice( GUID_SysMouse, &pInputDevice, NULL );
+			auto                  pMouse = pInputInterface->GetDeviceByIndex<TInputDXDeviceMouse>( 0 );
+			auto                  hRes   = pInput8->CreateDevice( GUID_SysMouse, &pInputDevice, NULL );
 
 			TBOOL bIsNewMouse = TFALSE;
 
@@ -146,7 +146,7 @@ BOOL TInputDXInterface::EnumerateDeviceCallback( LPCDIDEVICEINSTANCEA a_poDevice
 			{
 				if ( pMouse == TNULL )
 				{
-					pMouse		= new TInputDXDeviceMouse;
+					pMouse      = new TInputDXDeviceMouse;
 					bIsNewMouse = TTRUE;
 
 					if ( pMouse == TNULL )
@@ -173,12 +173,12 @@ BOOL TInputDXInterface::EnumerateDeviceCallback( LPCDIDEVICEINSTANCEA a_poDevice
 				}
 
 				DIPROPDWORD oProperty;
-				oProperty.diph.dwSize		= sizeof( DIPROPDWORD );
+				oProperty.diph.dwSize       = sizeof( DIPROPDWORD );
 				oProperty.diph.dwHeaderSize = sizeof( DIPROPHEADER );
-				oProperty.diph.dwObj		= 0;
-				oProperty.diph.dwHow		= DIPH_DEVICE;
-				oProperty.dwData			= 0x20;
-				hRes						= pInputDevice->SetProperty( DIPROP_BUFFERSIZE, &oProperty.diph );
+				oProperty.diph.dwObj        = 0;
+				oProperty.diph.dwHow        = DIPH_DEVICE;
+				oProperty.dwData            = 0x20;
+				hRes                        = pInputDevice->SetProperty( DIPROP_BUFFERSIZE, &oProperty.diph );
 
 				if ( FAILED( hRes ) )
 				{

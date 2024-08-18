@@ -1,7 +1,7 @@
 #include "pch.h"
 
 #ifdef TOSHI_SKU_WINDOWS
-#	include "Platform/DX8/TTextureResourceHAL_DX8.h"
+#  include "Platform/DX8/TTextureResourceHAL_DX8.h"
 #endif // TOSHI_SKU_WINDOWS
 
 #include "ABINKMoviePlayer.h"
@@ -23,23 +23,23 @@ TDEFINE_CLASS( ABINKMoviePlayer );
 
 ABINKMoviePlayer::ABINKMoviePlayer()
 {
-	m_Bink		= TNULL;
-	m_bPlaying	= TFALSE;
-	m_bPaused	= TFALSE;
-	m_bVisible	= TFALSE;
-	m_pSurface	= TNULL;
+	m_Bink      = TNULL;
+	m_bPlaying  = TFALSE;
+	m_bPaused   = TFALSE;
+	m_bVisible  = TFALSE;
+	m_pSurface  = TNULL;
 	m_iNumRects = 0;
 }
 
 TBOOL ABINKMoviePlayer::OnCreate()
 {
 	BinkSetMemory(
-		[]( unsigned int size ) {
-			return TMalloc( size );
-		},
-		[]( void* ptr ) {
-			TFree( ptr );
-		} );
+	    []( unsigned int size ) {
+		    return TMalloc( size );
+	    },
+	    []( void* ptr ) {
+		    TFree( ptr );
+	    } );
 
 	int iOutput = FSOUND_GetOutput();
 
@@ -114,7 +114,7 @@ TBOOL ABINKMoviePlayer::OnUpdate( TFLOAT a_fDeltaTime )
 			auto ppRenderSurface = &m_pSurface;
 
 			if ( m_bVideoFitsBackBuffer ||
-				 TSTATICCAST( TTextureResourceHAL, m_pRects[ 0 ].pTexture )->GetD3DTexture()->GetSurfaceLevel( 0, ppRenderSurface ) == S_OK )
+			     TSTATICCAST( TTextureResourceHAL, m_pRects[ 0 ].pTexture )->GetD3DTexture()->GetSurfaceLevel( 0, ppRenderSurface ) == S_OK )
 			{
 				D3DLOCKED_RECT rect;
 				if ( S_OK == ( *ppRenderSurface )->LockRect( &rect, TNULL, 0 ) )
@@ -174,7 +174,7 @@ TBOOL ABINKMoviePlayer::CreateSurfaces()
 	auto pDevice = pRender->GetDirect3DDevice();
 
 	IDirect3DSurface8* pSurface;
-	auto			   hRes = pDevice->GetBackBuffer( 0, D3DBACKBUFFER_TYPE_MONO, &pSurface );
+	auto               hRes = pDevice->GetBackBuffer( 0, D3DBACKBUFFER_TYPE_MONO, &pSurface );
 
 	if ( hRes == S_OK )
 	{
@@ -212,7 +212,7 @@ TBOOL ABINKMoviePlayer::CreateSurfaces()
 		if ( desc.Width == m_Bink->Width && desc.Height == m_Bink->Height )
 		{
 			m_bVideoFitsBackBuffer = TTRUE;
-			hRes				   = pDevice->CreateImageSurface( desc.Width, desc.Height, desc.Format, &m_pSurface );
+			hRes                   = pDevice->CreateImageSurface( desc.Width, desc.Height, desc.Format, &m_pSurface );
 		}
 		else
 		{
@@ -264,7 +264,7 @@ void ABINKMoviePlayer::Render( TFLOAT a_fDeltaTime )
 		if ( m_bVideoFitsBackBuffer )
 		{
 			IDirect3DSurface8* pSurface;
-			auto			   hRes = pDevice->GetBackBuffer( 0, D3DBACKBUFFER_TYPE_MONO, &pSurface );
+			auto               hRes = pDevice->GetBackBuffer( 0, D3DBACKBUFFER_TYPE_MONO, &pSurface );
 
 			if ( hRes == S_OK )
 			{
@@ -299,17 +299,17 @@ TBOOL ABINKMoviePlayer::CreateAGUISurfaces( TUINT a_uiWidth, TUINT a_uiHeight, D
 	auto pDevice = TRenderD3DInterface::Interface()->GetDirect3DDevice();
 
 	D3DCAPS8 caps;
-	auto	 hRes = pDevice->GetDeviceCaps( &caps );
+	auto     hRes = pDevice->GetDeviceCaps( &caps );
 
 	if ( hRes == S_OK )
 	{
-		TUINT uiWidth			 = m_Bink->Width;
-		TUINT uiHeight			 = m_Bink->Height;
-		TUINT uiMaxTextureWidth	 = caps.MaxTextureWidth;
+		TUINT uiWidth            = m_Bink->Width;
+		TUINT uiHeight           = m_Bink->Height;
+		TUINT uiMaxTextureWidth  = caps.MaxTextureWidth;
 		TUINT uiMaxTextureHeight = caps.MaxTextureHeight;
 
 		m_iNumRects = ( ( uiHeight - 1 ) + uiMaxTextureHeight ) / uiMaxTextureHeight * ( ( uiWidth - 1 ) + uiMaxTextureWidth ) / uiMaxTextureWidth;
-		m_pRects	= new Rect[ m_iNumRects ];
+		m_pRects    = new Rect[ m_iNumRects ];
 
 		auto pDisplayParams = TRenderD3DInterface::Interface()->GetCurrentDisplayParams();
 
@@ -338,34 +338,34 @@ TBOOL ABINKMoviePlayer::CreateAGUISurfaces( TUINT a_uiWidth, TUINT a_uiHeight, D
 			return TFALSE;
 		}
 
-		TFLOAT fVideoWidth	= TMath::Abs( TFLOAT( m_Bink->Width ) );
+		TFLOAT fVideoWidth  = TMath::Abs( TFLOAT( m_Bink->Width ) );
 		TFLOAT fVideoHeight = TMath::Abs( TFLOAT( m_Bink->Height ) );
 
-		TUINT uiPosY	  = 0;
+		TUINT uiPosY      = 0;
 		TUINT uiRectIndex = 0;
 
 		TUINT uiLeftHeight = uiHeight;
 		while ( 0 < TINT( uiLeftHeight ) )
 		{
 			TUINT uiRectHeight = TMath::Min( uiLeftHeight, uiMaxTextureHeight );
-			uiWidth			   = m_Bink->Width;
+			uiWidth            = m_Bink->Width;
 
-			TUINT uiPosX	  = 0;
+			TUINT uiPosX      = 0;
 			TUINT uiLeftWidth = m_Bink->Width;
 
 			while ( 0 < TINT( uiLeftWidth ) )
 			{
 				TUINT uiRectWidth = TMath::Min( uiLeftWidth, uiMaxTextureWidth );
-				TBOOL bCreated	  = m_pRects[ uiRectIndex ].Create(
-					   uiPosX,
-					   uiPosY,
-					   uiRectWidth,
-					   uiRectHeight,
-					   ( uiPosX + fVideoWidth * -0.5f ) * fScaleX,
-					   ( uiPosY + fVideoHeight * -0.5f ) * fScaleY,
-					   uiRectWidth * fScaleX,
-					   uiRectHeight * fScaleY,
-					   eFormat );
+				TBOOL bCreated    = m_pRects[ uiRectIndex ].Create(
+                    uiPosX,
+                    uiPosY,
+                    uiRectWidth,
+                    uiRectHeight,
+                    ( uiPosX + fVideoWidth * -0.5f ) * fScaleX,
+                    ( uiPosY + fVideoHeight * -0.5f ) * fScaleY,
+                    uiRectWidth * fScaleX,
+                    uiRectHeight * fScaleY,
+                    eFormat );
 
 				if ( !bCreated )
 				{
@@ -420,16 +420,16 @@ ABINKMoviePlayer::Rect::~Rect()
 
 TBOOL ABINKMoviePlayer::Rect::Create( int a_iPosX, int a_iPosY, int a_iWidth, int a_iHeight, TFLOAT a_iRenderPos1X, TFLOAT a_iRenderPos1Y, TFLOAT a_iRenderWidth, TFLOAT a_iRenderHeight, TTEXTURERESOURCEFORMAT a_eFormat )
 {
-	iPosY	= a_iPosY;
-	iPosX	= a_iPosX;
-	iWidth	= a_iWidth;
+	iPosY   = a_iPosY;
+	iPosX   = a_iPosX;
+	iWidth  = a_iWidth;
 	iHeight = a_iHeight;
-	Pos1	= { a_iRenderPos1X, a_iRenderPos1Y };
-	Pos2	= { a_iRenderPos1X + a_iRenderWidth, a_iRenderPos1Y + a_iRenderHeight };
+	Pos1    = { a_iRenderPos1X, a_iRenderPos1Y };
+	Pos2    = { a_iRenderPos1X + a_iRenderWidth, a_iRenderPos1Y + a_iRenderHeight };
 
-	TUINT32 uiWidth	 = TMath::RoundToNextPowerOfTwo( a_iWidth );
+	TUINT32 uiWidth  = TMath::RoundToNextPowerOfTwo( a_iWidth );
 	TUINT32 uiHeight = TMath::RoundToNextPowerOfTwo( a_iHeight );
-	TINT	iPixelSize;
+	TINT    iPixelSize;
 
 	if ( a_eFormat == TTEXTURERESOURCEFORMAT::Unknown )
 	{
@@ -448,8 +448,8 @@ TBOOL ABINKMoviePlayer::Rect::Create( int a_iPosX, int a_iPosY, int a_iWidth, in
 		return TFALSE;
 	}
 
-	auto uiDataSize	 = iPixelSize * uiWidth * uiHeight;
-	pData			 = new TUINT8[ uiDataSize ];
+	auto uiDataSize  = iPixelSize * uiWidth * uiHeight;
+	pData            = new TUINT8[ uiDataSize ];
 	auto pTexFactory = TRenderInterface::GetSingleton()->GetSystemResource<TTextureFactory>( SYSRESOURCE_TEXTUREFACTORY );
 
 	pTexture = pTexFactory->CreateEx( pData, uiDataSize, uiWidth, uiHeight, 1, a_eFormat, 4 );

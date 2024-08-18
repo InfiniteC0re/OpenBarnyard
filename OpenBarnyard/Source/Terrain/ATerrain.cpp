@@ -8,8 +8,8 @@
 #include <Toshi/T2String.h>
 
 #ifdef TOSHI_SKU_WINDOWS
-#	include "Platform/DX8/AWorldShader/AWorldMesh_DX8.h"
-#	include "Platform/DX8/AWorldShader/AWorldShader_DX8.h"
+#  include "Platform/DX8/AWorldShader/AWorldMesh_DX8.h"
+#  include "Platform/DX8/AWorldShader/AWorldShader_DX8.h"
 #endif
 
 //-----------------------------------------------------------------------------
@@ -22,12 +22,12 @@ TOSHI_NAMESPACE_USING
 
 ATerrainInterface::ATerrainInterface( TINT a_iUnused1, TINT a_iUnused2, TINT a_iPreloadTerrainBlockSize, TINT a_iStartVISGroup )
 {
-	m_bIsLoaded				   = TTRUE;
-	m_pTerrainVIS			   = TNULL;
-	m_iNumChunks			   = 16;
+	m_bIsLoaded                = TTRUE;
+	m_pTerrainVIS              = TNULL;
+	m_iNumChunks               = 16;
 	m_iPreloadTerrainBlockSize = a_iPreloadTerrainBlockSize;
 
-	m_pJobs		  = new JobSlot[ NUM_TOTAL_JOBS ];
+	m_pJobs       = new JobSlot[ NUM_TOTAL_JOBS ];
 	auto pJobSlot = &m_pJobs[ 0 ];
 
 	for ( TUINT i = 0; i < MAX_NUM_MODEL_LOADER_JOBS; i++ )
@@ -82,13 +82,13 @@ ATerrainInterface::ATerrainInterface( TINT a_iUnused1, TINT a_iUnused2, TINT a_i
 	TTODO( "Call FUN_00619040() and initialise some other values" );
 	m_iCurrentSection  = a_iStartVISGroup;
 	m_iPreviousSection = -1;
-	m_bUnused4		   = TFALSE;
+	m_bUnused4         = TFALSE;
 	// ...
-	m_fUnused3				  = 0.0f;
+	m_fUnused3                = 0.0f;
 	m_cbOnCollsionModelLoaded = TNULL;
-	m_cbOnModelLoaded		  = TNULL;
-	m_cbOnVISGroupChanged	  = TNULL;
-	m_fnGetCurrentVISGroup	  = GetCurrentSectionID;
+	m_cbOnModelLoaded         = TNULL;
+	m_cbOnVISGroupChanged     = TNULL;
+	m_fnGetCurrentVISGroup    = GetCurrentSectionID;
 }
 
 ATerrainInterface::~ATerrainInterface()
@@ -162,7 +162,7 @@ void ATerrainInterface::Update()
 		for ( TINT i = 0; i < m_pTerrainVIS->m_iNumSections; i++ )
 		{
 			if ( m_pTerrainVIS->m_pSections[ i ].IsLODLoading( ATerrainLODType_High ) ||
-				 m_pTerrainVIS->m_pSections[ i ].IsLODLoading( ATerrainLODType_Low ) )
+			     m_pTerrainVIS->m_pSections[ i ].IsLODLoading( ATerrainLODType_Low ) )
 			{
 				// There are already some models loading, don't create any new jobs
 				bSkipLoadingModels = TTRUE;
@@ -184,7 +184,7 @@ void ATerrainInterface::Update()
 					for ( TINT i = 0; i < pDVIS->iCount; i++ )
 					{
 						auto uiGroupIndex = pDVIS->pInfo[ i ].uiGroupIndex;
-						auto eLODType	  = pDVIS->pInfo[ i ].eLODType;
+						auto eLODType     = pDVIS->pInfo[ i ].eLODType;
 
 						if ( pGroups[ uiGroupIndex ].IsLODQueued( eLODType ) )
 						{
@@ -226,7 +226,7 @@ void ATerrainInterface::Update()
 		for ( TINT i = 0; i < m_pTerrainVIS->m_iNumSections; i++ )
 		{
 			if ( m_pTerrainVIS->m_pSections[ i ].IsLODQueued( ATerrainLODType_High ) ||
-				 m_pTerrainVIS->m_pSections[ i ].IsLODQueued( ATerrainLODType_Low ) )
+			     m_pTerrainVIS->m_pSections[ i ].IsLODQueued( ATerrainLODType_Low ) )
 			{
 				FlushJobs();
 				return;
@@ -237,7 +237,7 @@ void ATerrainInterface::Update()
 		for ( TINT i = 0; i < m_pTerrainVIS->m_iNumSections; i++ )
 		{
 			if ( m_pTerrainVIS->m_pSections[ i ].IsLODLoading( ATerrainLODType_High ) ||
-				 m_pTerrainVIS->m_pSections[ i ].IsLODLoading( ATerrainLODType_Low ) )
+			     m_pTerrainVIS->m_pSections[ i ].IsLODLoading( ATerrainLODType_Low ) )
 			{
 				FlushJobs();
 				return;
@@ -250,7 +250,7 @@ void ATerrainInterface::Update()
 
 			for ( TINT i = 0; i < pDVIS->iCount; i++ )
 			{
-				auto pInfo	= &pDVIS->pInfo[ i ];
+				auto pInfo  = &pDVIS->pInfo[ i ];
 				auto pGroup = &m_pTerrainVIS->m_pSections[ pInfo->uiGroupIndex ];
 
 				if ( pGroup->IsLODLoaded( pInfo->eLODType ) && !pGroup->IsLODEmpty( pInfo->eLODType ) )
@@ -273,7 +273,7 @@ void ATerrainInterface::Render()
 	m_pTerrainVIS->m_pPersistantTerrainBlock->UpdateLastAccessTime();
 
 	auto pRenderContext = TRenderInterface::GetSingleton()->GetCurrentContext();
-	auto pCameraObject	= pRenderContext->GetCameraObject();
+	auto pCameraObject  = pRenderContext->GetCameraObject();
 
 	if ( pCameraObject )
 	{
@@ -289,9 +289,9 @@ void ATerrainInterface::Render()
 		m_LitShadowColor.Multiply( s_ShadowColor2Multiplier );
 
 		m_LitAmbientColor = m_LitShadowColor;
-		m_bUnused4		  = TFALSE;
-		m_fUnused3		  = 1.0f;
-		m_bUnused4		  = TTRUE;
+		m_bUnused4        = TFALSE;
+		m_fUnused3        = 1.0f;
+		m_bUnused4        = TTRUE;
 
 		auto pTerrainVIS = m_pTerrainVIS;
 
@@ -303,7 +303,7 @@ void ATerrainInterface::Render()
 				m_iCurrentSection = 0;
 			}
 
-			auto pSections		 = pTerrainVIS->m_pSections;
+			auto pSections       = pTerrainVIS->m_pSections;
 			auto iCurrentSection = m_iCurrentSection;
 			auto pCurrentSection = &pSections[ iCurrentSection ];
 
@@ -363,7 +363,7 @@ void ATerrainInterface::LoadFromFile( const TCHAR* a_szFilePath, TBOOL a_bLoadLa
 	if ( m_VISTRB.GetSymbolAddress( "preloadcollision" ) )
 	{
 		// We won't stream collision models if there's any preload collision
-		a_bStreamCollision		   = TFALSE;
+		a_bStreamCollision         = TFALSE;
 		m_iPreloadTerrainBlockSize = m_pTerrainVIS->m_uiPersistantTerrainBlockSize;
 	}
 
@@ -377,8 +377,8 @@ void ATerrainInterface::LoadFromFile( const TCHAR* a_szFilePath, TBOOL a_bLoadLa
 	if ( m_pTerrainVIS->m_uiPersistantTerrainBlockSize > 0 )
 	{
 		m_pTerrainVIS->m_pPersistantTerrainBlock = new ATerrainLODBlock(
-			m_pTerrainVIS->m_uiPersistantTerrainBlockSize,
-			"Terrain_Persistant" );
+		    m_pTerrainVIS->m_uiPersistantTerrainBlockSize,
+		    "Terrain_Persistant" );
 	}
 
 	// Create HighLOD blocks
@@ -392,8 +392,8 @@ void ATerrainInterface::LoadFromFile( const TCHAR* a_szFilePath, TBOOL a_bLoadLa
 			TStringManager::String8Format( szBlockName, sizeof( szBlockName ), "Terrain_HighLOD_Block%d", i );
 
 			m_pTerrainVIS->m_ppHighBlocks[ i ] = new ATerrainLODBlock(
-				m_pTerrainVIS->m_uiHighBlockSize,
-				szBlockName );
+			    m_pTerrainVIS->m_uiHighBlockSize,
+			    szBlockName );
 		}
 	}
 
@@ -408,8 +408,8 @@ void ATerrainInterface::LoadFromFile( const TCHAR* a_szFilePath, TBOOL a_bLoadLa
 			TStringManager::String8Format( szBlockName, sizeof( szBlockName ), "Terrain_LowLOD_Block%d", i );
 
 			m_pTerrainVIS->m_ppLowBlocks[ i ] = new ATerrainLODBlock(
-				m_pTerrainVIS->m_uiLowBlockSize,
-				szBlockName );
+			    m_pTerrainVIS->m_uiLowBlockSize,
+			    szBlockName );
 		}
 	}
 
@@ -418,18 +418,18 @@ void ATerrainInterface::LoadFromFile( const TCHAR* a_szFilePath, TBOOL a_bLoadLa
 	// Load global matlib if it is specified
 	if ( *m_pTerrainVIS->m_szMatLibrary != '\0' )
 	{
-		auto pMatlibJob		 = GetFreeMatlibLoaderJob();
+		auto pMatlibJob      = GetFreeMatlibLoaderJob();
 		auto pPersitantBlock = m_pTerrainVIS->m_pPersistantTerrainBlock;
 
-		auto pTRB							 = new ( pPersitantBlock->GetMemBlock() ) TTRB();
+		auto pTRB                            = new ( pPersitantBlock->GetMemBlock() ) TTRB();
 		m_pTerrainVIS->m_pMaterialLibraryTRB = pTRB;
 		pPersitantBlock->SetupTRB( pTRB, pPersitantBlock );
 
 		pMatlibJob->InitJob(
-			m_pTerrainVIS->m_szMatLibrary,
-			m_pTerrainVIS->m_pMaterialLibraryTRB,
-			m_pTerrainVIS->m_pMaterialLibrary,
-			pPersitantBlock->GetMemBlock() );
+		    m_pTerrainVIS->m_szMatLibrary,
+		    m_pTerrainVIS->m_pMaterialLibraryTRB,
+		    m_pTerrainVIS->m_pMaterialLibrary,
+		    pPersitantBlock->GetMemBlock() );
 
 		AAssetStreaming::GetSingleton()->AddMainThreadJob( pMatlibJob );
 	}
@@ -492,7 +492,7 @@ void ATerrainInterface::DestroyModelData( ATerrainSection::ModelNode* a_pModelDa
 
 void ATerrainInterface::UpdateUsedBlocks( ATerrainLODType a_eLODType )
 {
-	TINT			   iNumBlocks;
+	TINT               iNumBlocks;
 	ATerrainLODBlock** ppBlocks;
 
 	if ( a_eLODType == ATerrainLODType_High )
@@ -524,7 +524,7 @@ void ATerrainInterface::UpdateUsedBlocks( ATerrainLODType a_eLODType )
 			for ( TINT k = 0; k < pVIS->m_iNumSections; k++ )
 			{
 				if ( pCurrentVISGroup->m_pVisibility[ k ] == a_eLODType &&
-					 pBlock->m_pVISGroup == &pVIS->m_pSections[ k ] )
+				     pBlock->m_pVISGroup == &pVIS->m_pSections[ k ] )
 				{
 					pBlock->SetUsed();
 				}
@@ -555,8 +555,8 @@ void ATerrainInterface::QueueStreamingAssets()
 	}
 
 	if ( !HASANYFLAG(
-			 pCurrentGroup->m_eFlags,
-			 ATerrainSection::FLAGS_HIGH_LOD_LOADED | ATerrainSection::FLAGS_HIGH_LOD_LOADING ) )
+	         pCurrentGroup->m_eFlags,
+	         ATerrainSection::FLAGS_HIGH_LOD_LOADED | ATerrainSection::FLAGS_HIGH_LOD_LOADING ) )
 	{
 		pCurrentGroup->SetLODQueued( ATerrainLODType_High, TTRUE );
 	}
@@ -587,7 +587,7 @@ TBOOL ATerrainInterface::HasAnyLODsQueued()
 
 ATerrainLODBlock* ATerrainInterface::AllocateLODBlock( ATerrainLODType a_eLODType, ATerrainSection* a_pVISGroup )
 {
-	TINT			   iNumBlocks;
+	TINT               iNumBlocks;
 	ATerrainLODBlock** ppBlocks;
 
 	if ( a_eLODType == ATerrainLODType_High )
@@ -625,7 +625,7 @@ ATerrainLODBlock* ATerrainInterface::AllocateLODBlock( ATerrainLODType a_eLODTyp
 				if ( pBlock->m_fLastAccessTime < fMinAccessTime )
 				{
 					fMinAccessTime = pBlock->m_fLastAccessTime;
-					iFoundIndex	   = i;
+					iFoundIndex    = i;
 				}
 			}
 		}
@@ -635,7 +635,7 @@ ATerrainLODBlock* ATerrainInterface::AllocateLODBlock( ATerrainLODType a_eLODTyp
 
 	if ( iFoundIndex >= 0 )
 	{
-		auto pBlock	   = ppBlocks[ iFoundIndex ];
+		auto pBlock    = ppBlocks[ iFoundIndex ];
 		auto pVISGroup = pBlock->m_pVISGroup;
 
 		if ( pVISGroup )
@@ -825,7 +825,7 @@ static void RenderWorldWin( TModelInstance* a_pModelInstance )
 	TRenderInterface::GetSingleton()->GetCurrentContext()->SetSkeletonInstance( pSkeletonInstance );
 
 	auto pModel = a_pModelInstance->GetModel();
-	auto pLOD	= &pModel->GetLOD( a_pModelInstance->GetLOD() );
+	auto pLOD   = &pModel->GetLOD( a_pModelInstance->GetLOD() );
 
 	for ( TINT i = 0; pLOD->iNumMeshes; i++ )
 	{
@@ -861,7 +861,7 @@ static void RenderCellMeshWin( CellMeshSphere* a_pMeshSphere, RenderData* a_pRen
 
 static void RenderWorldVisWin( TModelInstance* a_pModelInstance, void* a_pModelNode )
 {
-	auto pModel		= a_pModelInstance->GetModel();
+	auto pModel     = a_pModelInstance->GetModel();
 	auto pModelNode = TSTATICCAST( ATerrainSection::ModelNode, a_pModelNode );
 
 	if ( TNULL != pModel->GetTRB() )
@@ -878,14 +878,14 @@ static void RenderWorldVisWin( TModelInstance* a_pModelInstance, void* a_pModelN
 
 			TMatrix44 projection;
 			pRenderContext->ComputePerspectiveProjection(
-				projection,
-				pRenderContext->GetViewportParameters(),
-				pRenderContext->GetProjectionParams() );
+			    projection,
+			    pRenderContext->GetViewportParameters(),
+			    pRenderContext->GetProjectionParams() );
 
 			TMatrix44 modelView = pRenderContext->GetModelViewMatrix();
 
 			const TBOOL bIsDefaultRenderer =
-				( pModelNode->m_WorldVis.m_pfnRenderCallback == RenderCellMeshDefault );
+			    ( pModelNode->m_WorldVis.m_pfnRenderCallback == RenderCellMeshDefault );
 
 			// If using lighting, specify method that calculates lighting
 			if ( bIsDefaultRenderer && pModelNode->IsUsingLighting() )
@@ -914,11 +914,11 @@ ATerrainSection::ModelNode* ATerrainInterface::CreateModelInstance( ATerrainSect
 	if ( !pModel || !pModel->IsCreated() )
 	{
 		a_pModelNode->m_ModelRef.Create(
-			a_szModelName,
-			AAssetLoader::GetAssetTRB( AAssetType_AssetPack ) );
+		    a_szModelName,
+		    AAssetLoader::GetAssetTRB( AAssetType_AssetPack ) );
 	}
 
-	auto pInstance			= a_pModelNode->m_ModelRef.CreateInstance();
+	auto pInstance          = a_pModelNode->m_ModelRef.CreateInstance();
 	auto pInstanceTransform = &pInstance->GetTransform();
 
 	pInstanceTransform->SetEuler( TVector3( 1.570796f, 0.0f, 0.0f ) );
@@ -940,7 +940,7 @@ ATerrainSection::ModelNode* ATerrainInterface::CreateModelInstance( ATerrainSect
 	TTODO( "Create collision model set" );
 
 	auto pModelInstance = pInstance->GetInstance();
-	pModel				= pModelInstance->GetModel();
+	pModel              = pModelInstance->GetModel();
 
 	auto pWorldDatabase = pModel->CastSymbol<WorldDatabase>( "Database" );
 

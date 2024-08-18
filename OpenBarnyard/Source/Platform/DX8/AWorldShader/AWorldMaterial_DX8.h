@@ -33,7 +33,7 @@ public:
 	void SetOrderTable( Toshi::TOrderTable* a_pOrderTable );
 
 	AWorldMaterialHAL* GetAlphaBlendMaterial() const { return m_pAlphaBlendMaterial; }
-	void			   SetAlphaBlendMaterial( AWorldMaterialHAL* val ) { m_pAlphaBlendMaterial = val; }
+	void               SetAlphaBlendMaterial( AWorldMaterialHAL* val ) { m_pAlphaBlendMaterial = val; }
 
 	TFLOAT GetUVOffsetX( TUINT a_uiTextureIndex )
 	{
@@ -71,9 +71,9 @@ private:
 	void SetupRenderer();
 
 private:
-	AWorldMaterialHAL*	m_pAlphaBlendMaterial;
+	AWorldMaterialHAL*  m_pAlphaBlendMaterial;
 	Toshi::TOrderTable* m_pAssignedOrderTable;
-	TBOOL				m_aHasUVOffsets[ MAX_TEXTURES ];
-	TFLOAT				m_aUVOffsetsX[ MAX_TEXTURES ];
-	TFLOAT				m_aUVOffsetsY[ MAX_TEXTURES ];
+	TBOOL               m_aHasUVOffsets[ MAX_TEXTURES ];
+	TFLOAT              m_aUVOffsetsX[ MAX_TEXTURES ];
+	TFLOAT              m_aUVOffsetsY[ MAX_TEXTURES ];
 };

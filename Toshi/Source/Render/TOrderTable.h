@@ -16,17 +16,17 @@ public:
 	enum State_ : State
 	{
 		State_Registered = BITFLAG( 0 ),
-		State_Used		 = BITFLAG( 1 )
+		State_Used       = BITFLAG( 1 )
 	};
 
 public:
 	TRegMaterial()
 	{
-		m_State				= 0;
-		m_pOrderTable		= TNULL;
-		m_pMaterial			= TNULL;
+		m_State             = 0;
+		m_pOrderTable       = TNULL;
+		m_pMaterial         = TNULL;
 		m_pLastRenderPacket = TNULL;
-		m_pNextRegMat		= TNULL;
+		m_pNextRegMat       = TNULL;
 	}
 
 	// Renders all of the render packets attached to this registered material
@@ -39,18 +39,18 @@ public:
 	void  SetFlags( State a_eFlags ) { m_State = a_eFlags; }
 
 	TOrderTable* GetOrderTable() const { return m_pOrderTable; }
-	void		 SetOrderTable( TOrderTable* a_pOrderTable ) { m_pOrderTable = a_pOrderTable; }
+	void         SetOrderTable( TOrderTable* a_pOrderTable ) { m_pOrderTable = a_pOrderTable; }
 
 	TMaterial* GetMaterial() const { return m_pMaterial; }
-	void	   SetMaterial( TMaterial* a_pMaterial ) { m_pMaterial = a_pMaterial; }
+	void       SetMaterial( TMaterial* a_pMaterial ) { m_pMaterial = a_pMaterial; }
 
 	TRegMaterial* GetNextRegMat() const { return m_pNextRegMat; }
-	void		  SetNextRegMat( TRegMaterial* a_pRegMat ) { m_pNextRegMat = a_pRegMat; }
+	void          SetNextRegMat( TRegMaterial* a_pRegMat ) { m_pNextRegMat = a_pRegMat; }
 
 private:
-	State		   m_State;
+	State          m_State;
 	TOrderTable*   m_pOrderTable;
-	TMaterial*	   m_pMaterial;
+	TMaterial*     m_pMaterial;
 	TRenderPacket* m_pLastRenderPacket;
 	TRegMaterial*  m_pNextRegMat;
 };
@@ -95,20 +95,20 @@ public:
 	static TRenderPacket* AllocRenderPacket();
 
 public:
-	inline static TUINT			 s_uiMaxRenderPackets	  = 0;
-	inline static TUINT			 s_uiNumRenderPackets	  = 0;
-	inline static TUINT			 s_uiMaxNumRenderPackets  = 0;
-	inline static TUINT			 s_uiOrigMaxRenderPackets = 0;
+	inline static TUINT          s_uiMaxRenderPackets     = 0;
+	inline static TUINT          s_uiNumRenderPackets     = 0;
+	inline static TUINT          s_uiMaxNumRenderPackets  = 0;
+	inline static TUINT          s_uiOrigMaxRenderPackets = 0;
 	inline static TRenderPacket* s_pRenderPackets;
 
-	inline static TUINT					  s_uiMaxMaterials			 = 0;
-	inline static TUINT					  s_uiNumRegisteredMaterials = 0;
-	inline static TRegMaterial*			  s_pRegMaterials;
+	inline static TUINT                   s_uiMaxMaterials           = 0;
+	inline static TUINT                   s_uiNumRegisteredMaterials = 0;
+	inline static TRegMaterial*           s_pRegMaterials;
 	inline static TNodeList<TRegMaterial> s_llRegMatRegisteredList;
 	inline static TNodeList<TRegMaterial> s_llRegMatFreeList;
 
 private:
-	TShader*	  m_pShader;
+	TShader*      m_pShader;
 	TRegMaterial* m_pLastRegMat;
 };
 

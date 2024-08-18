@@ -60,8 +60,8 @@ TBOOL TTask::CreateFailed()
 TBOOL TTask::Reset()
 {
 	TTask* firstAttached = Child();
-	TTask* node			 = firstAttached;
-	TBOOL  result		 = TTRUE;
+	TTask* node          = firstAttached;
+	TBOOL  result        = TTRUE;
 
 	while ( node != TNULL && node != firstAttached )
 	{

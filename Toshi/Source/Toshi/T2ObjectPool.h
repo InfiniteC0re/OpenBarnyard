@@ -56,14 +56,14 @@ protected:
 	void Initialise( UnusedObject* a_pObjects, TUINT a_uiMaxNumber, TUINT a_uiObjectSize )
 	{
 		TASSERT( a_uiMaxNumber > 1 );
-		m_pHead				  = a_pObjects;
+		m_pHead               = a_pObjects;
 		UnusedObject* pObject = a_pObjects;
 
 		for ( TUINT i = a_uiMaxNumber - 1; i != 0; i-- )
 		{
-			UnusedObject* pNext	 = TREINTERPRETCAST( UnusedObject*, TREINTERPRETCAST( TUINTPTR, pObject ) + a_uiObjectSize );
+			UnusedObject* pNext  = TREINTERPRETCAST( UnusedObject*, TREINTERPRETCAST( TUINTPTR, pObject ) + a_uiObjectSize );
 			pObject->pNextObject = pNext;
-			pObject				 = pNext;
+			pObject              = pNext;
 		}
 
 		pObject->pNextObject = TNULL;
@@ -72,14 +72,14 @@ protected:
 	UnusedObject* GetObject()
 	{
 		UnusedObject* pNode = m_pHead;
-		m_pHead				= m_pHead->pNextObject;
+		m_pHead             = m_pHead->pNextObject;
 		return pNode;
 	}
 
 	void ReturnObject( UnusedObject* a_pObject )
 	{
 		a_pObject->pNextObject = m_pHead;
-		m_pHead				   = a_pObject;
+		m_pHead                = a_pObject;
 	}
 
 	TUINT GetNumFreeObjects() const
@@ -97,7 +97,7 @@ protected:
 
 template <class T, TUINT MaxNumber, TUINT ObjectSize = sizeof( T ), TUINT Alignment = alignof( T )>
 class T2ObjectPool :
-	protected T2GenericObjectPool
+    protected T2GenericObjectPool
 {
 public:
 	TSTATICASSERT( MaxNumber >= 2 );
@@ -107,9 +107,9 @@ public:
 	T2ObjectPool()
 	{
 		T2GenericObjectPool::Initialise(
-			TREINTERPRETCAST( T2GenericObjectPool::UnusedObject*, GetObjects() ),
-			MaxNumber,
-			ObjectSize );
+		    TREINTERPRETCAST( T2GenericObjectPool::UnusedObject*, GetObjects() ),
+		    MaxNumber,
+		    ObjectSize );
 	}
 
 	template <class... Args>
@@ -152,7 +152,7 @@ public:
 	virtual TBOOL IsAddressInPool( const void* a_pAddress ) const
 	{
 		return ( TREINTERPRETCAST( TUINTPTR, this ) + sizeof( T2GenericObjectPool ) ) <= TREINTERPRETCAST( TUINTPTR, a_pAddress ) &&
-			TREINTERPRETCAST( TUINTPTR, a_pAddress ) < ( TREINTERPRETCAST( TUINTPTR, this ) + sizeof( T2GenericObjectPool ) + ( MaxNumber * ObjectSize ) );
+		    TREINTERPRETCAST( TUINTPTR, a_pAddress ) < ( TREINTERPRETCAST( TUINTPTR, this ) + sizeof( T2GenericObjectPool ) + ( MaxNumber * ObjectSize ) );
 	}
 
 	TBOOL CanAllocate() const { return T2GenericObjectPool::CanAllocate( ObjectSize ); }
@@ -174,7 +174,7 @@ private:
 
 template <class T>
 class T2DynamicObjectPool :
-	protected T2GenericObjectPool
+    protected T2GenericObjectPool
 {
 public:
 	T2DynamicObjectPool( T2Allocator* a_pAllocator, TINT a_iMaxNumber )
@@ -183,9 +183,9 @@ public:
 		m_iMaxNumber = a_iMaxNumber;
 		m_pAllocator = a_pAllocator;
 
-		TUINT32 uiClassSize		 = sizeof( T );
+		TUINT32 uiClassSize      = sizeof( T );
 		TUINT32 uiClassAlignment = alignof( T );
-		m_uiObjectSize			 = ( uiClassSize - 1 ) + uiClassAlignment & ~( uiClassAlignment - 1U );
+		m_uiObjectSize           = ( uiClassSize - 1 ) + uiClassAlignment & ~( uiClassAlignment - 1U );
 
 		TASSERT( m_uiObjectSize >= sizeof( T ) && uiClassAlignment > 0 );
 
@@ -200,9 +200,9 @@ public:
 
 		TVALIDPTR( m_pData );
 		T2GenericObjectPool::Initialise(
-			TREINTERPRETCAST( T2GenericObjectPool::UnusedObject*, m_pData ),
-			m_iMaxNumber,
-			m_uiObjectSize );
+		    TREINTERPRETCAST( T2GenericObjectPool::UnusedObject*, m_pData ),
+		    m_iMaxNumber,
+		    m_uiObjectSize );
 	}
 
 	virtual ~T2DynamicObjectPool()
@@ -250,21 +250,21 @@ public:
 	virtual TBOOL IsAddressInPool( const void* a_pAddress ) const
 	{
 		return TREINTERPRETCAST( TUINTPTR, m_pData ) <= TREINTERPRETCAST( TUINTPTR, a_pAddress ) &&
-			TREINTERPRETCAST( TUINTPTR, a_pAddress ) < TREINTERPRETCAST( TUINTPTR, m_pData ) + ( m_iMaxNumber * m_uiObjectSize );
+		    TREINTERPRETCAST( TUINTPTR, a_pAddress ) < TREINTERPRETCAST( TUINTPTR, m_pData ) + ( m_iMaxNumber * m_uiObjectSize );
 	}
 
 	TBOOL CanAllocate() const { return T2GenericObjectPool::CanAllocate( m_uiObjectSize ); }
 
 private:
 	T2Allocator* m_pAllocator;
-	TINT		 m_iMaxNumber;
-	TUINT		 m_uiObjectSize;
-	void*		 m_pData;
+	TINT         m_iMaxNumber;
+	TUINT        m_uiObjectSize;
+	void*        m_pData;
 };
 
 template <class TClassType>
 class T2DerivedDynamicObjectPool :
-	protected T2GenericObjectPool
+    protected T2GenericObjectPool
 {
 public:
 	T2DerivedDynamicObjectPool( T2Allocator* a_pAllocator, TINT a_iMaxNumber )
@@ -273,9 +273,9 @@ public:
 		m_iMaxNumber = a_iMaxNumber;
 		m_pAllocator = a_pAllocator;
 
-		TUINT32 uiClassSize		 = TClassType::GetClassStatic()->GetMaxSizeOfDerivedClasses();
+		TUINT32 uiClassSize      = TClassType::GetClassStatic()->GetMaxSizeOfDerivedClasses();
 		TUINT32 uiClassAlignment = TClassType::GetClassStatic()->GetMaxAlignmentOfDerivedClasses();
-		m_uiObjectSize			 = ( uiClassSize - 1 ) + uiClassAlignment & ~( uiClassAlignment - 1U );
+		m_uiObjectSize           = ( uiClassSize - 1 ) + uiClassAlignment & ~( uiClassAlignment - 1U );
 
 		TASSERT( m_uiObjectSize >= sizeof( TClassType ) && uiClassAlignment > 0 );
 
@@ -290,9 +290,9 @@ public:
 
 		TVALIDPTR( m_pData );
 		T2GenericObjectPool::Initialise(
-			TREINTERPRETCAST( T2GenericObjectPool::UnusedObject*, m_pData ),
-			m_iMaxNumber,
-			m_uiObjectSize );
+		    TREINTERPRETCAST( T2GenericObjectPool::UnusedObject*, m_pData ),
+		    m_iMaxNumber,
+		    m_uiObjectSize );
 	}
 
 	virtual ~T2DerivedDynamicObjectPool()
@@ -349,16 +349,16 @@ public:
 	virtual TBOOL IsAddressInPool( const void* a_pAddress ) const
 	{
 		return TREINTERPRETCAST( TUINTPTR, m_pData ) <= TREINTERPRETCAST( TUINTPTR, a_pAddress ) &&
-			TREINTERPRETCAST( TUINTPTR, a_pAddress ) < TREINTERPRETCAST( TUINTPTR, m_pData ) + ( m_iMaxNumber * m_uiObjectSize );
+		    TREINTERPRETCAST( TUINTPTR, a_pAddress ) < TREINTERPRETCAST( TUINTPTR, m_pData ) + ( m_iMaxNumber * m_uiObjectSize );
 	}
 
 	TBOOL CanAllocate() const { return T2GenericObjectPool::CanAllocate( m_uiObjectSize ); }
 
 private:
 	T2Allocator* m_pAllocator;
-	TINT		 m_iMaxNumber;
-	TUINT		 m_uiObjectSize;
-	void*		 m_pData;
+	TINT         m_iMaxNumber;
+	TUINT        m_uiObjectSize;
+	void*        m_pData;
 };
 
 TOSHI_NAMESPACE_END

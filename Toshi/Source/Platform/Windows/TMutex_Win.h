@@ -28,7 +28,7 @@ public:
 	TBOOL Destroy()
 	{
 		BOOL result = CloseHandle( m_Handle );
-		m_Handle	= NULL;
+		m_Handle    = NULL;
 
 		return result;
 	}
@@ -37,7 +37,7 @@ public:
 	TBOOL Lock( TUINT32 flags = 0 )
 	{
 		DWORD waitForMs = ( flags & TMutexLockFlag_DoNotWait ) ? 0 : INFINITE;
-		DWORD result	= WaitForSingleObject( m_Handle, waitForMs );
+		DWORD result    = WaitForSingleObject( m_Handle, waitForMs );
 
 		return result == WAIT_OBJECT_0;
 	}

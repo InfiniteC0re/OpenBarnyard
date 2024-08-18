@@ -9,7 +9,7 @@
 
 TOSHI_NAMESPACE_START
 
-T2GlobalAllocator T2Allocator::s_GlobalAllocator;
+T2GlobalAllocator ms_oGlobalAllocator;
 
 void* T2GlobalAllocator::Malloc( TSIZE size )
 {

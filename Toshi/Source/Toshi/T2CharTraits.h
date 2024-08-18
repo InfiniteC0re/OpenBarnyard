@@ -10,14 +10,14 @@ template <typename CharT>
 class T2CharTraits
 {
 public:
-	using CharType					   = CharT;
-	constexpr static TSIZE	  CharSize = sizeof( CharType );
+	using CharType                     = CharT;
+	constexpr static TSIZE    CharSize = sizeof( CharType );
 	constexpr static CharType NullChar = 0;
 
 public:
-	static TBOOL	IsSpace( CharType a_cChar ) { TUNREACHABLE(); }
-	static TBOOL	IsUpperCase( CharType a_cChar ) { TUNREACHABLE(); }
-	static TBOOL	IsLowerCase( CharType a_cChar ) { TUNREACHABLE(); }
+	static TBOOL    IsSpace( CharType a_cChar ) { TUNREACHABLE(); }
+	static TBOOL    IsUpperCase( CharType a_cChar ) { TUNREACHABLE(); }
+	static TBOOL    IsLowerCase( CharType a_cChar ) { TUNREACHABLE(); }
 	static CharType ToUpperCase( CharType a_cChar ) { TUNREACHABLE(); }
 	static CharType ToLowerCase( CharType a_cChar ) { TUNREACHABLE(); }
 };

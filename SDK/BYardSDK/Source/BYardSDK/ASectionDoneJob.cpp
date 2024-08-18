@@ -19,7 +19,7 @@ TBOOL ASectionDoneJob::CancelJob()
 
 void ASectionDoneJob::InitJob( ATerrainSection* a_pVISGroup, ATerrainLODType a_eLODType )
 {
-	m_eLODType	  = a_eLODType;
-	m_pSection	  = a_pVISGroup;
+	m_eLODType    = a_eLODType;
+	m_pSection    = a_pVISGroup;
 	m_bIsCanceled = TFALSE;
 }

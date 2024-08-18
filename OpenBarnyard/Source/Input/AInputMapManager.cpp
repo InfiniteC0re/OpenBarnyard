@@ -13,12 +13,12 @@ TOSHI_NAMESPACE_USING
 TDEFINE_CLASS( AInputMapManager );
 
 AInputMapManager::AInputMapManager() :
-	m_pActiveInputMap( TNULL ),
-	m_iNumPushedInputMaps( 0 ),
-	m_oDoodadToNameMap( AMemory::GetAllocator( AMemory::POOL_Misc ) ),
-	m_oKeyMap( AMemory::GetAllocator( AMemory::POOL_Misc ) ),
-	m_oCommandMap( AMemory::GetAllocator( AMemory::POOL_Misc ) ),
-	m_UnkMap( AMemory::GetAllocator( AMemory::POOL_Misc ) )
+    m_pActiveInputMap( TNULL ),
+    m_iNumPushedInputMaps( 0 ),
+    m_oDoodadToNameMap( AMemory::GetAllocator( AMemory::POOL_Misc ) ),
+    m_oKeyMap( AMemory::GetAllocator( AMemory::POOL_Misc ) ),
+    m_oCommandMap( AMemory::GetAllocator( AMemory::POOL_Misc ) ),
+    m_UnkMap( AMemory::GetAllocator( AMemory::POOL_Misc ) )
 {
 	InitMouseDoodads();
 	InitKeyboardDoodads();
@@ -113,7 +113,7 @@ void AInputMapManager::GetEventCommands( const Toshi::TInputInterface::InputEven
 
 	if ( m_pActiveInputMap )
 	{
-		auto pCommandMap	  = &m_pActiveInputMap->GetCommandMap();
+		auto pCommandMap      = &m_pActiveInputMap->GetCommandMap();
 		auto pCommandIndexRes = pCommandMap->FindNode( a_pEvent->GetDoodad() );
 
 		while ( pCommandIndexRes != pCommandMap->End() )
@@ -350,7 +350,7 @@ void AInputMapManager::InitGamepadDoodads()
 
 void AInputMapManager::InitCommandMap()
 {
-#define ADD_COMMAND( NAME, UNK, EVENT_TYPE )			 m_oCommandMap.Insert( AInputCommand_##NAME, { #NAME, UNK, EVENT_TYPE } )
+#define ADD_COMMAND( NAME, UNK, EVENT_TYPE )             m_oCommandMap.Insert( AInputCommand_##NAME, { #NAME, UNK, EVENT_TYPE } )
 #define ADD_COMMAND_EX( COMMAND, NAME, UNK, EVENT_TYPE ) m_oCommandMap.Insert( COMMAND, { NAME, UNK, EVENT_TYPE } )
 
 	ADD_COMMAND( Unknown, -1, 0 );

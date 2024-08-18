@@ -20,5 +20,5 @@ public:
 
 private:
 	Toshi::T2ObjectPool<AFade, 8> m_Fades;
-	Toshi::TQList<AFade>		  m_ActiveFades;
+	Toshi::TQList<AFade>          m_ActiveFades;
 };

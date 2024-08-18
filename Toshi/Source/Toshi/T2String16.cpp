@@ -78,7 +78,7 @@ TWCHAR* T2String16::Copy( TWCHAR* dst, const TWCHAR* src, TSIZE size )
 TWCHAR* T2String16::CopySafe( TWCHAR* dst, const TWCHAR* src, TSIZE size )
 {
 	TSIZE srcLen = Length( src );
-	size		 = TMath::Min( size - 1, srcLen );
+	size         = TMath::Min( size - 1, srcLen );
 	wcsncpy( dst, src, size );
 	dst[ size ] = L'\0';
 	return dst;

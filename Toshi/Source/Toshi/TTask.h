@@ -8,9 +8,9 @@ TOSHI_NAMESPACE_START
 class TScheduler;
 
 class TTask :
-	public TObject,
-	public TRefCounted,
-	public TNodeTree<TTask>::TNode
+    public TObject,
+    public TRefCounted,
+    public TNodeTree<TTask>::TNode
 {
 public:
 	TDECLARE_CLASS( TTask, TObject );
@@ -22,7 +22,7 @@ public:
 	{
 		State_Created = BITFLAG( 0 ),
 		State_Active  = BITFLAG( 1 ),
-		State_Dying	  = BITFLAG( 2 ),
+		State_Dying   = BITFLAG( 2 ),
 	};
 
 public:
@@ -45,10 +45,10 @@ public:
 	void SetParent( TTask* a_pAttachTo );
 
 	TUINT32& GetFlags() { return m_State; }
-	TBOOL	 IsCreated() const { return m_State & State_Created; }
-	TBOOL	 IsActive() const { return m_State & State_Active; }
-	TBOOL	 IsCreatedAndActive() const { return ( m_State & ( State_Created | State_Active ) ) == ( State_Created | State_Active ); }
-	TBOOL	 IsDying() const { return m_State & State_Dying; }
+	TBOOL    IsCreated() const { return m_State & State_Created; }
+	TBOOL    IsActive() const { return m_State & State_Active; }
+	TBOOL    IsCreatedAndActive() const { return ( m_State & ( State_Created | State_Active ) ) == ( State_Created | State_Active ); }
+	TBOOL    IsDying() const { return m_State & State_Dying; }
 
 private:
 	TUINT32 m_State;

@@ -84,7 +84,7 @@ TCHAR* T2String8::Concat( TCHAR* dst, const TCHAR* src, TSIZE size /*= -1*/ )
 TCHAR* T2String8::CopySafe( TCHAR* dst, const TCHAR* src, TSIZE size )
 {
 	TSIZE srcLen = Length( src );
-	size		 = TMath::Min( size - 1, srcLen );
+	size         = TMath::Min( size - 1, srcLen );
 	strncpy( dst, src, size );
 	dst[ size ] = '\0';
 	return dst;

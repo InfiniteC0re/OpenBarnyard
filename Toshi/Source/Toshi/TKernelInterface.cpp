@@ -12,11 +12,11 @@ TOSHI_NAMESPACE_START
 
 TKernelInterface::TKernelInterface()
 {
-	m_Scheduler		 = TNULL;
-	m_bIsPaused		 = TFALSE;
-	m_fAverageFps	 = 0.0f;
-	m_uiNumFrames	 = 0;
-	m_Unk4			 = TFALSE;
+	m_Scheduler      = TNULL;
+	m_bIsPaused      = TFALSE;
+	m_fAverageFps    = 0.0f;
+	m_uiNumFrames    = 0;
+	m_Unk4           = TFALSE;
 	m_fnQuitCallback = TNULL;
 }
 

@@ -22,15 +22,15 @@ public:
 
 public:
 	TFORCEINLINE constexpr T2ConstString( const CharType* a_pszString ) :
-		m_pszString( a_pszString )
+	    m_pszString( a_pszString )
 	{}
 
 	TFORCEINLINE constexpr T2ConstString() :
-		m_pszString( TNULL )
+	    m_pszString( TNULL )
 	{}
 
 	TFORCEINLINE constexpr T2ConstString( const T2ConstString& a_rOther ) :
-		m_pszString( a_rOther.m_pszString )
+	    m_pszString( a_rOther.m_pszString )
 	{}
 
 	TFORCEINLINE TSIZE Length() const { return StringTraits::Length( m_pszString ); }
@@ -81,7 +81,7 @@ public:
 
 	using StringTraits = TStringTraits;
 	using CharTraits   = typename StringTraits::CharTraits;
-	using CharType	   = typename StringTraits::CharType;
+	using CharType     = typename StringTraits::CharType;
 
 public:
 	constexpr T2FormatString()
@@ -109,7 +109,7 @@ public:
 		 */
 	TINT ParseLine( const CharType* a_szString, TINT a_uiSize = -1, TINT* a_pStringLength = TNULL, TBOOL a_bTrimStartSpaces = TTRUE, TBOOL a_bTrimEndSpaces = TTRUE )
 	{
-		TINT  uiPos		   = 0;
+		TINT  uiPos        = 0;
 		TINT  uiStringPos  = 0;
 		TBOOL bTextStarted = TFALSE;
 
@@ -228,17 +228,17 @@ private:
 	CharType m_szBuffer[ Size ];
 };
 
-using T2FormatString32	 = T2FormatString<32, T2StringTraits<TCHAR>>;
-using T2FormatString64	 = T2FormatString<64, T2StringTraits<TCHAR>>;
-using T2FormatString128	 = T2FormatString<128, T2StringTraits<TCHAR>>;
-using T2FormatString256	 = T2FormatString<256, T2StringTraits<TCHAR>>;
-using T2FormatString512	 = T2FormatString<512, T2StringTraits<TCHAR>>;
+using T2FormatString32   = T2FormatString<32, T2StringTraits<TCHAR>>;
+using T2FormatString64   = T2FormatString<64, T2StringTraits<TCHAR>>;
+using T2FormatString128  = T2FormatString<128, T2StringTraits<TCHAR>>;
+using T2FormatString256  = T2FormatString<256, T2StringTraits<TCHAR>>;
+using T2FormatString512  = T2FormatString<512, T2StringTraits<TCHAR>>;
 using T2FormatString1024 = T2FormatString<1024, T2StringTraits<TCHAR>>;
 using T2FormatString2048 = T2FormatString<2048, T2StringTraits<TCHAR>>;
 using T2FormatString4096 = T2FormatString<4096, T2StringTraits<TCHAR>>;
 
-using T2FormatWString32	  = T2FormatString<32, T2StringTraits<TWCHAR>>;
-using T2FormatWString64	  = T2FormatString<64, T2StringTraits<TWCHAR>>;
+using T2FormatWString32   = T2FormatString<32, T2StringTraits<TWCHAR>>;
+using T2FormatWString64   = T2FormatString<64, T2StringTraits<TWCHAR>>;
 using T2FormatWString128  = T2FormatString<128, T2StringTraits<TWCHAR>>;
 using T2FormatWString256  = T2FormatString<256, T2StringTraits<TWCHAR>>;
 using T2FormatWString512  = T2FormatString<512, T2StringTraits<TWCHAR>>;
@@ -254,7 +254,7 @@ template <class StringTraits = T2StringTraits<TCHAR>>
 class T2StringParser
 {
 public:
-	using CharType	  = typename StringTraits::CharType;
+	using CharType    = typename StringTraits::CharType;
 	using ConstString = T2ConstString<StringTraits>;
 
 public:
@@ -270,7 +270,7 @@ public:
 
 	void SetBuffer( ConstString a_pchBuffer, TSIZE a_uiBufferSize = -1 )
 	{
-		m_Buffer	= a_pchBuffer;
+		m_Buffer    = a_pchBuffer;
 		m_BufferPos = a_pchBuffer;
 
 		if ( a_pchBuffer )
@@ -301,20 +301,20 @@ public:
 		TASSERT( TNULL != a_pszToken );
 		TASSERT( a_uiTokenMaxSize > 1 );
 
-		TSIZE		uiSizeLeft	  = a_uiTokenMaxSize;
-		CharType*	pchCopyCursor = a_pszToken;
-		ConstString cursor		  = m_BufferPos.SkipSpaces();
+		TSIZE       uiSizeLeft    = a_uiTokenMaxSize;
+		CharType*   pchCopyCursor = a_pszToken;
+		ConstString cursor        = m_BufferPos.SkipSpaces();
 
-		TBOOL bIsInQuotes		= TFALSE;
+		TBOOL bIsInQuotes       = TFALSE;
 		TBOOL bIsPrevCharEscape = TFALSE;
-		TBOOL bIsValid			= TFALSE;
+		TBOOL bIsValid          = TFALSE;
 
 		// Copy until we have the last byte for the \0 character or the buffer is over
 		while ( uiSizeLeft > 1 && cursor < m_BufferEnd )
 		{
-			CharType cChar		   = *cursor;
-			TBOOL	 bIsEscapeChar = cChar == '\\';
-			TBOOL	 bIsBreakToken = isspace( cChar );
+			CharType cChar         = *cursor;
+			TBOOL    bIsEscapeChar = cChar == '\\';
+			TBOOL    bIsBreakToken = isspace( cChar );
 
 			if ( !bIsPrevCharEscape && ( cChar == '"' || cChar == '\'' ) )
 			{
@@ -349,14 +349,14 @@ public:
 			bIsValid = TTRUE;
 
 		m_BufferLastPeek = cursor;
-		*pchCopyCursor	 = '\0';
+		*pchCopyCursor   = '\0';
 		return bIsValid;
 	}
 
 	TBOOL ReadToken( CharType* a_pszToken, TSIZE a_uiTokenMaxSize )
 	{
 		TBOOL bResult = PeekToken( a_pszToken, a_uiTokenMaxSize );
-		m_BufferPos	  = m_BufferLastPeek;
+		m_BufferPos   = m_BufferLastPeek;
 
 		return bResult;
 	}
@@ -371,7 +371,7 @@ private:
 	ConstString m_BufferPos;
 	ConstString m_BufferEnd;
 	ConstString m_BufferLastPeek;
-	TSIZE		m_uiBufferSize;
+	TSIZE       m_uiBufferSize;
 };
 
 using T2String8Parser  = T2StringParser<T2StringTraits<TCHAR>>;

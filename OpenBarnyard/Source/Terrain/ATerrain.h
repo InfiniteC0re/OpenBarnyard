@@ -8,27 +8,27 @@
 #include "Assets/ASectionDoneJob.h"
 
 class ATerrainInterface :
-	public Toshi::TSingleton<ATerrainInterface>
+    public Toshi::TSingleton<ATerrainInterface>
 {
 public:
-	constexpr static TUINT MAX_NUM_MODEL_LOADER_JOBS	 = 128;
-	constexpr static TUINT MAX_NUM_MATLIB_LOADER_JOBS	 = 10;
-	constexpr static TUINT MAX_NUM_KEYLIB_LOADER_JOBS	 = 10;
-	constexpr static TUINT MAX_NUM_SECTION_LOADER_JOBS	 = 32;
-	constexpr static TUINT MAX_NUM_TRB_LOADER_JOBS		 = 2;
-	constexpr static TUINT MAX_NUM_SKELETON_LOADER_JOBS	 = 2;
+	constexpr static TUINT MAX_NUM_MODEL_LOADER_JOBS     = 128;
+	constexpr static TUINT MAX_NUM_MATLIB_LOADER_JOBS    = 10;
+	constexpr static TUINT MAX_NUM_KEYLIB_LOADER_JOBS    = 10;
+	constexpr static TUINT MAX_NUM_SECTION_LOADER_JOBS   = 32;
+	constexpr static TUINT MAX_NUM_TRB_LOADER_JOBS       = 2;
+	constexpr static TUINT MAX_NUM_SKELETON_LOADER_JOBS  = 2;
 	constexpr static TUINT MAX_NUM_COLLISION_LOADER_JOBS = 64;
 	constexpr static TUINT NUM_TOTAL_JOBS =
-		MAX_NUM_MODEL_LOADER_JOBS +
-		MAX_NUM_MATLIB_LOADER_JOBS +
-		MAX_NUM_KEYLIB_LOADER_JOBS +
-		MAX_NUM_SECTION_LOADER_JOBS +
-		MAX_NUM_TRB_LOADER_JOBS +
-		MAX_NUM_SKELETON_LOADER_JOBS +
-		MAX_NUM_COLLISION_LOADER_JOBS;
+	    MAX_NUM_MODEL_LOADER_JOBS +
+	    MAX_NUM_MATLIB_LOADER_JOBS +
+	    MAX_NUM_KEYLIB_LOADER_JOBS +
+	    MAX_NUM_SECTION_LOADER_JOBS +
+	    MAX_NUM_TRB_LOADER_JOBS +
+	    MAX_NUM_SKELETON_LOADER_JOBS +
+	    MAX_NUM_COLLISION_LOADER_JOBS;
 
 	struct JobSlot :
-		public Toshi::T2SList<JobSlot>::Node
+	    public Toshi::T2SList<JobSlot>::Node
 	{
 		AMainThreadJob* pJob = TNULL;
 	};
@@ -108,7 +108,7 @@ public:
 	 */
 	ATerrainVIS* GetVIS() const { return m_pTerrainVIS; }
 
-	ATRBLoaderJob*	   GetFreeTRBLoaderJob();
+	ATRBLoaderJob*     GetFreeTRBLoaderJob();
 	ASkeletonDoneJob*  GetFreeSkeletonLoaderJob();
 	AMatLibLoaderJob*  GetFreeMatlibLoaderJob();
 	ACollisionDoneJob* GetFreeCollisionLoaderJob();
@@ -133,54 +133,54 @@ private:
 	static TINT GetCurrentSectionID();
 	static TINT GetPersistantSectionID();
 
-	inline static TINT	ms_iPersistantVISGroupIndex = -1;
-	inline static TBOOL ms_bAutoVIS					= TFALSE;
+	inline static TINT  ms_iPersistantVISGroupIndex = -1;
+	inline static TBOOL ms_bAutoVIS                 = TFALSE;
 
 private:
-	Toshi::TVector4							   m_LitShadowColor;
-	Toshi::TVector4							   m_LitAmbientColor;
-	Toshi::TVector4							   m_DefaultShadowColor;
-	Toshi::TVector4							   m_DefaultAmbientColor;
-	TFLOAT									   m_fUnused3;
-	TBOOL									   m_bUnused4;
+	Toshi::TVector4                            m_LitShadowColor;
+	Toshi::TVector4                            m_LitAmbientColor;
+	Toshi::TVector4                            m_DefaultShadowColor;
+	Toshi::TVector4                            m_DefaultAmbientColor;
+	TFLOAT                                     m_fUnused3;
+	TBOOL                                      m_bUnused4;
 	Toshi::T2SList<ATerrainSection::ModelNode> m_ModelDatas;
-	t_OnModelNodeReady						   m_cbOnCollsionModelLoaded;
-	t_OnModelNodeReady						   m_cbOnModelLoaded;
-	t_OnVISGroupChanged						   m_cbOnVISGroupChanged;
-	AModelLoaderJob							   m_aModelLoaderJobs[ MAX_NUM_MODEL_LOADER_JOBS ];
-	AMatLibLoaderJob						   m_aMatlibLoaderJobs[ MAX_NUM_MATLIB_LOADER_JOBS ];
-	AKeyLibLoaderJob						   m_aKeylibLoaderJobs[ MAX_NUM_KEYLIB_LOADER_JOBS ];
-	ASectionDoneJob							   m_aSectionDoneJobs[ MAX_NUM_SECTION_LOADER_JOBS ];
-	ATRBLoaderJob							   m_aTRBLoaderJobs[ MAX_NUM_TRB_LOADER_JOBS ];
-	ASkeletonDoneJob						   m_aSkeletonDoneJobs[ MAX_NUM_SKELETON_LOADER_JOBS ];
-	ACollisionDoneJob						   m_aCollisionDoneJobs[ MAX_NUM_COLLISION_LOADER_JOBS ];
-	JobSlot*								   m_pJobs;
-	Toshi::T2SList<JobSlot>					   m_UsedModelLoaderJobs;
-	Toshi::T2SList<JobSlot>					   m_FreeModelLoaderJobs;
-	Toshi::T2SList<JobSlot>					   m_UsedUnknownLoaderJobs;
-	Toshi::T2SList<JobSlot>					   m_FreeUnknownLoaderJobs;
-	Toshi::T2SList<JobSlot>					   m_UsedSectionLoaderJobs;
-	Toshi::T2SList<JobSlot>					   m_FreeSectionLoaderJobs;
-	Toshi::T2SList<JobSlot>					   m_UsedKeylibLoaderJobs;
-	Toshi::T2SList<JobSlot>					   m_FreeKeylibLoaderJobs;
-	Toshi::T2SList<JobSlot>					   m_UsedMatlibLoaderJobs;
-	Toshi::T2SList<JobSlot>					   m_FreeMatlibLoaderJobs;
-	Toshi::T2SList<JobSlot>					   m_UsedTRBLoaderJobs;
-	Toshi::T2SList<JobSlot>					   m_FreeTRBLoaderJobs;
-	Toshi::T2SList<JobSlot>					   m_UsedSkeletonLoaderJobs;
-	Toshi::T2SList<JobSlot>					   m_FreeSkeletonLoaderJobs;
-	Toshi::T2SList<JobSlot>					   m_UsedCollisionLoaderJobs;
-	Toshi::T2SList<JobSlot>					   m_FreeCollisionLoaderJobs;
-	TBOOL									   m_bStreamCollision;
-	TBOOL									   m_bIsLoaded;
-	Toshi::TTRB								   m_VISTRB;
-	Toshi::TTRB								   m_TRB2;
-	ATerrainVIS*							   m_pTerrainVIS;
-	ATerrainOrderDVIS*						   m_pOrderDVIS;
+	t_OnModelNodeReady                         m_cbOnCollsionModelLoaded;
+	t_OnModelNodeReady                         m_cbOnModelLoaded;
+	t_OnVISGroupChanged                        m_cbOnVISGroupChanged;
+	AModelLoaderJob                            m_aModelLoaderJobs[ MAX_NUM_MODEL_LOADER_JOBS ];
+	AMatLibLoaderJob                           m_aMatlibLoaderJobs[ MAX_NUM_MATLIB_LOADER_JOBS ];
+	AKeyLibLoaderJob                           m_aKeylibLoaderJobs[ MAX_NUM_KEYLIB_LOADER_JOBS ];
+	ASectionDoneJob                            m_aSectionDoneJobs[ MAX_NUM_SECTION_LOADER_JOBS ];
+	ATRBLoaderJob                              m_aTRBLoaderJobs[ MAX_NUM_TRB_LOADER_JOBS ];
+	ASkeletonDoneJob                           m_aSkeletonDoneJobs[ MAX_NUM_SKELETON_LOADER_JOBS ];
+	ACollisionDoneJob                          m_aCollisionDoneJobs[ MAX_NUM_COLLISION_LOADER_JOBS ];
+	JobSlot*                                   m_pJobs;
+	Toshi::T2SList<JobSlot>                    m_UsedModelLoaderJobs;
+	Toshi::T2SList<JobSlot>                    m_FreeModelLoaderJobs;
+	Toshi::T2SList<JobSlot>                    m_UsedUnknownLoaderJobs;
+	Toshi::T2SList<JobSlot>                    m_FreeUnknownLoaderJobs;
+	Toshi::T2SList<JobSlot>                    m_UsedSectionLoaderJobs;
+	Toshi::T2SList<JobSlot>                    m_FreeSectionLoaderJobs;
+	Toshi::T2SList<JobSlot>                    m_UsedKeylibLoaderJobs;
+	Toshi::T2SList<JobSlot>                    m_FreeKeylibLoaderJobs;
+	Toshi::T2SList<JobSlot>                    m_UsedMatlibLoaderJobs;
+	Toshi::T2SList<JobSlot>                    m_FreeMatlibLoaderJobs;
+	Toshi::T2SList<JobSlot>                    m_UsedTRBLoaderJobs;
+	Toshi::T2SList<JobSlot>                    m_FreeTRBLoaderJobs;
+	Toshi::T2SList<JobSlot>                    m_UsedSkeletonLoaderJobs;
+	Toshi::T2SList<JobSlot>                    m_FreeSkeletonLoaderJobs;
+	Toshi::T2SList<JobSlot>                    m_UsedCollisionLoaderJobs;
+	Toshi::T2SList<JobSlot>                    m_FreeCollisionLoaderJobs;
+	TBOOL                                      m_bStreamCollision;
+	TBOOL                                      m_bIsLoaded;
+	Toshi::TTRB                                m_VISTRB;
+	Toshi::TTRB                                m_TRB2;
+	ATerrainVIS*                               m_pTerrainVIS;
+	ATerrainOrderDVIS*                         m_pOrderDVIS;
 	// ...
-	TINT				 m_iCurrentSection;
-	TINT				 m_iPreviousSection;
-	TINT				 m_iPreloadTerrainBlockSize;
+	TINT                 m_iCurrentSection;
+	TINT                 m_iPreviousSection;
+	TINT                 m_iPreloadTerrainBlockSize;
 	t_GetCurrentVISGroup m_fnGetCurrentVISGroup;
 	// ...
 	TINT m_iNumChunks;

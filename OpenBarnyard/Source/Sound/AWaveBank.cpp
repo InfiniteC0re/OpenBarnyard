@@ -18,11 +18,11 @@ AWaveBank::AWaveBank( const Toshi::TPString8& a_strBank, const Toshi::TPString8&
 {
 	m_iNumWaves = 0;
 	m_iNumLoads = 0;
-	m_strBank	= a_strBank;
-	m_strPath	= a_strPath;
-	m_pWaves	= TNULL;
+	m_strBank   = a_strBank;
+	m_strPath   = a_strPath;
+	m_pWaves    = TNULL;
 
-	m_FileHandle	= TNULL;
+	m_FileHandle    = TNULL;
 	m_bSetFrequency = a_bSetFrequency;
 
 	ASoundManager::ms_WaveBanks.Insert( a_strBank, this );
@@ -74,8 +74,8 @@ void AWaveBank::ParseWavesData( const PBProperties* a_pBankProperties, TUINT a_u
 		if ( pProperty->GetName().GetString()[ 0 ] != 'W' ) continue;
 
 		TINT   iFrequency = 22050;
-		TFLOAT fLength	  = 0.0f;
-		TUINT  uiFlags	  = a_uiForcedFlags;
+		TFLOAT fLength    = 0.0f;
+		TUINT  uiFlags    = a_uiForcedFlags;
 
 		const PBProperties* pWaveProperties = pProperty->GetValue()->GetProperties();
 

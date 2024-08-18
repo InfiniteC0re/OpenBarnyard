@@ -17,7 +17,7 @@ Frustum::Frustum()
 	aFrustumPlanes[ 3 ].uiClipFlag = 0;
 	aFrustumPlanes[ 4 ].uiClipFlag = 0;
 	aFrustumPlanes[ 5 ].uiClipFlag = 0;
-	iActivePlaneCount			   = 0;
+	iActivePlaneCount              = 0;
 }
 
 void Frustum::InitReduce()
@@ -61,9 +61,9 @@ void Frustum::Transform( const Frustum& a_rFrustum, const Toshi::TMatrix44& a_rM
 	for ( TINT i = 0; i < 6; i++ )
 	{
 		TMatrix44::TransformPlaneOrthogonal(
-			aFrustumPlanes[ i ].oPlane,
-			a_rMatrix,
-			a_rFrustum.aFrustumPlanes[ i ].oPlane );
+		    aFrustumPlanes[ i ].oPlane,
+		    a_rMatrix,
+		    a_rFrustum.aFrustumPlanes[ i ].oPlane );
 
 		aFrustumPlanes[ i ].uiClipFlag = a_rFrustum.aFrustumPlanes[ i ].uiClipFlag;
 	}

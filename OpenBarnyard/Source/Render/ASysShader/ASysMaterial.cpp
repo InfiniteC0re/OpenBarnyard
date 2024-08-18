@@ -14,11 +14,11 @@ TDEFINE_CLASS_NORUNTIME( ASysMaterial );
 ASysMaterial::ASysMaterial()
 {
 	m_eBlendMode = BLENDMODE_DEFAULT;
-	m_Vec3		 = { 0.0f, 0.0f, 0.0f, 0.0f };
-	m_pTexture	 = TNULL;
-	m_Unk1		 = 0;
-	m_Unk2		 = 0;
-	m_Unk3		 = 0;
+	m_Vec3       = { 0.0f, 0.0f, 0.0f, 0.0f };
+	m_pTexture   = TNULL;
+	m_Unk1       = 0;
+	m_Unk2       = 0;
+	m_Unk3       = 0;
 }
 
 TBOOL ASysMaterial::Create()

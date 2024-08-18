@@ -29,12 +29,12 @@ public:
 	TDLL& operator=( const TDLL& other )
 	{
 		m_sFileName = other.m_sFileName;
-		m_pDLL		= other.m_pDLL;
+		m_pDLL      = other.m_pDLL;
 	}
 
 private:
 	TString8 m_sFileName;
-	HMODULE	 m_pDLL;
+	HMODULE  m_pDLL;
 };
 
 TOSHI_NAMESPACE_END

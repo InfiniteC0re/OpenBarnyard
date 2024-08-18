@@ -11,9 +11,9 @@ public:
 public:
 	AGUI2Material()
 	{
-		m_iNumTex		   = 1;
+		m_iNumTex          = 1;
 		m_pTextureResource = TNULL;
-		m_eBlendState	   = 1;
+		m_eBlendState      = 1;
 		m_eTextureAddress  = 1;
 		m_iMipMapLODBias   = 0;
 	}
@@ -30,7 +30,7 @@ public:
 
 private:
 	Toshi::TTexture* m_pTextureResource;
-	TUINT			 m_eBlendState;
-	TUINT			 m_eTextureAddress;
-	TUINT			 m_iMipMapLODBias;
+	TUINT            m_eBlendState;
+	TUINT            m_eTextureAddress;
+	TUINT            m_iMipMapLODBias;
 };

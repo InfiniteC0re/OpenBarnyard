@@ -111,7 +111,7 @@ TINT TInputDXDeviceMouse::ProcessEvents( EventEmitter& a_rEmitter, TFLOAT a_fDel
 	m_dwButtonPrevious = m_dwButtonCurrent;
 	TINT iNumProcessed = ProcessRepeats( a_rEmitter, a_fDeltaTime );
 
-	DWORD			   dwItems = 32;
+	DWORD              dwItems = 32;
 	DIDEVICEOBJECTDATA dod[ 32 ];
 	TUtil::MemClear( dod, sizeof( dod ) );
 
@@ -139,9 +139,9 @@ TINT TInputDXDeviceMouse::ProcessEvents( EventEmitter& a_rEmitter, TFLOAT a_fDel
 			case DIMOFS_BUTTON2:
 			{
 				TINT iButton =
-					( dod[ i ].dwOfs == DIMOFS_BUTTON0 ) ? ( !m_bReverseButtons ? 0 : 1 ) :
-					( dod[ i ].dwOfs == DIMOFS_BUTTON1 ) ? ( !m_bReverseButtons ? 1 : 0 ) :
-														   2;
+				    ( dod[ i ].dwOfs == DIMOFS_BUTTON0 ) ? ( !m_bReverseButtons ? 0 : 1 ) :
+				    ( dod[ i ].dwOfs == DIMOFS_BUTTON1 ) ? ( !m_bReverseButtons ? 1 : 0 ) :
+				                                           2;
 
 				TUINT uiButtonFlag = ( 1 << iButton );
 
@@ -172,12 +172,12 @@ TINT TInputDXDeviceMouse::ProcessEvents( EventEmitter& a_rEmitter, TFLOAT a_fDel
 	if ( m_iDeltaPositionX != 0 && m_iDeltaPositionY != 0 )
 	{
 		a_rEmitter.Throw(
-			TInputInterface::InputEvent(
-				this,
-				0x3000b,
-				TInputInterface::EVENT_TYPE_MOVED,
-				m_iDeltaPositionX,
-				m_iDeltaPositionY ) );
+		    TInputInterface::InputEvent(
+		        this,
+		        0x3000b,
+		        TInputInterface::EVENT_TYPE_MOVED,
+		        m_iDeltaPositionX,
+		        m_iDeltaPositionY ) );
 
 		iNumProcessed += 1;
 	}
@@ -264,25 +264,25 @@ TBOOL TInputDXDeviceMouse::Initialise()
 	POINT cursorPos;
 	GetCursorPos( &cursorPos );
 
-	m_iPositionX	  = cursorPos.x;
-	m_iPositionY	  = cursorPos.y;
-	m_iPositionZ	  = 0;
+	m_iPositionX      = cursorPos.x;
+	m_iPositionY      = cursorPos.y;
+	m_iPositionZ      = 0;
 	m_iDeltaPositionX = 0;
 	m_iDeltaPositionY = 0;
 	m_iDeltaPositionZ = 0;
-	m_iUnk1			  = 0;
-	m_iUnk2			  = 0;
-	m_iUnk3			  = 0;
-	m_iUnk4			  = 0;
-	m_iUnk5			  = 0;
-	m_iUnk6			  = -1;
-	m_iUnk7			  = -1;
+	m_iUnk1           = 0;
+	m_iUnk2           = 0;
+	m_iUnk3           = 0;
+	m_iUnk4           = 0;
+	m_iUnk5           = 0;
+	m_iUnk6           = -1;
+	m_iUnk7           = -1;
 
 	DIPROPDWORD dwordProperty;
-	dwordProperty.diph.dwSize		= sizeof( dwordProperty );
+	dwordProperty.diph.dwSize       = sizeof( dwordProperty );
 	dwordProperty.diph.dwHeaderSize = sizeof( DIPROPHEADER );
-	dwordProperty.diph.dwObj		= DIMOFS_Z;
-	dwordProperty.diph.dwHow		= DIPH_BYOFFSET;
+	dwordProperty.diph.dwObj        = DIMOFS_Z;
+	dwordProperty.diph.dwHow        = DIPH_BYOFFSET;
 
 	HRESULT hr = m_poDXInputDevice->GetProperty( DIPROP_GRANULARITY, &dwordProperty.diph );
 
@@ -312,7 +312,7 @@ void TInputDXDeviceMouse::RefreshDirect()
 		if ( SUCCEEDED( m_poDXInputDevice->Poll() ) )
 		{
 			DIMOUSESTATE mouseState;
-			HRESULT		 hRes = m_poDXInputDevice->GetDeviceState( sizeof( DIMOUSESTATE ), &mouseState );
+			HRESULT      hRes = m_poDXInputDevice->GetDeviceState( sizeof( DIMOUSESTATE ), &mouseState );
 
 			if ( SUCCEEDED( hRes ) )
 			{
@@ -342,8 +342,8 @@ TBOOL TInputDXDeviceMouse::WasDown( TINT a_iDoodad ) const
 void TInputDXDeviceMouse::SetExclusive( HWND a_hWindow, TBOOL a_bExclusive )
 {
 	m_poDXInputDevice->SetCooperativeLevel(
-		a_hWindow,
-		a_bExclusive ? ( DISCL_EXCLUSIVE | DISCL_FOREGROUND ) : ( DISCL_NONEXCLUSIVE | DISCL_FOREGROUND ) );
+	    a_hWindow,
+	    a_bExclusive ? ( DISCL_EXCLUSIVE | DISCL_FOREGROUND ) : ( DISCL_NONEXCLUSIVE | DISCL_FOREGROUND ) );
 }
 
 void TInputDXDeviceMouse::SetCurrentPosition( TINT a_iX, TINT a_iY )
@@ -378,12 +378,12 @@ TBOOL const TInputDXDeviceMouse::BindToDIDevice( HWND a_hMainWindow, LPCDIDEVICE
 	}
 
 	DIPROPDWORD dipdw{};
-	dipdw.diph.dwSize		= sizeof( DIPROPDWORD );
+	dipdw.diph.dwSize       = sizeof( DIPROPDWORD );
 	dipdw.diph.dwHeaderSize = sizeof( DIPROPHEADER );
-	dipdw.diph.dwObj		= 0;
-	dipdw.diph.dwHow		= DIPH_DEVICE;
-	dipdw.dwData			= DIPROPAXISMODE_REL;
-	hRes					= m_poDXInputDevice->SetProperty( DIPROP_AXISMODE, &dipdw.diph );
+	dipdw.diph.dwObj        = 0;
+	dipdw.diph.dwHow        = DIPH_DEVICE;
+	dipdw.dwData            = DIPROPAXISMODE_REL;
+	hRes                    = m_poDXInputDevice->SetProperty( DIPROP_AXISMODE, &dipdw.diph );
 
 	return hRes == DI_OK;
 }

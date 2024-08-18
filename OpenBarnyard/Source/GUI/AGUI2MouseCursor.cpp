@@ -13,18 +13,18 @@ TOSHI_NAMESPACE_USING
 
 AGUI2MouseCursor::AGUI2MouseCursor()
 {
-	m_CursorPos.x								= 0.0f;
-	m_CursorPos.y								= 0.0f;
-	m_BoundingStart								= { 0.0f, 0.0f };
-	m_pMouseDevice								= TNULL;
-	m_pPointerUpSection							= TNULL;
-	m_pPointerDownSection						= TNULL;
-	m_fCursorAccelerations[ Acceleration_Off ]	= 1.0f;
+	m_CursorPos.x                               = 0.0f;
+	m_CursorPos.y                               = 0.0f;
+	m_BoundingStart                             = { 0.0f, 0.0f };
+	m_pMouseDevice                              = TNULL;
+	m_pPointerUpSection                         = TNULL;
+	m_pPointerDownSection                       = TNULL;
+	m_fCursorAccelerations[ Acceleration_Off ]  = 1.0f;
 	m_fCursorAccelerations[ Acceleration_Slow ] = 10.0f;
 	m_fCursorAccelerations[ Acceleration_Fast ] = 20.0f;
-	m_eAccelerationType							= Acceleration_Fast;
-	m_RadialFieldPos							= TVector2::VEC_ZERO;
-	m_fRadialRadius								= -1.0f;
+	m_eAccelerationType                         = Acceleration_Fast;
+	m_RadialFieldPos                            = TVector2::VEC_ZERO;
+	m_fRadialRadius                             = -1.0f;
 }
 
 TBOOL AGUI2MouseCursor::Create( const TCHAR* a_szPointerUpTexture, const TCHAR* a_szPointerDownTexture, TFLOAT a_fScalar )
@@ -36,8 +36,8 @@ TBOOL AGUI2MouseCursor::Create( const TCHAR* a_szPointerUpTexture, const TCHAR* 
 		return TFALSE;
 	}
 
-	m_pPointerUpSection	 = AGUI2TextureSectionManager::GetTextureSection( a_szPointerUpTexture );
-	TFLOAT fCursorWidth	 = m_pPointerUpSection->GetWidth();
+	m_pPointerUpSection  = AGUI2TextureSectionManager::GetTextureSection( a_szPointerUpTexture );
+	TFLOAT fCursorWidth  = m_pPointerUpSection->GetWidth();
 	TFLOAT fCursorHeight = m_pPointerUpSection->GetHeight();
 
 	AGUI2Rectangle::SetDimensions( fCursorWidth, fCursorHeight );
@@ -62,8 +62,8 @@ void AGUI2MouseCursor::Update()
 	if ( m_pMouseDevice )
 	{
 		MoveCursor(
-			m_pMouseDevice->GetAxisFloat( TInputDeviceMouse::AXIS_CURSOR, 0 ),
-			m_pMouseDevice->GetAxisFloat( TInputDeviceMouse::AXIS_CURSOR, 1 ) );
+		    m_pMouseDevice->GetAxisFloat( TInputDeviceMouse::AXIS_CURSOR, 0 ),
+		    m_pMouseDevice->GetAxisFloat( TInputDeviceMouse::AXIS_CURSOR, 1 ) );
 
 		if ( !m_pPointerDownSection || !m_pMouseDevice->IsDown( TInputDeviceMouse::BUTTON_1 ) )
 		{

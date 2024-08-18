@@ -146,69 +146,69 @@ void TInputInterface::ReleaseAllDevices()
 
 TInputInterface::InputEvent::InputEvent( TInputDevice* a_pDevice, TINT a_iDoodad, EVENT_TYPE a_eEventType )
 {
-	m_pSource			= a_pDevice;
-	m_iDoodad			= a_iDoodad;
-	m_eEventType		= a_eEventType;
+	m_pSource           = a_pDevice;
+	m_iDoodad           = a_iDoodad;
+	m_eEventType        = a_eEventType;
 	m_bIsMagnitudeFloat = TFALSE;
-	m_iAxisCount		= 0;
-	m_wszString[ 0 ]	= L'\0';
+	m_iAxisCount        = 0;
+	m_wszString[ 0 ]    = L'\0';
 }
 
 TInputInterface::InputEvent::InputEvent( TInputDevice* a_pDevice, TINT a_iDoodad, EVENT_TYPE a_eEventType, TWCHAR* a_wszString )
 {
-	m_pSource			= a_pDevice;
-	m_iDoodad			= a_iDoodad;
-	m_eEventType		= a_eEventType;
+	m_pSource           = a_pDevice;
+	m_iDoodad           = a_iDoodad;
+	m_eEventType        = a_eEventType;
 	m_bIsMagnitudeFloat = TFALSE;
-	m_iAxisCount		= 0;
+	m_iAxisCount        = 0;
 	TStringManager::String16Copy( m_wszString, a_wszString, 3 );
 	m_Magnitude.Ints[ 0 ] = 0;
 }
 
 TInputInterface::InputEvent::InputEvent( TInputDevice* a_pDevice, TINT a_iDoodad, EVENT_TYPE a_eEventType, TINT a_iMagnitude1 )
 {
-	m_pSource			  = a_pDevice;
-	m_iDoodad			  = a_iDoodad;
-	m_eEventType		  = a_eEventType;
+	m_pSource             = a_pDevice;
+	m_iDoodad             = a_iDoodad;
+	m_eEventType          = a_eEventType;
 	m_Magnitude.Ints[ 0 ] = a_iMagnitude1;
-	m_bIsMagnitudeFloat	  = TFALSE;
-	m_iAxisCount		  = 1;
-	m_wszString[ 0 ]	  = L'\0';
+	m_bIsMagnitudeFloat   = TFALSE;
+	m_iAxisCount          = 1;
+	m_wszString[ 0 ]      = L'\0';
 }
 
 TInputInterface::InputEvent::InputEvent( TInputDevice* a_pDevice, TINT a_iDoodad, EVENT_TYPE a_eEventType, TINT a_iMagnitude1, TINT a_iMagnitude2 )
 {
-	m_pSource			  = a_pDevice;
-	m_iDoodad			  = a_iDoodad;
-	m_eEventType		  = a_eEventType;
+	m_pSource             = a_pDevice;
+	m_iDoodad             = a_iDoodad;
+	m_eEventType          = a_eEventType;
 	m_Magnitude.Ints[ 0 ] = a_iMagnitude1;
 	m_Magnitude.Ints[ 1 ] = a_iMagnitude2;
-	m_bIsMagnitudeFloat	  = TFALSE;
-	m_iAxisCount		  = 2;
-	m_wszString[ 0 ]	  = L'\0';
+	m_bIsMagnitudeFloat   = TFALSE;
+	m_iAxisCount          = 2;
+	m_wszString[ 0 ]      = L'\0';
 }
 
 TInputInterface::InputEvent::InputEvent( TInputDevice* a_pDevice, TINT a_iDoodad, EVENT_TYPE a_eEventType, TFLOAT a_fMagnitude1 )
 {
-	m_pSource				= a_pDevice;
-	m_iDoodad				= a_iDoodad;
-	m_eEventType			= a_eEventType;
+	m_pSource               = a_pDevice;
+	m_iDoodad               = a_iDoodad;
+	m_eEventType            = a_eEventType;
 	m_Magnitude.Floats[ 0 ] = a_fMagnitude1;
-	m_bIsMagnitudeFloat		= TTRUE;
-	m_iAxisCount			= 1;
-	m_wszString[ 0 ]		= L'\0';
+	m_bIsMagnitudeFloat     = TTRUE;
+	m_iAxisCount            = 1;
+	m_wszString[ 0 ]        = L'\0';
 }
 
 TInputInterface::InputEvent::InputEvent( TInputDevice* a_pDevice, TINT a_iDoodad, EVENT_TYPE a_eEventType, TFLOAT a_fMagnitude1, TFLOAT a_fMagnitude2 )
 {
-	m_pSource				= a_pDevice;
-	m_iDoodad				= a_iDoodad;
-	m_eEventType			= a_eEventType;
+	m_pSource               = a_pDevice;
+	m_iDoodad               = a_iDoodad;
+	m_eEventType            = a_eEventType;
 	m_Magnitude.Floats[ 0 ] = a_fMagnitude1;
 	m_Magnitude.Floats[ 1 ] = a_fMagnitude2;
-	m_bIsMagnitudeFloat		= TTRUE;
-	m_iAxisCount			= 2;
-	m_wszString[ 0 ]		= L'\0';
+	m_bIsMagnitudeFloat     = TTRUE;
+	m_iAxisCount            = 2;
+	m_wszString[ 0 ]        = L'\0';
 }
 
 TINT TInputInterface::InputEvent::GetMagnitudeInt( TINT a_iAxis )

@@ -2,7 +2,7 @@
 #include "TModel.h"
 
 #ifdef TOSHI_SKU_WINDOWS
-#	include "Platform/DX8/TRenderInterface_DX8.h"
+#  include "Platform/DX8/TRenderInterface_DX8.h"
 #endif // TOSHI_SKU_WINDOWS
 
 //-----------------------------------------------------------------------------
@@ -15,18 +15,18 @@ TOSHI_NAMESPACE_START
 
 TModel::TModel()
 {
-	m_eFlags		 = Flags_None;
-	m_iNumInstances	 = 0;
-	m_iLODCount		 = 0;
-	m_pSkeleton		 = TNULL;
-	m_pCollision	 = TNULL;
+	m_eFlags         = Flags_None;
+	m_iNumInstances  = 0;
+	m_iLODCount      = 0;
+	m_pSkeleton      = TNULL;
+	m_pCollision     = TNULL;
 	m_pCollisionData = TNULL;
-	m_pTRB			 = TNULL;
-	m_bIsAssetFile	 = TFALSE;
-	m_aUnk1[ 0 ]	 = 5.0f;
-	m_aUnk1[ 1 ]	 = 20.0f;
-	m_aUnk1[ 2 ]	 = m_aUnk1[ 1 ] + m_aUnk1[ 1 ];
-	m_aUnk1[ 3 ]	 = m_aUnk1[ 2 ] + m_aUnk1[ 2 ];
+	m_pTRB           = TNULL;
+	m_bIsAssetFile   = TFALSE;
+	m_aUnk1[ 0 ]     = 5.0f;
+	m_aUnk1[ 1 ]     = 20.0f;
+	m_aUnk1[ 2 ]     = m_aUnk1[ 1 ] + m_aUnk1[ 1 ];
+	m_aUnk1[ 3 ]     = m_aUnk1[ 2 ] + m_aUnk1[ 2 ];
 }
 
 TBOOL TModel::LoadTRB()
@@ -37,16 +37,16 @@ TBOOL TModel::LoadTRB()
 
 	if ( pSkeletonHeader )
 	{
-		m_pSkeleton	  = TSTATICCAST( TSkeleton, GetSymbol( "Skeleton" ) );
+		m_pSkeleton   = TSTATICCAST( TSkeleton, GetSymbol( "Skeleton" ) );
 		auto pLibrary = TRenderInterface::GetSingleton()->GetKeyframeLibraryManager().GetLibrary( pSkeletonHeader->m_szTKLName );
 		m_pSkeleton->GetKeyLibraryInstance().CreateEx(
-			pLibrary,
-			pSkeletonHeader->m_iTKeyCount,
-			pSkeletonHeader->m_iQKeyCount,
-			pSkeletonHeader->m_iSKeyCount,
-			pSkeletonHeader->m_iTBaseIndex,
-			pSkeletonHeader->m_iQBaseIndex,
-			pSkeletonHeader->m_iSBaseIndex );
+		    pLibrary,
+		    pSkeletonHeader->m_iTKeyCount,
+		    pSkeletonHeader->m_iQKeyCount,
+		    pSkeletonHeader->m_iSKeyCount,
+		    pSkeletonHeader->m_iTBaseIndex,
+		    pSkeletonHeader->m_iQBaseIndex,
+		    pSkeletonHeader->m_iSBaseIndex );
 	}
 
 	m_pCollision = *TSTATICCAST( void*, GetSymbol( "Collision" ) );
@@ -62,7 +62,7 @@ TBOOL TModel::LoadTRB()
 TBOOL TModel::LoadTRB( TTRB* a_pTRB )
 {
 	m_bIsAssetFile = TFALSE;
-	m_pTRB		   = a_pTRB;
+	m_pTRB         = a_pTRB;
 
 	return LoadTRB();
 }
@@ -76,15 +76,15 @@ TBOOL TModel::LoadTRB( const TCHAR* a_szFileName, TTRB* a_pAssetTRB, TUINT8 a_ui
 
 	if ( a_pAssetTRB )
 	{
-		m_pTRB				   = a_pAssetTRB;
-		m_bIsAssetFile		   = TTRUE;
-		m_szSymbolPrefix	   = a_szFileName;
+		m_pTRB                 = a_pAssetTRB;
+		m_bIsAssetFile         = TTRUE;
+		m_szSymbolPrefix       = a_szFileName;
 		m_szSymbolPrefixLength = a_ui8FileNameLen;
 	}
 	else
 	{
 		m_bIsAssetFile = TFALSE;
-		m_pTRB		   = new TTRB();
+		m_pTRB         = new TTRB();
 
 		if ( m_pTRB->Load( a_szFileName, 0 ) != TTRB::ERROR_OK )
 		{
@@ -158,8 +158,8 @@ TModelInstance* TModel::CreateInstance()
 TBOOL TModel::GetSkeletonAssetSymbolName( const TCHAR* a_szFileName, const TCHAR*& a_rSymbolName, TUINT8& a_rNameLen, TTRB* a_pTRB )
 {
 	auto iFilePathLength = TUINT8( TStringManager::String8Length( a_szFileName ) );
-	auto iFileNamePos	 = iFilePathLength - 1;
-	a_rNameLen			 = iFilePathLength;
+	auto iFileNamePos    = iFilePathLength - 1;
+	a_rNameLen           = iFilePathLength;
 
 	while ( a_szFileName[ iFileNamePos ] != '\\' && a_szFileName[ iFileNamePos ] != '/' )
 		iFileNamePos--;
@@ -168,12 +168,12 @@ TBOOL TModel::GetSkeletonAssetSymbolName( const TCHAR* a_szFileName, const TCHAR
 	TCHAR symbolName[ 64 ];
 
 	auto iFileNameLength = iFilePathLength - iFileNamePos - 4;
-	a_rNameLen			 = iFileNameLength;
+	a_rNameLen           = iFileNameLength;
 
 	TStringManager::String8Copy( symbolName, a_szFileName + iFileNamePos, iFileNameLength );
-	symbolName[ iFileNameLength ]	  = '_';
+	symbolName[ iFileNameLength ]     = '_';
 	symbolName[ iFileNameLength + 1 ] = '\0';
-	a_rNameLen						  = iFileNameLength + 1;
+	a_rNameLen                        = iFileNameLength + 1;
 
 	TStringManager::String8ToLowerCase( symbolName );
 	TStringManager::String8Copy( symbolName + a_rNameLen, "Skeleton" );
@@ -193,12 +193,12 @@ TBOOL TModel::GetSkeletonAssetSymbolName( const TCHAR* a_szFileName, const TCHAR
 
 TModelInstance::TModelInstance( TModel* a_pModel )
 {
-	m_pModel				  = a_pModel;
-	m_pSkeletonInstance		  = TNULL;
-	m_fnPreRenderCb			  = 0;
-	m_fnCustomRenderCb		  = TNULL;
+	m_pModel                  = a_pModel;
+	m_pSkeletonInstance       = TNULL;
+	m_fnPreRenderCb           = 0;
+	m_fnCustomRenderCb        = TNULL;
 	m_pCustomRenderCbUserData = TNULL;
-	m_iCurrentLOD			  = 0;
+	m_iCurrentLOD             = 0;
 }
 
 void TModelInstance::Update( TFLOAT a_fDeltaTime )
@@ -237,7 +237,7 @@ void TModelInstance::SetPreRenderCallback( t_PreRenderCB a_fnCallback )
 
 void TModelInstance::SetCustomRenderMethod( t_CustomRenderCB a_fnCallback, void* a_pUserData )
 {
-	m_fnCustomRenderCb		  = a_fnCallback;
+	m_fnCustomRenderCb        = a_fnCallback;
 	m_pCustomRenderCbUserData = a_pUserData;
 }
 

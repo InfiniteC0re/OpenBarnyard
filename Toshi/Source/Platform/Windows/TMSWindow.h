@@ -63,18 +63,18 @@ private:
 protected:
 	static constexpr GUID WceusbshGUID = { 0x25dbce51, 0x6c8f, 0x4a72, 0x8a, 0x6d, 0xb5, 0x4c, 0x2b, 0x4f, 0xc8, 0x35 };
 
-	inline static TBOOL		 ms_bIsFocused;
-	inline static BOOL		 ms_bIsFullscreen;
+	inline static TBOOL      ms_bIsFocused;
+	inline static BOOL       ms_bIsFullscreen;
 	inline static STICKYKEYS ms_StickyKeys;
 	inline static HDEVNOTIFY ms_hDeviceNotify;
 
 private:
-	HWND			  m_HWND;		  // 0x04
-	TRenderInterface* m_pRenderer;	  // 0x08
-	TBOOL			  m_bWindowed;	  // 0x0C
-	TBOOL			  m_bDestroyed;	  // 0x0D
-	TBOOL			  m_bIsFocused;	  // 0x0E
-	HMODULE			  m_ModuleHandle; // 0x10
+	HWND              m_HWND;         // 0x04
+	TRenderInterface* m_pRenderer;    // 0x08
+	TBOOL             m_bWindowed;    // 0x0C
+	TBOOL             m_bDestroyed;   // 0x0D
+	TBOOL             m_bIsFocused;   // 0x0E
+	HMODULE           m_ModuleHandle; // 0x10
 };
 
 TOSHI_NAMESPACE_END

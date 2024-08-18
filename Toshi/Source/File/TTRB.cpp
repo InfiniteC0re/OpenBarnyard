@@ -23,7 +23,7 @@ void* TTRB::s_pDefAllocatorUserData = TNULL;
 TTRB::TTRB()
 {
 	m_pHeader = TNULL;
-	m_SYMB	  = TNULL;
+	m_SYMB    = TNULL;
 	SetMemoryFunctions( s_cbDefAllocator, s_cbDefDeallocator, s_pDefAllocatorUserData );
 }
 
@@ -67,7 +67,7 @@ TBOOL TTRB::ProcessForm( TTSFI& ttsf )
 {
 	// FUN_00686f10
 	static constexpr TUINT32 MAX_RELC_NUM_BATCH = 512;
-	RELCEntry				 relcEntries[ MAX_RELC_NUM_BATCH ];
+	RELCEntry                relcEntries[ MAX_RELC_NUM_BATCH ];
 
 	TINT32 fileSize = ttsf.m_CurrentHunk.Size - 4;
 	TINT32 leftSize = fileSize;
@@ -100,7 +100,7 @@ TBOOL TTRB::ProcessForm( TTSFI& ttsf )
 			{
 				TINT numsections = ( sectionSize - 4 ) / 0xC;
 
-				m_pHeader				 = static_cast<Header*>( m_MemAllocator( AllocType_Unk0, sizeof( Header ) + sizeof( SecInfo ) * numsections, 0, 0, m_MemUserData ) );
+				m_pHeader                = static_cast<Header*>( m_MemAllocator( AllocType_Unk0, sizeof( Header ) + sizeof( SecInfo ) * numsections, 0, 0, m_MemUserData ) );
 				m_pHeader->m_ui32Version = { 0 };
 
 				ttsf.ReadRaw( &m_pHeader->m_i32SectionCount, sizeof( m_pHeader->m_i32SectionCount ) );
@@ -140,8 +140,8 @@ TBOOL TTRB::ProcessForm( TTSFI& ttsf )
 			}
 			else if ( sectionName == TFourCC( "RELC" ) )
 			{
-				TUINT32 relocCount	 = 0;
-				TUINT32 curReloc	 = 0;
+				TUINT32 relocCount   = 0;
+				TUINT32 curReloc     = 0;
 				TUINT32 readedRelocs = 0;
 
 				ttsf.ReadRaw( &relocCount, sizeof( relocCount ) );
@@ -165,8 +165,8 @@ TBOOL TTRB::ProcessForm( TTSFI& ttsf )
 						for ( TUINT32 i = 0; i < relocReadCount; i++ )
 						{
 							auto& relcEntry = relcEntries[ i ];
-							auto  hdrx1		= GetSectionInfo( relcEntry.HDRX1 );
-							auto  hdrx2		= hdrx1;
+							auto  hdrx1     = GetSectionInfo( relcEntry.HDRX1 );
+							auto  hdrx2     = hdrx1;
 
 							if ( m_pHeader->m_ui32Version.Value >= TVERSION( 1, 0 ) )
 							{
@@ -233,7 +233,7 @@ TBOOL TTRB::ProcessForm( TTSFI& ttsf )
 	ttsf.ReadFORM( &form );
 
 	TBOOL result = ProcessForm( ttsf );
-	fileSize	 = leftSize;
+	fileSize     = leftSize;
 
 	return result;
 }
@@ -309,7 +309,7 @@ TUINT32 TTSFI::ReadAlignmentPad()
 	TASSERT( m_pFile != TNULL, "File is TNULL" );
 
 	static TCHAR s_AlignBuffer[ 4 ];
-	TUINT8		 alignValue = 4 - ( m_pFile->Tell() & 3 );
+	TUINT8       alignValue = 4 - ( m_pFile->Tell() & 3 );
 
 	if ( alignValue != 4 )
 	{

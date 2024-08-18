@@ -28,6 +28,6 @@ public:
 
 private:
 	AGUI2TextBox* m_pTextBox;
-	TFLOAT		  m_fTotalTime;
-	TBOOL		  m_bIsVisible;
+	TFLOAT        m_fTotalTime;
+	TBOOL         m_bIsVisible;
 };

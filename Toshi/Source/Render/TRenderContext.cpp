@@ -34,32 +34,32 @@ void TRenderContext::EnableFog( TBOOL a_bEnable )
 void TRenderContext::SetFogDistance( TFLOAT a_fStart, TFLOAT a_fEnd )
 {
 	m_fFogDistanceStart = a_fStart;
-	m_fFogDistanceEnd	= a_fEnd;
+	m_fFogDistanceEnd   = a_fEnd;
 	m_eFlags |= FLAG_DIRTY;
 	m_eFlags &= ~( FLAG_UNK3 | FLAG_UNK4 | FLAG_HAS_WORLDPLANES | FLAG_UNK6 );
 }
 
 TRenderContext::TRenderContext( TRenderInterface* a_pRenderer ) :
-	m_pRenderer( a_pRenderer ),
-	m_eFlags( FLAG_DIRTY ),
-	m_eClipFlags( 0x3F ),
-	m_eCameraMode( CameraMode_Perspective ),
-	m_pCurrentSkeletonInstance( TNULL ),
-	m_pCurrentCameraObject( TNULL ),
-	m_AmbientColor( 1.0f, 1.0f, 1.0f, 0.0f ),
-	m_FogColor( 1.0f, 1.0f, 1.0f, 0.0f ),
-	m_fFogDistanceStart( 10.0f ),
-	m_fFogDistanceEnd( 1000.0f ),
-	m_fAlphaBlend( 1.0f ),
-	m_fShadeCoeff( 0.0f )
+    m_pRenderer( a_pRenderer ),
+    m_eFlags( FLAG_DIRTY ),
+    m_eClipFlags( 0x3F ),
+    m_eCameraMode( CameraMode_Perspective ),
+    m_pCurrentSkeletonInstance( TNULL ),
+    m_pCurrentCameraObject( TNULL ),
+    m_AmbientColor( 1.0f, 1.0f, 1.0f, 0.0f ),
+    m_FogColor( 1.0f, 1.0f, 1.0f, 0.0f ),
+    m_fFogDistanceStart( 10.0f ),
+    m_fFogDistanceEnd( 1000.0f ),
+    m_fAlphaBlend( 1.0f ),
+    m_fShadeCoeff( 0.0f )
 {
 	TIMPLEMENT();
 
 	// Setup viewport parameters
 	if ( m_pRenderer->GetCurrentDevice() != TNULL )
 	{
-		auto pDevice			  = m_pRenderer->GetCurrentDevice();
-		auto pMode				  = pDevice->GetMode();
+		auto pDevice              = m_pRenderer->GetCurrentDevice();
+		auto pMode                = pDevice->GetMode();
 		m_oViewportParams.fWidth  = TFLOAT( pMode->GetWidth() );
 		m_oViewportParams.fHeight = TFLOAT( pMode->GetHeight() );
 	}
@@ -69,22 +69,22 @@ TRenderContext::TRenderContext( TRenderInterface* a_pRenderer ) :
 		m_oViewportParams.fHeight = 480.0f;
 	}
 
-	m_oViewportParams.fX	= 0;
-	m_oViewportParams.fY	= 0;
+	m_oViewportParams.fX    = 0;
+	m_oViewportParams.fY    = 0;
 	m_oViewportParams.fMaxZ = 1.0f;
 	m_oViewportParams.fMinZ = 1.0f;
 
 	// Setup projection parameters
 	TFLOAT fHalfWidth  = m_oViewportParams.fWidth * 0.5f;
 	TFLOAT fHalfHeight = m_oViewportParams.fHeight * 0.5f;
-	TFLOAT fProj	   = fHalfHeight / TMath::Tan( TMath::DegToRad( 45.0f ) );
+	TFLOAT fProj       = fHalfHeight / TMath::Tan( TMath::DegToRad( 45.0f ) );
 
 	m_ProjParams.m_fNearClip = 1.0f;
-	m_ProjParams.m_fFarClip	 = 1000.0f;
-	m_ProjParams.m_Centre.x	 = fHalfWidth;
-	m_ProjParams.m_Centre.y	 = fHalfHeight;
-	m_ProjParams.m_Proj.x	 = fProj;
-	m_ProjParams.m_Proj.y	 = fProj;
+	m_ProjParams.m_fFarClip  = 1000.0f;
+	m_ProjParams.m_Centre.x  = fHalfWidth;
+	m_ProjParams.m_Centre.y  = fHalfHeight;
+	m_ProjParams.m_Proj.x    = fProj;
+	m_ProjParams.m_Proj.y    = fProj;
 
 	m_oModelViewMatrix.Identity();
 	m_oWorldViewMatrix.Identity();
@@ -121,19 +121,19 @@ void TRenderContext::SetProjectionParams( const PROJECTIONPARAMS& params )
 	TASSERT( TMath::IsFinite( params.m_Centre.y ) && ( !TMath::IsNaN( params.m_Centre.y ) ) );
 
 	m_ProjParams = params;
-	m_eFlags	 = ( m_eFlags & ( ~( FLAG_UNK3 | FLAG_UNK4 | FLAG_HAS_WORLDPLANES | FLAG_UNK6 ) ) ) | FLAG_DIRTY;
+	m_eFlags     = ( m_eFlags & ( ~( FLAG_UNK3 | FLAG_UNK4 | FLAG_HAS_WORLDPLANES | FLAG_UNK6 ) ) ) | FLAG_DIRTY;
 }
 
 void TRenderContext::SetViewportParameters( const VIEWPORTPARAMS& params )
 {
 	m_oViewportParams = params;
-	m_eFlags		  = ( m_eFlags & ( ~( FLAG_UNK3 | FLAG_UNK4 | FLAG_HAS_WORLDPLANES | FLAG_UNK6 ) ) ) | FLAG_DIRTY;
+	m_eFlags          = ( m_eFlags & ( ~( FLAG_UNK3 | FLAG_UNK4 | FLAG_HAS_WORLDPLANES | FLAG_UNK6 ) ) ) | FLAG_DIRTY;
 }
 
 void TRenderContext::SetCameraMode( CameraMode cameraMode )
 {
 	m_eCameraMode = cameraMode;
-	m_eFlags	  = ( m_eFlags & ( ~( FLAG_UNK3 | FLAG_UNK4 | FLAG_HAS_WORLDPLANES | FLAG_UNK6 ) ) ) | FLAG_DIRTY;
+	m_eFlags      = ( m_eFlags & ( ~( FLAG_UNK3 | FLAG_UNK4 | FLAG_HAS_WORLDPLANES | FLAG_UNK6 ) ) ) | FLAG_DIRTY;
 }
 
 void TRenderContext::ComputePerspectiveProjection( TMatrix44& a_rOutProjection, const VIEWPORTPARAMS& a_rViewportParams, const PROJECTIONPARAMS& a_rProjParams )
@@ -229,7 +229,7 @@ TBOOL TRenderContext::CullSphereToFrustumSimple( const TSphere& a_rSphere, const
 TINT TRenderContext::CullSphereToFrustum( const TSphere& a_rSphere, const TPlane* a_pPlanes, TINT a_iClipFlags, TINT a_iClipFlagsMask )
 {
 	TINT iLeftPlanes = a_iClipFlags & a_iClipFlagsMask;
-	TINT iPlaneFlag	 = 1;
+	TINT iPlaneFlag  = 1;
 
 	do {
 		if ( iLeftPlanes == 0 )

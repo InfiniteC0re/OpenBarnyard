@@ -5,7 +5,7 @@
 #include <File/TFileStream.h>
 
 class AAssetStreaming :
-	public THookedSingleton<AAssetStreaming, 0x0079b114>
+    public THookedSingleton<AAssetStreaming, 0x0079b114>
 {
 public:
 	void Update();
@@ -34,9 +34,9 @@ public:
 	}
 
 private:
-	Toshi::T2DList<AMainThreadJob> m_Jobs;		  // 0x0
-	AMainThreadJob*				   m_pCurrentJob; // 0x8
-	Toshi::TFileStream			   m_FileStream;  // 0x0C
-	void*						   m_Unk;		  // 0xD8
-	TBOOL						   m_bFlag;		  // 0xDC
+	Toshi::T2DList<AMainThreadJob> m_Jobs;        // 0x0
+	AMainThreadJob*                m_pCurrentJob; // 0x8
+	Toshi::TFileStream             m_FileStream;  // 0x0C
+	void*                          m_Unk;         // 0xD8
+	TBOOL                          m_bFlag;       // 0xDC
 };

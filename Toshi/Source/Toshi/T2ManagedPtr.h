@@ -13,7 +13,7 @@ class T2ManagedPtr
 public:
 	// Constructor
 	T2ManagedPtr() :
-		m_pRawPtr( TNULL )
+	    m_pRawPtr( TNULL )
 	{}
 
 	// Copy constructor
@@ -22,7 +22,7 @@ public:
 	// Move constructor
 	T2ManagedPtr( T2ManagedPtr&& a_rOther )
 	{
-		m_pRawPtr		   = a_rOther.m_pRawPtr;
+		m_pRawPtr          = a_rOther.m_pRawPtr;
 		a_rOther.m_pRawPtr = TNULL;
 	}
 
@@ -53,10 +53,10 @@ public:
 		return TFALSE;
 	}
 
-	T*		 Get() { return TREINTERPRETCAST( T*, m_pRawPtr ); }
+	T*       Get() { return TREINTERPRETCAST( T*, m_pRawPtr ); }
 	const T* Get() const { return TREINTERPRETCAST( const T*, m_pRawPtr ); }
 
-	T*		 operator->() { return Get(); }
+	T*       operator->() { return Get(); }
 	const T* operator->() const { return Get(); }
 
 	T2ManagedPtr& operator=( const T2ManagedPtr& a_rOther ) = delete;

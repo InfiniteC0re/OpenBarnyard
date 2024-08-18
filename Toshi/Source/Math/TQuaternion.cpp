@@ -20,12 +20,12 @@ void TQuaternion::SetFromEulerYX( const TFLOAT* fVal )
 
 void TQuaternion::SetFromEulerRollPitchYaw( TFLOAT a_fRoll, TFLOAT a_fPitch, TFLOAT a_fYaw )
 {
-	TFLOAT fCosRoll	 = cos( a_fRoll * 0.5f );
-	TFLOAT fSinRoll	 = sin( a_fRoll * 0.5f );
+	TFLOAT fCosRoll  = cos( a_fRoll * 0.5f );
+	TFLOAT fSinRoll  = sin( a_fRoll * 0.5f );
 	TFLOAT fCosPitch = cos( a_fPitch * 0.5f );
 	TFLOAT fSinPitch = sin( a_fPitch * 0.5f );
-	TFLOAT fCosYaw	 = cos( a_fYaw * 0.5f );
-	TFLOAT fSinYaw	 = sin( a_fYaw * 0.5f );
+	TFLOAT fCosYaw   = cos( a_fYaw * 0.5f );
+	TFLOAT fSinYaw   = sin( a_fYaw * 0.5f );
 
 	TFLOAT fX = fCosYaw * fCosPitch * fSinRoll - fSinYaw * fSinPitch * fCosRoll;
 	TFLOAT fY = fCosPitch * fSinRoll * fSinYaw + fSinPitch * fCosRoll * fCosYaw;
@@ -55,7 +55,7 @@ void TQuaternion::SetVectorDirection( const TVector3& a_rVec3, const TVector3& a
 	{
 		vec3.Divide( mag );
 		TFLOAT dotProduct = TVector3::DotProduct( a_rVec3_2, a_rVec3 );
-		TFLOAT rot		  = 0.0f;
+		TFLOAT rot        = 0.0f;
 		if ( ( dotProduct <= 1.0f - TMath::TFLOAT_EPSILON ) && ( rot = TMath::PI, -1.0f + TMath::TFLOAT_EPSILON <= dotProduct ) )
 		{
 			rot = TMath::ACos( dotProduct );
@@ -194,7 +194,7 @@ void TQuaternion::Slerp( TQuaternion& a_rOut, const TQuaternion& a_rStart, const
 		return;
 	}
 
-	TFLOAT fDot			= TVector4::DotProduct4( a_rStart.AsVector4(), a_rEnd.AsVector4() );
+	TFLOAT fDot         = TVector4::DotProduct4( a_rStart.AsVector4(), a_rEnd.AsVector4() );
 	TBOOL  bNegativeDot = fDot < 0.0f;
 
 	if ( bNegativeDot )
@@ -210,7 +210,7 @@ void TQuaternion::Slerp( TQuaternion& a_rOut, const TQuaternion& a_rStart, const
 	else
 	{
 		TFLOAT fAcos = TMath::ACos( fDot );
-		TFLOAT fSin	 = TMath::Sin( fAcos );
+		TFLOAT fSin  = TMath::Sin( fAcos );
 
 		fProg1 = TMath::Sin( fAcos * a_fProgress ) * ( 1.0f / fSin );
 		fProg2 = TMath::Sin( ( 1.0f - a_fProgress ) * fAcos ) * ( 1.0f / fSin );

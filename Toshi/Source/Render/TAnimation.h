@@ -5,16 +5,16 @@
 #include "File/TTRB.h"
 
 #ifdef LoadLibrary
-#	undef LoadLibrary
+#  undef LoadLibrary
 #endif LoadLibrary
 
 TOSHI_NAMESPACE_START
 
 constexpr TINT TANIMATION_MAXBONES = 128;
 
-using TAnimVector	  = TVector3;
+using TAnimVector     = TVector3;
 using TAnimQuaternion = TQuaternion;
-using TAnimScale	  = TFLOAT;
+using TAnimScale      = TFLOAT;
 using TAnimationBone  = unsigned short;
 
 class TSkeletonInstance;
@@ -25,10 +25,10 @@ public:
 	using Flags = uint8_t;
 	enum Flags_ : Flags
 	{
-		Flags_None				  = 0,
-		Flags_Active			  = BITFLAG( 0 ),
-		Flags_Managed			  = BITFLAG( 1 ),
-		Flags_Unknown2			  = BITFLAG( 2 ),
+		Flags_None                = 0,
+		Flags_Active              = BITFLAG( 0 ),
+		Flags_Managed             = BITFLAG( 1 ),
+		Flags_Unknown2            = BITFLAG( 2 ),
 		Flags_UpdateStateOnRemove = BITFLAG( 3 ),
 	};
 
@@ -57,33 +57,33 @@ public:
 	TBOOL IsManaged() const { return m_eFlags & Flags_Managed; }
 	TBOOL IsUpdateStateOnRemove() const { return m_eFlags & Flags_UpdateStateOnRemove; }
 
-	unsigned short			 GetSequence() const { return m_iSeqID; }
+	unsigned short           GetSequence() const { return m_iSeqID; }
 	class TSkeletonSequence* GetSequencePtr() const;
-	TSkeletonInstance*		 GetSkeletonInstance() const { return m_pSkeletonInstance; }
-	float					 GetSpeed() const { return m_fSpeed; }
-	float					 GetSeqTime() const { return m_fSeqTime; }
-	float					 GetTotalTime() const { return m_fTotalTime; }
-	float					 GetWeight() const { return m_fWeight; }
-	float					 GetDestWeight() const { return m_fDestWeight; }
-	float					 GetBlendInSpeed() const { return m_fBlendInSpeed; }
-	float					 GetBlendOutSpeed() const { return m_fBlendOutSpeed; }
+	TSkeletonInstance*       GetSkeletonInstance() const { return m_pSkeletonInstance; }
+	float                    GetSpeed() const { return m_fSpeed; }
+	float                    GetSeqTime() const { return m_fSeqTime; }
+	float                    GetTotalTime() const { return m_fTotalTime; }
+	float                    GetWeight() const { return m_fWeight; }
+	float                    GetDestWeight() const { return m_fDestWeight; }
+	float                    GetBlendInSpeed() const { return m_fBlendInSpeed; }
+	float                    GetBlendOutSpeed() const { return m_fBlendOutSpeed; }
 
 	TAnimationBone* GetBones() { return TREINTERPRETCAST( TAnimationBone*, this + 1 ); }
 	TAnimationBone* GetBone( TINT a_iIndex ) { return &TREINTERPRETCAST( TAnimationBone*, this + 1 )[ a_iIndex ]; }
 
 private:
 	TSkeletonInstance* m_pSkeletonInstance;
-	unsigned short	   m_iSeqID;
-	Flags			   m_eFlags;
-	TINT			   m_iUnk3;
-	Mode			   m_eMode;
-	float			   m_fSpeed;
-	float			   m_fWeight;
-	float			   m_fDestWeight;
-	float			   m_fTotalTime;
-	float			   m_fSeqTime;
-	float			   m_fBlendInSpeed;
-	float			   m_fBlendOutSpeed;
+	unsigned short     m_iSeqID;
+	Flags              m_eFlags;
+	TINT               m_iUnk3;
+	Mode               m_eMode;
+	float              m_fSpeed;
+	float              m_fWeight;
+	float              m_fDestWeight;
+	float              m_fTotalTime;
+	float              m_fSeqTime;
+	float              m_fBlendInSpeed;
+	float              m_fBlendOutSpeed;
 };
 
 class TKeyframeLibrary : public TDList<TKeyframeLibrary>::TNode
@@ -93,17 +93,17 @@ public:
 
 	struct TRBHeader
 	{
-		const TCHAR*	 m_szName;
-		TVector3		 m_SomeVector;
-		TINT			 m_iNumTranslations;
-		TINT			 m_iNumQuaternions;
-		TINT			 m_iNumScales;
-		TINT			 m_iTranslationSize;
-		TINT			 m_iQuaternionSize;
-		TINT			 m_iScaleSize;
-		TAnimVector*	 m_pTranslations;
+		const TCHAR*     m_szName;
+		TVector3         m_SomeVector;
+		TINT             m_iNumTranslations;
+		TINT             m_iNumQuaternions;
+		TINT             m_iNumScales;
+		TINT             m_iTranslationSize;
+		TINT             m_iQuaternionSize;
+		TINT             m_iScaleSize;
+		TAnimVector*     m_pTranslations;
 		TAnimQuaternion* m_pQuaternions;
-		TAnimScale*		 m_pScales;
+		TAnimScale*      m_pScales;
 	};
 
 public:
@@ -131,20 +131,20 @@ private:
 	}
 
 private:
-	TUINT8			 m_iNameLength;
-	TCHAR			 m_szName[ 31 ];
-	TVector3		 m_SomeVector;
-	TINT			 m_iReferenceCount;
-	TINT			 m_iNumTranslations;
-	TINT			 m_iNumQuaternions;
-	TINT			 m_iNumScales;
-	TINT			 m_iTranslationSize;
-	TINT			 m_iQuaternionSize;
-	TINT			 m_iScaleSize;
-	TAnimVector*	 m_pTranslations;
+	TUINT8           m_iNameLength;
+	TCHAR            m_szName[ 31 ];
+	TVector3         m_SomeVector;
+	TINT             m_iReferenceCount;
+	TINT             m_iNumTranslations;
+	TINT             m_iNumQuaternions;
+	TINT             m_iNumScales;
+	TINT             m_iTranslationSize;
+	TINT             m_iQuaternionSize;
+	TINT             m_iScaleSize;
+	TAnimVector*     m_pTranslations;
 	TAnimQuaternion* m_pQuaternions;
-	TAnimScale*		 m_pScales;
-	TTRB*			 m_pTRB;
+	TAnimScale*      m_pScales;
+	TTRB*            m_pTRB;
 };
 
 class TKeyframeLibraryInstance
@@ -181,21 +181,21 @@ public:
 	void SetSCount( TINT a_iSCount ) { m_iSKeyCount = a_iSCount; }
 
 	TKeyframeLibrary* GetLibrary() const { return m_pLibrary; }
-	TINT			  GetTCount() const { return m_iTKeyCount; }
-	TINT			  GetQCount() const { return m_iQKeyCount; }
-	TINT			  GetSCount() const { return m_iSKeyCount; }
+	TINT              GetTCount() const { return m_iTKeyCount; }
+	TINT              GetQCount() const { return m_iQKeyCount; }
+	TINT              GetSCount() const { return m_iSKeyCount; }
 
 private:
 	TKeyframeLibrary* m_pLibrary;
-	TINT			  m_iTBaseIndex;
-	TINT			  m_iQBaseIndex;
-	TINT			  m_iSBaseIndex;
-	TINT			  m_iTKeyCount;
-	TINT			  m_iQKeyCount;
-	TINT			  m_iSKeyCount;
-	TAnimVector*	  m_pTranslations;
+	TINT              m_iTBaseIndex;
+	TINT              m_iQBaseIndex;
+	TINT              m_iSBaseIndex;
+	TINT              m_iTKeyCount;
+	TINT              m_iQKeyCount;
+	TINT              m_iSKeyCount;
+	TAnimVector*      m_pTranslations;
 	TAnimQuaternion*  m_pQuaternions;
-	TAnimScale*		  m_pScales;
+	TAnimScale*       m_pScales;
 };
 
 class TKeyframeLibraryManager
@@ -213,7 +213,7 @@ public:
 
 private:
 	TDList<TKeyframeLibrary> m_List;
-	TINT					 m_iNumLibraries = 0;
+	TINT                     m_iNumLibraries = 0;
 };
 
 TOSHI_NAMESPACE_END

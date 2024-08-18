@@ -20,10 +20,10 @@
 
 TOSHI_NAMESPACE_USING
 
-TUINT  g_uiWindowWidth	= 0;
+TUINT  g_uiWindowWidth  = 0;
 TUINT  g_uiWindowHeight = 0;
-TBOOL  g_bBikeFOVPatch	= TFALSE;
-TFLOAT g_fOriginalFOV	= 0.0f;
+TBOOL  g_bBikeFOVPatch  = TFALSE;
+TFLOAT g_fOriginalFOV   = 0.0f;
 
 // Replacing this method since it's all useless now but can crash the game
 HOOK( 0x006b4cb0, TMemory_UnkMethod, TBOOL, TMemory::MemBlock* a_pMemBlock )
@@ -123,7 +123,7 @@ MEMBER_HOOK( 0x006b4b80, TMemory, TMemory_SetGlobalBlock, TMemory::MemBlock*, TM
 #ifdef TMEMORY_USE_DLMALLOC
 
 	TMemoryDL* pMemModule = THookedMemory::GetSingleton()->GetMemModule();
-	MemBlock*  pOldHeap	  = pMemModule->GetHeap();
+	MemBlock*  pOldHeap   = pMemModule->GetHeap();
 
 	m_pGlobalBlock = a_pMemBlock;
 	pMemModule->SetHeap( a_pMemBlock );
@@ -180,8 +180,8 @@ class ACollisionObjectModel
 	TCHAR PADDING[ 0xA4 ];
 };
 class AInstanceManager_CollObjectModel :
-	public ACollisionObjectModel,
-	public T2SList<AInstanceManager_CollObjectModel>::Node
+    public ACollisionObjectModel,
+    public T2SList<AInstanceManager_CollObjectModel>::Node
 {
 };
 
@@ -213,8 +213,8 @@ class AOptions
 MEMBER_HOOK( 0x00662d90, AOptions, AOptions_IsResolutionCompatible, TBOOL, TINT a_iWidth, TINT a_iHeight )
 {
 	TBOOL* pIsWindowed = (TBOOL*)( ( TUINT( this ) + 0x20 ) );
-	TINT*  pWidth	   = (TINT*)( ( TUINT( this ) + 0x24 ) );
-	TINT*  pHeight	   = (TINT*)( ( TUINT( this ) + 0x28 ) );
+	TINT*  pWidth      = (TINT*)( ( TUINT( this ) + 0x24 ) );
+	TINT*  pHeight     = (TINT*)( ( TUINT( this ) + 0x28 ) );
 
 	if ( *pIsWindowed == TFALSE )
 	{
@@ -230,7 +230,7 @@ MEMBER_HOOK( 0x00662d90, AOptions, AOptions_IsResolutionCompatible, TBOOL, TINT 
 				a_iWidth  = windowRect.right;
 				a_iHeight = windowRect.bottom;
 
-				HKEY	hkey;
+				HKEY    hkey;
 				LSTATUS status = RegCreateKeyExA( HKEY_CURRENT_USER, "Software\\THQ\\Barnyard", NULL, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hkey, NULL );
 
 				if ( status == 0 )
@@ -249,14 +249,14 @@ MEMBER_HOOK( 0x00662d90, AOptions, AOptions_IsResolutionCompatible, TBOOL, TINT 
 		}
 	}
 
-	constexpr TFLOAT ASPECT_RATIO_5_4	= 5.0f / 4.0f;
+	constexpr TFLOAT ASPECT_RATIO_5_4   = 5.0f / 4.0f;
 	constexpr TFLOAT ASPECT_RATIO_25_16 = 25.0f / 16.0f;
 	constexpr TFLOAT ASPECT_RATIO_16_10 = 16.0f / 10.0f;
-	constexpr TFLOAT ASPECT_RATIO_15_9	= 15.0f / 9.0f;
-	constexpr TFLOAT ASPECT_RATIO_16_9	= 16.0f / 9.0f;
+	constexpr TFLOAT ASPECT_RATIO_15_9  = 15.0f / 9.0f;
+	constexpr TFLOAT ASPECT_RATIO_16_9  = 16.0f / 9.0f;
 
-	TFLOAT	fCurrentAspectRatio = TFLOAT( a_iWidth ) / TFLOAT( a_iHeight );
-	TFLOAT* pFOV				= (TFLOAT*)0x007822ac;
+	TFLOAT  fCurrentAspectRatio = TFLOAT( a_iWidth ) / TFLOAT( a_iHeight );
+	TFLOAT* pFOV                = (TFLOAT*)0x007822ac;
 
 	if ( TMath::Abs( fCurrentAspectRatio - ASPECT_RATIO_5_4 ) <= 0.1f )
 	{
@@ -268,24 +268,24 @@ MEMBER_HOOK( 0x00662d90, AOptions, AOptions_IsResolutionCompatible, TBOOL, TINT 
 	}
 	else if ( TMath::Abs( fCurrentAspectRatio - ASPECT_RATIO_16_10 ) <= 0.1f )
 	{
-		*pFOV			= 1.2244f;
+		*pFOV           = 1.2244f;
 		g_bBikeFOVPatch = TTRUE;
 	}
 	else if ( TMath::Abs( fCurrentAspectRatio - ASPECT_RATIO_15_9 ) <= 0.1f )
 	{
-		*pFOV			= 1.24655f;
+		*pFOV           = 1.24655f;
 		g_bBikeFOVPatch = TTRUE;
 	}
 	else if ( TMath::Abs( fCurrentAspectRatio - ASPECT_RATIO_16_9 ) <= 0.1f )
 	{
-		*pFOV			= 1.313f;
+		*pFOV           = 1.313f;
 		g_bBikeFOVPatch = TTRUE;
 	}
 
-	*pWidth	 = a_iWidth;
+	*pWidth  = a_iWidth;
 	*pHeight = a_iHeight;
 
-	g_uiWindowWidth	 = a_iWidth;
+	g_uiWindowWidth  = a_iWidth;
 	g_uiWindowHeight = a_iHeight;
 
 	g_fOriginalFOV = *pFOV;
@@ -316,8 +316,8 @@ MEMBER_HOOK( 0x006bb000, TTRB, TTRB_Load, TINT, const char* a_szFileName, TUINT 
 	filepath.MakeLower();
 
 	auto  pModLoaderTask = AGlobalModLoaderTask::Get();
-	auto  pMods			 = &pModLoaderTask->GetMods();
-	TBOOL bFound		 = TFALSE;
+	auto  pMods          = &pModLoaderTask->GetMods();
+	TBOOL bFound         = TFALSE;
 
 	for ( auto it = pMods->Begin(); it != pMods->End(); it++ )
 	{
@@ -368,8 +368,8 @@ MEMBER_HOOK( 0x006c1d40, TModelManager, TModelRegistry_CreateModel, TModelManage
 	inputFileName.Truncate( inputFileName.FindReverse( '.', -1 ) );
 
 	auto  pModLoaderTask = AGlobalModLoaderTask::Get();
-	auto  pMods			 = &pModLoaderTask->GetMods();
-	TTRB* pFoundAsset	 = TNULL;
+	auto  pMods          = &pModLoaderTask->GetMods();
+	TTRB* pFoundAsset    = TNULL;
 
 	for ( auto it = pMods->Begin(); it != pMods->End(); it++ )
 	{
@@ -437,7 +437,7 @@ MEMBER_HOOK( 0x006154c0, ARenderer, ARenderer_CreateTRender, TBOOL )
 	TBOOL bResult = CallOriginal();
 
 	TRenderInterface::SetSingletonExplicit(
-		THookedRenderD3DInterface::GetSingleton() );
+	    THookedRenderD3DInterface::GetSingleton() );
 
 	AGlobalModLoaderTask::Get()->OnRenderInterfaceReady();
 
@@ -458,7 +458,7 @@ TBOOL MaterialLibrary_LoadTTLData( AMaterialLibrary* a_pMatLib, AMaterialLibrary
 {
 	auto pTTL = TSTATICCAST( AMaterialLibrary::TTL, a_pTTLData );
 
-	auto pLibList	  = AMaterialLibraryManager::List::GetSingleton();
+	auto pLibList     = AMaterialLibraryManager::List::GetSingleton();
 	TINT iNumTextures = 0;
 
 	if ( AMaterialLibrary::ms_bSkipLoadedTextures )
@@ -477,8 +477,8 @@ TBOOL MaterialLibrary_LoadTTLData( AMaterialLibrary* a_pMatLib, AMaterialLibrary
 	}
 
 	a_pMatLib->m_pTexturesArray = new ATexture[ iNumTextures ];
-	a_pMatLib->m_pTextures		= a_pMatLib->m_pTexturesArray;
-	a_pMatLib->m_iNumTextures	= iNumTextures;
+	a_pMatLib->m_pTextures      = a_pMatLib->m_pTexturesArray;
+	a_pMatLib->m_iNumTextures   = iNumTextures;
 
 	// Calculate maximum texture size to preallocate a buffer
 	TSIZE uiMaxTextureSize = 0;
@@ -563,15 +563,15 @@ MEMBER_HOOK( 0x006da4d0, TMSWindow, TMSWindow_SetPosition, void, TUINT x, TUINT 
 	{
 		// Fix window size when in windowed mode
 		RECT rect;
-		rect.left	= x;
-		rect.top	= y;
-		rect.right	= width;
+		rect.left   = x;
+		rect.top    = y;
+		rect.right  = width;
 		rect.bottom = height;
 
 		if ( TRUE == AdjustWindowRectEx( &rect, GetWindowLongA( GetHWND(), GWL_STYLE ), FALSE, GetWindowLongA( GetHWND(), GWL_EXSTYLE ) ) )
 		{
-			x	   = rect.left;
-			y	   = rect.top;
+			x      = rect.left;
+			y      = rect.top;
 			width  = rect.right;
 			height = rect.bottom;
 		}
@@ -677,12 +677,12 @@ MEMBER_HOOK( 0x006357d0, AGUI2, AGUI2_OnUpdate, TBOOL, TFLOAT a_fDeltaTime )
 MEMBER_HOOK( 0x004293d0, AGameStateController, AGameStateController_ProcessInput, TBOOL, TInputInterface::InputEvent* a_pInputEvent )
 {
 	if ( a_pInputEvent->GetEventType() == TInputInterface::EVENT_TYPE_GONE_DOWN &&
-		 a_pInputEvent->GetDoodad() == TInputDeviceKeyboard::KEY_GRAVE )
+	     a_pInputEvent->GetDoodad() == TInputDeviceKeyboard::KEY_GRAVE )
 	{
 		AImGUI::GetSingleton()->Toggle();
 	}
 	else if ( a_pInputEvent->GetEventType() == TInputInterface::EVENT_TYPE_GONE_DOWN &&
-			  a_pInputEvent->GetDoodad() == TInputDeviceKeyboard::KEY_F5 )
+	          a_pInputEvent->GetDoodad() == TInputDeviceKeyboard::KEY_F5 )
 	{
 		*(TBOOL*)( ( *(TUINT*)( 0x0079b2ec ) + 0x88 ) ) = !( *(TBOOL*)( ( *(TUINT*)( 0x0079b2ec ) + 0x88 ) ) );
 	}
@@ -731,7 +731,7 @@ HOOK( 0x006cead0, TRenderContext_CullSphereToFrustumSimple, TBOOL, const TSphere
 {
 	if ( g_bNoCullingInRadiusOfObject && ACameraManager::IsSingletonCreated() )
 	{
-		auto  pCamera			 = ACameraManager::GetSingleton()->GetCurrentCamera();
+		auto  pCamera            = ACameraManager::GetSingleton()->GetCurrentCamera();
 		auto& vCameraTranslation = pCamera->m_Matrix.GetTranslation();
 
 		auto fDistance = TVector3::DistanceSq( a_rSphere.GetOrigin(), vCameraTranslation.AsVector3() );
@@ -757,7 +757,7 @@ HOOK( 0x006cea40, TRenderContext_CullSphereToFrustum, TINT, const TSphere& a_rSp
 {
 	if ( g_bNoCullingInRadiusOfObject && ACameraManager::IsSingletonCreated() )
 	{
-		auto  pCamera			 = ACameraManager::GetSingleton()->GetCurrentCamera();
+		auto  pCamera            = ACameraManager::GetSingleton()->GetCurrentCamera();
 		auto& vCameraTranslation = pCamera->m_Matrix.GetTranslation();
 
 		auto fDistance = TVector3::DistanceSq( a_rSphere.GetOrigin(), vCameraTranslation.AsVector3() );
@@ -769,7 +769,7 @@ HOOK( 0x006cea40, TRenderContext_CullSphereToFrustum, TINT, const TSphere& a_rSp
 	}
 
 	TINT iLeftPlanes = a_iClipFlags & a_iClipFlagsMask;
-	TINT iPlaneFlag	 = 1;
+	TINT iPlaneFlag  = 1;
 
 	do {
 		if ( iLeftPlanes == 0 )

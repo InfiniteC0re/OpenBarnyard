@@ -11,9 +11,9 @@ public:
 	T2Texture()
 	{
 		m_uiDataSize  = 0;
-		m_pData		  = TNULL;
-		m_Unk1		  = 0;
-		m_Unk2		  = 0;
+		m_pData       = TNULL;
+		m_Unk1        = 0;
+		m_Unk2        = 0;
 		m_pD3DTexture = TNULL;
 	}
 
@@ -24,7 +24,7 @@ public:
 
 	void SetData( void* a_pData, TUINT a_uiDataSize )
 	{
-		m_pData		 = a_pData;
+		m_pData      = a_pData;
 		m_uiDataSize = a_uiDataSize;
 	}
 
@@ -68,16 +68,16 @@ public:
 	}
 
 private:
-	TUINT		   m_uiDataSize;
-	void*		   m_pData;
-	TUINT		   m_Unk1;
-	TUINT		   m_Unk2;
+	TUINT          m_uiDataSize;
+	void*          m_pData;
+	TUINT          m_Unk1;
+	TUINT          m_Unk2;
 	D3DXIMAGE_INFO m_ImageInfo;
 	union
 	{
-		IDirect3DTexture8*		 m_pD3DTexture;
+		IDirect3DTexture8*       m_pD3DTexture;
 		IDirect3DVolumeTexture8* m_pD3DVolumeTexture;
-		IDirect3DCubeTexture8*	 m_pD3DCubeTexture;
+		IDirect3DCubeTexture8*   m_pD3DCubeTexture;
 	};
 };
 

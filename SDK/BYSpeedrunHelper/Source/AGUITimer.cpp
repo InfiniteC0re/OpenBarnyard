@@ -10,7 +10,7 @@ TOSHI_NAMESPACE_USING
 
 AGUITimer::AGUITimer()
 {
-	m_pTextBox	 = TNULL;
+	m_pTextBox   = TNULL;
 	m_fTotalTime = 0.0f;
 	m_bIsVisible = TTRUE;
 }
@@ -77,7 +77,7 @@ void AGUITimer::Render()
 void AGUITimer::GetTime( TFLOAT a_fTime, TINT& a_iMilliseconds, TINT& a_iSeconds, TINT& a_iMinutes, TINT& a_iHours )
 {
 	a_iMilliseconds = TMath::FloorToInt( fmod( a_fTime, 1.0f ) * 1000 );
-	a_iSeconds		= TMath::FloorToInt( fmod( a_fTime, 60.0f ) );
-	a_iMinutes		= TMath::FloorToInt( fmod( a_fTime / 60.0f, 60.0f ) );
-	a_iHours		= TMath::FloorToInt( a_fTime / 3600.0f );
+	a_iSeconds      = TMath::FloorToInt( fmod( a_fTime, 60.0f ) );
+	a_iMinutes      = TMath::FloorToInt( fmod( a_fTime / 60.0f, 60.0f ) );
+	a_iHours        = TMath::FloorToInt( a_fTime / 3600.0f );
 }

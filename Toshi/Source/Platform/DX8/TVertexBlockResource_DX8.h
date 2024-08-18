@@ -27,8 +27,8 @@ public:
 	{
 		HALBuffer();
 
-		TUINT					uiNumStreams;
-		TUINT16					uiVertexOffset;
+		TUINT                   uiNumStreams;
+		TUINT16                 uiVertexOffset;
 		IDirect3DVertexBuffer8* apVertexBuffers[ TVertexFactoryFormat::MAX_NUM_STREAMS ];
 	};
 
@@ -67,13 +67,13 @@ private:
 
 protected:
 	TVertexFactoryResourceInterface* m_pFactory;
-	TUINT							 m_uiFlags;
-	TUINT16							 m_uiMaxVertices;
-	TUINT							 m_uiOffset;
-	TUINT							 m_uiVerticesUsed;
-	TUINT							 m_uiLockCount;
-	TUINT							 m_Unk1;
-	HALBuffer						 m_HALBuffer;
+	TUINT                            m_uiFlags;
+	TUINT16                          m_uiMaxVertices;
+	TUINT                            m_uiOffset;
+	TUINT                            m_uiVerticesUsed;
+	TUINT                            m_uiLockCount;
+	TUINT                            m_Unk1;
+	HALBuffer                        m_HALBuffer;
 };
 
 TOSHI_NAMESPACE_END

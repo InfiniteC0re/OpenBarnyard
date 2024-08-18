@@ -41,7 +41,7 @@ public:
 		union
 		{
 			TUINT8 m_aMemoryBuffer[ sizeof( T ) * BUFSIZE ];
-			T	   m_aElements[ BUFSIZE ];
+			T      m_aElements[ BUFSIZE ];
 		};
 	};
 
@@ -74,7 +74,7 @@ public:
 		TASSERT( ( 1 << TMath::IntLog2( BUFSIZE ) ) == BUFSIZE );
 
 		m_iMainIndexShift = TMath::IntLog2( BUFSIZE );
-		m_iSubIndexMask	  = ( 1 << TMath::IntLog2( BUFSIZE ) ) - 1;
+		m_iSubIndexMask   = ( 1 << TMath::IntLog2( BUFSIZE ) ) - 1;
 	}
 
 	static void DestroySharedBuffers()
@@ -97,10 +97,10 @@ public:
 	}
 
 private:
-	inline static TNode*		 m_pNodeArray;
-	inline static TINT			 m_iNumBuffers;
-	inline static TINT			 m_iMainIndexShift;
-	inline static TINT			 m_iSubIndexMask;
+	inline static TNode*         m_pNodeArray;
+	inline static TINT           m_iNumBuffers;
+	inline static TINT           m_iMainIndexShift;
+	inline static TINT           m_iSubIndexMask;
 	inline static TArray<TNode*> m_oFreeList;
 
 public:
@@ -109,7 +109,7 @@ public:
 	//-----------------------------------------------------------------------------
 
 	TSharedBuffer() :
-		m_oArray( 4, 10 )
+	    m_oArray( 4, 10 )
 	{
 		TASSERT( ( 1 << TMath::IntLog2( BUFSIZE ) ) == BUFSIZE );
 	}
@@ -185,7 +185,7 @@ public:
 		TASSERT( m_oFreeList.Size() <= m_iNumBuffers );
 		TASSERT( a_iIndex < m_oArray.Size() * BUFSIZE );
 
-		TINT iSubIndex	= m_iSubIndexMask & a_iIndex;
+		TINT iSubIndex  = m_iSubIndexMask & a_iIndex;
 		TINT iMainIndex = a_iIndex >> ( m_iMainIndexShift % BUFSIZE );
 
 		TASSERT( iMainIndex < m_oArray.Size() );
@@ -200,7 +200,7 @@ public:
 		TASSERT( m_oFreeList.Size() <= m_iNumBuffers );
 		TASSERT( a_iIndex < m_oArray.Size() * BUFSIZE );
 
-		TINT iSubIndex	= m_iSubIndexMask & a_iIndex;
+		TINT iSubIndex  = m_iSubIndexMask & a_iIndex;
 		TINT iMainIndex = a_iIndex >> ( m_iMainIndexShift % BUFSIZE );
 
 		TASSERT( iMainIndex < m_oArray.Size() );

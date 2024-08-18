@@ -68,7 +68,7 @@ public:
 		TVector4::w = w;
 	}
 
-	void			Normalise();
+	void            Normalise();
 	constexpr TBOOL isNormalised( TFLOAT fVal = 0.05f ) const { return ( ( ( 1.0f - fVal ) * ( 1.0f - fVal ) ) < MagnitudeSq() ) && ( ( ( 1.0f + fVal ) * ( 1.0f + fVal ) ) >= MagnitudeSq() ); }
 
 	void ProjectNormalToPlane( const TVector4& vec, const TVector4& vec2 );
@@ -205,9 +205,9 @@ public:
 	void Negate4( const TVector4& vec ) { Set( -vec.x, -vec.y, -vec.z, -vec.w ); }
 	void Negate4() { Set( -x, -y, -z, -w ); }
 
-	TFLOAT			 Magnitude() const { return TMath::Sqrt( x * x + y * y + z * z ); }
+	TFLOAT           Magnitude() const { return TMath::Sqrt( x * x + y * y + z * z ); }
 	constexpr TFLOAT MagnitudeSq() const { return x * x + y * y + z * z; }
-	TFLOAT			 MagnitudeXZ() const { return TMath::Sqrt( x * x + z * z ); }
+	TFLOAT           MagnitudeXZ() const { return TMath::Sqrt( x * x + z * z ); }
 	constexpr TFLOAT MagnitudeSqXZ() const { return x * x + z * z; }
 
 	constexpr TVector4& Progress( const TVector4& a_rVec, TFLOAT a_fScalar )
@@ -230,9 +230,9 @@ public:
 	constexpr TVector4 operator*( const TVector4& other ) const { return { x * other.x, y * other.y, z * other.z, other.w }; }
 	constexpr TVector4 operator/( const TVector4& other ) const { return { x / other.x, y / other.y, z / other.z, other.w }; }
 
-	void	  operator=( const TVector3& other ) { Set( other ); }
-	void	  operator=( const TVector4& other ) { Set( other ); }
-	void	  operator+=( const TVector4& other ) { Add( other ); }
+	void      operator=( const TVector3& other ) { Set( other ); }
+	void      operator=( const TVector4& other ) { Set( other ); }
+	void      operator+=( const TVector4& other ) { Add( other ); }
 	TVector4& operator-=( const TVector4& other )
 	{
 		Substract( other );
@@ -241,19 +241,19 @@ public:
 	void operator/=( const TVector4& other ) { Divide( other ); }
 	void operator*=( const TVector4& other ) { Multiply( other ); }
 
-	TFLOAT*		  AsArray() { return TREINTERPRETCAST( TFLOAT*, this ); }
+	TFLOAT*       AsArray() { return TREINTERPRETCAST( TFLOAT*, this ); }
 	const TFLOAT* AsArray() const { return TREINTERPRETCAST( const TFLOAT*, this ); }
 
-	TVector3&		AsVector3() { return TREINTERPRETCAST( TVector3&, *this ); }
+	TVector3&       AsVector3() { return TREINTERPRETCAST( TVector3&, *this ); }
 	const TVector3& AsVector3() const { return TREINTERPRETCAST( const TVector3&, *this ); }
 
-	TVector2&		AsVector2() { return TREINTERPRETCAST( TVector2&, *this ); }
+	TVector2&       AsVector2() { return TREINTERPRETCAST( TVector2&, *this ); }
 	const TVector2& AsVector2() const { return TREINTERPRETCAST( const TVector2&, *this ); }
 
 public:
-	static TFLOAT			Distance( const TVector4& vec1, const TVector4& vec2 ) { return ( vec2 - vec1 ).Magnitude(); }
+	static TFLOAT           Distance( const TVector4& vec1, const TVector4& vec2 ) { return ( vec2 - vec1 ).Magnitude(); }
 	static constexpr TFLOAT DistanceSq( const TVector4& vec1, const TVector4& vec2 ) { return ( vec2 - vec1 ).MagnitudeSq(); }
-	static TFLOAT			DistanceXZ( const TVector4& vec1, const TVector4& vec2 ) { return ( vec2 - vec1 ).MagnitudeXZ(); }
+	static TFLOAT           DistanceXZ( const TVector4& vec1, const TVector4& vec2 ) { return ( vec2 - vec1 ).MagnitudeXZ(); }
 	static constexpr TFLOAT DistanceSqXZ( const TVector4& vec1, const TVector4& vec2 ) { return ( vec2 - vec1 ).MagnitudeSqXZ(); }
 
 	TFLOAT constexpr DotProduct( const TVector4& vec ) const { return DotProduct3( *this, vec ); }

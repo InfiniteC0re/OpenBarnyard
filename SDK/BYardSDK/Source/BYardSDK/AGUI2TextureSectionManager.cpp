@@ -9,7 +9,7 @@ TBOOL AGUI2TextureSectionManager::Open( const char* a_szFileName, Toshi::TTRB* a
 	if ( a_pTRB == TNULL )
 	{
 		*g_providedtrb = TFALSE;
-		*g_trb		   = new TTRB();
+		*g_trb         = new TTRB();
 
 		if ( ( *g_trb )->Load( a_szFileName ) != TTRB::ERROR_OK )
 			return TFALSE;
@@ -18,11 +18,11 @@ TBOOL AGUI2TextureSectionManager::Open( const char* a_szFileName, Toshi::TTRB* a
 	}
 	else
 	{
-		*g_trb		   = a_pTRB;
+		*g_trb         = a_pTRB;
 		*g_providedtrb = TTRUE;
 
 		auto iFilePathLength = TStringManager::String8Length( a_szFileName );
-		auto iFileNamePos	 = iFilePathLength - 1;
+		auto iFileNamePos    = iFilePathLength - 1;
 
 		while ( a_szFileName[ iFileNamePos ] != '\\' && a_szFileName[ iFileNamePos ] != '/' )
 			iFileNamePos--;
@@ -32,7 +32,7 @@ TBOOL AGUI2TextureSectionManager::Open( const char* a_szFileName, Toshi::TTRB* a
 
 		auto iFileNameLength = iFilePathLength - iFileNamePos - 4;
 		TStringManager::String8Copy( symbolName, a_szFileName + iFileNamePos, iFileNameLength );
-		symbolName[ iFileNameLength ]	  = '_';
+		symbolName[ iFileNameLength ]     = '_';
 		symbolName[ iFileNameLength + 1 ] = '\0';
 		TStringManager::String8ToLowerCase( symbolName );
 		TStringManager::String8Copy( symbolName + iFileNameLength + 1, "texturesections" );
@@ -58,7 +58,7 @@ void AGUI2TextureSectionManager::Close()
 			delete *g_trb;
 
 		*g_providedtrb = TFALSE;
-		*g_trb		   = TNULL;
+		*g_trb         = TNULL;
 	}
 }
 
@@ -96,20 +96,20 @@ void AGUI2TextureSectionManager::CreateMaterials()
 				auto pMaterial = pRenderer->CreateMaterial( pTexture );
 				pSection->SetMaterial( pMaterial );
 
-				auto iWidth	 = pRenderer->GetWidth( pMaterial );
+				auto iWidth  = pRenderer->GetWidth( pMaterial );
 				auto iHeight = pRenderer->GetHeight( pMaterial );
 
 				auto& uv1 = pSection->GetUVPoint1();
-				uv1.x	  = TFLOAT( pSection->GetPoint1X() ) / TFLOAT( iWidth );
-				uv1.y	  = TFLOAT( pSection->GetPoint1Y() ) / TFLOAT( iHeight );
-				uv1.z	  = TFLOAT( pSection->GetPoint2X() ) / TFLOAT( iWidth );
-				uv1.w	  = TFLOAT( pSection->GetPoint1Y() ) / TFLOAT( iHeight );
+				uv1.x     = TFLOAT( pSection->GetPoint1X() ) / TFLOAT( iWidth );
+				uv1.y     = TFLOAT( pSection->GetPoint1Y() ) / TFLOAT( iHeight );
+				uv1.z     = TFLOAT( pSection->GetPoint2X() ) / TFLOAT( iWidth );
+				uv1.w     = TFLOAT( pSection->GetPoint1Y() ) / TFLOAT( iHeight );
 
 				auto& uv2 = pSection->GetUVPoint2();
-				uv2.x	  = TFLOAT( pSection->GetPoint2X() ) / TFLOAT( iWidth );
-				uv2.y	  = TFLOAT( pSection->GetPoint2Y() ) / TFLOAT( iHeight );
-				uv2.z	  = TFLOAT( pSection->GetPoint1X() ) / TFLOAT( iWidth );
-				uv2.w	  = TFLOAT( pSection->GetPoint2Y() ) / TFLOAT( iHeight );
+				uv2.x     = TFLOAT( pSection->GetPoint2X() ) / TFLOAT( iWidth );
+				uv2.y     = TFLOAT( pSection->GetPoint2Y() ) / TFLOAT( iHeight );
+				uv2.z     = TFLOAT( pSection->GetPoint1X() ) / TFLOAT( iWidth );
+				uv2.w     = TFLOAT( pSection->GetPoint2Y() ) / TFLOAT( iHeight );
 			}
 		}
 	}
@@ -152,20 +152,20 @@ void AGUI2TextureSectionManager::UpdateMaterials()
 					auto pMaterial = pRenderer->CreateMaterial( pTexture );
 					pSection->SetMaterial( pMaterial );
 
-					auto iWidth	 = pRenderer->GetWidth( pMaterial );
+					auto iWidth  = pRenderer->GetWidth( pMaterial );
 					auto iHeight = pRenderer->GetHeight( pMaterial );
 
 					auto& uv1 = pSection->GetUVPoint1();
-					uv1.x	  = TFLOAT( pSection->GetPoint1X() ) * TFLOAT( iWidth );
-					uv1.y	  = TFLOAT( pSection->GetPoint1Y() ) * ( 1.0f / TFLOAT( iHeight ) );
-					uv1.z	  = TFLOAT( pSection->GetPoint2X() ) * TFLOAT( iWidth );
-					uv1.w	  = TFLOAT( pSection->GetPoint1Y() ) * ( 1.0f / TFLOAT( iHeight ) );
+					uv1.x     = TFLOAT( pSection->GetPoint1X() ) * TFLOAT( iWidth );
+					uv1.y     = TFLOAT( pSection->GetPoint1Y() ) * ( 1.0f / TFLOAT( iHeight ) );
+					uv1.z     = TFLOAT( pSection->GetPoint2X() ) * TFLOAT( iWidth );
+					uv1.w     = TFLOAT( pSection->GetPoint1Y() ) * ( 1.0f / TFLOAT( iHeight ) );
 
 					auto& uv2 = pSection->GetUVPoint2();
-					uv2.x	  = TFLOAT( pSection->GetPoint2X() ) * TFLOAT( iWidth );
-					uv2.y	  = TFLOAT( pSection->GetPoint2Y() ) * ( 1.0f / TFLOAT( iHeight ) );
-					uv2.z	  = TFLOAT( pSection->GetPoint1X() ) * TFLOAT( iWidth );
-					uv2.w	  = TFLOAT( pSection->GetPoint2Y() ) * ( 1.0f / TFLOAT( iHeight ) );
+					uv2.x     = TFLOAT( pSection->GetPoint2X() ) * TFLOAT( iWidth );
+					uv2.y     = TFLOAT( pSection->GetPoint2Y() ) * ( 1.0f / TFLOAT( iHeight ) );
+					uv2.z     = TFLOAT( pSection->GetPoint1X() ) * TFLOAT( iWidth );
+					uv2.w     = TFLOAT( pSection->GetPoint2Y() ) * ( 1.0f / TFLOAT( iHeight ) );
 				}
 			}
 			else if ( pTexture == TNULL )

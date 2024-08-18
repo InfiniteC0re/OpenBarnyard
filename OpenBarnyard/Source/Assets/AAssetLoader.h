@@ -31,8 +31,8 @@ public:
 	static T* CastSymbol( const TCHAR* a_szFileName, const TCHAR* a_szSymbolName, AAssetType a_eAssetType )
 	{
 		return TSTATICCAST(
-			T,
-			GetSymbolAddress( a_szFileName, a_szSymbolName, a_eAssetType ) );
+		    T,
+		    GetSymbolAddress( a_szFileName, a_szSymbolName, a_eAssetType ) );
 	}
 
 	// Returns TRB file of specified asset

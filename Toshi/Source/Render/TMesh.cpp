@@ -14,15 +14,15 @@ TDEFINE_CLASS_NORUNTIME( TMesh );
 TMesh::TMesh()
 {
 	m_pOwnerShader = TNULL;
-	m_pMaterial	   = TNULL;
-	m_State		   = State_None;
+	m_pMaterial    = TNULL;
+	m_State        = State_None;
 }
 
 TMesh::~TMesh()
 {
 	m_pOwnerShader = TNULL;
-	m_pMaterial	   = TNULL;
-	m_State		   = State_None;
+	m_pMaterial    = TNULL;
+	m_State        = State_None;
 }
 
 TBOOL TMesh::Validate()

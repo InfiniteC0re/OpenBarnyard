@@ -9,13 +9,13 @@ template <class KeyType, class ValueType, class Comparator = TComparator<KeyType
 class T2Map
 {
 public:
-	using Pair	   = T2Pair<KeyType, ValueType, Comparator>;
+	using Pair     = T2Pair<KeyType, ValueType, Comparator>;
 	using Iterator = T2RedBlackTree<Pair>::Iterator;
-	using Node	   = T2RedBlackTree<Pair>::Node;
+	using Node     = T2RedBlackTree<Pair>::Node;
 
 public:
-	T2Map( T2Allocator* a_pAllocator = &T2Allocator::s_GlobalAllocator ) :
-		m_RedBlackTree( a_pAllocator )
+	T2Map( T2Allocator* a_pAllocator = GetGlobalAllocator() ) :
+	    m_RedBlackTree( a_pAllocator )
 	{
 	}
 

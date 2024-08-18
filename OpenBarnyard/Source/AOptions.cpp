@@ -15,7 +15,7 @@ TDEFINE_CLASS( AOptions );
 AOptions::AOptions()
 {
 	m_eUpdatedSettings = UpdatedSettings_None;
-	m_eLanguage		   = ALocaleManager::Lang_UNKNOWN;
+	m_eLanguage        = ALocaleManager::Lang_UNKNOWN;
 
 	ReloadSettings();
 }
@@ -44,13 +44,13 @@ TBOOL AOptions::ApplySettings()
 
 void AOptions::LoadSettings()
 {
-	m_fGamma			 = 0.420849f;
-	m_iWidth			 = 800;
-	m_iHeight			 = 600;
-	m_fSensitivity		 = 0.5f;
-	m_bHighDetailGrass	 = TTRUE;
+	m_fGamma             = 0.420849f;
+	m_iWidth             = 800;
+	m_iHeight            = 600;
+	m_fSensitivity       = 0.5f;
+	m_bHighDetailGrass   = TTRUE;
 	m_bControllerEnabled = TFALSE;
-	m_bForcedWindowed	 = TFALSE;
+	m_bForcedWindowed    = TFALSE;
 
 	HKEY hKey;
 
@@ -62,21 +62,21 @@ void AOptions::LoadSettings()
 		DWORD dwSize = sizeof( dwData );
 
 		if ( ERROR_SUCCESS == RegQueryValueExA( hKey, "RealForcedWindowed", NULL, &dwType, (LPBYTE)&dwData, &dwSize ) &&
-			 dwType == REG_DWORD )
+		     dwType == REG_DWORD )
 		{
 			m_bForcedWindowed = dwData != FALSE;
 		}
 
 		dwSize = sizeof( dwData );
 		if ( ERROR_SUCCESS == RegQueryValueExA( hKey, "HighDetailGrass", NULL, &dwType, (LPBYTE)&dwData, &dwSize ) &&
-			 dwType == REG_DWORD )
+		     dwType == REG_DWORD )
 		{
 			m_bHighDetailGrass = dwData != FALSE;
 		}
 
 		dwSize = sizeof( szBuffer );
 		if ( ERROR_SUCCESS == RegQueryValueExA( hKey, "Gamma", NULL, &dwType, (LPBYTE)szBuffer, &dwSize ) &&
-			 dwType == REG_SZ )
+		     dwType == REG_SZ )
 		{
 			dwSize -= 1;
 			TMath::Clip( dwSize, (DWORD)0, (DWORD)16 );
@@ -94,17 +94,17 @@ void AOptions::LoadSettings()
 		}
 
 		TINT iWidth = 0;
-		dwSize		= sizeof( iWidth );
+		dwSize      = sizeof( iWidth );
 		if ( ERROR_SUCCESS == RegQueryValueExA( hKey, "Width", NULL, &dwType, (LPBYTE)&dwData, &dwSize ) &&
-			 dwType == REG_DWORD )
+		     dwType == REG_DWORD )
 		{
 			iWidth = dwData;
 		}
 
 		TINT iHeight = 0;
-		dwSize		 = sizeof( iHeight );
+		dwSize       = sizeof( iHeight );
 		if ( ERROR_SUCCESS == RegQueryValueExA( hKey, "Height", NULL, &dwType, (LPBYTE)&dwData, &dwSize ) &&
-			 dwType == REG_DWORD )
+		     dwType == REG_DWORD )
 		{
 			iHeight = dwData;
 		}
@@ -117,7 +117,7 @@ void AOptions::LoadSettings()
 
 		dwSize = sizeof( szBuffer );
 		if ( ERROR_SUCCESS == RegQueryValueExA( hKey, "Sensitivity", NULL, &dwType, (LPBYTE)szBuffer, &dwSize ) &&
-			 dwType == REG_SZ )
+		     dwType == REG_SZ )
 		{
 			m_fSensitivity = TStringManager::String8ToFloat( szBuffer );
 			TMath::Clip( m_fSensitivity, 0.0f, 1.0f );
@@ -125,7 +125,7 @@ void AOptions::LoadSettings()
 
 		dwSize = sizeof( dwData );
 		if ( ERROR_SUCCESS == RegQueryValueExA( hKey, "ControllerEnabled", NULL, &dwType, (LPBYTE)&dwData, &dwSize ) &&
-			 dwType == REG_DWORD )
+		     dwType == REG_DWORD )
 		{
 			m_bControllerEnabled = dwData != FALSE;
 		}

@@ -8,8 +8,8 @@ template <TUINT NUM_BITS>
 class TBitField
 {
 public:
-	using ValueType						   = TUINT32;
-	static constexpr TUINT MIN_NUM_BITS	   = 8 * sizeof( ValueType );
+	using ValueType                        = TUINT32;
+	static constexpr TUINT MIN_NUM_BITS    = 8 * sizeof( ValueType );
 	static constexpr TUINT BIT_SUBNUM_MASK = MIN_NUM_BITS - 1;
 
 public:

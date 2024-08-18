@@ -16,13 +16,13 @@ class TAllocator
 public:
 	using value_type = Type;
 
-	using pointer		= Type*;
+	using pointer       = Type*;
 	using const_pointer = const Type*;
 
-	using void_pointer		 = void*;
+	using void_pointer       = void*;
 	using const_void_pointer = const void*;
 
-	using size_type		  = size_t;
+	using size_type       = size_t;
 	using difference_type = std::ptrdiff_t;
 
 	TAllocator()  = default;

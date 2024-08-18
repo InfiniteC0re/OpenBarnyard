@@ -14,12 +14,12 @@ TBOOL TGenericFifo::Create( TCHAR* a_pBuffer, TINT a_iMaxItems, TINT a_iItemSize
 	TASSERT( a_iMaxItems > 0, "Max items is less than zero" );
 	TASSERT( a_iItemSize > 0, "Item size is less than zero" );
 
-	m_iItemSize		  = a_iItemSize;
-	m_iMaxItems		  = a_iMaxItems;
+	m_iItemSize       = a_iItemSize;
+	m_iMaxItems       = a_iMaxItems;
 	m_pDataPopCursor  = a_pBuffer;
 	m_pDataPushCursor = a_pBuffer;
-	m_pDataBegin	  = a_pBuffer;
-	m_pDataEnd		  = a_pBuffer + ( a_iMaxItems * a_iItemSize );
+	m_pDataBegin      = a_pBuffer;
+	m_pDataEnd        = a_pBuffer + ( a_iMaxItems * a_iItemSize );
 
 	TBOOL bResult;
 	bResult = m_Semaphore1.Create( m_iMaxItems, m_iMaxItems );

@@ -14,11 +14,11 @@
 #include <string>
 
 #ifndef __TOSHI_TTRB_H__
-#	error Include TTRB.h to use this extension
+#  error Include TTRB.h to use this extension
 #endif
 
 #ifndef __TOSHI_PLUGIN_PTRB_H__
-#	define __TOSHI_PLUGIN_PTRB_H__
+#  define __TOSHI_PLUGIN_PTRB_H__
 #endif
 
 //-----------------------------------------------------------------------------
@@ -72,11 +72,11 @@ public:
 		{
 		public:
 			Ptr() :
-				m_Stack( TNULL ), m_Offset( 0 ) {}
+			    m_Stack( TNULL ), m_Offset( 0 ) {}
 			Ptr( PTRBSections::MemoryStream* stack, TUINT offset ) :
-				m_Stack( stack ), m_Offset( offset ) {}
+			    m_Stack( stack ), m_Offset( offset ) {}
 			Ptr( PTRBSections::MemoryStream* stack, T* ptr ) :
-				m_Stack( stack ), m_Offset( stack->GetOffset( ptr ) ) {}
+			    m_Stack( stack ), m_Offset( stack->GetOffset( ptr ) ) {}
 
 			T* get()
 			{
@@ -131,22 +131,22 @@ public:
 
 		private:
 			PTRBSections::MemoryStream* m_Stack;
-			TUINT						m_Offset;
+			TUINT                       m_Offset;
 		};
 
 		struct RelcPtr
 		{
-			TUINT						Offset;
-			TUINT						DataPtr;
+			TUINT                       Offset;
+			TUINT                       DataPtr;
 			PTRBSections::MemoryStream* DataStack;
 		};
 
 	public:
 		MemoryStream( TUINT32 index )
 		{
-			m_Index		   = index;
-			m_Buffer	   = TNULL;
-			m_BufferPos	   = TNULL;
+			m_Index        = index;
+			m_Buffer       = TNULL;
+			m_BufferPos    = TNULL;
 			m_BufferSize   = 0;
 			m_ExpectedSize = 0;
 			m_PtrList.reserve( 32 );
@@ -157,8 +157,8 @@ public:
 		{
 			TASSERT( other.m_DependentStacks.size() == 0, "Cross pointers are not supported" );
 
-			m_Index		   = other.m_Index;
-			m_Buffer	   = TNULL;
+			m_Index        = other.m_Index;
+			m_Buffer       = TNULL;
 			m_BufferSize   = 0;
 			m_ExpectedSize = other.m_ExpectedSize;
 			Resize( other.m_BufferSize );
@@ -169,9 +169,9 @@ public:
 			for ( TUINT i = 0; i < other.m_PtrList.size(); i++ )
 			{
 				m_PtrList.emplace_back(
-					other.m_PtrList[ i ].Offset,
-					other.m_PtrList[ i ].DataPtr,
-					this // TODO: support cross pointers
+				    other.m_PtrList[ i ].Offset,
+				    other.m_PtrList[ i ].DataPtr,
+				    this // TODO: support cross pointers
 				);
 			}
 		}
@@ -195,7 +195,7 @@ public:
 		TUINT32 SetIndex( TUINT32 index )
 		{
 			TUINT32 oldIndex = m_Index;
-			m_Index			 = index;
+			m_Index          = index;
 			return oldIndex;
 		}
 
@@ -275,12 +275,12 @@ public:
 		}
 
 	private:
-		TUINT32					   m_Index;
-		TCHAR*					   m_Buffer;
-		TCHAR*					   m_BufferPos;
-		TUINT					   m_BufferSize;
-		TUINT32					   m_ExpectedSize;
-		std::vector<RelcPtr>	   m_PtrList;
+		TUINT32                    m_Index;
+		TCHAR*                     m_Buffer;
+		TCHAR*                     m_BufferPos;
+		TUINT                      m_BufferSize;
+		TUINT32                    m_ExpectedSize;
+		std::vector<RelcPtr>       m_PtrList;
 		std::vector<MemoryStream*> m_DependentStacks;
 	};
 
@@ -307,7 +307,7 @@ public:
 
 	PTRBSections::MemoryStream* CreateStream();
 	PTRBSections::MemoryStream* CreateStream( const PTRBSections::MemoryStream* pStream );
-	TBOOL						DeleteStack( PTRBSymbols* pSymb, PTRBSections::MemoryStream* pStream );
+	TBOOL                       DeleteStack( PTRBSymbols* pSymb, PTRBSections::MemoryStream* pStream );
 
 	PTRBSections::MemoryStream* GetStack( TUINT index );
 
@@ -500,13 +500,13 @@ public:
 	{
 		TASSERT( m_Symbols.size() == m_SymbolNames.size(), "" );
 
-		TUINT32 nameOffset	= 0;
+		TUINT32 nameOffset  = 0;
 		TUINT32 symbolCount = m_Symbols.size();
 		ttsfo.Write( symbolCount );
 
 		for ( TUINT i = 0; i < m_Symbols.size(); i++ )
 		{
-			m_Symbols[ i ].NameHash	  = Toshi::TTRB::HashString( m_SymbolNames[ i ].c_str() );
+			m_Symbols[ i ].NameHash   = Toshi::TTRB::HashString( m_SymbolNames[ i ].c_str() );
 			m_Symbols[ i ].NameOffset = nameOffset;
 			nameOffset += m_SymbolNames[ i ].length() + 1;
 			ttsfo.Write( m_Symbols[ i ] );
@@ -549,7 +549,7 @@ public:
 
 private:
 	std::vector<Toshi::TTRB::TTRBSymbol> m_Symbols;
-	std::vector<std::string>			 m_SymbolNames;
+	std::vector<std::string>             m_SymbolNames;
 };
 
 class PTRBWriter
@@ -559,9 +559,9 @@ public:
 
 public:
 	PTRBWriter() :
-		m_HDRX( VERSION ) {}
+	    m_HDRX( VERSION ) {}
 	PTRBWriter( const std::string& filepath ) :
-		m_HDRX( VERSION ) { ReadFromFile( filepath ); }
+	    m_HDRX( VERSION ) { ReadFromFile( filepath ); }
 
 	void Reset()
 	{
@@ -574,7 +574,7 @@ public:
 		Reset();
 
 		Toshi::TTSFI ttsfi;
-		auto		 pFile = Toshi::TFile::Create( filepath.c_str() );
+		auto         pFile = Toshi::TFile::Create( filepath.c_str() );
 
 		if ( pFile && ttsfi.Open( pFile ) == Toshi::TTRB::ERROR_OK )
 		{
@@ -623,7 +623,7 @@ public:
 
 	void WriteToFile( const std::string& filepath, TBOOL compress = false, Toshi::TTSF::Endianess endianess = Toshi::TTSF::Endianess_Little )
 	{
-		Toshi::TTSFO		   ttsfo;
+		Toshi::TTSFO           ttsfo;
 		Toshi::TTSFO::HunkMark mark;
 		ttsfo.Create( filepath.c_str(), "TRBF", endianess );
 
@@ -662,15 +662,15 @@ public:
 	}
 
 private:
-	PTRBHeader		m_HDRX;
-	PTRBSections	m_SECT;
+	PTRBHeader      m_HDRX;
+	PTRBSections    m_SECT;
 	PTRBRelocations m_RELC;
-	PTRBSymbols		m_SYMB;
+	PTRBSymbols     m_SYMB;
 };
 
 inline PTRBHeader::PTRBHeader( Toshi::TVersion version )
 {
-	m_Header.m_ui32Version	   = version;
+	m_Header.m_ui32Version     = version;
 	m_Header.m_i32SectionCount = 0;
 }
 
@@ -691,7 +691,7 @@ inline void PTRBHeader::Write( Toshi::TTSFO& ttsfo, PTRBSections& sect )
 	for ( PTRBSections::MemoryStream* stack : sect )
 	{
 		Toshi::TTRB::SecInfo sectionInfo = {};
-		sectionInfo.m_Size				 = TAlignNumUp( stack->GetUsedSize() );
+		sectionInfo.m_Size               = TAlignNumUp( stack->GetUsedSize() );
 		ttsfo.Write( sectionInfo );
 	}
 }
@@ -727,9 +727,9 @@ inline void PTRBRelocations::Write( Toshi::TTSFO& ttsfo, PTRBSections& sect )
 		for ( auto& ptr : *section )
 		{
 			Toshi::TTRB::RELCEntry entry = {};
-			entry.HDRX1					 = (short)i;
-			entry.HDRX2					 = ptr.DataStack->GetIndex();
-			entry.Offset				 = ptr.Offset;
+			entry.HDRX1                  = (short)i;
+			entry.HDRX2                  = ptr.DataStack->GetIndex();
+			entry.Offset                 = ptr.Offset;
 			ttsfo.Write( entry );
 		}
 	}
@@ -744,9 +744,9 @@ inline void PTRBRelocations::Read( Toshi::TTSFI& ttsfi, PTRBSections& sect )
 	for ( TUINT32 i = 0; i < ptrCount; i++ )
 	{
 		ttsfi.Read( &entry );
-		auto	stack	  = sect.GetStack( entry.HDRX1 );
-		auto	dataStack = sect.GetStack( entry.HDRX2 );
-		TUINT32 dataPtr	  = *(TUINT32*)( &stack->GetBuffer()[ entry.Offset ] );
+		auto    stack     = sect.GetStack( entry.HDRX1 );
+		auto    dataStack = sect.GetStack( entry.HDRX2 );
+		TUINT32 dataPtr   = *(TUINT32*)( &stack->GetBuffer()[ entry.Offset ] );
 		stack->AddRelocationPtr( entry.Offset, dataPtr, dataStack );
 	}
 
@@ -770,7 +770,7 @@ inline void PTRBSections::MemoryStream::SetCrossPointer( T** outPtr, Ptr<T> ptr 
 
 	// Set current stack as dependent from ptr.stack()
 	auto crossStack = ptr.stack();
-	auto it			= std::find( crossStack->m_DependentStacks.begin(), crossStack->m_DependentStacks.end(), this );
+	auto it         = std::find( crossStack->m_DependentStacks.begin(), crossStack->m_DependentStacks.end(), this );
 
 	if ( it == crossStack->m_DependentStacks.end() )
 	{
@@ -813,8 +813,8 @@ inline PTRBSections::MemoryStream::Ptr<T> PTRBSections::MemoryStream::Alloc( T**
 	TASSERT( (TUINT)outPtr >= (TUINT)m_Buffer && (TUINT)outPtr < (TUINT)m_Buffer + (TUINT)m_BufferSize, "Out pointer is out of buffer" );
 	m_BufferPos = TREINTERPRETCAST( TCHAR*, TAlignPointerUp( m_BufferPos ) );
 
-	const TUINT TSize		 = sizeof( T ) * count;
-	TUINT		outPtrOffset = GetOffset( outPtr );
+	const TUINT TSize        = sizeof( T ) * count;
+	TUINT       outPtrOffset = GetOffset( outPtr );
 	GrowBuffer( GetUsedSize() + TSize );
 
 	T* allocated = reinterpret_cast<T*>( m_BufferPos );
@@ -832,8 +832,8 @@ inline PTRBSections::MemoryStream::Ptr<T> PTRBSections::MemoryStream::Alloc( T**
 	TASSERT( (TUINT)outPtr >= (TUINT)m_Buffer && (TUINT)outPtr < (TUINT)m_Buffer + (TUINT)m_BufferSize, "Out pointer is out of buffer" );
 	m_BufferPos = TREINTERPRETCAST( TCHAR*, TAlignPointerUp( m_BufferPos ) );
 
-	constexpr TUINT TSize		 = sizeof( T ) * Count;
-	TUINT			outPtrOffset = GetOffset( outPtr );
+	constexpr TUINT TSize        = sizeof( T ) * Count;
+	TUINT           outPtrOffset = GetOffset( outPtr );
 	GrowBuffer( GetUsedSize() + TSize );
 
 	T* allocated = reinterpret_cast<T*>( m_BufferPos );
@@ -909,9 +909,9 @@ inline void PTRBSections::MemoryStream::Resize( TUINT size )
 	//TASSERT(size > m_BufferSize, "Buffer can't shrink");
 
 	TCHAR* oldBuffer = m_Buffer;
-	TUINT  usedSize	 = GetUsedSize();
-	m_Buffer		 = new TCHAR[ size ];
-	m_BufferSize	 = size;
+	TUINT  usedSize  = GetUsedSize();
+	m_Buffer         = new TCHAR[ size ];
+	m_BufferSize     = size;
 
 	Toshi::TUtil::MemClear( m_Buffer, size );
 

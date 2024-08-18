@@ -29,14 +29,14 @@ TBOOL AGameSystemManager::OnCreate()
 
 	TTRB startupLibTrb;
 	startupLibTrb.Load( startupLibFileName );
-	auto pProperties	 = PBProperties::LoadFromTRB( startupLibTrb );
+	auto pProperties     = PBProperties::LoadFromTRB( startupLibTrb );
 	auto pKeylibProperty = pProperties->GetOptionalProperty( "keylib" );
 
 	if ( pKeylibProperty )
 	{
 		AKeyFrameLibraryManager::GetSingleton()->LoadLibrariesFromProperties(
-			pKeylibProperty,
-			&startupLibTrb );
+		    pKeylibProperty,
+		    &startupLibTrb );
 	}
 
 	TGetClass( AModelRepos ).CreateObject();

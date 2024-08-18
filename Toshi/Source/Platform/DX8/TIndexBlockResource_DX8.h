@@ -24,8 +24,8 @@ public:
 public:
 	struct HALBuffer
 	{
-		TUINT16				   uiIndexOffset = 0;
-		TUINT16				   uiUnknown;
+		TUINT16                uiIndexOffset = 0;
+		TUINT16                uiUnknown;
 		IDirect3DIndexBuffer8* pIndexBuffer = TNULL;
 	};
 
@@ -59,13 +59,13 @@ private:
 
 public:
 	TIndexFactoryResourceInterface* m_pFactory;
-	TUINT							m_uiFlags;
-	TUINT16							m_uiMaxIndices;
-	TUINT							m_uiOffset;
-	TUINT							m_uiIndicesUsed;
-	TUINT							m_uiLockCount;
-	TUINT							m_Unk1;
-	HALBuffer						m_HALBuffer;
+	TUINT                           m_uiFlags;
+	TUINT16                         m_uiMaxIndices;
+	TUINT                           m_uiOffset;
+	TUINT                           m_uiIndicesUsed;
+	TUINT                           m_uiLockCount;
+	TUINT                           m_Unk1;
+	HALBuffer                       m_HALBuffer;
 };
 
 TOSHI_NAMESPACE_END

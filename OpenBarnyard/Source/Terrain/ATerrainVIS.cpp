@@ -11,11 +11,11 @@
 
 void ATerrainVIS::LoadSkeleton()
 {
-	auto pTerrain		  = ATerrainInterface::GetSingleton();
+	auto pTerrain         = ATerrainInterface::GetSingleton();
 	auto pPersistantBlock = pTerrain->m_pTerrainVIS->m_pPersistantTerrainBlock;
 
 	m_pLocatorManager = new ( pPersistantBlock->GetMemBlock() ) ATerrainLocatorManager();
-	auto pTRB		  = new ( pPersistantBlock->GetMemBlock() ) Toshi::TTRB();
+	auto pTRB         = new ( pPersistantBlock->GetMemBlock() ) Toshi::TTRB();
 
 	pPersistantBlock->SetupTRB( pTRB, pPersistantBlock );
 

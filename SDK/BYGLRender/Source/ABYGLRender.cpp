@@ -20,7 +20,7 @@
 
 TOSHI_NAMESPACE_USING
 
-TBOOL g_bRenderGUI			  = TTRUE;
+TBOOL g_bRenderGUI            = TTRUE;
 TBOOL g_bRenderWorldWireframe = TFALSE;
 TBOOL g_bRenderSkinWireframe  = TFALSE;
 
@@ -28,7 +28,7 @@ TBOOL MaterialLibrary_LoadTTLData( AMaterialLibrary* a_pMatLib, AMaterialLibrary
 {
 	auto pTTL = TSTATICCAST( AMaterialLibrary::TTL, a_pTTLData );
 
-	auto pLibList	  = AMaterialLibraryManager::List::GetSingleton();
+	auto pLibList     = AMaterialLibraryManager::List::GetSingleton();
 	TINT iNumTextures = 0;
 
 	if ( AMaterialLibrary::ms_bSkipLoadedTextures )
@@ -47,8 +47,8 @@ TBOOL MaterialLibrary_LoadTTLData( AMaterialLibrary* a_pMatLib, AMaterialLibrary
 	}
 
 	a_pMatLib->m_pTexturesArray = new ATexture[ iNumTextures ];
-	a_pMatLib->m_pTextures		= a_pMatLib->m_pTexturesArray;
-	a_pMatLib->m_iNumTextures	= iNumTextures;
+	a_pMatLib->m_pTextures      = a_pMatLib->m_pTexturesArray;
+	a_pMatLib->m_iNumTextures   = iNumTextures;
 
 	auto pGLTextureManager = TTextureManagerSDL::GetSingleton();
 
@@ -76,7 +76,7 @@ TBOOL MaterialLibrary_LoadTTLData( AMaterialLibrary* a_pMatLib, AMaterialLibrary
 
 					pTexture->SetData( TNULL, 0 );
 
-					int			   width, height, channels;
+					int            width, height, channels;
 					unsigned char* texData = SOIL_load_image_from_memory( (unsigned char*)pTexInfo->m_pData, pTexInfo->m_uiDataSize, &width, &height, &channels, 4 );
 
 					glActiveTexture( GL_TEXTURE0 );
@@ -108,7 +108,7 @@ MEMBER_HOOK( 0x00615f60, AMaterialLibrary, AMaterialLibrary_DestroyTextures, voi
 	for ( TINT i = 0; i < m_iNumTextures; i++ )
 	{
 		auto pAppTexture = &m_pTextures[ i ];
-		auto pGLTexture	 = pGLTextureManager->RemoveGLAssociation( pAppTexture->pTexture->GetD3DTexture() );
+		auto pGLTexture  = pGLTextureManager->RemoveGLAssociation( pAppTexture->pTexture->GetD3DTexture() );
 
 		if ( pGLTexture )
 		{
@@ -125,9 +125,9 @@ class ARenderer
 MEMBER_HOOK( 0x006154c0, ARenderer, ARenderer_CreateTRender, TBOOL )
 {
 	TRenderInterface::DISPLAYPARAMS displayParams;
-	displayParams.bWindowed		= TTRUE;
-	displayParams.uiWidth		= 800;
-	displayParams.uiHeight		= 600;
+	displayParams.bWindowed     = TTRUE;
+	displayParams.uiWidth       = 800;
+	displayParams.uiHeight      = 600;
 	displayParams.uiColourDepth = 32;
 
 	auto pSDLRender = new TRenderSDL();
@@ -144,10 +144,10 @@ class AGUI2RendererDX8 : public AGUI2Renderer
 {
 public:
 	AGUI2Transform* m_pTransforms;
-	TINT			m_iTransformCount;
-	TUINT32			m_uiColour;
-	TBOOL			m_bIsTransformDirty;
-	AGUI2Material*	m_pMaterial; // ?
+	TINT            m_iTransformCount;
+	TUINT32         m_uiColour;
+	TBOOL           m_bIsTransformDirty;
+	AGUI2Material*  m_pMaterial; // ?
 };
 
 MEMBER_HOOK( 0x0064eb90, AGUI2RendererDX8, AGUI2Renderer_SetMaterial, void, AGUI2Material* a_pMaterial )
@@ -183,7 +183,7 @@ MEMBER_HOOK( 0x0064eb90, AGUI2RendererDX8, AGUI2Renderer_SetMaterial, void, AGUI
 struct AGUI2RendererVertex
 {
 	Toshi::TVector3 Position;
-	TUINT32			Colour;
+	TUINT32         Colour;
 	Toshi::TVector2 UV;
 };
 
@@ -199,35 +199,35 @@ MEMBER_HOOK( 0x0064fa70, AGUI2RendererDX8, AGUI2Renderer_RenderRectangle, void, 
 	s_Vertices[ 0 ].Position.x = a.x;
 	s_Vertices[ 0 ].Position.y = a.y;
 	s_Vertices[ 0 ].Position.z = fZ;
-	s_Vertices[ 0 ].Colour	   = m_uiColour;
-	s_Vertices[ 0 ].UV.x	   = uv1.x;
-	s_Vertices[ 0 ].UV.y	   = uv1.y;
+	s_Vertices[ 0 ].Colour     = m_uiColour;
+	s_Vertices[ 0 ].UV.x       = uv1.x;
+	s_Vertices[ 0 ].UV.y       = uv1.y;
 	s_Vertices[ 1 ].Position.y = a.y;
 	s_Vertices[ 1 ].Position.x = b.x;
 	s_Vertices[ 1 ].Position.z = fZ;
-	s_Vertices[ 1 ].Colour	   = m_uiColour;
-	s_Vertices[ 1 ].UV.y	   = uv1.y;
-	s_Vertices[ 1 ].UV.x	   = uv2.x;
+	s_Vertices[ 1 ].Colour     = m_uiColour;
+	s_Vertices[ 1 ].UV.y       = uv1.y;
+	s_Vertices[ 1 ].UV.x       = uv2.x;
 	s_Vertices[ 2 ].Position.y = b.y;
 	s_Vertices[ 2 ].Position.x = a.x;
 	s_Vertices[ 2 ].Position.z = fZ;
-	s_Vertices[ 2 ].Colour	   = m_uiColour;
-	s_Vertices[ 2 ].UV.y	   = uv2.y;
-	s_Vertices[ 2 ].UV.x	   = uv1.x;
+	s_Vertices[ 2 ].Colour     = m_uiColour;
+	s_Vertices[ 2 ].UV.y       = uv2.y;
+	s_Vertices[ 2 ].UV.x       = uv1.x;
 	s_Vertices[ 3 ].Position.y = b.y;
 	s_Vertices[ 3 ].Position.x = b.x;
 	s_Vertices[ 3 ].Position.z = fZ;
-	s_Vertices[ 3 ].Colour	   = m_uiColour;
-	s_Vertices[ 3 ].UV.y	   = uv2.y;
-	s_Vertices[ 3 ].UV.x	   = uv2.x;
+	s_Vertices[ 3 ].Colour     = m_uiColour;
+	s_Vertices[ 3 ].UV.y       = uv2.y;
+	s_Vertices[ 3 ].UV.x       = uv2.x;
 
 	static TUINT16 s_Indices[] = {
 		0, 1, 2, 3
 	};
 
 	static auto vertexShader = TRenderSDL::CompileShader(
-		GL_VERTEX_SHADER,
-		"#version 400\n\
+	    GL_VERTEX_SHADER,
+	    "#version 400\n\
 		\
 		layout(location = 0) in vec3 a_Position;\n\
 		layout(location = 1) in vec4 a_Colour;\n\
@@ -247,8 +247,8 @@ MEMBER_HOOK( 0x0064fa70, AGUI2RendererDX8, AGUI2Renderer_RenderRectangle, void, 
 		}" );
 
 	static auto fragmentShader = TRenderSDL::CompileShader(
-		GL_FRAGMENT_SHADER,
-		"#version 400\n\
+	    GL_FRAGMENT_SHADER,
+	    "#version 400\n\
 		\
 		out vec4 color;\n\
 		\
@@ -267,8 +267,8 @@ MEMBER_HOOK( 0x0064fa70, AGUI2RendererDX8, AGUI2Renderer_RenderRectangle, void, 
 	static auto shaderProgram = Toshi::TRenderSDL::CreateShaderProgram( vertexShader, fragmentShader );
 
 	static auto s_VertexArray = TRenderSDL::CreateVertexArray(
-		TRenderSDL::CreateVertexBuffer( s_Vertices, sizeof( s_Vertices ), GL_DYNAMIC_DRAW ),
-		TRenderSDL::CreateIndexBuffer( s_Indices, 4, GL_STATIC_DRAW ) );
+	    TRenderSDL::CreateVertexBuffer( s_Vertices, sizeof( s_Vertices ), GL_DYNAMIC_DRAW ),
+	    TRenderSDL::CreateIndexBuffer( s_Indices, 4, GL_STATIC_DRAW ) );
 
 	s_VertexArray.SetAttribPointer( 0, 3, GL_FLOAT, sizeof( AGUI2RendererVertex ), 0 );
 	s_VertexArray.SetAttribPointer( 1, 4, GL_UNSIGNED_BYTE, sizeof( AGUI2RendererVertex ), (void*)offsetof( AGUI2RendererVertex, Colour ), GL_TRUE );

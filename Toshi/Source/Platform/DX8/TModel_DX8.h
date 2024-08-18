@@ -4,7 +4,7 @@
 TOSHI_NAMESPACE_START
 
 class TModelHAL :
-	public TModel
+    public TModel
 {
 public:
 	virtual TBOOL Create( TTMD* a_pTMD, TBOOL a_bLoad ) override;

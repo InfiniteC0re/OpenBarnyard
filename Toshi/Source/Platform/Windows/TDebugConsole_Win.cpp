@@ -23,14 +23,14 @@ TOSHI_NAMESPACE_START
 
 TDebugConsole::TDebugConsole()
 {
-	m_HWND	  = FindConsole();
+	m_HWND    = FindConsole();
 	m_Created = m_HWND != TNULL;
 
 	m_LogListener.Connect(
-		TUtil::GetLogEmitter(),
-		this,
-		TDebugConsole::OnLog,
-		1 );
+	    TUtil::GetLogEmitter(),
+	    this,
+	    TDebugConsole::OnLog,
+	    1 );
 }
 
 TDebugConsole::~TDebugConsole()
@@ -48,7 +48,7 @@ TDebugConsole::~TDebugConsole()
 TBOOL TDebugConsole::Show( TBOOL state )
 {
 	TBOOL oldState = m_Visible;
-	m_Visible	   = state;
+	m_Visible      = state;
 
 	ShowWindow( m_HWND, state );
 	UpdateWindow( m_HWND );
@@ -109,9 +109,9 @@ TBOOL TDebugConsole::OnLog( TDebugConsole* a_pCaller, TUtil* a_pOwner, TUtil::Lo
 	if ( s_bIsSimpleMode )
 	{
 		TDebug_FinalPrintf(
-			"[%s]: %s",
-			TUtil::LogTypeToString( pLogEvent->m_eType ),
-			pLogEvent->m_szString );
+		    "[%s]: %s",
+		    TUtil::LogTypeToString( pLogEvent->m_eType ),
+		    pLogEvent->m_szString );
 	}
 	else
 	{
@@ -121,12 +121,12 @@ TBOOL TDebugConsole::OnLog( TDebugConsole* a_pCaller, TUtil* a_pOwner, TUtil::Lo
 		_strtime( strTime );
 
 		TDebug_FinalPrintf(
-			"[%s] [%s/%s] [%s]: %s",
-			strTime,
-			appParams.szLogAppName,
-			appParams.szLogAppDirName != TNULL ? appParams.szLogAppDirName : "",
-			TUtil::LogTypeToString( pLogEvent->m_eType ),
-			pLogEvent->m_szString );
+		    "[%s] [%s/%s] [%s]: %s",
+		    strTime,
+		    appParams.szLogAppName,
+		    appParams.szLogAppDirName != TNULL ? appParams.szLogAppDirName : "",
+		    TUtil::LogTypeToString( pLogEvent->m_eType ),
+		    pLogEvent->m_szString );
 	}
 
 	SetConsoleTextAttribute( hStd, wOldColorAttrs );

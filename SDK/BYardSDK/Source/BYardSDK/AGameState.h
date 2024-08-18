@@ -7,8 +7,8 @@
 #include <Toshi/TPString8.h>
 
 class AGameState :
-	public Toshi::TObject,
-	public Toshi::T2DList<AGameState>::Node
+    public Toshi::TObject,
+    public Toshi::T2DList<AGameState>::Node
 {
 public:
 	template <class Result, class... Args>
@@ -17,15 +17,15 @@ public:
 	struct HUDParams
 	{
 		TUINT m_uiFlags = 0;
-		TUINT m_Unk1	= 0;
-		TUINT m_Unk2	= 0;
-		TUINT m_Unk3	= 0;
-		TUINT m_Unk4	= 0;
-		TUINT m_Unk5	= 0;
-		TUINT m_Unk6	= 0;
-		TUINT m_Unk7	= 0;
-		TUINT m_Unk8	= 0;
-		TUINT m_Unk9	= 0;
+		TUINT m_Unk1    = 0;
+		TUINT m_Unk2    = 0;
+		TUINT m_Unk3    = 0;
+		TUINT m_Unk4    = 0;
+		TUINT m_Unk5    = 0;
+		TUINT m_Unk6    = 0;
+		TUINT m_Unk7    = 0;
+		TUINT m_Unk8    = 0;
+		TUINT m_Unk9    = 0;
 
 		void SetFlags( TUINT a_uiFlags )
 		{
@@ -40,29 +40,29 @@ public:
 	AGameState();
 	virtual ~AGameState() = default;
 
-	virtual TBOOL	ProcessInput( const Toshi::TInputInterface::InputEvent* a_pInputEvent );
-	virtual TBOOL	ProcessCommand( AInputCommand a_eInputCommand, const Toshi::TInputInterface::InputEvent* a_pInputEvent, TBOOL& a_rStopEvents );
-	virtual TBOOL	Unknown1( void* a_pUnk1, void* a_pUnk2 );
-	virtual void	Unknown2( void* a_pUnk1 ) {}
-	virtual void	Unknown3( void* a_pUnk1 ) {}
-	virtual void	Unknown4( void* a_pUnk1 ) {}
-	virtual void	Unknown5() {}
-	virtual TBOOL	Unknown6() { return TTRUE; }
+	virtual TBOOL   ProcessInput( const Toshi::TInputInterface::InputEvent* a_pInputEvent );
+	virtual TBOOL   ProcessCommand( AInputCommand a_eInputCommand, const Toshi::TInputInterface::InputEvent* a_pInputEvent, TBOOL& a_rStopEvents );
+	virtual TBOOL   Unknown1( void* a_pUnk1, void* a_pUnk2 );
+	virtual void    Unknown2( void* a_pUnk1 ) {}
+	virtual void    Unknown3( void* a_pUnk1 ) {}
+	virtual void    Unknown4( void* a_pUnk1 ) {}
+	virtual void    Unknown5() {}
+	virtual TBOOL   Unknown6() { return TTRUE; }
 	virtual TUINT32 GetSound() { return -1; }
-	virtual TBOOL	Unknown7() { return TTRUE; }
-	virtual void	Unknown8() {}
-	virtual void	OnStarted() {}
-	virtual void	Unknown10() {}
-	virtual void	Unknown11( void* a_pUnk1, void* a_pUnk2 ) {}
-	virtual void	Unknown12( void* a_pUnk1, void* a_pUnk2 ) {}
-	virtual TFLOAT	GetFOV();
-	virtual TBOOL	OnUpdate( TFLOAT a_fDeltaTime );
-	virtual void	OnInsertion();
-	virtual void	OnRemoval();
-	virtual void	OnSuspend();
-	virtual void	OnResume( AGameState* a_pPreviousState );
-	virtual void	OnActivate();
-	virtual void	OnDeactivate();
+	virtual TBOOL   Unknown7() { return TTRUE; }
+	virtual void    Unknown8() {}
+	virtual void    OnStarted() {}
+	virtual void    Unknown10() {}
+	virtual void    Unknown11( void* a_pUnk1, void* a_pUnk2 ) {}
+	virtual void    Unknown12( void* a_pUnk1, void* a_pUnk2 ) {}
+	virtual TFLOAT  GetFOV();
+	virtual TBOOL   OnUpdate( TFLOAT a_fDeltaTime );
+	virtual void    OnInsertion();
+	virtual void    OnRemoval();
+	virtual void    OnSuspend();
+	virtual void    OnResume( AGameState* a_pPreviousState );
+	virtual void    OnActivate();
+	virtual void    OnDeactivate();
 
 	TBOOL SendInputCommands( const Toshi::TInputInterface::InputEvent* a_pEvent );
 
@@ -81,8 +81,8 @@ public:
 		for ( auto it = m_ChildStates.Begin(); it != m_ChildStates.End(); it++ )
 		{
 			auto pGameState = TREINTERPRETCAST(
-				AGameState*,
-				TREINTERPRETCAST( uintptr_t, TSTATICCAST( AGameState, it ) ) + a_uiOffset );
+			    AGameState*,
+			    TREINTERPRETCAST( uintptr_t, TSTATICCAST( AGameState, it ) ) + a_uiOffset );
 
 			( pGameState->*a_fnCallback )( args... );
 		}
@@ -94,8 +94,8 @@ public:
 		for ( auto it = m_ChildStates.Begin(); it != m_ChildStates.End(); it++ )
 		{
 			auto pGameState = TREINTERPRETCAST(
-				AGameState*,
-				TREINTERPRETCAST( uintptr_t, TSTATICCAST( AGameState, it ) ) + a_uiOffset );
+			    AGameState*,
+			    TREINTERPRETCAST( uintptr_t, TSTATICCAST( AGameState, it ) ) + a_uiOffset );
 
 			TBOOL bResult = ( pGameState->*a_fnCallback )( args... );
 
@@ -155,13 +155,13 @@ protected:
 	}
 
 protected:
-	HUDParams				   m_HUDParams;
-	TINT					   m_iOverlayColorIndex;
+	HUDParams                  m_HUDParams;
+	TINT                       m_iOverlayColorIndex;
 	Toshi::T2DList<AGameState> m_ChildStates;
-	AInputMap*				   m_pInputMap;
-	AGameState*				   m_pOwnerState;
-	TBOOL					   m_bWasInserted;
-	TBOOL					   m_bIsActivated;
-	AGUI2Element			   m_GUIElement;
-	TFLOAT					   m_fFOV;
+	AInputMap*                 m_pInputMap;
+	AGameState*                m_pOwnerState;
+	TBOOL                      m_bWasInserted;
+	TBOOL                      m_bIsActivated;
+	AGUI2Element               m_GUIElement;
+	TFLOAT                     m_fFOV;
 };

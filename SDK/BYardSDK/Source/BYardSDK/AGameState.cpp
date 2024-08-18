@@ -11,11 +11,11 @@ TOSHI_NAMESPACE_USING
 AGameState::AGameState()
 {
 	m_iOverlayColorIndex = 0;
-	m_pInputMap			 = TNULL;
-	m_pOwnerState		 = TNULL;
-	m_bWasInserted		 = TFALSE;
-	m_bIsActivated		 = TFALSE;
-	m_fFOV				 = Toshi::TMath::DegToRad( 60.0f );
+	m_pInputMap          = TNULL;
+	m_pOwnerState        = TNULL;
+	m_bWasInserted       = TFALSE;
+	m_bIsActivated       = TFALSE;
+	m_fFOV               = Toshi::TMath::DegToRad( 60.0f );
 
 	auto pRootElement = AGUI2::GetRootElement();
 	m_GUIElement.SetDimensions( pRootElement->GetWidth(), pRootElement->GetHeight() );

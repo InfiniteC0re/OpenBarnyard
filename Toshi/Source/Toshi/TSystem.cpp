@@ -15,7 +15,7 @@ TOSHI_NAMESPACE_START
 TSystemManager g_oSystemManager;
 
 TSystemManager::TSystemManager() :
-	m_PauseEmitter( this )
+    m_PauseEmitter( this )
 {
 	m_pKernelInterface = TNULL;
 }

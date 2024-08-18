@@ -13,10 +13,10 @@ TOSHI_NAMESPACE_USING
 
 AWorldVis::AWorldVis()
 {
-	m_pWorld			= TNULL;
-	m_pCellNodes		= TNULL;
-	m_iNumBuiltCells	= 0;
-	m_iNumCellSettings	= 0;
+	m_pWorld            = TNULL;
+	m_pCellNodes        = TNULL;
+	m_iNumBuiltCells    = 0;
+	m_iNumCellSettings  = 0;
 	m_pfnRenderCallback = TNULL;
 }
 
@@ -33,7 +33,7 @@ AWorldVis::~AWorldVis()
 
 void AWorldVis::Create( World* a_pWorld )
 {
-	m_pWorld	 = a_pWorld;
+	m_pWorld     = a_pWorld;
 	m_pCellNodes = new CellNode[ a_pWorld->m_iNumCells ];
 	Reset();
 }
@@ -58,8 +58,8 @@ void AWorldVis::Build( const Toshi::TMatrix44& a_rModelView, const Toshi::TMatri
 	m_ViewModelPos = viewModel.GetTranslation().AsVector3();
 
 	CullBox cullBox;
-	cullBox.x	   = 0.0f;
-	cullBox.y	   = 0.0f;
+	cullBox.x      = 0.0f;
+	cullBox.y      = 0.0f;
 	cullBox.width  = TFLOAT( TRenderInterface::GetSingleton()->GetCurrentDisplayParams()->uiWidth );
 	cullBox.height = TFLOAT( TRenderInterface::GetSingleton()->GetCurrentDisplayParams()->uiHeight );
 
@@ -87,14 +87,14 @@ void AWorldVis::Build( const Toshi::TMatrix44& a_rModelView, const Toshi::TMatri
 		pCell->uiFlags |= Cell::FLAGS_BUILDING;
 
 		auto pRenderContext = TRenderInterface::GetSingleton()->GetCurrentContext();
-		auto pNode			= pCell->pNode;
+		auto pNode          = pCell->pNode;
 
 		if ( TNULL == pNode )
 		{
 			TASSERT( m_iNumBuiltCells < MAX_VISIBLE_CELLS );
-			pNode				 = m_pCellNodes + ( m_iNumBuiltCells++ );
-			pCell->pNode		 = pNode;
-			pNode->iCellIndex	 = a_iCellIndex;
+			pNode                = m_pCellNodes + ( m_iNumBuiltCells++ );
+			pCell->pNode         = pNode;
+			pNode->iCellIndex    = a_iCellIndex;
 			pNode->pCellSettings = TNULL;
 		}
 
@@ -102,9 +102,9 @@ void AWorldVis::Build( const Toshi::TMatrix44& a_rModelView, const Toshi::TMatri
 
 		auto pCellSettings = &m_aCellSettings[ m_iNumCellSettings++ ];
 
-		pCellSettings->pNext	= pNode->pCellSettings;
+		pCellSettings->pNext    = pNode->pCellSettings;
 		pCellSettings->oCullBox = a_rCullBox;
-		pNode->pCellSettings	= pCellSettings;
+		pNode->pCellSettings    = pCellSettings;
 
 		for ( TINT i = 0; i < pCell->m_iSomeCount; i++ )
 		{
@@ -120,12 +120,12 @@ static void CreatePortalFrustum( Frustum& a_rFrustum, CullBox& a_rCullBox, TMatr
 {
 	auto pRenderContext = TRenderInterface::GetSingleton()->GetCurrentContext();
 
-	a_rFrustum.aFrustumPlanes[ 0 ].oPlane	  = pRenderContext->GetFrustumPlanes()[ 0 ];
-	a_rFrustum.aFrustumPlanes[ 1 ].oPlane	  = pRenderContext->GetFrustumPlanes()[ 1 ];
-	a_rFrustum.aFrustumPlanes[ 2 ].oPlane	  = pRenderContext->GetFrustumPlanes()[ 2 ];
-	a_rFrustum.aFrustumPlanes[ 3 ].oPlane	  = pRenderContext->GetFrustumPlanes()[ 3 ];
-	a_rFrustum.aFrustumPlanes[ 4 ].oPlane	  = pRenderContext->GetFrustumPlanes()[ 4 ];
-	a_rFrustum.aFrustumPlanes[ 5 ].oPlane	  = pRenderContext->GetFrustumPlanes()[ 5 ];
+	a_rFrustum.aFrustumPlanes[ 0 ].oPlane     = pRenderContext->GetFrustumPlanes()[ 0 ];
+	a_rFrustum.aFrustumPlanes[ 1 ].oPlane     = pRenderContext->GetFrustumPlanes()[ 1 ];
+	a_rFrustum.aFrustumPlanes[ 2 ].oPlane     = pRenderContext->GetFrustumPlanes()[ 2 ];
+	a_rFrustum.aFrustumPlanes[ 3 ].oPlane     = pRenderContext->GetFrustumPlanes()[ 3 ];
+	a_rFrustum.aFrustumPlanes[ 4 ].oPlane     = pRenderContext->GetFrustumPlanes()[ 4 ];
+	a_rFrustum.aFrustumPlanes[ 5 ].oPlane     = pRenderContext->GetFrustumPlanes()[ 5 ];
 	a_rFrustum.aFrustumPlanes[ 0 ].uiClipFlag = 1;
 	a_rFrustum.aFrustumPlanes[ 1 ].uiClipFlag = 2;
 	a_rFrustum.aFrustumPlanes[ 2 ].uiClipFlag = 4;
@@ -151,9 +151,9 @@ void AWorldVis::Render( const Toshi::TMatrix44& a_rModelView )
 
 		TMatrix44 projection;
 		TRenderContext::ComputePerspectiveProjection(
-			projection,
-			pRenderContext->GetViewportParameters(),
-			pRenderContext->GetProjectionParams() );
+		    projection,
+		    pRenderContext->GetViewportParameters(),
+		    pRenderContext->GetProjectionParams() );
 
 		for ( TINT i = 0; i < m_iNumBuiltCells; i++ )
 		{
@@ -169,7 +169,7 @@ void AWorldVis::Render( const Toshi::TMatrix44& a_rModelView )
 				frustum.InitReduce();
 
 				RenderData renderData;
-				renderData.pCell	= pCell;
+				renderData.pCell    = pCell;
 				renderData.pFrustum = &frustum;
 
 				RenderTreeIntersectNonRecurse( pCell->pTreeBranchNodes, &renderData );
@@ -181,35 +181,35 @@ void AWorldVis::Render( const Toshi::TMatrix44& a_rModelView )
 void AWorldVis::RenderTreeIntersectNonRecurse( CellSphereTreeBranchNode* a_pNode, RenderData* a_pRenderData )
 {
 	auto pRightNode = a_pNode->m_pRight;
-	auto pNode		= a_pNode;
+	auto pNode      = a_pNode;
 
 	while ( pRightNode != TNULL )
 	{
-		pNode	   = pRightNode;
+		pNode      = pRightNode;
 		pRightNode = pRightNode->m_pRight;
 	}
 
 	CellSphereTreeBranchNode endNode;
 	endNode.m_BoundingSphere = TSphere( 0.0f, 0.0f, 0.0f, 0.0f );
-	endNode.m_pRight		 = pNode->GetLeafNode()->End();
+	endNode.m_pRight         = pNode->GetLeafNode()->End();
 
 	auto pStackValue1 = s_pStack + 0;
 	auto pStackValue2 = s_pStack + 1;
 
-	pStackValue1->pNextNode			 = a_pNode;
-	pStackValue1->pPrevNode			 = &endNode;
+	pStackValue1->pNextNode          = a_pNode;
+	pStackValue1->pPrevNode          = &endNode;
 	pStackValue1->iInitialPlaneCount = a_pRenderData->pFrustum->iActivePlaneCount;
 
-	pStackValue2->pNextNode			 = a_pNode;
-	pStackValue2->pPrevNode			 = &endNode;
+	pStackValue2->pNextNode          = a_pNode;
+	pStackValue2->pPrevNode          = &endNode;
 	pStackValue2->iInitialPlaneCount = a_pRenderData->pFrustum->iActivePlaneCount;
 
 	TINT iNumVisibleSpheres = 0;
-	pStackValue1			= pStackValue2;
+	pStackValue1            = pStackValue2;
 
 	for ( ;; )
 	{
-		auto pStackValue2Node					   = pStackValue2->pNextNode;
+		auto pStackValue2Node                      = pStackValue2->pNextNode;
 		a_pRenderData->pFrustum->iActivePlaneCount = pStackValue2->iInitialPlaneCount;
 
 		if ( pStackValue2Node->IsLeaf() )
@@ -217,19 +217,19 @@ void AWorldVis::RenderTreeIntersectNonRecurse( CellSphereTreeBranchNode* a_pNode
 			RenderLeafNodeIntersect( pStackValue2Node, a_pRenderData );
 			iNumVisibleSpheres -= 1;
 
-			pStackValue2			= pStackValue1 - 1;
+			pStackValue2            = pStackValue1 - 1;
 			pStackValue2->pNextNode = pStackValue2->pNextNode->m_pRight;
-			pStackValue1			= pStackValue2;
+			pStackValue1            = pStackValue2;
 		}
 		else
 		{
 			FrustumIntersectSphereResult eIntersectResult =
-				a_pRenderData->pFrustum->IntersectSphereReduce( pStackValue2Node->m_BoundingSphere );
+			    a_pRenderData->pFrustum->IntersectSphereReduce( pStackValue2Node->m_BoundingSphere );
 
 			if ( eIntersectResult == FISR_ALL_VISIBLE )
 			{
 				// The whole node is visible so just render everything
-				TINT iCurrentActivePlaneCount			   = a_pRenderData->pFrustum->iActivePlaneCount;
+				TINT iCurrentActivePlaneCount              = a_pRenderData->pFrustum->iActivePlaneCount;
 				a_pRenderData->pFrustum->iActivePlaneCount = 0;
 
 				auto pEndNode = pStackValue2->pPrevNode->m_pRight;
@@ -240,8 +240,8 @@ void AWorldVis::RenderTreeIntersectNonRecurse( CellSphereTreeBranchNode* a_pNode
 						for ( TUINT i = 0; i < pStackValue2Node->GetLeafNode()->m_uiNumMeshes; i++ )
 						{
 							m_pfnRenderCallback(
-								a_pRenderData->pCell->ppCellMeshSpheres[ pStackValue2Node->GetLeafNode()->GetMeshIndex( i ) ],
-								a_pRenderData );
+							    a_pRenderData->pCell->ppCellMeshSpheres[ pStackValue2Node->GetLeafNode()->GetMeshIndex( i ) ],
+							    a_pRenderData );
 						}
 
 						pStackValue2Node = pStackValue2Node->GetLeafNode()->End();
@@ -260,19 +260,19 @@ void AWorldVis::RenderTreeIntersectNonRecurse( CellSphereTreeBranchNode* a_pNode
 				// This node is partially visible so let's
 				// check what leaf nodes are actually visible
 				iNumVisibleSpheres++;
-				pStackValue2					 = pStackValue1 + 1;
+				pStackValue2                     = pStackValue1 + 1;
 				pStackValue2->iInitialPlaneCount = a_pRenderData->pFrustum->iActivePlaneCount;
-				pStackValue2->pNextNode			 = pStackValue2Node->GetSubNode();
-				pStackValue2->pPrevNode			 = pStackValue2Node;
-				pStackValue1					 = pStackValue2;
+				pStackValue2->pNextNode          = pStackValue2Node->GetSubNode();
+				pStackValue2->pPrevNode          = pStackValue2Node;
+				pStackValue1                     = pStackValue2;
 			}
 			else
 			{
 				// Skip this node is already rendered or just not visible
 				iNumVisibleSpheres--;
-				pStackValue2			= pStackValue1 - 1;
+				pStackValue2            = pStackValue1 - 1;
 				pStackValue2->pNextNode = pStackValue2->pNextNode->m_pRight;
-				pStackValue1			= pStackValue2;
+				pStackValue1            = pStackValue2;
 			}
 		}
 
@@ -287,8 +287,8 @@ void AWorldVis::RenderLeafNodeIntersect( CellSphereTreeBranchNode* a_pNode, Rend
 
 	for ( TUINT i = 0; i < a_pNode->GetLeafNode()->m_uiNumMeshes; i++ )
 	{
-		CellMeshSphere* pMeshSphere		 = a_pRenderData->pCell->ppCellMeshSpheres[ a_pNode->GetLeafNode()->GetMeshIndex( i ) ];
-		TINT			iIntersectResult = a_pRenderData->pFrustum->IntersectSphereReduce( pMeshSphere->m_BoundingSphere );
+		CellMeshSphere* pMeshSphere      = a_pRenderData->pCell->ppCellMeshSpheres[ a_pNode->GetLeafNode()->GetMeshIndex( i ) ];
+		TINT            iIntersectResult = a_pRenderData->pFrustum->IntersectSphereReduce( pMeshSphere->m_BoundingSphere );
 
 		if ( iIntersectResult != -1 )
 		{

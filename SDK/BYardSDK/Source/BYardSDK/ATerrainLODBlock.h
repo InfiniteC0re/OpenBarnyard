@@ -15,7 +15,7 @@ enum ATerrainLODType_ : ATerrainLODType
 };
 
 class ATerrainLODBlock :
-	public Toshi::T2SList<ATerrainLODBlock>::Node
+    public Toshi::T2SList<ATerrainLODBlock>::Node
 {
 public:
 	friend class ATerrainInterface;
@@ -45,18 +45,18 @@ public:
 	TBOOL IsUsed() const { return !m_bIsUnused; }
 	TBOOL IsUnused() const { return m_bIsUnused; }
 
-	AMemoryPoolAllocator&	  GetAllocator() { return m_Allocator; }
+	AMemoryPoolAllocator&     GetAllocator() { return m_Allocator; }
 	Toshi::TMemory::MemBlock* GetMemBlock() { return m_pCreatedMemBlock; }
 
 private:
-	TUINT32*				  m_pAllocatedSize;
-	TUINT					  m_Unk1;
-	TUINT*					  m_pUnk2;
-	ATerrainSection*		  m_pVISGroup;
-	ATerrainLODType			  m_eLODType;
-	TFLOAT					  m_fLastAccessTime;
-	TUINT					  m_uiHeapSize;
+	TUINT32*                  m_pAllocatedSize;
+	TUINT                     m_Unk1;
+	TUINT*                    m_pUnk2;
+	ATerrainSection*          m_pVISGroup;
+	ATerrainLODType           m_eLODType;
+	TFLOAT                    m_fLastAccessTime;
+	TUINT                     m_uiHeapSize;
 	Toshi::TMemory::MemBlock* m_pCreatedMemBlock;
-	AMemoryPoolAllocator	  m_Allocator;
-	TBOOL					  m_bIsUnused;
+	AMemoryPoolAllocator      m_Allocator;
+	TBOOL                     m_bIsUnused;
 };

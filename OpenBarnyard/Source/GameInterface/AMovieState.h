@@ -22,10 +22,10 @@ private:
 	TBOOL EndMovieImmediately();
 
 private:
-	Toshi::TPString8							m_FileName;
-	TBOOL										m_bFlag1;
-	AGameState*									m_pNextGameState;
-	TBOOL										m_bFlag2;
-	Toshi::TGenericListener						m_Listener1;
+	Toshi::TPString8                            m_FileName;
+	TBOOL                                       m_bFlag1;
+	AGameState*                                 m_pNextGameState;
+	TBOOL                                       m_bFlag2;
+	Toshi::TGenericListener                     m_Listener1;
 	Toshi::TListener<AFade, TBOOL, AMovieState> m_FadeOverListener;
 };

@@ -3,32 +3,32 @@
 #include <Toshi/T2DList.h>
 
 #ifdef TOSHI_SKU_WINDOWS
-#	include "Platform/DX8/T2Texture_DX8.h"
+#  include "Platform/DX8/T2Texture_DX8.h"
 #endif // TOSHI_SKU_WINDOWS
 
 class ATexture
 {
 public:
 	Toshi::T2Texture* pTexture;
-	Toshi::TString8	  Name;
+	Toshi::TString8   Name;
 };
 
 class AMaterialLibrary :
-	public Toshi::T2DList<AMaterialLibrary>::Node
+    public Toshi::T2DList<AMaterialLibrary>::Node
 {
 public:
 	struct TTL
 	{
 		struct TexInfo
 		{
-			BOOL		m_bIsT2Texture;
+			BOOL        m_bIsT2Texture;
 			const char* m_szFileName;
-			TUINT		m_uiDataSize;
-			void*		m_pData;
+			TUINT       m_uiDataSize;
+			void*       m_pData;
 		};
 
-		TINT		m_iNumTextures;
-		TexInfo*	m_pTextureInfos;
+		TINT        m_iNumTextures;
+		TexInfo*    m_pTextureInfos;
 		const char* m_szPackName;
 	};
 
@@ -67,8 +67,8 @@ public:
 
 public:
 	Toshi::TString8 m_Path;
-	ATexture*		m_pTexturesArray;
-	ATexture*		m_pTextures;
-	TINT			m_iNumTextures;
-	Toshi::TTRB		m_TRB;
+	ATexture*       m_pTexturesArray;
+	ATexture*       m_pTextures;
+	TINT            m_iNumTextures;
+	Toshi::TTRB     m_TRB;
 };

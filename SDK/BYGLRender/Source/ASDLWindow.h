@@ -34,7 +34,7 @@ public:
 	}
 
 private:
-	SDL_Window*				 m_pWindow = TNULL;
-	ASDLWindowListener*		 m_pListener;
+	SDL_Window*              m_pWindow = TNULL;
+	ASDLWindowListener*      m_pListener;
 	Toshi::TRenderInterface* m_pRender;
 };

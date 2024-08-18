@@ -3,7 +3,7 @@
 #include "ATerrainSection.h"
 
 class ACollisionDoneJob :
-	public AMainThreadJob
+    public AMainThreadJob
 {
 public:
 	virtual void  BeginJob() override;
@@ -14,5 +14,5 @@ public:
 
 private:
 	ATerrainSection* m_pVISGroup;
-	TBOOL			 m_bFlag;
+	TBOOL            m_bFlag;
 };

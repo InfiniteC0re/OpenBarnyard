@@ -69,7 +69,7 @@ TTexture* TTextureFactory::FindTexture( const TCHAR* a_szName ) const
 
 TTextureFactory::NameEntry* TTextureFactory::RegisterTexture( const TCHAR* a_szName, TTexture* a_pTexture )
 {
-	auto pList	= &m_aLists[ HashName( a_szName ) ];
+	auto pList  = &m_aLists[ HashName( a_szName ) ];
 	auto pEntry = new TTextureFactory::NameEntry( a_szName, a_pTexture );
 
 	a_pTexture->m_pNameEntry = pEntry;

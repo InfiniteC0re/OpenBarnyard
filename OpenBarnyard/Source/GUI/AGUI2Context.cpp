@@ -10,10 +10,10 @@
 
 AGUI2Context::AGUI2Context()
 {
-	m_pRenderer			  = TNULL;
-	m_pRootElement		  = TNULL;
+	m_pRenderer           = TNULL;
+	m_pRootElement        = TNULL;
 	m_pCreatedRootElement = TNULL;
-	m_pDebugCanvas		  = TNULL;
+	m_pDebugCanvas        = TNULL;
 
 	m_pCreatedRootElement = new AGUI2Element;
 

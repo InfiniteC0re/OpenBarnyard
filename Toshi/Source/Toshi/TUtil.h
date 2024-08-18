@@ -37,20 +37,20 @@ public:
 		TSTATICASSERT( Toshi::TUtil::LogType_NUMOF == TARRAYSIZE( kTypeStrings ) );
 
 		return a_eType >= LogType_Info && a_eType < LogType_NUMOF ?
-			kTypeStrings[ a_eType ] :
-			"UNKNOWN";
+		    kTypeStrings[ a_eType ] :
+		    "UNKNOWN";
 	}
 
 	struct LogEvent
 	{
 		constexpr LogEvent( TLogFile* a_pFile, LogType a_eType, const TCHAR* a_szString ) :
-			m_pFile( a_pFile ),
-			m_eType( a_eType ),
-			m_szString( a_szString )
+		    m_pFile( a_pFile ),
+		    m_eType( a_eType ),
+		    m_szString( a_szString )
 		{}
 
-		TLogFile*	 m_pFile;
-		LogType		 m_eType;
+		TLogFile*    m_pFile;
+		LogType      m_eType;
 		const TCHAR* m_szString;
 	};
 
@@ -58,21 +58,21 @@ public:
 	{
 		TOSHIParams() noexcept {}
 
-		const TCHAR* szCommandLine	 = "";
-		const TCHAR* szLogFileName	 = "toshi";
-		const TCHAR* szLogAppName	 = "Toshi";
+		const TCHAR* szCommandLine   = "";
+		const TCHAR* szLogFileName   = "toshi";
+		const TCHAR* szLogAppName    = "Toshi";
 		const TCHAR* szLogAppDirName = "Kernel";
-		TBOOL		 bLogToConsole	 = TTRUE;
-		TINT		 iUnused1		 = 0;
-		TINT		 iUnused2		 = 0;
+		TBOOL        bLogToConsole   = TTRUE;
+		TINT         iUnused1        = 0;
+		TINT         iUnused2        = 0;
 	};
 
 public:
 	TUtil();
 
 private:
-	TLogFile*				  m_pDefaultLogFile;
-	TLogFile*				  m_pCurrentLogFile;
+	TLogFile*                 m_pDefaultLogFile;
+	TLogFile*                 m_pCurrentLogFile;
 	TEmitter<TUtil, LogEvent> m_LogEmitter;
 
 public:
@@ -86,10 +86,10 @@ public:
 
 	static const TCHAR* GetTime();
 
-	static void	 MemSet( void* ptr, TSIZE value, TSIZE size ) { std::memset( ptr, value, size ); }
+	static void  MemSet( void* ptr, TSIZE value, TSIZE size ) { std::memset( ptr, value, size ); }
 	static void* MemCopy( void* dst, const void* src, TSIZE size ) { return std::memcpy( dst, src, size ); }
-	static void	 MemClear( void* ptr, TSIZE size ) { std::memset( ptr, 0, size ); }
-	static TINT	 MemCompare( const void* ptr1, const void* ptr2, TSIZE size ) { return std::memcmp( ptr1, ptr2, size ); }
+	static void  MemClear( void* ptr, TSIZE size ) { std::memset( ptr, 0, size ); }
+	static TINT  MemCompare( const void* ptr1, const void* ptr2, TSIZE size ) { return std::memcmp( ptr1, ptr2, size ); }
 
 	//-----------------------------------------------------------------------------
 	// Logging
@@ -105,7 +105,7 @@ public:
 	static void LogConsole( const TCHAR* a_szFormat, ... );
 	static void LogSet( TLogFile* a_logFile );
 
-	static TLogFile*						 GetCurrentLogFile() { return TUtil::GetSingleton()->m_pCurrentLogFile; }
+	static TLogFile*                         GetCurrentLogFile() { return TUtil::GetSingleton()->m_pCurrentLogFile; }
 	static TEmitter<TUtil, TUtil::LogEvent>& GetLogEmitter() { return TUtil::GetSingleton()->m_LogEmitter; }
 
 	static void SetGlobalMutex( HANDLE a_hGlobalMutex ) { ms_hGlobalMutex = a_hGlobalMutex; }
@@ -134,8 +134,8 @@ private:
 
 private:
 	inline static TPString8Pool** ms_poStringPool;
-	inline static HANDLE		  ms_hGlobalMutex;
-	inline static TOSHIParams	  ms_oToshiParams;
+	inline static HANDLE          ms_hGlobalMutex;
+	inline static TOSHIParams     ms_oToshiParams;
 
 public:
 #pragma region CRC
@@ -163,8 +163,8 @@ public:
 /* ------------------------------------------------------------------------- */
 /* CRC-32 CCITT                                                              */
 /* ------------------------------------------------------------------------- */
-#define CRC32POLY		 ( 0xEDB88320L ) /* Generator polynomial number       */
-#define CRC32POST( crc ) ( ~( crc ) )	 /* CRC Postconditioning before xmit  */
+#define CRC32POLY        ( 0xEDB88320L ) /* Generator polynomial number       */
+#define CRC32POST( crc ) ( ~( crc ) )    /* CRC Postconditioning before xmit  */
 
 #define crc32upd( crctab, crc, c ) \
 	( ( crctab )[ ( (TINT)( crc ) ^ ( c ) ) & 0xff ] ^ ( ( crc ) >> 8 ) )
@@ -175,7 +175,7 @@ public:
 
 	inline static TUINT32 s_aiCRC32LUT[ CRC_TABSIZE ] = {};
 
-	static void	   CRCInitialise();
+	static void    CRCInitialise();
 	static TUINT32 CRC32( TBYTE* buffer, TUINT32 len );
 
 #pragma endregion

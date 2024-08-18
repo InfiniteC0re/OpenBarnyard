@@ -44,15 +44,15 @@ void TPString8Pool::Get( TPooledString8*& a_pOutString, const TCHAR* a_szString,
 }
 
 TPString8Pool::TPString8Pool( T2Allocator* a_pAllocator ) :
-	m_pAllocator( a_pAllocator ),
-	m_oMap( a_pAllocator )
+    m_pAllocator( a_pAllocator ),
+    m_oMap( a_pAllocator )
 {
 	// TODO: Initialise some unknown values
 }
 
 TPString8Pool::TPString8Pool( TINT a_iUnknown1, TINT a_iUnknown2, T2Allocator* a_pAllocator, void* m_pUnknown3 ) :
-	m_pAllocator( a_pAllocator ),
-	m_oMap( a_pAllocator )
+    m_pAllocator( a_pAllocator ),
+    m_oMap( a_pAllocator )
 {
 	// TODO: Initialise some unknown values
 
@@ -64,10 +64,10 @@ TPString8Pool::TPString8Pool( TINT a_iUnknown1, TINT a_iUnknown2, T2Allocator* a
 
 TPString8Initialiser::TPString8Initialiser( StringMap* a_pStrings, TUINT a_iStringCount, TBOOL a_bCanReinitialise )
 {
-	m_iCount			= a_iStringCount;
-	m_pStrings			= a_pStrings;
-	m_pNextInitialiser	= ms_pHeadInitialiser;
-	m_bCanReinitialise	= a_bCanReinitialise;
+	m_iCount            = a_iStringCount;
+	m_pStrings          = a_pStrings;
+	m_pNextInitialiser  = ms_pHeadInitialiser;
+	m_bCanReinitialise  = a_bCanReinitialise;
 	ms_pHeadInitialiser = this;
 }
 
@@ -89,7 +89,7 @@ void TPString8Initialiser::Initialise( TPString8Pool* a_pStringPool )
 		TPString8 string( a_pStringPool, m_pStrings[ i ].m_szCString );
 
 		if ( string.GetPooledString() &&
-			 string.GetPooledString() != m_pStrings[ i ].m_pString8->GetPooledString() )
+		     string.GetPooledString() != m_pStrings[ i ].m_pString8->GetPooledString() )
 		{
 			*m_pStrings[ i ].m_pString8 = string;
 		}

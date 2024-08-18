@@ -12,13 +12,13 @@ TOSHI_NAMESPACE_START
 TFreeList::TFreeList( TUINT a_uiItemSize, TINT a_iInitialSize, TINT a_iGrowSize, const TCHAR* a_pchName )
 {
 	m_uiItemSize  = a_uiItemSize;
-	m_iCapacity	  = 0;
+	m_iCapacity   = 0;
 	m_pMemoryHeap = TNULL;
 	TASSERT( m_iGrowSize >= 0 );
 	TASSERT( a_iInitialSize >= 0 );
 	SetGrowSize( a_iGrowSize );
 
-	m_pPrevList	 = ms_pLastList;
+	m_pPrevList  = ms_pLastList;
 	ms_pLastList = this;
 }
 
@@ -29,7 +29,7 @@ TFreeList::Node* TFreeList::Allocate( TINT a_iNumber, TINT a_iSize )
 
 	Node* pNewNode = TREINTERPRETCAST( Node*, TMalloc( a_iNumber * a_iSize + sizeof( Node ), m_pMemoryHeap ) );
 
-	pNewNode->pNext	 = m_RootNode.pNext;
+	pNewNode->pNext  = m_RootNode.pNext;
 	m_RootNode.pNext = pNewNode;
 
 	auto  pData = pNewNode + 1;
@@ -38,7 +38,7 @@ TFreeList::Node* TFreeList::Allocate( TINT a_iNumber, TINT a_iSize )
 	for ( TINT i = a_iNumber - 1; i != 0; i-- )
 	{
 		pData->pNext = pNext;
-		pNext		 = pData;
+		pNext        = pData;
 
 		pData = TREINTERPRETCAST( Node*, TREINTERPRETCAST( uintptr_t, pData ) + a_iSize );
 	}
@@ -53,7 +53,7 @@ void TFreeList::SetCapacity( TINT a_iNewCapacity )
 	{
 		auto pNode = Allocate( a_iNewCapacity - m_iCapacity, m_uiItemSize );
 
-		pNode->pNext	 = m_LastNode.pNext;
+		pNode->pNext     = m_LastNode.pNext;
 		m_LastNode.pNext = pNode;
 	}
 }
@@ -84,13 +84,13 @@ void TFreeList::Delete( void* a_Ptr )
 
 	if ( m_LastNode.pNext != TNULL )
 	{
-		pNode->pNext	 = m_LastNode.pNext;
+		pNode->pNext     = m_LastNode.pNext;
 		m_LastNode.pNext = pNode;
 	}
 	else
 	{
 		m_LastNode.pNext = pNode;
-		pNode->pNext	 = TNULL;
+		pNode->pNext     = TNULL;
 	}
 }
 

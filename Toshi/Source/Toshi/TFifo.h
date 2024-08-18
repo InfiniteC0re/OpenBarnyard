@@ -9,9 +9,9 @@ protected:
 	typedef uint8_t Flags;
 	enum Flags_ : Flags
 	{
-		Flags_None			= 0,
+		Flags_None          = 0,
 		Flags_PollSemaphore = BITFLAG( 0 ),
-		Flags_NoSemaphore	= BITFLAG( 1 ),
+		Flags_NoSemaphore   = BITFLAG( 1 ),
 	};
 
 protected:
@@ -28,12 +28,12 @@ private:
 #endif
 	TSemaphore m_Semaphore1;
 	TSemaphore m_Semaphore2;
-	TINT	   m_iItemSize;
-	TINT	   m_iMaxItems;
-	TCHAR*	   m_pDataBegin;
-	TCHAR*	   m_pDataEnd;
-	TCHAR*	   m_pDataPopCursor;
-	TCHAR*	   m_pDataPushCursor;
+	TINT       m_iItemSize;
+	TINT       m_iMaxItems;
+	TCHAR*     m_pDataBegin;
+	TCHAR*     m_pDataEnd;
+	TCHAR*     m_pDataPopCursor;
+	TCHAR*     m_pDataPushCursor;
 };
 
 template <class T, TINT MaxItems>

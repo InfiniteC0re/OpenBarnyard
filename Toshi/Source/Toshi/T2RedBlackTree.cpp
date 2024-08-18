@@ -14,11 +14,11 @@ constinit T2GenericRedBlackTreeNode T2GenericRedBlackTree::ms_oNil;
 T2GenericRedBlackTreeNode* T2GenericRedBlackTree::GetFirstNode()
 {
 	T2GenericRedBlackTreeNode* pCurrentNode = &m_oRoot;
-	T2GenericRedBlackTreeNode* pResult		= TNULL;
+	T2GenericRedBlackTreeNode* pResult      = TNULL;
 
 	while ( pCurrentNode != &ms_oNil )
 	{
-		pResult		 = pCurrentNode;
+		pResult      = pCurrentNode;
 		pCurrentNode = pResult->m_pLeft;
 	}
 
@@ -33,7 +33,7 @@ T2GenericRedBlackTreeNode* T2GenericRedBlackTree::Insert( T2GenericRedBlackTreeN
 
 	m_iNumElements += 1;
 	pNode->red = 1;
-	node	   = pNode;
+	node       = pNode;
 
 	while ( pNode_00 = node->m_pParent, pNode_00->red != 0 )
 	{
@@ -50,16 +50,16 @@ T2GenericRedBlackTreeNode* T2GenericRedBlackTree::Insert( T2GenericRedBlackTreeN
 					node = pNode_00;
 				}
 
-				node->m_pParent->red			= 0;
+				node->m_pParent->red            = 0;
 				node->m_pParent->m_pParent->red = 1;
 				RightRotate( node->m_pParent->m_pParent );
 			}
 			else
 			{
-				pNode_00->red					= 0;
-				pTVar1->red						= 0;
+				pNode_00->red                   = 0;
+				pTVar1->red                     = 0;
 				node->m_pParent->m_pParent->red = 1;
-				node							= node->m_pParent->m_pParent;
+				node                            = node->m_pParent->m_pParent;
 			}
 		}
 		else if ( pTVar1->red == 0 )
@@ -70,16 +70,16 @@ T2GenericRedBlackTreeNode* T2GenericRedBlackTree::Insert( T2GenericRedBlackTreeN
 				node = pNode_00;
 			}
 
-			node->m_pParent->red			= 0;
+			node->m_pParent->red            = 0;
 			node->m_pParent->m_pParent->red = 1;
 			LeftRotate( node->m_pParent->m_pParent );
 		}
 		else
 		{
-			pNode_00->red					= 0;
-			pTVar1->red						= 0;
+			pNode_00->red                   = 0;
+			pTVar1->red                     = 0;
 			node->m_pParent->m_pParent->red = 1;
-			node							= node->m_pParent->m_pParent;
+			node                            = node->m_pParent->m_pParent;
 		}
 	}
 
@@ -91,7 +91,7 @@ T2GenericRedBlackTreeNode* T2GenericRedBlackTree::Insert( T2GenericRedBlackTreeN
 
 void T2GenericRedBlackTree::DeleteFixUp( T2GenericRedBlackTreeNode* pNode )
 {
-	TINT					   uVar2;
+	TINT                       uVar2;
 	T2GenericRedBlackTreeNode* pTVar1;
 	T2GenericRedBlackTreeNode* pTVar3;
 	T2GenericRedBlackTreeNode* pTVar4;
@@ -108,7 +108,7 @@ void T2GenericRedBlackTree::DeleteFixUp( T2GenericRedBlackTreeNode* pNode )
 
 			if ( pTVar1->red != 0 )
 			{
-				pTVar1->red			  = 0;
+				pTVar1->red           = 0;
 				pNode->m_pParent->red = 1;
 				LeftRotate( pNode->m_pParent );
 				pTVar3 = pNode->m_pParent;
@@ -119,20 +119,20 @@ void T2GenericRedBlackTree::DeleteFixUp( T2GenericRedBlackTreeNode* pNode )
 			if ( ( uVar2 == 0 ) && ( pTVar1->m_pLeft->red == 0 ) )
 			{
 				pTVar1->red = 1;
-				pNode		= pNode->m_pParent;
+				pNode       = pNode->m_pParent;
 			}
 			else
 			{
 				if ( uVar2 == 0 )
 				{
 					pTVar1->m_pLeft->red = 0;
-					pTVar1->red			 = 1;
+					pTVar1->red          = 1;
 					RightRotate( pTVar1 );
 					pTVar3 = pNode->m_pParent;
 					pTVar1 = pTVar3->m_pRight;
 				}
 
-				pTVar1->red			  = pTVar3->red;
+				pTVar1->red           = pTVar3->red;
 				pNode->m_pParent->red = 0;
 				pTVar1->m_pRight->red = 0;
 				LeftRotate( pNode->m_pParent );
@@ -143,7 +143,7 @@ void T2GenericRedBlackTree::DeleteFixUp( T2GenericRedBlackTreeNode* pNode )
 		{
 			if ( pTVar1->red != 0 )
 			{
-				pTVar1->red			  = 0;
+				pTVar1->red           = 0;
 				pNode->m_pParent->red = 1;
 				RightRotate( pNode->m_pParent );
 				pTVar3 = pNode->m_pParent;
@@ -153,20 +153,20 @@ void T2GenericRedBlackTree::DeleteFixUp( T2GenericRedBlackTreeNode* pNode )
 			if ( pTVar1->m_pRight->red == 0 && pTVar1->m_pLeft->red == 0 )
 			{
 				pTVar1->red = 1;
-				pNode		= pNode->m_pParent;
+				pNode       = pNode->m_pParent;
 			}
 			else
 			{
 				if ( pTVar1->m_pLeft->red == 0 )
 				{
 					pTVar1->m_pRight->red = 0;
-					pTVar1->red			  = 1;
+					pTVar1->red           = 1;
 					LeftRotate( pTVar1 );
 					pTVar3 = pNode->m_pParent;
 					pTVar1 = pTVar3->m_pLeft;
 				}
 
-				pTVar1->red			  = pTVar3->red;
+				pTVar1->red           = pTVar3->red;
 				pNode->m_pParent->red = 0;
 				pTVar1->m_pLeft->red  = 0;
 				RightRotate( pNode->m_pParent );
@@ -197,7 +197,7 @@ T2GenericRedBlackTreeNode* T2GenericRedBlackTree::DeleteNode( T2GenericRedBlackT
 		pTVar3 = y->m_pRight;
 	}
 
-	pTVar1			  = y->m_pParent;
+	pTVar1            = y->m_pParent;
 	pTVar3->m_pParent = pTVar1;
 
 	if ( &m_oRoot == pTVar1 )
@@ -234,12 +234,12 @@ T2GenericRedBlackTreeNode* T2GenericRedBlackTree::DeleteNode( T2GenericRedBlackT
 
 	TASSERT( y != &ms_oNil );
 
-	y->m_pLeft				   = pNode->m_pLeft;
-	y->m_pRight				   = pNode->m_pRight;
-	y->m_pParent			   = pNode->m_pParent;
+	y->m_pLeft                 = pNode->m_pLeft;
+	y->m_pRight                = pNode->m_pRight;
+	y->m_pParent               = pNode->m_pParent;
 	pNode->m_pRight->m_pParent = y;
 	pNode->m_pLeft->m_pParent  = y;
-	pTVar1					   = pNode->m_pParent;
+	pTVar1                     = pNode->m_pParent;
 
 	if ( pNode == pTVar1->m_pLeft )
 	{
@@ -251,7 +251,7 @@ T2GenericRedBlackTreeNode* T2GenericRedBlackTree::DeleteNode( T2GenericRedBlackT
 	}
 
 	TINT oldRedValue = y->red;
-	y->red			 = pNode->red;
+	y->red           = pNode->red;
 
 	if ( oldRedValue == 0 )
 	{
@@ -269,7 +269,7 @@ void T2GenericRedBlackTree::LeftRotate( T2GenericRedBlackTreeNode* pNode )
 	T2GenericRedBlackTreeNode* pTVar1;
 	T2GenericRedBlackTreeNode* pTVar2;
 
-	pTVar2			= pNode->m_pRight;
+	pTVar2          = pNode->m_pRight;
 	pNode->m_pRight = pTVar2->m_pLeft;
 
 	if ( pTVar2->m_pLeft != &ms_oNil )
@@ -278,7 +278,7 @@ void T2GenericRedBlackTree::LeftRotate( T2GenericRedBlackTreeNode* pNode )
 	}
 
 	pTVar2->m_pParent = pNode->m_pParent;
-	pTVar1			  = pNode->m_pParent;
+	pTVar1            = pNode->m_pParent;
 
 	if ( pNode == pTVar1->m_pLeft )
 	{
@@ -289,7 +289,7 @@ void T2GenericRedBlackTree::LeftRotate( T2GenericRedBlackTreeNode* pNode )
 		pTVar1->m_pRight = pTVar2;
 	}
 
-	pTVar2->m_pLeft	 = pNode;
+	pTVar2->m_pLeft  = pNode;
 	pNode->m_pParent = pTVar2;
 	CheckValid();
 }
@@ -299,7 +299,7 @@ void T2GenericRedBlackTree::RightRotate( T2GenericRedBlackTreeNode* pNode )
 	T2GenericRedBlackTreeNode* pTVar1;
 	T2GenericRedBlackTreeNode* pTVar2;
 
-	pTVar2		   = pNode->m_pLeft;
+	pTVar2         = pNode->m_pLeft;
 	pNode->m_pLeft = pTVar2->m_pRight;
 
 	if ( pTVar2->m_pRight != &ms_oNil )
@@ -308,7 +308,7 @@ void T2GenericRedBlackTree::RightRotate( T2GenericRedBlackTreeNode* pNode )
 	}
 
 	pTVar2->m_pParent = pNode->m_pParent;
-	pTVar1			  = pNode->m_pParent;
+	pTVar1            = pNode->m_pParent;
 
 	if ( pNode == pTVar1->m_pLeft )
 	{
@@ -359,7 +359,7 @@ T2GenericRedBlackTreeNode* T2GenericRedBlackTree::GetPredecessorOf( T2GenericRed
 {
 	T2GenericRedBlackTreeNode* pTVar1;
 	T2GenericRedBlackTreeNode* pTVar2 = pNode->m_pLeft;
-	TBOOL					   bVar3;
+	TBOOL                      bVar3;
 
 	if ( pTVar2 == &ms_oNil )
 	{

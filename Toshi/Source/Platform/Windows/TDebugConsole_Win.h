@@ -27,9 +27,9 @@ private:
 	static TBOOL OnLog( TDebugConsole* a_pCaller, TUtil* a_pOwner, TUtil::LogEvent* pLogEvent );
 
 private:
-	TBOOL											 m_Visible = TFALSE;
-	TBOOL											 m_Created = TFALSE;
-	HWND											 m_HWND;
+	TBOOL                                            m_Visible = TFALSE;
+	TBOOL                                            m_Created = TFALSE;
+	HWND                                             m_HWND;
 	TListener<TUtil, TUtil::LogEvent, TDebugConsole> m_LogListener;
 };
 

@@ -12,15 +12,15 @@ class ATerrainSection
 {
 public:
 	class ModelNode :
-		public Toshi::T2SList<ModelNode>::Node
+	    public Toshi::T2SList<ModelNode>::Node
 	{
 	public:
 		using ModelNodeFlags = TUINT8;
 		enum ModelNodeFlags_ : ModelNodeFlags
 		{
-			MNF_NONE		 = 0,
+			MNF_NONE         = 0,
 			MNF_USE_LIGHTING = BITFLAG( 0 ),
-			MNF_GLOW		 = BITFLAG( 1 ),
+			MNF_GLOW         = BITFLAG( 1 ),
 		};
 
 		static constexpr TUINT TYPE_NAME_MAX_SIZE = 14;
@@ -34,28 +34,28 @@ public:
 		void SetUseLighting( TBOOL a_bUseLighting );
 		void SetGlow( TBOOL a_bIsGlow );
 
-		TBOOL			IsUsingLighting() const { return !ISZERO( m_eFlags & MNF_USE_LIGHTING ); }
+		TBOOL           IsUsingLighting() const { return !ISZERO( m_eFlags & MNF_USE_LIGHTING ); }
 		AWorldMaterial* GetAnimatedMaterial() const { return m_pAnimatedMaterial; }
 
 	public:
-		Toshi::TModelPtr		m_ModelRef;
+		Toshi::TModelPtr        m_ModelRef;
 		Toshi::T2ModelInstance* m_pModelInstance;
-		AWorldVis				m_WorldVis;
-		AWorldMaterial*			m_pAnimatedMaterial;
+		AWorldVis               m_WorldVis;
+		AWorldMaterial*         m_pAnimatedMaterial;
 		// ...
-		char		   m_szType[ TYPE_NAME_MAX_SIZE + 1 ];
+		char           m_szType[ TYPE_NAME_MAX_SIZE + 1 ];
 		ModelNodeFlags m_eFlags;
-		TBOOL		   m_bCreated;
+		TBOOL          m_bCreated;
 	};
 
 	enum FLAGS : TUINT32
 	{
-		FLAGS_HIGH_LOD_LOADED	= BITFLAG( 0 ),
-		FLAGS_LOW_LOD_LOADED	= BITFLAG( 1 ),
-		FLAGS_HIGH_LOD_LOADING	= BITFLAG( 2 ),
-		FLAGS_LOW_LOD_LOADING	= BITFLAG( 3 ),
-		FLAGS_HIGH_LOD_QUEUED	= BITFLAG( 4 ),
-		FLAGS_LOW_LOD_QUEUED	= BITFLAG( 5 ),
+		FLAGS_HIGH_LOD_LOADED   = BITFLAG( 0 ),
+		FLAGS_LOW_LOD_LOADED    = BITFLAG( 1 ),
+		FLAGS_HIGH_LOD_LOADING  = BITFLAG( 2 ),
+		FLAGS_LOW_LOD_LOADING   = BITFLAG( 3 ),
+		FLAGS_HIGH_LOD_QUEUED   = BITFLAG( 4 ),
+		FLAGS_LOW_LOD_QUEUED    = BITFLAG( 5 ),
 		FLAGS_COLLISION_LOADING = BITFLAG( 10 )
 	};
 
@@ -96,12 +96,12 @@ public:
 	{
 		if ( a_eLODType == ATerrainLODType_High )
 		{
-			a_rLODs	   = m_pszHighModelFiles;
+			a_rLODs    = m_pszHighModelFiles;
 			a_rNumLODs = m_iNumHighModelFiles;
 		}
 		else
 		{
-			a_rLODs	   = m_pszLowModelFiles;
+			a_rLODs    = m_pszLowModelFiles;
 			a_rNumLODs = m_iNumLowModelFiles;
 		}
 	}
@@ -110,12 +110,12 @@ public:
 	{
 		if ( a_eLODType == ATerrainLODType_High )
 		{
-			a_rMemBlocks	= m_ppHighLODBlocks;
+			a_rMemBlocks    = m_ppHighLODBlocks;
 			a_rNumMemBlocks = m_iNumHighMemBlocksUsed;
 		}
 		else
 		{
-			a_rMemBlocks	= m_ppLowLODBlocks;
+			a_rMemBlocks    = m_ppLowLODBlocks;
 			a_rNumMemBlocks = m_iNumLowMemBlocksUsed;
 		}
 	}
@@ -129,31 +129,31 @@ private:
 	const TCHAR*  m_szName;
 	const TCHAR** m_pszHighModelFiles;
 	const TCHAR** m_pszLowModelFiles;
-	TINT32		  m_iNumHighModelFiles;
-	TINT32		  m_iNumLowModelFiles;
+	TINT32        m_iNumHighModelFiles;
+	TINT32        m_iNumLowModelFiles;
 
-	TUINT8*		 m_aLODFlags[ 2 ];
+	TUINT8*      m_aLODFlags[ 2 ];
 	const TCHAR* m_szCollisionFilename;
-	ModelNode*	 m_pCollisionModelData;
-	ModelNode**	 m_ppLODModelsData[ ATerrainLODType_NUMOF ];
+	ModelNode*   m_pCollisionModelData;
+	ModelNode**  m_ppLODModelsData[ ATerrainLODType_NUMOF ];
 
-	const TCHAR*	  m_szHighMatLibFilename;
-	Toshi::TTRB*	  m_pMatLibHighTRB;
+	const TCHAR*      m_szHighMatLibFilename;
+	Toshi::TTRB*      m_pMatLibHighTRB;
 	AMaterialLibrary* m_pMatLibHigh;
 
-	const TCHAR*	  m_szLowMatLibFilename;
-	Toshi::TTRB*	  m_pMatLibLowTRB;
+	const TCHAR*      m_szLowMatLibFilename;
+	Toshi::TTRB*      m_pMatLibLowTRB;
 	AMaterialLibrary* m_pMatLibLow;
 
 	ATerrainLODType*   m_pVisibility;
-	TUINT32			   m_eFlags;
-	TUINT16			   m_iNumHighMemBlocksUsed;
-	TUINT16			   m_iNumLowMemBlocksUsed;
+	TUINT32            m_eFlags;
+	TUINT16            m_iNumHighMemBlocksUsed;
+	TUINT16            m_iNumLowMemBlocksUsed;
 	ATerrainLODBlock** m_ppHighLODBlocks;
 	ATerrainLODBlock** m_ppLowLODBlocks;
-	TUINT8*			   m_pHighLODToBlock;
-	TUINT8*			   m_pLowLODToBlock;
-	TUINT8			   m_iCollisionMemBlockID;
-	TUINT8			   m_iHighMatLibMemBlockID;
-	TUINT8			   m_iLowMatLibMemBlockID;
+	TUINT8*            m_pHighLODToBlock;
+	TUINT8*            m_pLowLODToBlock;
+	TUINT8             m_iCollisionMemBlockID;
+	TUINT8             m_iHighMatLibMemBlockID;
+	TUINT8             m_iLowMatLibMemBlockID;
 };

@@ -9,27 +9,27 @@
 #include "THookedSingleton.h"
 
 class ATerrainInterface :
-	public THookedSingleton<ATerrainInterface, 0x00796300>
+    public THookedSingleton<ATerrainInterface, 0x00796300>
 {
 public:
-	constexpr static TUINT MAX_NUM_MODEL_LOADER_JOBS	 = 128;
-	constexpr static TUINT MAX_NUM_MATLIB_LOADER_JOBS	 = 10;
-	constexpr static TUINT MAX_NUM_KEYLIB_LOADER_JOBS	 = 10;
-	constexpr static TUINT MAX_NUM_SECTION_LOADER_JOBS	 = 32;
-	constexpr static TUINT MAX_NUM_TRB_LOADER_JOBS		 = 2;
-	constexpr static TUINT MAX_NUM_SKELETON_LOADER_JOBS	 = 2;
+	constexpr static TUINT MAX_NUM_MODEL_LOADER_JOBS     = 128;
+	constexpr static TUINT MAX_NUM_MATLIB_LOADER_JOBS    = 10;
+	constexpr static TUINT MAX_NUM_KEYLIB_LOADER_JOBS    = 10;
+	constexpr static TUINT MAX_NUM_SECTION_LOADER_JOBS   = 32;
+	constexpr static TUINT MAX_NUM_TRB_LOADER_JOBS       = 2;
+	constexpr static TUINT MAX_NUM_SKELETON_LOADER_JOBS  = 2;
 	constexpr static TUINT MAX_NUM_COLLISION_LOADER_JOBS = 64;
 	constexpr static TUINT NUM_TOTAL_JOBS =
-		MAX_NUM_MODEL_LOADER_JOBS +
-		MAX_NUM_MATLIB_LOADER_JOBS +
-		MAX_NUM_KEYLIB_LOADER_JOBS +
-		MAX_NUM_SECTION_LOADER_JOBS +
-		MAX_NUM_TRB_LOADER_JOBS +
-		MAX_NUM_SKELETON_LOADER_JOBS +
-		MAX_NUM_COLLISION_LOADER_JOBS;
+	    MAX_NUM_MODEL_LOADER_JOBS +
+	    MAX_NUM_MATLIB_LOADER_JOBS +
+	    MAX_NUM_KEYLIB_LOADER_JOBS +
+	    MAX_NUM_SECTION_LOADER_JOBS +
+	    MAX_NUM_TRB_LOADER_JOBS +
+	    MAX_NUM_SKELETON_LOADER_JOBS +
+	    MAX_NUM_COLLISION_LOADER_JOBS;
 
 	struct JobSlot :
-		public Toshi::T2SList<JobSlot>::Node
+	    public Toshi::T2SList<JobSlot>::Node
 	{
 		AMainThreadJob* pJob = TNULL;
 	};
@@ -181,55 +181,55 @@ private:
 	static TINT GetCurrentVISGroupIndex();
 	static TINT GetPersistantVISGroupIndex();
 
-	inline static TINT	ms_iPersistantVISGroupIndex = -1;
-	inline static TBOOL ms_bAutoVIS					= TFALSE;
+	inline static TINT  ms_iPersistantVISGroupIndex = -1;
+	inline static TBOOL ms_bAutoVIS                 = TFALSE;
 
 public:
-	Toshi::TVector4							   m_LitShadowColor;
-	Toshi::TVector4							   m_LitAmbientColor;
-	Toshi::TVector4							   m_DefaultShadowColor;
-	Toshi::TVector4							   m_DefaultAmbientColor;
-	char									   PAD1[ 8 ];
+	Toshi::TVector4                            m_LitShadowColor;
+	Toshi::TVector4                            m_LitAmbientColor;
+	Toshi::TVector4                            m_DefaultShadowColor;
+	Toshi::TVector4                            m_DefaultAmbientColor;
+	char                                       PAD1[ 8 ];
 	Toshi::T2SList<ATerrainSection::ModelNode> m_ModelDatas;
-	char									   PAD2[ 8 ];
-	t_OnVISGroupChanged						   m_cbOnVISGroupChanged;
-	AModelLoaderJob							   m_aModelLoaderJobs[ MAX_NUM_MODEL_LOADER_JOBS ];
-	AMatLibLoaderJob						   m_aMatlibLoaderJobs[ MAX_NUM_MATLIB_LOADER_JOBS ];
-	AKeyLibLoaderJob						   m_aKeylibLoaderJobs[ MAX_NUM_KEYLIB_LOADER_JOBS ];
-	ASectionDoneJob							   m_aSectionDoneJobs[ MAX_NUM_SECTION_LOADER_JOBS ];
-	ATRBLoaderJob							   m_aTRBLoaderJobs[ MAX_NUM_TRB_LOADER_JOBS ];
-	ASkeletonDoneJob						   m_aSkeletonDoneJobs[ MAX_NUM_SKELETON_LOADER_JOBS ];
-	ACollisionDoneJob						   m_aCollisionDoneJobs[ MAX_NUM_COLLISION_LOADER_JOBS ];
-	JobSlot*								   m_pJobs;
-	Toshi::T2SList<JobSlot>					   m_UsedModelLoaderJobs;
-	Toshi::T2SList<JobSlot>					   m_FreeModelLoaderJobs;
-	Toshi::T2SList<JobSlot>					   m_UsedUnknownLoaderJobs;
-	Toshi::T2SList<JobSlot>					   m_FreeUnknownLoaderJobs;
-	Toshi::T2SList<JobSlot>					   m_UsedSectionLoaderJobs;
-	Toshi::T2SList<JobSlot>					   m_FreeSectionLoaderJobs;
-	Toshi::T2SList<JobSlot>					   m_UsedKeylibLoaderJobs;
-	Toshi::T2SList<JobSlot>					   m_FreeKeylibLoaderJobs;
-	Toshi::T2SList<JobSlot>					   m_UsedMatlibLoaderJobs;
-	Toshi::T2SList<JobSlot>					   m_FreeMatlibLoaderJobs;
-	Toshi::T2SList<JobSlot>					   m_UsedTRBLoaderJobs;
-	Toshi::T2SList<JobSlot>					   m_FreeTRBLoaderJobs;
-	Toshi::T2SList<JobSlot>					   m_UsedSkeletonLoaderJobs;
-	Toshi::T2SList<JobSlot>					   m_FreeSkeletonLoaderJobs;
-	Toshi::T2SList<JobSlot>					   m_UsedCollisionLoaderJobs;
-	Toshi::T2SList<JobSlot>					   m_FreeCollisionLoaderJobs;
-	TBOOL									   m_bStreamCollision;
-	TBOOL									   m_bIsLoaded;
-	Toshi::TTRB								   m_VISTRB;
-	Toshi::TTRB								   m_TRB2;
-	ATerrainVIS*							   m_pTerrainVIS;
-	ATerrainOrderDVIS*						   m_pOrderDVIS;
-	char									   PAD3[ 100 ];
-	TINT									   m_iCurrentGroup;
-	TINT									   m_iPreviousGroup;
-	TINT									   m_iPreloadTerrainBlockSize;
-	t_GetCurrentVISGroup					   m_fnGetCurrentVISGroup;
-	char									   PAD4[ 4 ];
-	TINT									   m_iNumChunks;
+	char                                       PAD2[ 8 ];
+	t_OnVISGroupChanged                        m_cbOnVISGroupChanged;
+	AModelLoaderJob                            m_aModelLoaderJobs[ MAX_NUM_MODEL_LOADER_JOBS ];
+	AMatLibLoaderJob                           m_aMatlibLoaderJobs[ MAX_NUM_MATLIB_LOADER_JOBS ];
+	AKeyLibLoaderJob                           m_aKeylibLoaderJobs[ MAX_NUM_KEYLIB_LOADER_JOBS ];
+	ASectionDoneJob                            m_aSectionDoneJobs[ MAX_NUM_SECTION_LOADER_JOBS ];
+	ATRBLoaderJob                              m_aTRBLoaderJobs[ MAX_NUM_TRB_LOADER_JOBS ];
+	ASkeletonDoneJob                           m_aSkeletonDoneJobs[ MAX_NUM_SKELETON_LOADER_JOBS ];
+	ACollisionDoneJob                          m_aCollisionDoneJobs[ MAX_NUM_COLLISION_LOADER_JOBS ];
+	JobSlot*                                   m_pJobs;
+	Toshi::T2SList<JobSlot>                    m_UsedModelLoaderJobs;
+	Toshi::T2SList<JobSlot>                    m_FreeModelLoaderJobs;
+	Toshi::T2SList<JobSlot>                    m_UsedUnknownLoaderJobs;
+	Toshi::T2SList<JobSlot>                    m_FreeUnknownLoaderJobs;
+	Toshi::T2SList<JobSlot>                    m_UsedSectionLoaderJobs;
+	Toshi::T2SList<JobSlot>                    m_FreeSectionLoaderJobs;
+	Toshi::T2SList<JobSlot>                    m_UsedKeylibLoaderJobs;
+	Toshi::T2SList<JobSlot>                    m_FreeKeylibLoaderJobs;
+	Toshi::T2SList<JobSlot>                    m_UsedMatlibLoaderJobs;
+	Toshi::T2SList<JobSlot>                    m_FreeMatlibLoaderJobs;
+	Toshi::T2SList<JobSlot>                    m_UsedTRBLoaderJobs;
+	Toshi::T2SList<JobSlot>                    m_FreeTRBLoaderJobs;
+	Toshi::T2SList<JobSlot>                    m_UsedSkeletonLoaderJobs;
+	Toshi::T2SList<JobSlot>                    m_FreeSkeletonLoaderJobs;
+	Toshi::T2SList<JobSlot>                    m_UsedCollisionLoaderJobs;
+	Toshi::T2SList<JobSlot>                    m_FreeCollisionLoaderJobs;
+	TBOOL                                      m_bStreamCollision;
+	TBOOL                                      m_bIsLoaded;
+	Toshi::TTRB                                m_VISTRB;
+	Toshi::TTRB                                m_TRB2;
+	ATerrainVIS*                               m_pTerrainVIS;
+	ATerrainOrderDVIS*                         m_pOrderDVIS;
+	char                                       PAD3[ 100 ];
+	TINT                                       m_iCurrentGroup;
+	TINT                                       m_iPreviousGroup;
+	TINT                                       m_iPreloadTerrainBlockSize;
+	t_GetCurrentVISGroup                       m_fnGetCurrentVISGroup;
+	char                                       PAD4[ 4 ];
+	TINT                                       m_iNumChunks;
 };
 
 class ABYardTerrainManager
@@ -301,7 +301,7 @@ public:
 	struct TerrainInfo
 	{
 		const char* szName;
-		TUINT32		uiUnk;
+		TUINT32     uiUnk;
 	};
 
 	inline static constexpr TerrainInfo ms_aTerrains[ Terrain_NUMOF ] = {
@@ -364,13 +364,13 @@ public:
 	};
 
 public:
-	static void					 SetTerrain( TINT a_eTerrain, TBOOL a_bLoadLater, TBOOL a_bStreamModels, TINT a_iUnused1, TINT a_iUnused2, TINT a_iPreloadTerrainBlockSize, TINT a_iStartVISGroup );
+	static void                  SetTerrain( TINT a_eTerrain, TBOOL a_bLoadLater, TBOOL a_bStreamModels, TINT a_iUnused1, TINT a_iUnused2, TINT a_iPreloadTerrainBlockSize, TINT a_iStartVISGroup );
 	static constexpr const char* GetTerrainName( Terrain a_eTerrain ) { return ms_aTerrains[ a_eTerrain ].szName; }
 
 	static void StartLoading();
 
 public:
 	inline static ATerrainInterface* ms_pCurrentTerrain;
-	inline static Terrain*			 ms_pCurrentLevel = TREINTERPRETCAST( Terrain*, 0x00772800 );
-	inline static Terrain&			 ms_eCurrentLevel = *ms_pCurrentLevel;
+	inline static Terrain*           ms_pCurrentLevel = TREINTERPRETCAST( Terrain*, 0x00772800 );
+	inline static Terrain&           ms_eCurrentLevel = *ms_pCurrentLevel;
 };

@@ -102,7 +102,7 @@ public:
 		return this;
 	}
 
-	TCHAR&		 operator[]( TINT a_iIndex ) { return m_pBuffer[ a_iIndex ]; }
+	TCHAR&       operator[]( TINT a_iIndex ) { return m_pBuffer[ a_iIndex ]; }
 	const TCHAR& operator[]( TINT a_iIndex ) const { return *GetString( a_iIndex ); }
 
 	operator const TCHAR*() const { return m_pBuffer; }
@@ -144,8 +144,8 @@ private:
 
 	void Reset()
 	{
-		m_pBuffer	 = NullString;
-		m_iStrLen	 = 0;
+		m_pBuffer    = NullString;
+		m_iStrLen    = 0;
 		m_iExcessLen = 0;
 	}
 
@@ -156,17 +156,17 @@ private:
 
 	static T2Allocator* GetDefaultAllocatorCB()
 	{
-		return &T2Allocator::s_GlobalAllocator;
+		return GetGlobalAllocator();
 	}
 
 private:
 	static inline func_DefaultAllocatorCB sm_pDefaultAllocatorCB = &GetDefaultAllocatorCB;
 
 private:
-	TCHAR*		 m_pBuffer		  = NullString; // 0x0
-	TUINT32		 m_iExcessLen : 8 = 0;			// 0x4
-	TINT32		 m_iStrLen : 24	  = 0;			// 0x5
-	T2Allocator* m_pAllocator;					// 0x8
+	TCHAR*       m_pBuffer        = NullString; // 0x0
+	TUINT32      m_iExcessLen : 8 = 0;          // 0x4
+	TINT32       m_iStrLen : 24   = 0;          // 0x5
+	T2Allocator* m_pAllocator;                  // 0x8
 };
 
 TOSHI_NAMESPACE_END

@@ -19,8 +19,8 @@ TOSHI_NAMESPACE_USING
 TDEFINE_CLASS( AMaterialLibraryManager );
 
 AMaterialLibraryManager::AMaterialLibraryManager() :
-	m_NumRefLibraries( AMemory::GetAllocator( AMemory::POOL_Misc ) ),
-	m_LoadedLibraries( AMemory::GetAllocator( AMemory::POOL_Misc ) )
+    m_NumRefLibraries( AMemory::GetAllocator( AMemory::POOL_Misc ) ),
+    m_LoadedLibraries( AMemory::GetAllocator( AMemory::POOL_Misc ) )
 {
 	List::CreateSingleton();
 
@@ -43,7 +43,7 @@ void AMaterialLibraryManager::LoadLibrariesFromProperties( const PBPropertyValue
 		for ( TUINT i = 0; i < pArray->GetSize(); i++ )
 		{
 			auto matlibName = pArray->GetValue( i )->GetTPString8();
-			auto eLangId	= ALocaleManager::GetSingleton()->GetLanguage();
+			auto eLangId    = ALocaleManager::GetSingleton()->GetLanguage();
 
 			TBOOL bLocaliseAsset;
 
@@ -98,12 +98,12 @@ void AMaterialLibraryManager::LoadLibrary( const Toshi::TPString8& a_rLibName, T
 
 		TCHAR matlibPath[ 128 ];
 		TStringManager::String8Format(
-			matlibPath,
-			sizeof( matlibPath ),
-			"data/matlibs/%s%s%s.ttl",
-			a_rLibName.GetPooledString()->GetString8().GetString(),
-			fileMiddle.GetString(),
-			fileFormat.GetString() );
+		    matlibPath,
+		    sizeof( matlibPath ),
+		    "data/matlibs/%s%s%s.ttl",
+		    a_rLibName.GetPooledString()->GetString8().GetString(),
+		    fileMiddle.GetString(),
+		    fileFormat.GetString() );
 
 		auto pLibrary = List::GetSingleton()->CreateLibraryFromAsset( matlibPath, a_pTRB );
 
@@ -124,14 +124,14 @@ void AMaterialLibraryManager::LoadLibrary( const Toshi::TPString8& a_rLibName, T
 	else
 	{
 		auto pRefCount = m_NumRefLibraries.Find( a_rLibName );
-		*pRefCount	   = *pRefCount + 1;
+		*pRefCount     = *pRefCount + 1;
 	}
 }
 
 void AMaterialLibraryManager::UnloadLibrary( const TPString8& a_rLibName, TBOOL a_bUnused )
 {
 	TPString8 matlibName = a_rLibName;
-	auto	  eLangId	 = ALocaleManager::GetSingleton()->GetLanguage();
+	auto      eLangId    = ALocaleManager::GetSingleton()->GetLanguage();
 
 	TBOOL bLocaliseAsset;
 
@@ -291,7 +291,7 @@ AMaterialLibrary* AMaterialLibraryManager::List::CreateLibraryFromAsset( const T
 	if ( a_pTRB )
 	{
 		auto iFilePathLength = TStringManager::String8Length( a_szFilePath );
-		auto iFileNamePos	 = iFilePathLength - 1;
+		auto iFileNamePos    = iFilePathLength - 1;
 
 		while ( a_szFilePath[ iFileNamePos ] != '\\' && a_szFilePath[ iFileNamePos ] != '/' )
 			iFileNamePos--;
@@ -302,7 +302,7 @@ AMaterialLibrary* AMaterialLibraryManager::List::CreateLibraryFromAsset( const T
 		auto  iLen = iFilePathLength - iFileNamePos - 4;
 		TStringManager::String8Copy( symbolName, a_szFilePath + iFileNamePos, iFilePathLength - iFileNamePos - 4 );
 
-		symbolName[ iLen ]	   = '_';
+		symbolName[ iLen ]     = '_';
 		symbolName[ iLen + 1 ] = '\0';
 		TStringManager::String8ToLowerCase( symbolName );
 		TStringManager::String8Copy( symbolName + iLen + 1, "TTL" );
@@ -342,7 +342,7 @@ AMaterialLibrary* AMaterialLibraryManager::List::CreateLibraryFromAsset( const T
 ATexture* AMaterialLibraryManager::List::FindTexture( const TCHAR* a_szTextureName, AMaterialLibrary** a_ppMaterialLibrary, TINT* a_pTextureIndex )
 {
 	TINT iIndex = -1;
-	auto it		= m_Libraries.Begin();
+	auto it     = m_Libraries.Begin();
 
 	while ( true )
 	{

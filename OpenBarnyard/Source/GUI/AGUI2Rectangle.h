@@ -6,7 +6,7 @@
 #include <Math/TVector4.h>
 
 class AGUI2Rectangle :
-	public AGUI2Element
+    public AGUI2Element
 {
 public:
 	AGUI2Rectangle();
@@ -29,7 +29,7 @@ public:
 	}
 
 protected:
-	AGUI2Material*	m_pMaterial;
+	AGUI2Material*  m_pMaterial;
 	Toshi::TVector4 m_UV1;
 	Toshi::TVector4 m_UV2;
 };

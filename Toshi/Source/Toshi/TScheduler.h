@@ -31,21 +31,21 @@ public:
 	void Update();
 
 	TFLOAT& GetDebugDeltaTime() { return m_DebugDeltaTime; }
-	TFLOAT	GetDebugDeltaTime() const { return m_DebugDeltaTime; }
+	TFLOAT  GetDebugDeltaTime() const { return m_DebugDeltaTime; }
 
 	TFLOAT& GetDebugDeltaTimeMult() { return m_DebugDeltaTimeMult; }
-	TFLOAT	GetDebugDeltaTimeMult() const { return m_DebugDeltaTimeMult; }
+	TFLOAT  GetDebugDeltaTimeMult() const { return m_DebugDeltaTimeMult; }
 
 	void SetDebugDeltaTimeMult( TBOOL useDebugDeltaTimeMult, TFLOAT debugDeltaTimeMult = 1.0f )
 	{
 		m_UseDebugDeltaTimeMult = useDebugDeltaTimeMult;
-		m_DebugDeltaTimeMult	= debugDeltaTimeMult;
+		m_DebugDeltaTimeMult    = debugDeltaTimeMult;
 	}
 
 	void SetDebugDeltaTime( TBOOL useDebugDeltaTime, TFLOAT debugDeltaTime = 0.0f )
 	{
 		m_UseDebugDeltaTime = useDebugDeltaTime;
-		m_DebugDeltaTime	= debugDeltaTime;
+		m_DebugDeltaTime    = debugDeltaTime;
 	}
 
 	void SetDebugPause( TBOOL pause )
@@ -154,15 +154,15 @@ private:
 	static TFLOAT s_MaxTimeDeltaAllowed;
 
 private:
-	TNodeTree<TTask>	  m_TaskTree;
-	TFLOAT				  m_DeltaTime;
-	TFLOAT				  m_TotalTime;
-	TFLOAT				  m_MaxDeltaTime;
-	TUINT				  m_uiNumFrames;
+	TNodeTree<TTask>      m_TaskTree;
+	TFLOAT                m_DeltaTime;
+	TFLOAT                m_TotalTime;
+	TFLOAT                m_MaxDeltaTime;
+	TUINT                 m_uiNumFrames;
 	t_DeltaTimeCalculator m_fnDeltaTimeCalculator;
-	TBOOL				  m_UseDebugDeltaTime;
-	TFLOAT				  m_DebugDeltaTime;
-	TFLOAT				  m_Unk1;
+	TBOOL                 m_UseDebugDeltaTime;
+	TFLOAT                m_DebugDeltaTime;
+	TFLOAT                m_Unk1;
 	// ...
 	TBOOL  m_Unk2;
 	TBOOL  m_UseDebugDeltaTimeMult;

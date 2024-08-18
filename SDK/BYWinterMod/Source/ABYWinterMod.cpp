@@ -93,7 +93,7 @@ public:
 	void OnRenderInterfaceReady( Toshi::TRenderD3DInterface* a_pRenderInterface ) override
 	{
 		TRenderInterface::SetSingletonExplicit(
-			THookedRenderD3DInterface::GetSingleton() );
+		    THookedRenderD3DInterface::GetSingleton() );
 	}
 
 	void OnAppRendererReady() override
@@ -107,8 +107,8 @@ public:
 			if ( TTRB::ERROR_OK == m_pAssetTRB->Load( TString8::VarArgs( "%s\\BYWinterMod\\BYWinterMod.trb", GetModsDirectory() ) ) )
 			{
 				m_pMatLib = AMaterialLibraryManager::List::GetSingleton()->CreateLibraryFromAsset(
-					"BYWinterMatlib.ttl",
-					m_pAssetTRB );
+				    "BYWinterMatlib.ttl",
+				    m_pAssetTRB );
 
 				AMaterialLibraryManager::GetSingleton()->CreateTextures( m_pMatLib );
 			}
@@ -153,8 +153,8 @@ public:
 	}
 
 private:
-	Toshi::TTRB*	  m_pAssetTRB = TNULL;
-	AMaterialLibrary* m_pMatLib	  = TNULL;
+	Toshi::TTRB*      m_pAssetTRB = TNULL;
+	AMaterialLibrary* m_pMatLib   = TNULL;
 };
 
 extern "C"

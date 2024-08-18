@@ -4,9 +4,9 @@
 #include <Render/TRenderInterface.h>
 
 AKeyframeLibStreamJob::AKeyframeLibStreamJob() :
-	TFileStreamJob( TNULL )
+    TFileStreamJob( TNULL )
 {
-	m_pLibrary	  = TNULL;
+	m_pLibrary    = TNULL;
 	m_szName[ 0 ] = '\0';
 }
 

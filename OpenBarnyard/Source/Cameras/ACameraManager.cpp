@@ -13,7 +13,7 @@ TOSHI_NAMESPACE_USING
 TDEFINE_CLASS( ACameraManager );
 
 ACameraManager::ACameraManager() :
-	m_vLookDirection( ACamera::sm_vInitialLookDirection )
+    m_vLookDirection( ACamera::sm_vInitialLookDirection )
 {
 	TTODO( "Create helpers" );
 
@@ -43,9 +43,9 @@ TBOOL ACameraManager::OnUpdate( TFLOAT a_fDeltaTime )
 	vLookDirection.Normalise();
 
 	auto& rvTranslation = m_pCurrentCamera->GetMatrix().GetTranslation();
-	rvTranslation.x		= -3.0f;
-	rvTranslation.y		= -18.0f + cos( s_fTime / 2.0f ) * 9.0f;
-	rvTranslation.z		= -16 + cos( s_fTime / 3.0f ) * 16.0f;
+	rvTranslation.x     = -3.0f;
+	rvTranslation.y     = -18.0f + cos( s_fTime / 2.0f ) * 9.0f;
+	rvTranslation.z     = -16 + cos( s_fTime / 3.0f ) * 16.0f;
 
 	m_pCurrentCamera->LookAtDirection( vLookDirection );
 

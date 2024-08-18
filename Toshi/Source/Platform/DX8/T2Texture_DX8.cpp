@@ -15,7 +15,7 @@ HRESULT T2Texture::Load()
 {
 	TASSERT( m_pData != TNULL && m_uiDataSize != 0 );
 
-	auto pRender	= TSTATICCAST( TRenderD3DInterface, TRenderInterface::GetSingleton() );
+	auto pRender    = TSTATICCAST( TRenderD3DInterface, TRenderInterface::GetSingleton() );
 	auto pD3DDevice = pRender->GetDirect3DDevice();
 
 	HRESULT hRes = D3DXGetImageInfoFromFileInMemory( m_pData, m_uiDataSize, &m_ImageInfo );
@@ -25,28 +25,28 @@ HRESULT T2Texture::Load()
 		if ( m_ImageInfo.ResourceType == D3DRTYPE_TEXTURE )
 		{
 			return D3DXCreateTextureFromFileInMemory(
-				pD3DDevice,
-				m_pData,
-				m_uiDataSize,
-				&m_pD3DTexture );
+			    pD3DDevice,
+			    m_pData,
+			    m_uiDataSize,
+			    &m_pD3DTexture );
 		}
 		else
 		{
 			if ( m_ImageInfo.ResourceType == D3DRTYPE_VOLUMETEXTURE )
 			{
 				return D3DXCreateVolumeTextureFromFileInMemory(
-					pD3DDevice,
-					m_pData,
-					m_uiDataSize,
-					&m_pD3DVolumeTexture );
+				    pD3DDevice,
+				    m_pData,
+				    m_uiDataSize,
+				    &m_pD3DVolumeTexture );
 			}
 			else if ( m_ImageInfo.ResourceType == D3DRTYPE_CUBETEXTURE )
 			{
 				return D3DXCreateCubeTextureFromFileInMemory(
-					pD3DDevice,
-					m_pData,
-					m_uiDataSize,
-					&m_pD3DCubeTexture );
+				    pD3DDevice,
+				    m_pData,
+				    m_uiDataSize,
+				    &m_pD3DCubeTexture );
 			}
 
 			return D3DERR_WRONGTEXTUREFORMAT;

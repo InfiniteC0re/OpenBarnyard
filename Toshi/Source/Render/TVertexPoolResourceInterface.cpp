@@ -13,11 +13,11 @@ TDEFINE_CLASS_NORUNTIME( TVertexPoolResourceInterface );
 
 TVertexPoolResourceInterface::TVertexPoolResourceInterface()
 {
-	m_pFactory		= TNULL;
-	m_uiFlags		= 0;
+	m_pFactory      = TNULL;
+	m_uiFlags       = 0;
 	m_uiMaxVertices = 0;
 	m_uiNumVertices = 0;
-	m_uiLockCount	= 0;
+	m_uiLockCount   = 0;
 }
 
 void TVertexPoolResourceInterface::OnDestroy()
@@ -28,16 +28,16 @@ void TVertexPoolResourceInterface::OnDestroy()
 
 TBOOL TVertexPoolResourceInterface::Create( TVertexFactoryResourceInterface* a_pFactory, TUINT16 a_uiMaxVertices, TUINT16 a_uiFlags )
 {
-	m_pFactory		= a_pFactory;
+	m_pFactory      = a_pFactory;
 	m_uiMaxVertices = a_uiMaxVertices;
-	m_uiFlags		= a_uiFlags;
+	m_uiFlags       = a_uiFlags;
 	return TResource::Create();
 }
 
 TVertexPoolResourceInterface::LockBuffer::LockBuffer()
 {
 	uiNumStreams   = 0;
-	uiOffset	   = 0;
+	uiOffset       = 0;
 	apStreams[ 0 ] = TNULL;
 	apStreams[ 1 ] = TNULL;
 	apStreams[ 2 ] = TNULL;

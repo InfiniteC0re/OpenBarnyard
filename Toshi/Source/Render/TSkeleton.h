@@ -46,9 +46,9 @@ public:
 	}
 
 private:
-	uint8_t	  m_eFlags;
-	uint8_t	  m_iKeySize;
-	TUINT16	  m_iNumKeys;
+	uint8_t   m_eFlags;
+	uint8_t   m_iKeySize;
+	TUINT16   m_iNumKeys;
 	uint16_t* m_pData;
 };
 
@@ -72,45 +72,45 @@ public:
 	TSkeletonSequenceBone* GetBones() { return m_pSeqBones; }
 	TSkeletonSequenceBone* GetBone( TINT a_iIndex ) { return &m_pSeqBones[ a_iIndex ]; }
 
-	TFLOAT		 GetDuration() const { return m_fDuration; }
+	TFLOAT       GetDuration() const { return m_fDuration; }
 	const TCHAR* GetName() const { return m_szName; }
-	TINT16		 GetUnk2() const { return m_iUnk2; }
+	TINT16       GetUnk2() const { return m_iUnk2; }
 
 private:
-	const TCHAR*		   m_szName;
-	Flag				   m_eFlags;
-	TINT16				   m_iUnk2;
-	LOOPMODE			   m_eLoopMode;
-	TFLOAT				   m_fDuration;
+	const TCHAR*           m_szName;
+	Flag                   m_eFlags;
+	TINT16                 m_iUnk2;
+	LOOPMODE               m_eLoopMode;
+	TFLOAT                 m_fDuration;
 	TSkeletonSequenceBone* m_pSeqBones;
-	TINT				   m_iUnk3;
+	TINT                   m_iUnk3;
 };
 
 class TSkeletonBone
 {
 public:
-	TQuaternion&	   GetRotation() { return m_Rotation; }
+	TQuaternion&       GetRotation() { return m_Rotation; }
 	const TQuaternion& GetRotation() const { return m_Rotation; }
 
-	TMatrix44&		 GetTransform() { return m_Transform; }
+	TMatrix44&       GetTransform() { return m_Transform; }
 	const TMatrix44& GetTransform() const { return m_Transform; }
 
-	TMatrix44&		GetTransformInv() { return m_TransformInv; }
+	TMatrix44&      GetTransformInv() { return m_TransformInv; }
 	const TVector3& GetPosition() const { return m_Position; }
 
-	TUINT8		 GetNameLength() const { return m_iNameLength; }
+	TUINT8       GetNameLength() const { return m_iNameLength; }
 	const TCHAR* GetName() const { return m_szName; }
 
 	TINT GetParentBone() const { return m_iParentBone; }
 
 public:
 	TQuaternion m_Rotation;
-	TMatrix44	m_Transform;
-	TMatrix44	m_TransformInv;
-	TUINT8		m_iNameLength;
-	TCHAR		m_szName[ 31 ];
-	TINT16		m_iParentBone;
-	TVector3	m_Position;
+	TMatrix44   m_Transform;
+	TMatrix44   m_TransformInv;
+	TUINT8      m_iNameLength;
+	TCHAR       m_szName[ 31 ];
+	TINT16      m_iParentBone;
+	TVector3    m_Position;
 };
 
 class TSkeleton
@@ -137,20 +137,20 @@ public:
 	class TSkeletonInstance* CreateInstance( TBOOL a_bSetBasePose );
 
 	t_fnQuatLerp GetQInterpFn() const { return m_fnQuatLerp; }
-	void		 SetQInterpFn( QUATINTERP a_eQuatInterp );
+	void         SetQInterpFn( QUATINTERP a_eQuatInterp );
 
 	TSkeletonBone* GetBone( const TCHAR* a_cBoneName, TUINT32 a_iLength ) { return GetBone( GetBoneID( a_cBoneName, a_iLength ) ); }
-	TINT		   GetBoneID( const TCHAR* a_cBoneName, TUINT32 a_iLength );
+	TINT           GetBoneID( const TCHAR* a_cBoneName, TUINT32 a_iLength );
 
 	TKeyframeLibraryInstance& GetKeyLibraryInstance() { return m_KeyLibraryInstance; }
-	TINT					  GetAnimationMaxCount() { return m_iAnimationMaxCount; }
-	TSkeletonBone*			  GetBone( TINT a_iBone ) { return &m_pBones[ a_iBone ]; }
-	TSkeletonBone*			  GetBones() { return m_pBones; }
-	TINT					  GetInstanceCount() const { return m_iInstanceCount; }
-	TINT					  GetBoneCount() const { return m_iBoneCount; }
-	TINT					  GetAutoBoneCount() const { return m_iBoneCount - m_iManualBoneCount; }
+	TINT                      GetAnimationMaxCount() { return m_iAnimationMaxCount; }
+	TSkeletonBone*            GetBone( TINT a_iBone ) { return &m_pBones[ a_iBone ]; }
+	TSkeletonBone*            GetBones() { return m_pBones; }
+	TINT                      GetInstanceCount() const { return m_iInstanceCount; }
+	TINT                      GetBoneCount() const { return m_iBoneCount; }
+	TINT                      GetAutoBoneCount() const { return m_iBoneCount - m_iManualBoneCount; }
 
-	TINT			   GetSequenceID( const TCHAR* a_sSequenceName, TUINT32 a_iLength );
+	TINT               GetSequenceID( const TCHAR* a_sSequenceName, TUINT32 a_iLength );
 	TSkeletonSequence* GetSequences() { return m_SkeletonSequences; }
 	TSkeletonSequence* GetSequence( TUINT32 a_iSequence ) { return &m_SkeletonSequences[ a_iSequence ]; }
 	TSkeletonSequence* GetSequence( const TCHAR* a_sSequenceName, TUINT32 a_iLength ) { return GetSequence( GetSequenceID( a_sSequenceName, a_iLength ) ); }
@@ -160,22 +160,22 @@ public:
 	TSkeleton& operator=( const TSkeleton& a_rSkeleton ) { TIMPLEMENT(); }
 
 public:
-	TINT16					 m_iBoneCount;		   // 0x00
-	TINT16					 m_iManualBoneCount;   // 0x02
-	TINT16					 m_iSequenceCount;	   // 0x04
-	TINT16					 m_iAnimationMaxCount; // 0x06
-	TINT16					 m_iInstanceCount;	   // 0x08
+	TINT16                   m_iBoneCount;         // 0x00
+	TINT16                   m_iManualBoneCount;   // 0x02
+	TINT16                   m_iSequenceCount;     // 0x04
+	TINT16                   m_iAnimationMaxCount; // 0x06
+	TINT16                   m_iInstanceCount;     // 0x08
 	TKeyframeLibraryInstance m_KeyLibraryInstance; // 0x0C
-	TSkeletonBone*			 m_pBones;			   // 0x34
-	TSkeletonSequence*		 m_SkeletonSequences;  // 0x38
-	t_fnQuatLerp			 m_fnQuatLerp;		   // 0x3C
+	TSkeletonBone*           m_pBones;             // 0x34
+	TSkeletonSequence*       m_SkeletonSequences;  // 0x38
+	t_fnQuatLerp             m_fnQuatLerp;         // 0x3C
 };
 
 struct TSkeletonInstanceBone
 {
 	TQuaternion m_Rotation;
-	TVector3	m_Position;
-	TMatrix44	m_Transform;
+	TVector3    m_Position;
+	TMatrix44   m_Transform;
 };
 
 class TSkeletonInstance
@@ -184,7 +184,7 @@ public:
 	struct BoneCache
 	{
 		TQuaternion Rotation;
-		TVector3	Position;
+		TVector3    Position;
 	};
 
 	friend TSkeleton;
@@ -192,8 +192,8 @@ public:
 public:
 	TSkeletonInstance() = default;
 
-	void	   UpdateTime( TFLOAT a_fDeltaTime );
-	void	   UpdateState( TBOOL a_bForceUpdate );
+	void       UpdateTime( TFLOAT a_fDeltaTime );
+	void       UpdateState( TBOOL a_bForceUpdate );
 	TMatrix44* GetBoneTransformCurrent( TINT a_iBone, TMatrix44& a_rMatrix );
 
 	void RemoveAnimation( TAnimation* a_pAnimation, TFLOAT a_fValue );
@@ -202,7 +202,7 @@ public:
 
 	void Delete();
 
-	TSkeleton*					 GetSkeleton() { return m_pSkeleton; }
+	TSkeleton*                   GetSkeleton() { return m_pSkeleton; }
 	const TSkeletonInstanceBone* GetBones() { return m_pBones; }
 	const TSkeletonInstanceBone& GetBone( TINT a_uiIndex )
 	{
@@ -215,19 +215,19 @@ public:
 	inline static BoneCache g_aBonesCaches[ TANIMATION_MAXBONES ];
 
 private:
-	TINT				   m_iFlags;
-	TUINT32				   m_iSize;
-	TSkeleton*			   m_pSkeleton;
-	TINT16				   m_iBaseAnimationCount;
-	TINT16				   m_iOverlayAnimationCount;
-	TQList<TAnimation>	   m_BaseAnimations;
-	TQList<TAnimation>	   m_OverlayAnimations;
-	TQList<TAnimation>	   m_FreeAnimations;
+	TINT                   m_iFlags;
+	TUINT32                m_iSize;
+	TSkeleton*             m_pSkeleton;
+	TINT16                 m_iBaseAnimationCount;
+	TINT16                 m_iOverlayAnimationCount;
+	TQList<TAnimation>     m_BaseAnimations;
+	TQList<TAnimation>     m_OverlayAnimations;
+	TQList<TAnimation>     m_FreeAnimations;
 	TSkeletonInstanceBone* m_pBones;
-	TAnimation*			   m_pAnimations;
-	TFLOAT				   m_fTotalWeight;
-	TINT				   m_iLastUpdateTimeFrame;
-	TINT				   m_iLastUpdateStateFrame;
+	TAnimation*            m_pAnimations;
+	TFLOAT                 m_fTotalWeight;
+	TINT                   m_iLastUpdateTimeFrame;
+	TINT                   m_iLastUpdateStateFrame;
 };
 
 TOSHI_NAMESPACE_END

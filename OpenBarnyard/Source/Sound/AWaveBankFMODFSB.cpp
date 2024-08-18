@@ -17,7 +17,7 @@ TOSHI_NAMESPACE_USING
 TBOOL g_bIsLoadingFSBFile = TFALSE;
 
 AWaveBankFMODFSB::AWaveBankFMODFSB( const Toshi::TPString8& a_strBank, const Toshi::TPString8& a_strPath ) :
-	AWaveBank( a_strBank, a_strPath, TFALSE )
+    AWaveBank( a_strBank, a_strPath, TFALSE )
 {
 }
 
@@ -41,7 +41,7 @@ AWaveBank::LOADRESULT AWaveBankFMODFSB::Load( LOADFLAGS a_uiFlags, TINT a_iBuffe
 	if ( a_uiFlags & LOADFLAGS_LOCALISE )
 	{
 		ALocaleManager::Lang iLangId = ALocaleManager::Lang_UNKNOWN;
-		ALocaleManager*		 pLocale = ALocaleManager::Interface();
+		ALocaleManager*      pLocale = ALocaleManager::Interface();
 
 		if ( pLocale )
 			iLangId = pLocale->GetLanguage();
@@ -59,7 +59,7 @@ AWaveBank::LOADRESULT AWaveBankFMODFSB::Load( LOADFLAGS a_uiFlags, TINT a_iBuffe
 	TFileManager* pFileManager = TFileManager::GetSingleton();
 
 	TNativeFileInfo oFileInfo;
-	TBOOL			bGotFileInfo = pFileManager->GetFileInfo( strFileName, oFileInfo );
+	TBOOL           bGotFileInfo = pFileManager->GetFileInfo( strFileName, oFileInfo );
 
 	TASSERT( TTRUE == bGotFileInfo );
 
@@ -96,7 +96,7 @@ AWaveBank::LOADRESULT AWaveBankFMODFSB::Load( LOADFLAGS a_uiFlags, TINT a_iBuffe
 				AWave* pWave = &m_pWaves[ i ];
 				pWave->uiFlags |= ( 4 | 8 );
 				pWave->pSampleHandle = pSample;
-				pWave->iIndex		 = i;
+				pWave->iIndex        = i;
 
 				TINT iDeffreq;
 				FSOUND_Sample_GetDefaults( pSample, &iDeffreq, TNULL, TNULL, TNULL );
@@ -120,9 +120,9 @@ AWaveBank::UNLOADRESULT AWaveBankFMODFSB::Unload()
 		// Reset the waves
 		for ( TINT i = 0; i < m_iNumWaves; i++ )
 		{
-			AWave* pWave		 = &m_pWaves[ i ];
+			AWave* pWave         = &m_pWaves[ i ];
 			pWave->pSampleHandle = TNULL;
-			pWave->iIndex		 = -1;
+			pWave->iIndex        = -1;
 			pWave->uiFlags &= ~( 4 | 8 );
 		}
 

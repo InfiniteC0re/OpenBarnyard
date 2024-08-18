@@ -25,13 +25,13 @@ public:
 	TINT GetPoint2Y() const;
 
 private:
-	const TCHAR*	m_szName;
-	const TCHAR*	m_szTextureFile;
-	TINT			m_iPoint1X;
-	TINT			m_iPoint1Y;
-	TINT			m_iPoint2X;
-	TINT			m_iPoint2Y;
-	AGUI2Material*	m_pMaterial;
+	const TCHAR*    m_szName;
+	const TCHAR*    m_szTextureFile;
+	TINT            m_iPoint1X;
+	TINT            m_iPoint1Y;
+	TINT            m_iPoint2X;
+	TINT            m_iPoint2Y;
+	AGUI2Material*  m_pMaterial;
 	Toshi::TVector4 m_UV1;
 	Toshi::TVector4 m_UV2;
 };

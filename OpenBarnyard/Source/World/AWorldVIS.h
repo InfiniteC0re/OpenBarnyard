@@ -10,7 +10,7 @@ public:
 	{
 		CellSphereTreeBranchNode* pNextNode;
 		CellSphereTreeBranchNode* pPrevNode;
-		TINT					  iInitialPlaneCount;
+		TINT                      iInitialPlaneCount;
 	};
 
 	using t_RenderCallback = void ( * )( CellMeshSphere* a_pMeshSphere, RenderData* a_pRenderData );
@@ -31,15 +31,15 @@ public:
 
 private:
 	inline static StackValue* s_pStack;
-	static constexpr TUINT	  s_iStackSize = 100;
+	static constexpr TUINT    s_iStackSize = 100;
 
 public:
-	World*			 m_pWorld;
-	CellSettings	 m_aCellSettings[ MAX_VISIBLE_CELLS ];
-	CellNode*		 m_pCellNodes;
-	TINT			 m_iNumBuiltCells;
-	TINT			 m_iNumCellSettings;
-	TINT			 Unknown;
-	Toshi::TVector3	 m_ViewModelPos;
+	World*           m_pWorld;
+	CellSettings     m_aCellSettings[ MAX_VISIBLE_CELLS ];
+	CellNode*        m_pCellNodes;
+	TINT             m_iNumBuiltCells;
+	TINT             m_iNumCellSettings;
+	TINT             Unknown;
+	Toshi::TVector3  m_ViewModelPos;
 	t_RenderCallback m_pfnRenderCallback;
 };

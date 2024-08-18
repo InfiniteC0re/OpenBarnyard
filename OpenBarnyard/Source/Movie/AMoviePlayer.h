@@ -13,8 +13,8 @@ public:
 	virtual void  OnDestroy() override;
 
 	virtual TBOOL PlayMovie( const TCHAR* a_szFileName, TUINT32 a_Unk ) = 0;
-	virtual void  StopMovie()											= 0;
-	virtual void  PauseMovie( TBOOL a_bPause )							= 0;
+	virtual void  StopMovie()                                           = 0;
+	virtual void  PauseMovie( TBOOL a_bPause )                          = 0;
 	virtual void  Mute( TBOOL a_bMute = TTRUE ) { m_bIsMuted = a_bMute; }
 	virtual TBOOL IsMoviePlaying() = 0;
 	virtual TBOOL IsMoviePaused()  = 0;
@@ -27,8 +27,8 @@ public:
 
 private:
 	Toshi::TEmitter<AMoviePlayer, TBOOL> m_SomeEmitter;
-	TBOOL								 m_bCreated;
-	TBOOL								 m_bIsFullscreen;
-	TBOOL								 m_bIsMuted;
-	TBOOL								 m_bIsHidden;
+	TBOOL                                m_bCreated;
+	TBOOL                                m_bIsFullscreen;
+	TBOOL                                m_bIsMuted;
+	TBOOL                                m_bIsHidden;
 };

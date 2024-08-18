@@ -17,7 +17,7 @@ TDLL::TDLL()
 TDLL::TDLL( const TDLL& other )
 {
 	m_sFileName = other.m_sFileName;
-	m_pDLL		= other.m_pDLL;
+	m_pDLL      = other.m_pDLL;
 }
 
 TDLL::~TDLL()
@@ -29,7 +29,7 @@ TBOOL TDLL::Load( const TString8& a_sFileName )
 {
 	Unload();
 	m_sFileName = a_sFileName;
-	m_pDLL		= LoadLibraryA( m_sFileName );
+	m_pDLL      = LoadLibraryA( m_sFileName );
 	TASSERT( m_pDLL != TNULL );
 
 	return m_pDLL != TNULL;
@@ -41,7 +41,7 @@ void TDLL::Unload()
 	{
 		FreeLibrary( m_pDLL );
 		m_sFileName = "";
-		m_pDLL		= NULL;
+		m_pDLL      = NULL;
 	}
 }
 

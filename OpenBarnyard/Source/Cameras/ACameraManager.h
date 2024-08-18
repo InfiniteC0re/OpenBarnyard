@@ -4,8 +4,8 @@
 #include <Toshi/TTask.h>
 
 class ACameraManager :
-	public Toshi::TTask,
-	public Toshi::TSingleton<ACameraManager>
+    public Toshi::TTask,
+    public Toshi::TSingleton<ACameraManager>
 {
 public:
 	TDECLARE_CLASS( ACameraManager, Toshi::TTask );
@@ -41,8 +41,8 @@ public:
 	ACameraHelper* m_apProjectileHelpers[ MAX_CAMERAS ];
 	ACameraHelper* m_apGTAHelpers[ MAX_CAMERAS ];
 	ACameraHelper* m_apCarChaseHelpers[ MAX_CAMERAS ];
-	ACamera*	   m_pCurrentCamera;
-	ACamera*	   m_apCameras[ MAX_CAMERAS ];
+	ACamera*       m_pCurrentCamera;
+	ACamera*       m_apCameras[ MAX_CAMERAS ];
 	// ...
 	void* m_apSomeArray[ MAX_CAMERAS ];
 	// ...

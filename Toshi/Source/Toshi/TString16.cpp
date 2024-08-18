@@ -27,8 +27,8 @@ TString16::TString16( TString16&& src ) noexcept
 {
 	TString16::m_pAllocator = src.m_pAllocator;
 	TString16::m_iExcessLen = src.m_iExcessLen;
-	TString16::m_iStrLen	= src.m_iStrLen;
-	TString16::m_pBuffer	= src.m_pBuffer;
+	TString16::m_iStrLen    = src.m_iStrLen;
+	TString16::m_pBuffer    = src.m_pBuffer;
 	src.Reset();
 	src.m_pAllocator = GetAllocator();
 }
@@ -95,7 +95,7 @@ TINT TString16::Find( const TWCHAR* substr, TINT pos ) const
 
 TBOOL TString16::AllocBuffer( TINT a_iLength, TBOOL freeMemory )
 {
-	TBOOL hasChanged	= TFALSE;
+	TBOOL hasChanged    = TFALSE;
 	TINT  currentLength = Length();
 
 	TASSERT( a_iLength >= 0, "Length can't be less than 0" );
@@ -107,7 +107,7 @@ TBOOL TString16::AllocBuffer( TINT a_iLength, TBOOL freeMemory )
 		{
 			if ( freeMemory ) m_pAllocator->Free( m_pBuffer );
 
-			m_pBuffer	 = NullWString;
+			m_pBuffer    = NullWString;
 			m_iExcessLen = 0;
 
 			hasChanged = TTRUE;
@@ -123,7 +123,7 @@ TBOOL TString16::AllocBuffer( TINT a_iLength, TBOOL freeMemory )
 					m_pAllocator->Free( m_pBuffer );
 				}
 
-				m_pBuffer	 = (TWCHAR*)m_pAllocator->Malloc( ( a_iLength + 1 ) * sizeof( TWCHAR ) );
+				m_pBuffer    = (TWCHAR*)m_pAllocator->Malloc( ( a_iLength + 1 ) * sizeof( TWCHAR ) );
 				m_iExcessLen = 0;
 
 				hasChanged = TTRUE;
@@ -131,7 +131,7 @@ TBOOL TString16::AllocBuffer( TINT a_iLength, TBOOL freeMemory )
 			else
 			{
 				m_iExcessLen = newExcessLen;
-				hasChanged	 = TFALSE;
+				hasChanged   = TFALSE;
 			}
 		}
 
@@ -144,9 +144,9 @@ TBOOL TString16::AllocBuffer( TINT a_iLength, TBOOL freeMemory )
 
 TString16 TString16::Format( const TWCHAR* a_pcFormat, ... )
 {
-	TWCHAR	  buffer[ 0x400 ];
+	TWCHAR    buffer[ 0x400 ];
 	TString16 buffer2;
-	va_list	  args;
+	va_list   args;
 
 	va_start( args, a_pcFormat );
 
@@ -259,7 +259,7 @@ TString16& TString16::Concat( const TWCHAR* str, TINT size )
 		size = len;
 	}
 
-	TINT	oldLength = m_iStrLen;
+	TINT    oldLength = m_iStrLen;
 	TWCHAR* oldString = m_pBuffer;
 
 	TBOOL allocated = AllocBuffer( m_iStrLen + size, TFALSE );
@@ -295,9 +295,9 @@ TINT TString16::Compare( const TWCHAR* a_pcString, TINT param_2 ) const
 		return wcsncmp( GetString(), a_pcString, param_2 );
 	}
 
-	const TWCHAR* str	= GetString();
-	TWCHAR		  bVar1 = 0;
-	TWCHAR		  bVar4 = 0;
+	const TWCHAR* str   = GetString();
+	TWCHAR        bVar1 = 0;
+	TWCHAR        bVar4 = 0;
 	while ( TTRUE )
 	{
 		bVar1 = *str;

@@ -11,13 +11,13 @@ TOSHI_NAMESPACE_START
 
 TSkeleton::TSkeleton()
 {
-	m_iBoneCount		 = 0;
-	m_iManualBoneCount	 = 0;
-	m_iSequenceCount	 = 0;
+	m_iBoneCount         = 0;
+	m_iManualBoneCount   = 0;
+	m_iSequenceCount     = 0;
 	m_iAnimationMaxCount = 0;
-	m_iInstanceCount	 = 0;
-	m_pBones			 = TNULL;
-	m_SkeletonSequences	 = TNULL;
+	m_iInstanceCount     = 0;
+	m_pBones             = TNULL;
+	m_SkeletonSequences  = TNULL;
 }
 
 void TSkeleton::Delete()
@@ -45,30 +45,30 @@ TSkeletonInstance* TSkeleton::CreateInstance( TBOOL a_bSetBasePose )
 		SetQInterpFn( TREINTERPRETCAST( QUATINTERP, m_fnQuatLerp ) );
 	}
 
-	auto			   iAutoBoneCount = GetAutoBoneCount();
-	TSIZE			   iAnimationSize = iAutoBoneCount * sizeof( TAnimationBone ) + TAlignNumDown( sizeof( TAnimation ) );
-	TSIZE			   iInstanceSize  = sizeof( TSkeletonInstance ) + sizeof( TSkeletonInstanceBone ) * iAutoBoneCount + iAnimationSize * GetAnimationMaxCount();
+	auto               iAutoBoneCount = GetAutoBoneCount();
+	TSIZE              iAnimationSize = iAutoBoneCount * sizeof( TAnimationBone ) + TAlignNumDown( sizeof( TAnimation ) );
+	TSIZE              iInstanceSize  = sizeof( TSkeletonInstance ) + sizeof( TSkeletonInstanceBone ) * iAutoBoneCount + iAnimationSize * GetAnimationMaxCount();
 	TSkeletonInstance* pInstance;
 
 	pInstance = TSTATICCAST( TSkeletonInstance, TMalloc( iInstanceSize ) );
 
 	new ( pInstance ) TSkeletonInstance();
-	pInstance->m_pSkeleton				= this;
-	pInstance->m_iSize					= iInstanceSize;
-	pInstance->m_iBaseAnimationCount	= 0;
+	pInstance->m_pSkeleton              = this;
+	pInstance->m_iSize                  = iInstanceSize;
+	pInstance->m_iBaseAnimationCount    = 0;
 	pInstance->m_iOverlayAnimationCount = 0;
-	pInstance->m_iFlags					= 0;
-	pInstance->m_pBones					= TREINTERPRETCAST( TSkeletonInstanceBone*, this + 1 );
-	pInstance->m_pAnimations			= TREINTERPRETCAST( TAnimation*, this + 1 ) + iAutoBoneCount;
-	pInstance->m_fTotalWeight			= 0.0f;
-	pInstance->m_iLastUpdateStateFrame	= 0;
-	pInstance->m_iLastUpdateTimeFrame	= 0;
+	pInstance->m_iFlags                 = 0;
+	pInstance->m_pBones                 = TREINTERPRETCAST( TSkeletonInstanceBone*, this + 1 );
+	pInstance->m_pAnimations            = TREINTERPRETCAST( TAnimation*, this + 1 ) + iAutoBoneCount;
+	pInstance->m_fTotalWeight           = 0.0f;
+	pInstance->m_iLastUpdateStateFrame  = 0;
+	pInstance->m_iLastUpdateTimeFrame   = 0;
 
 	for ( TINT i = 0; i < GetAnimationMaxCount(); i++ )
 	{
 		TAnimation* pAnimation = TREINTERPRETCAST(
-			TAnimation*,
-			TREINTERPRETCAST( uintptr_t, pInstance->m_pAnimations ) + i * iAnimationSize );
+		    TAnimation*,
+		    TREINTERPRETCAST( uintptr_t, pInstance->m_pAnimations ) + i * iAnimationSize );
 
 		new ( pAnimation ) TAnimation();
 		pInstance->m_FreeAnimations.PushFront( pAnimation );
@@ -120,7 +120,7 @@ void TSkeletonInstance::UpdateTime( TFLOAT a_fDeltaTime )
 	if ( !m_BaseAnimations.IsEmpty() || ( !m_OverlayAnimations.IsEmpty() && m_iLastUpdateTimeFrame != g_oSystemManager.GetFrameCount() ) )
 	{
 		m_iLastUpdateTimeFrame = g_oSystemManager.GetFrameCount();
-		m_fTotalWeight		   = 0.0f;
+		m_fTotalWeight         = 0.0f;
 
 		// Update base animations
 		T2_FOREACH( m_BaseAnimations, pAnim )
@@ -149,12 +149,12 @@ void TSkeletonInstance::UpdateTime( TFLOAT a_fDeltaTime )
 void TSkeletonInstance::UpdateState( TBOOL a_bForceUpdate )
 {
 	if ( ( a_bForceUpdate || m_iLastUpdateStateFrame != g_oSystemManager.GetFrameCount() ) &&
-		 m_pSkeleton->GetKeyLibraryInstance().GetLibrary() != TNULL )
+	     m_pSkeleton->GetKeyLibraryInstance().GetLibrary() != TNULL )
 	{
 		m_iLastUpdateStateFrame = g_oSystemManager.GetFrameCount();
 
-		const auto QInterpFn		   = m_pSkeleton->GetQInterpFn();
-		TFLOAT	   fOneOverTotalWeight = 1.0f;
+		const auto QInterpFn           = m_pSkeleton->GetQInterpFn();
+		TFLOAT     fOneOverTotalWeight = 1.0f;
 
 		if ( 1.0f < m_fTotalWeight )
 			fOneOverTotalWeight = 1.0f / m_fTotalWeight;
@@ -166,7 +166,7 @@ void TSkeletonInstance::UpdateState( TBOOL a_bForceUpdate )
 			TASSERT( i < TANIMATION_MAXBONES );
 
 			auto& rBoneCache = g_aBonesCaches[ i ];
-			auto  pBone		 = m_pSkeleton->GetBone( i );
+			auto  pBone      = m_pSkeleton->GetBone( i );
 
 			if ( m_BaseAnimations.IsEmpty() )
 			{
@@ -176,40 +176,40 @@ void TSkeletonInstance::UpdateState( TBOOL a_bForceUpdate )
 			else
 			{
 				TFLOAT fWeightTotalRatio = 0.0f;
-				TBOOL  bBoneHasState	 = TFALSE;
+				TBOOL  bBoneHasState     = TFALSE;
 
 				T2_FOREACH( m_BaseAnimations, it )
 				{
-					auto pSeq	  = m_pSkeleton->GetSequence( it->GetSequence() );
+					auto pSeq     = m_pSkeleton->GetSequence( it->GetSequence() );
 					auto pSeqBone = pSeq->GetBone( i );
 
 					TINT iCurrentKeyframePos = TINT( ( it->GetSeqTime() / pSeq->GetDuration() ) * 65535 );
 
 					TUINT16 iLerpFromIndex;
 					TUINT16 iLerpToIndex;
-					TFLOAT	fLerpProgress = pSeqBone->GetKeyPair( iCurrentKeyframePos, *it->GetBone( i ), iLerpFromIndex, iLerpToIndex );
+					TFLOAT  fLerpProgress = pSeqBone->GetKeyPair( iCurrentKeyframePos, *it->GetBone( i ), iLerpFromIndex, iLerpToIndex );
 
 					TFLOAT fWeightRatio = it->GetWeight() * fOneOverTotalWeight;
 
 					if ( fWeightRatio > 0.0f && pSeqBone->GetKeyCount() != 0 )
 					{
 						auto pFromKey = pSeqBone->GetKey( iLerpFromIndex );
-						auto pToKey	  = pSeqBone->GetKey( iLerpToIndex );
+						auto pToKey   = pSeqBone->GetKey( iLerpToIndex );
 
 						auto& rKeyLibrary = m_pSkeleton->GetKeyLibraryInstance();
-						auto  pFromQuat	  = rKeyLibrary.GetQ( pFromKey[ 1 ] );
-						auto  pToQuat	  = rKeyLibrary.GetQ( pToKey[ 1 ] );
+						auto  pFromQuat   = rKeyLibrary.GetQ( pFromKey[ 1 ] );
+						auto  pToQuat     = rKeyLibrary.GetQ( pToKey[ 1 ] );
 
 						if ( it == m_BaseAnimations.Head() )
 						{
-							bBoneHasState	  = TTRUE;
+							bBoneHasState     = TTRUE;
 							fWeightTotalRatio = fWeightRatio;
 							QInterpFn( rBoneCache.Rotation, *pFromQuat, *pToQuat, fLerpProgress );
 
 							if ( pSeqBone->IsTranslateAnimated() )
 							{
 								auto pFromTranslation = rKeyLibrary.GetT( pFromKey[ 2 ] );
-								auto pToTranslation	  = rKeyLibrary.GetT( pToKey[ 2 ] );
+								auto pToTranslation   = rKeyLibrary.GetT( pToKey[ 2 ] );
 
 								rBoneCache.Position.Lerp( *pFromTranslation, *pToTranslation, fLerpProgress );
 							}
@@ -220,7 +220,7 @@ void TSkeletonInstance::UpdateState( TBOOL a_bForceUpdate )
 						}
 						else
 						{
-							TVector4	position;
+							TVector4    position;
 							TQuaternion rotation;
 
 							QInterpFn( rotation, *pFromQuat, *pToQuat, fLerpProgress );
@@ -228,7 +228,7 @@ void TSkeletonInstance::UpdateState( TBOOL a_bForceUpdate )
 							if ( pSeqBone->IsTranslateAnimated() )
 							{
 								auto pFromTranslation = rKeyLibrary.GetT( pFromKey[ 2 ] );
-								auto pToTranslation	  = rKeyLibrary.GetT( pToKey[ 2 ] );
+								auto pToTranslation   = rKeyLibrary.GetT( pToKey[ 2 ] );
 
 								position.Lerp3( *pFromTranslation, *pToTranslation, fLerpProgress );
 							}
@@ -253,7 +253,7 @@ void TSkeletonInstance::UpdateState( TBOOL a_bForceUpdate )
 			{
 				if ( it->GetWeight() != 0 )
 				{
-					auto pSeq	  = m_pSkeleton->GetSequence( it->GetSequence() );
+					auto pSeq     = m_pSkeleton->GetSequence( it->GetSequence() );
 					auto pSeqBone = pSeq->GetBone( i );
 
 					if ( !pSeqBone->Is2() && pSeqBone->GetKeyCount() != 0 )
@@ -262,16 +262,16 @@ void TSkeletonInstance::UpdateState( TBOOL a_bForceUpdate )
 
 						TUINT16 iLerpFromIndex;
 						TUINT16 iLerpToIndex;
-						TFLOAT	fLerpProgress = pSeqBone->GetKeyPair( iCurrentKeyframePos, *it->GetBone( i ), iLerpFromIndex, iLerpToIndex );
+						TFLOAT  fLerpProgress = pSeqBone->GetKeyPair( iCurrentKeyframePos, *it->GetBone( i ), iLerpFromIndex, iLerpToIndex );
 
 						auto pFromKey = pSeqBone->GetKey( iLerpFromIndex );
-						auto pToKey	  = pSeqBone->GetKey( iLerpToIndex );
+						auto pToKey   = pSeqBone->GetKey( iLerpToIndex );
 
 						auto& rKeyLibrary = m_pSkeleton->GetKeyLibraryInstance();
-						auto  pFromQuat	  = rKeyLibrary.GetQ( pFromKey[ 1 ] );
-						auto  pToQuat	  = rKeyLibrary.GetQ( pToKey[ 1 ] );
+						auto  pFromQuat   = rKeyLibrary.GetQ( pFromKey[ 1 ] );
+						auto  pToQuat     = rKeyLibrary.GetQ( pToKey[ 1 ] );
 
-						TVector4	position;
+						TVector4    position;
 						TQuaternion rotation;
 
 						QInterpFn( rotation, rBoneCache.Rotation, *pToQuat, fLerpProgress );
@@ -281,7 +281,7 @@ void TSkeletonInstance::UpdateState( TBOOL a_bForceUpdate )
 						if ( pSeqBone->IsTranslateAnimated() )
 						{
 							auto pFromTranslation = rKeyLibrary.GetT( pFromKey[ 2 ] );
-							auto pToTranslation	  = rKeyLibrary.GetT( pToKey[ 2 ] );
+							auto pToTranslation   = rKeyLibrary.GetT( pToKey[ 2 ] );
 
 							position.Lerp3( *pFromTranslation, *pToTranslation, fLerpProgress );
 							pLerpToVec = &position.AsVector3();
@@ -300,9 +300,9 @@ void TSkeletonInstance::UpdateState( TBOOL a_bForceUpdate )
 		for ( TINT i = 0; i < m_pSkeleton->GetAutoBoneCount(); i++ )
 		{
 			auto& rBoneCache = g_aBonesCaches[ i ];
-			auto& rMatrix	 = g_aForwardMatrices[ i ];
+			auto& rMatrix    = g_aForwardMatrices[ i ];
 
-			auto pBone		 = m_pSkeleton->GetBone( i );
+			auto pBone       = m_pSkeleton->GetBone( i );
 			auto iParentBone = pBone->GetParentBone();
 
 			if ( iParentBone == -1 )
@@ -369,7 +369,7 @@ TFLOAT TSkeletonSequenceBone::GetKeyPair( TINT a_iCurrentAnimTime, TUINT16& a_rC
 		// Animation haven't reached it's first frame
 		a_rCurrentKeyIndex = 0;
 		a_rLerpFromIndex   = 0;
-		a_rLerpToIndex	   = 0;
+		a_rLerpToIndex     = 0;
 		return 0.0f;
 	}
 
@@ -381,7 +381,7 @@ TFLOAT TSkeletonSequenceBone::GetKeyPair( TINT a_iCurrentAnimTime, TUINT16& a_rC
 		// Animation is over
 		a_rCurrentKeyIndex = iLastKeyIndex;
 		a_rLerpFromIndex   = iLastKeyIndex;
-		a_rLerpToIndex	   = iLastKeyIndex;
+		a_rLerpToIndex     = iLastKeyIndex;
 		return 0.0f;
 	}
 
@@ -390,18 +390,18 @@ TFLOAT TSkeletonSequenceBone::GetKeyPair( TINT a_iCurrentAnimTime, TUINT16& a_rC
 	if ( pCurrentKeyTime < a_iCurrentAnimTime )
 	{
 		// Current key is currently lerping
-		auto iNextIndex	  = a_rCurrentKeyIndex + 1;
+		auto iNextIndex   = a_rCurrentKeyIndex + 1;
 		auto iNextKeyTime = *GetKey( iNextIndex );
 
 		while ( iNextKeyTime <= a_iCurrentAnimTime )
 		{
 			// Skip keys that are already over
 			a_rCurrentKeyIndex = iNextIndex++;
-			iNextKeyTime	   = *GetKey( iNextIndex );
+			iNextKeyTime       = *GetKey( iNextIndex );
 		}
 
 		a_rLerpFromIndex = a_rCurrentKeyIndex;
-		a_rLerpToIndex	 = iNextIndex;
+		a_rLerpToIndex   = iNextIndex;
 	}
 	else
 	{
@@ -409,22 +409,22 @@ TFLOAT TSkeletonSequenceBone::GetKeyPair( TINT a_iCurrentAnimTime, TUINT16& a_rC
 		{
 			// Current time is right at the end of keys transition
 			a_rLerpFromIndex = a_rCurrentKeyIndex;
-			a_rLerpToIndex	 = a_rCurrentKeyIndex;
+			a_rLerpToIndex   = a_rCurrentKeyIndex;
 			return 0.0f;
 		}
 
 		// The animation is playing backwards?
-		auto iPrevIndex	  = a_rCurrentKeyIndex - 1;
+		auto iPrevIndex   = a_rCurrentKeyIndex - 1;
 		auto iPrevKeyTime = *GetKey( iPrevIndex );
 
 		while ( a_iCurrentAnimTime < iPrevKeyTime || a_iCurrentAnimTime == iPrevKeyTime )
 		{
 			a_rCurrentKeyIndex = iPrevIndex--;
-			iPrevKeyTime	   = *GetKey( iPrevIndex );
+			iPrevKeyTime       = *GetKey( iPrevIndex );
 		}
 
 		a_rLerpFromIndex = iPrevIndex;
-		a_rLerpToIndex	 = a_rCurrentKeyIndex;
+		a_rLerpToIndex   = a_rCurrentKeyIndex;
 	}
 
 	auto iLerpFromTime = *GetKey( a_rLerpFromIndex );

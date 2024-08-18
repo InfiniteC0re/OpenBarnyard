@@ -74,7 +74,7 @@ TString8 TFile::ConcatPath( const TString8& a_rcPath1, const TString8& a_rcPath2
 	TINT iPath2Length = a_rcPath2.Length();
 
 	if ( iPath2StartPos < iPath2Length &&
-		 ( a_rcPath2[ iPath2StartPos ] == '/' || a_rcPath2[ iPath2StartPos ] == '\\' ) )
+	     ( a_rcPath2[ iPath2StartPos ] == '/' || a_rcPath2[ iPath2StartPos ] == '\\' ) )
 	{
 		// The second path starts from a filesystem/volume root so ignore the first path
 		strResult += a_rcPath2.GetString( iPath2StartPos );
@@ -84,7 +84,7 @@ TString8 TFile::ConcatPath( const TString8& a_rcPath1, const TString8& a_rcPath2
 		// Concat the first path with the second one trimming parts like 'C:' or 'native:' and etc.
 		strResult += a_rcPath1.GetString( iPath1StartPos );
 		if ( iPath1StartPos < iPath1Length && iPath2StartPos < iPath2Length &&
-			 a_rcPath1[ iPath1Length - 1 ] != '/' && a_rcPath1[ iPath1Length - 1 ] != '\\' )
+		     a_rcPath1[ iPath1Length - 1 ] != '/' && a_rcPath1[ iPath1Length - 1 ] != '\\' )
 		{
 			strResult += "/";
 		}
@@ -100,7 +100,7 @@ TString8 TFile::SimplifyPath( const TString8& a_rcPath )
 	TString8 strPath = a_rcPath;
 	FixPathSlashesBack( strPath );
 
-	TINT	 iPos = 0;
+	TINT     iPos = 0;
 	TString8 strResult;
 
 	// Keep filesystem/volume/protocol name in the simplified path and leave it as it is
@@ -118,7 +118,7 @@ TString8 TFile::SimplifyPath( const TString8& a_rcPath )
 	}
 
 	TINT iInitialResultLength = strResult.Length();
-	TINT iResultLength		  = iInitialResultLength;
+	TINT iResultLength        = iInitialResultLength;
 
 	strPath += "/";
 	TINT iSlashPos = strPath.Find( '/', iPos );
@@ -165,7 +165,7 @@ TString8 TFile::SimplifyPath( const TString8& a_rcPath )
 			strResult.Concat( strPath.GetString( iPos ), ( iSlashPos - iPos ) + 1 );
 		}
 
-		iPos	  = iSlashPos + 1;
+		iPos      = iSlashPos + 1;
 		iSlashPos = strPath.Find( '/', iPos );
 
 	} while ( TTRUE );

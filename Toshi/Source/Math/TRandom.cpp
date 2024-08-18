@@ -2,17 +2,17 @@
 #include "TRandom.h"
 
 #ifdef USE_PORTABLE
-#	define cut( a ) ( (a)&0xffffffff ) /* Cut the integer down to 32bits */
+#  define cut( a ) ( (a)&0xffffffff ) /* Cut the integer down to 32bits */
 #else
-#	define cut( a ) ( a ) /* A no-op */
+#  define cut( a ) ( a ) /* A no-op */
 #endif
 
 #define ind( mm, x ) ( ( mm )[ ( x >> 2 ) & ( RANDSIZ - 1 ) ] )
 /* the call to cut() is a macro defined in standard.h */
 #define rngstep( mix, a, b, mm, m, m2, r, x )               \
 	{                                                       \
-		x		 = *m;                                      \
-		a		 = cut( ( a ^ ( mix ) ) + *( m2++ ) );      \
+		x        = *m;                                      \
+		a        = cut( ( a ^ ( mix ) ) + *( m2++ ) );      \
 		*( m++ ) = y = cut( ind( mm, x ) + a + b );         \
 		*( r++ ) = b = cut( ind( mm, y >> RANDSIZL ) + x ); \
 	}
@@ -69,7 +69,7 @@ void TRandom::Isaac()
 	a  = m_uiRandA;
 	b  = cut( m_uiRandB + ( ++m_uiRandC ) );
 
-	m	 = mm;
+	m    = mm;
 	mend = m2 = m + ( RANDSIZ / 2 );
 	while ( m < mend )
 	{
@@ -89,7 +89,7 @@ void TRandom::Isaac()
 void TRandom::RandInit()
 {
 	TUINT32 a, b, c, d, e, f, g, h;
-	TINT	i;
+	TINT    i;
 
 	m_uiRandA = m_uiRandB = m_uiRandC = 0;
 
@@ -119,7 +119,7 @@ void TRandom::RandInit()
 
 		mix( a, b, c, d, e, f, g, h );
 
-		m[ i ]	   = a;
+		m[ i ]     = a;
 		m[ i + 1 ] = b;
 		m[ i + 2 ] = c;
 		m[ i + 3 ] = d;
@@ -143,7 +143,7 @@ void TRandom::RandInit()
 
 		mix( a, b, c, d, e, f, g, h );
 
-		m[ i ]	   = a;
+		m[ i ]     = a;
 		m[ i + 1 ] = b;
 		m[ i + 2 ] = c;
 		m[ i + 3 ] = d;
@@ -161,7 +161,7 @@ TINT TRandom::GetInt( TUINT32 a_iLower, TUINT32 a_iUpper )
 {
 	TASSERT( a_iUpper > a_iLower, "a_iLower can't be higher than a_iUpper" );
 
-	unsigned long long rand	 = RandRaw();
+	unsigned long long rand  = RandRaw();
 	unsigned long long range = a_iUpper - a_iLower;
 	return a_iLower + ( range * rand >> 32 );
 }

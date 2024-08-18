@@ -20,14 +20,14 @@
 
 TOSHI_NAMESPACE_USING
 
-ARunTimer	  g_Timer;
+ARunTimer     g_Timer;
 AGUI2TextBox* g_pExperimentalModeText = TNULL;
 
 const T2CommandLine* g_pCommandLine;
-TBOOL				 g_bIsExperimentalMode = TFALSE;
+TBOOL                g_bIsExperimentalMode = TFALSE;
 
 class AQuestManager :
-	public Toshi::TTask
+    public Toshi::TTask
 {
 public:
 	TCHAR MARGIN[ 408 ];
@@ -57,7 +57,7 @@ MEMBER_HOOK( 0x006be7b0, T2Locale, T2Locale_GetString, const TWCHAR*, TINT a_iNu
 		if ( ABYardTerrainManager::ms_eCurrentLevel != ABYardTerrainManager::Terrain_CowTipping )
 		{
 			static TClass* pCowTippingGameClass = TClass::Find( "ACowTippingMiniGameState", &TGetClass( THookedObject ) );
-			AGameState*	   pCurrentGameState	= AGameStateController::GetSingleton()->GetCurrentState();
+			AGameState*    pCurrentGameState    = AGameStateController::GetSingleton()->GetCurrentState();
 
 			if ( pCurrentGameState->IsExactly( pCowTippingGameClass ) )
 			{
@@ -108,7 +108,7 @@ public:
 	TBOOL OnLoad() override
 	{
 		if ( AHooks::AddHook( Hook_NewGameStarted, HookType_Before, NewGameStarted ) &&
-			 AHooks::AddHook( Hook_AGUI2_MainPostRenderCallback, HookType_Before, AGUI2_MainPostRenderCallback ) )
+		     AHooks::AddHook( Hook_AGUI2_MainPostRenderCallback, HookType_Before, AGUI2_MainPostRenderCallback ) )
 		{
 			InstallHook<AQuestManager_FUNC>();
 			InstallHook<T2Locale_GetString>();
@@ -138,7 +138,7 @@ public:
 	void OnRenderInterfaceReady( Toshi::TRenderD3DInterface* a_pRenderInterface ) override
 	{
 		TRenderInterface::SetSingletonExplicit(
-			THookedRenderD3DInterface::GetSingleton() );
+		    THookedRenderD3DInterface::GetSingleton() );
 	}
 
 	void OnAGUI2Ready() override
@@ -150,7 +150,7 @@ public:
 			TFLOAT fWidth, fHeight;
 			AGUI2::GetSingleton()->GetDimensions( fWidth, fHeight );
 
-			auto pFont				= AGUI2FontManager::FindFont( "Rekord18" );
+			auto pFont              = AGUI2FontManager::FindFont( "Rekord18" );
 			g_pExperimentalModeText = AGUI2TextBox::CreateFromEngine();
 
 			g_pExperimentalModeText->Create( pFont, 400.0f );
@@ -206,7 +206,7 @@ extern "C"
 
 		TUtil::ToshiCreate( toshiParams );
 
-		g_pCommandLine		  = a_pCommandLine;
+		g_pCommandLine        = a_pCommandLine;
 		g_bIsExperimentalMode = g_pCommandLine->HasParameter( "-experimental" );
 
 		return new ABYSpeedrunHelper();

@@ -6,7 +6,7 @@
 #include <Platform/DX8/TTextureResourceHAL_DX8.h>
 
 class AWorldMaterialWrapperGL :
-	public Toshi::TMaterial
+    public Toshi::TMaterial
 {
 public:
 	void PreRenderGL()
@@ -22,8 +22,8 @@ public:
 				if ( m_aTextures[ 0 ] != pInvalidNative )
 				{
 					auto pTexManagerSDL = Toshi::TTextureManagerSDL::GetSingleton();
-					m_pTextures[ 0 ]	= TREINTERPRETCAST( Toshi::TTexture*, pTexManagerSDL->GetGLAssociation( pD3DTexture ) );
-					m_pTextures[ 1 ]	= TREINTERPRETCAST( Toshi::TTexture*, pD3DTexture );
+					m_pTextures[ 0 ]    = TREINTERPRETCAST( Toshi::TTexture*, pTexManagerSDL->GetGLAssociation( pD3DTexture ) );
+					m_pTextures[ 1 ]    = TREINTERPRETCAST( Toshi::TTexture*, pD3DTexture );
 				}
 			}
 
@@ -77,11 +77,11 @@ public:
 
 private:
 	Toshi::TTextureResourceHAL* m_aTextures[ 4 ];
-	TINT						m_iBlendMode; // ?
+	TINT                        m_iBlendMode; // ?
 };
 
 class AWorldShaderGL :
-	public Toshi::TSingleton<AWorldShaderGL>
+    public Toshi::TSingleton<AWorldShaderGL>
 {
 public:
 	struct WorldVertex
@@ -96,12 +96,12 @@ public:
 	AWorldShaderGL()
 	{
 		m_VAO = Toshi::TRenderSDL::CreateVertexArray(
-			Toshi::TRenderSDL::CreateVertexBuffer( TNULL, 0, GL_DYNAMIC_DRAW ),
-			Toshi::TRenderSDL::CreateIndexBuffer( TNULL, 0, GL_DYNAMIC_DRAW ) );
+		    Toshi::TRenderSDL::CreateVertexBuffer( TNULL, 0, GL_DYNAMIC_DRAW ),
+		    Toshi::TRenderSDL::CreateIndexBuffer( TNULL, 0, GL_DYNAMIC_DRAW ) );
 
 		m_VertexShader = Toshi::TRenderSDL::CompileShader(
-			GL_VERTEX_SHADER,
-			"#version 400\n\
+		    GL_VERTEX_SHADER,
+		    "#version 400\n\
 			\
 			layout(location = 0) in vec3 a_Position;\n\
 			layout(location = 1) in vec3 a_Normal;\n\
@@ -122,8 +122,8 @@ public:
 			}" );
 
 		m_PixelShader = Toshi::TRenderSDL::CompileShader(
-			GL_FRAGMENT_SHADER,
-			"#version 400\n\
+		    GL_FRAGMENT_SHADER,
+		    "#version 400\n\
 			in vec2 textureCoord;\n\
 			in vec3 vertexColor;\n\
 			\
@@ -151,8 +151,8 @@ public:
 		auto pAmbientColor = (Toshi::TVector4*)( *(TUINT*)( 0x0079a854 ) + 0x100 );
 
 		auto pRenderContext = TSTATICCAST(
-			Toshi::TRenderContextD3D,
-			THookedRenderD3DInterface::GetSingleton()->GetCurrentContext() );
+		    Toshi::TRenderContextD3D,
+		    THookedRenderD3DInterface::GetSingleton()->GetCurrentContext() );
 
 		m_VAO.SetAttribPointer( 0, 3, GL_FLOAT, sizeof( WorldVertex ), (void*)offsetof( WorldVertex, Position ) );
 		m_VAO.SetAttribPointer( 1, 3, GL_FLOAT, sizeof( WorldVertex ), (void*)offsetof( WorldVertex, Normal ) );
@@ -174,9 +174,9 @@ public:
 
 	void Render( Toshi::TRenderPacket* a_pRenderPacket )
 	{
-		auto pMesh		 = a_pRenderPacket->GetMesh();
+		auto pMesh       = a_pRenderPacket->GetMesh();
 		auto pVertexPool = *TREINTERPRETCAST( Toshi::TVertexPoolResource**, TUINT( pMesh ) + 0x18 );
-		auto pIndexPool	 = *TREINTERPRETCAST( Toshi::TIndexPoolResource**, ( *TREINTERPRETCAST( TUINT*, TUINT( pMesh ) + 0x1C ) ) + 0x8 );
+		auto pIndexPool  = *TREINTERPRETCAST( Toshi::TIndexPoolResource**, ( *TREINTERPRETCAST( TUINT*, TUINT( pMesh ) + 0x1C ) ) + 0x8 );
 
 		{
 			Toshi::TVertexBlockResource::HALBuffer vertexHAL;
@@ -210,7 +210,7 @@ public:
 
 private:
 	Toshi::TGLVertexArrayRef m_VAO;
-	Toshi::TGLShaderRef		 m_VertexShader;
-	Toshi::TGLShaderRef		 m_PixelShader;
-	Toshi::TGLShaderProgram	 m_ShaderProgram;
+	Toshi::TGLShaderRef      m_VertexShader;
+	Toshi::TGLShaderRef      m_PixelShader;
+	Toshi::TGLShaderProgram  m_ShaderProgram;
 };

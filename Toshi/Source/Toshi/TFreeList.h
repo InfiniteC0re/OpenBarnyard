@@ -50,12 +50,12 @@ private:
 	inline static TFreeList* ms_pLastList = TNULL;
 
 private:
-	TFreeList*		   m_pPrevList;
-	TINT			   m_iCapacity;
-	TUINT			   m_uiItemSize;
-	Node			   m_LastNode;
-	Node			   m_RootNode;
-	TINT			   m_iGrowSize;
+	TFreeList*         m_pPrevList;
+	TINT               m_iCapacity;
+	TUINT              m_uiItemSize;
+	Node               m_LastNode;
+	Node               m_RootNode;
+	TINT               m_iGrowSize;
 	TMemory::MemBlock* m_pMemoryHeap;
 };
 

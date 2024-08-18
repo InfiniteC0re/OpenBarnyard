@@ -11,11 +11,11 @@ TOSHI_NAMESPACE_START
 
 TCameraObject::TCameraObject()
 {
-	m_Unk1	   = 0;
-	m_eMode	   = TRenderContext::CameraMode_Perspective;
-	m_fNear	   = 1.0f;
-	m_fFar	   = 100.0f;
-	m_fFOV	   = TMath::DegToRad( 90.0f );
+	m_Unk1     = 0;
+	m_eMode    = TRenderContext::CameraMode_Perspective;
+	m_fNear    = 1.0f;
+	m_fFar     = 100.0f;
+	m_fFOV     = TMath::DegToRad( 90.0f );
 	m_fCentreX = 0.5f;
 	m_fCentreY = 0.5f;
 	m_bEnabled = TTRUE;
@@ -25,11 +25,11 @@ void TCameraObject::Render()
 {
 	if ( m_bEnabled )
 	{
-		auto pRender		= TRenderInterface::GetSingleton();
+		auto pRender        = TRenderInterface::GetSingleton();
 		auto pRenderContext = pRender->GetCurrentContext();
 
 		TRenderContext::PROJECTIONPARAMS projParams = pRenderContext->GetProjectionParams();
-		projParams.m_Centre							= { m_fCentreX * pRenderContext->GetWidth(), m_fCentreY * pRenderContext->GetHeight() };
+		projParams.m_Centre                         = { m_fCentreX * pRenderContext->GetWidth(), m_fCentreY * pRenderContext->GetHeight() };
 
 		auto render = TRenderInterface::GetSingleton();
 

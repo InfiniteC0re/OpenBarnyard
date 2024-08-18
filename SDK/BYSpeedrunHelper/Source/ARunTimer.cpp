@@ -11,11 +11,11 @@
 TOSHI_NAMESPACE_USING
 
 class ATimerThread :
-	public TThread
+    public TThread
 {
 public:
 	ATimerThread( ARunTimer* a_pRunTimer ) :
-		m_pRunTimer( a_pRunTimer )
+	    m_pRunTimer( a_pRunTimer )
 	{
 		m_TimeSyncMutex.Create();
 		m_flSyncTimerTime = 0.1f;
@@ -52,16 +52,16 @@ public:
 public:
 	ARunTimer* m_pRunTimer;
 	THPTimer   m_Timer;
-	TFLOAT	   m_flSyncTimerTime;
-	T2Mutex	   m_TimeSyncMutex;
-	TBOOL	   m_bClosed;
+	TFLOAT     m_flSyncTimerTime;
+	T2Mutex    m_TimeSyncMutex;
+	TBOOL      m_bClosed;
 };
 
 ARunTimer::ARunTimer()
 {
 	m_pTimerThread = TNULL;
-	m_flTime	   = 0.0f;
-	m_bPaused	   = TTRUE;
+	m_flTime       = 0.0f;
+	m_bPaused      = TTRUE;
 }
 
 ARunTimer::~ARunTimer()
@@ -92,8 +92,8 @@ void ARunTimer::Destroy()
 void ARunTimer::Reset()
 {
 	m_flTotalLoadingTime = 0.0f;
-	m_flTime			 = 0.0f;
-	m_bPaused			 = TTRUE;
+	m_flTime             = 0.0f;
+	m_bPaused            = TTRUE;
 
 	ASplitsServer::GetSingleton()->Reset();
 }
@@ -112,8 +112,8 @@ void ARunTimer::Split()
 void ARunTimer::Start()
 {
 	m_flTotalLoadingTime = 0.0f;
-	m_flTime			 = 0.0f;
-	m_bPaused			 = TFALSE;
+	m_flTime             = 0.0f;
+	m_bPaused            = TFALSE;
 
 	ASplitsServer::GetSingleton()->StartRun();
 }

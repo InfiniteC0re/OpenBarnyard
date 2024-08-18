@@ -15,11 +15,11 @@ public:
 	protected:
 		TNode()
 		{
-			m_Tree	 = TNULL;
-			m_Next	 = (T*)this;
-			m_Prev	 = (T*)this;
+			m_Tree   = TNULL;
+			m_Next   = (T*)this;
+			m_Prev   = (T*)this;
 			m_Parent = TNULL;
-			m_Child	 = TNULL;
+			m_Child  = TNULL;
 		}
 
 	public:
@@ -29,19 +29,19 @@ public:
 			return m_Parent == (T*)( &Tree()->m_Root );
 		}
 
-		TBOOL		  IsLinked() const { return m_Tree != TNULL; }
-		T*			  Parent() const { return m_Parent; }
-		T*			  Next() const { return m_Next; }
-		T*			  Prev() const { return m_Prev; }
+		TBOOL         IsLinked() const { return m_Tree != TNULL; }
+		T*            Parent() const { return m_Parent; }
+		T*            Next() const { return m_Next; }
+		T*            Prev() const { return m_Prev; }
 		TNodeTree<T>* Tree() const { return m_Tree; }
-		T*			  Child() const { return m_Child; }
+		T*            Child() const { return m_Child; }
 
 	protected:
 		TNodeTree<T>* m_Tree;
-		T*			  m_Next;
-		T*			  m_Prev;
-		T*			  m_Parent;
-		T*			  m_Child;
+		T*            m_Next;
+		T*            m_Prev;
+		T*            m_Parent;
+		T*            m_Child;
 	};
 
 public:
@@ -90,7 +90,7 @@ public:
 			parentNode->m_Child = sourceNode;
 		}
 
-		sourceNode->m_Tree	 = this;
+		sourceNode->m_Tree   = this;
 		sourceNode->m_Parent = parentNode;
 		m_Count += 1;
 	}
@@ -127,8 +127,8 @@ public:
 	T* Remove( T& node, TBOOL flag = TFALSE )
 	{
 		// Toshi::TNodeTree<Toshi::TResource>::Remove - 00691e70
-		TNodeTree<T>* nodeRoot	 = node.Tree();
-		T*			  nodeParent = node.Parent();
+		TNodeTree<T>* nodeRoot   = node.Tree();
+		T*            nodeParent = node.Parent();
 
 		if ( nodeRoot != TNULL )
 		{
@@ -170,9 +170,9 @@ public:
 
 		node.m_Prev->m_Next = node.m_Next;
 		node.m_Next->m_Prev = node.m_Prev;
-		node.m_Next			= &node;
-		node.m_Prev			= &node;
-		node.m_Tree			= TNULL;
+		node.m_Next         = &node;
+		node.m_Prev         = &node;
+		node.m_Tree         = TNULL;
 		return &node;
 	}
 
@@ -214,9 +214,9 @@ public:
 
 				node->m_Prev->m_Parent = node->m_Next;
 				node->m_Next->m_Child  = node->m_Prev;
-				node->m_Next		   = node;
-				node->m_Prev		   = node;
-				node->m_Tree		   = TNULL;
+				node->m_Next           = node;
+				node->m_Prev           = node;
+				node->m_Tree           = TNULL;
 			}
 
 			delete node;
@@ -259,7 +259,7 @@ public:
 	}
 
 protected:
-	TNode  m_Root;	// 0x0
+	TNode  m_Root;  // 0x0
 	size_t m_Count; // 0x14
 };
 

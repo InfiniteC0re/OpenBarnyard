@@ -17,45 +17,45 @@ public:
 	constexpr TPlane() = default;
 
 	constexpr TPlane( const TVector4& a_PlaneData ) :
-		m_Normal( a_PlaneData.AsVector3() ),
-		m_fDistance( a_PlaneData.w )
+	    m_Normal( a_PlaneData.AsVector3() ),
+	    m_fDistance( a_PlaneData.w )
 	{}
 
 	constexpr TPlane( const TVector3& a_Normal, TFLOAT a_fDistance ) :
-		m_Normal( a_Normal ),
-		m_fDistance( a_fDistance )
+	    m_Normal( a_Normal ),
+	    m_fDistance( a_fDistance )
 	{}
 
 	constexpr TPlane( const TVector3& a_Normal, const TVector3& a_Point ) :
-		m_Normal( a_Normal ),
-		m_fDistance( TVector3::DotProduct( a_Normal, a_Point ) )
+	    m_Normal( a_Normal ),
+	    m_fDistance( TVector3::DotProduct( a_Normal, a_Point ) )
 	{}
 
 	constexpr TPlane( TFLOAT a_fNormalX, TFLOAT a_fNormalY, TFLOAT a_fNormalZ, TFLOAT a_fDistance ) :
-		m_Normal( a_fNormalX, a_fNormalY, a_fNormalZ ),
-		m_fDistance( a_fDistance )
+	    m_Normal( a_fNormalX, a_fNormalY, a_fNormalZ ),
+	    m_fDistance( a_fDistance )
 	{}
 
 	constexpr TPlane( const TPlane& a_Other ) :
-		m_Normal( a_Other.m_Normal ),
-		m_fDistance( a_Other.m_fDistance )
+	    m_Normal( a_Other.m_Normal ),
+	    m_fDistance( a_Other.m_fDistance )
 	{}
 
 	constexpr void Set( const TVector4& a_PlaneData )
 	{
-		m_Normal	= a_PlaneData.AsVector3();
+		m_Normal    = a_PlaneData.AsVector3();
 		m_fDistance = a_PlaneData.w;
 	}
 
 	constexpr void Set( const TVector3& a_Normal, TFLOAT a_fDistance )
 	{
-		m_Normal	= a_Normal;
+		m_Normal    = a_Normal;
 		m_fDistance = a_fDistance;
 	}
 
 	constexpr void Set( const TVector3& a_Normal, const TVector3& a_Point )
 	{
-		m_Normal	= a_Normal;
+		m_Normal    = a_Normal;
 		m_fDistance = TVector3::DotProduct( a_Normal, a_Point );
 	}
 
@@ -67,7 +67,7 @@ public:
 
 	constexpr void Set( const TPlane& a_Other )
 	{
-		m_Normal	= a_Other.m_Normal;
+		m_Normal    = a_Other.m_Normal;
 		m_fDistance = a_Other.m_fDistance;
 	}
 
@@ -118,20 +118,20 @@ public:
 
 	constexpr TPlane& operator=( const TPlane& a_rPlane )
 	{
-		m_Normal	= a_rPlane.m_Normal;
+		m_Normal    = a_rPlane.m_Normal;
 		m_fDistance = a_rPlane.m_fDistance;
 		return *this;
 	}
 
-	TFORCEINLINE constexpr TVector3&	   AsNormal() { return m_Normal; }
+	TFORCEINLINE constexpr TVector3&       AsNormal() { return m_Normal; }
 	TFORCEINLINE constexpr const TVector3& AsNormal() const { return m_Normal; }
 
-	TFORCEINLINE TVector4&		 AsVector4() { return *TREINTERPRETCAST( TVector4*, this ); }
+	TFORCEINLINE TVector4&       AsVector4() { return *TREINTERPRETCAST( TVector4*, this ); }
 	TFORCEINLINE const TVector4& AsVector4() const { return *TREINTERPRETCAST( const TVector4*, this ); }
 
 private:
 	TVector3 m_Normal;
-	TFLOAT	 m_fDistance;
+	TFLOAT   m_fDistance;
 };
 
 TOSHI_NAMESPACE_END

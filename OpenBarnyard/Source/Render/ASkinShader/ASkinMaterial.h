@@ -2,7 +2,7 @@
 #include <Render/TMaterial.h>
 
 class ASkinMaterial :
-	public Toshi::TMaterial
+    public Toshi::TMaterial
 {
 	TDECLARE_CLASS( ASkinMaterial, Toshi::TMaterial );
 
@@ -34,6 +34,6 @@ public:
 protected:
 	Toshi::TTexture* m_pTexture;
 	Toshi::TTexture* m_apLightingTextures[ LT_NUMOF ];
-	BLENDMODE		 m_eBlendMode;
-	TBOOL			 m_bFlag;
+	BLENDMODE        m_eBlendMode;
+	TBOOL            m_bFlag;
 };

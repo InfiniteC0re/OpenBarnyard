@@ -9,7 +9,7 @@
 
 TOSHI_NAMESPACE_START
 
-#define MIN_NUM_BITS	( 8 * sizeof( TUINT32 ) )
+#define MIN_NUM_BITS    ( 8 * sizeof( TUINT32 ) )
 #define BIT_SUBNUM_MASK ( MIN_NUM_BITS - 1 )
 
 TBitArray::TBitArray( TINT a_iNumBits, TINT a_iInitialiseWith )
@@ -245,7 +245,7 @@ void TBitArray::Destroy()
 
 void TBitArray::Create( TINT a_iNumBits, TINT a_iInitialiseWith )
 {
-	m_iSize				= a_iNumBits;
+	m_iSize             = a_iNumBits;
 	m_uiInitialisedWith = ( a_iInitialiseWith == 0 ) ? 0 : 0xFFFFFFFF;
 
 	m_pBuffer = new TUINT32[ GetNumAllocatedBytes() / sizeof( TUINT32 ) ];

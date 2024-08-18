@@ -6,8 +6,8 @@
 #include <Toshi/TString8.h>
 
 class ARootTask :
-	public Toshi::TTask,
-	public Toshi::TSingleton<ARootTask>
+    public Toshi::TTask,
+    public Toshi::TSingleton<ARootTask>
 {
 public:
 	TDECLARE_CLASS( ARootTask, Toshi::TTask );
@@ -33,22 +33,22 @@ public:
 	TBOOL ShouldRenderMainScene() const { return !m_bStopRenderingScene; }
 
 private:
-	void		CreateGameSystem();
+	void        CreateGameSystem();
 	static void LoadFrontEnd();
 
 private:
-	AOptions*  m_pOptions;			   // 0x20
-	TTask*	   m_pGUISystem;		   // 0x24
-	TTask*	   m_pGUI2;				   // 0x28
-	TTask*	   m_pInputHandler;		   // 0x2C
-	ARenderer* m_pRenderer;			   // 0x30
-	TTask*	   m_pGameStateController; // 0x34
-	TTask*	   m_pMoviePlayer;		   // 0x3C
-	TTask*	   m_pGameSystemManager;   // 0x40
-	TTask*	   m_pSoundManager;		   // 0x44
-	TBOOL	   m_bRenderWorld;		   // 0x54
-	TBOOL	   m_bPaused;			   // 0x55
-	TBOOL	   m_bStopRenderingScene;  // 0x56
-	TBOOL	   m_bGameSystemCreated;   // 0x57
-	TBOOL	   m_bStartedGame;
+	AOptions*  m_pOptions;             // 0x20
+	TTask*     m_pGUISystem;           // 0x24
+	TTask*     m_pGUI2;                // 0x28
+	TTask*     m_pInputHandler;        // 0x2C
+	ARenderer* m_pRenderer;            // 0x30
+	TTask*     m_pGameStateController; // 0x34
+	TTask*     m_pMoviePlayer;         // 0x3C
+	TTask*     m_pGameSystemManager;   // 0x40
+	TTask*     m_pSoundManager;        // 0x44
+	TBOOL      m_bRenderWorld;         // 0x54
+	TBOOL      m_bPaused;              // 0x55
+	TBOOL      m_bStopRenderingScene;  // 0x56
+	TBOOL      m_bGameSystemCreated;   // 0x57
+	TBOOL      m_bStartedGame;
 };

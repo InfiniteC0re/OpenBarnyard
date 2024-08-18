@@ -25,5 +25,5 @@ public:
 
 private:
 	AGUISlideshow m_Slideshow;
-	AGameState*	  m_pNextState;
+	AGameState*   m_pNextState;
 };

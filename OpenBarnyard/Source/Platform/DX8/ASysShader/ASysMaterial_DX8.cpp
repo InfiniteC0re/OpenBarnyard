@@ -2,8 +2,8 @@
 #include "ASysMaterial_DX8.h"
 
 #ifdef TOSHI_SKU_WINDOWS
-#	include "Platform/DX8/TRenderInterface_DX8.h"
-#	include "Platform/DX8/TTextureResourceHAL_DX8.h"
+#  include "Platform/DX8/TRenderInterface_DX8.h"
+#  include "Platform/DX8/TTextureResourceHAL_DX8.h"
 #endif // TOSHI_SKU_WINDOWS
 
 //-----------------------------------------------------------------------------
@@ -19,10 +19,10 @@ TDEFINE_CLASS( ASysMaterialHAL );
 ASysMaterialHAL::ASysMaterialHAL()
 {
 	m_pAssignedOrderTable = TNULL;
-	m_pTexture			  = TNULL;
-	m_Unk1				  = 0;
-	m_Unk2				  = 0;
-	m_Unk3				  = 0;
+	m_pTexture            = TNULL;
+	m_Unk1                = 0;
+	m_Unk2                = 0;
+	m_Unk3                = 0;
 }
 
 ASysMaterialHAL::~ASysMaterialHAL()

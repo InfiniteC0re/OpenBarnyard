@@ -16,7 +16,7 @@ void TUtil::TrimLog( const TCHAR* fileName, TSIZE trimTo )
 {
 	// and yes they actually did it with std
 
-	WIN32_FIND_DATAA		ffd;
+	WIN32_FIND_DATAA        ffd;
 	std::queue<std::string> queue;
 
 	HANDLE hFind = FindFirstFileA( fileName, &ffd );

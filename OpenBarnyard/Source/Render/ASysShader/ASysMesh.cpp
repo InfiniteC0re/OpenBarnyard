@@ -14,13 +14,13 @@ TDEFINE_CLASS_NORUNTIME( ASysMesh );
 
 ASysMesh::ASysMesh()
 {
-	m_uiFlags		= 0;
+	m_uiFlags       = 0;
 	m_uiMaxVertices = 0;
-	m_uiMaxIndices	= 0;
-	m_pVertexPool	= TNULL;
-	m_pIndexPool	= TNULL;
-	m_bFlag1		= TFALSE;
-	m_bFlag2		= TFALSE;
+	m_uiMaxIndices  = 0;
+	m_pVertexPool   = TNULL;
+	m_pIndexPool    = TNULL;
+	m_bFlag1        = TFALSE;
+	m_bFlag2        = TFALSE;
 }
 
 TBOOL ASysMesh::Validate()
@@ -69,9 +69,9 @@ void ASysMesh::DestroyResources()
 		m_pIndexPool = TNULL;
 	}
 
-	m_uiFlags		= 0;
+	m_uiFlags       = 0;
 	m_uiMaxVertices = 0;
-	m_uiMaxIndices	= 0;
+	m_uiMaxIndices  = 0;
 }
 
 TBOOL ASysMesh::Create( void* a_pUnk, const TCHAR* a_szSomeString )
@@ -82,9 +82,9 @@ TBOOL ASysMesh::Create( void* a_pUnk, const TCHAR* a_szSomeString )
 
 TBOOL ASysMesh::CreatePools( TUINT32 a_uiResourcesFlags, TUINT16 a_uiMaxVertices, TUINT16 a_uiMaxIndices )
 {
-	m_uiFlags		= a_uiResourcesFlags;
+	m_uiFlags       = a_uiResourcesFlags;
 	m_uiMaxVertices = a_uiMaxVertices;
-	m_uiMaxIndices	= a_uiMaxIndices;
+	m_uiMaxIndices  = a_uiMaxIndices;
 
 	if ( !CreateResource() )
 	{

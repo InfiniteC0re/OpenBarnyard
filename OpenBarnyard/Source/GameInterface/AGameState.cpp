@@ -22,11 +22,11 @@ TDEFINE_CLASS( AGameState );
 AGameState::AGameState()
 {
 	m_iOverlayColorIndex = 0;
-	m_pInputMap			 = TNULL;
-	m_pOwnerState		 = TNULL;
-	m_bWasInserted		 = TFALSE;
-	m_bIsActivated		 = TFALSE;
-	m_fFOV				 = TMath::DegToRad( 60.0f );
+	m_pInputMap          = TNULL;
+	m_pOwnerState        = TNULL;
+	m_bWasInserted       = TFALSE;
+	m_bIsActivated       = TFALSE;
+	m_fFOV               = TMath::DegToRad( 60.0f );
 
 	AGUI2Element* pRootElement = AGUI2::GetRootElement();
 	m_GUIElement.SetDimensions( pRootElement->GetWidth(), pRootElement->GetHeight() );
@@ -199,7 +199,7 @@ TBOOL AGameState::SendInputCommands( const TInputInterface::InputEvent* a_pEvent
 
 		for ( TINT i = 0; i < commands.iNumCommands; i++ )
 		{
-			auto  eCommand	  = commands.aCommands[ i ];
+			auto  eCommand    = commands.aCommands[ i ];
 			TBOOL bStopEvents = TTRUE;
 
 			if ( ProcessCommand( eCommand, a_pEvent, bStopEvents ) )
@@ -242,7 +242,7 @@ void AGameState::Activate()
 	OnActivate();
 
 	TGlobalEmitter<AGameStateControllerEvent>::Throw(
-		AGameStateControllerEvent( this, AGameStateControllerEvent::Type_GameStateActivated ) );
+	    AGameStateControllerEvent( this, AGameStateControllerEvent::Type_GameStateActivated ) );
 }
 
 void AGameState::Deactivate()
@@ -250,9 +250,9 @@ void AGameState::Deactivate()
 	OnDeactivate();
 
 	TGlobalEmitter<AGameStateControllerEvent>::Throw(
-		AGameStateControllerEvent(
-			this,
-			AGameStateControllerEvent::Type_GameStateDeactivated ) );
+	    AGameStateControllerEvent(
+	        this,
+	        AGameStateControllerEvent::Type_GameStateDeactivated ) );
 }
 
 void AGameState::Suspend()

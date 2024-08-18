@@ -3,7 +3,7 @@
 #include "Terrain/ATerrainVIS.h"
 
 class ASkeletonDoneJob :
-	public AMainThreadJob
+    public AMainThreadJob
 {
 public:
 	virtual void  BeginJob() override;

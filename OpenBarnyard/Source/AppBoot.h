@@ -15,7 +15,7 @@ public:
 	virtual TBOOL OnUpdate( float deltaTime ) override;
 
 public:
-	ARootTask*	m_pRootTask;
+	ARootTask*  m_pRootTask;
 	ADummyTask* m_pInputTask;
 	ADummyTask* m_pUpdate1Task;
 	ADummyTask* m_pUpdate2Task;

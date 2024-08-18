@@ -12,9 +12,9 @@ void TTextureSDL::Init()
 	TASSERT( 0 < m_DataSize );
 	TRenderSDL* pRender = TRenderSDL::Interface();
 
-	int			   width, height, channels;
+	int            width, height, channels;
 	unsigned char* texData = SOIL_load_image_from_memory( m_TexData, m_DataSize, &width, &height, &channels, 4 );
-	m_TexInfo->Handle	   = TRenderSDL::Interface()->CreateTexture( width, height, GL_RGBA, TFALSE, texData );
+	m_TexInfo->Handle      = TRenderSDL::Interface()->CreateTexture( width, height, GL_RGBA, TFALSE, texData );
 
 	// FIXME: use settings of the texture here
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
@@ -91,15 +91,15 @@ TTextureSDL* TTextureSDL::InitRunTime( TEXTURE_FORMAT format, UINT width, UINT h
 	TASSERT( pTexture->m_TexInfo != TNULL );
 
 	GLenum glFormat =
-		( format == TEXTURE_FORMAT_R8G8B8A8_UNORM ) ? GL_RGBA :
-		( format == TEXTURE_FORMAT_R8G8_UNORM )		? GL_RG :
-													  GL_R;
+	    ( format == TEXTURE_FORMAT_R8G8B8A8_UNORM ) ? GL_RGBA :
+	    ( format == TEXTURE_FORMAT_R8G8_UNORM )     ? GL_RG :
+	                                                  GL_R;
 
-	pTexture->m_TexInfo->Handle		 = pRender->CreateTexture( width, height, glFormat, TFALSE, srcData );
-	pTexture->m_TexInfo->Width		 = width;
-	pTexture->m_TexInfo->Height		 = height;
+	pTexture->m_TexInfo->Handle      = pRender->CreateTexture( width, height, glFormat, TFALSE, srcData );
+	pTexture->m_TexInfo->Width       = width;
+	pTexture->m_TexInfo->Height      = height;
 	pTexture->m_TexInfo->MipMapCount = 1;
-	pTexture->m_TexInfo->Format		 = format;
+	pTexture->m_TexInfo->Format      = format;
 
 	TTextureManagerSDL::GetSingleton()->AddTexture( pTexture );
 
@@ -153,7 +153,7 @@ void TTextureSDL::SelectSamplerId()
 
 			m_eAddressU = TEXTURE_ADDRESS_CLAMP;
 			m_eAddressV = TEXTURE_ADDRESS_CLAMP;
-			m_eFilter	= TEXTURE_FILTER_MIN_MAG_MIP_LINEAR;
+			m_eFilter   = TEXTURE_FILTER_MIN_MAG_MIP_LINEAR;
 			m_SamplerId = 3;
 		}
 	}
@@ -167,14 +167,14 @@ void TTextureSDL::SetWrap( TEXTURE_ADDRESS_MODE eAddressU, TEXTURE_ADDRESS_MODE 
 }
 
 TTextureManagerSDL::TTextureManagerSDL() :
-	m_pLastTexture( TNULL )
+    m_pLastTexture( TNULL )
 {
 	uint8_t* srcData;
 
 	// White texture
-	constexpr int WhiteTextureWidth	 = 8;
+	constexpr int WhiteTextureWidth  = 8;
 	constexpr int WhiteTextureHeight = 8;
-	constexpr int WhiteTextureSize	 = WhiteTextureWidth * WhiteTextureHeight * 4;
+	constexpr int WhiteTextureSize   = WhiteTextureWidth * WhiteTextureHeight * 4;
 
 	srcData = (uint8_t*)TMemalign( WhiteTextureSize, 16 );
 	TUtil::MemSet( srcData, 0xFF, WhiteTextureSize );
@@ -193,7 +193,7 @@ TTextureManagerSDL::TTextureManagerSDL() :
 
 	for ( uint8_t* pos = srcData; pos < srcData + InvalidTextureSize; pos += 4 )
 	{
-		*( pos )	 = rand() % 256;
+		*( pos )     = rand() % 256;
 		*( pos + 1 ) = rand() % 256;
 		*( pos + 2 ) = rand() % 256;
 		*( pos + 3 ) = rand() % 256;

@@ -84,7 +84,7 @@ void AGUI2Element::SetColour( TUINT32 a_uiColour )
 void AGUI2Element::SetAlpha( TFLOAT a_fAlpha )
 {
 	TUINT8 alpha8 = (TUINT8)( a_fAlpha * 255.0f );
-	m_uiColour	  = ( m_uiColour & 0x00FFFFFF ) | alpha8 << 24;
+	m_uiColour    = ( m_uiColour & 0x00FFFFFF ) | alpha8 << 24;
 }
 
 void AGUI2Element::SetShadowAlpha( TFLOAT a_fAlpha )

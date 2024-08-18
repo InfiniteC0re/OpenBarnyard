@@ -7,26 +7,26 @@ TOSHI_NAMESPACE_START
 class TMemoryInitialiser
 {
 public:
-    TMemoryInitialiser()
-    {
-        Initialise();
-    }
+	TMemoryInitialiser()
+	{
+		Initialise();
+	}
 
-    ~TMemoryInitialiser()
-    {
-        Deinitialise();
-    }
+	~TMemoryInitialiser()
+	{
+		Deinitialise();
+	}
 
-    TINT Initialise()
-    {
-        TMemory::Initialise( 0, 0 );
-        return 0;
-    }
+	TINT Initialise()
+	{
+		TMemory::Initialise( 0, 0 );
+		return 0;
+	}
 
-    void Deinitialise()
-    {
-        TMemory::Deinitialise();
-    }
+	void Deinitialise()
+	{
+		TMemory::Deinitialise();
+	}
 };
 
 TOSHI_NAMESPACE_END

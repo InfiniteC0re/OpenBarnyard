@@ -21,28 +21,28 @@ TIndexBlockResource* TIndexFactoryResource::FindBlockResource( TIndexPoolResourc
 		return TNULL;
 	}
 
-	using Pair	= T2Pair<TIndexBlockResource*, TIndexPoolResource*>;
+	using Pair  = T2Pair<TIndexBlockResource*, TIndexPoolResource*>;
 	Pair result = { TNULL, a_pResource };
 
 	TResource::RecurseSimple(
-		[]( TResource* a_pResource, void* a_pUserData ) {
-			auto pPair = TSTATICCAST( Pair, a_pUserData );
+	    []( TResource* a_pResource, void* a_pUserData ) {
+		    auto pPair = TSTATICCAST( Pair, a_pUserData );
 
-			if ( a_pResource->IsA( &TGetClass( TIndexBlockResource ) ) )
-			{
-				auto pBlockResource = TSTATICCAST( TIndexBlockResource, a_pResource );
+		    if ( a_pResource->IsA( &TGetClass( TIndexBlockResource ) ) )
+		    {
+			    auto pBlockResource = TSTATICCAST( TIndexBlockResource, a_pResource );
 
-				if ( pBlockResource->CanFit( pPair->GetSecond() ) && !pBlockResource->IsDying() )
-				{
-					pPair->m_First = pBlockResource;
-					return TFALSE;
-				}
-			}
+			    if ( pBlockResource->CanFit( pPair->GetSecond() ) && !pBlockResource->IsDying() )
+			    {
+				    pPair->m_First = pBlockResource;
+				    return TFALSE;
+			    }
+		    }
 
-			return TTRUE;
-		},
-		this,
-		&result );
+		    return TTRUE;
+	    },
+	    this,
+	    &result );
 
 	return result.m_First;
 }
@@ -50,8 +50,8 @@ TIndexBlockResource* TIndexFactoryResource::FindBlockResource( TIndexPoolResourc
 TIndexBlockResource* TIndexFactoryResource::CreateBlockResource( TUINT16 a_uiMaxIndices, TUINT32 a_uiFlags )
 {
 	auto pIndexBlock = TSTATICCAST(
-		TIndexBlockResource,
-		GetRenderer()->CreateResource( &TGetClass( TIndexBlockResource ), TNULL, this ) );
+	    TIndexBlockResource,
+	    GetRenderer()->CreateResource( &TGetClass( TIndexBlockResource ), TNULL, this ) );
 
 	TVALIDPTR( pIndexBlock );
 
@@ -62,8 +62,8 @@ TIndexBlockResource* TIndexFactoryResource::CreateBlockResource( TUINT16 a_uiMax
 TIndexPoolResourceInterface* TIndexFactoryResource::CreatePoolResource( TUINT16 a_uiMaxStaticIndices, TUINT16 a_uiFlags )
 {
 	auto pIndexPool = TSTATICCAST(
-		TIndexPoolResource,
-		GetRenderer()->CreateResource( &TGetClass( TIndexPoolResource ), TNULL, this ) );
+	    TIndexPoolResource,
+	    GetRenderer()->CreateResource( &TGetClass( TIndexPoolResource ), TNULL, this ) );
 
 	TVALIDPTR( pIndexPool );
 

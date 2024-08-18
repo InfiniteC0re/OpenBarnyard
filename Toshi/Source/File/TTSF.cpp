@@ -11,9 +11,9 @@ TOSHI_NAMESPACE_START
 
 TUINT32 TTSFI::Open( TFile* a_pFile )
 {
-	m_pFile			= a_pFile;
+	m_pFile         = a_pFile;
 	m_FileInfoCount = 0;
-	m_UNKFLAG		= TFALSE;
+	m_UNKFLAG       = TFALSE;
 
 	if ( m_pFile == TNULL )
 	{
@@ -43,7 +43,7 @@ TUINT32 TTSFI::Open( TFile* a_pFile )
 	if ( m_Endianess == Endianess_Big )
 	{
 		m_Header.FileSize = PARSEDWORD_BIG( m_Header.FileSize );
-		m_Magic			  = PARSEDWORD_BIG( m_Magic );
+		m_Magic           = PARSEDWORD_BIG( m_Magic );
 	}
 
 	m_CurrentHunk.Name = m_Header.Magic;
@@ -55,23 +55,23 @@ TUINT32 TTSFI::Open( TFile* a_pFile )
 
 TUINT32 TTSFI::Open( const TCHAR* a_szFilePath )
 {
-	TFile* pFile	= TFile::Create( a_szFilePath );
+	TFile* pFile    = TFile::Create( a_szFilePath );
 	auto   uiResult = Open( pFile );
-	m_UNKFLAG		= TFALSE;
+	m_UNKFLAG       = TFALSE;
 	return uiResult;
 }
 
 TUINT32 TTSFI::PushForm()
 {
 	if ( m_CurrentHunk.Name != TFourCC( "FORM" ) &&
-		 m_CurrentHunk.Name != TFourCC( "TSFL" ) &&
-		 m_CurrentHunk.Name != TFourCC( "TSFB" ) )
+	     m_CurrentHunk.Name != TFourCC( "TSFL" ) &&
+	     m_CurrentHunk.Name != TFourCC( "TSFB" ) )
 	{
 		return TTRB::ERROR_WRONG_MAGIC;
 	}
 
 	m_FileInfo[ m_FileInfoCount ].FileStartOffset = m_pFile->Tell() - 4;
-	m_FileInfo[ m_FileInfoCount ].FileSize		  = m_CurrentHunk.Size;
+	m_FileInfo[ m_FileInfoCount ].FileSize        = m_CurrentHunk.Size;
 	m_FileInfoCount++;
 
 	return TTRB::ERROR_OK;
@@ -86,7 +86,7 @@ TUINT32 TTSFI::PopForm()
 	auto& fileInfo = m_FileInfo[ m_FileInfoCount ];
 
 	m_CurrentHunk.Size = fileInfo.FileSize;
-	m_ReadPos		   = m_pFile->Tell() - fileInfo.FileStartOffset;
+	m_ReadPos          = m_pFile->Tell() - fileInfo.FileStartOffset;
 
 	TUINT32 alignedPos = TAlignNumUp( m_CurrentHunk.Size );
 	m_pFile->Seek( alignedPos - m_ReadPos, TSEEK_CUR );
@@ -157,7 +157,7 @@ void TTSFI::Close( TBOOL free )
 		m_pFile->Destroy();
 	}
 
-	m_pFile			= TNULL;
+	m_pFile         = TNULL;
 	m_FileInfoCount = 0;
 }
 
@@ -166,7 +166,7 @@ void TTSFI::ReadCompressed( void* buffer, TUINT32 size )
 	TCompress::Header header;
 
 	TUINT32 headerStart = m_pFile->Tell();
-	int8_t	error		= TCompress::GetHeader( m_pFile, header );
+	int8_t  error       = TCompress::GetHeader( m_pFile, header );
 
 	if ( error == TCOMPRESS_ERROR_OK )
 	{
@@ -178,12 +178,12 @@ void TTSFI::ReadCompressed( void* buffer, TUINT32 size )
 
 TTSFI::TTSFI()
 {
-	m_pFile			= TNULL;
+	m_pFile         = TNULL;
 	m_FileInfoCount = 0;
-	m_UNKFLAG		= TFALSE;
-	m_ReadPos		= 0;
+	m_UNKFLAG       = TFALSE;
+	m_ReadPos       = 0;
 	TUtil::MemClear( m_FileInfo, sizeof( m_FileInfo ) );
-	m_Magic			   = 0;
+	m_Magic            = 0;
 	m_CurrentHunk.Name = 0;
 	m_CurrentHunk.Size = 0;
 }
@@ -195,7 +195,7 @@ TTSFO::ERROR TTSFO::Create( const TCHAR* filepath, const TCHAR* magic, Endianess
 	if ( m_pFile != TNULL )
 	{
 		TTSF::Hunk hunk{ TFourCC( "TSFL" ), 0 };
-		TUINT32	   magicValue = TFourCC( magic );
+		TUINT32    magicValue = TFourCC( magic );
 
 		if ( endianess == Endianess_Big )
 		{
@@ -206,7 +206,7 @@ TTSFO::ERROR TTSFO::Create( const TCHAR* filepath, const TCHAR* magic, Endianess
 		Write( hunk );
 		Write( magicValue );
 
-		m_Endianess					   = endianess;
+		m_Endianess                    = endianess;
 		m_Positions[ m_PositionCount ] = 0;
 		m_PositionCount += 1;
 
@@ -233,7 +233,7 @@ TSIZE TTSFO::BeginForm( const TCHAR* name )
 	TASSERT( m_pFile != TNULL, "TTSFO is not created" );
 
 	TTSF::Hunk hunk{ TFourCC( "FORM" ), 0 };
-	auto	   nameValue = TFourCC( name );
+	auto       nameValue = TFourCC( name );
 
 	if ( m_Endianess == Endianess_Big )
 	{
@@ -257,7 +257,7 @@ TSIZE TTSFO::EndForm()
 	{
 		auto formPosition = m_Positions[ --m_PositionCount ];
 
-		auto oldPos	  = m_pFile->Tell();
+		auto oldPos   = m_pFile->Tell();
 		auto formSize = ( oldPos - formPosition ) - 8;
 
 		if ( m_Endianess == Endianess_Big )

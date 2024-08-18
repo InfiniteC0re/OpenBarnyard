@@ -22,7 +22,7 @@ T2ModelInstance::~T2ModelInstance()
 void T2ModelInstance::Create( TModelPtr* a_pModelPtr )
 {
 	m_eFlags |= 0b00001000;
-	m_pModelRef		 = a_pModelPtr;
+	m_pModelRef      = a_pModelPtr;
 	m_pModelInstance = a_pModelPtr->GetModel()->CreateInstance();
 	TTODO( "Initialise some unknown values" );
 }
@@ -69,15 +69,15 @@ TBOOL T2ModelInstance::RenderIfVisible()
 {
 	auto  pContext = TRenderInterface::GetSingleton()->GetCurrentContext();
 	auto  pModel   = m_pModelInstance->GetModel();
-	auto& lod	   = pModel->GetLOD( 0 );
+	auto& lod      = pModel->GetLOD( 0 );
 
 	TVector4 transformScale = m_TransformObject.GetScale();
-	TSphere	 bounding		= lod.BoundingSphere;
+	TSphere  bounding       = lod.BoundingSphere;
 	bounding.AsVector4().Multiply( TVector4(
-		transformScale.x,
-		transformScale.y,
-		transformScale.z,
-		TMath::Max( TMath::Max( transformScale.x, transformScale.y ), transformScale.z ) ) );
+	    transformScale.x,
+	    transformScale.y,
+	    transformScale.z,
+	    TMath::Max( TMath::Max( transformScale.x, transformScale.y ), transformScale.z ) ) );
 
 	TMatrix44 transformMatrix;
 	m_TransformObject.GetLocalMatrixImp( transformMatrix );

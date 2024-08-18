@@ -5,7 +5,7 @@
 class AGameState;
 
 class AGameStateControllerEvent :
-	public Toshi::TGlobalEvent<AGameStateControllerEvent>
+    public Toshi::TGlobalEvent<AGameStateControllerEvent>
 {
 public:
 	using Type = TUINT32;
@@ -19,13 +19,13 @@ public:
 
 public:
 	constexpr AGameStateControllerEvent( AGameState* a_pGameState, Type a_eType ) :
-		m_pGameState( a_pGameState ),
-		m_eType( a_eType ) {}
+	    m_pGameState( a_pGameState ),
+	    m_eType( a_eType ) {}
 
 	AGameState* GetGameState() const { return m_pGameState; }
-	Type		GetEventType() const { return m_eType; }
+	Type        GetEventType() const { return m_eType; }
 
 private:
 	AGameState* m_pGameState;
-	Type		m_eType;
+	Type        m_eType;
 };

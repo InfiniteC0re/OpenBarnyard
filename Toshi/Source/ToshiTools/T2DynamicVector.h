@@ -9,7 +9,7 @@ protected:
 	T2GenericDynamicVector( T2Allocator* a_pAllocator, TINT a_iInitialSize, TINT a_iGrowSize, TINT a_iElementSize )
 	{
 		m_pAllocator   = a_pAllocator;
-		m_iGrowSize	   = a_iGrowSize;
+		m_iGrowSize    = a_iGrowSize;
 		m_iNumElements = 0;
 		m_iAllocSize   = a_iInitialSize;
 		m_poElements   = ( a_iInitialSize > 0 ) ? a_pAllocator->Malloc( a_iInitialSize * a_iElementSize ) : TNULL;
@@ -18,7 +18,7 @@ protected:
 	T2GenericDynamicVector( void* a_poElements, TINT a_iMaxSize, TINT a_iNumElements )
 	{
 		m_pAllocator   = TNULL;
-		m_iGrowSize	   = 0;
+		m_iGrowSize    = 0;
 		m_iNumElements = a_iNumElements;
 		m_iAllocSize   = a_iMaxSize;
 		m_poElements   = a_poElements;
@@ -28,11 +28,11 @@ protected:
 	void Grow( TINT a_iNumElements, TINT a_iElementSize );
 
 protected:
-	T2Allocator* m_pAllocator;	 // 0x0
-	TINT		 m_iGrowSize;	 // 0x4
-	TINT		 m_iNumElements; // 0x8
-	TINT		 m_iAllocSize;	 // 0xC
-	void*		 m_poElements;	 // 0x10
+	T2Allocator* m_pAllocator;   // 0x0
+	TINT         m_iGrowSize;    // 0x4
+	TINT         m_iNumElements; // 0x8
+	TINT         m_iAllocSize;   // 0xC
+	void*        m_poElements;   // 0x10
 };
 
 template <class T>
@@ -176,17 +176,17 @@ public:
 		}
 
 	private:
-		TINT			 m_iIndex;	// 0x0
+		TINT             m_iIndex;  // 0x0
 		T2DynamicVector* m_pVector; // 0x4
 	};
 
 public:
 	constexpr T2DynamicVector( T2Allocator* a_pAllocator, TINT a_iMaxSize, TINT a_iGrowSize ) :
-		T2GenericDynamicVector( a_pAllocator, a_iMaxSize, a_iGrowSize, sizeof( T ) )
+	    T2GenericDynamicVector( a_pAllocator, a_iMaxSize, a_iGrowSize, sizeof( T ) )
 	{}
 
 	constexpr T2DynamicVector( T* a_poElements, TINT a_iMaxSize, TINT a_iNumElements ) :
-		T2GenericDynamicVector( a_poElements, a_iMaxSize, a_iNumElements )
+	    T2GenericDynamicVector( a_poElements, a_iMaxSize, a_iNumElements )
 	{}
 
 	~T2DynamicVector()

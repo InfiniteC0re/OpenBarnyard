@@ -49,14 +49,14 @@ int main( int argc, char** argv )
 		TTRACE( "Starting tests...\n" );
 
 		TINT iNumFails = g_pTestingFramework->RunTests(
-			[]( T2TestingFramework::Test* pTest, T2TestingFramework::Check* pCheck ) {
-				// Fail
-				TTRACE( "- Failed check \'%s\' in the '%s::%s' test\n", pCheck->pchStatement, pTest->pCategory->pchName, pTest->pchName );
-			},
-			[]( T2TestingFramework::Test* pTest, T2TestingFramework::Check* pCheck ) {
-				TTRACE( "+ Succeded check \'%s\' in the '%s::%s' test\n", pCheck->pchStatement, pTest->pCategory->pchName, pTest->pchName );
-				// Success
-			} );
+		    []( T2TestingFramework::Test* pTest, T2TestingFramework::Check* pCheck ) {
+			    // Fail
+			    TTRACE( "- Failed check \'%s\' in the '%s::%s' test\n", pCheck->pchStatement, pTest->pCategory->pchName, pTest->pchName );
+		    },
+		    []( T2TestingFramework::Test* pTest, T2TestingFramework::Check* pCheck ) {
+			    TTRACE( "+ Succeded check \'%s\' in the '%s::%s' test\n", pCheck->pchStatement, pTest->pCategory->pchName, pTest->pchName );
+			    // Success
+		    } );
 
 		TTRACE( "Finished the tests with %d fail(s).\n", iNumFails );
 	}

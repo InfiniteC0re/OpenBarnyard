@@ -18,8 +18,8 @@ TDEFINE_CLASS( TVertexFactoryResource );
 TVertexPoolResourceInterface* TVertexFactoryResource::CreatePoolResource( TUINT16 a_uiMaxStaticVertices, TUINT16 a_uiFlags )
 {
 	auto pVertexPool = TSTATICCAST(
-		TVertexPoolResource,
-		GetRenderer()->CreateResource( &TGetClass( TVertexPoolResource ), TNULL, this ) );
+	    TVertexPoolResource,
+	    GetRenderer()->CreateResource( &TGetClass( TVertexPoolResource ), TNULL, this ) );
 
 	TVALIDPTR( pVertexPool );
 
@@ -32,8 +32,8 @@ TVertexPoolResourceInterface* TVertexFactoryResource::CreatePoolResource( TUINT1
 TVertexBlockResource* TVertexFactoryResource::CreateBlockResource( TUINT16 a_uiMaxVertices, TUINT32 a_uiFlags )
 {
 	auto pVertexBlock = TSTATICCAST(
-		TVertexBlockResource,
-		GetRenderer()->CreateResource( &TGetClass( TVertexBlockResource ), TNULL, this ) );
+	    TVertexBlockResource,
+	    GetRenderer()->CreateResource( &TGetClass( TVertexBlockResource ), TNULL, this ) );
 
 	TVALIDPTR( pVertexBlock );
 
@@ -48,28 +48,28 @@ TVertexBlockResource* TVertexFactoryResource::FindBlockResource( TVertexPoolReso
 		return TNULL;
 	}
 
-	using Pair	= T2Pair<TVertexBlockResource*, TVertexPoolResource*>;
+	using Pair  = T2Pair<TVertexBlockResource*, TVertexPoolResource*>;
 	Pair result = { TNULL, a_pResource };
 
 	TResource::RecurseSimple(
-		[]( TResource* a_pResource, void* a_pUserData ) {
-			auto pPair = TSTATICCAST( Pair, a_pUserData );
+	    []( TResource* a_pResource, void* a_pUserData ) {
+		    auto pPair = TSTATICCAST( Pair, a_pUserData );
 
-			if ( a_pResource->IsA( &TGetClass( TVertexBlockResource ) ) )
-			{
-				auto pBlockResource = TSTATICCAST( TVertexBlockResource, a_pResource );
+		    if ( a_pResource->IsA( &TGetClass( TVertexBlockResource ) ) )
+		    {
+			    auto pBlockResource = TSTATICCAST( TVertexBlockResource, a_pResource );
 
-				if ( pBlockResource->CanFit( pPair->GetSecond() ) && !pBlockResource->IsDying() )
-				{
-					pPair->m_First = pBlockResource;
-					return TFALSE;
-				}
-			}
+			    if ( pBlockResource->CanFit( pPair->GetSecond() ) && !pBlockResource->IsDying() )
+			    {
+				    pPair->m_First = pBlockResource;
+				    return TFALSE;
+			    }
+		    }
 
-			return TTRUE;
-		},
-		this,
-		&result );
+		    return TTRUE;
+	    },
+	    this,
+	    &result );
 
 	return result.m_First;
 }

@@ -19,12 +19,12 @@ TDEFINE_FREELIST_ALLOCATOR( TTextureResourceHAL );
 
 TTextureResourceHAL::TTextureResourceHAL()
 {
-	m_iNumLocks		  = 0;
+	m_iNumLocks       = 0;
 	m_bLoadFromMemory = TFALSE;
-	m_bIsToshi2		  = TFALSE;
-	m_pData			  = TNULL;
-	m_uiDataSize	  = 0;
-	m_pD3DTexture	  = TNULL;
+	m_bIsToshi2       = TFALSE;
+	m_pData           = TNULL;
+	m_uiDataSize      = 0;
+	m_pD3DTexture     = TNULL;
 	m_eAddressUState  = 0;
 	m_eAddressVState  = 0;
 }
@@ -81,16 +81,16 @@ void TTextureResourceHAL::Unlock()
 
 void TTextureResourceHAL::CreateFromT2Texture( T2Texture* a_pTexture )
 {
-	m_bIsToshi2		  = TTRUE;
-	m_uiWidth		  = a_pTexture->GetWidth();
-	m_uiHeight		  = a_pTexture->GetHeight();
-	m_uiMipLevels	  = a_pTexture->GetMipLevels();
-	m_bNoMipLevels	  = FALSE;
+	m_bIsToshi2       = TTRUE;
+	m_uiWidth         = a_pTexture->GetWidth();
+	m_uiHeight        = a_pTexture->GetHeight();
+	m_uiMipLevels     = a_pTexture->GetMipLevels();
+	m_bNoMipLevels    = FALSE;
 	m_eResourceFormat = TTEXTURERESOURCEFORMAT::Unknown;
 	m_eAddressUState  = 0;
 	m_eAddressVState  = 0;
-	m_ImageInfo		  = a_pTexture->GetImageInfo();
-	m_pD3DTexture	  = a_pTexture->GetD3DTexture();
+	m_ImageInfo       = a_pTexture->GetImageInfo();
+	m_pD3DTexture     = a_pTexture->GetD3DTexture();
 
 	TResource::Create();
 	TResource::Validate();
@@ -105,15 +105,15 @@ TBOOL TTextureResourceHAL::Create( void* a_pData, TUINT a_uiDataSize, TUINT a_eT
 		return TFALSE;
 	}
 
-	m_eTextureFlags	  = a_eTextureFlags;
-	m_uiWidth		  = a_uiWidth;
-	m_uiHeight		  = a_uiHeight;
-	m_uiMipLevels	  = 0;
+	m_eTextureFlags   = a_eTextureFlags;
+	m_uiWidth         = a_uiWidth;
+	m_uiHeight        = a_uiHeight;
+	m_uiMipLevels     = 0;
 	m_eResourceFormat = TTEXTURERESOURCEFORMAT::Unknown;
-	m_bNoMipLevels	  = TRUE;
+	m_bNoMipLevels    = TRUE;
 	m_bLoadFromMemory = TTRUE;
-	m_pData			  = a_pData;
-	m_uiDataSize	  = a_uiDataSize;
+	m_pData           = a_pData;
+	m_uiDataSize      = a_uiDataSize;
 	m_eAddressUState  = 0;
 	m_eAddressVState  = 0;
 
@@ -128,10 +128,10 @@ TBOOL TTextureResourceHAL::Create( const TCHAR* a_szFileName, TUINT a_eTextureFl
 		return TFALSE;
 	}
 
-	m_eTextureFlags	 = a_eTextureFlags;
+	m_eTextureFlags  = a_eTextureFlags;
 	m_eAddressUState = 0;
 	m_eAddressVState = 0;
-	m_bNoMipLevels	 = TRUE;
+	m_bNoMipLevels   = TRUE;
 
 	return TTRUE;
 }
@@ -143,14 +143,14 @@ TBOOL TTextureResourceHAL::CreateEx( void* a_pData, TUINT a_uiDataSize, TUINT a_
 		return TFALSE;
 	}
 
-	m_uiWidth		  = a_uiWidth;
-	m_pData			  = a_pData;
-	m_uiHeight		  = a_uiHeight;
-	m_uiDataSize	  = a_uiDataSize;
-	m_eTextureFlags	  = 0x40;
-	m_uiMipLevels	  = a_uiMipLevels;
+	m_uiWidth         = a_uiWidth;
+	m_pData           = a_pData;
+	m_uiHeight        = a_uiHeight;
+	m_uiDataSize      = a_uiDataSize;
+	m_eTextureFlags   = 0x40;
+	m_uiMipLevels     = a_uiMipLevels;
 	m_eResourceFormat = a_eFormat;
-	m_bNoMipLevels	  = a_bNoMipLevels;
+	m_bNoMipLevels    = a_bNoMipLevels;
 	m_bLoadFromMemory = TTRUE;
 	m_eAddressUState  = 0;
 	m_eAddressVState  = 0;
@@ -192,13 +192,13 @@ TBOOL TTextureResourceHAL::CreateFromMemory888( TUINT a_uiWidth, TUINT a_uiHeigh
 	auto pRenderer = TSTATICCAST( TRenderD3DInterface, GetRenderer() );
 
 	HRESULT hCreateRes = pRenderer->GetDirect3DDevice()->CreateTexture(
-		a_uiWidth,
-		a_uiHeight,
-		a_uiLevels,
-		0,
-		D3DFMT_X8R8G8B8,
-		D3DPOOL_MANAGED,
-		&m_pD3DTexture );
+	    a_uiWidth,
+	    a_uiHeight,
+	    a_uiLevels,
+	    0,
+	    D3DFMT_X8R8G8B8,
+	    D3DPOOL_MANAGED,
+	    &m_pD3DTexture );
 
 	if ( SUCCEEDED( hCreateRes ) )
 	{
@@ -213,10 +213,10 @@ TBOOL TTextureResourceHAL::CreateFromMemory888( TUINT a_uiWidth, TUINT a_uiHeigh
 			for ( TUINT i = a_uiHeight; i != 0; i-- )
 			{
 				TUINT8 uiDataPixel = *pDataPixel;
-				pTexPixel[ 0 ]	   = pDataPixel[ 2 ];
-				pTexPixel[ 1 ]	   = pDataPixel[ 1 ];
-				pTexPixel[ 2 ]	   = pDataPixel[ 0 ];
-				pTexPixel[ 3 ]	   = 255;
+				pTexPixel[ 0 ]     = pDataPixel[ 2 ];
+				pTexPixel[ 1 ]     = pDataPixel[ 1 ];
+				pTexPixel[ 2 ]     = pDataPixel[ 0 ];
+				pTexPixel[ 3 ]     = 255;
 
 				pTexPixel += 4;
 				pDataPixel += 3;
@@ -254,13 +254,13 @@ TBOOL TTextureResourceHAL::CreateFromMemory4444( TUINT a_uiWidth, TUINT a_uiHeig
 	auto pRenderer = TSTATICCAST( TRenderD3DInterface, GetRenderer() );
 
 	HRESULT hCreateRes = pRenderer->GetDirect3DDevice()->CreateTexture(
-		a_uiWidth,
-		a_uiHeight,
-		a_uiLevels,
-		0,
-		D3DFMT_A4R4G4B4,
-		D3DPOOL_MANAGED,
-		&m_pD3DTexture );
+	    a_uiWidth,
+	    a_uiHeight,
+	    a_uiLevels,
+	    0,
+	    D3DFMT_A4R4G4B4,
+	    D3DPOOL_MANAGED,
+	    &m_pD3DTexture );
 
 	if ( SUCCEEDED( hCreateRes ) )
 	{
@@ -269,13 +269,13 @@ TBOOL TTextureResourceHAL::CreateFromMemory4444( TUINT a_uiWidth, TUINT a_uiHeig
 
 		if ( a_uiHeight != 0 )
 		{
-			TUINT16* pTexPixel	= TSTATICCAST( TUINT16, rect.pBits );
+			TUINT16* pTexPixel  = TSTATICCAST( TUINT16, rect.pBits );
 			TUINT16* pDataPixel = TSTATICCAST( TUINT16, a_pData );
 
 			for ( TUINT i = a_uiHeight; i != 0; i-- )
 			{
 				TUINT16 uiDataPixel = *pDataPixel;
-				*pTexPixel			= ( ( ( ( uiDataPixel >> 12 ) << 4 | uiDataPixel & 15 ) << 4 | uiDataPixel >> 4 & 15 ) << 4 ) | uiDataPixel >> 8 & 15;
+				*pTexPixel          = ( ( ( ( uiDataPixel >> 12 ) << 4 | uiDataPixel & 15 ) << 4 | uiDataPixel >> 4 & 15 ) << 4 ) | uiDataPixel >> 8 & 15;
 				pTexPixel++;
 				pDataPixel++;
 			}
@@ -306,21 +306,21 @@ TBOOL TTextureResourceHAL::CreateFromMemoryDDS( TUINT a_uiWidth, TUINT a_uiHeigh
 	auto pRenderer = TSTATICCAST( TRenderD3DInterface, GetRenderer() );
 
 	HRESULT hRes = D3DXCreateTextureFromFileInMemoryEx(
-		pRenderer->GetDirect3DDevice(),
-		a_pData,
-		m_uiDataSize,
-		-1,
-		-1,
-		a_uiLevels,
-		0,
-		D3DFMT_UNKNOWN,
-		D3DPOOL_MANAGED,
-		D3DFILTER_LINEARMIPNEAREST,
-		D3DFILTER_LINEARMIPNEAREST,
-		0,
-		&m_ImageInfo,
-		NULL,
-		&m_pD3DTexture );
+	    pRenderer->GetDirect3DDevice(),
+	    a_pData,
+	    m_uiDataSize,
+	    -1,
+	    -1,
+	    a_uiLevels,
+	    0,
+	    D3DFMT_UNKNOWN,
+	    D3DPOOL_MANAGED,
+	    D3DFILTER_LINEARMIPNEAREST,
+	    D3DFILTER_LINEARMIPNEAREST,
+	    0,
+	    &m_ImageInfo,
+	    NULL,
+	    &m_pD3DTexture );
 
 	if ( FAILED( hRes ) )
 	{
@@ -335,20 +335,20 @@ TBOOL TTextureResourceHAL::CreateFromFileDDS( TUINT a_uiWidth, TUINT a_uiHeight,
 	auto pRenderer = TSTATICCAST( TRenderD3DInterface, GetRenderer() );
 
 	HRESULT hRes = D3DXCreateTextureFromFileExA(
-		pRenderer->GetDirect3DDevice(),
-		a_szFile,
-		-1,
-		-1,
-		a_uiLevels,
-		0,
-		D3DFMT_UNKNOWN,
-		D3DPOOL_MANAGED,
-		D3DFILTER_LINEARMIPNEAREST,
-		D3DFILTER_LINEARMIPNEAREST,
-		0,
-		&m_ImageInfo,
-		NULL,
-		&m_pD3DTexture );
+	    pRenderer->GetDirect3DDevice(),
+	    a_szFile,
+	    -1,
+	    -1,
+	    a_uiLevels,
+	    0,
+	    D3DFMT_UNKNOWN,
+	    D3DPOOL_MANAGED,
+	    D3DFILTER_LINEARMIPNEAREST,
+	    D3DFILTER_LINEARMIPNEAREST,
+	    0,
+	    &m_ImageInfo,
+	    NULL,
+	    &m_pD3DTexture );
 
 	if ( FAILED( hRes ) )
 	{

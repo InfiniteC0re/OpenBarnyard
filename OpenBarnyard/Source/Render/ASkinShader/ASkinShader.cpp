@@ -12,10 +12,10 @@ TOSHI_NAMESPACE_USING
 TDEFINE_CLASS_NORUNTIME( ASkinShader );
 
 ASkinShader::ASkinShader() :
-	m_SomeColour( 0 ),
-	m_Unk2( 128 ),
-	m_Unk3( 1.0f ),
-	m_Unk4( 0 )
+    m_SomeColour( 0 ),
+    m_Unk2( 128 ),
+    m_Unk3( 1.0f ),
+    m_Unk4( 0 )
 {
 }
 

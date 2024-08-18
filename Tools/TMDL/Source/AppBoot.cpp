@@ -25,8 +25,8 @@ static TMemoryInitialiser s_MemoryInitialiser;
 
 static inline void SetFaceAndAdvance3( aiFace*& face, unsigned int a, unsigned int b, unsigned int c )
 {
-	face->mNumIndices	= 3;
-	face->mIndices		= new unsigned int[ 3 ];
+	face->mNumIndices   = 3;
+	face->mIndices      = new unsigned int[ 3 ];
 	face->mIndices[ 0 ] = a;
 	face->mIndices[ 1 ] = b;
 	face->mIndices[ 2 ] = c;
@@ -37,11 +37,11 @@ static void LogRenderGroup( CellSphereTreeBranchNode* a_pRenderGroup )
 {
 	TINFO( "      New render group:\n" );
 	TINFO(
-		"        Bounding: %f %f %f %f\n",
-		a_pRenderGroup->m_BoundingSphere.GetOrigin().x,
-		a_pRenderGroup->m_BoundingSphere.GetOrigin().y,
-		a_pRenderGroup->m_BoundingSphere.GetOrigin().z,
-		a_pRenderGroup->m_BoundingSphere.GetRadius() );
+	    "        Bounding: %f %f %f %f\n",
+	    a_pRenderGroup->m_BoundingSphere.GetOrigin().x,
+	    a_pRenderGroup->m_BoundingSphere.GetOrigin().y,
+	    a_pRenderGroup->m_BoundingSphere.GetOrigin().z,
+	    a_pRenderGroup->m_BoundingSphere.GetRadius() );
 
 	TBOOL bHasNext = a_pRenderGroup->m_pRight;
 
@@ -54,11 +54,11 @@ static void LogRenderGroup( CellSphereTreeBranchNode* a_pRenderGroup )
 	if ( bHasNext )
 	{
 		TINFO(
-			"        Final bounding: %f %f %f %f\n",
-			a_pRenderGroup->m_BoundingSphere.GetOrigin().x,
-			a_pRenderGroup->m_BoundingSphere.GetOrigin().y,
-			a_pRenderGroup->m_BoundingSphere.GetOrigin().z,
-			a_pRenderGroup->m_BoundingSphere.GetRadius() );
+		    "        Final bounding: %f %f %f %f\n",
+		    a_pRenderGroup->m_BoundingSphere.GetOrigin().x,
+		    a_pRenderGroup->m_BoundingSphere.GetOrigin().y,
+		    a_pRenderGroup->m_BoundingSphere.GetOrigin().z,
+		    a_pRenderGroup->m_BoundingSphere.GetRadius() );
 	}
 }
 
@@ -68,17 +68,17 @@ int main( int argc, char** argv )
 	toshiParams.szCommandLine = GetCommandLineA();
 
 	TUtil::ToshiCreate( toshiParams );
-	TUtil::SetTPStringPool( new TPString8Pool( 1024, 0, &T2Allocator::s_GlobalAllocator, TNULL ) );
+	TUtil::SetTPStringPool( new TPString8Pool( 1024, 0, Toshi::GetGlobalAllocator(), TNULL ) );
 
 	T2CommandLine commandLine( GetCommandLineA() );
-	auto		  strInfoFile	   = commandLine.GetParameterValue( "-i" );
-	auto		  strCompileFile   = commandLine.GetParameterValue( "-c" );
-	auto		  strDecompileFile = commandLine.GetParameterValue( "-d" );
-	auto		  strTexturesPath  = commandLine.GetParameterValue( "-d" );
-	auto		  strOutPath	   = commandLine.GetParameterValue( "-o" );
-	auto		  strKeyLib		   = commandLine.GetParameterValue( "-keylib" );
-	auto		  bParamIsBtec	   = commandLine.HasParameter( "-btec" );
-	auto		  bParamIsTerrain  = commandLine.HasParameter( "-terrain" );
+	auto          strInfoFile      = commandLine.GetParameterValue( "-i" );
+	auto          strCompileFile   = commandLine.GetParameterValue( "-c" );
+	auto          strDecompileFile = commandLine.GetParameterValue( "-d" );
+	auto          strTexturesPath  = commandLine.GetParameterValue( "-d" );
+	auto          strOutPath       = commandLine.GetParameterValue( "-o" );
+	auto          strKeyLib        = commandLine.GetParameterValue( "-keylib" );
+	auto          bParamIsBtec     = commandLine.HasParameter( "-btec" );
+	auto          bParamIsTerrain  = commandLine.HasParameter( "-terrain" );
 
 	if ( strInfoFile )
 	{
@@ -87,16 +87,16 @@ int main( int argc, char** argv )
 		auto pInSECT = inTRB.GetSections();
 		auto pInSYMB = inTRB.GetSymbols();
 
-		auto pInFileHeader	   = pInSYMB->Find<TTMDBase::FileHeader>( pInSECT, "FileHeader" );
-		auto pInDatabase	   = pInSYMB->Find<WorldDatabase>( pInSECT, "Database" );
+		auto pInFileHeader     = pInSYMB->Find<TTMDBase::FileHeader>( pInSECT, "FileHeader" );
+		auto pInDatabase       = pInSYMB->Find<WorldDatabase>( pInSECT, "Database" );
 		auto pInSkeletonHeader = pInSYMB->Find<TTMDBase::SkeletonHeader>( pInSECT, "SkeletonHeader" );
-		auto pInSkeleton	   = pInSYMB->Find<TSkeleton>( pInSECT, "Skeleton" );
-		auto pInMaterials	   = pInSYMB->Find<TTMDBase::MaterialsHeader>( pInSECT, "Materials" );
-		auto pInCollision	   = pInSYMB->Find<TTMDBase::Collision>( pInSECT, "Collision" );
-		auto pInHeader		   = pInSYMB->Find<TTMDWin::TRBWinHeader>( pInSECT, "Header" );
+		auto pInSkeleton       = pInSYMB->Find<TSkeleton>( pInSECT, "Skeleton" );
+		auto pInMaterials      = pInSYMB->Find<TTMDBase::MaterialsHeader>( pInSECT, "Materials" );
+		auto pInCollision      = pInSYMB->Find<TTMDBase::Collision>( pInSECT, "Collision" );
+		auto pInHeader         = pInSYMB->Find<TTMDWin::TRBWinHeader>( pInSECT, "Header" );
 
-		const TBOOL bIsSkin		 = pInFileHeader;
-		const TBOOL bIsTerrain	 = pInDatabase;
+		const TBOOL bIsSkin      = pInFileHeader;
+		const TBOOL bIsTerrain   = pInDatabase;
 		const TBOOL bHasSkeleton = pInSkeletonHeader;
 
 		if ( !bIsSkin && !bIsTerrain )
@@ -139,11 +139,11 @@ int main( int argc, char** argv )
 						auto pMeshBounding = pModel->ppCellMeshSpheres[ j ];
 
 						TINFO(
-							"        Bounding Sphere: %f %f %f %f\n",
-							pMeshBounding->m_BoundingSphere.GetOrigin().x,
-							pMeshBounding->m_BoundingSphere.GetOrigin().y,
-							pMeshBounding->m_BoundingSphere.GetOrigin().z,
-							pMeshBounding->m_BoundingSphere.GetRadius() );
+						    "        Bounding Sphere: %f %f %f %f\n",
+						    pMeshBounding->m_BoundingSphere.GetOrigin().x,
+						    pMeshBounding->m_BoundingSphere.GetOrigin().y,
+						    pMeshBounding->m_BoundingSphere.GetOrigin().z,
+						    pMeshBounding->m_BoundingSphere.GetRadius() );
 
 						auto pMesh = pMeshBounding->m_pCellMesh;
 						TINFO( "        Num Indices: %u\n", pMesh->uiNumIndices );
@@ -185,7 +185,7 @@ int main( int argc, char** argv )
 
 		for ( TINT i = 0; i < pInHeader->m_iNumLODs; i++ )
 		{
-			auto pLOD		= pInHeader->GetLOD( i );
+			auto pLOD       = pInHeader->GetLOD( i );
 			TINT iMeshCount = pLOD->m_iMeshCount1 + pLOD->m_iMeshCount2;
 
 			TINFO( "  Information about LOD%i:\n", i );

@@ -15,13 +15,13 @@ TDEFINE_CLASS( ADisplayModes_Win );
 
 void ADisplayModes_Win::Initialise()
 {
-	auto pRenderer	  = TSTATICCAST( TRenderD3DInterface, TRenderInterface::GetSingleton() );
+	auto pRenderer    = TSTATICCAST( TRenderD3DInterface, TRenderInterface::GetSingleton() );
 	auto pAdapterList = pRenderer->GetAdapterList();
 
 	T2_FOREACH( *pAdapterList, pAdapter )
 	{
 		auto uiNumSupportedDevices = pAdapter->GetNumSupportedDevices();
-		auto pModeList			   = pAdapter->GetModeList();
+		auto pModeList             = pAdapter->GetModeList();
 
 		T2_FOREACH( *pModeList, pMode )
 		{
@@ -39,18 +39,18 @@ void ADisplayModes_Win::Initialise()
 					auto uiWidth  = pDevice->GetMode()->GetWidth();
 					auto uiHeight = pDevice->GetMode()->GetHeight();
 
-					if ( uiWidth == ( uiHeight / 3 ) * 4 ||	 // 4:3
-						 uiHeight == ( uiWidth / 3 ) * 4 ||	 // 4:3
-						 uiWidth == ( uiHeight / 4 ) * 5 ||	 // 5:4
-						 uiWidth == ( uiHeight / 5 ) * 4 ||	 // 4:5
-						 uiWidth == ( uiHeight / 9 ) * 16 || // 16:9
-						 uiWidth == ( uiHeight / 10 ) * 16 ) // 16:10
+					if ( uiWidth == ( uiHeight / 3 ) * 4 ||  // 4:3
+					     uiHeight == ( uiWidth / 3 ) * 4 ||  // 4:3
+					     uiWidth == ( uiHeight / 4 ) * 5 ||  // 5:4
+					     uiWidth == ( uiHeight / 5 ) * 4 ||  // 4:5
+					     uiWidth == ( uiHeight / 9 ) * 16 || // 16:9
+					     uiWidth == ( uiHeight / 10 ) * 16 ) // 16:10
 					{
-						if ( ( 640 <= uiWidth && 480 <= uiHeight ) ||	// 4:3
-							 ( 1280 <= uiWidth && 1024 <= uiHeight ) || // 5:4
-							 ( 1024 <= uiWidth && 1280 <= uiHeight ) || // 4:5
-							 ( 1280 <= uiWidth && 720 <= uiHeight ) ||	// 16:9
-							 ( 1440 <= uiWidth && 900 <= uiHeight ) )	// 16:10
+						if ( ( 640 <= uiWidth && 480 <= uiHeight ) ||   // 4:3
+						     ( 1280 <= uiWidth && 1024 <= uiHeight ) || // 5:4
+						     ( 1024 <= uiWidth && 1280 <= uiHeight ) || // 4:5
+						     ( 1280 <= uiWidth && 720 <= uiHeight ) ||  // 16:9
+						     ( 1440 <= uiWidth && 900 <= uiHeight ) )   // 16:10
 						{
 							if ( pDevice->GetMode()->Is16Bit() )
 							{

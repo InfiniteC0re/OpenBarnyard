@@ -23,7 +23,7 @@ public:
 
 public:
 	Toshi::TTexture* m_pTextureResource;
-	TUINT			 m_eBlendState;
-	TUINT			 m_eTextureAddress;
-	TUINT			 m_iMipMapLODBias;
+	TUINT            m_eBlendState;
+	TUINT            m_eTextureAddress;
+	TUINT            m_iMipMapLODBias;
 };

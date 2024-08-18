@@ -52,9 +52,9 @@ void TTexture::CheckValid()
 	if ( m_mipMaps != 0 )
 	{
 		m_unk2 |= 0x10000000;
-		m_unk3		= 2;
+		m_unk3      = 2;
 		m_magFilter = GX_LIN_MIP_LIN;
-		m_unk4		= 0.5f * -( m_mipMaps - 176.0f );
+		m_unk4      = 0.5f * -( m_mipMaps - 176.0f );
 	}
 
 	if ( m_texFmt - 8 < 2 )
@@ -74,8 +74,8 @@ void TTexture::InitTexObj()
 		m_pImageData = new byte[ m_iImageSize ];
 		if ( m_width != ( m_width & -m_width ) || m_height != ( m_height & -m_height ) )
 		{
-			m_wrapS	  = 0;
-			m_wrapT	  = 0;
+			m_wrapS   = 0;
+			m_wrapT   = 0;
 			m_mipMaps = 0;
 		}
 	}
@@ -84,10 +84,10 @@ void TTexture::InitTexObj()
 void TTexture::InitRuntime( GXTexFmt a_texFmt, GXTlutFmt a_tlutFmt, TUINT a_unk, TUINT a_unk2, TUINT a_unk3, TUINT a_unk4, void* a_unk5, void* a_unk6, TCHAR const* a_szFileName )
 {
 	m_pImageData = TNULL;
-	m_texFmt	 = a_texFmt;
-	m_tlutFmt	 = a_tlutFmt;
-	m_wrapS		 = GX_REPEAT;
-	m_wrapT		 = GX_REPEAT;
+	m_texFmt     = a_texFmt;
+	m_tlutFmt    = a_tlutFmt;
+	m_wrapS      = GX_REPEAT;
+	m_wrapT      = GX_REPEAT;
 	m_szFileName = (TCHAR*)a_szFileName;
 
 	m_iHash = ComputeHash( m_szFileName );
@@ -128,11 +128,11 @@ void TTexture::Swizzle32Bit()
 {
 	uint8_t* buf;
 	TUINT32* imgPtr3;
-	TUINT32	 height = m_height;
-	TUINT32	 width	= m_width;
+	TUINT32  height = m_height;
+	TUINT32  width  = m_width;
 	for ( TSIZE i = 0; i < m_mipMaps + 1; i++ )
 	{
-		TINT	 iVar7	  = 0;
+		TINT     iVar7    = 0;
 		TUINT32* imagePtr = reinterpret_cast<TUINT32*>( m_pImageData );
 		for ( TSIZE j = 0; j < height; j += 4 )
 		{
@@ -143,7 +143,7 @@ void TTexture::Swizzle32Bit()
 				uint8_t* buf2 = buf + iVar1;
 				for ( TSIZE s = 0; s < 2; s++ )
 				{
-					imgPtr3		 = imagePtr;
+					imgPtr3      = imagePtr;
 					imgPtr3[ 0 ] = buf2[ 0 ] >> 0x10;
 					imgPtr3[ 1 ] = buf2[ 1 ] >> 0x10;
 					imgPtr3[ 2 ] = buf2[ 2 ] >> 0x10;

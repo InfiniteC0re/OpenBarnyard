@@ -11,8 +11,8 @@
 TOSHI_NAMESPACE_START
 
 TFileManager::TFileManager() :
-	m_WorkingDirectory( "/" ),
-	m_ValidatedCount( 0 )
+    m_WorkingDirectory( "/" ),
+    m_ValidatedCount( 0 )
 {
 	InvalidateSystemPath();
 }
@@ -170,7 +170,7 @@ void TFileManager::ValidateSystemPath()
 
 		m_ValidatedCount = 0;
 
-		TString8	 fsName;
+		TString8     fsName;
 		TSysPathIter pathIter( m_SysPath );
 
 		TBOOL hasPath = pathIter.First( fsName );
@@ -194,14 +194,14 @@ void TFileManager::ValidateSystemPath()
 }
 
 TFileManager::TSysPathIter::TSysPathIter( const TString8& str ) :
-	m_String( str ),
-	m_Position( -1 )
+    m_String( str ),
+    m_Position( -1 )
 {
 }
 
 TFileManager::TSysPathIter::TSysPathIter( const TSysPathIter& other ) :
-	m_String( other.m_String ),
-	m_Position( other.m_Position )
+    m_String( other.m_String ),
+    m_Position( other.m_Position )
 {
 }
 
@@ -226,11 +226,11 @@ TBOOL TFileManager::TSysPathIter::Next( TString8& path )
 	if ( m_Position >= 0 )
 	{
 		TINT strStart = m_Position + 1;
-		m_Position	  = m_String.Find( ';', strStart );
+		m_Position    = m_String.Find( ';', strStart );
 
 		path.Copy(
-			m_String.GetString( strStart ),
-			( m_Position >= 0 ) ? ( m_Position - strStart ) : -1 );
+		    m_String.GetString( strStart ),
+		    ( m_Position >= 0 ) ? ( m_Position - strStart ) : -1 );
 
 		return TTRUE;
 	}

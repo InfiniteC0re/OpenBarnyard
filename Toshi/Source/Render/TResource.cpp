@@ -14,8 +14,8 @@ TDEFINE_CLASS( TResource );
 
 TResource::TResource()
 {
-	m_State		= 0;
-	m_UId		= 0;
+	m_State     = 0;
+	m_UId       = 0;
 	m_pRenderer = TNULL;
 	m_Name[ 0 ] = 0;
 }

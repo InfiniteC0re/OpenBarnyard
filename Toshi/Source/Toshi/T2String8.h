@@ -26,10 +26,10 @@ public:
 
 	static TCHAR* Concat( TCHAR* dst, const TCHAR* src, TSIZE size = -1 );
 
-	static TCHAR*		FindChar( TCHAR* str, TCHAR character );
+	static TCHAR*       FindChar( TCHAR* str, TCHAR character );
 	static const TCHAR* FindChar( const TCHAR* str, TCHAR character );
 
-	static TCHAR*		FindString( TCHAR* str, const TCHAR* substr );
+	static TCHAR*       FindString( TCHAR* str, const TCHAR* substr );
 	static const TCHAR* FindString( const TCHAR* str, const TCHAR* substr );
 
 	static TSIZE Length( const TCHAR* str );
@@ -43,20 +43,20 @@ public:
 	static void IntToString( TINT value, TCHAR* dst, TINT unused, TINT radix );
 	static void IntToString( TINT value, TCHAR* dst, TINT radix );
 
-	static TINT	  StringToInt( const TCHAR* src );
+	static TINT   StringToInt( const TCHAR* src );
 	static TFLOAT StringToFloat( const TCHAR* src );
 
-	static TCHAR*		SkipSpaces( TCHAR* str );
+	static TCHAR*       SkipSpaces( TCHAR* str );
 	static const TCHAR* SkipSpaces( const TCHAR* str );
 
 	static T2Allocator* GetDefaultAllocatorCB()
 	{
-		return &T2Allocator::s_GlobalAllocator;
+		return GetGlobalAllocator();
 	}
 
 public:
 	static inline T2Allocator* sm_pDefaultAllocatorCB = GetDefaultAllocatorCB();
-	static TCHAR			   ms_aScratchMem[ SCRATCH_MEM_SIZE ];
+	static TCHAR               ms_aScratchMem[ SCRATCH_MEM_SIZE ];
 };
 
 TOSHI_NAMESPACE_END
