@@ -15,6 +15,9 @@
 
 #include <Math/TVector4.h>
 
+#undef PlaySound
+#define ASOUNDMANAGER_MAX_CUE_NUM 128
+
 class ASoundManager :
     public Toshi::TTask,
     public Toshi::TSingleton<ASoundManager>
@@ -25,10 +28,6 @@ public:
 	struct Cue;
 
 	struct S2 : public Toshi::T2DList<S2>::Node
-	{
-	};
-
-	struct Category : public Toshi::T2DList<Category>::Node
 	{
 	};
 
@@ -70,18 +69,45 @@ public:
 		}
 	};
 
-	struct PlayingSound :
-	    public Toshi::T2DList<PlayingSound>::Node
+	// This struct can exist in 2 different versions
+	// The game seems to be allocating it with different sizes from two different allocators
+	// but referencing the same structure name (checked in the Japanese Wii version which has few symbols left)
+	struct ChannelRef :
+	    public Toshi::T2DList<ChannelRef>::Node
 	{
+		union TypesUnion
+		{
+			struct Type1
+			{
+				TINT                  iFMODChannelHandle;
+				ASoundAdvanced::Wave* pWave;
+				TINT                  Unknown;
+				TUINT                 uiEventFlags;
+				TFLOAT                fVolume;
+				TINT                  iFrequency;
+			} t1;
+
+			struct Type2
+			{
+				using Callback_t = void ( * )( TINT a_iType, TINT a_iCueIndex, void* a_pUserData );
+
+				Callback_t fnCallback;
+				void*      pUserData;
+			} t2;
+		} types;
 	};
+
+	static constexpr TINT  CHANNEL_REF_NUM_TYPES = 2;
+	static constexpr TUINT CHANNEL_REF_T1_SIZE   = sizeof( ChannelRef ) - sizeof( ChannelRef::TypesUnion ) + sizeof( ChannelRef::TypesUnion::Type1 );
+	static constexpr TUINT CHANNEL_REF_T2_SIZE   = sizeof( ChannelRef ) - sizeof( ChannelRef::TypesUnion ) + sizeof( ChannelRef::TypesUnion::Type2 );
 
 	class SoundEvent :
 	    public Toshi::T2DList<SoundEvent>::Node
 	{
 	public:
-		SoundEvent( SOUNDEVENT a_eEventType, TFLOAT a_fStartTime, Cue* a_pCue, ASoundAdvanced::Wave* a_pWave, PlayingSound* a_pPlayingSound, TUINT a_uiFlags, TINT a_iTrackIndex );
-		SoundEvent( SOUNDEVENT a_eEventType, TFLOAT a_fStartTime, Cue* a_pCue, ASoundAdvanced::Wave* a_pWave, TFLOAT a_fCustomParam1, PlayingSound* a_pPlayingSound, TUINT a_uiFlags, TINT a_iTrackIndex );
-		SoundEvent( SOUNDEVENT a_eEventType, TFLOAT a_fStartTime, Cue* a_pCue, ASoundAdvanced::Wave* a_pWave, const EventParameters& a_rcCustomParams, PlayingSound* a_pPlayingSound, TUINT a_uiFlags, TINT a_iTrackIndex );
+		SoundEvent( SOUNDEVENT a_eEventType, TFLOAT a_fStartTime, Cue* a_pCue, ASoundAdvanced::Wave* a_pWave, ChannelRef* a_pPlayingSound, TUINT a_uiFlags, TINT a_iTrackIndex );
+		SoundEvent( SOUNDEVENT a_eEventType, TFLOAT a_fStartTime, Cue* a_pCue, ASoundAdvanced::Wave* a_pWave, TFLOAT a_fCustomParam1, ChannelRef* a_pPlayingSound, TUINT a_uiFlags, TINT a_iTrackIndex );
+		SoundEvent( SOUNDEVENT a_eEventType, TFLOAT a_fStartTime, Cue* a_pCue, ASoundAdvanced::Wave* a_pWave, const EventParameters& a_rcCustomParams, ChannelRef* a_pPlayingSound, TUINT a_uiFlags, TINT a_iTrackIndex );
 
 	public:
 		SOUNDEVENT            eEventType;
@@ -89,7 +115,7 @@ public:
 		TUINT                 uiFlags;
 		Cue*                  pCue;
 		ASoundAdvanced::Wave* pWave;
-		PlayingSound*         pPlayingSound;
+		ChannelRef*           pPlayingSound;
 		EventParameters       oParameters;
 		TINT                  iTrackIndex;
 	};
@@ -149,18 +175,30 @@ public:
 		Cue();
 		~Cue();
 
-		TBOOL           bUsed; // ?
-		TFLOAT          fStartTime;
-		ASoundAdvanced* pSoundAdvanced;
-		TFLOAT          fStartTime2;
-		Toshi::TVector4 vecPosition;
-		TFLOAT          fVolume;
-		TFLOAT          fFrequency;
-		TINT            m_iNumPlayingSounds;
-		// T2DList PlayingSounds
-		SoundEventList EventList;
-		// T2DList[2] m_aSomeLists
-		Toshi::T2Vector<TINT, 15> m_vecLoopStarts;
+		void Reset();
+
+		TBOOL                      bUsed; // ?
+		TFLOAT                     fStartTime;
+		ASoundAdvanced*            pSoundAdvanced;
+		TFLOAT                     fStartTime2;
+		Toshi::TVector4            vecPosition;
+		TFLOAT                     fVolume;
+		TFLOAT                     fFrequency;
+		TINT                       iNumChannelRefs;
+		Toshi::T2DList<ChannelRef> oChannelRefsT1;
+		SoundEventList             oEventList;
+		Toshi::T2DList<ChannelRef> aChannelRefsT2[ 2 ];
+		Toshi::T2Vector<TINT, 15>  vecLoopStarts;
+	};
+
+	struct Category
+	{
+		TBOOL  bFlag1            = TTRUE;
+		TBOOL  bFlag2            = TTRUE;
+		TBOOL  bFlag3            = TFALSE;
+		TFLOAT fVolumeMultiplier = 1.0f;
+		// ...
+		Toshi::T2DList<Cue> PlayingCues;
 	};
 
 	struct EventHandler
@@ -187,7 +225,12 @@ public:
 	virtual TBOOL OnUpdate( TFLOAT a_fDeltaTime ) override;
 	virtual void  OnDestroy() override;
 
+	TINT PlaySound( ASoundWaveId a_iSound );
+	TINT PlaySoundEx( ASoundWaveId a_iSound, TFLOAT a_fVolume, TBOOL a_bFlag, TFLOAT a_fStartDelay, TINT a_iTrack );
+
 	void PauseAllSound( TBOOL a_bPaused );
+
+	TINT GetAvailableCueIndex();
 
 	//-----------------------------------------------------------------------------
 	// Wavebanks
@@ -234,20 +277,22 @@ private:
 	void CreatePlaySoundEvent( Cue* a_pCue, TINT a_iTrackIndex, TINT a_iFirstWaveIndex, TINT a_iLastWaveIndex, TUINT a_uiFlags, TFLOAT a_fDelay1, TFLOAT a_fDelay2 );
 
 	// Allocates new SoundEvent and adds it to the specified cue
-	SoundEvent* CreateSoundEvent( SOUNDEVENT a_eEventType, TFLOAT a_fDelay, Cue* a_pCue, ASoundAdvanced::Wave* a_pWave, PlayingSound* a_pPlayingSound, TUINT a_uiFlags, TINT a_iTrackIndex );
+	SoundEvent* CreateSoundEvent( SOUNDEVENT a_eEventType, TFLOAT a_fDelay, Cue* a_pCue, ASoundAdvanced::Wave* a_pWave, ChannelRef* a_pPlayingSound, TUINT a_uiFlags, TINT a_iTrackIndex );
 
 	// Allocates new SoundEvent and adds it to the specified cue
-	SoundEvent* CreateSoundEvent( SOUNDEVENT a_eEventType, TFLOAT a_fDelay, Cue* a_pCue, ASoundAdvanced::Wave* a_pWave, TFLOAT a_fCustomParam1, PlayingSound* a_pPlayingSound, TUINT a_uiFlags, TINT a_iTrackIndex );
+	SoundEvent* CreateSoundEvent( SOUNDEVENT a_eEventType, TFLOAT a_fDelay, Cue* a_pCue, ASoundAdvanced::Wave* a_pWave, TFLOAT a_fCustomParam1, ChannelRef* a_pPlayingSound, TUINT a_uiFlags, TINT a_iTrackIndex );
 
 	// Allocates new SoundEvent and adds it to the specified cue
-	SoundEvent* CreateSoundEvent( SOUNDEVENT a_eEventType, TFLOAT a_fDelay, Cue* a_pCue, ASoundAdvanced::Wave* a_pWave, const EventParameters& a_rcCustomParams, PlayingSound* a_pPlayingSound, TUINT a_uiFlags, TINT a_iTrackIndex );
+	SoundEvent* CreateSoundEvent( SOUNDEVENT a_eEventType, TFLOAT a_fDelay, Cue* a_pCue, ASoundAdvanced::Wave* a_pWave, const EventParameters& a_rcCustomParams, ChannelRef* a_pPlayingSound, TUINT a_uiFlags, TINT a_iTrackIndex );
 
 	// Adds event to the cue and queues the cue to be played
 	void AddEventToCue( Cue* a_pCue, SoundEvent* a_pSoundEvent );
 
-public:
-	// Whether ALoadScreen should be updated while loading audio stream or not
-	inline static TBOOL ms_bShouldUpdateLoadingScreen = TFALSE;
+private:
+	//-----------------------------------------------------------------------------
+	// Event handlers
+	//-----------------------------------------------------------------------------
+	void EventHandler_PlaySound( SoundEvent* a_pEvent );
 
 private:
 	TBOOL Initialise();
@@ -257,19 +302,25 @@ private:
 
 	TBOOL LoadSoundBankImpl( const TCHAR* a_szName, TBOOL a_bSimpleSound, TBOOL a_bLoadImmediately );
 
+public:
+	// Whether ALoadScreen should be updated while loading audio stream or not
+	inline static TBOOL ms_bShouldUpdateLoadingScreen = TFALSE;
+
 private:
 	inline static Toshi::TFileSystem*                                                      ms_pFileSystem;
 	inline static Toshi::T2Map<Toshi::TPString8, AWaveBank*, Toshi::TPString8::Comparator> ms_WaveBanks;
 	inline static TINT                                                                     ms_iPaused;
 
 private:
-	Toshi::T2DynamicObjectPool<SoundEvent>                              m_SoundEventPool;   // 0x20
-	Toshi::T2Map<Toshi::TPString8, TSIZE, Toshi::TPString8::Comparator> m_CategoryIndices;  // 0x80
-	Toshi::T2Map<TINT, ASoundAdvanced*>                                 m_SoundIdToSoundEx; // 0x80
-	Toshi::T2Map<TINT, ASound*>                                         m_SoundIdToSound;   // 0x80
-	CameraData                                                          m_oCameraData;      // 0xC8
-	Cue                                                                 m_aCues[ 128 ];     // 0x108
-	S2                                                                  m_aS2[ 8 ];         // 0x4D08
+	Toshi::T2DynamicObjectPool<SoundEvent>                              m_SoundEventPool;                     // 0x20
+	Toshi::T2DynamicObjectPool<ChannelRef>                              m_ChannelRefT1Pool;                   // 0x50
+	Toshi::T2DynamicObjectPool<ChannelRef>                              m_ChannelRefT2Pool;                   // 0x68
+	Toshi::T2Map<Toshi::TPString8, TSIZE, Toshi::TPString8::Comparator> m_CategoryIndices;                    // 0x80
+	Toshi::T2Map<TINT, ASoundAdvanced*>                                 m_SoundIdToSoundAdv;                  // 0x80
+	Toshi::T2Map<TINT, ASound*>                                         m_SoundIdToSound;                     // 0x80
+	CameraData                                                          m_oCameraData;                        // 0xC8
+	Cue                                                                 m_aCues[ ASOUNDMANAGER_MAX_CUE_NUM ]; // 0x108
+	S2                                                                  m_aS2[ 8 ];                           // 0x4D08
 	// ...
 	Category                                                                                       m_aCategories[ MAX_NUM_CATEGORIES ];  // 0x4E10
 	TINT                                                                                           m_iLastAvailableSoundExSlot;          // 0x4F50

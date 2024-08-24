@@ -178,7 +178,7 @@ TFLOAT TRandom::GetFloat()
 
 TFLOAT TRandom::GetFloatMinMax( TFLOAT a_fLower, TFLOAT a_fUpper )
 {
-	return (TFLOAT)( RandRaw() >> 1 ) * 4.6566129E-10f * a_fUpper + a_fLower;
+	return (TFLOAT)( RandRaw() >> 1 ) * 4.6566129E-10f * ( a_fUpper - a_fLower ) + a_fLower;
 }
 
 TFLOAT TRandom::GetFloat2()

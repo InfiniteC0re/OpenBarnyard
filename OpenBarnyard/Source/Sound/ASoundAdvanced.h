@@ -15,18 +15,18 @@ public:
 
 	struct Wave
 	{
-		AWaveBank* m_pWaveBank            = TNULL;
-		TINT       m_iId                  = -1;
-		TFLOAT     m_fVolume              = 1.0f;
-		TFLOAT     m_fMinVolumeMultiplier = 0.0f;
-		TFLOAT     m_fMaxVolumeMultiplier = 0.0f;
-		TFLOAT     m_fPitch               = 1.0f;
-		TFLOAT     m_fMinPitch            = 0.0f;
-		TFLOAT     m_fMaxPitch            = 0.0f;
-		TINT       m_iFrequency           = 44100;
-		TFLOAT     m_fStart               = 0.0f;
-		TFLOAT     m_fVarDelay            = 0.0f;
-		TINT       m_iWeight              = 50;
+		AWaveBank* pWaveBank            = TNULL;
+		TINT       iId                  = -1;
+		TFLOAT     fVolume              = 1.0f;
+		TFLOAT     fMinVolumeMultiplier = 0.0f;
+		TFLOAT     fMaxVolumeMultiplier = 0.0f;
+		TFLOAT     fPitch               = 1.0f;
+		TFLOAT     fMinPitch            = 0.0f;
+		TFLOAT     fMaxPitch            = 0.0f;
+		TINT       iFrequency           = 44100;
+		TFLOAT     fStart               = 0.0f;
+		TFLOAT     fVarDelay            = 0.0f;
+		TINT       iWeight              = 50;
 	};
 
 public:
@@ -41,15 +41,23 @@ public:
 	{
 	}
 
+	TINT GetFirstWaveForTrack( TINT a_iTrack ) const
+	{
+		TINT iFirstWaveIndex = 0;
+		for ( TINT iTrack = 0; iTrack < a_iTrack; iTrack++ )
+			iFirstWaveIndex += m_vecTracks[ iTrack ];
+
+		return iFirstWaveIndex;
+	}
 
 private:
-	TINT                          m_iFlags;
-	TINT                          m_iId;
-	TINT                          m_uiCategoryIndex;
-	TUINT8                        m_ui8Priority;
-	TFLOAT                        m_fMinDist;
-	Toshi::T2DynamicVector<Wave>  m_vecWaves;
-	Toshi::T2DynamicVector<TUINT> m_vecTracks;
-	Toshi::TBitArray              m_TrackLoop;
-	Toshi::T2Vector<TINT, 15>     m_vecLoopStarts;
+	TINT                         m_iFlags;
+	TINT                         m_iId;
+	TINT                         m_uiCategoryIndex;
+	TUINT8                       m_ui8Priority;
+	TFLOAT                       m_fMinDist;
+	Toshi::T2DynamicVector<Wave> m_vecWaves;
+	Toshi::T2DynamicVector<TINT> m_vecTracks;
+	Toshi::TBitArray             m_TrackLoop;
+	Toshi::T2Vector<TINT, 15>    m_vecLoopStarts;
 };

@@ -34,7 +34,7 @@ AWaveSampleHandle AWaveBank::GetWaveSample( TINT a_iWaveIndex ) const
 	return m_pWaves[ a_iWaveIndex ].pSampleHandle;
 }
 
-void AWaveBank::Unknown( void* a_Unknown )
+void AWaveBank::ResetWave( TINT a_iWaveIndex )
 {
 }
 
@@ -42,6 +42,12 @@ AWaveBank::~AWaveBank()
 {
 	ASoundManager::ms_WaveBanks.Remove( m_strBank );
 	delete[] m_pWaves;
+}
+
+AWave* AWaveBank::GetWave( TINT a_iWaveIndex )
+{
+	TASSERT( a_iWaveIndex < m_iNumWaves );
+	return &m_pWaves[ a_iWaveIndex ];
 }
 
 void AWaveBank::SetWaveFlag1( TINT a_iWaveIndex )

@@ -224,9 +224,12 @@ public:
 		}
 	}
 
-	void Erase( Iterator iter )
+	Iterator Erase( Iterator iter )
 	{
+		Iterator itNext = iter.Next();
 		iter->Remove();
+
+		return itNext;
 	}
 
 	TBOOL IsEmpty() const

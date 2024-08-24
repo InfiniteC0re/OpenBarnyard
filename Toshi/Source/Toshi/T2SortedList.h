@@ -49,6 +49,9 @@ public:
 
 	Iterator Push( T* a_pValue ) { return Push( *a_pValue ); }
 
+	T* PopBack() { return Container::PopBack(); }
+	T* PopFront() { return Container::PopFront(); }
+
 	// Removes element from the list and adds it again to make sure the order is right
 	Iterator ReInsert( T& a_rValue )
 	{
@@ -67,7 +70,7 @@ public:
 	void Delete( Iterator a_It ) { Container::Delete( a_It ); }
 	void DeleteAll() { Container::DeleteAll(); }
 
-	void Erase( Iterator a_It ) { Container::Erase( a_It ); }
+	Iterator Erase( Iterator a_It ) { return Container::Erase( a_It ); }
 
 	TBOOL IsEmpty() const { return Container::IsEmpty(); }
 	TUINT Size() const { return Container::Size(); }

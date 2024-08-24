@@ -177,17 +177,17 @@ class T2DynamicObjectPool :
     protected T2GenericObjectPool
 {
 public:
-	T2DynamicObjectPool( T2Allocator* a_pAllocator, TINT a_iMaxNumber )
+	T2DynamicObjectPool( T2Allocator* a_pAllocator, TINT a_iMaxNumber, TSIZE a_uiSize = sizeof( T ), TSIZE a_uiAlignment = alignof( T ) )
 	{
 		TVALIDPTR( a_pAllocator );
 		m_iMaxNumber = a_iMaxNumber;
 		m_pAllocator = a_pAllocator;
 
-		TUINT32 uiClassSize      = sizeof( T );
-		TUINT32 uiClassAlignment = alignof( T );
+		TUINT32 uiClassSize      = a_uiSize;
+		TUINT32 uiClassAlignment = a_uiAlignment;
 		m_uiObjectSize           = ( uiClassSize - 1 ) + uiClassAlignment & ~( uiClassAlignment - 1U );
 
-		TASSERT( m_uiObjectSize >= sizeof( T ) && uiClassAlignment > 0 );
+		TASSERT( m_uiObjectSize >= a_uiSize && uiClassAlignment > 0 );
 
 		if ( m_iMaxNumber < 1 )
 		{

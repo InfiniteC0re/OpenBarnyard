@@ -1,5 +1,7 @@
 #pragma once
 
+#define ASOUNDWAVEID_INVALID -1
+
 using ASoundWaveId = TINT32;
 
 class AWaveBank;

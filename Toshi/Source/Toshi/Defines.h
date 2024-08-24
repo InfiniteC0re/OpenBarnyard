@@ -68,6 +68,7 @@
 #define TREINTERPRETCAST( TYPE, VALUE )   ( reinterpret_cast<TYPE>( VALUE ) )
 #define TSTATICCAST( POINTERTYPE, VALUE ) ( static_cast<POINTERTYPE*>( VALUE ) )
 #define TARRAYSIZE( ARRAY )               ( sizeof( ARRAY ) / sizeof( *ARRAY ) )
+#define TOFFSETOF( CLASS, MEMBER )        offsetof( CLASS, MEMBER )
 #define TALIGNAS( VALUE )                 alignas( VALUE )
 #define TINLINE                           inline
 #define TFORCEINLINE                      __forceinline
