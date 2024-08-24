@@ -28,7 +28,7 @@ AWaveBank::AWaveBank( const Toshi::TPString8& a_strBank, const Toshi::TPString8&
 	ASoundManager::ms_WaveBanks.Insert( a_strBank, this );
 }
 
-AWaveSampleHandle AWaveBank::GetWaveSample( TINT a_iWaveIndex ) const
+AWaveSampleHandle AWaveBank::GetWaveSample( TINT a_iWaveIndex, TINT a_iUnused ) const
 {
 	TASSERT( a_iWaveIndex < m_iNumWaves );
 	return m_pWaves[ a_iWaveIndex ].pSampleHandle;
@@ -48,6 +48,24 @@ AWave* AWaveBank::GetWave( TINT a_iWaveIndex )
 {
 	TASSERT( a_iWaveIndex < m_iNumWaves );
 	return &m_pWaves[ a_iWaveIndex ];
+}
+
+TINT AWaveBank::GetWaveId( TINT a_iWaveIndex )
+{
+	TASSERT( a_iWaveIndex < m_iNumWaves );
+	return m_pWaves[ a_iWaveIndex ].iIndex;
+}
+
+AWaveSampleHandle AWaveBank::CreateWaveSample( TINT a_iWaveIndex, TINT a_iUnused )
+{
+	TASSERT( a_iWaveIndex < m_iNumWaves );
+
+	if ( m_pWaves[ a_iWaveIndex ].pSampleHandle == TNULL )
+	{
+		m_pWaves[ a_iWaveIndex ].pSampleHandle = GetWaveSample( a_iWaveIndex, a_iUnused );
+	}
+
+	return m_pWaves[ a_iWaveIndex ].pSampleHandle;
 }
 
 void AWaveBank::SetWaveFlag1( TINT a_iWaveIndex )

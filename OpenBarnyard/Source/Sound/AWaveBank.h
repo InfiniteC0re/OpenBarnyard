@@ -34,11 +34,15 @@ public:
 	virtual TBOOL             IsReady() const                                 = 0;
 	virtual LOADRESULT        Load( LOADFLAGS a_uiFlags, TINT a_iBufferSize ) = 0;
 	virtual UNLOADRESULT      Unload()                                        = 0;
-	virtual AWaveSampleHandle GetWaveSample( TINT a_iWaveIndex ) const;
+	virtual AWaveSampleHandle GetWaveSample( TINT a_iWaveIndex, TINT a_iUnused ) const;
 	virtual void              ResetWave( TINT a_iWaveIndex ); // empty in the original
 	virtual ~AWaveBank();
 
 	AWave* GetWave( TINT a_iWaveIndex );
+	TINT   GetWaveId( TINT a_iWaveIndex );
+
+	// Creates wave sample if it's not created and returns it
+	AWaveSampleHandle CreateWaveSample( TINT a_iWaveIndex, TINT a_iUnused );
 
 	void SetWaveFlag1( TINT a_iWaveIndex );
 	void SetWaveFlag2( TINT a_iWaveIndex );

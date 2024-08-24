@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "ASoundManager.h"
+#include "ASoundLegacy.h"
 #include "ASound.h"
-#include "ASoundAdvanced.h"
 #include "Cameras/ACameraManager.h"
 #include "Tasks/ARootTask.h"
 #include "Assets/AAssetLoader.h"
@@ -26,14 +26,16 @@ TOSHI_NAMESPACE_USING
 TDEFINE_CLASS( ASoundManager );
 
 #define MAX_NUM_SOUND_EVENTS 256
+#define MAX_NUM_STREAMS      64
 
 ASoundManager::ASoundManager() :
     m_SoundEventPool( AMemory::GetAllocator( AMemory::POOL_Sound ), MAX_NUM_SOUND_EVENTS ),
-    m_ChannelRefT1Pool( AMemory::GetAllocator( AMemory::POOL_Sound ), MAX_NUM_SOUND_EVENTS, CHANNEL_REF_T1_SIZE ),
-    m_ChannelRefT2Pool( AMemory::GetAllocator( AMemory::POOL_Sound ), MAX_NUM_SOUND_EVENTS, CHANNEL_REF_T2_SIZE ),
+    m_StreamRefPool( AMemory::GetAllocator( AMemory::POOL_Sound ), MAX_NUM_STREAMS ),
+    m_ChannelRefPool( AMemory::GetAllocator( AMemory::POOL_Sound ), MAX_NUM_SOUND_EVENTS ),
+    m_ChannelRefLegacyPool( AMemory::GetAllocator( AMemory::POOL_Sound ), MAX_NUM_SOUND_EVENTS ),
     m_CategoryIndices( AMemory::GetAllocator( AMemory::POOL_Sound ) ),
-    m_SoundIdToSoundAdv( AMemory::GetAllocator( AMemory::POOL_Sound ) ),
-    m_SoundIdToSound( AMemory::GetAllocator( AMemory::POOL_Sound ) )
+    m_SoundIdToSound( AMemory::GetAllocator( AMemory::POOL_Sound ) ),
+    m_SoundIdToSoundLegacy( AMemory::GetAllocator( AMemory::POOL_Sound ) )
 {
 	TIMPLEMENT();
 	m_iLastAvailableSoundExSlot = -1;
@@ -51,6 +53,9 @@ ASoundManager::ASoundManager() :
 
 	m_aEventHandlers[ SOUNDEVENT_PlayAudio ].Unused     = 0;
 	m_aEventHandlers[ SOUNDEVENT_PlayAudio ].fnCallback = &ASoundManager::EventHandler_PlaySound;
+
+	m_aEventHandlers[ SOUNDEVENT_PlayStream ].Unused     = 0;
+	m_aEventHandlers[ SOUNDEVENT_PlayStream ].fnCallback = &ASoundManager::EventHandler_PlayStream;
 }
 
 ASoundManager::~ASoundManager()
@@ -116,7 +121,7 @@ TBOOL ASoundManager::OnUpdate( TFLOAT a_fDeltaTime )
 
 	TTODO( "FUN_005db310" );
 
-	// Run the queued events
+	// Run the event loop
 	while ( !m_QueuedSortedEventLists.IsEmpty() )
 	{
 		SoundEventList&            eventList      = *m_QueuedSortedEventLists.Front();
@@ -166,6 +171,34 @@ TBOOL ASoundManager::OnUpdate( TFLOAT a_fDeltaTime )
 				m_QueuedSortedEventLists.ReInsert( eventList );
 				break;
 			}
+		}
+	}
+
+	// Update streams
+	for ( auto pStream = m_StreamRefs.Begin(); pStream != m_StreamRefs.End(); )
+	{
+		if ( ( pStream->pUnknown && UpdateStreamActivity( pStream ) ) ||
+		     ( pStream->pCue && UpdateStreamCue( pStream ) ) )
+		{
+			auto itNext = m_StreamRefs.Erase( pStream );
+			m_StreamRefPool.DeleteObject( pStream );
+
+			pStream = itNext;
+		}
+		else
+		{
+			pStream = pStream.Next();
+		}
+	}
+
+	// Reset cues that has finished playing
+	for ( TINT i = 0; i < ASOUNDMANAGER_MAX_NUM_CUE; i++ )
+	{
+		TFLOAT fCueStartTime = m_aCues[ i ].fStartTime;
+
+		if ( fCueStartTime > 0.0f && IsCuePlaying( i ) )
+		{
+			m_aCues[ i ].Reset();
 		}
 	}
 
@@ -229,13 +262,13 @@ TINT ASoundManager::PlaySoundEx( ASoundWaveId a_iSound, TFLOAT a_fVolume, TBOOL 
 		return -1;
 
 	// Look if the sound is stored to be played
-	auto pFoundNode = m_SoundIdToSoundAdv.FindNode( a_iSound );
+	auto pFoundNode = m_SoundIdToSound.FindNode( a_iSound );
 
-	if ( pFoundNode == m_SoundIdToSoundAdv.End() )
+	if ( pFoundNode == m_SoundIdToSound.End() )
 		return -1;
 
 	// The sound is found, can use it
-	ASoundAdvanced* pSound = pFoundNode->GetValue()->GetSecond();
+	ASound* pSound = pFoundNode->GetValue()->GetSecond();
 
 	// Check if no waves are stored in the sound
 	if ( pSound->m_vecWaves.Size() == 0 )
@@ -262,9 +295,9 @@ TINT ASoundManager::PlaySoundEx( ASoundWaveId a_iSound, TFLOAT a_fVolume, TBOOL 
 	}
 
 	// Setup basic settings on the cue
-	pCue->fVolume        = ( a_fVolume > 1.0f ) ? 1.0f : a_fVolume;
-	pCue->pSoundAdvanced = pSound;
-	pCue->fFrequency     = 1.0f;
+	pCue->fVolume    = ( a_fVolume > 1.0f ) ? 1.0f : a_fVolume;
+	pCue->pSound     = pSound;
+	pCue->fFrequency = 1.0f;
 	pCue->vecLoopStarts.Copy( pSound->m_vecLoopStarts );
 
 	TINT iSoundNumTracks = pSound->m_vecTracks.Size();
@@ -347,6 +380,49 @@ TINT ASoundManager::GetAvailableCueIndex()
 
 	m_iLastAvailableSoundExSlot = iSlot;
 	return iSlot;
+}
+
+TBOOL ASoundManager::IsCuePlaying( TINT a_iCueIndex )
+{
+	TASSERT( a_iCueIndex < ASOUNDMANAGER_MAX_NUM_CUE );
+
+	if ( a_iCueIndex == -1 )
+		return TFALSE;
+
+	Cue* pCue = &m_aCues[ a_iCueIndex ];
+
+	if ( pCue->fStartTime2 > 0.0f || !pCue->oEventList->IsEmpty() )
+		return TTRUE;
+
+	if ( pCue->fStartTime > 0.0f && pCue->pSound != TNULL )
+	{
+		ASound* pSound = pCue->pSound;
+
+		if ( pSound->m_iFlags & 16 )
+		{
+			// Stream
+			T2_FOREACH( pCue->oChannelRefs, channel )
+			{
+				if ( FSOUND_IsPlaying( channel->iFMODChannelHandle ) )
+				{
+					return TTRUE;
+				}
+			}
+		}
+		else
+		{
+			// Loaded data
+			T2_FOREACH( pCue->oChannelRefs, channel )
+			{
+				if ( !( channel->uiEventFlags & 0x20 ) || FSOUND_IsPlaying( channel->iFMODChannelHandle ) )
+				{
+					return TTRUE;
+				}
+			}
+		}
+	}
+
+	return TFALSE;
 }
 
 AWaveBank* ASoundManager::FindWaveBank( const TPString8& a_rcName )
@@ -478,11 +554,11 @@ TBOOL ASoundManager::LoadSoundBankImpl( const TCHAR* a_szName, TBOOL a_bSimpleSo
 
 		if ( a_bSimpleSound )
 		{
-			pSoundBank->m_pSounds = new ( AMemory::GetMemBlock( AMemory::POOL_Sound ) ) ASound[ iNumSounds ];
+			pSoundBank->m_pSounds = new ( AMemory::GetMemBlock( AMemory::POOL_Sound ) ) ASoundLegacy[ iNumSounds ];
 		}
 		else
 		{
-			pSoundBank->m_pSoundsEx = new ( AMemory::GetMemBlock( AMemory::POOL_Sound ) ) ASoundAdvanced[ iNumSounds ];
+			pSoundBank->m_pSoundsEx = new ( AMemory::GetMemBlock( AMemory::POOL_Sound ) ) ASound[ iNumSounds ];
 		}
 
 		pSoundsProperties->GetOptionalPropertyValue( pSoundBank->m_strName, "name" );
@@ -505,10 +581,10 @@ TBOOL ASoundManager::LoadSoundBankImpl( const TCHAR* a_szName, TBOOL a_bSimpleSo
 			if ( a_bSimpleSound )
 			{
 				// Initialise ASound
-				ASound* pSound = &pSoundBank->m_pSounds[ iSoundIndex++ ];
+				ASoundLegacy* pSound = &pSoundBank->m_pSounds[ iSoundIndex++ ];
 
 				pSound->m_iId = iSoundId;
-				m_SoundIdToSound.Insert( iSoundId, pSound );
+				m_SoundIdToSoundLegacy.Insert( iSoundId, pSound );
 
 				if ( !pSoundProperties->GetOptionalPropertyValue( pSound->m_iFlags, "flags" ) )
 				{
@@ -545,10 +621,10 @@ TBOOL ASoundManager::LoadSoundBankImpl( const TCHAR* a_szName, TBOOL a_bSimpleSo
 			else
 			{
 				// Initialise ASoundEx
-				ASoundAdvanced* pSoundEx = &pSoundBank->m_pSoundsEx[ iSoundIndex++ ];
+				ASound* pSoundEx = &pSoundBank->m_pSoundsEx[ iSoundIndex++ ];
 
 				pSoundEx->m_iId = iSoundId;
-				m_SoundIdToSoundAdv.Insert( iSoundId, pSoundEx );
+				m_SoundIdToSound.Insert( iSoundId, pSoundEx );
 
 				// Get category
 				TPString8 strCategory;
@@ -592,7 +668,7 @@ TBOOL ASoundManager::LoadSoundBankImpl( const TCHAR* a_szName, TBOOL a_bSimpleSo
 
 								if ( pWaveBank != TNULL )
 								{
-									ASoundAdvanced::Wave oWave;
+									ASound::Wave oWave;
 									oWave.pWaveBank = pWaveBank;
 									oWave.iId       = pWaves->GetValue( i )->GetInteger();
 
@@ -816,6 +892,11 @@ TBOOL ASoundManager::LoadSoundBankImpl( const TCHAR* a_szName, TBOOL a_bSimpleSo
 	return bNoErrors;
 }
 
+TUINT ASoundManager::GetCueIndex( Cue* a_pCue )
+{
+	return ( TREINTERPRETCAST( TUINTPTR, a_pCue ) - TREINTERPRETCAST( TUINTPTR, ASoundManager::ms_pSingleton ) - TOFFSETOF( ASoundManager, m_aCues ) ) / sizeof( Cue );
+}
+
 TBOOL ASoundManager::Initialise()
 {
 	FSOUND_Init( 44100, m_iMinHWChannels + m_iNumChannels, 0 );
@@ -939,7 +1020,7 @@ void ASoundManager::CreatePlaySoundEvent( Cue* a_pCue, TINT a_iTrackIndex, TINT 
 {
 	TVALIDPTR( a_pCue );
 
-	ASoundAdvanced* pSound = a_pCue->pSoundAdvanced;
+	ASound* pSound = a_pCue->pSound;
 	TVALIDPTR( pSound );
 
 	TUINT uiFlags = a_uiFlags;
@@ -962,7 +1043,7 @@ void ASoundManager::CreatePlaySoundEvent( Cue* a_pCue, TINT a_iTrackIndex, TINT 
 
 			for ( TINT i = a_iFirstWaveIndex; iNumLeftWaves > 0; iNumLeftWaves-- )
 			{
-				ASoundAdvanced::Wave* pWave = &pSound->m_vecWaves[ i ];
+				ASound::Wave* pWave = &pSound->m_vecWaves[ i ];
 
 				TFLOAT fVolumeMultiplier = pRandom->GetFloatMinMax( pWave->fMinVolumeMultiplier, pWave->fMaxVolumeMultiplier );
 				TFLOAT fVolume           = fVolumeMultiplier * pWave->fVolume;
@@ -978,7 +1059,7 @@ void ASoundManager::CreatePlaySoundEvent( Cue* a_pCue, TINT a_iTrackIndex, TINT 
 				if ( a_fDelay2 != -1.0f ) fStartDelay += a_fDelay2;
 
 				SoundEvent* pEvent = CreateSoundEvent(
-				    ( uiFlags & 16 ) ? SOUNDEVENT_PlayAudio : SOUNDEVENT_PlayStream,
+				    ( uiFlags & 16 ) ? SOUNDEVENT_PlayStream : SOUNDEVENT_PlayAudio,
 				    fStartDelay,
 				    a_pCue,
 				    pWave,
@@ -997,7 +1078,7 @@ void ASoundManager::CreatePlaySoundEvent( Cue* a_pCue, TINT a_iTrackIndex, TINT 
 	}
 }
 
-ASoundManager::SoundEvent* ASoundManager::CreateSoundEvent( SOUNDEVENT a_eEventType, TFLOAT a_fDelay, Cue* a_pCue, ASoundAdvanced::Wave* a_pWave, ChannelRef* a_pPlayingSound, TUINT a_uiFlags, TINT a_iTrackIndex )
+ASoundManager::SoundEvent* ASoundManager::CreateSoundEvent( SOUNDEVENT a_eEventType, TFLOAT a_fDelay, Cue* a_pCue, ASound::Wave* a_pWave, ChannelRef* a_pPlayingSound, TUINT a_uiFlags, TINT a_iTrackIndex )
 {
 	TVALIDPTR( a_pCue );
 	TASSERT( m_SoundEventPool.CanAllocate() );
@@ -1014,7 +1095,7 @@ ASoundManager::SoundEvent* ASoundManager::CreateSoundEvent( SOUNDEVENT a_eEventT
 	return TNULL;
 }
 
-ASoundManager::SoundEvent* ASoundManager::CreateSoundEvent( SOUNDEVENT a_eEventType, TFLOAT a_fDelay, Cue* a_pCue, ASoundAdvanced::Wave* a_pWave, TFLOAT a_fCustomParam1, ChannelRef* a_pPlayingSound, TUINT a_uiFlags, TINT a_iTrackIndex )
+ASoundManager::SoundEvent* ASoundManager::CreateSoundEvent( SOUNDEVENT a_eEventType, TFLOAT a_fDelay, Cue* a_pCue, ASound::Wave* a_pWave, TFLOAT a_fCustomParam1, ChannelRef* a_pPlayingSound, TUINT a_uiFlags, TINT a_iTrackIndex )
 {
 	TVALIDPTR( a_pCue );
 	TASSERT( m_SoundEventPool.CanAllocate() );
@@ -1031,7 +1112,7 @@ ASoundManager::SoundEvent* ASoundManager::CreateSoundEvent( SOUNDEVENT a_eEventT
 	return TNULL;
 }
 
-ASoundManager::SoundEvent* ASoundManager::CreateSoundEvent( SOUNDEVENT a_eEventType, TFLOAT a_fDelay, Cue* a_pCue, ASoundAdvanced::Wave* a_pWave, const EventParameters& a_rcCustomParams, ChannelRef* a_pPlayingSound, TUINT a_uiFlags, TINT a_iTrackIndex )
+ASoundManager::SoundEvent* ASoundManager::CreateSoundEvent( SOUNDEVENT a_eEventType, TFLOAT a_fDelay, Cue* a_pCue, ASound::Wave* a_pWave, const EventParameters& a_rcCustomParams, ChannelRef* a_pPlayingSound, TUINT a_uiFlags, TINT a_iTrackIndex )
 {
 	TVALIDPTR( a_pCue );
 	TASSERT( m_SoundEventPool.CanAllocate() );
@@ -1065,62 +1146,180 @@ void ASoundManager::AddEventToCue( Cue* a_pCue, SoundEvent* a_pSoundEvent )
 	}
 }
 
+TBOOL ASoundManager::UpdateStreamActivity( StreamRef* a_pStream )
+{
+	TASSERT( !"Not implemented" );
+	return TFALSE;
+}
+
+TBOOL ASoundManager::UpdateStreamCue( StreamRef* a_pStream )
+{
+	TVALIDPTR( a_pStream );
+
+	Cue*    pCue   = a_pStream->pCue;
+	ASound* pSound = pCue->pSound;
+
+	if ( pSound )
+	{
+		ChannelRef*    pChannel      = a_pStream->pChannelRef;
+		AWaveBank*     pWaveBank     = pChannel->pWave->pWaveBank;
+		FSOUND_STREAM* pStreamHandle = (FSOUND_STREAM*)pWaveBank->CreateWaveSample( pChannel->pWave->iId, 0 );
+
+		if ( !( pSound->m_iFlags & 0x40 ) )
+		{
+			TINT iOpenState = FSOUND_Stream_GetOpenState( pStreamHandle );
+
+			if ( iOpenState == -2 ) return TFALSE;
+			FSOUND_Stream_GetNumSubStreams( pStreamHandle );
+			FSOUND_Stream_SetSubStream( pStreamHandle, pWaveBank->GetWaveId( pChannel->pWave->iId ) );
+
+			pSound->m_iFlags |= 0x40;
+		}
+
+		TINT iOpenState = FSOUND_Stream_GetOpenState( pStreamHandle );
+
+		if ( iOpenState != -1 )
+		{
+			if ( iOpenState == -2 )
+				return TFALSE;
+
+			if ( iOpenState != -3 )
+			{
+				if ( iOpenState != 0 )
+					return TTRUE;
+
+				pSound->m_iFlags &= ~0x40;
+
+				TINT iChannelHandle          = FSOUND_Stream_PlayEx( FSOUND_FREE, pStreamHandle, TNULL, TTRUE );
+				pChannel->iFMODChannelHandle = iChannelHandle;
+
+				if ( iChannelHandle == -1 )
+					return TTRUE;
+
+				pChannel->uiEventFlags = pChannel->uiEventFlags | 0x20;
+				pSound->m_iFlags |= 0x20;
+
+				TINT iVolume = ( m_bMuted ) ? 0 : TINT( pChannel->fVolume * 255.0f );
+
+				FSOUND_SetVolume( iChannelHandle, iVolume );
+				FSOUND_SetFrequency( iChannelHandle, pChannel->iFrequency );
+				FSOUND_SetPriority( iChannelHandle, TINT( pSound->m_ui8Priority ) );
+
+				TINT iStreamMode = FSOUND_Stream_GetMode( pStreamHandle );
+
+				if ( pChannel->uiEventFlags & 2 )
+				{
+					iStreamMode = iStreamMode & 0xfffffffa | 2;
+					FSOUND_SetReserved( iChannelHandle, TTRUE );
+				}
+				else
+				{
+					iStreamMode = iStreamMode & 0xfffffff9 | 1;
+				}
+
+				if ( pChannel->uiEventFlags & 4 )
+					iStreamMode = iStreamMode & 0xfff7dfff | 0x1000;
+				else
+					iStreamMode = iStreamMode & 0xffffcfff | 0x80000;
+
+				FSOUND_Stream_SetMode( pStreamHandle, iStreamMode );
+
+				if ( pChannel->uiEventFlags & 4 )
+				{
+					TFLOAT aPos[ 3 ];
+					aPos[ 0 ] = ( pCue->vecPosition ).x;
+					aPos[ 1 ] = ( pCue->vecPosition ).y;
+					aPos[ 2 ] = -( pCue->vecPosition ).z;
+
+					FSOUND_3D_SetMinMaxDistance( iChannelHandle, pSound->m_fMinDist, 10000.0f );
+					FSOUND_3D_SetAttributes( iChannelHandle, aPos, TNULL );
+				}
+				else
+				{
+					FSOUND_SetPan( iChannelHandle, 128 );
+				}
+
+				if ( !HASANYFLAG( pChannel->uiEventFlags, 1 ) )
+				{
+					FSOUND_SetPaused( iChannelHandle, TFALSE );
+				}
+				else if ( pCue->oEventList.IsLinked() )
+				{
+					pCue->oEventList.Remove();
+				}
+
+				T2_FOREACH( pCue->aChannelRefsLegacy[ 0 ], it )
+				{
+					it->fnCallback( 0, GetCueIndex( pCue ), it->pUserData );
+				}
+
+				return TTRUE;
+			}
+		}
+
+		pSound->m_iFlags = pSound->m_iFlags & 0xffffffbf;
+		pCue->Reset();
+	}
+
+	return TTRUE;
+}
+
 void ASoundManager::EventHandler_PlaySound( SoundEvent* a_pEvent )
 {
 	TVALIDPTR( a_pEvent );
-	TASSERT( TTRUE == m_ChannelRefT1Pool.CanAllocate() );
+	TASSERT( TTRUE == m_ChannelRefPool.CanAllocate() );
 
-	Cue*            pCue   = a_pEvent->pCue;
-	ASoundAdvanced* pSound = pCue->pSoundAdvanced;
+	Cue*    pCue   = a_pEvent->pCue;
+	ASound* pSound = pCue->pSound;
 
-	if ( pSound && m_ChannelRefT1Pool.CanAllocate() )
+	if ( pSound && m_ChannelRefPool.CanAllocate() )
 	{
 		// Allocate new ChannelRef object from the pool
-		ChannelRef* pChannelRef = m_ChannelRefT1Pool.NewObject();
+		ChannelRef* pChannelRef = m_ChannelRefPool.NewObject();
 
 		// Push the channelref to the cue
 		pCue->iNumChannelRefs += 1;
-		pCue->oChannelRefsT1.PushBack( pChannelRef );
+		pCue->oChannelRefs.PushBack( pChannelRef );
 
-		TFLOAT fCategoryVolume = m_aCategories[ pCue->pSoundAdvanced->m_uiCategoryIndex ].fVolumeMultiplier;
+		TFLOAT fCategoryVolume = m_aCategories[ pCue->pSound->m_uiCategoryIndex ].fVolumeMultiplier;
 
-		pChannelRef->types.t1.pWave   = a_pEvent->pWave;
-		pChannelRef->types.t1.fVolume = fCategoryVolume * pCue->fVolume * a_pEvent->oParameters[ 0 ];
-		TMath::Clip( pChannelRef->types.t1.fVolume, 0.0f, 1.0f );
+		pChannelRef->pWave   = a_pEvent->pWave;
+		pChannelRef->fVolume = fCategoryVolume * pCue->fVolume * a_pEvent->oParameters[ 0 ];
+		TMath::Clip( pChannelRef->fVolume, 0.0f, 1.0f );
 
-		ASoundAdvanced::Wave* pWave        = pChannelRef->types.t1.pWave;
-		pChannelRef->types.t1.uiEventFlags = a_pEvent->uiFlags;
-		pChannelRef->types.t1.iFrequency   = TINT( pWave->iFrequency * a_pEvent->oParameters[ 1 ] );
+		ASound::Wave* pWave       = pChannelRef->pWave;
+		pChannelRef->uiEventFlags = a_pEvent->uiFlags;
+		pChannelRef->iFrequency   = TINT( pWave->iFrequency * a_pEvent->oParameters[ 1 ] );
 
-		FSOUND_SAMPLE* pSample = (FSOUND_SAMPLE*)pWave->pWaveBank->GetWaveSample( pWave->iId );
+		FSOUND_SAMPLE* pSample = (FSOUND_SAMPLE*)pWave->pWaveBank->GetWave( pWave->iId )->pSampleHandle;
 
 		TINT iSampleMode = FSOUND_Sample_GetMode( pSample );
 
-		if ( pChannelRef->types.t1.uiEventFlags & 2 )
+		if ( pChannelRef->uiEventFlags & 2 )
 			iSampleMode = iSampleMode & 0xfffffffa | 2;
 		else
 			iSampleMode = iSampleMode & 0xfffffff9 | 1;
 
 		FSOUND_Sample_SetMode( pSample, iSampleMode );
 
-		TINT iChannelHandle                      = FSOUND_PlaySoundEx( FSOUND_FREE, pSample, TNULL, TTRUE );
-		pChannelRef->types.t1.iFMODChannelHandle = iChannelHandle;
+		TINT iChannelHandle             = FSOUND_PlaySoundEx( FSOUND_FREE, pSample, TNULL, TTRUE );
+		pChannelRef->iFMODChannelHandle = iChannelHandle;
 
 		if ( iChannelHandle != -1 )
 		{
 			// No errors
-			TINT iVolume = ( m_bMuted ) ? 0 : TINT( pChannelRef->types.t1.fVolume * 255.0f );
+			TINT iVolume = ( m_bMuted ) ? 0 : TINT( pChannelRef->fVolume * 255.0f );
 
 			FSOUND_SetVolume( iChannelHandle, iVolume );
-			FSOUND_SetFrequency( iChannelHandle, pChannelRef->types.t1.iFrequency );
+			FSOUND_SetFrequency( iChannelHandle, pChannelRef->iFrequency );
 			FSOUND_SetPriority( iChannelHandle, TINT( pSound->m_ui8Priority ) );
 
-			if ( pChannelRef->types.t1.uiEventFlags & 4 )
+			if ( pChannelRef->uiEventFlags & 4 )
 			{
 				TFLOAT aPos[ 3 ];
 				aPos[ 0 ] = ( pCue->vecPosition ).x;
 				aPos[ 1 ] = ( pCue->vecPosition ).y;
-				aPos[ 2 ] = ( pCue->vecPosition ).z;
+				aPos[ 2 ] = -( pCue->vecPosition ).z;
 
 				FSOUND_3D_SetMinMaxDistance( iChannelHandle, pSound->m_fMinDist, 10000.0f );
 				FSOUND_3D_SetAttributes( iChannelHandle, aPos, TNULL );
@@ -1130,26 +1329,23 @@ void ASoundManager::EventHandler_PlaySound( SoundEvent* a_pEvent )
 				FSOUND_SetPan( iChannelHandle, 128 );
 			}
 
-			if ( !HASANYFLAG( pChannelRef->types.t1.uiEventFlags, 1 ) )
+			if ( !HASANYFLAG( pChannelRef->uiEventFlags, 1 ) )
 			{
-				FSOUND_CD_SetPaused( iChannelHandle, TFALSE );
+				FSOUND_SetPaused( iChannelHandle, TFALSE );
 			}
-			else if ( !pCue->oEventList->IsEmpty() )
+			else if ( pCue->oEventList.IsLinked() )
 			{
 				pCue->oEventList.Remove();
 			}
 
 			pSound->m_iFlags |= 32;
-			pChannelRef->types.t1.uiEventFlags |= 32;
+			pChannelRef->uiEventFlags |= 32;
 
 			ASoundManager* pSoundManager = ASoundManager::GetSingleton();
 
-			T2_FOREACH( pCue->aChannelRefsT2[ 0 ], it )
+			T2_FOREACH( pCue->aChannelRefsLegacy[ 0 ], it )
 			{
-				it->types.t2.fnCallback(
-				    0,
-				    ( TREINTERPRETCAST( TUINTPTR, this ) - TREINTERPRETCAST( TUINTPTR, pSoundManager ) - TOFFSETOF( ASoundManager, m_aCues ) ) / sizeof( Cue ),
-				    it->types.t2.pUserData );
+				it->fnCallback( 0, GetCueIndex( pCue ), it->pUserData );
 			}
 
 			TINT iTrackIndex = a_pEvent->iTrackIndex;
@@ -1163,15 +1359,15 @@ void ASoundManager::EventHandler_PlaySound( SoundEvent* a_pEvent )
 					TINT iFirstWave = pSound->GetFirstWaveForTrack( iTrackIndex );
 
 					// Remove channel refs which has finished playing
-					T2_FOREACH( pCue->oChannelRefsT1, it )
+					T2_FOREACH( pCue->oChannelRefs, it )
 					{
-						if ( !FSOUND_IsPlaying( it->types.t1.iFMODChannelHandle ) )
+						if ( !FSOUND_IsPlaying( it->iFMODChannelHandle ) )
 						{
 							// NOTE: Seems to be a bug that presents in the original game.
 							// Erase returns next node after removed one so it will be skipped
 							// since the code just overrides current iterator
-							it = pCue->oChannelRefsT1.Erase( it );
-							m_ChannelRefT1Pool.FreeObject( it );
+							it = pCue->oChannelRefs.Erase( it );
+							m_ChannelRefPool.FreeObject( it );
 						}
 					}
 
@@ -1182,7 +1378,7 @@ void ASoundManager::EventHandler_PlaySound( SoundEvent* a_pEvent )
 					    pSound->m_vecTracks[ iTrackIndex ] + iFirstWave,
 					    a_pEvent->uiFlags,
 					    0.0f,
-					    pChannelRef->types.t1.pWave->pWaveBank->GetWave( pChannelRef->types.t1.pWave->iId )->fLength );
+					    pChannelRef->pWave->pWaveBank->GetWave( pChannelRef->pWave->iId )->fLength );
 				}
 
 				if ( iLoopStart > 0 )
@@ -1197,7 +1393,7 @@ void ASoundManager::EventHandler_PlaySound( SoundEvent* a_pEvent )
 					    pSound->m_vecTracks[ iTrackIndex ] + iFirstWave,
 					    a_pEvent->uiFlags,
 					    0.0f,
-					    pChannelRef->types.t1.pWave->pWaveBank->GetWave( pChannelRef->types.t1.pWave->iId )->fLength );
+					    pChannelRef->pWave->pWaveBank->GetWave( pChannelRef->pWave->iId )->fLength );
 				}
 			}
 		}
@@ -1210,15 +1406,56 @@ void ASoundManager::EventHandler_PlaySound( SoundEvent* a_pEvent )
 	}
 }
 
+void ASoundManager::EventHandler_PlayStream( SoundEvent* a_pEvent )
+{
+	TVALIDPTR( a_pEvent );
+	TASSERT( TTRUE == m_ChannelRefPool.CanAllocate() );
+
+	Cue*    pCue   = a_pEvent->pCue;
+	ASound* pSound = pCue->pSound;
+
+	if ( pSound && m_ChannelRefPool.CanAllocate() )
+	{
+		// Allocate new ChannelRef object from the pool
+		ChannelRef* pChannelRef = m_ChannelRefPool.NewObject();
+
+		// Push the channelref to the cue
+		pCue->iNumChannelRefs += 1;
+		pCue->oChannelRefs.PushBack( pChannelRef );
+
+		TFLOAT fCategoryVolume = m_aCategories[ pCue->pSound->m_uiCategoryIndex ].fVolumeMultiplier;
+
+		pChannelRef->pWave   = a_pEvent->pWave;
+		pChannelRef->fVolume = fCategoryVolume * pCue->fVolume * a_pEvent->oParameters[ 0 ];
+		TMath::Clip( pChannelRef->fVolume, 0.0f, 1.0f );
+
+		ASound::Wave* pWave       = pChannelRef->pWave;
+		pChannelRef->uiEventFlags = a_pEvent->uiFlags & ( ~32 );
+		pChannelRef->iFrequency   = TINT( pWave->iFrequency * a_pEvent->oParameters[ 1 ] );
+
+		TASSERT( TTRUE == m_StreamRefPool.CanAllocate() );
+
+		if ( m_StreamRefPool.CanAllocate() )
+		{
+			StreamRef* pStreamRef   = m_StreamRefPool.NewObject();
+			pStreamRef->pChannelRef = pChannelRef;
+			pStreamRef->pCue        = pCue;
+
+			pChannelRef->iFMODChannelHandle = -1;
+			m_StreamRefs.PushBack( pStreamRef );
+		}
+	}
+}
+
 ASoundManager::Cue::Cue()
 {
-	bUsed          = TFALSE;
-	pSoundAdvanced = TNULL;
-	fStartTime     = 0.0f;
-	fStartTime2    = 0.0f;
-	vecPosition    = TVector4::VEC_ZERO;
-	fVolume        = 1.0f;
-	fFrequency     = 1.0f;
+	bUsed       = TFALSE;
+	pSound      = TNULL;
+	fStartTime  = 0.0f;
+	fStartTime2 = 0.0f;
+	vecPosition = TVector4::VEC_ZERO;
+	fVolume     = 1.0f;
+	fFrequency  = 1.0f;
 }
 
 ASoundManager::Cue::~Cue()
@@ -1229,23 +1466,20 @@ void ASoundManager::Cue::Reset()
 {
 	ASoundManager* pSoundManager = ASoundManager::GetSingleton();
 
-	T2_FOREACH( aChannelRefsT2[ 1 ], it )
+	T2_FOREACH( aChannelRefsLegacy[ 1 ], it )
 	{
-		it->types.t2.fnCallback(
-		    1,
-		    ( TREINTERPRETCAST( TUINTPTR, this ) - TREINTERPRETCAST( TUINTPTR, pSoundManager ) - TOFFSETOF( ASoundManager, m_aCues ) ) / sizeof( Cue ),
-		    it->types.t2.pUserData );
+		it->fnCallback( 1, GetCueIndex( this ), it->pUserData );
 	}
 
-	bUsed          = TFALSE;
-	fStartTime     = -1.0f;
-	fStartTime2    = -1.0f;
-	pSoundAdvanced = TNULL;
+	bUsed       = TFALSE;
+	fStartTime  = -1.0f;
+	fStartTime2 = -1.0f;
+	pSound      = TNULL;
 
 	// Reset waves used by the channel refs
-	T2_FOREACH( oChannelRefsT1, channelRef )
+	T2_FOREACH( oChannelRefs, channelRef )
 	{
-		channelRef->types.t1.pWave->pWaveBank->ResetWave( channelRef->types.t1.pWave->iId );
+		channelRef->pWave->pWaveBank->ResetWave( channelRef->pWave->iId );
 	}
 
 	// Delete allocated sound events
@@ -1255,26 +1489,25 @@ void ASoundManager::Cue::Reset()
 		pSoundManager->m_SoundEventPool.FreeObject( pSoundEvent );
 	}
 
-	// NOTE: could this be a bug in the original?
-	if ( !oEventList->IsEmpty() )
+	if ( oEventList.IsLinked() )
 		oEventList.Remove();
 
 	// Delete all channel refs of Type2
-	for ( TINT i = 0; i < TARRAYSIZE( aChannelRefsT2 ); i++ )
+	for ( TINT i = 0; i < TARRAYSIZE( aChannelRefsLegacy ); i++ )
 	{
-		while ( !aChannelRefsT2[ i ].IsEmpty() )
+		while ( !aChannelRefsLegacy[ i ].IsEmpty() )
 		{
-			ChannelRef* pChannelRef = aChannelRefsT2[ i ].PopFront();
-			pSoundManager->m_ChannelRefT2Pool.DeleteObject( pChannelRef );
+			ChannelRefLegacy* pChannelRef = aChannelRefsLegacy[ i ].PopFront();
+			pSoundManager->m_ChannelRefLegacyPool.DeleteObject( pChannelRef );
 		}
 	}
 
 	iNumChannelRefs = 0;
 
-	while ( !oChannelRefsT1.IsEmpty() )
+	while ( !oChannelRefs.IsEmpty() )
 	{
-		ChannelRef* pChannelRef = oChannelRefsT1.PopFront();
-		pSoundManager->m_ChannelRefT1Pool.DeleteObject( pChannelRef );
+		ChannelRef* pChannelRef = oChannelRefs.PopFront();
+		pSoundManager->m_ChannelRefPool.DeleteObject( pChannelRef );
 	}
 
 	vecLoopStarts.Clear();
@@ -1294,7 +1527,7 @@ ASoundManager::SoundEventList::~SoundEventList()
 		delete m_pEventList;
 }
 
-ASoundManager::SoundEvent::SoundEvent( SOUNDEVENT a_eEventType, TFLOAT a_fStartTime, Cue* a_pCue, ASoundAdvanced::Wave* a_pWave, ChannelRef* a_pPlayingSound, TUINT a_uiFlags, TINT a_iTrackIndex ) :
+ASoundManager::SoundEvent::SoundEvent( SOUNDEVENT a_eEventType, TFLOAT a_fStartTime, Cue* a_pCue, ASound::Wave* a_pWave, ChannelRef* a_pPlayingSound, TUINT a_uiFlags, TINT a_iTrackIndex ) :
     pWave( a_pWave ),
     eEventType( a_eEventType ),
     pPlayingSound( a_pPlayingSound ),
@@ -1305,7 +1538,7 @@ ASoundManager::SoundEvent::SoundEvent( SOUNDEVENT a_eEventType, TFLOAT a_fStartT
 {
 }
 
-ASoundManager::SoundEvent::SoundEvent( SOUNDEVENT a_eEventType, TFLOAT a_fStartTime, Cue* a_pCue, ASoundAdvanced::Wave* a_pWave, TFLOAT a_fCustomParam1, ChannelRef* a_pPlayingSound, TUINT a_uiFlags, TINT a_iTrackIndex ) :
+ASoundManager::SoundEvent::SoundEvent( SOUNDEVENT a_eEventType, TFLOAT a_fStartTime, Cue* a_pCue, ASound::Wave* a_pWave, TFLOAT a_fCustomParam1, ChannelRef* a_pPlayingSound, TUINT a_uiFlags, TINT a_iTrackIndex ) :
     pWave( a_pWave ),
     eEventType( a_eEventType ),
     pPlayingSound( a_pPlayingSound ),
@@ -1317,7 +1550,7 @@ ASoundManager::SoundEvent::SoundEvent( SOUNDEVENT a_eEventType, TFLOAT a_fStartT
 	oParameters[ 0 ] = a_fCustomParam1;
 }
 
-ASoundManager::SoundEvent::SoundEvent( SOUNDEVENT a_eEventType, TFLOAT a_fStartTime, Cue* a_pCue, ASoundAdvanced::Wave* a_pWave, const EventParameters& a_rcCustomParams, ChannelRef* a_pPlayingSound, TUINT a_uiFlags, TINT a_iTrackIndex ) :
+ASoundManager::SoundEvent::SoundEvent( SOUNDEVENT a_eEventType, TFLOAT a_fStartTime, Cue* a_pCue, ASound::Wave* a_pWave, const EventParameters& a_rcCustomParams, ChannelRef* a_pPlayingSound, TUINT a_uiFlags, TINT a_iTrackIndex ) :
     pWave( a_pWave ),
     eEventType( a_eEventType ),
     pPlayingSound( a_pPlayingSound ),
