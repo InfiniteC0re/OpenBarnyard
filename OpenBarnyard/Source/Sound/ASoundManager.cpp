@@ -2,6 +2,8 @@
 #include "ASoundManager.h"
 #include "ASound.h"
 #include "ASoundAdvanced.h"
+#include "Cameras/ACameraManager.h"
+#include "Tasks/ARootTask.h"
 #include "Assets/AAssetLoader.h"
 #include "Memory/AMemory.h"
 #include "AWaveBankFMODFSB.h"
@@ -94,6 +96,110 @@ TBOOL ASoundManager::OnUpdate( TFLOAT a_fDeltaTime )
 {
 	TIMPLEMENT();
 	m_fCurrentTime += a_fDeltaTime;
+
+	if ( !g_oSystemManager.IsPaused() )
+	{
+		if ( ARootTask::GetSingleton()->IsPaused() && ms_iPaused <= 0 )
+		{
+			PauseAllSound( TTRUE );
+		}
+		else if ( !ARootTask::GetSingleton()->IsPaused() && ms_iPaused > 0 )
+		{
+			PauseAllSound( TFALSE );
+		}
+	}
+
+	TTODO( "FUN_005db310" );
+
+	// Run the queued events
+	while ( !m_QueuedSortedEventLists.IsEmpty() )
+	{
+		SoundEventList&            eventList      = *m_QueuedSortedEventLists.Front();
+		ASoundManager::SoundEvent* pEarliestEvent = eventList->Front();
+
+		// Skip the list if it's too early to execute it's earliest event
+		if ( pEarliestEvent->fStartTime > m_fCurrentTime )
+			break;
+
+		// Handle events in the list
+		while ( TTRUE )
+		{
+			pEarliestEvent->Remove();
+
+			TASSERT( pEarliestEvent->eEventType < SOUNDEVENT_NUMOF );
+			EventHandler::Callback_t fnEventCallback = m_aEventHandlers[ pEarliestEvent->eEventType ].fnCallback;
+
+			TASSERT( fnEventCallback != TNULL );
+
+			// Execute event callback
+			( this->*fnEventCallback )( pEarliestEvent );
+
+			// Deallocate the event object
+			m_SoundEventPool.DeleteObject( pEarliestEvent );
+
+			if ( !eventList.IsLinked() )
+				break;
+
+			// Check if the list is over
+			if ( eventList->IsEmpty() )
+			{
+				// Unlink the list since it's not used anymore
+				eventList.Remove();
+				break;
+			}
+
+			// Certainly, there are some more events
+			// Let's check if they need to be processed
+			pEarliestEvent = eventList->Front();
+
+			if ( pEarliestEvent->fStartTime > m_fCurrentTime )
+			{
+				// Seems that the other events in the list are not to be executed yet,
+				// so let's reinsert the list to preserve correct order and move on to
+				// the next list.
+
+				m_QueuedSortedEventLists.ReInsert( eventList );
+				break;
+			}
+		}
+	}
+
+	// ...
+
+	// Update sound attributes based on the current camera position
+	// TODO: replace TTRUE with some flag from the AQuestManager
+	if ( ARootTask::GetSingleton()->IsGameSystemCreated() && TTRUE )
+	{
+		ACamera* pCamera = ACameraManager::GetSingleton()->GetCurrentCamera();
+
+		// Get the position
+		m_oCameraData.Position = pCamera->GetMatrix().AsBasisVector4( 3 );
+
+		// Get the forward vector
+		m_oCameraData.Forward   = pCamera->GetMatrix().AsBasisVector4( 2 );
+		m_oCameraData.Forward.w = 1.0f;
+
+		// Get the up vector
+		m_oCameraData.Up   = pCamera->GetMatrix().AsBasisVector4( 1 );
+		m_oCameraData.Up.w = 1.0f;
+
+		// Invert up axis as it needs to be
+		m_oCameraData.Up.x = -m_oCameraData.Up.x;
+		m_oCameraData.Up.y = -m_oCameraData.Up.y;
+		m_oCameraData.Up.z = -m_oCameraData.Up.z;
+
+		TFLOAT aPosition[ 3 ];
+		aPosition[ 0 ] = m_oCameraData.Position.x;
+		aPosition[ 1 ] = m_oCameraData.Position.y;
+		aPosition[ 2 ] = m_oCameraData.Position.z;
+
+		TFLOAT aVelocity[ 3 ];
+		aVelocity[ 0 ] = m_oCameraData.Velocity.x;
+		aVelocity[ 1 ] = m_oCameraData.Velocity.y;
+		aVelocity[ 2 ] = m_oCameraData.Velocity.z;
+
+		FSOUND_3D_Listener_SetAttributes( aPosition, aVelocity, m_oCameraData.Forward.x, m_oCameraData.Forward.y, -m_oCameraData.Forward.z, m_oCameraData.Up.x, m_oCameraData.Up.y, -m_oCameraData.Up.z );
+	}
 
 	FSOUND_Update();
 	return TTRUE;
@@ -819,7 +925,7 @@ void ASoundManager::AddEventToCue( Cue* a_pCue, SoundEvent* a_pSoundEvent )
 	// is taking the first event into account when sorting the lists
 	if ( pFirstEvent != a_pCue->EventList->Begin() )
 	{
-		m_QueuedEventLists.ReInsert( a_pCue->EventList );
+		m_QueuedSortedEventLists.ReInsert( a_pCue->EventList );
 	}
 }
 

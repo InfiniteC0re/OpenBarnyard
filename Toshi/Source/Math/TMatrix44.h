@@ -112,28 +112,28 @@ public:
 	{
 		return *TREINTERPRETCAST(
 		    TVector3*,
-		    TREINTERPRETCAST( uintptr_t, this ) + a_iIndex * sizeof( TVector4 ) );
+		    TREINTERPRETCAST( TUINTPTR, this ) + a_iIndex * sizeof( TVector4 ) );
 	}
 
 	TVector3& AsBasisVector3( TINT a_iIndex = 0 )
 	{
 		return *TREINTERPRETCAST(
 		    TVector3*,
-		    TREINTERPRETCAST( uintptr_t, this ) + a_iIndex * sizeof( TVector4 ) );
+		    TREINTERPRETCAST( TUINTPTR, this ) + a_iIndex * sizeof( TVector4 ) );
 	}
 
 	const TVector4& AsBasisVector4( TINT a_iIndex = 0 ) const
 	{
 		return *TREINTERPRETCAST(
 		    TVector4*,
-		    TREINTERPRETCAST( uintptr_t, this ) + a_iIndex * sizeof( TVector4 ) );
+		    TREINTERPRETCAST( TUINTPTR, this ) + a_iIndex * sizeof( TVector4 ) );
 	}
 
 	TVector4& AsBasisVector4( TINT a_iIndex = 0 )
 	{
 		return *TREINTERPRETCAST(
 		    TVector4*,
-		    TREINTERPRETCAST( uintptr_t, this ) + a_iIndex * sizeof( TVector4 ) );
+		    TREINTERPRETCAST( TUINTPTR, this ) + a_iIndex * sizeof( TVector4 ) );
 	}
 
 	TVector4& GetTranslation()

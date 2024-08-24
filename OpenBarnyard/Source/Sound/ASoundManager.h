@@ -122,6 +122,7 @@ public:
 		SoundEventList();
 		~SoundEventList();
 
+		ListContainer* EventList() const { return m_pEventList; }
 		ListContainer* operator->() const { return m_pEventList; }
 
 	private:
@@ -259,19 +260,20 @@ private:
 private:
 	inline static Toshi::TFileSystem*                                                      ms_pFileSystem;
 	inline static Toshi::T2Map<Toshi::TPString8, AWaveBank*, Toshi::TPString8::Comparator> ms_WaveBanks;
+	inline static TINT                                                                     ms_iPaused;
 
 private:
 	Toshi::T2DynamicObjectPool<SoundEvent>                              m_SoundEventPool;   // 0x20
 	Toshi::T2Map<Toshi::TPString8, TSIZE, Toshi::TPString8::Comparator> m_CategoryIndices;  // 0x80
 	Toshi::T2Map<TINT, ASoundAdvanced*>                                 m_SoundIdToSoundEx; // 0x80
 	Toshi::T2Map<TINT, ASound*>                                         m_SoundIdToSound;   // 0x80
-	CameraData                                                          m_CameraData;       // 0xC8
+	CameraData                                                          m_oCameraData;      // 0xC8
 	Cue                                                                 m_aCues[ 128 ];     // 0x108
 	S2                                                                  m_aS2[ 8 ];         // 0x4D08
 	// ...
 	Category                                                                                       m_aCategories[ MAX_NUM_CATEGORIES ];  // 0x4E10
 	TINT                                                                                           m_iLastAvailableSoundExSlot;          // 0x4F50
-	Toshi::T2SortedList<SoundEventList, Toshi::T2DList<SoundEventList>, SoundEventListSortResults> m_QueuedEventLists;                   // 0x4F54
+	Toshi::T2SortedList<SoundEventList, Toshi::T2DList<SoundEventList>, SoundEventListSortResults> m_QueuedSortedEventLists;             // 0x4F54
 	TFLOAT                                                                                         m_fCurrentTime;                       // 0x4F5C
 	EventHandler                                                                                   m_aEventHandlers[ SOUNDEVENT_NUMOF ]; // 0x4F60
 	TBOOL                                                                                          m_bMuted;                             // 0x4FA8
