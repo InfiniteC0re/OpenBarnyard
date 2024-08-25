@@ -4,7 +4,7 @@
 #include "Assets/AKeyFrameLibraryManager.h"
 #include "Assets/AModelLoader.h"
 #include "Render/AModelRepos.h"
-#include "Terrain/ATerrain.h"
+#include "Terrain/ATerrainInterface.h"
 #include "GUI/AGUISystem.h"
 #include "GUI/AGUI2.h"
 #include "GUI/AGUI2TextureSectionManager.h"

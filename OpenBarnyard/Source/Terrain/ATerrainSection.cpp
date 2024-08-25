@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "ATerrainSection.h"
-#include "ATerrain.h"
+#include "ATerrainInterface.h"
 #include "Assets/AAssetStreaming.h"
 #include "Assets/AMaterialLibraryManager.h"
 #include "Render/AWorldShader/AWorldMaterial.h"

@@ -4,7 +4,7 @@
 #include "Assets/AKeyFrameLibraryManager.h"
 #include "Render/AModelRepos.h"
 #include "Cameras/ACameraManager.h"
-#include "Terrain/ATerrain.h"
+#include "Terrain/ATerrainInterface.h"
 
 #include <Toshi/TScheduler.h>
 #include <Plugins/PPropertyParser/PBProperties.h>

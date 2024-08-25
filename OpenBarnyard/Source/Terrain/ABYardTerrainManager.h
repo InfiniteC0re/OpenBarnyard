@@ -1,5 +1,5 @@
 #pragma once
-#include "ATerrain.h"
+#include "ATerrainInterface.h"
 
 class ABYardTerrainManager
 {

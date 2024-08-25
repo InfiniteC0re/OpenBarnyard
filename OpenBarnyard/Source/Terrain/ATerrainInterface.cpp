@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "ATerrain.h"
+#include "ATerrainInterface.h"
 #include "Tasks/ARootTask.h"
 #include "Assets/AAssetLoader.h"
 #include "Assets/AAssetStreaming.h"
@@ -32,49 +32,49 @@ ATerrainInterface::ATerrainInterface( TINT a_iUnused1, TINT a_iUnused2, TINT a_i
 
 	for ( TUINT i = 0; i < MAX_NUM_MODEL_LOADER_JOBS; i++ )
 	{
-		pJobSlot->pJob = &m_aModelLoaderJobs[ i ];
+		pJobSlot->SetNodeValue( &m_aModelLoaderJobs[ i ] );
 		m_FreeModelLoaderJobs.PushFront( pJobSlot );
 		pJobSlot++;
 	}
 
 	for ( TUINT i = 0; i < MAX_NUM_KEYLIB_LOADER_JOBS; i++ )
 	{
-		pJobSlot->pJob = &m_aKeylibLoaderJobs[ i ];
+		pJobSlot->SetNodeValue( &m_aKeylibLoaderJobs[ i ] );
 		m_FreeKeylibLoaderJobs.PushFront( pJobSlot );
 		pJobSlot++;
 	}
 
 	for ( TUINT i = 0; i < MAX_NUM_MATLIB_LOADER_JOBS; i++ )
 	{
-		pJobSlot->pJob = &m_aMatlibLoaderJobs[ i ];
+		pJobSlot->SetNodeValue( &m_aMatlibLoaderJobs[ i ] );
 		m_FreeMatlibLoaderJobs.PushFront( pJobSlot );
 		pJobSlot++;
 	}
 
 	for ( TUINT i = 0; i < MAX_NUM_SECTION_LOADER_JOBS; i++ )
 	{
-		pJobSlot->pJob = &m_aSectionDoneJobs[ i ];
+		pJobSlot->SetNodeValue( &m_aSectionDoneJobs[ i ] );
 		m_FreeSectionLoaderJobs.PushFront( pJobSlot );
 		pJobSlot++;
 	}
 
 	for ( TUINT i = 0; i < MAX_NUM_TRB_LOADER_JOBS; i++ )
 	{
-		pJobSlot->pJob = &m_aTRBLoaderJobs[ i ];
+		pJobSlot->SetNodeValue( &m_aTRBLoaderJobs[ i ] );
 		m_FreeTRBLoaderJobs.PushFront( pJobSlot );
 		pJobSlot++;
 	}
 
 	for ( TUINT i = 0; i < MAX_NUM_SKELETON_LOADER_JOBS; i++ )
 	{
-		pJobSlot->pJob = &m_aSkeletonDoneJobs[ i ];
+		pJobSlot->SetNodeValue( &m_aSkeletonDoneJobs[ i ] );
 		m_FreeSkeletonLoaderJobs.PushFront( pJobSlot );
 		pJobSlot++;
 	}
 
 	for ( TUINT i = 0; i < MAX_NUM_COLLISION_LOADER_JOBS; i++ )
 	{
-		pJobSlot->pJob = &m_aCollisionDoneJobs[ i ];
+		pJobSlot->SetNodeValue( &m_aCollisionDoneJobs[ i ] );
 		m_FreeCollisionLoaderJobs.PushFront( pJobSlot );
 		pJobSlot++;
 	}
@@ -690,7 +690,7 @@ ATRBLoaderJob* ATerrainInterface::GetFreeTRBLoaderJob()
 		auto pTRBJobSlot = m_FreeTRBLoaderJobs.PopFront();
 		m_UsedTRBLoaderJobs.PushFront( pTRBJobSlot );
 
-		return TSTATICCAST( ATRBLoaderJob, pTRBJobSlot->pJob );
+		return TSTATICCAST( ATRBLoaderJob, pTRBJobSlot->GetNodeValue() );
 	}
 	else
 	{
@@ -707,7 +707,7 @@ ASkeletonDoneJob* ATerrainInterface::GetFreeSkeletonLoaderJob()
 		auto pTRBJobSlot = m_FreeSkeletonLoaderJobs.PopFront();
 		m_UsedSkeletonLoaderJobs.PushFront( pTRBJobSlot );
 
-		return TSTATICCAST( ASkeletonDoneJob, pTRBJobSlot->pJob );
+		return TSTATICCAST( ASkeletonDoneJob, pTRBJobSlot->GetNodeValue() );
 	}
 	else
 	{
@@ -724,7 +724,7 @@ AMatLibLoaderJob* ATerrainInterface::GetFreeMatlibLoaderJob()
 		auto pTRBJobSlot = m_FreeMatlibLoaderJobs.PopFront();
 		m_UsedMatlibLoaderJobs.PushFront( pTRBJobSlot );
 
-		return TSTATICCAST( AMatLibLoaderJob, pTRBJobSlot->pJob );
+		return TSTATICCAST( AMatLibLoaderJob, pTRBJobSlot->GetNodeValue() );
 	}
 	else
 	{
@@ -741,7 +741,7 @@ ACollisionDoneJob* ATerrainInterface::GetFreeCollisionLoaderJob()
 		auto pTRBJobSlot = m_FreeCollisionLoaderJobs.PopFront();
 		m_UsedCollisionLoaderJobs.PushFront( pTRBJobSlot );
 
-		return TSTATICCAST( ACollisionDoneJob, pTRBJobSlot->pJob );
+		return TSTATICCAST( ACollisionDoneJob, pTRBJobSlot->GetNodeValue() );
 	}
 	else
 	{
@@ -758,7 +758,7 @@ AModelLoaderJob* ATerrainInterface::GetFreeModelLoaderJob()
 		auto pTRBJobSlot = m_FreeModelLoaderJobs.PopFront();
 		m_UsedModelLoaderJobs.PushFront( pTRBJobSlot );
 
-		return TSTATICCAST( AModelLoaderJob, pTRBJobSlot->pJob );
+		return TSTATICCAST( AModelLoaderJob, pTRBJobSlot->GetNodeValue() );
 	}
 	else
 	{
@@ -775,7 +775,7 @@ ASectionDoneJob* ATerrainInterface::GetFreeSectionLoaderJob()
 		auto pTRBJobSlot = m_FreeSectionLoaderJobs.PopFront();
 		m_UsedSectionLoaderJobs.PushFront( pTRBJobSlot );
 
-		return TSTATICCAST( ASectionDoneJob, pTRBJobSlot->pJob );
+		return TSTATICCAST( ASectionDoneJob, pTRBJobSlot->GetNodeValue() );
 	}
 	else
 	{
@@ -799,9 +799,9 @@ void ATerrainInterface::MoveAllFinishedJobs( Toshi::T2SList<JobSlot>& a_rFreeJob
 {
 	for ( auto it = a_rUsedJobs.Begin(); it != a_rUsedJobs.End(); )
 	{
-		auto pNext = it->Next();
+		auto pNext = it.Next();
 
-		if ( !it->pJob->IsRunning() )
+		if ( !it->GetNodeValue()->IsRunning() )
 		{
 			a_rUsedJobs.Erase( it );
 			a_rFreeJobs.PushFront( it );

@@ -27,11 +27,7 @@ public:
 	    MAX_NUM_SKELETON_LOADER_JOBS +
 	    MAX_NUM_COLLISION_LOADER_JOBS;
 
-	struct JobSlot :
-	    public Toshi::T2SList<JobSlot>::Node
-	{
-		AMainThreadJob* pJob = TNULL;
-	};
+	using JobSlot = Toshi::T2SListNodeWrapper<AMainThreadJob>;
 
 	friend ATerrainVIS;
 	friend class ABYardTerrainManager;

@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "ATerrainVIS.h"
-#include "ATerrain.h"
+#include "ATerrainInterface.h"
 #include "Assets/AAssetStreaming.h"
 
 //-----------------------------------------------------------------------------

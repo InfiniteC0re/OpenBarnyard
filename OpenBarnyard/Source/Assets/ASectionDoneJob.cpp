@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "ASectionDoneJob.h"
-#include "Terrain/ATerrain.h"
+#include "Terrain/ATerrainInterface.h"
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.

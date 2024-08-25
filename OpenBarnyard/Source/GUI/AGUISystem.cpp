@@ -3,7 +3,7 @@
 #include "AGUI2TextureSectionManager.h"
 #include "Render/ARenderer.h"
 #include "Memory/AMemory.h"
-#include "Terrain/ATerrain.h"
+#include "Terrain/ATerrainInterface.h"
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.

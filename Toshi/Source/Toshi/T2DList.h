@@ -1,8 +1,7 @@
 #pragma once
 #include "T2Iterator.h"
 
-namespace Toshi
-{
+TOSHI_NAMESPACE_START
 
 //-----------------------------------------------------------------------------
 // TOSHI 2.0 - Doubly linked list
@@ -262,4 +261,39 @@ public:
 	}
 };
 
-} // namespace Toshi
+//-----------------------------------------------------------------------------
+// Purpose: wraps typename T making it T2DList::Node
+//-----------------------------------------------------------------------------
+template <typename T>
+class T2DListNodeWrapper : public T2DList<T2DListNodeWrapper<T>>::Node
+{
+public:
+	using Type = T;
+
+public:
+	// constructors/destructor
+	constexpr T2DListNodeWrapper() = default;
+
+	constexpr T2DListNodeWrapper( T* a_pValue ) :
+	    m_pValue( a_pValue ) {}
+
+	~T2DListNodeWrapper() = default;
+
+	constexpr T*       GetNodeValue() { return m_pValue; }
+	constexpr const T* GetNodeValue() const { return m_pValue; }
+	constexpr T*       operator->() { return m_pValue; }
+	constexpr const T* operator->() const { return m_pValue; }
+
+	constexpr void SetNodeValue( T* a_pValue ) { m_pValue = a_pValue; }
+
+	constexpr T2DListNodeWrapper& operator=( T* a_pValue )
+	{
+		SetNodeValue( a_pValue );
+		return *this;
+	}
+
+private:
+	T* m_pValue;
+};
+
+TOSHI_NAMESPACE_END

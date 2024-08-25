@@ -15,7 +15,6 @@
 
 #include <Math/TVector4.h>
 
-#undef PlaySound
 #define ASOUNDMANAGER_MAX_NUM_CUE 128
 
 class ASoundManager :
@@ -25,7 +24,7 @@ class ASoundManager :
 public:
 	TDECLARE_CLASS( ASoundManager, Toshi::TTask );
 
-	struct Cue;
+	class Cue;
 
 	struct S2 : public Toshi::T2DList<S2>::Node
 	{
@@ -47,7 +46,13 @@ public:
 	{
 		SOUNDEVENT_PlayAudio,
 		SOUNDEVENT_PlayStream,
-		// ...
+		SOUNDEVENT_StopAudio,
+		SOUNDEVENT_UpdateChannelVolume,
+		SOUNDEVENT_UpdateChannelFrequency,
+		SOUNDEVENT_UNUSED1,
+		SOUNDEVENT_UpdateChannelPosition,
+		SOUNDEVENT_UNUSED2,
+		SOUNDEVENT_UNUSED3,
 		SOUNDEVENT_NUMOF,
 	};
 
@@ -57,7 +62,6 @@ public:
 		static constexpr TSIZE MAX_NUM_PARAMS = 3;
 
 	public:
-
 		TFLOAT& operator[]( TUINT a_uiIndex )
 		{
 			TASSERT( a_uiIndex < MAX_NUM_PARAMS );
@@ -83,12 +87,12 @@ public:
 	    public Toshi::T2DList<ChannelRef>::Node
 	{
 	public:
-		TINT          iFMODChannelHandle = -1;
-		ASound::Sample* pWave              = TNULL;
-		TINT          Unknown            = 0;
-		TINT         iFlags       = 0;
-		TFLOAT        fVolume            = 1.0f;
-		TINT          iFrequency         = 44100;
+		TINT            iFMODChannelHandle = -1;
+		ASound::Sample* pSample            = TNULL;
+		TINT            Unknown            = 0;
+		TINT            iFlags             = 0;
+		TFLOAT          fVolume            = 1.0f;
+		TINT            iFrequency         = 44100;
 	};
 
 	struct TDEPRECATED ChannelRefLegacy :
@@ -122,9 +126,9 @@ public:
 	public:
 		SOUNDEVENT      eEventType;
 		TFLOAT          fStartTime;
-		TINT           iFlags;
+		TINT            iFlags;
 		Cue*            pCue;
-		ASound::Sample*   pSample;
+		ASound::Sample* pSample;
 		ChannelRef*     pChannel;
 		EventParameters oParameters;
 		TINT            iTrackIndex;
@@ -148,22 +152,10 @@ public:
 		}
 	};
 
-	// Contains SoundEvents in a sorted way being a T2DList node
-	class SoundEventList : public Toshi::T2DList<SoundEventList>::Node
-	{
-	public:
-		using ListContainer = Toshi::T2SortedList<SoundEvent, Toshi::T2DList<SoundEvent>, SoundEventSortResults>;
-
-	public:
-		SoundEventList();
-		~SoundEventList();
-
-		ListContainer* EventList() const { return m_pEventList; }
-		ListContainer* operator->() const { return m_pEventList; }
-
-	private:
-		ListContainer* m_pEventList;
-	};
+	//-----------------------------------------------------------------------------
+	// Purpose: contains SoundEvents in sorted order, can be used in T2DList
+	//-----------------------------------------------------------------------------
+	using SoundEventList = Toshi::T2DListNodeWrapper<Toshi::T2SortedList<SoundEvent, Toshi::T2DList<SoundEvent>, SoundEventSortResults>>;
 
 	// Sorts lists of the events by the amount of stored events (from 0 to n)
 	struct SoundEventListSortResults
@@ -180,13 +172,22 @@ public:
 		}
 	};
 
-	struct Cue : public Toshi::T2DList<Cue>::Node
+	//-----------------------------------------------------------------------------
+	// Purpose: Cue is an only playable unit that can be created by ASoundManager.
+	// It contains all the channels (sounds) that are played by ASound.
+	//-----------------------------------------------------------------------------
+	class Cue :
+	    public Toshi::T2DList<Cue>::Node
 	{
 	public:
 		Cue();
 		~Cue();
 
 		void Reset();
+
+		TBOOL HasEventOfType( SOUNDEVENT a_eEventType ) const;
+
+		TBOOL IsUsed() const { return fStartTime > 0.0f; }
 
 	public:
 		TBOOL                            bUsed;
@@ -203,10 +204,13 @@ public:
 		Toshi::T2Vector<TINT, 15>        vecLoopStarts;
 	};
 
+	//-----------------------------------------------------------------------------
+	// Purpose: stores common settings for specified groups of sounds.
+	//-----------------------------------------------------------------------------
 	struct Category
 	{
 	public:
-		TBOOL  bFlag1            = TTRUE;
+		TBOOL  bPausable         = TTRUE;
 		TBOOL  bFlag2            = TTRUE;
 		TBOOL  bFlag3            = TFALSE;
 		TFLOAT fVolumeMultiplier = 1.0f;
@@ -214,21 +218,26 @@ public:
 		Toshi::T2DList<Cue> PlayingCues;
 	};
 
-	struct EventHandler
-	{
-	public:
-		using Callback_t = void ( ASoundManager::* )( SoundEvent* a_pSoundEvent );
-
-	public:
-		Callback_t fnCallback;
-		TUINT      Unused;
-	};
-
+	//-----------------------------------------------------------------------------
+	// Purpose: stores list of event handlers that can be executed by the event
+	// loop in ASoundManager::Update
+	//-----------------------------------------------------------------------------
 	struct SoundEventManager
 	{
+	private:
+		struct EventHandler
+		{
+		public:
+			using Callback_t = void ( ASoundManager::* )( SoundEvent* a_pSoundEvent );
+
+		public:
+			Callback_t fnCallback = TNULL;
+			TUINT      Unused     = 0;
+		};
+
 	public:
-		SoundEventManager();
-		~SoundEventManager();
+		SoundEventManager()  = default;
+		~SoundEventManager() = default;
 
 		void SetEventHandler( SOUNDEVENT a_eEventType, EventHandler::Callback_t a_fnHandler );
 		void ExecuteEvent( SOUNDEVENT a_eEventType, ASoundManager* a_pSoundManager, SoundEvent* a_pEvent );
@@ -248,18 +257,41 @@ public:
 	ASoundManager();
 	~ASoundManager();
 
+	//-----------------------------------------------------------------------------
+	// Toshi::TTask
+	//-----------------------------------------------------------------------------
 	virtual TBOOL Reset() override;
 	virtual TBOOL OnCreate() override;
 	virtual TBOOL OnUpdate( TFLOAT a_fDeltaTime ) override;
 	virtual void  OnDestroy() override;
 
-	TINT PlaySound( ASoundWaveId a_iSound );
-	TINT PlaySoundEx( ASoundWaveId a_iSound, TFLOAT a_fVolume, TBOOL a_bFlag, TFLOAT a_fStartDelay, TINT a_iTrack );
+	//-----------------------------------------------------------------------------
+	// Own methods
+	//-----------------------------------------------------------------------------
 
-	void PauseAllSound( TBOOL a_bPaused );
+	// Immediately plays cue and returns it's index. Use PlayCueEx for more settings.
+	TINT PlayCue( ASoundWaveId a_iSound );
 
-	TINT  GetAvailableCueIndex();
+	// Plays cue and returns it's index
+	TINT PlayCueEx( ASoundWaveId a_iSound, TFLOAT a_fVolume, TBOOL a_bFlag, TFLOAT a_fDelay, TINT a_iTrack );
+
+	// Immediately stops cue and all it's sounds
+	void StopCue( TINT& a_rCueIndex );
+
+	// Asynchronously stop cue and all it's sounds
+	void StopCueAsync( TINT& a_rCueIndex, TFLOAT a_fDelay );
+
+	// Allows to control pause state of sounds
+	void PauseAllCues( TBOOL a_bPause );
+
+	// Returns index of an available cue that can be used to play sound
+	TINT GetAvailableCueIndex();
+
+	// Returns TTRUE if cue is playing
 	TBOOL IsCuePlaying( TINT a_iCueIndex );
+
+	// Cancels all queued events of specified type
+	void CancelCueEvents( Cue* a_pCue, SOUNDEVENT a_eEventType );
 
 	//-----------------------------------------------------------------------------
 	// Wavebanks
@@ -306,13 +338,13 @@ private:
 	void CreatePlaySoundEvent( Cue* a_pCue, TINT a_iTrackIndex, TINT a_iFirstWaveIndex, TINT a_iLastWaveIndex, TINT a_iFlags, TFLOAT a_fDelay1, TFLOAT a_fDelay2 );
 
 	// Allocates new SoundEvent and adds it to the specified cue
-	SoundEvent* CreateSoundEvent( SOUNDEVENT a_eEventType, TFLOAT a_fDelay, Cue* a_pCue, ASound::Sample* a_pWave, ChannelRef* a_pChannel, TINT a_iFlags, TINT a_iTrackIndex );
+	SoundEvent* CreateSoundEvent( SOUNDEVENT a_eEventType, TFLOAT a_fDelay, Cue* a_pCue, ASound::Sample* a_pSample, ChannelRef* a_pChannel, TINT a_iFlags, TINT a_iTrackIndex );
 
 	// Allocates new SoundEvent and adds it to the specified cue
-	SoundEvent* CreateSoundEvent( SOUNDEVENT a_eEventType, TFLOAT a_fDelay, Cue* a_pCue, ASound::Sample* a_pWave, TFLOAT a_fCustomParam1, ChannelRef* a_pChannel, TINT a_iFlags, TINT a_iTrackIndex );
+	SoundEvent* CreateSoundEvent( SOUNDEVENT a_eEventType, TFLOAT a_fDelay, Cue* a_pCue, ASound::Sample* a_pSample, TFLOAT a_fCustomParam1, ChannelRef* a_pChannel, TINT a_iFlags, TINT a_iTrackIndex );
 
 	// Allocates new SoundEvent and adds it to the specified cue
-	SoundEvent* CreateSoundEvent( SOUNDEVENT a_eEventType, TFLOAT a_fDelay, Cue* a_pCue, ASound::Sample* a_pWave, const EventParameters& a_rcCustomParams, ChannelRef* a_pChannel, TINT a_iFlags, TINT a_iTrackIndex );
+	SoundEvent* CreateSoundEvent( SOUNDEVENT a_eEventType, TFLOAT a_fDelay, Cue* a_pCue, ASound::Sample* a_pSample, const EventParameters& a_rcCustomParams, ChannelRef* a_pChannel, TINT a_iFlags, TINT a_iTrackIndex );
 
 	// Adds event to the cue and queues the cue to be played
 	void AddEventToCue( Cue* a_pCue, SoundEvent* a_pSoundEvent );
@@ -329,6 +361,10 @@ private:
 	//-----------------------------------------------------------------------------
 	void EventHandler_PlaySound( SoundEvent* a_pEvent );
 	void EventHandler_PlayStream( SoundEvent* a_pEvent );
+	void EventHandler_StopAudio( SoundEvent* a_pEvent );
+	void EventHandler_UpdateChannelVolume( SoundEvent* a_pEvent );
+	void EventHandler_UpdateChannelFrequency( SoundEvent* a_pEvent );
+	void EventHandler_UpdatePosition( SoundEvent* a_pEvent );
 
 private:
 	TBOOL Initialise();
@@ -348,7 +384,7 @@ public:
 private:
 	inline static Toshi::TFileSystem*                                                      ms_pFileSystem;
 	inline static Toshi::T2Map<Toshi::TPString8, AWaveBank*, Toshi::TPString8::Comparator> ms_WaveBanks;
-	inline static TINT                                                                     ms_iPaused;
+	inline static TINT                                                                     ms_iNumPauses;
 
 private:
 	Toshi::T2DynamicObjectPool<SoundEvent>                              m_SoundEventPool;                     // 0x20
@@ -363,21 +399,21 @@ private:
 	S2                                                                  m_aS2[ 8 ];                           // 0x4D08
 	Toshi::T2DList<StreamRef>                                           m_StreamRefs;                         // 0x4E08
 	// ...
-	Category                                                                                       m_aCategories[ MAX_NUM_CATEGORIES ];  // 0x4E10
-	TINT                                                                                           m_iLastAvailableSoundExSlot;          // 0x4F50
-	Toshi::T2SortedList<SoundEventList, Toshi::T2DList<SoundEventList>, SoundEventListSortResults> m_QueuedSortedEventLists;             // 0x4F54
-	TFLOAT                                                                                         m_fCurrentTime;                       // 0x4F5C
-	SoundEventManager                                                                              m_oEventManager;                      // 0x4F60
-	TBOOL                                                                                          m_bMuted;                             // 0x4FA8
-	TBOOL                                                                                          m_bUseMinHardwareChannels;            // 0x4FA9
-	TINT                                                                                           m_iMinHWChannels;                     // 0x4FAC
-	TINT                                                                                           m_iNumChannels;                       // 0x4FB0
-	TINT                                                                                           m_iGlobalFrequency;                   // 0x4FB4
-	PauseListener                                                                                  m_PauseListener;                      // 0x4FB8
-	S4*                                                                                            m_pS4;                                // 0x4FCC
-	Toshi::T2DList<S4>                                                                             m_FreeListS4;                         // 0x4FD0
-	Toshi::T2DList<S4>                                                                             m_UnkList1;                           // 0x4FD8
-	Toshi::T2DList<ASoundBank>                                                                     m_SoundBanks;                         // 0x4FE0
-	Toshi::T2DList<S2>                                                                             m_FreeListS2;                         // 0x4FE8
-	                                                                                                                                     // ...
+	Category                                                                                       m_aCategories[ MAX_NUM_CATEGORIES ]; // 0x4E10
+	TINT                                                                                           m_iLastAvailableSoundExSlot;         // 0x4F50
+	Toshi::T2SortedList<SoundEventList, Toshi::T2DList<SoundEventList>, SoundEventListSortResults> m_QueuedSortedEventLists;            // 0x4F54
+	TFLOAT                                                                                         m_fCurrentTime;                      // 0x4F5C
+	SoundEventManager                                                                              m_oEventManager;                     // 0x4F60
+	TBOOL                                                                                          m_bMuted;                            // 0x4FA8
+	TBOOL                                                                                          m_bUseMinHardwareChannels;           // 0x4FA9
+	TINT                                                                                           m_iMinHWChannels;                    // 0x4FAC
+	TINT                                                                                           m_iNumChannels;                      // 0x4FB0
+	TINT                                                                                           m_iGlobalFrequency;                  // 0x4FB4
+	PauseListener                                                                                  m_PauseListener;                     // 0x4FB8
+	S4*                                                                                            m_pS4;                               // 0x4FCC
+	Toshi::T2DList<S4>                                                                             m_FreeListS4;                        // 0x4FD0
+	Toshi::T2DList<S4>                                                                             m_UnkList1;                          // 0x4FD8
+	Toshi::T2DList<ASoundBank>                                                                     m_SoundBanks;                        // 0x4FE0
+	Toshi::T2DList<S2>                                                                             m_FreeListS2;                        // 0x4FE8
+	                                                                                                                                    // ...
 };

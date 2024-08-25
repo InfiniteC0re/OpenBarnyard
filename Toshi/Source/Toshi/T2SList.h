@@ -256,4 +256,39 @@ public:
 	Iterator Transfer( Node* a_pNode, T2GenericSList& a_rList ) { return T2GenericSList::Transfer( a_pNode, a_rList ); }
 };
 
+//-----------------------------------------------------------------------------
+// Purpose: wraps typename T making it T2SList::Node
+//-----------------------------------------------------------------------------
+template <typename T>
+class T2SListNodeWrapper : public T2SList<T2SListNodeWrapper<T>>::Node
+{
+public:
+	using Type = T;
+
+public:
+	// constructors/destructor
+	constexpr T2SListNodeWrapper() = default;
+
+	constexpr T2SListNodeWrapper( T* a_pValue ) :
+	    m_pValue( a_pValue ) {}
+
+	~T2SListNodeWrapper() = default;
+
+	constexpr T*       GetNodeValue() { return m_pValue; }
+	constexpr const T* GetNodeValue() const { return m_pValue; }
+	constexpr T*       operator->() { return m_pValue; }
+	constexpr const T* operator->() const { return m_pValue; }
+
+	constexpr void SetNodeValue( T* a_pValue ) { m_pValue = a_pValue; }
+
+	constexpr T2SListNodeWrapper& operator=( T* a_pValue )
+	{
+		SetNodeValue( a_pValue );
+		return *this;
+	}
+
+private:
+	T* m_pValue;
+};
+
 TOSHI_NAMESPACE_END

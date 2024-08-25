@@ -20,7 +20,7 @@
 #include "Sound/ASoundManager.h"
 #include "Movie/ABINKMoviePlayer.h"
 #include "ALoadScreen.h"
-#include "Terrain/ATerrain.h"
+#include "Terrain/ATerrainInterface.h"
 #include "Terrain/ABYardTerrainManager.h"
 
 #include <Plugins/PPropertyParser/PBProperties.h>
@@ -369,5 +369,5 @@ void ARootTask::LoadFrontEnd()
 	    AFade::Color( 0, 0, 0, 0 ),
 	    1.0f );
 
-	ASoundManager::GetSingleton()->PlaySound( 161 );
+	ASoundManager::GetSingleton()->PlayCue( 161 );
 }
