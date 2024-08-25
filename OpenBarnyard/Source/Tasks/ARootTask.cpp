@@ -369,5 +369,5 @@ void ARootTask::LoadFrontEnd()
 	    AFade::Color( 0, 0, 0, 0 ),
 	    1.0f );
 
-	ASoundManager::GetSingleton()->PlaySound( 26 );
+	ASoundManager::GetSingleton()->PlaySound( 161 );
 }

@@ -1,5 +1,6 @@
 #pragma once
 #include "ASoundLegacy.h"
+#include "ARandom.h"
 #include "Memory/AMemory.h"
 
 #include <Toshi/TBitArray.h>
@@ -13,7 +14,7 @@ class ASound
 public:
 	friend class ASoundManager;
 
-	struct Wave
+	struct Sample
 	{
 		AWaveBank* pWaveBank            = TNULL;
 		TINT       iId                  = -1;
@@ -36,7 +37,7 @@ public:
 	    m_uiCategoryIndex( 0 ),
 	    m_ui8Priority( 255 ),
 	    m_fMinDist( 1.0f ),
-	    m_vecWaves( AMemory::GetAllocator( AMemory::POOL_Sound ), 1, 1 ),
+	    m_vecSamples( AMemory::GetAllocator( AMemory::POOL_Sound ), 1, 1 ),
 	    m_vecTracks( AMemory::GetAllocator( AMemory::POOL_Sound ), 1, 1 )
 	{
 	}
@@ -50,13 +51,53 @@ public:
 		return iFirstWaveIndex;
 	}
 
+	TINT GetRandomSample( TINT a_iWaveIndexMin, TINT a_iWaveIndexMax )
+	{
+		return a_iWaveIndexMin + ARandom::GetSingleton()->m_oRandom.GetInt( a_iWaveIndexMax - a_iWaveIndexMin );
+	}
+
+	TINT GetRandomSampleWeighted( TINT a_iTrackIndex, TINT a_iWaveIndexMin, TINT a_iWaveIndexMax )
+	{
+		TASSERT( a_iTrackIndex != -1 );
+		TASSERT( a_iWaveIndexMax - a_iWaveIndexMin > 0 );
+
+		TINT  iNumWaves      = a_iWaveIndexMax - a_iWaveIndexMin;
+		TINT  iTrackNumWaves = m_vecTracks[ a_iTrackIndex ];
+		TINT* pWeights       = new ( AMemory::GetMemBlock( AMemory::POOL_Sound ) ) TINT[ iTrackNumWaves ];
+
+		TINT iTotalWeight = 0;
+		for ( TINT i = 0; i < a_iWaveIndexMax - a_iWaveIndexMin; i++ )
+		{
+			pWeights[ i ] = m_vecSamples[ i + a_iWaveIndexMin ].iWeight;
+			iTotalWeight += pWeights[ i ];
+		}
+
+		TINT* pWeightedSamples = new ( AMemory::GetMemBlock( AMemory::POOL_Sound ) ) TINT[ iTotalWeight ];
+		for ( TINT i = 0, j = 0; i < a_iWaveIndexMax - a_iWaveIndexMin; i++ )
+		{
+			// Copy sample index N (weight) times to the array
+			for ( TINT k = 0; k < pWeights[ i ]; k++ )
+			{
+				TASSERT( j < iTotalWeight );
+				pWeightedSamples[ j++ ] = a_iWaveIndexMin + i;
+			}
+		}
+
+		TINT iSelectedSample = ARandom::GetSingleton()->m_oRandom.GetInt( iTotalWeight );
+
+		delete[] pWeights;
+		delete[] pWeightedSamples;
+
+		return iSelectedSample;
+	}
+
 private:
 	TINT                         m_iFlags;
 	TINT                         m_iId;
 	TINT                         m_uiCategoryIndex;
 	TUINT8                       m_ui8Priority;
 	TFLOAT                       m_fMinDist;
-	Toshi::T2DynamicVector<Wave> m_vecWaves;
+	Toshi::T2DynamicVector<Sample> m_vecSamples;
 	Toshi::T2DynamicVector<TINT> m_vecTracks;
 	Toshi::TBitArray             m_TrackLoop;
 	Toshi::T2Vector<TINT, 15>    m_vecLoopStarts;
