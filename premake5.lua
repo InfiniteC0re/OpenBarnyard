@@ -35,7 +35,7 @@ workspace "OpenBarnyard"
 	-- Global Windows parameters
 	filter "system:windows"
 		systemversion "latest"
-
+		
 		vectorextensions "SSE2"
 		
 		linkoptions

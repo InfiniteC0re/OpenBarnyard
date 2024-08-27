@@ -315,7 +315,7 @@ TString8& TString8::Concat( const TCHAR* str, TINT size )
 	if ( allocated )
 	{
 		// since it has made a new buffer
-		// it need to copy the old string
+		// it needû to copy the old string
 		// to the new buffer
 
 		TStringManager::String8Copy( m_pBuffer, oldString, -1 );
@@ -332,54 +332,28 @@ TString8& TString8::Concat( const TCHAR* str, TINT size )
 	return *this;
 }
 
-TINT TString8::Compare( const TCHAR* a_pcString, TINT param_2 ) const
+TINT TString8::Compare( const TCHAR* a_pcString, TINT a_iLength ) const
 {
-	TASSERT( a_pcString != TNULL, "TCString::CompareNoCase - Passed string cannot be TNULL" );
-	TASSERT( IsIndexValid( 0 ), "TCString::CompareNoCase - Index 0 is not valid" );
-	TASSERT( GetString() != TNULL, "TCString::CompareNoCase - String cannot be TNULL" );
+	TASSERT( a_pcString != TNULL, "TCString::Compare - Passed string cannot be TNULL" );
+	TASSERT( IsIndexValid( 0 ), "TCString::Compare - Index 0 is not valid" );
+	TASSERT( GetString() != TNULL, "TCString::Compare - String cannot be TNULL" );
 
-	if ( param_2 != -1 )
-	{
-		return strncmp( GetString(), a_pcString, param_2 );
-	}
+	if ( a_iLength != -1 )
+		return strncmp( GetString(), a_pcString, a_iLength );
 
-	const TCHAR* str   = GetString();
-	TCHAR        bVar1 = 0;
-	TCHAR        bVar4 = 0;
-	while ( TTRUE )
-	{
-		bVar1 = *str;
-		bVar4 = bVar1 < *a_pcString;
-
-		if ( bVar1 != *a_pcString ) break;
-		if ( bVar1 == 0 ) return 0;
-
-		bVar1 = str[ 1 ];
-		bVar4 = bVar1 < a_pcString[ 1 ];
-
-		if ( bVar1 != a_pcString[ 1 ] ) break;
-		if ( bVar1 == 0 ) return 0;
-
-		str += 2;
-		a_pcString += 2;
-	}
-	return bVar4 | 1;
+	return strcmp( GetString(), a_pcString );
 }
 
-TINT TString8::CompareNoCase( const TCHAR* a_pcString, TINT param_2 ) const
+TINT TString8::CompareNoCase( const TCHAR* a_pcString, TINT a_iLength ) const
 {
 	TASSERT( a_pcString != TNULL, "TCString::CompareNoCase - Passed string cannot be TNULL" );
 	TASSERT( IsIndexValid( 0 ), "TCString::CompareNoCase - Index 0 is not valid" );
 	TASSERT( GetString() != TNULL, "TCString::CompareNoCase - String cannot be TNULL" );
 
-	if ( param_2 == -1 )
-	{
+	if ( a_iLength == -1 )
 		return _stricmp( GetString(), a_pcString );
-	}
 
-	TASSERT( IsIndexValid( 0 ), "TCString::CompareNoCase - Index 0 is not valid" );
-
-	return _strnicmp( GetString(), a_pcString, param_2 );
+	return _strnicmp( GetString(), a_pcString, a_iLength );
 }
 
 TString8 TString8::Mid( TINT a_iFirst, TINT a_iCount ) const
@@ -447,17 +421,12 @@ TString8& TString8::Concat( const TString16& str, TINT size )
 
 TBOOL TString8::IsAllLowerCase() const
 {
-	if ( m_iStrLen != 0 )
+	TCHAR* pChar = m_pBuffer;
+
+	while ( pChar < m_pBuffer + m_iStrLen )
 	{
-		TCHAR* iter   = m_pBuffer;
-		TCHAR* endStr = m_pBuffer + m_iStrLen;
-
-		do
-		{
-			TCHAR currentC = *iter++;
-			if ( currentC > '@' && currentC < '[' ) return TFALSE;
-
-		} while ( iter < endStr );
+		TCHAR cChar = *pChar++;
+		if ( cChar >= 'A' && cChar <= 'Z' ) return TFALSE;
 	}
 
 	return TTRUE;
@@ -465,17 +434,12 @@ TBOOL TString8::IsAllLowerCase() const
 
 TBOOL TString8::IsAllUpperCase() const
 {
-	if ( m_iStrLen != 0 )
+	TCHAR* pChar = m_pBuffer;
+
+	while ( pChar < m_pBuffer + m_iStrLen )
 	{
-		TCHAR* iter   = m_pBuffer;
-		TCHAR* endStr = m_pBuffer + m_iStrLen;
-
-		do
-		{
-			TCHAR currentC = *iter++;
-			if ( currentC > '`' && currentC < '{' ) return TFALSE;
-
-		} while ( iter < endStr );
+		TCHAR cChar = *pChar++;
+		if ( cChar >= 'a' && cChar <= 'z' ) return TFALSE;
 	}
 
 	return TTRUE;
