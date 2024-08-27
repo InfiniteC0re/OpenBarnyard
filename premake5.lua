@@ -36,6 +36,13 @@ workspace "OpenBarnyard"
 	filter "system:windows"
 		systemversion "latest"
 
+		vectorextensions "SSE2"
+		
+		linkoptions
+		{
+			"/SAFESEH:NO"
+		}
+
 		externalincludedirs
 		{
 			"%{IncludeDir.dx8}"
