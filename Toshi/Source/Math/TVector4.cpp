@@ -3,13 +3,13 @@
 
 TOSHI_NAMESPACE_START
 
-const TVector4 TVector4::VEC_ZERO = { 0, 0, 0, 1 };
-const TVector4 TVector4::VEC_POSX = { 1, 0, 0, 1 };
-const TVector4 TVector4::VEC_POSY = { 0, 1, 0, 1 };
-const TVector4 TVector4::VEC_POSZ = { 0, 0, 1, 1 };
-const TVector4 TVector4::VEC_NEGX = { -1, 0, 0, 1 };
-const TVector4 TVector4::VEC_NEGY = { 0, -1, 0, 1 };
-const TVector4 TVector4::VEC_NEGZ = { 0, 0, -1, 1 };
+constinit const TVector4 TVector4::VEC_ZERO = TVector4( 0, 0, 0, 1 );
+constinit const TVector4 TVector4::VEC_POSX = TVector4( 1, 0, 0, 1 );
+constinit const TVector4 TVector4::VEC_POSY = TVector4( 0, 1, 0, 1 );
+constinit const TVector4 TVector4::VEC_POSZ = TVector4( 0, 0, 1, 1 );
+constinit const TVector4 TVector4::VEC_NEGX = TVector4( -1, 0, 0, 1 );
+constinit const TVector4 TVector4::VEC_NEGY = TVector4( 0, -1, 0, 1 );
+constinit const TVector4 TVector4::VEC_NEGZ = TVector4( 0, 0, -1, 1 );
 
 void TVector4::Normalise()
 {

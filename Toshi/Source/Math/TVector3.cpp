@@ -3,17 +3,17 @@
 
 TOSHI_NAMESPACE_START
 
-const TVector3 TVector3::VEC_ZERO     = { 0, 0, 0 };
-const TVector3 TVector3::VEC_POSX     = { 1, 0, 0 };
-const TVector3 TVector3::VEC_POSY     = { 0, 1, 0 };
-const TVector3 TVector3::VEC_POSZ     = { 0, 0, 1 };
-const TVector3 TVector3::VEC_NEGX     = { -1, 0, 0 };
-const TVector3 TVector3::VEC_NEGY     = { 0, -1, 0 };
-const TVector3 TVector3::VEC_NEGZ     = { 0, 0, -1 };
-const TVector3 TVector3::VEC_POSXPOSZ = { TMath::ONEOVER_SQRT_TWO, 0, TMath::ONEOVER_SQRT_TWO };
-const TVector3 TVector3::VEC_POSXNEGZ = { TMath::ONEOVER_SQRT_TWO, 0, -TMath::ONEOVER_SQRT_TWO };
-const TVector3 TVector3::VEC_NEGXPOSZ = { TVector3::VEC_POSXNEGZ.z, 0, TMath::ONEOVER_SQRT_TWO };
-const TVector3 TVector3::VEC_NEGXNEGZ = { TVector3::VEC_POSXNEGZ.z, 0, TVector3::VEC_POSXNEGZ.z };
+constinit const TVector3 TVector3::VEC_ZERO     = TVector3( 0, 0, 0 );
+constinit const TVector3 TVector3::VEC_POSX     = TVector3( 1, 0, 0 );
+constinit const TVector3 TVector3::VEC_POSY     = TVector3( 0, 1, 0 );
+constinit const TVector3 TVector3::VEC_POSZ     = TVector3( 0, 0, 1 );
+constinit const TVector3 TVector3::VEC_NEGX     = TVector3( -1, 0, 0 );
+constinit const TVector3 TVector3::VEC_NEGY     = TVector3( 0, -1, 0 );
+constinit const TVector3 TVector3::VEC_NEGZ     = TVector3( 0, 0, -1 );
+constinit const TVector3 TVector3::VEC_POSXPOSZ = TVector3( TMath::ONEOVER_SQRT_TWO, 0, TMath::ONEOVER_SQRT_TWO );
+constinit const TVector3 TVector3::VEC_POSXNEGZ = TVector3( TMath::ONEOVER_SQRT_TWO, 0, -TMath::ONEOVER_SQRT_TWO );
+constinit const TVector3 TVector3::VEC_NEGXPOSZ = TVector3( -TMath::ONEOVER_SQRT_TWO, 0, TMath::ONEOVER_SQRT_TWO );
+constinit const TVector3 TVector3::VEC_NEGXNEGZ = TVector3( -TMath::ONEOVER_SQRT_TWO, 0, -TMath::ONEOVER_SQRT_TWO );
 
 void TVector3::Clip( TFLOAT fVal, TFLOAT fVal2 )
 {

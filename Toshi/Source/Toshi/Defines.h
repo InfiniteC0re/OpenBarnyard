@@ -49,7 +49,7 @@
 	{
 #define TOSHI_NAMESPACE_END }
 
-#ifdef TOSHI_DIST
+#ifdef TOSHI_FINAL
 #  define TOSHI_NO_LOGS
 #endif
 
@@ -164,3 +164,7 @@
 #  define TCRITICAL( ... )
 #  define TTRACE( ... )
 #endif // TOSHI_NO_LOGS
+
+#ifndef TOSHI_USER_ENGINE
+#  define TOSHI_USER_CLIENT
+#endif // !TOSHI_USER_ENGINE

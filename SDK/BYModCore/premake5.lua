@@ -1,27 +1,16 @@
 project "BYModCore"
+	kind "SharedLib"
 	language "C++"
-	cppdialect "C++20"
 	staticruntime "on"
-	characterset "ASCII"
 	
 	pchheader "pch.h"
 	pchsource "Source/pch.cpp"
 	
-	ignoredefaultlibraries
-	{
-		"LIBCI",
-	}
-
 	links
 	{
 		"Toshi",
 		"BYardSDK",
 		"detours.lib"
-	}
-	
-	linkoptions
-	{
-		"/SAFESEH:NO"
 	}
 	
 	libdirs
@@ -46,42 +35,10 @@ project "BYModCore"
 		"%{wks.location}/SDK/BYardSDK/Source",
 		"%{IncludeDir.detours}"
 	}
-	
-	externalincludedirs 
-	{
-		"%{IncludeDir.dx8}"
-	}
-	
-	defines
-	{
-		"TOSHI_USER_CLIENT",
-		"SPDLOG_WCHAR_TO_UTF8_SUPPORT"
-	}
 
 	filter "system:windows"
-		systemversion "latest"
-
 		defines
 		{
 			"TOSHI_MODLOADER",
-			"TOSHI_SDK",
-			"TOSHI_SKU_WINDOWS"
+			"TOSHI_SDK"
 		}
-
-	filter "configurations:Debug"
-		kind "SharedLib"
-		runtime "Debug"
-		defines "TOSHI_DEBUG"
-		symbols "On"
-
-	filter "configurations:Release"
-		kind "SharedLib"
-		runtime "Release"
-		defines "TOSHI_RELEASE"
-		optimize "On"
-
-	filter "configurations:Dist"
-		kind "SharedLib"
-		runtime "Release"
-		defines "TOSHI_DIST"
-		optimize "On"

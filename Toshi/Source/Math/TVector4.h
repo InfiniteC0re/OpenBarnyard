@@ -2,42 +2,39 @@
 #include "Math/TVector3.h"
 #include "Math/TVector2.h"
 
-#include <d3dx8math.h>
-
 TOSHI_NAMESPACE_START
 
 class TVector4
 {
 public:
 	constexpr TVector4() = default;
-	constexpr TVector4( TFLOAT x, TFLOAT y, TFLOAT z, TFLOAT w )
-	{
-		TVector4::x = x;
-		TVector4::y = y;
-		TVector4::z = z;
-		TVector4::w = w;
-	}
-	constexpr TVector4( TFLOAT floats[ 4 ] )
-	{
-		TVector4::x = floats[ 0 ];
-		TVector4::y = floats[ 1 ];
-		TVector4::z = floats[ 2 ];
-		TVector4::w = floats[ 3 ];
-	}
-	constexpr TVector4( const TVector3& other )
-	{
-		TVector4::x = other.x;
-		TVector4::y = other.y;
-		TVector4::z = other.z;
-		TVector4::w = 1.0f;
-	}
-	constexpr TVector4( const TVector4& other )
-	{
-		TVector4::x = other.x;
-		TVector4::y = other.y;
-		TVector4::z = other.z;
-		TVector4::w = other.w;
-	}
+	constexpr TVector4( TFLOAT a_fX, TFLOAT a_fY, TFLOAT a_fZ, TFLOAT a_fW ) :
+	    x( a_fX ),
+	    y( a_fY ),
+	    z( a_fZ ),
+	    w( a_fW )
+	{}
+
+	constexpr TVector4( TFLOAT a_pFloats[ 4 ] ) :
+	    x( a_pFloats[ 0 ] ),
+	    y( a_pFloats[ 1 ] ),
+	    z( a_pFloats[ 2 ] ),
+	    w( a_pFloats[ 3 ] )
+	{}
+
+	constexpr TVector4( const TVector3& a_rcOther ) :
+	    x( a_rcOther.x ),
+	    y( a_rcOther.y ),
+	    z( a_rcOther.z ),
+	    w( 1.0f )
+	{}
+
+	constexpr TVector4( const TVector4& a_rcOther ) :
+	    x( a_rcOther.x ),
+	    y( a_rcOther.y ),
+	    z( a_rcOther.z ),
+	    w( a_rcOther.w )
+	{}
 
 	constexpr void Set( const TVector3& vec )
 	{
@@ -46,6 +43,7 @@ public:
 		TVector4::z = vec.z;
 		TVector4::w = 1.0f;
 	}
+
 	constexpr void Set( const TVector4& vec )
 	{
 		TVector4::x = vec.x;
@@ -53,6 +51,7 @@ public:
 		TVector4::z = vec.z;
 		TVector4::w = vec.w;
 	}
+
 	constexpr void Set( TFLOAT floats[ 4 ] )
 	{
 		TVector4::x = floats[ 0 ];
@@ -60,6 +59,7 @@ public:
 		TVector4::z = floats[ 2 ];
 		TVector4::w = floats[ 3 ];
 	}
+
 	constexpr void Set( TFLOAT x, TFLOAT y, TFLOAT z, TFLOAT w )
 	{
 		TVector4::x = x;
@@ -196,12 +196,14 @@ public:
 	void Negate( const TVector4& vec ) { Negate3( vec ); }
 	void Negate() { Negate3(); }
 	void Negate3( const TVector4& vec ) { Set( -vec.x, -vec.y, -vec.z, vec.w ); }
+
 	void Negate3()
 	{
 		x = -x;
 		y = -y;
 		z = -z;
 	}
+
 	void Negate4( const TVector4& vec ) { Set( -vec.x, -vec.y, -vec.z, -vec.w ); }
 	void Negate4() { Set( -x, -y, -z, -w ); }
 
@@ -230,14 +232,16 @@ public:
 	constexpr TVector4 operator*( const TVector4& other ) const { return { x * other.x, y * other.y, z * other.z, other.w }; }
 	constexpr TVector4 operator/( const TVector4& other ) const { return { x / other.x, y / other.y, z / other.z, other.w }; }
 
-	void      operator=( const TVector3& other ) { Set( other ); }
-	void      operator=( const TVector4& other ) { Set( other ); }
-	void      operator+=( const TVector4& other ) { Add( other ); }
+	void operator=( const TVector3& other ) { Set( other ); }
+	void operator=( const TVector4& other ) { Set( other ); }
+	void operator+=( const TVector4& other ) { Add( other ); }
+
 	TVector4& operator-=( const TVector4& other )
 	{
 		Substract( other );
 		return *this;
 	}
+
 	void operator/=( const TVector4& other ) { Divide( other ); }
 	void operator*=( const TVector4& other ) { Multiply( other ); }
 
@@ -266,13 +270,13 @@ public:
 	static constexpr TFLOAT DotProduct4( const TVector4& vec1, const TVector4& vec2 ) { return vec1.x * vec2.x + vec1.y * vec2.y + vec1.z * vec2.z + vec1.w * vec2.w; }
 
 public:
-	static const TVector4 VEC_ZERO;
-	static const TVector4 VEC_POSX;
-	static const TVector4 VEC_POSY;
-	static const TVector4 VEC_POSZ;
-	static const TVector4 VEC_NEGX;
-	static const TVector4 VEC_NEGY;
-	static const TVector4 VEC_NEGZ;
+	static const constinit TVector4 VEC_ZERO;
+	static const constinit TVector4 VEC_POSX;
+	static const constinit TVector4 VEC_POSY;
+	static const constinit TVector4 VEC_POSZ;
+	static const constinit TVector4 VEC_NEGX;
+	static const constinit TVector4 VEC_NEGY;
+	static const constinit TVector4 VEC_NEGZ;
 
 public:
 	TFLOAT x, y, z, w;

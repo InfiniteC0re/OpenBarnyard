@@ -31,6 +31,6 @@ project "OPCODE"
 		runtime "Release"
 		optimize "On"
 
-	filter "configurations:Dist"
+	filter "configurations:Final"
 		runtime "Release"
 		optimize "On"

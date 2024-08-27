@@ -2,9 +2,12 @@ include "Settings.lua"
 include "Dependencies.lua"
 
 workspace "OpenBarnyard"
+	cppdialect "C++20"
+	characterset "ASCII"
+
 	platforms "Windows"
-	configurations { "Debug", "Release", "Dist" }
-	
+	configurations { "Debug", "Release", "Final" }
+
 	disablewarnings { "4996" }
 	
 	debugdir ("%{wks.location}/bin/" .. outputdir .. "/%{prj.name}")
@@ -13,8 +16,10 @@ workspace "OpenBarnyard"
 	
 	editandcontinue "Off"
 	
+	-- Global defines
 	defines
 	{
+		"_CRT_SECURE_NO_WARNINGS"
 	--	"TMEMORY_USE_DLMALLOC",
 	--	"TOSHI_PROFILER",
 	--	"TOSHI_PROFILER_MEMORY",
@@ -26,6 +31,38 @@ workspace "OpenBarnyard"
 		
 	filter "options:arch=x64"
 		architecture "x64"
+
+	-- Global Windows parameters
+	filter "system:windows"
+		systemversion "latest"
+
+		externalincludedirs
+		{
+			"%{IncludeDir.dx8}"
+		}
+
+		defines
+		{
+			"TOSHI_SKU_WINDOWS",
+			"TRENDERINTERFACE_DX8"
+		}
+
+	filter "configurations:Debug"
+		runtime "Debug"
+		defines "TOSHI_DEBUG"
+		symbols "On"
+
+	filter "configurations:Release"
+		runtime "Release"
+		defines "TOSHI_RELEASE"
+		optimize "On"
+
+	filter "configurations:Final"
+		runtime "Release"
+		defines "TOSHI_FINAL"
+		optimize "On"
+
+-- Include the projects
 
 group "Engine"
 	include "Toshi"

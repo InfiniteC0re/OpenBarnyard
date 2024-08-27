@@ -1,16 +1,10 @@
 project "BYGLRender"
+	kind "SharedLib"
 	language "C++"
-	cppdialect "C++20"
 	staticruntime "on"
-	characterset "ASCII"
 	
 	pchheader "pch.h"
 	pchsource "Source/pch.cpp"
-	
-	ignoredefaultlibraries
-	{
-		"LIBCI",
-	}
 
 	links
 	{
@@ -20,11 +14,6 @@ project "BYGLRender"
 		"SDL2.lib",
 		"opengl32.lib",
 		"glew32s.lib"
-	}
-	
-	linkoptions
-	{
-		"/SAFESEH:NO"
 	}
 	
 	libdirs
@@ -57,15 +46,8 @@ project "BYGLRender"
 		"%{wks.location}/SDK/BYGLRender/Vendor/glew/include"
 	}
 	
-	externalincludedirs 
-	{
-		"%{IncludeDir.dx8}"
-	}
-	
 	defines
 	{
-		"TOSHI_USER_CLIENT",
-		"SPDLOG_WCHAR_TO_UTF8_SUPPORT",
 		"GLEW_STATIC"
 	}
 	
@@ -73,29 +55,8 @@ project "BYGLRender"
 		flags { "NoPCH" }
 
 	filter "system:windows"
-		systemversion "latest"
-
 		defines
 		{
 			"TOSHI_SDK",
-			"TOSHI_MODLOADER_CLIENT",
-			"TOSHI_SKU_WINDOWS"
+			"TOSHI_MODLOADER_CLIENT"
 		}
-
-	filter "configurations:Debug"
-		kind "SharedLib"
-		runtime "Debug"
-		defines "TOSHI_DEBUG"
-		symbols "On"
-
-	filter "configurations:Release"
-		kind "SharedLib"
-		runtime "Release"
-		defines "TOSHI_RELEASE"
-		optimize "On"
-
-	filter "configurations:Dist"
-		kind "SharedLib"
-		runtime "Release"
-		defines "TOSHI_DIST"
-		optimize "On"

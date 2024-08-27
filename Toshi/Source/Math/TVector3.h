@@ -131,17 +131,17 @@ public:
 	static constexpr TFLOAT DotProduct( const TVector3& vec1, const TVector3& vec2 ) { return vec1.x * vec2.x + vec1.y * vec2.y + vec1.z * vec2.z; }
 
 public:
-	static const TVector3 VEC_ZERO;
-	static const TVector3 VEC_POSX;
-	static const TVector3 VEC_POSY;
-	static const TVector3 VEC_POSZ;
-	static const TVector3 VEC_NEGX;
-	static const TVector3 VEC_NEGY;
-	static const TVector3 VEC_NEGZ;
-	static const TVector3 VEC_NEGXPOSZ;
-	static const TVector3 VEC_NEGXNEGZ;
-	static const TVector3 VEC_POSXPOSZ;
-	static const TVector3 VEC_POSXNEGZ;
+	static constinit const TVector3 VEC_ZERO;
+	static constinit const TVector3 VEC_POSX;
+	static constinit const TVector3 VEC_POSY;
+	static constinit const TVector3 VEC_POSZ;
+	static constinit const TVector3 VEC_NEGX;
+	static constinit const TVector3 VEC_NEGY;
+	static constinit const TVector3 VEC_NEGZ;
+	static constinit const TVector3 VEC_NEGXPOSZ;
+	static constinit const TVector3 VEC_NEGXNEGZ;
+	static constinit const TVector3 VEC_POSXPOSZ;
+	static constinit const TVector3 VEC_POSXNEGZ;
 
 public:
 	TFLOAT x, y, z;

@@ -32,7 +32,7 @@ AApplication g_oTheApp;
 
 TOSHI_NAMESPACE_USING
 
-#ifndef TOSHI_DIST
+#ifndef TOSHI_FINAL
 #  define TOSHI_ENTRY int main( int argc, TCHAR** argv )
 #else
 #  define TOSHI_ENTRY int WINAPI WinMain( HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, INT cmdShow )
