@@ -11,6 +11,9 @@ class AGUI2Element;
 class AGUI2ElementNode
 {
 public:
+	friend AGUI2Element;
+
+public:
 	AGUI2ElementNode()
 	{
 		m_pNext = this;
@@ -46,8 +49,9 @@ public:
 		a_rNode.m_pNext          = this;
 	}
 
-	AGUI2Element* GetNextElem() { return TREINTERPRETCAST( AGUI2Element*, m_pNext ); }
-	AGUI2Element* GetPrevElem() { return TREINTERPRETCAST( AGUI2Element*, m_pPrev ); }
+	TBOOL IsLinked() const            { return this != m_pNext; }
+	AGUI2ElementNode* GetNext() const { return m_pNext; }
+	AGUI2ElementNode* GetPrev() const { return m_pPrev; }
 
 protected:
 	AGUI2ElementNode* m_pNext;
@@ -139,7 +143,7 @@ public:
 
 	TBOOL IsVisible() const
 	{
-		return m_eFlags & 1;
+		return ( m_eFlags & 1 ) && ( m_uiVisibilityMask & s_uiVisibilityMask ) != 0;
 	}
 
 	TBOOL IsFocused() const
@@ -202,6 +206,36 @@ public:
 	AGUI2Transform& GetTransform()
 	{
 		return m_oTransform;
+	}
+
+	// Returns first children or TNULL
+	AGUI2Element* ChildBegin() const
+	{
+		return ( m_Children.IsLinked() ) ? (AGUI2Element*)m_Children.GetNext() : TNULL;
+	}
+
+	// Returns last children or TNULL
+	AGUI2Element* ChildRBegin() const
+	{
+		return ( m_Children.IsLinked() ) ? (AGUI2Element*)m_Children.GetPrev() : TNULL;
+	}
+
+	// Returns next children or TNULL
+	AGUI2Element* GetNextChild( AGUI2Element* a_pCurrentChild )
+	{
+		if ( a_pCurrentChild->GetNext() == &m_Children || a_pCurrentChild->GetNext() == a_pCurrentChild )
+			return TNULL;
+
+		return (AGUI2Element*)a_pCurrentChild->GetNext();
+	}
+
+	// Returns previous children or TNULL
+	AGUI2Element* GetPrevChild( AGUI2Element* a_pCurrentChild )
+	{
+		if ( a_pCurrentChild->GetPrev() == &m_Children || a_pCurrentChild->GetPrev() == a_pCurrentChild )
+			return TNULL;
+
+		return (AGUI2Element*)a_pCurrentChild->GetPrev();
 	}
 
 public:

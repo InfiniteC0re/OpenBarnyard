@@ -25,9 +25,9 @@ AGUI2Element::AGUI2Element()
 
 void AGUI2Element::Tick( TFLOAT a_fDeltaTime )
 {
-	for ( auto elem = m_Children.GetPrevElem(); elem != &m_Children; elem = elem->GetPrevElem() )
+	for ( AGUI2Element* it = ChildRBegin(); it != TNULL; it = GetPrevChild( it ) )
 	{
-		elem->Tick( a_fDeltaTime );
+		it->Tick( a_fDeltaTime );
 	}
 }
 
@@ -126,13 +126,13 @@ void AGUI2Element::Render()
 	}
 #endif
 
-	for ( auto elem = m_Children.GetPrevElem(); elem != &m_Children; elem = elem->GetPrevElem() )
+	for ( AGUI2Element* it = ChildRBegin(); it != TNULL && it != &m_Children; it = GetPrevChild( it ) )
 	{
-		if ( elem->IsVisible() && ( elem->m_uiVisibilityMask & s_uiVisibilityMask ) != 0 )
+		if ( it->IsVisible() )
 		{
-			elem->PreRender();
-			elem->Render();
-			elem->PostRender();
+			it->PreRender();
+			it->Render();
+			it->PostRender();
 		}
 	}
 
