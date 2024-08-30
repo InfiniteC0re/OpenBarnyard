@@ -4,7 +4,7 @@
 #include "AGUI2TextureSection.h"
 
 class AGUI2Dialog :
-	public AGUI2Element
+    public AGUI2Element
 {
 public:
 	enum WINDOWTEXTURE
@@ -45,5 +45,5 @@ private:
 	AGUI2Element*        m_pFocusElement;
 	AGUI2TextureSection* m_apTexTiles[ WT_NUMOF ];
 	AGUI2Rectangle       m_aRectangles[ WT_NUMOF ];
-	TBOOL                m_bFlag;
+	TBOOL                m_bUseScissor;
 };

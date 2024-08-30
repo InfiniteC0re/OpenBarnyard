@@ -9,6 +9,34 @@ class TRenderInterface;
 class TSkeletonInstance;
 class TCameraObject;
 
+using TLightID = TINT8;
+
+struct TLightIDList
+{
+	inline static constexpr TINT MAX_NUM_LIGHTS = 4;
+
+	void Add( TLightID a_iLightId );
+	void Reset();
+
+	TLightID& operator[]( TINT a_iIndex );
+
+	TLightID aIDs[ MAX_NUM_LIGHTS ];
+};
+
+typedef TUINT32 WORLDPLANE;
+enum WORLDPLANE_ : WORLDPLANE
+{
+	WORLDPLANE_LEFT,
+	WORLDPLANE_RIGHT,
+	WORLDPLANE_BOTTOM,
+	WORLDPLANE_TOP,
+	WORLDPLANE_NEAR,
+	WORLDPLANE_FAR,
+	WORLDPLANE_NUMOF
+};
+
+using TFrustum = TPlane[ WORLDPLANE_NUMOF ];
+
 class TRenderContext
 {
 public:
@@ -34,17 +62,6 @@ public:
 		CameraMode_Orthographic,
 	};
 
-	typedef TUINT32 WORLDPLANE;
-	enum WORLDPLANE_ : WORLDPLANE
-	{
-		WORLDPLANE_LEFT,
-		WORLDPLANE_RIGHT,
-		WORLDPLANE_BOTTOM,
-		WORLDPLANE_TOP,
-		WORLDPLANE_NEAR,
-		WORLDPLANE_FAR,
-	};
-
 	struct VIEWPORTPARAMS
 	{
 		TFLOAT fX;
@@ -61,6 +78,8 @@ public:
 		TVector2 m_Proj;
 		TFLOAT   m_fNearClip;
 		TFLOAT   m_fFarClip;
+
+		void SetFromFOV( TFLOAT a_fViewportWidth, TFLOAT a_fViewportHeight, TFLOAT a_fFOV, TFLOAT a_fNearPlane, TFLOAT a_fFarPlane );
 	};
 
 protected:
@@ -78,7 +97,10 @@ public:
 	virtual void SetWorldViewMatrix( const TMatrix44& a_rMatrix );
 	virtual void Update() = 0;
 
-	const PROJECTIONPARAMS& GetProjectionParams() const { return m_ProjParams; }
+	void ClearLightIDs();
+	void AddLight( TLightID a_iLightId );
+
+	const PROJECTIONPARAMS& GetProjectionParams() const { return m_oProjParams; }
 	void                    SetProjectionParams( const PROJECTIONPARAMS& a_rParams );
 
 	const VIEWPORTPARAMS& GetViewportParameters() const { return m_oViewportParams; }
@@ -129,6 +151,9 @@ public:
 	static void ComputePerspectiveProjection( TMatrix44& a_rOutProjection, const VIEWPORTPARAMS& a_rViewportParams, const PROJECTIONPARAMS& a_rProjParams );
 	static void ComputeOrthographicProjection( TMatrix44& a_rOutProjection, const VIEWPORTPARAMS& a_rViewportParams, const PROJECTIONPARAMS& a_rProjParams );
 
+	static void ComputePerspectiveFrustum( TFrustum& a_rcFrustum, const VIEWPORTPARAMS& a_rViewportParams, const PROJECTIONPARAMS& a_rProjParams );
+	static void ComputeOrthographicFrustum( TFrustum& a_rcFrustum, const VIEWPORTPARAMS& a_rViewportParams, const PROJECTIONPARAMS& a_rProjParams );
+
 	static TBOOL CullSphereToFrustumSimple( const TSphere& a_rSphere, const TPlane* a_pPlanes, TINT a_iNumPlanes );
 	static TINT  CullSphereToFrustum( const TSphere& a_rSphere, const TPlane* a_pPlanes, TINT a_iClipFlags, TINT a_iClipFlagsMask );
 
@@ -139,7 +164,7 @@ protected:
 	TUINT              m_Unk;                      // 0x0010
 	CameraMode         m_eCameraMode;              // 0x0014
 	VIEWPORTPARAMS     m_oViewportParams;          // 0x0018
-	PROJECTIONPARAMS   m_ProjParams;               // 0x0030
+	PROJECTIONPARAMS   m_oProjParams;              // 0x0030
 	TSkeletonInstance* m_pCurrentSkeletonInstance; // 0x0048
 	TMatrix44          m_oModelViewMatrix;         // 0x004C
 	TMatrix44          m_oWorldViewMatrix;         // 0x008C
@@ -148,18 +173,19 @@ protected:
 	TVector4           m_AmbientColor;             // 0x014C
 	TVector4           m_FogColor;                 // 0x015C
 	// ...
-	TFLOAT m_fFogDistanceStart;    // 0x01A0
-	TFLOAT m_fFogDistanceEnd;      // 0x01A4
-	TPlane m_aFrustumPlanes1[ 6 ]; // 0x01A8
-	TPlane m_aWorldPlanes[ 6 ];    // 0x0208
-	TPlane m_aFrustumPlanes2[ 6 ]; // 0x0268
+	TFLOAT   m_fFogDistanceStart; // 0x01A0
+	TFLOAT   m_fFogDistanceEnd;   // 0x01A4
+	TFrustum m_aFrustumPlanes1;   // 0x01A8
+	TFrustum m_aWorldPlanes;      // 0x0208
+	TFrustum m_aFrustumPlanes2;   // 0x0268
 	// ...
 	TMatrix44 m_oWorldModelMatrix; // 0x032C
 	TMatrix44 m_oViewModelMatrix;  // 0x0368
 	TFLOAT    m_fAlphaBlend;       // 0x03A8
 	// ...
 	TFLOAT m_fShadeCoeff; // 0x03B0
-	// ...
+	// TBOOL
+	TLightIDList   m_oLightIds;            // 0x03B5
 	TCameraObject* m_pCurrentCameraObject; // 0x03BC
 };
 

@@ -102,7 +102,7 @@ public:
 	void Abs( const TVector2& vec3 ) { Set( TMath::Abs( vec3.x ), TMath::Abs( vec3.y ) ); }
 	void Abs() { Set( TMath::Abs( x ), TMath::Abs( y ) ); }
 
-	TFLOAT Magnitude() const { return TMath::Sqrt( x * x + y * y ); }
+	TFLOAT           Magnitude() const { return TMath::Sqrt( x * x + y * y ); }
 	constexpr TFLOAT MagnitudeSq() const { return x * x + y * y; }
 
 	TBOOL IsEqual( const TVector2& vec ) { return TMath::Abs( x - vec.x ) < 0.00001f && TMath::Abs( y - vec.y ) < 0.00001f; }
@@ -117,7 +117,7 @@ public:
 	constexpr void operator/=( const TVector2& other ) { Divide( other ); }
 
 public:
-	static TFLOAT Distance( const TVector2& vec1, const TVector2& vec2 ) { return ( vec2 - vec1 ).Magnitude(); }
+	static TFLOAT           Distance( const TVector2& vec1, const TVector2& vec2 ) { return ( vec2 - vec1 ).Magnitude(); }
 	static constexpr TFLOAT DistanceSq( const TVector2& vec1, const TVector2& vec2 ) { return ( vec2 - vec1 ).MagnitudeSq(); }
 	static constexpr TFLOAT DotProduct( const TVector2& vec1, const TVector2& vec2 ) { return vec1.x * vec2.x + vec1.y * vec2.y; }
 

@@ -7,7 +7,7 @@
 class AGUI2TextureSection
 {
 public:
-	AGUI2TextureSection() = default;
+	AGUI2TextureSection()  = default;
 	~AGUI2TextureSection() = default;
 
 	void SetMaterial( AGUI2Material* a_pMaterial );

@@ -33,45 +33,24 @@ public:
 		InputEvent( TInputDevice* a_pDevice, TINT a_iDoodad, EVENT_TYPE a_eEventType, TFLOAT a_fMagnitude1 );
 		InputEvent( TInputDevice* a_pDevice, TINT a_iDoodad, EVENT_TYPE a_eEventType, TFLOAT a_fMagnitude1, TFLOAT a_fMagnitude2 );
 
-		TINT GetMagnitudeInt( TINT a_iAxis );
+		TBOOL StartRepeat( TFLOAT a_fFirstRepeatTime, TFLOAT a_fRepeatTime );
 
-		TFLOAT GetMagnitudeFloat( TINT a_iAxis );
+		TINT   GetMagnitudeInt( TINT a_iAxis ) const;
+		TFLOAT GetMagnitudeFloat( TINT a_iAxis ) const;
 
-		int8_t GetAxisCount() const
-		{
-			return m_iAxisCount;
-		}
+		TINT          GetDoodad() const { return m_iDoodad; }
+		EVENT_TYPE    GetEventType() const { return m_eEventType; }
+		TInputDevice* GetSource() const { return m_pSource; }
+		TINT8         GetAxisCount() const { return m_iAxisCount; }
 
-		TINT GetDoodad() const
-		{
-			return m_iDoodad;
-		}
-
-		EVENT_TYPE GetEventType() const
-		{
-			return m_eEventType;
-		}
-
-		TInputDevice* GetSource() const
-		{
-			return m_pSource;
-		}
-
-		TBOOL IsMagnitudeFloat()
-		{
-			return m_bIsMagnitudeFloat;
-		}
-
-		TBOOL IsMagnitudeInt()
-		{
-			return !m_bIsMagnitudeFloat;
-		}
+		TBOOL IsMagnitudeFloat() const { return m_bIsMagnitudeFloat; }
+		TBOOL IsMagnitudeInt() const { return !m_bIsMagnitudeFloat; }
 
 	public:
 		TINT          m_iDoodad;           // 0x00
 		EVENT_TYPE    m_eEventType;        // 0x04
 		TBOOL         m_bIsMagnitudeFloat; // 0x08
-		int8_t        m_iAxisCount;        // 0x09
+		TINT8         m_iAxisCount;        // 0x09
 		TInputDevice* m_pSource;           // 0x0C
 		TWCHAR        m_wszString[ 4 ];    // 0x10
 

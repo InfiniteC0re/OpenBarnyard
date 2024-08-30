@@ -8,7 +8,7 @@ class TVector4
 {
 public:
 	constexpr TVector4() = default;
-	constexpr TVector4( TFLOAT a_fX, TFLOAT a_fY, TFLOAT a_fZ, TFLOAT a_fW ) :
+	constexpr TVector4( TFLOAT a_fX, TFLOAT a_fY, TFLOAT a_fZ, TFLOAT a_fW = 1.0f ) :
 	    x( a_fX ),
 	    y( a_fY ),
 	    z( a_fZ ),
@@ -193,19 +193,19 @@ public:
 	void Abs( const TVector4& vec4 ) { Set( TMath::Abs( vec4.x ), TMath::Abs( vec4.y ), TMath::Abs( vec4.z ), w ); }
 	void Abs() { Set( TMath::Abs( x ), TMath::Abs( y ), TMath::Abs( z ), w ); }
 
-	void Negate( const TVector4& vec ) { Negate3( vec ); }
-	void Negate() { Negate3(); }
-	void Negate3( const TVector4& vec ) { Set( -vec.x, -vec.y, -vec.z, vec.w ); }
+	constexpr void Negate( const TVector4& vec ) { Negate3( vec ); }
+	constexpr void Negate() { Negate3(); }
+	constexpr void Negate3( const TVector4& vec ) { Set( -vec.x, -vec.y, -vec.z, vec.w ); }
 
-	void Negate3()
+	constexpr void Negate3()
 	{
 		x = -x;
 		y = -y;
 		z = -z;
 	}
 
-	void Negate4( const TVector4& vec ) { Set( -vec.x, -vec.y, -vec.z, -vec.w ); }
-	void Negate4() { Set( -x, -y, -z, -w ); }
+	constexpr void Negate4( const TVector4& vec ) { Set( -vec.x, -vec.y, -vec.z, -vec.w ); }
+	constexpr void Negate4() { Set( -x, -y, -z, -w ); }
 
 	TFLOAT           Magnitude() const { return TMath::Sqrt( x * x + y * y + z * z ); }
 	constexpr TFLOAT MagnitudeSq() const { return x * x + y * y + z * z; }
@@ -245,6 +245,9 @@ public:
 	void operator/=( const TVector4& other ) { Divide( other ); }
 	void operator*=( const TVector4& other ) { Multiply( other ); }
 
+	void operator/=( TFLOAT a_fScalar ) { Divide( a_fScalar ); }
+	void operator*=( TFLOAT a_fScalar ) { Multiply( a_fScalar ); }
+
 	TFLOAT*       AsArray() { return TREINTERPRETCAST( TFLOAT*, this ); }
 	const TFLOAT* AsArray() const { return TREINTERPRETCAST( const TFLOAT*, this ); }
 
@@ -268,6 +271,13 @@ public:
 
 	TFLOAT constexpr DotProduct4( const TVector4& vec ) const { return DotProduct4( *this, vec ); }
 	static constexpr TFLOAT DotProduct4( const TVector4& vec1, const TVector4& vec2 ) { return vec1.x * vec2.x + vec1.y * vec2.y + vec1.z * vec2.z + vec1.w * vec2.w; }
+
+	static void Swap( TVector4& a_rVec1, TVector4& a_rVec2 )
+	{
+		TVector4 temp = a_rVec1;
+		a_rVec1       = a_rVec2;
+		a_rVec2       = temp;
+	}
 
 public:
 	static const constinit TVector4 VEC_ZERO;

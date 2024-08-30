@@ -211,7 +211,7 @@ TInputInterface::InputEvent::InputEvent( TInputDevice* a_pDevice, TINT a_iDoodad
 	m_wszString[ 0 ]        = L'\0';
 }
 
-TINT TInputInterface::InputEvent::GetMagnitudeInt( TINT a_iAxis )
+TINT TInputInterface::InputEvent::GetMagnitudeInt( TINT a_iAxis ) const
 {
 	TASSERT( a_iAxis >= 0 && a_iAxis < GetAxisCount() );
 
@@ -230,7 +230,7 @@ TINT TInputInterface::InputEvent::GetMagnitudeInt( TINT a_iAxis )
 	}
 }
 
-TFLOAT TInputInterface::InputEvent::GetMagnitudeFloat( TINT a_iAxis )
+TFLOAT TInputInterface::InputEvent::GetMagnitudeFloat( TINT a_iAxis ) const
 {
 	TASSERT( a_iAxis >= 0 && a_iAxis < GetAxisCount() );
 
@@ -240,6 +240,11 @@ TFLOAT TInputInterface::InputEvent::GetMagnitudeFloat( TINT a_iAxis )
 	}
 
 	return (TFLOAT)m_Magnitude.Ints[ a_iAxis ];
+}
+
+TBOOL TInputInterface::InputEvent::StartRepeat( TFLOAT a_fFirstRepeatTime, TFLOAT a_fRepeatTime )
+{
+	return m_pSource->StartRepeat( m_iDoodad, a_fFirstRepeatTime, a_fRepeatTime );
 }
 
 TOSHI_NAMESPACE_END

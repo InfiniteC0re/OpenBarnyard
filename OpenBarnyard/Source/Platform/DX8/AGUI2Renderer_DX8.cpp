@@ -441,7 +441,7 @@ void AGUI2RendererDX8::SetColour( TUINT32 a_uiColour )
 	m_uiColour = a_uiColour;
 }
 
-void AGUI2RendererDX8::SetupViewport( TFLOAT a_fVal1, TFLOAT a_fVal2, TFLOAT a_fVal3, TFLOAT a_fVal4 )
+void AGUI2RendererDX8::SetScissor( TFLOAT a_fVal1, TFLOAT a_fVal2, TFLOAT a_fVal3, TFLOAT a_fVal4 )
 {
 	auto pRender    = TSTATICCAST( TRenderD3DInterface, TRenderInterface::GetSingleton() );
 	auto pD3DDevice = pRender->GetDirect3DDevice();
@@ -503,7 +503,7 @@ void AGUI2RendererDX8::SetupViewport( TFLOAT a_fVal1, TFLOAT a_fVal2, TFLOAT a_f
 	pD3DDevice->SetTransform( D3DTS_PROJECTION, (D3DMATRIX*)&projection );
 }
 
-void AGUI2RendererDX8::SetupViewport()
+void AGUI2RendererDX8::ClearScissor()
 {
 	auto pRender    = TSTATICCAST( TRenderD3DInterface, TRenderInterface::GetSingleton() );
 	auto pD3DDevice = pRender->GetDirect3DDevice();

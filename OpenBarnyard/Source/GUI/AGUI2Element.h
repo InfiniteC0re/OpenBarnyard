@@ -49,7 +49,7 @@ public:
 		a_rNode.m_pNext          = this;
 	}
 
-	TBOOL IsLinked() const            { return this != m_pNext; }
+	TBOOL             IsLinked() const { return this != m_pNext; }
 	AGUI2ElementNode* GetNext() const { return m_pNext; }
 	AGUI2ElementNode* GetPrev() const { return m_pPrev; }
 

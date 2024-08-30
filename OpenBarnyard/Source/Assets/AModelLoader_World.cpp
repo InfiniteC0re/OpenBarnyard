@@ -20,7 +20,7 @@ TOSHI_NAMESPACE_USING
 static TUINT   s_iMeshIndex          = 0;
 static TClass* s_pWorldMaterialClass = TNULL;
 
-static void LoadFromRenderGroups( CellSphereTreeBranchNode* a_pRenderGroup, Cell*& a_ppModel, TModelLOD* a_pModelLOD )
+static void LoadTreeIntersect( CellSphereTreeBranchNode* a_pRenderGroup, Cell*& a_ppModel, TModelLOD* a_pModelLOD )
 {
 	TVALIDPTR( a_pRenderGroup );
 
@@ -29,7 +29,7 @@ static void LoadFromRenderGroups( CellSphereTreeBranchNode* a_pRenderGroup, Cell
 	auto pRenderGroup = a_pRenderGroup;
 	while ( !pRenderGroup->IsLeaf() )
 	{
-		LoadFromRenderGroups( pRenderGroup->GetSubNode(), a_ppModel, a_pModelLOD );
+		LoadTreeIntersect( pRenderGroup->GetSubNode(), a_ppModel, a_pModelLOD );
 		pRenderGroup = pRenderGroup->m_pRight;
 	}
 
@@ -98,7 +98,7 @@ static void LoadFromRenderGroups( CellSphereTreeBranchNode* a_pRenderGroup, Cell
 	}
 }
 
-void AModelLoader::LoadWorldLOD( Toshi::TModel* a_pModel, TINT a_iLODIndex, Toshi::TModelLOD* a_pLOD )
+void AModelLoader::LoadWorldMeshTRB( Toshi::TModel* a_pModel, TINT a_iLODIndex, Toshi::TModelLOD* a_pLOD )
 {
 	TPROFILER_SCOPE();
 
@@ -115,7 +115,7 @@ void AModelLoader::LoadWorldLOD( Toshi::TModel* a_pModel, TINT a_iLODIndex, Tosh
 		for ( TINT k = 0; k < pWorld->m_iNumCells; k++ )
 		{
 			auto pModel = pWorld->m_ppCells[ k ];
-			LoadFromRenderGroups( pModel->pTreeBranchNodes, pModel, a_pLOD );
+			LoadTreeIntersect( pModel->pTreeBranchNodes, pModel, a_pLOD );
 		}
 	}
 }

@@ -23,8 +23,8 @@ public:
 	virtual void             PopTransform()                                                                                                                = 0;
 	virtual void             SetTransform( const AGUI2Transform& a_rTransform )                                                                            = 0;
 	virtual void             SetColour( TUINT32 a_uiColour )                                                                                               = 0;
-	virtual void             SetupViewport( TFLOAT a_fVal1, TFLOAT a_fVal2, TFLOAT a_fVal3, TFLOAT a_fVal4 )                                               = 0;
-	virtual void             SetupViewport()                                                                                                               = 0;
+	virtual void             SetScissor( TFLOAT a_fVal1, TFLOAT a_fVal2, TFLOAT a_fVal3, TFLOAT a_fVal4 )                                                  = 0;
+	virtual void             ClearScissor()                                                                                                                = 0;
 	virtual void             RenderRectangle( const Toshi::TVector2& a, const Toshi::TVector2& b, const Toshi::TVector2& uv1, const Toshi::TVector2& uv2 ) = 0;
 	virtual void             RenderTriStrip( Toshi::TVector2* vertices, Toshi::TVector2* UV, uint32_t numverts )                                           = 0;
 	virtual void             RenderLine( const Toshi::TVector2& a, const Toshi::TVector2& b )                                                              = 0;

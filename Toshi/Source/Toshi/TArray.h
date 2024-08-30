@@ -253,10 +253,17 @@ public:
 		m_iGrowSize = a_iGrowSize;
 	}
 
-	T* Push( const T& element )
+	T* Push( const T& element = T() )
 	{
 		GrowBy( 1 );
 		return TConstruct( &m_pData[ m_iNumElements++ ], element );
+	}
+
+	template <class... Args>
+	T* EmplaceBack( Args&&... args )
+	{
+		GrowBy( 1 );
+		return TConstruct( &m_pData[ m_iNumElements++ ], std::forward<Args>( args )... );
 	}
 
 	T& Pop()

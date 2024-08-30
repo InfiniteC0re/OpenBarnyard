@@ -6,6 +6,15 @@
 
 TOSHI_NAMESPACE_START
 
+using BASISVECTOR = TINT;
+enum BASISVECTOR_ : BASISVECTOR
+{
+	BASISVECTOR_RIGHT,
+	BASISVECTOR_UP,
+	BASISVECTOR_FORWARD,
+	BASISVECTOR_TRANSLATION
+};
+
 class TMatrix44
 {
 public:
@@ -16,13 +25,13 @@ public:
 	    m_f41, m_f42, m_f43, m_f44;
 
 public:
-	TMatrix44() = default;
+	constexpr TMatrix44() = default;
 
-	TMatrix44( const TMatrix44& a_rMatrix ) :
+	constexpr TMatrix44( const TMatrix44& a_rMatrix ) :
 	    m_f11( a_rMatrix.m_f11 ), m_f12( a_rMatrix.m_f12 ), m_f13( a_rMatrix.m_f13 ), m_f14( a_rMatrix.m_f14 ), m_f21( a_rMatrix.m_f21 ), m_f22( a_rMatrix.m_f22 ), m_f23( a_rMatrix.m_f23 ), m_f24( a_rMatrix.m_f24 ), m_f31( a_rMatrix.m_f31 ), m_f32( a_rMatrix.m_f32 ), m_f33( a_rMatrix.m_f33 ), m_f34( a_rMatrix.m_f34 ), m_f41( a_rMatrix.m_f41 ), m_f42( a_rMatrix.m_f42 ), m_f43( a_rMatrix.m_f43 ), m_f44( a_rMatrix.m_f44 )
 	{}
 
-	TMatrix44(
+	constexpr TMatrix44(
 	    TFLOAT a_f11,
 	    TFLOAT a_f12,
 	    TFLOAT a_f13,
@@ -42,7 +51,7 @@ public:
 	    m_f11( a_f11 ), m_f12( a_f12 ), m_f13( a_f13 ), m_f14( a_f14 ), m_f21( a_f21 ), m_f22( a_f22 ), m_f23( a_f23 ), m_f24( a_f24 ), m_f31( a_f31 ), m_f32( a_f32 ), m_f33( a_f33 ), m_f34( a_f34 ), m_f41( a_f41 ), m_f42( a_f42 ), m_f43( a_f43 ), m_f44( a_f44 )
 	{}
 
-	void Set(
+	constexpr void Set(
 	    TFLOAT a_f11,
 	    TFLOAT a_f12,
 	    TFLOAT a_f13,
@@ -98,57 +107,52 @@ public:
 		m_f44 = IDENTITY.m_f44;
 	}
 
-	TVector3 GetTranslation3() const
-	{
-		return { m_f41, m_f42, m_f43 };
-	}
-
-	TVector4 GetTranslation4() const
-	{
-		return { m_f41, m_f42, m_f43, m_f44 };
-	}
-
-	const TVector3& AsBasisVector3( TINT a_iIndex = 0 ) const
+	const TVector3& AsBasisVector3( BASISVECTOR a_iIndex ) const
 	{
 		return *TREINTERPRETCAST(
 		    TVector3*,
 		    TREINTERPRETCAST( TUINTPTR, this ) + a_iIndex * sizeof( TVector4 ) );
 	}
 
-	TVector3& AsBasisVector3( TINT a_iIndex = 0 )
+	TVector3& AsBasisVector3( BASISVECTOR a_iIndex )
 	{
 		return *TREINTERPRETCAST(
 		    TVector3*,
 		    TREINTERPRETCAST( TUINTPTR, this ) + a_iIndex * sizeof( TVector4 ) );
 	}
 
-	const TVector4& AsBasisVector4( TINT a_iIndex = 0 ) const
+	const TVector4& AsBasisVector4( BASISVECTOR a_iIndex ) const
 	{
 		return *TREINTERPRETCAST(
 		    TVector4*,
 		    TREINTERPRETCAST( TUINTPTR, this ) + a_iIndex * sizeof( TVector4 ) );
 	}
 
-	TVector4& AsBasisVector4( TINT a_iIndex = 0 )
+	TVector4& AsBasisVector4( BASISVECTOR a_iIndex )
 	{
 		return *TREINTERPRETCAST(
 		    TVector4*,
 		    TREINTERPRETCAST( TUINTPTR, this ) + a_iIndex * sizeof( TVector4 ) );
+	}
+
+	TVector3& GetTranslation3()
+	{
+		return AsBasisVector3( BASISVECTOR_TRANSLATION );
+	}
+
+	const TVector3& GetTranslation3() const
+	{
+		return AsBasisVector3( BASISVECTOR_TRANSLATION );
 	}
 
 	TVector4& GetTranslation()
 	{
-		return AsBasisVector4( 3 );
+		return AsBasisVector4( BASISVECTOR_TRANSLATION );
 	}
 
 	const TVector4& GetTranslation() const
 	{
-		return AsBasisVector4( 3 );
-	}
-
-	void SetTranslation( const TVector3& a_rTranslation )
-	{
-		GetTranslation() = a_rTranslation;
+		return AsBasisVector4( BASISVECTOR_TRANSLATION );
 	}
 
 	void SetTranslation( const TVector4& a_rTranslation )
@@ -159,7 +163,7 @@ public:
 	void LookAtTarget( const TVector4& a_rTarget, const TVector4& a_rUp );
 	void LookAtDirection( const TVector4& a_rVec, const TVector4& a_rVec2 );
 
-	void Scale( float a_fScalar1, float a_fScalar2, float a_fScalar3 )
+	constexpr void Scale( float a_fScalar1, float a_fScalar2, float a_fScalar3 )
 	{
 		m_f11 *= a_fScalar1;
 		m_f12 *= a_fScalar1;
@@ -172,7 +176,7 @@ public:
 		m_f33 *= a_fScalar3;
 	}
 
-	void Scale( const TVector4& a_rScalars )
+	constexpr void Scale( const TVector4& a_rScalars )
 	{
 		m_f11 *= a_rScalars.x;
 		m_f12 *= a_rScalars.x;
@@ -185,12 +189,12 @@ public:
 		m_f33 *= a_rScalars.z;
 	}
 
-	void Scale( float a_fScale )
+	constexpr void Scale( float a_fScale )
 	{
 		Scale( a_fScale, a_fScale, a_fScale );
 	}
 
-	TBOOL IsOrthonormal() const
+	constexpr TBOOL IsOrthonormal() const
 	{
 		float fVar1 = ( m_f32 * m_f32 + m_f31 * m_f31 + m_f33 * m_f33 ) - 1.0f;
 		float fVar2 = ( m_f22 * m_f22 + m_f21 * m_f21 + m_f23 * m_f23 ) - 1.0f;
@@ -206,9 +210,8 @@ public:
 
 	void Multiply( const TMatrix44& a_rRight )
 	{
-		TMatrix44 temp;
-		temp.Multiply( *this, a_rRight );
-		*this = temp;
+		TMatrix44 temp = *this;
+		Multiply( temp, a_rRight );
 	}
 
 	TBOOL Invert( const TMatrix44& a_rRight );
@@ -224,17 +227,17 @@ public:
 	void RotateY( float a_fAngle );
 	void RotateZ( float a_fAngle );
 
-	static void TransformPlaneOrthogonal( TPlane& a_rOutPlane, const TMatrix44& a_rMatrix, const TPlane& a_rPlane )
+	static void TransformPlaneOrthogonal( TPlane& a_rOutPlane, const TMatrix44& a_rMatrix, const TPlane& a_rcSourcePlane )
 	{
-		RotateVector( a_rOutPlane.AsVector4(), a_rMatrix, a_rPlane.AsVector4() );
+		RotateVector( a_rOutPlane.AsVector4(), a_rMatrix, a_rcSourcePlane.AsVector4() );
 
 		a_rOutPlane.SetD(
-		    a_rPlane.GetD() +
+		    a_rcSourcePlane.GetD() +
 		    TVector4::DotProduct3(
-		        a_rOutPlane.AsVector4(), a_rMatrix.AsBasisVector4( 3 ) ) );
+		        a_rOutPlane.AsVector4(), a_rMatrix.AsBasisVector4( BASISVECTOR_TRANSLATION ) ) );
 	}
 
-	static void RotateVector( TVector4& a_rOutVector, const TMatrix44& a_rMatrix, const TVector4& a_rVector )
+	constexpr static void RotateVector( TVector4& a_rOutVector, const TMatrix44& a_rMatrix, const TVector4& a_rVector )
 	{
 		float fVar1  = a_rMatrix.m_f32;
 		float fVar2  = a_rVector.z;
@@ -261,7 +264,7 @@ public:
 		a_rOutVector.w = a_rVector.w;
 	}
 
-	static void TransformVector( TVector3& a_rOutVector, const TMatrix44& a_rMatrix, const TVector3& a_rVector )
+	constexpr static void TransformVector( TVector3& a_rOutVector, const TMatrix44& a_rMatrix, const TVector3& a_rVector )
 	{
 		TFLOAT fVar1   = a_rMatrix.m_f32;
 		TFLOAT fVar2   = a_rVector.z;
@@ -282,7 +285,7 @@ public:
 		a_rOutVector.z = fVar12 * fVar13 + fVar10 * fVar11 + fVar8 * fVar9 + fVar14;
 	}
 
-	static void TransformVector( TVector4& a_rOutVector, const TMatrix44& a_rMatrix, const TVector4& a_rVector )
+	constexpr static void TransformVector( TVector4& a_rOutVector, const TMatrix44& a_rMatrix, const TVector4& a_rVector )
 	{
 		TFLOAT fVar1   = a_rMatrix.m_f42;
 		TFLOAT fVar2   = a_rVector.w;
@@ -314,7 +317,7 @@ public:
 		a_rOutVector.z = fVar15 * fVar16 + fVar13 * fVar14 + fVar11 * fVar12 + fVar9 * fVar10;
 	}
 
-	void operator=( const TMatrix44& a_rMatrix )
+	constexpr void operator=( const TMatrix44& a_rMatrix )
 	{
 		Set(
 		    a_rMatrix.m_f11, a_rMatrix.m_f12, a_rMatrix.m_f13, a_rMatrix.m_f14,

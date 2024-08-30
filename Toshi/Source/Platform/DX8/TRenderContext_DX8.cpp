@@ -12,46 +12,17 @@ TOSHI_NAMESPACE_START
 
 void TRenderContextD3D::ComputePerspectiveProjection()
 {
-	TRenderContext::ComputePerspectiveProjection( m_Projection, m_oViewportParams, m_ProjParams );
+	TRenderContext::ComputePerspectiveProjection( m_Projection, m_oViewportParams, m_oProjParams );
 }
 
 void TRenderContextD3D::ComputeOrthographicProjection()
 {
-	TRenderContext::ComputeOrthographicProjection( m_Projection, m_oViewportParams, m_ProjParams );
+	TRenderContext::ComputeOrthographicProjection( m_Projection, m_oViewportParams, m_oProjParams );
 }
 
 void TRenderContextD3D::ComputePerspectiveFrustum()
 {
-	TASSERT( m_ProjParams.m_Proj.x != 0.0f );
-	TASSERT( m_ProjParams.m_Proj.y != 0.0f );
-
-	TASSERT( TMath::IsFinite( m_ProjParams.m_Proj.x ) && ( !TMath::IsNaN( m_ProjParams.m_Proj.x ) ) );
-	TASSERT( TMath::IsFinite( m_ProjParams.m_Proj.y ) && ( !TMath::IsNaN( m_ProjParams.m_Proj.y ) ) );
-	TASSERT( TMath::IsFinite( m_ProjParams.m_Centre.x ) && ( !TMath::IsNaN( m_ProjParams.m_Centre.x ) ) );
-	TASSERT( TMath::IsFinite( m_ProjParams.m_Centre.y ) && ( !TMath::IsNaN( m_ProjParams.m_Centre.y ) ) );
-
-	TFLOAT   fVal1 = 1.0f / m_ProjParams.m_Proj.x;
-	TFLOAT   fVal2 = 1.0f / m_ProjParams.m_Proj.y;
-	TVector4 vec1  = TVector4( -m_ProjParams.m_Centre.x * fVal1, ( m_oViewportParams.fHeight - m_ProjParams.m_Centre.y ) * fVal2, 1.0f, 0.0f );
-	TVector4 vec2  = TVector4( ( m_oViewportParams.fWidth - m_ProjParams.m_Centre.x ) * fVal1, vec1.y, 1.0f, 0.0f );
-	TVector4 vec3  = TVector4( vec2.x, -m_ProjParams.m_Centre.y * fVal2, 1.0f, 0.0f );
-	TVector4 vec4  = TVector4( vec1.x, vec3.y, 1.0f, 0.0f );
-
-	// Setup planes
-	m_aFrustumPlanes1[ WORLDPLANE_LEFT ].AsVector4().CrossProduct( vec4, vec1 );
-	m_aFrustumPlanes1[ WORLDPLANE_RIGHT ].AsVector4().CrossProduct( vec2, vec3 );
-	m_aFrustumPlanes1[ WORLDPLANE_BOTTOM ].AsVector4().CrossProduct( vec3, vec4 );
-	m_aFrustumPlanes1[ WORLDPLANE_TOP ].AsVector4().CrossProduct( vec1, vec2 );
-
-	// Normalize each plane
-	m_aFrustumPlanes1[ WORLDPLANE_LEFT ].AsNormal().Normalize();
-	m_aFrustumPlanes1[ WORLDPLANE_RIGHT ].AsNormal().Normalize();
-	m_aFrustumPlanes1[ WORLDPLANE_BOTTOM ].AsNormal().Normalize();
-	m_aFrustumPlanes1[ WORLDPLANE_TOP ].AsNormal().Normalize();
-
-	// Setup near and far planes
-	m_aFrustumPlanes1[ WORLDPLANE_NEAR ].Set( 0.0f, 0.0f, -1.0f, -m_ProjParams.m_fNearClip );
-	m_aFrustumPlanes1[ WORLDPLANE_FAR ].Set( 0.0f, 0.0f, 1.0f, m_ProjParams.m_fFarClip );
+	TRenderContext::ComputePerspectiveFrustum( m_aFrustumPlanes1, m_oViewportParams, m_oProjParams );
 
 	// Copy planes
 	m_aFrustumPlanes2[ WORLDPLANE_LEFT ]   = m_aFrustumPlanes1[ WORLDPLANE_LEFT ];
@@ -64,30 +35,7 @@ void TRenderContextD3D::ComputePerspectiveFrustum()
 
 void TRenderContextD3D::ComputeOrthographicFrustum()
 {
-	TASSERT( m_ProjParams.m_Proj.x != 0.0f );
-	TASSERT( m_ProjParams.m_Proj.y != 0.0f );
-	TASSERT( m_oViewportParams.fWidth != 0.0f );
-	TASSERT( m_oViewportParams.fHeight != 0.0f );
-
-	TASSERT( TMath::IsFinite( m_ProjParams.m_Proj.x ) && ( !TMath::IsNaN( m_ProjParams.m_Proj.x ) ) );
-	TASSERT( TMath::IsFinite( m_ProjParams.m_Proj.y ) && ( !TMath::IsNaN( m_ProjParams.m_Proj.y ) ) );
-	TASSERT( TMath::IsFinite( m_ProjParams.m_Centre.x ) && ( !TMath::IsNaN( m_ProjParams.m_Centre.x ) ) );
-	TASSERT( TMath::IsFinite( m_ProjParams.m_Centre.y ) && ( !TMath::IsNaN( m_ProjParams.m_Centre.y ) ) );
-
-	TFLOAT fWidth   = m_oViewportParams.fWidth;
-	TFLOAT fHeight  = m_oViewportParams.fHeight;
-	TFLOAT fCentreX = m_ProjParams.m_Centre.x;
-	TFLOAT fCentreY = m_ProjParams.m_Centre.y;
-	TFLOAT fVal1    = 1.0f / m_ProjParams.m_Proj.x;
-	TFLOAT fVal2    = 1.0f / m_ProjParams.m_Proj.y;
-
-	// Setup planes
-	m_aFrustumPlanes1[ WORLDPLANE_LEFT ].Set( -1.0f, 0.0f, 0.0f, fCentreX * fVal1 );
-	m_aFrustumPlanes1[ WORLDPLANE_RIGHT ].Set( 1.0f, 0.0f, 0.0f, ( fWidth - fCentreX ) * fVal1 );
-	m_aFrustumPlanes1[ WORLDPLANE_BOTTOM ].Set( 0.0f, -1.0f, 0.0f, fCentreY * fVal2 );
-	m_aFrustumPlanes1[ WORLDPLANE_TOP ].Set( 0.0f, 1.0f, 0.0f, ( fHeight - fCentreY ) * fVal2 );
-	m_aFrustumPlanes1[ WORLDPLANE_NEAR ].Set( 0.0f, 0.0f, -1.0f, -m_ProjParams.m_fNearClip );
-	m_aFrustumPlanes1[ WORLDPLANE_FAR ].Set( 0.0f, 0.0f, 1.0f, m_ProjParams.m_fFarClip );
+	TRenderContext::ComputeOrthographicFrustum( m_aFrustumPlanes1, m_oViewportParams, m_oProjParams );
 
 	// Copy planes
 	m_aFrustumPlanes2[ WORLDPLANE_LEFT ]   = m_aFrustumPlanes1[ WORLDPLANE_LEFT ];

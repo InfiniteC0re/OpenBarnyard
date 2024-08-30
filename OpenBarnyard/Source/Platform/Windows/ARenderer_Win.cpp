@@ -9,6 +9,7 @@
 #include "GUI/AGUI2.h"
 #include "GUI/AGUI2TextureSectionManager.h"
 #include "Render/ARenderer.h"
+#include "Render/AGlowViewport.h"
 #include "Cameras/ACameraManager.h"
 #include "Input/AInputHandler.h"
 #include "Movie/AMoviePlayer.h"
@@ -319,6 +320,7 @@ TBOOL ARenderer::OnCreate()
 		AModelLoader::CreateSingleton();
 		AMaterialLibraryManager::CreateSingleton();
 		AKeyFrameLibraryManager::CreateSingleton();
+		AGlowViewport::CreateSingleton( TLightIDList::MAX_NUM_LIGHTS * SPLITSCREEN_MAX_NUM_PLAYERS );
 	}
 
 	return bCreatedTRender;
@@ -395,7 +397,7 @@ TBOOL ARenderer::OnUpdate( TFLOAT a_fDeltaTime )
 {
 	TIMPLEMENT();
 
-	auto pRender = TRenderD3DInterface::Interface();
+	TRenderD3DInterface* pRender = TRenderD3DInterface::Interface();
 
 	if ( g_oTheApp.IsDestroyed() )
 		return TTRUE;
@@ -407,8 +409,10 @@ TBOOL ARenderer::OnUpdate( TFLOAT a_fDeltaTime )
 	if ( g_oSystemManager.IsPaused() )
 		return TFALSE;
 
-	auto pRootTask = ARootTask::GetSingleton();
+	// Update transforms of glow objects
+	AGlowViewport::GetSingleton()->Update();
 
+	ARootTask* pRootTask = ARootTask::GetSingleton();
 	if ( pRootTask->IsGameSystemCreated() )
 	{
 		auto pRenderContext = TRenderInterface::GetSingleton()->GetCurrentContext();
@@ -421,8 +425,9 @@ TBOOL ARenderer::OnUpdate( TFLOAT a_fDeltaTime )
 		}
 		else if ( pRootTask->IsRenderWorld() )
 		{
-			const ACamera*  pCamera    = ACameraManager::GetSingleton()->GetCurrentCamera();
-			const TMatrix44 oCamMatrix = pCamera->GetMatrix();
+			const ACamera* pCamera    = ACameraManager::GetSingleton()->GetCurrentCamera();
+			TMatrix44      oCamMatrix = pCamera->GetMatrix();
+			oCamMatrix.SetTranslation( pCamera->GetMatrix().GetTranslation() );
 
 			UpdateMainCamera( oCamMatrix, pCamera );
 			m_pViewport->AllowDepthClear( TFALSE );

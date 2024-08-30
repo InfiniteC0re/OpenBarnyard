@@ -168,7 +168,7 @@ TBOOL AGUI2::OnUpdate( TFLOAT a_fDeltaTime )
 
 			if ( pCamera )
 			{
-				auto vCamTranslation = pCamera->GetMatrix().GetTranslation4();
+				auto vCamTranslation = pCamera->GetMatrix().GetTranslation();
 
 				TStringManager::String16Format(
 				    wszCameraInfo,

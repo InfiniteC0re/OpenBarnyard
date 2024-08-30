@@ -14,7 +14,7 @@ TOSHI_NAMESPACE_USING
 AGUI2Dialog::AGUI2Dialog()
 {
 	m_pFocusElement = TNULL;
-	m_bFlag = TFALSE;
+	m_bUseScissor   = TFALSE;
 }
 
 AGUI2Dialog::~AGUI2Dialog()
@@ -31,7 +31,7 @@ void AGUI2Dialog::Render()
 		{
 			it->PreRender();
 
-			if ( m_bFlag && it != &m_aRectangles[ WT_MIDDLECENTER ] )
+			if ( m_bUseScissor && it != &m_aRectangles[ WT_MIDDLECENTER ] )
 			{
 				TFLOAT fWidth, fHeight;
 				it->GetDimensions( fWidth, fHeight );
@@ -39,13 +39,13 @@ void AGUI2Dialog::Render()
 				TFLOAT fHalfWidth  = fWidth * 0.5f;
 				TFLOAT fHalfHeight = fHeight * 0.5f;
 
-				pRenderer->SetupViewport( -fHalfWidth, fHalfHeight, fHalfWidth, -fHalfHeight );
+				pRenderer->SetScissor( -fHalfWidth, fHalfHeight, fHalfWidth, -fHalfHeight );
 			}
 
 			it->Render();
 
-			if ( m_bFlag && it != &m_aRectangles[ WT_MIDDLECENTER ] )
-				pRenderer->SetupViewport();
+			if ( m_bUseScissor && it != &m_aRectangles[ WT_MIDDLECENTER ] )
+				pRenderer->ClearScissor();
 
 			it->PostRender();
 		}
