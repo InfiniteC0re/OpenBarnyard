@@ -112,6 +112,9 @@
 .\Vendor\clang-format.exe -i .\Tools\TLocaleCompiler\Source\*.cpp
 .\Vendor\clang-format.exe -i .\Tools\TLocaleCompiler\Source\*.h
 
+.\Vendor\clang-format.exe -i .\Tools\Sounds2Enum\Source\*.cpp
+.\Vendor\clang-format.exe -i .\Tools\Sounds2Enum\Source\*.h
+
 .\Vendor\clang-format.exe -i .\Tools\TMDL\Source\*.cpp
 .\Vendor\clang-format.exe -i .\Tools\TMDL\Source\*.h
 

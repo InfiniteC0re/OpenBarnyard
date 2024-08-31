@@ -23,6 +23,9 @@
 #include "Terrain/ATerrainInterface.h"
 #include "Terrain/ABYardTerrainManager.h"
 
+#include "SoundBank/music.h"
+#include "SoundBank/ui.h"
+
 #include <Plugins/PPropertyParser/PBProperties.h>
 #include <Toshi/TScheduler.h>
 #include <Toshi/T2ObjectPool.h>
@@ -369,5 +372,5 @@ void ARootTask::LoadFrontEnd()
 	    AFade::Color( 0, 0, 0, 0 ),
 	    1.0f );
 
-	ASoundManager::GetSingleton()->PlayCue( 161 );
+	ASoundManager::GetSingleton()->PlayCue( soundbank::UI_CONFIRM );
 }

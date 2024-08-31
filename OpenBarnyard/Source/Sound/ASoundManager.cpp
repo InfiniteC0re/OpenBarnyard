@@ -201,14 +201,14 @@ TBOOL ASoundManager::OnUpdate( TFLOAT a_fDeltaTime )
 		ACamera* pCamera = ACameraManager::GetSingleton()->GetCurrentCamera();
 
 		// Get the position
-		m_oCameraData.Position = pCamera->GetMatrix().AsBasisVector4( 3 );
+		m_oCameraData.Position = pCamera->GetMatrix().AsBasisVector4( BASISVECTOR_TRANSLATION );
 
 		// Get the forward vector
-		m_oCameraData.Forward   = pCamera->GetMatrix().AsBasisVector4( 2 );
+		m_oCameraData.Forward   = pCamera->GetMatrix().AsBasisVector4( BASISVECTOR_FORWARD );
 		m_oCameraData.Forward.w = 1.0f;
 
 		// Get the up vector
-		m_oCameraData.Up   = pCamera->GetMatrix().AsBasisVector4( 1 );
+		m_oCameraData.Up   = pCamera->GetMatrix().AsBasisVector4( BASISVECTOR_UP );
 		m_oCameraData.Up.w = 1.0f;
 
 		// Invert up axis as it needs to be

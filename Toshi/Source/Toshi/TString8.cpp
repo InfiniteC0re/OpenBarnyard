@@ -445,4 +445,44 @@ TBOOL TString8::IsAllUpperCase() const
 	return TTRUE;
 }
 
+TBOOL TString8::StartsWith( const TCHAR* a_szString, TINT a_iLength /*= -1 */ ) const
+{
+	TINT iStringLength = ( a_iLength != -1 ) ? a_iLength : T2String8::Length( a_szString );
+
+	if ( Length() < iStringLength )
+		return TFALSE;
+
+	return Compare( a_szString, iStringLength ) == 0;
+}
+
+TBOOL TString8::EndsWith( const TCHAR* a_szString, TINT a_iLength /*= -1 */ ) const
+{
+	TINT iStringLength = ( a_iLength != -1 ) ? a_iLength : T2String8::Length( a_szString );
+
+	if ( Length() < iStringLength )
+		return TFALSE;
+
+	return strncmp( GetString( Length() - iStringLength ), a_szString, iStringLength ) == 0;
+}
+
+TBOOL TString8::StartsWithNoCase( const TCHAR* a_szString, TINT a_iLength /*= -1 */ ) const
+{
+	TINT iStringLength = ( a_iLength != -1 ) ? a_iLength : T2String8::Length( a_szString );
+
+	if ( Length() < iStringLength )
+		return TFALSE;
+
+	return CompareNoCase( a_szString, iStringLength ) == 0;
+}
+
+TBOOL TString8::EndsWithNoCase( const TCHAR* a_szString, TINT a_iLength /*= -1 */ ) const
+{
+	TINT iStringLength = ( a_iLength != -1 ) ? a_iLength : T2String8::Length( a_szString );
+
+	if ( Length() < iStringLength )
+		return TFALSE;
+
+	return strnicmp( GetString( Length() - iStringLength ), a_szString, iStringLength ) == 0;
+}
+
 TOSHI_NAMESPACE_END

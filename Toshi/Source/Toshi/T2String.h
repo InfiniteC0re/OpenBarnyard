@@ -417,4 +417,129 @@ public:
 using T2String8Comparator  = T2StringComparator<T2StringTraits<TCHAR>>;
 using T2String16Comparator = T2StringComparator<T2StringTraits<TWCHAR>>;
 
+template <TINT Size, typename TStringTraits = T2StringTraits<TCHAR>>
+class T2StringBuffer
+{
+public:
+	TSTATICASSERT( Size > 0 );
+
+	using StringTraits = TStringTraits;
+	using CharTraits   = typename StringTraits::CharTraits;
+	using CharType     = typename StringTraits::CharType;
+
+public:
+	constexpr T2StringBuffer()
+	{
+		m_szBuffer[ 0 ] = CharTraits::NullChar;
+		m_iPosition     = 0;
+	}
+
+	T2StringBuffer( const CharType* a_szString )
+	{
+		Copy( a_szString );
+	}
+
+	void Copy( const CharType* a_szString )
+	{
+		StringTraits::CopySafe( m_szBuffer, a_szString, Size );
+		m_iPosition = StringTraits::Length( a_szString );
+	}
+
+	void Format( const CharType* a_szFormat, ... )
+	{
+		va_list args;
+
+		va_start( args, a_szFormat );
+		m_iPosition = StringTraits::FormatV( m_szBuffer, Size, a_szFormat, args );
+		va_end( args );
+
+		m_szBuffer[ Size - 1 ] = CharTraits::NullChar;
+	}
+
+	void FormatV( const CharType* a_szFormat, va_list a_Args )
+	{
+		m_iPosition            = StringTraits::FormatV( m_szBuffer, Size, a_szFormat, a_Args );
+		m_szBuffer[ Size - 1 ] = CharTraits::NullChar;
+	}
+
+	void AppendFormat( const CharType* a_szFormat, ... )
+	{
+		if ( Size - m_iPosition - 1 <= 0 ) return;
+
+		va_list args;
+
+		va_start( args, a_szFormat );
+		m_iPosition += StringTraits::FormatV( m_szBuffer + m_iPosition, Size - m_iPosition, a_szFormat, args );
+		va_end( args );
+	}
+
+	void AppendFormatV( const CharType* a_szFormat, va_list a_Args )
+	{
+		if ( Size - m_iPosition - 1 <= 0 ) return;
+		m_iPosition += StringTraits::FormatV( m_szBuffer + m_iPosition, Size - m_iPosition, a_szFormat, a_Args );
+	}
+
+	void Append( const CharType* a_szString )
+	{
+		TINT iStringLength = StringTraits::Length( a_szString );
+		if ( Size - m_iPosition - iStringLength - 1 <= 0 ) return;
+
+		StringTraits::Concat( m_szBuffer + m_iPosition, a_szString, iStringLength );
+		m_iPosition += StringTraits::Length( a_szString );
+	}
+
+	constexpr void Clear()
+	{
+		m_szBuffer[ 0 ] = CharTraits::NullChar;
+		m_iPosition     = 0;
+	}
+
+	constexpr TINT Length()
+	{
+		return m_iPosition;
+	}
+
+	constexpr CharType* Get()
+	{
+		return m_szBuffer;
+	}
+
+	constexpr const CharType* Get() const
+	{
+		return m_szBuffer;
+	}
+
+	constexpr CharType* Get( TUINT a_uiIndex )
+	{
+		TASSERT( a_uiIndex < Size );
+		return &m_szBuffer[ a_uiIndex ];
+	}
+
+	constexpr const CharType* Get( TUINT a_uiIndex ) const
+	{
+		TASSERT( a_uiIndex < Size );
+		return &m_szBuffer[ a_uiIndex ];
+	}
+
+	constexpr CharType& operator[]( TUINT a_uiIndex )
+	{
+		return *Get( a_uiIndex );
+	}
+
+	constexpr const CharType& operator[]( TUINT a_uiIndex ) const
+	{
+		return *Get( a_uiIndex );
+	}
+
+	T2StringBuffer& operator+=( const CharType* a_szString )
+	{
+		Append( a_szString );
+		return *this;
+	}
+
+private:
+	CharType m_szBuffer[ Size ];
+	TINT     m_iPosition;
+};
+
 TOSHI_NAMESPACE_END

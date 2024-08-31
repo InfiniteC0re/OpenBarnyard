@@ -79,6 +79,11 @@ public:
 	TINT  Length() const { return m_iStrLen; }
 	TUINT ExcessLength() const { return m_iExcessLen; }
 
+	TBOOL StartsWith( const TCHAR* a_szString, TINT a_iLength = -1 ) const;
+	TBOOL EndsWith( const TCHAR* a_szString, TINT a_iLength = -1 ) const;
+	TBOOL StartsWithNoCase( const TCHAR* a_szString, TINT a_iLength = -1 ) const;
+	TBOOL EndsWithNoCase( const TCHAR* a_szString, TINT a_iLength = -1 ) const;
+
 	TBOOL IsAllLowerCase() const;
 	TBOOL IsAllUpperCase() const;
 	TBOOL IsIndexValid( TINT a_iIndex ) const { return a_iIndex >= 0 && a_iIndex <= Length(); }

@@ -16,8 +16,8 @@ public:
 	virtual void     DestroyFile( TFile* a_pFile ) OVERRIDE;
 	virtual TBOOL    RemoveFile( const TString8& a_rcFileName ) OVERRIDE;
 	virtual TString8 MakeInternalPath( const TString8& a_rcPath ) OVERRIDE;
-	virtual TBOOL    GetFirstFile( const TString8& a_rcPath, TString8& a_rOutFileName, TUINT8 a_ui8Flags ) OVERRIDE;
-	virtual TBOOL    GetNextFile( TString8& a_rOutFileName, TUINT8 a_ui8Flags ) OVERRIDE;
+	virtual TBOOL    GetFirstFile( const TString8& a_rcPath, TString8& a_rOutFileName, TFINDFILE a_ui8Flags ) OVERRIDE;
+	virtual TBOOL    GetNextFile( TString8& a_rOutFileName, TFINDFILE a_ui8Flags ) OVERRIDE;
 
 	virtual TBOOL MakeDirectory( const TString8& a_rcDirectory );
 };

@@ -82,7 +82,7 @@ TString8 TNativeFileSystem::MakeInternalPath( const TString8& a_rcPath )
 	return strInternalPath;
 }
 
-TBOOL TNativeFileSystem::GetFirstFile( const TString8& a_rcPath, TString8& a_rOutFileName, TUINT8 a_ui8Flags )
+TBOOL TNativeFileSystem::GetFirstFile( const TString8& a_rcPath, TString8& a_rOutFileName, TFINDFILE a_ui8Flags )
 {
 	TString8 strPath( a_rcPath );
 
@@ -101,12 +101,12 @@ TBOOL TNativeFileSystem::GetFirstFile( const TString8& a_rcPath, TString8& a_rOu
 
 	if ( hFirstFile != INVALID_HANDLE_VALUE )
 	{
-		TUINT8 ui8MaskedFlags;
+		TFINDFILE ui8MaskedFlags;
 
 		if ( oFindData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY )
-			ui8MaskedFlags = a_ui8Flags & 1;
+			ui8MaskedFlags = a_ui8Flags & TFINDFILE_DIRECTORY;
 		else
-			ui8MaskedFlags = a_ui8Flags & 2;
+			ui8MaskedFlags = a_ui8Flags & TFINDFILE_FILE;
 
 		if ( ui8MaskedFlags != 0 )
 		{
@@ -123,7 +123,7 @@ TBOOL TNativeFileSystem::MakeDirectory( TString8 const& string )
 	return CreateDirectoryA( string, TNULL );
 }
 
-TBOOL TNativeFileSystem::GetNextFile( TString8& a_rOutFileName, TUINT8 a_ui8Flags )
+TBOOL TNativeFileSystem::GetNextFile( TString8& a_rOutFileName, TFINDFILE a_ui8Flags )
 {
 	WIN32_FIND_DATAA findFileData;
 
@@ -136,13 +136,13 @@ TBOOL TNativeFileSystem::GetNextFile( TString8& a_rOutFileName, TUINT8 a_ui8Flag
 		}
 		else if ( findFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY )
 		{
-			if ( ( a_ui8Flags & 1 ) != 0 )
+			if ( a_ui8Flags & TFINDFILE_DIRECTORY )
 			{
 				a_rOutFileName = findFileData.cFileName;
 				return TTRUE;
 			}
 		}
-		else if ( ( a_ui8Flags & 2 ) != 0 )
+		else if ( a_ui8Flags & TFINDFILE_FILE )
 		{
 			a_rOutFileName = findFileData.cFileName;
 			return TTRUE;

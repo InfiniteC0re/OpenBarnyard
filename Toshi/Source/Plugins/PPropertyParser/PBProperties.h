@@ -333,7 +333,19 @@ struct PBPropertiesTypeCast<PBProperties*>
 };
 
 template <>
+struct PBPropertiesTypeCast<const PBProperties*>
+{
+	static constexpr PBPropertyValue::Type type = PBPropertyValue::Type::Properties;
+};
+
+template <>
 struct PBPropertiesTypeCast<PBPropertyValueArray*>
+{
+	static constexpr PBPropertyValue::Type type = PBPropertyValue::Type::Array;
+};
+
+template <>
+struct PBPropertiesTypeCast<const PBPropertyValueArray*>
 {
 	static constexpr PBPropertyValue::Type type = PBPropertyValue::Type::Array;
 };
@@ -346,6 +358,12 @@ struct PBPropertiesTypeCast<TCHAR*>
 
 template <>
 struct PBPropertiesTypeCast<const TCHAR*>
+{
+	static constexpr PBPropertyValue::Type type = PBPropertyValue::Type::String;
+};
+
+template <>
+struct PBPropertiesTypeCast<Toshi::TString8>
 {
 	static constexpr PBPropertyValue::Type type = PBPropertyValue::Type::String;
 };
@@ -848,7 +866,7 @@ public:
 			else
 			{
 				void* rawValue = pFoundProperty->GetRaw();
-				a_rOutValue    = *TREINTERPRETCAST( T*, &rawValue );
+				a_rOutValue    = *(T*)( &rawValue );
 			}
 
 			return TTRUE;

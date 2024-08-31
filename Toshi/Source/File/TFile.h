@@ -31,6 +31,13 @@ enum TFILEMODE_ : TFILEMODE
 	TFILEMODE_NOBUFFER  = BITFLAG( 4 ),
 };
 
+typedef TUINT8 TFINDFILE;
+enum TFINDFILE_ : TFINDFILE
+{
+	TFINDFILE_FILE      = BITFLAG( 0 ),
+	TFINDFILE_DIRECTORY = BITFLAG( 1 ),
+};
+
 struct TNativeFileInfo
 {
 	TString8 InternalPath;
@@ -73,12 +80,12 @@ public:
 	/**
          * Finds out what's the first file at the specified path.
          */
-	virtual TBOOL GetFirstFile( const TString8& a_rcPath, TString8& a_rOutFileName, TUINT8 a_ui8Flags ) { return TFALSE; }
+	virtual TBOOL GetFirstFile( const TString8& a_rcPath, TString8& a_rOutFileName, TFINDFILE a_ui8Flags = TFINDFILE_DIRECTORY | TFINDFILE_FILE ) { return TFALSE; }
 
 	/**
          * Not documented.
          */
-	virtual TBOOL GetNextFile( TString8& a_rOutFileName, TUINT8 a_ui8Flags ) { return TFALSE; }
+	virtual TBOOL GetNextFile( TString8& a_rOutFileName, TFINDFILE a_ui8Flags = TFINDFILE_DIRECTORY | TFINDFILE_FILE ) { return TFALSE; }
 
 	/**
          * Sets the directory prefix to work with.
