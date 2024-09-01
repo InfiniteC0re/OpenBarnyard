@@ -3,9 +3,11 @@
 // Note: Automatically generated header file.
 //-----------------------------------------------------------------------------
 
+#include "Sound/ASound.h"
+
 namespace soundbank {
 
-enum footsteps {
+enum footsteps : ASoundId {
 
 	// Category: Ingame
 	FOOTSTEPS_PLAYER_STEP = 576,

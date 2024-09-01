@@ -51,7 +51,7 @@ TBOOL AGUI2::OnCreate()
 
 	// FPS stats
 	m_oFPS.Create( pFont, 600.0f );
-	m_oFPS.SetAttachment( AGUI2Element::Anchor_TopLeft, AGUI2Element::Anchor_TopLeft );
+	m_oFPS.SetAttachment( AGUI2ATTACHMENT_TOPLEFT, AGUI2ATTACHMENT_TOPLEFT );
 	m_oFPS.SetTextAlign( AGUI2Font::TextAlign_Left );
 	m_oFPS.SetTransform( 0.0f, 0.0f );
 
@@ -61,7 +61,7 @@ TBOOL AGUI2::OnCreate()
 
 	// Player stats
 	m_oPlayerInfo.Create( pFont, 600.0f );
-	m_oPlayerInfo.SetAttachment( AGUI2Element::Anchor_TopLeft, AGUI2Element::Anchor_TopLeft );
+	m_oPlayerInfo.SetAttachment( AGUI2ATTACHMENT_TOPLEFT, AGUI2ATTACHMENT_TOPLEFT );
 	m_oPlayerInfo.SetTextAlign( AGUI2Font::TextAlign_Left );
 	m_oPlayerInfo.SetTransform( 0.0f, 24.0f );
 
@@ -71,7 +71,7 @@ TBOOL AGUI2::OnCreate()
 
 	// Textures stats
 	m_oTexturesInfo.Create( pFont, 600.0f );
-	m_oTexturesInfo.SetAttachment( AGUI2Element::Anchor_TopLeft, AGUI2Element::Anchor_TopLeft );
+	m_oTexturesInfo.SetAttachment( AGUI2ATTACHMENT_TOPLEFT, AGUI2ATTACHMENT_TOPLEFT );
 	m_oTexturesInfo.SetTextAlign( AGUI2Font::TextAlign_Left );
 	m_oTexturesInfo.SetTransform( 0.0f, 48.0f );
 
@@ -81,7 +81,7 @@ TBOOL AGUI2::OnCreate()
 
 	// Memory stats
 	m_oMemStats.Create( pFont, 600.0f );
-	m_oMemStats.SetAttachment( AGUI2Element::Anchor_TopLeft, AGUI2Element::Anchor_TopLeft );
+	m_oMemStats.SetAttachment( AGUI2ATTACHMENT_TOPLEFT, AGUI2ATTACHMENT_TOPLEFT );
 	m_oMemStats.SetTextAlign( AGUI2Font::TextAlign_Left );
 	m_oMemStats.SetTransform( 0.0f, 72.0f );
 

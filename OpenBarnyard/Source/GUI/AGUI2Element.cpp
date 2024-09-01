@@ -18,8 +18,8 @@ AGUI2Element::AGUI2Element()
 	m_uiColour         = 0xFFFFFFFF;
 	m_uiVisibilityMask = 0xFFFFFFFF;
 	m_cbPostRender     = TNULL;
-	m_ePivot           = Pivot_MiddleCenter;
-	m_eAnchor          = Anchor_MiddleCenter;
+	m_ePivot           = AGUI2ATTACHMENT_MIDDLECENTER;
+	m_eAnchor          = AGUI2ATTACHMENT_MIDDLECENTER;
 	m_eFlags           = 3;
 }
 
@@ -33,83 +33,21 @@ void AGUI2Element::Tick( TFLOAT a_fDeltaTime )
 
 void AGUI2Element::PreRender()
 {
-	Toshi::TVector2 vec1 = { 0.0f, 0.0f };
-	Toshi::TVector2 vec2 = { 0.0f, 0.0f };
+	Toshi::TVector2 vecAnchorPos = { 0.0f, 0.0f };
+	Toshi::TVector2 vecPivotPos  = { 0.0f, 0.0f };
 
 	if ( m_pParent != TNULL )
 	{
 		TFLOAT fParentWidth, fParentHeight;
 		m_pParent->GetDimensions( fParentWidth, fParentHeight );
-
-		switch ( m_eAnchor )
-		{
-			case Anchor_TopLeft:
-				vec1.x = vec1.x - fParentWidth * 0.5f;
-				vec1.y = vec1.y - fParentHeight * 0.5f;
-				break;
-			case Anchor_TopCenter:
-				vec1.y = vec1.y - fParentHeight * 0.5f;
-				break;
-			case Anchor_TopRight:
-				vec1.y = vec1.y - fParentHeight * 0.5f;
-				vec1.x = fParentWidth * 0.5f + vec1.x;
-				break;
-			case Anchor_MiddleLeft:
-				vec1.x = vec1.x - fParentWidth * 0.5f;
-				break;
-			case Anchor_MiddleRight:
-				vec1.x = fParentWidth * 0.5f + vec1.x;
-				break;
-			case Anchor_BottomLeft:
-				vec1.x = vec1.x - fParentWidth * 0.5f;
-				vec1.y = fParentHeight * 0.5f + vec1.y;
-				break;
-			case Anchor_BottomCenter:
-				vec1.y = fParentHeight * 0.5f + vec1.y;
-				break;
-			case Anchor_BottomRight:
-				vec1.x = fParentWidth * 0.5f + vec1.x;
-				vec1.y = fParentHeight * 0.5f + vec1.y;
-				break;
-		}
+		AnchorPos( vecAnchorPos.x, vecAnchorPos.y, fParentWidth, fParentHeight );
 	}
 
 	TFLOAT fWidth, fHeight;
 	GetDimensions( fWidth, fHeight );
+	PivotPos( vecPivotPos.x, vecPivotPos.y, fWidth, fHeight );
 
-	switch ( m_ePivot )
-	{
-		case Pivot_TopLeft:
-			vec2.x = fWidth * 0.5f + vec2.x;
-			vec2.y = fHeight * 0.5f + vec2.y;
-			break;
-		case Pivot_TopCenter:
-			vec2.y = fHeight * 0.5f + vec2.y;
-			break;
-		case Pivot_TopRight:
-			vec2.x = vec2.x - fWidth * 0.5f;
-			vec2.y = fHeight * 0.5f + vec2.y;
-			break;
-		case Pivot_MiddleLeft:
-			vec2.x = fWidth * 0.5f + vec2.x;
-			break;
-		case Pivot_MiddleRight:
-			vec2.x = vec2.x - fWidth * 0.5f;
-			break;
-		case Pivot_BottomLeft:
-			vec2.x = fWidth * 0.5f + vec2.x;
-			vec2.y = vec2.y - fHeight * 0.5f;
-			break;
-		case Pivot_BottomCenter:
-			vec2.y = vec2.y - fHeight * 0.5f;
-			break;
-		case Pivot_BottomRight:
-			vec2.x = vec2.x - fWidth * 0.5f;
-			vec2.y = vec2.y - fHeight * 0.5f;
-			break;
-	}
-
-	AGUI2::GetRenderer()->PushTransform( m_oTransform, vec1, vec2 );
+	AGUI2::GetRenderer()->PushTransform( m_oTransform, vecAnchorPos, vecPivotPos );
 }
 
 void AGUI2Element::Render()
@@ -222,7 +160,7 @@ void AGUI2Element::SetFocus( TBOOL a_bFocused )
 	}
 }
 
-TBOOL AGUI2Element::IsPointInside( const Toshi::TVector2& a_rPoint )
+TBOOL AGUI2Element::IsPointInside( TFLOAT a_fX, TFLOAT a_fY )
 {
 	TFLOAT minX, minY;
 	TFLOAT maxX, maxY;
@@ -230,91 +168,94 @@ TBOOL AGUI2Element::IsPointInside( const Toshi::TVector2& a_rPoint )
 	GetMins( minX, minY );
 	GetMaxs( maxX, maxY );
 
-	if ( minX <= a_rPoint.x && a_rPoint.x <= maxX && minY <= a_rPoint.y )
-	{
-		return a_rPoint.y <= maxY;
-	}
+	return ( minX <= a_fX && a_fX <= maxX ) && ( minY <= a_fY && a_fY <= maxY );
+}
 
-	return TFALSE;
+void AGUI2Element::AnchorPos( TFLOAT& a_rX, TFLOAT& a_rY, TFLOAT a_fWidth, TFLOAT a_fHeight )
+{
+	switch ( m_eAnchor )
+	{
+		case AGUI2ATTACHMENT_TOPLEFT:
+			a_rX -= a_fWidth * 0.5f;
+			a_rY -= a_fHeight * 0.5f;
+			break;
+		case AGUI2ATTACHMENT_TOPCENTER:
+			a_rY -= a_fHeight * 0.5f;
+			break;
+		case AGUI2ATTACHMENT_TOPRIGHT:
+			a_rX += a_fWidth * 0.5f;
+			a_rY -= a_fHeight * 0.5f;
+			break;
+		case AGUI2ATTACHMENT_MIDDLELEFT:
+			a_rX -= a_fWidth * 0.5f;
+			break;
+		case AGUI2ATTACHMENT_MIDDLERIGHT:
+			a_rX += a_fWidth * 0.5f;
+			break;
+		case AGUI2ATTACHMENT_BOTTOMLEFT:
+			a_rX -= a_fWidth * 0.5f;
+			a_rY += a_fHeight * 0.5f;
+			break;
+		case AGUI2ATTACHMENT_BOTTOMCENTER:
+			a_rY += a_fHeight * 0.5f;
+			break;
+		case AGUI2ATTACHMENT_BOTTOMRIGHT:
+			a_rX += a_fWidth * 0.5f;
+			a_rY += a_fHeight * 0.5f;
+			break;
+	}
+}
+
+void AGUI2Element::PivotPos( TFLOAT& a_rX, TFLOAT& a_rY, TFLOAT a_fWidth, TFLOAT a_fHeight )
+{
+	switch ( m_ePivot )
+	{
+		case AGUI2ATTACHMENT_TOPLEFT:
+			a_rX += a_fWidth * 0.5f;
+			a_rY += a_fHeight * 0.5f;
+			break;
+		case AGUI2ATTACHMENT_TOPCENTER:
+			a_rY += a_fHeight * 0.5f;
+			break;
+		case AGUI2ATTACHMENT_TOPRIGHT:
+			a_rX -= a_fWidth * 0.5f;
+			a_rY += a_fHeight * 0.5f;
+			break;
+		case AGUI2ATTACHMENT_MIDDLELEFT:
+			a_rX += a_fWidth * 0.5f;
+			break;
+		case AGUI2ATTACHMENT_MIDDLERIGHT:
+			a_rX -= a_fWidth * 0.5f;
+			break;
+		case AGUI2ATTACHMENT_BOTTOMLEFT:
+			a_rX += a_fWidth * 0.5f;
+			a_rY -= a_fHeight * 0.5f;
+			break;
+		case AGUI2ATTACHMENT_BOTTOMCENTER:
+			a_rY -= a_fHeight * 0.5f;
+			break;
+		case AGUI2ATTACHMENT_BOTTOMRIGHT:
+			a_rX -= a_fWidth * 0.5f;
+			a_rY -= a_fHeight * 0.5f;
+			break;
+	}
 }
 
 void AGUI2Element::GetScreenTransform( AGUI2Transform& a_rOutTransform )
 {
-	Toshi::TVector2 vec1 = { 0.0f, 0.0f };
-	Toshi::TVector2 vec2 = { 0.0f, 0.0f };
+	Toshi::TVector2 vecAnchorPos = { 0.0f, 0.0f };
+	Toshi::TVector2 vecPivotPos  = { 0.0f, 0.0f };
 
 	if ( m_pParent != TNULL )
 	{
 		TFLOAT fParentWidth, fParentHeight;
 		m_pParent->GetDimensions( fParentWidth, fParentHeight );
-
-		switch ( m_eAnchor )
-		{
-			case Anchor_BottomLeft:
-				vec1.x = vec1.x - fParentWidth * 0.5f;
-				vec1.y = vec1.y - fParentHeight * 0.5f;
-				break;
-			case Anchor_BottomCenter:
-				vec1.y = vec1.y - fParentHeight * 0.5f;
-				break;
-			case Anchor_BottomRight:
-				vec1.x = vec1.x + fParentWidth * 0.5f;
-				vec1.y = vec1.y - fParentHeight * 0.5f;
-				break;
-			case Anchor_MiddleLeft:
-				vec1.x = vec1.x - fParentWidth * 0.5f;
-				break;
-			case Anchor_MiddleRight:
-				vec1.x = fParentWidth * 0.5f + vec1.x;
-				break;
-			case Anchor_TopLeft:
-				vec1.x = vec1.x - fParentWidth * 0.5f;
-				vec1.y = fParentHeight * 0.5f + vec1.y;
-				break;
-			case Anchor_TopCenter:
-				vec1.y = fParentHeight * 0.5f + vec1.y;
-				break;
-			case Anchor_TopRight:
-				vec1.x = fParentWidth * 0.5f + vec1.x;
-				vec1.y = fParentHeight * 0.5f + vec1.y;
-				break;
-		}
+		AnchorPos( vecAnchorPos.x, vecAnchorPos.y, fParentWidth, fParentHeight );
 	}
 
 	TFLOAT fWidth, fHeight;
 	GetDimensions( fWidth, fHeight );
-
-	switch ( m_ePivot )
-	{
-		case Pivot_BottomLeft:
-			vec2.x = fWidth * 0.5f + vec2.x;
-			vec2.y = fHeight * 0.5f + vec2.y;
-			break;
-		case Pivot_BottomCenter:
-			vec2.y = fHeight * 0.5f + vec2.y;
-			break;
-		case Pivot_BottomRight:
-			vec2.x = vec2.x - fWidth * 0.5f;
-			vec2.y = fHeight * 0.5f + vec2.y;
-			break;
-		case Pivot_MiddleLeft:
-			vec2.x = fWidth * 0.5f + vec2.x;
-			break;
-		case Pivot_MiddleRight:
-			vec2.x = vec2.x - fWidth * 0.5f;
-			break;
-		case Pivot_TopLeft:
-			vec2.x = fWidth * 0.5f + vec2.x;
-			vec2.y = vec2.y - fHeight * 0.5f;
-			break;
-		case Pivot_TopCenter:
-			vec2.y = vec2.y - fHeight * 0.5f;
-			break;
-		case Pivot_TopRight:
-			vec2.x = vec2.x - fWidth * 0.5f;
-			vec2.y = vec2.y - fHeight * 0.5f;
-			break;
-	}
+	PivotPos( vecPivotPos.x, vecPivotPos.y, fWidth, fHeight );
 
 	AGUI2Transform transform1;
 	AGUI2Transform transform2;
@@ -330,18 +271,18 @@ void AGUI2Element::GetScreenTransform( AGUI2Transform& a_rOutTransform )
 
 		transform1.m_Rotation[ 0 ] = { 1.0f, 0.0f };
 		transform1.m_Rotation[ 1 ] = { 0.0f, 1.0f };
-		transform1.m_Position      = { pDisplayParams->uiWidth / 2.0f, pDisplayParams->uiHeight / 2.0f };
+		transform1.m_Translation   = { pDisplayParams->uiWidth / 2.0f, pDisplayParams->uiHeight / 2.0f };
 
 		transform1.PreMultiply( pDisplayParams->uiWidth / fWidth, pDisplayParams->uiHeight / fHeight );
 		transform2 = GetTransform();
 	}
 
 	Toshi::TVector2 vec;
-	transform1.Transform( vec, vec1 );
-	transform1.m_Position = { vec.x, vec.y };
+	transform1.Transform( vec, vecAnchorPos );
+	transform1.m_Translation = { vec.x, vec.y };
 
-	transform2.Transform( vec, vec2 );
-	transform2.m_Position = { vec.x, vec.y };
+	transform2.Transform( vec, vecPivotPos );
+	transform2.m_Translation = { vec.x, vec.y };
 
 	AGUI2Transform::Multiply( a_rOutTransform, transform1, transform2 );
 }

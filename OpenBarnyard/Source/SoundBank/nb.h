@@ -3,9 +3,11 @@
 // Note: Automatically generated header file.
 //-----------------------------------------------------------------------------
 
+#include "Sound/ASound.h"
+
 namespace soundbank {
 
-enum nb {
+enum nb : ASoundId {
 
 	// Category: Ingame
 	NB_PINBALL = 690,

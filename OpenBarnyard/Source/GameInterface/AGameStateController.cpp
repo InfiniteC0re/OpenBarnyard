@@ -35,7 +35,7 @@ TBOOL AGameStateController::OnCreate()
 	AGUI2::GetSingleton()->GetDimensions( fWidth, fHeight );
 
 	m_Rectangle.SetDimensions( fWidth, fHeight );
-	m_Rectangle.SetAttachment( AGUI2Element::Anchor_TopCenter, AGUI2Element::Pivot_TopCenter );
+	m_Rectangle.SetAttachment( AGUI2ATTACHMENT_BOTTOMCENTER, AGUI2ATTACHMENT_BOTTOMCENTER );
 	m_Rectangle.SetInFront();
 	m_Rectangle.Hide();
 

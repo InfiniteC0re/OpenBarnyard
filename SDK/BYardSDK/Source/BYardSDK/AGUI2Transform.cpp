@@ -34,14 +34,14 @@ void AGUI2Transform::PreMultiply( TFLOAT a_fBasisVec1Angle, TFLOAT a_fBasisVec2A
 	AGUI2Transform transform;
 	transform.m_Rotation[ 0 ] = { a_fBasisVec1Angle, 0.0f };
 	transform.m_Rotation[ 1 ] = { 0.0f, a_fBasisVec2Angle };
-	transform.m_Position      = { 0.0f, 0.0f };
+	transform.m_Translation   = { 0.0f, 0.0f };
 	PreMultiply( transform );
 }
 
 void AGUI2Transform::Transform( Toshi::TVector2& a_rOutVec, const Toshi::TVector2& a_rTransformVec ) const
 {
-	a_rOutVec.x = m_Position.x + m_Rotation[ 0 ].x * a_rTransformVec.x + m_Rotation[ 1 ].x * a_rTransformVec.y;
-	a_rOutVec.y = m_Position.y + m_Rotation[ 0 ].y * a_rTransformVec.x + m_Rotation[ 1 ].y * a_rTransformVec.y;
+	a_rOutVec.x = m_Translation.x + m_Rotation[ 0 ].x * a_rTransformVec.x + m_Rotation[ 1 ].x * a_rTransformVec.y;
+	a_rOutVec.y = m_Translation.y + m_Rotation[ 0 ].y * a_rTransformVec.x + m_Rotation[ 1 ].y * a_rTransformVec.y;
 }
 
 void AGUI2Transform::GetInverse( AGUI2Transform& a_rInverse ) const
@@ -50,19 +50,19 @@ void AGUI2Transform::GetInverse( AGUI2Transform& a_rInverse ) const
 	TFLOAT fVar1;
 	TFLOAT fVar2;
 
-	fVar2                        = 1.0f / ( m_Rotation[ 0 ].x * m_Rotation[ 1 ].y - m_Rotation[ 0 ].y * m_Rotation[ 1 ].x );
-	fVar1                        = m_Rotation[ 1 ].x;
-	a_rInverse.m_Rotation[ 0 ].x = fVar2 * m_Rotation[ 0 ].x;
-	a_rInverse.m_Rotation[ 0 ].y = fVar2 * fVar1;
-	fVar1                        = m_Rotation[ 1 ].y;
-	a_rInverse.m_Rotation[ 1 ].x = fVar2 * m_Rotation[ 0 ].y;
-	a_rInverse.m_Rotation[ 1 ].y = fVar2 * fVar1;
-	( a_rInverse.m_Position ).x  = 0.0;
-	( a_rInverse.m_Position ).y  = 0.0;
-	( a_rInverse.m_Position ).x  = a_rInverse.m_Rotation[ 1 ].x * ( m_Position ).y + a_rInverse.m_Rotation[ 0 ].x * ( m_Position ).x + ( a_rInverse.m_Position ).x;
-	( a_rInverse.m_Position ).y  = a_rInverse.m_Rotation[ 0 ].y * ( m_Position ).x + a_rInverse.m_Rotation[ 1 ].y * ( m_Position ).y + ( a_rInverse.m_Position ).y;
-	( a_rInverse.m_Position ).x  = -( a_rInverse.m_Position ).x;
-	( a_rInverse.m_Position ).y  = -( a_rInverse.m_Position ).y;
+	fVar2                          = 1.0f / ( m_Rotation[ 0 ].x * m_Rotation[ 1 ].y - m_Rotation[ 0 ].y * m_Rotation[ 1 ].x );
+	fVar1                          = m_Rotation[ 1 ].x;
+	a_rInverse.m_Rotation[ 0 ].x   = fVar2 * m_Rotation[ 0 ].x;
+	a_rInverse.m_Rotation[ 0 ].y   = fVar2 * fVar1;
+	fVar1                          = m_Rotation[ 1 ].y;
+	a_rInverse.m_Rotation[ 1 ].x   = fVar2 * m_Rotation[ 0 ].y;
+	a_rInverse.m_Rotation[ 1 ].y   = fVar2 * fVar1;
+	( a_rInverse.m_Translation ).x = 0.0;
+	( a_rInverse.m_Translation ).y = 0.0;
+	( a_rInverse.m_Translation ).x = a_rInverse.m_Rotation[ 1 ].x * ( m_Translation ).y + a_rInverse.m_Rotation[ 0 ].x * ( m_Translation ).x + ( a_rInverse.m_Translation ).x;
+	( a_rInverse.m_Translation ).y = a_rInverse.m_Rotation[ 0 ].y * ( m_Translation ).x + a_rInverse.m_Rotation[ 1 ].y * ( m_Translation ).y + ( a_rInverse.m_Translation ).y;
+	( a_rInverse.m_Translation ).x = -( a_rInverse.m_Translation ).x;
+	( a_rInverse.m_Translation ).y = -( a_rInverse.m_Translation ).y;
 }
 
 void AGUI2Transform::Multiply( AGUI2Transform& a_rOutTransform, const AGUI2Transform& a_rA, const AGUI2Transform& a_rB )
@@ -71,6 +71,6 @@ void AGUI2Transform::Multiply( AGUI2Transform& a_rOutTransform, const AGUI2Trans
 	a_rOutTransform.m_Rotation[ 0 ].y = a_rB.m_Rotation[ 0 ].y * a_rA.m_Rotation[ 1 ].y + a_rA.m_Rotation[ 0 ].y * a_rB.m_Rotation[ 0 ].x;
 	a_rOutTransform.m_Rotation[ 1 ].x = a_rB.m_Rotation[ 1 ].x * a_rA.m_Rotation[ 0 ].x + a_rB.m_Rotation[ 1 ].y * a_rA.m_Rotation[ 1 ].x;
 	a_rOutTransform.m_Rotation[ 1 ].y = a_rB.m_Rotation[ 1 ].x * a_rA.m_Rotation[ 0 ].y + a_rB.m_Rotation[ 1 ].y * a_rA.m_Rotation[ 1 ].y;
-	a_rOutTransform.m_Position.x      = a_rB.m_Position.x * a_rA.m_Rotation[ 0 ].x + a_rB.m_Position.y * a_rA.m_Rotation[ 1 ].x + a_rA.m_Position.x;
-	a_rOutTransform.m_Position.y      = a_rB.m_Position.x * a_rA.m_Rotation[ 0 ].y + a_rB.m_Position.y * a_rA.m_Rotation[ 1 ].y + a_rA.m_Position.y;
+	a_rOutTransform.m_Translation.x   = a_rB.m_Translation.x * a_rA.m_Rotation[ 0 ].x + a_rB.m_Translation.y * a_rA.m_Rotation[ 1 ].x + a_rA.m_Translation.x;
+	a_rOutTransform.m_Translation.y   = a_rB.m_Translation.x * a_rA.m_Rotation[ 0 ].y + a_rB.m_Translation.y * a_rA.m_Rotation[ 1 ].y + a_rA.m_Translation.y;
 }

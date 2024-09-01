@@ -3,9 +3,11 @@
 // Note: Automatically generated header file.
 //-----------------------------------------------------------------------------
 
+#include "Sound/ASound.h"
+
 namespace soundbank {
 
-enum carchase {
+enum carchase : ASoundId {
 
 	// Category: Ingame
 	CARCHASE_OLD_PLAYER_ENGINE_LOOP = 383,

@@ -3,9 +3,11 @@
 // Note: Automatically generated header file.
 //-----------------------------------------------------------------------------
 
+#include "Sound/ASound.h"
+
 namespace soundbank {
 
-enum veggie {
+enum veggie : ASoundId {
 
 	// Category: Ingame
 	VEGGIE_GATE = 443,

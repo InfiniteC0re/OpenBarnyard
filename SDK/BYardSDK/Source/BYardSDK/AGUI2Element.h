@@ -178,7 +178,7 @@ public:
 	{
 		m_oTransform = AGUI2Transform();
 		m_oTransform.Rotate( a_fRotAngle );
-		m_oTransform.SetPosition( a_fX, a_fY );
+		m_oTransform.SetTranslation( a_fX, a_fY );
 	}
 
 	void SetAnchor( Anchor a_eAnchor )

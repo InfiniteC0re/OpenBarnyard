@@ -3,9 +3,11 @@
 // Note: Automatically generated header file.
 //-----------------------------------------------------------------------------
 
+#include "Sound/ASound.h"
+
 namespace soundbank {
 
-enum bikerace {
+enum bikerace : ASoundId {
 
 	// Category: VO
 	BIKERACE_BUD_TAUNT = 1953,

@@ -24,9 +24,9 @@ public:
 	void MoveCursor( TFLOAT a_fDeltaX, TFLOAT a_fDeltaY );
 
 public:
+	Toshi::TVector2           m_MousePos;
+	Toshi::TVector2           m_CursorCenter;
 	Toshi::TVector2           m_CursorPos;
-	Toshi::TVector2           m_BoundingStart;
-	Toshi::TVector2           m_BoundingEnd;
 	Toshi::TInputDeviceMouse* m_pMouseDevice;
 	AGUI2TextureSection*      m_pPointerUpSection;
 	AGUI2TextureSection*      m_pPointerDownSection;

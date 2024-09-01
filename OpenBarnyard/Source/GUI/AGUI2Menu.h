@@ -1,0 +1,107 @@
+#pragma once
+#include "AGUI2Element.h"
+#include "Input/AInputMap.h"
+#include "Sound/ASound.h"
+
+class AGUI2MenuItem;
+
+class AGUI2Menu :
+    public AGUI2Element
+{
+public:
+	using ACTIONFLAGS = TUINT32;
+	enum ACTIONFLAGS_ : ACTIONFLAGS
+	{
+		ACTIONFLAGS_NONE   = 0,
+		ACTIONFLAGS_UP     = BITFLAG( 0 ),
+		ACTIONFLAGS_DOWN   = BITFLAG( 1 ),
+		ACTIONFLAGS_LEFT   = BITFLAG( 2 ),
+		ACTIONFLAGS_RIGHT  = BITFLAG( 3 ),
+		ACTIONFLAGS_OK     = BITFLAG( 4 ),
+		ACTIONFLAGS_CANCEL = BITFLAG( 5 ),
+	};
+
+	using ActionCallback = void ( * )( void* a_pUserData, AGUI2MenuItem* a_pItem );
+	using FocusCallback  = void ( * )( void* a_pUserData, AGUI2MenuItem* a_pOldFocus, AGUI2MenuItem* a_pNewFocus );
+
+public:
+	// constructors/destructor
+	AGUI2Menu();
+	~AGUI2Menu();
+
+	void  Update( TFLOAT a_fDeltaTime );
+	TBOOL ProcessInputCommand( AInputCommand a_eCommand, Toshi::TInputInterface::InputEvent* a_pEvent );
+
+	void AddMenuItem( AGUI2MenuItem& a_rMenuItem );
+	void SetFocusAt( AGUI2MenuItem& a_rMenuItem );
+
+	void SetAlphaRecursive( TFLOAT a_fAlpha, TFLOAT a_fShadowAlpha );
+
+private:
+	TINT           m_Unk1;
+	AGUI2MenuItem* m_pUnk2;
+	AGUI2MenuItem* m_pCancelItem;
+	ASoundId       m_eFocusSound;
+	ASoundId       m_eSelectSound;
+	ASoundId       m_eBackSound;
+	ASoundId       m_eNegativeSound;
+	AGUI2MenuItem* m_pLastMenuItem;
+	AGUI2MenuItem* m_pFocusedMenuItem;
+	ACTIONFLAGS    m_eActionFlags;
+	TINT           m_Unk3;
+	TINT           m_Unk4;
+	ActionCallback m_fnActionCallback;
+	FocusCallback  m_fnFocusCallback;
+	void*          m_pCallbackUserData;
+	TFLOAT         m_fTime;
+	TBOOL          m_bFlag1;
+	TBOOL          m_bVerticalFlow;
+	TINT           m_iNumMenuItems;
+	TBOOL          m_bHoverDirty;
+	AGUI2MenuItem* m_pHoveredMenuItem;
+};
+
+class AGUI2MenuItem :
+    public AGUI2Element
+{
+public:
+	friend class AGUI2Menu;
+
+	enum COMMANDRESULT
+	{
+		COMMANDRESULT_NONE,
+		COMMANDRESULT_OK,
+		COMMANDRESULT_CANCEL,
+	};
+
+public:
+	// constructors/destructor
+	AGUI2MenuItem();
+	~AGUI2MenuItem();
+
+	//-----------------------------------------------------------------------------
+	// AGUI2Element
+	//-----------------------------------------------------------------------------
+	virtual void SetAlpha( TFLOAT a_fAlpha ) OVERRIDE;
+
+	//-----------------------------------------------------------------------------
+	// Own methods
+	//-----------------------------------------------------------------------------
+	virtual void          OnFocus();
+	virtual void          OnFocusLost();
+	virtual void          OnUpdate( TFLOAT a_fDeltaTime );
+	virtual COMMANDRESULT OnInputCommand( AGUI2Menu::ACTIONFLAGS& a_rActionFlags );
+	virtual void          SetEnabled( TBOOL a_bEnabled );
+	virtual TFLOAT        Unknown5();
+	virtual TFLOAT        Unknown6();
+
+	void LinkMenuItemBefore( AGUI2MenuItem& a_rLinkAfter );
+
+	TBOOL IsEnabled() const { return m_bEnabled; }
+	TBOOL CanFocus() const { return IsEnabled() && IsVisible(); }
+
+private:
+	AGUI2MenuItem* m_pNextMenuItem;
+	AGUI2MenuItem* m_pPrevMenuItem;
+	TBOOL          m_bEnabled;
+};

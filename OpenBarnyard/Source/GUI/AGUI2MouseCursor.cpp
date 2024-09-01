@@ -13,9 +13,9 @@ TOSHI_NAMESPACE_USING
 
 AGUI2MouseCursor::AGUI2MouseCursor()
 {
-	m_CursorPos.x                               = 0.0f;
-	m_CursorPos.y                               = 0.0f;
-	m_BoundingStart                             = { 0.0f, 0.0f };
+	m_MousePos.x                                = 0.0f;
+	m_MousePos.y                                = 0.0f;
+	m_CursorCenter                              = { 0.0f, 0.0f };
 	m_pMouseDevice                              = TNULL;
 	m_pPointerUpSection                         = TNULL;
 	m_pPointerDownSection                       = TNULL;
@@ -43,8 +43,8 @@ TBOOL AGUI2MouseCursor::Create( const TCHAR* a_szPointerUpTexture, const TCHAR* 
 	AGUI2Rectangle::SetDimensions( fCursorWidth, fCursorHeight );
 	AGUI2Element::GetTransform().PreMultiply( a_fScalar, a_fScalar );
 	AGUI2Rectangle::SetTextureSection( m_pPointerUpSection );
-	AGUI2Element::SetAttachment( AGUI2Element::Anchor_MiddleCenter, AGUI2Element::Pivot_TopLeft );
-	m_BoundingStart = { -fCursorWidth / 2, -fCursorHeight / 2 };
+	AGUI2Element::SetAttachment( AGUI2ATTACHMENT_MIDDLECENTER, AGUI2ATTACHMENT_TOPLEFT );
+	m_CursorCenter = { -fCursorWidth / 2, -fCursorHeight / 2 };
 
 	if ( a_szPointerDownTexture )
 	{
@@ -78,11 +78,11 @@ void AGUI2MouseCursor::Update()
 			m_bIsMouseDown = TTRUE;
 		}
 
-		AGUI2Element::GetTransform().SetPosition( m_CursorPos.x, m_CursorPos.y );
+		AGUI2Element::GetTransform().SetTranslation( m_MousePos.x, m_MousePos.y );
 
-		AGUI2Transform screenTransform;
-		GetScreenTransform( screenTransform );
-		screenTransform.Transform( m_BoundingEnd, m_BoundingStart );
+		AGUI2Transform oScreenTransform;
+		GetScreenTransform( oScreenTransform );
+		oScreenTransform.Transform( m_CursorPos, m_CursorCenter );
 	}
 
 	return;
@@ -121,28 +121,28 @@ void AGUI2MouseCursor::MoveCursor( TFLOAT a_fDeltaX, TFLOAT a_fDeltaY )
 		fCursorAccelerationY = 4.0f;
 	}
 
-	m_CursorPos.x += fCursorAccelerationX * a_fDeltaX * m_fCursorAccelerations[ Acceleration_Off ];
-	m_CursorPos.y += fCursorAccelerationY * a_fDeltaY * m_fCursorAccelerations[ Acceleration_Off ];
+	m_MousePos.x += fCursorAccelerationX * a_fDeltaX * m_fCursorAccelerations[ Acceleration_Off ];
+	m_MousePos.y += fCursorAccelerationY * a_fDeltaY * m_fCursorAccelerations[ Acceleration_Off ];
 
 	TFLOAT fMinsX, fMinsY;
 	TFLOAT fMaxsX, fMaxsY;
 	AGUI2::GetRootElement()->GetMins( fMinsX, fMinsY );
 	AGUI2::GetRootElement()->GetMaxs( fMaxsX, fMaxsY );
 
-	if ( m_CursorPos.x < fMinsX ) m_CursorPos.x = fMinsX;
-	if ( m_CursorPos.x > fMaxsX ) m_CursorPos.x = fMaxsX;
-	if ( m_CursorPos.y < fMinsY ) m_CursorPos.y = fMinsY;
-	if ( m_CursorPos.y > fMaxsY ) m_CursorPos.y = fMaxsY;
+	if ( m_MousePos.x < fMinsX ) m_MousePos.x = fMinsX;
+	if ( m_MousePos.x > fMaxsX ) m_MousePos.x = fMaxsX;
+	if ( m_MousePos.y < fMinsY ) m_MousePos.y = fMinsY;
+	if ( m_MousePos.y > fMaxsY ) m_MousePos.y = fMaxsY;
 
 	if ( m_fRadialRadius != -1.0f )
 	{
-		Toshi::TVector2 vec = m_CursorPos - m_RadialFieldPos;
+		Toshi::TVector2 vec = m_MousePos - m_RadialFieldPos;
 
 		if ( m_fRadialRadius < vec.Magnitude() )
 		{
 			vec.Normalize();
-			m_CursorPos.x = vec.x * m_fRadialRadius + m_RadialFieldPos.x;
-			m_CursorPos.y = vec.y * m_fRadialRadius + m_RadialFieldPos.y;
+			m_MousePos.x = vec.x * m_fRadialRadius + m_RadialFieldPos.x;
+			m_MousePos.y = vec.y * m_fRadialRadius + m_RadialFieldPos.y;
 		}
 	}
 }

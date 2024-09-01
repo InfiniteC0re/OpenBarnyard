@@ -3,9 +3,11 @@
 // Note: Automatically generated header file.
 //-----------------------------------------------------------------------------
 
+#include "Sound/ASound.h"
+
 namespace soundbank {
 
-enum defender {
+enum defender : ASoundId {
 
 	// Category: VO
 	DEFENDER_FREDDY_EVIL_FOILED = 524,

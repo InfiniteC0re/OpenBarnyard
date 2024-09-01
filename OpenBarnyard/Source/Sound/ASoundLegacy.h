@@ -2,7 +2,7 @@
 
 #define ASOUNDWAVEID_INVALID -1
 
-using ASoundWaveId = TINT32;
+using ASoundId = TINT32;
 
 class AWaveBank;
 
@@ -14,8 +14,8 @@ public:
 
 public:
 private:
-	TINT         m_iId;
-	TINT         m_iFlags;
-	AWaveBank*   m_pWaveBank;
-	ASoundWaveId m_iWaveId;
+	TINT       m_iId;
+	TINT       m_iFlags;
+	AWaveBank* m_pWaveBank;
+	ASoundId   m_iWaveId;
 };

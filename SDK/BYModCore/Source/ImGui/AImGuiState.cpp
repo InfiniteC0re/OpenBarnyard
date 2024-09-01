@@ -21,7 +21,7 @@ TBOOL AImGuiState::OnUpdate(TFLOAT a_fDeltaTime)
 	auto pRender = THookedRenderD3DInterface::GetSingleton();
 	auto pDisplayParams = pRender->GetCurrentDisplayParams();
 
-	Toshi::TVector2 transformedCursorPos = AGUI2::GetSingleton()->m_oMouseCursor.m_CursorPos;
+	Toshi::TVector2 transformedCursorPos = AGUI2::GetSingleton()->m_oMouseCursor.m_MousePos;
 
 	TFLOAT fRootWidth, fRootHeight;
 	AGUI2::GetRootElement()->GetDimensions(fRootWidth, fRootHeight);

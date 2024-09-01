@@ -3,9 +3,11 @@
 // Note: Automatically generated header file.
 //-----------------------------------------------------------------------------
 
+#include "Sound/ASound.h"
+
 namespace soundbank {
 
-enum tappa {
+enum tappa : ASoundId {
 
 	// Category: Ingame
 	TAPPA_CROWD01 = 452,

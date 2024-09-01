@@ -3,9 +3,11 @@
 // Note: Automatically generated header file.
 //-----------------------------------------------------------------------------
 
+#include "Sound/ASound.h"
+
 namespace soundbank {
 
-enum golf {
+enum golf : ASoundId {
 
 	// Category: Ingame
 	GOLF_GOLFHIT = 84,

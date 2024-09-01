@@ -3,9 +3,11 @@
 // Note: Automatically generated header file.
 //-----------------------------------------------------------------------------
 
+#include "Sound/ASound.h"
+
 namespace soundbank {
 
-enum darts {
+enum darts : ASoundId {
 
 	// Category: Ingame
 	DARTS_CROWD01 = 580,

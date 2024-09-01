@@ -3,9 +3,11 @@
 // Note: Automatically generated header file.
 //-----------------------------------------------------------------------------
 
+#include "Sound/ASound.h"
+
 namespace soundbank {
 
-enum barnyard {
+enum barnyard : ASoundId {
 
 	// Category: Ingame
 	BARNYARD_STREAM = 229,

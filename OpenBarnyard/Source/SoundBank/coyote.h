@@ -3,9 +3,11 @@
 // Note: Automatically generated header file.
 //-----------------------------------------------------------------------------
 
+#include "Sound/ASound.h"
+
 namespace soundbank {
 
-enum coyote {
+enum coyote : ASoundId {
 
 	// Category: Ingame
 	COYOTE_COYOTE = 566,

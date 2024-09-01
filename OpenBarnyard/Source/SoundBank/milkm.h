@@ -3,9 +3,11 @@
 // Note: Automatically generated header file.
 //-----------------------------------------------------------------------------
 
+#include "Sound/ASound.h"
+
 namespace soundbank {
 
-enum milkm {
+enum milkm : ASoundId {
 
 	// Category: Ingame
 	MILKM_AMBIENT = 468,

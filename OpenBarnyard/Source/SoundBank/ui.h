@@ -3,9 +3,11 @@
 // Note: Automatically generated header file.
 //-----------------------------------------------------------------------------
 
+#include "Sound/ASound.h"
+
 namespace soundbank {
 
-enum ui {
+enum ui : ASoundId {
 
 	// Category: Ingame
 	UI_CONFIRM = 161,

@@ -270,10 +270,10 @@ public:
 	//-----------------------------------------------------------------------------
 
 	// Immediately plays cue and returns it's index. Use PlayCueEx for more settings.
-	TINT PlayCue( ASoundWaveId a_iSound );
+	TINT PlayCue( ASoundId a_iSound );
 
 	// Plays cue and returns it's index
-	TINT PlayCueEx( ASoundWaveId a_iSound, TFLOAT a_fVolume, TBOOL a_bFlag, TFLOAT a_fDelay, TINT a_iTrack );
+	TINT PlayCueEx( ASoundId a_iSound, TFLOAT a_fVolume, TBOOL a_bFlag, TFLOAT a_fDelay, TINT a_iTrack );
 
 	// Immediately stops cue and all it's sounds
 	void StopCue( TINT& a_rCueIndex );

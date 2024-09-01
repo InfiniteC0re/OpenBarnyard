@@ -3,9 +3,11 @@
 // Note: Automatically generated header file.
 //-----------------------------------------------------------------------------
 
+#include "Sound/ASound.h"
+
 namespace soundbank {
 
-enum honey {
+enum honey : ASoundId {
 
 	// Category: Ingame
 	HONEY_BEE_LP = 280,

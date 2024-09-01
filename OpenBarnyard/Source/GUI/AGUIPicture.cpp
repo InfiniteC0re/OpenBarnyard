@@ -79,7 +79,7 @@ void AGUIPicture::Render()
 		AGUI2::GetSingleton()->GetDimensions( fWidth, fHeight );
 
 		AGUI2Transform transform;
-		transform.SetPosition( 0.0f, 0.0f );
+		transform.SetTranslation( 0.0f, 0.0f );
 		transform.PreMultiply( fWidth / 638.0f, fHeight / 477.0f );
 
 		auto pRenderer = AGUI2::GetRenderer();

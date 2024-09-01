@@ -256,7 +256,7 @@ TBOOL AGUISlideshow::Setup( AGameState::HUDParams* a_pHUDParams, const Params& a
 	TFLOAT fWidth, fHeight;
 	AGUI2::GetSingleton()->GetDimensions( fWidth, fHeight );
 	m_FadeOverlay.SetDimensions( fWidth, fHeight );
-	m_FadeOverlay.SetAttachment( AGUI2Element::Anchor_TopCenter, AGUI2Element::Pivot_TopCenter );
+	m_FadeOverlay.SetAttachment( AGUI2ATTACHMENT_TOPCENTER, AGUI2ATTACHMENT_TOPCENTER );
 	m_FadeOverlay.Hide();
 
 	if ( a_rParams.bDelayAppear )

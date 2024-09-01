@@ -3,9 +3,11 @@
 // Note: Automatically generated header file.
 //-----------------------------------------------------------------------------
 
+#include "Sound/ASound.h"
+
 namespace soundbank {
 
-enum cowtip {
+enum cowtip : ASoundId {
 
 	// Category: Ingame
 	COWTIP_LAUNCHER_LOOP = 348,

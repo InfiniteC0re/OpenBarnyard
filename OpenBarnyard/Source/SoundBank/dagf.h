@@ -3,9 +3,11 @@
 // Note: Automatically generated header file.
 //-----------------------------------------------------------------------------
 
+#include "Sound/ASound.h"
+
 namespace soundbank {
 
-enum dagf {
+enum dagf : ASoundId {
 
 	// Category: VO
 	DAGF_DAG_BATTLE = 514,

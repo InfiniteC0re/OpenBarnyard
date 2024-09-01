@@ -33,6 +33,7 @@ public:
 		m_pPrev          = this;
 	}
 
+	// Sets a_rNode to be next after this
 	void LinkAfter( AGUI2ElementNode& a_rNode )
 	{
 		m_pNext          = &a_rNode;
@@ -41,6 +42,7 @@ public:
 		m_pPrev->m_pNext = this;
 	}
 
+	// Sets a_rNode to be previous after this
 	void LinkBefore( AGUI2ElementNode& a_rNode )
 	{
 		m_pNext                  = a_rNode.m_pNext;
@@ -58,37 +60,23 @@ protected:
 	AGUI2ElementNode* m_pPrev;
 };
 
+enum AGUI2ATTACHMENT
+{
+	AGUI2ATTACHMENT_TOPLEFT,
+	AGUI2ATTACHMENT_TOPCENTER,
+	AGUI2ATTACHMENT_TOPRIGHT,
+	AGUI2ATTACHMENT_MIDDLELEFT,
+	AGUI2ATTACHMENT_MIDDLECENTER,
+	AGUI2ATTACHMENT_MIDDLERIGHT,
+	AGUI2ATTACHMENT_BOTTOMLEFT,
+	AGUI2ATTACHMENT_BOTTOMCENTER,
+	AGUI2ATTACHMENT_BOTTOMRIGHT,
+	AGUI2ATTACHMENT_NUMOF,
+};
+
 class AGUI2Element : public AGUI2ElementNode
 {
 public:
-	using Pivot = uint32_t;
-	enum Pivot_ : Pivot
-	{
-		Pivot_TopLeft,
-		Pivot_TopCenter,
-		Pivot_TopRight,
-		Pivot_MiddleLeft,
-		Pivot_MiddleCenter,
-		Pivot_MiddleRight,
-		Pivot_BottomLeft,
-		Pivot_BottomCenter,
-		Pivot_BottomRight,
-	};
-
-	using Anchor = uint32_t;
-	enum Anchor_ : Anchor
-	{
-		Anchor_TopLeft,
-		Anchor_TopCenter,
-		Anchor_TopRight,
-		Anchor_MiddleLeft,
-		Anchor_MiddleCenter,
-		Anchor_MiddleRight,
-		Anchor_BottomLeft,
-		Anchor_BottomCenter,
-		Anchor_BottomRight,
-	};
-
 	using t_PostRender = void ( * )();
 
 public:
@@ -111,7 +99,10 @@ public:
 	virtual void   SetAlpha( TFLOAT a_fAlpha );
 	virtual void   SetShadowAlpha( TFLOAT a_fAlpha );
 	virtual void   SetFocus( TBOOL a_bFocused );
-	virtual TBOOL  IsPointInside( const Toshi::TVector2& a_rPoint );
+	virtual TBOOL  IsPointInside( TFLOAT a_fX, TFLOAT a_fY );
+
+	void AnchorPos( TFLOAT& a_rX, TFLOAT& a_rY, TFLOAT a_fWidth, TFLOAT a_fHeight );
+	void PivotPos( TFLOAT& a_rX, TFLOAT& a_rY, TFLOAT a_fWidth, TFLOAT a_fHeight );
 
 	void GetScreenTransform( AGUI2Transform& a_rOutTransform );
 	void GetInvScreenTransform( AGUI2Transform& a_rOutTransform );
@@ -179,20 +170,20 @@ public:
 	{
 		m_oTransform = AGUI2Transform();
 		m_oTransform.Rotate( a_fRotAngle );
-		m_oTransform.SetPosition( a_fX, a_fY );
+		m_oTransform.SetTranslation( a_fX, a_fY );
 	}
 
-	void SetAnchor( Anchor a_eAnchor )
+	void SetAnchor( AGUI2ATTACHMENT a_eAnchor )
 	{
 		m_eAnchor = a_eAnchor;
 	}
 
-	void SetPivot( Pivot a_ePivot )
+	void SetPivot( AGUI2ATTACHMENT a_ePivot )
 	{
 		m_ePivot = a_ePivot;
 	}
 
-	void SetAttachment( Anchor a_eAnchor, Pivot a_ePivot )
+	void SetAttachment( AGUI2ATTACHMENT a_eAnchor, AGUI2ATTACHMENT a_ePivot )
 	{
 		m_eAnchor = a_eAnchor;
 		m_ePivot  = a_ePivot;
@@ -245,8 +236,8 @@ protected:
 	AGUI2Element*    m_pParent;
 	AGUI2Transform   m_oTransform;
 	AGUI2ElementNode m_Children;
-	Anchor           m_eAnchor;
-	Pivot            m_ePivot;
+	AGUI2ATTACHMENT  m_eAnchor;
+	AGUI2ATTACHMENT  m_ePivot;
 	TFLOAT           m_fWidth;
 	TFLOAT           m_fHeight;
 	TUINT32          m_uiColour;

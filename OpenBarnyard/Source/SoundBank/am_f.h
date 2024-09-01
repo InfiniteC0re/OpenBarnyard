@@ -3,9 +3,11 @@
 // Note: Automatically generated header file.
 //-----------------------------------------------------------------------------
 
+#include "Sound/ASound.h"
+
 namespace soundbank {
 
-enum am_f {
+enum am_f : ASoundId {
 
 	// Category: Ingame
 	AM_F_CHEER = 641,

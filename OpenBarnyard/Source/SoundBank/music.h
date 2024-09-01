@@ -3,9 +3,11 @@
 // Note: Automatically generated header file.
 //-----------------------------------------------------------------------------
 
+#include "Sound/ASound.h"
+
 namespace soundbank {
 
-enum music {
+enum music : ASoundId {
 
 	// Category: Music
 	MUSIC_CHASING_CHICKS = 0,

@@ -62,8 +62,10 @@ int main( int argc, char** argv )
 						s_SoundBankHeaderCode += "// Note: Automatically generated header file.\n";
 						s_SoundBankHeaderCode += "//-----------------------------------------------------------------------------\n\n";
 
+						s_SoundBankHeaderCode += "#include \"Sound/ASound.h\"\n\n";
+
 						s_SoundBankHeaderCode += "namespace soundbank {\n\n";
-						s_SoundBankHeaderCode.AppendFormat( "enum %s {\n\n", strSoundBankName.GetString() );
+						s_SoundBankHeaderCode.AppendFormat( "enum %s : ASoundId {\n\n", strSoundBankName.GetString() );
 
 						for ( auto it = pSounds->Begin(); it != pSounds->End(); it++ )
 						{

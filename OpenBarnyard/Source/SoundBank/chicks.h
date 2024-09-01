@@ -3,9 +3,11 @@
 // Note: Automatically generated header file.
 //-----------------------------------------------------------------------------
 
+#include "Sound/ASound.h"
+
 namespace soundbank {
 
-enum chicks {
+enum chicks : ASoundId {
 
 	// Category: Ingame
 	CHICKS_CHICKS = 325,

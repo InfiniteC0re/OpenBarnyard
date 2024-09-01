@@ -84,7 +84,7 @@ void AGUI2RendererDX8::BeginScene()
 	auto& rTransform           = m_pTransforms[ m_iTransformCount ];
 	rTransform.m_Rotation[ 0 ] = { pDisplayParams->uiWidth / fRootWidth, 0.0f };
 	rTransform.m_Rotation[ 1 ] = { 0.0f, -TFLOAT( pDisplayParams->uiHeight ) / fRootHeight };
-	rTransform.m_Position      = { 0.0f, 0.0f };
+	rTransform.m_Translation   = { 0.0f, 0.0f };
 
 	static TUINT32          s_MatrixFlags = 0;
 	static Toshi::TMatrix44 s_IdentityMatrix;
@@ -414,10 +414,10 @@ void AGUI2RendererDX8::PushTransform( const AGUI2Transform& a_rTransform, const 
 
 	TVector2 vec;
 	transform1.Transform( vec, a_rVec1 );
-	transform1.m_Position = { vec.x, vec.y };
+	transform1.m_Translation = { vec.x, vec.y };
 
 	transform2.Transform( vec, a_rVec2 );
-	transform2.m_Position = { vec.x, vec.y };
+	transform2.m_Translation = { vec.x, vec.y };
 
 	AGUI2Transform::Multiply( m_pTransforms[ m_iTransformCount ], transform1, transform2 );
 	m_bIsTransformDirty = TTRUE;
@@ -723,8 +723,8 @@ void AGUI2RendererDX8::UpdateTransform()
 	worldMatrix.m_f33 = 1.0f;
 	worldMatrix.m_f34 = 0.0f;
 
-	worldMatrix.m_f41 = pTransform->m_Position.x;
-	worldMatrix.m_f42 = pTransform->m_Position.y;
+	worldMatrix.m_f41 = pTransform->m_Translation.x;
+	worldMatrix.m_f42 = pTransform->m_Translation.y;
 	worldMatrix.m_f43 = 0.0f;
 	worldMatrix.m_f44 = 1.0f;
 

@@ -3,9 +3,11 @@
 // Note: Automatically generated header file.
 //-----------------------------------------------------------------------------
 
+#include "Sound/ASound.h"
+
 namespace soundbank {
 
-enum pool {
+enum pool : ASoundId {
 
 	// Category: Ingame
 	POOL_BALL_BALL = 292,

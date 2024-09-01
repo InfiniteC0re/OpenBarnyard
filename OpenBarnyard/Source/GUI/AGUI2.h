@@ -24,15 +24,13 @@ public:
 	void GetDimensions( TFLOAT& a_rWidth, TFLOAT& a_rHeight );
 	void CreateContext();
 
-	TBOOL IsCursorVisible() const
-	{
-		return m_bShowMouseCursor;
-	}
+	TBOOL IsCursorVisible() const { return m_bShowMouseCursor; }
 
 public:
-	static AGUI2Element*  GetRootElement() { return GetSingletonSafe()->m_pRootElement; }
-	static AGUI2Context*  GetContext() { return ms_pCurrentContext; }
-	static AGUI2Renderer* GetRenderer();
+	static AGUI2MouseCursor& GetMouseCursor() { return GetSingletonSafe()->m_oMouseCursor; }
+	static AGUI2Element*     GetRootElement() { return GetSingletonSafe()->m_pRootElement; }
+	static AGUI2Context*     GetContext() { return ms_pCurrentContext; }
+	static AGUI2Renderer*    GetRenderer();
 
 private:
 	static void MainPostRenderCallback();

@@ -3,9 +3,11 @@
 // Note: Automatically generated header file.
 //-----------------------------------------------------------------------------
 
+#include "Sound/ASound.h"
+
 namespace soundbank {
 
-enum wmike {
+enum wmike : ASoundId {
 
 	// Category: Ingame
 	WMIKE_MIKE_STEP = 590,

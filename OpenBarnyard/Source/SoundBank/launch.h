@@ -3,9 +3,11 @@
 // Note: Automatically generated header file.
 //-----------------------------------------------------------------------------
 
+#include "Sound/ASound.h"
+
 namespace soundbank {
 
-enum launch {
+enum launch : ASoundId {
 
 	// Category: Ingame
 	LAUNCH_STRETCH = 125,

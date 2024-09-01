@@ -3,9 +3,11 @@
 // Note: Automatically generated header file.
 //-----------------------------------------------------------------------------
 
+#include "Sound/ASound.h"
+
 namespace soundbank {
 
-enum am_m {
+enum am_m : ASoundId {
 
 	// Category: Ingame
 	AM_M_THROW = 600,

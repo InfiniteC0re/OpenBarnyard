@@ -3,9 +3,11 @@
 // Note: Automatically generated header file.
 //-----------------------------------------------------------------------------
 
+#include "Sound/ASound.h"
+
 namespace soundbank {
 
-enum pigc {
+enum pigc : ASoundId {
 
 	// Category: VO
 	PIGC_PIG_BYE1 = 497,

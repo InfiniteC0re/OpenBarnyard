@@ -3,9 +3,11 @@
 // Note: Automatically generated header file.
 //-----------------------------------------------------------------------------
 
+#include "Sound/ASound.h"
+
 namespace soundbank {
 
-enum targets {
+enum targets : ASoundId {
 
 	// Category: Ingame
 	TARGETS_CANS = 485,

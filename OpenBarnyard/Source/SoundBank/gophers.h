@@ -3,9 +3,11 @@
 // Note: Automatically generated header file.
 //-----------------------------------------------------------------------------
 
+#include "Sound/ASound.h"
+
 namespace soundbank {
 
-enum gophers {
+enum gophers : ASoundId {
 
 	// Category: VO
 	GOPHERS_SELL = 488,

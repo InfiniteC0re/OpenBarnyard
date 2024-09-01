@@ -372,5 +372,5 @@ void ARootTask::LoadFrontEnd()
 	    AFade::Color( 0, 0, 0, 0 ),
 	    1.0f );
 
-	ASoundManager::GetSingleton()->PlayCue( soundbank::UI_CONFIRM );
+	ASoundManager::GetSingleton()->PlayCue( soundbank::MUSIC_WILD_MIKE );
 }

@@ -3,9 +3,11 @@
 // Note: Automatically generated header file.
 //-----------------------------------------------------------------------------
 
+#include "Sound/ASound.h"
+
 namespace soundbank {
 
-enum raccoon {
+enum raccoon : ASoundId {
 
 	// Category: Ingame
 	RACCOON_RAC_AIM = 681,

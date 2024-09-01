@@ -3,9 +3,11 @@
 // Note: Automatically generated header file.
 //-----------------------------------------------------------------------------
 
+#include "Sound/ASound.h"
+
 namespace soundbank {
 
-enum mrs_b {
+enum mrs_b : ASoundId {
 
 	// Category: VO
 	MRS_B_MR_B_GRUNTS1 = 540,

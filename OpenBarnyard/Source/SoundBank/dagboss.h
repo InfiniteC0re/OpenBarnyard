@@ -3,9 +3,11 @@
 // Note: Automatically generated header file.
 //-----------------------------------------------------------------------------
 
+#include "Sound/ASound.h"
+
 namespace soundbank {
 
-enum dagboss {
+enum dagboss : ASoundId {
 
 	// Category: Ingame
 	DAGBOSS_LAUNCHER_FIRE = 704,

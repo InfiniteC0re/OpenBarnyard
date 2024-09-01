@@ -62,7 +62,7 @@ void ALoadScreen::Create()
 
 		pRectangle->SetDimensions( pTexSection->GetWidth(), pTexSection->GetHeight() );
 		pRectangle->SetTextureSection( pTexSection );
-		pRectangle->SetAttachment( AGUI2Element::Anchor_BottomLeft, AGUI2Element::Pivot_BottomLeft );
+		pRectangle->SetAttachment( AGUI2ATTACHMENT_BOTTOMLEFT, AGUI2ATTACHMENT_BOTTOMLEFT );
 		pRectangle->SetTransform( fRectPosX, -fHeight * 0.075f );
 		pRectangle->Hide();
 
@@ -76,7 +76,7 @@ void ALoadScreen::Create()
 	m_TextBox.Create( pFont, pFont->GetTextWidth( pLoadingString, 1.0f ) );
 	m_TextBox.SetScale( 1.0f );
 	m_TextBox.SetText( pLoadingString );
-	m_TextBox.SetAttachment( AGUI2Element::Pivot_BottomCenter, AGUI2Element::Pivot_BottomCenter );
+	m_TextBox.SetAttachment( AGUI2ATTACHMENT_BOTTOMCENTER, AGUI2ATTACHMENT_BOTTOMCENTER );
 	m_TextBox.SetTransform( 0.0f, -fHeight * 0.08f );
 	m_TextBox.Hide();
 

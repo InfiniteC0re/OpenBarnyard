@@ -298,8 +298,8 @@ MEMBER_HOOK( 0x0064fa70, AGUI2RendererDX8, AGUI2Renderer_RenderRectangle, void, 
 	view.m_f32 = 0.0f;
 	view.m_f33 = 1.0f;
 	view.m_f34 = 0.0f;
-	view.m_f41 = pTransform->m_Position.x;
-	view.m_f42 = pTransform->m_Position.y;
+	view.m_f41 = pTransform->m_Translation.x;
+	view.m_f42 = pTransform->m_Translation.y;
 	view.m_f43 = 0.0f;
 	view.m_f44 = 1.0f;
 

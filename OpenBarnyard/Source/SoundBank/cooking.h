@@ -3,9 +3,11 @@
 // Note: Automatically generated header file.
 //-----------------------------------------------------------------------------
 
+#include "Sound/ASound.h"
+
 namespace soundbank {
 
-enum cooking {
+enum cooking : ASoundId {
 
 	// Category: Ingame
 	COOKING_COOKING = 700,

@@ -3,9 +3,11 @@
 // Note: Automatically generated header file.
 //-----------------------------------------------------------------------------
 
+#include "Sound/ASound.h"
+
 namespace soundbank {
 
-enum cocktails {
+enum cocktails : ASoundId {
 
 	// Category: Ingame
 	COCKTAILS_MAKE_DRINK = 703,

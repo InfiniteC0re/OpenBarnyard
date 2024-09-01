@@ -85,7 +85,7 @@ AFade* AFadeManager::StartFade( const AFade::Color& a_rFadeFrom, const AFade::Co
 
 	auto& rRectangle = pFade->GetRectangleElement();
 	rRectangle.Create( fWidth, fHeight );
-	rRectangle.SetAttachment( AGUI2Element::Anchor_TopCenter, AGUI2Element::Pivot_TopCenter );
+	rRectangle.SetAttachment( AGUI2ATTACHMENT_TOPCENTER, AGUI2ATTACHMENT_TOPCENTER );
 	rRectangle.SetColour( a_rFadeFrom.GetTColor32() );
 	rRectangle.SetInFront();
 

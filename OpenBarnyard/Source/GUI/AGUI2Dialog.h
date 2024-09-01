@@ -7,21 +7,6 @@ class AGUI2Dialog :
     public AGUI2Element
 {
 public:
-	enum WINDOWTEXTURE
-	{
-		WT_TOPLEFT,
-		WT_TOPCENTER,
-		WT_TOPRIGHT,
-		WT_MIDDLELEFT,
-		WT_MIDDLECENTER,
-		WT_MIDDLERIGHT,
-		WT_BOTTOMLEFT,
-		WT_BOTTOMCENTER,
-		WT_BOTTOMRIGHT,
-		WT_NUMOF,
-	};
-
-public:
 	// constructors/destructor
 	AGUI2Dialog();
 	~AGUI2Dialog();
@@ -43,7 +28,7 @@ public:
 
 private:
 	AGUI2Element*        m_pFocusElement;
-	AGUI2TextureSection* m_apTexTiles[ WT_NUMOF ];
-	AGUI2Rectangle       m_aRectangles[ WT_NUMOF ];
+	AGUI2TextureSection* m_apTexTiles[ AGUI2ATTACHMENT_NUMOF ];
+	AGUI2Rectangle       m_aRectangles[ AGUI2ATTACHMENT_NUMOF ];
 	TBOOL                m_bUseScissor;
 };

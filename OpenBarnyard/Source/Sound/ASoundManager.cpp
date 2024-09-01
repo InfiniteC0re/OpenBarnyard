@@ -241,12 +241,12 @@ void ASoundManager::OnDestroy()
 	m_PauseListener.Disconnect();
 }
 
-TINT ASoundManager::PlayCue( ASoundWaveId a_iSound )
+TINT ASoundManager::PlayCue( ASoundId a_iSound )
 {
 	return PlayCueEx( a_iSound, 1.0f, TFALSE, 0.0f, -1 );
 }
 
-TINT ASoundManager::PlayCueEx( ASoundWaveId a_iSound, TFLOAT a_fVolume, TBOOL a_bFlag, TFLOAT a_fDelay, TINT a_iTrack )
+TINT ASoundManager::PlayCueEx( ASoundId a_iSound, TFLOAT a_fVolume, TBOOL a_bFlag, TFLOAT a_fDelay, TINT a_iTrack )
 {
 	if ( a_iSound == ASOUNDWAVEID_INVALID )
 		return -1;

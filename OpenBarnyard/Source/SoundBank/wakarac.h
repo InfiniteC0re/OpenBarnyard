@@ -3,9 +3,11 @@
 // Note: Automatically generated header file.
 //-----------------------------------------------------------------------------
 
+#include "Sound/ASound.h"
+
 namespace soundbank {
 
-enum wakarac {
+enum wakarac : ASoundId {
 
 	// Category: Ingame
 	WAKARAC_MISS = 305,

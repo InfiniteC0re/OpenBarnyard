@@ -86,11 +86,16 @@ public:
 		Multiply( scalar );
 	}
 
+	constexpr void Negate()
+	{
+		Set( -x, -y );
+	}
+
 	void Normalize()
 	{
 		if ( MagnitudeSq() != 0.0f )
 		{
-			float magnitude = TMath::OneOverSqrt( MagnitudeSq() );
+			TFLOAT magnitude = TMath::OneOverSqrt( MagnitudeSq() );
 			Set( x * magnitude, y * magnitude );
 		}
 		else

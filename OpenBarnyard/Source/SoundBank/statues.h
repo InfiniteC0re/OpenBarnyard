@@ -3,9 +3,11 @@
 // Note: Automatically generated header file.
 //-----------------------------------------------------------------------------
 
+#include "Sound/ASound.h"
+
 namespace soundbank {
 
-enum statues {
+enum statues : ASoundId {
 
 	// Category: Ingame
 	STATUES_AIR_GUITAR = 196,

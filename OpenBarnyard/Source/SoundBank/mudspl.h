@@ -3,9 +3,11 @@
 // Note: Automatically generated header file.
 //-----------------------------------------------------------------------------
 
+#include "Sound/ASound.h"
+
 namespace soundbank {
 
-enum mudspl {
+enum mudspl : ASoundId {
 
 	// Category: Ingame
 	MUDSPL_PIPESQUEAK = 53,

@@ -3,9 +3,11 @@
 // Note: Automatically generated header file.
 //-----------------------------------------------------------------------------
 
+#include "Sound/ASound.h"
+
 namespace soundbank {
 
-enum junkyard {
+enum junkyard : ASoundId {
 
 	// Category: Ingame
 	JUNKYARD_WIND_J01 = 640,
