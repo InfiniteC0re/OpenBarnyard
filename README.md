@@ -1,5 +1,9 @@
 # OpenBarnyard [![Toshi](https://github.com/InfiniteC0re/OpenBarnyard/actions/workflows/ci.yaml/badge.svg)](https://github.com/InfiniteC0re/OpenBarnyard/actions/workflows/ci.yaml)
-Decompilation of Barnyard the video game and the TOSHI 2.0 game engine.
+WIP decompilation of Barnyard the video game and the proprietary TOSHI 2.0 game engine developed by Blue Tongue Entertainment.
+
+Join our [OpenTOSHI](https://discord.gg/3bMq8hWvFX) Discord server that has commit notifications, devlogs and much more.
+
+Also, check out [OpenJPOG](https://github.com/AdventureT/OpenJPOG) repository with a WIP decompilation of Jurassic Park: Operation Genesis that utilizes an older version of the TOSHI game engine.
 
 ![alt text](https://repository-images.githubusercontent.com/524925868/e2f3fde2-ece4-4a71-bd81-f4cbce744c9a)
 
