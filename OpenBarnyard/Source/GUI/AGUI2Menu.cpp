@@ -11,6 +11,8 @@
 //-----------------------------------------------------------------------------
 #include <Core/TMemoryDebugOn.h>
 
+#define EAT_ALL_INPUT_EVENTS TFALSE
+
 TOSHI_NAMESPACE_USING
 
 AGUI2Menu::AGUI2Menu()
@@ -113,7 +115,7 @@ TBOOL AGUI2Menu::ProcessInputCommand( AInputCommand a_eCommand, Toshi::TInputInt
 
 	if ( a_pEvent->GetEventType() == TInputInterface::EVENT_TYPE_GONE_DOWN ||
 	     a_pEvent->GetEventType() == TInputInterface::EVENT_TYPE_REPEAT ||
-	     TFALSE )
+	     EAT_ALL_INPUT_EVENTS )
 	{
 		bHandled = TTRUE;
 
@@ -145,7 +147,7 @@ TBOOL AGUI2Menu::ProcessInputCommand( AInputCommand a_eCommand, Toshi::TInputInt
 				a_pEvent->StartRepeat( 0.5f, 0.1f );
 				break;
 			default:
-				bHandled = TFALSE;
+				bHandled = EAT_ALL_INPUT_EVENTS;
 				break;
 		}
 	}
