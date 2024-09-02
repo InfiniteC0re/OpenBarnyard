@@ -186,7 +186,7 @@ TBOOL ASoundManager::OnUpdate( TFLOAT a_fDeltaTime )
 	{
 		TFLOAT fCueStartTime = m_aCues[ i ].fStartTime;
 
-		if ( fCueStartTime > 0.0f && IsCuePlaying( i ) )
+		if ( fCueStartTime > 0.0f && !IsCuePlaying( i ) )
 		{
 			m_aCues[ i ].Reset();
 		}
@@ -398,7 +398,7 @@ TBOOL ASoundManager::IsCuePlaying( TINT a_iCueIndex )
 			// Stream
 			T2_FOREACH( pCue->oChannelRefs, channel )
 			{
-				if ( FSOUND_IsPlaying( channel->iFMODChannelHandle ) )
+				if ( !( channel->iFlags & 0x20 ) || FSOUND_IsPlaying( channel->iFMODChannelHandle ) )
 				{
 					return TTRUE;
 				}
@@ -409,7 +409,8 @@ TBOOL ASoundManager::IsCuePlaying( TINT a_iCueIndex )
 			// Loaded data
 			T2_FOREACH( pCue->oChannelRefs, channel )
 			{
-				if ( !( channel->iFlags & 0x20 ) || FSOUND_IsPlaying( channel->iFMODChannelHandle ) )
+				TASSERT( channel->iFMODChannelHandle != -1 );
+				if ( FSOUND_IsPlaying( channel->iFMODChannelHandle ) )
 				{
 					return TTRUE;
 				}
@@ -976,7 +977,7 @@ void ASoundManager::PauseAllCues( TBOOL a_bPause )
 		{
 			Cue* pCue = &m_aCues[ i ];
 
-			if ( !pCue->pSound || m_aCategories[ pCue->pSound->m_uiCategoryIndex ].bPausable )
+			if ( !pCue->pSound || !m_aCategories[ pCue->pSound->m_uiCategoryIndex ].bPausable )
 				continue;
 
 			T2_FOREACH( pCue->oChannelRefs, channel )
@@ -1308,6 +1309,7 @@ TBOOL ASoundManager::UpdateStreamCue( StreamRef* a_pStream )
 
 				TINT iChannelHandle          = FSOUND_Stream_PlayEx( FSOUND_FREE, pStreamHandle, TNULL, TTRUE );
 				pChannel->iFMODChannelHandle = iChannelHandle;
+				TASSERT( iChannelHandle != -1 );
 
 				if ( iChannelHandle == -1 )
 					return TTRUE;
@@ -1420,6 +1422,7 @@ void ASoundManager::EventHandler_PlaySound( SoundEvent* a_pEvent )
 
 		TINT iChannelHandle             = FSOUND_PlaySoundEx( FSOUND_FREE, pSample, TNULL, TTRUE );
 		pChannelRef->iFMODChannelHandle = iChannelHandle;
+		TASSERT( iChannelHandle != -1 );
 
 		if ( iChannelHandle != -1 )
 		{
