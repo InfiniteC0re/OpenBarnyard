@@ -80,9 +80,9 @@ TBOOL AGameState::Unknown6()
 	return TTRUE;
 }
 
-TUINT32 AGameState::GetSound()
+ASoundId AGameState::GetSound()
 {
-	return -1;
+	return ASOUNDWAVEID_INVALID;
 }
 
 TBOOL AGameState::Unknown7()

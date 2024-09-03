@@ -21,8 +21,8 @@ public:
 		ACTIONFLAGS_CANCEL = BITFLAG( 5 ),
 	};
 
-	using ActionCallback = void ( * )( void* a_pUserData, AGUI2MenuItem* a_pItem );
-	using FocusCallback  = void ( * )( void* a_pUserData, AGUI2MenuItem* a_pOldFocus, AGUI2MenuItem* a_pNewFocus );
+	using ActivateCallback = void ( * )( void* a_pUserData, AGUI2MenuItem* a_pItem );
+	using FocusCallback    = void    ( * )( void* a_pUserData, AGUI2MenuItem* a_pOldFocus, AGUI2MenuItem* a_pNewFocus );
 
 public:
 	// constructors/destructor
@@ -30,35 +30,56 @@ public:
 	~AGUI2Menu();
 
 	void  Update( TFLOAT a_fDeltaTime );
-	TBOOL ProcessInputCommand( AInputCommand a_eCommand, Toshi::TInputInterface::InputEvent* a_pEvent );
+	TBOOL ProcessInputCommand( AInputCommand a_eCommand, const Toshi::TInputInterface::InputEvent* a_pEvent );
 
 	void AddMenuItem( AGUI2MenuItem& a_rMenuItem );
 	void SetFocusAt( AGUI2MenuItem& a_rMenuItem );
 
-	void SetAlphaRecursive( TFLOAT a_fAlpha, TFLOAT a_fShadowAlpha );
+	// Reflows elements vertically and calculates dimensions
+	void SetVerticalFlow();
+
+	TBOOL TriggerButtonPress( AGUI2MenuItem& a_rMenuItem );
+
+	void SetMenuAlpha( TFLOAT a_fAlpha, TFLOAT a_fShadowAlpha = -1.0f );
+	void SetMouseStateDirty() { m_bMouseStateDirty = TTRUE; }
+
+	AGUI2MenuItem* GetFocusedMenuItem() const { return m_pFocusedMenuItem; }
+	AGUI2MenuItem* GetHoveredMenuItem() const { return m_pHoveredMenuItem; }
+
+	void SetCallbackUserData( void* a_pUserData ) { m_pCallbackUserData = a_pUserData; }
+	void SetItemActivationCallback( ActivateCallback a_fnCallback ) { m_fnActivateCallback = a_fnCallback; }
+	void SetItemFocusCallback( FocusCallback a_fnCallback ) { m_fnFocusCallback = a_fnCallback; }
+
+	void SetFocusSound( ASoundId a_eSound ) { m_eFocusSound = a_eSound; }
+	void SetSelectSound( ASoundId a_eSound ) { m_eSelectSound = a_eSound; }
+	void SetBackSound( ASoundId a_eSound ) { m_eBackSound = a_eSound; }
+	void SetNegativeSound( ASoundId a_eSound ) { m_eNegativeSound = a_eSound; }
 
 private:
-	TINT           m_Unk1;
-	AGUI2MenuItem* m_pUnk2;
-	AGUI2MenuItem* m_pCancelItem;
-	ASoundId       m_eFocusSound;
-	ASoundId       m_eSelectSound;
-	ASoundId       m_eBackSound;
-	ASoundId       m_eNegativeSound;
-	AGUI2MenuItem* m_pLastMenuItem;
-	AGUI2MenuItem* m_pFocusedMenuItem;
-	ACTIONFLAGS    m_eActionFlags;
-	TINT           m_Unk3;
-	TINT           m_Unk4;
-	ActionCallback m_fnActionCallback;
-	FocusCallback  m_fnFocusCallback;
-	void*          m_pCallbackUserData;
-	TFLOAT         m_fTime;
-	TBOOL          m_bFlag1;
-	TBOOL          m_bVerticalFlow;
-	TINT           m_iNumMenuItems;
-	TBOOL          m_bHoverDirty;
-	AGUI2MenuItem* m_pHoveredMenuItem;
+	void ActivateFocusedButton();
+
+private:
+	TFLOAT           m_fItemSpacing;
+	AGUI2MenuItem*   m_pDefaultFocusElement;
+	AGUI2MenuItem*   m_pCancelItem;
+	ASoundId         m_eFocusSound;
+	ASoundId         m_eSelectSound;
+	ASoundId         m_eBackSound;
+	ASoundId         m_eNegativeSound;
+	AGUI2MenuItem*   m_pLastMenuItem;
+	AGUI2MenuItem*   m_pFocusedMenuItem;
+	ACTIONFLAGS      m_eActionFlags;
+	TINT             m_Unk3;
+	TINT             m_Unk4;
+	ActivateCallback m_fnActivateCallback;
+	FocusCallback    m_fnFocusCallback;
+	void*            m_pCallbackUserData;
+	TFLOAT           m_fTime;
+	TBOOL            m_bFlag1;
+	TBOOL            m_bHorizontalFlow;
+	TINT             m_iNumMenuItems;
+	TBOOL            m_bMouseStateDirty;
+	AGUI2MenuItem*   m_pHoveredMenuItem;
 };
 
 class AGUI2MenuItem :
@@ -92,8 +113,8 @@ public:
 	virtual void          OnUpdate( TFLOAT a_fDeltaTime );
 	virtual COMMANDRESULT OnInputCommand( AGUI2Menu::ACTIONFLAGS& a_rActionFlags );
 	virtual void          SetEnabled( TBOOL a_bEnabled );
-	virtual TFLOAT        Unknown5();
-	virtual TFLOAT        Unknown6();
+	virtual TFLOAT        GetFlowVisualOffset();
+	virtual TFLOAT        GetFlowOffset();
 
 	void LinkMenuItemBefore( AGUI2MenuItem& a_rLinkAfter );
 

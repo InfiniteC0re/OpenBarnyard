@@ -17,28 +17,28 @@ TOSHI_NAMESPACE_USING
 
 AGUI2Menu::AGUI2Menu()
 {
-	m_Unk1              = 0;
-	m_pUnk2             = TNULL;
-	m_pCancelItem       = TNULL;
-	m_pLastMenuItem     = TNULL;
-	m_pFocusedMenuItem  = TNULL;
-	m_eFocusSound       = soundbank::UI_MENUCLICK;
-	m_eSelectSound      = soundbank::UI_MENUOK;
-	m_eBackSound        = soundbank::UI_MENUBACK;
-	m_eNegativeSound    = soundbank::UI_NEGATIVE;
-	m_eActionFlags      = 0;
-	m_Unk3              = 0;
-	m_Unk4              = 0;
-	m_fnActionCallback  = TNULL;
-	m_fnFocusCallback   = TNULL;
-	m_pCallbackUserData = TNULL;
-	m_fTime             = 0.0f;
-	m_bVerticalFlow     = TFALSE;
-	m_iNumMenuItems     = 0;
-	m_bHoverDirty       = TFALSE;
-	m_pHoveredMenuItem  = TNULL;
-	m_eActionFlags      = 0;
-	m_bFlag1            = TTRUE;
+	m_fItemSpacing         = 0.0f;
+	m_pDefaultFocusElement = TNULL;
+	m_pCancelItem          = TNULL;
+	m_pLastMenuItem        = TNULL;
+	m_pFocusedMenuItem     = TNULL;
+	m_eFocusSound          = soundbank::UI_MENUCLICK;
+	m_eSelectSound         = soundbank::UI_MENUOK;
+	m_eBackSound           = soundbank::UI_MENUBACK;
+	m_eNegativeSound       = soundbank::UI_NEGATIVE;
+	m_eActionFlags         = 0;
+	m_Unk3                 = 0;
+	m_Unk4                 = 0;
+	m_fnActivateCallback   = TNULL;
+	m_fnFocusCallback      = TNULL;
+	m_pCallbackUserData    = TNULL;
+	m_fTime                = 0.0f;
+	m_bHorizontalFlow      = TFALSE;
+	m_iNumMenuItems        = 0;
+	m_bMouseStateDirty     = TFALSE;
+	m_pHoveredMenuItem     = TNULL;
+	m_eActionFlags         = 0;
+	m_bFlag1               = TTRUE;
 }
 
 AGUI2Menu::~AGUI2Menu()
@@ -47,7 +47,7 @@ AGUI2Menu::~AGUI2Menu()
 
 void AGUI2Menu::Update( TFLOAT a_fDeltaTime )
 {
-	if ( m_bHoverDirty )
+	if ( m_bMouseStateDirty )
 	{
 		AGUI2Transform oElementInvTransform;
 
@@ -87,7 +87,7 @@ void AGUI2Menu::Update( TFLOAT a_fDeltaTime )
 			}
 		}
 
-		m_bHoverDirty = TFALSE;
+		m_bMouseStateDirty = TFALSE;
 	}
 
 	if ( m_pLastMenuItem != TNULL )
@@ -109,7 +109,7 @@ void AGUI2Menu::Update( TFLOAT a_fDeltaTime )
 	m_fTime += a_fDeltaTime;
 }
 
-TBOOL AGUI2Menu::ProcessInputCommand( AInputCommand a_eCommand, Toshi::TInputInterface::InputEvent* a_pEvent )
+TBOOL AGUI2Menu::ProcessInputCommand( AInputCommand a_eCommand, const Toshi::TInputInterface::InputEvent* a_pEvent )
 {
 	TBOOL bHandled = TFALSE;
 
@@ -164,8 +164,8 @@ TBOOL AGUI2Menu::ProcessInputCommand( AInputCommand a_eCommand, Toshi::TInputInt
 				ASoundManager::GetSingleton()->PlayCue( m_eBackSound );
 
 				// Call handler if it's specified
-				if ( m_fnActionCallback )
-					m_fnActionCallback( m_pCallbackUserData, m_pCancelItem );
+				if ( m_fnActivateCallback )
+					m_fnActivateCallback( m_pCallbackUserData, m_pCancelItem );
 			}
 			else
 			{
@@ -175,21 +175,14 @@ TBOOL AGUI2Menu::ProcessInputCommand( AInputCommand a_eCommand, Toshi::TInputInt
 		}
 		else if ( eCommandResult == AGUI2MenuItem::COMMANDRESULT_OK )
 		{
-			if ( m_fnActionCallback && m_pFocusedMenuItem )
-			{
-				// Can submit
-				ASoundManager::GetSingleton()->PlayCue( m_eSelectSound );
-
-				if ( m_fnActionCallback )
-					m_fnActionCallback( m_pCallbackUserData, m_pFocusedMenuItem );
-			}
+			ActivateFocusedButton();
 		}
 		else if ( eCommandResult == AGUI2MenuItem::COMMANDRESULT_NONE )
 		{
 			// If element didn't process the command, check if the menu can handle this
 
-			if ( ( !m_bVerticalFlow && m_eActionFlags & ACTIONFLAGS_UP ) ||
-			     ( m_bVerticalFlow && m_eActionFlags & ACTIONFLAGS_LEFT ) )
+			if ( ( !m_bHorizontalFlow && m_eActionFlags & ACTIONFLAGS_UP ) ||
+			     ( m_bHorizontalFlow && m_eActionFlags & ACTIONFLAGS_LEFT ) )
 			{
 				// Focus on next element
 				AGUI2MenuItem* pNewFocused = m_pFocusedMenuItem->m_pNextMenuItem;
@@ -211,8 +204,8 @@ TBOOL AGUI2Menu::ProcessInputCommand( AInputCommand a_eCommand, Toshi::TInputInt
 					bHandled = TTRUE;
 				}
 			}
-			else if ( ( !m_bVerticalFlow && m_eActionFlags & ACTIONFLAGS_DOWN ) ||
-			          ( m_bVerticalFlow && m_eActionFlags & ACTIONFLAGS_RIGHT ) )
+			else if ( ( !m_bHorizontalFlow && m_eActionFlags & ACTIONFLAGS_DOWN ) ||
+			          ( m_bHorizontalFlow && m_eActionFlags & ACTIONFLAGS_RIGHT ) )
 			{
 				// Focus on previous element
 				AGUI2MenuItem* pNewFocused = m_pFocusedMenuItem->m_pPrevMenuItem;
@@ -264,7 +257,65 @@ void AGUI2Menu::SetFocusAt( AGUI2MenuItem& a_rMenuItem )
 	}
 }
 
-void AGUI2Menu::SetAlphaRecursive( TFLOAT a_fAlpha, TFLOAT a_fShadowAlpha )
+void AGUI2Menu::SetVerticalFlow()
+{
+	m_fWidth = 0.0f;
+	m_fHeight = 0.0f;
+
+	TFLOAT fOffsetY = 0.0f;
+	AGUI2MenuItem* pMenuItem = m_pLastMenuItem;
+	
+	if ( pMenuItem )
+	{
+		while ( TTRUE )
+		{
+			if ( pMenuItem->IsVisible() )
+			{
+				TFLOAT fItemWidth, fItemHeight;
+				pMenuItem->GetDimensions( fItemWidth, fItemHeight );
+
+				TFLOAT fItemPosY = fItemHeight * 0.5f + pMenuItem->GetFlowVisualOffset() + fOffsetY;
+				pMenuItem->GetTransform().SetTranslation( 0.0f, fItemPosY );
+				pMenuItem->SetAttachment( AGUI2ATTACHMENT_TOPCENTER, AGUI2ATTACHMENT_MIDDLECENTER );
+
+				m_fWidth = TMath::Max( m_fWidth, fItemWidth );
+				fOffsetY = fItemHeight * 0.5f + pMenuItem->GetFlowOffset() + fItemPosY + m_fItemSpacing;
+			}
+
+			pMenuItem = pMenuItem->m_pPrevMenuItem;
+			if ( pMenuItem == m_pLastMenuItem ) break;
+		}
+
+		// Set focus at the last added item
+		SetFocusAt( *m_pLastMenuItem );
+	}
+
+	// Update height
+	m_fHeight = fOffsetY;
+
+	// Set focus at default item if it's specified
+	if ( m_pFocusedMenuItem )
+		SetFocusAt( *m_pFocusedMenuItem );
+
+	m_bHorizontalFlow = TFALSE;
+}
+
+TBOOL AGUI2Menu::TriggerButtonPress( AGUI2MenuItem& a_rMenuItem )
+{
+	m_eActionFlags |= ACTIONFLAGS_OK;
+	AGUI2MenuItem::COMMANDRESULT eCommandResult = a_rMenuItem.OnInputCommand( m_eActionFlags );
+	m_eActionFlags                              = ACTIONFLAGS_NONE;
+
+	if ( eCommandResult == AGUI2MenuItem::COMMANDRESULT_OK )
+	{
+		ActivateFocusedButton();
+		return TTRUE;
+	}
+
+	return TFALSE;
+}
+
+void AGUI2Menu::SetMenuAlpha( TFLOAT a_fAlpha, TFLOAT a_fShadowAlpha /* = -1.0f*/ )
 {
 	if ( m_pLastMenuItem != TNULL )
 	{
@@ -284,4 +335,16 @@ void AGUI2Menu::SetAlphaRecursive( TFLOAT a_fAlpha, TFLOAT a_fShadowAlpha )
 	}
 
 	AGUI2Element::SetAlpha( a_fAlpha );
+}
+
+void AGUI2Menu::ActivateFocusedButton()
+{
+	if ( m_fnActivateCallback && m_pFocusedMenuItem )
+	{
+		// Can submit
+		ASoundManager::GetSingleton()->PlayCue( m_eSelectSound );
+
+		if ( m_fnActivateCallback )
+			m_fnActivateCallback( m_pCallbackUserData, m_pFocusedMenuItem );
+	}
 }

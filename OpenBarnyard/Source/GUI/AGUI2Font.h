@@ -49,9 +49,9 @@ public:
 	void DrawTextWrapped( const TWCHAR* a_wszText, TFLOAT a_fX, TFLOAT a_fY, TFLOAT a_fWidth, TFLOAT a_fHeight, TUINT32 a_uiColour, TFLOAT a_fScale, TextAlign a_eAlign, void* a_fnCallback = TNULL );
 	void DrawTextSingleLine( const TWCHAR* a_wszText, TINT a_iTextLength, TFLOAT a_fX, TFLOAT a_fY, TUINT32 a_uiColour, TFLOAT a_fScale, void* a_fnCallback = TNULL );
 
-	TFLOAT GetTextHeightWrapped( const TWCHAR* a_wszText, TFLOAT a_fMaxWidth, TFLOAT a_fScale );
-	TFLOAT GetTextWidth( const TWCHAR* a_wszText, TFLOAT a_fScale );
-	TFLOAT GetTextWidth( const TWCHAR* a_wszText, TINT a_iTextLength, TFLOAT a_fScale );
+	TFLOAT GetTextHeightWrapped( const TWCHAR* a_wszText, TFLOAT a_fMaxWidth, TFLOAT a_fScale = 1.0f );
+	TFLOAT GetTextWidth( const TWCHAR* a_wszText, TFLOAT a_fScale = 1.0f );
+	TFLOAT GetTextWidth( const TWCHAR* a_wszText, TINT a_iTextLength, TFLOAT a_fScale = 1.0f );
 
 private:
 	AGUI2FontDef*   m_pFontDef    = TNULL;

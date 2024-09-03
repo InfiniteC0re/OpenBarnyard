@@ -242,7 +242,7 @@ TFLOAT TInputInterface::InputEvent::GetMagnitudeFloat( TINT a_iAxis ) const
 	return (TFLOAT)m_Magnitude.Ints[ a_iAxis ];
 }
 
-TBOOL TInputInterface::InputEvent::StartRepeat( TFLOAT a_fFirstRepeatTime, TFLOAT a_fRepeatTime )
+TBOOL TInputInterface::InputEvent::StartRepeat( TFLOAT a_fFirstRepeatTime, TFLOAT a_fRepeatTime ) const
 {
 	return m_pSource->StartRepeat( m_iDoodad, a_fFirstRepeatTime, a_fRepeatTime );
 }

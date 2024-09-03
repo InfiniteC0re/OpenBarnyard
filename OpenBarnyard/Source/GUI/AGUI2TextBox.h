@@ -51,9 +51,20 @@ public:
 		m_uiShadowColour = a_uiColour;
 	}
 
+	void SetShadowOffset( TFLOAT a_fOffsetX, TFLOAT a_fOffsetY )
+	{
+		m_fShadowOffsetX = m_fScale * a_fOffsetX;
+		m_fShadowOffsetY = m_fScale * a_fOffsetY;
+	}
+
 	void SetTextAlign( AGUI2Font::TextAlign a_eTextAlign )
 	{
 		m_eTextAlign = a_eTextAlign;
+	}
+
+	const TWCHAR* GetText() const
+	{
+		return m_wszText;
 	}
 
 private:

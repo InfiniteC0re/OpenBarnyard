@@ -2,6 +2,9 @@
 #include "AGUI2Font.h"
 #include "AGUI2FontResource.h"
 
+#define AGUI2FONT_PRIMARY   "Rekord26"
+#define AGUI2FONT_SECONDARY "Rekord18"
+
 class AGUI2FontManager
 {
 public:

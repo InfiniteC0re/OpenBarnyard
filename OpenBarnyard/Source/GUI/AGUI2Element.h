@@ -152,6 +152,11 @@ public:
 		return m_eFlags & 16;
 	}
 
+	TFLOAT GetAlpha() const
+	{
+		return ( ( m_uiColour & 0x00FFFFFF ) >> 24 ) * ( 1.0f / 255.0f );
+	}
+
 	void AddChildTail( AGUI2Element& a_rElement )
 	{
 		a_rElement.Unlink();
@@ -227,6 +232,12 @@ public:
 			return TNULL;
 
 		return (AGUI2Element*)a_pCurrentChild->GetPrev();
+	}
+
+	void RemoveSelf()
+	{
+		AGUI2ElementNode::Unlink();
+		m_pParent = TNULL;
 	}
 
 public:

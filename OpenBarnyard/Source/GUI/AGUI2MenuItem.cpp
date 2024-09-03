@@ -55,12 +55,12 @@ void AGUI2MenuItem::SetEnabled( TBOOL a_bEnabled )
 	m_bEnabled = a_bEnabled;
 }
 
-TFLOAT AGUI2MenuItem::Unknown5()
+TFLOAT AGUI2MenuItem::GetFlowVisualOffset()
 {
 	return 0.0f;
 }
 
-TFLOAT AGUI2MenuItem::Unknown6()
+TFLOAT AGUI2MenuItem::GetFlowOffset()
 {
 	return 0.0f;
 }

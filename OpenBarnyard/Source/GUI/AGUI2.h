@@ -25,6 +25,7 @@ public:
 	void CreateContext();
 
 	TBOOL IsCursorVisible() const { return m_bShowMouseCursor; }
+	void  SetCursorVisible( TBOOL a_bVisible ) { m_bShowMouseCursor = a_bVisible; }
 
 public:
 	static AGUI2MouseCursor& GetMouseCursor() { return GetSingletonSafe()->m_oMouseCursor; }

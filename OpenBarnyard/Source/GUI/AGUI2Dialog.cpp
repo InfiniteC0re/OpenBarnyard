@@ -54,7 +54,7 @@ void AGUI2Dialog::Render()
 
 void AGUI2Dialog::SetDimensions( TFLOAT a_fWidth, TFLOAT a_fHeight )
 {
-	SetDimensionsImpl( a_fWidth, a_fHeight );
+	SetDialogSize( a_fWidth, a_fHeight );
 }
 
 void AGUI2Dialog::SetColour( TUINT32 a_uiColour )
@@ -85,7 +85,7 @@ void AGUI2Dialog::SetFocus( TBOOL a_bFocused )
 	AGUI2Element::SetFocus( a_bFocused );
 }
 
-void AGUI2Dialog::SetBorders( const TCHAR* a_szTopLeft, const TCHAR* a_szTopCenter, const TCHAR* a_szTopRight, const TCHAR* a_szMiddleLeft, const TCHAR* a_szMiddleCenter, const TCHAR* a_szMiddleRight, const TCHAR* a_szBottomLeft, const TCHAR* a_szBottomCenter, const TCHAR* a_szBottomRight )
+void AGUI2Dialog::Create( const TCHAR* a_szTopLeft, const TCHAR* a_szTopCenter, const TCHAR* a_szTopRight, const TCHAR* a_szMiddleLeft, const TCHAR* a_szMiddleCenter, const TCHAR* a_szMiddleRight, const TCHAR* a_szBottomLeft, const TCHAR* a_szBottomCenter, const TCHAR* a_szBottomRight )
 {
 	m_apTexTiles[ AGUI2ATTACHMENT_TOPLEFT ]   = AGUI2TextureSectionManager::GetTextureSection( a_szTopLeft );
 	m_apTexTiles[ AGUI2ATTACHMENT_TOPCENTER ] = AGUI2TextureSectionManager::GetTextureSection( a_szTopCenter );
@@ -111,7 +111,7 @@ void AGUI2Dialog::SetBorders( const TCHAR* a_szTopLeft, const TCHAR* a_szTopCent
 	AddChildTail( m_aRectangles[ AGUI2ATTACHMENT_MIDDLECENTER ] );
 }
 
-void AGUI2Dialog::SetDimensionsImpl( TFLOAT a_fWidth, TFLOAT a_fHeight )
+void AGUI2Dialog::SetDialogSize( TFLOAT a_fWidth, TFLOAT a_fHeight )
 {
 	TFLOAT fBorderWidth  = ( m_apTexTiles[ AGUI2ATTACHMENT_MIDDLELEFT ]->GetWidth() + m_apTexTiles[ AGUI2ATTACHMENT_MIDDLERIGHT ]->GetWidth() ) * 0.5f;
 	TFLOAT fBorderHeight = ( m_apTexTiles[ AGUI2ATTACHMENT_TOPCENTER ]->GetHeight() + m_apTexTiles[ AGUI2ATTACHMENT_BOTTOMCENTER ]->GetHeight() ) * 0.5f;

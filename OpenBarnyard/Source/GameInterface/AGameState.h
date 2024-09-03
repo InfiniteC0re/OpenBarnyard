@@ -2,6 +2,7 @@
 #include "GUI/AGUI2Element.h"
 #include "Input/AInputMapManager.h"
 #include "AGameStateControllerEvent.h"
+#include "Sound/ASound.h"
 
 #include <Toshi/T2DList.h>
 #include <Input/TInputInterface.h>
@@ -53,7 +54,7 @@ public:
 	virtual void    Unknown4( void* a_pUnk1 );
 	virtual void    Unknown5();
 	virtual TBOOL   Unknown6();
-	virtual TUINT32 GetSound();
+	virtual ASoundId GetSound();
 	virtual TBOOL   Unknown7();
 	virtual void    Unknown8();
 	virtual void    OnStarted();

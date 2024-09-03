@@ -23,8 +23,8 @@ public:
 	//-----------------------------------------------------------------------------
 	// Own methods
 	//-----------------------------------------------------------------------------
-	void SetBorders( const TCHAR* a_szTopLeft, const TCHAR* a_szTopCenter, const TCHAR* a_szTopRight, const TCHAR* a_szMiddleLeft, const TCHAR* a_szMiddleCenter, const TCHAR* a_szMiddleRight, const TCHAR* a_szBottomLeft, const TCHAR* a_szBottomCenter, const TCHAR* a_szBottomRight );
-	void SetDimensionsImpl( TFLOAT a_fWidth, TFLOAT a_fHeight );
+	void Create( const TCHAR* a_szTopLeft = "Border_Top_Left", const TCHAR* a_szTopCenter = "Border_Horizontal", const TCHAR* a_szTopRight = "Border_Top_Right", const TCHAR* a_szMiddleLeft = "Border_Vertical", const TCHAR* a_szMiddleCenter = "Border_Middle", const TCHAR* a_szMiddleRight = "Border_Vertical", const TCHAR* a_szBottomLeft = "Border_Bottom_Left", const TCHAR* a_szBottomCenter = "Border_Horizontal", const TCHAR* a_szBottomRight = "Border_Bottom_Right" );
+	void SetDialogSize( TFLOAT a_fWidth, TFLOAT a_fHeight );
 
 private:
 	AGUI2Element*        m_pFocusElement;
