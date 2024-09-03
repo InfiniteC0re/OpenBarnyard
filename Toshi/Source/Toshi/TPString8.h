@@ -303,9 +303,12 @@ public:
 
 public:
 	TPString8Initialiser( StringMap* a_pStrings, TUINT a_iStringCount, TBOOL a_bFlag );
+	~TPString8Initialiser() = default;
 
 	void Initialise( TPString8Pool* a_pStringPool );
 
+	StringMap*            GetStringMap() const { return m_pStrings; }
+	TUINT                 GetCount() const { return m_iCount; }
 	TPString8Initialiser* Next() const { return m_pNextInitialiser; }
 
 public:
