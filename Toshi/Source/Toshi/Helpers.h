@@ -20,13 +20,13 @@ TFORCEINLINE constexpr TUINT32 TFourCC( const TCHAR str[ 4 ] )
 // Returns TTRUE if the pointer is aligned to the specified alignment value
 // For example, TTRUE  is returned if pointer is 0x8 and alignment is 4
 //              TFALSE is returned if pointer is 0x8 and alignment is 7
-TFORCEINLINE TBOOL TIsPointerAligned( const void* a_pPointer, TUINT a_uiAlignment = sizeof( void* ) )
+TFORCEINLINE TBOOL TIsPointerAligned( const void* a_pPointer, TSIZE a_uiAlignment = sizeof( void* ) )
 {
 	return 0 == ( TUINTPTR( a_pPointer ) % a_uiAlignment );
 }
 
 template <class T>
-TFORCEINLINE constexpr T* TAlignPointerUp( T* a_pMem, TUINT a_uiAlignment = sizeof( T* ) )
+TFORCEINLINE constexpr T* TAlignPointerUp( T* a_pMem, TSIZE a_uiAlignment = sizeof( T* ) )
 {
 	return TREINTERPRETCAST(
 	    T*,
@@ -34,7 +34,7 @@ TFORCEINLINE constexpr T* TAlignPointerUp( T* a_pMem, TUINT a_uiAlignment = size
 }
 
 template <class T>
-TFORCEINLINE constexpr T* TAlignPointerDown( T* a_pMem, TUINT a_uiAlignment = sizeof( T* ) )
+TFORCEINLINE constexpr T* TAlignPointerDown( T* a_pMem, TSIZE a_uiAlignment = sizeof( T* ) )
 {
 	return TREINTERPRETCAST(
 	    T*,
@@ -42,14 +42,14 @@ TFORCEINLINE constexpr T* TAlignPointerDown( T* a_pMem, TUINT a_uiAlignment = si
 }
 
 template <class T>
-TFORCEINLINE constexpr T TAlignNumDown( T a_iValue, TUINT a_uiAlignment = 4 )
+TFORCEINLINE constexpr T TAlignNumDown( T a_iValue, TSIZE a_uiAlignment = 4 )
 {
 	TSTATICASSERT( std::is_arithmetic<T>::value );
 	return a_iValue & (T)( ~( a_uiAlignment - 1U ) );
 }
 
 template <class T>
-TFORCEINLINE constexpr T TAlignNumUp( T a_iValue, TUINT a_uiAlignment = 4 )
+TFORCEINLINE constexpr T TAlignNumUp( T a_iValue, TSIZE a_uiAlignment = 4 )
 {
 	TSTATICASSERT( std::is_arithmetic<T>::value );
 	return ( a_iValue + ( a_uiAlignment - 1U ) ) & (T)( ~( a_uiAlignment - 1U ) );

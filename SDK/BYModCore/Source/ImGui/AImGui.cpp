@@ -93,7 +93,7 @@ AImGUI::AImGUI()
 
 	auto pRender = THookedRenderD3DInterface::GetSingleton();
 	ImGui_ImplDX8_Init(pRender->GetDirect3DDevice());
-	ImGui_ImplWin32_Init(pRender->GetWindow()->GetHWND());
+	ImGui_ImplWin32_Init(pRender->GetMSWindow()->GetHWND());
 	m_DisplayParams = *pRender->GetCurrentDisplayParams();
 
 	AHooks::AddHook(Hook_AGUI2_MainPostRenderCallback, HookType_Before, AImGUI_RenderCallback);

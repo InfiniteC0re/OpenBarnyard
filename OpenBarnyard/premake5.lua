@@ -35,6 +35,7 @@ project "OpenBarnyard"
 	includedirs
 	{
 		"Source",
+		"%{wks.location}/Toshi/Resources",
 		"%{wks.location}/Toshi/Source",
 		"%{wks.location}/Shared/Source",
 		"%{IncludeDir.fmod}",

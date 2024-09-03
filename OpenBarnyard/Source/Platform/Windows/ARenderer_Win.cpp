@@ -26,6 +26,8 @@
 #  include "Platform/DX8/ASkinShader/ASkinShader_DX8.h"
 #endif // TOSHI_SKU_WINDOWS
 
+#include <resource.h>
+
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
 // Note: Should be the last include!
@@ -52,13 +54,21 @@ ARenderer::ARenderer() :
 
 TBOOL ARenderer::CreateTRender()
 {
-	auto pRendererClass = TClass::Find( "TRenderD3DInterface" );
-	auto pRenderer      = TSTATICCAST( TRenderD3DInterface, pRendererClass->CreateObject() );
+#if defined( TOSHI_SKU_WINDOWS ) && defined( TRENDERINTERFACE_DX8 )
+	TString8 strRenderInterfaceName = "TRenderD3DInterface";
+#endif
 
-	TFIXME( "Call FUN_006c8010(DAT_007cf02c,&local_38) but not sure if it has any use" );
+	TKernelInterface::GetSingleton()->LoadInterface( strRenderInterfaceName );
+
+	TClass*              pRendererClass = TClass::Find( strRenderInterfaceName );
+	TRenderD3DInterface* pRenderer      = TSTATICCAST( TRenderD3DInterface, pRendererClass->CreateObject() );
 
 	pRenderer->SetAutoCreateSystemResources( TFALSE );
 	pRenderer->Create( "Barnyard" );
+
+	HMODULE hModuleHandle = GetModuleHandleA( TNULL );
+	HICON   hIcon         = LoadIconA( hModuleHandle, MAKEINTRESOURCE( IDI_ICON1 ) );
+	SendMessageA( pRenderer->GetMSWindow()->GetHWND(), 0x80, TRUE, (LPARAM)hIcon );
 
 	m_DisplayModes.Initialise();
 

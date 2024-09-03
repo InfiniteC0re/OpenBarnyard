@@ -5,7 +5,6 @@
 
 #include <dbt.h>
 #include <windowsx.h>
-#include "../resource.h"
 
 TOSHI_NAMESPACE_START
 

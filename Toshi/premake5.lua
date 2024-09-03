@@ -49,6 +49,7 @@ project "Toshi"
 	{
 		"Source",
 		"Icons",
+		"Resources",
 		"%{IncludeDir.fmod}",
 		"%{IncludeDir.stb}"
 	}
@@ -87,9 +88,9 @@ project "Toshi"
 			"Source/Platform/DX8/**.cpp",
 			"Source/Platform/DX8/**.c",
 			"Icons/*.ico",
-			"*.h",
-			"*.aps",
-			"*.rc"
+			"Resources/*.h",
+			"Resources/*.aps",
+			"Resources/*.rc"
 		}
 
 		defines

@@ -298,7 +298,7 @@ TBOOL TTSFO::CloseHunk( HunkMark* hunkMark )
 	return TTRUE;
 }
 
-TSIZE TTSFO::WriteHunk( TUINT32 hunkName, void* buffer, TSIZE bufferSize )
+TUINT32 TTSFO::WriteHunk( TUINT32 hunkName, void* buffer, TSIZE bufferSize )
 {
 	TTSF::Hunk hunk{ hunkName, bufferSize };
 

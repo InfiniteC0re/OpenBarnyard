@@ -170,14 +170,14 @@ public:
 		* @param name - 4 bytes long value which will be written after the hunk
 		* @return number of written bytes
 		*/
-	TUINT32 BeginForm( const TCHAR* name );
+	TSIZE BeginForm( const TCHAR* name );
 
 	/**
 		* Ends the current form if it exists.
 		*
 		* @return size of the form
 		*/
-	TUINT32 EndForm();
+	TSIZE EndForm();
 
 	/**
 		* Opens new hunk.
@@ -204,7 +204,7 @@ public:
 		* @param bufferSize - size of the buffer (can be 0)
 		* @return number of written bytes
 		*/
-	TUINT32 WriteHunk( TUINT32 hunkName, void* buffer = TNULL, TUINT32 bufferSize = 0 );
+	TUINT32 WriteHunk( TUINT32 hunkName, void* buffer = TNULL, TSIZE bufferSize = 0 );
 
 	template <class T>
 	TUINT32 Write( const T& value )
@@ -213,13 +213,13 @@ public:
 		return m_pFile->Write( &value, sizeof( T ) );
 	}
 
-	TUINT32 WriteRaw( const void* buffer, TUINT32 size )
+	TUINT32 WriteRaw( const void* buffer, TSIZE size )
 	{
 		TASSERT( m_pFile != TNULL, "TTSFO is not created" );
 		return m_pFile->Write( buffer, size );
 	}
 
-	TUINT32 WriteCompressed( const void* buffer, TUINT32 size )
+	TUINT32 WriteCompressed( const void* buffer, TSIZE size )
 	{
 		TASSERT( m_pFile != TNULL, "TTSFO is not created" );
 		TUINT32 writtenSize = TCompress::Compress( m_pFile, (TCHAR*)buffer, size, 0, m_Endianess == Endianess_Big );

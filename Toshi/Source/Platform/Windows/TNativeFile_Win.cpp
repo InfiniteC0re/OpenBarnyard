@@ -265,7 +265,7 @@ TINT TNativeFile::ReadUnbuffered( LPVOID dst, TUINT size )
 	return lpNumberOfBytesRead;
 }
 
-TUINT TNativeFile::Read( void* a_pDst, TUINT a_uiSize )
+TSIZE TNativeFile::Read( void* a_pDst, TSIZE a_uiSize )
 {
 	FlushWriteBuffer();
 
@@ -273,10 +273,10 @@ TUINT TNativeFile::Read( void* a_pDst, TUINT a_uiSize )
 
 	if ( m_RBuffer != TNULL )
 	{
-		DWORD  readedCount  = 0;
-		DWORD  startPos     = m_Position;
-		DWORD  curBufferPos = startPos / BUFFER_SIZE * BUFFER_SIZE;
-		DWORD  newBufferPos = ( startPos + a_uiSize ) / BUFFER_SIZE * BUFFER_SIZE;
+		TSIZE  readedCount  = 0;
+		TSIZE  startPos     = m_Position;
+		TSIZE  curBufferPos = startPos / BUFFER_SIZE * BUFFER_SIZE;
+		TSIZE  newBufferPos = ( startPos + a_uiSize ) / BUFFER_SIZE * BUFFER_SIZE;
 		LPVOID curPosBuffer = a_pDst;
 
 		if ( curBufferPos != newBufferPos )
@@ -333,7 +333,7 @@ TUINT TNativeFile::Read( void* a_pDst, TUINT a_uiSize )
 	return ReadUnbuffered( a_pDst, a_uiSize );
 }
 
-TUINT TNativeFile::Write( const void* buffer, TUINT size )
+TSIZE TNativeFile::Write( const void* buffer, TSIZE size )
 {
 	if ( m_RBufferPosition != m_Position )
 	{
@@ -393,7 +393,7 @@ TUINT TNativeFile::Write( const void* buffer, TUINT size )
 	return 0;
 }
 
-TUINT32 TNativeFile::Tell()
+TSIZE TNativeFile::Tell()
 {
 	FlushWriteBuffer();
 	return m_Position;
@@ -524,29 +524,7 @@ TINT TNativeFile::WPrintf( const TWCHAR* a_wszFormat, ... )
 	return iResult;
 }
 
-TINT TNativeFile::VCPrintf( const TCHAR* a_szFormat, va_list a_vargs )
-{
-	TCHAR str[ 512 ];
-
-	TINT iResult = T2String8::FormatV( str, TARRAYSIZE( str ), a_szFormat, a_vargs );
-
-	Write( str, iResult );
-
-	return iResult;
-}
-
-TINT TNativeFile::VWPrintf( const TWCHAR* a_wszFormat, va_list a_vargs )
-{
-	TWCHAR str[ 512 ];
-
-	TINT iResult = T2String16::FormatV( str, TARRAYSIZE( str ), a_wszFormat, a_vargs );
-
-	Write( str, iResult * sizeof( TWCHAR ) );
-
-	return iResult;
-}
-
-TUINT TNativeFile::GetSize()
+TSIZE TNativeFile::GetSize()
 {
 	m_RBufferPosition = SetFilePointer( m_Handle, 0, TNULL, TSEEK_END );
 
@@ -647,6 +625,11 @@ void TNativeFile::Close()
 		TFree( m_WBuffer );
 		m_WBuffer = TNULL;
 	}
+}
+
+void TNativeFile::FlushBuffers()
+{
+	FlushWriteBuffer();
 }
 
 TOSHI_NAMESPACE_END

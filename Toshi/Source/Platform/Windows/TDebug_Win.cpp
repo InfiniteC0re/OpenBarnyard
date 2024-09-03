@@ -86,7 +86,7 @@ void TDebug_BroadcastDebugString( const TCHAR* a_szString )
 	//TIMPLEMENT();
 }
 
-#include "../resource.h"
+#include "resource.h"
 
 const TCHAR* TDebug_szAssertFilename;
 const TCHAR* TDebug_szAssertExpression;

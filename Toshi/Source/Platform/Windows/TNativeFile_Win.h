@@ -34,11 +34,12 @@ public:
 	//-----------------------------------------------------------------------------
 	// TFile
 	//-----------------------------------------------------------------------------
-	virtual TUINT     Read( void* a_pDst, TUINT a_uiSize ) OVERRIDE;
-	virtual TUINT     Write( const void* a_pSrc, TUINT a_uiSize ) OVERRIDE;
+	virtual TSIZE     Read( void* a_pDst, TSIZE a_uiSize ) OVERRIDE;
+	virtual TSIZE     Write( const void* a_pSrc, TSIZE a_uiSize ) OVERRIDE;
 	virtual TBOOL     Seek( TINT a_iOffset, TSEEK a_eOrigin = TSEEK_CUR ) OVERRIDE;
-	virtual TUINT     Tell() OVERRIDE;
-	virtual TUINT     GetSize() OVERRIDE;
+	virtual TSIZE     Tell() OVERRIDE;
+	virtual void      FlushBuffers() OVERRIDE;
+	virtual TSIZE     GetSize() OVERRIDE;
 	virtual _FILETIME GetDate() OVERRIDE;
 	virtual TCHAR     GetCChar() OVERRIDE;
 	virtual TWCHAR    GetWChar() OVERRIDE;
@@ -46,8 +47,6 @@ public:
 	virtual TINT      PutWChar( TWCHAR a_wcCharacter ) OVERRIDE;
 	virtual TINT      CPrintf( const TCHAR* a_szFormat, ... ) OVERRIDE;
 	virtual TINT      WPrintf( const TWCHAR* a_wszFormat, ... ) OVERRIDE;
-	virtual TINT      VCPrintf( const TCHAR* a_szFormat, va_list a_vargs ) OVERRIDE;
-	virtual TINT      VWPrintf( const TWCHAR* a_wszFormat, va_list a_vargs ) OVERRIDE;
 
 	TBOOL Open( const TString8& a_FileName, TFILEMODE a_Mode );
 

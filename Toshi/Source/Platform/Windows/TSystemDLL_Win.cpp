@@ -1,5 +1,5 @@
 #include "ToshiPCH.h"
-#include "TDLL_Win.h"
+#include "TSystemDLL_Win.h"
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
@@ -9,48 +9,61 @@
 
 TOSHI_NAMESPACE_START
 
-TDLL::TDLL()
+TSystemDLLWin::TSystemDLLWin()
 {
 	m_pDLL = TNULL;
 }
 
-TDLL::TDLL( const TDLL& other )
+TSystemDLLWin::TSystemDLLWin( const TSystemDLLWin& other )
 {
 	m_sFileName = other.m_sFileName;
 	m_pDLL      = other.m_pDLL;
 }
 
-TDLL::~TDLL()
+TSystemDLLWin::~TSystemDLLWin()
 {
 	Unload();
 }
 
-TBOOL TDLL::Load( const TString8& a_sFileName )
+TBOOL TSystemDLLWin::Load( const TString8& a_sFileName )
 {
+#ifdef TOSHI_DYNAMIC_LINKING
 	Unload();
 	m_sFileName = a_sFileName;
 	m_pDLL      = LoadLibraryA( m_sFileName );
 	TASSERT( m_pDLL != TNULL );
 
 	return m_pDLL != TNULL;
+#else
+	return TFALSE;
+#endif
 }
 
-void TDLL::Unload()
+void TSystemDLLWin::Unload()
 {
+#ifdef TOSHI_DYNAMIC_LINKING
 	if ( m_pDLL != NULL )
 	{
 		FreeLibrary( m_pDLL );
 		m_sFileName = "";
 		m_pDLL      = NULL;
 	}
+#endif
 }
 
-void* TDLL::GetAddress( const TString8& a_sSymbolName )
+void* TSystemDLLWin::GetAddress( const TString8& a_sSymbolName )
 {
 	void* pAddress = GetProcAddress( GetDLL(), a_sSymbolName );
 	TASSERT( pAddress != TNULL );
 
 	return pAddress;
+}
+
+TSystemDLLWin& TSystemDLLWin::operator=( const TSystemDLLWin& other )
+{
+	m_sFileName = other.m_sFileName;
+	m_pDLL      = other.m_pDLL;
+	return *this;
 }
 
 TOSHI_NAMESPACE_END

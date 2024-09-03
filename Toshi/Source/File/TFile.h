@@ -125,7 +125,7 @@ public:
          * @param a_uiSize number of bytes to read
          * @return the number of read bytes
          */
-	virtual TUINT Read( void* a_pDst, TUINT a_uiSize ) = 0;
+	virtual TSIZE Read( void* a_pDst, TSIZE a_uiSize ) = 0;
 
 	/**
          * Writes specified number of bytes to the file from the buffer.
@@ -133,7 +133,7 @@ public:
          * @param a_uiSize number of bytes to write
          * @return the number of written bytes
          */
-	virtual TUINT Write( const void* a_pSrc, TUINT a_uiSize ) = 0;
+	virtual TSIZE Write( const void* a_pSrc, TSIZE a_uiSize ) = 0;
 
 	/**
          * Shifts current file cursor based on the specified offset and origin.
@@ -146,12 +146,17 @@ public:
 	/**
          * @return current position of the file cursor
          */
-	virtual TUINT Tell() = 0;
+	virtual TSIZE Tell() = 0;
+
+	/**
+          * Flushes write buffers.
+          */
+	virtual void FlushBuffers() {}
 
 	/**
          * @return size of the file
          */
-	virtual TUINT GetSize() = 0;
+	virtual TSIZE GetSize() = 0;
 
 	/**
          * @return last write time
@@ -194,18 +199,6 @@ public:
          * @return number of characters written
          */
 	virtual TINT WPrintf( const TWCHAR* a_wszFormat, ... ) = 0;
-
-	/**
-         * Analogue of vprintf but writes result to the file.
-         * @return number of characters written
-         */
-	virtual TINT VCPrintf( const TCHAR* a_szFormat, va_list a_vargs ) = 0;
-
-	/**
-         * Analogue of vwprintf but writes result to the file.
-         * @return number of characters written
-         */
-	virtual TINT VWPrintf( const TWCHAR* a_wszFormat, va_list a_vargs ) = 0;
 
 	virtual ~TFile() {}
 

@@ -186,7 +186,7 @@ TBOOL ASoundManager::OnUpdate( TFLOAT a_fDeltaTime )
 	{
 		TFLOAT fCueStartTime = m_aCues[ i ].fStartTime;
 
-		if ( fCueStartTime > 0.0f && !IsCuePlaying( i ) )
+		if ( fCueStartTime < 0.0f && !IsCuePlaying( i ) )
 		{
 			m_aCues[ i ].Reset();
 		}
@@ -409,7 +409,6 @@ TBOOL ASoundManager::IsCuePlaying( TINT a_iCueIndex )
 			// Loaded data
 			T2_FOREACH( pCue->oChannelRefs, channel )
 			{
-				TASSERT( channel->iFMODChannelHandle != -1 );
 				if ( FSOUND_IsPlaying( channel->iFMODChannelHandle ) )
 				{
 					return TTRUE;

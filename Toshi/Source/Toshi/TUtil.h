@@ -13,7 +13,7 @@ class TUtil : public TSingleton<TUtil>
 {
 public:
 	//-----------------------------------------------------------------------------
-	// Class members
+	// Logging
 	//-----------------------------------------------------------------------------
 
 	enum LogType
@@ -54,6 +54,7 @@ public:
 		const TCHAR* m_szString;
 	};
 
+	// Note: this wasn't in the original engine
 	struct TOSHIParams
 	{
 		TOSHIParams() noexcept {}
@@ -69,6 +70,7 @@ public:
 
 public:
 	TUtil();
+	~TUtil() = default;
 
 private:
 	TLogFile*                 m_pDefaultLogFile;
@@ -81,12 +83,11 @@ public:
 	//-----------------------------------------------------------------------------
 
 	static TBOOL ToshiCreate( const TOSHIParams& a_rToshiParams );
-
-	static void ToshiDestroy();
+	static void  ToshiDestroy();
 
 	static const TCHAR* GetTime();
 
-	static void  MemSet( void* ptr, TSIZE value, TSIZE size ) { std::memset( ptr, value, size ); }
+	static void  MemSet( void* ptr, TINT value, TSIZE size ) { std::memset( ptr, value, size ); }
 	static void* MemCopy( void* dst, const void* src, TSIZE size ) { return std::memcpy( dst, src, size ); }
 	static void  MemClear( void* ptr, TSIZE size ) { std::memset( ptr, 0, size ); }
 	static TINT  MemCompare( const void* ptr1, const void* ptr2, TSIZE size ) { return std::memcmp( ptr1, ptr2, size ); }
@@ -105,8 +106,8 @@ public:
 	static void LogConsole( const TCHAR* a_szFormat, ... );
 	static void LogSet( TLogFile* a_logFile );
 
-	static TLogFile*                         GetCurrentLogFile() { return TUtil::GetSingleton()->m_pCurrentLogFile; }
-	static TEmitter<TUtil, TUtil::LogEvent>& GetLogEmitter() { return TUtil::GetSingleton()->m_LogEmitter; }
+	static TLogFile*                         GetCurrentLogFile() { return ms_pSingleton->m_pCurrentLogFile; }
+	static TEmitter<TUtil, TUtil::LogEvent>& GetLogEmitter() { return ms_pSingleton->m_LogEmitter; }
 
 	static void SetGlobalMutex( HANDLE a_hGlobalMutex ) { ms_hGlobalMutex = a_hGlobalMutex; }
 
@@ -125,8 +126,7 @@ public:
 
 private:
 	static void Create();
-
-	static TBOOL CreateKernelInterface();
+	static void CreateKernelInterface();
 
 	static void LogInitialise();
 	static void CreateTPStringPool();

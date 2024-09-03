@@ -85,7 +85,7 @@ public:
 
 	void Exit() { m_bExited = TTRUE; }
 
-	TFORCEINLINE TMSWindow* GetWindow() { return &m_Window; }
+	TFORCEINLINE TMSWindow* GetMSWindow() { return &m_Window; }
 	TFORCEINLINE TPriList<TOrderTable>& GetOrderTables() { return m_OrderTables; }
 	TFORCEINLINE IDirect3D8*            GetDirect3D() const { return m_pDirect3D; }
 	TFORCEINLINE IDirect3DDevice8*      GetDirect3DDevice() const { return m_pDirectDevice; }

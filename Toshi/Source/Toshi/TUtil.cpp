@@ -6,8 +6,6 @@
 #include "File/TLogFile.h"
 #include "Render/TModelManager.h"
 
-#include <Platform/Windows/TConsoleFile_Win.h>
-
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
 // Note: Should be the last include!
@@ -151,13 +149,18 @@ TBOOL TUtil::ToshiCreate( const TOSHIParams& a_rToshiParams )
 {
 	ms_oToshiParams = a_rToshiParams;
 
+	TSystemManager::Create();
 	CreateKernelInterface();
-	// TODO: FUN_006c7fe0
 	TFileManager::Create();
 	CreateTPStringPool();
 	Create();
 
 	return TTRUE;
+}
+
+void TUtil::CreateKernelInterface()
+{
+	TKernelInterface::CreateSingleton();
 }
 
 void TUtil::ToshiDestroy()
@@ -174,11 +177,6 @@ void TUtil::Create()
 {
 	TUtil::CreateSingleton()->LogInitialise();
 	TUtil::CRCInitialise();
-}
-
-TBOOL TUtil::CreateKernelInterface()
-{
-	return TSystemManager::Create();
 }
 
 // Source: https://lentz.com.au/blog/tag/crc-table-generator

@@ -72,7 +72,7 @@ void __CRTDECL operator delete[]( void* ptr, TSIZE _Size ) noexcept
 
 #ifndef TMEMORY_USE_DLMALLOC
 
-#  define MEM_TO_NODE( PTR ) ( ( (MemNode*)( ( (TUINT)PTR ) + sizeof( void* ) ) ) - 1 )
+#  define MEM_TO_NODE( PTR ) ( ( (MemNode*)( ( (TUINTPTR)PTR ) + sizeof( void* ) ) ) - 1 )
 
 TOSHI_NAMESPACE_START
 
@@ -132,14 +132,14 @@ TMemory::~TMemory()
 #  define CALL_12( ADDR, RET_TYPE, TYPE1, VALUE1, TYPE2, VALUE2, TYPE3, VALUE3, TYPE4, VALUE4, TYPE5, VALUE5 ) ( ( RET_TYPE( __stdcall* )( TYPE1, TYPE2, TYPE3, TYPE4, TYPE5 ) )( ADDR ) )( VALUE1, VALUE2, VALUE3, VALUE4, VALUE5 )
 #  define CALL( ... )                                                                                          PP_MACRO_OVERLOAD( CALL, __VA_ARGS__ )
 
-void* TMemory::Alloc( TUINT a_uiSize, TINT a_uiAlignment, MemBlock* a_pMemBlock, const TCHAR* a_szFileName, TINT a_iLineNum )
+void* TMemory::Alloc( TSIZE a_uiSize, TSIZE a_uiAlignment, MemBlock* a_pMemBlock, const TCHAR* a_szFileName, TINT a_iLineNum )
 {
 	//return CALL_THIS( 0x006b5230, TMemory*, void*, this, TUINT, a_uiSize, TINT, a_uiAlignment, MemBlock*, a_pMemBlock, const TCHAR*, a_szFileName, TINT, a_iLineNum );
 
 	TMUTEX_LOCK_SCOPE( ms_pGlobalMutex );
 
-	volatile TUINT uiSize      = a_uiSize;
-	volatile TUINT uiAlignment = a_uiAlignment;
+	volatile TSIZE uiSize      = a_uiSize;
+	volatile TSIZE uiAlignment = a_uiAlignment;
 	MemBlock*      pMemBlock   = a_pMemBlock;
 
 	if ( uiSize < 4 )
@@ -161,8 +161,8 @@ void* TMemory::Alloc( TUINT a_uiSize, TINT a_uiAlignment, MemBlock* a_pMemBlock,
 		pMemBlock = m_pGlobalBlock;
 	}
 
-	volatile TUINT uiAlignedSize  = TAlignNumUp( uiSize );
-	volatile TUINT uiRequiredSize = uiAlignedSize + sizeof( MemNode );
+	volatile TSIZE uiAlignedSize  = TAlignNumUp( uiSize );
+	volatile TSIZE uiRequiredSize = uiAlignedSize + sizeof( MemNode );
 
 	MemNode* pMemNode = TNULL;
 
@@ -237,7 +237,7 @@ void* TMemory::Alloc( TUINT a_uiSize, TINT a_uiAlignment, MemBlock* a_pMemBlock,
 
 		if ( pMemNode != pAllocNode )
 		{
-			TUINT uiNodeSize                                                      = GetNodeSize( pMemNode );
+			TSIZE uiNodeSize                                                      = GetNodeSize( pMemNode );
 			pAllocNode->pOwner                                                    = pMemNode->pOwner;
 			*(MemNode**)( (TUINTPTR)pMemNode->GetDataRegionStart() + uiNodeSize ) = pAllocNode;
 		}
@@ -284,7 +284,7 @@ void* TMemory::Alloc( TUINT a_uiSize, TINT a_uiAlignment, MemBlock* a_pMemBlock,
 
 		if ( pMemNode != pAllocNode )
 		{
-			TUINT uiNodeSize                                                               = GetNodeSize( pMemNode );
+			TSIZE uiNodeSize                                                               = GetNodeSize( pMemNode );
 			pAllocNode->pOwner                                                             = pMemNode->pOwner;
 			*(MemNode* volatile*)( (TUINTPTR)pMemNode->GetDataRegionStart() + uiNodeSize ) = pAllocNode;
 		}
@@ -309,7 +309,7 @@ TBOOL TMemory::Free( const void* a_pAllocated )
 
 	MemNode* pAllocationNode = MEM_TO_NODE( a_pAllocated );
 
-	TUINT     uiAllocationSize = GetNodeSize( pAllocationNode );
+	TSIZE     uiAllocationSize = GetNodeSize( pAllocationNode );
 	MemBlock* pMemBlock        = GetProcessMemBlock( pAllocationNode );
 
 	SetHoleSize( pAllocationNode, uiAllocationSize );
@@ -322,7 +322,7 @@ TBOOL TMemory::Free( const void* a_pAllocated )
 	if ( pOwner && !IsProcess( pOwner ) )
 	{
 		pAllocationNode   = pOwner;
-		TUINT uiOwnerSize = GetNodeSize( pOwner );
+		TSIZE uiOwnerSize = GetNodeSize( pOwner );
 
 		ExtendNodeSize( pOwner, uiAllocationSize + uiOwnerSize + TMEMORY_ALLOC_RESERVED_SIZE );
 		pNextLyingNode->pOwner = pOwner;
@@ -339,7 +339,7 @@ TBOOL TMemory::Free( const void* a_pAllocated )
 
 	if ( !IsProcess( pNextLyingNode ) )
 	{
-		TUINT uiNextNodeSize = GetNodeSize( pNextLyingNode );
+		TSIZE uiNextNodeSize = GetNodeSize( pNextLyingNode );
 
 		if ( MemNode* pPrev = pNextLyingNode->pPrevHole )
 			pPrev->pNextHole = pNextLyingNode->pNextHole;
@@ -365,20 +365,20 @@ TBOOL TMemory::Free( const void* a_pAllocated )
 	return TTRUE;
 }
 
-TMemory::MemBlock* TMemory::CreateMemBlock( TUINT a_uiSize, const TCHAR* a_szName, MemBlock* a_pOwnerBlock, TINT a_iUnused )
+TMemory::MemBlock* TMemory::CreateMemBlock( TSIZE a_uiSize, const TCHAR* a_szName, MemBlock* a_pOwnerBlock, TINT a_iUnused )
 {
 	void* pMem = Alloc( a_uiSize, 16, a_pOwnerBlock, TNULL, -1 );
 	return CreateMemBlockInPlace( pMem, a_uiSize, a_szName );
 }
 
-TMemory::MemBlock* TMemory::CreateMemBlockInPlace( void* a_pMem, TUINT a_uiSize, const TCHAR* a_szName )
+TMemory::MemBlock* TMemory::CreateMemBlockInPlace( void* a_pMem, TSIZE a_uiSize, const TCHAR* a_szName )
 {
 	TMUTEX_LOCK_SCOPE( ms_pGlobalMutex );
 
 	if ( a_pMem && a_uiSize != 0 && !m_FreeBlocks.IsEmpty() )
 	{
-		auto pBlock           = TREINTERPRETCAST( MemBlock*, TAlignNumDown( TREINTERPRETCAST( TUINT32, a_pMem ) ) );
-		auto uiBlockTotalSize = ( TREINTERPRETCAST( TUINT32, a_pMem ) + TAlignNumDown( a_uiSize ) ) - TREINTERPRETCAST( TUINT32, pBlock );
+		auto pBlock           = TREINTERPRETCAST( MemBlock*, TAlignNumDown( TREINTERPRETCAST( TUINTPTR, a_pMem ) ) );
+		auto uiBlockTotalSize = ( TREINTERPRETCAST( TUINTPTR, a_pMem ) + TAlignNumDown( a_uiSize ) ) - TREINTERPRETCAST( TUINTPTR, pBlock );
 
 		if ( pBlock )
 		{
@@ -391,7 +391,7 @@ TMemory::MemBlock* TMemory::CreateMemBlockInPlace( void* a_pMem, TUINT a_uiSize,
 
 		if ( uiBlockTotalSize != 0 )
 		{
-			constexpr TUINT CHUNK_RESERVED_SIZE = ( sizeof( MemBlock ) + ( sizeof( MemNode ) - sizeof( void* ) ) );
+			constexpr TSIZE CHUNK_RESERVED_SIZE = ( sizeof( MemBlock ) + ( sizeof( MemNode ) - sizeof( void* ) ) );
 
 			pBlock->m_uiTotalSize1 = uiBlockTotalSize;
 			TUtil::MemClear( pBlock->m_apHoles, sizeof( pBlock->m_apHoles ) );
@@ -406,7 +406,7 @@ TMemory::MemBlock* TMemory::CreateMemBlockInPlace( void* a_pMem, TUINT a_uiSize,
 			auto uiFreeListId                 = MapSizeToFreeList( uiBlockTotalSize - CHUNK_RESERVED_SIZE );
 			pBlock->m_apHoles[ uiFreeListId ] = pHole;
 
-			auto pBlockFooter           = TREINTERPRETCAST( MemBlockFooter*, TREINTERPRETCAST( TUINT32, pBlock ) + uiBlockTotalSize ) - 1;
+			auto pBlockFooter           = TREINTERPRETCAST( MemBlockFooter*, TREINTERPRETCAST( TUINTPTR, pBlock ) + uiBlockTotalSize ) - 1;
 			pBlockFooter->m_pBlockOwner = TNULL;
 			pBlockFooter->m_Unk4        = 0;
 			pBlockFooter->m_Unk1        = 0;
@@ -493,7 +493,7 @@ int TMemory::DebugTestMemoryBlock( MemBlock* a_pMemBlock )
 	return 0;
 }
 
-TBOOL TMemory::Initialise( TUINT a_uiHeapSize, TUINT a_uiReservedSize, TUINT a_uiUnused )
+TBOOL TMemory::Initialise( TSIZE a_uiHeapSize, TSIZE a_uiReservedSize, TUINT a_uiUnused )
 {
 	auto tmemory = TSTATICCAST( TMemory, calloc( sizeof( TMemory ), 1 ) );
 	new ( tmemory ) TMemory();
@@ -531,7 +531,7 @@ void TMemory::Deinitialise()
 	free( pMainBlockMemory );
 }
 
-TUINT TMemory::MapSizeToFreeList( TUINT a_uiSize )
+TUINT TMemory::MapSizeToFreeList( TSIZE a_uiSize )
 {
 	TFLOAT fSize          = TFLOAT( TAlignNumUp( a_uiSize ) - 1 );
 	TUINT  uiExponentSign = ( *(TINT*)&fSize ) >> 23;
@@ -627,12 +627,12 @@ void TMemory::GetMemInfo( MemInfo& a_rMemInfo, MemBlock* a_pMemBlock )
 	a_rMemInfo.m_uiLargestProcess  = 0;
 	a_rMemInfo.m_uiLargestHole     = 0;
 
-	auto uiUnk          = (TUINT)a_pMemBlock->m_pFirstHole + ( -88 - (TUINT)a_pMemBlock );
+	auto uiUnk          = (TUINTPTR)a_pMemBlock->m_pFirstHole + ( -88 - (TUINTPTR)a_pMemBlock );
 	a_rMemInfo.m_uiUnk3 = uiUnk;
 	a_rMemInfo.m_uiUnk4 = uiUnk;
 
 	auto  pHole      = a_pMemBlock->m_pFirstHole;
-	TUINT uiHoleSize = pHole->uiSize;
+	TSIZE uiHoleSize = pHole->uiSize;
 
 	while ( TAlignNumDown( uiHoleSize ) != 0 )
 	{
@@ -671,7 +671,7 @@ void TMemory::GetMemInfo( MemInfo& a_rMemInfo, MemBlock* a_pMemBlock )
 		}
 
 		auto pOldHole = pHole;
-		pHole         = (MemNode*)( (TUINT)&pHole->pPrevHole + uiHoleSize );
+		pHole         = (MemNode*)( (TUINTPTR)&pHole->pPrevHole + uiHoleSize );
 		uiHoleSize    = pHole->uiSize;
 	}
 
@@ -696,7 +696,7 @@ TMemory::HALMemInfo::HALMemInfo()
 
 TOSHI_NAMESPACE_END
 
-void* TMalloc( TUINT a_uiSize, Toshi::TMemory::MemBlock* a_pMemBlock, const TCHAR* a_szFileName, TINT a_iLineNum )
+void* TMalloc( TSIZE a_uiSize, Toshi::TMemory::MemBlock* a_pMemBlock, const TCHAR* a_szFileName, TINT a_iLineNum )
 {
 	if ( !a_pMemBlock )
 	{
@@ -713,7 +713,7 @@ void* TMalloc( TUINT a_uiSize, Toshi::TMemory::MemBlock* a_pMemBlock, const TCHA
 	return pMem;
 }
 
-void* TMalloc( TUINT a_uiSize, const TCHAR* a_szFileName, TINT a_iLineNum )
+void* TMalloc( TSIZE a_uiSize, const TCHAR* a_szFileName, TINT a_iLineNum )
 {
 	auto pMemBlock = Toshi::g_pMemory->GetGlobalBlock();
 
@@ -727,7 +727,7 @@ void* TMalloc( TUINT a_uiSize, const TCHAR* a_szFileName, TINT a_iLineNum )
 	return pMem;
 }
 
-void* TMalloc( TUINT a_uiSize )
+void* TMalloc( TSIZE a_uiSize )
 {
 	auto pMemBlock = Toshi::g_pMemory->GetGlobalBlock();
 
@@ -741,7 +741,7 @@ void* TMalloc( TUINT a_uiSize )
 	return pMem;
 }
 
-void* TMemalign( TUINT a_uiAlignment, TUINT a_uiSize, Toshi::TMemory::MemBlock* a_pMemBlock )
+void* TMemalign( TSIZE a_uiAlignment, TSIZE a_uiSize, Toshi::TMemory::MemBlock* a_pMemBlock )
 {
 	if ( !a_pMemBlock )
 	{
@@ -758,7 +758,7 @@ void* TMemalign( TUINT a_uiAlignment, TUINT a_uiSize, Toshi::TMemory::MemBlock* 
 	return pMem;
 }
 
-void* TMemalign( TUINT a_uiSize, TUINT a_uiAlignment )
+void* TMemalign( TSIZE a_uiSize, TSIZE a_uiAlignment )
 {
 	auto pMemBlock = Toshi::g_pMemory->GetGlobalBlock();
 

@@ -42,7 +42,7 @@ public:
 
 	public:
 		MemNode* pOwner;
-		TUINT    uiSize;
+		TSIZE    uiSize;
 		union
 		{
 			MemNode*  pNextHole;
@@ -56,9 +56,9 @@ public:
 	struct MemBlock
 	{
 		MemBlockSlot* m_pSlot;
-		TUINT         m_uiTotalSize1;
+		TSIZE         m_uiTotalSize1;
 		MemBlock*     m_pNextBlock;
-		TUINT         m_uiTotalSize2;
+		TSIZE         m_uiTotalSize2;
 		MemNode*      m_apHoles[ TMEMORY_NUM_FREELISTS ];
 		MemNode*      m_pFirstHole;
 		TCHAR         m_szSignature[ 8 ];
@@ -82,20 +82,20 @@ public:
 
 	struct MemInfo
 	{
-		TUINT m_uiTotalSize;
-		TUINT m_uiLogicTotalSize;
-		TUINT m_uiTotalFree;
-		TUINT m_uiLogicTotalFree;
-		TUINT m_uiTotalUsed;
-		TUINT m_uiLogicTotalUsed;
+		TSIZE m_uiTotalSize;
+		TSIZE m_uiLogicTotalSize;
+		TSIZE m_uiTotalFree;
+		TSIZE m_uiLogicTotalFree;
+		TSIZE m_uiTotalUsed;
+		TSIZE m_uiLogicTotalUsed;
 		TINT  m_iNumHoles;
 		TINT  m_iNumProcesses;
-		TUINT m_uiLargestHole;
-		TUINT m_uiLargestProcess;
-		TUINT m_uiSmallestHole;
-		TUINT m_uiSmallestProcess;
-		TUINT m_uiUnk3;
-		TUINT m_uiUnk4;
+		TSIZE m_uiLargestHole;
+		TSIZE m_uiLargestProcess;
+		TSIZE m_uiSmallestHole;
+		TSIZE m_uiSmallestProcess;
+		TSIZE m_uiUnk3;
+		TSIZE m_uiUnk4;
 	};
 
 	struct HALMemInfo
@@ -103,7 +103,7 @@ public:
 		HALMemInfo();
 
 		TUINT m_Unknown1[ 10 ];
-		TUINT m_uiMemUsage;
+		TSIZE m_uiMemUsage;
 		TUINT m_Unknown2[ 15 ];
 	};
 
@@ -111,14 +111,14 @@ public:
 	TMemory();
 	~TMemory();
 
-	void* Alloc( TUINT a_uiSize, TINT a_uiAlignment, MemBlock* a_pMemBlock, const TCHAR* a_szFileName, TINT a_iLineNum );
+	void* Alloc( TSIZE a_uiSize, TSIZE a_uiAlignment, MemBlock* a_pMemBlock, const TCHAR* a_szFileName, TINT a_iLineNum );
 	TBOOL Free( const void* a_pMem );
 
 	void* SysAlloc( TSIZE a_uiSize );
 	void  SysFree( void* a_pMem );
 
-	MemBlock* CreateMemBlock( TUINT a_uiSize, const TCHAR* a_szName, MemBlock* a_pOwnerBlock, TINT a_iUnused );
-	MemBlock* CreateMemBlockInPlace( void* a_pMem, TUINT a_uiSize, const TCHAR* a_szName );
+	MemBlock* CreateMemBlock( TSIZE a_uiSize, const TCHAR* a_szName, MemBlock* a_pOwnerBlock, TINT a_iUnused );
+	MemBlock* CreateMemBlockInPlace( void* a_pMem, TSIZE a_uiSize, const TCHAR* a_szName );
 	void      DestroyMemBlock( MemBlock* a_pMemBlock );
 
 	MemBlock* GetGlobalBlock() const;
@@ -133,15 +133,15 @@ private:
 	void  SetMemBlockUnused( MemBlock* a_pMemBlock );
 
 	static MemNode* GetMemNodeFromAddress( void* a_pMem );
-	static void     ExtendNodeSize( MemNode* a_pNode, TUINT a_uiExtendSize ) { a_pNode->uiSize = a_uiExtendSize | ( a_pNode->uiSize & TMEMORY_FLAGS_MASK ); }
-	static void     SetHoleSize( MemNode* a_pNode, TUINT a_uiHoleSize ) { a_pNode->uiSize = a_uiHoleSize; }
+	static void     ExtendNodeSize( MemNode* a_pNode, TSIZE a_uiExtendSize ) { a_pNode->uiSize = a_uiExtendSize | ( a_pNode->uiSize & TMEMORY_FLAGS_MASK ); }
+	static void     SetHoleSize( MemNode* a_pNode, TSIZE a_uiHoleSize ) { a_pNode->uiSize = a_uiHoleSize; }
 	static TBOOL    IsProcess( MemNode* a_pNode ) { return HASANYFLAG( a_pNode->uiSize, TMEMORY_FLAGS_HOLE_PROCESS ); }
-	static void     SetProcess( MemBlock* a_pMemBlock, MemNode* a_pNode, TUINT a_uiHoleSize )
+	static void     SetProcess( MemBlock* a_pMemBlock, MemNode* a_pNode, TSIZE a_uiHoleSize )
 	{
 		a_pNode->uiSize    = a_uiHoleSize | g_pMemory->GetGlobalFlags() | TMEMORY_FLAGS_HOLE_PROCESS;
 		a_pNode->pMemBlock = a_pMemBlock;
 	}
-	static TUINT     GetNodeSize( MemNode* a_pNode ) { return TAlignNumDown( a_pNode->uiSize ); }
+	static TSIZE     GetNodeSize( MemNode* a_pNode ) { return TAlignNumDown( a_pNode->uiSize ); }
 	static MemBlock* GetProcessMemBlock( MemNode* a_pNode ) { return a_pNode->pMemBlock; }
 	static void      ConvertProcessToHole( MemNode* a_pNode ) { a_pNode->uiSize &= ~TMEMORY_FLAGS_MASK; }
 	static int       TestMemIntegrity( MemBlock* a_pMemBlock );
@@ -150,18 +150,18 @@ private:
 public:
 	static void  GetMemInfo( MemInfo& a_rMemInfo, MemBlock* a_pMemBlock );
 	static void  GetHALMemInfo( HALMemInfo& a_rHALMemInfo );
-	static TBOOL Initialise( TUINT a_uiHeapSize, TUINT a_uiReservedSize, TUINT a_uiUnused = 0 );
+	static TBOOL Initialise( TSIZE a_uiHeapSize, TSIZE a_uiReservedSize, TUINT a_uiUnused = 0 );
 	static void  Deinitialise();
-	static TUINT MapSizeToFreeList( TUINT a_uiSize );
+	static TUINT MapSizeToFreeList( TSIZE a_uiSize );
 	static void  DebugPrintHALMemInfo( const TCHAR* a_szFormat, ... );
 
 private:
 	inline static class TMutex* ms_pGlobalMutex;
 
 private:
-	TUINT                   m_TotalAllocatedSize;
-	TUINT                   m_ReservedSize;
-	TUINT                   m_MainBlockSize;
+	TSIZE                   m_TotalAllocatedSize;
+	TSIZE                   m_ReservedSize;
+	TSIZE                   m_MainBlockSize;
 	TNodeList<MemBlockSlot> m_UsedBlocks;
 	TNodeList<MemBlockSlot> m_FreeBlocks;
 	MemBlockSlot            m_aBlockSlots[ TMEMORY_NUM_BLOCK_SLOTS ];
@@ -246,11 +246,11 @@ TOSHI_NAMESPACE_END
 
 #endif // TMEMORY_USE_DLMALLOC
 
-void* TMalloc( TUINT a_uiSize );
-void* TMalloc( TUINT a_uiSize, const TCHAR* a_szFileName, TINT a_iLineNum );
-void* TMalloc( TUINT a_uiSize, Toshi::TMemory::MemBlock* a_pMemBlock, const TCHAR* a_szFileName = TNULL, TINT a_iLineNum = -1 );
-void* TMemalign( TUINT a_uiSize, TUINT a_uiAlignment );
-void* TMemalign( TUINT a_uiAlignment, TUINT a_uiSize, Toshi::TMemory::MemBlock* a_pMemBlock );
+void* TMalloc( TSIZE a_uiSize );
+void* TMalloc( TSIZE a_uiSize, const TCHAR* a_szFileName, TINT a_iLineNum );
+void* TMalloc( TSIZE a_uiSize, Toshi::TMemory::MemBlock* a_pMemBlock, const TCHAR* a_szFileName = TNULL, TINT a_iLineNum = -1 );
+void* TMemalign( TSIZE a_uiSize, TSIZE a_uiAlignment );
+void* TMemalign( TSIZE a_uiAlignment, TSIZE a_uiSize, Toshi::TMemory::MemBlock* a_pMemBlock );
 
 void TFree( void* a_pMem );
 
@@ -267,9 +267,9 @@ TFORCEINLINE T* TConstruct( T* a_pMemory, Args&&... args )
 // Purpose: Calls constructor of type T on the specified pointer N times.
 //-----------------------------------------------------------------------------
 template <class T, class... Args>
-TFORCEINLINE T* TConstructArray( T* a_pMemory, TUINT a_uiNumTimes, Args&&... args )
+TFORCEINLINE T* TConstructArray( T* a_pMemory, TSIZE a_uiNumTimes, Args&&... args )
 {
-	for ( TUINT i = 0; i < a_uiNumTimes; i++ )
+	for ( TSIZE i = 0; i < a_uiNumTimes; i++ )
 	{
 		new ( a_pMemory + i ) T( std::forward<Args>( args )... );
 	}

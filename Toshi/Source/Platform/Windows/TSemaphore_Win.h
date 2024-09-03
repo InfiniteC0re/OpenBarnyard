@@ -13,7 +13,7 @@ public:
 		* Define them in TThread_{Platform}.cpp
 		*/
 
-	TBOOL Create( size_t a_iInitCount, size_t a_iMaxCount )
+	TBOOL Create( TINT a_iInitCount, TINT a_iMaxCount )
 	{
 		TASSERT( a_iInitCount >= 0, "Init count should be greater than zero" );
 		TASSERT( a_iMaxCount >= a_iInitCount, "Init count cannot be less than max count" );

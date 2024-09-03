@@ -151,7 +151,8 @@ void TLogFile::Log( TUtil::LogType type, const TCHAR* str1, const TCHAR* str2, c
 
 		va_list args;
 		va_start( args, format );
-		m_pFile->VCPrintf( format, args );
+		T2String8::FormatV( TStringManager::GetTempString8(), format, args );
+		m_pFile->CPrintf( TStringManager::GetTempString8() );
 		va_end( args );
 
 		m_typeCounts[ type ]++;
