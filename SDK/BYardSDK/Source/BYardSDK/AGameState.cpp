@@ -10,7 +10,7 @@ TOSHI_NAMESPACE_USING
 
 AGameState::AGameState()
 {
-	m_iOverlayColorIndex = 0;
+	m_eOverlayColorIndex = 0;
 	m_pInputMap          = TNULL;
 	m_pOwnerState        = TNULL;
 	m_bWasInserted       = TFALSE;

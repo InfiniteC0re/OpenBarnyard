@@ -23,6 +23,7 @@ public:
 	};
 
 public:
+	// constructors/destructor
 	ABYardMenuState();
 	~ABYardMenuState();
 
@@ -40,10 +41,10 @@ public:
 	//-----------------------------------------------------------------------------
 	// Own methods
 	//-----------------------------------------------------------------------------
-	virtual void OnMenuVisible();
+	virtual void OnMenuOpen();
 	virtual void OnMenuItemActivated( AGUI2MenuItem& a_rMenuItem ) = 0;
 	virtual void OnMenuItemFocused( AGUI2MenuItem& a_rOldFocus, AGUI2MenuItem& a_rNewFocus );
-	virtual void OnMenuHidden();
+	virtual void OnMenuClose();
 
 private:
 	void UpdateMenuOpacity();
@@ -52,7 +53,7 @@ private:
 public:
 	inline static TFLOAT ms_fTimeSinceInsertion = 0.0f;
 
-private:
+protected:
 	AGUI2Element   m_oRootElement;
 	AGUI2Dialog    m_oDialog;
 	AGUI2Menu      m_oMenu;

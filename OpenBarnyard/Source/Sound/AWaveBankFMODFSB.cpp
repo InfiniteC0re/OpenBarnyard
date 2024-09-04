@@ -94,14 +94,14 @@ AWaveBank::LOADRESULT AWaveBankFMODFSB::Load( LOADFLAGS a_uiFlags, TINT a_iBuffe
 				FSOUND_SAMPLE* pSample = FMUSIC_GetSample( pModule, i );
 
 				AWave* pWave = &m_pWaves[ i ];
-				pWave->uiFlags |= ( 4 | 8 );
+				pWave->iFlags |= ( 4 | 8 );
 				pWave->pSampleHandle = pSample;
 				pWave->iIndex        = i;
 
 				TINT iDeffreq;
 				FSOUND_Sample_GetDefaults( pSample, &iDeffreq, TNULL, TNULL, TNULL );
 
-				pWave->uiFrequency = TUINT( iDeffreq );
+				pWave->iFrequency = TUINT( iDeffreq );
 			}
 
 			return LOADRESULT_OK;
@@ -123,7 +123,7 @@ AWaveBank::UNLOADRESULT AWaveBankFMODFSB::Unload()
 			AWave* pWave         = &m_pWaves[ i ];
 			pWave->pSampleHandle = TNULL;
 			pWave->iIndex        = -1;
-			pWave->uiFlags &= ~( 4 | 8 );
+			pWave->iFlags &= ~( 4 | 8 );
 		}
 
 		FMUSIC_MODULE* pModule = (FMUSIC_MODULE*)m_FileHandle;

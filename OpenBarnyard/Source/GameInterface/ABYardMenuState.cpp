@@ -42,7 +42,7 @@ TBOOL ABYardMenuState::ProcessInput( const TInputInterface::InputEvent* a_pInput
 			// Make sure menu updates mouse state
 			m_oMenu.SetMouseStateDirty();
 		}
-		else if ( a_pInputEvent->GetEventType() == TInputInterface::EVENT_TYPE_REPEAT &&
+		else if ( a_pInputEvent->GetEventType() == TInputInterface::EVENT_TYPE_GONE_DOWN &&
 		          a_pInputEvent->GetDoodad() == TInputDeviceMouse::BUTTON_1 &&
 		          m_oMenu.GetHoveredMenuItem() != TNULL )
 		{
@@ -123,7 +123,7 @@ TBOOL ABYardMenuState::OnUpdate( TFLOAT a_fDeltaTime )
 				m_fMenuOpacity      = 1.0f;
 
 				m_oRootElement.Hide();
-				OnMenuHidden();
+				OnMenuClose();
 
 				return TTRUE;
 			}
@@ -139,7 +139,7 @@ TBOOL ABYardMenuState::OnUpdate( TFLOAT a_fDeltaTime )
 				m_eMenuState        = MENUSTATE_MENU_VISIBLE;
 				m_fOscillatorOffset = 0.0f;
 
-				OnMenuVisible();
+				OnMenuOpen();
 			}
 
 			// Update menu opacity
@@ -173,7 +173,7 @@ TBOOL ABYardMenuState::OnUpdate( TFLOAT a_fDeltaTime )
 					// Can't show dialog
 					m_oRootElement.Hide();
 					m_eMenuState = MENUSTATE_NOTHING;
-					OnMenuHidden();
+					OnMenuClose();
 
 					return TTRUE;
 				}
@@ -331,7 +331,7 @@ void ABYardMenuState::OnDeactivate()
 	m_oRootElement.Hide();
 }
 
-void ABYardMenuState::OnMenuVisible()
+void ABYardMenuState::OnMenuOpen()
 {
 }
 
@@ -348,7 +348,7 @@ void ABYardMenuState::OnMenuItemFocused( AGUI2MenuItem& a_rOldFocus, AGUI2MenuIt
 	}
 }
 
-void ABYardMenuState::OnMenuHidden()
+void ABYardMenuState::OnMenuClose()
 {
 }
 

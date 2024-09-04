@@ -7,65 +7,32 @@
 class AGUI2TextBox : public AGUI2Element
 {
 public:
+	// constructors/destructor
 	AGUI2TextBox();
-
-	virtual void   Render() override;
-	virtual void   GetDimensions( TFLOAT& a_rWidth, TFLOAT& a_rHeight ) override;
-	virtual TFLOAT GetWidth() override;
-	virtual TFLOAT GetHeight() override;
-	virtual void   SetWidth( TFLOAT a_fWidth ) override;
-	virtual void   SetShadowAlpha( TFLOAT a_fAlpha ) override;
+	~AGUI2TextBox();
 
 	void Create( AGUI2Font* a_pFont, TFLOAT a_fWidth );
 
-	void SetText( const TWCHAR* a_wszText )
-	{
-		m_wszText          = a_wszText;
-		m_bDimensionsDirty = TTRUE;
-	}
+	void SetText( const TWCHAR* a_wszText );
+	void SetScale( TFLOAT a_fScale );
+	void SetShadow( TBOOL a_bEnabled, TUINT32 a_uiColour );
+	void SetShadowEnabled( TBOOL a_bEnabled );
+	void SetShadowColour( const Toshi::TColor& a_rColour );
+	void SetShadowColour( TUINT32 a_uiColour );
+	void SetShadowOffset( TFLOAT a_fOffsetX, TFLOAT a_fOffsetY );
+	void SetTextAlign( AGUI2Font::TextAlign a_eTextAlign );
 
-	void SetScale( TFLOAT a_fScale )
-	{
-		m_fScale           = a_fScale;
-		m_bDimensionsDirty = TTRUE;
-	}
+	const TWCHAR* GetText() const;
 
-	void SetShadow( TBOOL a_bEnabled, TUINT32 a_uiColour )
-	{
-		m_bRenderShadow  = a_bEnabled;
-		m_uiShadowColour = a_uiColour;
-	}
-
-	void SetShadowEnabled( TBOOL a_bEnabled )
-	{
-		m_bRenderShadow = a_bEnabled;
-	}
-
-	void SetShadowColour( const Toshi::TColor& a_rColour )
-	{
-		m_uiShadowColour = a_rColour.Value32;
-	}
-
-	void SetShadowColour( TUINT32 a_uiColour )
-	{
-		m_uiShadowColour = a_uiColour;
-	}
-
-	void SetShadowOffset( TFLOAT a_fOffsetX, TFLOAT a_fOffsetY )
-	{
-		m_fShadowOffsetX = m_fScale * a_fOffsetX;
-		m_fShadowOffsetY = m_fScale * a_fOffsetY;
-	}
-
-	void SetTextAlign( AGUI2Font::TextAlign a_eTextAlign )
-	{
-		m_eTextAlign = a_eTextAlign;
-	}
-
-	const TWCHAR* GetText() const
-	{
-		return m_wszText;
-	}
+	//-----------------------------------------------------------------------------
+	// AGUI2Element
+	//-----------------------------------------------------------------------------
+	virtual void   Render() OVERRIDE;
+	virtual void   GetDimensions( TFLOAT& a_rWidth, TFLOAT& a_rHeight ) OVERRIDE;
+	virtual TFLOAT GetWidth() OVERRIDE;
+	virtual TFLOAT GetHeight() OVERRIDE;
+	virtual void   SetWidth( TFLOAT a_fWidth ) OVERRIDE;
+	virtual void   SetShadowAlpha( TFLOAT a_fAlpha ) OVERRIDE;
 
 private:
 	void RenderText( void* a_fnCallback );

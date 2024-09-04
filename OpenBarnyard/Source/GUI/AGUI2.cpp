@@ -239,8 +239,7 @@ AGUI2Renderer* AGUI2::GetRenderer()
 
 void AGUI2::MainPostRenderCallback()
 {
-	// FIXME: Render only when cursor should be visible
-	if ( !AGUI2::GetSingleton()->IsCursorVisible() )
+	if ( AGUI2::GetSingleton()->IsCursorVisible() )
 	{
 		auto& mouseCursor = AGUI2::GetSingleton()->m_oMouseCursor;
 

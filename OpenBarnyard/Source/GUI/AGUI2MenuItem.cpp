@@ -67,8 +67,8 @@ TFLOAT AGUI2MenuItem::GetFlowOffset()
 
 void AGUI2MenuItem::LinkMenuItemBefore( AGUI2MenuItem& a_rLinkAfter )
 {
-	m_pNextMenuItem                  = &a_rLinkAfter;
-	m_pPrevMenuItem                  = a_rLinkAfter.m_pPrevMenuItem;
-	a_rLinkAfter.m_pPrev             = this;
-	m_pPrevMenuItem->m_pNextMenuItem = this;
+	m_pPrevMenuItem                  = &a_rLinkAfter;
+	m_pNextMenuItem                  = a_rLinkAfter.m_pNextMenuItem;
+	a_rLinkAfter.m_pNextMenuItem     = this;
+	m_pNextMenuItem->m_pPrevMenuItem = this;
 }

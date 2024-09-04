@@ -169,7 +169,7 @@ TINT TInputDXDeviceMouse::ProcessEvents( EventEmitter& a_rEmitter, TFLOAT a_fDel
 		}
 	}
 
-	if ( m_iDeltaPositionX != 0 && m_iDeltaPositionY != 0 )
+	if ( m_iDeltaPositionX != 0 || m_iDeltaPositionY != 0 )
 	{
 		a_rEmitter.Throw(
 		    TInputInterface::InputEvent(

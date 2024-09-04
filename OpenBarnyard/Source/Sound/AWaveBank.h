@@ -40,6 +40,7 @@ public:
 
 	AWave* GetWave( TINT a_iWaveIndex );
 	TINT   GetWaveId( TINT a_iWaveIndex );
+	TINT   GetWaveFrequency( TINT a_iWaveIndex );
 
 	// Creates wave sample if it's not created and returns it
 	AWaveSampleHandle CreateWaveSample( TINT a_iWaveIndex, TINT a_iUnused );

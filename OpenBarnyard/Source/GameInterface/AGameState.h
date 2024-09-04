@@ -12,6 +12,18 @@ class AGameState :
     public Toshi::T2DList<AGameState>::Node
 {
 public:
+	using OVERLAY = TUINT;
+	enum OVERLAY_ : OVERLAY
+	{
+		OVERLAY_1,
+		OVERLAY_2,
+		OVERLAY_3,
+		OVERLAY_NUMOF,
+	};
+
+	friend class AGameStateController;
+
+public:
 	TDECLARE_CLASS( AGameState, Toshi::TObject );
 
 	template <class Result, class... Args>
@@ -82,6 +94,9 @@ public:
 	void Destroy();
 	void Destroy( TBOOL a_bDeactivate );
 
+	void    SetOverlay( OVERLAY a_eOverlay ) { m_eOverlayColorIndex = a_eOverlay; }
+	OVERLAY GetOverlay() const { return m_eOverlayColorIndex; }
+
 	template <class RetT, class... Args>
 	void ExecuteForAllChildStates( t_ExecuteForChildCb<RetT, Args...> a_fnCallback, TUINT32 a_uiOffset, Args... args )
 	{
@@ -117,7 +132,7 @@ public:
 
 protected:
 	HUDParams                  m_HUDParams;
-	TINT                       m_iOverlayColorIndex;
+	OVERLAY                    m_eOverlayColorIndex;
 	Toshi::T2DList<AGameState> m_ChildStates;
 	AInputMap*                 m_pInputMap;
 	AGameState*                m_pOwnerState;

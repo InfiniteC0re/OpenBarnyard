@@ -1,6 +1,6 @@
 #pragma once
 
-#define ASOUNDWAVEID_INVALID -1
+#define ASOUNDID_INVALID -1
 
 using ASoundId = TINT32;
 

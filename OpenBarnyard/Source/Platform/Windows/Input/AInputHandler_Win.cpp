@@ -29,7 +29,7 @@ AInputHandler::AInputHandler()
 	m_pMainController = TNULL;
 
 	m_bIsPaused         = TFALSE;
-	m_bIsLastInputValid = TFALSE;
+	m_bHadInputLastFrame = TFALSE;
 }
 
 AInputHandler::~AInputHandler()
@@ -61,7 +61,7 @@ TBOOL AInputHandler::OnCreate()
 TBOOL AInputHandler::OnUpdate( TFLOAT a_fDeltaTime )
 {
 	TIMPLEMENT();
-	m_bIsLastInputValid = TFALSE;
+	m_bHadInputLastFrame = TFALSE;
 	m_fDeltaTime        = a_fDeltaTime;
 
 	TInputInterface::GetSingleton()->AcquireAll();
@@ -105,13 +105,13 @@ TBOOL AInputHandler::ProcessInputEvent( Toshi::TInputInterface* a_pInputInterfac
 		{
 			if ( pInputSource->GetClass()->IsA( &TGetClass( TInputDeviceMouse ) ) )
 			{
-				m_bIsLastInputValid = TTRUE;
+				m_bHadInputLastFrame = TTRUE;
 			}
 
 			return TFALSE;
 		}
 	}
 
-	m_bIsLastInputValid = TTRUE;
+	m_bHadInputLastFrame = TTRUE;
 	return TTRUE;
 }

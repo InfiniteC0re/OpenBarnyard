@@ -67,9 +67,9 @@ void AGUI2Button::SetImage( const TCHAR* a_szTexSec, TFLOAT a_fScaleX, TFLOAT a_
 	LinkChildBefore( m_oBackgroundRect, m_oText );
 }
 
-void AGUI2Button::Render()
+void AGUI2Button::GetDimensions( TFLOAT& a_rWidth, TFLOAT& a_rHeight )
 {
-	m_oText.Render();
+	m_oText.GetDimensions( a_rWidth, a_rHeight );
 }
 
 void AGUI2Button::SetAlpha( TFLOAT a_fAlpha )

@@ -52,7 +52,7 @@ public:
 	Toshi::T2DynamicVector<void*>    m_UnkVector;
 	TUINT                            m_Unk2;
 	TUINT                            m_Unk3;
-	AGUI2Rectangle                   m_Rectangle;
+	AGUI2Rectangle                   m_oOverlay;
 	TUINT16                          m_eFlags;
 	TFLOAT                           m_fOverlayAlpha;
 	TFLOAT                           m_fSoundVolume;

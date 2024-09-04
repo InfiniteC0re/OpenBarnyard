@@ -90,6 +90,7 @@ TFORCEINLINE TINT  Round( TFLOAT a_fVal ) { return (TINT)roundf( a_fVal ); }
 TFORCEINLINE TINT  CeilToInt( TFLOAT a_fVal ) { return TINT( a_fVal ) - TUINT32( 0 < TUINT32( a_fVal - TUINT32( a_fVal ) ) ); }
 TFORCEINLINE TINT  FloorToInt( TFLOAT a_fVal ) { return TINT( a_fVal ) - TUINT32( 0x80000000 < TUINT32( a_fVal - TUINT32( a_fVal ) ) ); }
 TFORCEINLINE TBOOL IsNaN( TFLOAT fVal ) { return isnan( fVal ); }
+
 TFORCEINLINE TINT  FastMod( TINT a_iNum, TINT a_iModulus )
 {
 	TASSERT( a_iNum >= 0 );
@@ -97,12 +98,24 @@ TFORCEINLINE TINT  FastMod( TINT a_iNum, TINT a_iModulus )
 	TASSERT( 0 == ( a_iModulus & ( a_iModulus - 1 ) ) );
 	return a_iNum & ( a_iModulus - 1 );
 }
+
 TFORCEINLINE void SinCos( TFLOAT fVal, TFLOAT& a_rSin, TFLOAT& a_rCos )
 {
 	a_rSin = sin( fVal );
 	a_rCos = cos( fVal );
 }
+
 TFORCEINLINE TFLOAT LERP( TFLOAT a, TFLOAT b, TFLOAT t ) { return a + t * ( b - a ); }
+
+TFORCEINLINE TFLOAT LERPClamped( TFLOAT a, TFLOAT b, TFLOAT t )
+{
+	TFLOAT fResult = LERP( a, b, t );
+
+	if ( ( a < b && b < fResult ) || ( b < a && fResult < b ) )
+		return b;
+	
+	return fResult;
+}
 
 template <typename T>
 TFORCEINLINE void Clip( T& rVal, const T& Min, const T& Max )

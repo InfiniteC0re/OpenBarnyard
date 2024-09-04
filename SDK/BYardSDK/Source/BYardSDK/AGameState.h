@@ -156,7 +156,7 @@ protected:
 
 protected:
 	HUDParams                  m_HUDParams;
-	TINT                       m_iOverlayColorIndex;
+	TINT                       m_eOverlayColorIndex;
 	Toshi::T2DList<AGameState> m_ChildStates;
 	AInputMap*                 m_pInputMap;
 	AGameState*                m_pOwnerState;

@@ -39,6 +39,8 @@ public:
 
 	TINT GetRandomSampleWeighted( TINT a_iTrackIndex, TINT a_iWaveIndexMin, TINT a_iWaveIndexMax );
 
+	Toshi::T2DynamicVector<Sample>& GetSamples() { return m_vecSamples; }
+
 private:
 	TINT                           m_iFlags;
 	TINT                           m_iId;

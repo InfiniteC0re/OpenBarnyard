@@ -21,7 +21,7 @@ TDEFINE_CLASS( AGameState );
 
 AGameState::AGameState()
 {
-	m_iOverlayColorIndex = 0;
+	m_eOverlayColorIndex = OVERLAY_1;
 	m_pInputMap          = TNULL;
 	m_pOwnerState        = TNULL;
 	m_bWasInserted       = TFALSE;
@@ -82,7 +82,7 @@ TBOOL AGameState::Unknown6()
 
 ASoundId AGameState::GetSound()
 {
-	return ASOUNDWAVEID_INVALID;
+	return ASOUNDID_INVALID;
 }
 
 TBOOL AGameState::Unknown7()

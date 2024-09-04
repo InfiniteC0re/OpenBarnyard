@@ -45,6 +45,7 @@ public:
 
 	AGUI2MenuItem* GetFocusedMenuItem() const { return m_pFocusedMenuItem; }
 	AGUI2MenuItem* GetHoveredMenuItem() const { return m_pHoveredMenuItem; }
+	AGUI2MenuItem* GetLastMenuItem() const { return m_pLastMenuItem; }
 
 	void SetCallbackUserData( void* a_pUserData ) { m_pCallbackUserData = a_pUserData; }
 	void SetItemActivationCallback( ActivateCallback a_fnCallback ) { m_fnActivateCallback = a_fnCallback; }
@@ -100,6 +101,14 @@ public:
 	AGUI2MenuItem();
 	~AGUI2MenuItem();
 
+	void LinkMenuItemBefore( AGUI2MenuItem& a_rLinkAfter );
+
+	TBOOL IsEnabled() const { return m_bEnabled; }
+	TBOOL CanFocus() const { return IsEnabled() && IsVisible(); }
+
+	AGUI2MenuItem* GetNextMenuItem() const { return m_pNextMenuItem; }
+	AGUI2MenuItem* GetPrevMenuItem() const { return m_pPrevMenuItem; }
+
 	//-----------------------------------------------------------------------------
 	// AGUI2Element
 	//-----------------------------------------------------------------------------
@@ -115,11 +124,6 @@ public:
 	virtual void          SetEnabled( TBOOL a_bEnabled );
 	virtual TFLOAT        GetFlowVisualOffset();
 	virtual TFLOAT        GetFlowOffset();
-
-	void LinkMenuItemBefore( AGUI2MenuItem& a_rLinkAfter );
-
-	TBOOL IsEnabled() const { return m_bEnabled; }
-	TBOOL CanFocus() const { return IsEnabled() && IsVisible(); }
 
 private:
 	AGUI2MenuItem* m_pNextMenuItem;

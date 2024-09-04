@@ -77,7 +77,7 @@ void AGUI2Menu::Update( TFLOAT a_fDeltaTime )
 							ASoundManager::GetSingleton()->PlayCue( m_eFocusSound );
 						}
 
-						m_pFocusedMenuItem = pItem;
+						m_pHoveredMenuItem = pItem;
 						break;
 					}
 				}

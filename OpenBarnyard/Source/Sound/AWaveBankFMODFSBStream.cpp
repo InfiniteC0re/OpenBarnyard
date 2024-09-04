@@ -54,7 +54,7 @@ AWaveBank::LOADRESULT AWaveBankFMODFSBStream::Load( LOADFLAGS a_uiFlags, TINT a_
 	// Open the FSB stream
 	TUINT uiStreamOpenMode =
 	    ( FSOUND_NONBLOCKING | FSOUND_SIGNED | FSOUND_MONO | FSOUND_16BITS ) |
-	    ( ( m_pWaves->uiFlags & 2 ) ? FSOUND_HW3D : FSOUND_HW2D );
+	    ( ( m_pWaves->iFlags & 2 ) ? FSOUND_HW3D : FSOUND_HW2D );
 
 	FSOUND_STREAM* pStream = FSOUND_Stream_Open( oFileInfo.InternalPath, uiStreamOpenMode, oFileInfo.Offset, oFileInfo.Length );
 	TVALIDPTR( pStream );
@@ -83,7 +83,7 @@ AWaveBank::LOADRESULT AWaveBankFMODFSBStream::Load( LOADFLAGS a_uiFlags, TINT a_
 			AWave* pWave         = &m_pWaves[ i ];
 			pWave->iIndex        = i;
 			pWave->pSampleHandle = pStream;
-			pWave->uiFlags |= ( 4 | 8 );
+			pWave->iFlags |= ( 4 | 8 );
 		}
 
 		return LOADRESULT_OK;
@@ -115,7 +115,7 @@ AWaveBank::UNLOADRESULT AWaveBankFMODFSBStream::Unload()
 			AWave* pWave         = &m_pWaves[ i ];
 			pWave->pSampleHandle = TNULL;
 			pWave->iIndex        = -1;
-			pWave->uiFlags &= ~( 4 | 8 );
+			pWave->iFlags &= ~( 4 | 8 );
 		}
 
 		m_FileHandle = TNULL;

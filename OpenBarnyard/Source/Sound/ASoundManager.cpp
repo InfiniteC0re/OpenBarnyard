@@ -248,7 +248,7 @@ TINT ASoundManager::PlayCue( ASoundId a_iSound )
 
 TINT ASoundManager::PlayCueEx( ASoundId a_iSound, TFLOAT a_fVolume, TBOOL a_bFlag, TFLOAT a_fDelay, TINT a_iTrack )
 {
-	if ( a_iSound == ASOUNDWAVEID_INVALID )
+	if ( a_iSound == ASOUNDID_INVALID )
 		return -1;
 
 	// Look if the sound is stored to be played

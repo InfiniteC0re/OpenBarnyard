@@ -24,4 +24,54 @@ void TGenericListener::Disconnect()
 	m_pCallback = TNULL;
 }
 
+TGenericListener::~TGenericListener()
+{
+	Disconnect();
+}
+
+void TGenericListener::Execute( void* pOwner, void* pData )
+{
+	m_pCallback( m_pCaller, pOwner, pData );
+}
+
+void TGenericEmitter::Destroy()
+{
+	if ( !m_Listeners.IsEmpty() )
+	{
+		for ( auto it = m_Listeners.Begin(); it != m_Listeners.End(); it++ )
+		{
+			it->Disconnect();
+		}
+	}
+
+	m_pOwner = TNULL;
+}
+
+void TGenericEmitter::Create( void* a_pOwner )
+{
+	m_pOwner = a_pOwner;
+}
+
+void TGenericEmitter::Throw( void* a_pData )
+{
+	auto pListener = m_Listeners.Begin();
+
+	while ( pListener != m_Listeners.End() )
+	{
+		auto pNextListener = pListener->Next();
+		pListener->Execute( m_pOwner, a_pData );
+		pListener = pNextListener;
+	}
+}
+
+TGenericEmitter::TGenericEmitter( void* a_pOwner )
+{
+	Create( a_pOwner );
+}
+
+TGenericEmitter::TGenericEmitter()
+{
+	Create( TNULL );
+}
+
 TOSHI_NAMESPACE_END

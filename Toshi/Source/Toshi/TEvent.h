@@ -13,19 +13,13 @@ public:
 
 public:
 	TGenericListener() = default;
-	~TGenericListener()
-	{
-		Disconnect();
-	}
+	~TGenericListener();
 
 	void Connect( TGenericEmitter& a_rEmitter, void* a_pCaller, t_Callback a_pCallback, TINT a_iPriority );
 	void Disconnect();
 
 private:
-	void Execute( void* pOwner, void* pData )
-	{
-		m_pCallback( m_pCaller, pOwner, pData );
-	}
+	void Execute( void* pOwner, void* pData );
 
 private:
 	void*      m_pCaller   = TNULL;
@@ -35,43 +29,15 @@ private:
 class TGenericEmitter
 {
 public:
-	TGenericEmitter()
-	{
-		Create( TNULL );
-	}
+	TGenericEmitter();
+	TGenericEmitter( void* a_pOwner );
+	~TGenericEmitter() = default;
 
-	TGenericEmitter( void* a_pOwner )
-	{
-		Create( a_pOwner );
-	}
+	void Create( void* a_pOwner );
+	void Destroy();
 
-	void Throw( void* a_pData )
-	{
-		auto pListener = m_Listeners.Begin();
-
-		while ( pListener != m_Listeners.End() )
-		{
-			auto pNextListener = pListener->Next();
-			pListener->Execute( m_pOwner, a_pData );
-			pListener = pNextListener;
-		}
-	}
-
-	void Create( void* a_pOwner )
-	{
-		m_pOwner = a_pOwner;
-	}
-
-	void Destroy()
-	{
-		for ( auto it = m_Listeners.Begin(); it != m_Listeners.End(); it++ )
-		{
-			//it->Disconnect();
-		}
-
-		m_pOwner = TNULL;
-	}
-
+	void Throw( void* a_pData );
+	
 	TPriList<TGenericListener>&       GetListeners() { return m_Listeners; }
 	const TPriList<TGenericListener>& GetListeners() const { return m_Listeners; }
 

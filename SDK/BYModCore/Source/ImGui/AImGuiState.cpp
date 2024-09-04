@@ -13,7 +13,7 @@ TDEFINE_CLASS(AImGuiState);
 
 AImGuiState::AImGuiState()
 {
-	m_iOverlayColorIndex = 3;
+	m_eOverlayColorIndex = 3;
 }
 
 TBOOL AImGuiState::OnUpdate(TFLOAT a_fDeltaTime)

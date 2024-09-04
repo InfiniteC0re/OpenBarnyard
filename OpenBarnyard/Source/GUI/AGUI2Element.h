@@ -242,7 +242,7 @@ public:
 
 	void LinkChildBefore( AGUI2Element& a_rNewChildren, AGUI2Element& a_rInsertAfter )
 	{
-		a_rInsertAfter.LinkBefore( a_rNewChildren );
+		a_rNewChildren.LinkBefore( a_rInsertAfter );
 	}
 
 public:

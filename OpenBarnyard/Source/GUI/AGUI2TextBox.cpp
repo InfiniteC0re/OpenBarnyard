@@ -20,12 +20,22 @@ AGUI2TextBox::AGUI2TextBox()
 	m_eTextAlign     = AGUI2Font::TextAlign_Center;
 }
 
+ AGUI2TextBox::~AGUI2TextBox()
+{
+}
+
 void AGUI2TextBox::Create( AGUI2Font* a_pFont, TFLOAT a_fWidth )
 {
 	m_pFont                = a_pFont;
 	AGUI2Element::m_fWidth = a_fWidth;
 	m_bDimensionsDirty     = TTRUE;
 	m_bUnkFlag2            = TFALSE;
+}
+
+void AGUI2TextBox::SetText( const TWCHAR* a_wszText )
+{
+	m_wszText          = a_wszText;
+	m_bDimensionsDirty = TTRUE;
 }
 
 void AGUI2TextBox::RenderText( void* a_fnCallback )
@@ -64,6 +74,49 @@ void AGUI2TextBox::RenderText( void* a_fnCallback )
 		    m_eTextAlign,
 		    a_fnCallback );
 	}
+}
+
+void AGUI2TextBox::SetScale( TFLOAT a_fScale )
+{
+	m_fScale           = a_fScale;
+	m_bDimensionsDirty = TTRUE;
+}
+
+void AGUI2TextBox::SetShadow( TBOOL a_bEnabled, TUINT32 a_uiColour )
+{
+	m_bRenderShadow  = a_bEnabled;
+	m_uiShadowColour = a_uiColour;
+}
+
+void AGUI2TextBox::SetShadowEnabled( TBOOL a_bEnabled )
+{
+	m_bRenderShadow = a_bEnabled;
+}
+
+void AGUI2TextBox::SetShadowColour( TUINT32 a_uiColour )
+{
+	m_uiShadowColour = a_uiColour;
+}
+
+void AGUI2TextBox::SetShadowColour( const Toshi::TColor& a_rColour )
+{
+	m_uiShadowColour = a_rColour.Value32;
+}
+
+void AGUI2TextBox::SetShadowOffset( TFLOAT a_fOffsetX, TFLOAT a_fOffsetY )
+{
+	m_fShadowOffsetX = m_fScale * a_fOffsetX;
+	m_fShadowOffsetY = m_fScale * a_fOffsetY;
+}
+
+void AGUI2TextBox::SetTextAlign( AGUI2Font::TextAlign a_eTextAlign )
+{
+	m_eTextAlign = a_eTextAlign;
+}
+
+const TWCHAR* AGUI2TextBox::GetText() const
+{
+	return m_wszText;
 }
 
 void AGUI2TextBox::Render()

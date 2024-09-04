@@ -56,6 +56,12 @@ TINT AWaveBank::GetWaveId( TINT a_iWaveIndex )
 	return m_pWaves[ a_iWaveIndex ].iIndex;
 }
 
+TINT AWaveBank::GetWaveFrequency( TINT a_iWaveIndex )
+{
+	TASSERT( a_iWaveIndex < m_iNumWaves );
+	return m_pWaves[ a_iWaveIndex ].iFrequency;
+}
+
 AWaveSampleHandle AWaveBank::CreateWaveSample( TINT a_iWaveIndex, TINT a_iUnused )
 {
 	TASSERT( a_iWaveIndex < m_iNumWaves );
@@ -71,15 +77,15 @@ AWaveSampleHandle AWaveBank::CreateWaveSample( TINT a_iWaveIndex, TINT a_iUnused
 void AWaveBank::SetWaveFlag1( TINT a_iWaveIndex )
 {
 	TASSERT( a_iWaveIndex < m_iNumWaves );
-	m_pWaves[ a_iWaveIndex ].uiFlags &= ~2;
-	m_pWaves[ a_iWaveIndex ].uiFlags |= 1;
+	m_pWaves[ a_iWaveIndex ].iFlags &= ~2;
+	m_pWaves[ a_iWaveIndex ].iFlags |= 1;
 }
 
 void AWaveBank::SetWaveFlag2( TINT a_iWaveIndex )
 {
 	TASSERT( a_iWaveIndex < m_iNumWaves );
-	m_pWaves[ a_iWaveIndex ].uiFlags &= ~1;
-	m_pWaves[ a_iWaveIndex ].uiFlags |= 2;
+	m_pWaves[ a_iWaveIndex ].iFlags &= ~1;
+	m_pWaves[ a_iWaveIndex ].iFlags |= 2;
 }
 
 void AWaveBank::ParseWavesData( const PBProperties* a_pBankProperties, TUINT a_uiForcedFlags )

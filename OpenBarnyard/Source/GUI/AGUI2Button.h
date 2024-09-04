@@ -8,6 +8,7 @@ class AGUI2Button :
     public AGUI2MenuItem
 {
 public:
+	// constructors/destructor
 	AGUI2Button();
 	~AGUI2Button();
 
@@ -15,6 +16,8 @@ public:
 	void SetImage( const TCHAR* a_szTexSec, TFLOAT a_fScaleX, TFLOAT a_fScaleY );
 
 	void SetButtonId( TINT a_iID ) { m_iButtonID = a_iID; }
+	TINT GetButtonId() const { return m_iButtonID; }
+
 	void SetScaleOnFocus( TBOOL a_bScaleOnFocus ) { m_bScaleOnFocus = a_bScaleOnFocus; }
 	void SetFocusedScale( TFLOAT a_fScale ) { m_fFocusedScale = a_fScale; }
 	void SetFocusedColour( TUINT a_uiColour ) { m_uiFocusedColour = a_uiColour; }
@@ -29,12 +32,13 @@ public:
 
 	void SetTextShadowOffset( TFLOAT a_fOffsetX, TFLOAT a_fOffsetY ) { m_oText.SetShadowOffset( a_fOffsetX, a_fOffsetY ); }
 
+	AGUI2Rectangle& GetBackground() { return m_oBackgroundRect; }
 	AGUI2TextBox& GetTextBox() { return m_oText; }
 
 	//-----------------------------------------------------------------------------
 	// AGUI2Element
 	//-----------------------------------------------------------------------------
-	virtual void Render() OVERRIDE;
+	virtual void GetDimensions( TFLOAT& a_rWidth, TFLOAT& a_rHeight ) OVERRIDE;
 	virtual void SetAlpha( TFLOAT a_fAlpha ) OVERRIDE;
 	virtual void SetShadowAlpha( TFLOAT a_fAlpha ) OVERRIDE;
 

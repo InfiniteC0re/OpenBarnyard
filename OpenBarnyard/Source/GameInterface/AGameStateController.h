@@ -12,6 +12,14 @@ class AGameStateController : public Toshi::TTask, public Toshi::TSingleton<AGame
 public:
 	TDECLARE_CLASS( AGameStateController, Toshi::TTask );
 
+	struct OverlayData
+	{
+		TUINT8 uiColorA;
+		TUINT8 uiColorR;
+		TUINT8 uiColorG;
+		TUINT8 uiColorB;
+	};
+
 public:
 	AGameStateController();
 	~AGameStateController();
@@ -24,25 +32,25 @@ public:
 	void PushState( AGameState* a_pGameState );
 	void PopState( AGameState* a_pGameState );
 
+	void PopCurrentGameState();
 	void ResetStack();
 
-	void PopCurrentGameState();
+	void SetFlags( TUINT16 a_eFlags );
+
+	void         SetOverlayParams( AGameState::OVERLAY a_eOverlay, const OverlayData& a_rcParams );
+	OverlayData* GetOverlayParams( AGameState::OVERLAY a_eOverlay );
 	void UpdateScreenOverlay();
 
 	TBOOL ProcessInput( const Toshi::TInputInterface::InputEvent* a_pEvent );
 
-	AGameState* GetCurrentState()
-	{
-		return m_oStates.Back();
-	}
-
-	TBOOL IsCurrentState( Toshi::TClass* a_pClass )
-	{
-		return GetCurrentState()->IsA( a_pClass );
-	}
+	AGameState* GetCurrentState() { return m_oStates.Back(); }
+	TBOOL IsCurrentState( Toshi::TClass* a_pClass ) { return GetCurrentState()->IsA( a_pClass ); }
 
 private:
 	void InsertGameState( AGameState* a_pGameState );
+
+private:
+	inline static OverlayData ms_aOverlays[ AGameState::OVERLAY_NUMOF ];
 
 private:
 	// ...
@@ -50,6 +58,9 @@ private:
 	void*                            m_VectorData[ 5 ];
 	Toshi::T2DynamicVector<void*>    m_UnkVector;
 	// ...
-	AGUI2Rectangle m_Rectangle;
+	AGUI2Rectangle m_oOverlay;
 	TUINT16        m_eFlags;
+	TFLOAT         m_fOverlayAlpha;
+	TFLOAT         m_fSoundVolume;
+	TFLOAT         m_fOverlayGoal;
 };

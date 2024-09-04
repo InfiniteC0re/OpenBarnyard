@@ -17,6 +17,7 @@
 #include "GameInterface/AMovieState.h"
 #include "GameInterface/SaveLoadSKU.h"
 #include "GameInterface/AMessagePopupState.h"
+#include "GameInterface/AFrontEndMainMenuState2.h"
 #include "Sound/ASoundManager.h"
 #include "Movie/ABINKMoviePlayer.h"
 #include "ALoadScreen.h"
@@ -347,7 +348,6 @@ void ARootTask::LoadFrontEnd()
 
 	AAssetLoader::LoadAssetPackFromLibrary( "lib_frontend", TTRUE );
 
-	//ATerrainManager::SetTerrain(ATerrainManager::Terrain_EnvBensHill, TTRUE, TTRUE, 0, 0, 0, 0);
 	ABYardTerrainManager::SetTerrain( ABYardTerrainManager::Terrain_FrontEnd, TTRUE, TTRUE, 0, 0, 0, 0 );
 	ABYardTerrainManager::StartLoading();
 	AAssetLoader::CreateAssetsFromLibrary( "lib_frontend" );
@@ -360,7 +360,15 @@ void ARootTask::LoadFrontEnd()
 	// Load music samples
 	pSoundManager->LoadSoundBankSamples( TPS8( music ) );
 
+	// Create front end state
+	AFrontEndMainMenuState2* pFrontEndState = new AFrontEndMainMenuState2();
+	ABYardTerrainManager::SetTerrain( ABYardTerrainManager::Terrain_FrontEnd, TFALSE, TTRUE, 0, 0, 0, 0 );
+	ABYardTerrainManager::StartLoading();
+
 	GetSingleton()->SetRenderWorld( TTRUE );
+
+	// Push the state
+	AGameStateController::GetSingleton()->PushState( pFrontEndState );
 
 	// Hide loading screen
 	g_oLoadScreen.Reset();
@@ -371,6 +379,4 @@ void ARootTask::LoadFrontEnd()
 	    AFade::Color( 255, 0, 0, 0 ),
 	    AFade::Color( 0, 0, 0, 0 ),
 	    1.0f );
-
-	ASoundManager::GetSingleton()->PlayCue( soundbank::MUSIC_WILD_MIKE );
 }
