@@ -42,7 +42,7 @@ public:
 		m_pPrev->m_pNext = this;
 	}
 
-	// Sets a_rNode to be previous after this
+	// Sets a_rNode to be previous to this
 	void LinkBefore( AGUI2ElementNode& a_rNode )
 	{
 		m_pNext                  = a_rNode.m_pNext;
@@ -238,6 +238,11 @@ public:
 	{
 		AGUI2ElementNode::Unlink();
 		m_pParent = TNULL;
+	}
+
+	void LinkChildBefore( AGUI2Element& a_rNewChildren, AGUI2Element& a_rInsertAfter )
+	{
+		a_rInsertAfter.LinkBefore( a_rNewChildren );
 	}
 
 public:

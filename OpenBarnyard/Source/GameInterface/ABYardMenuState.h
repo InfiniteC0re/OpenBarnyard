@@ -7,7 +7,7 @@
 #include "GUI/AGUI2Menu.h"
 
 class ABYardMenuState :
-	public AGameState
+    public AGameState
 {
 public:
 	TDECLARE_CLASS( ABYardMenuState, AGameState );

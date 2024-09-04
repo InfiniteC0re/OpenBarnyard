@@ -53,6 +53,8 @@ public:
 	TFLOAT GetTextWidth( const TWCHAR* a_wszText, TFLOAT a_fScale = 1.0f );
 	TFLOAT GetTextWidth( const TWCHAR* a_wszText, TINT a_iTextLength, TFLOAT a_fScale = 1.0f );
 
+	TFLOAT GetLinesMargin();
+
 private:
 	AGUI2FontDef*   m_pFontDef    = TNULL;
 	AGUI2Material** m_ppMaterials = TNULL;

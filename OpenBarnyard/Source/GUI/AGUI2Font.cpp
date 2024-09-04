@@ -299,3 +299,11 @@ TFLOAT AGUI2Font::GetTextWidth( const TWCHAR* a_wszText, TINT a_iTextLength, TFL
 
 	return iWidth * a_fScale;
 }
+
+TFLOAT AGUI2Font::GetLinesMargin()
+{
+	if ( m_pFontDef )
+		return TFLOAT( m_pFontDef->uiLinesMargin );
+
+	return 0.0f;
+}

@@ -259,12 +259,12 @@ void AGUI2Menu::SetFocusAt( AGUI2MenuItem& a_rMenuItem )
 
 void AGUI2Menu::SetVerticalFlow()
 {
-	m_fWidth = 0.0f;
+	m_fWidth  = 0.0f;
 	m_fHeight = 0.0f;
 
-	TFLOAT fOffsetY = 0.0f;
+	TFLOAT         fOffsetY  = 0.0f;
 	AGUI2MenuItem* pMenuItem = m_pLastMenuItem;
-	
+
 	if ( pMenuItem )
 	{
 		while ( TTRUE )

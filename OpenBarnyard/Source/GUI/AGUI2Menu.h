@@ -22,7 +22,7 @@ public:
 	};
 
 	using ActivateCallback = void ( * )( void* a_pUserData, AGUI2MenuItem* a_pItem );
-	using FocusCallback    = void    ( * )( void* a_pUserData, AGUI2MenuItem* a_pOldFocus, AGUI2MenuItem* a_pNewFocus );
+	using FocusCallback    = void ( * )( void* a_pUserData, AGUI2MenuItem* a_pOldFocus, AGUI2MenuItem* a_pNewFocus );
 
 public:
 	// constructors/destructor

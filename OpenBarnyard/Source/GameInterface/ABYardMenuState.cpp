@@ -17,12 +17,12 @@ TDEFINE_CLASS_NORUNTIME( ABYardMenuState )
 
 ABYardMenuState::ABYardMenuState()
 {
-	m_eMenuState                      = MENUSTATE_NOTHING;
+	m_eMenuState             = MENUSTATE_NOTHING;
 	m_fOscillatorOffset      = 0.0f;
-	m_fMenuOpacity                    = 0;
+	m_fMenuOpacity           = 0;
 	m_fTotalTime             = 0.0f;
 	m_bFocusedElementBloated = TTRUE;
-	m_bIgnoreInputs           = TFALSE;
+	m_bIgnoreInputs          = TFALSE;
 	m_pButtonRotations       = TNULL;
 	m_bHasRectangle2         = TFALSE;
 }
@@ -71,8 +71,8 @@ TBOOL ABYardMenuState::ProcessCommand( AInputCommand a_eInputCommand, const Tosh
 	return TFALSE;
 }
 
-static TFLOAT s_fOscillatorMaxValue = TMath::PI / 1.5f;
-static TFLOAT s_fAnimationMultiplier = 2.0f - TMath::Sin( s_fOscillatorMaxValue );
+static TFLOAT s_fOscillatorPeriod    = TMath::PI / 1.5f;
+static TFLOAT s_fOscillatorAmplitude = 2.0f - TMath::Sin( s_fOscillatorPeriod );
 
 TBOOL ABYardMenuState::OnUpdate( TFLOAT a_fDeltaTime )
 {
@@ -80,19 +80,18 @@ TBOOL ABYardMenuState::OnUpdate( TFLOAT a_fDeltaTime )
 
 	switch ( m_eMenuState )
 	{
-		case 0:
+		case MENUSTATE_DIALOG_APPEAR:
 			// Dialog appear animation
 			m_fOscillatorOffset += a_fDeltaTime * 6.0f;
 
-			if ( m_fOscillatorOffset <= s_fOscillatorMaxValue )
+			if ( m_fOscillatorOffset <= s_fOscillatorPeriod )
 			{
-				TFLOAT fScale = s_fAnimationMultiplier * TMath::Sin( m_fOscillatorOffset );
-				m_oDialog.GetTransform().SetIdentity();
-				m_oDialog.GetTransform().PreMultiply( fScale, fScale );
+				TFLOAT fScale = s_fOscillatorAmplitude * TMath::Sin( m_fOscillatorOffset );
+				m_oDialog.GetTransform().SetFromScale( fScale, fScale );
 			}
 			else
 			{
-				m_fOscillatorOffset = s_fOscillatorMaxValue;
+				m_fOscillatorOffset = s_fOscillatorPeriod;
 				m_eMenuState        = MENUSTATE_MENU_APPEAR;
 				m_fMenuOpacity      = 0;
 				m_oDialog.GetTransform().SetIdentity();
@@ -102,15 +101,14 @@ TBOOL ABYardMenuState::OnUpdate( TFLOAT a_fDeltaTime )
 			SetDialogOpacity( m_oDialog.GetAlpha() + a_fDeltaTime * 5.0f );
 			break;
 
-		case 1:
+		case MENUSTATE_DIALOG_DISAPPEAR:
 			// Dialog disappear animation
 			if ( m_fOscillatorOffset >= 0.0f )
 			{
 				m_fOscillatorOffset -= a_fDeltaTime * 6.0f;
 
-				TFLOAT fScale = s_fAnimationMultiplier * TMath::Sin( TMath::Max( m_fOscillatorOffset, 0.0f ) );
-				m_oDialog.GetTransform().SetIdentity();
-				m_oDialog.GetTransform().PreMultiply( fScale, fScale );
+				TFLOAT fScale = s_fOscillatorAmplitude * TMath::Sin( TMath::Max( m_fOscillatorOffset, 0.0f ) );
+				m_oDialog.GetTransform().SetFromScale( fScale, fScale );
 
 				if ( fScale < 0.5f )
 				{
@@ -131,7 +129,7 @@ TBOOL ABYardMenuState::OnUpdate( TFLOAT a_fDeltaTime )
 			}
 
 			break;
-		case 2:
+		case MENUSTATE_MENU_APPEAR:
 			// Menu fade-in animation
 			m_fMenuOpacity += a_fDeltaTime * 5.0f;
 
@@ -148,7 +146,7 @@ TBOOL ABYardMenuState::OnUpdate( TFLOAT a_fDeltaTime )
 			UpdateMenuOpacity();
 			return BaseClass::OnUpdate( a_fDeltaTime );
 
-		case 3:
+		case MENUSTATE_MENU_DISAPPEAR:
 			// Menu fade-out animation
 			m_fMenuOpacity -= a_fDeltaTime * 5.0f;
 
@@ -167,7 +165,7 @@ TBOOL ABYardMenuState::OnUpdate( TFLOAT a_fDeltaTime )
 				{
 					// Can show dialog
 					m_eMenuState        = MENUSTATE_DIALOG_DISAPPEAR;
-					m_fOscillatorOffset = s_fOscillatorMaxValue;
+					m_fOscillatorOffset = s_fOscillatorPeriod;
 					return BaseClass::OnUpdate( a_fDeltaTime );
 				}
 				else
@@ -182,19 +180,15 @@ TBOOL ABYardMenuState::OnUpdate( TFLOAT a_fDeltaTime )
 			}
 
 			break;
-		case 4:
+		case MENUSTATE_NOTHING:
 			// Closed?
 			return BaseClass::OnUpdate( a_fDeltaTime );
-		case 5:
+		case MENUSTATE_MENU_VISIBLE:
 			// Menu is open and can be used
 			if ( m_bFocusedElementBloated )
 			{
-				TVector2 vecItemTranslation = m_oMenu.GetFocusedMenuItem()->GetTransform().GetTranslation();
-				m_oMenu.GetFocusedMenuItem()->GetTransform().SetIdentity();
-
 				TFLOAT fScale = 1.0f + 0.05f * ( m_fTotalTime * ( TMath::PI * 2 ) );
-				m_oMenu.GetFocusedMenuItem()->GetTransform().PreMultiply( fScale, fScale );
-				m_oMenu.GetFocusedMenuItem()->GetTransform().SetTranslation( vecItemTranslation );
+				m_oMenu.GetFocusedMenuItem()->GetTransform().SetScale( fScale, fScale );
 			}
 
 			m_oMenu.Update( a_fDeltaTime );
@@ -222,7 +216,7 @@ void ABYardMenuState::OnInsertion()
 	}
 
 	SetInputMap( TPS8( DialogInputMap ) );
-	AGUI2Font* pFont = AGUI2FontManager::FindFont( AGUI2FONT_PRIMARY );
+	AGUI2Font*           pFont        = AGUI2FontManager::FindFont( AGUI2FONT_PRIMARY );
 	AGUI2TextureSection* pPanelTexSec = AGUI2TextureSectionManager::GetTextureSection( "Panel_01" );
 
 	TVALIDPTR( pFont );
@@ -235,9 +229,9 @@ void ABYardMenuState::OnInsertion()
 	m_oTitle.SetTransform( 0.0f, 2.0f, 0.0f );
 
 	AGUI2Transform oTransform;
-	oTransform.m_Rotation[ 0 ] = TVector2( 1.0f, 0.0f );
-	oTransform.m_Rotation[ 1 ] = TVector2( 0.0f, 1.0f );
-	oTransform.m_Translation.x = 0.0f;
+	oTransform.m_aRotations[ 0 ]  = TVector2( 1.0f, 0.0f );
+	oTransform.m_aRotations[ 1 ]  = TVector2( 0.0f, 1.0f );
+	oTransform.m_vecTranslation.x = 0.0f;
 	m_oTitle.GetTransform().PreMultiply( oTransform );
 
 	m_oTitle.SetShadow( TTRUE, 0xa0000000 );
@@ -300,7 +294,7 @@ void ABYardMenuState::OnRemoval()
 {
 	if ( m_bHasRectangle2 )
 		m_oRectangle2.RemoveSelf();
-	
+
 	m_oTitle.RemoveSelf();
 	m_oTitleBackground.RemoveSelf();
 	m_oDialog.RemoveSelf();
@@ -324,9 +318,9 @@ void ABYardMenuState::OnActivate()
 	m_oDialog.GetTransform().PreMultiply( oDialogTransform );
 
 	m_oMenu.SetMenuAlpha( 0.0f );
-	m_fMenuOpacity               = 0;
+	m_fMenuOpacity      = 0;
 	m_fOscillatorOffset = 0.0f;
-	m_bIgnoreInputs             = TFALSE;
+	m_bIgnoreInputs     = TFALSE;
 
 	m_HUDParams.SetFlags( 64 );
 }

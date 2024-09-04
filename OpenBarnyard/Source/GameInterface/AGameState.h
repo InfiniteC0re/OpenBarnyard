@@ -46,29 +46,29 @@ public:
 	//-----------------------------------------------------------------------------
 	// Own methods
 	//-----------------------------------------------------------------------------
-	virtual TBOOL   ProcessInput( const Toshi::TInputInterface::InputEvent* a_pInputEvent );
-	virtual TBOOL   ProcessCommand( AInputCommand a_eInputCommand, const Toshi::TInputInterface::InputEvent* a_pInputEvent, TBOOL& a_rStopEvents );
-	virtual TBOOL   Unknown1( void* a_pUnk1, void* a_pUnk2 );
-	virtual void    Unknown2( void* a_pUnk1 );
-	virtual void    Unknown3( void* a_pUnk1 );
-	virtual void    Unknown4( void* a_pUnk1 );
-	virtual void    Unknown5();
-	virtual TBOOL   Unknown6();
+	virtual TBOOL    ProcessInput( const Toshi::TInputInterface::InputEvent* a_pInputEvent );
+	virtual TBOOL    ProcessCommand( AInputCommand a_eInputCommand, const Toshi::TInputInterface::InputEvent* a_pInputEvent, TBOOL& a_rStopEvents );
+	virtual TBOOL    Unknown1( void* a_pUnk1, void* a_pUnk2 );
+	virtual void     Unknown2( void* a_pUnk1 );
+	virtual void     Unknown3( void* a_pUnk1 );
+	virtual void     Unknown4( void* a_pUnk1 );
+	virtual void     Unknown5();
+	virtual TBOOL    Unknown6();
 	virtual ASoundId GetSound();
-	virtual TBOOL   Unknown7();
-	virtual void    Unknown8();
-	virtual void    OnStarted();
-	virtual void    Unknown10();
-	virtual void    Unknown11( void* a_pUnk1, void* a_pUnk2 );
-	virtual void    Unknown12( void* a_pUnk1, void* a_pUnk2 );
-	virtual TFLOAT  GetFOV();
-	virtual TBOOL   OnUpdate( TFLOAT a_fDeltaTime );
-	virtual void    OnInsertion();
-	virtual void    OnRemoval();
-	virtual void    OnSuspend();
-	virtual void    OnResume( AGameState* a_pPreviousState );
-	virtual void    OnActivate();
-	virtual void    OnDeactivate();
+	virtual TBOOL    Unknown7();
+	virtual void     Unknown8();
+	virtual void     OnStarted();
+	virtual void     Unknown10();
+	virtual void     Unknown11( void* a_pUnk1, void* a_pUnk2 );
+	virtual void     Unknown12( void* a_pUnk1, void* a_pUnk2 );
+	virtual TFLOAT   GetFOV();
+	virtual TBOOL    OnUpdate( TFLOAT a_fDeltaTime );
+	virtual void     OnInsertion();
+	virtual void     OnRemoval();
+	virtual void     OnSuspend();
+	virtual void     OnResume( AGameState* a_pPreviousState );
+	virtual void     OnActivate();
+	virtual void     OnDeactivate();
 
 	TBOOL SendInputCommands( const Toshi::TInputInterface::InputEvent* a_pEvent );
 
