@@ -110,6 +110,7 @@ void AMaterialLibrary::DestroyTextures()
 	m_pTextures    = TNULL;
 	m_iNumTextures = 0;
 	delete[] m_pTexturesArray;
+	m_pTexturesArray = TNULL;
 }
 
 TINT AMaterialLibrary::FindTextureIndex( const TCHAR* a_szTextureName )

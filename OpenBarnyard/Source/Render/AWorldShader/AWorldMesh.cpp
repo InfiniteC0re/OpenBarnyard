@@ -111,6 +111,7 @@ void AWorldMesh::DestroyResource()
 	}
 
 	delete[] m_pSubMeshes;
+	m_pSubMeshes    = TNULL;
 	m_uiFlags       = 0;
 	m_uiMaxVertices = 0;
 }

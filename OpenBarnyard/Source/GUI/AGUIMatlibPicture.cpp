@@ -36,9 +36,11 @@ void AGUIMatlibPicture::Flush()
 			}
 
 			delete[] m_pImages;
+			m_pImages = TNULL;
 
 			m_iNumRects2 = 0;
 			delete[] m_pRectangles;
+			m_pRectangles = TNULL;
 
 			m_iNumRects1 = 0;
 			UnloadMatLib();

@@ -4,7 +4,7 @@
 #include "Thread/TMutexLock.h"
 
 #ifdef TOSHI_PROFILER_MEMORY
-//#include "Profiler/tracy/Tracy.hpp"
+#  include "Profiler/tracy/Tracy.hpp"
 #endif // TOSHI_PROFILER_MEMORY
 
 #include "TMemoryDebugOff.h"
@@ -206,6 +206,11 @@ void* TMemory::Alloc( TSIZE a_uiSize, TSIZE a_uiAlignment, MemBlock* a_pMemBlock
 		return TNULL;
 	}
 
+#  ifdef TOSHI_PROFILER_MEMORY
+	// Create named zone to make it possible to know where the allocation occured
+	tracy::ScopedZone zone( TMemory__LINE__, TMemory__FILE__, T2String8::Length( TMemory__FILE__ ), "", 0, TMemory__FUNC__ ? TMemory__FUNC__ : "", TMemory__FUNC__ ? T2String8::Length( TMemory__FUNC__ ) : 0 );
+#  endif
+
 	MemNode* pAllocNode = MEM_TO_NODE( pAllocatedAddress );
 
 	if ( volatile MemNode* pOwner = pMemNode->pOwner )
@@ -266,6 +271,9 @@ void* TMemory::Alloc( TSIZE a_uiSize, TSIZE a_uiAlignment, MemBlock* a_pMemBlock
 		// Save pointer to the hole right at the end of the data region (probably for some validation)
 		*(MemNode* volatile*)pNewNode->GetDataRegionEnd() = pNewNode;
 
+#  ifdef TOSHI_PROFILER_MEMORY
+		TracyAlloc( (void*)pAllocatedAddress, uiAlignedSize );
+#  endif
 		return (void*)pAllocatedAddress;
 	}
 	else
@@ -291,6 +299,9 @@ void* TMemory::Alloc( TSIZE a_uiSize, TSIZE a_uiAlignment, MemBlock* a_pMemBlock
 
 		SetProcess( pMemBlock, pAllocNode, uiDataRegionSize );
 
+#  ifdef TOSHI_PROFILER_MEMORY
+		TracyAlloc( (void*)pAllocatedAddress, uiAlignedSize );
+#  endif
 		return (void*)pAllocatedAddress;
 	}
 }
@@ -306,6 +317,10 @@ TBOOL TMemory::Free( const void* a_pAllocated )
 		// Can't free TNULL or unaligned pointer
 		return TFALSE;
 	}
+
+#  ifdef TOSHI_PROFILER_MEMORY
+	TracyFree( a_pAllocated );
+#  endif
 
 	MemNode* pAllocationNode = MEM_TO_NODE( a_pAllocated );
 

@@ -54,7 +54,9 @@ void TModelManager::Uninitialise()
 	TASSERT( ms_pEntries != TNULL );
 	ms_oUsedList.Clear();
 	ms_oFreeList.Clear();
+
 	delete[] ms_pEntries;
+	ms_pEntries = TNULL;
 }
 
 TModelManager::ModelNode* TModelManager::CreateModel( const TCHAR* a_szFileName, TModelPtr& a_rModelRef, TTRB* a_pAssetTRB )

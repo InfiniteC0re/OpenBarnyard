@@ -10,12 +10,6 @@
 #include "Toshi/TStringManager.h"
 #include "Toshi/TString8.h"
 
-//-----------------------------------------------------------------------------
-// Enables memory debugging.
-// Note: Should be the last include!
-//-----------------------------------------------------------------------------
-#include "Core/TMemoryDebugOn.h"
-
 class PBPropertyValue
 {
 public:

@@ -17,7 +17,7 @@ public:
 	virtual TBOOL OnCreate() override;
 	virtual TBOOL OnUpdate( TFLOAT a_fDeltaTime ) override;
 
-	Toshi::TInputDeviceMouse* GetMouseDevice() const { return m_pMouseDevice; }
+	Toshi::TInputDeviceMouse*    GetMouseDevice() const { return m_pMouseDevice; }
 	Toshi::TInputDeviceKeyboard* GetKeyboardDevice() const { return m_pKeyboardDevice; }
 
 	TBOOL HadInputLastFrame() const { return m_bHadInputLastFrame; }

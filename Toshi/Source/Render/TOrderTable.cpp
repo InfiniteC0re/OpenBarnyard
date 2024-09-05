@@ -48,9 +48,11 @@ TOrderTable::~TOrderTable()
 		s_llRegMatFreeList.RemoveAll();
 
 		delete[] s_pRegMaterials;
+		s_pRegMaterials = TNULL;
 	}
 
 	delete[] s_pRenderPackets;
+	s_pRenderPackets = TNULL;
 }
 
 void TOrderTable::Render()

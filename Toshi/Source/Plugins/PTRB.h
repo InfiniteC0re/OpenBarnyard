@@ -21,12 +21,6 @@
 #  define __TOSHI_PLUGIN_PTRB_H__
 #endif
 
-//-----------------------------------------------------------------------------
-// Enables memory debugging.
-// Note: Should be the last include!
-//-----------------------------------------------------------------------------
-#include "Core/TMemoryDebugOn.h"
-
 class PTRBHeader;
 class PTRBSections;
 class PTRBRelocations;

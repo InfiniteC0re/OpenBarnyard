@@ -39,12 +39,12 @@ public:
 
 	void         SetOverlayParams( AGameState::OVERLAY a_eOverlay, const OverlayData& a_rcParams );
 	OverlayData* GetOverlayParams( AGameState::OVERLAY a_eOverlay );
-	void UpdateScreenOverlay();
+	void         UpdateScreenOverlay();
 
 	TBOOL ProcessInput( const Toshi::TInputInterface::InputEvent* a_pEvent );
 
 	AGameState* GetCurrentState() { return m_oStates.Back(); }
-	TBOOL IsCurrentState( Toshi::TClass* a_pClass ) { return GetCurrentState()->IsA( a_pClass ); }
+	TBOOL       IsCurrentState( Toshi::TClass* a_pClass ) { return GetCurrentState()->IsA( a_pClass ); }
 
 private:
 	void InsertGameState( AGameState* a_pGameState );

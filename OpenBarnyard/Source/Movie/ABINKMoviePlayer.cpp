@@ -371,6 +371,7 @@ TBOOL ABINKMoviePlayer::CreateAGUISurfaces( TUINT a_uiWidth, TUINT a_uiHeight, D
 				{
 					TASSERT( TFALSE, "ABINKMoviePlayer: Unable to create rectangle" );
 					delete[] m_pRects;
+					m_pRects = TNULL;
 					return TFALSE;
 				}
 
@@ -397,6 +398,7 @@ void ABINKMoviePlayer::DestroySurfaces()
 	}
 
 	delete[] m_pRects;
+	m_pRects    = TNULL;
 	m_iNumRects = 0;
 }
 

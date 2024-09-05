@@ -157,7 +157,7 @@ void AFrontEndMainMenuState2::OnInsertion()
 	m_oMenu.SetItemFocusCallback( []( void* a_pUserData, AGUI2MenuItem* a_pOldFocus, AGUI2MenuItem* a_pNewFocus ) {
 		TSTATICCAST( AFrontEndMainMenuState2, a_pUserData )->OnMenuItemFocused( *a_pOldFocus, *a_pNewFocus );
 	} );
-	
+
 	m_oTitleBackground.Hide();
 	m_Rectangle1.SetAttachment( AGUI2ATTACHMENT_TOPCENTER, AGUI2ATTACHMENT_TOPCENTER );
 	m_Rectangle1.SetTransform( 0.0f, 10.0f );
@@ -178,7 +178,7 @@ void AFrontEndMainMenuState2::OnInsertion()
 	m_oMenu.SetSelectSound( soundbank::UI_FE_SELECT );
 	m_oMenu.SetBackSound( soundbank::UI_MENUBACK );
 	m_oMenu.SetNegativeSound( soundbank::UI_NEGATIVE );
-	
+
 	m_oDialog.SetTransform( 0.0f, 50.0f );
 	m_oMenu.SetTransform( 0.0f, 50.0f );
 
@@ -208,7 +208,7 @@ void AFrontEndMainMenuState2::OnActivate()
 {
 	TIMPLEMENT();
 
-	m_fAFKTime = 0.0f;
+	m_fAFKTime         = 0.0f;
 	m_iPressedButtonId = -1;
 
 	m_Rectangle1.Show();

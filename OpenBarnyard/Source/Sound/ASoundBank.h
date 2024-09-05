@@ -34,7 +34,7 @@ public:
 			for ( TINT k = 0; k < m_pSoundsEx[ i ].GetSamples().Size(); k++ )
 			{
 				ASound::Sample& rSample = m_pSoundsEx[ i ].GetSamples()[ k ];
-				rSample.iFrequency = TINT( rSample.pWaveBank->GetWaveFrequency( rSample.iId ) * rSample.fPitch );
+				rSample.iFrequency      = TINT( rSample.pWaveBank->GetWaveFrequency( rSample.iId ) * rSample.fPitch );
 			}
 		}
 	}

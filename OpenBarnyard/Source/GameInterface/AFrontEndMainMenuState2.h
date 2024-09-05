@@ -37,7 +37,7 @@ public:
 	virtual TBOOL ProcessInput( const Toshi::TInputInterface::InputEvent* a_pInputEvent ) OVERRIDE;
 	virtual TBOOL ProcessCommand( AInputCommand a_eInputCommand, const Toshi::TInputInterface::InputEvent* a_pInputEvent, TBOOL& a_rStopEvents ) OVERRIDE;
 	virtual TBOOL OnUpdate( TFLOAT a_fDeltaTime ) OVERRIDE;
-	virtual void OnInsertion() OVERRIDE;
+	virtual void  OnInsertion() OVERRIDE;
 	virtual void  OnRemoval() OVERRIDE;
 	virtual void  OnActivate() OVERRIDE;
 	virtual void  OnDeactivate() OVERRIDE;
@@ -52,9 +52,9 @@ private:
 	void UpdateMenuButtons( TFLOAT a_fDeltaTime );
 
 public:
-	inline static TBOOL ms_bIsInserted = TFALSE;
-	inline static TFLOAT ms_fPlayIntroAFKTime = 30.0f;
-	inline static TFLOAT ms_fFocusedButtonMaxScale = 1.25f;
+	inline static TBOOL  ms_bIsInserted                = TFALSE;
+	inline static TFLOAT ms_fPlayIntroAFKTime          = 5.0f;
+	inline static TFLOAT ms_fFocusedButtonMaxScale     = 1.25f;
 	inline static TFLOAT ms_fFocusedButtonTextMaxScale = 1.25f;
 
 private:

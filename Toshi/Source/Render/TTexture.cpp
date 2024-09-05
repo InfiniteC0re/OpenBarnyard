@@ -1,5 +1,6 @@
 #include "ToshiPCH.h"
 #include "TTexture.h"
+#include "TRenderInterface.h"
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
@@ -20,6 +21,9 @@ TTexture::TTexture()
 
 TTexture::~TTexture()
 {
+	TTextureFactory* pTexFactory = TRenderInterface::GetSingleton()->GetSystemResource<TTextureFactory>( SYSRESOURCE_TEXTUREFACTORY );
+
+	pTexFactory->DeregisterTexture( this );
 }
 
 TBOOL TTexture::Lock( LOCKSTATE& a_rLockState )

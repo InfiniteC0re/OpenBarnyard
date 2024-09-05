@@ -20,7 +20,7 @@ AGUI2TextBox::AGUI2TextBox()
 	m_eTextAlign     = AGUI2Font::TextAlign_Center;
 }
 
- AGUI2TextBox::~AGUI2TextBox()
+AGUI2TextBox::~AGUI2TextBox()
 {
 }
 

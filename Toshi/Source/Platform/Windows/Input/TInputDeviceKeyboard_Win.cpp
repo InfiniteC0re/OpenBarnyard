@@ -127,19 +127,13 @@ TINT TInputDXDeviceKeyboard::ProcessEvents( TEmitter<TInputInterface, TInputInte
 			UpdateVirtualButtons();
 			return iNumProcessed;
 		}
-		else
-		{
-			m_bIsUpdating = TFALSE;
-			Unacquire();
-			Acquire();
 
-			return 0;
-		}
+		m_bIsUpdating = TFALSE;
+		Unacquire();
+		Acquire();
 	}
-	else
-	{
-		return 0;
-	}
+
+	return 0;
 }
 
 TINT TInputDXDeviceKeyboard::GetButtonCount() const
@@ -237,9 +231,8 @@ void TInputDXDeviceKeyboard::RefreshDirect()
 		return;
 
 	std::swap( m_pKeyStates1, m_pKeyStates2 );
-	HRESULT hPoolRes = m_poDXInputDevice->Poll();
 
-	if ( SUCCEEDED( hPoolRes ) &&
+	if ( SUCCEEDED( m_poDXInputDevice->Poll() ) &&
 	     m_poDXInputDevice->GetDeviceState( 256, m_pKeyStates1 ) == S_OK )
 	{
 		DWORD dwNumElements = 32;
@@ -825,6 +818,7 @@ const TBOOL TInputDXDeviceKeyboard::BindToDIDevice( HWND a_hMainWindow, LPCDIDEV
 		}
 	}
 
+	m_bIsUpdating = TFALSE;
 	m_poDXInputDevice->EnumObjects( EnumObjectCallback, this, DIDFT_BUTTON );
 	return TTRUE;
 }

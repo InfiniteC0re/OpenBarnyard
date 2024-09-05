@@ -20,10 +20,7 @@ AMusicManager::AMusicManager()
 void AMusicManager::PlayBackgroundMusic( ASoundId a_eSoundId )
 {
 	if ( m_eBackgroundMusicCue == -1 )
-	{
 		m_eBackgroundMusicCue = ASoundManager::GetSingleton()->PlayCue( a_eSoundId );
-		m_eBackgroundMusicCue = a_eSoundId;
-	}
 }
 
 void AMusicManager::StopBackgroundMusic()

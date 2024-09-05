@@ -28,7 +28,7 @@ AInputHandler::AInputHandler()
 	m_pKeyboardDevice = TNULL;
 	m_pMainController = TNULL;
 
-	m_bIsPaused         = TFALSE;
+	m_bIsPaused          = TFALSE;
 	m_bHadInputLastFrame = TFALSE;
 }
 
@@ -62,7 +62,7 @@ TBOOL AInputHandler::OnUpdate( TFLOAT a_fDeltaTime )
 {
 	TIMPLEMENT();
 	m_bHadInputLastFrame = TFALSE;
-	m_fDeltaTime        = a_fDeltaTime;
+	m_fDeltaTime         = a_fDeltaTime;
 
 	TInputInterface::GetSingleton()->AcquireAll();
 	TInputInterface::GetSingleton()->ProcessEvents( a_fDeltaTime );

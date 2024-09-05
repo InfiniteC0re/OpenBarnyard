@@ -91,7 +91,7 @@ TFORCEINLINE TINT  CeilToInt( TFLOAT a_fVal ) { return TINT( a_fVal ) - TUINT32(
 TFORCEINLINE TINT  FloorToInt( TFLOAT a_fVal ) { return TINT( a_fVal ) - TUINT32( 0x80000000 < TUINT32( a_fVal - TUINT32( a_fVal ) ) ); }
 TFORCEINLINE TBOOL IsNaN( TFLOAT fVal ) { return isnan( fVal ); }
 
-TFORCEINLINE TINT  FastMod( TINT a_iNum, TINT a_iModulus )
+TFORCEINLINE TINT FastMod( TINT a_iNum, TINT a_iModulus )
 {
 	TASSERT( a_iNum >= 0 );
 	TASSERT( a_iModulus > 0 );
@@ -113,7 +113,7 @@ TFORCEINLINE TFLOAT LERPClamped( TFLOAT a, TFLOAT b, TFLOAT t )
 
 	if ( ( a < b && b < fResult ) || ( b < a && fResult < b ) )
 		return b;
-	
+
 	return fResult;
 }
 

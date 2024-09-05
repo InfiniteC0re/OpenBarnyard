@@ -19,7 +19,7 @@ AGameStateController::AGameStateController() :
     m_UnkVector( m_VectorData, TARRAYSIZE( m_VectorData ), 0 )
 {
 	// Incomplete
-	m_eFlags = 0;
+	m_eFlags       = 0;
 	m_fOverlayGoal = 0.0f;
 }
 
@@ -202,7 +202,7 @@ void AGameStateController::SetFlags( TUINT16 a_eFlags )
 
 	if ( !( m_eFlags & 256 ) )
 	{
-		m_fOverlayGoal = 0.0f;
+		m_fOverlayGoal  = 0.0f;
 		m_fOverlayAlpha = ( a_eFlags == 4 ) ? 1.0f : 0.0f;
 	}
 	else

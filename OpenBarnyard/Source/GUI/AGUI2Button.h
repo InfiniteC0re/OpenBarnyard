@@ -33,7 +33,7 @@ public:
 	void SetTextShadowOffset( TFLOAT a_fOffsetX, TFLOAT a_fOffsetY ) { m_oText.SetShadowOffset( a_fOffsetX, a_fOffsetY ); }
 
 	AGUI2Rectangle& GetBackground() { return m_oBackgroundRect; }
-	AGUI2TextBox& GetTextBox() { return m_oText; }
+	AGUI2TextBox&   GetTextBox() { return m_oText; }
 
 	//-----------------------------------------------------------------------------
 	// AGUI2Element

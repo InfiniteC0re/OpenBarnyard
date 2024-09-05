@@ -37,7 +37,7 @@ public:
 	void Destroy();
 
 	void Throw( void* a_pData );
-	
+
 	TPriList<TGenericListener>&       GetListeners() { return m_Listeners; }
 	const TPriList<TGenericListener>& GetListeners() const { return m_Listeners; }
 

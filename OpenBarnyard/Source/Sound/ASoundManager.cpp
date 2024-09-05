@@ -238,6 +238,7 @@ void ASoundManager::OnDestroy()
 	m_UnkList1.Clear();
 	m_FreeListS4.Clear();
 	delete[] m_pS4;
+	m_pS4 = TNULL;
 	m_PauseListener.Disconnect();
 }
 
@@ -425,7 +426,7 @@ void ASoundManager::StopCueAsync( TINT& a_rCueIndex, TFLOAT a_fDelay )
 	if ( a_rCueIndex == -1 )
 		return;
 
-	TASSERT( a_rCueIndex > 0 && a_rCueIndex < ASOUNDMANAGER_MAX_NUM_CUE );
+	TASSERT( a_rCueIndex >= 0 && a_rCueIndex < ASOUNDMANAGER_MAX_NUM_CUE );
 	Cue* pCue   = &m_aCues[ a_rCueIndex ];
 	a_rCueIndex = -1;
 
