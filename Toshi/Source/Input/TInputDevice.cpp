@@ -46,7 +46,7 @@ TINT TInputDevice::ProcessRepeats( EventEmitter& a_rEmitter, TFLOAT a_fDeltaTime
 		}
 		else
 		{
-			if ( 1 < m_Repeats.Size() )
+			if ( m_Repeats.Size() > 1 )
 			{
 				auto& rLastRepeat   = m_Repeats[ m_Repeats.Size() - 1 ];
 				rRepeat.iDoodad     = rLastRepeat.iDoodad;

@@ -23,6 +23,7 @@ project "OpenBarnyard"
 	{
 		"Source/**.h",
 		"Source/**.cpp",
+		"Source/APooledStrings.cpp"
 	}
 	
 	libdirs

@@ -153,7 +153,7 @@ TBOOL TInputDXDeviceKeyboard::IsDown( TINT doodad ) const
 	else if ( doodad == VIRTKEY_ALT )
 		return IsAltDown();
 	else
-		return m_pKeyStates1[ TranslateDXToDoodad( doodad ) ] & 0x80;
+		return m_pKeyStates1[ TranslateDoodadToDX( doodad ) ] & 0x80;
 }
 
 TBOOL TInputDXDeviceKeyboard::IsEnabled() const
