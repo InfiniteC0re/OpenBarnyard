@@ -178,7 +178,7 @@ TINT TInputDeviceController::ProcessVirtualButtons( EventEmitter& a_rEmitter, TF
 	    TInputInterface::InputEvent(
 	        this,
 	        0x1001B,
-	        TInputInterface::EVENT_TYPE_UNKNOWN,
+	        TInputInterface::EVENT_TYPE_VIRTUAL,
 	        m_fMag1,
 	        m_fMag2 ) );
 

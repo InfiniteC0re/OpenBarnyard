@@ -47,7 +47,7 @@ public:
 		InputEvent_GoneDown = BITFLAG( Toshi::TInputInterface::EVENT_TYPE_GONE_DOWN ),
 		InputEvent_GoneUp   = BITFLAG( Toshi::TInputInterface::EVENT_TYPE_GONE_UP ),
 		InputEvent_Repeat   = BITFLAG( Toshi::TInputInterface::EVENT_TYPE_REPEAT ),
-		InputEvent_Unknown  = BITFLAG( Toshi::TInputInterface::EVENT_TYPE_UNKNOWN ),
+		InputEvent_Virtual  = BITFLAG( Toshi::TInputInterface::EVENT_TYPE_VIRTUAL ),
 		InputEvent_Moved    = BITFLAG( Toshi::TInputInterface::EVENT_TYPE_MOVED ),
 	};
 
