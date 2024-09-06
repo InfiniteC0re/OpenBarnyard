@@ -107,19 +107,11 @@ public:
 
 	TBOOL IsLeftNodeNext( const T& value )
 	{
-		if ( m_Value == value )
-		{
+		// Insert same values to the right side
+		if ( TComparator<T>::IsEqual( m_Value, value ) )
 			return TFALSE;
-		}
-		else
-		{
-			if ( m_Value < value )
-			{
-				return TFALSE;
-			}
 
-			return TTRUE;
-		}
+		return TComparator<T>::IsLess( m_Value, value );
 	}
 
 	TBOOL operator==( const T& other ) const
@@ -175,51 +167,61 @@ public:
 	class Iterator
 	{
 	public:
-		TFORCEINLINE Iterator( Node* ppNode ) :
-		    m_ppNode( ppNode ) {}
+		TFORCEINLINE Iterator( Node* a_pNode ) :
+		    m_pNode( a_pNode ) {}
 
 		TFORCEINLINE Iterator Next()
 		{
 			Iterator next = *this;
-			m_ppNode      = TSTATICCAST( Node, T2RedBlackTree::GetSuccessorOf( m_ppNode ) );
+			m_pNode       = TSTATICCAST( Node, T2RedBlackTree::GetSuccessorOf( m_pNode ) );
 			return next;
 		}
 
 		TFORCEINLINE Iterator Prev()
 		{
 			Iterator prev = *this;
-			m_ppNode      = TSTATICCAST( Node, T2RedBlackTree::GetPredecessorOf( m_ppNode ) );
+			m_pNode       = TSTATICCAST( Node, T2RedBlackTree::GetPredecessorOf( m_pNode ) );
 			return prev;
 		}
 
 		TFORCEINLINE Node* GetNode()
 		{
-			return m_ppNode;
+			return m_pNode;
 		}
 
-		TFORCEINLINE TBOOL operator==( const Node* a_pNode ) const
+		TFORCEINLINE T* GetValue() const
 		{
-			return m_ppNode == a_pNode;
+			return &m_pNode->m_Value;
 		}
+
+		//TFORCEINLINE TBOOL operator==( const Node* a_pNode ) const
+		//{
+		//	return m_pNode == a_pNode;
+		//}
 
 		TFORCEINLINE TBOOL operator==( const Iterator& other ) const
 		{
-			return m_ppNode == other.m_ppNode;
+			return m_pNode == other.m_pNode;
 		}
 
-		TFORCEINLINE TBOOL operator==( const T& other ) const
+		/*TFORCEINLINE TBOOL operator==( const T& other ) const
 		{
-			return m_ppNode == other;
-		}
+			return m_pNode == other;
+		}*/
 
 		TFORCEINLINE T& operator*() const
 		{
-			return m_ppNode->m_Value;
+			return m_pNode->m_Value;
 		}
 
 		TFORCEINLINE T* operator->() const
 		{
-			return &m_ppNode->m_Value;
+			return &m_pNode->m_Value;
+		}
+
+		TFORCEINLINE operator T*() const
+		{
+			return &m_pNode->m_Value;
 		}
 
 		TFORCEINLINE Iterator operator++( TINT )
@@ -229,7 +231,7 @@ public:
 
 		TFORCEINLINE Iterator& operator++()
 		{
-			m_ppNode = TSTATICCAST( Node, T2RedBlackTree::GetSuccessorOf( m_ppNode ) );
+			m_pNode = TSTATICCAST( Node, T2RedBlackTree::GetSuccessorOf( m_pNode ) );
 			return *this;
 		}
 
@@ -240,12 +242,12 @@ public:
 
 		TFORCEINLINE Iterator& operator--()
 		{
-			m_ppNode = TSTATICCAST( Node, T2RedBlackTree::GetPredecessorOf( m_ppNode ) );
+			m_pNode = TSTATICCAST( Node, T2RedBlackTree::GetPredecessorOf( m_pNode ) );
 			return *this;
 		}
 
 	private:
-		Node* m_ppNode;
+		Node* m_pNode;
 	};
 
 public:
@@ -295,7 +297,7 @@ public:
 		}
 	}
 
-	void Insert( Node*& insertedNode, const T& value )
+	Iterator Insert( const T& value )
 	{
 		Node* pNode     = m_pAllocator->New<Node>( value );
 		pNode->m_pLeft  = &ms_oNil;
@@ -331,10 +333,11 @@ public:
 
 		TASSERT( ms_oNil.red == 0, "ms_oNil not red in T2GenericRedBlackTree::TreeInsertHelp" ); // TreeInsertHelp????
 		T2GenericRedBlackTree::Insert( pNode );
-		insertedNode = pNode;
+
+		return pNode;
 	}
 
-	Iterator Find( Node*& foundNode, const T& value )
+	Iterator Find( const T& value )
 	{
 		Node* pCurrentNode = TSTATICCAST( Node, m_oRoot.m_pLeft );
 
@@ -342,8 +345,7 @@ public:
 		{
 			if ( pCurrentNode->operator==( value ) )
 			{
-				foundNode = pCurrentNode;
-				return foundNode;
+				return pCurrentNode;
 			}
 
 			if ( pCurrentNode->IsLeftNodeNext( value ) )
@@ -356,22 +358,19 @@ public:
 			}
 		}
 
-		foundNode = TSTATICCAST( Node, &m_oRoot );
-		return foundNode;
+		return TSTATICCAST( Node, &m_oRoot );
 	}
 
-	Iterator FindNext( Node*& foundNode, Node*& nextAfter, const T& value )
+	Iterator FindNext( Node*& nextAfter, const T& value )
 	{
 		Node* pNode = TSTATICCAST( Node, GetSuccessorOf( nextAfter ) );
 
 		if ( pNode->operator==( value ) )
 		{
-			foundNode = pNode;
-			return foundNode;
+			return pNode;
 		}
 
-		foundNode = TSTATICCAST( Node, &m_oRoot );
-		return foundNode;
+		return TSTATICCAST( Node, &m_oRoot );
 	}
 
 	TSIZE Size() const

@@ -50,16 +50,19 @@ public:
 
 private:
 	void UpdateMenuButtons( TFLOAT a_fDeltaTime );
+	void UpdateFocusedButton( TFLOAT a_fDeltaTime );
 
 public:
 	inline static TBOOL  ms_bIsInserted                = TFALSE;
-	inline static TFLOAT ms_fPlayIntroAFKTime          = 5.0f;
+	inline static TFLOAT ms_fPlayIntroAFKTime          = 30.0f;
+	inline static TFLOAT ms_fFocusedButtonMaxOffset    = 3.0f;
 	inline static TFLOAT ms_fFocusedButtonMaxScale     = 1.25f;
 	inline static TFLOAT ms_fFocusedButtonTextMaxScale = 1.25f;
+	inline static TFLOAT ms_fFocusedButtonAnimSpeed    = 20.0f;
 
 private:
 	AGUI2Button                                             m_aButtons[ FRONTENDBUTTON_NUMOF ];
-	TINT                                                    m_iPressedButtonId;
+	TINT                                                    m_iActivatedButtonID;
 	AGUI2Rectangle                                          m_Rectangle1;
 	AGUI2Rectangle                                          m_Rectangle2;
 	Toshi::TGenericListener                                 m_oUnkListener;

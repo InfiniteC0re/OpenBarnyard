@@ -286,12 +286,12 @@ MEMBER_HOOK( 0x0064fa70, AGUI2RendererDX8, AGUI2Renderer_RenderRectangle, void, 
 	};
 
 	TMatrix44 view;
-	view.m_f11 = pTransform->m_aRotations[ 0 ].x;
-	view.m_f12 = pTransform->m_aRotations[ 0 ].y;
+	view.m_f11 = pTransform->m_aMatrixRows[ 0 ].x;
+	view.m_f12 = pTransform->m_aMatrixRows[ 0 ].y;
 	view.m_f13 = 0.0f;
 	view.m_f14 = 0.0f;
-	view.m_f21 = pTransform->m_aRotations[ 1 ].x;
-	view.m_f22 = pTransform->m_aRotations[ 1 ].y;
+	view.m_f21 = pTransform->m_aMatrixRows[ 1 ].x;
+	view.m_f22 = pTransform->m_aMatrixRows[ 1 ].y;
 	view.m_f23 = 0.0f;
 	view.m_f24 = 0.0f;
 	view.m_f31 = 0.0f;

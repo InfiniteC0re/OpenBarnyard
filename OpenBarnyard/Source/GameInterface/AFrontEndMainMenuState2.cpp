@@ -10,6 +10,7 @@
 #include "Sound/AMusicManager.h"
 #include "Input/AInputHandler.h"
 #include "GameInterface/AMovieState.h"
+#include "AOptionsState.h"
 
 #include <Input/TInputDeviceKeyboard.h>
 #include <Input/TInputDeviceController.h>
@@ -26,10 +27,10 @@ TDEFINE_CLASS( AFrontEndMainMenuState2 );
 
 AFrontEndMainMenuState2::AFrontEndMainMenuState2( void* a_pUnk, TBOOL a_bFlag )
 {
-	m_iPressedButtonId = -1;
-	m_pUnk1            = a_pUnk;
-	m_bFlag            = a_bFlag;
-	m_fAFKTime         = 0.0f;
+	m_iActivatedButtonID = -1;
+	m_pUnk1              = a_pUnk;
+	m_bFlag              = a_bFlag;
+	m_fAFKTime           = 0.0f;
 
 	m_pButtonRotations                            = new TFLOAT[ FRONTENDBUTTON_NUMOF ];
 	m_pButtonRotations[ FRONTENDBUTTON_NEWGAME ]  = TMath::DegToRad( 2.0f );
@@ -81,8 +82,8 @@ TBOOL AFrontEndMainMenuState2::ProcessCommand( AInputCommand a_eInputCommand, co
 			else
 			{
 				// Cancel command was sent
-				m_iPressedButtonId = FRONTENDBUTTON_QUIT;
-				m_eMenuState       = MENUSTATE_MENU_DISAPPEAR;
+				m_iActivatedButtonID = FRONTENDBUTTON_QUIT;
+				m_eMenuState         = MENUSTATE_MENU_DISAPPEAR;
 				return TTRUE;
 			}
 		}
@@ -114,7 +115,7 @@ TBOOL AFrontEndMainMenuState2::OnUpdate( TFLOAT a_fDeltaTime )
 
 	if ( m_eMenuState == MENUSTATE_MENU_VISIBLE && m_bIgnoreInputs )
 	{
-		TTODO( "FUN_00432dc0" );
+		UpdateFocusedButton( a_fDeltaTime );
 	}
 
 	return BaseClass::OnUpdate( a_fDeltaTime );
@@ -132,16 +133,16 @@ void AFrontEndMainMenuState2::OnInsertion()
 		TTODO( "Create some helper?" );
 	}
 
-	AGUI2Font* pFont = AGUI2FontManager::FindFont( AGUI2FONT_PRIMARY );
+	AGUI2Font* pFont = AGUI2FontManager::FindFont( AGUI2STYLE_FONT_PRIMARY );
 
 	for ( TINT i = 0; i < FRONTENDBUTTON_NUMOF; i++ )
 	{
-		TWCHAR* wszText = ALocaleManager::GetSingleton()->GetString( FRONTENDBUTTON_TEXTS[ i ] );
+		const TWCHAR* wszText = ALocaleManager::GetSingleton()->GetString( FRONTENDBUTTON_TEXTS[ i ] );
 
 		m_aButtons[ i ].Create( pFont, pFont->GetTextWidth( wszText ), wszText, 5.0f );
-		m_aButtons[ i ].SetFocusedColour( 0xffffffff );
-		m_aButtons[ i ].SetEnabledColour( 0xffffc800 );
-		m_aButtons[ i ].SetDisabledColour( 0xff4b4b4b );
+		m_aButtons[ i ].SetFocusedColour( AGUI2STYLE_COLOR_FOCUSED );
+		m_aButtons[ i ].SetEnabledColour( AGUI2STYLE_COLOR_PRIMARY );
+		m_aButtons[ i ].SetDisabledColour( AGUI2STYLE_COLOR_DISABLED );
 		m_aButtons[ i ].SetFocusedScale( 1.0f );
 		m_aButtons[ i ].OnFocusLost();
 		m_aButtons[ i ].SetButtonId( i );
@@ -158,7 +159,7 @@ void AFrontEndMainMenuState2::OnInsertion()
 		TSTATICCAST( AFrontEndMainMenuState2, a_pUserData )->OnMenuItemFocused( *a_pOldFocus, *a_pNewFocus );
 	} );
 
-	m_oTitleBackground.Hide();
+	m_oDialogTitleBackground.Hide();
 	m_Rectangle1.SetAttachment( AGUI2ATTACHMENT_TOPCENTER, AGUI2ATTACHMENT_TOPCENTER );
 	m_Rectangle1.SetTransform( 0.0f, 10.0f );
 	m_Rectangle1.Hide();
@@ -190,6 +191,7 @@ void AFrontEndMainMenuState2::OnRemoval()
 {
 	ms_bIsInserted = TFALSE;
 
+
 	AMusicManager::GetSingleton()->StopBackgroundMusic();
 	TTODO( "FUN_0054b390" );
 
@@ -208,8 +210,8 @@ void AFrontEndMainMenuState2::OnActivate()
 {
 	TIMPLEMENT();
 
-	m_fAFKTime         = 0.0f;
-	m_iPressedButtonId = -1;
+	m_fAFKTime           = 0.0f;
+	m_iActivatedButtonID = -1;
 
 	m_Rectangle1.Show();
 	m_Rectangle2.Show();
@@ -217,7 +219,7 @@ void AFrontEndMainMenuState2::OnActivate()
 	BaseClass::OnActivate();
 	m_eMenuState = MENUSTATE_MENU_APPEAR;
 
-	m_oTitleBackground.Hide();
+	m_oDialogTitleBackground.Hide();
 }
 
 void AFrontEndMainMenuState2::OnDeactivate()
@@ -230,14 +232,32 @@ void AFrontEndMainMenuState2::OnDeactivate()
 
 void AFrontEndMainMenuState2::OnMenuItemActivated( AGUI2MenuItem& a_rMenuItem )
 {
-	m_iPressedButtonId = TSTATICCAST( AGUI2Button, &a_rMenuItem )->GetButtonId();
-	TTODO( "FUN_00432a90" );
+	AGUI2Button* pButton = TSTATICCAST( AGUI2Button, &a_rMenuItem );
+
+	m_iActivatedButtonID = pButton->GetButtonId();
+	OnButtonActivated( pButton );
+
 	m_eMenuState = MENUSTATE_MENU_VISIBLE;
 }
 
 void AFrontEndMainMenuState2::OnMenuClose()
 {
 	TIMPLEMENT();
+
+	if ( m_iActivatedButtonID == -1 )
+		return;
+
+	AGameState* pPushGameState = TNULL;
+
+	switch ( m_iActivatedButtonID )
+	{
+		case FRONTENDBUTTON_OPTIONS:
+			pPushGameState = new AOptionsState();
+			break;
+	}
+
+	if ( pPushGameState )
+		AGameStateController::GetSingleton()->PushState( pPushGameState );
 }
 
 void AFrontEndMainMenuState2::UpdateMenuButtons( TFLOAT a_fDeltaTime )
@@ -257,18 +277,18 @@ void AFrontEndMainMenuState2::UpdateMenuButtons( TFLOAT a_fDeltaTime )
 			if ( pItem == pFocused )
 			{
 				TFLOAT fSpeed     = a_fDeltaTime * 10.0f;
-				fBackgroundScaleX = TMath::LERPClamped( pItem->GetBackground().GetTransform().m_aRotations[ 0 ].x, ms_fFocusedButtonMaxScale, fSpeed );
-				fBackgroundScaleY = TMath::LERPClamped( pItem->GetBackground().GetTransform().m_aRotations[ 1 ].y, ms_fFocusedButtonMaxScale, fSpeed );
-				fTextScaleX       = TMath::LERPClamped( pItem->GetTextBox().GetTransform().m_aRotations[ 0 ].x, ms_fFocusedButtonTextMaxScale, fSpeed );
-				fTextScaleY       = TMath::LERPClamped( pItem->GetTextBox().GetTransform().m_aRotations[ 1 ].y, ms_fFocusedButtonTextMaxScale, fSpeed );
+				fBackgroundScaleX = TMath::LERPClamped( pItem->GetBackground().GetTransform().m_aMatrixRows[ 0 ].x, ms_fFocusedButtonMaxScale, fSpeed );
+				fBackgroundScaleY = TMath::LERPClamped( pItem->GetBackground().GetTransform().m_aMatrixRows[ 1 ].y, ms_fFocusedButtonMaxScale, fSpeed );
+				fTextScaleX       = TMath::LERPClamped( pItem->GetTextBox().GetTransform().m_aMatrixRows[ 0 ].x, ms_fFocusedButtonTextMaxScale, fSpeed );
+				fTextScaleY       = TMath::LERPClamped( pItem->GetTextBox().GetTransform().m_aMatrixRows[ 1 ].y, ms_fFocusedButtonTextMaxScale, fSpeed );
 			}
 			else
 			{
 				TFLOAT fSpeed     = a_fDeltaTime * 20.0f;
-				fBackgroundScaleX = TMath::LERPClamped( pItem->GetBackground().GetTransform().m_aRotations[ 0 ].x, 1.0f, fSpeed );
-				fBackgroundScaleY = TMath::LERPClamped( pItem->GetBackground().GetTransform().m_aRotations[ 1 ].y, 1.0f, fSpeed );
-				fTextScaleX       = TMath::LERPClamped( pItem->GetTextBox().GetTransform().m_aRotations[ 0 ].x, 1.0f, fSpeed );
-				fTextScaleY       = TMath::LERPClamped( pItem->GetTextBox().GetTransform().m_aRotations[ 1 ].y, 1.0f, fSpeed );
+				fBackgroundScaleX = TMath::LERPClamped( pItem->GetBackground().GetTransform().m_aMatrixRows[ 0 ].x, 1.0f, fSpeed );
+				fBackgroundScaleY = TMath::LERPClamped( pItem->GetBackground().GetTransform().m_aMatrixRows[ 1 ].y, 1.0f, fSpeed );
+				fTextScaleX       = TMath::LERPClamped( pItem->GetTextBox().GetTransform().m_aMatrixRows[ 0 ].x, 1.0f, fSpeed );
+				fTextScaleY       = TMath::LERPClamped( pItem->GetTextBox().GetTransform().m_aMatrixRows[ 1 ].y, 1.0f, fSpeed );
 			}
 
 			pItem->GetBackground().GetTransform().SetScale( fBackgroundScaleX, fBackgroundScaleX );
@@ -277,5 +297,31 @@ void AFrontEndMainMenuState2::UpdateMenuButtons( TFLOAT a_fDeltaTime )
 			pItem = TSTATICCAST( AGUI2Button, pItem->GetPrevMenuItem() );
 			if ( pItem == pLastMenuItem ) break;
 		}
+	}
+}
+
+void AFrontEndMainMenuState2::UpdateFocusedButton( TFLOAT a_fDeltaTime )
+{
+	AGUI2Button* pFocusedButton = TSTATICCAST( AGUI2Button, m_oMenu.GetFocusedMenuItem() );
+
+	ms_fAnimationTime += a_fDeltaTime;
+	TFLOAT fProgress = TMath::Sin( ms_fFocusedButtonAnimSpeed * ms_fAnimationTime );
+
+	if ( ms_fAnimationTime < TMath::PI / ms_fFocusedButtonAnimSpeed )
+	{
+		TFLOAT fOffset = ms_fFocusedButtonMaxOffset * fProgress;
+		pFocusedButton->GetTextBox().SetTranslation( ms_vecActivatedButtonTranslation.x + fOffset, ms_vecActivatedButtonTranslation.y + fOffset );
+
+		TFLOAT fOneMinusProgress = 1.0f - fProgress;
+		pFocusedButton->SetShadowAlpha( fOneMinusProgress );
+		pFocusedButton->SetTextShadowOffset( ms_vecActivatedButtonShadow.x * fOneMinusProgress, ms_vecActivatedButtonShadow.y * fOneMinusProgress );
+	}
+	else
+	{
+		m_bIgnoreInputs = TFALSE;
+		m_eMenuState    = MENUSTATE_MENU_DISAPPEAR;
+
+		pFocusedButton->SetTextShadowOffset( ms_vecActivatedButtonShadow.x, ms_vecActivatedButtonShadow.y );
+		pFocusedButton->GetTextBox().SetTranslation( ms_vecActivatedButtonTranslation.x, ms_vecActivatedButtonTranslation.y );
 	}
 }

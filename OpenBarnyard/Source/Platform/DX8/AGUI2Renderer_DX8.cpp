@@ -81,10 +81,10 @@ void AGUI2RendererDX8::BeginScene()
 	TFLOAT fRootHeight;
 	AGUI2::GetContext()->GetRootElement()->GetDimensions( fRootWidth, fRootHeight );
 
-	auto& rTransform             = m_pTransforms[ m_iTransformCount ];
-	rTransform.m_aRotations[ 0 ] = { pDisplayParams->uiWidth / fRootWidth, 0.0f };
-	rTransform.m_aRotations[ 1 ] = { 0.0f, -TFLOAT( pDisplayParams->uiHeight ) / fRootHeight };
-	rTransform.m_vecTranslation  = { 0.0f, 0.0f };
+	auto& rTransform              = m_pTransforms[ m_iTransformCount ];
+	rTransform.m_aMatrixRows[ 0 ] = { pDisplayParams->uiWidth / fRootWidth, 0.0f };
+	rTransform.m_aMatrixRows[ 1 ] = { 0.0f, -TFLOAT( pDisplayParams->uiHeight ) / fRootHeight };
+	rTransform.m_vecTranslation   = { 0.0f, 0.0f };
 
 	static TUINT32          s_MatrixFlags = 0;
 	static Toshi::TMatrix44 s_IdentityMatrix;
@@ -708,13 +708,13 @@ void AGUI2RendererDX8::UpdateTransform()
 	AGUI2Transform* pTransform = m_pTransforms + m_iTransformCount;
 
 	TMatrix44 worldMatrix;
-	worldMatrix.m_f11 = pTransform->m_aRotations[ 0 ].x;
-	worldMatrix.m_f12 = pTransform->m_aRotations[ 0 ].y;
+	worldMatrix.m_f11 = pTransform->m_aMatrixRows[ 0 ].x;
+	worldMatrix.m_f12 = pTransform->m_aMatrixRows[ 0 ].y;
 	worldMatrix.m_f13 = 0.0f;
 	worldMatrix.m_f14 = 0.0f;
 
-	worldMatrix.m_f21 = pTransform->m_aRotations[ 1 ].x;
-	worldMatrix.m_f22 = pTransform->m_aRotations[ 1 ].y;
+	worldMatrix.m_f21 = pTransform->m_aMatrixRows[ 1 ].x;
+	worldMatrix.m_f22 = pTransform->m_aMatrixRows[ 1 ].y;
 	worldMatrix.m_f23 = 0.0f;
 	worldMatrix.m_f24 = 0.0f;
 

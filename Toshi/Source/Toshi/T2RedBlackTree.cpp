@@ -326,33 +326,41 @@ void T2GenericRedBlackTree::RightRotate( T2GenericRedBlackTreeNode* pNode )
 
 T2GenericRedBlackTreeNode* T2GenericRedBlackTree::GetSuccessorOf( T2GenericRedBlackTreeNode* pNode )
 {
-	T2GenericRedBlackTreeNode* pTVar1 = pNode->m_pRight;
+	T2GenericRedBlackTreeNode* pTVar1;
 	T2GenericRedBlackTreeNode* pTVar2;
-	T2GenericRedBlackTreeNode* pTVar3;
-	T2GenericRedBlackTreeNode* pTVar4;
+	bool                       bVar3;
 
-	if ( ( pTVar1 != &ms_oNil ) && ( pTVar4 = pTVar1, pTVar1 != TNULL ) )
+	pTVar1 = pNode->m_pRight;
+	if ( pTVar1 == &ms_oNil )
 	{
-		do
+		pTVar1 = pNode->m_pParent;
+		pTVar2 = pTVar1;
+		if ( pNode == pTVar1->m_pRight )
 		{
-			pTVar3 = pTVar4;
-			pTVar4 = pTVar3->m_pLeft;
-		} while ( pTVar3->m_pLeft != &ms_oNil );
-
-		return pTVar3;
+			do {
+				pTVar1 = pTVar2->m_pParent;
+				bVar3  = pTVar2 == pTVar1->m_pRight;
+				pTVar2 = pTVar1;
+			} while ( bVar3 );
+		}
+		if ( pTVar1->m_pParent == pTVar1 )
+		{
+			pTVar1 = &ms_oNil;
+		}
 	}
-
-	for ( pTVar2 = pNode->m_pParent; pNode == pTVar2->m_pRight; pTVar2 = pTVar2->m_pParent )
+	else
 	{
-		pNode = pTVar2;
+		pTVar2 = pTVar1->m_pLeft;
+		if ( pTVar2 != &ms_oNil )
+		{
+			do {
+				pTVar1 = pTVar2;
+				pTVar2 = pTVar2->m_pLeft;
+			} while ( pTVar2 != &ms_oNil );
+			return pTVar1;
+		}
 	}
-
-	if ( pTVar2->m_pParent != pTVar2 )
-	{
-		return pTVar2;
-	}
-
-	return &ms_oNil;
+	return pTVar1;
 }
 
 T2GenericRedBlackTreeNode* T2GenericRedBlackTree::GetPredecessorOf( T2GenericRedBlackTreeNode* pNode )

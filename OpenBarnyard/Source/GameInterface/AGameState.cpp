@@ -169,9 +169,7 @@ void AGameState::Destroy( TBOOL a_bDeactivate )
 	TRenderInterface::GetSingleton()->BeginEndSceneHAL();
 
 	if ( a_bDeactivate )
-	{
 		Deactivate();
-	}
 
 	OnRemoval();
 	delete this;

@@ -269,9 +269,9 @@ void AGUI2Element::GetScreenTransform( AGUI2Transform& a_rOutTransform )
 	{
 		auto pDisplayParams = Toshi::TRenderInterface::GetSingleton()->GetCurrentDisplayParams();
 
-		transform1.m_aRotations[ 0 ] = { 1.0f, 0.0f };
-		transform1.m_aRotations[ 1 ] = { 0.0f, 1.0f };
-		transform1.m_vecTranslation  = { pDisplayParams->uiWidth / 2.0f, pDisplayParams->uiHeight / 2.0f };
+		transform1.m_aMatrixRows[ 0 ] = { 1.0f, 0.0f };
+		transform1.m_aMatrixRows[ 1 ] = { 0.0f, 1.0f };
+		transform1.m_vecTranslation   = { pDisplayParams->uiWidth / 2.0f, pDisplayParams->uiHeight / 2.0f };
 
 		transform1.PreMultiply( pDisplayParams->uiWidth / fWidth, pDisplayParams->uiHeight / fHeight );
 		transform2 = GetTransform();

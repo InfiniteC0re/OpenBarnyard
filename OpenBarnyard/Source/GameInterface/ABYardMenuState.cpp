@@ -187,7 +187,7 @@ TBOOL ABYardMenuState::OnUpdate( TFLOAT a_fDeltaTime )
 			// Menu is open and can be used
 			if ( m_bFocusedElementBloated )
 			{
-				TFLOAT fScale = 1.0f + 0.05f * ( m_fTotalTime * ( TMath::PI * 2 ) );
+				TFLOAT fScale = 1.0f + 0.05f * TMath::Sin( m_fTotalTime * ( TMath::PI * 2 ) );
 				m_oMenu.GetFocusedMenuItem()->GetTransform().SetScale( fScale, fScale );
 			}
 
@@ -202,7 +202,7 @@ TPSTRING8_DECLARE( DialogInputMap );
 
 void ABYardMenuState::OnInsertion()
 {
-	ms_fTimeSinceInsertion = 0.0f;
+	ms_fAnimationTime = 0.0f;
 
 	if ( m_bHasRectangle2 )
 	{
@@ -216,33 +216,33 @@ void ABYardMenuState::OnInsertion()
 	}
 
 	SetInputMap( TPS8( DialogInputMap ) );
-	AGUI2Font*           pFont        = AGUI2FontManager::FindFont( AGUI2FONT_PRIMARY );
+	AGUI2Font*           pFont        = AGUI2FontManager::FindFont( AGUI2STYLE_FONT_PRIMARY );
 	AGUI2TextureSection* pPanelTexSec = AGUI2TextureSectionManager::GetTextureSection( "Panel_01" );
 
 	TVALIDPTR( pFont );
 	TVALIDPTR( pPanelTexSec );
 
 	// Setup textbox
-	TFLOAT fTextBoxWidth = ( m_oTitle.GetText() != TNULL ) ? pFont->GetTextWidth( m_oTitle.GetText() ) : pPanelTexSec->GetWidth();
-	m_oTitle.Create( pFont, fTextBoxWidth );
-	m_oTitle.SetColour( 0xfffff0af );
-	m_oTitle.SetTransform( 0.0f, 2.0f, 0.0f );
+	TFLOAT fTextBoxWidth = ( m_oDialogTitle.GetText() != TNULL ) ? pFont->GetTextWidth( m_oDialogTitle.GetText() ) : pPanelTexSec->GetWidth();
+	m_oDialogTitle.Create( pFont, fTextBoxWidth );
+	m_oDialogTitle.SetColour( 0xfffff0af );
+	m_oDialogTitle.SetTransform( 0.0f, 2.0f, 0.0f );
 
 	AGUI2Transform oTransform;
-	oTransform.m_aRotations[ 0 ]  = TVector2( 1.0f, 0.0f );
-	oTransform.m_aRotations[ 1 ]  = TVector2( 0.0f, 1.0f );
+	oTransform.m_aMatrixRows[ 0 ] = TVector2( 1.0f, 0.0f );
+	oTransform.m_aMatrixRows[ 1 ] = TVector2( 0.0f, 1.0f );
 	oTransform.m_vecTranslation.x = 0.0f;
-	m_oTitle.GetTransform().PreMultiply( oTransform );
+	m_oDialogTitle.GetTransform().PreMultiply( oTransform );
 
-	m_oTitle.SetShadow( TTRUE, 0xa0000000 );
-	m_oTitle.SetShadowAlpha( 0.6f );
-	m_oTitle.SetShadowOffset( 5.0f, 5.0f );
+	m_oDialogTitle.SetShadow( TTRUE, 0xa0000000 );
+	m_oDialogTitle.SetShadowAlpha( 0.6f );
+	m_oDialogTitle.SetShadowOffset( 5.0f, 5.0f );
 
 	// Setup textbox background
-	m_oTitleBackground.SetTextureSection( pPanelTexSec );
-	m_oTitleBackground.SetDimensions( TMath::Max( m_oTitle.GetWidth() * 1.25f, pPanelTexSec->GetWidth() ), pPanelTexSec->GetHeight() );
-	m_oTitleBackground.SetAttachment( AGUI2ATTACHMENT_TOPCENTER, AGUI2ATTACHMENT_TOPCENTER );
-	m_oTitle.AddChildTail( m_oTitleBackground );
+	m_oDialogTitleBackground.SetTextureSection( pPanelTexSec );
+	m_oDialogTitleBackground.SetDimensions( TMath::Max( m_oDialogTitle.GetWidth() * 1.25f, pPanelTexSec->GetWidth() ), pPanelTexSec->GetHeight() );
+	m_oDialogTitleBackground.SetAttachment( AGUI2ATTACHMENT_TOPCENTER, AGUI2ATTACHMENT_TOPCENTER );
+	m_oDialogTitleBackground.AddChildTail( m_oDialogTitle );
 
 	// Setup menu
 	m_oMenu.SetFocus( TTRUE );
@@ -284,7 +284,7 @@ void ABYardMenuState::OnInsertion()
 	m_oRootElement.SetDimensions( fGUIRootWidth, fGUIRootHeight );
 
 	m_oRootElement.AddChildTail( m_oMenu );
-	m_oDialog.AddChildTail( m_oTitle );
+	m_oDialog.AddChildTail( m_oDialogTitleBackground );
 	AGUI2::GetRootElement()->AddChildTail( m_oRootElement );
 
 	BaseClass::OnInsertion();
@@ -295,8 +295,8 @@ void ABYardMenuState::OnRemoval()
 	if ( m_bHasRectangle2 )
 		m_oRectangle2.RemoveSelf();
 
-	m_oTitle.RemoveSelf();
-	m_oTitleBackground.RemoveSelf();
+	m_oDialogTitle.RemoveSelf();
+	m_oDialogTitleBackground.RemoveSelf();
 	m_oDialog.RemoveSelf();
 	m_oMenu.RemoveSelf();
 	m_oRootElement.RemoveSelf();
@@ -362,4 +362,21 @@ void ABYardMenuState::SetDialogOpacity( TFLOAT a_fOpacity )
 {
 	TMath::Clip( a_fOpacity, 0.0f, 1.0f );
 	m_oDialog.SetAlpha( a_fOpacity );
+}
+
+void ABYardMenuState::OnButtonActivated( AGUI2Button* a_pButton )
+{
+	if ( !m_bIgnoreInputs )
+	{
+		m_bIgnoreInputs = TTRUE;
+		m_eMenuState    = MENUSTATE_MENU_DISAPPEAR;
+
+		if ( a_pButton )
+		{
+			ms_vecActivatedButtonTranslation = a_pButton->GetTextBox().GetTransform().GetTranslation();
+			ms_fAnimationTime                = 0.0f;
+			ms_vecActivatedButtonShadow.x    = a_pButton->GetTextBox().GetShadowOffsetX();
+			ms_vecActivatedButtonShadow.y    = a_pButton->GetTextBox().GetShadowOffsetY();
+		}
+	}
 }

@@ -40,7 +40,7 @@ namespace PooledStrings
                 {
                     string str = strings[i];
 
-                    if (str.Length >= 1 && str.IndexOf(" ") == -1)
+                    if (!str.TrimStart().StartsWith("#") && str.Length >= 1 && str.IndexOf(" ") == -1)
                     {
                         sb.AppendFormat("TPString8 g_str_{0};\n", str);
                         numStrings++;
@@ -55,7 +55,7 @@ namespace PooledStrings
                 {
                     string str = strings[i];
 
-                    if (!str.TrimStart().StartsWith("#") && str.Length > 1 && str.IndexOf(" ") == -1)
+                    if (!str.TrimStart().StartsWith("#") && str.Length >= 1 && str.IndexOf(" ") == -1)
                     {
                         sb.AppendFormat("\t{{ &g_str_{0},{1}\"{0}\" }},\n", str, String.Concat(Enumerable.Repeat(" ", 33 - str.Length)));
                     }

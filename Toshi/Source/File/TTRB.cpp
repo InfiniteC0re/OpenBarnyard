@@ -176,8 +176,8 @@ TBOOL TTRB::ProcessForm( TTSFI& ttsf )
 							// this won't work in x64 because pointers in TRB files are always 4 bytes
 							// need some workaround to support x64 again
 							TSTATICASSERT( sizeof( void* ) == 4 );
-							uintptr_t* ptr = reinterpret_cast<uintptr_t*>( (uintptr_t)hdrx1->m_Data + relcEntry.Offset );
-							*ptr += (uintptr_t)hdrx2->m_Data;
+							TUINTPTR* ptr = TREINTERPRETCAST( TUINTPTR*, TUINTPTR( hdrx1->m_Data ) + relcEntry.Offset );
+							*ptr += TUINTPTR( hdrx2->m_Data );
 						}
 
 						readedRelocs += relocReadCount;

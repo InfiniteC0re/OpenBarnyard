@@ -36,19 +36,16 @@ public:
 
 	ValueType* Insert( const KeyType& key, const ValueType& value )
 	{
-		Node* result = TNULL;
-		m_RedBlackTree.Insert( result, { key, value } );
-
-		return &result->GetValue()->GetSecond();
+		Iterator result = m_RedBlackTree.Insert( { key, value } );
+		return &result.GetValue()->GetSecond();
 	}
 
 	void Remove( const KeyType& key )
 	{
-		Node* result;
-		m_RedBlackTree.Find( result, { key } );
+		Iterator result = m_RedBlackTree.Find( { key } );
 
 		TASSERT( result != End() );
-		m_RedBlackTree.Delete( result );
+		m_RedBlackTree.Delete( result.GetNode() );
 	}
 
 	void RemoveNode( Node* a_pNode )
@@ -59,34 +56,26 @@ public:
 
 	ValueType* Find( const KeyType& key )
 	{
-		Node* result;
-		m_RedBlackTree.Find( result, { key } );
-
-		return result ? &result->GetValue()->GetSecond() : &m_RedBlackTree.End()->GetSecond();
+		Iterator result = m_RedBlackTree.Find( { key } );
+		return &result.GetValue()->GetSecond();
 	}
 
 	Node* FindNode( const KeyType& key )
 	{
-		Node* result;
-		m_RedBlackTree.Find( result, { key } );
-
-		return result;
+		Iterator result = m_RedBlackTree.Find( { key } );
+		return result.GetNode();
 	}
 
 	Node* FindNext( Node* a_pNode, const KeyType& a_rKey )
 	{
-		Node* result;
-		m_RedBlackTree.FindNext( result, a_pNode, { a_rKey } );
-
-		return result ? &result->GetValue()->GetSecond() : &m_RedBlackTree.End()->GetSecond();
+		Iterator result = m_RedBlackTree.FindNext( a_pNode, { a_rKey } );
+		return result.GetValue();
 	}
 
 	Node* FindNextNode( Node* a_pNode, const KeyType& a_rKey )
 	{
-		Node* result;
-		m_RedBlackTree.FindNext( result, a_pNode, { a_rKey } );
-
-		return result;
+		Iterator result = m_RedBlackTree.FindNext( a_pNode, { a_rKey } );
+		return result.GetNode();
 	}
 
 	Iterator Begin()

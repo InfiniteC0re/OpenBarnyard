@@ -5,6 +5,7 @@
 #include "GUI/AGUI2Rectangle.h"
 #include "GUI/AGUI2TextBox.h"
 #include "GUI/AGUI2Menu.h"
+#include "GUI/AGUI2Button.h"
 
 class ABYardMenuState :
     public AGameState
@@ -46,19 +47,24 @@ public:
 	virtual void OnMenuItemFocused( AGUI2MenuItem& a_rOldFocus, AGUI2MenuItem& a_rNewFocus );
 	virtual void OnMenuClose();
 
+protected:
+	void OnButtonActivated( AGUI2Button* a_pButton );
+
 private:
 	void UpdateMenuOpacity();
 	void SetDialogOpacity( TFLOAT a_fOpacity );
 
-public:
-	inline static TFLOAT ms_fTimeSinceInsertion = 0.0f;
+protected:
+	inline static Toshi::TVector2 ms_vecActivatedButtonTranslation;
+	inline static TFLOAT          ms_fAnimationTime;
+	inline static Toshi::TVector2 ms_vecActivatedButtonShadow;
 
 protected:
 	AGUI2Element   m_oRootElement;
 	AGUI2Dialog    m_oDialog;
 	AGUI2Menu      m_oMenu;
-	AGUI2Rectangle m_oTitleBackground;
-	AGUI2TextBox   m_oTitle;
+	AGUI2Rectangle m_oDialogTitleBackground;
+	AGUI2TextBox   m_oDialogTitle;
 	MENUSTATE      m_eMenuState;
 	TFLOAT         m_fOscillatorOffset;
 	TFLOAT         m_fMenuOpacity;

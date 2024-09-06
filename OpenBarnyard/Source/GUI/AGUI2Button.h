@@ -30,6 +30,7 @@ public:
 		m_oText.SetShadowAlpha( a_fAlpha );
 	}
 
+	void SetTextShadowOffset( TFLOAT a_fOffset ) { m_oText.SetShadowOffset( a_fOffset, a_fOffset ); }
 	void SetTextShadowOffset( TFLOAT a_fOffsetX, TFLOAT a_fOffsetY ) { m_oText.SetShadowOffset( a_fOffsetX, a_fOffsetY ); }
 
 	AGUI2Rectangle& GetBackground() { return m_oBackgroundRect; }

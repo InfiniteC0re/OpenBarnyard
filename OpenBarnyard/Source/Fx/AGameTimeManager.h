@@ -19,5 +19,5 @@ public:
 	~AGameTimeManager();
 
 	DAYPHASE GetCurrentDayPhase() const;
-	TBOOL IsItNight() const;
+	TBOOL    IsItNight() const;
 };

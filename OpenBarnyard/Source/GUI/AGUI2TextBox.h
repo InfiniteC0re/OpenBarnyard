@@ -22,7 +22,9 @@ public:
 	void SetShadowOffset( TFLOAT a_fOffsetX, TFLOAT a_fOffsetY );
 	void SetTextAlign( AGUI2Font::TextAlign a_eTextAlign );
 
-	const TWCHAR* GetText() const;
+	const TWCHAR* GetText() const { return m_wszText; }
+	TFLOAT        GetShadowOffsetX() const { return m_fShadowOffsetX; }
+	TFLOAT        GetShadowOffsetY() const { return m_fShadowOffsetY; }
 
 	//-----------------------------------------------------------------------------
 	// AGUI2Element

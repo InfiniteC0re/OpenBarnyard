@@ -141,7 +141,7 @@ void AInputMapManager::GetEventCommands( const Toshi::TInputInterface::InputEven
 				a_rCommandArray.AddCommand( pCommandIndexRes->GetValue()->GetSecond() );
 			}
 
-			// Look if there is any other commands binded to this doodad
+			// Look if there are any other commands binded to this doodad
 			pCommandIndexRes = pCommandMap->FindNextNode( pCommandIndexRes, a_pEvent->GetDoodad() );
 		}
 	}

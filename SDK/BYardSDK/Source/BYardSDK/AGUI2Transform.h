@@ -6,9 +6,9 @@ class AGUI2Transform
 public:
 	AGUI2Transform()
 	{
-		m_aRotations[ 0 ] = { 1.0f, 0.0f };
-		m_aRotations[ 1 ] = { 0.0f, 1.0f };
-		m_vecTranslation  = { 0.0f, 0.0f };
+		m_aMatrixRows[ 0 ] = { 1.0f, 0.0f };
+		m_aMatrixRows[ 1 ] = { 0.0f, 1.0f };
+		m_vecTranslation   = { 0.0f, 0.0f };
 	}
 
 	void Rotate( TFLOAT a_fAngle );
@@ -33,6 +33,6 @@ public:
 	static void Multiply( AGUI2Transform& a_rOutTransform, const AGUI2Transform& a_rA, const AGUI2Transform& a_rB );
 
 public:
-	Toshi::TVector2 m_aRotations[ 2 ];
+	Toshi::TVector2 m_aMatrixRows[ 2 ];
 	Toshi::TVector2 m_vecTranslation;
 };

@@ -1,4 +1,5 @@
 #pragma once
+#include "AGUI2Style.h"
 #include "AGUI2Transform.h"
 
 #include <Toshi/Typedefs.h>
@@ -154,7 +155,7 @@ public:
 
 	TFLOAT GetAlpha() const
 	{
-		return ( ( m_uiColour & 0x00FFFFFF ) >> 24 ) * ( 1.0f / 255.0f );
+		return ( ( m_uiColour & 0xFF000000 ) >> 24 ) * ( 1.0f / 255.0f );
 	}
 
 	void AddChildTail( AGUI2Element& a_rElement )
@@ -169,6 +170,16 @@ public:
 		a_rElement.Unlink();
 		a_rElement.m_pParent = this;
 		a_rElement.LinkAfter( m_Children );
+	}
+
+	void SetTranslation( TFLOAT a_fX, TFLOAT a_fY )
+	{
+		m_oTransform.SetTranslation( a_fX, a_fY );
+	}
+
+	void SetTranslation( const Toshi::TVector2& a_rTranslation )
+	{
+		m_oTransform.SetTranslation( a_rTranslation );
 	}
 
 	void SetTransform( TFLOAT a_fX, TFLOAT a_fY, float a_fRotAngle = 0.0f )
