@@ -202,4 +202,14 @@ const TWCHAR* T2String16::SkipSpaces( const TWCHAR* str )
 	return pszCursor;
 }
 
+TWCHAR* T2String16::CreateCopy( const TWCHAR* a_wszString, TSIZE a_uiSize )
+{
+	TSIZE uiSize = ( a_uiSize == -1 ) ? T2String16::Length( a_wszString ) : a_uiSize;
+
+	TWCHAR* wszBuffer = new TWCHAR[ uiSize ];
+	TUtil::MemCopy( wszBuffer, a_wszString, a_uiSize * sizeof( TWCHAR ) );
+
+	return wszBuffer;
+}
+
 TOSHI_NAMESPACE_END

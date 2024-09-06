@@ -143,13 +143,13 @@ void AGUI2Button::SetEnabled( TBOOL a_bEnabled )
 TFLOAT AGUI2Button::GetFlowVisualOffset()
 {
 	TVALIDPTR( m_pFont );
-	return m_pFont->GetLinesMargin();
+	return m_pFont->GetLinesMargin() * 0.5f + m_fGap;
 }
 
 TFLOAT AGUI2Button::GetFlowOffset()
 {
 	TVALIDPTR( m_pFont );
-	return m_pFont->GetLinesMargin();
+	return m_pFont->GetLinesMargin() * 0.5f + m_fGap;
 }
 
 void AGUI2Button::SetButtonColour( TUINT a_uiColour )

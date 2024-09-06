@@ -8,6 +8,12 @@ class AOptions :
 public:
 	TDECLARE_CLASS( AOptions, Toshi::TObject );
 
+	using Flags = TUINT32;
+	enum Flags_ : Flags
+	{
+		Flags_InvertMouse = BITFLAG( 1 )
+	};
+
 	using UpdatedSettings = TUINT32;
 	enum UpdatedSettings_ : UpdatedSettings
 	{

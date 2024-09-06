@@ -229,8 +229,8 @@ void ABYardMenuState::OnInsertion()
 	m_oDialogTitle.SetTransform( 0.0f, 2.0f, 0.0f );
 
 	AGUI2Transform oTransform;
-	oTransform.m_aMatrixRows[ 0 ] = TVector2( 1.0f, 0.0f );
-	oTransform.m_aMatrixRows[ 1 ] = TVector2( 0.0f, 1.0f );
+	oTransform.m_aMatrixRows[ 0 ] = TVector2( 1.1f, 0.0f );
+	oTransform.m_aMatrixRows[ 1 ] = TVector2( 0.0f, 1.1f );
 	oTransform.m_vecTranslation.x = 0.0f;
 	m_oDialogTitle.GetTransform().PreMultiply( oTransform );
 
@@ -257,7 +257,7 @@ void ABYardMenuState::OnInsertion()
 	m_oMenu.SetBackSound( soundbank::UI_MENUBACK );
 	m_oMenu.SetSelectSound( soundbank::UI_MENUOK );
 	m_oMenu.SetNegativeSound( soundbank::UI_NEGATIVE );
-	m_oMenu.SetVerticalFlow();
+	m_oMenu.ReflowVertical();
 
 	// Setup dialog
 	TFLOAT fMenuWidth, fMenuHeight;

@@ -12,6 +12,8 @@ public:
 	static constexpr TSIZE SCRATCH_MEM_SIZE = 512;
 
 public:
+	static TWCHAR* CreateCopy( const TWCHAR* a_wszString, TSIZE a_uiSize = -1 );
+
 	static TINT Format( TWCHAR* a_pcString, TINT size, const TWCHAR* a_pcFormat, ... );
 	static TINT Format( TWCHAR* a_pcString, const TWCHAR* a_pcFormat, ... );
 

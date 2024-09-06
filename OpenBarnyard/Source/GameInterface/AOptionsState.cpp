@@ -47,7 +47,7 @@ void AOptionsState::OnInsertion()
 	{
 		const TWCHAR* wszText = ALocaleManager::GetSingleton()->GetString( OPTIONSBUTTON_TEXTS[ i ] );
 
-		m_aButtons[ i ].Create( pFont, pFont->GetTextWidth( wszText ), wszText, 5.0f );
+		m_aButtons[ i ].Create( pFont, pFont->GetTextWidth( wszText ), wszText, 10.0f );
 		m_aButtons[ i ].SetFocusedColour( AGUI2STYLE_COLOR_FOCUSED );
 		m_aButtons[ i ].SetEnabledColour( AGUI2STYLE_COLOR_SECONDARY );
 		m_aButtons[ i ].SetDisabledColour( AGUI2STYLE_COLOR_DISABLED );

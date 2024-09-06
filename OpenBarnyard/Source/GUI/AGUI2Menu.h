@@ -36,7 +36,7 @@ public:
 	void SetFocusAt( AGUI2MenuItem& a_rMenuItem );
 
 	// Reflows elements vertically and calculates dimensions
-	void SetVerticalFlow();
+	void ReflowVertical();
 
 	TBOOL TriggerButtonPress( AGUI2MenuItem& a_rMenuItem );
 

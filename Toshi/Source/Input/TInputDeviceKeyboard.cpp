@@ -206,10 +206,10 @@ const TCHAR* TInputDeviceKeyboard::GetButtonFromDoodad( Doodad a_iDoodad ) const
 void TInputDeviceKeyboard::SetVirtStickDoodads( TINT a_iMapID, Doodad a_iDoodad1, Doodad a_iDoodad2, Doodad a_iDoodad3, Doodad a_iDoodad4 )
 {
 	TASSERT( a_iMapID >= 0 && a_iMapID < VIRTSTK_DIRECTIONAL_MAPS );
-	m_aVirtStickDoodads[ a_iMapID + 0 ].iDoodad1 = a_iDoodad1;
-	m_aVirtStickDoodads[ a_iMapID + 1 ].iDoodad2 = a_iDoodad2;
-	m_aVirtStickDoodads[ a_iMapID + 2 ].iDoodad3 = a_iDoodad3;
-	m_aVirtStickDoodads[ a_iMapID + 3 ].iDoodad4 = a_iDoodad4;
+	m_aVirtStickDoodads[ a_iMapID ].iDoodad1 = a_iDoodad1;
+	m_aVirtStickDoodads[ a_iMapID ].iDoodad2 = a_iDoodad2;
+	m_aVirtStickDoodads[ a_iMapID ].iDoodad3 = a_iDoodad3;
+	m_aVirtStickDoodads[ a_iMapID ].iDoodad4 = a_iDoodad4;
 }
 
 void TInputDeviceKeyboard::GetVirtStickDoodads( TINT a_iMapID, Doodad& a_rDoodad1, Doodad& a_rDoodad2, Doodad& a_rDoodad3, Doodad& a_rDoodad4 )

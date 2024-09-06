@@ -257,7 +257,7 @@ void AGUI2Menu::SetFocusAt( AGUI2MenuItem& a_rMenuItem )
 	}
 }
 
-void AGUI2Menu::SetVerticalFlow()
+void AGUI2Menu::ReflowVertical()
 {
 	m_fWidth  = 0.0f;
 	m_fHeight = 0.0f;
