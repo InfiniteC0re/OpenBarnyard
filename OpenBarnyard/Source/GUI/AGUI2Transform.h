@@ -22,7 +22,7 @@ public:
 
 	void Rotate( TFLOAT a_fAngle );
 	void PreMultiply( const AGUI2Transform& a_rTransform );
-	void PreMultiply( TFLOAT a_fScaleX, TFLOAT a_fScaleY );
+	void Scale( TFLOAT a_fScaleX, TFLOAT a_fScaleY );
 	void Transform( Toshi::TVector2& a_rOutVec, const Toshi::TVector2& a_rTransformVec ) const;
 	void GetInverse( AGUI2Transform& a_rInverse ) const;
 

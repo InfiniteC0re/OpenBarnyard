@@ -41,7 +41,7 @@ TBOOL AGUI2MouseCursor::Create( const TCHAR* a_szPointerUpTexture, const TCHAR* 
 	TFLOAT fCursorHeight = m_pPointerUpSection->GetHeight();
 
 	AGUI2Rectangle::SetDimensions( fCursorWidth, fCursorHeight );
-	AGUI2Element::GetTransform().PreMultiply( a_fScalar, a_fScalar );
+	AGUI2Element::GetTransform().Scale( a_fScalar, a_fScalar );
 	AGUI2Rectangle::SetTextureSection( m_pPointerUpSection );
 	AGUI2Element::SetAttachment( AGUI2ATTACHMENT_MIDDLECENTER, AGUI2ATTACHMENT_TOPLEFT );
 	m_CursorCenter = { -fCursorWidth / 2, -fCursorHeight / 2 };

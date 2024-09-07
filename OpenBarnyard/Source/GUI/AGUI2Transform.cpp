@@ -34,7 +34,7 @@ void AGUI2Transform::PreMultiply( const AGUI2Transform& a_rTransform )
 	m_aMatrixRows[ 1 ].y = a_rTransform.m_aMatrixRows[ 1 ].x * vecRot0.y + a_rTransform.m_aMatrixRows[ 1 ].y * vecRot1.y;
 }
 
-void AGUI2Transform::PreMultiply( TFLOAT a_fScaleX, TFLOAT a_fScaleY )
+void AGUI2Transform::Scale( TFLOAT a_fScaleX, TFLOAT a_fScaleY )
 {
 	AGUI2Transform transform;
 	transform.m_aMatrixRows[ 0 ] = { a_fScaleX, 0.0f };
@@ -72,14 +72,14 @@ void AGUI2Transform::SetScale( TFLOAT a_fScaleX, TFLOAT a_fScaleY )
 {
 	TVector2 vecTranslation = m_vecTranslation;
 	SetIdentity();
-	PreMultiply( a_fScaleX, a_fScaleY );
+	Scale( a_fScaleX, a_fScaleY );
 	m_vecTranslation = vecTranslation;
 }
 
 void AGUI2Transform::SetFromScale( TFLOAT a_fScaleX, TFLOAT a_fScaleY )
 {
 	SetIdentity();
-	PreMultiply( a_fScaleX, a_fScaleY );
+	Scale( a_fScaleX, a_fScaleY );
 }
 
 void AGUI2Transform::Multiply( AGUI2Transform& a_rOutTransform, const AGUI2Transform& a_rA, const AGUI2Transform& a_rB )

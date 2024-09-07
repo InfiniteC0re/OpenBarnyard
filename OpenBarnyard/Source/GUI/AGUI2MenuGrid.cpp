@@ -74,13 +74,15 @@ void AGUI2MenuGrid::AddMenuGridItem( AGUI2MenuGridItem& a_rMenuItem )
 	a_rMenuItem.SetAttachment( AGUI2ATTACHMENT_TOPLEFT, AGUI2ATTACHMENT_TOPLEFT );
 }
 
-void AGUI2MenuGrid::SetFocusAt( AGUI2MenuGridItem& a_rMenuItem )
+void AGUI2MenuGrid::SetFocusAt( AGUI2MenuGridItem* a_pMenuItem )
 {
 	if ( m_pFocusedMenuItem )
 		m_pFocusedMenuItem->OnFocusLost();
 
-	m_pFocusedMenuItem = &a_rMenuItem;
-	a_rMenuItem.OnFocus();
+	m_pFocusedMenuItem = a_pMenuItem;
+	
+	if ( a_pMenuItem )
+		a_pMenuItem->OnFocus();
 }
 
 void AGUI2MenuGrid::ReflowChildren()
@@ -130,7 +132,7 @@ void AGUI2MenuGrid::ReflowChildren()
 		AGUI2Element::SetWidth( fMaxItemWidth * m_pColumnsData[ i ] + AGUI2Element::GetWidth() + m_fColumnGap );
 
 	// Height
-	for ( TINT i = 0; i < m_iNumColumns; i++ )
+	for ( TINT i = 0; i < m_iNumRows; i++ )
 		AGUI2Element::SetHeight( fMaxItemHeight * m_pRowsData[ i ] + AGUI2Element::GetHeight() + m_fRowGap );
 
 	AGUI2Element::SetWidth( AGUI2Element::GetWidth() - m_fColumnGap );
@@ -167,9 +169,13 @@ TBOOL AGUI2MenuGrid::CreateGrid( TINT a_iNumRows, TINT a_iNumColumns, TFLOAT a_f
 	m_fColumnGap  = a_fColumnGap;
 	m_fRowGap     = a_fRowGap;
 
-	// Create rows and columns data
-	m_pColumnsData = new TFLOAT[ a_iNumColumns ]( 1.0f );
-	m_pRowsData    = new TFLOAT[ a_iNumRows ]( 1.0f );
+	// Create columns data
+	m_pColumnsData = new TFLOAT[ a_iNumColumns ];
+	TUtil::Fill( m_pColumnsData, m_pColumnsData + a_iNumColumns, 1.0f );
+
+	// Create rows data
+	m_pRowsData    = new TFLOAT[ a_iNumRows ];
+	TUtil::Fill( m_pRowsData, m_pRowsData + a_iNumRows, 1.0f );
 
 	return TTRUE;
 }
@@ -207,7 +213,7 @@ void AGUI2MenuGrid::Update( TFLOAT a_fDeltaTime )
 							if ( m_fnFocusCallback )
 								m_fnFocusCallback( m_pCallbackUserData, m_pFocusedMenuItem, pItem );
 
-							SetFocusAt( *pItem );
+							SetFocusAt( pItem );
 						}
 
 						m_pHoveredMenuItem = pItem;
@@ -328,7 +334,7 @@ TBOOL AGUI2MenuGrid::ProcessInputCommand( AInputCommand a_eCommand, const Toshi:
 				if ( m_fnFocusCallback )
 					m_fnFocusCallback( m_pCallbackUserData, m_pFocusedMenuItem, pItem );
 
-				SetFocusAt( *pItem );
+				SetFocusAt( pItem );
 				break;
 			}
 
@@ -410,7 +416,7 @@ TBOOL AGUI2MenuGrid::ProcessInputCommand( AInputCommand a_eCommand, const Toshi:
 		if ( m_fnFocusCallback )
 			m_fnFocusCallback( m_pCallbackUserData, m_pFocusedMenuItem, pNewFocused );
 
-		SetFocusAt( *pNewFocused );
+		SetFocusAt( pNewFocused );
 		bHandled = TTRUE;
 	}
 

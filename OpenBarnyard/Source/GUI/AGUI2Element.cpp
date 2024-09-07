@@ -273,7 +273,7 @@ void AGUI2Element::GetScreenTransform( AGUI2Transform& a_rOutTransform )
 		transform1.m_aMatrixRows[ 1 ] = { 0.0f, 1.0f };
 		transform1.m_vecTranslation   = { pDisplayParams->uiWidth / 2.0f, pDisplayParams->uiHeight / 2.0f };
 
-		transform1.PreMultiply( pDisplayParams->uiWidth / fWidth, pDisplayParams->uiHeight / fHeight );
+		transform1.Scale( pDisplayParams->uiWidth / fWidth, pDisplayParams->uiHeight / fHeight );
 		transform2 = GetTransform();
 	}
 

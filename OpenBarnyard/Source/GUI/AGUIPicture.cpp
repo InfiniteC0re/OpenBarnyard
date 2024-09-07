@@ -80,7 +80,7 @@ void AGUIPicture::Render()
 
 		AGUI2Transform transform;
 		transform.SetTranslation( 0.0f, 0.0f );
-		transform.PreMultiply( fWidth / 638.0f, fHeight / 477.0f );
+		transform.Scale( fWidth / 638.0f, fHeight / 477.0f );
 
 		auto pRenderer = AGUI2::GetRenderer();
 		pRenderer->PushTransform( transform, TVector2::VEC_ZERO, TVector2::VEC_ZERO );

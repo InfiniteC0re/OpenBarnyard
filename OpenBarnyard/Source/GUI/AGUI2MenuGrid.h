@@ -37,7 +37,7 @@ public:
 	TBOOL ProcessInputCommand( AInputCommand a_eCommand, const Toshi::TInputInterface::InputEvent* a_pEvent );
 
 	void AddMenuGridItem( AGUI2MenuGridItem& a_rMenuItem );
-	void SetFocusAt( AGUI2MenuGridItem& a_rMenuItem );
+	void SetFocusAt( AGUI2MenuGridItem* a_pMenuItem );
 
 	// Reflows elements and calculates dimensions
 	void ReflowChildren();
@@ -57,6 +57,8 @@ public:
 	void SetFocusSound( ASoundId a_eSound ) { m_eFocusSound = a_eSound; }
 	void SetSelectSound( ASoundId a_eSound ) { m_eSelectSound = a_eSound; }
 	void SetBackSound( ASoundId a_eSound ) { m_eBackSound = a_eSound; }
+
+	void BlockActivation( TBOOL a_bBlock ) { m_bBlockActivation = a_bBlock; }
 
 private:
 	TFLOAT             m_fItemSpacing;

@@ -51,7 +51,7 @@ void AGUI2MenuGridTextItem::Create( AGUI2Font* a_pFont, TFLOAT a_fWidth, const T
 	}
 
 	// Copy string
-	if ( m_wszText )
+	if ( a_wszText )
 		m_wszText = T2String16::CreateCopy( a_wszText );
 
 	m_oTextBox.SetText( m_wszText );

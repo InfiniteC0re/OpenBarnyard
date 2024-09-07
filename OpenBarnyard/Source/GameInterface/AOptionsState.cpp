@@ -4,6 +4,8 @@
 #include "SoundBank/ui.h"
 #include "GUI/AGUI2FontManager.h"
 #include "Locale/ALocaleManager.h"
+#include "AGameStateController.h"
+#include "AAudioOptionsState.h"
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
@@ -92,5 +94,16 @@ void AOptionsState::OnMenuItemActivated( AGUI2MenuItem& a_rMenuItem )
 void AOptionsState::OnMenuClose()
 {
 	TIMPLEMENT();
-	AGameState::Remove();
+
+	//if ( m_iActivatedButtonID == -1 )
+	//	AGameState::Remove();
+
+	if ( m_iActivatedButtonID == OPTIONSBUTTON_AUDIO )
+	{
+		AGameStateController::GetSingleton()->PushState( new AAudioOptionsState() );
+	}
+	else
+	{
+		AGameState::Remove();
+	}
 }

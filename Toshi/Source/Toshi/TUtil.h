@@ -92,6 +92,13 @@ public:
 	static void  MemClear( void* ptr, TSIZE size ) { std::memset( ptr, 0, size ); }
 	static TINT  MemCompare( const void* ptr1, const void* ptr2, TSIZE size ) { return std::memcmp( ptr1, ptr2, size ); }
 
+	template <class T>
+	static void Fill( T* a_pStart, T* a_pEnd, const T& a_rcValue = T() )
+	{
+		for ( ; a_pStart != a_pEnd; a_pStart++ )
+			*a_pStart = a_rcValue;
+	}
+
 	//-----------------------------------------------------------------------------
 	// Logging
 	//-----------------------------------------------------------------------------

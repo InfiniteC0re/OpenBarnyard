@@ -330,7 +330,7 @@ void ABYardMenuState::OnMenuItemFocused( AGUI2MenuItem& a_rOldFocus, AGUI2MenuIt
 		TVector2 vecTranslation = a_rOldFocus.GetTransform().GetTranslation();
 
 		a_rOldFocus.GetTransform().SetZero();
-		a_rOldFocus.GetTransform().PreMultiply( 1.0f, 1.0f );
+		a_rOldFocus.GetTransform().Scale( 1.0f, 1.0f );
 		a_rOldFocus.GetTransform().SetTranslation( vecTranslation );
 	}
 }

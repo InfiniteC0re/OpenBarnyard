@@ -33,7 +33,7 @@ public:
 		InputEvent( TInputDevice* a_pDevice, TINT a_iDoodad, EVENT_TYPE a_eEventType, TFLOAT a_fMagnitude1 );
 		InputEvent( TInputDevice* a_pDevice, TINT a_iDoodad, EVENT_TYPE a_eEventType, TFLOAT a_fMagnitude1, TFLOAT a_fMagnitude2 );
 
-		TBOOL StartRepeat( TFLOAT a_fFirstRepeatTime, TFLOAT a_fRepeatTime ) const;
+		TBOOL StartRepeat( TFLOAT a_fFirstRepeatTime = 0.5f, TFLOAT a_fRepeatTime = 0.1f ) const;
 
 		TINT   GetMagnitudeInt( TINT a_iAxis ) const;
 		TFLOAT GetMagnitudeFloat( TINT a_iAxis ) const;

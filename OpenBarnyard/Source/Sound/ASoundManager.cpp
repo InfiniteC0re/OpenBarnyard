@@ -186,7 +186,7 @@ TBOOL ASoundManager::OnUpdate( TFLOAT a_fDeltaTime )
 	{
 		TFLOAT fCueStartTime = m_aCues[ i ].fStartTime;
 
-		if ( fCueStartTime < 0.0f && !IsCuePlaying( i ) )
+		if ( fCueStartTime > 0.0f && !IsCuePlaying( i ) )
 		{
 			m_aCues[ i ].Reset();
 		}

@@ -204,8 +204,9 @@ TCHAR* T2String8::CreateCopy( const TCHAR* a_pcString, TSIZE a_uiSize /*= -1 */ 
 {
 	TSIZE uiSize = ( a_uiSize == -1 ) ? T2String8::Length( a_pcString ) : a_uiSize;
 
-	TCHAR* pcBuffer = new TCHAR[ uiSize ];
-	TUtil::MemCopy( pcBuffer, a_pcString, a_uiSize * sizeof( TCHAR ) );
+	TCHAR* pcBuffer = new TCHAR[ uiSize + 1 ];
+	TUtil::MemCopy( pcBuffer, a_pcString, uiSize * sizeof( TCHAR ) );
+	pcBuffer[ uiSize ] = '\0';
 
 	return pcBuffer;
 }

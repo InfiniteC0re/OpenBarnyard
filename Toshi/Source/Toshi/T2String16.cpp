@@ -206,8 +206,9 @@ TWCHAR* T2String16::CreateCopy( const TWCHAR* a_wszString, TSIZE a_uiSize )
 {
 	TSIZE uiSize = ( a_uiSize == -1 ) ? T2String16::Length( a_wszString ) : a_uiSize;
 
-	TWCHAR* wszBuffer = new TWCHAR[ uiSize ];
-	TUtil::MemCopy( wszBuffer, a_wszString, a_uiSize * sizeof( TWCHAR ) );
+	TWCHAR* wszBuffer = new TWCHAR[ uiSize + 1 ];
+	TUtil::MemCopy( wszBuffer, a_wszString, uiSize * sizeof( TWCHAR ) );
+	wszBuffer[ uiSize ] = L'\0';
 
 	return wszBuffer;
 }
