@@ -48,6 +48,8 @@ AGUI2MenuGrid::AGUI2MenuGrid()
 
 AGUI2MenuGrid::~AGUI2MenuGrid()
 {
+	delete[] m_pColumnsData;
+	delete[] m_pRowsData;
 }
 
 void AGUI2MenuGrid::AddMenuGridItem( AGUI2MenuGridItem& a_rMenuItem )

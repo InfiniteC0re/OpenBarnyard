@@ -53,7 +53,7 @@ void AOptionsState::OnInsertion()
 		m_aButtons[ i ].SetDisabledColour( AGUI2STYLE_COLOR_DISABLED );
 		m_aButtons[ i ].SetFocusedScale( 1.0f );
 		m_aButtons[ i ].OnFocusLost();
-		m_aButtons[ i ].SetButtonId( i );
+		m_aButtons[ i ].SetId( i );
 		m_aButtons[ i ].SetTextShadow( TTRUE, 0xa0000000, 0.6f );
 		m_aButtons[ i ].SetTextShadowOffset( 5.0f );
 		m_oMenu.AddMenuItem( m_aButtons[ i ] );
@@ -84,7 +84,7 @@ void AOptionsState::OnActivate()
 void AOptionsState::OnMenuItemActivated( AGUI2MenuItem& a_rMenuItem )
 {
 	AGUI2Button* pButton = TSTATICCAST( AGUI2Button, &a_rMenuItem );
-	m_iActivatedButtonID = pButton->GetButtonId();
+	m_iActivatedButtonID = pButton->GetId();
 
 	ABYardMenuState::OnButtonActivated( pButton );
 }

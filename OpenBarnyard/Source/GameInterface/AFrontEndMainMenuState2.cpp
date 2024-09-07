@@ -145,7 +145,7 @@ void AFrontEndMainMenuState2::OnInsertion()
 		m_aButtons[ i ].SetDisabledColour( AGUI2STYLE_COLOR_DISABLED );
 		m_aButtons[ i ].SetFocusedScale( 1.0f );
 		m_aButtons[ i ].OnFocusLost();
-		m_aButtons[ i ].SetButtonId( i );
+		m_aButtons[ i ].SetId( i );
 		m_aButtons[ i ].SetScaleOnFocus( TFALSE );
 		m_aButtons[ i ].GetTransform().Rotate( m_pButtonRotations[ i ] );
 		m_aButtons[ i ].SetImage( "Panel_01", 1.25f, 1.5f );
@@ -234,7 +234,7 @@ void AFrontEndMainMenuState2::OnMenuItemActivated( AGUI2MenuItem& a_rMenuItem )
 {
 	AGUI2Button* pButton = TSTATICCAST( AGUI2Button, &a_rMenuItem );
 
-	m_iActivatedButtonID = pButton->GetButtonId();
+	m_iActivatedButtonID = pButton->GetId();
 	OnButtonActivated( pButton );
 
 	m_eMenuState = MENUSTATE_MENU_VISIBLE;

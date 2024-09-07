@@ -1,22 +1,19 @@
 #pragma once
-#include "AGUI2Menu.h"
+#include "AGUI2MenuGrid.h"
 #include "AGUI2Rectangle.h"
-#include "AGUI2Font.h"
 #include "AGUI2TextBox.h"
 
-class AGUI2Button :
-    public AGUI2MenuItem
+class AGUI2MenuGridTextItem :
+    public AGUI2MenuGridItem
 {
 public:
-	// constructors/destructor
-	AGUI2Button();
-	~AGUI2Button();
+	AGUI2MenuGridTextItem();
+	~AGUI2MenuGridTextItem();
 
 	void Create( AGUI2Font* a_pFont, TFLOAT a_fWidth, const TWCHAR* a_wszText, TFLOAT a_fGap );
-	void SetImage( const TCHAR* a_szTexSec, TFLOAT a_fScaleX, TFLOAT a_fScaleY );
 
-	void SetId( TINT a_iID ) { m_iButtonID = a_iID; }
-	TINT GetId() const { return m_iButtonID; }
+	void SetId( TINT a_iID ) { m_iID = a_iID; }
+	TINT GetId() const { return m_iID; }
 
 	void SetScaleOnFocus( TBOOL a_bScaleOnFocus ) { m_bScaleOnFocus = a_bScaleOnFocus; }
 	void SetFocusedScale( TFLOAT a_fScale ) { m_fFocusedScale = a_fScale; }
@@ -26,53 +23,49 @@ public:
 
 	void SetTextShadow( TBOOL a_bEnabled, TUINT32 a_uiColour, TFLOAT a_fAlpha )
 	{
-		m_oText.SetShadow( a_bEnabled, a_uiColour );
-		m_oText.SetShadowAlpha( a_fAlpha );
+		m_oTextBox.SetShadow( a_bEnabled, a_uiColour );
+		m_oTextBox.SetShadowAlpha( a_fAlpha );
 	}
 
-	void SetTextShadowOffset( TFLOAT a_fOffset ) { m_oText.SetShadowOffset( a_fOffset, a_fOffset ); }
-	void SetTextShadowOffset( TFLOAT a_fOffsetX, TFLOAT a_fOffsetY ) { m_oText.SetShadowOffset( a_fOffsetX, a_fOffsetY ); }
+	void SetTextShadowOffset( TFLOAT a_fOffset ) { m_oTextBox.SetShadowOffset( a_fOffset, a_fOffset ); }
+	void SetTextShadowOffset( TFLOAT a_fOffsetX, TFLOAT a_fOffsetY ) { m_oTextBox.SetShadowOffset( a_fOffsetX, a_fOffsetY ); }
 
-	AGUI2Rectangle& GetBackground() { return m_oBackgroundRect; }
-	AGUI2TextBox&   GetTextBox() { return m_oText; }
+	AGUI2TextBox& GetTextBox() { return m_oTextBox; }
 
 	//-----------------------------------------------------------------------------
 	// AGUI2Element
 	//-----------------------------------------------------------------------------
-	virtual void GetDimensions( TFLOAT& a_rWidth, TFLOAT& a_rHeight ) OVERRIDE;
+	virtual void SetDimensions( TFLOAT a_fWidth, TFLOAT a_fHeight ) OVERRIDE;
 	virtual void SetAlpha( TFLOAT a_fAlpha ) OVERRIDE;
 	virtual void SetShadowAlpha( TFLOAT a_fAlpha ) OVERRIDE;
 
 	//-----------------------------------------------------------------------------
-	// AGUI2MenuItem
+	// AGUI2MenuGridItem
 	//-----------------------------------------------------------------------------
 	virtual void   OnFocus() OVERRIDE;
 	virtual void   OnFocusLost() OVERRIDE;
-	virtual void   SetEnabled( TBOOL a_bEnabled ) OVERRIDE;
+	virtual void   SetEnabled( TBOOL a_bEnabled );
 	virtual TFLOAT GetFlowVisualOffset() OVERRIDE;
 	virtual TFLOAT GetFlowOffset() OVERRIDE;
 
 private:
-	void SetButtonColour( TUINT a_uiColour );
-
-private:
-	TINT           m_iButtonID;
+	TINT           m_iID;
 	TBOOL          m_bScaleOnFocus;
 	TBOOL          m_bFocused;
 	TFLOAT         m_fRectangle1Width;
 	TFLOAT         m_fRectangle1Height;
 	TBOOL          m_bUseRectangle1;
-	TINT           m_Unk3;
-	AGUI2Rectangle m_Rectangle1;
+	TINT           m_Unk1;
+	AGUI2Rectangle m_oRectangle1;
 	TUINT          m_uiFocusedColour;
-	TUINT          m_Unk4;
 	TUINT          m_uiEnabledColour;
 	TUINT          m_uiDisabledColour;
 	TFLOAT         m_fFocusedScale;
 	TFLOAT         m_fScale;
 	AGUI2Font*     m_pFont;
-	AGUI2TextBox   m_oText;
+	AGUI2TextBox   m_oTextBox;
 	TFLOAT         m_fGap;
-	const TWCHAR*  m_wszButtonText;
-	AGUI2Rectangle m_oBackgroundRect;
+	TWCHAR*        m_wszText;
+	TFLOAT         m_fWidth;
+	AGUI2Rectangle m_oRectangle2;
 };
