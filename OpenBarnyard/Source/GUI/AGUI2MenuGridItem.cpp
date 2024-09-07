@@ -66,3 +66,11 @@ void AGUI2MenuGridItem::LinkMenuItemBefore( AGUI2MenuGridItem& a_rLinkAfter )
 	a_rLinkAfter.m_pNextMenuGridItem         = this;
 	m_pNextMenuGridItem->m_pPrevMenuGridItem = this;
 }
+
+void AGUI2MenuGridItem::SetSideElements( AGUI2MenuGridItem* a_pLeft, AGUI2MenuGridItem* a_pRight, AGUI2MenuGridItem* a_pTop, AGUI2MenuGridItem* a_pBottom )
+{
+	m_pLeftElement   = a_pLeft;
+	m_pRightElement  = a_pRight;
+	m_pTopElement    = a_pTop;
+	m_pBottomElement = a_pBottom;
+}

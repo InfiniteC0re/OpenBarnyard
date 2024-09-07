@@ -37,20 +37,7 @@ TBOOL ABYardMenuState::ProcessInput( const TInputInterface::InputEvent* a_pInput
 {
 	if ( m_eMenuState == MENUSTATE_MENU_VISIBLE && !m_bIgnoreInputs )
 	{
-		if ( a_pInputEvent->GetEventType() == TInputInterface::EVENT_TYPE_MOVED )
-		{
-			// Make sure menu updates mouse state
-			m_oMenu.SetMouseStateDirty();
-		}
-		else if ( a_pInputEvent->GetEventType() == TInputInterface::EVENT_TYPE_GONE_DOWN &&
-		          a_pInputEvent->GetDoodad() == TInputDeviceMouse::BUTTON_1 &&
-		          m_oMenu.GetHoveredMenuItem() != TNULL )
-		{
-			// LMB was pressed and the menu has a hovered item
-			return m_oMenu.TriggerButtonPress( *m_oMenu.GetHoveredMenuItem() );
-		}
-
-		return TFALSE;
+		m_oMenu.ProcessInputEvent( a_pInputEvent );
 	}
 
 	return BaseClass::ProcessInput( a_pInputEvent );
@@ -257,7 +244,7 @@ void ABYardMenuState::OnInsertion()
 	m_oMenu.SetBackSound( soundbank::UI_MENUBACK );
 	m_oMenu.SetSelectSound( soundbank::UI_MENUOK );
 	m_oMenu.SetNegativeSound( soundbank::UI_NEGATIVE );
-	m_oMenu.ReflowVertical();
+	m_oMenu.ReflowChildrenVertically();
 
 	// Setup dialog
 	TFLOAT fMenuWidth, fMenuHeight;

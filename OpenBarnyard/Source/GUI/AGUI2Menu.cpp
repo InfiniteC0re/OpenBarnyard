@@ -109,6 +109,24 @@ void AGUI2Menu::Update( TFLOAT a_fDeltaTime )
 	m_fTime += a_fDeltaTime;
 }
 
+TBOOL AGUI2Menu::ProcessInputEvent( const Toshi::TInputInterface::InputEvent* a_pEvent )
+{
+	if ( a_pEvent->GetEventType() == TInputInterface::EVENT_TYPE_MOVED )
+	{
+		// Make sure menu updates mouse state
+		SetMouseStateDirty();
+	}
+	else if ( a_pEvent->GetEventType() == TInputInterface::EVENT_TYPE_GONE_DOWN &&
+	          a_pEvent->GetDoodad() == TInputDeviceMouse::BUTTON_1 &&
+	          GetHoveredMenuItem() != TNULL )
+	{
+		// LMB was pressed and the menu has a hovered item
+		return TriggerButtonPress( *GetHoveredMenuItem() );
+	}
+
+	return TFALSE;
+}
+
 TBOOL AGUI2Menu::ProcessInputCommand( AInputCommand a_eCommand, const Toshi::TInputInterface::InputEvent* a_pEvent )
 {
 	TBOOL bHandled = TFALSE;
@@ -257,7 +275,7 @@ void AGUI2Menu::SetFocusAt( AGUI2MenuItem& a_rMenuItem )
 	}
 }
 
-void AGUI2Menu::ReflowVertical()
+void AGUI2Menu::ReflowChildrenVertically()
 {
 	m_fWidth  = 0.0f;
 	m_fHeight = 0.0f;
@@ -341,7 +359,7 @@ void AGUI2Menu::ActivateFocusedButton()
 {
 	if ( m_fnActivateCallback && m_pFocusedMenuItem )
 	{
-		// Can submit
+		// Can activate
 		ASoundManager::GetSingleton()->PlayCue( m_eSelectSound );
 
 		if ( m_fnActivateCallback )

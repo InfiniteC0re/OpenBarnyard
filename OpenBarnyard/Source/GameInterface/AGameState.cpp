@@ -233,6 +233,7 @@ TBOOL AGameState::SendInputCommands( const TInputInterface::InputEvent* a_pEvent
 void AGameState::SetInputMap( const TPString8& a_MapName )
 {
 	m_pInputMap = AInputMapManager::GetSingleton()->FindMap( a_MapName );
+	TASSERT( m_pInputMap != TNULL );
 }
 
 void AGameState::Activate()

@@ -30,13 +30,14 @@ public:
 	~AGUI2Menu();
 
 	void  Update( TFLOAT a_fDeltaTime );
+	TBOOL ProcessInputEvent( const Toshi::TInputInterface::InputEvent* a_pEvent );
 	TBOOL ProcessInputCommand( AInputCommand a_eCommand, const Toshi::TInputInterface::InputEvent* a_pEvent );
 
 	void AddMenuItem( AGUI2MenuItem& a_rMenuItem );
 	void SetFocusAt( AGUI2MenuItem& a_rMenuItem );
 
 	// Reflows elements vertically and calculates dimensions
-	void ReflowVertical();
+	void ReflowChildrenVertically();
 
 	TBOOL TriggerButtonPress( AGUI2MenuItem& a_rMenuItem );
 
