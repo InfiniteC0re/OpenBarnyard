@@ -9,6 +9,7 @@
 
 TOSHI_NAMESPACE_START
 
+// $OpenBarnyard: FUNCTION 006da9e0
 TSystemDLLWin::TSystemDLLWin()
 {
 	m_pDLL = TNULL;
@@ -20,6 +21,8 @@ TSystemDLLWin::TSystemDLLWin( const TSystemDLLWin& other )
 	m_pDLL      = other.m_pDLL;
 }
 
+// $OpenBarnyard: FUNCTION 006daa00
+// $OpenBarnyard: FUNCTION 006daa10
 TSystemDLLWin::~TSystemDLLWin()
 {
 	Unload();
