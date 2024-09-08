@@ -124,6 +124,7 @@ TOSHI_ENTRY
 	return 0;
 }
 
+// $Barnyard: FUNCTION 00404390
 static TBOOL CreateStringPool()
 {
 	auto pStringPool = new TPString8Pool( 1024, 0, AMemory::GetAllocator( AMemory::POOL_StringPool ), TNULL );
@@ -134,6 +135,13 @@ static TBOOL CreateStringPool()
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 00404370
+// $Barnyard: FUNCTION 00404010
+AApplication::~AApplication()
+{
+}
+
+// $Barnyard: FUNCTION 004045a0
 TBOOL AApplication::OnCreate( int argc, TCHAR** argv )
 {
 	TINFO( "Starting Barnyard...\n" );
@@ -193,9 +201,4 @@ TBOOL AApplication::OnCreate( int argc, TCHAR** argv )
 	}
 
 	return TApplication::OnCreate( argc, argv );
-}
-
-TBOOL AApplication::OnUpdate( TFLOAT deltaTime )
-{
-	return TTRUE;
 }

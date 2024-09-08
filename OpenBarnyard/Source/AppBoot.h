@@ -9,10 +9,9 @@ class AApplication : public Toshi::TApplication
 {
 public:
 	AApplication() = default;
-	~AApplication() {}
+	~AApplication();
 
 	virtual TBOOL OnCreate( int argc, TCHAR** argv ) override;
-	virtual TBOOL OnUpdate( float deltaTime ) override;
 
 public:
 	ARootTask*  m_pRootTask;

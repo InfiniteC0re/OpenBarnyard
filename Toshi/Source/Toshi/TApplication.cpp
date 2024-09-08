@@ -13,34 +13,40 @@
 
 TOSHI_NAMESPACE_START
 
+// $Barnyard: FUNCTION 006c16b0
 TApplication::TApplication()
 {
 	m_Flags = 0;
 }
 
+// $Barnyard: FUNCTION 006c17c0
+// $Barnyard: FUNCTION 006c16e0
 TApplication::~TApplication()
 {
 	Destroy();
 }
 
+// $Barnyard: FUNCTION 006c17f0
 TBOOL TApplication::Create( const TCHAR* appName, TINT argc, TCHAR** argv )
 {
-	m_oExitEvent.Connect( this, OnApplicationExitEvent );
-	m_Name = appName;
-
 	m_pDebugConsole = new TDebugConsole;
 
 	if ( IsConsoleEnabled() )
 		m_pDebugConsole->Show( TTRUE );
+	
+	m_IsVerbose = TFALSE;
+	m_Name = appName;
 
 	return OnCreate( argc, argv );
 }
 
+// $Barnyard: FUNCTION 006c1760
 void TApplication::Destroy()
 {
 	m_Flags |= TApplicationFlag_Destroyed;
 }
 
+// $Barnyard: FUNCTION 006c16f0
 TBOOL TApplication::Execute()
 {
 	TASSERT( TApplication::IsCreated() == TTRUE );
@@ -55,20 +61,23 @@ TBOOL TApplication::Execute()
 	return OnDestroy();
 }
 
+// $Barnyard: FUNCTION 006c1770
 TBOOL TApplication::OnCreate( TINT argc, TCHAR** argv )
 {
 	m_Flags |= TApplicationFlag_Created;
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 006c1780
 TBOOL TApplication::OnUpdate( TFLOAT deltaTime )
 {
 	return ( m_Flags & TApplicationFlag_Destroyed ) == 0;
 }
 
+// $Barnyard: FUNCTION 006c1790
 TBOOL TApplication::OnDestroy()
 {
-	m_oExitEvent.Disconnect();
+	m_Name = TString8();
 	return TTRUE;
 }
 

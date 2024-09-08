@@ -12,7 +12,7 @@ TOSHI_NAMESPACE_USING
 
 TDEFINE_CLASS( AOptions );
 
-// $OpenBarnyard: FUNCTION 006632d0
+// $Barnyard: FUNCTION 006632d0
 AOptions::AOptions()
 {
 	m_eUpdatedSettings = UpdatedSettings_None;
@@ -21,7 +21,7 @@ AOptions::AOptions()
 	ReloadSettings();
 }
 
-// $OpenBarnyard: FUNCTION 00663160
+// $Barnyard: FUNCTION 00663160
 TBOOL AOptions::ApplySettings()
 {
 	TIMPLEMENT();
@@ -44,7 +44,7 @@ TBOOL AOptions::ApplySettings()
 	return TTRUE;
 }
 
-// $OpenBarnyard: FUNCTION 00662eb0
+// $Barnyard: FUNCTION 00662eb0
 void AOptions::LoadSettings()
 {
 	m_fGamma             = 0.420849f;
@@ -135,7 +135,7 @@ void AOptions::LoadSettings()
 	}
 }
 
-// $OpenBarnyard: FUNCTION 00662d90
+// $Barnyard: FUNCTION 00662d90
 TBOOL AOptions::IsResolutionCompatible( TINT a_iWidth, TINT a_iHeight )
 {
 	static constexpr struct
