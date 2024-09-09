@@ -19,6 +19,7 @@ TOSHI_NAMESPACE_USING
 // Global definition
 ALoadScreen g_oLoadScreen;
 
+// $Barnyard: FUNCTION 0042ac30
 ALoadScreen::ALoadScreen()
 {
 	m_bIsLoadingScreen = TFALSE;
@@ -28,10 +29,13 @@ ALoadScreen::ALoadScreen()
 	m_fTimer           = 0.8f;
 }
 
+// $Barnyard: FUNCTION 0042acd0
+// $Barnyard: FUNCTION 0042ada0
 ALoadScreen::~ALoadScreen()
 {
 }
 
+// $Barnyard: FUNCTION 0042adc0
 void ALoadScreen::Create()
 {
 	T2_FOREACH_ARRAY( ms_LoadTextures, i )
@@ -87,6 +91,7 @@ void ALoadScreen::Create()
 	m_fTotalTime = 0.0f;
 }
 
+// $Barnyard: FUNCTION 0042b160
 void ALoadScreen::StartLoading( TINT a_iUnused, TBOOL a_bRender )
 {
 	m_bIsLoadingScreen = TTRUE;
@@ -114,6 +119,7 @@ void ALoadScreen::StartLoading( TINT a_iUnused, TBOOL a_bRender )
 	UpdateUI( a_bRender );
 }
 
+// $Barnyard: FUNCTION 0042b100
 void ALoadScreen::SetLoadingState( TBOOL a_bIsLoading, TBOOL a_bUpdateUI )
 {
 	m_bIsLoadingScreen = a_bIsLoading;
@@ -137,6 +143,7 @@ void ALoadScreen::SetLoadingState( TBOOL a_bIsLoading, TBOOL a_bUpdateUI )
 	if ( a_bUpdateUI ) UpdateUI( a_bIsLoading );
 }
 
+// $Barnyard: FUNCTION 0042b1e0
 void ALoadScreen::Update( TFLOAT a_fDeltaTime, TBOOL a_bRender )
 {
 	if ( m_bIsLoadingScreen )
@@ -156,6 +163,7 @@ void ALoadScreen::Update( TFLOAT a_fDeltaTime, TBOOL a_bRender )
 	}
 }
 
+// $Barnyard: FUNCTION 0042b080
 void ALoadScreen::ResetIndicators( TBOOL a_bRender )
 {
 	if ( m_bIsLoadingScreen )
@@ -167,6 +175,7 @@ void ALoadScreen::ResetIndicators( TBOOL a_bRender )
 	}
 }
 
+// $Barnyard: FUNCTION 0042b260
 void ALoadScreen::Reset()
 {
 	if ( m_bFlag )
@@ -191,6 +200,7 @@ void ALoadScreen::Reset()
 	m_bIsLoadingScreen = TFALSE;
 }
 
+// $Barnyard: FUNCTION 0042afc0
 void ALoadScreen::UpdateUI( TBOOL a_bRender )
 {
 	for ( TUINT i = 0; i < NUM_LOAD_INDICATORS; i++ )

@@ -8,6 +8,7 @@
 //-----------------------------------------------------------------------------
 #include <Core/TMemoryDebugOn.h>
 
+// $Barnyard: FUNCTION 006066e0
 AAssetStreaming::AAssetStreaming()
 {
 	m_pCurrentJob = TNULL;
@@ -16,6 +17,11 @@ AAssetStreaming::AAssetStreaming()
 	m_FileStream.Create( 0, Toshi::TThread::THREAD_PRIORITY_NORMAL, 0 );
 }
 
+AAssetStreaming::~AAssetStreaming()
+{
+}
+
+// $Barnyard: FUNCTION 00606a90
 void AAssetStreaming::Update()
 {
 	if ( m_pCurrentJob == TNULL )
@@ -33,6 +39,7 @@ void AAssetStreaming::Update()
 	}
 }
 
+// $Barnyard: FUNCTION 00606b20
 void AAssetStreaming::CancelAllJobs()
 {
 	for ( auto it = m_Jobs.Begin(); it != m_Jobs.End(); )
@@ -47,4 +54,18 @@ void AAssetStreaming::CancelAllJobs()
 
 		it = next;
 	}
+}
+
+// $Barnyard: FUNCTION 006067d0
+TBOOL AAssetStreaming::HasActiveJobs() const
+{
+	return !m_Jobs.IsEmpty() || m_pCurrentJob != TNULL;
+}
+
+// $Barnyard: FUNCTION 00606ae0
+void AAssetStreaming::AddMainThreadJob( AMainThreadJob* a_pJob )
+{
+	TASSERT( m_pCurrentJob != a_pJob );
+	a_pJob->m_bIsRunning = TFALSE;
+	m_Jobs.PushBack( a_pJob );
 }

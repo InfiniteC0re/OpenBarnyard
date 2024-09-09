@@ -26,6 +26,7 @@ static void TranslateLibraryName( Toshi::TString8& a_rOutName, const TCHAR* a_sz
 	a_rOutName.Format( "Data/%s.trb", a_szLibraryName );
 }
 
+// $Barnyard: FUNCTION 00425600
 TBOOL AAssetLoader::LoadAssetPackFromLibrary( const TCHAR* a_szLibraryName, TBOOL a_bStream )
 {
 	TPROFILER_SCOPE();
@@ -56,6 +57,7 @@ TBOOL AAssetLoader::LoadAssetPackFromLibrary( const TCHAR* a_szLibraryName, TBOO
 	return TFALSE;
 }
 
+// $Barnyard: FUNCTION 00425060 WIP
 TBOOL AAssetLoader::CreateAssetsFromLibrary( const TCHAR* a_szLibraryName )
 {
 	TPROFILER_SCOPE();
@@ -104,6 +106,7 @@ TBOOL AAssetLoader::CreateAssetsFromLibrary( const TCHAR* a_szLibraryName )
 	return TFALSE;
 }
 
+// $Barnyard: FUNCTION 004012d0
 TBOOL AAssetLoader::Load( const TCHAR* a_szFileName, AAssetType a_eAssetType, TBOOL a_bStream )
 {
 	TPROFILER_SCOPE();
@@ -148,6 +151,7 @@ TBOOL AAssetLoader::Load( const TCHAR* a_szFileName, AAssetType a_eAssetType, TB
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 00401180
 void AAssetLoader::Close( AAssetType a_eAssetType )
 {
 	if ( ms_pTRBFiles[ a_eAssetType ] )
@@ -158,6 +162,7 @@ void AAssetLoader::Close( AAssetType a_eAssetType )
 	}
 }
 
+// $Barnyard: FUNCTION 00401200
 void* AAssetLoader::GetSymbolAddress( const TCHAR* a_szFileName, const TCHAR* a_szSymbolName, AAssetType a_eAssetType )
 {
 	if ( ms_pTRBFiles[ a_eAssetType ] )

@@ -8,21 +8,14 @@ class AAssetStreaming :
 {
 public:
 	AAssetStreaming();
+	~AAssetStreaming();
 
 	void Update();
 	void CancelAllJobs();
 
-	TBOOL HasActiveJobs() const
-	{
-		return !m_Jobs.IsEmpty() || m_pCurrentJob != TNULL;
-	}
+	TBOOL HasActiveJobs() const;
 
-	void AddMainThreadJob( AMainThreadJob* a_pJob )
-	{
-		TASSERT( m_pCurrentJob != a_pJob );
-		a_pJob->m_bIsRunning = TFALSE;
-		m_Jobs.PushBack( a_pJob );
-	}
+	void AddMainThreadJob( AMainThreadJob* a_pJob );
 
 	Toshi::TFileStream& GetFileStream()
 	{
