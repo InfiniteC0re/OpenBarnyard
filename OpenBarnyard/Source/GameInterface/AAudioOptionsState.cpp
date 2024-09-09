@@ -19,12 +19,10 @@ TDEFINE_CLASS( AAudioOptionsState );
 
 AAudioOptionsState::AAudioOptionsState()
 {
-
 }
 
 AAudioOptionsState::~AAudioOptionsState()
 {
-
 }
 
 TBOOL AAudioOptionsState::ProcessInput( const Toshi::TInputInterface::InputEvent* a_pInputEvent )
@@ -133,8 +131,7 @@ void AAudioOptionsState::OnInsertion()
 	{
 		m_aTextItems[ i ].SetTransform(
 		    m_aTextItems[ i ].GetWidth() * 0.5f + m_aTextItems[ i ].GetTransform().GetTranslation().x,
-		    m_aTextItems[ i ].GetTransform().GetTranslation().y
-		);
+		    m_aTextItems[ i ].GetTransform().GetTranslation().y );
 
 		m_aTextItems[ i ].SetAttachment( AGUI2ATTACHMENT_TOPLEFT, AGUI2ATTACHMENT_TOPCENTER );
 	}
@@ -189,8 +186,8 @@ void AAudioOptionsState::OnMenuGridItemFocused( AGUI2MenuGridItem& a_rOldFocus, 
 
 AVolumeSlider::AVolumeSlider()
 {
-	m_bMouseDirty = TFALSE;
-	m_iLastPressedArrowIndex  = -1;
+	m_bMouseDirty            = TFALSE;
+	m_iLastPressedArrowIndex = -1;
 }
 
 AVolumeSlider::~AVolumeSlider()

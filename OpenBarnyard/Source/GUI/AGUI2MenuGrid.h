@@ -12,18 +12,18 @@ public:
 	using ACTIONFLAGS = TUINT32;
 	enum ACTIONFLAGS_ : ACTIONFLAGS
 	{
-		ACTIONFLAGS_NONE       = 0,
-		ACTIONFLAGS_UP         = BITFLAG( 0 ),
-		ACTIONFLAGS_DOWN       = BITFLAG( 1 ),
-		ACTIONFLAGS_LEFT       = BITFLAG( 2 ),
-		ACTIONFLAGS_RIGHT      = BITFLAG( 3 ),
-		ACTIONFLAGS_OK         = BITFLAG( 4 ),
-		ACTIONFLAGS_CANCEL     = BITFLAG( 5 ),
+		ACTIONFLAGS_NONE         = 0,
+		ACTIONFLAGS_UP           = BITFLAG( 0 ),
+		ACTIONFLAGS_DOWN         = BITFLAG( 1 ),
+		ACTIONFLAGS_LEFT         = BITFLAG( 2 ),
+		ACTIONFLAGS_RIGHT        = BITFLAG( 3 ),
+		ACTIONFLAGS_OK           = BITFLAG( 4 ),
+		ACTIONFLAGS_CANCEL       = BITFLAG( 5 ),
 		ACTIONFLAGS_MOUSEUPDATED = BITFLAG( 6 ),
 	};
 
 	using ActivateCallback = void ( * )( void* a_pUserData, AGUI2MenuGridItem* a_pItem );
-	using FocusCallback    = void    ( * )( void* a_pUserData, AGUI2MenuGridItem* a_pOldFocus, AGUI2MenuGridItem* a_pNewFocus );
+	using FocusCallback    = void ( * )( void* a_pUserData, AGUI2MenuGridItem* a_pOldFocus, AGUI2MenuGridItem* a_pNewFocus );
 
 public:
 	// constructors/destructor
@@ -31,7 +31,7 @@ public:
 	~AGUI2MenuGrid();
 
 	TBOOL CreateGrid( TINT a_iNumColumns, TINT a_iNumRows, TFLOAT a_fColumnGap, TFLOAT a_fRowGap );
-	
+
 	void  Update( TFLOAT a_fDeltaTime );
 	TBOOL ProcessInputEvent( const Toshi::TInputInterface::InputEvent* a_pEvent );
 	TBOOL ProcessInputCommand( AInputCommand a_eCommand, const Toshi::TInputInterface::InputEvent* a_pEvent );

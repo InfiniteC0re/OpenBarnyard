@@ -14,6 +14,8 @@
 #include <BYardSDK/ATerrainInterface.h>
 
 #include <Toshi/THPTimer.h>
+#include <Toshi/TScheduler.h>
+#include <Input/TInputDeviceKeyboard.h>
 #include <T2Locale/T2Locale.h>
 #include <File/TFile.h>
 #include <ToshiTools/T2CommandLine.h>
@@ -126,6 +128,25 @@ public:
 
 	TBOOL OnUpdate( TFLOAT a_fDeltaTime ) override
 	{
+		if ( g_bIsExperimentalMode )
+		{
+			// Simulate lag by pressing Z key
+			TInputInterface* pInputInterface = *(TInputInterface**)( 0x007cec34 );
+
+			if ( pInputInterface )
+			{
+				static TClass*        pKeyboardClass = TClass::Find( "TInputDeviceKeyboard", &TGetClass( THookedObject ) );
+				TInputDeviceKeyboard* pKeyboard      = (TInputDeviceKeyboard*)pInputInterface->GetDeviceByIndex( pKeyboardClass, 0 );
+				TSystemManager*       pSystemManager = (TSystemManager*)0x007ce640;
+
+				TBOOL        bIsDown    = pKeyboard->IsDown( TInputDeviceKeyboard::KEY_Q );
+				static TBOOL s_bWasDown = TFALSE;
+
+				pSystemManager->GetScheduler()->SetDebugDeltaTime( !s_bWasDown && bIsDown, 0.5f );
+				s_bWasDown = bIsDown;
+			}
+		}
+
 		g_Timer.Update();
 		return TTRUE;
 	}

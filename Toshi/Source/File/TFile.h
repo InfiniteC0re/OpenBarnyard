@@ -200,18 +200,14 @@ public:
          */
 	virtual TINT WPrintf( const TWCHAR* a_wszFormat, ... ) = 0;
 
-	virtual ~TFile() {}
+	virtual ~TFile();
 
 	TFileSystem* GetFileSystem() const
 	{
 		return m_pFileSystem;
 	}
 
-	void Destroy()
-	{
-		TVALIDPTR( m_pFileSystem );
-		m_pFileSystem->DestroyFile( this );
-	}
+	void Destroy();
 
 public:
 	static TString8 ConcatPath( const TString8& a_rcPath1, const TString8& a_rcPath2 );
@@ -247,7 +243,7 @@ public:
 
 public:
 	TFileManager();
-	~TFileManager() { Destroy(); }
+	~TFileManager();
 
 	void Destroy();
 	void MountFileSystem( TFileSystem* a_pFileSystem );

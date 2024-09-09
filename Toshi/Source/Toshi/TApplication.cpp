@@ -33,9 +33,9 @@ TBOOL TApplication::Create( const TCHAR* appName, TINT argc, TCHAR** argv )
 
 	if ( IsConsoleEnabled() )
 		m_pDebugConsole->Show( TTRUE );
-	
+
 	m_IsVerbose = TFALSE;
-	m_Name = appName;
+	m_Name      = appName;
 
 	return OnCreate( argc, argv );
 }

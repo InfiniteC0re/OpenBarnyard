@@ -15,14 +15,13 @@ TFileSystem::TFileSystem( const TFileSystem& other )
 	m_Prefix = TString8( other.GetPrefix() );
 }
 
+// $Barnyard FUNCTION 006be2e0
 TFileSystem::TFileSystem( const TCHAR* name ) :
     m_Name( name )
 {
-	//???
-	// m_iStringCount = m_iStringCount
-	m_NextFileHandle = NULL;
 }
 
+// $Barnyard FUNCTION 006bdd30
 void TFileSystem::SetPrefix( const TString8& a_rcPrefix )
 {
 	m_Prefix = a_rcPrefix;
@@ -36,6 +35,7 @@ void TFileSystem::SetPrefix( const TString8& a_rcPrefix )
 	}
 }
 
+// $Barnyard FUNCTION 006bdd80
 TBOOL TFileSystem::ToNative( const TString8& a_rcPath, TNativeFileInfo& a_rOutInfo )
 {
 	a_rOutInfo.InternalPath = MakeInternalPath( a_rcPath );

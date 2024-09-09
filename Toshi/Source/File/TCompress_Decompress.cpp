@@ -9,6 +9,7 @@
 
 TOSHI_NAMESPACE_START
 
+// $Barnyard FUNCTION 006dc4f0
 uintptr_t TCompress::Decompress( TFile* file, TCompress::Header* header, TCHAR* buffer, TUINT32 bufferSize )
 {
 	TPROFILER_SCOPE();
@@ -66,6 +67,7 @@ uintptr_t TCompress::Decompress( TFile* file, TCompress::Header* header, TCHAR* 
 	return sizeDecompressed;
 }
 
+// $Barnyard FUNCTION 006dc220
 int8_t TCompress::GetHeader( TFile* file, TCompress::Header& btecHeader )
 {
 	TUINT32 headerSize = TCompress::HEADER_SIZE_12;
@@ -95,6 +97,7 @@ int8_t TCompress::GetHeader( TFile* file, TCompress::Header& btecHeader )
 
 // With the help of Revel8n approach
 // Could use some code cleanup
+// $Barnyard FUNCTION 006dc340
 TINT TCompress::GetCommand( TFile* file, TBOOL& noOffset, TUINT32& size, TINT& offset )
 {
 	TINT  read_count = file->Read( &size, 1 );

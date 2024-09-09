@@ -3,7 +3,7 @@
 #include "GUI/AGUI2MenuGridTextItem.h"
 
 class AVolumeSlider :
-	public AGUI2MenuGridItem
+    public AGUI2MenuGridItem
 {
 public:
 	using ArrowFocusCallback = void ( * )( void* a_pUserData, TINT a_iSliderID );
@@ -29,16 +29,16 @@ private:
 	inline static TFLOAT ms_fBarScale = 0.5f;
 
 private:
-	TINT m_iID;
-	AGUI2Rectangle m_aArrows[ 2 ];
-	AGUI2Rectangle m_aBars[ 5 ];
+	TINT               m_iID;
+	AGUI2Rectangle     m_aArrows[ 2 ];
+	AGUI2Rectangle     m_aBars[ 5 ];
 	ArrowFocusCallback m_fnArrowFocusCallback;
-	void*          m_pCallbackUserData;
-	TBOOL          m_bMouseDirty;
-	TINT           m_iLastPressedArrowIndex;
+	void*              m_pCallbackUserData;
+	TBOOL              m_bMouseDirty;
+	TINT               m_iLastPressedArrowIndex;
 };
 
-class AAudioOptionsState:
+class AAudioOptionsState :
     public ABYardMenuState
 {
 public:
@@ -67,8 +67,8 @@ public:
 	//-----------------------------------------------------------------------------
 	virtual TBOOL ProcessInput( const Toshi::TInputInterface::InputEvent* a_pInputEvent ) OVERRIDE;
 	virtual TBOOL ProcessCommand( AInputCommand a_eInputCommand, const Toshi::TInputInterface::InputEvent* a_pInputEvent, TBOOL& a_rStopEvents ) OVERRIDE;
-	virtual void OnInsertion() OVERRIDE;
-	virtual void OnRemoval() OVERRIDE;
+	virtual void  OnInsertion() OVERRIDE;
+	virtual void  OnRemoval() OVERRIDE;
 
 	//-----------------------------------------------------------------------------
 	// ABYardMenuState

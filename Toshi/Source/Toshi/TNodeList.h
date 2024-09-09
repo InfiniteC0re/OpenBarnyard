@@ -2,18 +2,19 @@
 
 TOSHI_NAMESPACE_START
 
-class TOSHI_API TGenericNodeList
+template <class T>
+class TNodeList
 {
-protected:
-	class TOSHI_API TNode
+public:
+	class TNode
 	{
-	public:
-		friend TGenericNodeList;
+	protected:
+		friend TNodeList;
 
 	public:
 		constexpr TNode() :
-		    m_pNext( this ),
-		    m_pPrev( this ),
+		    m_pNext( TSTATICCAST( T, this ) ),
+		    m_pPrev( TSTATICCAST( T, this ) ),
 		    m_pList( TNULL )
 		{}
 
@@ -33,30 +34,30 @@ protected:
 			a_rNode.m_pPrev = TNULL;
 		}
 
-		TNode* Next() const { return m_pNext; }
-		TNode* Prev() const { return m_pPrev; }
+		T* Next() const { return m_pNext; }
+		T* Prev() const { return m_pPrev; }
 
-		void Remove() { GetList()->Remove( this ); }
+		void Remove() { GetList()->Remove( TSTATICCAST( T, this ) ); }
 
-		void              SetList( TGenericNodeList* list ) { m_pList = list; }
-		TGenericNodeList* GetList() const { return m_pList; }
+		void       SetList( TNodeList* list ) { m_pList = list; }
+		TNodeList* GetList() const { return m_pList; }
 
 		TBOOL IsLinked() const { return m_pList != TNULL; }
 
 	protected:
-		TGenericNodeList* m_pList;
-		TNode*            m_pNext;
-		TNode*            m_pPrev;
+		TNodeList* m_pList;
+		T*         m_pNext;
+		T*         m_pPrev;
 	};
 
-	class TOSHI_API Iterator
+	class Iterator
 	{
 	public:
 		constexpr Iterator() :
 		    m_pPtr( TNULL )
 		{}
 
-		constexpr Iterator( TNode* a_pPtr ) :
+		constexpr Iterator( T* a_pPtr ) :
 		    m_pPtr( a_pPtr )
 		{}
 
@@ -64,7 +65,7 @@ protected:
 		    m_pPtr( other.m_pPtr )
 		{}
 
-		TNode* Get() const
+		T* Get() const
 		{
 			return m_pPtr;
 		}
@@ -74,18 +75,18 @@ protected:
 			m_pPtr = other.m_pPtr;
 		}
 
-		void operator=( TNode* pPtr )
+		void operator=( T* pPtr )
 		{
 			m_pPtr = pPtr;
 		}
 
-		TNode* operator->() const
+		T* operator->() const
 		{
 			TASSERT( m_pPtr != TNULL );
 			return m_pPtr;
 		}
 
-		operator TNode*() const
+		operator T*() const
 		{
 			TASSERT( m_pPtr != TNULL );
 			return m_pPtr;
@@ -126,22 +127,22 @@ protected:
 			return Iterator{ m_pPtr };
 		}
 
-	private:
-		TNode* m_pPtr;
+	protected:
+		T* m_pPtr;
 	};
 
 public:
-	TGenericNodeList()
+	TNodeList()
 	{
 		m_iCount = 0;
 	}
 
-	~TGenericNodeList()
+	~TNodeList()
 	{
 		DeleteAll();
 	}
 
-	void InsertAfter( TNode* insertAfter, TNode* newNode )
+	void InsertAfter( T* insertAfter, T* newNode )
 	{
 		TASSERT( !newNode->IsLinked() );
 		newNode->SetList( this );
@@ -152,7 +153,7 @@ public:
 		m_iCount++;
 	}
 
-	void InsertBefore( TNode* insertBefore, TNode* newNode )
+	void InsertBefore( T* insertBefore, T* newNode )
 	{
 		TASSERT( !newNode->IsLinked() );
 		newNode->SetList( this );
@@ -163,7 +164,7 @@ public:
 		m_iCount++;
 	}
 
-	TNode* Remove( TNode* pNode )
+	T* Remove( T* pNode )
 	{
 		TASSERT( pNode->GetList() == this );
 		pNode->SetList( TNULL );
@@ -215,17 +216,17 @@ public:
 		}
 	}
 
-	void Delete( TNode* pNode )
+	void Delete( T* pNode )
 	{
 		Remove( pNode );
 		delete pNode;
 	}
 
-	void InsertHead( TNode* a_pNode ) { InsertAfter( &m_oRoot, a_pNode ); }
-	void InsertTail( TNode* a_pNode ) { InsertBefore( &m_oRoot, a_pNode ); }
+	void InsertHead( T* a_pNode ) { InsertAfter( End(), a_pNode ); }
+	void InsertTail( T* a_pNode ) { InsertBefore( End(), a_pNode ); }
 
 	TBOOL IsEmpty() const { return Begin() == End(); }
-	TBOOL IsValid( const TNode* a_pNode ) const { return a_pNode != TNULL && a_pNode->m_pList == this; }
+	TBOOL IsValid( const T* a_pNode ) const { return a_pNode != TNULL && a_pNode->m_pList == this; }
 
 	TSIZE Count() const { return m_iCount; }
 
@@ -233,104 +234,14 @@ public:
 	Iterator Tail() const { return m_oRoot.m_pPrev; }
 
 	Iterator Begin() const { return m_oRoot.m_pNext; }
-	Iterator End() const { return &m_oRoot; }
+	Iterator End() const { return TSTATICCAST( T, &m_oRoot ); }
 
 	Iterator RBegin() const { return m_oRoot.m_pPrev; }
-	Iterator REnd() const { return &m_oRoot; }
+	Iterator REnd() const { return TSTATICCAST( T, &m_oRoot ); }
 
 protected:
 	mutable TNode m_oRoot;
 	TINT          m_iCount;
-};
-
-template <class T>
-class TNodeList : public TGenericNodeList
-{
-public:
-	class TNode : public TGenericNodeList::TNode
-	{
-	public:
-		T* Next() const { return TSTATICCAST( T, m_pNext ); }
-		T* Prev() const { return TSTATICCAST( T, m_pPrev ); }
-	};
-
-	class Iterator : public TGenericNodeList::Iterator
-	{
-	public:
-		constexpr Iterator() {}
-
-		Iterator( T* a_pPtr ) :
-		    TGenericNodeList::Iterator( a_pPtr )
-		{}
-
-		Iterator( TNode* a_pPtr ) :
-		    TGenericNodeList::Iterator( a_pPtr )
-		{}
-
-		Iterator( const TGenericNodeList::Iterator& other ) :
-		    TGenericNodeList::Iterator( other )
-		{}
-
-		T* Get()
-		{
-			return TSTATICCAST( T, TGenericNodeList::Iterator::Get() );
-		}
-
-		T* operator->() const
-		{
-			return TSTATICCAST( T, TGenericNodeList::Iterator::Get() );
-		}
-
-		operator T*() const
-		{
-			return TSTATICCAST( T, TGenericNodeList::Iterator::Get() );
-		}
-
-		Iterator operator++( TINT dummy )
-		{
-			return TGenericNodeList::Iterator::operator++( dummy );
-		}
-
-		Iterator operator--( TINT dummy )
-		{
-			return TGenericNodeList::Iterator::operator--( dummy );
-		}
-
-		Iterator operator++()
-		{
-			return TGenericNodeList::Iterator::operator++();
-		}
-
-		Iterator operator--()
-		{
-			return TGenericNodeList::Iterator::operator--();
-		}
-	};
-
-public:
-	T* Remove( T& a_rNode )
-	{
-		return TSTATICCAST( T, TGenericNodeList::Remove( &a_rNode ) );
-	}
-
-	Iterator RemoveHead()
-	{
-		return TGenericNodeList::RemoveHead();
-	}
-
-	Iterator RemoveTail()
-	{
-		return TGenericNodeList::RemoveTail();
-	}
-
-	Iterator Head() const { return TGenericNodeList::Head(); }
-	Iterator Tail() const { return TGenericNodeList::Tail(); }
-
-	Iterator Begin() const { return TGenericNodeList::Begin(); }
-	Iterator End() const { return TGenericNodeList::End(); }
-
-	Iterator RBegin() const { return TGenericNodeList::RBegin(); }
-	Iterator REnd() const { return TGenericNodeList::REnd(); }
 };
 
 TOSHI_NAMESPACE_END

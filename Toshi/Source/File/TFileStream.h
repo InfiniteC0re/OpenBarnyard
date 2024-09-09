@@ -27,12 +27,12 @@ protected:
 class TFileStream : public TThread
 {
 public:
-	TFileStream() = default;
+	TFileStream();
 
 	// This method will be executed by the thread
 	virtual void Main() override;
 
-	virtual ~TFileStream() = default;
+	virtual ~TFileStream();
 
 	// Adds job to the FIFO
 	void AddStream( TFileStreamJob* job );
@@ -44,28 +44,15 @@ private:
 class TTRBStreamJob : public TFileStreamJob
 {
 public:
-	TTRBStreamJob() :
-	    TFileStreamJob( TNULL )
-	{
-		m_trb           = TNULL;
-		m_fileName[ 0 ] = '\0';
-	}
+	TTRBStreamJob();
+	virtual ~TTRBStreamJob();
 
-	virtual ~TTRBStreamJob() = default;
+	virtual void Process();
 
-	virtual void Process()
-	{
-		m_trb->Load( m_fileName );
-	}
+	void Init( TTRB* trb, const TCHAR* fileName );
 
-	void Init( TTRB* trb, const TCHAR* fileName )
-	{
-		m_trb = trb;
-		T2String8::Copy( m_fileName, fileName, -1 );
-	}
-
-	TTRB*        GetTRB() const { return m_trb; }
-	const TCHAR* GetFileName() const { return m_fileName; }
+	TTRB*        GetTRB() const;
+	const TCHAR* GetFileName() const;
 
 public:
 	TTRB* m_trb;

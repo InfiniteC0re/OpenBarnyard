@@ -309,7 +309,7 @@ public:
 
 public:
 	TTRB();
-	~TTRB() { Close(); }
+	~TTRB();
 
 	// Creates TFile and reads TRB from it
 	ERROR Load( const TCHAR* a_szFilePath, TUINT32 a_uiUnknown = 0 );
@@ -324,125 +324,36 @@ public:
 	// Destroys TRB file and the content
 	void Close();
 
-	static void SetDefaultMemoryFuncs( t_MemoryFuncAlloc allocator, t_MemoryFuncDealloc deallocator, void* allocatorUserData );
-
 	template <typename T>
-	T* CastSymbol( const TCHAR* symbName )
-	{
-		return TSTATICCAST( T, GetSymbolAddress( symbName ) );
-	}
+	T* CastSymbol( const TCHAR* symbName ) { return TSTATICCAST( T, GetSymbolAddress( symbName ) ); }
 
-	static TUINT32 GetSymbolTableSize( TUINT32 count )
-	{
-		return sizeof( TTRBSymbol ) * count + sizeof( SYMB );
-	}
+	SecInfo* GetSectionInfoList() const { return reinterpret_cast<SecInfo*>( m_pHeader + 1 ); }
+	SecInfo* GetSectionInfo( TINT index ) const { return GetSectionInfoList() + index; }
 
-	static TUINT32 GetHeaderSize( TUINT32 count )
-	{
-		return sizeof( SecInfo ) * count + sizeof( Header );
-	}
-
-	SecInfo* GetSectionInfoList() const
-	{
-		return reinterpret_cast<SecInfo*>( m_pHeader + 1 );
-	}
-
-	SecInfo* GetSectionInfo( TINT index ) const
-	{
-		return GetSectionInfoList() + index;
-	}
-
-	TTRBSymbol* GetSymbol( TINT index ) const
-	{
-		if ( m_SYMB == TNULL )
-		{
-			return TNULL;
-		}
-		else if ( index < m_SYMB->m_i32SymbCount )
-		{
-			return reinterpret_cast<TTRBSymbol*>( m_SYMB + 1 ) + index;
-		}
-
-		return TNULL;
-	}
-
-	TTRBSymbol* GetSymbol( TCHAR const* a_symbolName )
-	{
-		TINT index = GetSymbolIndex( a_symbolName );
-		if ( index == -1 )
-		{
-			return TNULL;
-		}
-
-		return GetSymbol( index );
-	}
-
-	const TCHAR* GetSymbolName( TINT index ) const
-	{
-		if ( m_SYMB == TNULL )
-		{
-			return TNULL;
-		}
-
-		return GetSymbolName( reinterpret_cast<TTRBSymbol*>( m_SYMB + 1 ) + index );
-	}
-
-	const TCHAR* GetSymbolName( TTRBSymbol* symbol ) const
-	{
-		if ( m_SYMB == TNULL )
-		{
-			return TNULL;
-		}
-
-		return reinterpret_cast<const TCHAR*>(
-		    reinterpret_cast<uintptr_t>( m_SYMB ) +
-		    GetSymbolTableSize( m_SYMB->m_i32SymbCount ) +
-		    symbol->NameOffset );
-	}
-
-	TINT32 GetNumSymbols() const
-	{
-		return m_SYMB->m_i32SymbCount;
-	}
+	TTRBSymbol*  GetSymbol( TINT index ) const;
+	TTRBSymbol*  GetSymbol( const TCHAR* a_symbolName );
+	const TCHAR* GetSymbolName( TINT index ) const;
+	const TCHAR* GetSymbolName( TTRBSymbol* symbol ) const;
+	TINT32       GetNumSymbols() const { return m_SYMB->m_i32SymbCount; }
 
 	SYMB* GetSymbolTable() const { return m_SYMB; }
+	void  DeleteSymbolTable();
 
-	static TINT16 HashString( const TCHAR* str )
-	{
-		TINT16 hash = 0;
-		TCHAR  character;
+	void SetMemoryFunctions( t_MemoryFuncAlloc allocator, t_MemoryFuncDealloc deallocator, void* userdata );
 
-		while ( *str != '\0' )
-		{
-			character = *( str++ );
-			hash      = (TINT16)character + hash * 0x1f;
-		}
+public:
+	// $Barnyard FUNCTION 006ba9b0
+	static TUINT32 GetHeaderSize( TUINT32 count ) { return sizeof( SecInfo ) * count + sizeof( Header ); }
 
-		return hash;
-	}
-
-	void SetMemoryFunctions( t_MemoryFuncAlloc allocator, t_MemoryFuncDealloc deallocator, void* userdata )
-	{
-		m_MemAllocator   = allocator;
-		m_MemDeallocator = deallocator;
-		m_MemUserData    = userdata;
-	}
-
-	void DeleteSymbolTable()
-	{
-		if ( m_SYMB != TNULL )
-		{
-			m_MemDeallocator( AllocType_Unk2, m_SYMB, 0, 0, m_MemUserData );
-			m_SYMB = TNULL;
-		}
-	}
+	static TUINT32 GetSymbolTableSize( TUINT32 count ) { return sizeof( TTRBSymbol ) * count + sizeof( SYMB ); }
+	static TINT16  HashString( const TCHAR* str );
 
 private:
 	// Parses sections
 	TBOOL ProcessForm( TTSFI& ttsf );
 
 	// Returns pointer to section by index
-	inline void* GetSection( TINT index ) { return GetSectionInfo( index )->m_Data; }
+	void* GetSection( TINT index ) { return GetSectionInfo( index )->m_Data; }
 
 private:
 	static void* s_pDefAllocatorUserData;

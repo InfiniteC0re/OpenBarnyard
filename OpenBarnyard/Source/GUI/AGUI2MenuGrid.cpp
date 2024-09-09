@@ -80,7 +80,7 @@ void AGUI2MenuGrid::SetFocusAt( AGUI2MenuGridItem* a_pMenuItem )
 		m_pFocusedMenuItem->OnFocusLost();
 
 	m_pFocusedMenuItem = a_pMenuItem;
-	
+
 	if ( a_pMenuItem )
 		a_pMenuItem->OnFocus();
 }
@@ -174,7 +174,7 @@ TBOOL AGUI2MenuGrid::CreateGrid( TINT a_iNumRows, TINT a_iNumColumns, TFLOAT a_f
 	TUtil::Fill( m_pColumnsData, m_pColumnsData + a_iNumColumns, 1.0f );
 
 	// Create rows data
-	m_pRowsData    = new TFLOAT[ a_iNumRows ];
+	m_pRowsData = new TFLOAT[ a_iNumRows ];
 	TUtil::Fill( m_pRowsData, m_pRowsData + a_iNumRows, 1.0f );
 
 	return TTRUE;

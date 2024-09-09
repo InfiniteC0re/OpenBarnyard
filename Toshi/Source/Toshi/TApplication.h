@@ -53,10 +53,10 @@ public:
 	TBOOL Execute();
 
 private:
-	TString8                                             m_Name;       // 0x4
-	TUINT32                                              m_Flags;      // 0x10
-	TBOOL                                                m_IsVerbose;  // 0x14
-	TDebugConsole*                                       m_pDebugConsole;
+	TString8       m_Name;      // 0x4
+	TUINT32        m_Flags;     // 0x10
+	TBOOL          m_IsVerbose; // 0x14
+	TDebugConsole* m_pDebugConsole;
 };
 
 TOSHI_NAMESPACE_END

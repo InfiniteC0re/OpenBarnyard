@@ -15,45 +15,17 @@ typedef union _TLargeInteger
 	LONGLONG&      QuadPart() { return *(LONGLONG*)this; }
 } TLargeInteger;
 
-class THPTimer
+class TOSHI_API THPTimer
 {
 public:
-	THPTimer()
-	{
-		Reset();
-	}
+	THPTimer();
+	~THPTimer();
 
-	TUINT32 GetRaw32()
-	{
-		LARGE_INTEGER raw32;
-		QueryPerformanceCounter( &raw32 );
-		return static_cast<TUINT32>( raw32.QuadPart );
-	}
+	TUINT32 GetRaw32();
+	int64_t GetRaw64();
 
-	int64_t GetRaw64()
-	{
-		LARGE_INTEGER raw64;
-		QueryPerformanceCounter( &raw64 );
-		return raw64.QuadPart;
-	}
-
-	void Reset()
-	{
-		QueryPerformanceCounter( &m_iCurrentTime.LargeInteger() );
-		QueryPerformanceFrequency( &m_iFrequency.LargeInteger() );
-		m_iOldTime = m_iCurrentTime;
-		m_fDelta   = 0;
-	}
-
-	void Update()
-	{
-		m_iOldTime = m_iCurrentTime;
-		QueryPerformanceCounter( &m_iCurrentTime.LargeInteger() );
-
-		TFLOAT ratio      = 1.0f / m_iFrequency.QuadPart();
-		m_fDelta          = ( m_iCurrentTime.QuadPart() - m_iOldTime.QuadPart() ) * ratio;
-		m_fCurrentSeconds = m_iCurrentTime.QuadPart() * ratio;
-	}
+	void Update();
+	void Reset();
 
 public:
 	TFLOAT GetDelta() const { return m_fDelta; }

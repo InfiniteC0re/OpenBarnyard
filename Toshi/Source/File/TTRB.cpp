@@ -20,6 +20,7 @@ static constexpr TTRB::t_MemoryFuncDealloc s_cbDefDeallocator = []( TTRB::AllocT
 
 void* TTRB::s_pDefAllocatorUserData = TNULL;
 
+// $Barnyard FUNCTION 006ba9e0
 TTRB::TTRB()
 {
 	m_pHeader = TNULL;
@@ -27,9 +28,15 @@ TTRB::TTRB()
 	SetMemoryFunctions( s_cbDefAllocator, s_cbDefDeallocator, s_pDefAllocatorUserData );
 }
 
+// $Barnyard FUNCTION 006baff0
+TTRB::~TTRB()
+{
+	Close();
+}
+
+// $Barnyard FUNCTION 006bb000
 TTRB::ERROR TTRB::Load( const TCHAR* a_szFilePath, TUINT32 a_uiUnknown )
 {
-	// FUN_00686920
 	TPROFILER_SCOPE();
 
 	ERROR error = m_TTSFI.Open( a_szFilePath );
@@ -63,9 +70,9 @@ TTRB::ERROR TTRB::Load( const TCHAR* a_szFilePath, TUINT32 a_uiUnknown )
 	return error;
 }
 
+// $Barnyard FUNCTION 006baad0
 TBOOL TTRB::ProcessForm( TTSFI& ttsf )
 {
-	// FUN_00686f10
 	static constexpr TUINT32 MAX_RELC_NUM_BATCH = 512;
 	RELCEntry                relcEntries[ MAX_RELC_NUM_BATCH ];
 
@@ -238,6 +245,7 @@ TBOOL TTRB::ProcessForm( TTSFI& ttsf )
 	return result;
 }
 
+// $Barnyard FUNCTION 006bafa0
 void* TTRB::GetSymbolAddress( const TCHAR* symbName )
 {
 	auto index = GetSymbolIndex( symbName );
@@ -251,6 +259,7 @@ void* TTRB::GetSymbolAddress( const TCHAR* symbName )
 	return TNULL;
 }
 
+// $Barnyard FUNCTION 006baeb0
 TINT TTRB::GetSymbolIndex( const TCHAR* symbName )
 {
 	if ( m_SYMB != TNULL )
@@ -274,9 +283,9 @@ TINT TTRB::GetSymbolIndex( const TCHAR* symbName )
 	return -1;
 }
 
+// $Barnyard FUNCTION 006baa20
 void TTRB::Close()
 {
-	// FUN_006869d0
 	if ( m_pHeader != TNULL )
 	{
 		for ( TINT i = 0; i < m_pHeader->m_i32SectionCount; i++ )
@@ -296,32 +305,87 @@ void TTRB::Close()
 	DeleteSymbolTable();
 }
 
-void TTRB::SetDefaultMemoryFuncs( t_MemoryFuncAlloc allocator, t_MemoryFuncDealloc deallocator, void* allocatorUserData )
+// $Barnyard FUNCTION 006ba950
+void TTRB::SetMemoryFunctions( t_MemoryFuncAlloc allocator, t_MemoryFuncDealloc deallocator, void* userdata )
 {
-	if ( allocator != TNULL )
+	m_MemAllocator   = allocator;
+	m_MemDeallocator = deallocator;
+	m_MemUserData    = userdata;
+}
+
+// $Barnyard FUNCTION 006ba8b0
+void TTRB::DeleteSymbolTable()
+{
+	if ( m_SYMB != TNULL )
 	{
-		TASSERT( deallocator != TNULL );
+		m_MemDeallocator( AllocType_Unk2, m_SYMB, 0, 0, m_MemUserData );
+		m_SYMB = TNULL;
 	}
 }
 
-TUINT32 TTSFI::ReadAlignmentPad()
+TINT16 TTRB::HashString( const TCHAR* str )
 {
-	TASSERT( m_pFile != TNULL, "File is TNULL" );
+	TINT16 hash = 0;
+	TCHAR  character;
 
-	static TCHAR s_AlignBuffer[ 4 ];
-	TUINT8       alignValue = 4 - ( m_pFile->Tell() & 3 );
-
-	if ( alignValue != 4 )
+	while ( *str != '\0' )
 	{
-		return m_pFile->Read( s_AlignBuffer, alignValue );
+		character = *( str++ );
+		hash      = (TINT16)character + hash * 0x1f;
 	}
 
-	return 0;
+	return hash;
 }
 
-void TTSFI::ReadRaw( void* dst, TUINT32 size )
+// $Barnyard FUNCTION 006ba920
+const TCHAR* TTRB::GetSymbolName( TTRBSymbol* symbol ) const
 {
-	m_ReadPos += m_pFile->Read( dst, size );
+	if ( m_SYMB == TNULL )
+	{
+		return TNULL;
+	}
+
+	return reinterpret_cast<const TCHAR*>(
+	    reinterpret_cast<uintptr_t>( m_SYMB ) +
+	    GetSymbolTableSize( m_SYMB->m_i32SymbCount ) +
+	    symbol->NameOffset );
+}
+
+const TCHAR* TTRB::GetSymbolName( TINT index ) const
+{
+	if ( m_SYMB == TNULL )
+	{
+		return TNULL;
+	}
+
+	return GetSymbolName( reinterpret_cast<TTRBSymbol*>( m_SYMB + 1 ) + index );
+}
+
+// $Barnyard FUNCTION 006ba8f0
+TTRB::TTRBSymbol* TTRB::GetSymbol( TINT index ) const
+{
+	if ( m_SYMB == TNULL )
+	{
+		return TNULL;
+	}
+	else if ( index < m_SYMB->m_i32SymbCount )
+	{
+		return reinterpret_cast<TTRBSymbol*>( m_SYMB + 1 ) + index;
+	}
+
+	return TNULL;
+}
+
+// $Barnyard FUNCTION 006baf60
+TTRB::TTRBSymbol* TTRB::GetSymbol( const TCHAR* a_symbolName )
+{
+	TINT index = GetSymbolIndex( a_symbolName );
+	if ( index == -1 )
+	{
+		return TNULL;
+	}
+
+	return GetSymbol( index );
 }
 
 TOSHI_NAMESPACE_END

@@ -51,7 +51,7 @@ void TInputInterface::RemoveDevice( TInputDevice* device )
 {
 	if ( device != TNULL )
 	{
-		m_DeviceList.Remove( *device );
+		m_DeviceList.Remove( device );
 		device->SetInputInterface( TNULL );
 	}
 }
