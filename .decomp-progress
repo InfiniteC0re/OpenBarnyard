@@ -1,0 +1,19 @@
+projects
+{
+    "Barnyard"
+    {
+        "functions"	    "DevTools/ProgressCalculation/functions.csv"
+        "ignore"        "DevTools/ProgressCalculation/ignorelist.txt"
+        "svgtemplate    "DevTools/ProgressCalculation/template.svg"
+
+        "files"
+        {
+            "extension" ".cpp"
+            "extension" ".hpp"
+            "extension" ".c"
+            "extension" ".h"
+            "directory" "Toshi/Source"
+            "directory" "OpenBarnyard/Source"
+        }
+    }
+}
