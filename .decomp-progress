@@ -2,9 +2,9 @@ projects
 {
     "Barnyard"
     {
-        "functions"	    "DevTools/ProgressCalculation/functions.csv"
+        "functions"     "DevTools/ProgressCalculation/functions.csv"
         "ignore"        "DevTools/ProgressCalculation/ignorelist.txt"
-        "svgtemplate    "DevTools/ProgressCalculation/template.svg"
+        "svgtemplate"   "DevTools/ProgressCalculation/template.svg"
 
         "files"
         {
