@@ -9,7 +9,7 @@
 
 TOSHI_NAMESPACE_START
 
-// $Barnyard FUNCTION 006d8ca0
+// $Barnyard: FUNCTION 006d8ca0
 TUINT32 TTSFI::Open( TFile* a_pFile )
 {
 	m_pFile         = a_pFile;
@@ -54,7 +54,7 @@ TUINT32 TTSFI::Open( TFile* a_pFile )
 	return TTRB::ERROR_OK;
 }
 
-// $Barnyard FUNCTION 006d8e70
+// $Barnyard: FUNCTION 006d8e70
 TUINT32 TTSFI::Open( const TCHAR* a_szFilePath )
 {
 	TFile* pFile    = TFile::Create( a_szFilePath );
@@ -63,7 +63,7 @@ TUINT32 TTSFI::Open( const TCHAR* a_szFilePath )
 	return uiResult;
 }
 
-// $Barnyard FUNCTION 006d8be0
+// $Barnyard: FUNCTION 006d8be0
 TUINT32 TTSFI::PushForm()
 {
 	if ( m_CurrentHunk.Name != TFourCC( "FORM" ) &&
@@ -80,7 +80,7 @@ TUINT32 TTSFI::PushForm()
 	return TTRB::ERROR_OK;
 }
 
-// $Barnyard FUNCTION 006d8c30
+// $Barnyard: FUNCTION 006d8c30
 TUINT32 TTSFI::PopForm()
 {
 	if ( m_FileInfoCount < 1 ) return TTRB::ERROR_NO_FILEINFO_ON_STACK;
@@ -98,7 +98,7 @@ TUINT32 TTSFI::PopForm()
 	return TTRB::ERROR_OK;
 }
 
-// $Barnyard FUNCTION 006d8a60
+// $Barnyard: FUNCTION 006d8a60
 TUINT8 TTSFI::ReadHunk()
 {
 	m_pFile->Read( &m_CurrentHunk, sizeof( Hunk ) );
@@ -114,7 +114,7 @@ TUINT8 TTSFI::ReadHunk()
 	return TTRB::ERROR_OK;
 }
 
-// $Barnyard FUNCTION 006d8ba0
+// $Barnyard: FUNCTION 006d8ba0
 TUINT8 TTSFI::SkipHunk()
 {
 	TUINT32 alignedSize = TAlignNumUp( m_CurrentHunk.Size );
@@ -124,7 +124,7 @@ TUINT8 TTSFI::SkipHunk()
 	return TTRB::ERROR_OK;
 }
 
-// $Barnyard FUNCTION 006d8ae0
+// $Barnyard: FUNCTION 006d8ae0
 TUINT8 TTSFI::ReadFORM( TFORM* section )
 {
 	if ( m_CurrentHunk.Name != TFourCC( "FORM" ) )
@@ -137,7 +137,7 @@ TUINT8 TTSFI::ReadFORM( TFORM* section )
 	return TTRB::ERROR_OK;
 }
 
-// $Barnyard FUNCTION 006d8e00
+// $Barnyard: FUNCTION 006d8e00
 TUINT8 TTSFI::ReadHunkData( void* dst )
 {
 	if ( m_CurrentHunk.Name == TFourCC( "FORM" ) )
@@ -152,7 +152,7 @@ TUINT8 TTSFI::ReadHunkData( void* dst )
 	return TTRB::ERROR_OK;
 }
 
-// $Barnyard FUNCTION 006d8dc0
+// $Barnyard: FUNCTION 006d8dc0
 void TTSFI::Close( TBOOL free )
 {
 	PopForm();
@@ -166,7 +166,7 @@ void TTSFI::Close( TBOOL free )
 	m_FileInfoCount = 0;
 }
 
-// $Barnyard FUNCTION 006d8b40
+// $Barnyard: FUNCTION 006d8b40
 void TTSFI::ReadCompressed( void* buffer, TUINT32 size )
 {
 	TCompress::Header header;
@@ -182,7 +182,7 @@ void TTSFI::ReadCompressed( void* buffer, TUINT32 size )
 	}
 }
 
-// $Barnyard FUNCTION 006d8a20
+// $Barnyard: FUNCTION 006d8a20
 TTSFI::TTSFI()
 {
 	m_pFile         = TNULL;

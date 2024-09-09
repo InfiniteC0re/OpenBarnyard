@@ -78,7 +78,7 @@ TOSHI_NAMESPACE_START
 
 TMemory* g_pMemory = TNULL;
 
-// $Barnyard FUNCTION 006b56b0
+// $Barnyard: FUNCTION 006b56b0
 TMemory::TMemory()
 {
 	TASSERT( g_pMemory == TNULL );
@@ -133,7 +133,7 @@ TMemory::~TMemory()
 #  define CALL_12( ADDR, RET_TYPE, TYPE1, VALUE1, TYPE2, VALUE2, TYPE3, VALUE3, TYPE4, VALUE4, TYPE5, VALUE5 ) ( ( RET_TYPE( __stdcall* )( TYPE1, TYPE2, TYPE3, TYPE4, TYPE5 ) )( ADDR ) )( VALUE1, VALUE2, VALUE3, VALUE4, VALUE5 )
 #  define CALL( ... )                                                                                          PP_MACRO_OVERLOAD( CALL, __VA_ARGS__ )
 
-// $Barnyard FUNCTION 006b5230
+// $Barnyard: FUNCTION 006b5230
 void* TMemory::Alloc( TSIZE a_uiSize, TSIZE a_uiAlignment, MemBlock* a_pMemBlock, const TCHAR* a_szFileName, TINT a_iLineNum )
 {
 	//return CALL_THIS( 0x006b5230, TMemory*, void*, this, TUINT, a_uiSize, TINT, a_uiAlignment, MemBlock*, a_pMemBlock, const TCHAR*, a_szFileName, TINT, a_iLineNum );
@@ -308,7 +308,7 @@ void* TMemory::Alloc( TSIZE a_uiSize, TSIZE a_uiAlignment, MemBlock* a_pMemBlock
 	}
 }
 
-// $Barnyard FUNCTION 006b4a20
+// $Barnyard: FUNCTION 006b4a20
 TBOOL TMemory::Free( const void* a_pAllocated )
 {
 	//return CALL_THIS( 0x006b4a20, TMemory*, TBOOL, this, const void*, a_pAllocated );
@@ -383,14 +383,14 @@ TBOOL TMemory::Free( const void* a_pAllocated )
 	return TTRUE;
 }
 
-// $Barnyard FUNCTION 006b5510
+// $Barnyard: FUNCTION 006b5510
 TMemory::MemBlock* TMemory::CreateMemBlock( TSIZE a_uiSize, const TCHAR* a_szName, MemBlock* a_pOwnerBlock, TINT a_iUnused )
 {
 	void* pMem = Alloc( a_uiSize, 16, a_pOwnerBlock, TNULL, -1 );
 	return CreateMemBlockInPlace( pMem, a_uiSize, a_szName );
 }
 
-// $Barnyard FUNCTION 006b4e60
+// $Barnyard: FUNCTION 006b4e60
 TMemory::MemBlock* TMemory::CreateMemBlockInPlace( void* a_pMem, TSIZE a_uiSize, const TCHAR* a_szName )
 {
 	TMUTEX_LOCK_SCOPE( ms_pGlobalMutex );
@@ -445,7 +445,7 @@ TMemory::MemBlock* TMemory::CreateMemBlockInPlace( void* a_pMem, TSIZE a_uiSize,
 	return TNULL;
 }
 
-// $Barnyard FUNCTION 006b5090
+// $Barnyard: FUNCTION 006b5090
 void TMemory::DestroyMemBlock( MemBlock* a_pMemBlock )
 {
 	FreeMemBlock( a_pMemBlock );
@@ -457,7 +457,7 @@ Toshi::TMemory::MemBlock* TMemory::GetGlobalBlock() const
 	return m_pGlobalBlock;
 }
 
-// $Barnyard FUNCTION 006b4fb0
+// $Barnyard: FUNCTION 006b4fb0
 TBOOL TMemory::FreeMemBlock( MemBlock* a_pMemBlock )
 {
 	TMUTEX_LOCK_SCOPE( ms_pGlobalMutex );
@@ -515,7 +515,7 @@ int TMemory::DebugTestMemoryBlock( MemBlock* a_pMemBlock )
 	return 0;
 }
 
-// $Barnyard FUNCTION 006b5740
+// $Barnyard: FUNCTION 006b5740
 TBOOL TMemory::Initialise( TSIZE a_uiHeapSize, TSIZE a_uiReservedSize, TUINT a_uiUnused )
 {
 	auto tmemory = TSTATICCAST( TMemory, calloc( sizeof( TMemory ), 1 ) );
@@ -541,7 +541,7 @@ TBOOL TMemory::Initialise( TSIZE a_uiHeapSize, TSIZE a_uiReservedSize, TUINT a_u
 	return TTRUE;
 }
 
-// $Barnyard FUNCTION 006b57e0
+// $Barnyard: FUNCTION 006b57e0
 void TMemory::Deinitialise()
 {
 	TASSERT( g_pMemory != TNULL );
@@ -555,7 +555,7 @@ void TMemory::Deinitialise()
 	free( pMainBlockMemory );
 }
 
-// $Barnyard FUNCTION 006b49e0
+// $Barnyard: FUNCTION 006b49e0
 TUINT TMemory::MapSizeToFreeList( TSIZE a_uiSize )
 {
 	TFLOAT fSize          = TFLOAT( TAlignNumUp( a_uiSize ) - 1 );
@@ -576,7 +576,7 @@ TUINT TMemory::MapSizeToFreeList( TSIZE a_uiSize )
 	return uiResult;
 }
 
-// $Barnyard FUNCTION 006b4b80
+// $Barnyard: FUNCTION 006b4b80
 TMemory::MemBlock* TMemory::SetGlobalBlock( MemBlock* a_pMemBlock )
 {
 	MemBlock* pOldMemBlock = m_pGlobalBlock;
@@ -584,7 +584,7 @@ TMemory::MemBlock* TMemory::SetGlobalBlock( MemBlock* a_pMemBlock )
 	return pOldMemBlock;
 }
 
-// $Barnyard FUNCTION 006b50b0
+// $Barnyard: FUNCTION 006b50b0
 void TMemory::DumpMemInfo()
 {
 	MemInfo memInfo;
@@ -624,7 +624,7 @@ void TMemory::DebugPrintHALMemInfo( const TCHAR* a_szFormat, ... )
 	va_end( args );
 }
 
-// $Barnyard FUNCTION 006b4ba0
+// $Barnyard: FUNCTION 006b4ba0
 void TMemory::GetMemInfo( MemInfo& a_rMemInfo, MemBlock* a_pMemBlock )
 {
 	TMUTEX_LOCK_SCOPE( ms_pGlobalMutex );
@@ -712,7 +712,7 @@ void TMemory::GetMemInfo( MemInfo& a_rMemInfo, MemBlock* a_pMemBlock )
 	}
 }
 
-// $Barnyard FUNCTION 006b4b60
+// $Barnyard: FUNCTION 006b4b60
 void TMemory::GetHALMemInfo( HALMemInfo& a_rHALMemInfo )
 {
 	TUtil::MemClear( &a_rHALMemInfo, sizeof( a_rHALMemInfo ) );
@@ -725,7 +725,7 @@ TMemory::HALMemInfo::HALMemInfo()
 
 TOSHI_NAMESPACE_END
 
-// $Barnyard FUNCTION 006b5540
+// $Barnyard: FUNCTION 006b5540
 void* TMalloc( TSIZE a_uiSize, Toshi::TMemory::MemBlock* a_pMemBlock, const TCHAR* a_szFileName, TINT a_iLineNum )
 {
 	if ( !a_pMemBlock )
@@ -757,7 +757,7 @@ void* TMalloc( TSIZE a_uiSize, const TCHAR* a_szFileName, TINT a_iLineNum )
 	return pMem;
 }
 
-// $Barnyard FUNCTION 006b5630
+// $Barnyard: FUNCTION 006b5630
 void* TMalloc( TSIZE a_uiSize )
 {
 	auto pMemBlock = Toshi::g_pMemory->GetGlobalBlock();
@@ -772,7 +772,7 @@ void* TMalloc( TSIZE a_uiSize )
 	return pMem;
 }
 
-// $Barnyard FUNCTION 006b5590
+// $Barnyard: FUNCTION 006b5590
 void* TMemalign( TSIZE a_uiAlignment, TSIZE a_uiSize, Toshi::TMemory::MemBlock* a_pMemBlock )
 {
 	if ( !a_pMemBlock )
@@ -790,7 +790,7 @@ void* TMemalign( TSIZE a_uiAlignment, TSIZE a_uiSize, Toshi::TMemory::MemBlock* 
 	return pMem;
 }
 
-// $Barnyard FUNCTION 006b5670
+// $Barnyard: FUNCTION 006b5670
 void* TMemalign( TSIZE a_uiSize, TSIZE a_uiAlignment )
 {
 	auto pMemBlock = Toshi::g_pMemory->GetGlobalBlock();
@@ -805,8 +805,8 @@ void* TMemalign( TSIZE a_uiSize, TSIZE a_uiAlignment )
 	return pMem;
 }
 
-// $Barnyard FUNCTION 00401020
-// $Barnyard FUNCTION 006b4df0
+// $Barnyard: FUNCTION 00401020
+// $Barnyard: FUNCTION 006b4df0
 void TFree( void* a_pMem )
 {
 	Toshi::g_pMemory->Free( a_pMem );

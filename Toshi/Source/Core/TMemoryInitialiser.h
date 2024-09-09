@@ -7,13 +7,13 @@ TOSHI_NAMESPACE_START
 class TMemoryInitialiser
 {
 public:
-	// $Barnyard FUNCTION 006bfca0
+	// $Barnyard: FUNCTION 006bfca0
 	TMemoryInitialiser()
 	{
 		Initialise();
 	}
 
-	// $Barnyard FUNCTION 006bfcb0
+	// $Barnyard: FUNCTION 006bfcb0
 	~TMemoryInitialiser()
 	{
 		Deinitialise();

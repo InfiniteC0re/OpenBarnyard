@@ -1,11 +1,15 @@
 # OpenBarnyard [![Toshi](https://github.com/InfiniteC0re/OpenBarnyard/actions/workflows/ci.yaml/badge.svg)](https://github.com/InfiniteC0re/OpenBarnyard/actions/workflows/ci.yaml)
-WIP decompilation of Barnyard the video game and the proprietary TOSHI 2.0 game engine developed by Blue Tongue Entertainment.
+[OpenJPOG](https://github.com/AdventureT/OpenJPOG) | [Modifications](https://www.youtube.com/@infc0re) | [Discord](https://discord.gg/3bMq8hWvFX)
 
-Join our [OpenTOSHI](https://discord.gg/3bMq8hWvFX) Discord server that has commit notifications, devlogs and much more.
+This is a **WIP** decompilation of Barnyard the video game (for Windows) and the proprietary TOSHI 2.0 game engine developed by Blue Tongue Entertainment.
 
-Also, check out [OpenJPOG](https://github.com/AdventureT/OpenJPOG) repository with a WIP decompilation of Jurassic Park: Operation Genesis that utilizes an older version of the TOSHI game engine.
+## Status
 
-![alt text](https://repository-images.githubusercontent.com/524925868/e2f3fde2-ece4-4a71-bd81-f4cbce744c9a)
+<img src="https://opentoshi.net/progress/Barnyard.svg" width="100%"/>
+
+At the moment, the progress bar and percentage don't show the real progress since many methods don't have markers containing their addresses yet so it might take a while to fill the gaps.
+
+## Notes
 
 > [!IMPORTANT]
 > **SUPPORT THE DEVELOPERS OF THE TOSHI ENGINE**
@@ -21,7 +25,7 @@ Also, check out [OpenJPOG](https://github.com/AdventureT/OpenJPOG) repository wi
 
 ### Windows
 
-Building on Windows requires
+Building on Windows requires:
 
 - Visual Studio 2022
 
@@ -32,7 +36,7 @@ Clone the repository with the following commands:
 	git submodule update --init --recursive
 	./GenerateProjects-VS2022.bat
 
-Then compile the generated solution and that's it
+Doing that should be enough to build the whole solution in IDE.
 
 ## Thirdparty libraries
 - [premake](https://github.com/premake/premake-core)

@@ -9,17 +9,17 @@
 
 TOSHI_NAMESPACE_START
 
-// $Barnyard FUNCTION 006d7ef0
+// $Barnyard: FUNCTION 006d7ef0
 TFileStream::TFileStream()
 {
 }
 
-// $Barnyard FUNCTION 006d7fb0
+// $Barnyard: FUNCTION 006d7fb0
 TFileStream::~TFileStream()
 {
 }
 
-// $Barnyard FUNCTION 006d7f30
+// $Barnyard: FUNCTION 006d7f30
 void TFileStream::Main()
 {
 	TFileStreamJob* pJob;
@@ -37,7 +37,7 @@ void TFileStream::Main()
 	}
 }
 
-// $Barnyard FUNCTION 006d7f70
+// $Barnyard: FUNCTION 006d7f70
 void TFileStream::AddStream( TFileStreamJob* job )
 {
 	job->m_bIsProcessed = TFALSE;
@@ -58,20 +58,20 @@ TTRB* TTRBStreamJob::GetTRB() const
 	return m_trb;
 }
 
-// $Barnyard FUNCTION 006d7ec0
+// $Barnyard: FUNCTION 006d7ec0
 void TTRBStreamJob::Init( TTRB* trb, const TCHAR* fileName )
 {
 	m_trb = trb;
 	T2String8::Copy( m_fileName, fileName, -1 );
 }
 
-// $Barnyard FUNCTION 006d7ee0
+// $Barnyard: FUNCTION 006d7ee0
 void TTRBStreamJob::Process()
 {
 	m_trb->Load( m_fileName );
 }
 
-// $Barnyard FUNCTION 006d7ea0
+// $Barnyard: FUNCTION 006d7ea0
 TTRBStreamJob::TTRBStreamJob() :
     TFileStreamJob( TNULL )
 {

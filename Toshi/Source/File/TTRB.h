@@ -342,7 +342,7 @@ public:
 	void SetMemoryFunctions( t_MemoryFuncAlloc allocator, t_MemoryFuncDealloc deallocator, void* userdata );
 
 public:
-	// $Barnyard FUNCTION 006ba9b0
+	// $Barnyard: FUNCTION 006ba9b0
 	static TUINT32 GetHeaderSize( TUINT32 count ) { return sizeof( SecInfo ) * count + sizeof( Header ); }
 
 	static TUINT32 GetSymbolTableSize( TUINT32 count ) { return sizeof( TTRBSymbol ) * count + sizeof( SYMB ); }

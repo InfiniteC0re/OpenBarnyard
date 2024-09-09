@@ -20,7 +20,7 @@ static constexpr TTRB::t_MemoryFuncDealloc s_cbDefDeallocator = []( TTRB::AllocT
 
 void* TTRB::s_pDefAllocatorUserData = TNULL;
 
-// $Barnyard FUNCTION 006ba9e0
+// $Barnyard: FUNCTION 006ba9e0
 TTRB::TTRB()
 {
 	m_pHeader = TNULL;
@@ -28,13 +28,13 @@ TTRB::TTRB()
 	SetMemoryFunctions( s_cbDefAllocator, s_cbDefDeallocator, s_pDefAllocatorUserData );
 }
 
-// $Barnyard FUNCTION 006baff0
+// $Barnyard: FUNCTION 006baff0
 TTRB::~TTRB()
 {
 	Close();
 }
 
-// $Barnyard FUNCTION 006bb000
+// $Barnyard: FUNCTION 006bb000
 TTRB::ERROR TTRB::Load( const TCHAR* a_szFilePath, TUINT32 a_uiUnknown )
 {
 	TPROFILER_SCOPE();
@@ -70,7 +70,7 @@ TTRB::ERROR TTRB::Load( const TCHAR* a_szFilePath, TUINT32 a_uiUnknown )
 	return error;
 }
 
-// $Barnyard FUNCTION 006baad0
+// $Barnyard: FUNCTION 006baad0
 TBOOL TTRB::ProcessForm( TTSFI& ttsf )
 {
 	static constexpr TUINT32 MAX_RELC_NUM_BATCH = 512;
@@ -245,7 +245,7 @@ TBOOL TTRB::ProcessForm( TTSFI& ttsf )
 	return result;
 }
 
-// $Barnyard FUNCTION 006bafa0
+// $Barnyard: FUNCTION 006bafa0
 void* TTRB::GetSymbolAddress( const TCHAR* symbName )
 {
 	auto index = GetSymbolIndex( symbName );
@@ -259,7 +259,7 @@ void* TTRB::GetSymbolAddress( const TCHAR* symbName )
 	return TNULL;
 }
 
-// $Barnyard FUNCTION 006baeb0
+// $Barnyard: FUNCTION 006baeb0
 TINT TTRB::GetSymbolIndex( const TCHAR* symbName )
 {
 	if ( m_SYMB != TNULL )
@@ -283,7 +283,7 @@ TINT TTRB::GetSymbolIndex( const TCHAR* symbName )
 	return -1;
 }
 
-// $Barnyard FUNCTION 006baa20
+// $Barnyard: FUNCTION 006baa20
 void TTRB::Close()
 {
 	if ( m_pHeader != TNULL )
@@ -305,7 +305,7 @@ void TTRB::Close()
 	DeleteSymbolTable();
 }
 
-// $Barnyard FUNCTION 006ba950
+// $Barnyard: FUNCTION 006ba950
 void TTRB::SetMemoryFunctions( t_MemoryFuncAlloc allocator, t_MemoryFuncDealloc deallocator, void* userdata )
 {
 	m_MemAllocator   = allocator;
@@ -313,7 +313,7 @@ void TTRB::SetMemoryFunctions( t_MemoryFuncAlloc allocator, t_MemoryFuncDealloc 
 	m_MemUserData    = userdata;
 }
 
-// $Barnyard FUNCTION 006ba8b0
+// $Barnyard: FUNCTION 006ba8b0
 void TTRB::DeleteSymbolTable()
 {
 	if ( m_SYMB != TNULL )
@@ -337,7 +337,7 @@ TINT16 TTRB::HashString( const TCHAR* str )
 	return hash;
 }
 
-// $Barnyard FUNCTION 006ba920
+// $Barnyard: FUNCTION 006ba920
 const TCHAR* TTRB::GetSymbolName( TTRBSymbol* symbol ) const
 {
 	if ( m_SYMB == TNULL )
@@ -361,7 +361,7 @@ const TCHAR* TTRB::GetSymbolName( TINT index ) const
 	return GetSymbolName( reinterpret_cast<TTRBSymbol*>( m_SYMB + 1 ) + index );
 }
 
-// $Barnyard FUNCTION 006ba8f0
+// $Barnyard: FUNCTION 006ba8f0
 TTRB::TTRBSymbol* TTRB::GetSymbol( TINT index ) const
 {
 	if ( m_SYMB == TNULL )
@@ -376,7 +376,7 @@ TTRB::TTRBSymbol* TTRB::GetSymbol( TINT index ) const
 	return TNULL;
 }
 
-// $Barnyard FUNCTION 006baf60
+// $Barnyard: FUNCTION 006baf60
 TTRB::TTRBSymbol* TTRB::GetSymbol( const TCHAR* a_symbolName )
 {
 	TINT index = GetSymbolIndex( a_symbolName );

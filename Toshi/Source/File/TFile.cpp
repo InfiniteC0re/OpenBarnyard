@@ -9,7 +9,7 @@
 
 TOSHI_NAMESPACE_START
 
-// $Barnyard FUNCTION 006bddc0
+// $Barnyard: FUNCTION 006bddc0
 TFile::TFile( TFileSystem* pFS )
 {
 	m_pFileSystem = pFS;
@@ -20,12 +20,12 @@ TFile::TFile( const TFile& other )
 	m_pFileSystem = other.GetFileSystem();
 }
 
-// $Barnyard FUNCTION 006bddf0
+// $Barnyard: FUNCTION 006bddf0
 TFile::~TFile()
 {
 }
 
-// $Barnyard FUNCTION 006be700
+// $Barnyard: FUNCTION 006be700
 TFile* TFile::Create( const TString8& filename, TFILEMODE mode )
 {
 	TASSERT( filename.IsIndexValid( 0 ), "filename is empty" );
@@ -44,7 +44,7 @@ TFile* TFile::Create( const TString8& filename, TFILEMODE mode )
 	return pFile;
 }
 
-// $Barnyard FUNCTION 006bdff0
+// $Barnyard: FUNCTION 006bdff0
 TString8 TFile::ConcatPath( const TString8& a_rcPath1, const TString8& a_rcPath2 )
 {
 	TString8 strResult;
@@ -102,7 +102,7 @@ TString8 TFile::ConcatPath( const TString8& a_rcPath1, const TString8& a_rcPath2
 	return SimplifyPath( strResult );
 }
 
-// $Barnyard FUNCTION 006bde20
+// $Barnyard: FUNCTION 006bde20
 TString8 TFile::SimplifyPath( const TString8& a_rcPath )
 {
 	TString8 strPath = a_rcPath;
@@ -179,8 +179,8 @@ TString8 TFile::SimplifyPath( const TString8& a_rcPath )
 	} while ( TTRUE );
 }
 
-// $Barnyard FUNCTION 006be310
-// $Barnyard FUNCTION 006bdcf0
+// $Barnyard: FUNCTION 006be310
+// $Barnyard: FUNCTION 006bdcf0
 void TFile::Destroy()
 {
 	TVALIDPTR( m_pFileSystem );

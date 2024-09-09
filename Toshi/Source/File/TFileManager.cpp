@@ -47,7 +47,7 @@ void TFileManager::Destroy()
 	DestroyCommon();
 }
 
-// $Barnyard FUNCTION 006be290
+// $Barnyard: FUNCTION 006be290
 void TFileManager::MountFileSystem( TFileSystem* a_pFileSystem )
 {
 	TASSERT( TFileManager::FindFileSystem( a_pFileSystem->GetName() ) == TNULL );
@@ -57,7 +57,7 @@ void TFileManager::MountFileSystem( TFileSystem* a_pFileSystem )
 	InvalidateSystemPath();
 }
 
-// $Barnyard FUNCTION 006be260
+// $Barnyard: FUNCTION 006be260
 TFileSystem* TFileManager::FindFileSystem( const TString8& name )
 {
 	TFileSystem* pFileSystem = TFileManager::FindFileSystem( m_Validated, name );
@@ -70,7 +70,7 @@ TFileSystem* TFileManager::FindFileSystem( const TString8& name )
 	return pFileSystem;
 }
 
-// $Barnyard FUNCTION 006be200
+// $Barnyard: FUNCTION 006be200
 TFileSystem* TFileManager::FindFileSystem( TDList<TFileSystem>& a_rList, const TString8& name )
 {
 	T2_FOREACH( a_rList, pFileSystem )
@@ -84,7 +84,7 @@ TFileSystem* TFileManager::FindFileSystem( TDList<TFileSystem>& a_rList, const T
 	return TNULL;
 }
 
-// $Barnyard FUNCTION 006be4b0
+// $Barnyard: FUNCTION 006be4b0
 TFile* TFileManager::CreateFile( const TString8& a_sName, TFILEMODE flags )
 {
 	TASSERT( a_sName.Length() > 0, "Name can't be empty" );
@@ -121,7 +121,7 @@ TFile* TFileManager::CreateFile( const TString8& a_sName, TFILEMODE flags )
 	return TNULL;
 }
 
-// $Barnyard FUNCTION 006be5c0
+// $Barnyard: FUNCTION 006be5c0
 TBOOL TFileManager::GetFileInfo( const TString8& a_strPath, TNativeFileInfo& a_rNativeInfo )
 {
 	TASSERT( a_strPath.Length() > 0, "Path can't be empty" );
@@ -165,7 +165,7 @@ TBOOL TFileManager::GetFileInfo( const TString8& a_strPath, TNativeFileInfo& a_r
 	return pFileSystem->ToNative( a_strPath, a_rNativeInfo );
 }
 
-// $Barnyard FUNCTION 006be370
+// $Barnyard: FUNCTION 006be370
 void TFileManager::ValidateSystemPath()
 {
 	if ( !m_IsValidated )
@@ -249,20 +249,20 @@ TBOOL TFileManager::TSysPathIter::Next( TString8& path )
 	}
 }
 
-// $Barnyard FUNCTION 006be1c0
+// $Barnyard: FUNCTION 006be1c0
 TString8 TFileManager::MakeAbsolutePath( const TString8& a_rcRelativePath ) const
 {
 	return TFile::ConcatPath( m_WorkingDirectory, a_rcRelativePath );
 }
 
-// $Barnyard FUNCTION 006be140
+// $Barnyard: FUNCTION 006be140
 void TFileManager::CreateCommon()
 {
 	TFileManager::CreateSingleton();
 	ms_oMutex.Create();
 }
 
-// $Barnyard FUNCTION 006be320
+// $Barnyard: FUNCTION 006be320
 void TFileManager::DestroyCommon()
 {
 	ms_oMutex.Destroy();
