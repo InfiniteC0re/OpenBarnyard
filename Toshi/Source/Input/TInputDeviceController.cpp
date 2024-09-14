@@ -11,6 +11,21 @@ TOSHI_NAMESPACE_START
 
 TDEFINE_CLASS_NORUNTIME( TInputDeviceController );
 
+// $Barnyard: FUNCTION 006c48d0
+TInputDeviceController::TInputDeviceController()
+{
+	m_CurrentState = new TBOOL[ NUM_BUTTONS ];
+	m_OldState     = new TBOOL[ NUM_BUTTONS ];
+	TUtil::MemClear( m_CurrentState, sizeof( *m_CurrentState ) * NUM_BUTTONS );
+	TUtil::MemClear( m_OldState, sizeof( *m_OldState ) * NUM_BUTTONS );
+}
+
+// $Barnyard: FUNCTION 006c4ea0
+TInputDeviceController::~TInputDeviceController()
+{
+}
+
+// $Barnyard: FUNCTION 006c4990
 TBOOL TInputDeviceController::GetDoodadProperties( Doodad a_iDoodad, DoodadProperties& a_rProperties ) const
 {
 	if ( a_iDoodad < 0x10000 || 0x1001b < a_iDoodad )
@@ -30,6 +45,7 @@ TBOOL TInputDeviceController::GetDoodadProperties( Doodad a_iDoodad, DoodadPrope
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 006c4d30
 const TCHAR* TInputDeviceController::GetButtonFromDoodad( Doodad a_iDoodad ) const
 {
 	// TODO: Create constants for doodads
@@ -95,6 +111,7 @@ const TCHAR* TInputDeviceController::GetButtonFromDoodad( Doodad a_iDoodad ) con
 	}
 }
 
+// $Barnyard: FUNCTION 006c49f0
 TBOOL TInputDeviceController::IsDown( Doodad a_iDoodad ) const
 {
 	switch ( a_iDoodad )
@@ -124,6 +141,7 @@ void TInputDeviceController::SetVibration( VIBRATION_ACTUATOR a_eActuator, TFLOA
 {
 }
 
+// $Barnyard: FUNCTION 006c4a80
 TBOOL TInputDeviceController::WasDown( Doodad a_iDoodad ) const
 {
 	switch ( a_iDoodad )
@@ -154,6 +172,7 @@ TBOOL TInputDeviceController::Unknown2()
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 006c4ee0
 TINT TInputDeviceController::ProcessVirtualButtons( EventEmitter& a_rEmitter, TFLOAT a_fDeltaTime )
 {
 	TINT iNumProcessed = 0;

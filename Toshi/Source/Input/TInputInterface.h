@@ -64,13 +64,9 @@ public:
 	using EventEmitter = TEmitter<TInputInterface, TInputInterface::InputEvent>;
 
 public:
-	TInputInterface() :
-	    m_InputEventEmitter( this )
-	{
-		m_bIsExclusiveMode = TFALSE;
-	}
+	TInputInterface();
+	~TInputInterface();
 
-	~TInputInterface()           = default;
 	virtual TBOOL Initialise()   = 0;
 	virtual TBOOL Deinitialise() = 0;
 	virtual TBOOL AcquireAll();

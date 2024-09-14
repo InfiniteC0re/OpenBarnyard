@@ -10,6 +10,7 @@
 
 TOSHI_NAMESPACE_START
 
+// $Barnyard: FUNCTION 006d58e0
 TBOOL TOrderTable::Create( TShader* a_pShader, TINT a_iPriority )
 {
 	m_pLastRegMat = TNULL;

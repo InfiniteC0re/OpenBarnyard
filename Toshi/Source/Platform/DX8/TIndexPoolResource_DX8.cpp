@@ -13,6 +13,7 @@ TOSHI_NAMESPACE_START
 
 TDEFINE_CLASS( TIndexPoolResource );
 
+// $Barnyard: FUNCTION 006d5ef0
 TIndexPoolResource::TIndexPoolResource()
 {
 	m_uiIndexOffset     = 0;
@@ -20,6 +21,12 @@ TIndexPoolResource::TIndexPoolResource()
 	m_uiNumLocksAllTime = 0;
 }
 
+// $Barnyard: FUNCTION 006d5f70
+TIndexPoolResource::~TIndexPoolResource()
+{
+}
+
+// $Barnyard: FUNCTION 006d5e50
 TBOOL TIndexPoolResource::Validate()
 {
 	if ( IsCreated() && IsValid() )
@@ -70,6 +77,7 @@ TBOOL TIndexPoolResource::Validate()
 	return TResource::Validate();
 }
 
+// $Barnyard: FUNCTION 006d5fe0
 void TIndexPoolResource::Invalidate()
 {
 	if ( IsCreated() && IsValid() )
@@ -84,6 +92,7 @@ void TIndexPoolResource::Invalidate()
 	}
 }
 
+// $Barnyard: FUNCTION 006d5e20
 void TIndexPoolResource::OnDestroy()
 {
 	if ( m_uiFlags & 1 && m_pIndices )
@@ -95,6 +104,7 @@ void TIndexPoolResource::OnDestroy()
 	TIndexPoolResourceInterface::OnDestroy();
 }
 
+// $Barnyard: FUNCTION 006d6040
 TBOOL TIndexPoolResource::Lock( LockBuffer* a_pLockBuffer )
 {
 	TVALIDPTR( a_pLockBuffer );
@@ -137,6 +147,7 @@ TBOOL TIndexPoolResource::Lock( LockBuffer* a_pLockBuffer )
 	return TFALSE;
 }
 
+// $Barnyard: FUNCTION 006d60f0
 void TIndexPoolResource::Unlock( TUINT16 a_uiNewNumIndices )
 {
 	TASSERT( m_uiLockCount > 0 );
@@ -170,6 +181,7 @@ void TIndexPoolResource::Unlock( TUINT16 a_uiNewNumIndices )
 	}
 }
 
+// $Barnyard: FUNCTION 006d5dd0
 TBOOL TIndexPoolResource::Create( TIndexFactoryResourceInterface* a_pFactory, TUINT16 a_uiMaxIndices, TUINT16 a_uiFlags )
 {
 	if ( a_uiFlags & 4 )
@@ -201,6 +213,7 @@ TResource* TIndexPoolResource::GetParent()
 	return Parent();
 }
 
+// $Barnyard: FUNCTION 006d5fa0
 TIndexBlockResource* TIndexPoolResource::GetIndexBlock()
 {
 	if ( Parent()->IsExactly( &TGetClass( TIndexBlockResource ) ) )
@@ -211,6 +224,7 @@ TIndexBlockResource* TIndexPoolResource::GetIndexBlock()
 	return TNULL;
 }
 
+// $Barnyard: FUNCTION 006d6180
 TBOOL TIndexPoolResource::GetHALBuffer( TIndexBlockResource::HALBuffer* a_pHALBuffer )
 {
 	TVALIDPTR( a_pHALBuffer );
@@ -228,6 +242,12 @@ TBOOL TIndexPoolResource::GetHALBuffer( TIndexBlockResource::HALBuffer* a_pHALBu
 	}
 
 	return TFALSE;
+}
+
+// $Barnyard: FUNCTION 006d5ee0
+TUINT16* TIndexPoolResource::GetIndices()
+{
+	return ( m_uiLockCount == 0 ) ? m_pIndices : TNULL;
 }
 
 TOSHI_NAMESPACE_END

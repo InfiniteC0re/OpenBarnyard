@@ -25,7 +25,7 @@ public:
 
 	TINT GetInt();
 	TINT GetInt( TUINT32 a_iLower, TUINT32 a_iUpper );
-	TINT GetInt( TUINT32 a_iUpper ) { return GetInt( 0, a_iUpper ); };
+	TINT GetInt( TUINT32 a_iUpper );;
 
 	TFLOAT GetFloat();
 	TFLOAT GetFloatMinMax( TFLOAT a_fLower, TFLOAT a_fUpper );

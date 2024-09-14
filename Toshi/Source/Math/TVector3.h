@@ -38,7 +38,10 @@ public:
 		TVector3::z = z;
 	}
 
+	// $Barnyard: FUNCTION 006cbba0
 	constexpr void Lerp( const TVector3& finish, float t ) { Lerp( *this, finish, t ); }
+
+	// $Barnyard: FUNCTION 006cbb60
 	constexpr void Lerp( const TVector3& start, const TVector3& finish, float t )
 	{
 		TVector3 progress = finish - start;
@@ -47,6 +50,7 @@ public:
 		Set( start + progress );
 	}
 
+	// $Barnyard: FUNCTION 0040f390
 	constexpr void Add( const TVector3& vec )
 	{
 		x += vec.x;
@@ -113,6 +117,7 @@ public:
 	void Abs( const TVector3& vec3 ) { Set( TMath::Abs( vec3.x ), TMath::Abs( vec3.y ), TMath::Abs( vec3.z ) ); }
 	void Abs() { Set( TMath::Abs( x ), TMath::Abs( y ), TMath::Abs( z ) ); }
 
+	// $Barnyard: FUNCTION 006c74f0
 	TFLOAT           Magnitude() const { return TMath::Sqrt( x * x + y * y + z * z ); }
 	constexpr TFLOAT MagnitudeSq() const { return x * x + y * y + z * z; }
 

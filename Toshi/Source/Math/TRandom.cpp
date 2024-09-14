@@ -55,12 +55,14 @@
 
 TOSHI_NAMESPACE_START
 
+// $Barnyard: FUNCTION 006b5ca0
 TRandom::TRandom()
 {
 	THPTimer timer = THPTimer();
 	SetSeed( timer.GetRaw32() );
 }
 
+// $Barnyard: FUNCTION 006b5850
 void TRandom::Isaac()
 {
 	TUINT a, b, x, y, *m, *mm, *m2, *r, *mend;
@@ -86,6 +88,7 @@ void TRandom::Isaac()
 	m_uiRandB = b;
 }
 
+// $Barnyard: FUNCTION 006b5af0
 void TRandom::RandInit()
 {
 	TUINT32 a, b, c, d, e, f, g, h;
@@ -166,6 +169,12 @@ TINT TRandom::GetInt( TUINT32 a_iLower, TUINT32 a_iUpper )
 	return a_iLower + ( range * rand >> 32 );
 }
 
+// $Barnyard: FUNCTION 006b5ce0
+TINT TRandom::GetInt( TUINT32 a_iUpper )
+{
+	return GetInt( 0, a_iUpper );
+}
+
 TINT TRandom::GetInt()
 {
 	return RandRaw();
@@ -176,6 +185,7 @@ TFLOAT TRandom::GetFloat()
 	return ( RandRaw() >> 1 ) * 4.6566129E-10f;
 }
 
+// $Barnyard: FUNCTION 00401080
 TFLOAT TRandom::GetFloatMinMax( TFLOAT a_fLower, TFLOAT a_fUpper )
 {
 	return (TFLOAT)( RandRaw() >> 1 ) * 4.6566129E-10f * ( a_fUpper - a_fLower ) + a_fLower;

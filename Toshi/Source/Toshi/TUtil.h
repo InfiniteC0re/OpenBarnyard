@@ -25,15 +25,15 @@ public:
 		LogType_NUMOF
 	};
 
+	static constexpr const TCHAR* kTypeStrings[] = {
+		"Info",
+		"Warning",
+		"Error",
+		"Critical"
+	};
+
 	static constexpr const TCHAR* LogTypeToString( LogType a_eType )
 	{
-		constexpr const TCHAR* kTypeStrings[]{
-			"Info",
-			"Warning",
-			"Error",
-			"Critical"
-		};
-
 		TSTATICASSERT( Toshi::TUtil::LogType_NUMOF == TARRAYSIZE( kTypeStrings ) );
 
 		return a_eType >= LogType_Info && a_eType < LogType_NUMOF ?

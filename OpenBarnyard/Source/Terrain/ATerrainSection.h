@@ -39,7 +39,7 @@ public:
 
 	public:
 		Toshi::TModelPtr        m_ModelRef;
-		Toshi::T2ModelInstance* m_pModelInstance;
+		Toshi::TSceneObject* m_pModelInstance;
 		AWorldVis               m_WorldVis;
 		AWorldMaterial*         m_pAnimatedMaterial;
 		// ...

@@ -149,7 +149,7 @@ public:
 
 public:
 	TInputDeviceKeyboard();
-	~TInputDeviceKeyboard() = default;
+	~TInputDeviceKeyboard();
 
 	virtual TBOOL GetDoodadProperties( Doodad a_iDoodad, DoodadProperties& doodadProps ) const override;
 

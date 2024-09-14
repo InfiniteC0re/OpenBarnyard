@@ -11,6 +11,16 @@ TOSHI_NAMESPACE_START
 
 TDEFINE_CLASS_NORUNTIME( TInputDeviceKeyboard );
 
+// $Barnyard: FUNCTION 006c4f70
+TInputDeviceKeyboard::TInputDeviceKeyboard()
+{
+}
+
+// $Barnyard: FUNCTION 006c5680
+TInputDeviceKeyboard::~TInputDeviceKeyboard()
+{
+}
+
 struct VirtualButtonDefinition
 {
 	TInputDevice::Doodad iThrowDoodad;
@@ -32,6 +42,7 @@ static VirtualButtonDefinition s_aVirtualButtons[] = {
 	  TInputDeviceKeyboard::KEY_RMENU }
 };
 
+// $Barnyard: FUNCTION 006c56b0
 TINT TInputDeviceKeyboard::ProcessVirtualButtons( EventEmitter& a_rEmitter, TFLOAT flt )
 {
 	a_rEmitter.Throw( TInputInterface::InputEvent( this, 0x20001, TInputInterface::EVENT_TYPE_VIRTUAL, m_aMags[ 0 ], m_aMags[ 1 ] ) );
@@ -67,6 +78,7 @@ TINT TInputDeviceKeyboard::ProcessVirtualButtons( EventEmitter& a_rEmitter, TFLO
 	return iNumThrownEvents;
 }
 
+// $Barnyard: FUNCTION 006c5090
 const TCHAR* TInputDeviceKeyboard::GetButtonFromDoodad( Doodad a_iDoodad ) const
 {
 #define CASE( KEY ) \
@@ -221,6 +233,7 @@ void TInputDeviceKeyboard::GetVirtStickDoodads( TINT a_iMapID, Doodad& a_rDoodad
 	a_rDoodad4 = m_aVirtStickDoodads[ a_iMapID ].iDoodad4;
 }
 
+// $Barnyard: FUNCTION 006c56b0
 void TInputDeviceKeyboard::UpdateVirtualButtons()
 {
 	m_aMags[ 2 ] = m_aMags[ 0 ];
@@ -244,10 +257,7 @@ void TInputDeviceKeyboard::UpdateVirtualButtons()
 	}
 }
 
-TInputDeviceKeyboard::TInputDeviceKeyboard()
-{
-}
-
+// $Barnyard: FUNCTION 006c4fc0
 TBOOL TInputDeviceKeyboard::GetDoodadProperties( Doodad a_iDoodad, DoodadProperties& doodadProps ) const
 {
 	if ( ( a_iDoodad >= DOODAD_START ) && ( a_iDoodad < DOODAD_END ) )

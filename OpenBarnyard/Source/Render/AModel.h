@@ -5,7 +5,7 @@
 #include <Toshi/TPString8.h>
 
 #include <Toshi/T2DList.h>
-#include <Toshi/T2ModelInstance.h>
+#include <Toshi/TSceneObject.h>
 
 class AModel;
 
@@ -36,12 +36,12 @@ public:
 
 public:
 	AModelInstance();
-	AModelInstance( AModel* a_pModel, Toshi::T2ModelInstance* a_pT2Instance, TBOOL a_bEnableSkeletonUpdate );
+	AModelInstance( AModel* a_pModel, Toshi::TSceneObject* a_pT2Instance, TBOOL a_bEnableSkeletonUpdate );
 
 	void SetSkeletonUpdating( TBOOL a_bUpdating );
 
 	AModel*                 GetModel() const { return m_pModel; }
-	Toshi::T2ModelInstance* GetT2Instance() const { return m_pT2ModelInstance; }
+	Toshi::TSceneObject* GetT2Instance() const { return m_pT2ModelInstance; }
 	TUINT                   GetClipFlags() const { return m_uiClipFlags; }
 
 	TBOOL IsUpdatingSkeleton() const { return m_eFlags & Flags_UpdatingSkeleton; }
@@ -54,7 +54,7 @@ private:
 	AModel* m_pModel;
 	TUINT   m_uiClipFlags;
 	// ...
-	Toshi::T2ModelInstance*                      m_pT2ModelInstance;
+	Toshi::TSceneObject*                      m_pT2ModelInstance;
 	Toshi::TEmitter<AModelInstance, ChangeEvent> m_ChangeEmitter;
 	Flags                                        m_eFlags;
 };
@@ -90,6 +90,8 @@ private:
 	TUINT             m_uiID;
 	Toshi::TModelPtr* m_pModelPtr;
 	Toshi::TPString8  m_Name;
+
+	// This should be T2Vector
 	TUINT             m_uiNumModelInstances;
 	AModelInstanceRef m_aModelInstances[ MAX_NUM_INSTANCES ];
 	Toshi::TVector3   m_Vec1;

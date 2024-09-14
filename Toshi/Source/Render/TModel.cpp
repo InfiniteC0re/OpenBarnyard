@@ -13,6 +13,7 @@
 
 TOSHI_NAMESPACE_START
 
+// $Barnyard: FUNCTION 006cdf20
 TModel::TModel()
 {
 	m_eFlags         = Flags_None;
@@ -29,6 +30,13 @@ TModel::TModel()
 	m_aUnk1[ 3 ]     = m_aUnk1[ 2 ] + m_aUnk1[ 2 ];
 }
 
+// $Barnyard: FUNCTION 006cdff0
+// $Barnyard: FUNCTION 006ce130
+TModel::~TModel()
+{
+}
+
+// $Barnyard: FUNCTION 006ce3e0
 TBOOL TModel::LoadTRB()
 {
 	TASSERT( m_eFlags & Flags_Created );
@@ -59,6 +67,7 @@ TBOOL TModel::LoadTRB()
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 006ce8c0
 TBOOL TModel::LoadTRB( TTRB* a_pTRB )
 {
 	m_bIsAssetFile = TFALSE;
@@ -67,6 +76,7 @@ TBOOL TModel::LoadTRB( TTRB* a_pTRB )
 	return LoadTRB();
 }
 
+// $Barnyard: FUNCTION 006ce820
 TBOOL TModel::LoadTRB( const TCHAR* a_szFileName, TTRB* a_pAssetTRB, TUINT8 a_ui8FileNameLen )
 {
 	if ( !m_bIsAssetFile && m_pTRB )
@@ -95,6 +105,7 @@ TBOOL TModel::LoadTRB( const TCHAR* a_szFileName, TTRB* a_pAssetTRB, TUINT8 a_ui
 	return LoadTRB();
 }
 
+// $Barnyard: FUNCTION 006ce780
 void TModel::UnloadTRB()
 {
 	if ( m_pTRB )
@@ -121,6 +132,7 @@ void TModel::UnloadTRB()
 	m_eFlags &= Flags_Loaded;
 }
 
+// $Barnyard: FUNCTION 006ce010
 void* TModel::GetSymbol( const TCHAR* a_szSymbolName )
 {
 	if ( m_bIsAssetFile )
@@ -135,6 +147,7 @@ void* TModel::GetSymbol( const TCHAR* a_szSymbolName )
 	return m_pTRB->GetSymbolAddress( a_szSymbolName );
 }
 
+// $Barnyard: FUNCTION 006ce180
 TModelInstance* TModel::CreateInstance()
 {
 	auto pInstance = new TModelInstance( this );
@@ -155,6 +168,7 @@ TModelInstance* TModel::CreateInstance()
 	return pInstance;
 }
 
+// $Barnyard: FUNCTION 006c1b40
 TBOOL TModel::GetSkeletonAssetSymbolName( const TCHAR* a_szFileName, const TCHAR*& a_rSymbolName, TUINT8& a_rNameLen, TTRB* a_pTRB )
 {
 	auto iFilePathLength = TUINT8( TStringManager::String8Length( a_szFileName ) );
@@ -201,11 +215,16 @@ TModelInstance::TModelInstance( TModel* a_pModel )
 	m_iCurrentLOD             = 0;
 }
 
+TModelInstance::~TModelInstance()
+{
+}
+
 void TModelInstance::Update( TFLOAT a_fDeltaTime )
 {
 	m_pSkeletonInstance->UpdateTime( a_fDeltaTime );
 }
 
+// $Barnyard: FUNCTION 006ce090
 void TModelInstance::Render()
 {
 	if ( m_fnPreRenderCb )
@@ -251,6 +270,7 @@ TINT32 TModelInstance::GetLOD()
 	return m_iCurrentLOD;
 }
 
+// $Barnyard: FUNCTION 006ce150
 void TModelInstance::Delete()
 {
 	if ( m_pSkeletonInstance )
@@ -264,12 +284,12 @@ void TModelInstance::Delete()
 	delete this;
 }
 
-Toshi::TModel* TModelInstance::GetModel() const
+TModel* TModelInstance::GetModel() const
 {
 	return m_pModel;
 }
 
-Toshi::TSkeletonInstance* TModelInstance::GetSkeletonInstance() const
+TSkeletonInstance* TModelInstance::GetSkeletonInstance() const
 {
 	return m_pSkeletonInstance;
 }

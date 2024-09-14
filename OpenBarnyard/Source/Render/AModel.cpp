@@ -178,7 +178,7 @@ TString8* AModel::GenerateInstanceName( TString8& a_rOutName, const TPString8& a
 	return &a_rOutName;
 }
 
-AModelInstance::AModelInstance( AModel* a_pModel, T2ModelInstance* a_pT2Instance, TBOOL a_bEnableSkeletonUpdate ) :
+AModelInstance::AModelInstance( AModel* a_pModel, TSceneObject* a_pT2Instance, TBOOL a_bEnableSkeletonUpdate ) :
     m_ChangeEmitter( this )
 {
 	TFIXME( "Initialise some unknown members" );

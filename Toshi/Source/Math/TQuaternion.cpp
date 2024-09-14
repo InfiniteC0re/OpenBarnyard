@@ -35,6 +35,7 @@ void TQuaternion::SetFromEulerRollPitchYaw( TFLOAT a_fRoll, TFLOAT a_fPitch, TFL
 	Set( fX, fY, fZ, fW );
 }
 
+// $Barnyard: FUNCTION 006c93b0
 void TQuaternion::SetRotation( const TVector3& a_rVec3, TFLOAT a_fVal )
 {
 	TFLOAT fVal;
@@ -44,6 +45,7 @@ void TQuaternion::SetRotation( const TVector3& a_rVec3, TFLOAT a_fVal )
 	Set( a_rVec3.x * fVal, a_rVec3.y * fVal, a_rVec3.z * fVal, fVal2 );
 }
 
+// $Barnyard: FUNCTION 006c9840
 void TQuaternion::SetVectorDirection( const TVector3& a_rVec3, const TVector3& a_rVec3_2 )
 {
 	TVector3 vec3;
@@ -94,6 +96,7 @@ void TQuaternion::RotateVector( TVector3& param_1, const TQuaternion& param_2, c
 	param_1.Set( quat3.x, quat3.y, quat3.z );
 }
 
+// $Barnyard: FUNCTION 006c9340
 void TQuaternion::RotateAroundAxis( const TVector3& param_1, TFLOAT param_2 )
 {
 	TFLOAT fVal;
@@ -108,30 +111,10 @@ void TQuaternion::GetEulerXYZ( TVector3& outVec ) const
 	TMatrix44 matrix;
 	matrix.SetFromQuaternion( *this );
 
-	TFLOAT fVal1 = matrix.m_f31;
-	TMath::Clip( fVal1, -1.0f, 1.0f );
-
-	TFLOAT fVal2 = TMath::Sqrt( 1.0f - fVal1 * fVal1 );
-
-	if ( matrix.m_f11 < 0 && matrix.m_f33 < 0 )
-		fVal2 *= -1;
-
-	if ( 0.001f < fVal2 || fVal2 < -0.001 )
-	{
-		TFLOAT fVal3 = 1.0f / fVal2;
-
-		outVec.x = TMath::ATan2( matrix.m_f32 * fVal3, matrix.m_f33 * fVal3 );
-		outVec.y = TMath::ATan2( fVal1, fVal2 );
-		outVec.z = TMath::ATan2( matrix.m_f21 * fVal3, matrix.m_f11 * fVal3 );
-	}
-	else
-	{
-		outVec.x = TMath::ATan2( -matrix.m_f32, matrix.m_f22 );
-		outVec.y = -TMath::ASin( fVal1 );
-		outVec.z = 0.0f;
-	}
+	matrix.GetEulerXYZ( outVec );
 }
 
+// $Barnyard: FUNCTION 006c9190
 TQuaternion& TQuaternion::operator*=( const TQuaternion& a_Quat )
 {
 	TFLOAT fX = ( ( x * a_Quat.w + a_Quat.z * y ) - a_Quat.y * z ) + a_Quat.x * w;
@@ -142,6 +125,7 @@ TQuaternion& TQuaternion::operator*=( const TQuaternion& a_Quat )
 	return *this;
 }
 
+// $Barnyard: FUNCTION 006c9ae0
 void TQuaternion::Nlerp( TQuaternion& a_rOut, const TQuaternion& a_rStart, const TQuaternion& a_rEnd, TFLOAT a_fProgress )
 {
 	TFLOAT fDot = TVector4::DotProduct4( a_rStart.AsVector4(), a_rEnd.AsVector4() );
@@ -180,6 +164,7 @@ void TQuaternion::Nlerp( TQuaternion& a_rOut, const TQuaternion& a_rStart, const
 	}
 }
 
+// $Barnyard: FUNCTION 006c9400
 void TQuaternion::Slerp( TQuaternion& a_rOut, const TQuaternion& a_rStart, const TQuaternion& a_rEnd, TFLOAT a_fProgress )
 {
 	if ( a_fProgress == 0.0f )

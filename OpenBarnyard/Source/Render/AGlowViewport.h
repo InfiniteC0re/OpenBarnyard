@@ -4,7 +4,7 @@
 #include <Math/TMatrix44.h>
 #include <Math/TPlane.h>
 #include <Render/TRenderContext.h>
-#include <Toshi/T2ModelInstance.h>
+#include <Toshi/TSceneObject.h>
 
 class AGlowViewport :
     public Toshi::TSingleton<AGlowViewport>
@@ -31,7 +31,7 @@ public:
 		Toshi::TRenderContext::VIEWPORTPARAMS   m_oViewportParams;
 		Toshi::TRenderContext::PROJECTIONPARAMS m_oProjectionParams;
 		Toshi::TRenderContext::CameraMode       m_eCameraMode;
-		Toshi::T2ModelInstance*                 m_pT2ModelInstance;
+		Toshi::TSceneObject*                 m_pT2ModelInstance;
 		TINT                                    m_iAttachBone;
 		TINT                                    m_eTransformType;
 		Toshi::TFrustum                         m_oFrustum;

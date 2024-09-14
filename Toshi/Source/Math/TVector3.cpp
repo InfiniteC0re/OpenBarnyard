@@ -30,6 +30,7 @@ void TVector3::CrossProduct( const TVector3& vec1, const TVector3& vec2 )
 	Set( fX, fY, fZ );
 }
 
+// $Barnyard: FUNCTION 006cbbe0
 void TVector3::RotateX( TFLOAT a_fRotation )
 {
 	TFLOAT f1;
@@ -42,6 +43,7 @@ void TVector3::RotateX( TFLOAT a_fRotation )
 	z = oldY * f1 + z * f2;
 }
 
+// $Barnyard: FUNCTION 006c7820
 void TVector3::RotateY( TFLOAT a_fRotation )
 {
 	TFLOAT f1;

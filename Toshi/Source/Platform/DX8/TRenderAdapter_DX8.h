@@ -99,6 +99,9 @@ public:
 	};
 
 public:
+	TD3DAdapter();
+	~TD3DAdapter();
+
 	virtual TUINT32         GetAdapterIndex() const override;
 	virtual const TString8& GetDriver() const override;
 	virtual const TString8& GetDriverDescription() const override;

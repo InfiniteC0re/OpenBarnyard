@@ -90,7 +90,6 @@ TBOOL TTRB::ProcessForm( TTSFI& ttsf )
 			if ( fileSize < 1 )
 			{
 				ttsf.PopForm();
-				// FUN_007ebfbf
 				return TTRUE;
 			}
 

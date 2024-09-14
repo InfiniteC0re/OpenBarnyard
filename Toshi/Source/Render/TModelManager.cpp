@@ -2,7 +2,7 @@
 #include "TModelManager.h"
 #include "TRenderInterface.h"
 
-#include "Toshi/T2ModelInstance.h"
+#include "Toshi/TSceneObject.h"
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
@@ -119,9 +119,9 @@ TBOOL TModelPtr::Create( const TCHAR* a_szFileName, TTRB* a_pTRB )
 	return m_pModel != TNULL;
 }
 
-T2ModelInstance* TModelPtr::CreateInstance()
+TSceneObject* TModelPtr::CreateInstance()
 {
-	auto pInstance = new T2ModelInstance();
+	auto pInstance = new TSceneObject();
 	pInstance->Create( this );
 
 	return pInstance;

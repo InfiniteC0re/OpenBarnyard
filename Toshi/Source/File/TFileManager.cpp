@@ -22,6 +22,7 @@ TFileManager::~TFileManager()
 	Destroy();
 }
 
+// $Barnyard: FUNCTION 006d9230
 void TFileManager::Destroy()
 {
 	{

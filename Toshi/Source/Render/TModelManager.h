@@ -4,7 +4,7 @@
 
 TOSHI_NAMESPACE_START
 
-class T2ModelInstance;
+class TSceneObject;
 class TModelPtr;
 
 class TModelManager
@@ -86,7 +86,7 @@ public:
 	~TModelPtr();
 
 	TBOOL            Create( const TCHAR* a_szFileName, TTRB* a_pTRB );
-	T2ModelInstance* CreateInstance();
+	TSceneObject* CreateInstance();
 
 	void SetModel( TModel* a_pModel ) { m_pModel = a_pModel; }
 

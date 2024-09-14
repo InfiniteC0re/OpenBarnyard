@@ -3,7 +3,7 @@
 
 TOSHI_NAMESPACE_START
 
-TMatrix44 TMatrix44::IDENTITY(
+constinit TMatrix44 TMatrix44::IDENTITY(
     1.0f,
     0.0f,
     0.0f,
@@ -36,6 +36,7 @@ void TMatrix44::LookAtTarget( const TVector4& target, const TVector4& up )
 	m_f21 = m_f13 * m_f32 - m_f12 * m_f33;
 }
 
+// $Barnyard: FUNCTION 006c8970
 void TMatrix44::LookAtDirection( const Toshi::TVector4& a_rDirection, const Toshi::TVector4& a_rUpAxis )
 {
 	TVector4 vProjection;
@@ -55,29 +56,9 @@ void TMatrix44::LookAtDirection( const Toshi::TVector4& a_rDirection, const Tosh
 	AsBasisVector4( 2 ).w = 0.0f;
 }
 
+// $Barnyard: FUNCTION 006c85f0
 void TMatrix44::Multiply( const TMatrix44& a_rLeft, const TMatrix44& a_rRight )
 {
-	/*TFLOAT fVar2;
-		bool bVar3;
-		TINT iVar4;
-		TINT iVar5;
-
-		TMatrix44* pThis = this;
-
-		iVar4 = 0;
-		do {
-			iVar5 = 0;
-			while (true) {
-				fVar2 = (&a_rLeft.m_f11)[iVar5] * *(TFLOAT*)((TINT)&a_rRight.m_f11 + iVar4);
-				if (3 < iVar5 + 1) break;
-				(&pm_f11)[iVar5] = fVar2;
-				iVar5 = iVar5 + 1;
-			}
-			(&pm_f11)[iVar5] = fVar2;
-			iVar4 = iVar4 + 0x10;
-			pThis = (TMatrix44*)&pm_f21;
-		} while (iVar4 < 0x40);*/
-
 	TASSERT( ( this != &a_rLeft ) && ( this != &a_rRight ) );
 
 	for ( TINT i = 0; i < 4; i++ )
@@ -95,6 +76,14 @@ void TMatrix44::Multiply( const TMatrix44& a_rLeft, const TMatrix44& a_rRight )
 	}
 }
 
+// $Barnyard: FUNCTION 0041fb30
+void TMatrix44::Multiply( const TMatrix44& a_rRight )
+{
+	TMatrix44 temp = *this;
+	Multiply( temp, a_rRight );
+}
+
+// $Barnyard: FUNCTION 006c8ef0
 TBOOL TMatrix44::Invert( const TMatrix44& a_rRight )
 {
 	TASSERT( a_rRight.m_f14 == 0.0f );
@@ -138,6 +127,7 @@ TBOOL TMatrix44::Invert( const TMatrix44& a_rRight )
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 006c9050
 void TMatrix44::InvertOrthogonal( const TMatrix44& a_rRight )
 {
 	TASSERT( a_rRight.m_f14 == 0.0f );
@@ -180,6 +170,7 @@ void TMatrix44::InvertOrthogonal( const TMatrix44& a_rRight )
 	RotateVector( AsBasisVector4( 3 ), *this, AsBasisVector4( 3 ) );
 }
 
+// $Barnyard: FUNCTION 006c9110
 void TMatrix44::InvertOrthogonal()
 {
 	InvertOrthogonal( *this );
@@ -201,6 +192,7 @@ void TMatrix44::InvertOrthonormal()
 	m_f41 = m_f42 * m_f21 + m_f41 * m_f11 + m_f43 * m_f31;
 }
 
+// $Barnyard: FUNCTION 006c8d90
 TMatrix44& TMatrix44::SetFromQuaternion( const TQuaternion& a_rQuaternion )
 {
 	TFLOAT fVal1 = a_rQuaternion.z * 2.0f;
@@ -229,6 +221,7 @@ TMatrix44& TMatrix44::SetFromQuaternion( const TQuaternion& a_rQuaternion )
 	return *this;
 }
 
+// $Barnyard: FUNCTION 006c8ea0
 TMatrix44& TMatrix44::PushQuaternion( const TQuaternion& a_rQuaternion, const TMatrix44& a_rMatrix, const TVector3& a_rOrigin )
 {
 	TMatrix44 matrix;
@@ -240,6 +233,7 @@ TMatrix44& TMatrix44::PushQuaternion( const TQuaternion& a_rQuaternion, const TM
 	return *this;
 }
 
+// $Barnyard: FUNCTION 006c8840
 void TMatrix44::RotateX( TFLOAT angle )
 {
 	TFLOAT fVar1;
@@ -259,6 +253,7 @@ void TMatrix44::RotateX( TFLOAT angle )
 	m_f33 = m_f33 * fCos - fVar1 * fSin;
 }
 
+// $Barnyard: FUNCTION 006c88e0
 void TMatrix44::RotateY( TFLOAT angle )
 {
 	TFLOAT fVar1;
@@ -278,6 +273,7 @@ void TMatrix44::RotateY( TFLOAT angle )
 	m_f33 = m_f33 * fCos + fVar1 * fSin;
 }
 
+// $Barnyard: FUNCTION 006c87b0
 void TMatrix44::RotateZ( TFLOAT angle )
 {
 	TFLOAT fVar1;
@@ -295,6 +291,33 @@ void TMatrix44::RotateZ( TFLOAT angle )
 	m_f12 = fVar2 * fSin + m_f12 * fCos;
 	m_f13 = m_f23 * fSin + fVar1 * fCos;
 	m_f23 = m_f23 * fCos - fVar1 * fSin;
+}
+
+// $Barnyard: FUNCTION 005e7bb0
+void TMatrix44::GetEulerXYZ( TVector3& a_rOutVec ) const
+{
+	TFLOAT fVal1 = m_f31;
+	TMath::Clip( fVal1, -1.0f, 1.0f );
+
+	TFLOAT fVal2 = TMath::Sqrt( 1.0f - fVal1 * fVal1 );
+
+	if ( m_f11 < 0 && m_f33 < 0 )
+		fVal2 *= -1;
+
+	if ( 0.001f < fVal2 || fVal2 < -0.001 )
+	{
+		TFLOAT fVal3 = 1.0f / fVal2;
+
+		a_rOutVec.x = TMath::ATan2( m_f32 * fVal3, m_f33 * fVal3 );
+		a_rOutVec.y = TMath::ATan2( fVal1, fVal2 );
+		a_rOutVec.z = TMath::ATan2( m_f21 * fVal3, m_f11 * fVal3 );
+	}
+	else
+	{
+		a_rOutVec.x = TMath::ATan2( -m_f32, m_f22 );
+		a_rOutVec.y = -TMath::ASin( fVal1 );
+		a_rOutVec.z = 0.0f;
+	}
 }
 
 TOSHI_NAMESPACE_END

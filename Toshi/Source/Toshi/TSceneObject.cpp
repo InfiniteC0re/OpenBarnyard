@@ -1,5 +1,5 @@
 #include "ToshiPCH.h"
-#include "T2ModelInstance.h"
+#include "TSceneObject.h"
 #include "Render/TRenderInterface.h"
 
 //-----------------------------------------------------------------------------
@@ -10,16 +10,16 @@
 
 TOSHI_NAMESPACE_START
 
-T2ModelInstance::T2ModelInstance()
+TSceneObject::TSceneObject()
 {
 	m_SomeVector2.y = 1.0f;
 }
 
-T2ModelInstance::~T2ModelInstance()
+TSceneObject::~TSceneObject()
 {
 }
 
-void T2ModelInstance::Create( TModelPtr* a_pModelPtr )
+void TSceneObject::Create( TModelPtr* a_pModelPtr )
 {
 	m_eFlags |= 0b00001000;
 	m_pModelRef      = a_pModelPtr;
@@ -27,7 +27,7 @@ void T2ModelInstance::Create( TModelPtr* a_pModelPtr )
 	TTODO( "Initialise some unknown values" );
 }
 
-void T2ModelInstance::Delete()
+void TSceneObject::Delete()
 {
 	if ( this )
 	{
@@ -42,12 +42,12 @@ void T2ModelInstance::Delete()
 	}
 }
 
-void T2ModelInstance::Update( TFLOAT a_fDeltaTime )
+void TSceneObject::Update( TFLOAT a_fDeltaTime )
 {
 	m_pModelInstance->Update( a_fDeltaTime );
 }
 
-TBOOL T2ModelInstance::Render( TUINT a_uiClipFlags, const TVector3& a_rBounding )
+TBOOL TSceneObject::Render( TUINT a_uiClipFlags, const TVector3& a_rBounding )
 {
 	TIMPLEMENT();
 	auto pContext = TRenderInterface::GetSingleton()->GetCurrentContext();
@@ -65,7 +65,7 @@ TBOOL T2ModelInstance::Render( TUINT a_uiClipFlags, const TVector3& a_rBounding 
 	return TTRUE;
 }
 
-TBOOL T2ModelInstance::RenderIfVisible()
+TBOOL TSceneObject::RenderIfVisible()
 {
 	auto  pContext = TRenderInterface::GetSingleton()->GetCurrentContext();
 	auto  pModel   = m_pModelInstance->GetModel();

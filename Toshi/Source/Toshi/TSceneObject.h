@@ -4,11 +4,11 @@
 
 TOSHI_NAMESPACE_START
 
-class T2ModelInstance
+class TSceneObject
 {
 public:
-	T2ModelInstance();
-	~T2ModelInstance();
+	TSceneObject();
+	~TSceneObject();
 
 	void Create( TModelPtr* a_pModelPtr );
 	void Delete();

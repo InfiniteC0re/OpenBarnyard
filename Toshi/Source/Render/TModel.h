@@ -31,6 +31,7 @@ public:
 
 public:
 	TModelInstance( TModel* a_pModel );
+	~TModelInstance();
 
 	void Update( TFLOAT a_fDeltaTime );
 	void Render();
@@ -81,7 +82,7 @@ public:
 	virtual void  Delete()                                           = 0;
 	virtual TBOOL LoadFromFile( const TCHAR* a_szFileName )          = 0;
 	virtual void  Unload()                                           = 0;
-	virtual ~TModel()                                                = default;
+	virtual ~TModel();
 	virtual TBOOL GetUnknownFlag()                                   = 0;
 
 	TBOOL LoadTRB();

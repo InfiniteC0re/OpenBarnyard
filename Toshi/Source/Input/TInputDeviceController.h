@@ -17,15 +17,8 @@ public:
 	};
 
 public:
-	TInputDeviceController()
-	{
-		m_CurrentState = new TBOOL[ NUM_BUTTONS ];
-		m_OldState     = new TBOOL[ NUM_BUTTONS ];
-		TUtil::MemClear( m_CurrentState, sizeof( *m_CurrentState ) * NUM_BUTTONS );
-		TUtil::MemClear( m_OldState, sizeof( *m_OldState ) * NUM_BUTTONS );
-	}
-
-	~TInputDeviceController() = default;
+	TInputDeviceController();
+	~TInputDeviceController();
 
 	virtual TBOOL        GetDoodadProperties( Doodad a_iDoodad, DoodadProperties& a_rProperties ) const override;
 	virtual const TCHAR* GetButtonFromDoodad( Doodad a_iDoodad ) const override;

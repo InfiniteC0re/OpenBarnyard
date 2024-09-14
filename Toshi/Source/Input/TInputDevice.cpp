@@ -11,6 +11,7 @@ TOSHI_NAMESPACE_START
 
 TDEFINE_CLASS_NORUNTIME( TInputDevice );
 
+// $Barnyard: FUNCTION 006d98e0
 TInputDevice::TInputDevice() :
     m_Repeats( 0, 16 ),
     m_Array2( 0, 16 )
@@ -25,6 +26,7 @@ TBOOL TInputDevice::Flush()
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 006d9740
 TINT TInputDevice::ProcessRepeats( EventEmitter& a_rEmitter, TFLOAT a_fDeltaTime )
 {
 	TINT iNumProcessed = 0;
@@ -64,6 +66,7 @@ TINT TInputDevice::ProcessRepeats( EventEmitter& a_rEmitter, TFLOAT a_fDeltaTime
 	return iNumProcessed;
 }
 
+// $Barnyard: FUNCTION 006d9950
 TBOOL TInputDevice::StartRepeat( Doodad a_iDoodad, TFLOAT a_fFirstRepeatTime, TFLOAT a_fRepeatTime )
 {
 	for ( auto it = m_Repeats.Begin(); it.IsOver() == TFALSE; ++it )
@@ -82,6 +85,7 @@ TBOOL TInputDevice::StartRepeat( Doodad a_iDoodad, TFLOAT a_fFirstRepeatTime, TF
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 006d9a00
 void TInputDevice::StopRepeat( Doodad a_iDoodad )
 {
 	if ( m_Repeats.Size() != 0 )
@@ -111,6 +115,7 @@ void TInputDevice::StopRepeat( Doodad a_iDoodad )
 	}
 }
 
+// $Barnyard: FUNCTION 006d9a70
 void TInputDevice::StopAllRepeats()
 {
 	m_Repeats.Clear();
@@ -121,6 +126,7 @@ TBOOL TInputDevice::IsForceFeedbackDevice()
 	return TFALSE;
 }
 
+// $Barnyard: FUNCTION 006d9800
 void TInputDevice::ThrowRepeatEvent( EventEmitter& emitter, RepeatInfo* repeatInfo, TFLOAT flt )
 {
 	emitter.Throw(

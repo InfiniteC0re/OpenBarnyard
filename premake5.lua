@@ -19,7 +19,7 @@ workspace "OpenBarnyard"
 	-- Global defines
 	defines
 	{
-		"_CRT_SECURE_NO_WARNINGS"
+		"_CRT_SECURE_NO_WARNINGS",
 	--	"TMEMORY_USE_DLMALLOC",
 	--	"TOSHI_PROFILER",
 	--	"TOSHI_PROFILER_MEMORY",

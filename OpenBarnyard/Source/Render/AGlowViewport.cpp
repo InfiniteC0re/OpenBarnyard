@@ -126,7 +126,7 @@ void AGlowViewport::Update()
 	// Update the used glow objects and add lights to the render context if necessary
 	for ( GlowObject* pGlowObject = m_pHeadUsedObject; pGlowObject != TNULL; pGlowObject = pGlowObject->m_pNextObject )
 	{
-		if ( T2ModelInstance* pT2ModelInstance = pGlowObject->m_pT2ModelInstance )
+		if ( TSceneObject* pT2ModelInstance = pGlowObject->m_pT2ModelInstance )
 		{
 			// Set light at bone position and add it to the render context
 			TModelInstance* pModelInstance = pT2ModelInstance->GetInstance();

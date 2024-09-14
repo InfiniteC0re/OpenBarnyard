@@ -16,6 +16,8 @@ TOSHI_NAMESPACE_START
 TDEFINE_CLASS( TIndexBlockResource );
 TDEFINE_FREELIST_ALLOCATOR( TIndexBlockResource );
 
+// $Barnyard: FUNCTION 006c01b0
+// $Barnyard: FUNCTION 006c0200
 TIndexBlockResource::TIndexBlockResource()
 {
 	m_pFactory      = TNULL;
@@ -25,6 +27,11 @@ TIndexBlockResource::TIndexBlockResource()
 	m_uiIndicesUsed = 0;
 	m_uiLockCount   = 0;
 	m_Unk1          = 0;
+}
+
+// $Barnyard: FUNCTION 006c0250
+TIndexBlockResource::~TIndexBlockResource()
+{
 }
 
 TBOOL TIndexBlockResource::AttachPool( TIndexPoolResource* a_pPool )
@@ -58,6 +65,7 @@ TBOOL TIndexBlockResource::DettachPool( TIndexPoolResource* a_pPool )
 	return TFALSE;
 }
 
+// $Barnyard: FUNCTION 006c0440
 TBOOL TIndexBlockResource::Validate()
 {
 	if ( IsValid() && IsCreated() )
@@ -110,6 +118,7 @@ TBOOL TIndexBlockResource::Validate()
 	return TResource::Validate();
 }
 
+// $Barnyard: FUNCTION 006c02d0
 void TIndexBlockResource::Invalidate()
 {
 	if ( IsValid() && IsCreated() )
@@ -141,6 +150,7 @@ TBOOL TIndexBlockResource::TryValidate()
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 006c0350
 TBOOL TIndexBlockResource::CreateHAL()
 {
 	DestroyHAL();
@@ -181,6 +191,7 @@ TBOOL TIndexBlockResource::CreateHAL()
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 006c0280
 void TIndexBlockResource::DestroyHAL()
 {
 	TMemory::HALMemInfo memInfoHAL;
@@ -196,6 +207,7 @@ void TIndexBlockResource::DestroyHAL()
 	s_iHALMemoryUsage = s_iHALMemoryUsage - memInfoHAL.m_uiMemUsage;
 }
 
+// $Barnyard: FUNCTION 006c0060
 TBOOL TIndexBlockResource::Lock( TIndexPoolResourceInterface::LockBuffer* a_pLockBuffer, TUINT16 a_uiNumIndices )
 {
 	TVALIDPTR( a_pLockBuffer );
@@ -257,6 +269,7 @@ TBOOL TIndexBlockResource::Lock( TIndexPoolResourceInterface::LockBuffer* a_pLoc
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 006c0120
 void TIndexBlockResource::Unlock()
 {
 	TASSERT( 0 != m_uiLockCount );
@@ -282,6 +295,7 @@ TBOOL TIndexBlockResource::Create( TIndexFactoryResourceInterface* a_pFactory, T
 	return TResource::Create();
 }
 
+// $Barnyard: FUNCTION 006c0150
 TBOOL TIndexBlockResource::CanFit( TIndexPoolResource* a_pPoolResource ) const
 {
 	if ( !HASANYFLAG( m_uiFlags, 1 ) )

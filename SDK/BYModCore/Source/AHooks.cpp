@@ -15,6 +15,7 @@
 
 #include <Input/TInputDeviceKeyboard.h>
 #include <Render/TCameraObject.h>
+#include <Render/TModel.h>
 #include <Platform/Windows/TMSWindow.h>
 #include <Platform/DX8/TRenderInterface_DX8.h>
 
@@ -205,6 +206,30 @@ MEMBER_HOOK( 0x005dfac0, AInstanceManager_CollObjectModel, CollObjectModel_DCTOR
 	pList2->Reset();
 
 	CallOriginal();
+}
+
+MEMBER_HOOK( 0x006ce820, Toshi::TModel, TModel_LoadTRB, TBOOL, const TCHAR* a_szFileName, TTRB* a_pAssetTRB, TUINT8 a_ui8FileNameLen )
+{
+	TBOOL bResult = CallOriginal( a_szFileName, a_pAssetTRB, a_ui8FileNameLen );
+
+	if ( m_bIsAssetFile )
+	{
+		// Trying to fix careless memory handling that sometimes causes crashes in the original game
+		m_szSymbolPrefix = T2String8::CreateCopy( a_szFileName );
+	}
+
+	return bResult;
+}
+
+MEMBER_HOOK( 0x006ce780, Toshi::TModel, TModel_UnloadTRB, void )
+{
+	CallOriginal();
+
+	if ( m_bIsAssetFile )
+	{
+		// Out patch creates a copy of the symbol string so need to deallocate it here
+		delete[] m_szSymbolPrefix;
+	}
 }
 
 class AOptions
@@ -810,32 +835,36 @@ void AHooks::Initialise()
 	InstallHook<TMemory_Free>();
 	InstallHook<TMemory_Alloc>();
 	InstallHook<TMemory_GetMemInfo>();
-	//InstallHook<TMSWindow_SetPosition>();
+	////InstallHook<TMSWindow_SetPosition>();
 	InstallHook<AGUISlideshow_ProcessInput>();
-	InstallHook<FUN_0042ab30>();
+	//InstallHook<FUN_0042ab30>();
 	InstallHook<AGUI2_MainPostRenderCallback>();
-	InstallHook<AGUI2_Constructor>();
-	InstallHook<AGUI2_OnCreate>();
-	InstallHook<AGUI2_OnUpdate>();
-	InstallHook<AGameStateController_ProcessInput>();
-	InstallHook<ATerrain_Render>();
-	InstallHook<AModelLoader_AModelLoaderLoadTRBCallback>();
-	InstallHook<AMaterialLibrary_LoadTTLData>();
-	InstallHook<ARenderer_CreateTRender>();
-	InstallHook<ARenderer_OnCreate>();
-	InstallHook<AFrontEndMiniGameState2_CTOR>();
-	InstallHook<TRenderD3DInterface_OnD3DDeviceLost>();
-	InstallHook<TRenderD3DInterface_OnD3DDeviceFound>();
-	InstallHook<TModelRegistry_CreateModel>();
-	InstallHook<TRenderInterface_SetLightColourMatrix>();
-	InstallHook<AOptions_IsResolutionCompatible>();
-	InstallHook<ADisplayModes_Win_DoesModeExist>();
-	//InstallHook<TCameraObject_SetFOV>();
-	InstallHook<TRenderD3DInterface_UpdateColourSettings>();
-	//InstallHook<TRenderContext_CullSphereToFrustumSimple>();
-	//InstallHook<TRenderContext_CullSphereToFrustum>();
-	InstallHook<TTRB_Load>();
+	//InstallHook<AGUI2_Constructor>();
+	//InstallHook<AGUI2_OnCreate>();
+	//InstallHook<AGUI2_OnUpdate>();
+	//InstallHook<AGameStateController_ProcessInput>();
+	//InstallHook<ATerrain_Render>();
+	//InstallHook<AModelLoader_AModelLoaderLoadTRBCallback>();
+	//InstallHook<AMaterialLibrary_LoadTTLData>();
+	//InstallHook<ARenderer_CreateTRender>();
+	//InstallHook<ARenderer_OnCreate>();
+	//InstallHook<AFrontEndMiniGameState2_CTOR>();
+	//InstallHook<TRenderD3DInterface_OnD3DDeviceLost>();
+	//InstallHook<TRenderD3DInterface_OnD3DDeviceFound>();
+	//InstallHook<TModelRegistry_CreateModel>();
+	//InstallHook<TRenderInterface_SetLightColourMatrix>();
+	//InstallHook<AOptions_IsResolutionCompatible>();
+	//InstallHook<ADisplayModes_Win_DoesModeExist>();
+	////InstallHook<TCameraObject_SetFOV>();
+	//InstallHook<TRenderD3DInterface_UpdateColourSettings>();
+	////InstallHook<TRenderContext_CullSphereToFrustumSimple>();
+	////InstallHook<TRenderContext_CullSphereToFrustum>();
+	//InstallHook<TTRB_Load>();
+
+	// Fixing crashes and memory stumps of the original game
 	InstallHook<CollObjectModel_DCTOR>();
+	InstallHook<TModel_LoadTRB>();
+	InstallHook<TModel_UnloadTRB>();
 }
 
 TBOOL AHooks::AddHook( Hook a_eHook, HookType a_eHookType, void* a_pCallback )

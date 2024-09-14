@@ -91,6 +91,7 @@ public:
 		Set( -x, -y );
 	}
 
+	// $Barnyard: FUNCTION 006cce70
 	void Normalize()
 	{
 		if ( MagnitudeSq() != 0.0f )
@@ -107,6 +108,7 @@ public:
 	void Abs( const TVector2& vec3 ) { Set( TMath::Abs( vec3.x ), TMath::Abs( vec3.y ) ); }
 	void Abs() { Set( TMath::Abs( x ), TMath::Abs( y ) ); }
 
+	// $Barnyard: FUNCTION 006ccdf0
 	TFLOAT           Magnitude() const { return TMath::Sqrt( x * x + y * y ); }
 	constexpr TFLOAT MagnitudeSq() const { return x * x + y * y; }
 

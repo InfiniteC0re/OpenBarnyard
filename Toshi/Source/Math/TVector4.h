@@ -44,6 +44,7 @@ public:
 		TVector4::w = 1.0f;
 	}
 
+	// $Barnyard: FUNCTION 0046b360
 	constexpr void Set( const TVector4& vec )
 	{
 		TVector4::x = vec.x;
@@ -68,7 +69,9 @@ public:
 		TVector4::w = w;
 	}
 
+	TFLOAT          NormaliseMag();
 	void            Normalise();
+	void            Normalise4();
 	constexpr TBOOL isNormalised( TFLOAT fVal = 0.05f ) const { return ( ( ( 1.0f - fVal ) * ( 1.0f - fVal ) ) < MagnitudeSq() ) && ( ( ( 1.0f + fVal ) * ( 1.0f + fVal ) ) >= MagnitudeSq() ); }
 
 	void ProjectNormalToPlane( const TVector4& vec, const TVector4& vec2 );
@@ -87,6 +90,7 @@ public:
 		z += vec.z;
 	}
 
+	// $Barnyard: FUNCTION 0043cce0
 	constexpr void Add( const TVector4& a, const TVector4& b )
 	{
 		Set( a + b );
@@ -100,6 +104,7 @@ public:
 		z -= vec.z;
 	}
 
+	// $Barnyard: FUNCTION 0041cd70
 	constexpr void Substract( const TVector4& a, const TVector4& b )
 	{
 		Set( a - b );
@@ -121,6 +126,19 @@ public:
 		z *= ratio;
 	}
 
+	// $Barnyard: FUNCTION 006c9250
+	constexpr void Divide4( TFLOAT scalar )
+	{
+		if ( scalar != 0.0f )
+		{
+			TFLOAT ratio = 1.0f / scalar;
+			x *= ratio;
+			y *= ratio;
+			z *= ratio;
+			w *= ratio;
+		}
+	}
+
 	constexpr void Divide( const TVector4& vec1, const TVector4& vec2 )
 	{
 		Set( vec1 / vec2 );
@@ -132,6 +150,7 @@ public:
 		Divide( scalar );
 	}
 
+	// $Barnyard: FUNCTION 006c7430
 	constexpr void Multiply( const TVector4& vec )
 	{
 		x *= vec.x;
@@ -139,6 +158,7 @@ public:
 		z *= vec.z;
 	}
 
+	// $Barnyard: FUNCTION 006c7450
 	constexpr void Multiply( TFLOAT scalar )
 	{
 		x *= scalar;
@@ -146,15 +166,33 @@ public:
 		z *= scalar;
 	}
 
-	constexpr void Multiply( const TVector4& vec1, const TVector4& vec2 )
-	{
-		Set( vec1 * vec2 );
-	}
-
+	// $Barnyard: FUNCTION 006c7380
 	constexpr void Multiply( const TVector4& vec, TFLOAT scalar )
 	{
 		Set( vec );
 		Multiply( scalar );
+	}
+
+	constexpr void Multiply4( const TVector4& vec )
+	{
+		x *= vec.x;
+		y *= vec.y;
+		z *= vec.z;
+		w *= vec.w;
+	}
+
+	constexpr void Multiply4( TFLOAT scalar )
+	{
+		x *= scalar;
+		y *= scalar;
+		z *= scalar;
+		w *= scalar;
+	}
+
+	constexpr void Multiply4( const TVector4& vec, TFLOAT scalar )
+	{
+		Set( vec );
+		Multiply4( scalar );
 	}
 
 	void Cos( const TVector4& vec )
@@ -165,6 +203,7 @@ public:
 		w = TMath::Cos( vec.w );
 	}
 
+	// $Barnyard: FUNCTION 006c7740
 	void CrossProduct( const TVector4& vec1, const TVector4& vec2 )
 	{
 		x = vec2.z * vec1.y - vec2.y * vec1.z;
@@ -174,15 +213,25 @@ public:
 	}
 
 	constexpr void Lerp3( const TVector4& finish, TFLOAT t ) { Lerp3( *this, finish, t ); }
+
+	// $Barnyard: FUNCTION 006c77e0
 	constexpr void Lerp3( const TVector4& start, const TVector4& finish, TFLOAT t )
 	{
-		TVector4 progress = finish - start;
-		progress.Multiply( t );
-
-		TVector4::x = progress.x + start.x;
-		TVector4::y = progress.y + start.y;
-		TVector4::z = progress.z + start.z;
+		TVector4::x = ( finish.x - start.x ) * t + start.x;
+		TVector4::y = ( finish.y - start.y ) * t + start.y;
+		TVector4::z = ( finish.z - start.z ) * t + start.z;
 		TVector4::w = start.w;
+	}
+
+	constexpr void Lerp4( const TVector4& finish, TFLOAT t ) { Lerp4( *this, finish, t ); }
+
+	// $Barnyard: FUNCTION 006c7790
+	constexpr void Lerp4( const TVector4& start, const TVector4& finish, TFLOAT t )
+	{
+		TVector4::x = ( finish.x - start.x ) * t + start.x;
+		TVector4::y = ( finish.y - start.y ) * t + start.y;
+		TVector4::z = ( finish.z - start.z ) * t + start.z;
+		TVector4::w = ( finish.w - start.w ) * t + start.w;
 	}
 
 	constexpr double GetScalarProjectionOnUnit( const TVector4& vec )
@@ -195,6 +244,8 @@ public:
 
 	constexpr void Negate( const TVector4& vec ) { Negate3( vec ); }
 	constexpr void Negate() { Negate3(); }
+
+	// $Barnyard: FUNCTION 005f1740
 	constexpr void Negate3( const TVector4& vec ) { Set( -vec.x, -vec.y, -vec.z, vec.w ); }
 
 	constexpr void Negate3()
@@ -208,7 +259,9 @@ public:
 	constexpr void Negate4() { Set( -x, -y, -z, -w ); }
 
 	TFLOAT           Magnitude() const { return TMath::Sqrt( x * x + y * y + z * z ); }
+	TFLOAT           Magnitude4() const { return TMath::Sqrt( w * w + x * x + y * y + z * z ); }
 	constexpr TFLOAT MagnitudeSq() const { return x * x + y * y + z * z; }
+	constexpr TFLOAT MagnitudeSq4() const { return w * w + x * x + y * y + z * z; }
 	TFLOAT           MagnitudeXZ() const { return TMath::Sqrt( x * x + z * z ); }
 	constexpr TFLOAT MagnitudeSqXZ() const { return x * x + z * z; }
 
@@ -222,6 +275,12 @@ public:
 		return *this;
 	}
 
+	// $Barnyard: FUNCTION 006c92f0
+	constexpr TBOOL IsEqual( const TVector4& a_rcVec ) const
+	{
+		return a_rcVec.x == x && a_rcVec.y == y && a_rcVec.z == z;
+	}
+
 	constexpr TVector4 operator+( const TVector3& other ) const { return { x + other.x, y + other.y, z + other.z, w }; }
 	constexpr TVector4 operator-( const TVector3& other ) const { return { x - other.x, y - other.y, z - other.z, w }; }
 	constexpr TVector4 operator*( const TVector3& other ) const { return { x * other.x, y * other.y, z * other.z, w }; }
@@ -229,6 +288,8 @@ public:
 
 	constexpr TVector4 operator+( const TVector4& other ) const { return { x + other.x, y + other.y, z + other.z, other.w }; }
 	constexpr TVector4 operator-( const TVector4& other ) const { return { x - other.x, y - other.y, z - other.z, other.w }; }
+
+	// $Barnyard: FUNCTION 004159e0
 	constexpr TVector4 operator*( const TVector4& other ) const { return { x * other.x, y * other.y, z * other.z, other.w }; }
 	constexpr TVector4 operator/( const TVector4& other ) const { return { x / other.x, y / other.y, z / other.z, other.w }; }
 
@@ -258,7 +319,9 @@ public:
 	const TVector2& AsVector2() const { return TREINTERPRETCAST( const TVector2&, *this ); }
 
 public:
-	static TFLOAT           Distance( const TVector4& vec1, const TVector4& vec2 ) { return ( vec2 - vec1 ).Magnitude(); }
+	static TFLOAT Distance( const TVector4& vec1, const TVector4& vec2 ) { return ( vec2 - vec1 ).Magnitude(); }
+
+	// $Barnyard: FUNCTION 006c76c0
 	static constexpr TFLOAT DistanceSq( const TVector4& vec1, const TVector4& vec2 ) { return ( vec2 - vec1 ).MagnitudeSq(); }
 	static TFLOAT           DistanceXZ( const TVector4& vec1, const TVector4& vec2 ) { return ( vec2 - vec1 ).MagnitudeXZ(); }
 	static constexpr TFLOAT DistanceSqXZ( const TVector4& vec1, const TVector4& vec2 ) { return ( vec2 - vec1 ).MagnitudeSqXZ(); }
@@ -267,11 +330,16 @@ public:
 	static constexpr TFLOAT DotProduct( const TVector4& vec1, const TVector4& vec2 ) { return DotProduct3( vec1, vec2 ); }
 
 	TFLOAT constexpr DotProduct3( const TVector4& vec ) const { return DotProduct3( *this, vec ); }
+
+	// $Barnyard: FUNCTION 006c7670
 	static constexpr TFLOAT DotProduct3( const TVector4& vec1, const TVector4& vec2 ) { return vec1.x * vec2.x + vec1.y * vec2.y + vec1.z * vec2.z; }
 
 	TFLOAT constexpr DotProduct4( const TVector4& vec ) const { return DotProduct4( *this, vec ); }
+
+	// $Barnyard: FUNCTION 006c7690
 	static constexpr TFLOAT DotProduct4( const TVector4& vec1, const TVector4& vec2 ) { return vec1.x * vec2.x + vec1.y * vec2.y + vec1.z * vec2.z + vec1.w * vec2.w; }
 
+	// $Barnyard: FUNCTION 006085d0
 	static void Swap( TVector4& a_rVec1, TVector4& a_rVec2 )
 	{
 		TVector4 temp = a_rVec1;

@@ -9,6 +9,17 @@
 
 TOSHI_NAMESPACE_START
 
+// $Barnyard: FUNCTION 006d9d80
+TModelHAL::TModelHAL()
+{
+}
+
+// $Barnyard: FUNCTION 006d9f70
+TModelHAL::~TModelHAL()
+{
+}
+
+// $Barnyard: FUNCTION 006d9da0
 TBOOL TModelHAL::Create( TTMD* a_pTMD, TBOOL a_bLoad )
 {
 	m_eFlags |= Flags_Created;
@@ -25,6 +36,7 @@ TBOOL TModelHAL::Create( TTMD* a_pTMD, TBOOL a_bLoad )
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 006d9de0
 TBOOL TModelHAL::Create( const TCHAR* a_szFileName, TBOOL a_bLoad )
 {
 	m_eFlags |= Flags_Created;
@@ -41,6 +53,7 @@ TBOOL TModelHAL::Create( const TCHAR* a_szFileName, TBOOL a_bLoad )
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 006d9e20
 TBOOL TModelHAL::Create( const TCHAR* a_szFileName, TBOOL a_bLoad, TTRB* a_pAssetTRB, TUINT8 a_ui8FileNameLen )
 {
 	m_eFlags |= Flags_Created;
@@ -57,6 +70,7 @@ TBOOL TModelHAL::Create( const TCHAR* a_szFileName, TBOOL a_bLoad, TTRB* a_pAsse
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 006d9f50
 void TModelHAL::Delete()
 {
 	Unload();
@@ -74,6 +88,7 @@ TBOOL TModelHAL::LoadFromFile( const TCHAR* a_szFileName )
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 006d9ed0
 void TModelHAL::Unload()
 {
 	if ( m_pSkeleton )
@@ -107,6 +122,7 @@ TBOOL TModelHAL::GetUnknownFlag()
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 006d9e60
 TBOOL TModelHAL::LoadTMDHAL( TTMD* a_pTMD )
 {
 	if ( !IsLoaded() )
@@ -118,6 +134,7 @@ TBOOL TModelHAL::LoadTMDHAL( TTMD* a_pTMD )
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 006d9e90
 TBOOL TModelHAL::LoadTMDHAL( const TCHAR* a_szFileName, TTRB* a_pAssetTRB, TUINT8 a_ui8FileNameLen )
 {
 	if ( !IsLoaded() )

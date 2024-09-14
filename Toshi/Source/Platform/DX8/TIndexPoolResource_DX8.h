@@ -16,6 +16,7 @@ public:
 
 public:
 	TIndexPoolResource();
+	~TIndexPoolResource();
 
 	virtual TBOOL Validate() override;
 	virtual void  Invalidate() override;
@@ -24,7 +25,7 @@ public:
 	virtual void  Unlock( TUINT16 a_uiNewNumIndices ) override;
 	virtual TBOOL Create( TIndexFactoryResourceInterface* a_pFactory, TUINT16 a_uiMaxIndices, TUINT16 a_uiFlags ) override;
 
-	TUINT16* GetIndices() { return ( m_uiLockCount == 0 ) ? m_pIndices : TNULL; }
+	TUINT16* GetIndices();
 
 	TResource*           GetParent();
 	TIndexBlockResource* GetIndexBlock();

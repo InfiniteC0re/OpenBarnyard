@@ -14,6 +14,10 @@ TOSHI_NAMESPACE_START
 
 TDEFINE_CLASS( TIndexFactoryResource );
 
+// destructor
+// $Barnyard: FUNCTION 006d7b80
+
+// $Barnyard: FUNCTION 006d7a50
 TIndexBlockResource* TIndexFactoryResource::FindBlockResource( TIndexPoolResource* a_pResource )
 {
 	if ( a_pResource->GetFlags() & 2 )
@@ -47,6 +51,7 @@ TIndexBlockResource* TIndexFactoryResource::FindBlockResource( TIndexPoolResourc
 	return result.m_First;
 }
 
+// $Barnyard: FUNCTION 006d7a90
 TIndexBlockResource* TIndexFactoryResource::CreateBlockResource( TUINT16 a_uiMaxIndices, TUINT32 a_uiFlags )
 {
 	auto pIndexBlock = TSTATICCAST(
@@ -59,6 +64,7 @@ TIndexBlockResource* TIndexFactoryResource::CreateBlockResource( TUINT16 a_uiMax
 	return pIndexBlock;
 }
 
+// $Barnyard: FUNCTION 006d7ad0
 TIndexPoolResourceInterface* TIndexFactoryResource::CreatePoolResource( TUINT16 a_uiMaxStaticIndices, TUINT16 a_uiFlags )
 {
 	auto pIndexPool = TSTATICCAST(

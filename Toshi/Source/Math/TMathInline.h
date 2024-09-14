@@ -38,7 +38,11 @@ TFORCEINLINE TBOOL  IsFinite( TFLOAT fVal ) { return _finite( fVal ) != 0; }
 TFORCEINLINE TFLOAT Sin( TFLOAT fVal ) { return sinf( fVal ); }
 TFORCEINLINE TFLOAT Cos( TFLOAT fVal ) { return cosf( fVal ); }
 TFORCEINLINE TFLOAT Tan( TFLOAT fVal ) { return tanf( fVal ); }
-TFORCEINLINE TFLOAT ASin( TFLOAT fVal ) { return sinf( fVal ); }
+
+// $Barnyard: FUNCTION 006b69f0
+TFORCEINLINE TFLOAT ASin( TFLOAT fVal ) { return asinf( fVal ); }
+
+// $Barnyard: FUNCTION 006b6a20
 TFORCEINLINE TFLOAT ACos( TFLOAT fVal ) { return acos( fVal ); }
 TFORCEINLINE TFLOAT ATan( TFLOAT fVal )
 {
@@ -86,9 +90,14 @@ TFORCEINLINE TFLOAT OneOverSqrt( TFLOAT a_fX )
 	return 1.0f / Sqrt( a_fX );
 }
 
-TFORCEINLINE TINT  Round( TFLOAT a_fVal ) { return (TINT)roundf( a_fVal ); }
-TFORCEINLINE TINT  CeilToInt( TFLOAT a_fVal ) { return TINT( a_fVal ) - TUINT32( 0 < TUINT32( a_fVal - TUINT32( a_fVal ) ) ); }
-TFORCEINLINE TINT  FloorToInt( TFLOAT a_fVal ) { return TINT( a_fVal ) - TUINT32( 0x80000000 < TUINT32( a_fVal - TUINT32( a_fVal ) ) ); }
+TFORCEINLINE TINT Round( TFLOAT a_fVal ) { return (TINT)roundf( a_fVal ); }
+
+// $Barnyard: FUNCTION 006b69d0
+TFORCEINLINE TINT CeilToInt( TFLOAT a_fVal ) { return TINT( a_fVal ) - TUINT32( 0 < TUINT32( a_fVal - TUINT32( a_fVal ) ) ); }
+
+// $Barnyard: FUNCTION 006b69b0
+TFORCEINLINE TINT FloorToInt( TFLOAT a_fVal ) { return TINT( a_fVal ) - TUINT32( 0x80000000 < TUINT32( a_fVal - TUINT32( a_fVal ) ) ); }
+
 TFORCEINLINE TBOOL IsNaN( TFLOAT fVal ) { return isnan( fVal ); }
 
 TFORCEINLINE TINT FastMod( TINT a_iNum, TINT a_iModulus )
@@ -99,14 +108,23 @@ TFORCEINLINE TINT FastMod( TINT a_iNum, TINT a_iModulus )
 	return a_iNum & ( a_iModulus - 1 );
 }
 
+// $Barnyard: FUNCTION 006b6af0
+TFORCEINLINE TFLOAT Pow( TFLOAT a_fValue, TFLOAT a_fPow )
+{
+	return powf( a_fValue, a_fPow );
+}
+
+// $Barnyard: FUNCTION 006b7370
 TFORCEINLINE void SinCos( TFLOAT fVal, TFLOAT& a_rSin, TFLOAT& a_rCos )
 {
 	a_rSin = sin( fVal );
 	a_rCos = cos( fVal );
 }
 
+// $Barnyard: FUNCTION 006b6640
 TFORCEINLINE TFLOAT LERP( TFLOAT a, TFLOAT b, TFLOAT t ) { return a + t * ( b - a ); }
 
+// $Barnyard: FUNCTION 006b6660
 TFORCEINLINE TFLOAT LERPClamped( TFLOAT a, TFLOAT b, TFLOAT t )
 {
 	TFLOAT fResult = LERP( a, b, t );
@@ -117,6 +135,8 @@ TFORCEINLINE TFLOAT LERPClamped( TFLOAT a, TFLOAT b, TFLOAT t )
 	return fResult;
 }
 
+// $Barnyard: FUNCTION 006b6870
+// $Barnyard: FUNCTION 006b68a0
 template <typename T>
 TFORCEINLINE void Clip( T& rVal, const T& Min, const T& Max )
 {

@@ -26,8 +26,8 @@ public:
 	};
 
 public:
-	TInputDeviceMouse()  = default;
-	~TInputDeviceMouse() = default;
+	TInputDeviceMouse();
+	~TInputDeviceMouse();
 
 	virtual TBOOL        GetDoodadProperties( Doodad a_iDoodad, TInputDevice::DoodadProperties& props ) const override;
 	virtual const TCHAR* GetButtonFromDoodad( Doodad a_iDoodad ) const override;

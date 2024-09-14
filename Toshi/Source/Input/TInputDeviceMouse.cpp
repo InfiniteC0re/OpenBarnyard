@@ -11,6 +11,17 @@ TOSHI_NAMESPACE_START
 
 TDEFINE_CLASS_NORUNTIME( TInputDeviceMouse );
 
+// $Barnyard: FUNCTION 006c40d0
+TInputDeviceMouse::TInputDeviceMouse()
+{
+}
+
+// $Barnyard: FUNCTION 006c40f0
+TInputDeviceMouse::~TInputDeviceMouse()
+{
+}
+
+// $Barnyard: FUNCTION 006c4100
 TBOOL TInputDeviceMouse::GetDoodadProperties( Doodad a_iDoodad, TInputDevice::DoodadProperties& props ) const
 {
 	if ( a_iDoodad < 0x30000 || AXIS_WHEEL < a_iDoodad )
@@ -36,6 +47,7 @@ TBOOL TInputDeviceMouse::GetDoodadProperties( Doodad a_iDoodad, TInputDevice::Do
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 006c4160
 const TCHAR* TInputDeviceMouse::GetButtonFromDoodad( Doodad a_iDoodad ) const
 {
 	switch ( a_iDoodad )

@@ -7,6 +7,9 @@ class TModelHAL :
     public TModel
 {
 public:
+	TModelHAL();
+	~TModelHAL();
+
 	virtual TBOOL Create( TTMD* a_pTMD, TBOOL a_bLoad ) override;
 	virtual TBOOL Create( const TCHAR* a_szFileName, TBOOL a_bLoad ) override;
 	virtual void  Delete() override;

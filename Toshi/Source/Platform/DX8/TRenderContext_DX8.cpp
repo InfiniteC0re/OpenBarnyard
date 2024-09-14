@@ -10,16 +10,19 @@
 
 TOSHI_NAMESPACE_START
 
+// $Barnyard: FUNCTION 006d6c80
 void TRenderContextD3D::ComputePerspectiveProjection()
 {
 	TRenderContext::ComputePerspectiveProjection( m_Projection, m_oViewportParams, m_oProjParams );
 }
 
+// $Barnyard: FUNCTION 006d6f80
 void TRenderContextD3D::ComputeOrthographicProjection()
 {
 	TRenderContext::ComputeOrthographicProjection( m_Projection, m_oViewportParams, m_oProjParams );
 }
 
+// $Barnyard: FUNCTION 006d6d30
 void TRenderContextD3D::ComputePerspectiveFrustum()
 {
 	TRenderContext::ComputePerspectiveFrustum( m_aFrustumPlanes1, m_oViewportParams, m_oProjParams );
@@ -33,6 +36,7 @@ void TRenderContextD3D::ComputePerspectiveFrustum()
 	m_aFrustumPlanes2[ WORLDPLANE_FAR ]    = m_aFrustumPlanes1[ WORLDPLANE_FAR ];
 }
 
+// $Barnyard: FUNCTION 006d7030
 void TRenderContextD3D::ComputeOrthographicFrustum()
 {
 	TRenderContext::ComputeOrthographicFrustum( m_aFrustumPlanes1, m_oViewportParams, m_oProjParams );
@@ -46,6 +50,7 @@ void TRenderContextD3D::ComputeOrthographicFrustum()
 	m_aFrustumPlanes2[ WORLDPLANE_FAR ]    = m_aFrustumPlanes1[ WORLDPLANE_FAR ];
 }
 
+// $Barnyard: FUNCTION 006d7220
 void TRenderContextD3D::EnableFogHAL()
 {
 	auto pRenderer = TSTATICCAST( TRenderD3DInterface, m_pRenderer );
@@ -69,15 +74,18 @@ void TRenderContextD3D::DisableFogHAL()
 	pDevice->SetRenderState( D3DRS_FOGENABLE, FALSE );
 }
 
+// $Barnyard: FUNCTION 006d6c60
 TRenderContextD3D::TRenderContextD3D( TRenderInterface* a_pRenderer ) :
     TRenderContext( a_pRenderer )
 {
 }
 
+// $Barnyard: FUNCTION 006d72e0
 TRenderContextD3D::~TRenderContextD3D()
 {
 }
 
+// $Barnyard: FUNCTION 006d7310
 void TRenderContextD3D::Update()
 {
 	if ( IsDirty() )

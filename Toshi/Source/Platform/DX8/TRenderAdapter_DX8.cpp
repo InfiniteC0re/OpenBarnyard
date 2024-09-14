@@ -10,51 +10,71 @@
 
 TOSHI_NAMESPACE_START
 
+TD3DAdapter::TD3DAdapter()
+{
+}
+
+// $Barnyard: FUNCTION 006c7070
+// $Barnyard: FUNCTION 006d6940
+TD3DAdapter::~TD3DAdapter()
+{
+}
+
+// $Barnyard: FUNCTION 006d66c0
 TUINT32 TD3DAdapter::GetAdapterIndex() const
 {
 	return m_uiAdapterIndex;
 }
 
+// $Barnyard: FUNCTION 006d66d0
 const TString8& TD3DAdapter::GetDriver() const
 {
 	return m_Driver;
 }
 
+// $Barnyard: FUNCTION 006d66e0
 const TString8& TD3DAdapter::GetDriverDescription() const
 {
 	return m_Description;
 }
 
+// $Barnyard: FUNCTION 006d66f0
 TUINT16 TD3DAdapter::GetProductID() const
 {
 	return m_DriverVersionHighPart >> 16;
 }
 
+// $Barnyard: FUNCTION 006d6700
 TUINT16 TD3DAdapter::GetVersion() const
 {
 	return m_DriverVersionHighPart & 0xFFFF;
 }
 
+// $Barnyard: FUNCTION 006d6710
 TUINT16 TD3DAdapter::GetSubVersion() const
 {
 	return m_DriverVersionLowPart >> 16;
 }
 
+// $Barnyard: FUNCTION 006d6720
 TUINT16 TD3DAdapter::GetBuild() const
 {
 	return m_DriverVersionLowPart & 0xFFFF;
 }
 
+// $Barnyard: FUNCTION 006d6730
 const GUID& TD3DAdapter::GetDeviceIdentifier() const
 {
 	return m_DeviceIdentifier;
 }
 
+// $Barnyard: FUNCTION 006d47b0
 TUINT32 TD3DAdapter::GetNumSupportedDevices() const
 {
 	return Mode::NUMSUPPORTEDDEVICES;
 }
 
+// $Barnyard: FUNCTION 006d69a0
 void TD3DAdapter::EnumerateOutputs( TRenderInterface* a_pRenderer )
 {
 	TRenderD3DInterface* pRenderer = TSTATICCAST( TRenderD3DInterface, a_pRenderer );
@@ -163,31 +183,37 @@ void TD3DAdapter::EnumerateOutputs( TRenderInterface* a_pRenderer )
 	}
 }
 
+// $Barnyard: FUNCTION 004ffb50
 TRenderAdapter* TD3DAdapter::Mode::GetAdapter() const
 {
 	return m_pOwnerAdapter;
 }
 
+// $Barnyard: FUNCTION 004ffe40
 TSIZE TD3DAdapter::Mode::GetModeIndex() const
 {
 	return m_uiModeIndex;
 }
 
+// $Barnyard: FUNCTION 006d6760
 TUINT32 TD3DAdapter::Mode::GetWidth() const
 {
 	return m_DisplayMode.Width;
 }
 
+// $Barnyard: FUNCTION 005f7a30
 TUINT32 TD3DAdapter::Mode::GetHeight() const
 {
 	return m_DisplayMode.Height;
 }
 
+// $Barnyard: FUNCTION 006d6770
 TBOOL TD3DAdapter::Mode::Is32Bit() const
 {
 	return m_DisplayMode.Format == D3DFMT_X8R8G8B8;
 }
 
+// $Barnyard: FUNCTION 006d6780
 TBOOL TD3DAdapter::Mode::Is16Bit() const
 {
 	return m_DisplayMode.Format == D3DFMT_R5G6B5 ||
@@ -195,11 +221,13 @@ TBOOL TD3DAdapter::Mode::Is16Bit() const
 	    m_DisplayMode.Format == D3DFMT_X4R4G4B4;
 }
 
+// $Barnyard: FUNCTION 006d67a0
 TUINT32 TD3DAdapter::Mode::GetRefreshRate() const
 {
 	return m_DisplayMode.RefreshRate;
 }
 
+// $Barnyard: FUNCTION 006d67b0
 TRenderAdapter::Mode::Device* TD3DAdapter::Mode::GetDevice( TUINT32 a_iDevice )
 {
 	if ( a_iDevice >= 0 && a_iDevice < NUMSUPPORTEDDEVICES )
@@ -210,6 +238,7 @@ TRenderAdapter::Mode::Device* TD3DAdapter::Mode::GetDevice( TUINT32 a_iDevice )
 	return TNULL;
 }
 
+// $Barnyard: FUNCTION 006d67f0
 D3DFORMAT TD3DAdapter::Mode::GetBackBufferFormat( TUINT32 a_uiColourDepth )
 {
 	if ( a_uiColourDepth == 16 )
@@ -220,41 +249,49 @@ D3DFORMAT TD3DAdapter::Mode::GetBackBufferFormat( TUINT32 a_uiColourDepth )
 	return D3DFORMAT( ( a_uiColourDepth != 32 ) - 1 & 0x16 );
 }
 
+// $Barnyard: FUNCTION 006d6820
 TRenderAdapter::Mode* TD3DAdapter::Mode::Device::GetMode() const
 {
 	return m_pOwnerMode;
 }
 
+// $Barnyard: FUNCTION 006d6830
 TUINT32 TD3DAdapter::Mode::Device::GetDeviceIndex() const
 {
 	return m_uiDeviceIndex;
 }
 
+// $Barnyard: FUNCTION 006d6840
 const TCHAR* TD3DAdapter::Mode::Device::GetTypeString() const
 {
 	return DEVICETYPESSTRINGS[ m_uiDeviceIndex ];
 }
 
+// $Barnyard: FUNCTION 006d6850
 TBOOL TD3DAdapter::Mode::Device::IsSoftware() const
 {
 	return m_bIsSoftware;
 }
 
+// $Barnyard: FUNCTION 006d6860
 TBOOL TD3DAdapter::Mode::Device::CanRenderWindowed() const
 {
 	return m_bCanRenderWindowed;
 }
 
+// $Barnyard: FUNCTION 006d6870
 TBOOL TD3DAdapter::Mode::Device::SupportsHardwareTransfomations() const
 {
 	return m_bSupportsTransformation;
 }
 
+// $Barnyard: FUNCTION 006d6890
 TBOOL TD3DAdapter::Mode::Device::IsDepthStencilFormatSupported( TUINT32 a_iIndex ) const
 {
 	return m_aSupportedDSFormats[ a_iIndex ];
 }
 
+// $Barnyard: FUNCTION 006d6880
 TBOOL TD3DAdapter::Mode::Device::SupportsPureDevice() const
 {
 	return m_bSupportsPureDevice;

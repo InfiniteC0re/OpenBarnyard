@@ -13,6 +13,7 @@ TOSHI_NAMESPACE_START
 
 TDEFINE_CLASS_NORUNTIME( TInputInterface );
 
+// $Barnyard: FUNCTION 006c3fd0
 TInputDevice* TInputInterface::GetDeviceByIndex( TClass* a_pClass, TUINT a_uiIndex )
 {
 	if ( m_DeviceList.Count() == 0 )
@@ -38,6 +39,7 @@ TInputDevice* TInputInterface::GetDeviceByIndex( TClass* a_pClass, TUINT a_uiInd
 	return TNULL;
 }
 
+// $Barnyard: FUNCTION 006c3f80
 void TInputInterface::AddDevice( TInputDevice* device )
 {
 	if ( device != TNULL )
@@ -47,6 +49,7 @@ void TInputInterface::AddDevice( TInputDevice* device )
 	}
 }
 
+// $Barnyard: FUNCTION 006c3d50
 void TInputInterface::RemoveDevice( TInputDevice* device )
 {
 	if ( device != TNULL )
@@ -56,6 +59,7 @@ void TInputInterface::RemoveDevice( TInputDevice* device )
 	}
 }
 
+// $Barnyard: FUNCTION 006c3e10
 TBOOL TInputInterface::AcquireAll()
 {
 	TBOOL bResult = TTRUE;
@@ -68,6 +72,7 @@ TBOOL TInputInterface::AcquireAll()
 	return bResult;
 }
 
+// $Barnyard: FUNCTION 006c3e50
 TBOOL TInputInterface::UnacquireAll()
 {
 	TBOOL bResult = TTRUE;
@@ -80,6 +85,7 @@ TBOOL TInputInterface::UnacquireAll()
 	return bResult;
 }
 
+// $Barnyard: FUNCTION 006c3e90
 TBOOL TInputInterface::FlushAll()
 {
 	TBOOL bResult = TTRUE;
@@ -92,16 +98,19 @@ TBOOL TInputInterface::FlushAll()
 	return bResult;
 }
 
+// $Barnyard: FUNCTION 006c3cb0
 void TInputInterface::SetExclusiveMode( TBOOL a_bIsExclusive )
 {
 	m_bIsExclusiveMode = a_bIsExclusive;
 }
 
+// $Barnyard: FUNCTION 006c3cc0
 TBOOL TInputInterface::GetExclusiveMode() const
 {
 	return m_bIsExclusiveMode;
 }
 
+// $Barnyard: FUNCTION 006c3ed0
 TINT TInputInterface::ProcessEvents( TFLOAT a_fDeltaTime )
 {
 	TINT iNumProcessed = 0;
@@ -125,6 +134,7 @@ TINT TInputInterface::ProcessEvents( TFLOAT a_fDeltaTime )
 	return iNumProcessed;
 }
 
+// $Barnyard: FUNCTION 006c3f50
 void TInputInterface::StopAllRepeats()
 {
 	for ( auto it = m_DeviceList.Begin(); it != m_DeviceList.End(); ++it )
@@ -133,6 +143,7 @@ void TInputInterface::StopAllRepeats()
 	}
 }
 
+// $Barnyard: FUNCTION 006c3d90
 void TInputInterface::ReleaseAllDevices()
 {
 	for ( auto it = m_DeviceList.Begin(); it != m_DeviceList.End(); ++it )
@@ -144,6 +155,19 @@ void TInputInterface::ReleaseAllDevices()
 	}
 }
 
+// $Barnyard: FUNCTION 006c4030
+TInputInterface::TInputInterface() :
+    m_InputEventEmitter( this )
+{
+	m_bIsExclusiveMode = TFALSE;
+}
+
+// $Barnyard: FUNCTION 006c4080
+TInputInterface::~TInputInterface()
+{
+}
+
+// $Barnyard: FUNCTION 006c3ba0
 TInputInterface::InputEvent::InputEvent( TInputDevice* a_pDevice, TINT a_iDoodad, EVENT_TYPE a_eEventType )
 {
 	m_pSource           = a_pDevice;
@@ -176,6 +200,7 @@ TInputInterface::InputEvent::InputEvent( TInputDevice* a_pDevice, TINT a_iDoodad
 	m_wszString[ 0 ]      = L'\0';
 }
 
+// $Barnyard: FUNCTION 006c3c50
 TInputInterface::InputEvent::InputEvent( TInputDevice* a_pDevice, TINT a_iDoodad, EVENT_TYPE a_eEventType, TINT a_iMagnitude1, TINT a_iMagnitude2 )
 {
 	m_pSource             = a_pDevice;
@@ -199,6 +224,7 @@ TInputInterface::InputEvent::InputEvent( TInputDevice* a_pDevice, TINT a_iDoodad
 	m_wszString[ 0 ]        = L'\0';
 }
 
+// $Barnyard: FUNCTION 006c3c10
 TInputInterface::InputEvent::InputEvent( TInputDevice* a_pDevice, TINT a_iDoodad, EVENT_TYPE a_eEventType, TFLOAT a_fMagnitude1, TFLOAT a_fMagnitude2 )
 {
 	m_pSource               = a_pDevice;
@@ -230,6 +256,7 @@ TINT TInputInterface::InputEvent::GetMagnitudeInt( TINT a_iAxis ) const
 	}
 }
 
+// $Barnyard: FUNCTION 006c3c90
 TFLOAT TInputInterface::InputEvent::GetMagnitudeFloat( TINT a_iAxis ) const
 {
 	TASSERT( a_iAxis >= 0 && a_iAxis < GetAxisCount() );
@@ -242,6 +269,7 @@ TFLOAT TInputInterface::InputEvent::GetMagnitudeFloat( TINT a_iAxis ) const
 	return (TFLOAT)m_Magnitude.Ints[ a_iAxis ];
 }
 
+// $Barnyard: FUNCTION 006c3cd0
 TBOOL TInputInterface::InputEvent::StartRepeat( TFLOAT a_fFirstRepeatTime, TFLOAT a_fRepeatTime ) const
 {
 	return m_pSource->StartRepeat( m_iDoodad, a_fFirstRepeatTime, a_fRepeatTime );
