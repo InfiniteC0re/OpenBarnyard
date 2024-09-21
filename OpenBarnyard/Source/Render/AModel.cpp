@@ -11,11 +11,11 @@ TOSHI_NAMESPACE_USING
 
 TDEFINE_CLASS( AModelInstance );
 
+// $Barnyard: FUNCTION 0060fef0
 AModel::AModel( const TPString8& a_rName, TTRB* a_pTRB ) :
     m_Name( a_rName ),
     m_uiID( ms_uiNumCreated ),
     m_pModelPtr( TNULL ),
-    m_uiNumModelInstances( 0 ),
     m_Vec1( TVector3::VEC_ZERO ),
     m_Vec2( TVector3::VEC_ZERO )
 {
@@ -24,6 +24,8 @@ AModel::AModel( const TPString8& a_rName, TTRB* a_pTRB ) :
 	ms_uiNumCreated += 1;
 }
 
+// $Barnyard: FUNCTION 0060fc90
+// $Barnyard: FUNCTION 0060fed0
 AModel::~AModel()
 {
 	if ( m_pModelPtr )
@@ -32,34 +34,36 @@ AModel::~AModel()
 	}
 }
 
+// $Barnyard: FUNCTION 0060f9f0
 void AModel::Update( TFLOAT a_fDeltaTime )
 {
 	TIMPLEMENT();
 
-	for ( TUINT i = 0; i < m_uiNumModelInstances; i++ )
+	for ( TUINT i = 0; i < m_vecInstanceRefs.Size(); i++ )
 	{
-		auto pInstance = m_aModelInstances[ i ].Get();
+		auto pInstance = m_vecInstanceRefs[ i ].Get();
 
 		if ( pInstance->IsUpdatingSkeleton() )
 		{
-			pInstance->GetT2Instance()->Update( a_fDeltaTime );
+			pInstance->GetSceneObject()->Update( a_fDeltaTime );
 		}
 	}
 }
 
+// $Barnyard: FUNCTION 0060fb10
 void AModel::Render( TUINT8 a_uiFlags )
 {
-	for ( TUINT i = 0; i < m_uiNumModelInstances; i++ )
+	for ( TUINT i = 0; i < m_vecInstanceRefs.Size(); i++ )
 	{
-		auto& pModelInstance = m_aModelInstances[ i ];
+		auto& pModelInstance = m_vecInstanceRefs[ i ];
 		auto  eFlags         = pModelInstance->m_eFlags;
 
 		if ( ( ( eFlags >> 4 & 1 ) == a_uiFlags && ( eFlags & 2 ) != 0 ) && ( eFlags & 1 ) != 0 )
 		{
-			auto pT2Instance = pModelInstance->GetT2Instance();
-			auto pModel      = pT2Instance->GetInstance()->GetModel();
+			auto pSceneObject = pModelInstance->GetSceneObject();
+			auto pModel       = pSceneObject->GetInstance()->GetModel();
 
-			auto& transform      = pT2Instance->GetTransform();
+			auto& transform      = pSceneObject->GetTransform();
 			auto& transformScale = transform.GetScale();
 			auto& lod            = pModel->GetLOD( 0 );
 
@@ -71,11 +75,12 @@ void AModel::Render( TUINT8 a_uiFlags )
 
 			Toshi::TVector3 boundingPos;
 			Toshi::TMatrix44::TransformVector( boundingPos, transformMatrix, lod.BoundingSphere.GetOrigin() );
-			pT2Instance->Render( pModelInstance->GetClipFlags(), boundingPos );
+			pSceneObject->Render( pModelInstance->GetClipFlags(), boundingPos );
 		}
 	}
 }
 
+// $Barnyard: FUNCTION 0060fd20
 AModelInstanceRef* AModel::CreateInstance( AModelInstanceRef& a_rOutRef )
 {
 	// TODO: use this name in debug?
@@ -84,15 +89,21 @@ AModelInstanceRef* AModel::CreateInstance( AModelInstanceRef& a_rOutRef )
 
 	AModelInstanceRef modelInstanceRef = new AModelInstance(
 	    this,
-	    m_pModelPtr->CreateInstance(),
+	    m_pModelPtr->CreateSceneObject(),
 	    TFALSE );
 
-	m_aModelInstances[ m_uiNumModelInstances++ ] = modelInstanceRef;
-	a_rOutRef                                    = modelInstanceRef;
+	m_vecInstanceRefs.PushBack( modelInstanceRef );
+	a_rOutRef = modelInstanceRef;
 
 	return &a_rOutRef;
 }
 
+TSIZE AModel::GetNumInstances() const
+{
+	return m_vecInstanceRefs.Size();
+}
+
+// $Barnyard: FUNCTION 0060f8c0
 TModelPtr* AModel::Create( const TPString8& a_rFilePath, TTRB* a_pTRB )
 {
 	// TODO: use this name in debug?
@@ -119,6 +130,7 @@ TModelPtr* AModel::Create( const TPString8& a_rFilePath, TTRB* a_pTRB )
 	return pModelPtr;
 }
 
+// $Barnyard: FUNCTION 0060f6e0
 void AModel::GetNameFromPath( const TPString8& a_FilePath, TString8& a_rName )
 {
 	TString8 name = a_FilePath.GetString8();
@@ -163,6 +175,7 @@ void AModel::GetNameFromPath( const TPString8& a_FilePath, TString8& a_rName )
 	}
 }
 
+// $Barnyard: FUNCTION 0060f7f0
 TString8* AModel::GenerateInstanceName( TString8& a_rOutName, const TPString8& a_FilePath )
 {
 	static TUINT ms_uiDebugObjectIndex = 0;
@@ -178,37 +191,39 @@ TString8* AModel::GenerateInstanceName( TString8& a_rOutName, const TPString8& a
 	return &a_rOutName;
 }
 
-AModelInstance::AModelInstance( AModel* a_pModel, TSceneObject* a_pT2Instance, TBOOL a_bEnableSkeletonUpdate ) :
+// $Barnyard: FUNCTION 00611280
+AModelInstance::AModelInstance( AModel* a_pModel, TSceneObject* a_pSceneObject, TBOOL a_bEnableSkeletonUpdate ) :
     m_ChangeEmitter( this )
 {
 	TFIXME( "Initialise some unknown members" );
 
-	m_Unknown1[ 0 ]    = 1.0f;
-	m_Unknown1[ 1 ]    = 1.0f;
-	m_Unknown1[ 2 ]    = 1.0f;
-	m_Unknown1[ 3 ]    = 1.0f;
-	m_pModel           = a_pModel;
-	m_uiClipFlags      = 0x3F;
-	m_pT2ModelInstance = a_pT2Instance;
-	m_eFlags           = 0b00001001;
+	m_Unknown1[ 0 ] = 1.0f;
+	m_Unknown1[ 1 ] = 1.0f;
+	m_Unknown1[ 2 ] = 1.0f;
+	m_Unknown1[ 3 ] = 1.0f;
+	m_pModel        = a_pModel;
+	m_uiClipFlags   = 0x3F;
+	m_pSceneObject  = a_pSceneObject;
+	m_eFlags        = 0b00001001;
 
 	SetSkeletonUpdating( a_bEnableSkeletonUpdate );
-	m_pT2ModelInstance->GetInstance()->SetCustomRenderMethod( RenderInstanceCallback, this );
+	m_pSceneObject->GetInstance()->SetCustomRenderMethod( RenderInstanceCallback, this );
 }
 
+// $Barnyard: FUNCTION 00610820
 AModelInstance::AModelInstance() :
     m_ChangeEmitter( this )
 {
 	TFIXME( "Initialise some unknown members" );
 
-	m_Unknown1[ 0 ]    = 1.0f;
-	m_Unknown1[ 1 ]    = 1.0f;
-	m_Unknown1[ 2 ]    = 1.0f;
-	m_Unknown1[ 3 ]    = 1.0f;
-	m_pModel           = TNULL;
-	m_pT2ModelInstance = TNULL;
-	m_uiClipFlags      = 0x3F;
-	m_eFlags           = 0b00011000;
+	m_Unknown1[ 0 ] = 1.0f;
+	m_Unknown1[ 1 ] = 1.0f;
+	m_Unknown1[ 2 ] = 1.0f;
+	m_Unknown1[ 3 ] = 1.0f;
+	m_pModel        = TNULL;
+	m_pSceneObject  = TNULL;
+	m_uiClipFlags   = 0x3F;
+	m_eFlags        = 0b00011000;
 }
 
 void AModelInstance::RenderInstanceCallback( TModelInstance* a_pInstance, void* a_pUserData )
@@ -216,13 +231,14 @@ void AModelInstance::RenderInstanceCallback( TModelInstance* a_pInstance, void* 
 	TIMPLEMENT();
 }
 
+// $Barnyard: FUNCTION 00610cd0
 void AModelInstance::SetSkeletonUpdating( TBOOL a_bUpdating )
 {
 	if ( a_bUpdating )
 	{
 		if ( !IsUpdatingSkeleton() )
 		{
-			m_pT2ModelInstance->EnableSkeletonUpdate();
+			m_pSceneObject->EnableSkeletonUpdate();
 			m_ChangeEmitter.Throw( ChangeEvent_EnabledSkeletonUpdate );
 		}
 
@@ -232,7 +248,7 @@ void AModelInstance::SetSkeletonUpdating( TBOOL a_bUpdating )
 	{
 		if ( IsUpdatingSkeleton() )
 		{
-			m_pT2ModelInstance->DisableSkeletonUpdate();
+			m_pSceneObject->DisableSkeletonUpdate();
 			m_ChangeEmitter.Throw( ChangeEvent_DisabledSkeletonUpdate );
 		}
 

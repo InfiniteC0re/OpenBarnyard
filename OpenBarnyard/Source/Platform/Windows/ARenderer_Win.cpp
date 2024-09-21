@@ -111,7 +111,7 @@ TBOOL ARenderer::CreateTRender()
 			displayParams.uiColourDepth = 16;
 			pDevice                     = FindSuitableDevice( displayParams, TTRUE );
 
-			if ( pDevice == 0 )
+			if ( pDevice == TNULL )
 			{
 				pRenderer->OnInitializationFailureDisplay();
 				return TFALSE;

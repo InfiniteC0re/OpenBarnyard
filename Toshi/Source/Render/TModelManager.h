@@ -85,8 +85,8 @@ public:
 	TModelPtr() = default;
 	~TModelPtr();
 
-	TBOOL            Create( const TCHAR* a_szFileName, TTRB* a_pTRB );
-	TSceneObject* CreateInstance();
+	TBOOL         Create( const TCHAR* a_szFileName, TTRB* a_pTRB );
+	TSceneObject* CreateSceneObject();
 
 	void SetModel( TModel* a_pModel ) { m_pModel = a_pModel; }
 

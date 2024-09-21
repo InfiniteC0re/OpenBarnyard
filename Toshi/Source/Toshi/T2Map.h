@@ -48,6 +48,12 @@ public:
 		m_RedBlackTree.Delete( result.GetNode() );
 	}
 
+	void Remove( Iterator& it )
+	{
+		TASSERT( it != End() );
+		m_RedBlackTree.Delete( it.GetNode() );
+	}
+
 	void RemoveNode( Node* a_pNode )
 	{
 		TASSERT( TNULL != a_pNode && a_pNode != End() );
@@ -58,6 +64,19 @@ public:
 	{
 		Iterator result = m_RedBlackTree.Find( { key } );
 		return &result.GetValue()->GetSecond();
+	}
+
+	Iterator FindByValue( const ValueType& value )
+	{
+		for ( auto it = Begin(); it != End(); it++ )
+		{
+			if ( it.GetValue()->GetSecond() == value )
+			{
+				return it;
+			}
+		}
+
+		return End();
 	}
 
 	Node* FindNode( const KeyType& key )
@@ -86,6 +105,11 @@ public:
 	Iterator End()
 	{
 		return m_RedBlackTree.End();
+	}
+
+	TBOOL IsEmpty() const
+	{
+		return Begin() == End();
 	}
 
 private:

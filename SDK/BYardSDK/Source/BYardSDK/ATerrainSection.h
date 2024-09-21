@@ -14,8 +14,8 @@ public:
 	{
 		~ModelNode();
 
-		Toshi::TModelPtr        m_ModelRef;
-		Toshi::TSceneObject* m_pModelInstance;
+		Toshi::TModelPtr     m_ModelRef;
+		Toshi::TSceneObject* m_pSceneObject;
 	};
 
 	enum FLAGS : TUINT32

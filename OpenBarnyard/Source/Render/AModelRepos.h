@@ -11,6 +11,10 @@ class AModelRepos :
 public:
 	TDECLARE_CLASS( AModelRepos, Toshi::TObject );
 
+	using ModelsMap = Toshi::T2Map<Toshi::TPString8, AModel*, Toshi::TPString8::Comparator>;
+
+	static constexpr TSIZE MAX_UNUSED_MODELS_NUM = 9;
+
 public:
 	AModelRepos();
 	~AModelRepos();
@@ -21,17 +25,21 @@ public:
 	AModelInstance* InstantiateModel( AModel* a_pModel );
 	AModelInstance* InstantiateNewModel( const Toshi::TPString8& a_rName, Toshi::TTRB* a_pTRB );
 
-	void CreateInModels2( const Toshi::TPString8& a_rName, Toshi::TTRB* a_pTRB );
+	void CreateModel( const Toshi::TPString8& a_rName, Toshi::TTRB* a_pTRB );
 
 	void Update( TFLOAT a_fDeltaTime );
 
 private:
-	AModel* CreateNewModel( const Toshi::TPString8& a_rName, Toshi::TTRB* a_pTRB );
+	AModel* AllocateAModel( const Toshi::TPString8& a_rName, Toshi::TTRB* a_pTRB );
+
+	void MarkAllModelsUnused();
+	void MarkModelUnused( AModel* a_pModel );
 
 	void UnloadAllModels();
+	void UnloadAllUnusedModels();
 
 private:
-	Toshi::T2DList<AModel>                                                m_UnusedModels;
-	Toshi::T2Map<Toshi::TPString8, AModel*, Toshi::TPString8::Comparator> m_UsedModels;
-	Toshi::T2Map<Toshi::TPString8, AModel*, Toshi::TPString8::Comparator> m_Models2;
+	Toshi::T2DList<AModel> m_UnusedModels;
+	ModelsMap              m_UsedModels;
+	ModelsMap              m_AllModels;
 };

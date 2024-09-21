@@ -233,7 +233,7 @@ void TInputDeviceKeyboard::GetVirtStickDoodads( TINT a_iMapID, Doodad& a_rDoodad
 	a_rDoodad4 = m_aVirtStickDoodads[ a_iMapID ].iDoodad4;
 }
 
-// $Barnyard: FUNCTION 006c56b0
+// $Barnyard: FUNCTION 006c4ff0
 void TInputDeviceKeyboard::UpdateVirtualButtons()
 {
 	m_aMags[ 2 ] = m_aMags[ 0 ];

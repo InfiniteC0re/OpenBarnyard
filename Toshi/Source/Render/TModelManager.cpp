@@ -119,12 +119,12 @@ TBOOL TModelPtr::Create( const TCHAR* a_szFileName, TTRB* a_pTRB )
 	return m_pModel != TNULL;
 }
 
-TSceneObject* TModelPtr::CreateInstance()
+TSceneObject* TModelPtr::CreateSceneObject()
 {
-	auto pInstance = new TSceneObject();
-	pInstance->Create( this );
+	auto pSceneObject = new TSceneObject();
+	pSceneObject->Create( this );
 
-	return pInstance;
+	return pSceneObject;
 }
 
 TOSHI_NAMESPACE_END

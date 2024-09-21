@@ -399,9 +399,9 @@ ATerrainSection::ModelNode::~ModelNode()
 {
 	TIMPLEMENT_D( "Destroy collision data" );
 
-	if ( m_pModelInstance )
+	if ( m_pSceneObject )
 	{
-		m_pModelInstance->Delete();
+		m_pSceneObject->Delete();
 	}
 }
 
@@ -427,8 +427,8 @@ void ATerrainSection::ModelNode::Render()
 		if ( m_eFlags & MNF_USE_LIGHTING )
 			pShader->SetColours( pTerrain->GetLitShadowColor(), pTerrain->GetLitAmbientColor() );
 
-		m_pModelInstance->EnableSkeletonUpdate();
-		m_pModelInstance->RenderIfVisible();
+		m_pSceneObject->EnableSkeletonUpdate();
+		m_pSceneObject->RenderIfVisible();
 
 		if ( m_eFlags & MNF_USE_LIGHTING )
 			pShader->SetColours( pTerrain->GetDefaultShadowColor(), pTerrain->GetDefaultAmbientColor() );
@@ -450,9 +450,9 @@ void ATerrainSection::ModelNode::SetGlow( TBOOL a_bIsGlow )
 	else
 		m_eFlags &= ~MNF_GLOW;
 
-	if ( TNULL != m_pModelInstance )
+	if ( TNULL != m_pSceneObject )
 	{
-		auto pModel = m_pModelInstance->GetModelRef()->GetModel();
+		auto pModel = m_pSceneObject->GetModelRef()->GetModel();
 
 		for ( TINT i = 0; i < pModel->GetNumLODs(); i++ )
 		{

@@ -14,16 +14,16 @@ public:
 	void SetData( void* a_pData, TUINT a_uiDataSize );
 
 	HRESULT Load();
-	void Unload();
+	void    Unload();
 
 	const D3DXIMAGE_INFO& GetImageInfo() const;
-	TUINT GetWidth() const;
-	TUINT GetHeight() const;
-	TUINT GetMipLevels() const;
+	TUINT                 GetWidth() const;
+	TUINT                 GetHeight() const;
+	TUINT                 GetMipLevels() const;
 
-	IDirect3DTexture8* GetD3DTexture();
+	IDirect3DTexture8*       GetD3DTexture();
 	IDirect3DVolumeTexture8* GetD3DVolumeTexture();
-	IDirect3DCubeTexture8* GetD3DCubeTexture();
+	IDirect3DCubeTexture8*   GetD3DCubeTexture();
 
 private:
 	TUINT          m_uiDataSize;

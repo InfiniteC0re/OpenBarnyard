@@ -918,7 +918,7 @@ ATerrainSection::ModelNode* ATerrainInterface::CreateModelInstance( ATerrainSect
 		    AAssetLoader::GetAssetTRB( AAssetType_AssetPack ) );
 	}
 
-	auto pInstance          = a_pModelNode->m_ModelRef.CreateInstance();
+	auto pInstance          = a_pModelNode->m_ModelRef.CreateSceneObject();
 	auto pInstanceTransform = &pInstance->GetTransform();
 
 	pInstanceTransform->SetEuler( TVector3( 1.570796f, 0.0f, 0.0f ) );
@@ -928,7 +928,7 @@ ATerrainSection::ModelNode* ATerrainInterface::CreateModelInstance( ATerrainSect
 	pInstanceTransform->GetLocalMatrixImp( collisionLocalMatrix );
 	pInstanceTransform->SetMatrix( collisionLocalMatrix );
 
-	a_pModelNode->m_pModelInstance = pInstance;
+	a_pModelNode->m_pSceneObject = pInstance;
 
 	pInstance->GetSomeVector1().x = 1.0f;
 	pInstance->GetSomeVector1().y = 1.0f;

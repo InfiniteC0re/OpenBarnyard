@@ -83,7 +83,7 @@ public:
 	virtual TBOOL LoadFromFile( const TCHAR* a_szFileName )          = 0;
 	virtual void  Unload()                                           = 0;
 	virtual ~TModel();
-	virtual TBOOL GetUnknownFlag()                                   = 0;
+	virtual TBOOL GetUnknownFlag() = 0;
 
 	TBOOL LoadTRB();
 	TBOOL LoadTRB( TTRB* a_pTRB );

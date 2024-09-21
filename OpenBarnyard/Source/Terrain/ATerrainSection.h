@@ -38,10 +38,10 @@ public:
 		AWorldMaterial* GetAnimatedMaterial() const { return m_pAnimatedMaterial; }
 
 	public:
-		Toshi::TModelPtr        m_ModelRef;
-		Toshi::TSceneObject* m_pModelInstance;
-		AWorldVis               m_WorldVis;
-		AWorldMaterial*         m_pAnimatedMaterial;
+		Toshi::TModelPtr     m_ModelRef;
+		Toshi::TSceneObject* m_pSceneObject;
+		AWorldVis            m_WorldVis;
+		AWorldMaterial*      m_pAnimatedMaterial;
 		// ...
 		char           m_szType[ TYPE_NAME_MAX_SIZE + 1 ];
 		ModelNodeFlags m_eFlags;

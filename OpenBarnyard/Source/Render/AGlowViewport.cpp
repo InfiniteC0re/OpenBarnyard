@@ -126,10 +126,10 @@ void AGlowViewport::Update()
 	// Update the used glow objects and add lights to the render context if necessary
 	for ( GlowObject* pGlowObject = m_pHeadUsedObject; pGlowObject != TNULL; pGlowObject = pGlowObject->m_pNextObject )
 	{
-		if ( TSceneObject* pT2ModelInstance = pGlowObject->m_pT2ModelInstance )
+		if ( TSceneObject* pSceneObject = pGlowObject->m_pSceneObject )
 		{
 			// Set light at bone position and add it to the render context
-			TModelInstance* pModelInstance = pT2ModelInstance->GetInstance();
+			TModelInstance* pModelInstance = pSceneObject->GetInstance();
 
 			if ( !pModelInstance )
 				continue;
@@ -138,11 +138,11 @@ void AGlowViewport::Update()
 
 			// Get local bone transform
 			TMatrix44 oBoneTransform;
-			pSkeletonInstance->GetBoneTransformCurrent( pGlowObject->m_iAttachBone, oBoneTransform );
+			pSkeletonInstance->GetBoneTransformCurrent( pGlowObject->m_iAttachBonå, oBoneTransform );
 
 			// Get model instance transform to calculate world bone transform later
 			TMatrix44 oLightTransform;
-			pT2ModelInstance->GetTransform().GetLocalMatrixImp( oLightTransform );
+			pSceneObject->GetTransform().GetLocalMatrixImp( oLightTransform );
 
 			// Get world bone transform
 			oLightTransform.Multiply( oBoneTransform );
@@ -214,10 +214,10 @@ void AGlowViewport::Update()
 
 AGlowViewport::GlowObject::GlowObject()
 {
-	Unknown1           = 0;
-	m_pT2ModelInstance = TNULL;
-	m_iAttachBone      = -1;
-	m_eTransformType   = 2;
+	Unknown1         = 0;
+	m_pSceneObject   = TNULL;
+	m_iAttachBonå    = -1;
+	m_eTransformType = 2;
 
 	m_oTransform    = TMatrix44::IDENTITY;
 	m_bIsNightLight = TTRUE;

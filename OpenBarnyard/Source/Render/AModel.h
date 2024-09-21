@@ -5,6 +5,7 @@
 #include <Toshi/TPString8.h>
 
 #include <Toshi/T2DList.h>
+#include <Toshi/T2Vector.h>
 #include <Toshi/TSceneObject.h>
 
 class AModel;
@@ -36,13 +37,13 @@ public:
 
 public:
 	AModelInstance();
-	AModelInstance( AModel* a_pModel, Toshi::TSceneObject* a_pT2Instance, TBOOL a_bEnableSkeletonUpdate );
+	AModelInstance( AModel* a_pModel, Toshi::TSceneObject* a_pSceneObject, TBOOL a_bEnableSkeletonUpdate );
 
 	void SetSkeletonUpdating( TBOOL a_bUpdating );
 
-	AModel*                 GetModel() const { return m_pModel; }
-	Toshi::TSceneObject* GetT2Instance() const { return m_pT2ModelInstance; }
-	TUINT                   GetClipFlags() const { return m_uiClipFlags; }
+	AModel*              GetModel() const { return m_pModel; }
+	Toshi::TSceneObject* GetSceneObject() const { return m_pSceneObject; }
+	TUINT                GetClipFlags() const { return m_uiClipFlags; }
 
 	TBOOL IsUpdatingSkeleton() const { return m_eFlags & Flags_UpdatingSkeleton; }
 
@@ -54,7 +55,7 @@ private:
 	AModel* m_pModel;
 	TUINT   m_uiClipFlags;
 	// ...
-	Toshi::TSceneObject*                      m_pT2ModelInstance;
+	Toshi::TSceneObject*                         m_pSceneObject;
 	Toshi::TEmitter<AModelInstance, ChangeEvent> m_ChangeEmitter;
 	Flags                                        m_eFlags;
 };
@@ -76,6 +77,8 @@ public:
 
 	AModelInstanceRef* CreateInstance( AModelInstanceRef& a_rOutRef );
 
+	TSIZE GetNumInstances() const;
+
 	const Toshi::TPString8& GetName() const { return m_Name; }
 
 public:
@@ -87,13 +90,10 @@ private:
 	inline static TUINT ms_uiNumCreated;
 
 private:
-	TUINT             m_uiID;
-	Toshi::TModelPtr* m_pModelPtr;
-	Toshi::TPString8  m_Name;
-
-	// This should be T2Vector
-	TUINT             m_uiNumModelInstances;
-	AModelInstanceRef m_aModelInstances[ MAX_NUM_INSTANCES ];
-	Toshi::TVector3   m_Vec1;
-	Toshi::TVector3   m_Vec2;
+	TUINT                                                 m_uiID;
+	Toshi::TModelPtr*                                     m_pModelPtr;
+	Toshi::TPString8                                      m_Name;
+	Toshi::T2Vector<AModelInstanceRef, MAX_NUM_INSTANCES> m_vecInstanceRefs;
+	Toshi::TVector3                                       m_Vec1;
+	Toshi::TVector3                                       m_Vec2;
 };
