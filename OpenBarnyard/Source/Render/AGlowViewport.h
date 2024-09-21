@@ -31,7 +31,7 @@ public:
 		Toshi::TRenderContext::VIEWPORTPARAMS   m_oViewportParams;
 		Toshi::TRenderContext::PROJECTIONPARAMS m_oProjectionParams;
 		Toshi::TRenderContext::CameraMode       m_eCameraMode;
-		TINT                                    m_iAttachBonå;
+		TINT                                    m_iAttachBone;
 		Toshi::TSceneObject*                    m_pSceneObject;
 		TINT                                    m_eTransformType;
 		Toshi::TFrustum                         m_oFrustum;

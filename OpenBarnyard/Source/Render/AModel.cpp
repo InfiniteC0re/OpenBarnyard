@@ -1,6 +1,17 @@
 #include "pch.h"
 #include "AModel.h"
 
+#include "AGlowViewport.h"
+#include "AStaticInstanceShader/AStaticInstanceMesh.h"
+#include "AStaticInstanceShader/AStaticInstanceMaterial.h"
+#include "Assets/AModelLoader.h"
+
+#ifdef TOSHI_SKU_WINDOWS
+#  include "Platform/DX8/AWorldShader/AWorldShader_DX8.h"
+#endif
+
+#include <Render/TRenderInterface.h>
+
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
 // Note: Should be the last include!
@@ -197,10 +208,7 @@ AModelInstance::AModelInstance( AModel* a_pModel, TSceneObject* a_pSceneObject, 
 {
 	TFIXME( "Initialise some unknown members" );
 
-	m_Unknown1[ 0 ] = 1.0f;
-	m_Unknown1[ 1 ] = 1.0f;
-	m_Unknown1[ 2 ] = 1.0f;
-	m_Unknown1[ 3 ] = 1.0f;
+	m_Scale         = TVector4( 1.0f, 1.0f, 1.0f, 1.0f );
 	m_pModel        = a_pModel;
 	m_uiClipFlags   = 0x3F;
 	m_pSceneObject  = a_pSceneObject;
@@ -216,19 +224,153 @@ AModelInstance::AModelInstance() :
 {
 	TFIXME( "Initialise some unknown members" );
 
-	m_Unknown1[ 0 ] = 1.0f;
-	m_Unknown1[ 1 ] = 1.0f;
-	m_Unknown1[ 2 ] = 1.0f;
-	m_Unknown1[ 3 ] = 1.0f;
+	m_Scale         = TVector4( 1.0f, 1.0f, 1.0f, 1.0f );
 	m_pModel        = TNULL;
 	m_pSceneObject  = TNULL;
 	m_uiClipFlags   = 0x3F;
 	m_eFlags        = 0b00011000;
 }
 
+// $Barnyard: FUNCTION 006108c0
 void AModelInstance::RenderInstanceCallback( TModelInstance* a_pInstance, void* a_pUserData )
 {
-	TIMPLEMENT();
+	TModel*            pModel            = a_pInstance->GetModel();
+	TSkeletonInstance* pSkeletonInstance = a_pInstance->GetSkeletonInstance();
+
+	AModelInstance* pGameModelInstance = TSTATICCAST( AModelInstance, a_pUserData );
+
+	// Update skeleton state
+	pSkeletonInstance->UpdateState( TTRUE );
+
+	// Update current render context with actual skeleton instance to render
+	TRenderContext* pRenderContext = TRenderInterface::GetSingleton()->GetCurrentContext();
+	pRenderContext->SetSkeletonInstance( pSkeletonInstance );
+
+	TModelLOD* pLOD = &pModel->GetLOD( a_pInstance->GetLOD() );
+	TBOOL      bIsWorldMesh = TFALSE;
+
+	// Check if it's a world model
+	if ( pLOD->iNumMeshes > 0 )
+	{
+		bIsWorldMesh = pLOD->ppMeshes[ 0 ]->GetClass() == &TGetClass( AWorldShaderHAL );
+	}
+
+	// Check if object can be affected by any light sources
+	if ( pLOD->iNumMeshes > 0 && pGameModelInstance->ReceivesLight() )
+	{
+		TMatrix44 matTransform;
+		pGameModelInstance->GetSceneObject()->GetTransform().GetLocalMatrixImp( matTransform );
+
+		// Get position of bounding sphere transformed by this scene object
+		TSphere boundingSphere = pLOD->BoundingSphere;
+		TMatrix44::TransformVector( boundingSphere.GetOrigin(), matTransform, boundingSphere.GetOrigin() );
+
+		TLightIDList lightIds;
+		AGlowViewport::GetSingleton()->GetInfluencingLightIDs( boundingSphere, lightIds );
+
+		if ( lightIds[ 0 ] != -1 )
+		{
+			// Add light to the render context
+			pRenderContext->AddLight( lightIds[ 0 ] );
+		}
+	}
+
+	static TUINT s_uiUnusedFlags;
+	if ( !( s_uiUnusedFlags & 1 ) )
+		s_uiUnusedFlags |= 1;
+
+	static TMatrix44 s_oOldModelViewMatrix;
+	TMatrix44        oScaledModelViewMatrix;
+	
+	if ( pGameModelInstance )
+	{
+		// Save current model view matrix
+		s_oOldModelViewMatrix  = pRenderContext->GetModelViewMatrix();
+
+		// Calculate model view matrix for this instance and set it
+		oScaledModelViewMatrix = pRenderContext->GetModelViewMatrix();
+		oScaledModelViewMatrix.Scale( pGameModelInstance->GetScale() );
+
+		pRenderContext->SetModelViewMatrix( oScaledModelViewMatrix );
+	}
+
+	// Don't do anything if there are no meshed to render
+	if ( pLOD->iNumMeshes == 0 )
+		return;
+
+	TBOOL bIsStaticInstanceMesh = pLOD->ppMeshes[ 0 ]->IsA( &TGetClass( AStaticInstanceMesh ) );
+	AStaticInstanceMaterial* pStaticInstanceMat    = AModelLoader::ms_pDefaultStaticInstanceMaterial;
+	AWorldMaterial*          pWorldMat             = AModelLoader::ms_pDefaultWorldMaterial;
+	ASkinMaterial*           pSkinMat              = AModelLoader::ms_pDefaultSkinMaterial;
+	
+	static constexpr TINT MAX_NUM_MATERIALS = 32;
+	TMaterial*            apOldMaterials[ MAX_NUM_MATERIALS ];
+	TASSERT( pLOD->iNumMeshes < MAX_NUM_MATERIALS );
+
+	if ( !pGameModelInstance->IsUnknown1() )
+	{
+		for ( TINT i = 0; i < pLOD->iNumMeshes; i++ )
+		{
+			pLOD->ppMeshes[ i ]->Render();
+		}
+	}
+	else if ( bIsStaticInstanceMesh )
+	{
+		// Render meshes with the default material
+		for ( TINT i = 0; i < pLOD->iNumMeshes; i++ )
+		{
+			apOldMaterials[ i ] = pLOD->ppMeshes[ i ]->GetMaterial();
+			pLOD->ppMeshes[ i ]->SetMaterial( pStaticInstanceMat );
+			pLOD->ppMeshes[ i ]->Render();
+		}
+
+		// Render meshes with their original materials
+		for ( TINT i = 0; i < pLOD->iNumMeshes; i++ )
+		{
+			pLOD->ppMeshes[ i ]->SetMaterial( apOldMaterials[ i ] );
+			pLOD->ppMeshes[ i ]->Render();
+		}
+	}
+	else if ( bIsWorldMesh )
+	{
+		// Render meshes with the default material
+		for ( TINT i = 0; i < pLOD->iNumMeshes; i++ )
+		{
+			apOldMaterials[ i ] = pLOD->ppMeshes[ i ]->GetMaterial();
+			pLOD->ppMeshes[ i ]->SetMaterial( pStaticInstanceMat );
+			pLOD->ppMeshes[ i ]->Render();
+		}
+
+		// Render meshes with their original materials
+		for ( TINT i = 0; i < pLOD->iNumMeshes; i++ )
+		{
+			pLOD->ppMeshes[ i ]->SetMaterial( apOldMaterials[ i ] );
+			pLOD->ppMeshes[ i ]->Render();
+		}
+	}
+	else
+	{
+		// Render meshes with the default material
+		for ( TINT i = 0; i < pLOD->iNumMeshes; i++ )
+		{
+			apOldMaterials[ i ] = pLOD->ppMeshes[ i ]->GetMaterial();
+			pLOD->ppMeshes[ i ]->SetMaterial( pStaticInstanceMat );
+			pLOD->ppMeshes[ i ]->Render();
+		}
+
+		// Render meshes with their original materials
+		for ( TINT i = 0; i < pLOD->iNumMeshes; i++ )
+		{
+			pLOD->ppMeshes[ i ]->SetMaterial( apOldMaterials[ i ] );
+			pLOD->ppMeshes[ i ]->Render();
+		}
+	}
+
+	if ( pGameModelInstance )
+	{
+		// Restore old model view matrix
+		pRenderContext->SetModelViewMatrix( s_oOldModelViewMatrix );
+	}
 }
 
 // $Barnyard: FUNCTION 00610cd0

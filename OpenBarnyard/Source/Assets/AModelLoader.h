@@ -1,5 +1,7 @@
 #pragma once
 #include "Render/AWorldShader/AWorldMaterial.h"
+#include "Render/ASkinShader/ASkinMaterial.h"
+#include "Render/AStaticInstanceShader/AStaticInstanceMaterial.h"
 
 #include <Toshi/T2DList.h>
 #include <Render/TTMDBase.h>
@@ -41,8 +43,11 @@ public:
 	static constexpr TUINT MAX_NUM_ALLOCATED_MATERIALS = 512;
 	static constexpr TUINT MAX_NUM_MODEL_MATERIALS     = 150;
 
+	friend class AModelInstance;
+
 public:
 	AModelLoader();
+	~AModelLoader();
 
 	static Toshi::TMaterial* CreateMaterial( Toshi::TShader* a_pShader, const TCHAR* a_szMaterialName );
 	static void              DestroyMaterial( Toshi::TMaterial* a_pMaterial );
@@ -81,8 +86,9 @@ private:
 	inline static TINT                             ms_iNumGlowMaterials;
 	inline static TINT                             ms_iNumDoubleSidedMaterials;
 	inline static TINT                             ms_iNumCreatedMaterials;
-	// ...
-	inline static AWorldMaterial* ms_pDefaultWorldMaterial;
+	inline static ASkinMaterial*                   ms_pDefaultSkinMaterial;
+	inline static AWorldMaterial*                  ms_pDefaultWorldMaterial;
+	inline static AStaticInstanceMaterial*         ms_pDefaultStaticInstanceMaterial;
 
 private:
 	Toshi::TTRB m_oTRB;

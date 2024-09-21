@@ -5,6 +5,7 @@
 
 #ifdef TOSHI_SKU_WINDOWS
 #  include "Platform/DX8/AWorldShader/AWorldShader_DX8.h"
+#  include "Platform/DX8/ASkinShader/ASkinShader_DX8.h"
 
 #  include <Render/TTMDWin.h>
 #  include <Platform/DX8/TRenderInterface_DX8.h>
@@ -87,11 +88,19 @@ AModelLoader::AModelLoader()
 	if ( !bAssetPackLoaded )
 		m_oTRB.DeleteSymbolTable();
 
-	TTODO( "Create default skin material" );
+	if ( TNULL == ms_pDefaultSkinMaterial )
+	{
+		ASkinMaterial* pSkinMaterial = ASkinShader::GetSingleton()->CreateMaterial( TNULL );
+		pSkinMaterial->Create( 7 );
+		pSkinMaterial->SetFlags( TMaterial::FLAGS_NO_CULL, TFALSE );
+		pSkinMaterial->SetTexture( TNULL );
+		
+		ms_pDefaultSkinMaterial = pSkinMaterial;
+	}
 
 	if ( TNULL == ms_pDefaultWorldMaterial )
 	{
-		auto pWorldMaterial = AWorldShader::GetSingleton()->CreateMaterial( TNULL );
+		AWorldMaterial* pWorldMaterial = AWorldShader::GetSingleton()->CreateMaterial( TNULL );
 		pWorldMaterial->Create( 6 );
 		pWorldMaterial->SetFlags( TMaterial::FLAGS_NO_CULL, TFALSE );
 		pWorldMaterial->SetTexture( 0, TNULL );
@@ -99,6 +108,10 @@ AModelLoader::AModelLoader()
 
 		ms_pDefaultWorldMaterial = pWorldMaterial;
 	}
+}
+
+ AModelLoader::~AModelLoader()
+{
 }
 
 void AModelLoader::MaterialApplyFlags( Toshi::TMaterial* a_pMaterial, const TCHAR* a_szMaterialName )

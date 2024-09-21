@@ -23,6 +23,8 @@ public:
 	{
 		Flags_None             = 0,
 		Flags_UpdatingSkeleton = BITFLAG( 0 ),
+		Flags_Unknown1    = BITFLAG( 2 ),
+		Flags_ReceivesLight    = BITFLAG( 3 ),
 	};
 
 	enum ChangeEvent : TUINT32
@@ -45,15 +47,19 @@ public:
 	Toshi::TSceneObject* GetSceneObject() const { return m_pSceneObject; }
 	TUINT                GetClipFlags() const { return m_uiClipFlags; }
 
+	const Toshi::TVector4& GetScale() const { return m_Scale; }
+
 	TBOOL IsUpdatingSkeleton() const { return m_eFlags & Flags_UpdatingSkeleton; }
+	TBOOL IsUnknown1() const { return m_eFlags & Flags_Unknown1; }
+	TBOOL ReceivesLight() const { return m_eFlags & Flags_ReceivesLight; }
 
 private:
 	static void RenderInstanceCallback( Toshi::TModelInstance* a_pInstance, void* a_pUserData );
 
 private:
-	TFLOAT  m_Unknown1[ 4 ];
-	AModel* m_pModel;
-	TUINT   m_uiClipFlags;
+	Toshi::TVector4 m_Scale;
+	AModel*         m_pModel;
+	TUINT           m_uiClipFlags;
 	// ...
 	Toshi::TSceneObject*                         m_pSceneObject;
 	Toshi::TEmitter<AModelInstance, ChangeEvent> m_ChangeEmitter;

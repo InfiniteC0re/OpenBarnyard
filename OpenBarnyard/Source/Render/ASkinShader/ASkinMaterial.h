@@ -31,6 +31,12 @@ public:
 
 	BLENDMODE GetBlendMode() const { return m_eBlendMode; }
 
+	void SetTexture( Toshi::TTexture* a_pTexture )
+	{
+		m_pTexture = a_pTexture;
+		SetTextureNum( 1 );
+	}
+
 protected:
 	Toshi::TTexture* m_pTexture;
 	Toshi::TTexture* m_apLightingTextures[ LT_NUMOF ];
