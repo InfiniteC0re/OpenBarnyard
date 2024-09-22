@@ -14,7 +14,7 @@ public:
 	{
 		~ModelNode();
 
-		Toshi::TModelPtr     m_ModelRef;
+		Toshi::TManagedModel m_ModelRef;
 		Toshi::TSceneObject* m_pSceneObject;
 	};
 

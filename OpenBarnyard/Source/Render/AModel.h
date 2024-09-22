@@ -21,10 +21,10 @@ public:
 	using Flags = TUINT8;
 	enum Flags_ : Flags
 	{
-		Flags_None             = 0,
-		Flags_UpdatingSkeleton = BITFLAG( 0 ),
-		Flags_Unknown1    = BITFLAG( 2 ),
-		Flags_ReceivesLight    = BITFLAG( 3 ),
+		Flags_None                     = 0,
+		Flags_UpdatingSkeleton         = BITFLAG( 0 ),
+		Flags_DrawWithDefaultMaterials = BITFLAG( 2 ),
+		Flags_ReceivesLight            = BITFLAG( 3 ),
 	};
 
 	enum ChangeEvent : TUINT32
@@ -50,7 +50,7 @@ public:
 	const Toshi::TVector4& GetScale() const { return m_Scale; }
 
 	TBOOL IsUpdatingSkeleton() const { return m_eFlags & Flags_UpdatingSkeleton; }
-	TBOOL IsUnknown1() const { return m_eFlags & Flags_Unknown1; }
+	TBOOL DrawWithDefaultMaterials() const { return m_eFlags & Flags_DrawWithDefaultMaterials; }
 	TBOOL ReceivesLight() const { return m_eFlags & Flags_ReceivesLight; }
 
 private:
@@ -81,23 +81,23 @@ public:
 	void Update( TFLOAT a_fDeltaTime );
 	void Render( TUINT8 a_uiFlags );
 
-	AModelInstanceRef* CreateInstance( AModelInstanceRef& a_rOutRef );
+	AModelInstanceRef CreateInstance();
 
 	TSIZE GetNumInstances() const;
 
 	const Toshi::TPString8& GetName() const { return m_Name; }
 
 public:
-	static Toshi::TModelPtr* Create( const Toshi::TPString8& a_rFilePath, Toshi::TTRB* a_pTRB );
-	static void              GetNameFromPath( const Toshi::TPString8& a_FilePath, Toshi::TString8& a_rName );
-	static Toshi::TString8*  GenerateInstanceName( Toshi::TString8& a_rOutName, const Toshi::TPString8& a_FilePath );
+	static Toshi::TManagedModel* Create( const Toshi::TPString8& a_rFilePath, Toshi::TTRB* a_pTRB );
+	static void                  GetNameFromPath( const Toshi::TPString8& a_FilePath, Toshi::TString8& a_rName );
+	static Toshi::TString8*      GenerateInstanceName( Toshi::TString8& a_rOutName, const Toshi::TPString8& a_FilePath );
 
 private:
 	inline static TUINT ms_uiNumCreated;
 
 private:
 	TUINT                                                 m_uiID;
-	Toshi::TModelPtr*                                     m_pModelPtr;
+	Toshi::TManagedModel*                                 m_pModelPtr;
 	Toshi::TPString8                                      m_Name;
 	Toshi::T2Vector<AModelInstanceRef, MAX_NUM_INSTANCES> m_vecInstanceRefs;
 	Toshi::TVector3                                       m_Vec1;

@@ -19,18 +19,19 @@ public:
 	AModelRepos();
 	~AModelRepos();
 
-	AModel* GetModel( const Toshi::TPString8& a_rName );
+	AModel* GetModel( const Toshi::TPString8& a_rcName );
 	AModel* GetUnusedModel( const Toshi::TPString8& a_rName );
 
 	AModelInstance* InstantiateModel( AModel* a_pModel );
 	AModelInstance* InstantiateNewModel( const Toshi::TPString8& a_rName, Toshi::TTRB* a_pTRB );
 
-	void CreateModel( const Toshi::TPString8& a_rName, Toshi::TTRB* a_pTRB );
+	void LoadModel( const Toshi::TPString8& a_rcName, Toshi::TTRB* a_pTRB );
+	void UnloadModel( const Toshi::TPString8& a_rcName, TBOOL a_bDestroy );
 
 	void Update( TFLOAT a_fDeltaTime );
 
 private:
-	AModel* AllocateAModel( const Toshi::TPString8& a_rName, Toshi::TTRB* a_pTRB );
+	AModel* AllocateAModel( const Toshi::TPString8& a_rcName, Toshi::TTRB* a_pTRB );
 
 	void MarkAllModelsUnused();
 	void MarkModelUnused( AModel* a_pModel );

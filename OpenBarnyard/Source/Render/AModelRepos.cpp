@@ -148,11 +148,7 @@ void AModelRepos::UnloadAllModels()
 AModelInstance* AModelRepos::InstantiateModel( AModel* a_pModel )
 {
 	TVALIDPTR( a_pModel );
-
-	AModelInstanceRef modelInstance;
-	a_pModel->CreateInstance( modelInstance );
-
-	return modelInstance.Get();
+	return a_pModel->CreateInstance().Get();
 }
 
 // $Barnyard: FUNCTION 00612b10
@@ -161,7 +157,11 @@ AModelInstance* AModelRepos::InstantiateNewModel( const Toshi::TPString8& a_rNam
 	AModel*             pModel      = TNULL;
 	ModelsMap::Iterator pModels2Res = m_AllModels.FindNode( a_rName );
 
-	if ( pModels2Res == m_AllModels.End() )
+	if ( pModels2Res != m_AllModels.End() )
+	{
+		pModel = pModels2Res->GetSecond();
+	}
+	else
 	{
 		ModelsMap::Iterator pUsedModelsRes = m_UsedModels.FindNode( a_rName );
 
@@ -169,10 +169,6 @@ AModelInstance* AModelRepos::InstantiateNewModel( const Toshi::TPString8& a_rNam
 		{
 			pModel = pUsedModelsRes->GetSecond();
 		}
-	}
-	else
-	{
-		pModel = pModels2Res->GetSecond();
 	}
 
 	if ( !pModel )
@@ -186,7 +182,7 @@ AModelInstance* AModelRepos::InstantiateNewModel( const Toshi::TPString8& a_rNam
 }
 
 // $Barnyard: FUNCTION 00612c90
-void AModelRepos::CreateModel( const Toshi::TPString8& a_rName, Toshi::TTRB* a_pTRB )
+void AModelRepos::LoadModel( const Toshi::TPString8& a_rName, Toshi::TTRB* a_pTRB )
 {
 	if ( m_AllModels.FindNode( a_rName ) == m_AllModels.End() )
 	{
@@ -217,5 +213,32 @@ void AModelRepos::CreateModel( const Toshi::TPString8& a_rName, Toshi::TTRB* a_p
 	}
 }
 
+// $Barnyard: FUNCTION 00612d60
+void AModelRepos::UnloadModel( const Toshi::TPString8& a_rcName, TBOOL a_bDestroy )
+{
+	auto pModelNode = m_AllModels.FindNode( a_rcName );
+
+	if ( pModelNode != m_AllModels.End() && pModelNode->GetValue()->GetSecond()->GetNumInstances() == 0 )
+	{
+		AModel* pModel = pModelNode->GetValue()->GetSecond();
+		m_AllModels.RemoveNode( pModelNode );
+
+		if ( a_bDestroy )
+		{
+			if ( pModel->IsLinked() )
+				pModel->Remove();
+
+			delete pModel;
+		}
+		else
+		{
+			m_UnusedModels.PushFront( pModel );
+		}
+	}
+}
+
 // $Barnyard: FUNCTION 006124e0
 // Note: this function was replaced with T2Map::FindByValue
+
+// $Barnyard: FUNCTION 00612300
+// Note: m_UnusedModels.PushFront

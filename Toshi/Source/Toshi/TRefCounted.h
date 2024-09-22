@@ -6,7 +6,6 @@ class TRefCounted
 {
 public:
 	TRefCounted() { m_iRefCount = 0; }
-	TRefCounted( TRefCounted const& ) { m_iRefCount = 0; }
 	~TRefCounted() { m_iRefCount = -1; }
 
 	TINT         DecRefCount() { return m_iRefCount--; }
@@ -18,16 +17,22 @@ protected:
 	TINT m_iRefCount;
 };
 
-/**
-	 * T should have Delete method
-	 */
+// typename T should have Delete method in order to be successfully destroyed
+// NOTE: Each TObject has it by default
 template <class T>
 class TRef
 {
 public:
+	// constructors/destructor
 	TRef() { Create( TNULL ); }
 	TRef( T* a_pPtr ) { Create( a_pPtr ); }
-	TRef( const TRef& a_rOther ) { Create( a_rOther.m_pPtr ); }
+	TRef( const TRef& a_rcOther ) { Create( a_rcOther.m_pPtr ); }
+	TRef( TRef&& a_rOther )
+	{
+		a_rOther.m_pPtr = m_pPtr;
+		m_pPtr          = TNULL;
+	}
+
 	~TRef() { Destroy(); }
 
 	TRef& operator=( T* a_pPtr )

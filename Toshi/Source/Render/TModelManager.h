@@ -5,7 +5,7 @@
 TOSHI_NAMESPACE_START
 
 class TSceneObject;
-class TModelPtr;
+class TManagedModel;
 
 class TModelManager
 {
@@ -68,7 +68,7 @@ public:
 	static void Initialise();
 	static void Uninitialise();
 
-	static ModelNode* CreateModel( const TCHAR* a_szFileName, TModelPtr& a_rModelRef, TTRB* a_pAssetTRB );
+	static ModelNode* CreateModel( const TCHAR* a_szFileName, TManagedModel& a_rModelRef, TTRB* a_pAssetTRB );
 
 public:
 	inline static ModelNode*         ms_pEntries;
@@ -76,14 +76,14 @@ public:
 	inline static T2DList<ModelNode> ms_oFreeList;
 };
 
-class TModelPtr
+class TManagedModel
 {
 public:
 	friend TModelManager;
 
 public:
-	TModelPtr() = default;
-	~TModelPtr();
+	TManagedModel();
+	~TManagedModel();
 
 	TBOOL         Create( const TCHAR* a_szFileName, TTRB* a_pTRB );
 	TSceneObject* CreateSceneObject();

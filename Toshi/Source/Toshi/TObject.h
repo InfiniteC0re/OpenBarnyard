@@ -209,7 +209,7 @@ TOSHI_NAMESPACE_END
 // Safely casts TObject to specified TClass
 //-----------------------------------------------------------------------------
 template <class T>
-TFORCEINLINE T* TCastClass( Toshi::TObject* a_pObject )
+TFORCEINLINE T* TDynamicCast( Toshi::TObject* a_pObject )
 {
 	TSTATICASSERT( T::IsTObject );
 
@@ -219,11 +219,9 @@ TFORCEINLINE T* TCastClass( Toshi::TObject* a_pObject )
 		{
 			return TSTATICCAST( T, a_pObject );
 		}
-
-		TASSERT( !"Invalid call of TCastClass" );
 	}
 
 	return TNULL;
 }
 
-#define TDYNAMICCAST( T, OBJECT ) ( TCastClass<T>( OBJECT ) )
+#define TDYNAMICCAST( T, OBJECT ) ( TDynamicCast<T>( OBJECT ) )

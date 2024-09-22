@@ -12,7 +12,11 @@
 
 TOSHI_NAMESPACE_START
 
-TModelPtr::~TModelPtr()
+TManagedModel::TManagedModel()
+{
+}
+
+TManagedModel::~TManagedModel()
 {
 	if ( m_pModel )
 	{
@@ -59,7 +63,7 @@ void TModelManager::Uninitialise()
 	ms_pEntries = TNULL;
 }
 
-TModelManager::ModelNode* TModelManager::CreateModel( const TCHAR* a_szFileName, TModelPtr& a_rModelRef, TTRB* a_pAssetTRB )
+TModelManager::ModelNode* TModelManager::CreateModel( const TCHAR* a_szFileName, TManagedModel& a_rModelRef, TTRB* a_pAssetTRB )
 {
 	if ( ms_oFreeList.IsEmpty() )
 	{
@@ -111,7 +115,7 @@ TModelManager::ModelNode* TModelManager::CreateModel( const TCHAR* a_szFileName,
 	return pEntry;
 }
 
-TBOOL TModelPtr::Create( const TCHAR* a_szFileName, TTRB* a_pTRB )
+TBOOL TManagedModel::Create( const TCHAR* a_szFileName, TTRB* a_pTRB )
 {
 	m_pModel = TNULL;
 	m_pEntry = TModelManager::CreateModel( a_szFileName, *this, a_pTRB );
@@ -119,9 +123,9 @@ TBOOL TModelPtr::Create( const TCHAR* a_szFileName, TTRB* a_pTRB )
 	return m_pModel != TNULL;
 }
 
-TSceneObject* TModelPtr::CreateSceneObject()
+TSceneObject* TManagedModel::CreateSceneObject()
 {
-	auto pSceneObject = new TSceneObject();
+	TSceneObject* pSceneObject = new TSceneObject();
 	pSceneObject->Create( this );
 
 	return pSceneObject;

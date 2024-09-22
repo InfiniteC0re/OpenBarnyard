@@ -17,9 +17,10 @@ TSceneObject::TSceneObject()
 
 TSceneObject::~TSceneObject()
 {
+	DestroyModelInstance();
 }
 
-void TSceneObject::Create( TModelPtr* a_pModelPtr )
+void TSceneObject::Create( TManagedModel* a_pModelPtr )
 {
 	m_eFlags |= 0b00001000;
 	m_pModelRef      = a_pModelPtr;
@@ -30,16 +31,7 @@ void TSceneObject::Create( TModelPtr* a_pModelPtr )
 void TSceneObject::Delete()
 {
 	if ( this )
-	{
-		if ( m_pModelInstance )
-		{
-			m_pModelInstance->Delete();
-			m_pModelInstance = TNULL;
-			m_eFlags &= ~0b00001000;
-		}
-
 		delete this;
-	}
 }
 
 void TSceneObject::Update( TFLOAT a_fDeltaTime )
@@ -95,6 +87,16 @@ TBOOL TSceneObject::RenderIfVisible()
 	}
 
 	return Render( pContext->GetClipFlags(), bounding.GetOrigin() );
+}
+
+void TSceneObject::DestroyModelInstance()
+{
+	if ( m_pModelInstance )
+	{
+		m_pModelInstance->Delete();
+		m_pModelInstance = TNULL;
+		m_eFlags &= ~0b00001000;
+	}
 }
 
 TOSHI_NAMESPACE_END

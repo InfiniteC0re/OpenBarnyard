@@ -92,7 +92,7 @@ void AModel::Render( TUINT8 a_uiFlags )
 }
 
 // $Barnyard: FUNCTION 0060fd20
-AModelInstanceRef* AModel::CreateInstance( AModelInstanceRef& a_rOutRef )
+AModelInstanceRef AModel::CreateInstance()
 {
 	// TODO: use this name in debug?
 	TString8 instanceName;
@@ -104,9 +104,7 @@ AModelInstanceRef* AModel::CreateInstance( AModelInstanceRef& a_rOutRef )
 	    TFALSE );
 
 	m_vecInstanceRefs.PushBack( modelInstanceRef );
-	a_rOutRef = modelInstanceRef;
-
-	return &a_rOutRef;
+	return modelInstanceRef;
 }
 
 TSIZE AModel::GetNumInstances() const
@@ -115,13 +113,13 @@ TSIZE AModel::GetNumInstances() const
 }
 
 // $Barnyard: FUNCTION 0060f8c0
-TModelPtr* AModel::Create( const TPString8& a_rFilePath, TTRB* a_pTRB )
+TManagedModel* AModel::Create( const TPString8& a_rFilePath, TTRB* a_pTRB )
 {
 	// TODO: use this name in debug?
 	TString8 modelName;
 	GetNameFromPath( a_rFilePath, modelName );
 
-	auto pModelPtr = new TModelPtr();
+	auto pModelPtr = new TManagedModel();
 
 	if ( pModelPtr )
 	{
@@ -208,11 +206,11 @@ AModelInstance::AModelInstance( AModel* a_pModel, TSceneObject* a_pSceneObject, 
 {
 	TFIXME( "Initialise some unknown members" );
 
-	m_Scale         = TVector4( 1.0f, 1.0f, 1.0f, 1.0f );
-	m_pModel        = a_pModel;
-	m_uiClipFlags   = 0x3F;
-	m_pSceneObject  = a_pSceneObject;
-	m_eFlags        = 0b00001001;
+	m_Scale        = TVector4( 1.0f, 1.0f, 1.0f, 1.0f );
+	m_pModel       = a_pModel;
+	m_uiClipFlags  = 0x3F;
+	m_pSceneObject = a_pSceneObject;
+	m_eFlags       = 0b00001001;
 
 	SetSkeletonUpdating( a_bEnableSkeletonUpdate );
 	m_pSceneObject->GetInstance()->SetCustomRenderMethod( RenderInstanceCallback, this );
@@ -224,11 +222,11 @@ AModelInstance::AModelInstance() :
 {
 	TFIXME( "Initialise some unknown members" );
 
-	m_Scale         = TVector4( 1.0f, 1.0f, 1.0f, 1.0f );
-	m_pModel        = TNULL;
-	m_pSceneObject  = TNULL;
-	m_uiClipFlags   = 0x3F;
-	m_eFlags        = 0b00011000;
+	m_Scale        = TVector4( 1.0f, 1.0f, 1.0f, 1.0f );
+	m_pModel       = TNULL;
+	m_pSceneObject = TNULL;
+	m_uiClipFlags  = 0x3F;
+	m_eFlags       = 0b00011000;
 }
 
 // $Barnyard: FUNCTION 006108c0
@@ -246,7 +244,7 @@ void AModelInstance::RenderInstanceCallback( TModelInstance* a_pInstance, void* 
 	TRenderContext* pRenderContext = TRenderInterface::GetSingleton()->GetCurrentContext();
 	pRenderContext->SetSkeletonInstance( pSkeletonInstance );
 
-	TModelLOD* pLOD = &pModel->GetLOD( a_pInstance->GetLOD() );
+	TModelLOD* pLOD         = &pModel->GetLOD( a_pInstance->GetLOD() );
 	TBOOL      bIsWorldMesh = TFALSE;
 
 	// Check if it's a world model
@@ -281,11 +279,11 @@ void AModelInstance::RenderInstanceCallback( TModelInstance* a_pInstance, void* 
 
 	static TMatrix44 s_oOldModelViewMatrix;
 	TMatrix44        oScaledModelViewMatrix;
-	
+
 	if ( pGameModelInstance )
 	{
 		// Save current model view matrix
-		s_oOldModelViewMatrix  = pRenderContext->GetModelViewMatrix();
+		s_oOldModelViewMatrix = pRenderContext->GetModelViewMatrix();
 
 		// Calculate model view matrix for this instance and set it
 		oScaledModelViewMatrix = pRenderContext->GetModelViewMatrix();
@@ -298,16 +296,16 @@ void AModelInstance::RenderInstanceCallback( TModelInstance* a_pInstance, void* 
 	if ( pLOD->iNumMeshes == 0 )
 		return;
 
-	TBOOL bIsStaticInstanceMesh = pLOD->ppMeshes[ 0 ]->IsA( &TGetClass( AStaticInstanceMesh ) );
+	TBOOL                    bIsStaticInstanceMesh = pLOD->ppMeshes[ 0 ]->IsA( &TGetClass( AStaticInstanceMesh ) );
 	AStaticInstanceMaterial* pStaticInstanceMat    = AModelLoader::ms_pDefaultStaticInstanceMaterial;
 	AWorldMaterial*          pWorldMat             = AModelLoader::ms_pDefaultWorldMaterial;
 	ASkinMaterial*           pSkinMat              = AModelLoader::ms_pDefaultSkinMaterial;
-	
+
 	static constexpr TINT MAX_NUM_MATERIALS = 32;
 	TMaterial*            apOldMaterials[ MAX_NUM_MATERIALS ];
 	TASSERT( pLOD->iNumMeshes < MAX_NUM_MATERIALS );
 
-	if ( !pGameModelInstance->IsUnknown1() )
+	if ( !pGameModelInstance->DrawWithDefaultMaterials() )
 	{
 		for ( TINT i = 0; i < pLOD->iNumMeshes; i++ )
 		{
@@ -337,7 +335,7 @@ void AModelInstance::RenderInstanceCallback( TModelInstance* a_pInstance, void* 
 		for ( TINT i = 0; i < pLOD->iNumMeshes; i++ )
 		{
 			apOldMaterials[ i ] = pLOD->ppMeshes[ i ]->GetMaterial();
-			pLOD->ppMeshes[ i ]->SetMaterial( pStaticInstanceMat );
+			pLOD->ppMeshes[ i ]->SetMaterial( pWorldMat );
 			pLOD->ppMeshes[ i ]->Render();
 		}
 
@@ -354,7 +352,7 @@ void AModelInstance::RenderInstanceCallback( TModelInstance* a_pInstance, void* 
 		for ( TINT i = 0; i < pLOD->iNumMeshes; i++ )
 		{
 			apOldMaterials[ i ] = pLOD->ppMeshes[ i ]->GetMaterial();
-			pLOD->ppMeshes[ i ]->SetMaterial( pStaticInstanceMat );
+			pLOD->ppMeshes[ i ]->SetMaterial( pSkinMat );
 			pLOD->ppMeshes[ i ]->Render();
 		}
 

@@ -94,7 +94,7 @@ AModelLoader::AModelLoader()
 		pSkinMaterial->Create( 7 );
 		pSkinMaterial->SetFlags( TMaterial::FLAGS_NO_CULL, TFALSE );
 		pSkinMaterial->SetTexture( TNULL );
-		
+
 		ms_pDefaultSkinMaterial = pSkinMaterial;
 	}
 
@@ -110,7 +110,7 @@ AModelLoader::AModelLoader()
 	}
 }
 
- AModelLoader::~AModelLoader()
+AModelLoader::~AModelLoader()
 {
 }
 

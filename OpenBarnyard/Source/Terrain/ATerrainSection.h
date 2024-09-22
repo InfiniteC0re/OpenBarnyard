@@ -38,7 +38,7 @@ public:
 		AWorldMaterial* GetAnimatedMaterial() const { return m_pAnimatedMaterial; }
 
 	public:
-		Toshi::TModelPtr     m_ModelRef;
+		Toshi::TManagedModel m_ModelRef;
 		Toshi::TSceneObject* m_pSceneObject;
 		AWorldVis            m_WorldVis;
 		AWorldMaterial*      m_pAnimatedMaterial;

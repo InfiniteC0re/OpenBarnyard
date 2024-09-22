@@ -73,6 +73,8 @@
 .\Vendor\clang-format.exe -i .\OpenBarnyard\Source\Render\AWorldShader\*.h
 .\Vendor\clang-format.exe -i .\OpenBarnyard\Source\Render\*.cpp
 .\Vendor\clang-format.exe -i .\OpenBarnyard\Source\Render\*.h
+.\Vendor\clang-format.exe -i .\OpenBarnyard\Source\Animation\*.cpp
+.\Vendor\clang-format.exe -i .\OpenBarnyard\Source\Animation\*.h
 .\Vendor\clang-format.exe -i .\OpenBarnyard\Source\Sound\*.cpp
 .\Vendor\clang-format.exe -i .\OpenBarnyard\Source\Sound\*.h
 .\Vendor\clang-format.exe -i .\OpenBarnyard\Source\Tasks\*.cpp

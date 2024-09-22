@@ -382,7 +382,7 @@ MEMBER_HOOK( 0x006cd220, TCameraObject, TCameraObject_SetFOV, TFLOAT, TFLOAT a_f
 	return CallOriginal( a_fFOV );
 }
 
-MEMBER_HOOK( 0x006c1d40, TModelManager, TModelRegistry_CreateModel, TModelManager::ModelNode*, const char* a_szFileName, TModelPtr& a_rModelRef, TTRB* a_pAssetTRB )
+MEMBER_HOOK( 0x006c1d40, TModelManager, TModelRegistry_CreateModel, TModelManager::ModelNode*, const char* a_szFileName, TManagedModel& a_rModelRef, TTRB* a_pAssetTRB )
 {
 	TString8 filepath = a_szFileName;
 

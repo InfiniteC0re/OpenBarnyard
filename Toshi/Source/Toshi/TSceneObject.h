@@ -10,14 +10,16 @@ public:
 	TSceneObject();
 	~TSceneObject();
 
-	void Create( TModelPtr* a_pModelPtr );
+	void Create( TManagedModel* a_pModelPtr );
+
 	void Delete();
+	void DestroyModelInstance();
 
 	void  Update( TFLOAT a_fDeltaTime );
 	TBOOL Render( TUINT a_uiClipFlags, const TVector3& a_rBounding );
 	TBOOL RenderIfVisible();
 
-	TModelPtr*        GetModelRef() { return m_pModelRef; }
+	TManagedModel*    GetModelRef() { return m_pModelRef; }
 	TModelInstance*   GetInstance() { return m_pModelInstance; }
 	TTransformObject& GetTransform() { return m_TransformObject; }
 
@@ -31,7 +33,7 @@ public:
 	TVector2& GetSomeVector2() { return m_SomeVector2; }
 
 private:
-	TModelPtr*       m_pModelRef      = TNULL;
+	TManagedModel*   m_pModelRef      = TNULL;
 	TModelInstance*  m_pModelInstance = TNULL;
 	TTransformObject m_TransformObject;
 	// ...
