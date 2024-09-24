@@ -61,15 +61,15 @@ protected:
 		return m_iNumElements;
 	}
 
-	T2GenericRedBlackTreeNode* GetFirstNode();
+	T2GenericRedBlackTreeNode* GetFirstNode() const;
 	T2GenericRedBlackTreeNode* Insert( T2GenericRedBlackTreeNode* pNode );
 	void                       DeleteFixUp( T2GenericRedBlackTreeNode* pNode );
 	T2GenericRedBlackTreeNode* DeleteNode( T2GenericRedBlackTreeNode* pNode );
 
 	void                              LeftRotate( T2GenericRedBlackTreeNode* pNode );
 	void                              RightRotate( T2GenericRedBlackTreeNode* pNode );
-	static T2GenericRedBlackTreeNode* GetSuccessorOf( T2GenericRedBlackTreeNode* pNode );
-	static T2GenericRedBlackTreeNode* GetPredecessorOf( T2GenericRedBlackTreeNode* pNode );
+	static T2GenericRedBlackTreeNode* GetSuccessorOf( const T2GenericRedBlackTreeNode* pNode );
+	static T2GenericRedBlackTreeNode* GetPredecessorOf( const T2GenericRedBlackTreeNode* pNode );
 
 private:
 	void CheckValid()
@@ -82,9 +82,9 @@ protected:
 	static constinit T2GenericRedBlackTreeNode ms_oNil;
 
 protected:
-	T2Allocator*              m_pAllocator;
-	T2GenericRedBlackTreeNode m_oRoot;
-	size_t                    m_iNumElements;
+	T2Allocator*                      m_pAllocator;
+	mutable T2GenericRedBlackTreeNode m_oRoot;
+	size_t                            m_iNumElements;
 };
 
 template <class T>
@@ -105,7 +105,7 @@ public:
 		return &m_Value;
 	}
 
-	TBOOL IsLeftNodeNext( const T& value )
+	TBOOL IsLeftNodeNext( const T& value ) const
 	{
 		// Insert same values to the right side
 		if ( TComparator<T>::IsEqual( m_Value, value ) )
@@ -189,25 +189,15 @@ public:
 			return m_pNode;
 		}
 
-		TFORCEINLINE T* GetValue() const
+		TFORCEINLINE T* GetValue()
 		{
 			return &m_pNode->m_Value;
 		}
-
-		//TFORCEINLINE TBOOL operator==( const Node* a_pNode ) const
-		//{
-		//	return m_pNode == a_pNode;
-		//}
 
 		TFORCEINLINE TBOOL operator==( const Iterator& other ) const
 		{
 			return m_pNode == other.m_pNode;
 		}
-
-		/*TFORCEINLINE TBOOL operator==( const T& other ) const
-		{
-			return m_pNode == other;
-		}*/
 
 		TFORCEINLINE T& operator*() const
 		{
@@ -250,6 +240,87 @@ public:
 		Node* m_pNode;
 	};
 
+	class CIterator
+	{
+	public:
+		TFORCEINLINE CIterator( const Node* a_pNode ) :
+		    m_pNode( a_pNode ) {}
+
+		TFORCEINLINE CIterator Next()
+		{
+			CIterator next = *this;
+			m_pNode        = TSTATICCAST( const Node, T2RedBlackTree::GetSuccessorOf( m_pNode ) );
+			return next;
+		}
+
+		TFORCEINLINE CIterator Prev()
+		{
+			CIterator prev = *this;
+			m_pNode        = TSTATICCAST( const Node, T2RedBlackTree::GetPredecessorOf( m_pNode ) );
+			return prev;
+		}
+
+		TFORCEINLINE const Node* GetNode()
+		{
+			return m_pNode;
+		}
+
+		TFORCEINLINE const T* GetValue() const
+		{
+			return &m_pNode->m_Value;
+		}
+
+		TFORCEINLINE TBOOL operator==( const Iterator& other ) const
+		{
+			return m_pNode == other.m_pNode;
+		}
+
+		TFORCEINLINE TBOOL operator==( const CIterator& other ) const
+		{
+			return m_pNode == other.m_pNode;
+		}
+
+		TFORCEINLINE const T& operator*() const
+		{
+			return m_pNode->m_Value;
+		}
+
+		TFORCEINLINE const T* operator->() const
+		{
+			return &m_pNode->m_Value;
+		}
+
+		TFORCEINLINE operator const T*() const
+		{
+			return &m_pNode->m_Value;
+		}
+
+		TFORCEINLINE CIterator operator++( TINT )
+		{
+			return Next();
+		}
+
+		TFORCEINLINE CIterator& operator++()
+		{
+			m_pNode = TSTATICCAST( const Node, T2RedBlackTree::GetSuccessorOf( m_pNode ) );
+			return *this;
+		}
+
+		TFORCEINLINE CIterator operator--( TINT )
+		{
+			return Prev();
+		}
+
+		TFORCEINLINE CIterator& operator--()
+		{
+			m_pNode = TSTATICCAST( const Node, T2RedBlackTree::GetPredecessorOf( m_pNode ) );
+			return *this;
+		}
+
+	private:
+		const Node* m_pNode;
+	};
+
 public:
 	T2RedBlackTree( T2Allocator* pAllocator = GetGlobalAllocator() ) :
 	    T2GenericRedBlackTree( pAllocator )
@@ -271,12 +342,21 @@ public:
 		return Iterator( TREINTERPRETCAST( Node*, &m_oRoot ) );
 	}
 
+	const CIterator Begin() const
+	{
+		return CIterator( TREINTERPRETCAST( const Node*, GetFirstNode() ) );
+	}
+
+	const CIterator End() const
+	{
+		return CIterator( TREINTERPRETCAST( const Node*, &m_oRoot ) );
+	}
+
 	void DeleteAll()
 	{
 		while ( GetNumElements() > 0 )
 		{
-			auto pNode = TSTATICCAST( Node, GetFirstNode() );
-			Delete( pNode );
+			Delete( TSTATICCAST( Node, GetFirstNode() ) );
 		}
 	}
 
@@ -337,7 +417,7 @@ public:
 		return pNode;
 	}
 
-	Iterator Find( const T& value )
+	Iterator Find( const T& value ) const
 	{
 		Node* pCurrentNode = TSTATICCAST( Node, m_oRoot.m_pLeft );
 
@@ -361,7 +441,7 @@ public:
 		return TSTATICCAST( Node, &m_oRoot );
 	}
 
-	Iterator FindNext( Node*& nextAfter, const T& value )
+	Iterator FindNext( Node*& nextAfter, const T& value ) const
 	{
 		Node* pNode = TSTATICCAST( Node, GetSuccessorOf( nextAfter ) );
 

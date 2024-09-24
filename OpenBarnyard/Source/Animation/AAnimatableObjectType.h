@@ -18,7 +18,11 @@ public:
 
 	virtual TBOOL CreateFromProperties( const PBProperties* a_pProperties, const Toshi::TPString8& a_rcName );
 	virtual TBOOL Create( const Toshi::TPString8& a_rcName );
-	void          Destroy();
+	virtual void  Unknown( void* );
+
+	void Destroy();
+
+	ANamedAnimationSetRef FindAnimationSet( const Toshi::TPString8& a_rcName );
 
 private:
 	TBOOL LoadAnimationSet( const PBProperties* a_pProperties );
@@ -29,6 +33,6 @@ private:
 	Toshi::TPString8                          m_strName;
 	Toshi::T2Vector<ANamedAnimationSetRef, 6> m_vecAnimationSets;
 	Toshi::T2DList<AAnimatableObjectType>     m_UnkList; // list type is a placeholder
-	AModel*                                   m_pModel;
+	AModel*                                   m_pAModel;
 	void*                                     m_pUnk;
 };

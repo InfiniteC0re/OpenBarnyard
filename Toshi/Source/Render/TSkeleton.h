@@ -60,13 +60,7 @@ public:
 		FLAG_Overlay = BITFLAG( 0 ),
 	};
 
-	enum LOOPMODE : TINT
-	{
-		LOOPMODE_LOOP
-	};
-
 public:
-	TBOOL IsLooping() const { return m_eLoopMode == LOOPMODE_LOOP; }
 	TBOOL IsOverlay() const { return m_eFlags & FLAG_Overlay; }
 
 	TSkeletonSequenceBone* GetBones() { return m_pSeqBones; }
@@ -77,13 +71,13 @@ public:
 	TINT16       GetUnk2() const { return m_iUnk2; }
 
 private:
-	const TCHAR*           m_szName;
+	TUINT8                 m_iNameLength;
+	TCHAR                  m_szName[ 31 ];
 	Flag                   m_eFlags;
 	TINT16                 m_iUnk2;
-	LOOPMODE               m_eLoopMode;
+	TINT                   m_iNumUsedBones;
 	TFLOAT                 m_fDuration;
 	TSkeletonSequenceBone* m_pSeqBones;
-	TINT                   m_iUnk3;
 };
 
 class TSkeletonBone
@@ -139,8 +133,8 @@ public:
 	t_fnQuatLerp GetQInterpFn() const { return m_fnQuatLerp; }
 	void         SetQInterpFn( QUATINTERP a_eQuatInterp );
 
-	TSkeletonBone* GetBone( const TCHAR* a_cBoneName, TUINT32 a_iLength ) { return GetBone( GetBoneID( a_cBoneName, a_iLength ) ); }
-	TINT           GetBoneID( const TCHAR* a_cBoneName, TUINT32 a_iLength );
+	TSkeletonBone* GetBone( const TCHAR* a_cBoneName, TUINT32 a_iLength = 0 ) { return GetBone( GetBoneID( a_cBoneName, a_iLength ) ); }
+	TINT           GetBoneID( const TCHAR* a_cBoneName, TUINT32 a_iLength = 0 );
 
 	TKeyframeLibraryInstance& GetKeyLibraryInstance() { return m_KeyLibraryInstance; }
 	TINT                      GetAnimationMaxCount() { return m_iAnimationMaxCount; }
@@ -150,10 +144,10 @@ public:
 	TINT                      GetBoneCount() const { return m_iBoneCount; }
 	TINT                      GetAutoBoneCount() const { return m_iBoneCount - m_iManualBoneCount; }
 
-	TINT               GetSequenceID( const TCHAR* a_sSequenceName, TUINT32 a_iLength );
+	TINT               GetSequenceID( const TCHAR* a_sSequenceName, TUINT32 a_iLength = 0 );
 	TSkeletonSequence* GetSequences() { return m_SkeletonSequences; }
-	TSkeletonSequence* GetSequence( TUINT32 a_iSequence ) { return &m_SkeletonSequences[ a_iSequence ]; }
-	TSkeletonSequence* GetSequence( const TCHAR* a_sSequenceName, TUINT32 a_iLength ) { return GetSequence( GetSequenceID( a_sSequenceName, a_iLength ) ); }
+	TSkeletonSequence* GetSequence( TINT a_iSequence ) { return &m_SkeletonSequences[ a_iSequence ]; }
+	TSkeletonSequence* GetSequence( const TCHAR* a_sSequenceName, TUINT32 a_iLength = 0 ) { return GetSequence( GetSequenceID( a_sSequenceName, a_iLength ) ); }
 
 	TINT16 GetSequenceCount() { return m_iSequenceCount; }
 

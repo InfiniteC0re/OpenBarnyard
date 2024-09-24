@@ -115,6 +115,11 @@ public:
 		return m_LODs[ a_uiLOD ];
 	}
 
+	TSkeleton* GetSkeleton() const
+	{
+		return m_pSkeleton;
+	}
+
 	template <class T>
 	T* CastSymbol( const TCHAR* a_szSymbolName ) { return TSTATICCAST( T, GetSymbol( a_szSymbolName ) ); }
 

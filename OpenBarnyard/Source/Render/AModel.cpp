@@ -26,11 +26,11 @@ TDEFINE_CLASS( AModelInstance );
 AModel::AModel( const TPString8& a_rName, TTRB* a_pTRB ) :
     m_Name( a_rName ),
     m_uiID( ms_uiNumCreated ),
-    m_pModelPtr( TNULL ),
+    m_pManagedModel( TNULL ),
     m_Vec1( TVector3::VEC_ZERO ),
     m_Vec2( TVector3::VEC_ZERO )
 {
-	m_pModelPtr = AModel::Create( a_rName, a_pTRB );
+	m_pManagedModel = AModel::Create( a_rName, a_pTRB );
 
 	ms_uiNumCreated += 1;
 }
@@ -39,9 +39,9 @@ AModel::AModel( const TPString8& a_rName, TTRB* a_pTRB ) :
 // $Barnyard: FUNCTION 0060fed0
 AModel::~AModel()
 {
-	if ( m_pModelPtr )
+	if ( m_pManagedModel )
 	{
-		delete m_pModelPtr;
+		delete m_pManagedModel;
 	}
 }
 
@@ -100,7 +100,7 @@ AModelInstanceRef AModel::CreateInstance()
 
 	AModelInstanceRef modelInstanceRef = new AModelInstance(
 	    this,
-	    m_pModelPtr->CreateSceneObject(),
+	    m_pManagedModel->CreateSceneObject(),
 	    TFALSE );
 
 	m_vecInstanceRefs.PushBack( modelInstanceRef );

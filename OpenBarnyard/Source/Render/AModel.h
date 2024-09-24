@@ -86,6 +86,7 @@ public:
 	TSIZE GetNumInstances() const;
 
 	const Toshi::TPString8& GetName() const { return m_Name; }
+	Toshi::TSkeleton*       GetSkeleton() const { return m_pManagedModel->GetModel()->GetSkeleton(); }
 
 public:
 	static Toshi::TManagedModel* Create( const Toshi::TPString8& a_rFilePath, Toshi::TTRB* a_pTRB );
@@ -97,7 +98,7 @@ private:
 
 private:
 	TUINT                                                 m_uiID;
-	Toshi::TManagedModel*                                 m_pModelPtr;
+	Toshi::TManagedModel*                                 m_pManagedModel;
 	Toshi::TPString8                                      m_Name;
 	Toshi::T2Vector<AModelInstanceRef, MAX_NUM_INSTANCES> m_vecInstanceRefs;
 	Toshi::TVector3                                       m_Vec1;

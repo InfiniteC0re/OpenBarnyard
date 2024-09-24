@@ -11,7 +11,7 @@ TOSHI_NAMESPACE_START
 
 constinit T2GenericRedBlackTreeNode T2GenericRedBlackTree::ms_oNil;
 
-T2GenericRedBlackTreeNode* T2GenericRedBlackTree::GetFirstNode()
+T2GenericRedBlackTreeNode* T2GenericRedBlackTree::GetFirstNode() const
 {
 	T2GenericRedBlackTreeNode* pCurrentNode = &m_oRoot;
 	T2GenericRedBlackTreeNode* pResult      = TNULL;
@@ -324,7 +324,7 @@ void T2GenericRedBlackTree::RightRotate( T2GenericRedBlackTreeNode* pNode )
 	CheckValid();
 }
 
-T2GenericRedBlackTreeNode* T2GenericRedBlackTree::GetSuccessorOf( T2GenericRedBlackTreeNode* pNode )
+T2GenericRedBlackTreeNode* T2GenericRedBlackTree::GetSuccessorOf( const T2GenericRedBlackTreeNode* pNode )
 {
 	T2GenericRedBlackTreeNode* pTVar1;
 	T2GenericRedBlackTreeNode* pTVar2;
@@ -363,7 +363,7 @@ T2GenericRedBlackTreeNode* T2GenericRedBlackTree::GetSuccessorOf( T2GenericRedBl
 	return pTVar1;
 }
 
-T2GenericRedBlackTreeNode* T2GenericRedBlackTree::GetPredecessorOf( T2GenericRedBlackTreeNode* pNode )
+T2GenericRedBlackTreeNode* T2GenericRedBlackTree::GetPredecessorOf( const T2GenericRedBlackTreeNode* pNode )
 {
 	T2GenericRedBlackTreeNode* pTVar1;
 	T2GenericRedBlackTreeNode* pTVar2 = pNode->m_pLeft;

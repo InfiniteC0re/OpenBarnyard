@@ -9,9 +9,10 @@ template <class KeyType, class ValueType, class Comparator = TComparator<KeyType
 class T2Map
 {
 public:
-	using Pair     = T2Pair<KeyType, ValueType, Comparator>;
-	using Iterator = T2RedBlackTree<Pair>::Iterator;
-	using Node     = T2RedBlackTree<Pair>::Node;
+	using Pair      = T2Pair<KeyType, ValueType, Comparator>;
+	using Iterator  = T2RedBlackTree<Pair>::Iterator;
+	using CIterator = T2RedBlackTree<Pair>::CIterator;
+	using Node      = T2RedBlackTree<Pair>::Node;
 
 public:
 	T2Map( T2Allocator* a_pAllocator = GetGlobalAllocator() ) :
@@ -103,6 +104,16 @@ public:
 	}
 
 	Iterator End()
+	{
+		return m_RedBlackTree.End();
+	}
+
+	const CIterator Begin() const
+	{
+		return m_RedBlackTree.Begin();
+	}
+
+	const CIterator End() const
 	{
 		return m_RedBlackTree.End();
 	}

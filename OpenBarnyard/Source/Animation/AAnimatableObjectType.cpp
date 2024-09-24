@@ -13,8 +13,8 @@ TOSHI_NAMESPACE_USING
 // $Barnyard: FUNCTION 0057ed30
 AAnimatableObjectType::AAnimatableObjectType()
 {
-	m_pModel = TNULL;
-	m_pUnk   = TNULL;
+	m_pAModel = TNULL;
+	m_pUnk    = TNULL;
 }
 
 // $Barnyard: FUNCTION 0057f2c0
@@ -51,8 +51,8 @@ TBOOL AAnimatableObjectType::CreateFromProperties( const PBProperties* a_pProper
 	AModelRepos* pModelRepos = AModelRepos::GetSingleton();
 	pModelRepos->LoadModel( strPooledModelPath, TNULL );
 
-	m_pModel = pModelRepos->GetModel( strPooledModelPath );
-	TVALIDPTR( m_pModel );
+	m_pAModel = pModelRepos->GetModel( strPooledModelPath );
+	TVALIDPTR( m_pAModel );
 
 	TBOOL bLoadedAnimationSet = TFALSE;
 
@@ -97,12 +97,16 @@ TBOOL AAnimatableObjectType::Create( const Toshi::TPString8& a_rcName )
 	AModelRepos* pModelRepos = AModelRepos::GetSingleton();
 	pModelRepos->LoadModel( strPooledModelPath, TNULL );
 
-	m_pModel = pModelRepos->GetModel( strPooledModelPath );
-	TVALIDPTR( m_pModel );
+	m_pAModel = pModelRepos->GetModel( strPooledModelPath );
+	TVALIDPTR( m_pAModel );
 
 	LoadAnimationSet( TNULL );
 
 	return TTRUE;
+}
+
+void AAnimatableObjectType::Unknown( void* )
+{
 }
 
 // $Barnyard: FUNCTION 0057eeb0
@@ -111,10 +115,10 @@ void AAnimatableObjectType::Destroy()
 	m_vecAnimationSets.Clear();
 	m_UnkList.DeleteAll();
 
-	if ( m_pModel )
+	if ( m_pAModel )
 	{
-		AModelRepos::GetSingleton()->UnloadModel( m_pModel->GetName(), TFALSE );
-		m_pModel = TNULL;
+		AModelRepos::GetSingleton()->UnloadModel( m_pAModel->GetName(), TFALSE );
+		m_pAModel = TNULL;
 	}
 
 	if ( m_pUnk )
@@ -125,10 +129,51 @@ void AAnimatableObjectType::Destroy()
 	}
 }
 
+// $Barnyard: FUNCTION 0057ef40
+ANamedAnimationSetRef AAnimatableObjectType::FindAnimationSet( const Toshi::TPString8& a_rcName )
+{
+	for ( TSIZE i = 0; i < m_vecAnimationSets.Size(); i++ )
+	{
+		if ( m_vecAnimationSets[ i ]->GetName() == a_rcName )
+		{
+			return m_vecAnimationSets[ i ];
+		}
+	}
+
+	return TNULL;
+}
+
+// $Barnyard: FUNCTION 0057f060
 TBOOL AAnimatableObjectType::LoadAnimationSet( const PBProperties* a_pProperties )
 {
 	TVALIDPTR( a_pProperties );
-	TASSERT( !"Not implemented" );
+	TVALIDPTR( m_pAModel );
+
+	TSkeleton*          pSkeleton     = m_pAModel->GetSkeleton();
+	ANamedAnimationSet* pAnimationSet = TNULL;
+
+	if ( a_pProperties )
+	{
+		// Get anim object name
+		TPString8 strName;
+		a_pProperties->GetOptionalPropertyValue( strName, TPS8( Name ) );
+
+		// Check if this animation set is already created
+		pAnimationSet = FindAnimationSet( strName ).Get();
+	}
+
+	if ( !pAnimationSet )
+	{
+		// Create new animation set
+		pAnimationSet = new ( AMemory::GetMemBlock( AMemory::POOL_Misc ) ) ANamedAnimationSet();
+		m_vecAnimationSets.PushBack( pAnimationSet );
+	}
+
+	TVALIDPTR( pAnimationSet );
+	TVALIDPTR( pSkeleton );
+
+	if ( pAnimationSet )
+		return pAnimationSet->CreateFromProperties( a_pProperties, pSkeleton );
 
 	return TTRUE;
 }

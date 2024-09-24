@@ -89,11 +89,14 @@ void TSkeleton::SetQInterpFn( QUATINTERP a_eQuatInterp )
 		m_fnQuatLerp = TQuaternion::Nlerp;
 }
 
-TINT TSkeleton::GetBoneID( const TCHAR* a_cBoneName, TUINT32 a_iLength )
+TINT TSkeleton::GetBoneID( const TCHAR* a_szBoneName, TUINT32 a_iLength )
 {
+	if ( a_iLength == 0 )
+		a_iLength = TStringManager::String8Length( a_szBoneName );
+
 	for ( short i = 0; i < m_iBoneCount; i++ )
 	{
-		if ( TStringManager::String8CompareNoCase( m_pBones[ i ].GetName(), a_cBoneName, a_iLength ) == 0 )
+		if ( TStringManager::String8CompareNoCase( m_pBones[ i ].GetName(), a_szBoneName, a_iLength ) == 0 )
 		{
 			return i;
 		}
@@ -102,11 +105,14 @@ TINT TSkeleton::GetBoneID( const TCHAR* a_cBoneName, TUINT32 a_iLength )
 	return -1;
 }
 
-TINT TSkeleton::GetSequenceID( const TCHAR* a_sSequenceName, TUINT32 a_iLength )
+TINT TSkeleton::GetSequenceID( const TCHAR* a_szSequenceName, TUINT32 a_iLength )
 {
+	if ( a_iLength == 0 )
+		a_iLength = TStringManager::String8Length( a_szSequenceName );
+
 	for ( short i = 0; i < m_iSequenceCount; i++ )
 	{
-		if ( TStringManager::String8CompareNoCase( m_SkeletonSequences[ i ].GetName(), a_sSequenceName, a_iLength ) == 0 )
+		if ( TStringManager::String8CompareNoCase( m_SkeletonSequences[ i ].GetName(), a_szSequenceName, a_iLength ) == 0 )
 		{
 			return i;
 		}
