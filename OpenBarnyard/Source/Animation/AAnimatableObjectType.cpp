@@ -67,7 +67,7 @@ TBOOL AAnimatableObjectType::CreateFromProperties( const PBProperties* a_pProper
 			}
 			else if ( !T2String8::Compare( it->GetName().GetString(), "AnimControllerType" ) )
 			{
-				SetAnimControllerType( it->GetValue()->GetProperties() );
+				SetAnimController( it->GetValue()->GetProperties() );
 			}
 			else if ( !T2String8::Compare( it->GetName().GetString(), "Skins" ) )
 			{
@@ -178,7 +178,7 @@ TBOOL AAnimatableObjectType::LoadAnimationSet( const PBProperties* a_pProperties
 	return TTRUE;
 }
 
-TBOOL AAnimatableObjectType::SetAnimControllerType( const PBProperties* a_pProperties )
+TBOOL AAnimatableObjectType::SetAnimController( const PBProperties* a_pProperties )
 {
 	TVALIDPTR( a_pProperties );
 	TASSERT( !"Not implemented" );

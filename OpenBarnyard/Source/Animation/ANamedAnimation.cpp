@@ -33,9 +33,9 @@ ANamedAnimation::~ANamedAnimation()
 TPSTRING8_DECLARE( EndOfAnim );
 
 // $Barnyard: FUNCTION 00581a90
-static TBOOL IsFinishOnAnimEnd( const TPString8& a_rcFinishType )
+ANamedAnimation::FINISHTYPE ANamedAnimation::GetFinishType( const Toshi::TPString8& a_rcFinishType )
 {
-	return !a_rcFinishType.GetString8().IsEmpty() && a_rcFinishType == TPS8( EndOfAnim );
+	return ( !a_rcFinishType.GetString8().IsEmpty() && a_rcFinishType == TPS8( EndOfAnim ) ) ? FINISHTYPE_AUTO : FINISHTYPE_MANUAL;
 }
 
 // $Barnyard: FUNCTION 00580760
@@ -143,7 +143,7 @@ TBOOL ANamedAnimation::Create( const PBProperties* a_pProperties, Toshi::TSkelet
 		m_fDuration = pSequence->GetDuration();
 
 		m_eFlags &= ~( FLAGS_FINISH_MANUAL | FLAGS_FINISH_ON_ANIM_END );
-		m_eFlags |= ( IsFinishOnAnimEnd( strDefaultFinishType ) ) ? FLAGS_FINISH_ON_ANIM_END : FLAGS_FINISH_MANUAL;
+		m_eFlags |= ( GetFinishType( strDefaultFinishType ) == FINISHTYPE_AUTO ) ? FLAGS_FINISH_ON_ANIM_END : FLAGS_FINISH_MANUAL;
 
 		TASSERT( !"Find model in AAnimatableObjectManager and parse breakpoints" );
 

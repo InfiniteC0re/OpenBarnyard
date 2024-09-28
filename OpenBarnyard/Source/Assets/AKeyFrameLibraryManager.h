@@ -29,7 +29,7 @@ public:
 	TBOOL UnrefLibrary( const Toshi::TPString8& a_rLibraryName );
 
 private:
-	void UnloadLibrary( LibraryMap::Node*& a_rLibrary );
+	void UnloadLibrary( LibraryMap::Iterator& a_rLibrary );
 	void UnloadAllLibraries();
 
 private:

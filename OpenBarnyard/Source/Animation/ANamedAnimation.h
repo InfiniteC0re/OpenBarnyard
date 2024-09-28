@@ -20,6 +20,13 @@ public:
 		FLAGS_REVERSE            = BITFLAG( 6 ),
 	};
 
+	using FINISHTYPE = TINT;
+	enum FINISHTYPE_ : FINISHTYPE
+	{
+		FINISHTYPE_MANUAL,
+		FINISHTYPE_AUTO
+	};
+
 public:
 	// constructors/destructor
 	ANamedAnimation( Toshi::T2Allocator* a_pAllocator );
@@ -28,8 +35,12 @@ public:
 	TBOOL Create( const PBProperties* a_pProperties, Toshi::TSkeleton* a_pSkeleton );
 	void  Reset();
 
+	TBOOL IsOverlay() const { return m_eFlags & FLAGS_OVERLAY; }
+
 	const Toshi::TPString8& GetName() const { return m_strName; }
 	const Toshi::TPString8& GetExportedName() const { return m_strExportedName; }
+
+	static FINISHTYPE GetFinishType( const Toshi::TPString8& a_rcFinishType );
 
 private:
 	Toshi::TPString8 m_strExportedName;

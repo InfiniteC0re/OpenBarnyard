@@ -96,7 +96,7 @@ public:
 	void UnloadTexturesOfLibrary( AMaterialLibrary* a_pMaterialLibrary );
 
 private:
-	void DestroyLibrary( LibrariesMap::Node*& a_rpMaterialLibraryNode, TBOOL a_bUpdateGUIMaterials );
+	void DestroyLibrary( LibrariesMap::Iterator& a_rcMaterialLibraryNode, TBOOL a_bUpdateGUIMaterials );
 
 private:
 	Toshi::T2Map<Toshi::TPString8, int, Toshi::TPString8::Comparator> m_NumRefLibraries;

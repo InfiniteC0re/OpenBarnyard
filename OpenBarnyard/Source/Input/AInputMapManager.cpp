@@ -114,17 +114,17 @@ void AInputMapManager::GetEventCommands( const Toshi::TInputInterface::InputEven
 	if ( m_pActiveInputMap )
 	{
 		auto pCommandMap      = &m_pActiveInputMap->GetCommandMap();
-		auto pCommandIndexRes = pCommandMap->FindNode( a_pEvent->GetDoodad() );
+		auto pCommandIndexRes = pCommandMap->Find( a_pEvent->GetDoodad() );
 
-		while ( pCommandIndexRes != pCommandMap->End() )
+		while ( pCommandMap->IsValid( pCommandIndexRes ) )
 		{
-			auto  pCommandRes = m_oCommandMap.FindNode( pCommandIndexRes->GetValue()->GetSecond() );
+			auto  pCommandRes = m_oCommandMap.Find( pCommandIndexRes->GetSecond() );
 			TBOOL bCommandValid;
 
-			if ( pCommandRes != m_oCommandMap.End() )
+			if ( m_oCommandMap.IsValid( pCommandRes ) )
 			{
 				bCommandValid = TTRUE;
-				auto command  = pCommandRes->GetValue()->GetSecond();
+				auto command  = pCommandRes->GetSecond();
 
 				if ( !command.IsEventTypeAllowed( a_pEvent->GetEventType() ) )
 				{
@@ -138,11 +138,11 @@ void AInputMapManager::GetEventCommands( const Toshi::TInputInterface::InputEven
 
 			if ( bCommandValid )
 			{
-				a_rCommandArray.AddCommand( pCommandIndexRes->GetValue()->GetSecond() );
+				a_rCommandArray.AddCommand( pCommandIndexRes->GetSecond() );
 			}
 
 			// Look if there are any other commands binded to this doodad
-			pCommandIndexRes = pCommandMap->FindNextNode( pCommandIndexRes, a_pEvent->GetDoodad() );
+			pCommandIndexRes = pCommandMap->FindNext( pCommandIndexRes, a_pEvent->GetDoodad() );
 		}
 	}
 }

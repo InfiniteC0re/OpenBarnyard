@@ -21,15 +21,15 @@ void TPString8Pool::Get( TPooledString8*& a_pOutString, const TCHAR* a_szString,
 
 		if ( iStrLen != 0 )
 		{
-			TPooledString8* pResult = *m_oMap.Find( a_szString );
+			auto it = m_oMap.Find( a_szString );
 
-			if ( pResult != m_oMap.End()->GetSecond() )
+			if ( m_oMap.IsValid( it ) )
 			{
 				if ( a_pWasInPool )
 					*a_pWasInPool = TTRUE;
 
-				a_pOutString = pResult;
-				pResult->IncRefCount();
+				a_pOutString = it->GetSecond();
+				a_pOutString->IncRefCount();
 			}
 			else
 			{

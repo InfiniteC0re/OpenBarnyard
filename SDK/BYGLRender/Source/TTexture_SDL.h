@@ -282,7 +282,7 @@ public:
 
 	void AddGLAssociation( IDirect3DTexture8* a_pTexture, TTextureSDL* a_pReplaced )
 	{
-		auto pResult = m_AssociatedTextures.FindNode( a_pTexture );
+		auto pResult = m_AssociatedTextures.Find( a_pTexture );
 
 		if ( pResult == m_AssociatedTextures.End() )
 		{
@@ -296,11 +296,11 @@ public:
 
 	TTextureSDL* GetGLAssociation( IDirect3DTexture8* a_pTexture )
 	{
-		auto pResult = m_AssociatedTextures.FindNode( a_pTexture );
+		auto pResult = m_AssociatedTextures.Find( a_pTexture );
 
 		if ( pResult != m_AssociatedTextures.End() )
 		{
-			return pResult->GetValue()->GetSecond();
+			return pResult->GetSecond();
 		}
 
 		return m_pInvalidTexture;
@@ -308,14 +308,13 @@ public:
 
 	TTextureSDL* RemoveGLAssociation( IDirect3DTexture8* a_pTexture )
 	{
-		auto pResult = m_AssociatedTextures.FindNode( a_pTexture );
+		auto pResult = m_AssociatedTextures.Find( a_pTexture );
 
 		if ( pResult != m_AssociatedTextures.End() )
 		{
-			auto pTexture = pResult->GetValue()->GetSecond();
-			m_AssociatedTextures.RemoveNode( pResult );
+			auto pTexture = pResult->GetSecond();
+			m_AssociatedTextures.Remove( pResult );
 
-			TASSERT( m_AssociatedTextures.FindNode( a_pTexture ) == m_AssociatedTextures.End() );
 			return pTexture;
 		}
 

@@ -34,7 +34,7 @@ AMaterialLibraryManager::AMaterialLibraryManager() :
 	}
 }
 
-void AMaterialLibraryManager::LoadLibrariesFromProperties( const PBPropertyValue* a_pProperty, Toshi::TTRB* a_pTRB, TBOOL a_bUpdateGUIMaterials )
+void AMaterialLibraryManager::LoadLibrariesFromProperties( const PBPropertyValue* a_pProperty, TTRB* a_pTRB, TBOOL a_bUpdateGUIMaterials )
 {
 	if ( a_pProperty )
 	{
@@ -82,14 +82,14 @@ void AMaterialLibraryManager::LoadLibrariesFromProperties( const PBPropertyValue
 	}
 }
 
-void AMaterialLibraryManager::LoadLibrary( const Toshi::TPString8& a_rLibName, Toshi::TTRB* a_pTRB, TBOOL a_bIsGUI )
+void AMaterialLibraryManager::LoadLibrary( const TPString8& a_rLibName, TTRB* a_pTRB, TBOOL a_bIsGUI )
 {
 	auto pRenderer = TRenderInterface::GetSingleton();
 
-	if ( m_LoadedLibraries.Find( a_rLibName ) == &m_LoadedLibraries.End()->GetSecond() )
+	if ( !m_LoadedLibraries.IsValid( m_LoadedLibraries.Find( a_rLibName ) ) )
 	{
-		Toshi::TString8 fileMiddle = "";
-		Toshi::TString8 fileFormat = "";
+		TString8 fileMiddle = "";
+		TString8 fileFormat = "";
 
 		if ( !pRenderer->Supports32BitTextures() )
 		{
@@ -105,7 +105,7 @@ void AMaterialLibraryManager::LoadLibrary( const Toshi::TPString8& a_rLibName, T
 		    fileMiddle.GetString(),
 		    fileFormat.GetString() );
 
-		auto pLibrary = List::GetSingleton()->CreateLibraryFromAsset( matlibPath, a_pTRB );
+		AMaterialLibrary* pLibrary = List::GetSingleton()->CreateLibraryFromAsset( matlibPath, a_pTRB );
 
 		if ( pLibrary )
 		{
@@ -124,7 +124,7 @@ void AMaterialLibraryManager::LoadLibrary( const Toshi::TPString8& a_rLibName, T
 	else
 	{
 		auto pRefCount = m_NumRefLibraries.Find( a_rLibName );
-		*pRefCount     = *pRefCount + 1;
+		pRefCount->GetSecond() += 1;
 	}
 }
 
@@ -156,32 +156,32 @@ void AMaterialLibraryManager::UnloadLibrary( const TPString8& a_rLibName, TBOOL 
 
 	TRenderInterface::GetSingleton()->BeginEndSceneHAL();
 
-	auto pMatlibNode = m_LoadedLibraries.FindNode( matlibName );
+	auto pMatlibNode = m_LoadedLibraries.Find( matlibName );
 
 	if ( pMatlibNode != m_LoadedLibraries.End() )
 	{
-		auto pRefCountNode = m_NumRefLibraries.FindNode( matlibName );
+		auto pRefCountNode = m_NumRefLibraries.Find( matlibName );
 
-		if ( pRefCountNode != m_NumRefLibraries.End() )
+		if ( m_NumRefLibraries.IsValid( pRefCountNode ) )
 		{
-			pRefCountNode->GetValue()->GetSecond() -= 1;
+			pRefCountNode->GetSecond() -= 1;
 
-			if ( pRefCountNode->GetValue()->GetSecond() == 0 )
+			if ( pRefCountNode->GetSecond() == 0 )
 			{
 				DestroyLibrary( pMatlibNode, a_bUnused );
-				m_NumRefLibraries.RemoveNode( pRefCountNode );
+				m_NumRefLibraries.Remove( pRefCountNode );
 			}
 		}
 	}
 }
 
-void AMaterialLibraryManager::DestroyLibrary( LibrariesMap::Node*& a_rpMaterialLibraryNode, TBOOL a_bUpdateGUIMaterials )
+void AMaterialLibraryManager::DestroyLibrary( LibrariesMap::Iterator& a_rcMaterialLibraryNode, TBOOL a_bUpdateGUIMaterials )
 {
-	auto pMaterialLibrary = a_rpMaterialLibraryNode->GetValue()->GetSecond();
+	auto pMaterialLibrary = a_rcMaterialLibraryNode->GetSecond();
 	UnloadTexturesOfLibrary( pMaterialLibrary );
 
 	pMaterialLibrary->Destroy();
-	m_LoadedLibraries.RemoveNode( a_rpMaterialLibraryNode );
+	m_LoadedLibraries.Remove( a_rcMaterialLibraryNode );
 
 	TRenderInterface::GetSingleton()->FlushDyingResources();
 	TRenderInterface::GetSingleton()->FlushDyingResources();
@@ -249,11 +249,11 @@ void AMaterialLibraryManager::OnLibraryLoaded( TBOOL a_bUpdateGUIMaterials )
 	}
 }
 
-Toshi::TTexture* AMaterialLibraryManager::FindTexture( const TCHAR* a_szTextureName )
+TTexture* AMaterialLibraryManager::FindTexture( const TCHAR* a_szTextureName )
 {
 	for ( auto it = m_UsedTextures.Begin(); it != m_UsedTextures.End(); it = it->Next() )
 	{
-		if ( Toshi::TStringManager::String8CompareNoCase( it->GetName(), a_szTextureName ) == 0 )
+		if ( TStringManager::String8CompareNoCase( it->GetName(), a_szTextureName ) == 0 )
 		{
 			return it->GetTexture();
 		}
@@ -262,7 +262,7 @@ Toshi::TTexture* AMaterialLibraryManager::FindTexture( const TCHAR* a_szTextureN
 	return TNULL;
 }
 
-AMaterialLibrary* AMaterialLibraryManager::List::CreateLibraryFromTRB( Toshi::TTRB* a_pTRB, const TCHAR* a_szFilePath )
+AMaterialLibrary* AMaterialLibraryManager::List::CreateLibraryFromTRB( TTRB* a_pTRB, const TCHAR* a_szFilePath )
 {
 	TPROFILER_SCOPE();
 
@@ -279,7 +279,7 @@ AMaterialLibrary* AMaterialLibraryManager::List::CreateLibraryFromTRB( Toshi::TT
 	return pLibrary;
 }
 
-AMaterialLibrary* AMaterialLibraryManager::List::CreateLibraryFromAsset( const TCHAR* a_szFilePath, Toshi::TTRB* a_pTRB )
+AMaterialLibrary* AMaterialLibraryManager::List::CreateLibraryFromAsset( const TCHAR* a_szFilePath, TTRB* a_pTRB )
 {
 	TPROFILER_SCOPE();
 

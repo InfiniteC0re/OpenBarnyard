@@ -98,7 +98,7 @@ void AWaveBank::ParseWavesData( const PBProperties* a_pBankProperties, TUINT a_u
 
 	for ( TUINT i = 0; i < a_pBankProperties->GetPropertyCount(); i++ )
 	{
-		const PBProperties::PBProperty* pProperty = a_pBankProperties->GetProperty( i );
+		const PBProperties::PBProperty* pProperty = a_pBankProperties->GetPropertyByIndex( i );
 
 		// Skip any properties other than Wave
 		if ( pProperty->GetName().GetString()[ 0 ] != 'W' ) continue;
@@ -110,11 +110,11 @@ void AWaveBank::ParseWavesData( const PBProperties* a_pBankProperties, TUINT a_u
 		const PBProperties* pWaveProperties = pProperty->GetValue()->GetProperties();
 
 		// Parse flags
-		const PBPropertyValue* pFlagsProperty = pWaveProperties->GetOptionalProperty( "flags" );
+		const PBPropertyValue* pFlagsProperty = pWaveProperties->GetProperty( "flags" );
 		if ( pFlagsProperty && uiFlags == 0 ) uiFlags = pFlagsProperty->GetInteger();
 
 		// Parse frequency
-		const PBPropertyValue* pFreqProperty = pWaveProperties->GetOptionalProperty( "frequency" );
+		const PBPropertyValue* pFreqProperty = pWaveProperties->GetProperty( "frequency" );
 		if ( pFreqProperty )
 		{
 			if ( m_bSetFrequency )

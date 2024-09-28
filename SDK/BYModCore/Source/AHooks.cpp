@@ -350,7 +350,7 @@ MEMBER_HOOK( 0x006bb000, TTRB, TTRB_Load, TINT, const char* a_szFileName, TUINT 
 
 		if ( pFileOverrides != TNULL )
 		{
-			auto pOrigFileName = pFileOverrides->GetOptionalProperty( filepath );
+			auto pOrigFileName = pFileOverrides->GetProperty( filepath );
 
 			if ( pOrigFileName )
 			{

@@ -130,9 +130,9 @@ AAssetPack::Asset_t* AAssetPack::GetAssetFromSymbol( const Toshi::TPString8& a_r
 {
 	auto ppResult = m_SymbolToAsset.Find( a_rSymbolName );
 
-	if ( *ppResult != m_SymbolToAsset.End()->GetSecond() )
+	if ( ppResult != m_SymbolToAsset.End() )
 	{
-		return *ppResult;
+		return ppResult->GetSecond();
 	}
 
 	return TNULL;

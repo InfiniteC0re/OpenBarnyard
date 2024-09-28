@@ -43,7 +43,7 @@ TBOOL AAssetLoader::LoadAssetPackFromLibrary( const TCHAR* a_szLibraryName, TBOO
 		TVALIDPTR( pProperties );
 
 		// Load asset pack
-		auto pModelLib = pProperties->GetOptionalProperty( "modellib" );
+		auto pModelLib = pProperties->GetProperty( "modellib" );
 
 		if ( pModelLib )
 		{
@@ -76,7 +76,7 @@ TBOOL AAssetLoader::CreateAssetsFromLibrary( const TCHAR* a_szLibraryName )
 		TFIXME( "Create other assets" );
 
 		// Load material libraries
-		auto pMatlibs = pProperties->GetOptionalProperty( "matlib" );
+		auto pMatlibs = pProperties->GetProperty( "matlib" );
 
 		if ( pMatlibs )
 		{
@@ -89,7 +89,7 @@ TBOOL AAssetLoader::CreateAssetsFromLibrary( const TCHAR* a_szLibraryName )
 		}
 
 		// Load keyframe libraries
-		auto pKeyframes = pProperties->GetOptionalProperty( "keylib" );
+		auto pKeyframes = pProperties->GetProperty( "keylib" );
 
 		if ( pKeyframes )
 		{

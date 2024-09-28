@@ -44,11 +44,17 @@ void AModelRepos::UnloadAllUnusedModels()
 // $Barnyard: FUNCTION 006123c0
 AModel* AModelRepos::GetModel( const Toshi::TPString8& a_rName )
 {
-	auto pRes = m_AllModels.FindNode( a_rName );
-	if ( pRes != m_AllModels.End() ) return pRes->GetValue()->GetSecond();
+	{
+		// Look in list of all models
+		auto pRes = m_AllModels.Find( a_rName );
+		if ( m_AllModels.IsValid( pRes ) ) return pRes->GetSecond();
+	}
 
-	pRes = m_UsedModels.FindNode( a_rName );
-	if ( pRes != m_AllModels.End() ) return pRes->GetValue()->GetSecond();
+	{
+		// Look in list used models
+		auto pRes = m_UsedModels.Find( a_rName );
+		if ( m_UsedModels.IsValid( pRes ) ) return pRes->GetSecond();
+	}
 
 	return TNULL;
 }
@@ -155,7 +161,7 @@ AModelInstance* AModelRepos::InstantiateModel( AModel* a_pModel )
 AModelInstance* AModelRepos::InstantiateNewModel( const Toshi::TPString8& a_rName, Toshi::TTRB* a_pTRB )
 {
 	AModel*             pModel      = TNULL;
-	ModelsMap::Iterator pModels2Res = m_AllModels.FindNode( a_rName );
+	ModelsMap::Iterator pModels2Res = m_AllModels.Find( a_rName );
 
 	if ( pModels2Res != m_AllModels.End() )
 	{
@@ -163,9 +169,9 @@ AModelInstance* AModelRepos::InstantiateNewModel( const Toshi::TPString8& a_rNam
 	}
 	else
 	{
-		ModelsMap::Iterator pUsedModelsRes = m_UsedModels.FindNode( a_rName );
+		ModelsMap::Iterator pUsedModelsRes = m_UsedModels.Find( a_rName );
 
-		if ( pUsedModelsRes != m_UsedModels.End() )
+		if ( m_UsedModels.IsValid( pUsedModelsRes ) )
 		{
 			pModel = pUsedModelsRes->GetSecond();
 		}
@@ -184,12 +190,12 @@ AModelInstance* AModelRepos::InstantiateNewModel( const Toshi::TPString8& a_rNam
 // $Barnyard: FUNCTION 00612c90
 void AModelRepos::LoadModel( const Toshi::TPString8& a_rName, Toshi::TTRB* a_pTRB )
 {
-	if ( m_AllModels.FindNode( a_rName ) == m_AllModels.End() )
+	if ( m_AllModels.Find( a_rName ) == m_AllModels.End() )
 	{
 		AModel* pModel         = TNULL;
-		auto    pUsedModelsRes = m_UsedModels.FindNode( a_rName );
+		auto    pUsedModelsRes = m_UsedModels.Find( a_rName );
 
-		if ( pUsedModelsRes == m_UsedModels.End() )
+		if ( !m_UsedModels.IsValid( pUsedModelsRes ) )
 		{
 			pModel = GetUnusedModel( a_rName );
 
@@ -204,8 +210,8 @@ void AModelRepos::LoadModel( const Toshi::TPString8& a_rName, Toshi::TTRB* a_pTR
 		}
 		else
 		{
-			pModel = pUsedModelsRes->GetValue()->GetSecond();
-			m_UsedModels.RemoveNode( pUsedModelsRes );
+			pModel = pUsedModelsRes->GetSecond();
+			m_UsedModels.Remove( pUsedModelsRes );
 		}
 
 		TVALIDPTR( pModel );
@@ -216,12 +222,12 @@ void AModelRepos::LoadModel( const Toshi::TPString8& a_rName, Toshi::TTRB* a_pTR
 // $Barnyard: FUNCTION 00612d60
 void AModelRepos::UnloadModel( const Toshi::TPString8& a_rcName, TBOOL a_bDestroy )
 {
-	auto pModelNode = m_AllModels.FindNode( a_rcName );
+	auto pModelNode = m_AllModels.Find( a_rcName );
 
-	if ( pModelNode != m_AllModels.End() && pModelNode->GetValue()->GetSecond()->GetNumInstances() == 0 )
+	if ( m_AllModels.IsValid( pModelNode ) && pModelNode->GetSecond()->GetNumInstances() == 0 )
 	{
-		AModel* pModel = pModelNode->GetValue()->GetSecond();
-		m_AllModels.RemoveNode( pModelNode );
+		AModel* pModel = pModelNode->GetSecond();
+		m_AllModels.Remove( pModelNode );
 
 		if ( a_bDestroy )
 		{

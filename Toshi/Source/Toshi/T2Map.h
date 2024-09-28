@@ -55,18 +55,6 @@ public:
 		m_RedBlackTree.Delete( it.GetNode() );
 	}
 
-	void RemoveNode( Node* a_pNode )
-	{
-		TASSERT( TNULL != a_pNode && a_pNode != End() );
-		m_RedBlackTree.Delete( a_pNode );
-	}
-
-	ValueType* Find( const KeyType& key )
-	{
-		Iterator result = m_RedBlackTree.Find( { key } );
-		return &result.GetValue()->GetSecond();
-	}
-
 	Iterator FindByValue( const ValueType& value )
 	{
 		for ( auto it = Begin(); it != End(); it++ )
@@ -80,22 +68,19 @@ public:
 		return End();
 	}
 
-	Node* FindNode( const KeyType& key )
+	Iterator Find( const KeyType& key )
 	{
-		Iterator result = m_RedBlackTree.Find( { key } );
-		return result.GetNode();
+		return m_RedBlackTree.Find( { key } );
 	}
 
-	Node* FindNext( Node* a_pNode, const KeyType& a_rKey )
+	Iterator FindNext( Iterator a_oIterator, const KeyType& a_rKey )
 	{
-		Iterator result = m_RedBlackTree.FindNext( a_pNode, { a_rKey } );
-		return result.GetValue();
+		return m_RedBlackTree.FindNext( a_oIterator.GetNode(), { a_rKey } );
 	}
 
-	Node* FindNextNode( Node* a_pNode, const KeyType& a_rKey )
+	TBOOL IsValid( Iterator a_oIterator ) const
 	{
-		Iterator result = m_RedBlackTree.FindNext( a_pNode, { a_rKey } );
-		return result.GetNode();
+		return a_oIterator != End();
 	}
 
 	Iterator Begin()

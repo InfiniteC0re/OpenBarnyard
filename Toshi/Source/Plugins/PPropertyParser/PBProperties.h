@@ -816,7 +816,7 @@ public:
 		return m_pProperties + m_iCount;
 	}
 
-	const PBProperty* GetProperty( TSIZE a_iIndex ) const
+	const PBProperty* GetPropertyByIndex( TSIZE a_iIndex ) const
 	{
 		TASSERT( m_iCount > a_iIndex );
 		return &m_pProperties[ a_iIndex ];
@@ -824,10 +824,10 @@ public:
 
 	const PBPropertyValue* GetPropertyValue( TSIZE a_iIndex ) const
 	{
-		return GetProperty( a_iIndex )->GetValue();
+		return GetPropertyByIndex( a_iIndex )->GetValue();
 	}
 
-	const PBPropertyValue* GetOptionalProperty( const TCHAR* a_szName ) const
+	const PBPropertyValue* GetProperty( const TCHAR* a_szName ) const
 	{
 		for ( TSIZE i = 0; i < m_iCount; i++ )
 		{
@@ -843,7 +843,7 @@ public:
 	template <typename T>
 	TBOOL GetOptionalPropertyValue( T& a_rOutValue, const TCHAR* a_szName ) const
 	{
-		const PBPropertyValue* pFoundProperty = GetOptionalProperty( a_szName );
+		const PBPropertyValue* pFoundProperty = GetProperty( a_szName );
 
 		if ( pFoundProperty && pFoundProperty->GetType() == PBPropertiesTypeCast<T>::type )
 		{

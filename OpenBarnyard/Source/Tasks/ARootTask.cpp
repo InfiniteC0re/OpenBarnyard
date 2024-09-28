@@ -251,7 +251,7 @@ void ARootTask::LoadStartupData()
 	trb.Load( startupLibPath );
 
 	auto properties     = PBProperties::LoadFromTRB( trb );
-	auto matlibProperty = properties->GetOptionalProperty( "matlib" );
+	auto matlibProperty = properties->GetProperty( "matlib" );
 
 	if ( matlibProperty )
 	{

@@ -47,13 +47,11 @@ TBOOL AKeyFrameLibraryManager::LoadLibrary( const Toshi::TPString8& a_rLibraryNa
 {
 	TPROFILER_SCOPE();
 
-	auto pResultNode = m_Libraries.FindNode( a_rLibraryName );
-
-	if ( pResultNode != m_Libraries.End() )
+	if ( m_Libraries.IsValid( m_Libraries.Find( a_rLibraryName ) ) )
 	{
 		// The library is already loaded
 		// Increment reference count
-		*m_LibrariesRefs.Find( a_rLibraryName ) += 1;
+		m_LibrariesRefs.Find( a_rLibraryName )->GetSecond() += 1;
 		return TTRUE;
 	}
 
@@ -99,16 +97,15 @@ TBOOL AKeyFrameLibraryManager::UnrefLibrary( const Toshi::TPString8& a_rLibraryN
 {
 	TPROFILER_SCOPE();
 
-	auto pResultNode = m_Libraries.FindNode( a_rLibraryName );
+	auto pResultNode = m_Libraries.Find( a_rLibraryName );
 
-	if ( pResultNode != m_Libraries.End() )
+	if ( m_Libraries.IsValid( pResultNode ) )
 	{
-		auto pPair          = pResultNode->GetValue();
-		auto pRefResultNode = m_LibrariesRefs.FindNode( pPair->GetFirst() );
+		auto pRefResultNode = m_LibrariesRefs.Find( pResultNode->GetFirst() );
 
 		if ( pRefResultNode != m_LibrariesRefs.End() )
 		{
-			auto& rNumRefs = pPair->GetSecond();
+			auto& rNumRefs = pResultNode->GetSecond();
 
 			if ( rNumRefs != 0 )
 				rNumRefs--;
@@ -116,7 +113,7 @@ TBOOL AKeyFrameLibraryManager::UnrefLibrary( const Toshi::TPString8& a_rLibraryN
 			if ( rNumRefs == 0 )
 			{
 				UnloadLibrary( pResultNode );
-				m_LibrariesRefs.RemoveNode( pRefResultNode );
+				m_LibrariesRefs.Remove( pRefResultNode );
 			}
 		}
 	}
@@ -130,9 +127,8 @@ void AKeyFrameLibraryManager::UnloadAllLibraries()
 
 	for ( auto it = m_Libraries.Begin(); it != m_Libraries.End(); )
 	{
-		auto pCurrentNode = it.GetNode();
-		auto pNext        = it.Next();
-		UnloadLibrary( pCurrentNode );
+		auto pNext = it.Next();
+		UnloadLibrary( it );
 		it = pNext;
 	}
 
@@ -140,14 +136,14 @@ void AKeyFrameLibraryManager::UnloadAllLibraries()
 	m_LibrariesRefs.Clear();
 }
 
-void AKeyFrameLibraryManager::UnloadLibrary( LibraryMap::Node*& a_rLibrary )
+void AKeyFrameLibraryManager::UnloadLibrary( LibraryMap::Iterator& a_rLibrary )
 {
 	TPROFILER_SCOPE();
 
 	if ( a_rLibrary != m_Libraries.End() )
 	{
 		auto pKeyFrameLibMngr = &TRenderInterface::GetSingleton()->GetKeyframeLibraryManager();
-		pKeyFrameLibMngr->UnloadLibrary( a_rLibrary->GetValue()->GetSecond() );
-		m_Libraries.RemoveNode( a_rLibrary );
+		pKeyFrameLibMngr->UnloadLibrary( a_rLibrary.GetValue()->GetSecond() );
+		m_Libraries.Remove( a_rLibrary );
 	}
 }

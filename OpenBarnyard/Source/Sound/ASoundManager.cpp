@@ -253,13 +253,13 @@ TINT ASoundManager::PlayCueEx( ASoundId a_iSound, TFLOAT a_fVolume, TBOOL a_bFla
 		return -1;
 
 	// Look if the sound is stored to be played
-	auto pFoundNode = m_SoundIdToSound.FindNode( a_iSound );
+	auto pFoundNode = m_SoundIdToSound.Find( a_iSound );
 
-	if ( pFoundNode == m_SoundIdToSound.End() )
+	if ( !m_SoundIdToSound.IsValid( pFoundNode ) )
 		return -1;
 
 	// The sound is found, can use it
-	ASound* pSound = pFoundNode->GetValue()->GetSecond();
+	ASound* pSound = pFoundNode->GetSecond();
 
 	// Check if no waves are stored in the sound
 	if ( pSound->m_vecSamples.Size() == 0 )
@@ -473,9 +473,9 @@ void ASoundManager::CancelCueEvents( Cue* a_pCue, SOUNDEVENT a_eEventType )
 
 AWaveBank* ASoundManager::FindWaveBank( const TPString8& a_rcName )
 {
-	auto pFoundNode = ms_WaveBanks.FindNode( a_rcName );
+	auto pFoundNode = ms_WaveBanks.Find( a_rcName );
 
-	return ( pFoundNode != ms_WaveBanks.End() ) ? pFoundNode->GetValue()->GetSecond() : TNULL;
+	return ( ms_WaveBanks.IsValid( pFoundNode ) ) ? pFoundNode->GetSecond() : TNULL;
 }
 
 AWaveBank* ASoundManager::LoadWaveBankFromAsset( const Toshi::TString8& a_strName, TUINT a_uiForcedFlags )
@@ -499,23 +499,23 @@ AWaveBank* ASoundManager::LoadWaveBankFromAsset( const Toshi::TString8& a_strNam
 	pBankProperties->GetOptionalPropertyValue( strWaveWankBankName, "name" );
 
 	TINT iNameCmpRslt        = strWaveWankBankName.GetString8().Compare( a_strName, -1 );
-	auto pExistingWaveBank   = ms_WaveBanks.FindNode( strWaveWankBankName );
-	auto pWaveBankVersionVal = pBankProperties->GetOptionalProperty( "version" );
+	auto pExistingWaveBank   = ms_WaveBanks.Find( strWaveWankBankName );
+	auto pWaveBankVersionVal = pBankProperties->GetProperty( "version" );
 
 	// Store wavebank library
-	auto      pWaveBankLibraryVal = pBankProperties->GetOptionalProperty( "library" );
+	auto      pWaveBankLibraryVal = pBankProperties->GetProperty( "library" );
 	TPString8 strWaveBankLibrary  = ( pWaveBankLibraryVal ) ? pWaveBankLibraryVal->GetTPString8() : TNULL;
 
 	// Store wavebank type
-	auto      pWaveBankTypeVal = pBankProperties->GetOptionalProperty( "type" );
+	auto      pWaveBankTypeVal = pBankProperties->GetProperty( "type" );
 	TPString8 strWaveBankType  = ( pWaveBankTypeVal ) ? pWaveBankTypeVal->GetTPString8() : TNULL;
 
 	// Store wavebank path
-	auto      pWaveBankPathVal = pBankProperties->GetOptionalProperty( "path" );
+	auto      pWaveBankPathVal = pBankProperties->GetProperty( "path" );
 	TPString8 strWaveBankPath  = ( pWaveBankPathVal ) ? pWaveBankPathVal->GetTPString8() : TNULL;
 
 	// Store wavebank extension
-	auto      pWaveBankExtensionVal = pBankProperties->GetOptionalProperty( "extension" );
+	auto      pWaveBankExtensionVal = pBankProperties->GetProperty( "extension" );
 	TPString8 strWaveBankExtension  = ( pWaveBankExtensionVal ) ? pWaveBankExtensionVal->GetTPString8() : TNULL;
 
 	// Create the actual wavebank from the parameters
@@ -677,11 +677,11 @@ TBOOL ASoundManager::LoadSoundBankImpl( const TCHAR* a_szName, TBOOL a_bSimpleSo
 					TPSTRING8_DECLARE( default );
 
 					// Find category and store it's index
-					auto pFoundCategory = m_CategoryIndices.FindNode(
+					auto pFoundCategory = m_CategoryIndices.Find(
 					    ( strCategory.GetPooledString() || strCategory.GetString8().Length() == 0 ) ? TPS8( default ) : strCategory );
 
-					TASSERT( pFoundCategory != m_CategoryIndices.End() );
-					pSoundEx->m_uiCategoryIndex = pFoundCategory->GetValue()->GetSecond();
+					TASSERT( m_CategoryIndices.IsValid( pFoundCategory ) );
+					pSoundEx->m_uiCategoryIndex = pFoundCategory->GetSecond();
 
 					// Get flags
 					if ( pSoundProperties->GetOptionalPropertyValue( pSoundEx->m_iFlags, "flags" ) )
@@ -1024,7 +1024,7 @@ TBOOL ASoundManager::LoadWaveBanksInfo( const TCHAR* a_szFileName )
 	    AAssetLoader::CastSymbol<const PBProperties>( a_szFileName, PBProperties::TRB_SECTION_NAME, AAssetType_WaveBank );
 	TVALIDPTR( pProperties );
 
-	auto pWaveBanksVal = pProperties->GetOptionalProperty( "Wavebanks" );
+	auto pWaveBanksVal = pProperties->GetProperty( "Wavebanks" );
 	TVALIDPTR( pWaveBanksVal );
 
 	auto pWaveBanks = pWaveBanksVal->GetArray();
@@ -1039,7 +1039,7 @@ TBOOL ASoundManager::LoadWaveBanksInfo( const TCHAR* a_szFileName )
 		}
 	}
 
-	auto pCategoriesVal = pProperties->GetOptionalProperty( "Categories" );
+	auto pCategoriesVal = pProperties->GetProperty( "Categories" );
 	TVALIDPTR( pCategoriesVal );
 
 	auto pCategories = pCategoriesVal->GetArray();

@@ -238,6 +238,8 @@ public:
 
 	private:
 		Node* m_pNode;
+
+		friend class CIterator;
 	};
 
 	class CIterator
@@ -245,6 +247,9 @@ public:
 	public:
 		TFORCEINLINE CIterator( const Node* a_pNode ) :
 		    m_pNode( a_pNode ) {}
+
+		TFORCEINLINE CIterator( const Iterator& a_rcIterator ) :
+		    m_pNode( a_rcIterator.m_pNode ) {}
 
 		TFORCEINLINE CIterator Next()
 		{
@@ -319,6 +324,8 @@ public:
 
 	private:
 		const Node* m_pNode;
+
+		friend class Iterator;
 	};
 
 public:
@@ -441,9 +448,9 @@ public:
 		return TSTATICCAST( Node, &m_oRoot );
 	}
 
-	Iterator FindNext( Node*& nextAfter, const T& value ) const
+	Iterator FindNext( const Node* a_pNextAfter, const T& value ) const
 	{
-		Node* pNode = TSTATICCAST( Node, GetSuccessorOf( nextAfter ) );
+		Node* pNode = TSTATICCAST( Node, GetSuccessorOf( a_pNextAfter ) );
 
 		if ( pNode->operator==( value ) )
 		{

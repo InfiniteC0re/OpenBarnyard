@@ -12,6 +12,9 @@ class AAnimatableObjectType :
     public Toshi::T2DList<AAnimatableObjectType>::Node
 {
 public:
+	constexpr static TSIZE MAX_ANIMATION_SETS = 6;
+
+public:
 	// constructors/destructor
 	AAnimatableObjectType();
 	virtual ~AAnimatableObjectType();
@@ -26,13 +29,13 @@ public:
 
 private:
 	TBOOL LoadAnimationSet( const PBProperties* a_pProperties );
-	TBOOL SetAnimControllerType( const PBProperties* a_pProperties );
+	TBOOL SetAnimController( const PBProperties* a_pProperties );
 	TBOOL SetSkins( const PBProperties* a_pProperties );
 
 private:
-	Toshi::TPString8                          m_strName;
-	Toshi::T2Vector<ANamedAnimationSetRef, 6> m_vecAnimationSets;
-	Toshi::T2DList<AAnimatableObjectType>     m_UnkList; // list type is a placeholder
-	AModel*                                   m_pAModel;
-	void*                                     m_pUnk;
+	Toshi::TPString8                                           m_strName;
+	Toshi::T2Vector<ANamedAnimationSetRef, MAX_ANIMATION_SETS> m_vecAnimationSets;
+	Toshi::T2DList<AAnimatableObjectType>                      m_UnkList; // list type is a placeholder
+	AModel*                                                    m_pAModel;
+	void*                                                      m_pUnk;
 };

@@ -14,7 +14,7 @@ private:
 private:
 	static PTRBSections::MemoryStream::Ptr<TCHAR> GetStringPtr( const TCHAR* a_szString )
 	{
-		return *s_aStringMap.Find( a_szString );
+		return s_aStringMap.Find( a_szString )->GetSecond();
 	}
 
 	static void DumpValue( PTRBSections::MemoryStream::Ptr<PBPropertyValue> a_ptrValue, const PBPropertyValue& a_OrigValue, PTRBSections::MemoryStream* a_pStack, PTRBSections::MemoryStream::Ptr<PBProperties>* a_pParentProperties )
@@ -104,7 +104,7 @@ private:
 
 	static void AddStringToMap( const TCHAR* a_szString )
 	{
-		if ( s_aStringMap.Find( a_szString ) == &s_aStringMap.End()->GetSecond() )
+		if ( s_aStringMap.Find( a_szString ) == s_aStringMap.End() )
 		{
 			s_aStringMap.Insert( a_szString, {} );
 		}
