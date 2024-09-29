@@ -2,8 +2,7 @@
 #include "ATRBLoaderJob.h"
 #include "Terrain/ATerrainSection.h"
 
-class ASectionDoneJob :
-    public AMainThreadJob
+class ASectionDoneJob : public AMainThreadJob
 {
 public:
 	virtual void  BeginJob() override;

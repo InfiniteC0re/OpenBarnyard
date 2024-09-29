@@ -16,11 +16,8 @@ TOSHI_NAMESPACE_USING
 
 TDEFINE_CLASS( ASkinMaterialHAL );
 
-ASkinMaterialHAL::ASkinMaterialHAL() :
-    m_pAlphaBlendMaterial( TNULL ),
-    m_pAssignedOrderTable( TNULL ),
-    m_pSomeTexture( TNULL ),
-    m_bIsSkin( TTRUE )
+ASkinMaterialHAL::ASkinMaterialHAL()
+    : m_pAlphaBlendMaterial( TNULL ), m_pAssignedOrderTable( TNULL ), m_pSomeTexture( TNULL ), m_bIsSkin( TTRUE )
 {
 }
 

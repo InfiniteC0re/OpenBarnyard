@@ -1,8 +1,7 @@
 #pragma once
 #include <Toshi/T2DList.h>
 
-class AMainThreadJob :
-    public Toshi::T2DList<AMainThreadJob>::Node
+class AMainThreadJob : public Toshi::T2DList<AMainThreadJob>::Node
 {
 public:
 	friend class AAssetStreaming;

@@ -12,8 +12,8 @@
 
 TDEFINE_CLASS( AGUISlideshow );
 
-AGUISlideshow::AGUISlideshow() :
-    m_Images( Toshi::GetGlobalAllocator(), 64, 64 )
+AGUISlideshow::AGUISlideshow()
+    : m_Images( Toshi::GetGlobalAllocator(), 64, 64 )
 {
 	m_pHUDParams        = TNULL;
 	m_eFlags            = Flags_None;

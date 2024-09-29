@@ -7,8 +7,8 @@ namespace Toshi
 class TRenderContextSDL : public TRenderContext
 {
 public:
-	TRenderContextSDL( TRenderInterface* a_pRender ) :
-	    TRenderContext( a_pRender )
+	TRenderContextSDL( TRenderInterface* a_pRender )
+	    : TRenderContext( a_pRender )
 	{
 	}
 

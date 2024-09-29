@@ -39,8 +39,8 @@ protected:
 class T2GenericRedBlackTree
 {
 protected:
-	T2GenericRedBlackTree( T2Allocator* pAllocator ) :
-	    m_oRoot( ms_oNil )
+	T2GenericRedBlackTree( T2Allocator* pAllocator )
+	    : m_oRoot( ms_oNil )
 	{
 		m_pAllocator   = pAllocator;
 		m_iNumElements = 0;
@@ -95,8 +95,8 @@ public:
 	friend class T2RedBlackTree;
 
 public:
-	T2RedBlackTreeNode( const T& value ) :
-	    m_Value( value )
+	T2RedBlackTreeNode( const T& value )
+	    : m_Value( value )
 	{
 	}
 
@@ -167,8 +167,8 @@ public:
 	class Iterator
 	{
 	public:
-		TFORCEINLINE Iterator( Node* a_pNode ) :
-		    m_pNode( a_pNode ) {}
+		TFORCEINLINE Iterator( Node* a_pNode )
+		    : m_pNode( a_pNode ) {}
 
 		TFORCEINLINE Iterator Next()
 		{
@@ -245,11 +245,11 @@ public:
 	class CIterator
 	{
 	public:
-		TFORCEINLINE CIterator( const Node* a_pNode ) :
-		    m_pNode( a_pNode ) {}
+		TFORCEINLINE CIterator( const Node* a_pNode )
+		    : m_pNode( a_pNode ) {}
 
-		TFORCEINLINE CIterator( const Iterator& a_rcIterator ) :
-		    m_pNode( a_rcIterator.m_pNode ) {}
+		TFORCEINLINE CIterator( const Iterator& a_rcIterator )
+		    : m_pNode( a_rcIterator.m_pNode ) {}
 
 		TFORCEINLINE CIterator Next()
 		{
@@ -329,8 +329,8 @@ public:
 	};
 
 public:
-	T2RedBlackTree( T2Allocator* pAllocator = GetGlobalAllocator() ) :
-	    T2GenericRedBlackTree( pAllocator )
+	T2RedBlackTree( T2Allocator* pAllocator = GetGlobalAllocator() )
+	    : T2GenericRedBlackTree( pAllocator )
 	{
 	}
 

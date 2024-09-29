@@ -8,8 +8,8 @@
 
 #include <Plugins/PPropertyParser/PBProperties.h>
 
-class AAnimatableObjectType :
-    public Toshi::T2DList<AAnimatableObjectType>::Node
+class AAnimatableObjectType
+	: public Toshi::T2DList<AAnimatableObjectType>::Node
 {
 public:
 	constexpr static TSIZE MAX_ANIMATION_SETS = 6;

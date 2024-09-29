@@ -6,9 +6,8 @@
 #include <Input/TInputInterface.h>
 #include <Toshi/TPString8.h>
 
-class AGameState :
-    public Toshi::TObject,
-    public Toshi::T2DList<AGameState>::Node
+class AGameState : public Toshi::TObject
+    , public Toshi::T2DList<AGameState>::Node
 {
 public:
 	template <class Result, class... Args>

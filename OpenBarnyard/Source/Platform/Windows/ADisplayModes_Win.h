@@ -1,8 +1,7 @@
 #pragma once
 #include <Toshi/T2Vector.h>
 
-class ADisplayModes_Win :
-    public Toshi::TObject
+class ADisplayModes_Win : public Toshi::TObject
 {
 public:
 	TDECLARE_CLASS( ADisplayModes_Win, Toshi::TObject );

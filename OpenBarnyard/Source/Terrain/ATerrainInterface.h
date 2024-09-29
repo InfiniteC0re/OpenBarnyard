@@ -7,8 +7,7 @@
 #include "Assets/ACollisionDoneJob.h"
 #include "Assets/ASectionDoneJob.h"
 
-class ATerrainInterface :
-    public Toshi::TSingleton<ATerrainInterface>
+class ATerrainInterface : public Toshi::TSingleton<ATerrainInterface>
 {
 public:
 	constexpr static TUINT MAX_NUM_MODEL_LOADER_JOBS     = 128;

@@ -5,7 +5,8 @@
 #include <Plugins/GUI/PGUITRRenderObject.h>
 #include <Toshi/TPString8.h>
 
-class AGUISystem : public Toshi::TTask, public Toshi::TSingleton<AGUISystem>
+class AGUISystem : public Toshi::TTask
+    , public Toshi::TSingleton<AGUISystem>
 {
 public:
 	TDECLARE_CLASS( AGUISystem, Toshi::TTask );

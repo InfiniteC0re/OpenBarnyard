@@ -9,14 +9,8 @@
 
 TOSHI_NAMESPACE_USING
 
-ASound::ASound() :
-    m_iFlags( 0 ),
-    m_iId( 0 ),
-    m_uiCategoryIndex( 0 ),
-    m_ui8Priority( 255 ),
-    m_fMinDist( 1.0f ),
-    m_vecSamples( AMemory::GetAllocator( AMemory::POOL_Sound ), 1, 1 ),
-    m_vecTracks( AMemory::GetAllocator( AMemory::POOL_Sound ), 1, 1 )
+ASound::ASound()
+    : m_iFlags( 0 ), m_iId( 0 ), m_uiCategoryIndex( 0 ), m_ui8Priority( 255 ), m_fMinDist( 1.0f ), m_vecSamples( AMemory::GetAllocator( AMemory::POOL_Sound ), 1, 1 ), m_vecTracks( AMemory::GetAllocator( AMemory::POOL_Sound ), 1, 1 )
 {
 }
 

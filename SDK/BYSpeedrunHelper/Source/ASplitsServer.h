@@ -4,8 +4,7 @@
 #include <Thread/T2MutexLock.h>
 #include <ToshiTools/T2NamedPipeServer.h>
 
-class ASplitsServer :
-    public Toshi::TSingleton<ASplitsServer>
+class ASplitsServer : public Toshi::TSingleton<ASplitsServer>
 {
 public:
 	static constexpr TSIZE MAX_BUFFER_SIZE = 65535;

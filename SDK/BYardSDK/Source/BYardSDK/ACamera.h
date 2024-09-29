@@ -15,8 +15,7 @@ public:
 	TFLOAT           m_fProjectionCentreY;
 };
 
-struct ACameraManager :
-    public THookedSingleton<ACameraManager, 0x007822e0>
+struct ACameraManager : public THookedSingleton<ACameraManager, 0x007822e0>
 {
 	ACamera* GetCurrentCamera()
 	{

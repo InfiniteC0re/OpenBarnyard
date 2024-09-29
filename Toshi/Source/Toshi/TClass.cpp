@@ -11,18 +11,8 @@
 
 TOSHI_NAMESPACE_START
 
-TClass::TClass( const TCHAR* a_szName, TClass* a_pParentClass, CreateObject_t a_fnCreate, CreateObjectInPlace_t a_fnCreateInPlace, Initialise_t a_fnInitialise, Deinitialise_t a_fnUnitialise, TUINT16 a_uiVersionMajor, TUINT16 a_uiVersionMinor, TUINT32 a_uiClassSize, TUINT32 a_uiClassAlignment ) :
-    m_szName( a_szName ),
-    m_pParent( a_pParentClass ),
-    m_fnCreate( a_fnCreate ),
-    m_fnCreateInPlace( a_fnCreateInPlace ),
-    m_fnInitialise( a_fnInitialise ),
-    m_fnDeinitialise( a_fnUnitialise ),
-    m_uiVersionMajor( a_uiVersionMajor ),
-    m_uiVersionMinor( a_uiVersionMinor ),
-    m_uiClassSize( a_uiClassSize ),
-    m_uiClassAlignment( a_uiClassAlignment ),
-    m_bInitialised( TFALSE )
+TClass::TClass( const TCHAR* a_szName, TClass* a_pParentClass, CreateObject_t a_fnCreate, CreateObjectInPlace_t a_fnCreateInPlace, Initialise_t a_fnInitialise, Deinitialise_t a_fnUnitialise, TUINT16 a_uiVersionMajor, TUINT16 a_uiVersionMinor, TUINT32 a_uiClassSize, TUINT32 a_uiClassAlignment )
+    : m_szName( a_szName ), m_pParent( a_pParentClass ), m_fnCreate( a_fnCreate ), m_fnCreateInPlace( a_fnCreateInPlace ), m_fnInitialise( a_fnInitialise ), m_fnDeinitialise( a_fnUnitialise ), m_uiVersionMajor( a_uiVersionMajor ), m_uiVersionMinor( a_uiVersionMinor ), m_uiClassSize( a_uiClassSize ), m_uiClassAlignment( a_uiClassAlignment ), m_bInitialised( TFALSE )
 {
 	if ( m_pParent )
 	{

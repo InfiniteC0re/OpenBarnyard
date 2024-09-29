@@ -21,16 +21,16 @@ public:
 	using CharType = typename StringTraits::CharType;
 
 public:
-	TFORCEINLINE constexpr T2ConstString( const CharType* a_pszString ) :
-	    m_pszString( a_pszString )
+	TFORCEINLINE constexpr T2ConstString( const CharType* a_pszString )
+	    : m_pszString( a_pszString )
 	{}
 
-	TFORCEINLINE constexpr T2ConstString() :
-	    m_pszString( TNULL )
+	TFORCEINLINE constexpr T2ConstString()
+	    : m_pszString( TNULL )
 	{}
 
-	TFORCEINLINE constexpr T2ConstString( const T2ConstString& a_rOther ) :
-	    m_pszString( a_rOther.m_pszString )
+	TFORCEINLINE constexpr T2ConstString( const T2ConstString& a_rOther )
+	    : m_pszString( a_rOther.m_pszString )
 	{}
 
 	TFORCEINLINE TSIZE Length() const { return StringTraits::Length( m_pszString ); }

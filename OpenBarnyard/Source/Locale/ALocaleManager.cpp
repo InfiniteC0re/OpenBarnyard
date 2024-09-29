@@ -9,8 +9,8 @@
 
 TOSHI_NAMESPACE_USING
 
-ALocaleManager::ALocaleManager() :
-    T2Locale( Lang_NUMOF, 307200, Toshi::GetGlobalAllocator()->Malloc( 307200 ) )
+ALocaleManager::ALocaleManager()
+    : T2Locale( Lang_NUMOF, 307200, Toshi::GetGlobalAllocator()->Malloc( 307200 ) )
 {
 }
 

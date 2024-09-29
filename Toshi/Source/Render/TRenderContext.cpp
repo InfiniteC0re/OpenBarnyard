@@ -39,19 +39,8 @@ void TRenderContext::SetFogDistance( TFLOAT a_fStart, TFLOAT a_fEnd )
 	m_eFlags &= ~( FLAG_UNK3 | FLAG_UNK4 | FLAG_HAS_WORLDPLANES | FLAG_UNK6 );
 }
 
-TRenderContext::TRenderContext( TRenderInterface* a_pRenderer ) :
-    m_pRenderer( a_pRenderer ),
-    m_eFlags( FLAG_DIRTY ),
-    m_eClipFlags( 0x3F ),
-    m_eCameraMode( CameraMode_Perspective ),
-    m_pCurrentSkeletonInstance( TNULL ),
-    m_pCurrentCameraObject( TNULL ),
-    m_AmbientColor( 1.0f, 1.0f, 1.0f, 0.0f ),
-    m_FogColor( 1.0f, 1.0f, 1.0f, 0.0f ),
-    m_fFogDistanceStart( 10.0f ),
-    m_fFogDistanceEnd( 1000.0f ),
-    m_fAlphaBlend( 1.0f ),
-    m_fShadeCoeff( 0.0f )
+TRenderContext::TRenderContext( TRenderInterface* a_pRenderer )
+    : m_pRenderer( a_pRenderer ), m_eFlags( FLAG_DIRTY ), m_eClipFlags( 0x3F ), m_eCameraMode( CameraMode_Perspective ), m_pCurrentSkeletonInstance( TNULL ), m_pCurrentCameraObject( TNULL ), m_AmbientColor( 1.0f, 1.0f, 1.0f, 0.0f ), m_FogColor( 1.0f, 1.0f, 1.0f, 0.0f ), m_fFogDistanceStart( 10.0f ), m_fFogDistanceEnd( 1000.0f ), m_fAlphaBlend( 1.0f ), m_fShadeCoeff( 0.0f )
 {
 	TIMPLEMENT();
 

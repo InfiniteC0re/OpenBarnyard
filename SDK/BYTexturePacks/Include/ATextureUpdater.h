@@ -9,8 +9,7 @@ extern TBOOL           g_bDumpTextures;
 extern TBOOL           g_bAutoReload;
 extern Toshi::THPTimer g_LastDumpTimer;
 
-class ATextureUpdateWatcher :
-    public Toshi::TThread
+class ATextureUpdateWatcher : public Toshi::TThread
 {
 public:
 	virtual void Main() override;
@@ -26,8 +25,7 @@ private:
 	TBOOL       m_bDestroyed = TFALSE;
 };
 
-class ATextureUpdater :
-    public Toshi::TSingleton<ATextureUpdater>
+class ATextureUpdater : public Toshi::TSingleton<ATextureUpdater>
 {
 public:
 	ATextureUpdater();

@@ -14,7 +14,8 @@ class TPString8Pool;
 
 class TKernelInterfaceDLL :
 #ifdef TOSHI_SKU_WINDOWS
-    public TSystemDLLWin,
+    public TSystemDLLWin
+    ,
 #else
 #  error Unsupported platform
 #endif
@@ -31,8 +32,7 @@ public:
 //       It's also the reason why it's almost empty compared to it's
 //       implementation in JPOG.
 //-----------------------------------------------------------------------------
-class TKernelInterface :
-    public TSingleton<TKernelInterface>
+class TKernelInterface : public TSingleton<TKernelInterface>
 {
 public:
 	TKernelInterface()  = default;

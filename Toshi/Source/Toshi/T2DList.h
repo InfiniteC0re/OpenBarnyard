@@ -23,9 +23,8 @@ public:
 		T2_DEFINE_ITERATOR_FRIEND();
 
 	public:
-		constexpr Node() :
-		    m_pPrev( this ),
-		    m_pNext( this )
+		constexpr Node()
+		    : m_pPrev( this ), m_pNext( this )
 		{}
 
 		~Node()
@@ -274,8 +273,8 @@ public:
 	// constructors/destructor
 	constexpr T2DListNodeWrapper() = default;
 
-	constexpr T2DListNodeWrapper( T* a_pValue ) :
-	    m_pValue( a_pValue ) {}
+	constexpr T2DListNodeWrapper( T* a_pValue )
+	    : m_pValue( a_pValue ) {}
 
 	~T2DListNodeWrapper() = default;
 

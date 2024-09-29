@@ -16,14 +16,14 @@ namespace Toshi
 class TGLShaderRef
 {
 public:
-	TGLShaderRef() :
-	    m_uiId( 0 ) {}
+	TGLShaderRef()
+	    : m_uiId( 0 ) {}
 
-	TGLShaderRef( GLuint a_uiId ) :
-	    m_uiId( a_uiId ) {}
+	TGLShaderRef( GLuint a_uiId )
+	    : m_uiId( a_uiId ) {}
 
-	TGLShaderRef( const TGLShaderRef& a_rOther ) :
-	    m_uiId( a_rOther.m_uiId ) {}
+	TGLShaderRef( const TGLShaderRef& a_rOther )
+	    : m_uiId( a_rOther.m_uiId ) {}
 
 	GLuint GetId() const { return m_uiId; }
 
@@ -36,19 +36,15 @@ private:
 class TGLShaderProgram
 {
 public:
-	TGLShaderProgram() :
-	    m_uiProgram( 0 ), m_VShader( 0 ), m_FShader( 0 ) {}
+	TGLShaderProgram()
+	    : m_uiProgram( 0 ), m_VShader( 0 ), m_FShader( 0 ) {}
 
-	TGLShaderProgram( const TGLShaderRef& a_VShader, const TGLShaderRef& a_FShader ) :
-	    m_uiProgram( 0 ),
-	    m_VShader( a_VShader ),
-	    m_FShader( a_FShader )
+	TGLShaderProgram( const TGLShaderRef& a_VShader, const TGLShaderRef& a_FShader )
+	    : m_uiProgram( 0 ), m_VShader( a_VShader ), m_FShader( a_FShader )
 	{}
 
-	TGLShaderProgram( const TGLShaderProgram& a_rOther ) :
-	    m_uiProgram( a_rOther.m_uiProgram ),
-	    m_VShader( a_rOther.m_VShader ),
-	    m_FShader( a_rOther.m_FShader )
+	TGLShaderProgram( const TGLShaderProgram& a_rOther )
+	    : m_uiProgram( a_rOther.m_uiProgram ), m_VShader( a_rOther.m_VShader ), m_FShader( a_rOther.m_FShader )
 	{}
 
 	void Create()
@@ -184,14 +180,14 @@ template <GLenum Type>
 class TGLBufferRef
 {
 public:
-	TGLBufferRef() :
-	    m_uiId( 0 ) {}
+	TGLBufferRef()
+	    : m_uiId( 0 ) {}
 
-	TGLBufferRef( GLuint a_uiId ) :
-	    m_uiId( a_uiId ) {}
+	TGLBufferRef( GLuint a_uiId )
+	    : m_uiId( a_uiId ) {}
 
-	TGLBufferRef( const TGLBufferRef& a_rOther ) :
-	    m_uiId( a_rOther.m_uiId ) {}
+	TGLBufferRef( const TGLBufferRef& a_rOther )
+	    : m_uiId( a_rOther.m_uiId ) {}
 
 	GLuint GetId() const { return m_uiId; }
 
@@ -218,22 +214,18 @@ using TGLIndexBuffer  = TGLBufferRef<GL_ELEMENT_ARRAY_BUFFER>;
 class TGLVertexArrayRef
 {
 public:
-	TGLVertexArrayRef() :
-	    m_uiId( 0 ) {}
+	TGLVertexArrayRef()
+	    : m_uiId( 0 ) {}
 
-	TGLVertexArrayRef( GLuint a_uiId ) :
-	    m_uiId( a_uiId ) {}
+	TGLVertexArrayRef( GLuint a_uiId )
+	    : m_uiId( a_uiId ) {}
 
-	TGLVertexArrayRef( GLuint a_uiId, TGLVertexBuffer a_VertexBuffer, TGLIndexBuffer a_IndexBuffer ) :
-	    m_uiId( a_uiId ),
-	    m_VertexBuffer( a_VertexBuffer ),
-	    m_IndexBuffer( a_IndexBuffer )
+	TGLVertexArrayRef( GLuint a_uiId, TGLVertexBuffer a_VertexBuffer, TGLIndexBuffer a_IndexBuffer )
+	    : m_uiId( a_uiId ), m_VertexBuffer( a_VertexBuffer ), m_IndexBuffer( a_IndexBuffer )
 	{}
 
-	TGLVertexArrayRef( const TGLVertexArrayRef& a_rOther ) :
-	    m_uiId( a_rOther.m_uiId ),
-	    m_VertexBuffer( a_rOther.m_VertexBuffer ),
-	    m_IndexBuffer( a_rOther.m_IndexBuffer )
+	TGLVertexArrayRef( const TGLVertexArrayRef& a_rOther )
+	    : m_uiId( a_rOther.m_uiId ), m_VertexBuffer( a_rOther.m_VertexBuffer ), m_IndexBuffer( a_rOther.m_IndexBuffer )
 	{}
 
 	void SetAttribPointer( GLuint a_uiIndex, GLint a_iNumComponents, GLenum a_eType, GLsizei a_iStride, const void* a_pOffset, GLboolean a_bNormalized = GL_FALSE )
@@ -278,8 +270,7 @@ private:
 	TGLIndexBuffer  m_IndexBuffer;
 };
 
-class TRenderSDL :
-    public TRenderInterface
+class TRenderSDL : public TRenderInterface
 {
 public:
 	TDECLARE_CLASS( TRenderSDL, TRenderInterface );

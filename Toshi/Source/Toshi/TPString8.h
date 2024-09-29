@@ -27,8 +27,8 @@ public:
 	friend class TPString8;
 
 public:
-	TPooledString8( const TCHAR* a_szString, TPString8Pool* a_pPool, T2Allocator* a_pAllocator ) :
-	    m_oString( a_szString, a_pAllocator )
+	TPooledString8( const TCHAR* a_szString, TPString8Pool* a_pPool, T2Allocator* a_pAllocator )
+	    : m_oString( a_szString, a_pAllocator )
 	{
 		m_pPool = a_pPool;
 	}
@@ -126,8 +126,8 @@ public:
 	inline static const TString8 ms_sEmpty = TString8( "" );
 
 public:
-	TFORCEINLINE constexpr TPString8() :
-	    m_pPtr( TNULL )
+	TFORCEINLINE constexpr TPString8()
+	    : m_pPtr( TNULL )
 	{}
 
 	TFORCEINLINE TPString8( const TCHAR* a_szString )

@@ -11,9 +11,8 @@
 #include <Render/TRenderInterface.h>
 #include <Render/TRenderAdapter.h>
 
-class ARenderer :
-    public Toshi::TTask,
-    public Toshi::TSingleton<ARenderer>
+class ARenderer : public Toshi::TTask
+    , public Toshi::TSingleton<ARenderer>
 {
 public:
 	TDECLARE_CLASS( ARenderer, Toshi::TTask );

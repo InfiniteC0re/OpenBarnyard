@@ -4,8 +4,7 @@
 
 #include <File/TFileStream.h>
 
-class AAssetStreaming :
-    public THookedSingleton<AAssetStreaming, 0x0079b114>
+class AAssetStreaming : public THookedSingleton<AAssetStreaming, 0x0079b114>
 {
 public:
 	void Update();

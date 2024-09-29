@@ -1,8 +1,7 @@
 #pragma once
 #include <Math/TMatrix44.h>
 
-class ACamera :
-    public Toshi::TObject
+class ACamera : public Toshi::TObject
 {
 public:
 	TDECLARE_CLASS( ACamera, Toshi::TObject );

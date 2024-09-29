@@ -3,7 +3,8 @@
 
 #include <Toshi/TTask.h>
 
-class AFadeManager : public Toshi::TTask, public Toshi::TSingleton<AFadeManager>
+class AFadeManager : public Toshi::TTask
+    , public Toshi::TSingleton<AFadeManager>
 {
 public:
 	TDECLARE_CLASS( AFadeManager, Toshi::TTask );

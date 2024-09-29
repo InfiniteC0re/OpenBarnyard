@@ -65,12 +65,12 @@ public:
 		class Ptr
 		{
 		public:
-			Ptr() :
-			    m_Stack( TNULL ), m_Offset( 0 ) {}
-			Ptr( PTRBSections::MemoryStream* stack, TUINT offset ) :
-			    m_Stack( stack ), m_Offset( offset ) {}
-			Ptr( PTRBSections::MemoryStream* stack, T* ptr ) :
-			    m_Stack( stack ), m_Offset( stack->GetOffset( ptr ) ) {}
+			Ptr()
+			    : m_Stack( TNULL ), m_Offset( 0 ) {}
+			Ptr( PTRBSections::MemoryStream* stack, TUINT offset )
+			    : m_Stack( stack ), m_Offset( offset ) {}
+			Ptr( PTRBSections::MemoryStream* stack, T* ptr )
+			    : m_Stack( stack ), m_Offset( stack->GetOffset( ptr ) ) {}
 
 			T* get()
 			{
@@ -552,10 +552,10 @@ public:
 	static constexpr Toshi::TVersion VERSION = { TVERSION( 1, 1 ) };
 
 public:
-	PTRBWriter() :
-	    m_HDRX( VERSION ) {}
-	PTRBWriter( const std::string& filepath ) :
-	    m_HDRX( VERSION ) { ReadFromFile( filepath ); }
+	PTRBWriter()
+	    : m_HDRX( VERSION ) {}
+	PTRBWriter( const std::string& filepath )
+	    : m_HDRX( VERSION ) { ReadFromFile( filepath ); }
 
 	void Reset()
 	{

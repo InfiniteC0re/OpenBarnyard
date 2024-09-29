@@ -12,9 +12,8 @@
 
 TOSHI_NAMESPACE_USING
 
-AGlowViewport::AGlowViewport( TINT a_iMaxNumGlowObjects ) :
-    m_iMaxNumObjects( a_iMaxNumGlowObjects ),
-    m_pHeadFreeObject( TNULL )
+AGlowViewport::AGlowViewport( TINT a_iMaxNumGlowObjects )
+    : m_iMaxNumObjects( a_iMaxNumGlowObjects ), m_pHeadFreeObject( TNULL )
 {
 	TASSERT( a_iMaxNumGlowObjects < ( 1 << 8 * sizeof( TLightID ) ) - 1 );
 	m_pAllocObjects = new GlowObject[ a_iMaxNumGlowObjects ];

@@ -6,9 +6,8 @@
 #include <Toshi/TPString8.h>
 #include <Toshi/T2Map.h>
 
-class AKeyFrameLibraryManager :
-    public Toshi::TObject,
-    public Toshi::TSingleton<AKeyFrameLibraryManager>
+class AKeyFrameLibraryManager : public Toshi::TObject
+    , public Toshi::TSingleton<AKeyFrameLibraryManager>
 {
 public:
 	TDECLARE_CLASS( AKeyFrameLibraryManager, Toshi::TObject );

@@ -10,12 +10,11 @@
 
 TOSHI_NAMESPACE_USING
 
-class ATimerThread :
-    public TThread
+class ATimerThread : public TThread
 {
 public:
-	ATimerThread( ARunTimer* a_pRunTimer ) :
-	    m_pRunTimer( a_pRunTimer )
+	ATimerThread( ARunTimer* a_pRunTimer )
+	    : m_pRunTimer( a_pRunTimer )
 	{
 		m_TimeSyncMutex.Create();
 		m_flSyncTimerTime = 0.1f;

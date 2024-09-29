@@ -14,10 +14,8 @@ TOSHI_NAMESPACE_USING
 
 TDEFINE_CLASS_NORUNTIME( AWorldMesh );
 
-AWorldMesh::AWorldMesh() :
-    m_uiFlags( 0 ),
-    m_uiMaxVertices( 0 ),
-    m_pVertexPool( TNULL )
+AWorldMesh::AWorldMesh()
+    : m_uiFlags( 0 ), m_uiMaxVertices( 0 ), m_pVertexPool( TNULL )
 {
 }
 

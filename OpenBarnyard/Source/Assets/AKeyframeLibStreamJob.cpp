@@ -11,8 +11,8 @@
 
 TOSHI_NAMESPACE_USING
 
-AKeyframeLibStreamJob::AKeyframeLibStreamJob() :
-    TFileStreamJob( TNULL )
+AKeyframeLibStreamJob::AKeyframeLibStreamJob()
+    : TFileStreamJob( TNULL )
 {
 	m_pLibrary    = TNULL;
 	m_szName[ 0 ] = '\0';

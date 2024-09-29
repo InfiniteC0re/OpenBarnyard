@@ -4,8 +4,7 @@
 
 #include <Render/TModel.h>
 
-class ACollisionInspector :
-    public Toshi::TSingleton<ACollisionInspector>
+class ACollisionInspector : public Toshi::TSingleton<ACollisionInspector>
 {
 public:
 	ACollisionInspector();

@@ -13,8 +13,7 @@ enum ATerrainLODType_ : ATerrainLODType
 	ATerrainLODType_NUMOF,
 };
 
-class ATerrainLODBlock :
-    public Toshi::T2SList<ATerrainLODBlock>::Node
+class ATerrainLODBlock : public Toshi::T2SList<ATerrainLODBlock>::Node
 {
 public:
 	friend class ATerrainInterface;

@@ -5,8 +5,7 @@
 #include <Render/TTexture.h>
 #include <Platform/DX8/TTextureResourceHAL_DX8.h>
 
-class AWorldMaterialWrapperGL :
-    public Toshi::TMaterial
+class AWorldMaterialWrapperGL : public Toshi::TMaterial
 {
 public:
 	void PreRenderGL()
@@ -80,8 +79,7 @@ private:
 	TINT                        m_iBlendMode; // ?
 };
 
-class AWorldShaderGL :
-    public Toshi::TSingleton<AWorldShaderGL>
+class AWorldShaderGL : public Toshi::TSingleton<AWorldShaderGL>
 {
 public:
 	struct WorldVertex

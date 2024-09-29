@@ -5,8 +5,7 @@
 
 class AGUI2MenuItem;
 
-class AGUI2Menu :
-    public AGUI2Element
+class AGUI2Menu : public AGUI2Element
 {
 public:
 	using ACTIONFLAGS = TUINT32;
@@ -84,8 +83,7 @@ private:
 	AGUI2MenuItem*   m_pHoveredMenuItem;
 };
 
-class AGUI2MenuItem :
-    public AGUI2Element
+class AGUI2MenuItem : public AGUI2Element
 {
 public:
 	friend class AGUI2Menu;

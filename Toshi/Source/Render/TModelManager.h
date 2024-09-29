@@ -10,8 +10,7 @@ class TManagedModel;
 class TModelManager
 {
 public:
-	class ModelNode :
-	    public T2DList<ModelNode>::Node
+	class ModelNode : public T2DList<ModelNode>::Node
 	{
 	public:
 		ModelNode()

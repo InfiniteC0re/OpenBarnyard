@@ -12,8 +12,8 @@ TOSHI_NAMESPACE_USING
 
 TDEFINE_CLASS( ACameraManager );
 
-ACameraManager::ACameraManager() :
-    m_vLookDirection( ACamera::sm_vInitialLookDirection )
+ACameraManager::ACameraManager()
+    : m_vLookDirection( ACamera::sm_vInitialLookDirection )
 {
 	TTODO( "Create helpers" );
 

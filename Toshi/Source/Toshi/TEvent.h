@@ -50,8 +50,8 @@ template <typename Owner, typename Data = Owner>
 class TEmitter : public TGenericEmitter
 {
 public:
-	TEmitter( Owner* owner ) :
-	    TGenericEmitter( owner ) {}
+	TEmitter( Owner* owner )
+	    : TGenericEmitter( owner ) {}
 
 	void Throw( Data* pData ) { TGenericEmitter::Throw( pData ); }
 	void Throw( Data&& data ) { TGenericEmitter::Throw( &data ); }

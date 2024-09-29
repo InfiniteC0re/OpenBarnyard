@@ -180,9 +180,8 @@ class ACollisionObjectModel
 {
 	TCHAR PADDING[ 0xA4 ];
 };
-class AInstanceManager_CollObjectModel :
-    public ACollisionObjectModel,
-    public T2SList<AInstanceManager_CollObjectModel>::Node
+class AInstanceManager_CollObjectModel : public ACollisionObjectModel
+    , public T2SList<AInstanceManager_CollObjectModel>::Node
 {
 };
 

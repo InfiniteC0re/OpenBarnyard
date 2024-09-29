@@ -13,9 +13,8 @@ TOSHI_NAMESPACE_USING
 TDEFINE_CLASS( AModelRepos );
 
 // $Barnyard: FUNCTION 00612340
-AModelRepos::AModelRepos() :
-    m_UsedModels( AMemory::GetAllocator( AMemory::POOL_Misc ) ),
-    m_AllModels( AMemory::GetAllocator( AMemory::POOL_Misc ) )
+AModelRepos::AModelRepos()
+    : m_UsedModels( AMemory::GetAllocator( AMemory::POOL_Misc ) ), m_AllModels( AMemory::GetAllocator( AMemory::POOL_Misc ) )
 {
 }
 

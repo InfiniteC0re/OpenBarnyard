@@ -18,9 +18,8 @@ TOSHI_NAMESPACE_USING
 
 TDEFINE_CLASS( AMaterialLibraryManager );
 
-AMaterialLibraryManager::AMaterialLibraryManager() :
-    m_NumRefLibraries( AMemory::GetAllocator( AMemory::POOL_Misc ) ),
-    m_LoadedLibraries( AMemory::GetAllocator( AMemory::POOL_Misc ) )
+AMaterialLibraryManager::AMaterialLibraryManager()
+    : m_NumRefLibraries( AMemory::GetAllocator( AMemory::POOL_Misc ) ), m_LoadedLibraries( AMemory::GetAllocator( AMemory::POOL_Misc ) )
 {
 	List::CreateSingleton();
 

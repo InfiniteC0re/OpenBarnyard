@@ -10,9 +10,8 @@
 
 #include <Toshi/TTask.h>
 
-class AGUI2 :
-    public Toshi::TTask,
-    public THookedSingleton<AGUI2, 0x007b4ff4>
+class AGUI2 : public Toshi::TTask
+    , public THookedSingleton<AGUI2, 0x007b4ff4>
 {
 public:
 	virtual TBOOL OnCreate()                      = 0;

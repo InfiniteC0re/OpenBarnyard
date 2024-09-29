@@ -16,8 +16,8 @@ TFileSystem::TFileSystem( const TFileSystem& other )
 }
 
 // $Barnyard: FUNCTION 006be2e0
-TFileSystem::TFileSystem( const TCHAR* name ) :
-    m_Name( name )
+TFileSystem::TFileSystem( const TCHAR* name )
+    : m_Name( name )
 {
 }
 

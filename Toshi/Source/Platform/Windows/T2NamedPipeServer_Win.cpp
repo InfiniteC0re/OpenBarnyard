@@ -13,8 +13,8 @@
 
 TOSHI_NAMESPACE_START
 
-T2NamedPipeServerThread::T2NamedPipeServerThread( T2NamedPipeServer* a_pServer ) :
-    m_pServer( a_pServer )
+T2NamedPipeServerThread::T2NamedPipeServerThread( T2NamedPipeServer* a_pServer )
+    : m_pServer( a_pServer )
 {
 }
 
@@ -71,15 +71,8 @@ void T2NamedPipeServerThread::Main()
 	}
 }
 
-T2NamedPipeServer::T2NamedPipeServer() :
-    m_pThread( TNULL ),
-    m_pMemory( TNULL ),
-    m_fnUpdateStream( TNULL ),
-    m_uiMemorySize( 0 ),
-    m_hPipe( INVALID_HANDLE_VALUE ),
-    m_bHasClient( TFALSE ),
-    m_bStarted( TFALSE ),
-    m_pUserData( TNULL )
+T2NamedPipeServer::T2NamedPipeServer()
+    : m_pThread( TNULL ), m_pMemory( TNULL ), m_fnUpdateStream( TNULL ), m_uiMemorySize( 0 ), m_hPipe( INVALID_HANDLE_VALUE ), m_bHasClient( TFALSE ), m_bStarted( TFALSE ), m_pUserData( TNULL )
 {
 }
 

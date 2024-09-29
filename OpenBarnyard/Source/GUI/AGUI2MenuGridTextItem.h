@@ -3,8 +3,7 @@
 #include "AGUI2Rectangle.h"
 #include "AGUI2TextBox.h"
 
-class AGUI2MenuGridTextItem :
-    public AGUI2MenuGridItem
+class AGUI2MenuGridTextItem : public AGUI2MenuGridItem
 {
 public:
 	AGUI2MenuGridTextItem();

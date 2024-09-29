@@ -5,8 +5,7 @@
 
 #include <Math/TVector4.h>
 
-class AGUI2Rectangle :
-    public AGUI2Element
+class AGUI2Rectangle : public AGUI2Element
 {
 public:
 	AGUI2Rectangle();

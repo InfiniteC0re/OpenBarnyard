@@ -8,9 +8,9 @@
 #include <Render/TSkeleton.h>
 #include <Plugins/PPropertyParser/PBProperties.h>
 
-class ANamedAnimationSet :
-    public Toshi::TObject,
-    public Toshi::TRefCounted
+class ANamedAnimationSet
+    : public Toshi::TObject
+    , public Toshi::TRefCounted
 {
 public:
 	TDECLARE_CLASS( ANamedAnimationSet, Toshi::TObject );

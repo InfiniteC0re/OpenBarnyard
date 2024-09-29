@@ -9,8 +9,7 @@ class AMaterialLibrary;
 class ATerrainSection
 {
 public:
-	struct ModelNode :
-	    Toshi::T2SList<ModelNode>::Node
+	struct ModelNode : Toshi::T2SList<ModelNode>::Node
 	{
 		~ModelNode();
 

@@ -12,13 +12,8 @@ TOSHI_NAMESPACE_USING
 
 TDEFINE_CLASS( AInputMapManager );
 
-AInputMapManager::AInputMapManager() :
-    m_pActiveInputMap( TNULL ),
-    m_iNumPushedInputMaps( 0 ),
-    m_oDoodadToNameMap( AMemory::GetAllocator( AMemory::POOL_Misc ) ),
-    m_oKeyMap( AMemory::GetAllocator( AMemory::POOL_Misc ) ),
-    m_oCommandMap( AMemory::GetAllocator( AMemory::POOL_Misc ) ),
-    m_UnkMap( AMemory::GetAllocator( AMemory::POOL_Misc ) )
+AInputMapManager::AInputMapManager()
+    : m_pActiveInputMap( TNULL ), m_iNumPushedInputMaps( 0 ), m_oDoodadToNameMap( AMemory::GetAllocator( AMemory::POOL_Misc ) ), m_oKeyMap( AMemory::GetAllocator( AMemory::POOL_Misc ) ), m_oCommandMap( AMemory::GetAllocator( AMemory::POOL_Misc ) ), m_UnkMap( AMemory::GetAllocator( AMemory::POOL_Misc ) )
 {
 	InitMouseDoodads();
 	InitKeyboardDoodads();

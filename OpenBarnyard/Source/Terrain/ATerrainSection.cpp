@@ -389,10 +389,8 @@ void ATerrainSection::SetLODEmpty( ATerrainLODType a_eLODType, TBOOL a_bEmpty )
 	}
 }
 
-ATerrainSection::ModelNode::ModelNode() :
-    m_eFlags( MNF_NONE ),
-    m_bCreated( TFALSE ),
-    m_pAnimatedMaterial( TNULL )
+ATerrainSection::ModelNode::ModelNode()
+    : m_eFlags( MNF_NONE ), m_bCreated( TFALSE ), m_pAnimatedMaterial( TNULL )
 {
 	m_szType[ 0 ] = '\0';
 }

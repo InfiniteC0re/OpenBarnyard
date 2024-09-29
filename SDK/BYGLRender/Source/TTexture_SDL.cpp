@@ -166,8 +166,8 @@ void TTextureSDL::SetWrap( TEXTURE_ADDRESS_MODE eAddressU, TEXTURE_ADDRESS_MODE 
 	SelectSamplerId();
 }
 
-TTextureManagerSDL::TTextureManagerSDL() :
-    m_pLastTexture( TNULL )
+TTextureManagerSDL::TTextureManagerSDL()
+    : m_pLastTexture( TNULL )
 {
 	uint8_t* srcData;
 

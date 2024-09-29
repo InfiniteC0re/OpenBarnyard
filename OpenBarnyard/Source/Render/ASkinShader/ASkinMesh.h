@@ -23,8 +23,7 @@ public:
 	TINT                                aBones[ 28 ];
 };
 
-class ASkinMesh :
-    public Toshi::TMesh
+class ASkinMesh : public Toshi::TMesh
 {
 public:
 	TDECLARE_CLASS( ASkinMesh, Toshi::TMesh );

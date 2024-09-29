@@ -1,7 +1,6 @@
 #pragma once
 
-class AGameTimeManager :
-    public Toshi::TSingleton<AGameTimeManager>
+class AGameTimeManager : public Toshi::TSingleton<AGameTimeManager>
 {
 public:
 	enum DAYPHASE

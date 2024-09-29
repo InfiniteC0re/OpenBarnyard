@@ -8,32 +8,20 @@ class TVector4
 {
 public:
 	constexpr TVector4() = default;
-	constexpr TVector4( TFLOAT a_fX, TFLOAT a_fY, TFLOAT a_fZ, TFLOAT a_fW = 1.0f ) :
-	    x( a_fX ),
-	    y( a_fY ),
-	    z( a_fZ ),
-	    w( a_fW )
+	constexpr TVector4( TFLOAT a_fX, TFLOAT a_fY, TFLOAT a_fZ, TFLOAT a_fW = 1.0f )
+	    : x( a_fX ), y( a_fY ), z( a_fZ ), w( a_fW )
 	{}
 
-	constexpr TVector4( TFLOAT a_pFloats[ 4 ] ) :
-	    x( a_pFloats[ 0 ] ),
-	    y( a_pFloats[ 1 ] ),
-	    z( a_pFloats[ 2 ] ),
-	    w( a_pFloats[ 3 ] )
+	constexpr TVector4( TFLOAT a_pFloats[ 4 ] )
+	    : x( a_pFloats[ 0 ] ), y( a_pFloats[ 1 ] ), z( a_pFloats[ 2 ] ), w( a_pFloats[ 3 ] )
 	{}
 
-	constexpr TVector4( const TVector3& a_rcOther ) :
-	    x( a_rcOther.x ),
-	    y( a_rcOther.y ),
-	    z( a_rcOther.z ),
-	    w( 1.0f )
+	constexpr TVector4( const TVector3& a_rcOther )
+	    : x( a_rcOther.x ), y( a_rcOther.y ), z( a_rcOther.z ), w( 1.0f )
 	{}
 
-	constexpr TVector4( const TVector4& a_rcOther ) :
-	    x( a_rcOther.x ),
-	    y( a_rcOther.y ),
-	    z( a_rcOther.z ),
-	    w( a_rcOther.w )
+	constexpr TVector4( const TVector4& a_rcOther )
+	    : x( a_rcOther.x ), y( a_rcOther.y ), z( a_rcOther.z ), w( a_rcOther.w )
 	{}
 
 	constexpr void Set( const TVector3& vec )

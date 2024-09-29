@@ -13,8 +13,7 @@ public:
 	Toshi::TString8   Name;
 };
 
-class AMaterialLibrary :
-    public Toshi::T2DList<AMaterialLibrary>::Node
+class AMaterialLibrary : public Toshi::T2DList<AMaterialLibrary>::Node
 {
 public:
 	struct TTL

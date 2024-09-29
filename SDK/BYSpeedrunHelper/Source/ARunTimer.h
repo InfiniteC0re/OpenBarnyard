@@ -9,8 +9,7 @@ class ATimerThread;
 //-----------------------------------------------------------------------------
 // Purpose: Wrapper for AGUITimer that also sends commands to ASplitsServer.
 //-----------------------------------------------------------------------------
-class ARunTimer :
-    public Toshi::TSingleton<ARunTimer>
+class ARunTimer : public Toshi::TSingleton<ARunTimer>
 {
 public:
 	friend ATimerThread;

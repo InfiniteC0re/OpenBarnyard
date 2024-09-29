@@ -2,8 +2,7 @@
 #include "ATRBLoaderJob.h"
 #include "ATerrainSection.h"
 
-class ACollisionDoneJob :
-    public AMainThreadJob
+class ACollisionDoneJob : public AMainThreadJob
 {
 public:
 	virtual void  BeginJob() override;

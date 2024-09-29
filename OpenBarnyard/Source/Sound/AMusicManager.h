@@ -3,9 +3,8 @@
 
 #include <Toshi/TTask.h>
 
-class AMusicManager :
-    public Toshi::TTask,
-    public Toshi::TSingleton<AMusicManager>
+class AMusicManager : public Toshi::TTask
+    , public Toshi::TSingleton<AMusicManager>
 {
 public:
 	TDECLARE_CLASS( AMusicManager, Toshi::TTask );

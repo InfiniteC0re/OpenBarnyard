@@ -40,20 +40,8 @@ public:
 	    TUINT16               a_uiVersionMinor,
 	    TUINT32               a_uiClassSize,
 	    TUINT32               a_uiClassAlignment
-	) :
-	    m_szName( a_szName ),
-	    m_pParent( TNULL ),
-	    m_pPrevious( TNULL ),
-	    m_pLastChildren( TNULL ),
-	    m_fnCreate( a_fnCreate ),
-	    m_fnCreateInPlace( a_fnCreateInPlace ),
-	    m_fnInitialise( a_fnInitialise ),
-	    m_fnDeinitialise( a_fnUnitialise ),
-	    m_uiVersionMajor( a_uiVersionMajor ),
-	    m_uiVersionMinor( a_uiVersionMinor ),
-	    m_uiClassSize( a_uiClassSize ),
-	    m_uiClassAlignment( a_uiClassAlignment ),
-	    m_bInitialised( TFALSE )
+	)
+	    : m_szName( a_szName ), m_pParent( TNULL ), m_pPrevious( TNULL ), m_pLastChildren( TNULL ), m_fnCreate( a_fnCreate ), m_fnCreateInPlace( a_fnCreateInPlace ), m_fnInitialise( a_fnInitialise ), m_fnDeinitialise( a_fnUnitialise ), m_uiVersionMajor( a_uiVersionMajor ), m_uiVersionMinor( a_uiVersionMinor ), m_uiClassSize( a_uiClassSize ), m_uiClassAlignment( a_uiClassAlignment ), m_bInitialised( TFALSE )
 	{}
 
 	~TClass();

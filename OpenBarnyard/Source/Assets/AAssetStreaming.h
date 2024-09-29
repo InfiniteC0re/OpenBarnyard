@@ -3,8 +3,7 @@
 
 #include <File/TFileStream.h>
 
-class AAssetStreaming :
-    public Toshi::TSingleton<AAssetStreaming>
+class AAssetStreaming : public Toshi::TSingleton<AAssetStreaming>
 {
 public:
 	AAssetStreaming();

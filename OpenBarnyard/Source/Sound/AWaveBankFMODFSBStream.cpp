@@ -15,8 +15,8 @@
 
 TOSHI_NAMESPACE_USING
 
-AWaveBankFMODFSBStream::AWaveBankFMODFSBStream( const TPString8& a_strBank, const TPString8& a_strPath ) :
-    AWaveBank( a_strBank, a_strPath, TTRUE )
+AWaveBankFMODFSBStream::AWaveBankFMODFSBStream( const TPString8& a_strBank, const TPString8& a_strPath )
+    : AWaveBank( a_strBank, a_strPath, TTRUE )
 {
 }
 

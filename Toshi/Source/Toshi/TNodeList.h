@@ -12,22 +12,16 @@ public:
 		friend TNodeList;
 
 	public:
-		constexpr TNode() :
-		    m_pNext( TSTATICCAST( T, this ) ),
-		    m_pPrev( TSTATICCAST( T, this ) ),
-		    m_pList( TNULL )
+		constexpr TNode()
+		    : m_pNext( TSTATICCAST( T, this ) ), m_pPrev( TSTATICCAST( T, this ) ), m_pList( TNULL )
 		{}
 
-		constexpr TNode( const TNode& a_rcNode ) :
-		    m_pNext( a_rcNode.m_pNext ),
-		    m_pPrev( a_rcNode.m_pPrev ),
-		    m_pList( a_rcNode.m_pList )
+		constexpr TNode( const TNode& a_rcNode )
+		    : m_pNext( a_rcNode.m_pNext ), m_pPrev( a_rcNode.m_pPrev ), m_pList( a_rcNode.m_pList )
 		{}
 
-		TNode( TNode&& a_rNode ) :
-		    m_pNext( a_rNode.m_pNext ),
-		    m_pPrev( a_rNode.m_pPrev ),
-		    m_pList( a_rNode.m_pList )
+		TNode( TNode&& a_rNode )
+		    : m_pNext( a_rNode.m_pNext ), m_pPrev( a_rNode.m_pPrev ), m_pList( a_rNode.m_pList )
 		{
 			a_rNode.m_pList = TNULL;
 			a_rNode.m_pNext = TNULL;
@@ -53,16 +47,16 @@ public:
 	class Iterator
 	{
 	public:
-		constexpr Iterator() :
-		    m_pPtr( TNULL )
+		constexpr Iterator()
+		    : m_pPtr( TNULL )
 		{}
 
-		constexpr Iterator( T* a_pPtr ) :
-		    m_pPtr( a_pPtr )
+		constexpr Iterator( T* a_pPtr )
+		    : m_pPtr( a_pPtr )
 		{}
 
-		constexpr Iterator( const Iterator& other ) :
-		    m_pPtr( other.m_pPtr )
+		constexpr Iterator( const Iterator& other )
+		    : m_pPtr( other.m_pPtr )
 		{}
 
 		T* Get() const

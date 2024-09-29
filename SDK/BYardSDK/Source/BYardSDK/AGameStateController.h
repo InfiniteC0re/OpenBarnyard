@@ -7,9 +7,8 @@
 #include <Toshi/T2Vector.h>
 #include <ToshiTools/T2DynamicVector.h>
 
-class AGameStateController :
-    public Toshi::TTask,
-    public THookedSingleton<AGameStateController, 0x00781788>
+class AGameStateController : public Toshi::TTask
+    , public THookedSingleton<AGameStateController, 0x00781788>
 {
 public:
 	virtual TBOOL OnCreate() override;

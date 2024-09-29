@@ -22,9 +22,8 @@ TOSHI_NAMESPACE_USING
 
 TDEFINE_CLASS( AWorldShaderHAL );
 
-AWorldShaderHAL::AWorldShaderHAL() :
-    m_ShadowColour( 0.3f, 0.3f, 0.3f, 1.0f ),
-    m_AmbientColour( 1.0f, 1.0f, 1.0f, 1.0f )
+AWorldShaderHAL::AWorldShaderHAL()
+    : m_ShadowColour( 0.3f, 0.3f, 0.3f, 1.0f ), m_AmbientColour( 1.0f, 1.0f, 1.0f, 1.0f )
 {
 	m_hVertexShader = 0;
 	m_pUnk2         = TNULL;

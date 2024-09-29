@@ -94,8 +94,8 @@ public:
 	};
 
 public:
-	TMemoryDL( Flags flags = Flags_Standard, BlockSize blockSize = 640 * 1024 * 1024 ) :
-	    m_Flags( flags ), m_GlobalSize( blockSize ), m_NumAllocatedBytes( 0 ) {}
+	TMemoryDL( Flags flags = Flags_Standard, BlockSize blockSize = 640 * 1024 * 1024 )
+	    : m_Flags( flags ), m_GlobalSize( blockSize ), m_NumAllocatedBytes( 0 ) {}
 
 	void              SetHeap( TMemoryDLHeap* a_pHeap ) { m_GlobalHeap = a_pHeap; }
 	TMemoryDLHeap*    GetHeap() { return m_GlobalHeap; }

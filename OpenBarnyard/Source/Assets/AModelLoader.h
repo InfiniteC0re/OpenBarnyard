@@ -13,7 +13,8 @@
 #  include <Render/TTMDWin.h>
 #endif
 
-class AModelLoader : public Toshi::TObject, public Toshi::TSingleton<AModelLoader>
+class AModelLoader : public Toshi::TObject
+    , public Toshi::TSingleton<AModelLoader>
 {
 public:
 	TDECLARE_CLASS( AModelLoader, Toshi::TObject );

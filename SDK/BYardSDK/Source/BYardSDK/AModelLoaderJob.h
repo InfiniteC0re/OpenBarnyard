@@ -3,8 +3,7 @@
 
 #include <Render/TModelManager.h>
 
-class AModelLoaderJob :
-    public ATRBLoaderJob
+class AModelLoaderJob : public ATRBLoaderJob
 {
 public:
 	virtual void  BeginJob() override;

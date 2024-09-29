@@ -5,7 +5,8 @@
 #include <Input/TInputDeviceController.h>
 #include <Toshi/T2Vector.h>
 
-class AInputHandler : public Toshi::TTask, public Toshi::TSingleton<AInputHandler>
+class AInputHandler : public Toshi::TTask
+    , public Toshi::TSingleton<AInputHandler>
 {
 public:
 	TDECLARE_CLASS( AInputHandler, Toshi::TTask );

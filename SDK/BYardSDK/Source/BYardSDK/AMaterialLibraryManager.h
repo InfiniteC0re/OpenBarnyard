@@ -14,13 +14,11 @@
 #  undef LoadLibrary
 #endif
 
-class AMaterialLibraryManager :
-    public THookedObject,
-    public THookedSingleton<AMaterialLibraryManager, 0x007b4660>
+class AMaterialLibraryManager : public THookedObject
+    , public THookedSingleton<AMaterialLibraryManager, 0x007b4660>
 {
 public:
-	class List :
-	    public THookedSingleton<List, 0x007b46c8>
+	class List : public THookedSingleton<List, 0x007b46c8>
 	{
 	public:
 		AMaterialLibrary* CreateLibraryFromTRB( Toshi::TTRB* a_pTRB, const char* a_szFilePath );
@@ -31,8 +29,7 @@ public:
 		Toshi::T2DList<AMaterialLibrary> m_Libraries;
 	};
 
-	class TextureSlot :
-	    public Toshi::T2SList<TextureSlot>::Node
+	class TextureSlot : public Toshi::T2SList<TextureSlot>::Node
 	{
 	public:
 		TextureSlot() = default;

@@ -7,9 +7,8 @@
 #include <Toshi/T2DList.h>
 #include <Input/TInputInterface.h>
 
-class AGameState :
-    public Toshi::TObject,
-    public Toshi::T2DList<AGameState>::Node
+class AGameState : public Toshi::TObject
+    , public Toshi::T2DList<AGameState>::Node
 {
 public:
 	using OVERLAY = TUINT;

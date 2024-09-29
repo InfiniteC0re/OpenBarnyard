@@ -28,8 +28,7 @@ AGUI2TextBox* g_pExperimentalModeText = TNULL;
 const T2CommandLine* g_pCommandLine;
 TBOOL                g_bIsExperimentalMode = TFALSE;
 
-class AQuestManager :
-    public Toshi::TTask
+class AQuestManager : public Toshi::TTask
 {
 public:
 	TCHAR MARGIN[ 408 ];

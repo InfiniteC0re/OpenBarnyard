@@ -156,8 +156,8 @@ void TInputInterface::ReleaseAllDevices()
 }
 
 // $Barnyard: FUNCTION 006c4030
-TInputInterface::TInputInterface() :
-    m_InputEventEmitter( this )
+TInputInterface::TInputInterface()
+    : m_InputEventEmitter( this )
 {
 	m_bIsExclusiveMode = TFALSE;
 }

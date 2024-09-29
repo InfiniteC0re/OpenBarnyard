@@ -1,9 +1,8 @@
 #pragma once
 #include <T2Locale/T2Locale.h>
 
-class AOptions :
-    public Toshi::TObject,
-    public Toshi::TSingleton<AOptions>
+class AOptions : public Toshi::TObject
+    , public Toshi::TSingleton<AOptions>
 {
 public:
 	TDECLARE_CLASS( AOptions, Toshi::TObject );

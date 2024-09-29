@@ -43,16 +43,14 @@ void TPString8Pool::Get( TPooledString8*& a_pOutString, const TCHAR* a_szString,
 	}
 }
 
-TPString8Pool::TPString8Pool( T2Allocator* a_pAllocator ) :
-    m_pAllocator( a_pAllocator ),
-    m_oMap( a_pAllocator )
+TPString8Pool::TPString8Pool( T2Allocator* a_pAllocator )
+    : m_pAllocator( a_pAllocator ), m_oMap( a_pAllocator )
 {
 	// TODO: Initialise some unknown values
 }
 
-TPString8Pool::TPString8Pool( TINT a_iUnknown1, TINT a_iUnknown2, T2Allocator* a_pAllocator, void* m_pUnknown3 ) :
-    m_pAllocator( a_pAllocator ),
-    m_oMap( a_pAllocator )
+TPString8Pool::TPString8Pool( TINT a_iUnknown1, TINT a_iUnknown2, T2Allocator* a_pAllocator, void* m_pUnknown3 )
+    : m_pAllocator( a_pAllocator ), m_oMap( a_pAllocator )
 {
 	// TODO: Initialise some unknown values
 

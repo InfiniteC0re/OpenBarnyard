@@ -10,9 +10,8 @@
 
 class AModel;
 
-class AModelInstance :
-    public Toshi::TObject,
-    public Toshi::TRefCounted
+class AModelInstance : public Toshi::TObject
+    , public Toshi::TRefCounted
 {
 public:
 	TDECLARE_CLASS( AModelInstance, Toshi::TObject );
@@ -68,8 +67,7 @@ private:
 
 using AModelInstanceRef = Toshi::TRef<AModelInstance>;
 
-class AModel :
-    public Toshi::T2DList<AModel>::Node
+class AModel : public Toshi::T2DList<AModel>::Node
 {
 public:
 	static constexpr TUINT32 MAX_NUM_INSTANCES = 250;

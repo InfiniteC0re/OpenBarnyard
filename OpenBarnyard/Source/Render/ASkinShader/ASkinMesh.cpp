@@ -14,11 +14,8 @@ TOSHI_NAMESPACE_USING
 
 TDEFINE_CLASS_NORUNTIME( ASkinMesh );
 
-ASkinSubMesh::ASkinSubMesh() :
-    uiUnknown( 0 ),
-    pIndexPool( TNULL ),
-    uiNumVertices( 0 ),
-    uiNumBones( 0 )
+ASkinSubMesh::ASkinSubMesh()
+    : uiUnknown( 0 ), pIndexPool( TNULL ), uiNumVertices( 0 ), uiNumBones( 0 )
 {
 }
 
@@ -31,12 +28,8 @@ ASkinSubMesh::~ASkinSubMesh()
 	}
 }
 
-ASkinMesh::ASkinMesh() :
-    m_uiFlags( 0 ),
-    m_uiMaxVertices( 0 ),
-    m_uiNumSubMeshes( 0 ),
-    m_pVertexPool( TNULL ),
-    m_Unk( TNULL )
+ASkinMesh::ASkinMesh()
+    : m_uiFlags( 0 ), m_uiMaxVertices( 0 ), m_uiNumSubMeshes( 0 ), m_pVertexPool( TNULL ), m_Unk( TNULL )
 {
 }
 

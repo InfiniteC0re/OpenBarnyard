@@ -5,9 +5,8 @@
 class AWorldMaterial;
 class AWorldMesh;
 
-class AWorldShader :
-    public Toshi::TShader,
-    public Toshi::TSingleton<AWorldShader>
+class AWorldShader : public Toshi::TShader
+    , public Toshi::TSingleton<AWorldShader>
 {
 public:
 	TDECLARE_CLASS( AWorldShader, Toshi::TShader );

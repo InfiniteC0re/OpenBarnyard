@@ -16,9 +16,8 @@ enum TResourceState_ : TResourceState
 	TResourceState_SceneObject = BITFLAG( 5 ),
 };
 
-class TResource :
-    public TObject,
-    public TNodeTree<TResource>::TNode
+class TResource : public TObject
+    , public TNodeTree<TResource>::TNode
 {
 public:
 	TDECLARE_CLASS( TResource, TObject );

@@ -11,8 +11,8 @@ TOSHI_NAMESPACE_START
 
 TDEFINE_CLASS_NORUNTIME( TFileLexerUTF8 );
 
-TFileLexerUTF8::TFileLexerUTF8() :
-    m_oEmitter( this )
+TFileLexerUTF8::TFileLexerUTF8()
+    : m_oEmitter( this )
 {
 	m_pFile                   = 0;
 	m_bUnk1                   = TFALSE;
@@ -45,8 +45,8 @@ TFileLexerUTF8::TFileLexerUTF8() :
 #endif
 }
 
-TFileLexerUTF8::TFileLexerUTF8( TFile* a_pInputStream, TINT a_iTokenLookaheadSize ) :
-    m_oEmitter( this )
+TFileLexerUTF8::TFileLexerUTF8( TFile* a_pInputStream, TINT a_iTokenLookaheadSize )
+    : m_oEmitter( this )
 {
 	m_pFile                   = 0;
 	m_bUnk1                   = TFALSE;

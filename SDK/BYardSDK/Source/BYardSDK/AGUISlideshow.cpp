@@ -3,8 +3,8 @@
 #include "AGUI2.h"
 #include "SDKHooks.h"
 
-AGUISlideshow::AGUISlideshow() :
-    m_Images( Toshi::GetGlobalAllocator(), 64, 64 )
+AGUISlideshow::AGUISlideshow()
+    : m_Images( Toshi::GetGlobalAllocator(), 64, 64 )
 {
 	CALL_THIS( 0x0059d810, AGUISlideshow*, void, this );
 }

@@ -96,8 +96,7 @@ protected:
 };
 
 template <class T, TUINT MaxNumber, TUINT ObjectSize = sizeof( T ), TUINT Alignment = alignof( T )>
-class T2ObjectPool :
-    protected T2GenericObjectPool
+class T2ObjectPool : protected T2GenericObjectPool
 {
 public:
 	TSTATICASSERT( MaxNumber >= 2 );
@@ -174,8 +173,7 @@ private:
 };
 
 template <class T>
-class T2DynamicObjectPool :
-    protected T2GenericObjectPool
+class T2DynamicObjectPool : protected T2GenericObjectPool
 {
 public:
 	T2DynamicObjectPool( T2Allocator* a_pAllocator, TINT a_iMaxNumber, TSIZE a_uiSize = sizeof( T ), TSIZE a_uiAlignment = alignof( T ) )
@@ -265,8 +263,7 @@ private:
 };
 
 template <class TClassType>
-class T2DerivedDynamicObjectPool :
-    protected T2GenericObjectPool
+class T2DerivedDynamicObjectPool : protected T2GenericObjectPool
 {
 public:
 	T2DerivedDynamicObjectPool( T2Allocator* a_pAllocator, TINT a_iMaxNumber )

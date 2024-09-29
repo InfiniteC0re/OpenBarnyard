@@ -20,8 +20,8 @@ struct MsgQueueHeader_t
 static TCHAR s_szBuffer[ 8192 ];
 static TUINT s_uiBufferPos = 0;
 
-ASplitsServer::ASplitsServer() :
-    m_uiBufferSize( 0 )
+ASplitsServer::ASplitsServer()
+    : m_uiBufferSize( 0 )
 {
 	m_NamedPipe.Start(
 	    "BYSpeedrunHelper",

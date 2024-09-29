@@ -15,8 +15,8 @@ TOSHI_NAMESPACE_USING
 
 TDEFINE_CLASS( AGameStateController );
 
-AGameStateController::AGameStateController() :
-    m_UnkVector( m_VectorData, TARRAYSIZE( m_VectorData ), 0 )
+AGameStateController::AGameStateController()
+    : m_UnkVector( m_VectorData, TARRAYSIZE( m_VectorData ), 0 )
 {
 	// Incomplete
 	m_eFlags       = 0;

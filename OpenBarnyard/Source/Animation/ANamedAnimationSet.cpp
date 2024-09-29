@@ -12,16 +12,16 @@ TDEFINE_CLASS( ANamedAnimationSet );
 TOSHI_NAMESPACE_USING
 
 // $Barnyard: FUNCTION 00580e30
-ANamedAnimationSet::ANamedAnimationSet() :
-    m_mapAnimations( GetGlobalAllocator() )
+ANamedAnimationSet::ANamedAnimationSet()
+    : m_mapAnimations( GetGlobalAllocator() )
 {
 	m_pAllocator   = GetGlobalAllocator();
 	m_eOverlayType = OVERLAYTYPE_NONE;
 }
 
 // $Barnyard: FUNCTION 00580ea0
-ANamedAnimationSet::ANamedAnimationSet( Toshi::T2Allocator* a_pAllocator ) :
-    m_mapAnimations( a_pAllocator )
+ANamedAnimationSet::ANamedAnimationSet( Toshi::T2Allocator* a_pAllocator )
+    : m_mapAnimations( a_pAllocator )
 {
 	m_pAllocator   = a_pAllocator;
 	m_eOverlayType = OVERLAYTYPE_NONE;

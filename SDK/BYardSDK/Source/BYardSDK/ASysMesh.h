@@ -5,8 +5,7 @@
 #include <Render/TVertexPoolResourceInterface.h>
 #include <Render/TIndexPoolResourceInterface.h>
 
-class ASysMesh :
-    public Toshi::TMesh
+class ASysMesh : public Toshi::TMesh
 {
 public:
 	struct LockBuffer

@@ -35,9 +35,8 @@ enum SYSRESOURCE_ : SYSRESOURCE
 	SYSRESOURCE_NUMOF
 };
 
-class TRenderInterface :
-    public TObject,
-    public TSingleton<TRenderInterface>
+class TRenderInterface : public TObject
+    , public TSingleton<TRenderInterface>
 {
 public:
 	TDECLARE_CLASS( TRenderInterface, TObject );

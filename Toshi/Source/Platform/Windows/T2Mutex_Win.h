@@ -13,8 +13,8 @@ public:
 	};
 
 public:
-	constexpr T2Mutex() :
-	    m_Mutex( TNULL ) {}
+	constexpr T2Mutex()
+	    : m_Mutex( TNULL ) {}
 	~T2Mutex() { Destroy(); }
 
 	// Returns TTRUE if success

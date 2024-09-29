@@ -7,15 +7,15 @@ TOSHI_NAMESPACE_START
 class TQuaternion
 {
 public:
-	TQuaternion() :
-	    x( 0.0f ), y( 0.0f ), z( 0.0f ), w( 1.0f )
+	TQuaternion()
+	    : x( 0.0f ), y( 0.0f ), z( 0.0f ), w( 1.0f )
 	{}
 
-	TQuaternion( const TQuaternion& a_pQuaternion ) :
-	    x( a_pQuaternion.x ), y( a_pQuaternion.y ), z( a_pQuaternion.z ), w( a_pQuaternion.w ) {}
+	TQuaternion( const TQuaternion& a_pQuaternion )
+	    : x( a_pQuaternion.x ), y( a_pQuaternion.y ), z( a_pQuaternion.z ), w( a_pQuaternion.w ) {}
 
-	TQuaternion( TFLOAT a_fX, TFLOAT a_fY, TFLOAT a_fZ, TFLOAT a_fW ) :
-	    x( a_fX ), y( a_fY ), z( a_fZ ), w( a_fW ) {}
+	TQuaternion( TFLOAT a_fX, TFLOAT a_fY, TFLOAT a_fZ, TFLOAT a_fW )
+	    : x( a_fX ), y( a_fY ), z( a_fZ ), w( a_fW ) {}
 
 	void Set( TFLOAT a_fX, TFLOAT a_fY, TFLOAT a_fZ, TFLOAT a_fW )
 	{

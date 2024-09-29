@@ -56,8 +56,8 @@ public:
 	};
 
 public:
-	TTSF() :
-	    m_pFile( TNULL ) {}
+	TTSF()
+	    : m_pFile( TNULL ) {}
 
 protected:
 	Endianess m_Endianess; // 0x0
@@ -126,8 +126,8 @@ public:
 	};
 
 public:
-	TTSFO() :
-	    m_PositionCount( 0 ), m_Positions() {}
+	TTSFO()
+	    : m_PositionCount( 0 ), m_Positions() {}
 	~TTSFO() { Close(); }
 
 	/**

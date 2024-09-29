@@ -3,8 +3,7 @@
 
 class AMaterialLibrary;
 
-class AMatLibLoaderJob :
-    public ATRBLoaderJob
+class AMatLibLoaderJob : public ATRBLoaderJob
 {
 public:
 	virtual void  BeginJob() override;

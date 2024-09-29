@@ -11,8 +11,7 @@
 class ATerrainSection
 {
 public:
-	class ModelNode :
-	    public Toshi::T2SList<ModelNode>::Node
+	class ModelNode : public Toshi::T2SList<ModelNode>::Node
 	{
 	public:
 		using ModelNodeFlags = TUINT8;

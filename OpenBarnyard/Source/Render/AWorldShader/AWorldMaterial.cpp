@@ -11,12 +11,8 @@ TOSHI_NAMESPACE_USING
 
 TDEFINE_CLASS_NORUNTIME( AWorldMaterial );
 
-AWorldMaterial::AWorldMaterial() :
-    m_eBlendMode( 0 ),
-    m_fUVAnimX( 0.0f ),
-    m_fUVAnimY( 0.0f ),
-    m_fUVAnimSpeedX( 0.0f ),
-    m_fUVAnimSpeedY( 0.0f )
+AWorldMaterial::AWorldMaterial()
+    : m_eBlendMode( 0 ), m_fUVAnimX( 0.0f ), m_fUVAnimY( 0.0f ), m_fUVAnimSpeedX( 0.0f ), m_fUVAnimSpeedY( 0.0f )
 {
 	m_aTextures[ 0 ] = TNULL;
 	m_aTextures[ 1 ] = TNULL;

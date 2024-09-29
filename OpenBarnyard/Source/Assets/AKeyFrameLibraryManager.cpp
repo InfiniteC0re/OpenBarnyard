@@ -14,9 +14,8 @@ TOSHI_NAMESPACE_USING
 
 TDEFINE_CLASS( AKeyFrameLibraryManager );
 
-AKeyFrameLibraryManager::AKeyFrameLibraryManager() :
-    m_Libraries( AMemory::GetAllocator( AMemory::POOL_Misc ) ),
-    m_LibrariesRefs( AMemory::GetAllocator( AMemory::POOL_Misc ) )
+AKeyFrameLibraryManager::AKeyFrameLibraryManager()
+    : m_Libraries( AMemory::GetAllocator( AMemory::POOL_Misc ) ), m_LibrariesRefs( AMemory::GetAllocator( AMemory::POOL_Misc ) )
 {
 }
 

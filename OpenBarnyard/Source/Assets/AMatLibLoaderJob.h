@@ -2,8 +2,7 @@
 #include "ATRBLoaderJob.h"
 #include "AMaterialLibrary.h"
 
-class AMatLibLoaderJob :
-    public ATRBLoaderJob
+class AMatLibLoaderJob : public ATRBLoaderJob
 {
 public:
 	virtual void  BeginJob() override;

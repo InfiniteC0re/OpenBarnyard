@@ -31,11 +31,11 @@ struct TColor
 
 	TColor() = default;
 
-	TFORCEINLINE constexpr TColor( TUINT32 a_uiColor ) :
-	    Value32( a_uiColor ) {}
+	TFORCEINLINE constexpr TColor( TUINT32 a_uiColor )
+	    : Value32( a_uiColor ) {}
 
-	TFORCEINLINE constexpr TColor( TUINT8 a_uiR, TUINT8 a_uiG, TUINT8 a_uiB, TUINT8 a_uiA = 255 ) :
-	    R( a_uiR ), G( a_uiG ), B( a_uiB ), A( a_uiA ) {}
+	TFORCEINLINE constexpr TColor( TUINT8 a_uiR, TUINT8 a_uiG, TUINT8 a_uiB, TUINT8 a_uiA = 255 )
+	    : R( a_uiR ), G( a_uiG ), B( a_uiB ), A( a_uiA ) {}
 
 	TFORCEINLINE TColor& operator=( TUINT32 a_uiColor )
 	{

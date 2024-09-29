@@ -3,8 +3,7 @@
 #include "AGUI2Rectangle.h"
 #include "AGUI2TextureSection.h"
 
-class AGUI2Dialog :
-    public AGUI2Element
+class AGUI2Dialog : public AGUI2Element
 {
 public:
 	// constructors/destructor

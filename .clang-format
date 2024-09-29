@@ -43,10 +43,7 @@ BraceWrapping:
   SplitEmptyNamespace: false
 BreakBeforeBinaryOperators: None
 BreakBeforeInheritanceComma: false
-BreakInheritanceList: AfterColon
 BreakBeforeTernaryOperators: false
-BreakConstructorInitializersBeforeComma: false
-BreakConstructorInitializers: AfterColon
 BreakAfterJavaFieldAnnotations: false
 BreakStringLiterals: false
 ColumnLimit: 0
@@ -110,3 +107,5 @@ SpacesInSquareBrackets: true
 Standard:        Latest
 TabWidth:        4
 UseTab:          ForIndentation
+BreakInheritanceList: BeforeComma
+BreakConstructorInitializers: BeforeComma

@@ -43,10 +43,8 @@ public:
 
 	struct LogEvent
 	{
-		constexpr LogEvent( TLogFile* a_pFile, LogType a_eType, const TCHAR* a_szString ) :
-		    m_pFile( a_pFile ),
-		    m_eType( a_eType ),
-		    m_szString( a_szString )
+		constexpr LogEvent( TLogFile* a_pFile, LogType a_eType, const TCHAR* a_szString )
+		    : m_pFile( a_pFile ), m_eType( a_eType ), m_szString( a_szString )
 		{}
 
 		TLogFile*    m_pFile;

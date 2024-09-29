@@ -16,8 +16,8 @@ TOSHI_NAMESPACE_USING
 
 TBOOL g_bIsLoadingFSBFile = TFALSE;
 
-AWaveBankFMODFSB::AWaveBankFMODFSB( const Toshi::TPString8& a_strBank, const Toshi::TPString8& a_strPath ) :
-    AWaveBank( a_strBank, a_strPath, TFALSE )
+AWaveBankFMODFSB::AWaveBankFMODFSB( const Toshi::TPString8& a_strBank, const Toshi::TPString8& a_strPath )
+    : AWaveBank( a_strBank, a_strPath, TFALSE )
 {
 }
 

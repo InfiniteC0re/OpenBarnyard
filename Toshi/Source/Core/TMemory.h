@@ -74,8 +74,7 @@ public:
 		TUINT     m_Unk4;        // -0x04
 	};
 
-	struct MemBlockSlot :
-	    public TNodeList<MemBlockSlot>::TNode
+	struct MemBlockSlot : public TNodeList<MemBlockSlot>::TNode
 	{
 		MemBlock* m_pPtr = TNULL;
 	};

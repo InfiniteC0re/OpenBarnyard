@@ -8,8 +8,7 @@
 #include "ASectionDoneJob.h"
 #include "THookedSingleton.h"
 
-class ATerrainInterface :
-    public THookedSingleton<ATerrainInterface, 0x00796300>
+class ATerrainInterface : public THookedSingleton<ATerrainInterface, 0x00796300>
 {
 public:
 	constexpr static TUINT MAX_NUM_MODEL_LOADER_JOBS     = 128;
@@ -28,8 +27,7 @@ public:
 	    MAX_NUM_SKELETON_LOADER_JOBS +
 	    MAX_NUM_COLLISION_LOADER_JOBS;
 
-	struct JobSlot :
-	    public Toshi::T2SList<JobSlot>::Node
+	struct JobSlot : public Toshi::T2SList<JobSlot>::Node
 	{
 		AMainThreadJob* pJob = TNULL;
 	};

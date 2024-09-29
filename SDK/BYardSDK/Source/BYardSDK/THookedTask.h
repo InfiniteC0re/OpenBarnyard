@@ -6,10 +6,9 @@
 #include <Toshi/TRefCounted.h>
 #include <Toshi/TNodeTree.h>
 
-class THookedTask :
-    public Toshi::TObject,
-    public Toshi::TRefCounted,
-    public Toshi::TNodeTree<THookedTask>::TNode
+class THookedTask : public Toshi::TObject
+    , public Toshi::TRefCounted
+    , public Toshi::TNodeTree<THookedTask>::TNode
 {
 public:
 	TDECLARE_CLASS( THookedTask, Toshi::TObject );

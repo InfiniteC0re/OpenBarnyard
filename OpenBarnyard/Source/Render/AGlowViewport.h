@@ -6,8 +6,7 @@
 #include <Render/TRenderContext.h>
 #include <Toshi/TSceneObject.h>
 
-class AGlowViewport :
-    public Toshi::TSingleton<AGlowViewport>
+class AGlowViewport : public Toshi::TSingleton<AGlowViewport>
 {
 public:
 	class GlowObject

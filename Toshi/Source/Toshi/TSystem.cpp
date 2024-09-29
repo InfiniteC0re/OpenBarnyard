@@ -46,8 +46,8 @@ TSystemTimer::~TSystemTimer()
 {
 }
 
-TSystemManager::TSystemManager() :
-    m_PauseEmitter( this )
+TSystemManager::TSystemManager()
+    : m_PauseEmitter( this )
 {
 	m_pSystemTimer = TNULL;
 }

@@ -76,8 +76,8 @@ void TRenderContextD3D::DisableFogHAL()
 }
 
 // $Barnyard: FUNCTION 006d6c60
-TRenderContextD3D::TRenderContextD3D( TRenderInterface* a_pRenderer ) :
-    TRenderContext( a_pRenderer )
+TRenderContextD3D::TRenderContextD3D( TRenderInterface* a_pRenderer )
+    : TRenderContext( a_pRenderer )
 {
 }
 

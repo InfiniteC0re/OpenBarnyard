@@ -10,9 +10,8 @@
 
 TOSHI_NAMESPACE_START
 
-TFileManager::TFileManager() :
-    m_WorkingDirectory( "/" ),
-    m_ValidatedCount( 0 )
+TFileManager::TFileManager()
+    : m_WorkingDirectory( "/" ), m_ValidatedCount( 0 )
 {
 	InvalidateSystemPath();
 }
@@ -203,15 +202,13 @@ void TFileManager::ValidateSystemPath()
 	}
 }
 
-TFileManager::TSysPathIter::TSysPathIter( const TString8& str ) :
-    m_String( str ),
-    m_Position( -1 )
+TFileManager::TSysPathIter::TSysPathIter( const TString8& str )
+    : m_String( str ), m_Position( -1 )
 {
 }
 
-TFileManager::TSysPathIter::TSysPathIter( const TSysPathIter& other ) :
-    m_String( other.m_String ),
-    m_Position( other.m_Position )
+TFileManager::TSysPathIter::TSysPathIter( const TSysPathIter& other )
+    : m_String( other.m_String ), m_Position( other.m_Position )
 {
 }
 

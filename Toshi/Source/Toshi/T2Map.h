@@ -15,8 +15,8 @@ public:
 	using Node      = T2RedBlackTree<Pair>::Node;
 
 public:
-	T2Map( T2Allocator* a_pAllocator = GetGlobalAllocator() ) :
-	    m_RedBlackTree( a_pAllocator )
+	T2Map( T2Allocator* a_pAllocator = GetGlobalAllocator() )
+	    : m_RedBlackTree( a_pAllocator )
 	{
 	}
 

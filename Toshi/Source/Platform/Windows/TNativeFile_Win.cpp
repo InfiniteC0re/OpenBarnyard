@@ -11,8 +11,8 @@ TOSHI_NAMESPACE_START
 
 #pragma region TNativeFileSystem
 
-TNativeFileSystem::TNativeFileSystem( const TCHAR* name ) :
-    TFileSystem( name )
+TNativeFileSystem::TNativeFileSystem( const TCHAR* name )
+    : TFileSystem( name )
 {
 	m_NextFileHandle = INVALID_HANDLE_VALUE;
 	TFileManager::GetSingletonSafe()->MountFileSystem( this );
@@ -154,8 +154,8 @@ TBOOL TNativeFileSystem::GetNextFile( TString8& a_rOutFileName, TFINDFILE a_ui8F
 
 #pragma endregion
 
-TNativeFile::TNativeFile( TNativeFileSystem* pFS ) :
-    TFile( pFS )
+TNativeFile::TNativeFile( TNativeFileSystem* pFS )
+    : TFile( pFS )
 {
 	m_Handle          = INVALID_HANDLE_VALUE;
 	m_Position        = -1;
@@ -168,8 +168,8 @@ TNativeFile::TNativeFile( TNativeFileSystem* pFS ) :
 	m_WriteBuffered   = TTRUE;
 }
 
-TNativeFile::TNativeFile( const TNativeFile& other ) :
-    TFile( other )
+TNativeFile::TNativeFile( const TNativeFile& other )
+    : TFile( other )
 {
 	m_Handle          = other.m_Handle;
 	m_Position        = other.m_Position;

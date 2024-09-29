@@ -17,9 +17,8 @@
 
 #define ASOUNDMANAGER_MAX_NUM_CUE 128
 
-class ASoundManager :
-    public Toshi::TTask,
-    public Toshi::TSingleton<ASoundManager>
+class ASoundManager : public Toshi::TTask
+    , public Toshi::TSingleton<ASoundManager>
 {
 public:
 	TDECLARE_CLASS( ASoundManager, Toshi::TTask );
@@ -83,8 +82,7 @@ public:
 	// so I split them in two. It doesn't affect anything including compatibility
 	// since ChannelRefLegacy is not even created by the game.
 
-	struct ChannelRef :
-	    public Toshi::T2DList<ChannelRef>::Node
+	struct ChannelRef : public Toshi::T2DList<ChannelRef>::Node
 	{
 	public:
 		TINT            iFMODChannelHandle = -1;
@@ -95,8 +93,7 @@ public:
 		TINT            iFrequency         = 44100;
 	};
 
-	struct TDEPRECATED ChannelRefLegacy :
-	    public Toshi::T2DList<ChannelRefLegacy>::Node
+	struct TDEPRECATED ChannelRefLegacy : public Toshi::T2DList<ChannelRefLegacy>::Node
 	{
 	public:
 		using Callback_t = void ( * )( TINT a_iType, TINT a_iCueIndex, void* a_pUserData );
@@ -106,8 +103,7 @@ public:
 		void*      pUserData  = TNULL;
 	};
 
-	struct StreamRef :
-	    public Toshi::T2DList<StreamRef>::Node
+	struct StreamRef : public Toshi::T2DList<StreamRef>::Node
 	{
 	public:
 		ChannelRef* pChannelRef;
@@ -115,8 +111,7 @@ public:
 		void*       pUnknown;
 	};
 
-	class SoundEvent :
-	    public Toshi::T2DList<SoundEvent>::Node
+	class SoundEvent : public Toshi::T2DList<SoundEvent>::Node
 	{
 	public:
 		SoundEvent( SOUNDEVENT a_eEventType, TFLOAT a_fStartTime, Cue* a_pCue, ASound::Sample* a_pWave, ChannelRef* a_pChannel, TINT a_iFlags, TINT a_iTrackIndex );
@@ -176,8 +171,7 @@ public:
 	// Purpose: Cue is an only playable unit that can be created by ASoundManager.
 	// It contains all the channels (sounds) that are played by ASound.
 	//-----------------------------------------------------------------------------
-	class Cue :
-	    public Toshi::T2DList<Cue>::Node
+	class Cue : public Toshi::T2DList<Cue>::Node
 	{
 	public:
 		Cue();

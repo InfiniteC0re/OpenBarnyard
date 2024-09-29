@@ -6,9 +6,8 @@ TOSHI_NAMESPACE_START
 
 class TInputDevice;
 
-class TInputInterface :
-    public TObject,
-    public TSingleton<TInputInterface>
+class TInputInterface : public TObject
+    , public TSingleton<TInputInterface>
 {
 public:
 	TDECLARE_CLASS( TInputInterface, TObject );
@@ -101,9 +100,8 @@ private:
 	TGenericEmitter         m_Emitter2;          // 0x24
 };
 
-class TInputDevice :
-    public TObject,
-    public TNodeList<TInputDevice>::TNode
+class TInputDevice : public TObject
+    , public TNodeList<TInputDevice>::TNode
 {
 public:
 	TDECLARE_CLASS( TInputDevice, TObject );

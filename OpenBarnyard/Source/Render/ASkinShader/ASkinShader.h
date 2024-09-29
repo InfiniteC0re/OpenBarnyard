@@ -5,9 +5,8 @@
 class ASkinMaterial;
 class ASkinMesh;
 
-class ASkinShader :
-    public Toshi::TShader,
-    public Toshi::TSingleton<ASkinShader>
+class ASkinShader : public Toshi::TShader
+    , public Toshi::TSingleton<ASkinShader>
 {
 public:
 	TDECLARE_CLASS( ASkinShader, Toshi::TShader );

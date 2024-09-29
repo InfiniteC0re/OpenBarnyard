@@ -3,13 +3,12 @@
 
 TOSHI_NAMESPACE_START
 
-class TNullFileSystem :
-    public TFileSystem,
-    public TSingleton<TNullFileSystem>
+class TNullFileSystem : public TFileSystem
+    , public TSingleton<TNullFileSystem>
 {
 public:
-	TNullFileSystem( const TCHAR* name ) :
-	    TFileSystem( name )
+	TNullFileSystem( const TCHAR* name )
+	    : TFileSystem( name )
 	{
 		TFileManager::GetSingletonSafe()->MountFileSystem( this );
 	}

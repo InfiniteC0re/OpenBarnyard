@@ -23,12 +23,8 @@ TOSHI_NAMESPACE_USING
 TDEFINE_CLASS( AModelInstance );
 
 // $Barnyard: FUNCTION 0060fef0
-AModel::AModel( const TPString8& a_rName, TTRB* a_pTRB ) :
-    m_Name( a_rName ),
-    m_uiID( ms_uiNumCreated ),
-    m_pManagedModel( TNULL ),
-    m_Vec1( TVector3::VEC_ZERO ),
-    m_Vec2( TVector3::VEC_ZERO )
+AModel::AModel( const TPString8& a_rName, TTRB* a_pTRB )
+    : m_Name( a_rName ), m_uiID( ms_uiNumCreated ), m_pManagedModel( TNULL ), m_Vec1( TVector3::VEC_ZERO ), m_Vec2( TVector3::VEC_ZERO )
 {
 	m_pManagedModel = AModel::Create( a_rName, a_pTRB );
 
@@ -202,8 +198,8 @@ TString8* AModel::GenerateInstanceName( TString8& a_rOutName, const TPString8& a
 }
 
 // $Barnyard: FUNCTION 00611280
-AModelInstance::AModelInstance( AModel* a_pModel, TSceneObject* a_pSceneObject, TBOOL a_bEnableSkeletonUpdate ) :
-    m_ChangeEmitter( this )
+AModelInstance::AModelInstance( AModel* a_pModel, TSceneObject* a_pSceneObject, TBOOL a_bEnableSkeletonUpdate )
+    : m_ChangeEmitter( this )
 {
 	TFIXME( "Initialise some unknown members" );
 
@@ -218,8 +214,8 @@ AModelInstance::AModelInstance( AModel* a_pModel, TSceneObject* a_pSceneObject, 
 }
 
 // $Barnyard: FUNCTION 00610820
-AModelInstance::AModelInstance() :
-    m_ChangeEmitter( this )
+AModelInstance::AModelInstance()
+    : m_ChangeEmitter( this )
 {
 	TFIXME( "Initialise some unknown members" );
 

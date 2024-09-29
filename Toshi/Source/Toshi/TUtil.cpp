@@ -139,8 +139,8 @@ void TUtil::LogSet( TLogFile* a_pLogFile )
 	pUtil->m_pCurrentLogFile = ( !a_pLogFile ) ? pUtil->m_pDefaultLogFile : a_pLogFile;
 }
 
-TUtil::TUtil() :
-    m_LogEmitter( this )
+TUtil::TUtil()
+    : m_LogEmitter( this )
 {
 	m_pDefaultLogFile = TNULL;
 	m_pCurrentLogFile = TNULL;

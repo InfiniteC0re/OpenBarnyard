@@ -5,8 +5,7 @@
 #include <Render/TTexture.h>
 #include <Platform/DX8/TTextureResourceHAL_DX8.h>
 
-class ASkinMaterialWrapperGL :
-    public Toshi::TMaterial
+class ASkinMaterialWrapperGL : public Toshi::TMaterial
 {
 public:
 	void PreRenderGL()
@@ -93,8 +92,7 @@ public:
 	TBOOL                       m_bFlag3;
 };
 
-class ASkinShaderGL :
-    public Toshi::TSingleton<ASkinShaderGL>
+class ASkinShaderGL : public Toshi::TSingleton<ASkinShaderGL>
 {
 public:
 	struct SkinVertex

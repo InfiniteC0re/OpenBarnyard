@@ -5,9 +5,8 @@
 #include <Toshi/TTask.h>
 #include <Toshi/TString8.h>
 
-class ARootTask :
-    public Toshi::TTask,
-    public Toshi::TSingleton<ARootTask>
+class ARootTask : public Toshi::TTask
+    , public Toshi::TSingleton<ARootTask>
 {
 public:
 	TDECLARE_CLASS( ARootTask, Toshi::TTask );

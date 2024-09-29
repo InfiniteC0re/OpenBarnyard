@@ -108,8 +108,8 @@ public:
 	// Member definitions
 	//-----------------------------------------------------------------------------
 
-	TSharedBuffer() :
-	    m_oArray( 4, 10 )
+	TSharedBuffer()
+	    : m_oArray( 4, 10 )
 	{
 		TASSERT( ( 1 << TMath::IntLog2( BUFSIZE ) ) == BUFSIZE );
 	}

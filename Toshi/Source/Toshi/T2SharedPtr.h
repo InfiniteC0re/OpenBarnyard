@@ -27,8 +27,8 @@ private:
 
 public:
 	// Constructor
-	T2SharedPtr() :
-	    m_pRawPtr( TNULL )
+	T2SharedPtr()
+	    : m_pRawPtr( TNULL )
 	{}
 
 	// Copy constructor

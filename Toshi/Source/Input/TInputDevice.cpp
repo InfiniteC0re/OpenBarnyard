@@ -12,9 +12,8 @@ TOSHI_NAMESPACE_START
 TDEFINE_CLASS_NORUNTIME( TInputDevice );
 
 // $Barnyard: FUNCTION 006d98e0
-TInputDevice::TInputDevice() :
-    m_Repeats( 0, 16 ),
-    m_Array2( 0, 16 )
+TInputDevice::TInputDevice()
+    : m_Repeats( 0, 16 ), m_Array2( 0, 16 )
 {
 	m_bUnknown        = TFALSE;
 	m_bIsAcquired     = TFALSE;

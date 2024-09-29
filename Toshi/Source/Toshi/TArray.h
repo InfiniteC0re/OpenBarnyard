@@ -309,8 +309,8 @@ template <class T>
 class TArray : public TGenericArray<T>
 {
 public:
-	TArray( TINT a_iGrowSize = 10, TINT a_iSize = 0 ) :
-	    TGenericArray<T>( a_iGrowSize, a_iSize )
+	TArray( TINT a_iGrowSize = 10, TINT a_iSize = 0 )
+	    : TGenericArray<T>( a_iGrowSize, a_iSize )
 	{
 	}
 };

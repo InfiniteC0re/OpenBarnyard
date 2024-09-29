@@ -6,9 +6,8 @@
 class ASysMaterial;
 class ASysMesh;
 
-class ASysShader :
-    public Toshi::TShader,
-    public THookedSingleton<ASysShader, 0x0079a340>
+class ASysShader : public Toshi::TShader
+    , public THookedSingleton<ASysShader, 0x0079a340>
 {
 public:
 	virtual ASysMaterial* CreateMaterial( const char* a_szName ) = 0;

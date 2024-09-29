@@ -12,8 +12,8 @@ class T2ManagedPtr
 {
 public:
 	// Constructor
-	T2ManagedPtr() :
-	    m_pRawPtr( TNULL )
+	T2ManagedPtr()
+	    : m_pRawPtr( TNULL )
 	{}
 
 	// Copy constructor

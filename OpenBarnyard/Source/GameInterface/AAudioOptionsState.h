@@ -2,8 +2,7 @@
 #include "ABYardMenuState.h"
 #include "GUI/AGUI2MenuGridTextItem.h"
 
-class AVolumeSlider :
-    public AGUI2MenuGridItem
+class AVolumeSlider : public AGUI2MenuGridItem
 {
 public:
 	using ArrowFocusCallback = void ( * )( void* a_pUserData, TINT a_iSliderID );
@@ -38,8 +37,7 @@ private:
 	TINT               m_iLastPressedArrowIndex;
 };
 
-class AAudioOptionsState :
-    public ABYardMenuState
+class AAudioOptionsState : public ABYardMenuState
 {
 public:
 	TDECLARE_CLASS( AAudioOptionsState, ABYardMenuState );

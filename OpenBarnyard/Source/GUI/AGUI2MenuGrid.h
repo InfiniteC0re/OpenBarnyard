@@ -5,8 +5,7 @@
 
 class AGUI2MenuGridItem;
 
-class AGUI2MenuGrid :
-    public AGUI2Element
+class AGUI2MenuGrid : public AGUI2Element
 {
 public:
 	using ACTIONFLAGS = TUINT32;
@@ -90,8 +89,7 @@ private:
 	AGUI2MenuGridItem* m_pHoveredMenuItem;
 };
 
-class AGUI2MenuGridItem :
-    public AGUI2Element
+class AGUI2MenuGridItem : public AGUI2Element
 {
 public:
 	friend class AGUI2MenuGrid;

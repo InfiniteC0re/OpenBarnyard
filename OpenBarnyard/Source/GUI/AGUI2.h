@@ -8,9 +8,8 @@
 
 #include <Toshi/TTask.h>
 
-class AGUI2 :
-    public Toshi::TTask,
-    public Toshi::TSingleton<AGUI2>
+class AGUI2 : public Toshi::TTask
+    , public Toshi::TSingleton<AGUI2>
 {
 public:
 	TDECLARE_CLASS( AGUI2, Toshi::TTask );

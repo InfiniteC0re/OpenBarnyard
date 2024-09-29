@@ -1,8 +1,7 @@
 #pragma once
 #include "ACamera.h"
 
-class ACameraHelper :
-    public Toshi::TObject
+class ACameraHelper : public Toshi::TObject
 {
 public:
 	TDECLARE_CLASS( ACameraHelper, Toshi::TObject );

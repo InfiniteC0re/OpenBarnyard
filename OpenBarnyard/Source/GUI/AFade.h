@@ -5,8 +5,7 @@
 #include <Toshi/TQList.h>
 #include <Toshi/T2ObjectPool.h>
 
-class AFade :
-    public Toshi::TQList<AFade>::TNode
+class AFade : public Toshi::TQList<AFade>::TNode
 {
 public:
 	friend class AFadeManager;
@@ -20,17 +19,14 @@ public:
 
 		constexpr Color() = default;
 
-		constexpr Color( TUINT8 a_uiA, TUINT8 a_uiR, TUINT8 a_uiG, TUINT8 a_uiB ) :
-		    A( a_uiA ), R( a_uiR ), G( a_uiG ), B( a_uiB ) {}
+		constexpr Color( TUINT8 a_uiA, TUINT8 a_uiR, TUINT8 a_uiG, TUINT8 a_uiB )
+		    : A( a_uiA ), R( a_uiR ), G( a_uiG ), B( a_uiB ) {}
 
-		constexpr Color( const Toshi::TColor& a_rColor ) :
-		    A( a_rColor.A ), R( a_rColor.G ), G( a_rColor.G ), B( a_rColor.B ) {}
+		constexpr Color( const Toshi::TColor& a_rColor )
+		    : A( a_rColor.A ), R( a_rColor.G ), G( a_rColor.G ), B( a_rColor.B ) {}
 
-		constexpr Color( TUINT32 a_uiColor ) :
-		    A( TCOLOR_GET_A( a_uiColor ) ),
-		    R( TCOLOR_GET_R( a_uiColor ) ),
-		    G( TCOLOR_GET_G( a_uiColor ) ),
-		    B( TCOLOR_GET_B( a_uiColor ) )
+		constexpr Color( TUINT32 a_uiColor )
+		    : A( TCOLOR_GET_A( a_uiColor ) ), R( TCOLOR_GET_R( a_uiColor ) ), G( TCOLOR_GET_G( a_uiColor ) ), B( TCOLOR_GET_B( a_uiColor ) )
 		{}
 
 		constexpr TUINT32 GetTColor32() const

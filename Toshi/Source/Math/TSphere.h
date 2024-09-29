@@ -9,24 +9,20 @@ class TSphere
 public:
 	constexpr TSphere() = default;
 
-	constexpr TSphere( const TVector4& a_rSphereData ) :
-	    m_Origin( a_rSphereData.AsVector3() ),
-	    m_fRadius( a_rSphereData.w )
+	constexpr TSphere( const TVector4& a_rSphereData )
+	    : m_Origin( a_rSphereData.AsVector3() ), m_fRadius( a_rSphereData.w )
 	{}
 
-	constexpr TSphere( const TVector3& a_rOrigin, TFLOAT a_fRadius ) :
-	    m_Origin( a_rOrigin ),
-	    m_fRadius( a_fRadius )
+	constexpr TSphere( const TVector3& a_rOrigin, TFLOAT a_fRadius )
+	    : m_Origin( a_rOrigin ), m_fRadius( a_fRadius )
 	{}
 
-	constexpr TSphere( TFLOAT a_fOriginX, TFLOAT a_fOriginY, TFLOAT a_fOriginZ, TFLOAT a_fRadius ) :
-	    m_Origin( a_fOriginX, a_fOriginY, a_fOriginZ ),
-	    m_fRadius( a_fRadius )
+	constexpr TSphere( TFLOAT a_fOriginX, TFLOAT a_fOriginY, TFLOAT a_fOriginZ, TFLOAT a_fRadius )
+	    : m_Origin( a_fOriginX, a_fOriginY, a_fOriginZ ), m_fRadius( a_fRadius )
 	{}
 
-	constexpr TSphere( const TSphere& a_rSphere ) :
-	    m_Origin( a_rSphere.m_Origin ),
-	    m_fRadius( a_rSphere.m_fRadius )
+	constexpr TSphere( const TSphere& a_rSphere )
+	    : m_Origin( a_rSphere.m_Origin ), m_fRadius( a_rSphere.m_fRadius )
 	{}
 
 	constexpr void Set( const TVector4& a_rSphereData )

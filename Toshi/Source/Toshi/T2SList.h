@@ -269,8 +269,8 @@ public:
 	// constructors/destructor
 	constexpr T2SListNodeWrapper() = default;
 
-	constexpr T2SListNodeWrapper( T* a_pValue ) :
-	    m_pValue( a_pValue ) {}
+	constexpr T2SListNodeWrapper( T* a_pValue )
+	    : m_pValue( a_pValue ) {}
 
 	~T2SListNodeWrapper() = default;
 

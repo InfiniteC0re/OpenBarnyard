@@ -7,16 +7,14 @@
 #include <Toshi/T2Map.h>
 #include <Toshi/T2SList.h>
 
-class AMaterialLibraryManager :
-    public Toshi::TObject,
-    public Toshi::TSingleton<AMaterialLibraryManager>
+class AMaterialLibraryManager : public Toshi::TObject
+    , public Toshi::TSingleton<AMaterialLibraryManager>
 {
 public:
 	TDECLARE_CLASS( AMaterialLibraryManager, Toshi::TObject );
 
 public:
-	class List :
-	    public Toshi::TSingleton<List>
+	class List : public Toshi::TSingleton<List>
 	{
 	public:
 		AMaterialLibrary* CreateLibraryFromTRB( Toshi::TTRB* a_pTRB, const TCHAR* a_szFilePath );
@@ -27,8 +25,7 @@ public:
 		Toshi::T2DList<AMaterialLibrary> m_Libraries;
 	};
 
-	class TextureSlot :
-	    public Toshi::T2SList<TextureSlot>::Node
+	class TextureSlot : public Toshi::T2SList<TextureSlot>::Node
 	{
 	public:
 		TextureSlot() = default;

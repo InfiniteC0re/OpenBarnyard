@@ -38,17 +38,8 @@ TOSHI_NAMESPACE_USING
 
 TDEFINE_CLASS( ARenderer );
 
-ARenderer::ARenderer() :
-    m_RenderGUIEmitter( this ),
-    m_AnimationUpdateStartEmitter( this ),
-    m_AnimationUpdateEndEmitter( this ),
-    m_pViewport( TNULL ),
-    m_pCameraObject( TNULL ),
-    m_pHALViewport1( TNULL ),
-    m_pHALViewport2( TNULL ),
-    m_bRenderGUI( TTRUE ),
-    m_fNear( 1.0f ),
-    m_fFar( 280.0f )
+ARenderer::ARenderer()
+    : m_RenderGUIEmitter( this ), m_AnimationUpdateStartEmitter( this ), m_AnimationUpdateEndEmitter( this ), m_pViewport( TNULL ), m_pCameraObject( TNULL ), m_pHALViewport1( TNULL ), m_pHALViewport2( TNULL ), m_bRenderGUI( TTRUE ), m_fNear( 1.0f ), m_fFar( 280.0f )
 {
 }
 

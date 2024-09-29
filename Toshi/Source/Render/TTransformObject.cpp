@@ -10,11 +10,8 @@
 
 TOSHI_NAMESPACE_START
 
-TTransformObject::TTransformObject() :
-    m_eMode( Mode::Quat ),
-    m_Quat( TQuaternion::IDENTITY ),
-    m_Translation( TVector3::VEC_ZERO ),
-    m_Scale( 1.0f, 1.0f, 1.0f )
+TTransformObject::TTransformObject()
+    : m_eMode( Mode::Quat ), m_Quat( TQuaternion::IDENTITY ), m_Translation( TVector3::VEC_ZERO ), m_Scale( 1.0f, 1.0f, 1.0f )
 {
 	m_EulerOrder[ 0 ] = 2;
 	m_EulerOrder[ 1 ] = 1;

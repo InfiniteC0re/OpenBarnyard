@@ -20,8 +20,8 @@ public:
 	class TShaderList
 	{
 	public:
-		TShaderList() :
-		    m_pRoot( TNULL ) {}
+		TShaderList()
+		    : m_pRoot( TNULL ) {}
 
 		void AddShader( TShader* pShader );
 		void RemoveShader( TShader* pShader );

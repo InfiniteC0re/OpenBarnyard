@@ -4,9 +4,8 @@
 class ASysMaterial;
 class ASysMesh;
 
-class ASysShader :
-    public Toshi::TShader,
-    public Toshi::TSingleton<ASysShader>
+class ASysShader : public Toshi::TShader
+    , public Toshi::TSingleton<ASysShader>
 {
 public:
 	TDECLARE_CLASS( ASysShader, Toshi::TShader );

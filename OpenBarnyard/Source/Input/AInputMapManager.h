@@ -32,9 +32,8 @@ struct AInputCommandArray
 	AInputCommand aCommands[ MAX_NUM_COMMANDS ];
 };
 
-class AInputMapManager :
-    public Toshi::TObject,
-    public Toshi::TSingleton<AInputMapManager>
+class AInputMapManager : public Toshi::TObject
+    , public Toshi::TSingleton<AInputMapManager>
 {
 public:
 	TDECLARE_CLASS( AInputMapManager, Toshi::TObject );

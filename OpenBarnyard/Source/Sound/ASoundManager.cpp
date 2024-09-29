@@ -28,14 +28,8 @@ TDEFINE_CLASS( ASoundManager );
 #define MAX_NUM_SOUND_EVENTS 256
 #define MAX_NUM_STREAMS      64
 
-ASoundManager::ASoundManager() :
-    m_SoundEventPool( AMemory::GetAllocator( AMemory::POOL_Sound ), MAX_NUM_SOUND_EVENTS ),
-    m_StreamRefPool( AMemory::GetAllocator( AMemory::POOL_Sound ), MAX_NUM_STREAMS ),
-    m_ChannelRefPool( AMemory::GetAllocator( AMemory::POOL_Sound ), MAX_NUM_SOUND_EVENTS ),
-    m_ChannelRefLegacyPool( AMemory::GetAllocator( AMemory::POOL_Sound ), MAX_NUM_SOUND_EVENTS ),
-    m_CategoryIndices( AMemory::GetAllocator( AMemory::POOL_Sound ) ),
-    m_SoundIdToSound( AMemory::GetAllocator( AMemory::POOL_Sound ) ),
-    m_SoundIdToSoundLegacy( AMemory::GetAllocator( AMemory::POOL_Sound ) )
+ASoundManager::ASoundManager()
+    : m_SoundEventPool( AMemory::GetAllocator( AMemory::POOL_Sound ), MAX_NUM_SOUND_EVENTS ), m_StreamRefPool( AMemory::GetAllocator( AMemory::POOL_Sound ), MAX_NUM_STREAMS ), m_ChannelRefPool( AMemory::GetAllocator( AMemory::POOL_Sound ), MAX_NUM_SOUND_EVENTS ), m_ChannelRefLegacyPool( AMemory::GetAllocator( AMemory::POOL_Sound ), MAX_NUM_SOUND_EVENTS ), m_CategoryIndices( AMemory::GetAllocator( AMemory::POOL_Sound ) ), m_SoundIdToSound( AMemory::GetAllocator( AMemory::POOL_Sound ) ), m_SoundIdToSoundLegacy( AMemory::GetAllocator( AMemory::POOL_Sound ) )
 {
 	TIMPLEMENT();
 	m_iLastAvailableSoundExSlot = -1;
@@ -1741,38 +1735,19 @@ TBOOL ASoundManager::Cue::HasEventOfType( SOUNDEVENT a_eEventType ) const
 	return TFALSE;
 }
 
-ASoundManager::SoundEvent::SoundEvent( SOUNDEVENT a_eEventType, TFLOAT a_fStartTime, Cue* a_pCue, ASound::Sample* a_pWave, ChannelRef* a_pChannel, TINT a_iFlags, TINT a_iTrackIndex ) :
-    pSample( a_pWave ),
-    eEventType( a_eEventType ),
-    pChannel( a_pChannel ),
-    iFlags( a_iFlags ),
-    pCue( a_pCue ),
-    fStartTime( a_fStartTime ),
-    iTrackIndex( a_iTrackIndex )
+ASoundManager::SoundEvent::SoundEvent( SOUNDEVENT a_eEventType, TFLOAT a_fStartTime, Cue* a_pCue, ASound::Sample* a_pWave, ChannelRef* a_pChannel, TINT a_iFlags, TINT a_iTrackIndex )
+    : pSample( a_pWave ), eEventType( a_eEventType ), pChannel( a_pChannel ), iFlags( a_iFlags ), pCue( a_pCue ), fStartTime( a_fStartTime ), iTrackIndex( a_iTrackIndex )
 {
 }
 
-ASoundManager::SoundEvent::SoundEvent( SOUNDEVENT a_eEventType, TFLOAT a_fStartTime, Cue* a_pCue, ASound::Sample* a_pWave, TFLOAT a_fCustomParam1, ChannelRef* a_pChannel, TINT a_iFlags, TINT a_iTrackIndex ) :
-    pSample( a_pWave ),
-    eEventType( a_eEventType ),
-    pChannel( a_pChannel ),
-    iFlags( a_iFlags ),
-    pCue( a_pCue ),
-    fStartTime( a_fStartTime ),
-    iTrackIndex( a_iTrackIndex )
+ASoundManager::SoundEvent::SoundEvent( SOUNDEVENT a_eEventType, TFLOAT a_fStartTime, Cue* a_pCue, ASound::Sample* a_pWave, TFLOAT a_fCustomParam1, ChannelRef* a_pChannel, TINT a_iFlags, TINT a_iTrackIndex )
+    : pSample( a_pWave ), eEventType( a_eEventType ), pChannel( a_pChannel ), iFlags( a_iFlags ), pCue( a_pCue ), fStartTime( a_fStartTime ), iTrackIndex( a_iTrackIndex )
 {
 	oParameters[ 0 ] = a_fCustomParam1;
 }
 
-ASoundManager::SoundEvent::SoundEvent( SOUNDEVENT a_eEventType, TFLOAT a_fStartTime, Cue* a_pCue, ASound::Sample* a_pWave, const EventParameters& a_rcCustomParams, ChannelRef* a_pChannel, TINT a_iFlags, TINT a_iTrackIndex ) :
-    pSample( a_pWave ),
-    eEventType( a_eEventType ),
-    pChannel( a_pChannel ),
-    iFlags( a_iFlags ),
-    pCue( a_pCue ),
-    fStartTime( a_fStartTime ),
-    iTrackIndex( a_iTrackIndex ),
-    oParameters( a_rcCustomParams )
+ASoundManager::SoundEvent::SoundEvent( SOUNDEVENT a_eEventType, TFLOAT a_fStartTime, Cue* a_pCue, ASound::Sample* a_pWave, const EventParameters& a_rcCustomParams, ChannelRef* a_pChannel, TINT a_iFlags, TINT a_iTrackIndex )
+    : pSample( a_pWave ), eEventType( a_eEventType ), pChannel( a_pChannel ), iFlags( a_iFlags ), pCue( a_pCue ), fStartTime( a_fStartTime ), iTrackIndex( a_iTrackIndex ), oParameters( a_rcCustomParams )
 {
 }
 

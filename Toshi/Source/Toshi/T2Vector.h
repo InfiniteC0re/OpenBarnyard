@@ -12,12 +12,12 @@ public:
 		friend class T2Vector;
 
 	public:
-		constexpr Iterator( T2Vector* a_pVector ) :
-		    m_uiIndex( 0 ), m_pVector( a_pVector ) {}
-		constexpr Iterator( TSIZE a_uiIndex, T2Vector* a_pVector ) :
-		    m_uiIndex( a_uiIndex ), m_pVector( a_pVector ) {}
-		constexpr Iterator( const Iterator& a_rOther ) :
-		    m_uiIndex( a_rOther.m_uiIndex ), m_pVector( a_rOther.m_pVector ) {}
+		constexpr Iterator( T2Vector* a_pVector )
+		    : m_uiIndex( 0 ), m_pVector( a_pVector ) {}
+		constexpr Iterator( TSIZE a_uiIndex, T2Vector* a_pVector )
+		    : m_uiIndex( a_uiIndex ), m_pVector( a_pVector ) {}
+		constexpr Iterator( const Iterator& a_rOther )
+		    : m_uiIndex( a_rOther.m_uiIndex ), m_pVector( a_rOther.m_pVector ) {}
 
 		constexpr TSIZE Index() const noexcept
 		{

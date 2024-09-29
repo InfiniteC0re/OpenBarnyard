@@ -181,12 +181,12 @@ public:
 	};
 
 public:
-	constexpr T2DynamicVector( T2Allocator* a_pAllocator, TINT a_iMaxSize, TINT a_iGrowSize ) :
-	    T2GenericDynamicVector( a_pAllocator, a_iMaxSize, a_iGrowSize, sizeof( T ) )
+	constexpr T2DynamicVector( T2Allocator* a_pAllocator, TINT a_iMaxSize, TINT a_iGrowSize )
+	    : T2GenericDynamicVector( a_pAllocator, a_iMaxSize, a_iGrowSize, sizeof( T ) )
 	{}
 
-	constexpr T2DynamicVector( T* a_poElements, TINT a_iMaxSize, TINT a_iNumElements ) :
-	    T2GenericDynamicVector( a_poElements, a_iMaxSize, a_iNumElements )
+	constexpr T2DynamicVector( T* a_poElements, TINT a_iMaxSize, TINT a_iNumElements )
+	    : T2GenericDynamicVector( a_poElements, a_iMaxSize, a_iNumElements )
 	{}
 
 	~T2DynamicVector()

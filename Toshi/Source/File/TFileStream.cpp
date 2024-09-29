@@ -72,8 +72,8 @@ void TTRBStreamJob::Process()
 }
 
 // $Barnyard: FUNCTION 006d7ea0
-TTRBStreamJob::TTRBStreamJob() :
-    TFileStreamJob( TNULL )
+TTRBStreamJob::TTRBStreamJob()
+    : TFileStreamJob( TNULL )
 {
 	m_trb           = TNULL;
 	m_fileName[ 0 ] = '\0';

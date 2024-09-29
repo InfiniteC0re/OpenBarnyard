@@ -26,20 +26,8 @@ TDEFINE_CLASS( ASkinShaderHAL );
 #define VERTEX_SHADER_REGISTER_MVP   0
 #define VERTEX_SHADER_REGISTER_BONES 5
 
-ASkinShaderHAL::ASkinShaderHAL() :
-    m_hUnknownPixelShader( 0 ),
-    m_hVertexShader( 0 ),
-    m_hVertexShaderHD( 0 ),
-    m_hPixelShader( 0 ),
-    m_iAlphaRef( 128 ),
-    m_bIsAlphaBlendMaterial( TFALSE ),
-    m_fAMDPatch1( 0.0f ),
-    m_bCPUSupportsFeature1( TFALSE ),
-    m_bCPUSupportsFeature2( TFALSE ),
-    m_bUnkFlag( TFALSE ),
-    m_bHighEndSkinning( TTRUE ),
-    m_bLightScattering( TTRUE ),
-    m_fAMDPatch2( 1.0f )
+ASkinShaderHAL::ASkinShaderHAL()
+    : m_hUnknownPixelShader( 0 ), m_hVertexShader( 0 ), m_hVertexShaderHD( 0 ), m_hPixelShader( 0 ), m_iAlphaRef( 128 ), m_bIsAlphaBlendMaterial( TFALSE ), m_fAMDPatch1( 0.0f ), m_bCPUSupportsFeature1( TFALSE ), m_bCPUSupportsFeature2( TFALSE ), m_bUnkFlag( TFALSE ), m_bHighEndSkinning( TTRUE ), m_bLightScattering( TTRUE ), m_fAMDPatch2( 1.0f )
 {
 }
 

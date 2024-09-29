@@ -11,8 +11,8 @@ TOSHI_NAMESPACE_START
 class TViewportHAL : public Toshi::TViewport
 {
 public:
-	TViewportHAL( TBOOL a_bFlag ) :
-	    TViewport( a_bFlag )
+	TViewportHAL( TBOOL a_bFlag )
+	    : TViewport( a_bFlag )
 	{}
 };
 

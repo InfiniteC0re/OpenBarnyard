@@ -9,8 +9,7 @@
 #  include "Platform/DX8/T2Texture_DX8.h"
 #endif // TOSHI_SKU_WINDOWS
 
-class AMaterialLibrary :
-    public Toshi::T2DList<AMaterialLibrary>::Node
+class AMaterialLibrary : public Toshi::T2DList<AMaterialLibrary>::Node
 {
 public:
 	struct TTL

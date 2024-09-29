@@ -3,8 +3,7 @@
 #include "GUI/AGUI2Button.h"
 #include "GUI/AFade.h"
 
-class AFrontEndMainMenuState2 :
-    public ABYardMenuState
+class AFrontEndMainMenuState2 : public ABYardMenuState
 {
 public:
 	TDECLARE_CLASS( AFrontEndMainMenuState2, ABYardMenuState );

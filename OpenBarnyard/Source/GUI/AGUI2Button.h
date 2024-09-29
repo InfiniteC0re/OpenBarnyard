@@ -4,8 +4,7 @@
 #include "AGUI2Font.h"
 #include "AGUI2TextBox.h"
 
-class AGUI2Button :
-    public AGUI2MenuItem
+class AGUI2Button : public AGUI2MenuItem
 {
 public:
 	// constructors/destructor

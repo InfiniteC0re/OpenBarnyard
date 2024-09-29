@@ -92,8 +92,8 @@ inline void TGenericGlobalListener<T>::DisconnectImpl()
 class TGenericGlobalEvent
 {
 public:
-	TGenericGlobalEvent( const void* a_pData ) :
-	    m_pData( a_pData ) {}
+	TGenericGlobalEvent( const void* a_pData )
+	    : m_pData( a_pData ) {}
 
 public:
 	const void* m_pData;

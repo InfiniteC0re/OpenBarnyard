@@ -3,9 +3,8 @@
 
 #include <Toshi/TTask.h>
 
-class ACameraManager :
-    public Toshi::TTask,
-    public Toshi::TSingleton<ACameraManager>
+class ACameraManager : public Toshi::TTask
+    , public Toshi::TSingleton<ACameraManager>
 {
 public:
 	TDECLARE_CLASS( ACameraManager, Toshi::TTask );
