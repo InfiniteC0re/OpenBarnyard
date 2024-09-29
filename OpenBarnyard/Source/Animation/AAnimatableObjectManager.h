@@ -27,6 +27,9 @@ public:
 	void LoadAnimObjType( const TCHAR* a_szName, const PBProperties* a_pProperties, TBOOL a_bFlag );
 	void LoadAnimObjType( const Toshi::TPString8& a_rcName, const PBProperties* a_pProperties, TBOOL a_bFlag );
 
+	AAnimatableObjectType* FindType( const Toshi::TPString8& a_rcName );
+	void DeleteType( const Toshi::TPString8& a_rcName );
+
 	// TTask
 	virtual TBOOL OnUpdate( TFLOAT a_fDeltaTime ) OVERRIDE;
 
@@ -34,8 +37,8 @@ private:
 	void FUN_0057e3e0( AAnimatableObjectType* a_pObjectType );
 
 private:
+	Toshi::T2DList<PlaceholderNode>       m_UnkList;
 	Toshi::T2DList<AAnimatableObjectType> m_ObjectTypes;
-	Toshi::T2DList<PlaceholderNode>       m_Types;
 	Toshi::TTRB*                          m_pTRB;
 	TINT                                  m_Unk;
 };

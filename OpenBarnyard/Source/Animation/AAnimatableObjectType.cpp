@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "AAnimatableObjectType.h"
-#include "Render/AModelRepos.h"
+#include "AModelRepos.h"
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.

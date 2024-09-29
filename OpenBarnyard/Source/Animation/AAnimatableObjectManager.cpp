@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "AAnimatableObjectManager.h"
 #include "AAnimatableObjectTypeBunch.h"
+#include "AModelRepos.h"
 #include "ALoadScreen.h"
 
 //-----------------------------------------------------------------------------
@@ -34,7 +35,7 @@ AAnimatableObjectManager::~AAnimatableObjectManager()
 	}
 
 	m_ObjectTypes.DeleteAll();
-	m_Types.DeleteAll();
+	m_UnkList.DeleteAll();
 }
 
 // $Barnyard: FUNCTION 0057e8c0
@@ -125,6 +126,32 @@ void AAnimatableObjectManager::LoadAnimObjType( const TPString8& a_rcName, const
 void AAnimatableObjectManager::LoadAnimObjType( const TCHAR* a_szName, const PBProperties* a_pProperties, TBOOL a_bFlag )
 {
 	LoadAnimObjType( TPString8( a_szName ), a_pProperties, a_bFlag );
+}
+
+// $Barnyard: FUNCTION 0057d820
+AAnimatableObjectType* AAnimatableObjectManager::FindType( const Toshi::TPString8& a_rcName )
+{
+	T2_FOREACH( m_ObjectTypes, it )
+	{
+		if ( it->GetName() == a_rcName )
+			return it;
+	}
+
+	return TNULL;
+}
+
+// $Barnyard: FUNCTION 0057d870
+void AAnimatableObjectManager::DeleteType( const Toshi::TPString8& a_rcName )
+{
+	AAnimatableObjectType* pType = FindType( a_rcName );
+
+	if ( pType )
+	{
+		pType->Remove();
+		delete pType;
+
+		AModelRepos::GetSingleton()->UnloadAllUnusedModels();
+	}
 }
 
 TBOOL AAnimatableObjectManager::OnUpdate( TFLOAT a_fDeltaTime )

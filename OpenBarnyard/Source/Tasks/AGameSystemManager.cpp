@@ -2,7 +2,7 @@
 #include "AGameSystemManager.h"
 #include "Assets/AAssetStreaming.h"
 #include "Assets/AKeyFrameLibraryManager.h"
-#include "Render/AModelRepos.h"
+#include "Animation/AModelRepos.h"
 #include "Cameras/ACameraManager.h"
 #include "Terrain/ATerrainInterface.h"
 #include "Sound/AMusicManager.h"

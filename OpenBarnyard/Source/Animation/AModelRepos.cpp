@@ -186,6 +186,37 @@ AModelInstance* AModelRepos::InstantiateNewModel( const Toshi::TPString8& a_rNam
 	return InstantiateModel( pModel );
 }
 
+// $Barnyard: FUNCTION 00612f50
+void AModelRepos::DestroyModelInstance( AModelInstance* a_pInstance )
+{
+	{
+		// Remove from the list of all models
+		auto it = m_AllModels.FindByValue( a_pInstance->GetModel() );
+
+		if ( m_AllModels.IsValid( it ) )
+		{
+			AModel* pModel = it->GetSecond();
+			pModel->DestroyInstance( a_pInstance );
+		}
+	}
+
+	{
+		// Remove from the list of used models
+		auto it = m_UsedModels.FindByValue( a_pInstance->GetModel() );
+
+		if ( m_UsedModels.IsValid( it ) )
+		{
+			AModel* pModel = it->GetSecond();
+			pModel->DestroyInstance( a_pInstance );
+
+			if ( pModel->GetNumInstances() < 1 )
+			{
+				MarkModelUnused( pModel );
+			}
+		}
+	}
+}
+
 // $Barnyard: FUNCTION 00612c90
 void AModelRepos::LoadModel( const Toshi::TPString8& a_rName, Toshi::TTRB* a_pTRB )
 {
@@ -247,3 +278,6 @@ void AModelRepos::UnloadModel( const Toshi::TPString8& a_rcName, TBOOL a_bDestro
 
 // $Barnyard: FUNCTION 00612300
 // Note: m_UnusedModels.PushFront
+
+// $Barnyard: FUNCTION 0060fc00
+// Note: m_vecInstanceRefs.PopBack

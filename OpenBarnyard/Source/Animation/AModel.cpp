@@ -1,9 +1,9 @@
 #include "pch.h"
 #include "AModel.h"
 
-#include "AGlowViewport.h"
-#include "AStaticInstanceShader/AStaticInstanceMesh.h"
-#include "AStaticInstanceShader/AStaticInstanceMaterial.h"
+#include "Render/AGlowViewport.h"
+#include "Render/AStaticInstanceShader/AStaticInstanceMesh.h"
+#include "Render/AStaticInstanceShader/AStaticInstanceMaterial.h"
 #include "Assets/AModelLoader.h"
 
 #ifdef TOSHI_SKU_WINDOWS
@@ -106,6 +106,12 @@ AModelInstanceRef AModel::CreateInstance()
 
 	m_vecInstanceRefs.PushBack( modelInstanceRef );
 	return modelInstanceRef;
+}
+
+// $Barnyard: FUNCTION 0060fe40
+void AModel::DestroyInstance( AModelInstance* a_pInstance )
+{
+	m_vecInstanceRefs.FindAndEraseFast( a_pInstance );
 }
 
 TSIZE AModel::GetNumInstances() const

@@ -223,6 +223,7 @@ public:
 		return End();
 	}
 
+	// Erases element preserving order
 	void Erase( const Iterator& a_rIterator )
 	{
 		TSIZE uiItemIndex = a_rIterator.Index();
@@ -239,6 +240,34 @@ public:
 		}
 
 		m_iNumElements--;
+	}
+
+	// Finds and erases element preserving order
+	void FindAndErase( const T& a_rcItem )
+	{
+		auto it = Find( a_rcItem );
+
+		if ( it != End() )
+			Erase( it );
+	}
+
+	// Erases element ignoring order but with a faster algorithm
+	void EraseFast( Iterator& a_rIterator )
+	{
+		TSIZE uiItemIndex = a_rIterator.Index();
+		TASSERT( uiItemIndex < m_iNumElements );
+
+		a_rIterator.Value() = Back();
+		PopBack();
+	}
+
+	// Finds and erases element ignoring order but with a faster algorithm
+	void FindAndEraseFast( const T& a_rcItem )
+	{
+		auto it = Find( a_rcItem );
+
+		if ( it != End() )
+			EraseFast( it );
 	}
 
 	TSIZE Size() const

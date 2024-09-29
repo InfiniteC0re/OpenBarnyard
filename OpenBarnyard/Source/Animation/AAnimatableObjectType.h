@@ -1,5 +1,5 @@
 #pragma once
-#include "Render/AModel.h"
+#include "AModel.h"
 #include "ANamedAnimationSet.h"
 
 #include <Toshi/T2DList.h>
@@ -29,6 +29,8 @@ public:
 
 	ANamedAnimationSetRef FindAnimationSet( const Toshi::TPString8& a_rcName );
 	ANamedAnimationSetRef GetAnimationSet( TSIZE a_iIndex );
+
+	const Toshi::TPString8& GetName() const { return m_strName; }
 
 private:
 	TBOOL LoadAnimationSet( const PBProperties* a_pProperties );

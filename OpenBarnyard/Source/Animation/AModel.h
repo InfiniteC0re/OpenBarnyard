@@ -80,6 +80,7 @@ public:
 	void Render( TUINT8 a_uiFlags );
 
 	AModelInstanceRef CreateInstance();
+	void              DestroyInstance( AModelInstance* a_pInstance );
 
 	TSIZE GetNumInstances() const;
 

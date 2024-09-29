@@ -3,7 +3,7 @@
 #include "Assets/AMaterialLibraryManager.h"
 #include "Assets/AKeyFrameLibraryManager.h"
 #include "Assets/AModelLoader.h"
-#include "Render/AModelRepos.h"
+#include "Animation/AModelRepos.h"
 #include "Terrain/ATerrainInterface.h"
 #include "GUI/AGUISystem.h"
 #include "GUI/AGUI2.h"

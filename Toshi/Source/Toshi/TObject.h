@@ -37,7 +37,7 @@ public:                                                                       \
 //-----------------------------------------------------------------------------
 #define TDECLARE_CLASS( THIS_CLASS, PARENT_CLASS )   \
 	TDECLARE_CLASS_BODY( THIS_CLASS, PARENT_CLASS ); \
-	static Toshi::TClass TClassObjectName;
+	static Toshi::TClass TClassObjectName
 
 //-----------------------------------------------------------------------------
 // Declares default methods to register class and ms_oClass object.

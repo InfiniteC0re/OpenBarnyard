@@ -23,20 +23,21 @@ public:
 
 	AModelInstance* InstantiateModel( AModel* a_pModel );
 	AModelInstance* InstantiateNewModel( const Toshi::TPString8& a_rName, Toshi::TTRB* a_pTRB );
+	void            DestroyModelInstance( AModelInstance* a_pInstance );
 
 	void LoadModel( const Toshi::TPString8& a_rcName, Toshi::TTRB* a_pTRB );
 	void UnloadModel( const Toshi::TPString8& a_rcName, TBOOL a_bDestroy );
 
 	void Update( TFLOAT a_fDeltaTime );
 
+	void UnloadAllModels();
+	void UnloadAllUnusedModels();
+
 private:
 	AModel* AllocateAModel( const Toshi::TPString8& a_rcName, Toshi::TTRB* a_pTRB );
 
 	void MarkAllModelsUnused();
 	void MarkModelUnused( AModel* a_pModel );
-
-	void UnloadAllModels();
-	void UnloadAllUnusedModels();
 
 private:
 	Toshi::T2DList<AModel> m_UnusedModels;
