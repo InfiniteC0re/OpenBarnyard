@@ -89,7 +89,8 @@ void AGameStateController::OnDestroy()
 void AGameStateController::InsertGameState( AGameState* a_pGameState )
 {
 	TGlobalEmitter<AGameStateControllerEvent>::Throw(
-	    AGameStateControllerEvent( a_pGameState, AGameStateControllerEvent::Type_GameStateBeingAdded ) );
+	    AGameStateControllerEvent( a_pGameState, AGameStateControllerEvent::Type_GameStateBeingAdded )
+	);
 
 	m_oStates.PushBack( a_pGameState );
 	a_pGameState->OnInsertion();

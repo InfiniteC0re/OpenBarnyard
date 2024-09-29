@@ -57,7 +57,8 @@ void ATerrainLODBlock::SetupTRB( TTRB* a_pTRB, ATerrainLODBlock* a_pOther )
 	    []( TTRB::AllocType alloctype, void* ptr, TINT16 unk1, TUINT32 unk2, void* userData ) {
 		    TFree( ptr );
 	    },
-	    a_pOther );
+	    a_pOther
+	);
 }
 
 void ATerrainLODBlock::UpdateLastAccessTime()

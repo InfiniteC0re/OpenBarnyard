@@ -109,7 +109,8 @@ public:
 		T2GenericObjectPool::Initialise(
 		    TREINTERPRETCAST( T2GenericObjectPool::UnusedObject*, GetObjects() ),
 		    MaxNumber,
-		    ObjectSize );
+		    ObjectSize
+		);
 	}
 
 	template <class... Args>
@@ -202,7 +203,8 @@ public:
 		T2GenericObjectPool::Initialise(
 		    TREINTERPRETCAST( T2GenericObjectPool::UnusedObject*, m_pData ),
 		    m_iMaxNumber,
-		    m_uiObjectSize );
+		    m_uiObjectSize
+		);
 	}
 
 	virtual ~T2DynamicObjectPool()
@@ -292,7 +294,8 @@ public:
 		T2GenericObjectPool::Initialise(
 		    TREINTERPRETCAST( T2GenericObjectPool::UnusedObject*, m_pData ),
 		    m_iMaxNumber,
-		    m_uiObjectSize );
+		    m_uiObjectSize
+		);
 	}
 
 	virtual ~T2DerivedDynamicObjectPool()

@@ -145,7 +145,9 @@ TBOOL ARenderer::CreateTRenderResources()
 		    pRenderer->CreateResource(
 		        TClass::Find( "TVertexFactoryResource" ),
 		        "VFSYSVNDUV1",
-		        TNULL ) );
+		        TNULL
+		    )
+		);
 
 		pRenderer->SetResourceExplicit( pResource, SYSRESOURCE_VFSYSVNDUV1 );
 
@@ -162,7 +164,9 @@ TBOOL ARenderer::CreateTRenderResources()
 		    pRenderer->CreateResource(
 		        TClass::Find( "TVertexFactoryResource" ),
 		        "VFSKIN",
-		        TNULL ) );
+		        TNULL
+		    )
+		);
 
 		pRenderer->SetResourceExplicit( pResource, SYSRESOURCE_VFSKIN );
 
@@ -179,7 +183,9 @@ TBOOL ARenderer::CreateTRenderResources()
 		    pRenderer->CreateResource(
 		        TClass::Find( "TVertexFactoryResource" ),
 		        "VFWORLD",
-		        TNULL ) );
+		        TNULL
+		    )
+		);
 
 		pRenderer->SetResourceExplicit( pResource, SYSRESOURCE_VFWORLD );
 
@@ -196,7 +202,9 @@ TBOOL ARenderer::CreateTRenderResources()
 		    pRenderer->CreateResource(
 		        TClass::Find( "TIndexFactoryResource" ),
 		        "IFSYS",
-		        TNULL ) );
+		        TNULL
+		    )
+		);
 
 		pRenderer->SetResourceExplicit( pResource, SYSRESOURCE_IFSYS );
 
@@ -209,7 +217,8 @@ TBOOL ARenderer::CreateTRenderResources()
 		auto pResource = pRenderer->CreateResource(
 		    TClass::Find( "TTextureFactoryHAL" ),
 		    "TextureFactory",
-		    TNULL );
+		    TNULL
+		);
 
 		pRenderer->SetResourceExplicit( pResource, SYSRESOURCE_TEXTUREFACTORY );
 		pResource->Create();

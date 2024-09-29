@@ -85,7 +85,8 @@ TBOOL ARootTask::OnCreate()
 
 		    return TTRUE;
 	    },
-	    TNULL );
+	    TNULL
+	);
 
 	AAssetLoader::Load( "data\\assets\\lib_startup.trb", AAssetType_Startup, TTRUE );
 
@@ -258,7 +259,8 @@ void ARootTask::LoadStartupData()
 		AMaterialLibraryManager::GetSingleton()->LoadLibrariesFromProperties(
 		    matlibProperty,
 		    AAssetLoader::GetAssetTRB( AAssetType_Startup ),
-		    TTRUE );
+		    TTRUE
+		);
 	}
 
 	trb.Close();
@@ -378,5 +380,6 @@ void ARootTask::LoadFrontEnd()
 	AFadeManager::GetSingleton()->StartFade(
 	    AFade::Color( 255, 0, 0, 0 ),
 	    AFade::Color( 0, 0, 0, 0 ),
-	    1.0f );
+	    1.0f
+	);
 }

@@ -53,7 +53,8 @@ TBOOL AInputHandler::OnCreate()
 	    []( AInputHandler* a_pInputHandler, TInputInterface* a_pInputInterface, TInputInterface::InputEvent* a_pEvent ) {
 		    return a_pInputHandler->ProcessInputEvent( a_pInputInterface, a_pEvent );
 	    },
-	    0 );
+	    0
+	);
 
 	return TTRUE;
 }

@@ -34,7 +34,8 @@ TBOOL AGUISystem::OnCreate()
 	    ARenderer::GetSingleton()->GetRenderGUIEmitter(),
 	    this,
 	    OnGUIRender,
-	    0xffff8000 );
+	    0xffff8000
+	);
 
 	auto pDisplayParams = Toshi::TRenderInterface::GetSingleton()->GetCurrentDisplayParams();
 

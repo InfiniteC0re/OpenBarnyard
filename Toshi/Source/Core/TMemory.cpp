@@ -536,7 +536,8 @@ TBOOL TMemory::Initialise( TSIZE a_uiHeapSize, TSIZE a_uiReservedSize, TUINT a_u
 	tmemory->m_pGlobalBlock       = tmemory->CreateMemBlockInPlace(
         tmemory->m_pMemory,
         tmemory->m_TotalAllocatedSize,
-        "Toshi" );
+        "Toshi"
+    );
 
 	return TTRUE;
 }

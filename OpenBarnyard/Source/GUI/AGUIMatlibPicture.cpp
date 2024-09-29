@@ -115,7 +115,8 @@ void AGUIMatlibPicture::LoadMatLib()
 
 	m_pMaterialLibrary = AMaterialLibraryManager::List::GetSingleton()->CreateLibraryFromAsset(
 	    path,
-	    AAssetLoader::GetAssetTRB( AAssetType_AssetPack ) );
+	    AAssetLoader::GetAssetTRB( AAssetType_AssetPack )
+	);
 }
 
 void AGUIMatlibPicture::UnloadMatLib()

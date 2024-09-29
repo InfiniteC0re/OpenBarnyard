@@ -204,7 +204,8 @@ void AGlowViewport::Update()
 			    1.0f, 0.0f, 0.0f, 0.0f,
 			    0.0f, 0.0f, 1.0f, 0.0f,
 			    0.0f, -1.0f, 0.0f, 0.0f,
-			    0.0f, 0.0f, 0.0f, 1.0f );
+			    0.0f, 0.0f, 0.0f, 1.0f
+			);
 
 			TMatrix44::TransformVector( oMVP.GetTranslation(), oMVP, vLightPos );
 			pGlowObject->m_oMVP = oMVP;
@@ -236,7 +237,8 @@ AGlowViewport::GlowObject::GlowObject()
 	    oViewportParams.fHeight,
 	    TMath::DegToRad( 45.0f ),
 	    0.1f,
-	    30.0f );
+	    30.0f
+	);
 
 	Setup( TMatrix44::IDENTITY, oViewportParams, oProjectionParams, TRenderContext::CameraMode_Perspective );
 }

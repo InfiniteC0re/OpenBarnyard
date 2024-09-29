@@ -209,7 +209,8 @@ Toshi::TMaterial* AModelLoader::CreateMaterial( Toshi::TShader* a_pShader, const
 	{
 		pTexture = TDYNAMICCAST(
 		    TTextureResourceHAL,
-		    AMaterialLibraryManager::GetSingleton()->FindTexture( pTMDMaterial->szTextureFile ) );
+		    AMaterialLibraryManager::GetSingleton()->FindTexture( pTMDMaterial->szTextureFile )
+		);
 
 		szTextureName = pTMDMaterial->szTextureFile;
 	}
@@ -218,7 +219,8 @@ Toshi::TMaterial* AModelLoader::CreateMaterial( Toshi::TShader* a_pShader, const
 		TTRACE( "Couldn't find texture for material '%s'", a_szMaterialName );
 		pTexture = TDYNAMICCAST(
 		    TTextureResourceHAL,
-		    TRenderD3DInterface::Interface()->GetInvalidTexture() );
+		    TRenderD3DInterface::Interface()->GetInvalidTexture()
+		);
 		szTextureName = "invalid";
 	}
 

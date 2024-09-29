@@ -37,7 +37,8 @@ void TUtil::LogInitialise()
 	    time->tm_mday,
 	    time->tm_hour,
 	    time->tm_min,
-	    time->tm_sec );
+	    time->tm_sec
+	);
 
 	GetCurrentLogFile()->Create( filename.Get(), "Toshi 2.0", TFALSE );
 	GetCurrentLogFile()->AllowIndentation( TTRUE );

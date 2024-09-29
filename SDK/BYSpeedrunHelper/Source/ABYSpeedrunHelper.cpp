@@ -159,7 +159,8 @@ public:
 	void OnRenderInterfaceReady( Toshi::TRenderD3DInterface* a_pRenderInterface ) override
 	{
 		TRenderInterface::SetSingletonExplicit(
-		    THookedRenderD3DInterface::GetSingleton() );
+		    THookedRenderD3DInterface::GetSingleton()
+		);
 	}
 
 	void OnAGUI2Ready() override

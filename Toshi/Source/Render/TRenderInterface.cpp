@@ -38,13 +38,15 @@ TRenderInterface::TRenderInterface()
 	    1.0f, 1.0f, 1.0f, 0.0f,
 	    0.0f, 0.0f, 0.0f, 0.0f,
 	    0.0f, 0.0f, 0.0f, 0.0f,
-	    0.0f, 0.0f, 0.0f, 0.0f );
+	    0.0f, 0.0f, 0.0f, 0.0f
+	);
 
 	m_LightDirection.Set(
 	    -0.47f, -0.74f, 0.47f, 0.0f,
 	    0.0f, 0.0f, 0.0f, 0.0f,
 	    0.0f, 0.0f, 0.0f, 0.0f,
-	    0.0f, 0.0f, 0.0f, 0.0f );
+	    0.0f, 0.0f, 0.0f, 0.0f
+	);
 }
 
 TRenderInterface::~TRenderInterface()

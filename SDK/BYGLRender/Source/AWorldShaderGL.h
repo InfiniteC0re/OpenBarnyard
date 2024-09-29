@@ -97,7 +97,8 @@ public:
 	{
 		m_VAO = Toshi::TRenderSDL::CreateVertexArray(
 		    Toshi::TRenderSDL::CreateVertexBuffer( TNULL, 0, GL_DYNAMIC_DRAW ),
-		    Toshi::TRenderSDL::CreateIndexBuffer( TNULL, 0, GL_DYNAMIC_DRAW ) );
+		    Toshi::TRenderSDL::CreateIndexBuffer( TNULL, 0, GL_DYNAMIC_DRAW )
+		);
 
 		m_VertexShader = Toshi::TRenderSDL::CompileShader(
 		    GL_VERTEX_SHADER,
@@ -119,7 +120,8 @@ public:
 				textureCoord = a_UV;\n\
 				vertexColor = a_Color;\n\
 				gl_Position = u_Projection * u_View * vec4(a_Position, 1.0);\n\
-			}" );
+			}"
+		);
 
 		m_PixelShader = Toshi::TRenderSDL::CompileShader(
 		    GL_FRAGMENT_SHADER,
@@ -140,7 +142,8 @@ public:
 				if (texColor.a < 0.2) discard;\n\
 				vec3 shadow = vertexColor;\n\
 				color = texColor * mix(u_AmbientColor, u_ShadowColor, vec4(1 - vertexColor, 1.0f));\n\
-			}" );
+			}"
+		);
 
 		m_ShaderProgram = Toshi::TRenderSDL::CreateShaderProgram( m_VertexShader, m_PixelShader );
 	}
@@ -152,7 +155,8 @@ public:
 
 		auto pRenderContext = TSTATICCAST(
 		    Toshi::TRenderContextD3D,
-		    THookedRenderD3DInterface::GetSingleton()->GetCurrentContext() );
+		    THookedRenderD3DInterface::GetSingleton()->GetCurrentContext()
+		);
 
 		m_VAO.SetAttribPointer( 0, 3, GL_FLOAT, sizeof( WorldVertex ), (void*)offsetof( WorldVertex, Position ) );
 		m_VAO.SetAttribPointer( 1, 3, GL_FLOAT, sizeof( WorldVertex ), (void*)offsetof( WorldVertex, Normal ) );

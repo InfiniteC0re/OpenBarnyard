@@ -33,7 +33,8 @@ TBOOL AAssetUnpacker::Unpack( AAssetPack& a_rAssetPack, const Toshi::TString8& a
 				pOutSYMB->Add(
 				    pOutStack,
 				    outSymbolName,
-				    pOutStack->GetBuffer() + ( pInSymbolAddress.get() - pInSymbolAddress.stack()->GetBuffer() ) );
+				    pOutStack->GetBuffer() + ( pInSymbolAddress.get() - pInSymbolAddress.stack()->GetBuffer() )
+				);
 			}
 
 			TString8 outPath = a_rOutPath;

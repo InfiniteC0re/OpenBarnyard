@@ -27,7 +27,8 @@ void ASysShaderHAL::Flush()
 	auto pDevice        = TRenderD3DInterface::Interface()->GetDirect3DDevice();
 	auto pRenderContext = TSTATICCAST(
 	    TRenderContextD3D,
-	    TRenderD3DInterface::Interface()->GetCurrentContext() );
+	    TRenderD3DInterface::Interface()->GetCurrentContext()
+	);
 
 	pDevice->SetTextureStageState( 0, D3DTSS_MINFILTER, 2 );
 	pDevice->SetTextureStageState( 0, D3DTSS_MAGFILTER, 2 );
@@ -77,7 +78,8 @@ void ASysShaderHAL::StartFlush()
 	auto pDevice        = TRenderD3DInterface::Interface()->GetDirect3DDevice();
 	auto pRenderContext = TSTATICCAST(
 	    TRenderContextD3D,
-	    TRenderD3DInterface::Interface()->GetCurrentContext() );
+	    TRenderD3DInterface::Interface()->GetCurrentContext()
+	);
 
 	pDevice->SetTextureStageState( 0, D3DTSS_MINFILTER, 2 );
 	pDevice->SetTextureStageState( 0, D3DTSS_MAGFILTER, 2 );
@@ -198,7 +200,8 @@ void ASysShaderHAL::Render( Toshi::TRenderPacket* pPacket )
 			    0,
 			    pVertexPool->GetNumVertices(),
 			    indexHALBuffer.uiIndexOffset,
-			    pIndexPool->GetNumIndices() - 2 );
+			    pIndexPool->GetNumIndices() - 2
+			);
 		}
 		else
 		{
@@ -207,7 +210,8 @@ void ASysShaderHAL::Render( Toshi::TRenderPacket* pPacket )
 			    0,
 			    pVertexPool->GetNumVertices(),
 			    indexHALBuffer.uiIndexOffset,
-			    pIndexPool->GetNumIndices() / 3 );
+			    pIndexPool->GetNumIndices() / 3
+			);
 		}
 	}
 

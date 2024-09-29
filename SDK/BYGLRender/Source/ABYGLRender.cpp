@@ -244,7 +244,8 @@ MEMBER_HOOK( 0x0064fa70, AGUI2RendererDX8, AGUI2Renderer_RenderRectangle, void, 
 			o_TexCoord = a_UV;\n\
 			o_Colour = vec4(a_Colour.b, a_Colour.g, a_Colour.r, a_Colour.a);\n\
 			gl_Position = u_Projection * u_View * vec4(a_Position, 1.0);\n\
-		}" );
+		}"
+	);
 
 	static auto fragmentShader = TRenderSDL::CompileShader(
 	    GL_FRAGMENT_SHADER,
@@ -262,13 +263,15 @@ MEMBER_HOOK( 0x0064fa70, AGUI2RendererDX8, AGUI2Renderer_RenderRectangle, void, 
 			vec4 texColor = texture(tex0, o_TexCoord);\n\
 			if (texColor.a < 0.2f) discard;\n\
 			color = texture(tex0, o_TexCoord) * o_Colour;\n\
-		}" );
+		}"
+	);
 
 	static auto shaderProgram = Toshi::TRenderSDL::CreateShaderProgram( vertexShader, fragmentShader );
 
 	static auto s_VertexArray = TRenderSDL::CreateVertexArray(
 	    TRenderSDL::CreateVertexBuffer( s_Vertices, sizeof( s_Vertices ), GL_DYNAMIC_DRAW ),
-	    TRenderSDL::CreateIndexBuffer( s_Indices, 4, GL_STATIC_DRAW ) );
+	    TRenderSDL::CreateIndexBuffer( s_Indices, 4, GL_STATIC_DRAW )
+	);
 
 	s_VertexArray.SetAttribPointer( 0, 3, GL_FLOAT, sizeof( AGUI2RendererVertex ), 0 );
 	s_VertexArray.SetAttribPointer( 1, 4, GL_UNSIGNED_BYTE, sizeof( AGUI2RendererVertex ), (void*)offsetof( AGUI2RendererVertex, Colour ), GL_TRUE );

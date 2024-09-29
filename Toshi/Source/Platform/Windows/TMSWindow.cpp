@@ -187,7 +187,8 @@ TBOOL TMSWindow::Create( TRenderInterface* renderer, LPCSTR title )
 	    NULL,
 	    NULL,
 	    m_ModuleHandle,
-	    this );
+	    this
+	);
 
 	if ( !m_HWND ) return TFALSE;
 

@@ -153,7 +153,8 @@ void AWorldVis::Render( const Toshi::TMatrix44& a_rModelView )
 		TRenderContext::ComputePerspectiveProjection(
 		    projection,
 		    pRenderContext->GetViewportParameters(),
-		    pRenderContext->GetProjectionParams() );
+		    pRenderContext->GetProjectionParams()
+		);
 
 		for ( TINT i = 0; i < m_iNumBuiltCells; i++ )
 		{
@@ -241,7 +242,8 @@ void AWorldVis::RenderTreeIntersectNonRecurse( CellSphereTreeBranchNode* a_pNode
 						{
 							m_pfnRenderCallback(
 							    a_pRenderData->pCell->ppCellMeshSpheres[ pStackValue2Node->GetLeafNode()->GetMeshIndex( i ) ],
-							    a_pRenderData );
+							    a_pRenderData
+							);
 						}
 
 						pStackValue2Node = pStackValue2Node->GetLeafNode()->End();

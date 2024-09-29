@@ -66,7 +66,8 @@ void ATerrainSection::LoadCollision()
 		    &m_pCollisionModelData->m_ModelRef,
 		    pTRB,
 		    m_szCollisionFilename,
-		    pTerrain->IsCollisionStreamed() );
+		    pTerrain->IsCollisionStreamed()
+		);
 
 		auto pCollisionJob = pTerrain->GetFreeCollisionLoaderJob();
 		pCollisionJob->InitJob( this, TFALSE );
@@ -142,7 +143,8 @@ void ATerrainSection::LoadModels( ATerrainLODType a_eLODType )
 					    &pModelData->m_ModelRef,
 					    pTRB,
 					    ppLODNames[ i ],
-					    TTRUE );
+					    TTRUE
+					);
 
 					AAssetStreaming::GetSingleton()->AddMainThreadJob( pModelLoaderJob );
 				}

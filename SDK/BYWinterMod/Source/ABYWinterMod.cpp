@@ -93,7 +93,8 @@ public:
 	void OnRenderInterfaceReady( Toshi::TRenderD3DInterface* a_pRenderInterface ) override
 	{
 		TRenderInterface::SetSingletonExplicit(
-		    THookedRenderD3DInterface::GetSingleton() );
+		    THookedRenderD3DInterface::GetSingleton()
+		);
 	}
 
 	void OnAppRendererReady() override
@@ -108,7 +109,8 @@ public:
 			{
 				m_pMatLib = AMaterialLibraryManager::List::GetSingleton()->CreateLibraryFromAsset(
 				    "BYWinterMatlib.ttl",
-				    m_pAssetTRB );
+				    m_pAssetTRB
+				);
 
 				AMaterialLibraryManager::GetSingleton()->CreateTextures( m_pMatLib );
 			}

@@ -128,7 +128,8 @@ void AMovieState::SkipMovie( TBOOL a_bFastSkip )
 			    []( AMovieState* a_pMovieState, AFade* a_pFade, TBOOL* ) {
 				    return a_pMovieState->EndMovieImmediately();
 			    },
-			    0 );
+			    0
+			);
 		}
 	}
 	else

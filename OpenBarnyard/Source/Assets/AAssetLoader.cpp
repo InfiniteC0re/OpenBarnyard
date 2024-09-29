@@ -83,7 +83,8 @@ TBOOL AAssetLoader::CreateAssetsFromLibrary( const TCHAR* a_szLibraryName )
 			AMaterialLibraryManager::GetSingleton()->LoadLibrariesFromProperties(
 			    pMatlibs,
 			    GetAssetTRB( AAssetType_AssetPack ),
-			    TTRUE );
+			    TTRUE
+			);
 
 			g_oLoadScreen.Update( 1.0f, TTRUE );
 		}
@@ -95,7 +96,8 @@ TBOOL AAssetLoader::CreateAssetsFromLibrary( const TCHAR* a_szLibraryName )
 		{
 			AKeyFrameLibraryManager::GetSingleton()->LoadLibrariesFromProperties(
 			    pKeyframes,
-			    GetAssetTRB( AAssetType_AssetPack ) );
+			    GetAssetTRB( AAssetType_AssetPack )
+			);
 
 			g_oLoadScreen.Update( 1.0f, TTRUE );
 		}

@@ -46,7 +46,8 @@ TIndexBlockResource* TIndexFactoryResource::FindBlockResource( TIndexPoolResourc
 		    return TTRUE;
 	    },
 	    this,
-	    &result );
+	    &result
+	);
 
 	return result.m_First;
 }
@@ -56,7 +57,8 @@ TIndexBlockResource* TIndexFactoryResource::CreateBlockResource( TUINT16 a_uiMax
 {
 	auto pIndexBlock = TSTATICCAST(
 	    TIndexBlockResource,
-	    GetRenderer()->CreateResource( &TGetClass( TIndexBlockResource ), TNULL, this ) );
+	    GetRenderer()->CreateResource( &TGetClass( TIndexBlockResource ), TNULL, this )
+	);
 
 	TVALIDPTR( pIndexBlock );
 
@@ -69,7 +71,8 @@ TIndexPoolResourceInterface* TIndexFactoryResource::CreatePoolResource( TUINT16 
 {
 	auto pIndexPool = TSTATICCAST(
 	    TIndexPoolResource,
-	    GetRenderer()->CreateResource( &TGetClass( TIndexPoolResource ), TNULL, this ) );
+	    GetRenderer()->CreateResource( &TGetClass( TIndexPoolResource ), TNULL, this )
+	);
 
 	TVALIDPTR( pIndexPool );
 

@@ -63,7 +63,8 @@ void AGUI2MouseCursor::Update()
 	{
 		MoveCursor(
 		    m_pMouseDevice->GetAxisFloat( TInputDeviceMouse::AXIS_CURSOR, 0 ),
-		    m_pMouseDevice->GetAxisFloat( TInputDeviceMouse::AXIS_CURSOR, 1 ) );
+		    m_pMouseDevice->GetAxisFloat( TInputDeviceMouse::AXIS_CURSOR, 1 )
+		);
 
 		if ( !m_pPointerDownSection || !m_pMouseDevice->IsDown( TInputDeviceMouse::BUTTON_1 ) )
 		{

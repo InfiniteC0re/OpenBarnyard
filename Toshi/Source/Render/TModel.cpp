@@ -54,7 +54,8 @@ TBOOL TModel::LoadTRB()
 		    pSkeletonHeader->m_iSKeyCount,
 		    pSkeletonHeader->m_iTBaseIndex,
 		    pSkeletonHeader->m_iQBaseIndex,
-		    pSkeletonHeader->m_iSBaseIndex );
+		    pSkeletonHeader->m_iSBaseIndex
+		);
 	}
 
 	m_pCollision = *TSTATICCAST( void*, GetSymbol( "Collision" ) );

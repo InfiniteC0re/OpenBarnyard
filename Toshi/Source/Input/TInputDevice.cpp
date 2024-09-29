@@ -133,7 +133,9 @@ void TInputDevice::ThrowRepeatEvent( EventEmitter& emitter, RepeatInfo* repeatIn
 	    TInputInterface::InputEvent(
 	        this,
 	        repeatInfo->iDoodad,
-	        TInputInterface::EVENT_TYPE_REPEAT ) );
+	        TInputInterface::EVENT_TYPE_REPEAT
+	    )
+	);
 }
 
 TOSHI_NAMESPACE_END

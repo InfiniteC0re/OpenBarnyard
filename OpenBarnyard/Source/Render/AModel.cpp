@@ -101,7 +101,8 @@ AModelInstanceRef AModel::CreateInstance()
 	AModelInstanceRef modelInstanceRef = new AModelInstance(
 	    this,
 	    m_pManagedModel->CreateSceneObject(),
-	    TFALSE );
+	    TFALSE
+	);
 
 	m_vecInstanceRefs.PushBack( modelInstanceRef );
 	return modelInstanceRef;

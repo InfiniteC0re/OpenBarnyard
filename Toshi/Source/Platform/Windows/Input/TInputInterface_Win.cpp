@@ -116,7 +116,8 @@ BOOL TInputDXInterface::EnumerateDeviceCallback( LPCDIDEVICEINSTANCEA a_poDevice
 
 						hRes = pInputDevice->SetCooperativeLevel(
 						    pInputInterface->GetMainWindow(),
-						    pInputInterface->GetExclusiveMode() ? ( DISCL_NOWINKEY | DISCL_FOREGROUND | DISCL_EXCLUSIVE ) : ( DISCL_NONEXCLUSIVE | DISCL_BACKGROUND ) );
+						    pInputInterface->GetExclusiveMode() ? ( DISCL_NOWINKEY | DISCL_FOREGROUND | DISCL_EXCLUSIVE ) : ( DISCL_NONEXCLUSIVE | DISCL_BACKGROUND )
+						);
 
 						if ( hRes == DI_OK )
 						{

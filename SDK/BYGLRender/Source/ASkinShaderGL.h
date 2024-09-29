@@ -111,7 +111,8 @@ public:
 	{
 		m_VAO = Toshi::TRenderSDL::CreateVertexArray(
 		    Toshi::TRenderSDL::CreateVertexBuffer( TNULL, 0, GL_DYNAMIC_DRAW ),
-		    Toshi::TRenderSDL::CreateIndexBuffer( TNULL, 0, GL_DYNAMIC_DRAW ) );
+		    Toshi::TRenderSDL::CreateIndexBuffer( TNULL, 0, GL_DYNAMIC_DRAW )
+		);
 
 		m_VertexShader = Toshi::TRenderSDL::CompileShader(
 		    GL_VERTEX_SHADER,
@@ -161,7 +162,8 @@ public:
 				finalColor += (1.0f - diffuse) * u_AmbientColour;\n\
 				o_FinalColor.rgb = finalColor.rgb;\n\
 				o_FinalColor.a = u_AmbientColour.a;\n\
-			}" );
+			}"
+		);
 
 		m_PixelShader = Toshi::TRenderSDL::CompileShader(
 		    GL_FRAGMENT_SHADER,
@@ -181,7 +183,8 @@ public:
 				vec4 texColor = texture(tex0, o_TexCoord);\n\
 				if (texColor.a < 0.2f) discard;\n\
 				color = texColor * clamp(o_FinalColor, 0.0f, 1.0f);\n\
-			}" );
+			}"
+		);
 
 		m_ShaderProgram = Toshi::TRenderSDL::CreateShaderProgram( m_VertexShader, m_PixelShader );
 
@@ -236,7 +239,8 @@ public:
 				o_LightingTexCoord1 = lightingUV;\n\
 				o_LightingTexCoord2 = lightingUV;\n\
 				o_LightingTexCoord3 = lightingUV;\n\
-			}" );
+			}"
+		);
 
 		m_PixelShaderHD = Toshi::TRenderSDL::CompileShader(
 		    GL_FRAGMENT_SHADER,
@@ -275,7 +279,8 @@ public:
 				color.rgb = clamp(color.rgb - shade1.rgb, 0.0f, 1.0f);\n\
 				color.rgb = clamp(color.rgb + shade2.rgb, 0.0f, 1.0f);\n\
 				color.a *= u_AmbientColour.a;\n\
-			}" );
+			}"
+		);
 
 		m_ShaderProgramHD = Toshi::TRenderSDL::CreateShaderProgram( m_VertexShaderHD, m_PixelShaderHD );
 	}
@@ -290,7 +295,8 @@ public:
 
 		auto pRenderContext = TSTATICCAST(
 		    Toshi::TRenderContextD3D,
-		    THookedRenderD3DInterface::GetSingleton()->GetCurrentContext() );
+		    THookedRenderD3DInterface::GetSingleton()->GetCurrentContext()
+		);
 
 		m_ProjectionMatrix = *(Toshi::TMatrix44*)( TUINT( pRenderContext ) + 0x3C0 );
 		m_WorldViewMatrix  = *(Toshi::TMatrix44*)( TUINT( pRenderContext ) + 0x8C );

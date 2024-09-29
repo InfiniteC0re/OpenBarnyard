@@ -73,7 +73,8 @@ public:
 		    a_rEmitter,
 		    a_pCaller,
 		    TREINTERPRETCAST( t_Callback, a_pCallback ),
-		    a_iPriority );
+		    a_iPriority
+		);
 	}
 };
 

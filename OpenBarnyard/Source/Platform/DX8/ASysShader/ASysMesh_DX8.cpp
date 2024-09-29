@@ -26,7 +26,8 @@ TBOOL ASysMeshHAL::Render()
 		auto pRenderPacket = GetMaterial()->AddRenderPacket( this );
 
 		pRenderPacket->SetModelViewMatrix(
-		    TRenderInterface::GetSingleton()->GetCurrentContext()->GetModelViewMatrix() );
+		    TRenderInterface::GetSingleton()->GetCurrentContext()->GetModelViewMatrix()
+		);
 	}
 
 	return TTRUE;

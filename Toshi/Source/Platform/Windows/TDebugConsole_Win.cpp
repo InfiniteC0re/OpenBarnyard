@@ -30,7 +30,8 @@ TDebugConsole::TDebugConsole()
 	    TUtil::GetLogEmitter(),
 	    this,
 	    TDebugConsole::OnLog,
-	    1 );
+	    1
+	);
 }
 
 TDebugConsole::~TDebugConsole()
@@ -111,7 +112,8 @@ TBOOL TDebugConsole::OnLog( TDebugConsole* a_pCaller, TUtil* a_pOwner, TUtil::Lo
 		TDebug_FinalPrintf(
 		    "[%s]: %s",
 		    TUtil::LogTypeToString( pLogEvent->m_eType ),
-		    pLogEvent->m_szString );
+		    pLogEvent->m_szString
+		);
 	}
 	else
 	{
@@ -126,7 +128,8 @@ TBOOL TDebugConsole::OnLog( TDebugConsole* a_pCaller, TUtil* a_pOwner, TUtil::Lo
 		    appParams.szLogAppName,
 		    appParams.szLogAppDirName != TNULL ? appParams.szLogAppDirName : "",
 		    TUtil::LogTypeToString( pLogEvent->m_eType ),
-		    pLogEvent->m_szString );
+		    pLogEvent->m_szString
+		);
 	}
 
 	SetConsoleTextAttribute( hStd, wOldColorAttrs );

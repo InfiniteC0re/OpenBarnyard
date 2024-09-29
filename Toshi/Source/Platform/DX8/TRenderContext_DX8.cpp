@@ -60,7 +60,8 @@ void TRenderContextD3D::EnableFogHAL()
 	pDevice->SetRenderState( D3DRS_FOGTABLEMODE, D3DFOG_LINEAR );
 	pDevice->SetRenderState(
 	    D3DRS_FOGCOLOR,
-	    ( ( ( TUINT8( m_FogColor.x * 255.0f ) << 8 ) | TUINT8( m_FogColor.y * 255.0f ) ) << 8 ) | TUINT8( m_FogColor.z * 255.0f ) );
+	    ( ( ( TUINT8( m_FogColor.x * 255.0f ) << 8 ) | TUINT8( m_FogColor.y * 255.0f ) ) << 8 ) | TUINT8( m_FogColor.z * 255.0f )
+	);
 
 	pDevice->SetRenderState( D3DRS_FOGSTART, *TREINTERPRETCAST( DWORD*, &m_fFogDistanceStart ) );
 	pDevice->SetRenderState( D3DRS_FOGEND, *TREINTERPRETCAST( DWORD*, &m_fFogDistanceEnd ) );

@@ -73,15 +73,7 @@ class TTexture
 	TINT ComputeHash( const TCHAR* str );
 	void CheckValid();
 	void InitTexObj();
-	void InitRuntime( GXTexFmt     a_texFmt,
-	                  GXTlutFmt    a_tlutFmt,
-	                  TUINT        a_unk,
-	                  TUINT        a_unk2,
-	                  TUINT        a_unk3,
-	                  TUINT        a_unk4,
-	                  void*        a_unk5,
-	                  void*        a_unk6,
-	                  TCHAR const* a_szFileName );
+	void InitRuntime( GXTexFmt a_texFmt, GXTlutFmt a_tlutFmt, TUINT a_unk, TUINT a_unk2, TUINT a_unk3, TUINT a_unk4, void* a_unk5, void* a_unk6, TCHAR const* a_szFileName );
 
 	void GetPhysicalSize( TUINT32& width, TUINT32& height, TUINT32 bitsPerTexel );
 

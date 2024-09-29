@@ -116,9 +116,7 @@ TBOOL AGUI2Menu::ProcessInputEvent( const Toshi::TInputInterface::InputEvent* a_
 		// Make sure menu updates mouse state
 		SetMouseStateDirty();
 	}
-	else if ( a_pEvent->GetEventType() == TInputInterface::EVENT_TYPE_GONE_DOWN &&
-	          a_pEvent->GetDoodad() == TInputDeviceMouse::BUTTON_1 &&
-	          GetHoveredMenuItem() != TNULL )
+	else if ( a_pEvent->GetEventType() == TInputInterface::EVENT_TYPE_GONE_DOWN && a_pEvent->GetDoodad() == TInputDeviceMouse::BUTTON_1 && GetHoveredMenuItem() != TNULL )
 	{
 		// LMB was pressed and the menu has a hovered item
 		return TriggerButtonPress( *GetHoveredMenuItem() );
@@ -222,8 +220,7 @@ TBOOL AGUI2Menu::ProcessInputCommand( AInputCommand a_eCommand, const Toshi::TIn
 					bHandled = TTRUE;
 				}
 			}
-			else if ( ( !m_bHorizontalFlow && m_eActionFlags & ACTIONFLAGS_DOWN ) ||
-			          ( m_bHorizontalFlow && m_eActionFlags & ACTIONFLAGS_RIGHT ) )
+			else if ( ( !m_bHorizontalFlow && m_eActionFlags & ACTIONFLAGS_DOWN ) || ( m_bHorizontalFlow && m_eActionFlags & ACTIONFLAGS_RIGHT ) )
 			{
 				// Focus on previous element
 				AGUI2MenuItem* pNewFocused = m_pFocusedMenuItem->m_pPrevMenuItem;

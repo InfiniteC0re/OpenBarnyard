@@ -38,7 +38,8 @@ T2TestingFramework::TestAutoReg::TestAutoReg( const TCHAR* a_pchTestName, const 
 	g_pTestingFramework->RegisterTest(
 	    a_pchTestName,
 	    g_pTestingFramework->RegisterCategory( a_pchCategoryName ),
-	    a_fnMethod );
+	    a_fnMethod
+	);
 }
 
 T2TestingFramework::Category* T2TestingFramework::FindCategory( const TCHAR* a_pchName )

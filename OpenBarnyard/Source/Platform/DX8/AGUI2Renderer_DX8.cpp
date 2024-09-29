@@ -32,7 +32,8 @@ AGUI2RendererDX8::~AGUI2RendererDX8()
 AGUI2Material* AGUI2RendererDX8::CreateMaterial( const TCHAR* a_szTextureName )
 {
 	return CreateMaterial(
-	    GetTexture( a_szTextureName ) );
+	    GetTexture( a_szTextureName )
+	);
 }
 
 AGUI2Material* AGUI2RendererDX8::CreateMaterial( Toshi::TTexture* a_pTexture )

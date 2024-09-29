@@ -378,7 +378,8 @@ void ATerrainInterface::LoadFromFile( const TCHAR* a_szFilePath, TBOOL a_bLoadLa
 	{
 		m_pTerrainVIS->m_pPersistantTerrainBlock = new ATerrainLODBlock(
 		    m_pTerrainVIS->m_uiPersistantTerrainBlockSize,
-		    "Terrain_Persistant" );
+		    "Terrain_Persistant"
+		);
 	}
 
 	// Create HighLOD blocks
@@ -393,7 +394,8 @@ void ATerrainInterface::LoadFromFile( const TCHAR* a_szFilePath, TBOOL a_bLoadLa
 
 			m_pTerrainVIS->m_ppHighBlocks[ i ] = new ATerrainLODBlock(
 			    m_pTerrainVIS->m_uiHighBlockSize,
-			    szBlockName );
+			    szBlockName
+			);
 		}
 	}
 
@@ -409,7 +411,8 @@ void ATerrainInterface::LoadFromFile( const TCHAR* a_szFilePath, TBOOL a_bLoadLa
 
 			m_pTerrainVIS->m_ppLowBlocks[ i ] = new ATerrainLODBlock(
 			    m_pTerrainVIS->m_uiLowBlockSize,
-			    szBlockName );
+			    szBlockName
+			);
 		}
 	}
 
@@ -429,7 +432,8 @@ void ATerrainInterface::LoadFromFile( const TCHAR* a_szFilePath, TBOOL a_bLoadLa
 		    m_pTerrainVIS->m_szMatLibrary,
 		    m_pTerrainVIS->m_pMaterialLibraryTRB,
 		    m_pTerrainVIS->m_pMaterialLibrary,
-		    pPersitantBlock->GetMemBlock() );
+		    pPersitantBlock->GetMemBlock()
+		);
 
 		AAssetStreaming::GetSingleton()->AddMainThreadJob( pMatlibJob );
 	}
@@ -556,7 +560,8 @@ void ATerrainInterface::QueueStreamingAssets()
 
 	if ( !HASANYFLAG(
 	         pCurrentGroup->m_eFlags,
-	         ATerrainSection::FLAGS_HIGH_LOD_LOADED | ATerrainSection::FLAGS_HIGH_LOD_LOADING ) )
+	         ATerrainSection::FLAGS_HIGH_LOD_LOADED | ATerrainSection::FLAGS_HIGH_LOD_LOADING
+	     ) )
 	{
 		pCurrentGroup->SetLODQueued( ATerrainLODType_High, TTRUE );
 	}
@@ -880,7 +885,8 @@ static void RenderWorldVisWin( TModelInstance* a_pModelInstance, void* a_pModelN
 			pRenderContext->ComputePerspectiveProjection(
 			    projection,
 			    pRenderContext->GetViewportParameters(),
-			    pRenderContext->GetProjectionParams() );
+			    pRenderContext->GetProjectionParams()
+			);
 
 			TMatrix44 modelView = pRenderContext->GetModelViewMatrix();
 
@@ -915,7 +921,8 @@ ATerrainSection::ModelNode* ATerrainInterface::CreateModelInstance( ATerrainSect
 	{
 		a_pModelNode->m_ModelRef.Create(
 		    a_szModelName,
-		    AAssetLoader::GetAssetTRB( AAssetType_AssetPack ) );
+		    AAssetLoader::GetAssetTRB( AAssetType_AssetPack )
+		);
 	}
 
 	auto pInstance          = a_pModelNode->m_ModelRef.CreateSceneObject();

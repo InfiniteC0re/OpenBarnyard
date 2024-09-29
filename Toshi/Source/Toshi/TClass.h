@@ -27,7 +27,8 @@ public:
 	    TUINT16               a_uiVersionMajor,
 	    TUINT16               a_uiVersionMinor,
 	    TUINT32               a_uiClassSize,
-	    TUINT32               a_uiClassAlignment );
+	    TUINT32               a_uiClassAlignment
+	);
 
 	constexpr TClass(
 	    const TCHAR*          a_szName,
@@ -38,7 +39,8 @@ public:
 	    TUINT16               a_uiVersionMajor,
 	    TUINT16               a_uiVersionMinor,
 	    TUINT32               a_uiClassSize,
-	    TUINT32               a_uiClassAlignment ) :
+	    TUINT32               a_uiClassAlignment
+	) :
 	    m_szName( a_szName ),
 	    m_pParent( TNULL ),
 	    m_pPrevious( TNULL ),

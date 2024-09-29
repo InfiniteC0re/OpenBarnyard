@@ -11,7 +11,8 @@
 void ATRBLoaderJob::BeginJob()
 {
 	AAssetStreaming::GetSingleton()->GetFileStream().AddStream(
-	    &m_oStreamJob );
+	    &m_oStreamJob
+	);
 }
 
 TBOOL ATRBLoaderJob::RunJob()

@@ -103,7 +103,8 @@ void AMaterialLibraryManager::LoadLibrary( const TPString8& a_rLibName, TTRB* a_
 		    "data/matlibs/%s%s%s.ttl",
 		    a_rLibName.GetPooledString()->GetString8().GetString(),
 		    fileMiddle.GetString(),
-		    fileFormat.GetString() );
+		    fileFormat.GetString()
+		);
 
 		AMaterialLibrary* pLibrary = List::GetSingleton()->CreateLibraryFromAsset( matlibPath, a_pTRB );
 

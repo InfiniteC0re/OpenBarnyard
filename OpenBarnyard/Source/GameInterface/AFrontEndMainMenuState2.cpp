@@ -107,7 +107,8 @@ TBOOL AFrontEndMainMenuState2::OnUpdate( TFLOAT a_fDeltaTime )
 			// Fade in screen and start intro video after that
 			AFade* pFade = AFadeManager::GetSingleton()->StartFade( AFade::Color( 0, 0, 0, 0 ), AFade::Color( 255, 0, 0, 0 ), 0.5f );
 			m_oFadeOverListener.Connect(
-			    pFade->GetFadeOverEmitter(), this, []( AFrontEndMainMenuState2* a_pFrontEndState, AFade* a_pFade, TBOOL* ) { return a_pFrontEndState->StartIntroVideo(); }, 0 );
+			    pFade->GetFadeOverEmitter(), this, []( AFrontEndMainMenuState2* a_pFrontEndState, AFade* a_pFade, TBOOL* ) { return a_pFrontEndState->StartIntroVideo(); }, 0
+			);
 		}
 	}
 

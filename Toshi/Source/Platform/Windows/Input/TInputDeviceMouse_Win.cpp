@@ -177,7 +177,9 @@ TINT TInputDXDeviceMouse::ProcessEvents( EventEmitter& a_rEmitter, TFLOAT a_fDel
 		        0x3000b,
 		        TInputInterface::EVENT_TYPE_MOVED,
 		        m_iDeltaPositionX,
-		        m_iDeltaPositionY ) );
+		        m_iDeltaPositionY
+		    )
+		);
 
 		iNumProcessed += 1;
 	}
@@ -343,7 +345,8 @@ void TInputDXDeviceMouse::SetExclusive( HWND a_hWindow, TBOOL a_bExclusive )
 {
 	m_poDXInputDevice->SetCooperativeLevel(
 	    a_hWindow,
-	    a_bExclusive ? ( DISCL_EXCLUSIVE | DISCL_FOREGROUND ) : ( DISCL_NONEXCLUSIVE | DISCL_FOREGROUND ) );
+	    a_bExclusive ? ( DISCL_EXCLUSIVE | DISCL_FOREGROUND ) : ( DISCL_NONEXCLUSIVE | DISCL_FOREGROUND )
+	);
 }
 
 void TInputDXDeviceMouse::SetCurrentPosition( TINT a_iX, TINT a_iY )

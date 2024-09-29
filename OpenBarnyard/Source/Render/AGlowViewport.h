@@ -20,7 +20,8 @@ public:
 		    const Toshi::TMatrix44&                        a_rcTransform,
 		    const Toshi::TRenderContext::VIEWPORTPARAMS&   a_rcViewportParams,
 		    const Toshi::TRenderContext::PROJECTIONPARAMS& a_rcProjectionParams,
-		    Toshi::TRenderContext::CameraMode              a_eCameraMode );
+		    Toshi::TRenderContext::CameraMode              a_eCameraMode
+		);
 
 		TBOOL IsEnabled() const { return m_bEnabled; }
 		TBOOL IsNightLight() const { return m_bIsNightLight; }

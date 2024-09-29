@@ -114,7 +114,8 @@ TBOOL AGUI2::OnUpdate( TFLOAT a_fDeltaTime )
 			    memInfo.m_uiLogicTotalUsed,
 			    memInfo.m_uiLogicTotalFree,
 			    memInfo.m_iNumHoles,
-			    memInfo.m_uiLargestHole );
+			    memInfo.m_uiLargestHole
+			);
 
 			m_oMemStats.SetText( m_wszMemStats );
 			s_UpdateTimer = 0.0f;
@@ -137,7 +138,8 @@ TBOOL AGUI2::OnUpdate( TFLOAT a_fDeltaTime )
 		    m_wszFPS,
 		    TARRAYSIZE( m_wszFPS ),
 		    L"FPS: %0.02f",
-		    s_FPS );
+		    s_FPS
+		);
 
 		m_oFPS.SetText( m_wszFPS );
 
@@ -177,7 +179,8 @@ TBOOL AGUI2::OnUpdate( TFLOAT a_fDeltaTime )
 				    L"Cam",
 				    vCamTranslation.x,
 				    vCamTranslation.y,
-				    vCamTranslation.z );
+				    vCamTranslation.z
+				);
 			}
 		}
 
@@ -185,7 +188,8 @@ TBOOL AGUI2::OnUpdate( TFLOAT a_fDeltaTime )
 		    m_wszPlayerInfo,
 		    TARRAYSIZE( m_wszPlayerInfo ),
 		    L"%s",
-		    wszCameraInfo );
+		    wszCameraInfo
+		);
 
 		m_oPlayerInfo.SetText( m_wszPlayerInfo );
 	}
@@ -201,7 +205,8 @@ TBOOL AGUI2::OnUpdate( TFLOAT a_fDeltaTime )
 		    L"Textures: (F:%d,U:%d)/%d",
 		    iNumFreeTextures,
 		    iNumUsedTextures,
-		    AMaterialLibraryManager::MAX_NUM_TEXTURES );
+		    AMaterialLibraryManager::MAX_NUM_TEXTURES
+		);
 
 		m_oTexturesInfo.SetText( m_wszTexturesInfo );
 

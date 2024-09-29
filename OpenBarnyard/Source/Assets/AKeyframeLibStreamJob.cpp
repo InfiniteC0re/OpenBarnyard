@@ -31,5 +31,6 @@ void AKeyframeLibStreamJob::Init( const TCHAR* a_szFileName )
 	TStringManager::String8Copy(
 	    m_szName,
 	    a_szFileName,
-	    TMath::Min( TStringManager::String8Length( a_szFileName ), sizeof( m_szName ) ) );
+	    TMath::Min( TStringManager::String8Length( a_szFileName ), sizeof( m_szName ) )
+	);
 }

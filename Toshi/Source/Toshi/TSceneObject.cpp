@@ -69,7 +69,8 @@ TBOOL TSceneObject::RenderIfVisible()
 	    transformScale.x,
 	    transformScale.y,
 	    transformScale.z,
-	    TMath::Max( TMath::Max( transformScale.x, transformScale.y ), transformScale.z ) ) );
+	    TMath::Max( TMath::Max( transformScale.x, transformScale.y ), transformScale.z )
+	) );
 
 	TMatrix44 transformMatrix;
 	m_TransformObject.GetLocalMatrixImp( transformMatrix );

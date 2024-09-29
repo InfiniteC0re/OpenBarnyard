@@ -42,7 +42,8 @@ void TViewport::BeginSKU()
 		    g,
 		    b,
 		    1.0f,
-		    0 );
+		    0
+		);
 	}
 }
 

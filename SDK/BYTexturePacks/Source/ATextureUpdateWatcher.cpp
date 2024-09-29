@@ -16,7 +16,8 @@ void ATextureUpdateWatcher::Main()
 	    FILE_NOTIFY_CHANGE_FILE_NAME |
 	        FILE_NOTIFY_CHANGE_DIR_NAME |
 	        FILE_NOTIFY_CHANGE_LAST_WRITE,
-	    NULL, &m_Overlapped, NULL );
+	    NULL, &m_Overlapped, NULL
+	);
 
 	while ( TTRUE )
 	{
@@ -88,7 +89,8 @@ void ATextureUpdateWatcher::Main()
 			    FILE_NOTIFY_CHANGE_FILE_NAME |
 			        FILE_NOTIFY_CHANGE_DIR_NAME |
 			        FILE_NOTIFY_CHANGE_LAST_WRITE,
-			    NULL, &m_Overlapped, NULL );
+			    NULL, &m_Overlapped, NULL
+			);
 		}
 	}
 }
@@ -104,7 +106,8 @@ void ATextureUpdateWatcher::Init( const char* a_szPath )
 	    NULL,
 	    OPEN_EXISTING,
 	    FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OVERLAPPED,
-	    NULL );
+	    NULL
+	);
 }
 
 void ATextureUpdateWatcher::Destroy()

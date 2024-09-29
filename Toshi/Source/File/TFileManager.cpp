@@ -240,7 +240,8 @@ TBOOL TFileManager::TSysPathIter::Next( TString8& path )
 
 		path.Copy(
 		    m_String.GetString( strStart ),
-		    ( m_Position >= 0 ) ? ( m_Position - strStart ) : -1 );
+		    ( m_Position >= 0 ) ? ( m_Position - strStart ) : -1
+		);
 
 		return TTRUE;
 	}

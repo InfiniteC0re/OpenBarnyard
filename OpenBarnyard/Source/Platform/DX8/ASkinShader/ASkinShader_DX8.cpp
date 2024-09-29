@@ -514,7 +514,8 @@ void ASkinShaderHAL::Render( Toshi::TRenderPacket* a_pRenderPacket )
 				    0,
 				    pVertexPool->GetNumVertices(),
 				    indexHALBuffer.uiIndexOffset,
-				    pIndexPool->GetNumIndices() );
+				    pIndexPool->GetNumIndices()
+				);
 			}
 		}
 	}

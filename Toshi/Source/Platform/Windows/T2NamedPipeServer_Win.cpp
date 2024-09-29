@@ -62,7 +62,8 @@ void T2NamedPipeServerThread::Main()
 				    m_pServer->m_pMemory,
 				    m_pServer->m_uiMemorySize,
 				    NULL,
-				    NULL );
+				    NULL
+				);
 			}
 		}
 
@@ -106,7 +107,8 @@ TBOOL T2NamedPipeServer::Start( const TCHAR* a_szName, TUINT a_uiSendInterval, T
 	    a_uiOutBufferSize,
 	    a_uiInBufferSize,
 	    0,
-	    NULL );
+	    NULL
+	);
 
 	TASSERT( INVALID_HANDLE_VALUE != m_hPipe );
 

@@ -68,7 +68,8 @@ TSkeletonInstance* TSkeleton::CreateInstance( TBOOL a_bSetBasePose )
 	{
 		TAnimation* pAnimation = TREINTERPRETCAST(
 		    TAnimation*,
-		    TREINTERPRETCAST( uintptr_t, pInstance->m_pAnimations ) + i * iAnimationSize );
+		    TREINTERPRETCAST( uintptr_t, pInstance->m_pAnimations ) + i * iAnimationSize
+		);
 
 		new ( pAnimation ) TAnimation();
 		pInstance->m_FreeAnimations.PushFront( pAnimation );

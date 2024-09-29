@@ -152,7 +152,8 @@ TINT TDebug_AssertHandler( const TCHAR* a_szExpression, const TCHAR* a_szFileNam
 	    MAKEINTRESOURCEA( IDD_ASSERT ),
 	    hWnd,
 	    TDebug_AssertionDlgProc,
-	    NULL );
+	    NULL
+	);
 
 	return ( result != -1 ) ? result : 1;
 }

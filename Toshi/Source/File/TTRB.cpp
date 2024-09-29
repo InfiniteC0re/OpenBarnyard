@@ -347,7 +347,8 @@ const TCHAR* TTRB::GetSymbolName( TTRBSymbol* symbol ) const
 	return reinterpret_cast<const TCHAR*>(
 	    reinterpret_cast<uintptr_t>( m_SYMB ) +
 	    GetSymbolTableSize( m_SYMB->m_i32SymbCount ) +
-	    symbol->NameOffset );
+	    symbol->NameOffset
+	);
 }
 
 const TCHAR* TTRB::GetSymbolName( TINT index ) const

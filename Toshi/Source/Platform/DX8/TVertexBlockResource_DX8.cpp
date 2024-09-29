@@ -94,7 +94,8 @@ TBOOL TVertexBlockResource::CreateHAL()
 		    usage,
 		    0,
 		    ( m_uiFlags & 1 ) ? D3DPOOL_MANAGED : D3DPOOL_DEFAULT,
-		    &m_HALBuffer.apVertexBuffers[ i ] );
+		    &m_HALBuffer.apVertexBuffers[ i ]
+		);
 
 		if ( FAILED( hRes ) )
 		{
@@ -221,7 +222,8 @@ TBOOL TVertexBlockResource::Validate()
 							    TUtil::MemCopy(
 							        pPair->GetSecond().apStreams[ i ] + pPool->m_uiVertexOffset * uiVertexSize,
 							        pPool->GetManagedStream( i ),
-							        pPool->GetNumVertices() * uiVertexSize );
+							        pPool->GetNumVertices() * uiVertexSize
+							    );
 						    }
 					    }
 				    }
@@ -229,7 +231,8 @@ TBOOL TVertexBlockResource::Validate()
 				    return TTRUE;
 			    },
 			    this,
-			    &pair );
+			    &pair
+			);
 
 			Unlock();
 		}
@@ -304,7 +307,8 @@ TBOOL TVertexBlockResource::Lock( TVertexPoolResourceInterface::LockBuffer* a_pL
 		    a_pLockBuffer->uiOffset * vertexFormat.m_aStreamFormats[ i ].m_uiVertexSize,
 		    uiNumVertices * vertexFormat.m_aStreamFormats[ i ].m_uiVertexSize,
 		    &a_pLockBuffer->apStreams[ i ],
-		    uiFlags );
+		    uiFlags
+		);
 
 		if ( FAILED( hRes ) )
 		{

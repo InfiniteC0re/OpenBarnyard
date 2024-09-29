@@ -24,7 +24,9 @@ TTexture* TTextureFactoryHAL::CreateTextureFromFile( const TCHAR* a_szFilePath, 
 		    GetRenderer()->CreateResource(
 		        TClass::Find( "TTextureResourceHAL" ),
 		        TNULL,
-		        this ) );
+		        this
+		    )
+		);
 
 		pTexture->Create( a_szFilePath, a_eTextureFlags );
 		RegisterTexture( a_szFilePath, pTexture );
@@ -51,7 +53,9 @@ TTexture* TTextureFactoryHAL::CreateTextureFromMemory( void* a_pData, TUINT a_ui
 	    GetRenderer()->CreateResource(
 	        TClass::Find( "TTextureResourceHAL" ),
 	        TNULL,
-	        this ) );
+	        this
+	    )
+	);
 
 	pTexture->Create( a_pData, a_uiDataSize, a_eTextureFlags, a_uiWidth, a_uiHeight );
 	RegisterTexture( s_szName, pTexture );
@@ -76,7 +80,9 @@ TTexture* TTextureFactoryHAL::CreateEx( void* a_pData, TUINT a_uiDataSize, TUINT
 	    GetRenderer()->CreateResource(
 	        TClass::Find( "TTextureResourceHAL" ),
 	        TNULL,
-	        this ) );
+	        this
+	    )
+	);
 
 	pTexture->CreateEx( a_pData, a_uiDataSize, a_uiWidth, a_uiHeight, a_uiMipLevels, a_eFormat, a_bNoMipLevels );
 	RegisterTexture( s_szName, pTexture );
@@ -101,7 +107,9 @@ TTexture* TTextureFactoryHAL::CreateFromT2Texture( T2Texture* a_pTexture )
 	    GetRenderer()->CreateResource(
 	        TClass::Find( "TTextureResourceHAL" ),
 	        TNULL,
-	        this ) );
+	        this
+	    )
+	);
 
 	pTexture->CreateFromT2Texture( a_pTexture );
 	RegisterTexture( s_szName, pTexture );

@@ -198,7 +198,8 @@ TBOOL TTextureResourceHAL::CreateFromMemory888( TUINT a_uiWidth, TUINT a_uiHeigh
 	    0,
 	    D3DFMT_X8R8G8B8,
 	    D3DPOOL_MANAGED,
-	    &m_pD3DTexture );
+	    &m_pD3DTexture
+	);
 
 	if ( SUCCEEDED( hCreateRes ) )
 	{
@@ -260,7 +261,8 @@ TBOOL TTextureResourceHAL::CreateFromMemory4444( TUINT a_uiWidth, TUINT a_uiHeig
 	    0,
 	    D3DFMT_A4R4G4B4,
 	    D3DPOOL_MANAGED,
-	    &m_pD3DTexture );
+	    &m_pD3DTexture
+	);
 
 	if ( SUCCEEDED( hCreateRes ) )
 	{
@@ -320,7 +322,8 @@ TBOOL TTextureResourceHAL::CreateFromMemoryDDS( TUINT a_uiWidth, TUINT a_uiHeigh
 	    0,
 	    &m_ImageInfo,
 	    NULL,
-	    &m_pD3DTexture );
+	    &m_pD3DTexture
+	);
 
 	if ( FAILED( hRes ) )
 	{
@@ -348,7 +351,8 @@ TBOOL TTextureResourceHAL::CreateFromFileDDS( TUINT a_uiWidth, TUINT a_uiHeight,
 	    0,
 	    &m_ImageInfo,
 	    NULL,
-	    &m_pD3DTexture );
+	    &m_pD3DTexture
+	);
 
 	if ( FAILED( hRes ) )
 	{

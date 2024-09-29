@@ -102,14 +102,16 @@ TBOOL TIndexBlockResource::Validate()
 						    TUtil::MemCopy(
 						        pPair->GetSecond().pBuffer + pPool->m_uiIndexOffset,
 						        pPool->GetIndices(),
-						        pPool->GetNumIndices() * sizeof( TIndexType ) );
+						        pPool->GetNumIndices() * sizeof( TIndexType )
+						    );
 					    }
 				    }
 
 				    return TTRUE;
 			    },
 			    this,
-			    &pair );
+			    &pair
+			);
 
 			Unlock();
 		}
@@ -177,7 +179,8 @@ TBOOL TIndexBlockResource::CreateHAL()
 	    usage,
 	    D3DFMT_INDEX16,
 	    ( m_uiFlags & 1 ) ? D3DPOOL_MANAGED : D3DPOOL_DEFAULT,
-	    &m_HALBuffer.pIndexBuffer );
+	    &m_HALBuffer.pIndexBuffer
+	);
 
 	if ( FAILED( hRes ) )
 	{
@@ -258,7 +261,8 @@ TBOOL TIndexBlockResource::Lock( TIndexPoolResourceInterface::LockBuffer* a_pLoc
 	    a_pLockBuffer->uiOffset * sizeof( TIndexType ),
 	    uiNumIndices * sizeof( TIndexType ),
 	    (BYTE**)&a_pLockBuffer->pBuffer,
-	    uiFlags );
+	    uiFlags
+	);
 
 	if ( FAILED( hRes ) )
 	{

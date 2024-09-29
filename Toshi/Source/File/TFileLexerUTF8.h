@@ -34,7 +34,8 @@ public:
 		{
 			return TREINTERPRETCAST(
 			    LookaheadTokens*,
-			    TMalloc( sizeof( LookaheadTokens ) + sizeof( Token ) * a_iCount ) );
+			    TMalloc( sizeof( LookaheadTokens ) + sizeof( Token ) * a_iCount )
+			);
 		}
 
 		static void Free( Token* a_pHeadToken )
@@ -46,7 +47,8 @@ public:
 		{
 			return TREINTERPRETCAST(
 			    LookaheadTokens*,
-			    TREINTERPRETCAST( uintptr_t, a_pHeadToken ) - sizeof( LookaheadTokens ) );
+			    TREINTERPRETCAST( uintptr_t, a_pHeadToken ) - sizeof( LookaheadTokens )
+			);
 		}
 
 	public:

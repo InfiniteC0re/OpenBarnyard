@@ -41,7 +41,8 @@ static void LogRenderGroup( CellSphereTreeBranchNode* a_pRenderGroup )
 	    a_pRenderGroup->m_BoundingSphere.GetOrigin().x,
 	    a_pRenderGroup->m_BoundingSphere.GetOrigin().y,
 	    a_pRenderGroup->m_BoundingSphere.GetOrigin().z,
-	    a_pRenderGroup->m_BoundingSphere.GetRadius() );
+	    a_pRenderGroup->m_BoundingSphere.GetRadius()
+	);
 
 	TBOOL bHasNext = a_pRenderGroup->m_pRight;
 
@@ -58,7 +59,8 @@ static void LogRenderGroup( CellSphereTreeBranchNode* a_pRenderGroup )
 		    a_pRenderGroup->m_BoundingSphere.GetOrigin().x,
 		    a_pRenderGroup->m_BoundingSphere.GetOrigin().y,
 		    a_pRenderGroup->m_BoundingSphere.GetOrigin().z,
-		    a_pRenderGroup->m_BoundingSphere.GetRadius() );
+		    a_pRenderGroup->m_BoundingSphere.GetRadius()
+		);
 	}
 }
 
@@ -143,7 +145,8 @@ int main( int argc, char** argv )
 						    pMeshBounding->m_BoundingSphere.GetOrigin().x,
 						    pMeshBounding->m_BoundingSphere.GetOrigin().y,
 						    pMeshBounding->m_BoundingSphere.GetOrigin().z,
-						    pMeshBounding->m_BoundingSphere.GetRadius() );
+						    pMeshBounding->m_BoundingSphere.GetRadius()
+						);
 
 						auto pMesh = pMeshBounding->m_pCellMesh;
 						TINFO( "        Num Indices: %u\n", pMesh->uiNumIndices );

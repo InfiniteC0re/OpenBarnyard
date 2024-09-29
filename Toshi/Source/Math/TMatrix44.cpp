@@ -19,7 +19,8 @@ constinit TMatrix44 TMatrix44::IDENTITY(
     0.0f,
     0.0f,
     0.0f,
-    1.0f );
+    1.0f
+);
 
 void TMatrix44::LookAtTarget( const TVector4& target, const TVector4& up )
 {

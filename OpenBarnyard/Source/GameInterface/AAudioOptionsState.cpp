@@ -131,7 +131,8 @@ void AAudioOptionsState::OnInsertion()
 	{
 		m_aTextItems[ i ].SetTransform(
 		    m_aTextItems[ i ].GetWidth() * 0.5f + m_aTextItems[ i ].GetTransform().GetTranslation().x,
-		    m_aTextItems[ i ].GetTransform().GetTranslation().y );
+		    m_aTextItems[ i ].GetTransform().GetTranslation().y
+		);
 
 		m_aTextItems[ i ].SetAttachment( AGUI2ATTACHMENT_TOPLEFT, AGUI2ATTACHMENT_TOPCENTER );
 	}

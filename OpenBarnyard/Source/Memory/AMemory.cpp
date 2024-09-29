@@ -22,7 +22,8 @@ void AMemory::CreatePool( POOL a_ePool )
 	    rPool.GetSize(),
 	    rPool.GetName(),
 	    pAllocOnHeap,
-	    rPool.GetUnk2() );
+	    rPool.GetUnk2()
+	);
 
 	s_AllocatorList.aAllocators[ a_ePool ].SetMemBlock( s_aMemBlocks[ a_ePool ] );
 }

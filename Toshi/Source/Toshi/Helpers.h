@@ -30,7 +30,8 @@ TFORCEINLINE constexpr T* TAlignPointerUp( T* a_pMem, TSIZE a_uiAlignment = size
 {
 	return TREINTERPRETCAST(
 	    T*,
-	    ( TUINTPTR( a_pMem ) + ( a_uiAlignment - 1 ) ) & ( ~( a_uiAlignment - 1U ) ) );
+	    ( TUINTPTR( a_pMem ) + ( a_uiAlignment - 1 ) ) & ( ~( a_uiAlignment - 1U ) )
+	);
 }
 
 template <class T>
@@ -38,7 +39,8 @@ TFORCEINLINE constexpr T* TAlignPointerDown( T* a_pMem, TSIZE a_uiAlignment = si
 {
 	return TREINTERPRETCAST(
 	    T*,
-	    ( TUINTPTR( a_pMem ) ) & ( ~( a_uiAlignment - 1U ) ) );
+	    ( TUINTPTR( a_pMem ) ) & ( ~( a_uiAlignment - 1U ) )
+	);
 }
 
 template <class T>

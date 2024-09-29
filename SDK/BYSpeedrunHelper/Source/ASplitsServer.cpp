@@ -27,13 +27,15 @@ ASplitsServer::ASplitsServer() :
 	    "BYSpeedrunHelper",
 	    100,
 	    0,
-	    MAX_BUFFER_SIZE );
+	    MAX_BUFFER_SIZE
+	);
 
 	m_pMemBlock = g_pMemory->CreateMemBlock(
 	    128 * 1024,
 	    "Autosplitter",
 	    g_pMemory->GetGlobalBlock(),
-	    0 );
+	    0
+	);
 
 	TASSERT( m_pMemBlock != TNULL );
 

@@ -60,7 +60,8 @@ void AGUI2TextBox::RenderText( void* a_fnCallback )
 			    m_uiShadowColour,
 			    m_fScale,
 			    m_eTextAlign,
-			    a_fnCallback );
+			    a_fnCallback
+			);
 		}
 
 		m_pFont->DrawTextWrapped(
@@ -72,7 +73,8 @@ void AGUI2TextBox::RenderText( void* a_fnCallback )
 		    AGUI2Element::m_uiColour,
 		    m_fScale,
 		    m_eTextAlign,
-		    a_fnCallback );
+		    a_fnCallback
+		);
 	}
 }
 

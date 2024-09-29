@@ -82,7 +82,8 @@ TBOOL ASoundManager::OnCreate()
 		    a_pSndMngr->PauseAllCues( *a_pPaused );
 		    return TTRUE;
 	    },
-	    0 );
+	    0
+	);
 
 	m_pS4 = new ( AMemory::GetMemBlock( AMemory::POOL_Sound ) ) S4[ 32 ];
 
@@ -315,7 +316,8 @@ TINT ASoundManager::PlayCueEx( ASoundId a_iSound, TFLOAT a_fVolume, TBOOL a_bFla
 				    pSound->m_vecTracks[ iTrack ] + iFirstWaveIndex,
 				    iFlags,
 				    a_fDelay,
-				    -1.0f );
+				    -1.0f
+				);
 
 				iFirstWaveIndex += pSound->m_vecTracks[ iTrack ];
 			}
@@ -339,7 +341,8 @@ TINT ASoundManager::PlayCueEx( ASoundId a_iSound, TFLOAT a_fVolume, TBOOL a_bFla
 		    pSound->m_vecTracks[ a_iTrack ] + iFirstWaveIndex,
 		    iFlags,
 		    a_fDelay,
-		    -1.0f );
+		    -1.0f
+		);
 	}
 
 	pCue->bUsed = TTRUE;
@@ -678,7 +681,8 @@ TBOOL ASoundManager::LoadSoundBankImpl( const TCHAR* a_szName, TBOOL a_bSimpleSo
 
 					// Find category and store it's index
 					auto pFoundCategory = m_CategoryIndices.Find(
-					    ( strCategory.GetPooledString() || strCategory.GetString8().Length() == 0 ) ? TPS8( default ) : strCategory );
+					    ( strCategory.GetPooledString() || strCategory.GetString8().Length() == 0 ) ? TPS8( default ) : strCategory
+					);
 
 					TASSERT( m_CategoryIndices.IsValid( pFoundCategory ) );
 					pSoundEx->m_uiCategoryIndex = pFoundCategory->GetSecond();
@@ -1016,7 +1020,8 @@ TBOOL ASoundManager::LoadWaveBanksInfo( const TCHAR* a_szFileName )
 	TBOOL bOpened = AAssetLoader::Load(
 	    "Data/Assets/lib_wavebank.trb",
 	    AAssetType_WaveBank,
-	    TTRUE );
+	    TTRUE
+	);
 
 	if ( !bOpened ) return TFALSE;
 
@@ -1152,7 +1157,8 @@ void ASoundManager::CreatePlaySoundEvent( Cue* a_pCue, TINT a_iTrackIndex, TINT 
 				    oParams,
 				    TNULL,
 				    iFlags,
-				    a_iTrackIndex );
+				    a_iTrackIndex
+				);
 
 				TVALIDPTR( pEvent );
 			}
@@ -1189,7 +1195,8 @@ void ASoundManager::CreatePlaySoundEvent( Cue* a_pCue, TINT a_iTrackIndex, TINT 
 		    oParams,
 		    TNULL,
 		    iFlags,
-		    a_iTrackIndex );
+		    a_iTrackIndex
+		);
 
 		TVALIDPTR( pEvent );
 	}
@@ -1497,7 +1504,8 @@ void ASoundManager::EventHandler_PlaySound( SoundEvent* a_pEvent )
 					    pSound->m_vecTracks[ iTrackIndex ] + iFirstWave,
 					    a_pEvent->iFlags,
 					    0.0f,
-					    pChannelRef->pSample->pWaveBank->GetWave( pChannelRef->pSample->iId )->fLength );
+					    pChannelRef->pSample->pWaveBank->GetWave( pChannelRef->pSample->iId )->fLength
+					);
 				}
 
 				if ( iLoopStart > 0 )
@@ -1512,7 +1520,8 @@ void ASoundManager::EventHandler_PlaySound( SoundEvent* a_pEvent )
 					    pSound->m_vecTracks[ iTrackIndex ] + iFirstWave,
 					    a_pEvent->iFlags,
 					    0.0f,
-					    pChannelRef->pSample->pWaveBank->GetWave( pChannelRef->pSample->iId )->fLength );
+					    pChannelRef->pSample->pWaveBank->GetWave( pChannelRef->pSample->iId )->fLength
+					);
 				}
 			}
 		}

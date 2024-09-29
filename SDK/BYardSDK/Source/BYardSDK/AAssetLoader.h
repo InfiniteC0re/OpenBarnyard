@@ -26,7 +26,8 @@ public:
 	{
 		return TSTATICCAST(
 		    T*,
-		    GetSymbolAddress( a_szFileName, a_szSymbolName, a_eAssetType ) );
+		    GetSymbolAddress( a_szFileName, a_szSymbolName, a_eAssetType )
+		);
 	}
 
 	static Toshi::TTRB* GetAssetTRB( AAssetType a_eAssetType )

@@ -19,7 +19,8 @@ TVertexPoolResourceInterface* TVertexFactoryResource::CreatePoolResource( TUINT1
 {
 	auto pVertexPool = TSTATICCAST(
 	    TVertexPoolResource,
-	    GetRenderer()->CreateResource( &TGetClass( TVertexPoolResource ), TNULL, this ) );
+	    GetRenderer()->CreateResource( &TGetClass( TVertexPoolResource ), TNULL, this )
+	);
 
 	TVALIDPTR( pVertexPool );
 
@@ -33,7 +34,8 @@ TVertexBlockResource* TVertexFactoryResource::CreateBlockResource( TUINT16 a_uiM
 {
 	auto pVertexBlock = TSTATICCAST(
 	    TVertexBlockResource,
-	    GetRenderer()->CreateResource( &TGetClass( TVertexBlockResource ), TNULL, this ) );
+	    GetRenderer()->CreateResource( &TGetClass( TVertexBlockResource ), TNULL, this )
+	);
 
 	TVALIDPTR( pVertexBlock );
 
@@ -69,7 +71,8 @@ TVertexBlockResource* TVertexFactoryResource::FindBlockResource( TVertexPoolReso
 		    return TTRUE;
 	    },
 	    this,
-	    &result );
+	    &result
+	);
 
 	return result.m_First;
 }

@@ -241,7 +241,8 @@ void AGameState::Activate()
 	OnActivate();
 
 	TGlobalEmitter<AGameStateControllerEvent>::Throw(
-	    AGameStateControllerEvent( this, AGameStateControllerEvent::Type_GameStateActivated ) );
+	    AGameStateControllerEvent( this, AGameStateControllerEvent::Type_GameStateActivated )
+	);
 }
 
 void AGameState::Deactivate()
@@ -251,7 +252,9 @@ void AGameState::Deactivate()
 	TGlobalEmitter<AGameStateControllerEvent>::Throw(
 	    AGameStateControllerEvent(
 	        this,
-	        AGameStateControllerEvent::Type_GameStateDeactivated ) );
+	        AGameStateControllerEvent::Type_GameStateDeactivated
+	    )
+	);
 }
 
 void AGameState::Suspend()

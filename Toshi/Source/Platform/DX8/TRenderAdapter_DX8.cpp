@@ -105,7 +105,8 @@ void TD3DAdapter::EnumerateOutputs( TRenderInterface* a_pRenderer )
 			    Mode::Device::DEVICETYPES[ k ],
 			    pMode->GetD3DDisplayMode().Format,
 			    pMode->GetD3DDisplayMode().Format,
-			    FALSE );
+			    FALSE
+			);
 
 			if ( SUCCEEDED( hRes ) )
 			{
@@ -158,7 +159,8 @@ void TD3DAdapter::EnumerateOutputs( TRenderInterface* a_pRenderer )
 						    pMode->GetD3DDisplayMode().Format,
 						    D3DUSAGE_DEPTHSTENCIL,
 						    D3DRTYPE_SURFACE,
-						    Mode::Device::DEPTHSTENCILFORMATS[ j ] );
+						    Mode::Device::DEPTHSTENCILFORMATS[ j ]
+						);
 
 						if ( SUCCEEDED( hCheck ) )
 						{
@@ -167,7 +169,8 @@ void TD3DAdapter::EnumerateOutputs( TRenderInterface* a_pRenderer )
 							    Mode::Device::DEVICETYPES[ k ],
 							    pMode->GetD3DDisplayMode().Format,
 							    pMode->GetD3DDisplayMode().Format,
-							    Mode::Device::DEPTHSTENCILFORMATS[ j ] );
+							    Mode::Device::DEPTHSTENCILFORMATS[ j ]
+							);
 
 							if ( SUCCEEDED( hMatch ) )
 							{

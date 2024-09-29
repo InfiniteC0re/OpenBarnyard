@@ -29,7 +29,8 @@ HRESULT T2Texture::Load()
 			    pD3DDevice,
 			    m_pData,
 			    m_uiDataSize,
-			    &m_pD3DTexture );
+			    &m_pD3DTexture
+			);
 		}
 		else
 		{
@@ -39,7 +40,8 @@ HRESULT T2Texture::Load()
 				    pD3DDevice,
 				    m_pData,
 				    m_uiDataSize,
-				    &m_pD3DVolumeTexture );
+				    &m_pD3DVolumeTexture
+				);
 			}
 			else if ( m_ImageInfo.ResourceType == D3DRTYPE_CUBETEXTURE )
 			{
@@ -47,7 +49,8 @@ HRESULT T2Texture::Load()
 				    pD3DDevice,
 				    m_pData,
 				    m_uiDataSize,
-				    &m_pD3DCubeTexture );
+				    &m_pD3DCubeTexture
+				);
 			}
 
 			return D3DERR_WRONGTEXTUREFORMAT;

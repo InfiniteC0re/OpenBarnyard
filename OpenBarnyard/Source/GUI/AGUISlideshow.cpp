@@ -45,7 +45,8 @@ void AGUISlideshow::LocaliseBackgroundFileName( Toshi::TPString8& a_rOutName, co
 		Toshi::TStringManager::String8Copy(
 		    szLang,
 		    ALocaleManager::Interface()->GetCurrentLanguageName(),
-		    sizeof( szLang ) );
+		    sizeof( szLang )
+		);
 
 		szLang[ 1 ] = '\0';
 		Toshi::TStringManager::String8Format( szFormattedName, sizeof( szFormattedName ), "%s%s", a_szName, szLang );

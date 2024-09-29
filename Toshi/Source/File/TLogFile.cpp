@@ -131,7 +131,8 @@ void TLogFile::Log( TUtil::LogType type, const TCHAR* str1, const TCHAR* str2, c
 				    "%d [%s]: %s",
 				    m_iTotalLogCount,
 				    TUtil::LogTypeToString( type ),
-				    m_LevelString );
+				    m_LevelString
+				);
 			}
 		}
 		else
@@ -146,7 +147,8 @@ void TLogFile::Log( TUtil::LogType type, const TCHAR* str1, const TCHAR* str2, c
 			    strTime,
 			    str1,
 			    str2 != TNULL ? str2 : "",
-			    !m_bAllowIndentation ? m_LevelString : "" );
+			    !m_bAllowIndentation ? m_LevelString : ""
+			);
 		}
 
 		va_list args;

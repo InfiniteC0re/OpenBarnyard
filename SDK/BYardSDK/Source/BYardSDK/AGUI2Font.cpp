@@ -145,7 +145,8 @@ void AGUI2Font::DrawTextSingleLine( const wchar_t* a_wszText, TINT a_iTextLength
 					    { fPos1X + fOffsetX, fPos1Y + fOffsetY },
 					    { fPos2X + fOffsetX, fPos2Y + fOffsetY },
 					    { ( pCharData.ui16PosX ) * fXToUV, ( pCharData.ui16PosY ) * fYToUV },
-					    { ( pCharData.ui16PosX + pCharData.ui8CharWidth + 1 ) * fXToUV, ( pCharData.ui16PosY + pCharData.ui8CharHeight + 1 ) * fYToUV } );
+					    { ( pCharData.ui16PosX + pCharData.ui8CharWidth + 1 ) * fXToUV, ( pCharData.ui16PosY + pCharData.ui8CharHeight + 1 ) * fYToUV }
+					);
 				}
 
 				TFLOAT fPos2X = TFLOAT( pFontDef->Unk2 + pCharData.Unk4 + pCharData.ui8CharWidth );
@@ -246,7 +247,8 @@ TFLOAT AGUI2Font::GetTextWidth( const wchar_t* a_wszText, TFLOAT a_fScale )
 		return GetTextWidth(
 		    a_wszText,
 		    Toshi::TStringManager::String16Length( a_wszText ),
-		    a_fScale );
+		    a_fScale
+		);
 	}
 
 	return 0.0f;

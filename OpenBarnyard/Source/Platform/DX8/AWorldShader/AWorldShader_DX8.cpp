@@ -316,7 +316,8 @@ void AWorldShaderHAL::Render( TRenderPacket* a_pRenderPacket )
 		    0,
 		    pVertexPool->GetNumVertices(),
 		    indexBuffer.uiIndexOffset,
-		    pIndexPool->GetNumIndices() - 2 );
+		    pIndexPool->GetNumIndices() - 2
+		);
 	}
 }
 

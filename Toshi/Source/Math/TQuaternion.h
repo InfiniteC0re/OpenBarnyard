@@ -31,7 +31,8 @@ public:
 		    TQuaternion::IDENTITY.x,
 		    TQuaternion::IDENTITY.y,
 		    TQuaternion::IDENTITY.z,
-		    TQuaternion::IDENTITY.w );
+		    TQuaternion::IDENTITY.w
+		);
 	}
 
 	void SetFromEulerYX( const TFLOAT* fVal );

@@ -32,7 +32,8 @@ public:
 	{
 		return TSTATICCAST(
 		    T,
-		    GetSymbolAddress( a_szFileName, a_szSymbolName, a_eAssetType ) );
+		    GetSymbolAddress( a_szFileName, a_szSymbolName, a_eAssetType )
+		);
 	}
 
 	// Returns TRB file of specified asset

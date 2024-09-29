@@ -187,7 +187,9 @@ TINT TInputDeviceController::ProcessVirtualButtons( EventEmitter& a_rEmitter, TF
 			        0x10011 + i,
 			        m_CurrentState[ i ] == TTRUE ?
 			            TInputInterface::EVENT_TYPE_GONE_DOWN :
-			            TInputInterface::EVENT_TYPE_GONE_UP ) );
+			            TInputInterface::EVENT_TYPE_GONE_UP
+			    )
+			);
 
 			iNumProcessed += 1;
 		}
@@ -199,7 +201,9 @@ TINT TInputDeviceController::ProcessVirtualButtons( EventEmitter& a_rEmitter, TF
 	        0x1001B,
 	        TInputInterface::EVENT_TYPE_VIRTUAL,
 	        m_fMag1,
-	        m_fMag2 ) );
+	        m_fMag2
+	    )
+	);
 
 	return iNumProcessed + 1;
 }

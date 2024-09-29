@@ -35,7 +35,8 @@ void ABYTexturePacks::UpdateTexturePackPath()
 	    g_szTexturePackPath,
 	    sizeof( g_szTexturePackPath ),
 	    "Mods\\TexturePacks\\%s\\",
-	    g_szTexturePackName );
+	    g_szTexturePackName
+	);
 
 	m_pTexWatcher = new ATextureUpdateWatcher();
 	m_pTexWatcher->Init( g_szTexturePackPath );
@@ -64,7 +65,8 @@ void ABYTexturePacks::OnUnload()
 void ABYTexturePacks::OnRenderInterfaceReady( Toshi::TRenderD3DInterface* a_pRenderInterface )
 {
 	TRenderInterface::SetSingletonExplicit(
-	    THookedRenderD3DInterface::GetSingleton() );
+	    THookedRenderD3DInterface::GetSingleton()
+	);
 }
 
 void ABYTexturePacks::OnImGuiRender()

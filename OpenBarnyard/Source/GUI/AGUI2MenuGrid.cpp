@@ -252,9 +252,7 @@ TBOOL AGUI2MenuGrid::ProcessInputEvent( const Toshi::TInputInterface::InputEvent
 		// Make sure menu updates mouse state
 		SetMouseStateDirty();
 	}
-	else if ( a_pEvent->GetEventType() == TInputInterface::EVENT_TYPE_GONE_DOWN &&
-	          a_pEvent->GetDoodad() == TInputDeviceMouse::BUTTON_1 &&
-	          GetHoveredMenuItem() != TNULL )
+	else if ( a_pEvent->GetEventType() == TInputInterface::EVENT_TYPE_GONE_DOWN && a_pEvent->GetDoodad() == TInputDeviceMouse::BUTTON_1 && GetHoveredMenuItem() != TNULL )
 	{
 		// LMB was pressed and the menu has a hovered item
 		return TriggerButtonPress( *GetHoveredMenuItem() );

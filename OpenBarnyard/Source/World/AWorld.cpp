@@ -63,7 +63,8 @@ void Frustum::Transform( const Frustum& a_rFrustum, const Toshi::TMatrix44& a_rM
 		TMatrix44::TransformPlaneOrthogonal(
 		    aFrustumPlanes[ i ].oPlane,
 		    a_rMatrix,
-		    a_rFrustum.aFrustumPlanes[ i ].oPlane );
+		    a_rFrustum.aFrustumPlanes[ i ].oPlane
+		);
 
 		aFrustumPlanes[ i ].uiClipFlag = a_rFrustum.aFrustumPlanes[ i ].uiClipFlag;
 	}

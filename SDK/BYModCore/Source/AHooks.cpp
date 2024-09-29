@@ -462,7 +462,8 @@ MEMBER_HOOK( 0x006154c0, ARenderer, ARenderer_CreateTRender, TBOOL )
 	TBOOL bResult = CallOriginal();
 
 	TRenderInterface::SetSingletonExplicit(
-	    THookedRenderD3DInterface::GetSingleton() );
+	    THookedRenderD3DInterface::GetSingleton()
+	);
 
 	AGlobalModLoaderTask::Get()->OnRenderInterfaceReady();
 
@@ -706,8 +707,7 @@ MEMBER_HOOK( 0x004293d0, AGameStateController, AGameStateController_ProcessInput
 	{
 		AImGUI::GetSingleton()->Toggle();
 	}
-	else if ( a_pInputEvent->GetEventType() == TInputInterface::EVENT_TYPE_GONE_DOWN &&
-	          a_pInputEvent->GetDoodad() == TInputDeviceKeyboard::KEY_F5 )
+	else if ( a_pInputEvent->GetEventType() == TInputInterface::EVENT_TYPE_GONE_DOWN && a_pInputEvent->GetDoodad() == TInputDeviceKeyboard::KEY_F5 )
 	{
 		*(TBOOL*)( ( *(TUINT*)( 0x0079b2ec ) + 0x88 ) ) = !( *(TBOOL*)( ( *(TUINT*)( 0x0079b2ec ) + 0x88 ) ) );
 	}

@@ -131,7 +131,8 @@ TBOOL TRenderD3DInterface::CreateDisplay( const DISPLAYPARAMS& a_rParams )
 		    m_Window.GetHWND(),
 		    pDevice->GetD3DDeviceFlags(),
 		    &m_PresentParams,
-		    &m_pDirectDevice );
+		    &m_pDirectDevice
+		);
 
 		if ( FAILED( hRes ) )
 		{
@@ -172,7 +173,8 @@ TBOOL TRenderD3DInterface::CreateDisplay( const DISPLAYPARAMS& a_rParams )
 
 		SetCursorPos(
 		    uiWindowPosX + pDisplayParams->uiWidth / 2,
-		    uiWindowPosY + pDisplayParams->uiHeight / 2 );
+		    uiWindowPosY + pDisplayParams->uiHeight / 2
+		);
 
 		m_pDirectDevice->ShowCursor( TRUE );
 
@@ -342,7 +344,8 @@ TBOOL TRenderD3DInterface::CreateVertexShader( const DWORD* a_ShaderDeclaration,
 	    a_ShaderDeclaration,
 	    a_pFunction,
 	    a_pOutVertexShader,
-	    !bSupportsHardwareTransformations ? D3DCREATE_PUREDEVICE : 0 );
+	    !bSupportsHardwareTransformations ? D3DCREATE_PUREDEVICE : 0
+	);
 
 	if ( FAILED( hRes ) )
 	{
@@ -793,7 +796,8 @@ void TRenderD3DInterface::ClearRegion( TINT a_iX, TINT a_iY, TINT a_iWidth, TINT
 	    eFlags,
 	    ( ( a_uiColorR | 0xffffff00 ) << 8 | (TUINT)a_uiColorG ) << 8 | (TUINT)a_uiColorB,
 	    a_fZ,
-	    a_uiStencil );
+	    a_uiStencil
+	);
 }
 
 // $Barnyard: FUNCTION 006c6760
@@ -826,7 +830,9 @@ TBOOL TRenderD3DInterface::IsTextureFormatSupportedImpl( D3DFORMAT a_eFormat )
 	        m_PresentParams.BackBufferFormat,
 	        0,
 	        D3DRTYPE_TEXTURE,
-	        a_eFormat ) );
+	        a_eFormat
+	    )
+	);
 }
 
 // $Barnyard: FUNCTION 006c63f0

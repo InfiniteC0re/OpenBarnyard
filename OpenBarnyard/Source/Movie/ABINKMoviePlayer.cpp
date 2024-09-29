@@ -39,7 +39,8 @@ TBOOL ABINKMoviePlayer::OnCreate()
 	    },
 	    []( void* ptr ) {
 		    TFree( ptr );
-	    } );
+	    }
+	);
 
 	int iOutput = FSOUND_GetOutput();
 
@@ -365,7 +366,8 @@ TBOOL ABINKMoviePlayer::CreateAGUISurfaces( TUINT a_uiWidth, TUINT a_uiHeight, D
                     ( uiPosY + fVideoHeight * -0.5f ) * fScaleY,
                     uiRectWidth * fScaleX,
                     uiRectHeight * fScaleY,
-                    eFormat );
+                    eFormat
+                );
 
 				if ( !bCreated )
 				{

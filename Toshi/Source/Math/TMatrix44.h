@@ -40,7 +40,8 @@ public:
 	    TFLOAT a_f41,
 	    TFLOAT a_f42,
 	    TFLOAT a_f43,
-	    TFLOAT a_f44 ) :
+	    TFLOAT a_f44
+	) :
 	    m_f11( a_f11 ), m_f12( a_f12 ), m_f13( a_f13 ), m_f14( a_f14 ), m_f21( a_f21 ), m_f22( a_f22 ), m_f23( a_f23 ), m_f24( a_f24 ), m_f31( a_f31 ), m_f32( a_f32 ), m_f33( a_f33 ), m_f34( a_f34 ), m_f41( a_f41 ), m_f42( a_f42 ), m_f43( a_f43 ), m_f44( a_f44 )
 	{}
 
@@ -61,7 +62,8 @@ public:
 	    TFLOAT a_f41,
 	    TFLOAT a_f42,
 	    TFLOAT a_f43,
-	    TFLOAT a_f44 )
+	    TFLOAT a_f44
+	)
 	{
 		m_f11 = a_f11;
 		m_f12 = a_f12;
@@ -87,7 +89,8 @@ public:
 		    a_rcMatrix.m_f11, a_rcMatrix.m_f12, a_rcMatrix.m_f13, a_rcMatrix.m_f14,
 		    a_rcMatrix.m_f21, a_rcMatrix.m_f22, a_rcMatrix.m_f23, a_rcMatrix.m_f24,
 		    a_rcMatrix.m_f31, a_rcMatrix.m_f32, a_rcMatrix.m_f33, a_rcMatrix.m_f34,
-		    a_rcMatrix.m_f41, a_rcMatrix.m_f42, a_rcMatrix.m_f43, a_rcMatrix.m_f44 );
+		    a_rcMatrix.m_f41, a_rcMatrix.m_f42, a_rcMatrix.m_f43, a_rcMatrix.m_f44
+		);
 	}
 
 	// $Barnyard: FUNCTION 006c8500
@@ -100,28 +103,32 @@ public:
 	{
 		return *TREINTERPRETCAST(
 		    TVector3*,
-		    TREINTERPRETCAST( TUINTPTR, this ) + a_iIndex * sizeof( TVector4 ) );
+		    TREINTERPRETCAST( TUINTPTR, this ) + a_iIndex * sizeof( TVector4 )
+		);
 	}
 
 	TVector3& AsBasisVector3( BASISVECTOR a_iIndex )
 	{
 		return *TREINTERPRETCAST(
 		    TVector3*,
-		    TREINTERPRETCAST( TUINTPTR, this ) + a_iIndex * sizeof( TVector4 ) );
+		    TREINTERPRETCAST( TUINTPTR, this ) + a_iIndex * sizeof( TVector4 )
+		);
 	}
 
 	const TVector4& AsBasisVector4( BASISVECTOR a_iIndex ) const
 	{
 		return *TREINTERPRETCAST(
 		    TVector4*,
-		    TREINTERPRETCAST( TUINTPTR, this ) + a_iIndex * sizeof( TVector4 ) );
+		    TREINTERPRETCAST( TUINTPTR, this ) + a_iIndex * sizeof( TVector4 )
+		);
 	}
 
 	TVector4& AsBasisVector4( BASISVECTOR a_iIndex )
 	{
 		return *TREINTERPRETCAST(
 		    TVector4*,
-		    TREINTERPRETCAST( TUINTPTR, this ) + a_iIndex * sizeof( TVector4 ) );
+		    TREINTERPRETCAST( TUINTPTR, this ) + a_iIndex * sizeof( TVector4 )
+		);
 	}
 
 	TVector3& GetTranslation3()
@@ -223,7 +230,9 @@ public:
 		a_rOutPlane.SetD(
 		    a_rcSourcePlane.GetD() +
 		    TVector4::DotProduct3(
-		        a_rOutPlane.AsVector4(), a_rMatrix.AsBasisVector4( BASISVECTOR_TRANSLATION ) ) );
+		        a_rOutPlane.AsVector4(), a_rMatrix.AsBasisVector4( BASISVECTOR_TRANSLATION )
+		    )
+		);
 	}
 
 	// $Barnyard: FUNCTION 006c8b80
@@ -315,7 +324,8 @@ public:
 		    a_rcMatrix.m_f11, a_rcMatrix.m_f12, a_rcMatrix.m_f13, a_rcMatrix.m_f14,
 		    a_rcMatrix.m_f21, a_rcMatrix.m_f22, a_rcMatrix.m_f23, a_rcMatrix.m_f24,
 		    a_rcMatrix.m_f31, a_rcMatrix.m_f32, a_rcMatrix.m_f33, a_rcMatrix.m_f34,
-		    a_rcMatrix.m_f41, a_rcMatrix.m_f42, a_rcMatrix.m_f43, a_rcMatrix.m_f44 );
+		    a_rcMatrix.m_f41, a_rcMatrix.m_f42, a_rcMatrix.m_f43, a_rcMatrix.m_f44
+		);
 	}
 
 #ifdef TOSHI_SKU_WINDOWS
