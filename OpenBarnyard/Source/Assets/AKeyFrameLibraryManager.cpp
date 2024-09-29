@@ -34,7 +34,7 @@ void AKeyFrameLibraryManager::LoadLibrariesFromProperties( const PBPropertyValue
 
 		for ( TUINT i = 0; i < pArray->GetSize(); i++ )
 		{
-			LoadLibrary( pArray->GetValue( i )->GetString(), a_pTRB );
+			LoadLibrary( TPString8( pArray->GetValue( i )->GetString() ), a_pTRB );
 			g_oLoadScreen.Update( 1.0f, TTRUE );
 		}
 

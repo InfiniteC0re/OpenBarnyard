@@ -6,6 +6,7 @@
 #include "Cameras/ACameraManager.h"
 #include "Terrain/ATerrainInterface.h"
 #include "Sound/AMusicManager.h"
+#include "Animation/AAnimatableObjectManager.h"
 
 #include <Toshi/TScheduler.h>
 #include <Plugins/PPropertyParser/PBProperties.h>
@@ -44,8 +45,11 @@ TBOOL AGameSystemManager::OnCreate()
 	TGetClass( AModelRepos ).CreateObject();
 
 	auto pScheduler = g_oSystemManager.GetScheduler();
+	pScheduler->CreateTask<AAnimatableObjectManager>( this )->Create();
 	pScheduler->CreateTask<ACameraManager>( this )->Create();
 	pScheduler->CreateTask<AMusicManager>( this )->Create();
+
+	AAnimatableObjectManager::GetSingleton()->LoadTypesFromLibrary( "lib_startup" );
 
 	AAssetStreaming::CreateSingleton()->SetFlag( TFALSE );
 

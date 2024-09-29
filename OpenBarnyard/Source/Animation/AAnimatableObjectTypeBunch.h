@@ -20,8 +20,8 @@ public:
 	virtual void  Unknown( AAnimatableObject* a_pAnimatableObject ) OVERRIDE;
 
 private:
-	TINT m_iBunchCount;
-	TFLOAT m_fRange;
+	TINT             m_iBunchCount;
+	TFLOAT           m_fRange;
 	Toshi::TPString8 m_strChildBone;
 	Toshi::TPString8 m_strParentBone;
 	TYPE             m_eType;

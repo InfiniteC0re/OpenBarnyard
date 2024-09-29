@@ -24,9 +24,23 @@ class TRef
 {
 public:
 	// constructors/destructor
-	TRef() { Create( TNULL ); }
-	TRef( T* a_pPtr ) { Create( a_pPtr ); }
-	TRef( const TRef& a_rcOther ) { Create( a_rcOther.m_pPtr ); }
+	constexpr TRef()
+	    : m_pPtr( TNULL )
+	{
+	}
+
+	TRef( T* a_pPtr )
+	    : m_pPtr( TNULL )
+	{
+		Create( a_pPtr );
+	}
+
+	TRef( const TRef& a_rcOther )
+	    : m_pPtr( TNULL )
+	{
+		Create( a_rcOther.m_pPtr );
+	}
+
 	TRef( TRef&& a_rOther )
 	{
 		a_rOther.m_pPtr = m_pPtr;
@@ -60,6 +74,9 @@ public:
 
 	T*       operator->() { return m_pPtr; }
 	const T* operator->() const { return m_pPtr; }
+
+	operator T*() { return m_pPtr; }
+	operator const T*() const { return m_pPtr; }
 
 private:
 	TFORCEINLINE void Create( T* a_pPtr )

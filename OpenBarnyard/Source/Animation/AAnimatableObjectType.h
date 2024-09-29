@@ -8,8 +8,10 @@
 
 #include <Plugins/PPropertyParser/PBProperties.h>
 
+class AAnimatableObject;
+
 class AAnimatableObjectType
-	: public Toshi::T2DList<AAnimatableObjectType>::Node
+    : public Toshi::T2DList<AAnimatableObjectType>::Node
 {
 public:
 	constexpr static TSIZE MAX_ANIMATION_SETS = 6;
@@ -21,11 +23,12 @@ public:
 
 	virtual TBOOL CreateFromProperties( const PBProperties* a_pProperties, const Toshi::TPString8& a_rcName );
 	virtual TBOOL Create( const Toshi::TPString8& a_rcName );
-	virtual void  Unknown( void* );
+	virtual void  Unknown( AAnimatableObject* a_pAnimatableObject );
 
 	void Destroy();
 
 	ANamedAnimationSetRef FindAnimationSet( const Toshi::TPString8& a_rcName );
+	ANamedAnimationSetRef GetAnimationSet( TSIZE a_iIndex );
 
 private:
 	TBOOL LoadAnimationSet( const PBProperties* a_pProperties );

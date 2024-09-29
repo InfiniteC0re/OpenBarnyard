@@ -33,9 +33,7 @@ public:
 	~ANamedAnimationSet();
 
 	TBOOL CreateFromProperties( const PBProperties* a_pProperties, Toshi::TSkeleton* a_pSkeleton );
-
-	// required by Toshi::TRef
-	void Delete();
+	void  Destroy();
 
 	const Toshi::TPString8& GetName() const { return m_strName; }
 

@@ -13,7 +13,21 @@
 TOSHI_NAMESPACE_START
 
 TManagedModel::TManagedModel()
+    : m_pModel( TNULL )
 {
+	static TBOOL s_bFilledList = TFALSE;
+
+	if ( !s_bFilledList )
+	{
+		for ( TUINT i = 0; i < TModelManager::MAX_NUM_MODELS; i++ )
+		{
+			TModelManager::ms_oFreeList.PushBack( &TModelManager::ms_pEntries[ i ] );
+		}
+
+		s_bFilledList = TTRUE;
+	}
+
+	m_pEntry = TNULL;
 }
 
 TManagedModel::~TManagedModel()
@@ -99,18 +113,20 @@ TModelManager::ModelNode* TModelManager::CreateModel( const TCHAR* a_szFileName,
 	auto pEntry = ms_oFreeList.PopBack();
 	ms_oUsedList.PushFront( pEntry );
 
-	const TCHAR* szSkeletonSymbolName;
+	const TCHAR* szFileName;
 	TUINT8       ui8NameLen = 0;
 
-	if ( !a_pAssetTRB || !TModel::GetSkeletonAssetSymbolName( filepath, szSkeletonSymbolName, ui8NameLen, a_pAssetTRB ) )
+	if ( !a_pAssetTRB || !TModel::GetSkeletonAssetSymbolName( filepath, szFileName, ui8NameLen, a_pAssetTRB ) )
 	{
-		a_pAssetTRB          = TNULL;
-		szSkeletonSymbolName = filepath;
-		ui8NameLen           = -1;
+		a_pAssetTRB = TNULL;
+		szFileName  = filepath;
+		ui8NameLen  = -1;
 	}
 
-	auto pModel = TRenderInterface::GetSingleton()->CreateModel( szSkeletonSymbolName, TTRUE, a_pAssetTRB, ui8NameLen );
+	auto pModel = TRenderInterface::GetSingleton()->CreateModel( szFileName, TTRUE, a_pAssetTRB, ui8NameLen );
 	pEntry->Create( crc32, pModel );
+	pEntry->IncRefCount();
+	a_rModelRef.m_pModel = pModel;
 
 	return pEntry;
 }

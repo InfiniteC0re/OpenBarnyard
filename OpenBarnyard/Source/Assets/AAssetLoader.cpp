@@ -5,6 +5,7 @@
 #include "AKeyFrameLibraryManager.h"
 #include "ATRBLoaderJob.h"
 #include "ALoadScreen.h"
+#include "Animation/AAnimatableObjectManager.h"
 
 #include <Toshi/TString8.h>
 #include <File/TTRB.h>
@@ -98,6 +99,16 @@ TBOOL AAssetLoader::CreateAssetsFromLibrary( const TCHAR* a_szLibraryName )
 			    pKeyframes,
 			    GetAssetTRB( AAssetType_AssetPack )
 			);
+
+			g_oLoadScreen.Update( 1.0f, TTRUE );
+		}
+
+		// Load animatable object types
+		auto pAnimObjTypes = pProperties->GetProperty( "AnimObjTypes" );
+
+		if ( pAnimObjTypes )
+		{
+			AAnimatableObjectManager::GetSingleton()->LoadTypesFromLibrary( a_szLibraryName );
 
 			g_oLoadScreen.Update( 1.0f, TTRUE );
 		}

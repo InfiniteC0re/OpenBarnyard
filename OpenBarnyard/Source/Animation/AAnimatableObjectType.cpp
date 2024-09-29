@@ -45,7 +45,7 @@ TBOOL AAnimatableObjectType::CreateFromProperties( const PBProperties* a_pProper
 	TString8 strModelPath;
 	strModelPath.Format( "%s%s", "data\\models\\", strObjModel.GetString() );
 
-	TPString8 strPooledModelPath = strModelPath.GetString();
+	TPString8 strPooledModelPath = TPString8( strModelPath.GetString() );
 
 	// Load model
 	AModelRepos* pModelRepos = AModelRepos::GetSingleton();
@@ -91,7 +91,7 @@ TBOOL AAnimatableObjectType::Create( const Toshi::TPString8& a_rcName )
 	TString8 strModelPath;
 	strModelPath.Format( "%s%s", "data\\models\\", m_strName.GetString() );
 
-	TPString8 strPooledModelPath = strModelPath.GetString();
+	TPString8 strPooledModelPath = TPString8( strModelPath.GetString() );
 
 	// Load model
 	AModelRepos* pModelRepos = AModelRepos::GetSingleton();
@@ -105,7 +105,7 @@ TBOOL AAnimatableObjectType::Create( const Toshi::TPString8& a_rcName )
 	return TTRUE;
 }
 
-void AAnimatableObjectType::Unknown( void* )
+void AAnimatableObjectType::Unknown( AAnimatableObject* a_pAnimatableObject )
 {
 }
 
@@ -143,14 +143,24 @@ ANamedAnimationSetRef AAnimatableObjectType::FindAnimationSet( const Toshi::TPSt
 	return TNULL;
 }
 
+// $Barnyard: FUNCTION 0057efb0
+ANamedAnimationSetRef AAnimatableObjectType::GetAnimationSet( TSIZE a_iIndex )
+{
+	TASSERT( a_iIndex < MAX_ANIMATION_SETS );
+
+	if ( m_vecAnimationSets[ a_iIndex ].Get() )
+		return m_vecAnimationSets[ a_iIndex ];
+
+	return ANamedAnimationSetRef();
+}
+
 // $Barnyard: FUNCTION 0057f060
 TBOOL AAnimatableObjectType::LoadAnimationSet( const PBProperties* a_pProperties )
 {
-	TVALIDPTR( a_pProperties );
 	TVALIDPTR( m_pAModel );
 
-	TSkeleton*          pSkeleton     = m_pAModel->GetSkeleton();
-	ANamedAnimationSet* pAnimationSet = TNULL;
+	TSkeleton*            pSkeleton     = m_pAModel->GetSkeleton();
+	ANamedAnimationSetRef pAnimationSet = TNULL;
 
 	if ( a_pProperties )
 	{
@@ -162,7 +172,7 @@ TBOOL AAnimatableObjectType::LoadAnimationSet( const PBProperties* a_pProperties
 		pAnimationSet = FindAnimationSet( strName ).Get();
 	}
 
-	if ( !pAnimationSet )
+	if ( !pAnimationSet.Get() )
 	{
 		// Create new animation set
 		pAnimationSet = new ( AMemory::GetMemBlock( AMemory::POOL_Misc ) ) ANamedAnimationSet();
@@ -172,7 +182,7 @@ TBOOL AAnimatableObjectType::LoadAnimationSet( const PBProperties* a_pProperties
 	TVALIDPTR( pAnimationSet );
 	TVALIDPTR( pSkeleton );
 
-	if ( pAnimationSet )
+	if ( a_pProperties )
 		return pAnimationSet->CreateFromProperties( a_pProperties, pSkeleton );
 
 	return TTRUE;

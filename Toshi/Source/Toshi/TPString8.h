@@ -14,6 +14,7 @@
 
 #define TPSTRING8_DECLARE( STR ) extern Toshi::TPString8 g_str_##STR
 #define TPS8( STR )              ( g_str_##STR )
+#define TPS8D( STR )             ( Toshi::TPString8( STR ) )
 
 TOSHI_NAMESPACE_START
 
@@ -130,7 +131,7 @@ public:
 	    : m_pPtr( TNULL )
 	{}
 
-	TFORCEINLINE TPString8( const TCHAR* a_szString )
+	TFORCEINLINE explicit TPString8( const TCHAR* a_szString )
 	{
 		TUtil::GetTPStringPool()->Get( m_pPtr, a_szString, TNULL );
 	}

@@ -501,19 +501,19 @@ AWaveBank* ASoundManager::LoadWaveBankFromAsset( const Toshi::TString8& a_strNam
 
 	// Store wavebank library
 	auto      pWaveBankLibraryVal = pBankProperties->GetProperty( "library" );
-	TPString8 strWaveBankLibrary  = ( pWaveBankLibraryVal ) ? pWaveBankLibraryVal->GetTPString8() : TNULL;
+	TPString8 strWaveBankLibrary  = ( pWaveBankLibraryVal ) ? pWaveBankLibraryVal->GetTPString8() : TPString8();
 
 	// Store wavebank type
 	auto      pWaveBankTypeVal = pBankProperties->GetProperty( "type" );
-	TPString8 strWaveBankType  = ( pWaveBankTypeVal ) ? pWaveBankTypeVal->GetTPString8() : TNULL;
+	TPString8 strWaveBankType  = ( pWaveBankTypeVal ) ? pWaveBankTypeVal->GetTPString8() : TPString8();
 
 	// Store wavebank path
 	auto      pWaveBankPathVal = pBankProperties->GetProperty( "path" );
-	TPString8 strWaveBankPath  = ( pWaveBankPathVal ) ? pWaveBankPathVal->GetTPString8() : TNULL;
+	TPString8 strWaveBankPath  = ( pWaveBankPathVal ) ? pWaveBankPathVal->GetTPString8() : TPString8();
 
 	// Store wavebank extension
 	auto      pWaveBankExtensionVal = pBankProperties->GetProperty( "extension" );
-	TPString8 strWaveBankExtension  = ( pWaveBankExtensionVal ) ? pWaveBankExtensionVal->GetTPString8() : TNULL;
+	TPString8 strWaveBankExtension  = ( pWaveBankExtensionVal ) ? pWaveBankExtensionVal->GetTPString8() : TPString8();
 
 	// Create the actual wavebank from the parameters
 	AWaveBank* pWaveBank = AllocateWaveBank( strWaveWankBankName, strWaveBankLibrary, strWaveBankType, strWaveBankPath );

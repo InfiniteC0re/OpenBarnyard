@@ -97,7 +97,7 @@ TBOOL ANamedAnimation::Create( const PBProperties* a_pProperties, Toshi::TSkelet
 				break;
 			case 'N':
 				// Name
-				m_strExportedName = it->GetValue()->GetTPString8();
+				m_strName = it->GetValue()->GetTPString8();
 				break;
 			case 'R':
 				// Reverse

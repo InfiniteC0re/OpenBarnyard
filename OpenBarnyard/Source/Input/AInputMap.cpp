@@ -18,7 +18,7 @@ void AInputMap::LoadFromProperties( const PBProperties& a_rProperties )
 
 	for ( auto it = a_rProperties.Begin(); it != a_rProperties.End(); it++ )
 	{
-		auto eCommandCode = pInputManager->GetCommandCode( it->GetName().GetString() );
+		auto eCommandCode = pInputManager->GetCommandCode( Toshi::TPString8( it->GetName().GetString() ) );
 		auto pArray       = it->GetValue()->GetArray();
 
 		for ( TUINT i = 0; i < pArray->GetSize(); i++ )

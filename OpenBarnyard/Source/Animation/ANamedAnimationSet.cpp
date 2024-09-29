@@ -31,7 +31,7 @@ ANamedAnimationSet::ANamedAnimationSet( Toshi::T2Allocator* a_pAllocator )
 // $Barnyard: FUNCTION 005815e0
 ANamedAnimationSet::~ANamedAnimationSet()
 {
-	Delete();
+	Destroy();
 }
 
 TPSTRING8_DECLARE( Name );
@@ -103,7 +103,7 @@ TBOOL ANamedAnimationSet::CreateFromProperties( const PBProperties* a_pPropertie
 	return TTRUE;
 }
 
-void ANamedAnimationSet::Delete()
+void ANamedAnimationSet::Destroy()
 {
 	// Delete all named animations
 	while ( !m_mapAnimations.IsEmpty() )

@@ -176,7 +176,7 @@ public:
 	void PushBack( const T& item = T() )
 	{
 		TASSERT( m_iNumElements < CAPACITY );
-		AtUnsafe( m_iNumElements++ ) = item;
+		TConstruct<T>( &AtUnsafe( m_iNumElements++ ), item );
 	}
 
 	void PopBack()
@@ -198,7 +198,7 @@ public:
 		TSIZE i;
 		for ( i = 0; i < a_rcCopyFrom.Size(); i++ )
 		{
-			AtUnsafe( i ) = a_rcCopyFrom.At( i );
+			TConstruct<T>( &AtUnsafe( i ), a_rcCopyFrom.At( i ) );
 		}
 
 		if ( Size() > a_rcCopyFrom.Size() )

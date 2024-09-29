@@ -24,7 +24,11 @@ TDEFINE_CLASS( AModelInstance );
 
 // $Barnyard: FUNCTION 0060fef0
 AModel::AModel( const TPString8& a_rName, TTRB* a_pTRB )
-    : m_Name( a_rName ), m_uiID( ms_uiNumCreated ), m_pManagedModel( TNULL ), m_Vec1( TVector3::VEC_ZERO ), m_Vec2( TVector3::VEC_ZERO )
+    : m_Name( a_rName )
+    , m_uiID( ms_uiNumCreated )
+    , m_pManagedModel( TNULL )
+    , m_Vec1( TVector3::VEC_ZERO )
+    , m_Vec2( TVector3::VEC_ZERO )
 {
 	m_pManagedModel = AModel::Create( a_rName, a_pTRB );
 
