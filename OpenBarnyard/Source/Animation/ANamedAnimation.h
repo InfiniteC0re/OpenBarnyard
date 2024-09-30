@@ -54,5 +54,5 @@ private:
 	TFLOAT                        m_fSpeed;
 	TFLOAT                        m_fDuration;
 	Toshi::T2Allocator*           m_pAllocator;
-	Toshi::T2DynamicVector<void*> m_vecUnk;
+	Toshi::T2DynamicVector<void*> m_vecBreakpoints;
 };

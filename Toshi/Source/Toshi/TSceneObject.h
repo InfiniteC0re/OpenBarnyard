@@ -19,9 +19,10 @@ public:
 	TBOOL Render( TUINT a_uiClipFlags, const TVector3& a_rBounding );
 	TBOOL RenderIfVisible();
 
-	TManagedModel*    GetModelRef() { return m_pModelRef; }
-	TModelInstance*   GetInstance() { return m_pModelInstance; }
-	TTransformObject& GetTransform() { return m_TransformObject; }
+	TManagedModel*     GetModelRef() { return m_pModelRef; }
+	TModelInstance*    GetInstance() { return m_pModelInstance; }
+	TSkeletonInstance* GetSkeletonInstance() { return GetInstance()->GetSkeletonInstance(); }
+	TTransformObject&  GetTransform() { return m_TransformObject; }
 
 	void EnableSkeletonUpdate() { m_eFlags |= 1; }
 	void DisableSkeletonUpdate() { m_eFlags &= ~1; }

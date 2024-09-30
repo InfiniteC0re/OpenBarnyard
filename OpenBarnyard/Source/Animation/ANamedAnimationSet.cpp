@@ -121,6 +121,12 @@ void ANamedAnimationSet::Destroy()
 	m_strName      = TPString8();
 }
 
+// $Barnyard: FUNCTION 00580d50
+TBOOL ANamedAnimationSet::AddSoundBreakpoint( ASoundBreakpoint* a_pSoundBreakpoint, Toshi::TSkeleton* a_pSkeleton )
+{
+	return TTRUE;
+}
+
 // $Barnyard: FUNCTION 00581700
 ANamedAnimation* ANamedAnimationSet::LoadNamedAnimation( const PBProperties* a_pProperties, Toshi::TSkeleton* a_pSkeleton )
 {

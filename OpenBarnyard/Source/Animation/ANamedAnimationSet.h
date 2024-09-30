@@ -1,6 +1,6 @@
 #pragma once
 #include "ANamedAnimation.h"
-#include "AToshiAnimationRef.h"
+#include "ASoundBreakpoint.h"
 
 #include <Toshi/TRefCounted.h>
 #include <Toshi/TPString8.h>
@@ -34,6 +34,8 @@ public:
 
 	TBOOL CreateFromProperties( const PBProperties* a_pProperties, Toshi::TSkeleton* a_pSkeleton );
 	void  Destroy();
+
+	TBOOL AddSoundBreakpoint( ASoundBreakpoint* a_pSoundBreakpoint, Toshi::TSkeleton* a_pSkeleton );
 
 	const Toshi::TPString8& GetName() const { return m_strName; }
 

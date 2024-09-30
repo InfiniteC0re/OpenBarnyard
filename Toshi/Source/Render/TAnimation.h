@@ -22,7 +22,7 @@ class TSkeletonInstance;
 class TAnimation : public TQList<TAnimation>::TNode
 {
 public:
-	using Flags = uint8_t;
+	using Flags = TUINT16;
 	enum Flags_ : Flags
 	{
 		Flags_None                = 0,
@@ -84,6 +84,8 @@ private:
 	float              m_fSeqTime;
 	float              m_fBlendInSpeed;
 	float              m_fBlendOutSpeed;
+
+	friend class TSkeletonInstance;
 };
 
 class TKeyframeLibrary : public TDList<TKeyframeLibrary>::TNode

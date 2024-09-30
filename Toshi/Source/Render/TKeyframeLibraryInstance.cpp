@@ -53,6 +53,7 @@ TKeyframeLibrary* TKeyframeLibraryInstance::CreateEx( TKeyframeLibrary* a_pLibra
 	return pOldLibrary;
 }
 
+// $Barnyard: FUNCTION 006c9c80
 void TKeyframeLibraryInstance::Destroy()
 {
 	if ( m_pLibrary != TNULL )

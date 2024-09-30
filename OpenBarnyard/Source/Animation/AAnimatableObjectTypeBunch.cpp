@@ -50,7 +50,7 @@ TBOOL AAnimatableObjectTypeBunch::CreateFromProperties( const PBProperties* a_pP
 	return TTRUE;
 }
 
-void AAnimatableObjectTypeBunch::Unknown( AAnimatableObject* a_pAnimatableObject )
+void AAnimatableObjectTypeBunch::OnAnimatableObjectCreated( AAnimatableObject* a_pAnimatableObject )
 {
 	TASSERT( !"Not implemented" );
 }

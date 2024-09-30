@@ -28,8 +28,6 @@ void TSkeleton::Delete()
 		instance.SetSCount( instance.GetSCount() - 1 );
 		instance.SetLibrary( TNULL );
 	}
-
-	//tfree(this);
 }
 
 TBOOL TSkeleton::Create( TUINT32 param_1 )
@@ -38,11 +36,13 @@ TBOOL TSkeleton::Create( TUINT32 param_1 )
 	return TFALSE;
 }
 
+// $Barnyard: FUNCTION 006ca760
 TSkeletonInstance* TSkeleton::CreateInstance( TBOOL a_bSetBasePose )
 {
-	if ( TREINTERPRETCAST( TINT, m_fnQuatLerp ) < 3 )
+	// Set quaternion interpolation method if it's not already set
+	if ( (QUATINTERP)m_fnQuatLerp <= QUATINTERP_Nlerp )
 	{
-		SetQInterpFn( TREINTERPRETCAST( QUATINTERP, m_fnQuatLerp ) );
+		SetQInterpFn( (QUATINTERP)m_fnQuatLerp );
 	}
 
 	auto               iAutoBoneCount = GetAutoBoneCount();
@@ -57,7 +57,7 @@ TSkeletonInstance* TSkeleton::CreateInstance( TBOOL a_bSetBasePose )
 	pInstance->m_iSize                  = iInstanceSize;
 	pInstance->m_iBaseAnimationCount    = 0;
 	pInstance->m_iOverlayAnimationCount = 0;
-	pInstance->m_iFlags                 = 0;
+	pInstance->m_eFlags                 = 0;
 	pInstance->m_pBones                 = TREINTERPRETCAST( TSkeletonInstanceBone*, this + 1 );
 	pInstance->m_pAnimations            = TREINTERPRETCAST( TAnimation*, this + 1 ) + iAutoBoneCount;
 	pInstance->m_fTotalWeight           = 0.0f;
@@ -90,6 +90,7 @@ void TSkeleton::SetQInterpFn( QUATINTERP a_eQuatInterp )
 		m_fnQuatLerp = TQuaternion::Nlerp;
 }
 
+// $Barnyard: FUNCTION 00610e40
 TINT TSkeleton::GetBoneID( const TCHAR* a_szBoneName, TUINT32 a_iLength )
 {
 	if ( a_iLength == 0 )
@@ -106,6 +107,7 @@ TINT TSkeleton::GetBoneID( const TCHAR* a_szBoneName, TUINT32 a_iLength )
 	return -1;
 }
 
+// $Barnyard: FUNCTION 006c9d80
 TINT TSkeleton::GetSequenceID( const TCHAR* a_szSequenceName, TUINT32 a_iLength )
 {
 	if ( a_iLength == 0 )
@@ -122,6 +124,7 @@ TINT TSkeleton::GetSequenceID( const TCHAR* a_szSequenceName, TUINT32 a_iLength 
 	return -1;
 }
 
+// $Barnyard: FUNCTION 006cb420
 void TSkeletonInstance::UpdateTime( TFLOAT a_fDeltaTime )
 {
 	if ( !m_BaseAnimations.IsEmpty() || ( !m_OverlayAnimations.IsEmpty() && m_iLastUpdateTimeFrame != g_oSystemManager.GetFrameCount() ) )
@@ -134,7 +137,6 @@ void TSkeletonInstance::UpdateTime( TFLOAT a_fDeltaTime )
 		{
 			if ( pAnim->UpdateTime( a_fDeltaTime ) )
 			{
-				m_pSkeleton->GetSequence( pAnim->GetSequence() );
 				m_fTotalWeight += pAnim->GetWeight();
 			}
 		}
@@ -145,14 +147,16 @@ void TSkeletonInstance::UpdateTime( TFLOAT a_fDeltaTime )
 			pAnim->UpdateTime( a_fDeltaTime );
 		}
 
-		if ( HASANYFLAG( m_iFlags, 1 ) )
+		if ( HASANYFLAG( m_eFlags, 1 ) )
 		{
-			m_iFlags &= ~1;
+			m_eFlags &= ~1;
 			UpdateState( TFALSE );
 		}
 	}
 }
 
+// $Barnyard: FUNCTION 006ca960
+// Note: the current implementation is taken from de Blob
 void TSkeletonInstance::UpdateState( TBOOL a_bForceUpdate )
 {
 	if ( ( a_bForceUpdate || m_iLastUpdateStateFrame != g_oSystemManager.GetFrameCount() ) &&
@@ -332,6 +336,7 @@ void TSkeletonInstance::UpdateState( TBOOL a_bForceUpdate )
 	}
 }
 
+// $Barnyard: FUNCTION 006c9ec0
 TMatrix44* TSkeletonInstance::GetBoneTransformCurrent( TINT a_iBone, TMatrix44& a_rMatrix )
 {
 	if ( a_iBone < m_pSkeleton->GetAutoBoneCount() )
@@ -345,11 +350,42 @@ TMatrix44* TSkeletonInstance::GetBoneTransformCurrent( TINT a_iBone, TMatrix44& 
 	return &a_rMatrix;
 }
 
-void TSkeletonInstance::RemoveAnimation( TAnimation* a_pAnimation, TFLOAT a_fValue )
+// $Barnyard: FUNCTION 006ca860
+void TSkeletonInstance::RemoveAnimation( TAnimation* a_pAnimation, TFLOAT a_fBlendOutSpeed )
 {
+	if ( !a_pAnimation )
+		return;
+
 	TASSERT( TTRUE == a_pAnimation->IsActive() );
 
-	TIMPLEMENT();
+	if ( a_fBlendOutSpeed > 0.0f )
+	{
+		a_pAnimation->m_fDestWeight    = 0.0f;
+		a_pAnimation->m_fBlendOutSpeed = a_fBlendOutSpeed;
+		a_pAnimation->m_eMode          = TAnimation::MODE_UNK3;
+		return;
+	}
+
+	if ( a_pAnimation->m_eFlags & TAnimation::Flags_UpdateStateOnRemove )
+	{
+		a_pAnimation->m_eFlags &= ~TAnimation::Flags_UpdateStateOnRemove;
+		a_pAnimation->m_fDestWeight    = 1.0f;
+		a_pAnimation->m_fBlendOutSpeed = 1.0f;
+		a_pAnimation->m_eMode          = TAnimation::MODE_UNK3;
+		m_eFlags |= 1;
+		return;
+	}
+
+	if ( a_pAnimation->GetSequencePtr()->IsOverlay() )
+		m_iOverlayAnimationCount -= 1;
+	else
+		m_iBaseAnimationCount -= 1;
+
+	a_pAnimation->m_eFlags = TAnimation::Flags_None;
+
+	// Unlink the animation and add it to the list of free animations
+	a_pAnimation->Remove();
+	m_FreeAnimations.PushFront( a_pAnimation );
 }
 
 void TSkeletonInstance::SetStateFromBasePose()
@@ -365,6 +401,16 @@ void TSkeletonInstance::Delete()
 {
 	m_pSkeleton->m_iInstanceCount--;
 	delete this;
+}
+
+// $Barnyard: FUNCTION 006cb3a0
+void TSkeletonInstance::RemoveAllAnimations()
+{
+	while ( !m_BaseAnimations.IsEmpty() )
+		RemoveAnimation( m_BaseAnimations.Begin(), 0.0f );
+
+	while ( !m_OverlayAnimations.IsEmpty() )
+		RemoveAnimation( m_OverlayAnimations.Begin(), 0.0f );
 }
 
 TFLOAT TSkeletonSequenceBone::GetKeyPair( TINT a_iCurrentAnimTime, TUINT16& a_rCurrentKeyIndex, TUINT16& a_rLerpFromIndex, TUINT16& a_rLerpToIndex )

@@ -46,6 +46,9 @@ TBOOL AGameSystemManager::OnCreate()
 
 	auto pScheduler = g_oSystemManager.GetScheduler();
 	pScheduler->CreateTask<AAnimatableObjectManager>( this )->Create();
+
+	AAnimatableObjectManager::GetSingleton()->LoadAnimSoundBreakpoints( "Data/Sound/AnimSoundBP.trb" );
+
 	pScheduler->CreateTask<ACameraManager>( this )->Create();
 	pScheduler->CreateTask<AMusicManager>( this )->Create();
 

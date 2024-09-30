@@ -23,14 +23,17 @@ public:
 
 	virtual TBOOL CreateFromProperties( const PBProperties* a_pProperties, const Toshi::TPString8& a_rcName );
 	virtual TBOOL Create( const Toshi::TPString8& a_rcName );
-	virtual void  Unknown( AAnimatableObject* a_pAnimatableObject );
+	virtual void  OnAnimatableObjectCreated( AAnimatableObject* a_pAnimatableObject );
 
 	void Destroy();
 
-	ANamedAnimationSetRef FindAnimationSet( const Toshi::TPString8& a_rcName );
-	ANamedAnimationSetRef GetAnimationSet( TSIZE a_iIndex );
+	ANamedAnimationSetRef FindAnimationSet( const Toshi::TPString8& a_rcName ) const;
+	ANamedAnimationSetRef GetAnimationSet( TSIZE a_iIndex ) const;
+	ANamedAnimationSetRef GetDefaultAnimationSet() const;
+	TSIZE                 GetNumAnimationSets() const;
 
 	const Toshi::TPString8& GetName() const { return m_strName; }
+	AModel*                 GetModel() const { return m_pAModel; }
 
 private:
 	TBOOL LoadAnimationSet( const PBProperties* a_pProperties );

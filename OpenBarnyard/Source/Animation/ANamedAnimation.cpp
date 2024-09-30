@@ -11,7 +11,7 @@ TOSHI_NAMESPACE_USING
 
 // $Barnyard: FUNCTION 00580520
 ANamedAnimation::ANamedAnimation( T2Allocator* a_pAllocator )
-    : m_vecUnk( a_pAllocator, 0, 0 )
+    : m_vecBreakpoints( a_pAllocator, 0, 0 )
 {
 	m_iSequenceId          = -1;
 	m_eFlags               = FLAGS_NONE;

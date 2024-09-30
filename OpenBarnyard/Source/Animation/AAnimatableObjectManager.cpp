@@ -14,12 +14,15 @@ TOSHI_NAMESPACE_USING
 
 TDEFINE_CLASS( AAnimatableObjectManager );
 
+Toshi::T2ObjectPool<AToshiAnimationRef, 100> g_oAnimationRefPool;
+
 static constexpr const TCHAR* MODELTYPES_DIR = "data\\modeltypes\\";
 
 // $Barnyard: FUNCTION 0057d5f0
+// $Barnyard: FUNCTION 0057d560
 AAnimatableObjectManager::AAnimatableObjectManager()
-    : m_pTRB( TNULL )
-    , m_Unk( 0 )
+    : m_pAnimSoundBPsTRB( TNULL )
+    , m_pSoundBreakpoints( TNULL )
 {
 }
 
@@ -27,15 +30,26 @@ AAnimatableObjectManager::AAnimatableObjectManager()
 // $Barnyard: FUNCTION 0057d680
 AAnimatableObjectManager::~AAnimatableObjectManager()
 {
-	if ( m_pTRB )
+	if ( m_pAnimSoundBPsTRB )
 	{
-		delete m_pTRB;
-		m_pTRB = TNULL;
-		m_Unk  = 0;
+		delete m_pAnimSoundBPsTRB;
+		m_pAnimSoundBPsTRB   = TNULL;
+		m_pSoundBreakpoints = TNULL;
 	}
 
-	m_ObjectTypes.DeleteAll();
-	m_UnkList.DeleteAll();
+	m_Types.DeleteAll();
+	m_AnimatableObjects.DeleteAll();
+}
+
+// $Barnyard: FUNCTION 0057d710
+AAnimatableObject* AAnimatableObjectManager::CreateAnimatableObject( AAnimatableObjectType* a_pObjectType, void* a_Unk1, TUINT a_eFlags )
+{
+	AAnimatableObject* pObject = new AAnimatableObject();
+
+	m_AnimatableObjects.PushBack( pObject );
+	pObject->Create( a_pObjectType, a_Unk1, a_eFlags );
+
+	return pObject;
 }
 
 // $Barnyard: FUNCTION 0057e8c0
@@ -131,7 +145,7 @@ void AAnimatableObjectManager::LoadAnimObjType( const TCHAR* a_szName, const PBP
 // $Barnyard: FUNCTION 0057d820
 AAnimatableObjectType* AAnimatableObjectManager::FindType( const Toshi::TPString8& a_rcName )
 {
-	T2_FOREACH( m_ObjectTypes, it )
+	T2_FOREACH( m_Types, it )
 	{
 		if ( it->GetName() == a_rcName )
 			return it;
@@ -154,6 +168,29 @@ void AAnimatableObjectManager::DeleteType( const Toshi::TPString8& a_rcName )
 	}
 }
 
+// $Barnyard: FUNCTION 0057d390
+TBOOL AAnimatableObjectManager::LoadAnimSoundBreakpoints( const TCHAR* a_szFilePath )
+{
+	TASSERT( m_pAnimSoundBPsTRB == TNULL );
+
+	if ( a_szFilePath )
+	{
+		m_pAnimSoundBPsTRB = new TTRB();
+
+		if ( m_pAnimSoundBPsTRB->Load( a_szFilePath ) == TTRB::ERROR_OK )
+		{
+			m_pSoundBreakpoints = m_pAnimSoundBPsTRB->CastSymbol<ASoundBreakpointsTable>( "Main" );
+			TVALIDPTR( m_pSoundBreakpoints );
+		}
+		else
+		{
+			TASSERT( !"Unable to load info about sound breakpoints" );
+		}
+	}
+
+	return TTRUE;
+}
+
 TBOOL AAnimatableObjectManager::OnUpdate( TFLOAT a_fDeltaTime )
 {
 	TIMPLEMENT();
@@ -163,8 +200,36 @@ TBOOL AAnimatableObjectManager::OnUpdate( TFLOAT a_fDeltaTime )
 // $Barnyard: FUNCTION 0057e3e0
 void AAnimatableObjectManager::FUN_0057e3e0( AAnimatableObjectType* a_pObjectType )
 {
-	if ( m_Unk )
+	if ( m_pSoundBreakpoints )
 	{
-		TASSERT( !"Not implemented" );
+		// Extract model name from the path
+		const TCHAR* pszModelName = a_pObjectType->GetModel()->GetName().GetString();
+		TINT         iModelNameStartPos = T2String8::Length( pszModelName );
+		
+		while ( iModelNameStartPos > 0 && ( pszModelName[ iModelNameStartPos - 1 ] != '\\' &&
+											pszModelName[ iModelNameStartPos - 1 ] != '/' ) )
+		{
+			iModelNameStartPos--;
+		}
+
+		TCHAR szModelName[ 512 ];
+		T2String8::Copy( szModelName, pszModelName + iModelNameStartPos );
+
+		TSkeleton* pSkeleton = a_pObjectType->GetModel()->GetSkeleton();
+
+		for ( TUINT i = 0; i < m_pSoundBreakpoints->uiCount; i++ )
+		{
+			ASoundBreakpoint* pSoundBreakpoint = &m_pSoundBreakpoints->pBreakpoints[ i ];
+
+			if ( !T2String8::CompareNoCase( szModelName, pSoundBreakpoint->pszModelName ) )
+			{
+				for ( TSIZE k = 0; k < a_pObjectType->GetNumAnimationSets(); k++ )
+				{
+					ANamedAnimationSetRef pAnimationSet = a_pObjectType->GetAnimationSet( k );
+
+					pAnimationSet->AddSoundBreakpoint( pSoundBreakpoint, pSkeleton );
+				}
+			}
+		}
 	}
 }

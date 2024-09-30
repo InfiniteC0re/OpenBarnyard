@@ -17,7 +17,7 @@ public:
 
 	// AAnimatableObjectType
 	virtual TBOOL CreateFromProperties( const PBProperties* a_pProperties, const Toshi::TPString8& a_rcName ) OVERRIDE;
-	virtual void  Unknown( AAnimatableObject* a_pAnimatableObject ) OVERRIDE;
+	virtual void  OnAnimatableObjectCreated( AAnimatableObject* a_pAnimatableObject ) OVERRIDE;
 
 private:
 	TINT             m_iBunchCount;

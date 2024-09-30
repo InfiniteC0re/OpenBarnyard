@@ -402,3 +402,11 @@ void AModelInstance::SetSkeletonUpdating( TBOOL a_bUpdating )
 		m_eFlags &= ~Flags_UpdatingSkeleton;
 	}
 }
+
+void AModelInstance::SetReceivesLight( TBOOL a_bReceives )
+{
+	if ( a_bReceives )
+		m_eFlags |= Flags_ReceivesLight;
+	else
+		m_eFlags &= ~Flags_ReceivesLight;
+}

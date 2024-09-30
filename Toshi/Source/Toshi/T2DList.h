@@ -230,6 +230,17 @@ public:
 		return itNext;
 	}
 
+	TBOOL Exists( T* a_pItem )
+	{
+		for ( auto it = Begin(); it != End(); it++ )
+		{
+			if ( it == a_pItem )
+				return TTRUE;
+		}
+
+		return TFALSE;
+	}
+
 	TBOOL IsEmpty() const
 	{
 		return !m_oRoot.IsLinked();
@@ -296,3 +307,6 @@ private:
 };
 
 TOSHI_NAMESPACE_END
+
+// $Barnyard: FUNCTION 006c8140
+// Toshi::T2DList::Exists

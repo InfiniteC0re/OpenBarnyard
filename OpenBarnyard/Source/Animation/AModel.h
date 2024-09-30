@@ -41,6 +41,7 @@ public:
 	AModelInstance( AModel* a_pModel, Toshi::TSceneObject* a_pSceneObject, TBOOL a_bEnableSkeletonUpdate );
 
 	void SetSkeletonUpdating( TBOOL a_bUpdating );
+	void SetReceivesLight( TBOOL a_bReceives );
 
 	AModel*              GetModel() const { return m_pModel; }
 	Toshi::TSceneObject* GetSceneObject() const { return m_pSceneObject; }

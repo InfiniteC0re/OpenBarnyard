@@ -190,7 +190,8 @@ public:
 	void       UpdateState( TBOOL a_bForceUpdate );
 	TMatrix44* GetBoneTransformCurrent( TINT a_iBone, TMatrix44& a_rMatrix );
 
-	void RemoveAnimation( TAnimation* a_pAnimation, TFLOAT a_fValue );
+	void RemoveAnimation( TAnimation* a_pAnimation, TFLOAT a_fBlendOutSpeed );
+	void RemoveAllAnimations();
 
 	void SetStateFromBasePose();
 
@@ -209,7 +210,7 @@ public:
 	inline static BoneCache g_aBonesCaches[ TANIMATION_MAXBONES ];
 
 private:
-	TINT                   m_iFlags;
+	TINT                   m_eFlags;
 	TUINT32                m_iSize;
 	TSkeleton*             m_pSkeleton;
 	TINT16                 m_iBaseAnimationCount;
