@@ -56,7 +56,7 @@ TBOOL T2CommandLine::HasParameter( const TCHAR* a_pszParameter, TINT* a_pIndex /
 		if ( it.Get() == a_pszParameter )
 		{
 			if ( a_pIndex )
-				*a_pIndex = it.GetCurrentIndex();
+				*a_pIndex = it.Index();
 
 			return TTRUE;
 		}

@@ -10,7 +10,7 @@ TBOOL AAssetUnpacker::Unpack( AAssetPack& a_rAssetPack, const Toshi::TString8& a
 		auto  pTRB   = a_rAssetPack.GetTRBFile();
 		auto& assets = a_rAssetPack.GetAssets();
 
-		for ( TUINT i = 0; i < assets.Size(); i++ )
+		for ( TINT i = 0; i < assets.Size(); i++ )
 		{
 			auto pAsset = &assets[ i ];
 

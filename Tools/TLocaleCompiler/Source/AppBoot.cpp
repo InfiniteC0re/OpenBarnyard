@@ -84,7 +84,7 @@ int main( int argc, char** argv )
 
 				TARRAY_FOREACH( foundStrings, str )
 				{
-					auto iIndex = str.GetCurrentIndex();
+					auto iIndex = str.Index();
 					pOutStack->Alloc<TWCHAR>( &pLocaleStrings->Strings[ iIndex ], str->Length() + 1 );
 
 					T2String16::Copy( pLocaleStrings->Strings[ iIndex ], str.Get() );

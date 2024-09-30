@@ -132,7 +132,7 @@ void AAnimatableObjectType::Destroy()
 // $Barnyard: FUNCTION 0057ef40
 ANamedAnimationSetRef AAnimatableObjectType::FindAnimationSet( const Toshi::TPString8& a_rcName ) const
 {
-	for ( TSIZE i = 0; i < m_vecAnimationSets.Size(); i++ )
+	for ( TINT i = 0; i < m_vecAnimationSets.Size(); i++ )
 	{
 		if ( m_vecAnimationSets[ i ]->GetName() == a_rcName )
 		{
@@ -144,7 +144,7 @@ ANamedAnimationSetRef AAnimatableObjectType::FindAnimationSet( const Toshi::TPSt
 }
 
 // $Barnyard: FUNCTION 0057efb0
-ANamedAnimationSetRef AAnimatableObjectType::GetAnimationSet( TSIZE a_iIndex ) const
+ANamedAnimationSetRef AAnimatableObjectType::GetAnimationSet( TINT a_iIndex ) const
 {
 	TASSERT( a_iIndex < MAX_ANIMATION_SETS );
 
@@ -160,7 +160,7 @@ ANamedAnimationSetRef AAnimatableObjectType::GetDefaultAnimationSet() const
 	return GetAnimationSet( 0 );
 }
 
-TSIZE AAnimatableObjectType::GetNumAnimationSets() const
+TINT AAnimatableObjectType::GetNumAnimationSets() const
 {
 	return m_vecAnimationSets.Size();
 }

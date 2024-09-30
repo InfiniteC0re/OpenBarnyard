@@ -44,7 +44,7 @@ TBOOL AAssetPack::Load( const char* a_szFileName )
 			if ( !pFound )
 			{
 				m_Assets.PushBack( { .Name = TPS8D( szAssetFileName ), .Format = "trb", .pTRB = &m_TRBFile, .pStack = pStack } );
-				auto pAsset = &m_Assets.Back();
+				auto pAsset = m_Assets.Back();
 
 				TINT iAssetFileNameLength = TStringManager::String8Length( szAssetFileName );
 

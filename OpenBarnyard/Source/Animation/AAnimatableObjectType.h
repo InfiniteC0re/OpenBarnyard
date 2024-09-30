@@ -28,9 +28,9 @@ public:
 	void Destroy();
 
 	ANamedAnimationSetRef FindAnimationSet( const Toshi::TPString8& a_rcName ) const;
-	ANamedAnimationSetRef GetAnimationSet( TSIZE a_iIndex ) const;
+	ANamedAnimationSetRef GetAnimationSet( TINT a_iIndex ) const;
 	ANamedAnimationSetRef GetDefaultAnimationSet() const;
-	TSIZE                 GetNumAnimationSets() const;
+	TINT                  GetNumAnimationSets() const;
 
 	const Toshi::TPString8& GetName() const { return m_strName; }
 	AModel*                 GetModel() const { return m_pAModel; }

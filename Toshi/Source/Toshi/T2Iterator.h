@@ -57,6 +57,16 @@ public:
 		return m_pPtr;
 	}
 
+	T& operator*() noexcept
+	{
+		return *m_pPtr;
+	}
+
+	const T& operator*() const noexcept
+	{
+		return *m_pPtr;
+	}
+
 	T2Iterator Next() const
 	{
 		TASSERT( m_pPtr != TNULL );

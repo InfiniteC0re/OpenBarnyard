@@ -28,7 +28,7 @@ public:
 
 	AGameState* GetCurrentState()
 	{
-		return m_oStates.Back();
+		return *m_oStates.Back();
 	}
 
 	AGameState* GetPreviousState()

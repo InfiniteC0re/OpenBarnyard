@@ -36,7 +36,7 @@ public:
 	void LoadAnimObjType( const Toshi::TPString8& a_rcName, const PBProperties* a_pProperties, TBOOL a_bFlag );
 
 	AAnimatableObjectType* FindType( const Toshi::TPString8& a_rcName );
-	void DeleteType( const Toshi::TPString8& a_rcName );
+	void                   DeleteType( const Toshi::TPString8& a_rcName );
 
 	TBOOL LoadAnimSoundBreakpoints( const TCHAR* a_szFilePath );
 

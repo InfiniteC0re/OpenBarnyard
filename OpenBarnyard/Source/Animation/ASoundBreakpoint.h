@@ -14,6 +14,6 @@ struct ASoundBreakpoint
 // Stored in TRB files
 struct ASoundBreakpointsTable
 {
-	TUINT32 uiCount;
+	TUINT32           uiCount;
 	ASoundBreakpoint* pBreakpoints;
 };

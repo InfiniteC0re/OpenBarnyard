@@ -15,12 +15,12 @@ protected:
 		m_poElements   = ( a_iInitialSize > 0 ) ? a_pAllocator->Malloc( a_iInitialSize * a_iElementSize ) : TNULL;
 	}
 
-	T2GenericDynamicVector( void* a_poElements, TINT a_iMaxSize, TINT a_iNumElements )
+	T2GenericDynamicVector( void* a_poElements, TINT a_iInitialSize, TINT a_iNumElements )
 	{
 		m_pAllocator   = TNULL;
 		m_iGrowSize    = 0;
 		m_iNumElements = a_iNumElements;
-		m_iAllocSize   = a_iMaxSize;
+		m_iAllocSize   = a_iInitialSize;
 		m_poElements   = a_poElements;
 	}
 
@@ -45,98 +45,129 @@ public:
 		friend T2DynamicVector;
 
 	public:
-		Iterator()
-		{
-			m_iIndex  = 0;
-			m_pVector = TNULL;
-		}
+		constexpr Iterator()
+		    : m_iIndex( 0 ), m_pVector( TNULL ) {}
+		constexpr Iterator( T2DynamicVector* a_pVector )
+		    : m_iIndex( 0 ), m_pVector( a_pVector ) {}
+		constexpr Iterator( T2DynamicVector& a_rVector )
+		    : m_iIndex( 0 ), m_pVector( &a_rVector ) {}
+		constexpr Iterator( TINT a_iIndex, T2DynamicVector* a_pVector )
+		    : m_iIndex( a_iIndex ), m_pVector( a_pVector ) {}
+		constexpr Iterator( const Iterator& a_rOther )
+		    : m_iIndex( a_rOther.m_iIndex ), m_pVector( a_rOther.m_pVector ) {}
 
-		Iterator( const Iterator& other )
-		{
-			m_pVector = other.m_pVector;
-			m_iIndex  = 0;
-		}
-
-		Iterator( T2DynamicVector& a_pVector )
-		{
-			m_iIndex  = 0;
-			m_pVector = &a_pVector;
-		}
-
-		Iterator( TINT a_iIndex, T2DynamicVector& a_pVector )
-		{
-			m_iIndex  = a_iIndex;
-			m_pVector = &a_pVector;
-		}
-
-		void SetCurrentIndex( TINT a_iIndex ) const
-		{
-			TASSERT( m_pVector );
-			TASSERT( a_iIndex < m_pVector->Size() );
-			m_iIndex = a_iIndex;
-		}
-
-		TINT GetCurrentIndex() const
+		constexpr TINT Index() const
 		{
 			return m_iIndex;
 		}
 
-		TINT& IncrementSafe()
+		TBOOL IsValid() const
 		{
-			m_iIndex++;
-			TASSERT( m_pVector );
-
-			if ( m_pVector->m_iNumElements <= m_iIndex || m_iIndex == 0 )
-				m_iIndex = -1;
-
-			return m_iIndex;
+			return *this != m_pVector->End();
 		}
 
-		void Push( const T& element )
-		{
-			TASSERT( m_pVector );
-			m_pVector->Push( element );
-		}
-
-		TBOOL IsOver() const
-		{
-			return *this == m_pVector->End();
-		}
-
-		T& Current()
+		T* Get() noexcept
 		{
 			TASSERT( m_iIndex >= 0 );
 			TASSERT( m_pVector );
-			TASSERT( m_iIndex < m_pVector->m_iNumElements );
-			return m_pVector->At( m_iIndex );
+			return &m_pVector->At( m_iIndex );
 		}
 
-		const T& Current() const
+		const T* Get() const noexcept
 		{
 			TASSERT( m_iIndex >= 0 );
 			TASSERT( m_pVector );
-			TASSERT( m_iIndex < m_pVector->m_iNumElements );
+			return &m_pVector->At( m_iIndex );
+		}
+
+		T& Value()
+		{
+			TASSERT( m_iIndex >= 0 );
+			TASSERT( m_pVector );
 			return m_pVector->At( m_iIndex );
+		}
+
+		const T& Value() const
+		{
+			TASSERT( m_iIndex >= 0 );
+			TASSERT( m_pVector );
+			return m_pVector->At( m_iIndex );
+		}
+
+		Iterator Next() const
+		{
+			Iterator temp = *this;
+			temp.m_iIndex += 1;
+			return temp;
+		}
+
+		Iterator Prev() const
+		{
+			Iterator temp = *this;
+			temp.m_iIndex -= 1;
+			return temp;
+		}
+
+		operator T*()
+		{
+			return &Value();
+		}
+
+		operator const T*() const
+		{
+			return &Value();
 		}
 
 		T* operator->()
 		{
-			return &Current();
+			return &Value();
 		}
 
 		const T* operator->() const
 		{
-			return &Current();
+			return &Value();
 		}
 
-		TBOOL operator==( const Iterator& a_rOther ) const
+		T& operator*() noexcept
 		{
-			return m_iIndex == a_rOther.m_iIndex && m_pVector == a_rOther.m_pVector;
+			return Value();
 		}
 
-		TBOOL operator!=( const Iterator& a_rOther ) const
+		const T& operator*() const noexcept
 		{
-			return m_iIndex != a_rOther.m_iIndex || m_pVector != a_rOther.m_pVector;
+			return Value();
+		}
+
+		TBOOL operator==( const Iterator& a_rOther ) const noexcept
+		{
+			return a_rOther.m_pVector == m_pVector && a_rOther.m_iIndex == m_iIndex;
+		}
+
+		TBOOL operator>( const Iterator& a_rOther ) const noexcept
+		{
+			return a_rOther.m_pVector == m_pVector && a_rOther.m_iIndex > m_iIndex;
+		}
+
+		TBOOL operator>=( const Iterator& a_rOther ) const noexcept
+		{
+			return a_rOther.m_pVector == m_pVector && a_rOther.m_iIndex >= m_iIndex;
+		}
+
+		TBOOL operator<( const Iterator& a_rOther ) const noexcept
+		{
+			return a_rOther.m_pVector == m_pVector && a_rOther.m_iIndex < m_iIndex;
+		}
+
+		TBOOL operator<=( const Iterator& a_rOther ) const noexcept
+		{
+			return a_rOther.m_pVector == m_pVector && a_rOther.m_iIndex <= m_iIndex;
+		}
+
+		constexpr Iterator& operator=( const Iterator& a_rOther ) noexcept
+		{
+			m_iIndex  = a_rOther.m_iIndex;
+			m_pVector = a_rOther.m_pVector;
+			return *this;
 		}
 
 		Iterator& operator++()
@@ -181,12 +212,12 @@ public:
 	};
 
 public:
-	constexpr T2DynamicVector( T2Allocator* a_pAllocator, TINT a_iMaxSize, TINT a_iGrowSize )
-	    : T2GenericDynamicVector( a_pAllocator, a_iMaxSize, a_iGrowSize, sizeof( T ) )
+	constexpr T2DynamicVector( T2Allocator* a_pAllocator = GetGlobalAllocator(), TINT a_iInitialSize = 0, TINT a_iGrowSize = -1 )
+	    : T2GenericDynamicVector( a_pAllocator, a_iInitialSize, a_iGrowSize, sizeof( T ) )
 	{}
 
-	constexpr T2DynamicVector( T* a_poElements, TINT a_iMaxSize, TINT a_iNumElements )
-	    : T2GenericDynamicVector( a_poElements, a_iMaxSize, a_iNumElements )
+	constexpr T2DynamicVector( T* a_poElements, TINT a_iInitialSize, TINT a_iNumElements )
+	    : T2GenericDynamicVector( a_poElements, a_iInitialSize, a_iNumElements )
 	{}
 
 	~T2DynamicVector()
@@ -194,13 +225,25 @@ public:
 		Clear();
 
 		if ( m_pAllocator )
-		{
 			Reallocate( 0, sizeof( T ) );
-		}
 		else
-		{
 			m_poElements = TNULL;
-		}
+	}
+
+	Iterator InsertBefore( Iterator a_itInsertBefore, const T& a_rcItem = T() )
+	{
+		InsertGap( a_itInsertBefore.Index(), 1, sizeof( T ) );
+		TConstruct<T>( &AtUnsafe( a_itInsertBefore.Index() ), a_rcItem );
+
+		return Iterator( a_itInsertBefore.Index(), this );
+	}
+
+	Iterator InsertAfter( Iterator a_itInsertAfter, const T& a_rcItem = T() )
+	{
+		InsertGap( a_itInsertAfter.Index() + 1, 1, sizeof( T ) );
+		TConstruct<T>( &AtUnsafe( a_itInsertAfter.Index() + 1 ), a_rcItem );
+
+		return Iterator( a_itInsertAfter.Index() + 1, this );
 	}
 
 	void Clear()
@@ -221,38 +264,119 @@ public:
 		}
 	}
 
-	T* PushBack( const T& element = T() )
-	{
-		Grow( 1, sizeof( T ) );
-		return new ( (T*)m_poElements + m_iNumElements++ ) T( element );
-	}
-
 	template <class... Args>
 	T* EmplaceBack( Args&&... args )
 	{
 		Grow( 1, sizeof( T ) );
-		return new ( (T*)m_poElements + m_iNumElements++ ) T( std::forward<Args>( args )... );
+		return TConstruct<T>( &AtUnsafe( m_iNumElements++ ), std::forward<Args>( args )... );
 	}
 
-	Iterator Begin()
+	void PushBack( const T& item = T() )
 	{
-		return Iterator{ 0, *this };
+		Grow( 1, sizeof( T ) );
+		TConstruct<T>( &AtUnsafe( m_iNumElements++ ), item );
 	}
 
-	Iterator End()
+	void PopBack()
 	{
-		return Iterator{ m_iNumElements, *this };
+		TASSERT( m_iNumElements > 0 );
+		AtUnsafe( --m_iNumElements ).~T();
+	}
+
+	Iterator Find( const T& a_rcValue )
+	{
+		for ( auto it = Begin(); it != End(); it++ )
+		{
+			if ( it.Value() == a_rcValue )
+				return it;
+		}
+
+		return End();
+	}
+
+	// Erases element preserving order
+	void Erase( const Iterator& a_rIterator )
+	{
+		TINT uiItemIndex = a_rIterator.Index();
+		TASSERT( uiItemIndex < m_iNumElements );
+
+		AtUnsafe( uiItemIndex ).~T();
+
+		if ( uiItemIndex + 1 < Size() )
+		{
+			for ( TINT i = uiItemIndex + 1; i < Size(); i++ )
+			{
+				TConstruct<T>( &AtUnsafe( i - 1 ), std::move( AtUnsafe( i ) ) );
+				AtUnsafe( i ).~T();
+			}
+		}
+
+		m_iNumElements--;
+	}
+
+	// Finds and erases element preserving order
+	void FindAndErase( const T& a_rcItem )
+	{
+		auto it = Find( a_rcItem );
+
+		if ( it != End() )
+			Erase( it );
+	}
+
+	// Erases element ignoring order but with a faster algorithm
+	void EraseFast( Iterator& a_rIterator )
+	{
+		TINT uiItemIndex = a_rIterator.Index();
+		TASSERT( uiItemIndex < m_iNumElements );
+
+		a_rIterator.Value() = Back().Value();
+		PopBack();
+	}
+
+	// Finds and erases element ignoring order but with a faster algorithm
+	void FindAndEraseFast( const T& a_rcItem )
+	{
+		auto it = Find( a_rcItem );
+
+		if ( it != End() )
+			EraseFast( it );
+	}
+
+	Iterator Front()
+	{
+		TASSERT( m_iNumElements > 0 );
+		return Iterator( 0, this );
 	}
 
 	Iterator Back()
 	{
 		TASSERT( m_iNumElements > 0 );
-		return Iterator{ m_iNumElements - 1, *this };
+		return Iterator( m_iNumElements - 1, this );
+	}
+
+	Iterator Begin()
+	{
+		return Iterator( 0, this );
+	}
+
+	Iterator End()
+	{
+		return Iterator( m_iNumElements, this );
 	}
 
 	TINT Size() const
 	{
 		return m_iNumElements;
+	}
+
+	TINT Capacity() const
+	{
+		return m_iAllocSize;
+	}
+
+	TBOOL IsEmpty() const
+	{
+		return Size() == 0;
 	}
 
 	T& At( TINT a_iIndex )
@@ -275,6 +399,98 @@ public:
 	const T& operator[]( TINT a_iIndex ) const
 	{
 		return At( a_iIndex );
+	}
+
+private:
+	TFORCEINLINE constexpr T& AtUnsafe( TINT a_iIndex )
+	{
+		return *( TREINTERPRETCAST( T*, m_poElements ) + a_iIndex );
+	}
+
+	TFORCEINLINE constexpr const T& AtUnsafe( TINT a_iIndex ) const
+	{
+		return *( TREINTERPRETCAST( T*, m_poElements ) + a_iIndex );
+	}
+
+	void InsertGap( TINT a_iGapAt, TINT a_iGapSize, TINT a_iElementSize, TBOOL a_bUseMemMove = TFALSE )
+	{
+		if ( m_iAllocSize < m_iNumElements + a_iGapSize )
+		{
+			TINT iNewSize = m_iAllocSize + a_iGapSize;
+
+			if ( m_iGrowSize == -1 )
+				iNewSize = TMath::Max( iNewSize, m_iAllocSize * 2 );
+			else
+				iNewSize = TMath::Max( iNewSize, m_iAllocSize + m_iGrowSize );
+
+			TCHAR* pNewBuffer = (TCHAR*)m_pAllocator->Malloc( iNewSize * a_iElementSize );
+
+			if ( m_poElements )
+			{
+				TINT iNumElementsBeforeGap = a_iGapAt;
+				TINT iNumElementsAfterGap  = m_iNumElements - a_iGapAt;
+
+				if ( a_bUseMemMove )
+				{
+					// Unsafe way but suitable with simple types
+
+					// Copy elements before the gap
+					if ( iNumElementsBeforeGap > 0 )
+						TUtil::MemCopy( pNewBuffer, m_poElements, iNumElementsBeforeGap * a_iElementSize );
+
+					// Copy elements after the gap
+					if ( iNumElementsAfterGap > 0 )
+						TUtil::MemCopy( pNewBuffer + ( a_iGapAt + a_iGapSize ) * a_iElementSize, TREINTERPRETCAST( TCHAR*, m_poElements ) + a_iGapAt * a_iElementSize, iNumElementsAfterGap * a_iElementSize );
+				}
+				else
+				{
+					// This is much safer
+
+					// Copy elements before the gap
+					for ( TINT i = 0; i < iNumElementsBeforeGap; i++ )
+					{
+						TConstruct<T>( TREINTERPRETCAST( T*, pNewBuffer + ( i * a_iElementSize ) ), std::move( AtUnsafe( i ) ) );
+						AtUnsafe( i ).~T();
+					}
+
+					// Copy elements after the gap
+					for ( TINT i = a_iGapAt + a_iGapSize, k = a_iGapAt; k < m_iNumElements; i++, k++ )
+					{
+						TConstruct<T>( TREINTERPRETCAST( T*, pNewBuffer + ( i * a_iElementSize ) ), std::move( AtUnsafe( k ) ) );
+						AtUnsafe( k ).~T();
+					}
+				}
+
+				// Free the old buffer
+				m_pAllocator->Free( m_poElements );
+			}
+
+			m_poElements   = pNewBuffer;
+			m_iAllocSize   = iNewSize;
+			m_iNumElements = m_iNumElements + a_iGapSize;
+
+			return;
+		}
+		else if ( m_iNumElements > a_iGapAt )
+		{
+			if ( a_bUseMemMove )
+			{
+				// Unsafe way but suitable with simple types
+				// Note: Seems that in Barnyard there's no other way of adding a gap but in newer Toshi branches there is so I'm adding it here too anyways
+				TUtil::MemMove( &AtUnsafe( a_iGapAt + a_iGapSize ), &AtUnsafe( a_iGapAt ), ( m_iNumElements - a_iGapAt ) * a_iElementSize );
+			}
+			else
+			{
+				// This is much safer
+				for ( TINT i = m_iNumElements - 1, k = i + a_iGapSize; i >= a_iGapAt; i--, k-- )
+				{
+					TConstruct<T>( &AtUnsafe( k ), std::move( AtUnsafe( i ) ) );
+					AtUnsafe( i ).~T();
+				}
+			}
+		}
+
+		m_iNumElements += a_iGapSize;
 	}
 };
 

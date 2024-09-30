@@ -89,6 +89,7 @@ public:
 	static void* MemCopy( void* dst, const void* src, TSIZE size ) { return std::memcpy( dst, src, size ); }
 	static void  MemClear( void* ptr, TSIZE size ) { std::memset( ptr, 0, size ); }
 	static TINT  MemCompare( const void* ptr1, const void* ptr2, TSIZE size ) { return std::memcmp( ptr1, ptr2, size ); }
+	static void* MemMove( void* dst, const void* src, TSIZE size ) { return std::memmove( dst, src, size ); }
 
 	template <class T>
 	static void Fill( T* a_pStart, T* a_pEnd, const T& a_rcValue = T() )

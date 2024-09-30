@@ -50,7 +50,7 @@ void AModel::Update( TFLOAT a_fDeltaTime )
 {
 	TIMPLEMENT();
 
-	for ( TUINT i = 0; i < m_vecInstanceRefs.Size(); i++ )
+	for ( TINT i = 0; i < m_vecInstanceRefs.Size(); i++ )
 	{
 		auto pInstance = m_vecInstanceRefs[ i ].Get();
 
@@ -64,7 +64,7 @@ void AModel::Update( TFLOAT a_fDeltaTime )
 // $Barnyard: FUNCTION 0060fb10
 void AModel::Render( TUINT8 a_uiFlags )
 {
-	for ( TUINT i = 0; i < m_vecInstanceRefs.Size(); i++ )
+	for ( TINT i = 0; i < m_vecInstanceRefs.Size(); i++ )
 	{
 		auto& pModelInstance = m_vecInstanceRefs[ i ];
 		auto  eFlags         = pModelInstance->m_eFlags;

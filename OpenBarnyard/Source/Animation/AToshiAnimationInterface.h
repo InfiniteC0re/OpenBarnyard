@@ -8,9 +8,7 @@ class AToshiAnimationRef
     : public Toshi::T2DList<AToshiAnimationRef>::Node
 {
 public:
-
 private:
-
 };
 
 class AToshiAnimationInterface
@@ -34,4 +32,3 @@ private:
 	Toshi::TSkeletonInstance*          m_pSkeletonInstance;
 	// ...
 };
-

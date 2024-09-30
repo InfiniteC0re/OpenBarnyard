@@ -43,26 +43,8 @@ public:
 			m_poArray = &a_poArray;
 		}
 
-		void SetCurrentIndex( TINT a_iIndex ) const
+		TINT Index() const
 		{
-			TASSERT( m_poArray );
-			TASSERT( a_iIndex < m_poArray->Size() );
-			m_iIndex = a_iIndex;
-		}
-
-		TINT GetCurrentIndex() const
-		{
-			return m_iIndex;
-		}
-
-		TINT& IncrementSafe()
-		{
-			m_iIndex++;
-			TASSERT( m_poArray );
-
-			if ( m_poArray->m_iNumElements <= m_iIndex || m_iIndex == 0 )
-				m_iIndex = -1;
-
 			return m_iIndex;
 		}
 

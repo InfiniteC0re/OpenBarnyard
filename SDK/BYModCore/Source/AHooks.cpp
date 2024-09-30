@@ -423,14 +423,14 @@ MEMBER_HOOK( 0x006c1d40, TModelManager, TModelRegistry_CreateModel, TModelManage
 
 MEMBER_HOOK( 0x006bf6b0, TRenderInterface, TRenderInterface_SetLightColourMatrix, void, TMatrix44* a_pLightColour )
 {
-	for ( TUINT i = 0; i < AHooks::RenderInterface::SetLightColourMatrix[ HookType_Before ].Size(); i++ )
+	for ( TINT i = 0; i < AHooks::RenderInterface::SetLightColourMatrix[ HookType_Before ].Size(); i++ )
 	{
 		AHooks::RenderInterface::SetLightColourMatrix[ HookType_Before ][ i ]( this, a_pLightColour );
 	}
 
 	CallOriginal( a_pLightColour );
 
-	for ( TUINT i = 0; i < AHooks::RenderInterface::SetLightColourMatrix[ HookType_After ].Size(); i++ )
+	for ( TINT i = 0; i < AHooks::RenderInterface::SetLightColourMatrix[ HookType_After ].Size(); i++ )
 	{
 		AHooks::RenderInterface::SetLightColourMatrix[ HookType_After ][ i ]( this, a_pLightColour );
 	}
@@ -558,7 +558,7 @@ TBOOL MaterialLibrary_LoadTTLData( AMaterialLibrary* a_pMatLib, AMaterialLibrary
 
 MEMBER_HOOK( 0x00615d20, AMaterialLibrary, AMaterialLibrary_LoadTTLData, TBOOL, AMaterialLibrary::TTL* a_pTTL )
 {
-	for ( TUINT i = 0; i < AHooks::MaterialLibrary::LoadTTLData[ HookType_Before ].Size(); i++ )
+	for ( TINT i = 0; i < AHooks::MaterialLibrary::LoadTTLData[ HookType_Before ].Size(); i++ )
 	{
 		if ( AHooks::MaterialLibrary::LoadTTLData[ HookType_Before ][ i ]( this, a_pTTL ) )
 		{
@@ -568,7 +568,7 @@ MEMBER_HOOK( 0x00615d20, AMaterialLibrary, AMaterialLibrary_LoadTTLData, TBOOL, 
 
 	if ( !MaterialLibrary_LoadTTLData( this, a_pTTL ) )
 	{
-		for ( TUINT i = 0; i < AHooks::MaterialLibrary::LoadTTLData[ HookType_After ].Size(); i++ )
+		for ( TINT i = 0; i < AHooks::MaterialLibrary::LoadTTLData[ HookType_After ].Size(); i++ )
 		{
 			if ( AHooks::MaterialLibrary::LoadTTLData[ HookType_After ][ i ]( this, a_pTTL ) )
 			{
@@ -607,7 +607,7 @@ MEMBER_HOOK( 0x006da4d0, TMSWindow, TMSWindow_SetPosition, void, TUINT x, TUINT 
 
 MEMBER_HOOK( 0x0059dac0, AGUISlideshow, AGUISlideshow_ProcessInput, TBOOL, TInputInterface::InputEvent* a_pEvent )
 {
-	for ( TUINT i = 0; i < AHooks::GUISlideshow::ProcessInput[ HookType_Before ].Size(); i++ )
+	for ( TINT i = 0; i < AHooks::GUISlideshow::ProcessInput[ HookType_Before ].Size(); i++ )
 	{
 		if ( AHooks::GUISlideshow::ProcessInput[ HookType_Before ][ i ]( this, a_pEvent ) )
 		{
@@ -620,7 +620,7 @@ MEMBER_HOOK( 0x0059dac0, AGUISlideshow, AGUISlideshow_ProcessInput, TBOOL, TInpu
 
 	if ( !ProcessInput( a_pEvent ) )
 	{
-		for ( TUINT i = 0; i < AHooks::GUISlideshow::ProcessInput[ HookType_After ].Size(); i++ )
+		for ( TINT i = 0; i < AHooks::GUISlideshow::ProcessInput[ HookType_After ].Size(); i++ )
 		{
 			if ( AHooks::GUISlideshow::ProcessInput[ HookType_After ][ i ]( this, a_pEvent ) )
 			{
@@ -636,14 +636,14 @@ MEMBER_HOOK( 0x0059dac0, AGUISlideshow, AGUISlideshow_ProcessInput, TBOOL, TInpu
 
 HOOK( 0x0042ab30, FUN_0042ab30, void )
 {
-	for ( TUINT i = 0; i < AHooks::Uncategorized::NewGameStarted[ HookType_Before ].Size(); i++ )
+	for ( TINT i = 0; i < AHooks::Uncategorized::NewGameStarted[ HookType_Before ].Size(); i++ )
 	{
 		AHooks::Uncategorized::NewGameStarted[ HookType_Before ][ i ]();
 	}
 
 	CallOriginal();
 
-	for ( TUINT i = 0; i < AHooks::Uncategorized::NewGameStarted[ HookType_After ].Size(); i++ )
+	for ( TINT i = 0; i < AHooks::Uncategorized::NewGameStarted[ HookType_After ].Size(); i++ )
 	{
 		AHooks::Uncategorized::NewGameStarted[ HookType_After ][ i ]();
 	}
@@ -651,14 +651,14 @@ HOOK( 0x0042ab30, FUN_0042ab30, void )
 
 HOOK( 0x00635410, AGUI2_MainPostRenderCallback, void )
 {
-	for ( TUINT i = 0; i < AHooks::GUI2::MainPostRenderCallback[ HookType_Before ].Size(); i++ )
+	for ( TINT i = 0; i < AHooks::GUI2::MainPostRenderCallback[ HookType_Before ].Size(); i++ )
 	{
 		AHooks::GUI2::MainPostRenderCallback[ HookType_Before ][ i ]();
 	}
 
 	CallOriginal();
 
-	for ( TUINT i = 0; i < AHooks::GUI2::MainPostRenderCallback[ HookType_After ].Size(); i++ )
+	for ( TINT i = 0; i < AHooks::GUI2::MainPostRenderCallback[ HookType_After ].Size(); i++ )
 	{
 		AHooks::GUI2::MainPostRenderCallback[ HookType_After ][ i ]();
 	}
@@ -716,14 +716,14 @@ MEMBER_HOOK( 0x004293d0, AGameStateController, AGameStateController_ProcessInput
 
 MEMBER_HOOK( 0x005ea8b0, ATerrainInterface, ATerrain_Render, void )
 {
-	for ( TUINT i = 0; i < AHooks::Terrain::Render[ HookType_Before ].Size(); i++ )
+	for ( TINT i = 0; i < AHooks::Terrain::Render[ HookType_Before ].Size(); i++ )
 	{
 		AHooks::Terrain::Render[ HookType_Before ][ i ]( this );
 	}
 
 	CallOriginal();
 
-	for ( TUINT i = 0; i < AHooks::Terrain::Render[ HookType_After ].Size(); i++ )
+	for ( TINT i = 0; i < AHooks::Terrain::Render[ HookType_After ].Size(); i++ )
 	{
 		AHooks::Terrain::Render[ HookType_After ][ i ]( this );
 	}
@@ -733,14 +733,14 @@ HOOK( 0x006114d0, AModelLoader_AModelLoaderLoadTRBCallback, TBOOL, TModel* a_pMo
 {
 	TBOOL bRes;
 
-	for ( TUINT i = 0; i < AHooks::ModelLoader::LoadTRBCallback[ HookType_Before ].Size(); i++ )
+	for ( TINT i = 0; i < AHooks::ModelLoader::LoadTRBCallback[ HookType_Before ].Size(); i++ )
 	{
 		bRes |= AHooks::ModelLoader::LoadTRBCallback[ HookType_Before ][ i ]( a_pModel );
 	}
 
 	bRes |= CallOriginal( a_pModel );
 
-	for ( TUINT i = 0; i < AHooks::ModelLoader::LoadTRBCallback[ HookType_After ].Size(); i++ )
+	for ( TINT i = 0; i < AHooks::ModelLoader::LoadTRBCallback[ HookType_After ].Size(); i++ )
 	{
 		bRes |= AHooks::ModelLoader::LoadTRBCallback[ HookType_After ][ i ]( a_pModel );
 	}

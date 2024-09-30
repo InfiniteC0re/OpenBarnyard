@@ -33,7 +33,7 @@ AAnimatableObjectManager::~AAnimatableObjectManager()
 	if ( m_pAnimSoundBPsTRB )
 	{
 		delete m_pAnimSoundBPsTRB;
-		m_pAnimSoundBPsTRB   = TNULL;
+		m_pAnimSoundBPsTRB  = TNULL;
 		m_pSoundBreakpoints = TNULL;
 	}
 
@@ -203,11 +203,10 @@ void AAnimatableObjectManager::FUN_0057e3e0( AAnimatableObjectType* a_pObjectTyp
 	if ( m_pSoundBreakpoints )
 	{
 		// Extract model name from the path
-		const TCHAR* pszModelName = a_pObjectType->GetModel()->GetName().GetString();
+		const TCHAR* pszModelName       = a_pObjectType->GetModel()->GetName().GetString();
 		TINT         iModelNameStartPos = T2String8::Length( pszModelName );
-		
-		while ( iModelNameStartPos > 0 && ( pszModelName[ iModelNameStartPos - 1 ] != '\\' &&
-											pszModelName[ iModelNameStartPos - 1 ] != '/' ) )
+
+		while ( iModelNameStartPos > 0 && ( pszModelName[ iModelNameStartPos - 1 ] != '\\' && pszModelName[ iModelNameStartPos - 1 ] != '/' ) )
 		{
 			iModelNameStartPos--;
 		}
@@ -223,7 +222,7 @@ void AAnimatableObjectManager::FUN_0057e3e0( AAnimatableObjectType* a_pObjectTyp
 
 			if ( !T2String8::CompareNoCase( szModelName, pSoundBreakpoint->pszModelName ) )
 			{
-				for ( TSIZE k = 0; k < a_pObjectType->GetNumAnimationSets(); k++ )
+				for ( TINT k = 0; k < a_pObjectType->GetNumAnimationSets(); k++ )
 				{
 					ANamedAnimationSetRef pAnimationSet = a_pObjectType->GetAnimationSet( k );
 

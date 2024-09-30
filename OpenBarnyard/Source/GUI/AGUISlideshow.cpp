@@ -116,7 +116,7 @@ void AGUISlideshow::UpdateFadeOverlay()
 		if ( fOpacity >= 1.0f )
 		{
 			Toshi::TPString8 pictureName;
-			LocaliseBackgroundFileName( pictureName, m_ImageIterator.Current() );
+			LocaliseBackgroundFileName( pictureName, *m_ImageIterator );
 			AGUISystem::GetSingleton()->SetPicture( pictureName );
 
 			m_bIsAppearing      = TFALSE;
@@ -162,7 +162,7 @@ TBOOL AGUISlideshow::IsSlideshowOver()
 {
 	if ( !HASANYFLAG( m_eFlags, Flags_Repeat ) )
 	{
-		return m_ImageIterator.IsOver();
+		return !m_ImageIterator.IsValid();
 	}
 
 	if ( !HASANYFLAG( m_eFlags, Flags_Ended ) && ( m_fUnk4 <= 0.0f || m_fUnk2 <= m_fUnk4 ) )
@@ -175,12 +175,12 @@ TBOOL AGUISlideshow::IsSlideshowOver()
 
 void AGUISlideshow::SwitchToNextSlide( TBOOL a_bUnused )
 {
-	if ( !m_ImageIterator.IsOver() )
+	if ( m_ImageIterator.IsValid() )
 	{
 		m_ImageIterator++;
 	}
 
-	if ( m_ImageIterator.IsOver() )
+	if ( !m_ImageIterator.IsValid() )
 	{
 		if ( !HASANYFLAG( m_eFlags, Flags_Repeat ) ) return;
 		m_ImageIterator = m_Images;
@@ -189,7 +189,7 @@ void AGUISlideshow::SwitchToNextSlide( TBOOL a_bUnused )
 	m_fCurrentSlideTime = 0.0f;
 
 	Toshi::TPString8 pictureName;
-	LocaliseBackgroundFileName( pictureName, m_ImageIterator.Current() );
+	LocaliseBackgroundFileName( pictureName, *m_ImageIterator );
 	AGUISystem::GetSingleton()->SetPicture( pictureName );
 }
 

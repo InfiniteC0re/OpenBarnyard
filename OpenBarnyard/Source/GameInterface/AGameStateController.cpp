@@ -69,7 +69,7 @@ TBOOL AGameStateController::OnUpdate( TFLOAT a_fDeltaTime )
 
 		if ( !HASANYFLAG( m_eFlags, 7 ) )
 		{
-			m_oStates.Back()->OnUpdate( a_fDeltaTime );
+			( *m_oStates.Back() )->OnUpdate( a_fDeltaTime );
 		}
 	}
 
@@ -81,8 +81,9 @@ void AGameStateController::OnDestroy()
 {
 	TASSERT( m_oStates.Size() == 1 );
 
-	auto pGameState = m_oStates.Back();
+	auto pGameState = *m_oStates.Back();
 	m_oStates.PopBack();
+
 	pGameState->Destroy();
 }
 
@@ -101,7 +102,7 @@ void AGameStateController::ReplaceState( AGameState* a_pGameState )
 {
 	if ( m_oStates.Size() > 1 )
 	{
-		auto pCurrentGameState = m_oStates.Back();
+		auto pCurrentGameState = *m_oStates.Back();
 		m_oStates.PopBack();
 
 		pCurrentGameState->Destroy();
@@ -114,8 +115,8 @@ void AGameStateController::PushState( AGameState* a_pGameState )
 {
 	if ( m_oStates.Size() > 1 )
 	{
-		m_oStates.Back()->Deactivate();
-		m_oStates.Back()->Suspend();
+		( *m_oStates.Back() )->Deactivate();
+		( *m_oStates.Back() )->Suspend();
 	}
 
 	InsertGameState( a_pGameState );
@@ -123,7 +124,7 @@ void AGameStateController::PushState( AGameState* a_pGameState )
 
 void AGameStateController::PopState( AGameState* a_pGameState )
 {
-	auto pCurrentGameState = m_oStates.Back();
+	auto pCurrentGameState = *m_oStates.Back();
 
 	TASSERT( a_pGameState == pCurrentGameState );
 	m_oStates.PopBack();
@@ -138,7 +139,7 @@ void AGameStateController::PopState( AGameState* a_pGameState )
 
 	if ( m_oStates.Size() > 1 )
 	{
-		pCurrentGameState = m_oStates.Back();
+		pCurrentGameState = *m_oStates.Back();
 		pCurrentGameState->OnResume( a_pGameState );
 		pCurrentGameState->Activate();
 	}
@@ -150,7 +151,7 @@ void AGameStateController::PopCurrentGameState()
 
 	if ( m_oStates.Size() > 1 )
 	{
-		PopState( m_oStates.Back() );
+		PopState( *m_oStates.Back() );
 	}
 }
 
@@ -158,9 +159,9 @@ void AGameStateController::UpdateScreenOverlay()
 {
 	TBOOL bAddOverlay = TFALSE;
 
-	if ( m_oStates.Size() > 1 && m_oStates.Back()->GetOverlay() != AGameState::OVERLAY_1 )
+	if ( m_oStates.Size() > 1 && ( *m_oStates.Back() )->GetOverlay() != AGameState::OVERLAY_1 )
 	{
-		OverlayData* pOverlay = GetOverlayParams( m_oStates.Back()->GetOverlay() );
+		OverlayData* pOverlay = GetOverlayParams( ( *m_oStates.Back() )->GetOverlay() );
 		m_oOverlay.SetColour( TCOLOR_ALPHA( pOverlay->uiColorR, pOverlay->uiColorG, pOverlay->uiColorB, pOverlay->uiColorA ) );
 
 		bAddOverlay = TTRUE;
@@ -188,7 +189,7 @@ void AGameStateController::ResetStack()
 
 	while ( 1 < m_oStates.Size() )
 	{
-		auto pGameState = m_oStates.Back();
+		auto pGameState = *m_oStates.Back();
 		m_oStates.PopBack();
 
 		pGameState->Destroy( bIsFirst );
@@ -219,7 +220,7 @@ void AGameStateController::SetFlags( TUINT16 a_eFlags )
 	oData.uiColorB = 0;
 	SetOverlayParams( AGameState::OVERLAY_3, oData );
 
-	m_oStates.Back()->SetOverlay( AGameState::OVERLAY_3 );
+	( *m_oStates.Back() )->SetOverlay( AGameState::OVERLAY_3 );
 	UpdateScreenOverlay();
 }
 
@@ -252,7 +253,7 @@ TBOOL AGameStateController::ProcessInput( const TInputInterface::InputEvent* a_p
 		TIMPLEMENT_D( "Cheat code activation" );
 	}
 
-	auto pGameState = m_oStates.Back();
+	auto pGameState = *m_oStates.Back();
 
 	if ( pGameState->SendInputCommands( a_pEvent ) )
 	{
