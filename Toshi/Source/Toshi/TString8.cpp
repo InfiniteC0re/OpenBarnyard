@@ -59,7 +59,6 @@ TString8::TString8( TString8&& src ) noexcept
 	TString8::m_iStrLen    = src.m_iStrLen;
 	TString8::m_pBuffer    = src.m_pBuffer;
 	src.Reset();
-	src.m_pAllocator = GetAllocator();
 }
 
 void TString8::Copy( const TString16& src, TINT size )

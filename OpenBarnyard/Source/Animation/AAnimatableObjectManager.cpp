@@ -191,6 +191,25 @@ TBOOL AAnimatableObjectManager::LoadAnimSoundBreakpoints( const TCHAR* a_szFileP
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 0057d420
+TINT AAnimatableObjectManager::FindNumAnimationSoundBreakpoints( const Toshi::TPString8& a_rcModelName, ANamedAnimation* a_pAnimation )
+{
+	TVALIDPTR( m_pSoundBreakpoints );
+
+	TINT iCount = 0;
+
+	for ( TUINT i = 0; i < m_pSoundBreakpoints->uiCount; i++ )
+	{
+		if ( !T2String8::CompareNoCase( m_pSoundBreakpoints->pBreakpoints[ i ].pszModelName, a_rcModelName ) &&
+		     !T2String8::CompareNoCase( m_pSoundBreakpoints->pBreakpoints[ i ].pszAnimationName, a_pAnimation->GetExportedName() ) )
+		{
+			iCount += 1;
+		}
+	}
+
+	return iCount;
+}
+
 TBOOL AAnimatableObjectManager::OnUpdate( TFLOAT a_fDeltaTime )
 {
 	TIMPLEMENT();

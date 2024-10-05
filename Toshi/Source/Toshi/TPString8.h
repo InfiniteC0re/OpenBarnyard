@@ -257,6 +257,14 @@ public:
 		return *this;
 	}
 
+	TFORCEINLINE TPString8& operator=( TPString8&& a_rOther )
+	{
+		Decrement();
+		m_pPtr          = a_rOther.m_pPtr;
+		a_rOther.m_pPtr = TNULL;
+		return *this;
+	}
+
 	TFORCEINLINE operator const TCHAR*() const
 	{
 		return m_pPtr ? m_pPtr->m_oString.GetString() : ms_sEmpty.GetString();

@@ -26,15 +26,19 @@ public:
 	using Iterator = Container::Iterator;
 
 public:
-	T2SortedVector()  = default;
+	template <class... Args>
+	T2SortedVector( Args&&... args )
+	    : Container( std::forward<Args>( args )... )
+	{}
+
 	~T2SortedVector() = default;
 
 	// With a help of binary search algorithm, looks for an insertion place of the specified value
-	Iterator FindInsertionPoint( const T& a_rcValue, TBOOL& a_rbOptimized )
+	Iterator FindInsertionPoint( const T& a_rcValue, TBOOL& a_rbNotUnique )
 	{
 		TINT iSearchStart = 0;
 		TINT iSearchEnd   = Container::Size() - 1;
-		a_rbOptimized     = TFALSE;
+		a_rbNotUnique     = TFALSE;
 
 		while ( iSearchStart <= iSearchEnd )
 		{
@@ -63,7 +67,7 @@ public:
 					iSearchStart += 1;
 				}
 
-				a_rbOptimized = TTRUE;
+				a_rbNotUnique = TTRUE;
 				break;
 			}
 		}
@@ -73,8 +77,8 @@ public:
 
 	Iterator Push( const T& a_rValue )
 	{
-		TBOOL bOptimized;
-		return Container::InsertBefore( FindInsertionPoint( a_rValue, bOptimized ), a_rValue );
+		TBOOL bNotUnique;
+		return Container::InsertBefore( FindInsertionPoint( a_rValue, bNotUnique ), a_rValue );
 	}
 
 	Iterator Push( const T* a_pValue ) { return Push( *a_pValue ); }
@@ -104,6 +108,9 @@ public:
 
 	T&       operator[]( TINT a_iIndex ) { return Container::At( a_iIndex ); }
 	const T& operator[]( TINT a_iIndex ) const { return Container::At( a_iIndex ); }
+
+	Container* AccessContainer() { return TSTATICCAST( Container, this ); }
+	Container* operator->() { return TSTATICCAST( Container, this ); }
 };
 
 TOSHI_NAMESPACE_END

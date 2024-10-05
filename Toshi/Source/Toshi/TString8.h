@@ -118,31 +118,46 @@ public:
 	TBOOL operator==( const TString8& str ) const { return Compare( str.m_pBuffer, -1 ) == 0; }
 	TBOOL operator!=( const TCHAR* cstr ) const { return Compare( cstr, -1 ) != 0; }
 	TBOOL operator!=( const TString8& str ) const { return Compare( str.m_pBuffer, -1 ) != 0; }
-	TBOOL operator<( const TCHAR* cstr ) const { return Compare( cstr, -1 ) > -1; };
-	TBOOL operator<( const TString8& str ) const { return Compare( str.m_pBuffer, -1 ) > -1; };
-	TBOOL operator<=( const TCHAR* cstr ) const { return Compare( cstr, -1 ) > 0; };
-	TBOOL operator<=( const TString8& str ) const { return Compare( str.m_pBuffer, -1 ) > 0; };
+	TBOOL operator<( const TCHAR* cstr ) const { return Compare( cstr, -1 ) > -1; }
+	TBOOL operator<( const TString8& str ) const { return Compare( str.m_pBuffer, -1 ) > -1; }
+	TBOOL operator<=( const TCHAR* cstr ) const { return Compare( cstr, -1 ) > 0; }
+	TBOOL operator<=( const TString8& str ) const { return Compare( str.m_pBuffer, -1 ) > 0; }
 
 	TString8& operator=( const TCHAR* cstr )
 	{
 		Copy( cstr, -1 );
 		return *this;
-	};
+	}
+
 	TString8& operator=( const TWCHAR* wcstr )
 	{
 		Copy( wcstr, -1 );
 		return *this;
-	};
+	}
+
 	TString8& operator=( const TString8& str )
 	{
 		Copy( str, -1 );
 		return *this;
-	};
+	}
+
+	TString8& operator=( TString8&& str )
+	{
+		FreeBuffer();
+		m_pBuffer    = str.m_pBuffer;
+		m_iExcessLen = str.m_iExcessLen;
+		m_iStrLen    = str.m_iStrLen;
+		m_pAllocator = str.m_pAllocator;
+
+		str.Reset();
+		return *this;
+	}
+
 	TString8& operator=( const TString16& str )
 	{
 		Copy( str, -1 );
 		return *this;
-	};
+	}
 
 private:
 	typedef T2Allocator* ( *func_DefaultAllocatorCB )();

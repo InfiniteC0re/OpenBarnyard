@@ -30,7 +30,6 @@ TString16::TString16( TString16&& src ) noexcept
 	TString16::m_iStrLen    = src.m_iStrLen;
 	TString16::m_pBuffer    = src.m_pBuffer;
 	src.Reset();
-	src.m_pAllocator = GetAllocator();
 }
 
 TString16::TString16( const TString16& src, T2Allocator* allocator )

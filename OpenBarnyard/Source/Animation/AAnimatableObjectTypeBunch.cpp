@@ -22,7 +22,7 @@ AAnimatableObjectTypeBunch::~AAnimatableObjectTypeBunch()
 	AAnimatableObjectType::Destroy();
 }
 
-// $Barnyard: FUNCTION 0057f980
+// $Barnyard: FUNCTION 0057fa20
 TBOOL AAnimatableObjectTypeBunch::CreateFromProperties( const PBProperties* a_pProperties, const Toshi::TPString8& a_rcName )
 {
 	// Parse base properties

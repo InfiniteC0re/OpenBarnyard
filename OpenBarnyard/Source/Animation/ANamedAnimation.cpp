@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "ANamedAnimation.h"
+#include "AAnimatableObjectManager.h"
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
@@ -37,6 +38,16 @@ ANamedAnimation::FINISHTYPE ANamedAnimation::GetFinishType( const Toshi::TPStrin
 {
 	return ( !a_rcFinishType.GetString8().IsEmpty() && a_rcFinishType == TPS8( EndOfAnim ) ) ? FINISHTYPE_AUTO : FINISHTYPE_MANUAL;
 }
+
+// $Barnyard: FUNCTION 00580150 TODO
+static AAnimationBreakpoint* CreateBreakpointRuntime( const PBProperties* a_pProperties, TBOOL a_bTimedCall )
+{
+	TIMPLEMENT();
+
+	return TNULL;
+}
+
+TPSTRING8_DECLARE( Model );
 
 // $Barnyard: FUNCTION 00580760
 TBOOL ANamedAnimation::Create( const PBProperties* a_pProperties, Toshi::TSkeleton* a_pSkeleton )
@@ -145,7 +156,30 @@ TBOOL ANamedAnimation::Create( const PBProperties* a_pProperties, Toshi::TSkelet
 		m_eFlags &= ~( FLAGS_FINISH_MANUAL | FLAGS_FINISH_ON_ANIM_END );
 		m_eFlags |= ( GetFinishType( strDefaultFinishType ) == FINISHTYPE_AUTO ) ? FLAGS_FINISH_ON_ANIM_END : FLAGS_FINISH_MANUAL;
 
-		TASSERT( !"Find model in AAnimatableObjectManager and parse breakpoints" );
+		TPString8 strModelName;
+		a_pProperties->GetParentProperties()->GetParentProperties()->GetOptionalPropertyValue( strModelName, TPS8( Model ) );
+
+		// Allocate space to store breakpoints
+		TINT iNumSoundBreakpoints = AAnimatableObjectManager::GetSingleton()->FindNumAnimationSoundBreakpoints( strModelName, this );
+		m_vecBreakpoints->Reserve( iNumBreakpoints + iNumSoundBreakpoints + 4 );
+
+		// Read breakpoints stored in the properties
+
+		T2_FOREACH( ( *a_pProperties ), it )
+		{
+			const TCHAR* pchPropertyName = it->GetName().GetString();
+
+			if ( *pchPropertyName == 'B' )
+			{
+				// Breakpoint
+				AAnimationBreakpoint* pBreakpoint = CreateBreakpointRuntime( it->GetValue()->GetProperties(), TTRUE );
+
+				if ( pBreakpoint )
+				{
+					m_vecBreakpoints.Push( pBreakpoint );
+				}
+			}
+		}
 
 		return TTRUE;
 	}
@@ -175,3 +209,14 @@ void ANamedAnimation::Reset()
 	m_eFlags &= ~( FLAGS_FINISH_MANUAL | FLAGS_FINISH_ON_ANIM_END );
 	m_eFlags |= FLAGS_FINISH_MANUAL;
 }
+
+// $Barnyard: FUNCTION 00580750
+void ANamedAnimation::AttachBreakpoint( AAnimationBreakpoint* a_pBreakpoint )
+{
+	m_vecBreakpoints.Push( a_pBreakpoint );
+}
+
+// Various template functions:
+// $Barnyard: FUNCTION 00580710
+// $Barnyard: FUNCTION 00580440
+// $Barnyard: FUNCTION 006cbde0

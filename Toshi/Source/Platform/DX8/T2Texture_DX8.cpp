@@ -14,6 +14,8 @@ TOSHI_NAMESPACE_START
 // $Barnyard: FUNCTION 00615bc0
 HRESULT T2Texture::Load()
 {
+	TPROFILER_SCOPE();
+
 	TASSERT( m_pData != TNULL && m_uiDataSize != 0 );
 
 	auto pRender    = TSTATICCAST( TRenderD3DInterface, TRenderInterface::GetSingleton() );

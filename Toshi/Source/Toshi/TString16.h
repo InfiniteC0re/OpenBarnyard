@@ -112,12 +112,25 @@ public:
 	{
 		Copy( a_wszStr, -1 );
 		return *this;
-	};
+	}
+
 	TString16& operator=( const TString16& str )
 	{
 		Copy( str, -1 );
 		return *this;
-	};
+	}
+
+	TString16& operator=( TString16&& str )
+	{
+		FreeBuffer();
+		m_pBuffer    = str.m_pBuffer;
+		m_iExcessLen = str.m_iExcessLen;
+		m_iStrLen    = str.m_iStrLen;
+		m_pAllocator = str.m_pAllocator;
+
+		str.Reset();
+		return *this;
+	}
 
 private:
 	typedef T2Allocator* ( *func_DefaultAllocatorCB )();

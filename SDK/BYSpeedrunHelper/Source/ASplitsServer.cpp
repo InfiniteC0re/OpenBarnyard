@@ -62,7 +62,7 @@ ASplitsServer::ASplitsServer()
 			pSplits->m_uiBufferSize = sizeof( MsgQueueHeader_t );
 
 			// Copy events to the buffer
-			for ( TSIZE i = 0; i < pSplits->m_QueuedEvents.Size(); i++ )
+			for ( TINT i = 0; i < pSplits->m_QueuedEvents.Size(); i++ )
 			{
 				TCHAR* pchMsg   = pSplits->m_QueuedEvents[ i ];
 				TUINT  uiMsgLen = T2String8::Length( pchMsg );

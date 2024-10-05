@@ -40,6 +40,8 @@ public:
 
 	TBOOL LoadAnimSoundBreakpoints( const TCHAR* a_szFilePath );
 
+	TINT FindNumAnimationSoundBreakpoints( const Toshi::TPString8& a_rcModelName, ANamedAnimation* a_pAnimation );
+
 	// TTask
 	virtual TBOOL OnUpdate( TFLOAT a_fDeltaTime ) OVERRIDE;
 

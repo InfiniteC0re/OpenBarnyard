@@ -38,7 +38,6 @@ TTRB::~TTRB()
 TTRB::ERROR TTRB::Load( const TCHAR* a_szFilePath, TUINT32 a_uiUnknown )
 {
 	TPROFILER_SCOPE();
-
 	ERROR error = m_TTSFI.Open( a_szFilePath );
 
 	if ( error == ERROR_OK )
@@ -73,6 +72,8 @@ TTRB::ERROR TTRB::Load( const TCHAR* a_szFilePath, TUINT32 a_uiUnknown )
 // $Barnyard: FUNCTION 006baad0
 TBOOL TTRB::ProcessForm( TTSFI& ttsf )
 {
+	TPROFILER_SCOPE();
+
 	static constexpr TUINT32 MAX_RELC_NUM_BATCH = 512;
 	RELCEntry                relcEntries[ MAX_RELC_NUM_BATCH ];
 

@@ -83,6 +83,9 @@ public:
 	Iterator REnd() const { return Container::REnd(); }
 	Iterator Front() const { return Container::Front(); }
 	Iterator Back() const { return Container::Back(); }
+
+	Container* AccessContainer() { return TSTATICCAST( Container, this ); }
+	Container* operator->() { return TSTATICCAST( Container, this ); }
 };
 
 TOSHI_NAMESPACE_END

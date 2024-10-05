@@ -15,6 +15,8 @@ AMaterialLibrary::AMaterialLibrary()
 
 TBOOL AMaterialLibrary::LoadTTLData( void* a_pTTLData )
 {
+	TPROFILER_SCOPE();
+
 	TTL* pTTL = TSTATICCAST( TTL, a_pTTLData );
 
 	auto pLibList     = AMaterialLibraryManager::List::GetSingleton();
