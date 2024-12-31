@@ -176,6 +176,14 @@ MEMBER_HOOK( 0x006b5230, TMemory, TMemory_Alloc, void*, TUINT a_uiSize, TUINT a_
 #endif // !TMEMORY_USE_DLMALLOC
 }
 
+// Drastically reduces load times since loader thread is much
+// faster nowadays and we it doesn't need to sleep
+HOOK( 0x006BB8A0, Toshi_Sleep, void, DWORD a_uiMs )
+{
+	if ( a_uiMs == 20 ) return;
+	CallOriginal( a_uiMs );
+}
+
 class ACollisionObjectModel
 {
 	TCHAR PADDING[ 0xA4 ];
@@ -282,6 +290,8 @@ MEMBER_HOOK( 0x00662d90, AOptions, AOptions_IsResolutionCompatible, TBOOL, TINT 
 	TFLOAT  fCurrentAspectRatio = TFLOAT( a_iWidth ) / TFLOAT( a_iHeight );
 	TFLOAT* pFOV                = (TFLOAT*)0x007822ac;
 
+	g_fOriginalFOV = *pFOV;
+
 	if ( TMath::Abs( fCurrentAspectRatio - ASPECT_RATIO_5_4 ) <= 0.1f )
 	{
 		*pFOV = 0.994199f;
@@ -311,8 +321,6 @@ MEMBER_HOOK( 0x00662d90, AOptions, AOptions_IsResolutionCompatible, TBOOL, TINT 
 
 	g_uiWindowWidth  = a_iWidth;
 	g_uiWindowHeight = a_iHeight;
-
-	g_fOriginalFOV = *pFOV;
 
 	return TFALSE;
 }
@@ -826,6 +834,7 @@ HOOK( 0x006cea40, TRenderContext_CullSphereToFrustum, TINT, const TSphere& a_rSp
 
 void AHooks::Initialise()
 {
+	InstallHook<Toshi_Sleep>();
 	InstallHook<TMemory_UnkMethod>();
 	InstallHook<TMemory_Initialise>();
 	InstallHook<TMemory_DestroyMemBlock>();
