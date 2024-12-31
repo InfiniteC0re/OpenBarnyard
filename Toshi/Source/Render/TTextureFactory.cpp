@@ -21,8 +21,9 @@ TTextureFactory::NameEntry::NameEntry( const TCHAR* a_szName, TTexture* a_pTextu
 	m_pTexture = a_pTexture;
 }
 
-TTextureFactory::NameEntry::~NameEntry(){
-	TASSERT( TFALSE == IsLinked() )
+TTextureFactory::NameEntry::~NameEntry()
+{
+	TASSERT( TFALSE == IsLinked() );
 }
 
 TTextureFactory::~TTextureFactory()

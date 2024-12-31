@@ -73,8 +73,10 @@
 #define TINLINE                           inline
 #define TFORCEINLINE                      __forceinline
 
-#define TANONYMOUSVAR_1( X, Y ) CONCATTOKEN( X, Y )
-#define TANONYMOUSVAR( TYPE )   TYPE TANONYMOUSVAR_1( _anonymous, __COUNTER__ )
+#define TANONYMOUSVAR_1( Y )                CONCATTOKEN( _anonymous, Y )
+#define TANONYMOUSVAR( TYPE )               TYPE TANONYMOUSVAR_1( __COUNTER__ )
+#define TANONYMOUSVARC( TYPE, COUNTER )     TYPE TANONYMOUSVAR_1( COUNTER )
+#define TANONYMOUSVARC_GET( TYPE, COUNTER ) TANONYMOUSVAR_1( COUNTER )
 
 #define TDEPRECATED                  [[deprecated]]
 #define TDEPRECATED_REASON( REASON ) [[deprecated( REASON )]]
@@ -82,66 +84,55 @@
 #define TDECLARE_POINTER_HANDLE( NAME ) typedef void* NAME
 
 #ifdef TOSHI_ENABLE_ASSERTS
-#  define TFIREFLAG                   \
-	  static TBOOL FIREFLAG = TFALSE; \
-	  if ( !FIREFLAG )
+#  define TCALL_ONCE_IF_1( CONDITION, COUNTER ) \
+	  if ( !Toshi::T2UniqueValue<TBOOL, COUNTER>::value && ( CONDITION ) && ( Toshi::T2UniqueValue<TBOOL, COUNTER>::value = TTRUE ) )
+#  define TCALL_ONCE_IF( CONDITION ) TCALL_ONCE_IF_1( CONDITION, __COUNTER__ )
+
 #  define TWIP()                                                                        \
 	  {                                                                                 \
-		  TFIREFLAG                                                                     \
+		  TCALL_ONCE_IF( TTRUE )                                                        \
 		  {                                                                             \
 			  TERROR( "Work in progress: '%s', at line %d\n", __FUNCTION__, __LINE__ ); \
-			  FIREFLAG = TTRUE;                                                         \
 		  }                                                                             \
 	  }
 #  define TTODO( DESC )                                                                \
 	  {                                                                                \
-		  TFIREFLAG                                                                    \
+		  TCALL_ONCE_IF( TTRUE )                                                       \
 		  {                                                                            \
 			  TERROR( "TODO: %s ('%s', at line %d)\n", DESC, __FUNCTION__, __LINE__ ); \
-			  FIREFLAG = TTRUE;                                                        \
 		  }                                                                            \
 	  }
 #  define TFIXME( DESC )                                                               \
 	  {                                                                                \
-		  TFIREFLAG                                                                    \
+		  TCALL_ONCE_IF( TTRUE )                                                       \
 		  {                                                                            \
 			  TWARN( "FIXME: %s ('%s', at line %d)\n", DESC, __FUNCTION__, __LINE__ ); \
-			  FIREFLAG = TTRUE;                                                        \
 		  }                                                                            \
 	  }
 #  define TIMPLEMENT()                                           \
 	  {                                                          \
-		  TFIREFLAG                                              \
+		  TCALL_ONCE_IF( TTRUE )                                 \
 		  {                                                      \
 			  TERROR( "%s is not implemented\n", __FUNCTION__ ); \
-			  FIREFLAG = TTRUE;                                  \
 		  }                                                      \
 	  }
 #  define TIMPLEMENT_D( DESC )                                             \
 	  {                                                                    \
-		  TFIREFLAG                                                        \
+		  TCALL_ONCE_IF( TTRUE )                                           \
 		  {                                                                \
 			  TERROR( "%s is not implemented: %s\n", __FUNCTION__, DESC ); \
-			  FIREFLAG = TTRUE;                                            \
 		  }                                                                \
 	  }
-#  define TASSERT( X, ... )                                                                     \
-	  {                                                                                         \
-		  TFIREFLAG if ( !( X ) )                                                               \
-		  {                                                                                     \
-			  if ( 1 == TDebug_AssertHandler( #X, __FILE__, __LINE__, __VA_ARGS__ ) ) TBREAK(); \
-			  FIREFLAG = TTRUE;                                                                 \
-		  }                                                                                     \
-	  }
-#  define TASSERT_NO_CHECK( X, ... ) TDebug_AssertHandler(#X, __FILE__, __LINE__, __VA_ARGS__))
-#  define TVALIDPTR( PTR ) TASSERT( TDebug_IsValidAddress( PTR ) )
+#  define TASSERT_IMPL( X, ID, ... ) ( ( !Toshi::T2UniqueValue<TBOOL, ID>::value ) && 1 == TDebug_AssertHandler( #X, __FILE__, __LINE__, __VA_ARGS__ ) && ( TBREAK(), TTRUE ) && ( Toshi::T2UniqueValue<TBOOL, ID>::value = TTRUE ) )
+#  define TASSERT( X, ... )          ( !( X ) && TASSERT_IMPL( X, __COUNTER__, __VA_ARGS__ ) || !( X ) )
+#  define TVALIDPTR( PTR )           TASSERT( TDebug_IsValidAddress( PTR ) )
 #else // TOSHI_ENABLE_ASSERTS
 #  define TWIP()
 #  define TTODO( DESC )
 #  define TFIXME( DESC )
 #  define TIMPLEMENT()
 #  define TIMPLEMENT_D( DESC )
-#  define TASSERT( X, ... )
+#  define TASSERT( X, ... ) ( TFALSE )
 #  define TVALIDPTR( PTR )
 #endif // TOSHI_ENABLE_ASSERTS
 

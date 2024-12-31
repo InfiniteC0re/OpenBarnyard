@@ -42,7 +42,7 @@ public:
 	AAnimatableObject();
 	~AAnimatableObject();
 
-	TBOOL Create( AAnimatableObjectType* a_pObjectType, void* m_Unk1, TUINT a_eFlags = 0 );
+	TBOOL Create( AAnimatableObjectType* a_pObjectType, void* a_Unk1, TUINT a_eFlags = 0 );
 
 private:
 	S1                                            m_oS1;

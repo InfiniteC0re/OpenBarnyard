@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Toshi/Defines.h"
+#include "Toshi/T2UniqueValue.h"
+
 #include "Toshi/Typedefs.h"
 #include "Toshi/Platform.h"
 #include "Toshi/Profiler.h"

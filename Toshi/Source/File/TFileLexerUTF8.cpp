@@ -69,7 +69,7 @@ TFileLexerUTF8::TFileLexerUTF8( TFile* a_pInputStream, TINT a_iTokenLookaheadSiz
 	m_iTokenLookaheadSize = 1 << ( ( ( a_iTokenLookaheadSize * 2 + -1 ) >> 0x17 ) + 0x81U & 0x1f );
 	m_iTokenLookaheadMask = ( m_iTokenLookaheadSize - 1 < 2 ) ? 1 : m_iTokenLookaheadSize - 1;
 
-	TASSERT( a_pInputStream != TNULL )
+	TASSERT( a_pInputStream != TNULL );
 	SetInputStream( a_pInputStream );
 
 #if defined( TOSHI_SKU_WINDOWS )
