@@ -176,14 +176,6 @@ MEMBER_HOOK( 0x006b5230, TMemory, TMemory_Alloc, void*, TUINT a_uiSize, TUINT a_
 #endif // !TMEMORY_USE_DLMALLOC
 }
 
-// Drastically reduces load times since loader thread is much
-// faster nowadays and we it doesn't need to sleep
-HOOK( 0x006BB8A0, Toshi_Sleep, void, DWORD a_uiMs )
-{
-	if ( a_uiMs == 20 ) return;
-	CallOriginal( a_uiMs );
-}
-
 class ACollisionObjectModel
 {
 	TCHAR PADDING[ 0xA4 ];
@@ -292,25 +284,25 @@ MEMBER_HOOK( 0x00662d90, AOptions, AOptions_IsResolutionCompatible, TBOOL, TINT 
 
 	g_fOriginalFOV = *pFOV;
 
-	if ( TMath::Abs( fCurrentAspectRatio - ASPECT_RATIO_5_4 ) <= 0.1f )
+	if ( TMath::Abs( fCurrentAspectRatio - ASPECT_RATIO_5_4 ) <= FLT_EPSILON )
 	{
 		*pFOV = 0.994199f;
 	}
-	else if ( TMath::Abs( fCurrentAspectRatio - ASPECT_RATIO_25_16 ) <= 0.1f )
+	else if ( TMath::Abs( fCurrentAspectRatio - ASPECT_RATIO_25_16 ) <= FLT_EPSILON )
 	{
 		*pFOV = 1.18425f;
 	}
-	else if ( TMath::Abs( fCurrentAspectRatio - ASPECT_RATIO_16_10 ) <= 0.1f )
+	else if ( TMath::Abs( fCurrentAspectRatio - ASPECT_RATIO_16_10 ) <= FLT_EPSILON )
 	{
 		*pFOV           = 1.2244f;
 		g_bBikeFOVPatch = TTRUE;
 	}
-	else if ( TMath::Abs( fCurrentAspectRatio - ASPECT_RATIO_15_9 ) <= 0.1f )
+	else if ( TMath::Abs( fCurrentAspectRatio - ASPECT_RATIO_15_9 ) <= FLT_EPSILON )
 	{
 		*pFOV           = 1.24655f;
 		g_bBikeFOVPatch = TTRUE;
 	}
-	else if ( TMath::Abs( fCurrentAspectRatio - ASPECT_RATIO_16_9 ) <= 0.1f )
+	else if ( TMath::Abs( fCurrentAspectRatio - ASPECT_RATIO_16_9 ) <= FLT_EPSILON )
 	{
 		*pFOV           = 1.313f;
 		g_bBikeFOVPatch = TTRUE;
@@ -712,7 +704,10 @@ MEMBER_HOOK( 0x004293d0, AGameStateController, AGameStateController_ProcessInput
 	if ( a_pInputEvent->GetEventType() == TInputInterface::EVENT_TYPE_GONE_DOWN &&
 	     a_pInputEvent->GetDoodad() == TInputDeviceKeyboard::KEY_GRAVE )
 	{
-		AImGUI::GetSingleton()->Toggle();
+		Toshi::TInputDeviceKeyboard* pKeyboard = TSTATICCAST( Toshi::TInputDeviceKeyboard, a_pInputEvent->GetSource() );
+		
+		if ( pKeyboard->IsAltDown() )
+			AImGUI::GetSingleton()->Toggle();
 	}
 	else if ( a_pInputEvent->GetEventType() == TInputInterface::EVENT_TYPE_GONE_DOWN && a_pInputEvent->GetDoodad() == TInputDeviceKeyboard::KEY_F5 )
 	{
@@ -834,7 +829,20 @@ HOOK( 0x006cea40, TRenderContext_CullSphereToFrustum, TINT, const TSphere& a_rSp
 
 void AHooks::Initialise()
 {
-	InstallHook<Toshi_Sleep>();
+	// Drastically reduces load times since loader thread is much
+	// faster nowadays and it doesn't need to sleep
+	DWORD dwOldProtection;
+
+	VirtualProtect( (void*)0x004238AE, 4, PAGE_EXECUTE_READWRITE, &dwOldProtection );
+	*(TUINT32*)( 0x004238AE ) = 0x0020568E;
+	VirtualProtect( (void*)0x005EBF9E, 4, PAGE_EXECUTE_READWRITE, &dwOldProtection );
+	*(TUINT32*)( 0x005EBF9E ) = 0x0003CF9E;
+	VirtualProtect( (void*)0x005EC34E, 4, PAGE_EXECUTE_READWRITE, &dwOldProtection );
+	*(TUINT32*)( 0x005EC34E ) = 0x0003CBEE;
+	VirtualProtect( (void*)0x005EBF20, 4, PAGE_EXECUTE_READWRITE, &dwOldProtection );
+	*(TUINT32*)( 0x005EBF20 ) = 0x0003D01C;
+
+	// Apply other hooks
 	InstallHook<TMemory_UnkMethod>();
 	InstallHook<TMemory_Initialise>();
 	InstallHook<TMemory_DestroyMemBlock>();
@@ -843,36 +851,39 @@ void AHooks::Initialise()
 	InstallHook<TMemory_Free>();
 	InstallHook<TMemory_Alloc>();
 	InstallHook<TMemory_GetMemInfo>();
-	////InstallHook<TMSWindow_SetPosition>();
+	//InstallHook<TMSWindow_SetPosition>();
 	InstallHook<AGUISlideshow_ProcessInput>();
-	//InstallHook<FUN_0042ab30>();
+	InstallHook<FUN_0042ab30>();
 	InstallHook<AGUI2_MainPostRenderCallback>();
-	//InstallHook<AGUI2_Constructor>();
-	//InstallHook<AGUI2_OnCreate>();
-	//InstallHook<AGUI2_OnUpdate>();
-	//InstallHook<AGameStateController_ProcessInput>();
-	//InstallHook<ATerrain_Render>();
-	//InstallHook<AModelLoader_AModelLoaderLoadTRBCallback>();
-	//InstallHook<AMaterialLibrary_LoadTTLData>();
-	//InstallHook<ARenderer_CreateTRender>();
-	//InstallHook<ARenderer_OnCreate>();
-	//InstallHook<AFrontEndMiniGameState2_CTOR>();
-	//InstallHook<TRenderD3DInterface_OnD3DDeviceLost>();
-	//InstallHook<TRenderD3DInterface_OnD3DDeviceFound>();
-	//InstallHook<TModelRegistry_CreateModel>();
-	//InstallHook<TRenderInterface_SetLightColourMatrix>();
-	//InstallHook<AOptions_IsResolutionCompatible>();
-	//InstallHook<ADisplayModes_Win_DoesModeExist>();
-	////InstallHook<TCameraObject_SetFOV>();
-	//InstallHook<TRenderD3DInterface_UpdateColourSettings>();
-	////InstallHook<TRenderContext_CullSphereToFrustumSimple>();
-	////InstallHook<TRenderContext_CullSphereToFrustum>();
-	//InstallHook<TTRB_Load>();
+	InstallHook<AGUI2_Constructor>();
+	InstallHook<AGUI2_OnCreate>();
+	InstallHook<AGUI2_OnUpdate>();
+	InstallHook<AGameStateController_ProcessInput>();
+	InstallHook<ATerrain_Render>();
+	InstallHook<AModelLoader_AModelLoaderLoadTRBCallback>();
+
+	InstallHook<ARenderer_CreateTRender>();
+	InstallHook<ARenderer_OnCreate>();
+	InstallHook<AFrontEndMiniGameState2_CTOR>();
+	InstallHook<TRenderD3DInterface_OnD3DDeviceLost>();
+	InstallHook<TRenderD3DInterface_OnD3DDeviceFound>();
+	InstallHook<TModelRegistry_CreateModel>();
+	InstallHook<TRenderInterface_SetLightColourMatrix>();
+	InstallHook<AOptions_IsResolutionCompatible>();
+	InstallHook<ADisplayModes_Win_DoesModeExist>();
+	//InstallHook<TCameraObject_SetFOV>();
+	InstallHook<TRenderD3DInterface_UpdateColourSettings>();
+	//InstallHook<TRenderContext_CullSphereToFrustumSimple>();
+	//InstallHook<TRenderContext_CullSphereToFrustum>();
+	InstallHook<TTRB_Load>();
 
 	// Fixing crashes and memory stumps of the original game
 	InstallHook<CollObjectModel_DCTOR>();
 	InstallHook<TModel_LoadTRB>();
 	InstallHook<TModel_UnloadTRB>();
+
+	// This might be unstable until all the memory stomps are fixed :(
+	//InstallHook<AMaterialLibrary_LoadTTLData>();
 }
 
 TBOOL AHooks::AddHook( Hook a_eHook, HookType a_eHookType, void* a_pCallback )
