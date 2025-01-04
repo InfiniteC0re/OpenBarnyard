@@ -8,17 +8,6 @@ project "Toshi"
 	pchheader "ToshiPCH.h"
 	pchsource "Source/ToshiPCH.cpp"
 	
-	links
-	{
-		"d3d8.lib",
-		"d3dx8.lib",
-		"dxguid.lib",
-		"dxgi.lib",
-		"legacy_stdio_definitions.lib",
-		"winmm.lib",
-		"dinput8.lib"
-	}
-	
 	files
 	{
 		"Source/ToshiPCH.cpp",
@@ -54,15 +43,9 @@ project "Toshi"
 		"%{IncludeDir.stb}"
 	}
 	
-	externalincludedirs 
-	{
-		"%{IncludeDir.dx8}"
-	}
-	
 	libdirs
 	{
-		"%{LibDir.fmod}",
-		"%{LibDir.dx8}"
+		"%{LibDir.fmod}"
 	}
 
 	defines
@@ -92,6 +75,27 @@ project "Toshi"
 		}
 		
 		filter "options:renderer=DX8"
+			links
+			{
+				"d3d8.lib",
+				"d3dx8.lib",
+				"dxguid.lib",
+				"dxgi.lib",
+				"legacy_stdio_definitions.lib",
+				"winmm.lib",
+				"dinput8.lib"
+			}
+			
+			externalincludedirs 
+			{
+				"%{IncludeDir.dx8}"
+			}
+	
+			libdirs
+			{
+				"%{LibDir.dx8}"
+			}
+
 			files
 			{
 				"Source/Platform/DX8/**.cpp",
@@ -99,10 +103,19 @@ project "Toshi"
 			}
 			
 		filter "options:renderer=GL"
+		externalincludedirs
+			{
+				"%{IncludeDir.sdl2}",
+				"%{IncludeDir.glm}",
+				"%{IncludeDir.glew}"
+			}
+
 			files
 			{
 				"Source/Platform/GL/**.cpp",
-				"Source/Platform/GL/**.c"
+				"Source/Platform/GL/**.c",
+				"Source/Platform/SDL/**.cpp",
+				"Source/Platform/SDL/**.h"
 			}
 
 		defines
