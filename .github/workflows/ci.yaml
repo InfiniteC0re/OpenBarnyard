@@ -5,7 +5,7 @@ on: [push]
 jobs:
   win:
     env:
-      PREMAKE_VERSION: 5.0.0-beta2
+      PREMAKE_VERSION: 5.0.0-beta4
 
     runs-on: windows-latest
     steps:
