@@ -127,5 +127,7 @@ project "OpenBarnyard"
 			files
 			{
 				"Source/Platform/GL/**.cpp",
-				"Source/Platform/GL/**.h"
+				"Source/Platform/GL/**.h",
+				"Source/Platform/SDL/**.cpp",
+				"Source/Platform/SDL/**.h"
 			}

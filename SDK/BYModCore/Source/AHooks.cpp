@@ -16,7 +16,7 @@
 #include <Input/TInputDeviceKeyboard.h>
 #include <Render/TCameraObject.h>
 #include <Render/TModel.h>
-#include <Platform/Windows/TMSWindow.h>
+#include <Platform/DX8/TMSWindow.h>
 #include <Platform/DX8/TRenderInterface_DX8.h>
 
 TOSHI_NAMESPACE_USING

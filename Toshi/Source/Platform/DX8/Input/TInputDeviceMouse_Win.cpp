@@ -1,7 +1,7 @@
 #include "ToshiPCH.h"
 #include "TInputDeviceMouse_Win.h"
 #include "Platform/DX8/TRenderInterface_DX8.h"
-#include "Platform/Windows/Input/TInputInterface_Win.h"
+#include "Platform/DX8/Input/TInputInterface_Win.h"
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.

@@ -1,9 +1,7 @@
 #include "ToshiPCH.h"
 #include "TModel.h"
 
-#ifdef TOSHI_SKU_WINDOWS
-#  include "Platform/DX8/TRenderInterface_DX8.h"
-#endif // TOSHI_SKU_WINDOWS
+#include "Render/TRenderInterface.h"
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
