@@ -85,13 +85,25 @@ project "Toshi"
 			"Source/Platform/Windows/**.cpp",
 			"Source/Platform/Windows/**.c",
 			"Source/Platform/Windows/**.h",
-			"Source/Platform/DX8/**.cpp",
-			"Source/Platform/DX8/**.c",
 			"Icons/*.ico",
 			"Resources/*.h",
 			"Resources/*.aps",
 			"Resources/*.rc"
 		}
+		
+		filter "options:renderer=DX8"
+			files
+			{
+				"Source/Platform/DX8/**.cpp",
+				"Source/Platform/DX8/**.c"
+			}
+			
+		filter "options:renderer=GL"
+			files
+			{
+				"Source/Platform/GL/**.cpp",
+				"Source/Platform/GL/**.c"
+			}
 
 		defines
 		{

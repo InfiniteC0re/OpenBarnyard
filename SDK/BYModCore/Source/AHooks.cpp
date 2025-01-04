@@ -705,7 +705,7 @@ MEMBER_HOOK( 0x004293d0, AGameStateController, AGameStateController_ProcessInput
 	     a_pInputEvent->GetDoodad() == TInputDeviceKeyboard::KEY_GRAVE )
 	{
 		Toshi::TInputDeviceKeyboard* pKeyboard = TSTATICCAST( Toshi::TInputDeviceKeyboard, a_pInputEvent->GetSource() );
-		
+
 		if ( pKeyboard->IsAltDown() )
 			AImGUI::GetSingleton()->Toggle();
 	}

@@ -29,8 +29,8 @@ workspace "OpenBarnyard"
 	filter "options:arch=x86"
 		architecture "x86"
 		
-	filter "options:arch=x64"
-		architecture "x64"
+	--filter "options:arch=x64"
+	--	architecture "x64"
 
 	-- Global Windows parameters
 	filter "system:windows"
@@ -43,16 +43,27 @@ workspace "OpenBarnyard"
 			"/SAFESEH:NO"
 		}
 
-		externalincludedirs
-		{
-			"%{IncludeDir.dx8}"
-		}
-
 		defines
 		{
-			"TOSHI_SKU_WINDOWS",
-			"TRENDERINTERFACE_DX8"
+			"TOSHI_SKU_WINDOWS"
 		}
+		
+		filter "options:renderer=DX8"
+			externalincludedirs
+			{
+				"%{IncludeDir.dx8}"
+			}
+			
+			defines
+			{
+				"TRENDERINTERFACE_DX8"
+			}
+		
+		filter "options:renderer=GL"
+			defines
+			{
+				"TRENDERINTERFACE_GL"
+			}
 
 	filter "configurations:Debug"
 		runtime "Debug"
