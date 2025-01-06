@@ -3,6 +3,7 @@
 #ifdef TRENDERINTERFACE_GL
 #  include "Render/T2RenderCommon.h"
 #  include "T2RenderBuffer_GL.h"
+#  include "T2Shader_GL.h"
 
 TOSHI_NAMESPACE_START
 
@@ -35,10 +36,13 @@ public:
 	void Destroy();
 
 public:
-	static T2VertexBuffer CreateVertexBuffer( const void* a_pData, GLuint a_uiSize, GLenum a_eUsage );
-	static T2IndexBuffer  CreateIndexBuffer( const TUINT16* a_pIndices, GLuint a_uiCount, GLenum a_eUsage );
-	static T2VertexArray  CreateVertexArray();
-	static T2VertexArray  CreateVertexArray( T2VertexBuffer a_VertexBuffer, T2IndexBuffer a_IndexBuffer );
+	static T2CompiledShader CompileShader( GLenum a_eShader, const TCHAR* a_szSource );
+	static T2CompiledShader CompileShaderFromFile( GLenum a_eShader, const TCHAR* a_szFileName );
+	static T2Shader         CreateShaderProgram( T2CompiledShader a_VertexShader, T2CompiledShader a_FragmentShader );
+	static T2VertexBuffer   CreateVertexBuffer( const void* a_pData, GLuint a_uiSize, GLenum a_eUsage );
+	static T2IndexBuffer    CreateIndexBuffer( const TUINT16* a_pIndices, GLuint a_uiCount, GLenum a_eUsage );
+	static T2VertexArray    CreateVertexArray();
+	static T2VertexArray    CreateVertexArray( T2VertexBuffer a_VertexBuffer, T2IndexBuffer a_IndexBuffer );
 
 private:
 	void OnDeviceReset();
