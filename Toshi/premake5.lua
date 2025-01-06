@@ -103,7 +103,7 @@ project "Toshi"
 			}
 			
 		filter "options:renderer=GL"
-		externalincludedirs
+			externalincludedirs
 			{
 				"%{IncludeDir.sdl2}",
 				"%{IncludeDir.glm}",
