@@ -1,5 +1,6 @@
 #include "ToshiPCH.h"
 #include "Render/T2Render.h"
+#include "T2RenderBuffer_GL.h"
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
