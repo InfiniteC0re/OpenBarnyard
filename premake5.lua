@@ -48,22 +48,22 @@ workspace "OpenBarnyard"
 			"TOSHI_SKU_WINDOWS"
 		}
 		
-		filter "options:renderer=DX8"
-			externalincludedirs
-			{
-				"%{IncludeDir.dx8}"
-			}
+	filter "options:renderer=DX8"
+		externalincludedirs
+		{
+			"%{IncludeDir.dx8}"
+		}
 			
-			defines
-			{
-				"TRENDERINTERFACE_DX8"
-			}
+		defines
+		{
+			"TRENDERINTERFACE_DX8"
+		}
 		
-		filter "options:renderer=GL"
-			defines
-			{
-				"TRENDERINTERFACE_GL"
-			}
+	filter "options:renderer=GL"
+		defines
+		{
+			"TRENDERINTERFACE_GL"
+		}
 
 	filter "configurations:Debug"
 		runtime "Debug"
