@@ -48,15 +48,15 @@ private:
 class T2Shader
 {
 public:
-	constexpr T2Shader()
+	T2Shader()
 	    : m_uiProgram( 0 ), m_VShader( 0 ), m_FShader( 0 )
 	{}
 
-	constexpr T2Shader( const T2CompiledShader& a_VShader, const T2CompiledShader& a_FShader )
+	T2Shader( const T2CompiledShader& a_VShader, const T2CompiledShader& a_FShader )
 	    : m_uiProgram( 0 ), m_VShader( a_VShader ), m_FShader( a_FShader )
 	{}
 
-	constexpr T2Shader( const T2Shader& a_rOther )
+	T2Shader( const T2Shader& a_rOther )
 	    : m_uiProgram( a_rOther.m_uiProgram ), m_VShader( a_rOther.m_VShader ), m_FShader( a_rOther.m_FShader )
 	{}
 
@@ -79,8 +79,8 @@ public:
 	void SetUniform( const TCHAR* a_szSlotName, TUINT a_uiValue );
 	void SetUniform( const TCHAR* a_szSlotName, const TUINT* a_pValue, TUINT a_uiNumItems );
 
-	constexpr T2CompiledShader GetVertexShader() const { return m_VShader; }
-	constexpr T2CompiledShader GetFragmentShader() const { return m_FShader; }
+	T2CompiledShader GetVertexShader() const { return m_VShader; }
+	T2CompiledShader GetFragmentShader() const { return m_FShader; }
 
 	T2Shader& operator=( const T2Shader& a_rOther );
 

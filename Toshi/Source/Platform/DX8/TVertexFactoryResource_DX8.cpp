@@ -61,9 +61,9 @@ TVertexBlockResource* TVertexFactoryResource::FindBlockResource( TVertexPoolReso
 		    {
 			    auto pBlockResource = TSTATICCAST( TVertexBlockResource, a_pResource );
 
-			    if ( pBlockResource->CanFit( pPair->GetSecond() ) && !pBlockResource->IsDying() )
+			    if ( pBlockResource->CanFit( pPair->second ) && !pBlockResource->IsDying() )
 			    {
-				    pPair->m_First = pBlockResource;
+				    pPair->first = pBlockResource;
 				    return TFALSE;
 			    }
 		    }
@@ -74,7 +74,7 @@ TVertexBlockResource* TVertexFactoryResource::FindBlockResource( TVertexPoolReso
 	    &result
 	);
 
-	return result.m_First;
+	return result.first;
 }
 
 TOSHI_NAMESPACE_END

@@ -196,9 +196,9 @@ TBOOL TVertexBlockResource::Validate()
 		using Pair = T2Pair<TVertexBlockResource*, TVertexPoolResourceInterface::LockBuffer>;
 		Pair pair;
 
-		if ( Lock( &pair.m_Second, 0 ) )
+		if ( Lock( &pair.second, 0 ) )
 		{
-			pair.m_First = this;
+			pair.first = this;
 
 			TResource::RecurseSimple(
 			    []( TResource* a_pResource, void* a_pUserData ) {
@@ -212,15 +212,15 @@ TBOOL TVertexBlockResource::Validate()
 
 					    if ( pPool->m_uiFlags & 1 )
 					    {
-						    pPool->m_uiVertexOffset = pPair->GetSecond().uiOffset;
-						    pPair->GetSecond().uiOffset += pPool->GetNumVertices();
+						    pPool->m_uiVertexOffset = pPair->second.uiOffset;
+						    pPair->second.uiOffset += pPool->GetNumVertices();
 
 						    for ( TUINT i = 0; i < vertexFormat.GetNumStreams(); i++ )
 						    {
 							    auto uiVertexSize = vertexFormat.m_aStreamFormats[ i ].m_uiVertexSize;
 
 							    TUtil::MemCopy(
-							        pPair->GetSecond().apStreams[ i ] + pPool->m_uiVertexOffset * uiVertexSize,
+							        pPair->second.apStreams[ i ] + pPool->m_uiVertexOffset * uiVertexSize,
 							        pPool->GetManagedStream( i ),
 							        pPool->GetNumVertices() * uiVertexSize
 							    );
