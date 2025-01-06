@@ -2,9 +2,12 @@
 
 #ifdef TRENDERINTERFACE_GL
 
+#  include "Toshi/TPString8.h"
+#  include "Toshi/T2Map.h"
 #  include "Math/TMatrix44.h"
 #  include "Math/TVector4.h"
 #  include "Math/TVector3.h"
+
 #  include "GL/glew.h"
 
 TOSHI_NAMESPACE_START
@@ -58,9 +61,10 @@ public:
 	{}
 
 	TBOOL Create();
-	void Destroy( TBOOL a_bDeleteShaders );
+	void  Destroy( TBOOL a_bDeleteShaders );
 
-	void Use() const;
+	GLint GetUniformSlotId( const TCHAR* a_szSlotName );
+	void  Use() const;
 
 	void SetUniform( const TCHAR* a_szSlotName, const TMatrix44& a_rMatrix );
 	void SetUniform( const TCHAR* a_szSlotName, const TMatrix44* a_pMatrix, TUINT a_uiNumItems );
@@ -81,9 +85,10 @@ public:
 	T2Shader& operator=( const T2Shader& a_rOther );
 
 private:
-	GLuint           m_uiProgram;
-	T2CompiledShader m_VShader;
-	T2CompiledShader m_FShader;
+	GLuint                                          m_uiProgram;
+	T2CompiledShader                                m_VShader;
+	T2CompiledShader                                m_FShader;
+	T2Map<TPString8, GLuint, TPString8::Comparator> m_UniformToSlotId;
 };
 
 TOSHI_NAMESPACE_END

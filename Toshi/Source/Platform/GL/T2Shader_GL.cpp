@@ -51,74 +51,62 @@ void T2Shader::Use() const
 
 void T2Shader::SetUniform( const TCHAR* a_szSlotName, const TUINT* a_pValue, TUINT a_uiNumItems )
 {
-	GLuint loc = glGetUniformLocation( m_uiProgram, a_szSlotName );
-	glUniform1uiv( loc, a_uiNumItems, a_pValue );
+	glUniform1uiv( GetUniformSlotId( a_szSlotName ), a_uiNumItems, a_pValue );
 }
 
 void T2Shader::SetUniform( const TCHAR* a_szSlotName, TUINT a_uiValue )
 {
-	GLuint loc = glGetUniformLocation( m_uiProgram, a_szSlotName );
-	glUniform1ui( loc, a_uiValue );
+	glUniform1ui( GetUniformSlotId( a_szSlotName ), a_uiValue );
 }
 
 void T2Shader::SetUniform( const TCHAR* a_szSlotName, const TINT* a_pValue, TUINT a_uiNumItems )
 {
-	GLuint loc = glGetUniformLocation( m_uiProgram, a_szSlotName );
-	glUniform1iv( loc, a_uiNumItems, a_pValue );
+	glUniform1iv( GetUniformSlotId( a_szSlotName ), a_uiNumItems, a_pValue );
 }
 
 void T2Shader::SetUniform( const TCHAR* a_szSlotName, TINT a_iValue )
 {
-	GLuint loc = glGetUniformLocation( m_uiProgram, a_szSlotName );
-	glUniform1i( loc, a_iValue );
+	glUniform1i( GetUniformSlotId( a_szSlotName ), a_iValue );
 }
 
 void T2Shader::SetUniform( const TCHAR* a_szSlotName, const TFLOAT* a_pValue, TUINT a_uiNumItems )
 {
-	GLuint loc = glGetUniformLocation( m_uiProgram, a_szSlotName );
-	glUniform1fv( loc, a_uiNumItems, a_pValue );
+	glUniform1fv( GetUniformSlotId( a_szSlotName ), a_uiNumItems, a_pValue );
 }
 
 void T2Shader::SetUniform( const TCHAR* a_szSlotName, TFLOAT a_fValue )
 {
-	GLuint loc = glGetUniformLocation( m_uiProgram, a_szSlotName );
-	glUniform1f( loc, a_fValue );
+	glUniform1f( GetUniformSlotId( a_szSlotName ), a_fValue );
 }
 
 void T2Shader::SetUniform( const TCHAR* a_szSlotName, const TVector3* a_pVector, TUINT a_uiNumItems )
 {
-	GLuint loc = glGetUniformLocation( m_uiProgram, a_szSlotName );
-	glUniform3fv( loc, a_uiNumItems, (const TFLOAT*)a_pVector );
+	glUniform3fv( GetUniformSlotId( a_szSlotName ), a_uiNumItems, (const TFLOAT*)a_pVector );
 }
 
 void T2Shader::SetUniform( const TCHAR* a_szSlotName, const TVector3& a_rVector )
 {
-	GLuint loc = glGetUniformLocation( m_uiProgram, a_szSlotName );
-	glUniform3fv( loc, 1, &a_rVector.x );
+	glUniform3fv( GetUniformSlotId( a_szSlotName ), 1, &a_rVector.x );
 }
 
 void T2Shader::SetUniform( const TCHAR* a_szSlotName, const TVector4* a_pVector, TUINT a_uiNumItems )
 {
-	GLuint loc = glGetUniformLocation( m_uiProgram, a_szSlotName );
-	glUniform4fv( loc, a_uiNumItems, (const TFLOAT*)a_pVector );
+	glUniform4fv( GetUniformSlotId( a_szSlotName ), a_uiNumItems, (const TFLOAT*)a_pVector );
 }
 
 void T2Shader::SetUniform( const TCHAR* a_szSlotName, const TVector4& a_rVector )
 {
-	GLuint loc = glGetUniformLocation( m_uiProgram, a_szSlotName );
-	glUniform4fv( loc, 1, &a_rVector.x );
+	glUniform4fv( GetUniformSlotId( a_szSlotName ), 1, &a_rVector.x );
 }
 
 void T2Shader::SetUniform( const TCHAR* a_szSlotName, const TMatrix44* a_pMatrix, TUINT a_uiNumItems )
 {
-	GLuint loc = glGetUniformLocation( m_uiProgram, a_szSlotName );
-	glUniformMatrix4fv( loc, a_uiNumItems, GL_FALSE, (const TFLOAT*)a_pMatrix );
+	glUniformMatrix4fv( GetUniformSlotId( a_szSlotName ), a_uiNumItems, GL_FALSE, (const TFLOAT*)a_pMatrix );
 }
 
 void T2Shader::SetUniform( const TCHAR* a_szSlotName, const TMatrix44& a_rMatrix )
 {
-	GLuint loc = glGetUniformLocation( m_uiProgram, a_szSlotName );
-	glUniformMatrix4fv( loc, 1, GL_FALSE, &a_rMatrix.m_f11 );
+	glUniformMatrix4fv( GetUniformSlotId( a_szSlotName ), 1, GL_FALSE, &a_rMatrix.m_f11 );
 }
 
 T2Shader& T2Shader::operator=( const T2Shader& a_rOther )
@@ -131,6 +119,22 @@ T2Shader& T2Shader::operator=( const T2Shader& a_rOther )
 	}
 
 	return *this;
+}
+
+GLint T2Shader::GetUniformSlotId( const TCHAR* a_szSlotName )
+{
+	TPString8 strSlotName = TPS8D( a_szSlotName );
+	auto      it          = m_UniformToSlotId.Find( strSlotName );
+
+	if ( it != m_UniformToSlotId.End() )
+		return it->second;
+
+	GLint iLoc = glGetUniformLocation( m_uiProgram, a_szSlotName );
+
+	if ( iLoc != -1 )
+		m_UniformToSlotId.Insert( strSlotName, iLoc );
+
+	return iLoc;
 }
 
 TOSHI_NAMESPACE_END
