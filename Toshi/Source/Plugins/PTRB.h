@@ -53,16 +53,8 @@ namespace PTRBUtils
 {
 
 template <typename T>
-inline T ConvertEndianess( Toshi::TTSF::Endianess a_eEndianess, T a_numValue, TBOOL bInvert = TFALSE )
+inline T ConvertEndianess( Toshi::TTSF::Endianess a_eEndianess, T a_numValue )
 {
-	if ( bInvert )
-	{
-		if ( a_eEndianess == Toshi::TTSF::Endianess_Little )
-			a_eEndianess = Toshi::TTSF::Endianess_Big;
-		else
-			a_eEndianess = Toshi::TTSF::Endianess_Little;
-	}
-
 	switch ( a_eEndianess )
 	{
 		case Toshi::TTSF::Endianess_Little:
