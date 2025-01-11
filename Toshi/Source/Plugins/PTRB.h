@@ -278,7 +278,7 @@ public:
 		TUINT32                    m_ExpectedSize;
 		std::vector<RelcPtr>       m_PtrList;
 		std::vector<MemoryStream*> m_DependentStacks;
-		Endianess     m_eEndianess;
+		Endianess                  m_eEndianess;
 	};
 
 public:
@@ -330,7 +330,7 @@ public:
 
 private:
 	std::vector<PTRBSections::MemoryStream*> m_Stacks;
-	Endianess                   m_eEndianess;
+	Endianess                                m_eEndianess;
 };
 
 class PTRBSymbols
@@ -703,16 +703,16 @@ public:
 		return CONVERTENDIANESS( m_eEndianess, a_numValue );
 	}
 
-	PTRBSymbols*           GetSymbols() { return &m_SYMB; }
-	PTRBSections*          GetSections() { return &m_SECT; }
-	Endianess GetEndianess() const { return m_eEndianess; }
+	PTRBSymbols*  GetSymbols() { return &m_SYMB; }
+	PTRBSections* GetSections() { return &m_SECT; }
+	Endianess     GetEndianess() const { return m_eEndianess; }
 
 private:
-	PTRBHeader             m_HDRX;
-	PTRBSections           m_SECT;
-	PTRBRelocations        m_RELC;
-	PTRBSymbols            m_SYMB;
-	Endianess m_eEndianess;
+	PTRBHeader      m_HDRX;
+	PTRBSections    m_SECT;
+	PTRBRelocations m_RELC;
+	PTRBSymbols     m_SYMB;
+	Endianess       m_eEndianess;
 };
 
 inline PTRBHeader::PTRBHeader( Toshi::TVersion version )
