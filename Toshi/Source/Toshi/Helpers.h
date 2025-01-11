@@ -17,6 +17,18 @@ TFORCEINLINE constexpr TUINT32 TFourCC( const TCHAR str[ 4 ] )
 	return ( ( str[ 3 ] << 24 ) | ( str[ 2 ] << 16 ) | ( str[ 1 ] << 8 ) | str[ 0 ] );
 }
 
+// Returns TUINT32 value (always Low Endian) that consists of the specified 4 characters
+TFORCEINLINE constexpr TUINT32 TFourCCLE( const TCHAR str[ 4 ] )
+{
+	return PARSEDWORD( TFourCC( str ) );
+}
+
+// Returns TUINT32 value (always Big Endian) that consists of the specified 4 characters
+TFORCEINLINE constexpr TUINT32 TFourCCBE( const TCHAR str[ 4 ] )
+{
+	return PARSEDWORD_BIG( TFourCC( str ) );
+}
+
 // Returns TTRUE if the pointer is aligned to the specified alignment value
 // For example, TTRUE  is returned if pointer is 0x8 and alignment is 4
 //              TFALSE is returned if pointer is 0x8 and alignment is 7

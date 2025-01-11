@@ -43,8 +43,8 @@ int main( int argc, char** argv )
 			TINFO( "Opened file for input!\n" );
 			TINFO( "Reading input file...\n" );
 
-			PTRBWriter outTrbFile;
-			auto       pOutStack = outTrbFile.GetSections()->CreateStream();
+			PTRB outTrbFile;
+			auto pOutStack = outTrbFile.GetSections()->CreateStream();
 
 			// Read file data into a buffer
 			auto  uiFileSize  = pTextFile->GetSize();

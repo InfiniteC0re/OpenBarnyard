@@ -201,12 +201,12 @@ TTSFO::ERROR TTSFO::Create( const TCHAR* filepath, const TCHAR* magic, Endianess
 
 	if ( m_pFile != TNULL )
 	{
-		TTSF::Hunk hunk{ TFourCC( "TSFL" ), 0 };
+		TTSF::Hunk hunk{ TFourCCLE( "TSFL" ), 0 };
 		TUINT32    magicValue = TFourCC( magic );
 
 		if ( endianess == Endianess_Big )
 		{
-			hunk.Name = TFourCC( "TSFB" );
+			hunk.Name = TFourCCLE( "TSFB" );
 			hunk.Size = PARSEDWORD_BIG( hunk.Size );
 		}
 

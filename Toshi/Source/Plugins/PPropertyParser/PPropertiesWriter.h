@@ -148,9 +148,9 @@ public:
 	{
 		TASSERT( a_oProperties.GetParentProperties() == TNULL );
 
-		PTRBWriter trb;
-		auto       sect = trb.GetSections();
-		auto       symb = trb.GetSymbols();
+		PTRB trb;
+		auto sect = trb.GetSections();
+		auto symb = trb.GetSymbols();
 
 		auto stack = sect->CreateStream();
 

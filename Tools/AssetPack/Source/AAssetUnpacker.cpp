@@ -19,9 +19,9 @@ TBOOL AAssetUnpacker::Unpack( AAssetPack& a_rAssetPack, const Toshi::TString8& a
 
 			auto pRelatedSymbols = &pAsset->RelatedSymbols;
 
-			PTRBWriter outTrbFile;
-			auto       pOutSECT = outTrbFile.GetSections();
-			auto       pOutSYMB = outTrbFile.GetSymbols();
+			PTRB outTrbFile;
+			auto pOutSECT = outTrbFile.GetSections();
+			auto pOutSYMB = outTrbFile.GetSymbols();
 
 			auto pOutStack = pOutSECT->CreateStream( pAsset->pStack );
 

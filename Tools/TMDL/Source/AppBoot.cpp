@@ -84,7 +84,7 @@ int main( int argc, char** argv )
 
 	if ( strInfoFile )
 	{
-		PTRBWriter inTRB( strInfoFile.GetString() );
+		PTRB inTRB( strInfoFile.GetString() );
 
 		auto pInSECT = inTRB.GetSections();
 		auto pInSYMB = inTRB.GetSymbols();

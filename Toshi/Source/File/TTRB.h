@@ -59,6 +59,10 @@ public:
 	TTSF()
 	    : m_pFile( TNULL ) {}
 
+	~TTSF() = default;
+
+	Endianess GetEndianess() const { return m_Endianess; }
+
 protected:
 	Endianess m_Endianess; // 0x0
 	TFile*    m_pFile;     // 0x4
@@ -273,11 +277,11 @@ public:
 
 	struct SecInfo
 	{
-		TCHAR   m_Unused[ 2 ]; // 0x0 (padding)
-		TINT16  m_Unk1;        // 0x2
-		TUINT32 m_Size;        // 0x4
-		void*   m_Data;        // 0x8
-		TUINT32 m_Unk2;        // 0xC
+		TINT16  m_Unused; // 0x0 (padding)
+		TINT16  m_Unk1;   // 0x2
+		TUINT32 m_Size;   // 0x4
+		void*   m_Data;   // 0x8
+		TUINT32 m_Unk2;   // 0xC
 	};
 
 	struct Header
