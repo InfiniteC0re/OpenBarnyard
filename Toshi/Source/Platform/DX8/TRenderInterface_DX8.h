@@ -4,7 +4,7 @@
 #include "TRenderAdapter_DX8.h"
 #include "TDebugText_DX8.h"
 
-#include "Platform/Windows/TMSWindow.h"
+#include "Platform/DX8/TMSWindow.h"
 
 #include <d3d8.h>
 

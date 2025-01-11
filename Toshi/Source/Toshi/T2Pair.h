@@ -4,73 +4,70 @@
 TOSHI_NAMESPACE_START
 
 template <class First, class Second, class Comparator = TComparator<First>>
-class T2Pair
+struct T2Pair
 {
-public:
-	T2Pair( const First& first, const Second& second )
+	First  first;
+	Second second;
+
+	constexpr T2Pair( const First& a_rcFirst, const Second& a_rcSecond )
+	    : first( a_rcFirst )
+	    , second( a_rcSecond )
+	{}
+
+	constexpr T2Pair( const First& a_rcFirst )
+	    : first( a_rcFirst )
+		, second( Second() )
+	{ }
+
+	constexpr T2Pair()
+	    : first( First() )
+	    , second( Second() )
+	{ }
+
+	constexpr First& GetFirst() { return first; }
+
+	constexpr Second& GetSecond() { return second; }
+
+	constexpr T2Pair& operator=( const T2Pair<First, Second, Comparator>& a_rcOther )
 	{
-		m_First  = first;
-		m_Second = second;
+		if ( this != &a_rcOther )
+		{
+			first  = a_rcOther.first;
+			second = a_rcOther.second;
+		}
+
+		return *this;
 	}
 
-	T2Pair( const First& first )
+	constexpr TBOOL operator==( const T2Pair<First, Second, Comparator>& other ) const
 	{
-		m_First = first;
+		return Comparator::IsEqual( first, other.first );
 	}
 
-	T2Pair()
+	constexpr TBOOL operator!=( const T2Pair<First, Second, Comparator>& other ) const
 	{
+		return !Comparator::IsEqual( first, other.first );
 	}
 
-	First& GetFirst()
+	constexpr TBOOL operator>( const T2Pair<First, Second, Comparator>& other ) const
 	{
-		return m_First;
+		return Comparator::IsGreater( first, other.first );
 	}
 
-	Second& GetSecond()
+	constexpr TBOOL operator>=( const T2Pair<First, Second, Comparator>& other ) const
 	{
-		return m_Second;
+		return Comparator::IsGreaterOrEqual( first, other.first );
 	}
 
-	void operator=( const T2Pair<First, Second, Comparator>& other )
+	constexpr TBOOL operator<( const T2Pair<First, Second, Comparator>& other ) const
 	{
-		m_First  = other.m_First;
-		m_Second = other.m_Second;
+		return Comparator::IsLess( first, other.first );
 	}
 
-	TBOOL operator==( const T2Pair<First, Second, Comparator>& other ) const
+	constexpr TBOOL operator<=( const T2Pair<First, Second, Comparator>& other ) const
 	{
-		return Comparator::IsEqual( m_First, other.m_First );
+		return Comparator::IsLessOrEqual( first, other.first );
 	}
-
-	TBOOL operator!=( const T2Pair<First, Second, Comparator>& other ) const
-	{
-		return !Comparator::IsEqual( m_First, other.m_First );
-	}
-
-	TBOOL operator>( const T2Pair<First, Second, Comparator>& other ) const
-	{
-		return Comparator::IsGreater( m_First, other.m_First );
-	}
-
-	TBOOL operator>=( const T2Pair<First, Second, Comparator>& other ) const
-	{
-		return Comparator::IsGreaterOrEqual( m_First, other.m_First );
-	}
-
-	TBOOL operator<( const T2Pair<First, Second, Comparator>& other ) const
-	{
-		return Comparator::IsLess( m_First, other.m_First );
-	}
-
-	TBOOL operator<=( const T2Pair<First, Second, Comparator>& other ) const
-	{
-		return Comparator::IsLessOrEqual( m_First, other.m_First );
-	}
-
-public:
-	First  m_First;
-	Second m_Second;
 };
 
 TOSHI_NAMESPACE_END

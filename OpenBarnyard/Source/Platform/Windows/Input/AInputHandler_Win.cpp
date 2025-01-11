@@ -4,7 +4,6 @@
 #include "Tasks/ARootTask.h"
 
 #include <Input/TInputInterface.h>
-#include <Platform/Windows/Input/TInputInterface_Win.h>
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.

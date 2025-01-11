@@ -2,9 +2,9 @@
 #include "TMSWindow.h"
 #include "Toshi/TApplication.h"
 #include "Toshi/TSystem.h"
-#include "Input/TInputInterface_Win.h"
 
-#include "Platform/Windows/Input/TInputDeviceMouse_Win.h"
+#include "Platform/DX8/Input/TInputInterface_Win.h"
+#include "Platform/DX8/Input/TInputDeviceMouse_Win.h"
 #include "Platform/DX8/TRenderInterface_DX8.h"
 
 //-----------------------------------------------------------------------------

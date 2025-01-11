@@ -22,8 +22,8 @@ project "BYGLRender"
 		"%{LibDir.bink}",
 		"%{LibDir.dx8}",
 		"%{LibDir.detours}",
-		"%{wks.location}/SDK/BYGLRender/Vendor/glew/lib",
-		"%{wks.location}/SDK/BYGLRender/Vendor/sdl2/lib",
+		"%{LibDir.glew}",
+		"%{LibDir.sdl2}",
 	}
 
 	files
@@ -41,9 +41,9 @@ project "BYGLRender"
 		"%{wks.location}/SDK/BYardSDK/Source",
 		"%{wks.location}/SDK/BYModCore/Include",
 		"%{IncludeDir.detours}",
-		"%{wks.location}/SDK/BYGLRender/Vendor/sdl2/include",
-		"%{wks.location}/SDK/BYGLRender/Vendor/glm/include",
-		"%{wks.location}/SDK/BYGLRender/Vendor/glew/include"
+		"%{IncludeDir.sdl2}",
+		"%{IncludeDir.glm}",
+		"%{IncludeDir.glew}"
 	}
 	
 	defines

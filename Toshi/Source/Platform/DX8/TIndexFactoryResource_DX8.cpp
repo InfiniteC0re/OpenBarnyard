@@ -36,9 +36,9 @@ TIndexBlockResource* TIndexFactoryResource::FindBlockResource( TIndexPoolResourc
 		    {
 			    auto pBlockResource = TSTATICCAST( TIndexBlockResource, a_pResource );
 
-			    if ( pBlockResource->CanFit( pPair->GetSecond() ) && !pBlockResource->IsDying() )
+			    if ( pBlockResource->CanFit( pPair->second ) && !pBlockResource->IsDying() )
 			    {
-				    pPair->m_First = pBlockResource;
+				    pPair->first = pBlockResource;
 				    return TFALSE;
 			    }
 		    }
@@ -49,7 +49,7 @@ TIndexBlockResource* TIndexFactoryResource::FindBlockResource( TIndexPoolResourc
 	    &result
 	);
 
-	return result.m_First;
+	return result.first;
 }
 
 // $Barnyard: FUNCTION 006d7a90
