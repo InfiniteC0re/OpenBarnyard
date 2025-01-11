@@ -30,13 +30,6 @@ public:
 	static constexpr TUINT32 IDMAGICB = TFourCC( "TSFB" );
 	static constexpr TUINT32 IDMAGICL = TFourCC( "TSFL" );
 
-	typedef TUINT8 Endianess;
-	enum Endianess_ : Endianess
-	{
-		Endianess_Little,
-		Endianess_Big,
-	};
-
 	struct Header
 	{
 		TUINT32 Magic;

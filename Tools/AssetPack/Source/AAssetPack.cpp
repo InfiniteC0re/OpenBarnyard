@@ -96,7 +96,7 @@ TBOOL AAssetPack::Load( const char* a_szFileName )
 
 void AAssetPack::Save( const char* a_szFileName, TBOOL a_bCompress )
 {
-	PTRB outFile;
+	PTRB outFile( m_TRBFile.GetEndianess() );
 
 	auto pSECT = outFile.GetSections();
 	auto pSYMB = outFile.GetSymbols();

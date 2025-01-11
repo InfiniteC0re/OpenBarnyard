@@ -33,8 +33,8 @@ public:
 
 	void SetVersion( Toshi::TVersion version );
 	void SetSectionCount( int32_t count );
-	void Write( Toshi::TTSFO& ttsfo, PTRBSections& sect, Toshi::TTSF::Endianess eEndianess );
-	void Read( Toshi::TTSFI& ttsfi, PTRBSections& sect, Toshi::TTSF::Endianess eEndianess );
+	void Write( Toshi::TTSFO& ttsfo, PTRBSections& sect, Endianess eEndianess );
+	void Read( Toshi::TTSFI& ttsfi, PTRBSections& sect, Endianess eEndianess );
 
 private:
 	Toshi::TTRB::Header m_Header;
@@ -45,36 +45,9 @@ class PTRBRelocations
 public:
 	PTRBRelocations() = default;
 
-	void Write( Toshi::TTSFO& ttsfo, PTRBSections& sect, Toshi::TTSF::Endianess eEndianess );
-	void Read( Toshi::TTSFI& ttsfi, PTRBSections& sect, Toshi::TTSF::Endianess eEndianess );
+	void Write( Toshi::TTSFO& ttsfo, PTRBSections& sect, Endianess eEndianess );
+	void Read( Toshi::TTSFI& ttsfi, PTRBSections& sect, Endianess eEndianess );
 };
-
-namespace PTRBUtils
-{
-
-template <typename T>
-inline T ConvertEndianess( Toshi::TTSF::Endianess a_eEndianess, T a_numValue )
-{
-	switch ( a_eEndianess )
-	{
-		case Toshi::TTSF::Endianess_Little:
-			if constexpr ( sizeof( T ) == 4 )
-				return (T)PARSEDWORD( *(TUINT32*)( TREINTERPRETCAST( void*, &a_numValue ) ) );
-			else if constexpr ( sizeof( T ) == 2 )
-				return (T)PARSEWORD( *(TUINT16*)( TREINTERPRETCAST( void*, &a_numValue ) ) );
-			break;
-		case Toshi::TTSF::Endianess_Big:
-			if constexpr ( sizeof( T ) == 4 )
-				return (T)PARSEDWORD_BIG( *(TUINT32*)( TREINTERPRETCAST( void*, &a_numValue ) ) );
-			else if constexpr ( sizeof( T ) == 2 )
-				return (T)PARSEWORD_BIG( *(TUINT16*)( TREINTERPRETCAST( void*, &a_numValue ) ) );
-			break;
-	}
-
-	return a_numValue;
-}
-
-} // namespace PTRBUtils
 
 class PTRBSections
 {
@@ -163,7 +136,7 @@ public:
 		};
 
 	public:
-		MemoryStream( TUINT32 index, Toshi::TTSF::Endianess eEndianess )
+		MemoryStream( TUINT32 index, Endianess eEndianess )
 		{
 			m_Index        = index;
 			m_eEndianess   = eEndianess;
@@ -305,11 +278,11 @@ public:
 		TUINT32                    m_ExpectedSize;
 		std::vector<RelcPtr>       m_PtrList;
 		std::vector<MemoryStream*> m_DependentStacks;
-		Toshi::TTSF::Endianess     m_eEndianess;
+		Endianess     m_eEndianess;
 	};
 
 public:
-	PTRBSections( Toshi::TTSF::Endianess a_eEndianess = Toshi::TTSF::Endianess_Little )
+	PTRBSections( Endianess a_eEndianess = Endianess_Little )
 	    : m_eEndianess( a_eEndianess )
 	{}
 
@@ -324,7 +297,7 @@ public:
 			delete stack;
 
 		m_Stacks.clear();
-		m_eEndianess = Toshi::TTSF::Endianess_Little;
+		m_eEndianess = Endianess_Little;
 	}
 
 	TUINT GetStackCount() const
@@ -332,7 +305,7 @@ public:
 		return m_Stacks.size();
 	}
 
-	TBOOL SetEndianess( Toshi::TTSF::Endianess a_eEndianess )
+	TBOOL SetEndianess( Endianess a_eEndianess )
 	{
 		if ( m_Stacks.size() == 0 )
 		{
@@ -350,14 +323,14 @@ public:
 	PTRBSections::MemoryStream* GetStack( TUINT index );
 
 	void Write( Toshi::TTSFO& ttsfo, TBOOL compress );
-	void Read( Toshi::TTSFI& ttsfi, TBOOL compressed = TFALSE, Toshi::TTSF::Endianess eEndianess = Toshi::TTSF::Endianess_Little );
+	void Read( Toshi::TTSFI& ttsfi, TBOOL compressed = TFALSE, Endianess eEndianess = Endianess_Little );
 
 	std::vector<PTRBSections::MemoryStream*>::iterator begin() { return m_Stacks.begin(); }
 	std::vector<PTRBSections::MemoryStream*>::iterator end() { return m_Stacks.end(); }
 
 private:
 	std::vector<PTRBSections::MemoryStream*> m_Stacks;
-	Toshi::TTSF::Endianess                   m_eEndianess;
+	Endianess                   m_eEndianess;
 };
 
 class PTRBSymbols
@@ -535,13 +508,13 @@ public:
 		}
 	}
 
-	void Write( Toshi::TTSFO& ttsfo, Toshi::TTSF::Endianess eEndianess )
+	void Write( Toshi::TTSFO& ttsfo, Endianess eEndianess )
 	{
 		TASSERT( m_Symbols.size() == m_SymbolNames.size(), "" );
 
 		TUINT32 nameOffset  = 0;
 		TUINT32 symbolCount = m_Symbols.size();
-		ttsfo.Write( PTRBUtils::ConvertEndianess( eEndianess, symbolCount ) );
+		ttsfo.Write( CONVERTENDIANESS( eEndianess, symbolCount ) );
 
 		for ( TUINT i = 0; i < m_Symbols.size(); i++ )
 		{
@@ -550,11 +523,11 @@ public:
 			nameOffset += m_SymbolNames[ i ].length() + 1;
 
 			Toshi::TTRB::TTRBSymbol oFixedSymbol;
-			oFixedSymbol.HDRX       = PTRBUtils::ConvertEndianess( eEndianess, m_Symbols[ i ].HDRX );
-			oFixedSymbol.NameHash   = PTRBUtils::ConvertEndianess( eEndianess, m_Symbols[ i ].NameHash );
-			oFixedSymbol.NameOffset = PTRBUtils::ConvertEndianess( eEndianess, m_Symbols[ i ].NameOffset );
-			oFixedSymbol.Padding    = PTRBUtils::ConvertEndianess( eEndianess, m_Symbols[ i ].Padding );
-			oFixedSymbol.DataOffset = PTRBUtils::ConvertEndianess( eEndianess, m_Symbols[ i ].DataOffset );
+			oFixedSymbol.HDRX       = CONVERTENDIANESS( eEndianess, m_Symbols[ i ].HDRX );
+			oFixedSymbol.NameHash   = CONVERTENDIANESS( eEndianess, m_Symbols[ i ].NameHash );
+			oFixedSymbol.NameOffset = CONVERTENDIANESS( eEndianess, m_Symbols[ i ].NameOffset );
+			oFixedSymbol.Padding    = CONVERTENDIANESS( eEndianess, m_Symbols[ i ].Padding );
+			oFixedSymbol.DataOffset = CONVERTENDIANESS( eEndianess, m_Symbols[ i ].DataOffset );
 			ttsfo.Write( oFixedSymbol );
 		}
 
@@ -565,11 +538,11 @@ public:
 		}
 	}
 
-	void Read( Toshi::TTSFI& ttsfi, PTRBSections& sect, Toshi::TTSF::Endianess eEndianess )
+	void Read( Toshi::TTSFI& ttsfi, PTRBSections& sect, Endianess eEndianess )
 	{
 		TUINT32 symbolCount = 0;
 		ttsfi.Read( &symbolCount );
-		symbolCount = PTRBUtils::ConvertEndianess( eEndianess, symbolCount );
+		symbolCount = CONVERTENDIANESS( eEndianess, symbolCount );
 
 		// Read symbols
 		TUINT symbolsSize = sizeof( Toshi::TTRB::TTRBSymbol ) * symbolCount;
@@ -584,11 +557,11 @@ public:
 
 		for ( auto& symbol : m_Symbols )
 		{
-			symbol.HDRX       = PTRBUtils::ConvertEndianess( eEndianess, symbol.HDRX );
-			symbol.NameHash   = PTRBUtils::ConvertEndianess( eEndianess, symbol.NameHash );
-			symbol.NameOffset = PTRBUtils::ConvertEndianess( eEndianess, symbol.NameOffset );
-			symbol.Padding    = PTRBUtils::ConvertEndianess( eEndianess, symbol.Padding );
-			symbol.DataOffset = PTRBUtils::ConvertEndianess( eEndianess, symbol.DataOffset );
+			symbol.HDRX       = CONVERTENDIANESS( eEndianess, symbol.HDRX );
+			symbol.NameHash   = CONVERTENDIANESS( eEndianess, symbol.NameHash );
+			symbol.NameOffset = CONVERTENDIANESS( eEndianess, symbol.NameOffset );
+			symbol.Padding    = CONVERTENDIANESS( eEndianess, symbol.Padding );
+			symbol.DataOffset = CONVERTENDIANESS( eEndianess, symbol.DataOffset );
 
 			const TCHAR* symbolName = &namesBuffer[ symbol.NameOffset ];
 			m_SymbolNames.push_back( symbolName );
@@ -611,7 +584,7 @@ public:
 	static constexpr Toshi::TVersion VERSION = { TVERSION( 1, 1 ) };
 
 public:
-	PTRB( Toshi::TTSF::Endianess a_eEndianess = Toshi::TTSF::Endianess_Little )
+	PTRB( Endianess a_eEndianess = Endianess_Little )
 	    : m_HDRX( VERSION )
 	    , m_eEndianess( a_eEndianess )
 	{
@@ -688,11 +661,9 @@ public:
 	{
 		if ( m_eEndianess != -1 )
 		{
-			const TBOOL bIsBigEndian = ( m_eEndianess == Toshi::TTSF::Endianess_Big );
-
 			Toshi::TTSFO           ttsfo;
 			Toshi::TTSFO::HunkMark mark;
-			ttsfo.Create( filepath.c_str(), bIsBigEndian ? "FBRT" : "TRBF", m_eEndianess );
+			ttsfo.Create( filepath.c_str(), ( m_eEndianess == Endianess_Big ) ? "FBRT" : "TRBF", m_eEndianess );
 
 			// HDRX
 			ttsfo.OpenHunk( &mark, "HDRX" );
@@ -701,6 +672,9 @@ public:
 			ttsfo.CloseHunk( &mark );
 
 			// SECT
+			if ( compress )
+				Toshi::TCompress::ms_bIsBigEndian = ( m_eEndianess == Endianess_Big );
+
 			ttsfo.OpenHunk( &mark, compress ? "SECC" : "SECT" );
 			m_SECT.Write( ttsfo, compress );
 			ttsfo.CloseHunk( &mark );
@@ -726,19 +700,19 @@ public:
 	template <typename T>
 	T ConvertEndianess( T a_numValue )
 	{
-		return PTRBUtils::ConvertEndianess( m_eEndianess, a_numValue );
+		return CONVERTENDIANESS( m_eEndianess, a_numValue );
 	}
 
 	PTRBSymbols*           GetSymbols() { return &m_SYMB; }
 	PTRBSections*          GetSections() { return &m_SECT; }
-	Toshi::TTSF::Endianess GetEndianess() const { return m_eEndianess; }
+	Endianess GetEndianess() const { return m_eEndianess; }
 
 private:
 	PTRBHeader             m_HDRX;
 	PTRBSections           m_SECT;
 	PTRBRelocations        m_RELC;
 	PTRBSymbols            m_SYMB;
-	Toshi::TTSF::Endianess m_eEndianess;
+	Endianess m_eEndianess;
 };
 
 inline PTRBHeader::PTRBHeader( Toshi::TVersion version )
@@ -757,45 +731,45 @@ inline void PTRBHeader::SetSectionCount( int32_t count )
 	m_Header.m_i32SectionCount = count;
 }
 
-inline void PTRBHeader::Write( Toshi::TTSFO& ttsfo, PTRBSections& sect, Toshi::TTSF::Endianess eEndianess )
+inline void PTRBHeader::Write( Toshi::TTSFO& ttsfo, PTRBSections& sect, Endianess eEndianess )
 {
 	Toshi::TTRB::Header oFixedHeader;
-	oFixedHeader.m_ui32Version     = PTRBUtils::ConvertEndianess( eEndianess, m_Header.m_ui32Version.Value );
-	oFixedHeader.m_i32SectionCount = PTRBUtils::ConvertEndianess( eEndianess, m_Header.m_i32SectionCount );
+	oFixedHeader.m_ui32Version     = CONVERTENDIANESS( eEndianess, m_Header.m_ui32Version.Value );
+	oFixedHeader.m_i32SectionCount = CONVERTENDIANESS( eEndianess, m_Header.m_i32SectionCount );
 
 	ttsfo.Write( oFixedHeader );
 
 	for ( PTRBSections::MemoryStream* stack : sect )
 	{
 		Toshi::TTRB::SecInfo sectionInfo = {};
-		sectionInfo.m_Size               = PTRBUtils::ConvertEndianess( eEndianess, TAlignNumUp( stack->GetUsedSize() ) );
+		sectionInfo.m_Size               = CONVERTENDIANESS( eEndianess, TAlignNumUp( stack->GetUsedSize() ) );
 		ttsfo.Write( sectionInfo );
 	}
 }
 
-inline void PTRBHeader::Read( Toshi::TTSFI& ttsfi, PTRBSections& sect, Toshi::TTSF::Endianess eEndianess )
+inline void PTRBHeader::Read( Toshi::TTSFI& ttsfi, PTRBSections& sect, Endianess eEndianess )
 {
 	ttsfi.Read( &m_Header );
-	m_Header.m_i32SectionCount = PTRBUtils::ConvertEndianess( eEndianess, m_Header.m_i32SectionCount );
-	m_Header.m_ui32Version     = PTRBUtils::ConvertEndianess( eEndianess, m_Header.m_ui32Version.Value );
+	m_Header.m_i32SectionCount = CONVERTENDIANESS( eEndianess, m_Header.m_i32SectionCount );
+	m_Header.m_ui32Version     = CONVERTENDIANESS( eEndianess, m_Header.m_ui32Version.Value );
 
 	for ( TINT i = 0; i < m_Header.m_i32SectionCount; i++ )
 	{
 		Toshi::TTRB::SecInfo sectionInfo;
 		ttsfi.Read( &sectionInfo );
 
-		sectionInfo.m_Data   = PTRBUtils::ConvertEndianess( eEndianess, sectionInfo.m_Data );
-		sectionInfo.m_Size   = PTRBUtils::ConvertEndianess( eEndianess, sectionInfo.m_Size );
-		sectionInfo.m_Unk1   = PTRBUtils::ConvertEndianess( eEndianess, sectionInfo.m_Unk1 );
-		sectionInfo.m_Unk2   = PTRBUtils::ConvertEndianess( eEndianess, sectionInfo.m_Unk2 );
-		sectionInfo.m_Unused = PTRBUtils::ConvertEndianess( eEndianess, sectionInfo.m_Unused );
+		sectionInfo.m_Data   = CONVERTENDIANESS( eEndianess, sectionInfo.m_Data );
+		sectionInfo.m_Size   = CONVERTENDIANESS( eEndianess, sectionInfo.m_Size );
+		sectionInfo.m_Unk1   = CONVERTENDIANESS( eEndianess, sectionInfo.m_Unk1 );
+		sectionInfo.m_Unk2   = CONVERTENDIANESS( eEndianess, sectionInfo.m_Unk2 );
+		sectionInfo.m_Unused = CONVERTENDIANESS( eEndianess, sectionInfo.m_Unused );
 
 		auto stack = sect.CreateStream();
 		stack->SetExpectedSize( sectionInfo.m_Size );
 	}
 }
 
-inline void PTRBRelocations::Write( Toshi::TTSFO& ttsfo, PTRBSections& sect, Toshi::TTSF::Endianess eEndianess )
+inline void PTRBRelocations::Write( Toshi::TTSFO& ttsfo, PTRBSections& sect, Endianess eEndianess )
 {
 	TUINT32 ptrCount = 0;
 	for ( auto section : sect )
@@ -803,7 +777,7 @@ inline void PTRBRelocations::Write( Toshi::TTSFO& ttsfo, PTRBSections& sect, Tos
 		ptrCount += section->GetPointerCount();
 	}
 
-	ttsfo.Write( PTRBUtils::ConvertEndianess( eEndianess, ptrCount ) );
+	ttsfo.Write( CONVERTENDIANESS( eEndianess, ptrCount ) );
 
 	for ( TUINT i = 0; i < sect.GetStackCount(); i++ )
 	{
@@ -812,28 +786,28 @@ inline void PTRBRelocations::Write( Toshi::TTSFO& ttsfo, PTRBSections& sect, Tos
 		for ( auto& ptr : *section )
 		{
 			Toshi::TTRB::RELCEntry entry = {};
-			entry.HDRX1                  = PTRBUtils::ConvertEndianess( eEndianess, (TINT16)i );
-			entry.HDRX2                  = PTRBUtils::ConvertEndianess( eEndianess, (TINT16)ptr.DataStack->GetIndex() );
-			entry.Offset                 = PTRBUtils::ConvertEndianess( eEndianess, ptr.Offset );
+			entry.HDRX1                  = CONVERTENDIANESS( eEndianess, (TINT16)i );
+			entry.HDRX2                  = CONVERTENDIANESS( eEndianess, (TINT16)ptr.DataStack->GetIndex() );
+			entry.Offset                 = CONVERTENDIANESS( eEndianess, ptr.Offset );
 			ttsfo.Write( entry );
 		}
 	}
 }
 
-inline void PTRBRelocations::Read( Toshi::TTSFI& ttsfi, PTRBSections& sect, Toshi::TTSF::Endianess eEndianess )
+inline void PTRBRelocations::Read( Toshi::TTSFI& ttsfi, PTRBSections& sect, Endianess eEndianess )
 {
 	TUINT32 ptrCount = 0;
 	ttsfi.Read( &ptrCount );
 
-	ptrCount = PTRBUtils::ConvertEndianess( eEndianess, ptrCount );
+	ptrCount = CONVERTENDIANESS( eEndianess, ptrCount );
 
 	Toshi::TTRB::RELCEntry entry;
 	for ( TUINT32 i = 0; i < ptrCount; i++ )
 	{
 		ttsfi.Read( &entry );
-		entry.HDRX1  = PTRBUtils::ConvertEndianess( eEndianess, entry.HDRX1 );
-		entry.HDRX2  = PTRBUtils::ConvertEndianess( eEndianess, entry.HDRX2 );
-		entry.Offset = PTRBUtils::ConvertEndianess( eEndianess, entry.Offset );
+		entry.HDRX1  = CONVERTENDIANESS( eEndianess, entry.HDRX1 );
+		entry.HDRX2  = CONVERTENDIANESS( eEndianess, entry.HDRX2 );
+		entry.Offset = CONVERTENDIANESS( eEndianess, entry.Offset );
 
 		auto    stack     = sect.GetStack( entry.HDRX1 );
 		auto    dataStack = sect.GetStack( entry.HDRX2 );
@@ -912,7 +886,7 @@ inline PTRBSections::MemoryStream::Ptr<T> PTRBSections::MemoryStream::Alloc( T**
 	m_BufferPos += TSize;
 
 	Write<T*>( outPtrOffset, allocated );
-	AddRelocationPtr( outPtrOffset, PTRBUtils::ConvertEndianess( m_eEndianess, GetOffset( allocated ) ) );
+	AddRelocationPtr( outPtrOffset, CONVERTENDIANESS( m_eEndianess, GetOffset( allocated ) ) );
 
 	return { this, allocated };
 }
@@ -931,7 +905,7 @@ inline PTRBSections::MemoryStream::Ptr<T> PTRBSections::MemoryStream::Alloc( T**
 	m_BufferPos += TSize;
 
 	Write<T*>( outPtrOffset, allocated );
-	AddRelocationPtr( outPtrOffset, PTRBUtils::ConvertEndianess( m_eEndianess, GetOffset( allocated ) ) );
+	AddRelocationPtr( outPtrOffset, CONVERTENDIANESS( m_eEndianess, GetOffset( allocated ) ) );
 
 	return { this, allocated };
 }
@@ -944,7 +918,7 @@ inline void PTRBSections::MemoryStream::WritePointer( T** outPtr, const T* ptr )
 
 	TUINT outPtrOffset = GetOffset( outPtr );
 	Write<TUINT32>( outPtrOffset, TREINTERPRETCAST( TUINT32, ptr ) );
-	AddRelocationPtr( outPtrOffset, PTRBUtils::ConvertEndianess( m_eEndianess, GetOffset( ptr ) ) );
+	AddRelocationPtr( outPtrOffset, CONVERTENDIANESS( m_eEndianess, GetOffset( ptr ) ) );
 }
 
 template <class T>
@@ -954,7 +928,7 @@ inline void PTRBSections::MemoryStream::WritePointer( T** outPtr, const PTRBSect
 
 	TUINT outPtrOffset = GetOffset( outPtr );
 	Write<TUINT32>( outPtrOffset, TREINTERPRETCAST( TUINT32, ptr.get() ) );
-	AddRelocationPtr( outPtrOffset, PTRBUtils::ConvertEndianess( m_eEndianess, ptr.offset() ) );
+	AddRelocationPtr( outPtrOffset, CONVERTENDIANESS( m_eEndianess, ptr.offset() ) );
 }
 
 inline PTRBSections::MemoryStream::Ptr<TCHAR> PTRBSections::MemoryStream::AllocBytes( TUINT Size )
@@ -971,7 +945,7 @@ inline void PTRBSections::MemoryStream::Link()
 {
 	for ( auto& ptr : m_PtrList )
 	{
-		Write<void*>( ptr.Offset, ptr.DataStack->GetBuffer() + PTRBUtils::ConvertEndianess( m_eEndianess, ptr.DataPtr ) );
+		Write<void*>( ptr.Offset, ptr.DataStack->GetBuffer() + CONVERTENDIANESS( m_eEndianess, ptr.DataPtr ) );
 	}
 }
 
@@ -1113,7 +1087,7 @@ inline void PTRBSections::Write( Toshi::TTSFO& ttsfo, TBOOL compress )
 	}
 }
 
-inline void PTRBSections::Read( Toshi::TTSFI& ttsfi, TBOOL compressed, Toshi::TTSF::Endianess eEndianess )
+inline void PTRBSections::Read( Toshi::TTSFI& ttsfi, TBOOL compressed, Endianess eEndianess )
 {
 	m_eEndianess = eEndianess;
 
@@ -1127,6 +1101,7 @@ inline void PTRBSections::Read( Toshi::TTSFI& ttsfi, TBOOL compressed, Toshi::TT
 
 			if ( compressed )
 			{
+				Toshi::TCompress::ms_bIsBigEndian = ( eEndianess == Endianess_Big );
 				ttsfi.ReadCompressed( stack->GetBuffer(), expectedSize );
 			}
 			else

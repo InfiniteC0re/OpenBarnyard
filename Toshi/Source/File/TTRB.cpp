@@ -133,6 +133,8 @@ TBOOL TTRB::ProcessForm( TTSFI& ttsf )
 			}
 			else if ( sectionName == TFourCC( "SECC" ) )
 			{
+				Toshi::TCompress::ms_bIsBigEndian = ( CURRENT_ENDIANESS == Endianess_Big );
+
 				for ( TINT i = 0; i < m_pHeader->m_i32SectionCount; i++ )
 				{
 					auto* secInfo = GetSectionInfo( i );

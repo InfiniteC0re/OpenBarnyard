@@ -19,7 +19,7 @@ TBOOL AAssetUnpacker::Unpack( AAssetPack& a_rAssetPack, const Toshi::TString8& a
 
 			auto pRelatedSymbols = &pAsset->RelatedSymbols;
 
-			PTRB outTrbFile;
+			PTRB outTrbFile( a_rAssetPack.GetTRBFile()->GetEndianess() );
 			auto pOutSECT = outTrbFile.GetSections();
 			auto pOutSYMB = outTrbFile.GetSymbols();
 

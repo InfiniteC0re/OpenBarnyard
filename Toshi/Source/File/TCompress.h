@@ -48,6 +48,9 @@ public:
 	// Size of header that is common for BTEC 1.3
 	static constexpr TUINT32 HEADER_SIZE_13 = sizeof( Header );
 
+	// Custom variable used to help the compressor/decompressor decide which byte order it should use
+	inline static TBOOL ms_bIsBigEndian = TFALSE;
+
 public:
 	//-----------------------------------------------------------------------------
 	// Compressor

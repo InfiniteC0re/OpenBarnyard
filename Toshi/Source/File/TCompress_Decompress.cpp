@@ -74,10 +74,23 @@ int8_t TCompress::GetHeader( TFile* file, TCompress::Header& btecHeader )
 	TUINT32 savedPos   = file->Tell();
 	TSIZE   readedSize = file->Read( &btecHeader, headerSize );
 
+	if ( ms_bIsBigEndian )
+	{
+		btecHeader.Size           = CONVERTENDIANESS( Endianess_Big, btecHeader.Size );
+		btecHeader.CompressedSize = CONVERTENDIANESS( Endianess_Big, btecHeader.CompressedSize );
+		btecHeader.Magic          = CONVERTENDIANESS( Endianess_Big, btecHeader.Magic );
+		btecHeader.Version        = CONVERTENDIANESS( Endianess_Big, btecHeader.Version.Value );
+	}
+
 	if ( btecHeader.Version == TVERSION( 1, 3 ) )
 	{
 		readedSize += file->Read( &btecHeader.XorValue, sizeof( TCompress::Header::XorValue ) );
 		headerSize += sizeof( TCompress::Header::XorValue );
+
+		if ( ms_bIsBigEndian )
+		{
+			btecHeader.XorValue = CONVERTENDIANESS( Endianess_Big, btecHeader.XorValue );
+		}
 	}
 
 	if ( readedSize != headerSize )
