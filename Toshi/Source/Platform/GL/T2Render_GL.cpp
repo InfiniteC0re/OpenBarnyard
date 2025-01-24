@@ -134,4 +134,25 @@ T2CompiledShader T2Render::CompileShaderFromFile( GLenum a_eShader, const TCHAR*
 	return shader;
 }
 
+GLuint T2Render::CreateTexture( GLsizei a_iWidth, GLsizei a_iHeight, GLenum a_eFormat, TBOOL a_bGenerateMipmap, const void* a_pData )
+{
+	GLuint uiTexture;
+	glGenTextures( 1, &uiTexture );
+
+	glBindTexture( GL_TEXTURE_2D, uiTexture );
+	glTexImage2D( GL_TEXTURE_2D, 0, a_eFormat, a_iWidth, a_iHeight, 0, a_eFormat, GL_UNSIGNED_BYTE, a_pData );
+
+	if ( a_pData && a_bGenerateMipmap )
+	{
+		glGenerateMipmap( GL_TEXTURE_2D );
+	}
+
+	return uiTexture;
+}
+
+void T2Render::DestroyTexture( GLuint a_iId )
+{
+	glDeleteTextures( 1, &a_iId );
+}
+
 TOSHI_NAMESPACE_END

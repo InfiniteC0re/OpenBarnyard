@@ -91,16 +91,18 @@ public:
 	TBOOL IsUnicode() const { return TFALSE; } // Who would have known?
 
 public:
-	TString8 operator+( TCHAR const* cstr ) const
+	TString8 operator+( const TCHAR* cstr ) const
 	{
 		TString8 str = TString8( *this );
 		return std::move( str.Concat( cstr ) );
 	}
-	TString8* operator+=( TCHAR const* cstr )
+
+	TString8* operator+=( const TCHAR* cstr )
 	{
 		Concat( cstr, -1 );
 		return this;
 	}
+
 	TString8* operator+=( TString8& str )
 	{
 		Concat( str, -1 );

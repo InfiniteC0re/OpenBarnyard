@@ -3,7 +3,7 @@
 #include "TPlane.h"
 
 #ifdef TRENDERINTERFACE_DX8
-#include <d3dx8math.h>
+#  include <d3dx8math.h>
 #endif
 
 TOSHI_NAMESPACE_START

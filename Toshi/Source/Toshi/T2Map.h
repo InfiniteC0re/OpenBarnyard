@@ -108,6 +108,11 @@ public:
 		return Begin() == End();
 	}
 
+	Iterator operator[]( const KeyType& key )
+	{
+		return m_RedBlackTree.Find( { key } );
+	}
+
 private:
 	T2RedBlackTree<Pair> m_RedBlackTree;
 };

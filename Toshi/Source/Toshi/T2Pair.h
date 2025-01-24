@@ -16,13 +16,13 @@ struct T2Pair
 
 	constexpr T2Pair( const First& a_rcFirst )
 	    : first( a_rcFirst )
-		, second( Second() )
-	{ }
+	    , second( Second() )
+	{}
 
 	constexpr T2Pair()
 	    : first( First() )
 	    , second( Second() )
-	{ }
+	{}
 
 	constexpr First& GetFirst() { return first; }
 

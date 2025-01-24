@@ -113,7 +113,7 @@ project "Toshi"
 			files
 			{
 				"Source/Platform/GL/**.cpp",
-				"Source/Platform/GL/**.c",
+				"Source/Platform/GL/**.h",
 				"Source/Platform/SDL/**.cpp",
 				"Source/Platform/SDL/**.h"
 			}

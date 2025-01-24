@@ -2,6 +2,7 @@
 
 #ifdef TRENDERINTERFACE_GL
 
+#  include "Toshi/TString8.h"
 #  include "GL/glew.h"
 
 TOSHI_NAMESPACE_START

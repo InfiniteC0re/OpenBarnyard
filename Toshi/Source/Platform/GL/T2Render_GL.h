@@ -9,8 +9,8 @@ TOSHI_NAMESPACE_START
 
 //-----------------------------------------------------------------------------
 // Note: This is a custom class which is not the same as the one used in TOSHI 2.0
-// since it was never actually used in any games but in some tools like TXSViewer which
-// is not publicly available, so it's not possible to match this class.
+// since it was never actually used in any games but in some tools like TXSViewer
+// which is not publicly available, so it's not possible to match this class.
 //-----------------------------------------------------------------------------
 class T2Render
 {
@@ -36,6 +36,9 @@ public:
 	void Destroy();
 
 public:
+	static GLuint           CreateTexture( GLsizei a_iWidth, GLsizei a_iHeight, GLenum a_eFormat, TBOOL a_bGenerateMipmap, const void* a_pData );
+	static void             DestroyTexture( GLuint a_iId );
+
 	static T2CompiledShader CompileShader( GLenum a_eShader, const TCHAR* a_szSource );
 	static T2CompiledShader CompileShaderFromFile( GLenum a_eShader, const TCHAR* a_szFileName );
 	static T2Shader         CreateShaderProgram( T2CompiledShader a_VertexShader, T2CompiledShader a_FragmentShader );
