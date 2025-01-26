@@ -5,6 +5,8 @@
 
 TOSHI_NAMESPACE_START
 
+class T2Render;
+
 //-----------------------------------------------------------------------------
 // Note: This is a custom class which is not the same as the one used in TOSHI 2.0
 // since it was never actually used in any games but in some tools like TXSViewer which
@@ -23,7 +25,7 @@ public:
 	T2Window()  = default;
 	~T2Window() = default;
 
-	TBOOL Create( TRenderInterface* a_pRender, const TCHAR* a_szTitle );
+	TBOOL Create( T2Render* a_pRender, const TCHAR* a_szTitle );
 	void  Update();
 
 	void SetFullscreen( TBOOL a_bFullScreen );
@@ -35,7 +37,7 @@ public:
 private:
 	SDL_Window*       m_pWindow = TNULL;
 	EventListener*    m_pListener;
-	TRenderInterface* m_pRender;
+	T2Render*         m_pRender;
 };
 
 TOSHI_NAMESPACE_END

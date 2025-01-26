@@ -291,7 +291,6 @@ void ARenderer::RenderGUI()
 	auto pViewport = AGUISystem::GetSingleton()->GetRenderObject( 0 )->GetViewport();
 
 	auto pOldContext = pRender->SetCurrentRenderContext( pViewport->GetRenderContext() );
-	;
 
 	TTODO( "Save and restore value of 'm_AmbientColor?' when it's figured out" );
 

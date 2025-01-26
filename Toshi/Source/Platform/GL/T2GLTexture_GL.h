@@ -183,14 +183,14 @@ typedef enum TEXTURE_FILTER
 //-----------------------------------------------------------------------------
 // Note: This is a custom class.
 //-----------------------------------------------------------------------------
-class T2Texture
+class T2GLTexture
 {
 public:
 	friend class T2TextureManager;
 
 public:
-	T2Texture() = default;
-	~T2Texture();
+	T2GLTexture() = default;
+	~T2GLTexture();
 
 	void Create( TEXTURE_FORMAT a_eFormat, UINT a_uiWidth, UINT a_uiHeight, const void* a_pData );
 	void Destroy();
@@ -198,7 +198,7 @@ public:
 	void Bind( GLenum a_eTarget );
 
 	const TCHAR* GetName() const { return m_pchTexName; }
-	void*        GetHandle() const { return TREINTERPRETCAST( void*, m_pHandle ); }
+	GLuint       GetHandle() const { return m_pHandle; }
 	UINT         GetWidth() const { return m_uiWidth; }
 	UINT         GetHeight() const { return m_uiHeight; }
 
@@ -218,8 +218,8 @@ private:
 	TEXTURE_ADDRESS_MODE m_eAddressV = TEXTURE_ADDRESS_WRAP;
 	TEXTURE_FILTER       m_eFilter   = TEXTURE_FILTER_MIN_MAG_MIP_LINEAR;
 
-	T2Texture* m_pPrevTexture = TNULL;
-	T2Texture* m_pNextTexture = TNULL;
+	T2GLTexture* m_pPrevTexture = TNULL;
+	T2GLTexture* m_pNextTexture = TNULL;
 };
 
 //-----------------------------------------------------------------------------
@@ -229,24 +229,24 @@ class T2TextureManager
     : public TSingleton<T2TextureManager>
 {
 public:
-	friend class T2Texture;
+	friend class T2GLTexture;
 
 public:
 	T2TextureManager();
 	~T2TextureManager() = default;
 
-	T2Texture* GetLastTexture() const { return m_pLastTexture; }
-	T2Texture* GetInvalidTexture() const { return m_pInvalidTexture; }
-	T2Texture* GetWhiteTexture() const { return m_pWhiteTexture; }
+	T2GLTexture* GetLastTexture() const { return m_pLastTexture; }
+	T2GLTexture* GetInvalidTexture() const { return m_pInvalidTexture; }
+	T2GLTexture* GetWhiteTexture() const { return m_pWhiteTexture; }
 
-	T2Texture* FindTexture( const TCHAR* a_pchTexName );
-	void       AddTexture( T2Texture* a_pTexture );
-	void       RemoveTexture( T2Texture* a_pTexture );
+	T2GLTexture* FindTexture( const TCHAR* a_pchTexName );
+	void       AddTexture( T2GLTexture* a_pTexture );
+	void       RemoveTexture( T2GLTexture* a_pTexture );
 
 private:
-	T2Texture* m_pLastTexture;
-	T2Texture* m_pInvalidTexture;
-	T2Texture* m_pWhiteTexture;
+	T2GLTexture* m_pLastTexture;
+	T2GLTexture* m_pInvalidTexture;
+	T2GLTexture* m_pWhiteTexture;
 };
 
 TOSHI_NAMESPACE_END

@@ -1,4 +1,4 @@
-project "BYModCore"
+project "BYEnhanced"
 	kind "SharedLib"
 	language "C++"
 	staticruntime "on"
@@ -6,11 +6,17 @@ project "BYModCore"
 	pchheader "pch.h"
 	pchsource "Source/pch.cpp"
 	
+	filter "options:renderer=GL"
+		kind "None"
+
 	links
 	{
 		"Toshi",
 		"BYardSDK",
-		"detours.lib"
+		"BYModCore",
+		"SDL2.lib",
+		"opengl32.lib",
+		"glew32s.lib"
 	}
 	
 	libdirs
@@ -19,12 +25,15 @@ project "BYModCore"
 		"%{LibDir.bink}",
 		"%{LibDir.dx8}",
 		"%{LibDir.detours}",
+		"%{LibDir.glew}",
+		"%{LibDir.sdl2}",
 	}
 
 	files
 	{
 		"Source/**.h",
 		"Source/**.cpp",
+		"Source/**.c",
 	}
 
 	includedirs
@@ -33,17 +42,24 @@ project "BYModCore"
 		"Include",
 		"%{wks.location}/Toshi/Source",
 		"%{wks.location}/SDK/BYardSDK/Source",
-		"%{IncludeDir.detours}"
+		"%{wks.location}/SDK/BYModCore/Include",
+		"%{IncludeDir.detours}",
+		"%{IncludeDir.sdl2}",
+		"%{IncludeDir.glm}",
+		"%{IncludeDir.glew}"
 	}
 	
-	externalincludedirs
+	defines
 	{
-		"%{IncludeDir.dx8}"
+		"GLEW_STATIC"
 	}
+	
+	filter "files:**.c"
+		flags { "NoPCH" }
 
 	filter "system:windows"
 		defines
 		{
-			"TOSHI_MODLOADER",
-			"TOSHI_SDK"
+			"TOSHI_SDK",
+			"TOSHI_MODLOADER_CLIENT"
 		}

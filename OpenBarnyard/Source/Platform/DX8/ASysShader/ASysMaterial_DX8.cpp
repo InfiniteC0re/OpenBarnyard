@@ -106,7 +106,7 @@ void ASysMaterialHAL::PreRender()
 
 		if ( pTextureHAL->GetD3DTexture() )
 		{
-			( pDevice->SetTexture )( 0, pTextureHAL->GetD3DTexture() );
+			pDevice->SetTexture( 0, pTextureHAL->GetD3DTexture() );
 			TRenderD3DInterface::Interface()->SetTextureAddress( 0, pTextureHAL->GetAddress(), -1 );
 		}
 	}
@@ -117,7 +117,7 @@ void ASysMaterialHAL::PreRender()
 
 	if ( m_Flags & FLAGS_NO_CULL )
 	{
-		( pDevice->SetRenderState )( D3DRS_CULLMODE, D3DCULL_NONE );
+		pDevice->SetRenderState( D3DRS_CULLMODE, D3DCULL_NONE );
 	}
 
 	switch ( m_eBlendMode )

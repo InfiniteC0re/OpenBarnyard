@@ -4,6 +4,9 @@
 #  include "Render/T2RenderCommon.h"
 #  include "T2RenderBuffer_GL.h"
 #  include "T2Shader_GL.h"
+#  include "Platform/SDL/T2Window_SDL.h"
+
+#  include <SDL/SDL.h>
 
 TOSHI_NAMESPACE_START
 
@@ -13,6 +16,7 @@ TOSHI_NAMESPACE_START
 // which is not publicly available, so it's not possible to match this class.
 //-----------------------------------------------------------------------------
 class T2Render
+    : public TSingleton<T2Render>
 {
 public:
 	inline static constexpr T2RenderAPI API = T2RenderAPI::OpenGL;
@@ -35,6 +39,12 @@ public:
 	// Destroys renderer and everything it manages
 	void Destroy();
 
+	void Update( TFLOAT a_fDeltaTime );
+	void BeginScene();
+	void EndScene();
+
+	const WindowParams& GetWindowParams() const { return m_oWindowParams; }
+
 public:
 	static GLuint           CreateTexture( GLsizei a_iWidth, GLsizei a_iHeight, GLenum a_eFormat, TBOOL a_bGenerateMipmap, const void* a_pData );
 	static void             DestroyTexture( GLuint a_iId );
@@ -49,6 +59,12 @@ public:
 
 private:
 	void OnDeviceReset();
+
+private:
+	T2Window*     m_pWindow    = TNULL;
+	SDL_GLContext m_pGLContext = TNULL;
+	WindowParams  m_oWindowParams;
+	TBOOL         m_bIsInScene = TFALSE;
 };
 
 TOSHI_NAMESPACE_END

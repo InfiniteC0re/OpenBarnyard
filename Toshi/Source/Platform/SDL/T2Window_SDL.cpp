@@ -10,7 +10,7 @@
 
 TOSHI_NAMESPACE_START
 
-TBOOL T2Window::Create( TRenderInterface* a_pRender, const TCHAR* a_szTitle )
+TBOOL T2Window::Create( T2Render* a_pRender, const TCHAR* a_szTitle )
 {
 	m_pRender = a_pRender;
 	m_pWindow = SDL_CreateWindow(

@@ -64,6 +64,11 @@ workspace "OpenBarnyard"
 		{
 			"TRENDERINTERFACE_GL"
 		}
+		
+		defines
+		{
+			"GLEW_STATIC"
+		}
 
 	filter "configurations:Debug"
 		runtime "Debug"
@@ -103,3 +108,4 @@ group "SDK"
 	include "SDK/BYTexturePacks"
 	include "SDK/BYWinterMod"
 	include "SDK/BYGLRender"
+	include "SDK/BYEnhanced"

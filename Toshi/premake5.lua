@@ -103,6 +103,19 @@ project "Toshi"
 			}
 			
 		filter "options:renderer=GL"
+			links
+			{
+				"SDL2.lib",
+				"opengl32.lib",
+				"glew32s.lib"
+			}
+			
+			libdirs
+			{
+				"%{LibDir.sdl2}",
+				"%{LibDir.glew}"
+			}
+			
 			externalincludedirs
 			{
 				"%{IncludeDir.sdl2}",

@@ -1,6 +1,7 @@
 #include "ToshiPCH.h"
 #include "Render/T2Render.h"
 #include "File/TFile.h"
+#include "T2GLTexture_GL.h"
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
@@ -20,9 +21,64 @@ T2Render::~T2Render()
 
 }
 
+TBOOL g_bCreated = TFALSE;
+
 TBOOL T2Render::Create( const WindowParams& a_rcWindowParams )
 {
-	return TFALSE;
+	TASSERT( TFALSE == g_bCreated );
+
+	TINFO( "Creating T2Render (OpenGL)\n" );
+
+	SDL_Init( SDL_INIT_VIDEO );
+	SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1 );
+	SDL_GL_SetAttribute( SDL_GL_ACCELERATED_VISUAL, 1 );
+	SDL_GL_SetAttribute( SDL_GL_RED_SIZE, 8 );
+	SDL_GL_SetAttribute( SDL_GL_GREEN_SIZE, 8 );
+	SDL_GL_SetAttribute( SDL_GL_BLUE_SIZE, 8 );
+	SDL_GL_SetAttribute( SDL_GL_ALPHA_SIZE, 8 );
+
+	SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 4 );
+	SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 0 );
+	SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE );
+
+	const TCHAR* pchWindowTitle = a_rcWindowParams.pchTitle;
+
+	if ( !pchWindowTitle )
+		pchWindowTitle = "TOSHI : T2Render";
+
+	m_pWindow = new T2Window();
+	if ( m_pWindow->Create( this, pchWindowTitle ) )
+	{
+		// Create SDL context
+		m_pGLContext = SDL_GL_CreateContext( m_pWindow->GetNativeWindow() );
+		SDL_GL_MakeCurrent( m_pWindow->GetNativeWindow(), m_pGLContext );
+
+		// Initialise glew
+		GLenum glewStatus = glewInit();
+		TASSERT( glewStatus == GLEW_OK, (const char*)glewGetErrorString( glewStatus ) );
+
+		// Create the actual display window
+		m_oWindowParams = a_rcWindowParams;
+
+		if ( !m_oWindowParams.bIsWindowed )
+		{
+			m_pWindow->SetFullscreen( TTRUE );
+			TINFO( "Setting window mode to fullscreen\n" );
+		}
+
+		m_pWindow->SetPosition( 100, 100, m_oWindowParams.uiWidth, m_oWindowParams.uiHeight );
+
+		T2TextureManager::CreateSingleton();
+		g_bCreated = TTRUE;
+
+		return TTRUE;
+	}
+	else
+	{
+		TERROR( "Failed to create Window\n" );
+		return TFALSE;
+	}
+
 }
 
 void T2Render::Destroy()
@@ -37,7 +93,7 @@ T2VertexBuffer T2Render::CreateVertexBuffer( const void* a_pData, GLuint a_uiSiz
 	TASSERT( uiBufferId != 0 );
 	T2VertexBuffer buffer( uiBufferId );
 
-	if ( a_uiSize != 0 )
+	if ( a_pData && a_uiSize != 0 )
 	{
 		buffer.SetData( a_pData, a_uiSize, a_eUsage );
 	}
@@ -53,7 +109,7 @@ T2IndexBuffer T2Render::CreateIndexBuffer( const TUINT16* a_pIndices, GLuint a_u
 	TASSERT( uiBufferId != 0 );
 	T2IndexBuffer buffer( uiBufferId );
 
-	if ( a_uiCount != 0 )
+	if ( a_pIndices && a_uiCount != 0 )
 	{
 		buffer.SetData( a_pIndices, sizeof( *a_pIndices ) * a_uiCount, a_eUsage );
 	}
@@ -153,6 +209,30 @@ GLuint T2Render::CreateTexture( GLsizei a_iWidth, GLsizei a_iHeight, GLenum a_eF
 void T2Render::DestroyTexture( GLuint a_iId )
 {
 	glDeleteTextures( 1, &a_iId );
+}
+
+void T2Render::Update( TFLOAT a_fDeltaTime )
+{
+	TASSERT( TFALSE == m_bIsInScene );
+	m_pWindow->Update();
+}
+
+void T2Render::BeginScene()
+{
+	TASSERT( TFALSE == m_bIsInScene );
+
+	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+	glViewport( 0, 0, m_oWindowParams.uiWidth, m_oWindowParams.uiHeight );
+
+	m_bIsInScene = TTRUE;
+}
+
+void T2Render::EndScene()
+{
+	TASSERT( TTRUE == m_bIsInScene );
+
+	SDL_GL_SwapWindow( m_pWindow->GetNativeWindow() );
+	m_bIsInScene = TFALSE;
 }
 
 TOSHI_NAMESPACE_END
