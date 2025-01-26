@@ -19,8 +19,8 @@ TOSHI_NAMESPACE_USING
 AEnhancedGUIRenderer::AEnhancedGUIRenderer()
 {
 	// Compile shaders
-	m_hVertexShader = T2Render::CompileShaderFromFile( GL_VERTEX_SHADER, "Shaders/Enhanced/GUI.vs" );
-	m_hFragmentShader = T2Render::CompileShaderFromFile( GL_FRAGMENT_SHADER, "Shaders/Enhanced/GUI.fs" );
+	m_hVertexShader = T2Render::CompileShaderFromFile( GL_VERTEX_SHADER, "Shaders/AGUI2.vs" );
+	m_hFragmentShader = T2Render::CompileShaderFromFile( GL_FRAGMENT_SHADER, "Shaders/AGUI2.fs" );
 	
 	// Create shader program
 	m_oShaderProgram = T2Render::CreateShaderProgram( m_hVertexShader, m_hFragmentShader );
@@ -142,7 +142,7 @@ public:
 	TINT            m_iTransformCount;
 	TUINT32         m_uiColour;
 	TBOOL           m_bIsTransformDirty;
-	AGUI2Material*  m_pMaterial; // ?
+	AGUI2Material*  m_pMaterial;
 };
 
 MEMBER_HOOK( 0x0064eb90, AGUI2RendererDX8, AGUI2Renderer_SetMaterial, void, AGUI2Material* a_pMaterial )

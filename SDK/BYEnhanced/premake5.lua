@@ -1,5 +1,5 @@
 project "BYEnhanced"
-	kind "SharedLib"
+	kind "None"
 	language "C++"
 	staticruntime "on"
 	
@@ -7,7 +7,7 @@ project "BYEnhanced"
 	pchsource "Source/pch.cpp"
 	
 	filter "options:renderer=GL"
-		kind "None"
+		kind "SharedLib"
 
 	links
 	{
@@ -47,6 +47,11 @@ project "BYEnhanced"
 		"%{IncludeDir.sdl2}",
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.glew}"
+	}
+	
+	externalincludedirs
+	{
+		"%{IncludeDir.dx8}"
 	}
 	
 	defines
