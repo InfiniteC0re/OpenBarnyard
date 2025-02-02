@@ -32,8 +32,6 @@ public:
 
 	void SetData( const void* a_pData, GLuint a_uiSize, GLenum a_eUsage )
 	{
-		TASSERT( m_uiId != 0 );
-		glBindBuffer( Type, m_uiId );
 		glBufferData( Type, a_uiSize, a_pData, a_eUsage );
 	}
 
@@ -72,8 +70,6 @@ public:
 	void SetAttribPointer( GLuint a_uiIndex, GLint a_iNumComponents, GLenum a_eType, GLsizei a_iStride, const void* a_pOffset, GLboolean a_bNormalized = GL_FALSE )
 	{
 		TASSERT( m_uiId != 0 );
-		glBindVertexArray( m_uiId );
-		glBindBuffer( GL_ARRAY_BUFFER, m_VertexBuffer.GetId() );
 		glVertexAttribPointer( a_uiIndex, a_iNumComponents, a_eType, a_bNormalized, a_iStride, a_pOffset );
 		glEnableVertexAttribArray( a_uiIndex );
 	}
@@ -81,7 +77,6 @@ public:
 	void SetVertexBuffer( T2VertexBuffer a_VertexBuffer )
 	{
 		TASSERT( m_uiId != 0 );
-		glBindVertexArray( m_uiId );
 		a_VertexBuffer.Bind();
 		m_VertexBuffer = a_VertexBuffer;
 	}
@@ -89,7 +84,6 @@ public:
 	void SetIndexBuffer( T2IndexBuffer a_IndexBuffer )
 	{
 		TASSERT( m_uiId != 0 );
-		glBindVertexArray( m_uiId );
 		a_IndexBuffer.Bind();
 		m_IndexBuffer = a_IndexBuffer;
 	}

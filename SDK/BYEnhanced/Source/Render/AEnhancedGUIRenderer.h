@@ -18,6 +18,7 @@ public:
 	~AEnhancedGUIRenderer();
 
 	void BeginScene();
+	void EndScene();
 	void RenderRectangle( const Toshi::TVector2& a, const Toshi::TVector2& b, const Toshi::TVector2& uv1, const Toshi::TVector2& uv2 );
 	
 	void SetColour( TUINT32 a_uiColour );

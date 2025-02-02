@@ -50,6 +50,12 @@ void AEnhancedGUIRenderer::BeginScene()
 	m_oShaderProgram.SetUniform( "u_Projection", matProjection );
 
 	m_oVertexArray.Bind();
+	m_oVertexArray.GetVertexBuffer().Bind();
+}
+
+void AEnhancedGUIRenderer::EndScene()
+{
+	m_oVertexArray.Unbind();
 }
 
 void AEnhancedGUIRenderer::RenderRectangle( const Toshi::TVector2& a, const Toshi::TVector2& b, const Toshi::TVector2& uv1, const Toshi::TVector2& uv2 )
@@ -190,9 +196,16 @@ MEMBER_HOOK( 0x0064f490, AGUI2RendererDX8, AGUI2Renderer_BeginScene, void )
 	AEnhancedGUIRenderer::GetSingleton()->BeginScene();
 }
 
+MEMBER_HOOK( 0x0064e7c0, AGUI2RendererDX8, AGUI2Renderer_EndScene, void )
+{
+	CallOriginal();
+	AEnhancedGUIRenderer::GetSingleton()->EndScene();
+}
+
 void AEnhancedGUIRenderer::InstallHooks()
 {
 	InstallHook<AGUI2Renderer_SetMaterial>();
 	InstallHook<AGUI2Renderer_RenderRectangle>();
 	InstallHook<AGUI2Renderer_BeginScene>();
+	InstallHook<AGUI2Renderer_EndScene>();
 }

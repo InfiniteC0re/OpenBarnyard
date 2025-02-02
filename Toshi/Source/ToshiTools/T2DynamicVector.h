@@ -222,12 +222,7 @@ public:
 
 	~T2DynamicVector()
 	{
-		Clear();
-
-		if ( m_pAllocator )
-			Reallocate( 0, sizeof( T ) );
-		else
-			m_poElements = TNULL;
+		FreeMemory();
 	}
 
 	Iterator InsertBefore( Iterator a_itInsertBefore, const T& a_rcItem = T() )
@@ -254,6 +249,16 @@ public:
 		}
 
 		m_iNumElements = 0;
+	}
+
+	void FreeMemory()
+	{
+		Clear();
+
+		if ( m_pAllocator )
+			Reallocate( 0, sizeof( T ) );
+		else
+			m_poElements = TNULL;
 	}
 
 	void Reserve( TINT a_iSize )
@@ -324,12 +329,12 @@ public:
 	}
 
 	// Erases element ignoring order but with a faster algorithm
-	void EraseFast( Iterator& a_rIterator )
+	void EraseFast( const Iterator& a_rIterator )
 	{
 		TINT uiItemIndex = a_rIterator.Index();
 		TASSERT( uiItemIndex < m_iNumElements );
 
-		a_rIterator.Value() = Back().Value();
+		AtUnsafe( uiItemIndex ) = Back().Value();
 		PopBack();
 	}
 
@@ -364,9 +369,20 @@ public:
 		return Iterator( m_iNumElements, this );
 	}
 
+	Iterator MakeIterator( TINT a_iIndex )
+	{
+		return Iterator( a_iIndex, this );
+	}
+
 	TINT Size() const
 	{
 		return m_iNumElements;
+	}
+
+	void SetSize( TINT a_iNewSize )
+	{
+		Reserve( a_iNewSize );
+		m_iNumElements = a_iNewSize;
 	}
 
 	TINT Capacity() const

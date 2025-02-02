@@ -32,7 +32,10 @@ public:
 
 	TBOOL GetHALBuffer( TVertexBlockResource::HALBuffer* a_pHALBuffer );
 
+#ifndef TOSHI_MODLOADER_CLIENT
 private:
+#endif
+
 	TUINT16 m_uiVertexOffset;
 	TBYTE*  m_apManagedStreams[ TVertexFactoryFormat::MAX_NUM_STREAMS ];
 	TUINT   m_uiNumLocksAllTime;

@@ -200,7 +200,7 @@ TBOOL ARenderer::CreateTRenderResources()
 		pRenderer->SetResourceExplicit( pResource, SYSRESOURCE_IFSYS );
 
 		TIndexFactoryFormat indexFormat;
-		indexFormat.m_uiUnk = 2;
+		indexFormat.uiIndexSize = 2;
 		pResource->Create( &indexFormat, 64700, 0 );
 	}
 

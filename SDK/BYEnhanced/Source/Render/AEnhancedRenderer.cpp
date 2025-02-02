@@ -2,6 +2,8 @@
 #include "AEnhancedTexture.h"
 #include "AEnhancedRenderer.h"
 #include "AEnhancedGUIRenderer.h"
+#include "ARenderBufferCollection.h"
+#include "AEnhancedWorldShader.h"
 
 #include <HookHelpers.h>
 #include <Platform/GL/T2Render_GL.h>
@@ -28,11 +30,13 @@ TBOOL AEnhancedRenderer::Create()
 	TBOOL bDisplayCreated = T2Render::CreateSingleton()->Create( oWindowParams );
 	TASSERT( TTRUE == bDisplayCreated );
 
-	// Create shaders and initialise other modules here
 	InstallHooks();
 
+	// Create shaders and initialise other modules here
 	AEnhancedTextureManager::CreateSingleton();
 	AEnhancedGUIRenderer::CreateSingleton();
+	ARenderBufferCollection::CreateSingleton()->Create( 5000 );
+	AEnhancedWorldShader::CreateSingleton();
 
 	return bDisplayCreated;
 }

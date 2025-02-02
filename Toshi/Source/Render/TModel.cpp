@@ -14,18 +14,18 @@ TOSHI_NAMESPACE_START
 // $Barnyard: FUNCTION 006cdf20
 TModel::TModel()
 {
-	m_eFlags         = Flags_None;
-	m_iNumInstances  = 0;
-	m_iLODCount      = 0;
-	m_pSkeleton      = TNULL;
-	m_pCollision     = TNULL;
-	m_pCollisionData = TNULL;
-	m_pTRB           = TNULL;
-	m_bIsAssetFile   = TFALSE;
-	m_aUnk1[ 0 ]     = 5.0f;
-	m_aUnk1[ 1 ]     = 20.0f;
-	m_aUnk1[ 2 ]     = m_aUnk1[ 1 ] + m_aUnk1[ 1 ];
-	m_aUnk1[ 3 ]     = m_aUnk1[ 2 ] + m_aUnk1[ 2 ];
+	m_eFlags             = Flags_None;
+	m_iNumInstances      = 0;
+	m_iLODCount          = 0;
+	m_pSkeleton          = TNULL;
+	m_pCollision         = TNULL;
+	m_pCollisionData     = TNULL;
+	m_pTRB               = TNULL;
+	m_bIsAssetFile       = TFALSE;
+	m_aLODDistances[ 0 ] = 5.0f;
+	m_aLODDistances[ 1 ] = 20.0f;
+	m_aLODDistances[ 2 ] = m_aLODDistances[ 1 ] + m_aLODDistances[ 1 ];
+	m_aLODDistances[ 3 ] = m_aLODDistances[ 2 ] + m_aLODDistances[ 2 ];
 }
 
 // $Barnyard: FUNCTION 006cdff0

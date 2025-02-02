@@ -95,6 +95,7 @@ T2VertexBuffer T2Render::CreateVertexBuffer( const void* a_pData, GLuint a_uiSiz
 
 	if ( a_pData && a_uiSize != 0 )
 	{
+		buffer.Bind();
 		buffer.SetData( a_pData, a_uiSize, a_eUsage );
 	}
 
@@ -111,6 +112,7 @@ T2IndexBuffer T2Render::CreateIndexBuffer( const TUINT16* a_pIndices, GLuint a_u
 
 	if ( a_pIndices && a_uiCount != 0 )
 	{
+		buffer.Bind();
 		buffer.SetData( a_pIndices, sizeof( *a_pIndices ) * a_uiCount, a_eUsage );
 	}
 
@@ -133,6 +135,7 @@ T2VertexArray T2Render::CreateVertexArray( T2VertexBuffer a_VertexBuffer, T2Inde
 	TASSERT( uiVaoId != 0 );
 
 	T2VertexArray vao( uiVaoId );
+	vao.Bind();
 	vao.SetVertexBuffer( a_VertexBuffer );
 	vao.SetIndexBuffer( a_IndexBuffer );
 
