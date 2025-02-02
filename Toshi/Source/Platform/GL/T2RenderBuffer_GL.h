@@ -91,7 +91,7 @@ public:
 	constexpr GLuint GetId() const { return m_uiId; }
 
 	void Bind() { glBindVertexArray( m_uiId ); }
-	void Unbind() { glBindVertexArray( 0 ); }
+	static void Unbind() { glBindVertexArray( 0 ); }
 	void Destroy() { glDeleteVertexArrays( 1, &m_uiId ); }
 
 	constexpr T2VertexBuffer GetVertexBuffer() { return m_VertexBuffer; }

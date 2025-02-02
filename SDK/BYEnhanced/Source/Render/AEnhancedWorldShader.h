@@ -42,7 +42,7 @@ public:
 	AEnhancedWorldShader();
 	~AEnhancedWorldShader();
 
-	void StartFlush();
+	void PreRender();
 	void Render( Toshi::TRenderPacket* a_pRenderPacket );
 
 private:

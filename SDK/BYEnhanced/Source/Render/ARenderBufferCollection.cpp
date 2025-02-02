@@ -141,6 +141,9 @@ MEMBER_HOOK( 0x006d64f0, TVertexPoolResource, TVertexPoolResource_Lock, TBOOL, T
 
 	if ( iBufferId == -1 )
 	{
+		// Unbind VAO to avoid loading wrong vertex buffer into it
+		T2VertexArray::Unbind();
+
 		// Allocate buffer if it doesn't exist yet
 		iBufferId = T2Render::CreateVertexBuffer( TNULL, 0, GL_STATIC_DRAW ).GetId();
 	}
@@ -161,6 +164,9 @@ MEMBER_HOOK( 0x006d65d0, TVertexPoolResource, TVertexPoolResource_Unlock, void, 
 	TASSERT( g_VertexLockBuffer.uiNumStreams == 1 );
 
 	TUINT uiCopySize = GetFactory()->GetVertexFormat().m_aStreamFormats[ 0 ].m_uiVertexSize * a_uiNumVertices;
+
+	// Unbind VAO to avoid loading wrong vertex buffer into it
+	T2VertexArray::Unbind();
 
 	T2VertexBuffer vertexBuffer( iBufferId );
 	vertexBuffer.Bind();
@@ -195,6 +201,9 @@ MEMBER_HOOK( 0x006d6040, TIndexPoolResource, TIndexPoolResource_Lock, TBOOL, TIn
 
 	if ( iBufferId == -1 )
 	{
+		// Unbind VAO to avoid loading wrong index buffer into it
+		T2VertexArray::Unbind();
+
 		// Allocate buffer if it doesn't exist yet
 		iBufferId = T2Render::CreateIndexBuffer( TNULL, 0, GL_STATIC_DRAW ).GetId();
 	}
@@ -214,6 +223,10 @@ MEMBER_HOOK( 0x006d60f0, TIndexPoolResource, TIndexPoolResource_Unlock, void, TU
 	TASSERT( GetFactory()->GetIndexFormat().uiIndexSize == 2 );
 	TUINT uiCopySize = GetFactory()->GetIndexFormat().uiIndexSize * a_uiNumIndices;
 
+	// Unbind VAO to avoid loading wrong index buffer into it
+	T2VertexArray::Unbind();
+
+	// Upload index data
 	T2IndexBuffer indexBuffer( iBufferId );
 	indexBuffer.Bind();
 	indexBuffer.SetData( g_IndexLockBuffer.pBuffer, uiCopySize, GL_STATIC_DRAW );
@@ -309,8 +322,8 @@ HOOK( 0x00613a40, AModelLoader_LoadWorldMeshTRB, void, TModel* a_pModel, TINT a_
 			renderBuffer->SetAttribPointer( 1, 3, GL_FLOAT, sizeof( WorldVertex ), (void*)offsetof( WorldVertex, Normal ) );
 			renderBuffer->SetAttribPointer( 2, 3, GL_FLOAT, sizeof( WorldVertex ), (void*)offsetof( WorldVertex, Color ) );
 			renderBuffer->SetAttribPointer( 3, 2, GL_FLOAT, sizeof( WorldVertex ), (void*)offsetof( WorldVertex, UV ) );
-			renderBuffer->Unbind();
 
+			T2VertexArray::Unbind();
 			pWorldMesh->m_pSubMeshes[ 0 ].iRenderBufferId = renderBuffer.iID;
 		}
 		else

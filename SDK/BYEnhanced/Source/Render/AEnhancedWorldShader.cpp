@@ -31,17 +31,8 @@ AEnhancedWorldShader::~AEnhancedWorldShader()
 {
 }
 
-void AEnhancedWorldShader::StartFlush()
+void AEnhancedWorldShader::PreRender()
 {
-	
-}
-
-void AEnhancedWorldShader::Render( Toshi::TRenderPacket* a_pRenderPacket )
-{
-	AWorldMesh* pMesh       = (AWorldMesh*)a_pRenderPacket->GetMesh();
-	auto        pVertexPool = *TREINTERPRETCAST( Toshi::TVertexPoolResource**, TUINT( pMesh ) + 0x18 );
-	auto        pIndexPool  = *TREINTERPRETCAST( Toshi::TIndexPoolResource**, ( *TREINTERPRETCAST( TUINT*, TUINT( pMesh ) + 0x1C ) ) + 0x8 );
-
 	auto pShadowColor   = (Toshi::TVector4*)( *(TUINT*)( 0x0079a854 ) + 0xF0 );
 	auto pAmbientColor  = (Toshi::TVector4*)( *(TUINT*)( 0x0079a854 ) + 0x100 );
 	auto pRenderContext = TSTATICCAST(
@@ -54,20 +45,28 @@ void AEnhancedWorldShader::Render( Toshi::TRenderPacket* a_pRenderPacket )
 	m_oShaderProgram.SetUniform( "u_ShadowColor", *pShadowColor );
 	m_oShaderProgram.SetUniform( "u_AmbientColor", *pAmbientColor );
 	m_oShaderProgram.SetUniform( "u_Projection", *(Toshi::TMatrix44*)( TUINT( pRenderContext ) + 0x3C0 ) );
-	m_oShaderProgram.SetUniform( "u_View", a_pRenderPacket->GetModelViewMatrix() );
-
-	ARenderBuffer renderBuffer = ARenderBufferCollection::GetSingleton()->GetRenderBuffer( pMesh->m_pSubMeshes[ 0 ].iRenderBufferId );
-	renderBuffer->Bind();
 
 	glEnable( GL_CULL_FACE );
 	glCullFace( GL_BACK );
 
 	glEnable( GL_DEPTH_TEST );
 	glPolygonMode( GL_BACK, GL_FILL );
+}
+
+void AEnhancedWorldShader::Render( Toshi::TRenderPacket* a_pRenderPacket )
+{
+	// TODO: Use single VAO for better performance
+	// Also, consider combining VBOs and IBOs into a single big buffer to reduce changes in context
+
+	AWorldMesh* pMesh       = (AWorldMesh*)a_pRenderPacket->GetMesh();
+	auto        pIndexPool  = *TREINTERPRETCAST( Toshi::TIndexPoolResource**, ( *TREINTERPRETCAST( TUINT*, TUINT( pMesh ) + 0x1C ) ) + 0x8 );
+
+	m_oShaderProgram.SetUniform( "u_View", a_pRenderPacket->GetModelViewMatrix() );
+
+	ARenderBuffer renderBuffer = ARenderBufferCollection::GetSingleton()->GetRenderBuffer( pMesh->m_pSubMeshes[ 0 ].iRenderBufferId );
+	renderBuffer->Bind();
 
 	glDrawElements( GL_TRIANGLE_STRIP, pIndexPool->GetNumIndices(), GL_UNSIGNED_SHORT, TNULL );
-
-	renderBuffer->Unbind();
 }
 
 //MEMBER_HOOK( 0x005f6f70, AWorldMaterialWrapperGL, AWorldMaterial_PreRender, void )
@@ -82,7 +81,7 @@ class AWorldShaderHAL
 MEMBER_HOOK( 0x005f6510, AWorldShaderHAL, AWorldShaderHAL_StartFlush, void )
 {
 	CallOriginal();
-	//AWorldShaderGL::GetSingleton()->StartFlush();
+	AEnhancedWorldShader::GetSingleton()->PreRender();
 }
 
 MEMBER_HOOK( 0x005f6cb0, AWorldShaderHAL, AWorldShaderHAL_Render, void, Toshi::TRenderPacket* a_pRenderPacket )
