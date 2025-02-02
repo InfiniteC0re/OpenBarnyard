@@ -1,11 +1,13 @@
 #include "pch.h"
 #include "HookHelpers.h"
 #include "AEnhancedWorldShader.h"
+#include "AEnhancedTexture.h"
 #include "ARenderBufferCollection.h"
 
 #include <Platform/GL/T2Render_GL.h>
 #include <Platform/DX8/TIndexPoolResource_DX8.h>
 #include <Platform/DX8/TVertexPoolResource_DX8.h>
+#include <Platform/DX8/TTextureResourceHAL_DX8.h>
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
@@ -69,11 +71,33 @@ void AEnhancedWorldShader::Render( Toshi::TRenderPacket* a_pRenderPacket )
 	glDrawElements( GL_TRIANGLE_STRIP, pIndexPool->GetNumIndices(), GL_UNSIGNED_SHORT, TNULL );
 }
 
-//MEMBER_HOOK( 0x005f6f70, AWorldMaterialWrapperGL, AWorldMaterial_PreRender, void )
-//{
-//	CallOriginal();
-//	AWorldMaterialWrapperGL::PreRenderGL();
-//}
+class AWorldMaterial
+	: public Toshi::TMaterial
+{
+public:
+	static constexpr TUINT MAX_TEXTURES = 4;
+
+	using BLENDMODE = TINT;
+
+public:
+	Toshi::TTexture* m_aTextures[ MAX_TEXTURES ];
+	BLENDMODE        m_eBlendMode;
+	TFLOAT           m_fUVAnimX;
+	TFLOAT           m_fUVAnimY;
+	TFLOAT           m_fUVAnimSpeedX;
+	TFLOAT           m_fUVAnimSpeedY;
+};
+
+MEMBER_HOOK( 0x005f6f70, AWorldMaterial, AWorldMaterial_PreRender, void )
+{
+	CallOriginal();
+
+	TTextureResourceHAL* pTexture = TSTATICCAST( TTextureResourceHAL, m_aTextures[ 0 ] );
+	T2GLTexture*         pGLTexture = AEnhancedTextureManager::GetAssociation( pTexture->GetD3DTexture() );
+
+	glActiveTexture( GL_TEXTURE0 );
+	glBindTexture( GL_TEXTURE_2D, pGLTexture->GetHandle() );
+}
 
 class AWorldShaderHAL
 {};
@@ -97,7 +121,7 @@ MEMBER_HOOK( 0x005f6cb0, AWorldShaderHAL, AWorldShaderHAL_Render, void, Toshi::T
 
 void AEnhancedWorldShader::InstallHooks()
 {
-	//InstallHook<AWorldMaterial_PreRender>();
+	InstallHook<AWorldMaterial_PreRender>();
 	InstallHook<AWorldShaderHAL_StartFlush>();
 	InstallHook<AWorldShaderHAL_Render>();
 }

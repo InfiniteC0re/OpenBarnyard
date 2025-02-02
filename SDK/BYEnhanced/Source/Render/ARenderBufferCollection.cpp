@@ -310,26 +310,19 @@ HOOK( 0x00613a40, AModelLoader_LoadWorldMeshTRB, void, TModel* a_pModel, TINT a_
 		Toshi::TMesh* pMesh        = a_pLOD->ppMeshes[ k ];
 		const TCHAR*  pchClassName = pMesh->GetClass()->GetName();
 
-		if ( !T2String8::Compare( pchClassName, "AWorldMeshHAL" ) )
-		{
-			AWorldMesh* pWorldMesh = (AWorldMesh*)pMesh;
-			TVertexPoolResource* pVertexPool = (TVertexPoolResource*)pWorldMesh->m_pVertexPool;
-			TIndexPoolResource*  pIndexPool  = (TIndexPoolResource*)pWorldMesh->m_pSubMeshes[ 0 ].pIndexPool;
+		AWorldMesh*          pWorldMesh  = (AWorldMesh*)pMesh;
+		TVertexPoolResource* pVertexPool = (TVertexPoolResource*)pWorldMesh->m_pVertexPool;
+		TIndexPoolResource*  pIndexPool  = (TIndexPoolResource*)pWorldMesh->m_pSubMeshes[ 0 ].pIndexPool;
 
-			ARenderBuffer renderBuffer = ARenderBufferCollection::GetSingleton()->AllocateRenderBuffer( pVertexPool->m_uiNumLocksAllTime, pIndexPool->m_uiNumLocksAllTime );
-			renderBuffer->Bind();
-			renderBuffer->SetAttribPointer( 0, 3, GL_FLOAT, sizeof( WorldVertex ), (void*)offsetof( WorldVertex, Position ) );
-			renderBuffer->SetAttribPointer( 1, 3, GL_FLOAT, sizeof( WorldVertex ), (void*)offsetof( WorldVertex, Normal ) );
-			renderBuffer->SetAttribPointer( 2, 3, GL_FLOAT, sizeof( WorldVertex ), (void*)offsetof( WorldVertex, Color ) );
-			renderBuffer->SetAttribPointer( 3, 2, GL_FLOAT, sizeof( WorldVertex ), (void*)offsetof( WorldVertex, UV ) );
+		ARenderBuffer renderBuffer = ARenderBufferCollection::GetSingleton()->AllocateRenderBuffer( pVertexPool->m_uiNumLocksAllTime, pIndexPool->m_uiNumLocksAllTime );
+		renderBuffer->Bind();
+		renderBuffer->SetAttribPointer( 0, 3, GL_FLOAT, sizeof( WorldVertex ), (void*)offsetof( WorldVertex, Position ) );
+		renderBuffer->SetAttribPointer( 1, 3, GL_FLOAT, sizeof( WorldVertex ), (void*)offsetof( WorldVertex, Normal ) );
+		renderBuffer->SetAttribPointer( 2, 3, GL_FLOAT, sizeof( WorldVertex ), (void*)offsetof( WorldVertex, Color ) );
+		renderBuffer->SetAttribPointer( 3, 2, GL_FLOAT, sizeof( WorldVertex ), (void*)offsetof( WorldVertex, UV ) );
 
-			T2VertexArray::Unbind();
-			pWorldMesh->m_pSubMeshes[ 0 ].iRenderBufferId = renderBuffer.iID;
-		}
-		else
-		{
-			TTRACE( "Meshes of type '%s' are not supported by the OpenGL renderer!\n", pchClassName );
-		}
+		T2VertexArray::Unbind();
+		pWorldMesh->m_pSubMeshes[ 0 ].iRenderBufferId = renderBuffer.iID;
 	}
 }
 
