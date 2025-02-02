@@ -16,6 +16,7 @@
 #include <Input/TInputDeviceKeyboard.h>
 #include <Render/TCameraObject.h>
 #include <Render/TModel.h>
+#include <Render/TShader.h>
 #include <Platform/DX8/TMSWindow.h>
 #include <Platform/DX8/TRenderInterface_DX8.h>
 
@@ -654,6 +655,29 @@ MEMBER_HOOK( 0x005ea8b0, ATerrainInterface, ATerrain_Render, void )
 	}
 }
 
+MEMBER_HOOK( 0x006d5970, TOrderTable, TOrderTable_Flush, void )
+{
+	static TShader* s_pLastShader = TNULL;
+	TShader* pShader = GetShader();
+
+	if ( pShader != s_pLastShader )
+	{
+		if ( TNULL != s_pLastShader )
+			s_pLastShader->EndFlush();
+
+		pShader->StartFlush();
+		s_pLastShader = pShader;
+	}
+
+	for ( auto it = m_pLastRegMat; it != TNULL; it = it->GetNextRegMat() )
+	{
+		it->Render();
+	}
+
+	*(TUINT*)( 0x007d3124 ) = 0;
+	m_pLastRegMat        = TNULL;
+}
+
 HOOK( 0x006114d0, AModelLoader_AModelLoaderLoadTRBCallback, TBOOL, TModel* a_pModel )
 {
 	TBOOL bRes;
@@ -798,6 +822,8 @@ void AHooks::Initialise()
 	//InstallHook<TRenderContext_CullSphereToFrustumSimple>();
 	//InstallHook<TRenderContext_CullSphereToFrustum>();
 	InstallHook<TTRB_Load>();
+
+	InstallHook<TOrderTable_Flush>();
 
 	// Fixing crashes and memory stumps of the original game
 	InstallHook<CollObjectModel_DCTOR>();
