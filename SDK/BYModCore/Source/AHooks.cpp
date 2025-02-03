@@ -657,23 +657,20 @@ MEMBER_HOOK( 0x005ea8b0, ATerrainInterface, ATerrain_Render, void )
 
 MEMBER_HOOK( 0x006d5970, TOrderTable, TOrderTable_Flush, void )
 {
-	static TShader* s_pLastShader = TNULL;
 	TShader* pShader = GetShader();
 
-	if ( pShader != s_pLastShader )
+	if ( m_pLastRegMat )
 	{
-		if ( TNULL != s_pLastShader )
-			s_pLastShader->EndFlush();
-
 		pShader->StartFlush();
-		s_pLastShader = pShader;
-	}
 
-	for ( auto it = m_pLastRegMat; it != TNULL; it = it->GetNextRegMat() )
-	{
-		it->Render();
-	}
+		for ( auto it = m_pLastRegMat; it != TNULL; it = it->GetNextRegMat() )
+		{
+			it->Render();
+		}
 
+		pShader->EndFlush();
+	}
+	
 	*(TUINT*)( 0x007d3124 ) = 0;
 	m_pLastRegMat        = TNULL;
 }

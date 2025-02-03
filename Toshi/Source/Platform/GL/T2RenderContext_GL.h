@@ -3,6 +3,8 @@
 #ifdef TRENDERINTERFACE_GL
 
 #  include "T2Viewport_GL.h"
+#  include "T2GLTexture_GL.h"
+#  include "T2Shader_GL.h"
 #  include "Math/TMatrix44.h"
 #  include "Math/TSphere.h"
 
@@ -43,6 +45,47 @@ public:
 	TMatrix44&       GetProjectionMatrix() { return m_matProjection; }
 	const TMatrix44& GetProjectionMatrix() const { return m_matProjection; }
 
+	TBOOL SetShaderProgram( const T2Shader& a_rcShaderProgram )
+	{
+		if ( m_uiCurrentShaderProgram != a_rcShaderProgram.GetProgram() )
+		{
+			a_rcShaderProgram.Use();
+			m_uiCurrentShaderProgram = a_rcShaderProgram.GetProgram();
+
+			return TTRUE;
+		}
+
+		return TFALSE;
+	}
+
+	void SetTexture2D( TINT a_iTextureIndex, const T2GLTexture& a_rcTexture )
+	{
+		if ( m_aCurrentTextures[ a_iTextureIndex ] != a_rcTexture.GetHandle() )
+		{
+
+			if ( m_iCurrentTextureUnit != a_iTextureIndex )
+			{
+				glActiveTexture( GL_TEXTURE0 + a_iTextureIndex );
+				m_iCurrentTextureUnit = a_iTextureIndex;
+			}
+
+			glBindTexture( GL_TEXTURE_2D, a_rcTexture.GetHandle() );
+			m_aCurrentTextures[ a_iTextureIndex ] = a_rcTexture.GetHandle();
+		}
+	}
+
+	void ResetTexture2D( TINT a_iTextureIndex )
+	{
+		if ( m_iCurrentTextureUnit != a_iTextureIndex )
+		{
+			glActiveTexture( GL_TEXTURE0 + a_iTextureIndex );
+			glBindTexture( GL_TEXTURE_2D, NULL );
+
+			m_iCurrentTextureUnit = a_iTextureIndex;
+			m_aCurrentTextures[ a_iTextureIndex ] = -1;
+		}
+	}
+
 public:
 	static void ComputePerspectiveProjection( TMatrix44& a_rOutProjection, const T2Viewport& a_rViewportParams, const Projection& a_rProjParams );
 	static void ComputeOrthographicProjection( TMatrix44& a_rOutProjection, const T2Viewport& a_rViewportParams, const Projection& a_rProjParams );
@@ -55,6 +98,9 @@ public:
 
 private:
 	TMatrix44 m_matProjection;
+	GLuint    m_uiCurrentShaderProgram = -1;
+	TINT      m_iCurrentTextureUnit    = 0;
+	GLuint    m_aCurrentTextures[ 8 ];
 };
 
 TOSHI_NAMESPACE_END

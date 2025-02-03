@@ -49,5 +49,4 @@ private:
 	Toshi::T2VertexArray*        m_pVertexArrayObjects;
 	TINT                         m_iNumFreeVAO;
 	TINT                         m_iNumUsedVAO;
-
 };

@@ -42,7 +42,7 @@ void AEnhancedWorldShader::PreRender()
 	    THookedRenderD3DInterface::GetSingleton()->GetCurrentContext()
 	);
 
-	m_oShaderProgram.Use();
+	T2Render::SetShaderProgram( m_oShaderProgram );
 	m_oShaderProgram.SetUniform( "u_Color", Toshi::TVector4( 1.0f, 1.0f, 1.0f, 1.0f ) );
 	m_oShaderProgram.SetUniform( "u_ShadowColor", *pShadowColor );
 	m_oShaderProgram.SetUniform( "u_AmbientColor", *pAmbientColor );
@@ -95,8 +95,7 @@ MEMBER_HOOK( 0x005f6f70, AWorldMaterial, AWorldMaterial_PreRender, void )
 	TTextureResourceHAL* pTexture = TSTATICCAST( TTextureResourceHAL, m_aTextures[ 0 ] );
 	T2GLTexture*         pGLTexture = AEnhancedTextureManager::GetAssociation( pTexture->GetD3DTexture() );
 
-	glActiveTexture( GL_TEXTURE0 );
-	glBindTexture( GL_TEXTURE_2D, pGLTexture->GetHandle() );
+	T2Render::SetTexture2D( 0, *pGLTexture );
 }
 
 class AWorldShaderHAL

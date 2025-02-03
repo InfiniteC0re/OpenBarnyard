@@ -46,11 +46,17 @@ void AEnhancedGUIRenderer::BeginScene()
 		0.0f, 0.0f, 0.0f, 1.0f
 	};
 
-	m_oShaderProgram.Use();
+	T2Render::SetShaderProgram( m_oShaderProgram );
 	m_oShaderProgram.SetUniform( "u_Projection", matProjection );
 
 	m_oVertexArray.Bind();
 	m_oVertexArray.GetVertexBuffer().Bind();
+
+	glEnable( GL_BLEND );
+	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+
+	glCullFace( GL_FRONT );
+	glDisable( GL_DEPTH_TEST );
 }
 
 void AEnhancedGUIRenderer::EndScene()
@@ -163,22 +169,14 @@ MEMBER_HOOK( 0x0064eb90, AGUI2RendererDX8, AGUI2Renderer_SetMaterial, void, AGUI
 
 			if ( pTextureResource )
 			{
-				glActiveTexture( GL_TEXTURE0 );
-				AEnhancedTextureManager::GetAssociation( pTextureResource->GetD3DTexture() )->Bind( GL_TEXTURE_2D );
+				T2Render::SetTexture2D( 0, AEnhancedTextureManager::GetAssociation( pTextureResource->GetD3DTexture() ) );
 			}
 		}
 		else
 		{
-			glActiveTexture( GL_TEXTURE0 );
-			glBindTexture( GL_TEXTURE_2D, 0 );
+			T2Render::ResetTexture2D( 0 );
 		}
 	}
-
-	glEnable( GL_BLEND );
-	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
-
-	glCullFace( GL_FRONT );
-	glDisable( GL_DEPTH_TEST );
 }
 
 MEMBER_HOOK( 0x0064fa70, AGUI2RendererDX8, AGUI2Renderer_RenderRectangle, void, const Toshi::TVector2& a, const Toshi::TVector2& b, const Toshi::TVector2& uv1, const Toshi::TVector2& uv2 )

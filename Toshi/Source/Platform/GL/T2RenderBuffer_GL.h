@@ -90,9 +90,28 @@ public:
 
 	constexpr GLuint GetId() const { return m_uiId; }
 
-	void Bind() { glBindVertexArray( m_uiId ); }
-	static void Unbind() { glBindVertexArray( 0 ); }
-	void Destroy() { glDeleteVertexArrays( 1, &m_uiId ); }
+	inline static GLuint ms_uiBoundId = 0;
+
+	void Bind()
+	{
+		if ( ms_uiBoundId != m_uiId )
+		{
+			glBindVertexArray( m_uiId );
+			ms_uiBoundId = m_uiId;
+		}
+	}
+
+	static void Unbind()
+	{
+		glBindVertexArray( 0 );
+		ms_uiBoundId = 0;
+	}
+
+	void Destroy()
+	{
+		glDeleteVertexArrays( 1, &m_uiId );
+		ms_uiBoundId = 0;
+	}
 
 	constexpr T2VertexBuffer GetVertexBuffer() { return m_VertexBuffer; }
 	constexpr T2IndexBuffer  GetIndexBuffer() { return m_IndexBuffer; }

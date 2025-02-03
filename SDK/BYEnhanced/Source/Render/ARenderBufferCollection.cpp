@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "ARenderBufferCollection.h"
 #include "AEnhancedWorldShader.h"
+#include "AEnhancedSkinShader.h"
 #include "HookHelpers.h"
 
 #include <Render/TTMDWin.h>
@@ -243,55 +244,7 @@ MEMBER_HOOK( 0x006d5e20, TIndexPoolResource, TIndexPoolResource_OnDestroy, void 
 	CallOriginal();
 }
 
-// TModelHAL
-
-MEMBER_HOOK( 0x006d9e90, TModelHAL, TModelHAL_LoadTMDHAL, TBOOL, const TCHAR* a_szFileName, TTRB* a_pAssetTRB, TUINT8 a_ui8FileNameLen )
-{
-	TBOOL bCreated = CallOriginal( a_szFileName, a_pAssetTRB, a_ui8FileNameLen );
-
-	//if ( bCreated )
-	//{
-	//	// TODO: create VAOs for different meshes
-
-	//	for ( TINT i = 0; i < GetNumLODs(); i++ )
-	//	{
-	//		TModelLOD* pLOD = &m_LODs[ i ];
-
-	//		for ( TINT k = 0; k < pLOD->iNumMeshes; k++ )
-	//		{
-	//			Toshi::TMesh* pMesh = pLOD->ppMeshes[ k ];
-	//			const TCHAR* pchClassName = pMesh->GetClass()->GetName();
-
-	//			if ( !T2String8::Compare( pchClassName, "AWorldMeshHAL" ) )
-	//			{
-	//				AWorldMesh* pWorldMesh = (AWorldMesh*)pMesh;
-
-	//				ARenderBuffer renderBuffer = ARenderBufferCollection::GetSingleton()->AllocateRenderBuffer();
-	//				renderBuffer->SetAttribPointer( 0, 3, GL_FLOAT, sizeof( WorldVertex ), (void*)offsetof( WorldVertex, Position ) );
-	//				renderBuffer->SetAttribPointer( 1, 3, GL_FLOAT, sizeof( WorldVertex ), (void*)offsetof( WorldVertex, Normal ) );
-	//				renderBuffer->SetAttribPointer( 2, 3, GL_FLOAT, sizeof( WorldVertex ), (void*)offsetof( WorldVertex, Color ) );
-	//				renderBuffer->SetAttribPointer( 3, 2, GL_FLOAT, sizeof( WorldVertex ), (void*)offsetof( WorldVertex, UV ) );
-
-	//				TVertexPoolResource* pVertexPool = (TVertexPoolResource*)pWorldMesh->m_pVertexPool;
-	//				renderBuffer->SetVertexBuffer( pVertexPool->m_uiNumLocksAllTime );
-
-	//				pWorldMesh->m_pSubMeshes[ 0 ].iRenderBufferId = renderBuffer.iID;
-	//				TIndexPoolResource* pIndexPool = (TIndexPoolResource*)pWorldMesh->m_pSubMeshes[ 0 ].pIndexPool;
-	//				renderBuffer->SetIndexBuffer( pIndexPool->m_uiNumLocksAllTime );
-
-	//			}
-	//			else
-	//			{
-	//				TTRACE( "Meshes of type '%s' are not supported by the OpenGL renderer!\n", pchClassName );
-	//			}
-	//		}
-	//	}
-
-	//	return TTRUE;
-	//}
-
-	return TTRUE;
-}
+// AModelLoader
 
 HOOK( 0x00613a40, AModelLoader_LoadWorldMeshTRB, void, TModel* a_pModel, TINT a_iLODIndex, TModelLOD* a_pLOD, Toshi::TTMDWin::TRBLODHeader* a_pLODHeader )
 {
@@ -307,8 +260,7 @@ HOOK( 0x00613a40, AModelLoader_LoadWorldMeshTRB, void, TModel* a_pModel, TINT a_
 
 	for ( TINT k = 0; k < a_pLOD->iNumMeshes; k++ )
 	{
-		Toshi::TMesh* pMesh        = a_pLOD->ppMeshes[ k ];
-		const TCHAR*  pchClassName = pMesh->GetClass()->GetName();
+		Toshi::TMesh* pMesh = a_pLOD->ppMeshes[ k ];
 
 		AWorldMesh*          pWorldMesh  = (AWorldMesh*)pMesh;
 		TVertexPoolResource* pVertexPool = (TVertexPoolResource*)pWorldMesh->m_pVertexPool;
@@ -326,6 +278,36 @@ HOOK( 0x00613a40, AModelLoader_LoadWorldMeshTRB, void, TModel* a_pModel, TINT a_
 	}
 }
 
+HOOK( 0x006135d0, AModelLoader_LoadSkinLOD, void, TModel* a_pModel, TINT a_iLODIndex, TModelLOD* a_pLOD, Toshi::TTMDWin::TRBLODHeader* a_pLODHeader )
+{
+	CallOriginal( a_pModel, a_iLODIndex, a_pLOD, a_pLODHeader );
+
+	for ( TINT i = 0; i < a_pLOD->iNumMeshes; i++ )
+	{
+		Toshi::TMesh* pMesh = a_pLOD->ppMeshes[ i ];
+
+		ASkinMesh*           pSkinMesh   = (ASkinMesh*)pMesh;
+		TVertexPoolResource* pVertexPool = (TVertexPoolResource*)pSkinMesh->m_pVertexPool;
+
+		for ( TINT k = 0; k < pSkinMesh->m_uiNumSubMeshes; k++ )
+		{
+			ASkinMesh::SubMesh* pSubMesh   = &pSkinMesh->m_pSubMeshes[ k ];
+			TIndexPoolResource* pIndexPool = (TIndexPoolResource*)pSubMesh->pIndexPool;
+
+			ARenderBuffer renderBuffer = ARenderBufferCollection::GetSingleton()->AllocateRenderBuffer( pVertexPool->m_uiNumLocksAllTime, pIndexPool->m_uiNumLocksAllTime );
+			renderBuffer->Bind();
+			renderBuffer->SetAttribPointer( 0, 3, GL_FLOAT, sizeof( ASkinMesh::SkinVertex ), (void*)offsetof( ASkinMesh::SkinVertex, Position ) );
+			renderBuffer->SetAttribPointer( 1, 3, GL_FLOAT, sizeof( ASkinMesh::SkinVertex ), (void*)offsetof( ASkinMesh::SkinVertex, Normal ) );
+			renderBuffer->SetAttribPointer( 2, 4, GL_UNSIGNED_BYTE, sizeof( ASkinMesh::SkinVertex ), (void*)offsetof( ASkinMesh::SkinVertex, Weights ), GL_TRUE );
+			renderBuffer->SetAttribPointer( 3, 4, GL_UNSIGNED_BYTE, sizeof( ASkinMesh::SkinVertex ), (void*)offsetof( ASkinMesh::SkinVertex, Bones ), GL_TRUE );
+			renderBuffer->SetAttribPointer( 4, 2, GL_FLOAT, sizeof( ASkinMesh::SkinVertex ), (void*)offsetof( ASkinMesh::SkinVertex, UV ) );
+			
+			T2VertexArray::Unbind();
+			pSubMesh->Zero = renderBuffer.iID;
+		}
+	}
+}
+
 void ARenderBufferCollection::InstallHooks()
 {
 	InstallHook<TVertexPoolResource_CTOR>();
@@ -338,6 +320,6 @@ void ARenderBufferCollection::InstallHooks()
 	InstallHook<TIndexPoolResource_Unlock>();
 	InstallHook<TIndexPoolResource_OnDestroy>();
 
-	InstallHook<TModelHAL_LoadTMDHAL>();
 	InstallHook<AModelLoader_LoadWorldMeshTRB>();
+	InstallHook<AModelLoader_LoadSkinLOD>();
 }

@@ -64,7 +64,6 @@ public:
 	void  Destroy( TBOOL a_bDeleteShaders );
 
 	GLint GetUniformSlotId( const TCHAR* a_szSlotName );
-	void  Use() const;
 
 	void SetUniform( const TCHAR* a_szSlotName, const TMatrix44& a_rMatrix );
 	void SetUniform( const TCHAR* a_szSlotName, const TMatrix44* a_pMatrix, TUINT a_uiNumItems );
@@ -79,10 +78,16 @@ public:
 	void SetUniform( const TCHAR* a_szSlotName, TUINT a_uiValue );
 	void SetUniform( const TCHAR* a_szSlotName, const TUINT* a_pValue, TUINT a_uiNumItems );
 
+	GLuint           GetProgram() const { return m_uiProgram; }
 	T2CompiledShader GetVertexShader() const { return m_VShader; }
 	T2CompiledShader GetFragmentShader() const { return m_FShader; }
 
 	T2Shader& operator=( const T2Shader& a_rOther );
+
+private:
+	friend class T2Render;
+	friend class T2RenderContext;
+	void Use() const;
 
 private:
 	GLuint                                          m_uiProgram;

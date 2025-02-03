@@ -4,6 +4,7 @@
 #include "AEnhancedGUIRenderer.h"
 #include "ARenderBufferCollection.h"
 #include "AEnhancedWorldShader.h"
+#include "AEnhancedSkinShader.h"
 
 #include <HookHelpers.h>
 #include <Platform/GL/T2Render_GL.h>
@@ -37,6 +38,7 @@ TBOOL AEnhancedRenderer::Create()
 	AEnhancedGUIRenderer::CreateSingleton();
 	ARenderBufferCollection::CreateSingleton()->Create( 5000 );
 	AEnhancedWorldShader::CreateSingleton();
+	AEnhancedSkinShader::CreateSingleton();
 
 	return bDisplayCreated;
 }

@@ -4,6 +4,7 @@
 #  include "Render/T2RenderCommon.h"
 #  include "T2RenderBuffer_GL.h"
 #  include "T2Shader_GL.h"
+#  include "T2RenderContext_GL.h"
 #  include "Platform/SDL/T2Window_SDL.h"
 
 #  include <SDL/SDL.h>
@@ -46,6 +47,12 @@ public:
 	const WindowParams& GetWindowParams() const { return m_oWindowParams; }
 
 public:
+	static T2RenderContext& GetRenderContext() { return GetSingleton()->m_oRenderContext; }
+	static TBOOL            SetShaderProgram( const T2Shader& a_rcShaderProgram ) { return GetRenderContext().SetShaderProgram( a_rcShaderProgram ); }
+	static void             SetTexture2D( TINT a_iTextureIndex, const T2GLTexture& a_rcTexture ) { GetRenderContext().SetTexture2D( a_iTextureIndex, a_rcTexture ); }
+	static void             SetTexture2D( TINT a_iTextureIndex, T2GLTexture* a_pTexture ) { GetRenderContext().SetTexture2D( a_iTextureIndex, *a_pTexture ); }
+	static void             ResetTexture2D( TINT a_iTextureIndex ) { GetRenderContext().ResetTexture2D( a_iTextureIndex ); }
+
 	static GLuint           CreateTexture( GLsizei a_iWidth, GLsizei a_iHeight, GLenum a_eFormat, TBOOL a_bGenerateMipmap, const void* a_pData );
 	static void             DestroyTexture( GLuint a_iId );
 
@@ -61,10 +68,12 @@ private:
 	void OnDeviceReset();
 
 private:
-	T2Window*     m_pWindow    = TNULL;
-	SDL_GLContext m_pGLContext = TNULL;
-	WindowParams  m_oWindowParams;
-	TBOOL         m_bIsInScene = TFALSE;
+	T2Window*       m_pWindow    = TNULL;
+	SDL_GLContext   m_pGLContext = TNULL;
+	WindowParams    m_oWindowParams;
+	T2RenderContext m_oRenderContext;
+
+	TBOOL m_bIsInScene = TFALSE;
 };
 
 TOSHI_NAMESPACE_END
