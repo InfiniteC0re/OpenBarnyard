@@ -40,8 +40,8 @@ void main()
 	// Calculate position of the vertex
 	gl_Position = (u_Projection * u_ModelView) * vec4(vertex, 1.0f);
 	
-	o_Position = mat3(u_Model) * vertex;
-	o_Normal = normalize(normal);
+	o_Position = (u_Model * vec4(vertex, 1.0f)).xyz;
+	o_Normal = mat3(u_Model) * normalize(normal);
 	o_ViewPos = mat3(u_ViewWorld) * vec3(0.0, 0.0, 0.0);
 	o_TexCoord = a_UV;
 	

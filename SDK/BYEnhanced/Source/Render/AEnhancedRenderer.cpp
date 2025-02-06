@@ -23,7 +23,7 @@ TOSHI_NAMESPACE_USING
 TBOOL AEnhancedRenderer::Create()
 {
 	// Setup window parameters
-	m_oWindowParams.pchTitle  = "Barnyard Enhanced";
+	m_oWindowParams.pchTitle    = "Barnyard Enhanced";
 	m_oWindowParams.bIsWindowed = TTRUE;
 	m_oWindowParams.uiWidth     = 800;
 	m_oWindowParams.uiHeight    = 600;
@@ -68,18 +68,37 @@ TBOOL AEnhancedRenderer::Update( TFLOAT a_fDeltaTime )
 void AEnhancedRenderer::ScenePreRender()
 {
 	// Prepare HDR framebuffer before rendering the scene
-	enhRender::g_FrameBufferHDR.Bind();
+	enhRender::g_FrameBufferDeferred.Bind();
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+
+	// Set attachments to draw to (deferred rendering)
+	GLuint attachments[ 3 ] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
+	glDrawBuffers( TARRAYSIZE( attachments ), attachments );
 }
 
 void AEnhancedRenderer::ScenePostRender()
 {
-	enhRender::g_FrameBufferHDR.Unbind();
+	enhRender::g_FrameBufferDeferred.Unbind();
+	
+	// Reset draw buffers attachments
+	GLuint attachment = GL_COLOR_ATTACHMENT0;
+	glDrawBuffers( 1, &attachment );
 
-	// Apply HDR
-	T2Render::SetShaderProgram( enhRender::g_ShaderHDR );
-	T2Render::SetTexture2D( 0, enhRender::g_FrameBufferHDR.GetTexture() );
+	// Deferred rendering pass
+	T2Render::SetShaderProgram( enhRender::g_ShaderLighting );
+	T2Render::SetTexture2D( 0, enhRender::g_FrameBufferDeferred.GetAttachment( 0 ) ); // world positions
+	T2Render::SetTexture2D( 1, enhRender::g_FrameBufferDeferred.GetAttachment( 1 ) ); // normals
+	T2Render::SetTexture2D( 2, enhRender::g_FrameBufferDeferred.GetAttachment( 2 ) ); // colors
+	T2Render::SetTexture2D( 3, enhRender::g_FrameBufferDeferred.GetDepthTexture() );  // depth
+
+	enhRender::g_ShaderLighting.SetUniform( "u_AmbientColor", *(TVector4*)( ( *(TUINT*)0x0079a854 ) + 0x100 ) );
+	enhRender::g_ShaderLighting.SetUniform( "u_DiffuseColor", *(TVector4*)( ( *(TUINT*)0x0079a854 ) + 0xF0 ) );
 	RenderScreenQuad();
+
+	//// Apply HDR
+	//T2Render::SetShaderProgram( enhRender::g_ShaderHDR );
+	//T2Render::SetTexture2D( 0, enhRender::g_FrameBufferDeferred.GetAttachment( 0 ) );
+	//RenderScreenQuad();
 }
 
 void AEnhancedRenderer::RenderScreenQuad()
@@ -123,27 +142,62 @@ void AEnhancedRenderer::RenderScreenQuad()
 
 void AEnhancedRenderer::CreateFrameBuffers()
 {
-	enhRender::g_FrameBufferHDR.Create(
+	enhRender::g_FrameBufferDeferred.Create();
+
+	// Create depth texture
+	enhRender::g_FrameBufferDeferred.CreateDepthTexture( m_oWindowParams.uiWidth, m_oWindowParams.uiHeight );
+
+	// Create attachment to store positions
+	enhRender::g_FrameBufferDeferred.CreateAttachment(
+	    0,
 	    m_oWindowParams.uiWidth,
 	    m_oWindowParams.uiHeight,
 	    GL_RGB16F,
 	    GL_RGBA,
-	    GL_FLOAT,
-		TTRUE
+	    GL_FLOAT
 	);
 
-	enhRender::g_FrameBufferHDR.Unbind();
+	// Create attachment to store normals
+	enhRender::g_FrameBufferDeferred.CreateAttachment(
+	    1,
+	    m_oWindowParams.uiWidth,
+	    m_oWindowParams.uiHeight,
+	    GL_RGB16F,
+	    GL_RGBA,
+	    GL_FLOAT
+	);
+
+	// Create attachment to store albedo
+	enhRender::g_FrameBufferDeferred.CreateAttachment(
+	    2,
+	    m_oWindowParams.uiWidth,
+	    m_oWindowParams.uiHeight,
+	    GL_RGBA,
+	    GL_RGBA,
+	    GL_UNSIGNED_BYTE
+	);
+
+	enhRender::g_FrameBufferDeferred.Unbind();
 }
 
 void AEnhancedRenderer::CreateShaders()
 {
+	T2CompiledShader hScreenQuad = T2Render::CompileShaderFromFile( GL_VERTEX_SHADER, "Shaders/ScreenQuad.vs" );
+	
 	{
 		// HDR Shader
-		T2CompiledShader hVertex   = T2Render::CompileShaderFromFile( GL_VERTEX_SHADER, "Shaders/HDR.vs" );
 		T2CompiledShader hFragment = T2Render::CompileShaderFromFile( GL_FRAGMENT_SHADER, "Shaders/HDR.fs" );
-		enhRender::g_ShaderHDR     = T2Render::CreateShaderProgram( hVertex, hFragment );
+		enhRender::g_ShaderHDR     = T2Render::CreateShaderProgram( hScreenQuad, hFragment );
 
 		glObjectLabel( GL_PROGRAM, enhRender::g_ShaderHDR.GetProgram(), 3, "HDR" );
+	}
+
+	{
+		// Lighting Shader (Deferred Rendering)
+		T2CompiledShader hFragment  = T2Render::CompileShaderFromFile( GL_FRAGMENT_SHADER, "Shaders/Lighting.fs" );
+		enhRender::g_ShaderLighting = T2Render::CreateShaderProgram( hScreenQuad, hFragment );
+
+		glObjectLabel( GL_PROGRAM, enhRender::g_ShaderLighting.GetProgram(), 3, "Deferred" );
 	}
 }
 

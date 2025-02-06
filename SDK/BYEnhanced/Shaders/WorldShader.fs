@@ -1,19 +1,21 @@
 #version 400
+layout (location = 0) out vec4 gPosition;
+layout (location = 1) out vec4 gNormal;
+layout (location = 2) out vec4 gColor;
+
 in vec2 textureCoord;
 in vec3 vertexColor;
-
-out vec4 color;
-
-uniform vec4 u_Color;
-uniform vec4 u_ShadowColor;
-uniform vec4 u_AmbientColor;
+in vec3 fragPos;
+in vec3 normal;
+in mat4 worldMatrix;
 uniform sampler2D tex0;
 
 void main()
 {
 	vec4 texColor = texture(tex0, textureCoord);
-	if (texColor.a <= 0.5) discard;
-	vec3 shadow = vertexColor;
-	color = texColor * mix(u_AmbientColor, u_ShadowColor, vec4(1 - vertexColor, 1.0f));
-	//color = vec4(1.0, 1.0, 0.0, 1.0);
+	if (texColor.a <= 0.05) discard;
+	
+	gPosition = vec4(fragPos, 1.0f);
+	gNormal = vec4(normal, 1.0f);
+	gColor = texColor;
 }

@@ -7,8 +7,9 @@
 namespace enhRender
 {
 
-inline Toshi::T2FrameBuffer g_FrameBufferHDR;
-inline Toshi::T2Shader g_ShaderHDR;
+inline Toshi::T2FrameBuffer g_FrameBufferDeferred;
+inline Toshi::T2Shader      g_ShaderHDR;
+inline Toshi::T2Shader      g_ShaderLighting;
 
 } // namespace enhRender
 
