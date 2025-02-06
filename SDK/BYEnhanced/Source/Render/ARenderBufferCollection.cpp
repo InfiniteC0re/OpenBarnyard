@@ -268,10 +268,10 @@ HOOK( 0x00613a40, AModelLoader_LoadWorldMeshTRB, void, TModel* a_pModel, TINT a_
 
 		ARenderBuffer renderBuffer = ARenderBufferCollection::GetSingleton()->AllocateRenderBuffer( pVertexPool->m_uiNumLocksAllTime, pIndexPool->m_uiNumLocksAllTime );
 		renderBuffer->Bind();
-		renderBuffer->SetAttribPointer( 0, 3, GL_FLOAT, sizeof( WorldVertex ), (void*)offsetof( WorldVertex, Position ) );
-		renderBuffer->SetAttribPointer( 1, 3, GL_FLOAT, sizeof( WorldVertex ), (void*)offsetof( WorldVertex, Normal ) );
-		renderBuffer->SetAttribPointer( 2, 3, GL_FLOAT, sizeof( WorldVertex ), (void*)offsetof( WorldVertex, Color ) );
-		renderBuffer->SetAttribPointer( 3, 2, GL_FLOAT, sizeof( WorldVertex ), (void*)offsetof( WorldVertex, UV ) );
+		renderBuffer->GetVertexBuffer().SetAttribPointer( 0, 3, GL_FLOAT, sizeof( WorldVertex ), offsetof( WorldVertex, Position ) );
+		renderBuffer->GetVertexBuffer().SetAttribPointer( 1, 3, GL_FLOAT, sizeof( WorldVertex ), offsetof( WorldVertex, Normal ) );
+		renderBuffer->GetVertexBuffer().SetAttribPointer( 2, 3, GL_FLOAT, sizeof( WorldVertex ), offsetof( WorldVertex, Color ) );
+		renderBuffer->GetVertexBuffer().SetAttribPointer( 3, 2, GL_FLOAT, sizeof( WorldVertex ), offsetof( WorldVertex, UV ) );
 
 		T2VertexArray::Unbind();
 		pWorldMesh->m_pSubMeshes[ 0 ].iRenderBufferId = renderBuffer.iID;
@@ -296,11 +296,11 @@ HOOK( 0x006135d0, AModelLoader_LoadSkinLOD, void, TModel* a_pModel, TINT a_iLODI
 
 			ARenderBuffer renderBuffer = ARenderBufferCollection::GetSingleton()->AllocateRenderBuffer( pVertexPool->m_uiNumLocksAllTime, pIndexPool->m_uiNumLocksAllTime );
 			renderBuffer->Bind();
-			renderBuffer->SetAttribPointer( 0, 3, GL_FLOAT, sizeof( ASkinMesh::SkinVertex ), (void*)offsetof( ASkinMesh::SkinVertex, Position ) );
-			renderBuffer->SetAttribPointer( 1, 3, GL_FLOAT, sizeof( ASkinMesh::SkinVertex ), (void*)offsetof( ASkinMesh::SkinVertex, Normal ) );
-			renderBuffer->SetAttribPointer( 2, 4, GL_UNSIGNED_BYTE, sizeof( ASkinMesh::SkinVertex ), (void*)offsetof( ASkinMesh::SkinVertex, Weights ), GL_TRUE );
-			renderBuffer->SetAttribPointer( 3, 4, GL_UNSIGNED_BYTE, sizeof( ASkinMesh::SkinVertex ), (void*)offsetof( ASkinMesh::SkinVertex, Bones ), GL_TRUE );
-			renderBuffer->SetAttribPointer( 4, 2, GL_FLOAT, sizeof( ASkinMesh::SkinVertex ), (void*)offsetof( ASkinMesh::SkinVertex, UV ) );
+			renderBuffer->GetVertexBuffer().SetAttribPointer( 0, 3, GL_FLOAT, sizeof( ASkinMesh::SkinVertex ), offsetof( ASkinMesh::SkinVertex, Position ) );
+			renderBuffer->GetVertexBuffer().SetAttribPointer( 1, 3, GL_FLOAT, sizeof( ASkinMesh::SkinVertex ), offsetof( ASkinMesh::SkinVertex, Normal ) );
+			renderBuffer->GetVertexBuffer().SetAttribPointer( 2, 4, GL_UNSIGNED_BYTE, sizeof( ASkinMesh::SkinVertex ), offsetof( ASkinMesh::SkinVertex, Weights ), GL_TRUE );
+			renderBuffer->GetVertexBuffer().SetAttribPointer( 3, 4, GL_UNSIGNED_BYTE, sizeof( ASkinMesh::SkinVertex ), offsetof( ASkinMesh::SkinVertex, Bones ), GL_TRUE );
+			renderBuffer->GetVertexBuffer().SetAttribPointer( 4, 2, GL_FLOAT, sizeof( ASkinMesh::SkinVertex ), offsetof( ASkinMesh::SkinVertex, UV ) );
 			
 			T2VertexArray::Unbind();
 			pSubMesh->Zero = renderBuffer.iID;

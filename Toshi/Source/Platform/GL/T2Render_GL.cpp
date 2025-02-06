@@ -13,12 +13,10 @@ TOSHI_NAMESPACE_START
 
 T2Render::T2Render()
 {
-
 }
 
 T2Render::~T2Render()
 {
-
 }
 
 TBOOL g_bCreated = TFALSE;
@@ -78,7 +76,6 @@ TBOOL T2Render::Create( const WindowParams& a_rcWindowParams )
 		TERROR( "Failed to create Window\n" );
 		return TFALSE;
 	}
-
 }
 
 void T2Render::Destroy()
@@ -164,6 +161,8 @@ T2CompiledShader T2Render::CompileShader( GLenum a_eShader, const TCHAR* a_szSou
 		TERROR( "Unable to compile shader\n" );
 		TERROR( "Error: %s\n", log );
 		delete[] log;
+
+		TASSERT( TFALSE );
 	}
 
 	return shader;
@@ -179,10 +178,10 @@ T2Shader T2Render::CreateShaderProgram( T2CompiledShader a_VertexShader, T2Compi
 
 T2CompiledShader T2Render::CompileShaderFromFile( GLenum a_eShader, const TCHAR* a_szFileName )
 {
-	TFile* pFile    = TFile::Create( a_szFileName );
+	TFile* pFile      = TFile::Create( a_szFileName );
 	TSIZE  uiFileSize = pFile->GetSize();
 
-	TCHAR* pSrc    = new TCHAR[ uiFileSize + 1 ];
+	TCHAR* pSrc = new TCHAR[ uiFileSize + 1 ];
 	pFile->Read( pSrc, uiFileSize );
 	pSrc[ uiFileSize ] = '\0';
 	pFile->Destroy();
@@ -193,13 +192,13 @@ T2CompiledShader T2Render::CompileShaderFromFile( GLenum a_eShader, const TCHAR*
 	return shader;
 }
 
-GLuint T2Render::CreateTexture( GLsizei a_iWidth, GLsizei a_iHeight, GLenum a_eFormat, TBOOL a_bGenerateMipmap, const void* a_pData )
+GLuint T2Render::CreateTexture( GLsizei a_iWidth, GLsizei a_iHeight, GLenum a_eInternalFormat, GLenum a_eFormat, GLenum a_ePixelType, TBOOL a_bGenerateMipmap, const void* a_pData )
 {
 	GLuint uiTexture;
 	glGenTextures( 1, &uiTexture );
 
 	glBindTexture( GL_TEXTURE_2D, uiTexture );
-	glTexImage2D( GL_TEXTURE_2D, 0, a_eFormat, a_iWidth, a_iHeight, 0, a_eFormat, GL_UNSIGNED_BYTE, a_pData );
+	glTexImage2D( GL_TEXTURE_2D, 0, a_eInternalFormat, a_iWidth, a_iHeight, 0, a_eFormat, a_ePixelType, a_pData );
 
 	if ( a_pData && a_bGenerateMipmap )
 	{

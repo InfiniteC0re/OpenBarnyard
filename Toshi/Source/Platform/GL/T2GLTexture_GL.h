@@ -195,8 +195,6 @@ public:
 	void Create( TEXTURE_FORMAT a_eFormat, UINT a_uiWidth, UINT a_uiHeight, const void* a_pData );
 	void Destroy();
 
-	void Bind( GLenum a_eTarget );
-
 	const TCHAR* GetName() const { return m_pchTexName; }
 	GLuint       GetHandle() const { return m_pHandle; }
 	UINT         GetWidth() const { return m_uiWidth; }
@@ -240,8 +238,8 @@ public:
 	T2GLTexture* GetWhiteTexture() const { return m_pWhiteTexture; }
 
 	T2GLTexture* FindTexture( const TCHAR* a_pchTexName );
-	void       AddTexture( T2GLTexture* a_pTexture );
-	void       RemoveTexture( T2GLTexture* a_pTexture );
+	void         AddTexture( T2GLTexture* a_pTexture );
+	void         RemoveTexture( T2GLTexture* a_pTexture );
 
 private:
 	T2GLTexture* m_pLastTexture;

@@ -184,7 +184,6 @@ void AEnhancedSkinShader::PreRender()
 	glCullFace( GL_BACK );
 
 	glEnable( GL_DEPTH_TEST );
-	glPolygonMode( GL_BACK, GL_FILL );
 
 	auto pRenderContext = TSTATICCAST(
 	    Toshi::TRenderContext,

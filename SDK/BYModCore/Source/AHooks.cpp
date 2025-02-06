@@ -670,9 +670,9 @@ MEMBER_HOOK( 0x006d5970, TOrderTable, TOrderTable_Flush, void )
 
 		pShader->EndFlush();
 	}
-	
+
 	*(TUINT*)( 0x007d3124 ) = 0;
-	m_pLastRegMat        = TNULL;
+	m_pLastRegMat           = TNULL;
 }
 
 HOOK( 0x006114d0, AModelLoader_AModelLoaderLoadTRBCallback, TBOOL, TModel* a_pModel )

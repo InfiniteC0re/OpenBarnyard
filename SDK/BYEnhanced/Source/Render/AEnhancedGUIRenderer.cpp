@@ -139,9 +139,9 @@ void AEnhancedGUIRenderer::CreateVertexArray()
 	    T2Render::CreateIndexBuffer( aIndices, TARRAYSIZE( aIndices ), GL_STATIC_DRAW )
 	);
 
-	m_oVertexArray.SetAttribPointer( 0, 3, GL_FLOAT, sizeof( AEnhancedGUIRenderer::Vertex ), 0 );
-	m_oVertexArray.SetAttribPointer( 1, 4, GL_UNSIGNED_BYTE, sizeof( AEnhancedGUIRenderer::Vertex ), (void*)offsetof( AEnhancedGUIRenderer::Vertex, Colour ), GL_TRUE );
-	m_oVertexArray.SetAttribPointer( 2, 2, GL_FLOAT, sizeof( AEnhancedGUIRenderer::Vertex ), (void*)offsetof( AEnhancedGUIRenderer::Vertex, UV ) );
+	m_oVertexArray.GetVertexBuffer().SetAttribPointer( 0, 3, GL_FLOAT, sizeof( AEnhancedGUIRenderer::Vertex ), 0 );
+	m_oVertexArray.GetVertexBuffer().SetAttribPointer( 1, 4, GL_UNSIGNED_BYTE, sizeof( AEnhancedGUIRenderer::Vertex ), offsetof( AEnhancedGUIRenderer::Vertex, Colour ), GL_TRUE );
+	m_oVertexArray.GetVertexBuffer().SetAttribPointer( 2, 2, GL_FLOAT, sizeof( AEnhancedGUIRenderer::Vertex ), offsetof( AEnhancedGUIRenderer::Vertex, UV ) );
 }
 
 // Hooks

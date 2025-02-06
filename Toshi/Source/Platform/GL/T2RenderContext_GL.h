@@ -58,20 +58,24 @@ public:
 		return TFALSE;
 	}
 
-	void SetTexture2D( TINT a_iTextureIndex, const T2GLTexture& a_rcTexture )
+	void SetTexture2D( TINT a_iTextureIndex, GLuint a_uiTexture )
 	{
-		if ( m_aCurrentTextures[ a_iTextureIndex ] != a_rcTexture.GetHandle() )
+		if ( m_aCurrentTextures[ a_iTextureIndex ] != a_uiTexture )
 		{
-
 			if ( m_iCurrentTextureUnit != a_iTextureIndex )
 			{
 				glActiveTexture( GL_TEXTURE0 + a_iTextureIndex );
 				m_iCurrentTextureUnit = a_iTextureIndex;
 			}
 
-			glBindTexture( GL_TEXTURE_2D, a_rcTexture.GetHandle() );
-			m_aCurrentTextures[ a_iTextureIndex ] = a_rcTexture.GetHandle();
+			glBindTexture( GL_TEXTURE_2D, a_uiTexture );
+			m_aCurrentTextures[ a_iTextureIndex ] = a_uiTexture;
 		}
+	}
+
+	void SetTexture2D( TINT a_iTextureIndex, const T2GLTexture& a_rcTexture )
+	{
+		SetTexture2D( a_iTextureIndex, a_rcTexture.GetHandle() );
 	}
 
 	void ResetTexture2D( TINT a_iTextureIndex )
@@ -81,7 +85,7 @@ public:
 			glActiveTexture( GL_TEXTURE0 + a_iTextureIndex );
 			glBindTexture( GL_TEXTURE_2D, NULL );
 
-			m_iCurrentTextureUnit = a_iTextureIndex;
+			m_iCurrentTextureUnit                 = a_iTextureIndex;
 			m_aCurrentTextures[ a_iTextureIndex ] = -1;
 		}
 	}

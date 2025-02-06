@@ -35,6 +35,12 @@ public:
 		glBufferData( Type, a_uiSize, a_pData, a_eUsage );
 	}
 
+	void SetAttribPointer( GLuint a_uiIndex, GLint a_iNumComponents, GLenum a_eType, GLsizei a_iStride, GLsizei a_pOffset, GLboolean a_bNormalized = GL_FALSE )
+	{
+		glVertexAttribPointer( a_uiIndex, a_iNumComponents, a_eType, a_bNormalized, a_iStride, (const void*)a_pOffset );
+		glEnableVertexAttribArray( a_uiIndex );
+	}
+
 	void Bind() { glBindBuffer( Type, m_uiId ); }
 	void Unbind() { glBindBuffer( Type, 0 ); }
 	void Destroy() { glDeleteBuffers( 1, &m_uiId ); }
@@ -67,13 +73,6 @@ public:
 	    : m_uiId( a_rOther.m_uiId ), m_VertexBuffer( a_rOther.m_VertexBuffer ), m_IndexBuffer( a_rOther.m_IndexBuffer )
 	{}
 
-	void SetAttribPointer( GLuint a_uiIndex, GLint a_iNumComponents, GLenum a_eType, GLsizei a_iStride, const void* a_pOffset, GLboolean a_bNormalized = GL_FALSE )
-	{
-		TASSERT( m_uiId != 0 );
-		glVertexAttribPointer( a_uiIndex, a_iNumComponents, a_eType, a_bNormalized, a_iStride, a_pOffset );
-		glEnableVertexAttribArray( a_uiIndex );
-	}
-
 	void SetVertexBuffer( T2VertexBuffer a_VertexBuffer )
 	{
 		TASSERT( m_uiId != 0 );
@@ -103,8 +102,11 @@ public:
 
 	static void Unbind()
 	{
-		glBindVertexArray( 0 );
-		ms_uiBoundId = 0;
+		if ( ms_uiBoundId != 0 )
+		{
+			glBindVertexArray( 0 );
+			ms_uiBoundId = 0;
+		}
 	}
 
 	void Destroy()

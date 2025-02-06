@@ -4,6 +4,8 @@
 #include "AEnhancedTexture.h"
 #include "ARenderBufferCollection.h"
 
+#include <Render/TTransformObject.h>
+
 #include <Platform/GL/T2Render_GL.h>
 #include <Platform/DX8/TIndexPoolResource_DX8.h>
 #include <Platform/DX8/TVertexPoolResource_DX8.h>
@@ -35,6 +37,7 @@ AEnhancedWorldShader::~AEnhancedWorldShader()
 
 void AEnhancedWorldShader::PreRender()
 {
+
 	auto pShadowColor   = (Toshi::TVector4*)( *(TUINT*)( 0x0079a854 ) + 0xF0 );
 	auto pAmbientColor  = (Toshi::TVector4*)( *(TUINT*)( 0x0079a854 ) + 0x100 );
 	auto pRenderContext = TSTATICCAST(
@@ -52,7 +55,6 @@ void AEnhancedWorldShader::PreRender()
 	glCullFace( GL_BACK );
 
 	glEnable( GL_DEPTH_TEST );
-	glPolygonMode( GL_BACK, GL_FILL );
 }
 
 void AEnhancedWorldShader::Render( Toshi::TRenderPacket* a_pRenderPacket )
@@ -63,7 +65,18 @@ void AEnhancedWorldShader::Render( Toshi::TRenderPacket* a_pRenderPacket )
 	AWorldMesh* pMesh       = (AWorldMesh*)a_pRenderPacket->GetMesh();
 	auto        pIndexPool  = *TREINTERPRETCAST( Toshi::TIndexPoolResource**, ( *TREINTERPRETCAST( TUINT*, TUINT( pMesh ) + 0x1C ) ) + 0x8 );
 
-	m_oShaderProgram.SetUniform( "u_View", a_pRenderPacket->GetModelViewMatrix() );
+	TMatrix44 oModelView = a_pRenderPacket->GetModelViewMatrix();
+	m_oShaderProgram.SetUniform( "u_ModelView", oModelView );
+
+	auto pRenderContext = TSTATICCAST(
+	    Toshi::TRenderContext,
+	    THookedRenderD3DInterface::GetSingleton()->GetCurrentContext()
+	);
+
+	TMatrix44 oWorldMatrix;
+	oWorldMatrix.InvertOrthogonal( pRenderContext->GetWorldViewMatrix() );
+	oWorldMatrix.Multiply( oModelView );
+	m_oShaderProgram.SetUniform( "u_WorldMatrix", oWorldMatrix );
 
 	ARenderBuffer renderBuffer = ARenderBufferCollection::GetSingleton()->GetRenderBuffer( pMesh->m_pSubMeshes[ 0 ].iRenderBufferId );
 	renderBuffer->Bind();

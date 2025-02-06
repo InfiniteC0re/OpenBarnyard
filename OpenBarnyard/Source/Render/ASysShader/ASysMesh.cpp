@@ -157,8 +157,8 @@ TBOOL ASysMesh::CreateResource()
 
 TBOOL ASysMesh::Lock( LockBuffer& a_rLockBuffer )
 {
-    TASSERT( 0 == ( m_uiFlags & FLAG_LOCKED ) );
-	
+	TASSERT( 0 == ( m_uiFlags & FLAG_LOCKED ) );
+
 	if ( m_pVertexPool->Lock( &a_rLockBuffer.VertexLock ) )
 	{
 		if ( m_pIndexPool->Lock( &a_rLockBuffer.IndexLock ) )

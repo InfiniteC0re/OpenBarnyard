@@ -35,9 +35,9 @@ public:
 	SDL_Window* GetNativeWindow() const { return m_pWindow; }
 
 private:
-	SDL_Window*       m_pWindow = TNULL;
-	EventListener*    m_pListener;
-	T2Render*         m_pRender;
+	SDL_Window*    m_pWindow = TNULL;
+	EventListener* m_pListener;
+	T2Render*      m_pRender;
 };
 
 TOSHI_NAMESPACE_END

@@ -51,10 +51,11 @@ public:
 	static TBOOL            SetShaderProgram( const T2Shader& a_rcShaderProgram ) { return GetRenderContext().SetShaderProgram( a_rcShaderProgram ); }
 	static void             SetTexture2D( TINT a_iTextureIndex, const T2GLTexture& a_rcTexture ) { GetRenderContext().SetTexture2D( a_iTextureIndex, a_rcTexture ); }
 	static void             SetTexture2D( TINT a_iTextureIndex, T2GLTexture* a_pTexture ) { GetRenderContext().SetTexture2D( a_iTextureIndex, *a_pTexture ); }
+	static void             SetTexture2D( TINT a_iTextureIndex, GLuint a_uiTexture ) { GetRenderContext().SetTexture2D( a_iTextureIndex, a_uiTexture ); }
 	static void             ResetTexture2D( TINT a_iTextureIndex ) { GetRenderContext().ResetTexture2D( a_iTextureIndex ); }
 
-	static GLuint           CreateTexture( GLsizei a_iWidth, GLsizei a_iHeight, GLenum a_eFormat, TBOOL a_bGenerateMipmap, const void* a_pData );
-	static void             DestroyTexture( GLuint a_iId );
+	static GLuint CreateTexture( GLsizei a_iWidth, GLsizei a_iHeight, GLenum a_eInternalFormat, GLenum a_eFormat, GLenum a_ePixelType, TBOOL a_bGenerateMipmap, const void* a_pData );
+	static void   DestroyTexture( GLuint a_iId );
 
 	static T2CompiledShader CompileShader( GLenum a_eShader, const TCHAR* a_szSource );
 	static T2CompiledShader CompileShaderFromFile( GLenum a_eShader, const TCHAR* a_szFileName );

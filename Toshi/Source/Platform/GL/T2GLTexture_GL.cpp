@@ -16,11 +16,6 @@ void T2GLTexture::Destroy()
 	T2Render::DestroyTexture( m_pHandle );
 }
 
-void T2GLTexture::Bind( GLenum a_eTarget )
-{
-	glBindTexture( a_eTarget, m_pHandle );
-}
-
 void T2GLTexture::Create( TEXTURE_FORMAT a_eFormat, UINT a_uiWidth, UINT a_uiHeight, const void* a_pData )
 {
 	if ( m_pHandle != 0 )
@@ -33,7 +28,7 @@ void T2GLTexture::Create( TEXTURE_FORMAT a_eFormat, UINT a_uiWidth, UINT a_uiHei
 	    ( a_eFormat == TEXTURE_FORMAT_R8G8_UNORM )     ? GL_RG :
 	                                                     GL_R;
 
-	m_pHandle       = T2Render::CreateTexture( a_uiWidth, a_uiHeight, glFormat, TFALSE, a_pData );
+	m_pHandle       = T2Render::CreateTexture( a_uiWidth, a_uiHeight, glFormat, glFormat, GL_UNSIGNED_BYTE, TFALSE, a_pData );
 	m_uiWidth       = a_uiWidth;
 	m_uiHeight      = a_uiHeight;
 	m_uiMipMapCount = 1;
