@@ -128,7 +128,8 @@ void AEnhancedRenderer::CreateFrameBuffers()
 	    m_oWindowParams.uiHeight,
 	    GL_RGB16F,
 	    GL_RGBA,
-	    GL_FLOAT
+	    GL_FLOAT,
+		TTRUE
 	);
 
 	enhRender::g_FrameBufferHDR.Unbind();

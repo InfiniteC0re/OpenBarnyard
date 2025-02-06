@@ -21,7 +21,7 @@ T2FrameBuffer::~T2FrameBuffer()
 	Destroy();
 }
 
-void T2FrameBuffer::Create( GLsizei a_iWidth, GLsizei a_iHeight, GLenum a_eInternalFormat, GLenum a_eFormat, GLenum a_ePixelType )
+void T2FrameBuffer::Create( GLsizei a_iWidth, GLsizei a_iHeight, GLenum a_eInternalFormat, GLenum a_eFormat, GLenum a_ePixelType, TBOOL a_bCreateDepthTexture )
 {
 	TASSERT( m_uiFBO == 0 );
 	TASSERT( a_iWidth > 0 );
@@ -36,6 +36,11 @@ void T2FrameBuffer::Create( GLsizei a_iWidth, GLsizei a_iHeight, GLenum a_eInter
 
 	glFramebufferTexture2D( GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, uiTexture, 0 );
 	m_uiTexture = uiTexture;
+
+	if ( a_bCreateDepthTexture )
+	{
+		CreateDepthTexture( a_iWidth, a_iHeight );
+	}
 }
 
 GLuint g_uiBoundFBO = 0;
@@ -66,8 +71,26 @@ void T2FrameBuffer::Destroy()
 	{
 		glDeleteFramebuffers( 1, &m_uiFBO );
 		m_uiFBO     = 0;
+
+		T2Render::DestroyTexture( m_uiTexture );
 		m_uiTexture = 0;
+
+		if ( m_uiDepthTexture != 0 )
+		{
+			T2Render::DestroyTexture( m_uiDepthTexture );
+			m_uiDepthTexture = 0;
+		}
 	}
+}
+
+void T2FrameBuffer::CreateDepthTexture( GLsizei a_iWidth, GLsizei a_iHeight )
+{
+	T2FrameBuffer::Bind();
+
+	GLuint uiTexture = T2Render::CreateTexture( a_iWidth, a_iHeight, GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, TFALSE, TNULL );
+
+	glFramebufferTexture2D( GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, uiTexture, 0 );
+	m_uiDepthTexture = uiTexture;
 }
 
 TOSHI_NAMESPACE_END
