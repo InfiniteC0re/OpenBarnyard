@@ -9,12 +9,17 @@ IncludeDir.stb = "%{wks.location}/Toshi/Vendor/stb"
 IncludeDir.dx8 = "%{wks.location}/Toshi/Vendor/DX81/include"
 IncludeDir.bink = "%{wks.location}/Toshi/Vendor/bink/include"
 IncludeDir.detours = "%{wks.location}/SDK/Vendor/Detours/include"
+IncludeDir.glm = "%%{wks.location}/Toshi/Vendor/glm/include"
+IncludeDir.glew = "%{wks.location}/Toshi/Vendor/glew/include"
+IncludeDir.sdl2 = "%{wks.location}/Toshi/Vendor/sdl2/include"
 
 LibDir = {}
 LibDir.fmod = "%{wks.location}/Toshi/Vendor/fmod/lib"
 LibDir.dx8 = "%{wks.location}/Toshi/Vendor/DX81/lib"
 LibDir.bink = "%{wks.location}/Toshi/Vendor/bink/lib"
 LibDir.detours = "%{wks.location}/SDK/Vendor/Detours/lib"
+LibDir.glew = "%{wks.location}/Toshi/Vendor/glew/lib"
+LibDir.sdl2 = "%{wks.location}/Toshi/Vendor/sdl2/lib"
 
 -- content of these folders should be copied to any client application
 ClientContentCommon = "%{wks.location}Content/Common/"

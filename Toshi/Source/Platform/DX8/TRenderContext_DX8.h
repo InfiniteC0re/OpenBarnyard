@@ -27,7 +27,10 @@ public:
 		return TSTATICCAST( TRenderContextD3D, a_pRenderContext );
 	}
 
+#ifndef TOSHI_SDK
 private:
+#endif
+
 	TMatrix44 m_Projection;
 };
 

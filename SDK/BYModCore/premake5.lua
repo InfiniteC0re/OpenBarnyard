@@ -35,6 +35,11 @@ project "BYModCore"
 		"%{wks.location}/SDK/BYardSDK/Source",
 		"%{IncludeDir.detours}"
 	}
+	
+	externalincludedirs
+	{
+		"%{IncludeDir.dx8}"
+	}
 
 	filter "system:windows"
 		defines

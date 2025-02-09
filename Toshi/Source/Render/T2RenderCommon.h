@@ -1,0 +1,14 @@
+#pragma once
+
+#ifdef TRENDERINTERFACE_GL
+
+TOSHI_NAMESPACE_START
+
+enum class T2RenderAPI
+{
+	OpenGL
+};
+
+TOSHI_NAMESPACE_END
+
+#endif // TRENDERINTERFACE_GL

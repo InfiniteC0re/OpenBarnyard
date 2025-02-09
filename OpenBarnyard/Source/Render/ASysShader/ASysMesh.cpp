@@ -157,6 +157,8 @@ TBOOL ASysMesh::CreateResource()
 
 TBOOL ASysMesh::Lock( LockBuffer& a_rLockBuffer )
 {
+	TASSERT( 0 == ( m_uiFlags & FLAG_LOCKED ) );
+
 	if ( m_pVertexPool->Lock( &a_rLockBuffer.VertexLock ) )
 	{
 		if ( m_pIndexPool->Lock( &a_rLockBuffer.IndexLock ) )
@@ -171,6 +173,8 @@ TBOOL ASysMesh::Lock( LockBuffer& a_rLockBuffer )
 
 void ASysMesh::Unlock( TUINT32 a_uiNumVertices, TUINT32 a_uiNumIndices )
 {
+	TASSERT( 0 != ( m_uiFlags & FLAG_LOCKED ) );
+
 	if ( TINT16( a_uiNumVertices ) == -1 )
 	{
 		a_uiNumVertices = m_pVertexPool->GetNumVertices();

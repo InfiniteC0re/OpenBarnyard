@@ -32,6 +32,11 @@ project "BYardSDK"
 		"%{IncludeDir.detours}"
 	}
 	
+	externalincludedirs
+	{
+		"%{IncludeDir.dx8}"
+	}
+	
 	filter "system:windows"
 		defines
 		{

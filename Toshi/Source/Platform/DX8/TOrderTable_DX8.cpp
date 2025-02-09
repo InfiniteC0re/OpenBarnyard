@@ -17,7 +17,7 @@ TBOOL TOrderTable::Create( TShader* a_pShader, TINT a_iPriority )
 	m_pShader     = a_pShader;
 
 	TNode::SetPriority( a_iPriority );
-	TRenderD3DInterface::Interface()->GetOrderTables().Insert( this );
+	TRenderD3DInterface::Interface()->RegisterOrderTable( this );
 
 	return TTRUE;
 }

@@ -87,6 +87,8 @@ void ASkinMesh::Create( TUINT32 a_uiFlags, TUINT16 a_uiMaxVertices, TUINT16 a_ui
 
 TBOOL ASkinMesh::Lock( LockBuffer& a_rLockBuffer )
 {
+	TASSERT( 0 == ( m_uiFlags & FLAG_LOCKED ) );
+
 	if ( m_pVertexPool->Lock( &a_rLockBuffer ) )
 	{
 		m_uiFlags |= FLAG_LOCKED;
@@ -98,6 +100,8 @@ TBOOL ASkinMesh::Lock( LockBuffer& a_rLockBuffer )
 
 void ASkinMesh::Unlock( TUINT32 a_uiNumVertices )
 {
+	TASSERT( 0 != ( m_uiFlags & FLAG_LOCKED ) );
+
 	if ( TINT16( a_uiNumVertices ) == -1 )
 	{
 		a_uiNumVertices = m_pVertexPool->GetNumVertices();

@@ -157,7 +157,10 @@ public:
 	static TBOOL CullSphereToFrustumSimple( const TSphere& a_rSphere, const TPlane* a_pPlanes, TINT a_iNumPlanes );
 	static TINT  CullSphereToFrustum( const TSphere& a_rSphere, const TPlane* a_pPlanes, TINT a_iClipFlags, TINT a_iClipFlagsMask );
 
+#ifndef TOSHI_SDK
 protected:
+#endif
+
 	TRenderInterface*  m_pRenderer;                // 0x0004
 	FLAG               m_eFlags;                   // 0x0008
 	TUINT              m_eClipFlags;               // 0x000C

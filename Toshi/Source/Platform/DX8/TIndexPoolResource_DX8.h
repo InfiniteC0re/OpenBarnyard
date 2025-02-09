@@ -32,7 +32,10 @@ public:
 
 	TBOOL GetHALBuffer( TIndexBlockResource::HALBuffer* a_pHALBuffer );
 
+#ifndef TOSHI_MODLOADER_CLIENT
 private:
+#endif
+
 	TUINT16     m_uiIndexOffset;
 	TIndexType* m_pIndices;
 	TUINT       m_uiNumLocksAllTime;

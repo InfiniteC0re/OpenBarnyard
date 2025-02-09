@@ -94,6 +94,9 @@ public:
 	// Allocates render packet from the memory allocated by CreateStaticData
 	static TRenderPacket* AllocRenderPacket();
 
+	// Returns bound shader
+	TShader* GetShader() const { return m_pShader; }
+
 public:
 	inline static TUINT          s_uiMaxRenderPackets     = 0;
 	inline static TUINT          s_uiNumRenderPackets     = 0;
@@ -107,7 +110,9 @@ public:
 	inline static TNodeList<TRegMaterial> s_llRegMatRegisteredList;
 	inline static TNodeList<TRegMaterial> s_llRegMatFreeList;
 
+#ifndef TOSHI_SDK
 private:
+#endif
 	TShader*      m_pShader;
 	TRegMaterial* m_pLastRegMat;
 };

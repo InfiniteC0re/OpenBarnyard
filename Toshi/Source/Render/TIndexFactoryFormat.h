@@ -6,7 +6,7 @@ using TIndexType = TUINT16;
 
 struct TIndexFactoryFormat
 {
-	TUINT m_uiUnk = 0;
+	TUINT uiIndexSize = 0;
 };
 
 TOSHI_NAMESPACE_END

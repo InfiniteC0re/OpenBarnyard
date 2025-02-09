@@ -83,9 +83,9 @@ TBOOL TIndexBlockResource::Validate()
 		using Pair = T2Pair<TIndexBlockResource*, TIndexPoolResourceInterface::LockBuffer>;
 		Pair pair;
 
-		if ( Lock( &pair.m_Second, 0 ) )
+		if ( Lock( &pair.second, 0 ) )
 		{
-			pair.m_First = this;
+			pair.first = this;
 
 			TResource::RecurseSimple(
 			    []( TResource* a_pResource, void* a_pUserData ) {
@@ -96,11 +96,11 @@ TBOOL TIndexBlockResource::Validate()
 
 					    if ( pPool->m_uiFlags & 1 )
 					    {
-						    pPool->m_uiIndexOffset = pPair->GetSecond().uiOffset;
-						    pPair->GetSecond().uiOffset += pPool->GetNumIndices();
+						    pPool->m_uiIndexOffset = pPair->second.uiOffset;
+						    pPair->second.uiOffset += pPool->GetNumIndices();
 
 						    TUtil::MemCopy(
-						        pPair->GetSecond().pBuffer + pPool->m_uiIndexOffset,
+						        pPair->second.pBuffer + pPool->m_uiIndexOffset,
 						        pPool->GetIndices(),
 						        pPool->GetNumIndices() * sizeof( TIndexType )
 						    );

@@ -83,11 +83,13 @@ public:
 		TString16 str = TString16( *this );
 		return std::move( str.Concat( a_wszStr ) );
 	}
+
 	TString16* operator+=( TWCHAR const* a_wszStr )
 	{
 		Concat( a_wszStr, -1 );
 		return this;
 	}
+
 	TString16* operator+=( TString16& str )
 	{
 		Concat( str, -1 );

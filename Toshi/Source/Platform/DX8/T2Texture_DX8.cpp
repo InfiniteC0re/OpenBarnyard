@@ -77,21 +77,6 @@ void T2Texture::Unload()
 	}
 }
 
-IDirect3DCubeTexture8* T2Texture::GetD3DCubeTexture()
-{
-	return m_pD3DCubeTexture;
-}
-
-IDirect3DVolumeTexture8* T2Texture::GetD3DVolumeTexture()
-{
-	return m_pD3DVolumeTexture;
-}
-
-IDirect3DTexture8* T2Texture::GetD3DTexture()
-{
-	return m_pD3DTexture;
-}
-
 TUINT T2Texture::GetMipLevels() const
 {
 	return m_ImageInfo.MipLevels;
@@ -112,7 +97,7 @@ const D3DXIMAGE_INFO& T2Texture::GetImageInfo() const
 	return m_ImageInfo;
 }
 
-void T2Texture::SetData( void* a_pData, TUINT a_uiDataSize )
+void T2Texture::SetData( const void* a_pData, TUINT a_uiDataSize )
 {
 	m_pData      = a_pData;
 	m_uiDataSize = a_uiDataSize;
