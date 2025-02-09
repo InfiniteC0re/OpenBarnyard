@@ -3,6 +3,7 @@
 #include "ARenderBufferCollection.h"
 #include "AEnhancedTexture.h"
 #include "HookHelpers.h"
+#include "AEnhancedRenderer.h"
 
 #include <Platform/GL/T2Render_GL.h>
 #include <Platform/DX8/TTextureResourceHAL_DX8.h>
@@ -197,7 +198,6 @@ void AEnhancedSkinShader::PreRender()
 	    THookedRenderD3DInterface::GetSingleton()->GetCurrentContext()
 	);
 
-	m_ProjectionMatrix = *(Toshi::TMatrix44*)( TUINT( pRenderContext ) + 0x3C0 );
 	m_WorldViewMatrix  = *(Toshi::TMatrix44*)( TUINT( pRenderContext ) + 0x8C );
 	m_ViewWorldMatrix.Invert( m_WorldViewMatrix );
 
@@ -205,11 +205,11 @@ void AEnhancedSkinShader::PreRender()
 	static TPString8 s_ViewWorld  = TPS8D( "u_ViewWorld" );
 
 	T2Render::SetShaderProgram( m_oShaderProgram );
-	m_oShaderProgram.SetUniform( s_Projection, m_ProjectionMatrix );
+	m_oShaderProgram.SetUniform( s_Projection, enhRender::g_Projection );
 	m_oShaderProgram.SetUniform( s_ViewWorld, m_ViewWorldMatrix );
 
 	T2Render::SetShaderProgram( m_oShaderProgramHD );
-	m_oShaderProgramHD.SetUniform( s_Projection, m_ProjectionMatrix );
+	m_oShaderProgramHD.SetUniform( s_Projection, enhRender::g_Projection );
 	m_oShaderProgramHD.SetUniform( s_ViewWorld, m_ViewWorldMatrix );
 }
 

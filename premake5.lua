@@ -67,7 +67,8 @@ workspace "OpenBarnyard"
 		
 		defines
 		{
-			"GLEW_STATIC"
+			"GLEW_STATIC",
+			"GLM_FORCE_LEFT_HANDED"
 		}
 
 	filter "configurations:Debug"

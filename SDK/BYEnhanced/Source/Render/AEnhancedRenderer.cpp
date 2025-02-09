@@ -7,10 +7,13 @@
 #include "AEnhancedSkinShader.h"
 
 #include <Math/TVector2.h>
+#include <Render/TCameraObject.h>
+#include <Render/TViewport.h>
 
 #include <HookHelpers.h>
 #include <Platform/GL/T2Render_GL.h>
 #include <Platform/DX8/TRenderInterface_DX8.h>
+#include <Platform/DX8/TRenderContext_DX8.h>
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
@@ -227,8 +230,21 @@ MEMBER_HOOK( 0x006c6fd0, TRenderD3DInterface, TRenderD3DInterface_EndScene, TBOO
 	return TFALSE;
 }
 
-class ARenderer
-{};
+struct ARenderer
+{
+	TCHAR PADDING[0x28];
+	TCameraObject* m_pCameraObject;
+};
+
+struct ACamera
+	: public Toshi::TObject
+{
+	Toshi::TMatrix44 m_Matrix;
+	TFLOAT           m_fFOV;
+	TFLOAT           m_fProjectionCentreX;
+	TFLOAT           m_fProjectionCentreY;
+};
+
 
 MEMBER_HOOK( 0x0060b370, ARenderer, ARenderer_RenderMainScene, void, TFLOAT a_fDeltaTime )
 {
@@ -240,10 +256,50 @@ MEMBER_HOOK( 0x0060b370, ARenderer, ARenderer_RenderMainScene, void, TFLOAT a_fD
 	AEnhancedRenderer::GetSingleton()->ScenePostRender();
 }
 
+MEMBER_HOOK( 0x0060acc0, ARenderer, ARenderer_UpdateMainCamera, void, const TMatrix44& a_rTransformMatrix, ACamera* a_pCamera )
+{
+	m_pCameraObject->SetProjectionCentreX( a_pCamera->m_fProjectionCentreX );
+	m_pCameraObject->SetProjectionCentreY( a_pCamera->m_fProjectionCentreY );
+	m_pCameraObject->SetFOV( a_pCamera->m_fFOV );
+	m_pCameraObject->GetTransformObject().SetMatrix( a_rTransformMatrix );
+	m_pCameraObject->SetNear( *(TFLOAT*)( TUINT( this ) + 0x38 ) );
+	m_pCameraObject->SetFar( *(TFLOAT*)( TUINT( this ) + 0x34 ) );
+}
+
+//-----------------------------------------------------------------------------
+// This is absurd but Intel compiler optimized the original game's code in such
+// a way that ECX register is not  updated before calling
+// ComputePerspectiveFrustum so it needs to be manually set in a hooked method.
+// Luckily ComputePerspectiveProjection is always called before so it can be
+// used to obtain the pointer.
+//-----------------------------------------------------------------------------
+TRenderContextD3D* g_pRenderContext;
+
+MEMBER_HOOK( 0x006d6c80, TRenderContextD3D, TRenderContextD3D_ComputePerspectiveProjection, void )
+{
+	g_pRenderContext = this;
+	
+	CallOriginal();
+	enhRender::g_Projection = *(TMatrix44*)( TUINTPTR( this ) + 960 );
+
+	// Fix depth being 0..1 (D3D) instead of -1..1 (OpenGL)
+	enhRender::g_Projection.m_f33 = ( m_oProjParams.m_fFarClip + m_oProjParams.m_fNearClip ) / ( m_oProjParams.m_fFarClip - m_oProjParams.m_fNearClip );
+	enhRender::g_Projection.m_f43 = -( 2 * m_oProjParams.m_fNearClip * m_oProjParams.m_fFarClip ) / ( m_oProjParams.m_fFarClip - m_oProjParams.m_fNearClip );
+}
+
+MEMBER_HOOK( 0x006d6d30, TRenderContextD3D, TRenderContextD3D_ComputePerspectiveFrustum, void* )
+{
+	return _orig_func_ptr( g_pRenderContext );
+}
+
 void AEnhancedRenderer::InstallHooks()
 {
 	InstallHook<TRenderD3DInterface_BeginScene>();
 	InstallHook<TRenderD3DInterface_EndScene>();
 
 	InstallHook<ARenderer_RenderMainScene>();
+	InstallHook<ARenderer_UpdateMainCamera>();
+
+	InstallHook<TRenderContextD3D_ComputePerspectiveProjection>();
+	InstallHook<TRenderContextD3D_ComputePerspectiveFrustum>();
 }

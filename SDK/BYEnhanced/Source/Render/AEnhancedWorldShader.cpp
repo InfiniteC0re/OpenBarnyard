@@ -2,6 +2,7 @@
 #include "HookHelpers.h"
 #include "AEnhancedWorldShader.h"
 #include "AEnhancedTexture.h"
+#include "AEnhancedRenderer.h"
 #include "ARenderBufferCollection.h"
 
 #include <Render/TTransformObject.h>
@@ -54,7 +55,7 @@ void AEnhancedWorldShader::PreRender()
 	m_oShaderProgram.SetUniform( s_uColor, Toshi::TVector4( 1.0f, 1.0f, 1.0f, 1.0f ) );
 	m_oShaderProgram.SetUniform( s_uShadowColor, *pShadowColor );
 	m_oShaderProgram.SetUniform( s_uAmbientColor, *pAmbientColor );
-	m_oShaderProgram.SetUniform( s_uProjection, *(Toshi::TMatrix44*)( TUINT( pRenderContext ) + 0x3C0 ) );
+	m_oShaderProgram.SetUniform( s_uProjection, enhRender::g_Projection );
 
 	//glEnable( GL_CULL_FACE );
 	//glCullFace( GL_BACK );

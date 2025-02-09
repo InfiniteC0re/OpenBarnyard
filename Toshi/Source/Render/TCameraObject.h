@@ -7,53 +7,53 @@ TOSHI_NAMESPACE_START
 class TCameraObject
 {
 public:
-	static constexpr float s_kMinFOV = ( 1.0f / 180.0f ) * TMath::PI;
-	static constexpr float s_kMaxFOV = TMath::PI;
+	static constexpr TFLOAT s_kMinFOV = ( 1.0f / 180.0f ) * TMath::PI;
+	static constexpr TFLOAT s_kMaxFOV = TMath::PI;
 
 public:
 	TCameraObject();
 
 	void Render();
 
-	float SetNear( float fNear )
+	TFLOAT SetNear( TFLOAT fNear )
 	{
 		return std::exchange( m_fNear, fNear );
 	}
 
-	float SetFar( float fFar )
+	TFLOAT SetFar( TFLOAT fFar )
 	{
 		return std::exchange( m_fFar, fFar );
 	}
 
-	float SetFOV( float fFOV )
+	TFLOAT SetFOV( TFLOAT fFOV )
 	{
 		TMath::Clip( fFOV, s_kMinFOV, s_kMaxFOV );
 		return std::exchange( m_fFOV, fFOV );
 	}
 
-	float SetProjectionCentreX( float fCentreX )
+	TFLOAT SetProjectionCentreX( TFLOAT fCentreX )
 	{
 		TMath::Clip( fCentreX, 0.0f, 1.0f );
 		return std::exchange( m_fCentreX, fCentreX );
 	}
 
-	float SetProjectionCentreY( float fCentreY )
+	TFLOAT SetProjectionCentreY( TFLOAT fCentreY )
 	{
 		TMath::Clip( fCentreY, 0.0f, 1.0f );
 		return std::exchange( m_fCentreY, fCentreY );
 	}
 
-	float GetNear() const
+	TFLOAT GetNear() const
 	{
 		return m_fNear;
 	}
 
-	float GetFar() const
+	TFLOAT GetFar() const
 	{
 		return m_fFar;
 	}
 
-	float GetFOV() const
+	TFLOAT GetFOV() const
 	{
 		return m_fFOV;
 	}
@@ -74,13 +74,13 @@ public:
 	}
 
 private:
-	float                      m_fNear;
-	float                      m_fFar;
-	float                      m_fFOV;
+	TFLOAT                      m_fNear;
+	TFLOAT                      m_fFar;
+	TFLOAT                      m_fFOV;
 	TINT                       m_Unk1;
 	TRenderContext::CameraMode m_eMode;
-	float                      m_fCentreX;
-	float                      m_fCentreY;
+	TFLOAT                      m_fCentreX;
+	TFLOAT                      m_fCentreY;
 	TTransformObject           m_TransformObject;
 	TBOOL                      m_bEnabled;
 };

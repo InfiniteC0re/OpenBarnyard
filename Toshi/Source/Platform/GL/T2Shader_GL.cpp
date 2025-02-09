@@ -54,7 +54,15 @@ void T2Shader::SetUniform( const TPString8& a_strSlotName, const TUINT* a_pValue
 	if ( a_uiNumItems == 1 )
 		SetUniform( a_strSlotName, *a_pValue );
 	else
-		glUniform1uiv( GetUniformSlotId( a_strSlotName ).id, a_uiNumItems, a_pValue );
+	{
+		UniformMeta& meta = GetUniformSlotId( a_strSlotName );
+
+		if ( meta.id < 0 )
+			return;
+
+		glUniform1uiv( meta.id, a_uiNumItems, a_pValue );
+		meta.uInteger = *a_pValue;
+	}
 }
 
 void T2Shader::SetUniform( const TPString8& a_strSlotName, TUINT a_uiValue )
@@ -76,7 +84,15 @@ void T2Shader::SetUniform( const TPString8& a_strSlotName, const TINT* a_pValue,
 	if ( a_uiNumItems == 1 )
 		SetUniform( a_strSlotName, *a_pValue );
 	else
-		glUniform1iv( GetUniformSlotId( a_strSlotName ).id, a_uiNumItems, a_pValue );
+	{
+		UniformMeta& meta = GetUniformSlotId( a_strSlotName );
+
+		if ( meta.id < 0 )
+			return;
+
+		glUniform1iv( meta.id, a_uiNumItems, a_pValue );
+		meta.integer = *a_pValue;
+	}
 }
 
 void T2Shader::SetUniform( const TPString8& a_strSlotName, TINT a_iValue )
@@ -98,7 +114,15 @@ void T2Shader::SetUniform( const TPString8& a_strSlotName, const TFLOAT* a_pValu
 	if ( a_uiNumItems == 1 )
 		SetUniform( a_strSlotName, *a_pValue );
 	else
-		glUniform1fv( GetUniformSlotId( a_strSlotName ).id, a_uiNumItems, a_pValue );
+	{
+		UniformMeta& meta = GetUniformSlotId( a_strSlotName );
+
+		if ( meta.id < 0 )
+			return;
+
+		glUniform1fv( meta.id, a_uiNumItems, a_pValue );
+		meta.fp = *a_pValue;
+	}
 }
 
 void T2Shader::SetUniform( const TPString8& a_strSlotName, TFLOAT a_fValue )
@@ -120,7 +144,15 @@ void T2Shader::SetUniform( const TPString8& a_strSlotName, const TVector3* a_pVe
 	if ( a_uiNumItems == 1 )
 		SetUniform( a_strSlotName, *a_pVector );
 	else
-		glUniform3fv( GetUniformSlotId( a_strSlotName ).id, a_uiNumItems, (const TFLOAT*)a_pVector );
+	{
+		UniformMeta& meta = GetUniformSlotId( a_strSlotName );
+
+		if ( meta.id < 0 )
+			return;
+
+		glUniform3fv( meta.id, a_uiNumItems, (const TFLOAT*)a_pVector );
+		meta.vec3 = *a_pVector;
+	}
 }
 
 void T2Shader::SetUniform( const TPString8& a_strSlotName, const TVector3& a_rVector )
@@ -142,7 +174,15 @@ void T2Shader::SetUniform( const TPString8& a_strSlotName, const TVector4* a_pVe
 	if ( a_uiNumItems == 1 )
 		SetUniform( a_strSlotName, *a_pVector );
 	else
-		glUniform4fv( GetUniformSlotId( a_strSlotName ).id, a_uiNumItems, (const TFLOAT*)a_pVector );
+	{
+		UniformMeta& meta = GetUniformSlotId( a_strSlotName );
+
+		if ( meta.id < 0 )
+			return;
+
+		glUniform4fv( meta.id, a_uiNumItems, (const TFLOAT*)a_pVector );
+		meta.vec4 = _mm_loadu_ps( (float*)a_pVector );
+	}
 }
 
 void T2Shader::SetUniform( const TPString8& a_strSlotName, const TVector4& a_rVector )
@@ -167,7 +207,15 @@ void T2Shader::SetUniform( const TPString8& a_strSlotName, const TMatrix44* a_pM
 	if ( a_uiNumItems == 1 )
 		SetUniform( a_strSlotName, *a_pMatrix );
 	else
-		glUniformMatrix4fv( GetUniformSlotId( a_strSlotName ).id, a_uiNumItems, GL_FALSE, (const TFLOAT*)a_pMatrix );
+	{
+		UniformMeta& meta = GetUniformSlotId( a_strSlotName );
+
+		if ( meta.id < 0 )
+			return;
+
+		glUniformMatrix4fv( meta.id, a_uiNumItems, GL_FALSE, (const TFLOAT*)a_pMatrix );
+		meta.mat44 = _mm512_loadu_ps( a_pMatrix );
+	}
 }
 
 void T2Shader::SetUniform( const TPString8& a_strSlotName, const TMatrix44& a_rMatrix )
@@ -184,6 +232,26 @@ void T2Shader::SetUniform( const TPString8& a_strSlotName, const TMatrix44& a_rM
 		glUniformMatrix4fv( meta.id, 1, GL_FALSE, &a_rMatrix.m_f11 );
 		meta.mat44 = _mm512_loadu_ps( m0 );
 	}
+}
+
+void T2Shader::SetUniform( const TPString8& a_strSlotName, const glm::mat4& a_rMatrix )
+{
+	SetUniform( a_strSlotName, *(TMatrix44*)&a_rMatrix );
+}
+
+void T2Shader::SetUniform( const TPString8& a_strSlotName, const glm::mat4* a_pMatrix, TUINT a_uiNumItems )
+{
+	SetUniform( a_strSlotName, (TMatrix44*)a_pMatrix, a_uiNumItems );
+}
+
+void T2Shader::SetUniform( const TPString8& a_strSlotName, const glm::vec4& a_rVector )
+{
+	SetUniform( a_strSlotName, *(TVector4*)&a_rVector );
+}
+
+void T2Shader::SetUniform( const TPString8& a_strSlotName, const glm::vec4* a_pVector, TUINT a_uiNumItems )
+{
+	SetUniform( a_strSlotName, (TVector4*)a_pVector, a_uiNumItems );
 }
 
 T2Shader& T2Shader::operator=( const T2Shader& a_rOther )

@@ -363,8 +363,8 @@ void TRenderContext::PROJECTIONPARAMS::SetFromFOV( TFLOAT a_fViewportWidth, TFLO
 	TFLOAT fHalfHeight = a_fViewportHeight * 0.5f;
 	TFLOAT fProj       = fHalfHeight / TMath::Tan( a_fFOV );
 
-	m_fNearClip = 1.0f;
-	m_fFarClip  = 1000.0f;
+	m_fNearClip = a_fNearPlane;
+	m_fFarClip  = a_fFarPlane;
 	m_Centre.x  = fHalfWidth;
 	m_Centre.y  = fHalfHeight;
 	m_Proj.x    = fProj;

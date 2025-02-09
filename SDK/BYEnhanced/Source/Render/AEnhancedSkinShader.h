@@ -70,5 +70,4 @@ private:
 
 	Toshi::TMatrix44 m_WorldViewMatrix;
 	Toshi::TMatrix44 m_ViewWorldMatrix;
-	Toshi::TMatrix44 m_ProjectionMatrix;
 };

@@ -4,6 +4,8 @@
 #include <Platform/GL/T2FrameBuffer_GL.h>
 #include <Platform/GL/T2Shader_GL.h>
 
+#include <glm/ext.hpp>
+
 namespace enhRender
 {
 
@@ -11,6 +13,7 @@ inline Toshi::T2FrameBuffer g_FrameBufferDeferred;
 inline Toshi::T2Shader      g_ShaderHDR;
 inline Toshi::T2Shader      g_ShaderLighting;
 inline Toshi::TVector3      g_DirectionalLightDir( -12.8f, -75.0f, -38.7f );
+inline Toshi::TMatrix44     g_Projection;
 
 } // namespace enhRender
 
