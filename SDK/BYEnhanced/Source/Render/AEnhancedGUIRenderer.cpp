@@ -46,8 +46,10 @@ void AEnhancedGUIRenderer::BeginScene()
 		0.0f, 0.0f, 0.0f, 1.0f
 	};
 
+	static TPString8 s_Projection = TPS8D( "u_Projection" );
+
 	T2Render::SetShaderProgram( m_oShaderProgram );
-	m_oShaderProgram.SetUniform( "u_Projection", matProjection );
+	m_oShaderProgram.SetUniform( s_Projection, matProjection );
 
 	m_oVertexArray.Bind();
 	m_oVertexArray.GetVertexBuffer().Bind();
@@ -114,7 +116,9 @@ void AEnhancedGUIRenderer::RenderRectangle( const Toshi::TVector2& a, const Tosh
 	view.m_f42 = pTransform->m_vecTranslation.y;
 	view.m_f43 = 0.0f;
 	view.m_f44 = 1.0f;
-	m_oShaderProgram.SetUniform( "u_View", view );
+
+	static TPString8 s_View = TPS8D( "u_View" );
+	m_oShaderProgram.SetUniform( s_View, view );
 
 	glDrawElements( GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_SHORT, TNULL );
 }

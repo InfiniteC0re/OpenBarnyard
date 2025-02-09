@@ -11,6 +11,9 @@
 
 #include <glm/mat4x4.hpp>
 
+#include <immintrin.h>
+#include <intrin.h>
+
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
 // Note: Should be the last include!
@@ -146,26 +149,30 @@ public:
 AEnhancedSkinShader::AEnhancedSkinShader()
 {
 	// Compile shaders
-	m_hVertexShader   = T2Render::CompileShaderFromFile( GL_VERTEX_SHADER, "Shaders/SkinShader.vs" );
-	m_hFragmentShader = T2Render::CompileShaderFromFile( GL_FRAGMENT_SHADER, "Shaders/SkinShader.fs" );
+	m_hVertexShader     = T2Render::CompileShaderFromFile( GL_VERTEX_SHADER, "Shaders/SkinShader.vs" );
+	m_hFragmentShader   = T2Render::CompileShaderFromFile( GL_FRAGMENT_SHADER, "Shaders/SkinShader.fs" );
 	m_hVertexShaderHD   = T2Render::CompileShaderFromFile( GL_VERTEX_SHADER, "Shaders/SkinShader_HD.vs" );
 	m_hFragmentShaderHD = T2Render::CompileShaderFromFile( GL_FRAGMENT_SHADER, "Shaders/SkinShader_HD.fs" );
 
 	// Create shader programs
-	m_oShaderProgram = T2Render::CreateShaderProgram( m_hVertexShader, m_hFragmentShader );
+	m_oShaderProgram   = T2Render::CreateShaderProgram( m_hVertexShader, m_hFragmentShader );
 	m_oShaderProgramHD = T2Render::CreateShaderProgram( m_hVertexShaderHD, m_hFragmentShaderHD );
 
 	// Set default shader uniforms...
 
+	static TPString8 s_LightColourParams = TPS8D( "u_LightColourParams" );
+	static TPString8 s_UpAxis            = TPS8D( "u_UpAxis" );
+	static TPString8 s_LightColour       = TPS8D( "u_LightColour" );
+
 	// HD Shader
 	T2Render::SetShaderProgram( m_oShaderProgramHD );
-	m_oShaderProgramHD.SetUniform( "u_LightColourParams", TVector4( 1.0f, 0.0f, 0.0f, 1.0f ) );
+	m_oShaderProgramHD.SetUniform( s_LightColourParams, TVector4( 1.0f, 0.0f, 0.0f, 1.0f ) );
 
 	// Default Shader
 	T2Render::SetShaderProgram( m_oShaderProgram );
-	m_oShaderProgram.SetUniform( "u_UpAxis", TVector4( 0.0f, 0.0f, 0.0f, 1.0f ) );
-	m_oShaderProgram.SetUniform( "u_LightColour", TVector4( 1.0f, 1.0f, 1.0f, 1.0f ) );
-	m_oShaderProgram.SetUniform( "u_LightColourParams", TVector4( 1.0f, 0.0f, 0.0f, 1.0f ) );
+	m_oShaderProgram.SetUniform( s_UpAxis, TVector4( 0.0f, 0.0f, 0.0f, 1.0f ) );
+	m_oShaderProgram.SetUniform( s_LightColour, TVector4( 1.0f, 1.0f, 1.0f, 1.0f ) );
+	m_oShaderProgram.SetUniform( s_LightColourParams, TVector4( 1.0f, 0.0f, 0.0f, 1.0f ) );
 
 	InstallHooks();
 }
@@ -180,8 +187,8 @@ void AEnhancedSkinShader::PreRender()
 
 	glEnable( GL_BLEND );
 
-	glEnable( GL_CULL_FACE );
-	glCullFace( GL_BACK );
+	//glEnable( GL_CULL_FACE );
+	//glCullFace( GL_BACK );
 
 	glEnable( GL_DEPTH_TEST );
 
@@ -194,28 +201,38 @@ void AEnhancedSkinShader::PreRender()
 	m_WorldViewMatrix  = *(Toshi::TMatrix44*)( TUINT( pRenderContext ) + 0x8C );
 	m_ViewWorldMatrix.Invert( m_WorldViewMatrix );
 
+	static TPString8 s_Projection = TPS8D( "u_Projection" );
+	static TPString8 s_ViewWorld  = TPS8D( "u_ViewWorld" );
+
 	T2Render::SetShaderProgram( m_oShaderProgram );
-	m_oShaderProgram.SetUniform( "u_Projection", m_ProjectionMatrix );
-	m_oShaderProgram.SetUniform( "u_ViewWorld", m_ViewWorldMatrix );
+	m_oShaderProgram.SetUniform( s_Projection, m_ProjectionMatrix );
+	m_oShaderProgram.SetUniform( s_ViewWorld, m_ViewWorldMatrix );
 
 	T2Render::SetShaderProgram( m_oShaderProgramHD );
-	m_oShaderProgramHD.SetUniform( "u_Projection", m_ProjectionMatrix );
-	m_oShaderProgramHD.SetUniform( "u_ViewWorld", m_ViewWorldMatrix );
+	m_oShaderProgramHD.SetUniform( s_Projection, m_ProjectionMatrix );
+	m_oShaderProgramHD.SetUniform( s_ViewWorld, m_ViewWorldMatrix );
 }
 
 void AEnhancedSkinShader::Render( TRenderPacket* a_pRenderPacket )
 {
 	auto pMesh       = a_pRenderPacket->GetMesh();
 	auto pVertexPool = *TREINTERPRETCAST( TVertexPoolResource**, TUINT( pMesh ) + 0x18 );
-
-	auto pMaterial = TSTATICCAST( ASkinMaterialWrapper, pMesh->GetMaterial() );
+	auto pMaterial   = TSTATICCAST( ASkinMaterialWrapper, pMesh->GetMaterial() );
+	
+	static TPString8 s_UpAxis         = TPS8D( "u_UpAxis" );
+	static TPString8 s_LightingLerp1  = TPS8D( "u_LightingLerp1" );
+	static TPString8 s_LightingLerp2  = TPS8D( "u_LightingLerp2" );
+	static TPString8 s_Model          = TPS8D( "u_Model" );
+	static TPString8 s_AmbientColor   = TPS8D( "u_AmbientColor" );
+	static TPString8 s_LightDirection = TPS8D( "u_LightDirection" );
+	static TPString8 s_ModelView      = TPS8D( "u_ModelView" );
+	static TPString8 s_NumBones       = TPS8D( "u_NumBones" );
+	static TPString8 s_BoneTransforms = TPS8D( "u_BoneTransforms" );
 
 	T2Shader* pShaderProgram = TNULL;
-	TBOOL     bUniformsDirty = TFALSE;
-
 	if ( pMaterial->m_bIsSkin && pMaterial->m_bFlag2 && pMaterial->m_bFlag3 )
 	{
-		bUniformsDirty = T2Render::SetShaderProgram( m_oShaderProgramHD );
+		T2Render::SetShaderProgram( m_oShaderProgramHD );
 		pShaderProgram = &m_oShaderProgramHD;
 
 		TMatrix44 inverseModelView;
@@ -224,22 +241,19 @@ void AEnhancedSkinShader::Render( TRenderPacket* a_pRenderPacket )
 		TVector4 upVector;
 		upVector.Negate3( inverseModelView.AsBasisVector4( 2 ) );
 
-		pShaderProgram->SetUniform( "u_UpAxis", upVector );
-		
+		pShaderProgram->SetUniform( s_UpAxis, upVector );
+
 		TFLOAT fLerpFactor = a_pRenderPacket->GetShadeCoeff() * ( 1.0f / 255.0f );
-		pShaderProgram->SetUniform( "u_LightingLerp1", TVector4( 1.0f - fLerpFactor, 1.0f - fLerpFactor, 1.0f - fLerpFactor, 0.0f ) );
-		pShaderProgram->SetUniform( "u_LightingLerp2", TVector4( fLerpFactor, fLerpFactor, fLerpFactor, 0.0f ) );
+		pShaderProgram->SetUniform( s_LightingLerp1, TVector4( 1.0f - fLerpFactor, 1.0f - fLerpFactor, 1.0f - fLerpFactor, 0.0f ) );
+		pShaderProgram->SetUniform( s_LightingLerp2, TVector4( fLerpFactor, fLerpFactor, fLerpFactor, 0.0f ) );
 	}
 	else
 	{
 		pShaderProgram = &m_oShaderProgram;
-		bUniformsDirty = T2Render::SetShaderProgram( m_oShaderProgram );
+		T2Render::SetShaderProgram( m_oShaderProgram );
 
 		// TODO: Use simple shader instead of HD...
 	}
-
-	TMatrix44 modelMatrix;
-	modelMatrix.Multiply( m_ViewWorldMatrix, a_pRenderPacket->GetModelViewMatrix() );
 
 	auto&     modelView = a_pRenderPacket->GetModelViewMatrix();
 	TMatrix44 worldModelView;
@@ -265,13 +279,16 @@ void AEnhancedSkinShader::Render( TRenderPacket* a_pRenderPacket )
 	TVector4 ambientColour = a_pRenderPacket->GetAmbientColour();
 	TVector4 lightColour   = a_pRenderPacket->GetLightColour();
 
-	pShaderProgram->SetUniform( "u_Model", modelMatrix );
-	pShaderProgram->SetUniform( "u_AmbientColour", ambientColour );
-	pShaderProgram->SetUniform( "u_LightDirection", lightDirWorld );
-	pShaderProgram->SetUniform( "u_ModelView", a_pRenderPacket->GetModelViewMatrix() );
+	TMatrix44 modelMatrix;
+	modelMatrix.Multiply( m_ViewWorldMatrix, a_pRenderPacket->GetModelViewMatrix() );
+
+	pShaderProgram->SetUniform( s_Model, modelMatrix );
+	pShaderProgram->SetUniform( s_AmbientColor, ambientColour );
+	pShaderProgram->SetUniform( s_LightDirection, lightDirWorld );
+	pShaderProgram->SetUniform( s_ModelView, a_pRenderPacket->GetModelViewMatrix() );
 
 	auto pSkeletonInstance = a_pRenderPacket->GetSkeletonInstance();
-	auto uiNumSubMeshes = *(TUINT16*)( TUINT( pMesh ) + 0x16 );
+	auto uiNumSubMeshes    = *(TUINT16*)( TUINT( pMesh ) + 0x16 );
 
 	for ( TUINT16 i = 0; i < uiNumSubMeshes; i++ )
 	{
@@ -283,20 +300,14 @@ void AEnhancedSkinShader::Render( TRenderPacket* a_pRenderPacket )
 		auto iSubMeshNumBones = *TREINTERPRETCAST( TINT32*, TUINT( pSubMesh ) + 0x20 );
 		auto pSubMeshBones    = TREINTERPRETCAST( TUINT32*, TUINT( pSubMesh ) + 0x24 );
 
-		static TMatrix44 s_BoneTransforms[ 28 ];
-		for ( TINT k = 0; k < iSubMeshNumBones; k++ )
+		__m512 s_aBoneTransforms[ 28 ];
+		for ( TINT k = 0; k < iSubMeshNumBones && k < TARRAYSIZE( s_aBoneTransforms ); k++ )
 		{
-			*(glm::mat4*)&s_BoneTransforms[ k ] = glm::transpose( *(glm::mat4*)&pSkeletonInstance->GetBone( pSubMeshBones[ k ] ).m_Transform );
+			s_aBoneTransforms[ k ] = _mm512_loadu_ps( &pSkeletonInstance->GetBone( pSubMeshBones[ k ] ).m_Transform );
 		}
 
-		static TINT s_iPrevNumBones = 0;
-		pShaderProgram->SetUniform( "u_BoneTransforms", s_BoneTransforms, iSubMeshNumBones );
-
-		if ( s_iPrevNumBones != iSubMeshNumBones || bUniformsDirty )
-		{
-			pShaderProgram->SetUniform( "u_NumBones", iSubMeshNumBones );
-			s_iPrevNumBones = iSubMeshNumBones;
-		}
+		pShaderProgram->SetUniform( s_BoneTransforms, (TMatrix44*)s_aBoneTransforms, iSubMeshNumBones );
+		pShaderProgram->SetUniform( s_NumBones, iSubMeshNumBones );
 
 		// Draw
 		ARenderBufferCollection::GetSingleton()->GetRenderBuffer( iRenderBufferID )->Bind();

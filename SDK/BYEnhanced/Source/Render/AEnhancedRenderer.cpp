@@ -91,8 +91,12 @@ void AEnhancedRenderer::ScenePostRender()
 	T2Render::SetTexture2D( 2, enhRender::g_FrameBufferDeferred.GetAttachment( 2 ) ); // colors
 	T2Render::SetTexture2D( 3, enhRender::g_FrameBufferDeferred.GetDepthTexture() );  // depth
 
-	enhRender::g_ShaderLighting.SetUniform( "u_AmbientColor", *(TVector4*)( ( *(TUINT*)0x0079a854 ) + 0x100 ) );
-	enhRender::g_ShaderLighting.SetUniform( "u_DiffuseColor", *(TVector4*)( ( *(TUINT*)0x0079a854 ) + 0xF0 ) );
+	static TPString8 s_DirectionalLightDir = TPS8D( "u_DirectionalLightDir" );
+	static TPString8 s_AmbientColor        = TPS8D( "u_AmbientColor" );
+	static TPString8 s_DiffuseColor        = TPS8D( "u_DiffuseColor" );
+	enhRender::g_ShaderLighting.SetUniform( s_DirectionalLightDir, enhRender::g_DirectionalLightDir );
+	enhRender::g_ShaderLighting.SetUniform( s_AmbientColor, *(TVector4*)( ( *(TUINT*)0x0079a854 ) + 0x100 ) );
+	enhRender::g_ShaderLighting.SetUniform( s_DiffuseColor, *(TVector4*)( ( *(TUINT*)0x0079a854 ) + 0xF0 ) );
 	RenderScreenQuad();
 
 	//// Apply HDR
@@ -172,9 +176,9 @@ void AEnhancedRenderer::CreateFrameBuffers()
 	    2,
 	    m_oWindowParams.uiWidth,
 	    m_oWindowParams.uiHeight,
+	    GL_RGB16F,
 	    GL_RGBA,
-	    GL_RGBA,
-	    GL_UNSIGNED_BYTE
+	    GL_FLOAT
 	);
 
 	enhRender::g_FrameBufferDeferred.Unbind();

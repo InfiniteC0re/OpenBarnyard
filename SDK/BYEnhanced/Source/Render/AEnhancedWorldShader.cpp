@@ -37,7 +37,6 @@ AEnhancedWorldShader::~AEnhancedWorldShader()
 
 void AEnhancedWorldShader::PreRender()
 {
-
 	auto pShadowColor   = (Toshi::TVector4*)( *(TUINT*)( 0x0079a854 ) + 0xF0 );
 	auto pAmbientColor  = (Toshi::TVector4*)( *(TUINT*)( 0x0079a854 ) + 0x100 );
 	auto pRenderContext = TSTATICCAST(
@@ -46,13 +45,19 @@ void AEnhancedWorldShader::PreRender()
 	);
 
 	T2Render::SetShaderProgram( m_oShaderProgram );
-	m_oShaderProgram.SetUniform( "u_Color", Toshi::TVector4( 1.0f, 1.0f, 1.0f, 1.0f ) );
-	m_oShaderProgram.SetUniform( "u_ShadowColor", *pShadowColor );
-	m_oShaderProgram.SetUniform( "u_AmbientColor", *pAmbientColor );
-	m_oShaderProgram.SetUniform( "u_Projection", *(Toshi::TMatrix44*)( TUINT( pRenderContext ) + 0x3C0 ) );
 
-	glEnable( GL_CULL_FACE );
-	glCullFace( GL_BACK );
+	static TPString8 s_uColor        = TPS8D( "u_Color" );
+	static TPString8 s_uShadowColor  = TPS8D( "u_ShadowColor" );
+	static TPString8 s_uAmbientColor = TPS8D( "u_AmbientColor" );
+	static TPString8 s_uProjection   = TPS8D( "u_Projection" );
+
+	m_oShaderProgram.SetUniform( s_uColor, Toshi::TVector4( 1.0f, 1.0f, 1.0f, 1.0f ) );
+	m_oShaderProgram.SetUniform( s_uShadowColor, *pShadowColor );
+	m_oShaderProgram.SetUniform( s_uAmbientColor, *pAmbientColor );
+	m_oShaderProgram.SetUniform( s_uProjection, *(Toshi::TMatrix44*)( TUINT( pRenderContext ) + 0x3C0 ) );
+
+	//glEnable( GL_CULL_FACE );
+	//glCullFace( GL_BACK );
 
 	glEnable( GL_DEPTH_TEST );
 }
@@ -65,8 +70,11 @@ void AEnhancedWorldShader::Render( Toshi::TRenderPacket* a_pRenderPacket )
 	AWorldMesh* pMesh       = (AWorldMesh*)a_pRenderPacket->GetMesh();
 	auto        pIndexPool  = *TREINTERPRETCAST( Toshi::TIndexPoolResource**, ( *TREINTERPRETCAST( TUINT*, TUINT( pMesh ) + 0x1C ) ) + 0x8 );
 
+	static TPString8 s_ModelView   = TPS8D( "u_ModelView" );
+	static TPString8 s_WorldMatrix = TPS8D( "u_WorldMatrix" );
+
 	TMatrix44 oModelView = a_pRenderPacket->GetModelViewMatrix();
-	m_oShaderProgram.SetUniform( "u_ModelView", oModelView );
+	m_oShaderProgram.SetUniform( s_ModelView, oModelView );
 
 	auto pRenderContext = TSTATICCAST(
 	    Toshi::TRenderContext,
@@ -76,7 +84,7 @@ void AEnhancedWorldShader::Render( Toshi::TRenderPacket* a_pRenderPacket )
 	TMatrix44 oWorldMatrix;
 	oWorldMatrix.InvertOrthogonal( pRenderContext->GetWorldViewMatrix() );
 	oWorldMatrix.Multiply( oModelView );
-	m_oShaderProgram.SetUniform( "u_WorldMatrix", oWorldMatrix );
+	m_oShaderProgram.SetUniform( s_WorldMatrix, oWorldMatrix );
 
 	ARenderBuffer renderBuffer = ARenderBufferCollection::GetSingleton()->GetRenderBuffer( pMesh->m_pSubMeshes[ 0 ].iRenderBufferId );
 	renderBuffer->Bind();

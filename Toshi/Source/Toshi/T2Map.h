@@ -35,6 +35,13 @@ public:
 		return m_RedBlackTree.Size();
 	}
 
+	template <class... Args>
+	ValueType* Emplace( const KeyType& key, Args&&... args )
+	{
+		Iterator result = m_RedBlackTree.Insert( { key, ValueType( std::forward<Args>( args )... ) } );
+		return &result.GetValue()->GetSecond();
+	}
+
 	ValueType* Insert( const KeyType& key, const ValueType& value )
 	{
 		Iterator result = m_RedBlackTree.Insert( { key, value } );

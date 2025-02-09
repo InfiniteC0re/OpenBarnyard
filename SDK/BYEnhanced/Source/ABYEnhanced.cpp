@@ -48,7 +48,7 @@ public:
 
 	void OnRenderInterfaceReady( Toshi::TRenderD3DInterface* a_pRenderInterface ) override
 	{
-		//THookedRenderD3DInterface::GetSingleton();
+		
 	}
 
 	void OnAppRendererReady() override
@@ -57,6 +57,7 @@ public:
 
 	virtual void OnImGuiRender() override
 	{
+		ImGui::DragFloat3( "Sun Direction", (TFLOAT*)&enhRender::g_DirectionalLightDir );
 		/*ImGui::Checkbox( "Render GUI", &g_bRenderGUI );
 		ImGui::Checkbox( "Wireframe World", &g_bRenderWorldWireframe );
 		ImGui::Checkbox( "Wireframe Skin", &g_bRenderSkinWireframe );*/

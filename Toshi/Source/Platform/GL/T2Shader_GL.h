@@ -10,6 +10,9 @@
 
 #  include "GL/glew.h"
 
+#include <immintrin.h>
+#include <intrin.h>
+
 TOSHI_NAMESPACE_START
 
 //-----------------------------------------------------------------------------
@@ -48,6 +51,34 @@ private:
 class T2Shader
 {
 public:
+	struct UniformMeta
+	{
+		GLint id;
+
+		union
+		{
+			TINT      integer;
+			TUINT     uInteger;
+			__m512    mat44;
+			__m128    vec4;
+			TVector3  vec3;
+			FLOAT     fp;
+		};
+
+		UniformMeta()
+		{ }
+
+		UniformMeta( GLint a_iId )
+		    : id( a_iId )
+		{}
+
+		UniformMeta( const UniformMeta& a_rcOther )
+		    : id( a_rcOther.id )
+		    , mat44( a_rcOther.mat44 )
+		{}
+	};
+
+public:
 	T2Shader()
 	    : m_uiProgram( 0 ), m_VShader( 0 ), m_FShader( 0 )
 	{}
@@ -63,20 +94,21 @@ public:
 	TBOOL Create();
 	void  Destroy( TBOOL a_bDeleteShaders );
 
-	GLint GetUniformSlotId( const TCHAR* a_szSlotName );
+	UniformMeta& GetUniformSlotId( const TCHAR* a_szSlotName );
+	UniformMeta& GetUniformSlotId( const TPString8& a_strSlotName );
 
-	void SetUniform( const TCHAR* a_szSlotName, const TMatrix44& a_rMatrix );
-	void SetUniform( const TCHAR* a_szSlotName, const TMatrix44* a_pMatrix, TUINT a_uiNumItems );
-	void SetUniform( const TCHAR* a_szSlotName, const TVector4& a_rVector );
-	void SetUniform( const TCHAR* a_szSlotName, const TVector4* a_pVector, TUINT a_uiNumItems );
-	void SetUniform( const TCHAR* a_szSlotName, const TVector3& a_rVector );
-	void SetUniform( const TCHAR* a_szSlotName, const TVector3* a_pVector, TUINT a_uiNumItems );
-	void SetUniform( const TCHAR* a_szSlotName, TFLOAT a_fValue );
-	void SetUniform( const TCHAR* a_szSlotName, const TFLOAT* a_pValue, TUINT a_uiNumItems );
-	void SetUniform( const TCHAR* a_szSlotName, TINT a_iValue );
-	void SetUniform( const TCHAR* a_szSlotName, const TINT* a_pValue, TUINT a_uiNumItems );
-	void SetUniform( const TCHAR* a_szSlotName, TUINT a_uiValue );
-	void SetUniform( const TCHAR* a_szSlotName, const TUINT* a_pValue, TUINT a_uiNumItems );
+	void SetUniform( const TPString8& a_szSlotName, const TMatrix44& a_rMatrix );
+	void SetUniform( const TPString8& a_szSlotName, const TMatrix44* a_pMatrix, TUINT a_uiNumItems );
+	void SetUniform( const TPString8& a_szSlotName, const TVector4& a_rVector );
+	void SetUniform( const TPString8& a_szSlotName, const TVector4* a_pVector, TUINT a_uiNumItems );
+	void SetUniform( const TPString8& a_szSlotName, const TVector3& a_rVector );
+	void SetUniform( const TPString8& a_szSlotName, const TVector3* a_pVector, TUINT a_uiNumItems );
+	void SetUniform( const TPString8& a_szSlotName, TFLOAT a_fValue );
+	void SetUniform( const TPString8& a_szSlotName, const TFLOAT* a_pValue, TUINT a_uiNumItems );
+	void SetUniform( const TPString8& a_szSlotName, TINT a_iValue );
+	void SetUniform( const TPString8& a_szSlotName, const TINT* a_pValue, TUINT a_uiNumItems );
+	void SetUniform( const TPString8& a_szSlotName, TUINT a_uiValue );
+	void SetUniform( const TPString8& a_szSlotName, const TUINT* a_pValue, TUINT a_uiNumItems );
 
 	GLuint           GetProgram() const { return m_uiProgram; }
 	T2CompiledShader GetVertexShader() const { return m_VShader; }
@@ -93,7 +125,8 @@ private:
 	GLuint                                          m_uiProgram;
 	T2CompiledShader                                m_VShader;
 	T2CompiledShader                                m_FShader;
-	T2Map<TPString8, GLuint, TPString8::Comparator> m_UniformToSlotId;
+
+	T2Map<TPString8, UniformMeta, TPString8::Comparator> m_UniformToSlotId;
 };
 
 TOSHI_NAMESPACE_END
