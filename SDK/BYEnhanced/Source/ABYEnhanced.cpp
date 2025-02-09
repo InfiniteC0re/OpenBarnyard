@@ -58,6 +58,7 @@ public:
 	virtual void OnImGuiRender() override
 	{
 		ImGui::DragFloat3( "Sun Direction", (TFLOAT*)&enhRender::g_DirectionalLightDir );
+		ImGui::ColorEdit3( "Fog Color", (TFLOAT*)&enhRender::g_FogColor );
 		/*ImGui::Checkbox( "Render GUI", &g_bRenderGUI );
 		ImGui::Checkbox( "Wireframe World", &g_bRenderWorldWireframe );
 		ImGui::Checkbox( "Wireframe Skin", &g_bRenderSkinWireframe );*/

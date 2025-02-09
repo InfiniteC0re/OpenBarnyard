@@ -15,6 +15,7 @@ public:
 	void Create();
 	void CreateAttachment( TINT a_iAttachment, GLsizei a_iWidth, GLsizei a_iHeight, GLenum a_eInternalFormat, GLenum a_eFormat, GLenum a_ePixelType );
 	void CreateDepthTexture( GLsizei a_iWidth, GLsizei a_iHeight );
+	void SetDrawBuffer( GLenum a_eDrawBuffer );
 	
 	void Destroy();
 

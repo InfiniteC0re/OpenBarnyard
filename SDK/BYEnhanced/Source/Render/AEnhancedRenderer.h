@@ -10,9 +10,11 @@ namespace enhRender
 {
 
 inline Toshi::T2FrameBuffer g_FrameBufferDeferred;
+inline Toshi::T2FrameBuffer g_ShadowMap1;
 inline Toshi::T2Shader      g_ShaderHDR;
 inline Toshi::T2Shader      g_ShaderLighting;
 inline Toshi::TVector3      g_DirectionalLightDir( -12.8f, -75.0f, -38.7f );
+inline Toshi::TVector3      g_FogColor( 1.0f, 1.0f, 1.0f );
 inline Toshi::TMatrix44     g_Projection;
 
 } // namespace enhRender

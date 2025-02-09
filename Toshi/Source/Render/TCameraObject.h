@@ -12,6 +12,7 @@ public:
 
 public:
 	TCameraObject();
+	~TCameraObject();
 
 	void Render();
 
@@ -61,6 +62,11 @@ public:
 	TRenderContext::CameraMode GetMode() const
 	{
 		return m_eMode;
+	}
+
+	void SetMode( TRenderContext::CameraMode a_eMode )
+	{
+		m_eMode = a_eMode;
 	}
 
 	TBOOL IsEnabled() const

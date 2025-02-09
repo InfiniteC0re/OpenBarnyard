@@ -96,16 +96,16 @@ public:
 
 			T2Render::SetTexture2D( 0, ( m_pTextures[ 0 ] ) ? TREINTERPRETCAST( T2GLTexture*, m_pTextures[ 0 ] ) : T2TextureManager::GetSingleton()->GetInvalidTexture() );
 
-			if ( m_pLighting1 )
+			if ( m_pLighting1 && m_pTextures[ 2 ] )
 				T2Render::SetTexture2D( 1, TREINTERPRETCAST( T2GLTexture*, m_pTextures[ 2 ] ) );
 
-			if ( m_pLighting2 )
+			if ( m_pLighting2 && m_pTextures[ 3 ] )
 				T2Render::SetTexture2D( 2, TREINTERPRETCAST( T2GLTexture*, m_pTextures[ 3 ] ) );
 
-			if ( m_pLighting3 )
+			if ( m_pLighting3 && m_pTextures[ 4 ] )
 				T2Render::SetTexture2D( 3, TREINTERPRETCAST( T2GLTexture*, m_pTextures[ 4 ] ) );
 
-			if ( m_pLighting4 )
+			if ( m_pLighting4 && m_pTextures[ 5 ] )
 				T2Render::SetTexture2D( 4, TREINTERPRETCAST( T2GLTexture*, m_pTextures[ 5 ] ) );
 		}
 		else

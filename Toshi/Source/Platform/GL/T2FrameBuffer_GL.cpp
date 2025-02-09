@@ -88,8 +88,10 @@ void T2FrameBuffer::CreateDepthTexture( GLsizei a_iWidth, GLsizei a_iHeight )
 
 	T2FrameBuffer::Bind();
 	GLuint uiTexture = T2Render::CreateTexture( a_iWidth, a_iHeight, GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT, GL_FLOAT, TFALSE, TNULL );
-	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
+	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
+	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
+	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
 
 	glFramebufferTexture2D( GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, uiTexture, 0 );
 	m_uiDepthTexture = uiTexture;
@@ -109,6 +111,13 @@ void T2FrameBuffer::CreateAttachment( TINT a_iAttachment, GLsizei a_iWidth, GLsi
 
 	glFramebufferTexture2D( GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + a_iAttachment, GL_TEXTURE_2D, uiTexture, 0 );
 	m_aAttachments[ a_iAttachment ] = uiTexture;
+}
+
+void T2FrameBuffer::SetDrawBuffer( GLenum a_eDrawBuffer )
+{
+	T2FrameBuffer::Bind();
+	glDrawBuffer( GL_NONE );
+	glReadBuffer( GL_NONE );
 }
 
 TOSHI_NAMESPACE_END

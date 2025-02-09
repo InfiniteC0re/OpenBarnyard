@@ -14,6 +14,7 @@
 #include <Platform/GL/T2Render_GL.h>
 #include <Platform/DX8/TRenderInterface_DX8.h>
 #include <Platform/DX8/TRenderContext_DX8.h>
+#include <BYardSDK/SDKHooks.h>
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
@@ -68,8 +69,83 @@ TBOOL AEnhancedRenderer::Update( TFLOAT a_fDeltaTime )
 	return TTRUE;
 }
 
+Toshi::TCameraObject g_SunCameraObject;
+const Toshi::TVector4 s_vWorldUp = { 0.0f, -1.0f, 0.0f, 1.0f };
+
 void AEnhancedRenderer::ScenePreRender()
 {
+	TRenderD3DInterface* pRender = THookedRenderD3DInterface::GetSingleton();
+	TRenderContext*      pRenderContext = pRender->GetCurrentContext();
+
+	//-----------------------------------------------------------------------------
+	// Pass 1. Render scene into shadow maps
+	//-----------------------------------------------------------------------------
+	
+	// Setup viewport size
+	glViewport( 0, 0, 2048, 2048 );
+
+	// Bind shadow map frame buffer
+	enhRender::g_ShadowMap1.Bind();
+	glClear( GL_DEPTH_BUFFER_BIT );
+
+	// Make light space view matrix
+	TMatrix44 oSunTransform = TMatrix44::IDENTITY;
+	oSunTransform.SetTranslation( TVector3( 25.17f, -50.30f, -1.05 ) );
+	
+	TVector4 direction = TVector3( 19.09f, -8.36f, -35.88 ) - oSunTransform.GetTranslation3();
+	direction.Normalise();
+	
+	oSunTransform.LookAtDirection( direction, s_vWorldUp );
+
+	// Prepare camera
+	g_SunCameraObject.SetMode( TRenderContext::CameraMode_Orthographic );
+	g_SunCameraObject.SetProjectionCentreX( 0.5f );
+	g_SunCameraObject.SetProjectionCentreY( 0.5f );
+	g_SunCameraObject.SetFOV( TMath::DegToRad( 172.0f ) );
+	g_SunCameraObject.GetTransformObject().SetMatrix( oSunTransform );
+	g_SunCameraObject.SetNear( 1.0f );
+	g_SunCameraObject.SetFar( 100.0f );
+
+	// Update game's render context
+	*(TCameraObject**)( TUINTPTR( pRenderContext ) + 0x3BC ) = &g_SunCameraObject;
+	CALL_THIS( 0x006cd0d0, Toshi::TCameraObject*, void, &g_SunCameraObject );
+
+	// Add the light view matrix to the top of the transform stack to render the scene from it's POV
+	auto& rTransformStack = pRender->GetTransforms();
+	rTransformStack.Reset();
+	rTransformStack.Top().Identity();
+	rTransformStack.Push( pRenderContext->GetWorldViewMatrix() );
+
+	CALL_THIS( 0x006125d0, void*, void, *(void**)0x007b45fc, TINT, 2 ); // AModelRepos::RenderModelsOfType
+	CALL_THIS( 0x006125d0, void*, void, *(void**)0x007b45fc, TINT, 1 ); // AModelRepos::RenderModelsOfType
+
+	// Render terrain
+	if ( *(TINT*)0x00796300 )
+	{
+		if ( *(TINT*)0x0078de44 )
+		{
+			CALL_THIS( 0x005dd5c0, void*, void, *(void**)0x0078de44 ); // AGateManager::Render
+		}
+
+		CALL_THIS( 0x005ea8b0, void*, void, *(void**)0x00796300 ); // ATerrain::Render
+		CALL_THIS( 0x005ef3a0, void*, void, *(void**)0x00796304 ); // ATreeManager::Render
+		CALL_THIS( 0x005e17a0, void*, void, *(void**)0x0078deb0 ); // AInstanceManager::Render
+		CALL_THIS( 0x005e3990, void*, void, *(void**)0x007922e0 ); // ARegrowthManager::Render
+	}
+	
+	CALL_THIS( 0x0053a320, void*, void, *(void**)0x00783c18, TBOOL, TFALSE ); // AAnimalPopulationManager::Render
+	CALL( 0x006be990, void );                                                 // TRenderD3DInterface::FlushShaders
+
+	// Unbind shadow map after scene rendering is done
+	enhRender::g_ShadowMap1.Unbind();
+
+	//-----------------------------------------------------------------------------
+	// Pass 2. Render the scene into 3 GBuffer's textures
+	//-----------------------------------------------------------------------------
+
+	// Setup viewport size
+	glViewport( 0, 0, m_oWindowParams.uiWidth, m_oWindowParams.uiHeight );
+
 	// Prepare HDR framebuffer before rendering the scene
 	enhRender::g_FrameBufferDeferred.Bind();
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
@@ -97,7 +173,9 @@ void AEnhancedRenderer::ScenePostRender()
 	static TPString8 s_DirectionalLightDir = TPS8D( "u_DirectionalLightDir" );
 	static TPString8 s_AmbientColor        = TPS8D( "u_AmbientColor" );
 	static TPString8 s_DiffuseColor        = TPS8D( "u_DiffuseColor" );
+	static TPString8 s_FogColor            = TPS8D( "u_FogColor" );
 	enhRender::g_ShaderLighting.SetUniform( s_DirectionalLightDir, enhRender::g_DirectionalLightDir );
+	enhRender::g_ShaderLighting.SetUniform( s_FogColor, enhRender::g_FogColor );
 	enhRender::g_ShaderLighting.SetUniform( s_AmbientColor, *(TVector4*)( ( *(TUINT*)0x0079a854 ) + 0x100 ) );
 	enhRender::g_ShaderLighting.SetUniform( s_DiffuseColor, *(TVector4*)( ( *(TUINT*)0x0079a854 ) + 0xF0 ) );
 	RenderScreenQuad();
@@ -185,6 +263,12 @@ void AEnhancedRenderer::CreateFrameBuffers()
 	);
 
 	enhRender::g_FrameBufferDeferred.Unbind();
+
+	// Create buffers for shadow maps
+	enhRender::g_ShadowMap1.Create();
+	enhRender::g_ShadowMap1.CreateDepthTexture( 2048, 2048 );
+	enhRender::g_ShadowMap1.SetDrawBuffer( GL_NONE );
+	enhRender::g_ShadowMap1.Unbind();
 }
 
 void AEnhancedRenderer::CreateShaders()
@@ -245,7 +329,6 @@ struct ACamera
 	TFLOAT           m_fProjectionCentreY;
 };
 
-
 MEMBER_HOOK( 0x0060b370, ARenderer, ARenderer_RenderMainScene, void, TFLOAT a_fDeltaTime )
 {
 	AEnhancedRenderer::GetSingleton()->ScenePreRender();
@@ -258,6 +341,7 @@ MEMBER_HOOK( 0x0060b370, ARenderer, ARenderer_RenderMainScene, void, TFLOAT a_fD
 
 MEMBER_HOOK( 0x0060acc0, ARenderer, ARenderer_UpdateMainCamera, void, const TMatrix44& a_rTransformMatrix, ACamera* a_pCamera )
 {
+	//m_pCameraObject->SetMode( TRenderContext::CameraMode_Orthographic );
 	m_pCameraObject->SetProjectionCentreX( a_pCamera->m_fProjectionCentreX );
 	m_pCameraObject->SetProjectionCentreY( a_pCamera->m_fProjectionCentreY );
 	m_pCameraObject->SetFOV( a_pCamera->m_fFOV );
@@ -278,7 +362,7 @@ TRenderContextD3D* g_pRenderContext;
 MEMBER_HOOK( 0x006d6c80, TRenderContextD3D, TRenderContextD3D_ComputePerspectiveProjection, void )
 {
 	g_pRenderContext = this;
-	
+
 	CallOriginal();
 	enhRender::g_Projection = *(TMatrix44*)( TUINTPTR( this ) + 960 );
 
@@ -292,6 +376,11 @@ MEMBER_HOOK( 0x006d6d30, TRenderContextD3D, TRenderContextD3D_ComputePerspective
 	return _orig_func_ptr( g_pRenderContext );
 }
 
+MEMBER_HOOK( 0x006c57e0, TRenderD3DInterface, TRenderD3DInterface_GetPixelAspectRatio, TFLOAT )
+{
+	return 0.8660254f;
+}
+
 void AEnhancedRenderer::InstallHooks()
 {
 	InstallHook<TRenderD3DInterface_BeginScene>();
@@ -302,4 +391,6 @@ void AEnhancedRenderer::InstallHooks()
 
 	InstallHook<TRenderContextD3D_ComputePerspectiveProjection>();
 	InstallHook<TRenderContextD3D_ComputePerspectiveFrustum>();
+
+	InstallHook<TRenderD3DInterface_GetPixelAspectRatio>();
 }
