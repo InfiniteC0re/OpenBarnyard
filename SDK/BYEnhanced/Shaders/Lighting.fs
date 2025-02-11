@@ -7,9 +7,16 @@ layout(binding = 0) uniform sampler2D gPosition;
 layout(binding = 1) uniform sampler2D gNormal;
 layout(binding = 2) uniform sampler2D gColor;
 layout(binding = 3) uniform sampler2D gDepth;
+layout(binding = 4) uniform sampler2D gShadow;
 
 uniform vec4 u_AmbientColor;
 uniform vec4 u_DiffuseColor;
+uniform vec3 u_FogColor;
+uniform vec3 u_DirectionalLightDir;
+uniform mat4 u_LightViewMatrix;
+
+uniform float u_ShadowBiasMin;
+uniform float u_ShadowBiasMax;
 
 vec3 aces(vec3 x) {
   const float a = 2.51;
@@ -28,7 +35,7 @@ vec3 filmic(vec3 x) {
 
 vec3 directionalLighting(vec3 normal, vec3 texColor)
 {
-    vec3 lightDir = normalize(vec3(-0.2f, -1.0f, -0.3f));
+    vec3 lightDir = normalize(-u_DirectionalLightDir);
     
 	// diffuse shading
     float diff = max(dot(normal, lightDir), 0.0);
@@ -60,6 +67,21 @@ vec3 pointLight(vec3 fragPos, vec3 normal, vec3 texColor)
     return (ambient + diffuse);
 }
 
+float CalculateShadow(vec3 normal, vec4 fragPosLightSpace)
+{
+	vec3 lightDir = normalize(-u_DirectionalLightDir);
+
+	vec3 shadowCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+	shadowCoords = shadowCoords * 0.5 + 0.5; 
+	
+	float shadowMapDepth = texture(gShadow, shadowCoords.xy).r;
+	float fragDepth = shadowCoords.z;
+	
+	float bias = max(u_ShadowBiasMax * (1.0 - dot(normalize(normal), lightDir)), u_ShadowBiasMin);  
+	float shadow = fragDepth - bias > shadowMapDepth ? 1.0 : 0.0;  
+	return shadow;
+}
+
 void main()
 {
 	vec3 fragPos = texture(gPosition, o_TexCoord).rgb;
@@ -67,10 +89,26 @@ void main()
 	vec4 albedo = texture(gColor, o_TexCoord);
 	float depth = texture(gDepth, o_TexCoord).r;
 	
+	// Calculate directional lighting
 	FragColor.rgb = directionalLighting(normal, albedo.rgb);
-	FragColor.rgb += pointLight(fragPos, normal, FragColor.rgb);
+	
+	// Apply shadow maps
+	vec4 fragPosLightSpace = u_LightViewMatrix * vec4(fragPos, 1.0f);
+	float flShadowStrength = CalculateShadow(normal, fragPosLightSpace);
 
+	FragColor.rgb *= (1.0f - flShadowStrength * 0.2f);
+	
+	// Apply lighting from point lights
+	FragColor.rgb += pointLight(fragPos, normal, FragColor.rgb);
+	
+	// Tonemap
 	FragColor.rgb = aces(FragColor.rgb);
 	FragColor.rgb = pow(FragColor.rgb, vec3(2.2));
-	FragColor.a = albedo.a;
+	
+	float zNear = 1.0;    // TODO: Replace by the zNear of your perspective projection
+    float zFar  = 280.0; // TODO: Replace by the zFar  of your perspective projection
+	//FragColor.rgb = vec3((2.0 * zNear) / (zFar + zNear - depth * (zFar - zNear)));
+	
+	FragColor.rgb = mix(FragColor.rgb, u_FogColor, (2.0 * zNear) / (zFar + zNear - depth * (zFar - zNear)));
+	FragColor.a = 1.0f;
 }

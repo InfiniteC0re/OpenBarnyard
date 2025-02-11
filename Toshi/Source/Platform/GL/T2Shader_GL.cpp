@@ -192,8 +192,8 @@ void T2Shader::SetUniform( const TPString8& a_strSlotName, const TVector4& a_rVe
 	if ( meta.id < 0 )
 		return;
 
-	__m128* v0 = (__m128*)&a_rVector;
-	__m128 vcmp = _mm_cmpneq_ps( *v0, meta.vec4 );
+	__m128 v0   = _mm_loadu_ps( (float*)&a_rVector.x );
+	__m128 vcmp = _mm_cmpneq_ps( v0, meta.vec4 );
 
 	if ( _mm_movemask_ps( vcmp ) != 0 )
 	{

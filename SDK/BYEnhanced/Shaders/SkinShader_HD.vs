@@ -33,8 +33,9 @@ void main()
 	for (int i = 0; i < 4; i++)
 	{
 		int boneIndex = int(a_Bones[i] * 256.0 / 3);
-		vertex += vec3((vec4(a_Position, 1.0f) * u_BoneTransforms[boneIndex]) * a_Weights[i]);
-		normal += (a_Normal * mat3(u_BoneTransforms[boneIndex])) * a_Weights[i];
+		mat4 transform = transpose(u_BoneTransforms[boneIndex]);
+		vertex += vec3((vec4(a_Position, 1.0f) * transform) * a_Weights[i]);
+		normal += (a_Normal * mat3(transform)) * a_Weights[i];
 	}
 	
 	// Calculate position of the vertex

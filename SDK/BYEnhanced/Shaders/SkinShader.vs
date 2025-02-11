@@ -12,7 +12,7 @@ out vec3 o_Position;
 out vec3 o_ViewPos;
 out vec4 o_FinalColor;
 
-uniform vec4 u_AmbientColour;
+uniform vec4 u_AmbientColor;
 uniform vec4 u_LightColour;
 uniform vec3 u_LightDirection;
 uniform vec4 u_UpAxis;
@@ -32,8 +32,9 @@ void main()
 	for (int i = 0; i < 4; i++)
 	{
 		int boneIndex = int(a_Bones[i] * 256.0 / 3);
-		vertex += vec3((vec4(a_Position, 1.0f) * u_BoneTransforms[boneIndex]) * a_Weights[i]);
-		normal += (a_Normal * mat3(u_BoneTransforms[boneIndex])) * a_Weights[i];
+		mat4 transform = transpose(u_BoneTransforms[boneIndex]);
+		vertex += vec3((vec4(a_Position, 1.0f) * transform) * a_Weights[i]);
+		normal += (a_Normal * mat3(transform)) * a_Weights[i];
 	}
 	
 	// Calculate position of the vertex
@@ -48,8 +49,8 @@ void main()
 	float diffuse = min(max(dot(o_Normal, -u_LightDirection), 0.0f), 1.0f);
 	
 	vec4 finalColor = diffuse * u_LightColour;
-	finalColor += (1.0f - diffuse) * u_AmbientColour;
+	finalColor += (1.0f - diffuse) * u_AmbientColor;
 	
 	o_FinalColor.rgb = finalColor.rgb;
-	o_FinalColor.a = u_AmbientColour.a;
+	o_FinalColor.a = u_AmbientColor.a;
 }

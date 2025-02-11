@@ -12,7 +12,7 @@ in vec2 o_LightingTexCoord1;
 in vec2 o_LightingTexCoord2;
 in vec2 o_LightingTexCoord3;
 
-uniform vec4 u_AmbientColour;
+uniform vec4 u_AmbientColor;
 uniform vec4 u_LightColour;
 uniform vec3 u_LightDirection;
 uniform vec4 u_LightingLerp1;
@@ -39,5 +39,5 @@ void main()
 	gColor = texture(tex0, o_TexCoord);
 	//gColor.rgb = clamp(gColor.rgb - shade1.rgb, 0.0f, 1.0f);
 	//gColor.rgb = clamp(gColor.rgb + shade2.rgb, 0.0f, 1.0f);
-	gColor.a *= u_AmbientColour.a;
+	gColor.a *= u_AmbientColor.a;
 }
