@@ -17,6 +17,7 @@
 #include <Input/TInputDeviceKeyboard.h>
 #include <Render/TCameraObject.h>
 #include <Render/TModel.h>
+#include <Render/TShader.h>
 #include <Platform/Windows/TMSWindow.h>
 #include <Platform/DX8/TRenderInterface_DX8.h>
 
@@ -838,6 +839,9 @@ MEMBER_HOOK( 0x006bbb00, TSystemManager, TSystemManager_Update, void )
 		CallOriginal();
 		s_oFPSTimer.Update();
 
+		if ( g_oSettings.iMaxFPS < 5 )
+			g_oSettings.iMaxFPS = 5;
+
 		const TFLOAT fTargetDeltaTime = 1.0f / g_oSettings.iMaxFPS;
 		const TFLOAT fDelta           = s_oFPSTimer.GetDelta();
 
@@ -852,21 +856,27 @@ MEMBER_HOOK( 0x006bbb00, TSystemManager, TSystemManager_Update, void )
 	else CallOriginal();
 }
 
+MEMBER_HOOK( 0x006d5970, TOrderTable, TOrderTable_Flush, void )
+{
+
+	if ( m_pLastRegMat )
+	{
+		m_pShader->StartFlush();
+
+		for ( auto it = m_pLastRegMat; it != TNULL; it = it->GetNextRegMat() )
+		{
+			it->Render();
+		}
+
+		m_pShader->EndFlush();
+	}
+
+	*(TUINT*)( 0x007d3124 ) = 0;
+	m_pLastRegMat           = TNULL;
+}
+
 void AHooks::Initialise()
 {
-	// Drastically reduces load times since loader thread is much
-	// faster nowadays and it doesn't need to sleep
-	DWORD dwOldProtection;
-
-	VirtualProtect( (void*)0x004238AE, 4, PAGE_EXECUTE_READWRITE, &dwOldProtection );
-	*(TUINT32*)( 0x004238AE ) = 0x0020568E;
-	VirtualProtect( (void*)0x005EBF9E, 4, PAGE_EXECUTE_READWRITE, &dwOldProtection );
-	*(TUINT32*)( 0x005EBF9E ) = 0x0003CF9E;
-	VirtualProtect( (void*)0x005EC34E, 4, PAGE_EXECUTE_READWRITE, &dwOldProtection );
-	*(TUINT32*)( 0x005EC34E ) = 0x0003CBEE;
-	VirtualProtect( (void*)0x005EBF20, 4, PAGE_EXECUTE_READWRITE, &dwOldProtection );
-	*(TUINT32*)( 0x005EBF20 ) = 0x0003D01C;
-
 	// Apply other hooks
 	InstallHook<TMemory_UnkMethod>();
 	InstallHook<TMemory_Initialise>();
@@ -876,7 +886,7 @@ void AHooks::Initialise()
 	InstallHook<TMemory_Free>();
 	InstallHook<TMemory_Alloc>();
 	InstallHook<TMemory_GetMemInfo>();
-	//InstallHook<TMSWindow_SetPosition>();
+	InstallHook<TMSWindow_SetPosition>();
 	InstallHook<AGUISlideshow_ProcessInput>();
 	InstallHook<FUN_0042ab30>();
 	InstallHook<AGUI2_MainPostRenderCallback>();
@@ -911,6 +921,7 @@ void AHooks::Initialise()
 	//InstallHook<AMaterialLibrary_LoadTTLData>();
 	
 	InstallHook<TSystemManager_Update>();
+	InstallHook<TOrderTable_Flush>();
 }
 
 TBOOL AHooks::AddHook( Hook a_eHook, HookType a_eHookType, void* a_pCallback )

@@ -107,7 +107,7 @@ public:
 	inline static TNodeList<TRegMaterial> s_llRegMatRegisteredList;
 	inline static TNodeList<TRegMaterial> s_llRegMatFreeList;
 
-private:
+
 	TShader*      m_pShader;
 	TRegMaterial* m_pLastRegMat;
 };
