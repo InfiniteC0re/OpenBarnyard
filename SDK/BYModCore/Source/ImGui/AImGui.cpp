@@ -6,6 +6,7 @@
 #include "imgui_impl_win32.h"
 
 #include "AModLoaderTask.h"
+#include "ACoreSettings.h"
 
 #include <BYardSDK/AGUI2.h>
 #include <BYardSDK/AGameState.h>
@@ -261,6 +262,17 @@ void AImGUI::Render()
 			//		CALL_THIS(0x00469890, AMiniGameManager*, void, pMiniGameManager, const Toshi::TPString8&, MINIGAME_LIST[s_iSelectedMiniGame]);
 			//	}
 			//}
+
+			ImGui::EndTabItem();
+		}
+
+		if ( ImGui::BeginTabItem( "Game Settings" ) )
+		{
+			ImGui::Checkbox( "Limit FPS", &g_oSettings.bLimitFPS );
+			ImGui::SliderInt( "Max FPS", &g_oSettings.iMaxFPS, 15, 500 );
+
+			if ( ImGui::Button( "Save" ) )
+				g_oSettings.Save();
 
 			ImGui::EndTabItem();
 		}

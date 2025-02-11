@@ -3,6 +3,7 @@
 #include "AImGUI.h"
 #include "HookHelpers.h"
 #include "AModLoaderTask.h"
+#include "ACoreSettings.h"
 
 #include <BYardSDK/AGameStateController.h>
 #include <BYardSDK/THookedRenderD3DInterface.h>
@@ -827,6 +828,30 @@ HOOK( 0x006cea40, TRenderContext_CullSphereToFrustum, TINT, const TSphere& a_rSp
 	} while ( TTRUE );
 }
 
+MEMBER_HOOK( 0x006bbb00, TSystemManager, TSystemManager_Update, void )
+{
+	if ( g_oSettings.bLimitFPS )
+	{
+		static THPTimer s_oFPSTimer;
+
+		s_oFPSTimer.Update();
+		CallOriginal();
+		s_oFPSTimer.Update();
+
+		const TFLOAT fTargetDeltaTime = 1.0f / g_oSettings.iMaxFPS;
+		const TFLOAT fDelta           = s_oFPSTimer.GetDelta();
+
+		TFLOAT flSleepTime = fTargetDeltaTime - fDelta;
+
+		while ( flSleepTime > 0.0f )
+		{
+			s_oFPSTimer.Update();
+			flSleepTime -= s_oFPSTimer.GetDelta();
+		}
+	}
+	else CallOriginal();
+}
+
 void AHooks::Initialise()
 {
 	// Drastically reduces load times since loader thread is much
@@ -884,6 +909,8 @@ void AHooks::Initialise()
 
 	// This might be unstable until all the memory stomps are fixed :(
 	//InstallHook<AMaterialLibrary_LoadTTLData>();
+	
+	InstallHook<TSystemManager_Update>();
 }
 
 TBOOL AHooks::AddHook( Hook a_eHook, HookType a_eHookType, void* a_pCallback )

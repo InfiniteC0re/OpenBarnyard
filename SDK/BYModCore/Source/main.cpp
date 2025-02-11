@@ -3,6 +3,7 @@
 #include "ModLoader.h"
 #include "HookHelpers.h"
 #include "AModLoaderTask.h"
+#include "ACoreSettings.h"
 #include "AImGUI.h"
 
 #include "BYardSDK/SDKHooks.h"
@@ -118,6 +119,7 @@ DWORD APIENTRY DllMain( HMODULE hModule, DWORD reason, LPVOID reserved )
 
 			TUtil::ToshiCreate( toshiParams );
 
+			g_oSettings.Load();
 			g_CommandLine.Create( GetCommandLineA() );
 
 			// Initialise hooks
