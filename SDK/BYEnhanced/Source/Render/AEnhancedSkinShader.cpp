@@ -44,7 +44,7 @@ public:
 					m_pTextures[ 0 ] = TREINTERPRETCAST( TTexture*, AEnhancedTextureManager::GetAssociation( pD3DTexture ) );
 					m_pTextures[ 1 ] = TREINTERPRETCAST( TTexture*, pD3DTexture );
 
-					if ( m_pLighting1 )
+					/*if ( m_pLighting1 )
 					{
 						T2GLTexture* pGLTexture = AEnhancedTextureManager::GetAssociation( m_pLighting1->GetD3DTexture() );
 						T2Render::SetTexture2D( 0, pGLTexture );
@@ -90,13 +90,19 @@ public:
 						glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
 
 						m_pTextures[ 5 ] = TREINTERPRETCAST( TTexture*, pGLTexture );
-					}
+					}*/
 				}
 			}
 
-			T2Render::SetTexture2D( 0, ( m_pTextures[ 0 ] ) ? TREINTERPRETCAST( T2GLTexture*, m_pTextures[ 0 ] ) : T2TextureManager::GetSingleton()->GetInvalidTexture() );
+			T2GLTexture* pTex = ( m_pTextures[ 0 ] ) ? TREINTERPRETCAST( T2GLTexture*, m_pTextures[ 0 ] ) : T2TextureManager::GetSingleton()->GetInvalidTexture();
 
-			if ( m_pLighting1 && m_pTextures[ 2 ] )
+			if ( T2Render::GetTexture2D( 0 ) != pTex->GetHandle() )
+			{
+				AEnhancedSkinShader::GetSingleton()->FlushMultiDraw();
+				T2Render::SetTexture2D( 0, pTex );
+			}
+
+			/*if ( m_pLighting1 && m_pTextures[ 2 ] )
 				T2Render::SetTexture2D( 1, TREINTERPRETCAST( T2GLTexture*, m_pTextures[ 2 ] ) );
 
 			if ( m_pLighting2 && m_pTextures[ 3 ] )
@@ -106,7 +112,7 @@ public:
 				T2Render::SetTexture2D( 3, TREINTERPRETCAST( T2GLTexture*, m_pTextures[ 4 ] ) );
 
 			if ( m_pLighting4 && m_pTextures[ 5 ] )
-				T2Render::SetTexture2D( 4, TREINTERPRETCAST( T2GLTexture*, m_pTextures[ 5 ] ) );
+				T2Render::SetTexture2D( 4, TREINTERPRETCAST( T2GLTexture*, m_pTextures[ 5 ] ) );*/
 		}
 		else
 		{
@@ -211,6 +217,9 @@ void AEnhancedSkinShader::PreRender()
 	T2Render::SetShaderProgram( m_oShaderProgramHD );
 	m_oShaderProgramHD.SetUniform( s_Projection, enhRender::g_Projection );
 	m_oShaderProgramHD.SetUniform( s_ViewWorld, m_ViewWorldMatrix );
+
+	m_oMultiDrawRenderBuffer.Clear();
+	m_aMultiDrawBuffer.Reset();
 }
 
 void AEnhancedSkinShader::Render( TRenderPacket* a_pRenderPacket )
@@ -219,73 +228,7 @@ void AEnhancedSkinShader::Render( TRenderPacket* a_pRenderPacket )
 	auto pVertexPool = *TREINTERPRETCAST( TVertexPoolResource**, TUINT( pMesh ) + 0x18 );
 	auto pMaterial   = TSTATICCAST( ASkinMaterialWrapper, pMesh->GetMaterial() );
 	
-	static TPString8 s_UpAxis         = TPS8D( "u_UpAxis" );
-	static TPString8 s_LightingLerp1  = TPS8D( "u_LightingLerp1" );
-	static TPString8 s_LightingLerp2  = TPS8D( "u_LightingLerp2" );
-	static TPString8 s_Model          = TPS8D( "u_Model" );
-	static TPString8 s_AmbientColor   = TPS8D( "u_AmbientColor" );
-	static TPString8 s_LightDirection = TPS8D( "u_LightDirection" );
-	static TPString8 s_ModelView      = TPS8D( "u_ModelView" );
-	static TPString8 s_NumBones       = TPS8D( "u_NumBones" );
-	static TPString8 s_BoneTransforms = TPS8D( "u_BoneTransforms" );
-
-	T2Shader* pShaderProgram = TNULL;
-	if ( pMaterial->m_bIsSkin && pMaterial->m_bFlag2 && pMaterial->m_bFlag3 )
-	{
-		T2Render::SetShaderProgram( m_oShaderProgramHD );
-		pShaderProgram = &m_oShaderProgramHD;
-
-		TMatrix44 inverseModelView;
-		inverseModelView.InvertOrthogonal( a_pRenderPacket->GetModelViewMatrix() );
-
-		TVector4 upVector;
-		upVector.Negate3( inverseModelView.AsBasisVector4( 2 ) );
-
-		pShaderProgram->SetUniform( s_UpAxis, upVector );
-
-		TFLOAT fLerpFactor = a_pRenderPacket->GetShadeCoeff() * ( 1.0f / 255.0f );
-		pShaderProgram->SetUniform( s_LightingLerp1, TVector4( 1.0f - fLerpFactor, 1.0f - fLerpFactor, 1.0f - fLerpFactor, 0.0f ) );
-		pShaderProgram->SetUniform( s_LightingLerp2, TVector4( fLerpFactor, fLerpFactor, fLerpFactor, 0.0f ) );
-	}
-	else
-	{
-		pShaderProgram = &m_oShaderProgram;
-		T2Render::SetShaderProgram( m_oShaderProgram );
-
-		// TODO: Use simple shader instead of HD...
-	}
-
-	auto&     modelView = a_pRenderPacket->GetModelViewMatrix();
-	TMatrix44 worldModelView;
-
-	for ( TINT i = 0; i < 4; i++ )
-	{
-		worldModelView.AsBasisVector4( i ).x = modelView.m_f11 * m_WorldViewMatrix.AsBasisVector3( i ).x + modelView.m_f12 * m_WorldViewMatrix.AsBasisVector3( i ).y + modelView.m_f13 * m_WorldViewMatrix.AsBasisVector3( i ).z;
-		worldModelView.AsBasisVector4( i ).y = modelView.m_f21 * m_WorldViewMatrix.AsBasisVector3( i ).x + modelView.m_f22 * m_WorldViewMatrix.AsBasisVector3( i ).y + modelView.m_f23 * m_WorldViewMatrix.AsBasisVector3( i ).z;
-		worldModelView.AsBasisVector4( i ).z = modelView.m_f31 * m_WorldViewMatrix.AsBasisVector3( i ).x + modelView.m_f32 * m_WorldViewMatrix.AsBasisVector3( i ).y + modelView.m_f33 * m_WorldViewMatrix.AsBasisVector3( i ).z;
-		worldModelView.AsBasisVector4( i ).w = modelView.m_f14 * m_WorldViewMatrix.AsBasisVector3( i ).x + modelView.m_f24 * m_WorldViewMatrix.AsBasisVector3( i ).y + modelView.m_f34 * m_WorldViewMatrix.AsBasisVector3( i ).z;
-	};
-
-	TFLOAT lightDirX = -a_pRenderPacket->GetLightDirection().x;
-	TFLOAT lightDirY = -a_pRenderPacket->GetLightDirection().y;
-	TFLOAT lightDirZ = -a_pRenderPacket->GetLightDirection().z;
-
-	TVector3 lightDirWorld;
-	lightDirWorld.x = worldModelView.m_f11 * lightDirX + worldModelView.m_f21 * lightDirY + worldModelView.m_f31 * lightDirZ;
-	lightDirWorld.y = worldModelView.m_f12 * lightDirX + worldModelView.m_f22 * lightDirY + worldModelView.m_f32 * lightDirZ;
-	lightDirWorld.z = worldModelView.m_f13 * lightDirX + worldModelView.m_f23 * lightDirY + worldModelView.m_f33 * lightDirZ;
-	lightDirWorld.Normalize();
-
-	TVector4 ambientColour = a_pRenderPacket->GetAmbientColour();
-	TVector4 lightColour   = a_pRenderPacket->GetLightColour();
-
-	TMatrix44 modelMatrix;
-	modelMatrix.Multiply( m_ViewWorldMatrix, a_pRenderPacket->GetModelViewMatrix() );
-
-	pShaderProgram->SetUniform( s_Model, modelMatrix );
-	pShaderProgram->SetUniform( s_AmbientColor, ambientColour );
-	pShaderProgram->SetUniform( s_LightDirection, lightDirWorld );
-	pShaderProgram->SetUniform( s_ModelView, a_pRenderPacket->GetModelViewMatrix() );
+	T2Render::SetShaderProgram( m_oShaderProgram );
 
 	auto pSkeletonInstance = a_pRenderPacket->GetSkeletonInstance();
 	auto uiNumSubMeshes    = *(TUINT16*)( TUINT( pMesh ) + 0x16 );
@@ -306,12 +249,59 @@ void AEnhancedSkinShader::Render( TRenderPacket* a_pRenderPacket )
 			s_aBoneTransforms[ k ] = _mm512_loadu_ps( &pSkeletonInstance->GetBone( pSubMeshBones[ k ] ).m_Transform );
 		}
 
-		pShaderProgram->SetUniform( s_BoneTransforms, (TMatrix44*)s_aBoneTransforms, iSubMeshNumBones );
-		pShaderProgram->SetUniform( s_NumBones, iSubMeshNumBones );
+		static TPString8 s_NumBones       = TPS8D( "u_NumBones" );
+		static TPString8 s_BoneTransforms = TPS8D( "u_BoneTransforms" );
+		
+		TBOOL bSkeletonChanged = TFALSE;
+		bSkeletonChanged |= m_oShaderProgram.SetUniform( s_BoneTransforms, (TMatrix44*)s_aBoneTransforms, iSubMeshNumBones );
+		bSkeletonChanged |= m_oShaderProgram.SetUniform( s_NumBones, iSubMeshNumBones );
 
-		// Draw
-		ARenderBufferCollection::GetSingleton()->GetRenderBuffer( iRenderBufferID )->Bind();
-		glDrawElements( GL_TRIANGLE_STRIP, pIndexPool->GetNumIndices(), GL_UNSIGNED_SHORT, TNULL );
+		if ( bSkeletonChanged )
+			FlushMultiDraw();
+
+		AddMultiDrawCommand(
+		    ARenderBufferCollection::GetSingleton()->GetRenderBuffer( iRenderBufferID ),
+		    pIndexPool->GetNumIndices(),
+		    a_pRenderPacket->GetModelViewMatrix()
+		);
+
+		if ( bSkeletonChanged )
+			FlushMultiDraw();
+	}
+}
+
+void AEnhancedSkinShader::AddMultiDrawCommand( const ARenderBuffer& a_rcRenderBuffer, TUINT a_uiNumIndices, const Toshi::TMatrix44& a_rcModelView )
+{
+	if ( m_oMultiDrawRenderBuffer != a_rcRenderBuffer )
+	{
+		FlushMultiDraw();
+
+		m_oMultiDrawRenderBuffer = a_rcRenderBuffer;
+		m_uiMultiDrawNumIndices  = a_uiNumIndices;
+	}
+
+	// Flush multidraw if the buffer is already full
+	if ( m_aMultiDrawBuffer.IsFull() )
+	{
+		FlushMultiDraw();
+	}
+
+	// Add instance to the buffer
+	m_aMultiDrawBuffer.Push( a_rcModelView );
+}
+
+void AEnhancedSkinShader::FlushMultiDraw()
+{
+	if ( m_oMultiDrawRenderBuffer.pVertexArray && m_aMultiDrawBuffer.Count() > 0 )
+	{
+		static TPString8 s_ModelView = TPS8D( "u_ModelView" );
+		m_oShaderProgram.SetUniform( s_ModelView, &m_aMultiDrawBuffer.Begin(), m_aMultiDrawBuffer.Count() );
+
+		m_oMultiDrawRenderBuffer->Bind();
+		glDrawElementsInstanced( GL_TRIANGLE_STRIP, m_uiMultiDrawNumIndices, GL_UNSIGNED_SHORT, TNULL, m_aMultiDrawBuffer.Count() );
+		
+		m_oMultiDrawRenderBuffer.Clear();
+		m_aMultiDrawBuffer.Reset();
 	}
 }
 
@@ -330,6 +320,12 @@ MEMBER_HOOK( 0x005f3230, ASkinShaderHAL, ASkinShader_StartFlush, void )
 	AEnhancedSkinShader::GetSingleton()->PreRender();
 }
 
+MEMBER_HOOK( 0x005f3370, ASkinShaderHAL, ASkinShader_EndFlush, void )
+{
+	CallOriginal();
+	AEnhancedSkinShader::GetSingleton()->FlushMultiDraw();
+}
+
 MEMBER_HOOK( 0x005f4830, ASkinShaderHAL, ASkinShader_Render, void, Toshi::TRenderPacket* a_pRenderPacket )
 {
 	CallOriginal( a_pRenderPacket );
@@ -340,5 +336,6 @@ void AEnhancedSkinShader::InstallHooks()
 {
 	InstallHook<ASkinMaterial_PreRender>();
 	InstallHook<ASkinShader_StartFlush>();
+	InstallHook<ASkinShader_EndFlush>();
 	InstallHook<ASkinShader_Render>();
 }

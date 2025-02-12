@@ -16,9 +16,10 @@ public:
 		AtUnsafe( m_iTop ) = a_item;
 	}
 
-	void PushNull()
+	T& PushNull()
 	{
 		m_iTop++;
+		return Top();
 	}
 
 	T& Pop()
@@ -29,7 +30,7 @@ public:
 		return item;
 	}
 
-	TBOOL IsFull()
+	TBOOL IsFull() const
 	{
 		return m_iTop == ( C - 1 );
 	}
@@ -39,14 +40,39 @@ public:
 		return AtUnsafe( m_iTop );
 	}
 
-	TBOOL IsEmpty()
+	TBOOL IsEmpty() const
 	{
 		return m_iTop == -1;
 	}
 
 	void Reset()
 	{
-		m_iTop = 0;
+		m_iTop = -1;
+	}
+
+	TINT Count() const
+	{
+		return m_iTop + 1;
+	}
+
+	T& Begin()
+	{
+		return AtUnsafe( 0 );
+	}
+
+	const T& Begin() const
+	{
+		return AtUnsafe( 0 );
+	}
+
+	T& End()
+	{
+		return AtUnsafe( m_iTop );
+	}
+
+	const T& End() const
+	{
+		return AtUnsafe( m_iTop );
 	}
 
 private:

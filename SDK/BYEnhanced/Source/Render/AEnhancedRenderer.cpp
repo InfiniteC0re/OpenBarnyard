@@ -29,8 +29,8 @@ TBOOL AEnhancedRenderer::Create()
 	// Setup window parameters
 	m_oWindowParams.pchTitle    = "Barnyard Enhanced";
 	m_oWindowParams.bIsWindowed = TTRUE;
-	m_oWindowParams.uiWidth     = 1280;
-	m_oWindowParams.uiHeight    = 720;
+	m_oWindowParams.uiWidth     = 800;
+	m_oWindowParams.uiHeight    = 600;
 
 	// Create display
 	TBOOL bDisplayCreated = T2Render::CreateSingleton()->Create( m_oWindowParams );
@@ -128,7 +128,7 @@ void AEnhancedRenderer::ScenePreRender()
 	// Add the light view matrix to the top of the transform stack to render the scene from it's POV
 	auto& rTransformStack = pRender->GetTransforms();
 	rTransformStack.Reset();
-	rTransformStack.Top().Identity();
+	rTransformStack.PushNull().Identity();
 	rTransformStack.Push( pRenderContext->GetWorldViewMatrix() );
 
 	// Update light view matrix
@@ -188,19 +188,21 @@ void AEnhancedRenderer::ScenePostRender()
 	T2Render::SetTexture2D( 3, enhRender::g_FrameBufferDeferred.GetDepthTexture() );  // depth
 	T2Render::SetTexture2D( 4, enhRender::g_ShadowMap1.GetDepthTexture() );           // shadow map
 
-	static TPString8 s_DirectionalLightDir = TPS8D( "u_DirectionalLightDir" );
-	static TPString8 s_AmbientColor        = TPS8D( "u_AmbientColor" );
-	static TPString8 s_DiffuseColor        = TPS8D( "u_DiffuseColor" );
-	static TPString8 s_FogColor            = TPS8D( "u_FogColor" );
-	static TPString8 s_LightViewMatrix     = TPS8D( "u_LightViewMatrix" );
+	static TPString8 s_DirectionalLightDir   = TPS8D( "u_DirectionalLightDir" );
+	static TPString8 s_AmbientColor          = TPS8D( "u_AmbientColor" );
+	static TPString8 s_DiffuseColor          = TPS8D( "u_DiffuseColor" );
+	static TPString8 s_FogColor              = TPS8D( "u_FogColor" );
+	static TPString8 s_LightViewMatrix       = TPS8D( "u_LightViewMatrix" );
 	static TPString8 s_LightProjectionMatrix = TPS8D( "u_LightProjectionMatrix" );
 	static TPString8 s_ShadowBiasMin         = TPS8D( "u_ShadowBiasMin" );
 	static TPString8 s_ShadowBiasMax         = TPS8D( "u_ShadowBiasMax" );
+	static TPString8 s_ShadowStrength        = TPS8D( "u_ShadowStrength" );
 	enhRender::g_ShaderLighting.SetUniform( s_DirectionalLightDir, enhRender::g_DirectionalLightDir );
 	enhRender::g_ShaderLighting.SetUniform( s_FogColor, enhRender::g_FogColor );
 	enhRender::g_ShaderLighting.SetUniform( s_LightViewMatrix, enhRender::g_LightViewMatrix );
 	enhRender::g_ShaderLighting.SetUniform( s_ShadowBiasMin, enhRender::g_ShadowBiasMin );
 	enhRender::g_ShaderLighting.SetUniform( s_ShadowBiasMax, enhRender::g_ShadowBiasMax );
+	enhRender::g_ShaderLighting.SetUniform( s_ShadowStrength, enhRender::g_ShadowStrength );
 	enhRender::g_ShaderLighting.SetUniform( s_AmbientColor, *(TVector4*)( ( *(TUINT*)0x0079a854 ) + 0x100 ) );
 	enhRender::g_ShaderLighting.SetUniform( s_DiffuseColor, *(TVector4*)( ( *(TUINT*)0x0079a854 ) + 0xF0 ) );
 	RenderScreenQuad();
@@ -384,6 +386,14 @@ MEMBER_HOOK( 0x006d6c80, TRenderContextD3D, TRenderContextD3D_ComputePerspective
 
 	//enhRender::g_Projection.m_f11 *= -1;
 
+	static TFLOAT s_fTime = 0.0f;
+
+	TMatrix44* pMatrix = (TMatrix44*)( TUINTPTR( this ) + 960 );
+	//pMatrix->m_f11 *= TMath::Sin( s_fTime );
+	//pMatrix->m_f22 *= TMath::Cos( s_fTime );
+
+	s_fTime += 0.001f;
+
 	// Fix depth being 0..1 (D3D) instead of -1..1 (OpenGL)
 	enhRender::g_Projection.m_f33 = ( m_oProjParams.m_fFarClip + m_oProjParams.m_fNearClip ) / ( m_oProjParams.m_fFarClip - m_oProjParams.m_fNearClip );
 	enhRender::g_Projection.m_f43 = -( 2 * m_oProjParams.m_fNearClip * m_oProjParams.m_fFarClip ) / ( m_oProjParams.m_fFarClip - m_oProjParams.m_fNearClip );
@@ -392,7 +402,7 @@ MEMBER_HOOK( 0x006d6c80, TRenderContextD3D, TRenderContextD3D_ComputePerspective
 MEMBER_HOOK( 0x006d6f80, TRenderContextD3D, TRenderContextD3D_ComputeOrthographicProjection, void )
 {
 	CallOriginal();
-	*(glm::mat4*)&enhRender::g_Projection = glm::orthoNO( -20.0f, 20.0f, -20.0f, 20.0f, 1.0f, 280.0f );
+	*(glm::mat4*)&enhRender::g_Projection = glm::orthoNO( -30.0f, 30.0f, -30.0f, 30.0f, 1.0f, 280.0f );
 }
 
 MEMBER_HOOK( 0x006d7030, TRenderContextD3D, TRenderContextD3D_ComputeOrthographicFrustum, void )

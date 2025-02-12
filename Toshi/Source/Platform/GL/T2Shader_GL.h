@@ -98,22 +98,22 @@ public:
 	UniformMeta& GetUniformSlotId( const TCHAR* a_szSlotName );
 	UniformMeta& GetUniformSlotId( const TPString8& a_strSlotName );
 
-	void SetUniform( const TPString8& a_strSlotName, const TMatrix44& a_rMatrix );
-	void SetUniform( const TPString8& a_strSlotName, const TMatrix44* a_pMatrix, TUINT a_uiNumItems );
-	void SetUniform( const TPString8& a_strSlotName, const glm::mat4& a_rMatrix );
-	void SetUniform( const TPString8& a_strSlotName, const glm::mat4* a_pMatrix, TUINT a_uiNumItems );
-	void SetUniform( const TPString8& a_strSlotName, const TVector4& a_rVector );
-	void SetUniform( const TPString8& a_strSlotName, const TVector4* a_pVector, TUINT a_uiNumItems );
-	void SetUniform( const TPString8& a_strSlotName, const glm::vec4& a_rVector );
-	void SetUniform( const TPString8& a_strSlotName, const glm::vec4* a_pVector, TUINT a_uiNumItems );
-	void SetUniform( const TPString8& a_strSlotName, const TVector3& a_rVector );
-	void SetUniform( const TPString8& a_strSlotName, const TVector3* a_pVector, TUINT a_uiNumItems );
-	void SetUniform( const TPString8& a_strSlotName, TFLOAT a_fValue );
-	void SetUniform( const TPString8& a_strSlotName, const TFLOAT* a_pValue, TUINT a_uiNumItems );
-	void SetUniform( const TPString8& a_strSlotName, TINT a_iValue );
-	void SetUniform( const TPString8& a_strSlotName, const TINT* a_pValue, TUINT a_uiNumItems );
-	void SetUniform( const TPString8& a_strSlotName, TUINT a_uiValue );
-	void SetUniform( const TPString8& a_strSlotName, const TUINT* a_pValue, TUINT a_uiNumItems );
+	TBOOL SetUniform( const TPString8& a_strSlotName, const TMatrix44& a_rMatrix );
+	TBOOL SetUniform( const TPString8& a_strSlotName, const TMatrix44* a_pMatrix, TUINT a_uiNumItems );
+	TBOOL SetUniform( const TPString8& a_strSlotName, const glm::mat4& a_rMatrix );
+	TBOOL SetUniform( const TPString8& a_strSlotName, const glm::mat4* a_pMatrix, TUINT a_uiNumItems );
+	TBOOL SetUniform( const TPString8& a_strSlotName, const TVector4& a_rVector );
+	TBOOL SetUniform( const TPString8& a_strSlotName, const TVector4* a_pVector, TUINT a_uiNumItems );
+	TBOOL SetUniform( const TPString8& a_strSlotName, const glm::vec4& a_rVector );
+	TBOOL SetUniform( const TPString8& a_strSlotName, const glm::vec4* a_pVector, TUINT a_uiNumItems );
+	TBOOL SetUniform( const TPString8& a_strSlotName, const TVector3& a_rVector );
+	TBOOL SetUniform( const TPString8& a_strSlotName, const TVector3* a_pVector, TUINT a_uiNumItems );
+	TBOOL SetUniform( const TPString8& a_strSlotName, TFLOAT a_fValue );
+	TBOOL SetUniform( const TPString8& a_strSlotName, const TFLOAT* a_pValue, TUINT a_uiNumItems );
+	TBOOL SetUniform( const TPString8& a_strSlotName, TINT a_iValue );
+	TBOOL SetUniform( const TPString8& a_strSlotName, const TINT* a_pValue, TUINT a_uiNumItems );
+	TBOOL SetUniform( const TPString8& a_strSlotName, TUINT a_uiValue );
+	TBOOL SetUniform( const TPString8& a_strSlotName, const TUINT* a_pValue, TUINT a_uiNumItems );
 
 	GLuint           GetProgram() const { return m_uiProgram; }
 	T2CompiledShader GetVertexShader() const { return m_VShader; }

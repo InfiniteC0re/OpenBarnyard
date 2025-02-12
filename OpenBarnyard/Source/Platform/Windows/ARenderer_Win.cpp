@@ -360,7 +360,7 @@ void ARenderer::RenderMainScene( TFLOAT a_fDeltaTime )
 
 		auto& rTransformStack = pRender->GetTransforms();
 		rTransformStack.Reset();
-		rTransformStack.Top().Identity();
+		rTransformStack.PushNull().Identity();
 
 		pViewport->Begin();
 		pCameraObject->Render();

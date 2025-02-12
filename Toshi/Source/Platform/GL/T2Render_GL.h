@@ -49,6 +49,7 @@ public:
 public:
 	static T2RenderContext& GetRenderContext() { return GetSingleton()->m_oRenderContext; }
 	static TBOOL            SetShaderProgram( const T2Shader& a_rcShaderProgram ) { return GetRenderContext().SetShaderProgram( a_rcShaderProgram ); }
+	static GLuint           GetTexture2D( TINT a_iTextureIndex ) { return GetRenderContext().GetTexture2D( a_iTextureIndex ); }
 	static void             SetTexture2D( TINT a_iTextureIndex, const T2GLTexture& a_rcTexture ) { GetRenderContext().SetTexture2D( a_iTextureIndex, a_rcTexture ); }
 	static void             SetTexture2D( TINT a_iTextureIndex, T2GLTexture* a_pTexture ) { GetRenderContext().SetTexture2D( a_iTextureIndex, *a_pTexture ); }
 	static void             SetTexture2D( TINT a_iTextureIndex, GLuint a_uiTexture ) { GetRenderContext().SetTexture2D( a_iTextureIndex, a_uiTexture ); }

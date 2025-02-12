@@ -9,12 +9,23 @@ struct ARenderBuffer
 	TINT iID;
 	Toshi::T2VertexArray* pVertexArray;
 
+	void Clear()
+	{
+		iID          = -1;
+		pVertexArray = TNULL;
+	}
+
 	Toshi::T2VertexArray* operator->() const
 	{
 		TASSERT( iID != -1 );
 		TASSERT( pVertexArray != TNULL );
 
 		return pVertexArray;
+	}
+
+	TBOOL operator==( const ARenderBuffer& a_rcOther ) const
+	{
+		return a_rcOther.iID == iID && a_rcOther.pVertexArray == pVertexArray;
 	}
 };
 

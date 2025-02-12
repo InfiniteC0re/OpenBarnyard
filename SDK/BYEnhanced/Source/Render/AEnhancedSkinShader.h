@@ -1,4 +1,5 @@
 #pragma once
+#include "ARenderBufferCollection.h"
 
 #include <Toshi/TSingleton.h>
 #include <Render/TMesh.h>
@@ -6,6 +7,7 @@
 #include <Render/TVertexPoolResourceInterface.h>
 
 #include <Platform/GL/T2Shader_GL.h>
+#include <Platform/GL/T2GLTexture_GL.h>
 
 class ASkinMesh
 	: public Toshi::TMesh
@@ -50,11 +52,17 @@ class AEnhancedSkinShader
     : public Toshi::TSingleton<AEnhancedSkinShader>
 {
 public:
+	inline static constexpr TSIZE MULTIDRAW_MAX = 64;
+
+public:
 	AEnhancedSkinShader();
 	~AEnhancedSkinShader();
 	
 	void PreRender();
 	void Render( Toshi::TRenderPacket* a_pRenderPacket );
+
+	void AddMultiDrawCommand( const ARenderBuffer& a_rcRenderBuffer, TUINT a_uiNumIndices, const Toshi::TMatrix44& a_rcModelView );
+	void FlushMultiDraw();
 
 private:
 	void InstallHooks();
@@ -70,4 +78,8 @@ private:
 
 	Toshi::TMatrix44 m_WorldViewMatrix;
 	Toshi::TMatrix44 m_ViewWorldMatrix;
+
+	Toshi::TStack<Toshi::TMatrix44, MULTIDRAW_MAX> m_aMultiDrawBuffer;
+	ARenderBuffer                                  m_oMultiDrawRenderBuffer;
+	TUINT                                          m_uiMultiDrawNumIndices;
 };

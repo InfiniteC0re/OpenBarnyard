@@ -58,6 +58,11 @@ public:
 		return TFALSE;
 	}
 
+	GLuint GetTexture2D( TINT a_iTextureIndex )
+	{
+		return m_aCurrentTextures[ a_iTextureIndex ];
+	}
+
 	void SetTexture2D( TINT a_iTextureIndex, GLuint a_uiTexture )
 	{
 		if ( m_aCurrentTextures[ a_iTextureIndex ] != a_uiTexture )

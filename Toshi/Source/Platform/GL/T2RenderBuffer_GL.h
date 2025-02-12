@@ -91,13 +91,16 @@ public:
 
 	inline static GLuint ms_uiBoundId = 0;
 
-	void Bind()
+	TBOOL Bind()
 	{
 		if ( ms_uiBoundId != m_uiId )
 		{
 			glBindVertexArray( m_uiId );
 			ms_uiBoundId = m_uiId;
+			return TTRUE;
 		}
+
+		return TFALSE;
 	}
 
 	static void Unbind()
@@ -107,6 +110,11 @@ public:
 			glBindVertexArray( 0 );
 			ms_uiBoundId = 0;
 		}
+	}
+
+	TBOOL IsBound() const
+	{
+		return ms_uiBoundId == m_uiId;
 	}
 
 	void Destroy()

@@ -59,6 +59,8 @@ public:
 	{
 		ImGui::SliderFloat( "Shadow Bias (Min)", &enhRender::g_ShadowBiasMin, 0.0f, 1.0f, "%.8f" );
 		ImGui::SliderFloat( "Shadow Bias (Max)", &enhRender::g_ShadowBiasMax, 0.0f, 1.0f, "%.8f" );
+		ImGui::SliderFloat( "Shadow Strength", &enhRender::g_ShadowStrength, 0.0f, 1.0f, "%.3f" );
+
 		ImGui::DragFloat3( "Sun Direction", (TFLOAT*)&enhRender::g_DirectionalLightDir );
 		ImGui::ColorEdit3( "Fog Color", (TFLOAT*)&enhRender::g_FogColor );
 		/*ImGui::Checkbox( "Render GUI", &g_bRenderGUI );
