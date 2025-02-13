@@ -43,7 +43,7 @@ public:
 
 	void Bind() { glBindBuffer( Type, m_uiId ); }
 	void Unbind() { glBindBuffer( Type, 0 ); }
-	void Destroy() { glDeleteBuffers( 1, &m_uiId ); }
+	void Clear() { m_uiId = 0; }
 
 	constexpr operator TBOOL() const { return m_uiId != 0; }
 

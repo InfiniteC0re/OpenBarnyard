@@ -66,6 +66,9 @@ public:
 	static T2VertexArray    CreateVertexArray();
 	static T2VertexArray    CreateVertexArray( T2VertexBuffer a_VertexBuffer, T2IndexBuffer a_IndexBuffer );
 
+	static void DestroyVertexBuffer( const T2VertexBuffer& a_VertexBuffer );
+	static void DestroyIndexBuffer( const T2IndexBuffer& a_IndexBuffer );
+
 private:
 	void OnDeviceReset();
 

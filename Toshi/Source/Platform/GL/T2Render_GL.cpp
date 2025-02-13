@@ -237,4 +237,16 @@ void T2Render::EndScene()
 	m_bIsInScene = TFALSE;
 }
 
+void T2Render::DestroyVertexBuffer( const T2VertexBuffer& a_VertexBuffer )
+{
+	GLuint uiId = a_VertexBuffer.GetId();
+	glDeleteBuffers( 1, &uiId );
+}
+
+void T2Render::DestroyIndexBuffer( const T2IndexBuffer& a_IndexBuffer )
+{
+	GLuint uiId = a_IndexBuffer.GetId();
+	glDeleteBuffers( 1, &uiId );
+}
+
 TOSHI_NAMESPACE_END

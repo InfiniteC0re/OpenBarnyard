@@ -106,8 +106,9 @@ void ARenderBufferCollection::DestroyRenderBuffer( const ARenderBuffer& a_rcRend
 	m_vecUsedVertexArrayObjects.FindAndEraseFast( a_rcRenderBuffer.iID );
 
 	a_rcRenderBuffer->Destroy();
-	a_rcRenderBuffer->GetVertexBuffer().Destroy();
-	a_rcRenderBuffer->GetIndexBuffer().Destroy();
+	
+	T2Render::DestroyVertexBuffer( a_rcRenderBuffer->GetVertexBuffer() );
+	T2Render::DestroyIndexBuffer( a_rcRenderBuffer->GetIndexBuffer() );
 
 	m_iNumFreeVAO += 1;
 	m_iNumUsedVAO -= 1;
@@ -181,7 +182,7 @@ MEMBER_HOOK( 0x006d6280, TVertexPoolResource, TVertexPoolResource_OnDestroy, voi
 	TINT iBufferId = m_uiNumLocksAllTime;
 	TASSERT( iBufferId != -1 );
 
-	T2VertexBuffer( iBufferId ).Destroy();
+	T2Render::DestroyVertexBuffer( T2VertexBuffer( iBufferId ) );
 	CallOriginal();
 }
 
@@ -240,7 +241,7 @@ MEMBER_HOOK( 0x006d5e20, TIndexPoolResource, TIndexPoolResource_OnDestroy, void 
 	TINT iBufferId = m_uiNumLocksAllTime;
 	TASSERT( iBufferId != -1 );
 
-	T2IndexBuffer( iBufferId ).Destroy();
+	T2Render::DestroyIndexBuffer( T2IndexBuffer( iBufferId ) );
 	CallOriginal();
 }
 
