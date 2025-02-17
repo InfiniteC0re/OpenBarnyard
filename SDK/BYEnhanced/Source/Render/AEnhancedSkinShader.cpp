@@ -292,14 +292,23 @@ void AEnhancedSkinShader::AddMultiDrawCommand( const ARenderBuffer& a_rcRenderBu
 
 void AEnhancedSkinShader::FlushMultiDraw()
 {
-	if ( m_oMultiDrawRenderBuffer.pVertexArray && m_aMultiDrawBuffer.Count() > 0 )
+	if ( m_oMultiDrawRenderBuffer.pMesh && m_aMultiDrawBuffer.Count() > 0 )
 	{
 		static TPString8 s_ModelView = TPS8D( "u_ModelView" );
 		m_oShaderProgram.SetUniform( s_ModelView, &m_aMultiDrawBuffer.Begin(), m_aMultiDrawBuffer.Count() );
 
-		m_oMultiDrawRenderBuffer->Bind();
-		glDrawElementsInstanced( GL_TRIANGLE_STRIP, m_uiMultiDrawNumIndices, GL_UNSIGNED_SHORT, TNULL, m_aMultiDrawBuffer.Count() );
-		
+		m_oMultiDrawRenderBuffer->pVAO->Bind();
+
+		glDrawElementsInstancedBaseVertex(
+		    GL_TRIANGLE_STRIP,
+		    m_oMultiDrawRenderBuffer->pIndexBuffer->size / 2,
+		    GL_UNSIGNED_SHORT,
+		    (const void*)m_oMultiDrawRenderBuffer->pIndexBuffer->offset,
+		    m_aMultiDrawBuffer.Count(),
+		    m_oMultiDrawRenderBuffer->pVertexBuffer->offset / 40
+		);
+		//glDrawElementsInstanced( GL_TRIANGLE_STRIP, m_uiMultiDrawNumIndices, GL_UNSIGNED_SHORT, TNULL, m_aMultiDrawBuffer.Count() );
+
 		m_oMultiDrawRenderBuffer.Clear();
 		m_aMultiDrawBuffer.Reset();
 	}

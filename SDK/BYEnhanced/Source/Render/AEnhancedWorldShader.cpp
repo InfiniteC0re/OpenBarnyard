@@ -88,9 +88,15 @@ void AEnhancedWorldShader::Render( Toshi::TRenderPacket* a_pRenderPacket )
 	m_oShaderProgram.SetUniform( s_WorldMatrix, oWorldMatrix );
 
 	ARenderBuffer renderBuffer = ARenderBufferCollection::GetSingleton()->GetRenderBuffer( pMesh->m_pSubMeshes[ 0 ].iRenderBufferId );
-	renderBuffer->Bind();
+	renderBuffer->pVAO->Bind();
 
-	glDrawElements( GL_TRIANGLE_STRIP, pIndexPool->GetNumIndices(), GL_UNSIGNED_SHORT, TNULL );
+	glDrawElementsBaseVertex(
+		GL_TRIANGLE_STRIP,
+	    renderBuffer->pIndexBuffer->size / 2,
+		GL_UNSIGNED_SHORT,
+		(const void*)renderBuffer->pIndexBuffer->offset,
+	    renderBuffer->pVertexBuffer->offset / 44
+	);
 }
 
 class AWorldMaterial

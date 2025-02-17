@@ -42,27 +42,9 @@ TBOOL AEnhancedRenderer::Create()
 	// Create shaders and initialise other modules here
 	AEnhancedTextureManager::CreateSingleton();
 	AEnhancedGUIRenderer::CreateSingleton();
-	ARenderBufferCollection::CreateSingleton()->Create( 5000 );
+	ARenderBufferCollection::CreateSingleton()->Create( 10000 );
 	AEnhancedWorldShader::CreateSingleton();
 	AEnhancedSkinShader::CreateSingleton();
-
-	T2SharedVertexBuffer sharedVBO;
-	sharedVBO.Create( 1000, 40 );
-
-	T2SharedVertexBuffer::SubBuffer subBuffer1;
-	T2SharedVertexBuffer::SubBuffer subBuffer2;
-	T2SharedVertexBuffer::SubBuffer subBuffer3;
-	T2SharedVertexBuffer::SubBuffer subBuffer4;
-	T2SharedVertexBuffer::SubBuffer subBuffer5;
-	sharedVBO.Allocate( 8, subBuffer1 );
-	sharedVBO.Allocate( 32, subBuffer2 );
-	sharedVBO.Allocate( 16, subBuffer3 );
-
-	sharedVBO.Deallocate( subBuffer2 );
-	sharedVBO.Allocate( 16, subBuffer4 );
-	sharedVBO.Allocate( 16, subBuffer5 );
-	sharedVBO.Deallocate( subBuffer4 );
-	sharedVBO.Allocate( 16, subBuffer4 );
 
 	// Create framebuffers and shaders
 	CreateFrameBuffers();

@@ -2,30 +2,37 @@
 #include <Toshi/TSingleton.h>
 #include <ToshiTools/T2DynamicVector.h>
 
-#include <Platform/GL/T2RenderBuffer_GL.h>
+#include <Platform/GL/T2SharedRenderBuffer_GL.h>
 
 struct ARenderBuffer
 {
-	TINT iID;
-	Toshi::T2VertexArray* pVertexArray;
+	struct Mesh
+	{
+		Toshi::T2VertexArray*                   pVAO;
+		Toshi::T2SharedVertexBuffer::SubBuffer* pVertexBuffer;
+		Toshi::T2SharedIndexBuffer::SubBuffer*  pIndexBuffer;
+	};
+
+	TINT  iID;
+	Mesh* pMesh;
 
 	void Clear()
 	{
-		iID          = -1;
-		pVertexArray = TNULL;
+		iID   = -1;
+		pMesh = TNULL;
 	}
 
-	Toshi::T2VertexArray* operator->() const
+	Mesh* operator->() const
 	{
 		TASSERT( iID != -1 );
-		TASSERT( pVertexArray != TNULL );
+		TASSERT( pMesh != TNULL );
 
-		return pVertexArray;
+		return pMesh;
 	}
 
 	TBOOL operator==( const ARenderBuffer& a_rcOther ) const
 	{
-		return a_rcOther.iID == iID && a_rcOther.pVertexArray == pVertexArray;
+		return a_rcOther.iID == iID && a_rcOther.pMesh == pMesh;
 	}
 };
 
@@ -36,14 +43,16 @@ class ARenderBufferCollection
     : public Toshi::TSingleton<ARenderBufferCollection>
 {
 public:
+	
+
+public:
 	ARenderBufferCollection();
 	~ARenderBufferCollection();
 
 	void Create( TINT a_iMaxNumVertexArrayObjects );
 	void Destroy();
 
-	ARenderBuffer AllocateRenderBuffer();
-	ARenderBuffer AllocateRenderBuffer( Toshi::T2VertexBuffer a_VertexBuffer, Toshi::T2IndexBuffer a_IndexBuffer );
+	ARenderBuffer AllocateRenderBuffer( Toshi::T2SharedVertexBuffer::SubBuffer* a_pVertexBuffer, Toshi::T2SharedIndexBuffer::SubBuffer* a_pIndexBuffer );
 	void          DestroyRenderBuffer( const ARenderBuffer& a_rcRenderBuffer );
 
 	ARenderBuffer GetRenderBuffer( TINT a_iID ) const;
@@ -57,7 +66,7 @@ private:
 
 	Toshi::T2DynamicVector<TINT> m_vecFreeVertexArrayObjects;
 	Toshi::T2DynamicVector<TINT> m_vecUsedVertexArrayObjects;
-	Toshi::T2VertexArray*        m_pVertexArrayObjects;
-	TINT                         m_iNumFreeVAO;
-	TINT                         m_iNumUsedVAO;
+	ARenderBuffer::Mesh*         m_pMeshes;
+	TINT                         m_iNumFreeMeshes;
+	TINT                         m_iNumUsedMeshes;
 };

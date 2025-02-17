@@ -24,6 +24,15 @@ inline TFLOAT g_ShadowStrength = 0.2f;
 
 } // namespace enhRender
 
+typedef struct
+{
+	TUINT count;
+	TUINT instanceCount;
+	TUINT firstIndex;
+	TINT  baseVertex;
+	TUINT baseInstance;
+} DrawElementsIndirectCommand;
+
 class AEnhancedRenderer
     : public Toshi::TSingleton<AEnhancedRenderer>
 {

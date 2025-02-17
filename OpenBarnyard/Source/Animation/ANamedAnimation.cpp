@@ -161,7 +161,7 @@ TBOOL ANamedAnimation::Create( const PBProperties* a_pProperties, Toshi::TSkelet
 
 		// Allocate space to store breakpoints
 		TINT iNumSoundBreakpoints = AAnimatableObjectManager::GetSingleton()->FindNumAnimationSoundBreakpoints( strModelName, this );
-		m_vecBreakpoints->Reserve( iNumBreakpoints + iNumSoundBreakpoints + 4 );
+		m_vecBreakpoints.AccessContainer()->Reserve( iNumBreakpoints + iNumSoundBreakpoints + 4 );
 
 		// Read breakpoints stored in the properties
 
