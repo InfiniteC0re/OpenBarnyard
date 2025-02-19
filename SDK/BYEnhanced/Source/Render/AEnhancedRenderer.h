@@ -20,8 +20,8 @@ inline Toshi::TVector3      g_FogColor( 1.0f, 1.0f, 1.0f );
 inline Toshi::TMatrix44     g_Projection;
 inline Toshi::TMatrix44     g_LightViewMatrix;
 
-inline TFLOAT g_ShadowBiasMin = 0.0005f;
-inline TFLOAT g_ShadowBiasMax = 0.0047f;
+inline TFLOAT g_ShadowBiasMin = 0.00045f;
+inline TFLOAT g_ShadowBiasMax = 0.0000f;
 inline TFLOAT g_ShadowStrength = 0.2f;
 
 inline TFLOAT g_Exposure = 6.4f;

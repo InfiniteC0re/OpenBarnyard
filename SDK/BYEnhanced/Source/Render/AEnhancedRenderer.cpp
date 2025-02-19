@@ -38,8 +38,8 @@ TBOOL AEnhancedRenderer::Create()
 	// Setup window parameters
 	m_oWindowParams.pchTitle    = "Barnyard Enhanced";
 	m_oWindowParams.bIsWindowed = TTRUE;
-	m_oWindowParams.uiWidth     = 800;
-	m_oWindowParams.uiHeight    = 600;
+	m_oWindowParams.uiWidth     = 1280;
+	m_oWindowParams.uiHeight    = 720;
 
 	// Create display
 	TBOOL bDisplayCreated = T2Render::CreateSingleton()->Create( m_oWindowParams );
