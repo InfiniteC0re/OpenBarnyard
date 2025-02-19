@@ -63,6 +63,9 @@ public:
 
 		ImGui::DragFloat3( "Sun Direction", (TFLOAT*)&enhRender::g_DirectionalLightDir );
 		ImGui::ColorEdit3( "Fog Color", (TFLOAT*)&enhRender::g_FogColor );
+
+		ImGui::SliderFloat( "Gamma", &enhRender::g_Gamma, 0.0f, 10.0f, "%.1f" );
+		ImGui::SliderFloat( "Exposure", &enhRender::g_Exposure, 0.0f, 20.0f, "%.1f" );
 		/*ImGui::Checkbox( "Render GUI", &g_bRenderGUI );
 		ImGui::Checkbox( "Wireframe World", &g_bRenderWorldWireframe );
 		ImGui::Checkbox( "Wireframe Skin", &g_bRenderSkinWireframe );*/

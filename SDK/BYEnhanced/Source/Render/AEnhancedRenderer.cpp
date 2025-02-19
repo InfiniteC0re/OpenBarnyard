@@ -270,12 +270,16 @@ void AEnhancedRenderer::ScenePostRender()
 	static TPString8 s_ShadowBiasMin         = TPS8D( "u_ShadowBiasMin" );
 	static TPString8 s_ShadowBiasMax         = TPS8D( "u_ShadowBiasMax" );
 	static TPString8 s_ShadowStrength        = TPS8D( "u_ShadowStrength" );
+	static TPString8 s_Gamma                 = TPS8D( "u_Gamma" );
+	static TPString8 s_Exposure              = TPS8D( "u_Exposure" );
 	enhRender::g_ShaderLighting.SetUniform( s_DirectionalLightDir, enhRender::g_DirectionalLightDir );
 	enhRender::g_ShaderLighting.SetUniform( s_FogColor, enhRender::g_FogColor );
 	enhRender::g_ShaderLighting.SetUniform( s_LightViewMatrix, enhRender::g_LightViewMatrix );
 	enhRender::g_ShaderLighting.SetUniform( s_ShadowBiasMin, enhRender::g_ShadowBiasMin );
 	enhRender::g_ShaderLighting.SetUniform( s_ShadowBiasMax, enhRender::g_ShadowBiasMax );
 	enhRender::g_ShaderLighting.SetUniform( s_ShadowStrength, enhRender::g_ShadowStrength );
+	enhRender::g_ShaderLighting.SetUniform( s_Gamma, enhRender::g_Gamma );
+	enhRender::g_ShaderLighting.SetUniform( s_Exposure, enhRender::g_Exposure );
 	enhRender::g_ShaderLighting.SetUniform( s_AmbientColor, *(TVector4*)( ( *(TUINT*)0x0079a854 ) + 0x100 ) );
 	enhRender::g_ShaderLighting.SetUniform( s_DiffuseColor, *(TVector4*)( ( *(TUINT*)0x0079a854 ) + 0xF0 ) );
 	RenderScreenQuad();

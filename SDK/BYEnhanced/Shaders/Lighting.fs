@@ -19,6 +19,9 @@ uniform float u_ShadowBiasMin;
 uniform float u_ShadowBiasMax;
 uniform float u_ShadowStrength;
 
+uniform float u_Exposure;
+uniform float u_Gamma;
+
 vec3 aces(vec3 x) {
   const float a = 2.51;
   const float b = 0.03;
@@ -47,7 +50,7 @@ vec3 uncharted2_tonemap_partial(vec3 x)
 
 vec3 uncharted2_filmic(vec3 v)
 {
-    float exposure_bias = 6.4f;
+    float exposure_bias = u_Exposure;
     vec3 curr = uncharted2_tonemap_partial(v * exposure_bias);
 
     vec3 W = vec3(11.2f);
@@ -125,10 +128,10 @@ void main()
 	
 	// Tonemap
 	FragColor.rgb = uncharted2_filmic(FragColor.rgb);
-	FragColor.rgb = pow(FragColor.rgb, vec3(2.2));
+	FragColor.rgb = pow(FragColor.rgb, vec3(u_Gamma));
 	
-	float zNear = 1.0;    // TODO: Replace by the zNear of your perspective projection
-    float zFar  = 280.0; // TODO: Replace by the zFar  of your perspective projection
+	// float zNear = 1.0;    // TODO: Replace by the zNear of your perspective projection
+    // float zFar  = 280.0; // TODO: Replace by the zFar  of your perspective projection
 	//FragColor.rgb = vec3((2.0 * zNear) / (zFar + zNear - depth * (zFar - zNear)));
 	
 	//FragColor.rgb = mix(FragColor.rgb, u_FogColor, (2.0 * zNear) / (zFar + zNear - depth * (zFar - zNear)));
