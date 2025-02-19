@@ -192,6 +192,8 @@ void AEnhancedSkinShader::PreRender()
 	T2Render::GetRenderContext().EnableBlend( TTRUE );
 	T2Render::GetRenderContext().EnableDepthTest( TTRUE );
 
+	//glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+
 	auto pRenderContext = TSTATICCAST(
 	    Toshi::TRenderContext,
 	    THookedRenderD3DInterface::GetSingleton()->GetCurrentContext()

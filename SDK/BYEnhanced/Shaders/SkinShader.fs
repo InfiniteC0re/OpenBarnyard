@@ -16,7 +16,7 @@ void main()
 	vec4 texColor = texture(tex0, o_TexCoord);
 	
 	// TODO: Make alpha reference an uniform value to control it from code
-	if (texColor.a < 0.2f) discard;
+	if (texColor.a < 0.00392156862745098f) discard;
 	
 	gPosition = vec4(o_Position, 1.0f);
 	gNormal = vec4(o_Normal, 1.0f);

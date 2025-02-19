@@ -59,6 +59,8 @@ void AEnhancedWorldShader::PreRender()
 	m_oShaderProgram.SetUniform( s_uAmbientColor, *pAmbientColor );
 	m_oShaderProgram.SetUniform( s_uProjection, enhRender::g_Projection );
 
+	T2Render::GetRenderContext().EnableBlend( TFALSE );
+
 	//glEnable( GL_CULL_FACE );
 	//glCullFace( GL_BACK );
 

@@ -13,7 +13,7 @@ uniform sampler2D tex0;
 void main()
 {
 	vec4 texColor = texture(tex0, textureCoord);
-	if (texColor.a <= 0.05) discard;
+	if (texColor.a <= 0.5) discard;
 	
 	gPosition = vec4(fragPos, 1.0f);
 	gNormal = vec4(normal, 1.0f);
