@@ -28,7 +28,7 @@ AEnhancedWorldShader::AEnhancedWorldShader()
 
 	// Create shader program
 	m_oShaderProgram = T2Render::CreateShaderProgram( m_hVertexShader, m_hFragmentShader );
-	
+
 	InstallHooks();
 }
 
@@ -47,11 +47,13 @@ void AEnhancedWorldShader::PreRender()
 
 	T2Render::SetShaderProgram( m_oShaderProgram );
 
+	static TPString8 s_uWorldView    = TPS8D( "u_WorldView" );
 	static TPString8 s_uColor        = TPS8D( "u_Color" );
 	static TPString8 s_uShadowColor  = TPS8D( "u_ShadowColor" );
 	static TPString8 s_uAmbientColor = TPS8D( "u_AmbientColor" );
 	static TPString8 s_uProjection   = TPS8D( "u_Projection" );
 
+	m_oShaderProgram.SetUniform( s_uWorldView, pRenderContext->GetWorldViewMatrix() );
 	m_oShaderProgram.SetUniform( s_uColor, Toshi::TVector4( 1.0f, 1.0f, 1.0f, 1.0f ) );
 	m_oShaderProgram.SetUniform( s_uShadowColor, *pShadowColor );
 	m_oShaderProgram.SetUniform( s_uAmbientColor, *pAmbientColor );
@@ -60,43 +62,69 @@ void AEnhancedWorldShader::PreRender()
 	//glEnable( GL_CULL_FACE );
 	//glCullFace( GL_BACK );
 
-	glEnable( GL_DEPTH_TEST );
+	T2Render::GetRenderContext().EnableDepthTest( TTRUE );
 }
 
 void AEnhancedWorldShader::Render( Toshi::TRenderPacket* a_pRenderPacket )
 {
-	// TODO: Use single VAO for better performance
-	// Also, consider combining VBOs and IBOs into a single big buffer to reduce changes in context
+	AWorldMesh* pMesh = TSTATICCAST( AWorldMesh, a_pRenderPacket->GetMesh() );
 
-	AWorldMesh* pMesh       = (AWorldMesh*)a_pRenderPacket->GetMesh();
-	auto        pIndexPool  = *TREINTERPRETCAST( Toshi::TIndexPoolResource**, ( *TREINTERPRETCAST( TUINT*, TUINT( pMesh ) + 0x1C ) ) + 0x8 );
-
-	static TPString8 s_ModelView   = TPS8D( "u_ModelView" );
-	static TPString8 s_WorldMatrix = TPS8D( "u_WorldMatrix" );
-
-	TMatrix44 oModelView = a_pRenderPacket->GetModelViewMatrix();
-	m_oShaderProgram.SetUniform( s_ModelView, oModelView );
-
-	auto pRenderContext = TSTATICCAST(
-	    Toshi::TRenderContext,
-	    THookedRenderD3DInterface::GetSingleton()->GetCurrentContext()
+	QueueMultiDraw(
+		a_pRenderPacket,
+	    ARenderBufferCollection::GetSingleton()->GetRenderBuffer( pMesh->m_pSubMeshes[ 0 ].iRenderBufferId )
 	);
+}
 
-	TMatrix44 oWorldMatrix;
-	oWorldMatrix.InvertOrthogonal( pRenderContext->GetWorldViewMatrix() );
-	oWorldMatrix.Multiply( oModelView );
-	m_oShaderProgram.SetUniform( s_WorldMatrix, oWorldMatrix );
+void AEnhancedWorldShader::CreateMultiDrawCommand( Toshi::TRenderPacket* a_pRenderPacket )
+{
+	ARenderBuffer renderBuffer = ARenderBufferCollection::GetSingleton()->GetRenderBuffer( TSTATICCAST( AWorldMesh, a_pRenderPacket->GetMesh() )->m_pSubMeshes[ 0 ].iRenderBufferId );
 
-	ARenderBuffer renderBuffer = ARenderBufferCollection::GetSingleton()->GetRenderBuffer( pMesh->m_pSubMeshes[ 0 ].iRenderBufferId );
-	renderBuffer->pVAO->Bind();
+	AEnhancedRenderer* pRenderer = AEnhancedRenderer::GetSingleton();
 
-	glDrawElementsBaseVertex(
-		GL_TRIANGLE_STRIP,
+	// HACK: set number of commands related to this render packet
+	a_pRenderPacket->m_pUnk = (void*)1;
+
+	pRenderer->AddMultiDrawCommand(
 	    renderBuffer->pIndexBuffer->size / 2,
-		GL_UNSIGNED_SHORT,
-		(const void*)renderBuffer->pIndexBuffer->offset,
-	    renderBuffer->pVertexBuffer->offset / 44
+	    1,
+	    renderBuffer->pIndexBuffer->offset / 2,
+	    renderBuffer->pVertexBuffer->offset / 44,
+	    pRenderer->AddMultiDrawModelViewMatrix( a_pRenderPacket->GetModelViewMatrix() )
 	);
+}
+
+void AEnhancedWorldShader::QueueMultiDraw( Toshi::TRenderPacket* a_pRenderPacket, const ARenderBuffer& a_rcRenderBuffer )
+{
+	TINT iNumCmds = (TINT)a_pRenderPacket->m_pUnk;
+
+	if ( iNumCmds != 0 && !m_oMultiDrawLastBuffer || m_oMultiDrawLastBuffer->pVAO != a_rcRenderBuffer->pVAO )
+	{
+		FlushMultiDraw();
+		m_oMultiDrawLastBuffer = a_rcRenderBuffer;
+	}
+
+	m_iMultiDrawSize += iNumCmds;
+}
+
+void AEnhancedWorldShader::FlushMultiDraw()
+{
+	if ( m_oMultiDrawLastBuffer && m_iMultiDrawSize != 0 )
+	{
+		m_oMultiDrawLastBuffer->pVAO->Bind();
+		
+		glMultiDrawElementsIndirect(
+		    GL_TRIANGLE_STRIP,
+		    GL_UNSIGNED_SHORT,
+		    AEnhancedRenderer::GetSingleton()->GetMultiDrawCommandOffset(),
+		    m_iMultiDrawSize,
+		    0
+		);
+
+		AEnhancedRenderer::GetSingleton()->SeekMultiDrawCursor( m_iMultiDrawSize );
+		
+		m_iMultiDrawSize = 0;
+		m_oMultiDrawLastBuffer.Clear();
+	}
 }
 
 class AWorldMaterial
@@ -123,7 +151,11 @@ MEMBER_HOOK( 0x005f6f70, AWorldMaterial, AWorldMaterial_PreRender, void )
 	TTextureResourceHAL* pTexture = TSTATICCAST( TTextureResourceHAL, m_aTextures[ 0 ] );
 	T2GLTexture*         pGLTexture = AEnhancedTextureManager::GetAssociation( pTexture->GetD3DTexture() );
 
-	T2Render::SetTexture2D( 0, *pGLTexture );
+	if ( T2Render::GetTexture2D( 0 ) != pGLTexture->GetHandle() )
+	{
+		AEnhancedWorldShader::GetSingleton()->FlushMultiDraw();
+		T2Render::SetTexture2D( 0, *pGLTexture );
+	}
 }
 
 class AWorldShaderHAL

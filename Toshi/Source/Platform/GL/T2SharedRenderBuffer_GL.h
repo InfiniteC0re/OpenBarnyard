@@ -18,7 +18,7 @@ public:
 
 		void SetData( const void* a_pData, GLsizeiptr a_iSize )
 		{
-			TASSERT( a_iSize <= size );
+			TASSERT( a_iSize <= GLsizeiptr( size ) );
 			glNamedBufferSubData( owner->m_oRenderBuffer.GetId(), offset, a_iSize, a_pData );
 		}
 

@@ -13,8 +13,8 @@ struct ARenderBuffer
 		Toshi::T2SharedIndexBuffer::SubBuffer*  pIndexBuffer;
 	};
 
-	TINT  iID;
-	Mesh* pMesh;
+	TINT  iID   = -1;
+	Mesh* pMesh = TNULL;
 
 	void Clear()
 	{
@@ -34,6 +34,8 @@ struct ARenderBuffer
 	{
 		return a_rcOther.iID == iID && a_rcOther.pMesh == pMesh;
 	}
+
+	operator TBOOL() const { return pMesh != TNULL; }
 };
 
 //-----------------------------------------------------------------------------

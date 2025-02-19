@@ -6,9 +6,12 @@
 #include "AEnhancedWorldShader.h"
 #include "AEnhancedSkinShader.h"
 
+#include <AHooks.h>
+
 #include <Math/TVector2.h>
 #include <Render/TCameraObject.h>
 #include <Render/TViewport.h>
+#include <Render/TShader.h>
 
 #include <HookHelpers.h>
 #include <Platform/GL/T2Render_GL.h>
@@ -25,6 +28,11 @@
 
 TOSHI_NAMESPACE_USING
 
+AEnhancedRenderer::AEnhancedRenderer()
+    : m_vecMultiDrawCommands( GetGlobalAllocator(), 1024, 1024 )
+{
+}
+
 TBOOL AEnhancedRenderer::Create()
 {
 	// Setup window parameters
@@ -36,6 +44,12 @@ TBOOL AEnhancedRenderer::Create()
 	// Create display
 	TBOOL bDisplayCreated = T2Render::CreateSingleton()->Create( m_oWindowParams );
 	TASSERT( TTRUE == bDisplayCreated );
+
+	// Create buffers
+	m_oMultiDrawShaderStorage = T2Render::CreateShaderStorageBuffer( TNULL, 8 * 1024 * 1024, GL_DYNAMIC_DRAW );
+	m_oMultiDrawShaderStorage.Unbind();
+	m_oIndirectBuffer = T2Render::CreateIndirectBuffer( TNULL, 1024 * 1024, GL_DYNAMIC_DRAW );
+	m_oIndirectBuffer.Unbind();
 
 	InstallHooks();
 
@@ -68,6 +82,64 @@ TBOOL AEnhancedRenderer::Update( TFLOAT a_fDeltaTime )
 	pRender->EndScene();
 
 	return TTRUE;
+}
+
+void AEnhancedRenderer::ResetMultiDraw()
+{
+	m_vecMultiDrawCommands.Clear();
+	m_iMultiDrawNumIndices  = 0;
+	m_iMultiDrawNumMatrices = 0;
+	m_bMultiDrawDirty       = TFALSE;
+}
+
+void AEnhancedRenderer::AddMultiDrawCommand( TUINT a_uiCount, TUINT a_uiInstanceCount, TUINT a_uiFirstIndex, TINT a_iBaseVertex, TUINT a_uiBaseInstance )
+{
+	m_vecMultiDrawCommands.EmplaceBack( a_uiCount, a_uiInstanceCount, a_uiFirstIndex, a_iBaseVertex, a_uiBaseInstance );
+	m_bMultiDrawDirty = TTRUE;
+}
+
+TINT AEnhancedRenderer::AddMultiDrawModelViewMatrix( const Toshi::TMatrix44& a_rcModelView )
+{
+	if ( m_iMultiDrawNumMatrices > 0 )
+	{
+		const TMatrix44& rLastMatrix = m_oMultiDrawData.matrices[ m_iMultiDrawNumMatrices - 1 ];
+
+		__m512* m0 = (__m512*)&rLastMatrix;
+		__m512* m1 = (__m512*)&a_rcModelView;
+
+		if ( _mm512_cmpneq_ps_mask( *m0, *m1 ) != 0 )
+		{
+			m_oMultiDrawData.matrices[ m_iMultiDrawNumMatrices++ ] = a_rcModelView;
+		}
+	}
+	else
+	{
+		// This is the first matrix in the list
+		m_oMultiDrawData.matrices[ m_iMultiDrawNumMatrices++ ] = a_rcModelView;
+	}
+	
+	m_oMultiDrawData.indices[ m_iMultiDrawNumIndices++ ] = m_iMultiDrawNumMatrices - 1;
+	m_bMultiDrawDirty                                    = TTRUE;
+
+	return m_iMultiDrawNumIndices - 1;
+}
+
+void AEnhancedRenderer::FlushMultiDrawCommands()
+{
+	m_iMultiDrawCursor = 0;
+
+	if ( m_bMultiDrawDirty && m_vecMultiDrawCommands.Size() > 0 )
+	{
+		m_oIndirectBuffer.UpdateData( &m_vecMultiDrawCommands[ 0 ], 0, m_vecMultiDrawCommands.Size() * sizeof( DrawElementsIndirectCommand ) );
+		m_oMultiDrawShaderStorage.UpdateData( &m_oMultiDrawData, 0, sizeof( MultiDrawData::indices ) + sizeof( TMatrix44 ) * m_iMultiDrawNumMatrices );
+		m_bMultiDrawDirty = TFALSE;
+	}
+}
+
+DrawElementsIndirectCommand* AEnhancedRenderer::GetPrevMultiDrawCommand()
+{
+	TASSERT( m_vecMultiDrawCommands.Size() > 0 );
+	return &m_vecMultiDrawCommands[ m_vecMultiDrawCommands.Size() - 1 ];
 }
 
 Toshi::TCameraObject g_SunCameraObject;
@@ -302,14 +374,6 @@ void AEnhancedRenderer::CreateFrameBuffers()
 void AEnhancedRenderer::CreateShaders()
 {
 	T2CompiledShader hScreenQuad = T2Render::CompileShaderFromFile( GL_VERTEX_SHADER, "Shaders/ScreenQuad.vs" );
-	
-	{
-		// HDR Shader
-		T2CompiledShader hFragment = T2Render::CompileShaderFromFile( GL_FRAGMENT_SHADER, "Shaders/HDR.fs" );
-		enhRender::g_ShaderHDR     = T2Render::CreateShaderProgram( hScreenQuad, hFragment );
-
-		glObjectLabel( GL_PROGRAM, enhRender::g_ShaderHDR.GetProgram(), 3, "HDR" );
-	}
 
 	{
 		// Lighting Shader (Deferred Rendering)
@@ -438,6 +502,38 @@ MEMBER_HOOK( 0x006c57e0, TRenderD3DInterface, TRenderD3DInterface_GetPixelAspect
 	return 1.0f;
 }
 
+MEMBER_HOOK( 0x006c67c0, TRenderD3DInterface, TRenderD3DInterface_FlushOrderTables, void )
+{
+	const TShader*         pWorldShader = *(TShader**)0x0079a854;
+	const TShader*         pSkinShader  = *(TShader**)0x0079a4f8;
+	TPriList<TOrderTable>& orderTables  = *(TPriList<TOrderTable>*)( TUINTPTR( this ) + 0xD28 );
+
+	for ( auto pOrderTable = orderTables.Begin(); pOrderTable != orderTables.End(); pOrderTable++ )
+	{
+		TShader* pShader      = pOrderTable->GetShader();
+
+		// TODO: Support skin shader
+		if ( ( pShader == pWorldShader || pShader == pSkinShader ) && pOrderTable->m_pLastRegMat )
+		{
+			for ( TRegMaterial* it = pOrderTable->m_pLastRegMat; it != TNULL; it = it->GetNextRegMat() )
+			{
+				for ( TRenderPacket* pPacket = it->m_pLastRenderPacket; pPacket != TNULL; pPacket = pPacket->GetNextPacket() )
+				{
+					if ( pShader == pWorldShader )
+						AEnhancedWorldShader::GetSingleton()->CreateMultiDrawCommand( pPacket );
+					else if (pShader == pSkinShader)
+						AEnhancedSkinShader::GetSingleton()->CreateMultiDrawCommand( pPacket );
+				}
+			}
+		}
+	}
+
+	AEnhancedRenderer::GetSingleton()->FlushMultiDrawCommands();
+	AEnhancedRenderer::GetSingleton()->ResetMultiDraw();
+
+	CallOriginal();
+}
+
 void AEnhancedRenderer::InstallHooks()
 {
 	InstallHook<TRenderD3DInterface_BeginScene>();
@@ -452,4 +548,7 @@ void AEnhancedRenderer::InstallHooks()
 	InstallHook<TRenderContextD3D_ComputeOrthographicFrustum>();
 
 	InstallHook<TRenderD3DInterface_GetPixelAspectRatio>();
+	InstallHook<TRenderD3DInterface_FlushOrderTables>();
+
+	//AHooks::AddHook( Hook_TOrderTable_Flush, HookType_Before, TOrderTable_BeforeFlush );
 }

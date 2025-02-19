@@ -17,6 +17,7 @@ uniform mat4 u_LightViewMatrix;
 
 uniform float u_ShadowBiasMin;
 uniform float u_ShadowBiasMax;
+uniform float u_ShadowStrength;
 
 vec3 aces(vec3 x) {
   const float a = 2.51;
@@ -96,7 +97,7 @@ void main()
 	vec4 fragPosLightSpace = u_LightViewMatrix * vec4(fragPos, 1.0f);
 	float flShadowStrength = CalculateShadow(normal, fragPosLightSpace);
 
-	FragColor.rgb *= (1.0f - flShadowStrength * 0.2f);
+	FragColor.rgb *= (1.0f - flShadowStrength * u_ShadowStrength);
 	
 	// Apply lighting from point lights
 	FragColor.rgb += pointLight(fragPos, normal, FragColor.rgb);
@@ -109,6 +110,6 @@ void main()
     float zFar  = 280.0; // TODO: Replace by the zFar  of your perspective projection
 	//FragColor.rgb = vec3((2.0 * zNear) / (zFar + zNear - depth * (zFar - zNear)));
 	
-	FragColor.rgb = mix(FragColor.rgb, u_FogColor, (2.0 * zNear) / (zFar + zNear - depth * (zFar - zNear)));
+	//FragColor.rgb = mix(FragColor.rgb, u_FogColor, (2.0 * zNear) / (zFar + zNear - depth * (zFar - zNear)));
 	FragColor.a = 1.0f;
 }

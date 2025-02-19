@@ -4,6 +4,7 @@
 #include "AEnhancedTexture.h"
 #include "HookHelpers.h"
 #include "AEnhancedRenderer.h"
+#include "AEnhancedWorldShader.h"
 
 #include <Platform/GL/T2Render_GL.h>
 #include <Platform/DX8/TTextureResourceHAL_DX8.h>
@@ -158,22 +159,15 @@ AEnhancedSkinShader::AEnhancedSkinShader()
 	// Compile shaders
 	m_hVertexShader     = T2Render::CompileShaderFromFile( GL_VERTEX_SHADER, "Shaders/SkinShader.vs" );
 	m_hFragmentShader   = T2Render::CompileShaderFromFile( GL_FRAGMENT_SHADER, "Shaders/SkinShader.fs" );
-	m_hVertexShaderHD   = T2Render::CompileShaderFromFile( GL_VERTEX_SHADER, "Shaders/SkinShader_HD.vs" );
-	m_hFragmentShaderHD = T2Render::CompileShaderFromFile( GL_FRAGMENT_SHADER, "Shaders/SkinShader_HD.fs" );
 
 	// Create shader programs
 	m_oShaderProgram   = T2Render::CreateShaderProgram( m_hVertexShader, m_hFragmentShader );
-	m_oShaderProgramHD = T2Render::CreateShaderProgram( m_hVertexShaderHD, m_hFragmentShaderHD );
 
 	// Set default shader uniforms...
 
 	static TPString8 s_LightColourParams = TPS8D( "u_LightColourParams" );
 	static TPString8 s_UpAxis            = TPS8D( "u_UpAxis" );
 	static TPString8 s_LightColour       = TPS8D( "u_LightColour" );
-
-	// HD Shader
-	T2Render::SetShaderProgram( m_oShaderProgramHD );
-	m_oShaderProgramHD.SetUniform( s_LightColourParams, TVector4( 1.0f, 0.0f, 0.0f, 1.0f ) );
 
 	// Default Shader
 	T2Render::SetShaderProgram( m_oShaderProgram );
@@ -192,12 +186,11 @@ void AEnhancedSkinShader::PreRender()
 {
 	g_uiRenderState = 0;
 
-	glEnable( GL_BLEND );
-
 	//glEnable( GL_CULL_FACE );
 	//glCullFace( GL_BACK );
 
-	glEnable( GL_DEPTH_TEST );
+	T2Render::GetRenderContext().EnableBlend( TTRUE );
+	T2Render::GetRenderContext().EnableDepthTest( TTRUE );
 
 	auto pRenderContext = TSTATICCAST(
 	    Toshi::TRenderContext,
@@ -214,29 +207,27 @@ void AEnhancedSkinShader::PreRender()
 	m_oShaderProgram.SetUniform( s_Projection, enhRender::g_Projection );
 	m_oShaderProgram.SetUniform( s_ViewWorld, m_ViewWorldMatrix );
 
-	T2Render::SetShaderProgram( m_oShaderProgramHD );
-	m_oShaderProgramHD.SetUniform( s_Projection, enhRender::g_Projection );
-	m_oShaderProgramHD.SetUniform( s_ViewWorld, m_ViewWorldMatrix );
-
-	m_oMultiDrawRenderBuffer.Clear();
-	m_aMultiDrawBuffer.Reset();
+	m_oMultiDrawLastBuffer.Clear();
+	m_iMultiDrawSize = 0;
 }
 
 void AEnhancedSkinShader::Render( TRenderPacket* a_pRenderPacket )
 {
-	auto pMesh       = a_pRenderPacket->GetMesh();
-	auto pVertexPool = *TREINTERPRETCAST( TVertexPoolResource**, TUINT( pMesh ) + 0x18 );
-	auto pMaterial   = TSTATICCAST( ASkinMaterialWrapper, pMesh->GetMaterial() );
-	
+	TINT iNumCmds = ( TINT ) a_pRenderPacket->m_pUnk;
+
+	// Skip render packets that don't have any commands related to it
+	if ( iNumCmds == 0 )
+		return;
+
+	TMesh* pMesh = a_pRenderPacket->GetMesh();
 	T2Render::SetShaderProgram( m_oShaderProgram );
 
-	auto pSkeletonInstance = a_pRenderPacket->GetSkeletonInstance();
-	auto uiNumSubMeshes    = *(TUINT16*)( TUINT( pMesh ) + 0x16 );
+	TSkeletonInstance* pSkeletonInstance = a_pRenderPacket->GetSkeletonInstance();
+	TUINT16            uiNumSubMeshes    = *(TUINT16*)( TUINT( pMesh ) + 0x16 );
 
-	for ( TUINT16 i = 0; i < uiNumSubMeshes; i++ )
+	for ( TUINT16 i = 0; i < iNumCmds; i++ )
 	{
 		auto pSubMesh        = ( *TREINTERPRETCAST( TUINT*, TUINT( pMesh ) + 0x1C ) ) + 0x94 * i;
-		auto pIndexPool      = *TREINTERPRETCAST( TIndexPoolResource**, TUINT( pSubMesh ) + 0x4 );
 		auto iRenderBufferID = *TREINTERPRETCAST( TINT*, TUINT( pSubMesh ) + 0x8 );
 
 		// Update bones
@@ -256,61 +247,102 @@ void AEnhancedSkinShader::Render( TRenderPacket* a_pRenderPacket )
 		bSkeletonChanged |= m_oShaderProgram.SetUniform( s_BoneTransforms, (TMatrix44*)s_aBoneTransforms, iSubMeshNumBones );
 		bSkeletonChanged |= m_oShaderProgram.SetUniform( s_NumBones, iSubMeshNumBones );
 
+		ARenderBuffer renderBuffer = ARenderBufferCollection::GetSingleton()->GetRenderBuffer( iRenderBufferID );
+
 		if ( bSkeletonChanged )
 			FlushMultiDraw();
 
-		AddMultiDrawCommand(
-		    ARenderBufferCollection::GetSingleton()->GetRenderBuffer( iRenderBufferID ),
-		    pIndexPool->GetNumIndices(),
-		    a_pRenderPacket->GetModelViewMatrix()
-		);
+		QueueMultiDraw( renderBuffer );
 
 		if ( bSkeletonChanged )
 			FlushMultiDraw();
 	}
 }
 
-void AEnhancedSkinShader::AddMultiDrawCommand( const ARenderBuffer& a_rcRenderBuffer, TUINT a_uiNumIndices, const Toshi::TMatrix44& a_rcModelView )
+void AEnhancedSkinShader::CreateMultiDrawCommand( Toshi::TRenderPacket* a_pRenderPacket )
 {
-	if ( m_oMultiDrawRenderBuffer != a_rcRenderBuffer )
+	AEnhancedRenderer* pRenderer = AEnhancedRenderer::GetSingleton();
+	TMesh*             pMesh     = a_pRenderPacket->GetMesh();
+
+	TSkeletonInstance* pSkeletonInstance = a_pRenderPacket->GetSkeletonInstance();
+	TUINT16            uiNumSubMeshes    = *(TUINT16*)( TUINT( pMesh ) + 0x16 );
+
+	// HACK: set number of commands related to this render packet.
+	a_pRenderPacket->m_pUnk = (void*)0;
+
+	for ( TUINT16 i = 0; i < uiNumSubMeshes; i++ )
+	{
+		auto pSubMesh        = ( *TREINTERPRETCAST( TUINT*, TUINT( pMesh ) + 0x1C ) ) + 0x94 * i;
+		auto iRenderBufferID = *TREINTERPRETCAST( TINT*, TUINT( pSubMesh ) + 0x8 );
+
+		ARenderBuffer renderBuffer = ARenderBufferCollection::GetSingleton()->GetRenderBuffer( iRenderBufferID );
+
+		TUINT uiNumTriangles  = renderBuffer->pIndexBuffer->size / 2;
+		TUINT uiFirstIndex    = renderBuffer->pIndexBuffer->offset / 2;
+		TINT  iBaseVertex     = renderBuffer->pVertexBuffer->offset / 40;
+		TINT  iMatrixIndex    = pRenderer->AddMultiDrawModelViewMatrix( a_pRenderPacket->GetModelViewMatrix() );
+		TBOOL bCommandCreated = TFALSE;
+		
+		if ( i == 0 && uiNumSubMeshes == 1 && pRenderer->GetNumMultiDrawCommands() > 0 )
+		{
+			DrawElementsIndirectCommand* pCmd = pRenderer->GetPrevMultiDrawCommand();
+
+			if ( pCmd->count == uiNumTriangles && pCmd->firstIndex == uiFirstIndex && pCmd->baseVertex == iBaseVertex )
+			{
+				pCmd->instanceCount += 1;
+				bCommandCreated = TTRUE;
+
+				// HACK: set number of commands related to this render packet.
+				// Setting to 0 since this render packet is a part of the previous one now.
+				a_pRenderPacket->m_pUnk = (void*)0;
+			}
+		}
+
+		if ( !bCommandCreated )
+		{
+			pRenderer->AddMultiDrawCommand(
+			    uiNumTriangles,
+			    1,
+			    uiFirstIndex,
+			    iBaseVertex,
+			    iMatrixIndex
+			);
+
+			// HACK: set number of commands related to this render packet.
+			a_pRenderPacket->m_pUnk = (void*)( (TINT)a_pRenderPacket->m_pUnk + 1 );
+		}
+	}	
+}
+
+void AEnhancedSkinShader::QueueMultiDraw( const ARenderBuffer& a_rcRenderBuffer )
+{
+	if ( !m_oMultiDrawLastBuffer || m_oMultiDrawLastBuffer->pVAO != a_rcRenderBuffer->pVAO )
 	{
 		FlushMultiDraw();
-
-		m_oMultiDrawRenderBuffer = a_rcRenderBuffer;
-		m_uiMultiDrawNumIndices  = a_uiNumIndices;
+		m_oMultiDrawLastBuffer = a_rcRenderBuffer;
 	}
 
-	// Flush multidraw if the buffer is already full
-	if ( m_aMultiDrawBuffer.IsFull() )
-	{
-		FlushMultiDraw();
-	}
-
-	// Add instance to the buffer
-	m_aMultiDrawBuffer.Push( a_rcModelView );
+	m_iMultiDrawSize += 1;
 }
 
 void AEnhancedSkinShader::FlushMultiDraw()
 {
-	if ( m_oMultiDrawRenderBuffer.pMesh && m_aMultiDrawBuffer.Count() > 0 )
+	if ( m_oMultiDrawLastBuffer && m_iMultiDrawSize != 0 )
 	{
-		static TPString8 s_ModelView = TPS8D( "u_ModelView" );
-		m_oShaderProgram.SetUniform( s_ModelView, &m_aMultiDrawBuffer.Begin(), m_aMultiDrawBuffer.Count() );
+		m_oMultiDrawLastBuffer->pVAO->Bind();
 
-		m_oMultiDrawRenderBuffer->pVAO->Bind();
-
-		glDrawElementsInstancedBaseVertex(
+		glMultiDrawElementsIndirect(
 		    GL_TRIANGLE_STRIP,
-		    m_oMultiDrawRenderBuffer->pIndexBuffer->size / 2,
 		    GL_UNSIGNED_SHORT,
-		    (const void*)m_oMultiDrawRenderBuffer->pIndexBuffer->offset,
-		    m_aMultiDrawBuffer.Count(),
-		    m_oMultiDrawRenderBuffer->pVertexBuffer->offset / 40
+		    AEnhancedRenderer::GetSingleton()->GetMultiDrawCommandOffset(),
+		    m_iMultiDrawSize,
+		    0
 		);
-		//glDrawElementsInstanced( GL_TRIANGLE_STRIP, m_uiMultiDrawNumIndices, GL_UNSIGNED_SHORT, TNULL, m_aMultiDrawBuffer.Count() );
 
-		m_oMultiDrawRenderBuffer.Clear();
-		m_aMultiDrawBuffer.Reset();
+		AEnhancedRenderer::GetSingleton()->SeekMultiDrawCursor( m_iMultiDrawSize );
+
+		m_iMultiDrawSize = 0;
+		m_oMultiDrawLastBuffer.Clear();
 	}
 }
 
@@ -323,16 +355,27 @@ MEMBER_HOOK( 0x005f3ba0, ASkinMaterialWrapper, ASkinMaterial_PreRender, void )
 class ASkinShaderHAL
 {};
 
+TBOOL g_bIsFlushingSkinShader = TFALSE;
+
 MEMBER_HOOK( 0x005f3230, ASkinShaderHAL, ASkinShader_StartFlush, void )
 {
 	CallOriginal();
 	AEnhancedSkinShader::GetSingleton()->PreRender();
+
+	g_bIsFlushingSkinShader = TTRUE;
 }
 
 MEMBER_HOOK( 0x005f3370, ASkinShaderHAL, ASkinShader_EndFlush, void )
 {
 	CallOriginal();
-	AEnhancedSkinShader::GetSingleton()->FlushMultiDraw();
+
+	// NOTE: This method is shared across skin and world shaders in the original game so this hack is required
+	if ( g_bIsFlushingSkinShader )
+		AEnhancedSkinShader::GetSingleton()->FlushMultiDraw();
+	else
+		AEnhancedWorldShader::GetSingleton()->FlushMultiDraw();
+
+	g_bIsFlushingSkinShader = TFALSE;
 }
 
 MEMBER_HOOK( 0x005f4830, ASkinShaderHAL, ASkinShader_Render, void, Toshi::TRenderPacket* a_pRenderPacket )

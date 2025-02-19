@@ -1,6 +1,9 @@
 #pragma once
+#include "AEnhancedRenderer.h"
+#include "ARenderBufferCollection.h"
 
 #include <Toshi/TSingleton.h>
+#include <ToshiTools/T2DynamicVector.h>
 #include <Render/TIndexPoolResourceInterface.h>
 #include <Render/TVertexPoolResourceInterface.h>
 #include <Platform/GL/T2RenderBuffer_GL.h>
@@ -45,11 +48,20 @@ public:
 	void PreRender();
 	void Render( Toshi::TRenderPacket* a_pRenderPacket );
 
+	// Saves information about the mesh into an indirect buffer
+	void CreateMultiDrawCommand( Toshi::TRenderPacket* a_pRenderPacket );
+
+	void QueueMultiDraw( Toshi::TRenderPacket* a_pRenderPacket, const ARenderBuffer& a_rcRenderBuffer );
+	void FlushMultiDraw();
+
 private:
 	void InstallHooks();
 
 private:
-	Toshi::T2CompiledShader m_hVertexShader;
-	Toshi::T2CompiledShader m_hFragmentShader;
-	Toshi::T2Shader         m_oShaderProgram;
+	Toshi::T2CompiledShader      m_hVertexShader;
+	Toshi::T2CompiledShader      m_hFragmentShader;
+	Toshi::T2Shader              m_oShaderProgram;
+
+	ARenderBuffer m_oMultiDrawLastBuffer;
+	TINT          m_iMultiDrawSize = 0;
 };

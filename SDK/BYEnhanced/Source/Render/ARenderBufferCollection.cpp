@@ -57,6 +57,8 @@ ARenderBufferCollection::ARenderBufferCollection()
 	g_oWorldVAO.GetVertexBuffer().SetAttribPointer( 1, 3, GL_FLOAT, sizeof( WorldVertex ), offsetof( WorldVertex, Normal ) );
 	g_oWorldVAO.GetVertexBuffer().SetAttribPointer( 2, 3, GL_FLOAT, sizeof( WorldVertex ), offsetof( WorldVertex, Color ) );
 	g_oWorldVAO.GetVertexBuffer().SetAttribPointer( 3, 2, GL_FLOAT, sizeof( WorldVertex ), offsetof( WorldVertex, UV ) );
+	AEnhancedRenderer::GetSingleton()->GetIndirectBuffer().Bind();
+	AEnhancedRenderer::GetSingleton()->GetShaderStorageBuffer().BindBase( 3 );
 
 	// Initialise skin VAO
 	g_oSkinVAO = T2Render::CreateVertexArray( g_oSkinVertexBuffer.GetRenderBuffer(), g_oSharedIndexBuffer.GetRenderBuffer() );
@@ -66,6 +68,8 @@ ARenderBufferCollection::ARenderBufferCollection()
 	g_oSkinVAO.GetVertexBuffer().SetAttribPointer( 2, 4, GL_UNSIGNED_BYTE, sizeof( ASkinMesh::SkinVertex ), offsetof( ASkinMesh::SkinVertex, Weights ), GL_TRUE );
 	g_oSkinVAO.GetVertexBuffer().SetAttribPointer( 3, 4, GL_UNSIGNED_BYTE, sizeof( ASkinMesh::SkinVertex ), offsetof( ASkinMesh::SkinVertex, Bones ), GL_TRUE );
 	g_oSkinVAO.GetVertexBuffer().SetAttribPointer( 4, 2, GL_FLOAT, sizeof( ASkinMesh::SkinVertex ), offsetof( ASkinMesh::SkinVertex, UV ) );
+	AEnhancedRenderer::GetSingleton()->GetIndirectBuffer().Bind();
+	AEnhancedRenderer::GetSingleton()->GetShaderStorageBuffer().BindBase( 3 );
 
 	T2VertexArray::Unbind();
 	InstallHooks();

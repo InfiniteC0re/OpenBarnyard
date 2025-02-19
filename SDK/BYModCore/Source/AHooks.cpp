@@ -657,6 +657,11 @@ MEMBER_HOOK( 0x005ea8b0, ATerrainInterface, ATerrain_Render, void )
 
 MEMBER_HOOK( 0x006d5970, TOrderTable, TOrderTable_Flush, void )
 {
+	for ( TINT i = 0; i < AHooks::OrderTable::Flush[ HookType_Before ].Size(); i++ )
+	{
+		AHooks::OrderTable::Flush[ HookType_Before ][ i ]( this );
+	}
+
 	TShader* pShader = GetShader();
 
 	if ( m_pLastRegMat )
@@ -673,6 +678,11 @@ MEMBER_HOOK( 0x006d5970, TOrderTable, TOrderTable_Flush, void )
 
 	*(TUINT*)( 0x007d3124 ) = 0;
 	m_pLastRegMat           = TNULL;
+
+	for ( TINT i = 0; i < AHooks::OrderTable::Flush[ HookType_After ].Size(); i++ )
+	{
+		AHooks::OrderTable::Flush[ HookType_After ][ i ]( this );
+	}
 }
 
 HOOK( 0x006114d0, AModelLoader_AModelLoaderLoadTRBCallback, TBOOL, TModel* a_pModel )
@@ -855,6 +865,9 @@ TBOOL AHooks::AddHook( Hook a_eHook, HookType a_eHookType, void* a_pCallback )
 			return TTRUE;
 		case Hook_TRenderInterface_SetLightColourMatrix:
 			AHooks::RenderInterface::SetLightColourMatrix[ a_eHookType ].PushBack( TREINTERPRETCAST( AHooks::RenderInterface::t_SetLightColourMatrix, a_pCallback ) );
+			return TTRUE;
+		case Hook_TOrderTable_Flush:
+			AHooks::OrderTable::Flush[ a_eHookType ].PushBack( TREINTERPRETCAST( AHooks::OrderTable::t_Flush, a_pCallback ) );
 			return TTRUE;
 	}
 

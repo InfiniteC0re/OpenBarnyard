@@ -12,6 +12,11 @@ TOSHI_NAMESPACE_START
 
 T2RenderContext::T2RenderContext()
 {
+	m_bDepthTest = TFALSE;
+	glDisable( GL_DEPTH_TEST );
+
+	m_bBlend = TFALSE;
+	glDisable( GL_BLEND );
 }
 
 T2RenderContext::~T2RenderContext()
@@ -175,6 +180,82 @@ TINT T2RenderContext::CullSphereToFrustum( const TSphere& a_rSphere, const TPlan
 		a_pPlanes++;
 
 	} while ( TTRUE );
+}
+
+TBOOL T2RenderContext::SetShaderProgram( const T2Shader& a_rcShaderProgram )
+{
+	if ( m_uiCurrentShaderProgram != a_rcShaderProgram.GetProgram() )
+	{
+		a_rcShaderProgram.Use();
+		m_uiCurrentShaderProgram = a_rcShaderProgram.GetProgram();
+
+		return TTRUE;
+	}
+
+	return TFALSE;
+}
+
+GLuint T2RenderContext::GetTexture2D( TINT a_iTextureIndex )
+{
+	return m_aCurrentTextures[ a_iTextureIndex ];
+}
+
+void T2RenderContext::SetTexture2D( TINT a_iTextureIndex, GLuint a_uiTexture )
+{
+	if ( m_aCurrentTextures[ a_iTextureIndex ] != a_uiTexture )
+	{
+		if ( m_iCurrentTextureUnit != a_iTextureIndex )
+		{
+			glActiveTexture( GL_TEXTURE0 + a_iTextureIndex );
+			m_iCurrentTextureUnit = a_iTextureIndex;
+		}
+
+		glBindTexture( GL_TEXTURE_2D, a_uiTexture );
+		m_aCurrentTextures[ a_iTextureIndex ] = a_uiTexture;
+	}
+}
+
+void T2RenderContext::SetTexture2D( TINT a_iTextureIndex, const T2GLTexture& a_rcTexture )
+{
+	SetTexture2D( a_iTextureIndex, a_rcTexture.GetHandle() );
+}
+
+void T2RenderContext::ResetTexture2D( TINT a_iTextureIndex )
+{
+	if ( m_iCurrentTextureUnit != a_iTextureIndex )
+	{
+		glActiveTexture( GL_TEXTURE0 + a_iTextureIndex );
+		glBindTexture( GL_TEXTURE_2D, NULL );
+
+		m_iCurrentTextureUnit                 = a_iTextureIndex;
+		m_aCurrentTextures[ a_iTextureIndex ] = -1;
+	}
+}
+
+void T2RenderContext::EnableDepthTest( TBOOL a_bEnable )
+{
+	if ( m_bDepthTest != a_bEnable )
+	{
+		if ( a_bEnable )
+			glEnable( GL_DEPTH_TEST );
+		else
+			glDisable( GL_DEPTH_TEST );
+
+		m_bDepthTest = a_bEnable;
+	}
+}
+
+void T2RenderContext::EnableBlend( TBOOL a_bEnable )
+{
+	if ( m_bBlend != a_bEnable )
+	{
+		if ( a_bEnable )
+			glEnable( GL_BLEND );
+		else
+			glDisable( GL_BLEND );
+
+		m_bBlend = a_bEnable;
+	}
 }
 
 TOSHI_NAMESPACE_END

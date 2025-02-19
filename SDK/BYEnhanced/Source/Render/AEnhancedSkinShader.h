@@ -61,7 +61,10 @@ public:
 	void PreRender();
 	void Render( Toshi::TRenderPacket* a_pRenderPacket );
 
-	void AddMultiDrawCommand( const ARenderBuffer& a_rcRenderBuffer, TUINT a_uiNumIndices, const Toshi::TMatrix44& a_rcModelView );
+	// Saves information about the mesh into an indirect buffer
+	void CreateMultiDrawCommand( Toshi::TRenderPacket* a_pRenderPacket );
+
+	void QueueMultiDraw( const ARenderBuffer& a_rcRenderBuffer );
 	void FlushMultiDraw();
 
 private:
@@ -72,14 +75,9 @@ private:
 	Toshi::T2CompiledShader m_hFragmentShader;
 	Toshi::T2Shader         m_oShaderProgram;
 
-	Toshi::T2CompiledShader m_hVertexShaderHD;
-	Toshi::T2CompiledShader m_hFragmentShaderHD;
-	Toshi::T2Shader         m_oShaderProgramHD;
-
 	Toshi::TMatrix44 m_WorldViewMatrix;
 	Toshi::TMatrix44 m_ViewWorldMatrix;
 
-	Toshi::TStack<Toshi::TMatrix44, MULTIDRAW_MAX> m_aMultiDrawBuffer;
-	ARenderBuffer                                  m_oMultiDrawRenderBuffer;
-	TUINT                                          m_uiMultiDrawNumIndices;
+	ARenderBuffer m_oMultiDrawLastBuffer;
+	TINT          m_iMultiDrawSize = 0;
 };

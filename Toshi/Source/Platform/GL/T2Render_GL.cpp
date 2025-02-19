@@ -66,6 +66,7 @@ TBOOL T2Render::Create( const WindowParams& a_rcWindowParams )
 
 		m_pWindow->SetPosition( 100, 100, m_oWindowParams.uiWidth, m_oWindowParams.uiHeight );
 
+		// Create related systems
 		T2TextureManager::CreateSingleton();
 		g_bCreated = TTRUE;
 
@@ -90,7 +91,7 @@ T2VertexBuffer T2Render::CreateVertexBuffer( const void* a_pData, GLuint a_uiSiz
 	TASSERT( uiBufferId != 0 );
 	T2VertexBuffer buffer( uiBufferId );
 
-	if ( a_pData && a_uiSize != 0 )
+	if ( a_uiSize != 0 )
 	{
 		buffer.Bind();
 		buffer.SetData( a_pData, a_uiSize, a_eUsage );
@@ -107,10 +108,61 @@ T2IndexBuffer T2Render::CreateIndexBuffer( const TUINT16* a_pIndices, GLuint a_u
 	TASSERT( uiBufferId != 0 );
 	T2IndexBuffer buffer( uiBufferId );
 
-	if ( a_pIndices && a_uiCount != 0 )
+	if ( a_uiCount != 0 )
 	{
 		buffer.Bind();
 		buffer.SetData( a_pIndices, sizeof( *a_pIndices ) * a_uiCount, a_eUsage );
+	}
+
+	return buffer;
+}
+
+T2IndirectBuffer T2Render::CreateIndirectBuffer( const void* a_pData, GLuint a_uiSize, GLenum a_eUsage )
+{
+	GLuint uiBufferId;
+	glGenBuffers( 1, &uiBufferId );
+
+	TASSERT( uiBufferId != 0 );
+	T2IndirectBuffer buffer( uiBufferId );
+
+	if ( a_uiSize != 0 )
+	{
+		buffer.Bind();
+		buffer.SetData( a_pData, a_uiSize, a_eUsage );
+	}
+
+	return buffer;
+}
+
+T2ShaderStorageBuffer T2Render::CreateShaderStorageBuffer( const void* a_pData, GLuint a_uiSize, GLenum a_eUsage )
+{
+	GLuint uiBufferId;
+	glGenBuffers( 1, &uiBufferId );
+
+	TASSERT( uiBufferId != 0 );
+	T2ShaderStorageBuffer buffer( uiBufferId );
+
+	if ( a_uiSize != 0 )
+	{
+		buffer.Bind();
+		buffer.SetData( a_pData, a_uiSize, a_eUsage );
+	}
+
+	return buffer;
+}
+
+T2UniformBuffer T2Render::CreateUniformBuffer( const void* a_pData, GLuint a_uiSize, GLenum a_eUsage )
+{
+	GLuint uiBufferId;
+	glGenBuffers( 1, &uiBufferId );
+
+	TASSERT( uiBufferId != 0 );
+	T2UniformBuffer buffer( uiBufferId );
+
+	if ( a_uiSize != 0 )
+	{
+		buffer.Bind();
+		buffer.SetData( a_pData, a_uiSize, a_eUsage );
 	}
 
 	return buffer;
@@ -246,6 +298,24 @@ void T2Render::DestroyVertexBuffer( const T2VertexBuffer& a_VertexBuffer )
 void T2Render::DestroyIndexBuffer( const T2IndexBuffer& a_IndexBuffer )
 {
 	GLuint uiId = a_IndexBuffer.GetId();
+	glDeleteBuffers( 1, &uiId );
+}
+
+void T2Render::DestroyIndirectBuffer( const T2IndirectBuffer& a_IndirectBuffer )
+{
+	GLuint uiId = a_IndirectBuffer.GetId();
+	glDeleteBuffers( 1, &uiId );
+}
+
+void T2Render::DestroyShaderStorageBuffer( const T2IndirectBuffer& a_IndirectBuffer )
+{
+	GLuint uiId = a_IndirectBuffer.GetId();
+	glDeleteBuffers( 1, &uiId );
+}
+
+void T2Render::DestroyUniformBuffer( const T2IndirectBuffer& a_IndirectBuffer )
+{
+	GLuint uiId = a_IndirectBuffer.GetId();
 	glDeleteBuffers( 1, &uiId );
 }
 

@@ -9,6 +9,24 @@
 
 #  include <SDL/SDL.h>
 
+struct DrawElementsIndirectCommand
+{
+	DrawElementsIndirectCommand() = default;
+	DrawElementsIndirectCommand( TUINT a_uiCount, TUINT a_uiInstanceCount, TUINT a_uiFirstIndex, TINT a_iBaseVertex, TUINT a_uiBaseInstance )
+	    : count( a_uiCount )
+	    , instanceCount( a_uiInstanceCount )
+	    , firstIndex( a_uiFirstIndex )
+	    , baseVertex( a_iBaseVertex )
+	    , baseInstance( a_uiBaseInstance )
+	{}
+
+	TUINT count;
+	TUINT instanceCount;
+	TUINT firstIndex;
+	TINT  baseVertex;
+	TUINT baseInstance;
+};
+
 TOSHI_NAMESPACE_START
 
 //-----------------------------------------------------------------------------
@@ -58,16 +76,22 @@ public:
 	static GLuint CreateTexture( GLsizei a_iWidth, GLsizei a_iHeight, GLenum a_eInternalFormat, GLenum a_eFormat, GLenum a_ePixelType, TBOOL a_bGenerateMipmap, const void* a_pData );
 	static void   DestroyTexture( GLuint a_iId );
 
-	static T2CompiledShader CompileShader( GLenum a_eShader, const TCHAR* a_szSource );
-	static T2CompiledShader CompileShaderFromFile( GLenum a_eShader, const TCHAR* a_szFileName );
-	static T2Shader         CreateShaderProgram( T2CompiledShader a_VertexShader, T2CompiledShader a_FragmentShader );
-	static T2VertexBuffer   CreateVertexBuffer( const void* a_pData, GLuint a_uiSize, GLenum a_eUsage );
-	static T2IndexBuffer    CreateIndexBuffer( const TUINT16* a_pIndices, GLuint a_uiCount, GLenum a_eUsage );
-	static T2VertexArray    CreateVertexArray();
-	static T2VertexArray    CreateVertexArray( T2VertexBuffer a_VertexBuffer, T2IndexBuffer a_IndexBuffer );
+	static T2CompiledShader      CompileShader( GLenum a_eShader, const TCHAR* a_szSource );
+	static T2CompiledShader      CompileShaderFromFile( GLenum a_eShader, const TCHAR* a_szFileName );
+	static T2Shader              CreateShaderProgram( T2CompiledShader a_VertexShader, T2CompiledShader a_FragmentShader );
+	static T2VertexBuffer        CreateVertexBuffer( const void* a_pData, GLuint a_uiSize, GLenum a_eUsage );
+	static T2IndexBuffer         CreateIndexBuffer( const TUINT16* a_pIndices, GLuint a_uiCount, GLenum a_eUsage );
+	static T2IndirectBuffer      CreateIndirectBuffer( const void* a_pData, GLuint a_uiSize, GLenum a_eUsage );
+	static T2ShaderStorageBuffer CreateShaderStorageBuffer( const void* a_pData, GLuint a_uiSize, GLenum a_eUsage );
+	static T2UniformBuffer       CreateUniformBuffer( const void* a_pData, GLuint a_uiSize, GLenum a_eUsage );
+	static T2VertexArray         CreateVertexArray();
+	static T2VertexArray         CreateVertexArray( T2VertexBuffer a_VertexBuffer, T2IndexBuffer a_IndexBuffer );
 
 	static void DestroyVertexBuffer( const T2VertexBuffer& a_VertexBuffer );
 	static void DestroyIndexBuffer( const T2IndexBuffer& a_IndexBuffer );
+	static void DestroyIndirectBuffer( const T2IndirectBuffer& a_IndirectBuffer );
+	static void DestroyShaderStorageBuffer( const T2IndirectBuffer& a_IndirectBuffer );
+	static void DestroyUniformBuffer( const T2IndirectBuffer& a_IndirectBuffer );
 
 private:
 	void OnDeviceReset();

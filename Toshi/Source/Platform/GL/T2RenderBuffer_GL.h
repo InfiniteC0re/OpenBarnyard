@@ -30,19 +30,25 @@ public:
 
 	constexpr GLuint GetId() const { return m_uiId; }
 
-	void SetData( const void* a_pData, GLuint a_uiSize, GLenum a_eUsage )
+	void SetData( const void* a_pData, GLuint a_uiSize, GLenum a_eUsage ) const
 	{
-		glBufferData( Type, a_uiSize, a_pData, a_eUsage );
+		glNamedBufferData( m_uiId, a_uiSize, a_pData, a_eUsage );
 	}
 
-	void SetAttribPointer( GLuint a_uiIndex, GLint a_iNumComponents, GLenum a_eType, GLsizei a_iStride, GLsizei a_pOffset, GLboolean a_bNormalized = GL_FALSE )
+	void UpdateData( const void* a_pData, GLintptr offset, GLuint a_uiSize ) const
+	{
+		glNamedBufferSubData( m_uiId, offset, a_uiSize, a_pData );
+	}
+
+	void SetAttribPointer( GLuint a_uiIndex, GLint a_iNumComponents, GLenum a_eType, GLsizei a_iStride, GLsizei a_pOffset, GLboolean a_bNormalized = GL_FALSE ) const
 	{
 		glVertexAttribPointer( a_uiIndex, a_iNumComponents, a_eType, a_bNormalized, a_iStride, (const void*)a_pOffset );
 		glEnableVertexAttribArray( a_uiIndex );
 	}
 
-	void Bind() { glBindBuffer( Type, m_uiId ); }
-	void Unbind() { glBindBuffer( Type, 0 ); }
+	void Bind() const { glBindBuffer( Type, m_uiId ); }
+	void BindBase( GLuint a_uiIndex ) const { glBindBufferBase( Type, a_uiIndex, m_uiId ); }
+	void Unbind() const { glBindBuffer( Type, 0 ); }
 	void Clear() { m_uiId = 0; }
 
 	constexpr operator TBOOL() const { return m_uiId != 0; }
@@ -51,8 +57,11 @@ private:
 	GLuint m_uiId;
 };
 
-using T2VertexBuffer = T2RenderBuffer<GL_ARRAY_BUFFER>;
-using T2IndexBuffer  = T2RenderBuffer<GL_ELEMENT_ARRAY_BUFFER>;
+using T2VertexBuffer        = T2RenderBuffer<GL_ARRAY_BUFFER>;
+using T2IndexBuffer         = T2RenderBuffer<GL_ELEMENT_ARRAY_BUFFER>;
+using T2IndirectBuffer      = T2RenderBuffer<GL_DRAW_INDIRECT_BUFFER>;
+using T2ShaderStorageBuffer = T2RenderBuffer<GL_SHADER_STORAGE_BUFFER>;
+using T2UniformBuffer       = T2RenderBuffer<GL_UNIFORM_BUFFER>;
 
 class T2VertexArray
 {

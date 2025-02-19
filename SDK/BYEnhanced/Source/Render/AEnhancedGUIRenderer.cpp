@@ -54,11 +54,10 @@ void AEnhancedGUIRenderer::BeginScene()
 	m_oVertexArray.Bind();
 	m_oVertexArray.GetVertexBuffer().Bind();
 
-	glEnable( GL_BLEND );
-	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+	T2Render::GetRenderContext().EnableBlend( TTRUE );
+	T2Render::GetRenderContext().EnableDepthTest( TFALSE );
 
-	glCullFace( GL_FRONT );
-	glDisable( GL_DEPTH_TEST );
+	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 }
 
 void AEnhancedGUIRenderer::EndScene()
@@ -95,7 +94,7 @@ void AEnhancedGUIRenderer::RenderRectangle( const Toshi::TVector2& a, const Tosh
 	ms_aVertices[ 3 ].UV.y       = uv2.y;
 	ms_aVertices[ 3 ].UV.x       = uv2.x;
 
-	m_oVertexArray.GetVertexBuffer().SetData( &ms_aVertices, sizeof( AEnhancedGUIRenderer::Vertex ) * 4, GL_DYNAMIC_DRAW );
+	m_oVertexArray.GetVertexBuffer().UpdateData( &ms_aVertices, 0, sizeof( ms_aVertices ) );
 
 	AGUI2Transform* pTransform = m_pTransforms + m_iTransformCount;
 
@@ -139,10 +138,11 @@ void AEnhancedGUIRenderer::CreateVertexArray()
 	TUINT16 aIndices[] = { 0, 1, 2, 3 };
 
 	m_oVertexArray = T2Render::CreateVertexArray(
-	    T2Render::CreateVertexBuffer( TNULL, 0, GL_DYNAMIC_DRAW ),
+	    T2Render::CreateVertexBuffer( TNULL, sizeof( ms_aVertices ), GL_DYNAMIC_DRAW ),
 	    T2Render::CreateIndexBuffer( aIndices, TARRAYSIZE( aIndices ), GL_STATIC_DRAW )
 	);
 
+	m_oVertexArray.GetVertexBuffer().Bind();
 	m_oVertexArray.GetVertexBuffer().SetAttribPointer( 0, 3, GL_FLOAT, sizeof( AEnhancedGUIRenderer::Vertex ), 0 );
 	m_oVertexArray.GetVertexBuffer().SetAttribPointer( 1, 4, GL_UNSIGNED_BYTE, sizeof( AEnhancedGUIRenderer::Vertex ), offsetof( AEnhancedGUIRenderer::Vertex, Colour ), GL_TRUE );
 	m_oVertexArray.GetVertexBuffer().SetAttribPointer( 2, 2, GL_FLOAT, sizeof( AEnhancedGUIRenderer::Vertex ), offsetof( AEnhancedGUIRenderer::Vertex, UV ) );

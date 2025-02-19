@@ -1,4 +1,4 @@
-#version 400
+#version 460
 
 layout(location = 0) in vec3 a_Position;
 layout(location = 1) in vec3 a_Normal;
@@ -18,11 +18,15 @@ uniform vec3 u_LightDirection;
 uniform vec4 u_UpAxis;
 uniform vec4 u_LightColourParams;
 uniform mat4 u_Projection;
-uniform mat4 u_ModelView;
-uniform mat4 u_Model;
 uniform mat4 u_ViewWorld;
 uniform mat4 u_BoneTransforms[28];
 uniform int u_NumBones;
+
+layout(std430, binding = 3) buffer multidrawbuffer
+{
+	int indices[8000];
+    mat4 modelViews[8000];
+};
 
 void main()
 {
@@ -37,11 +41,14 @@ void main()
 		normal += (a_Normal * mat3(transform)) * a_Weights[i];
 	}
 	
-	// Calculate position of the vertex
-	gl_Position = (u_Projection * u_ModelView) * vec4(vertex, 1.0f);
+	mat4 modelView = modelViews[indices[gl_BaseInstance + gl_InstanceID]];
+	mat4 modelMatrix = u_ViewWorld * modelView;
 	
-	o_Position = (u_Model * vec4(vertex, 1.0f)).xyz;
-	o_Normal = mat3(u_Model) * normalize(normal);
+	// Calculate position of the vertex
+	gl_Position = (u_Projection * modelView) * vec4(vertex, 1.0f);
+	
+	o_Position = (modelMatrix * vec4(vertex, 1.0f)).xyz;
+	o_Normal = mat3(modelMatrix) * normalize(normal);
 	o_ViewPos = mat3(u_ViewWorld) * vec3(0.0, 0.0, 0.0);
 	o_TexCoord = a_UV;
 	

@@ -47,7 +47,9 @@ public:
 	TRegMaterial* GetNextRegMat() const { return m_pNextRegMat; }
 	void          SetNextRegMat( TRegMaterial* a_pRegMat ) { m_pNextRegMat = a_pRegMat; }
 
+#ifndef TOSHI_SDK
 private:
+#endif
 	State          m_State;
 	TOrderTable*   m_pOrderTable;
 	TMaterial*     m_pMaterial;

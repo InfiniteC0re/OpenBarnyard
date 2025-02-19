@@ -28,7 +28,7 @@ private:
 	void InstallHooks();
 	void CreateVertexArray();
 
-	inline static Vertex ms_aVertices[ 8 ];
+	inline static Vertex ms_aVertices[ 4 ];
 
 private:
 	Toshi::T2CompiledShader m_hVertexShader;

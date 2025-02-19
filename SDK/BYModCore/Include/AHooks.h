@@ -14,6 +14,7 @@ enum Hook
 	Hook_NewGameStarted,
 	Hook_MaterialLibrary_LoadTTLData,
 	Hook_TRenderInterface_SetLightColourMatrix,
+	Hook_TOrderTable_Flush,
 	Hook_NUMOF,
 };
 
@@ -61,8 +62,14 @@ public:
 
 	struct RenderInterface
 	{
-		using t_SetLightColourMatrix = void ( * )( Toshi::TRenderInterface* a_pRenderInterface, Toshi::TMatrix44* a_pLightColour );
+		using t_SetLightColourMatrix = void                                      ( * )( Toshi::TRenderInterface* a_pRenderInterface, Toshi::TMatrix44* a_pLightColour );
 		inline static Toshi::T2Vector<t_SetLightColourMatrix, MAX_NUM_CALLBACKS> SetLightColourMatrix[ HookType_NUMOF ];
+	};
+
+	struct OrderTable
+	{
+		using t_Flush = void                                      ( * )( Toshi::TOrderTable* a_pOrderTable );
+		inline static Toshi::T2Vector<t_Flush, MAX_NUM_CALLBACKS> Flush[ HookType_NUMOF ];
 	};
 
 	struct Uncategorized
