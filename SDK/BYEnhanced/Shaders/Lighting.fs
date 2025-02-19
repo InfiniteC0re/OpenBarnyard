@@ -34,6 +34,27 @@ vec3 filmic(vec3 x) {
   return pow(result, vec3(2.2));
 }
 
+vec3 uncharted2_tonemap_partial(vec3 x)
+{
+    float A = 0.15f;
+    float B = 0.50f;
+    float C = 0.10f;
+    float D = 0.20f;
+    float E = 0.02f;
+    float F = 0.30f;
+    return ((x*(A*x+C*B)+D*E)/(x*(A*x+B)+D*F))-E/F;
+}
+
+vec3 uncharted2_filmic(vec3 v)
+{
+    float exposure_bias = 6.4f;
+    vec3 curr = uncharted2_tonemap_partial(v * exposure_bias);
+
+    vec3 W = vec3(11.2f);
+    vec3 white_scale = vec3(1.0f) / uncharted2_tonemap_partial(W);
+    return curr * white_scale;
+}
+
 vec3 directionalLighting(vec3 normal, vec3 texColor)
 {
     vec3 lightDir = normalize(-u_DirectionalLightDir);
@@ -103,7 +124,7 @@ void main()
 	FragColor.rgb += pointLight(fragPos, normal, FragColor.rgb);
 	
 	// Tonemap
-	FragColor.rgb = aces(FragColor.rgb);
+	FragColor.rgb = uncharted2_filmic(FragColor.rgb);
 	FragColor.rgb = pow(FragColor.rgb, vec3(2.2));
 	
 	float zNear = 1.0;    // TODO: Replace by the zNear of your perspective projection
