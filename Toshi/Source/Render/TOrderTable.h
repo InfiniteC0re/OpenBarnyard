@@ -91,6 +91,9 @@ public:
 	// Allocate memory for storing render packets and registered materials
 	static void CreateStaticData( TUINT a_uiMaxMaterials, TUINT a_uiMaxRenderPackets );
 
+	// Deallocates memory used fror storing render packets and registered materials
+	static void DestroyStaticData();
+
 	// Allocates render packet from the memory allocated by CreateStaticData
 	static TRenderPacket* AllocRenderPacket();
 

@@ -131,7 +131,7 @@ void ASkinMaterialHAL::PreRender()
 		pD3DDevice->SetRenderState( D3DRS_CULLMODE, 1 );
 
 	auto pShader = TDYNAMICCAST( ASkinShaderHAL, GetShader() );
-	pShader->SetAlphaRef( ( m_Flags & FLAGS_HAS_BLENDMODE ) ? 1 : 128 );
+	pShader->SetAlphaRef( ( m_Flags & FLAGS_BLENDING ) ? 1 : 128 );
 
 	pD3DDevice->SetRenderState( D3DRS_COLORVERTEX, 0 );
 	pD3DDevice->SetRenderState( D3DRS_CULLMODE, 1 );
@@ -212,7 +212,7 @@ void ASkinMaterialHAL::CopyToAlphaBlendMaterial()
 		m_pAlphaBlendMaterial->m_apLightingTextures[ LT_2 ] = m_apLightingTextures[ LT_2 ];
 		m_pAlphaBlendMaterial->m_apLightingTextures[ LT_3 ] = m_apLightingTextures[ LT_3 ];
 
-		m_pAlphaBlendMaterial->SetFlags( TMaterial::FLAGS_HAS_BLENDMODE, TTRUE );
+		m_pAlphaBlendMaterial->SetFlags( TMaterial::FLAGS_BLENDING, TTRUE );
 	}
 }
 

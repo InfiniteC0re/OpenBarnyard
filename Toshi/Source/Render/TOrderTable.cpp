@@ -9,6 +9,7 @@
 
 TOSHI_NAMESPACE_START
 
+// $Barnyard: FUNCTION 006d5a60
 void TOrderTable::CreateStaticData( TUINT a_uiMaxMaterials, TUINT a_uiMaxRenderPackets )
 {
 	s_uiMaxRenderPackets = a_uiMaxRenderPackets;
@@ -34,27 +35,20 @@ TRenderPacket* TOrderTable::AllocRenderPacket()
 	return s_uiNumRenderPackets < s_uiMaxRenderPackets ? &s_pRenderPackets[ s_uiNumRenderPackets ] : TNULL;
 }
 
+// $Barnyard: FUNCTION 006c4610
 TOrderTable::TOrderTable()
 {
 	m_pLastRegMat = TNULL;
 	m_pShader     = TNULL;
 }
 
+// $Barnyard: FUNCTION 006d5d60
 TOrderTable::~TOrderTable()
 {
-	if ( s_pRegMaterials )
-	{
-		DeregisterAllMaterials();
-		s_llRegMatFreeList.RemoveAll();
-
-		delete[] s_pRegMaterials;
-		s_pRegMaterials = TNULL;
-	}
-
-	delete[] s_pRenderPackets;
-	s_pRenderPackets = TNULL;
+	DestroyStaticData();
 }
 
+// $Barnyard: FUNCTION 006d5910
 void TOrderTable::Render()
 {
 	TPROFILER_SCOPE();
@@ -68,6 +62,7 @@ void TOrderTable::Render()
 	m_pLastRegMat        = TNULL;
 }
 
+// $Barnyard: FUNCTION 006d5970
 void TOrderTable::Flush()
 {
 	TPROFILER_SCOPE();
@@ -90,6 +85,7 @@ void TOrderTable::Flush()
 	m_pLastRegMat        = TNULL;
 }
 
+// $Barnyard: FUNCTION 006d5be0
 TRegMaterial* TOrderTable::RegisterMaterial( TMaterial* pMat )
 {
 	TASSERT( s_uiNumRenderPackets == 0 );
@@ -115,13 +111,14 @@ TRegMaterial* TOrderTable::RegisterMaterial( TMaterial* pMat )
 	return pRegMat;
 }
 
+// $Barnyard: FUNCTION 006d5c60
 void TOrderTable::DeregisterMaterial( TRegMaterial* pRegMat )
 {
 	if ( HASANYFLAG( pRegMat->GetFlags(), TRegMaterial::State_Registered ) )
 	{
 		TASSERT( s_uiNumRenderPackets == 0 );
 
-		auto pMaterial = pRegMat->GetMaterial();
+		TMaterial* pMaterial = pRegMat->GetMaterial();
 
 		pRegMat->Remove();
 		s_llRegMatFreeList.InsertHead( pRegMat );
@@ -134,6 +131,7 @@ void TOrderTable::DeregisterMaterial( TRegMaterial* pRegMat )
 	}
 }
 
+// $Barnyard: FUNCTION 006d5cd0
 void TOrderTable::DeregisterAllMaterials()
 {
 	while ( !s_llRegMatRegisteredList.IsEmpty() )
@@ -152,6 +150,21 @@ void TOrderTable::UseMaterial( TRegMaterial* a_pRegMat )
 	}
 }
 
+void TOrderTable::DestroyStaticData()
+{
+	if ( s_pRegMaterials )
+	{
+		DeregisterAllMaterials();
+		s_llRegMatFreeList.RemoveAll();
+
+		delete[] s_pRegMaterials;
+		s_pRegMaterials = TNULL;
+	}
+
+	delete[] s_pRenderPackets;
+	s_pRenderPackets = TNULL;
+}
+
 void TRegMaterial::Render()
 {
 	TPROFILER_SCOPE();
@@ -168,9 +181,10 @@ void TRegMaterial::Render()
 	m_pMaterial->PostRender();
 }
 
+// $Barnyard: FUNCTION 006d59f0
 TRenderPacket* TRegMaterial::AddRenderPacket( TMesh* pMesh )
 {
-	auto pPreviousPacket = m_pLastRenderPacket;
+	TRenderPacket* pPreviousPacket = m_pLastRenderPacket;
 
 	m_pLastRenderPacket = TOrderTable::AllocRenderPacket();
 	m_pLastRenderPacket->SetNextPacket( pPreviousPacket );

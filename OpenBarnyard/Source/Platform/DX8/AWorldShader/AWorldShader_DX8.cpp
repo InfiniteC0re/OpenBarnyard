@@ -454,17 +454,10 @@ void AWorldShaderHAL::SetupLowEndMode()
 
 	pDevice->SetRenderState( D3DRS_CULLMODE, m_bRenderEnvMap ? D3DCULL_CCW : D3DCULL_CW );
 
-	static TUINT     s_uiIdentityMatrixFlags;
-	static TMatrix44 s_uiIdentityMatrix;
+	static TMatrix44 s_IdentityMatrix = TMatrix44::IDENTITY;
 
-	if ( !HASANYFLAG( s_uiIdentityMatrixFlags, 1 ) )
-	{
-		s_uiIdentityMatrixFlags |= 1;
-		s_uiIdentityMatrix = TMatrix44::IDENTITY;
-	}
-
-	pDevice->SetTransform( D3DTS_VIEW, (D3DMATRIX*)&s_uiIdentityMatrix );
-	pDevice->SetTransform( D3DTS_PROJECTION, (D3DMATRIX*)&pCurrentContext->GetProjectionMatrix() );
+	pDevice->SetTransform( D3DTS_VIEW, s_IdentityMatrix );
+	pDevice->SetTransform( D3DTS_PROJECTION, pCurrentContext->GetProjectionMatrix() );
 	pDevice->SetRenderState( D3DRS_SPECULARENABLE, dwWasSpecularEnabled );
 	pDevice->SetRenderState( D3DRS_FOGENABLE, FALSE );
 }

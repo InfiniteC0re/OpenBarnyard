@@ -135,6 +135,15 @@ TFORCEINLINE TFLOAT LERPClamped( TFLOAT a, TFLOAT b, TFLOAT t )
 	return fResult;
 }
 
+// $Barnyard: FUNCTION 006b6810
+TFORCEINLINE void NormaliseAngle( TFLOAT& a_rfValue )
+{
+	if ( PI < a_rfValue )
+		a_rfValue = fmod( a_rfValue + PI, PI * 2 ) - PI;
+	else if ( a_rfValue < -PI )
+		a_rfValue = fmod( a_rfValue - PI, PI * 2 ) + PI;
+}
+
 // $Barnyard: FUNCTION 006b6870
 // $Barnyard: FUNCTION 006b68a0
 template <typename T>

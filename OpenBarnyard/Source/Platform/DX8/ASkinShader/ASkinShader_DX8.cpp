@@ -691,16 +691,9 @@ void ASkinShaderHAL::SetupLowEndMode()
 
 	pDevice->SetRenderState( D3DRS_CULLMODE, m_bRenderEnvMap ? 3 : 2 );
 
-	static TUINT     s_uiIdentityMatrixFlags;
-	static TMatrix44 s_uiIdentityMatrix;
+	static TMatrix44 s_IdentityMatrix = TMatrix44::IDENTITY;
 
-	if ( ISZERO( s_uiIdentityMatrixFlags & 1 ) )
-	{
-		s_uiIdentityMatrixFlags |= 1;
-		s_uiIdentityMatrix = TMatrix44::IDENTITY;
-	}
-
-	pDevice->SetTransform( D3DTS_VIEW, s_uiIdentityMatrix );
+	pDevice->SetTransform( D3DTS_VIEW, s_IdentityMatrix );
 	pDevice->SetTransform( D3DTS_PROJECTION, pCurrentContext->GetProjectionMatrix() );
 	m_aOrderTables[ 0 ].Render();
 

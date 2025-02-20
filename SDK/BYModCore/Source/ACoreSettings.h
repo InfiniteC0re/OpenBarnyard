@@ -15,7 +15,7 @@ struct ACoreSettingsProperties
 inline struct ACoreSettings
     : public ACoreSettingsProperties
 {
-	
+
 	ACoreSettings();
 	~ACoreSettings();
 

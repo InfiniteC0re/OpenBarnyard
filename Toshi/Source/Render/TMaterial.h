@@ -22,7 +22,7 @@ public:
 	{
 		FLAGS_NONE          = 0,
 		FLAGS_NO_CULL       = BITFLAG( 0 ),
-		FLAGS_HAS_BLENDMODE = BITFLAG( 1 ),
+		FLAGS_BLENDING      = BITFLAG( 1 ),
 		FLAGS_UNK3          = BITFLAG( 2 ),
 		FLAGS_GLOW          = BITFLAG( 3 ),
 		FLAGS_CREATED       = BITFLAG( 4 ),

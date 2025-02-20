@@ -24,6 +24,7 @@
 #  include "Platform/DX8/ASysShader/ASysShader_DX8.h"
 #  include "Platform/DX8/AWorldShader/AWorldShader_DX8.h"
 #  include "Platform/DX8/ASkinShader/ASkinShader_DX8.h"
+#  include "Platform/DX8/AGrassShader/AGrassShaderHAL_DX8.h"
 #endif // TOSHI_SKU_WINDOWS
 
 #include <resource.h>
@@ -324,6 +325,7 @@ TBOOL ARenderer::OnCreate()
 	{
 		( new AWorldShaderHAL() )->Create();
 		( new ASkinShaderHAL() )->Create();
+		( new AGrassShaderHAL() )->Create();
 		( new ASysShaderHAL() )->Create();
 		CreateMainViewport();
 

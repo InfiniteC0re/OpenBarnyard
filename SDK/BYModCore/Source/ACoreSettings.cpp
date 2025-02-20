@@ -13,7 +13,6 @@ TOSHI_NAMESPACE_USING
 
 ACoreSettings::ACoreSettings()
 {
-	
 }
 
 ACoreSettings::~ACoreSettings()
@@ -23,14 +22,14 @@ ACoreSettings::~ACoreSettings()
 
 void ACoreSettings::Save()
 {
-	PTRB outFile;
-	PTRBSections* pSections = outFile.GetSections();
-	PTRBSymbols*  pSymbols  = outFile.GetSymbols();
+	PTRB                        outFile;
+	PTRBSections*               pSections  = outFile.GetSections();
+	PTRBSymbols*                pSymbols   = outFile.GetSymbols();
 	PTRBSections::MemoryStream* pMemStream = pSections->CreateStream();
 
 	// Write settings to the stream
 	auto pSettings = pMemStream->Alloc<ACoreSettingsProperties>();
-	*pSettings = *this;
+	*pSettings     = *this;
 
 	// Save the file
 	pSymbols->Add( pMemStream, "CoreSettings", pSettings.get() );
@@ -102,7 +101,7 @@ void ACoreSettings::Apply()
 			VirtualProtect( (void*)0x005EBF20, 4, PAGE_EXECUTE_READWRITE, &dwOldProtection );
 		}
 
-		TUINT32* pValues = s_aPatchValues[ bReduceLoadTimes ? 1 : 0 ];
+		TUINT32* pValues          = s_aPatchValues[ bReduceLoadTimes ? 1 : 0 ];
 		*(TUINT32*)( 0x004238AE ) = pValues[ 0 ];
 		*(TUINT32*)( 0x005EBF9E ) = pValues[ 1 ];
 		*(TUINT32*)( 0x005EC34E ) = pValues[ 2 ];
