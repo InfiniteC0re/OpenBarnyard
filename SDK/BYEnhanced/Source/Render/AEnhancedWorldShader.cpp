@@ -59,8 +59,6 @@ void AEnhancedWorldShader::PreRender()
 	m_oShaderProgram.SetUniform( s_uAmbientColor, *pAmbientColor );
 	m_oShaderProgram.SetUniform( s_uProjection, enhRender::g_Projection );
 
-	T2Render::GetRenderContext().EnableBlend( TFALSE );
-
 	//glEnable( GL_CULL_FACE );
 	//glCullFace( GL_BACK );
 
@@ -148,10 +146,13 @@ public:
 
 MEMBER_HOOK( 0x005f6f70, AWorldMaterial, AWorldMaterial_PreRender, void )
 {
-	CallOriginal();
+	if ( !enhRender::g_bIsShadowPass )
+		CallOriginal();
 
 	TTextureResourceHAL* pTexture = TSTATICCAST( TTextureResourceHAL, m_aTextures[ 0 ] );
 	T2GLTexture*         pGLTexture = AEnhancedTextureManager::GetAssociation( pTexture->GetD3DTexture() );
+	
+	T2Render::GetRenderContext().EnableBlend( m_eBlendMode != 0 );
 
 	if ( T2Render::GetTexture2D( 0 ) != pGLTexture->GetHandle() )
 	{
@@ -165,19 +166,21 @@ class AWorldShaderHAL
 
 MEMBER_HOOK( 0x005f6510, AWorldShaderHAL, AWorldShaderHAL_StartFlush, void )
 {
-	CallOriginal();
+	if ( !enhRender::g_bIsShadowPass )
+		CallOriginal();
+
 	AEnhancedWorldShader::GetSingleton()->PreRender();
 }
 
 MEMBER_HOOK( 0x005f6cb0, AWorldShaderHAL, AWorldShaderHAL_Render, void, Toshi::TRenderPacket* a_pRenderPacket )
 {
 	if ( *(TBOOL*)( TUINT( this ) + 0xEC ) == TFALSE )
-	{
 		return;
-	}
 
 	AEnhancedWorldShader::GetSingleton()->Render( a_pRenderPacket );
-	CallOriginal( a_pRenderPacket );
+	
+	if ( !enhRender::g_bIsShadowPass )
+		CallOriginal( a_pRenderPacket );
 }
 
 void AEnhancedWorldShader::InstallHooks()

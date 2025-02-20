@@ -15,8 +15,10 @@ namespace enhRender
 inline Toshi::T2FrameBuffer g_FrameBufferDeferred;
 inline Toshi::T2FrameBuffer g_ShadowMap1;
 inline Toshi::T2Shader      g_ShaderLighting;
-inline Toshi::TVector3      g_DirectionalLightDir( 0.653f, 0.757f, 0.0f );
+//inline Toshi::TVector3      g_DirectionalLightDir( 0.653f, 0.757f, 0.0f );
+inline Toshi::TVector3      g_DirectionalLightDir( 0.260f, 0.238f, 0.936f );
 inline Toshi::TVector3      g_FogColor( 1.0f, 1.0f, 1.0f );
+inline Toshi::TVector3      g_SpecularColor( 1.0f, 1.0f, 1.0f );
 inline Toshi::TMatrix44     g_Projection;
 inline Toshi::TMatrix44     g_LightViewMatrix;
 
@@ -26,6 +28,8 @@ inline TFLOAT g_ShadowStrength = 0.2f;
 
 inline TFLOAT g_Exposure = 6.4f;
 inline TFLOAT g_Gamma = 2.2f;
+
+inline TBOOL g_bIsShadowPass = TFALSE;
 
 } // namespace enhRender
 
@@ -71,11 +75,9 @@ private:
 
 	struct MultiDrawData
 	{
-		TINT             indices[ 8000 ];
 		Toshi::TMatrix44 matrices[ 8000 ];
 	} m_oMultiDrawData;
 
-	TINT m_iMultiDrawNumIndices = 0;
 	TINT m_iMultiDrawNumMatrices = 0;
 
 	TBOOL                                               m_bMultiDrawDirty = TTRUE;

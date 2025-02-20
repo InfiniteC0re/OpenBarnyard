@@ -60,7 +60,7 @@ public:
 		{
 			TINT      integer;
 			TUINT     uInteger;
-			__m512    mat44;
+			TMatrix44 mat44;
 			__m128    vec4;
 			TVector3  vec3;
 			FLOAT     fp;

@@ -120,6 +120,8 @@ public:
 			glBindTexture( GL_TEXTURE_2D, T2TextureManager::GetSingleton()->GetInvalidTexture()->GetHandle() );
 		}
 
+		T2Render::GetRenderContext().EnableBlend( m_iBlendMode != 0 );
+
 		if ( ( ( m_iBlendMode == 0 ) || ( m_iBlendMode == 1 ) ) || ( m_iBlendMode != 3 ) )
 		{
 			if ( !( g_uiRenderState & 1 ) )
@@ -162,18 +164,6 @@ AEnhancedSkinShader::AEnhancedSkinShader()
 
 	// Create shader programs
 	m_oShaderProgram   = T2Render::CreateShaderProgram( m_hVertexShader, m_hFragmentShader );
-
-	// Set default shader uniforms...
-
-	static TPString8 s_LightColourParams = TPS8D( "u_LightColourParams" );
-	static TPString8 s_UpAxis            = TPS8D( "u_UpAxis" );
-	static TPString8 s_LightColour       = TPS8D( "u_LightColour" );
-
-	// Default Shader
-	T2Render::SetShaderProgram( m_oShaderProgram );
-	m_oShaderProgram.SetUniform( s_UpAxis, TVector4( 0.0f, 0.0f, 0.0f, 1.0f ) );
-	m_oShaderProgram.SetUniform( s_LightColour, TVector4( 1.0f, 1.0f, 1.0f, 1.0f ) );
-	m_oShaderProgram.SetUniform( s_LightColourParams, TVector4( 1.0f, 0.0f, 0.0f, 1.0f ) );
 
 	InstallHooks();
 }
@@ -224,8 +214,13 @@ void AEnhancedSkinShader::Render( TRenderPacket* a_pRenderPacket )
 	TMesh* pMesh = a_pRenderPacket->GetMesh();
 	T2Render::SetShaderProgram( m_oShaderProgram );
 
+	ASkinMaterialWrapper* pMaterial = TSTATICCAST( ASkinMaterialWrapper, pMesh->GetMaterial() );
+
 	TSkeletonInstance* pSkeletonInstance = a_pRenderPacket->GetSkeletonInstance();
 	TUINT16            uiNumSubMeshes    = *(TUINT16*)( TUINT( pMesh ) + 0x16 );
+
+	static TPString8 s_Shininess = TPS8D( "u_Shininess" );
+	m_oShaderProgram.SetUniform( s_Shininess, ( pMaterial->m_bIsSkin && pMaterial->m_bFlag2 && pMaterial->m_bFlag3 ) ? 0.15f : 0.0f );
 
 	for ( TUINT16 i = 0; i < iNumCmds; i++ )
 	{
@@ -236,10 +231,15 @@ void AEnhancedSkinShader::Render( TRenderPacket* a_pRenderPacket )
 		auto iSubMeshNumBones = *TREINTERPRETCAST( TINT32*, TUINT( pSubMesh ) + 0x20 );
 		auto pSubMeshBones    = TREINTERPRETCAST( TUINT32*, TUINT( pSubMesh ) + 0x24 );
 
-		__m512 s_aBoneTransforms[ 28 ];
+		// Make sure the shader is flushed
+		if ( i == 0 && iSubMeshNumBones > 1 )
+			FlushMultiDraw();
+
+		TMatrix44 s_aBoneTransforms[ 28 ];
 		for ( TINT k = 0; k < iSubMeshNumBones && k < TARRAYSIZE( s_aBoneTransforms ); k++ )
 		{
-			s_aBoneTransforms[ k ] = _mm512_loadu_ps( &pSkeletonInstance->GetBone( pSubMeshBones[ k ] ).m_Transform );
+			//s_aBoneTransforms[ k ] = _mm512_loadu_ps( &pSkeletonInstance->GetBone( pSubMeshBones[ k ] ).m_Transform );
+			s_aBoneTransforms[ k ] = pSkeletonInstance->GetBone( pSubMeshBones[ k ] ).m_Transform;
 		}
 
 		static TPString8 s_NumBones       = TPS8D( "u_NumBones" );
@@ -249,12 +249,9 @@ void AEnhancedSkinShader::Render( TRenderPacket* a_pRenderPacket )
 		bSkeletonChanged |= m_oShaderProgram.SetUniform( s_BoneTransforms, (TMatrix44*)s_aBoneTransforms, iSubMeshNumBones );
 		bSkeletonChanged |= m_oShaderProgram.SetUniform( s_NumBones, iSubMeshNumBones );
 
-		ARenderBuffer renderBuffer = ARenderBufferCollection::GetSingleton()->GetRenderBuffer( iRenderBufferID );
-
-		if ( bSkeletonChanged )
-			FlushMultiDraw();
-
-		QueueMultiDraw( renderBuffer );
+		QueueMultiDraw( 
+			ARenderBufferCollection::GetSingleton()->GetRenderBuffer( iRenderBufferID )
+		);
 
 		if ( bSkeletonChanged )
 			FlushMultiDraw();
@@ -350,7 +347,9 @@ void AEnhancedSkinShader::FlushMultiDraw()
 
 MEMBER_HOOK( 0x005f3ba0, ASkinMaterialWrapper, ASkinMaterial_PreRender, void )
 {
-	CallOriginal();
+	if ( !enhRender::g_bIsShadowPass )
+		CallOriginal();
+
 	ASkinMaterialWrapper::PreRender();
 }
 
@@ -361,15 +360,17 @@ TBOOL g_bIsFlushingSkinShader = TFALSE;
 
 MEMBER_HOOK( 0x005f3230, ASkinShaderHAL, ASkinShader_StartFlush, void )
 {
-	CallOriginal();
-	AEnhancedSkinShader::GetSingleton()->PreRender();
+	if ( !enhRender::g_bIsShadowPass )
+		CallOriginal();
 
+	AEnhancedSkinShader::GetSingleton()->PreRender();
 	g_bIsFlushingSkinShader = TTRUE;
 }
 
 MEMBER_HOOK( 0x005f3370, ASkinShaderHAL, ASkinShader_EndFlush, void )
 {
-	CallOriginal();
+	if ( !enhRender::g_bIsShadowPass )
+		CallOriginal();
 
 	// NOTE: This method is shared across skin and world shaders in the original game so this hack is required
 	if ( g_bIsFlushingSkinShader )
@@ -382,7 +383,9 @@ MEMBER_HOOK( 0x005f3370, ASkinShaderHAL, ASkinShader_EndFlush, void )
 
 MEMBER_HOOK( 0x005f4830, ASkinShaderHAL, ASkinShader_Render, void, Toshi::TRenderPacket* a_pRenderPacket )
 {
-	CallOriginal( a_pRenderPacket );
+	if ( !enhRender::g_bIsShadowPass )
+		CallOriginal( a_pRenderPacket );
+
 	AEnhancedSkinShader::GetSingleton()->Render( a_pRenderPacket );
 }
 

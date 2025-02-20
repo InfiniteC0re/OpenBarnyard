@@ -243,7 +243,7 @@ TBOOL T2Shader::SetUniform( const TPString8& a_strSlotName, const TMatrix44* a_p
 			return TFALSE;
 
 		glUniformMatrix4fv( meta.id, a_uiNumItems, GL_FALSE, (const TFLOAT*)a_pMatrix );
-		meta.mat44 = _mm512_loadu_ps( a_pMatrix );
+		meta.mat44 = *a_pMatrix;
 
 		return TTRUE;
 	}
@@ -256,12 +256,13 @@ TBOOL T2Shader::SetUniform( const TPString8& a_strSlotName, const TMatrix44& a_r
 	if ( meta.id < 0 )
 		return TFALSE;
 
-	__m512* m0 = (__m512*)&a_rMatrix;
+	//__m512* m0 = (__m512*)&a_rMatrix;
 
-	if ( _mm512_cmpneq_ps_mask( *m0, meta.mat44 ) != 0 )
+	if ( TUtil::MemCompare( &meta.mat44, &a_rMatrix, 64 ) != 0 )
 	{
 		glUniformMatrix4fv( meta.id, 1, GL_FALSE, &a_rMatrix.m_f11 );
-		meta.mat44 = _mm512_loadu_ps( m0 );
+		meta.mat44 = a_rMatrix;
+		//meta.mat44 = _mm512_loadu_ps( m0 );
 
 		return TTRUE;
 	}

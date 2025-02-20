@@ -87,7 +87,6 @@ TBOOL AEnhancedRenderer::Update( TFLOAT a_fDeltaTime )
 void AEnhancedRenderer::ResetMultiDraw()
 {
 	m_vecMultiDrawCommands.Clear();
-	m_iMultiDrawNumIndices  = 0;
 	m_iMultiDrawNumMatrices = 0;
 	m_bMultiDrawDirty       = TFALSE;
 }
@@ -100,28 +99,10 @@ void AEnhancedRenderer::AddMultiDrawCommand( TUINT a_uiCount, TUINT a_uiInstance
 
 TINT AEnhancedRenderer::AddMultiDrawModelViewMatrix( const Toshi::TMatrix44& a_rcModelView )
 {
-	if ( m_iMultiDrawNumMatrices > 0 )
-	{
-		const TMatrix44& rLastMatrix = m_oMultiDrawData.matrices[ m_iMultiDrawNumMatrices - 1 ];
+	m_oMultiDrawData.matrices[ m_iMultiDrawNumMatrices++ ] = a_rcModelView;
+	m_bMultiDrawDirty                                      = TTRUE;
 
-		__m512* m0 = (__m512*)&rLastMatrix;
-		__m512* m1 = (__m512*)&a_rcModelView;
-
-		if ( _mm512_cmpneq_ps_mask( *m0, *m1 ) != 0 )
-		{
-			m_oMultiDrawData.matrices[ m_iMultiDrawNumMatrices++ ] = a_rcModelView;
-		}
-	}
-	else
-	{
-		// This is the first matrix in the list
-		m_oMultiDrawData.matrices[ m_iMultiDrawNumMatrices++ ] = a_rcModelView;
-	}
-	
-	m_oMultiDrawData.indices[ m_iMultiDrawNumIndices++ ] = m_iMultiDrawNumMatrices - 1;
-	m_bMultiDrawDirty                                    = TTRUE;
-
-	return m_iMultiDrawNumIndices - 1;
+	return m_iMultiDrawNumMatrices - 1;
 }
 
 void AEnhancedRenderer::FlushMultiDrawCommands()
@@ -131,7 +112,7 @@ void AEnhancedRenderer::FlushMultiDrawCommands()
 	if ( m_bMultiDrawDirty && m_vecMultiDrawCommands.Size() > 0 )
 	{
 		m_oIndirectBuffer.UpdateData( &m_vecMultiDrawCommands[ 0 ], 0, m_vecMultiDrawCommands.Size() * sizeof( DrawElementsIndirectCommand ) );
-		m_oMultiDrawShaderStorage.UpdateData( &m_oMultiDrawData, 0, sizeof( MultiDrawData::indices ) + sizeof( TMatrix44 ) * m_iMultiDrawNumMatrices );
+		m_oMultiDrawShaderStorage.UpdateData( &m_oMultiDrawData, 0, sizeof( TMatrix44 ) * m_iMultiDrawNumMatrices );
 		m_bMultiDrawDirty = TFALSE;
 	}
 }
@@ -167,6 +148,8 @@ void AEnhancedRenderer::ScenePreRender()
 	
 	ACamera*  pCamera       = CALL_THIS( 0x0045b870, void*, ACamera*, *(void**)0x007822e0 );
 	TMatrix44 oCamTransform = pCamera->m_Matrix;
+
+	enhRender::g_bIsShadowPass = TTRUE;
 	
 	// Setup viewport size
 	glViewport( 0, 0, SHADOW_MAP_SIZE, SHADOW_MAP_SIZE );
@@ -241,13 +224,19 @@ void AEnhancedRenderer::ScenePreRender()
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
 	// Set attachments to draw to (deferred rendering)
-	GLuint attachments[ 3 ] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
+	GLuint attachments[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3 };
 	glDrawBuffers( TARRAYSIZE( attachments ), attachments );
+
+	enhRender::g_bIsShadowPass = TFALSE;
 }
 
 void AEnhancedRenderer::ScenePostRender()
 {
 	enhRender::g_FrameBufferDeferred.Unbind();
+
+	// Get camera transform
+	ACamera*  pCamera       = CALL_THIS( 0x0045b870, void*, ACamera*, *(void**)0x007822e0 );
+	TMatrix44 oCamTransform = pCamera->m_Matrix;
 	
 	// Reset draw buffers attachments
 	GLuint attachment = GL_COLOR_ATTACHMENT0;
@@ -258,8 +247,9 @@ void AEnhancedRenderer::ScenePostRender()
 	T2Render::SetTexture2D( 0, enhRender::g_FrameBufferDeferred.GetAttachment( 0 ) ); // world positions
 	T2Render::SetTexture2D( 1, enhRender::g_FrameBufferDeferred.GetAttachment( 1 ) ); // normals
 	T2Render::SetTexture2D( 2, enhRender::g_FrameBufferDeferred.GetAttachment( 2 ) ); // colors
-	T2Render::SetTexture2D( 3, enhRender::g_FrameBufferDeferred.GetDepthTexture() );  // depth
-	T2Render::SetTexture2D( 4, enhRender::g_ShadowMap1.GetDepthTexture() );           // shadow map
+	T2Render::SetTexture2D( 3, enhRender::g_FrameBufferDeferred.GetAttachment( 3 ) ); // info
+	T2Render::SetTexture2D( 4, enhRender::g_FrameBufferDeferred.GetDepthTexture() );  // depth
+	T2Render::SetTexture2D( 5, enhRender::g_ShadowMap1.GetDepthTexture() );           // shadow map
 
 	static TPString8 s_DirectionalLightDir   = TPS8D( "u_DirectionalLightDir" );
 	static TPString8 s_AmbientColor          = TPS8D( "u_AmbientColor" );
@@ -272,8 +262,11 @@ void AEnhancedRenderer::ScenePostRender()
 	static TPString8 s_ShadowStrength        = TPS8D( "u_ShadowStrength" );
 	static TPString8 s_Gamma                 = TPS8D( "u_Gamma" );
 	static TPString8 s_Exposure              = TPS8D( "u_Exposure" );
+	static TPString8 s_CamPos                = TPS8D( "u_CamPos" );
+	static TPString8 s_SpecularColor         = TPS8D( "u_SpecularColor" );
 	enhRender::g_ShaderLighting.SetUniform( s_DirectionalLightDir, enhRender::g_DirectionalLightDir );
 	enhRender::g_ShaderLighting.SetUniform( s_FogColor, enhRender::g_FogColor );
+	enhRender::g_ShaderLighting.SetUniform( s_SpecularColor, enhRender::g_SpecularColor );
 	enhRender::g_ShaderLighting.SetUniform( s_LightViewMatrix, enhRender::g_LightViewMatrix );
 	enhRender::g_ShaderLighting.SetUniform( s_ShadowBiasMin, enhRender::g_ShadowBiasMin );
 	enhRender::g_ShaderLighting.SetUniform( s_ShadowBiasMax, enhRender::g_ShadowBiasMax );
@@ -282,6 +275,7 @@ void AEnhancedRenderer::ScenePostRender()
 	enhRender::g_ShaderLighting.SetUniform( s_Exposure, enhRender::g_Exposure );
 	enhRender::g_ShaderLighting.SetUniform( s_AmbientColor, *(TVector4*)( ( *(TUINT*)0x0079a854 ) + 0x100 ) );
 	enhRender::g_ShaderLighting.SetUniform( s_DiffuseColor, *(TVector4*)( ( *(TUINT*)0x0079a854 ) + 0xF0 ) );
+	enhRender::g_ShaderLighting.SetUniform( s_CamPos, oCamTransform.GetTranslation3() );
 	RenderScreenQuad();
 
 	//// Apply HDR
@@ -351,7 +345,7 @@ void AEnhancedRenderer::CreateFrameBuffers()
 	    1,
 	    m_oWindowParams.uiWidth,
 	    m_oWindowParams.uiHeight,
-	    GL_RGB16F,
+	    GL_RGBA32F,
 	    GL_RGBA,
 	    GL_FLOAT
 	);
@@ -362,6 +356,16 @@ void AEnhancedRenderer::CreateFrameBuffers()
 	    m_oWindowParams.uiWidth,
 	    m_oWindowParams.uiHeight,
 	    GL_RGB32F,
+	    GL_RGBA,
+	    GL_FLOAT
+	);
+
+	// Create attachment to store other information
+	enhRender::g_FrameBufferDeferred.CreateAttachment(
+	    3,
+	    m_oWindowParams.uiWidth,
+	    m_oWindowParams.uiHeight,
+	    GL_RGB16F,
 	    GL_RGBA,
 	    GL_FLOAT
 	);
@@ -471,7 +475,7 @@ MEMBER_HOOK( 0x006d6c80, TRenderContextD3D, TRenderContextD3D_ComputePerspective
 MEMBER_HOOK( 0x006d6f80, TRenderContextD3D, TRenderContextD3D_ComputeOrthographicProjection, void )
 {
 	CallOriginal();
-	*(glm::mat4*)&enhRender::g_Projection = glm::orthoNO( -30.0f, 30.0f, -30.0f, 30.0f, 1.0f, 280.0f );
+	*(glm::mat4*)&enhRender::g_Projection = glm::orthoNO( -25.0f, 25.0f, -25.0f, 25.0f, 1.0f, 280.0f );
 }
 
 MEMBER_HOOK( 0x006d7030, TRenderContextD3D, TRenderContextD3D_ComputeOrthographicFrustum, void )
