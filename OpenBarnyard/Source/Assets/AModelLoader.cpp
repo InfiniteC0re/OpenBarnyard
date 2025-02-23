@@ -338,6 +338,11 @@ void AModelLoader::DestroyMaterial( TMaterial* a_pMaterial )
 	}
 }
 
+void AModelLoader::InitialiseStatic()
+{
+	InitialiseGrassLayersTextures();
+}
+
 void AModelLoader::AddMaterial( const TString8& a_rName, MaterialNode* a_pMaterialNode )
 {
 	TPROFILER_SCOPE();

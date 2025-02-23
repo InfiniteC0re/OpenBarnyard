@@ -2,6 +2,7 @@
 #include "Render/AWorldShader/AWorldMaterial.h"
 #include "Render/ASkinShader/ASkinMaterial.h"
 #include "Render/AStaticInstanceShader/AStaticInstanceMaterial.h"
+#include "Assets/AMaterialLibrary.h"
 
 #include <Toshi/T2DList.h>
 #include <Render/TTMDBase.h>
@@ -11,6 +12,7 @@
 
 #ifdef TOSHI_SKU_WINDOWS
 #  include <Render/TTMDWin.h>
+#  include <Platform/DX8/T2Texture_DX8.h>
 #endif
 
 class AModelLoader : public Toshi::TObject
@@ -53,6 +55,8 @@ public:
 	static Toshi::TMaterial* CreateMaterial( Toshi::TShader* a_pShader, const TCHAR* a_szMaterialName );
 	static void              DestroyMaterial( Toshi::TMaterial* a_pMaterial );
 
+	static void InitialiseStatic();
+
 private:
 	static void              AddMaterial( const Toshi::TString8& a_rName, MaterialNode* a_pMaterialNode );
 	static Toshi::TMaterial* FindMaterial( const Toshi::TString8& a_rName );
@@ -66,6 +70,8 @@ private:
 	static void LoadGrassMeshTRB( Toshi::TModel* a_pModel, TINT a_iLODIndex, Toshi::TModelLOD* a_pLOD );
 	static void LoadWorldMeshTRB( Toshi::TModel* a_pModel, TINT a_iLODIndex, Toshi::TModelLOD* a_pLOD );
 	static void LoadSkinLOD( Toshi::TModel* a_pModel, TINT a_iLODIndex, Toshi::TModelLOD* a_pLOD, Toshi::TTMDWin::TRBLODHeader* a_pLODHeader );
+
+	static void InitialiseGrassLayersTextures();
 
 private:
 	static TBOOL AModelLoaderLoadTMDCallback( Toshi::TModel* a_pModel );

@@ -2,6 +2,7 @@
 #include "AWorldShader_DX8.h"
 #include "AWorldMaterial_DX8.h"
 #include "AWorldMesh_DX8.h"
+#include "World/AWorld.h"
 
 #include <Render/TRenderPacket.h>
 #include <Platform/DX8/TRenderInterface_DX8.h>
@@ -298,7 +299,7 @@ void AWorldShaderHAL::Render( TRenderPacket* a_pRenderPacket )
 		TVertexBlockResource::HALBuffer vertexBuffer;
 		pVertexPool->GetHALBuffer( &vertexBuffer );
 
-		pDevice->SetStreamSource( 0, vertexBuffer.apVertexBuffers[ 0 ], 44 );
+		pDevice->SetStreamSource( 0, vertexBuffer.apVertexBuffers[ 0 ], sizeof( WorldVertex ) );
 
 		// Set indices
 		auto pIndexPool = TSTATICCAST( TIndexPoolResource, pMesh->GetSubMesh( 0 )->pIndexPool );

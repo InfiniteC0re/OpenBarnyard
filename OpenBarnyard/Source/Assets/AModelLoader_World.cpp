@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "AModelLoader.h"
 #include "World/AWorldVIS.h"
+#include "AAssetLoader.h"
+#include "AMaterialLibraryManager.h"
 
 #ifdef TOSHI_SKU_WINDOWS
 #  include "Platform/DX8/AWorldShader/AWorldMesh_DX8.h"
@@ -20,9 +22,29 @@
 
 TOSHI_NAMESPACE_USING
 
-static TUINT   s_iMeshIndex          = 0;
-static TUINT   s_iGrassMeshIndex     = 0;
-static TClass* s_pWorldMaterialClass = TNULL;
+static TUINT      s_iMeshIndex      = 0;
+static TUINT      s_iGrassMeshIndex = 0;
+AMaterialLibrary* g_pGrassLayersMatLib;
+Toshi::T2Texture* g_aGrassLayers[ 7 ];
+static TClass*    s_pWorldMaterialClass = TNULL;
+
+// $Barnyard: FUNCTION 00613270
+void AModelLoader::InitialiseGrassLayersTextures()
+{
+	g_pGrassLayersMatLib = AMaterialLibraryManager::List::GetSingleton()->CreateLibraryFromAsset(
+	    "Data\\MiscTextures\\GrasslayertexWin.ttl",
+	    AAssetLoader::GetAssetTRB( AAssetType_Startup )
+	);
+
+	TVALIDPTR( g_pGrassLayersMatLib );
+
+	g_aGrassLayers[ 1 ] = g_pGrassLayersMatLib->GetTexture( g_pGrassLayersMatLib->FindTextureIndex( "treeb3.tga" ) )->pTexture;
+	g_aGrassLayers[ 2 ] = g_aGrassLayers[ 1 ];
+	g_aGrassLayers[ 3 ] = g_pGrassLayersMatLib->GetTexture( g_pGrassLayersMatLib->FindTextureIndex( "treeb2.tga" ) )->pTexture;
+	g_aGrassLayers[ 4 ] = g_aGrassLayers[ 3 ];
+	g_aGrassLayers[ 5 ] = g_pGrassLayersMatLib->GetTexture( g_pGrassLayersMatLib->FindTextureIndex( "treeb1.tga" ) )->pTexture;
+	g_aGrassLayers[ 6 ] = g_aGrassLayers[ 5 ];
+}
 
 static void LoadTreeIntersect( CellSphereTreeBranchNode* a_pRenderGroup, Cell*& a_ppModel, TModelLOD* a_pModelLOD )
 {

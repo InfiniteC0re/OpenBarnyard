@@ -332,6 +332,7 @@ TBOOL ARenderer::OnCreate()
 		AModelLoader::CreateSingleton();
 		AMaterialLibraryManager::CreateSingleton();
 		AKeyFrameLibraryManager::CreateSingleton();
+		AModelLoader::GetSingleton()->InitialiseStatic();
 		AGlowViewport::CreateSingleton( TLightIDList::MAX_NUM_LIGHTS * SPLITSCREEN_MAX_NUM_PLAYERS );
 	}
 

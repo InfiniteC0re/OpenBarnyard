@@ -2,6 +2,8 @@
 #include "AGrassShaderHAL_DX8.h"
 #include "AGrassMaterialHAL_DX8.h"
 #include "AGrassMeshHAL_DX8.h"
+#include "Cameras/ACameraManager.h"
+#include "Assets/AModelLoader.h"
 #include "Platform/DX8/AWorldShader/AWorldShader_DX8.h"
 
 #include <Toshi/TScheduler.h>
@@ -97,11 +99,11 @@ void AGrassShaderHAL::StartFlush()
 		AWorldShaderHAL*          pWorldShader    = TSTATICCAST( AWorldShaderHAL, AWorldShader::GetSingleton() );
 		TVector4                  vecShadowColor  = pWorldShader->GetShadowColour();
 		TVector4                  vecAmbientColor = pWorldShader->GetAmbientColour();
-		static constexpr TVector4 vecSomeColor    = TVector4( 1.0f, 1.0f, 1.0f, 1.0f );
+		static constexpr TVector4 vecColor        = TVector4( 1.0f, 1.0f, 1.0f, 1.0f );
 
 		pD3DDevice->SetVertexShaderConstant( 4, &vecAmbientColor, 1 );
 		pD3DDevice->SetVertexShaderConstant( 5, &vecShadowColor, 1 );
-		pD3DDevice->SetVertexShaderConstant( 6, &vecSomeColor, 1 );
+		pD3DDevice->SetVertexShaderConstant( 6, &vecColor, 1 );
 
 		pD3DDevice->SetRenderState( D3DRS_ZWRITEENABLE, TRUE );
 		pD3DDevice->SetRenderState( D3DRS_ALPHATESTENABLE, TRUE );
@@ -215,22 +217,56 @@ void AGrassShaderHAL::Render( Toshi::TRenderPacket* a_pRenderPacket )
 		TVertexBlockResource::HALBuffer oVertexBuffer;
 		TVertexPoolResource*            pVertexPool = TSTATICCAST( TVertexPoolResource, pMesh->GetVertexPool() );
 		pVertexPool->GetHALBuffer( &oVertexBuffer );
-		pD3DDevice->SetStreamSource( 0, oVertexBuffer.apVertexBuffers[ 0 ], 44 );
+		pD3DDevice->SetStreamSource( 0, oVertexBuffer.apVertexBuffers[ 0 ], sizeof( WorldVertex ) );
 
 		TIndexBlockResource::HALBuffer oIndexBuffer;
 		TIndexPoolResource*            pIndexPool = TSTATICCAST( TIndexPoolResource, pMesh->GetSubMesh( 0 )->pIndexPool );
 		pIndexPool->GetHALBuffer( &oIndexBuffer );
 		pD3DDevice->SetIndices( oIndexBuffer.pIndexBuffer, oVertexBuffer.uiVertexOffset );
 
-		TVector4 vecUnknown = TVector4( 0.0f, 0.0f, 0.0f, 0.0f );
-		g_vecAnimOffset.w   = 1.0f;
+		TVector4 vecOffset = TVector4( 0.0f, 0.0f, 0.0f, 0.0f );
+		g_vecAnimOffset.w  = 1.0f;
 
 		pD3DDevice->SetVertexShaderConstant( 8, &g_vecAnimOffset, 1 );
-		pD3DDevice->SetVertexShaderConstant( 7, &vecUnknown, 1 );
+		pD3DDevice->SetVertexShaderConstant( 7, &vecOffset, 1 );
 		pD3DDevice->SetTexture( 0, g_pGrassShaderTerrainTexture->GetD3DTexture() );
 		pD3DDevice->DrawIndexedPrimitive( D3DPT_TRIANGLESTRIP, 0, pVertexPool->GetNumVertices(), oIndexBuffer.uiIndexOffset, pIndexPool->GetNumIndices() - 2 );
 	
-		TTODO( "Draw grass layers" );
+		ACamera* pCamera         = ACameraManager::GetSingleton()->GetCurrentCamera();
+		TVector4 vecCamPos       = pCamera->GetMatrix().GetTranslation();
+		TSphere  vecMeshBounding = pMesh->GetCellMeshSphere()->m_BoundingSphere;
+
+		TFLOAT fDistanceToCamera = TVector4::DistanceXZ( vecMeshBounding.AsVector4(), vecCamPos ) - vecMeshBounding.GetRadius();
+
+		if ( fDistanceToCamera <= 100.0f )
+		{
+			constexpr TINT MAX_LAYERS = 5;
+			TINT           iNumLayers = MAX_LAYERS;
+
+			if ( fDistanceToCamera > 20.0f )
+			{
+				iNumLayers = ( fDistanceToCamera >= 50.0f ) ?
+				    1 :
+				    MAX_LAYERS - 1 - TMath::Min( TINT( ( fDistanceToCamera - 20.0f ) / 10.0f ), 3 );
+			}
+
+			g_vecAnimOffset.w = 2.0f;
+			TFLOAT fStepSize  = 0.25f / iNumLayers;
+
+			for ( TINT i = 1; i <= iNumLayers; i++ )
+			{
+				extern T2Texture* g_aGrassLayers[ 7 ]; // AModelLoader_World.cpp
+
+				pD3DDevice->SetTexture( 0, g_aGrassLayers[ i ]->GetD3DTexture() );
+				pD3DDevice->SetVertexShaderConstant( 8, &g_vecAnimOffset, 1 );
+
+				vecOffset.x += fStepSize;
+				vecOffset.y += fStepSize;
+				vecOffset.z += fStepSize;
+				pD3DDevice->SetVertexShaderConstant( 7, &vecOffset, 1 );
+				pD3DDevice->DrawIndexedPrimitive( D3DPT_TRIANGLESTRIP, 0, pVertexPool->GetNumVertices(), oIndexBuffer.uiIndexOffset, pIndexPool->GetNumIndices() - 2 );
+			}
+		}
 	}
 }
 
@@ -275,6 +311,7 @@ void AGrassShaderHAL::UpdateAnimation()
 	g_vecAnimationDataOffset.x = TMath::Sin( vecAnim.x );
 	g_vecAnimationDataOffset.y = TMath::Sin( vecAnim.y );
 	g_vecAnimationDataOffset.z = TMath::Sin( vecAnim.z );
+	g_vecAnimationDataOffset.Multiply( 0.075f );
 
 	g_vecAnimOffset.x = g_vecAnimationDataOffset.x;
 	g_vecAnimOffset.y = g_vecAnimationDataOffset.y;

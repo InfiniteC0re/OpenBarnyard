@@ -26,6 +26,8 @@ public:
 
 	void CreateHAL( TUINT32 a_eFlags, TUINT16 a_uiMaxVertices, CellMeshSphere* a_pCellMeshSphere );
 
+	CellMeshSphere* GetCellMeshSphere() const { return m_pCellMeshSphere; }
+
 private:
 	void* m_pUnk1;
 	CellMeshSphere* m_pCellMeshSphere;
