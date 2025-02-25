@@ -34,10 +34,16 @@ public:
 	void        SetListener( EventListener* a_pListener ) { m_pListener = a_pListener; }
 	SDL_Window* GetNativeWindow() const { return m_pWindow; }
 
+	TINT GetWidth() const { return m_iWidth; }
+	TINT GetHeight() const { return m_iHeight; }
+
 private:
 	SDL_Window*    m_pWindow = TNULL;
 	EventListener* m_pListener;
 	T2Render*      m_pRender;
+
+	TINT m_iWidth;
+	TINT m_iHeight;
 };
 
 TOSHI_NAMESPACE_END

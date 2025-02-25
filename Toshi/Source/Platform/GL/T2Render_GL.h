@@ -62,7 +62,9 @@ public:
 	void BeginScene();
 	void EndScene();
 
+	T2Window*           GetWindow() const { return m_pWindow; }
 	const WindowParams& GetWindowParams() const { return m_oWindowParams; }
+	SDL_GLContext       GetGLContext() const { return m_pGLContext; }
 
 public:
 	static T2RenderContext& GetRenderContext() { return GetSingleton()->m_oRenderContext; }

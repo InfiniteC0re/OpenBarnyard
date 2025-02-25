@@ -25,6 +25,9 @@ TBOOL T2Window::Create( T2Render* a_pRender, const TCHAR* a_szTitle )
 #endif
 	);
 
+	m_iWidth  = -1;
+	m_iHeight = -1;
+
 	return m_pWindow != TNULL;
 }
 
@@ -56,6 +59,9 @@ void T2Window::SetPosition( TINT a_iX, TINT a_iY, TINT a_iWidth, TINT a_iHeight 
 {
 	SDL_SetWindowPosition( m_pWindow, a_iX, a_iY );
 	SDL_SetWindowSize( m_pWindow, a_iWidth, a_iHeight );
+
+	m_iWidth  = a_iWidth;
+	m_iHeight = a_iHeight;
 }
 
 TOSHI_NAMESPACE_END
