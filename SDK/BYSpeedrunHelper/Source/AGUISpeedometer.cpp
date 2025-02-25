@@ -124,7 +124,7 @@ void AGUISpeedometer::Update()
 				TVector4 vecVelocity;
 				pSteer->GetVelocityVector( vecVelocity );
 
-				TFLOAT fVelocity = vecVelocity.MagnitudeSqXZ();
+				fVelocity = vecVelocity.MagnitudeSqXZ();
 
 				if ( fVelocity != 0 )
 					fVelocity = TMath::Sqrt( fVelocity );
