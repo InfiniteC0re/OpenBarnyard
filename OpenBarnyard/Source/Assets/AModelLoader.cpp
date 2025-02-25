@@ -467,7 +467,7 @@ TBOOL AModelLoader::AModelLoaderLoadTRBCallback( TModel* a_pModel )
 
 		if ( pTRBLod->m_eShader == TTMDWin::ST_WORLD )
 		{
-			LoadWorldMeshTRB( a_pModel, i, &a_pModel->m_LODs[ i ] );
+			LoadWorldMeshTRB( a_pModel, i, &a_pModel->m_LODs[ i ], pTRBLod );
 			continue;
 		}
 		else if ( pTRBLod->m_eShader == TTMDWin::ST_SKIN )
@@ -477,7 +477,7 @@ TBOOL AModelLoader::AModelLoaderLoadTRBCallback( TModel* a_pModel )
 		}
 		else if ( pTRBLod->m_eShader == TTMDWin::ST_GRASS )
 		{
-			LoadGrassMeshTRB( a_pModel, i, &a_pModel->m_LODs[ i ] );
+			LoadGrassMeshTRB( a_pModel, i, &a_pModel->m_LODs[ i ], pTRBLod );
 			continue;
 		}
 

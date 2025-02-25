@@ -229,7 +229,7 @@ static void LoadGrassTreeIntersect( CellSphereTreeBranchNode* a_pRenderGroup, Ce
 	}
 }
 
-void AModelLoader::LoadGrassMeshTRB( TModel* a_pModel, TINT a_iLODIndex, TModelLOD* a_pLOD )
+void AModelLoader::LoadGrassMeshTRB( TModel* a_pModel, TINT a_iLODIndex, TModelLOD* a_pLOD, Toshi::TTMDWin::TRBLODHeader* a_pLODHeader )
 {
 	TPROFILER_SCOPE();
 
