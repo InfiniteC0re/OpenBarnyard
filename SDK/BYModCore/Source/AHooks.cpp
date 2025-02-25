@@ -18,7 +18,7 @@
 #include <Render/TCameraObject.h>
 #include <Render/TModel.h>
 #include <Render/TShader.h>
-#include <Platform/Windows/TMSWindow.h>
+#include <Platform/DX8/TMSWindow.h>
 #include <Platform/DX8/TRenderInterface_DX8.h>
 
 TOSHI_NAMESPACE_USING
@@ -480,84 +480,6 @@ MEMBER_HOOK( 0x0060c7c0, ARenderer, ARenderer_OnCreate, TBOOL )
 	return bResult;
 }
 
-// NOTE: this is more optimised version of the method which should work a little bit faster to improve loading times
-TBOOL MaterialLibrary_LoadTTLData( AMaterialLibrary* a_pMatLib, AMaterialLibrary::TTL* a_pTTLData )
-{
-	auto pTTL = TSTATICCAST( AMaterialLibrary::TTL, a_pTTLData );
-
-	auto pLibList     = AMaterialLibraryManager::List::GetSingleton();
-	TINT iNumTextures = 0;
-
-	if ( AMaterialLibrary::ms_bSkipLoadedTextures )
-	{
-		for ( TINT i = 0; i < pTTL->m_iNumTextures; i++ )
-		{
-			if ( !pLibList->FindTexture( pTTL->m_pTextureInfos[ i ].m_szFileName, TNULL, TNULL ) )
-			{
-				iNumTextures++;
-			}
-		}
-	}
-	else
-	{
-		iNumTextures = pTTL->m_iNumTextures;
-	}
-
-	a_pMatLib->m_pTexturesArray = new ATexture[ iNumTextures ];
-	a_pMatLib->m_pTextures      = a_pMatLib->m_pTexturesArray;
-	a_pMatLib->m_iNumTextures   = iNumTextures;
-
-	// Calculate maximum texture size to preallocate a buffer
-	TSIZE uiMaxTextureSize = 0;
-
-	for ( TINT i = 0; i < iNumTextures; i++ )
-	{
-		auto pTexInfo = &pTTL->m_pTextureInfos[ i ];
-
-		if ( !AMaterialLibrary::ms_bSkipLoadedTextures || !pLibList->FindTexture( pTexInfo->m_szFileName, TNULL, TNULL ) )
-		{
-			if ( pTexInfo->m_bIsT2Texture == TRUE )
-			{
-				uiMaxTextureSize = TMath::Max( pTexInfo->m_uiDataSize, uiMaxTextureSize );
-			}
-		}
-	}
-
-	void* pTexData = TMalloc( uiMaxTextureSize );
-
-	for ( TINT i = 0; i < iNumTextures; i++ )
-	{
-		auto pTexInfo = &pTTL->m_pTextureInfos[ i ];
-
-		if ( !AMaterialLibrary::ms_bSkipLoadedTextures || !pLibList->FindTexture( pTexInfo->m_szFileName, TNULL, TNULL ) )
-		{
-			TASSERT( pTexInfo->m_bIsT2Texture == TRUE, "No support of other texture types" );
-			a_pMatLib->m_pTextures[ i ].Name = pTexInfo->m_szFileName;
-
-			if ( pTexInfo->m_bIsT2Texture == TRUE )
-			{
-				auto pTexture = new Toshi::T2Texture;
-
-				if ( pTexture )
-				{
-					Toshi::TUtil::MemCopy( pTexData, pTexInfo->m_pData, pTexInfo->m_uiDataSize );
-					pTexture->SetData( pTexData, pTexInfo->m_uiDataSize );
-					pTexture->Load();
-
-					// Make sure pointer to the buffer is not stored in the texture anymore
-					pTexture->SetData( TNULL, 0 );
-				}
-
-				a_pMatLib->m_pTextures[ i ].pTexture = pTexture;
-			}
-		}
-	}
-
-	TFree( pTexData );
-
-	return TTRUE;
-}
-
 MEMBER_HOOK( 0x00615d20, AMaterialLibrary, AMaterialLibrary_LoadTTLData, TBOOL, AMaterialLibrary::TTL* a_pTTL )
 {
 	for ( TINT i = 0; i < AHooks::MaterialLibrary::LoadTTLData[ HookType_Before ].Size(); i++ )
@@ -568,7 +490,7 @@ MEMBER_HOOK( 0x00615d20, AMaterialLibrary, AMaterialLibrary_LoadTTLData, TBOOL, 
 		}
 	}
 
-	if ( !MaterialLibrary_LoadTTLData( this, a_pTTL ) )
+	if ( !CallOriginal( a_pTTL ) )
 	{
 		for ( TINT i = 0; i < AHooks::MaterialLibrary::LoadTTLData[ HookType_After ].Size(); i++ )
 		{
@@ -731,6 +653,36 @@ MEMBER_HOOK( 0x005ea8b0, ATerrainInterface, ATerrain_Render, void )
 	for ( TINT i = 0; i < AHooks::Terrain::Render[ HookType_After ].Size(); i++ )
 	{
 		AHooks::Terrain::Render[ HookType_After ][ i ]( this );
+	}
+}
+
+MEMBER_HOOK( 0x006d5970, TOrderTable, TOrderTable_Flush, void )
+{
+	for ( TINT i = 0; i < AHooks::OrderTable::Flush[ HookType_Before ].Size(); i++ )
+	{
+		AHooks::OrderTable::Flush[ HookType_Before ][ i ]( this );
+	}
+
+	TShader* pShader = GetShader();
+
+	if ( m_pLastRegMat )
+	{
+		pShader->StartFlush();
+
+		for ( auto it = m_pLastRegMat; it != TNULL; it = it->GetNextRegMat() )
+		{
+			it->Render();
+		}
+
+		pShader->EndFlush();
+	}
+
+	*(TUINT*)( 0x007d3124 ) = 0;
+	m_pLastRegMat           = TNULL;
+
+	for ( TINT i = 0; i < AHooks::OrderTable::Flush[ HookType_After ].Size(); i++ )
+	{
+		AHooks::OrderTable::Flush[ HookType_After ][ i ]( this );
 	}
 }
 
@@ -948,6 +900,9 @@ TBOOL AHooks::AddHook( Hook a_eHook, HookType a_eHookType, void* a_pCallback )
 			return TTRUE;
 		case Hook_TRenderInterface_SetLightColourMatrix:
 			AHooks::RenderInterface::SetLightColourMatrix[ a_eHookType ].PushBack( TREINTERPRETCAST( AHooks::RenderInterface::t_SetLightColourMatrix, a_pCallback ) );
+			return TTRUE;
+		case Hook_TOrderTable_Flush:
+			AHooks::OrderTable::Flush[ a_eHookType ].PushBack( TREINTERPRETCAST( AHooks::OrderTable::t_Flush, a_pCallback ) );
 			return TTRUE;
 	}
 

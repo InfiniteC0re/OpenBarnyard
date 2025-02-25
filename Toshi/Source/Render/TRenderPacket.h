@@ -42,7 +42,9 @@ public:
 	TFLOAT GetAlpha() const { return m_fAlpha; }
 	void   SetAlpha( TFLOAT val ) { m_fAlpha = val; }
 
+#ifndef TOSHI_SDK
 private:
+#endif
 	TRenderPacket*     m_pNextPacket;
 	void*              m_pUnk;
 	TMesh*             m_pMesh;

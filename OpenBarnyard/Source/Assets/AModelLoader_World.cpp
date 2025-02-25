@@ -124,7 +124,7 @@ static void LoadTreeIntersect( CellSphereTreeBranchNode* a_pRenderGroup, Cell*& 
 	}
 }
 
-void AModelLoader::LoadWorldMeshTRB( TModel* a_pModel, TINT a_iLODIndex, TModelLOD* a_pLOD )
+void AModelLoader::LoadWorldMeshTRB( Toshi::TModel* a_pModel, TINT a_iLODIndex, Toshi::TModelLOD* a_pLOD, Toshi::TTMDWin::TRBLODHeader* a_pLODHeader )
 {
 	TPROFILER_SCOPE();
 

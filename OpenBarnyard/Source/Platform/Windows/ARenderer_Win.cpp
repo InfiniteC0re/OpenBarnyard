@@ -201,7 +201,7 @@ TBOOL ARenderer::CreateTRenderResources()
 		pRenderer->SetResourceExplicit( pResource, SYSRESOURCE_IFSYS );
 
 		TIndexFactoryFormat indexFormat;
-		indexFormat.m_uiUnk = 2;
+		indexFormat.uiIndexSize = 2;
 		pResource->Create( &indexFormat, 64700, 0 );
 	}
 
@@ -292,7 +292,6 @@ void ARenderer::RenderGUI()
 	auto pViewport = AGUISystem::GetSingleton()->GetRenderObject( 0 )->GetViewport();
 
 	auto pOldContext = pRender->SetCurrentRenderContext( pViewport->GetRenderContext() );
-	;
 
 	TTODO( "Save and restore value of 'm_AmbientColor?' when it's figured out" );
 
@@ -364,7 +363,7 @@ void ARenderer::RenderMainScene( TFLOAT a_fDeltaTime )
 
 		auto& rTransformStack = pRender->GetTransforms();
 		rTransformStack.Reset();
-		rTransformStack.Top().Identity();
+		rTransformStack.PushNull().Identity();
 
 		pViewport->Begin();
 		pCameraObject->Render();

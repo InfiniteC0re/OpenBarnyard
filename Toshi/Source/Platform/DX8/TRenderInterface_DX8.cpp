@@ -964,4 +964,9 @@ const TCHAR* TRenderD3DInterface::GetErrorDescription( TINT32 a_eError )
 	return DXGetErrorDescription8A( a_eError );
 }
 
+void TRenderD3DInterface::RegisterOrderTable( TOrderTable* a_pOrderTable )
+{
+	m_OrderTables.Insert( a_pOrderTable );
+}
+
 TOSHI_NAMESPACE_END

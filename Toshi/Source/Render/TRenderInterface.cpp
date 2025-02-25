@@ -115,7 +115,7 @@ TBOOL TRenderInterface::BeginScene()
 {
 	m_iFrameCount += 1;
 	m_Transforms.Reset();
-	m_Transforms.Top().Identity();
+	m_Transforms.PushNull().Identity();
 	return TTRUE;
 }
 

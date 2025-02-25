@@ -2,7 +2,9 @@
 #include "TQuaternion.h"
 #include "TPlane.h"
 
-#include <d3dx8math.h>
+#ifdef TRENDERINTERFACE_DX8
+#  include <d3dx8math.h>
+#endif
 
 TOSHI_NAMESPACE_START
 
@@ -328,7 +330,7 @@ public:
 		);
 	}
 
-#ifdef TOSHI_SKU_WINDOWS
+#ifdef TRENDERINTERFACE_DX8
 	operator D3DXMATRIX*()
 	{
 		return TREINTERPRETCAST( D3DXMATRIX*, this );

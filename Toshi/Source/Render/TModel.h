@@ -133,14 +133,19 @@ private:
 	inline static t_ModelLoaderTMDCallback ms_cbModelLoaderTMD;
 	inline static t_ModelLoaderTRBCallback ms_cbModelLoaderTRB;
 
+#ifndef TOSHI_SDK
 protected:
+#else
+public:
+#endif
+
 	Flags        m_eFlags;
 	TINT         m_iNumInstances;
 	TINT         m_iLODCount;
 	TFLOAT       m_fLODDistance; // ?
 	TSkeleton*   m_pSkeleton;
 	TModelLOD    m_LODs[ MAX_NUM_LODS ];
-	TFLOAT       m_aUnk1[ 4 ];
+	TFLOAT       m_aLODDistances[ 4 ];
 	void*        m_pCollision;
 	void*        m_pCollisionData;
 	TTRB*        m_pTRB;

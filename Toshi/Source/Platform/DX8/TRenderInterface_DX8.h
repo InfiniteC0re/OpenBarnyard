@@ -4,7 +4,7 @@
 #include "TRenderAdapter_DX8.h"
 #include "TDebugText_DX8.h"
 
-#include "Platform/Windows/TMSWindow.h"
+#include "Platform/DX8/TMSWindow.h"
 
 #include <d3d8.h>
 
@@ -84,6 +84,8 @@ public:
 	void ClearRegion( TINT a_iX, TINT a_iY, TINT a_iWidth, TINT a_iHeight, TUINT8 a_eClearFlags, TUINT8 a_uiColorR, TUINT8 a_uiColorG, TUINT8 a_uiColorB, TFLOAT a_fZ, TUINT a_uiStencil );
 
 	void Exit() { m_bExited = TTRUE; }
+
+	void RegisterOrderTable( TOrderTable* a_pOrderTable );
 
 	TFORCEINLINE TMSWindow* GetMSWindow() { return &m_Window; }
 	TFORCEINLINE TPriList<TOrderTable>& GetOrderTables() { return m_OrderTables; }

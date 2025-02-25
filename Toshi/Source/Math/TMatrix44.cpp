@@ -92,38 +92,22 @@ TBOOL TMatrix44::Invert( const TMatrix44& a_rRight )
 	TASSERT( a_rRight.m_f34 == 0.0f );
 	TASSERT( a_rRight.m_f44 == 1.0f );
 
-	TFLOAT fVal1 = a_rRight.m_f22 * a_rRight.m_f33 - a_rRight.m_f23 * a_rRight.m_f32;
-	TFLOAT fVal2 = -( a_rRight.m_f12 * a_rRight.m_f33 - a_rRight.m_f13 * a_rRight.m_f32 );
-	TFLOAT fVal3 = a_rRight.m_f12 * a_rRight.m_f23 - a_rRight.m_f13 * a_rRight.m_f22;
-	TFLOAT fDet  = a_rRight.m_f11 * fVal1 + a_rRight.m_f21 * fVal2 + a_rRight.m_f31 * fVal3;
+	TFLOAT fVar1;
+	TFLOAT fVar2;
+	TFLOAT fVar3;
+	TFLOAT fVar4;
 
-	if ( fDet == 0.0 )
-	{
-		// Matrix is not invertible
+	fVar1 = a_rRight.m_f22 * a_rRight.m_f33 - a_rRight.m_f32 * a_rRight.m_f23;
+	fVar4 = -( a_rRight.m_f33 * a_rRight.m_f12 - a_rRight.m_f32 * a_rRight.m_f13 );
+	fVar3 = a_rRight.m_f23 * a_rRight.m_f12 - a_rRight.m_f22 * a_rRight.m_f13;
+	fVar2 = fVar4 * a_rRight.m_f21 + fVar1 * a_rRight.m_f11 + fVar3 * a_rRight.m_f31;
+
+	if ( fVar2 == 0.0 )
 		return TFALSE;
-	}
 
-	TFLOAT fInvDet = 1.0f / fDet;
-
-	m_f11 = fInvDet * fVal1;
-	m_f12 = fInvDet * fVal2;
-	m_f13 = fInvDet * fVal3;
-	m_f14 = a_rRight.m_f14;
-
-	m_f21 = -( ( a_rRight.m_f21 * a_rRight.m_f33 - a_rRight.m_f31 * a_rRight.m_f23 ) * fInvDet );
-	m_f22 = ( a_rRight.m_f11 * a_rRight.m_f33 - a_rRight.m_f31 * a_rRight.m_f13 ) * fInvDet;
-	m_f23 = -( ( a_rRight.m_f11 * a_rRight.m_f23 - a_rRight.m_f21 * a_rRight.m_f13 ) * fInvDet );
-	m_f24 = a_rRight.m_f24;
-
-	m_f31 = ( a_rRight.m_f21 * a_rRight.m_f32 - a_rRight.m_f31 * a_rRight.m_f22 ) * fInvDet;
-	m_f32 = -( ( a_rRight.m_f11 * a_rRight.m_f32 - a_rRight.m_f31 * a_rRight.m_f12 ) * fInvDet );
-	m_f33 = ( a_rRight.m_f11 * a_rRight.m_f22 - a_rRight.m_f21 * a_rRight.m_f12 ) * fInvDet;
-	m_f34 = a_rRight.m_f34;
-
-	m_f41 = -a_rRight.m_f41 * m_f11 - a_rRight.m_f42 * m_f21 - a_rRight.m_f43 * m_f31;
-	m_f42 = -a_rRight.m_f41 * m_f12 - a_rRight.m_f42 * m_f22 - a_rRight.m_f43 * m_f32;
-	m_f43 = -a_rRight.m_f41 * m_f13 - a_rRight.m_f42 * m_f23 - a_rRight.m_f43 * m_f33;
-	m_f44 = a_rRight.m_f44;
+	fVar2 = 1.0 / fVar2;
+	Set( fVar2 * fVar1, fVar4 * fVar2, fVar3 * fVar2, a_rRight.m_f14, -( ( a_rRight.m_f33 * a_rRight.m_f21 - a_rRight.m_f31 * a_rRight.m_f23 ) * fVar2 ), ( a_rRight.m_f11 * a_rRight.m_f33 - a_rRight.m_f31 * a_rRight.m_f13 ) * fVar2, -( ( a_rRight.m_f11 * a_rRight.m_f23 - a_rRight.m_f21 * a_rRight.m_f13 ) * fVar2 ), a_rRight.m_f24, ( a_rRight.m_f32 * a_rRight.m_f21 - a_rRight.m_f31 * a_rRight.m_f22 ) * fVar2, -( ( a_rRight.m_f32 * a_rRight.m_f11 - a_rRight.m_f31 * a_rRight.m_f12 ) * fVar2 ), ( a_rRight.m_f22 * a_rRight.m_f11 - a_rRight.m_f21 * a_rRight.m_f12 ) * fVar2, a_rRight.m_f34, -a_rRight.m_f41, -a_rRight.m_f42, -a_rRight.m_f43, a_rRight.m_f44 );
+	RotateVector( AsBasisVector4( 3 ), *this, AsBasisVector4( 3 ) );
 
 	return TTRUE;
 }

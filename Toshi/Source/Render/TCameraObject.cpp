@@ -21,6 +21,10 @@ TCameraObject::TCameraObject()
 	m_bEnabled = TTRUE;
 }
 
+TCameraObject::~TCameraObject()
+{
+}
+
 void TCameraObject::Render()
 {
 	if ( m_bEnabled )

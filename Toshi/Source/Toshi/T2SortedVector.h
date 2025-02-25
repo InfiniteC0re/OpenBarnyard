@@ -110,7 +110,6 @@ public:
 	const T& operator[]( TINT a_iIndex ) const { return Container::At( a_iIndex ); }
 
 	Container* AccessContainer() { return TSTATICCAST( Container, this ); }
-	Container* operator->() { return TSTATICCAST( Container, this ); }
 };
 
 TOSHI_NAMESPACE_END
