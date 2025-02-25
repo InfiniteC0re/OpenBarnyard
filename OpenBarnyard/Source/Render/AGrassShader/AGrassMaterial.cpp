@@ -1,5 +1,7 @@
 #include "pch.h"
-#include "AWorldMaterial.h"
+#include "AGrassMaterial.h"
+
+#include <Render/TOrderTable.h>
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
@@ -9,10 +11,11 @@
 
 TOSHI_NAMESPACE_USING
 
-TDEFINE_CLASS_NORUNTIME( AWorldMaterial );
+TDEFINE_CLASS_NORUNTIME( AGrassMaterial );
 
-AWorldMaterial::AWorldMaterial()
-    : m_eBlendMode( 0 ), m_fUVAnimX( 0.0f ), m_fUVAnimY( 0.0f ), m_fUVAnimSpeedX( 0.0f ), m_fUVAnimSpeedY( 0.0f )
+// $Barnyard: FUNCTION 005f7970
+AGrassMaterial::AGrassMaterial()
+    : m_eBlendMode( 0 )
 {
 	m_aTextures[ 0 ] = TNULL;
 	m_aTextures[ 1 ] = TNULL;
@@ -20,23 +23,29 @@ AWorldMaterial::AWorldMaterial()
 	m_aTextures[ 3 ] = TNULL;
 }
 
-AWorldMaterial::~AWorldMaterial()
+// $Barnyard: FUNCTION 005f7ab0
+// $Barnyard: FUNCTION 005f7a90
+AGrassMaterial::~AGrassMaterial()
 {
+	TRegMaterial* pRegMaterial = GetRegMaterial();
+
+	if ( pRegMaterial != TNULL )
+	{
+		TOrderTable::DeregisterMaterial( pRegMaterial );
+	}
 }
 
-TBOOL AWorldMaterial::Create( BLENDMODE a_eBlendMode )
+TBOOL AGrassMaterial::Create( BLENDMODE a_eBlendMode )
 {
 	SetBlendMode( a_eBlendMode );
 	return TMaterial::Create();
 }
 
-void AWorldMaterial::SetBlendMode( BLENDMODE a_eBlendMode )
+void AGrassMaterial::SetBlendMode( BLENDMODE a_eBlendMode )
 {
 	m_eBlendMode = a_eBlendMode;
 	m_Flags &= ~FLAGS_BLENDING;
 
 	if ( a_eBlendMode != 0 )
-	{
 		m_Flags |= FLAGS_BLENDING;
-	}
 }

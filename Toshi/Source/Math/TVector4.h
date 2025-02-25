@@ -311,6 +311,7 @@ public:
 
 	// $Barnyard: FUNCTION 006c76c0
 	static constexpr TFLOAT DistanceSq( const TVector4& vec1, const TVector4& vec2 ) { return ( vec2 - vec1 ).MagnitudeSq(); }
+	// $Barnyard: FUNCTION 006cbaf0
 	static TFLOAT           DistanceXZ( const TVector4& vec1, const TVector4& vec2 ) { return ( vec2 - vec1 ).MagnitudeXZ(); }
 	static constexpr TFLOAT DistanceSqXZ( const TVector4& vec1, const TVector4& vec2 ) { return ( vec2 - vec1 ).MagnitudeSqXZ(); }
 

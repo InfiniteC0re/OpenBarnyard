@@ -18,13 +18,13 @@ TFORCEINLINE constexpr TUINT32 TFourCC( const TCHAR str[ 4 ] )
 }
 
 // Returns TUINT32 value (always Low Endian) that consists of the specified 4 characters
-TFORCEINLINE constexpr TUINT32 TFourCCLE( const TCHAR str[ 4 ] )
+TFORCEINLINE TUINT32 TFourCCLE( const TCHAR str[ 4 ] )
 {
 	return PARSEDWORD( TFourCC( str ) );
 }
 
 // Returns TUINT32 value (always Big Endian) that consists of the specified 4 characters
-TFORCEINLINE constexpr TUINT32 TFourCCBE( const TCHAR str[ 4 ] )
+TFORCEINLINE TUINT32 TFourCCBE( const TCHAR str[ 4 ] )
 {
 	return PARSEDWORD_BIG( TFourCC( str ) );
 }

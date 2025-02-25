@@ -6,12 +6,12 @@
 #ifdef TOSHI_SKU_WINDOWS
 #  include "Platform/DX8/AWorldShader/AWorldShader_DX8.h"
 #  include "Platform/DX8/ASkinShader/ASkinShader_DX8.h"
+#  include "Platform/DX8/AGrassShader/AGrassShaderHAL_DX8.h"
 
 #  include <Render/TTMDWin.h>
 #  include <Platform/DX8/TRenderInterface_DX8.h>
 #  include <Platform/DX8/TTextureResourceHAL_DX8.h>
 #endif // TOSHI_SKU_WINDOWS
-
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
@@ -114,7 +114,7 @@ AModelLoader::~AModelLoader()
 {
 }
 
-void AModelLoader::MaterialApplyFlags( Toshi::TMaterial* a_pMaterial, const TCHAR* a_szMaterialName )
+void AModelLoader::MaterialApplyFlags( TMaterial* a_pMaterial, const TCHAR* a_szMaterialName )
 {
 	// Check if material is glowing
 	for ( TINT i = 0; i < ms_iNumGlowMaterials; i++ )
@@ -137,7 +137,7 @@ void AModelLoader::MaterialApplyFlags( Toshi::TMaterial* a_pMaterial, const TCHA
 	}
 }
 
-void AModelLoader::MaterialApplyClamp( Toshi::TMaterial* a_pMaterial, const TCHAR* a_szMaterialName, Toshi::TTexture* a_pTexture )
+void AModelLoader::MaterialApplyClamp( TMaterial* a_pMaterial, const TCHAR* a_szMaterialName, TTexture* a_pTexture )
 {
 	auto pClampedMaterial = ms_pClampedMaterials;
 
@@ -164,7 +164,7 @@ void AModelLoader::MaterialApplyClamp( Toshi::TMaterial* a_pMaterial, const TCHA
 	}
 }
 
-void AModelLoader::MaterialApplyAlphaRef( Toshi::TMaterial* a_pMaterial, const TCHAR* a_szMaterialName, Toshi::TTexture* a_pTexture )
+void AModelLoader::MaterialApplyAlphaRef( TMaterial* a_pMaterial, const TCHAR* a_szMaterialName, TTexture* a_pTexture )
 {
 	auto pAlphaRefMaterial = ms_pAlphaRefMaterials;
 
@@ -179,15 +179,23 @@ void AModelLoader::MaterialApplyAlphaRef( Toshi::TMaterial* a_pMaterial, const T
 	// Does nothing with the material in the original game
 }
 
-Toshi::TMaterial* AModelLoader::CreateMaterial( Toshi::TShader* a_pShader, const TCHAR* a_szMaterialName )
+TMaterial* AModelLoader::CreateMaterial( TShader* a_pShader, const TCHAR* a_szMaterialName )
 {
 	TPROFILER_SCOPE();
 
 	char prefixName[ 32 ];
 
-	if ( a_pShader->IsA( &TGetClass( AWorldShader ) ) )
+	if ( a_pShader->IsA( &TGetClass( ASkinShader ) ) )
+	{
+		TStringManager::String8Copy( prefixName, "ss_" );
+	}
+	else if ( a_pShader->IsA( &TGetClass( AWorldShader ) ) )
 	{
 		TStringManager::String8Copy( prefixName, "ws_" );
+	}
+	else if ( a_pShader->IsA( &TGetClass( AGrassShader ) ) )
+	{
+		TStringManager::String8Copy( prefixName, "gs_" );
 	}
 	else
 	{
@@ -234,8 +242,8 @@ Toshi::TMaterial* AModelLoader::CreateMaterial( Toshi::TShader* a_pShader, const
 
 	if ( a_pShader->IsA( &TGetClass( AWorldShader ) ) )
 	{
-		auto pShader   = TDYNAMICCAST( AWorldShaderHAL, a_pShader );
-		auto pMaterial = pShader->CreateMaterial( TNULL );
+		AWorldShaderHAL* pShader   = TDYNAMICCAST( AWorldShaderHAL, a_pShader );
+		AWorldMaterial*  pMaterial = pShader->CreateMaterial( TNULL );
 		pMaterial->Create( bIsAlpha ? 1 : 0 );
 		pMaterial->SetTexture( 0, pTexture );
 		pMaterial->SetTextureNum( 1 );
@@ -244,9 +252,19 @@ Toshi::TMaterial* AModelLoader::CreateMaterial( Toshi::TShader* a_pShader, const
 
 		TTODO( "Setup material using properties" );
 	}
+	else if ( a_pShader->IsA( &TGetClass( AGrassShader ) ) )
+	{
+		AGrassShaderHAL* pShader   = TDYNAMICCAST( AGrassShaderHAL, a_pShader );
+		AGrassMaterial*  pMaterial = pShader->CreateMaterial( TNULL );
+		pMaterial->Create( 0 );
+		pMaterial->SetTexture( 0, pTexture );
+		pMaterial->SetTextureNum( 1 );
+
+		pResultMaterial = pMaterial;
+	}
 	else
 	{
-		TTODO( "Support other shaders" );
+		TASSERT( !"Support other shaders" );
 	}
 
 	MaterialApplyFlags( pResultMaterial, a_szMaterialName );
@@ -274,7 +292,7 @@ Toshi::TMaterial* AModelLoader::CreateMaterial( Toshi::TShader* a_pShader, const
 	return pResultMaterial;
 }
 
-void AModelLoader::DestroyMaterial( Toshi::TMaterial* a_pMaterial )
+void AModelLoader::DestroyMaterial( TMaterial* a_pMaterial )
 {
 	TPROFILER_SCOPE();
 
@@ -320,7 +338,12 @@ void AModelLoader::DestroyMaterial( Toshi::TMaterial* a_pMaterial )
 	}
 }
 
-void AModelLoader::AddMaterial( const Toshi::TString8& a_rName, MaterialNode* a_pMaterialNode )
+void AModelLoader::InitialiseStatic()
+{
+	InitialiseGrassLayersTextures();
+}
+
+void AModelLoader::AddMaterial( const TString8& a_rName, MaterialNode* a_pMaterialNode )
 {
 	TPROFILER_SCOPE();
 
@@ -361,7 +384,7 @@ void AModelLoader::AddMaterial( const Toshi::TString8& a_rName, MaterialNode* a_
 	ms_iNumCreatedMaterials += 1;
 }
 
-Toshi::TMaterial* AModelLoader::FindMaterial( const Toshi::TString8& a_rName )
+TMaterial* AModelLoader::FindMaterial( const TString8& a_rName )
 {
 	TPROFILER_SCOPE();
 
@@ -400,7 +423,7 @@ Toshi::TMaterial* AModelLoader::FindMaterial( const Toshi::TString8& a_rName )
 	return TNULL;
 }
 
-Toshi::TTMDBase::Material* AModelLoader::FindMaterialInModel( const TCHAR* a_szName )
+TTMDBase::Material* AModelLoader::FindMaterialInModel( const TCHAR* a_szName )
 {
 	for ( TINT i = 0; i < ms_oCurrentModelMaterialsHeader.iNumMaterials; i++ )
 	{
@@ -413,12 +436,12 @@ Toshi::TTMDBase::Material* AModelLoader::FindMaterialInModel( const TCHAR* a_szN
 	return TNULL;
 }
 
-TBOOL AModelLoader::AModelLoaderLoadTMDCallback( Toshi::TModel* a_pModel )
+TBOOL AModelLoader::AModelLoaderLoadTMDCallback( TModel* a_pModel )
 {
 	return TFALSE;
 }
 
-TBOOL AModelLoader::AModelLoaderLoadTRBCallback( Toshi::TModel* a_pModel )
+TBOOL AModelLoader::AModelLoaderLoadTRBCallback( TModel* a_pModel )
 {
 	TPROFILER_SCOPE();
 
@@ -444,8 +467,7 @@ TBOOL AModelLoader::AModelLoaderLoadTRBCallback( Toshi::TModel* a_pModel )
 
 		if ( pTRBLod->m_eShader == TTMDWin::ST_WORLD )
 		{
-		LoadAsWorldModel:
-			LoadWorldMeshTRB( a_pModel, i, &a_pModel->m_LODs[ i ], pTRBLod );
+			LoadWorldMeshTRB( a_pModel, i, &a_pModel->m_LODs[ i ] );
 			continue;
 		}
 		else if ( pTRBLod->m_eShader == TTMDWin::ST_SKIN )
@@ -455,8 +477,8 @@ TBOOL AModelLoader::AModelLoaderLoadTRBCallback( Toshi::TModel* a_pModel )
 		}
 		else if ( pTRBLod->m_eShader == TTMDWin::ST_GRASS )
 		{
-			TTRACE( "Loading grass models is not yet implemented, loading as world model\n" );
-			goto LoadAsWorldModel;
+			LoadGrassMeshTRB( a_pModel, i, &a_pModel->m_LODs[ i ] );
+			continue;
 		}
 
 		TASSERT( !"The model is using an unknown shader" );

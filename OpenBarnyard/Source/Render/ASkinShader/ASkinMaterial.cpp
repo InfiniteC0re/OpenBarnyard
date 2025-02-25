@@ -33,10 +33,10 @@ TBOOL ASkinMaterial::Create( BLENDMODE a_eBlendMode )
 void ASkinMaterial::SetBlendMode( BLENDMODE a_eBlendMode )
 {
 	m_eBlendMode = a_eBlendMode;
-	m_Flags &= ~FLAGS_HAS_BLENDMODE;
+	m_Flags &= ~FLAGS_BLENDING;
 
 	if ( a_eBlendMode != 0 )
 	{
-		m_Flags |= FLAGS_HAS_BLENDMODE;
+		m_Flags |= FLAGS_BLENDING;
 	}
 }

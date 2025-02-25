@@ -9,17 +9,14 @@ public:
 	~AGUITimer();
 
 	void Create();
+	void ApplyUIStyle();
 
 	void Update();
 	void Render();
 
-	void Show() { m_bIsVisible = TTRUE; }
-	void Hide() { m_bIsVisible = TFALSE; }
-	void Reset() { m_fTotalTime = 0.0f; }
-
+	void Reset() { SetTime( 0.0f ); }
 	void SetTime( FLOAT a_fTime ) { m_fTotalTime = a_fTime; }
 
-	TBOOL& IsVisible() { return m_bIsVisible; }
 	TBOOL  IsValid() { return m_pTextBox; }
 
 	TFLOAT GetTotalTime() const { return m_fTotalTime; }
@@ -29,5 +26,4 @@ public:
 private:
 	AGUI2TextBox* m_pTextBox;
 	TFLOAT        m_fTotalTime;
-	TBOOL         m_bIsVisible;
 };

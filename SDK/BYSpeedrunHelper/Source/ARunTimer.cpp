@@ -44,7 +44,7 @@ public:
 				m_flSyncTimerTime = 0.1f;
 			}
 
-			ThreadSleep( 10 );
+			ThreadSleep( 5 );
 		}
 	}
 

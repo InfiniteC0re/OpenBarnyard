@@ -79,6 +79,8 @@
 .\Vendor\clang-format.exe -i .\OpenBarnyard\Source\Render\ASysShader\*.h
 .\Vendor\clang-format.exe -i .\OpenBarnyard\Source\Render\AWorldShader\*.cpp
 .\Vendor\clang-format.exe -i .\OpenBarnyard\Source\Render\AWorldShader\*.h
+.\Vendor\clang-format.exe -i .\OpenBarnyard\Source\Render\AGrassShader\*.cpp
+.\Vendor\clang-format.exe -i .\OpenBarnyard\Source\Render\AGrassShader\*.h
 .\Vendor\clang-format.exe -i .\OpenBarnyard\Source\Render\*.cpp
 .\Vendor\clang-format.exe -i .\OpenBarnyard\Source\Render\*.h
 .\Vendor\clang-format.exe -i .\OpenBarnyard\Source\Animation\*.cpp

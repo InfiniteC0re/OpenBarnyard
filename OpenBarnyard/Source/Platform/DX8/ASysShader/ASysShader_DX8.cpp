@@ -43,17 +43,10 @@ void ASysShaderHAL::Flush()
 	pDevice->SetTextureStageState( 1, D3DTSS_ALPHAOP, 1 );
 	pDevice->SetVertexShader( D3DFVF_TEX1 | D3DFVF_DIFFUSE | D3DFVF_XYZ );
 
-	static Toshi::TMatrix44 s_Identity;
-	static TUINT            s_IdentityCreated;
+	static TMatrix44 s_Identity = TMatrix44::IDENTITY;
 
-	if ( ( s_IdentityCreated & 1 ) == 0 )
-	{
-		s_Identity = Toshi::TMatrix44::IDENTITY;
-		s_IdentityCreated |= 1;
-	}
-
-	pDevice->SetTransform( D3DTS_PROJECTION, (D3DMATRIX*)&pRenderContext->GetProjectionMatrix() );
-	pDevice->SetTransform( D3DTS_VIEW, (D3DMATRIX*)&s_Identity );
+	pDevice->SetTransform( D3DTS_PROJECTION, pRenderContext->GetProjectionMatrix() );
+	pDevice->SetTransform( D3DTS_VIEW, s_Identity );
 	pDevice->SetPixelShader( 0 );
 
 	pDevice->SetRenderState( D3DRS_ALPHATESTENABLE, FALSE );
@@ -94,17 +87,10 @@ void ASysShaderHAL::StartFlush()
 	pDevice->SetTextureStageState( 1, D3DTSS_ALPHAOP, 1 );
 	pDevice->SetVertexShader( D3DFVF_TEX1 | D3DFVF_DIFFUSE | D3DFVF_XYZ );
 
-	static Toshi::TMatrix44 s_Identity;
-	static TUINT            s_IdentityCreated;
-
-	if ( ( s_IdentityCreated & 1 ) == 0 )
-	{
-		s_Identity = Toshi::TMatrix44::IDENTITY;
-		s_IdentityCreated |= 1;
-	}
+	static TMatrix44 s_Identity = TMatrix44::IDENTITY;
 
 	pDevice->SetTransform( D3DTS_PROJECTION, (D3DMATRIX*)&pRenderContext->GetProjectionMatrix() );
-	pDevice->SetTransform( D3DTS_VIEW, (D3DMATRIX*)&s_Identity );
+	pDevice->SetTransform( D3DTS_VIEW, s_Identity );
 	pDevice->SetPixelShader( 0 );
 
 	pDevice->SetRenderState( D3DRS_ALPHATESTENABLE, FALSE );
@@ -169,7 +155,7 @@ TBOOL ASysShaderHAL::TryValidate()
 	return TTRUE;
 }
 
-void ASysShaderHAL::Render( Toshi::TRenderPacket* pPacket )
+void ASysShaderHAL::Render( TRenderPacket* pPacket )
 {
 	TASSERT( pPacket->GetMesh()->IsExactly( &TGetClass( ASysMeshHAL ) ) );
 

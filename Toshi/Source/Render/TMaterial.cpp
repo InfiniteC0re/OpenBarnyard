@@ -102,9 +102,9 @@ void TMaterial::SetFlags( Flags flag, TBOOL set /*= TFALSE*/ )
 {
 	if ( set )
 	{
-		if ( flag & ( FLAGS_NO_CULL | FLAGS_HAS_BLENDMODE | FLAGS_UNK3 ) )
+		if ( flag & ( FLAGS_NO_CULL | FLAGS_BLENDING | FLAGS_UNK3 ) )
 		{
-			m_Flags &= ~( FLAGS_NO_CULL | FLAGS_HAS_BLENDMODE | FLAGS_UNK3 );
+			m_Flags &= ~( FLAGS_NO_CULL | FLAGS_BLENDING | FLAGS_UNK3 );
 		}
 
 		m_Flags |= flag;
