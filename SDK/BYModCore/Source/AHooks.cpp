@@ -808,25 +808,6 @@ MEMBER_HOOK( 0x006bbb00, TSystemManager, TSystemManager_Update, void )
 	else CallOriginal();
 }
 
-MEMBER_HOOK( 0x006d5970, TOrderTable, TOrderTable_Flush, void )
-{
-
-	if ( m_pLastRegMat )
-	{
-		m_pShader->StartFlush();
-
-		for ( auto it = m_pLastRegMat; it != TNULL; it = it->GetNextRegMat() )
-		{
-			it->Render();
-		}
-
-		m_pShader->EndFlush();
-	}
-
-	*(TUINT*)( 0x007d3124 ) = 0;
-	m_pLastRegMat           = TNULL;
-}
-
 void AHooks::Initialise()
 {
 	// Apply other hooks

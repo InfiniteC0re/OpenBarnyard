@@ -247,7 +247,7 @@ void AGrassShaderHAL::Render( Toshi::TRenderPacket* a_pRenderPacket )
 			{
 				iNumLayers = ( fDistanceToCamera >= 50.0f ) ?
 				    1 :
-				    MAX_LAYERS - 1 - TMath::Min( TINT( ( fDistanceToCamera - 20.0f ) / 10.0f ), 3 );
+				    MAX_LAYERS - 1 - TMath::Min( TINT( ( fDistanceToCamera - 20.0f ) / 10.0f ), MAX_LAYERS - 2 );
 			}
 
 			g_vecAnimOffset.w = 2.0f;

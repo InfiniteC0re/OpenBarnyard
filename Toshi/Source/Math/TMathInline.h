@@ -156,15 +156,13 @@ TFORCEINLINE void Clip( T& rVal, const T& Min, const T& Max )
 template <typename T>
 TFORCEINLINE const T& Min( const T& a, const T& b )
 {
-	if ( a < b ) { return a; }
-	else { return b; }
+	return ( a < b ) ? a : b;
 }
 
 template <typename T>
 TFORCEINLINE const T& Max( const T& a, const T& b )
 {
-	if ( a < b ) { return b; }
-	else { return a; }
+	return ( a < b ) ? b : a;
 }
 
 } // namespace TMath
