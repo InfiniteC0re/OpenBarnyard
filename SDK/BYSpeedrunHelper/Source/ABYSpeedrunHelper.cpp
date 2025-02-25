@@ -1,7 +1,9 @@
 #include "pch.h"
 #include "ARunTimer.h"
+#include "AGUISpeedometer.h"
 #include "ACollisionInspector.h"
 #include "ASplitsServer.h"
+#include "AModSettings.h"
 
 #include <AImGUI.h>
 #include <ModLoader.h>
@@ -22,8 +24,9 @@
 
 TOSHI_NAMESPACE_USING
 
-ARunTimer     g_Timer;
-AGUI2TextBox* g_pExperimentalModeText = TNULL;
+ARunTimer       g_Timer;
+AGUISpeedometer g_Speedometer;
+AGUI2TextBox*   g_pExperimentalModeText = TNULL;
 
 const T2CommandLine* g_pCommandLine;
 TBOOL                g_bIsExperimentalMode = TFALSE;
@@ -94,6 +97,7 @@ void NewGameStarted()
 void AGUI2_MainPostRenderCallback()
 {
 	g_Timer.Render();
+	g_Speedometer.Render();
 
 	if ( g_pExperimentalModeText )
 	{
@@ -111,6 +115,8 @@ public:
 		if ( AHooks::AddHook( Hook_NewGameStarted, HookType_Before, NewGameStarted ) &&
 		     AHooks::AddHook( Hook_AGUI2_MainPostRenderCallback, HookType_Before, AGUI2_MainPostRenderCallback ) )
 		{
+			g_oSettings.Load();
+
 			InstallHook<AQuestManager_FUNC>();
 			InstallHook<T2Locale_GetString>();
 			InstallHook<ALoadScreen_StartLoading>();
@@ -147,6 +153,7 @@ public:
 		}
 
 		g_Timer.Update();
+		g_Speedometer.Update();
 		return TTRUE;
 	}
 
@@ -165,6 +172,7 @@ public:
 	void OnAGUI2Ready() override
 	{
 		g_Timer.Create();
+		g_Speedometer.Create();
 
 		if ( g_bIsExperimentalMode )
 		{
@@ -187,7 +195,12 @@ public:
 
 	void OnImGuiRender() override
 	{
-		ImGui::Checkbox( "Show Timer", &g_Timer.GetUIElement().IsVisible() );
+		TBOOL bChangedSettings = TFALSE;
+		bChangedSettings |= ImGui::Checkbox( "Show Timer", &g_oSettings.bShowTimer );
+		bChangedSettings |= ImGui::Checkbox( "Show Speedometer", &g_oSettings.bShowSpeedometer );
+
+		ImGui::PushItemWidth( 320.0f );
+		bChangedSettings |= ImGui::ColorPicker4( "##HUD Color", (float*)&g_oSettings.vecHUDColor, ImGuiColorEditFlags_DisplayRGB | ImGuiColorEditFlags_AlphaBar );
 
 		if ( g_bIsExperimentalMode )
 		{
@@ -201,6 +214,16 @@ public:
 			ImGui::SameLine();
 			if ( ImGui::Button( "Reset Timer" ) ) g_Timer.Reset();
 		}
+
+		if ( bChangedSettings )
+			g_oSettings.Apply();
+
+		if ( ImGui::Button( "Save" ) )
+			g_oSettings.Save();
+
+		ImGui::SameLine();
+		if ( ImGui::Button( "Reset" ) )
+			g_oSettings.Reset();
 	}
 
 	TBOOL HasSettingsUI() override

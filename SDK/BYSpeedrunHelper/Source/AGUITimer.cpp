@@ -1,10 +1,10 @@
 #include "pch.h"
 #include "AGUITimer.h"
+#include "AModSettings.h"
 
 #include <BYardSDK/AGUI2.h>
 
 #include <Toshi/THPTimer.h>
-#include <Thread/TThread.h>
 
 TOSHI_NAMESPACE_USING
 
@@ -12,7 +12,6 @@ AGUITimer::AGUITimer()
 {
 	m_pTextBox   = TNULL;
 	m_fTotalTime = 0.0f;
-	m_bIsVisible = TTRUE;
 }
 
 AGUITimer::~AGUITimer()
@@ -26,16 +25,25 @@ AGUITimer::~AGUITimer()
 
 void AGUITimer::Create()
 {
-	TFLOAT fWidth, fHeight;
-	AGUI2::GetSingleton()->GetDimensions( fWidth, fHeight );
-
 	auto pFont = AGUI2FontManager::FindFont( "Rekord18" );
 	m_pTextBox = AGUI2TextBox::CreateFromEngine();
 	m_pTextBox->Create( pFont, 200.0f );
 	m_pTextBox->SetText( L"00:00:00.000" );
-	m_pTextBox->SetColour( TCOLOR( 253, 226, 1 ) );
+	
+	ApplyUIStyle();
+}
+
+void AGUITimer::ApplyUIStyle()
+{
+	if ( !m_pTextBox )
+		return;
+
+	TFLOAT fWidth, fHeight;
+	AGUI2::GetSingleton()->GetDimensions( fWidth, fHeight );
+
+	m_pTextBox->SetColour( TCOLOR( TUINT( g_oSettings.vecHUDColor.x * 255.0f ), TUINT( g_oSettings.vecHUDColor.y * 255.0f ), TUINT( g_oSettings.vecHUDColor.z * 255.0f ) ) );
 	m_pTextBox->SetTransform( -fWidth / 2 + 6.0f, 0.0f );
-	m_pTextBox->SetAlpha( 1.0f );
+	m_pTextBox->SetAlpha( g_oSettings.vecHUDColor.w  );
 	m_pTextBox->SetInFront();
 	m_pTextBox->SetTextAlign( AGUI2Font::TextAlign_Left );
 	m_pTextBox->SetAttachment( AGUI2Element::Anchor_MiddleLeft, AGUI2Element::Pivot_MiddleLeft );
@@ -66,7 +74,7 @@ void AGUITimer::Update()
 
 void AGUITimer::Render()
 {
-	if ( m_pTextBox && m_bIsVisible )
+	if ( m_pTextBox && g_oSettings.bShowTimer )
 	{
 		m_pTextBox->PreRender();
 		m_pTextBox->Render();
