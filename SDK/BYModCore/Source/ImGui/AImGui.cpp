@@ -268,6 +268,7 @@ void AImGUI::Render()
 		{
 			TBOOL bChanged = TFALSE;
 			bChanged |= ImGui::Checkbox( "Reduce Load Times", &g_oSettings.bReduceLoadTimes );
+			bChanged |= ImGui::Checkbox( "Better Grass", &g_oSettings.bBetterGrass );
 			bChanged |= ImGui::Checkbox( "Limit FPS", &g_oSettings.bLimitFPS );
 			bChanged |= ImGui::SliderInt( "Max FPS", &g_oSettings.iMaxFPS, 5, 500 );
 

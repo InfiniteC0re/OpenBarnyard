@@ -10,6 +10,9 @@ struct ACoreSettingsProperties
 	TBOOL bLimitFPS        = TTRUE;
 	TINT  iMaxFPS          = 200;
 	TBOOL bReduceLoadTimes = TFALSE;
+
+	// Version 2:
+	TBOOL bBetterGrass = TTRUE;
 };
 
 inline struct ACoreSettings
