@@ -824,7 +824,7 @@ TMemory::TMemory()
 	m_pMemModule = TNULL;
 }
 
-TBOOL TMemory::Initialise( TUINT a_uiHeapSize, TUINT a_uiReservedSize, TUINT a_uiUnused /* = 0*/ )
+TBOOL TMemory::Initialise( TUINT a_uiHeapSize, TUINT a_uiReservedSize, TMemoryDL::Flags a_eFlags /*= TMemoryDL::Flags_Standard*/ )
 {
 	TASSERT( g_pMemory == TNULL );
 
@@ -841,7 +841,7 @@ TBOOL TMemory::Initialise( TUINT a_uiHeapSize, TUINT a_uiReservedSize, TUINT a_u
 	if ( a_uiHeapSize == 0 )
 		a_uiHeapSize = 128 * 1024 * 1024;
 
-	new ( pMemModule ) TMemoryDL( TMemoryDL::Flags_Standard, a_uiHeapSize + a_uiReservedSize );
+	new ( pMemModule ) TMemoryDL( a_eFlags, a_uiHeapSize + a_uiReservedSize );
 	g_pMemory->m_pMemModule = pMemModule;
 	g_pMemoryDL             = pMemModule;
 
@@ -917,7 +917,10 @@ void* TMalloc( TUINT a_uiSize, Toshi::TMemory::MemBlock* a_pMemBlock, const TCHA
 		a_pMemBlock = Toshi::g_pMemoryDL->GetHeap();
 	}
 
-	return a_pMemBlock->Malloc( a_uiSize );
+	if ( a_pMemBlock )
+		return a_pMemBlock->Malloc( a_uiSize );
+	else 
+		return Toshi::g_pMemoryDL->GetContext().Malloc( a_uiSize );
 }
 
 void* TMalloc( TUINT a_uiSize, const TCHAR* a_szFileName, TINT a_iLineNum )
@@ -933,11 +936,12 @@ void* TMalloc( TUINT a_uiSize )
 void* TMemalign( TUINT a_uiAlignment, TUINT a_uiSize, Toshi::TMemory::MemBlock* a_pMemBlock )
 {
 	if ( !a_pMemBlock )
-	{
 		a_pMemBlock = Toshi::g_pMemoryDL->GetHeap();
-	}
 
-	return a_pMemBlock->Memalign( a_uiAlignment, a_uiSize );
+	if ( a_pMemBlock )
+		return a_pMemBlock->Memalign( a_uiAlignment, a_uiSize );
+	else
+		return Toshi::g_pMemoryDL->GetContext().Memalign( a_uiAlignment, a_uiSize );
 }
 
 void* TMemalign( TUINT a_uiSize, TUINT a_uiAlignment )

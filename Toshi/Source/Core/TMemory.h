@@ -227,7 +227,7 @@ public:
 	TMemoryDL* GetMemModule() { return m_pMemModule; }
 
 public:
-	static TBOOL Initialise( TUINT a_uiHeapSize, TUINT a_uiReservedSize, TUINT a_uiUnused = 0 );
+	static TBOOL Initialise( TUINT a_uiHeapSize, TUINT a_uiReservedSize, TMemoryDL::Flags a_eFlags = TMemoryDL::Flags_Standard );
 	static void  Deinitialise();
 
 	static void GetMemInfo( MemInfo& a_rMemInfo, MemBlock* a_pMemBlock );
