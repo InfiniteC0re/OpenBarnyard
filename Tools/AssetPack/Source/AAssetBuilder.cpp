@@ -23,7 +23,7 @@ void AAssetBuilder::Add( const TString8& a_FileName )
 
 		for ( TUINT i = 0; i < pSYMB->GetCount(); i++ )
 		{
-			pAsset->RelatedSymbols.Push( TPS8D( pSYMB->GetName( i ).GetString() ) );
+			pAsset->RelatedSymbols.Push( TPS8D( pSYMB->GetName( i ) ) );
 		}
 
 		TStringManager::String8Copy( pAsset->Format, a_FileName.GetString( a_FileName.Length() - 3 ), 4 );
