@@ -8,6 +8,7 @@
 
 #include <File/TTSF.h>
 #include <Toshi/TString8.h>
+#include <Toshi/T2String8.h>
 
 // TODO: replace STL classes with native TOSHI classes
 #include <vector>
@@ -389,6 +390,18 @@ public:
 	}
 
 	template <class T>
+	PTRBSections::MemoryStream::Ptr<T> Get( PTRBSections& sect, TINT index )
+	{
+		if ( index != -1 && (TINT)m_Symbols.size() > index )
+		{
+			auto stack = sect.GetStack( m_Symbols[ index ].HDRX );
+			return { stack, m_Symbols[ index ].DataOffset };
+		}
+
+		return { TNULL, (TUINT)0 };
+	}
+
+	template <class T>
 	PTRBSections::MemoryStream::Ptr<T> Find( PTRBSections& sect, const TCHAR* name )
 	{
 		TINT index = FindIndex( sect, name );
@@ -454,9 +467,9 @@ public:
 		return GetStack( *sect, index );
 	}
 
-	Toshi::TString8 GetName( TUINT index )
+	Toshi::T2ConstString8 GetName( TUINT index )
 	{
-		return m_SymbolNames[ index ].c_str();
+		return m_SymbolNames[ index ].GetString();
 	}
 
 	TUINT GetCount()
@@ -518,9 +531,9 @@ public:
 
 		for ( TUINT i = 0; i < m_Symbols.size(); i++ )
 		{
-			m_Symbols[ i ].NameHash   = Toshi::TTRB::HashString( m_SymbolNames[ i ].c_str() );
+			m_Symbols[ i ].NameHash   = Toshi::TTRB::HashString( m_SymbolNames[ i ] );
 			m_Symbols[ i ].NameOffset = nameOffset;
-			nameOffset += m_SymbolNames[ i ].length() + 1;
+			nameOffset += m_SymbolNames[ i ].Length() + 1;
 
 			Toshi::TTRB::TTRBSymbol oFixedSymbol;
 			oFixedSymbol.HDRX       = CONVERTENDIANESS( eEndianess, m_Symbols[ i ].HDRX );
@@ -533,7 +546,7 @@ public:
 
 		for ( auto& name : m_SymbolNames )
 		{
-			ttsfo.WriteRaw( name.c_str(), name.length() );
+			ttsfo.WriteRaw( name, name.Length() );
 			ttsfo.Write( (TUINT8)0 );
 		}
 	}
@@ -570,12 +583,12 @@ public:
 		delete[] namesBuffer;
 	}
 
-	std::vector<std::string>::iterator begin() { return m_SymbolNames.begin(); }
-	std::vector<std::string>::iterator end() { return m_SymbolNames.end(); }
+	std::vector<Toshi::TString8>::iterator begin() { return m_SymbolNames.begin(); }
+	std::vector<Toshi::TString8>::iterator end() { return m_SymbolNames.end(); }
 
 private:
 	std::vector<Toshi::TTRB::TTRBSymbol> m_Symbols;
-	std::vector<std::string>             m_SymbolNames;
+	std::vector<Toshi::TString8>         m_SymbolNames;
 };
 
 class PTRB
@@ -591,7 +604,7 @@ public:
 		m_SECT.SetEndianess( m_eEndianess );
 	}
 
-	PTRB( const std::string& filepath )
+	PTRB( Toshi::T2ConstString8 filepath )
 	    : m_HDRX( VERSION ) { ReadFromFile( filepath ); }
 
 	void Reset()
@@ -601,12 +614,12 @@ public:
 		m_SECT.SetEndianess( m_eEndianess );
 	}
 
-	TBOOL ReadFromFile( const std::string& filepath )
+	TBOOL ReadFromFile( Toshi::T2ConstString8 filepath )
 	{
 		Reset();
 
 		Toshi::TTSFI ttsfi;
-		auto         pFile = Toshi::TFile::Create( filepath.c_str() );
+		auto         pFile = Toshi::TFile::Create( filepath.Get() );
 
 		m_eEndianess = -1;
 		if ( pFile && ttsfi.Open( pFile ) == Toshi::TTRB::ERROR_OK )
@@ -657,13 +670,13 @@ public:
 		return TFALSE;
 	}
 
-	TBOOL WriteToFile( const std::string& filepath, TBOOL compress = TFALSE )
+	TBOOL WriteToFile( Toshi::T2ConstString8 filepath, TBOOL compress = TFALSE )
 	{
 		if ( m_eEndianess != -1 )
 		{
 			Toshi::TTSFO           ttsfo;
 			Toshi::TTSFO::HunkMark mark;
-			ttsfo.Create( filepath.c_str(), ( m_eEndianess == Endianess_Big ) ? "FBRT" : "TRBF", m_eEndianess );
+			ttsfo.Create( filepath, ( m_eEndianess == Endianess_Big ) ? "FBRT" : "TRBF", m_eEndianess );
 
 			// HDRX
 			ttsfo.OpenHunk( &mark, "HDRX" );

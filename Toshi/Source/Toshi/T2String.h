@@ -36,6 +36,8 @@ public:
 	TFORCEINLINE TSIZE Length() const { return StringTraits::Length( m_pszString ); }
 	TFORCEINLINE TBOOL IsLowerCase() const { return StringTraits::IsLowerCase( m_pszString ); }
 	TFORCEINLINE TBOOL IsUpperCase() const { return StringTraits::IsUpperCase( m_pszString ); }
+	TFORCEINLINE TBOOL IsEqual( T2ConstString a_otherString ) { return StringTraits::Compare( m_pszString, a_otherString.m_pszString ) == 0; }
+	TFORCEINLINE TBOOL IsEqualNoCase( T2ConstString a_otherString ) { return StringTraits::CompareNoCase( m_pszString, a_otherString.m_pszString ) == 0; }
 
 	TFORCEINLINE const CharType* FindChar( CharType a_cCharacter ) { return StringTraits::FindChar( m_pszString, a_cCharacter ); }
 	TFORCEINLINE const CharType* FindString( const CharType* a_pszSubstr ) { return StringTraits::FindString( m_pszString, a_pszSubstr ); }
@@ -60,6 +62,12 @@ public:
 		return *this;
 	}
 
+	TFORCEINLINE TBOOL operator==( T2ConstString a_otherString )
+	{
+		return StringTraits::Compare( m_pszString, a_otherString.m_pszString ) == 0;
+	}
+
+	TFORCEINLINE constexpr const CharType* Get() const { return m_pszString; }
 	TFORCEINLINE constexpr operator const CharType*() const { return m_pszString; }
 
 private:

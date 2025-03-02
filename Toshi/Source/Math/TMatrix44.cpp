@@ -105,7 +105,7 @@ TBOOL TMatrix44::Invert( const TMatrix44& a_rRight )
 	if ( fVar2 == 0.0 )
 		return TFALSE;
 
-	fVar2 = 1.0 / fVar2;
+	fVar2 = 1.0f / fVar2;
 	Set( fVar2 * fVar1, fVar4 * fVar2, fVar3 * fVar2, a_rRight.m_f14, -( ( a_rRight.m_f33 * a_rRight.m_f21 - a_rRight.m_f31 * a_rRight.m_f23 ) * fVar2 ), ( a_rRight.m_f11 * a_rRight.m_f33 - a_rRight.m_f31 * a_rRight.m_f13 ) * fVar2, -( ( a_rRight.m_f11 * a_rRight.m_f23 - a_rRight.m_f21 * a_rRight.m_f13 ) * fVar2 ), a_rRight.m_f24, ( a_rRight.m_f32 * a_rRight.m_f21 - a_rRight.m_f31 * a_rRight.m_f22 ) * fVar2, -( ( a_rRight.m_f32 * a_rRight.m_f11 - a_rRight.m_f31 * a_rRight.m_f12 ) * fVar2 ), ( a_rRight.m_f22 * a_rRight.m_f11 - a_rRight.m_f21 * a_rRight.m_f12 ) * fVar2, a_rRight.m_f34, -a_rRight.m_f41, -a_rRight.m_f42, -a_rRight.m_f43, a_rRight.m_f44 );
 	RotateVector( AsBasisVector4( 3 ), *this, AsBasisVector4( 3 ) );
 

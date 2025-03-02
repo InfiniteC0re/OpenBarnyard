@@ -212,11 +212,11 @@ public:
 	};
 
 public:
-	constexpr T2DynamicVector( T2Allocator* a_pAllocator = GetGlobalAllocator(), TINT a_iInitialSize = 0, TINT a_iGrowSize = -1 )
+	T2DynamicVector( T2Allocator* a_pAllocator = GetGlobalAllocator(), TINT a_iInitialSize = 0, TINT a_iGrowSize = -1 )
 	    : T2GenericDynamicVector( a_pAllocator, a_iInitialSize, a_iGrowSize, sizeof( T ) )
 	{}
 
-	constexpr T2DynamicVector( T* a_poElements, TINT a_iInitialSize, TINT a_iNumElements )
+	T2DynamicVector( T* a_poElements, TINT a_iInitialSize, TINT a_iNumElements )
 	    : T2GenericDynamicVector( a_poElements, a_iInitialSize, a_iNumElements )
 	{}
 
