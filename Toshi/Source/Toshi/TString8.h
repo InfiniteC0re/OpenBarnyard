@@ -56,6 +56,8 @@ public:
 	TString8& Concat( const TString16& src, TINT size = -1 );
 	TString8& Concat( const TCHAR* src, TINT size = -1 );
 
+	TString8& Reserve( TINT size );
+
 	TINT Compare( const TCHAR* a_szString, TINT a_iLength = -1 ) const;
 	TINT CompareNoCase( const TCHAR* a_szString, TINT a_iLength = -1 ) const;
 
@@ -70,14 +72,15 @@ public:
 		_strupr( m_pBuffer );
 		return *this;
 	}
+
 	TString8& MakeLower()
 	{
 		_strlwr( m_pBuffer );
 		return *this;
 	}
 
-	TINT  Length() const { return m_iStrLen; }
-	TUINT ExcessLength() const { return m_iExcessLen; }
+	TINT    Length() const { return m_iStrLen; }
+	TUINT16 ExcessLength() const { return m_iExcessLen; }
 
 	TBOOL StartsWith( const TCHAR* a_szString, TINT a_iLength = -1 ) const;
 	TBOOL EndsWith( const TCHAR* a_szString, TINT a_iLength = -1 ) const;
@@ -185,10 +188,10 @@ private:
 	static inline func_DefaultAllocatorCB sm_pDefaultAllocatorCB = &GetDefaultAllocatorCB;
 
 private:
-	TCHAR*       m_pBuffer        = NullString; // 0x0
-	TUINT32      m_iExcessLen : 8 = 0;          // 0x4
-	TINT32       m_iStrLen : 24   = 0;          // 0x5
-	T2Allocator* m_pAllocator;                  // 0x8
+	TCHAR*       m_pBuffer;        // 0x0
+	TUINT32      m_iExcessLen : 8; // 0x4
+	TINT32       m_iStrLen : 24;   // 0x5
+	T2Allocator* m_pAllocator;     // 0x8
 };
 
 TOSHI_NAMESPACE_END

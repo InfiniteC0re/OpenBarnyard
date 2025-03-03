@@ -48,6 +48,8 @@ public:
 	TString16& Concat( const TString16& str, TINT size = -1 ) { return Concat( str.m_pBuffer, size ); };
 	TString16& Concat( const TWCHAR* src, TINT size = -1 );
 
+	TString16& Reserve( TINT size );
+
 	TINT Compare( const TWCHAR* a_wszString, TINT a_iLength = -1 ) const;
 	TINT CompareNoCase( const TWCHAR* a_wszString, TINT a_iLength = -1 ) const;
 
@@ -68,8 +70,8 @@ public:
 		return *this;
 	}
 
-	TINT  Length() const { return m_iStrLen; }
-	TUINT ExcessLength() const { return m_iExcessLen; }
+	TINT    Length() const { return m_iStrLen; }
+	TUINT16 ExcessLength() const { return m_iExcessLen; }
 
 	TBOOL IsAllLowerCase() const;
 	TBOOL IsAllUpperCase() const;
@@ -158,10 +160,10 @@ private:
 	static inline func_DefaultAllocatorCB sm_pDefaultAllocatorCB = &GetDefaultAllocatorCB;
 
 private:
-	TWCHAR*      m_pBuffer        = NullWString; // 0x0
-	TUINT32      m_iExcessLen : 8 = 0;           // 0x4
-	TINT32       m_iStrLen : 24   = 0;           // 0x5
-	T2Allocator* m_pAllocator;                   // 0x8
+	TWCHAR*      m_pBuffer;        // 0x0
+	TUINT32      m_iExcessLen : 8; // 0x4
+	TINT32       m_iStrLen : 24;   // 0x5
+	T2Allocator* m_pAllocator;     // 0x8
 };
 
 TOSHI_NAMESPACE_END

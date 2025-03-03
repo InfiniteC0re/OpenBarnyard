@@ -317,6 +317,29 @@ TINT TString16::Compare( const TWCHAR* a_pcString, TINT param_2 ) const
 	return bVar4 | 1;
 }
 
+TString16& TString16::Reserve( TINT size )
+{
+	if ( size > Length() + TINT( ExcessLength() ) )
+	{
+		TINT    iOldLength = m_iStrLen;
+		TWCHAR* pOldString = m_pBuffer;
+		TINT    iCopySize  = TMath::Min( iOldLength, size );
+
+		TBOOL bAllocated = AllocBuffer( size, TFALSE );
+
+		if ( bAllocated )
+		{
+			TStringManager::String16Copy( m_pBuffer, pOldString, iCopySize );
+			m_pBuffer[ iCopySize ] = 0;
+		}
+
+		if ( bAllocated && iOldLength != 0 )
+			m_pAllocator->Free( pOldString );
+	}
+
+	return *this;
+}
+
 TINT TString16::CompareNoCase( const TWCHAR* a_pcString, TINT param_2 ) const
 {
 	TASSERT( a_pcString != TNULL, "TWString::CompareNoCase - Passed string cannot be TNULL" );

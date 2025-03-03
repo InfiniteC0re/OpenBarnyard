@@ -314,7 +314,7 @@ TString8& TString8::Concat( const TCHAR* str, TINT size )
 	if ( allocated )
 	{
 		// since it has made a new buffer
-		// it needû to copy the old string
+		// it needs to copy the old string
 		// to the new buffer
 
 		TStringManager::String8Copy( m_pBuffer, oldString, -1 );
@@ -326,6 +326,34 @@ TString8& TString8::Concat( const TCHAR* str, TINT size )
 	if ( allocated && oldLength != 0 )
 	{
 		m_pAllocator->Free( oldString );
+	}
+
+	return *this;
+}
+
+TString8& TString8::Reserve( TINT size )
+{
+	if ( size > Length() + TINT( ExcessLength() ) )
+	{
+		TINT   iOldLength = m_iStrLen;
+		TCHAR* pOldString = m_pBuffer;
+		TINT   iCopySize  = TMath::Min( iOldLength, size );
+
+		// Reallocate buffer if necessary
+		TBOOL bAllocated = AllocBuffer( size, TFALSE );
+		
+		// Update excess length
+		TASSERT( iCopySize <= size );
+		AllocBuffer( iCopySize, TFALSE );
+
+		if ( bAllocated )
+		{
+			TStringManager::String8Copy( m_pBuffer, pOldString, iCopySize );
+			m_pBuffer[ iCopySize ] = 0;
+		}
+
+		if ( bAllocated && iOldLength != 0 )
+			m_pAllocator->Free( pOldString );
 	}
 
 	return *this;
