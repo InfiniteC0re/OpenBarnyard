@@ -83,6 +83,18 @@ public:
 
 	Iterator Push( const T* a_pValue ) { return Push( *a_pValue ); }
 
+	Iterator ReInsert( const T& a_rcItem )
+	{
+		FindAndErase( a_rcItem );
+
+		return Push( a_rcItem );
+	}
+
+	Iterator ReInsert( const T* a_pValue )
+	{
+		return ReInsert( *a_pValue );
+	}
+
 	void PopBack() { Container::PopBack(); }
 	void PopFront() { Container::PopFront(); }
 

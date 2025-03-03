@@ -63,7 +63,7 @@ public:
 
 		TBOOL IsValid() const
 		{
-			return *this != m_pVector->End();
+			return m_pVector && *this != m_pVector->End();
 		}
 
 		T* Get() noexcept
