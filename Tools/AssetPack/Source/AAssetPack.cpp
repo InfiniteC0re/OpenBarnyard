@@ -17,7 +17,7 @@ TBOOL AAssetPack::Load( const char* a_szFileName )
 
 		for ( TUINT i = 0; i < pInSYMB->GetCount(); i++ )
 		{
-			TString8 name   = pInSYMB->GetName( i );
+			TString8 name   = pInSYMB->GetName( i ).Get();
 			auto     pStack = pInSYMB->GetStack( pInSECT, i );
 
 			char szAssetFileName[ MAX_PATH ];
@@ -50,7 +50,7 @@ TBOOL AAssetPack::Load( const char* a_szFileName )
 
 				for ( TUINT k = i; k < pInSYMB->GetCount(); k++ )
 				{
-					TString8 inSymbolName     = pInSYMB->GetName( k );
+					TString8 inSymbolName     = pInSYMB->GetName( k ).Get();
 					auto     pInSymbolAddress = pInSYMB->GetByIndex<char>( pInSECT, k );
 
 					if ( pInSymbolAddress.stack() == pAsset->pStack )
