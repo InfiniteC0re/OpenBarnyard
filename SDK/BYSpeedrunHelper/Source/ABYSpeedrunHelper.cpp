@@ -251,9 +251,9 @@ extern "C"
 		return new ABYSpeedrunHelper();
 	}
 
-	MODLOADER_EXPORT const TCHAR* GetModAutoUpdateURL( TString8& a_rUpdateXmlPath )
+	MODLOADER_EXPORT const TCHAR* GetModAutoUpdateURL()
 	{
-		return "http://storage.opentoshi.net/BYSpeedrunHelper/update.json";
+		return "https://github.com/InfiniteC0re/OpenBarnyard/releases/download/speedrunhelper/update.json";
 	}
 
 	MODLOADER_EXPORT const TCHAR* GetModName()

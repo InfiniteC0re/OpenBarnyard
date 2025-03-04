@@ -28,7 +28,7 @@ void AGUITimer::Create()
 	auto pFont = AGUI2FontManager::FindFont( "Rekord18" );
 	m_pTextBox = AGUI2TextBox::CreateFromEngine();
 	m_pTextBox->Create( pFont, 200.0f );
-	m_pTextBox->SetText( L"00:00:00.000" );
+	m_pTextBox->SetText( L"0.000" );
 	
 	ApplyUIStyle();
 }

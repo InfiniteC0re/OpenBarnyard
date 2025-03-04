@@ -15,7 +15,7 @@ TVersion g_uiCurrentVersion = TVERSION( 1, 0 );
 
 #define NEW_DLL_NAME    L"BYModCore.dll"
 #define OLD_DLL_NAME    L"BYModCore.dll_old"
-#define UPDATE_INFO_URL "http://storage.opentoshi.net/BYModCore/update.json"
+#define UPDATE_INFO_URL "https://github.com/InfiniteC0re/OpenBarnyard/releases/download/modloader/update.json"
 
 void UpdateManager::CleanUp()
 {
@@ -126,6 +126,13 @@ TBOOL UpdateManager::CheckVersion( Toshi::T2StringView strUpdateInfoUrl, Toshi::
 
 	// Do the request
 	httplib::Result result = httpClient.Get();
+
+	// Redirect once
+	if ( result->get_header_value_count( "location" ) )
+	{
+		httpClient.Create( result->get_header_value( "location" ).c_str() );
+		result = httpClient.Get();
+	}
 
 	if ( result.error() != httplib::Error::Success ) return TFALSE;
 	if ( result->status != 200 ) return TFALSE;
