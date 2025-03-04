@@ -26,10 +26,10 @@
 
 TOSHI_NAMESPACE_USING
 
-HMODULE hModuleCore;
-
 static T2CommandLine g_CommandLine;
 const T2CommandLine* g_pCommandLine = &g_CommandLine;
+
+TBOOL g_bCheckUpdates = TTRUE;
 
 const char* GetModsDirectory()
 {
@@ -113,7 +113,6 @@ DWORD APIENTRY DllMain( HMODULE hModule, DWORD reason, LPVOID reserved )
 			AllocConsole();
 			FILE* fDummy;
 			freopen_s( &fDummy, "CONOUT$", "w", stdout );
-			hModuleCore = hModule;
 #endif
 
 			TUtil::TOSHIParams toshiParams;
@@ -134,9 +133,17 @@ DWORD APIENTRY DllMain( HMODULE hModule, DWORD reason, LPVOID reserved )
 
 			SetConsoleCtrlHandler( exit_handler, TRUE );
 
-			UpdateManager::CleanUp();
-			UpdateManager::AskAutoUpdate();
+			// Auto updates
+			g_bCheckUpdates = !g_CommandLine.HasParameter( "-no-updates" );
 
+			UpdateManager::CleanUp();
+
+			if ( g_bCheckUpdates )
+				UpdateManager::AskAutoUpdate();
+			else
+				TINFO( "Auto updates are disabled with command line argument\n" );
+
+			// Create thread
 			TINFO( "Log system was successfully initialised!\n" );
 			TINFO( "Starting BYModCore thread...\n" );
 

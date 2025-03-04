@@ -50,9 +50,22 @@ void UpdateManager::AskAutoUpdate()
 		{
 			TINFO( "User agreed to update the ModCore\n" );
 
+			// Allocate console so user can see something during update
+			AllocConsole();
+			FILE* fDummy;
+			freopen_s( &fDummy, "CONOUT$", "w", stdout );
+			printf( "Downloading the update...\n" );
+
 			AHTTPClient httpClient;
 			httpClient.Create( versionInfo.strUpdateUrl.GetString() );
 			httplib::Result downloadResult = httpClient.Get();
+
+			// Redirect once
+			if ( downloadResult->get_header_value_count( "location" ) )
+			{
+				httpClient.Create( downloadResult->get_header_value( "location" ).c_str() );
+				downloadResult = httpClient.Get();
+			}
 
 			if ( downloadResult.error() != httplib::Error::Success ||
 			     downloadResult->status != 200 )
