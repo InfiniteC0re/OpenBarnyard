@@ -20,7 +20,7 @@
 #include <Toshi/TApplication.h>
 #include <Toshi/TUtil.h>
 
-#include <stdio.h>
+#include <cstdio>
 #include <windows.h>
 
 TOSHI_NAMESPACE_USING
@@ -97,12 +97,15 @@ BOOL WINAPI exit_handler( DWORD dwCtrlType )
 	return TRUE;
 }
 
+LONG WINAPI unhandled_handler( struct _EXCEPTION_POINTERS* apExceptionInfo );
+
 DWORD APIENTRY DllMain( HMODULE hModule, DWORD reason, LPVOID reserved )
 {
 	switch ( reason )
 	{
 		case DLL_PROCESS_ATTACH:
 		{
+			SetUnhandledExceptionFilter( unhandled_handler );
 			TMemory::Initialise( 4 * 1024 * 1024, 0 );
 
 #ifdef TOSHI_DEBUG
