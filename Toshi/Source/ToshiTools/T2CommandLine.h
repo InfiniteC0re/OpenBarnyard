@@ -12,9 +12,9 @@ class T2CommandLine
 {
 public:
 	T2CommandLine();
-	T2CommandLine( T2ConstString8 a_pchCommandLine );
+	T2CommandLine( T2StringView a_pchCommandLine );
 
-	void Create( T2ConstString8 a_pchCommandLine );
+	void Create( T2StringView a_pchCommandLine );
 
 	TBOOL    HasParameter( const TCHAR* a_pszParameter, TINT* a_pIndex = TNULL ) const;
 	TString8 GetParameterValue( const TCHAR* a_pszParameter, const TCHAR* a_pszDefaultValue = TNULL ) const;

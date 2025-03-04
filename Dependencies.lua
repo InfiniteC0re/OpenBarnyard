@@ -12,6 +12,7 @@ IncludeDir.detours = "%{wks.location}/SDK/Vendor/Detours/include"
 IncludeDir.glm = "%%{wks.location}/Toshi/Vendor/glm/include"
 IncludeDir.glew = "%{wks.location}/Toshi/Vendor/glew/include"
 IncludeDir.sdl2 = "%{wks.location}/Toshi/Vendor/sdl2/include"
+IncludeDir.libssl = "%{wks.location}/Toshi/Vendor/libssl/include"
 
 LibDir = {}
 LibDir.fmod = "%{wks.location}/Toshi/Vendor/fmod/lib"
@@ -20,6 +21,7 @@ LibDir.bink = "%{wks.location}/Toshi/Vendor/bink/lib"
 LibDir.detours = "%{wks.location}/SDK/Vendor/Detours/lib"
 LibDir.glew = "%{wks.location}/Toshi/Vendor/glew/lib"
 LibDir.sdl2 = "%{wks.location}/Toshi/Vendor/sdl2/lib"
+LibDir.libssl = "%{wks.location}/Toshi/Vendor/libssl/lib"
 
 -- content of these folders should be copied to any client application
 ClientContentCommon = "%{wks.location}Content/Common/"

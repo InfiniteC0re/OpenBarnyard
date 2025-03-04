@@ -467,7 +467,7 @@ public:
 		return GetStack( *sect, index );
 	}
 
-	Toshi::T2ConstString8 GetName( TUINT index )
+	Toshi::T2StringView GetName( TUINT index )
 	{
 		return m_SymbolNames[ index ].GetString();
 	}
@@ -604,7 +604,7 @@ public:
 		m_SECT.SetEndianess( m_eEndianess );
 	}
 
-	PTRB( Toshi::T2ConstString8 filepath )
+	PTRB( Toshi::T2StringView filepath )
 	    : m_HDRX( VERSION ) { ReadFromFile( filepath ); }
 
 	void Reset()
@@ -614,7 +614,7 @@ public:
 		m_SECT.SetEndianess( m_eEndianess );
 	}
 
-	TBOOL ReadFromFile( Toshi::T2ConstString8 filepath )
+	TBOOL ReadFromFile( Toshi::T2StringView filepath )
 	{
 		Reset();
 
@@ -670,7 +670,7 @@ public:
 		return TFALSE;
 	}
 
-	TBOOL WriteToFile( Toshi::T2ConstString8 filepath, TBOOL compress = TFALSE )
+	TBOOL WriteToFile( Toshi::T2StringView filepath, TBOOL compress = TFALSE )
 	{
 		if ( m_eEndianess != -1 )
 		{

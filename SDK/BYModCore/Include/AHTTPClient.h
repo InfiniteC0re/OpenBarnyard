@@ -1,4 +1,6 @@
 #pragma once
+
+#define CPPHTTPLIB_OPENSSL_SUPPORT
 #include "httplib.h"
 #include "ModLoader.h"
 
@@ -11,14 +13,21 @@ public:
 	AHTTPClient();
 	virtual ~AHTTPClient();
 
-	virtual void            Create( Toshi::T2ConstString8 strUrl );
+	virtual void            Create( Toshi::T2StringView strUrl );
+	virtual void            Destroy();
 	virtual void            SetHeaders( httplib::Headers& headers );
 	virtual httplib::Result Get();
 
 private:
-	httplib::Client* m_pClient;
-	Toshi::TString8  m_strBaseUrl;
-	Toshi::TString8  m_strPath;
+	union 
+	{
+		httplib::Client* m_pClient;
+		httplib::SSLClient* m_pSSLClient;
+	};
+
+	Toshi::TString8      m_strBaseUrl;
+	Toshi::TString8      m_strPath;
+	TBOOL                m_bHTTPS;
 };
 
 MODCORE_API AHTTPClient* CreateHTTPClient();

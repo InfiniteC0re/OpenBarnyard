@@ -5,6 +5,7 @@
 #include "AModLoaderTask.h"
 #include "ACoreSettings.h"
 #include "AImGUI.h"
+#include "UpdateManager.h"
 
 #include "BYardSDK/SDKHooks.h"
 
@@ -106,7 +107,7 @@ DWORD APIENTRY DllMain( HMODULE hModule, DWORD reason, LPVOID reserved )
 		case DLL_PROCESS_ATTACH:
 		{
 			SetUnhandledExceptionFilter( unhandled_handler );
-			TMemory::Initialise( 4 * 1024 * 1024, 0 );
+			TMemory::Initialise( 64 * 1024 * 1024, 0 );
 
 #ifdef TOSHI_DEBUG
 			AllocConsole();
@@ -133,10 +134,13 @@ DWORD APIENTRY DllMain( HMODULE hModule, DWORD reason, LPVOID reserved )
 
 			SetConsoleCtrlHandler( exit_handler, TRUE );
 
+			UpdateManager::CleanUp();
+			UpdateManager::AskAutoUpdate();
+
 			TINFO( "Log system was successfully initialised!\n" );
 			TINFO( "Starting BYModCore thread...\n" );
 
-			HANDLE hThread = CreateThread( 0, 256, (LPTHREAD_START_ROUTINE)MainThread, hModule, 0, 0 );
+			HANDLE hThread = CreateThread( 0, 0, (LPTHREAD_START_ROUTINE)MainThread, hModule, 0, 0 );
 
 			if ( hThread == NULL )
 			{

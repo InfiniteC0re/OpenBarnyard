@@ -10,59 +10,59 @@ TOSHI_NAMESPACE_START
 // Purpose: Template wrapper for constant strings that allows using an interface
 // instead of static methods from T2String8 or T2String16.
 //
-// Use T2ConstString8 to work with TCHAR strings
+// Use T2StringView to work with TCHAR strings
 // Use T2ConstString16 to work with TWCHAR strings
 // Note: To support other encodings, pass your own StringTraits class.
 //-----------------------------------------------------------------------------
 template <class StringTraits = T2StringTraits<TCHAR>>
-class T2ConstString
+class T2StringViewBase
 {
 public:
 	using CharType = typename StringTraits::CharType;
 
 public:
-	TFORCEINLINE constexpr T2ConstString( const CharType* a_pszString )
+	TFORCEINLINE constexpr T2StringViewBase( const CharType* a_pszString )
 	    : m_pszString( a_pszString )
 	{}
 
-	TFORCEINLINE constexpr T2ConstString()
+	TFORCEINLINE constexpr T2StringViewBase()
 	    : m_pszString( TNULL )
 	{}
 
-	TFORCEINLINE constexpr T2ConstString( const T2ConstString& a_rOther )
+	TFORCEINLINE constexpr T2StringViewBase( const T2StringViewBase& a_rOther )
 	    : m_pszString( a_rOther.m_pszString )
 	{}
 
 	TFORCEINLINE TSIZE Length() const { return StringTraits::Length( m_pszString ); }
 	TFORCEINLINE TBOOL IsLowerCase() const { return StringTraits::IsLowerCase( m_pszString ); }
 	TFORCEINLINE TBOOL IsUpperCase() const { return StringTraits::IsUpperCase( m_pszString ); }
-	TFORCEINLINE TBOOL IsEqual( T2ConstString a_otherString ) { return StringTraits::Compare( m_pszString, a_otherString.m_pszString ) == 0; }
-	TFORCEINLINE TBOOL IsEqualNoCase( T2ConstString a_otherString ) { return StringTraits::CompareNoCase( m_pszString, a_otherString.m_pszString ) == 0; }
+	TFORCEINLINE TBOOL IsEqual( T2StringViewBase a_otherString ) { return StringTraits::Compare( m_pszString, a_otherString.m_pszString ) == 0; }
+	TFORCEINLINE TBOOL IsEqualNoCase( T2StringViewBase a_otherString ) { return StringTraits::CompareNoCase( m_pszString, a_otherString.m_pszString ) == 0; }
 
 	TFORCEINLINE const CharType* FindChar( CharType a_cCharacter ) { return StringTraits::FindChar( m_pszString, a_cCharacter ); }
 	TFORCEINLINE const CharType* FindString( const CharType* a_pszSubstr ) { return StringTraits::FindString( m_pszString, a_pszSubstr ); }
 	TFORCEINLINE const CharType* SkipSpaces() { return StringTraits::SkipSpaces( m_pszString ); }
 
-	TFORCEINLINE constexpr T2ConstString& operator=( const CharType* a_pszString )
+	TFORCEINLINE constexpr T2StringViewBase& operator=( const CharType* a_pszString )
 	{
 		m_pszString = a_pszString;
 		return *this;
 	}
 
-	TFORCEINLINE constexpr T2ConstString operator+( int a_iSize ) const { return T2ConstString( m_pszString + a_iSize ); }
-	TFORCEINLINE constexpr T2ConstString operator-( int a_iSize ) const { return T2ConstString( m_pszString - a_iSize ); }
-	TFORCEINLINE constexpr T2ConstString operator+=( int a_iSize )
+	TFORCEINLINE constexpr T2StringViewBase operator+( int a_iSize ) const { return T2StringViewBase( m_pszString + a_iSize ); }
+	TFORCEINLINE constexpr T2StringViewBase operator-( int a_iSize ) const { return T2StringViewBase( m_pszString - a_iSize ); }
+	TFORCEINLINE constexpr T2StringViewBase operator+=( int a_iSize )
 	{
 		m_pszString += a_iSize;
 		return *this;
 	}
-	TFORCEINLINE constexpr T2ConstString operator-=( int a_iSize )
+	TFORCEINLINE constexpr T2StringViewBase operator-=( int a_iSize )
 	{
 		m_pszString -= a_iSize;
 		return *this;
 	}
 
-	TFORCEINLINE TBOOL operator==( T2ConstString a_otherString )
+	TFORCEINLINE TBOOL operator==( T2StringViewBase a_otherString )
 	{
 		return StringTraits::Compare( m_pszString, a_otherString.m_pszString ) == 0;
 	}
@@ -74,8 +74,8 @@ private:
 	const CharType* m_pszString;
 };
 
-using T2ConstString8  = T2ConstString<T2StringTraits<TCHAR>>;
-using T2ConstString16 = T2ConstString<T2StringTraits<TWCHAR>>;
+using T2StringView  = T2StringViewBase<T2StringTraits<TCHAR>>;
+using T2StringView16 = T2StringViewBase<T2StringTraits<TWCHAR>>;
 
 //-----------------------------------------------------------------------------
 // Purpose: Wrapper for a constant size string that has an interface.
@@ -263,7 +263,7 @@ class T2StringParser
 {
 public:
 	using CharType    = typename StringTraits::CharType;
-	using ConstString = T2ConstString<StringTraits>;
+	using ConstString = typename T2StringViewBase<StringTraits>;
 
 public:
 	T2StringParser( ConstString a_pchBuffer, TSIZE a_uiBufferSize = -1 )

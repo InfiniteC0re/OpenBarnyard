@@ -9,7 +9,7 @@
 
 TOSHI_NAMESPACE_START
 
-T2CommandLine::T2CommandLine( T2ConstString8 a_pchCommandLine )
+T2CommandLine::T2CommandLine( T2StringView a_pchCommandLine )
 {
 	Create( a_pchCommandLine );
 }
@@ -20,7 +20,7 @@ T2CommandLine::T2CommandLine()
 	m_bInitialised       = TFALSE;
 }
 
-void T2CommandLine::Create( T2ConstString8 a_pchCommandLine )
+void T2CommandLine::Create( T2StringView a_pchCommandLine )
 {
 	if ( a_pchCommandLine )
 	{

@@ -10,7 +10,9 @@ project "BYModCore"
 	{
 		"Toshi",
 		"BYardSDK",
-		"detours.lib"
+		"detours.lib",
+		"libcrypto_static.lib",
+		"libssl_static.lib"
 	}
 	
 	libdirs
@@ -19,6 +21,7 @@ project "BYModCore"
 		"%{LibDir.bink}",
 		"%{LibDir.dx8}",
 		"%{LibDir.detours}",
+		"%{LibDir.libssl}",
 	}
 
 	files
@@ -33,7 +36,8 @@ project "BYModCore"
 		"Include",
 		"%{wks.location}/Toshi/Source",
 		"%{wks.location}/SDK/BYardSDK/Source",
-		"%{IncludeDir.detours}"
+		"%{IncludeDir.detours}",
+		"%{IncludeDir.libssl}",
 	}
 	
 	externalincludedirs

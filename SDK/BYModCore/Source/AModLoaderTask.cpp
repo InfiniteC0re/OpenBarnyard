@@ -1,8 +1,8 @@
 #include "pch.h"
 #include "AHooks.h"
 #include "AModLoaderTask.h"
+#include "UpdateManager.h"
 #include "AHTTPClient.h"
-#include "json.hpp"
 
 #include <BYardSDK/THookedRenderD3DInterface.h>
 #include <BYardSDK/AGUI2FontManager.h>
@@ -99,47 +99,23 @@ void AModLoaderTask::LoadMods()
 			}
 
 			// Obtain the update url
-			TString8 updateXmlPath = fnGetModAutoUpdateURL();
+			TString8 updateInfoURL = fnGetModAutoUpdateURL();
 			TString8 strModName    = ( fnGetName ) ? fnGetName() : "Unknown Mod";
 			TVersion modVersion    = fnGetVersion();
 			
 			// We don't need the dll to be attached anymore
 			FreeLibrary( hModule );
 
+			if ( !updateInfoURL.Length() ) continue;
+			
 			TINFO( "Checking for updates of the '%s' mod...\n", strModName.GetString() );
-
-			if ( !updateXmlPath.Length() ) continue;
 			
-			AHTTPClient httpClient;
-			httpClient.Create( updateXmlPath.GetString() );
+			UpdateManager::VersionInfo versionInfo;
+			TBOOL bOutDated = UpdateManager::CheckVersion( updateInfoURL.GetString(), modVersion, &versionInfo );
 
-			// Do the request
-			httplib::Result result = httpClient.Get();
-			
-			if ( result.error() != httplib::Error::Success ) continue;
-			if ( result->status != 200 ) continue;
-
-			// Parse json
-			nlohmann::json json = json.parse( result->body );
-
-			if ( json.is_null() || !json.is_object() )
-				continue;
-
-			auto version = json.find( "version" );
-			auto latest  = json.find( "latest" );
-
-			if ( version == json.end() || latest == json.end() ) continue;
-			if ( !version->is_array() || !latest->is_string() ) continue;
-
-			if ( version->size() != 2 || !version->at( 0 ).is_number_integer() || !version->at( 1 ).is_number_integer() )
-				continue;
-
-			TVersion latestVersion = TVERSION( version->at( 0 ).get<TINT>(), version->at( 1 ).get<TINT>() );
-
-			if ( modVersion.Parts.Major < latestVersion.Parts.Major ||
-			     modVersion.Parts.Minor < latestVersion.Parts.Minor )
+			if ( bOutDated )
 			{
-				TINFO( "New version (v%u.%u) of the '%s' (v%u.%u) mod is available\n", latestVersion.Parts.Major, latestVersion.Parts.Minor, strModName.GetString(), modVersion.Parts.Major, modVersion.Parts.Minor );
+				TINFO( "New version (v%u.%u) of the '%s' (v%u.%u) mod is available\n", versionInfo.uiVersion.Parts.Major, versionInfo.uiVersion.Parts.Minor, strModName.GetString(), modVersion.Parts.Major, modVersion.Parts.Minor );
 				
 				TString8 strDescription = TString8::VarArgs(
 				    "New version of the '%s' mod is available!\n\n"
@@ -149,8 +125,8 @@ void AModLoaderTask::LoadMods()
 				    strModName.GetString(),
 				    modVersion.Parts.Major,
 				    modVersion.Parts.Minor,
-				    latestVersion.Parts.Major,
-				    latestVersion.Parts.Minor
+				    versionInfo.uiVersion.Parts.Major,
+				    versionInfo.uiVersion.Parts.Minor
 				);
 
 				const TINT msgBoxResult = MessageBoxA( NULL, strDescription.GetString(), "Barnyard ModLoader", MB_YESNO );
@@ -159,7 +135,8 @@ void AModLoaderTask::LoadMods()
 				{
 					TINFO( "User agreed to update mod\n" );
 
-					httpClient.Create( latest->get<std::string>().c_str() );
+					AHTTPClient httpClient;
+					httpClient.Create( versionInfo.strUpdateUrl.GetString() );
 					httplib::Result downloadResult = httpClient.Get();
 
 					if ( downloadResult.error() != httplib::Error::Success ||
@@ -179,7 +156,7 @@ void AModLoaderTask::LoadMods()
 					{
 						TERROR( "Unable to open file for writing. Error: %u\n", GetLastError() );
 						TASSERT( TFALSE );
-						MessageBoxA( NULL, "Unable to download new version of the mod! Canceling...", "Barnyard ModLoader", MB_OK );
+						MessageBoxA( NULL, "Unable to open file for writing! Canceling...", "Barnyard ModLoader", MB_OK );
 						continue;
 					}
 
