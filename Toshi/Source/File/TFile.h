@@ -162,7 +162,7 @@ public:
          * @return last write time
          */
 
-	virtual _FILETIME GetDate() { return {}; }
+	virtual TUINT64 GetDate() { return 0; }
 
 	/**
          * Reads one character of type TCHAR from the file.

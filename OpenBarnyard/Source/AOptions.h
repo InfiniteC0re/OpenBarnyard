@@ -43,7 +43,7 @@ public:
 	TFLOAT                GetSensitivity() const { return m_fSensitivity; }
 	TINT                  GetWidth() const { return m_iWidth; }
 	TINT                  GetHeight() const { return m_iHeight; }
-	TBOOL                 IsWindowed() const { return IsDebuggerPresent() || m_bForcedWindowed; }
+	TBOOL                 IsWindowed() const;
 	TBOOL                 IsControllerEnabled() const { return m_bControllerEnabled; }
 	TBOOL                 IsHighDetailGrassEnabled() const { return m_bHighDetailGrass; }
 

@@ -85,7 +85,7 @@ void TTextureResourceHAL::CreateFromT2Texture( T2Texture* a_pTexture )
 	m_uiWidth         = a_pTexture->GetWidth();
 	m_uiHeight        = a_pTexture->GetHeight();
 	m_uiMipLevels     = a_pTexture->GetMipLevels();
-	m_bNoMipLevels    = FALSE;
+	m_uiMipFlags      = 0;
 	m_eResourceFormat = TTEXTURERESOURCEFORMAT::Unknown;
 	m_eAddressUState  = 0;
 	m_eAddressVState  = 0;
@@ -110,7 +110,7 @@ TBOOL TTextureResourceHAL::Create( void* a_pData, TUINT a_uiDataSize, TUINT a_eT
 	m_uiHeight        = a_uiHeight;
 	m_uiMipLevels     = 0;
 	m_eResourceFormat = TTEXTURERESOURCEFORMAT::Unknown;
-	m_bNoMipLevels    = TRUE;
+	m_uiMipFlags      = 1;
 	m_bLoadFromMemory = TTRUE;
 	m_pData           = a_pData;
 	m_uiDataSize      = a_uiDataSize;
@@ -131,14 +131,14 @@ TBOOL TTextureResourceHAL::Create( const TCHAR* a_szFileName, TUINT a_eTextureFl
 	m_eTextureFlags  = a_eTextureFlags;
 	m_eAddressUState = 0;
 	m_eAddressVState = 0;
-	m_bNoMipLevels   = TRUE;
+	m_uiMipFlags     = 1;
 
 	return TTRUE;
 }
 
-TBOOL TTextureResourceHAL::CreateEx( void* a_pData, TUINT a_uiDataSize, TUINT a_uiWidth, TUINT a_uiHeight, TUINT a_uiMipLevels, TTEXTURERESOURCEFORMAT a_eFormat, BOOL a_bNoMipLevels )
+TBOOL TTextureResourceHAL::CreateEx( void* a_pData, TUINT a_uiDataSize, TUINT a_uiWidth, TUINT a_uiHeight, TUINT a_uiMipLevels, TTEXTURERESOURCEFORMAT a_eFormat, TUINT a_uiMipMapFlags )
 {
-	if ( !CreateResource( a_pData, a_uiDataSize, a_uiWidth, a_uiHeight, a_uiMipLevels, a_eFormat, a_bNoMipLevels ) )
+	if ( !CreateResource( a_pData, a_uiDataSize, a_uiWidth, a_uiHeight, a_uiMipLevels, a_eFormat, a_uiMipMapFlags ) )
 	{
 		return TFALSE;
 	}
@@ -150,7 +150,7 @@ TBOOL TTextureResourceHAL::CreateEx( void* a_pData, TUINT a_uiDataSize, TUINT a_
 	m_eTextureFlags   = 0x40;
 	m_uiMipLevels     = a_uiMipLevels;
 	m_eResourceFormat = a_eFormat;
-	m_bNoMipLevels    = a_bNoMipLevels;
+	m_uiMipFlags      = a_uiMipMapFlags;
 	m_bLoadFromMemory = TTRUE;
 	m_eAddressUState  = 0;
 	m_eAddressVState  = 0;
@@ -161,7 +161,7 @@ TBOOL TTextureResourceHAL::CreateEx( void* a_pData, TUINT a_uiDataSize, TUINT a_
 
 TBOOL TTextureResourceHAL::CreateFromFormat()
 {
-	TUINT uiMipLevels = ( m_bNoMipLevels == TRUE ) ? m_uiMipLevels : 0;
+	TUINT uiMipLevels = ( m_uiMipFlags & 1 ) ? m_uiMipLevels : 0;
 
 	switch ( m_eResourceFormat )
 	{

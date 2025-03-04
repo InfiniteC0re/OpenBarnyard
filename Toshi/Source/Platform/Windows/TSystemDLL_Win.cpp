@@ -1,6 +1,8 @@
 #include "ToshiPCH.h"
 #include "TSystemDLL_Win.h"
 
+#include <windows.h>
+
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
 // Note: Should be the last include!
@@ -56,7 +58,7 @@ void TSystemDLLWin::Unload()
 
 void* TSystemDLLWin::GetAddress( const TString8& a_sSymbolName )
 {
-	void* pAddress = GetProcAddress( GetDLL(), a_sSymbolName );
+	void* pAddress = GetProcAddress( (HMODULE)GetDLL(), a_sSymbolName );
 	TASSERT( pAddress != TNULL );
 
 	return pAddress;

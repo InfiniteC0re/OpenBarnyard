@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Windows.h>
+
 #undef THREAD_MODE_BACKGROUND_BEGIN
 #undef THREAD_MODE_BACKGROUND_END
 #undef THREAD_PRIORITY_ABOVE_NORMAL
@@ -35,7 +37,7 @@ public:
 	virtual void Main() = 0;
 	virtual ~TThread(){};
 
-	TBOOL Create( size_t a_iStackSize, PRIORITY a_ePriority, uint8_t flag );
+	TBOOL Create( size_t a_iStackSize, PRIORITY a_ePriority, TUINT8 a_eFlags );
 	TBOOL Destroy();
 
 	static TBOOL GetPriority( void* a_hThreadHnd, PRIORITY& a_ePriority );
@@ -44,8 +46,8 @@ public:
 	static void Exit( TThread* a_pThread );
 	//static void Sleep(TINT milliSeconds) { usleep(100); }
 
-	void* m_hThreadHnd; // 0xC
-	DWORD m_iThreadID;  // 0x10
+	void*         m_hThreadHnd; // 0xC
+	unsigned long m_iThreadID;  // 0x10
 };
 
 class TThreadManager : public TSingleton<TThreadManager>
@@ -53,8 +55,8 @@ class TThreadManager : public TSingleton<TThreadManager>
 public:
 	TThreadManager() { Create(); }
 
-	void Create() { InitializeCriticalSection( &m_CriticalSection ); }
-	void Delete() { DeleteCriticalSection( &m_CriticalSection ); }
+	void Create();
+	void Delete();
 
 	void RemoveThread( TThread* a_pThread );
 	void InsertThread( TThread* a_pThread );

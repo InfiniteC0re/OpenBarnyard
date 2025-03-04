@@ -2,61 +2,37 @@
 
 TOSHI_NAMESPACE_START
 
-enum TMutexLockFlag
-{
-	TMutexLockFlag_DoNotWait = 1,
-};
-
 class TMutex
 {
 public:
-	TMutex() = default;
-
-	~TMutex()
+	enum FLAG
 	{
-		Destroy();
-	}
-
-	// Returns TTRUE if success
-	TBOOL Create()
-	{
-		m_Handle = CreateMutexA( NULL, FALSE, NULL );
-		return TTRUE;
-	}
-
-	// Returns TTRUE if success
-	TBOOL Destroy()
-	{
-		BOOL result = CloseHandle( m_Handle );
-		m_Handle    = NULL;
-
-		return result;
-	}
-
-	// Returns TTRUE if the state is signaled
-	TBOOL Lock( TUINT32 flags = 0 )
-	{
-		DWORD waitForMs = ( flags & TMutexLockFlag_DoNotWait ) ? 0 : INFINITE;
-		DWORD result    = WaitForSingleObject( m_Handle, waitForMs );
-
-		return result == WAIT_OBJECT_0;
-	}
-
-	// Returns TTRUE if success
-	TBOOL Unlock()
-	{
-		return ReleaseMutex( m_Handle );
-	}
+		FLAG_NONE    = 0,
+		FLAG_NO_WAIT = BITFLAG( 0 ),
+	};
 
 public:
-	TMutex& operator=( const TMutex& mutex )
-	{
-		m_Handle = mutex.m_Handle;
-		return *this;
-	}
+	TMutex();
+	~TMutex();
+
+	// Returns TTRUE if success
+	TBOOL Create();
+
+	// Returns TTRUE if success
+	TBOOL Destroy();
+
+	// Returns TTRUE if the state is signaled
+	TBOOL Lock( FLAG a_eFlags = FLAG_NONE );
+
+	// Returns TTRUE if success
+	TBOOL Unlock();
+
+public:
+	TMutex& operator=( const TMutex& mutex );
+	TMutex& operator=( void* handle );
 
 private:
-	HANDLE m_Handle;
+	void* m_Handle;
 };
 
 TOSHI_NAMESPACE_END

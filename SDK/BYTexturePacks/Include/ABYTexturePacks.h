@@ -10,7 +10,6 @@ public:
 	void        OnRenderInterfaceReady( Toshi::TRenderD3DInterface* a_pRenderInterface ) override;
 	void        OnImGuiRender() override;
 	TBOOL       HasSettingsUI() override;
-	const char* GetName() override;
 
 	virtual void SetTexturePack( const char* a_szName );
 	virtual void UpdateTexturePackPath();

@@ -1,6 +1,7 @@
 #pragma once
 #include "AModInstance.h"
 
+#include <Toshi/TString8.h>
 #include <ToshiTools/T2CommandLine.h>
 
 #include <Windows.h>
@@ -18,4 +19,9 @@
 
 MODCORE_API const char* GetModsDirectory();
 
-using t_CreateModInstance = AModInstance* (*)( const Toshi::T2CommandLine* a_pCommandLine );
+class AHTTPClient;
+
+using t_CreateModInstance   = AModInstance* (*)( const Toshi::T2CommandLine* a_pCommandLine );
+using t_GetModVersion       = TUINT32 (*)();
+using t_GetModName          = const TCHAR* (*)();
+using t_GetModAutoUpdateURL = const TCHAR* (*)();

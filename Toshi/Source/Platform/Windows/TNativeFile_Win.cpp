@@ -1,6 +1,11 @@
 #include "ToshiPCH.h"
 #include "TNativeFile_Win.h"
 
+#include <windows.h>
+
+#undef CreateFile
+#undef FindFirstFile
+
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
 // Note: Should be the last include!
@@ -182,7 +187,7 @@ TNativeFile::TNativeFile( const TNativeFile& other )
 	m_WriteBuffered   = other.m_WriteBuffered;
 }
 
-TBOOL TNativeFile::LoadBuffer( DWORD bufferPos )
+TBOOL TNativeFile::LoadBuffer( TUINT32 bufferPos )
 {
 	// FUN_00689ff0
 	DWORD lpNumberOfBytesRead;
@@ -536,18 +541,16 @@ TSIZE TNativeFile::GetSize()
 	return m_RBufferPosition;
 }
 
-_FILETIME TNativeFile::GetDate()
+TUINT64 TNativeFile::GetDate()
 {
-	_FILETIME fLastWriteTime;
-	fLastWriteTime.dwLowDateTime  = 0;
-	fLastWriteTime.dwHighDateTime = 0;
+	TUINT64 uiLastWriteTime = 0;
 
 	if ( m_Handle != TNULL )
 	{
-		GetFileTime( m_Handle, NULL, NULL, &fLastWriteTime );
+		GetFileTime( m_Handle, NULL, NULL, (LPFILETIME)&uiLastWriteTime );
 	}
 
-	return fLastWriteTime;
+	return uiLastWriteTime;
 }
 
 TBOOL TNativeFile::Open( const TString8& a_FileName, TFILEMODE a_Mode )

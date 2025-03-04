@@ -12,9 +12,7 @@
 #include "Math/TVector4.h"
 #include "Math/TQuaternion.h"
 
-#ifdef ERROR
-#  undef ERROR
-#endif
+#undef ERROR
 
 TOSHI_NAMESPACE_START
 
@@ -91,7 +89,7 @@ public:
 	void Close( TBOOL free = TTRUE );
 
 	void ReadCompressed( void* buffer, TUINT32 size );
-	void CompressSection( TFile* file, TCHAR* unk, TUINT32 unk2, TUINT32 unk3 ) { TCompress::Compress( file, unk, unk2, unk3, m_Endianess ); }
+	void CompressSection( TFile* file, TBYTE* data, TUINT32 unk2, TUINT32 unk3 ) { TCompress::Compress( file, data, unk2, unk3, m_Endianess ); }
 
 	const Hunk& GetCurrentHunk() const { return m_CurrentHunk; }
 
@@ -219,7 +217,7 @@ public:
 	TUINT32 WriteCompressed( const void* buffer, TSIZE size )
 	{
 		TASSERT( m_pFile != TNULL, "TTSFO is not created" );
-		TUINT32 writtenSize = TCompress::Compress( m_pFile, (TCHAR*)buffer, size, 0, m_Endianess == Endianess_Big );
+		TUINT32 writtenSize = TCompress::Compress( m_pFile, (TBYTE*)buffer, size, 0, m_Endianess == Endianess_Big );
 		WriteAlignmentPad();
 		return writtenSize;
 	}

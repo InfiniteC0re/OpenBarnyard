@@ -39,10 +39,10 @@ public:
 	~TTextureFactory();
 
 	virtual void      Dump() const;
-	virtual TTexture* CreateTextureFromFile( const TCHAR* a_szFilePath, TUINT32 a_eTextureFlags )                                                                                  = 0;
-	virtual TTexture* CreateTextureFromMemory( void* a_pData, TUINT a_uiDataSize, TUINT a_eTextureFlags, TUINT a_uiWidth, TUINT a_uiHeight )                                       = 0;
-	virtual TTexture* CreateEx( void* a_pData, TUINT a_uiDataSize, TUINT a_uiWidth, TUINT a_uiHeight, TUINT a_uiMipLevels, TTEXTURERESOURCEFORMAT a_eFormat, BOOL a_bNoMipLevels ) = 0;
-	virtual TTexture* CreateFromT2Texture( T2Texture* a_pTexture )                                                                                                                 = 0;
+	virtual TTexture* CreateTextureFromFile( const TCHAR* a_szFilePath, TUINT32 a_eTextureFlags )                                                                                    = 0;
+	virtual TTexture* CreateTextureFromMemory( void* a_pData, TUINT a_uiDataSize, TUINT a_eTextureFlags, TUINT a_uiWidth, TUINT a_uiHeight )                                         = 0;
+	virtual TTexture* CreateEx( void* a_pData, TUINT a_uiDataSize, TUINT a_uiWidth, TUINT a_uiHeight, TUINT a_uiMipLevels, TTEXTURERESOURCEFORMAT a_eFormat, TUINT a_uiMipMapFlags ) = 0;
+	virtual TTexture* CreateFromT2Texture( T2Texture* a_pTexture )                                                                                                                   = 0;
 
 	TNodeList<NameEntry>* GetList( TUINT a_uiList );
 

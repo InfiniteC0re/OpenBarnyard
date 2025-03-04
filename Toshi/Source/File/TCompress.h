@@ -60,18 +60,18 @@ public:
 	static TINT           usemaxoffset;
 
 public:
-	static size_t Compress( TFile* file, TCHAR* data, TUINT32 size, TUINT32 unused, TBOOL isBigEndian );
+	static size_t Compress( TFile* file, TBYTE* data, TUINT32 size, TUINT32 unused, TBOOL isBigEndian );
 
 private:
-	static TINT WriteOffset( TUINT32 length, TINT offset, TCHAR*& data, TFile* file );
-	static TINT Write( TUINT32 length, TCHAR*& data, TFile* file );
+	static TINT WriteOffset( TUINT32 length, TINT offset, TBYTE*& data, TFile* file );
+	static TINT Write( TUINT32 length, TBYTE*& data, TFile* file );
 
 public:
 	//-----------------------------------------------------------------------------
 	// Decompressor
 	//-----------------------------------------------------------------------------
 
-	static uintptr_t Decompress( TFile* file, TCompress::Header* header, TCHAR* buffer, TUINT32 bufferSize );
+	static uintptr_t Decompress( TFile* file, TCompress::Header* header, TBYTE* buffer, TUINT32 bufferSize );
 	static int8_t    GetHeader( TFile* file, TCompress::Header& btecHeader );
 	static TINT      GetCommand( TFile* file, TBOOL& hasOffset, TUINT32& size, TINT& offset );
 };

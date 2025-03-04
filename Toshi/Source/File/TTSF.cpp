@@ -177,7 +177,7 @@ void TTSFI::ReadCompressed( void* buffer, TUINT32 size )
 	if ( error == TCOMPRESS_ERROR_OK )
 	{
 		TUINT32 headerSize = m_pFile->Tell() - headerStart;
-		TCompress::Decompress( m_pFile, &header, (TCHAR*)buffer, size );
+		TCompress::Decompress( m_pFile, &header, (TBYTE*)buffer, size );
 		m_ReadPos += header.CompressedSize + headerSize;
 	}
 }

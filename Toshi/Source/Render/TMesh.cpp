@@ -52,7 +52,7 @@ void TMesh::OnDestroy()
 	m_State &= ~State_Created;
 }
 
-void TMesh::SetFlags( State a_eFlags, BOOL a_bEnable )
+void TMesh::SetFlags( State a_eFlags, TBOOL a_bEnable )
 {
 	if ( a_bEnable )
 		m_State |= a_eFlags;

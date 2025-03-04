@@ -1,6 +1,8 @@
 #include "ToshiPCH.h"
 #include "TNativeFile_Win.h"
 
+#include <windows.h>
+
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
 // Note: Should be the last include!

@@ -1,6 +1,10 @@
 #pragma once
 #include "Thread/TSemaphore.h"
 
+#ifdef TOSHI_SKU_WINDOWS
+#  include <windows.h>
+#endif
+
 TOSHI_NAMESPACE_START
 
 class TGenericFifo

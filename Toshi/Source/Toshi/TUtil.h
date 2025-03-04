@@ -1,8 +1,7 @@
 #pragma once
 #include "Toshi/TSingleton.h"
 #include "Toshi/TEvent.h"
-
-#include <Windows.h>
+#include "Thread/TMutex.h"
 
 TOSHI_NAMESPACE_START
 
@@ -115,7 +114,7 @@ public:
 	static TLogFile*                         GetCurrentLogFile() { return ms_pSingleton->m_pCurrentLogFile; }
 	static TEmitter<TUtil, TUtil::LogEvent>& GetLogEmitter() { return ms_pSingleton->m_LogEmitter; }
 
-	static void SetGlobalMutex( HANDLE a_hGlobalMutex ) { ms_hGlobalMutex = a_hGlobalMutex; }
+	static TMutex& GetGlobalMutex() { return ms_oGlobalMutex; }
 
 	static TPString8Pool* SetTPStringPool( TPString8Pool* a_pStringPool ) { return std::exchange( *ms_poStringPool, a_pStringPool ); }
 
@@ -140,7 +139,7 @@ private:
 
 private:
 	inline static TPString8Pool** ms_poStringPool;
-	inline static HANDLE          ms_hGlobalMutex;
+	inline static TMutex          ms_oGlobalMutex;
 	inline static TOSHIParams     ms_oToshiParams;
 
 public:

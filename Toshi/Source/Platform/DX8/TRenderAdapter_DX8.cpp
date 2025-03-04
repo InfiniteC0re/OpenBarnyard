@@ -63,9 +63,9 @@ TUINT16 TD3DAdapter::GetBuild() const
 }
 
 // $Barnyard: FUNCTION 006d6730
-const GUID& TD3DAdapter::GetDeviceIdentifier() const
+const void* TD3DAdapter::GetDeviceIdentifier() const
 {
-	return m_DeviceIdentifier;
+	return &m_DeviceIdentifier;
 }
 
 // $Barnyard: FUNCTION 006d47b0

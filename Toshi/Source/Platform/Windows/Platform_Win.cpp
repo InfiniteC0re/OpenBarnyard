@@ -2,6 +2,8 @@
 #include "Toshi/Platform.h"
 #include "Toshi/TString8.h"
 
+#include <Windows.h>
+
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
 // Note: Should be the last include!

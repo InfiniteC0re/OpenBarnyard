@@ -3,6 +3,7 @@
 #include "Toshi/TString8.h"
 
 #include <conio.h>
+#include <windows.h>
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.

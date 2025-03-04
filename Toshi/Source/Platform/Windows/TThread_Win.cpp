@@ -21,7 +21,7 @@ unsigned long __stdcall ThreadEntry( void* userParam )
 	return 0;
 }
 
-TBOOL TThread::Create( TSIZE a_iStackSize, PRIORITY a_ePriority, uint8_t flag )
+TBOOL TThread::Create( TSIZE a_iStackSize, PRIORITY a_ePriority, TUINT8 a_eFlags )
 {
 	m_iThreadID  = -1;
 	m_hThreadHnd = CreateThread( NULL, a_iStackSize, ThreadEntry, this, CREATE_SUSPENDED, &m_iThreadID );
@@ -32,7 +32,7 @@ TBOOL TThread::Create( TSIZE a_iStackSize, PRIORITY a_ePriority, uint8_t flag )
 
 	TThreadManager::GetSingletonSafe()->InsertThread( this );
 
-	if ( ( flag & 1 ) == 0 )
+	if ( ( a_eFlags & 1 ) == 0 )
 	{
 		DWORD iResult = ResumeThread( m_hThreadHnd );
 		TASSERT( iResult != -1, "Couldn't resume thread" );
@@ -101,6 +101,16 @@ void TThreadManager::InsertThread( TThread* a_pThread )
 	EnterCriticalSection( &m_CriticalSection );
 	m_Threads.PushFront( a_pThread );
 	LeaveCriticalSection( &m_CriticalSection );
+}
+
+void TThreadManager::Create()
+{
+	InitializeCriticalSection( &m_CriticalSection );
+}
+
+void TThreadManager::Delete()
+{
+	DeleteCriticalSection( &m_CriticalSection );
 }
 
 TOSHI_NAMESPACE_END

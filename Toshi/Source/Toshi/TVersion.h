@@ -7,6 +7,11 @@ union TVersion
 {
 	TUINT32 Value;
 
+	TVersion() = default;
+	constexpr TVersion( TUINT32 a_uiVersion )
+	    : Value( a_uiVersion )
+	{ }
+
 	struct
 	{
 		TUINT16 Minor;

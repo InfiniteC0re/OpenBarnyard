@@ -1,5 +1,6 @@
 #pragma once
 #include <Toshi/T2DList.h>
+#include <Toshi/TString8.h>
 #include <File/TTRB.h>
 
 #include <Plugins/PPropertyParser/PBProperties.h>
@@ -26,11 +27,13 @@ public:
 	virtual void				OnAGUI2Ready() {}
 	virtual void				OnImGuiRender() {}
 	virtual TBOOL				HasSettingsUI() { return TFALSE; }
-	virtual const char*			GetName() = 0;
-	virtual Toshi::TVersion		GetVersion() { return { TVERSION( 1, 0 ) }; }
 	virtual Toshi::TTRB*		GetAssetFile() { return TNULL; }
 	virtual const PBProperties* GetFileOverrides() { return TNULL; }
 
+	const TCHAR* GetName() const { return m_strName.GetString(); }
+
 public:
-	HMODULE m_hModule;
+	HMODULE         m_hModule;
+	Toshi::TString8 m_strName;
+	Toshi::TVersion m_uiVersion;
 };

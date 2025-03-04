@@ -1,9 +1,6 @@
 #pragma once
 #include "File/TFile.h"
 
-#undef CreateFile
-#undef FindFirstFile
-
 TOSHI_NAMESPACE_START
 
 class TNativeFileSystem : public TFileSystem
@@ -40,7 +37,7 @@ public:
 	virtual TSIZE     Tell() OVERRIDE;
 	virtual void      FlushBuffers() OVERRIDE;
 	virtual TSIZE     GetSize() OVERRIDE;
-	virtual _FILETIME GetDate() OVERRIDE;
+	virtual TUINT64   GetDate() OVERRIDE;
 	virtual TCHAR     GetCChar() OVERRIDE;
 	virtual TWCHAR    GetWChar() OVERRIDE;
 	virtual TINT      PutCChar( TCHAR a_cCharacter ) OVERRIDE;
@@ -53,20 +50,20 @@ public:
 	void Close();
 
 private:
-	TBOOL LoadBuffer( DWORD bufferPos );
+	TBOOL LoadBuffer( TUINT32 bufferPos );
 	TINT  FlushWriteBuffer();
-	TINT  ReadUnbuffered( LPVOID dst, TUINT size );
+	TINT  ReadUnbuffered( void* dst, TUINT size );
 
 private:
-	HANDLE m_Handle;          // 0x8
-	DWORD  m_Position;        // 0xC
-	DWORD  m_RBufferPosition; // 0x10
-	DWORD  m_PrevBufferPos;   // 0x14
-	DWORD  m_LastBufferSize;  // 0x18
-	TCHAR* m_RBuffer;         // 0x1C (read buffer)
-	TCHAR* m_WBuffer;         // 0x20 (write buffer)
-	DWORD  m_WriteBufferUsed; // 0x24
-	TBOOL  m_WriteBuffered;   // 0x28
+	void*   m_Handle;          // 0x8
+	TUINT32 m_Position;        // 0xC
+	TUINT32 m_RBufferPosition; // 0x10
+	TUINT32 m_PrevBufferPos;   // 0x14
+	TUINT32 m_LastBufferSize;  // 0x18
+	TCHAR*  m_RBuffer;         // 0x1C (read buffer)
+	TCHAR*  m_WBuffer;         // 0x20 (write buffer)
+	TUINT32 m_WriteBufferUsed; // 0x24
+	TBOOL   m_WriteBuffered;   // 0x28
 };
 
 TOSHI_NAMESPACE_END

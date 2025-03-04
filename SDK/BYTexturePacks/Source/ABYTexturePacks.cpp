@@ -102,11 +102,6 @@ TBOOL ABYTexturePacks::HasSettingsUI()
 	return TTRUE;
 }
 
-const char* ABYTexturePacks::GetName()
-{
-	return "BYTexturePacks";
-}
-
 extern "C"
 {
 	MODLOADER_EXPORT AModInstance* CreateModInstance( const T2CommandLine* a_pCommandLine )
@@ -123,5 +118,15 @@ extern "C"
 		g_LoadMutex.Create();
 
 		return new ABYTexturePacks();
+	}
+
+	MODLOADER_EXPORT const TCHAR* GetModName()
+	{
+		return "BYTexturePacks";
+	}
+
+	MODLOADER_EXPORT TUINT32 GetModVersion()
+	{
+		return TVERSION( 1, 0 );
 	}
 }

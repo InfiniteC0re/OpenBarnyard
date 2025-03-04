@@ -1,9 +1,12 @@
 #include "ToshiPCH.h"
-#include "Core/TMemory.h"
-#include "Thread/TMutex.h"
-#include "Thread/TMutexLock.h"
 
 #ifndef TMEMORY_USE_DLMALLOC
+
+#  include "Core/TMemory.h"
+#  include "Thread/TMutex.h"
+#  include "Thread/TMutexLock.h"
+
+#  include <windows.h>
 
 TOSHI_NAMESPACE_START
 

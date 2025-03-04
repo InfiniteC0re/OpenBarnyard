@@ -167,9 +167,7 @@ void TUtil::CreateKernelInterface()
 void TUtil::ToshiDestroy()
 {
 	TIMPLEMENT();
-#ifdef TOSHI_SKU_WINDOWS
-	ReleaseMutex( ms_hGlobalMutex );
-#endif
+	ms_oGlobalMutex.Destroy();
 
 	TModelManager::Uninitialise();
 }

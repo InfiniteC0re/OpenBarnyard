@@ -1,6 +1,8 @@
 #include "ToshiPCH.h"
 #include "THPTimer_Win.h"
 
+#include <windows.h>
+
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
 // Note: Should be the last include!
@@ -35,8 +37,8 @@ int64_t THPTimer::GetRaw64()
 
 void THPTimer::Reset()
 {
-	QueryPerformanceCounter( &m_iCurrentTime.LargeInteger() );
-	QueryPerformanceFrequency( &m_iFrequency.LargeInteger() );
+	QueryPerformanceCounter( (LARGE_INTEGER*)&m_iCurrentTime );
+	QueryPerformanceFrequency( (LARGE_INTEGER*)&m_iFrequency );
 	m_iOldTime = m_iCurrentTime;
 	m_fDelta   = 0;
 }
@@ -44,11 +46,11 @@ void THPTimer::Reset()
 void THPTimer::Update()
 {
 	m_iOldTime = m_iCurrentTime;
-	QueryPerformanceCounter( &m_iCurrentTime.LargeInteger() );
+	QueryPerformanceCounter( (LARGE_INTEGER*)&m_iCurrentTime );
 
-	TFLOAT ratio      = 1.0f / m_iFrequency.QuadPart();
-	m_fDelta          = ( m_iCurrentTime.QuadPart() - m_iOldTime.QuadPart() ) * ratio;
-	m_fCurrentSeconds = m_iCurrentTime.QuadPart() * ratio;
+	TFLOAT ratio      = 1.0f / m_iFrequency;
+	m_fDelta          = ( m_iCurrentTime - m_iOldTime ) * ratio;
+	m_fCurrentSeconds = m_iCurrentTime * ratio;
 }
 
 TOSHI_NAMESPACE_END

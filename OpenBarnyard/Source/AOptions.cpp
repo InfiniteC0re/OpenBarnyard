@@ -2,6 +2,8 @@
 #include "AOptions.h"
 #include "Locale/ALocaleManager.h"
 
+#include <windows.h>
+
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
 // Note: Should be the last include!
@@ -166,4 +168,9 @@ TBOOL AOptions::IsResolutionCompatible( TINT a_iWidth, TINT a_iHeight )
 	}
 
 	return TFALSE;
+}
+
+TBOOL AOptions::IsWindowed() const
+{
+	return IsDebuggerPresent() || m_bForcedWindowed;
 }

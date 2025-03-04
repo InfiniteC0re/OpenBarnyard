@@ -230,11 +230,6 @@ public:
 	{
 		return TTRUE;
 	}
-
-	const char* GetName() override
-	{
-		return "BYSpeedrunHelper";
-	}
 };
 
 extern "C"
@@ -254,5 +249,20 @@ extern "C"
 		g_bIsExperimentalMode = g_pCommandLine->HasParameter( "-experimental" );
 
 		return new ABYSpeedrunHelper();
+	}
+
+	MODLOADER_EXPORT const TCHAR* GetModAutoUpdateURL( TString8& a_rUpdateXmlPath )
+	{
+		return "http://storage.opentoshi.net/BYSpeedrunHelper/update.json";
+	}
+
+	MODLOADER_EXPORT const TCHAR* GetModName()
+	{
+		return "BYSpeedrunHelper";
+	}
+
+	MODLOADER_EXPORT TUINT32 GetModVersion()
+	{
+		return TVERSION( 1, 0 );
 	}
 }

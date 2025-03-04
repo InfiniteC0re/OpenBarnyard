@@ -105,8 +105,7 @@ TOSHI_ENTRY
 	TUtil::Log( "OS Name: %s\n", osName );
 	TUtil::Log( "OS Version: %d.%d Build:%d %s\n", osVersionInfo.dwMajorVersion, osVersionInfo.dwMinorVersion, osVersionInfo.dwBuildNumber, osVersionInfo.szCSDVersion );
 
-	HANDLE hBarnyardMutex = CreateMutexA( NULL, TTRUE, "BARNYARD" );
-	TUtil::SetGlobalMutex( hBarnyardMutex );
+	TUtil::GetGlobalMutex() = CreateMutexA( NULL, TTRUE, "BARNYARD" );
 
 	if ( GetLastError() == ERROR_ALREADY_EXISTS )
 	{

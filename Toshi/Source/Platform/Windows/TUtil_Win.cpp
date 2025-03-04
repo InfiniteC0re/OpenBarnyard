@@ -3,6 +3,7 @@
 #include "Toshi/TUtil.h"
 
 #include <queue>
+#include <windows.h>
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.

@@ -17,13 +17,13 @@ public:
 	void* GetAddress( const TString8& a_sSymbolName );
 
 	const TString8& GetFileName() const { return m_sFileName; }
-	HMODULE         GetDLL() const { return m_pDLL; }
+	void*         GetDLL() const { return m_pDLL; }
 
 	TSystemDLLWin& operator=( const TSystemDLLWin& other );
 
 private:
 	TString8 m_sFileName;
-	HMODULE  m_pDLL;
+	void*    m_pDLL;
 };
 
 TOSHI_NAMESPACE_END

@@ -128,7 +128,7 @@ public:
 		m_eFlags |= 8;
 	}
 
-	TBOOL HasFlags( UINT32 a_uiFlags ) const
+	TBOOL HasFlags( TUINT32 a_uiFlags ) const
 	{
 		return ( m_eFlags & a_uiFlags ) == m_eFlags;
 	}

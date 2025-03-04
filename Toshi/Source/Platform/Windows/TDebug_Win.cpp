@@ -2,6 +2,8 @@
 #include "Toshi/TDebug.h"
 #include "Thread/T2Mutex.h"
 
+#include <Windows.h>
+
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
 // Note: Should be the last include!

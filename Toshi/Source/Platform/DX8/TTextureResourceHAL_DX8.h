@@ -32,7 +32,7 @@ public:
 	virtual void  CreateFromT2Texture( T2Texture* a_pTexture ) override;
 	virtual TBOOL Create( void* a_pData, TUINT a_uiDataSize, TUINT a_eTextureFlags, TUINT a_uiWidth, TUINT a_uiHeight ) override;
 	virtual TBOOL Create( const TCHAR* a_szFileName, TUINT a_eTextureFlags ) override;
-	virtual TBOOL CreateEx( void* a_pData, TUINT a_uiDataSize, TUINT a_uiWidth, TUINT a_uiHeight, TUINT a_uiMipLevels, TTEXTURERESOURCEFORMAT a_eFormat, BOOL a_bNoMipLevels ) override;
+	virtual TBOOL CreateEx( void* a_pData, TUINT a_uiDataSize, TUINT a_uiWidth, TUINT a_uiHeight, TUINT a_uiMipLevels, TTEXTURERESOURCEFORMAT a_eFormat, TUINT a_uiMipMapFlags ) override;
 
 	TBOOL CreateFromFormat();
 	TBOOL CreateFromMemory8888( TUINT a_uiWidth, TUINT a_uiHeight, TUINT a_uiLevels, void* a_pData );
@@ -67,7 +67,7 @@ private:
 	TUINT                  m_uiWidth;
 	TUINT                  m_uiHeight;
 	TUINT                  m_uiMipLevels;
-	BOOL                   m_bNoMipLevels;
+	TUINT                  m_uiMipFlags;
 	TTEXTURERESOURCEFORMAT m_eResourceFormat;
 	IDirect3DTexture8*     m_pD3DTexture;
 	D3DXIMAGE_INFO         m_ImageInfo;

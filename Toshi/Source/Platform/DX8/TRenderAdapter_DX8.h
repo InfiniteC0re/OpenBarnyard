@@ -4,6 +4,7 @@
 #include "Render/TRenderAdapter.h"
 
 #include <d3d8.h>
+#include <windows.h>
 
 TOSHI_NAMESPACE_START
 
@@ -109,7 +110,7 @@ public:
 	virtual TUINT16         GetVersion() const override;
 	virtual TUINT16         GetSubVersion() const override;
 	virtual TUINT16         GetBuild() const override;
-	virtual const GUID&     GetDeviceIdentifier() const override;
+	virtual const void*     GetDeviceIdentifier() const override;
 	virtual TUINT32         GetNumSupportedDevices() const override;
 
 	void SetAdapterIndex( TUINT32 a_uiAdapterIndex ) { m_uiAdapterIndex = a_uiAdapterIndex; }

@@ -12,7 +12,7 @@ TOSHI_NAMESPACE_START
 
 TINT TCompress::usemaxoffset;
 
-TINT TCompress::Write( TUINT32 length, TCHAR*& data, TFile* file )
+TINT TCompress::Write( TUINT32 length, TBYTE*& data, TFile* file )
 {
 	// 0068a830
 	TASSERT( length <= maxlength );
@@ -43,7 +43,7 @@ TINT TCompress::Write( TUINT32 length, TCHAR*& data, TFile* file )
 	return writtenSize;
 }
 
-TINT TCompress::WriteOffset( TUINT32 length, TINT offset, TCHAR*& data, TFile* file )
+TINT TCompress::WriteOffset( TUINT32 length, TINT offset, TBYTE*& data, TFile* file )
 {
 	// 0068a8c0
 	TASSERT( length <= maxlength );
@@ -86,28 +86,28 @@ TINT TCompress::WriteOffset( TUINT32 length, TINT offset, TCHAR*& data, TFile* f
 	return writtenSize;
 }
 
-TSIZE TCompress::Compress( TFile* file, TCHAR* buffer, TUINT32 size, TUINT32 unused, TBOOL isBigEndian )
+TSIZE TCompress::Compress( TFile* file, TBYTE* buffer, TUINT32 size, TUINT32 unused, TBOOL isBigEndian )
 {
 	BTECCompressor compressor;
 
 	usemaxoffset = 0x8000;
 	compressor.Initialize( buffer, size, usemaxoffset, 3 );
 
-	TCHAR* bufferPos = buffer;
-	TCHAR* bufferEnd = buffer + size;
+	TBYTE* bufferPos = buffer;
+	TBYTE* bufferEnd = buffer + size;
 
 	auto initialPos = file->Tell();
 	file->Seek( TCompress::HEADER_SIZE_12, TSEEK_CUR );
 
 	TSIZE  compressedSize = 0;
 	TSIZE  chunkSize      = 0;
-	TCHAR* chunkStart     = TNULL;
+	TBYTE* chunkStart     = TNULL;
 
 	while ( bufferPos < bufferEnd )
 	{
 		TSIZE uncompressedLeft = TMath::Min<TSIZE>( size - ( bufferPos - buffer ), maxlength );
 
-		TCHAR* offset    = TNULL;
+		TBYTE* offset    = TNULL;
 		TSIZE  dataSize  = 0;
 		TBOOL  hasOffset = compressor.FUN_0068af10( bufferPos, uncompressedLeft, offset, dataSize );
 

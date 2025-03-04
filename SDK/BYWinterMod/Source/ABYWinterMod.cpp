@@ -139,11 +139,6 @@ public:
 		return TNULL;
 	}
 
-	const char* GetName() override
-	{
-		return "BYWinterMod";
-	}
-
 	void OnImGuiRender() override
 	{
 		ImGui::ColorEdit4( "Lighting Colour", g_afLightColour );
@@ -173,5 +168,15 @@ extern "C"
 		TUtil::ToshiCreate( toshiParams );
 
 		return new ABYWinterMod();
+	}
+
+	MODLOADER_EXPORT const TCHAR* GetModName()
+	{
+		return "BYWinterMod";
+	}
+
+	MODLOADER_EXPORT TUINT32 GetModVersion()
+	{
+		return TVERSION( 1, 0 );
 	}
 }

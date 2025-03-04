@@ -76,11 +76,6 @@ public:
 	{
 		return TTRUE;
 	}
-
-	const char* GetName() override
-	{
-		return "Enhanced";
-	}
 };
 
 extern "C"
@@ -98,5 +93,15 @@ extern "C"
 		TUtil::SetTPStringPool( new TPString8Pool( 1024, 0, Toshi::GetGlobalAllocator(), TNULL ) );
 
 		return new ABYEnhanced();
+	}
+
+	MODLOADER_EXPORT const TCHAR* GetModName()
+	{
+		return "Enhanced";
+	}
+
+	MODLOADER_EXPORT TUINT32 GetModVersion()
+	{
+		return TVERSION( 1, 0 );
 	}
 }

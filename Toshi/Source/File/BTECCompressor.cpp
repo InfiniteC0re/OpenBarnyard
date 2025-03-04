@@ -37,7 +37,7 @@ BTECCompressor::~BTECCompressor()
 	TFree( m_Buckets );
 }
 
-void BTECCompressor::Initialize( TCHAR* buffer, TSIZE bufferSize, TINT maxoffset, TINT unk )
+void BTECCompressor::Initialize( TBYTE* buffer, TSIZE bufferSize, TINT maxoffset, TINT unk )
 {
 	// 0068ac60 +++
 	m_DataEnd     = buffer + bufferSize;
@@ -132,13 +132,13 @@ void BTECCompressor::FUN_0068ae40( TSIZE dataSize )
 	}
 }
 
-TBOOL BTECCompressor::FUN_0068af10( TCHAR* buffer, TSIZE bufferSize, TCHAR*& offset, TSIZE& dataSize )
+TBOOL BTECCompressor::FUN_0068af10( TBYTE* buffer, TSIZE bufferSize, TBYTE*& offset, TSIZE& dataSize )
 {
 	// +++
 	offset   = TNULL;
 	dataSize = 0;
 
-	if ( bufferSize < 1 || m_Offsets[ (BYTE)*buffer ] == TNULL )
+	if ( bufferSize < 1 || m_Offsets[ (TBYTE)*buffer ] == TNULL )
 	{
 		return TFALSE;
 	}
@@ -215,16 +215,16 @@ TBOOL BTECCompressor::FUN_0068af10( TCHAR* buffer, TSIZE bufferSize, TCHAR*& off
 		}
 	}
 
-	offset   = m_Offsets[ (BYTE)*buffer ];
+	offset   = m_Offsets[ (TBYTE)*buffer ];
 	dataSize = 1;
 
 	return TTRUE;
 }
 
-void BTECCompressor::AllocSubstring( TCHAR* buffer )
+void BTECCompressor::AllocSubstring( TBYTE* buffer )
 {
 	// 0068b180 +++
-	m_Offsets[ (BYTE)*buffer ] = buffer;
+	m_Offsets[ (TBYTE)*buffer ] = buffer;
 
 	for ( TSIZE i = 0; i < m_BucketCount; i++ )
 	{
@@ -262,7 +262,7 @@ void BTECCompressor::AllocSubstring( TCHAR* buffer )
 	}
 }
 
-TBOOL BTECCompressor::FUN_0068b300( TCHAR* buffer, Bucket nodeBucket, TSIZE bufferSize, Node*& out1, Node*& out2 )
+TBOOL BTECCompressor::FUN_0068b300( TBYTE* buffer, Bucket nodeBucket, TSIZE bufferSize, Node*& out1, Node*& out2 )
 {
 	auto hash       = HashData( buffer, bufferSize );
 	auto hashedNode = nodeBucket[ hash % 256 ];

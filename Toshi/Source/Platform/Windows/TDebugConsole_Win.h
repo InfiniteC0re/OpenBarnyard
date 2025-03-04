@@ -1,5 +1,7 @@
 #pragma once
 
+#include <windows.h>
+
 TOSHI_NAMESPACE_START
 
 constexpr const TCHAR* TDebugConsoleUUID = "{1B5D8052-529A-4c88-9DDE-EE523D440B00}";

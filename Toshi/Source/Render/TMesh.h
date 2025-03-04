@@ -40,7 +40,7 @@ public:
 	virtual TBOOL Render();
 	virtual void  OnDestroy();
 
-	void SetFlags( State a_eFlags, BOOL a_bEnable );
+	void SetFlags( State a_eFlags, TBOOL a_bEnable );
 
 	void DestroyResource();
 

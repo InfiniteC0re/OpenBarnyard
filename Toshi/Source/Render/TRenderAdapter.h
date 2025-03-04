@@ -53,7 +53,7 @@ public:
 	virtual TUINT16         GetVersion() const             = 0;
 	virtual TUINT16         GetSubVersion() const          = 0;
 	virtual TUINT16         GetBuild() const               = 0;
-	virtual const GUID&     GetDeviceIdentifier() const    = 0;
+	virtual const void*     GetDeviceIdentifier() const    = 0;
 	virtual TUINT32         GetNumSupportedDevices() const = 0;
 
 	TNodeList<Mode>* GetModeList() { return &m_Modes; }

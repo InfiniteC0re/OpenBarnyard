@@ -2,6 +2,8 @@
 #include "Toshi/Defines.h"
 #include "TThread_Win.h"
 
+#include <Windows.h>
+
 TOSHI_NAMESPACE_START
 
 class T2NamedPipeServer;

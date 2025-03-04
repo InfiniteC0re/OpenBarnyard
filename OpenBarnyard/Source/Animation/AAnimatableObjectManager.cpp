@@ -58,8 +58,8 @@ void AAnimatableObjectManager::LoadTypesFromLibrary( const TCHAR* a_szLibName )
 	TString8 strLibPath;
 	strLibPath.Format( "%slibs\\%s.trb", MODELTYPES_DIR, a_szLibName );
 
-	TTRB        oTRB;
-	TTRB::ERROR eLoadRes = oTRB.Load( strLibPath );
+	TTRB   oTRB;
+	TUINT8 eLoadRes = oTRB.Load( strLibPath );
 	TASSERT( eLoadRes == TTRB::ERROR_OK );
 
 	if ( eLoadRes == TTRB::ERROR_OK )

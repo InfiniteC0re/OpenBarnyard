@@ -10,7 +10,7 @@
 TOSHI_NAMESPACE_START
 
 // $Barnyard: FUNCTION 006dc4f0
-uintptr_t TCompress::Decompress( TFile* file, TCompress::Header* header, TCHAR* buffer, TUINT32 bufferSize )
+uintptr_t TCompress::Decompress( TFile* file, TCompress::Header* header, TBYTE* buffer, TUINT32 bufferSize )
 {
 	TPROFILER_SCOPE();
 
@@ -21,7 +21,7 @@ uintptr_t TCompress::Decompress( TFile* file, TCompress::Header* header, TCHAR* 
 	if ( header->Size > bufferSize )
 		return TCOMPRESS_ERROR_WRONG_SIZE;
 
-	TCHAR*  pBufferPos     = buffer;
+	TBYTE*  pBufferPos     = buffer;
 	TUINT32 compressedLeft = header->CompressedSize;
 
 	while ( compressedLeft > 0 )
@@ -35,7 +35,7 @@ uintptr_t TCompress::Decompress( TFile* file, TCompress::Header* header, TCHAR* 
 		if ( !noOffset )
 		{
 			// The data is already unpacked so just copy it
-			TCHAR* unpackedData = pBufferPos - offset;
+			TBYTE* unpackedData = pBufferPos - offset;
 
 			while ( chunkSize > 0 )
 			{
