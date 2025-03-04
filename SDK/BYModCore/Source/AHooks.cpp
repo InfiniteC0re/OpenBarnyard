@@ -242,11 +242,27 @@ MEMBER_HOOK( 0x00662d90, AOptions, AOptions_IsResolutionCompatible, TBOOL, TINT 
 	TINT*  pWidth      = (TINT*)( ( TUINT( this ) + 0x24 ) );
 	TINT*  pHeight     = (TINT*)( ( TUINT( this ) + 0x28 ) );
 
+	RECT windowRect;
+	BOOL bResult = GetWindowRect( GetDesktopWindow(), &windowRect );
+
+	if ( !bResult )
+	{
+		TERROR( "Unable to get window rect... Using resolution provided by the original game.\n" );
+		return TTRUE;
+	}
+
+	if ( a_iWidth > windowRect.right || a_iHeight > windowRect.bottom )
+	{
+		TWARN( "Wrong resolution is set (%dx%d), changing it to fit the whole screen (%dx%d)...\n", a_iWidth, a_iHeight, windowRect.right, windowRect.bottom );
+		a_iWidth  = windowRect.right;
+		a_iHeight = windowRect.bottom;
+		*pIsWindowed = TFALSE;
+	}
+	
+	TINFO( "Launching the game in %s mode\n", ( *pIsWindowed ) ? "windowed" : "fullscreen" );
+
 	if ( *pIsWindowed == TFALSE )
 	{
-		RECT windowRect;
-		GetWindowRect( GetDesktopWindow(), &windowRect );
-
 		if ( windowRect.right > a_iWidth || windowRect.bottom > a_iHeight )
 		{
 			const int msgBoxResult = MessageBoxW( NULL, L"It seems that you aren't using widescreen patch.\nDo you want the game to launch in your native resolution?", L"Barnyard", MB_YESNO );
@@ -288,24 +304,29 @@ MEMBER_HOOK( 0x00662d90, AOptions, AOptions_IsResolutionCompatible, TBOOL, TINT 
 
 	if ( TMath::Abs( fCurrentAspectRatio - ASPECT_RATIO_5_4 ) <= FLT_EPSILON )
 	{
+		TINFO( "Detected aspect ratio: 5:4\n" );
 		*pFOV = 0.994199f;
 	}
 	else if ( TMath::Abs( fCurrentAspectRatio - ASPECT_RATIO_25_16 ) <= FLT_EPSILON )
 	{
+		TINFO( "Detected aspect ratio: 25:16\n" );
 		*pFOV = 1.18425f;
 	}
 	else if ( TMath::Abs( fCurrentAspectRatio - ASPECT_RATIO_16_10 ) <= FLT_EPSILON )
 	{
+		TINFO( "Detected aspect ratio: 16:10\n" );
 		*pFOV           = 1.2244f;
 		g_bBikeFOVPatch = TTRUE;
 	}
 	else if ( TMath::Abs( fCurrentAspectRatio - ASPECT_RATIO_15_9 ) <= FLT_EPSILON )
 	{
+		TINFO( "Detected aspect ratio: 15:9\n" );
 		*pFOV           = 1.24655f;
 		g_bBikeFOVPatch = TTRUE;
 	}
 	else if ( TMath::Abs( fCurrentAspectRatio - ASPECT_RATIO_16_9 ) <= FLT_EPSILON )
 	{
+		TINFO( "Detected aspect ratio: 16:9\n" );
 		*pFOV           = 1.313f;
 		g_bBikeFOVPatch = TTRUE;
 	}
@@ -329,7 +350,7 @@ MEMBER_HOOK( 0x00614d70, ADisplayModes_Win, ADisplayModes_Win_DoesModeExist, TBO
 
 MEMBER_HOOK( 0x006c66b0, TRenderD3DInterface, TRenderD3DInterface_UpdateColourSettings, void )
 {
-	return;
+	
 }
 
 MEMBER_HOOK( 0x006bb000, TTRB, TTRB_Load, TINT, const char* a_szFileName, TUINT a_uiUnk )
@@ -420,7 +441,7 @@ MEMBER_HOOK( 0x006c1d40, TModelManager, TModelRegistry_CreateModel, TModelManage
 		if ( pFoundAsset ) break;
 	}
 
-	return CallOriginal( a_szFileName, a_rModelRef, pFoundAsset ? pFoundAsset : a_pAssetTRB );
+	return CallOriginal( a_szFileName, a_rModelRef, ( pFoundAsset ) ? pFoundAsset : a_pAssetTRB );
 }
 
 MEMBER_HOOK( 0x006bf6b0, TRenderInterface, TRenderInterface_SetLightColourMatrix, void, TMatrix44* a_pLightColour )
@@ -508,7 +529,7 @@ MEMBER_HOOK( 0x00615d20, AMaterialLibrary, AMaterialLibrary_LoadTTLData, TBOOL, 
 
 MEMBER_HOOK( 0x006da4d0, TMSWindow, TMSWindow_SetPosition, void, TUINT x, TUINT y, TUINT width, TUINT height )
 {
-	if ( IsWindowed() )
+	if ( IsWindowed() && !IsDebuggerPresent() )
 	{
 		// Fix window size when in windowed mode
 		RECT rect;

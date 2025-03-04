@@ -64,13 +64,13 @@ DWORD WINAPI MainThread( HMODULE hModule )
 	TINFO( "Waiting for Toshi systems to be loaded...\n" );
 
 	// Wait until AGUI2 is ready to use
-	while ( !AGUI2::IsSingletonCreated() ) { ThreadSleep( 50 ); }
-	while ( !AGUI2::GetSingleton()->GetRootElement() ) { ThreadSleep( 50 ); }
+	while ( !AGUI2::IsSingletonCreated() || !AGUI2::GetSingleton()->GetRootElement() )
+		ThreadSleep( 50 );
 
 	// Log info about AGUI2
 	TFLOAT fWidth, fHeight;
 	AGUI2::GetSingleton()->GetDimensions( fWidth, fHeight );
-	TINFO( "AGUI2 is ready! (Dimensions: %fx%f)\n", fWidth, fHeight );
+	TINFO( "AGUI2 is ready! (Dimensions: %.0fx%.0f)\n", fWidth, fHeight );
 
 	TUtil::SetTPStringPool( **(TPString8Pool***)0x007ce230 );
 
@@ -136,8 +136,15 @@ DWORD APIENTRY DllMain( HMODULE hModule, DWORD reason, LPVOID reserved )
 			TINFO( "Log system was successfully initialised!\n" );
 			TINFO( "Starting BYModCore thread...\n" );
 
-			CloseHandle( CreateThread( 0, 0, (LPTHREAD_START_ROUTINE)MainThread, hModule, 0, 0 ) );
+			HANDLE hThread = CreateThread( 0, 256, (LPTHREAD_START_ROUTINE)MainThread, hModule, 0, 0 );
 
+			if ( hThread == NULL )
+			{
+				TERROR( "Couldn't start the main thread\n" );
+				return TFALSE;
+			}
+
+			CloseHandle( hThread );
 			return TTRUE;
 		}
 		default:
