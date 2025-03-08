@@ -20,6 +20,7 @@
 #include <Render/TShader.h>
 #include <Platform/DX8/TMSWindow.h>
 #include <Platform/DX8/TRenderInterface_DX8.h>
+#include <Platform/Windows/TNativeFile_Win.h>
 
 TOSHI_NAMESPACE_USING
 
@@ -829,6 +830,14 @@ MEMBER_HOOK( 0x006bbb00, TSystemManager, TSystemManager_Update, void )
 	else CallOriginal();
 }
 
+MEMBER_HOOK( 0x006dce90, Toshi::TNativeFile, TNativeFile_FlushWriteBuffer, TINT )
+{
+	if ( m_WriteBufferUsed == 0 ) [[likely]]
+		 return 0;
+	else
+		return CallOriginal();
+}
+
 void AHooks::Initialise()
 {
 	// Apply other hooks
@@ -876,6 +885,7 @@ void AHooks::Initialise()
 
 	InstallHook<TSystemManager_Update>();
 	InstallHook<TOrderTable_Flush>();
+	//InstallHook<TNativeFile_FlushWriteBuffer>();
 }
 
 TBOOL AHooks::AddHook( Hook a_eHook, HookType a_eHookType, void* a_pCallback )

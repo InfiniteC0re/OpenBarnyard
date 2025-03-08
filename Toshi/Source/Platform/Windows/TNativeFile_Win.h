@@ -54,7 +54,7 @@ private:
 	TINT  FlushWriteBuffer();
 	TINT  ReadUnbuffered( void* dst, TUINT size );
 
-private:
+protected:
 	void*   m_Handle;          // 0x8
 	TUINT32 m_Position;        // 0xC
 	TUINT32 m_RBufferPosition; // 0x10

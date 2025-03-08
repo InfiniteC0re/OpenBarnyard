@@ -68,7 +68,9 @@ AWaveBank::LOADRESULT AWaveBankFMODFSBStream::Load( LOADFLAGS a_uiFlags, TINT a_
 			while ( iOpenState == -2 )
 			{
 				g_oLoadScreen.Update();
+#ifndef BARNYARD_COMMUNITY_PATCH
 				ThreadSleep( 5 );
+#endif // BARNYARD_COMMUNITY_PATCH
 				iOpenState = FSOUND_Stream_GetOpenState( pStream );
 			}
 		}
@@ -103,7 +105,9 @@ AWaveBank::UNLOADRESULT AWaveBankFMODFSBStream::Unload()
 		TINT iOpenState = FSOUND_Stream_GetOpenState( pStream );
 		while ( iOpenState == -2 )
 		{
+#ifndef BARNYARD_COMMUNITY_PATCH
 			ThreadSleep( 5 );
+#endif // BARNYARD_COMMUNITY_PATCH
 			iOpenState = FSOUND_Stream_GetOpenState( pStream );
 		}
 

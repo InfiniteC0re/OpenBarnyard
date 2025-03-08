@@ -144,7 +144,9 @@ TBOOL AAssetLoader::Load( const TCHAR* a_szFileName, AAssetType a_eAssetType, TB
 		while ( AAssetStreaming::GetSingleton()->HasActiveJobs() )
 		{
 			g_oLoadScreen.Update( 1.0f, TTRUE );
+#ifndef BARNYARD_COMMUNITY_PATCH
 			ThreadSleep( 5 );
+#endif // BARNYARD_COMMUNITY_PATCH
 			AAssetStreaming::GetSingleton()->Update();
 		}
 	}

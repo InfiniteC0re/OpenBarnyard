@@ -216,7 +216,15 @@ TBOOL TNativeFile::LoadBuffer( TUINT32 bufferPos )
 
 TINT TNativeFile::FlushWriteBuffer()
 {
-	DWORD lpNumberOfBytesWritten;
+
+#ifdef BARNYARD_COMMUNITY_PATCH
+
+	// Slightly improves reading performance. No clue why this wasn't in the original engine.
+	// Helps to avoid extra calls of WriteFile that do nothing.
+	if ( m_WriteBufferUsed == 0 )
+		return 0;
+
+#endif // BARNYARD_COMMUNITY_PATCH
 
 	if ( m_Position != m_RBufferPosition )
 	{
@@ -231,10 +239,9 @@ TINT TNativeFile::FlushWriteBuffer()
 		m_Position = m_RBufferPosition;
 	}
 
+	DWORD lpNumberOfBytesWritten;
 	if ( WriteFile( m_Handle, m_WBuffer, m_WriteBufferUsed, &lpNumberOfBytesWritten, TNULL ) == 0 )
-	{
 		return 0;
-	}
 
 	m_RBufferPosition += lpNumberOfBytesWritten;
 	m_Position        = m_RBufferPosition;

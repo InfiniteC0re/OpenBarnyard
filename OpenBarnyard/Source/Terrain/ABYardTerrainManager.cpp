@@ -73,7 +73,10 @@ void ABYardTerrainManager::StartLoading()
 	{
 		TRenderInterface::GetSingleton()->Update( 1.0f / 1000.0f );
 		AAssetStreaming::GetSingleton()->Update();
+
+#ifndef BARNYARD_COMMUNITY_PATCH
 		ThreadSleep( 20 );
+#endif // BARNYARD_COMMUNITY_PATCH
 
 		pTerrain->Update();
 		g_oLoadScreen.Update();

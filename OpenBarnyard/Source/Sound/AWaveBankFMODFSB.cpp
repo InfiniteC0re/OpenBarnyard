@@ -74,7 +74,9 @@ AWaveBank::LOADRESULT AWaveBankFMODFSB::Load( LOADFLAGS a_uiFlags, TINT a_iBuffe
 		TINT iOpenState = FMUSIC_GetOpenState( pModule );
 		while ( iOpenState == -2 )
 		{
+#ifndef BARNYARD_COMMUNITY_PATCH
 			ThreadSleep( 5 );
+#endif // BARNYARD_COMMUNITY_PATCH
 			iOpenState = FMUSIC_GetOpenState( pModule );
 		}
 
@@ -131,7 +133,9 @@ AWaveBank::UNLOADRESULT AWaveBankFMODFSB::Unload()
 		TINT iOpenState = FMUSIC_GetOpenState( pModule );
 		while ( iOpenState == -2 )
 		{
+#ifndef BARNYARD_COMMUNITY_PATCH
 			ThreadSleep( 5 );
+#endif // BARNYARD_COMMUNITY_PATCH
 			iOpenState = FMUSIC_GetOpenState( pModule );
 		}
 
