@@ -4,6 +4,7 @@
 #include "ACollisionInspector.h"
 #include "ASplitsServer.h"
 #include "AModSettings.h"
+#include "AUIManager.h"
 
 #include <AImGUI.h>
 #include <ModLoader.h>
@@ -24,8 +25,6 @@
 
 TOSHI_NAMESPACE_USING
 
-ARunTimer       g_Timer;
-AGUISpeedometer g_Speedometer;
 AGUI2TextBox*   g_pExperimentalModeText = TNULL;
 
 const T2CommandLine* g_pCommandLine;
@@ -49,7 +48,7 @@ MEMBER_HOOK( 0x005ce150, AQuestManager, AQuestManager_FUNC, void, TCHAR* a_pUnk1
 	if ( a_bUpdateProgress && ( iOldAct < m_iCurAct || iOldTier < m_iCurTier ) )
 	{
 		TTRACE( "Split! Old State: (%d, %d); Currect State: (%d, %d)\n", iOldAct, iOldTier, m_iCurAct, m_iCurTier );
-		g_Timer.Split();
+		AUIManager::GetSingleton()->GetTimer().Split();
 	}
 }
 
@@ -65,7 +64,7 @@ MEMBER_HOOK( 0x006be7b0, T2Locale, T2Locale_GetString, const TWCHAR*, TINT a_iNu
 
 			if ( pCurrentGameState->IsExactly( pCowTippingGameClass ) )
 			{
-				g_Timer.End();
+				AUIManager::GetSingleton()->GetTimer().End();
 				return L"Nice run!!!";
 			}
 		}
@@ -79,25 +78,25 @@ class ALoadScreen
 
 MEMBER_HOOK( 0x0042b160, ALoadScreen, ALoadScreen_StartLoading, void, TINT a_iUnused, TBOOL a_bRender )
 {
-	g_Timer.SetIsLoadingScreen( TTRUE );
+	AUIManager::GetSingleton()->GetTimer().SetIsLoadingScreen( TTRUE );
 	CallOriginal( a_iUnused, a_bRender );
 }
 
 MEMBER_HOOK( 0x0042b260, ALoadScreen, ALoadScreen_StopLoading, void )
 {
-	g_Timer.SetIsLoadingScreen( TFALSE );
+	AUIManager::GetSingleton()->GetTimer().SetIsLoadingScreen( TFALSE );
 	CallOriginal();
 }
 
 void NewGameStarted()
 {
-	g_Timer.Start();
+	AUIManager::GetSingleton()->GetTimer().Start();
 }
 
 void AGUI2_MainPostRenderCallback()
 {
-	g_Timer.Render();
-	g_Speedometer.Render();
+	if ( AUIManager::IsSingletonCreated() )
+		AUIManager::GetSingleton()->Render();
 
 	if ( g_pExperimentalModeText )
 	{
@@ -152,14 +151,16 @@ public:
 			}
 		}
 
-		g_Timer.Update();
-		g_Speedometer.Update();
+		if ( AUIManager::IsSingletonCreated() )
+			AUIManager::GetSingleton()->Update( a_fDeltaTime );
+		
 		return TTRUE;
 	}
 
 	void OnUnload() override
 	{
-		g_Timer.Destroy();
+		if ( AUIManager::IsSingletonCreated() )
+			AUIManager::GetSingleton()->Destroy();
 	}
 
 	void OnRenderInterfaceReady( Toshi::TRenderD3DInterface* a_pRenderInterface ) override
@@ -171,8 +172,7 @@ public:
 
 	void OnAGUI2Ready() override
 	{
-		g_Timer.Create();
-		g_Speedometer.Create();
+		AUIManager::CreateSingleton()->Create();
 
 		if ( g_bIsExperimentalMode )
 		{
@@ -196,7 +196,8 @@ public:
 	void OnImGuiRender() override
 	{
 		TBOOL bChangedSettings = TFALSE;
-		bChangedSettings |= ImGui::Checkbox( "Show Timer", &g_oSettings.bShowTimer );
+		bChangedSettings |= ImGui::Checkbox( "Show LRT Timer", &g_oSettings.bShowLRTTimer );
+		bChangedSettings |= ImGui::Checkbox( "Show RTA Timer", &g_oSettings.bShowRTATimer );
 		bChangedSettings |= ImGui::Checkbox( "Show Speedometer", &g_oSettings.bShowSpeedometer );
 
 		ImGui::PushItemWidth( 320.0f );
@@ -206,13 +207,13 @@ public:
 		{
 			ImGui::Checkbox( "Show Collision", &ACollisionInspector::GetSingleton()->IsCollisionVisible() );
 
-			if ( ImGui::Button( "Restart Timer" ) ) g_Timer.Start();
+			if ( ImGui::Button( "Restart Timer" ) ) AUIManager::GetSingleton()->GetTimer().Start();
 			ImGui::SameLine();
-			if ( ImGui::Button( "Resume Timer" ) ) g_Timer.Resume();
+			if ( ImGui::Button( "Resume Timer" ) ) AUIManager::GetSingleton()->GetTimer().Resume();
 			ImGui::SameLine();
-			if ( ImGui::Button( "Pause Timer" ) ) g_Timer.Pause();
+			if ( ImGui::Button( "Pause Timer" ) ) AUIManager::GetSingleton()->GetTimer().Pause();
 			ImGui::SameLine();
-			if ( ImGui::Button( "Reset Timer" ) ) g_Timer.Reset();
+			if ( ImGui::Button( "Reset Timer" ) ) AUIManager::GetSingleton()->GetTimer().Reset();
 		}
 
 		if ( bChangedSettings )

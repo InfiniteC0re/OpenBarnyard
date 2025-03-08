@@ -2,14 +2,13 @@
 #include "AGUITimer.h"
 
 #include <Toshi/THPTimer.h>
-#include <Toshi/TSingleton.h>
 
 class ATimerThread;
 
 //-----------------------------------------------------------------------------
 // Purpose: Wrapper for AGUITimer that also sends commands to ASplitsServer.
 //-----------------------------------------------------------------------------
-class ARunTimer : public Toshi::TSingleton<ARunTimer>
+class ARunTimer
 {
 public:
 	friend ATimerThread;
@@ -25,7 +24,6 @@ public:
 	void End();
 
 	void Reset();
-
 	void Split();
 
 	void Resume();
@@ -34,7 +32,7 @@ public:
 	void Update();
 	void Render();
 
-	AGUITimer& GetUIElement() { return m_UITimer; }
+	AGUITimer& GetUIElement() { return m_LRTTimer; }
 
 	void SetIsLoadingScreen( TBOOL a_bLoadingScreen );
 
@@ -43,12 +41,13 @@ public:
 	TFLOAT GetTotalTime() const { return m_flTime + m_flTotalLoadingTime; }
 
 private:
-	ATimerThread* m_pTimerThread;
-	AGUITimer     m_UITimer;
-	TFLOAT        m_flTime;
-	TBOOL         m_bPaused;
-
-	TBOOL           m_bIsLoading;
-	Toshi::THPTimer m_LoadingTimer;
-	TFLOAT          m_flTotalLoadingTime;
+	Toshi::THPTimer  m_Timer;
+	Toshi::THPTimer  m_LoadingTimer;
+	AGUITimer        m_LRTTimer;
+	AGUITimer        m_RTATimer;
+	TFLOAT           m_flTime;
+	TFLOAT           m_flSyncTimer;
+	TFLOAT           m_flTotalLoadingTime;
+	TBOOL            m_bPaused;
+	TBOOL            m_bIsLoading;
 };

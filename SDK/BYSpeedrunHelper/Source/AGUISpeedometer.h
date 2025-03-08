@@ -13,6 +13,7 @@ public:
 	void Render();
 
 	void ApplyUIStyle();
+	void UpdateUIPosition( TFLOAT a_fY );
 
 private:
 	AGUI2TextBox* m_pTextBox = TNULL;

@@ -38,15 +38,22 @@ void AGUITimer::ApplyUIStyle()
 	if ( !m_pTextBox )
 		return;
 
-	TFLOAT fWidth, fHeight;
-	AGUI2::GetSingleton()->GetDimensions( fWidth, fHeight );
-
 	m_pTextBox->SetColour( TCOLOR( TUINT( g_oSettings.vecHUDColor.x * 255.0f ), TUINT( g_oSettings.vecHUDColor.y * 255.0f ), TUINT( g_oSettings.vecHUDColor.z * 255.0f ) ) );
-	m_pTextBox->SetTransform( -fWidth / 2 + 6.0f, 0.0f );
 	m_pTextBox->SetAlpha( g_oSettings.vecHUDColor.w  );
 	m_pTextBox->SetInFront();
 	m_pTextBox->SetTextAlign( AGUI2Font::TextAlign_Left );
 	m_pTextBox->SetAttachment( AGUI2Element::Anchor_MiddleLeft, AGUI2Element::Pivot_MiddleLeft );
+}
+
+void AGUITimer::UpdateUIPosition( TFLOAT a_fY )
+{
+	if ( !m_pTextBox )
+		return;
+
+	TFLOAT fWidth, fHeight;
+	AGUI2::GetSingleton()->GetDimensions( fWidth, fHeight );
+
+	m_pTextBox->SetTransform( -fWidth / 2 + 6.0f, a_fY );
 }
 
 void AGUITimer::Update()
@@ -54,27 +61,25 @@ void AGUITimer::Update()
 	TINT iMilliseconds, iSeconds, iMinutes, iHours;
 	GetTime( m_fTotalTime, iMilliseconds, iSeconds, iMinutes, iHours );
 
-	static wchar_t s_buffer[ 48 ];
-
 	if ( iHours != 0 )
 	{
-		TStringManager::String16Format( s_buffer, TARRAYSIZE( s_buffer ), L"%02d:%02d:%02d.%03d", iHours, iMinutes, iSeconds, iMilliseconds );
+		TStringManager::String16Format( m_wcsBuffer, TARRAYSIZE( m_wcsBuffer ), L"%02d:%02d:%02d.%03d", iHours, iMinutes, iSeconds, iMilliseconds );
 	}
 	else if ( iMinutes != 0 )
 	{
-		TStringManager::String16Format( s_buffer, TARRAYSIZE( s_buffer ), L"%02d:%02d.%03d", iMinutes, iSeconds, iMilliseconds );
+		TStringManager::String16Format( m_wcsBuffer, TARRAYSIZE( m_wcsBuffer ), L"%02d:%02d.%03d", iMinutes, iSeconds, iMilliseconds );
 	}
 	else
 	{
-		TStringManager::String16Format( s_buffer, TARRAYSIZE( s_buffer ), L"%d.%03d", iSeconds, iMilliseconds );
+		TStringManager::String16Format( m_wcsBuffer, TARRAYSIZE( m_wcsBuffer ), L"%d.%03d", iSeconds, iMilliseconds );
 	}
 
-	m_pTextBox->SetText( s_buffer );
+	m_pTextBox->SetText( m_wcsBuffer );
 }
 
 void AGUITimer::Render()
 {
-	if ( m_pTextBox && g_oSettings.bShowTimer )
+	if ( m_pTextBox )
 	{
 		m_pTextBox->PreRender();
 		m_pTextBox->Render();

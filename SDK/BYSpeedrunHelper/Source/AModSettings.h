@@ -8,9 +8,12 @@ struct AModSettingsProperties
 	TUINT uiVersion = 1;
 
 	// Version 1:
-	TBOOL           bShowTimer       = TTRUE;
+	TBOOL           bShowLRTTimer    = TTRUE;
 	TBOOL           bShowSpeedometer = TTRUE;
 	Toshi::TVector4 vecHUDColor      = Toshi::TVector4( 253.0f / 255.0f, 226.0f / 255.0f, 1.0f / 255.0f, 1.0f );
+
+	// Version 2:
+	TBOOL bShowRTATimer = TFALSE;
 };
 
 inline struct AModSettings

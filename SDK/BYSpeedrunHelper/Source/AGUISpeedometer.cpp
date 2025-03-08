@@ -36,15 +36,22 @@ void AGUISpeedometer::ApplyUIStyle()
 	if ( !m_pTextBox )
 		return;
 
-	TFLOAT fWidth, fHeight;
-	AGUI2::GetSingleton()->GetDimensions( fWidth, fHeight );
-
 	m_pTextBox->SetColour( TCOLOR( TUINT( g_oSettings.vecHUDColor.x * 255.0f ), TUINT( g_oSettings.vecHUDColor.y * 255.0f ), TUINT( g_oSettings.vecHUDColor.z * 255.0f ) ) );
-	m_pTextBox->SetTransform( -fWidth / 2 + 6.0f, 24.0f );
 	m_pTextBox->SetAlpha( g_oSettings.vecHUDColor.w );
 	m_pTextBox->SetInFront();
 	m_pTextBox->SetTextAlign( AGUI2Font::TextAlign_Left );
 	m_pTextBox->SetAttachment( AGUI2Element::Anchor_MiddleLeft, AGUI2Element::Pivot_MiddleLeft );
+}
+
+void AGUISpeedometer::UpdateUIPosition( TFLOAT a_fY )
+{
+	if ( !m_pTextBox )
+		return;
+
+	TFLOAT fWidth, fHeight;
+	AGUI2::GetSingleton()->GetDimensions( fWidth, fHeight );
+
+	m_pTextBox->SetTransform( -fWidth / 2 + 6.0f, a_fY );
 }
 
 struct AUnitPlayer
@@ -140,7 +147,7 @@ void AGUISpeedometer::Update()
 
 void AGUISpeedometer::Render()
 {
-	if ( m_pTextBox && g_oSettings.bShowSpeedometer )
+	if ( m_pTextBox )
 	{
 		m_pTextBox->PreRender();
 		m_pTextBox->Render();

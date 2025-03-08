@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "ARunTimer.h"
 #include "ASplitsServer.h"
+#include "AModSettings.h"
+#include "AUIManager.h"
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
@@ -10,57 +12,13 @@
 
 TOSHI_NAMESPACE_USING
 
-class ATimerThread : public TThread
-{
-public:
-	ATimerThread( ARunTimer* a_pRunTimer )
-	    : m_pRunTimer( a_pRunTimer )
-	{
-		m_TimeSyncMutex.Create();
-		m_flSyncTimerTime = 0.1f;
-	}
-
-	virtual void Main() override
-	{
-		while ( TTRUE )
-		{
-			m_Timer.Update();
-			TFLOAT flDelta = m_Timer.GetDelta();
-
-			// Update time
-			if ( !m_pRunTimer->m_bPaused && !m_pRunTimer->m_bIsLoading )
-				m_pRunTimer->m_flTime += flDelta;
-
-			m_flSyncTimerTime -= flDelta;
-
-			if ( m_flSyncTimerTime <= 0.0f && !m_pRunTimer->m_bPaused )
-			{
-				T2MUTEX_LOCK_SCOPE( m_TimeSyncMutex );
-
-				TINT iMilliseconds, iSeconds, iMinutes, iHours;
-				AGUITimer::GetTime( m_pRunTimer->GetRunTime(), iMilliseconds, iSeconds, iMinutes, iHours );
-
-				ASplitsServer::GetSingleton()->SendTime( iMilliseconds, iSeconds, iMinutes, iHours );
-				m_flSyncTimerTime = 0.1f;
-			}
-
-			ThreadSleep( 5 );
-		}
-	}
-
-public:
-	ARunTimer* m_pRunTimer;
-	THPTimer   m_Timer;
-	TFLOAT     m_flSyncTimerTime;
-	T2Mutex    m_TimeSyncMutex;
-	TBOOL      m_bClosed;
-};
-
 ARunTimer::ARunTimer()
 {
-	m_pTimerThread = TNULL;
-	m_flTime       = 0.0f;
-	m_bPaused      = TTRUE;
+	m_flTime             = 0.0f;
+	m_flTotalLoadingTime = 0.0f;
+	m_flSyncTimer        = 0.1f;
+	m_bPaused            = TTRUE;
+	m_bIsLoading         = TFALSE;
 }
 
 ARunTimer::~ARunTimer()
@@ -70,22 +28,13 @@ ARunTimer::~ARunTimer()
 
 void ARunTimer::Create()
 {
-	m_UITimer.Create();
-
-	m_pTimerThread = new ATimerThread( this );
-	m_pTimerThread->Create( 128, TThread::THREAD_PRIORITY_LOWEST, 0 );
+	m_LRTTimer.Create();
+	m_RTATimer.Create();
 }
 
 void ARunTimer::Destroy()
 {
 	ASplitsServer::GetSingleton()->StopServer();
-
-	if ( m_pTimerThread )
-	{
-		m_pTimerThread->Destroy();
-		delete m_pTimerThread;
-		m_pTimerThread = TNULL;
-	}
 }
 
 void ARunTimer::Reset()
@@ -112,6 +61,7 @@ void ARunTimer::Start()
 {
 	m_flTotalLoadingTime = 0.0f;
 	m_flTime             = 0.0f;
+	m_flSyncTimer        = 0.1f;
 	m_bPaused            = TFALSE;
 
 	ASplitsServer::GetSingleton()->StartRun();
@@ -150,16 +100,58 @@ void ARunTimer::Resume()
 
 void ARunTimer::Update()
 {
-	if ( m_UITimer.IsValid() )
+	m_Timer.Update();
+	TFLOAT flDelta = m_Timer.GetDelta();
+
+	// Update time
+	if ( !m_bPaused && !m_bIsLoading )
+		m_flTime += flDelta;
+
+	// Send update to LiveSplit
+	m_flSyncTimer -= flDelta;
+
+	if ( m_flSyncTimer <= 0.0f && !m_bPaused )
 	{
-		m_UITimer.SetTime( GetRunTime() );
-		m_UITimer.Update();
+		TINT iMilliseconds, iSeconds, iMinutes, iHours;
+		AGUITimer::GetTime( GetRunTime(), iMilliseconds, iSeconds, iMinutes, iHours );
+
+		ASplitsServer::GetSingleton()->SendTime( iMilliseconds, iSeconds, iMinutes, iHours );
+		m_flSyncTimer = 0.1f;
+	}
+
+	// Update LRT timer
+	if ( m_LRTTimer.IsValid() && g_oSettings.bShowLRTTimer )
+	{
+		m_LRTTimer.SetTime( GetRunTime() );
+		m_LRTTimer.Update();
+	}
+
+	// Update RTA timer
+	if ( m_RTATimer.IsValid() && g_oSettings.bShowRTATimer )
+	{
+		m_RTATimer.SetTime( GetTotalTime() );
+		m_RTATimer.Update();
 	}
 }
 
 void ARunTimer::Render()
 {
-	m_UITimer.Render();
+	AUIVerticalStack& rUIStack = AUIManager::GetSingleton()->GetLeftSideList();
+
+	if ( g_oSettings.bShowLRTTimer )
+	{
+		m_LRTTimer.UpdateUIPosition( rUIStack.flHeight );
+		m_LRTTimer.Render();
+
+		rUIStack.AddElement( 24.0f );
+	}
+	if ( g_oSettings.bShowRTATimer )
+	{
+		m_RTATimer.UpdateUIPosition( rUIStack.flHeight );
+		m_RTATimer.Render();
+
+		rUIStack.AddElement( 24.0f );
+	}
 }
 
 void ARunTimer::SetIsLoadingScreen( TBOOL a_bLoadingScreen )
@@ -169,8 +161,11 @@ void ARunTimer::SetIsLoadingScreen( TBOOL a_bLoadingScreen )
 
 	if ( !m_bIsLoading && a_bLoadingScreen )
 	{
+		m_Timer.Update();
+		m_flTime += m_Timer.GetDelta();
+
 		// Loading started
-		m_LoadingTimer.Reset();
+		m_LoadingTimer.Update();
 
 		ASplitsServer::GetSingleton()->SetLoadingStart();
 
@@ -180,6 +175,7 @@ void ARunTimer::SetIsLoadingScreen( TBOOL a_bLoadingScreen )
 	{
 		// Loading ended
 		m_LoadingTimer.Update();
+		m_Timer.Update();
 
 		TFLOAT flLoadingTime = m_LoadingTimer.GetDelta();
 		m_flTotalLoadingTime += flLoadingTime;

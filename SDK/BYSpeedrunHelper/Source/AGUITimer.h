@@ -10,6 +10,7 @@ public:
 
 	void Create();
 	void ApplyUIStyle();
+	void UpdateUIPosition( TFLOAT a_fY );
 
 	void Update();
 	void Render();
@@ -26,4 +27,5 @@ public:
 private:
 	AGUI2TextBox* m_pTextBox;
 	TFLOAT        m_fTotalTime;
+	TWCHAR        m_wcsBuffer[ 48 ];
 };

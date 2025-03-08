@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "AModSettings.h"
-#include "ARunTimer.h"
-#include "AGUISpeedometer.h"
+#include "AUIManager.h"
 
 #include <Plugins/PTRB.h>
 
@@ -57,8 +56,10 @@ void AModSettings::Load()
 
 		switch ( pSettings->uiVersion )
 		{
+			case 2:
+				bShowRTATimer = pSettings->bShowRTATimer;
 			case 1:
-				bShowTimer       = pSettings->bShowTimer;
+				bShowLRTTimer    = pSettings->bShowLRTTimer;
 				bShowSpeedometer = pSettings->bShowSpeedometer;
 				vecHUDColor      = pSettings->vecHUDColor;
 				break;
@@ -71,13 +72,10 @@ void AModSettings::Load()
 	Apply();
 }
 
-extern ARunTimer       g_Timer;
-extern AGUISpeedometer g_Speedometer;
-
 void AModSettings::Apply()
 {
-	g_Timer.GetUIElement().ApplyUIStyle();
-	g_Speedometer.ApplyUIStyle();
+	if ( AUIManager::IsSingletonCreated() )
+		AUIManager::GetSingleton()->ApplyUIStyle();
 }
 
 void AModSettings::Reset()
