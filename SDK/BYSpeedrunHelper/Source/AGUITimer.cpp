@@ -10,8 +10,10 @@ TOSHI_NAMESPACE_USING
 
 AGUITimer::AGUITimer()
 {
-	m_pTextBox   = TNULL;
-	m_fTotalTime = 0.0f;
+	m_pTextBox       = TNULL;
+	m_fTotalTime     = 0.0f;
+	m_wcsPrefix      = TNULL;
+	m_bPrefixEnabled = TFALSE;
 }
 
 AGUITimer::~AGUITimer()
@@ -61,17 +63,24 @@ void AGUITimer::Update()
 	TINT iMilliseconds, iSeconds, iMinutes, iHours;
 	GetTime( m_fTotalTime, iMilliseconds, iSeconds, iMinutes, iHours );
 
+	TINT iTimeStrStart = 0;
+	if ( m_bPrefixEnabled && m_wcsPrefix )
+	{
+		iTimeStrStart = TStringManager::String16Length( m_wcsPrefix );
+		TStringManager::String16Copy( m_wcsBuffer, m_wcsPrefix, iTimeStrStart );
+	}
+
 	if ( iHours != 0 )
 	{
-		TStringManager::String16Format( m_wcsBuffer, TARRAYSIZE( m_wcsBuffer ), L"%02d:%02d:%02d.%03d", iHours, iMinutes, iSeconds, iMilliseconds );
+		TStringManager::String16Format( m_wcsBuffer + iTimeStrStart, TARRAYSIZE( m_wcsBuffer ) - iTimeStrStart, L"%02d:%02d:%02d.%03d", iHours, iMinutes, iSeconds, iMilliseconds );
 	}
 	else if ( iMinutes != 0 )
 	{
-		TStringManager::String16Format( m_wcsBuffer, TARRAYSIZE( m_wcsBuffer ), L"%02d:%02d.%03d", iMinutes, iSeconds, iMilliseconds );
+		TStringManager::String16Format( m_wcsBuffer + iTimeStrStart, TARRAYSIZE( m_wcsBuffer ) - iTimeStrStart, L"%02d:%02d.%03d", iMinutes, iSeconds, iMilliseconds );
 	}
 	else
 	{
-		TStringManager::String16Format( m_wcsBuffer, TARRAYSIZE( m_wcsBuffer ), L"%d.%03d", iSeconds, iMilliseconds );
+		TStringManager::String16Format( m_wcsBuffer + iTimeStrStart, TARRAYSIZE( m_wcsBuffer ) - iTimeStrStart, L"%d.%03d", iSeconds, iMilliseconds );
 	}
 
 	m_pTextBox->SetText( m_wcsBuffer );
@@ -85,6 +94,12 @@ void AGUITimer::Render()
 		m_pTextBox->Render();
 		m_pTextBox->PostRender();
 	}
+}
+
+void AGUITimer::EnablePrefix( const TWCHAR* a_wcsPrefix, TBOOL a_bEnable )
+{
+	m_wcsPrefix = a_wcsPrefix;
+	m_bPrefixEnabled = a_bEnable;
 }
 
 void AGUITimer::GetTime( TFLOAT a_fTime, TINT& a_iMilliseconds, TINT& a_iSeconds, TINT& a_iMinutes, TINT& a_iHours )

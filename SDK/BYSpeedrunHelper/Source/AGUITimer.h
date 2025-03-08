@@ -14,6 +14,7 @@ public:
 
 	void Update();
 	void Render();
+	void EnablePrefix( const TWCHAR* a_wcsPrefix, TBOOL a_bEnable );
 
 	void Reset() { SetTime( 0.0f ); }
 	void SetTime( FLOAT a_fTime ) { m_fTotalTime = a_fTime; }
@@ -28,4 +29,6 @@ private:
 	AGUI2TextBox* m_pTextBox;
 	TFLOAT        m_fTotalTime;
 	TWCHAR        m_wcsBuffer[ 48 ];
+	TBOOL         m_bPrefixEnabled;
+	const TWCHAR* m_wcsPrefix;
 };

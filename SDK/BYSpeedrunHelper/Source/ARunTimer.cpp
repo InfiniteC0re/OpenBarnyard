@@ -138,6 +138,10 @@ void ARunTimer::Render()
 {
 	AUIVerticalStack& rUIStack = AUIManager::GetSingleton()->GetLeftSideList();
 
+	const TBOOL bEnablePrefix = g_oSettings.bShowLRTTimer && g_oSettings.bShowRTATimer;
+	m_LRTTimer.EnablePrefix( L"LRT: ", bEnablePrefix );
+	m_RTATimer.EnablePrefix( L"RTA: ", bEnablePrefix );
+
 	if ( g_oSettings.bShowLRTTimer )
 	{
 		m_LRTTimer.UpdateUIPosition( rUIStack.flHeight );
