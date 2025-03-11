@@ -32,6 +32,12 @@ void AToshiAnimationInterface::KillAllAnimations()
 	m_pSkeletonInstance->RemoveAllAnimations();
 }
 
+// $Barnyard: FUNCTION 00470970
+ANamedAnimationSetRef AToshiAnimationInterface::GetAnimationSet()
+{
+	return m_pAnimationSet;
+}
+
 void AToshiAnimationInterface::DestroyAnimReferences()
 {
 	while ( !m_AnimRefList1.IsEmpty() )

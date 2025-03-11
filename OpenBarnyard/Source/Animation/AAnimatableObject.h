@@ -18,14 +18,14 @@ class AAnimatableObject
 public:
 	TDECLARE_CLASS( AAnimatableObject, Toshi::TObject );
 
-	struct S1
+	struct AttachmentInfo
 	{
-		Toshi::TVector4    vecUnk1  = Toshi::TVector4::VEC_ZERO;
-		Toshi::TQuaternion quatUnk2 = Toshi::TQuaternion::IDENTITY;
-		TINT               Unk3     = 0;
-		TINT               Unk4     = 0;
-		TINT8              Unk5     = -1;
-		TINT8              Unk6     = -1;
+		Toshi::TVector4    translation   = Toshi::TVector4::VEC_ZERO;
+		Toshi::TQuaternion quaternion    = Toshi::TQuaternion::IDENTITY;
+		AAnimatableObject* pParentObject = TNULL;
+		TINT               Unk4          = 0;
+		TINT8              iParentBone   = -1;
+		TINT8              iBone         = -1;
 	};
 
 	using FLAGS = TUINT8;
@@ -44,14 +44,19 @@ public:
 
 	TBOOL Create( AAnimatableObjectType* a_pObjectType, void* a_Unk1, TUINT a_eFlags = 0 );
 
+	void SetVisible( TBOOL a_bVisible );
+	void SetSkeletonUpdating( TBOOL a_bUpdating, TBOOL a_bRecursive );
+
+	void KillAllAnimations();
+
 private:
-	S1                                            m_oS1;
+	AttachmentInfo                                m_oAttachmentInfo;
 	void*                                         m_pUnk1;
 	AAnimatableObjectType*                        m_pObjectType;
 	AToshiAnimationInterface                      m_oToshiAnimInterface;
 	AModelInstanceRef                             m_pModelInstance;
 	Toshi::T2DList<Toshi::T2DListNodeWrapper<S2>> m_UnkList; // type is a placeholder
 	Toshi::T2Vector<Toshi::TPString8, 2>          m_vecPlayingAnims;
-	Toshi::T2SList<AAnimatableObject>             m_SList;
+	Toshi::T2SList<AAnimatableObject>             m_llAttachedObjects;
 	FLAGS                                         m_eFlags;
 };

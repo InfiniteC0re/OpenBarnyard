@@ -38,6 +38,7 @@ public:
 	TBOOL AddSoundBreakpoint( ASoundBreakpoint* a_pSoundBreakpoint, Toshi::TSkeleton* a_pSkeleton );
 
 	const Toshi::TPString8& GetName() const { return m_strName; }
+	ANamedAnimation*        GetNamedAnimation( const Toshi::TPString8& a_strName );
 
 private:
 	ANamedAnimation* LoadNamedAnimation( const PBProperties* a_pProperties, Toshi::TSkeleton* a_pSkeleton );

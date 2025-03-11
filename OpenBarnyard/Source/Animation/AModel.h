@@ -22,13 +22,14 @@ public:
 	{
 		Flags_None                     = 0,
 		Flags_UpdatingSkeleton         = BITFLAG( 0 ),
+		Flags_Visible                  = BITFLAG( 1 ),
 		Flags_DrawWithDefaultMaterials = BITFLAG( 2 ),
 		Flags_ReceivesLight            = BITFLAG( 3 ),
 	};
 
 	enum ChangeEvent : TUINT32
 	{
-		ChangeEvent_UNK1,
+		ChangeEvent_Visibility,
 		ChangeEvent_UNK2,
 		ChangeEvent_EnabledSkeletonUpdate,
 		ChangeEvent_DisabledSkeletonUpdate,
@@ -42,14 +43,17 @@ public:
 
 	void SetSkeletonUpdating( TBOOL a_bUpdating );
 	void SetReceivesLight( TBOOL a_bReceives );
+	void SetVisible( TBOOL a_bVisible );
 
 	AModel*              GetModel() const { return m_pModel; }
 	Toshi::TSceneObject* GetSceneObject() const { return m_pSceneObject; }
+	Toshi::TSkeleton*    GetSkeleton() const { return GetSceneObject()->GetInstance()->GetSkeletonInstance()->GetSkeleton(); }
 	TUINT                GetClipFlags() const { return m_uiClipFlags; }
 
 	const Toshi::TVector4& GetScale() const { return m_Scale; }
 
 	TBOOL IsUpdatingSkeleton() const { return m_eFlags & Flags_UpdatingSkeleton; }
+	TBOOL IsVisible() const { return m_eFlags & Flags_Visible; }
 	TBOOL DrawWithDefaultMaterials() const { return m_eFlags & Flags_DrawWithDefaultMaterials; }
 	TBOOL ReceivesLight() const { return m_eFlags & Flags_ReceivesLight; }
 

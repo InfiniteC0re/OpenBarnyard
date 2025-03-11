@@ -92,7 +92,7 @@ void AAnimatableObjectManager::LoadTypesFromLibrary( const TCHAR* a_szLibName )
 }
 
 // $Barnyard: FUNCTION 0057e550
-void AAnimatableObjectManager::LoadAnimObjType( const TPString8& a_rcName, const PBProperties* a_pProperties, TBOOL a_bFlag )
+void AAnimatableObjectManager::LoadAnimObjType( const TPString8& a_rcName, const PBProperties* a_pProperties, TBOOL a_bNoBreakpoints )
 {
 	TString8 strAnimObjPath;
 	strAnimObjPath.Format( "%s%s.trb", MODELTYPES_DIR, a_rcName.GetString() );
@@ -130,16 +130,16 @@ void AAnimatableObjectManager::LoadAnimObjType( const TPString8& a_rcName, const
 	    pObjectType->CreateFromProperties( pTypeProperties, a_rcName ) :
 	    pObjectType->Create( a_rcName );
 
-	if ( bCreated && !a_bFlag )
-		FUN_0057e3e0( pObjectType );
+	if ( bCreated && !a_bNoBreakpoints )
+		AttachSoundBreakpoints( pObjectType );
 
 	oTRB.Close();
 }
 
 // $Barnyard: FUNCTION 0057e840
-void AAnimatableObjectManager::LoadAnimObjType( const TCHAR* a_szName, const PBProperties* a_pProperties, TBOOL a_bFlag )
+void AAnimatableObjectManager::LoadAnimObjType( const TCHAR* a_szName, const PBProperties* a_pProperties, TBOOL a_bNoBreakpoints )
 {
-	LoadAnimObjType( TPString8( a_szName ), a_pProperties, a_bFlag );
+	LoadAnimObjType( TPString8( a_szName ), a_pProperties, a_bNoBreakpoints );
 }
 
 // $Barnyard: FUNCTION 0057d820
@@ -155,7 +155,7 @@ AAnimatableObjectType* AAnimatableObjectManager::FindType( const Toshi::TPString
 }
 
 // $Barnyard: FUNCTION 0057d870
-void AAnimatableObjectManager::DeleteType( const Toshi::TPString8& a_rcName )
+void AAnimatableObjectManager::DestroyType( const Toshi::TPString8& a_rcName )
 {
 	AAnimatableObjectType* pType = FindType( a_rcName );
 
@@ -217,7 +217,7 @@ TBOOL AAnimatableObjectManager::OnUpdate( TFLOAT a_fDeltaTime )
 }
 
 // $Barnyard: FUNCTION 0057e3e0
-void AAnimatableObjectManager::FUN_0057e3e0( AAnimatableObjectType* a_pObjectType )
+void AAnimatableObjectManager::AttachSoundBreakpoints( AAnimatableObjectType* a_pObjectType )
 {
 	if ( m_pSoundBreakpoints )
 	{

@@ -124,7 +124,19 @@ void ANamedAnimationSet::Destroy()
 // $Barnyard: FUNCTION 00580d50
 TBOOL ANamedAnimationSet::AddSoundBreakpoint( ASoundBreakpoint* a_pSoundBreakpoint, Toshi::TSkeleton* a_pSkeleton )
 {
+	TASSERT( !"TODO" );
 	return TTRUE;
+}
+
+// $Barnyard: FUNCTION 00580c50
+ANamedAnimation* ANamedAnimationSet::GetNamedAnimation( const Toshi::TPString8& a_strName )
+{
+	auto it = m_mapAnimations.Find( a_strName );
+
+	if ( it != m_mapAnimations.End() )
+		return it->second;
+
+	return TNULL;
 }
 
 // $Barnyard: FUNCTION 00581700

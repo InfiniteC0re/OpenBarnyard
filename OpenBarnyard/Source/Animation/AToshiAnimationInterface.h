@@ -22,6 +22,8 @@ public:
 	void SetSkeletonInstance( Toshi::TSkeletonInstance* a_pInstance ) { m_pSkeletonInstance = a_pInstance; }
 	void SetAnimationSet( const ANamedAnimationSetRef& a_rcAnimationSet ) { m_pAnimationSet = a_rcAnimationSet; }
 
+	ANamedAnimationSetRef GetAnimationSet();
+
 private:
 	void DestroyAnimReferences();
 

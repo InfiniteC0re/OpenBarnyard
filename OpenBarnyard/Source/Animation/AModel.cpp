@@ -403,10 +403,30 @@ void AModelInstance::SetSkeletonUpdating( TBOOL a_bUpdating )
 	}
 }
 
+// $Barnyard: FUNCTION 00610380
 void AModelInstance::SetReceivesLight( TBOOL a_bReceives )
 {
 	if ( a_bReceives )
 		m_eFlags |= Flags_ReceivesLight;
 	else
 		m_eFlags &= ~Flags_ReceivesLight;
+}
+
+// $Barnyard: FUNCTION 00610d40
+void AModelInstance::SetVisible( TBOOL a_bVisible )
+{
+	if ( a_bVisible )
+	{
+		if ( !IsVisible() )
+			m_ChangeEmitter.Throw( ChangeEvent_Visibility );
+
+		m_eFlags |= Flags_Visible;
+	}
+	else
+	{
+		if ( IsVisible() )
+			m_ChangeEmitter.Throw( ChangeEvent_Visibility );
+
+		m_eFlags &= ~Flags_Visible;
+	}
 }

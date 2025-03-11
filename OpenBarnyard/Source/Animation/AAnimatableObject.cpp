@@ -35,7 +35,7 @@ AAnimatableObject::~AAnimatableObject()
 		AModelRepos::GetSingleton()->DestroyModelInstance( pModelInstance );
 	}
 
-	m_SList.Clear();
+	m_llAttachedObjects.Clear();
 }
 
 // $Barnyard: FUNCTION 0057c650
@@ -73,4 +73,36 @@ TBOOL AAnimatableObject::Create( AAnimatableObjectType* a_pObjectType, void* a_U
 	}
 
 	return m_eFlags & FLAGS_CREATED;
+}
+
+// $Barnyard: FUNCTION 0057c2f0
+void AAnimatableObject::SetVisible( TBOOL a_bVisible )
+{
+	TVALIDPTR( m_pModelInstance );
+
+	m_pModelInstance->SetVisible( a_bVisible );
+}
+
+// $Barnyard: FUNCTION 0057c210
+void AAnimatableObject::SetSkeletonUpdating( TBOOL a_bUpdating, TBOOL a_bRecursive )
+{
+	TVALIDPTR( m_pModelInstance );
+
+	m_pModelInstance->SetSkeletonUpdating( a_bUpdating );
+
+	if ( a_bRecursive )
+	{
+		// Update settings of attached objects
+		T2_FOREACH( m_llAttachedObjects, it )
+		{
+			it->SetSkeletonUpdating( a_bUpdating, TTRUE );
+		}
+	}
+}
+
+// $Barnyard: FUNCTION 0057d190
+void AAnimatableObject::KillAllAnimations()
+{
+	m_vecPlayingAnims.Clear();
+	m_oToshiAnimInterface.KillAllAnimations();
 }

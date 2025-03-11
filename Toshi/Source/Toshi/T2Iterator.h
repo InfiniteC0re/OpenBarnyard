@@ -34,7 +34,7 @@ public:
 
 	T2Iterator( Node* pPtr )
 	{
-		m_pPtr = static_cast<T*>( pPtr );
+		m_pPtr = TSTATICCAST( T, pPtr );
 	}
 
 	T2Iterator( T* pPtr )
@@ -70,13 +70,13 @@ public:
 	T2Iterator Next() const
 	{
 		TASSERT( m_pPtr != TNULL );
-		return T2Iterator{ m_pPtr->Next() };
+		return T2Iterator{ TSTATICCAST( Node, m_pPtr )->Next() };
 	}
 
 	T2Iterator Prev() const
 	{
 		TASSERT( m_pPtr != TNULL );
-		return T2Iterator{ m_pPtr->Prev() };
+		return T2Iterator{ TSTATICCAST( Node, m_pPtr )->Prev() };
 	}
 
 	void operator=( const T2Iterator& other )
@@ -98,14 +98,14 @@ public:
 	operator T*() const
 	{
 		TASSERT( m_pPtr != TNULL );
-		return static_cast<T*>( m_pPtr );
+		return TSTATICCAST( T, m_pPtr );
 	}
 
 	T2Iterator operator++( TINT )
 	{
 		TASSERT( m_pPtr != TNULL );
 		T2Iterator old = m_pPtr;
-		m_pPtr         = static_cast<T*>( m_pPtr->Next() );
+		m_pPtr         = TSTATICCAST( T, TSTATICCAST( Node, m_pPtr )->Next() );
 		return old;
 	}
 
@@ -113,21 +113,21 @@ public:
 	{
 		TASSERT( m_pPtr != TNULL );
 		T2Iterator old = m_pPtr;
-		m_pPtr         = static_cast<T*>( m_pPtr->Prev() );
+		m_pPtr         = TSTATICCAST( T, TSTATICCAST( Node, m_pPtr )->Prev() );
 		return old;
 	}
 
 	T2Iterator operator++()
 	{
 		TASSERT( m_pPtr != TNULL );
-		m_pPtr = static_cast<T*>( m_pPtr->Next() );
+		m_pPtr = TSTATICCAST( T, TSTATICCAST( Node, m_pPtr )->Next() );
 		return T2Iterator{ m_pPtr };
 	}
 
 	T2Iterator operator--()
 	{
 		TASSERT( m_pPtr != TNULL );
-		m_pPtr = static_cast<T*>( m_pPtr->Prev() );
+		m_pPtr = TSTATICCAST(T, TSTATICCAST( Node, m_pPtr )->Prev() );
 		return T2Iterator{ m_pPtr };
 	}
 
