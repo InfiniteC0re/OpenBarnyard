@@ -25,7 +25,7 @@ AAnimatableObject::AAnimatableObject()
 // $Barnyard: FUNCTION 0057c530
 AAnimatableObject::~AAnimatableObject()
 {
-	m_UnkList.DeleteAll();
+	m_llAnimControllers.DeleteAll();
 
 	if ( m_pModelInstance )
 	{
@@ -39,7 +39,7 @@ AAnimatableObject::~AAnimatableObject()
 }
 
 // $Barnyard: FUNCTION 0057c650
-TBOOL AAnimatableObject::Create( AAnimatableObjectType* a_pObjectType, void* a_Unk1, TUINT a_eFlags )
+TBOOL AAnimatableObject::Create( AAnimatableObjectType* a_pObjectType, void* a_Unk1, CREATE_FLAGS a_eFlags )
 {
 	m_pUnk1       = a_Unk1;
 	m_pObjectType = a_pObjectType;
@@ -64,9 +64,22 @@ TBOOL AAnimatableObject::Create( AAnimatableObjectType* a_pObjectType, void* a_U
 		m_oToshiAnimInterface.SetSkeletonInstance( pSceneObject->GetSkeletonInstance() );
 		m_oToshiAnimInterface.SetAnimationSet( a_pObjectType->GetDefaultAnimationSet() );
 
-		if ( !( a_eFlags & 1 ) )
+		if ( !( a_eFlags & CREATE_FLAGS_NO_ANIM_CONTROLLER ) )
 		{
-			TASSERT( !"It's time to implement this *something*" );
+			// Create animation controllers
+			T2_FOREACH( a_pObjectType->GetAnimControllerTypes(), it )
+			{
+				TClass* pControllerClass = it->GetControllerClass();
+				TVALIDPTR( pControllerClass );
+
+				AAnimController* pAnimController = TSTATICCAST( AAnimController, pControllerClass->CreateObject() );
+				TVALIDPTR( pAnimController );
+
+				TBOOL bCreated = pAnimController->Create( a_Unk1, this, it );
+				TASSERT( TTRUE == bCreated );
+
+				m_llAnimControllers.PushBack( pAnimController );
+			}
 		}
 
 		a_pObjectType->OnAnimatableObjectCreated( this );

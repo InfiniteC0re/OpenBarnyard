@@ -40,18 +40,18 @@ ANamedAnimationSetRef AToshiAnimationInterface::GetAnimationSet()
 
 void AToshiAnimationInterface::DestroyAnimReferences()
 {
-	while ( !m_AnimRefList1.IsEmpty() )
+	while ( !m_llAnimRefs.IsEmpty() )
 	{
-		T2DList<AToshiAnimationRef>::Iterator itAnimRef = m_AnimRefList1.Begin();
-		m_AnimRefList1.Erase( itAnimRef );
+		T2DList<AToshiAnimationRef>::Iterator itAnimRef = m_llAnimRefs.Begin();
+		m_llAnimRefs.Erase( itAnimRef );
 
 		g_oAnimationRefPool.DeleteObject( itAnimRef );
 	}
 
-	while ( !m_AnimRefList2.IsEmpty() )
+	while ( !m_llOverlayAnimRefs.IsEmpty() )
 	{
-		T2DList<AToshiAnimationRef>::Iterator itAnimRef = m_AnimRefList2.Begin();
-		m_AnimRefList2.Erase( itAnimRef );
+		T2DList<AToshiAnimationRef>::Iterator itAnimRef = m_llOverlayAnimRefs.Begin();
+		m_llOverlayAnimRefs.Erase( itAnimRef );
 
 		g_oAnimationRefPool.DeleteObject( itAnimRef );
 	}

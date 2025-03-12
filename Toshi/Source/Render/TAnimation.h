@@ -32,58 +32,58 @@ public:
 		Flags_UpdateStateOnRemove = BITFLAG( 3 ),
 	};
 
-	using Mode = TUINT32;
-	enum Mode_ : Mode
+	using State = TUINT32;
+	enum State_ : State
 	{
-		MODE_UNK1,
-		MODE_UNK2,
-		MODE_UNK3,
+		STATE_BLENDING_IN,
+		STATE_PLAYING,
+		STATE_BLENDING_OUT,
 	};
 
 public:
 	TAnimation() = default;
 
-	TBOOL UpdateTime( float a_fDeltaTime );
-	void  RemoveAnimation( float a_fVal );
+	TBOOL UpdateTime( TFLOAT a_fDeltaTime );
+	void  RemoveAnimation( TFLOAT a_fVal );
 
-	void  SetMode( Mode a_eMode ) { m_eMode = a_eMode; }
-	float SetSpeed( float a_fSpeed ) { return std::exchange( m_fSpeed, a_fSpeed ); }
+	void   SetState( State a_eState ) { m_eState = a_eState; }
+	TFLOAT SetSpeed( TFLOAT a_fSpeed ) { return std::exchange( m_fSpeed, a_fSpeed ); }
 
-	float SetDestWeight( float a_fDestWeight, float a_fBlendInSpeed );
+	TFLOAT SetDestWeight( TFLOAT a_fDestWeight, TFLOAT a_fBlendInSpeed );
 
 	Flags GetFlags() const { return m_eFlags; }
-	Mode  GetMode() const { return m_eMode; }
+	State GetState() const { return m_eState; }
 	TBOOL IsActive() const { return m_eFlags & Flags_Active; }
 	TBOOL IsManaged() const { return m_eFlags & Flags_Managed; }
 	TBOOL IsUpdateStateOnRemove() const { return m_eFlags & Flags_UpdateStateOnRemove; }
 
-	unsigned short           GetSequence() const { return m_iSeqID; }
+	TUINT16                  GetSequence() const { return m_iSeqID; }
 	class TSkeletonSequence* GetSequencePtr() const;
 	TSkeletonInstance*       GetSkeletonInstance() const { return m_pSkeletonInstance; }
-	float                    GetSpeed() const { return m_fSpeed; }
-	float                    GetSeqTime() const { return m_fSeqTime; }
-	float                    GetTotalTime() const { return m_fTotalTime; }
-	float                    GetWeight() const { return m_fWeight; }
-	float                    GetDestWeight() const { return m_fDestWeight; }
-	float                    GetBlendInSpeed() const { return m_fBlendInSpeed; }
-	float                    GetBlendOutSpeed() const { return m_fBlendOutSpeed; }
+	TFLOAT                   GetSpeed() const { return m_fSpeed; }
+	TFLOAT                   GetSeqTime() const { return m_fSeqTime; }
+	TFLOAT                   GetTotalTime() const { return m_fTotalTime; }
+	TFLOAT                   GetWeight() const { return m_fWeight; }
+	TFLOAT                   GetDestWeight() const { return m_fDestWeight; }
+	TFLOAT                   GetBlendInSpeed() const { return m_fBlendInSpeed; }
+	TFLOAT                   GetBlendOutSpeed() const { return m_fBlendOutSpeed; }
 
 	TAnimationBone* GetBones() { return TREINTERPRETCAST( TAnimationBone*, this + 1 ); }
 	TAnimationBone* GetBone( TINT a_iIndex ) { return &TREINTERPRETCAST( TAnimationBone*, this + 1 )[ a_iIndex ]; }
 
 private:
 	TSkeletonInstance* m_pSkeletonInstance;
-	unsigned short     m_iSeqID;
+	TUINT16            m_iSeqID;
 	Flags              m_eFlags;
 	TINT               m_iUnk3;
-	Mode               m_eMode;
-	float              m_fSpeed;
-	float              m_fWeight;
-	float              m_fDestWeight;
-	float              m_fTotalTime;
-	float              m_fSeqTime;
-	float              m_fBlendInSpeed;
-	float              m_fBlendOutSpeed;
+	State              m_eState;
+	TFLOAT             m_fSpeed;
+	TFLOAT             m_fWeight;
+	TFLOAT             m_fDestWeight;
+	TFLOAT             m_fTotalTime;
+	TFLOAT             m_fSeqTime;
+	TFLOAT             m_fBlendInSpeed;
+	TFLOAT             m_fBlendOutSpeed;
 
 	friend class TSkeletonInstance;
 };

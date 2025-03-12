@@ -113,7 +113,7 @@ void AAnimatableObjectType::OnAnimatableObjectCreated( AAnimatableObject* a_pAni
 void AAnimatableObjectType::Destroy()
 {
 	m_vecAnimationSets.Clear();
-	m_UnkList.DeleteAll();
+	m_llAnimControllerTypes.DeleteAll();
 
 	if ( m_pAModel )
 	{
@@ -199,12 +199,29 @@ TBOOL AAnimatableObjectType::LoadAnimationSet( const PBProperties* a_pProperties
 	return TTRUE;
 }
 
+TPSTRING8_DECLARE( Type );
+
+// $Barnyard: FUNCTION 0057eda0
 TBOOL AAnimatableObjectType::SetAnimController( const PBProperties* a_pProperties )
 {
 	TVALIDPTR( a_pProperties );
-	TASSERT( !"Not implemented" );
 
-	return TTRUE;
+	// Get controller type name
+	TPString8 strType;
+	a_pProperties->GetOptionalPropertyValue( strType, TPS8( Type ) );
+
+	TClass* pTypeClass = TClass::Find( strType, &TGetClass( AAnimControllerType ) );
+	
+	TASSERT( TNULL != pTypeClass );
+	if ( pTypeClass == TNULL ) return TFALSE;
+
+	// Create the actual controller type
+	AAnimControllerType* pControllerType = TSTATICCAST( AAnimControllerType, pTypeClass->CreateObject() );
+	TVALIDPTR( pControllerType );
+
+	m_llAnimControllerTypes.PushBack( pControllerType );
+
+	return pControllerType->Create( a_pProperties );
 }
 
 TBOOL AAnimatableObjectType::SetSkins( const PBProperties* a_pProperties )

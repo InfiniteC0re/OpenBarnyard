@@ -1,6 +1,7 @@
 #pragma once
 #include "AModel.h"
 #include "ANamedAnimationSet.h"
+#include "AAnimControllerType.h"
 
 #include <Toshi/T2DList.h>
 #include <Toshi/TPString8.h>
@@ -35,6 +36,8 @@ public:
 	const Toshi::TPString8& GetName() const { return m_strName; }
 	AModel*                 GetModel() const { return m_pAModel; }
 
+	Toshi::T2DList<AAnimControllerType>& GetAnimControllerTypes() { return m_llAnimControllerTypes; }
+
 private:
 	TBOOL LoadAnimationSet( const PBProperties* a_pProperties );
 	TBOOL SetAnimController( const PBProperties* a_pProperties );
@@ -43,7 +46,7 @@ private:
 private:
 	Toshi::TPString8                                           m_strName;
 	Toshi::T2Vector<ANamedAnimationSetRef, MAX_ANIMATION_SETS> m_vecAnimationSets;
-	Toshi::T2DList<AAnimatableObjectType>                      m_UnkList; // list type is a placeholder
+	Toshi::T2DList<AAnimControllerType>                        m_llAnimControllerTypes;
 	AModel*                                                    m_pAModel;
 	void*                                                      m_pUnk;
 };

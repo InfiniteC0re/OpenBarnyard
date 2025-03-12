@@ -8,6 +8,13 @@ class AToshiAnimationRef
     : public Toshi::T2DList<AToshiAnimationRef>::Node
 {
 public:
+	struct AnimationMeta
+	{
+
+	};
+
+public:
+
 private:
 };
 
@@ -28,8 +35,8 @@ private:
 	void DestroyAnimReferences();
 
 private:
-	Toshi::T2DList<AToshiAnimationRef> m_AnimRefList1;
-	Toshi::T2DList<AToshiAnimationRef> m_AnimRefList2;
+	Toshi::T2DList<AToshiAnimationRef> m_llAnimRefs;
+	Toshi::T2DList<AToshiAnimationRef> m_llOverlayAnimRefs;
 	ANamedAnimationSetRef              m_pAnimationSet;
 	Toshi::TSkeletonInstance*          m_pSkeletonInstance;
 	// ...

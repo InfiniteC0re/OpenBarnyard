@@ -185,6 +185,9 @@ public:
 
 public:
 	TSkeletonInstance() = default;
+	~TSkeletonInstance();
+
+	TAnimation* GetAnimation( TUINT16 a_iSeqId );
 
 	void       UpdateTime( TFLOAT a_fDeltaTime );
 	void       UpdateState( TBOOL a_bForceUpdate );

@@ -362,7 +362,7 @@ void TSkeletonInstance::RemoveAnimation( TAnimation* a_pAnimation, TFLOAT a_fBle
 	{
 		a_pAnimation->m_fDestWeight    = 0.0f;
 		a_pAnimation->m_fBlendOutSpeed = a_fBlendOutSpeed;
-		a_pAnimation->m_eMode          = TAnimation::MODE_UNK3;
+		a_pAnimation->m_eState          = TAnimation::STATE_BLENDING_OUT;
 		return;
 	}
 
@@ -371,7 +371,7 @@ void TSkeletonInstance::RemoveAnimation( TAnimation* a_pAnimation, TFLOAT a_fBle
 		a_pAnimation->m_eFlags &= ~TAnimation::Flags_UpdateStateOnRemove;
 		a_pAnimation->m_fDestWeight    = 1.0f;
 		a_pAnimation->m_fBlendOutSpeed = 1.0f;
-		a_pAnimation->m_eMode          = TAnimation::MODE_UNK3;
+		a_pAnimation->m_eState         = TAnimation::STATE_BLENDING_OUT;
 		m_eFlags |= 1;
 		return;
 	}
@@ -411,6 +411,28 @@ void TSkeletonInstance::RemoveAllAnimations()
 
 	while ( !m_OverlayAnimations.IsEmpty() )
 		RemoveAnimation( m_OverlayAnimations.Begin(), 0.0f );
+}
+
+TSkeletonInstance::~TSkeletonInstance()
+{
+}
+
+// $Barnyard: FUNCTION 006ca920
+TAnimation* TSkeletonInstance::GetAnimation( TUINT16 a_iSeqId )
+{
+	T2_FOREACH( m_BaseAnimations, it )
+	{
+		if ( it->GetSequence() == a_iSeqId )
+			return it;
+	}
+
+	T2_FOREACH( m_OverlayAnimations, it )
+	{
+		if ( it->GetSequence() == a_iSeqId )
+			return it;
+	}
+
+	return TNULL;
 }
 
 TFLOAT TSkeletonSequenceBone::GetKeyPair( TINT a_iCurrentAnimTime, TUINT16& a_rCurrentKeyIndex, TUINT16& a_rLerpFromIndex, TUINT16& a_rLerpToIndex )

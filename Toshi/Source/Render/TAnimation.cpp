@@ -10,6 +10,7 @@
 
 TOSHI_NAMESPACE_START
 
+// $Barnyard: FUNCTION 006caea0
 TBOOL TAnimation::UpdateTime( TFLOAT a_fDeltaTime )
 {
 	auto pSkeleton = m_pSkeletonInstance->GetSkeleton();
@@ -36,7 +37,7 @@ TBOOL TAnimation::UpdateTime( TFLOAT a_fDeltaTime )
 		}
 		else
 		{
-			m_fSeqTime = pSeq->GetDuration();
+			m_fSeqTime = fSeqDuration;
 		}
 	}
 	else
@@ -57,25 +58,25 @@ TBOOL TAnimation::UpdateTime( TFLOAT a_fDeltaTime )
 		}
 	}
 
-	if ( m_eMode == MODE_UNK1 )
+	if ( m_eState == STATE_BLENDING_IN )
 	{
 		m_fWeight = ( m_fBlendInSpeed == 0.0f ) ? m_fDestWeight : m_fWeight + ( 1.0f / m_fBlendInSpeed ) * a_fDeltaTime;
 
 		if ( m_fDestWeight <= m_fWeight )
 		{
 			m_fWeight = m_fDestWeight;
-			m_eMode   = MODE_UNK2;
+			m_eState  = STATE_PLAYING;
 		}
 	}
-	else if ( m_eMode == MODE_UNK2 )
+	else if ( m_eState == STATE_PLAYING )
 	{
 		if ( HASANYFLAG( m_eFlags, Flags_Managed ) && fSeqDuration <= m_fTotalTime )
 		{
-			m_eMode = MODE_UNK3;
+			m_eState = STATE_BLENDING_OUT;
 			return TTRUE;
 		}
 	}
-	else if ( m_eMode == MODE_UNK3 )
+	else if ( m_eState == STATE_BLENDING_OUT )
 	{
 		m_fWeight = ( m_fBlendOutSpeed == 0.0f ) ? -1.0f : m_fWeight - ( 1.0f / m_fBlendOutSpeed ) * a_fDeltaTime;
 
@@ -104,12 +105,12 @@ TFLOAT TAnimation::SetDestWeight( TFLOAT a_fDestWeight, TFLOAT a_fBlendInSpeed )
 
 	if ( 0.0f < a_fBlendInSpeed )
 	{
-		m_eMode = MODE_UNK1;
+		m_eState = STATE_BLENDING_IN;
 	}
 	else
 	{
 		m_fWeight = a_fDestWeight;
-		m_eMode   = MODE_UNK2;
+		m_eState  = STATE_PLAYING;
 	}
 
 	return fOldValue;

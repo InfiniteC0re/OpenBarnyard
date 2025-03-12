@@ -20,8 +20,6 @@ class AAnimatableObjectManager
 public:
 	TDECLARE_CLASS( AAnimatableObjectManager, Toshi::TTask );
 
-
-
 public:
 	// constructors/destructor
 	AAnimatableObjectManager();
