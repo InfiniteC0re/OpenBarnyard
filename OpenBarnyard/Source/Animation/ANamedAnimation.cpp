@@ -29,6 +29,13 @@ ANamedAnimation::ANamedAnimation( T2Allocator* a_pAllocator )
 // $Barnyard: FUNCTION 005805b0
 ANamedAnimation::~ANamedAnimation()
 {
+	// Delete breakpoints
+	T2_FOREACH( m_vecBreakpoints, it )
+	{
+		delete ( *it );
+	}
+	
+	m_vecBreakpoints.Clear();
 }
 
 TPSTRING8_DECLARE( EndOfAnim );

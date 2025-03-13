@@ -45,9 +45,6 @@ public:
 	{
 		m_pRawPtr          = a_rOther.m_pRawPtr;
 		a_rOther.m_pRawPtr = TNULL;
-
-		if ( m_pRawPtr )
-			IncrementNumRefs();
 	}
 
 	// Destructor

@@ -18,8 +18,6 @@ AToshiAnimationInterface::AToshiAnimationInterface()
 
 AToshiAnimationInterface::~AToshiAnimationInterface()
 {
-	TIMPLEMENT();
-
 	DestroyAnimReferences();
 }
 

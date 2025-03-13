@@ -20,30 +20,16 @@ TSkeleton::TSkeleton()
 	m_SkeletonSequences  = TNULL;
 }
 
-void TSkeleton::Delete()
+TSkeleton::~TSkeleton()
 {
-	if ( m_KeyLibraryInstance.GetLibrary() != TNULL )
-	{
-		auto& instance = GetKeyLibraryInstance();
-		instance.SetSCount( instance.GetSCount() - 1 );
-		instance.SetLibrary( TNULL );
-	}
-}
-
-TBOOL TSkeleton::Create( TUINT32 param_1 )
-{
-	TIMPLEMENT();
-	return TFALSE;
 }
 
 // $Barnyard: FUNCTION 006ca760
 TSkeletonInstance* TSkeleton::CreateInstance( TBOOL a_bSetBasePose )
 {
 	// Set quaternion interpolation method if it's not already set
-	if ( (QUATINTERP)m_fnQuatLerp <= QUATINTERP_Nlerp )
-	{
-		SetQInterpFn( (QUATINTERP)m_fnQuatLerp );
-	}
+	if ( m_eQuatLerpType <= QUATINTERP_Nlerp )
+		SetQInterpFn( m_eQuatLerpType );
 
 	auto               iAutoBoneCount = GetAutoBoneCount();
 	TSIZE              iAnimationSize = iAutoBoneCount * sizeof( TAnimationBone ) + TAlignNumDown( sizeof( TAnimation ) );
@@ -68,7 +54,7 @@ TSkeletonInstance* TSkeleton::CreateInstance( TBOOL a_bSetBasePose )
 	{
 		TAnimation* pAnimation = TREINTERPRETCAST(
 		    TAnimation*,
-		    TREINTERPRETCAST( uintptr_t, pInstance->m_pAnimations ) + i * iAnimationSize
+		    TREINTERPRETCAST( TUINTPTR, pInstance->m_pAnimations ) + i * iAnimationSize
 		);
 
 		new ( pAnimation ) TAnimation();
@@ -262,12 +248,12 @@ void TSkeletonInstance::UpdateState( TBOOL a_bForceUpdate )
 
 			T2_FOREACH( m_OverlayAnimations, it )
 			{
-				if ( it->GetWeight() != 0 )
+				if ( it->GetWeight() != 0.0f )
 				{
 					auto pSeq     = m_pSkeleton->GetSequence( it->GetSequence() );
 					auto pSeqBone = pSeq->GetBone( i );
 
-					if ( !pSeqBone->Is2() && pSeqBone->GetKeyCount() != 0 )
+					if ( !pSeqBone->IsOverlayAnimated() && pSeqBone->GetKeyCount() != 0 )
 					{
 						TINT iCurrentKeyframePos = TINT( ( it->GetSeqTime() / pSeq->GetDuration() ) * 65535 );
 
@@ -362,44 +348,42 @@ void TSkeletonInstance::RemoveAnimation( TAnimation* a_pAnimation, TFLOAT a_fBle
 	{
 		a_pAnimation->m_fDestWeight    = 0.0f;
 		a_pAnimation->m_fBlendOutSpeed = a_fBlendOutSpeed;
-		a_pAnimation->m_eState          = TAnimation::STATE_BLENDING_OUT;
-		return;
+		a_pAnimation->m_eState         = TAnimation::STATE_BLENDING_OUT;
 	}
-
-	if ( a_pAnimation->m_eFlags & TAnimation::Flags_UpdateStateOnRemove )
+	else if ( a_pAnimation->m_eFlags & TAnimation::Flags_UpdateStateOnRemove )
 	{
 		a_pAnimation->m_eFlags &= ~TAnimation::Flags_UpdateStateOnRemove;
 		a_pAnimation->m_fDestWeight    = 1.0f;
 		a_pAnimation->m_fBlendOutSpeed = 1.0f;
 		a_pAnimation->m_eState         = TAnimation::STATE_BLENDING_OUT;
 		m_eFlags |= 1;
-		return;
 	}
-
-	if ( a_pAnimation->GetSequencePtr()->IsOverlay() )
-		m_iOverlayAnimationCount -= 1;
 	else
-		m_iBaseAnimationCount -= 1;
+	{
+		if ( a_pAnimation->GetSequencePtr()->IsOverlay() )
+			m_iOverlayAnimationCount -= 1;
+		else
+			m_iBaseAnimationCount -= 1;
 
-	a_pAnimation->m_eFlags = TAnimation::Flags_None;
+		a_pAnimation->m_eFlags = TAnimation::Flags_None;
 
-	// Unlink the animation and add it to the list of free animations
-	a_pAnimation->Remove();
-	m_FreeAnimations.PushFront( a_pAnimation );
+		// Unlink the animation and add it to the list of free animations
+		a_pAnimation->Remove();
+		m_FreeAnimations.PushFront( a_pAnimation );
+	}
 }
 
+// $Barnyard: FUNCTION 006c9e20
 void TSkeletonInstance::SetStateFromBasePose()
 {
 	for ( TINT i = 0; i < m_pSkeleton->GetAutoBoneCount(); i++ )
 	{
-		m_pSkeleton->GetBone( i );
-		m_pBones[ i ].m_Transform.Identity();
+		m_pSkeleton->GetBone( i )->GetTransform().Identity();
 	}
 }
 
 void TSkeletonInstance::Delete()
 {
-	m_pSkeleton->m_iInstanceCount--;
 	delete this;
 }
 
@@ -415,6 +399,7 @@ void TSkeletonInstance::RemoveAllAnimations()
 
 TSkeletonInstance::~TSkeletonInstance()
 {
+	m_pSkeleton->m_iInstanceCount--;
 }
 
 // $Barnyard: FUNCTION 006ca920
@@ -435,6 +420,129 @@ TAnimation* TSkeletonInstance::GetAnimation( TUINT16 a_iSeqId )
 	return TNULL;
 }
 
+// $Barnyard: FUNCTION 006cb190
+TAnimation* TSkeletonInstance::AddAnimationFull( TUINT16 a_iSequenceIndex, TFLOAT a_fDestWeight, TFLOAT a_fBlendInSpeed, TFLOAT a_fBlendOutSpeed, TAnimation::Flags a_eFlags )
+{
+	if ( m_pSkeleton->GetSequenceCount() <= a_iSequenceIndex )
+		return TNULL;
+
+	TAnimation* pAnimation = TNULL;
+
+	// Check if this animation is already playing as a base animation
+	for ( auto it = m_BaseAnimations.Begin(); pAnimation != TNULL && it != m_BaseAnimations.End(); ++it )
+	{
+		if ( it->GetSequence() == a_iSequenceIndex )
+			pAnimation = it;
+	}
+
+	// Check if this animation is already playing as an overlay animation
+	for ( auto it = m_BaseAnimations.Begin(); pAnimation != TNULL && it != m_BaseAnimations.End(); ++it )
+	{
+		if ( it->GetSequence() == a_iSequenceIndex )
+			pAnimation = it;
+	}
+
+	const TBOOL bIsNewAnim = pAnimation == TNULL;
+
+	if ( bIsNewAnim )
+	{
+		// Get a free animation from the list
+		pAnimation = m_FreeAnimations.IsEmpty() ? TNULL : m_FreeAnimations.Begin();
+
+		// If the free list is empty, replace the most unimportant animation with it
+		if ( !pAnimation )
+		{
+			TQList<TAnimation>* pIterateList = &m_BaseAnimations;
+
+			// If no base animations are currently playing, get one from the overlay animations list
+			if ( m_BaseAnimations.IsEmpty() )
+				pIterateList = &m_OverlayAnimations;
+
+			TASSERT( !pIterateList->IsEmpty() );
+			pAnimation = pIterateList->Begin();
+
+			// Find an animation that has the most least weight
+			for ( auto it = pIterateList->Begin().Next(); it != pIterateList->End(); it++ )
+			{
+				if ( it->GetWeight() < pAnimation->GetWeight() )
+					pAnimation = it;
+			}
+
+			// Instantly remove the animation
+			if ( TSkeletonInstance* pSkeletonInstance = pAnimation->GetSkeletonInstance() )
+				pSkeletonInstance->RemoveAnimation( pAnimation, 0.0f );
+		}
+
+		// Remove animation from any list
+		pAnimation->TQList<TAnimation>::TNode::Remove();
+
+		if ( m_pSkeleton->GetSequence( a_iSequenceIndex )->IsBase() )
+		{
+			// Base Animation
+			m_BaseAnimations.PushFront( pAnimation );
+			m_iBaseAnimationCount++;
+		}
+		else
+		{
+			// Overlay Animation
+			m_OverlayAnimations.PushFront( pAnimation );
+			m_iOverlayAnimationCount++;
+		}
+	}
+
+	// Clamp values
+	TMath::Clip( a_fDestWeight, 0.0f, 1.0f );
+
+	// Setup animation
+	TVALIDPTR( pAnimation );
+	pAnimation->m_iSeqID = a_iSequenceIndex;
+	pAnimation->m_eFlags = a_eFlags | TAnimation::Flags_Active;
+	pAnimation->m_iUnk3  = 0;
+	pAnimation->m_fSpeed = 1.0f;
+
+	if ( bIsNewAnim ) pAnimation->m_fWeight = 0.0f;
+	TMath::Clip( pAnimation->m_fWeight, 0.0f, 1.0f );
+
+	pAnimation->m_fBlendOutSpeed = a_fBlendOutSpeed;
+	pAnimation->m_fDestWeight    = a_fDestWeight;
+	pAnimation->m_fTotalTime     = 0.0f;
+	pAnimation->m_fSeqTime       = 0.0f;
+	pAnimation->m_fBlendInSpeed  = a_fBlendInSpeed;
+
+	if ( a_fBlendInSpeed <= 0.0f )
+	{
+		pAnimation->m_fWeight = a_fDestWeight;
+		pAnimation->m_eState  = TAnimation::STATE_PLAYING;
+	}
+	else
+	{
+		pAnimation->m_eState = TAnimation::STATE_BLENDING_IN;
+	}
+
+	// Clear auto bones data
+	TUtil::MemSet( pAnimation->GetBones(), 0, m_pSkeleton->GetAutoBoneCount() * sizeof( TAnimationBone ) );
+
+	pAnimation->m_pSkeletonInstance = this;
+	return pAnimation;
+}
+
+// $Barnyard: FUNCTION 006cb4d0
+TAnimation* TSkeletonInstance::AddAnimation( TUINT16 a_iSequenceIndex, TFLOAT a_fDestWeight, TFLOAT a_fBlendInSpeed )
+{
+	return AddAnimationFull( a_iSequenceIndex, a_fDestWeight, a_fBlendInSpeed, 0.0f, 0 );
+}
+
+const TSkeletonInstanceBone& TSkeletonInstance::GetBone( TINT a_uiIndex )
+{
+	TASSERT( a_uiIndex < m_pSkeleton->GetAutoBoneCount() );
+	return m_pBones[ a_uiIndex ];
+}
+
+TSkeletonInstance::TSkeletonInstance()
+{
+}
+
+// $Barnyard: FUNCTION 006c9f70
 TFLOAT TSkeletonSequenceBone::GetKeyPair( TINT a_iCurrentAnimTime, TUINT16& a_rCurrentKeyIndex, TUINT16& a_rLerpFromIndex, TUINT16& a_rLerpToIndex )
 {
 	auto pFirstKeyTime = *GetKey( 0 );

@@ -8,6 +8,8 @@
 
 TOSHI_NAMESPACE_START
 
+class TSkeletonInstance;
+
 class TSkeletonSequenceBone
 {
 public:
@@ -22,7 +24,7 @@ public:
 
 	TFORCEINLINE uint16_t* GetKey( size_t a_iKeyIndex )
 	{
-		return TREINTERPRETCAST( uint16_t*, a_iKeyIndex * m_iKeySize + TREINTERPRETCAST( uintptr_t, m_pData ) );
+		return TREINTERPRETCAST( uint16_t*, a_iKeyIndex* m_iKeySize + TREINTERPRETCAST( uintptr_t, m_pData ) );
 	}
 
 	TFORCEINLINE TUINT16 GetKeyCount() const
@@ -35,7 +37,7 @@ public:
 		return m_eFlags & 1;
 	}
 
-	TFORCEINLINE TBOOL Is2() const
+	TFORCEINLINE TBOOL IsOverlayAnimated() const
 	{
 		return m_eFlags & 2;
 	}
@@ -61,7 +63,8 @@ public:
 	};
 
 public:
-	TBOOL IsOverlay() const { return m_eFlags & FLAG_Overlay; }
+	TBOOL IsBase() const { return !( m_eFlags & FLAG_Overlay ); }
+	TBOOL IsOverlay() const { return ( m_eFlags & FLAG_Overlay ); }
 
 	TSkeletonSequenceBone* GetBones() { return m_pSeqBones; }
 	TSkeletonSequenceBone* GetBone( TINT a_iIndex ) { return &m_pSeqBones[ a_iIndex ]; }
@@ -120,15 +123,13 @@ public:
 		QUATINTERP_Nlerp
 	};
 
-	friend class TSkeletonInstance;
+	friend TSkeletonInstance;
 
 public:
 	TSkeleton();
+	~TSkeleton();
 
-	void  Delete();
-	TBOOL Create( TUINT32 param_1 );
-
-	class TSkeletonInstance* CreateInstance( TBOOL a_bSetBasePose );
+	TSkeletonInstance* CreateInstance( TBOOL a_bSetBasePose );
 
 	t_fnQuatLerp GetQInterpFn() const { return m_fnQuatLerp; }
 	void         SetQInterpFn( QUATINTERP a_eQuatInterp );
@@ -162,7 +163,12 @@ public:
 	TKeyframeLibraryInstance m_KeyLibraryInstance; // 0x0C
 	TSkeletonBone*           m_pBones;             // 0x34
 	TSkeletonSequence*       m_SkeletonSequences;  // 0x38
-	t_fnQuatLerp             m_fnQuatLerp;         // 0x3C
+
+	union // 0x3C
+	{
+		t_fnQuatLerp m_fnQuatLerp;
+		QUATINTERP   m_eQuatLerpType;
+	};
 };
 
 struct TSkeletonInstanceBone
@@ -184,29 +190,27 @@ public:
 	friend TSkeleton;
 
 public:
-	TSkeletonInstance() = default;
+	TSkeletonInstance();
 	~TSkeletonInstance();
 
+	TAnimation* AddAnimation( TUINT16 a_iSequenceIndex, TFLOAT a_fDestWeight, TFLOAT a_fBlendInSpeed );
+	TAnimation* AddAnimationFull( TUINT16 a_iSequenceIndex, TFLOAT a_fDestWeight, TFLOAT a_fBlendInSpeed, TFLOAT a_fBlendOutSpeed, TAnimation::Flags a_eFlags );
 	TAnimation* GetAnimation( TUINT16 a_iSeqId );
-
-	void       UpdateTime( TFLOAT a_fDeltaTime );
-	void       UpdateState( TBOOL a_bForceUpdate );
-	TMatrix44* GetBoneTransformCurrent( TINT a_iBone, TMatrix44& a_rMatrix );
 
 	void RemoveAnimation( TAnimation* a_pAnimation, TFLOAT a_fBlendOutSpeed );
 	void RemoveAllAnimations();
 
-	void SetStateFromBasePose();
+	void UpdateTime( TFLOAT a_fDeltaTime );
+	void UpdateState( TBOOL a_bForceUpdate );
 
+	TMatrix44* GetBoneTransformCurrent( TINT a_iBone, TMatrix44& a_rMatrix );
+	void SetStateFromBasePose();
+	
 	void Delete();
 
 	TSkeleton*                   GetSkeleton() { return m_pSkeleton; }
 	const TSkeletonInstanceBone* GetBones() { return m_pBones; }
-	const TSkeletonInstanceBone& GetBone( TINT a_uiIndex )
-	{
-		TASSERT( a_uiIndex < m_pSkeleton->GetAutoBoneCount() );
-		return m_pBones[ a_uiIndex ];
-	}
+	const TSkeletonInstanceBone& GetBone( TINT a_uiIndex );
 
 public:
 	inline static TMatrix44 g_aForwardMatrices[ TANIMATION_MAXBONES ];

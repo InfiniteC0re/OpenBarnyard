@@ -75,7 +75,7 @@ private:
 	TSkeletonInstance* m_pSkeletonInstance;
 	TUINT16            m_iSeqID;
 	Flags              m_eFlags;
-	TINT               m_iUnk3;
+	TINT16             m_iUnk3;
 	State              m_eState;
 	TFLOAT             m_fSpeed;
 	TFLOAT             m_fWeight;
