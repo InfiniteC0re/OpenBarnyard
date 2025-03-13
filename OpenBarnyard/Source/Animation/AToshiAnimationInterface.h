@@ -8,12 +8,6 @@ class AToshiAnimationRef
     : public Toshi::T2DList<AToshiAnimationRef>::Node
 {
 public:
-	struct AnimationMeta
-	{
-
-	};
-
-public:
 
 private:
 };
@@ -39,5 +33,7 @@ private:
 	Toshi::T2DList<AToshiAnimationRef> m_llOverlayAnimRefs;
 	ANamedAnimationSetRef              m_pAnimationSet;
 	Toshi::TSkeletonInstance*          m_pSkeletonInstance;
+	// ...
+	ANamedAnimationTransition m_oAnimTransition;
 	// ...
 };

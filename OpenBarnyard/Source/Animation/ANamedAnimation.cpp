@@ -10,6 +10,107 @@
 
 TOSHI_NAMESPACE_USING
 
+ANamedAnimationTransition::ANamedAnimationTransition()
+    : m_bAutoTransition( TFALSE )
+{
+}
+
+// $Barnyard: FUNCTION 00581b40
+ANamedAnimationTransition::~ANamedAnimationTransition()
+{
+}
+
+void ANamedAnimationTransition::SetTransitionName( const TPString8& a_strName )
+{
+    m_strTransitionName = a_strName;
+}
+
+// $Barnyard: FUNCTION 00583330
+void ANamedAnimationTransition::SetAnimationName( const TPString8& a_strName )
+{
+	m_strAnimationName = a_strName;
+}
+
+void ANamedAnimationTransition::SetBlendInTime( TFLOAT a_fTime )
+{
+	m_fBlendInTime = a_fTime;
+}
+
+TFLOAT ANamedAnimationTransition::GetBlendInTime() const
+{
+	return m_fBlendInTime;
+}
+
+void ANamedAnimationTransition::SetBlendOutTime( TFLOAT a_fTime )
+{
+	m_fBlendOutTime = a_fTime;
+}
+
+TFLOAT ANamedAnimationTransition::GetBlendOutTime() const
+{
+	return m_fBlendOutTime;
+}
+
+void ANamedAnimationTransition::SetAutoTransition( TBOOL a_bAutoTransition )
+{
+	m_bAutoTransition = a_bAutoTransition;
+}
+
+void ANamedAnimationTransition::SetManaged( TBOOL a_bManaged )
+{
+	m_bManaged = a_bManaged;
+}
+
+TBOOL ANamedAnimationTransition::IsAutoTransition() const
+{
+	return m_bAutoTransition;
+}
+
+TBOOL ANamedAnimationTransition::IsManaged() const
+{
+	return m_bManaged;
+}
+
+// $Barnyard: FUNCTION 00581d90
+ANamedAnimationTransitionSet::ANamedAnimationTransitionSet( ANamedAnimation* a_pNamedAnimation, Toshi::T2Allocator* a_pAllocator )
+    : m_pAnimation( a_pNamedAnimation )
+    , m_mapTransitions( a_pAllocator )
+    , m_bUnk3( TFALSE )
+{
+}
+
+// $Barnyard: FUNCTION 00582170
+ANamedAnimationTransitionSet::~ANamedAnimationTransitionSet()
+{
+}
+
+// $Barnyard: FUNCTION 00581ff0
+void ANamedAnimationTransitionSet::AddTransition( ANamedAnimation* a_pAnimation, const Toshi::TPString8& a_strTransitionName, TFLOAT a_fBlendInTime, TFLOAT a_fBlendOutTime, TBOOL a_bIsAutoTransition, TBOOL a_bManaged )
+{
+	TVALIDPTR( a_pAnimation );
+
+	// Create new transition object
+	ANamedAnimationTransition transition;
+	transition.m_strTransitionName = a_strTransitionName;
+	transition.m_strAnimationName  = a_pAnimation->GetName();
+	transition.m_fBlendOutTime     = a_fBlendOutTime;
+	transition.m_fBlendInTime      = a_fBlendInTime;
+	transition.m_bAutoTransition   = a_bIsAutoTransition != '\0';
+	transition.m_bManaged          = a_bManaged;
+
+	m_mapTransitions.Insert( a_pAnimation->GetName(), transition );
+
+	if ( a_bIsAutoTransition )
+		m_strAnimationName = a_pAnimation->GetName();
+}
+
+// $Barnyard: FUNCTION 00581ad0
+ANamedAnimationTransition* ANamedAnimationTransitionSet::FindTransition( const Toshi::TPString8& a_strName )
+{
+	auto it = m_mapTransitions[ a_strName ];
+	return ( it == m_mapTransitions.End() ) ? TNULL : &it.GetValue()->second;
+}
+
 // $Barnyard: FUNCTION 00580520
 ANamedAnimation::ANamedAnimation( T2Allocator* a_pAllocator )
     : m_vecBreakpoints( a_pAllocator, 0, 0 )

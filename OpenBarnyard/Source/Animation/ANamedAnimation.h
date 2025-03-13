@@ -4,8 +4,72 @@
 #include <Toshi/TPString8.h>
 #include <ToshiTools/T2DynamicVector.h>
 #include <Toshi/T2SortedVector.h>
+#include <Toshi/T2Map.h>
 #include <Render/TSkeleton.h>
 #include <Plugins/PPropertyParser/PBProperties.h>
+
+class ANamedAnimation;
+
+//-----------------------------------------------------------------------------
+// Purpose: Represents a single transition of a named animation
+//-----------------------------------------------------------------------------
+class ANamedAnimationTransition
+{
+public:
+	friend class ANamedAnimation;
+	friend class ANamedAnimationTransitionSet;
+
+public:
+	ANamedAnimationTransition();
+	~ANamedAnimationTransition();
+
+	void SetTransitionName( const Toshi::TPString8& a_strName );
+	void SetAnimationName( const Toshi::TPString8& a_strName );
+
+	void SetBlendInTime( TFLOAT a_fTime );
+	void SetBlendOutTime( TFLOAT a_fTime );
+	void SetAutoTransition( TBOOL a_bAutoTransition );
+	void SetManaged( TBOOL a_bManaged );
+
+	TFLOAT GetBlendInTime() const;
+	TFLOAT GetBlendOutTime() const;
+	TBOOL  IsAutoTransition() const;
+	TBOOL  IsManaged() const;
+
+private:
+	Toshi::TPString8 m_strTransitionName;
+	TFLOAT           m_fBlendInTime;
+	TFLOAT           m_fBlendOutTime;
+	Toshi::TPString8 m_strAnimationName;
+	TBOOL            m_bAutoTransition;
+	TBOOL            m_bManaged;
+};
+
+//-----------------------------------------------------------------------------
+// Purpose: Holds map of transitions applied to a named animation
+//-----------------------------------------------------------------------------
+class ANamedAnimationTransitionSet
+{
+public:
+	friend class ANamedAnimation;
+
+public:
+	ANamedAnimationTransitionSet( ANamedAnimation* a_pNamedAnimation, Toshi::T2Allocator* a_pAllocator );
+	~ANamedAnimationTransitionSet();
+
+	void                       AddTransition( ANamedAnimation* a_pAnimation, const Toshi::TPString8& a_strTransitionName, TFLOAT a_fBlendInTime, TFLOAT a_fBlendOutTime, TBOOL a_bIsAutoTransition, TBOOL a_bManaged );
+	ANamedAnimationTransition* FindTransition( const Toshi::TPString8& a_strName );
+
+private:
+	ANamedAnimation* m_pAnimation;
+
+	using TransitionMap = Toshi::T2Map<Toshi::TPString8, ANamedAnimationTransition, Toshi::TPString8::Comparator>;
+	TransitionMap m_mapTransitions;
+
+	Toshi::TPString8 m_strAnimationName;
+	TBOOL            m_bUnk3;
+	Toshi::TPString8 m_strUnk4;
+};
 
 class ANamedAnimation
 {

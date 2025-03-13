@@ -9,6 +9,11 @@ struct T2Pair
 	First  first;
 	Second second;
 
+	constexpr T2Pair()
+	    : first( First() )
+	    , second( Second() )
+	{}
+
 	constexpr T2Pair( const First& a_rcFirst, const Second& a_rcSecond )
 	    : first( a_rcFirst )
 	    , second( a_rcSecond )
@@ -19,13 +24,22 @@ struct T2Pair
 	    , second( Second() )
 	{}
 
-	constexpr T2Pair()
-	    : first( First() )
+	constexpr T2Pair( First&& a_rFirst )
+	    : first( a_rFirst )
 	    , second( Second() )
 	{}
 
-	constexpr First& GetFirst() { return first; }
+	constexpr T2Pair( const First& a_rcFirst, Second&& a_rSecond )
+	    : first( a_rcFirst )
+	    , second( a_rSecond )
+	{}
 
+	constexpr T2Pair( First&& a_rFirst, Second&& a_rSecond )
+	    : first( a_rFirst )
+	    , second( a_rSecond )
+	{}
+
+	constexpr First&  GetFirst() { return first; }
 	constexpr Second& GetSecond() { return second; }
 
 	constexpr T2Pair& operator=( const T2Pair<First, Second, Comparator>& a_rcOther )

@@ -38,13 +38,22 @@ public:
 	template <class... Args>
 	ValueType* Emplace( const KeyType& key, Args&&... args )
 	{
-		Iterator result = m_RedBlackTree.Insert( { key, ValueType( std::forward<Args>( args )... ) } );
+		Pair     pair{ key, ValueType( std::forward<Args>( args )... ) };
+		Iterator result = m_RedBlackTree.Insert( std::move( pair ) );
 		return &result.GetValue()->GetSecond();
 	}
 
 	ValueType* Insert( const KeyType& key, const ValueType& value )
 	{
-		Iterator result = m_RedBlackTree.Insert( { key, value } );
+		Pair     pair{ key, value };
+		Iterator result = m_RedBlackTree.Insert( std::move( pair ) );
+		return &result.GetValue()->GetSecond();
+	}
+
+	ValueType* Insert( const KeyType& key, ValueType&& value )
+	{
+		Pair     pair{ key, std::move( value ) };
+		Iterator result = m_RedBlackTree.Insert( std::move( pair ) );
 		return &result.GetValue()->GetSecond();
 	}
 

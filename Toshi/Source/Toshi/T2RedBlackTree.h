@@ -100,6 +100,11 @@ public:
 	{
 	}
 
+	T2RedBlackTreeNode( T&& value )
+	    : m_Value( std::move( value ) )
+	{
+	}
+
 	T* GetValue()
 	{
 		return &m_Value;
@@ -390,38 +395,16 @@ public:
 		pNode->m_pLeft  = &ms_oNil;
 		pNode->m_pRight = &ms_oNil;
 
-		Node* pCurrentNode = TSTATICCAST( Node, m_oRoot.m_pLeft );
-		Node* pInsertTo    = TSTATICCAST( Node, &m_oRoot );
+		return InsertImpl( pNode );
+	}
 
-		while ( pCurrentNode != &ms_oNil )
-		{
-			pInsertTo = pCurrentNode;
+	Iterator Insert( T&& value )
+	{
+		Node* pNode     = m_pAllocator->New<Node>( value );
+		pNode->m_pLeft  = &ms_oNil;
+		pNode->m_pRight = &ms_oNil;
 
-			if ( pCurrentNode->IsLeftNodeNext( value ) )
-			{
-				pCurrentNode = TSTATICCAST( Node, pCurrentNode->m_pLeft );
-			}
-			else
-			{
-				pCurrentNode = TSTATICCAST( Node, pCurrentNode->m_pRight );
-			}
-		}
-
-		pNode->m_pParent = pInsertTo;
-
-		if ( pInsertTo == &m_oRoot || pInsertTo->IsLeftNodeNext( value ) )
-		{
-			pInsertTo->m_pLeft = pNode;
-		}
-		else
-		{
-			pInsertTo->m_pRight = pNode;
-		}
-
-		TASSERT( ms_oNil.red == 0, "ms_oNil not red in T2GenericRedBlackTree::TreeInsertHelp" ); // TreeInsertHelp????
-		T2GenericRedBlackTree::Insert( pNode );
-
-		return pNode;
+		return InsertImpl( pNode );
 	}
 
 	Iterator Find( const T& value ) const
@@ -463,6 +446,43 @@ public:
 	TSIZE Size() const
 	{
 		return GetNumElements();
+	}
+
+private:
+	Iterator InsertImpl( Node* pNode )
+	{
+		Node* pCurrentNode = TSTATICCAST( Node, m_oRoot.m_pLeft );
+		Node* pInsertTo    = TSTATICCAST( Node, &m_oRoot );
+
+		while ( pCurrentNode != &ms_oNil )
+		{
+			pInsertTo = pCurrentNode;
+
+			if ( pCurrentNode->IsLeftNodeNext( *pNode->GetValue() ) )
+			{
+				pCurrentNode = TSTATICCAST( Node, pCurrentNode->m_pLeft );
+			}
+			else
+			{
+				pCurrentNode = TSTATICCAST( Node, pCurrentNode->m_pRight );
+			}
+		}
+
+		pNode->m_pParent = pInsertTo;
+
+		if ( pInsertTo == &m_oRoot || pInsertTo->IsLeftNodeNext( *pNode->GetValue() ) )
+		{
+			pInsertTo->m_pLeft = pNode;
+		}
+		else
+		{
+			pInsertTo->m_pRight = pNode;
+		}
+
+		TASSERT( ms_oNil.red == 0, "ms_oNil not red in T2GenericRedBlackTree::TreeInsertHelp" ); // TreeInsertHelp????
+		T2GenericRedBlackTree::Insert( pNode );
+
+		return pNode;
 	}
 };
 
