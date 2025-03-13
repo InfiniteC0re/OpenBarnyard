@@ -41,15 +41,19 @@ public:
 	};
 
 public:
-	TAnimation() = default;
+	TAnimation();
+	~TAnimation();
 
 	TBOOL UpdateTime( TFLOAT a_fDeltaTime );
 	void  RemoveAnimation( TFLOAT a_fVal );
 
 	void   SetState( State a_eState ) { m_eState = a_eState; }
 	TFLOAT SetSpeed( TFLOAT a_fSpeed ) { return std::exchange( m_fSpeed, a_fSpeed ); }
-
 	TFLOAT SetDestWeight( TFLOAT a_fDestWeight, TFLOAT a_fBlendInSpeed );
+	void   SetBlendInSpeed( TFLOAT a_fBlendInSpeed ) { m_fBlendInSpeed = a_fBlendInSpeed; }
+	void   SetBlendOutSpeed( TFLOAT a_fBlendOutSpeed ) { m_fBlendOutSpeed = a_fBlendOutSpeed; }
+	
+	void ChangeToManaged( TFLOAT a_fBlendOutSpeed );
 
 	Flags GetFlags() const { return m_eFlags; }
 	State GetState() const { return m_eState; }

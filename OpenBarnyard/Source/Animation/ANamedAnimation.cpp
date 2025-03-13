@@ -85,7 +85,7 @@ ANamedAnimationTransitionSet::~ANamedAnimationTransitionSet()
 }
 
 // $Barnyard: FUNCTION 00581ff0
-void ANamedAnimationTransitionSet::AddTransition( ANamedAnimation* a_pAnimation, const Toshi::TPString8& a_strTransitionName, TFLOAT a_fBlendInTime, TFLOAT a_fBlendOutTime, TBOOL a_bIsAutoTransition, TBOOL a_bManaged )
+void ANamedAnimationTransitionSet::AddTransition( ANamedAnimation* a_pAnimation, const Toshi::TPString8& a_strTransitionName, TFLOAT a_fBlendOutTime, TFLOAT a_fBlendInTime, TBOOL a_bIsAutoTransition, TBOOL a_bManaged )
 {
 	TVALIDPTR( a_pAnimation );
 
@@ -111,9 +111,21 @@ ANamedAnimationTransition* ANamedAnimationTransitionSet::FindTransition( const T
 	return ( it == m_mapTransitions.End() ) ? TNULL : &it.GetValue()->second;
 }
 
+// $Barnyard: FUNCTION 00581b10
+ANamedAnimationTransition* ANamedAnimationTransitionSet::GetDestTransition()
+{
+	if ( !m_strAnimationName.IsEmpty() )
+	{
+		return FindTransition( m_strAnimationName );
+	}
+
+	return TNULL;
+}
+
 // $Barnyard: FUNCTION 00580520
 ANamedAnimation::ANamedAnimation( T2Allocator* a_pAllocator )
     : m_vecBreakpoints( a_pAllocator, 0, 0 )
+    , m_oTransitionSet( this, a_pAllocator )
 {
 	m_iSequenceId          = -1;
 	m_eFlags               = FLAGS_NONE;
@@ -307,7 +319,7 @@ void ANamedAnimation::Reset()
 	m_strExportedName = TPS8( null );
 
 	m_eFlags &= ~FLAGS_LOOP;
-	m_eFlags &= ~FLAGS_UNK2;
+	m_eFlags &= ~FLAGS_NO_ANIM_REF;
 	m_fDefaultBlendOutTime = 0.3f;
 	m_fDefaultBlendInTime  = 0.3f;
 	m_fDefaultWeight       = 1.0f;

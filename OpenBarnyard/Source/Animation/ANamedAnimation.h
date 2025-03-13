@@ -38,8 +38,8 @@ public:
 
 private:
 	Toshi::TPString8 m_strTransitionName;
-	TFLOAT           m_fBlendInTime;
 	TFLOAT           m_fBlendOutTime;
+	TFLOAT           m_fBlendInTime;
 	Toshi::TPString8 m_strAnimationName;
 	TBOOL            m_bAutoTransition;
 	TBOOL            m_bManaged;
@@ -57,8 +57,9 @@ public:
 	ANamedAnimationTransitionSet( ANamedAnimation* a_pNamedAnimation, Toshi::T2Allocator* a_pAllocator );
 	~ANamedAnimationTransitionSet();
 
-	void                       AddTransition( ANamedAnimation* a_pAnimation, const Toshi::TPString8& a_strTransitionName, TFLOAT a_fBlendInTime, TFLOAT a_fBlendOutTime, TBOOL a_bIsAutoTransition, TBOOL a_bManaged );
+	void                       AddTransition( ANamedAnimation* a_pAnimation, const Toshi::TPString8& a_strTransitionName, TFLOAT a_fBlendOutTime, TFLOAT a_fBlendInTime, TBOOL a_bIsAutoTransition, TBOOL a_bManaged );
 	ANamedAnimationTransition* FindTransition( const Toshi::TPString8& a_strName );
+	ANamedAnimationTransition* GetDestTransition();
 
 private:
 	ANamedAnimation* m_pAnimation;
@@ -82,7 +83,7 @@ public:
 		FLAGS_FINISH_ON_ANIM_END = BITFLAG( 1 ),
 		FLAGS_OVERLAY            = BITFLAG( 2 ),
 		FLAGS_STATIC             = BITFLAG( 3 ),
-		FLAGS_UNK2               = BITFLAG( 4 ),
+		FLAGS_NO_ANIM_REF        = BITFLAG( 4 ),
 		FLAGS_LOOP               = BITFLAG( 5 ),
 		FLAGS_REVERSE            = BITFLAG( 6 ),
 	};
@@ -125,24 +126,35 @@ public:
 
 	void AttachBreakpoint( AAnimationBreakpoint* a_pBreakpoint );
 
-	TBOOL IsOverlay() const { return m_eFlags & FLAGS_OVERLAY; }
+	ANamedAnimationTransitionSet& GetTransitionSet() { return m_oTransitionSet; }
 
+	TINT16                  GetSequenceId() const { return m_iSequenceId; }
+	TBOOL                   IsFinishManual() const { return m_eFlags & FLAGS_FINISH_MANUAL; }
+	TBOOL                   IsOverlay() const { return m_eFlags & FLAGS_OVERLAY; }
+	TBOOL                   IsReversed() const { return m_eFlags & FLAGS_REVERSE; }
+	TBOOL                   IsLooped() const { return m_eFlags & FLAGS_LOOP; }
+	FLAGS                   GetFlags() const { return m_eFlags; }
+	TFLOAT                  GetDefaultBlendOutTime() const { return m_fDefaultBlendOutTime; }
+	TFLOAT                  GetDefaultBlendInTime() const { return m_fDefaultBlendInTime; }
+	TFLOAT                  GetDefaultWeight() const { return m_fDefaultWeight; }
+	TFLOAT                  GetSpeed() const { return m_fSpeed; }
+	TFLOAT                  GetDuration() const { return m_fDuration; }
 	const Toshi::TPString8& GetName() const { return m_strName; }
 	const Toshi::TPString8& GetExportedName() const { return m_strExportedName; }
 
 	static FINISHTYPE GetFinishType( const Toshi::TPString8& a_rcFinishType );
 
 private:
-	Toshi::TPString8 m_strExportedName;
-	Toshi::TPString8 m_strName;
-	TINT16           m_iSequenceId;
-	FLAGS            m_eFlags;
-	// ...
-	TFLOAT               m_fDefaultBlendOutTime;
-	TFLOAT               m_fDefaultBlendInTime;
-	TFLOAT               m_fDefaultWeight;
-	TFLOAT               m_fSpeed;
-	TFLOAT               m_fDuration;
-	Toshi::T2Allocator*  m_pAllocator;
-	SortedBreakpointList m_vecBreakpoints;
+	Toshi::TPString8             m_strExportedName;
+	Toshi::TPString8             m_strName;
+	TINT16                       m_iSequenceId;
+	FLAGS                        m_eFlags;
+	ANamedAnimationTransitionSet m_oTransitionSet;
+	TFLOAT                       m_fDefaultBlendOutTime;
+	TFLOAT                       m_fDefaultBlendInTime;
+	TFLOAT                       m_fDefaultWeight;
+	TFLOAT                       m_fSpeed;
+	TFLOAT                       m_fDuration;
+	Toshi::T2Allocator*          m_pAllocator;
+	SortedBreakpointList         m_vecBreakpoints;
 };

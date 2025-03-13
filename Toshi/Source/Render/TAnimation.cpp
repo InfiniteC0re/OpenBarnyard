@@ -13,10 +13,10 @@ TOSHI_NAMESPACE_START
 // $Barnyard: FUNCTION 006caea0
 TBOOL TAnimation::UpdateTime( TFLOAT a_fDeltaTime )
 {
-	auto pSkeleton = m_pSkeletonInstance->GetSkeleton();
-	auto pSeq      = pSkeleton->GetSequence( m_iSeqID );
+	TSkeleton*         pSkeleton = m_pSkeletonInstance->GetSkeleton();
+	TSkeletonSequence* pSeq      = pSkeleton->GetSequence( m_iSeqID );
 
-	auto fSeqDuration = pSeq->GetDuration();
+	TFLOAT fSeqDuration = pSeq->GetDuration();
 
 	m_fTotalTime += m_fSpeed * a_fDeltaTime;
 	m_fSeqTime += m_fSpeed * a_fDeltaTime;
@@ -90,6 +90,7 @@ TBOOL TAnimation::UpdateTime( TFLOAT a_fDeltaTime )
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 006cb0c0
 void TAnimation::RemoveAnimation( TFLOAT a_fVal )
 {
 	if ( m_pSkeletonInstance )
@@ -119,6 +120,28 @@ TFLOAT TAnimation::SetDestWeight( TFLOAT a_fDestWeight, TFLOAT a_fBlendInSpeed )
 TSkeletonSequence* TAnimation::GetSequencePtr() const
 {
 	return m_pSkeletonInstance->GetSkeleton()->GetSequence( m_iSeqID );
+}
+
+TAnimation::TAnimation()
+{
+}
+
+TAnimation::~TAnimation()
+{
+}
+
+// $Barnyard: FUNCTION 006ca230
+void TAnimation::ChangeToManaged( TFLOAT a_fBlendOutSpeed )
+{
+	if ( IsActive() && !IsManaged() )
+	{
+		TFLOAT fSeqDuration = m_pSkeletonInstance->GetSkeleton()->GetSequence( m_iSeqID )->GetDuration();
+
+		m_eFlags |= Flags_Managed;
+		m_fBlendOutSpeed = a_fBlendOutSpeed;
+		m_fSeqTime       = m_fSeqTime - TMath::FloorToInt( m_fSeqTime / fSeqDuration ) * fSeqDuration;
+		m_fTotalTime     = m_fSeqTime;
+	}
 }
 
 TOSHI_NAMESPACE_END
