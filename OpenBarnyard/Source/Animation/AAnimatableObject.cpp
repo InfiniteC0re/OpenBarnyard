@@ -88,6 +88,21 @@ TBOOL AAnimatableObject::Create( AAnimatableObjectType* a_pObjectType, void* a_U
 	return m_eFlags & FLAGS_CREATED;
 }
 
+// $Barnyard: FUNCTION 0057d130
+TBOOL AAnimatableObject::PlayAnimation( const Toshi::TPString8& a_strName )
+{
+	if ( !StartAnimation( a_strName ) )
+	{
+		// Couldn't play animation right now, play it later
+		TASSERT( m_vecQueuedAnims.Size() != m_vecQueuedAnims.CAPACITY );
+
+		m_vecQueuedAnims.PushBack( a_strName );
+		return TFALSE;
+	}
+
+	return TTRUE;
+}
+
 // $Barnyard: FUNCTION 0057c8d0
 TBOOL AAnimatableObject::StartAnimation( const TPString8& a_strName )
 {
@@ -111,6 +126,20 @@ TBOOL AAnimatableObject::StartAnimation( const TPString8& a_strName )
 		m_oToshiAnimInterface.PlayAnim( a_strName, -1.0f, TFALSE );
 
 	return bShouldPlay;
+}
+
+// $Barnyard: FUNCTION 0057d0c0
+void AAnimatableObject::PlayQueuedAnimation()
+{
+	T2_FOREACH( m_vecQueuedAnims, it )
+	{
+		if ( StartAnimation( *it ) )
+		{
+			// This animation has been started, remove it from the queue
+			m_vecQueuedAnims.EraseFast( it );
+			it--;
+		}
+	}
 }
 
 // $Barnyard: FUNCTION 0057c2f0

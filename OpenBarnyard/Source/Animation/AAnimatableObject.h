@@ -50,12 +50,20 @@ public:
 
 	TBOOL Create( AAnimatableObjectType* a_pObjectType, void* a_Unk1, CREATE_FLAGS a_eFlags = CREATE_FLAGS_NONE );
 
-	TBOOL StartAnimation( const Toshi::TPString8& a_strName );
+	// Starts animation immediately if possible, or schedules it to play later. Return TTRUE if started immediately.
+	TBOOL PlayAnimation( const Toshi::TPString8& a_strName );
 
 	void KillAllAnimations();
 
 	void SetVisible( TBOOL a_bVisible );
 	void SetSkeletonUpdating( TBOOL a_bUpdating, TBOOL a_bRecursive );
+
+private:
+	// Immediately starts animation if possible. Returns TTRUE if started animation.
+	TBOOL StartAnimation( const Toshi::TPString8& a_strName );
+
+	// Tries to play queued animations
+	void PlayQueuedAnimation();
 
 private:
 	AttachmentInfo                                m_oAttachmentInfo;
