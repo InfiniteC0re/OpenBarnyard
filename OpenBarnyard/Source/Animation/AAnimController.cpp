@@ -17,7 +17,7 @@ AAnimController::AAnimController()
 	m_pUnk1             = TNULL;
 	m_pAnimatableObject = TNULL;
 	m_pControllerType   = TNULL;
-	m_bUnk4             = TFALSE;
+	m_bDisabled         = TFALSE;
 }
 
 // $Barnyard: FUNCTION 00580420
@@ -40,7 +40,7 @@ TBOOL AAnimController::Unknown3( void* )
 	return TTRUE;
 }
 
-TBOOL AAnimController::Unknown4( void* )
+TBOOL AAnimController::IsAnimationAllowed( ANamedAnimation* a_pNamedAnimation )
 {
 	return TTRUE;
 }

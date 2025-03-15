@@ -50,10 +50,12 @@ public:
 
 	TBOOL Create( AAnimatableObjectType* a_pObjectType, void* a_Unk1, CREATE_FLAGS a_eFlags = CREATE_FLAGS_NONE );
 
-	void SetVisible( TBOOL a_bVisible );
-	void SetSkeletonUpdating( TBOOL a_bUpdating, TBOOL a_bRecursive );
+	TBOOL StartAnimation( const Toshi::TPString8& a_strName );
 
 	void KillAllAnimations();
+
+	void SetVisible( TBOOL a_bVisible );
+	void SetSkeletonUpdating( TBOOL a_bUpdating, TBOOL a_bRecursive );
 
 private:
 	AttachmentInfo                                m_oAttachmentInfo;
@@ -62,7 +64,7 @@ private:
 	AToshiAnimationInterface                      m_oToshiAnimInterface;
 	AModelInstanceRef                             m_pModelInstance;
 	Toshi::T2DList<AAnimController>               m_llAnimControllers;
-	Toshi::T2Vector<Toshi::TPString8, 2>          m_vecPlayingAnims;
+	Toshi::T2Vector<Toshi::TPString8, 2>          m_vecQueuedAnims;
 	Toshi::T2SList<AAnimatableObject>             m_llAttachedObjects;
 	FLAGS                                         m_eFlags;
 };

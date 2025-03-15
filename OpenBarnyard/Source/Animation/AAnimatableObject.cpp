@@ -88,6 +88,31 @@ TBOOL AAnimatableObject::Create( AAnimatableObjectType* a_pObjectType, void* a_U
 	return m_eFlags & FLAGS_CREATED;
 }
 
+// $Barnyard: FUNCTION 0057c8d0
+TBOOL AAnimatableObject::StartAnimation( const TPString8& a_strName )
+{
+	ANamedAnimation* pAnimation = m_oToshiAnimInterface.GetAnimationSet()->GetNamedAnimation( a_strName );
+	TVALIDPTR( pAnimation );
+
+	if ( !pAnimation )
+		return TTRUE;
+
+	// Make sure this animation isn't skipped by any controller
+	TBOOL bShouldPlay = TTRUE;
+	T2_FOREACH( m_llAnimControllers, it )
+	{
+		if ( it->IsEnabled() )
+		{
+			bShouldPlay &= it->IsAnimationAllowed( pAnimation );
+		}
+	}
+
+	if ( bShouldPlay )
+		m_oToshiAnimInterface.PlayAnim( a_strName, -1.0f, TFALSE );
+
+	return bShouldPlay;
+}
+
 // $Barnyard: FUNCTION 0057c2f0
 void AAnimatableObject::SetVisible( TBOOL a_bVisible )
 {
@@ -116,6 +141,6 @@ void AAnimatableObject::SetSkeletonUpdating( TBOOL a_bUpdating, TBOOL a_bRecursi
 // $Barnyard: FUNCTION 0057d190
 void AAnimatableObject::KillAllAnimations()
 {
-	m_vecPlayingAnims.Clear();
+	m_vecQueuedAnims.Clear();
 	m_oToshiAnimInterface.KillAllAnimations();
 }

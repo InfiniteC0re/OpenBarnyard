@@ -3,6 +3,7 @@
 
 class AAnimatableObject;
 class AAnimControllerType;
+class ANamedAnimation;
 
 class AAnimController
     : public Toshi::TObject
@@ -18,13 +19,15 @@ public:
 	virtual TBOOL OnCreate();
 	virtual void  Unknown2();
 	virtual TBOOL Unknown3( void* );
-	virtual TBOOL Unknown4( void* );
+	virtual TBOOL IsAnimationAllowed( ANamedAnimation* a_pNamedAnimation );
 
 	TBOOL Create( void* a_pUnk, AAnimatableObject* a_pAnimatableObject, AAnimControllerType* a_pControllerType );
+
+	TBOOL IsEnabled() const { return !m_bDisabled; }
 
 protected:
 	void*                m_pUnk1;
 	AAnimatableObject*   m_pAnimatableObject;
 	AAnimControllerType* m_pControllerType;
-	TBOOL                m_bUnk4;
+	TBOOL                m_bDisabled;
 };
