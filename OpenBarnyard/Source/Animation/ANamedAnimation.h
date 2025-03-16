@@ -135,6 +135,7 @@ public:
 	TBOOL                   IsOverlay() const { return m_eFlags & FLAGS_OVERLAY; }
 	TBOOL                   IsReversed() const { return m_eFlags & FLAGS_REVERSE; }
 	TBOOL                   IsLooped() const { return m_eFlags & FLAGS_LOOP; }
+	TBOOL                   IsStatic() const { return m_eFlags & FLAGS_STATIC; }
 	FLAGS                   GetFlags() const { return m_eFlags; }
 	TFLOAT                  GetDefaultBlendOutTime() const { return m_fDefaultBlendOutTime; }
 	TFLOAT                  GetDefaultBlendInTime() const { return m_fDefaultBlendInTime; }

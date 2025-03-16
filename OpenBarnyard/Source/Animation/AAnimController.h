@@ -17,7 +17,7 @@ public:
 	virtual ~AAnimController();
 
 	virtual TBOOL OnCreate();
-	virtual void  Unknown2();
+	virtual void  OnUpdate( TFLOAT a_fDeltaTime );
 	virtual TBOOL Unknown3( void* );
 	virtual TBOOL IsAnimationAllowed( ANamedAnimation* a_pNamedAnimation );
 

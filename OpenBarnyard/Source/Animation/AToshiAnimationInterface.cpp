@@ -45,7 +45,7 @@ AToshiAnimationInterface::AToshiAnimationInterface()
     : m_pSkeletonInstance( TNULL )
     , m_fTime( 0.0f )
     , m_Unk2( 0 )
-    , m_Unk3( TFALSE )
+    , m_eFlags( 0 )
 {
 }
 
@@ -53,6 +53,26 @@ AToshiAnimationInterface::AToshiAnimationInterface()
 AToshiAnimationInterface::~AToshiAnimationInterface()
 {
 	DestroyAnimReferences();
+}
+
+// $Barnyard: FUNCTION 00583440
+void AToshiAnimationInterface::Update( TFLOAT a_fDeltaTime, AnimEventList& a_rEventList )
+{
+	TFLOAT fOldTime = m_fTime;
+	m_fTime += a_fDeltaTime;
+
+	UpdateAnimations( m_llAnimRefs, a_fDeltaTime, a_rEventList );
+	UpdateAnimations( m_llOverlayAnimRefs, a_fDeltaTime, a_rEventList );
+
+	if ( fOldTime == 0.0f || m_fTime == 0.0f )
+	{
+		// Some animation has just started playing, update flags
+
+		if ( IsAllStatic() )
+			m_eFlags |= 1;
+		else
+			m_eFlags &= ~1;
+	}
 }
 
 // $Barnyard: FUNCTION 00583780
@@ -395,6 +415,24 @@ void AToshiAnimationInterface::UpdateAnimationBreakpointsReverse( AToshiAnimatio
 	}
 
 	a_rAnimRef.m_fTime = fCurrentAnimTime;
+}
+
+// $Barnyard: FUNCTION 00582de0
+TBOOL AToshiAnimationInterface::IsAllStatic()
+{
+	T2_FOREACH( m_llAnimRefs, it )
+	{
+		if ( it->GetNamedAnimation() && !it->GetNamedAnimation()->IsStatic() )
+			return TFALSE;
+	}
+
+	T2_FOREACH( m_llOverlayAnimRefs, it )
+	{
+		if ( it->GetNamedAnimation() && !it->GetNamedAnimation()->IsStatic() )
+			return TFALSE;
+	}
+
+	return TTRUE;
 }
 
 // $Barnyard: FUNCTION 00583520

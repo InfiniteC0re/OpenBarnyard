@@ -31,7 +31,7 @@ TBOOL AAnimController::OnCreate()
 	return TTRUE;
 }
 
-void AAnimController::Unknown2()
+void AAnimController::OnUpdate( TFLOAT a_fDeltaTime )
 {
 }
 

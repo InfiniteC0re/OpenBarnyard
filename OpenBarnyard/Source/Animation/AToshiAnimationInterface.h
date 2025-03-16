@@ -76,7 +76,7 @@ public:
 	AToshiAnimationInterface();
 	~AToshiAnimationInterface();
 
-	void Update();
+	void Update( TFLOAT a_fDeltaTime, AnimEventList& a_rEventList );
 
 	// Plays animation by it's name. Returns pointer to the animation ref object if created new one
 	AToshiAnimationRef* PlayAnim( const Toshi::TPString8& a_strName, TFLOAT a_fWeight, TBOOL a_bCreateNewRef );
@@ -118,6 +118,8 @@ private:
 	void UpdateAnimationBreakpoints( AToshiAnimationRef& a_rAnimRef, Toshi::TAnimation* a_pAnimation, AnimEventList& a_rEventList );
 	void UpdateAnimationBreakpointsReverse( AToshiAnimationRef& a_rAnimRef, Toshi::TAnimation* a_pAnimation, AnimEventList& a_rEventList );
 
+	TBOOL IsAllStatic();
+
 	void DestroyAnimReferences();
 
 private:
@@ -128,5 +130,5 @@ private:
 	TFLOAT                             m_fTime;
 	TINT                               m_Unk2;
 	ANamedAnimationTransition          m_oAnimTransition;
-	TBOOL                              m_Unk3;
+	TUINT8                             m_eFlags;
 };
