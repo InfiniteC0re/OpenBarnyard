@@ -31,6 +31,16 @@ void ANamedAnimationTransition::SetAnimationName( const TPString8& a_strName )
 	m_strAnimationName = a_strName;
 }
 
+const TPString8& ANamedAnimationTransition::GetTransitionName()
+{
+	return m_strTransitionName;
+}
+
+const TPString8& ANamedAnimationTransition::GetAnimationName()
+{
+	return m_strAnimationName;
+}
+
 void ANamedAnimationTransition::SetBlendInTime( TFLOAT a_fTime )
 {
 	m_fBlendInTime = a_fTime;
@@ -72,7 +82,7 @@ TBOOL ANamedAnimationTransition::IsManaged() const
 }
 
 // $Barnyard: FUNCTION 00581d90
-ANamedAnimationTransitionSet::ANamedAnimationTransitionSet( ANamedAnimation* a_pNamedAnimation, Toshi::T2Allocator* a_pAllocator )
+ANamedAnimationTransitionSet::ANamedAnimationTransitionSet( ANamedAnimation* a_pNamedAnimation, T2Allocator* a_pAllocator )
     : m_pAnimation( a_pNamedAnimation )
     , m_mapTransitions( a_pAllocator )
     , m_bUnk3( TFALSE )
@@ -85,7 +95,7 @@ ANamedAnimationTransitionSet::~ANamedAnimationTransitionSet()
 }
 
 // $Barnyard: FUNCTION 00581ff0
-void ANamedAnimationTransitionSet::AddTransition( ANamedAnimation* a_pAnimation, const Toshi::TPString8& a_strTransitionName, TFLOAT a_fBlendOutTime, TFLOAT a_fBlendInTime, TBOOL a_bIsAutoTransition, TBOOL a_bManaged )
+void ANamedAnimationTransitionSet::AddTransition( ANamedAnimation* a_pAnimation, const TPString8& a_strTransitionName, TFLOAT a_fBlendOutTime, TFLOAT a_fBlendInTime, TBOOL a_bIsAutoTransition, TBOOL a_bManaged )
 {
 	TVALIDPTR( a_pAnimation );
 
@@ -105,7 +115,7 @@ void ANamedAnimationTransitionSet::AddTransition( ANamedAnimation* a_pAnimation,
 }
 
 // $Barnyard: FUNCTION 00581ad0
-ANamedAnimationTransition* ANamedAnimationTransitionSet::FindTransition( const Toshi::TPString8& a_strName )
+ANamedAnimationTransition* ANamedAnimationTransitionSet::FindTransition( const TPString8& a_strName )
 {
 	auto it = m_mapTransitions[ a_strName ];
 	return ( it == m_mapTransitions.End() ) ? TNULL : &it.GetValue()->second;
@@ -154,7 +164,7 @@ ANamedAnimation::~ANamedAnimation()
 TPSTRING8_DECLARE( EndOfAnim );
 
 // $Barnyard: FUNCTION 00581a90
-ANamedAnimation::FINISHTYPE ANamedAnimation::GetFinishType( const Toshi::TPString8& a_rcFinishType )
+ANamedAnimation::FINISHTYPE ANamedAnimation::GetFinishType( const TPString8& a_rcFinishType )
 {
 	return ( !a_rcFinishType.GetString8().IsEmpty() && a_rcFinishType == TPS8( EndOfAnim ) ) ? FINISHTYPE_AUTO : FINISHTYPE_MANUAL;
 }
@@ -170,7 +180,7 @@ static AAnimationBreakpoint* CreateBreakpointRuntime( const PBProperties* a_pPro
 TPSTRING8_DECLARE( Model );
 
 // $Barnyard: FUNCTION 00580760
-TBOOL ANamedAnimation::Create( const PBProperties* a_pProperties, Toshi::TSkeleton* a_pSkeleton )
+TBOOL ANamedAnimation::Create( const PBProperties* a_pProperties, TSkeleton* a_pSkeleton )
 {
 	m_eFlags &= ~FLAGS_LOOP;
 	m_fDefaultBlendInTime  = 0.3f;

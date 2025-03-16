@@ -25,6 +25,8 @@ public:
 
 	void SetTransitionName( const Toshi::TPString8& a_strName );
 	void SetAnimationName( const Toshi::TPString8& a_strName );
+	const Toshi::TPString8& GetTransitionName();
+	const Toshi::TPString8& GetAnimationName();
 
 	void SetBlendInTime( TFLOAT a_fTime );
 	void SetBlendOutTime( TFLOAT a_fTime );
@@ -141,6 +143,7 @@ public:
 	TFLOAT                  GetDuration() const { return m_fDuration; }
 	const Toshi::TPString8& GetName() const { return m_strName; }
 	const Toshi::TPString8& GetExportedName() const { return m_strExportedName; }
+	SortedBreakpointList&   GetBreakpoints() { return m_vecBreakpoints; }
 
 	static FINISHTYPE GetFinishType( const Toshi::TPString8& a_rcFinishType );
 
