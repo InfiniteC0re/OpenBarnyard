@@ -135,17 +135,6 @@ Toshi::TRandom g_oRandom;
 
 MEMBER_HOOK( 0x0042b160, ALoadScreen, ALoadScreen_StartLoading, void, TINT a_iUnused, TBOOL a_bRender )
 {
-	if ( g_oSettings.bRandomSkin )
-	{
-		g_oSettings.eCowSkin = (CowSkin)g_oRandom.GetInt( 0, CowSkin_NumOf );
-		g_oSettings.bIsMale = g_oRandom.GetInt( 0, 50 ) >= 25;
-
-		if ( g_oSettings.eCowSkin > CowSkin_NumOf )
-			g_oSettings.eCowSkin = CowSkin_Holsten;
-
-		UpdateCowCustomization();
-	}
-
 	AUIManager::GetSingleton()->GetTimer().SetIsLoadingScreen( TTRUE );
 	CallOriginal( a_iUnused, a_bRender );
 }
@@ -159,12 +148,34 @@ MEMBER_HOOK( 0x0042b260, ALoadScreen, ALoadScreen_StopLoading, void )
 struct AAssetLoader
 {};
 
-MEMBER_HOOK( 0x00425060, AAssetLoader, AAssetLoader_CreateAssetsFromLibrary, TBOOL, const TCHAR* a_szLibraryName )
+HOOK( 0x00424a20, AAssetLoader_LoadPlayerCharacter, void, void* a_pProperties )
 {
 	// Update cow skin
-	UpdateCowCustomization();
+	if ( g_oSettings.bForceSkin && g_oSettings.bRandomSkin )
+	{
+		g_oSettings.eCowSkin = (CowSkin)g_oRandom.GetInt( 0, CowSkin_NumOf );
 
-	return CallOriginal( a_szLibraryName );
+		if ( g_oSettings.eCowSkin < 0 )
+			g_oSettings.eCowSkin = CowSkin_American;
+
+		if ( g_oSettings.eCowSkin >= CowSkin_NumOf )
+			g_oSettings.eCowSkin = CowSkin_Holsten;
+	}
+
+	UpdateCowCustomization();
+	CallOriginal( a_pProperties );
+}
+
+class ASimProfile
+{};
+
+MEMBER_HOOK( 0x0062e2e0, ASimProfile, ASimProfile_Unknown, void, TINT& a_rOut )
+{
+	CallOriginal( a_rOut );
+
+	void* pPlayerProfileManager = *(void**)0x007b493c;
+	if ( g_oSettings.bForceSkin && pPlayerProfileManager )
+		*(CowSkin*)( TUINTPTR( pPlayerProfileManager ) + 0x48 ) = g_oSettings.eCowSkin;
 }
 
 class ABYSpeedrunHelper : public AModInstance
@@ -181,7 +192,8 @@ public:
 			InstallHook<T2Locale_GetString>();
 			InstallHook<ALoadScreen_StartLoading>();
 			InstallHook<ALoadScreen_StopLoading>();
-			InstallHook<AAssetLoader_CreateAssetsFromLibrary>();
+			InstallHook<AAssetLoader_LoadPlayerCharacter>();
+			InstallHook<ASimProfile_Unknown>();
 
 			ACollisionInspector::CreateSingleton();
 			ASplitsServer::CreateSingleton();
@@ -306,8 +318,6 @@ public:
 					{
 						g_oSettings.eCowSkin = (CowSkin)i;
 						bChangedSettings     = TTRUE;
-
-						UpdateCowCustomization();
 					}
 				}
 
@@ -315,11 +325,7 @@ public:
 			}
 
 			ImGui::SameLine();
-			if ( ImGui::Checkbox( "Male", &g_oSettings.bIsMale ) )
-			{
-				UpdateCowCustomization();
-				bChangedSettings = TTRUE;
-			}
+			bChangedSettings |= ImGui::Checkbox( "Male", &g_oSettings.bIsMale );
 
 			ImGui::Separator();
 		}
@@ -381,10 +387,6 @@ public:
 			ImGui::Checkbox( "Show Collision", &ACollisionInspector::GetSingleton()->IsCollisionVisible() );
 
 			if ( ImGui::Button( "Restart Timer" ) ) AUIManager::GetSingleton()->GetTimer().Start();
-			ImGui::SameLine();
-			if ( ImGui::Button( "Resume Timer" ) ) AUIManager::GetSingleton()->GetTimer().Resume();
-			ImGui::SameLine();
-			if ( ImGui::Button( "Pause Timer" ) ) AUIManager::GetSingleton()->GetTimer().Pause();
 			ImGui::SameLine();
 			if ( ImGui::Button( "Reset Timer" ) ) AUIManager::GetSingleton()->GetTimer().Reset();
 		}

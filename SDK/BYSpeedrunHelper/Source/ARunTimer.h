@@ -26,9 +26,6 @@ public:
 	void Reset();
 	void Split();
 
-	void Resume();
-	void Pause();
-
 	void Update();
 	void Render();
 
@@ -38,17 +35,16 @@ public:
 	void SetIsLoadingScreen( TBOOL a_bLoadingScreen );
 
 	TFLOAT GetRunTime() const { return m_flTime; }
-	TFLOAT GetLoadingTime() const { return m_flTotalLoadingTime; }
-	TFLOAT GetTotalTime() const { return m_flTime + m_flTotalLoadingTime; }
+	TFLOAT GetLoadingTime() const { return m_flGlobalTime - m_flTime; }
+	TFLOAT GetTotalTime() const { return m_flGlobalTime; }
 
 private:
 	Toshi::THPTimer  m_Timer;
-	Toshi::THPTimer  m_LoadingTimer;
 	AGUITimer        m_LRTTimer;
 	AGUITimer        m_RTATimer;
 	TFLOAT           m_flTime;
 	TFLOAT           m_flSyncTimer;
-	TFLOAT           m_flTotalLoadingTime;
+	TFLOAT           m_flGlobalTime;
 	TBOOL            m_bPaused;
 	TBOOL            m_bIsLoading;
 };

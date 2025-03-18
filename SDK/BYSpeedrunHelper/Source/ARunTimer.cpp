@@ -14,11 +14,11 @@ TOSHI_NAMESPACE_USING
 
 ARunTimer::ARunTimer()
 {
-	m_flTime             = 0.0f;
-	m_flTotalLoadingTime = 0.0f;
-	m_flSyncTimer        = 0.1f;
-	m_bPaused            = TTRUE;
-	m_bIsLoading         = TFALSE;
+	m_flTime       = 0.0f;
+	m_flGlobalTime = 0.0f;
+	m_flSyncTimer  = 0.1f;
+	m_bPaused      = TTRUE;
+	m_bIsLoading   = TFALSE;
 }
 
 ARunTimer::~ARunTimer()
@@ -39,9 +39,10 @@ void ARunTimer::Destroy()
 
 void ARunTimer::Reset()
 {
-	m_flTotalLoadingTime = 0.0f;
-	m_flTime             = 0.0f;
-	m_bPaused            = TTRUE;
+	Update();
+	m_flGlobalTime = 0.0f;
+	m_flTime       = 0.0f;
+	m_bPaused      = TTRUE;
 
 	ASplitsServer::GetSingleton()->Reset();
 }
@@ -51,6 +52,8 @@ void ARunTimer::Split()
 	if ( m_bPaused )
 		return;
 
+	Update();
+	
 	TINT iMilliseconds, iSeconds, iMinutes, iHours;
 	AGUITimer::GetTime( GetRunTime(), iMilliseconds, iSeconds, iMinutes, iHours );
 
@@ -59,11 +62,12 @@ void ARunTimer::Split()
 
 void ARunTimer::Start()
 {
-	m_flTotalLoadingTime = 0.0f;
-	m_flTime             = 0.0f;
-	m_flSyncTimer        = 0.1f;
-	m_bPaused            = TFALSE;
+	m_flGlobalTime = 0.0f;
+	m_flTime       = 0.0f;
+	m_flSyncTimer  = 0.1f;
+	m_bPaused      = TFALSE;
 
+	Update();
 	ASplitsServer::GetSingleton()->StartRun();
 }
 
@@ -72,30 +76,13 @@ void ARunTimer::End()
 	if ( m_bPaused )
 		return;
 
+	Update();
 	m_bPaused = TTRUE;
 
 	TINT iMilliseconds, iSeconds, iMinutes, iHours;
 	AGUITimer::GetTime( GetRunTime(), iMilliseconds, iSeconds, iMinutes, iHours );
 
 	ASplitsServer::GetSingleton()->EndRun( iMilliseconds, iSeconds, iMinutes, iHours );
-}
-
-void ARunTimer::Pause()
-{
-	if ( m_bPaused )
-		return;
-
-	m_bPaused = TTRUE;
-	ASplitsServer::GetSingleton()->Pause();
-}
-
-void ARunTimer::Resume()
-{
-	if ( !m_bPaused )
-		return;
-
-	m_bPaused = TFALSE;
-	ASplitsServer::GetSingleton()->Pause();
 }
 
 void ARunTimer::Update()
@@ -107,16 +94,20 @@ void ARunTimer::Update()
 	if ( !m_bPaused && !m_bIsLoading )
 		m_flTime += flDelta;
 
-	// Send update to LiveSplit
-	m_flSyncTimer -= flDelta;
-
-	if ( m_flSyncTimer <= 0.0f && !m_bPaused )
+	if ( !m_bPaused )
 	{
-		TINT iMilliseconds, iSeconds, iMinutes, iHours;
-		AGUITimer::GetTime( GetRunTime(), iMilliseconds, iSeconds, iMinutes, iHours );
+		m_flGlobalTime += flDelta;
+		m_flSyncTimer -= flDelta;
 
-		ASplitsServer::GetSingleton()->SendTime( iMilliseconds, iSeconds, iMinutes, iHours );
-		m_flSyncTimer = 0.1f;
+		// Send update to LiveSplit
+		if ( m_flSyncTimer <= 0.0f )
+		{
+			TINT iMilliseconds, iSeconds, iMinutes, iHours;
+			AGUITimer::GetTime( GetRunTime(), iMilliseconds, iSeconds, iMinutes, iHours );
+
+			ASplitsServer::GetSingleton()->SendTime( iMilliseconds, iSeconds, iMinutes, iHours );
+			m_flSyncTimer = 0.1f;
+		}
 	}
 
 	// Update LRT timer
@@ -165,11 +156,7 @@ void ARunTimer::SetIsLoadingScreen( TBOOL a_bLoadingScreen )
 
 	if ( !m_bIsLoading && a_bLoadingScreen )
 	{
-		m_Timer.Update();
-		m_flTime += m_Timer.GetDelta();
-
-		// Loading started
-		m_LoadingTimer.Update();
+		Update();
 
 		ASplitsServer::GetSingleton()->SetLoadingStart();
 
@@ -177,16 +164,14 @@ void ARunTimer::SetIsLoadingScreen( TBOOL a_bLoadingScreen )
 	}
 	else if ( m_bIsLoading && !a_bLoadingScreen )
 	{
-		// Loading ended
-		m_LoadingTimer.Update();
+		// Loading ended, reset timer
 		m_Timer.Update();
+		TFLOAT flLoadingTime = m_Timer.GetDelta();
 
-		TFLOAT flLoadingTime = m_LoadingTimer.GetDelta();
-		m_flTotalLoadingTime += flLoadingTime;
-
+		m_flGlobalTime += flLoadingTime;
 		ASplitsServer::GetSingleton()->SetLoadingEnd();
 
-		TTRACE( "Loading has ended and it took %.2f seconds... Total time spent while loading: %.2f seconds\n", flLoadingTime, m_flTotalLoadingTime );
+		TTRACE( "Loading has ended and it took %.2f seconds... Total time spent while loading: %.2f seconds\n", flLoadingTime, GetLoadingTime() );
 	}
 
 	m_bIsLoading = a_bLoadingScreen;

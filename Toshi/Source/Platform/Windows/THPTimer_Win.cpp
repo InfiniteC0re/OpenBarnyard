@@ -48,7 +48,7 @@ void THPTimer::Update()
 	m_iOldTime = m_iCurrentTime;
 	QueryPerformanceCounter( (LARGE_INTEGER*)&m_iCurrentTime );
 
-	TFLOAT ratio      = 1.0f / m_iFrequency;
+	double ratio      = 1.0 / m_iFrequency;
 	m_fDelta          = ( m_iCurrentTime - m_iOldTime ) * ratio;
 	m_fCurrentSeconds = m_iCurrentTime * ratio;
 }
