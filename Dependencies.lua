@@ -1,5 +1,7 @@
 IncludeDir = {}
 IncludeDir.fmod = "%{wks.location}/Toshi/Vendor/fmod/include"
+IncludeDir.toshi = "%{wks.location}/Toshi/Source"
+IncludeDir.xml2pproperties = "%{wks.location}/Tools/XML2PProperties/Source"
 IncludeDir.trbf = "%{wks.location}/Tools/TRBF/Include"
 IncludeDir.libogg = "%{wks.location}/Toshi/Vendor/libogg/include"
 IncludeDir.libvorbis = "%{wks.location}/Toshi/Vendor/libvorbis/include"

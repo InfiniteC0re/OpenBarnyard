@@ -97,6 +97,8 @@ group "Tools"
 	include "Tools/TMDL"
 	include "Tools/XML2PProperties"
 	include "Tools/TLocaleCompiler"
+	include "Tools/PPropertyCompiler"
+	include "Tools/QuestCompiler"
 	include "Tools/Sounds2Enum"
 		
 group "Third-Party"

@@ -19,7 +19,6 @@ public:
 	TBOOL    HasParameter( const TCHAR* a_pszParameter, TINT* a_pIndex = TNULL ) const;
 	TString8 GetParameterValue( const TCHAR* a_pszParameter, const TCHAR* a_pszDefaultValue = TNULL ) const;
 
-private:
 	const TCHAR* GetNextParameter( const TCHAR* a_pszParameter ) const;
 
 private:

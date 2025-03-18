@@ -2,6 +2,10 @@
 #include "Toshi/Typedefs.h"
 #include "Toshi/TDebug.h"
 
+#include <cstdint>
+#include <cfloat>
+#include <cmath>
+
 TOSHI_NAMESPACE_START
 
 namespace TMath
@@ -43,7 +47,7 @@ TFORCEINLINE TFLOAT Tan( TFLOAT fVal ) { return tanf( fVal ); }
 TFORCEINLINE TFLOAT ASin( TFLOAT fVal ) { return asinf( fVal ); }
 
 // $Barnyard: FUNCTION 006b6a20
-TFORCEINLINE TFLOAT ACos( TFLOAT fVal ) { return acos( fVal ); }
+TFORCEINLINE TFLOAT ACos( TFLOAT fVal ) { return acosf( fVal ); }
 TFORCEINLINE TFLOAT ATan( TFLOAT fVal )
 {
 	TFLOAT fRes = atanf( fVal );
@@ -117,8 +121,8 @@ TFORCEINLINE TFLOAT Pow( TFLOAT a_fValue, TFLOAT a_fPow )
 // $Barnyard: FUNCTION 006b7370
 TFORCEINLINE void SinCos( TFLOAT fVal, TFLOAT& a_rSin, TFLOAT& a_rCos )
 {
-	a_rSin = sin( fVal );
-	a_rCos = cos( fVal );
+	a_rSin = sinf( fVal );
+	a_rCos = cosf( fVal );
 }
 
 // $Barnyard: FUNCTION 006b6640
@@ -139,9 +143,9 @@ TFORCEINLINE TFLOAT LERPClamped( TFLOAT a, TFLOAT b, TFLOAT t )
 TFORCEINLINE void NormaliseAngle( TFLOAT& a_rfValue )
 {
 	if ( PI < a_rfValue )
-		a_rfValue = fmod( a_rfValue + PI, PI * 2 ) - PI;
+		a_rfValue = fmodf( a_rfValue + PI, PI * 2 ) - PI;
 	else if ( a_rfValue < -PI )
-		a_rfValue = fmod( a_rfValue - PI, PI * 2 ) + PI;
+		a_rfValue = fmodf( a_rfValue - PI, PI * 2 ) + PI;
 }
 
 // $Barnyard: FUNCTION 006b6870

@@ -59,6 +59,13 @@ public:
 		m_uValue.UInt32 = a_uiValue;
 	}
 
+	PBPropertyValue( const TCHAR* a_pchValue )
+	{
+		m_eType         = Type::String;
+		m_uValue.String = new TCHAR[ Toshi::TStringManager::String8Length( a_pchValue ) + 1 ];
+		Toshi::TStringManager::String8Copy( m_uValue.String, a_pchValue );
+	}
+
 	PBPropertyValue( const Toshi::TString8& a_sValue )
 	{
 		m_eType         = Type::String;
@@ -114,6 +121,12 @@ public:
 	TUINT32 GetUINT32() const
 	{
 		TASSERT( m_eType == Type::UInt32 );
+		return m_uValue.UInt32;
+	}
+
+	TUINT32 GetLocaleStringId() const
+	{
+		TASSERT( m_eType == Type::LocaleString );
 		return m_uValue.UInt32;
 	}
 
@@ -454,6 +467,11 @@ public:
 	PBPropertyValue* Add( const Toshi::TString8& a_sValue )
 	{
 		return AllocValue( PBPropertyValue( a_sValue ) );
+	}
+
+	PBPropertyValue* Add( const TCHAR* a_pchValue )
+	{
+		return AllocValue( PBPropertyValue( a_pchValue ) );
 	}
 
 	PBPropertyValue* operator[]( TSIZE a_iIndex )

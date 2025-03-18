@@ -2,6 +2,8 @@
 #include "T2String8.h"
 #include "T2String16.h"
 
+#include <cstdarg>
+
 TOSHI_NAMESPACE_START
 
 class TStringManager

@@ -1,11 +1,15 @@
-project "XML2PProperties"
-	kind "StaticLib"
+project "QuestCompiler"
+	kind "ConsoleApp"
 	language "C++"
 	staticruntime "on"
 	
+	pchheader "pch.h"
+	pchsource "Source/pch.cpp"
+	
 	links
 	{
-		"Toshi"
+		"Toshi",
+		"XML2PProperties"
 	}
 	
 	files
@@ -18,6 +22,7 @@ project "XML2PProperties"
 	{
 		"Source",
 		"%{wks.location}/Toshi/Source",
+		"%{IncludeDir.xml2pproperties}"
 	}
 	
 	defines

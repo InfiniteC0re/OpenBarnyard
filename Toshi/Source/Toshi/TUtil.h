@@ -3,6 +3,8 @@
 #include "Toshi/TEvent.h"
 #include "Thread/TMutex.h"
 
+#include <utility>
+
 TOSHI_NAMESPACE_START
 
 class TPString8Pool;
