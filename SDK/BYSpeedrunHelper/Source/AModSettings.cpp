@@ -56,6 +56,10 @@ void AModSettings::Load()
 
 		switch ( pSettings->uiVersion )
 		{
+			case 3:
+				bForceSkin = pSettings->bForceSkin;
+				bIsMale    = pSettings->bIsMale;
+				eCowSkin   = pSettings->eCowSkin;
 			case 2:
 				bShowRTATimer = pSettings->bShowRTATimer;
 			case 1:

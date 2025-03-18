@@ -1,11 +1,22 @@
 #pragma once
 #include <Math/TVector4.h>
 
+enum CowSkin
+{
+	CowSkin_American,
+	CowSkin_Angus,
+	CowSkin_Beefmaster,
+	CowSkin_Spaniard,
+	CowSkin_Longhorn,
+	CowSkin_Brahman,
+	CowSkin_Holsten
+};
+
 struct AModSettingsProperties
 {
 	// Common for all versions:
 	TUINT uiMagic   = TFourCC( "BYSP" );
-	TUINT uiVersion = 1;
+	TUINT uiVersion = 3;
 
 	// Version 1:
 	TBOOL           bShowLRTTimer    = TTRUE;
@@ -14,6 +25,11 @@ struct AModSettingsProperties
 
 	// Version 2:
 	TBOOL bShowRTATimer = TFALSE;
+
+	// Version 3:
+	TBOOL   bForceSkin = TFALSE;
+	TBOOL   bIsMale    = TTRUE;
+	CowSkin eCowSkin   = CowSkin_American;
 };
 
 inline struct AModSettings

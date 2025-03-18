@@ -4,7 +4,7 @@ struct ACoreSettingsProperties
 {
 	// Common for all versions:
 	TUINT uiMagic   = TFourCC( "MDCR" );
-	TUINT uiVersion = 1;
+	TUINT uiVersion = 2;
 
 	// Version 1:
 	TBOOL bLimitFPS        = TTRUE;

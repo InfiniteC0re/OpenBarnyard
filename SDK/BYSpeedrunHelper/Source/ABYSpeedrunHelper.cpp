@@ -121,6 +121,33 @@ struct AGolfMinigameState : public AGameState
 AImGUI*     g_pImGui             = TNULL;
 static auto s_AGolfMiniGameState = TClass::Find( "AGolfMinigameState", &THookedObject::ms_oClass );
 
+static const char* COW_SKIN_LIST[] = {
+	"American",
+	"Angus",
+	"Beefmaster",
+	"Spaniard",
+	"Longhorn",
+	"Brahman",
+	"Holsten"
+};
+
+struct AAssetLoader
+{};
+
+MEMBER_HOOK( 0x00425060, AAssetLoader, AAssetLoader_CreateAssetsFromLibrary, TBOOL, const TCHAR* a_szLibraryName )
+{
+	// Update cow skin
+	void* pPlayerProfileManager = *(void**)0x007b493c;
+
+	if ( g_oSettings.bForceSkin && pPlayerProfileManager )
+	{
+		*(CowSkin*)( TUINTPTR( pPlayerProfileManager ) + 0x48 ) = g_oSettings.eCowSkin;
+		*(TINT*)( TUINTPTR( pPlayerProfileManager ) + 0x10 )    = g_oSettings.bIsMale ? 0 : 1;
+	}
+
+	return CallOriginal( a_szLibraryName );
+}
+
 class ABYSpeedrunHelper : public AModInstance
 {
 public:
@@ -135,6 +162,7 @@ public:
 			InstallHook<T2Locale_GetString>();
 			InstallHook<ALoadScreen_StartLoading>();
 			InstallHook<ALoadScreen_StopLoading>();
+			InstallHook<AAssetLoader_CreateAssetsFromLibrary>();
 
 			ACollisionInspector::CreateSingleton();
 			ASplitsServer::CreateSingleton();
@@ -242,6 +270,32 @@ public:
 		// Update pointer to the AImGui interface
 		g_pImGui = a_pImGui;
 
+		TBOOL bChangedSettings = TFALSE;
+
+		// Render cow customization UI
+		ImGui::Text( "Cow Customization" );
+		{
+			bChangedSettings |= ImGui::Checkbox( "Change Skin", &g_oSettings.bForceSkin );
+			bChangedSettings |= ImGui::Checkbox( "Male Cow", &g_oSettings.bIsMale );
+
+			if ( ImGui::BeginCombo( "##CowSkin", COW_SKIN_LIST[ g_oSettings.eCowSkin ] ) )
+			{
+				for ( TUINT i = 0; i < TARRAYSIZE( COW_SKIN_LIST ); i++ )
+				{
+					TBOOL bSelected = ( i == g_oSettings.eCowSkin );
+					if ( ImGui::Selectable( COW_SKIN_LIST[ i ], &bSelected ) && bSelected )
+					{
+						g_oSettings.eCowSkin = (CowSkin)i;
+						bChangedSettings     = TTRUE;
+					}
+				}
+
+				ImGui::EndCombo();
+			}
+
+			ImGui::Separator();
+		}
+
 		// Render minigame specific UI
 		if ( AGameStateController* pGameStateController = AGameStateController::GetSingleton() )
 		{
@@ -254,7 +308,7 @@ public:
 
 				if ( pCurrentStateClass == s_AGolfMiniGameState )
 				{
-					ImGui::Text( "Golf Settings" );
+					ImGui::Text( "Golf Hole Selector" );
 
 					TINT& rCurrentLevel = *(TINT*)( TUINTPTR( pCurrentState ) + 0x41D8 );
 
@@ -285,16 +339,13 @@ public:
 				if ( bDrawnUI )
 					ImGui::Separator();
 			}
-			
 		}
 
-
-		TBOOL bChangedSettings = TFALSE;
 		bChangedSettings |= ImGui::Checkbox( "Show LRT Timer", &g_oSettings.bShowLRTTimer );
 		bChangedSettings |= ImGui::Checkbox( "Show RTA Timer", &g_oSettings.bShowRTATimer );
 		bChangedSettings |= ImGui::Checkbox( "Show Speedometer", &g_oSettings.bShowSpeedometer );
 
-		ImGui::PushItemWidth( 320.0f );
+		ImGui::PushItemWidth( 300.0f );
 		bChangedSettings |= ImGui::ColorPicker4( "##HUD Color", (float*)&g_oSettings.vecHUDColor, ImGuiColorEditFlags_DisplayRGB | ImGuiColorEditFlags_AlphaBar );
 
 		if ( g_bIsExperimentalMode )
@@ -312,6 +363,8 @@ public:
 
 		if ( bChangedSettings )
 			g_oSettings.Apply();
+
+		ImGui::Separator();
 
 		if ( ImGui::Button( "Save" ) )
 			g_oSettings.Save();
