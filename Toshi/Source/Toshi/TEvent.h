@@ -64,7 +64,7 @@ template <typename Owner, typename Data, typename Caller>
 class TListener : public TGenericListener
 {
 public:
-	using t_CallerCallback = TBOOL ( * )( Caller* a_pCaller, Owner* a_pOwner, Data* a_pData );
+	using t_CallerCallback = TBOOL ( __stdcall* )( Caller* a_pCaller, Owner* a_pOwner, Data* a_pData );
 
 public:
 	void Connect( TGenericEmitter& a_rEmitter, Caller* a_pCaller, t_CallerCallback a_pCallback, TINT a_iPriority )

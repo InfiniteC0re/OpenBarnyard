@@ -70,7 +70,7 @@ void AGUISystem::OnDestroy()
 	m_SomeListener.Disconnect();
 }
 
-TBOOL AGUISystem::OnGUIRender( AGUISystem* a_pGUISystem, ARenderer* a_pRenderer, TINT* a_pUnknown )
+TBOOL __stdcall AGUISystem::OnGUIRender( AGUISystem* a_pGUISystem, ARenderer* a_pRenderer, TINT* a_pUnknown )
 {
 	if ( *a_pUnknown == 0 )
 	{

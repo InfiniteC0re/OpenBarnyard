@@ -211,32 +211,17 @@ LRESULT CALLBACK TMSWindow::WndProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM
 
 			if ( !pWindow->m_bDestroyed )
 			{
-				if ( wParam )
-				{
-					g_oSystemManager.Pause( TFALSE );
-					s_bIsPaused = TFALSE;
+				const TBOOL bPaused = !wParam;
 
-					if ( !pWindow->m_bWindowed )
-					{
-						if ( pRenderer->GetDirect3DDevice() )
-							pRenderer->OnD3DDeviceFound();
-					}
+				g_oSystemManager.Pause( bPaused );
+				s_bIsPaused = bPaused;
 
-					return 0;
-				}
-				else
-				{
-					g_oSystemManager.Pause( TTRUE );
-					s_bIsPaused = TTRUE;
+				if ( wParam && !pWindow->m_bWindowed && pRenderer->GetDirect3DDevice() )
+					pRenderer->OnD3DDeviceFound();
+				else if ( !wParam && !pWindow->m_bWindowed && pRenderer->GetDirect3DDevice() )
+					pRenderer->OnD3DDeviceLost();
 
-					if ( !pWindow->m_bWindowed )
-					{
-						if ( pRenderer->GetDirect3DDevice() )
-							pRenderer->OnD3DDeviceLost();
-					}
-
-					return 0;
-				}
+				return 0;
 			}
 		}
 
@@ -248,19 +233,9 @@ LRESULT CALLBACK TMSWindow::WndProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM
 
 		if ( uMsg == WM_ACTIVATE )
 		{
-			if ( wParam == 1 || wParam == 2 )
-			{
-				SetFocused( TTRUE );
+			SetFocused( ( wParam == WA_ACTIVE || wParam == WA_CLICKACTIVE ) );
 
-				return DefWindowProcA( hWnd, WM_ACTIVATE, wParam, lParam );
-			}
-			else if ( ms_bIsFocused )
-			{
-				ms_bIsFocused = TFALSE;
-				SystemParametersInfoA( SPI_SETSTICKYKEYS, sizeof( STICKYKEYS ), &ms_StickyKeys, 0 );
-
-				return DefWindowProcA( hWnd, WM_ACTIVATE, wParam, lParam );
-			}
+			return DefWindowProcA( hWnd, WM_ACTIVATE, wParam, lParam );
 		}
 
 		if ( uMsg == WM_QUIT )

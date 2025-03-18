@@ -36,7 +36,7 @@ public:
 	static void AllowBackgroundClear( TBOOL a_bAllow );
 
 private:
-	static TBOOL OnGUIRender( AGUISystem* a_pGUISystem, ARenderer* a_pRenderer, TINT* a_pUnknown );
+	static TBOOL __stdcall OnGUIRender( AGUISystem* a_pGUISystem, ARenderer* a_pRenderer, TINT* a_pUnknown );
 
 private:
 	TUINT                                         m_Unk1;

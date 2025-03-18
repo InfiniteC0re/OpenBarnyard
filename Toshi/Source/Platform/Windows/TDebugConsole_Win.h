@@ -26,7 +26,7 @@ public:
 
 private:
 	// Gets called after logging system printed something to a log file
-	static TBOOL OnLog( TDebugConsole* a_pCaller, TUtil* a_pOwner, TUtil::LogEvent* pLogEvent );
+	static TBOOL __stdcall OnLog( TDebugConsole* a_pCaller, TUtil* a_pOwner, TUtil::LogEvent* pLogEvent );
 
 private:
 	TBOOL                                            m_Visible = TFALSE;

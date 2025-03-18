@@ -93,7 +93,7 @@ HWND TDebugConsole::FindConsole() const
 
 static TBOOL s_bIsSimpleMode = TFALSE;
 
-TBOOL TDebugConsole::OnLog( TDebugConsole* a_pCaller, TUtil* a_pOwner, TUtil::LogEvent* pLogEvent )
+TBOOL __stdcall TDebugConsole::OnLog( TDebugConsole* a_pCaller, TUtil* a_pOwner, TUtil::LogEvent* pLogEvent )
 {
 	TASSERT( pLogEvent );
 

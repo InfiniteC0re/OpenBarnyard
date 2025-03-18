@@ -468,14 +468,24 @@ MEMBER_HOOK( 0x00409ce0, AFrontEndMiniGameState2, AFrontEndMiniGameState2_CTOR, 
 	CallOriginal( TFALSE );
 }
 
+TBOOL g_bUsingDXVK = TFALSE;
+
 MEMBER_HOOK( 0x006c6de0, TRenderD3DInterface, TRenderD3DInterface_OnD3DDeviceLost, void )
 {
+	// Don't do this when DXVK is used
+	if ( g_bUsingDXVK )
+		return;
+
 	CallOriginal();
 	AImGUI::GetSingleton()->OnD3DDeviceLost();
 }
 
 MEMBER_HOOK( 0x006c6e80, TRenderD3DInterface, TRenderD3DInterface_OnD3DDeviceFound, void )
 {
+	// Don't do this when DXVK is used
+	if ( g_bUsingDXVK )
+		return;
+
 	CallOriginal();
 	AImGUI::GetSingleton()->OnD3DDeviceFound();
 }
@@ -498,6 +508,9 @@ MEMBER_HOOK( 0x0060c7c0, ARenderer, ARenderer_OnCreate, TBOOL )
 	TBOOL bResult = CallOriginal();
 
 	AGlobalModLoaderTask::Get()->OnAppRendererReady();
+
+	// Find out whether DXVK is used or not
+	g_bUsingDXVK = ( GetModuleHandle( "vulkan-1.dll" ) != TNULL );
 
 	return bResult;
 }

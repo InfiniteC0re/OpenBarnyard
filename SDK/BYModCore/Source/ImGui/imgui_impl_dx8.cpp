@@ -338,7 +338,12 @@ void ImGui_ImplDX8_RenderDrawData(ImDrawData* draw_data) {
 
 bool ImGui_ImplDX8_Init(IDirect3DDevice8* device) {
     ImGuiIO& io = ImGui::GetIO();
-    IM_ASSERT(io.BackendRendererUserData == nullptr && "Already initialized a renderer backend!");
+
+    if ( io.BackendRendererUserData )
+    {
+        IM_DELETE( io.BackendRendererUserData );
+		io.BackendRendererUserData = TNULL;
+    }
 
     // Setup backend capabilities flags
     ImGui_ImplDX8_Data* bd = IM_NEW(ImGui_ImplDX8_Data)();
@@ -416,7 +421,7 @@ bool ImGui_ImplD3D8_CreateDepthStencilBuffer() {
         D3DSURFACE_DESC sfcDesc;
 
         bd->pd3dDevice->GetDepthStencilSurface(&realDepth);
-        if (realDepth->GetDesc(&sfcDesc) != 0) {
+        if (!realDepth || realDepth->GetDesc(&sfcDesc) != 0) {
             return false;
         }
         realDepth->Release();
