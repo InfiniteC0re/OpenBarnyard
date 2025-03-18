@@ -10,6 +10,25 @@
 #include "Toshi/TStringManager.h"
 #include "Toshi/TString8.h"
 
+struct PBPropertyLocaleString
+{
+	constexpr PBPropertyLocaleString()
+	    : uiIndex( -1 )
+	{}
+
+	constexpr PBPropertyLocaleString( TUINT a_uiIndex )
+	    : uiIndex( a_uiIndex )
+	{ }
+
+	PBPropertyLocaleString& operator=( TUINT a_uiIndex )
+	{
+		uiIndex = a_uiIndex;
+		return *this;
+	}
+
+	TUINT uiIndex;
+};
+
 class PBPropertyValue
 {
 public:
@@ -73,6 +92,12 @@ public:
 		Toshi::TStringManager::String8Copy( m_uValue.String, a_sValue );
 	}
 
+	PBPropertyValue( PBPropertyLocaleString a_strValue )
+	{
+		m_eType         = Type::LocaleString;
+		m_uValue.UInt32 = a_strValue.uiIndex;
+	}
+
 	PBPropertyValue( class PBProperties* a_pProperties )
 	{
 		m_eType             = Type::Properties;
@@ -124,7 +149,7 @@ public:
 		return m_uValue.UInt32;
 	}
 
-	TUINT32 GetLocaleStringId() const
+	PBPropertyLocaleString GetLocaleString() const
 	{
 		TASSERT( m_eType == Type::LocaleString );
 		return m_uValue.UInt32;
@@ -464,6 +489,11 @@ public:
 		return AllocValue( PBPropertyValue( a_uiValue ) );
 	}
 
+	PBPropertyValue* Add( PBPropertyLocaleString a_strLocaleString )
+	{
+		return AllocValue( PBPropertyValue( a_strLocaleString ) );
+	}
+
 	PBPropertyValue* Add( const Toshi::TString8& a_sValue )
 	{
 		return AllocValue( PBPropertyValue( a_sValue ) );
@@ -684,6 +714,12 @@ public:
 			m_pValue = new PBPropertyValue( a_pArray );
 		}
 
+		PBProperty( const Toshi::TString8& a_sName, PBPropertyLocaleString a_strLocaleString )
+		{
+			m_pName  = new PBPropertyName( a_sName );
+			m_pValue = new PBPropertyValue( a_strLocaleString );
+		}
+
 		PBProperty( const PBProperty& other )
 		{
 			m_pName  = new PBPropertyName( *other.m_pName );
@@ -900,6 +936,11 @@ public:
 	PBProperty* AddProperty( const Toshi::TString8& a_Name, TINT a_iValue )
 	{
 		return AllocProperty( PBProperty( a_Name, a_iValue ) );
+	}
+
+	PBProperty* AddProperty( const Toshi::TString8& a_Name, PBPropertyLocaleString a_strLocaleString )
+	{
+		return AllocProperty( PBProperty( a_Name, a_strLocaleString ) );
 	}
 
 	PBProperty* AddPropertyBool( const Toshi::TString8& a_Name, TBOOL a_bValue )

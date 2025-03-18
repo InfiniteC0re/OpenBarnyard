@@ -30,7 +30,7 @@ private:
 				a_ptrValue->m_uValue.Int = a_OrigValue.GetInteger();
 				break;
 			case PBPropertyValue::Type::LocaleString:
-				a_ptrValue->m_uValue.UInt32 = a_OrigValue.GetUINT32();
+				a_ptrValue->m_uValue.UInt32 = a_OrigValue.GetLocaleString().uiIndex;
 				break;
 			case PBPropertyValue::Type::Float:
 				a_ptrValue->m_uValue.Float = a_OrigValue.GetFloat();

@@ -88,7 +88,7 @@ static void PropertyValueToXml( tinyxml2::XMLElement* a_pRootElement, const PBPr
 			break;
 		case PBPropertyValue::Type::LocaleString:
 			a_pRootElement->SetAttribute( "type", "locale" );
-			a_pRootElement->SetAttribute( "value", a_pValue->GetLocaleStringId() );
+			a_pRootElement->SetAttribute( "value", a_pValue->GetLocaleString().uiIndex );
 			break;
 		case PBPropertyValue::Type::Properties:
 			a_pRootElement->SetAttribute( "type", "property" );
@@ -160,12 +160,14 @@ void XML2PProperties::XmlToProperties( tinyxml2::XMLElement* a_pRootElement, PBP
 			a_rProperties.AddProperty( it->Name(), valueAttr->Value() );
 		else if ( strType == s_strInt )
 			a_rProperties.AddProperty( it->Name(), valueAttr->IntValue() );
-		else if ( strType == s_strUint || strType == s_strLocale )
+		else if ( strType == s_strUint )
 			a_rProperties.AddProperty( it->Name(), valueAttr->UnsignedValue() );
+		else if ( strType == s_strLocale )
+			a_rProperties.AddProperty( it->Name(), PBPropertyLocaleString( valueAttr->UnsignedValue() ) );
 		else if ( strType == s_strFloat )
 			a_rProperties.AddProperty( it->Name(), valueAttr->FloatValue() );
 		else if ( strType == s_strBool )
-			a_rProperties.AddProperty( it->Name(), valueAttr->BoolValue() );
+			a_rProperties.AddPropertyBool( it->Name(), valueAttr->BoolValue() );
 		else if ( strType == s_strArray )
 		{
 			auto propertyArray = a_rProperties.AddPropertyArray( it->Name() )->GetValue()->GetArray();
@@ -183,8 +185,10 @@ void XML2PProperties::XmlToProperties( tinyxml2::XMLElement* a_pRootElement, PBP
 					propertyArray->Add( arrValueAttr->Value() );
 				else if ( strItemType == s_strInt )
 					propertyArray->Add( arrValueAttr->IntValue() );
-				else if ( strItemType == s_strUint || strItemType == s_strLocale )
+				else if ( strItemType == s_strUint )
 					propertyArray->Add( arrValueAttr->UnsignedValue() );
+				else if ( strItemType == s_strLocale )
+					propertyArray->Add( PBPropertyLocaleString( arrValueAttr->UnsignedValue() ) );
 				else if ( strItemType == s_strFloat )
 					propertyArray->Add( arrValueAttr->FloatValue() );
 				else if ( strItemType == s_strBool )
