@@ -138,7 +138,7 @@ int main( int argc, char** argv )
 	T2CommandLine commandLine( GetCommandLineA() );
 	auto          strActivitySet  = commandLine.GetParameterValue( "-activityset" );
 	auto          strInteractions = commandLine.GetParameterValue( "-interactions" );
-	auto          strOutPath      = commandLine.GetParameterValue( "-o" );
+	auto          strOutPath      = commandLine.GetParameterValue( "-o", "." );
 	auto          bIsBtec         = commandLine.HasParameter( "-btec" );
 	auto          bIsDecompile    = commandLine.HasParameter( "-d" );
 	auto          bIsCompile      = commandLine.HasParameter( "-c" );
@@ -176,7 +176,7 @@ int main( int argc, char** argv )
 		
 		tinyxml2::XMLDocument outActivitySet;
 
-		auto pOutActivitiesRoot = XML2PProperties::CreatePropertiesXMLTemplate( outActivitySet, TFALSE );
+		auto pOutActivitiesRoot     = XML2PProperties::CreatePropertiesXMLTemplate( outActivitySet, bIsBtec );
 		auto pOutActivitySetElement = pOutActivitiesRoot->InsertNewChildElement( "activityset" );
 		pOutActivitySetElement->SetAttribute( "type", "property" );
 
@@ -188,8 +188,8 @@ int main( int argc, char** argv )
 		PBProperties interactionsProperties;
 		XML2PProperties::XmlToProperties( interactionsDoc.RootElement(), interactionsProperties );
 
-		PPropertiesWriter::WriteTRB( TString8::VarArgs( "%s\\%s", outFilepath.GetString(), "AllInteractions.trz" ), interactionsProperties, TFALSE );
-		PPropertiesWriter::WriteTRB( TString8::VarArgs( "%s\\%s", outFilepath.GetString(), "ActivitySets1.trz" ), activitySetsProperties, TFALSE );
+		PPropertiesWriter::WriteTRB( TString8::VarArgs( "%s\\%s", outFilepath.GetString(), "AllInteractions.trz" ), interactionsProperties, bIsBtec );
+		PPropertiesWriter::WriteTRB( TString8::VarArgs( "%s\\%s", outFilepath.GetString(), "ActivitySets1.trz" ), activitySetsProperties, bIsBtec );
 	}
 	else if ( bIsDecompile )
 	{
