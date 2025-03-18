@@ -134,7 +134,8 @@ DWORD APIENTRY DllMain( HMODULE hModule, DWORD reason, LPVOID reserved )
 			SetConsoleCtrlHandler( exit_handler, TRUE );
 
 			// Auto updates
-			g_bCheckUpdates = !g_CommandLine.HasParameter( "-no-updates" );
+			//g_bCheckUpdates = !g_CommandLine.HasParameter( "-no-updates" );
+			g_bCheckUpdates = TFALSE;
 
 			UpdateManager::CleanUp();
 

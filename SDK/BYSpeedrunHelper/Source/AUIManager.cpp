@@ -56,6 +56,7 @@ void AUIManager::Render()
 
 void AUIManager::ApplyUIStyle()
 {
-	m_Timer.GetUIElement().ApplyUIStyle();
+	m_Timer.GetLRTTimerElement().ApplyUIStyle();
+	m_Timer.GetRTATimerElement().ApplyUIStyle();
 	m_Speedometer.ApplyUIStyle();
 }

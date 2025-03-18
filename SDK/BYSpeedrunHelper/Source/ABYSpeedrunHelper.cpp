@@ -276,7 +276,6 @@ public:
 		ImGui::Text( "Cow Customization" );
 		{
 			bChangedSettings |= ImGui::Checkbox( "Change Skin", &g_oSettings.bForceSkin );
-			bChangedSettings |= ImGui::Checkbox( "Male Cow", &g_oSettings.bIsMale );
 
 			if ( ImGui::BeginCombo( "##CowSkin", COW_SKIN_LIST[ g_oSettings.eCowSkin ] ) )
 			{
@@ -292,6 +291,9 @@ public:
 
 				ImGui::EndCombo();
 			}
+
+			ImGui::SameLine();
+			bChangedSettings |= ImGui::Checkbox( "Male Cow", &g_oSettings.bIsMale );
 
 			ImGui::Separator();
 		}

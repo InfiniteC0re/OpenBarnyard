@@ -32,7 +32,8 @@ public:
 	void Update();
 	void Render();
 
-	AGUITimer& GetUIElement() { return m_LRTTimer; }
+	AGUITimer& GetLRTTimerElement() { return m_LRTTimer; }
+	AGUITimer& GetRTATimerElement() { return m_RTATimer; }
 
 	void SetIsLoadingScreen( TBOOL a_bLoadingScreen );
 
