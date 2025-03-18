@@ -18,6 +18,7 @@
 
 #include <Toshi/THPTimer.h>
 #include <Toshi/TScheduler.h>
+#include <Math/TRandom.h>
 #include <Input/TInputDeviceKeyboard.h>
 #include <T2Locale/T2Locale.h>
 #include <File/TFile.h>
@@ -73,21 +74,6 @@ MEMBER_HOOK( 0x006be7b0, T2Locale, T2Locale_GetString, const TWCHAR*, TINT a_iNu
 	return CallOriginal( a_iNumString );
 }
 
-class ALoadScreen
-{};
-
-MEMBER_HOOK( 0x0042b160, ALoadScreen, ALoadScreen_StartLoading, void, TINT a_iUnused, TBOOL a_bRender )
-{
-	AUIManager::GetSingleton()->GetTimer().SetIsLoadingScreen( TTRUE );
-	CallOriginal( a_iUnused, a_bRender );
-}
-
-MEMBER_HOOK( 0x0042b260, ALoadScreen, ALoadScreen_StopLoading, void )
-{
-	AUIManager::GetSingleton()->GetTimer().SetIsLoadingScreen( TFALSE );
-	CallOriginal();
-}
-
 void NewGameStarted()
 {
 	AUIManager::GetSingleton()->GetTimer().Start();
@@ -131,12 +117,8 @@ static const char* COW_SKIN_LIST[] = {
 	"Holsten"
 };
 
-struct AAssetLoader
-{};
-
-MEMBER_HOOK( 0x00425060, AAssetLoader, AAssetLoader_CreateAssetsFromLibrary, TBOOL, const TCHAR* a_szLibraryName )
+void UpdateCowCustomization()
 {
-	// Update cow skin
 	void* pPlayerProfileManager = *(void**)0x007b493c;
 
 	if ( g_oSettings.bForceSkin && pPlayerProfileManager )
@@ -144,6 +126,43 @@ MEMBER_HOOK( 0x00425060, AAssetLoader, AAssetLoader_CreateAssetsFromLibrary, TBO
 		*(CowSkin*)( TUINTPTR( pPlayerProfileManager ) + 0x48 ) = g_oSettings.eCowSkin;
 		*(TINT*)( TUINTPTR( pPlayerProfileManager ) + 0x10 )    = g_oSettings.bIsMale ? 0 : 1;
 	}
+}
+
+class ALoadScreen
+{};
+
+Toshi::TRandom g_oRandom;
+
+MEMBER_HOOK( 0x0042b160, ALoadScreen, ALoadScreen_StartLoading, void, TINT a_iUnused, TBOOL a_bRender )
+{
+	if ( g_oSettings.bRandomSkin )
+	{
+		g_oSettings.eCowSkin = (CowSkin)g_oRandom.GetInt( 0, CowSkin_NumOf );
+		g_oSettings.bIsMale = g_oRandom.GetInt( 0, 50 ) >= 25;
+
+		if ( g_oSettings.eCowSkin > CowSkin_NumOf )
+			g_oSettings.eCowSkin = CowSkin_Holsten;
+
+		UpdateCowCustomization();
+	}
+
+	AUIManager::GetSingleton()->GetTimer().SetIsLoadingScreen( TTRUE );
+	CallOriginal( a_iUnused, a_bRender );
+}
+
+MEMBER_HOOK( 0x0042b260, ALoadScreen, ALoadScreen_StopLoading, void )
+{
+	AUIManager::GetSingleton()->GetTimer().SetIsLoadingScreen( TFALSE );
+	CallOriginal();
+}
+
+struct AAssetLoader
+{};
+
+MEMBER_HOOK( 0x00425060, AAssetLoader, AAssetLoader_CreateAssetsFromLibrary, TBOOL, const TCHAR* a_szLibraryName )
+{
+	// Update cow skin
+	UpdateCowCustomization();
 
 	return CallOriginal( a_szLibraryName );
 }
@@ -276,6 +295,7 @@ public:
 		ImGui::Text( "Cow Customization" );
 		{
 			bChangedSettings |= ImGui::Checkbox( "Change Skin", &g_oSettings.bForceSkin );
+			bChangedSettings |= ImGui::Checkbox( "Randomize", &g_oSettings.bRandomSkin );
 
 			if ( ImGui::BeginCombo( "##CowSkin", COW_SKIN_LIST[ g_oSettings.eCowSkin ] ) )
 			{
@@ -286,6 +306,8 @@ public:
 					{
 						g_oSettings.eCowSkin = (CowSkin)i;
 						bChangedSettings     = TTRUE;
+
+						UpdateCowCustomization();
 					}
 				}
 
@@ -293,7 +315,11 @@ public:
 			}
 
 			ImGui::SameLine();
-			bChangedSettings |= ImGui::Checkbox( "Male Cow", &g_oSettings.bIsMale );
+			if ( ImGui::Checkbox( "Male", &g_oSettings.bIsMale ) )
+			{
+				UpdateCowCustomization();
+				bChangedSettings = TTRUE;
+			}
 
 			ImGui::Separator();
 		}

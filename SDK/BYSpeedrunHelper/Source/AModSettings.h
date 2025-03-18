@@ -9,7 +9,8 @@ enum CowSkin
 	CowSkin_Spaniard,
 	CowSkin_Longhorn,
 	CowSkin_Brahman,
-	CowSkin_Holsten
+	CowSkin_Holsten,
+	CowSkin_NumOf
 };
 
 struct AModSettingsProperties
@@ -27,9 +28,10 @@ struct AModSettingsProperties
 	TBOOL bShowRTATimer = TFALSE;
 
 	// Version 3:
-	TBOOL   bForceSkin = TFALSE;
-	TBOOL   bIsMale    = TTRUE;
-	CowSkin eCowSkin   = CowSkin_American;
+	TBOOL   bForceSkin  = TFALSE;
+	TBOOL   bRandomSkin = TFALSE;
+	TBOOL   bIsMale     = TTRUE;
+	CowSkin eCowSkin    = CowSkin_American;
 };
 
 inline struct AModSettings
