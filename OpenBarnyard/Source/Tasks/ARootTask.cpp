@@ -189,12 +189,12 @@ void ARootTask::OnActivate()
 
 void ARootTask::OnDeactivate()
 {
-	if ( m_pGUISystem ) m_pGUISystem->Activate( TTRUE );
-	if ( m_pGUI2 ) m_pGUI2->Activate( TTRUE );
-	if ( m_pRenderer ) m_pRenderer->Activate( TTRUE );
-	if ( m_pInputHandler ) m_pInputHandler->Activate( TTRUE );
-	if ( m_pGameStateController ) m_pGameStateController->Activate( TTRUE );
-	if ( m_pMoviePlayer ) m_pMoviePlayer->Activate( TTRUE );
+	if ( m_pGUISystem ) m_pGUISystem->Activate( TFALSE );
+	if ( m_pGUI2 ) m_pGUI2->Activate( TFALSE );
+	if ( m_pRenderer ) m_pRenderer->Activate( TFALSE );
+	if ( m_pInputHandler ) m_pInputHandler->Activate( TFALSE );
+	if ( m_pGameStateController ) m_pGameStateController->Activate( TFALSE );
+	if ( m_pMoviePlayer ) m_pMoviePlayer->Activate( TFALSE );
 
 	TTODO( "Deactivate two more tasks" );
 }

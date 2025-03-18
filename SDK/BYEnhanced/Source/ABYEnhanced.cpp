@@ -10,6 +10,8 @@
 #include <BYardSDK/THookedRenderD3DInterface.h>
 
 #include <Toshi/THPTimer.h>
+#include <Input/TInputDeviceMouse.h>
+#include <Input/TInputInterface.h>
 #include <File/TFile.h>
 #include <Render/TIndexPoolResource.h>
 #include <Render/TVertexPoolResource.h>
@@ -20,11 +22,68 @@ TOSHI_NAMESPACE_USING
 class ARenderer
 {};
 
+struct MouseEventState
+{
+
+	TBOOL bNewEvent = TFALSE;
+	TBOOL bDown     = TTRUE;
+	TINT  iButton   = 0;
+
+} g_oMouseEventState;
+
 MEMBER_HOOK( 0x006154c0, ARenderer, ARenderer_CreateTRender, TBOOL )
 {
 	AEnhancedRenderer::CreateSingleton()->Create();
 
+	class SDLEventListener : public T2Window::EventListener
+	{
+	public:
+		virtual TBOOL OnEvent( const SDL_Event& a_rEvent )
+		{
+			switch ( a_rEvent.type )
+			{
+				case SDL_MOUSEBUTTONDOWN:
+					g_oMouseEventState.bNewEvent = TTRUE;
+					g_oMouseEventState.bDown     = TTRUE;
+					g_oMouseEventState.iButton   = a_rEvent.button.button;
+					break;
+				case SDL_MOUSEBUTTONUP:
+					g_oMouseEventState.bNewEvent = TTRUE;
+					g_oMouseEventState.bDown     = TFALSE;
+					g_oMouseEventState.iButton   = a_rEvent.button.button;
+					break;
+			}
+			return TTRUE;
+		}
+	};
+
+	T2Window* pWindow = T2Render::GetSingleton()->GetWindow();
+	pWindow->SetListener( new SDLEventListener );
+
 	return CallOriginal();
+}
+
+MEMBER_HOOK( 0x006d4200, TInputDeviceMouse, TInputDXDeviceMouse_ProcessEvents, TINT, TInputDevice::EventEmitter& a_rEmitter, TFLOAT a_fDeltaTime )
+{
+	if ( g_oMouseEventState.bNewEvent )
+	{
+		a_rEmitter.Throw( TInputInterface::InputEvent( this, TInputDeviceMouse::BUTTON_1 + g_oMouseEventState.iButton - 1, !g_oMouseEventState.bDown ? TInputInterface::EVENT_TYPE_GONE_DOWN : TInputInterface::EVENT_TYPE_GONE_UP ) );
+		g_oMouseEventState.bNewEvent = TFALSE;
+	}
+
+	return CallOriginal( a_rEmitter, a_fDeltaTime );
+}
+
+struct AGolfMinigameState
+{};
+
+MEMBER_HOOK( 0x004754f0, AGolfMinigameState, AGolfMinigameState_StartNextLevel, void )
+{
+	TINT* pLevelIndex = (TINT*)( TUINTPTR( this ) + 0x41D8 );
+
+	*pLevelIndex = 9;
+
+	CallOriginal();
 }
 
 class ABYEnhanced : public AModInstance
@@ -33,6 +92,8 @@ public:
 	TBOOL OnLoad() override
 	{
 		InstallHook<ARenderer_CreateTRender>();
+		InstallHook<TInputDXDeviceMouse_ProcessEvents>();
+		InstallHook<AGolfMinigameState_StartNextLevel>();
 		
 		return TTRUE;
 	}

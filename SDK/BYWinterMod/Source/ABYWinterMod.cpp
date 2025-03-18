@@ -139,7 +139,7 @@ public:
 		return TNULL;
 	}
 
-	void OnImGuiRender() override
+	void OnImGuiRender( AImGUI* a_pImGui ) override
 	{
 		ImGui::ColorEdit4( "Lighting Colour", g_afLightColour );
 	}

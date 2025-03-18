@@ -36,6 +36,11 @@ public:
 		return m_oStates[ m_oStates.Size() - 2 ];
 	}
 
+	TINT GetNumStates() const
+	{
+		return m_oStates.Size();
+	}
+
 	TBOOL IsCurrentState( Toshi::TClass* a_pClass )
 	{
 		return GetCurrentState()->IsA( a_pClass );

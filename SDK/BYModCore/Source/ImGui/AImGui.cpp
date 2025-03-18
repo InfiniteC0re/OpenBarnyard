@@ -287,7 +287,7 @@ void AImGUI::Render()
 			{
 				if ( ImGui::BeginTabItem( it->GetName() ) )
 				{
-					it->OnImGuiRender();
+					it->OnImGuiRender( this );
 					ImGui::EndTabItem();
 				}
 			}

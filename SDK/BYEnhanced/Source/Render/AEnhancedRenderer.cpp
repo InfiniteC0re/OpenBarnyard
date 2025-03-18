@@ -396,6 +396,7 @@ MEMBER_HOOK( 0x006c6590, TRenderD3DInterface, TRenderD3DInterface_BeginScene, TB
 {
 	if ( CallOriginal() )
 	{
+		T2Render::GetSingleton()->Update( 0.0f );
 		T2Render::GetSingleton()->BeginScene();
 		return TTRUE;
 	}

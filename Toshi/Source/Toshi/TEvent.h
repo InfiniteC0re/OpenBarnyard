@@ -8,7 +8,7 @@ class TGenericEmitter;
 class TGenericListener : public TPriList<TGenericListener>::TNode
 {
 public:
-	using t_Callback = TBOOL ( * )( void* a_pCaller, void* a_pOwner, void* a_pData );
+	using t_Callback = TBOOL ( __stdcall* )( void* a_pCaller, void* a_pOwner, void* a_pData );
 	friend class TGenericEmitter;
 
 public:

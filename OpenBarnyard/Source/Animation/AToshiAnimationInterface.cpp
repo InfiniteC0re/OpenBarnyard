@@ -420,6 +420,9 @@ void AToshiAnimationInterface::UpdateAnimationBreakpointsReverse( AToshiAnimatio
 // $Barnyard: FUNCTION 00582de0
 TBOOL AToshiAnimationInterface::IsAllStatic()
 {
+	if ( m_Unk2 != 0 )
+		return TFALSE;
+
 	T2_FOREACH( m_llAnimRefs, it )
 	{
 		if ( it->GetNamedAnimation() && !it->GetNamedAnimation()->IsStatic() )

@@ -95,8 +95,7 @@ void AModel::Render( TUINT8 a_uiFlags )
 AModelInstanceRef AModel::CreateInstance()
 {
 	// TODO: use this name in debug?
-	TString8 instanceName;
-	GenerateInstanceName( instanceName, m_Name );
+	TString8 instanceName = GenerateInstanceName( m_Name );
 
 	AModelInstanceRef modelInstanceRef = new AModelInstance(
 	    this,
@@ -192,7 +191,7 @@ void AModel::GetNameFromPath( const TPString8& a_FilePath, TString8& a_rName )
 }
 
 // $Barnyard: FUNCTION 0060f7f0
-TString8* AModel::GenerateInstanceName( TString8& a_rOutName, const TPString8& a_FilePath )
+TString8 AModel::GenerateInstanceName( const TPString8& a_FilePath )
 {
 	static TUINT ms_uiDebugObjectIndex = 0;
 
@@ -203,8 +202,7 @@ TString8* AModel::GenerateInstanceName( TString8& a_rOutName, const TPString8& a
 	debugName.Format( "%s%i", name.GetString(), ms_uiDebugObjectIndex % 1000 );
 	ms_uiDebugObjectIndex += 1;
 
-	a_rOutName = debugName;
-	return &a_rOutName;
+	return debugName;
 }
 
 // $Barnyard: FUNCTION 00611280

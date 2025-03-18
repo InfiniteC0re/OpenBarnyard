@@ -106,6 +106,21 @@ void AGUI2_MainPostRenderCallback()
 	}
 }
 
+struct GolfMiniGameSettings
+{
+
+	TBOOL bChangeLevel = TFALSE;
+	TINT  iLevel = 1;
+	TINT  iTargetLevel = -1;
+
+} g_oGolfMiniGameSettings;
+
+struct AGolfMinigameState : public AGameState
+{};
+
+AImGUI*     g_pImGui             = TNULL;
+static auto s_AGolfMiniGameState = TClass::Find( "AGolfMinigameState", &THookedObject::ms_oClass );
+
 class ABYSpeedrunHelper : public AModInstance
 {
 public:
@@ -132,6 +147,35 @@ public:
 
 	TBOOL OnUpdate( TFLOAT a_fDeltaTime ) override
 	{
+		AGameStateController* pGameStateController = AGameStateController::GetSingleton();
+
+		// Apply minigame specific settings
+		if ( g_oGolfMiniGameSettings.bChangeLevel )
+		{
+			AGameState* pCurrentState = pGameStateController->GetCurrentState();
+			
+			if ( pGameStateController->GetNumStates() >= 1 && pCurrentState )
+			{
+				TClass* pCurrentStateClass = pCurrentState->GetClass();
+
+				// Golf minigame - change level
+				if ( g_oGolfMiniGameSettings.bChangeLevel && pCurrentStateClass == s_AGolfMiniGameState )
+				{
+					TINT& rCurrentLevel = *(TINT*)( TUINTPTR( pCurrentState ) + 0x41D8 );
+
+					g_oGolfMiniGameSettings.bChangeLevel = TFALSE;
+					rCurrentLevel = g_oGolfMiniGameSettings.iLevel;
+
+					// Set the first level if tried to load previous while on the first one
+					if ( rCurrentLevel < -1 )
+						rCurrentLevel = -1;
+
+					// Ask the game to load next level
+					CALL_THIS( 0x004754f0, AGolfMinigameState*, void, TSTATICCAST( AGolfMinigameState, pCurrentState ) );
+				}
+			}
+		}
+
 		if ( g_bIsExperimentalMode )
 		{
 			// Simulate lag by pressing Z key
@@ -193,8 +237,58 @@ public:
 		}
 	}
 
-	void OnImGuiRender() override
+	void OnImGuiRender( AImGUI* a_pImGui ) override
 	{
+		// Update pointer to the AImGui interface
+		g_pImGui = a_pImGui;
+
+		// Render minigame specific UI
+		if ( AGameStateController* pGameStateController = AGameStateController::GetSingleton() )
+		{
+			AGameState* pCurrentState = pGameStateController->GetPreviousState();
+
+			if ( pGameStateController->GetNumStates() >= 2 && pCurrentState )
+			{
+				TClass* pCurrentStateClass = pCurrentState->GetClass();
+				TBOOL   bDrawnUI           = TFALSE;
+
+				if ( pCurrentStateClass == s_AGolfMiniGameState )
+				{
+					ImGui::Text( "Golf Settings" );
+
+					TINT& rCurrentLevel = *(TINT*)( TUINTPTR( pCurrentState ) + 0x41D8 );
+
+					auto fnLoadLevel = []( TINT iLevel )
+					{
+						g_oGolfMiniGameSettings.bChangeLevel = TTRUE;
+						g_oGolfMiniGameSettings.iLevel = iLevel;
+						g_pImGui->Toggle();
+					};
+
+					if ( ImGui::Button( "Prev Level" ) ) fnLoadLevel( rCurrentLevel - 2 );
+					ImGui::SameLine();
+					if ( ImGui::Button( "Restart Level" ) ) fnLoadLevel( rCurrentLevel - 1 );
+					ImGui::SameLine();
+					if ( ImGui::Button( "Next Level" ) ) fnLoadLevel( rCurrentLevel );
+
+					TINT* pLevels = *(TINT**)( TUINTPTR( pCurrentState ) + 0x4108 );
+					TINT  iMaxHole = *(TINT*)( TUINTPTR( pLevels ) + 0x90 );
+
+					static TINT s_iHoleSelection = 1;
+					ImGui::SliderInt( "##Hole", &s_iHoleSelection, 1, iMaxHole );
+					ImGui::SameLine();
+					if ( ImGui::Button( "Start Hole" ) ) fnLoadLevel( s_iHoleSelection - 2 );
+					
+					bDrawnUI = TTRUE;
+				}
+
+				if ( bDrawnUI )
+					ImGui::Separator();
+			}
+			
+		}
+
+
 		TBOOL bChangedSettings = TFALSE;
 		bChangedSettings |= ImGui::Checkbox( "Show LRT Timer", &g_oSettings.bShowLRTTimer );
 		bChangedSettings |= ImGui::Checkbox( "Show RTA Timer", &g_oSettings.bShowRTATimer );

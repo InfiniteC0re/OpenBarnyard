@@ -7,6 +7,8 @@
 
 #include <BYardSDK/THookedRenderD3DInterface.h>
 
+class AImGUI;
+
 class AModInstance :
 	public Toshi::T2DList<AModInstance>::Node
 {
@@ -24,8 +26,8 @@ public:
 	virtual void				OnRenderInterfaceReady( Toshi::TRenderD3DInterface* a_pRenderInterface ) {}
 	virtual void				OnAppRendererReady() {}
 	virtual void				OnAllModsLoaded() {}
-	virtual void				OnAGUI2Ready() {}
-	virtual void				OnImGuiRender() {}
+	virtual void                OnAGUI2Ready() {}
+	virtual void                OnImGuiRender( AImGUI* a_pImGui ) {}
 	virtual TBOOL				HasSettingsUI() { return TFALSE; }
 	virtual Toshi::TTRB*		GetAssetFile() { return TNULL; }
 	virtual const PBProperties* GetFileOverrides() { return TNULL; }

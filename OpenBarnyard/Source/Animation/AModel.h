@@ -95,7 +95,7 @@ public:
 public:
 	static Toshi::TManagedModel* Create( const Toshi::TPString8& a_rFilePath, Toshi::TTRB* a_pTRB );
 	static void                  GetNameFromPath( const Toshi::TPString8& a_FilePath, Toshi::TString8& a_rName );
-	static Toshi::TString8*      GenerateInstanceName( Toshi::TString8& a_rOutName, const Toshi::TPString8& a_FilePath );
+	static Toshi::TString8       GenerateInstanceName( const Toshi::TPString8& a_FilePath );
 
 private:
 	inline static TUINT ms_uiNumCreated;

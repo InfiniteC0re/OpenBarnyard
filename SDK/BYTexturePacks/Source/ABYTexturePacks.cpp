@@ -69,7 +69,7 @@ void ABYTexturePacks::OnRenderInterfaceReady( Toshi::TRenderD3DInterface* a_pRen
 	);
 }
 
-void ABYTexturePacks::OnImGuiRender()
+void ABYTexturePacks::OnImGuiRender( AImGUI* a_pImGui )
 {
 	static char s_InputTexturePackName[ 64 ];
 
