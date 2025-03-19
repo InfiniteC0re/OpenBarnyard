@@ -512,6 +512,9 @@ MEMBER_HOOK( 0x0060c7c0, ARenderer, ARenderer_OnCreate, TBOOL )
 	// Find out whether DXVK is used or not
 	g_bUsingDXVK = ( GetModuleHandle( "vulkan-1.dll" ) != TNULL );
 
+	if ( g_bUsingDXVK )
+		TINFO( "DXVK transition layer detected" );
+
 	return bResult;
 }
 

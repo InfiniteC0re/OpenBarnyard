@@ -1,5 +1,6 @@
 #pragma once
 #include "AGUITimer.h"
+#include "ARunTimeline.h"
 
 #include <Toshi/THPTimer.h>
 
@@ -23,7 +24,6 @@ public:
 	void Start();
 	void End();
 
-	void Reset();
 	void Split();
 
 	void Update();
@@ -34,17 +34,14 @@ public:
 
 	void SetIsLoadingScreen( TBOOL a_bLoadingScreen );
 
-	TFLOAT GetRunTime() const { return m_flTime; }
-	TFLOAT GetLoadingTime() const { return m_flGlobalTime - m_flTime; }
-	TFLOAT GetTotalTime() const { return m_flGlobalTime; }
-
 private:
+	ARunTimeline     m_Timeline;
 	Toshi::THPTimer  m_Timer;
 	AGUITimer        m_LRTTimer;
 	AGUITimer        m_RTATimer;
-	TFLOAT           m_flTime;
-	TFLOAT           m_flSyncTimer;
-	TFLOAT           m_flGlobalTime;
+	//TFLOAT           m_flTime;
+	//TFLOAT           m_flGlobalTime;
 	TBOOL            m_bPaused;
 	TBOOL            m_bIsLoading;
+	TFLOAT           m_flSyncTimer;
 };

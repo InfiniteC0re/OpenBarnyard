@@ -387,8 +387,6 @@ public:
 			ImGui::Checkbox( "Show Collision", &ACollisionInspector::GetSingleton()->IsCollisionVisible() );
 
 			if ( ImGui::Button( "Restart Timer" ) ) AUIManager::GetSingleton()->GetTimer().Start();
-			ImGui::SameLine();
-			if ( ImGui::Button( "Reset Timer" ) ) AUIManager::GetSingleton()->GetTimer().Reset();
 		}
 
 		if ( bChangedSettings )

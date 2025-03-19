@@ -2,6 +2,7 @@
 #include <cstdint>
 
 using TFLOAT   = float;
+using TDOUBLE  = double;
 using TBOOL    = bool;
 using TINT     = int;
 using TUINT    = unsigned int;
