@@ -18,11 +18,13 @@ layout(std430, binding = 3) buffer multidrawbuffer {
 };
 
 void main() {
-    textureCoord = a_UV;
-    vertexColor = a_Color;
-    gl_Position = u_Projection * modelViews[gl_BaseInstance + gl_InstanceID] * vec4(a_Position, 1.0);
+    vec4 vertexViewSpace = modelViews[gl_BaseInstance + gl_InstanceID] * vec4(a_Position, 1.0);
 
     mat4 modelMatrix = u_ViewWorld * modelViews[gl_BaseInstance + gl_InstanceID];
-    fragPos = (modelMatrix * vec4(a_Position, 1.0)).xyz;
+    gl_Position = u_Projection * vertexViewSpace;
+    
+    textureCoord = a_UV;
+    vertexColor = a_Color;
+    fragPos = vertexViewSpace.xyz;
     normal = mat3(transpose(inverse(modelMatrix))) * a_Normal;
 }

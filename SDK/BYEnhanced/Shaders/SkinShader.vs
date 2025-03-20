@@ -37,11 +37,12 @@ void main() {
 
     mat4 modelView = modelViews[gl_BaseInstance + gl_InstanceID];
     mat4 modelMatrix = u_ViewWorld * modelView;
+    vec4 vertexViewSpace = modelView * vec4(vertex, 1.0);
 
-    // Calculate position of the vertex
-    gl_Position = (u_Projection * modelView) * vec4(vertex, 1.0f);
+    // Calculate screen space position of the vertex
+    gl_Position = u_Projection * vertexViewSpace;
 
-    o_Position = (modelMatrix * vec4(vertex, 1.0f)).xyz;
+    o_Position = vertexViewSpace.xyz;
     o_Normal = mat3(transpose(inverse(modelMatrix))) * normalize(normal);
     o_TexCoord = a_UV;
 

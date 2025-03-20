@@ -16,6 +16,7 @@ uniform vec3 u_SpecularColor;
 uniform vec3 u_FogColor;
 uniform vec3 u_DirectionalLightDir;
 uniform mat4 u_LightViewMatrix;
+uniform mat4 u_View;
 uniform vec3 u_CamPos;
 
 uniform float u_Time;
@@ -125,7 +126,7 @@ float CalculateShadow(vec3 normal, vec4 fragPosLightSpace) {
 }
 
 void main() {
-    vec3 fragPos = texture(gPosition, o_TexCoord).rgb;
+    vec3 fragPos = (u_View * vec4(texture(gPosition, o_TexCoord).rgb, 1.0)).xyz;
     vec3 normal  = texture(gNormal, o_TexCoord).rgb;
     vec4 albedo  = texture(gColor, o_TexCoord);
     vec3 info    = texture(gInfo, o_TexCoord).rgb;

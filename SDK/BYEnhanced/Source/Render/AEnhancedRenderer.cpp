@@ -232,6 +232,9 @@ void AEnhancedRenderer::ScenePreRender()
 
 void AEnhancedRenderer::ScenePostRender()
 {
+	TRenderD3DInterface* pRender        = THookedRenderD3DInterface::GetSingleton();
+	TRenderContext*      pRenderContext = pRender->GetCurrentContext();
+
 	enhRender::g_FrameBufferDeferred.Unbind();
 
 	// Get camera transform
@@ -264,6 +267,7 @@ void AEnhancedRenderer::ScenePostRender()
 	static TPString8 s_Exposure              = TPS8D( "u_Exposure" );
 	static TPString8 s_CamPos                = TPS8D( "u_CamPos" );
 	static TPString8 s_SpecularColor         = TPS8D( "u_SpecularColor" );
+	static TPString8 s_View                  = TPS8D( "u_View" );
 	enhRender::g_ShaderLighting.SetUniform( s_DirectionalLightDir, enhRender::g_DirectionalLightDir );
 	enhRender::g_ShaderLighting.SetUniform( s_FogColor, enhRender::g_FogColor );
 	enhRender::g_ShaderLighting.SetUniform( s_SpecularColor, enhRender::g_SpecularColor );
@@ -276,6 +280,8 @@ void AEnhancedRenderer::ScenePostRender()
 	enhRender::g_ShaderLighting.SetUniform( s_AmbientColor, *(TVector4*)( ( *(TUINT*)0x0079a854 ) + 0x100 ) );
 	enhRender::g_ShaderLighting.SetUniform( s_DiffuseColor, *(TVector4*)( ( *(TUINT*)0x0079a854 ) + 0xF0 ) );
 	enhRender::g_ShaderLighting.SetUniform( s_CamPos, oCamTransform.GetTranslation3() );
+	enhRender::g_ShaderLighting.SetUniform( s_View, oCamTransform );
+
 	RenderScreenQuad();
 
 	//// Apply HDR
