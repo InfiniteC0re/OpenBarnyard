@@ -336,7 +336,7 @@ void AEnhancedRenderer::CreateFrameBuffers()
 	    m_oWindowParams.uiWidth,
 	    m_oWindowParams.uiHeight,
 	    GL_RGB32F,
-	    GL_RGBA,
+	    GL_RGB,
 	    GL_FLOAT
 	);
 
@@ -345,9 +345,9 @@ void AEnhancedRenderer::CreateFrameBuffers()
 	    1,
 	    m_oWindowParams.uiWidth,
 	    m_oWindowParams.uiHeight,
-	    GL_RGBA32F,
-	    GL_RGBA,
-	    GL_FLOAT
+	    GL_RGB16F,
+	    GL_RGB,
+	    GL_HALF_FLOAT
 	);
 
 	// Create attachment to store albedo
@@ -355,9 +355,9 @@ void AEnhancedRenderer::CreateFrameBuffers()
 	    2,
 	    m_oWindowParams.uiWidth,
 	    m_oWindowParams.uiHeight,
-	    GL_RGB32F,
-	    GL_RGBA,
-	    GL_FLOAT
+	    GL_RGB,
+	    GL_RGB,
+	    GL_UNSIGNED_BYTE
 	);
 
 	// Create attachment to store other information
@@ -365,9 +365,9 @@ void AEnhancedRenderer::CreateFrameBuffers()
 	    3,
 	    m_oWindowParams.uiWidth,
 	    m_oWindowParams.uiHeight,
-	    GL_RGB16F,
-	    GL_RGBA,
-	    GL_FLOAT
+	    GL_RG16F,
+	    GL_RG,
+	    GL_HALF_FLOAT
 	);
 
 	enhRender::g_FrameBufferDeferred.Unbind();

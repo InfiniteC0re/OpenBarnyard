@@ -74,18 +74,6 @@ MEMBER_HOOK( 0x006d4200, TInputDeviceMouse, TInputDXDeviceMouse_ProcessEvents, T
 	return CallOriginal( a_rEmitter, a_fDeltaTime );
 }
 
-struct AGolfMinigameState
-{};
-
-MEMBER_HOOK( 0x004754f0, AGolfMinigameState, AGolfMinigameState_StartNextLevel, void )
-{
-	TINT* pLevelIndex = (TINT*)( TUINTPTR( this ) + 0x41D8 );
-
-	*pLevelIndex = 9;
-
-	CallOriginal();
-}
-
 class ABYEnhanced : public AModInstance
 {
 public:
@@ -93,7 +81,6 @@ public:
 	{
 		InstallHook<ARenderer_CreateTRender>();
 		InstallHook<TInputDXDeviceMouse_ProcessEvents>();
-		InstallHook<AGolfMinigameState_StartNextLevel>();
 		
 		return TTRUE;
 	}
@@ -116,7 +103,7 @@ public:
 	{
 	}
 
-	virtual void OnImGuiRender() override
+	virtual void OnImGuiRender( AImGUI* a_pImGui ) override
 	{
 		ImGui::SliderFloat( "Shadow Bias (Min)", &enhRender::g_ShadowBiasMin, 0.0f, 1.0f, "%.8f" );
 		ImGui::SliderFloat( "Shadow Bias (Max)", &enhRender::g_ShadowBiasMax, 0.0f, 1.0f, "%.8f" );

@@ -47,13 +47,16 @@ void AEnhancedWorldShader::PreRender()
 
 	T2Render::SetShaderProgram( m_oShaderProgram );
 
-	static TPString8 s_uWorldView    = TPS8D( "u_WorldView" );
+	static TPString8 s_uViewWorld    = TPS8D( "u_ViewWorld" );
 	static TPString8 s_uColor        = TPS8D( "u_Color" );
 	static TPString8 s_uShadowColor  = TPS8D( "u_ShadowColor" );
 	static TPString8 s_uAmbientColor = TPS8D( "u_AmbientColor" );
 	static TPString8 s_uProjection   = TPS8D( "u_Projection" );
 
-	m_oShaderProgram.SetUniform( s_uWorldView, pRenderContext->GetWorldViewMatrix() );
+	TMatrix44 matViewWorld;
+	matViewWorld.Invert( pRenderContext->GetWorldViewMatrix() );
+
+	m_oShaderProgram.SetUniform( s_uViewWorld, matViewWorld );
 	m_oShaderProgram.SetUniform( s_uColor, Toshi::TVector4( 1.0f, 1.0f, 1.0f, 1.0f ) );
 	m_oShaderProgram.SetUniform( s_uShadowColor, *pShadowColor );
 	m_oShaderProgram.SetUniform( s_uAmbientColor, *pAmbientColor );
