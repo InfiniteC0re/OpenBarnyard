@@ -139,6 +139,13 @@ MEMBER_HOOK( 0x0042b160, ALoadScreen, ALoadScreen_StartLoading, void, TINT a_iUn
 	CallOriginal( a_iUnused, a_bRender );
 }
 
+MEMBER_HOOK( 0x0042b100, ALoadScreen, ALoadScreen_SetLoadingState, void, TBOOL a_bIsLoading, TBOOL a_bRender )
+{
+	AUIManager::GetSingleton()->GetTimer().SetIsLoadingScreen( a_bIsLoading );
+
+	CallOriginal( a_bIsLoading, a_bRender );
+}
+
 MEMBER_HOOK( 0x0042b260, ALoadScreen, ALoadScreen_StopLoading, void )
 {
 	AUIManager::GetSingleton()->GetTimer().SetIsLoadingScreen( TFALSE );
@@ -191,6 +198,7 @@ public:
 			InstallHook<AQuestManager_FUNC>();
 			InstallHook<T2Locale_GetString>();
 			InstallHook<ALoadScreen_StartLoading>();
+			InstallHook<ALoadScreen_SetLoadingState>();
 			InstallHook<ALoadScreen_StopLoading>();
 			InstallHook<AAssetLoader_LoadPlayerCharacter>();
 			InstallHook<ASimProfile_Unknown>();
