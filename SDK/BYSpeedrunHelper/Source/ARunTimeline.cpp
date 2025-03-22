@@ -101,6 +101,8 @@ void ARunTimeline::SaveToFile( const TCHAR* a_pchBaseName )
 	if ( !a_pchBaseName )
 		a_pchBaseName = "Run";
 
+	CreateDirectoryA( "Timelines", NULL );
+
 	time_t seconds;
 	time( &seconds );
 	tm* curTime = gmtime( &seconds );

@@ -48,55 +48,46 @@ int main( int argc, char** argv )
 
 			// Read file data into a buffer
 			auto  uiFileSize  = pTextFile->GetSize();
-			char* pFileBuffer = new char[ uiFileSize + 2 ];
+			char* pFileBuffer = new char[ uiFileSize + 1 ];
 
 			pTextFile->Read( pFileBuffer, uiFileSize );
 			pFileBuffer[ uiFileSize ]     = '\0';
-			pFileBuffer[ uiFileSize + 1 ] = '\0';
 			pTextFile->Destroy();
 
-			INT iIsUnicodeResult;
-			IsTextUnicode( pFileBuffer, uiFileSize, &iIsUnicodeResult );
+			TArray<TString16> foundStrings;
 
-			if ( iIsUnicodeResult & IS_TEXT_UNICODE_UNICODE_MASK )
+			T2FormatString2048  localeString;
+			TCHAR*              pFileStart  = TREINTERPRETCAST( TCHAR*, pFileBuffer );
+			TCHAR*              pFileEnd    = TREINTERPRETCAST( TCHAR*, pFileBuffer + uiFileSize );
+			TCHAR*              pFileCursor = TREINTERPRETCAST( TCHAR*, pFileBuffer );
+
+			while ( pFileCursor < pFileEnd )
 			{
-				TArray<TString16> foundStrings;
+				TINT iLocaleStringLength;
+				pFileCursor += localeString.ParseLine( pFileCursor, -1, &iLocaleStringLength, TFALSE, TTRUE );
 
-				T2FormatWString2048 localeString;
-				wchar_t*            pFileStart  = TREINTERPRETCAST( wchar_t*, pFileBuffer );
-				wchar_t*            pFileEnd    = TREINTERPRETCAST( wchar_t*, pFileBuffer + uiFileSize );
-				wchar_t*            pFileCursor = TREINTERPRETCAST( wchar_t*, pFileBuffer );
-
-				while ( pFileCursor < pFileEnd )
-				{
-					TINT iLocaleStringLength;
-					pFileCursor += localeString.ParseLine( pFileCursor, -1, &iLocaleStringLength, TFALSE, TTRUE );
-
-					foundStrings.Push( localeString.Get() );
-				}
-
-				TINFO( "Parsed %d locale strings.\n", foundStrings.Size() );
-
-				auto pLocaleStrings = pOutStack->Alloc<T2Locale::LocaleStrings>();
-
-				pLocaleStrings->m_numstrings = foundStrings.Size();
-				pOutStack->Alloc<T2LocalisedString>( &pLocaleStrings->Strings, foundStrings.Size() );
-
-				TARRAY_FOREACH( foundStrings, str )
-				{
-					auto iIndex = str.Index();
-					pOutStack->Alloc<TWCHAR>( &pLocaleStrings->Strings[ iIndex ], str->Length() + 1 );
-
-					T2String16::Copy( pLocaleStrings->Strings[ iIndex ], str.Get() );
-				}
-
-				outTrbFile.GetSymbols()->Add( pOutStack, "LocaleStrings", pLocaleStrings.get() );
-				outTrbFile.WriteToFile( strOutPath.GetString(), commandLine.HasParameter( "-btec" ) );
+				foundStrings.Push( Platform_UTF8ToUnicode( localeString.Get() ) );
 			}
-			else
+			
+			delete[] pFileBuffer;
+
+			TINFO( "Parsed %d locale strings.\n", foundStrings.Size() );
+
+			auto pLocaleStrings = pOutStack->Alloc<T2Locale::LocaleStrings>();
+
+			pLocaleStrings->m_numstrings = foundStrings.Size();
+			pOutStack->Alloc<T2LocalisedString>( &pLocaleStrings->Strings, foundStrings.Size() );
+
+			TARRAY_FOREACH( foundStrings, str )
 			{
-				TERROR( "The input file's encoding is not UTF-16!\n" );
+				auto iIndex = str.Index();
+				pOutStack->Alloc<TWCHAR>( &pLocaleStrings->Strings[ iIndex ], str->Length() + 1 );
+
+				T2String16::Copy( pLocaleStrings->Strings[ iIndex ], str.Get() );
 			}
+
+			outTrbFile.GetSymbols()->Add( pOutStack, "LocaleStrings", pLocaleStrings.get() );
+			outTrbFile.WriteToFile( strOutPath.GetString(), commandLine.HasParameter( "-btec" ) );
 		}
 		else
 		{
@@ -139,7 +130,9 @@ int main( int argc, char** argv )
 						}
 
 						finalString[ iPos ] = '\0';
-						pOutFile->WPrintf( L"%s\n", finalString.Get() );
+						
+						TString8 utf8String = Platform_UnicodeToUTF8( finalString.Get() );
+						pOutFile->CPrintf( "%s\n", utf8String.GetString() );
 					}
 
 					pOutFile->Destroy();

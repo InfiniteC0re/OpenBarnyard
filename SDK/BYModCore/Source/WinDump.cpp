@@ -25,5 +25,7 @@ void create_minidump( struct _EXCEPTION_POINTERS* apExceptionInfo )
 LONG WINAPI unhandled_handler( struct _EXCEPTION_POINTERS* apExceptionInfo )
 {
 	create_minidump( apExceptionInfo );
+
+	MessageBoxA( TNULL, "It looks like your game has unfortunately crashed!\n\nContact @infc0re on Discord attaching the crash.dmp file from your game directory.", "Barnyard Crashed", MB_OK );
 	return EXCEPTION_CONTINUE_SEARCH;
 }

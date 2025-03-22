@@ -90,6 +90,7 @@ public:
 	using StringTraits = TStringTraits;
 	using CharTraits   = typename StringTraits::CharTraits;
 	using CharType     = typename StringTraits::CharType;
+	using UCharType    = typename StringTraits::UCharType;
 
 public:
 	constexpr T2FormatString()
@@ -131,7 +132,7 @@ public:
 				// Trim spaced at the start of the string
 				if ( !bTextStarted && a_bTrimStartSpaces )
 				{
-					bTextStarted = !CharTraits::IsSpace( a_szString[ uiStringPos ] );
+					bTextStarted = !CharTraits::IsSpace( (UCharType)a_szString[ uiStringPos ] );
 
 					if ( !bTextStarted )
 					{
@@ -152,7 +153,7 @@ public:
 
 		if ( a_bTrimEndSpaces )
 		{
-			while ( uiPos >= 0 && m_szBuffer[ uiPos ] != '\n' && CharTraits::IsSpace( m_szBuffer[ uiPos ] ) )
+			while ( uiPos >= 0 && m_szBuffer[ uiPos ] != '\n' && CharTraits::IsSpace( (UCharType)m_szBuffer[ uiPos ] ) )
 			{
 				uiPos--;
 			}

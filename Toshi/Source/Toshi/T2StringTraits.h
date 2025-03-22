@@ -15,6 +15,7 @@ class T2StringTraits
 public:
 	using CharTraits = TCharTraits;
 	using CharType   = typename TCharTraits::CharType;
+	using UCharType  = typename TCharTraits::UCharType;
 
 public:
 	static TINT FormatV( CharType* a_pcString, TINT size, const CharType* a_pcFormat, va_list args ) { TUNREACHABLE(); }
