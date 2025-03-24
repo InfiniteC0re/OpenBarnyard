@@ -868,6 +868,20 @@ MEMBER_HOOK( 0x00497280, UnknownType, Unknown_CrashPoint1, void, TINT a_Unk1, BO
 	CallOriginal( a_Unk1, a_Unk2 );
 }
 
+struct AItemCountHudElement
+{};
+
+MEMBER_HOOK( 0x00454950, AItemCountHudElement, AItemCountHudElement_SetVisible, void, TBOOL a_bVisible )
+{
+	CallOriginal( a_bVisible );
+
+	if ( a_bVisible )
+	{
+		// Force the element to update since not updating it might cause it not to appear (no dialogues mod fix)
+		*(TBOOL*)( TUINTPTR( this ) + 0x11 ) = TFALSE;
+	}
+}
+
 void AHooks::Initialise()
 {
 	// Apply other hooks
@@ -889,6 +903,7 @@ void AHooks::Initialise()
 	InstallHook<AGameStateController_ProcessInput>();
 	InstallHook<ATerrain_Render>();
 	InstallHook<AModelLoader_AModelLoaderLoadTRBCallback>();
+	InstallHook<AItemCountHudElement_SetVisible>();
 
 	InstallHook<ARenderer_CreateTRender>();
 	InstallHook<ARenderer_OnCreate>();
