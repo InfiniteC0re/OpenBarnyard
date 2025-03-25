@@ -220,7 +220,7 @@ void AEnhancedSkinShader::Render( TRenderPacket* a_pRenderPacket )
 	TUINT16            uiNumSubMeshes    = *(TUINT16*)( TUINT( pMesh ) + 0x16 );
 
 	static TPString8 s_Shininess = TPS8D( "u_Shininess" );
-	m_oShaderProgram.SetUniform( s_Shininess, ( pMaterial->m_bIsSkin && pMaterial->m_bFlag2 && pMaterial->m_bFlag3 ) ? 0.15f : 0.0f );
+	m_oShaderProgram.SetUniform( s_Shininess, ( pMaterial->m_bIsSkin && pMaterial->m_bFlag2 && pMaterial->m_bFlag3 ) ? 0.07f : 0.0f );
 
 	for ( TUINT16 i = 0; i < iNumCmds; i++ )
 	{

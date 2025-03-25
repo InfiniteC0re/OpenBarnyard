@@ -17,7 +17,7 @@ uniform vec3 u_FogColor;
 uniform vec3 u_DirectionalLightDir;
 uniform mat4 u_LightViewMatrix;
 uniform mat4 u_View;
-uniform vec3 u_CamPos;
+// uniform vec3 u_CamPos; // unused since everything is in world space now
 
 uniform float u_Time;
 
@@ -63,7 +63,7 @@ vec3 uncharted2_filmic(vec3 v) {
 }
 
 vec3 directionalLighting(vec3 info, vec3 fragPos, vec3 normal, vec3 texColor, float shadowFactor) {
-    vec3 viewDir = normalize(u_CamPos - fragPos);
+    vec3 viewDir = normalize(-fragPos);
     vec3 lightDir = normalize(-u_DirectionalLightDir);
 
     // diffuse shading
@@ -76,7 +76,7 @@ vec3 directionalLighting(vec3 info, vec3 fragPos, vec3 normal, vec3 texColor, fl
     // combine results
     vec3 ambient = mix(u_DiffuseColor.rgb, u_AmbientColor.rgb, 0.6) * texColor;
     vec3 diffuse = 0.5 * u_AmbientColor.rgb * diff * texColor;
-    vec3 specular = u_SpecularColor * spec * info.g;
+    vec3 specular = u_SpecularColor * spec * info.g * shadowFactor;
     return (ambient + diffuse + specular);
 }
 
@@ -126,13 +126,14 @@ float CalculateShadow(vec3 normal, vec4 fragPosLightSpace) {
 }
 
 void main() {
-    vec3 fragPos = (u_View * vec4(texture(gPosition, o_TexCoord).rgb, 1.0)).xyz;
-    vec3 normal  = texture(gNormal, o_TexCoord).rgb;
-    vec4 albedo  = texture(gColor, o_TexCoord);
-    vec3 info    = texture(gInfo, o_TexCoord).rgb;
+    vec3 fragPos      = texture(gPosition, o_TexCoord).rgb;
+    vec3 fragPosWorld = (u_View * vec4(fragPos, 1.0f)).xyz;
+    vec3 normal       = texture(gNormal, o_TexCoord).rgb;
+    vec4 albedo       = texture(gColor, o_TexCoord);
+    vec3 info         = texture(gInfo, o_TexCoord).rgb;
 
     // Apply shadow maps
-    vec4 fragPosLightSpace = u_LightViewMatrix * vec4(fragPos, 1.0);
+    vec4 fragPosLightSpace = u_LightViewMatrix * vec4(fragPosWorld, 1.0);
     float flShadowFactor = CalculateShadow(normal, fragPosLightSpace);
 
     // Calculate directional lighting
@@ -141,7 +142,7 @@ void main() {
     FragColor.rgb *= (1.0 - flShadowFactor * u_ShadowStrength);
 
     // Apply lighting from point lights
-    FragColor.rgb += pointLight(fragPos, normal, FragColor.rgb);
+    FragColor.rgb += pointLight(fragPosWorld, normal, FragColor.rgb);
 
     // Tonemap
     FragColor.rgb = uncharted2_filmic(FragColor.rgb);
