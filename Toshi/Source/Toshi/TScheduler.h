@@ -36,11 +36,7 @@ public:
 	TFLOAT& GetDebugDeltaTimeMult() { return m_DebugDeltaTimeMult; }
 	TFLOAT  GetDebugDeltaTimeMult() const { return m_DebugDeltaTimeMult; }
 
-	void SetDebugDeltaTimeMult( TBOOL useDebugDeltaTimeMult, TFLOAT debugDeltaTimeMult = 1.0f )
-	{
-		m_UseDebugDeltaTimeMult = useDebugDeltaTimeMult;
-		m_DebugDeltaTimeMult    = debugDeltaTimeMult;
-	}
+	void SetDebugDeltaTimeMult( TBOOL useDebugDeltaTimeMult, TFLOAT debugDeltaTimeMult = 1.0f );
 
 	void SetDebugDeltaTime( TBOOL useDebugDeltaTime, TFLOAT debugDeltaTime = 0.0f )
 	{

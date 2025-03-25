@@ -26,10 +26,11 @@
 
 TOSHI_NAMESPACE_USING
 
-AGUI2TextBox*   g_pExperimentalModeText = TNULL;
+AGUI2TextBox* g_pExperimentalModeText = TNULL;
 
 const T2CommandLine* g_pCommandLine;
 TBOOL                g_bIsExperimentalMode = TFALSE;
+TBOOL                g_bIsFunCategory      = TFALSE;
 
 class AQuestManager : public Toshi::TTask
 {
@@ -96,7 +97,7 @@ struct GolfMiniGameSettings
 {
 
 	TBOOL bChangeLevel = TFALSE;
-	TINT  iLevel = 1;
+	TINT  iLevel       = 1;
 	TINT  iTargetLevel = -1;
 
 } g_oGolfMiniGameSettings;
@@ -104,8 +105,11 @@ struct GolfMiniGameSettings
 struct AGolfMinigameState : public AGameState
 {};
 
-AImGUI*     g_pImGui             = TNULL;
-static auto s_AGolfMiniGameState = TClass::Find( "AGolfMinigameState", &THookedObject::ms_oClass );
+AImGUI*     g_pImGui                   = TNULL;
+static auto s_AGolfMiniGameState       = TClass::Find( "AGolfMinigameState", &THookedObject::ms_oClass );
+static auto s_AVeggiePatchDefenderGame = TClass::Find( "AVeggiePatchDefenderGame", &THookedObject::ms_oClass );
+static auto s_AChickenCoopDefender     = TClass::Find( "AChickenCoopDefender", &THookedObject::ms_oClass );
+static auto s_ASleepCycleState         = TClass::Find( "ASleepCycleState", &THookedObject::ms_oClass );
 
 static const char* COW_SKIN_LIST[] = {
 	"American",
@@ -220,7 +224,7 @@ public:
 		if ( g_oGolfMiniGameSettings.bChangeLevel )
 		{
 			AGameState* pCurrentState = pGameStateController->GetCurrentState();
-			
+
 			if ( pGameStateController->GetNumStates() >= 1 && pCurrentState )
 			{
 				TClass* pCurrentStateClass = pCurrentState->GetClass();
@@ -231,7 +235,7 @@ public:
 					TINT& rCurrentLevel = *(TINT*)( TUINTPTR( pCurrentState ) + 0x41D8 );
 
 					g_oGolfMiniGameSettings.bChangeLevel = TFALSE;
-					rCurrentLevel = g_oGolfMiniGameSettings.iLevel;
+					rCurrentLevel                        = g_oGolfMiniGameSettings.iLevel;
 
 					// Set the first level if tried to load previous while on the first one
 					if ( rCurrentLevel < -1 )
@@ -243,6 +247,40 @@ public:
 			}
 		}
 
+		// Fun% mode
+		if ( g_bIsFunCategory )
+		{
+			// Adjust speed of the game
+			TBOOL  bSpeedUp = TFALSE;
+			TFLOAT fSpeed   = 1.0f;
+
+			AGameStateController* pGameStateController = AGameStateController::GetSingleton();
+			if ( pGameStateController->GetNumStates() >= 1 )
+			{
+				TSystemManager* pSystemManager = (TSystemManager*)0x007ce640;
+				TClass* pStateClass = pGameStateController->GetCurrentState()->GetClass();
+
+				if ( pStateClass == s_AChickenCoopDefender )
+				{
+					bSpeedUp = TTRUE;
+					fSpeed   = 2.0f;
+				}
+				else if ( pStateClass == s_AVeggiePatchDefenderGame )
+				{
+					bSpeedUp = TTRUE;
+					fSpeed   = 2.0f;
+				}
+				else if ( pStateClass == s_ASleepCycleState )
+				{
+					bSpeedUp = TTRUE;
+					fSpeed   = 8.0f;
+				}
+
+				pSystemManager->GetScheduler()->SetDebugDeltaTimeMult( bSpeedUp, fSpeed );
+			}
+		}
+
+		// Experimental mode
 		if ( g_bIsExperimentalMode )
 		{
 			// Simulate lag by pressing Z key
@@ -264,7 +302,7 @@ public:
 
 		if ( AUIManager::IsSingletonCreated() )
 			AUIManager::GetSingleton()->Update( a_fDeltaTime );
-		
+
 		return TTRUE;
 	}
 
@@ -354,10 +392,9 @@ public:
 
 					TINT& rCurrentLevel = *(TINT*)( TUINTPTR( pCurrentState ) + 0x41D8 );
 
-					auto fnLoadLevel = []( TINT iLevel )
-					{
+					auto fnLoadLevel = []( TINT iLevel ) {
 						g_oGolfMiniGameSettings.bChangeLevel = TTRUE;
-						g_oGolfMiniGameSettings.iLevel = iLevel;
+						g_oGolfMiniGameSettings.iLevel       = iLevel;
 						g_pImGui->Toggle();
 					};
 
@@ -367,14 +404,14 @@ public:
 					ImGui::SameLine();
 					if ( ImGui::Button( "Next Level" ) ) fnLoadLevel( rCurrentLevel );
 
-					TINT* pLevels = *(TINT**)( TUINTPTR( pCurrentState ) + 0x4108 );
+					TINT* pLevels  = *(TINT**)( TUINTPTR( pCurrentState ) + 0x4108 );
 					TINT  iMaxHole = *(TINT*)( TUINTPTR( pLevels ) + 0x90 );
 
 					static TINT s_iHoleSelection = 1;
 					ImGui::SliderInt( "##Hole", &s_iHoleSelection, 1, iMaxHole );
 					ImGui::SameLine();
 					if ( ImGui::Button( "Start Hole" ) ) fnLoadLevel( s_iHoleSelection - 2 );
-					
+
 					bDrawnUI = TTRUE;
 				}
 
@@ -431,6 +468,7 @@ extern "C"
 
 		g_pCommandLine        = a_pCommandLine;
 		g_bIsExperimentalMode = g_pCommandLine->HasParameter( "-experimental" );
+		g_bIsFunCategory      = g_pCommandLine->HasParameter( "-fun" );
 
 		return new ABYSpeedrunHelper();
 	}

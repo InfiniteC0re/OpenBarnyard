@@ -187,4 +187,12 @@ void TScheduler::UpdateActiveTasks( TTask* task )
 	}
 }
 
+// $Barnyard: FUNCTION 006bca00
+void TScheduler::SetDebugDeltaTimeMult( TBOOL useDebugDeltaTimeMult, TFLOAT debugDeltaTimeMult /*= 1.0f */ )
+{
+	m_UseDebugDeltaTimeMult = useDebugDeltaTimeMult;
+	m_DebugDeltaTimeMult    = debugDeltaTimeMult;
+	TMath::Clip( m_DebugDeltaTimeMult, 0.0f, 100.0f );
+}
+
 TOSHI_NAMESPACE_END

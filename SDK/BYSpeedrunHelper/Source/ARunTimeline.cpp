@@ -63,7 +63,13 @@ void ARunTimeline::AddEvent( EventType a_eEventType, void* a_pData /*= TNULL*/, 
 	if ( !m_bIsLive )
 		return;
 
-	const TBOOL   bWasLoading         = m_vecEvents.Size() > 0 && m_vecEvents.Back()->eType == EventType::LoadStart;
+	const TBOOL bWasLoading = m_vecEvents.Size() > 0 && m_vecEvents.Back()->eType == EventType::LoadStart;
+
+	// FIXME: Skip any events sent while the game is still on load screen
+	// It's better to check whether the load is over to make the time calculation not break
+	if ( bWasLoading && a_eEventType != EventType::LoadEnd )
+		return;
+
 	const TUINT64 uiPreviousEventTime = m_uiLastEventTime;
 	QueryPerformanceCounter( (LARGE_INTEGER*)&m_uiLastEventTime );
 
