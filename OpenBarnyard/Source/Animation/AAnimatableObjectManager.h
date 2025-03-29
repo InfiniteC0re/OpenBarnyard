@@ -47,8 +47,8 @@ private:
 	void AttachSoundBreakpoints( AAnimatableObjectType* a_pObjectType );
 
 private:
-	Toshi::T2DList<AAnimatableObject>     m_AnimatableObjects;
-	Toshi::T2DList<AAnimatableObjectType> m_Types;
+	Toshi::T2DList<AAnimatableObject>     m_llAnimatableObjects;
+	Toshi::T2DList<AAnimatableObjectType> m_llObjectTypes;
 	Toshi::TTRB*                          m_pAnimSoundBPsTRB;
 	ASoundBreakpointsTable*               m_pSoundBreakpoints;
 };

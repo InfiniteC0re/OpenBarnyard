@@ -88,6 +88,40 @@ TBOOL AAnimatableObject::Create( AAnimatableObjectType* a_pObjectType, void* a_U
 	return m_eFlags & FLAGS_CREATED;
 }
 
+// $Barnyard: FUNCTION 0057d280
+TBOOL AAnimatableObject::Update( TFLOAT a_fDeltaTime )
+{
+	if ( !HASANYFLAG( m_eFlags, FLAGS_CREATED ) )
+		return TTRUE;
+
+	AToshiAnimationInterface::AnimEventList animEvents;
+
+	PlayQueuedAnimation();
+	m_oToshiAnimInterface.Update( a_fDeltaTime, animEvents );
+
+	// Update attached animation controllers
+	UpdateAnimControllers( a_fDeltaTime );
+
+	// Handle the animation events
+	for ( TINT i = 0; i < animEvents.iNumEvents; i++ )
+	{
+		if ( animEvents.aEvents[ i ].eType == AToshiAnimationInterface::ANIMEVENT_TYPE_BREAKPOINT )
+			TASSERT( !"Call the breakpoint" );
+	}
+
+	return TTRUE;
+}
+
+// $Barnyard: FUNCTION 0057bf00
+void AAnimatableObject::UpdateAnimControllers( TFLOAT a_fDeltaTime )
+{
+	T2_FOREACH( m_llAnimControllers, it )
+	{
+		if ( it->IsEnabled() )
+			it->OnUpdate( a_fDeltaTime );
+	}
+}
+
 // $Barnyard: FUNCTION 0057d130
 TBOOL AAnimatableObject::PlayAnimation( const Toshi::TPString8& a_strName )
 {

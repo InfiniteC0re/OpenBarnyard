@@ -37,8 +37,8 @@ AAnimatableObjectManager::~AAnimatableObjectManager()
 		m_pSoundBreakpoints = TNULL;
 	}
 
-	m_Types.DeleteAll();
-	m_AnimatableObjects.DeleteAll();
+	m_llObjectTypes.DeleteAll();
+	m_llAnimatableObjects.DeleteAll();
 }
 
 // $Barnyard: FUNCTION 0057d710
@@ -46,7 +46,7 @@ AAnimatableObject* AAnimatableObjectManager::CreateAnimatableObject( AAnimatable
 {
 	AAnimatableObject* pObject = new AAnimatableObject();
 
-	m_AnimatableObjects.PushBack( pObject );
+	m_llAnimatableObjects.PushBack( pObject );
 	pObject->Create( a_pObjectType, a_Unk1, a_eFlags );
 
 	return pObject;
@@ -145,7 +145,7 @@ void AAnimatableObjectManager::LoadAnimObjType( const TCHAR* a_szName, const PBP
 // $Barnyard: FUNCTION 0057d820
 AAnimatableObjectType* AAnimatableObjectManager::FindType( const Toshi::TPString8& a_rcName )
 {
-	T2_FOREACH( m_Types, it )
+	T2_FOREACH( m_llObjectTypes, it )
 	{
 		if ( it->GetName() == a_rcName )
 			return it;
@@ -210,9 +210,27 @@ TINT AAnimatableObjectManager::FindNumAnimationSoundBreakpoints( const Toshi::TP
 	return iCount;
 }
 
+// $Barnyard: FUNCTION 0057ddc0
 TBOOL AAnimatableObjectManager::OnUpdate( TFLOAT a_fDeltaTime )
 {
-	TIMPLEMENT();
+	T2_FOREACH( m_llAnimatableObjects, it )
+	{
+		// Find out whether the animation of this object needs to be updated or not
+		TBOOL bUpdateAnim = it->IsAnimated();
+
+		if ( bUpdateAnim )
+		{
+			AModelInstanceRef modelInstance = it->GetModelInstance();
+
+			// Also, don't update animations when skeleton is not updating and no animations are queued
+			if ( !modelInstance->IsUpdatingSkeleton() && it->GetQueuedAnimations().Size() <= 0 )
+				bUpdateAnim = TFALSE;
+		}
+
+		if ( bUpdateAnim )
+			it->Update( a_fDeltaTime );
+	}
+
 	return TTRUE;
 }
 

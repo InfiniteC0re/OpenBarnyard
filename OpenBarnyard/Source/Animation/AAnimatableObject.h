@@ -33,8 +33,9 @@ public:
 	using FLAGS = TUINT8;
 	enum FLAGS_ : FLAGS
 	{
-		FLAGS_NONE,
-		FLAGS_CREATED,
+		FLAGS_NONE         = 0,
+		FLAGS_CREATED      = BITFLAG( 0 ),
+		FLAGS_NO_ANIMATION = BITFLAG( 1 ),
 	};
 
 	using CREATE_FLAGS = TUINT;
@@ -49,6 +50,8 @@ public:
 	~AAnimatableObject();
 
 	TBOOL Create( AAnimatableObjectType* a_pObjectType, void* a_Unk1, CREATE_FLAGS a_eFlags = CREATE_FLAGS_NONE );
+	TBOOL Update( TFLOAT a_fDeltaTime );
+	void  UpdateAnimControllers( TFLOAT a_fDeltaTime );
 
 	// Starts animation immediately if possible, or schedules it to play later. Return TTRUE if started immediately.
 	TBOOL PlayAnimation( const Toshi::TPString8& a_strName );
@@ -57,6 +60,11 @@ public:
 
 	void SetVisible( TBOOL a_bVisible );
 	void SetSkeletonUpdating( TBOOL a_bUpdating, TBOOL a_bRecursive );
+
+	const Toshi::T2Vector<Toshi::TPString8, 2>& GetQueuedAnimations() const { return m_vecQueuedAnims; }
+
+	AModelInstanceRef GetModelInstance() { return m_pModelInstance; }
+	TBOOL IsAnimated() const { return !HASANYFLAG( m_eFlags, FLAGS_NO_ANIMATION ); }
 
 private:
 	// Immediately starts animation if possible. Returns TTRUE if started animation.
