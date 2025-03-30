@@ -167,6 +167,7 @@
 						udword				mModelCode;		//!< Model code = combination of ModelFlag(s)
 						AABBTree*			mSource;		//!< Original source tree
 						AABBOptimizedTree*	mTree;			//!< Optimized tree owned by the model
+	                    bool                mTreeShared;
 		// Internal methods
 						void				ReleaseBase();
 						bool				CreateTree(bool no_leaf, bool quantized);
