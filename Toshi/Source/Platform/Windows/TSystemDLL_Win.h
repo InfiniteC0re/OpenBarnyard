@@ -17,7 +17,7 @@ public:
 	void* GetAddress( const TString8& a_sSymbolName );
 
 	const TString8& GetFileName() const { return m_sFileName; }
-	void*         GetDLL() const { return m_pDLL; }
+	void*           GetDLL() const { return m_pDLL; }
 
 	TSystemDLLWin& operator=( const TSystemDLLWin& other );
 

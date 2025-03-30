@@ -64,7 +64,7 @@ public:
 	const Toshi::T2Vector<Toshi::TPString8, 2>& GetQueuedAnimations() const { return m_vecQueuedAnims; }
 
 	AModelInstanceRef GetModelInstance() { return m_pModelInstance; }
-	TBOOL IsAnimated() const { return !HASANYFLAG( m_eFlags, FLAGS_NO_ANIMATION ); }
+	TBOOL             IsAnimated() const { return !HASANYFLAG( m_eFlags, FLAGS_NO_ANIMATION ); }
 
 private:
 	// Immediately starts animation if possible. Returns TTRUE if started animation.
@@ -74,13 +74,13 @@ private:
 	void PlayQueuedAnimation();
 
 private:
-	AttachmentInfo                                m_oAttachmentInfo;
-	void*                                         m_pUnk1;
-	AAnimatableObjectType*                        m_pObjectType;
-	AToshiAnimationInterface                      m_oToshiAnimInterface;
-	AModelInstanceRef                             m_pModelInstance;
-	Toshi::T2DList<AAnimController>               m_llAnimControllers;
-	Toshi::T2Vector<Toshi::TPString8, 2>          m_vecQueuedAnims;
-	Toshi::T2SList<AAnimatableObject>             m_llAttachedObjects;
-	FLAGS                                         m_eFlags;
+	AttachmentInfo                       m_oAttachmentInfo;
+	void*                                m_pUnk1;
+	AAnimatableObjectType*               m_pObjectType;
+	AToshiAnimationInterface             m_oToshiAnimInterface;
+	AModelInstanceRef                    m_pModelInstance;
+	Toshi::T2DList<AAnimController>      m_llAnimControllers;
+	Toshi::T2Vector<Toshi::TPString8, 2> m_vecQueuedAnims;
+	Toshi::T2SList<AAnimatableObject>    m_llAttachedObjects;
+	FLAGS                                m_eFlags;
 };

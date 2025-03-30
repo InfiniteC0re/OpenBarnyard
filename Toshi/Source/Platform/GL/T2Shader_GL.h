@@ -67,7 +67,7 @@ public:
 		};
 
 		UniformMeta()
-		{ }
+		{}
 
 		UniformMeta( GLint a_iId )
 		    : id( a_iId )
@@ -127,9 +127,9 @@ private:
 	void Use() const;
 
 private:
-	GLuint                                          m_uiProgram;
-	T2CompiledShader                                m_VShader;
-	T2CompiledShader                                m_FShader;
+	GLuint           m_uiProgram;
+	T2CompiledShader m_VShader;
+	T2CompiledShader m_FShader;
 
 	T2Map<TPString8, UniformMeta, TPString8::Comparator> m_UniformToSlotId;
 };

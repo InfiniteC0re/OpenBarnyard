@@ -52,7 +52,7 @@ public:
 	TFLOAT SetDestWeight( TFLOAT a_fDestWeight, TFLOAT a_fBlendInSpeed );
 	void   SetBlendInSpeed( TFLOAT a_fBlendInSpeed ) { m_fBlendInSpeed = a_fBlendInSpeed; }
 	void   SetBlendOutSpeed( TFLOAT a_fBlendOutSpeed ) { m_fBlendOutSpeed = a_fBlendOutSpeed; }
-	
+
 	void ChangeToManaged( TFLOAT a_fBlendOutSpeed );
 
 	Flags GetFlags() const { return m_eFlags; }

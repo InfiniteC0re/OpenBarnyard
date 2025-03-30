@@ -23,8 +23,8 @@ public:
 	ANamedAnimationTransition();
 	~ANamedAnimationTransition();
 
-	void SetTransitionName( const Toshi::TPString8& a_strName );
-	void SetAnimationName( const Toshi::TPString8& a_strName );
+	void                    SetTransitionName( const Toshi::TPString8& a_strName );
+	void                    SetAnimationName( const Toshi::TPString8& a_strName );
 	const Toshi::TPString8& GetTransitionName();
 	const Toshi::TPString8& GetAnimationName();
 

@@ -106,7 +106,7 @@ TBOOL T2Shader::SetUniform( const TPString8& a_strSlotName, const TINT* a_pValue
 TBOOL T2Shader::SetUniform( const TPString8& a_strSlotName, TINT a_iValue )
 {
 	UniformMeta& meta = GetUniformSlotId( a_strSlotName );
-	
+
 	if ( meta.id < 0 )
 		return TFALSE;
 
@@ -142,7 +142,7 @@ TBOOL T2Shader::SetUniform( const TPString8& a_strSlotName, const TFLOAT* a_pVal
 TBOOL T2Shader::SetUniform( const TPString8& a_strSlotName, TFLOAT a_fValue )
 {
 	UniformMeta& meta = GetUniformSlotId( a_strSlotName );
-	
+
 	if ( meta.id < 0 )
 		return TFALSE;
 

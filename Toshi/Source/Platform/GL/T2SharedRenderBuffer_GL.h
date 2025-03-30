@@ -135,12 +135,12 @@ public:
 	}
 
 	RenderBuffer& GetRenderBuffer() { return m_oRenderBuffer; }
-	TBOOL IsCreated() const { return m_oRenderBuffer; }
+	TBOOL         IsCreated() const { return m_oRenderBuffer; }
 
 private:
-	RenderBuffer   m_oRenderBuffer;
-	TINT           m_iTotalSize;
-	TINT           m_iFreeSize;
+	RenderBuffer m_oRenderBuffer;
+	TINT         m_iTotalSize;
+	TINT         m_iFreeSize;
 
 	T2SortedVector<SubBuffer*, T2DynamicVector<SubBuffer*>, SubBufferSort> m_vecAllocations;
 };
@@ -152,6 +152,6 @@ inline void T2SharedRenderBuffer<RenderBuffer>::SubBuffer::Deallocate()
 }
 
 using T2SharedVertexBuffer = T2SharedRenderBuffer<T2VertexBuffer>;
-using T2SharedIndexBuffer = T2SharedRenderBuffer<T2IndexBuffer>;
+using T2SharedIndexBuffer  = T2SharedRenderBuffer<T2IndexBuffer>;
 
 TOSHI_NAMESPACE_END

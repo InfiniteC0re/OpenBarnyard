@@ -15,6 +15,7 @@ IncludeDir.glm = "%%{wks.location}/Toshi/Vendor/glm/include"
 IncludeDir.glew = "%{wks.location}/Toshi/Vendor/glew/include"
 IncludeDir.sdl2 = "%{wks.location}/Toshi/Vendor/sdl2/include"
 IncludeDir.libssl = "%{wks.location}/Toshi/Vendor/libssl/include"
+IncludeDir.opcode = "%{wks.location}/Toshi/Vendor/Opcode/source"
 
 LibDir = {}
 LibDir.fmod = "%{wks.location}/Toshi/Vendor/fmod/lib"

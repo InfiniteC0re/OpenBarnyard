@@ -35,13 +35,13 @@ public:
 	void SetIsLoadingScreen( TBOOL a_bLoadingScreen );
 
 private:
-	ARunTimeline     m_Timeline;
-	Toshi::THPTimer  m_Timer;
-	AGUITimer        m_LRTTimer;
-	AGUITimer        m_RTATimer;
+	ARunTimeline    m_Timeline;
+	Toshi::THPTimer m_Timer;
+	AGUITimer       m_LRTTimer;
+	AGUITimer       m_RTATimer;
 	//TFLOAT           m_flTime;
 	//TFLOAT           m_flGlobalTime;
-	TBOOL            m_bPaused;
-	TBOOL            m_bIsLoading;
-	TFLOAT           m_flSyncTimer;
+	TBOOL  m_bPaused;
+	TBOOL  m_bIsLoading;
+	TFLOAT m_flSyncTimer;
 };

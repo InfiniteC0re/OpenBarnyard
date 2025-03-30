@@ -48,9 +48,9 @@ public:
 	TBOOL SetShaderProgram( const T2Shader& a_rcShaderProgram );
 
 	GLuint GetTexture2D( TINT a_iTextureIndex );
-	void SetTexture2D( TINT a_iTextureIndex, GLuint a_uiTexture );
-	void SetTexture2D( TINT a_iTextureIndex, const T2GLTexture& a_rcTexture );
-	void ResetTexture2D( TINT a_iTextureIndex );
+	void   SetTexture2D( TINT a_iTextureIndex, GLuint a_uiTexture );
+	void   SetTexture2D( TINT a_iTextureIndex, const T2GLTexture& a_rcTexture );
+	void   ResetTexture2D( TINT a_iTextureIndex );
 
 	void EnableDepthTest( TBOOL a_bEnable );
 	void EnableBlend( TBOOL a_bEnable );

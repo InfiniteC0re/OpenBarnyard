@@ -11,12 +11,18 @@ project "OpenBarnyard"
 	links
 	{
 		"Toshi",
+		"OPCODE",
 		"binkw32.lib"
 	}
 	
 	linkoptions
 	{
 		"%{wks.location}/bin-int/" .. outputdir .. "/Toshi/Toshi.res",
+	}
+	
+	defines
+	{
+		"BAN_OPCODE_AUTOLINK"
 	}
 
 	files
@@ -30,8 +36,8 @@ project "OpenBarnyard"
 		"Source/Assets/**.cpp",
 		"Source/Cameras/**.h",
 		"Source/Cameras/**.cpp",
-		"Source/Fx/**.h",
-		"Source/Fx/**.cpp",
+		"Source/Helpers/**.h",
+		"Source/Helpers/**.cpp",
 		"Source/GameInterface/**.h",
 		"Source/GameInterface/**.cpp",
 		"Source/GUI/**.h",
@@ -72,10 +78,7 @@ project "OpenBarnyard"
 		"%{wks.location}/Shared/Source",
 		"%{IncludeDir.fmod}",
 		"%{IncludeDir.bink}",
-		"%{IncludeDir.libtheora}",
-		"%{IncludeDir.libogg}",
-		"%{IncludeDir.libvorbis}",
-		"%{IncludeDir.theoraplay}",
+		"%{IncludeDir.opcode}",
 		"%{IncludeDir.stb}"
 	}
 	

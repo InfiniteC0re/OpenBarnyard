@@ -127,7 +127,7 @@ public:
 	T2Iterator operator--()
 	{
 		TASSERT( m_pPtr != TNULL );
-		m_pPtr = TSTATICCAST(T, TSTATICCAST( Node, m_pPtr )->Prev() );
+		m_pPtr = TSTATICCAST( T, TSTATICCAST( Node, m_pPtr )->Prev() );
 		return T2Iterator{ m_pPtr };
 	}
 

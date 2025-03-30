@@ -11,7 +11,7 @@
 
 TOSHI_NAMESPACE_USING
 
-static TUINT64 s_uiPerformanceFrequency = 0;
+static TUINT64 s_uiPerformanceFrequency   = 0;
 static TBOOL   s_bGotPerformanceFrequency = TFALSE;
 
 ARunTimeline::ARunTimeline()
@@ -145,10 +145,10 @@ void ARunTimeline::SaveToFile( const TCHAR* a_pchBaseName )
 	pFile->Write( &m_uiStartTime, sizeof( m_uiStartTime ) );
 	pFile->Write( &m_uiDuration, sizeof( m_uiDuration ) );
 	pFile->Write( &m_uiDurationNoLoads, sizeof( m_uiDurationNoLoads ) );
-	
+
 	// Write the events
 	TINT iNumEvents = m_vecEvents.Size();
-	pFile->Write( &iNumEvents, sizeof(iNumEvents) );
+	pFile->Write( &iNumEvents, sizeof( iNumEvents ) );
 
 	TINT iDataCursor = 0;
 

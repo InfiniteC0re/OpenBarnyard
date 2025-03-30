@@ -13,7 +13,7 @@ TOSHI_NAMESPACE_START
 T2FrameBuffer::T2FrameBuffer()
 {
 	m_uiFBO = 0;
-	
+
 	for ( TINT i = 0; i < TARRAYSIZE( m_aAttachments ); i++ )
 	{
 		m_aAttachments[ i ] = 0;
@@ -95,7 +95,7 @@ void T2FrameBuffer::CreateDepthTexture( GLsizei a_iWidth, GLsizei a_iHeight )
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER );
 
 	TFLOAT borderColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-	glTexParameterfv( GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor );  
+	glTexParameterfv( GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor );
 
 	glFramebufferTexture2D( GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, uiTexture, 0 );
 	m_uiDepthTexture = uiTexture;

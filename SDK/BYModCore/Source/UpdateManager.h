@@ -18,4 +18,4 @@ void AskAutoUpdate();
 
 TBOOL CheckVersion( Toshi::T2StringView strUpdateInfoUrl, Toshi::TVersion uiCurrentVersion, VersionInfo* pOutVersionInfo );
 
-}
+} // namespace UpdateManager

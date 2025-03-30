@@ -341,7 +341,7 @@ TString8& TString8::Reserve( TINT size )
 
 		// Reallocate buffer if necessary
 		TBOOL bAllocated = AllocBuffer( size, TFALSE );
-		
+
 		// Update excess length
 		TASSERT( iCopySize <= size );
 		AllocBuffer( iCopySize, TFALSE );

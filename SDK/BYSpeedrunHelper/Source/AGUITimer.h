@@ -19,7 +19,7 @@ public:
 	void Reset() { SetTime( 0.0f ); }
 	void SetTime( FLOAT a_fTime ) { m_fTotalTime = a_fTime; }
 
-	TBOOL  IsValid() { return m_pTextBox; }
+	TBOOL IsValid() { return m_pTextBox; }
 
 	TFLOAT GetTotalTime() const { return m_fTotalTime; }
 

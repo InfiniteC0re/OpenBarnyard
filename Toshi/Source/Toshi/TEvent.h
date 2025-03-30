@@ -8,7 +8,7 @@ class TGenericEmitter;
 class TGenericListener : public TPriList<TGenericListener>::TNode
 {
 public:
-	using t_Callback = TBOOL ( __stdcall* )( void* a_pCaller, void* a_pOwner, void* a_pData );
+	using t_Callback = TBOOL( __stdcall* )( void* a_pCaller, void* a_pOwner, void* a_pData );
 	friend class TGenericEmitter;
 
 public:
@@ -64,7 +64,7 @@ template <typename Owner, typename Data, typename Caller>
 class TListener : public TGenericListener
 {
 public:
-	using t_CallerCallback = TBOOL ( __stdcall* )( Caller* a_pCaller, Owner* a_pOwner, Data* a_pData );
+	using t_CallerCallback = TBOOL( __stdcall* )( Caller* a_pCaller, Owner* a_pOwner, Data* a_pData );
 
 public:
 	void Connect( TGenericEmitter& a_rEmitter, Caller* a_pCaller, t_CallerCallback a_pCallback, TINT a_iPriority )

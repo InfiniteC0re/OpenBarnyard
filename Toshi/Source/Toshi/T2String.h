@@ -74,7 +74,7 @@ private:
 	const CharType* m_pszString;
 };
 
-using T2StringView  = T2StringViewBase<T2StringTraits<TCHAR>>;
+using T2StringView   = T2StringViewBase<T2StringTraits<TCHAR>>;
 using T2StringView16 = T2StringViewBase<T2StringTraits<TWCHAR>>;
 
 //-----------------------------------------------------------------------------

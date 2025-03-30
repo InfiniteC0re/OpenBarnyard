@@ -258,7 +258,7 @@ public:
 			if ( pGameStateController->GetNumStates() >= 1 )
 			{
 				TSystemManager* pSystemManager = (TSystemManager*)0x007ce640;
-				TClass* pStateClass = pGameStateController->GetCurrentState()->GetClass();
+				TClass*         pStateClass    = pGameStateController->GetCurrentState()->GetClass();
 
 				if ( pStateClass == s_AChickenCoopDefender )
 				{

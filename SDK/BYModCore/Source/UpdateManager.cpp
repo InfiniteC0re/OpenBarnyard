@@ -113,7 +113,7 @@ void UpdateManager::AskAutoUpdate()
 
 			TINFO( "Successfully updated the ModCore!\n" );
 			MessageBoxA( NULL, "Successfully updated the ModCore!\n\nRestart the game to continue.", "Barnyard ModLoader", MB_OK );
-			
+
 			ExitProcess( 0 );
 		}
 	}

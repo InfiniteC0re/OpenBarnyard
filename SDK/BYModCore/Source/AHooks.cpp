@@ -255,11 +255,11 @@ MEMBER_HOOK( 0x00662d90, AOptions, AOptions_IsResolutionCompatible, TBOOL, TINT 
 	if ( a_iWidth > windowRect.right || a_iHeight > windowRect.bottom )
 	{
 		TWARN( "Wrong resolution is set (%dx%d), changing it to fit the whole screen (%dx%d)...\n", a_iWidth, a_iHeight, windowRect.right, windowRect.bottom );
-		a_iWidth  = windowRect.right;
-		a_iHeight = windowRect.bottom;
+		a_iWidth     = windowRect.right;
+		a_iHeight    = windowRect.bottom;
 		*pIsWindowed = TFALSE;
 	}
-	
+
 	TINFO( "Launching the game in %s mode\n", ( *pIsWindowed ) ? "windowed" : "fullscreen" );
 
 	if ( *pIsWindowed == TFALSE )
@@ -351,7 +351,6 @@ MEMBER_HOOK( 0x00614d70, ADisplayModes_Win, ADisplayModes_Win_DoesModeExist, TBO
 
 MEMBER_HOOK( 0x006c66b0, TRenderD3DInterface, TRenderD3DInterface_UpdateColourSettings, void )
 {
-	
 }
 
 MEMBER_HOOK( 0x006bb000, TTRB, TTRB_Load, TINT, const char* a_szFileName, TUINT a_uiUnk )
@@ -849,7 +848,7 @@ MEMBER_HOOK( 0x006bbb00, TSystemManager, TSystemManager_Update, void )
 MEMBER_HOOK( 0x006dce90, Toshi::TNativeFile, TNativeFile_FlushWriteBuffer, TINT )
 {
 	if ( m_WriteBufferUsed == 0 ) [[likely]]
-		 return 0;
+		return 0;
 	else
 		return CallOriginal();
 }

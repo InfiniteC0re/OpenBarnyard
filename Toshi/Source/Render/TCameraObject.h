@@ -7,8 +7,8 @@ TOSHI_NAMESPACE_START
 class TCameraObject
 {
 public:
-	static constexpr TFLOAT s_kMinFOV = ( 1.0f / 180.0f ) * TMath::PI;
-	static constexpr TFLOAT s_kMaxFOV = TMath::PI;
+	inline static constexpr TFLOAT s_kMinFOV = ( 1.0f / 180.0f ) * TMath::PI;
+	inline static constexpr TFLOAT s_kMaxFOV = TMath::PI;
 
 public:
 	TCameraObject();
@@ -80,13 +80,13 @@ public:
 	}
 
 private:
-	TFLOAT                      m_fNear;
-	TFLOAT                      m_fFar;
-	TFLOAT                      m_fFOV;
+	TFLOAT                     m_fNear;
+	TFLOAT                     m_fFar;
+	TFLOAT                     m_fFOV;
 	TINT                       m_Unk1;
 	TRenderContext::CameraMode m_eMode;
-	TFLOAT                      m_fCentreX;
-	TFLOAT                      m_fCentreY;
+	TFLOAT                     m_fCentreX;
+	TFLOAT                     m_fCentreY;
 	TTransformObject           m_TransformObject;
 	TBOOL                      m_bEnabled;
 };

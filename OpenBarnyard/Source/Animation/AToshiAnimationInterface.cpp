@@ -79,7 +79,7 @@ void AToshiAnimationInterface::Update( TFLOAT a_fDeltaTime, AnimEventList& a_rEv
 AToshiAnimationRef* AToshiAnimationInterface::PlayAnim( const TPString8& a_strName, TFLOAT a_fWeight, TBOOL a_bStartNewAnimation )
 {
 	// Check if this animation is not already playing
-	AToshiAnimationRef* pAnimRef = FindAnimationRef( a_strName ); 
+	AToshiAnimationRef* pAnimRef = FindAnimationRef( a_strName );
 	pAnimRef                     = FindAnimationRef( a_strName ); // ???
 
 	if ( pAnimRef )
@@ -119,7 +119,7 @@ AToshiAnimationRef* AToshiAnimationInterface::PlayAnim( const TPString8& a_strNa
 
 	// Client didn't require starting new animation and some animations are already playing...
 	ANamedAnimationTransition* pTransition;
-	TBOOL bHasTransition = GetAnimationTransition( m_llAnimRefs, a_strName, pAnimRef, pTransition );
+	TBOOL                      bHasTransition = GetAnimationTransition( m_llAnimRefs, a_strName, pAnimRef, pTransition );
 
 	if ( bHasTransition )
 	{
@@ -132,7 +132,7 @@ AToshiAnimationRef* AToshiAnimationInterface::PlayAnim( const TPString8& a_strNa
 	}
 
 	// There's currently no transition of this animation
-	pAnimRef = m_llAnimRefs.Head();
+	pAnimRef                           = m_llAnimRefs.Head();
 	ANamedAnimation* pCurrentAnimation = pAnimRef->GetNamedAnimation();
 
 	// Set transition settings
@@ -155,7 +155,7 @@ TAnimation* AToshiAnimationInterface::PlayAnimImpl( ANamedAnimation* a_pNamedAni
 
 	m_fTime = 0.0f;
 
-	TFLOAT fBlendInTime = ( a_pTransition ) ? a_pTransition->GetBlendInTime() : a_pNamedAnimation->GetDefaultBlendInTime();
+	TFLOAT fBlendInTime  = ( a_pTransition ) ? a_pTransition->GetBlendInTime() : a_pNamedAnimation->GetDefaultBlendInTime();
 	TFLOAT fBlendOutTime = a_pNamedAnimation->GetDefaultBlendOutTime();
 
 	ANamedAnimationTransition* pDestTransition = a_pNamedAnimation->GetTransitionSet().GetDestTransition();
@@ -183,7 +183,7 @@ TAnimation* AToshiAnimationInterface::PlayAnimImpl( ANamedAnimation* a_pNamedAni
 void AToshiAnimationInterface::UpdateAnimations( Toshi::T2DList<AToshiAnimationRef>& a_rList, TFLOAT a_fDeltaTime, AnimEventList& a_rEventList )
 {
 	auto it = a_rList.Begin();
-	
+
 	while ( TTRUE )
 	{
 		// Look for an animation that is about to end/is already over
@@ -217,7 +217,7 @@ void AToshiAnimationInterface::UpdateAnimations( Toshi::T2DList<AToshiAnimationR
 		if ( pNamedAnimation )
 		{
 			ANamedAnimationTransition* pTransition = pAnimRef->GetTransition();
-			
+
 			// If no transition is set to this animref, use default transition specified for this animation
 			if ( !pTransition )
 				pTransition = pAnimRef->GetNamedAnimation()->GetTransitionSet().GetDestTransition();
@@ -253,7 +253,7 @@ void AToshiAnimationInterface::UpdateAnimation( TFLOAT a_fDeltaTime, AToshiAnima
 	if ( !a_rAnimRef.m_bWasEverUpdated )
 	{
 		// Create initial ANIMEVENT_TYPE_STARTED event for this animation since it's the first time updating it
-		
+
 		AnimEvent& animEvent = a_rEventList.Push();
 		animEvent.SetSimpleEvent( ANIMEVENT_TYPE_START, pNamedAnimation->IsOverlay(), pNamedAnimation->GetName(), 0.0f );
 
@@ -464,7 +464,7 @@ TBOOL AToshiAnimationInterface::StopAnim( const AToshiAnimationRef& a_rcAnimatio
 			pAnimation->ChangeToManaged( pAnimation->GetBlendOutSpeed() );
 			return TTRUE;
 		}
-		
+
 		// Yeah, that's how this thing is in the original.
 		if ( pTransition->IsManaged() != TFALSE )
 		{
@@ -483,7 +483,7 @@ TBOOL AToshiAnimationInterface::StopAnim( const AToshiAnimationRef& a_rcAnimatio
 {
 	ANamedAnimation* pNamedAnimation = a_rcAnimationRef.m_pNamedAnimation;
 	if ( !pNamedAnimation ) return TFALSE;
-	
+
 	if ( TAnimation* pAnimation = m_pSkeletonInstance->GetAnimation( a_rcAnimationRef.GetSequenceId() ) )
 	{
 		if ( a_pTransition->IsManaged() )
@@ -509,7 +509,7 @@ void AToshiAnimationInterface::KillAllAnimations()
 // $Barnyard: FUNCTION 005835c0
 TBOOL AToshiAnimationInterface::SetAnimationTransition( AToshiAnimationRef& a_rAnimationRef, ANamedAnimationTransition* a_pTransition )
 {
-	a_rAnimationRef.m_pTransition = a_pTransition;
+	a_rAnimationRef.m_pTransition    = a_pTransition;
 	ANamedAnimation* pNamedAnimation = a_rAnimationRef.m_pNamedAnimation;
 
 	if ( pNamedAnimation )
@@ -563,7 +563,7 @@ AToshiAnimationRef* AToshiAnimationInterface::CreateOverlayAnimationRef( ANamedA
 	AToshiAnimationRef*        pAnimRef;
 	ANamedAnimationTransition* pTransition = TNULL;
 	GetAnimationTransition( m_llAnimRefs, a_pAnimation->GetName(), pAnimRef, pTransition );
-	
+
 	return CreateAnimationRef( m_llOverlayAnimRefs, a_pAnimation, a_fWeight, pTransition );
 }
 
@@ -594,11 +594,11 @@ void AToshiAnimationInterface::DestroyAnimReferences()
 
 AToshiAnimationRef::AToshiAnimationRef()
 {
-	m_pNamedAnimation = TNULL;
-	m_fWeight         = 1.0f;
-	m_fTime       = 0.0f;
-	m_pTransition     = TNULL;
-	m_bWasEverUpdated = TFALSE;
+	m_pNamedAnimation  = TNULL;
+	m_fWeight          = 1.0f;
+	m_fTime            = 0.0f;
+	m_pTransition      = TNULL;
+	m_bWasEverUpdated  = TFALSE;
 	m_iBreakpointIndex = 0;
 }
 

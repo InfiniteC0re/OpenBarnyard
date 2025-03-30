@@ -13,7 +13,6 @@ TOSHI_NAMESPACE_START
 
 TMutex::TMutex()
 {
-
 }
 
 TMutex::~TMutex()

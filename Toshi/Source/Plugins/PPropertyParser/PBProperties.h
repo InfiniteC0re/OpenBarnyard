@@ -18,7 +18,7 @@ struct PBPropertyLocaleString
 
 	constexpr PBPropertyLocaleString( TUINT a_uiIndex )
 	    : uiIndex( a_uiIndex )
-	{ }
+	{}
 
 	PBPropertyLocaleString& operator=( TUINT a_uiIndex )
 	{

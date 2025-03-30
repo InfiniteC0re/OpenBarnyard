@@ -22,7 +22,7 @@ public:
 	ANamedAnimation*           GetNamedAnimation() const { return m_pNamedAnimation; }
 	ANamedAnimationTransition* GetTransition() const { return m_pTransition; }
 
-	private:
+private:
 	ANamedAnimation*           m_pNamedAnimation;
 	TFLOAT                     m_fWeight;
 	TFLOAT                     m_fTime;
@@ -58,7 +58,7 @@ public:
 
 	struct AnimEventList
 	{
-		TINT     iNumEvents = 0;
+		TINT      iNumEvents = 0;
 		AnimEvent aEvents[ MAX_NUM_ANIMATIONS ];
 
 		AnimEvent& Head() { return aEvents[ 0 ]; }

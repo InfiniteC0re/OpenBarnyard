@@ -28,7 +28,7 @@ struct CellNode
 	TINT          Unknown;
 };
 
-struct Plane
+struct FrustumPlane
 {
 	Toshi::TPlane oPlane;
 	TUINT         uiClipFlag;
@@ -53,7 +53,7 @@ public:
 
 public:
 	TUINT16        aUnknown[ 6 ];
-	Plane          aFrustumPlanes[ 6 ];
+	FrustumPlane   aFrustumPlanes[ 6 ];
 	Toshi::TPlane* apActivePlanes[ 6 ];
 	TINT           iActivePlaneCount;
 };

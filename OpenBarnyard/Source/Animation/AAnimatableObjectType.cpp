@@ -211,7 +211,7 @@ TBOOL AAnimatableObjectType::SetAnimController( const PBProperties* a_pPropertie
 	a_pProperties->GetOptionalPropertyValue( strType, TPS8( Type ) );
 
 	TClass* pTypeClass = TClass::Find( strType, &TGetClass( AAnimControllerType ) );
-	
+
 	TASSERT( TNULL != pTypeClass );
 	if ( pTypeClass == TNULL ) return TFALSE;
 

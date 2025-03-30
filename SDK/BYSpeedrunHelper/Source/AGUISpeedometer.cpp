@@ -27,7 +27,7 @@ void AGUISpeedometer::Create()
 	m_pTextBox = AGUI2TextBox::CreateFromEngine();
 	m_pTextBox->Create( pFont, 200.0f );
 	m_pTextBox->SetText( L"0.00 m/s" );
-	
+
 	ApplyUIStyle();
 }
 

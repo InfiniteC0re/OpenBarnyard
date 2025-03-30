@@ -919,7 +919,7 @@ void* TMalloc( TUINT a_uiSize, Toshi::TMemory::MemBlock* a_pMemBlock, const TCHA
 
 	if ( a_pMemBlock )
 		return a_pMemBlock->Malloc( a_uiSize );
-	else 
+	else
 		return Toshi::g_pMemoryDL->GetContext().Malloc( a_uiSize );
 }
 

@@ -31,7 +31,7 @@ void AGUITimer::Create()
 	m_pTextBox = AGUI2TextBox::CreateFromEngine();
 	m_pTextBox->Create( pFont, 200.0f );
 	m_pTextBox->SetText( L"0.000" );
-	
+
 	ApplyUIStyle();
 }
 
@@ -41,7 +41,7 @@ void AGUITimer::ApplyUIStyle()
 		return;
 
 	m_pTextBox->SetColour( TCOLOR( TUINT( g_oSettings.vecHUDColor.x * 255.0f ), TUINT( g_oSettings.vecHUDColor.y * 255.0f ), TUINT( g_oSettings.vecHUDColor.z * 255.0f ) ) );
-	m_pTextBox->SetAlpha( g_oSettings.vecHUDColor.w  );
+	m_pTextBox->SetAlpha( g_oSettings.vecHUDColor.w );
 	m_pTextBox->SetInFront();
 	m_pTextBox->SetTextAlign( AGUI2Font::TextAlign_Left );
 	m_pTextBox->SetAttachment( AGUI2Element::Anchor_MiddleLeft, AGUI2Element::Pivot_MiddleLeft );
@@ -98,7 +98,7 @@ void AGUITimer::Render()
 
 void AGUITimer::EnablePrefix( const TWCHAR* a_wcsPrefix, TBOOL a_bEnable )
 {
-	m_wcsPrefix = a_wcsPrefix;
+	m_wcsPrefix      = a_wcsPrefix;
 	m_bPrefixEnabled = a_bEnable;
 }
 

@@ -10,7 +10,7 @@ union TVersion
 	TVersion() = default;
 	constexpr TVersion( TUINT32 a_uiVersion )
 	    : Value( a_uiVersion )
-	{ }
+	{}
 
 	struct
 	{

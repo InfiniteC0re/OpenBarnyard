@@ -22,7 +22,7 @@ ANamedAnimationTransition::~ANamedAnimationTransition()
 
 void ANamedAnimationTransition::SetTransitionName( const TPString8& a_strName )
 {
-    m_strTransitionName = a_strName;
+	m_strTransitionName = a_strName;
 }
 
 // $Barnyard: FUNCTION 00583330
@@ -157,7 +157,7 @@ ANamedAnimation::~ANamedAnimation()
 	{
 		delete ( *it );
 	}
-	
+
 	m_vecBreakpoints.Clear();
 }
 

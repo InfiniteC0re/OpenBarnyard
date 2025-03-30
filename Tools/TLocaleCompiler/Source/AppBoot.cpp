@@ -51,15 +51,15 @@ int main( int argc, char** argv )
 			char* pFileBuffer = new char[ uiFileSize + 1 ];
 
 			pTextFile->Read( pFileBuffer, uiFileSize );
-			pFileBuffer[ uiFileSize ]     = '\0';
+			pFileBuffer[ uiFileSize ] = '\0';
 			pTextFile->Destroy();
 
 			TArray<TString16> foundStrings;
 
-			T2FormatString2048  localeString;
-			TCHAR*              pFileStart  = TREINTERPRETCAST( TCHAR*, pFileBuffer );
-			TCHAR*              pFileEnd    = TREINTERPRETCAST( TCHAR*, pFileBuffer + uiFileSize );
-			TCHAR*              pFileCursor = TREINTERPRETCAST( TCHAR*, pFileBuffer );
+			T2FormatString2048 localeString;
+			TCHAR*             pFileStart  = TREINTERPRETCAST( TCHAR*, pFileBuffer );
+			TCHAR*             pFileEnd    = TREINTERPRETCAST( TCHAR*, pFileBuffer + uiFileSize );
+			TCHAR*             pFileCursor = TREINTERPRETCAST( TCHAR*, pFileBuffer );
 
 			while ( pFileCursor < pFileEnd )
 			{
@@ -68,7 +68,7 @@ int main( int argc, char** argv )
 
 				foundStrings.Push( Platform_UTF8ToUnicode( localeString.Get() ) );
 			}
-			
+
 			delete[] pFileBuffer;
 
 			TINFO( "Parsed %d locale strings.\n", foundStrings.Size() );
@@ -130,7 +130,7 @@ int main( int argc, char** argv )
 						}
 
 						finalString[ iPos ] = '\0';
-						
+
 						TString8 utf8String = Platform_UnicodeToUTF8( finalString.Get() );
 						pOutFile->CPrintf( "%s\n", utf8String.GetString() );
 					}

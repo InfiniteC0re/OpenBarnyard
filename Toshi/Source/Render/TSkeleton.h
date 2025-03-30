@@ -24,7 +24,7 @@ public:
 
 	TFORCEINLINE uint16_t* GetKey( size_t a_iKeyIndex )
 	{
-		return TREINTERPRETCAST( uint16_t*, a_iKeyIndex* m_iKeySize + TREINTERPRETCAST( uintptr_t, m_pData ) );
+		return TREINTERPRETCAST( uint16_t*, a_iKeyIndex * m_iKeySize + TREINTERPRETCAST( uintptr_t, m_pData ) );
 	}
 
 	TFORCEINLINE TUINT16 GetKeyCount() const
@@ -204,8 +204,8 @@ public:
 	void UpdateState( TBOOL a_bForceUpdate );
 
 	TMatrix44* GetBoneTransformCurrent( TINT a_iBone, TMatrix44& a_rMatrix );
-	void SetStateFromBasePose();
-	
+	void       SetStateFromBasePose();
+
 	void Delete();
 
 	TSkeleton*                   GetSkeleton() { return m_pSkeleton; }

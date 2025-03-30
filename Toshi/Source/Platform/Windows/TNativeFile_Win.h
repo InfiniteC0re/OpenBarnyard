@@ -31,19 +31,19 @@ public:
 	//-----------------------------------------------------------------------------
 	// TFile
 	//-----------------------------------------------------------------------------
-	virtual TSIZE     Read( void* a_pDst, TSIZE a_uiSize ) OVERRIDE;
-	virtual TSIZE     Write( const void* a_pSrc, TSIZE a_uiSize ) OVERRIDE;
-	virtual TBOOL     Seek( TINT a_iOffset, TSEEK a_eOrigin = TSEEK_CUR ) OVERRIDE;
-	virtual TSIZE     Tell() OVERRIDE;
-	virtual void      FlushBuffers() OVERRIDE;
-	virtual TSIZE     GetSize() OVERRIDE;
-	virtual TUINT64   GetDate() OVERRIDE;
-	virtual TCHAR     GetCChar() OVERRIDE;
-	virtual TWCHAR    GetWChar() OVERRIDE;
-	virtual TINT      PutCChar( TCHAR a_cCharacter ) OVERRIDE;
-	virtual TINT      PutWChar( TWCHAR a_wcCharacter ) OVERRIDE;
-	virtual TINT      CPrintf( const TCHAR* a_szFormat, ... ) OVERRIDE;
-	virtual TINT      WPrintf( const TWCHAR* a_wszFormat, ... ) OVERRIDE;
+	virtual TSIZE   Read( void* a_pDst, TSIZE a_uiSize ) OVERRIDE;
+	virtual TSIZE   Write( const void* a_pSrc, TSIZE a_uiSize ) OVERRIDE;
+	virtual TBOOL   Seek( TINT a_iOffset, TSEEK a_eOrigin = TSEEK_CUR ) OVERRIDE;
+	virtual TSIZE   Tell() OVERRIDE;
+	virtual void    FlushBuffers() OVERRIDE;
+	virtual TSIZE   GetSize() OVERRIDE;
+	virtual TUINT64 GetDate() OVERRIDE;
+	virtual TCHAR   GetCChar() OVERRIDE;
+	virtual TWCHAR  GetWChar() OVERRIDE;
+	virtual TINT    PutCChar( TCHAR a_cCharacter ) OVERRIDE;
+	virtual TINT    PutWChar( TWCHAR a_wcCharacter ) OVERRIDE;
+	virtual TINT    CPrintf( const TCHAR* a_szFormat, ... ) OVERRIDE;
+	virtual TINT    WPrintf( const TWCHAR* a_wszFormat, ... ) OVERRIDE;
 
 	TBOOL Open( const TString8& a_FileName, TFILEMODE a_Mode );
 

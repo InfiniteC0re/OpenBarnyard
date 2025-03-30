@@ -13,7 +13,6 @@ AHTTPClient::AHTTPClient()
     : m_pClient( TNULL )
     , m_bHTTPS( TFALSE )
 {
-
 }
 
 AHTTPClient::~AHTTPClient()
@@ -38,7 +37,7 @@ void AHTTPClient::Create( Toshi::T2StringView strUrl )
 		m_bHTTPS = TTRUE;
 	}
 
-	m_strBaseUrl = baseUrl.Get();
+	m_strBaseUrl  = baseUrl.Get();
 	TINT iPathPos = m_strBaseUrl.Find( '/' );
 
 	if ( iPathPos != -1 )
@@ -62,7 +61,7 @@ void AHTTPClient::Destroy()
 		delete m_pClient;
 		m_pClient = TNULL;
 	}
-	
+
 	if ( m_pSSLClient && m_bHTTPS )
 	{
 		delete m_pSSLClient;
@@ -86,7 +85,7 @@ httplib::Result AHTTPClient::Get()
 
 	if ( m_pClient && !m_bHTTPS )
 		return m_pClient->Get( m_strPath.GetString() );
-	
+
 	if ( m_pSSLClient && m_bHTTPS )
 		return m_pSSLClient->Get( m_strPath.GetString() );
 

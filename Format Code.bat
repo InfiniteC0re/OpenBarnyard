@@ -93,8 +93,8 @@
 .\Vendor\clang-format.exe -i .\OpenBarnyard\Source\Terrain\*.h
 .\Vendor\clang-format.exe -i .\OpenBarnyard\Source\World\*.cpp
 .\Vendor\clang-format.exe -i .\OpenBarnyard\Source\World\*.h
-.\Vendor\clang-format.exe -i .\OpenBarnyard\Source\Fx\*.cpp
-.\Vendor\clang-format.exe -i .\OpenBarnyard\Source\Fx\*.h
+.\Vendor\clang-format.exe -i .\OpenBarnyard\Source\Helpers\*.cpp
+.\Vendor\clang-format.exe -i .\OpenBarnyard\Source\Helpers\*.h
 
 .\Vendor\clang-format.exe -i .\SDK\BYardSDK\Source\*.cpp
 .\Vendor\clang-format.exe -i .\SDK\BYardSDK\Source\*.h

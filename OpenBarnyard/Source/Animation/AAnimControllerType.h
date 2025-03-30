@@ -13,6 +13,6 @@ public:
 	AAnimControllerType();
 	virtual ~AAnimControllerType();
 
-	virtual TBOOL Create( const PBProperties* a_pProperties );
+	virtual TBOOL          Create( const PBProperties* a_pProperties );
 	virtual Toshi::TClass* GetControllerClass() = 0;
 };

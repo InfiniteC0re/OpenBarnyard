@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "AGlowViewport.h"
-#include "Fx/AGameTimeManager.h"
+#include "Helpers/AGameTimeManager.h"
 
 #include <Render/TRenderInterface.h>
 
