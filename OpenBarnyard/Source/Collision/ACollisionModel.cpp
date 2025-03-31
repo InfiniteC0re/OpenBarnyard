@@ -20,3 +20,9 @@ ACollisionModel::ACollisionModel()
 ACollisionModel::~ACollisionModel()
 {
 }
+
+TBOOL ACollisionModel::Create( TINT a_iMeshIndex, Toshi::TModel* a_pModel )
+{
+	m_iMeshIndex = a_iMeshIndex;
+	m_pModel     = a_pModel;
+}

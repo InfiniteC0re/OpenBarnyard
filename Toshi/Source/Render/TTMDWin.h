@@ -70,6 +70,7 @@ struct TRBWinHeader
 		return TREINTERPRETCAST( TRBLODHeader*, this + 1 ) + a_uiIndex;
 	}
 };
+
 }; // namespace TTMDWin
 
 TOSHI_NAMESPACE_END

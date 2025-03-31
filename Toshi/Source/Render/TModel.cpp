@@ -14,18 +14,18 @@ TOSHI_NAMESPACE_START
 // $Barnyard: FUNCTION 006cdf20
 TModel::TModel()
 {
-	m_eFlags             = Flags_None;
-	m_iNumInstances      = 0;
-	m_iLODCount          = 0;
-	m_pSkeleton          = TNULL;
-	m_pCollision         = TNULL;
-	m_pCollisionData     = TNULL;
-	m_pTRB               = TNULL;
-	m_bIsAssetFile       = TFALSE;
-	m_aLODDistances[ 0 ] = 5.0f;
-	m_aLODDistances[ 1 ] = 20.0f;
-	m_aLODDistances[ 2 ] = m_aLODDistances[ 1 ] + m_aLODDistances[ 1 ];
-	m_aLODDistances[ 3 ] = m_aLODDistances[ 2 ] + m_aLODDistances[ 2 ];
+	m_eFlags              = Flags_None;
+	m_iNumInstances       = 0;
+	m_iLODCount           = 0;
+	m_iNumCollisionMeshes = 0;
+	m_pSkeleton           = TNULL;
+	m_pCollisionMeshes    = TNULL;
+	m_pTRB                = TNULL;
+	m_bIsAssetFile        = TFALSE;
+	m_aLODDistances[ 0 ]  = 5.0f;
+	m_aLODDistances[ 1 ]  = 20.0f;
+	m_aLODDistances[ 2 ]  = m_aLODDistances[ 1 ] + m_aLODDistances[ 1 ];
+	m_aLODDistances[ 3 ]  = m_aLODDistances[ 2 ] + m_aLODDistances[ 2 ];
 }
 
 // $Barnyard: FUNCTION 006cdff0
@@ -39,9 +39,8 @@ TBOOL TModel::LoadTRB()
 {
 	TASSERT( m_eFlags & Flags_Created );
 
-	auto pSkeletonHeader = TSTATICCAST( TTMDBase::SkeletonHeader, GetSymbol( "SkeletonHeader" ) );
-
-	if ( pSkeletonHeader )
+	// Load skeleton
+	if ( auto pSkeletonHeader = TSTATICCAST( TTMDBase::SkeletonHeader, GetSymbol( "SkeletonHeader" ) ) )
 	{
 		m_pSkeleton   = TSTATICCAST( TSkeleton, GetSymbol( "Skeleton" ) );
 		auto pLibrary = TRenderInterface::GetSingleton()->GetKeyframeLibraryManager().GetLibrary( pSkeletonHeader->m_szTKLName );
@@ -56,9 +55,50 @@ TBOOL TModel::LoadTRB()
 		);
 	}
 
-	m_pCollision = *TSTATICCAST( void*, GetSymbol( "Collision" ) );
-	TTODO( "Load collision data" );
+	// Load collision
+	auto pCollisionHeader = TSTATICCAST( TTMDBase::CollisionHeader, GetSymbol( "Collision" ) );
+	TASSERT( TNULL != pCollisionHeader );
 
+	m_iNumCollisionMeshes = pCollisionHeader->m_iNumMeshes;
+	m_pCollisionMeshes    = new TModelCollisionMesh[ pCollisionHeader->m_iNumMeshes ];
+
+	// Copy info about the collision meshes
+	for ( TINT i = 0; i < pCollisionHeader->m_iNumMeshes; i++ )
+	{
+		auto&       collisionMesh       = m_pCollisionMeshes[ i ];
+		const auto& collisionMeshHeader = pCollisionHeader->m_pMeshes[ i ];
+
+		// Copy base info
+		collisionMesh.m_Unk1          = collisionMeshHeader.m_Unk1;
+		collisionMesh.m_pVertices     = collisionMeshHeader.m_pVertices;
+		collisionMesh.m_uiNumVertices = collisionMeshHeader.m_uiNumVertices;
+		collisionMesh.m_pIndices      = collisionMeshHeader.m_pIndices;
+		collisionMesh.m_uiNumIndices  = collisionMeshHeader.m_uiNumIndices;
+
+		// Reserve space for collision types
+		collisionMesh.m_vecCollTypes.SetSize( collisionMeshHeader.m_uiNumCollTypes, TModelCollisionType{} );
+
+		// Copy collision types
+		for ( TUINT k = 0; k < collisionMeshHeader.m_uiNumCollTypes; k++ )
+		{
+			collisionMesh.m_vecCollTypes[ k ].strName = collisionMeshHeader.m_pCollTypes[ k ].pszName;
+			collisionMesh.m_vecCollTypes[ k ].uiUnk1  = collisionMeshHeader.m_pCollTypes[ k ].iUnk1;
+			collisionMesh.m_vecCollTypes[ k ].uiUnk2  = collisionMeshHeader.m_pCollTypes[ k ].iUnk2;
+
+			// TODO: figure out what it is
+			collisionMesh.m_vecCollTypes[ k ].vecS1.SetSize( collisionMeshHeader.m_pCollTypes[ k ].iSomeCount );
+			collisionMesh.m_vecCollTypes[ k ].uiUnk3 = 0;
+			collisionMesh.m_vecCollTypes[ k ].uiUnk4 = 0;
+
+			for ( TINT j = 0; j < collisionMeshHeader.m_pCollTypes[ k ].iSomeCount; j++ )
+			{
+				collisionMesh.m_vecCollTypes[ k ].vecS1[ j ].uiUnk1 = collisionMeshHeader.m_pCollTypes[ k ].pS1[ j ].uiUnk1;
+				collisionMesh.m_vecCollTypes[ k ].vecS1[ j ].uiUnk2 = collisionMeshHeader.m_pCollTypes[ k ].pS1[ j ].uiUnk2;
+			}
+		}
+	}
+
+	// Now let some client modelloader handle this
 	TASSERT( ms_cbModelLoaderTRB != TNULL, "Loader callback is not specified" );
 	ms_cbModelLoaderTRB( this );
 
@@ -122,12 +162,12 @@ void TModel::UnloadTRB()
 
 	m_bIsAssetFile = TFALSE;
 
-	if ( m_pCollisionData )
+	if ( m_pCollisionMeshes )
 	{
 		TASSERT( TFALSE, "Unload collision data" );
 	}
 
-	m_pCollisionData = TNULL;
+	m_pCollisionMeshes = TNULL;
 	m_eFlags &= Flags_Loaded;
 }
 

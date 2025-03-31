@@ -88,20 +88,19 @@ public:
 	TBOOL LoadTRB();
 	TBOOL LoadTRB( TTRB* a_pTRB );
 	TBOOL LoadTRB( const TCHAR* a_szFileName, TTRB* a_pAssetTRB, TUINT8 a_ui8FileNameLen );
-
-	TTRB* GetTRB() const { return m_pTRB; }
-
 	void UnloadTRB();
 
-	void* GetSymbol( const TCHAR* a_szSymbolName );
-
 	TModelInstance* CreateInstance();
+
+	void* GetSymbol( const TCHAR* a_szSymbolName );
 
 	TBOOL IsCreated() const { return m_eFlags & Flags_Created; }
 	TBOOL IsLoaded() const { return m_eFlags & Flags_Loaded; }
 
 	void SetNumLODs( TINT a_iNumLODs ) { m_iLODCount = a_iNumLODs; }
 	TINT GetNumLODs() const { return m_iLODCount; }
+
+	TTRB* GetTRB() const { return m_pTRB; }
 
 	TModelLOD& GetLOD( TUINT32 a_uiLOD )
 	{
@@ -133,25 +132,20 @@ private:
 	inline static t_ModelLoaderTMDCallback ms_cbModelLoaderTMD;
 	inline static t_ModelLoaderTRBCallback ms_cbModelLoaderTRB;
 
-#ifndef TOSHI_SDK
-protected:
-#else
 public:
-#endif
-
-	Flags        m_eFlags;
-	TINT         m_iNumInstances;
-	TINT         m_iLODCount;
-	TFLOAT       m_fLODDistance; // ?
-	TSkeleton*   m_pSkeleton;
-	TModelLOD    m_LODs[ MAX_NUM_LODS ];
-	TFLOAT       m_aLODDistances[ 4 ];
-	void*        m_pCollision;
-	void*        m_pCollisionData;
-	TTRB*        m_pTRB;
-	const TCHAR* m_szSymbolPrefix;
-	TUINT8       m_szSymbolPrefixLength;
-	TBOOL        m_bIsAssetFile;
+	Flags                m_eFlags;
+	TINT                 m_iNumInstances;
+	TINT                 m_iLODCount;
+	TFLOAT               m_fLODDistance; // ?
+	TSkeleton*           m_pSkeleton;
+	TModelLOD            m_LODs[ MAX_NUM_LODS ];
+	TFLOAT               m_aLODDistances[ 4 ];
+	TINT                 m_iNumCollisionMeshes;
+	TModelCollisionMesh* m_pCollisionMeshes;
+	TTRB*                m_pTRB;
+	const TCHAR*         m_szSymbolPrefix;
+	TUINT8               m_szSymbolPrefixLength;
+	TBOOL                m_bIsAssetFile;
 };
 
 TOSHI_NAMESPACE_END

@@ -385,6 +385,17 @@ public:
 		m_iNumElements = a_iNewSize;
 	}
 
+	void SetSize( TINT a_iNewSize, const T& a_rcValue )
+	{
+		Reserve( a_iNewSize );
+
+		TINT iOldNumElements = m_iNumElements;
+		m_iNumElements       = a_iNewSize;
+
+		for ( TINT i = iOldNumElements; i < a_iNewSize; i++ )
+			new ( &AtUnsafe( i ) ) T( a_rcValue );
+	}
+
 	TINT Capacity() const
 	{
 		return m_iAllocSize;

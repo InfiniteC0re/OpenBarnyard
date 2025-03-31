@@ -8,10 +8,14 @@ public:
 	ACollisionModel();
 	virtual ~ACollisionModel();
 
+	TBOOL Create( TINT a_iMeshIndex, Toshi::TModel* a_pModel );
+
 private:
 	// ...
-	Toshi::TModel* m_pModel;
-	// ...
+	TFLOAT                m_fUnk1;
+	TFLOAT                m_fUnk2;
+	Toshi::TModel*        m_pModel;
+	TINT                  m_iMeshIndex;
 	Opcode::Model         m_OpcodeModel;
 	Opcode::MeshInterface m_MeshInterface;
 };

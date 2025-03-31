@@ -94,7 +94,7 @@ int main( int argc, char** argv )
 		auto pInSkeletonHeader = pInSYMB->Find<TTMDBase::SkeletonHeader>( pInSECT, "SkeletonHeader" );
 		auto pInSkeleton       = pInSYMB->Find<TSkeleton>( pInSECT, "Skeleton" );
 		auto pInMaterials      = pInSYMB->Find<TTMDBase::MaterialsHeader>( pInSECT, "Materials" );
-		auto pInCollision      = pInSYMB->Find<TTMDBase::Collision>( pInSECT, "Collision" );
+		auto pInCollision      = pInSYMB->Find<TTMDBase::CollisionHeader>( pInSECT, "Collision" );
 		auto pInHeader         = pInSYMB->Find<TTMDWin::TRBWinHeader>( pInSECT, "Header" );
 
 		const TBOOL bIsSkin      = pInFileHeader;
@@ -182,7 +182,7 @@ int main( int argc, char** argv )
 
 		TINFO( "  Materials Size: %u\n", pInMaterials->uiSectionSize );
 		TINFO( "  Material Count: %d\n", pInMaterials->iNumMaterials );
-		TINFO( "  Collision Model Count: %i\n", pInCollision->m_iNumModels );
+		TINFO( "  Collision Mesh Count: %i\n", pInCollision->m_iNumMeshes );
 		TINFO( "  LOD Count: %i\n", pInHeader->m_iNumLODs );
 		TINFO( "  LOD Distance: %f\n", pInHeader->m_fLODDistance );
 

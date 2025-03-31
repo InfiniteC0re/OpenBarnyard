@@ -46,27 +46,43 @@ struct MaterialsHeader
 	}
 };
 
-struct CollisionModel
+struct CollisionTypeS1
 {
-	TUINT32   m_Unk1;
-	TVector3* m_pVertices;
-	TUINT32   m_uiNumVertices;
-	TUINT16*  m_pIndices;
-	TUINT32   m_uiNumIndices;
-	TUINT32   m_uiNumCollTypes;
-	TCHAR**   m_pszCollName;
-	TUINT32   m_Unk3;
+	TUINT16 uiUnk1;
+	TUINT16 uiUnk2;
 };
 
-struct Collision
+struct CollisionType
 {
-	TINT            m_iNumModels;
-	CollisionModel* m_pModels;
+	const TCHAR*     pszName;
+	TUINT            iUnk1;
+	TUINT            iUnk2;
+	TUINT            iUnk3;
+	TINT            iSomeCount;
+	CollisionTypeS1* pS1;
+};
+
+struct CollisionMesh
+{
+	TUINT32        m_Unk1;
+	TVector3*      m_pVertices;
+	TUINT32        m_uiNumVertices;
+	TUINT16*       m_pIndices;
+	TUINT32        m_uiNumIndices;
+	TUINT32        m_uiNumCollTypes;
+	CollisionType* m_pCollTypes;
+};
+
+struct CollisionHeader
+{
+	TINT           m_iNumMeshes;
+	CollisionMesh* m_pMeshes;
 };
 
 struct Mesh
 {
 };
+
 } // namespace TTMDBase
 
 TOSHI_NAMESPACE_END
