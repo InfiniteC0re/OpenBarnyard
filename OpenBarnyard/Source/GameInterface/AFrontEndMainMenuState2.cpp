@@ -2,6 +2,7 @@
 #include "AFrontEndMainMenuState2.h"
 #include "AGameStateController.h"
 #include "Locale/ALocaleManager.h"
+#include "Helpers/ASimAnimModelHelperManager.h"
 #include "GUI/AGUI2FontManager.h"
 #include "GUI/AGUI2.h"
 #include "GUI/AFadeManager.h"
@@ -25,10 +26,10 @@ TOSHI_NAMESPACE_USING
 
 TDEFINE_CLASS( AFrontEndMainMenuState2 );
 
-AFrontEndMainMenuState2::AFrontEndMainMenuState2( void* a_pUnk, TBOOL a_bFlag )
+AFrontEndMainMenuState2::AFrontEndMainMenuState2( AWindmillHelper* a_pWindmillHelper, TBOOL a_bFlag )
 {
 	m_iActivatedButtonID = -1;
-	m_pUnk1              = a_pUnk;
+	m_pWindmillHelper    = a_pWindmillHelper;
 	m_bFlag              = a_bFlag;
 	m_fAFKTime           = 0.0f;
 
@@ -122,16 +123,22 @@ TBOOL AFrontEndMainMenuState2::OnUpdate( TFLOAT a_fDeltaTime )
 	return BaseClass::OnUpdate( a_fDeltaTime );
 }
 
+// $Barnyard: FUNCTION 00409070
 void AFrontEndMainMenuState2::OnInsertion()
 {
+	// Note: commented out because it gives black screen atm
 	//if ( !m_bFlag )
 	//	AGameStateController::GetSingleton()->SetFlags( 4 );
 
 	ms_bIsInserted = TTRUE;
 
-	if ( m_pUnk1 == TNULL )
+	if ( !m_pWindmillHelper )
+	// Create windmill helper and a barn sign
 	{
-		TTODO( "Create some helper?" );
+		m_pWindmillHelper = new AWindmillHelper();
+		ASimAnimModelHelperManager::GetSingleton()->AddModelHelper( m_pWindmillHelper );
+
+		m_pWindmillHelper->CreateBarnSign();
 	}
 
 	AGUI2Font* pFont = AGUI2FontManager::FindFont( AGUI2STYLE_FONT_PRIMARY );

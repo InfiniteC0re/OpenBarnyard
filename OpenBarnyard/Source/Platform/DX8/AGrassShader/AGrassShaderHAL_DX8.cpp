@@ -234,9 +234,15 @@ void AGrassShaderHAL::Render( Toshi::TRenderPacket* a_pRenderPacket )
 	
 		ACamera* pCamera         = ACameraManager::GetSingleton()->GetCurrentCamera();
 		TVector4 vecCamPos       = pCamera->GetMatrix().GetTranslation();
-		TSphere  vecMeshBounding = pMesh->GetCellMeshSphere()->m_BoundingSphere;
 
-		TFLOAT fDistanceToCamera = TVector4::DistanceXZ( vecMeshBounding.AsVector4(), vecCamPos ) - vecMeshBounding.GetRadius();
+		// Transform coordinates to the actual world position, since they are exported rotated
+		TVector4 vecMeshBounding;
+		vecMeshBounding.x = pMesh->GetCellMeshSphere()->m_BoundingSphere.AsVector4().x;
+		vecMeshBounding.y = -pMesh->GetCellMeshSphere()->m_BoundingSphere.AsVector4().z;
+		vecMeshBounding.z = pMesh->GetCellMeshSphere()->m_BoundingSphere.AsVector4().y;
+		vecMeshBounding.w = pMesh->GetCellMeshSphere()->m_BoundingSphere.GetRadius();
+		
+		TFLOAT fDistanceToCamera = TVector4::DistanceXZ( vecMeshBounding, vecCamPos ) - vecMeshBounding.w;
 
 		if ( fDistanceToCamera <= 100.0f )
 		{

@@ -7,6 +7,7 @@
 #include "Terrain/ATerrainInterface.h"
 #include "Sound/AMusicManager.h"
 #include "Animation/AAnimatableObjectManager.h"
+#include "Helpers/ASimAnimModelHelperManager.h"
 
 #include <Toshi/TScheduler.h>
 #include <Plugins/PPropertyParser/PBProperties.h>
@@ -53,6 +54,7 @@ TBOOL AGameSystemManager::OnCreate()
 	pScheduler->CreateTask<AMusicManager>( this )->Create();
 
 	AAnimatableObjectManager::GetSingleton()->LoadTypesFromLibrary( "lib_startup" );
+	pScheduler->CreateTask<ASimAnimModelHelperManager>( this )->Create();
 
 	AAssetStreaming::CreateSingleton()->SetFlag( TFALSE );
 

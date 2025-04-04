@@ -129,6 +129,11 @@ public:
 		return m_RedBlackTree.Find( { key } );
 	}
 
+	T2Allocator* GetAllocator() const
+	{
+		return m_RedBlackTree.GetAllocator();
+	}
+
 private:
 	T2RedBlackTree<Pair> m_RedBlackTree;
 };

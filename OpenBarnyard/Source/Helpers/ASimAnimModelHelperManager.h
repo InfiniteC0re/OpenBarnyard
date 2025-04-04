@@ -6,6 +6,7 @@
 
 class ASimAnimModelHelperManager
     : public Toshi::TTask
+    , public Toshi::TSingleton<ASimAnimModelHelperManager>
 {
 public:
 	TDECLARE_CLASS( ASimAnimModelHelperManager, Toshi::TTask );

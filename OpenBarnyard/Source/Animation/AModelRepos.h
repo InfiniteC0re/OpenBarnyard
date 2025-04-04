@@ -39,7 +39,7 @@ private:
 	void MarkAllModelsUnused();
 	void MarkModelUnused( AModel* a_pModel );
 
-private:
+protected:
 	Toshi::T2DList<AModel> m_UnusedModels;
 	ModelsMap              m_UsedModels;
 	ModelsMap              m_AllModels;

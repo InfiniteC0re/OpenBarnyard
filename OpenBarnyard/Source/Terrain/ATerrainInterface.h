@@ -103,12 +103,38 @@ public:
 	 */
 	ATerrainVIS* GetVIS() const { return m_pTerrainVIS; }
 
+	/**
+	 * Finds a locator (bone) by the specified name and obtains it current transform if found.
+	 */
+	void GetLocatorTransform( const TCHAR* a_pszLocatorName, Toshi::TMatrix44& a_rOutTransform );
+
+	/**
+	 * Finds a locator (bone) by the specified name and obtains it current position if found.
+	 */
+	Toshi::TVector4 GetLocatorPos( const TCHAR* a_pszLocatorName );
+
+	/**
+	 * Finds a locator (bone) by the specified name and obtains it current position and rotation if found.
+	 */
+	void GetLocatorPosAndRot( const TCHAR* a_pszLocatorName, Toshi::TVector4& a_rOutPosition, Toshi::TQuaternion& a_rOutRotation );
+
+	/**
+	 * Finds a locator (bone) by the specified name and returns it if found.
+	 */
+	ATerrainLocator* FindLocator( const TCHAR* a_pszLocatorName );
+
 	ATRBLoaderJob*     GetFreeTRBLoaderJob();
 	ASkeletonDoneJob*  GetFreeSkeletonLoaderJob();
 	AMatLibLoaderJob*  GetFreeMatlibLoaderJob();
 	ACollisionDoneJob* GetFreeCollisionLoaderJob();
 	AModelLoaderJob*   GetFreeModelLoaderJob();
 	ASectionDoneJob*   GetFreeSectionLoaderJob();
+
+	ATerrainLocatorManager* GetLocatorManager() const
+	{
+		TVALIDPTR( m_pTerrainVIS );
+		return m_pTerrainVIS->GetLocatorManager();
+	}
 
 	const Toshi::TVector4& GetDefaultShadowColor() const { return m_DefaultShadowColor; }
 	const Toshi::TVector4& GetDefaultAmbientColor() const { return m_DefaultAmbientColor; }

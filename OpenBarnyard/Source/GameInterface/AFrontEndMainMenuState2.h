@@ -1,5 +1,6 @@
 #pragma once
 #include "ABYardMenuState.h"
+#include "Helpers/AWindmillHelper.h"
 #include "GUI/AGUI2Button.h"
 #include "GUI/AFade.h"
 
@@ -25,7 +26,7 @@ public:
 
 public:
 	// constructors/destructor
-	AFrontEndMainMenuState2( void* a_pUnk = TNULL, TBOOL a_bFlag = TFALSE );
+	AFrontEndMainMenuState2( AWindmillHelper* a_pWindmillHelper = TNULL, TBOOL a_bFlag = TFALSE );
 	~AFrontEndMainMenuState2();
 
 	TBOOL StartIntroVideo();
@@ -65,7 +66,7 @@ private:
 	AGUI2Rectangle                                          m_Rectangle1;
 	AGUI2Rectangle                                          m_Rectangle2;
 	Toshi::TGenericListener                                 m_oUnkListener;
-	void*                                                   m_pUnk1;
+	AWindmillHelper*                                        m_pWindmillHelper;
 	TBOOL                                                   m_bFlag;
 	TFLOAT                                                  m_fAFKTime;
 	Toshi::TListener<AFade, TBOOL, AFrontEndMainMenuState2> m_oFadeOverListener;

@@ -80,10 +80,8 @@ public:
 
 			return TSTATICCAST( ATRBLoaderJob, pTRBJobSlot->pJob );
 		}
-		else
-		{
-			return TNULL;
-		}
+
+		return TNULL;
 	}
 
 	ASkeletonDoneJob* GetFreeSkeletonLoaderJob()
@@ -97,10 +95,8 @@ public:
 
 			return TSTATICCAST( ASkeletonDoneJob, pTRBJobSlot->pJob );
 		}
-		else
-		{
-			return TNULL;
-		}
+
+		return TNULL;
 	}
 
 	AMatLibLoaderJob* GetFreeMatlibLoaderJob()
@@ -114,10 +110,8 @@ public:
 
 			return TSTATICCAST( AMatLibLoaderJob, pTRBJobSlot->pJob );
 		}
-		else
-		{
-			return TNULL;
-		}
+
+		return TNULL;
 	}
 
 	ACollisionDoneJob* GetFreeCollisionLoaderJob()
@@ -131,10 +125,8 @@ public:
 
 			return TSTATICCAST( ACollisionDoneJob, pTRBJobSlot->pJob );
 		}
-		else
-		{
-			return TNULL;
-		}
+
+		return TNULL;
 	}
 
 	AModelLoaderJob* GetFreeModelLoaderJob()
@@ -148,10 +140,8 @@ public:
 
 			return TSTATICCAST( AModelLoaderJob, pTRBJobSlot->pJob );
 		}
-		else
-		{
-			return TNULL;
-		}
+
+		return TNULL;
 	}
 
 	ASectionDoneJob* GetFreeSectionLoaderJob()
@@ -165,10 +155,8 @@ public:
 
 			return TSTATICCAST( ASectionDoneJob, pTRBJobSlot->pJob );
 		}
-		else
-		{
-			return TNULL;
-		}
+
+		return TNULL;
 	}
 
 private:

@@ -14,6 +14,9 @@
 #include <BYardSDK/THookedSingleton.h>
 #include <BYardSDK/THookedMemory.h>
 
+#include <Animation/AModel.h>
+#include <Animation/AModelRepos.h>
+
 #include <Input/TInputDeviceKeyboard.h>
 #include <Render/TCameraObject.h>
 #include <Render/TModel.h>
@@ -28,6 +31,8 @@ TUINT  g_uiWindowWidth  = 0;
 TUINT  g_uiWindowHeight = 0;
 TBOOL  g_bBikeFOVPatch  = TFALSE;
 TFLOAT g_fOriginalFOV   = 0.0f;
+
+#define PAGE_HEAP_VERIFICATION
 
 // Replacing this method since it's all useless now but can crash the game
 HOOK( 0x006b4cb0, TMemory_UnkMethod, TBOOL, TMemory::MemBlock* a_pMemBlock )
@@ -60,7 +65,7 @@ HOOK( 0x006b5740, TMemory_Initialise, TBOOL, TUINT a_uiHeapSize, TUINT a_uiReser
 	if ( a_uiHeapSize == 0 )
 		a_uiHeapSize = 256 * 1024 * 1024;
 
-	new ( pMemModule ) TMemoryDL( TMemoryDL::Flags_Standard, a_uiHeapSize + a_uiReservedSize );
+	new ( pMemModule ) TMemoryDL( TMemoryDL::Flags_NativeMethods, a_uiHeapSize + a_uiReservedSize );
 	pMemory->SetMemModule( pMemModule );
 
 	// Initialise the memory block
@@ -81,6 +86,8 @@ MEMBER_HOOK( 0x006b5510, TMemory, TMemory_CreateMemBlock, TMemory::MemBlock*, TU
 {
 #ifdef TMEMORY_USE_DLMALLOC
 
+	return TNULL;
+
 	TMemoryDL* pMemModule = THookedMemory::GetSingleton()->GetMemModule();
 
 	if ( !a_pOwnerBlock )
@@ -98,7 +105,7 @@ MEMBER_HOOK( 0x006b5510, TMemory, TMemory_CreateMemBlock, TMemory::MemBlock*, TU
 MEMBER_HOOK( 0x006b5090, TMemory, TMemory_DestroyMemBlock, void, TMemory::MemBlock* a_pMemBlock )
 {
 #ifdef TMEMORY_USE_DLMALLOC
-
+	return;
 	TMemoryDL* pMemModule = THookedMemory::GetSingleton()->GetMemModule();
 	pMemModule->dlheapdestroy( a_pMemBlock );
 
@@ -170,7 +177,8 @@ MEMBER_HOOK( 0x006b5230, TMemory, TMemory_Alloc, void*, TUINT a_uiSize, TUINT a_
 	if ( a_pMemBlock == TNULL )
 		a_pMemBlock = THookedMemory::GetSingleton()->GetMemModule()->GetHeap();
 
-	return a_pMemBlock->Memalign( a_uiAlignment, a_uiSize );
+	return THookedMemory::GetSingleton()->GetMemModule()->GetContext().Calloc( 1, a_uiSize );
+	//return a_pMemBlock->Memalign( a_uiAlignment, a_uiSize );
 
 #else // TMEMORY_USE_DLMALLOC
 
@@ -867,6 +875,40 @@ MEMBER_HOOK( 0x00497280, UnknownType, Unknown_CrashPoint1, void, TINT a_Unk1, BO
 	CallOriginal( a_Unk1, a_Unk2 );
 }
 
+MEMBER_HOOK( 0x00612f50, AModelRepos, Unknown_CrashPoint2, void, AModelInstance* a_pInstance )
+{
+	AModel* pModel = a_pInstance->GetModel();
+	{
+		// Remove from the list of all models
+		AModelRepos::ModelsMap::Iterator it{ nullptr };
+		CALL_THIS( 0x006124e0, AModelRepos*, void*, this, void*, &it, void*, &m_AllModels, void*, pModel );
+
+		if ( m_AllModels.IsValid( it ) )
+		{
+			AModel* pModel = it->GetSecond();
+			pModel->GetInstances().FindAndEraseFast( a_pInstance );
+		}
+	}
+
+	{
+		// Remove from the list of used models
+		AModelRepos::ModelsMap::Iterator it{ nullptr };
+		CALL_THIS( 0x006124e0, AModelRepos*, void*, this, void*, &it, void*, &m_UsedModels, void*, pModel );
+
+		if ( m_UsedModels.IsValid( it ) )
+		{
+			AModel* pModel = it->GetSecond();
+			pModel->GetInstances().FindAndEraseFast( a_pInstance );
+
+			if ( pModel->GetInstances().Size() < 1 )
+			{
+				CALL_THIS( 0x00612be0, AModelRepos*, void, this );
+			}
+		}
+	}
+	//CallOriginal( a_pModelInstance );
+}
+
 struct AItemCountHudElement
 {};
 
@@ -922,6 +964,7 @@ void AHooks::Initialise()
 	// Fixing crashes and memory stumps of the original game
 	InstallHook<CollObjectModel_DCTOR>();
 	InstallHook<Unknown_CrashPoint1>();
+	InstallHook<Unknown_CrashPoint2>();
 
 	InstallHook<TModel_LoadTRB>();
 	InstallHook<TModel_UnloadTRB>();

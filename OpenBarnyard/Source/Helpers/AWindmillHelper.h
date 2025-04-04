@@ -15,10 +15,15 @@ public:
 	virtual TBOOL OnUpdate( TFLOAT a_fDeltaTime ) OVERRIDE;
 	virtual void  OnDestroy() OVERRIDE;
 
+	//-----------------------------------------------------------------------------
+	// Own Methods
+	//-----------------------------------------------------------------------------
+	void CreateBarnSign();
+
 private:
 	// ...
 	// ...
 	TINT      m_iNumBarnSigns;
-	ABarnSign m_aBarnSigns;
+	ABarnSign m_aBarnSigns[ 1 ];
 	// ...
 };

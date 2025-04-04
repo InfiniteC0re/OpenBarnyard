@@ -11,6 +11,7 @@ TOSHI_NAMESPACE_USING
 
 // $Barnyard: FUNCTION 0054d320
 AWindmillHelper::AWindmillHelper()
+    : m_iNumBarnSigns( 0 )
 {
 }
 
@@ -29,4 +30,11 @@ TBOOL AWindmillHelper::OnUpdate( TFLOAT a_fDeltaTime )
 void AWindmillHelper::OnDestroy()
 {
 	TASSERT( !"Not implemented" );
+}
+
+// $Barnyard: FUNCTION 0054d7c0
+void AWindmillHelper::CreateBarnSign()
+{
+	TASSERT( m_iNumBarnSigns < TARRAYSIZE( m_aBarnSigns ) );
+	m_aBarnSigns[ m_iNumBarnSigns++ ].SpawnAtLocator( "loc_barnsign" );
 }

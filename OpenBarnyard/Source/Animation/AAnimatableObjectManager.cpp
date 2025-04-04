@@ -126,6 +126,8 @@ void AAnimatableObjectManager::LoadAnimObjType( const TPString8& a_rcName, const
 
 	TVALIDPTR( pObjectType );
 
+	m_llObjectTypes.PushBack( pObjectType );
+
 	TBOOL bCreated = ( pTypeProperties ) ?
 	    pObjectType->CreateFromProperties( pTypeProperties, a_rcName ) :
 	    pObjectType->Create( a_rcName );

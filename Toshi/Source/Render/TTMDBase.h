@@ -58,7 +58,7 @@ struct CollisionType
 	TUINT            iUnk1;
 	TUINT            iUnk2;
 	TUINT            iUnk3;
-	TINT            iSomeCount;
+	TINT             iSomeCount;
 	CollisionTypeS1* pS1;
 };
 

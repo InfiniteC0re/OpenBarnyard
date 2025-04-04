@@ -448,6 +448,11 @@ public:
 		return GetNumElements();
 	}
 
+	T2Allocator* GetAllocator() const
+	{
+		return m_pAllocator;
+	}
+
 private:
 	Iterator InsertImpl( Node* pNode )
 	{

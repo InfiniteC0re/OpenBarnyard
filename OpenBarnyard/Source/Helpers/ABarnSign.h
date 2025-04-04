@@ -7,6 +7,7 @@ public:
 	ABarnSign();
 	~ABarnSign();
 
+	void SpawnAtLocator( const TCHAR* a_pszLocatorName );
 
 private:
 	AModelInstance* m_pModelInstance;

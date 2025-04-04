@@ -35,6 +35,7 @@ project "BYModCore"
 		"Source",
 		"Include",
 		"%{wks.location}/Toshi/Source",
+		"%{wks.location}/OpenBarnyard/Source",
 		"%{wks.location}/SDK/BYardSDK/Source",
 		"%{IncludeDir.detours}",
 		"%{IncludeDir.libssl}",

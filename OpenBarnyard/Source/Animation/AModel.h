@@ -41,6 +41,7 @@ public:
 	AModelInstance();
 	AModelInstance( AModel* a_pModel, Toshi::TSceneObject* a_pSceneObject, TBOOL a_bEnableSkeletonUpdate );
 
+	void SetTransform( const Toshi::TMatrix44& a_rcTransform );
 	void SetSkeletonUpdating( TBOOL a_bUpdating );
 	void SetReceivesLight( TBOOL a_bReceives );
 	void SetVisible( TBOOL a_bVisible );
@@ -88,6 +89,7 @@ public:
 	void              DestroyInstance( AModelInstance* a_pInstance );
 
 	TSIZE GetNumInstances() const;
+	Toshi::T2Vector<AModelInstanceRef, MAX_NUM_INSTANCES>& GetInstances() { return m_vecInstanceRefs; }
 
 	const Toshi::TPString8& GetName() const { return m_Name; }
 	Toshi::TSkeleton*       GetSkeleton() const { return m_pManagedModel->GetModel()->GetSkeleton(); }

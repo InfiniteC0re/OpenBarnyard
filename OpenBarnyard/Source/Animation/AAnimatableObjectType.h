@@ -10,6 +10,7 @@
 #include <Plugins/PPropertyParser/PBProperties.h>
 
 class AAnimatableObject;
+class AModelInstance;
 
 class AAnimatableObjectType
     : public Toshi::T2DList<AAnimatableObjectType>::Node
@@ -32,6 +33,8 @@ public:
 	ANamedAnimationSetRef GetAnimationSet( TINT a_iIndex ) const;
 	ANamedAnimationSetRef GetDefaultAnimationSet() const;
 	TINT                  GetNumAnimationSets() const;
+
+	AModelInstance* Instantiate();
 
 	const Toshi::TPString8& GetName() const { return m_strName; }
 	AModel*                 GetModel() const { return m_pAModel; }

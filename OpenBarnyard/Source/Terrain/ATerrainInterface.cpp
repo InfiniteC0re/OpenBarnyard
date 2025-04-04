@@ -692,6 +692,76 @@ ATerrainLODBlock* ATerrainInterface::AllocateLODBlock( ATerrainLODType a_eLODTyp
 	return TNULL;
 }
 
+// $Barnyard: FUNCTION 005e8d70
+void ATerrainInterface::GetLocatorTransform( const TCHAR* a_pszLocatorName, TMatrix44& a_rOutTransform )
+{
+	ATerrainLocatorManager* pLocatorManager = GetLocatorManager();
+
+	ATerrainLocator* pLocator = pLocatorManager->FindLocator( a_pszLocatorName );
+	TASSERT( pLocator != TNULL );
+
+	// Get transform of the locator
+	TMatrix44 matLocator;
+	pLocator->GetMatrix( matLocator );
+
+	// Get locators global transform
+	pLocatorManager->GetWorldTransform().GetLocalMatrixImp( a_rOutTransform );
+
+	// Transform locator by the global transform
+	a_rOutTransform.Multiply( matLocator );
+}
+
+// $Barnyard: FUNCTION 005e8b60
+TVector4 ATerrainInterface::GetLocatorPos( const TCHAR* a_pszLocatorName )
+{
+	ATerrainLocatorManager* pLocatorManager = GetLocatorManager();
+
+	ATerrainLocator* pLocator = pLocatorManager->FindLocator( a_pszLocatorName );
+	TASSERT( pLocator != TNULL );
+
+	// Get transform of the locator
+	TMatrix44 matLocator;
+	pLocator->GetMatrix( matLocator );
+
+	// Get locators global transform and transform the locator
+	TMatrix44 matTransformed;
+	pLocatorManager->GetWorldTransform().GetLocalMatrixImp( matTransformed );
+	matTransformed.Multiply( matLocator );
+
+	return matTransformed.AsBasisVector4( BASISVECTOR_TRANSLATION );
+}
+
+// $Barnyard: FUNCTION 005e8bf0
+void ATerrainInterface::GetLocatorPosAndRot( const TCHAR* a_pszLocatorName, Toshi::TVector4& a_rOutPosition, Toshi::TQuaternion& a_rOutRotation )
+{
+	ATerrainLocatorManager* pLocatorManager = GetLocatorManager();
+
+	ATerrainLocator* pLocator = pLocatorManager->FindLocator( a_pszLocatorName );
+	TASSERT( pLocator != TNULL );
+
+	// Get transform of the locator
+	TMatrix44 matLocator;
+	pLocator->GetMatrix( matLocator );
+
+	// Get locators global transform and transform the locator
+	TMatrix44 matTransformed;
+	pLocatorManager->GetWorldTransform().GetLocalMatrixImp( matTransformed );
+	matTransformed.Multiply( matLocator );
+
+	TVector3& vecUp = matTransformed.AsBasisVector3( BASISVECTOR_UP );
+	a_rOutRotation  = TQuaternion( -vecUp.x, -vecUp.y, -vecUp.z, 1.0f );
+	a_rOutPosition  = matTransformed.AsBasisVector4( BASISVECTOR_TRANSLATION );
+}
+
+// $Barnyard: FUNCTION 005e82f0
+ATerrainLocator* ATerrainInterface::FindLocator( const TCHAR* a_pszLocatorName )
+{
+	if ( !m_pTerrainVIS )
+		return TNULL;
+
+	return GetLocatorManager()->FindLocator( a_pszLocatorName );
+}
+
 ATRBLoaderJob* ATerrainInterface::GetFreeTRBLoaderJob()
 {
 	TASSERT( m_FreeTRBLoaderJobs.Size() > 0, "No free ATRBLoaderJobs left!" );

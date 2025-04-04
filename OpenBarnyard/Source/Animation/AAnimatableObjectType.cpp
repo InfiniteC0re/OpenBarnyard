@@ -165,6 +165,11 @@ TINT AAnimatableObjectType::GetNumAnimationSets() const
 	return m_vecAnimationSets.Size();
 }
 
+AModelInstance* AAnimatableObjectType::Instantiate()
+{
+	return AModelRepos::GetSingleton()->InstantiateModel( GetModel() );
+}
+
 // $Barnyard: FUNCTION 0057f060
 TBOOL AAnimatableObjectType::LoadAnimationSet( const PBProperties* a_pProperties )
 {

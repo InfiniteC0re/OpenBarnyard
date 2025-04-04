@@ -234,6 +234,12 @@ AModelInstance::AModelInstance()
 	m_eFlags       = 0b00011000;
 }
 
+// $Barnyard: FUNCTION 006100d0
+void AModelInstance::SetTransform( const Toshi::TMatrix44& a_rcTransform )
+{
+	m_pSceneObject->GetTransform().SetMatrix( a_rcTransform );
+}
+
 // $Barnyard: FUNCTION 006108c0
 void AModelInstance::RenderInstanceCallback( TModelInstance* a_pInstance, void* a_pUserData )
 {

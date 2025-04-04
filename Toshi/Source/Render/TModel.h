@@ -88,7 +88,7 @@ public:
 	TBOOL LoadTRB();
 	TBOOL LoadTRB( TTRB* a_pTRB );
 	TBOOL LoadTRB( const TCHAR* a_szFileName, TTRB* a_pAssetTRB, TUINT8 a_ui8FileNameLen );
-	void UnloadTRB();
+	void  UnloadTRB();
 
 	TModelInstance* CreateInstance();
 
