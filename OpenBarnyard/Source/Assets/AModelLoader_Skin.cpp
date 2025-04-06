@@ -43,7 +43,7 @@ void AModelLoader::LoadSkinLOD( Toshi::TModel* a_pModel, TINT a_iLODIndex, Toshi
 			s_pSkinMaterialClass = TClass::Find( "ASkinMaterial" );
 		}
 
-		auto pMaterial = pShader->CreateMaterial( pTRBMesh->m_szMaterialName );
+		auto pMaterial = CreateMaterial( pShader, pTRBMesh->m_szMaterialName );
 		pMesh->SetMaterial( pMaterial );
 
 		a_pLOD->ppMeshes[ i ] = pMesh;

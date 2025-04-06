@@ -37,18 +37,19 @@ TBOOL ACameraManager::OnUpdate( TFLOAT a_fDeltaTime )
 	s_fTime += a_fDeltaTime;
 
 	TVector4 vLookDirection = m_vLookDirection;
-	vLookDirection.x = -0.6f;
-	//vLookDirection.y = 1.0f;
-	vLookDirection.z = 1.0f;
+	vLookDirection.x        = -0.6f;
+	vLookDirection.z        = 1.0f;
+	vLookDirection.y        = 0.5f;
+	vLookDirection.Negate();
 	vLookDirection.Normalise();
 
 	auto& rvTranslation = m_pCurrentCamera->GetMatrix().GetTranslation();
 	//rvTranslation.x     = -3.0f;
 	//rvTranslation.y     = -18.0f + cos( s_fTime / 2.0f ) * 9.0f;
 	//rvTranslation.z     = -16 + cos( s_fTime / 3.0f ) * 16.0f;
-	rvTranslation.x     = 42.78f;
-	rvTranslation.y     = -12.12f;
-	rvTranslation.z     = -57.17f;
+	rvTranslation.x     = 32.78f;
+	rvTranslation.y     = -9.41f;
+	rvTranslation.z     = -31.17f;
 
 	m_pCurrentCamera->LookAtDirection( vLookDirection );
 

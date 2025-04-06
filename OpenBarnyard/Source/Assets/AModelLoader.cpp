@@ -179,6 +179,7 @@ void AModelLoader::MaterialApplyAlphaRef( TMaterial* a_pMaterial, const TCHAR* a
 	// Does nothing with the material in the original game
 }
 
+// $Barnyard: FUNCTION 006119d0
 TMaterial* AModelLoader::CreateMaterial( TShader* a_pShader, const TCHAR* a_szMaterialName )
 {
 	TPROFILER_SCOPE();
@@ -240,7 +241,16 @@ TMaterial* AModelLoader::CreateMaterial( TShader* a_pShader, const TCHAR* a_szMa
 	    eTextureFormat == D3DFMT_A8R3G3B2 ||
 	    eTextureFormat == D3DFMT_DXT5;
 
-	if ( a_pShader->IsA( &TGetClass( AWorldShader ) ) )
+	if ( a_pShader->IsA( &TGetClass( ASkinShader ) ) )
+	{
+		ASkinShaderHAL* pShader   = TDYNAMICCAST( ASkinShaderHAL, a_pShader );
+		ASkinMaterial*  pMaterial = pShader->CreateMaterial( TNULL );
+		pMaterial->Create( bIsAlpha ? 1 : 0 );
+		pMaterial->SetTexture( pTexture );
+
+		pResultMaterial = pMaterial;
+	}
+	else if ( a_pShader->IsA( &TGetClass( AWorldShader ) ) )
 	{
 		AWorldShaderHAL* pShader   = TDYNAMICCAST( AWorldShaderHAL, a_pShader );
 		AWorldMaterial*  pMaterial = pShader->CreateMaterial( TNULL );

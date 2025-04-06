@@ -484,7 +484,9 @@ void ASkinShaderHAL::Render( Toshi::TRenderPacket* a_pRenderPacket )
 					auto pBone = &pSkeletonInstance->GetBone( pSubMesh->aBones[ k ] );
 
 					TMatrix44 oBoneTransform;
-					D3DXMatrixTranspose( oBoneTransform, pBone->m_Transform );
+					// NOTE: disable animations until they are fixed
+					//D3DXMatrixTranspose( oBoneTransform, pBone->m_Transform );
+					D3DXMatrixTranspose( oBoneTransform, TMatrix44::IDENTITY );
 					pD3DDevice->SetVertexShaderConstant( iCurrentRegister, oBoneTransform, 3 );
 
 					iCurrentRegister += 3;

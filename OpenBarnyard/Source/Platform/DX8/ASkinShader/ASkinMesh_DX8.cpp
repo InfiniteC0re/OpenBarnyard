@@ -17,12 +17,13 @@ TOSHI_NAMESPACE_USING
 
 TDEFINE_CLASS( ASkinMeshHAL );
 
+// $Barnyard: FUNCTION 005f3f20
 TBOOL ASkinMeshHAL::Render()
 {
 	auto pRenderInterface = TRenderD3DInterface::Interface();
 	auto pCurrentContext  = TRenderContextD3D::Upcast( pRenderInterface->GetCurrentContext() );
 
-	if ( pCurrentContext->GetSkeletonInstance() )
+	if ( TSkeletonInstance* pSkeletonInstance = pCurrentContext->GetSkeletonInstance() )
 	{
 		TMaterial* pMaterial;
 
@@ -38,6 +39,7 @@ TBOOL ASkinMeshHAL::Render()
 
 		auto pRenderPacket = pMaterial->AddRenderPacket( this );
 		pRenderPacket->SetModelViewMatrix( pCurrentContext->GetModelViewMatrix() );
+		pRenderPacket->SetSkeletonInstance( pSkeletonInstance );
 		pRenderPacket->SetAmbientColour( pCurrentContext->GetAmbientColour().AsVector3() );
 		pRenderPacket->SetLightColour( pRenderInterface->GetLightColour().AsBasisVector3( 0 ) );
 		pRenderPacket->SetLightDirection( pRenderInterface->GetLightDirection().AsBasisVector3( 0 ) );
