@@ -32,6 +32,8 @@ public:
 
 	Toshi::TRenderAdapter::Mode::Device* FindSuitableDevice( Toshi::TRenderInterface::DISPLAYPARAMS& a_rDisplayParams, bool a_bReverseOrder );
 
+	Toshi::TViewport* GetMainViewport() const { return m_pViewport; }
+
 	Toshi::TGenericEmitter&       GetRenderGUIEmitter() { return m_RenderGUIEmitter; }
 	const Toshi::TGenericEmitter& GetRenderGUIEmitter() const { return m_RenderGUIEmitter; }
 

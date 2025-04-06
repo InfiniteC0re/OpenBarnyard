@@ -25,6 +25,7 @@ public:
 		Flags_Visible                  = BITFLAG( 1 ),
 		Flags_DrawWithDefaultMaterials = BITFLAG( 2 ),
 		Flags_ReceivesLight            = BITFLAG( 3 ),
+		Flags_Unknown                  = BITFLAG( 4 ),
 	};
 
 	enum ChangeEvent : TUINT32
@@ -50,6 +51,7 @@ public:
 	Toshi::TSceneObject* GetSceneObject() const { return m_pSceneObject; }
 	Toshi::TSkeleton*    GetSkeleton() const { return GetSceneObject()->GetInstance()->GetSkeletonInstance()->GetSkeleton(); }
 	TUINT                GetClipFlags() const { return m_uiClipFlags; }
+	void                 SetClipFlags( TUINT a_uiClipFlags ) { m_uiClipFlags = a_uiClipFlags; }
 
 	const Toshi::TVector4& GetScale() const { return m_Scale; }
 
@@ -83,7 +85,7 @@ public:
 	virtual ~AModel();
 
 	void Update( TFLOAT a_fDeltaTime );
-	void Render( TUINT8 a_uiFlags );
+	void Render( TBOOL a_bIsSomething );
 
 	AModelInstanceRef CreateInstance();
 	void              DestroyInstance( AModelInstance* a_pInstance );

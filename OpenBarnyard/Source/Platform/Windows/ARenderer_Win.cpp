@@ -386,9 +386,13 @@ void ARenderer::RenderMainScene( TFLOAT a_fDeltaTime )
 		pRender->FlushShaders();
 		pViewportContext->EnableFog( TTRUE );
 
+		AModelRepos::GetSingleton()->RenderModels( 2 );
+
+		// Render terrain, trees, gates, instances and more...
 		if ( ATerrainInterface::GetSingleton() )
 		{
 			ATerrainInterface::GetSingleton()->Render();
+			// ...
 		}
 
 		pRender->FlushShaders();

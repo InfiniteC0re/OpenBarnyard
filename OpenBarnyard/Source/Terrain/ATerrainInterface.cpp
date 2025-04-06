@@ -491,7 +491,7 @@ void ATerrainInterface::DestroyModelData( ATerrainSection::ModelNode* a_pModelDa
 
 	if ( a_pModelData->IsLinked() )
 	{
-		m_ModelDatas.Erase( a_pModelData );
+		m_llModelNodes.Erase( a_pModelData );
 	}
 
 	if ( a_pModelData )
@@ -1067,7 +1067,7 @@ ATerrainSection::ModelNode* ATerrainInterface::CreateModelInstance( ATerrainSect
 		TStringManager::String8Copy( a_pModelNode->m_szType, a_szType, ATerrainSection::ModelNode::TYPE_NAME_MAX_SIZE );
 	}
 
-	m_ModelDatas.PushBack( a_pModelNode );
+	m_llModelNodes.PushBack( a_pModelNode );
 	a_pModelNode->m_bCreated = TTRUE;
 	return a_pModelNode;
 }

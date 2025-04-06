@@ -23,7 +23,10 @@ AWindmillHelper::~AWindmillHelper()
 
 TBOOL AWindmillHelper::OnUpdate( TFLOAT a_fDeltaTime )
 {
-	TASSERT( !"Not implemented" );
+	TIMPLEMENT();
+
+
+
 	return TTRUE;
 }
 

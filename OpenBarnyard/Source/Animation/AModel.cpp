@@ -4,6 +4,7 @@
 #include "Render/AGlowViewport.h"
 #include "Render/AStaticInstanceShader/AStaticInstanceMesh.h"
 #include "Render/AStaticInstanceShader/AStaticInstanceMaterial.h"
+#include "Render/ARenderer.h"
 #include "Assets/AModelLoader.h"
 
 #ifdef TOSHI_SKU_WINDOWS
@@ -48,11 +49,47 @@ AModel::~AModel()
 // $Barnyard: FUNCTION 0060f9f0
 void AModel::Update( TFLOAT a_fDeltaTime )
 {
-	TIMPLEMENT();
+	TRenderContext* pRenderCtx = ARenderer::GetSingleton()->GetMainViewport()->GetRenderContext();
 
 	for ( TINT i = 0; i < m_vecInstanceRefs.Size(); i++ )
 	{
-		auto pInstance = m_vecInstanceRefs[ i ].Get();
+		AModelInstance* pInstance    = m_vecInstanceRefs[ i ].Get();
+		TSceneObject*   pSceneObject = pInstance->GetSceneObject();
+		TModel*         pModel       = pSceneObject->GetInstance()->GetModel();
+
+		auto& transform      = pSceneObject->GetTransform();
+		auto& transformScale = transform.GetScale();
+		auto& lod            = pModel->GetLOD( 0 );
+
+		TVector4 vecBoundingSphere;
+		vecBoundingSphere.w = lod.BoundingSphere.GetRadius() * TMath::Max( TMath::Max( transformScale.x, transformScale.y ), transformScale.z );
+
+		if ( vecBoundingSphere.w <= 0.0f )
+		// The instance's scale is zero, do not render
+		{
+			pInstance->SetVisible( TFALSE );
+		}
+		else
+		// Check if the bounding sphere currently visible
+		{
+			Toshi::TMatrix44 transformMatrix;
+			transform.GetLocalMatrixImp( transformMatrix );
+
+			Toshi::TVector3 boundingPos;
+			Toshi::TMatrix44::TransformVector( vecBoundingSphere.AsVector3(), transformMatrix, lod.BoundingSphere.GetOrigin() );
+
+			if ( TRenderContext::CullSphereToFrustumSimple( vecBoundingSphere, pRenderCtx->GetWorldPlanes(), 6 ) )
+			{
+				// The object is visible, update clip flags to match the flags it was checked against
+				pInstance->SetVisible( TTRUE );
+				pInstance->SetClipFlags( pRenderCtx->GetClipFlags() );
+			}
+			else
+			{
+				// The object is not visible
+				pInstance->SetVisible( TFALSE );
+			}
+		}
 
 		if ( pInstance->IsUpdatingSkeleton() )
 		{
@@ -62,14 +99,16 @@ void AModel::Update( TFLOAT a_fDeltaTime )
 }
 
 // $Barnyard: FUNCTION 0060fb10
-void AModel::Render( TUINT8 a_uiFlags )
+void AModel::Render( TBOOL a_bIsSomething )
 {
 	for ( TINT i = 0; i < m_vecInstanceRefs.Size(); i++ )
 	{
 		auto& pModelInstance = m_vecInstanceRefs[ i ];
 		auto  eFlags         = pModelInstance->m_eFlags;
 
-		if ( ( ( eFlags >> 4 & 1 ) == a_uiFlags && ( eFlags & 2 ) != 0 ) && ( eFlags & 1 ) != 0 )
+		if ( HASANYFLAG( eFlags, AModelInstance::Flags_Unknown ) == a_bIsSomething &&
+		     HASANYFLAG( eFlags, AModelInstance::Flags_Visible ) &&
+		     HASANYFLAG( eFlags, AModelInstance::Flags_UpdatingSkeleton ) )
 		{
 			auto pSceneObject = pModelInstance->GetSceneObject();
 			auto pModel       = pSceneObject->GetInstance()->GetModel();
@@ -215,7 +254,7 @@ AModelInstance::AModelInstance( AModel* a_pModel, TSceneObject* a_pSceneObject, 
 	m_pModel       = a_pModel;
 	m_uiClipFlags  = 0x3F;
 	m_pSceneObject = a_pSceneObject;
-	m_eFlags       = 0b00001001;
+	m_eFlags       = Flags_ReceivesLight | Flags_UpdatingSkeleton;
 
 	SetSkeletonUpdating( a_bEnableSkeletonUpdate );
 	m_pSceneObject->GetInstance()->SetCustomRenderMethod( RenderInstanceCallback, this );
@@ -231,7 +270,7 @@ AModelInstance::AModelInstance()
 	m_pModel       = TNULL;
 	m_pSceneObject = TNULL;
 	m_uiClipFlags  = 0x3F;
-	m_eFlags       = 0b00011000;
+	m_eFlags       = 0b00010000 | Flags_ReceivesLight;
 }
 
 // $Barnyard: FUNCTION 006100d0

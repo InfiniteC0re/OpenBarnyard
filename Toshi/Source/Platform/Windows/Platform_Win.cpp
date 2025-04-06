@@ -62,7 +62,6 @@ TString8 Platform_UnicodeToUTF8( const TWCHAR* a_wszUnicodeString )
 
 TString16 Platform_UTF8ToUnicode( const TCHAR* a_pchUTF8String )
 {
-	TINT iStrLen;
 	if ( a_pchUTF8String && ( T2String8::Length( a_pchUTF8String ) ) )
 	{
 		TINT sizeRequired = MultiByteToWideChar( CP_UTF8, 0, a_pchUTF8String, -1, NULL, 0 );

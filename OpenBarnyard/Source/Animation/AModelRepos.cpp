@@ -44,13 +44,13 @@ void AModelRepos::UnloadAllUnusedModels()
 AModel* AModelRepos::GetModel( const Toshi::TPString8& a_rName )
 {
 	{
-		// Look in list of all models
+		// Look in the list of all models
 		auto pRes = m_AllModels.Find( a_rName );
 		if ( m_AllModels.IsValid( pRes ) ) return pRes->GetSecond();
 	}
 
 	{
-		// Look in list used models
+		// Look in the list used models
 		auto pRes = m_UsedModels.Find( a_rName );
 		if ( m_UsedModels.IsValid( pRes ) ) return pRes->GetSecond();
 	}
@@ -83,6 +83,30 @@ void AModelRepos::Update( TFLOAT a_fDeltaTime )
 	T2_FOREACH( m_AllModels, it )
 	{
 		it->GetSecond()->Update( a_fDeltaTime );
+	}
+}
+
+// $Barnyard: FUNCTION 006125d0
+void AModelRepos::RenderModels( TUINT a_uiMask )
+{
+	// Render used models
+	T2_FOREACH( m_UsedModels, it )
+	{
+		if ( HASANYFLAG( a_uiMask, 1 ) )
+			it->GetSecond()->Render( 1 );
+
+		if ( HASANYFLAG( a_uiMask, 2 ) )
+			it->GetSecond()->Render( 0 );
+	}
+
+	// Render other (all?) models
+	T2_FOREACH( m_AllModels, it )
+	{
+		if ( HASANYFLAG( a_uiMask, 1 ) )
+			it->GetSecond()->Render( 1 );
+
+		if ( HASANYFLAG( a_uiMask, 2 ) )
+			it->GetSecond()->Render( 0 );
 	}
 }
 

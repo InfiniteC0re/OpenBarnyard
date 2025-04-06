@@ -164,7 +164,7 @@ private:
 	Toshi::TVector4                            m_DefaultAmbientColor;
 	TFLOAT                                     m_fUnused3;
 	TBOOL                                      m_bUnused4;
-	Toshi::T2SList<ATerrainSection::ModelNode> m_ModelDatas;
+	Toshi::T2SList<ATerrainSection::ModelNode> m_llModelNodes;
 	t_OnModelNodeReady                         m_cbOnCollsionModelLoaded;
 	t_OnModelNodeReady                         m_cbOnModelLoaded;
 	t_OnVISGroupChanged                        m_cbOnVISGroupChanged;

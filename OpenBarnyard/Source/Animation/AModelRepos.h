@@ -29,6 +29,7 @@ public:
 	void UnloadModel( const Toshi::TPString8& a_rcName, TBOOL a_bDestroy );
 
 	void Update( TFLOAT a_fDeltaTime );
+	void RenderModels( TUINT a_uiMask );
 
 	void UnloadAllModels();
 	void UnloadAllUnusedModels();

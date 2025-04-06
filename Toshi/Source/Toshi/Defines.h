@@ -2,7 +2,7 @@
 
 #define ISZERO( X )                 ( ( X ) == 0 )
 #define NOTZERO( X )                ( !ISZERO( X ) )
-#define HASANYFLAG( STATE, FLAG )   ( ( ( STATE ) & ( FLAG ) ) )
+#define HASANYFLAG( STATE, FLAG )   ( ( ( STATE ) & ( FLAG ) ) != 0 )
 #define HASALLFLAGS( STATE, FLAGS ) ( ( ( STATE ) & ( FLAGS ) ) == ( FLAGS ) )
 #define STRINGIFY8( X )             #X
 #define STRINGIFY16( x )            L##x
@@ -84,10 +84,9 @@
 #define TDECLARE_POINTER_HANDLE( NAME ) typedef void* NAME
 
 #ifdef TOSHI_ENABLE_ASSERTS
-#  define TCALL_ONCE_IF_1( CONDITION, COUNTER ) \
-	  if ( !Toshi::T2UniqueValue<TBOOL, COUNTER>::value && ( CONDITION ) && ( Toshi::T2UniqueValue<TBOOL, COUNTER>::value = TTRUE ) )
-#  define TCALL_ONCE_IF( CONDITION ) TCALL_ONCE_IF_1( CONDITION, __COUNTER__ )
-
+#  define TCALL_ONCE_IF( CONDITION ) \
+	  static TBOOL s_bFlag;                     \
+	  if ( !s_bFlag && ( CONDITION ) && ( s_bFlag = TTRUE ) )
 #  define TWIP()                                                                        \
 	  {                                                                                 \
 		  TCALL_ONCE_IF( TTRUE )                                                        \
@@ -123,8 +122,12 @@
 			  TERROR( "%s is not implemented: %s\n", __FUNCTION__, DESC ); \
 		  }                                                                \
 	  }
-#  define TASSERT_IMPL( X, ID, ... ) ( ( !Toshi::T2UniqueValue<TBOOL, ID>::value ) && 1 == TDebug_AssertHandler( #X, __FILE__, __LINE__, __VA_ARGS__ ) && ( TBREAK(), TTRUE ) && ( Toshi::T2UniqueValue<TBOOL, ID>::value = TTRUE ) )
-#  define TASSERT( X, ... )          ( !( X ) && TASSERT_IMPL( X, __COUNTER__, __VA_ARGS__ ) || !( X ) )
+#  define TASSERT( X, ... )                                                       \
+	  {                                                                           \
+		  TCALL_ONCE_IF( !( X ) )                                                 \
+		  if ( 1 == TDebug_AssertHandler( #X, __FILE__, __LINE__, __VA_ARGS__ ) ) \
+			  TBREAK();                                                           \
+	  }
 #  define TVALIDPTR( PTR )           TASSERT( TDebug_IsValidAddress( PTR ) )
 #else // TOSHI_ENABLE_ASSERTS
 #  define TWIP()
