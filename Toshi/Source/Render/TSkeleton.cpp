@@ -32,7 +32,7 @@ TSkeletonInstance* TSkeleton::CreateInstance( TBOOL a_bSetBasePose )
 		SetQInterpFn( m_eQuatLerpType );
 
 	auto               iAutoBoneCount = GetAutoBoneCount();
-	TSIZE              iAnimationSize = iAutoBoneCount * sizeof( TAnimationBone ) + TAlignNumDown( sizeof( TAnimation ) );
+	TSIZE              iAnimationSize = TAlignNumUp( iAutoBoneCount * sizeof( TAnimationBone ) + sizeof( TAnimation ) );
 	TSIZE              iInstanceSize  = sizeof( TSkeletonInstance ) + sizeof( TSkeletonInstanceBone ) * iAutoBoneCount + iAnimationSize * GetAnimationMaxCount();
 	TSkeletonInstance* pInstance;
 
@@ -44,8 +44,8 @@ TSkeletonInstance* TSkeleton::CreateInstance( TBOOL a_bSetBasePose )
 	pInstance->m_iBaseAnimationCount    = 0;
 	pInstance->m_iOverlayAnimationCount = 0;
 	pInstance->m_eFlags                 = 0;
-	pInstance->m_pBones                 = TREINTERPRETCAST( TSkeletonInstanceBone*, this + 1 );
-	pInstance->m_pAnimations            = TREINTERPRETCAST( TAnimation*, this + 1 ) + iAutoBoneCount;
+	pInstance->m_pBones                 = TREINTERPRETCAST( TSkeletonInstanceBone*, pInstance + 1 );
+	pInstance->m_pAnimations            = TREINTERPRETCAST( TAnimation*, m_pBones + iAutoBoneCount );
 	pInstance->m_fTotalWeight           = 0.0f;
 	pInstance->m_iLastUpdateStateFrame  = 0;
 	pInstance->m_iLastUpdateTimeFrame   = 0;

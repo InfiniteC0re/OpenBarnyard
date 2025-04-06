@@ -118,10 +118,8 @@ public:
 	void Delete();
 	void SetTRB( TTRB* a_pTRB ) { m_pTRB = a_pTRB; }
 
-	const TCHAR* GetName() const
-	{
-		return m_szName;
-	}
+	TINT         GetNameLength() const { return m_iNameLength; }
+	const TCHAR* GetName() const { return m_szName; }
 
 private:
 	TKeyframeLibrary();

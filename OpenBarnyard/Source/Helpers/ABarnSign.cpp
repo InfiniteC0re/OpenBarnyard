@@ -29,7 +29,7 @@ ABarnSign::~ABarnSign()
 // $Barnyard: FUNCTION 0054d6f0
 void ABarnSign::SpawnAtLocator( const TCHAR* a_pszLocatorName )
 {
-	AAnimatableObjectType* pModelType = AAnimatableObjectManager::GetSingleton()->FindType( TPString8( "barnsign" ) );
+	AAnimatableObjectType* pModelType = AAnimatableObjectManager::GetSingleton()->FindType( TPString8( "twink_fe" ) );
 	TASSERT( TNULL != pModelType );
    
     m_pModelInstance = pModelType->Instantiate();

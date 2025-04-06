@@ -13,7 +13,8 @@ TKeyframeLibrary* TKeyframeLibraryManager::GetLibrary( const TCHAR* a_szName )
 {
 	for ( auto it = m_List.Begin(); it != m_List.End(); ++it )
 	{
-		if ( TStringManager::String8CompareNoCase( it->GetName(), a_szName ) == 0 )
+		if ( TStringManager::String8Length( a_szName ) == it->GetNameLength() &&
+			 TStringManager::String8CompareNoCase( it->GetName(), a_szName, it->GetNameLength() ) == 0 )
 		{
 			return it;
 		}
