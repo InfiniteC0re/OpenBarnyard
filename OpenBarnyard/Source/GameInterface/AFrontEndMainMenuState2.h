@@ -31,6 +31,9 @@ public:
 
 	TBOOL StartIntroVideo();
 
+	// Sets camera to it's position it should have in front end
+	static void SetupCamera();
+
 	//-----------------------------------------------------------------------------
 	// AGameState
 	//-----------------------------------------------------------------------------

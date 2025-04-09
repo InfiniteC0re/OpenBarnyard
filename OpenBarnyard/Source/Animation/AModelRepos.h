@@ -32,7 +32,7 @@ public:
 	void RenderModels( TUINT a_uiMask );
 
 	void UnloadAllModels();
-	void UnloadAllUnusedModels();
+	void UnloadUnusedModels();
 
 private:
 	AModel* AllocateAModel( const Toshi::TPString8& a_rcName, Toshi::TTRB* a_pTRB );

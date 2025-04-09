@@ -72,11 +72,11 @@ void AModel::Update( TFLOAT a_fDeltaTime )
 		else
 		// Check if the bounding sphere currently visible
 		{
-			Toshi::TMatrix44 transformMatrix;
+			TMatrix44 transformMatrix;
 			transform.GetLocalMatrixImp( transformMatrix );
 
-			Toshi::TVector3 boundingPos;
-			Toshi::TMatrix44::TransformVector( vecBoundingSphere.AsVector3(), transformMatrix, lod.BoundingSphere.GetOrigin() );
+			TVector3 boundingPos;
+			TMatrix44::TransformVector( vecBoundingSphere.AsVector3(), transformMatrix, lod.BoundingSphere.GetOrigin() );
 
 			if ( TRenderContext::CullSphereToFrustumSimple( vecBoundingSphere, pRenderCtx->GetWorldPlanes(), 6 ) )
 			{
@@ -120,11 +120,11 @@ void AModel::Render( TBOOL a_bIsSomething )
 			TFLOAT fRadiusScale = TMath::Max( TMath::Max( transformScale.x, transformScale.y ), transformScale.z );
 			TFLOAT fRadius      = lod.BoundingSphere.GetRadius() * fRadiusScale;
 
-			Toshi::TMatrix44 transformMatrix;
+			TMatrix44 transformMatrix;
 			transform.GetLocalMatrixImp( transformMatrix );
 
-			Toshi::TVector3 boundingPos;
-			Toshi::TMatrix44::TransformVector( boundingPos, transformMatrix, lod.BoundingSphere.GetOrigin() );
+			TVector3 boundingPos;
+			TMatrix44::TransformVector( boundingPos, transformMatrix, lod.BoundingSphere.GetOrigin() );
 			pSceneObject->Render( pModelInstance->GetClipFlags(), boundingPos );
 		}
 	}
@@ -274,7 +274,7 @@ AModelInstance::AModelInstance()
 }
 
 // $Barnyard: FUNCTION 006100d0
-void AModelInstance::SetTransform( const Toshi::TMatrix44& a_rcTransform )
+void AModelInstance::SetTransform( const TMatrix44& a_rcTransform )
 {
 	m_pSceneObject->GetTransform().SetMatrix( a_rcTransform );
 }
@@ -472,4 +472,10 @@ void AModelInstance::SetVisible( TBOOL a_bVisible )
 
 		m_eFlags &= ~Flags_Visible;
 	}
+}
+
+// $Barnyard: FUNCTION 006100c0
+const TPString8& AModelInstance::GetModelName() const
+{
+	return m_pModel->GetName();
 }

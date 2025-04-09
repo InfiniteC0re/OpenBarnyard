@@ -25,11 +25,11 @@ AModelRepos::~AModelRepos()
 	TIMPLEMENT();
 	UnloadAllModels();
 	MarkAllModelsUnused();
-	UnloadAllUnusedModels();
+	UnloadUnusedModels();
 }
 
 // $Barnyard: FUNCTION 00612440
-void AModelRepos::UnloadAllUnusedModels()
+void AModelRepos::UnloadUnusedModels()
 {
 	while ( !m_UnusedModels.IsEmpty() )
 	{

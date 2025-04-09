@@ -47,11 +47,12 @@ public:
 	void SetReceivesLight( TBOOL a_bReceives );
 	void SetVisible( TBOOL a_bVisible );
 
-	AModel*              GetModel() const { return m_pModel; }
-	Toshi::TSceneObject* GetSceneObject() const { return m_pSceneObject; }
-	Toshi::TSkeleton*    GetSkeleton() const { return GetSceneObject()->GetInstance()->GetSkeletonInstance()->GetSkeleton(); }
-	TUINT                GetClipFlags() const { return m_uiClipFlags; }
-	void                 SetClipFlags( TUINT a_uiClipFlags ) { m_uiClipFlags = a_uiClipFlags; }
+	AModel*                 GetModel() const { return m_pModel; }
+	const Toshi::TPString8& GetModelName() const;
+	Toshi::TSceneObject*    GetSceneObject() const { return m_pSceneObject; }
+	Toshi::TSkeleton*       GetSkeleton() const { return GetSceneObject()->GetInstance()->GetSkeletonInstance()->GetSkeleton(); }
+	TUINT                   GetClipFlags() const { return m_uiClipFlags; }
+	void                    SetClipFlags( TUINT a_uiClipFlags ) { m_uiClipFlags = a_uiClipFlags; }
 
 	const Toshi::TVector4& GetScale() const { return m_Scale; }
 

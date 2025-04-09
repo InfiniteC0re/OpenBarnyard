@@ -153,6 +153,7 @@ AAnimatableObjectType* AAnimatableObjectManager::FindType( const Toshi::TPString
 			return it;
 	}
 
+	TERROR( "AAnimatableObjectManager: unable to find animatable type '%s'\n", a_rcName.GetString() );
 	return TNULL;
 }
 
@@ -166,7 +167,7 @@ void AAnimatableObjectManager::DestroyType( const Toshi::TPString8& a_rcName )
 		pType->Remove();
 		delete pType;
 
-		AModelRepos::GetSingleton()->UnloadAllUnusedModels();
+		AModelRepos::GetSingleton()->UnloadUnusedModels();
 	}
 }
 

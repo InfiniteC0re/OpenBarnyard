@@ -11,18 +11,22 @@ public:
 	~ACameraHelper();
 
 	virtual void UpdateCurrentCamera();
-	virtual void Unk1() = 0;
-	virtual void Unk2() = 0;
-	virtual void Unk3() = 0;
-	virtual void Unk4() = 0;
-	virtual void Unk5() = 0;
-	virtual void Unk6() = 0;
-	virtual void GetCameraPosition( Toshi::TVector4& a_rPosition ) const;
+	virtual TBOOL OnUpdate( TFLOAT a_fDeltaTime ) = 0;
+	virtual TBOOL Unk2( void* ) = 0;
+	virtual TBOOL Unk3( void*, void* )            = 0;
+	virtual void OnCreate() = 0;
+	virtual void OnDestroy() = 0;
+	virtual void OnAttach() = 0;
+	virtual void GetCameraRotation( Toshi::TVector4& a_rOutRotation ) const;
 	virtual void Unk7( void* );
 	// ...
+	virtual void   OnDetach();
 	virtual TFLOAT GetFOV() const;
 
-private:
+	ACamera* GetCamera() { return m_pCamera; }
+	void SetCamera( ACamera* a_pCamera ) { m_pCamera = a_pCamera; }
+
+protected:
 	// ...
 	ACamera* m_pCamera;
 };

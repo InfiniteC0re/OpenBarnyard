@@ -59,6 +59,12 @@ TBOOL AFrontEndMainMenuState2::StartIntroVideo()
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 004245f0
+void AFrontEndMainMenuState2::SetupCamera()
+{
+
+}
+
 TBOOL AFrontEndMainMenuState2::ProcessInput( const Toshi::TInputInterface::InputEvent* a_pInputEvent )
 {
 	if ( !AFadeManager::GetSingleton()->HasAnyFadesInProgress( TTRUE ) && !m_oFadeOverListener.IsLinked() )
