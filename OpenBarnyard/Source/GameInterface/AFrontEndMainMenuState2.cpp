@@ -12,6 +12,8 @@
 #include "Input/AInputHandler.h"
 #include "GameInterface/AMovieState.h"
 #include "AOptionsState.h"
+#include "Cameras/ACameraManager.h"
+#include "Cameras/ABoneAttachCameraHelper.h"
 
 #include <Input/TInputDeviceKeyboard.h>
 #include <Input/TInputDeviceController.h>
@@ -62,7 +64,21 @@ TBOOL AFrontEndMainMenuState2::StartIntroVideo()
 // $Barnyard: FUNCTION 004245f0
 void AFrontEndMainMenuState2::SetupCamera()
 {
+	ACameraManager* pCamMngr = ACameraManager::GetSingleton();
 
+	ABoneAttachCameraHelper* pBoneCamera = TSTATICCAST(
+	    ABoneAttachCameraHelper,
+	    pCamMngr->GetCameraHelper( ACameraManager::CAMERAHELPER_BONEATTACH )
+	);
+
+	if ( pCamMngr->GetCurrentCameraHelper() != pBoneCamera )
+	{
+		// Setup the camera helper
+		pBoneCamera->SetModel( TPS8D( "data\\models\\envfrontend_cam" ), "camera" );
+		pCamMngr->SetCameraHelper( pBoneCamera );
+
+		pBoneCamera->SetAnimation( "camera_loop" );
+	}
 }
 
 TBOOL AFrontEndMainMenuState2::ProcessInput( const Toshi::TInputInterface::InputEvent* a_pInputEvent )

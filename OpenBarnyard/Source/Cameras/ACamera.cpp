@@ -27,6 +27,15 @@ ACamera::~ACamera()
 {
 }
 
+// $Barnyard: FUNCTION 00420490
+TVector4 ACamera::GetOrientation() const
+{
+	TVector4 vOrientation = m_Matrix.AsBasisVector4( Toshi::BASISVECTOR_FORWARD );
+	vOrientation.w        = 1.0f;
+
+	return vOrientation;
+}
+
 void ACamera::LookAtPoint( const Toshi::TVector4& a_rPoint )
 {
 	TVector4 vDirection = a_rPoint - m_Matrix.GetTranslation3();

@@ -157,6 +157,14 @@ AAnimatableObjectType* AAnimatableObjectManager::FindType( const Toshi::TPString
 	return TNULL;
 }
 
+// $Barnyard: FUNCTION 0057dac0
+void AAnimatableObjectManager::DetachObject( AAnimatableObject* a_pObject, AAnimatableObject* a_pParent )
+{
+	TASSERT( a_pObject->m_oAttachmentInfo.pParentObject == a_pParent );
+	a_pObject->m_oAttachmentInfo.pParentObject = TNULL;
+	a_pParent->m_llAttachedObjects.Erase( a_pObject );
+}
+
 // $Barnyard: FUNCTION 0057d870
 void AAnimatableObjectManager::DestroyType( const Toshi::TPString8& a_rcName )
 {
@@ -168,6 +176,39 @@ void AAnimatableObjectManager::DestroyType( const Toshi::TPString8& a_rcName )
 		delete pType;
 
 		AModelRepos::GetSingleton()->UnloadUnusedModels();
+	}
+}
+
+// $Barnyard: FUNCTION 0057dc60
+void AAnimatableObjectManager::DestroyAnimatableObject( AAnimatableObject* a_pAnimatableObject )
+{
+	if ( !a_pAnimatableObject )
+		return;
+
+	if ( m_llAnimatableObjects.Exists( a_pAnimatableObject ) )
+	{
+		// Destroy all attached objects
+		DestroyAttachedObjects( a_pAnimatableObject );
+
+		// Detach from a parent
+		if ( a_pAnimatableObject->m_oAttachmentInfo.pParentObject )
+			DetachObject( a_pAnimatableObject, a_pAnimatableObject->m_oAttachmentInfo.pParentObject );
+
+		a_pAnimatableObject->Remove();
+		delete a_pAnimatableObject;
+	}
+}
+
+// $Barnyard: FUNCTION 0057d7c0
+void AAnimatableObjectManager::DestroyAttachedObjects( AAnimatableObject* a_pAnimatableObject )
+{
+	if ( !a_pAnimatableObject )
+		return;
+
+	while ( a_pAnimatableObject->m_llAttachedObjects.IsLinked() )
+	{
+		AAnimatableObject* pAttachedObject = a_pAnimatableObject->m_llAttachedObjects.Begin();
+		DestroyAnimatableObject( pAttachedObject );
 	}
 }
 

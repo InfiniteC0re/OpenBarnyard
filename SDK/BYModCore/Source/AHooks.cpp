@@ -875,40 +875,6 @@ MEMBER_HOOK( 0x00497280, UnknownType, Unknown_CrashPoint1, void, TINT a_Unk1, BO
 	CallOriginal( a_Unk1, a_Unk2 );
 }
 
-MEMBER_HOOK( 0x00612f50, AModelRepos, Unknown_CrashPoint2, void, AModelInstance* a_pInstance )
-{
-	AModel* pModel = a_pInstance->GetModel();
-	{
-		// Remove from the list of all models
-		AModelRepos::ModelsMap::Iterator it{ nullptr };
-		CALL_THIS( 0x006124e0, AModelRepos*, void*, this, void*, &it, void*, &m_AllModels, void*, pModel );
-
-		if ( m_AllModels.IsValid( it ) )
-		{
-			AModel* pModel = it->GetSecond();
-			pModel->GetInstances().FindAndEraseFast( a_pInstance );
-		}
-	}
-
-	{
-		// Remove from the list of used models
-		AModelRepos::ModelsMap::Iterator it{ nullptr };
-		CALL_THIS( 0x006124e0, AModelRepos*, void*, this, void*, &it, void*, &m_UsedModels, void*, pModel );
-
-		if ( m_UsedModels.IsValid( it ) )
-		{
-			AModel* pModel = it->GetSecond();
-			pModel->GetInstances().FindAndEraseFast( a_pInstance );
-
-			if ( pModel->GetInstances().Size() < 1 )
-			{
-				CALL_THIS( 0x00612be0, AModelRepos*, void, this );
-			}
-		}
-	}
-	//CallOriginal( a_pModelInstance );
-}
-
 struct AItemCountHudElement
 {};
 
@@ -964,7 +930,6 @@ void AHooks::Initialise()
 	// Fixing crashes and memory stumps of the original game
 	InstallHook<CollObjectModel_DCTOR>();
 	InstallHook<Unknown_CrashPoint1>();
-	InstallHook<Unknown_CrashPoint2>();
 
 	InstallHook<TModel_LoadTRB>();
 	InstallHook<TModel_UnloadTRB>();

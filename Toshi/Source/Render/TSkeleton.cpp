@@ -45,7 +45,7 @@ TSkeletonInstance* TSkeleton::CreateInstance( TBOOL a_bSetBasePose )
 	pInstance->m_iOverlayAnimationCount = 0;
 	pInstance->m_eFlags                 = 0;
 	pInstance->m_pBones                 = TREINTERPRETCAST( TSkeletonInstanceBone*, pInstance + 1 );
-	pInstance->m_pAnimations            = TREINTERPRETCAST( TAnimation*, m_pBones + iAutoBoneCount );
+	pInstance->m_pAnimations            = TREINTERPRETCAST( TAnimation*, pInstance->m_pBones + iAutoBoneCount );
 	pInstance->m_fTotalWeight           = 0.0f;
 	pInstance->m_iLastUpdateStateFrame  = 0;
 	pInstance->m_iLastUpdateTimeFrame   = 0;
@@ -90,7 +90,7 @@ TINT TSkeleton::GetBoneID( const TCHAR* a_szBoneName, TUINT32 a_iLength )
 		}
 	}
 
-	return -1;
+	return TBONE_INVALID;
 }
 
 // $Barnyard: FUNCTION 006c9d80
@@ -107,7 +107,7 @@ TINT TSkeleton::GetSequenceID( const TCHAR* a_szSequenceName, TUINT32 a_iLength 
 		}
 	}
 
-	return -1;
+	return TSEQ_INVALID;
 }
 
 // $Barnyard: FUNCTION 006cb420
@@ -302,7 +302,7 @@ void TSkeletonInstance::UpdateState( TBOOL a_bForceUpdate )
 			auto pBone       = m_pSkeleton->GetBone( i );
 			auto iParentBone = pBone->GetParentBone();
 
-			if ( iParentBone == -1 )
+			if ( iParentBone == TBONE_INVALID )
 			{
 				// No parent bone
 				rMatrix.SetFromQuaternion( rBoneCache.Rotation );
@@ -323,17 +323,19 @@ void TSkeletonInstance::UpdateState( TBOOL a_bForceUpdate )
 }
 
 // $Barnyard: FUNCTION 006c9ec0
-TMatrix44* TSkeletonInstance::GetBoneTransformCurrent( TINT a_iBone, TMatrix44& a_rMatrix )
+TMatrix44 TSkeletonInstance::GetBoneTransformCurrent( TINT a_iBone )
 {
 	if ( a_iBone < m_pSkeleton->GetAutoBoneCount() )
 	{
+		TMatrix44 transform;
+		
 		auto pBone = m_pSkeleton->GetBone( a_iBone );
-		a_rMatrix.Multiply( m_pBones[ a_iBone ].m_Transform, pBone->GetTransform() );
-		return &a_rMatrix;
+		transform.Multiply( m_pBones[ a_iBone ].m_Transform, pBone->GetTransform() );
+		
+		return transform;
 	}
 
-	a_rMatrix = m_pSkeleton->GetBone( a_iBone )->GetTransform();
-	return &a_rMatrix;
+	return m_pSkeleton->GetBone( a_iBone )->GetTransform();
 }
 
 // $Barnyard: FUNCTION 006ca860

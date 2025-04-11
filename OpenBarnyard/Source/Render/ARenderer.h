@@ -34,8 +34,11 @@ public:
 
 	Toshi::TViewport* GetMainViewport() const { return m_pViewport; }
 
-	Toshi::TGenericEmitter&       GetRenderGUIEmitter() { return m_RenderGUIEmitter; }
-	const Toshi::TGenericEmitter& GetRenderGUIEmitter() const { return m_RenderGUIEmitter; }
+	Toshi::TEmitter<ARenderer, TBOOL*>& GetAnimationUpdateStartEmitter() { return m_AnimationUpdateStartEmitter; }
+	Toshi::TEmitter<ARenderer, TBOOL*>& GetAnimationUpdateEndEmitter() { return m_AnimationUpdateEndEmitter; }
+
+	Toshi::TEmitter<ARenderer, TINT>& GetRenderGUIEmitter() { return m_RenderGUIEmitter; }
+	const Toshi::TEmitter<ARenderer, TINT>& GetRenderGUIEmitter() const { return m_RenderGUIEmitter; }
 
 private:
 	void CreateMainViewport();

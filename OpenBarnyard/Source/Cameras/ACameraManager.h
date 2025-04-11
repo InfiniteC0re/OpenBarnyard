@@ -62,21 +62,27 @@ public:
 	//-----------------------------------------------------------------------------
 	void SetCameraHelper( ACameraHelper* a_pHelper );
 	
-	ACamera* GetCamera( TUINT a_uiCameraIndex ) const;
+	ACamera*       GetCamera( TUINT a_uiCameraIndex ) const;
 	ACameraHelper* GetCameraHelper( CAMERAHELPER a_eCameraHelper ) const;
-	ACamera* GetCurrentCamera() const;
+
+	ACameraHelper* GetCurrentCameraHelper() const;
+	ACamera*       GetCurrentCamera() const;
+
+	void StopPositionLerp( TFLOAT a_flDeltaTime );
 
 public:
-	ACameraHelper* m_apCameraHelpers[ CAMERAHELPER_NUM_OF ];
-	ACameraHelper* m_apSplitscreenCameraHelpers[ SPLITSCREEN_CAMERAHELPER_NUM_OF ];
-	ACamera*       m_pCurrentCamera;
-	ACamera*       m_apCameras[ SPLITSCREEN_MAX_CAMERAS ];
-	ACameraHelper* m_pCurrentHelper;
-	ACameraHelper* m_apCurrentSplitscreenCameraHelpers[ SPLITSCREEN_MAX_CAMERAS ];
-	ACameraHelper* m_pPreviousCameraHelper;
-	// ...
+	ACameraHelper*  m_apCameraHelpers[ CAMERAHELPER_NUM_OF ];
+	ACameraHelper*  m_apSplitscreenCameraHelpers[ SPLITSCREEN_CAMERAHELPER_NUM_OF ];
+	ACamera*        m_pCurrentCamera;
+	ACamera*        m_apCameras[ SPLITSCREEN_MAX_CAMERAS ];
+	ACameraHelper*  m_pCurrentHelper;
+	ACameraHelper*  m_apCurrentSplitscreenCameraHelpers[ SPLITSCREEN_MAX_CAMERAS ];
+	ACameraHelper*  m_pPreviousCameraHelper;
+	Toshi::TVector4 m_vLerpPosFrom;
 	Toshi::TVector4 m_vInitialLookDirection;
+	TFLOAT          m_fLerpDuration;
+	TFLOAT          m_fLerpTime;
 	// ...
 
-	TBOOL m_bFlag;
+	TBOOL m_bIsPosLerping;
 };

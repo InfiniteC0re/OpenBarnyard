@@ -365,6 +365,8 @@ void ARootTask::LoadFrontEnd()
 	// Create front end state
 	AFrontEndMainMenuState2* pFrontEndState = new AFrontEndMainMenuState2();
 	ABYardTerrainManager::SetTerrain( ABYardTerrainManager::Terrain_FrontEnd, TFALSE, TTRUE, 0, 0, 0, 0 );
+	pFrontEndState->SetupCamera();
+
 	ABYardTerrainManager::StartLoading();
 
 	GetSingleton()->SetRenderWorld( TTRUE );

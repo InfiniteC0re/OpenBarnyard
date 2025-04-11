@@ -4,6 +4,8 @@
 
 #include <Render/TAnimation.h>
 
+class ARenderer;
+
 class ABoneAttachCameraHelper
     : public ACameraHelper
 {
@@ -30,13 +32,19 @@ public:
 	//-----------------------------------------------------------------------------
 	virtual void BoneHelper_Unknown();
 
+	void SetModel( const Toshi::TPString8& a_strModelName, const TCHAR* a_szBoneName );
+	void SetAnimation( const TCHAR* a_szSeqName );
+
 private:
-	Toshi::TAnimation*        m_pAnimation;
-	AModelInstance*           m_pAModelInstance;
-	Toshi::TSceneObject*      m_pSceneObject;
-	Toshi::TSkeletonInstance* m_pSkeletonInstance;
-	TINT                      m_iBoneId;
-	Toshi::TMatrix44          m_oTransform;
-	Toshi::TGenericListener   m_oAnimStartListener;
-	AAnimatableObject*        m_pAnimatableObject;
+	static TBOOL __stdcall AnimationStartEventHandler( ABoneAttachCameraHelper* a_pCaller, ARenderer* a_pOwner, TBOOL** a_pData );
+
+private:
+	Toshi::TAnimation*                                           m_pAnimation;
+	AModelInstance*                                              m_pAModelInstance;
+	Toshi::TSceneObject*                                         m_pSceneObject;
+	Toshi::TSkeletonInstance*                                    m_pSkeletonInstance;
+	TINT                                                         m_iBoneId;
+	Toshi::TMatrix44                                             m_oTransform;
+	Toshi::TListener<ARenderer, TBOOL*, ABoneAttachCameraHelper> m_oAnimStartListener;
+	AAnimatableObject*                                           m_pAnimatableObject;
 };

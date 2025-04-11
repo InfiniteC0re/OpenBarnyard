@@ -16,6 +16,8 @@ public:
 	ACamera();
 	~ACamera();
 
+	Toshi::TVector4 GetOrientation() const;
+
 	void LookAtPoint( const Toshi::TVector4& a_rPoint );
 	void LookAtDirection( const Toshi::TVector4& a_rDirection );
 

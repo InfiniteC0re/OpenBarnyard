@@ -25,23 +25,30 @@ public:
 	AAnimatableObjectManager();
 	~AAnimatableObjectManager();
 
+	//-----------------------------------------------------------------------------
+	// TTask
+	//-----------------------------------------------------------------------------
+	virtual TBOOL OnUpdate( TFLOAT a_fDeltaTime ) OVERRIDE;
+
+	//-----------------------------------------------------------------------------
+	// Own Methods
+	//-----------------------------------------------------------------------------
 	AAnimatableObject* CreateAnimatableObject( AAnimatableObjectType* a_pObjectType, void* a_Unk1 = TNULL, TUINT a_eFlags = 0 );
 
 	// Loads all types specified in the library
-	void LoadTypesFromLibrary( const TCHAR* a_szLibName );
-
-	void LoadAnimObjType( const TCHAR* a_szName, const PBProperties* a_pProperties, TBOOL a_bNoBreakpoints );
-	void LoadAnimObjType( const Toshi::TPString8& a_rcName, const PBProperties* a_pProperties, TBOOL a_bNoBreakpoints );
-
-	AAnimatableObjectType* FindType( const Toshi::TPString8& a_rcName );
-	void                   DestroyType( const Toshi::TPString8& a_rcName );
-
+	void  LoadTypesFromLibrary( const TCHAR* a_szLibName );
+	void  LoadAnimObjType( const TCHAR* a_szName, const PBProperties* a_pProperties, TBOOL a_bNoBreakpoints );
+	void  LoadAnimObjType( const Toshi::TPString8& a_rcName, const PBProperties* a_pProperties, TBOOL a_bNoBreakpoints );
 	TBOOL LoadAnimSoundBreakpoints( const TCHAR* a_szFilePath );
 
-	TINT FindNumAnimationSoundBreakpoints( const Toshi::TPString8& a_rcModelName, ANamedAnimation* a_pAnimation );
+	TINT                   FindNumAnimationSoundBreakpoints( const Toshi::TPString8& a_rcModelName, ANamedAnimation* a_pAnimation );
+	AAnimatableObjectType* FindType( const Toshi::TPString8& a_rcName );
 
-	// TTask
-	virtual TBOOL OnUpdate( TFLOAT a_fDeltaTime ) OVERRIDE;
+	void DetachObject( AAnimatableObject* a_pObject, AAnimatableObject* a_pParent );
+
+	void DestroyType( const Toshi::TPString8& a_rcName );
+	void DestroyAnimatableObject( AAnimatableObject* a_pAnimatableObject );
+	void DestroyAttachedObjects( AAnimatableObject* a_pAnimatableObject );
 
 private:
 	void AttachSoundBreakpoints( AAnimatableObjectType* a_pObjectType );

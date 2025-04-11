@@ -45,6 +45,8 @@ public:
 		CREATE_FLAGS_NO_ANIM_CONTROLLER = BITFLAG( 0 ),
 	};
 
+	friend class AAnimatableObjectManager;
+
 public:
 	AAnimatableObject();
 	~AAnimatableObject();

@@ -15,7 +15,7 @@ TDEFINE_CLASS( ACameraManager );
 
 ACameraManager::ACameraManager()
     : m_vInitialLookDirection( ACamera::sm_vInitialLookDirection )
-    , m_bFlag( TFALSE )
+    , m_bIsPosLerping( TFALSE )
 {
 	for ( TUINT i = 0; i < SPLITSCREEN_MAX_CAMERAS; i++ )
 	{
@@ -28,6 +28,9 @@ ACameraManager::ACameraManager()
 
 	for ( TINT i = 0; i < SPLITSCREEN_CAMERAHELPER_NUM_OF; i++ )
 		m_apSplitscreenCameraHelpers[ i ] = TNULL;
+
+	for ( TINT i = 0; i < SPLITSCREEN_MAX_CAMERAS; i++ )
+		m_apCurrentSplitscreenCameraHelpers[ i ] = TNULL;
 
 	m_pCurrentCamera = GetCamera( 0 );
 
@@ -64,25 +67,42 @@ TBOOL ACameraManager::OnUpdate( TFLOAT a_fDeltaTime )
 	if ( ARootTask::GetSingleton()->IsPaused() )
 		return TTRUE;
 
-	static TFLOAT s_fTime = 0.0f;
-	s_fTime += a_fDeltaTime;
+	if ( !m_bIsPosLerping )
+	// No smooth transition is happening, just update the helpers
+	{
+		if ( m_pCurrentHelper )
+			m_pCurrentHelper->OnUpdate( a_fDeltaTime );
 
-	TVector4 vLookDirection = m_vInitialLookDirection;
-	vLookDirection.x        = -0.6f;
-	vLookDirection.z        = 1.0f;
-	vLookDirection.y        = 0.5f;
-	vLookDirection.Negate();
-	vLookDirection.Normalise();
+		for ( TINT i = 0; i < SPLITSCREEN_CAMERAHELPER_NUM_OF; i++ )
+		{
+			if ( m_apSplitscreenCameraHelpers[ i ] )
+				m_apSplitscreenCameraHelpers[ i ]->OnUpdate( a_fDeltaTime );
+		}
 
-	auto& rvTranslation = m_pCurrentCamera->GetMatrix().GetTranslation();
-	//rvTranslation.x     = -3.0f;
-	//rvTranslation.y     = -18.0f + cos( s_fTime / 2.0f ) * 9.0f;
-	//rvTranslation.z     = -16 + cos( s_fTime / 3.0f ) * 16.0f;
-	rvTranslation.x     = 32.78f;
-	rvTranslation.y     = -9.41f;
-	rvTranslation.z     = -31.17f;
+		return TTRUE;
+	}
 
-	m_pCurrentCamera->LookAtDirection( vLookDirection );
+	TASSERT( !"Smooth camera transition is not implemented" );
+
+	//static TFLOAT s_fTime = 0.0f;
+	//s_fTime += a_fDeltaTime;
+
+	//TVector4 vLookDirection = m_vInitialLookDirection;
+	//vLookDirection.x        = -0.6f;
+	//vLookDirection.z        = 1.0f;
+	//vLookDirection.y        = 0.5f;
+	//vLookDirection.Negate();
+	//vLookDirection.Normalise();
+
+	//auto& rvTranslation = m_pCurrentCamera->GetMatrix().GetTranslation();
+	////rvTranslation.x     = -3.0f;
+	////rvTranslation.y     = -18.0f + cos( s_fTime / 2.0f ) * 9.0f;
+	////rvTranslation.z     = -16 + cos( s_fTime / 3.0f ) * 16.0f;
+	//rvTranslation.x     = 32.78f;
+	//rvTranslation.y     = -9.41f;
+	//rvTranslation.z     = -31.17f;
+
+	//m_pCurrentCamera->LookAtDirection( vLookDirection );
 
 	return TTRUE;
 }
@@ -116,7 +136,7 @@ void ACameraManager::SetCameraHelper( ACameraHelper* a_pHelper )
 	}
 
 	m_pCurrentHelper->SetCamera( m_pCurrentCamera );
-	m_bFlag = TFALSE;
+	m_bIsPosLerping = TFALSE;
 }
 
 ACamera* ACameraManager::GetCamera( TUINT a_uiCameraIndex ) const
@@ -131,8 +151,29 @@ ACameraHelper* ACameraManager::GetCameraHelper( CAMERAHELPER a_eCameraHelper ) c
 	return m_apCameraHelpers[ a_eCameraHelper ];
 }
 
+ACameraHelper* ACameraManager::GetCurrentCameraHelper() const
+{
+	return m_pCurrentHelper;
+}
+
 // $Barnyard: FUNCTION 0045c0d0
 ACamera* ACameraManager::GetCurrentCamera() const
 {
 	return m_pCurrentCamera;
+}
+
+// $Barnyard: FUNCTION 0045b820
+void ACameraManager::StopPositionLerp( TFLOAT a_flDeltaTime )
+{
+	if ( !m_bIsPosLerping )
+		return;
+
+	m_bIsPosLerping = TFALSE;
+	m_fLerpDuration = 0.0f;
+
+	if ( m_pCurrentHelper )
+	{
+		m_pCurrentHelper->SetCamera( m_pCurrentCamera );
+		m_pCurrentHelper->OnUpdate( a_flDeltaTime );
+	}
 }
