@@ -4,6 +4,7 @@
 #include <AHooks.h>
 #include <BYardSDK/AGUI2.h>
 #include <BYardSDK/THookedSystemManager.h>
+#include <BYardSDK/THookedRenderD3DInterface.h>
 
 #include <Toshi/TScheduler.h>
 

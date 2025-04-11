@@ -2,7 +2,9 @@
 #include "AHooks.h"
 #include "AImGui.h"
 #include "AImGuiState.h"
+#include "DXVK/d3d8/d3d8_device.h"
 #include "imgui_impl_dx8.h"
+#include "imgui_impl_dx9.h"
 #include "imgui_impl_win32.h"
 
 #include "AModLoaderTask.h"
@@ -23,6 +25,8 @@ void AImGUI_RenderCallback()
 		AImGUI::GetSingleton()->Render();
 	}
 }
+
+extern TBOOL g_bUsingDXVK;
 
 AImGUI::AImGUI()
 {
@@ -92,8 +96,21 @@ AImGUI::AImGUI()
 	style.FramePadding                       = ImVec2( 12, 5 );
 	style.WindowBorderSize                   = 0.0f;
 
-	auto pRender = THookedRenderD3DInterface::GetSingleton();
-	ImGui_ImplDX8_Init( pRender->GetDirect3DDevice() );
+	auto              pRender = THookedRenderD3DInterface::GetSingleton();
+	IDirect3DDevice8* pD3D8   = pRender->GetDirect3DDevice();
+
+	if ( g_bUsingDXVK )
+	{
+		// If using DXVK, use DX9 backend to get better performance and avoid crashes
+		dxvk::D3D8Device* pDXVK8 = TSTATICCAST( dxvk::D3D8Device, pD3D8 );
+		ImGui_ImplDX9_Init( (IDirect3DDevice9*)pDXVK8->GetD3D9() );
+	}
+	else
+	{
+		// Not using DXVK, fallback to the custom DX8 backend
+		ImGui_ImplDX8_Init( pD3D8 );
+	}
+
 	ImGui_ImplWin32_Init( pRender->GetMSWindow()->GetHWND() );
 	m_DisplayParams = *pRender->GetCurrentDisplayParams();
 
@@ -102,7 +119,11 @@ AImGUI::AImGUI()
 
 void AImGUI::BeginScene()
 {
-	ImGui_ImplDX8_NewFrame();
+	if ( g_bUsingDXVK )
+		ImGui_ImplDX9_NewFrame();
+	else
+		ImGui_ImplDX8_NewFrame();
+
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
 }
@@ -110,7 +131,11 @@ void AImGUI::BeginScene()
 void AImGUI::EndScene()
 {
 	ImGui::Render();
-	ImGui_ImplDX8_RenderDrawData( ImGui::GetDrawData() );
+
+	if ( g_bUsingDXVK )
+		ImGui_ImplDX9_RenderDrawData( ImGui::GetDrawData() );
+	else
+		ImGui_ImplDX8_RenderDrawData( ImGui::GetDrawData() );
 }
 
 void AImGUI::Toggle()
@@ -303,10 +328,16 @@ void AImGUI::Render()
 
 void AImGUI::OnD3DDeviceLost()
 {
-	ImGui_ImplDX8_InvalidateDeviceObjects();
+	if ( g_bUsingDXVK )
+		ImGui_ImplDX9_InvalidateDeviceObjects();
+	else
+		ImGui_ImplDX8_InvalidateDeviceObjects();
 }
 
 void AImGUI::OnD3DDeviceFound()
 {
-	ImGui_ImplDX8_CreateDeviceObjects();
+	if ( g_bUsingDXVK )
+		ImGui_ImplDX9_CreateDeviceObjects();
+	else
+		ImGui_ImplDX8_CreateDeviceObjects();
 }

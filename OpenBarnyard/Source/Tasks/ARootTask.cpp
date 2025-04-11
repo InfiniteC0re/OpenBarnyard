@@ -350,7 +350,7 @@ void ARootTask::LoadFrontEnd()
 
 	AAssetLoader::LoadAssetPackFromLibrary( "lib_frontend", TTRUE );
 
-	ABYardTerrainManager::SetTerrain( ABYardTerrainManager::Terrain_EnvMain, TTRUE, TTRUE, 0, 0, 0, 0 );
+	ABYardTerrainManager::SetTerrain( ABYardTerrainManager::Terrain_FrontEnd, TTRUE, TTRUE, 0, 0, 0, 0 );
 	ABYardTerrainManager::StartLoading();
 	AAssetLoader::CreateAssetsFromLibrary( "lib_frontend" );
 
@@ -364,7 +364,7 @@ void ARootTask::LoadFrontEnd()
 
 	// Create front end state
 	AFrontEndMainMenuState2* pFrontEndState = new AFrontEndMainMenuState2();
-	ABYardTerrainManager::SetTerrain( ABYardTerrainManager::Terrain_EnvMain, TFALSE, TTRUE, 0, 0, 0, 0 );
+	ABYardTerrainManager::SetTerrain( ABYardTerrainManager::Terrain_FrontEnd, TFALSE, TTRUE, 0, 0, 0, 0 );
 	pFrontEndState->SetupCamera();
 
 	ABYardTerrainManager::StartLoading();

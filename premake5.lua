@@ -20,6 +20,7 @@ workspace "OpenBarnyard"
 	defines
 	{
 		"_CRT_SECURE_NO_WARNINGS",
+		"NOMINMAX",
 		"BARNYARD_COMMUNITY_PATCH",
 	--	"TMEMORY_USE_DLMALLOC",
 	--	"TOSHI_PROFILER",

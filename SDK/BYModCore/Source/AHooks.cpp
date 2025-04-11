@@ -520,7 +520,9 @@ MEMBER_HOOK( 0x0060c7c0, ARenderer, ARenderer_OnCreate, TBOOL )
 	g_bUsingDXVK = ( GetModuleHandle( "vulkan-1.dll" ) != TNULL );
 
 	if ( g_bUsingDXVK )
-		TINFO( "DXVK transition layer detected" );
+		TINFO( "DXVK transition layer detected\n" );
+
+	AImGUI::CreateSingleton();
 
 	return bResult;
 }

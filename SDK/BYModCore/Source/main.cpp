@@ -76,8 +76,6 @@ DWORD WINAPI MainThread( HMODULE hModule )
 	TUtil::SetTPStringPool( **(TPString8Pool***)0x007ce230 );
 
 	AGlobalModLoaderTask::Get()->OnAGUI2Ready();
-	AImGUI::CreateSingleton();
-
 	return TTRUE;
 }
 

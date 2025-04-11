@@ -1,6 +1,9 @@
 #pragma once
+#include <Toshi/THPTimer.h>
 #include <Thread/TThread.h>
 #include <Thread/TMutexLock.h>
+
+#include <Platform/DX8/T2Texture_DX8.h>
 
 extern char            g_szTexturePackName[ 64 ];
 extern char            g_szTexturePackPath[ MAX_PATH ];

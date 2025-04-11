@@ -5,7 +5,12 @@
 
 #include <Plugins/PPropertyParser/PBProperties.h>
 
-#include <BYardSDK/THookedRenderD3DInterface.h>
+TOSHI_NAMESPACE_START
+
+class TRenderD3DInterface;
+class TOrderTable;
+
+TOSHI_NAMESPACE_END
 
 class AImGUI;
 
