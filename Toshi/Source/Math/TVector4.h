@@ -78,11 +78,33 @@ public:
 		z += vec.z;
 	}
 
+	constexpr void Add4( const TVector4& vec )
+	{
+		x += vec.x;
+		y += vec.y;
+		z += vec.z;
+		w += vec.w;
+	}
+
 	// $Barnyard: FUNCTION 0043cce0
 	constexpr void Add( const TVector4& a, const TVector4& b )
 	{
 		Set( a + b );
 		w = a.w;
+	}
+
+	constexpr void Add4( const TVector4& a, const TVector4& b )
+	{
+		Set( a );
+		Add4( b );
+	}
+
+	constexpr void Substract4( const TVector4& vec )
+	{
+		x -= vec.x;
+		y -= vec.y;
+		z -= vec.z;
+		w -= vec.w;
 	}
 
 	constexpr void Substract( const TVector4& vec )
@@ -97,6 +119,12 @@ public:
 	{
 		Set( a - b );
 		w = a.w;
+	}
+
+	constexpr void Substract4( const TVector4& a, const TVector4& b )
+	{
+		Set( a );
+		Substract4( b );
 	}
 
 	constexpr void Divide( const TVector4& vec )
@@ -252,16 +280,6 @@ public:
 	constexpr TFLOAT MagnitudeSq4() const { return w * w + x * x + y * y + z * z; }
 	TFLOAT           MagnitudeXZ() const { return TMath::Sqrt( x * x + z * z ); }
 	constexpr TFLOAT MagnitudeSqXZ() const { return x * x + z * z; }
-
-	constexpr TVector4& Progress( const TVector4& a_rVec, TFLOAT a_fScalar )
-	{
-		x = a_rVec.x * a_fScalar;
-		y = a_rVec.y * a_fScalar;
-		z = a_rVec.z * a_fScalar;
-		w = a_rVec.w * a_fScalar;
-
-		return *this;
-	}
 
 	// $Barnyard: FUNCTION 006c92f0
 	constexpr TBOOL IsEqual( const TVector4& a_rcVec ) const

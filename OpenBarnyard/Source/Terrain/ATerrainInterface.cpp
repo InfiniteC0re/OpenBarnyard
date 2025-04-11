@@ -882,7 +882,7 @@ void ATerrainInterface::MoveAllFinishedJobs( Toshi::T2SList<JobSlot>& a_rFreeJob
 	{
 		auto pNext = it.Next();
 
-		if ( !it->GetNodeValue()->IsRunning() )
+		if ( it->GetNodeValue()->IsFinished() )
 		{
 			a_rUsedJobs.Erase( it );
 			a_rFreeJobs.PushFront( it );

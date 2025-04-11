@@ -18,7 +18,7 @@ public:
 	void AddMainThreadJob( AMainThreadJob* a_pJob )
 	{
 		TASSERT( m_pCurrentJob != a_pJob );
-		a_pJob->m_bIsRunning = TFALSE;
+		a_pJob->m_bIsFinished = TFALSE;
 		m_Jobs.PushBack( a_pJob );
 	}
 

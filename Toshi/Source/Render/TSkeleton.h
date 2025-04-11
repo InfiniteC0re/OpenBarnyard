@@ -73,6 +73,7 @@ public:
 	TSkeletonSequenceBone* GetBone( TINT a_iIndex ) { return &m_pSeqBones[ a_iIndex ]; }
 
 	TFLOAT       GetDuration() const { return m_fDuration; }
+	TUINT8       GetNameLength() const { return m_iNameLength; }
 	const TCHAR* GetName() const { return m_szName; }
 	TINT16       GetUnk2() const { return m_iUnk2; }
 

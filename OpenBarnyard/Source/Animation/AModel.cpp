@@ -75,7 +75,6 @@ void AModel::Update( TFLOAT a_fDeltaTime )
 			TMatrix44 transformMatrix;
 			transform.GetLocalMatrixImp( transformMatrix );
 
-			TVector3 boundingPos;
 			TMatrix44::TransformVector( vecBoundingSphere.AsVector3(), transformMatrix, lod.BoundingSphere.GetOrigin() );
 
 			if ( TRenderContext::CullSphereToFrustumSimple( vecBoundingSphere, pRenderCtx->GetWorldPlanes(), 6 ) )

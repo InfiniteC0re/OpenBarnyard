@@ -14,6 +14,7 @@
 #include "AOptionsState.h"
 #include "Cameras/ACameraManager.h"
 #include "Cameras/ABoneAttachCameraHelper.h"
+#include "Assets/AKeyFrameLibraryManager.h"
 
 #include <Input/TInputDeviceKeyboard.h>
 #include <Input/TInputDeviceController.h>

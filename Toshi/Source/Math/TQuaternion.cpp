@@ -132,35 +132,30 @@ void TQuaternion::Nlerp( TQuaternion& a_rOut, const TQuaternion& a_rStart, const
 
 	if ( 0.0f <= fDot )
 	{
-		TVector4 vec = a_rEnd.AsVector4() - a_rStart.AsVector4();
-		vec.Progress( vec, a_fProgress );
+		TVector4 vec = a_rEnd.AsVector4();
+
+		vec.Substract4( a_rStart.AsVector4() );
+		vec.Multiply4( vec, a_fProgress );
 
 		a_rOut.x = vec.x + a_rStart.x;
 		a_rOut.y = vec.y + a_rStart.y;
 		a_rOut.z = vec.z + a_rStart.z;
 		a_rOut.w = vec.w + a_rStart.w;
+
+		a_rOut.AsVector4().Normalise4();
 	}
 	else
 	{
-		TVector4 vec = a_rEnd.AsVector4() + a_rStart.AsVector4();
-		vec.Progress( vec, a_fProgress );
+		TVector4 vec = a_rEnd.AsVector4();
+		vec.Add4( a_rStart.AsVector4() );
+		vec.Multiply4( vec, a_fProgress );
 
 		a_rOut.x = vec.x - a_rStart.x;
 		a_rOut.y = vec.y - a_rStart.y;
 		a_rOut.z = vec.z - a_rStart.z;
 		a_rOut.w = vec.w - a_rStart.w;
-	}
-
-	TFLOAT fMag = TMath::Sqrt( a_rOut.x * a_rOut.x + a_rOut.y * a_rOut.y + a_rOut.z * a_rOut.z + a_rOut.w * a_rOut.w );
-
-	if ( fMag != 0.0f )
-	{
-		TFLOAT fOneOverMag = 1.0f / fMag;
-
-		a_rOut.x /= fOneOverMag;
-		a_rOut.y /= fOneOverMag;
-		a_rOut.z /= fOneOverMag;
-		a_rOut.w /= fOneOverMag;
+	
+		a_rOut.AsVector4().Normalise4();
 	}
 }
 

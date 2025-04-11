@@ -76,7 +76,7 @@ void TSkeleton::SetQInterpFn( QUATINTERP a_eQuatInterp )
 		m_fnQuatLerp = TQuaternion::Nlerp;
 }
 
-// $Barnyard: FUNCTION 00610e40
+// $Barnyard: FUNCTION 006c9d10
 TINT TSkeleton::GetBoneID( const TCHAR* a_szBoneName, TUINT32 a_iLength )
 {
 	if ( a_iLength == 0 )
@@ -84,7 +84,8 @@ TINT TSkeleton::GetBoneID( const TCHAR* a_szBoneName, TUINT32 a_iLength )
 
 	for ( short i = 0; i < m_iBoneCount; i++ )
 	{
-		if ( TStringManager::String8CompareNoCase( m_pBones[ i ].GetName(), a_szBoneName, a_iLength ) == 0 )
+		if ( m_pBones[ i ].GetNameLength() == a_iLength &&
+			 TStringManager::String8CompareNoCase( m_pBones[ i ].GetName(), a_szBoneName, a_iLength ) == 0 )
 		{
 			return i;
 		}
@@ -101,7 +102,8 @@ TINT TSkeleton::GetSequenceID( const TCHAR* a_szSequenceName, TUINT32 a_iLength 
 
 	for ( short i = 0; i < m_iSequenceCount; i++ )
 	{
-		if ( TStringManager::String8CompareNoCase( m_SkeletonSequences[ i ].GetName(), a_szSequenceName, a_iLength ) == 0 )
+		if ( m_SkeletonSequences[ i ].GetNameLength() == a_iLength &&
+			 TStringManager::String8CompareNoCase( m_SkeletonSequences[ i ].GetName(), a_szSequenceName, a_iLength ) == 0 )
 		{
 			return i;
 		}
@@ -292,14 +294,9 @@ void TSkeletonInstance::UpdateState( TBOOL a_bForceUpdate )
 					}
 				}
 			}
-		}
 
-		for ( TINT i = 0; i < m_pSkeleton->GetAutoBoneCount(); i++ )
-		{
-			auto& rBoneCache = g_aBonesCaches[ i ];
+			// Save the transform
 			auto& rMatrix    = g_aForwardMatrices[ i ];
-
-			auto pBone       = m_pSkeleton->GetBone( i );
 			auto iParentBone = pBone->GetParentBone();
 
 			if ( iParentBone == TBONE_INVALID )
@@ -380,7 +377,9 @@ void TSkeletonInstance::SetStateFromBasePose()
 {
 	for ( TINT i = 0; i < m_pSkeleton->GetAutoBoneCount(); i++ )
 	{
-		m_pSkeleton->GetBone( i )->GetTransform().Identity();
+		m_pBones[ i ].m_Rotation = m_pSkeleton->GetBone( i )->GetRotation();
+		m_pBones[ i ].m_Position = m_pSkeleton->GetBone( i )->GetPosition();
+		m_pBones[ i ].m_Transform.Identity();
 	}
 }
 

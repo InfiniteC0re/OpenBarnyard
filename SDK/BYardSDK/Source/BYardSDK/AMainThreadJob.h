@@ -12,8 +12,8 @@ public:
 	virtual TBOOL RunJob()    = 0;
 	virtual TBOOL CancelJob() { return TFALSE; }
 
-	TBOOL IsRunning() const { return m_bIsRunning; }
+	TBOOL IsFinished() const { return m_bIsFinished; }
 
 protected:
-	TBOOL m_bIsRunning = TFALSE;
+	TBOOL m_bIsFinished = TFALSE;
 };

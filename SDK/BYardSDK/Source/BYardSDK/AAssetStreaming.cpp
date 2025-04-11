@@ -15,8 +15,8 @@ void AAssetStreaming::Update()
 	}
 	else if ( m_pCurrentJob->RunJob() )
 	{
-		m_pCurrentJob->m_bIsRunning = TTRUE;
-		m_pCurrentJob               = TNULL;
+		m_pCurrentJob->m_bIsFinished = TTRUE;
+		m_pCurrentJob                = TNULL;
 	}
 }
 
@@ -28,7 +28,7 @@ void AAssetStreaming::CancelAllJobs()
 
 		if ( it->CancelJob() )
 		{
-			it->m_bIsRunning = TTRUE;
+			it->m_bIsFinished = TTRUE;
 			it->Remove();
 		}
 

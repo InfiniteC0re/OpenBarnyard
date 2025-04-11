@@ -34,8 +34,8 @@ void AAssetStreaming::Update()
 	}
 	else if ( m_pCurrentJob->RunJob() )
 	{
-		m_pCurrentJob->m_bIsRunning = TTRUE;
-		m_pCurrentJob               = TNULL;
+		m_pCurrentJob->m_bIsFinished = TTRUE;
+		m_pCurrentJob                = TNULL;
 	}
 }
 
@@ -48,7 +48,7 @@ void AAssetStreaming::CancelAllJobs()
 
 		if ( it->CancelJob() )
 		{
-			it->m_bIsRunning = TTRUE;
+			it->m_bIsFinished = TTRUE;
 			it->Remove();
 		}
 
@@ -66,6 +66,6 @@ TBOOL AAssetStreaming::HasActiveJobs() const
 void AAssetStreaming::AddMainThreadJob( AMainThreadJob* a_pJob )
 {
 	TASSERT( m_pCurrentJob != a_pJob );
-	a_pJob->m_bIsRunning = TFALSE;
+	a_pJob->m_bIsFinished = TFALSE;
 	m_Jobs.PushBack( a_pJob );
 }
