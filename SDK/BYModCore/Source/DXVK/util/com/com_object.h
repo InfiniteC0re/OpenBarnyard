@@ -4,8 +4,6 @@
 
 #include "com_include.h"
 
-#include "../util_likely.h"
-  
 namespace dxvk {
   
   template<typename T>
@@ -42,14 +40,14 @@ namespace dxvk {
     
     ULONG STDMETHODCALLTYPE AddRef() {
       uint32_t refCount = m_refCount++;
-      if (unlikely(!refCount))
+		if ( !refCount )
         AddRefPrivate();
       return refCount + 1;
     }
     
     ULONG STDMETHODCALLTYPE Release() {
       uint32_t refCount = --m_refCount;
-      if (unlikely(!refCount))
+		if ( !refCount )
         ReleasePrivate();
       return refCount;
     }
@@ -62,7 +60,7 @@ namespace dxvk {
 
     void ReleasePrivate() {
       uint32_t refPrivate = --m_refPrivate;
-      if (unlikely(!refPrivate)) {
+      if (!refPrivate) {
         m_refPrivate += 0x80000000;
         delete this;
       }
@@ -96,21 +94,6 @@ namespace dxvk {
    */
   template<typename Base>
   class ComObjectClamp : public ComObject<Base> {
-
-  public:
-
-    ULONG STDMETHODCALLTYPE Release() {
-      ULONG refCount = this->m_refCount;
-      if (likely(refCount != 0ul)) {
-        this->m_refCount--;
-        refCount--;
-
-        if (refCount == 0ul)
-          this->ReleasePrivate();
-      }
-
-      return refCount;
-    }
 
   };
   
