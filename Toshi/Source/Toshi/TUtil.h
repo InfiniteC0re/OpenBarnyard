@@ -183,7 +183,7 @@ public:
 	inline static TUINT32 s_aiCRC32LUT[ CRC_TABSIZE ] = {};
 
 	static void    CRCInitialise();
-	static TUINT32 CRC32( TBYTE* buffer, TUINT32 len );
+	static TUINT32 CRC32( void* buffer, TUINT32 len );
 
 #pragma endregion
 };

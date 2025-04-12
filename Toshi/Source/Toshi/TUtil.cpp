@@ -198,12 +198,13 @@ void TUtil::CRCInitialise()
 }
 
 // Source: https://lentz.com.au/blog/tag/crc-table-generator
-TUINT32 TUtil::CRC32( TBYTE* buffer, TUINT32 len )
+TUINT32 TUtil::CRC32( void* buffer, TUINT32 len )
 {
-	TUINT32 crc = 0;
+	TBYTE*  bytes = (TBYTE*)buffer;
+	TUINT32 crc   = 0;
 
 	while ( len-- )
-		crc = crc32upd( s_aiCRC32LUT, crc, *buffer++ );
+		crc = crc32upd( s_aiCRC32LUT, crc, *bytes++ );
 
 	return CRC32POST( crc );
 }

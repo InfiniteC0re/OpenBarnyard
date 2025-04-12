@@ -282,6 +282,12 @@ public:
 		TConstruct<T>( &AtUnsafe( m_iNumElements++ ), item );
 	}
 
+	void PushBack( T&& item )
+	{
+		Grow( 1, sizeof( T ) );
+		TConstruct<T>( &AtUnsafe( m_iNumElements++ ), item );
+	}
+
 	void PopBack()
 	{
 		TASSERT( m_iNumElements > 0 );
