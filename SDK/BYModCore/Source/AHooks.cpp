@@ -27,6 +27,8 @@
 
 TOSHI_NAMESPACE_USING
 
+extern const T2CommandLine* g_pCommandLine;
+
 TUINT  g_uiWindowWidth  = 0;
 TUINT  g_uiWindowHeight = 0;
 TBOOL  g_bBikeFOVPatch  = TFALSE;
@@ -254,6 +256,33 @@ MEMBER_HOOK( 0x00662d90, AOptions, AOptions_IsResolutionCompatible, TBOOL, TINT 
 	RECT windowRect;
 	BOOL bResult = GetWindowRect( GetDesktopWindow(), &windowRect );
 
+	// Override width and height by a start parameter
+	TString8 strWidthParam        = g_pCommandLine->GetParameterValue( "-width", TNULL );
+	TString8 strHeightParam       = g_pCommandLine->GetParameterValue( "-height", TNULL );
+	TBOOL    bWindowed            = g_pCommandLine->HasParameter( "-windowed" );
+	TBOOL    bFullscreen          = g_pCommandLine->HasParameter( "-fullscreen" );
+	TBOOL    bOverridenResolution = TFALSE;
+	if ( strWidthParam && strHeightParam )
+	{
+		a_iWidth             = T2String8::StringToInt( strWidthParam );
+		a_iHeight            = T2String8::StringToInt( strHeightParam );
+		bOverridenResolution = TTRUE;
+
+		TINFO( "User provided custom resolution (%dx%d).\n", a_iWidth, a_iHeight );
+	}
+
+	if ( bWindowed )
+	{
+		*pIsWindowed = TTRUE;
+		TINFO( "User is asking for windowed mode.\n" );
+	}
+
+	if ( bFullscreen )
+	{
+		*pIsWindowed = TFALSE;
+		TINFO( "User is asking for fullscreen mode.\n" );
+	}
+
 	if ( !bResult )
 	{
 		TERROR( "Unable to get window rect... Using resolution provided by the original game.\n" );
@@ -263,14 +292,15 @@ MEMBER_HOOK( 0x00662d90, AOptions, AOptions_IsResolutionCompatible, TBOOL, TINT 
 	if ( a_iWidth > windowRect.right || a_iHeight > windowRect.bottom )
 	{
 		TWARN( "Wrong resolution is set (%dx%d), changing it to fit the whole screen (%dx%d)...\n", a_iWidth, a_iHeight, windowRect.right, windowRect.bottom );
-		a_iWidth     = windowRect.right;
-		a_iHeight    = windowRect.bottom;
-		*pIsWindowed = TFALSE;
+		a_iWidth             = windowRect.right;
+		a_iHeight            = windowRect.bottom;
+		*pIsWindowed         = TFALSE;
+		bOverridenResolution = TFALSE;
 	}
 
 	TINFO( "Launching the game in %s mode\n", ( *pIsWindowed ) ? "windowed" : "fullscreen" );
 
-	if ( *pIsWindowed == TFALSE )
+	if ( *pIsWindowed == TFALSE && !bOverridenResolution )
 	{
 		if ( windowRect.right > a_iWidth || windowRect.bottom > a_iHeight )
 		{
