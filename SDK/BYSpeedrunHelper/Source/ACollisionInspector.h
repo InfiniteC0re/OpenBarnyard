@@ -16,7 +16,8 @@ private:
 	inline static ASysMaterial* ms_pCollisionMaterial;
 
 private:
-	static TBOOL AModelLoader_LoadTRBCallback( Toshi::TModel* a_pModel );
+	static TBOOL AModelLoader_LoadTRBCallbackBefore( Toshi::TModel* a_pModel );
+	static TBOOL AModelLoader_LoadTRBCallbackAfter( Toshi::TModel* a_pModel );
 	static void  ATerrain_Render( ATerrainInterface* a_pTerrain );
 
 private:

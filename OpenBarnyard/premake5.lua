@@ -22,7 +22,7 @@ project "OpenBarnyard"
 	
 	defines
 	{
-		"BAN_OPCODE_AUTOLINK"
+		
 	}
 
 	files
@@ -61,7 +61,11 @@ project "OpenBarnyard"
 		"Source/Terrain/**.h",
 		"Source/Terrain/**.cpp",
 		"Source/World/**.h",
-		"Source/World/**.cpp"
+		"Source/World/**.cpp",
+		"Source/Collision/**.h",
+		"Source/Collision/**.cpp",
+		"Source/Physics/**.h",
+		"Source/Physics/**.cpp"
 	}
 	
 	libdirs

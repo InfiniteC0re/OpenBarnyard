@@ -2,22 +2,54 @@
 #include "ACollisionInspector.h"
 
 #include <AHooks.h>
+#include <HookHelpers.h>
 
 #include <BYardSDK/ASysShader.h>
 #include <BYardSDK/ASysMesh.h>
 #include <BYardSDK/THookedRenderD3DInterface.h>
 
+#include <Toshi/T2Map.h>
 #include <ToshiTools/T2CommandLine.h>
+#include <Platform/DX8/TModel_DX8.h>
+
+TOSHI_NAMESPACE_USING
 
 extern TBOOL g_bIsExperimentalMode;
+TMemory::MemBlock* g_pCollMemBlock;
+T2Map<TModelLOD*, void*> g_mapModelLODToOldMeshes;
+
+MEMBER_HOOK( 0x006d9ed0, TModelHAL, TModelHAL_Unload, void )
+{
+	CallOriginal();
+
+	for ( TINT i = 0; i < m_iLODCount; i++ )
+	{
+		if ( m_LODs[ i ].ppMeshes )
+		{
+			auto it = g_mapModelLODToOldMeshes.Find( &m_LODs[ i ] );
+
+			if ( it != g_mapModelLODToOldMeshes.End() )
+			{
+				delete[] it->GetSecond();
+				g_mapModelLODToOldMeshes.Remove( it );
+			}
+		}
+	}
+}
 
 ACollisionInspector::ACollisionInspector()
 {
 	if ( g_bIsExperimentalMode )
 	{
 		// NOTE: it creates too many holes in memory so the game can even run out of memory and crash
-		AHooks::AddHook( Hook_AModelLoader_LoadTRBCallback, HookType_After, AModelLoader_LoadTRBCallback );
+		AHooks::AddHook( Hook_AModelLoader_LoadTRBCallback, HookType_Before, AModelLoader_LoadTRBCallbackBefore );
+		AHooks::AddHook( Hook_AModelLoader_LoadTRBCallback, HookType_After, AModelLoader_LoadTRBCallbackAfter );
 		AHooks::AddHook( Hook_ATerrain_Render, HookType_After, ATerrain_Render );
+
+		InstallHook<TModelHAL_Unload>();
+
+		void* pMemory   = HeapAlloc( GetProcessHeap(), HEAP_ZERO_MEMORY, 32 * 1024 * 1024 );
+		g_pCollMemBlock = g_pMemory->CreateMemBlockInPlace( pMemory, 32 * 1024 * 1024, "Models" );
 	}
 }
 
@@ -48,14 +80,32 @@ private:
 	TINT m_iZBias = 0;
 };
 
-TBOOL ACollisionInspector::AModelLoader_LoadTRBCallback( Toshi::TModel* a_pModel )
+TMemory::MemBlock* g_pMemBlock     = TNULL;
+TMemory::MemBlock* g_pGameMemBlock = TNULL;
+
+TBOOL ACollisionInspector::AModelLoader_LoadTRBCallbackBefore( Toshi::TModel* a_pModel )
 {
+	TMemory* pGameMemory = *TREINTERPRETCAST( TMemory**, 0x007ce1d4 );
+
+	g_pMemBlock     = g_pMemory->GetGlobalBlock();
+	g_pGameMemBlock = pGameMemory->GetGlobalBlock();
+
+	g_pMemory->SetGlobalBlock( g_pCollMemBlock );
+	pGameMemory->SetGlobalBlock( g_pCollMemBlock );
+
+	return TFALSE;
+}
+
+TBOOL ACollisionInspector::AModelLoader_LoadTRBCallbackAfter( TModel* a_pModel )
+{
+	TMemory* pGameMemory = *TREINTERPRETCAST( TMemory**, 0x007ce1d4 );
+
 	if ( a_pModel->GetNumLODs() >= 1 )
 	{
 		struct CollisionMeshDef_t
 		{
 			TUINT32          Unk1;
-			Toshi::TVector3* pVertices;
+			TVector3* pVertices;
 			TUINT32          NumVertices;
 			TUINT16*         pIndices;
 			TUINT32          NumIndices;
@@ -66,9 +116,9 @@ TBOOL ACollisionInspector::AModelLoader_LoadTRBCallback( Toshi::TModel* a_pModel
 
 		struct ASysMeshVertex_t
 		{
-			Toshi::TVector3 Position;
+			TVector3 Position;
 			TUINT32         Diffuse;
-			Toshi::TVector2 UV;
+			TVector2 UV;
 		};
 
 		struct Collision_t
@@ -83,15 +133,13 @@ TBOOL ACollisionInspector::AModelLoader_LoadTRBCallback( Toshi::TModel* a_pModel
 		{
 			if ( pCollision->uiNumMeshes > 0 )
 			{
-				//TTRACE("Creating collision mesh through ASysShader...\n");
-
 				if ( !ms_pCollisionMaterial )
 				{
 					auto pRender          = THookedRenderD3DInterface::GetSingleton();
 					ms_pCollisionMaterial = ASysShader::GetSingleton()->CreateMaterial( "collision" );
 					ms_pCollisionMaterial->SetBlendMode( ASysMaterial::BLENDMODE_1 );
 					ms_pCollisionMaterial->SetTexture( pRender->GetInvalidTexture() );
-					ms_pCollisionMaterial->SetFlags( Toshi::TMaterial::FLAGS_NO_CULL, TTRUE );
+					ms_pCollisionMaterial->SetFlags( TMaterial::FLAGS_NO_CULL, TTRUE );
 				}
 
 				for ( TINT j = 0; j < a_pModel->GetNumLODs(); j++ )
@@ -106,29 +154,27 @@ TBOOL ACollisionInspector::AModelLoader_LoadTRBCallback( Toshi::TModel* a_pModel
 					{
 						auto pMeshDef = &pCollision->pMeshDef[ i ];
 
-						if ( pMeshDef->NumIndices <= Toshi::TMath::TUINT16_MAX )
+						if ( pMeshDef->NumIndices <= TMath::TUINT16_MAX )
 						{
 							uiNumValidCollMeshes++;
 						}
 					}
 
-					rLOD.ppMeshes = (Toshi::TMesh**)TMalloc( sizeof( Toshi::TMesh* ) * ( rLOD.iNumMeshes + uiNumValidCollMeshes ) );
-					Toshi::TUtil::MemClear( rLOD.ppMeshes, sizeof( Toshi::TMesh* ) * ( rLOD.iNumMeshes + uiNumValidCollMeshes ) );
+					rLOD.ppMeshes = (TMesh**)TMalloc( sizeof( TMesh* ) * ( rLOD.iNumMeshes + uiNumValidCollMeshes ), g_pCollMemBlock );
 
 					if ( rLOD.iNumMeshes > 0 )
 					{
-						Toshi::TUtil::MemCopy( rLOD.ppMeshes, ppOldMeshes, rLOD.iNumMeshes * sizeof( Toshi::TMesh* ) );
-						TFree( ppOldMeshes );
-						ppOldMeshes = TNULL;
+						TUtil::MemCopy( rLOD.ppMeshes, ppOldMeshes, rLOD.iNumMeshes * sizeof( TMesh* ) );
+						g_mapModelLODToOldMeshes.Insert( &rLOD, ppOldMeshes );
 					}
 
 					for ( TUINT i = 0; i < pCollision->uiNumMeshes; i++ )
 					{
 						auto pMeshDef = &pCollision->pMeshDef[ i ];
 
-						if ( pMeshDef->NumIndices <= Toshi::TMath::TUINT16_MAX )
+						if ( pMeshDef->NumIndices <= TMath::TUINT16_MAX )
 						{
-							auto pMesh = new ASysCollisionMesh;
+							auto pMesh = new ( g_pCollMemBlock ) ASysCollisionMesh;
 							pMesh->SetOwnerShader( ASysShader::GetSingleton() );
 							pMesh->SetMaterial( ms_pCollisionMaterial );
 							pMesh->CreatePools( 9, pMeshDef->NumVertices, pMeshDef->NumIndices );
@@ -163,10 +209,16 @@ TBOOL ACollisionInspector::AModelLoader_LoadTRBCallback( Toshi::TModel* a_pModel
 					}
 				}
 
+				g_pMemory->SetGlobalBlock( g_pMemBlock );
+				pGameMemory->SetGlobalBlock( g_pGameMemBlock );
+
 				return TTRUE;
 			}
 		}
 	}
+
+	g_pMemory->SetGlobalBlock( g_pMemBlock );
+	pGameMemory->SetGlobalBlock( g_pGameMemBlock );
 
 	return TFALSE;
 }
