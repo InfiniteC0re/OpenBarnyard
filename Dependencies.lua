@@ -16,6 +16,7 @@ IncludeDir.glew = "%{wks.location}/Toshi/Vendor/glew/include"
 IncludeDir.sdl2 = "%{wks.location}/Toshi/Vendor/sdl2/include"
 IncludeDir.libssl = "%{wks.location}/Toshi/Vendor/libssl/include"
 IncludeDir.opcode = "%{wks.location}/Toshi/Vendor/Opcode/source"
+IncludeDir.curl = "%{wks.location}/Toshi/Vendor/curl/include"
 
 LibDir = {}
 LibDir.fmod = "%{wks.location}/Toshi/Vendor/fmod/lib"
@@ -25,6 +26,7 @@ LibDir.detours = "%{wks.location}/SDK/Vendor/Detours/lib"
 LibDir.glew = "%{wks.location}/Toshi/Vendor/glew/lib"
 LibDir.sdl2 = "%{wks.location}/Toshi/Vendor/sdl2/lib"
 LibDir.libssl = "%{wks.location}/Toshi/Vendor/libssl/lib"
+LibDir.curl = "%{wks.location}/Toshi/Vendor/curl/lib"
 
 -- content of these folders should be copied to any client application
 ClientContentCommon = "%{wks.location}Content/Common/"
