@@ -36,6 +36,15 @@ project "BYTexturePacks"
 		"%{wks.location}/SDK/BYModCore/Include",
 		"%{IncludeDir.detours}"
 	}
+	
+	-- Modloader specific
+	debugdir ("%{wks.location}/../Game")
+	debugcommand ("%{wks.location}/../Game/BYardModLoader.exe")
+	
+	postbuildcommands
+	{
+		"{COPYDIR} \"%{wks.location}bin/" .. outputdir .. "/%{prj.name}/\" %{wks.location}../Game/Mods/",
+	}
 
 	filter "system:windows"
 		defines

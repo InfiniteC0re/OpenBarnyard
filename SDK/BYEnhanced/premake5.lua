@@ -59,6 +59,15 @@ project "BYEnhanced"
 		"GLEW_STATIC"
 	}
 	
+	-- Modloader specific
+	debugdir ("%{wks.location}/../Game")
+	debugcommand ("%{wks.location}/../Game/BYardModLoader.exe")
+	
+	postbuildcommands
+	{
+		"{COPYDIR} \"%{wks.location}bin/" .. outputdir .. "/%{prj.name}/\" %{wks.location}../Game/Mods/",
+	}
+	
 	filter "files:**.c"
 		flags { "NoPCH" }
 

@@ -3,7 +3,7 @@ project "OpenBarnyard"
 	staticruntime "on"
 	
 	-- Set debug dir to the Game folder
-	debugdir ("%{wks.location}/Game")
+	debugdir ("%{wks.location}/../Game")
 
 	pchheader "pch.h"
 	pchsource "Source/pch.cpp"
