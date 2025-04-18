@@ -14,7 +14,6 @@ TDEFINE_CLASS_NORUNTIME( TRenderInterface );
 
 TRenderInterface::TRenderInterface()
 {
-	m_Unk1                   = 0;
 	m_bCreateSystemResources = TTRUE;
 	m_bInScene               = TFALSE;
 	m_bCreated               = TFALSE;
@@ -51,7 +50,6 @@ TRenderInterface::TRenderInterface()
 
 TRenderInterface::~TRenderInterface()
 {
-	m_Unk1 = -1;
 }
 
 TBOOL TRenderInterface::Create()

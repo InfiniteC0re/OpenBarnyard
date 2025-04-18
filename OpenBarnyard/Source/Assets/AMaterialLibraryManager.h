@@ -19,6 +19,7 @@ public:
 	public:
 		AMaterialLibrary* CreateLibraryFromTRB( Toshi::TTRB* a_pTRB, const TCHAR* a_szFilePath );
 		AMaterialLibrary* CreateLibraryFromAsset( const TCHAR* a_szFilePath, Toshi::TTRB* a_pTRB );
+		void              DestroyLibrary( AMaterialLibrary* a_pLibrary );
 		ATexture*         FindTexture( const TCHAR* a_szTextureName, AMaterialLibrary** a_ppMaterialLibrary, TINT* a_pTextureIndex );
 
 	private:

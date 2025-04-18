@@ -92,7 +92,7 @@ public:
 	AModelInstanceRef CreateInstance();
 	void              DestroyInstance( AModelInstance* a_pInstance );
 
-	TSIZE GetNumInstances() const;
+	TSIZE                                                  GetNumInstances() const;
 	Toshi::T2Vector<AModelInstanceRef, MAX_NUM_INSTANCES>& GetInstances() { return m_vecInstanceRefs; }
 
 	const Toshi::TPString8& GetName() const { return m_Name; }

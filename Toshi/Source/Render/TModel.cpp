@@ -44,7 +44,7 @@ TBOOL TModel::LoadTRB()
 	{
 		m_pSkeleton                = TSTATICCAST( TSkeleton, GetSymbol( "Skeleton" ) );
 		TKeyframeLibrary* pLibrary = TRenderInterface::GetSingleton()->GetKeyframeLibraryManager().GetLibrary( pSkeletonHeader->m_szTKLName );
-		
+
 		if ( !pLibrary )
 		{
 			TERROR( "TModel: loading a model without required keyframe library: %s\n", pSkeletonHeader->m_szTKLName );

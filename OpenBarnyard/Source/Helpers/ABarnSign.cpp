@@ -31,14 +31,14 @@ void ABarnSign::SpawnAtLocator( const TCHAR* a_pszLocatorName )
 {
 	AAnimatableObjectType* pModelType = AAnimatableObjectManager::GetSingleton()->FindType( TPString8( "barnsign" ) );
 	TASSERT( TNULL != pModelType );
-   
-    m_pModelInstance = pModelType->Instantiate();
 
-    // Get locator transform
-    TMatrix44 matLocator;
+	m_pModelInstance = pModelType->Instantiate();
+
+	// Get locator transform
+	TMatrix44 matLocator;
 	ATerrainInterface::GetSingleton()->GetLocatorTransform( a_pszLocatorName, matLocator );
 
-    // Update model instance
-    m_pModelInstance->SetTransform( matLocator );
-    m_pModelInstance->SetSkeletonUpdating( TTRUE );
+	// Update model instance
+	m_pModelInstance->SetTransform( matLocator );
+	m_pModelInstance->SetSkeletonUpdating( TTRUE );
 }

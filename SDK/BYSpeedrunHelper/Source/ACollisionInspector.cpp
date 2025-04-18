@@ -14,8 +14,8 @@
 
 TOSHI_NAMESPACE_USING
 
-extern TBOOL g_bIsExperimentalMode;
-TMemory::MemBlock* g_pCollMemBlock;
+extern TBOOL             g_bIsExperimentalMode;
+TMemory::MemBlock*       g_pCollMemBlock;
 T2Map<TModelLOD*, void*> g_mapModelLODToOldMeshes;
 
 MEMBER_HOOK( 0x006d9ed0, TModelHAL, TModelHAL_Unload, void )
@@ -104,20 +104,20 @@ TBOOL ACollisionInspector::AModelLoader_LoadTRBCallbackAfter( TModel* a_pModel )
 	{
 		struct CollisionMeshDef_t
 		{
-			TUINT32          Unk1;
-			TVector3* pVertices;
-			TUINT32          NumVertices;
-			TUINT16*         pIndices;
-			TUINT32          NumIndices;
-			TUINT32          uiNumCollTypes;
-			const char**     pszCollName;
-			TUINT32          Unk3;
+			TUINT32      Unk1;
+			TVector3*    pVertices;
+			TUINT32      NumVertices;
+			TUINT16*     pIndices;
+			TUINT32      NumIndices;
+			TUINT32      uiNumCollTypes;
+			const char** pszCollName;
+			TUINT32      Unk3;
 		};
 
 		struct ASysMeshVertex_t
 		{
 			TVector3 Position;
-			TUINT32         Diffuse;
+			TUINT32  Diffuse;
 			TVector2 UV;
 		};
 

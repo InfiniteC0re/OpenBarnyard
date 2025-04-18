@@ -85,7 +85,7 @@
 
 #ifdef TOSHI_ENABLE_ASSERTS
 #  define TCALL_ONCE_IF( CONDITION ) \
-	  static TBOOL s_bFlag;                     \
+	  static TBOOL s_bFlag;          \
 	  if ( !s_bFlag && ( CONDITION ) && ( s_bFlag = TTRUE ) )
 #  define TWIP()                                                                        \
 	  {                                                                                 \
@@ -128,7 +128,7 @@
 		  if ( 1 == TDebug_AssertHandler( #X, __FILE__, __LINE__, __VA_ARGS__ ) ) \
 			  TBREAK();                                                           \
 	  }
-#  define TVALIDPTR( PTR )           TASSERT( TDebug_IsValidAddress( PTR ) )
+#  define TVALIDPTR( PTR ) TASSERT( TDebug_IsValidAddress( PTR ) )
 #else // TOSHI_ENABLE_ASSERTS
 #  define TWIP()
 #  define TTODO( DESC )

@@ -45,7 +45,7 @@ public:
 	// Loads a list of locators from a terrain's skel file that contains them
 	void LoadFromTRB( Toshi::TTRB* a_pTRB );
 
-	Toshi::TTRB* GetTRB() { return m_pTRB; }
+	Toshi::TTRB*             GetTRB() { return m_pTRB; }
 	Toshi::TTransformObject& GetWorldTransform() { return m_oWorldTransform; }
 
 private:

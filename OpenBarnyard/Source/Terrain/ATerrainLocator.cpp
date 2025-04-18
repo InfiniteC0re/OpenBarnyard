@@ -17,10 +17,22 @@ ATerrainLocatorManager::ATerrainLocatorManager()
     , m_bCreatedGrowings( TFALSE )
 {
 	m_oWorldTransform.SetMatrix( TMatrix44{
-	    1.0f, 0.0f, 0.0f, 0.0f,
-	    0.0f, 0.0f, 1.0f, 0.0f,
-	    0.0f, -1.0f, 0.0f, 0.0f,
-	    0.0f, 0.0f, 0.0f, 1.0f,
+	    1.0f,
+	    0.0f,
+	    0.0f,
+	    0.0f,
+	    0.0f,
+	    0.0f,
+	    1.0f,
+	    0.0f,
+	    0.0f,
+	    -1.0f,
+	    0.0f,
+	    0.0f,
+	    0.0f,
+	    0.0f,
+	    0.0f,
+	    1.0f,
 	} );
 }
 

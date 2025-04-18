@@ -35,8 +35,10 @@ enum SYSRESOURCE_ : SYSRESOURCE
 	SYSRESOURCE_NUMOF
 };
 
-class TRenderInterface : public TObject
+class TRenderInterface
+    : public TObject
     , public TSingleton<TRenderInterface>
+    , public TRefCounted
 {
 public:
 	TDECLARE_CLASS( TRenderInterface, TObject );
@@ -159,7 +161,6 @@ public:
 	void BeginEndSceneHAL();
 
 protected:
-	TUINT32                   m_Unk1;                                 // 0x04
 	TBOOL                     m_bCreateSystemResources;               // 0x08
 	TBOOL                     m_bInScene;                             // 0x09
 	TBOOL                     m_bCreated = TFALSE;                    // 0x0A

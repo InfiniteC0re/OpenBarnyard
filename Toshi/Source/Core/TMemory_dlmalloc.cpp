@@ -5,7 +5,7 @@
 TOSHI_NAMESPACE_START
 
 #ifdef TMEMORY_USE_DLMALLOC
-#undef CreateMutex
+#  undef CreateMutex
 
 TMemoryDL* g_pMemoryDL = TNULL;
 

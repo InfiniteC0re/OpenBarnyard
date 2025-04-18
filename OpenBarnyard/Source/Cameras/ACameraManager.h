@@ -10,7 +10,7 @@ public:
 	TDECLARE_CLASS( ACameraManager, Toshi::TTask );
 
 	static constexpr TUINT SPLITSCREEN_MAX_CAMERAS = 4;
-	using CAMERAHELPER = TUINT32;
+	using CAMERAHELPER                             = TUINT32;
 	enum CAMERAHELPER_ : CAMERAHELPER
 	{
 		CAMERAHELPER_BIKE,
@@ -61,7 +61,7 @@ public:
 	// Own Methods
 	//-----------------------------------------------------------------------------
 	void SetCameraHelper( ACameraHelper* a_pHelper );
-	
+
 	ACamera*       GetCamera( TUINT a_uiCameraIndex ) const;
 	ACameraHelper* GetCameraHelper( CAMERAHELPER a_eCameraHelper ) const;
 

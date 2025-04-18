@@ -23,6 +23,7 @@
 #include <Render/TShader.h>
 #include <Platform/DX8/TMSWindow.h>
 #include <Platform/DX8/TRenderInterface_DX8.h>
+#include <Platform/DX8/TRenderAdapter_DX8.h>
 #include <Platform/Windows/TNativeFile_Win.h>
 
 TOSHI_NAMESPACE_USING
@@ -540,6 +541,14 @@ MEMBER_HOOK( 0x006154c0, ARenderer, ARenderer_CreateTRender, TBOOL )
 	return bResult;
 }
 
+MEMBER_HOOK( 0x0060aee0, ARenderer, ARenderer_FindSuitableDevice, TRenderAdapter::Mode::Device*, TRenderInterface::DISPLAYPARAMS& a_rDisplayParams, TINT a_bReverse )
+{
+	// This allows any resolution to be used including 2K or 4K
+	// It does't matter what to return since it's not used for anything but for broken logging
+	a_rDisplayParams.eDepthStencilFormat = 2;
+	return THookedRenderD3DInterface::GetSingleton()->GetAdapterList()->Begin()->GetModeList()->Begin()->GetDevice( 0 );
+}
+
 MEMBER_HOOK( 0x0060c7c0, ARenderer, ARenderer_OnCreate, TBOOL )
 {
 	TBOOL bResult = CallOriginal();
@@ -945,6 +954,7 @@ void AHooks::Initialise()
 	InstallHook<AItemCountHudElement_SetVisible>();
 
 	InstallHook<ARenderer_CreateTRender>();
+	InstallHook<ARenderer_FindSuitableDevice>();
 	InstallHook<ARenderer_OnCreate>();
 	InstallHook<AFrontEndMiniGameState2_CTOR>();
 	InstallHook<TRenderD3DInterface_OnD3DDeviceLost>();

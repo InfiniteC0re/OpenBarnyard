@@ -154,7 +154,7 @@ void TQuaternion::Nlerp( TQuaternion& a_rOut, const TQuaternion& a_rStart, const
 		a_rOut.y = vec.y - a_rStart.y;
 		a_rOut.z = vec.z - a_rStart.z;
 		a_rOut.w = vec.w - a_rStart.w;
-	
+
 		a_rOut.AsVector4().Normalise4();
 	}
 }

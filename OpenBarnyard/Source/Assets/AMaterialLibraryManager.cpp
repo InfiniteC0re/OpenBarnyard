@@ -339,6 +339,13 @@ AMaterialLibrary* AMaterialLibraryManager::List::CreateLibraryFromAsset( const T
 	return pLibrary;
 }
 
+// $Barnyard: FUNCTION 00615900
+void AMaterialLibraryManager::List::DestroyLibrary( AMaterialLibrary* a_pLibrary )
+{
+	TVALIDPTR( a_pLibrary );
+	a_pLibrary->Destroy();
+}
+
 ATexture* AMaterialLibraryManager::List::FindTexture( const TCHAR* a_szTextureName, AMaterialLibrary** a_ppMaterialLibrary, TINT* a_pTextureIndex )
 {
 	TINT iIndex = -1;

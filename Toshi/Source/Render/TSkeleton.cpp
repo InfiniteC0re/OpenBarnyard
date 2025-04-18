@@ -85,7 +85,7 @@ TINT TSkeleton::GetBoneID( const TCHAR* a_szBoneName, TUINT32 a_iLength )
 	for ( short i = 0; i < m_iBoneCount; i++ )
 	{
 		if ( m_pBones[ i ].GetNameLength() == a_iLength &&
-			 TStringManager::String8CompareNoCase( m_pBones[ i ].GetName(), a_szBoneName, a_iLength ) == 0 )
+		     TStringManager::String8CompareNoCase( m_pBones[ i ].GetName(), a_szBoneName, a_iLength ) == 0 )
 		{
 			return i;
 		}
@@ -103,7 +103,7 @@ TINT TSkeleton::GetSequenceID( const TCHAR* a_szSequenceName, TUINT32 a_iLength 
 	for ( short i = 0; i < m_iSequenceCount; i++ )
 	{
 		if ( m_SkeletonSequences[ i ].GetNameLength() == a_iLength &&
-			 TStringManager::String8CompareNoCase( m_SkeletonSequences[ i ].GetName(), a_szSequenceName, a_iLength ) == 0 )
+		     TStringManager::String8CompareNoCase( m_SkeletonSequences[ i ].GetName(), a_szSequenceName, a_iLength ) == 0 )
 		{
 			return i;
 		}
@@ -296,8 +296,8 @@ void TSkeletonInstance::UpdateState( TBOOL a_bForceUpdate )
 			}
 
 			// Save the transform
-			auto& rMatrix    = g_aForwardMatrices[ i ];
-			auto iParentBone = pBone->GetParentBone();
+			auto& rMatrix     = g_aForwardMatrices[ i ];
+			auto  iParentBone = pBone->GetParentBone();
 
 			if ( iParentBone == TBONE_INVALID )
 			{
@@ -325,10 +325,10 @@ TMatrix44 TSkeletonInstance::GetBoneTransformCurrent( TINT a_iBone )
 	if ( a_iBone < m_pSkeleton->GetAutoBoneCount() )
 	{
 		TMatrix44 transform;
-		
+
 		auto pBone = m_pSkeleton->GetBone( a_iBone );
 		transform.Multiply( m_pBones[ a_iBone ].m_Transform, pBone->GetTransform() );
-		
+
 		return transform;
 	}
 

@@ -25,7 +25,6 @@ ABoneAttachCameraHelper::ABoneAttachCameraHelper()
     , m_iBoneId( -1 )
     , m_pAnimatableObject( TNULL )
 {
-
 }
 
 // $Barnyard: FUNCTION 0045fe30
@@ -83,7 +82,6 @@ void ABoneAttachCameraHelper::OnDestroy()
 
 void ABoneAttachCameraHelper::OnAttach()
 {
-	
 }
 
 // $Barnyard: FUNCTION 0045fd00
@@ -98,7 +96,7 @@ void ABoneAttachCameraHelper::OnDetach()
 
 	if ( m_pAnimation )
 	{
-		m_iBoneId = -1;
+		m_iBoneId    = -1;
 		m_pAnimation = TNULL;
 	}
 
@@ -141,7 +139,7 @@ void ABoneAttachCameraHelper::SetModel( const Toshi::TPString8& a_strModelName, 
 	m_pSkeletonInstance = m_pSceneObject->GetSkeletonInstance();
 
 	TString8 strBoneName = a_szBoneName;
-	m_iBoneId = m_pSkeletonInstance->GetSkeleton()->GetBoneID( strBoneName, strBoneName.Length() );
+	m_iBoneId            = m_pSkeletonInstance->GetSkeleton()->GetBoneID( strBoneName, strBoneName.Length() );
 	TASSERT( m_iBoneId != TBONE_INVALID );
 
 	m_oAnimStartListener.Connect(

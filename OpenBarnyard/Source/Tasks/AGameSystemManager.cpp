@@ -8,6 +8,7 @@
 #include "Sound/AMusicManager.h"
 #include "Animation/AAnimatableObjectManager.h"
 #include "Helpers/ASimAnimModelHelperManager.h"
+#include "Helpers/ASkinLightingManager.h"
 
 #include <Toshi/TScheduler.h>
 #include <Plugins/PPropertyParser/PBProperties.h>
@@ -49,6 +50,7 @@ TBOOL AGameSystemManager::OnCreate()
 	pScheduler->CreateTask<AAnimatableObjectManager>( this )->Create();
 
 	AAnimatableObjectManager::GetSingleton()->LoadAnimSoundBreakpoints( "Data/Sound/AnimSoundBP.trb" );
+	ASkinLightingManager::CreateSingleton();
 
 	pScheduler->CreateTask<ACameraManager>( this )->Create();
 	pScheduler->CreateTask<AMusicManager>( this )->Create();

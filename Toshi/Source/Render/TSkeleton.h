@@ -7,7 +7,7 @@
 #include "Render/TAnimation.h"
 
 #define TBONE_INVALID -1
-#define TSEQ_INVALID -1
+#define TSEQ_INVALID  -1
 
 TOSHI_NAMESPACE_START
 
@@ -208,7 +208,7 @@ public:
 	void UpdateState( TBOOL a_bForceUpdate );
 
 	TMatrix44 GetBoneTransformCurrent( TINT a_iBone );
-	void       SetStateFromBasePose();
+	void      SetStateFromBasePose();
 
 	void Delete();
 
