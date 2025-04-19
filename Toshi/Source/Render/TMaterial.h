@@ -64,6 +64,8 @@ public:
 	TRegMaterial* GetRegMaterial() const;
 	void          SetRegMaterial( TRegMaterial* a_pRegMaterial );
 
+	const TCHAR* GetName() const { return m_Name; }
+
 	TBOOL IsCreated() const;
 
 	TRenderPacket* AddRenderPacket( TMesh* a_pMesh );

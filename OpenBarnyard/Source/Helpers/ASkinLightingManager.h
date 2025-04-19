@@ -19,8 +19,8 @@ public:
 		Toshi::TTexture* pTex2;
 		Toshi::TTexture* pTex3;
 		Toshi::TTexture* pTex4;
-		TINT             iUnk1;
-		void*            pUnk2;
+		TINT             iNumModels;
+		const TCHAR**    pszModels;
 	};
 
 	struct SkinLightTRBHeader
@@ -32,6 +32,9 @@ public:
 public:
 	ASkinLightingManager();
 	~ASkinLightingManager();
+
+	void       ApplySkinLight( Toshi::TManagedModel* a_pModel, const TCHAR* a_szMaterialName, SkinLight* a_pLight );
+	SkinLight* FindSkinLight( const TCHAR* a_szMaterialName );
 
 private:
 	TINT                m_iUnk;

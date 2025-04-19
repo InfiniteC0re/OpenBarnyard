@@ -2,6 +2,7 @@
 #include "ASkinLightingManager.h"
 #include "Assets/AMaterialLibraryManager.h"
 #include "Assets/AAssetLoader.h"
+#include "Render/ASkinShader/ASkinMaterial.h"
 
 #include <Render/TRenderInterface.h>
 
@@ -70,4 +71,58 @@ ASkinLightingManager::ASkinLightingManager()
 ASkinLightingManager::~ASkinLightingManager()
 {
 	AMaterialLibraryManager::List::GetSingleton()->DestroyLibrary( m_pSkinLightMatLib );
+}
+
+// $Barnyard: FUNCTION 0060dcc0
+void ASkinLightingManager::ApplySkinLight( Toshi::TManagedModel* a_pModel, const TCHAR* a_szMaterialName, SkinLight* a_pLight )
+{
+	TModel* pModel = a_pModel->GetModel();
+
+	if ( pModel->GetNumLODs() != 0 )
+	{
+		TModelLOD& lod = pModel->GetLOD( 0 );
+
+		for ( TINT i = 0; i < lod.iNumMeshes; i++ )
+		// Apply skin light for each mesh of the first LOD
+		{
+			if ( !lod.ppMeshes[ i ]->GetMaterial()->GetClass()->IsA( &TGetClass( ASkinMaterial ) ) )
+				continue;
+
+			// This is certainly a mesh with some skin material
+			ASkinMaterial* pMaterial = TSTATICCAST( ASkinMaterial, lod.ppMeshes[ i ]->GetMaterial() );
+
+			SkinLight* pLight = a_pLight;
+			if ( !a_szMaterialName || TStringManager::String8CompareNoCase( a_szMaterialName, pMaterial->GetName() ) != 0 || !pLight )
+			{
+				pLight = FindSkinLight( pMaterial->GetName() );
+			}
+
+			TVALIDPTR( pLight );
+			pMaterial->SetLightingTexture( ASkinMaterial::LT_0, pLight->pTex2 );
+			pMaterial->SetLightingTexture( ASkinMaterial::LT_1, pLight->pTex1 );
+			pMaterial->SetLightingTexture( ASkinMaterial::LT_2, pLight->pTex4 );
+			pMaterial->SetLightingTexture( ASkinMaterial::LT_3, pLight->pTex3 );
+			pMaterial->SetTextureNum( 5 );
+		}
+	}
+}
+
+// $Barnyard: FUNCTION 0060dc40
+ASkinLightingManager::SkinLight* ASkinLightingManager::FindSkinLight( const TCHAR* a_szModelName )
+{
+	TVALIDPTR( m_pSkinLightHeader );
+
+	for ( TINT i = 0; i < m_pSkinLightHeader->iNumLights; i++ )
+	{
+		SkinLight* pSkinLight = &m_pSkinLightHeader->pSkinLights[ i ];
+	
+		for ( TINT k = 0; k < pSkinLight->iNumModels; k++ )
+		{
+			if ( !TStringManager::String8CompareNoCase( pSkinLight->pszModels[ k ], a_szModelName ) )
+				return pSkinLight;
+		}
+	}
+
+	TASSERT( m_pSkinLightHeader->iNumLights != 0 );
+	return &m_pSkinLightHeader->pSkinLights[ 0 ];
 }

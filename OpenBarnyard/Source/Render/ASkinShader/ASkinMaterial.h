@@ -36,6 +36,11 @@ public:
 		SetTextureNum( 1 );
 	}
 
+	void SetLightingTexture( ELightingTexture a_eTex, Toshi::TTexture* a_pTexture )
+	{
+		m_apLightingTextures[ a_eTex ] = a_pTexture;
+	}
+
 protected:
 	Toshi::TTexture* m_pTexture;
 	Toshi::TTexture* m_apLightingTextures[ LT_NUMOF ];
