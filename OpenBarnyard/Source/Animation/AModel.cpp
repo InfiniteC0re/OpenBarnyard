@@ -6,6 +6,7 @@
 #include "Render/AStaticInstanceShader/AStaticInstanceMaterial.h"
 #include "Render/ARenderer.h"
 #include "Assets/AModelLoader.h"
+#include "Helpers/ASkinLightingManager.h"
 
 #ifdef TOSHI_SKU_WINDOWS
 #  include "Platform/DX8/AWorldShader/AWorldShader_DX8.h"
@@ -177,7 +178,8 @@ TManagedModel* AModel::Create( const TPString8& a_rFilePath, TTRB* a_pTRB )
 		}
 
 		pModelPtr->Create( filepath, a_pTRB );
-		TFIXME( "Call FUN_0060dcc0" );
+
+		ASkinLightingManager::GetSingleton()->ApplySkinLight( pModelPtr, TNULL, TNULL );
 	}
 
 	return pModelPtr;

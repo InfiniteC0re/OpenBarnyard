@@ -7,7 +7,8 @@
 #include <Toshi/T2Map.h>
 #include <Toshi/T2SList.h>
 
-class AMaterialLibraryManager : public Toshi::TObject
+class AMaterialLibraryManager
+    : public Toshi::TObject
     , public Toshi::TSingleton<AMaterialLibraryManager>
 {
 public:

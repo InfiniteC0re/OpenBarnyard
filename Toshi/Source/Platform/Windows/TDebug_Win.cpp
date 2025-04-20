@@ -144,6 +144,8 @@ TINT TDebug_AssertHandler( const TCHAR* a_szExpression, const TCHAR* a_szFileNam
 	TDebug_szAssertExpression = a_szExpression;
 	TDebug_uiAssertLineNumber = a_uiLineNumber;
 
+	TERROR( "Assertion (%s) failed ('%s', at line %u)\n", a_szExpression, a_szFileName, a_uiLineNumber );
+
 	HWND hWnd = GetActiveWindow();
 
 	if ( hWnd != NULL )
