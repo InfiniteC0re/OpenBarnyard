@@ -156,9 +156,11 @@ public:
 
 	TPriList() {}
 
+	Iterator GetNext( Iterator a_itNode ) { return a_itNode.Next(); }
+	Iterator GetPrev( Iterator a_itNode ) { return a_itNode.Prev(); }
 	Iterator Begin() { return TGenericPriList::Begin(); }
 	Iterator End() { return TGenericPriList::End(); }
-	TBOOL    IsLinked() { return !IsEmpty(); }
+	TBOOL    IsLinked() { return !TGenericPriList::IsEmpty(); }
 };
 
 template <class T>
@@ -169,6 +171,8 @@ public:
 
 	TDList() {}
 
+	Iterator GetNext( Iterator a_itNode ) { return a_itNode.Next(); }
+	Iterator GetPrev( Iterator a_itNode ) { return a_itNode.Prev(); }
 	T*       Head() { return TGenericDList::Head()->As<T>(); }
 	T*       Tail() { return TGenericDList::Tail()->As<T>(); }
 	Iterator Begin() { return TGenericDList::Begin()->As<T>(); }
