@@ -342,29 +342,32 @@ MEMBER_HOOK( 0x00662d90, AOptions, AOptions_IsResolutionCompatible, TBOOL, TINT 
 
 	g_fOriginalFOV = *pFOV;
 
-	if ( TMath::Abs( fCurrentAspectRatio - ASPECT_RATIO_5_4 ) <= FLT_EPSILON )
+	// To support resolutions like 1366x768 or 1360x768...
+	const TFLOAT MAX_ERROR = TMath::Max( TMath::Abs( ASPECT_RATIO_16_9 - ( 1366.0f / 768.0f ) ), TMath::Abs( ASPECT_RATIO_16_9 - ( 1360.0f / 768.0f ) ) );
+
+	if ( TMath::Abs( fCurrentAspectRatio - ASPECT_RATIO_5_4 ) <= MAX_ERROR )
 	{
 		TINFO( "Detected aspect ratio: 5:4\n" );
 		*pFOV = 0.994199f;
 	}
-	else if ( TMath::Abs( fCurrentAspectRatio - ASPECT_RATIO_25_16 ) <= FLT_EPSILON )
+	else if ( TMath::Abs( fCurrentAspectRatio - ASPECT_RATIO_25_16 ) <= MAX_ERROR )
 	{
 		TINFO( "Detected aspect ratio: 25:16\n" );
 		*pFOV = 1.18425f;
 	}
-	else if ( TMath::Abs( fCurrentAspectRatio - ASPECT_RATIO_16_10 ) <= FLT_EPSILON )
+	else if ( TMath::Abs( fCurrentAspectRatio - ASPECT_RATIO_16_10 ) <= MAX_ERROR )
 	{
 		TINFO( "Detected aspect ratio: 16:10\n" );
 		*pFOV           = 1.2244f;
 		g_bBikeFOVPatch = TTRUE;
 	}
-	else if ( TMath::Abs( fCurrentAspectRatio - ASPECT_RATIO_15_9 ) <= FLT_EPSILON )
+	else if ( TMath::Abs( fCurrentAspectRatio - ASPECT_RATIO_15_9 ) <= MAX_ERROR )
 	{
 		TINFO( "Detected aspect ratio: 15:9\n" );
 		*pFOV           = 1.24655f;
 		g_bBikeFOVPatch = TTRUE;
 	}
-	else if ( TMath::Abs( fCurrentAspectRatio - ASPECT_RATIO_16_9 ) <= FLT_EPSILON )
+	else if ( TMath::Abs( fCurrentAspectRatio - ASPECT_RATIO_16_9 ) <= MAX_ERROR )
 	{
 		TINFO( "Detected aspect ratio: 16:9\n" );
 		*pFOV           = 1.313f;
