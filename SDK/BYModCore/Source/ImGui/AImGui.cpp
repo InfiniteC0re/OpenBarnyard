@@ -18,16 +18,32 @@
 
 #include <Toshi/TPString8.h>
 
+TOSHI_NAMESPACE_USING
+
 void AImGUI_RenderCallback()
 {
-	if ( AImGUI::IsSingletonCreated() )
+	TBOOL                  bIsEnabled  = AImGUI::GetSingleton()->IsEnabled();
+	TBOOL                  bHasOverlay = TFALSE;
+	T2DList<AModInstance>& mods        = AGlobalModLoaderTask::GetSingleton()->Get()->GetMods();
+
+	T2_FOREACH( mods, it )
+	{
+		if ( it->IsOverlayVisible() )
+		{
+			bHasOverlay = TTRUE;
+			return;
+		}
+	}
+
+	if ( AImGUI::IsSingletonCreated() && ( bIsEnabled || bHasOverlay ) )
 	{
 		AImGUI::GetSingleton()->BeginScene();
 
-		if ( AImGUI::GetSingleton()->IsEnabled() )
+		if ( bIsEnabled )
 			AImGUI::GetSingleton()->Render();
 
-		AImGUI::GetSingleton()->RenderOverlay();
+		if ( bHasOverlay )
+			AImGUI::GetSingleton()->RenderOverlay();
 
 		AImGUI::GetSingleton()->EndScene();
 	}
@@ -177,8 +193,8 @@ void AImGUI::Render()
 	TFLOAT fWidth  = m_DisplayParams.uiWidth * 0.6f;
 	TFLOAT fHeight = m_DisplayParams.uiHeight * 0.8f;
 
-	fWidth  = Toshi::TMath::Min( fWidth, WINDOW_MAX_WIDTH );
-	fHeight = Toshi::TMath::Min( fHeight, WINDOW_MAX_HEIGHT );
+	fWidth  = TMath::Min( fWidth, WINDOW_MAX_WIDTH );
+	fHeight = TMath::Min( fHeight, WINDOW_MAX_HEIGHT );
 
 	ImGui::SetNextWindowSize( { fWidth, fHeight } );
 	ImGui::SetNextWindowPos( { TFLOAT( m_DisplayParams.uiWidth / 2 - fWidth / 2 ),
@@ -247,7 +263,7 @@ void AImGUI::Render()
 
 			//auto pPrevState = AGameStateController::GetSingleton()->GetPreviousState();
 
-			//if (pPrevState->IsExactly((Toshi::TClass*)0x00781b0c))
+			//if (pPrevState->IsExactly((TClass*)0x00781b0c))
 			//{
 			//	static const char* MINIGAME_LIST[] = {
 			//		"AChickenFireMinigameState",
@@ -297,7 +313,7 @@ void AImGUI::Render()
 			//		class AMiniGameManager;
 			//		auto pMiniGameManager = *(AMiniGameManager**)0x0078266c;
 
-			//		CALL_THIS(0x00469890, AMiniGameManager*, void, pMiniGameManager, const Toshi::TPString8&, MINIGAME_LIST[s_iSelectedMiniGame]);
+			//		CALL_THIS(0x00469890, AMiniGameManager*, void, pMiniGameManager, const TPString8&, MINIGAME_LIST[s_iSelectedMiniGame]);
 			//	}
 			//}
 

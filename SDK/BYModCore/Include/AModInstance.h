@@ -14,8 +14,7 @@ TOSHI_NAMESPACE_END
 
 class AImGUI;
 
-class AModInstance :
-	public Toshi::T2DList<AModInstance>::Node
+class AModInstance : public Toshi::T2DList<AModInstance>::Node
 {
 public:
 	AModInstance() = default;
@@ -25,16 +24,18 @@ public:
 		OnUnload();
 	}
 
-	virtual TBOOL				OnLoad() = 0;
-	virtual void				OnUnload() {}
-	virtual TBOOL				OnUpdate( TFLOAT a_fDeltaTime ) { return TTRUE; }
-	virtual void				OnRenderInterfaceReady( Toshi::TRenderD3DInterface* a_pRenderInterface ) {}
-	virtual void				OnAppRendererReady() {}
-	virtual void				OnAllModsLoaded() {}
+	virtual TBOOL               OnLoad() = 0;
+	virtual void                OnUnload() {}
+	virtual TBOOL               OnUpdate( TFLOAT a_fDeltaTime ) { return TTRUE; }
+	virtual void                OnRenderInterfaceReady( Toshi::TRenderD3DInterface* a_pRenderInterface ) {}
+	virtual void                OnAppRendererReady() {}
+	virtual void                OnAllModsLoaded() {}
 	virtual void                OnAGUI2Ready() {}
 	virtual void                OnImGuiRender( AImGUI* a_pImGui ) {}
-	virtual TBOOL				HasSettingsUI() { return TFALSE; }
-	virtual Toshi::TTRB*		GetAssetFile() { return TNULL; }
+	virtual void                OnImGuiRenderOverlay( AImGUI* a_pImGui ) {}
+	virtual TBOOL               HasSettingsUI() { return TFALSE; }
+	virtual TBOOL               IsOverlayVisible() { return TFALSE; }
+	virtual Toshi::TTRB*        GetAssetFile() { return TNULL; }
 	virtual const PBProperties* GetFileOverrides() { return TNULL; }
 
 	const TCHAR* GetName() const { return m_strName.GetString(); }
