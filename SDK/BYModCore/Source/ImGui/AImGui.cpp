@@ -22,30 +22,34 @@ TOSHI_NAMESPACE_USING
 
 void AImGUI_RenderCallback()
 {
-	TBOOL                  bIsEnabled  = AImGUI::GetSingleton()->IsEnabled();
 	TBOOL                  bHasOverlay = TFALSE;
-	T2DList<AModInstance>& mods        = AGlobalModLoaderTask::GetSingleton()->Get()->GetMods();
+	T2DList<AModInstance>& mods        = AGlobalModLoaderTask::Get()->GetMods();
 
 	T2_FOREACH( mods, it )
 	{
 		if ( it->IsOverlayVisible() )
 		{
 			bHasOverlay = TTRUE;
-			return;
+			break;
 		}
 	}
 
-	if ( AImGUI::IsSingletonCreated() && ( bIsEnabled || bHasOverlay ) )
+	if ( AImGUI::IsSingletonCreated() )
 	{
-		AImGUI::GetSingleton()->BeginScene();
+		TBOOL bEnabled = AImGUI::GetSingleton()->IsEnabled();
 
-		if ( bIsEnabled )
-			AImGUI::GetSingleton()->Render();
+		if ( bEnabled || bHasOverlay )
+		{
+			AImGUI::GetSingleton()->BeginScene();
 
-		if ( bHasOverlay )
-			AImGUI::GetSingleton()->RenderOverlay();
+			if ( bEnabled )
+				AImGUI::GetSingleton()->Render();
 
-		AImGUI::GetSingleton()->EndScene();
+			if ( bHasOverlay )
+				AImGUI::GetSingleton()->RenderOverlay();
+
+			AImGUI::GetSingleton()->EndScene();
+		}
 	}
 }
 
@@ -357,11 +361,15 @@ void AImGUI::Render()
 
 void AImGUI::RenderOverlay()
 {
-	//ImGui::Begin( "Debug Overlay", TNULL, ImGuiWindowFlags_AlwaysAutoResize );
-	//
-	//ImGui::Text( "Hello world!" );
-	//
-	//ImGui::End();
+	T2DList<AModInstance>& mods = AGlobalModLoaderTask::Get()->GetMods();
+
+	T2_FOREACH( mods, it )
+	{
+		if ( it->IsOverlayVisible() )
+		{
+			it->OnImGuiRenderOverlay( this );
+		}
+	}
 }
 
 void AImGUI::OnD3DDeviceLost()
