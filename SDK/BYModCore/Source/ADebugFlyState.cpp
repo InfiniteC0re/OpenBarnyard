@@ -164,3 +164,8 @@ TBOOL ADebugFlyState::ProcessInput( const Toshi::TInputInterface::InputEvent* a_
 
 	return TFALSE;
 }
+
+TFLOAT ADebugFlyState::GetFOV()
+{
+	return *(TFLOAT*)0x007822ac;
+}

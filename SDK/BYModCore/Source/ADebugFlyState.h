@@ -19,6 +19,7 @@ public:
 	virtual void  OnActivate() OVERRIDE;
 	virtual void  OnRemoval() OVERRIDE;
 	virtual TBOOL ProcessInput( const Toshi::TInputInterface::InputEvent* a_pInputEvent ) OVERRIDE;
+	virtual TFLOAT GetFOV() OVERRIDE;
 
 private:
 	ACameraHelper*     m_pOldHelper = TNULL;
