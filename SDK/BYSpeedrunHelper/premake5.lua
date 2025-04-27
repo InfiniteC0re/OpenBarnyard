@@ -30,9 +30,9 @@ project "BYSpeedrunHelper"
 	includedirs
 	{
 		"Source",
-		"%{wks.location}/Toshi/Source",
-		"%{wks.location}/SDK/BYardSDK/Source",
-		"%{wks.location}/SDK/BYModCore/Include",
+		"%{IncludeDir.toshi}",
+		"%{IncludeDir.byardsdk}",
+		"%{IncludeDir.modcore}",
 		"%{IncludeDir.detours}"
 	}
 	

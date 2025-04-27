@@ -20,9 +20,16 @@
 
 void AImGUI_RenderCallback()
 {
-	if ( AImGUI::IsSingletonCreated() && AImGUI::GetSingleton()->IsEnabled() )
+	if ( AImGUI::IsSingletonCreated() )
 	{
-		AImGUI::GetSingleton()->Render();
+		AImGUI::GetSingleton()->BeginScene();
+
+		if ( AImGUI::GetSingleton()->IsEnabled() )
+			AImGUI::GetSingleton()->Render();
+
+		AImGUI::GetSingleton()->RenderOverlay();
+
+		AImGUI::GetSingleton()->EndScene();
 	}
 }
 
@@ -164,8 +171,6 @@ void AImGUI::Toggle()
 
 void AImGUI::Render()
 {
-	BeginScene();
-
 	constexpr TFLOAT WINDOW_MAX_WIDTH  = 580;
 	constexpr TFLOAT WINDOW_MAX_HEIGHT = 740;
 
@@ -332,8 +337,15 @@ void AImGUI::Render()
 	}
 
 	ImGui::End();
+}
 
-	EndScene();
+void AImGUI::RenderOverlay()
+{
+	//ImGui::Begin( "Debug Overlay", TNULL, ImGuiWindowFlags_AlwaysAutoResize );
+	//
+	//ImGui::Text( "Hello world!" );
+	//
+	//ImGui::End();
 }
 
 void AImGUI::OnD3DDeviceLost()

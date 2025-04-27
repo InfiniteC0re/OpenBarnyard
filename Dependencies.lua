@@ -16,6 +16,10 @@ IncludeDir.glew = "%{wks.location}/Toshi/Vendor/glew/include"
 IncludeDir.sdl2 = "%{wks.location}/Toshi/Vendor/sdl2/include"
 IncludeDir.libssl = "%{wks.location}/Toshi/Vendor/libssl/include"
 IncludeDir.opcode = "%{wks.location}/Toshi/Vendor/Opcode/source"
+IncludeDir.toshi = "%{wks.location}/Toshi/Source"
+IncludeDir.byardsdk = "%{wks.location}/SDK/BYardSDK/Source"
+IncludeDir.modcore = "%{wks.location}/SDK/BYModCore/Include"
+IncludeDir.openbarnyard = "%{wks.location}/OpenBarnyard/Source"
 IncludeDir.curl = "%{wks.location}/Toshi/Vendor/curl/include"
 
 LibDir = {}

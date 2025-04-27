@@ -15,6 +15,7 @@ public:
 	void BeginScene();
 	void EndScene();
 	void Render();
+	void RenderOverlay();
 	void OnD3DDeviceLost();
 	void OnD3DDeviceFound();
 

@@ -28,7 +28,7 @@ project "BYardSDK"
 	includedirs
 	{
 		"Source",
-		"%{wks.location}/Toshi/Source",
+		"%{IncludeDir.toshi}",
 		"%{IncludeDir.detours}"
 	}
 	
