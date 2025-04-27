@@ -139,6 +139,24 @@ void ACameraManager::SetCameraHelper( ACameraHelper* a_pHelper )
 	m_bIsPosLerping = TFALSE;
 }
 
+// $Barnyard: FUNCTION 0045c240
+void ACameraManager::DetachCameraHelpers()
+{
+	if ( m_pCurrentHelper )
+		m_pCurrentHelper->OnDetach();
+
+	m_pCurrentHelper = TNULL;
+
+	for ( TINT i = 0; i < SPLITSCREEN_MAX_CAMERAS; i++ )
+	{
+		if ( m_apCurrentSplitscreenCameraHelpers[ i ] )
+		{
+			m_apCurrentSplitscreenCameraHelpers[ i ]->OnDetach();
+			m_apCurrentSplitscreenCameraHelpers[ i ] = TNULL;
+		}
+	}
+}
+
 ACamera* ACameraManager::GetCamera( TUINT a_uiCameraIndex ) const
 {
 	TASSERT( a_uiCameraIndex < SPLITSCREEN_MAX_CAMERAS );

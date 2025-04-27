@@ -2,6 +2,7 @@
 #include "AHooks.h"
 #include "AImGui.h"
 #include "AImGuiState.h"
+#include "ADebugFlyState.h"
 #include "DXVK/d3d8/d3d8_device.h"
 #include "imgui_impl_dx8.h"
 #include "imgui_impl_dx9.h"
@@ -246,6 +247,12 @@ void AImGUI::Render()
 				CALL_THIS( 0x00407f70, AGameState*, AGameState*, pDebugSSeqGameState );
 
 				AGameStateController::GetSingleton()->PushState( pDebugSSeqGameState );
+			}
+
+			if ( ImGui::Button( "Debug Fly State" ) )
+			{
+				Toggle();
+				AGameStateController::GetSingleton()->PushState( new ADebugFlyState() );
 			}
 
 			if ( ImGui::Button( "Hide GUI" ) )

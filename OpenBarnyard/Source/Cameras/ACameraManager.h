@@ -61,6 +61,7 @@ public:
 	// Own Methods
 	//-----------------------------------------------------------------------------
 	void SetCameraHelper( ACameraHelper* a_pHelper );
+	void DetachCameraHelpers();
 
 	ACamera*       GetCamera( TUINT a_uiCameraIndex ) const;
 	ACameraHelper* GetCameraHelper( CAMERAHELPER a_eCameraHelper ) const;
