@@ -1,6 +1,7 @@
 #pragma once
 #include <Toshi/TSingleton.h>
 #include <Toshi/T2Vector.h>
+#include <Render/TRenderPacket.h>
 #include <ToshiTools/T2DynamicVector.h>
 #include <Platform/GL/T2Render_GL.h>
 #include <Platform/GL/T2FrameBuffer_GL.h>

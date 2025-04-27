@@ -19,6 +19,7 @@
 #include <Platform/DX8/TRenderInterface_DX8.h>
 #include <Platform/DX8/TRenderContext_DX8.h>
 #include <BYardSDK/SDKHooks.h>
+#include <BYardSDK/THookedRenderD3DInterface.h>
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.

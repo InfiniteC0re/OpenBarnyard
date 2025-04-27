@@ -10,7 +10,7 @@
 TOSHI_NAMESPACE_USING
 
 AHashedObject::AHashedObject()
-    : m_Unk2( TNULL )
+    : m_pHashNode( TNULL )
 {
 }
 

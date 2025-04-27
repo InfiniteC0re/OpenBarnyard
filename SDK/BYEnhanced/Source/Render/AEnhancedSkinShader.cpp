@@ -10,6 +10,7 @@
 #include <Platform/DX8/TTextureResourceHAL_DX8.h>
 #include <Platform/DX8/TVertexPoolResource_DX8.h>
 #include <Platform/DX8/TIndexPoolResource_DX8.h>
+#include <BYardSDK/THookedRenderD3DInterface.h>
 
 #include <glm/mat4x4.hpp>
 
