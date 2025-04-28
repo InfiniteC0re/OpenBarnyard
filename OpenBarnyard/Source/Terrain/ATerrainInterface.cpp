@@ -332,7 +332,7 @@ TBOOL ATerrainInterface::IsLoaded() const
 		return TTRUE;
 	}
 
-	if ( m_pTerrainVIS->GetLocatorManager() && m_pTerrainVIS->GetLocatorManager()->GetTRB() )
+	if ( m_pTerrainVIS->GetLocatorList() && m_pTerrainVIS->GetLocatorList()->GetTRB() )
 	{
 		for ( TINT i = 0; i < m_pTerrainVIS->m_iNumSections; i++ )
 		{
@@ -695,7 +695,7 @@ ATerrainLODBlock* ATerrainInterface::AllocateLODBlock( ATerrainLODType a_eLODTyp
 // $Barnyard: FUNCTION 005e8d70
 void ATerrainInterface::GetLocatorTransform( const TCHAR* a_pszLocatorName, TMatrix44& a_rOutTransform )
 {
-	ATerrainLocatorManager* pLocatorManager = GetLocatorManager();
+	ATerrainLocatorList* pLocatorManager = GetLocatorList();
 
 	ATerrainLocator* pLocator = pLocatorManager->FindLocator( a_pszLocatorName );
 	TASSERT( pLocator != TNULL );
@@ -714,7 +714,7 @@ void ATerrainInterface::GetLocatorTransform( const TCHAR* a_pszLocatorName, TMat
 // $Barnyard: FUNCTION 005e8b60
 TVector4 ATerrainInterface::GetLocatorPos( const TCHAR* a_pszLocatorName )
 {
-	ATerrainLocatorManager* pLocatorManager = GetLocatorManager();
+	ATerrainLocatorList* pLocatorManager = GetLocatorList();
 
 	ATerrainLocator* pLocator = pLocatorManager->FindLocator( a_pszLocatorName );
 	TASSERT( pLocator != TNULL );
@@ -734,7 +734,7 @@ TVector4 ATerrainInterface::GetLocatorPos( const TCHAR* a_pszLocatorName )
 // $Barnyard: FUNCTION 005e8bf0
 void ATerrainInterface::GetLocatorPosAndRot( const TCHAR* a_pszLocatorName, Toshi::TVector4& a_rOutPosition, Toshi::TQuaternion& a_rOutRotation )
 {
-	ATerrainLocatorManager* pLocatorManager = GetLocatorManager();
+	ATerrainLocatorList* pLocatorManager = GetLocatorList();
 
 	ATerrainLocator* pLocator = pLocatorManager->FindLocator( a_pszLocatorName );
 	TASSERT( pLocator != TNULL );
@@ -759,7 +759,7 @@ ATerrainLocator* ATerrainInterface::FindLocator( const TCHAR* a_pszLocatorName )
 	if ( !m_pTerrainVIS )
 		return TNULL;
 
-	return GetLocatorManager()->FindLocator( a_pszLocatorName );
+	return GetLocatorList()->FindLocator( a_pszLocatorName );
 }
 
 ATRBLoaderJob* ATerrainInterface::GetFreeTRBLoaderJob()

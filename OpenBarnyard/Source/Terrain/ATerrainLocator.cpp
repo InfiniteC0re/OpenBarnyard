@@ -10,7 +10,7 @@
 TOSHI_NAMESPACE_USING
 
 // $Barnyard: FUNCTION 005ec800
-ATerrainLocatorManager::ATerrainLocatorManager()
+ATerrainLocatorList::ATerrainLocatorList()
     : m_pTRB( TNULL )
     , m_pLocatorsHeader( TNULL )
     , m_pLocatorVISHeader( TNULL )
@@ -36,12 +36,12 @@ ATerrainLocatorManager::ATerrainLocatorManager()
 	} );
 }
 
-ATerrainLocatorManager::~ATerrainLocatorManager()
+ATerrainLocatorList::~ATerrainLocatorList()
 {
 }
 
 // $Barnyard: FUNCTION 005ec8b0
-ATerrainLocator* ATerrainLocatorManager::FindLocator( const TCHAR* a_pszLocatorName )
+ATerrainLocator* ATerrainLocatorList::FindLocator( const TCHAR* a_pszLocatorName )
 {
 	TVALIDPTR( m_pLocatorsHeader );
 
@@ -95,7 +95,7 @@ ATerrainLocator* ATerrainLocatorManager::FindLocator( const TCHAR* a_pszLocatorN
 }
 
 // $Barnyard: FUNCTION 005ecad0
-void ATerrainLocatorManager::LoadFromTRB( TTRB* a_pTRB )
+void ATerrainLocatorList::LoadFromTRB( TTRB* a_pTRB )
 {
 	m_pTRB              = a_pTRB;
 	m_pLocatorsHeader   = a_pTRB->CastSymbol<ATerrainLocatorTRBHeader>( "Locators" );

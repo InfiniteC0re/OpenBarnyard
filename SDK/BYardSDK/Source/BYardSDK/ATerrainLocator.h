@@ -10,7 +10,7 @@ private:
 	Toshi::TVector3    m_Position;
 };
 
-class ATerrainLocatorManager
+class ATerrainLocatorList
 {
 public:
 	void LoadFromTRB( Toshi::TTRB* a_pTRB );

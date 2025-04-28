@@ -272,7 +272,7 @@ void ASkinShaderHAL::Render( Toshi::TRenderPacket* a_pRenderPacket )
 			auto pCurrentContext  = TRenderContextD3D::Upcast( pRenderInterface->GetCurrentContext() );
 			auto pD3DDevice       = pRenderInterface->GetDirect3DDevice();
 
-			if ( pMaterial->IsSkin() && pMaterial->HasLighting1Tex() && pMaterial->HasLighting2Tex() )
+			if ( pMaterial->IsHDLighting() && pMaterial->HasLighting1Tex() && pMaterial->HasLighting2Tex() )
 			{
 				// Apply lighting to the skin mesh that uses the HD shader
 				// HD shader uses 4 shading textures to character models look good

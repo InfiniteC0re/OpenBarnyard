@@ -136,7 +136,8 @@ void AGlowViewport::Update()
 			TSkeletonInstance* pSkeletonInstance = pModelInstance->GetSkeletonInstance();
 
 			// Get local bone transform
-			TMatrix44 oBoneTransform = pSkeletonInstance->GetBoneTransformCurrent( pGlowObject->m_iAttachBone );
+			TMatrix44 oBoneTransform;
+			pSkeletonInstance->GetBoneTransformCurrent( pGlowObject->m_iAttachBone, oBoneTransform );
 
 			// Get model instance transform to calculate world bone transform later
 			TMatrix44 oLightTransform;

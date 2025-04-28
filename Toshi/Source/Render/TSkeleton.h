@@ -207,8 +207,9 @@ public:
 	void UpdateTime( TFLOAT a_fDeltaTime );
 	void UpdateState( TBOOL a_bForceUpdate );
 
-	TMatrix44 GetBoneTransformCurrent( TINT a_iBone );
-	void      SetStateFromBasePose();
+	const TMatrix44& GetBoneTransformCurrent( TINT a_iBone );
+	TMatrix44&       GetBoneTransformCurrent( TINT a_iBone, TMatrix44& a_rOutTransform );
+	void             SetStateFromBasePose();
 
 	void Delete();
 

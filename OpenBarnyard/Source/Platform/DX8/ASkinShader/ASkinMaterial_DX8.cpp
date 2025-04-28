@@ -17,7 +17,7 @@ TOSHI_NAMESPACE_USING
 TDEFINE_CLASS( ASkinMaterialHAL );
 
 ASkinMaterialHAL::ASkinMaterialHAL()
-    : m_pAlphaBlendMaterial( TNULL ), m_pAssignedOrderTable( TNULL ), m_pSomeTexture( TNULL ), m_bIsSkin( TTRUE )
+    : m_pAlphaBlendMaterial( TNULL ), m_pAssignedOrderTable( TNULL ), m_pSomeTexture( TNULL ), m_bIsHDLighting( TTRUE )
 {
 }
 
@@ -56,7 +56,7 @@ void ASkinMaterialHAL::PreRender()
 
 	ASkinShaderHAL::sm_eRenderStateFlags = 0x1b;
 
-	if ( m_bIsSkin )
+	if ( m_bIsHDLighting )
 	{
 		pLT0Texture = TDYNAMICCAST( TTextureResourceHAL, m_apLightingTextures[ LT_0 ] );
 		pLT1Texture = TDYNAMICCAST( TTextureResourceHAL, m_apLightingTextures[ LT_1 ] );

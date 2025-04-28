@@ -320,19 +320,28 @@ void TSkeletonInstance::UpdateState( TBOOL a_bForceUpdate )
 }
 
 // $Barnyard: FUNCTION 006c9ec0
-TMatrix44 TSkeletonInstance::GetBoneTransformCurrent( TINT a_iBone )
+TMatrix44& TSkeletonInstance::GetBoneTransformCurrent( TINT a_iBone, TMatrix44& a_rOutTransform )
 {
 	if ( a_iBone < m_pSkeleton->GetAutoBoneCount() )
 	{
-		TMatrix44 transform;
-
 		auto pBone = m_pSkeleton->GetBone( a_iBone );
-		transform.Multiply( m_pBones[ a_iBone ].m_Transform, pBone->GetTransform() );
+		a_rOutTransform.Multiply( m_pBones[ a_iBone ].m_Transform, pBone->GetTransform() );
 
-		return transform;
+		return a_rOutTransform;
 	}
 
-	return m_pSkeleton->GetBone( a_iBone )->GetTransform();
+	a_rOutTransform = m_pSkeleton->GetBone( a_iBone )->GetTransform();
+
+	return a_rOutTransform;
+}
+
+// $Barnyard: FUNCTION 006c9f20
+const TMatrix44& TSkeletonInstance::GetBoneTransformCurrent( TINT a_iBone )
+{
+	static TMatrix44 s_Transform;
+
+	GetBoneTransformCurrent( a_iBone, s_Transform );
+	return s_Transform;
 }
 
 // $Barnyard: FUNCTION 006ca860

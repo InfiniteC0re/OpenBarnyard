@@ -13,7 +13,7 @@ void ASkeletonDoneJob::BeginJob()
 
 TBOOL ASkeletonDoneJob::RunJob()
 {
-	m_pVIS->GetLocatorManager()->LoadFromTRB( m_pTRBLoaderJob->GetStream().GetTRB() );
+	m_pVIS->GetLocatorList()->LoadFromTRB( m_pTRBLoaderJob->GetStream().GetTRB() );
 
 	return TTRUE;
 }

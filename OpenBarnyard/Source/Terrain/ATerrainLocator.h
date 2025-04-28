@@ -33,11 +33,11 @@ struct ATerrainLocatorVISTRBHeader
 	ATerrainLocatorVISSection* pSections;
 };
 
-class ATerrainLocatorManager
+class ATerrainLocatorList
 {
 public:
-	ATerrainLocatorManager();
-	~ATerrainLocatorManager();
+	ATerrainLocatorList();
+	~ATerrainLocatorList();
 
 	// Returns a locator if it's currently visible
 	ATerrainLocator* FindLocator( const TCHAR* a_pszLocatorName );

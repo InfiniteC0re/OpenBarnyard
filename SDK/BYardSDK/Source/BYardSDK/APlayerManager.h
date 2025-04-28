@@ -9,7 +9,7 @@ public:
 	ASteer* GetSteer() const { return m_pSteer; }
 
 public:
-	TBYTE PADDING1[ 24 ];
+	TBYTE   PADDING1[ 24 ];
 	ASteer* m_pSteer;
 };
 

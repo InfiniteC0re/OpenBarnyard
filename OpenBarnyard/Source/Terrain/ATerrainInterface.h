@@ -130,10 +130,10 @@ public:
 	AModelLoaderJob*   GetFreeModelLoaderJob();
 	ASectionDoneJob*   GetFreeSectionLoaderJob();
 
-	ATerrainLocatorManager* GetLocatorManager() const
+	ATerrainLocatorList* GetLocatorList() const
 	{
 		TVALIDPTR( m_pTerrainVIS );
-		return m_pTerrainVIS->GetLocatorManager();
+		return m_pTerrainVIS->GetLocatorList();
 	}
 
 	const Toshi::TVector4& GetDefaultShadowColor() const { return m_DefaultShadowColor; }

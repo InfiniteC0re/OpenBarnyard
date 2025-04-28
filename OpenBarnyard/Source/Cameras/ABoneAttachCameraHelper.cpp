@@ -40,7 +40,8 @@ TBOOL ABoneAttachCameraHelper::OnUpdate( TFLOAT a_fDeltaTime )
 	if ( m_pSceneObject )
 	{
 		// Get bone transform transformed by the model transform
-		TMatrix44 matBoneTransform = m_pSkeletonInstance->GetBoneTransformCurrent( m_iBoneId );
+		TMatrix44 matBoneTransform;
+		m_pSkeletonInstance->GetBoneTransformCurrent( m_iBoneId, matBoneTransform );
 		m_pSceneObject->GetTransform().GetLocalMatrixImp( m_oTransform );
 
 		m_oTransform.Multiply( matBoneTransform );
