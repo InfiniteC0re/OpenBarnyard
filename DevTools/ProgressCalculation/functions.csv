@@ -1,4 +1,4 @@
-"Name","Location","FunctionSignature","Function Size"
+"Name","Location","FunctionSignature","FunctionSize"
 "FUN_00401000","00401000","undefined FUN_00401000(undefined4 param_1)","17"
 "TFree","00401020","undefined TFree(undefined4 param_1)","11"
 "FUN_00401030","00401030","undefined FUN_00401030()","76"
