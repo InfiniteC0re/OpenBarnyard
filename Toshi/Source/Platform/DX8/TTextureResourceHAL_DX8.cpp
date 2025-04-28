@@ -29,18 +29,21 @@ TTextureResourceHAL::TTextureResourceHAL()
 	m_eAddressVState  = 0;
 }
 
+// $Barnyard: FUNCTION 006c0d50
 TUINT TTextureResourceHAL::GetWidth()
 {
 	Validate();
 	return m_ImageInfo.Width;
 }
 
+// $Barnyard: FUNCTION 006c0d60
 TUINT TTextureResourceHAL::GetHeight()
 {
 	Validate();
 	return m_ImageInfo.Height;
 }
 
+// $Barnyard: FUNCTION 006c0d70
 TBOOL TTextureResourceHAL::Lock( LOCKSTATE& a_rLockState )
 {
 	if ( m_pD3DTexture )
@@ -68,6 +71,7 @@ TBOOL TTextureResourceHAL::Lock( LOCKSTATE& a_rLockState )
 	return TFALSE;
 }
 
+// $Barnyard: FUNCTION 006c0dd0
 void TTextureResourceHAL::Unlock()
 {
 	TASSERT( m_iNumLocks != 0 );
@@ -79,6 +83,7 @@ void TTextureResourceHAL::Unlock()
 	}
 }
 
+// $Barnyard: FUNCTION 006c0cc0
 void TTextureResourceHAL::CreateFromT2Texture( T2Texture* a_pTexture )
 {
 	m_bIsToshi2       = TTRUE;
@@ -96,6 +101,7 @@ void TTextureResourceHAL::CreateFromT2Texture( T2Texture* a_pTexture )
 	TResource::Validate();
 }
 
+// $Barnyard: FUNCTION 006c0bb0
 TBOOL TTextureResourceHAL::Create( void* a_pData, TUINT a_uiDataSize, TUINT a_eTextureFlags, TUINT a_uiWidth, TUINT a_uiHeight )
 {
 	TWARN( "Deprecated! Please use: TTextureResourceHAL::CreateEx()\n" );
@@ -121,6 +127,7 @@ TBOOL TTextureResourceHAL::Create( void* a_pData, TUINT a_uiDataSize, TUINT a_eT
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 006c0b70
 TBOOL TTextureResourceHAL::Create( const TCHAR* a_szFileName, TUINT a_eTextureFlags )
 {
 	if ( !CreateResource( a_szFileName, a_eTextureFlags ) )
@@ -136,6 +143,7 @@ TBOOL TTextureResourceHAL::Create( const TCHAR* a_szFileName, TUINT a_eTextureFl
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 006c0c30
 TBOOL TTextureResourceHAL::CreateEx( void* a_pData, TUINT a_uiDataSize, TUINT a_uiWidth, TUINT a_uiHeight, TUINT a_uiMipLevels, TTEXTURERESOURCEFORMAT a_eFormat, TUINT a_uiMipMapFlags )
 {
 	if ( !CreateResource( a_pData, a_uiDataSize, a_uiWidth, a_uiHeight, a_uiMipLevels, a_eFormat, a_uiMipMapFlags ) )
@@ -159,6 +167,7 @@ TBOOL TTextureResourceHAL::CreateEx( void* a_pData, TUINT a_uiDataSize, TUINT a_
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 006c1280
 TBOOL TTextureResourceHAL::CreateFromFormat()
 {
 	TUINT uiMipLevels = ( m_uiMipFlags & 1 ) ? m_uiMipLevels : 0;
@@ -181,12 +190,14 @@ TBOOL TTextureResourceHAL::CreateFromFormat()
 	}
 }
 
+// $Barnyard: FUNCTION 006c0ff0
 TBOOL TTextureResourceHAL::CreateFromMemory8888( TUINT a_uiWidth, TUINT a_uiHeight, TUINT a_uiLevels, void* a_pData )
 {
 	TIMPLEMENT();
 	return TFALSE;
 }
 
+// $Barnyard: FUNCTION 006c10f0
 TBOOL TTextureResourceHAL::CreateFromMemory888( TUINT a_uiWidth, TUINT a_uiHeight, TUINT a_uiLevels, void* a_pData )
 {
 	auto pRenderer = TSTATICCAST( TRenderD3DInterface, GetRenderer() );
@@ -244,12 +255,14 @@ TBOOL TTextureResourceHAL::CreateFromMemory888( TUINT a_uiWidth, TUINT a_uiHeigh
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 006c0df0
 TBOOL TTextureResourceHAL::CreateFromMemory5551( TUINT a_uiWidth, TUINT a_uiHeight, TUINT a_uiLevels, void* a_pData )
 {
 	TIMPLEMENT();
 	return TFALSE;
 }
 
+// $Barnyard: FUNCTION 006c0ef0
 TBOOL TTextureResourceHAL::CreateFromMemory4444( TUINT a_uiWidth, TUINT a_uiHeight, TUINT a_uiLevels, void* a_pData )
 {
 	auto pRenderer = TSTATICCAST( TRenderD3DInterface, GetRenderer() );
@@ -303,6 +316,7 @@ TBOOL TTextureResourceHAL::CreateFromMemory4444( TUINT a_uiWidth, TUINT a_uiHeig
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 006c11e0
 TBOOL TTextureResourceHAL::CreateFromMemoryDDS( TUINT a_uiWidth, TUINT a_uiHeight, TUINT a_uiLevels, void* a_pData )
 {
 	auto pRenderer = TSTATICCAST( TRenderD3DInterface, GetRenderer() );
@@ -362,6 +376,7 @@ TBOOL TTextureResourceHAL::CreateFromFileDDS( TUINT a_uiWidth, TUINT a_uiHeight,
 	return hRes == S_OK;
 }
 
+// $Barnyard: FUNCTION 006c1240
 TBOOL TTextureResourceHAL::IsPPM( const TCHAR* a_szName )
 {
 	auto iLen = TStringManager::String8Length( a_szName );
@@ -374,6 +389,7 @@ TBOOL TTextureResourceHAL::IsPPM( const TCHAR* a_szName )
 	return TFALSE;
 }
 
+// $Barnyard: FUNCTION 006c13f0
 TBOOL TTextureResourceHAL::Validate()
 {
 	if ( IsCreated() && IsValid() )
@@ -431,6 +447,7 @@ TBOOL TTextureResourceHAL::Validate()
 	return TResource::Validate();
 }
 
+// $Barnyard: FUNCTION 006c1580
 void TTextureResourceHAL::Invalidate()
 {
 	if ( IsCreated() && IsValid() )

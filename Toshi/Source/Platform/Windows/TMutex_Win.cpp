@@ -20,12 +20,14 @@ TMutex::~TMutex()
 	Destroy();
 }
 
+// $Barnyard: FUNCTION 006bb660
 TBOOL TMutex::Create()
 {
 	m_Handle = CreateMutexA( NULL, FALSE, NULL );
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 006bb680
 TBOOL TMutex::Destroy()
 {
 	BOOL result = CloseHandle( m_Handle );
@@ -46,11 +48,13 @@ TMutex& TMutex::operator=( void* handle )
 	return *this;
 }
 
+// $Barnyard: FUNCTION 006bb6e0
 TBOOL TMutex::Unlock()
 {
 	return ReleaseMutex( m_Handle );
 }
 
+// $Barnyard: FUNCTION 006bb6a0
 TBOOL TMutex::Lock( FLAG a_eFlags /*= FLAG_NONE */ )
 {
 	DWORD waitForMs = ( a_eFlags & FLAG_NO_WAIT ) ? 0 : INFINITE;

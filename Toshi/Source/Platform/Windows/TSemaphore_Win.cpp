@@ -26,6 +26,7 @@ TBOOL TSemaphore::Wait()
 	return WaitForSingleObject( m_hSemaHnd, INFINITE ) == WAIT_OBJECT_0;
 }
 
+// $Barnyard: FUNCTION 006bb640
 TBOOL TSemaphore::Signal()
 {
 	TASSERT( m_hSemaHnd != NULL, "Handle is NULL" );

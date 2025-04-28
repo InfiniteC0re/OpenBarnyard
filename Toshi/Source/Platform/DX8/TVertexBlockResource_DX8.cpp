@@ -16,6 +16,7 @@ TOSHI_NAMESPACE_START
 TDEFINE_CLASS( TVertexBlockResource, 0, 1 );
 TDEFINE_FREELIST_ALLOCATOR( TVertexBlockResource );
 
+// $Barnyard: FUNCTION 006c0730
 TBOOL TVertexBlockResource::AttachPool( TVertexPoolResource* a_pPool )
 {
 	TVALIDPTR( a_pPool );
@@ -31,6 +32,7 @@ TBOOL TVertexBlockResource::AttachPool( TVertexPoolResource* a_pPool )
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 006c0670
 TBOOL TVertexBlockResource::CanFit( TVertexPoolResource* a_pPoolResource ) const
 {
 	if ( m_uiFlags & 1 && a_pPoolResource->GetFlags() & 1 )
@@ -41,6 +43,7 @@ TBOOL TVertexBlockResource::CanFit( TVertexPoolResource* a_pPoolResource ) const
 	return TFALSE;
 }
 
+// $Barnyard: FUNCTION 006c02f0
 TBOOL TVertexBlockResource::DettachPool( TVertexPoolResource* a_pPool )
 {
 	TASSERT( TTRUE == Parent()->IsExactly( &TGetClass( TVertexFactoryResource ) ) );
@@ -57,6 +60,7 @@ TBOOL TVertexBlockResource::DettachPool( TVertexPoolResource* a_pPool )
 	return TFALSE;
 }
 
+// $Barnyard: FUNCTION 006c0520
 TBOOL TVertexBlockResource::Create( TVertexFactoryResourceInterface* a_pFactory, TUINT16 a_uiMaxVertices, TUINT32 a_uiFlags )
 {
 	m_pFactory      = a_pFactory;
@@ -65,6 +69,7 @@ TBOOL TVertexBlockResource::Create( TVertexFactoryResourceInterface* a_pFactory,
 	return TResource::Create();
 }
 
+// $Barnyard: FUNCTION 006c0970
 TBOOL TVertexBlockResource::CreateHAL()
 {
 	DestroyHAL();
@@ -121,6 +126,7 @@ TBOOL TVertexBlockResource::CreateHAL()
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 006c0760
 void TVertexBlockResource::DestroyHAL()
 {
 	TMemory::HALMemInfo memInfoHAL;
@@ -149,6 +155,7 @@ void TVertexBlockResource::DestroyHAL()
 	}
 }
 
+// $Barnyard: FUNCTION 006c06b0
 void TVertexBlockResource::ChildVertexUsedChanged( TINT a_iChange )
 {
 	if ( a_iChange < 0 )
@@ -159,6 +166,7 @@ void TVertexBlockResource::ChildVertexUsedChanged( TINT a_iChange )
 	m_uiVerticesUsed += a_iChange;
 }
 
+// $Barnyard: FUNCTION 006c0190
 TBOOL TVertexBlockResource::TryInvalidate()
 {
 	if ( m_uiFlags & 1 )
@@ -169,6 +177,7 @@ TBOOL TVertexBlockResource::TryInvalidate()
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 006c01a0
 TBOOL TVertexBlockResource::TryValidate()
 {
 	if ( m_uiFlags & 1 )
@@ -179,6 +188,7 @@ TBOOL TVertexBlockResource::TryValidate()
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 006c0ac0
 TBOOL TVertexBlockResource::Validate()
 {
 	if ( IsValid() && IsCreated() )
@@ -241,6 +251,7 @@ TBOOL TVertexBlockResource::Validate()
 	return TResource::Validate();
 }
 
+// $Barnyard: FUNCTION 006c0950
 void TVertexBlockResource::Invalidate()
 {
 	if ( IsValid() && IsCreated() )
@@ -252,6 +263,7 @@ void TVertexBlockResource::Invalidate()
 	}
 }
 
+// $Barnyard: FUNCTION 006c0810
 TBOOL TVertexBlockResource::Lock( TVertexPoolResourceInterface::LockBuffer* a_pLockBuffer, TUINT16 a_uiNumVertices )
 {
 	TVALIDPTR( a_pLockBuffer );
@@ -320,6 +332,7 @@ TBOOL TVertexBlockResource::Lock( TVertexPoolResourceInterface::LockBuffer* a_pL
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 006c0620
 void TVertexBlockResource::Unlock()
 {
 	TASSERT( 0 != m_uiLockCount );
@@ -340,6 +353,7 @@ void TVertexBlockResource::Unlock()
 	}
 }
 
+// $Barnyard: FUNCTION 006c04d0
 TVertexBlockResource::TVertexBlockResource()
 {
 	m_pFactory       = TNULL;

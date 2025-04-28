@@ -18,7 +18,7 @@ TOSHI_NAMESPACE_USING
 ASkinLightingManager::ASkinLightingManager()
 {
 	m_iUnk = 0;
-	
+
 	// Load the matlib that contains all lighting textures
 	m_pSkinLightMatLib = AMaterialLibraryManager::List::GetSingleton()->CreateLibraryFromAsset(
 	    "Data\\MiscTextures\\SkinLighttex.ttl",
@@ -27,7 +27,7 @@ ASkinLightingManager::ASkinLightingManager()
 
 	// Get texture factory to actually create TTexture objects (not sure why duplicates are needed)
 	TTextureFactory* pTexFactory = TRenderInterface::GetSingleton()->GetSystemResource<TTextureFactory>(
-		SYSRESOURCE_TEXTUREFACTORY
+	    SYSRESOURCE_TEXTUREFACTORY
 	);
 
 	TTRB::ERROR eError = m_oTRB.Load( "Data\\MiscTextures\\SkinLighting.trb" );
@@ -115,7 +115,7 @@ ASkinLightingManager::SkinLight* ASkinLightingManager::FindSkinLight( const TCHA
 	for ( TINT i = 0; i < m_pSkinLightHeader->iNumLights; i++ )
 	{
 		SkinLight* pSkinLight = &m_pSkinLightHeader->pSkinLights[ i ];
-	
+
 		for ( TINT k = 0; k < pSkinLight->iNumModels; k++ )
 		{
 			if ( !TStringManager::String8CompareNoCase( pSkinLight->pszModels[ k ], a_szModelName ) )

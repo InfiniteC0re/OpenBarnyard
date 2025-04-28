@@ -15,6 +15,7 @@ TOSHI_NAMESPACE_START
 
 TDEFINE_CLASS( TVertexFactoryResource );
 
+// $Barnyard: FUNCTION 006d7910
 TVertexPoolResourceInterface* TVertexFactoryResource::CreatePoolResource( TUINT16 a_uiMaxStaticVertices, TUINT16 a_uiFlags )
 {
 	auto pVertexPool = TSTATICCAST(
@@ -30,6 +31,7 @@ TVertexPoolResourceInterface* TVertexFactoryResource::CreatePoolResource( TUINT1
 	return pVertexPool;
 }
 
+// $Barnyard: FUNCTION 006d78d0
 TVertexBlockResource* TVertexFactoryResource::CreateBlockResource( TUINT16 a_uiMaxVertices, TUINT32 a_uiFlags )
 {
 	auto pVertexBlock = TSTATICCAST(
@@ -43,6 +45,7 @@ TVertexBlockResource* TVertexFactoryResource::CreateBlockResource( TUINT16 a_uiM
 	return pVertexBlock;
 }
 
+// $Barnyard: FUNCTION 006d7890
 TVertexBlockResource* TVertexFactoryResource::FindBlockResource( TVertexPoolResource* a_pResource )
 {
 	if ( a_pResource->GetFlags() & 2 )
@@ -53,6 +56,7 @@ TVertexBlockResource* TVertexFactoryResource::FindBlockResource( TVertexPoolReso
 	using Pair  = T2Pair<TVertexBlockResource*, TVertexPoolResource*>;
 	Pair result = { TNULL, a_pResource };
 
+	// $Barnyard: FUNCTION 006d7850
 	TResource::RecurseSimple(
 	    []( TResource* a_pResource, void* a_pUserData ) {
 		    auto pPair = TSTATICCAST( Pair, a_pUserData );

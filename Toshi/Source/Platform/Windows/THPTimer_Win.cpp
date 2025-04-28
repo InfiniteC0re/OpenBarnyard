@@ -11,6 +11,7 @@
 
 TOSHI_NAMESPACE_START
 
+// $Barnyard: FUNCTION 006bdcb0
 THPTimer::THPTimer()
 {
 	Reset();
@@ -35,6 +36,7 @@ int64_t THPTimer::GetRaw64()
 	return raw64.QuadPart;
 }
 
+// $Barnyard: FUNCTION 006bdc10
 void THPTimer::Reset()
 {
 	QueryPerformanceCounter( (LARGE_INTEGER*)&m_iCurrentTime );
@@ -43,6 +45,7 @@ void THPTimer::Reset()
 	m_fDelta   = 0;
 }
 
+// $Barnyard: FUNCTION 006bdc50
 void THPTimer::Update()
 {
 	m_iOldTime = m_iCurrentTime;

@@ -39,6 +39,7 @@ void TKeyframeLibrary::Delete()
 	delete this;
 }
 
+// $Barnyard: FUNCTION 006ca600
 TKeyframeLibrary* TKeyframeLibrary::CreateFromTRB( TTRB* a_pTRB, const TCHAR* a_szSymbolName )
 {
 	TVALIDPTR( a_pTRB );

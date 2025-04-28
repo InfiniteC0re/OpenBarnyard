@@ -16,28 +16,33 @@ public:
 
 	void Render();
 
+	// $Barnyard: FUNCTION 006cd080
 	TFLOAT SetNear( TFLOAT fNear )
 	{
 		return std::exchange( m_fNear, fNear );
 	}
 
+	// $Barnyard: FUNCTION 006cd090
 	TFLOAT SetFar( TFLOAT fFar )
 	{
 		return std::exchange( m_fFar, fFar );
 	}
 
+	// $Barnyard: FUNCTION 006cd220
 	TFLOAT SetFOV( TFLOAT fFOV )
 	{
 		TMath::Clip( fFOV, s_kMinFOV, s_kMaxFOV );
 		return std::exchange( m_fFOV, fFOV );
 	}
 
+	// $Barnyard: FUNCTION 006cd270
 	TFLOAT SetProjectionCentreX( TFLOAT fCentreX )
 	{
 		TMath::Clip( fCentreX, 0.0f, 1.0f );
 		return std::exchange( m_fCentreX, fCentreX );
 	}
 
+	// $Barnyard: FUNCTION 006cd2d0
 	TFLOAT SetProjectionCentreY( TFLOAT fCentreY )
 	{
 		TMath::Clip( fCentreY, 0.0f, 1.0f );

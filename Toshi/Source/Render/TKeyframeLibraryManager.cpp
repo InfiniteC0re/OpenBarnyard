@@ -9,6 +9,17 @@
 
 TOSHI_NAMESPACE_START
 
+// $Barnyard: FUNCTION 006cb0e0
+TKeyframeLibraryManager::TKeyframeLibraryManager()
+{
+}
+
+// $Barnyard: FUNCTION 006cbf80
+TKeyframeLibraryManager::~TKeyframeLibraryManager()
+{
+}
+
+// $Barnyard: FUNCTION 006ca710
 TKeyframeLibrary* TKeyframeLibraryManager::GetLibrary( const TCHAR* a_szName )
 {
 	for ( auto it = m_List.Begin(); it != m_List.End(); ++it )
@@ -23,6 +34,7 @@ TKeyframeLibrary* TKeyframeLibraryManager::GetLibrary( const TCHAR* a_szName )
 	return TNULL;
 }
 
+// $Barnyard: FUNCTION 006cb0f0
 TKeyframeLibrary* TKeyframeLibraryManager::LoadLibrary( const TCHAR* a_szFilePath )
 {
 	TVALIDPTR( a_szFilePath );
@@ -44,6 +56,7 @@ TKeyframeLibrary* TKeyframeLibraryManager::LoadLibrary( const TCHAR* a_szFilePat
 	return pLibrary;
 }
 
+// $Barnyard: FUNCTION 006ca6d0
 TKeyframeLibrary* TKeyframeLibraryManager::LoadLibrary( TTRB* a_pTRB, const TCHAR* a_szSymbolName )
 {
 	TKeyframeLibrary* pLibrary = TKeyframeLibrary::CreateFromTRB( a_pTRB, a_szSymbolName );
@@ -54,6 +67,7 @@ TKeyframeLibrary* TKeyframeLibraryManager::LoadLibrary( TTRB* a_pTRB, const TCHA
 	return pLibrary;
 }
 
+// $Barnyard: FUNCTION 006ca3c0
 void TKeyframeLibraryManager::UnloadLibrary( TKeyframeLibrary* a_pLibrary )
 {
 	TVALIDPTR( a_pLibrary );

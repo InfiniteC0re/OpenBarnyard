@@ -13,6 +13,7 @@ TOSHI_NAMESPACE_START
 
 static TThreadManager oThreadManager;
 
+// $Barnyard: FUNCTION 006bb980
 unsigned long __stdcall ThreadEntry( void* userParam )
 {
 	TThread* pThread = static_cast<TThread*>( userParam );
@@ -21,6 +22,7 @@ unsigned long __stdcall ThreadEntry( void* userParam )
 	return 0;
 }
 
+// $Barnyard: FUNCTION 006bb9a0
 TBOOL TThread::Create( TSIZE a_iStackSize, PRIORITY a_ePriority, TUINT8 a_eFlags )
 {
 	m_iThreadID  = -1;
@@ -75,6 +77,7 @@ TBOOL TThread::SetPriority( void* a_hThreadHnd, PRIORITY a_ePriority )
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 006bb920
 void TThread::Exit( TThread* a_pThread )
 {
 	TASSERT( a_pThread->m_iThreadID == GetCurrentThreadId(), "Thread cannot be closed outside" );

@@ -10,6 +10,7 @@
 
 TOSHI_NAMESPACE_START
 
+// $Barnyard: FUNCTION 006d7fe0
 void TViewport::BeginSKU()
 {
 	D3DVIEWPORT8 viewport;
@@ -47,6 +48,7 @@ void TViewport::BeginSKU()
 	}
 }
 
+// $Barnyard: FUNCTION 006d80f0
 void TViewport::EndSKU()
 {
 	TRenderInterface::GetSingleton()->FlushOrderTables();

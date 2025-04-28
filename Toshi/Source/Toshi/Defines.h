@@ -89,33 +89,38 @@
 	  if ( !s_bFlag && ( CONDITION ) && ( s_bFlag = TTRUE ) )
 #  define TWIP()                                                                       \
 	  {                                                                                \
-		  TCALL_ONCE_IF( TTRUE ){                                                      \
+		  TCALL_ONCE_IF( TTRUE )                                                       \
+		  {                                                                            \
 			  TWARN( "Work in progress: '%s', at line %d\n", __FUNCTION__, __LINE__ ); \
-	  }                                                                                \
+		  }                                                                            \
 	  }
 #  define TTODO( DESC )                                                               \
 	  {                                                                               \
-		  TCALL_ONCE_IF( TTRUE ){                                                     \
+		  TCALL_ONCE_IF( TTRUE )                                                      \
+		  {                                                                           \
 			  TWARN( "TODO: %s ('%s', at line %d)\n", DESC, __FUNCTION__, __LINE__ ); \
-	  }                                                                               \
+		  }                                                                           \
 	  }
 #  define TFIXME( DESC )                                                               \
 	  {                                                                                \
-		  TCALL_ONCE_IF( TTRUE ){                                                      \
+		  TCALL_ONCE_IF( TTRUE )                                                       \
+		  {                                                                            \
 			  TWARN( "FIXME: %s ('%s', at line %d)\n", DESC, __FUNCTION__, __LINE__ ); \
-	  }                                                                                \
+		  }                                                                            \
 	  }
 #  define TIMPLEMENT()                                          \
 	  {                                                         \
-		  TCALL_ONCE_IF( TTRUE ){                               \
+		  TCALL_ONCE_IF( TTRUE )                                \
+		  {                                                     \
 			  TWARN( "%s is not implemented\n", __FUNCTION__ ); \
-	  }                                                         \
+		  }                                                     \
 	  }
 #  define TIMPLEMENT_D( DESC )                                            \
 	  {                                                                   \
-		  TCALL_ONCE_IF( TTRUE ){                                         \
+		  TCALL_ONCE_IF( TTRUE )                                          \
+		  {                                                               \
 			  TWARN( "%s is not implemented: %s\n", __FUNCTION__, DESC ); \
-	  }                                                                   \
+		  }                                                               \
 	  }
 #  define TASSERT( X, ... )                                                       \
 	  {                                                                           \

@@ -28,6 +28,7 @@ TKeyframeLibrary* TKeyframeLibraryInstance::Create( TKeyframeLibrary* a_pLibrary
 	return CreateEx( a_pLibrary, a_pLibrary->m_iNumTranslations, a_pLibrary->m_iNumQuaternions, a_pLibrary->m_iNumScales, 0, 0, 0 );
 }
 
+// $Barnyard: FUNCTION 006c9c90
 TKeyframeLibrary* TKeyframeLibraryInstance::CreateEx( TKeyframeLibrary* a_pLibrary, TINT a_iTKeyCount, TINT a_iQKeyCount, TINT a_iSKeyCount, TINT a_iTBaseIndex, TINT a_iQBaseIndex, TINT a_iSBaseIndex )
 {
 	TKeyframeLibrary* pOldLibrary = m_pLibrary;

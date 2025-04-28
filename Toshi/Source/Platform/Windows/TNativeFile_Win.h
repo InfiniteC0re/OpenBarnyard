@@ -27,6 +27,7 @@ public:
 public:
 	TNativeFile( TNativeFileSystem* a_pFileSystem );
 	TNativeFile( const TNativeFile& other );
+	~TNativeFile();
 
 	//-----------------------------------------------------------------------------
 	// TFile

@@ -205,8 +205,8 @@ private:
 class TKeyframeLibraryManager
 {
 public:
-	TKeyframeLibraryManager()  = default;
-	~TKeyframeLibraryManager() = default;
+	TKeyframeLibraryManager();
+	~TKeyframeLibraryManager();
 
 	TKeyframeLibrary* GetLibrary( const TCHAR* a_szName );
 

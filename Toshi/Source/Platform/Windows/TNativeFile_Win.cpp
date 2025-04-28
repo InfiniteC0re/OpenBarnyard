@@ -187,6 +187,12 @@ TNativeFile::TNativeFile( const TNativeFile& other )
 	m_WriteBuffered   = other.m_WriteBuffered;
 }
 
+// $Barnyard: FUNCTION 006dd450
+TNativeFile::~TNativeFile()
+{
+}
+
+// $Barnyard: FUNCTION 006dce20
 TBOOL TNativeFile::LoadBuffer( TUINT32 bufferPos )
 {
 	// FUN_00689ff0
@@ -214,6 +220,7 @@ TBOOL TNativeFile::LoadBuffer( TUINT32 bufferPos )
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 006dce90
 TINT TNativeFile::FlushWriteBuffer()
 {
 
@@ -249,6 +256,7 @@ TINT TNativeFile::FlushWriteBuffer()
 	return lpNumberOfBytesWritten;
 }
 
+// $Barnyard: FUNCTION 006dd4e0
 TINT TNativeFile::ReadUnbuffered( LPVOID dst, TUINT size )
 {
 	DWORD lpNumberOfBytesRead;
@@ -277,6 +285,7 @@ TINT TNativeFile::ReadUnbuffered( LPVOID dst, TUINT size )
 	return lpNumberOfBytesRead;
 }
 
+// $Barnyard: FUNCTION 006dd560
 TSIZE TNativeFile::Read( void* a_pDst, TSIZE a_uiSize )
 {
 	FlushWriteBuffer();
@@ -345,6 +354,7 @@ TSIZE TNativeFile::Read( void* a_pDst, TSIZE a_uiSize )
 	return ReadUnbuffered( a_pDst, a_uiSize );
 }
 
+// $Barnyard: FUNCTION 006dcf00
 TSIZE TNativeFile::Write( const void* buffer, TSIZE size )
 {
 	if ( m_RBufferPosition != m_Position )
@@ -405,12 +415,14 @@ TSIZE TNativeFile::Write( const void* buffer, TSIZE size )
 	return 0;
 }
 
+// $Barnyard: FUNCTION 006dd190
 TSIZE TNativeFile::Tell()
 {
 	FlushWriteBuffer();
 	return m_Position;
 }
 
+// $Barnyard: FUNCTION 006dd000
 TBOOL TNativeFile::Seek( TINT a_iOffset, TSEEK a_eOrigin )
 {
 	FlushWriteBuffer();
@@ -440,6 +452,7 @@ TBOOL TNativeFile::Seek( TINT a_iOffset, TSEEK a_eOrigin )
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 006dd0c0
 TCHAR TNativeFile::GetCChar()
 {
 	FlushWriteBuffer();
@@ -462,6 +475,7 @@ TCHAR TNativeFile::GetCChar()
 	return result;
 }
 
+// $Barnyard: FUNCTION 006dd120
 TWCHAR TNativeFile::GetWChar()
 {
 	FlushWriteBuffer();
@@ -484,6 +498,7 @@ TWCHAR TNativeFile::GetWChar()
 	return result;
 }
 
+// $Barnyard: FUNCTION 006dc670
 TINT TNativeFile::PutCChar( TCHAR a_cCharacter )
 {
 	if ( Write( &a_cCharacter, 1 ) != 1 )
@@ -494,6 +509,7 @@ TINT TNativeFile::PutCChar( TCHAR a_cCharacter )
 	return a_cCharacter & 0xFF;
 }
 
+// $Barnyard: FUNCTION 006dc690
 TINT TNativeFile::PutWChar( TWCHAR a_wcCharacter )
 {
 	if ( Write( &a_wcCharacter, 2 ) != 2 )
@@ -504,6 +520,7 @@ TINT TNativeFile::PutWChar( TWCHAR a_wcCharacter )
 	return a_wcCharacter & 0xFFFF;
 }
 
+// $Barnyard: FUNCTION 006dd1b0
 TINT TNativeFile::CPrintf( const TCHAR* a_szFormat, ... )
 {
 	va_list args;
@@ -520,6 +537,7 @@ TINT TNativeFile::CPrintf( const TCHAR* a_szFormat, ... )
 	return iResult;
 }
 
+// $Barnyard: FUNCTION 006dd200
 TINT TNativeFile::WPrintf( const TWCHAR* a_wszFormat, ... )
 {
 	va_list args;
@@ -536,6 +554,7 @@ TINT TNativeFile::WPrintf( const TWCHAR* a_wszFormat, ... )
 	return iResult;
 }
 
+// $Barnyard: FUNCTION 006dd080
 TSIZE TNativeFile::GetSize()
 {
 	m_RBufferPosition = SetFilePointer( m_Handle, 0, TNULL, TSEEK_END );
@@ -548,6 +567,7 @@ TSIZE TNativeFile::GetSize()
 	return m_RBufferPosition;
 }
 
+// $Barnyard: FUNCTION 006dd250
 TUINT64 TNativeFile::GetDate()
 {
 	TUINT64 uiLastWriteTime = 0;
@@ -560,6 +580,7 @@ TUINT64 TNativeFile::GetDate()
 	return uiLastWriteTime;
 }
 
+// $Barnyard: FUNCTION 006dcd00
 TBOOL TNativeFile::Open( const TString8& a_FileName, TFILEMODE a_Mode )
 {
 	TASSERT( a_FileName.IsIndexValid( 0 ), "TNativeFile::Open - wrong filename" );
@@ -613,6 +634,7 @@ TBOOL TNativeFile::Open( const TString8& a_FileName, TFILEMODE a_Mode )
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 006dd480
 void TNativeFile::Close()
 {
 	FlushWriteBuffer();

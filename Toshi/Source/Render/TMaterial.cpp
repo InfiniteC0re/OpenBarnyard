@@ -12,6 +12,7 @@ TOSHI_NAMESPACE_START
 
 TDEFINE_CLASS_NORUNTIME( TMaterial );
 
+// $Barnyard: FUNCTION 006ccc60
 TMaterial::TMaterial()
 {
 	m_Flags   = FLAGS_NONE;
@@ -19,19 +20,23 @@ TMaterial::TMaterial()
 	m_iNumTex = 0;
 	TUtil::MemClear( m_pTextures, sizeof( m_pTextures ) );
 	m_pRegMaterial = TNULL;
-	m_Name[ 0 ]    = '\0';
+	m_szName[ 0 ]  = '\0';
 }
 
+// $Barnyard: FUNCTION 006ccca0
+// $Barnyard: FUNCTION 006ccdc0
 TMaterial::~TMaterial()
 {
 }
 
+// $Barnyard: FUNCTION 006cccc0
 void TMaterial::OnDestroy()
 {
 	TASSERT( TTRUE == IsCreated() );
 	m_Flags &= ~FLAGS_CREATED;
 }
 
+// $Barnyard: FUNCTION 006cccb0
 TBOOL TMaterial::Create()
 {
 	TASSERT( TFALSE == IsCreated() );
@@ -86,18 +91,21 @@ TTexture* TMaterial::GetTexture( TUINT32 a_iStage /*= 0*/ ) const
 	return m_pTextures[ a_iStage ];
 }
 
-void TMaterial::SetName( const TCHAR* name )
+// $Barnyard: FUNCTION 006cccd0
+void TMaterial::SetName( const TCHAR* a_szName )
 {
-	if ( name == TNULL )
-	{
-		m_Name[ 0 ] = '\0';
-	}
-	else
-	{
-		T2String8::Copy( m_Name, name, NAMESIZELIMIT );
-	}
+	if ( a_szName == TNULL )
+		m_szName[ 0 ] = '\0';
+
+	TINT iNameLen = TStringManager::String8Length( a_szName );
+
+	if ( NAMESIZELIMIT - 1 < iNameLen )
+		TUtil::Log( "[ERROR] %s is to long, needs to be less then %d characters\n", a_szName, NAMESIZELIMIT );
+
+	TStringManager::String8Copy( m_szName, a_szName, NAMESIZELIMIT );
 }
 
+// $Barnyard: FUNCTION 006ccd10
 void TMaterial::SetFlags( Flags flag, TBOOL set /*= TFALSE*/ )
 {
 	if ( set )

@@ -15,10 +15,10 @@ public:
 	ADebugFlyState();
 	~ADebugFlyState();
 
-	virtual TBOOL OnUpdate( TFLOAT a_fDeltaTime ) OVERRIDE;
-	virtual void  OnActivate() OVERRIDE;
-	virtual void  OnRemoval() OVERRIDE;
-	virtual TBOOL ProcessInput( const Toshi::TInputInterface::InputEvent* a_pInputEvent ) OVERRIDE;
+	virtual TBOOL  OnUpdate( TFLOAT a_fDeltaTime ) OVERRIDE;
+	virtual void   OnActivate() OVERRIDE;
+	virtual void   OnRemoval() OVERRIDE;
+	virtual TBOOL  ProcessInput( const Toshi::TInputInterface::InputEvent* a_pInputEvent ) OVERRIDE;
 	virtual TFLOAT GetFOV() OVERRIDE;
 
 private:

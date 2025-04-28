@@ -15,6 +15,7 @@
 
 TOSHI_NAMESPACE_START
 
+// $Barnyard: FUNCTION 006bb8a0
 void ThreadSleep( TUINT dwMilliseconds )
 {
 	Sleep( dwMilliseconds );

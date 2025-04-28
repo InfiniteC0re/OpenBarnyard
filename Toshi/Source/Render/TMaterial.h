@@ -64,19 +64,19 @@ public:
 	TRegMaterial* GetRegMaterial() const;
 	void          SetRegMaterial( TRegMaterial* a_pRegMaterial );
 
-	const TCHAR* GetName() const { return m_Name; }
+	const TCHAR* GetName() const { return m_szName; }
 
 	TBOOL IsCreated() const;
 
 	TRenderPacket* AddRenderPacket( TMesh* a_pMesh );
 
 protected:
-	Flags         m_Flags;                     // 0x04
-	TShader*      m_pShader;                   // 0x08
-	TRegMaterial* m_pRegMaterial;              // 0x0C
-	TUINT32       m_iNumTex;                   // 0x10
-	TTexture*     m_pTextures[ MAXTEXTURES ];  // 0x14
-	TCHAR         m_Name[ NAMESIZELIMIT + 1 ]; // 0x2C
+	Flags         m_Flags;                       // 0x04
+	TShader*      m_pShader;                     // 0x08
+	TRegMaterial* m_pRegMaterial;                // 0x0C
+	TUINT32       m_iNumTex;                     // 0x10
+	TTexture*     m_pTextures[ MAXTEXTURES ];    // 0x14
+	TCHAR         m_szName[ NAMESIZELIMIT + 1 ]; // 0x2C
 };
 
 TOSHI_NAMESPACE_END

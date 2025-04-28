@@ -54,8 +54,8 @@ public:
 };
 
 class ACameraManager
-	: public Toshi::TTask
-	, public THookedSingleton<ACameraManager, 0x007822e0>
+    : public Toshi::TTask
+    , public THookedSingleton<ACameraManager, 0x007822e0>
 {
 public:
 	static constexpr TUINT SPLITSCREEN_MAX_CAMERAS = 4;

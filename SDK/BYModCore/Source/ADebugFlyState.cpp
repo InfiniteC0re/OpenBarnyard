@@ -74,7 +74,7 @@ TBOOL ADebugFlyState::OnUpdate( TFLOAT a_fDeltaTime )
 
 		TVector4 vecTranslation = pCamera->m_Matrix.GetTranslation();
 		m_vecRotation.SetFromEulerRollPitchYaw( m_fRoll, m_fPitch, m_fYaw );
-		
+
 		pCamera->m_Matrix.SetFromQuaternion( m_vecRotation );
 		pCamera->m_Matrix.SetTranslation( vecTranslation );
 

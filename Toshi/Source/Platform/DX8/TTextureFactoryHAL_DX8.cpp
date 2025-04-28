@@ -13,6 +13,7 @@ TOSHI_NAMESPACE_START
 
 TDEFINE_CLASS( TTextureFactoryHAL );
 
+// $Barnyard: FUNCTION 006d7bd0
 TTexture* TTextureFactoryHAL::CreateTextureFromFile( const TCHAR* a_szFilePath, TUINT32 a_eTextureFlags )
 {
 	TTexture* pTexture = FindTexture( a_szFilePath );
@@ -36,6 +37,7 @@ TTexture* TTextureFactoryHAL::CreateTextureFromFile( const TCHAR* a_szFilePath, 
 	return pTexture;
 }
 
+// $Barnyard: FUNCTION 006d7c30
 TTexture* TTextureFactoryHAL::CreateTextureFromMemory( void* a_pData, TUINT a_uiDataSize, TUINT a_eTextureFlags, TUINT a_uiWidth, TUINT a_uiHeight )
 {
 	static TUINT s_iNumMemTextures = 0;
@@ -63,6 +65,7 @@ TTexture* TTextureFactoryHAL::CreateTextureFromMemory( void* a_pData, TUINT a_ui
 	return pTexture;
 }
 
+// $Barnyard: FUNCTION 006d7cd0
 TTexture* TTextureFactoryHAL::CreateEx( void* a_pData, TUINT a_uiDataSize, TUINT a_uiWidth, TUINT a_uiHeight, TUINT a_uiMipLevels, TTEXTURERESOURCEFORMAT a_eFormat, TUINT a_uiMipMapFlags )
 {
 	static TUINT s_iNumMemTextures = 0;
@@ -90,6 +93,7 @@ TTexture* TTextureFactoryHAL::CreateEx( void* a_pData, TUINT a_uiDataSize, TUINT
 	return pTexture;
 }
 
+// $Barnyard: FUNCTION 006d7d80
 TTexture* TTextureFactoryHAL::CreateFromT2Texture( T2Texture* a_pTexture )
 {
 	static TUINT s_iNumMemTextures = 0;

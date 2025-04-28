@@ -13,6 +13,7 @@ TOSHI_NAMESPACE_START
 
 TDEFINE_CLASS( TVertexPoolResource );
 
+// $Barnyard: FUNCTION 006d63d0
 TVertexPoolResource::TVertexPoolResource()
 {
 	m_uiVertexOffset        = 0;
@@ -27,6 +28,7 @@ TVertexPoolResource::TVertexPoolResource()
 	m_apManagedStreams[ 7 ] = TNULL;
 }
 
+// $Barnyard: FUNCTION 006d62d0
 TBOOL TVertexPoolResource::Validate()
 {
 	if ( IsCreated() && IsValid() )
@@ -77,6 +79,7 @@ TBOOL TVertexPoolResource::Validate()
 	return TResource::Validate();
 }
 
+// $Barnyard: FUNCTION 006d6490
 void TVertexPoolResource::Invalidate()
 {
 	if ( IsCreated() && IsValid() )
@@ -91,6 +94,7 @@ void TVertexPoolResource::Invalidate()
 	}
 }
 
+// $Barnyard: FUNCTION 006d6280
 void TVertexPoolResource::OnDestroy()
 {
 	if ( m_uiFlags & 1 )
@@ -110,6 +114,7 @@ void TVertexPoolResource::OnDestroy()
 	TVertexPoolResourceInterface::OnDestroy();
 }
 
+// $Barnyard: FUNCTION 006d64f0
 TBOOL TVertexPoolResource::Lock( LockBuffer* a_pLockBuffer )
 {
 	TVALIDPTR( a_pLockBuffer );
@@ -158,6 +163,7 @@ TBOOL TVertexPoolResource::Lock( LockBuffer* a_pLockBuffer )
 	return TFALSE;
 }
 
+// $Barnyard: FUNCTION 006d65d0
 void TVertexPoolResource::Unlock( TUINT16 a_uiNewNumVertices )
 {
 	TASSERT( m_uiLockCount > 0 );
@@ -191,6 +197,7 @@ void TVertexPoolResource::Unlock( TUINT16 a_uiNewNumVertices )
 	}
 }
 
+// $Barnyard: FUNCTION 006d61f0
 TBOOL TVertexPoolResource::Create( TVertexFactoryResourceInterface* a_pFactory, TUINT16 a_uiMaxVertices, TUINT16 a_uiFlags )
 {
 	if ( a_uiFlags & 4 )
@@ -217,6 +224,7 @@ TBOOL TVertexPoolResource::Create( TVertexFactoryResourceInterface* a_pFactory, 
 	return TFALSE;
 }
 
+// $Barnyard: FUNCTION 006d6360
 TBYTE* TVertexPoolResource::GetManagedStream( TUINT a_uiStream )
 {
 	TASSERT( a_uiStream < m_pFactory->GetVertexFormat().GetNumStreams() );
@@ -229,6 +237,7 @@ TBYTE* TVertexPoolResource::GetManagedStream( TUINT a_uiStream )
 	return TNULL;
 }
 
+// $Barnyard: FUNCTION 006d6450
 TVertexBlockResource* TVertexPoolResource::GetVertexBlock()
 {
 	if ( Parent()->IsExactly( &TGetClass( TVertexBlockResource ) ) )
@@ -239,6 +248,7 @@ TVertexBlockResource* TVertexPoolResource::GetVertexBlock()
 	return TNULL;
 }
 
+// $Barnyard: FUNCTION 006bebf0
 TResource* TVertexPoolResource::GetParent()
 {
 	if ( Tree() )
@@ -249,6 +259,7 @@ TResource* TVertexPoolResource::GetParent()
 	return Parent();
 }
 
+// $Barnyard: FUNCTION 006d6660
 TBOOL TVertexPoolResource::GetHALBuffer( TVertexBlockResource::HALBuffer* a_pHALBuffer )
 {
 	TVALIDPTR( a_pHALBuffer );

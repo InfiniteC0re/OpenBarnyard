@@ -11,6 +11,7 @@
 
 TOSHI_NAMESPACE_START
 
+// $Barnyard: FUNCTION 006d90f0
 TBOOL TFileManager::Create()
 {
 	CreateCommon();

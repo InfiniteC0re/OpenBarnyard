@@ -9,6 +9,7 @@
 
 TOSHI_NAMESPACE_START
 
+// $Barnyard: FUNCTION 006cd030
 TCameraObject::TCameraObject()
 {
 	m_Unk1     = 0;
@@ -25,6 +26,7 @@ TCameraObject::~TCameraObject()
 {
 }
 
+// $Barnyard: FUNCTION 006cd0d0
 void TCameraObject::Render()
 {
 	if ( m_bEnabled )
