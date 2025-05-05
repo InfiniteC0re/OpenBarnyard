@@ -9,7 +9,8 @@ struct ATerrainLocator
 	Toshi::TQuaternion quatRotation;
 	Toshi::TVector3    vecPosition;
 	TUINT16            uiNameId;
-	TUINT16            uiFlags;
+	TUINT8             uiFlags1;
+	TINT8              iFlags2;
 };
 
 struct ATerrainLocatorTRBHeader
@@ -47,6 +48,9 @@ public:
 
 	Toshi::TTRB*             GetTRB() { return m_pTRB; }
 	Toshi::TTransformObject& GetWorldTransform() { return m_oWorldTransform; }
+
+	TINT32                    GetNumLocators() const { return m_pLocatorsHeader->iNumLocators; }
+	ATerrainLocatorTRBHeader* GetHeader() const { return m_pLocatorsHeader; }
 
 private:
 	Toshi::TTRB*                 m_pTRB;

@@ -67,7 +67,7 @@ TBOOL AGameSystemManager::OnCreate()
 	AAssetStreaming::CreateSingleton()->SetFlag( TFALSE );
 
 	// Instances, trees and other things...
-	ATreeManager::CreateSingleton()->LoadModels();
+	ATreeManager::CreateSingleton()->Initialise();
 
 	return TTRUE;
 }

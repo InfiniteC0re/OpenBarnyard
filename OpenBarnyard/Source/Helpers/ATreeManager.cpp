@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "ATreeManager.h"
+#include "Terrain/ATerrainLocator.h"
 #include "Assets/AAssetLoader.h"
 
 #ifdef TRENDERINTERFACE_DX8
@@ -32,45 +33,38 @@ ATreeManager::~ATreeManager()
 }
 
 // $Barnyard: FUNCTION 005ee170
-TBOOL ATreeManager::LoadModels()
+TBOOL ATreeManager::Initialise()
 {
+	TASSERT( m_pTrunks == TNULL && m_pFOBs == TNULL );
+
 	const TCHAR szFOBBoneName[] = "FOB";
 
 	// Create tree trunks
 	{
-		const TCHAR* aTrunkModelNames[] = {
-			"",
-			"",
-			"data\\models\\treelittle.trb",
-			"data\\models\\tree_bent_trunk.trb",
-			"data\\models\\tree_standard_trunk.trb",
-			"data\\models\\tree_tall_trunk.trb",
-			"data\\models\\treewall_sim_trunks.trb",
-			""
+		struct ModelInfo
+		{
+			const TCHAR* szModelName;
+			TINT         iIndex;
+		} aModels[] = {
+			{ "", 6 },
+			{ "", 0 },
+			{ "data\\models\\treelittle.trb", 1 },
+			{ "data\\models\\tree_bent_trunk.trb", 2 },
+			{ "data\\models\\tree_standard_trunk.trb", 3 },
+			{ "data\\models\\tree_tall_trunk.trb", 4 },
+			{ "data\\models\\treewall_sim_trunks.trb", 5 },
+			{ "", 7 }
 		};
 
-		TINT aTrunkModelIndices[] = {
-			6,
-			0,
-			1,
-			2,
-			3,
-			4,
-			5,
-			7
-		};
-
-		TSTATICASSERT( TARRAYSIZE( aTrunkModelNames ) == TARRAYSIZE( aTrunkModelIndices ) );
-
-		m_iNumTrunks = TARRAYSIZE( aTrunkModelNames );
+		m_iNumTrunks = TARRAYSIZE( aModels );
 		m_pTrunks    = new Model[ m_iNumTrunks ];
 
 		for ( TINT i = 0; i < m_iNumTrunks; i++ )
 		{
-			const TCHAR* pchModelName = aTrunkModelNames[ i ];
+			const TCHAR* pchModelName = aModels[ i ].szModelName;
 			Model*       pTreeModel   = &m_pTrunks[ i ];
 
-			pTreeModel->m_uiID = aTrunkModelIndices[ i ];
+			pTreeModel->m_uiID = aModels[ i ].iIndex;
 
 			if ( pchModelName[ 0 ] == '\0' )
 			// No model specified for this trunk
@@ -167,6 +161,170 @@ TBOOL ATreeManager::LoadModels()
 	}
 
 	return TTRUE;
+}
+
+// $Barnyard: FUNCTION 005ee8e0
+void ATreeManager::CreateInstances( ATerrainLocatorList* a_pLocatorList )
+{
+	TVALIDPTR( a_pLocatorList );
+
+	TASSERT( m_pFOBs != TNULL && m_pTrunks != TNULL );
+
+	struct LocatorInfo
+	{
+		TINT         iIndex;
+		const TCHAR* szName;
+		TBOOL        bHasCollision;
+	} aLocators[] = {
+		{ 3, "tree02", TTRUE },
+		{ 5, "tree03", TTRUE },
+		{ 4, "tree05", TTRUE },
+		{ 1, "fob2", TTRUE },
+		{ 1, "fobw", TTRUE },
+		{ 1, "busha", TFALSE },
+		{ 6, "treewall2", TTRUE },
+		{ 6, "treewall", TTRUE },
+		{ 2, "treelittle", TFALSE },
+		{ 3, "tree_bent", TTRUE },
+		{ 4, "tree_standard", TTRUE },
+		{ 5, "tree_tall", TTRUE },
+		{ 6, "treewall_sim", TTRUE },
+		{ 0, "fob_bens", TTRUE },
+		{ 7, "fob_pond", TTRUE },
+	};
+
+	// Initialise transform that is going to be used for each of the tree
+	TMatrix44 matGlobalTransform;
+	matGlobalTransform.m_f11 = 1.0f;
+	matGlobalTransform.m_f12 = 0.0f;
+	matGlobalTransform.m_f13 = 0.0f;
+	matGlobalTransform.m_f14 = 0.0f;
+	matGlobalTransform.m_f21 = 0.0f;
+	matGlobalTransform.m_f22 = 0.0f;
+	matGlobalTransform.m_f23 = 1.0f;
+	matGlobalTransform.m_f24 = 0.0f;
+	matGlobalTransform.m_f31 = 0.0f;
+	matGlobalTransform.m_f32 = -1.0f;
+	matGlobalTransform.m_f33 = 0.0f;
+	matGlobalTransform.m_f34 = 0.0f;
+	matGlobalTransform.m_f41 = 0.0f;
+	matGlobalTransform.m_f42 = 0.0f;
+	matGlobalTransform.m_f43 = 0.0f;
+	matGlobalTransform.m_f44 = 1.0f;
+
+	TINT iNumCollisionObjects = 0;
+	TINT iNumLocators         = a_pLocatorList->GetNumLocators();
+
+	if ( iNumLocators > 0 )
+	{
+		TBOOL aFlags[ MAX_INSTANCES - 2 ];
+		TINT  aUnk[ MAX_INSTANCES ];
+
+		TBOOL* pFlag = aFlags;
+		TINT*  pUnk  = aUnk;
+
+		ATerrainLocatorTRBHeader* pLocatorHeader = a_pLocatorList->GetHeader();
+		ATerrainLocator*          pLocators      = pLocatorHeader->pLocators;
+		
+		for ( TINT i = 0; i < iNumLocators; i++ )
+		{
+			const TCHAR* pchLocatorName = pLocatorHeader->ppNames[ pLocators[ i ].uiNameId ];
+			TVALIDPTR( pchLocatorName );
+
+			for ( TINT k = 0; k < TARRAYSIZE( aLocators ); k++ )
+			{
+				if ( !TStringManager::String8CompareNoCase(
+				         aLocators[ k ].szName,
+				         pchLocatorName,
+				         TStringManager::String8Length( aLocators[ k ].szName )
+				     ) )
+				{
+					// This locator is valid, so let's create a tree instance now
+					if ( m_llFreeTreeInstances.IsEmpty() )
+					{
+						TERROR( "ATreeManager::CreateInstances - Failed to create all instances due to not having empty instance slots!\n" );
+						break;
+					}
+
+					TINT  iIndex        = aLocators[ k ].iIndex;
+					TBOOL bHasCollision = TFALSE;
+
+					// TODO: figure out this hell
+					if ( m_bFlag && m_pTrunks[ iIndex ].m_pManagedModel == TNULL )
+					{
+						*pFlag = TTRUE;
+						iNumCollisionObjects += 1;
+					}
+					else if ( pLocators[ i ].iFlags2 < 0 )
+					{
+						*pFlag = TFALSE;
+					}
+					else
+					{
+						*pFlag = TTRUE;
+						iNumCollisionObjects += 1;
+						bHasCollision = TTRUE;
+					}
+
+					// Move cursors
+					pUnk++;
+					pFlag++;
+
+					// Create the instance object
+					TreeInstance* pTreeInstance = m_llFreeTreeInstances.PopFront();
+
+					TMatrix44 matLocatorTransform;
+					pLocators[ i ].GetMatrix( matLocatorTransform );
+
+					TMatrix44 matFinalTransform;
+					matFinalTransform.Multiply( matGlobalTransform, matLocatorTransform );
+
+					// Initialise the instance object
+					pTreeInstance->iTreeIndex = iIndex;
+
+					// Get flags for this instance
+					if ( iIndex == 7 )
+					// force for "fob_pond"
+					{
+						pTreeInstance->bFlag1 = TTRUE;
+						pTreeInstance->bFlag2 = TTRUE;
+					}
+					else
+					// get flags based on the locator name
+					{
+						TINT iLocatorNameLength = TStringManager::String8Length( pchLocatorName );
+
+						if ( iLocatorNameLength >= 4 && pchLocatorName[ iLocatorNameLength - 4 ] == '_' )
+						{
+							if ( pchLocatorName[ iLocatorNameLength - 3 ] == 'b' &&
+								 pchLocatorName[ iLocatorNameLength - 2 ] == 'r' &&
+								 pchLocatorName[ iLocatorNameLength - 2 ] == 'n')
+							// barn?
+							{
+								pTreeInstance->bFlag1 = TTRUE;
+							}
+							else if ( pchLocatorName[ iLocatorNameLength - 3 ] == 'd' &&
+									  pchLocatorName[ iLocatorNameLength - 2 ] == 'k' &&
+									  pchLocatorName[ iLocatorNameLength - 2 ] == 'g' )
+							// dankweed pond and some 'g'?
+							{
+								pTreeInstance->bFlag2 = TTRUE;
+							}
+						}
+					}
+
+					pTreeInstance->uiLocatorId  = TUINT16( i );
+					pTreeInstance->pLocatorList = a_pLocatorList;
+					pTreeInstance->uiUnk3       = 255;
+					m_llUsedTreeInstances.PushBack( pTreeInstance );
+
+					TTODO( "Spawn FOBs, create collisions and probably something else, idk..." );
+
+					break;
+				}
+			}
+		}
+	}
 }
 
 // $Barnyard: FUNCTION 005edd80

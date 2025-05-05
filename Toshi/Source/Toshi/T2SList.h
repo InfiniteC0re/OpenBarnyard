@@ -79,6 +79,11 @@ public:
 		return m_oRoot.m_pNext != &m_oRoot;
 	}
 
+	TBOOL IsEmpty() const
+	{
+		return m_oRoot.m_pNext == &m_oRoot;
+	}
+
 	Node* Back() const
 	{
 		Node* pBack = End();

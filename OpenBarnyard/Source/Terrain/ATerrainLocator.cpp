@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "ATerrainLocator.h"
+#include "Helpers/ATreeManager.h"
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
@@ -102,7 +103,9 @@ void ATerrainLocatorList::LoadFromTRB( TTRB* a_pTRB )
 	m_pLocatorVISHeader = a_pTRB->CastSymbol<ATerrainLocatorVISTRBHeader>( "LocatorVIS" );
 
 	TASSERT( m_pLocatorsHeader && m_pLocatorVISHeader );
-	TTODO( "Create trees, regrowths, instances and other things from locators" );
+
+	ATreeManager::GetSingleton()->CreateInstances( this );
+	TTODO( "Create regrowths, instances and other things from locators" );
 }
 
 // $Barnyard: FUNCTION 005ec9f0

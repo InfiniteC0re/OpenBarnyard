@@ -12,8 +12,18 @@ public:
 	struct TreeInstance
 	    : Toshi::T2SList<TreeInstance>::Node
 	{
-		ATerrainLocatorList*    pLocatorManager;
-		TUINT16                 uiId;
+		ATerrainLocatorList*    pLocatorList;
+		TUINT16                 uiLocatorId;
+		
+		union 
+		{
+			TUINT8 iTreeIndex : 6;
+			TUINT  bFlag1 : 1;
+			TUINT  bFlag2 : 1;
+		};
+
+		TUINT uiUnk3;
+
 		ACollisionObjectSimple* pSimpleCollisionObjects = TNULL;
 		void*                   unk                     = TNULL;
 	};
@@ -45,7 +55,10 @@ public:
 	ATreeManager();
 	~ATreeManager();
 
-	TBOOL LoadModels();
+	// Initialises models and returns TTRUE if succeded
+	TBOOL Initialise();
+
+	void CreateInstances( ATerrainLocatorList* a_pLocatorList );
 
 private:
 	// ...
