@@ -1,7 +1,7 @@
 project "XML2PProperties"
 	kind "StaticLib"
 	language "C++"
-	staticruntime "on"
+	staticruntime "off"
 	
 	links
 	{

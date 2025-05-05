@@ -57,8 +57,10 @@ public:
 
 	// Initialises models and returns TTRUE if succeded
 	TBOOL Initialise();
-
+	
 	void CreateInstances( ATerrainLocatorList* a_pLocatorList );
+
+	void Render();
 
 private:
 	// ...

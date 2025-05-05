@@ -1,7 +1,7 @@
 project "OPCODE"
 	kind "StaticLib"
 	language "C"
-	staticruntime "on"
+	staticruntime "off"
 	
 	pchheader "StdAfx.h"
 	pchsource "Source/StdAfx.cpp"

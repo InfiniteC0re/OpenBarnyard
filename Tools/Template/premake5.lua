@@ -1,7 +1,7 @@
 project "Template Tool"
 	kind "ConsoleApp"
 	language "C++"
-	staticruntime "on"
+	staticruntime "off"
 	
 	pchheader "pch.h"
 	pchsource "Source/pch.cpp"

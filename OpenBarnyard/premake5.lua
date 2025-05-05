@@ -1,6 +1,6 @@
 project "OpenBarnyard"
 	language "C++"
-	staticruntime "on"
+	staticruntime "off"
 	
 	-- Set debug dir to the Game folder
 	debugdir ("%{wks.location}/../Game")

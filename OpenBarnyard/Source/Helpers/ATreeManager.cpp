@@ -1,9 +1,11 @@
 #include "pch.h"
 #include "ATreeManager.h"
+#include "Terrain/ATerrainInterface.h"
 #include "Terrain/ATerrainLocator.h"
 #include "Assets/AAssetLoader.h"
 
 #ifdef TRENDERINTERFACE_DX8
+#  include "Platform/DX8/TRenderInterface_DX8.h"
 #  include "Platform/DX8/ASkinShader/ASkinMaterial_DX8.h"
 #endif // TRENDERINTERFACE_DX8
 
@@ -325,6 +327,19 @@ void ATreeManager::CreateInstances( ATerrainLocatorList* a_pLocatorList )
 			}
 		}
 	}
+}
+
+// $Barnyard: FUNCTION 005ef3a0
+void ATreeManager::Render()
+{
+	TASSERT( TFALSE );
+	TRenderContext* pRenderContext = TRenderInterface::GetSingleton()->GetCurrentContext();
+
+	TMatrix44 matModelView = pRenderContext->GetModelViewMatrix();
+	TMatrix44 matLightDir  = TRenderInterface::GetSingleton()->GetLightDirection();
+
+	// something with field9_0x18
+	// ...
 }
 
 // $Barnyard: FUNCTION 005edd80

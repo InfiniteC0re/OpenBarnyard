@@ -2,7 +2,7 @@ project "Toshi"
 	kind "StaticLib"
 	language "C++"
 	cppdialect "C++20"
-	staticruntime "on"
+	staticruntime "off"
 	characterset "ASCII"
 
 	pchheader "ToshiPCH.h"
