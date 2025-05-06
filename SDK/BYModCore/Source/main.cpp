@@ -5,7 +5,6 @@
 #include "AModLoaderTask.h"
 #include "ACoreSettings.h"
 #include "AImGUI.h"
-#include "UpdateManager.h"
 
 #include "BYardSDK/SDKHooks.h"
 
@@ -28,8 +27,6 @@ TOSHI_NAMESPACE_USING
 
 static T2CommandLine g_CommandLine;
 const T2CommandLine* g_pCommandLine = &g_CommandLine;
-
-TBOOL g_bCheckUpdates = TTRUE;
 
 const char* GetModsDirectory()
 {
@@ -130,17 +127,6 @@ DWORD APIENTRY DllMain( HMODULE hModule, DWORD reason, LPVOID reserved )
 			InstallHook<ToshiDestroy>();
 
 			SetConsoleCtrlHandler( exit_handler, TRUE );
-
-			// Auto updates
-			//g_bCheckUpdates = !g_CommandLine.HasParameter( "-no-updates" );
-			g_bCheckUpdates = TFALSE;
-
-			UpdateManager::CleanUp();
-
-			if ( g_bCheckUpdates )
-				UpdateManager::AskAutoUpdate();
-			else
-				TINFO( "Auto updates are disabled with command line argument\n" );
 
 			// Create thread
 			TINFO( "Log system was successfully initialised!\n" );

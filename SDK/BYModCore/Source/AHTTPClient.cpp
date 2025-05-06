@@ -1,4 +1,6 @@
 #include "pch.h"
+
+#if 0
 #include "AHTTPClient.h"
 
 //-----------------------------------------------------------------------------
@@ -96,3 +98,5 @@ MODCORE_API AHTTPClient* CreateHTTPClient()
 {
 	return new AHTTPClient();
 }
+
+#endif

@@ -1,5 +1,7 @@
 #pragma once
 
+#if 0
+
 #define CPPHTTPLIB_OPENSSL_SUPPORT
 #include "httplib.h"
 #include "ModLoader.h"
@@ -31,3 +33,5 @@ private:
 };
 
 MODCORE_API AHTTPClient* CreateHTTPClient();
+
+#endif 
