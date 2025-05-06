@@ -34,11 +34,29 @@ Clone the repository with the following commands:
 	git clone https://github.com/InfiniteC0re/OpenBarnyard.git
 	cd OpenBarnyard
 	git submodule update --init --recursive
-	./GenerateProjects-VS2022.bat
+	./GenerateProjects-WIN-DX8-VS2022.bat
 
-Doing that should be enough to build the whole solution in IDE.
+Then open the generated solution file with Visual Studio and build it!
 
-## Thirdparty libraries
+## Ghidra Repository
+
+In case you want to contribute or learn something about how the game (or the engine) works, you can use our Ghidra repository where the game is being reverse engineered.
+
+DM me (@infc0re) on Discord if you want to contribute and get your own account on the Ghidra repository to be able to make commits.
+
+```
+Version:  11.3.2
+File:     Barnyard/Barnyard (Windows)
+Hostname: repository.opentoshi.net
+Username: guest
+Password: guest1
+```
+
+## Contributing
+
+The project is open to any kind of contributions!
+
+## Third-Party libraries
 - [premake](https://github.com/premake/premake-core)
 - [tracy](https://github.com/wolfpld/tracy)
 - [fmod](https://fmod.com/)
