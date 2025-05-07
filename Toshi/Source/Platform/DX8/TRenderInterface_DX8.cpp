@@ -1,3 +1,6 @@
+// DirectX 8 Render Interface Implementation
+// This file contains the implementation of the DirectX 8 render interface for the Toshi engine
+
 #include "ToshiPCH.h"
 #include "TModel_DX8.h"
 #include "TRenderCapture_DX8.h"
@@ -23,6 +26,7 @@ TOSHI_NAMESPACE_START
 TDEFINE_CLASS( TRenderD3DInterface );
 
 // $Barnyard: FUNCTION 006c58e0
+// Tests if the device can begin and end a scene successfully
 void TRenderInterface::BeginEndSceneHAL()
 {
 	auto pHAL = TSTATICCAST( TRenderD3DInterface, this );
@@ -34,6 +38,7 @@ void TRenderInterface::BeginEndSceneHAL()
 }
 
 // $Barnyard: FUNCTION 006c6880
+// Constructor - Initializes DirectX 8 render interface with default values
 TRenderD3DInterface::TRenderD3DInterface()
 {
 	m_pDirect3D                          = TNULL;
@@ -41,32 +46,35 @@ TRenderD3DInterface::TRenderD3DInterface()
 	m_fPixelAspectRatio                  = 1.0f;
 	m_AcceleratorTable                   = NULL;
 	m_pDevice                            = TNULL;
-	m_oDisplayParams.uiWidth             = 640;
-	m_oDisplayParams.uiHeight            = 480;
-	m_oDisplayParams.uiColourDepth       = 32;
+	m_oDisplayParams.uiWidth             = 640; // Default width
+	m_oDisplayParams.uiHeight            = 480; // Default height
+	m_oDisplayParams.uiColourDepth       = 32;  // Default color depth
 	m_oDisplayParams.eDepthStencilFormat = 0;
 	m_oDisplayParams.bWindowed           = TTRUE;
-	m_fBrightness                        = 0.5f;
-	m_fSaturate                          = 0.5f;
+	m_fBrightness                        = 0.5f; // Default brightness
+	m_fSaturate                          = 0.5f; // Default saturation
 	m_bExited                            = TFALSE;
 	m_bCheckedCapableColourCorrection    = TFALSE;
 	m_bCapableColourCorrection           = TFALSE;
 	m_bFailed                            = TFALSE;
 	m_Unk1                               = TNULL;
 	m_Unk2                               = TNULL;
-	m_fContrast                          = 0.583012f;
-	m_fGamma                             = 0.420849f;
+	m_fContrast                          = 0.583012f; // Default contrast
+	m_fGamma                             = 0.420849f; // Default gamma
 	m_bChangedColourSettings             = TTRUE;
 	m_bEnableColourCorrection            = TTRUE;
 }
 
 // $Barnyard: FUNCTION 006c6da0
+// Destructor - Cleans up DirectX resources
 TRenderD3DInterface::~TRenderD3DInterface()
 {
 	Destroy();
 }
 
 // $Barnyard: FUNCTION 006c6990
+// Creates the display with specified parameters
+// Returns true if successful, false otherwise
 TBOOL TRenderD3DInterface::CreateDisplay( const DISPLAYPARAMS& a_rParams )
 {
 	if ( !TRenderInterface::CreateDisplay() )
@@ -75,6 +83,7 @@ TBOOL TRenderD3DInterface::CreateDisplay( const DISPLAYPARAMS& a_rParams )
 		return TFALSE;
 	}
 
+	// Find appropriate device for the display parameters
 	m_pDevice        = TSTATICCAST( TD3DAdapter::Mode::Device, FindDevice( a_rParams ) );
 	m_oDisplayParams = a_rParams;
 
@@ -82,9 +91,11 @@ TBOOL TRenderD3DInterface::CreateDisplay( const DISPLAYPARAMS& a_rParams )
 	{
 		auto pDisplayParams = GetCurrentDisplayParams();
 
+		// Get desktop window dimensions
 		RECT clientRect;
 		GetClientRect( GetDesktopWindow(), &clientRect );
 
+		// Handle large displays
 		if ( 2000 < clientRect.right )
 		{
 			clientRect.right /= 2;
@@ -93,6 +104,7 @@ TBOOL TRenderD3DInterface::CreateDisplay( const DISPLAYPARAMS& a_rParams )
 		TUINT32 uiWindowPosX = 0;
 		TUINT32 uiWindowPosY = 0;
 
+		// Calculate window position for windowed mode
 		if ( pDisplayParams->bWindowed )
 		{
 			auto pMode   = GetCurrentDevice()->GetMode();
@@ -100,6 +112,7 @@ TBOOL TRenderD3DInterface::CreateDisplay( const DISPLAYPARAMS& a_rParams )
 			uiWindowPosY = ( clientRect.bottom - pMode->GetHeight() ) / 2;
 		}
 
+		// Initialize presentation parameters
 		TUtil::MemClear( &m_PresentParams, sizeof( m_PresentParams ) );
 		m_PresentParams.Windowed               = pDisplayParams->bWindowed;
 		m_PresentParams.BackBufferCount        = 1;
@@ -111,11 +124,13 @@ TBOOL TRenderD3DInterface::CreateDisplay( const DISPLAYPARAMS& a_rParams )
 		m_PresentParams.BackBufferWidth        = pDisplayParams->uiWidth;
 		m_PresentParams.BackBufferHeight       = pDisplayParams->uiHeight;
 
+		// Get device information
 		auto pDevice        = TSTATICCAST( TD3DAdapter::Mode::Device, GetCurrentDevice() );
 		auto pMode          = TSTATICCAST( TD3DAdapter::Mode, pDevice->GetMode() );
 		auto pAdapter       = TSTATICCAST( TD3DAdapter, pMode->GetAdapter() );
 		auto uiAdapterIndex = pAdapter->GetAdapterIndex();
 
+		// Set back buffer format based on windowed/fullscreen mode
 		if ( pDisplayParams->bWindowed )
 		{
 			m_PresentParams.BackBufferFormat = pMode->GetD3DDisplayMode().Format;
@@ -125,6 +140,7 @@ TBOOL TRenderD3DInterface::CreateDisplay( const DISPLAYPARAMS& a_rParams )
 			m_PresentParams.BackBufferFormat = pMode->GetBackBufferFormat( pDisplayParams->uiColourDepth );
 		}
 
+		// Create Direct3D device
 		HRESULT hRes = m_pDirect3D->CreateDevice(
 		    uiAdapterIndex,
 		    TD3DAdapter::Mode::Device::DEVICETYPES[ pDevice->GetDeviceIndex() ],
@@ -138,12 +154,13 @@ TBOOL TRenderD3DInterface::CreateDisplay( const DISPLAYPARAMS& a_rParams )
 		{
 			OnInitializationFailureDevice();
 			PrintError( hRes, "Failed to create D3D Device!" );
-
 			return TFALSE;
 		}
 
+		// Initialize device states
 		SetDeviceDefaultStates();
 
+		// Set window mode
 		if ( pDisplayParams->bWindowed )
 		{
 			m_Window.SetWindowed();
@@ -153,6 +170,7 @@ TBOOL TRenderD3DInterface::CreateDisplay( const DISPLAYPARAMS& a_rParams )
 			m_Window.SetFullscreen();
 		}
 
+		// Handle multi-monitor setup
 		if ( uiAdapterIndex != 0 )
 		{
 			HMONITOR hMonitor = m_pDirect3D->GetAdapterMonitor( uiAdapterIndex );
@@ -164,13 +182,16 @@ TBOOL TRenderD3DInterface::CreateDisplay( const DISPLAYPARAMS& a_rParams )
 			uiWindowPosY += monitorInfo.rcMonitor.right;
 		}
 
+		// Set window position and size
 		m_Window.SetPosition( uiWindowPosX, uiWindowPosY, pDisplayParams->uiWidth, pDisplayParams->uiHeight );
 
+		// Get back buffer surface description
 		IDirect3DSurface8* pSurface;
 		m_pDirectDevice->GetBackBuffer( 0, D3DBACKBUFFER_TYPE_MONO, &pSurface );
 		pSurface->GetDesc( &m_SurfaceDesk );
 		pSurface->Release();
 
+		// Set cursor position to center of window
 		SetCursorPos(
 		    uiWindowPosX + pDisplayParams->uiWidth / 2,
 		    uiWindowPosY + pDisplayParams->uiHeight / 2
@@ -178,6 +199,7 @@ TBOOL TRenderD3DInterface::CreateDisplay( const DISPLAYPARAMS& a_rParams )
 
 		m_pDirectDevice->ShowCursor( TRUE );
 
+		// Create invalid texture pattern
 		TUINT invalidTextureData[ 32 ];
 		for ( TINT i = 0; i < 32; i++ )
 		{
@@ -187,6 +209,7 @@ TBOOL TRenderD3DInterface::CreateDisplay( const DISPLAYPARAMS& a_rParams )
 		auto pTextureFactory = GetSystemResource<TTextureFactoryHAL>( SYSRESOURCE_TEXTUREFACTORY );
 		m_pInvalidTexture    = pTextureFactory->CreateTextureFromMemory( invalidTextureData, sizeof( invalidTextureData ), 0x11, 8, 8 );
 
+		// Enable color correction and mark display as created
 		EnableColourCorrection( TTRUE );
 		m_bDisplayCreated = TTRUE;
 
@@ -707,76 +730,68 @@ TDebugD3DText* TRenderD3DInterface::InitDebugText( TINT a_iBufferSize )
 }
 
 // $Barnyard: FUNCTION 006c66e0
+// Sets default Direct3D device states
 void TRenderD3DInterface::SetDeviceDefaultStates()
 {
+	// Enable Z-buffer
 	m_pDirectDevice->SetRenderState( D3DRS_ZENABLE, 1 );
+	// Set culling mode to counter-clockwise
 	m_pDirectDevice->SetRenderState( D3DRS_CULLMODE, 2 );
+	// Disable lighting
 	m_pDirectDevice->SetRenderState( D3DRS_LIGHTING, 0 );
+	// Set texture filtering to linear
 	m_pDirectDevice->SetTextureStageState( 0, D3DTSS_MINFILTER, 2 );
 	m_pDirectDevice->SetTextureStageState( 0, D3DTSS_MAGFILTER, 2 );
 	m_pDirectDevice->SetTextureStageState( 0, D3DTSS_MIPFILTER, 2 );
 }
 
 // $Barnyard: FUNCTION 006c6110
-void TRenderD3DInterface::SetTextureAddress( DWORD a_iStage, TINT a_eType, TINT a_iUnk )
+// Sets texture addressing mode for a specific texture stage and coordinate
+void TRenderD3DInterface::SetTextureAddress( TINT a_iStage, ADDRESSINGMODE a_eAddressing, TEXCOORD a_eTextureCoordinate )
 {
-	// TODO: Refactor
-	DWORD DVar1;
-
-	if ( a_eType == 0 )
+	// Map texture addressing type to D3D address mode
+	DWORD addressMode;
+	switch ( a_eAddressing )
 	{
-		DVar1 = D3DTADDRESS_WRAP;
-		if ( a_iUnk == 0 ) goto LAB_006c618c;
-		if ( a_iUnk == 1 ) goto LAB_006c61da;
-		m_pDirectDevice->SetTextureStageState( a_iStage, D3DTSS_ADDRESSU, D3DTADDRESS_WRAP );
-		DVar1 = D3DTADDRESS_WRAP;
-	}
-	else if ( a_eType == 2 )
-	{
-		DVar1 = D3DTADDRESS_CLAMP;
-		if ( a_iUnk == 0 ) goto LAB_006c618c;
-		if ( a_iUnk == 1 ) goto LAB_006c61da;
-		m_pDirectDevice->SetTextureStageState( a_iStage, D3DTSS_ADDRESSU, D3DTADDRESS_CLAMP );
-		DVar1 = D3DTADDRESS_CLAMP;
-	}
-	else if ( a_eType == 1 )
-	{
-		DVar1 = D3DTADDRESS_MIRROR;
-
-		if ( a_iUnk == 0 )
-		{
-		LAB_006c618c:
-			m_pDirectDevice->SetTextureStageState( a_iStage, D3DTSS_ADDRESSU, DVar1 );
+		case ADDRESSINGMODE_WRAP:
+			addressMode = D3DTADDRESS_WRAP;
+			break;
+		case ADDRESSINGMODE_MIRROR:
+			addressMode = D3DTADDRESS_MIRROR;
+			break;
+		case ADDRESSINGMODE_CLAMP:
+			addressMode = D3DTADDRESS_CLAMP;
+			break;
+		case ADDRESSINGMODE_BORDER:
+			addressMode = D3DTADDRESS_BORDER;
+			break;
+		default:
+			TERROR( "TRenderD3DInterface::SetTextureAddress: Invalid addressing mode specified!\n" );
 			return;
-		}
+	}
 
-		if ( a_iUnk == 1 )
-		{
-		LAB_006c61da:
-			m_pDirectDevice->SetTextureStageState( a_iStage, D3DTSS_ADDRESSV, DVar1 );
-			return;
-		}
-
-		m_pDirectDevice->SetTextureStageState( a_iStage, D3DTSS_ADDRESSU, D3DTADDRESS_MIRROR );
-		DVar1 = D3DTADDRESS_MIRROR;
+	// Set either U or V coordinate addressing
+	if ( a_eTextureCoordinate == TEXCOORD_U )
+	{
+		m_pDirectDevice->SetTextureStageState( a_iStage, D3DTSS_ADDRESSU, addressMode );
+	}
+	else if ( a_eTextureCoordinate == TEXCOORD_V )
+	{
+		m_pDirectDevice->SetTextureStageState( a_iStage, D3DTSS_ADDRESSV, addressMode );
 	}
 	else
 	{
-		if ( a_eType != 3 ) return;
-
-		DVar1 = D3DTADDRESS_BORDER;
-		if ( a_iUnk == 0 ) goto LAB_006c618c;
-		if ( a_iUnk == 1 ) goto LAB_006c61da;
-		m_pDirectDevice->SetTextureStageState( a_iStage, D3DTSS_ADDRESSU, D3DTADDRESS_BORDER );
-		DVar1 = D3DTADDRESS_BORDER;
+		TASSERT( a_eTextureCoordinate == TEXCOORD_UV );
+		m_pDirectDevice->SetTextureStageState( a_iStage, D3DTSS_ADDRESSU, addressMode );
+		m_pDirectDevice->SetTextureStageState( a_iStage, D3DTSS_ADDRESSV, addressMode );
 	}
-
-	m_pDirectDevice->SetTextureStageState( a_iStage, D3DTSS_ADDRESSV, DVar1 );
 }
 
 // $Barnyard: FUNCTION 006c6070
+// Clears a region of the screen with specified color, depth, and stencil values
 void TRenderD3DInterface::ClearRegion( TINT a_iX, TINT a_iY, TINT a_iWidth, TINT a_iHeight, TUINT8 a_eClearFlags, TUINT8 a_uiColorR, TUINT8 a_uiColorG, TUINT8 a_uiColorB, TFLOAT a_fZ, TUINT a_uiStencil )
 {
+	// Build clear flags based on parameters
 	DWORD eFlags = ( a_eClearFlags & 1 ) ? D3DCLEAR_TARGET : 0;
 
 	if ( a_eClearFlags & 2 )
@@ -790,6 +805,7 @@ void TRenderD3DInterface::ClearRegion( TINT a_iX, TINT a_iY, TINT a_iWidth, TINT
 		eFlags = eFlags | D3DCLEAR_STENCIL;
 	}
 
+	// Clear the specified region
 	m_pDirectDevice->Clear(
 	    0,
 	    NULL,
@@ -864,21 +880,26 @@ void TRenderD3DInterface::OnInitializationFailureDisplay()
 }
 
 // $Barnyard: FUNCTION 006c72a0
+// Creates the DirectX 8 render interface
 TBOOL TRenderD3DInterface::Create( const TCHAR* a_szWindowName )
 {
 	TASSERT( TFALSE == IsCreated() );
 
 	if ( TRenderInterface::Create() )
 	{
+		// Create Direct3D 8 interface
 		m_pDirect3D = Direct3DCreate8( D3D_SDK_VERSION );
 
 		if ( m_pDirect3D )
 		{
+			// Initialize adapter database and create accelerator table
 			BuildAdapterDatabase();
 			CreateAccelTable();
 
+			// Create window
 			if ( m_Window.Create( this, a_szWindowName ) )
 			{
+				// Create system resources if needed
 				if ( m_bCreateSystemResources )
 				{
 					CreateSystemResources();

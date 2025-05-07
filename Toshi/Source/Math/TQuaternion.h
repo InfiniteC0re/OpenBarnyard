@@ -1,3 +1,14 @@
+/**
+ * @file TQuaternion.h
+ * Quaternion implementation for the Toshi engine
+ * 
+ * This file provides quaternion functionality including:
+ * - Quaternion operations (multiplication, normalization)
+ * - Rotation representation and conversion
+ * - Quaternion interpolation
+ * - Quaternion to matrix conversion
+ */
+
 #pragma once
 #include "Math/TVector3.h"
 #include "Math/TVector4.h"

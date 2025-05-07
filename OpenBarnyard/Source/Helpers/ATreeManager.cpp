@@ -227,7 +227,7 @@ void ATreeManager::CreateInstances( ATerrainLocatorList* a_pLocatorList )
 
 		ATerrainLocatorTRBHeader* pLocatorHeader = a_pLocatorList->GetHeader();
 		ATerrainLocator*          pLocators      = pLocatorHeader->pLocators;
-		
+
 		for ( TINT i = 0; i < iNumLocators; i++ )
 		{
 			const TCHAR* pchLocatorName = pLocatorHeader->ppNames[ pLocators[ i ].uiNameId ];
@@ -299,15 +299,13 @@ void ATreeManager::CreateInstances( ATerrainLocatorList* a_pLocatorList )
 						if ( iLocatorNameLength >= 4 && pchLocatorName[ iLocatorNameLength - 4 ] == '_' )
 						{
 							if ( pchLocatorName[ iLocatorNameLength - 3 ] == 'b' &&
-								 pchLocatorName[ iLocatorNameLength - 2 ] == 'r' &&
-								 pchLocatorName[ iLocatorNameLength - 2 ] == 'n')
+							     pchLocatorName[ iLocatorNameLength - 2 ] == 'r' &&
+							     pchLocatorName[ iLocatorNameLength - 2 ] == 'n' )
 							// barn?
 							{
 								pTreeInstance->bFlag1 = TTRUE;
 							}
-							else if ( pchLocatorName[ iLocatorNameLength - 3 ] == 'd' &&
-									  pchLocatorName[ iLocatorNameLength - 2 ] == 'k' &&
-									  pchLocatorName[ iLocatorNameLength - 2 ] == 'g' )
+							else if ( pchLocatorName[ iLocatorNameLength - 3 ] == 'd' && pchLocatorName[ iLocatorNameLength - 2 ] == 'k' && pchLocatorName[ iLocatorNameLength - 2 ] == 'g' )
 							// dankweed pond and some 'g'?
 							{
 								pTreeInstance->bFlag2 = TTRUE;

@@ -158,7 +158,7 @@ void AGUI2RendererDX8::EndScene()
 	pD3DDevice->SetTexture( 1, NULL );
 	pD3DDevice->SetTextureStageState( 1, D3DTSS_COLOROP, 1 );
 	pD3DDevice->SetTextureStageState( 1, D3DTSS_ALPHAOP, 1 );
-	pRender->SetTextureAddress( 0, 0, -1 );
+	pRender->SetTextureAddress( 0, ADDRESSINGMODE_WRAP, TEXCOORD_UV );
 }
 
 void AGUI2RendererDX8::ResetRenderer()
@@ -274,7 +274,7 @@ void AGUI2RendererDX8::SetMaterial( AGUI2Material* a_pMaterial )
 		pTexture->Validate();
 
 		pD3DDevice->SetTexture( 0, pTexture->GetD3DTexture() );
-		pRender->SetTextureAddress( 0, pTexture->GetAddress(), -1 );
+		pRender->SetTextureAddress( 0, pTexture->GetAddressing(), TEXCOORD_UV );
 
 		switch ( a_pMaterial->m_eBlendState )
 		{

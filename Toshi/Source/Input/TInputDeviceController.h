@@ -1,3 +1,14 @@
+/**
+ * @file TInputDeviceController.h
+ * Controller input device interface for the Toshi engine
+ * 
+ * This file defines the controller input device that provides:
+ * - Game controller input handling
+ * - Button and axis state management
+ * - Controller-specific input mapping
+ * - Force feedback support
+ */
+
 #pragma once
 #include "Input/TInputInterface.h"
 

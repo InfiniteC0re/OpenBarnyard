@@ -1,3 +1,14 @@
+/**
+ * @file T2DynamicVector.h
+ * Dynamic vector container for the Toshi engine
+ * 
+ * This file provides a dynamic vector implementation that includes:
+ * - Dynamic array management
+ * - Memory allocation and deallocation
+ * - Element access and manipulation
+ * - Vector operations and utilities
+ */
+
 #pragma once
 #include "Toshi/T2Allocator.h"
 

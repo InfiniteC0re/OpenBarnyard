@@ -1,3 +1,14 @@
+/**
+ * @file T2Locale.h
+ * Localization system for the Toshi engine
+ * 
+ * This file provides localization functionality including:
+ * - Language and region management
+ * - String localization
+ * - Culture-specific formatting
+ * - Localization resource handling
+ */
+
 #pragma once
 #include "Toshi/TSingleton.h"
 #include "File/TTRB.h"

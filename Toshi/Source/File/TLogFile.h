@@ -1,3 +1,14 @@
+/**
+ * @file TLogFile.h
+ * Logging system for the Toshi engine
+ * 
+ * This file provides logging functionality including:
+ * - Log file creation and management
+ * - Log message formatting and writing
+ * - Log level control
+ * - Log file rotation and cleanup
+ */
+
 #pragma once
 
 TOSHI_NAMESPACE_START

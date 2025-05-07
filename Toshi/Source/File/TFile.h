@@ -1,3 +1,14 @@
+/**
+ * @file TFile.h
+ * Core file system interface for the Toshi engine
+ * 
+ * This file defines the base file interface that provides:
+ * - File I/O operations (read/write/seek)
+ * - File system abstraction
+ * - File path handling
+ * - File stream management
+ */
+
 #pragma once
 #include "Toshi/TSingleton.h"
 #include "Toshi/TDList.h"

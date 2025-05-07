@@ -457,7 +457,7 @@ TBOOL ABINKMoviePlayer::Rect::Create( int a_iPosX, int a_iPosY, int a_iWidth, in
 	auto pTexFactory = TRenderInterface::GetSingleton()->GetSystemResource<TTextureFactory>( SYSRESOURCE_TEXTUREFACTORY );
 
 	pTexture = pTexFactory->CreateEx( pData, uiDataSize, uiWidth, uiHeight, 1, a_eFormat, 4 );
-	pTexture->SetAddress( 2 );
+	pTexture->SetAddressing( ADDRESSINGMODE_CLAMP );
 
 	pMaterial = AGUI2::GetRenderer()->CreateMaterial( pTexture );
 	pMaterial->SetBlendState( 0 );

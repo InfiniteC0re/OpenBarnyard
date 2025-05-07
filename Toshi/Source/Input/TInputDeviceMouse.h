@@ -1,3 +1,14 @@
+/**
+ * @file TInputDeviceMouse.h
+ * Mouse input device for the Toshi engine
+ * 
+ * This file defines the mouse input device that provides:
+ * - Mouse position tracking
+ * - Button state management
+ * - Mouse wheel handling
+ * - Mouse event processing
+ */
+
 #pragma once
 #include "TInputInterface.h"
 

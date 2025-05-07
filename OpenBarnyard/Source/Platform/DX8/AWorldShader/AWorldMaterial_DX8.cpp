@@ -82,8 +82,8 @@ void AWorldMaterialHAL::PreRender()
 				pD3DDevice->SetTextureStageState( i, D3DTSS_MIPFILTER, 2 );
 				pD3DDevice->SetTextureStageState( i, D3DTSS_MINFILTER, 2 );
 				pD3DDevice->SetTextureStageState( i, D3DTSS_MAGFILTER, 2 );
-				pRenderInterface->SetTextureAddress( i, pTexture->GetAddressUState(), 0 );
-				pRenderInterface->SetTextureAddress( i, pTexture->GetAddressVState(), 1 );
+				pRenderInterface->SetTextureAddress( i, pTexture->GetAddressUState(), TEXCOORD_U );
+				pRenderInterface->SetTextureAddress( i, pTexture->GetAddressVState(), TEXCOORD_V );
 			}
 		}
 	}

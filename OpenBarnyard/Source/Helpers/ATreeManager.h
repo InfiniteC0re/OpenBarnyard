@@ -12,10 +12,10 @@ public:
 	struct TreeInstance
 	    : Toshi::T2SList<TreeInstance>::Node
 	{
-		ATerrainLocatorList*    pLocatorList;
-		TUINT16                 uiLocatorId;
-		
-		union 
+		ATerrainLocatorList* pLocatorList;
+		TUINT16              uiLocatorId;
+
+		union
 		{
 			TUINT8 iTreeIndex : 6;
 			TUINT  bFlag1 : 1;
@@ -57,7 +57,7 @@ public:
 
 	// Initialises models and returns TTRUE if succeded
 	TBOOL Initialise();
-	
+
 	void CreateInstances( ATerrainLocatorList* a_pLocatorList );
 
 	void Render();

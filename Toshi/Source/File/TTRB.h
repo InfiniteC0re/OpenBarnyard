@@ -1,3 +1,14 @@
+/**
+ * @file TTRB.h
+ * TRB (Toshi Relocatable Binary) resource system for the Toshi engine
+ * 
+ * This file provides TRB resource functionality including:
+ * - Resource file loading and management
+ * - Resource data access and manipulation
+ * - Resource compression and decompression
+ * - Resource caching and optimization
+ */
+
 #pragma once
 #ifndef __TOSHI_TTRB_H__
 #  define __TOSHI_TTRB_H__

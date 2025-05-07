@@ -1,3 +1,14 @@
+/**
+ * @file TInputInterface.h
+ * Input system interface for the Toshi engine
+ * 
+ * This file defines the core input system that provides:
+ * - Input device management (keyboard, mouse, controllers)
+ * - Input event handling
+ * - Input state tracking
+ * - Input device abstraction
+ */
+
 #pragma once
 #include "Toshi/TNodeList.h"
 #include "Toshi/TArray.h"

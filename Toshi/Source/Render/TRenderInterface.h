@@ -1,4 +1,16 @@
+/**
+ * @file TRenderInterface.h
+ * Rendering system interface for the Toshi engine
+ * 
+ * This file defines the core rendering system that provides:
+ * - Graphics pipeline management
+ * - Shader handling
+ * - Resource management
+ * - Platform-specific rendering abstraction
+ */
+
 #pragma once
+#include "Render/TRender.h"
 #include "Math/Math.h"
 #include "Math/TSphere.h"
 #include "Toshi/TStack.h"
@@ -15,25 +27,6 @@
 TOSHI_NAMESPACE_START
 
 class TViewport;
-
-typedef uint8_t SYSRESOURCE;
-enum SYSRESOURCE_ : SYSRESOURCE
-{
-	SYSRESOURCE_VFactories,
-	SYSRESOURCE_VFSYSVNDUV1,
-	SYSRESOURCE_VFSKIN,
-	SYSRESOURCE_4,
-	SYSRESOURCE_5,
-	SYSRESOURCE_6,
-	SYSRESOURCE_VFWORLD,
-	SYSRESOURCE_8,
-	SYSRESOURCE_9,
-	SYSRESOURCE_IFactories,
-	SYSRESOURCE_IFSYS,
-	SYSRESOURCE_12,
-	SYSRESOURCE_TEXTUREFACTORY = 27,
-	SYSRESOURCE_NUMOF
-};
 
 class TRenderInterface
     : public TObject

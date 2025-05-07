@@ -14,7 +14,7 @@ TDEFINE_CLASS_NORUNTIME( TTexture );
 
 TTexture::TTexture()
 {
-	m_eAddress      = 0;
+	m_eAddressing   = ADDRESSINGMODE_WRAP;
 	m_eTextureFlags = 0;
 	m_pNameEntry    = TNULL;
 }

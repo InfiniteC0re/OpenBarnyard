@@ -1,3 +1,14 @@
+/**
+ * @file T2CommandLine.h
+ * Command line parsing and processing for Toshi tools
+ * 
+ * This file provides command line functionality including:
+ * - Command line argument parsing
+ * - Option handling
+ * - Parameter validation
+ * - Command line tool utilities
+ */
+
 #pragma once
 #include "Toshi/TString8.h"
 #include "Toshi/T2String.h"

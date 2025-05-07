@@ -1,3 +1,14 @@
+/**
+ * @file TMemory.cpp
+ * @brief Implementation of the Toshi memory management system
+ * 
+ * This file implements the core memory management functionality including:
+ * - Memory allocation and deallocation
+ * - Memory block management
+ * - Memory tracking and debugging
+ * - System memory operations
+ */
+
 #include "ToshiPCH.h"
 #include "TMemory.h"
 #include "Thread/TMutex.h"
@@ -9,6 +20,11 @@
 
 #include "TMemoryDebugOff.h"
 
+/**
+ * @brief Global new operator implementation
+ * @param size Size to allocate
+ * @return Pointer to allocated memory
+ */
 void* __CRTDECL operator new( TSIZE size )
 {
 #ifdef TOSHI_PROFILER_MEMORY
@@ -18,6 +34,11 @@ void* __CRTDECL operator new( TSIZE size )
 #endif // TOSHI_PROFILER_MEMORY
 }
 
+/**
+ * @brief Global new operator with nothrow implementation
+ * @param size Size to allocate
+ * @return Pointer to allocated memory
+ */
 void* __CRTDECL operator new( TSIZE size, ::std::nothrow_t const& ) noexcept
 {
 #ifdef TOSHI_PROFILER_MEMORY
@@ -27,6 +48,11 @@ void* __CRTDECL operator new( TSIZE size, ::std::nothrow_t const& ) noexcept
 #endif // TOSHI_PROFILER_MEMORY
 }
 
+/**
+ * @brief Global new[] operator implementation
+ * @param size Size to allocate
+ * @return Pointer to allocated memory
+ */
 void* __CRTDECL operator new[]( TSIZE size )
 {
 #ifdef TOSHI_PROFILER_MEMORY
@@ -36,6 +62,11 @@ void* __CRTDECL operator new[]( TSIZE size )
 #endif // TOSHI_PROFILER_MEMORY
 }
 
+/**
+ * @brief Global new[] operator with nothrow implementation
+ * @param size Size to allocate
+ * @return Pointer to allocated memory
+ */
 void* __CRTDECL operator new[]( TSIZE size, ::std::nothrow_t const& ) noexcept
 {
 #ifdef TOSHI_PROFILER_MEMORY
@@ -45,26 +76,47 @@ void* __CRTDECL operator new[]( TSIZE size, ::std::nothrow_t const& ) noexcept
 #endif // TOSHI_PROFILER_MEMORY
 }
 
+/**
+ * @brief Global delete operator implementation
+ * @param ptr Pointer to memory to free
+ */
 void __CRTDECL operator delete( void* ptr ) noexcept
 {
 	TFree( ptr );
 }
 
+/**
+ * @brief Global delete operator with nothrow implementation
+ * @param ptr Pointer to memory to free
+ */
 void __CRTDECL operator delete( void* ptr, ::std::nothrow_t const& ) noexcept
 {
 	TFree( ptr );
 }
 
+/**
+ * @brief Global delete[] operator implementation
+ * @param ptr Pointer to memory to free
+ */
 void __CRTDECL operator delete[]( void* ptr ) noexcept
 {
 	TFree( ptr );
 }
 
+/**
+ * @brief Global delete[] operator with nothrow implementation
+ * @param ptr Pointer to memory to free
+ */
 void __CRTDECL operator delete[]( void* ptr, ::std::nothrow_t const& ) noexcept
 {
 	TFree( ptr );
 }
 
+/**
+ * @brief Global delete[] operator with size implementation
+ * @param ptr Pointer to memory to free
+ * @param _Size Size of memory (unused)
+ */
 void __CRTDECL operator delete[]( void* ptr, TSIZE _Size ) noexcept
 {
 	TFree( ptr );
@@ -79,6 +131,10 @@ TOSHI_NAMESPACE_START
 TMemory* g_pMemory = TNULL;
 
 // $Barnyard: FUNCTION 006b56b0
+/**
+ * @brief Constructor for TMemory class
+ * Initializes the memory management system and sets up the global instance
+ */
 TMemory::TMemory()
 {
 	TASSERT( g_pMemory == TNULL );
@@ -95,6 +151,10 @@ TMemory::TMemory()
 	m_bFlag2 = TTRUE;
 }
 
+/**
+ * @brief Destructor for TMemory class
+ * Cleans up the memory management system and clears the global instance
+ */
 TMemory::~TMemory()
 {
 	g_pMemory = TNULL;
@@ -134,6 +194,22 @@ TMemory::~TMemory()
 #  define CALL( ... )                                                                                          PP_MACRO_OVERLOAD( CALL, __VA_ARGS__ )
 
 // $Barnyard: FUNCTION 006b5230
+/**
+ * @brief Allocates memory with specified size and alignment
+ * @param a_uiSize Size of memory to allocate
+ * @param a_uiAlignment Alignment requirement for the allocation
+ * @param a_pMemBlock Memory block to allocate from (NULL for global block)
+ * @param a_szFileName Source file name for debugging
+ * @param a_iLineNum Source line number for debugging
+ * @return Pointer to allocated memory or NULL if allocation failed
+ * 
+ * This function implements the core memory allocation logic:
+ * 1. Validates input parameters
+ * 2. Finds a suitable free hole in the memory block
+ * 3. Splits the hole if necessary
+ * 4. Updates memory block metadata
+ * 5. Returns the allocated memory pointer
+ */
 void* TMemory::Alloc( TSIZE a_uiSize, TSIZE a_uiAlignment, MemBlock* a_pMemBlock, const TCHAR* a_szFileName, TINT a_iLineNum )
 {
 	//return CALL_THIS( 0x006b5230, TMemory*, void*, this, TUINT, a_uiSize, TINT, a_uiAlignment, MemBlock*, a_pMemBlock, const TCHAR*, a_szFileName, TINT, a_iLineNum );
@@ -309,6 +385,17 @@ void* TMemory::Alloc( TSIZE a_uiSize, TSIZE a_uiAlignment, MemBlock* a_pMemBlock
 }
 
 // $Barnyard: FUNCTION 006b4a20
+/**
+ * @brief Frees previously allocated memory
+ * @param a_pAllocated Pointer to memory to free
+ * @return TRUE if memory was successfully freed
+ * 
+ * This function implements the core memory deallocation logic:
+ * 1. Validates the input pointer
+ * 2. Converts the process node back to a hole
+ * 3. Coalesces adjacent free holes if possible
+ * 4. Updates memory block metadata
+ */
 TBOOL TMemory::Free( const void* a_pAllocated )
 {
 	//return CALL_THIS( 0x006b4a20, TMemory*, TBOOL, this, const void*, a_pAllocated );
@@ -384,6 +471,20 @@ TBOOL TMemory::Free( const void* a_pAllocated )
 }
 
 // $Barnyard: FUNCTION 006b5510
+/**
+ * @brief Creates a new memory block
+ * @param a_uiSize Size of the memory block
+ * @param a_szName Name of the memory block
+ * @param a_pOwnerBlock Owner block (NULL for global block)
+ * @param a_iUnused Unused parameter
+ * @return Pointer to created memory block
+ * 
+ * This function:
+ * 1. Allocates memory for the block
+ * 2. Initializes the block structure
+ * 3. Sets up the initial free hole
+ * 4. Returns the created block
+ */
 TMemory::MemBlock* TMemory::CreateMemBlock( TSIZE a_uiSize, const TCHAR* a_szName, MemBlock* a_pOwnerBlock, TINT a_iUnused )
 {
 	void* pMem = Alloc( a_uiSize, 16, a_pOwnerBlock, TNULL, -1 );
@@ -391,6 +492,19 @@ TMemory::MemBlock* TMemory::CreateMemBlock( TSIZE a_uiSize, const TCHAR* a_szNam
 }
 
 // $Barnyard: FUNCTION 006b4e60
+/**
+ * @brief Creates a memory block at a specific location
+ * @param a_pMem Pointer to memory location
+ * @param a_uiSize Size of the memory block
+ * @param a_szName Name of the memory block
+ * @return Pointer to created memory block
+ * 
+ * This function:
+ * 1. Validates the input parameters
+ * 2. Initializes the block structure in place
+ * 3. Sets up the initial free hole
+ * 4. Returns the created block
+ */
 TMemory::MemBlock* TMemory::CreateMemBlockInPlace( void* a_pMem, TSIZE a_uiSize, const TCHAR* a_szName )
 {
 	TMUTEX_LOCK_SCOPE( ms_pGlobalMutex );
@@ -446,18 +560,41 @@ TMemory::MemBlock* TMemory::CreateMemBlockInPlace( void* a_pMem, TSIZE a_uiSize,
 }
 
 // $Barnyard: FUNCTION 006b5090
+/**
+ * @brief Destroys a memory block
+ * @param a_pMemBlock Pointer to memory block to destroy
+ * 
+ * This function:
+ * 1. Frees all memory in the block
+ * 2. Removes the block from tracking
+ * 3. Frees the block structure itself
+ */
 void TMemory::DestroyMemBlock( MemBlock* a_pMemBlock )
 {
 	FreeMemBlock( a_pMemBlock );
 	Free( a_pMemBlock );
 }
 
+/**
+ * @brief Gets the global memory block
+ * @return Pointer to global memory block
+ */
 Toshi::TMemory::MemBlock* TMemory::GetGlobalBlock() const
 {
 	return m_pGlobalBlock;
 }
 
 // $Barnyard: FUNCTION 006b4fb0
+/**
+ * @brief Frees a memory block
+ * @param a_pMemBlock Memory block to free
+ * @return TRUE if block was successfully freed
+ * 
+ * This function:
+ * 1. Marks the block as unused
+ * 2. Removes it from the used blocks list
+ * 3. Adds it to the free blocks list
+ */
 TBOOL TMemory::FreeMemBlock( MemBlock* a_pMemBlock )
 {
 	TMUTEX_LOCK_SCOPE( ms_pGlobalMutex );
@@ -469,6 +606,15 @@ TBOOL TMemory::FreeMemBlock( MemBlock* a_pMemBlock )
 	return TTRUE;
 }
 
+/**
+ * @brief Marks a memory block as unused
+ * @param a_pMemBlock Memory block to mark
+ * 
+ * This function:
+ * 1. Removes the block from the used blocks list
+ * 2. Adds it to the free blocks list
+ * 3. Reinitializes the block as unused
+ */
 void TMemory::SetMemBlockUnused( MemBlock* a_pMemBlock )
 {
 	a_pMemBlock->m_pSlot->Remove();
@@ -478,6 +624,16 @@ void TMemory::SetMemBlockUnused( MemBlock* a_pMemBlock )
 	TStringManager::String8Copy( a_pMemBlock->m_szSignature, "xxxxxxx" );
 }
 
+/**
+ * @brief Gets the memory node from an address
+ * @param a_pMem Memory address
+ * @return Pointer to memory node
+ * 
+ * This function:
+ * 1. Validates the input pointer
+ * 2. Calculates the node address from the memory address
+ * 3. Returns the node pointer
+ */
 Toshi::TMemory::MemNode* TMemory::GetMemNodeFromAddress( void* a_pMem )
 {
 	if ( !a_pMem || HASANYFLAG( TREINTERPRETCAST( TUINTPTR, a_pMem ), TMEMORY_FLAGS_MASK ) )
@@ -489,12 +645,32 @@ Toshi::TMemory::MemNode* TMemory::GetMemNodeFromAddress( void* a_pMem )
 	return pMemNode;
 }
 
+/**
+ * @brief Tests memory block integrity
+ * @param a_pMemBlock Memory block to test
+ * @return 0 if test passed
+ * 
+ * This function performs various integrity checks on the memory block:
+ * 1. Validates block structure
+ * 2. Checks hole linkages
+ * 3. Verifies memory boundaries
+ */
 int TMemory::TestMemIntegrity( MemBlock* a_pMemBlock )
 {
 	// TODO: this method is cut in the release build
 	return 0;
 }
 
+/**
+ * @brief Debug test for memory block
+ * @param a_pMemBlock Memory block to test
+ * @return 0 if test passed
+ * 
+ * This function performs debug tests on the memory block:
+ * 1. Prints memory usage information
+ * 2. Validates block structure
+ * 3. Checks for memory leaks
+ */
 int TMemory::DebugTestMemoryBlock( MemBlock* a_pMemBlock )
 {
 	TIMPLEMENT();
@@ -516,6 +692,19 @@ int TMemory::DebugTestMemoryBlock( MemBlock* a_pMemBlock )
 }
 
 // $Barnyard: FUNCTION 006b5740
+/**
+ * @brief Initializes the memory system
+ * @param a_uiHeapSize Size of the heap
+ * @param a_uiReservedSize Size of reserved memory
+ * @param a_uiUnused Unused parameter
+ * @return TRUE if initialization succeeded
+ * 
+ * This function:
+ * 1. Creates the TMemory instance
+ * 2. Initializes the global mutex
+ * 3. Allocates the main memory block
+ * 4. Sets up the global memory block
+ */
 TBOOL TMemory::Initialise( TSIZE a_uiHeapSize, TSIZE a_uiReservedSize, TUINT a_uiUnused )
 {
 	auto tmemory = TSTATICCAST( TMemory, calloc( sizeof( TMemory ), 1 ) );
@@ -543,6 +732,14 @@ TBOOL TMemory::Initialise( TSIZE a_uiHeapSize, TSIZE a_uiReservedSize, TUINT a_u
 }
 
 // $Barnyard: FUNCTION 006b57e0
+/**
+ * @brief Deinitializes the memory system
+ * 
+ * This function:
+ * 1. Cleans up all memory blocks
+ * 2. Frees the main memory block
+ * 3. Destroys the TMemory instance
+ */
 void TMemory::Deinitialise()
 {
 	TASSERT( g_pMemory != TNULL );
@@ -557,6 +754,16 @@ void TMemory::Deinitialise()
 }
 
 // $Barnyard: FUNCTION 006b49e0
+/*
+ * @brief Maps a size to a free list index
+ * @param a_uiSize Size to map
+ * @return Free list index
+ * 
+ * This function:
+ * 1. Calculates the appropriate free list index based on size
+ * 2. Ensures the index is within valid range
+ * 3. Returns the index
+ */
 TUINT TMemory::MapSizeToFreeList( TSIZE a_uiSize )
 {
 	TFLOAT fSize          = TFLOAT( TAlignNumUp( a_uiSize ) - 1 );
@@ -578,6 +785,11 @@ TUINT TMemory::MapSizeToFreeList( TSIZE a_uiSize )
 }
 
 // $Barnyard: FUNCTION 006b4b80
+/*
+ * @brief Sets the global memory block
+ * @param a_pMemBlock New global memory block
+ * @return Previous global memory block
+ */
 TMemory::MemBlock* TMemory::SetGlobalBlock( MemBlock* a_pMemBlock )
 {
 	MemBlock* pOldMemBlock = m_pGlobalBlock;
@@ -586,6 +798,14 @@ TMemory::MemBlock* TMemory::SetGlobalBlock( MemBlock* a_pMemBlock )
 }
 
 // $Barnyard: FUNCTION 006b50b0
+/*
+ * @brief Dumps memory usage information to debug output
+ * 
+ * This function:
+ * 1. Iterates through all used blocks
+ * 2. Gets memory info for each block
+ * 3. Prints detailed usage statistics
+ */
 void TMemory::DumpMemInfo()
 {
 	MemInfo memInfo;
@@ -617,6 +837,11 @@ void TMemory::DumpMemInfo()
 	}
 }
 
+/**
+ * @brief Debug print of HAL memory info
+ * @param a_szFormat Format string
+ * @param ... Variable arguments
+ */
 void TMemory::DebugPrintHALMemInfo( const TCHAR* a_szFormat, ... )
 {
 	va_list args;
@@ -626,6 +851,16 @@ void TMemory::DebugPrintHALMemInfo( const TCHAR* a_szFormat, ... )
 }
 
 // $Barnyard: FUNCTION 006b4ba0
+/*
+ * @brief Gets memory usage information
+ * @param a_rMemInfo Structure to fill with memory info
+ * @param a_pMemBlock Memory block to get info for
+ * 
+ * This function:
+ * 1. Initializes the info structure
+ * 2. Iterates through all holes in the block
+ * 3. Calculates various memory statistics
+ */
 void TMemory::GetMemInfo( MemInfo& a_rMemInfo, MemBlock* a_pMemBlock )
 {
 	TMUTEX_LOCK_SCOPE( ms_pGlobalMutex );
@@ -714,11 +949,19 @@ void TMemory::GetMemInfo( MemInfo& a_rMemInfo, MemBlock* a_pMemBlock )
 }
 
 // $Barnyard: FUNCTION 006b4b60
+/*
+ * @brief Gets hardware abstraction layer memory info
+ * @param a_rHALMemInfo Structure to fill with HAL memory info
+ */
 void TMemory::GetHALMemInfo( HALMemInfo& a_rHALMemInfo )
 {
 	TUtil::MemClear( &a_rHALMemInfo, sizeof( a_rHALMemInfo ) );
 }
 
+/**
+ * @brief Constructor for HALMemInfo
+ * Initializes all fields to zero
+ */
 TMemory::HALMemInfo::HALMemInfo()
 {
 	TUtil::MemClear( this, sizeof( *this ) );

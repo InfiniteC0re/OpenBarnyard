@@ -44,7 +44,7 @@ void AGrassMaterialHAL::PreRender()
 		if ( pTextureHAL->GetD3DTexture() )
 		{
 			pDevice->SetTexture( 0, pTextureHAL->GetD3DTexture() );
-			pRenderInterface->SetTextureAddress( 0, pTextureHAL->GetAddress(), -1 );
+			pRenderInterface->SetTextureAddress( 0, pTextureHAL->GetAddressing(), TEXCOORD_UV );
 		}
 	}
 
@@ -87,7 +87,7 @@ void AGrassMaterialHAL::PostRender()
 	if ( m_Flags & FLAGS_NO_CULL )
 		pDevice->SetRenderState( D3DRS_CULLMODE, 2 );
 
-	pRenderInterface->SetTextureAddress( 0, 0, -1 );
+	pRenderInterface->SetTextureAddress( 0, ADDRESSINGMODE_WRAP, TEXCOORD_UV );
 	pDevice->SetTexture( 0, TNULL );
 	pDevice->SetRenderState( D3DRS_ZWRITEENABLE, TRUE );
 }

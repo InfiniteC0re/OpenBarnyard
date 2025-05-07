@@ -1,3 +1,14 @@
+/**
+ * @file TShader.h
+ * Shader system for the Toshi engine
+ * 
+ * This file defines the shader system that provides:
+ * - Shader program management
+ * - Shader parameter handling
+ * - Shader state management
+ * - Platform-specific shader abstraction
+ */
+
 #pragma once
 #include "TOrderTable.h"
 

@@ -1,3 +1,14 @@
+/**
+ * @file TMatrix44.h
+ * 4x4 matrix implementation for the Toshi engine
+ * 
+ * This file provides 4x4 matrix functionality including:
+ * - Matrix transformations (translation, rotation, scaling)
+ * - Matrix operations (multiplication, inversion)
+ * - View and projection matrix handling
+ * - Matrix decomposition and composition
+ */
+
 #pragma once
 #include "TQuaternion.h"
 #include "TPlane.h"

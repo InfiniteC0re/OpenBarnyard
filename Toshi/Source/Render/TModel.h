@@ -1,3 +1,13 @@
+/**
+ * @file TModel.h
+ * 3D model system for the Toshi engine
+ * 
+ * This file defines the model system that provides:
+ * - 3D model loading and management
+ * - Mesh handling
+ * - Model resource management
+ */
+
 #pragma once
 #include "TTMDBase.h"
 #include "TSkeleton.h"

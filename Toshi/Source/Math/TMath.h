@@ -1,3 +1,8 @@
+/**
+ * @file TMath.h
+ * Core math utilities for the Toshi engine
+ */
+
 #pragma once
 #include "TVector4.h"
 

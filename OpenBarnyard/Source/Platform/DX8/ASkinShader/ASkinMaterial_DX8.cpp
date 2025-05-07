@@ -61,10 +61,10 @@ void ASkinMaterialHAL::PreRender()
 		pLT0Texture = TDYNAMICCAST( TTextureResourceHAL, m_apLightingTextures[ LT_0 ] );
 		pLT1Texture = TDYNAMICCAST( TTextureResourceHAL, m_apLightingTextures[ LT_1 ] );
 
-		pRender->SetTextureAddress( 1, 2, -1 );
-		pRender->SetTextureAddress( 2, 2, -1 );
-		pRender->SetTextureAddress( 3, 2, -1 );
-		pRender->SetTextureAddress( 4, 2, -1 );
+		pRender->SetTextureAddress( 1, ADDRESSINGMODE_CLAMP, TEXCOORD_UV );
+		pRender->SetTextureAddress( 2, ADDRESSINGMODE_CLAMP, TEXCOORD_UV );
+		pRender->SetTextureAddress( 3, ADDRESSINGMODE_CLAMP, TEXCOORD_UV );
+		pRender->SetTextureAddress( 4, ADDRESSINGMODE_CLAMP, TEXCOORD_UV );
 
 		pD3DDevice->SetTextureStageState( 1, D3DTSS_MAGFILTER, 2 );
 		pD3DDevice->SetTextureStageState( 2, D3DTSS_MAGFILTER, 2 );
@@ -105,8 +105,8 @@ void ASkinMaterialHAL::PreRender()
 			}
 
 			pD3DDevice->SetTextureStageState( 0, D3DTSS_MIPFILTER, 2 );
-			pRender->SetTextureAddress( 0, pTexture->GetAddressUState(), 0 );
-			pRender->SetTextureAddress( 0, pTexture->GetAddressVState(), 1 );
+			pRender->SetTextureAddress( 0, pTexture->GetAddressUState(), TEXCOORD_U );
+			pRender->SetTextureAddress( 0, pTexture->GetAddressVState(), TEXCOORD_V );
 		}
 	}
 	else

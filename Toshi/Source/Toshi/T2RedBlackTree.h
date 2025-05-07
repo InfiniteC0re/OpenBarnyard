@@ -1,3 +1,14 @@
+/**
+ * @file T2RedBlackTree.h
+ * Red-black tree implementation for the Toshi engine
+ * 
+ * This file provides a red-black tree implementation that includes:
+ * - Balanced binary tree operations
+ * - Tree node management
+ * - Tree traversal and searching
+ * - Tree balancing and maintenance
+ */
+
 #pragma once
 #include "Toshi/TComparator.h"
 #include "T2Allocator.h"

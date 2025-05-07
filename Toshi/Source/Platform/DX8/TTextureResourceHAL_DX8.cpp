@@ -25,8 +25,8 @@ TTextureResourceHAL::TTextureResourceHAL()
 	m_pData           = TNULL;
 	m_uiDataSize      = 0;
 	m_pD3DTexture     = TNULL;
-	m_eAddressUState  = 0;
-	m_eAddressVState  = 0;
+	m_eAddressUState  = ADDRESSINGMODE_WRAP;
+	m_eAddressVState  = ADDRESSINGMODE_WRAP;
 }
 
 // $Barnyard: FUNCTION 006c0d50
@@ -92,8 +92,8 @@ void TTextureResourceHAL::CreateFromT2Texture( T2Texture* a_pTexture )
 	m_uiMipLevels     = a_pTexture->GetMipLevels();
 	m_uiMipFlags      = 0;
 	m_eResourceFormat = TTEXTURERESOURCEFORMAT::Unknown;
-	m_eAddressUState  = 0;
-	m_eAddressVState  = 0;
+	m_eAddressUState  = ADDRESSINGMODE_WRAP;
+	m_eAddressVState  = ADDRESSINGMODE_WRAP;
 	m_ImageInfo       = a_pTexture->GetImageInfo();
 	m_pD3DTexture     = a_pTexture->GetD3DTexture();
 
@@ -120,8 +120,8 @@ TBOOL TTextureResourceHAL::Create( void* a_pData, TUINT a_uiDataSize, TUINT a_eT
 	m_bLoadFromMemory = TTRUE;
 	m_pData           = a_pData;
 	m_uiDataSize      = a_uiDataSize;
-	m_eAddressUState  = 0;
-	m_eAddressVState  = 0;
+	m_eAddressUState  = ADDRESSINGMODE_WRAP;
+	m_eAddressVState  = ADDRESSINGMODE_WRAP;
 
 	Validate();
 	return TTRUE;
@@ -136,8 +136,8 @@ TBOOL TTextureResourceHAL::Create( const TCHAR* a_szFileName, TUINT a_eTextureFl
 	}
 
 	m_eTextureFlags  = a_eTextureFlags;
-	m_eAddressUState = 0;
-	m_eAddressVState = 0;
+	m_eAddressUState = ADDRESSINGMODE_WRAP;
+	m_eAddressVState = ADDRESSINGMODE_WRAP;
 	m_uiMipFlags     = 1;
 
 	return TTRUE;
@@ -160,8 +160,8 @@ TBOOL TTextureResourceHAL::CreateEx( void* a_pData, TUINT a_uiDataSize, TUINT a_
 	m_eResourceFormat = a_eFormat;
 	m_uiMipFlags      = a_uiMipMapFlags;
 	m_bLoadFromMemory = TTRUE;
-	m_eAddressUState  = 0;
-	m_eAddressVState  = 0;
+	m_eAddressUState  = ADDRESSINGMODE_WRAP;
+	m_eAddressVState  = ADDRESSINGMODE_WRAP;
 
 	Validate();
 	return TTRUE;

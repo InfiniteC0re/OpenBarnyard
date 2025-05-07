@@ -1,3 +1,8 @@
+/**
+ * @file TFileStream.h
+ * File stream interface for the Toshi engine
+ */
+
 #pragma once
 #include "Toshi/TFifo.h"
 #include "Thread/TThread.h"

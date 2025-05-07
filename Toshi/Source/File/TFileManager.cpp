@@ -1,3 +1,14 @@
+/**
+ * @file TFileManager.cpp
+ * File system manager implementation for the Toshi engine
+ * 
+ * This file implements the core file system manager that provides:
+ * - File system mounting and unmounting
+ * - File creation and management
+ * - Path resolution and validation
+ * - System path handling
+ */
+
 #include "ToshiPCH.h"
 #include "TFile.h"
 #include "Thread/T2MutexLock.h"

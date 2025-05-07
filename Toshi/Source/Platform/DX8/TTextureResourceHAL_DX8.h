@@ -46,11 +46,11 @@ public:
 	IDirect3DTexture8* GetD3DTexture() { return m_pD3DTexture; }
 	void               SetD3DTexture( IDirect3DTexture8* a_pD3DTexture ) { m_pD3DTexture = a_pD3DTexture; }
 
-	TINT GetAddressUState() const { return m_eAddressUState; }
-	void SetAddressUState( TINT val ) { m_eAddressUState = val; }
+	ADDRESSINGMODE GetAddressUState() const { return m_eAddressUState; }
+	void           SetAddressUState( ADDRESSINGMODE a_eAddressing ) { m_eAddressUState = a_eAddressing; }
 
-	TINT GetAddressVState() const { return m_eAddressVState; }
-	void SetAddressVState( TINT val ) { m_eAddressVState = val; }
+	ADDRESSINGMODE GetAddressVState() const { return m_eAddressVState; }
+	void           SetAddressVState( ADDRESSINGMODE a_eAddressing ) { m_eAddressVState = a_eAddressing; }
 
 	D3DXIMAGE_INFO&       GetImageInfo() { return m_ImageInfo; }
 	const D3DXIMAGE_INFO& GetImageInfo() const { return m_ImageInfo; }
@@ -71,8 +71,8 @@ private:
 	TTEXTURERESOURCEFORMAT m_eResourceFormat;
 	IDirect3DTexture8*     m_pD3DTexture;
 	D3DXIMAGE_INFO         m_ImageInfo;
-	TINT                   m_eAddressUState;
-	TINT                   m_eAddressVState;
+	ADDRESSINGMODE         m_eAddressUState;
+	ADDRESSINGMODE         m_eAddressVState;
 };
 
 TOSHI_NAMESPACE_END

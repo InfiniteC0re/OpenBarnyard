@@ -99,7 +99,8 @@ project "Toshi"
 			files
 			{
 				"Source/Platform/DX8/**.cpp",
-				"Source/Platform/DX8/**.c"
+				"Source/Platform/DX8/**.c",
+				"Source/Platform/DX8/**.h"
 			}
 			
 		filter "options:renderer=GL"

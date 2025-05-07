@@ -1,3 +1,14 @@
+/**
+ * @file TString8.h
+ * Char string implementation for the Toshi engine
+ * 
+ * This file provides string functionality including:
+ * - Char string manipulation
+ * - String memory management
+ * - String formatting and parsing
+ * - String comparison and searching
+ */
+
 #pragma once
 #include "TString.h"
 #include "T2Allocator.h"

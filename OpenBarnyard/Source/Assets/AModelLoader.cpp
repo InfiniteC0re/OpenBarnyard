@@ -156,10 +156,10 @@ void AModelLoader::MaterialApplyClamp( TMaterial* a_pMaterial, const TCHAR* a_sz
 			auto pTexture = TDYNAMICCAST( TTextureResourceHAL, a_pTexture );
 
 			if ( pClampedMaterial->eAddressUState > 0 )
-				pTexture->SetAddressUState( 2 );
+				pTexture->SetAddressUState( ADDRESSINGMODE_CLAMP );
 
 			if ( pClampedMaterial->eAddressVState > 0 )
-				pTexture->SetAddressVState( 2 );
+				pTexture->SetAddressVState( ADDRESSINGMODE_CLAMP );
 		}
 	}
 }

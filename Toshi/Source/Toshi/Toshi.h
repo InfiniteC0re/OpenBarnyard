@@ -1,3 +1,17 @@
+/**
+ * @file Toshi.h
+ * Main header file for the Toshi game engine
+ * 
+ * This file serves as the primary include point for the Toshi engine,
+ * bringing together core systems including:
+ * - Memory management
+ * - Platform abstraction
+ * - Debug utilities
+ * - Math functionality
+ * - String management
+ * - Object system
+ */
+
 #pragma once
 
 #include "Toshi/Defines.h"

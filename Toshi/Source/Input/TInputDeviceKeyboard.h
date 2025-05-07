@@ -1,3 +1,14 @@
+/**
+ * @file TInputDeviceKeyboard.h
+ * Keyboard input device for the Toshi engine
+ * 
+ * This file defines the keyboard input device that provides:
+ * - Keyboard state tracking
+ * - Key press and release handling
+ * - Keyboard input mapping
+ * - Keyboard event processing
+ */
+
 #pragma once
 #include "TInputInterface.h"
 

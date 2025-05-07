@@ -1,3 +1,14 @@
+/**
+ * @file TVector3.h
+ * 3D vector implementation for the Toshi engine
+ * 
+ * This file provides 3D vector functionality including:
+ * - Vector operations (addition, subtraction, multiplication)
+ * - Vector normalization and length calculations
+ * - Vector transformations
+ * - Vector utility functions
+ */
+
 #pragma once
 
 TOSHI_NAMESPACE_START

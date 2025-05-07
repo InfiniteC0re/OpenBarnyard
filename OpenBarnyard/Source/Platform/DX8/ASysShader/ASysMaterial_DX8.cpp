@@ -107,7 +107,7 @@ void ASysMaterialHAL::PreRender()
 		if ( pTextureHAL->GetD3DTexture() )
 		{
 			pDevice->SetTexture( 0, pTextureHAL->GetD3DTexture() );
-			TRenderD3DInterface::Interface()->SetTextureAddress( 0, pTextureHAL->GetAddress(), -1 );
+			TRenderD3DInterface::Interface()->SetTextureAddress( 0, pTextureHAL->GetAddressing(), TEXCOORD_UV );
 		}
 	}
 	else
@@ -171,7 +171,7 @@ void ASysMaterialHAL::PostRender()
 		pDevice->SetRenderState( D3DRS_CULLMODE, D3DCULL_CW );
 	}
 
-	TRenderD3DInterface::Interface()->SetTextureAddress( 0, 0, -1 );
+	TRenderD3DInterface::Interface()->SetTextureAddress( 0, ADDRESSINGMODE_WRAP, TEXCOORD_UV );
 	pDevice->SetTexture( 0, TNULL );
 	pDevice->SetRenderState( D3DRS_ZWRITEENABLE, TRUE );
 	pDevice->SetRenderState( D3DRS_ZENABLE, TRUE );
