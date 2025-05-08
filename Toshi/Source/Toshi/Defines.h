@@ -1,4 +1,5 @@
 #pragma once
+#include "Typedefs.h"
 
 #define ISZERO( X )                 ( ( X ) == 0 )
 #define NOTZERO( X )                ( !ISZERO( X ) )

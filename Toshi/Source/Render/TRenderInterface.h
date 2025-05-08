@@ -10,6 +10,7 @@
  */
 
 #pragma once
+#include "Toshi/Defines.h"
 #include "Render/TRender.h"
 #include "Math/Math.h"
 #include "Math/TSphere.h"

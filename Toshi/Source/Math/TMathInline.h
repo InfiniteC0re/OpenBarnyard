@@ -1,5 +1,5 @@
 #pragma once
-#include "Toshi/Typedefs.h"
+#include "Toshi/Defines.h"
 #include "Toshi/TDebug.h"
 
 #include <cstdint>

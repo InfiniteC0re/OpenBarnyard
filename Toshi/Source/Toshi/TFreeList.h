@@ -6,7 +6,7 @@ public:                                                                         
 	TFORCEINLINE void* operator new( size_t s, void* where ) { return where; }                       \
                                                                                                      \
 	TFORCEINLINE void operator delete( void* ptr ) { ms_oFreeList.Delete( ptr ); }                   \
-	TFORCEINLINE void operator delete( void* ptr, void* where ) { delete ptr; }                      \
+	TFORCEINLINE void operator delete( void* ptr, void* where ) {}                                   \
                                                                                                      \
 	static void SetupFreeList( TINT a_iCapacity, TINT a_iGrowSize )                                  \
 	{                                                                                                \

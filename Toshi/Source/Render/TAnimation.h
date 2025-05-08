@@ -4,9 +4,7 @@
 #include "Toshi/TQList.h"
 #include "File/TTRB.h"
 
-#ifdef LoadLibrary
-#  undef LoadLibrary
-#endif LoadLibrary
+#undef LoadLibrary
 
 TOSHI_NAMESPACE_START
 
