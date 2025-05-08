@@ -14,8 +14,11 @@
 
 TOSHI_NAMESPACE_USING
 
+#define REFERENCE_CLASS( CLASS_NAME ) static TANONYMOUSVAR( const TCHAR* ) = CLASS_NAME::GetClassStatic()->GetName()
+
 AToshiClassReferenceHelper::AToshiClassReferenceHelper()
 {
-	TTextureFactoryHAL::GetClassStatic();
-	TInputDXInterface::GetClassStatic();
+	REFERENCE_CLASS( TTextureFactoryHAL );
+	REFERENCE_CLASS( TInputDXInterface );
+	REFERENCE_CLASS( TInputInterface );
 }

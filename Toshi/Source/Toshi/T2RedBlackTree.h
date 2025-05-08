@@ -200,7 +200,7 @@ public:
 			return prev;
 		}
 
-		TFORCEINLINE Node* GetNode()
+		TFORCEINLINE Node* GetNode() const
 		{
 			return m_pNode;
 		}
@@ -281,7 +281,7 @@ public:
 			return prev;
 		}
 
-		TFORCEINLINE const Node* GetNode()
+		TFORCEINLINE const Node* GetNode() const
 		{
 			return m_pNode;
 		}
@@ -293,7 +293,7 @@ public:
 
 		TFORCEINLINE TBOOL operator==( const Iterator& other ) const
 		{
-			return m_pNode == other.m_pNode;
+			return m_pNode == other.GetNode();
 		}
 
 		TFORCEINLINE TBOOL operator==( const CIterator& other ) const

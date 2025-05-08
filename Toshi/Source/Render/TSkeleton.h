@@ -156,8 +156,6 @@ public:
 
 	TINT16 GetSequenceCount() { return m_iSequenceCount; }
 
-	TSkeleton& operator=( const TSkeleton& a_rSkeleton ) { TIMPLEMENT(); }
-
 public:
 	TINT16                   m_iBoneCount;         // 0x00
 	TINT16                   m_iManualBoneCount;   // 0x02

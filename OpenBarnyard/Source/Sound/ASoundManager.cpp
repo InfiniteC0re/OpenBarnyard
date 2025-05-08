@@ -1252,7 +1252,7 @@ void ASoundManager::AddEventToCue( Cue* a_pCue, SoundEvent* a_pSoundEvent )
 	TVALIDPTR( a_pCue );
 	TVALIDPTR( a_pSoundEvent );
 
-	SoundEvent* pFirstEvent = ( !a_pCue->oEventList->IsEmpty() ) ? a_pCue->oEventList->Begin() : TNULL;
+	SoundEvent* pFirstEvent = ( !a_pCue->oEventList->IsEmpty() ) ? &*a_pCue->oEventList->Begin() : TNULL;
 	a_pCue->oEventList->Push( a_pSoundEvent );
 
 	// If first event in the list changed, reinsert the list in m_QueuedEventLists

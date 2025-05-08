@@ -14,18 +14,18 @@
 	for ( TINT iteratorName = TARRAYSIZE( arrName ) - 1; iteratorName >= 0; --iteratorName )
 
 #define T2_DEFINE_ITERATOR_FRIEND() \
-	template <class T, class Node> friend class Toshi::T2Iterator
+	template <class K, class Node> friend class Toshi::T2Iterator
 
 #define T2_DEFINE_ITERATOR( TYPE, NODE_TYPE ) \
 	using Iterator = Toshi::T2Iterator<TYPE, NODE_TYPE>
 
 TOSHI_NAMESPACE_START
 
-template <class T, class Node>
+template <class K, class Node>
 class T2Iterator
 {
 public:
-	TSTATICASSERT( std::is_base_of<Node, T>::value );
+	TSTATICASSERT( std::is_base_of<Node, K>::value );
 
 	T2Iterator()
 	{
@@ -34,10 +34,10 @@ public:
 
 	T2Iterator( Node* pPtr )
 	{
-		m_pPtr = TSTATICCAST( T, pPtr );
+		m_pPtr = TSTATICCAST( K, pPtr );
 	}
 
-	T2Iterator( T* pPtr )
+	T2Iterator( K* pPtr )
 	{
 		m_pPtr = pPtr;
 	}
@@ -47,22 +47,22 @@ public:
 		m_pPtr = other.m_pPtr;
 	}
 
-	T* Get()
+	K* Get()
 	{
 		return m_pPtr;
 	}
 
-	const T* Get() const
+	const K* Get() const
 	{
 		return m_pPtr;
 	}
 
-	T& operator*() noexcept
+	K& operator*() noexcept
 	{
 		return *m_pPtr;
 	}
 
-	const T& operator*() const noexcept
+	const K& operator*() const noexcept
 	{
 		return *m_pPtr;
 	}
@@ -84,28 +84,28 @@ public:
 		m_pPtr = other.m_pPtr;
 	}
 
-	void operator=( T* pPtr )
+	void operator=( K* pPtr )
 	{
 		m_pPtr = pPtr;
 	}
 
-	T* operator->() const
+	K* operator->() const
 	{
 		TASSERT( m_pPtr != TNULL );
 		return m_pPtr;
 	}
 
-	operator T*() const
+	operator K*() const
 	{
 		TASSERT( m_pPtr != TNULL );
-		return TSTATICCAST( T, m_pPtr );
+		return TSTATICCAST( K, m_pPtr );
 	}
 
 	T2Iterator operator++( TINT )
 	{
 		TASSERT( m_pPtr != TNULL );
 		T2Iterator old = m_pPtr;
-		m_pPtr         = TSTATICCAST( T, TSTATICCAST( Node, m_pPtr )->Next() );
+		m_pPtr         = TSTATICCAST( K, TSTATICCAST( Node, m_pPtr )->Next() );
 		return old;
 	}
 
@@ -113,26 +113,26 @@ public:
 	{
 		TASSERT( m_pPtr != TNULL );
 		T2Iterator old = m_pPtr;
-		m_pPtr         = TSTATICCAST( T, TSTATICCAST( Node, m_pPtr )->Prev() );
+		m_pPtr         = TSTATICCAST( K, TSTATICCAST( Node, m_pPtr )->Prev() );
 		return old;
 	}
 
 	T2Iterator operator++()
 	{
 		TASSERT( m_pPtr != TNULL );
-		m_pPtr = TSTATICCAST( T, TSTATICCAST( Node, m_pPtr )->Next() );
+		m_pPtr = TSTATICCAST( K, TSTATICCAST( Node, m_pPtr )->Next() );
 		return T2Iterator{ m_pPtr };
 	}
 
 	T2Iterator operator--()
 	{
 		TASSERT( m_pPtr != TNULL );
-		m_pPtr = TSTATICCAST( T, TSTATICCAST( Node, m_pPtr )->Prev() );
+		m_pPtr = TSTATICCAST( K, TSTATICCAST( Node, m_pPtr )->Prev() );
 		return T2Iterator{ m_pPtr };
 	}
 
 private:
-	T* m_pPtr;
+	K* m_pPtr;
 };
 
 TOSHI_NAMESPACE_END

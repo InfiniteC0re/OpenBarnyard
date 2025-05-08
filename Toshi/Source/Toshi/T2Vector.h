@@ -158,14 +158,14 @@ public:
 			return Iterator( m_iIndex - a_uiValue, m_pVector );
 		}
 
-		Iterator& operator+=( TINT a_uiValue ) const noexcept
+		Iterator& operator+=( TINT a_uiValue ) noexcept
 		{
 			TASSERT( m_iIndex + a_uiValue < m_pVector->Size() );
 			m_iIndex += a_uiValue;
 			return *this;
 		}
 
-		Iterator& operator-=( TINT a_uiValue ) const noexcept
+		Iterator& operator-=( TINT a_uiValue ) noexcept
 		{
 			TASSERT( m_iIndex - a_uiValue < m_pVector->Size() );
 			m_iIndex -= a_uiValue;

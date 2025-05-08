@@ -13,15 +13,15 @@ public:
 
 	public:
 		constexpr TNode()
-		    : m_pNext( TSTATICCAST( T, this ) ), m_pPrev( TSTATICCAST( T, this ) ), m_pList( TNULL )
+		    : m_pList( TNULL ), m_pNext( TSTATICCAST( T, this ) ), m_pPrev( TSTATICCAST( T, this ) )
 		{}
 
 		constexpr TNode( const TNode& a_rcNode )
-		    : m_pNext( a_rcNode.m_pNext ), m_pPrev( a_rcNode.m_pPrev ), m_pList( a_rcNode.m_pList )
+		    : m_pList( a_rcNode.m_pList ), m_pNext( a_rcNode.m_pNext ), m_pPrev( a_rcNode.m_pPrev )
 		{}
 
 		TNode( TNode&& a_rNode )
-		    : m_pNext( a_rNode.m_pNext ), m_pPrev( a_rNode.m_pPrev ), m_pList( a_rNode.m_pList )
+		    : m_pList( a_rNode.m_pList ), m_pNext( a_rNode.m_pNext ), m_pPrev( a_rNode.m_pPrev )
 		{
 			a_rNode.m_pList = TNULL;
 			a_rNode.m_pNext = TNULL;

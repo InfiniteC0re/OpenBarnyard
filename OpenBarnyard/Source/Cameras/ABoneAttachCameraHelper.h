@@ -7,11 +7,10 @@
 class ARenderer;
 
 //-----------------------------------------------------------------------------
-// ABoneAttachCameraHelper
-//-----------------------------------------------------------------------------
-// Helper class to attach a camera to a specific bone of a model.
+// Purpose: Helper class to attach a camera to a specific bone of a model.
 // This class allows a camera to follow a bone in a model, updating its position and orientation
-// according to the bone's transform. It also supports setting animations and handling animation events.
+// according to the bone's transform.
+//-----------------------------------------------------------------------------
 class ABoneAttachCameraHelper
     : public ACameraHelper
 {

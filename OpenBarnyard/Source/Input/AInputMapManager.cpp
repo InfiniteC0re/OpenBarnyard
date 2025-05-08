@@ -43,7 +43,7 @@ TBOOL AInputMapManager::ReadControlsData()
 
 		if ( pInputMap )
 		{
-			delete pInputMap;
+			delete pInputMap.Get();
 		}
 	}
 

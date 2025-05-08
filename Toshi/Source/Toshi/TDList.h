@@ -75,7 +75,7 @@ protected:
 	TGenericDList();
 	~TGenericDList();
 
-private:
+protected:
 	TNode m_oRoot;
 };
 

@@ -457,7 +457,7 @@ TAnimation* TSkeletonInstance::AddAnimationFull( TUINT16 a_iSequenceIndex, TFLOA
 	if ( bIsNewAnim )
 	{
 		// Get a free animation from the list
-		pAnimation = m_FreeAnimations.IsEmpty() ? TNULL : m_FreeAnimations.Begin();
+		pAnimation = m_FreeAnimations.IsEmpty() ? TNULL : &*m_FreeAnimations.Begin();
 
 		// If the free list is empty, replace the most unimportant animation with it
 		if ( !pAnimation )
