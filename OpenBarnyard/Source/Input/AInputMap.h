@@ -99,6 +99,7 @@ public:
 	TDECLARE_CLASS( AInputMap, Toshi::TObject );
 
 public:
+	// $Barnyard: FUNCTION 00596a20
 	AInputMap( const Toshi::TPString8& a_rName )
 	    : m_Name( a_rName ), m_oDoodadToCommandMap( AMemory::GetAllocator( AMemory::POOL_Misc ) )
 	{

@@ -13,6 +13,7 @@
 
 TOSHI_NAMESPACE_USING
 
+// $Barnyard: FUNCTION 005ecb80
 ATerrainLODBlock::ATerrainLODBlock( TUINT a_uiHeapSize, const TCHAR* a_szName )
 {
 	m_pAllocatedSize  = TNULL;
@@ -27,6 +28,7 @@ ATerrainLODBlock::ATerrainLODBlock( TUINT a_uiHeapSize, const TCHAR* a_szName )
 	m_Allocator.SetMemBlock( m_pCreatedMemBlock );
 }
 
+// $Barnyard: FUNCTION 005ecbe0
 ATerrainLODBlock::~ATerrainLODBlock()
 {
 	g_pMemory->DestroyMemBlock( m_pCreatedMemBlock );
@@ -40,6 +42,7 @@ ATerrainLODBlock::~ATerrainLODBlock()
 	m_pUnk2          = &s_Unk2AfterDestroy;
 }
 
+// $Barnyard: FUNCTION 005ecc80
 void ATerrainLODBlock::SetupTRB( TTRB* a_pTRB, ATerrainLODBlock* a_pOther )
 {
 	Node::InsertAfter( a_pOther );
@@ -61,11 +64,13 @@ void ATerrainLODBlock::SetupTRB( TTRB* a_pTRB, ATerrainLODBlock* a_pOther )
 	);
 }
 
+// $Barnyard: FUNCTION 005ecb30
 void ATerrainLODBlock::UpdateLastAccessTime()
 {
 	m_fLastAccessTime = g_oSystemManager.GetScheduler()->GetTotalTime();
 }
 
+// $Barnyard: FUNCTION 005ecc20
 void ATerrainLODBlock::Assign( ATerrainSection* a_pVISGroup, ATerrainLODType a_eLODType )
 {
 	if ( m_pVISGroup )

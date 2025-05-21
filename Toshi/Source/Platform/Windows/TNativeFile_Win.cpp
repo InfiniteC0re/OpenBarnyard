@@ -16,6 +16,7 @@ TOSHI_NAMESPACE_START
 
 #pragma region TNativeFileSystem
 
+// $Barnyard: FUNCTION 006dd280
 TNativeFileSystem::TNativeFileSystem( const TCHAR* name )
     : TFileSystem( name )
 {
@@ -23,11 +24,13 @@ TNativeFileSystem::TNativeFileSystem( const TCHAR* name )
 	TFileManager::GetSingletonSafe()->MountFileSystem( this );
 }
 
+// $Barnyard: FUNCTION 006be2c0
 TNativeFileSystem::~TNativeFileSystem()
 {
 	UnmountFileSystem();
 }
 
+// $Barnyard: FUNCTION 006dd2b0
 TFile* TNativeFileSystem::CreateFile( const TString8& a_rcFileName, TFILEMODE a_eFileMode )
 {
 	TNativeFile* nativeFile = new TNativeFile( this );
@@ -41,6 +44,7 @@ TFile* TNativeFileSystem::CreateFile( const TString8& a_rcFileName, TFILEMODE a_
 	return nativeFile;
 }
 
+// $Barnyard: FUNCTION 006dd6e0
 void TNativeFileSystem::DestroyFile( TFile* file )
 {
 	if ( file != TNULL )
@@ -50,11 +54,13 @@ void TNativeFileSystem::DestroyFile( TFile* file )
 	}
 }
 
+// $Barnyard: FUNCTION 006dccc0
 TBOOL TNativeFileSystem::RemoveFile( const TString8& a_rcFileName )
 {
 	return DeleteFileA( a_rcFileName ) != 0;
 }
 
+// $Barnyard: FUNCTION 006dd330
 TString8 TNativeFileSystem::MakeInternalPath( const TString8& a_rcPath )
 {
 	// Check if it's already an absolute path
@@ -87,6 +93,7 @@ TString8 TNativeFileSystem::MakeInternalPath( const TString8& a_rcPath )
 	return strInternalPath;
 }
 
+// $Barnyard: FUNCTION 006dcaf0
 TBOOL TNativeFileSystem::GetFirstFile( const TString8& a_rcPath, TString8& a_rOutFileName, TFINDFILE a_ui8Flags )
 {
 	TString8 strPath( a_rcPath );
@@ -123,11 +130,13 @@ TBOOL TNativeFileSystem::GetFirstFile( const TString8& a_rcPath, TString8& a_rOu
 	return TFALSE;
 }
 
+// $Barnyard: FUNCTION 006dcce0
 TBOOL TNativeFileSystem::MakeDirectory( TString8 const& string )
 {
 	return CreateDirectoryA( string, TNULL );
 }
 
+// $Barnyard: FUNCTION 006dcc30
 TBOOL TNativeFileSystem::GetNextFile( TString8& a_rOutFileName, TFINDFILE a_ui8Flags )
 {
 	WIN32_FIND_DATAA findFileData;

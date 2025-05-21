@@ -39,11 +39,13 @@ TOSHI_NAMESPACE_USING
 
 TDEFINE_CLASS( ARenderer );
 
+// $Barnyard: FUNCTION 0060b030
 ARenderer::ARenderer()
     : m_RenderGUIEmitter( this ), m_AnimationUpdateStartEmitter( this ), m_AnimationUpdateEndEmitter( this ), m_pViewport( TNULL ), m_pCameraObject( TNULL ), m_pHALViewport1( TNULL ), m_pHALViewport2( TNULL ), m_bRenderGUI( TTRUE ), m_fNear( 1.0f ), m_fFar( 280.0f )
 {
 }
 
+// $Barnyard: FUNCTION 006154c0
 TBOOL ARenderer::CreateTRender()
 {
 #if defined( TOSHI_SKU_WINDOWS ) && defined( TRENDERINTERFACE_DX8 )
@@ -125,6 +127,7 @@ TBOOL ARenderer::CreateTRender()
 	return TFALSE;
 }
 
+// $Barnyard: FUNCTION 006150e0
 TBOOL ARenderer::CreateTRenderResources()
 {
 	TIMPLEMENT();
@@ -219,6 +222,7 @@ TBOOL ARenderer::CreateTRenderResources()
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 0060aee0
 TRenderAdapter::Mode::Device* ARenderer::FindSuitableDevice( TRenderInterface::DISPLAYPARAMS& a_rDisplayParams, bool a_bReverseOrder )
 {
 	auto                          pRenderer = TSTATICCAST( TRenderD3DInterface, TRenderInterface::GetSingleton() );
@@ -286,6 +290,7 @@ TRenderAdapter::Mode::Device* ARenderer::FindSuitableDevice( TRenderInterface::D
 	return pDevice;
 }
 
+// $Barnyard: FUNCTION 0060b6f0
 void ARenderer::RenderGUI()
 {
 	auto pRender   = TSTATICCAST( TRenderD3DInterface, TRenderInterface::GetSingleton() );
@@ -311,6 +316,7 @@ void ARenderer::RenderGUI()
 	pRender->SetCurrentRenderContext( pOldContext );
 }
 
+// $Barnyard: FUNCTION 0060c7c0
 TBOOL ARenderer::OnCreate()
 {
 	TIMPLEMENT();
@@ -338,6 +344,7 @@ TBOOL ARenderer::OnCreate()
 	return bCreatedTRender;
 }
 
+// $Barnyard: FUNCTION 0060acc0
 void ARenderer::UpdateMainCamera( const Toshi::TMatrix44& a_rTransformMatrix, const ACamera* a_pCamera )
 {
 	m_pCameraObject->SetProjectionCentreX( a_pCamera->m_fProjectionCentreX );
@@ -348,6 +355,7 @@ void ARenderer::UpdateMainCamera( const Toshi::TMatrix44& a_rTransformMatrix, co
 	m_pCameraObject->SetNear( m_fNear );
 }
 
+// $Barnyard: FUNCTION 0060b370
 void ARenderer::RenderMainScene( TFLOAT a_fDeltaTime )
 {
 	if ( ARootTask::GetSingleton()->ShouldRenderMainScene() )
@@ -409,6 +417,7 @@ void ARenderer::RenderMainScene( TFLOAT a_fDeltaTime )
 	}
 }
 
+// $Barnyard: FUNCTION 0060c5e0
 TBOOL ARenderer::OnUpdate( TFLOAT a_fDeltaTime )
 {
 	TIMPLEMENT();
@@ -473,11 +482,13 @@ TBOOL ARenderer::OnUpdate( TFLOAT a_fDeltaTime )
 	}
 }
 
+// $Barnyard: FUNCTION 0060acb0
 void ARenderer::ForceUpdate30FPS()
 {
 	OnUpdate( 1.0f / 30.0f );
 }
 
+// $Barnyard: FUNCTION 0060c210
 void ARenderer::CreateMainViewport()
 {
 	auto pDisplayParams = TRenderInterface::GetSingleton()->GetCurrentDisplayParams();

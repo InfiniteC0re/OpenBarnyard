@@ -11,16 +11,19 @@ TOSHI_NAMESPACE_START
 
 TDEFINE_CLASS_NORUNTIME( TTask );
 
+// $Barnyard: FUNCTION 006bc910
 TTask::TTask()
 {
 	m_State = 0;
 }
 
+// $Barnyard: FUNCTION 006bc8c0
 TTask::~TTask()
 {
 	TASSERT( IsLinked() == TFALSE );
 }
 
+// $Barnyard: FUNCTION 006bc940
 TBOOL TTask::Create()
 {
 	TASSERT( IsCreated() == TFALSE );
@@ -44,6 +47,7 @@ TBOOL TTask::Create()
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 006bc990
 TBOOL TTask::CreateFailed()
 {
 	TASSERT( IsCreated() == TFALSE );
@@ -57,6 +61,7 @@ TBOOL TTask::CreateFailed()
 	return TFALSE;
 }
 
+// $Barnyard: FUNCTION 006bc8e0
 TBOOL TTask::Reset()
 {
 	TTask* firstAttached = Child();
@@ -107,6 +112,7 @@ void TTask::OnDeactivate()
 {
 }
 
+// $Barnyard: FUNCTION 006bc850
 void TTask::Activate( TBOOL activate )
 {
 	TUINT8 oldState = m_State;

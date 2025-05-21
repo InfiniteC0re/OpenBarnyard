@@ -42,6 +42,7 @@ public:
 	};
 
 public:
+	// $Barnyard: FUNCTION 00429630
 	static void Throw( const T& a_rData )
 	{
 		for ( auto it = sm_oListeners.Begin(); it != sm_oListeners.End(); ++it )

@@ -9,6 +9,7 @@
 
 TOSHI_NAMESPACE_USING
 
+// $Barnyard: FUNCTION 006c4410
 TBOOL AGUI2FontManager::Open( const TCHAR* a_szFileName )
 {
 	auto pResource = FindFontResource( a_szFileName );
@@ -41,6 +42,7 @@ TBOOL AGUI2FontManager::Open( const TCHAR* a_szFileName )
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 006c44d0
 AGUI2Font* AGUI2FontManager::FindFont( const TCHAR* a_szFontName )
 {
 	auto pRef = FindFontRef( a_szFontName );
@@ -54,6 +56,7 @@ AGUI2Font* AGUI2FontManager::FindFont( const TCHAR* a_szFontName )
 	return TNULL;
 }
 
+// $Barnyard: FUNCTION 006c42a0
 AGUI2FontRef* AGUI2FontManager::FindFontRef( const TCHAR* a_szFontName )
 {
 	for ( TUINT i = 0; i < MAX_NUM_FONT_REFS; i++ )
@@ -70,6 +73,7 @@ AGUI2FontRef* AGUI2FontManager::FindFontRef( const TCHAR* a_szFontName )
 	return TNULL;
 }
 
+// $Barnyard: FUNCTION 006c4240
 AGUI2FontResource* AGUI2FontManager::FindFontResource( const TCHAR* a_szResourceName )
 {
 	for ( TUINT i = 0; i < MAX_NUM_LOADED_FONTS; i++ )
@@ -112,6 +116,7 @@ AGUI2FontResource* AGUI2FontManager::FindUnusedFontResource()
 	return TNULL;
 }
 
+// $Barnyard: FUNCTION 006c42f0
 void AGUI2FontManager::CreateFontFromResource( AGUI2FontResource* a_pFontResource )
 {
 	auto& trb = a_pFontResource->oTRB;

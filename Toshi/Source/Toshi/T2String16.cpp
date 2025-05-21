@@ -126,6 +126,7 @@ TWCHAR* T2String16::FindString( TWCHAR* str, const TWCHAR* substr )
 	return wcsstr( str, substr );
 }
 
+// $Barnyard: FUNCTION 006bb3c0
 TSIZE T2String16::Length( const TWCHAR* str )
 {
 	if ( str != TNULL ) return wcslen( str );
@@ -202,6 +203,7 @@ const TWCHAR* T2String16::SkipSpaces( const TWCHAR* str )
 	return pszCursor;
 }
 
+// $Barnyard: FUNCTION 006bb450
 TWCHAR* T2String16::CreateCopy( const TWCHAR* a_wszString, TSIZE a_uiSize )
 {
 	TSIZE uiSize = ( a_uiSize == -1 ) ? T2String16::Length( a_wszString ) : a_uiSize;

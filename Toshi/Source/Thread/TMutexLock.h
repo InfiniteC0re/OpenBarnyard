@@ -28,6 +28,7 @@ public:
 		m_Mutex = other.m_Mutex;
 	}
 
+	// $Barnyard: FUNCTION 006d8a00
 	~TMutexLock()
 	{
 		Destroy();

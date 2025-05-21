@@ -12,6 +12,7 @@ TOSHI_NAMESPACE_START
 
 TDEFINE_CLASS( TResource );
 
+// $Barnyard: FUNCTION 006d8240
 TResource::TResource()
 {
 	m_State     = 0;
@@ -20,11 +21,13 @@ TResource::TResource()
 	m_Name[ 0 ] = 0;
 }
 
+// $Barnyard: FUNCTION 006d8220
 TResource::~TResource()
 {
 	m_State |= TResourceState_Dead;
 }
 
+// $Barnyard: FUNCTION 006d8160
 TBOOL TResource::Create()
 {
 	TASSERT( TFALSE == IsCreated(), "This resource is already created" );
@@ -33,6 +36,7 @@ TBOOL TResource::Create()
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 006d8180
 TBOOL TResource::Validate()
 {
 	TASSERT( IsDying() == TFALSE, "Resource is dying and cannot be validated" );
@@ -44,11 +48,13 @@ TBOOL TResource::Validate()
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 006bffd0
 void TResource::Invalidate()
 {
 	m_State &= ~TResourceState_Valid;
 }
 
+// $Barnyard: FUNCTION 006d8210
 void TResource::DestroyResource()
 {
 	GetRenderer()->DestroyResource( this );
@@ -64,6 +70,7 @@ TBOOL TResource::TryValidate()
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 006d8170
 void TResource::OnDestroy()
 {
 	TASSERT( TTRUE == IsCreated(), "Tried to destroy resource that wasn't created" );
@@ -72,6 +79,7 @@ void TResource::OnDestroy()
 	m_State |= TResourceState_Dying;
 }
 
+// $Barnyard: FUNCTION 006d82b0
 void TResource::SetParent( TResource* a_pParent )
 {
 	auto pTree = TNode::Tree();
@@ -91,6 +99,7 @@ void TResource::SetParent( TResource* a_pParent )
 	}
 }
 
+// $Barnyard: FUNCTION 006d81a0
 void TResource::SetName( const TCHAR* name )
 {
 	// 006b5350
@@ -106,6 +115,7 @@ void TResource::SetName( const TCHAR* name )
 	TStringManager::String8Copy( m_Name, name, -1 );
 }
 
+// $Barnyard: FUNCTION 006d8400
 TBOOL TResource::RecurseSimple( t_RecurseCb a_pCallback, TResource* a_pResource, void* a_pUserData )
 {
 	if ( a_pResource )
@@ -114,6 +124,7 @@ TBOOL TResource::RecurseSimple( t_RecurseCb a_pCallback, TResource* a_pResource,
 		return Recurse( a_pCallback, Child(), TTRUE, a_pUserData );
 }
 
+// $Barnyard: FUNCTION 006beb70
 TBOOL TResource::Recurse( t_RecurseCb a_pCallback, TResource* a_pResource, TBOOL a_bFlag, void* a_pUserData )
 {
 	TResource* pRes = a_pResource;

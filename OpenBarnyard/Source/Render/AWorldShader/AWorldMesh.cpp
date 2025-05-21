@@ -14,11 +14,13 @@ TOSHI_NAMESPACE_USING
 
 TDEFINE_CLASS_NORUNTIME( AWorldMesh );
 
+// $Barnyard: FUNCTION 005f5d00
 AWorldMesh::AWorldMesh()
     : m_uiFlags( 0 ), m_uiMaxVertices( 0 ), m_pVertexPool( TNULL )
 {
 }
 
+// $Barnyard: FUNCTION 005f8cc0
 TBOOL AWorldMesh::Validate()
 {
 	if ( !IsValidated() )
@@ -32,11 +34,13 @@ TBOOL AWorldMesh::Validate()
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 005effe0
 void AWorldMesh::Invalidate()
 {
 	BaseClass::Invalidate();
 }
 
+// $Barnyard: FUNCTION 005f5e90
 void AWorldMesh::OnDestroy()
 {
 	AModelLoader::DestroyMaterial( m_pMaterial );
@@ -45,6 +49,7 @@ void AWorldMesh::OnDestroy()
 	BaseClass::OnDestroy();
 }
 
+// $Barnyard: FUNCTION 005f5ef0
 void AWorldMesh::Create( TUINT32 a_uiFlags, TUINT16 a_uiMaxVertices )
 {
 	TASSERT( !IsCreated() );
@@ -93,6 +98,7 @@ TVertexPoolResourceInterface* AWorldMesh::GetVertexPool()
 	return m_pVertexPool;
 }
 
+// $Barnyard: FUNCTION 005f5d30
 TBOOL AWorldMesh::CreateResource()
 {
 	auto pVertexFactory = TRenderInterface::GetSingleton()->GetSystemResource<TVertexFactoryResourceInterface>( SYSRESOURCE_VFWORLD );

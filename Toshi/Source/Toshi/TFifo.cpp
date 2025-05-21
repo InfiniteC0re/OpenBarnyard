@@ -9,6 +9,7 @@
 
 TOSHI_NAMESPACE_START
 
+// $Barnyard: FUNCTION 006bb6f0
 TBOOL TGenericFifo::Create( TCHAR* a_pBuffer, TINT a_iMaxItems, TINT a_iItemSize )
 {
 	TASSERT( a_iMaxItems > 0, "Max items is less than zero" );
@@ -39,6 +40,7 @@ TBOOL TGenericFifo::Destroy()
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 006bb780
 TBOOL TGenericFifo::Push( void* a_pItem, Flags a_iFlags )
 {
 	TBOOL bResult = ( a_iFlags & Flags_PollSemaphore ) ? m_Semaphore1.Poll() : m_Semaphore1.Wait();
@@ -64,6 +66,7 @@ TBOOL TGenericFifo::Push( void* a_pItem, Flags a_iFlags )
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 006bb810
 TBOOL TGenericFifo::Pop( void* a_pOut, Flags a_iFlags )
 {
 	TBOOL bResult = ( a_iFlags & Flags_PollSemaphore ) ? m_Semaphore2.Poll() : m_Semaphore2.Wait();

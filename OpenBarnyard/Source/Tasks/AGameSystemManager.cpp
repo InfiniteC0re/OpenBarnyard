@@ -24,6 +24,7 @@ TDEFINE_CLASS( AGameSystemManager );
 
 TOSHI_NAMESPACE_USING
 
+// $Barnyard: FUNCTION 00401a20
 TBOOL AGameSystemManager::OnCreate()
 {
 	TIMPLEMENT();

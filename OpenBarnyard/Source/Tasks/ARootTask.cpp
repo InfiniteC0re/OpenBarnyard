@@ -41,6 +41,7 @@ TOSHI_NAMESPACE_USING
 
 TDEFINE_CLASS( ARootTask );
 
+// $Barnyard: FUNCTION 004031e0
 ARootTask::ARootTask()
 {
 	TIMPLEMENT();
@@ -65,6 +66,7 @@ ARootTask::ARootTask()
 	m_bGameSystemCreated   = TFALSE;
 }
 
+// $Barnyard: FUNCTION 00403cf0
 TBOOL ARootTask::OnCreate()
 {
 	TIMPLEMENT();
@@ -127,6 +129,7 @@ TBOOL ARootTask::OnCreate()
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 00403a80
 TBOOL ARootTask::OnUpdate( TFLOAT a_fDeltaTime )
 {
 	if ( !IsGameSystemCreated() )
@@ -157,6 +160,7 @@ TBOOL ARootTask::OnUpdate( TFLOAT a_fDeltaTime )
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 00402b40
 void ARootTask::OnChildDied( TClass* a_pClass, TTask* a_pDeletedTask )
 {
 	if ( a_pDeletedTask == m_pGUISystem ) m_pGUISystem = TNULL;
@@ -172,6 +176,7 @@ void ARootTask::OnChildDied( TClass* a_pClass, TTask* a_pDeletedTask )
 		m_pMoviePlayer = TNULL;
 }
 
+// $Barnyard: FUNCTION 00402cb0
 void ARootTask::OnActivate()
 {
 	if ( m_pGUISystem ) m_pGUISystem->Activate( TTRUE );
@@ -187,6 +192,7 @@ void ARootTask::OnActivate()
 	}
 }
 
+// $Barnyard: FUNCTION 00402d50
 void ARootTask::OnDeactivate()
 {
 	if ( m_pGUISystem ) m_pGUISystem->Activate( TFALSE );
@@ -204,6 +210,7 @@ TPSTRING8_DECLARE( bkg_Bink_Big );
 TPSTRING8_DECLARE( bkg_bluetongue );
 TPSTRING8_DECLARE( bkg_fmod );
 
+// $Barnyard: FUNCTION 00402e70
 void ARootTask::CreateStartupGameStates()
 {
 	TIMPLEMENT();
@@ -243,6 +250,7 @@ void ARootTask::CreateStartupGameStates()
 	m_bStartedGame = TTRUE;
 }
 
+// $Barnyard: FUNCTION 00403b90
 void ARootTask::LoadStartupData()
 {
 	TString8 startupLibPath;
@@ -282,11 +290,13 @@ void ARootTask::LoadStartupData()
 	g_oSystemManager.GetScheduler()->CreateTask<AFadeManager>( this )->Create();
 }
 
+// $Barnyard: FUNCTION 00402ba0
 TBOOL ARootTask::IsPaused() const
 {
 	return m_bPaused || g_oSystemManager.IsPaused();
 }
 
+// $Barnyard: FUNCTION 00403690
 void ARootTask::CreateGameSystem()
 {
 	TIMPLEMENT();
@@ -339,6 +349,7 @@ void ARootTask::CreateGameSystem()
 TPSTRING8_DECLARE( ui );
 TPSTRING8_DECLARE( music );
 
+// $Barnyard: FUNCTION 00427c40
 void ARootTask::LoadFrontEnd()
 {
 	TIMPLEMENT();

@@ -9,6 +9,7 @@
 
 TOSHI_NAMESPACE_USING
 
+// $Barnyard: FUNCTION 0063f710
 AGUI2MenuGridItem::AGUI2MenuGridItem()
 {
 	m_pNextMenuGridItem = this;
@@ -20,6 +21,7 @@ AGUI2MenuGridItem::AGUI2MenuGridItem()
 	m_pBottomElement    = TNULL;
 }
 
+// $Barnyard: FUNCTION 0063f6d0
 AGUI2MenuGridItem::~AGUI2MenuGridItem()
 {
 }
@@ -67,6 +69,7 @@ void AGUI2MenuGridItem::LinkMenuItemBefore( AGUI2MenuGridItem& a_rLinkAfter )
 	m_pNextMenuGridItem->m_pPrevMenuGridItem = this;
 }
 
+// $Barnyard: FUNCTION 0063f6e0
 void AGUI2MenuGridItem::SetSideElements( AGUI2MenuGridItem* a_pLeft, AGUI2MenuGridItem* a_pRight, AGUI2MenuGridItem* a_pTop, AGUI2MenuGridItem* a_pBottom )
 {
 	m_pLeftElement   = a_pLeft;

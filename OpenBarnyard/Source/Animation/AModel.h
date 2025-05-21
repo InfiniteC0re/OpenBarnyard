@@ -51,9 +51,10 @@ public:
 	const Toshi::TPString8&  GetModelName() const;
 	Toshi::TSceneObject*     GetSceneObject() const { return m_pSceneObject; }
 	Toshi::TTransformObject& GetTransform() const { return m_pSceneObject->GetTransform(); }
-	Toshi::TSkeleton*        GetSkeleton() const { return GetSceneObject()->GetInstance()->GetSkeletonInstance()->GetSkeleton(); }
-	TUINT                    GetClipFlags() const { return m_uiClipFlags; }
-	void                     SetClipFlags( TUINT a_uiClipFlags ) { m_uiClipFlags = a_uiClipFlags; }
+	// $Barnyard: FUNCTION 006100a0
+	Toshi::TSkeleton* GetSkeleton() const { return GetSceneObject()->GetInstance()->GetSkeletonInstance()->GetSkeleton(); }
+	TUINT             GetClipFlags() const { return m_uiClipFlags; }
+	void              SetClipFlags( TUINT a_uiClipFlags ) { m_uiClipFlags = a_uiClipFlags; }
 
 	const Toshi::TVector4& GetScale() const { return m_Scale; }
 

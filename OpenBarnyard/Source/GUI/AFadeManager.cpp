@@ -11,6 +11,7 @@
 
 TDEFINE_CLASS( AFadeManager );
 
+// $Barnyard: FUNCTION 0045c840
 TBOOL AFadeManager::OnUpdate( TFLOAT a_fDeltaTime )
 {
 	if ( !ARootTask::GetSingleton()->IsPaused() )
@@ -45,6 +46,7 @@ TBOOL AFadeManager::OnUpdate( TFLOAT a_fDeltaTime )
 	return TFALSE;
 }
 
+// $Barnyard: FUNCTION 0045c7b0
 void AFadeManager::StopAllFades()
 {
 	while ( TTRUE )
@@ -57,6 +59,7 @@ void AFadeManager::StopAllFades()
 	}
 }
 
+// $Barnyard: FUNCTION 0045cb20
 AFade* AFadeManager::StartFade( const AFade::Color& a_rFadeFrom, const AFade::Color& a_rFadeTo, TFLOAT a_fFadeTime )
 {
 	TFLOAT fWidth;
@@ -96,6 +99,7 @@ AFade* AFadeManager::StartFade( const AFade::Color& a_rFadeFrom, const AFade::Co
 	return pFade;
 }
 
+// $Barnyard: FUNCTION 0045c990
 TBOOL AFadeManager::HasAnyFadesInProgress( TBOOL a_bThrowFadeOver )
 {
 	for ( auto it = m_ActiveFades.Begin(); it != m_ActiveFades.End(); it++ )

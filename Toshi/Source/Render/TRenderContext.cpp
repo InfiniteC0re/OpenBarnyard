@@ -31,6 +31,7 @@ void TRenderContext::EnableFog( TBOOL a_bEnable )
 		m_eFlags &= ~FLAG_FOG;
 }
 
+// $Barnyard: FUNCTION 006cef90
 void TRenderContext::SetFogDistance( TFLOAT a_fStart, TFLOAT a_fEnd )
 {
 	m_fFogDistanceStart = a_fStart;
@@ -39,6 +40,7 @@ void TRenderContext::SetFogDistance( TFLOAT a_fStart, TFLOAT a_fEnd )
 	m_eFlags &= ~( FLAG_UNK3 | FLAG_UNK4 | FLAG_HAS_WORLDPLANES | FLAG_UNK6 );
 }
 
+// $Barnyard: FUNCTION 006cecc0
 TRenderContext::TRenderContext( TRenderInterface* a_pRenderer )
     : m_pRenderer( a_pRenderer ), m_eFlags( FLAG_DIRTY ), m_eClipFlags( 0x3F ), m_eCameraMode( CameraMode_Perspective ), m_pCurrentSkeletonInstance( TNULL ), m_pCurrentCameraObject( TNULL ), m_AmbientColor( 1.0f, 1.0f, 1.0f, 0.0f ), m_FogColor( 1.0f, 1.0f, 1.0f, 0.0f ), m_fFogDistanceStart( 10.0f ), m_fFogDistanceEnd( 1000.0f ), m_fAlphaBlend( 1.0f ), m_fShadeCoeff( 0.0f )
 {
@@ -74,10 +76,12 @@ TRenderContext::TRenderContext( TRenderInterface* a_pRenderer )
 	ClearLightIDs();
 }
 
+// $Barnyard: FUNCTION 006ce8e0
 TRenderContext::~TRenderContext()
 {
 }
 
+// $Barnyard: FUNCTION 006ce8f0
 void TRenderContext::SetModelViewMatrix( const TMatrix44& a_rMatrix )
 {
 	m_eFlags |= ( FLAG_DIRTY_WORLDMODELMATRIX | FLAG_DIRTY_VIEWMODELMATRIX );
@@ -85,6 +89,7 @@ void TRenderContext::SetModelViewMatrix( const TMatrix44& a_rMatrix )
 	m_eFlags &= ~( FLAG_HAS_MODELWORLDMATRIX | FLAG_UNK3 );
 }
 
+// $Barnyard: FUNCTION 006ce920
 void TRenderContext::SetWorldViewMatrix( const TMatrix44& a_rMatrix )
 {
 	m_eFlags |= FLAG_DIRTY_VIEWMODELMATRIX;
@@ -92,6 +97,7 @@ void TRenderContext::SetWorldViewMatrix( const TMatrix44& a_rMatrix )
 	m_eFlags &= ~( FLAG_HAS_MODELWORLDMATRIX | FLAG_HAS_VIEWWORLDMATRIX | FLAG_UNK4 | FLAG_HAS_WORLDPLANES | FLAG_UNK6 );
 }
 
+// $Barnyard: FUNCTION 006cef30
 void TRenderContext::SetProjectionParams( const PROJECTIONPARAMS& params )
 {
 	TASSERT( params.m_Proj.x != 0.0f );
@@ -105,18 +111,21 @@ void TRenderContext::SetProjectionParams( const PROJECTIONPARAMS& params )
 	m_eFlags      = ( m_eFlags & ( ~( FLAG_UNK3 | FLAG_UNK4 | FLAG_HAS_WORLDPLANES | FLAG_UNK6 ) ) ) | FLAG_DIRTY;
 }
 
+// $Barnyard: FUNCTION 006ceef0
 void TRenderContext::SetViewportParameters( const VIEWPORTPARAMS& params )
 {
 	m_oViewportParams = params;
 	m_eFlags          = ( m_eFlags & ( ~( FLAG_UNK3 | FLAG_UNK4 | FLAG_HAS_WORLDPLANES | FLAG_UNK6 ) ) ) | FLAG_DIRTY;
 }
 
+// $Barnyard: FUNCTION 006cef70
 void TRenderContext::SetCameraMode( CameraMode cameraMode )
 {
 	m_eCameraMode = cameraMode;
 	m_eFlags      = ( m_eFlags & ( ~( FLAG_UNK3 | FLAG_UNK4 | FLAG_HAS_WORLDPLANES | FLAG_UNK6 ) ) ) | FLAG_DIRTY;
 }
 
+// $Barnyard: FUNCTION 006ceba0
 void TRenderContext::ComputePerspectiveProjection( TMatrix44& a_rOutProjection, const VIEWPORTPARAMS& a_rViewportParams, const PROJECTIONPARAMS& a_rProjParams )
 {
 	a_rOutProjection.m_f11 = ( a_rProjParams.m_Proj.x * 2.0f ) / a_rViewportParams.fWidth;
@@ -137,6 +146,7 @@ void TRenderContext::ComputePerspectiveProjection( TMatrix44& a_rOutProjection, 
 	a_rOutProjection.m_f44 = 0.0f;
 }
 
+// $Barnyard: FUNCTION 006cec30
 void TRenderContext::ComputeOrthographicProjection( TMatrix44& a_rOutProjection, const VIEWPORTPARAMS& a_rViewportParams, const PROJECTIONPARAMS& a_rProjParams )
 {
 	TASSERT( a_rProjParams.m_Proj.x != 0.0f );
@@ -177,6 +187,7 @@ TUINT TRenderContext::SetClipFlags( TUINT a_uiClipFlags )
 	return std::exchange( m_eClipFlags, a_uiClipFlags );
 }
 
+// $Barnyard: FUNCTION 006ce990
 const TPlane* TRenderContext::GetWorldPlanes()
 {
 	if ( !HASANYFLAG( m_eFlags, FLAG_HAS_WORLDPLANES ) )
@@ -194,6 +205,7 @@ const TPlane* TRenderContext::GetWorldPlanes()
 	return m_aWorldPlanes;
 }
 
+// $Barnyard: FUNCTION 006cead0
 TBOOL TRenderContext::CullSphereToFrustumSimple( const TSphere& a_rSphere, const TPlane* a_pPlanes, TINT a_iNumPlanes )
 {
 	for ( TSIZE i = 0; i < WORLDPLANE_NUMOF; i++ )
@@ -207,6 +219,7 @@ TBOOL TRenderContext::CullSphereToFrustumSimple( const TSphere& a_rSphere, const
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 006cea40
 TINT TRenderContext::CullSphereToFrustum( const TSphere& a_rSphere, const TPlane* a_pPlanes, TINT a_iClipFlags, TINT a_iClipFlagsMask )
 {
 	TINT iLeftPlanes = a_iClipFlags & a_iClipFlagsMask;
@@ -241,6 +254,7 @@ TINT TRenderContext::CullSphereToFrustum( const TSphere& a_rSphere, const TPlane
 	} while ( TTRUE );
 }
 
+// $Barnyard: FUNCTION 006ce950
 const TMatrix44& TRenderContext::GetViewWorldMatrix()
 {
 	if ( !HASANYFLAG( m_eFlags, FLAG_HAS_VIEWWORLDMATRIX ) )
@@ -263,6 +277,7 @@ const TMatrix44& TRenderContext::GetModelWorldMatrix()
 	return m_oModelWorldMatrix;
 }
 
+// $Barnyard: FUNCTION 006ceb20
 const TMatrix44& TRenderContext::GetViewModelMatrix()
 {
 	if ( HASANYFLAG( m_eFlags, FLAG_DIRTY_VIEWMODELMATRIX ) )
@@ -285,11 +300,13 @@ const TMatrix44& TRenderContext::GetWorldModelMatrix()
 	return m_oWorldModelMatrix;
 }
 
+// $Barnyard: FUNCTION 006ceb80
 void TRenderContext::ClearLightIDs()
 {
 	m_oLightIds.Reset();
 }
 
+// $Barnyard: FUNCTION 006ceb50
 void TRenderContext::AddLight( TLightID a_iLightId )
 {
 	m_oLightIds.Add( a_iLightId );

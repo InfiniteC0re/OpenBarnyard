@@ -4,11 +4,13 @@
 class PGUITRRenderObject
 {
 public:
+	// $Barnyard: FUNCTION 0059d610
 	PGUITRRenderObject( TUINT a_uiIndex )
 	{
 		m_uiIndex = a_uiIndex;
 	}
 
+	// $Barnyard: FUNCTION 0059d600
 	~PGUITRRenderObject()
 	{
 		if ( m_pViewport )
@@ -17,6 +19,7 @@ public:
 		}
 	}
 
+	// $Barnyard: FUNCTION 0066a1c0
 	void SetViewport( Toshi::TViewport* a_pViewport )
 	{
 		m_pViewport = a_pViewport;

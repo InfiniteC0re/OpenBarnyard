@@ -10,6 +10,7 @@
 //-----------------------------------------------------------------------------
 #include <Core/TMemoryDebugOn.h>
 
+// $Barnyard: FUNCTION 006c2b10
 AGUI2Element::AGUI2Element()
 {
 	m_pParent          = TNULL;
@@ -23,6 +24,7 @@ AGUI2Element::AGUI2Element()
 	m_eFlags           = 3;
 }
 
+// $Barnyard: FUNCTION 006c22c0
 void AGUI2Element::Tick( TFLOAT a_fDeltaTime )
 {
 	for ( AGUI2Element* it = ChildRBegin(); it != TNULL; it = GetPrevChild( it ) )
@@ -31,6 +33,7 @@ void AGUI2Element::Tick( TFLOAT a_fDeltaTime )
 	}
 }
 
+// $Barnyard: FUNCTION 006c2300
 void AGUI2Element::PreRender()
 {
 	Toshi::TVector2 vecAnchorPos = { 0.0f, 0.0f };
@@ -50,6 +53,7 @@ void AGUI2Element::PreRender()
 	AGUI2::GetRenderer()->PushTransform( m_oTransform, vecAnchorPos, vecPivotPos );
 }
 
+// $Barnyard: FUNCTION 006c2510
 void AGUI2Element::Render()
 {
 #if 0
@@ -80,43 +84,51 @@ void AGUI2Element::Render()
 	}
 }
 
+// $Barnyard: FUNCTION 006c2570
 void AGUI2Element::PostRender()
 {
 	AGUI2::GetRenderer()->PopTransform();
 }
 
+// $Barnyard: FUNCTION 006c25d0
 void AGUI2Element::GetDimensions( TFLOAT& a_rWidth, TFLOAT& a_rHeight )
 {
 	a_rWidth  = m_fWidth;
 	a_rHeight = m_fHeight;
 }
 
+// $Barnyard: FUNCTION 005748f0
 TFLOAT AGUI2Element::GetWidth()
 {
 	return m_fWidth;
 }
 
+// $Barnyard: FUNCTION 00577290
 TFLOAT AGUI2Element::GetHeight()
 {
 	return m_fHeight;
 }
 
+// $Barnyard: FUNCTION 0043ce00
 void AGUI2Element::SetWidth( TFLOAT a_fWidth )
 {
 	m_fWidth = a_fWidth;
 }
 
+// $Barnyard: FUNCTION 0043ce10
 void AGUI2Element::SetHeight( TFLOAT a_fHeight )
 {
 	m_fHeight = a_fHeight;
 }
 
+// $Barnyard: FUNCTION 006c25f0
 void AGUI2Element::SetDimensions( TFLOAT a_fWidth, TFLOAT a_fHeight )
 {
 	m_fWidth  = a_fWidth;
 	m_fHeight = a_fHeight;
 }
 
+// $Barnyard: FUNCTION 006c2610
 void AGUI2Element::GetMins( TFLOAT& a_fX, TFLOAT& a_fY )
 {
 	TFLOAT fWidth, fHeight;
@@ -125,6 +137,7 @@ void AGUI2Element::GetMins( TFLOAT& a_fX, TFLOAT& a_fY )
 	a_fY = fHeight * -0.5f;
 }
 
+// $Barnyard: FUNCTION 006c2650
 void AGUI2Element::GetMaxs( TFLOAT& a_fX, TFLOAT& a_fY )
 {
 	TFLOAT fWidth, fHeight;
@@ -133,11 +146,13 @@ void AGUI2Element::GetMaxs( TFLOAT& a_fX, TFLOAT& a_fY )
 	a_fY = fHeight * 0.5f;
 }
 
+// $Barnyard: FUNCTION 0043cdf0
 void AGUI2Element::SetColour( TUINT32 a_uiColour )
 {
 	m_uiColour = a_uiColour;
 }
 
+// $Barnyard: FUNCTION 006c2ad0
 void AGUI2Element::SetAlpha( TFLOAT a_fAlpha )
 {
 	TUINT8 alpha8 = (TUINT8)( a_fAlpha * 255.0f );
@@ -148,6 +163,7 @@ void AGUI2Element::SetShadowAlpha( TFLOAT a_fAlpha )
 {
 }
 
+// $Barnyard: FUNCTION 006c2a80
 void AGUI2Element::SetFocus( TBOOL a_bFocused )
 {
 	if ( a_bFocused )
@@ -160,6 +176,7 @@ void AGUI2Element::SetFocus( TBOOL a_bFocused )
 	}
 }
 
+// $Barnyard: FUNCTION 006c2a00
 TBOOL AGUI2Element::IsPointInside( TFLOAT a_fX, TFLOAT a_fY )
 {
 	TFLOAT minX, minY;
@@ -241,6 +258,7 @@ void AGUI2Element::PivotPos( TFLOAT& a_rX, TFLOAT& a_rY, TFLOAT a_fWidth, TFLOAT
 	}
 }
 
+// $Barnyard: FUNCTION 006c2690
 void AGUI2Element::GetScreenTransform( AGUI2Transform& a_rOutTransform )
 {
 	Toshi::TVector2 vecAnchorPos = { 0.0f, 0.0f };
@@ -287,6 +305,7 @@ void AGUI2Element::GetScreenTransform( AGUI2Transform& a_rOutTransform )
 	AGUI2Transform::Multiply( a_rOutTransform, transform1, transform2 );
 }
 
+// $Barnyard: FUNCTION 006c29d0
 void AGUI2Element::GetInvScreenTransform( AGUI2Transform& a_rOutTransform )
 {
 	AGUI2Transform transform;

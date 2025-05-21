@@ -17,6 +17,7 @@ TBitArray::TBitArray( TINT a_iNumBits, TINT a_iInitialiseWith )
 	Create( a_iNumBits, a_iInitialiseWith );
 }
 
+// $Barnyard: FUNCTION 006cd9e0
 TBitArray::~TBitArray()
 {
 	Destroy();
@@ -243,6 +244,7 @@ void TBitArray::Destroy()
 	m_pBuffer = TNULL;
 }
 
+// $Barnyard: FUNCTION 006cda80
 void TBitArray::Create( TINT a_iNumBits, TINT a_iInitialiseWith )
 {
 	m_iSize             = a_iNumBits;

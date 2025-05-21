@@ -15,6 +15,7 @@ TOSHI_NAMESPACE_USING
 
 TDEFINE_CLASS( AGameStateController );
 
+// $Barnyard: FUNCTION 00429250
 AGameStateController::AGameStateController()
     : m_UnkVector( m_VectorData, TARRAYSIZE( m_VectorData ), 0 )
 {
@@ -23,11 +24,13 @@ AGameStateController::AGameStateController()
 	m_fOverlayGoal = 0.0f;
 }
 
+// $Barnyard: FUNCTION 004292f0
 AGameStateController::~AGameStateController()
 {
 	TASSERT( m_oStates.Size() == 0 );
 }
 
+// $Barnyard: FUNCTION 00429e90
 TBOOL AGameStateController::OnCreate()
 {
 	InsertGameState( new AGameState );
@@ -43,6 +46,7 @@ TBOOL AGameStateController::OnCreate()
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 0042a770
 TBOOL AGameStateController::OnUpdate( TFLOAT a_fDeltaTime )
 {
 	auto eFlags = m_eFlags;
@@ -77,6 +81,7 @@ TBOOL AGameStateController::OnUpdate( TFLOAT a_fDeltaTime )
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 00429380
 void AGameStateController::OnDestroy()
 {
 	TASSERT( m_oStates.Size() == 1 );
@@ -87,6 +92,7 @@ void AGameStateController::OnDestroy()
 	pGameState->Destroy();
 }
 
+// $Barnyard: FUNCTION 00429b00
 void AGameStateController::InsertGameState( AGameState* a_pGameState )
 {
 	TGlobalEmitter<AGameStateControllerEvent>::Throw(
@@ -98,6 +104,7 @@ void AGameStateController::InsertGameState( AGameState* a_pGameState )
 	a_pGameState->Activate();
 }
 
+// $Barnyard: FUNCTION 0042a090
 void AGameStateController::ReplaceState( AGameState* a_pGameState )
 {
 	if ( m_oStates.Size() > 1 )
@@ -111,6 +118,7 @@ void AGameStateController::ReplaceState( AGameState* a_pGameState )
 	InsertGameState( a_pGameState );
 }
 
+// $Barnyard: FUNCTION 00429f50
 void AGameStateController::PushState( AGameState* a_pGameState )
 {
 	if ( m_oStates.Size() > 1 )
@@ -122,6 +130,7 @@ void AGameStateController::PushState( AGameState* a_pGameState )
 	InsertGameState( a_pGameState );
 }
 
+// $Barnyard: FUNCTION 00429fb0
 void AGameStateController::PopState( AGameState* a_pGameState )
 {
 	auto pCurrentGameState = *m_oStates.Back();
@@ -145,6 +154,7 @@ void AGameStateController::PopState( AGameState* a_pGameState )
 	}
 }
 
+// $Barnyard: FUNCTION 0042a870
 void AGameStateController::PopCurrentGameState()
 {
 	TASSERT( m_oStates.Size() > 1 );
@@ -155,6 +165,7 @@ void AGameStateController::PopCurrentGameState()
 	}
 }
 
+// $Barnyard: FUNCTION 00429490
 void AGameStateController::UpdateScreenOverlay()
 {
 	TBOOL bAddOverlay = TFALSE;
@@ -180,6 +191,7 @@ void AGameStateController::UpdateScreenOverlay()
 	}
 }
 
+// $Barnyard: FUNCTION 0042a150
 void AGameStateController::ResetStack()
 {
 	UpdateScreenOverlay();
@@ -197,6 +209,7 @@ void AGameStateController::ResetStack()
 	}
 }
 
+// $Barnyard: FUNCTION 00429580
 void AGameStateController::SetFlags( TUINT16 a_eFlags )
 {
 	m_eFlags |= a_eFlags;
@@ -224,18 +237,21 @@ void AGameStateController::SetFlags( TUINT16 a_eFlags )
 	UpdateScreenOverlay();
 }
 
+// $Barnyard: FUNCTION 004280b0
 void AGameStateController::SetOverlayParams( AGameState::OVERLAY a_eOverlay, const OverlayData& a_rcParams )
 {
 	TASSERT( a_eOverlay < AGameState::OVERLAY_NUMOF );
 	ms_aOverlays[ a_eOverlay ] = a_rcParams;
 }
 
+// $Barnyard: FUNCTION 004280a0
 AGameStateController::OverlayData* AGameStateController::GetOverlayParams( AGameState::OVERLAY a_eOverlay )
 {
 	TASSERT( a_eOverlay < AGameState::OVERLAY_NUMOF );
 	return &ms_aOverlays[ a_eOverlay ];
 }
 
+// $Barnyard: FUNCTION 004293d0
 TBOOL AGameStateController::ProcessInput( const TInputInterface::InputEvent* a_pEvent )
 {
 	if ( m_eFlags & 1 )

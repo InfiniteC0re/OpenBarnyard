@@ -18,6 +18,7 @@ TOSHI_NAMESPACE_USING
 
 TDEFINE_CLASS( AMaterialLibraryManager );
 
+// $Barnyard: FUNCTION 00613c10
 AMaterialLibraryManager::AMaterialLibraryManager()
     : m_NumRefLibraries( AMemory::GetAllocator( AMemory::POOL_Misc ) ), m_LoadedLibraries( AMemory::GetAllocator( AMemory::POOL_Misc ) )
 {
@@ -81,6 +82,7 @@ void AMaterialLibraryManager::LoadLibrariesFromProperties( const PBPropertyValue
 	}
 }
 
+// $Barnyard: FUNCTION 00614a00
 void AMaterialLibraryManager::LoadLibrary( const TPString8& a_rLibName, TTRB* a_pTRB, TBOOL a_bIsGUI )
 {
 	auto pRenderer = TRenderInterface::GetSingleton();
@@ -128,6 +130,7 @@ void AMaterialLibraryManager::LoadLibrary( const TPString8& a_rLibName, TTRB* a_
 	}
 }
 
+// $Barnyard: FUNCTION 006142c0
 void AMaterialLibraryManager::UnloadLibrary( const TPString8& a_rLibName, TBOOL a_bUnused )
 {
 	TPString8 matlibName = a_rLibName;
@@ -175,6 +178,7 @@ void AMaterialLibraryManager::UnloadLibrary( const TPString8& a_rLibName, TBOOL 
 	}
 }
 
+// $Barnyard: FUNCTION 00614240
 void AMaterialLibraryManager::DestroyLibrary( LibrariesMap::Iterator& a_rcMaterialLibraryNode, TBOOL a_bUpdateGUIMaterials )
 {
 	auto pMaterialLibrary = a_rcMaterialLibraryNode->GetSecond();
@@ -192,6 +196,7 @@ void AMaterialLibraryManager::DestroyLibrary( LibrariesMap::Iterator& a_rcMateri
 	}
 }
 
+// $Barnyard: FUNCTION 00613d90
 void AMaterialLibraryManager::UnloadTexturesOfLibrary( AMaterialLibrary* a_pMaterialLibrary )
 {
 	for ( auto it = m_UsedTextures.Begin(); it != m_UsedTextures.End(); )
@@ -218,6 +223,7 @@ void AMaterialLibraryManager::UnloadTexturesOfLibrary( AMaterialLibrary* a_pMate
 	TTODO( "FUN_006120e0" );
 }
 
+// $Barnyard: FUNCTION 00613b50
 void AMaterialLibraryManager::CreateTextures( AMaterialLibrary* a_pMatLibrary )
 {
 	auto pTextureFactory = TRenderInterface::GetSingleton()->GetSystemResource<TTextureFactory>( SYSRESOURCE_TEXTUREFACTORY );
@@ -238,6 +244,7 @@ void AMaterialLibraryManager::CreateTextures( AMaterialLibrary* a_pMatLibrary )
 	}
 }
 
+// $Barnyard: FUNCTION 00613b20
 void AMaterialLibraryManager::OnLibraryLoaded( TBOOL a_bUpdateGUIMaterials )
 {
 	TRenderInterface::GetSingleton()->FlushDyingResources();
@@ -249,6 +256,7 @@ void AMaterialLibraryManager::OnLibraryLoaded( TBOOL a_bUpdateGUIMaterials )
 	}
 }
 
+// $Barnyard: FUNCTION 00613d20
 TTexture* AMaterialLibraryManager::FindTexture( const TCHAR* a_szTextureName )
 {
 	for ( auto it = m_UsedTextures.Begin(); it != m_UsedTextures.End(); it = it->Next() )
@@ -262,6 +270,7 @@ TTexture* AMaterialLibraryManager::FindTexture( const TCHAR* a_szTextureName )
 	return TNULL;
 }
 
+// $Barnyard: FUNCTION 00615a90
 AMaterialLibrary* AMaterialLibraryManager::List::CreateLibraryFromTRB( TTRB* a_pTRB, const TCHAR* a_szFilePath )
 {
 	TPROFILER_SCOPE();
@@ -279,6 +288,7 @@ AMaterialLibrary* AMaterialLibraryManager::List::CreateLibraryFromTRB( TTRB* a_p
 	return pLibrary;
 }
 
+// $Barnyard: FUNCTION 00615930
 AMaterialLibrary* AMaterialLibraryManager::List::CreateLibraryFromAsset( const TCHAR* a_szFilePath, TTRB* a_pTRB )
 {
 	TPROFILER_SCOPE();
@@ -346,6 +356,7 @@ void AMaterialLibraryManager::List::DestroyLibrary( AMaterialLibrary* a_pLibrary
 	a_pLibrary->Destroy();
 }
 
+// $Barnyard: FUNCTION 00615b40
 ATexture* AMaterialLibraryManager::List::FindTexture( const TCHAR* a_szTextureName, AMaterialLibrary** a_ppMaterialLibrary, TINT* a_pTextureIndex )
 {
 	TINT iIndex = -1;

@@ -15,6 +15,7 @@ TOSHI_NAMESPACE_USING
 
 TDEFINE_CLASS_NORUNTIME( ABYardMenuState )
 
+// $Barnyard: FUNCTION 00432390
 ABYardMenuState::ABYardMenuState()
 {
 	m_eMenuState             = MENUSTATE_NOTHING;
@@ -27,12 +28,14 @@ ABYardMenuState::ABYardMenuState()
 	m_bHasRectangle2         = TFALSE;
 }
 
+// $Barnyard: FUNCTION 00432470
 ABYardMenuState::~ABYardMenuState()
 {
 	if ( m_pButtonRotations )
 		delete[] m_pButtonRotations;
 }
 
+// $Barnyard: FUNCTION 004329e0
 TBOOL ABYardMenuState::ProcessInput( const TInputInterface::InputEvent* a_pInputEvent )
 {
 	if ( m_eMenuState == MENUSTATE_MENU_VISIBLE && !m_bIgnoreInputs )
@@ -43,6 +46,7 @@ TBOOL ABYardMenuState::ProcessInput( const TInputInterface::InputEvent* a_pInput
 	return BaseClass::ProcessInput( a_pInputEvent );
 }
 
+// $Barnyard: FUNCTION 00432a10
 TBOOL ABYardMenuState::ProcessCommand( AInputCommand a_eInputCommand, const Toshi::TInputInterface::InputEvent* a_pInputEvent, TBOOL& a_rStopEvents )
 {
 	if ( m_eMenuState == MENUSTATE_MENU_VISIBLE && !m_bIgnoreInputs )
@@ -61,6 +65,7 @@ TBOOL ABYardMenuState::ProcessCommand( AInputCommand a_eInputCommand, const Tosh
 static TFLOAT s_fOscillatorPeriod    = TMath::PI / 1.5f;
 static TFLOAT s_fOscillatorAmplitude = 2.0f - TMath::Sin( s_fOscillatorPeriod );
 
+// $Barnyard: FUNCTION 004325b0
 TBOOL ABYardMenuState::OnUpdate( TFLOAT a_fDeltaTime )
 {
 	m_fTotalTime += a_fDeltaTime;
@@ -187,6 +192,7 @@ TBOOL ABYardMenuState::OnUpdate( TFLOAT a_fDeltaTime )
 
 TPSTRING8_DECLARE( DialogInputMap );
 
+// $Barnyard: FUNCTION 00432f30
 void ABYardMenuState::OnInsertion()
 {
 	ms_fAnimationTime = 0.0f;
@@ -277,6 +283,7 @@ void ABYardMenuState::OnInsertion()
 	BaseClass::OnInsertion();
 }
 
+// $Barnyard: FUNCTION 00432530
 void ABYardMenuState::OnRemoval()
 {
 	if ( m_bHasRectangle2 )
@@ -291,6 +298,7 @@ void ABYardMenuState::OnRemoval()
 	BaseClass::OnRemoval();
 }
 
+// $Barnyard: FUNCTION 004332f0
 void ABYardMenuState::OnActivate()
 {
 	AGUI2::GetSingleton()->SetCursorVisible( TTRUE );
@@ -312,6 +320,7 @@ void ABYardMenuState::OnActivate()
 	m_HUDParams.SetFlags( 64 );
 }
 
+// $Barnyard: FUNCTION 00433380
 void ABYardMenuState::OnDeactivate()
 {
 	AGUI2::GetSingleton()->SetCursorVisible( TFALSE );
@@ -322,6 +331,7 @@ void ABYardMenuState::OnMenuOpen()
 {
 }
 
+// $Barnyard: FUNCTION 00432b20
 void ABYardMenuState::OnMenuItemFocused( AGUI2MenuItem& a_rOldFocus, AGUI2MenuItem& a_rNewFocus )
 {
 	if ( m_bFocusedElementBloated )
@@ -351,6 +361,7 @@ void ABYardMenuState::SetDialogOpacity( TFLOAT a_fOpacity )
 	m_oDialog.SetAlpha( a_fOpacity );
 }
 
+// $Barnyard: FUNCTION 00432a90
 void ABYardMenuState::OnButtonActivated( AGUI2Button* a_pButton )
 {
 	if ( !m_bIgnoreInputs )

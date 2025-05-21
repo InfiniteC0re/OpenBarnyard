@@ -173,6 +173,7 @@ TBOOL TString8::AllocBuffer( TINT a_iLength, TBOOL a_bFreeMemory )
 	return hasChanged;
 }
 
+// $Barnyard: FUNCTION 006bd3c0
 TString8& TString8::Format( const TCHAR* a_pcFormat, ... )
 {
 	va_list args;
@@ -231,6 +232,7 @@ void TString8::ForceSetData( TCHAR* a_cString, TINT a_iLength )
 	m_iExcessLen = 0;
 }
 
+// $Barnyard: FUNCTION 006bcf70
 TINT TString8::FindReverse( TCHAR a_findChar, TINT pos ) const
 {
 	if ( pos == -1 )
@@ -254,6 +256,7 @@ TINT TString8::FindReverse( TCHAR a_findChar, TINT pos ) const
 	return -1;
 }
 
+// $Barnyard: FUNCTION 006bd5d0
 void TString8::Truncate( TINT length )
 {
 	if ( Length() < length )
@@ -283,6 +286,7 @@ void TString8::FreeBuffer()
 	Reset();
 }
 
+// $Barnyard: FUNCTION 006bd110
 const TCHAR* TString8::GetString( TINT a_iIndex ) const
 {
 	TASSERT( a_iIndex >= 0 && a_iIndex <= (TINT)m_iStrLen );
@@ -359,6 +363,7 @@ TString8& TString8::Reserve( TINT size )
 	return *this;
 }
 
+// $Barnyard: FUNCTION 006bce60
 TINT TString8::Compare( const TCHAR* a_pcString, TINT a_iLength ) const
 {
 	TASSERT( a_pcString != TNULL, "TCString::Compare - Passed string cannot be TNULL" );
@@ -371,6 +376,7 @@ TINT TString8::Compare( const TCHAR* a_pcString, TINT a_iLength ) const
 	return strcmp( GetString(), a_pcString );
 }
 
+// $Barnyard: FUNCTION 006bcec0
 TINT TString8::CompareNoCase( const TCHAR* a_pcString, TINT a_iLength ) const
 {
 	TASSERT( a_pcString != TNULL, "TCString::CompareNoCase - Passed string cannot be TNULL" );
@@ -383,6 +389,7 @@ TINT TString8::CompareNoCase( const TCHAR* a_pcString, TINT a_iLength ) const
 	return _strnicmp( GetString(), a_pcString, a_iLength );
 }
 
+// $Barnyard: FUNCTION 006bd950
 TString8 TString8::Mid( TINT a_iFirst, TINT a_iCount ) const
 {
 	if ( a_iFirst < 0 )

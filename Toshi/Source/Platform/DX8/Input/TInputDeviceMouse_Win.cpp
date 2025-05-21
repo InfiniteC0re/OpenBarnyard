@@ -13,6 +13,7 @@ TOSHI_NAMESPACE_START
 
 TDEFINE_CLASS( TInputDXDeviceMouse );
 
+// $Barnyard: FUNCTION 006d3dd0
 TBOOL TInputDXDeviceMouse::Acquire()
 {
 	HRESULT hr = m_poDXInputDevice->Acquire();
@@ -33,6 +34,7 @@ TBOOL TInputDXDeviceMouse::Acquire()
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 006d3e00
 TBOOL TInputDXDeviceMouse::Unacquire()
 {
 	SetAcquired( TFALSE );
@@ -40,6 +42,7 @@ TBOOL TInputDXDeviceMouse::Unacquire()
 	return SUCCEEDED( hr );
 }
 
+// $Barnyard: FUNCTION 006d3e20
 void TInputDXDeviceMouse::Release()
 {
 	if ( m_poDXInputDevice )
@@ -49,6 +52,7 @@ void TInputDXDeviceMouse::Release()
 	}
 }
 
+// $Barnyard: FUNCTION 006d3f30
 void TInputDXDeviceMouse::Update( TFLOAT a_fDeltaTime )
 {
 	if ( IsAcquired() )
@@ -88,6 +92,7 @@ void TInputDXDeviceMouse::Update( TFLOAT a_fDeltaTime )
 	}
 }
 
+// $Barnyard: FUNCTION 006d3e40
 TBOOL TInputDXDeviceMouse::Flush()
 {
 	DWORD dwItems = INFINITE;
@@ -106,6 +111,7 @@ TBOOL TInputDXDeviceMouse::Flush()
 	return TFALSE;
 }
 
+// $Barnyard: FUNCTION 006d4200
 TINT TInputDXDeviceMouse::ProcessEvents( EventEmitter& a_rEmitter, TFLOAT a_fDeltaTime )
 {
 	m_dwButtonPrevious = m_dwButtonCurrent;
@@ -192,16 +198,19 @@ TINT TInputDXDeviceMouse::ProcessEvents( EventEmitter& a_rEmitter, TFLOAT a_fDel
 	return iNumProcessed;
 }
 
+// $Barnyard: FUNCTION 006d4000
 TINT TInputDXDeviceMouse::GetButtonCount() const
 {
 	return m_DIDevCaps.dwButtons;
 }
 
+// $Barnyard: FUNCTION 006d4010
 TINT TInputDXDeviceMouse::GetAxisCount() const
 {
 	return m_DIDevCaps.dwAxes;
 }
 
+// $Barnyard: FUNCTION 006d4020
 TBOOL TInputDXDeviceMouse::IsDown( TINT a_iDoodad ) const
 {
 	if ( ( 0x30000 < a_iDoodad ) && ( a_iDoodad < 0x30009 ) )
@@ -212,6 +221,7 @@ TBOOL TInputDXDeviceMouse::IsDown( TINT a_iDoodad ) const
 	return TFALSE;
 }
 
+// $Barnyard: FUNCTION 006d40a0
 TINT TInputDXDeviceMouse::GetAxisInt( Doodad a_iDoodad, TINT coord ) const
 {
 	if ( a_iDoodad == AXIS_CURSOR )
@@ -230,6 +240,7 @@ TINT TInputDXDeviceMouse::GetAxisInt( Doodad a_iDoodad, TINT coord ) const
 	return 0;
 }
 
+// $Barnyard: FUNCTION 006d40d0
 TFLOAT TInputDXDeviceMouse::GetAxisFloat( Doodad a_iDoodad, TINT coord ) const
 {
 	if ( a_iDoodad == AXIS_CURSOR )
@@ -257,6 +268,7 @@ TBOOL TInputDXDeviceMouse::IsEnabled() const
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 006d3c50
 TBOOL TInputDXDeviceMouse::Initialise()
 {
 	m_bReverseButtons  = TFALSE;
@@ -304,6 +316,7 @@ TBOOL TInputDXDeviceMouse::Deinitialise()
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 006d3e80
 void TInputDXDeviceMouse::RefreshDirect()
 {
 	if ( IsAcquired() )
@@ -331,6 +344,7 @@ void TInputDXDeviceMouse::RefreshDirect()
 	}
 }
 
+// $Barnyard: FUNCTION 006d4060
 TBOOL TInputDXDeviceMouse::WasDown( TINT a_iDoodad ) const
 {
 	if ( ( 0x30000 < a_iDoodad ) && ( a_iDoodad < 0x30009 ) )
@@ -341,6 +355,7 @@ TBOOL TInputDXDeviceMouse::WasDown( TINT a_iDoodad ) const
 	return TFALSE;
 }
 
+// $Barnyard: FUNCTION 006d4110
 void TInputDXDeviceMouse::SetExclusive( HWND a_hWindow, TBOOL a_bExclusive )
 {
 	m_poDXInputDevice->SetCooperativeLevel(
@@ -349,6 +364,7 @@ void TInputDXDeviceMouse::SetExclusive( HWND a_hWindow, TBOOL a_bExclusive )
 	);
 }
 
+// $Barnyard: FUNCTION 006d4140
 void TInputDXDeviceMouse::SetCurrentPosition( TINT a_iX, TINT a_iY )
 {
 	auto pDisplayParams = TRenderInterface::GetSingleton()->GetCurrentDisplayParams();
@@ -357,6 +373,7 @@ void TInputDXDeviceMouse::SetCurrentPosition( TINT a_iX, TINT a_iY )
 	TMath::Clip( m_iPositionY, 0, TINT( pDisplayParams->uiHeight ) );
 }
 
+// $Barnyard: FUNCTION 006d3d00
 TBOOL const TInputDXDeviceMouse::BindToDIDevice( HWND a_hMainWindow, LPCDIDEVICEINSTANCEA a_poDeviceInstance, IDirectInputDevice8A* a_poDXInputDevice, TBOOL a_bExclusive )
 {
 	TASSERT( a_poDeviceInstance != NULL );

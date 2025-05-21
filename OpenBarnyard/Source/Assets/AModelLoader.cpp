@@ -23,6 +23,7 @@ TDEFINE_CLASS( AModelLoader );
 
 TOSHI_NAMESPACE_USING
 
+// $Barnyard: FUNCTION 006116a0
 AModelLoader::AModelLoader()
 {
 	for ( TUINT i = 0; i < TARRAYSIZE( ms_oNodesAlloc ); i++ )
@@ -110,6 +111,7 @@ AModelLoader::AModelLoader()
 	}
 }
 
+// $Barnyard: FUNCTION 00611560
 AModelLoader::~AModelLoader()
 {
 }
@@ -137,6 +139,7 @@ void AModelLoader::MaterialApplyFlags( TMaterial* a_pMaterial, const TCHAR* a_sz
 	}
 }
 
+// $Barnyard: FUNCTION 00611440
 void AModelLoader::MaterialApplyClamp( TMaterial* a_pMaterial, const TCHAR* a_szMaterialName, TTexture* a_pTexture )
 {
 	auto pClampedMaterial = ms_pClampedMaterials;
@@ -302,6 +305,7 @@ TMaterial* AModelLoader::CreateMaterial( TShader* a_pShader, const TCHAR* a_szMa
 	return pResultMaterial;
 }
 
+// $Barnyard: FUNCTION 00611f50
 void AModelLoader::DestroyMaterial( TMaterial* a_pMaterial )
 {
 	TPROFILER_SCOPE();
@@ -348,6 +352,7 @@ void AModelLoader::DestroyMaterial( TMaterial* a_pMaterial )
 	}
 }
 
+// $Barnyard: FUNCTION 00613270
 void AModelLoader::InitialiseStatic()
 {
 	InitialiseGrassLayersTextures();
@@ -446,11 +451,13 @@ TTMDBase::Material* AModelLoader::FindMaterialInModel( const TCHAR* a_szName )
 	return TNULL;
 }
 
+// $Barnyard: FUNCTION 006528c0
 TBOOL AModelLoader::AModelLoaderLoadTMDCallback( TModel* a_pModel )
 {
 	return TFALSE;
 }
 
+// $Barnyard: FUNCTION 006114d0
 TBOOL AModelLoader::AModelLoaderLoadTRBCallback( TModel* a_pModel )
 {
 	TPROFILER_SCOPE();

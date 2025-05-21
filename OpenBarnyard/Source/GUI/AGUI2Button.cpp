@@ -8,6 +8,7 @@
 //-----------------------------------------------------------------------------
 #include <Core/TMemoryDebugOn.h>
 
+// $Barnyard: FUNCTION 00640020
 AGUI2Button::AGUI2Button()
 {
 	m_bScaleOnFocus     = TTRUE;
@@ -26,11 +27,13 @@ AGUI2Button::AGUI2Button()
 	m_wszButtonText     = TNULL;
 }
 
+// $Barnyard: FUNCTION 006400f0
 AGUI2Button::~AGUI2Button()
 {
 	m_oBackgroundRect.Unlink();
 }
 
+// $Barnyard: FUNCTION 00640490
 void AGUI2Button::Create( AGUI2Font* a_pFont, TFLOAT a_fWidth, const TWCHAR* a_wszText, TFLOAT a_fGap )
 {
 	TVALIDPTR( a_pFont );
@@ -52,6 +55,7 @@ void AGUI2Button::Create( AGUI2Font* a_pFont, TFLOAT a_fWidth, const TWCHAR* a_w
 	m_oText.SetTextAlign( AGUI2Font::TextAlign_Center );
 }
 
+// $Barnyard: FUNCTION 00640380
 void AGUI2Button::SetImage( const TCHAR* a_szTexSec, TFLOAT a_fScaleX, TFLOAT a_fScaleY )
 {
 	TVALIDPTR( a_szTexSec );
@@ -67,11 +71,13 @@ void AGUI2Button::SetImage( const TCHAR* a_szTexSec, TFLOAT a_fScaleX, TFLOAT a_
 	LinkChildBefore( m_oBackgroundRect, m_oText );
 }
 
+// $Barnyard: FUNCTION 00640210
 void AGUI2Button::GetDimensions( TFLOAT& a_rWidth, TFLOAT& a_rHeight )
 {
 	m_oText.GetDimensions( a_rWidth, a_rHeight );
 }
 
+// $Barnyard: FUNCTION 006402c0
 void AGUI2Button::SetAlpha( TFLOAT a_fAlpha )
 {
 	m_oText.SetAlpha( a_fAlpha );
@@ -86,6 +92,7 @@ void AGUI2Button::SetAlpha( TFLOAT a_fAlpha )
 	AGUI2MenuItem::SetAlpha( a_fAlpha );
 }
 
+// $Barnyard: FUNCTION 00640330
 void AGUI2Button::SetShadowAlpha( TFLOAT a_fAlpha )
 {
 	m_oText.SetShadowAlpha( a_fAlpha );
@@ -98,6 +105,7 @@ void AGUI2Button::SetShadowAlpha( TFLOAT a_fAlpha )
 	AGUI2MenuItem::SetShadowAlpha( a_fAlpha );
 }
 
+// $Barnyard: FUNCTION 00640550
 void AGUI2Button::OnFocus()
 {
 	m_bFocused = TTRUE;
@@ -117,6 +125,7 @@ void AGUI2Button::OnFocus()
 	}
 }
 
+// $Barnyard: FUNCTION 00640610
 void AGUI2Button::OnFocusLost()
 {
 	m_bFocused = TFALSE;
@@ -130,6 +139,7 @@ void AGUI2Button::OnFocusLost()
 		m_Rectangle1.RemoveSelf();
 }
 
+// $Barnyard: FUNCTION 006406b0
 void AGUI2Button::SetEnabled( TBOOL a_bEnabled )
 {
 	if ( IsEnabled() != a_bEnabled )
@@ -140,6 +150,7 @@ void AGUI2Button::SetEnabled( TBOOL a_bEnabled )
 	}
 }
 
+// $Barnyard: FUNCTION 006401f0
 TFLOAT AGUI2Button::GetFlowVisualOffset()
 {
 	TVALIDPTR( m_pFont );
@@ -152,6 +163,7 @@ TFLOAT AGUI2Button::GetFlowOffset()
 	return m_pFont->GetLinesMargin() * 0.5f + m_fGap;
 }
 
+// $Barnyard: FUNCTION 00640440
 void AGUI2Button::SetButtonColour( TUINT a_uiColour )
 {
 	m_oText.SetColour( a_uiColour );

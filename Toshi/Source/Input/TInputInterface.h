@@ -97,6 +97,7 @@ public:
 	EventEmitter& GetInputEventEmitter() { return m_InputEventEmitter; }
 
 	template <class C>
+	// $Barnyard: FUNCTION 006c3fd0
 	C* GetDeviceByIndex( TUINT a_uiIndex = 0 )
 	{
 		C* pDevice = TSTATICCAST( C, GetDeviceByIndex( &TGetClass( C ), a_uiIndex ) );
@@ -157,11 +158,13 @@ public:
 	virtual const TCHAR* GetButtonFromDoodad( Doodad a_iDoodad ) const   = 0;
 	virtual TBOOL        IsDown( Doodad a_iDoodad ) const                = 0;
 	virtual TINT         GetAxisInt( Doodad a_iDoodad, TINT axis ) const = 0;
-	virtual TINT         GetAxisInt2( Doodad a_iDoodad, TINT axis ) const { return GetAxisInt( a_iDoodad, axis ); }
-	virtual TFLOAT       GetAxisFloat( Doodad a_iDoodad, TINT axis ) const = 0;
-	virtual TFLOAT       GetAxisFloat2( Doodad a_iDoodad, TINT axis ) const { return GetAxisFloat( a_iDoodad, axis ); }
-	virtual TBOOL        IsEnabled() const = 0;
-	virtual void         ThrowRepeatEvent( EventEmitter& emitter, RepeatInfo* repeatInfo, TFLOAT deltaTime );
+	// $Barnyard: FUNCTION 00413110
+	virtual TINT   GetAxisInt2( Doodad a_iDoodad, TINT axis ) const { return GetAxisInt( a_iDoodad, axis ); }
+	virtual TFLOAT GetAxisFloat( Doodad a_iDoodad, TINT axis ) const = 0;
+	// $Barnyard: FUNCTION 00428140
+	virtual TFLOAT GetAxisFloat2( Doodad a_iDoodad, TINT axis ) const { return GetAxisFloat( a_iDoodad, axis ); }
+	virtual TBOOL  IsEnabled() const = 0;
+	virtual void   ThrowRepeatEvent( EventEmitter& emitter, RepeatInfo* repeatInfo, TFLOAT deltaTime );
 
 	TBOOL IsAcquired() const
 	{
@@ -178,6 +181,7 @@ public:
 		return m_pInputInterface;
 	}
 
+	// $Barnyard: FUNCTION 006d9700
 	void SetInputInterface( TInputInterface* a_pInterface )
 	{
 		m_pInputInterface = a_pInterface;

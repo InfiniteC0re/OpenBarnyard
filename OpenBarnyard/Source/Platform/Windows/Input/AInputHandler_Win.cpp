@@ -15,6 +15,7 @@ TOSHI_NAMESPACE_USING
 
 TDEFINE_CLASS( AInputHandler );
 
+// $Barnyard: FUNCTION 00595ae0
 AInputHandler::AInputHandler()
 {
 	TIMPLEMENT();
@@ -31,6 +32,7 @@ AInputHandler::AInputHandler()
 	m_bHadInputLastFrame = TFALSE;
 }
 
+// $Barnyard: FUNCTION 00595c40
 AInputHandler::~AInputHandler()
 {
 	if ( TInputInterface::GetSingleton() )
@@ -39,6 +41,7 @@ AInputHandler::~AInputHandler()
 	}
 }
 
+// $Barnyard: FUNCTION 00596620
 TBOOL AInputHandler::OnCreate()
 {
 	TIMPLEMENT();
@@ -58,6 +61,7 @@ TBOOL AInputHandler::OnCreate()
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 00596540
 TBOOL AInputHandler::OnUpdate( TFLOAT a_fDeltaTime )
 {
 	TIMPLEMENT();
@@ -69,6 +73,7 @@ TBOOL AInputHandler::OnUpdate( TFLOAT a_fDeltaTime )
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 00595ec0
 TBOOL AInputHandler::ProcessInputEvent( Toshi::TInputInterface* a_pInputInterface, Toshi::TInputInterface::InputEvent* a_pEvent )
 {
 	if ( m_bIsPaused )

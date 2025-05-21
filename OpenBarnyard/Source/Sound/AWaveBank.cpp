@@ -14,6 +14,7 @@
 
 TOSHI_NAMESPACE_USING
 
+// $Barnyard: FUNCTION 005dcd90
 AWaveBank::AWaveBank( const Toshi::TPString8& a_strBank, const Toshi::TPString8& a_strPath, TBOOL a_bSetFrequency )
 {
 	m_iNumWaves = 0;
@@ -28,6 +29,7 @@ AWaveBank::AWaveBank( const Toshi::TPString8& a_strBank, const Toshi::TPString8&
 	ASoundManager::ms_WaveBanks.Insert( a_strBank, this );
 }
 
+// $Barnyard: FUNCTION 005dc200
 AWaveSampleHandle AWaveBank::GetWaveSample( TINT a_iWaveIndex, TINT a_iUnused ) const
 {
 	TASSERT( a_iWaveIndex < m_iNumWaves );
@@ -38,6 +40,7 @@ void AWaveBank::ResetWave( TINT a_iWaveIndex )
 {
 }
 
+// $Barnyard: FUNCTION 005dce30
 AWaveBank::~AWaveBank()
 {
 	ASoundManager::ms_WaveBanks.Remove( m_strBank );
@@ -50,18 +53,21 @@ AWave* AWaveBank::GetWave( TINT a_iWaveIndex )
 	return &m_pWaves[ a_iWaveIndex ];
 }
 
+// $Barnyard: FUNCTION 005dc1a0
 TINT AWaveBank::GetWaveId( TINT a_iWaveIndex )
 {
 	TASSERT( a_iWaveIndex < m_iNumWaves );
 	return m_pWaves[ a_iWaveIndex ].iIndex;
 }
 
+// $Barnyard: FUNCTION 005dc1c0
 TINT AWaveBank::GetWaveFrequency( TINT a_iWaveIndex )
 {
 	TASSERT( a_iWaveIndex < m_iNumWaves );
 	return m_pWaves[ a_iWaveIndex ].iFrequency;
 }
 
+// $Barnyard: FUNCTION 005dc150
 AWaveSampleHandle AWaveBank::CreateWaveSample( TINT a_iWaveIndex, TINT a_iUnused )
 {
 	TASSERT( a_iWaveIndex < m_iNumWaves );
@@ -74,6 +80,7 @@ AWaveSampleHandle AWaveBank::CreateWaveSample( TINT a_iWaveIndex, TINT a_iUnused
 	return m_pWaves[ a_iWaveIndex ].pSampleHandle;
 }
 
+// $Barnyard: FUNCTION 005dc220
 void AWaveBank::SetWaveFlag1( TINT a_iWaveIndex )
 {
 	TASSERT( a_iWaveIndex < m_iNumWaves );
@@ -81,6 +88,7 @@ void AWaveBank::SetWaveFlag1( TINT a_iWaveIndex )
 	m_pWaves[ a_iWaveIndex ].iFlags |= 1;
 }
 
+// $Barnyard: FUNCTION 005dc240
 void AWaveBank::SetWaveFlag2( TINT a_iWaveIndex )
 {
 	TASSERT( a_iWaveIndex < m_iNumWaves );
@@ -88,6 +96,7 @@ void AWaveBank::SetWaveFlag2( TINT a_iWaveIndex )
 	m_pWaves[ a_iWaveIndex ].iFlags |= 2;
 }
 
+// $Barnyard: FUNCTION 005dc390
 void AWaveBank::ParseWavesData( const PBProperties* a_pBankProperties, TUINT a_uiForcedFlags )
 {
 	TVALIDPTR( a_pBankProperties );

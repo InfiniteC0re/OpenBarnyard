@@ -14,16 +14,19 @@ ALocaleManager::ALocaleManager()
 {
 }
 
+// $Barnyard: FUNCTION 00402730
 ALocaleManager::~ALocaleManager()
 {
 }
 
+// $Barnyard: FUNCTION 00402860
 const TCHAR* ALocaleManager::GetLanguageFilename( Lang a_eLang )
 {
 	TASSERT( a_eLang >= 0 && a_eLang < Lang_NUMOF );
 	return s_pLangDataFileNames[ a_eLang ];
 }
 
+// $Barnyard: FUNCTION 00402850
 const TCHAR* ALocaleManager::GetCurrentLanguageName()
 {
 	return GetLanguageName( m_LangId );
@@ -40,6 +43,7 @@ const TCHAR* ALocaleManager::GetVOLocaleDir( Lang a_eLang )
 	}
 }
 
+// $Barnyard: FUNCTION 004027e0
 const TCHAR* ALocaleManager::GetLanguageName( Lang a_eLang )
 {
 	switch ( a_eLang )

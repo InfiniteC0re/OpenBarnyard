@@ -9,6 +9,7 @@
 //-----------------------------------------------------------------------------
 #include <Core/TMemoryDebugOn.h>
 
+// $Barnyard: FUNCTION 005ed550
 void ATerrainVIS::LoadSkeleton()
 {
 	auto pTerrain         = ATerrainInterface::GetSingleton();

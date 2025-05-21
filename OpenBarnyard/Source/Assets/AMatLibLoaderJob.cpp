@@ -10,12 +10,14 @@
 
 TOSHI_NAMESPACE_USING
 
+// $Barnyard: FUNCTION 00606970
 void AMatLibLoaderJob::BeginJob()
 {
 	ATRBLoaderJob::InitJob( m_pTRB, m_FileName );
 	ATRBLoaderJob::BeginJob();
 }
 
+// $Barnyard: FUNCTION 006069a0
 TBOOL AMatLibLoaderJob::RunJob()
 {
 	TPROFILER_SCOPE();
@@ -45,6 +47,7 @@ TBOOL AMatLibLoaderJob::CancelJob()
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 00606660
 void AMatLibLoaderJob::InitJob( const TCHAR* a_szFileName, Toshi::TTRB* a_pTRB, AMaterialLibrary*& a_rpOutMatLib, Toshi::TMemory::MemBlock* a_pMemBlock )
 {
 	m_FileName    = a_szFileName;

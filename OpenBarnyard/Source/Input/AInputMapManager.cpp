@@ -12,6 +12,7 @@ TOSHI_NAMESPACE_USING
 
 TDEFINE_CLASS( AInputMapManager );
 
+// $Barnyard: FUNCTION 0059c840
 AInputMapManager::AInputMapManager()
     : m_pActiveInputMap( TNULL ), m_iNumPushedInputMaps( 0 ), m_oDoodadToNameMap( AMemory::GetAllocator( AMemory::POOL_Misc ) ), m_oKeyMap( AMemory::GetAllocator( AMemory::POOL_Misc ) ), m_oCommandMap( AMemory::GetAllocator( AMemory::POOL_Misc ) ), m_UnkMap( AMemory::GetAllocator( AMemory::POOL_Misc ) )
 {
@@ -21,6 +22,7 @@ AInputMapManager::AInputMapManager()
 	InitCommandMap();
 }
 
+// $Barnyard: FUNCTION 00597140
 TBOOL AInputMapManager::ReadControlsData()
 {
 	TString8 controlsFilePath;
@@ -58,6 +60,7 @@ TBOOL AInputMapManager::ReadControlsData()
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 00596e00
 void AInputMapManager::PushInputMap( AInputMap* a_pInputMap )
 {
 	TASSERT( m_iNumPushedInputMaps < MAX_NUM_INPUT_MAPS );
@@ -71,6 +74,7 @@ void AInputMapManager::PushInputMap( AInputMap* a_pInputMap )
 	m_pActiveInputMap = a_pInputMap;
 }
 
+// $Barnyard: FUNCTION 00596e40
 AInputMap* AInputMapManager::PopInputMap()
 {
 	TASSERT( m_iNumPushedInputMaps > 0 );
@@ -80,6 +84,7 @@ AInputMap* AInputMapManager::PopInputMap()
 	return m_apPushedInputMaps[ m_iNumPushedInputMaps - 1 ];
 }
 
+// $Barnyard: FUNCTION 00596ee0
 AInputMap* AInputMapManager::FindMap( const Toshi::TPString8& a_rMapName )
 {
 	for ( auto it = m_InputMaps.Begin(); it != m_InputMaps.End(); it++ )
@@ -93,6 +98,7 @@ AInputMap* AInputMapManager::FindMap( const Toshi::TPString8& a_rMapName )
 	return TNULL;
 }
 
+// $Barnyard: FUNCTION 00596f50
 TBOOL AInputMapManager::SetMap( const Toshi::TPString8& a_rMapName )
 {
 	auto pMap = FindMap( a_rMapName );
@@ -102,6 +108,7 @@ TBOOL AInputMapManager::SetMap( const Toshi::TPString8& a_rMapName )
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 00597790
 void AInputMapManager::GetEventCommands( const Toshi::TInputInterface::InputEvent* a_pEvent, AInputCommandArray& a_rCommandArray )
 {
 	a_rCommandArray.Clear();
@@ -142,6 +149,7 @@ void AInputMapManager::GetEventCommands( const Toshi::TInputInterface::InputEven
 	}
 }
 
+// $Barnyard: FUNCTION 00597670
 AInputCommand AInputMapManager::GetCommandCode( const Toshi::TPString8& a_rCommandName )
 {
 	for ( auto it = m_oCommandMap.Begin(); it != m_oCommandMap.End(); it++ )
@@ -155,6 +163,7 @@ AInputCommand AInputMapManager::GetCommandCode( const Toshi::TPString8& a_rComma
 	return AInputCommand_Unknown;
 }
 
+// $Barnyard: FUNCTION 00597700
 Toshi::TInputDevice::Doodad AInputMapManager::GetDoodadFromKey( const Toshi::TPString8& a_rKey )
 {
 	for ( auto it = m_oDoodadToNameMap.Begin(); it != m_oDoodadToNameMap.End(); it++ )
@@ -168,6 +177,7 @@ Toshi::TInputDevice::Doodad AInputMapManager::GetDoodadFromKey( const Toshi::TPS
 	return -1;
 }
 
+// $Barnyard: FUNCTION 0059c220
 void AInputMapManager::InitMouseDoodads()
 {
 	BindDoodad( 0x30001, TPString8( "Button1" ), 0x582 );
@@ -184,6 +194,7 @@ void AInputMapManager::InitMouseDoodads()
 	BindDoodad( 0x3000C, TPString8( "Wheel Axis" ), 0x58D );
 }
 
+// $Barnyard: FUNCTION 0059af20
 void AInputMapManager::InitKeyboardDoodads()
 {
 	BindDoodad( 0x20001, TPString8( "Virtual Stick" ), 0x506 );
@@ -312,6 +323,7 @@ void AInputMapManager::InitKeyboardDoodads()
 	BindDoodad( 0x2007f, TPString8( "Sleep" ), 0x581 );
 }
 
+// $Barnyard: FUNCTION 0059c410
 void AInputMapManager::InitGamepadDoodads()
 {
 	BindDoodad( 0x10001, TPString8( "DPadUp" ), 0x58e );
@@ -343,6 +355,7 @@ void AInputMapManager::InitGamepadDoodads()
 	BindDoodad( 0x1001a, TPString8( "Right Stick" ), 0x5a7 );
 }
 
+// $Barnyard: FUNCTION 00597d40
 void AInputMapManager::InitCommandMap()
 {
 #define ADD_COMMAND( NAME, UNK, EVENT_TYPE )             m_oCommandMap.Insert( AInputCommand_##NAME, { TPString8( #NAME ), UNK, EVENT_TYPE } )
@@ -432,6 +445,7 @@ void AInputMapManager::InitCommandMap()
 	ADD_COMMAND_EX( AInputCommand_CUSTOM_COMMAND, "CUSTOM COMMAND", -1, 0 );
 }
 
+// $Barnyard: FUNCTION 0059ad40
 void AInputMapManager::BindDoodad( Toshi::TInputDevice::Doodad a_iDoodad, const Toshi::TPString8& a_ButtonName, ActionId a_uiAction )
 {
 	m_oDoodadToNameMap.Insert( a_iDoodad, a_ButtonName );

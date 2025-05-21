@@ -21,6 +21,7 @@ ASkinMaterialHAL::ASkinMaterialHAL()
 {
 }
 
+// $Barnyard: FUNCTION 005f3510
 ASkinMaterialHAL::~ASkinMaterialHAL()
 {
 	if ( TNULL != m_pRegMaterial )
@@ -34,6 +35,7 @@ ASkinMaterialHAL::~ASkinMaterialHAL()
 	}
 }
 
+// $Barnyard: FUNCTION 005f3ab0
 void ASkinMaterialHAL::OnDestroy()
 {
 	if ( m_pAssignedOrderTable )
@@ -45,6 +47,7 @@ void ASkinMaterialHAL::OnDestroy()
 	BaseClass::OnDestroy();
 }
 
+// $Barnyard: FUNCTION 005f3ba0
 void ASkinMaterialHAL::PreRender()
 {
 	auto pRender    = TRenderD3DInterface::Interface();
@@ -142,6 +145,7 @@ void ASkinMaterialHAL::PreRender()
 		pRenderContext->EnableFogHAL();
 }
 
+// $Barnyard: FUNCTION 005f3e30
 void ASkinMaterialHAL::PostRender()
 {
 	auto pRender    = TRenderD3DInterface::Interface();
@@ -172,6 +176,7 @@ TBOOL ASkinMaterialHAL::Create( BLENDMODE a_eBlendMode )
 	return BaseClass::Create( a_eBlendMode );
 }
 
+// $Barnyard: FUNCTION 005f3ae0
 void ASkinMaterialHAL::SetBlendMode( BLENDMODE a_eBlendMode )
 {
 	auto pShader = TDYNAMICCAST( ASkinShaderHAL, GetShader() );
@@ -201,6 +206,7 @@ void ASkinMaterialHAL::SetBlendMode( BLENDMODE a_eBlendMode )
 	BaseClass::SetBlendMode( a_eBlendMode );
 }
 
+// $Barnyard: FUNCTION 005f35b0
 void ASkinMaterialHAL::CopyToAlphaBlendMaterial()
 {
 	if ( TNULL != m_pAlphaBlendMaterial )
@@ -216,6 +222,7 @@ void ASkinMaterialHAL::CopyToAlphaBlendMaterial()
 	}
 }
 
+// $Barnyard: FUNCTION 005f3600
 void ASkinMaterialHAL::SetOrderTable( Toshi::TOrderTable* a_pOrderTable )
 {
 	if ( a_pOrderTable != m_pAssignedOrderTable )

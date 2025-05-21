@@ -46,6 +46,7 @@ void TUtil::LogInitialise()
 #endif // TOSHI_NO_LOGS
 }
 
+// $Barnyard: FUNCTION 006bb560
 void TUtil::CreateTPStringPool()
 {
 	TASSERT( ms_poStringPool == TNULL );
@@ -53,6 +54,7 @@ void TUtil::CreateTPStringPool()
 	*ms_poStringPool = TNULL;
 }
 
+// $Barnyard: FUNCTION 006bb620
 void TUtil::DestroyTPStringPool()
 {
 	if ( ms_poStringPool )
@@ -146,6 +148,7 @@ TUtil::TUtil()
 	m_pCurrentLogFile = TNULL;
 }
 
+// $Barnyard: FUNCTION 006bff30
 TBOOL TUtil::ToshiCreate( const TOSHIParams& a_rToshiParams )
 {
 	ms_oToshiParams = a_rToshiParams;
@@ -159,11 +162,13 @@ TBOOL TUtil::ToshiCreate( const TOSHIParams& a_rToshiParams )
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 006c7fe0
 void TUtil::CreateKernelInterface()
 {
 	TKernelInterface::CreateSingleton();
 }
 
+// $Barnyard: FUNCTION 004042c0
 void TUtil::ToshiDestroy()
 {
 	TIMPLEMENT();
@@ -172,12 +177,14 @@ void TUtil::ToshiDestroy()
 	TModelManager::Uninitialise();
 }
 
+// $Barnyard: FUNCTION 006bfee0
 void TUtil::Create()
 {
 	TUtil::CreateSingleton()->LogInitialise();
 	TUtil::CRCInitialise();
 }
 
+// $Barnyard: FUNCTION 006bfd80
 // Source: https://lentz.com.au/blog/tag/crc-table-generator
 void TUtil::CRCInitialise()
 {
@@ -197,6 +204,7 @@ void TUtil::CRCInitialise()
 	}
 }
 
+// $Barnyard: FUNCTION 006bfe10
 // Source: https://lentz.com.au/blog/tag/crc-table-generator
 TUINT32 TUtil::CRC32( void* buffer, TUINT32 len )
 {

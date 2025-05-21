@@ -56,12 +56,14 @@ public:
 
 	void Get( TPooledString8*& a_pOutString, const TCHAR* a_szString, bool* a_pWasInPool = TNULL );
 
+	// $Barnyard: FUNCTION 006bc320
 	void Remove( TPooledString8* a_pString )
 	{
 		TASSERT( a_pString->GetRefCount() == 0 );
 		m_oMap.Remove( a_pString->GetString8() );
 	}
 
+	// $Barnyard: FUNCTION 006c1a60
 	void InitialiseStatic()
 	{
 		TIMPLEMENT();
@@ -159,6 +161,7 @@ public:
 		a_rOther.m_pPtr = TNULL;
 	}
 
+	// $Barnyard: FUNCTION 00612820
 	TFORCEINLINE ~TPString8()
 	{
 		Decrement();

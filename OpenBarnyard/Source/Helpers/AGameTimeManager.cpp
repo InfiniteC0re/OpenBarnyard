@@ -9,6 +9,7 @@
 
 TOSHI_NAMESPACE_USING
 
+// $Barnyard: FUNCTION 005469a0
 AGameTimeManager::AGameTimeManager()
 {
 }

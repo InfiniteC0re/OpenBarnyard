@@ -10,6 +10,7 @@ public:
 	TDECLARE_CLASS( ARandom, Toshi::TObject );
 
 public:
+	// $Barnyard: FUNCTION 004029d0
 	ARandom()
 	{
 	}

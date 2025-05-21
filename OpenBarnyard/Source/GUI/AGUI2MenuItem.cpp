@@ -9,6 +9,7 @@
 
 TOSHI_NAMESPACE_USING
 
+// $Barnyard: FUNCTION 0063ff60
 AGUI2MenuItem::AGUI2MenuItem()
 {
 	m_pNextMenuItem = this;
@@ -16,10 +17,12 @@ AGUI2MenuItem::AGUI2MenuItem()
 	m_bEnabled      = TTRUE;
 }
 
+// $Barnyard: FUNCTION 0063ff90
 AGUI2MenuItem::~AGUI2MenuItem()
 {
 }
 
+// $Barnyard: FUNCTION 0063cb00
 void AGUI2MenuItem::SetAlpha( TFLOAT a_fAlpha )
 {
 	for ( AGUI2Element* it = ChildRBegin(); it != TNULL; it = GetPrevChild( it ) )
@@ -42,6 +45,7 @@ void AGUI2MenuItem::OnUpdate( TFLOAT a_fDeltaTime )
 {
 }
 
+// $Barnyard: FUNCTION 0063ffa0
 AGUI2MenuItem::COMMANDRESULT AGUI2MenuItem::OnInputCommand( AGUI2Menu::ACTIONFLAGS& a_rActionFlags )
 {
 	if ( a_rActionFlags & AGUI2Menu::ACTIONFLAGS_CANCEL )
@@ -50,6 +54,7 @@ AGUI2MenuItem::COMMANDRESULT AGUI2MenuItem::OnInputCommand( AGUI2Menu::ACTIONFLA
 	return ( a_rActionFlags & AGUI2Menu::ACTIONFLAGS_OK ) ? COMMANDRESULT_OK : COMMANDRESULT_NONE;
 }
 
+// $Barnyard: FUNCTION 0063ff80
 void AGUI2MenuItem::SetEnabled( TBOOL a_bEnabled )
 {
 	m_bEnabled = a_bEnabled;
@@ -65,6 +70,7 @@ TFLOAT AGUI2MenuItem::GetFlowOffset()
 	return 0.0f;
 }
 
+// $Barnyard: FUNCTION 0063ffc0
 void AGUI2MenuItem::LinkMenuItemBefore( AGUI2MenuItem& a_rLinkAfter )
 {
 	m_pPrevMenuItem                  = &a_rLinkAfter;

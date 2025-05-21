@@ -19,6 +19,7 @@ ASysMeshHAL::ASysMeshHAL()
 	m_iZBias = 0;
 }
 
+// $Barnyard: FUNCTION 005f1430
 TBOOL ASysMeshHAL::Render()
 {
 	if ( ms_bStopRendering == FALSE )
@@ -33,6 +34,7 @@ TBOOL ASysMeshHAL::Render()
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 005f0e00
 void ASysMeshHAL::SetZBias( TINT a_iZBias )
 {
 	m_iZBias = a_iZBias;

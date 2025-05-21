@@ -11,6 +11,7 @@
 
 TOSHI_NAMESPACE_USING
 
+// $Barnyard: FUNCTION 006d58a0
 AWorldVis::AWorldVis()
 {
 	m_pWorld            = TNULL;
@@ -20,6 +21,7 @@ AWorldVis::AWorldVis()
 	m_pfnRenderCallback = TNULL;
 }
 
+// $Barnyard: FUNCTION 006d55f0
 AWorldVis::~AWorldVis()
 {
 	Reset();
@@ -31,6 +33,7 @@ AWorldVis::~AWorldVis()
 	}
 }
 
+// $Barnyard: FUNCTION 006d4f60
 void AWorldVis::Create( World* a_pWorld )
 {
 	m_pWorld     = a_pWorld;
@@ -38,6 +41,7 @@ void AWorldVis::Create( World* a_pWorld )
 	Reset();
 }
 
+// $Barnyard: FUNCTION 006d4d90
 void AWorldVis::Reset()
 {
 	for ( TINT i = 0; i < m_iNumBuiltCells; i++ )
@@ -134,6 +138,7 @@ static void CreatePortalFrustum( Frustum& a_rFrustum, CullBox& a_rCullBox, TMatr
 	a_rFrustum.aFrustumPlanes[ 5 ].uiClipFlag = 32;
 }
 
+// $Barnyard: FUNCTION 006d56b0
 void AWorldVis::Render( const Toshi::TMatrix44& a_rModelView )
 {
 	TPROFILER_SCOPE();
@@ -179,6 +184,7 @@ void AWorldVis::Render( const Toshi::TMatrix44& a_rModelView )
 	}
 }
 
+// $Barnyard: FUNCTION 006d5400
 void AWorldVis::RenderTreeIntersectNonRecurse( CellSphereTreeBranchNode* a_pNode, RenderData* a_pRenderData )
 {
 	auto pRightNode = a_pNode->m_pRight;
@@ -282,6 +288,7 @@ void AWorldVis::RenderTreeIntersectNonRecurse( CellSphereTreeBranchNode* a_pNode
 	}
 }
 
+// $Barnyard: FUNCTION 006d5360
 void AWorldVis::RenderLeafNodeIntersect( CellSphereTreeBranchNode* a_pNode, RenderData* a_pRenderData )
 {
 	// Use this to restore active planes after reduce intersect

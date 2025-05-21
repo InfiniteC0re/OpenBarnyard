@@ -25,6 +25,7 @@ ASysMaterialHAL::ASysMaterialHAL()
 	m_Unk3                = 0;
 }
 
+// $Barnyard: FUNCTION 005f0b60
 ASysMaterialHAL::~ASysMaterialHAL()
 {
 	auto pRegMat = GetRegMaterial();
@@ -35,6 +36,7 @@ ASysMaterialHAL::~ASysMaterialHAL()
 	}
 }
 
+// $Barnyard: FUNCTION 005f0bc0
 void ASysMaterialHAL::SetOrderTable( Toshi::TOrderTable* a_pOrderTable )
 {
 	if ( a_pOrderTable != m_pAssignedOrderTable )
@@ -53,6 +55,7 @@ void ASysMaterialHAL::SetOrderTable( Toshi::TOrderTable* a_pOrderTable )
 	}
 }
 
+// $Barnyard: FUNCTION 005f1210
 TBOOL ASysMaterialHAL::Create( BLENDMODE a_eBlendMode )
 {
 	// This is a bug in the original code
@@ -63,6 +66,7 @@ TBOOL ASysMaterialHAL::Create( BLENDMODE a_eBlendMode )
 	return TMaterial::Create();
 }
 
+// $Barnyard: FUNCTION 005f1310
 void ASysMaterialHAL::SetBlendMode( BLENDMODE a_eBlendMode )
 {
 	TASSERT( a_eBlendMode >= BLENDMODE_DEFAULT && a_eBlendMode < BLENDMODE_NUMOF );
@@ -95,6 +99,7 @@ void ASysMaterialHAL::SetBlendMode( BLENDMODE a_eBlendMode )
 	ASysMaterial::SetBlendMode( a_eBlendMode );
 }
 
+// $Barnyard: FUNCTION 005f0bf0
 void ASysMaterialHAL::PreRender()
 {
 	auto pDevice = TRenderD3DInterface::Interface()->GetDirect3DDevice();
@@ -160,6 +165,7 @@ void ASysMaterialHAL::PreRender()
 	}
 }
 
+// $Barnyard: FUNCTION 005f0d90
 void ASysMaterialHAL::PostRender()
 {
 	auto pDevice = TRenderD3DInterface::Interface()->GetDirect3DDevice();

@@ -48,6 +48,7 @@ public:
 	void SetVisible() { m_bIsVisible = TTRUE; }
 	void SetHidden() { m_bIsVisible = TFALSE; }
 
+	// $Barnyard: FUNCTION 0059e080
 	const Toshi::TPString8& GetName() const { return m_Name; }
 
 protected:

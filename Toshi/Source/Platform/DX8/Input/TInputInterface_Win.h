@@ -17,6 +17,7 @@ public:
 		m_bExclusive     = TTRUE;
 	}
 
+	// $Barnyard: FUNCTION 006d7430
 	virtual ~TInputDXInterface() override
 	{
 		ReleaseAllDevices();

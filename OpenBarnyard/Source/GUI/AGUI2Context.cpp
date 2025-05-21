@@ -8,6 +8,7 @@
 //-----------------------------------------------------------------------------
 #include <Core/TMemoryDebugOn.h>
 
+// $Barnyard: FUNCTION 006c4700
 AGUI2Context::AGUI2Context()
 {
 	m_pRenderer           = TNULL;
@@ -34,6 +35,7 @@ AGUI2Context::AGUI2Context()
 	m_pRootElement = m_pCreatedRootElement;
 }
 
+// $Barnyard: FUNCTION 006c47f0
 void AGUI2Context::Tick( TFLOAT a_fDeltaTime )
 {
 	if ( m_pRootElement )
@@ -44,6 +46,7 @@ void AGUI2Context::Tick( TFLOAT a_fDeltaTime )
 	m_pDebugCanvas->Tick( a_fDeltaTime );
 }
 
+// $Barnyard: FUNCTION 006c4820
 void AGUI2Context::Render()
 {
 	if ( m_pRootElement )

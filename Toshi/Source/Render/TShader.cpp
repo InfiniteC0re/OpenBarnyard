@@ -11,6 +11,7 @@ TOSHI_NAMESPACE_START
 
 TDEFINE_CLASS_NORUNTIME( TShader );
 
+// $Barnyard: FUNCTION 006ccbb0
 TShader::TShader()
 {
 	m_State = State_None;
@@ -22,6 +23,7 @@ TShader::~TShader()
 	sm_oShaderList.RemoveShader( this );
 }
 
+// $Barnyard: FUNCTION 006ccc30
 void TShader::OnDestroy()
 {
 	m_State &= ~State_Created;
@@ -31,18 +33,21 @@ void TShader::Flush()
 {
 }
 
+// $Barnyard: FUNCTION 006ccc20
 TBOOL TShader::Create()
 {
 	m_State |= State_Created;
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 006ccc40
 TBOOL TShader::Validate()
 {
 	m_State |= State_Validated;
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 006ccc50
 void TShader::Invalidate()
 {
 	m_State &= ~State_Validated;

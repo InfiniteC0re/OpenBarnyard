@@ -162,6 +162,7 @@ public:
 	}
 
 #ifdef __TOSHI_TPSTRING8_H__
+	// $Barnyard: FUNCTION 006b2450
 	Toshi::TPString8 GetTPString8() const
 	{
 		TASSERT( m_eType == Type::String );
@@ -881,6 +882,7 @@ public:
 		return GetPropertyByIndex( a_iIndex )->GetValue();
 	}
 
+	// $Barnyard: FUNCTION 006b1ee0
 	const PBPropertyValue* GetProperty( const TCHAR* a_szName ) const
 	{
 		for ( TSIZE i = 0; i < m_iCount; i++ )

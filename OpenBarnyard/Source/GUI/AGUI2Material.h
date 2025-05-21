@@ -9,6 +9,7 @@ public:
 	friend class AGUI2RendererDX8;
 
 public:
+	// $Barnyard: FUNCTION 0064e450
 	AGUI2Material()
 	{
 		m_iNumTex          = 1;

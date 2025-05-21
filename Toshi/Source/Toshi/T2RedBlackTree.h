@@ -50,6 +50,7 @@ protected:
 class T2GenericRedBlackTree
 {
 protected:
+	// $Barnyard: FUNCTION 006cefc0
 	T2GenericRedBlackTree( T2Allocator* pAllocator )
 	    : m_oRoot( ms_oNil )
 	{

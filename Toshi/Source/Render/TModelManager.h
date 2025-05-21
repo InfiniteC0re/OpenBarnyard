@@ -87,6 +87,7 @@ public:
 	TBOOL         Create( const TCHAR* a_szFileName, TTRB* a_pTRB );
 	TSceneObject* CreateSceneObject();
 
+	// $Barnyard: FUNCTION 006c1ae0
 	void SetModel( TModel* a_pModel ) { m_pModel = a_pModel; }
 
 	TModel*                   GetModel() const { return m_pModel; }

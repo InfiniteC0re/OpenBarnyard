@@ -17,14 +17,17 @@ TOSHI_NAMESPACE_USING
 
 TDEFINE_CLASS( AOptionsState );
 
+// $Barnyard: FUNCTION 00444ef0
 AOptionsState::AOptionsState()
 {
 }
 
+// $Barnyard: FUNCTION 00444f50
 AOptionsState::~AOptionsState()
 {
 }
 
+// $Barnyard: FUNCTION 00407aa0
 TBOOL AOptionsState::ProcessCommand( AInputCommand a_eInputCommand, const Toshi::TInputInterface::InputEvent* a_pInputEvent, TBOOL& a_rStopEvents )
 {
 	if ( m_eMenuState == MENUSTATE_MENU_VISIBLE && a_eInputCommand == AInputCommand_Cancel )
@@ -40,6 +43,7 @@ TBOOL AOptionsState::OnUpdate( TFLOAT a_fDeltaTime )
 
 TPSTRING8_DECLARE( DialogInputMap );
 
+// $Barnyard: FUNCTION 00444fc0
 void AOptionsState::OnInsertion()
 {
 	SetInputMap( TPS8( DialogInputMap ) );
@@ -67,6 +71,7 @@ void AOptionsState::OnInsertion()
 	BaseClass::OnInsertion();
 }
 
+// $Barnyard: FUNCTION 004450f0
 void AOptionsState::OnRemoval()
 {
 	for ( TINT i = 0; i < OPTIONSBUTTON_NUMOF; i++ )
@@ -77,12 +82,14 @@ void AOptionsState::OnRemoval()
 	BaseClass::OnRemoval();
 }
 
+// $Barnyard: FUNCTION 00445130
 void AOptionsState::OnActivate()
 {
 	m_iActivatedButtonID = -1;
 	BaseClass::OnActivate();
 }
 
+// $Barnyard: FUNCTION 00445150
 void AOptionsState::OnMenuItemActivated( AGUI2MenuItem& a_rMenuItem )
 {
 	AGUI2Button* pButton = TSTATICCAST( AGUI2Button, &a_rMenuItem );
@@ -91,6 +98,7 @@ void AOptionsState::OnMenuItemActivated( AGUI2MenuItem& a_rMenuItem )
 	ABYardMenuState::OnButtonActivated( pButton );
 }
 
+// $Barnyard: FUNCTION 00445190
 void AOptionsState::OnMenuClose()
 {
 	TIMPLEMENT();

@@ -20,6 +20,7 @@ AGrassMeshHAL::AGrassMeshHAL()
 	
 }
 
+// $Barnyard: FUNCTION 005f8840
 AGrassMeshHAL::~AGrassMeshHAL()
 {
 }
@@ -42,6 +43,7 @@ void AGrassMeshHAL::SetUnknown( void* a_pUnk )
 	m_pUnk1 = a_pUnk;
 }
 
+// $Barnyard: FUNCTION 005f80a0
 void AGrassMeshHAL::CreateHAL( TUINT32 a_eFlags, TUINT16 a_uiMaxVertices, CellMeshSphere* a_pCellMeshSphere )
 {
 	m_pCellMeshSphere = a_pCellMeshSphere;

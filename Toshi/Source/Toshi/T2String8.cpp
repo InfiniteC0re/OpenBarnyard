@@ -174,6 +174,7 @@ void T2String8::IntToString( TINT value, TCHAR* dst, TINT unused, TINT radix )
 	_itoa( value, dst, radix );
 }
 
+// $Barnyard: FUNCTION 006bb2a0
 TINT T2String8::StringToInt( const TCHAR* src )
 {
 	return atoi( src );

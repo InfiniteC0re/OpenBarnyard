@@ -25,7 +25,8 @@ public:
 	void       SetMaterial( TMaterial* pMaterial ) { m_pMaterial = pMaterial; }
 
 	TMatrix44& GetModelViewMatrix() { return m_oModelView; }
-	void       SetModelViewMatrix( TMatrix44& a_rMatrix44 ) { m_oModelView = a_rMatrix44; }
+	// $Barnyard: FUNCTION 006d58c0
+	void SetModelViewMatrix( TMatrix44& a_rMatrix44 ) { m_oModelView = a_rMatrix44; }
 
 	void            SetAmbientColour( const TVector3& a_rColour ) { m_oAmbientColour = a_rColour; }
 	const TVector3& GetAmbientColour() const { return m_oAmbientColour; }

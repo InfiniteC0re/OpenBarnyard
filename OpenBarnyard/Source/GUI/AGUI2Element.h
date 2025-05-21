@@ -21,11 +21,13 @@ public:
 		m_pPrev = this;
 	}
 
+	// $Barnyard: FUNCTION 006c2c40
 	virtual ~AGUI2ElementNode()
 	{
 		Unlink();
 	}
 
+	// $Barnyard: FUNCTION 006c2240
 	void Unlink()
 	{
 		m_pNext->m_pPrev = m_pPrev;
@@ -118,6 +120,7 @@ public:
 		m_eFlags &= ~1;
 	}
 
+	// $Barnyard: FUNCTION 006c3ad0
 	void SetInFront()
 	{
 		m_eFlags |= 16;
@@ -128,11 +131,13 @@ public:
 		m_eFlags |= 8;
 	}
 
+	// $Barnyard: FUNCTION 006c2ab0
 	TBOOL HasFlags( TUINT32 a_uiFlags ) const
 	{
 		return ( m_eFlags & a_uiFlags ) == m_eFlags;
 	}
 
+	// $Barnyard: FUNCTION 00406c80
 	TBOOL IsVisible() const
 	{
 		return ( m_eFlags & 1 ) && ( m_uiVisibilityMask & s_uiVisibilityMask ) != 0;
@@ -158,6 +163,7 @@ public:
 		return ( ( m_uiColour & 0xFF000000 ) >> 24 ) * ( 1.0f / 255.0f );
 	}
 
+	// $Barnyard: FUNCTION 006c2c00
 	void AddChildTail( AGUI2Element& a_rElement )
 	{
 		a_rElement.Unlink();
@@ -165,6 +171,7 @@ public:
 		a_rElement.LinkBefore( m_Children );
 	}
 
+	// $Barnyard: FUNCTION 006c2bc0
 	void AddChildHead( AGUI2Element& a_rElement )
 	{
 		a_rElement.Unlink();
@@ -182,6 +189,7 @@ public:
 		m_oTransform.SetTranslation( a_rTranslation );
 	}
 
+	// $Barnyard: FUNCTION 006c2590
 	void SetTransform( TFLOAT a_fX, TFLOAT a_fY, float a_fRotAngle = 0.0f )
 	{
 		m_oTransform = AGUI2Transform();
@@ -205,6 +213,7 @@ public:
 		m_ePivot  = a_ePivot;
 	}
 
+	// $Barnyard: FUNCTION 006c2b00
 	t_PostRender SetPostRenderCallback( t_PostRender a_cbNewCallback )
 	{
 		return std::exchange( m_cbPostRender, a_cbNewCallback );
@@ -221,6 +230,7 @@ public:
 		return ( m_Children.IsLinked() ) ? (AGUI2Element*)m_Children.GetNext() : TNULL;
 	}
 
+	// $Barnyard: FUNCTION 006c2280
 	// Returns last children or TNULL
 	AGUI2Element* ChildRBegin() const
 	{
@@ -251,6 +261,7 @@ public:
 		m_pParent = TNULL;
 	}
 
+	// $Barnyard: FUNCTION 006c2260
 	void LinkChildBefore( AGUI2Element& a_rNewChildren, AGUI2Element& a_rInsertAfter )
 	{
 		a_rNewChildren.LinkBefore( a_rInsertAfter );

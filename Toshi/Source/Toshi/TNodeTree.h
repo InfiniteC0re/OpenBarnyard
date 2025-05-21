@@ -56,6 +56,7 @@ public:
 		TASSERT( IsLinked() == TFALSE );
 	}
 
+	// $Barnyard: FUNCTION 00403980
 	/**
 		* Inserts node as a child of another node.
 		* 
@@ -105,6 +106,7 @@ public:
 		Insert( GetRoot(), sourceNode );
 	}
 
+	// $Barnyard: FUNCTION 004030d0
 	/**
 		 * Tries to remove sourceNode from the tree and inserts it to the parentNode or to the root
 		 */

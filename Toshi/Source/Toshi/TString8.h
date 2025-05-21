@@ -27,6 +27,7 @@ public:
 	TString8( const TString16& src, T2Allocator* allocator = TNULL );
 	TString8( const TCHAR* src, T2Allocator* allocator = TNULL );
 	TString8( TINT size, T2Allocator* allocator = TNULL );
+	// $Barnyard: FUNCTION 006bd140
 	~TString8() { FreeBuffer(); }
 
 	void Copy( const TString8& src, TINT size = -1 ) { Copy( src.m_pBuffer, size ); }
@@ -84,6 +85,7 @@ public:
 		return *this;
 	}
 
+	// $Barnyard: FUNCTION 006bcfc0
 	TString8& MakeLower()
 	{
 		_strlwr( m_pBuffer );
@@ -178,6 +180,7 @@ public:
 private:
 	typedef T2Allocator* ( *func_DefaultAllocatorCB )();
 
+	// $Barnyard: FUNCTION 006bd700
 	void Reset()
 	{
 		m_pBuffer    = NullString;

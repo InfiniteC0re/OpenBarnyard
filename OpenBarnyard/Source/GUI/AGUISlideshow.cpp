@@ -12,6 +12,7 @@
 
 TDEFINE_CLASS( AGUISlideshow );
 
+// $Barnyard: FUNCTION 0059dd30
 AGUISlideshow::AGUISlideshow()
     : m_Images( Toshi::GetGlobalAllocator(), 64, 64 )
 {
@@ -56,6 +57,7 @@ void AGUISlideshow::LocaliseBackgroundFileName( Toshi::TPString8& a_rOutName, co
 	a_rOutName = Toshi::TPString8( a_szName );
 }
 
+// $Barnyard: FUNCTION 0059db90
 void AGUISlideshow::Activate()
 {
 	TASSERT( m_Images.Size() > 0 );
@@ -82,6 +84,7 @@ void AGUISlideshow::Activate()
 	m_bIsActive = TTRUE;
 }
 
+// $Barnyard: FUNCTION 0059d8f0
 void AGUISlideshow::UpdateFadeOverlay()
 {
 	TFLOAT fOpacity;
@@ -132,6 +135,7 @@ void AGUISlideshow::UpdateFadeOverlay()
 	m_FadeOverlay.Show();
 }
 
+// $Barnyard: FUNCTION 0059dc60
 void AGUISlideshow::Update( TFLOAT a_fDeltaTime )
 {
 	if ( m_bIsActive && !IsSlideshowOver() )
@@ -158,6 +162,7 @@ void AGUISlideshow::Update( TFLOAT a_fDeltaTime )
 	m_FadeOverlay.Unlink();
 }
 
+// $Barnyard: FUNCTION 0059d720
 TBOOL AGUISlideshow::IsSlideshowOver()
 {
 	if ( !HASANYFLAG( m_eFlags, Flags_Repeat ) )
@@ -173,6 +178,7 @@ TBOOL AGUISlideshow::IsSlideshowOver()
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 0059d810
 void AGUISlideshow::SwitchToNextSlide( TBOOL a_bUnused )
 {
 	if ( m_ImageIterator.IsValid() )
@@ -193,6 +199,7 @@ void AGUISlideshow::SwitchToNextSlide( TBOOL a_bUnused )
 	AGUISystem::GetSingleton()->SetPicture( pictureName );
 }
 
+// $Barnyard: FUNCTION 0059d790
 void AGUISlideshow::Deactivate()
 {
 	TASSERT( TTRUE == m_bIsActive );
@@ -202,6 +209,7 @@ void AGUISlideshow::Deactivate()
 	m_eFlags |= Flags_Ended;
 }
 
+// $Barnyard: FUNCTION 0059d640
 TBOOL AGUISlideshow::Setup( AGameState::HUDParams* a_pHUDParams, const Params& a_rParams, TBOOL a_bShouldLocalise )
 {
 	if ( m_pHUDParams )
@@ -268,6 +276,7 @@ TBOOL AGUISlideshow::Setup( AGameState::HUDParams* a_pHUDParams, const Params& a
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 0059dac0
 TBOOL AGUISlideshow::ProcessInput( const Toshi::TInputInterface::InputEvent* a_pEvent )
 {
 	if ( a_pEvent->GetEventType() == Toshi::TInputInterface::EVENT_TYPE_GONE_DOWN )
@@ -289,6 +298,7 @@ TBOOL AGUISlideshow::ProcessInput( const Toshi::TInputInterface::InputEvent* a_p
 	return TFALSE;
 }
 
+// $Barnyard: FUNCTION 0059da50
 TBOOL AGUISlideshow::ProcessCommand( AInputCommand a_eCommand )
 {
 	if ( ( ( a_eCommand != AInputCommand_Back && a_eCommand != AInputCommand_Cancel && a_eCommand != AInputCommand_Quit ) || !HASANYFLAG( m_eFlags, Flags_Unk1 ) ) && !HASANYFLAG( m_eFlags, Flags_InstaSkippable ) )
@@ -307,6 +317,7 @@ TBOOL AGUISlideshow::ProcessCommand( AInputCommand a_eCommand )
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 0042eea0
 void AGUISlideshow::Reset()
 {
 	m_ImageIterator     = m_Images;

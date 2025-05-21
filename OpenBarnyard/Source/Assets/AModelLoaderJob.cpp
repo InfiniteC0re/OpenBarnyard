@@ -9,12 +9,14 @@
 //-----------------------------------------------------------------------------
 #include <Core/TMemoryDebugOn.h>
 
+// $Barnyard: FUNCTION 00606850
 void AModelLoaderJob::BeginJob()
 {
 	m_pModel = Toshi::TRenderInterface::GetSingleton()->CreateModel( m_oStreamJob.GetFileName(), TFALSE );
 	ATRBLoaderJob::BeginJob();
 }
 
+// $Barnyard: FUNCTION 00606630
 TBOOL AModelLoaderJob::RunJob()
 {
 	if ( m_oStreamJob.IsProcessed() )
@@ -28,6 +30,7 @@ TBOOL AModelLoaderJob::RunJob()
 	return TFALSE;
 }
 
+// $Barnyard: FUNCTION 00606880
 TBOOL AModelLoaderJob::CancelJob()
 {
 	if ( m_bCanBeCanceled )
@@ -43,6 +46,7 @@ TBOOL AModelLoaderJob::CancelJob()
 	return TFALSE;
 }
 
+// $Barnyard: FUNCTION 00606600
 void AModelLoaderJob::InitJob( Toshi::TManagedModel* a_pModelRef, Toshi::TTRB* a_pTRB, const TCHAR* a_szFileName, TBOOL a_bCanBeCanceled )
 {
 	m_pModelRef = a_pModelRef;

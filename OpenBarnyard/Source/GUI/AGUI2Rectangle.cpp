@@ -8,11 +8,13 @@
 //-----------------------------------------------------------------------------
 #include <Core/TMemoryDebugOn.h>
 
+// $Barnyard: FUNCTION 006c3ae0
 AGUI2Rectangle::AGUI2Rectangle()
 {
 	m_pMaterial = TNULL;
 }
 
+// $Barnyard: FUNCTION 006c39b0
 void AGUI2Rectangle::Render()
 {
 	auto pRenderer = AGUI2::GetRenderer();
@@ -32,6 +34,7 @@ void AGUI2Rectangle::Render()
 	AGUI2Element::Render();
 }
 
+// $Barnyard: FUNCTION 006c3910
 void AGUI2Rectangle::SetTextureSection( AGUI2TextureSection* a_pTexSection )
 {
 	if ( a_pTexSection )

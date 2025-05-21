@@ -9,6 +9,7 @@
 
 TOSHI_NAMESPACE_USING
 
+// $Barnyard: FUNCTION 0063f8d0
 AGUI2MenuGridTextItem::AGUI2MenuGridTextItem()
 {
 	m_bScaleOnFocus     = TTRUE;
@@ -27,6 +28,7 @@ AGUI2MenuGridTextItem::AGUI2MenuGridTextItem()
 	m_wszText           = TNULL;
 }
 
+// $Barnyard: FUNCTION 0063f9b0
 AGUI2MenuGridTextItem::~AGUI2MenuGridTextItem()
 {
 	delete[] m_wszText;
@@ -34,6 +36,7 @@ AGUI2MenuGridTextItem::~AGUI2MenuGridTextItem()
 	m_oRectangle2.RemoveSelf();
 }
 
+// $Barnyard: FUNCTION 0063fa80
 void AGUI2MenuGridTextItem::Create( AGUI2Font* a_pFont, TFLOAT a_fWidth, const TWCHAR* a_wszText, TFLOAT a_fGap )
 {
 	m_fWidth = a_fWidth;
@@ -61,12 +64,14 @@ void AGUI2MenuGridTextItem::Create( AGUI2Font* a_pFont, TFLOAT a_fWidth, const T
 	AGUI2MenuGridItem::SetDimensions( m_oTextBox.GetWidth(), m_oTextBox.GetHeight() );
 }
 
+// $Barnyard: FUNCTION 0063fd70
 void AGUI2MenuGridTextItem::SetDimensions( TFLOAT a_fWidth, TFLOAT a_fHeight )
 {
 	m_oTextBox.SetWidth( a_fWidth );
 	AGUI2MenuGridItem::SetDimensions( a_fWidth, a_fHeight );
 }
 
+// $Barnyard: FUNCTION 0063fd30
 void AGUI2MenuGridTextItem::SetAlpha( TFLOAT a_fAlpha )
 {
 	m_oTextBox.SetAlpha( a_fAlpha );
@@ -74,11 +79,13 @@ void AGUI2MenuGridTextItem::SetAlpha( TFLOAT a_fAlpha )
 	m_oRectangle2.SetAlpha( a_fAlpha );
 }
 
+// $Barnyard: FUNCTION 0063f9a0
 void AGUI2MenuGridTextItem::SetShadowAlpha( TFLOAT a_fAlpha )
 {
 	m_oTextBox.SetShadowAlpha( a_fAlpha );
 }
 
+// $Barnyard: FUNCTION 0063fbb0
 void AGUI2MenuGridTextItem::OnFocus()
 {
 	m_bFocused = TTRUE;
@@ -101,6 +108,7 @@ void AGUI2MenuGridTextItem::OnFocus()
 	}
 }
 
+// $Barnyard: FUNCTION 0063fc60
 void AGUI2MenuGridTextItem::OnFocusLost()
 {
 	m_bFocused = TFALSE;
@@ -117,12 +125,14 @@ void AGUI2MenuGridTextItem::OnFocusLost()
 		m_oRectangle1.RemoveSelf();
 }
 
+// $Barnyard: FUNCTION 0063fcd0
 void AGUI2MenuGridTextItem::SetEnabled( TBOOL a_bEnabled )
 {
 	AGUI2MenuGridItem::SetEnabled( a_bEnabled );
 	m_oTextBox.SetColour( IsEnabled() ? m_uiEnabledColour : m_uiDisabledColour );
 }
 
+// $Barnyard: FUNCTION 0063fd10
 TFLOAT AGUI2MenuGridTextItem::GetFlowVisualOffset()
 {
 	TVALIDPTR( m_pFont );

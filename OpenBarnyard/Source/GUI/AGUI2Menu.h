@@ -47,6 +47,7 @@ public:
 	AGUI2MenuItem* GetHoveredMenuItem() const { return m_pHoveredMenuItem; }
 	AGUI2MenuItem* GetLastMenuItem() const { return m_pLastMenuItem; }
 
+	// $Barnyard: FUNCTION 0063e440
 	void SetCallbackUserData( void* a_pUserData ) { m_pCallbackUserData = a_pUserData; }
 	void SetItemActivationCallback( ActivateCallback a_fnCallback ) { m_fnActivateCallback = a_fnCallback; }
 	void SetItemFocusCallback( FocusCallback a_fnCallback ) { m_fnFocusCallback = a_fnCallback; }

@@ -17,6 +17,7 @@ TOSHI_NAMESPACE_USING
 
 TDEFINE_CLASS( AAudioOptionsState );
 
+// $Barnyard: FUNCTION 00442a70
 AAudioOptionsState::AAudioOptionsState()
 {
 }
@@ -25,6 +26,7 @@ AAudioOptionsState::~AAudioOptionsState()
 {
 }
 
+// $Barnyard: FUNCTION 004435d0
 TBOOL AAudioOptionsState::ProcessInput( const Toshi::TInputInterface::InputEvent* a_pInputEvent )
 {
 	TIMPLEMENT();
@@ -38,6 +40,7 @@ TBOOL AAudioOptionsState::ProcessInput( const Toshi::TInputInterface::InputEvent
 	return BaseClass::ProcessInput( a_pInputEvent );
 }
 
+// $Barnyard: FUNCTION 00443370
 TBOOL AAudioOptionsState::ProcessCommand( AInputCommand a_eInputCommand, const Toshi::TInputInterface::InputEvent* a_pInputEvent, TBOOL& a_rStopEvents )
 {
 	TIMPLEMENT();
@@ -69,6 +72,7 @@ TBOOL AAudioOptionsState::ProcessCommand( AInputCommand a_eInputCommand, const T
 	return BaseClass::ProcessCommand( a_eInputCommand, a_pInputEvent, a_rStopEvents );
 }
 
+// $Barnyard: FUNCTION 00443760
 void AAudioOptionsState::OnInsertion()
 {
 	TIMPLEMENT();
@@ -149,6 +153,7 @@ void AAudioOptionsState::OnInsertion()
 	m_oDialog.SetDimensions( m_oGridMenu.GetWidth() + 128.0f, m_oGridMenu.GetHeight() + 150.0f );
 }
 
+// $Barnyard: FUNCTION 00443240
 void AAudioOptionsState::OnRemoval()
 {
 	TIMPLEMENT();
@@ -161,17 +166,20 @@ void AAudioOptionsState::OnRemoval()
 	BaseClass::OnRemoval();
 }
 
+// $Barnyard: FUNCTION 00443630
 void AAudioOptionsState::OnMenuItemActivated( AGUI2MenuItem& a_rMenuItem )
 {
 	ASoundManager::GetSingleton()->PlayCue( soundbank::UI_MENUOK );
 	ABYardMenuState::OnButtonActivated( TSTATICCAST( AGUI2Button, &a_rMenuItem ) );
 }
 
+// $Barnyard: FUNCTION 00443060
 void AAudioOptionsState::OnMenuItemFocused( AGUI2MenuItem& a_rOldFocus, AGUI2MenuItem& a_rNewFocus )
 {
 	TIMPLEMENT();
 }
 
+// $Barnyard: FUNCTION 004436d0
 void AAudioOptionsState::OnMenuClose()
 {
 	TIMPLEMENT();
@@ -179,22 +187,26 @@ void AAudioOptionsState::OnMenuClose()
 	BaseClass::Remove();
 }
 
+// $Barnyard: FUNCTION 00443660
 void AAudioOptionsState::OnMenuGridItemFocused( AGUI2MenuGridItem& a_rOldFocus, AGUI2MenuGridItem& a_rNewFocus )
 {
 	TIMPLEMENT();
 	m_iFocusedItemId = -1;
 }
 
+// $Barnyard: FUNCTION 00442720
 AVolumeSlider::AVolumeSlider()
 {
 	m_bMouseDirty            = TFALSE;
 	m_iLastPressedArrowIndex = -1;
 }
 
+// $Barnyard: FUNCTION 004427c0
 AVolumeSlider::~AVolumeSlider()
 {
 }
 
+// $Barnyard: FUNCTION 00442840
 TBOOL AVolumeSlider::Create( const TCHAR* a_szLeftArrow, const TCHAR* a_szRightArrow, const TCHAR* a_szBarIcon )
 {
 	// Setup left arrow
@@ -241,6 +253,7 @@ TBOOL AVolumeSlider::Create( const TCHAR* a_szLeftArrow, const TCHAR* a_szRightA
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 004430b0
 void AVolumeSlider::OnUpdate( TFLOAT a_fDeltaTime )
 {
 	if ( m_bMouseDirty )

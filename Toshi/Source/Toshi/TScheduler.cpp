@@ -16,6 +16,7 @@ TDEFINE_CLASS_NORUNTIME( TScheduler );
 TFLOAT TScheduler::s_MaxTimeDeltaAllowed          = 0.25f;
 TFLOAT TScheduler::s_DebugSlowMaxTimeDeltaAllowed = 1.0f;
 
+// $Barnyard: FUNCTION 006bccd0
 TScheduler::TScheduler()
 {
 	m_DeltaTime             = 0.0f;
@@ -34,6 +35,7 @@ TScheduler::~TScheduler()
 	DestroyAllTasks();
 }
 
+// $Barnyard: FUNCTION 006bcbf0
 TTask* TScheduler::CreateTask( TClass* pClass, TTask* pParent )
 {
 	TASSERT( pClass->IsA( &TGetClass( TTask ) ) );
@@ -137,6 +139,7 @@ void TScheduler::DeleteTaskAtomic( TTask* task )
 	}
 }
 
+// $Barnyard: FUNCTION 006bcc80
 void TScheduler::DestroyDyingTasks( TTask* task )
 {
 	if ( task != TNULL )
@@ -164,6 +167,7 @@ void TScheduler::DestroyDyingTasks( TTask* task )
 	}
 }
 
+// $Barnyard: FUNCTION 006bca20
 void TScheduler::UpdateActiveTasks( TTask* task )
 {
 	TTask* currentTask = task;

@@ -11,6 +11,7 @@
 
 TOSHI_NAMESPACE_USING
 
+// $Barnyard: FUNCTION 00646360
 AGUI2MouseCursor::AGUI2MouseCursor()
 {
 	m_MousePos.x                                = 0.0f;
@@ -27,6 +28,7 @@ AGUI2MouseCursor::AGUI2MouseCursor()
 	m_fRadialRadius                             = -1.0f;
 }
 
+// $Barnyard: FUNCTION 00646650
 TBOOL AGUI2MouseCursor::Create( const TCHAR* a_szPointerUpTexture, const TCHAR* a_szPointerDownTexture, TFLOAT a_fScalar )
 {
 	m_pMouseDevice = TInputInterface::GetSingleton()->GetDeviceByIndex<TInputDeviceMouse>( 0 );
@@ -57,6 +59,7 @@ TBOOL AGUI2MouseCursor::Create( const TCHAR* a_szPointerUpTexture, const TCHAR* 
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 00646740
 void AGUI2MouseCursor::Update()
 {
 	if ( m_pMouseDevice )
@@ -89,6 +92,7 @@ void AGUI2MouseCursor::Update()
 	return;
 }
 
+// $Barnyard: FUNCTION 00646400
 void AGUI2MouseCursor::MoveCursor( TFLOAT a_fDeltaX, TFLOAT a_fDeltaY )
 {
 	TFLOAT fCursorAccelerationX;

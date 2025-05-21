@@ -12,6 +12,7 @@ TOSHI_NAMESPACE_USING
 
 TDEFINE_CLASS_NORUNTIME( ACameraHelper );
 
+// $Barnyard: FUNCTION 0045b6e0
 ACameraHelper::ACameraHelper()
 {
 }

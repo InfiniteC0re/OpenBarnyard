@@ -14,6 +14,7 @@ void ASectionDoneJob::BeginJob()
 {
 }
 
+// $Barnyard: FUNCTION 005ed750
 TBOOL ASectionDoneJob::RunJob()
 {
 	if ( !m_bIsCanceled )
@@ -76,6 +77,7 @@ TBOOL ASectionDoneJob::RunJob()
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 005ecf50
 TBOOL ASectionDoneJob::CancelJob()
 {
 	m_bIsCanceled = TTRUE;

@@ -28,6 +28,7 @@ TDEFINE_CLASS( ASoundManager );
 #define MAX_NUM_SOUND_EVENTS 256
 #define MAX_NUM_STREAMS      64
 
+// $Barnyard: FUNCTION 005da7f0
 ASoundManager::ASoundManager()
     : m_SoundEventPool( AMemory::GetAllocator( AMemory::POOL_Sound ), MAX_NUM_SOUND_EVENTS ), m_StreamRefPool( AMemory::GetAllocator( AMemory::POOL_Sound ), MAX_NUM_STREAMS ), m_ChannelRefPool( AMemory::GetAllocator( AMemory::POOL_Sound ), MAX_NUM_SOUND_EVENTS ), m_ChannelRefLegacyPool( AMemory::GetAllocator( AMemory::POOL_Sound ), MAX_NUM_SOUND_EVENTS ), m_CategoryIndices( AMemory::GetAllocator( AMemory::POOL_Sound ) ), m_SoundIdToSound( AMemory::GetAllocator( AMemory::POOL_Sound ) ), m_SoundIdToSoundLegacy( AMemory::GetAllocator( AMemory::POOL_Sound ) )
 {
@@ -49,6 +50,7 @@ ASoundManager::ASoundManager()
 	m_oEventManager.SetEventHandler( SOUNDEVENT_StopAudio, &ASoundManager::EventHandler_StopAudio );
 }
 
+// $Barnyard: FUNCTION 005dbf70
 ASoundManager::~ASoundManager()
 {
 	TIMPLEMENT();
@@ -60,12 +62,14 @@ ASoundManager::~ASoundManager()
 	Reset();
 }
 
+// $Barnyard: FUNCTION 005dab50
 TBOOL ASoundManager::Reset()
 {
 	TIMPLEMENT();
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 005d8170
 TBOOL ASoundManager::OnCreate()
 {
 	Initialise();
@@ -94,6 +98,7 @@ TBOOL ASoundManager::OnCreate()
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 005db7d0
 TBOOL ASoundManager::OnUpdate( TFLOAT a_fDeltaTime )
 {
 	TIMPLEMENT();
@@ -228,6 +233,7 @@ TBOOL ASoundManager::OnUpdate( TFLOAT a_fDeltaTime )
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 005d7290
 void ASoundManager::OnDestroy()
 {
 	m_UnkList1.Clear();
@@ -237,11 +243,13 @@ void ASoundManager::OnDestroy()
 	m_PauseListener.Disconnect();
 }
 
+// $Barnyard: FUNCTION 005dade0
 TINT ASoundManager::PlayCue( ASoundId a_iSound )
 {
 	return PlayCueEx( a_iSound, 1.0f, TFALSE, 0.0f, -1 );
 }
 
+// $Barnyard: FUNCTION 005d9980
 TINT ASoundManager::PlayCueEx( ASoundId a_iSound, TFLOAT a_fVolume, TBOOL a_bFlag, TFLOAT a_fDelay, TINT a_iTrack )
 {
 	if ( a_iSound == ASOUNDID_INVALID )
@@ -344,11 +352,13 @@ TINT ASoundManager::PlayCueEx( ASoundId a_iSound, TFLOAT a_fVolume, TBOOL a_bFla
 	return iCueIndex;
 }
 
+// $Barnyard: FUNCTION 005dae50
 void ASoundManager::StopCue( TINT& a_rCueIndex )
 {
 	StopCueAsync( a_rCueIndex, 0.0f );
 }
 
+// $Barnyard: FUNCTION 005d66a0
 TINT ASoundManager::GetAvailableCueIndex()
 {
 	TINT iSlot;
@@ -375,6 +385,7 @@ TINT ASoundManager::GetAvailableCueIndex()
 	return iSlot;
 }
 
+// $Barnyard: FUNCTION 005d7640
 TBOOL ASoundManager::IsCuePlaying( TINT a_iCueIndex )
 {
 	TASSERT( a_iCueIndex < ASOUNDMANAGER_MAX_NUM_CUE );
@@ -418,6 +429,7 @@ TBOOL ASoundManager::IsCuePlaying( TINT a_iCueIndex )
 	return TFALSE;
 }
 
+// $Barnyard: FUNCTION 005d9b80
 void ASoundManager::StopCueAsync( TINT& a_rCueIndex, TFLOAT a_fDelay )
 {
 	if ( a_rCueIndex == -1 )
@@ -450,6 +462,7 @@ void ASoundManager::StopCueAsync( TINT& a_rCueIndex, TFLOAT a_fDelay )
 	}
 }
 
+// $Barnyard: FUNCTION 005d78f0
 void ASoundManager::CancelCueEvents( Cue* a_pCue, SOUNDEVENT a_eEventType )
 {
 	TVALIDPTR( a_pCue );
@@ -468,6 +481,7 @@ void ASoundManager::CancelCueEvents( Cue* a_pCue, SOUNDEVENT a_eEventType )
 	}
 }
 
+// $Barnyard: FUNCTION 005dc350
 AWaveBank* ASoundManager::FindWaveBank( const TPString8& a_rcName )
 {
 	auto pFoundNode = ms_WaveBanks.Find( a_rcName );
@@ -475,6 +489,7 @@ AWaveBank* ASoundManager::FindWaveBank( const TPString8& a_rcName )
 	return ( ms_WaveBanks.IsValid( pFoundNode ) ) ? pFoundNode->GetSecond() : TNULL;
 }
 
+// $Barnyard: FUNCTION 005dc810
 AWaveBank* ASoundManager::LoadWaveBankFromAsset( const Toshi::TString8& a_strName, TUINT a_uiForcedFlags )
 {
 	// Generate bank file name
@@ -523,6 +538,7 @@ AWaveBank* ASoundManager::LoadWaveBankFromAsset( const Toshi::TString8& a_strNam
 	return pWaveBank;
 }
 
+// $Barnyard: FUNCTION 005dc5b0
 AWaveBank* ASoundManager::AllocateWaveBank( const Toshi::TPString8& a_strBank, const Toshi::TPString8& a_strLibrary, const Toshi::TPString8& a_strType, const Toshi::TPString8& a_strPath )
 {
 	// Check if we are loading the supported format
@@ -546,6 +562,7 @@ AWaveBank* ASoundManager::AllocateWaveBank( const Toshi::TPString8& a_strBank, c
 	return TNULL;
 }
 
+// $Barnyard: FUNCTION 005d8b30
 TBOOL ASoundManager::LoadSoundBankImpl( const TCHAR* a_szName, TBOOL a_bSimpleSound, TBOOL a_bLoadImmediately )
 {
 	g_oLoadScreen.Update();
@@ -941,6 +958,7 @@ TUINT ASoundManager::GetCueIndex( Cue* a_pCue )
 	return ( TREINTERPRETCAST( TUINTPTR, a_pCue ) - TREINTERPRETCAST( TUINTPTR, ASoundManager::ms_pSingleton ) - TOFFSETOF( ASoundManager, m_aCues ) ) / sizeof( Cue );
 }
 
+// $Barnyard: FUNCTION 005d6230
 TBOOL ASoundManager::Initialise()
 {
 	FSOUND_Init( 44100, m_iMinHWChannels + m_iNumChannels, 0 );
@@ -963,6 +981,7 @@ TBOOL ASoundManager::Initialise()
 	return bRes;
 }
 
+// $Barnyard: FUNCTION 005d7540
 void ASoundManager::PauseAllCues( TBOOL a_bPause )
 {
 	if ( a_bPause )
@@ -1009,6 +1028,7 @@ void ASoundManager::PauseAllCues( TBOOL a_bPause )
 	}
 }
 
+// $Barnyard: FUNCTION 005dbd40
 TBOOL ASoundManager::LoadWaveBanksInfo( const TCHAR* a_szFileName )
 {
 	TBOOL bOpened = AAssetLoader::Load(
@@ -1055,6 +1075,7 @@ TBOOL ASoundManager::LoadWaveBanksInfo( const TCHAR* a_szFileName )
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 005d6830
 TBOOL ASoundManager::LoadWaveBankSamples( const Toshi::TPString8& a_rcName, AWaveBank::LOADFLAGS a_eLoadFlags, TINT a_iBufferSize )
 {
 	if ( a_rcName.GetPooledString() && !a_rcName.GetPooledString()->GetString8().IsEmpty() )
@@ -1081,6 +1102,7 @@ ASoundBank* ASoundManager::FindSoundBank( const Toshi::TPString8& a_rcName )
 	return TNULL;
 }
 
+// $Barnyard: FUNCTION 005da750
 TBOOL ASoundManager::LoadSoundBank( const Toshi::TPString8& a_rcName, TBOOL a_bSoundEx, TBOOL a_bLoadImmediately )
 {
 	if ( a_rcName.GetPooledString() && !a_rcName.GetPooledString()->GetString8().IsEmpty() )
@@ -1094,6 +1116,7 @@ TBOOL ASoundManager::LoadSoundBank( const Toshi::TPString8& a_rcName, TBOOL a_bS
 	return TFALSE;
 }
 
+// $Barnyard: FUNCTION 005d79c0
 void ASoundManager::LoadSoundBankSamples( const Toshi::TPString8& a_rcName )
 {
 	if ( ASoundBank* pSoundBank = FindSoundBank( a_rcName ) )
@@ -1102,6 +1125,7 @@ void ASoundManager::LoadSoundBankSamples( const Toshi::TPString8& a_rcName )
 	}
 }
 
+// $Barnyard: FUNCTION 005d8690
 void ASoundManager::CreatePlaySoundEvent( Cue* a_pCue, TINT a_iTrackIndex, TINT a_iFirstWaveIndex, TINT a_iLastWaveIndex, TINT a_iFlags, TFLOAT a_fDelay1, TFLOAT a_fDelay2 )
 {
 	TVALIDPTR( a_pCue );
@@ -1247,6 +1271,7 @@ ASoundManager::SoundEvent* ASoundManager::CreateSoundEvent( SOUNDEVENT a_eEventT
 	return TNULL;
 }
 
+// $Barnyard: FUNCTION 005d7cf0
 void ASoundManager::AddEventToCue( Cue* a_pCue, SoundEvent* a_pSoundEvent )
 {
 	TVALIDPTR( a_pCue );
@@ -1264,12 +1289,14 @@ void ASoundManager::AddEventToCue( Cue* a_pCue, SoundEvent* a_pSoundEvent )
 	}
 }
 
+// $Barnyard: FUNCTION 005d8380
 TBOOL ASoundManager::UpdateStreamActivity( StreamRef* a_pStream )
 {
 	TASSERT( !"Not implemented" );
 	return TFALSE;
 }
 
+// $Barnyard: FUNCTION 005da190
 TBOOL ASoundManager::UpdateStreamCue( StreamRef* a_pStream )
 {
 	TVALIDPTR( a_pStream );
@@ -1383,6 +1410,7 @@ TBOOL ASoundManager::UpdateStreamCue( StreamRef* a_pStream )
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 005da3f0
 void ASoundManager::EventHandler_PlaySound( SoundEvent* a_pEvent )
 {
 	TVALIDPTR( a_pEvent );
@@ -1528,6 +1556,7 @@ void ASoundManager::EventHandler_PlaySound( SoundEvent* a_pEvent )
 	}
 }
 
+// $Barnyard: FUNCTION 005d7720
 void ASoundManager::EventHandler_PlayStream( SoundEvent* a_pEvent )
 {
 	TVALIDPTR( a_pEvent );
@@ -1569,6 +1598,7 @@ void ASoundManager::EventHandler_PlayStream( SoundEvent* a_pEvent )
 	}
 }
 
+// $Barnyard: FUNCTION 005d7d50
 void ASoundManager::EventHandler_StopAudio( SoundEvent* a_pEvent )
 {
 	TVALIDPTR( a_pEvent );
@@ -1600,6 +1630,7 @@ void ASoundManager::EventHandler_StopAudio( SoundEvent* a_pEvent )
 	}
 }
 
+// $Barnyard: FUNCTION 005d6700
 void ASoundManager::EventHandler_UpdateChannelVolume( SoundEvent* a_pEvent )
 {
 	TVALIDPTR( a_pEvent );
@@ -1620,6 +1651,7 @@ void ASoundManager::EventHandler_UpdateChannelVolume( SoundEvent* a_pEvent )
 	}
 }
 
+// $Barnyard: FUNCTION 005d61c0
 void ASoundManager::EventHandler_UpdateChannelFrequency( SoundEvent* a_pEvent )
 {
 	TVALIDPTR( a_pEvent );
@@ -1636,6 +1668,7 @@ void ASoundManager::EventHandler_UpdateChannelFrequency( SoundEvent* a_pEvent )
 	}
 }
 
+// $Barnyard: FUNCTION 005d6200
 void ASoundManager::EventHandler_UpdatePosition( SoundEvent* a_pEvent )
 {
 	TVALIDPTR( a_pEvent );
@@ -1651,6 +1684,7 @@ void ASoundManager::EventHandler_UpdatePosition( SoundEvent* a_pEvent )
 	}
 }
 
+// $Barnyard: FUNCTION 005d7dd0
 ASoundManager::Cue::Cue()
 {
 
@@ -1670,6 +1704,7 @@ ASoundManager::Cue::~Cue()
 		delete oEventList.GetNodeValue();
 }
 
+// $Barnyard: FUNCTION 005d8500
 void ASoundManager::Cue::Reset()
 {
 	ASoundManager* pSoundManager = ASoundManager::GetSingleton();

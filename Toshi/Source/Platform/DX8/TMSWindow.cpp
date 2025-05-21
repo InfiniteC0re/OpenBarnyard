@@ -17,6 +17,7 @@ TOSHI_NAMESPACE_START
 
 TDEFINE_CLASS( TMSWindow );
 
+// $Barnyard: FUNCTION 006da520
 TMSWindow::TMSWindow()
 {
 	m_HWND       = NULL;
@@ -36,6 +37,7 @@ TMSWindow::TMSWindow()
 	SystemParametersInfoA( SPI_SETSTICKYKEYS, sizeof( STICKYKEYS ), &newStickyKeys, 0 );
 }
 
+// $Barnyard: FUNCTION 006da380
 void TMSWindow::Update( TFLOAT a_fDeltaTime )
 {
 	MSG msg;
@@ -106,6 +108,7 @@ void TMSWindow::Update( TFLOAT a_fDeltaTime )
 	}
 }
 
+// $Barnyard: FUNCTION 006da2f0
 void TMSWindow::UnregisterWindowClass()
 {
 	if ( m_HWND != NULL )
@@ -128,6 +131,7 @@ void TMSWindow::UnregisterWindowClass()
 	}
 }
 
+// $Barnyard: FUNCTION 006da260
 void TMSWindow::SetFocused( TBOOL a_bFocused )
 {
 	if ( ms_bIsFocused != a_bFocused )
@@ -149,11 +153,13 @@ void TMSWindow::SetFocused( TBOOL a_bFocused )
 	}
 }
 
+// $Barnyard: FUNCTION 006da4d0
 void TMSWindow::SetPosition( UINT x, UINT y, UINT width, UINT height )
 {
 	SetWindowPos( m_HWND, HWND_TOP, x, y, width, height, 0 );
 }
 
+// $Barnyard: FUNCTION 006da8a0
 TBOOL TMSWindow::Create( TRenderInterface* renderer, LPCSTR title )
 {
 	m_ModuleHandle = GetModuleHandleA( NULL );
@@ -198,6 +204,7 @@ TBOOL TMSWindow::Create( TRenderInterface* renderer, LPCSTR title )
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 006da620
 LRESULT CALLBACK TMSWindow::WndProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
 	static TBOOL s_bIsPaused;

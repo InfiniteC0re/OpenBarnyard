@@ -10,6 +10,7 @@
 
 TOSHI_NAMESPACE_START
 
+// $Barnyard: FUNCTION 006c8340
 TTransformObject::TTransformObject()
     : m_eMode( Mode::Quat ), m_Quat( TQuaternion::IDENTITY ), m_Translation( TVector3::VEC_ZERO ), m_Scale( 1.0f, 1.0f, 1.0f )
 {
@@ -22,6 +23,7 @@ TTransformObject::~TTransformObject()
 {
 }
 
+// $Barnyard: FUNCTION 006c83b0
 void TTransformObject::Push()
 {
 	auto pRender = TRenderInterface::GetSingleton();
@@ -68,6 +70,7 @@ void TTransformObject::Push()
 	pRender->GetCurrentContext()->SetModelViewMatrix( pRender->GetTransforms().Top() );
 }
 
+// $Barnyard: FUNCTION 006c84c0
 void TTransformObject::Pop()
 {
 	auto pRender = TRenderInterface::GetSingleton();
@@ -81,6 +84,7 @@ Toshi::TVector3& TTransformObject::GetTranslation()
 	return ( m_eMode != Mode::Matrix ) ? m_Translation : m_Matrix.GetTranslation().AsVector3();
 }
 
+// $Barnyard: FUNCTION 006c8250
 void TTransformObject::GetLocalMatrixImp( TMatrix44& outMatrix )
 {
 	if ( m_eMode == Mode::Quat )
@@ -119,6 +123,7 @@ void TTransformObject::GetLocalMatrixImp( TMatrix44& outMatrix )
 	}
 }
 
+// $Barnyard: FUNCTION 006c81b0
 void TTransformObject::SetEuler( const TVector3& a_rEuler )
 {
 	m_eMode = Mode::Euler;
@@ -132,6 +137,7 @@ void TTransformObject::SetEulerOrder( TUINT8 x, TUINT8 y, TUINT8 z )
 	m_EulerOrder[ 2 ] = z;
 }
 
+// $Barnyard: FUNCTION 006c8210
 void TTransformObject::SetTranslate( const TVector3& translation )
 {
 	m_Translation = translation;
@@ -146,6 +152,7 @@ void TTransformObject::SetQuat( const TQuaternion& quaternion )
 	m_Quat  = quaternion;
 }
 
+// $Barnyard: FUNCTION 006c81d0
 void TTransformObject::SetMatrix( const TMatrix44& matrix )
 {
 	m_eMode       = Mode::Matrix;

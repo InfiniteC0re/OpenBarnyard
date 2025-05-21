@@ -23,6 +23,7 @@ TOSHI_NAMESPACE_USING
 
 TDEFINE_CLASS( AWorldShaderHAL );
 
+// $Barnyard: FUNCTION 005f75e0
 AWorldShaderHAL::AWorldShaderHAL()
     : m_ShadowColour( 0.3f, 0.3f, 0.3f, 1.0f ), m_AmbientColour( 1.0f, 1.0f, 1.0f, 1.0f )
 {
@@ -36,10 +37,12 @@ AWorldShaderHAL::AWorldShaderHAL()
 	m_bUnkFlag4           = TFALSE;
 }
 
+// $Barnyard: FUNCTION 005f77a0
 AWorldShaderHAL::~AWorldShaderHAL()
 {
 }
 
+// $Barnyard: FUNCTION 005f66f0
 void AWorldShaderHAL::Flush()
 {
 	if ( IsValidated() )
@@ -87,6 +90,7 @@ void AWorldShaderHAL::Flush()
 	}
 }
 
+// $Barnyard: FUNCTION 005f6510
 void AWorldShaderHAL::StartFlush()
 {
 	if ( IsValidated() )
@@ -143,6 +147,7 @@ void AWorldShaderHAL::EndFlush()
 	pDevice->SetPixelShader( NULL );
 }
 
+// $Barnyard: FUNCTION 005f5f80
 TBOOL AWorldShaderHAL::Create()
 {
 	m_aOrderTables[ 0 ].Create( this, -3000 );
@@ -166,6 +171,7 @@ static TBOOL CreateWorldVertexShader( const char* a_szFileName, const DWORD* a_p
 	return TRenderD3DInterface::CreateVertexShader( s_ShaderDeclaration, a_pFunction, a_pOutVertexShader );
 }
 
+// $Barnyard: FUNCTION 005f6b20
 TBOOL AWorldShaderHAL::Validate()
 {
 	if ( IsValidated() )
@@ -203,6 +209,7 @@ TBOOL AWorldShaderHAL::Validate()
 	return AWorldShader::Validate();
 }
 
+// $Barnyard: FUNCTION 005f7580
 void AWorldShaderHAL::Invalidate()
 {
 	if ( !IsValidated() ) return;
@@ -232,6 +239,7 @@ TBOOL AWorldShaderHAL::TryValidate()
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 005f6cb0
 void AWorldShaderHAL::Render( TRenderPacket* a_pRenderPacket )
 {
 	if ( IsHighEndMode() && a_pRenderPacket && a_pRenderPacket->GetMesh() )
@@ -321,21 +329,25 @@ void AWorldShaderHAL::Render( TRenderPacket* a_pRenderPacket )
 	}
 }
 
+// $Barnyard: FUNCTION 005f6500
 void AWorldShaderHAL::EnableRenderEnvMap( TBOOL a_bEnable )
 {
 	m_bRenderEnvMap = a_bEnable;
 }
 
+// $Barnyard: FUNCTION 005f7760
 TBOOL AWorldShaderHAL::IsAlphaBlendMaterial()
 {
 	return m_bAlphaBlendMaterial;
 }
 
+// $Barnyard: FUNCTION 005f7780
 void AWorldShaderHAL::SetAlphaBlendMaterial( TBOOL a_bIsAlphaBlendMaterial )
 {
 	m_bAlphaBlendMaterial = a_bIsAlphaBlendMaterial;
 }
 
+// $Barnyard: FUNCTION 005f6c00
 AWorldMaterial* AWorldShaderHAL::CreateMaterial( const TCHAR* a_szName )
 {
 	Validate();
@@ -355,6 +367,7 @@ AWorldMaterial* AWorldShaderHAL::CreateMaterial( const TCHAR* a_szName )
 	return pMaterial;
 }
 
+// $Barnyard: FUNCTION 005f6b80
 AWorldMesh* AWorldShaderHAL::CreateMesh( const TCHAR* a_szName )
 {
 	Validate();
@@ -365,11 +378,13 @@ AWorldMesh* AWorldShaderHAL::CreateMesh( const TCHAR* a_szName )
 	return pMesh;
 }
 
+// $Barnyard: FUNCTION 005f7790
 TBOOL AWorldShaderHAL::IsHighEndMode()
 {
 	return m_bIsHighEndMode;
 }
 
+// $Barnyard: FUNCTION 005f6010
 void AWorldShaderHAL::SetHighEndMode( TBOOL a_bEnable )
 {
 	m_bIsHighEndMode = a_bEnable && IsCapableShaders();
@@ -410,6 +425,7 @@ void* AWorldShaderHAL::CreateUnknown( void*, void*, void*, void* )
 	return TNULL;
 }
 
+// $Barnyard: FUNCTION 005f6440
 void AWorldShaderHAL::SetColours( const Toshi::TVector4& a_rShadowColour, const Toshi::TVector4 a_rAmbientColour )
 {
 	m_ShadowColour  = a_rShadowColour;
@@ -423,6 +439,7 @@ void AWorldShaderHAL::SetColours( const Toshi::TVector4& a_rShadowColour, const 
 	Toshi::TMath::Clip( m_AmbientColour.z, 0.0f, 1.0f );
 }
 
+// $Barnyard: FUNCTION 005f6270
 void AWorldShaderHAL::SetupLowEndMode()
 {
 	auto pRenderInterface = TRenderD3DInterface::Interface();

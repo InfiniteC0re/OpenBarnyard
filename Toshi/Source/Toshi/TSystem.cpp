@@ -46,17 +46,20 @@ TSystemTimer::~TSystemTimer()
 {
 }
 
+// $Barnyard: FUNCTION 00710770
 TSystemManager::TSystemManager()
     : m_PauseEmitter( this )
 {
 	m_pSystemTimer = TNULL;
 }
 
+// $Barnyard: FUNCTION 006bbb00
 void TSystemManager::Update()
 {
 	m_pSystemTimer->Update();
 }
 
+// $Barnyard: FUNCTION 006bba90
 TBOOL TSystemManager::Create()
 {
 	TASSERT( g_oSystemManager.m_pSystemTimer == TNULL );
@@ -65,10 +68,12 @@ TBOOL TSystemManager::Create()
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 00713e20
 TSystemManager::~TSystemManager()
 {
 }
 
+// $Barnyard: FUNCTION 006c7fa0
 TKernelInterfaceDLL* TKernelInterface::FindInterface( const TString8& a_rcName )
 {
 	T2_FOREACH( m_Interfaces, it )
@@ -80,6 +85,7 @@ TKernelInterfaceDLL* TKernelInterface::FindInterface( const TString8& a_rcName )
 	return TNULL;
 }
 
+// $Barnyard: FUNCTION 006c8010
 TKernelInterfaceDLL* TKernelInterface::LoadInterface( const TString8& a_rcName )
 {
 	TKernelInterfaceDLL* pInterface = FindInterface( a_rcName );

@@ -229,6 +229,7 @@ TBOOL AAnimatableObjectType::SetAnimController( const PBProperties* a_pPropertie
 	return pControllerType->Create( a_pProperties );
 }
 
+// $Barnyard: FUNCTION 0057ea70
 TBOOL AAnimatableObjectType::SetSkins( const PBProperties* a_pProperties )
 {
 	TVALIDPTR( a_pProperties );

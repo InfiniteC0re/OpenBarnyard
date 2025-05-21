@@ -65,6 +65,7 @@ public:
 
 	const Toshi::T2Vector<Toshi::TPString8, 2>& GetQueuedAnimations() const { return m_vecQueuedAnims; }
 
+	// $Barnyard: FUNCTION 00416500
 	AModelInstanceRef GetModelInstance() { return m_pModelInstance; }
 	TBOOL             IsAnimated() const { return !HASANYFLAG( m_eFlags, FLAGS_NO_ANIMATION ); }
 

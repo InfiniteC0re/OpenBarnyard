@@ -31,6 +31,7 @@ ABINKMoviePlayer::ABINKMoviePlayer()
 	m_iNumRects = 0;
 }
 
+// $Barnyard: FUNCTION 00605890
 TBOOL ABINKMoviePlayer::OnCreate()
 {
 	BinkSetMemory(
@@ -61,6 +62,7 @@ TBOOL ABINKMoviePlayer::OnCreate()
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 006061f0
 TBOOL ABINKMoviePlayer::OnUpdate( TFLOAT a_fDeltaTime )
 {
 	if ( !IsMoviePlaying() )
@@ -144,6 +146,7 @@ void ABINKMoviePlayer::OnDestroy()
 {
 }
 
+// $Barnyard: FUNCTION 00606180
 TBOOL ABINKMoviePlayer::PlayMovie( const TCHAR* a_szFileName, TUINT32 a_Unk )
 {
 	TVALIDPTR( a_szFileName );
@@ -169,6 +172,7 @@ TBOOL ABINKMoviePlayer::PlayMovie( const TCHAR* a_szFileName, TUINT32 a_Unk )
 	return m_Bink != TNULL;
 }
 
+// $Barnyard: FUNCTION 00606070
 TBOOL ABINKMoviePlayer::CreateSurfaces()
 {
 	auto pRender = TRenderD3DInterface::Interface();
@@ -227,6 +231,7 @@ TBOOL ABINKMoviePlayer::CreateSurfaces()
 	return hRes == S_OK;
 }
 
+// $Barnyard: FUNCTION 00606040
 void ABINKMoviePlayer::StopMovie()
 {
 	if ( m_Bink )
@@ -241,21 +246,25 @@ void ABINKMoviePlayer::StopMovie()
 	m_bPaused  = TFALSE;
 }
 
+// $Barnyard: FUNCTION 00605860
 void ABINKMoviePlayer::PauseMovie( TBOOL a_bPause )
 {
 	m_bPaused = a_bPause;
 }
 
+// $Barnyard: FUNCTION 005f7770
 TBOOL ABINKMoviePlayer::IsMoviePlaying()
 {
 	return m_bPlaying;
 }
 
+// $Barnyard: FUNCTION 00605870
 TBOOL ABINKMoviePlayer::IsMoviePaused()
 {
 	return m_bPaused;
 }
 
+// $Barnyard: FUNCTION 006058e0
 void ABINKMoviePlayer::Render( TFLOAT a_fDeltaTime )
 {
 	if ( IsMoviePlaying() && m_bVisible )
@@ -290,11 +299,13 @@ void ABINKMoviePlayer::Render( TFLOAT a_fDeltaTime )
 	}
 }
 
+// $Barnyard: FUNCTION 006059f0
 void ABINKMoviePlayer::SetMovieFile( const TCHAR* a_szFile )
 {
 	TStringManager::String8Format( m_szMoviePath, sizeof( m_szMoviePath ), "Data/Movies/%s.bik", a_szFile );
 }
 
+// $Barnyard: FUNCTION 00605d50
 TBOOL ABINKMoviePlayer::CreateAGUISurfaces( TUINT a_uiWidth, TUINT a_uiHeight, D3DFORMAT a_eFormat )
 {
 	auto pDevice = TRenderD3DInterface::Interface()->GetDirect3DDevice();
@@ -391,6 +402,7 @@ TBOOL ABINKMoviePlayer::CreateAGUISurfaces( TUINT a_uiWidth, TUINT a_uiHeight, D
 	return hRes == S_OK;
 }
 
+// $Barnyard: FUNCTION 00605d00
 void ABINKMoviePlayer::DestroySurfaces()
 {
 	if ( m_pSurface )
@@ -404,6 +416,7 @@ void ABINKMoviePlayer::DestroySurfaces()
 	m_iNumRects = 0;
 }
 
+// $Barnyard: FUNCTION 00605a10
 ABINKMoviePlayer::Rect::~Rect()
 {
 	if ( pMaterial )
@@ -422,6 +435,7 @@ ABINKMoviePlayer::Rect::~Rect()
 	pData = TNULL;
 }
 
+// $Barnyard: FUNCTION 00605a60
 TBOOL ABINKMoviePlayer::Rect::Create( int a_iPosX, int a_iPosY, int a_iWidth, int a_iHeight, TFLOAT a_iRenderPos1X, TFLOAT a_iRenderPos1Y, TFLOAT a_iRenderWidth, TFLOAT a_iRenderHeight, TTEXTURERESOURCEFORMAT a_eFormat )
 {
 	iPosY   = a_iPosY;

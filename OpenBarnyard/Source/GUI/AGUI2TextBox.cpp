@@ -7,6 +7,7 @@
 //-----------------------------------------------------------------------------
 #include <Core/TMemoryDebugOn.h>
 
+// $Barnyard: FUNCTION 006c3620
 AGUI2TextBox::AGUI2TextBox()
 {
 	m_bRenderShadow  = TFALSE;
@@ -20,10 +21,12 @@ AGUI2TextBox::AGUI2TextBox()
 	m_eTextAlign     = AGUI2Font::TextAlign_Center;
 }
 
+// $Barnyard: FUNCTION 006c3660
 AGUI2TextBox::~AGUI2TextBox()
 {
 }
 
+// $Barnyard: FUNCTION 006c3670
 void AGUI2TextBox::Create( AGUI2Font* a_pFont, TFLOAT a_fWidth )
 {
 	m_pFont                = a_pFont;
@@ -38,6 +41,7 @@ void AGUI2TextBox::SetText( const TWCHAR* a_wszText )
 	m_bDimensionsDirty = TTRUE;
 }
 
+// $Barnyard: FUNCTION 006c3780
 void AGUI2TextBox::RenderText( void* a_fnCallback )
 {
 	if ( m_pFont && m_wszText )
@@ -116,6 +120,7 @@ void AGUI2TextBox::SetTextAlign( AGUI2Font::TextAlign a_eTextAlign )
 	m_eTextAlign = a_eTextAlign;
 }
 
+// $Barnyard: FUNCTION 006c3850
 void AGUI2TextBox::Render()
 {
 	TASSERT( m_pFont != TNULL );
@@ -135,6 +140,7 @@ void AGUI2TextBox::Render()
 	}
 }
 
+// $Barnyard: FUNCTION 006c36c0
 void AGUI2TextBox::GetDimensions( TFLOAT& a_rWidth, TFLOAT& a_rHeight )
 {
 	if ( !m_bUnkFlag2 && m_bDimensionsDirty )
@@ -155,6 +161,7 @@ void AGUI2TextBox::GetDimensions( TFLOAT& a_rWidth, TFLOAT& a_rHeight )
 	a_rHeight = AGUI2Element::m_fHeight;
 }
 
+// $Barnyard: FUNCTION 006c3720
 TFLOAT AGUI2TextBox::GetWidth()
 {
 	TFLOAT fWidth;
@@ -164,6 +171,7 @@ TFLOAT AGUI2TextBox::GetWidth()
 	return fWidth;
 }
 
+// $Barnyard: FUNCTION 006c3740
 TFLOAT AGUI2TextBox::GetHeight()
 {
 	TFLOAT fWidth;
@@ -173,12 +181,14 @@ TFLOAT AGUI2TextBox::GetHeight()
 	return fHeight;
 }
 
+// $Barnyard: FUNCTION 0063ad20
 void AGUI2TextBox::SetWidth( TFLOAT a_fWidth )
 {
 	AGUI2Element::m_fWidth = a_fWidth;
 	m_bDimensionsDirty     = TTRUE;
 }
 
+// $Barnyard: FUNCTION 006c3890
 void AGUI2TextBox::SetShadowAlpha( TFLOAT a_fAlpha )
 {
 	TUINT8 ui8Alpha  = TUINT8( a_fAlpha * 255.0f );

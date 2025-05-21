@@ -14,16 +14,19 @@ TOSHI_NAMESPACE_USING
 
 TDEFINE_CLASS( AKeyFrameLibraryManager );
 
+// $Barnyard: FUNCTION 00606bf0
 AKeyFrameLibraryManager::AKeyFrameLibraryManager()
     : m_Libraries( AMemory::GetAllocator( AMemory::POOL_Misc ) ), m_LibrariesRefs( AMemory::GetAllocator( AMemory::POOL_Misc ) )
 {
 }
 
+// $Barnyard: FUNCTION 006074b0
 AKeyFrameLibraryManager::~AKeyFrameLibraryManager()
 {
 	UnloadAllLibraries();
 }
 
+// $Barnyard: FUNCTION 006072d0
 void AKeyFrameLibraryManager::LoadLibrariesFromProperties( const PBPropertyValue* a_pArray, Toshi::TTRB* a_pTRB )
 {
 	TPROFILER_SCOPE();
@@ -42,6 +45,7 @@ void AKeyFrameLibraryManager::LoadLibrariesFromProperties( const PBPropertyValue
 	}
 }
 
+// $Barnyard: FUNCTION 00607030
 TBOOL AKeyFrameLibraryManager::LoadLibrary( const Toshi::TPString8& a_rLibraryName, TTRB* a_pTRB )
 {
 	TPROFILER_SCOPE();
@@ -92,6 +96,7 @@ TBOOL AKeyFrameLibraryManager::LoadLibrary( const Toshi::TPString8& a_rLibraryNa
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 006071d0
 TBOOL AKeyFrameLibraryManager::UnrefLibrary( const Toshi::TPString8& a_rLibraryName )
 {
 	TPROFILER_SCOPE();
@@ -120,6 +125,7 @@ TBOOL AKeyFrameLibraryManager::UnrefLibrary( const Toshi::TPString8& a_rLibraryN
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 00607440
 void AKeyFrameLibraryManager::UnloadAllLibraries()
 {
 	TPROFILER_SCOPE();
@@ -135,6 +141,7 @@ void AKeyFrameLibraryManager::UnloadAllLibraries()
 	m_LibrariesRefs.Clear();
 }
 
+// $Barnyard: FUNCTION 00606fd0
 void AKeyFrameLibraryManager::UnloadLibrary( LibraryMap::Iterator& a_rLibrary )
 {
 	TPROFILER_SCOPE();

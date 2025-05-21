@@ -11,6 +11,7 @@
 
 TOSHI_NAMESPACE_USING
 
+// $Barnyard: FUNCTION 00606590
 AKeyframeLibStreamJob::AKeyframeLibStreamJob()
     : TFileStreamJob( TNULL )
 {
@@ -18,6 +19,7 @@ AKeyframeLibStreamJob::AKeyframeLibStreamJob()
 	m_szName[ 0 ] = '\0';
 }
 
+// $Barnyard: FUNCTION 006065d0
 void AKeyframeLibStreamJob::Process()
 {
 	m_pLibrary    = TNULL;

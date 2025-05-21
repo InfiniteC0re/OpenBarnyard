@@ -351,6 +351,7 @@ public:
 	// $Barnyard: FUNCTION 006ba9b0
 	static TUINT32 GetHeaderSize( TUINT32 count ) { return sizeof( SecInfo ) * count + sizeof( Header ); }
 
+	// $Barnyard: FUNCTION 006ba9c0
 	static TUINT32 GetSymbolTableSize( TUINT32 count ) { return sizeof( TTRBSymbol ) * count + sizeof( SYMB ); }
 	static TINT16  HashString( const TCHAR* str );
 

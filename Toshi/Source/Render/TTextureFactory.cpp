@@ -26,6 +26,7 @@ TTextureFactory::NameEntry::~NameEntry()
 	TASSERT( TFALSE == IsLinked() );
 }
 
+// $Barnyard: FUNCTION 006d9680
 TTextureFactory::~TTextureFactory()
 {
 	for ( TUINT32 i = 0; i < NUM_LISTS; i++ )
@@ -34,6 +35,7 @@ TTextureFactory::~TTextureFactory()
 	}
 }
 
+// $Barnyard: FUNCTION 006d9410
 void TTextureFactory::Dump() const
 {
 	TUINT uiTexIndex = 0;
@@ -53,6 +55,7 @@ TNodeList<TTextureFactory::NameEntry>* TTextureFactory::GetList( TUINT a_uiList 
 	return &m_aLists[ a_uiList ];
 }
 
+// $Barnyard: FUNCTION 006d9490
 TTexture* TTextureFactory::FindTexture( const TCHAR* a_szName ) const
 {
 	auto pList = &m_aLists[ HashName( a_szName ) ];
@@ -68,6 +71,7 @@ TTexture* TTextureFactory::FindTexture( const TCHAR* a_szName ) const
 	return TNULL;
 }
 
+// $Barnyard: FUNCTION 006d9500
 TTextureFactory::NameEntry* TTextureFactory::RegisterTexture( const TCHAR* a_szName, TTexture* a_pTexture )
 {
 	auto pList  = &m_aLists[ HashName( a_szName ) ];
@@ -79,6 +83,7 @@ TTextureFactory::NameEntry* TTextureFactory::RegisterTexture( const TCHAR* a_szN
 	return a_pTexture->m_pNameEntry;
 }
 
+// $Barnyard: FUNCTION 006d95b0
 void TTextureFactory::DeregisterTexture( TTexture* a_pTexture )
 {
 	TVALIDPTR( a_pTexture );

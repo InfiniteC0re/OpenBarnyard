@@ -46,6 +46,7 @@ void ATerrainSection::Draw( ATerrainLODType a_eLODType )
 	}
 }
 
+// $Barnyard: FUNCTION 005ed310
 void ATerrainSection::LoadCollision()
 {
 	auto pTerrain = ATerrainInterface::GetSingleton();
@@ -78,6 +79,7 @@ void ATerrainSection::LoadCollision()
 	}
 }
 
+// $Barnyard: FUNCTION 005ed8f0
 void ATerrainSection::LoadModels( ATerrainLODType a_eLODType )
 {
 	TASSERT( a_eLODType == ATerrainLODType_High || a_eLODType == ATerrainLODType_Low );
@@ -238,6 +240,7 @@ void ATerrainSection::UnloadMatlib( ATerrainLODType a_eLODType )
 	}
 }
 
+// $Barnyard: FUNCTION 005ed650
 void ATerrainSection::DestroyLOD( ATerrainLODType a_eLODType )
 {
 	TASSERT( a_eLODType == ATerrainLODType_High || a_eLODType == ATerrainLODType_Low );
@@ -299,6 +302,7 @@ void ATerrainSection::DestroyLOD( ATerrainLODType a_eLODType )
 	SetLODEmpty( a_eLODType, TFALSE );
 }
 
+// $Barnyard: FUNCTION 005ecea0
 void ATerrainSection::RemoveFromStreamingQueue()
 {
 	for ( TINT i = 0; i < ATerrainLODType_NUMOF; i++ )
@@ -319,6 +323,7 @@ void ATerrainSection::RemoveFromStreamingQueue()
 	}
 }
 
+// $Barnyard: FUNCTION 005ecf20
 TBOOL ATerrainSection::IsMatLibLoaded( ATerrainLODType a_eLODType ) const
 {
 	TASSERT( a_eLODType == ATerrainLODType_High || a_eLODType == ATerrainLODType_Low );
@@ -375,6 +380,7 @@ void ATerrainSection::SetLODLoading( ATerrainLODType a_eLODType, TBOOL a_bLoadin
 	}
 }
 
+// $Barnyard: FUNCTION 005ece70
 void ATerrainSection::SetLODEmpty( ATerrainLODType a_eLODType, TBOOL a_bEmpty )
 {
 	TASSERT( a_eLODType == ATerrainLODType_High || a_eLODType == ATerrainLODType_Low );
@@ -389,12 +395,14 @@ void ATerrainSection::SetLODEmpty( ATerrainLODType a_eLODType, TBOOL a_bEmpty )
 	}
 }
 
+// $Barnyard: FUNCTION 005ecf60
 ATerrainSection::ModelNode::ModelNode()
     : m_eFlags( MNF_NONE ), m_bCreated( TFALSE ), m_pAnimatedMaterial( TNULL )
 {
 	m_szType[ 0 ] = '\0';
 }
 
+// $Barnyard: FUNCTION 005e8240
 ATerrainSection::ModelNode::~ModelNode()
 {
 	TIMPLEMENT_D( "Destroy collision data" );
@@ -405,6 +413,7 @@ ATerrainSection::ModelNode::~ModelNode()
 	}
 }
 
+// $Barnyard: FUNCTION 005e9380
 void ATerrainSection::ModelNode::Render()
 {
 	if ( m_bCreated )
@@ -435,6 +444,7 @@ void ATerrainSection::ModelNode::Render()
 	}
 }
 
+// $Barnyard: FUNCTION 005e82c0
 void ATerrainSection::ModelNode::SetUseLighting( TBOOL a_bUseLighting )
 {
 	if ( a_bUseLighting )
@@ -443,6 +453,7 @@ void ATerrainSection::ModelNode::SetUseLighting( TBOOL a_bUseLighting )
 		m_eFlags &= ~MNF_USE_LIGHTING;
 }
 
+// $Barnyard: FUNCTION 005e9430
 void ATerrainSection::ModelNode::SetGlow( TBOOL a_bIsGlow )
 {
 	if ( a_bIsGlow )

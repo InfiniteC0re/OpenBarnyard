@@ -10,6 +10,7 @@
 
 TDEFINE_CLASS_NORUNTIME( AInputMap );
 
+// $Barnyard: FUNCTION 00596c60
 void AInputMap::LoadFromProperties( const PBProperties& a_rProperties )
 {
 	m_oDoodadToCommandMap.Clear();

@@ -15,6 +15,7 @@ TOSHI_NAMESPACE_START
 
 TDEFINE_CLASS( TInputDXInterface );
 
+// $Barnyard: FUNCTION 006d7770
 TBOOL TInputDXInterface::Initialise()
 {
 	TASSERT( TNULL == m_poDirectInput8 );
@@ -42,6 +43,7 @@ TBOOL TInputDXInterface::Initialise()
 	return TFALSE;
 }
 
+// $Barnyard: FUNCTION 006d7390
 TBOOL TInputDXInterface::Deinitialise()
 {
 	TInputInterface::ReleaseAllDevices();
@@ -55,6 +57,7 @@ TBOOL TInputDXInterface::Deinitialise()
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 006d77e0
 void TInputDXInterface::SetExclusiveMode( TBOOL a_bIsExclusive )
 {
 	auto pMouse = GetDeviceByIndex<TInputDXDeviceMouse>( 0 );
@@ -76,6 +79,7 @@ TBOOL TInputDXInterface::LostDevice()
 	return TFALSE;
 }
 
+// $Barnyard: FUNCTION 006d7470
 BOOL TInputDXInterface::EnumerateDeviceCallback( LPCDIDEVICEINSTANCEA a_poDeviceInstance, LPVOID poDXInputInterface )
 {
 	TInputDXInterface* pInputInterface = TSTATICCAST( TInputDXInterface, poDXInputInterface );

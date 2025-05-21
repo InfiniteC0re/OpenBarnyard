@@ -11,6 +11,7 @@ TOSHI_NAMESPACE_START
 
 TDEFINE_CLASS( TInputDXDeviceKeyboard );
 
+// $Barnyard: FUNCTION 006dbae0
 TInputDXDeviceKeyboard::TInputDXDeviceKeyboard()
 {
 	m_iSomeNum        = 0;
@@ -21,6 +22,7 @@ TInputDXDeviceKeyboard::TInputDXDeviceKeyboard()
 	m_aKeys.InitialiseAll( { TNULL } );
 }
 
+// $Barnyard: FUNCTION 006dac40
 void TInputDXDeviceKeyboard::Release()
 {
 	if ( m_poDXInputDevice )
@@ -30,6 +32,7 @@ void TInputDXDeviceKeyboard::Release()
 	}
 }
 
+// $Barnyard: FUNCTION 006dabe0
 TBOOL TInputDXDeviceKeyboard::Acquire()
 {
 	m_bIsUpdating = TFALSE;
@@ -53,6 +56,7 @@ TBOOL TInputDXDeviceKeyboard::Acquire()
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 006dac20
 TBOOL TInputDXDeviceKeyboard::Unacquire()
 {
 	m_bIsUpdating = TFALSE;
@@ -61,12 +65,14 @@ TBOOL TInputDXDeviceKeyboard::Unacquire()
 	return SUCCEEDED( m_poDXInputDevice->Unacquire() );
 }
 
+// $Barnyard: FUNCTION 006dad30
 void TInputDXDeviceKeyboard::Update( TFLOAT deltaTime )
 {
 	if ( IsAcquired() )
 		m_bIsUpdating = TTRUE;
 }
 
+// $Barnyard: FUNCTION 006dac60
 TBOOL TInputDXDeviceKeyboard::Flush()
 {
 	if ( IsAcquired() )
@@ -88,6 +94,7 @@ TBOOL TInputDXDeviceKeyboard::Flush()
 	return TFALSE;
 }
 
+// $Barnyard: FUNCTION 006dbc00
 TINT TInputDXDeviceKeyboard::ProcessEvents( TEmitter<TInputInterface, TInputInterface::InputEvent>& emitter, TFLOAT deltaTime )
 {
 	if ( m_bIsUpdating )
@@ -141,6 +148,7 @@ TINT TInputDXDeviceKeyboard::GetButtonCount() const
 	return 0;
 }
 
+// $Barnyard: FUNCTION 006dbd30
 TBOOL TInputDXDeviceKeyboard::IsDown( TINT doodad ) const
 {
 	if ( !m_bIsUpdating )
@@ -161,21 +169,25 @@ TBOOL TInputDXDeviceKeyboard::IsEnabled() const
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 006dad50
 TBOOL TInputDXDeviceKeyboard::IsShiftDown() const
 {
 	return ( m_pKeyStates1[ DIK_LSHIFT ] & 0x80 ) || ( m_pKeyStates1[ DIK_RSHIFT ] & 0x80 );
 }
 
+// $Barnyard: FUNCTION 006dad70
 TBOOL TInputDXDeviceKeyboard::IsControlDown() const
 {
 	return ( m_pKeyStates1[ DIK_LCONTROL ] & 0x80 ) || ( m_pKeyStates1[ DIK_RCONTROL ] & 0x80 );
 }
 
+// $Barnyard: FUNCTION 006dad90
 TBOOL TInputDXDeviceKeyboard::IsAltDown() const
 {
 	return ( m_pKeyStates1[ DIK_LALT ] & 0x80 ) || ( m_pKeyStates1[ DIK_RALT ] & 0x80 );
 }
 
+// $Barnyard: FUNCTION 006dbda0
 TBOOL TInputDXDeviceKeyboard::WasDown( TINT doodad ) const
 {
 	if ( !m_bIsUpdating )
@@ -191,6 +203,7 @@ TBOOL TInputDXDeviceKeyboard::WasDown( TINT doodad ) const
 		return m_pKeyStates2[ TranslateDXToDoodad( doodad ) ] & 0x80;
 }
 
+// $Barnyard: FUNCTION 006dadb0
 TWCHAR* TInputDXDeviceKeyboard::TranslateDoodadToCharacter( TINT doodad ) const
 {
 #pragma warning( disable : 4309 )
@@ -208,6 +221,7 @@ TWCHAR* TInputDXDeviceKeyboard::TranslateDoodadToCharacter( TINT doodad ) const
 	return s_Buffer;
 }
 
+// $Barnyard: FUNCTION 006dab90
 TBOOL TInputDXDeviceKeyboard::Initialise()
 {
 	m_iSomeNum = 0;
@@ -219,12 +233,14 @@ TBOOL TInputDXDeviceKeyboard::Initialise()
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 006dabd0
 TBOOL TInputDXDeviceKeyboard::Deinitialise()
 {
 	Release();
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 006dacb0
 void TInputDXDeviceKeyboard::RefreshDirect()
 {
 	if ( !IsAcquired() )
@@ -246,6 +262,7 @@ void TInputDXDeviceKeyboard::RefreshDirect()
 	}
 }
 
+// $Barnyard: FUNCTION 006dbb60
 TBOOL TInputDXDeviceKeyboard::HandleKeyChange( TEmitter<TInputInterface, TInputInterface::InputEvent>& a_Emitter, TINT a_iKeyIndex, uint8_t a_ui8KeyState )
 {
 	TINT iDoodad = TranslateDXToDoodad( a_iKeyIndex );
@@ -279,6 +296,7 @@ TBOOL TInputDXDeviceKeyboard::HandleKeyChange( TEmitter<TInputInterface, TInputI
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 006db410
 TINT TInputDXDeviceKeyboard::TranslateDXToDoodad( TINT doodad )
 {
 	switch ( doodad )
@@ -534,6 +552,7 @@ TINT TInputDXDeviceKeyboard::TranslateDXToDoodad( TINT doodad )
 	}
 }
 
+// $Barnyard: FUNCTION 006dae20
 TINT TInputDXDeviceKeyboard::TranslateDoodadToDX( TINT dxkey )
 {
 	switch ( dxkey )
@@ -789,6 +808,7 @@ TINT TInputDXDeviceKeyboard::TranslateDoodadToDX( TINT dxkey )
 	}
 }
 
+// $Barnyard: FUNCTION 006dbfc0
 const TBOOL TInputDXDeviceKeyboard::BindToDIDevice( HWND a_hMainWindow, LPCDIDEVICEINSTANCEA a_poDeviceInstance, IDirectInputDevice8A* a_poDXInputDevice )
 {
 	TASSERT( a_poDeviceInstance != NULL );

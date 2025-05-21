@@ -13,6 +13,7 @@ TOSHI_NAMESPACE_USING
 
 TDEFINE_CLASS( ACameraManager );
 
+// $Barnyard: FUNCTION 0045b960
 ACameraManager::ACameraManager()
     : m_vInitialLookDirection( ACamera::sm_vInitialLookDirection )
     , m_bIsPosLerping( TFALSE )
@@ -60,6 +61,7 @@ ACameraManager::~ACameraManager()
 {
 }
 
+// $Barnyard: FUNCTION 0045bf10
 TBOOL ACameraManager::OnUpdate( TFLOAT a_fDeltaTime )
 {
 	TIMPLEMENT();
@@ -163,6 +165,7 @@ ACamera* ACameraManager::GetCamera( TUINT a_uiCameraIndex ) const
 	return m_apCameras[ a_uiCameraIndex ];
 }
 
+// $Barnyard: FUNCTION 0045c0d0
 ACameraHelper* ACameraManager::GetCameraHelper( CAMERAHELPER a_eCameraHelper ) const
 {
 	TASSERT( a_eCameraHelper < CAMERAHELPER_NUM_OF );

@@ -29,6 +29,7 @@ TOSHI_NAMESPACE_USING
 
 TDEFINE_CLASS( AFrontEndMainMenuState2 );
 
+// $Barnyard: FUNCTION 00408f20
 AFrontEndMainMenuState2::AFrontEndMainMenuState2( AWindmillHelper* a_pWindmillHelper, TBOOL a_bFlag )
 {
 	m_iActivatedButtonID = -1;
@@ -45,10 +46,12 @@ AFrontEndMainMenuState2::AFrontEndMainMenuState2( AWindmillHelper* a_pWindmillHe
 	m_pButtonRotations[ FRONTENDBUTTON_QUIT ]     = TMath::DegToRad( -1.0f );
 }
 
+// $Barnyard: FUNCTION 00408df0
 AFrontEndMainMenuState2::~AFrontEndMainMenuState2()
 {
 }
 
+// $Barnyard: FUNCTION 004094c0
 TBOOL AFrontEndMainMenuState2::StartIntroVideo()
 {
 	AFrontEndMainMenuState2* pFrontEndState = new AFrontEndMainMenuState2();
@@ -82,6 +85,7 @@ void AFrontEndMainMenuState2::SetupCamera()
 	}
 }
 
+// $Barnyard: FUNCTION 004093d0
 TBOOL AFrontEndMainMenuState2::ProcessInput( const Toshi::TInputInterface::InputEvent* a_pInputEvent )
 {
 	if ( !AFadeManager::GetSingleton()->HasAnyFadesInProgress( TTRUE ) && !m_oFadeOverListener.IsLinked() )
@@ -92,6 +96,7 @@ TBOOL AFrontEndMainMenuState2::ProcessInput( const Toshi::TInputInterface::Input
 	return TFALSE;
 }
 
+// $Barnyard: FUNCTION 00409410
 TBOOL AFrontEndMainMenuState2::ProcessCommand( AInputCommand a_eInputCommand, const TInputInterface::InputEvent* a_pInputEvent, TBOOL& a_rStopEvents )
 {
 	if ( !AFadeManager::GetSingleton()->HasAnyFadesInProgress( TTRUE ) && !m_oFadeOverListener.IsLinked() )
@@ -116,6 +121,7 @@ TBOOL AFrontEndMainMenuState2::ProcessCommand( AInputCommand a_eInputCommand, co
 	return TFALSE;
 }
 
+// $Barnyard: FUNCTION 00409910
 TBOOL AFrontEndMainMenuState2::OnUpdate( TFLOAT a_fDeltaTime )
 {
 	// Reset AFK time
@@ -218,6 +224,7 @@ void AFrontEndMainMenuState2::OnInsertion()
 	m_bFocusedElementBloated = TFALSE;
 }
 
+// $Barnyard: FUNCTION 00409340
 void AFrontEndMainMenuState2::OnRemoval()
 {
 	ms_bIsInserted = TFALSE;
@@ -237,6 +244,7 @@ void AFrontEndMainMenuState2::OnRemoval()
 	BaseClass::OnRemoval();
 }
 
+// $Barnyard: FUNCTION 00409680
 void AFrontEndMainMenuState2::OnActivate()
 {
 	TIMPLEMENT();
@@ -253,6 +261,7 @@ void AFrontEndMainMenuState2::OnActivate()
 	m_oDialogTitleBackground.Hide();
 }
 
+// $Barnyard: FUNCTION 00408ea0
 void AFrontEndMainMenuState2::OnDeactivate()
 {
 	m_Rectangle1.Hide();
@@ -261,6 +270,7 @@ void AFrontEndMainMenuState2::OnDeactivate()
 	BaseClass::OnDeactivate();
 }
 
+// $Barnyard: FUNCTION 00408ec0
 void AFrontEndMainMenuState2::OnMenuItemActivated( AGUI2MenuItem& a_rMenuItem )
 {
 	AGUI2Button* pButton = TSTATICCAST( AGUI2Button, &a_rMenuItem );
@@ -271,6 +281,7 @@ void AFrontEndMainMenuState2::OnMenuItemActivated( AGUI2MenuItem& a_rMenuItem )
 	m_eMenuState = MENUSTATE_MENU_VISIBLE;
 }
 
+// $Barnyard: FUNCTION 004099f0
 void AFrontEndMainMenuState2::OnMenuClose()
 {
 	TIMPLEMENT();
@@ -291,6 +302,7 @@ void AFrontEndMainMenuState2::OnMenuClose()
 		AGameStateController::GetSingleton()->PushState( pPushGameState );
 }
 
+// $Barnyard: FUNCTION 00432b80
 void AFrontEndMainMenuState2::UpdateMenuButtons( TFLOAT a_fDeltaTime )
 {
 	AGUI2MenuItem* pLastMenuItem = m_oMenu.GetLastMenuItem();
@@ -331,6 +343,7 @@ void AFrontEndMainMenuState2::UpdateMenuButtons( TFLOAT a_fDeltaTime )
 	}
 }
 
+// $Barnyard: FUNCTION 00432dc0
 void AFrontEndMainMenuState2::UpdateFocusedButton( TFLOAT a_fDeltaTime )
 {
 	AGUI2Button* pFocusedButton = TSTATICCAST( AGUI2Button, m_oMenu.GetFocusedMenuItem() );

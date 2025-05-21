@@ -9,6 +9,7 @@
 
 TOSHI_NAMESPACE_START
 
+// $Barnyard: FUNCTION 006cbd50
 void T2GenericDynamicVector::Reallocate( TINT a_iNewSize, TINT a_iElementSize )
 {
 	if ( a_iNewSize != m_iAllocSize )
@@ -35,6 +36,7 @@ void T2GenericDynamicVector::Reallocate( TINT a_iNewSize, TINT a_iElementSize )
 	}
 }
 
+// $Barnyard: FUNCTION 006cbf00
 void T2GenericDynamicVector::Grow( TINT a_iNumElements, TINT a_iElementSize )
 {
 	TINT newSize = m_iNumElements + a_iNumElements;

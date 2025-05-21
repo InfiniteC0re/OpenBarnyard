@@ -26,15 +26,18 @@ TDEFINE_CLASS( ASkinShaderHAL );
 #define VERTEX_SHADER_REGISTER_MVP   0
 #define VERTEX_SHADER_REGISTER_BONES 5
 
+// $Barnyard: FUNCTION 005f46a0
 ASkinShaderHAL::ASkinShaderHAL()
     : m_hUnknownPixelShader( 0 ), m_hVertexShader( 0 ), m_hVertexShaderHD( 0 ), m_hPixelShader( 0 ), m_iAlphaRef( 128 ), m_bIsAlphaBlendMaterial( TFALSE ), m_fAMDPatch1( 0.0f ), m_bCPUSupportsFeature1( TFALSE ), m_bCPUSupportsFeature2( TFALSE ), m_bUnkFlag( TFALSE ), m_bHighEndSkinning( TTRUE ), m_bLightScattering( TTRUE ), m_fAMDPatch2( 1.0f )
 {
 }
 
+// $Barnyard: FUNCTION 005f47b0
 ASkinShaderHAL::~ASkinShaderHAL()
 {
 }
 
+// $Barnyard: FUNCTION 005f33b0
 void ASkinShaderHAL::Flush()
 {
 	if ( IsValidated() )
@@ -78,6 +81,7 @@ void ASkinShaderHAL::Flush()
 	BaseClass::Flush();
 }
 
+// $Barnyard: FUNCTION 005f3230
 void ASkinShaderHAL::StartFlush()
 {
 	auto pRenderInterface = TRenderD3DInterface::Interface();
@@ -117,6 +121,7 @@ void ASkinShaderHAL::StartFlush()
 	}
 }
 
+// $Barnyard: FUNCTION 005f3370
 void ASkinShaderHAL::EndFlush()
 {
 	auto pRenderInterface = TRenderD3DInterface::Interface();
@@ -127,6 +132,7 @@ void ASkinShaderHAL::EndFlush()
 	pDevice->SetPixelShader( 0 );
 }
 
+// $Barnyard: FUNCTION 005f17a0
 TBOOL ASkinShaderHAL::Create()
 {
 	m_aOrderTables[ 0 ].Create( this, -390 );
@@ -145,6 +151,7 @@ static TBOOL CreateSkinVertexShader( const char* a_szFileName, const DWORD* a_pF
 	return TRenderD3DInterface::CreateVertexShader( s_ShaderDeclaration, a_pFunction, a_pOutVertexShader );
 }
 
+// $Barnyard: FUNCTION 005f3860
 TBOOL ASkinShaderHAL::Validate()
 {
 	if ( IsValidated() )
@@ -201,6 +208,7 @@ TBOOL ASkinShaderHAL::Validate()
 	}
 }
 
+// $Barnyard: FUNCTION 005f4030
 void ASkinShaderHAL::Invalidate()
 {
 	if ( !IsValidated() ) return;
@@ -251,6 +259,7 @@ TBOOL ASkinShaderHAL::TryValidate()
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 005f4830
 void ASkinShaderHAL::Render( Toshi::TRenderPacket* a_pRenderPacket )
 {
 	if ( IsHighEndSkinning() )
@@ -513,21 +522,25 @@ void ASkinShaderHAL::Render( Toshi::TRenderPacket* a_pRenderPacket )
 	}
 }
 
+// $Barnyard: FUNCTION 004427b0
 void ASkinShaderHAL::EnableRenderEnvMap( TBOOL a_bEnable )
 {
 	m_bRenderEnvMap = a_bEnable;
 }
 
+// $Barnyard: FUNCTION 0041a410
 TBOOL ASkinShaderHAL::IsHighEndSkinning()
 {
 	return m_bHighEndSkinning;
 }
 
+// $Barnyard: FUNCTION 005f17f0
 void ASkinShaderHAL::EnableHighEndSkinning( TBOOL a_bEnable )
 {
 	m_bHighEndSkinning = a_bEnable && IsCapableHighEndSkinning();
 }
 
+// $Barnyard: FUNCTION 005f1810
 TBOOL ASkinShaderHAL::IsCapableHighEndSkinning()
 {
 	D3DCAPS8 caps;
@@ -552,6 +565,7 @@ TBOOL ASkinShaderHAL::IsCapableHighEndSkinning()
 	return ( ( caps.VertexShaderVersion & 0xFFFF ) > 256 ) && ( caps.DevCaps & 0x10000 );
 }
 
+// $Barnyard: FUNCTION 005f4770
 TBOOL ASkinShaderHAL::IsLightScattering()
 {
 	return m_bLightScattering;
@@ -561,16 +575,19 @@ void ASkinShaderHAL::SetLightScattering( TBOOL a_bEnable )
 {
 }
 
+// $Barnyard: FUNCTION 005f4780
 TBOOL ASkinShaderHAL::IsAlphaBlendMaterial()
 {
 	return m_bIsAlphaBlendMaterial;
 }
 
+// $Barnyard: FUNCTION 005f47a0
 void ASkinShaderHAL::SetAlphaBlendMaterial( TBOOL a_bIsAlphaBlendMaterial )
 {
 	m_bIsAlphaBlendMaterial = a_bIsAlphaBlendMaterial;
 }
 
+// $Barnyard: FUNCTION 005f39a0
 ASkinMaterial* ASkinShaderHAL::CreateMaterial( const TCHAR* a_szName )
 {
 	Validate();
@@ -593,6 +610,7 @@ ASkinMaterial* ASkinShaderHAL::CreateMaterial( const TCHAR* a_szName )
 	return pMaterial;
 }
 
+// $Barnyard: FUNCTION 005f3920
 ASkinMesh* ASkinShaderHAL::CreateMesh( const TCHAR* a_szName )
 {
 	Validate();
@@ -619,16 +637,19 @@ void ASkinShaderHAL::RemoveLight( TINT a_iIndex )
 	TASSERT( !"Not implemeted in the original game" );
 }
 
+// $Barnyard: FUNCTION 005f4790
 TBOOL ASkinShaderHAL::IsEnableRenderEnvMap()
 {
 	return m_bRenderEnvMap;
 }
 
+// $Barnyard: FUNCTION 005fc670
 void ASkinShaderHAL::SetSomeColour( TUINT a_uiR, TUINT a_uiG, TUINT a_uiB, TUINT a_uiA )
 {
 	m_SomeColour = ( ( a_uiA << 8 | a_uiB ) << 8 | a_uiG ) << 8 | a_uiR;
 }
 
+// $Barnyard: FUNCTION 005f3640
 TINT ASkinShaderHAL::SetUnknown1( TINT a_Unknown, TUINT8 a_fAlpha )
 {
 	if ( m_SomeColourComponents[ 1 ] < 2 )
@@ -641,6 +662,7 @@ TINT ASkinShaderHAL::SetUnknown1( TINT a_Unknown, TUINT8 a_fAlpha )
 	return m_Unk2;
 }
 
+// $Barnyard: FUNCTION 006639a0
 void ASkinShaderHAL::SetUnknown2( TINT a_Unknown )
 {
 	m_Unk2 = a_Unknown;
@@ -655,11 +677,13 @@ void ASkinShaderHAL::SetAlphaRef( TINT a_iAlphaRef )
 	m_iAlphaRef = a_iAlphaRef;
 }
 
+// $Barnyard: FUNCTION 005f40f0
 void ASkinShaderHAL::RenderLowEnd( Toshi::TRenderPacket* a_pRenderPacket )
 {
 	TASSERT( !"Hello there" );
 }
 
+// $Barnyard: FUNCTION 005f1b10
 void ASkinShaderHAL::SetupLowEndMode()
 {
 	auto pRenderInterface = TRenderD3DInterface::Interface();
@@ -701,6 +725,7 @@ void ASkinShaderHAL::SetupLowEndMode()
 	pDevice->SetRenderState( D3DRS_FOGENABLE, 0 );
 }
 
+// $Barnyard: FUNCTION 005f1ac0
 void ASkinShaderHAL::ApplyGPUSpecificPatches()
 {
 	auto pRenderInterface = TRenderD3DInterface::Interface();
@@ -715,12 +740,14 @@ void ASkinShaderHAL::ApplyGPUSpecificPatches()
 	}
 }
 
+// $Barnyard: FUNCTION 005f18e0
 void ASkinShaderHAL::CheckCPUFeature1()
 {
 	TIMPLEMENT();
 	m_bCPUSupportsFeature1 = TTRUE;
 }
 
+// $Barnyard: FUNCTION 005f19d0
 void ASkinShaderHAL::CheckCPUFeature2()
 {
 	TIMPLEMENT();

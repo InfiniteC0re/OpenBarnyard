@@ -10,6 +10,7 @@
 
 TOSHI_NAMESPACE_USING
 
+// $Barnyard: FUNCTION 006bfb20
 TBOOL AGUI2TextureSectionManager::Open( const TCHAR* a_szFileName, Toshi::TTRB* a_pTRB )
 {
 	if ( a_pTRB == TNULL )
@@ -52,6 +53,7 @@ TBOOL AGUI2TextureSectionManager::Open( const TCHAR* a_szFileName, Toshi::TTRB* 
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 006bfc40
 void AGUI2TextureSectionManager::Close()
 {
 	if ( g_trb )
@@ -68,6 +70,7 @@ void AGUI2TextureSectionManager::Close()
 	}
 }
 
+// $Barnyard: FUNCTION 006bf890
 AGUI2TextureSection* AGUI2TextureSectionManager::GetTextureSection( const TCHAR* a_szSectionName )
 {
 	TASSERT( g_defblock && g_sections );
@@ -83,6 +86,7 @@ AGUI2TextureSection* AGUI2TextureSectionManager::GetTextureSection( const TCHAR*
 	return TNULL;
 }
 
+// $Barnyard: FUNCTION 006bf8e0
 void AGUI2TextureSectionManager::CreateMaterials()
 {
 	TASSERT( g_sections != TNULL );
@@ -121,6 +125,7 @@ void AGUI2TextureSectionManager::CreateMaterials()
 	}
 }
 
+// $Barnyard: FUNCTION 006bf9c0
 void AGUI2TextureSectionManager::DestroyMaterials()
 {
 	TASSERT( g_sections != TNULL );
@@ -140,6 +145,7 @@ void AGUI2TextureSectionManager::DestroyMaterials()
 	}
 }
 
+// $Barnyard: FUNCTION 006bfa10
 void AGUI2TextureSectionManager::UpdateMaterials()
 {
 	if ( g_sections != TNULL )

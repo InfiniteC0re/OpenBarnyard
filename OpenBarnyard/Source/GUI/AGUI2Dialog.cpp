@@ -11,6 +11,7 @@
 
 TOSHI_NAMESPACE_USING
 
+// $Barnyard: FUNCTION 00638020
 AGUI2Dialog::AGUI2Dialog()
 {
 	m_pFocusElement = TNULL;
@@ -21,6 +22,7 @@ AGUI2Dialog::~AGUI2Dialog()
 {
 }
 
+// $Barnyard: FUNCTION 006385f0
 void AGUI2Dialog::Render()
 {
 	AGUI2Renderer* pRenderer = AGUI2::GetRenderer();
@@ -57,6 +59,7 @@ void AGUI2Dialog::SetDimensions( TFLOAT a_fWidth, TFLOAT a_fHeight )
 	SetDialogSize( a_fWidth, a_fHeight );
 }
 
+// $Barnyard: FUNCTION 00638550
 void AGUI2Dialog::SetColour( TUINT32 a_uiColour )
 {
 	for ( TINT i = 0; i < AGUI2ATTACHMENT_NUMOF; i++ )
@@ -67,6 +70,7 @@ void AGUI2Dialog::SetColour( TUINT32 a_uiColour )
 	AGUI2Element::SetColour( a_uiColour );
 }
 
+// $Barnyard: FUNCTION 00638580
 void AGUI2Dialog::SetAlpha( TFLOAT a_fAlpha )
 {
 	for ( TINT i = 0; i < AGUI2ATTACHMENT_NUMOF; i++ )
@@ -77,6 +81,7 @@ void AGUI2Dialog::SetAlpha( TFLOAT a_fAlpha )
 	AGUI2Element::SetAlpha( a_fAlpha );
 }
 
+// $Barnyard: FUNCTION 006385c0
 void AGUI2Dialog::SetFocus( TBOOL a_bFocused )
 {
 	if ( m_pFocusElement )
@@ -85,6 +90,7 @@ void AGUI2Dialog::SetFocus( TBOOL a_bFocused )
 	AGUI2Element::SetFocus( a_bFocused );
 }
 
+// $Barnyard: FUNCTION 00638100
 void AGUI2Dialog::Create( const TCHAR* a_szTopLeft, const TCHAR* a_szTopCenter, const TCHAR* a_szTopRight, const TCHAR* a_szMiddleLeft, const TCHAR* a_szMiddleCenter, const TCHAR* a_szMiddleRight, const TCHAR* a_szBottomLeft, const TCHAR* a_szBottomCenter, const TCHAR* a_szBottomRight )
 {
 	m_apTexTiles[ AGUI2ATTACHMENT_TOPLEFT ]   = AGUI2TextureSectionManager::GetTextureSection( a_szTopLeft );
@@ -111,6 +117,7 @@ void AGUI2Dialog::Create( const TCHAR* a_szTopLeft, const TCHAR* a_szTopCenter, 
 	AddChildTail( m_aRectangles[ AGUI2ATTACHMENT_MIDDLECENTER ] );
 }
 
+// $Barnyard: FUNCTION 006383b0
 void AGUI2Dialog::SetDialogSize( TFLOAT a_fWidth, TFLOAT a_fHeight )
 {
 	TFLOAT fBorderWidth  = ( m_apTexTiles[ AGUI2ATTACHMENT_MIDDLELEFT ]->GetWidth() + m_apTexTiles[ AGUI2ATTACHMENT_MIDDLERIGHT ]->GetWidth() ) * 0.5f;

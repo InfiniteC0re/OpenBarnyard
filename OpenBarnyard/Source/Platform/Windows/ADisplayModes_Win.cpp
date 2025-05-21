@@ -13,6 +13,7 @@ TOSHI_NAMESPACE_USING
 
 TDEFINE_CLASS( ADisplayModes_Win );
 
+// $Barnyard: FUNCTION 00614e00
 void ADisplayModes_Win::Initialise()
 {
 	auto pRenderer    = TSTATICCAST( TRenderD3DInterface, TRenderInterface::GetSingleton() );

@@ -222,6 +222,7 @@ public:
 		}
 	}
 
+	// $Barnyard: FUNCTION 00457a20
 	Iterator Erase( Iterator iter )
 	{
 		Iterator itNext = iter.Next();
@@ -230,6 +231,7 @@ public:
 		return itNext;
 	}
 
+	// $Barnyard: FUNCTION 006c8140
 	TBOOL Exists( T* a_pItem )
 	{
 		for ( auto it = Begin(); it != End(); it++ )

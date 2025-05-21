@@ -19,6 +19,7 @@ ASkinSubMesh::ASkinSubMesh()
 {
 }
 
+// $Barnyard: FUNCTION 005f97b0
 ASkinSubMesh::~ASkinSubMesh()
 {
 	if ( pIndexPool )
@@ -28,6 +29,7 @@ ASkinSubMesh::~ASkinSubMesh()
 	}
 }
 
+// $Barnyard: FUNCTION 005f1540
 ASkinMesh::ASkinMesh()
     : m_uiFlags( 0 ), m_uiMaxVertices( 0 ), m_uiNumSubMeshes( 0 ), m_pVertexPool( TNULL ), m_Unk( TNULL )
 {
@@ -50,6 +52,7 @@ TBOOL ASkinMesh::Validate()
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 005f1580
 void ASkinMesh::Invalidate()
 {
 	BaseClass::Invalidate();
@@ -60,6 +63,7 @@ TBOOL ASkinMesh::Render()
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 005f16c0
 void ASkinMesh::OnDestroy()
 {
 	AModelLoader::DestroyMaterial( m_pMaterial );
@@ -67,6 +71,7 @@ void ASkinMesh::OnDestroy()
 	BaseClass::OnDestroy();
 }
 
+// $Barnyard: FUNCTION 005f16e0
 void ASkinMesh::Create( TUINT32 a_uiFlags, TUINT16 a_uiMaxVertices, TUINT16 a_uiNumSubMeshes )
 {
 	TASSERT( !IsCreated() );
@@ -85,6 +90,7 @@ void ASkinMesh::Create( TUINT32 a_uiFlags, TUINT16 a_uiMaxVertices, TUINT16 a_ui
 	}
 }
 
+// $Barnyard: FUNCTION 005f9980
 TBOOL ASkinMesh::Lock( LockBuffer& a_rLockBuffer )
 {
 	TASSERT( 0 == ( m_uiFlags & FLAG_LOCKED ) );
@@ -98,6 +104,7 @@ TBOOL ASkinMesh::Lock( LockBuffer& a_rLockBuffer )
 	return TFALSE;
 }
 
+// $Barnyard: FUNCTION 005f5de0
 void ASkinMesh::Unlock( TUINT32 a_uiNumVertices )
 {
 	TASSERT( 0 != ( m_uiFlags & FLAG_LOCKED ) );
@@ -127,6 +134,7 @@ ASkinSubMesh* ASkinMesh::GetSubMesh( TUINT16 a_uiIndex )
 	return &m_pSubMeshes[ a_uiIndex ];
 }
 
+// $Barnyard: FUNCTION 005f15a0
 TBOOL ASkinMesh::CreateResource()
 {
 	auto pVertexFactory = TRenderInterface::GetSingleton()->GetSystemResource<TVertexFactoryResourceInterface>( SYSRESOURCE_VFSKIN );
@@ -138,6 +146,7 @@ TBOOL ASkinMesh::CreateResource()
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 005f9930
 void ASkinMesh::DestroyResource()
 {
 	if ( m_pVertexPool )

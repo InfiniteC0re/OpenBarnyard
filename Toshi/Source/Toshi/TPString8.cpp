@@ -11,6 +11,7 @@ TDEFINE_FREELIST_ALLOCATOR1( Toshi::TPooledString8, 64 );
 
 TOSHI_NAMESPACE_START
 
+// $Barnyard: FUNCTION 006bc3e0
 void TPString8Pool::Get( TPooledString8*& a_pOutString, const TCHAR* a_szString, bool* a_pWasInPool )
 {
 	a_pOutString = TNULL;
@@ -60,6 +61,7 @@ TPString8Pool::TPString8Pool( TINT a_iUnknown1, TINT a_iUnknown2, T2Allocator* a
 	}
 }
 
+// $Barnyard: FUNCTION 006bc0a0
 TPString8Initialiser::TPString8Initialiser( StringMap* a_pStrings, TUINT a_iStringCount, TBOOL a_bCanReinitialise )
 {
 	m_iCount            = a_iStringCount;
@@ -69,6 +71,7 @@ TPString8Initialiser::TPString8Initialiser( StringMap* a_pStrings, TUINT a_iStri
 	ms_pHeadInitialiser = this;
 }
 
+// $Barnyard: FUNCTION 006bc4c0
 void TPString8Initialiser::Initialise( TPString8Pool* a_pStringPool )
 {
 	if ( m_bCanReinitialise )
@@ -94,6 +97,7 @@ void TPString8Initialiser::Initialise( TPString8Pool* a_pStringPool )
 	}
 }
 
+// $Barnyard: FUNCTION 006bc380
 void TPooledString8::Delete()
 {
 	if ( IsPooled() )

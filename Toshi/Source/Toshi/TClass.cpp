@@ -11,6 +11,7 @@
 
 TOSHI_NAMESPACE_START
 
+// $Barnyard: FUNCTION 006bbf30
 TClass::TClass( const TCHAR* a_szName, TClass* a_pParentClass, CreateObject_t a_fnCreate, CreateObjectInPlace_t a_fnCreateInPlace, Initialise_t a_fnInitialise, Deinitialise_t a_fnUnitialise, TUINT16 a_uiVersionMajor, TUINT16 a_uiVersionMinor, TUINT32 a_uiClassSize, TUINT32 a_uiClassAlignment )
     : m_szName( a_szName ), m_pParent( a_pParentClass ), m_fnCreate( a_fnCreate ), m_fnCreateInPlace( a_fnCreateInPlace ), m_fnInitialise( a_fnInitialise ), m_fnDeinitialise( a_fnUnitialise ), m_uiVersionMajor( a_uiVersionMajor ), m_uiVersionMinor( a_uiVersionMinor ), m_uiClassSize( a_uiClassSize ), m_uiClassAlignment( a_uiClassAlignment ), m_bInitialised( TFALSE )
 {
@@ -29,6 +30,7 @@ TClass::TClass( const TCHAR* a_szName, TClass* a_pParentClass, CreateObject_t a_
 	}
 }
 
+// $Barnyard: FUNCTION 006bbfa0
 TClass::~TClass()
 {
 	m_pLastChildren = TNULL;
@@ -52,6 +54,7 @@ void TClass::Initialize()
 	}
 }
 
+// $Barnyard: FUNCTION 006bbfe0
 void TClass::RecurseTree( RecurseTreeBaseBeginCb_t fBaseBegin, RecurseTreeBaseEndCb_t fBaseEnd, RecurseTreeCheck_t fCheck, void* custom )
 {
 	TBOOL valid = fCheck( this, custom );
@@ -64,6 +67,7 @@ void TClass::RecurseTree( RecurseTreeBaseBeginCb_t fBaseBegin, RecurseTreeBaseEn
 	}
 }
 
+// $Barnyard: FUNCTION 006bbe10
 void TClass::RecurseTree2( RecurseTreeBaseBeginCb_t fBaseBegin, RecurseTreeBaseEndCb_t fBaseEnd, RecurseTreeCheck_t fCheck, void* custom )
 {
 	for ( TClass* pClass = m_pLastChildren; pClass != TNULL; pClass = pClass->m_pPrevious )
@@ -79,6 +83,7 @@ void TClass::RecurseTree2( RecurseTreeBaseBeginCb_t fBaseBegin, RecurseTreeBaseE
 	}
 }
 
+// $Barnyard: FUNCTION 006bbdb0
 TClass* TClass::FindRecurse( const TCHAR* const& name, TClass* parent, TBOOL hasPrevious )
 {
 	while ( parent )
@@ -107,12 +112,14 @@ TClass* TClass::FindRecurse( const TCHAR* const& name, TClass* parent, TBOOL has
 	return TNULL;
 }
 
+// $Barnyard: FUNCTION 006bbfc0
 TClass* TClass::Find( const TCHAR* name, TClass* parent )
 {
 	if ( parent == TNULL ) parent = &TObject::TClassObjectName;
 	return FindRecurse( name, parent, TFALSE );
 }
 
+// $Barnyard: FUNCTION 006bbce0
 TObject* TClass::CreateObject() const
 {
 	if ( m_fnCreate != TNULL )
@@ -123,6 +130,7 @@ TObject* TClass::CreateObject() const
 	return TNULL;
 }
 
+// $Barnyard: FUNCTION 006bbd60
 TBOOL TClass::IsA( TClass* cmpClass )
 {
 	if ( cmpClass->m_pLastChildren == TNULL )
@@ -147,6 +155,7 @@ TBOOL TClass::IsA( TClass* cmpClass )
 	return TFALSE;
 }
 
+// $Barnyard: FUNCTION 006bc020
 TUINT32 TClass::GetMaxSizeOfDerivedClasses()
 {
 	auto GetMaxSizeOfClass = []( TClass* a_pClass, void* a_pSize ) -> TBOOL {
@@ -167,6 +176,7 @@ TUINT32 TClass::GetMaxSizeOfDerivedClasses()
 	return uiClassSize;
 }
 
+// $Barnyard: FUNCTION 006bc060
 TUINT32 TClass::GetMaxAlignmentOfDerivedClasses()
 {
 	auto GetMaxAlignmentOfClass = []( TClass* a_pClass, void* a_pAlignment ) -> TBOOL {

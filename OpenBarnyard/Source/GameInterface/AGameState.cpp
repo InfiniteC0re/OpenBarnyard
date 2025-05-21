@@ -19,6 +19,7 @@ TOSHI_NAMESPACE_USING
 
 TDEFINE_CLASS( AGameState );
 
+// $Barnyard: FUNCTION 00428170
 AGameState::AGameState()
 {
 	m_eOverlayColorIndex = OVERLAY_1;
@@ -35,10 +36,12 @@ AGameState::AGameState()
 	m_GUIElement.Hide();
 }
 
+// $Barnyard: FUNCTION 00428250
 AGameState::~AGameState()
 {
 }
 
+// $Barnyard: FUNCTION 00428700
 TBOOL AGameState::ProcessInput( const TInputInterface::InputEvent* a_pInputEvent )
 {
 	if ( ExecuteForOneChildState( &AGameState::ProcessInput, 0, a_pInputEvent ) )
@@ -54,6 +57,7 @@ TBOOL AGameState::ProcessCommand( AInputCommand a_eInputCommand, const TInputInt
 	return TFALSE;
 }
 
+// $Barnyard: FUNCTION 00428870
 TBOOL AGameState::Unknown1( void* a_pUnk1, void* a_pUnk2 )
 {
 	return ExecuteForOneChildState( &AGameState::Unknown1, 0, a_pUnk1, a_pUnk2 );
@@ -80,6 +84,7 @@ TBOOL AGameState::Unknown6()
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 004ee130
 ASoundId AGameState::GetSound()
 {
 	return ASOUNDID_INVALID;
@@ -110,44 +115,52 @@ void AGameState::Unknown12( void* a_pUnk1, void* a_pUnk2 )
 {
 }
 
+// $Barnyard: FUNCTION 0045b650
 TFLOAT AGameState::GetFOV()
 {
 	return ACamera::sm_fCurrentFOV;
 }
 
+// $Barnyard: FUNCTION 00428890
 TBOOL AGameState::OnUpdate( TFLOAT a_fDeltaTime )
 {
 	ExecuteForAllChildStates( &AGameState::OnUpdate, 0, a_fDeltaTime );
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 004288b0
 void AGameState::OnInsertion()
 {
 	m_bWasInserted = TTRUE;
 	ExecuteForAllChildStates( &AGameState::OnInsertion, 0 );
 }
 
+// $Barnyard: FUNCTION 004288d0
 void AGameState::OnRemoval()
 {
 	ExecuteForAllChildStates( &AGameState::OnRemoval, 0 );
 }
 
+// $Barnyard: FUNCTION 00428920
 void AGameState::OnSuspend()
 {
 	ExecuteForAllChildStates( &AGameState::OnSuspend, 0 );
 }
 
+// $Barnyard: FUNCTION 004288f0
 void AGameState::OnResume( AGameState* a_pPreviousState )
 {
 	ExecuteForAllChildStates( &AGameState::OnResume, 0, a_pPreviousState );
 }
 
+// $Barnyard: FUNCTION 004289c0
 void AGameState::OnActivate()
 {
 	m_bIsActivated = TTRUE;
 	ExecuteForAllChildStates( &AGameState::OnActivate, 0 );
 }
 
+// $Barnyard: FUNCTION 004289e0
 void AGameState::OnDeactivate()
 {
 	m_bIsActivated = TFALSE;
@@ -175,6 +188,7 @@ void AGameState::Destroy( TBOOL a_bDeactivate )
 	delete this;
 }
 
+// $Barnyard: FUNCTION 00428730
 TBOOL AGameState::SendInputCommands( const TInputInterface::InputEvent* a_pEvent )
 {
 	auto pInputHandler = AInputHandler::GetSingleton();
@@ -230,6 +244,7 @@ TBOOL AGameState::SendInputCommands( const TInputInterface::InputEvent* a_pEvent
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 00428320
 void AGameState::SetInputMap( const TPString8& a_MapName )
 {
 	m_pInputMap = AInputMapManager::GetSingleton()->FindMap( a_MapName );
@@ -262,6 +277,7 @@ void AGameState::Suspend()
 	OnSuspend();
 }
 
+// $Barnyard: FUNCTION 004282d0
 void AGameState::Remove()
 {
 	if ( m_pOwnerState == TNULL )

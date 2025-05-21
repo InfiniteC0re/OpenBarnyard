@@ -12,6 +12,7 @@ TOSHI_NAMESPACE_USING
 
 TDEFINE_CLASS_NORUNTIME( ASysMesh );
 
+// $Barnyard: FUNCTION 005f00b0
 ASysMesh::ASysMesh()
 {
 	m_uiFlags       = 0;
@@ -23,6 +24,7 @@ ASysMesh::ASysMesh()
 	m_bFlag2        = TFALSE;
 }
 
+// $Barnyard: FUNCTION 005f03e0
 TBOOL ASysMesh::Validate()
 {
 	if ( IsValidated() )
@@ -40,6 +42,7 @@ TBOOL ASysMesh::Validate()
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 005f0420
 void ASysMesh::Invalidate()
 {
 	if ( m_pVertexPool && m_pIndexPool )
@@ -74,12 +77,14 @@ void ASysMesh::DestroyResources()
 	m_uiMaxIndices  = 0;
 }
 
+// $Barnyard: FUNCTION 005f0180
 TBOOL ASysMesh::Create( void* a_pUnk, const TCHAR* a_szSomeString )
 {
 	m_SomeString = a_szSomeString;
 	return TMesh::Create();
 }
 
+// $Barnyard: FUNCTION 005f0450
 TBOOL ASysMesh::CreatePools( TUINT32 a_uiResourcesFlags, TUINT16 a_uiMaxVertices, TUINT16 a_uiMaxIndices )
 {
 	m_uiFlags       = a_uiResourcesFlags;
@@ -155,6 +160,7 @@ TBOOL ASysMesh::CreateResource()
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 005f02b0
 TBOOL ASysMesh::Lock( LockBuffer& a_rLockBuffer )
 {
 	TASSERT( 0 == ( m_uiFlags & FLAG_LOCKED ) );
@@ -171,6 +177,7 @@ TBOOL ASysMesh::Lock( LockBuffer& a_rLockBuffer )
 	return TFALSE;
 }
 
+// $Barnyard: FUNCTION 005f02f0
 void ASysMesh::Unlock( TUINT32 a_uiNumVertices, TUINT32 a_uiNumIndices )
 {
 	TASSERT( 0 != ( m_uiFlags & FLAG_LOCKED ) );
@@ -195,6 +202,7 @@ Toshi::TVertexPoolResourceInterface* ASysMesh::GetVertexPool()
 	return m_pVertexPool;
 }
 
+// $Barnyard: FUNCTION 0066b130
 Toshi::TIndexPoolResourceInterface* ASysMesh::GetIndexPool()
 {
 	return m_pIndexPool;

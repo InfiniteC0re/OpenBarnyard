@@ -22,6 +22,7 @@ TOSHI_NAMESPACE_USING
 
 TDEFINE_CLASS( AGUI2 );
 
+// $Barnyard: FUNCTION 00635440
 AGUI2::AGUI2()
 {
 	m_pRootElement     = TNULL;
@@ -33,6 +34,7 @@ AGUI2::AGUI2()
 	m_bShowTexturesInfo = TTRUE;
 }
 
+// $Barnyard: FUNCTION 006355a0
 TBOOL AGUI2::OnCreate()
 {
 	CreateContext();
@@ -95,6 +97,7 @@ TBOOL AGUI2::OnCreate()
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 006357d0
 TBOOL AGUI2::OnUpdate( TFLOAT a_fDeltaTime )
 {
 	if ( m_bShowMemStatsInfo )
@@ -226,11 +229,13 @@ TBOOL AGUI2::OnUpdate( TFLOAT a_fDeltaTime )
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 006353f0
 void AGUI2::GetDimensions( TFLOAT& a_rWidth, TFLOAT& a_rHeight )
 {
 	m_pRootElement->GetDimensions( a_rWidth, a_rHeight );
 }
 
+// $Barnyard: FUNCTION 006c47c0
 void AGUI2::CreateContext()
 {
 	ms_pCurrentContext = new AGUI2Context;
@@ -242,6 +247,7 @@ AGUI2Renderer* AGUI2::GetRenderer()
 	return ms_pCurrentContext->GetRenderer();
 }
 
+// $Barnyard: FUNCTION 00635410
 void AGUI2::MainPostRenderCallback()
 {
 	if ( AGUI2::GetSingleton()->IsCursorVisible() )

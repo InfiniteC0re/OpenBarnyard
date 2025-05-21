@@ -41,6 +41,7 @@ public:
 		TUINT m_Unk8    = 0;
 		TUINT m_Unk9    = 0;
 
+		// $Barnyard: FUNCTION 0059ca50
 		void SetFlags( TUINT a_uiFlags )
 		{
 			if ( a_uiFlags != m_uiFlags )

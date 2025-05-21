@@ -15,16 +15,19 @@
 
 TOSHI_NAMESPACE_USING
 
+// $Barnyard: FUNCTION 005dcf90
 AWaveBankFMODFSBStream::AWaveBankFMODFSBStream( const TPString8& a_strBank, const TPString8& a_strPath )
     : AWaveBank( a_strBank, a_strPath, TTRUE )
 {
 }
 
+// $Barnyard: FUNCTION 005dcfd0
 TBOOL AWaveBankFMODFSBStream::IsReady() const
 {
 	return FSOUND_Stream_GetOpenState( (FSOUND_STREAM*)m_FileHandle ) == 0;
 }
 
+// $Barnyard: FUNCTION 005dd2d0
 AWaveBank::LOADRESULT AWaveBankFMODFSBStream::Load( LOADFLAGS a_uiFlags, TINT a_iBufferSize )
 {
 	if ( m_iNumLoads > 0 || m_FileHandle != TNULL )
@@ -94,6 +97,7 @@ AWaveBank::LOADRESULT AWaveBankFMODFSBStream::Load( LOADFLAGS a_uiFlags, TINT a_
 	return LOADRESULT_ERR;
 }
 
+// $Barnyard: FUNCTION 005dd4c0
 AWaveBank::UNLOADRESULT AWaveBankFMODFSBStream::Unload()
 {
 	if ( m_iNumLoads != 0 && --m_iNumLoads < 1 && m_FileHandle )

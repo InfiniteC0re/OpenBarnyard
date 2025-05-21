@@ -11,12 +11,14 @@ TOSHI_NAMESPACE_USING
 
 TDEFINE_CLASS_NORUNTIME( AWorldShader );
 
+// $Barnyard: FUNCTION 005f5e10
 AWorldShader::AWorldShader()
 {
 	m_fUnk2 = 0.5f;
 	m_pUnk3 = TNULL;
 }
 
+// $Barnyard: FUNCTION 005f5e40
 AWorldShader::~AWorldShader()
 {
 }

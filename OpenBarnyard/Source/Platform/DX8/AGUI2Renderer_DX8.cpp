@@ -17,6 +17,7 @@
 
 TOSHI_NAMESPACE_USING
 
+// $Barnyard: FUNCTION 0064e5c0
 AGUI2RendererDX8::AGUI2RendererDX8()
 {
 	m_pTransforms       = new AGUI2Transform[ MAX_NUM_TRANSFORMS ];
@@ -24,6 +25,7 @@ AGUI2RendererDX8::AGUI2RendererDX8()
 	m_bIsTransformDirty = TFALSE;
 }
 
+// $Barnyard: FUNCTION 0064e670
 AGUI2RendererDX8::~AGUI2RendererDX8()
 {
 	delete[] m_pTransforms;
@@ -46,6 +48,7 @@ AGUI2Material* AGUI2RendererDX8::CreateMaterial( Toshi::TTexture* a_pTexture )
 	return pMaterial;
 }
 
+// $Barnyard: FUNCTION 0064e720
 void AGUI2RendererDX8::DestroyMaterial( AGUI2Material* a_pMaterial )
 {
 	if ( a_pMaterial )
@@ -55,21 +58,25 @@ void AGUI2RendererDX8::DestroyMaterial( AGUI2Material* a_pMaterial )
 	}
 }
 
+// $Barnyard: FUNCTION 0064f480
 Toshi::TTexture* AGUI2RendererDX8::GetTexture( const TCHAR* a_szTextureName )
 {
 	return AMaterialLibraryManager::GetSingleton()->FindTexture( a_szTextureName );
 }
 
+// $Barnyard: FUNCTION 0064e740
 TUINT AGUI2RendererDX8::GetWidth( AGUI2Material* a_pMaterial )
 {
 	return a_pMaterial->m_pTextureResource->GetWidth();
 }
 
+// $Barnyard: FUNCTION 0064e750
 TUINT AGUI2RendererDX8::GetHeight( AGUI2Material* a_pMaterial )
 {
 	return a_pMaterial->m_pTextureResource->GetHeight();
 }
 
+// $Barnyard: FUNCTION 0064f490
 void AGUI2RendererDX8::BeginScene()
 {
 	auto pRender    = TSTATICCAST( TRenderD3DInterface, TRenderInterface::GetSingleton() );
@@ -137,6 +144,7 @@ void AGUI2RendererDX8::BeginScene()
 	sm_bUnknownFlag = TFALSE;
 }
 
+// $Barnyard: FUNCTION 0064e7c0
 void AGUI2RendererDX8::EndScene()
 {
 	auto pRender    = TSTATICCAST( TRenderD3DInterface, TRenderInterface::GetSingleton() );
@@ -161,6 +169,7 @@ void AGUI2RendererDX8::EndScene()
 	pRender->SetTextureAddress( 0, ADDRESSINGMODE_WRAP, TEXCOORD_UV );
 }
 
+// $Barnyard: FUNCTION 0064e8c0
 void AGUI2RendererDX8::ResetRenderer()
 {
 	auto pRender    = TSTATICCAST( TRenderD3DInterface, TRenderInterface::GetSingleton() );
@@ -185,6 +194,7 @@ void AGUI2RendererDX8::ResetRenderer()
 	pD3DDevice->SetTextureStageState( 1, D3DTSS_ALPHAOP, 1 );
 }
 
+// $Barnyard: FUNCTION 0064e9c0
 void AGUI2RendererDX8::PrepareRenderer()
 {
 	auto pRender    = TSTATICCAST( TRenderD3DInterface, TRenderInterface::GetSingleton() );
@@ -237,6 +247,7 @@ void AGUI2RendererDX8::PrepareRenderer()
 	m_bIsTransformDirty = TTRUE;
 }
 
+// $Barnyard: FUNCTION 0064eb90
 void AGUI2RendererDX8::SetMaterial( AGUI2Material* a_pMaterial )
 {
 	auto pRender    = TSTATICCAST( TRenderD3DInterface, TRenderInterface::GetSingleton() );
@@ -405,6 +416,7 @@ void AGUI2RendererDX8::SetMaterial( AGUI2Material* a_pMaterial )
 	}
 }
 
+// $Barnyard: FUNCTION 0064f1a0
 void AGUI2RendererDX8::PushTransform( const AGUI2Transform& a_rTransform, const Toshi::TVector2& a_rVec1, const Toshi::TVector2& a_rVec2 )
 {
 	TASSERT( m_iTransformCount < MAX_NUM_TRANSFORMS );
@@ -424,6 +436,7 @@ void AGUI2RendererDX8::PushTransform( const AGUI2Transform& a_rTransform, const 
 	m_bIsTransformDirty = TTRUE;
 }
 
+// $Barnyard: FUNCTION 0064f290
 void AGUI2RendererDX8::PopTransform()
 {
 	TASSERT( m_iTransformCount >= 0 );
@@ -431,17 +444,20 @@ void AGUI2RendererDX8::PopTransform()
 	m_bIsTransformDirty = TTRUE;
 }
 
+// $Barnyard: FUNCTION 0064f2a0
 void AGUI2RendererDX8::SetTransform( const AGUI2Transform& a_rTransform )
 {
 	m_pTransforms[ m_iTransformCount ] = a_rTransform;
 	m_bIsTransformDirty                = TTRUE;
 }
 
+// $Barnyard: FUNCTION 0064e660
 void AGUI2RendererDX8::SetColour( TUINT32 a_uiColour )
 {
 	m_uiColour = a_uiColour;
 }
 
+// $Barnyard: FUNCTION 0064f780
 void AGUI2RendererDX8::SetScissor( TFLOAT a_fVal1, TFLOAT a_fVal2, TFLOAT a_fVal3, TFLOAT a_fVal4 )
 {
 	auto pRender    = TSTATICCAST( TRenderD3DInterface, TRenderInterface::GetSingleton() );
@@ -504,6 +520,7 @@ void AGUI2RendererDX8::SetScissor( TFLOAT a_fVal1, TFLOAT a_fVal2, TFLOAT a_fVal
 	pD3DDevice->SetTransform( D3DTS_PROJECTION, (D3DMATRIX*)&projection );
 }
 
+// $Barnyard: FUNCTION 0064f990
 void AGUI2RendererDX8::ClearScissor()
 {
 	auto pRender    = TSTATICCAST( TRenderD3DInterface, TRenderInterface::GetSingleton() );
@@ -539,6 +556,7 @@ void AGUI2RendererDX8::ClearScissor()
 	pD3DDevice->SetTransform( D3DTS_PROJECTION, (D3DMATRIX*)&projection );
 }
 
+// $Barnyard: FUNCTION 0064fa70
 void AGUI2RendererDX8::RenderRectangle( const Toshi::TVector2& a, const Toshi::TVector2& b, const Toshi::TVector2& uv1, const Toshi::TVector2& uv2 )
 {
 	if ( m_bIsTransformDirty )
@@ -566,6 +584,7 @@ void AGUI2RendererDX8::RenderRectangle( const Toshi::TVector2& a, const Toshi::T
 	pRender->GetDirect3DDevice()->DrawPrimitiveUP( D3DPT_TRIANGLESTRIP, 2, sm_Vertices, sizeof( Vertex ) );
 }
 
+// $Barnyard: FUNCTION 0064fb90
 void AGUI2RendererDX8::RenderTriStrip( Toshi::TVector2* vertices, Toshi::TVector2* UV, uint32_t numverts )
 {
 	TIMPLEMENT();
@@ -619,6 +638,7 @@ void AGUI2RendererDX8::RenderLine( TFLOAT x1, TFLOAT y1, TFLOAT x2, TFLOAT y2 )
 	SetMaterial( pMaterial );
 }
 
+// $Barnyard: FUNCTION 0064feb0
 void AGUI2RendererDX8::RenderOutlineRectangle( const Toshi::TVector2& a, const Toshi::TVector2& b )
 {
 	auto pMaterial = m_pMaterial;
@@ -655,6 +675,7 @@ void AGUI2RendererDX8::RenderOutlineRectangle( const Toshi::TVector2& a, const T
 	SetMaterial( pMaterial );
 }
 
+// $Barnyard: FUNCTION 00650030
 void AGUI2RendererDX8::RenderFilledRectangle( const Toshi::TVector2& a, const Toshi::TVector2& b )
 {
 	auto pMaterial = m_pMaterial;
@@ -687,6 +708,7 @@ void AGUI2RendererDX8::RenderFilledRectangle( const Toshi::TVector2& a, const To
 	SetMaterial( pMaterial );
 }
 
+// $Barnyard: FUNCTION 0064e760
 void AGUI2RendererDX8::ScaleCoords( TFLOAT& x, TFLOAT& y )
 {
 	auto pDisplayParams = TRenderInterface::GetSingleton()->GetCurrentDisplayParams();
@@ -698,11 +720,13 @@ void AGUI2RendererDX8::ScaleCoords( TFLOAT& x, TFLOAT& y )
 	y /= pDisplayParams->uiHeight / fRootHeight;
 }
 
+// $Barnyard: FUNCTION 0064eb80
 void AGUI2RendererDX8::ResetZCoordinate()
 {
 	sm_fZCoordinate = 0.01f;
 }
 
+// $Barnyard: FUNCTION 0064f2e0
 void AGUI2RendererDX8::UpdateTransform()
 {
 	auto            pRender    = TSTATICCAST( TRenderD3DInterface, TRenderInterface::GetSingleton() );
@@ -733,6 +757,7 @@ void AGUI2RendererDX8::UpdateTransform()
 	m_bIsTransformDirty = TFALSE;
 }
 
+// $Barnyard: FUNCTION 0064f3a0
 void AGUI2RendererDX8::SetupProjectionMatrix( TMatrix44& a_rOutMatrix, TINT a_iLeft, TINT a_iRight, TINT a_iTop, TINT a_iBottom )
 {
 	auto pRender        = TSTATICCAST( TRenderD3DInterface, TRenderInterface::GetSingleton() );

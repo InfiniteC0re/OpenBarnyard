@@ -12,6 +12,7 @@ TOSHI_NAMESPACE_START
 
 TDEFINE_CLASS_NORUNTIME( TRenderInterface );
 
+// $Barnyard: FUNCTION 006bf490
 TRenderInterface::TRenderInterface()
 {
 	m_bCreateSystemResources = TTRUE;
@@ -48,10 +49,12 @@ TRenderInterface::TRenderInterface()
 	);
 }
 
+// $Barnyard: FUNCTION 006bf6d0
 TRenderInterface::~TRenderInterface()
 {
 }
 
+// $Barnyard: FUNCTION 006be9f0
 TBOOL TRenderInterface::Create()
 {
 	TASSERT( TFALSE == IsCreated(), "TRender already created" );
@@ -68,6 +71,7 @@ TBOOL TRenderInterface::Create()
 	return TFALSE;
 }
 
+// $Barnyard: FUNCTION 006bea30
 TBOOL TRenderInterface::Destroy()
 {
 	TASSERT( TTRUE == IsCreated(), "TRender is not created" );
@@ -109,6 +113,7 @@ TBOOL TRenderInterface::CreateDisplay( const DISPLAYPARAMS& a_rParams )
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 006bea70
 TBOOL TRenderInterface::BeginScene()
 {
 	m_iFrameCount += 1;
@@ -117,6 +122,7 @@ TBOOL TRenderInterface::BeginScene()
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 006bec20
 void TRenderInterface::DestroyResource( TResource* resource )
 {
 	TASSERT( TNULL != resource->Tree(), "Resource doesn't have a tree" );
@@ -131,6 +137,7 @@ void TRenderInterface::DestroyResource( TResource* resource )
 	}
 }
 
+// $Barnyard: FUNCTION 006beaa0
 void TRenderInterface::DestroyResourceRecurse( TResource* resource )
 {
 	if ( resource != TNULL )
@@ -159,6 +166,7 @@ void TRenderInterface::DestroyResourceRecurse( TResource* resource )
 	}
 }
 
+// $Barnyard: FUNCTION 006be8f0
 void TRenderInterface::SetResourceExplicit( TResource* resource, SYSRESOURCE systemResource )
 {
 	TASSERT( systemResource >= 0 && systemResource < SYSRESOURCE_NUMOF, "Unknown resource" );
@@ -166,6 +174,7 @@ void TRenderInterface::SetResourceExplicit( TResource* resource, SYSRESOURCE sys
 	m_SystemResources[ systemResource ] = resource;
 }
 
+// $Barnyard: FUNCTION 006bf240
 TResource* TRenderInterface::CreateResource( TClass* pClass, const TCHAR* name, TResource* parent )
 {
 	TASSERT( pClass != TNULL, "TResource class is TNULL" );
@@ -194,6 +203,7 @@ TResource* TRenderInterface::CreateResource( TClass* pClass, const TCHAR* name, 
 	return pResource;
 }
 
+// $Barnyard: FUNCTION 006becf0
 void TRenderInterface::DumpStats()
 {
 	TIMPLEMENT();
@@ -225,16 +235,19 @@ void TRenderInterface::DumpStats()
 	}
 }
 
+// $Barnyard: FUNCTION 006be9b0
 void TRenderInterface::GetScreenOffset( TVector2& a_rVec )
 {
 	a_rVec.Set( m_ScreenOffset );
 }
 
+// $Barnyard: FUNCTION 006be9d0
 void TRenderInterface::SetScreenOffset( const TVector2& a_rVec )
 {
 	m_ScreenOffset.Set( a_rVec );
 }
 
+// $Barnyard: FUNCTION 006bf670
 TFLOAT TRenderInterface::GetScreenAspectRatio()
 {
 	return 4.0f / 3.0f;
@@ -264,11 +277,13 @@ TBOOL TRenderInterface::Supports32BitTextures()
 	return TFALSE;
 }
 
+// $Barnyard: FUNCTION 006bf690
 void TRenderInterface::SetLightDirectionMatrix( const TMatrix44& a_rMatrix )
 {
 	m_LightDirection = a_rMatrix;
 }
 
+// $Barnyard: FUNCTION 006bf6b0
 void TRenderInterface::SetLightColourMatrix( const TMatrix44& a_rMatrix )
 {
 	m_LightColour = a_rMatrix;
@@ -291,17 +306,20 @@ TBOOL TRenderInterface::CreateSystemResources()
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 006bf800
 void TRenderInterface::DestroySystemResources()
 {
 	DestroyResourceRecurse( m_Resources.ChildOfRoot() );
 	FlushDyingResources();
 }
 
+// $Barnyard: FUNCTION 006bf230
 void TRenderInterface::DestroyAllShaderResources()
 {
 	TIMPLEMENT();
 }
 
+// $Barnyard: FUNCTION 006bf750
 void TRenderInterface::DestroyDyingResources( TResource* resources )
 {
 	// TODO: refactor
@@ -372,6 +390,7 @@ void TRenderInterface::DeleteResourceRecurse( TResource* resource )
 	}
 }
 
+// $Barnyard: FUNCTION 006bf420
 void TRenderInterface::DeleteResourceAtomic( TResource* a_pResource )
 {
 	if ( a_pResource )
@@ -398,6 +417,7 @@ void TRenderInterface::DeleteResourceAtomic( TResource* a_pResource )
 	}
 }
 
+// $Barnyard: FUNCTION 006bf030
 TRenderAdapter::Mode::Device* TRenderInterface::FindDevice( const DISPLAYPARAMS& a_rDisplayParams )
 {
 	auto pAdapter = GetAdapterList()->Begin();
@@ -481,6 +501,7 @@ TRenderAdapter::Mode::Device* TRenderInterface::FindDevice( const DISPLAYPARAMS&
 	}
 }
 
+// $Barnyard: FUNCTION 006bf7d0
 void TRenderInterface::FlushDyingResources()
 {
 	while ( m_bHasDyingResources )

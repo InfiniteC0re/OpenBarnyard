@@ -8,11 +8,13 @@
 //-----------------------------------------------------------------------------
 #include <Core/TMemoryDebugOn.h>
 
+// $Barnyard: FUNCTION 00615cc0
 AMaterialLibrary::AMaterialLibrary()
 {
 	m_iNumTextures = 0;
 }
 
+// $Barnyard: FUNCTION 00615d20
 TBOOL AMaterialLibrary::LoadTTLData( void* a_pTTLData )
 {
 	TPROFILER_SCOPE();
@@ -71,6 +73,7 @@ TBOOL AMaterialLibrary::LoadTTLData( void* a_pTTLData )
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 00616000
 TBOOL AMaterialLibrary::LoadTTLFile( const TCHAR* a_szFilePath )
 {
 	m_TRB.Load( a_szFilePath );
@@ -80,6 +83,7 @@ TBOOL AMaterialLibrary::LoadTTLFile( const TCHAR* a_szFilePath )
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 00616040
 TBOOL AMaterialLibrary::LoadTRBFile( Toshi::TTRB* a_pTRB )
 {
 	void* pTTL = a_pTRB->GetSymbolAddress( "TTL" );
@@ -98,6 +102,7 @@ void AMaterialLibrary::Destroy()
 	delete this;
 }
 
+// $Barnyard: FUNCTION 00615f60
 void AMaterialLibrary::DestroyTextures()
 {
 	for ( TINT i = 0; i < m_iNumTextures; i++ )
@@ -115,6 +120,7 @@ void AMaterialLibrary::DestroyTextures()
 	m_pTexturesArray = TNULL;
 }
 
+// $Barnyard: FUNCTION 00615f10
 TINT AMaterialLibrary::FindTextureIndex( const TCHAR* a_szTextureName )
 {
 	for ( TINT i = 0; i < m_iNumTextures; i++ )

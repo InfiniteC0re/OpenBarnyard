@@ -10,6 +10,7 @@
 
 TOSHI_NAMESPACE_START
 
+// $Barnyard: FUNCTION 006cb4f0
 TSceneObject::TSceneObject()
 {
 	m_SomeVector2.y = 1.0f;
@@ -20,6 +21,7 @@ TSceneObject::~TSceneObject()
 	DestroyModelInstance();
 }
 
+// $Barnyard: FUNCTION 006cb530
 void TSceneObject::Create( TManagedModel* a_pModelPtr )
 {
 	m_eFlags |= 0b00001000;
@@ -28,17 +30,20 @@ void TSceneObject::Create( TManagedModel* a_pModelPtr )
 	TTODO( "Initialise some unknown values" );
 }
 
+// $Barnyard: FUNCTION 006cbab0
 void TSceneObject::Delete()
 {
 	if ( this )
 		delete this;
 }
 
+// $Barnyard: FUNCTION 006cb580
 void TSceneObject::Update( TFLOAT a_fDeltaTime )
 {
 	m_pModelInstance->Update( a_fDeltaTime );
 }
 
+// $Barnyard: FUNCTION 006cb590
 TBOOL TSceneObject::Render( TUINT a_uiClipFlags, const TVector3& a_rBounding )
 {
 	TIMPLEMENT();
@@ -57,6 +62,7 @@ TBOOL TSceneObject::Render( TUINT a_uiClipFlags, const TVector3& a_rBounding )
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 006cb9b0
 TBOOL TSceneObject::RenderIfVisible()
 {
 	auto  pContext = TRenderInterface::GetSingleton()->GetCurrentContext();
@@ -90,6 +96,7 @@ TBOOL TSceneObject::RenderIfVisible()
 	return Render( pContext->GetClipFlags(), bounding.GetOrigin() );
 }
 
+// $Barnyard: FUNCTION 006cb890
 void TSceneObject::DestroyModelInstance()
 {
 	if ( m_pModelInstance )

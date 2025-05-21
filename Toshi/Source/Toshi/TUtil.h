@@ -86,8 +86,10 @@ public:
 
 	static const TCHAR* GetTime();
 
+	// $Barnyard: FUNCTION 006bfd10
 	static void  MemSet( void* ptr, TINT value, TSIZE size ) { std::memset( ptr, value, size ); }
 	static void* MemCopy( void* dst, const void* src, TSIZE size ) { return std::memcpy( dst, src, size ); }
+	// $Barnyard: FUNCTION 006bfd50
 	static void  MemClear( void* ptr, TSIZE size ) { std::memset( ptr, 0, size ); }
 	static TINT  MemCompare( const void* ptr1, const void* ptr2, TSIZE size ) { return std::memcmp( ptr1, ptr2, size ); }
 	static void* MemMove( void* dst, const void* src, TSIZE size ) { return std::memmove( dst, src, size ); }
@@ -120,6 +122,7 @@ public:
 
 	static TPString8Pool* SetTPStringPool( TPString8Pool* a_pStringPool ) { return std::exchange( *ms_poStringPool, a_pStringPool ); }
 
+	// $Barnyard: FUNCTION 006bb580
 	static TPString8Pool* GetTPStringPool()
 	{
 		TASSERT( ms_poStringPool != TNULL );

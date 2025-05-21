@@ -53,6 +53,7 @@ protected:
 	}
 
 protected:
+	// $Barnyard: FUNCTION 006cdae0
 	void Initialise( UnusedObject* a_pObjects, TUINT a_uiMaxNumber, TUINT a_uiObjectSize )
 	{
 		TASSERT( a_uiMaxNumber > 1 );
@@ -144,17 +145,20 @@ public:
 		return ( MaxNumber - GetNumFreeObjects() ) * ObjectSize;
 	}
 
+	// $Barnyard: FUNCTION 0045c5b0
 	virtual TSIZE GetCapacity() const OVERRIDE
 	{
 		return MaxNumber * ObjectSize;
 	}
 
+	// $Barnyard: FUNCTION 0045c5c0
 	virtual TBOOL IsAddressInPool( const void* a_pAddress ) const
 	{
 		return ( TREINTERPRETCAST( TUINTPTR, this ) + sizeof( T2GenericObjectPool ) ) <= TREINTERPRETCAST( TUINTPTR, a_pAddress ) &&
 		    TREINTERPRETCAST( TUINTPTR, a_pAddress ) < ( TREINTERPRETCAST( TUINTPTR, this ) + sizeof( T2GenericObjectPool ) + ( MaxNumber * ObjectSize ) );
 	}
 
+	// $Barnyard: FUNCTION 00555310
 	TBOOL CanAllocate() const { return T2GenericObjectPool::CanAllocate( ObjectSize ); }
 
 private:

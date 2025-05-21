@@ -20,6 +20,7 @@ TOSHI_NAMESPACE_USING
 
 TDEFINE_CLASS( ASysShaderHAL );
 
+// $Barnyard: FUNCTION 005f0980
 void ASysShaderHAL::Flush()
 {
 	Validate();
@@ -64,6 +65,7 @@ void ASysShaderHAL::Flush()
 	pDevice->SetRenderState( D3DRS_FOGENABLE, FALSE );
 }
 
+// $Barnyard: FUNCTION 005f07a0
 void ASysShaderHAL::StartFlush()
 {
 	Validate();
@@ -103,6 +105,7 @@ void ASysShaderHAL::StartFlush()
 	pDevice->SetRenderState( D3DRS_FOGENABLE, FALSE );
 }
 
+// $Barnyard: FUNCTION 005f0940
 void ASysShaderHAL::EndFlush()
 {
 	auto pDevice = TRenderD3DInterface::Interface()->GetDirect3DDevice();
@@ -112,6 +115,7 @@ void ASysShaderHAL::EndFlush()
 	pDevice->SetRenderState( D3DRS_FOGENABLE, FALSE );
 }
 
+// $Barnyard: FUNCTION 005f05e0
 TBOOL ASysShaderHAL::Create()
 {
 	TASSERT( TFALSE == IsCreated() );
@@ -125,6 +129,7 @@ TBOOL ASysShaderHAL::Create()
 	return Validate();
 }
 
+// $Barnyard: FUNCTION 005f0640
 TBOOL ASysShaderHAL::Validate()
 {
 	if ( !IsValidated() )
@@ -135,6 +140,7 @@ TBOOL ASysShaderHAL::Validate()
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 005f0660
 void ASysShaderHAL::Invalidate()
 {
 	if ( IsValidated() )
@@ -143,18 +149,21 @@ void ASysShaderHAL::Invalidate()
 	}
 }
 
+// $Barnyard: FUNCTION 005f3690
 TBOOL ASysShaderHAL::TryInvalidate()
 {
 	Invalidate();
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 005f36a0
 TBOOL ASysShaderHAL::TryValidate()
 {
 	Validate();
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 005f0670
 void ASysShaderHAL::Render( TRenderPacket* pPacket )
 {
 	TASSERT( pPacket->GetMesh()->IsExactly( &TGetClass( ASysMeshHAL ) ) );
@@ -204,6 +213,7 @@ void ASysShaderHAL::Render( TRenderPacket* pPacket )
 	pDevice->SetRenderState( D3DRS_ZBIAS, 0 );
 }
 
+// $Barnyard: FUNCTION 005f1140
 ASysMaterial* ASysShaderHAL::CreateMaterial( const TCHAR* a_szName )
 {
 	Validate();
@@ -215,6 +225,7 @@ ASysMaterial* ASysShaderHAL::CreateMaterial( const TCHAR* a_szName )
 	return pMaterialHAL;
 }
 
+// $Barnyard: FUNCTION 005f10b0
 ASysMesh* ASysShaderHAL::CreateMesh( const TCHAR* a_szName )
 {
 	Validate();

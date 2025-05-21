@@ -392,6 +392,7 @@ void TSkeletonInstance::SetStateFromBasePose()
 	}
 }
 
+// $Barnyard: FUNCTION 006c9df0
 void TSkeletonInstance::Delete()
 {
 	delete this;

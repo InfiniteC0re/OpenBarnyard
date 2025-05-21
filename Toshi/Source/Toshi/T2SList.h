@@ -254,8 +254,10 @@ public:
 	Iterator FindNodeBefore( Iterator a_Node ) { return T2GenericSList::FindNodeBefore( a_Node ); }
 
 	Iterator PopBack() { return T2GenericSList::PopBack(); }
+	// $Barnyard: FUNCTION 006c7e50
 	Iterator PopFront() { return T2GenericSList::PopFront(); }
 
+	// $Barnyard: FUNCTION 0057d4c0
 	Iterator Erase( Iterator a_Iterator ) { return T2GenericSList::Erase( a_Iterator, a_Iterator.Next() ); }
 	Iterator Erase( Iterator a_From, Iterator a_To ) { return T2GenericSList::Erase( a_From, a_To ); }
 	Iterator Transfer( Node* a_pNode, T2GenericSList& a_rList ) { return T2GenericSList::Transfer( a_pNode, a_rList ); }

@@ -56,6 +56,7 @@ public:
 	virtual const void*     GetDeviceIdentifier() const    = 0;
 	virtual TUINT32         GetNumSupportedDevices() const = 0;
 
+	// $Barnyard: FUNCTION 006d8130
 	TNodeList<Mode>* GetModeList() { return &m_Modes; }
 
 private:

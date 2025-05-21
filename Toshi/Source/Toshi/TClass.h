@@ -56,10 +56,12 @@ public:
 	TBOOL        IsInitialized() const { return m_bInitialised; }
 	TClass*      GetParent() { return static_cast<TClass*>( m_pParent ); }
 	const TCHAR* GetName() const { return m_szName; }
-	TUINT16      GetVersionMajor() const { return m_uiVersionMajor; }
-	TUINT16      GetVersionMinor() const { return m_uiVersionMinor; }
-	TUINT32      GetMaxSizeOfDerivedClasses();
-	TUINT32      GetMaxAlignmentOfDerivedClasses();
+	// $Barnyard: FUNCTION 006bbd50
+	TUINT16 GetVersionMajor() const { return m_uiVersionMajor; }
+	// $Barnyard: FUNCTION 006bbd40
+	TUINT16 GetVersionMinor() const { return m_uiVersionMinor; }
+	TUINT32 GetMaxSizeOfDerivedClasses();
+	TUINT32 GetMaxAlignmentOfDerivedClasses();
 
 	// todo: move this function away from this class
 	static TBOOL TryInitialize( TClass* tClass );

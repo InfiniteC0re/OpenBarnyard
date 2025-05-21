@@ -10,6 +10,7 @@
 //-----------------------------------------------------------------------------
 #include <Core/TMemoryDebugOn.h>
 
+// $Barnyard: FUNCTION 006c2cf0
 TBOOL AGUI2Font::Create( AGUI2FontDef* a_pFontDef )
 {
 	TASSERT( a_pFontDef->uiNumMaterials != 0 );
@@ -31,6 +32,7 @@ TBOOL AGUI2Font::Create( AGUI2FontDef* a_pFontDef )
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 006c3410
 void AGUI2Font::DrawTextWrapped( const TWCHAR* a_wszText, TFLOAT a_fX, TFLOAT a_fY, TFLOAT a_fWidth, TFLOAT a_fHeight, TUINT32 a_uiColour, TFLOAT a_fScale, TextAlign a_eAlign, void* a_fnCallback /*= TNULL*/ )
 {
 	auto pFontDef = m_pFontDef;
@@ -121,6 +123,7 @@ void AGUI2Font::DrawTextWrapped( const TWCHAR* a_wszText, TFLOAT a_fX, TFLOAT a_
 	}
 }
 
+// $Barnyard: FUNCTION 006c2fe0
 void AGUI2Font::DrawTextSingleLine( const TWCHAR* a_wszText, TINT a_iTextLength, TFLOAT a_fX, TFLOAT a_fY, TUINT32 a_uiColour, TFLOAT a_fScale, void* a_fnCallback /*= TNULL*/ )
 {
 	auto pRenderer = AGUI2::GetRenderer();
@@ -181,6 +184,7 @@ void AGUI2Font::DrawTextSingleLine( const TWCHAR* a_wszText, TINT a_iTextLength,
 	}
 }
 
+// $Barnyard: FUNCTION 006c2e10
 TFLOAT AGUI2Font::GetTextHeightWrapped( const TWCHAR* a_wszText, TFLOAT a_fMaxWidth, TFLOAT a_fScale )
 {
 	auto pFontDef = m_pFontDef;
@@ -303,6 +307,7 @@ TFLOAT AGUI2Font::GetTextWidth( const TWCHAR* a_wszText, TINT a_iTextLength, TFL
 	return iWidth * a_fScale;
 }
 
+// $Barnyard: FUNCTION 006c2df0
 TFLOAT AGUI2Font::GetLinesMargin()
 {
 	if ( m_pFontDef )

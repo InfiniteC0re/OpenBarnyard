@@ -171,6 +171,7 @@ public:
 		return pNode;
 	}
 
+	// $Barnyard: FUNCTION 0061f490
 	void RemoveAll()
 	{
 		while ( !IsEmpty() )
@@ -202,6 +203,7 @@ public:
 	void DeleteHead() { Delete( Head() ); }
 	void DeleteTail() { Delete( Tail() ); }
 
+	// $Barnyard: FUNCTION 005a0190
 	void DeleteAll()
 	{
 		while ( !IsEmpty() )

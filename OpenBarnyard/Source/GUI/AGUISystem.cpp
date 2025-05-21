@@ -18,6 +18,7 @@ TDEFINE_CLASS( AGUISystem );
 TPSTRING8_DECLARE( Start );
 TPSTRING8_DECLARE( ParkManager );
 
+// $Barnyard: FUNCTION 0059e0b0
 AGUISystem::AGUISystem()
 {
 	m_Unk1          = 0;
@@ -28,6 +29,7 @@ AGUISystem::AGUISystem()
 	m_pStrings[ 1 ] = TPS8( Start );
 }
 
+// $Barnyard: FUNCTION 0059df20
 TBOOL AGUISystem::OnCreate()
 {
 	m_RenderGUIListener.Connect(
@@ -60,6 +62,7 @@ TBOOL AGUISystem::OnCreate()
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 0059deb0
 void AGUISystem::OnDestroy()
 {
 	for ( TUINT i = 0; i < NUM_RENDER_OBJECTS; i++ )
@@ -70,6 +73,7 @@ void AGUISystem::OnDestroy()
 	m_SomeListener.Disconnect();
 }
 
+// $Barnyard: FUNCTION 0059de80
 TBOOL __stdcall AGUISystem::OnGUIRender( AGUISystem* a_pGUISystem, ARenderer* a_pRenderer, TINT* a_pUnknown )
 {
 	if ( *a_pUnknown == 0 )
@@ -80,6 +84,7 @@ TBOOL __stdcall AGUISystem::OnGUIRender( AGUISystem* a_pGUISystem, ARenderer* a_
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 0059def0
 void AGUISystem::AllowBackgroundClear( TBOOL a_bAllow )
 {
 	if ( ms_pSingleton->m_pRenderObjects[ 0 ] != TNULL )
@@ -93,6 +98,7 @@ void AGUISystem::AllowBackgroundClear( TBOOL a_bAllow )
 	}
 }
 
+// $Barnyard: FUNCTION 0059e270
 void AGUISystem::SetPicture( const Toshi::TPString8& a_rName )
 {
 	TBOOL bShowPicture = TFALSE;
@@ -122,6 +128,7 @@ void AGUISystem::SetPicture( const Toshi::TPString8& a_rName )
 	}
 }
 
+// $Barnyard: FUNCTION 0059e350
 void AGUISystem::ResetPicture()
 {
 	m_MatLibPicture.Flush();

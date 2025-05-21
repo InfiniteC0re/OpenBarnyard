@@ -24,6 +24,7 @@ public:
 			delete[] m_pSounds;
 	}
 
+	// $Barnyard: FUNCTION 005d6580
 	void Load()
 	{
 		for ( TINT i = 0; i < m_iNumSounds; i++ )

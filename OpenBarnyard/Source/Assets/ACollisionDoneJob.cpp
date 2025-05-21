@@ -11,6 +11,7 @@ void ACollisionDoneJob::BeginJob()
 {
 }
 
+// $Barnyard: FUNCTION 005ed0d0
 TBOOL ACollisionDoneJob::RunJob()
 {
 	TIMPLEMENT();
@@ -19,6 +20,7 @@ TBOOL ACollisionDoneJob::RunJob()
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 005ed170
 TBOOL ACollisionDoneJob::CancelJob()
 {
 	TIMPLEMENT();

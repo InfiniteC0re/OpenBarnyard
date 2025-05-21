@@ -11,6 +11,7 @@ TOSHI_NAMESPACE_START
 
 TDEFINE_CLASS_NORUNTIME( TVertexPoolResourceInterface );
 
+// $Barnyard: FUNCTION 006daae0
 TVertexPoolResourceInterface::TVertexPoolResourceInterface()
 {
 	m_pFactory      = TNULL;
@@ -20,12 +21,14 @@ TVertexPoolResourceInterface::TVertexPoolResourceInterface()
 	m_uiLockCount   = 0;
 }
 
+// $Barnyard: FUNCTION 006daa90
 void TVertexPoolResourceInterface::OnDestroy()
 {
 	TASSERT( 0 == m_uiLockCount );
 	m_pFactory->m_uiNumPools -= 1;
 }
 
+// $Barnyard: FUNCTION 006dab20
 TBOOL TVertexPoolResourceInterface::Create( TVertexFactoryResourceInterface* a_pFactory, TUINT16 a_uiMaxVertices, TUINT16 a_uiFlags )
 {
 	m_pFactory      = a_pFactory;

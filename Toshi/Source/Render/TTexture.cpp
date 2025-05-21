@@ -12,6 +12,7 @@ TOSHI_NAMESPACE_START
 
 TDEFINE_CLASS_NORUNTIME( TTexture );
 
+// $Barnyard: FUNCTION 006d9340
 TTexture::TTexture()
 {
 	m_eAddressing   = ADDRESSINGMODE_WRAP;
@@ -19,6 +20,7 @@ TTexture::TTexture()
 	m_pNameEntry    = TNULL;
 }
 
+// $Barnyard: FUNCTION 006d9390
 TTexture::~TTexture()
 {
 	TTextureFactory* pTexFactory = TRenderInterface::GetSingleton()->GetSystemResource<TTextureFactory>( SYSRESOURCE_TEXTUREFACTORY );

@@ -167,7 +167,8 @@ public:
 	virtual TINT         GetAxisCount() const override { return 0; }
 	virtual const TCHAR* GetButtonFromDoodad( Doodad a_iDoodad ) const override;
 	virtual TINT         GetAxisInt( Doodad a_iDoodad, TINT axis ) const override { return 0; }
-	virtual float        GetAxisFloat( Doodad a_iDoodad, TINT axis ) const override { return 0; }
+	// $Barnyard: FUNCTION 006c4fb0
+	virtual float GetAxisFloat( Doodad a_iDoodad, TINT axis ) const override { return 0; }
 
 	virtual TBOOL   IsShiftDown() const                                  = 0;
 	virtual TBOOL   IsControlDown() const                                = 0;

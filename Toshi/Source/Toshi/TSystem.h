@@ -124,11 +124,13 @@ public:
 
 	void Update();
 
+	// $Barnyard: FUNCTION 006bbc30
 	TFLOAT GetFPS() const
 	{
 		return m_pSystemTimer->GetFPS();
 	}
 
+	// $Barnyard: FUNCTION 006bbc50
 	TBOOL Pause( TBOOL a_bPause )
 	{
 		TBOOL bOldState = m_pSystemTimer->SetPaused( a_bPause );
@@ -142,26 +144,31 @@ public:
 		return m_PauseEmitter;
 	}
 
+	// $Barnyard: FUNCTION 006bbc40
 	TUINT32 GetFrameCount() const
 	{
 		return m_pSystemTimer->GetNumFrames();
 	}
 
+	// $Barnyard: FUNCTION 006bbc00
 	THPTimer& GetTimer()
 	{
 		return m_pSystemTimer->GetTimer();
 	}
 
+	// $Barnyard: FUNCTION 006bbc10
 	TScheduler* GetScheduler() const
 	{
 		return m_pSystemTimer->GetScheduler();
 	}
 
+	// $Barnyard: FUNCTION 006bbc20
 	TBOOL IsPaused() const
 	{
 		return m_pSystemTimer->IsPaused();
 	}
 
+	// $Barnyard: FUNCTION 006bbba0
 	void SetQuitCallback( TSystemTimer::QuitCallback a_fnQuitCallback )
 	{
 		m_pSystemTimer->SetQuitCallback( a_fnQuitCallback );

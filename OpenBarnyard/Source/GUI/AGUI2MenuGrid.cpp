@@ -15,6 +15,7 @@ TOSHI_NAMESPACE_USING
 
 #define EAT_ALL_INPUT_EVENTS TFALSE
 
+// $Barnyard: FUNCTION 0063ec80
 AGUI2MenuGrid::AGUI2MenuGrid()
 {
 	m_fItemSpacing         = 0.0f;
@@ -46,12 +47,14 @@ AGUI2MenuGrid::AGUI2MenuGrid()
 	m_eActionFlags         = ACTIONFLAGS_NONE;
 }
 
+// $Barnyard: FUNCTION 0063ed30
 AGUI2MenuGrid::~AGUI2MenuGrid()
 {
 	delete[] m_pColumnsData;
 	delete[] m_pRowsData;
 }
 
+// $Barnyard: FUNCTION 0063ee90
 void AGUI2MenuGrid::AddMenuGridItem( AGUI2MenuGridItem& a_rMenuItem )
 {
 	if ( m_pLastMenuItem )
@@ -74,6 +77,7 @@ void AGUI2MenuGrid::AddMenuGridItem( AGUI2MenuGridItem& a_rMenuItem )
 	a_rMenuItem.SetAttachment( AGUI2ATTACHMENT_TOPLEFT, AGUI2ATTACHMENT_TOPLEFT );
 }
 
+// $Barnyard: FUNCTION 0063f080
 void AGUI2MenuGrid::SetFocusAt( AGUI2MenuGridItem* a_pMenuItem )
 {
 	if ( m_pFocusedMenuItem )
@@ -85,6 +89,7 @@ void AGUI2MenuGrid::SetFocusAt( AGUI2MenuGridItem* a_pMenuItem )
 		a_pMenuItem->OnFocus();
 }
 
+// $Barnyard: FUNCTION 0063ef10
 void AGUI2MenuGrid::ReflowChildren()
 {
 	TASSERT( m_pLastMenuItem != TNULL );
@@ -162,6 +167,7 @@ TBOOL AGUI2MenuGrid::TriggerButtonPress( AGUI2MenuGridItem& a_rMenuItem )
 	return TFALSE;
 }
 
+// $Barnyard: FUNCTION 0063ed60
 TBOOL AGUI2MenuGrid::CreateGrid( TINT a_iNumRows, TINT a_iNumColumns, TFLOAT a_fColumnGap, TFLOAT a_fRowGap )
 {
 	m_iNumRows    = a_iNumRows;
@@ -180,6 +186,7 @@ TBOOL AGUI2MenuGrid::CreateGrid( TINT a_iNumRows, TINT a_iNumColumns, TFLOAT a_f
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 0063f5b0
 void AGUI2MenuGrid::Update( TFLOAT a_fDeltaTime )
 {
 	if ( m_bMouseStateDirty )
@@ -245,6 +252,7 @@ void AGUI2MenuGrid::Update( TFLOAT a_fDeltaTime )
 	m_fTime += a_fDeltaTime;
 }
 
+// $Barnyard: FUNCTION 0063f190
 TBOOL AGUI2MenuGrid::ProcessInputEvent( const Toshi::TInputInterface::InputEvent* a_pEvent )
 {
 	if ( a_pEvent->GetEventType() == TInputInterface::EVENT_TYPE_MOVED )
@@ -261,6 +269,7 @@ TBOOL AGUI2MenuGrid::ProcessInputEvent( const Toshi::TInputInterface::InputEvent
 	return TFALSE;
 }
 
+// $Barnyard: FUNCTION 0063f230
 TBOOL AGUI2MenuGrid::ProcessInputCommand( AInputCommand a_eCommand, const Toshi::TInputInterface::InputEvent* a_pEvent )
 {
 	TBOOL bHandled = TFALSE;

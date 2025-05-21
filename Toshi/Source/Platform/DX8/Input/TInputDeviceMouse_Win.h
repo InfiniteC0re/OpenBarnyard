@@ -10,11 +10,13 @@ public:
 	TDECLARE_CLASS( TInputDXDeviceMouse, TInputDeviceMouse );
 
 public:
+	// $Barnyard: FUNCTION 006d3c30
 	TInputDXDeviceMouse()
 	{
 		m_poDXInputDevice = NULL;
 	}
 
+	// $Barnyard: FUNCTION 006d4530
 	virtual ~TInputDXDeviceMouse()
 	{
 		Deinitialise();

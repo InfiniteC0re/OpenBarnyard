@@ -15,6 +15,7 @@ TFLOAT                ACamera::sm_fCurrentFOV           = Toshi::TMath::DegToRad
 const Toshi::TVector4 ACamera::sm_vWorldUp              = { 0.0f, -1.0f, 0.0f, 1.0f };
 const Toshi::TVector4 ACamera::sm_vInitialLookDirection = { 0.0f, 0.0f, 1.0f, 1.0f };
 
+// $Barnyard: FUNCTION 0045b040
 ACamera::ACamera()
 {
 	m_Matrix             = TMatrix44::IDENTITY;
@@ -23,6 +24,7 @@ ACamera::ACamera()
 	m_fProjectionCentreY = 0.5f;
 }
 
+// $Barnyard: FUNCTION 0045b080
 ACamera::~ACamera()
 {
 }
@@ -36,6 +38,7 @@ TVector4 ACamera::GetOrientation() const
 	return vOrientation;
 }
 
+// $Barnyard: FUNCTION 0045b2c0
 void ACamera::LookAtPoint( const Toshi::TVector4& a_rPoint )
 {
 	TVector4 vDirection = a_rPoint - m_Matrix.GetTranslation3();
@@ -44,6 +47,7 @@ void ACamera::LookAtPoint( const Toshi::TVector4& a_rPoint )
 	LookAtDirection( vDirection );
 }
 
+// $Barnyard: FUNCTION 0045b090
 void ACamera::LookAtDirection( const Toshi::TVector4& a_rDirection )
 {
 	TASSERT( a_rDirection.isNormalised() );

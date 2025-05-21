@@ -20,6 +20,7 @@ TOSHI_NAMESPACE_USING
 
 static TClass* s_pSkinMaterialClass = TNULL;
 
+// $Barnyard: FUNCTION 006135d0
 void AModelLoader::LoadSkinLOD( Toshi::TModel* a_pModel, TINT a_iLODIndex, Toshi::TModelLOD* a_pLOD, Toshi::TTMDWin::TRBLODHeader* a_pLODHeader )
 {
 	TPROFILER_SCOPE();

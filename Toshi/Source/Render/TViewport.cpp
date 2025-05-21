@@ -9,6 +9,7 @@
 
 TOSHI_NAMESPACE_START
 
+// $Barnyard: FUNCTION 006cd7e0
 TViewport::TViewport( TBOOL a_bFlag )
 {
 	m_MemAllocatorBlock     = TNULL;
@@ -32,6 +33,7 @@ TViewport::TViewport( TBOOL a_bFlag )
 	}
 }
 
+// $Barnyard: FUNCTION 006cd860
 TViewport::~TViewport()
 {
 	if ( m_pRenderCtx )
@@ -41,6 +43,7 @@ TViewport::~TViewport()
 	}
 }
 
+// $Barnyard: FUNCTION 006cd660
 void TViewport::SetBackgroundColor( TUINT8 r, TUINT8 g, TUINT8 b, TUINT8 a )
 {
 	if ( m_ColorR != r || m_ColorG != g || m_ColorB != b || m_ColorA != a )
@@ -54,6 +57,7 @@ void TViewport::SetBackgroundColor( TUINT8 r, TUINT8 g, TUINT8 b, TUINT8 a )
 	}
 }
 
+// $Barnyard: FUNCTION 006cd720
 void TViewport::GetBackgroundColor( TUINT8& r, TUINT8& g, TUINT8& b, TUINT8& a )
 {
 	r = m_ColorR;
@@ -67,6 +71,7 @@ TRenderContext* TViewport::GetRenderContext() const
 	return m_pRenderCtx;
 }
 
+// $Barnyard: FUNCTION 006cd5e0
 void TViewport::SetMaxZ( TFLOAT value )
 {
 	TRenderContext::VIEWPORTPARAMS params = m_pRenderCtx->GetViewportParameters();
@@ -79,6 +84,7 @@ void TViewport::SetMaxZ( TFLOAT value )
 	}
 }
 
+// $Barnyard: FUNCTION 006cd560
 void TViewport::SetMinZ( TFLOAT value )
 {
 	TRenderContext::VIEWPORTPARAMS params = m_pRenderCtx->GetViewportParameters();
@@ -91,6 +97,7 @@ void TViewport::SetMinZ( TFLOAT value )
 	}
 }
 
+// $Barnyard: FUNCTION 006cd4e0
 void TViewport::SetHeight( TFLOAT value )
 {
 	TRenderContext::VIEWPORTPARAMS params = m_pRenderCtx->GetViewportParameters();
@@ -103,6 +110,7 @@ void TViewport::SetHeight( TFLOAT value )
 	}
 }
 
+// $Barnyard: FUNCTION 006cd460
 void TViewport::SetWidth( TFLOAT value )
 {
 	TRenderContext::VIEWPORTPARAMS params = m_pRenderCtx->GetViewportParameters();
@@ -115,6 +123,7 @@ void TViewport::SetWidth( TFLOAT value )
 	}
 }
 
+// $Barnyard: FUNCTION 006cd3e0
 void TViewport::SetY( TFLOAT value )
 {
 	TRenderContext::VIEWPORTPARAMS params = m_pRenderCtx->GetViewportParameters();
@@ -127,6 +136,7 @@ void TViewport::SetY( TFLOAT value )
 	}
 }
 
+// $Barnyard: FUNCTION 006cd360
 void TViewport::SetX( TFLOAT value )
 {
 	TRenderContext::VIEWPORTPARAMS params = m_pRenderCtx->GetViewportParameters();
@@ -139,12 +149,14 @@ void TViewport::SetX( TFLOAT value )
 	}
 }
 
+// $Barnyard: FUNCTION 006cd6c0
 void TViewport::SetMemoryAllocatorBlock( TMemory::MemBlock* a_pMemBlock )
 {
 	m_MemAllocatorBlock = a_pMemBlock;
 	ChangeSKU( ChangeEvent_AllocatorBlock );
 }
 
+// $Barnyard: FUNCTION 006cd7b0
 TBOOL TViewport::EnableDefaultBeginRender( TBOOL enable )
 {
 	TBOOL oldState        = m_bDefaultBeginRender;
@@ -157,6 +169,7 @@ void TViewport::Enable( TBOOL enable )
 	m_bEnable = enable;
 }
 
+// $Barnyard: FUNCTION 006cd780
 TBOOL TViewport::AllowDepthClear( TBOOL allow )
 {
 	TBOOL oldState     = m_bAllowDepthClear;
@@ -165,6 +178,7 @@ TBOOL TViewport::AllowDepthClear( TBOOL allow )
 	return oldState;
 }
 
+// $Barnyard: FUNCTION 006cd750
 TBOOL TViewport::AllowBackgroundClear( TBOOL allow )
 {
 	TBOOL oldState          = m_bAllowBackgroundClear;
@@ -173,6 +187,7 @@ TBOOL TViewport::AllowBackgroundClear( TBOOL allow )
 	return oldState;
 }
 
+// $Barnyard: FUNCTION 006cd7d0
 void TViewport::End()
 {
 	EndSKU();
@@ -180,6 +195,7 @@ void TViewport::End()
 	m_bInViewport = TFALSE;
 }
 
+// $Barnyard: FUNCTION 006cd7c0
 void TViewport::Begin()
 {
 	TASSERT( m_bInViewport == TFALSE );

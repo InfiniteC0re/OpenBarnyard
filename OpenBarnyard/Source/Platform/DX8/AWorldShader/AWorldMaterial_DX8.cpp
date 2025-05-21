@@ -18,6 +18,7 @@ TOSHI_NAMESPACE_USING
 
 TDEFINE_CLASS( AWorldMaterialHAL );
 
+// $Barnyard: FUNCTION 005f68f0
 AWorldMaterialHAL::AWorldMaterialHAL()
 {
 	m_pAlphaBlendMaterial = TNULL;
@@ -31,6 +32,7 @@ AWorldMaterialHAL::AWorldMaterialHAL()
 	}
 }
 
+// $Barnyard: FUNCTION 005f6930
 AWorldMaterialHAL::~AWorldMaterialHAL()
 {
 	if ( m_pRegMaterial )
@@ -44,6 +46,7 @@ AWorldMaterialHAL::~AWorldMaterialHAL()
 	}
 }
 
+// $Barnyard: FUNCTION 005f6f40
 void AWorldMaterialHAL::OnDestroy()
 {
 	if ( m_pAssignedOrderTable != TNULL )
@@ -55,6 +58,7 @@ void AWorldMaterialHAL::OnDestroy()
 	BaseClass::OnDestroy();
 }
 
+// $Barnyard: FUNCTION 005f6f70
 void AWorldMaterialHAL::PreRender()
 {
 	auto pRenderInterface = TRenderD3DInterface::Interface();
@@ -139,6 +143,7 @@ void AWorldMaterialHAL::PreRender()
 	SetupRenderer();
 }
 
+// $Barnyard: FUNCTION 005f72b0
 void AWorldMaterialHAL::PostRender()
 {
 	auto pRenderInterface = TRenderD3DInterface::Interface();
@@ -164,12 +169,14 @@ void AWorldMaterialHAL::PostRender()
 	AWorldShaderHAL::s_RenderStateFlags = 0x1B;
 }
 
+// $Barnyard: FUNCTION 005f3580
 TBOOL AWorldMaterialHAL::Create( BLENDMODE a_eBlendMode )
 {
 	SetBlendMode( a_eBlendMode );
 	return BaseClass::Create( a_eBlendMode );
 }
 
+// $Barnyard: FUNCTION 005f7360
 void AWorldMaterialHAL::SetBlendMode( BLENDMODE a_eBlendMode )
 {
 	auto pShader = TDYNAMICCAST( AWorldShaderHAL, m_pShader );
@@ -205,6 +212,7 @@ void AWorldMaterialHAL::SetBlendMode( BLENDMODE a_eBlendMode )
 	BaseClass::SetBlendMode( a_eBlendMode );
 }
 
+// $Barnyard: FUNCTION 005f69a0
 void AWorldMaterialHAL::CopyToAlphaBlendMaterial()
 {
 	if ( m_pAlphaBlendMaterial )
@@ -219,6 +227,7 @@ void AWorldMaterialHAL::CopyToAlphaBlendMaterial()
 	}
 }
 
+// $Barnyard: FUNCTION 005f69e0
 void AWorldMaterialHAL::SetOrderTable( Toshi::TOrderTable* a_pOrderTable )
 {
 	if ( a_pOrderTable != m_pAssignedOrderTable )

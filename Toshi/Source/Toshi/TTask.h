@@ -45,9 +45,11 @@ public:
 
 	TUINT32& GetFlags() { return m_State; }
 	TBOOL    IsCreated() const { return m_State & State_Created; }
-	TBOOL    IsActive() const { return m_State & State_Active; }
-	TBOOL    IsCreatedAndActive() const { return ( m_State & ( State_Created | State_Active ) ) == ( State_Created | State_Active ); }
-	TBOOL    IsDying() const { return m_State & State_Dying; }
+	// $Barnyard: FUNCTION 006bc8a0
+	TBOOL IsActive() const { return m_State & State_Active; }
+	TBOOL IsCreatedAndActive() const { return ( m_State & ( State_Created | State_Active ) ) == ( State_Created | State_Active ); }
+	// $Barnyard: FUNCTION 006bc8b0
+	TBOOL IsDying() const { return m_State & State_Dying; }
 
 private:
 	TUINT32 m_State;

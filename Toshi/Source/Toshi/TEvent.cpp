@@ -8,6 +8,7 @@
 
 TOSHI_NAMESPACE_START
 
+// $Barnyard: FUNCTION 006c4630
 void TGenericListener::Connect( TGenericEmitter& a_rEmitter, void* a_pCaller, t_Callback a_pCallback, TINT a_iPriority )
 {
 	TASSERT( IsLinked() == TFALSE );
@@ -17,6 +18,7 @@ void TGenericListener::Connect( TGenericEmitter& a_rEmitter, void* a_pCaller, t_
 	a_rEmitter.GetListeners().Insert( this );
 }
 
+// $Barnyard: FUNCTION 006c46c0
 void TGenericListener::Disconnect()
 {
 	Remove();
@@ -34,6 +36,7 @@ void TGenericListener::Execute( void* pOwner, void* pData )
 	m_pCallback( m_pCaller, pOwner, pData );
 }
 
+// $Barnyard: FUNCTION 006c4680
 void TGenericEmitter::Destroy()
 {
 	if ( !m_Listeners.IsEmpty() )
@@ -52,6 +55,7 @@ void TGenericEmitter::Create( void* a_pOwner )
 	m_pOwner = a_pOwner;
 }
 
+// $Barnyard: FUNCTION 006c45e0
 void TGenericEmitter::Throw( void* a_pData )
 {
 	auto pListener = m_Listeners.Begin();

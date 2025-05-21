@@ -118,6 +118,7 @@ public:
 	TFLOAT GetHeight() const { return m_oViewportParams.fHeight; }
 
 	TBOOL IsFogEnabled() const { return m_eFlags & FLAG_FOG; }
+	// $Barnyard: FUNCTION 006ce980
 	TBOOL IsDirty() const { return m_eFlags & FLAG_DIRTY; }
 
 	TSkeletonInstance* GetSkeletonInstance() const { return m_pCurrentSkeletonInstance; }

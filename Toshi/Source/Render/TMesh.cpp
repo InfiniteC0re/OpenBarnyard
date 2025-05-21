@@ -18,6 +18,7 @@ TMesh::TMesh()
 	m_State        = State_None;
 }
 
+// $Barnyard: FUNCTION 005f5e80
 TMesh::~TMesh()
 {
 	m_pOwnerShader = TNULL;
@@ -36,6 +37,7 @@ void TMesh::Invalidate()
 	m_State &= ~State_Validated;
 }
 
+// $Barnyard: FUNCTION 005efff0
 TBOOL TMesh::Create()
 {
 	m_State |= State_Created;
@@ -47,11 +49,13 @@ TBOOL TMesh::Render()
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 005f0000
 void TMesh::OnDestroy()
 {
 	m_State &= ~State_Created;
 }
 
+// $Barnyard: FUNCTION 006ccd60
 void TMesh::SetFlags( State a_eFlags, TBOOL a_bEnable )
 {
 	if ( a_bEnable )
@@ -60,6 +64,7 @@ void TMesh::SetFlags( State a_eFlags, TBOOL a_bEnable )
 		m_State &= ~a_eFlags;
 }
 
+// $Barnyard: FUNCTION 006ccd40
 void TMesh::DestroyResource()
 {
 	Invalidate();

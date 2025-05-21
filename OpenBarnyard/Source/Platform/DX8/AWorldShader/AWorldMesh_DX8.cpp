@@ -16,6 +16,7 @@ TOSHI_NAMESPACE_USING
 
 TDEFINE_CLASS( AWorldMeshHAL );
 
+// $Barnyard: FUNCTION 005f7450
 TBOOL AWorldMeshHAL::Render()
 {
 	auto pRenderInterface = TRenderD3DInterface::Interface();

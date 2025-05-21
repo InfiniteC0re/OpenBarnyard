@@ -9,6 +9,7 @@
 
 TOSHI_NAMESPACE_USING
 
+// $Barnyard: FUNCTION 005d7200
 ASound::ASound()
     : m_iFlags( 0 ), m_iId( 0 ), m_uiCategoryIndex( 0 ), m_ui8Priority( 255 ), m_fMinDist( 1.0f ), m_vecSamples( AMemory::GetAllocator( AMemory::POOL_Sound ), 1, 1 ), m_vecTracks( AMemory::GetAllocator( AMemory::POOL_Sound ), 1, 1 )
 {
@@ -28,6 +29,7 @@ TINT ASound::GetRandomSample( TINT a_iWaveIndexMin, TINT a_iWaveIndexMax )
 	return a_iWaveIndexMin + ARandom::GetSingleton()->m_oRandom.GetInt( a_iWaveIndexMax - a_iWaveIndexMin );
 }
 
+// $Barnyard: FUNCTION 005d68b0
 TINT ASound::GetRandomSampleWeighted( TINT a_iTrackIndex, TINT a_iWaveIndexMin, TINT a_iWaveIndexMax )
 {
 	TASSERT( a_iTrackIndex != -1 );

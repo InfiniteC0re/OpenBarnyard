@@ -17,6 +17,7 @@ TOSHI_NAMESPACE_USING
 
 TDEFINE_CLASS_NORUNTIME( AMovieState );
 
+// $Barnyard: FUNCTION 0043c090
 AMovieState::AMovieState( const TCHAR* a_szName, TBOOL a_bFlag1, AGameState* a_pNextGameState, TBOOL a_bFlag2 )
 {
 	m_pNextGameState = a_pNextGameState;
@@ -26,6 +27,7 @@ AMovieState::AMovieState( const TCHAR* a_szName, TBOOL a_bFlag1, AGameState* a_p
 	m_FileName = a_szName;
 }
 
+// $Barnyard: FUNCTION 0043c4f0
 TBOOL AMovieState::ProcessInput( const TInputInterface::InputEvent* a_pInputEvent )
 {
 	if ( AFadeManager::GetSingleton()->HasAnyFadesInProgress( TTRUE ) || m_FadeOverListener.IsLinked() )
@@ -43,6 +45,7 @@ TBOOL AMovieState::ProcessInput( const TInputInterface::InputEvent* a_pInputEven
 	return AGameState::ProcessInput( a_pInputEvent );
 }
 
+// $Barnyard: FUNCTION 0043c550
 TBOOL AMovieState::ProcessCommand( AInputCommand a_eInputCommand, const TInputInterface::InputEvent* a_pInputEvent, TBOOL& a_rStopEvents )
 {
 	if ( AFadeManager::GetSingleton()->HasAnyFadesInProgress( TTRUE ) || m_FadeOverListener.IsLinked() )
@@ -61,6 +64,7 @@ TBOOL AMovieState::ProcessCommand( AInputCommand a_eInputCommand, const TInputIn
 	return TFALSE;
 }
 
+// $Barnyard: FUNCTION 0043c3d0
 TBOOL AMovieState::OnUpdate( TFLOAT a_fDeltaTime )
 {
 	if ( AMoviePlayer::GetSingleton()->IsMoviePlaying() )
@@ -75,6 +79,7 @@ TBOOL AMovieState::OnUpdate( TFLOAT a_fDeltaTime )
 
 TPSTRING8_DECLARE( DialogInputMap );
 
+// $Barnyard: FUNCTION 0043c6c0
 void AMovieState::OnInsertion()
 {
 	SetInputMap( TPS8( DialogInputMap ) );
@@ -105,6 +110,7 @@ void AMovieState::OnInsertion()
 	AMoviePlayer::GetSingleton()->PlayMovie( m_FileName, -( m_bFlag2 != TFALSE ) & 2 );
 }
 
+// $Barnyard: FUNCTION 0043bf40
 void AMovieState::OnRemoval()
 {
 	m_Listener1.Disconnect();
@@ -112,6 +118,7 @@ void AMovieState::OnRemoval()
 	AGameState::OnRemoval();
 }
 
+// $Barnyard: FUNCTION 0043c240
 void AMovieState::SkipMovie( TBOOL a_bFastSkip )
 {
 	if ( !a_bFastSkip )
@@ -138,6 +145,7 @@ void AMovieState::SkipMovie( TBOOL a_bFastSkip )
 	}
 }
 
+// $Barnyard: FUNCTION 0043bf70
 TBOOL AMovieState::EndMovieImmediately()
 {
 	AFade::Color fadeTo( 0, 0, 0, 0 );

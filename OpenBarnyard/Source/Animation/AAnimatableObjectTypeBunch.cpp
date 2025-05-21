@@ -50,6 +50,7 @@ TBOOL AAnimatableObjectTypeBunch::CreateFromProperties( const PBProperties* a_pP
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 0057f6f0
 void AAnimatableObjectTypeBunch::OnAnimatableObjectCreated( AAnimatableObject* a_pAnimatableObject )
 {
 	TASSERT( !"Not implemented" );

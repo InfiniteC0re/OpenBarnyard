@@ -11,6 +11,7 @@ TOSHI_NAMESPACE_USING
 
 TDEFINE_CLASS_NORUNTIME( ASysMaterial );
 
+// $Barnyard: FUNCTION 005f0040
 ASysMaterial::ASysMaterial()
 {
 	m_eBlendMode = BLENDMODE_DEFAULT;
@@ -31,6 +32,7 @@ TBOOL ASysMaterial::Create( BLENDMODE a_eBlendMode )
 	return TMaterial::Create();
 }
 
+// $Barnyard: FUNCTION 005f00a0
 void ASysMaterial::SetBlendMode( BLENDMODE a_eBlendMode )
 {
 	m_eBlendMode = a_eBlendMode;

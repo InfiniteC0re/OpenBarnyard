@@ -12,6 +12,7 @@
 
 TOSHI_NAMESPACE_USING
 
+// $Barnyard: FUNCTION 006086f0
 AGlowViewport::AGlowViewport( TINT a_iMaxNumGlowObjects )
     : m_iMaxNumObjects( a_iMaxNumGlowObjects ), m_pHeadFreeObject( TNULL )
 {
@@ -33,6 +34,7 @@ AGlowViewport::AGlowViewport( TINT a_iMaxNumGlowObjects )
 	m_pHeadFreeObject = m_pAllocObjects;
 }
 
+// $Barnyard: FUNCTION 006087f0
 AGlowViewport::~AGlowViewport()
 {
 	delete[] m_pAllocObjects;
@@ -58,6 +60,7 @@ AGlowViewport::GlowObject* AGlowViewport::CreateGlowObject()
 	return pGlowObject;
 }
 
+// $Barnyard: FUNCTION 00608560
 void AGlowViewport::RemoveGlowObject( GlowObject* a_pGlowObject )
 {
 	if ( a_pGlowObject == TNULL )
@@ -94,6 +97,7 @@ void AGlowViewport::RemoveGlowObject( GlowObject* a_pGlowObject )
 	}
 }
 
+// $Barnyard: FUNCTION 00608be0
 void AGlowViewport::GetInfluencingLightIDs( const TSphere& a_rcSphere, TLightIDList& a_rLightIDs )
 {
 	a_rLightIDs.Reset();
@@ -115,6 +119,7 @@ void AGlowViewport::GetInfluencingLightIDs( const TSphere& a_rcSphere, TLightIDL
 	}
 }
 
+// $Barnyard: FUNCTION 00608810
 void AGlowViewport::Update()
 {
 	TRenderContext* pRenderContext = TRenderInterface::GetSingleton()->GetCurrentContext();
@@ -212,6 +217,7 @@ void AGlowViewport::Update()
 	}
 }
 
+// $Barnyard: FUNCTION 00608630
 AGlowViewport::GlowObject::GlowObject()
 {
 	Unknown1         = 0;
@@ -242,6 +248,7 @@ AGlowViewport::GlowObject::GlowObject()
 	Setup( TMatrix44::IDENTITY, oViewportParams, oProjectionParams, TRenderContext::CameraMode_Perspective );
 }
 
+// $Barnyard: FUNCTION 006081d0
 void AGlowViewport::GlowObject::Setup( const Toshi::TMatrix44& a_rcTransform, const Toshi::TRenderContext::VIEWPORTPARAMS& a_rcViewportParams, const Toshi::TRenderContext::PROJECTIONPARAMS& a_rcProjectionParams, Toshi::TRenderContext::CameraMode a_eCameraMode )
 {
 	m_oViewportParams   = a_rcViewportParams;

@@ -9,6 +9,7 @@
 
 TOSHI_NAMESPACE_START
 
+// $Barnyard: FUNCTION 006be7f0
 T2Locale::T2Locale( TINT langCount, TSIZE bufferSize, void* buffer )
 {
 	// 00662d40
@@ -30,6 +31,7 @@ T2Locale::T2Locale( TINT langCount, TSIZE bufferSize, void* buffer )
 	m_Locale.SetMemoryFunctions( TRBAllocator, TRBDeallocator, this );
 }
 
+// $Barnyard: FUNCTION 006be710
 T2Locale::~T2Locale()
 {
 	m_Locale.Close();
@@ -40,16 +42,19 @@ T2Locale::~T2Locale()
 	}
 }
 
+// $Barnyard: FUNCTION 006be7d0
 void* T2Locale::TRBAllocator( TTRB::AllocType alloctype, TSIZE size, short unk, TSIZE unk2, void* userData )
 {
 	return TSTATICCAST( T2Locale, userData )->TRBAlloc( size );
 }
 
+// $Barnyard: FUNCTION 00539d40
 void T2Locale::TRBDeallocator( TTRB::AllocType alloctype, void* ptr, short unk, TSIZE unk2, void* userData )
 {
 	// T2Locale doesn't have deallocator
 }
 
+// $Barnyard: FUNCTION 006be750
 void T2Locale::SetLanguage( Lang langid )
 {
 	// 00662e30
@@ -73,6 +78,7 @@ TINT T2Locale::GetNumStrings() const
 	return m_StringTable->m_numstrings;
 }
 
+// $Barnyard: FUNCTION 006be7b0
 T2LocalisedString T2Locale::GetString( TINT a_iNumString )
 {
 	TASSERT( a_iNumString >= 0 && a_iNumString < GetNumStrings() );

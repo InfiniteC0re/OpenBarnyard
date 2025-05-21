@@ -16,16 +16,19 @@ TOSHI_NAMESPACE_USING
 
 TBOOL g_bIsLoadingFSBFile = TFALSE;
 
+// $Barnyard: FUNCTION 005dcf40
 AWaveBankFMODFSB::AWaveBankFMODFSB( const Toshi::TPString8& a_strBank, const Toshi::TPString8& a_strPath )
     : AWaveBank( a_strBank, a_strPath, TFALSE )
 {
 }
 
+// $Barnyard: FUNCTION 005dcf80
 TBOOL AWaveBankFMODFSB::IsReady() const
 {
 	return FMUSIC_GetOpenState( (FMUSIC_MODULE*)m_FileHandle ) == 0;
 }
 
+// $Barnyard: FUNCTION 005dd000
 AWaveBank::LOADRESULT AWaveBankFMODFSB::Load( LOADFLAGS a_uiFlags, TINT a_iBufferSize )
 {
 	if ( m_iNumLoads > 0 || m_FileHandle != TNULL )
@@ -113,6 +116,7 @@ AWaveBank::LOADRESULT AWaveBankFMODFSB::Load( LOADFLAGS a_uiFlags, TINT a_iBuffe
 	return LOADRESULT_ERR;
 }
 
+// $Barnyard: FUNCTION 005dd230
 AWaveBank::UNLOADRESULT AWaveBankFMODFSB::Unload()
 {
 	if ( m_iNumLoads != 0 && --m_iNumLoads < 1 && m_FileHandle )

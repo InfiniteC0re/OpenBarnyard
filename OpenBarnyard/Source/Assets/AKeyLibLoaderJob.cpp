@@ -15,6 +15,7 @@ void AKeyLibLoaderJob::BeginJob()
 	);
 }
 
+// $Barnyard: FUNCTION 00606690
 TBOOL AKeyLibLoaderJob::RunJob()
 {
 	if ( m_oStreamJob.IsProcessed() )

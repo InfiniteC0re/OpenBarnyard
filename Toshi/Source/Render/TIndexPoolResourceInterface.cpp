@@ -11,6 +11,7 @@ TOSHI_NAMESPACE_START
 
 TDEFINE_CLASS_NORUNTIME( TIndexPoolResourceInterface );
 
+// $Barnyard: FUNCTION 006daa50
 TIndexPoolResourceInterface::TIndexPoolResourceInterface()
 {
 	m_pFactory     = TNULL;

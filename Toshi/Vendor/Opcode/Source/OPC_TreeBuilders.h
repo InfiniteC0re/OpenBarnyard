@@ -160,6 +160,7 @@
 		public:
 		//! Constructor
 													AABBTreeOfTrianglesBuilder() : mIMesh(null)										{}
+		// $Barnyard: FUNCTION 006ad360
 		//! Destructor
 		virtual										~AABBTreeOfTrianglesBuilder()													{}
 

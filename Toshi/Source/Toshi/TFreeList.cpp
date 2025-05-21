@@ -9,6 +9,7 @@
 
 TOSHI_NAMESPACE_START
 
+// $Barnyard: FUNCTION 006c1840
 TFreeList::TFreeList( TUINT a_uiItemSize, TINT a_iInitialSize, TINT a_iGrowSize, const TCHAR* a_pchName )
 {
 	m_uiItemSize  = a_uiItemSize;
@@ -22,6 +23,7 @@ TFreeList::TFreeList( TUINT a_uiItemSize, TINT a_iInitialSize, TINT a_iGrowSize,
 	ms_pLastList = this;
 }
 
+// $Barnyard: FUNCTION 006c18b0
 TFreeList::Node* TFreeList::Allocate( TINT a_iNumber, TINT a_iSize )
 {
 	TASSERT( a_iNumber > 0 );
@@ -47,6 +49,7 @@ TFreeList::Node* TFreeList::Allocate( TINT a_iNumber, TINT a_iSize )
 	return pData;
 }
 
+// $Barnyard: FUNCTION 006c1990
 void TFreeList::SetCapacity( TINT a_iNewCapacity )
 {
 	if ( m_iCapacity < a_iNewCapacity )
@@ -58,6 +61,7 @@ void TFreeList::SetCapacity( TINT a_iNewCapacity )
 	}
 }
 
+// $Barnyard: FUNCTION 006c1950
 void* TFreeList::New( TUINT a_uiSize )
 {
 	if ( a_uiSize != m_uiItemSize )
@@ -78,6 +82,7 @@ void* TFreeList::New( TUINT a_uiSize )
 	}
 }
 
+// $Barnyard: FUNCTION 006c1880
 void TFreeList::Delete( void* a_Ptr )
 {
 	Node* pNode = TSTATICCAST( Node, a_Ptr );

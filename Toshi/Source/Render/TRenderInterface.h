@@ -107,6 +107,7 @@ public:
 
 	// Returns system resource
 	template <class T>
+	// $Barnyard: FUNCTION 006be970
 	T* GetSystemResource( SYSRESOURCE systemResource )
 	{
 		TASSERT( systemResource >= 0 && systemResource < SYSRESOURCE_NUMOF, "Unknown resource" );
@@ -119,6 +120,7 @@ public:
 	// Creates resource and returns it
 	TResource* CreateResource( TClass* pClass, const TCHAR* name, TResource* parent );
 
+	// $Barnyard: FUNCTION 006be980
 	// Sets new render context and returns the old one
 	TRenderContext* SetCurrentRenderContext( TRenderContext* a_pRenderContext )
 	{
@@ -127,14 +129,18 @@ public:
 
 	void SetAutoCreateSystemResources( TBOOL a_bAutoCreate ) { m_bCreateSystemResources = a_bAutoCreate; }
 
+	// $Barnyard: FUNCTION 006be920
 	TBOOL IsInScene() { return m_bInScene; }
+	// $Barnyard: FUNCTION 006be930
 	TBOOL IsCreated() { return m_bCreated; }
+	// $Barnyard: FUNCTION 006be940
 	TBOOL IsDisplayCreated() { return m_bDisplayCreated; }
 
 	const TMatrix44& GetLightDirection() const { return m_LightDirection; }
 	const TMatrix44& GetLightColour() const { return m_LightColour; }
 
-	TRenderContext*            GetCurrentContext() const { return m_pCurrentContext; }
+	TRenderContext* GetCurrentContext() const { return m_pCurrentContext; }
+	// $Barnyard: FUNCTION 006be950
 	TNodeList<TRenderAdapter>* GetAdapterList() { return &m_AdapterList; }
 	TKeyframeLibraryManager&   GetKeyframeLibraryManager() { return m_KeyframeManager; }
 	TStack<TMatrix44, 20>&     GetTransforms() { return m_Transforms; }

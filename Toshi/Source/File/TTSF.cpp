@@ -344,6 +344,7 @@ TUINT32 TTSFI::ReadAlignmentPad()
 	return 0;
 }
 
+// $Barnyard: FUNCTION 006d8b20
 void TTSFI::ReadRaw( void* dst, TUINT32 size )
 {
 	m_ReadPos += m_pFile->Read( dst, size );

@@ -231,6 +231,7 @@ public:
 	    : T2GenericDynamicVector( a_poElements, a_iInitialSize, a_iNumElements )
 	{}
 
+	// $Barnyard: FUNCTION 0059dce0
 	~T2DynamicVector()
 	{
 		FreeMemory();

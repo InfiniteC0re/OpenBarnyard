@@ -12,6 +12,7 @@
 
 TOSHI_NAMESPACE_START
 
+// $Barnyard: FUNCTION 006c1c90
 TManagedModel::TManagedModel()
     : m_pModel( TNULL )
 {
@@ -30,6 +31,7 @@ TManagedModel::TManagedModel()
 	m_pEntry = TNULL;
 }
 
+// $Barnyard: FUNCTION 006c1ce0
 TManagedModel::~TManagedModel()
 {
 	if ( m_pModel )
@@ -61,12 +63,14 @@ TManagedModel::~TManagedModel()
 	}
 }
 
+// $Barnyard: FUNCTION 006c1c00
 void TModelManager::Initialise()
 {
 	TASSERT( ms_pEntries == TNULL );
 	ms_pEntries = new ModelNode[ MAX_NUM_MODELS ];
 }
 
+// $Barnyard: FUNCTION 006c1c50
 void TModelManager::Uninitialise()
 {
 	TASSERT( ms_pEntries != TNULL );
@@ -77,6 +81,7 @@ void TModelManager::Uninitialise()
 	ms_pEntries = TNULL;
 }
 
+// $Barnyard: FUNCTION 006c1d40
 TModelManager::ModelNode* TModelManager::CreateModel( const TCHAR* a_szFileName, TManagedModel& a_rModelRef, TTRB* a_pAssetTRB )
 {
 	if ( ms_oFreeList.IsEmpty() )
@@ -131,6 +136,7 @@ TModelManager::ModelNode* TModelManager::CreateModel( const TCHAR* a_szFileName,
 	return pEntry;
 }
 
+// $Barnyard: FUNCTION 006c1fd0
 TBOOL TManagedModel::Create( const TCHAR* a_szFileName, TTRB* a_pTRB )
 {
 	m_pModel = TNULL;

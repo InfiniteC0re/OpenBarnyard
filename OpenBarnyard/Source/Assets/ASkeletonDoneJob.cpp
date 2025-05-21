@@ -11,6 +11,7 @@ void ASkeletonDoneJob::BeginJob()
 {
 }
 
+// $Barnyard: FUNCTION 005ed0a0
 TBOOL ASkeletonDoneJob::RunJob()
 {
 	m_pVIS->GetLocatorList()->LoadFromTRB( m_pTRBLoaderJob->GetStream().GetTRB() );

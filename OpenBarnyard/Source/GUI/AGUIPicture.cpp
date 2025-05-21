@@ -12,6 +12,7 @@ TOSHI_NAMESPACE_USING
 
 TDEFINE_CLASS_INIT_NORUNTIME( AGUIPicture );
 
+// $Barnyard: FUNCTION 0059d530
 AGUIPicture::AGUIPicture()
 {
 	m_iUnknown1  = 0;
@@ -66,11 +67,13 @@ void AGUIPicture::DeinitialiseClass()
 {
 }
 
+// $Barnyard: FUNCTION 0059d2a0
 void AGUIPicture::SetFlag()
 {
 	m_bFlag = TTRUE;
 }
 
+// $Barnyard: FUNCTION 0059d310
 void AGUIPicture::Render()
 {
 	if ( m_bIsVisible )

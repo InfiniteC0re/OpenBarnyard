@@ -9,6 +9,7 @@
 
 TOSHI_NAMESPACE_USING
 
+// $Barnyard: FUNCTION 006c2060
 void AGUI2Transform::Rotate( TFLOAT a_fAngle )
 {
 	TFLOAT fSin, fCos;
@@ -23,6 +24,7 @@ void AGUI2Transform::Rotate( TFLOAT a_fAngle )
 	m_aMatrixRows[ 1 ].y = vecRot1.y * fCos - vecRot0.y * fSin;
 }
 
+// $Barnyard: FUNCTION 00404810
 void AGUI2Transform::PreMultiply( const AGUI2Transform& a_rTransform )
 {
 	TVector2 vecRot0 = m_aMatrixRows[ 0 ];
@@ -43,12 +45,14 @@ void AGUI2Transform::Scale( TFLOAT a_fScaleX, TFLOAT a_fScaleY )
 	PreMultiply( transform );
 }
 
+// $Barnyard: FUNCTION 006c20f0
 void AGUI2Transform::Transform( TVector2& a_rOutVec, const TVector2& a_rTransformVec ) const
 {
 	a_rOutVec.x = m_vecTranslation.x + m_aMatrixRows[ 0 ].x * a_rTransformVec.x + m_aMatrixRows[ 1 ].x * a_rTransformVec.y;
 	a_rOutVec.y = m_vecTranslation.y + m_aMatrixRows[ 0 ].y * a_rTransformVec.x + m_aMatrixRows[ 1 ].y * a_rTransformVec.y;
 }
 
+// $Barnyard: FUNCTION 006c21a0
 void AGUI2Transform::GetInverse( AGUI2Transform& a_rInverse ) const
 {
 	TFLOAT fMultiplier = 1.0f / ( m_aMatrixRows[ 0 ].x * m_aMatrixRows[ 1 ].y - m_aMatrixRows[ 0 ].y * m_aMatrixRows[ 1 ].x );
@@ -82,6 +86,7 @@ void AGUI2Transform::SetFromScale( TFLOAT a_fScaleX, TFLOAT a_fScaleY )
 	Scale( a_fScaleX, a_fScaleY );
 }
 
+// $Barnyard: FUNCTION 006c2120
 void AGUI2Transform::Multiply( AGUI2Transform& a_rOutTransform, const AGUI2Transform& a_rA, const AGUI2Transform& a_rB )
 {
 	a_rOutTransform.m_aMatrixRows[ 0 ].x = a_rB.m_aMatrixRows[ 0 ].y * a_rA.m_aMatrixRows[ 1 ].x + a_rA.m_aMatrixRows[ 0 ].x * a_rB.m_aMatrixRows[ 0 ].x;

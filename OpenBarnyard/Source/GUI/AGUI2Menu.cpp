@@ -15,6 +15,7 @@
 
 TOSHI_NAMESPACE_USING
 
+// $Barnyard: FUNCTION 0063e380
 AGUI2Menu::AGUI2Menu()
 {
 	m_fItemSpacing         = 0.0f;
@@ -41,10 +42,12 @@ AGUI2Menu::AGUI2Menu()
 	m_bFlag1               = TTRUE;
 }
 
+// $Barnyard: FUNCTION 0063e410
 AGUI2Menu::~AGUI2Menu()
 {
 }
 
+// $Barnyard: FUNCTION 0063eb70
 void AGUI2Menu::Update( TFLOAT a_fDeltaTime )
 {
 	if ( m_bMouseStateDirty )
@@ -125,6 +128,7 @@ TBOOL AGUI2Menu::ProcessInputEvent( const Toshi::TInputInterface::InputEvent* a_
 	return TFALSE;
 }
 
+// $Barnyard: FUNCTION 0063e900
 TBOOL AGUI2Menu::ProcessInputCommand( AInputCommand a_eCommand, const Toshi::TInputInterface::InputEvent* a_pEvent )
 {
 	TBOOL bHandled = TFALSE;
@@ -249,6 +253,7 @@ TBOOL AGUI2Menu::ProcessInputCommand( AInputCommand a_eCommand, const Toshi::TIn
 	return bHandled;
 }
 
+// $Barnyard: FUNCTION 0063e450
 void AGUI2Menu::AddMenuItem( AGUI2MenuItem& a_rMenuItem )
 {
 	if ( m_pLastMenuItem )
@@ -260,6 +265,7 @@ void AGUI2Menu::AddMenuItem( AGUI2MenuItem& a_rMenuItem )
 	m_iNumMenuItems++;
 }
 
+// $Barnyard: FUNCTION 0063e4f0
 void AGUI2Menu::SetFocusAt( AGUI2MenuItem& a_rMenuItem )
 {
 	if ( a_rMenuItem.IsVisible() )
@@ -272,6 +278,7 @@ void AGUI2Menu::SetFocusAt( AGUI2MenuItem& a_rMenuItem )
 	}
 }
 
+// $Barnyard: FUNCTION 0063e600
 void AGUI2Menu::ReflowChildrenVertically()
 {
 	m_fWidth  = 0.0f;
@@ -330,6 +337,7 @@ TBOOL AGUI2Menu::TriggerButtonPress( AGUI2MenuItem& a_rMenuItem )
 	return TFALSE;
 }
 
+// $Barnyard: FUNCTION 0063e570
 void AGUI2Menu::SetMenuAlpha( TFLOAT a_fAlpha, TFLOAT a_fShadowAlpha /* = -1.0f*/ )
 {
 	if ( m_pLastMenuItem != TNULL )

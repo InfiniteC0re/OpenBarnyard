@@ -115,6 +115,7 @@ private:
 
 	void DeleteTaskAtomic( TTask* task );
 
+	// $Barnyard: FUNCTION 006bcac0
 	void DeleteTaskRecurse( TTask* task )
 	{
 		if ( task != TNULL )

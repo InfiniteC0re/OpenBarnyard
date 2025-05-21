@@ -11,6 +11,7 @@ TOSHI_NAMESPACE_START
 
 constinit T2GenericRedBlackTreeNode T2GenericRedBlackTree::ms_oNil;
 
+// $Barnyard: FUNCTION 006cf1e0
 T2GenericRedBlackTreeNode* T2GenericRedBlackTree::GetFirstNode() const
 {
 	T2GenericRedBlackTreeNode* pCurrentNode = &m_oRoot;
@@ -25,6 +26,7 @@ T2GenericRedBlackTreeNode* T2GenericRedBlackTree::GetFirstNode() const
 	return pResult;
 }
 
+// $Barnyard: FUNCTION 006ceff0
 T2GenericRedBlackTreeNode* T2GenericRedBlackTree::Insert( T2GenericRedBlackTreeNode* pNode )
 {
 	T2GenericRedBlackTreeNode* pNode_00;
@@ -89,6 +91,7 @@ T2GenericRedBlackTreeNode* T2GenericRedBlackTree::Insert( T2GenericRedBlackTreeN
 	return pNode;
 }
 
+// $Barnyard: FUNCTION 006cf200
 void T2GenericRedBlackTree::DeleteFixUp( T2GenericRedBlackTreeNode* pNode )
 {
 	TINT                       uVar2;
@@ -179,6 +182,7 @@ void T2GenericRedBlackTree::DeleteFixUp( T2GenericRedBlackTreeNode* pNode )
 	CheckValid();
 }
 
+// $Barnyard: FUNCTION 006cf460
 T2GenericRedBlackTreeNode* T2GenericRedBlackTree::DeleteNode( T2GenericRedBlackTreeNode* pNode )
 {
 	T2GenericRedBlackTreeNode* pTVar1;
@@ -324,6 +328,7 @@ void T2GenericRedBlackTree::RightRotate( T2GenericRedBlackTreeNode* pNode )
 	CheckValid();
 }
 
+// $Barnyard: FUNCTION 006cf190
 T2GenericRedBlackTreeNode* T2GenericRedBlackTree::GetSuccessorOf( const T2GenericRedBlackTreeNode* pNode )
 {
 	T2GenericRedBlackTreeNode* pTVar1;

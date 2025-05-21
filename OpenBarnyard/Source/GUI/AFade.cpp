@@ -7,6 +7,7 @@
 //-----------------------------------------------------------------------------
 #include <Core/TMemoryDebugOn.h>
 
+// $Barnyard: FUNCTION 0045c6a0
 AFade::AFade()
     : m_FadeFromColor( 255, 255, 255, 255 ), m_FadeToColor( 255, 255, 255, 255 ), m_fCurrentTime( 0.0f ), m_FadeOverEmitter( this )
 {
@@ -27,6 +28,7 @@ void AFade::SetFadeToColor( const Color& a_rFadeToColor )
 	m_FadeToColor = a_rFadeToColor;
 }
 
+// $Barnyard: FUNCTION 0045c400
 AFade::Color* AFade::GetCurrentColor( Color& a_rColor )
 {
 	TFLOAT fProgress = m_fCurrentTime / m_fFadeTime;
@@ -38,6 +40,7 @@ AFade::Color* AFade::GetCurrentColor( Color& a_rColor )
 	return &a_rColor;
 }
 
+// $Barnyard: FUNCTION 0045c600
 TBOOL AFade::IsStillFading( TBOOL a_bThrowFadeOver )
 {
 	if ( m_fFadeTime <= m_fCurrentTime )

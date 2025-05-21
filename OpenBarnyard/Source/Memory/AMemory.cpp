@@ -9,6 +9,7 @@
 
 TOSHI_NAMESPACE_USING
 
+// $Barnyard: FUNCTION 00402910
 void AMemory::CreatePool( POOL a_ePool )
 {
 	TASSERT( a_ePool >= POOL_None && a_ePool < POOL_NUMOF );

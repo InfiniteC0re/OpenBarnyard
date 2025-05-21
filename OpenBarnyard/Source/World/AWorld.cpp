@@ -30,6 +30,7 @@ void Frustum::InitReduce()
 	}
 }
 
+// $Barnyard: FUNCTION 006d4dd0
 FrustumIntersectSphereResult Frustum::IntersectSphereReduce( const Toshi::TSphere& a_rSphere )
 {
 	for ( TINT i = 0; i < iActivePlaneCount; )

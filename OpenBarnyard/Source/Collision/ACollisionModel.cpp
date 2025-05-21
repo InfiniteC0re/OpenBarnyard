@@ -21,6 +21,7 @@ ACollisionModel::~ACollisionModel()
 {
 }
 
+// $Barnyard: FUNCTION 00618cb0
 TBOOL ACollisionModel::Create( TINT a_iMeshIndex, Toshi::TModel* a_pModel )
 {
 	m_iMeshIndex = a_iMeshIndex;

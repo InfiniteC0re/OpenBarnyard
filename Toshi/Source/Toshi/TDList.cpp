@@ -97,6 +97,7 @@ void TGenericDList::InsertSegmentAtTail( TNode* a_pNode1, TNode* a_pNode2 )
 	a_pNode1->m_pNext->m_pPrev = a_pNode1;
 }
 
+// $Barnyard: FUNCTION 006c9bf0
 void TGenericDList::RemoveAll()
 {
 	while ( !IsEmpty() )
