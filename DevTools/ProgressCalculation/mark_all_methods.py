@@ -30,7 +30,7 @@ def main():
     except Exception:
         pass
 
-    pool_size = 16
+    pool_size = 32
 
     # define worker function before a Pool is instantiated
     def worker(file):

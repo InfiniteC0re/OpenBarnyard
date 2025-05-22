@@ -81,7 +81,7 @@ TBOOL ARenderer::CreateTRender()
 		pRenderer->SetGamma( AOptions::GetSingleton()->GetGamma() );
 	}
 
-	if ( !m_DisplayModes.IsModeExists( iWidth, iHeight, iColourDepth ) )
+	if ( !m_DisplayModes.DoesModeExist( iWidth, iHeight, iColourDepth ) )
 	{
 		// Incompatible display mode
 		iWidth       = 800;

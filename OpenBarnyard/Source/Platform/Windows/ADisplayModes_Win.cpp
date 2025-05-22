@@ -55,7 +55,7 @@ void ADisplayModes_Win::Initialise()
 						{
 							if ( pDevice->GetMode()->Is16Bit() )
 							{
-								if ( !IsModeExists( uiWidth, uiHeight, 16 ) )
+								if ( !DoesModeExist( uiWidth, uiHeight, 16 ) )
 								{
 									m_Modes.PushBack( { .m_uiWidth = uiWidth, .m_uiHeight = uiHeight, .m_uiColourDepth = 16 } );
 								}
@@ -63,7 +63,7 @@ void ADisplayModes_Win::Initialise()
 
 							if ( pDevice->GetMode()->Is32Bit() )
 							{
-								if ( !IsModeExists( uiWidth, uiHeight, 32 ) )
+								if ( !DoesModeExist( uiWidth, uiHeight, 32 ) )
 								{
 									m_Modes.PushBack( { .m_uiWidth = uiWidth, .m_uiHeight = uiHeight, .m_uiColourDepth = 32 } );
 								}
@@ -76,7 +76,8 @@ void ADisplayModes_Win::Initialise()
 	}
 }
 
-TBOOL ADisplayModes_Win::IsModeExists( const TUINT32& a_rWidth, const TUINT32& a_rHeight, const TUINT32& a_rColourDepth )
+// $Barnyard: FUNCTION 00614d70
+TBOOL ADisplayModes_Win::DoesModeExist( const TUINT32& a_rWidth, const TUINT32& a_rHeight, const TUINT32& a_rColourDepth )
 {
 	T2_FOREACH( m_Modes, it )
 	{

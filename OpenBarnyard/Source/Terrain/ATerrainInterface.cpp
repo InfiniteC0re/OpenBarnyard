@@ -20,6 +20,7 @@
 
 TOSHI_NAMESPACE_USING
 
+// $Barnyard: FUNCTION 005e94f0
 ATerrainInterface::ATerrainInterface( TINT a_iUnused1, TINT a_iUnused2, TINT a_iPreloadTerrainBlockSize, TINT a_iStartVISGroup )
 {
 	m_bIsLoaded                = TTRUE;
@@ -91,6 +92,7 @@ ATerrainInterface::ATerrainInterface( TINT a_iUnused1, TINT a_iUnused2, TINT a_i
 	m_fnGetCurrentVISGroup    = GetCurrentSectionID;
 }
 
+// $Barnyard: FUNCTION 005ec3e0
 ATerrainInterface::~ATerrainInterface()
 {
 	TIMPLEMENT();
@@ -116,6 +118,7 @@ ATerrainInterface::~ATerrainInterface()
 	delete[] m_pJobs;
 }
 
+// $Barnyard: FUNCTION 005eafa0
 void ATerrainInterface::Update()
 {
 	if ( !m_pTerrainVIS ) return;
@@ -268,6 +271,7 @@ void ATerrainInterface::Update()
 
 static TFLOAT s_ShadowColor2Multiplier = 0.6f;
 
+// $Barnyard: FUNCTION 005ea8b0
 void ATerrainInterface::Render()
 {
 	m_pTerrainVIS->m_pPersistantTerrainBlock->UpdateLastAccessTime();
@@ -325,6 +329,7 @@ void ATerrainInterface::Render()
 	}
 }
 
+// $Barnyard: FUNCTION 005e7d30
 TBOOL ATerrainInterface::IsLoaded() const
 {
 	if ( m_pTerrainVIS == TNULL )
@@ -348,6 +353,7 @@ TBOOL ATerrainInterface::IsLoaded() const
 	return TFALSE;
 }
 
+// $Barnyard: FUNCTION 005ebfd0
 void ATerrainInterface::LoadFromFile( const TCHAR* a_szFilePath, TBOOL a_bLoadLater, TBOOL a_bStreamCollision )
 {
 	TFIXME( "Do something with ATerrainSectionHudElement" );
@@ -467,6 +473,7 @@ void ATerrainInterface::LoadFromFile( const TCHAR* a_szFilePath, TBOOL a_bLoadLa
 	m_bIsLoaded = TTRUE;
 }
 
+// $Barnyard: FUNCTION 005ebec0
 void ATerrainInterface::WaitUntilLoaded()
 {
 	TPROFILER_SCOPE();
@@ -485,6 +492,7 @@ void ATerrainInterface::WaitUntilLoaded()
 	}
 }
 
+// $Barnyard: FUNCTION 005ead40
 void ATerrainInterface::DestroyModelData( ATerrainSection::ModelNode* a_pModelData )
 {
 	TVALIDPTR( a_pModelData );
@@ -500,6 +508,7 @@ void ATerrainInterface::DestroyModelData( ATerrainSection::ModelNode* a_pModelDa
 	}
 }
 
+// $Barnyard: FUNCTION 005e8140
 void ATerrainInterface::UpdateUsedBlocks( ATerrainLODType a_eLODType )
 {
 	TINT               iNumBlocks;
@@ -543,6 +552,7 @@ void ATerrainInterface::UpdateUsedBlocks( ATerrainLODType a_eLODType )
 	}
 }
 
+// $Barnyard: FUNCTION 005e80b0
 void ATerrainInterface::QueueStreamingAssets()
 {
 	TASSERT( m_iCurrentSection != -1 );
@@ -581,6 +591,7 @@ void ATerrainInterface::UnqueueStreamingAssets()
 	}
 }
 
+// $Barnyard: FUNCTION 005e8070
 TBOOL ATerrainInterface::HasAnyLODsQueued()
 {
 	for ( TINT i = 0; i < m_pTerrainVIS->m_iNumSections; i++ )
@@ -596,6 +607,7 @@ TBOOL ATerrainInterface::HasAnyLODsQueued()
 	return TFALSE;
 }
 
+// $Barnyard: FUNCTION 005ecca0
 ATerrainLODBlock* ATerrainInterface::AllocateLODBlock( ATerrainLODType a_eLODType, ATerrainSection* a_pVISGroup )
 {
 	TINT               iNumBlocks;
@@ -796,6 +808,7 @@ ASkeletonDoneJob* ATerrainInterface::GetFreeSkeletonLoaderJob()
 	}
 }
 
+// $Barnyard: FUNCTION 005ed190
 AMatLibLoaderJob* ATerrainInterface::GetFreeMatlibLoaderJob()
 {
 	TASSERT( m_FreeMatlibLoaderJobs.Size() > 0, "No free AMatlibLoaderJobs left!" );
@@ -876,6 +889,7 @@ void ATerrainInterface::FlushJobs()
 	MoveAllFinishedJobs( m_FreeCollisionLoaderJobs, m_UsedCollisionLoaderJobs );
 }
 
+// $Barnyard: FUNCTION 005eacd0
 void ATerrainInterface::MoveAllFinishedJobs( Toshi::T2SList<JobSlot>& a_rFreeJobs, Toshi::T2SList<JobSlot>& a_rUsedJobs )
 {
 	for ( auto it = a_rUsedJobs.Begin(); it != a_rUsedJobs.End(); )
@@ -989,6 +1003,7 @@ static void RenderWorldVisWin( TModelInstance* a_pModelInstance, void* a_pModelN
 
 #endif // TOSHI_SKU_WINDOWS
 
+// $Barnyard: FUNCTION 005e8670
 ATerrainSection::ModelNode* ATerrainInterface::CreateModelInstance( ATerrainSection::ModelNode* a_pModelNode, const char* a_szModelName, const char* a_szType )
 {
 	// Make sure model is created
@@ -1072,6 +1087,7 @@ ATerrainSection::ModelNode* ATerrainInterface::CreateModelInstance( ATerrainSect
 	return a_pModelNode;
 }
 
+// $Barnyard: FUNCTION 005e92f0
 void ATerrainInterface::CancelUnrequiredJobs()
 {
 	if ( m_iCurrentSection != m_iPreviousSection && m_iPreviousSection >= 0 )
@@ -1093,6 +1109,7 @@ void ATerrainInterface::CancelUnrequiredJobs()
 	}
 }
 
+// $Barnyard: FUNCTION 005e8e80
 void ATerrainInterface::UpdateNightMaterials()
 {
 	TIMPLEMENT();

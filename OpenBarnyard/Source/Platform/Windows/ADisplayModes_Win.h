@@ -19,7 +19,7 @@ public:
 
 	void Initialise();
 
-	TBOOL IsModeExists( const TUINT32& a_rWidth, const TUINT32& a_rHeight, const TUINT32& a_rColourDepth );
+	TBOOL DoesModeExist( const TUINT32& a_rWidth, const TUINT32& a_rHeight, const TUINT32& a_rColourDepth );
 
 private:
 	Toshi::T2Vector<Mode, 1024> m_Modes;
