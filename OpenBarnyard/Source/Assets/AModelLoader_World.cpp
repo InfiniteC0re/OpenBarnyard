@@ -28,7 +28,6 @@ AMaterialLibrary* g_pGrassLayersMatLib;
 Toshi::T2Texture* g_aGrassLayers[ 7 ];
 static TClass*    s_pWorldMaterialClass = TNULL;
 
-// $Barnyard: FUNCTION 00613270
 void AModelLoader::InitialiseGrassLayersTextures()
 {
 	g_pGrassLayersMatLib = AMaterialLibraryManager::List::GetSingleton()->CreateLibraryFromAsset(

@@ -309,6 +309,3 @@ private:
 };
 
 TOSHI_NAMESPACE_END
-
-// $Barnyard: FUNCTION 006c8140
-// Toshi::T2DList::Exists

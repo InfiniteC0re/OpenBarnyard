@@ -97,7 +97,6 @@ public:
 	EventEmitter& GetInputEventEmitter() { return m_InputEventEmitter; }
 
 	template <class C>
-	// $Barnyard: FUNCTION 006c3fd0
 	C* GetDeviceByIndex( TUINT a_uiIndex = 0 )
 	{
 		C* pDevice = TSTATICCAST( C, GetDeviceByIndex( &TGetClass( C ), a_uiIndex ) );

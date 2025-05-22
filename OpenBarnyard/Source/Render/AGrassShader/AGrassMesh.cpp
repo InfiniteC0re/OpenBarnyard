@@ -67,7 +67,7 @@ void AGrassMesh::OnDestroy()
 	m_uiMaxVertices = 0;
 }
 
-// $Barnyard: FUNCTION 005f7b50
+// $Barnyard: FUNCTION 005f7b80
 TBOOL AGrassMesh::Create( TUINT32 a_uiFlags, TUINT16 a_uiMaxVertices )
 {
 	m_uiFlags       = a_uiFlags;

@@ -11,7 +11,7 @@ TOSHI_NAMESPACE_USING
 
 TDEFINE_CLASS( ALockedMesh );
 
-// $Barnyard: FUNCTION 005f79c0
+// $Barnyard: FUNCTION 005edf40
 ALockedMesh::ALockedMesh()
 {
 	// TODO: initialise members

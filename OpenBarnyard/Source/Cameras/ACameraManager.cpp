@@ -177,7 +177,7 @@ ACameraHelper* ACameraManager::GetCurrentCameraHelper() const
 	return m_pCurrentHelper;
 }
 
-// $Barnyard: FUNCTION 0045c0d0
+// $Barnyard: FUNCTION 0045b870
 ACamera* ACameraManager::GetCurrentCamera() const
 {
 	return m_pCurrentCamera;

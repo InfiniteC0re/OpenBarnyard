@@ -67,7 +67,7 @@ ASkinLightingManager::ASkinLightingManager()
 	m_oTRB.DeleteSymbolTable();
 }
 
-// $Barnyard: FUNCTION 0060dd70
+// $Barnyard: FUNCTION 0060df20
 ASkinLightingManager::~ASkinLightingManager()
 {
 	AMaterialLibraryManager::List::GetSingleton()->DestroyLibrary( m_pSkinLightMatLib );
