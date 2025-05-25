@@ -14,6 +14,7 @@ AHashedObject::AHashedObject()
 {
 }
 
+// $Barnyard: FUNCTION 0061ef10
 AHashedObject::~AHashedObject()
 {
 }

@@ -1,6 +1,9 @@
 #pragma once
 #include "AObjectHash.h"
 
+//-----------------------------------------------------------------------------
+// Purpose: A wrapper for AObjectHash that makes the class a singleton.
+//-----------------------------------------------------------------------------
 class AObjectHashMain
     : public AObjectHash
     , public Toshi::TSingleton<AObjectHashMain>
@@ -8,7 +11,5 @@ class AObjectHashMain
 public:
 	AObjectHashMain( TINT a_iNumNodes );
 	~AObjectHashMain();
-
-	void Initialise( TFLOAT a_fMinX, TFLOAT a_fMinY, TFLOAT a_fMaxX, TFLOAT a_fMaxY, TINT a_iNumCellsX, TINT a_iNumCellsY );
 
 };

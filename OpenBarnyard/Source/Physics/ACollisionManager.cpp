@@ -126,7 +126,7 @@ AObjectHashMain* ACollisionManager::CreateObjectHashMain( HashType a_eHashType )
 		fMinX = -400.0f;
 	}
 
-	AObjectHashMain::GetSingleton()->Initialise( fMinX, fMinY, fMaxX, fMaxY, iNumCellsX, iNumCellsY );
+	AObjectHashMain::GetSingleton()->InitialiseCache( fMinX, fMinY, fMaxX, fMaxY, iNumCellsX, iNumCellsY );
 
 	return AObjectHashMain::GetSingleton();
 }

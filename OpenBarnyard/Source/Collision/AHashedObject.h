@@ -4,16 +4,19 @@
 class AHashedObject
 {
 public:
+	friend AObjectHash;
+
+public:
 	AHashedObject();
 	virtual ~AHashedObject();
 
-	virtual TFLOAT           Unknown1() = 0;
-	virtual Toshi::TVector3* Unknown2() = 0;
-	virtual TBOOL            Unknown3();
-	virtual void             SetUnk2( void* a_pUnk );
-	virtual void*            GetUnk2();
+	virtual TFLOAT                 GetRadius()   = 0;
+	virtual const Toshi::TVector3& GetPosition() = 0;
+	virtual TBOOL                  Unknown3();
+	virtual void                   SetUnk2( void* a_pUnk );
+	virtual void*                  GetUnk2();
 
 private:
-	AObjectHash::Node* m_pHashNode;
+	AObjectHash::CellObject* m_pHashNode;
 	void* m_Unk2;
 };

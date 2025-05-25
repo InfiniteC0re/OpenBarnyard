@@ -1,27 +1,41 @@
 #pragma once
 #include <Toshi/TNodeList.h>
 
+class AHashedObject;
+
+//-----------------------------------------------------------------------------
+// Purpose: A performance optimization that splits the whole map into different
+// chunks, allowing not to perform complex calculations on collision objects
+// that do not collide with each other when they are in different cells.
+// The alhorithm is also called "Spatial Hashing".
+//-----------------------------------------------------------------------------
 class AObjectHash
 {
 public:
-	inline static constexpr TUINT NUM_LISTS = 4096;
+	inline static constexpr TUINT GRID_SIZE   = 64;
+	inline static constexpr TUINT NUM_BUCKETS = GRID_SIZE * GRID_SIZE;
 
-	struct Node
-	    : public Toshi::TNodeList<Node>::TNode
+	struct CellObject
+	    : public Toshi::TNodeList<CellObject>::TNode
 	{
-		void* pUnk1 = TNULL;
-		void* pUnk2 = TNULL;
+		AHashedObject* pHashedObject   = TNULL;
+		CellObject*    pPreviousCell = TNULL;
 	};
 
 public:
 	AObjectHash( TINT a_iNumNodes );
 	virtual ~AObjectHash();
 
+	void InitialiseCache( TFLOAT a_fMinX, TFLOAT a_fMinY, TFLOAT a_fMaxX, TFLOAT a_fMaxY, TINT a_iNumCellsX, TINT a_iNumCellsY );
+
+	CellObject* AssignHash( AHashedObject* a_pObject );
+	void RemoveHash( AHashedObject* a_pObject );
+
 protected:
 	//...
-	Node*                  m_pAllNodes;
-	Toshi::TNodeList<Node> m_FreeList;
-	Toshi::TNodeList<Node> m_UsedList;
+	CellObject*                  m_pAllCells;
+	Toshi::TNodeList<CellObject> m_FreeList;
+	Toshi::TNodeList<CellObject> m_UsedList;
 	//...
 	TFLOAT m_fTotalX;
 	TFLOAT m_fTotalY;
@@ -29,11 +43,11 @@ protected:
 	TFLOAT m_fNegativeMinY;
 	TFLOAT m_fMaxXOverNumCells;
 	TFLOAT m_fMaxYOverNumCells;
-	TFLOAT m_fMaxXOverNumCellsOverOne;
-	TFLOAT m_fMaxYOverNumCellsOverOne;
+	TFLOAT m_fDivideByMaxXOverNumCells;
+	TFLOAT m_fDivideByMaxYOverNumCells;
 	TINT   m_fNumCellsX;
 	TINT   m_fNumCellsY;
 	//...
-	Toshi::TNodeList<Node> m_aLists[ NUM_LISTS ];
+	Toshi::TNodeList<CellObject> m_aCellBuckets[ NUM_BUCKETS ];
 	//...
 };
