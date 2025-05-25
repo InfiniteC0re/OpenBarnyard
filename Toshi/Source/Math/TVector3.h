@@ -36,12 +36,14 @@ public:
 		TVector3::y = vec.y;
 		TVector3::z = vec.z;
 	}
+
 	constexpr void Set( TFLOAT floats[ 3 ] )
 	{
 		TVector3::x = floats[ 0 ];
 		TVector3::y = floats[ 1 ];
 		TVector3::z = floats[ 2 ];
 	}
+
 	constexpr void Set( TFLOAT x, TFLOAT y, TFLOAT z )
 	{
 		TVector3::x = x;
@@ -123,6 +125,12 @@ public:
 	{
 		Set( vec );
 		Multiply( scalar );
+	}
+
+	// $Barnyard: FUNCTION 006cbb20
+	constexpr TBOOL Equals( const TVector3& vec )
+	{
+		return vec.x == x && vec.y == y && vec.z == z;
 	}
 
 	void Abs( const TVector3& vec3 ) { Set( TMath::Abs( vec3.x ), TMath::Abs( vec3.y ), TMath::Abs( vec3.z ) ); }

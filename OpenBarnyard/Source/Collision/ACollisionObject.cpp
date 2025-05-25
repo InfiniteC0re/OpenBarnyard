@@ -14,9 +14,9 @@ TDEFINE_CLASS_NORUNTIME( ACollisionObject );
 
 // $Barnyard: FUNCTION 0061c2b0
 ACollisionObject::ACollisionObject()
+    : field3_0x18( 0 )
+    , m_eType( Type_None )
 {
-	field3_0x18 = 0;
-	field4_0x1c = 0;
 }
 
 // $Barnyard: FUNCTION 0061c390
@@ -29,7 +29,7 @@ ACollisionObject::~ACollisionObject()
 // $Barnyard: FUNCTION 0052de40
 TFLOAT ACollisionObject::GetRadius()
 {
-	return GetObjectRadius();
+	return GetObjectRadius() * 1.2f;
 }
 
 // $Barnyard: FUNCTION 004130f0
@@ -48,7 +48,7 @@ void ACollisionObject::VTable0x34()
 {
 }
 
-TBOOL ACollisionObject::VTable0x4C( void* )
+TBOOL ACollisionObject::Create( TFLOAT a_fRadius )
 {
 	return TFALSE;
 }
