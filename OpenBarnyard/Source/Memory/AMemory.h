@@ -7,9 +7,7 @@ class AMemoryPool
 {
 public:
 	constexpr AMemoryPool( const TCHAR* a_szName, int a_iHeapIndex, size_t a_uiSize, int a_iUnk1, int a_iUnk2 )
-	    : m_szName( a_szName ), m_iHeapIndex( a_iHeapIndex ), m_uiSize( a_uiSize ), m_iUnk1( a_iUnk1 ), m_iUnk2( a_iUnk2 )
-	{
-	}
+	    : m_szName( a_szName ), m_iHeapIndex( a_iHeapIndex ), m_uiSize( a_uiSize ), m_iUnk1( a_iUnk1 ), m_iUnk2( a_iUnk2 ) {}
 
 	const TCHAR* GetName() const { return m_szName; }
 	int          GetHeapIndex() const { return m_iHeapIndex; }

@@ -12,7 +12,16 @@ TOSHI_NAMESPACE_USING
 // $Barnyard: FUNCTION 0061f760
 AObjectHash::AObjectHash( TINT a_iNumNodes )
 {
-	TIMPLEMENT_D( "Initialise some values" );
+	m_fTotalX                  = 0.0f;
+	m_fTotalY                  = 0.0f;
+	m_fNegativeMinX            = 0.0f;
+	m_fNegativeMinY            = 0.0f;
+	m_fNumCellsX               = 0;
+	m_fNumCellsY               = 0;
+	m_fMaxXOverNumCells        = 0.0f;
+	m_fMaxYOverNumCells        = 0.0f;
+	m_fMaxXOverNumCellsOverOne = 0.0f;
+	m_fMaxYOverNumCellsOverOne = 0.0f;
 
 	m_pAllNodes = new Node[ a_iNumNodes ];
 	for ( TINT i = 0; i < a_iNumNodes; i++ )

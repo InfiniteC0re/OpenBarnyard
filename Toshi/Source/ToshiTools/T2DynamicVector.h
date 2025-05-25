@@ -263,6 +263,7 @@ public:
 		m_iNumElements = 0;
 	}
 
+	// $Barnyard: FUNCTION 0047b230
 	void FreeMemory()
 	{
 		Clear();

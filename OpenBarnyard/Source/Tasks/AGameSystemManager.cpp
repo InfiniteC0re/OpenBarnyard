@@ -10,6 +10,8 @@
 #include "Helpers/ASimAnimModelHelperManager.h"
 #include "Helpers/ASkinLightingManager.h"
 #include "Helpers/ATreeManager.h"
+#include "Physics/ACollisionManager.h"
+#include "Physics/ABarnyardCollision.h"
 
 #include <Toshi/TScheduler.h>
 #include <Plugins/PPropertyParser/PBProperties.h>
@@ -62,6 +64,10 @@ TBOOL AGameSystemManager::OnCreate()
 
 	// Load models from the startup library
 	AAnimatableObjectManager::GetSingleton()->LoadTypesFromLibrary( "lib_startup" );
+
+	// Create collision and physics systems
+	pScheduler->CreateTask<ACollisionManager>( this )->Create();
+	//ABarnyardCollision::CreateSingleton();
 
 	pScheduler->CreateTask<ASimAnimModelHelperManager>( this )->Create();
 

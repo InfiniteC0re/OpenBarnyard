@@ -23,6 +23,7 @@
 #include "ALoadScreen.h"
 #include "Terrain/ATerrainInterface.h"
 #include "Terrain/ABYardTerrainManager.h"
+#include "Physics/ACollisionManager.h"
 
 #include "SoundBank/music.h"
 #include "SoundBank/ui.h"
@@ -360,6 +361,7 @@ void ARootTask::LoadFrontEnd()
 	pSoundManager->LoadSoundBank( TPS8( music ), TFALSE, TFALSE );
 
 	AAssetLoader::LoadAssetPackFromLibrary( "lib_frontend", TTRUE );
+	ACollisionManager::GetSingleton()->CreateObjectHashMain( ACollisionManager::HashType_UNK2 );
 
 	ABYardTerrainManager::SetTerrain( ABYardTerrainManager::Terrain_FrontEnd, TTRUE, TTRUE, 0, 0, 0, 0 );
 	ABYardTerrainManager::StartLoading();
