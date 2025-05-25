@@ -136,6 +136,8 @@ public:
 		return m_pTerrainVIS->GetLocatorList();
 	}
 
+	TINT GetSectionID() const { return m_iCurrentSection; }
+
 	const Toshi::TVector4& GetDefaultShadowColor() const { return m_DefaultShadowColor; }
 	const Toshi::TVector4& GetDefaultAmbientColor() const { return m_DefaultAmbientColor; }
 	const Toshi::TVector4& GetLitShadowColor() const { return m_LitShadowColor; }

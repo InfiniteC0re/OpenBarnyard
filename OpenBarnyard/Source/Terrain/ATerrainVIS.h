@@ -25,7 +25,9 @@ public:
 public:
 	void LoadSkeleton();
 
-	ATerrainLocatorList* GetLocatorList() { return m_pLocatorList; }
+	ATerrainLocatorList* GetLocatorList() const { return m_pLocatorList; }
+	TINT32               GetNumSections() const { return m_iNumSections; }
+	ATerrainSection*     GetSections() const { return m_pSections; }
 
 private:
 	const TCHAR*         m_szKeyLibrary;

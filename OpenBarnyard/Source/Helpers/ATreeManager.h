@@ -17,7 +17,7 @@ public:
 
 		union
 		{
-			TUINT8 iTreeIndex : 6;
+			TUINT8 iTrunkIndex : 6;
 			TUINT  bFlag1 : 1;
 			TUINT  bFlag2 : 1;
 		};
@@ -26,6 +26,12 @@ public:
 
 		ACollisionObjectSimple* pSimpleCollisionObjects = TNULL;
 		void*                   unk                     = TNULL;
+	};
+
+	struct TreeInstanceRenderData
+	{
+		Toshi::TMatrix44        oMatrix;
+		TreeInstanceRenderData* pPrev;
 	};
 
 	class Model
@@ -45,7 +51,7 @@ public:
 		TUINT                 m_uiID;
 		TINT                  m_iNumFOBs;
 		Toshi::TMatrix44*     m_pFOBMatrices;
-		TFLOAT                m_fUnk1;
+		TFLOAT                m_fGroundOffset;
 		TFLOAT                m_fRadius;
 	};
 
@@ -68,15 +74,17 @@ private:
 	Model* m_pTrunks;
 	TINT   m_iNumFOBs;
 	Model* m_pFOBs;
-	// ...
+
+	TreeInstanceRenderData** m_pRenderData;
+
 	TreeInstance                 m_aTreeInstances[ MAX_INSTANCES ];
 	Toshi::T2SList<TreeInstance> m_llUsedTreeInstances;
 	Toshi::T2SList<TreeInstance> m_llFreeTreeInstances;
 	ALockedMesh                  m_aLockedMeshes[ 2 ];
 	// ...
-	TFLOAT m_fUnk1;
-	TFLOAT m_fUnk2;
-	TFLOAT m_fUnk3;
+	TFLOAT m_fLODSwitchDistance;
+	TFLOAT m_fRenderDistance;
+	TFLOAT m_fBlendingDistance;
 	TBOOL  m_bCreateCollision;
 	TBOOL  m_bFlag;
 };

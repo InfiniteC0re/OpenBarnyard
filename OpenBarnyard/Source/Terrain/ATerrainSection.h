@@ -119,10 +119,11 @@ public:
 		}
 	}
 
-	TINT GetLODCount( ATerrainLODType a_eLODType )
-	{
-		return ( a_eLODType == ATerrainLODType_High ) ? m_iNumHighModelFiles : m_iNumLowModelFiles;
-	}
+	const TCHAR* GetName() const { return m_szName; }
+
+	TINT GetLODCount( ATerrainLODType a_eLODType ) { return ( a_eLODType == ATerrainLODType_High ) ? m_iNumHighModelFiles : m_iNumLowModelFiles; }
+
+	TBOOL IsOtherSectionVisible( TINT a_iSection ) const { return m_pVisibility[ a_iSection ] > ATerrainLODType_None; }
 
 private:
 	const TCHAR*  m_szName;

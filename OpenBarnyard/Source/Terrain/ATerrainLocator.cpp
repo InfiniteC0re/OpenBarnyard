@@ -108,6 +108,12 @@ void ATerrainLocatorList::LoadFromTRB( TTRB* a_pTRB )
 	TTODO( "Create regrowths, instances and other things from locators" );
 }
 
+// $Barnyard: FUNCTION 005eca20
+TINT ATerrainLocatorList::GetNumVISSections() const
+{
+	return ( m_pLocatorVISHeader ) ? m_pLocatorVISHeader->iNumSections : 0;
+}
+
 // $Barnyard: FUNCTION 005ec9f0
 void ATerrainLocator::GetMatrix( Toshi::TMatrix44& a_rOutMatrix )
 {

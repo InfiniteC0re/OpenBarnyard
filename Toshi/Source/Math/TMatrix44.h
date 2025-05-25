@@ -200,6 +200,24 @@ public:
 		m_f33 *= a_rScalars.z;
 	}
 
+	// $Barnyard: FUNCTION 006c86a0
+	constexpr void ScaleAll( const TMatrix44& a_rMatrix, TFLOAT a_fScalar )
+	{
+		for ( TINT i = 0; i < 4; i++ )
+		{
+			TFLOAT* pBasis = AsBasisVector4( i ).AsArray();
+
+			for ( TINT k = 0; k < 4; k++ )
+			{
+				pBasis[ k ] =
+				    a_fScalar * a_rMatrix.AsBasisVector4( i ).w +
+				    a_fScalar * a_rMatrix.AsBasisVector4( i ).z +
+				    a_fScalar * a_rMatrix.AsBasisVector4( i ).y +
+				    a_fScalar * a_rMatrix.AsBasisVector4( i ).x;
+			}
+		}
+	}
+
 	constexpr void Scale( TFLOAT a_fScale )
 	{
 		Scale( a_fScale, a_fScale, a_fScale );

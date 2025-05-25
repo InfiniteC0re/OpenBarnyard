@@ -13,6 +13,7 @@
 #include "Cameras/ACameraManager.h"
 #include "Input/AInputHandler.h"
 #include "Movie/AMoviePlayer.h"
+#include "Helpers/ATreeManager.h"
 
 #ifdef TOSHI_SKU_WINDOWS
 #  include "Platform/DX8/TVertexFactoryResource_DX8.h"
@@ -400,6 +401,8 @@ void ARenderer::RenderMainScene( TFLOAT a_fDeltaTime )
 		if ( ATerrainInterface::GetSingleton() )
 		{
 			ATerrainInterface::GetSingleton()->Render();
+			// ...
+			ATreeManager::GetSingleton()->Render();
 			// ...
 		}
 

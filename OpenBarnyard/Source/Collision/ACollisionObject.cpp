@@ -48,7 +48,7 @@ void ACollisionObject::VTable0x34()
 {
 }
 
-TBOOL ACollisionObject::Create( TFLOAT a_fRadius )
+TBOOL ACollisionObject::UpdateHash( TFLOAT a_fRadius )
 {
 	return TFALSE;
 }

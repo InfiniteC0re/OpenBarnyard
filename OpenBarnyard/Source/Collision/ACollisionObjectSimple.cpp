@@ -50,6 +50,7 @@ TBOOL ACollisionObjectSimple::UpdateHash( TFLOAT a_fRadius, const Toshi::TVector
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 0061bfd0
 void ACollisionObjectSimple::UpdateHash( const Toshi::TVector3& a_rcPosition )
 {
 	if ( !m_vPosition.Equals( a_rcPosition ) )

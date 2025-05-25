@@ -11,6 +11,9 @@ struct ATerrainLocator
 	TUINT16            uiNameId;
 	TUINT8             uiFlags1;
 	TINT8              iFlags2;
+
+	TFLOAT GetScale() const { return ( uiFlags1 & 0xF ) * 0.2f; }
+	TUINT8 GetFlags1() const { return uiFlags1 >> 4; }
 };
 
 struct ATerrainLocatorTRBHeader
@@ -46,11 +49,14 @@ public:
 	// Loads a list of locators from a terrain's skel file that contains them
 	void LoadFromTRB( Toshi::TTRB* a_pTRB );
 
+	TINT GetNumVISSections() const;
+
 	Toshi::TTRB*             GetTRB() { return m_pTRB; }
 	Toshi::TTransformObject& GetWorldTransform() { return m_oWorldTransform; }
 
-	TINT32                    GetNumLocators() const { return m_pLocatorsHeader->iNumLocators; }
-	ATerrainLocatorTRBHeader* GetHeader() const { return m_pLocatorsHeader; }
+	TINT32                       GetNumLocators() const { return m_pLocatorsHeader->iNumLocators; }
+	ATerrainLocatorTRBHeader*    GetHeader() const { return m_pLocatorsHeader; }
+	ATerrainLocatorVISTRBHeader* GetVISHeader() const { return m_pLocatorVISHeader; }
 
 private:
 	Toshi::TTRB*                 m_pTRB;
