@@ -119,8 +119,6 @@ bool BaseModel::CreateTree(bool no_leaf, bool quantized)
 // TOSHI Engine ONLY
 bool BaseModel::CreateTreeDummy( bool no_leaf, bool quantized )
 {
-	DELETESINGLE( mTree );
-
 	// Setup model code
 	if ( no_leaf ) mModelCode |= OPC_NO_LEAF;
 	else mModelCode &= ~OPC_NO_LEAF;
