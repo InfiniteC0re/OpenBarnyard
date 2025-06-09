@@ -136,27 +136,27 @@ void Model::Release()
  *	\return		true if success
  */
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool Model::Build(const OPCODECREATE& create)
+bool Model::Build( const OPCODECREATE& create )
 {
 	// 1) Checkings
-	if(!create.mIMesh || !create.mIMesh->IsValid())	return false;
+	if ( !create.mIMesh || !create.mIMesh->IsValid() ) return false;
 
 	// For this model, we only support complete trees
-	if(create.mSettings.mLimit!=1)	return SetIceError("OPCODE WARNING: supports complete trees only! Use mLimit = 1.\n", null);
+	if ( create.mSettings.mLimit != 1 ) return SetIceError( "OPCODE WARNING: supports complete trees only! Use mLimit = 1.\n", null );
 
 	// Look for degenerate faces.
 	udword NbDegenerate = create.mIMesh->CheckTopology();
 	if ( NbDegenerate ) IceLog( "OPCODE WARNING: found %d degenerate faces in model! Collision might report wrong results!\n", NbDegenerate );
-	// We continue nonetheless.... 
+	// We continue nonetheless....
 
-	Release();	// Make sure previous tree has been discarded [Opcode 1.3, thanks Adam]
+	Release(); // Make sure previous tree has been discarded [Opcode 1.3, thanks Adam]
 
 	// 1-1) Setup mesh interface automatically [Opcode 1.3]
-	SetMeshInterface(create.mIMesh);
+	SetMeshInterface( create.mIMesh );
 
 	// Special case for 1-triangle meshes [Opcode 1.3]
 	udword NbTris = create.mIMesh->GetNbTriangles();
-	if(NbTris==1)
+	if ( NbTris == 1 )
 	{
 		// We don't need to actually create a tree here, since we'll only have a single triangle to deal with anyway.
 		// It's a waste to use a "model" for this but at least it will work.
@@ -166,45 +166,84 @@ bool Model::Build(const OPCODECREATE& create)
 
 	// 2) Build a generic AABB Tree.
 	mSource = new AABBTree;
-	CHECKALLOC(mSource);
+	CHECKALLOC( mSource );
 
 	// 2-1) Setup a builder. Our primitives here are triangles from input mesh,
 	// so we use an AABBTreeOfTrianglesBuilder.....
 	{
 		AABBTreeOfTrianglesBuilder TB;
-		TB.mIMesh			= create.mIMesh;
-		TB.mSettings		= create.mSettings;
-		TB.mNbPrimitives	= NbTris;
-		if(!mSource->Build(&TB))	return false;
+		TB.mIMesh        = create.mIMesh;
+		TB.mSettings     = create.mSettings;
+		TB.mNbPrimitives = NbTris;
+		if ( !mSource->Build( &TB ) ) return false;
 	}
 
 	// 3) Create an optimized tree according to user-settings
-	if(!CreateTree(create.mNoLeaf, create.mQuantized))	return false;
+	if ( !CreateTree( create.mNoLeaf, create.mQuantized ) ) return false;
 
 	// 3-2) Create optimized tree
-	if(!mTree->Build(mSource))	return false;
+	if ( !mTree->Build( mSource ) ) return false;
 
 	// 3-3) Delete generic tree if needed
-	if(!create.mKeepOriginal)	DELETESINGLE(mSource);
+	if ( !create.mKeepOriginal ) DELETESINGLE( mSource );
 
 #ifdef __MESHMERIZER_H__
 	// 4) Convex hull
-	if(create.mCollisionHull)
+	if ( create.mCollisionHull )
 	{
 		// Create hull
 		mHull = new CollisionHull;
-		CHECKALLOC(mHull);
+		CHECKALLOC( mHull );
 
 		CONVEXHULLCREATE CHC;
 		// ### doesn't work with strides
-		CHC.NbVerts			= create.mIMesh->GetNbVertices();
-		CHC.Vertices		= create.mIMesh->GetVerts();
-		CHC.UnifyNormals	= true;
-		CHC.ReduceVertices	= true;
-		CHC.WordFaces		= false;
-		mHull->Compute(CHC);
+		CHC.NbVerts        = create.mIMesh->GetNbVertices();
+		CHC.Vertices       = create.mIMesh->GetVerts();
+		CHC.UnifyNormals   = true;
+		CHC.ReduceVertices = true;
+		CHC.WordFaces      = false;
+		mHull->Compute( CHC );
 	}
 #endif // __MESHMERIZER_H__
+
+	return true;
+}
+
+bool Model::BuildGivenTree( const OPCODECREATE& create, AABBOptimizedTree* tree )
+{
+	// 1) Checkings
+	if ( !create.mIMesh || !create.mIMesh->IsValid() ) return false;
+
+	// For this model, we only support complete trees
+	if ( create.mSettings.mLimit != 1 ) return SetIceError( "OPCODE WARNING: supports complete trees only! Use mLimit = 1.\n", null );
+
+	// Look for degenerate faces.
+	udword NbDegenerate = create.mIMesh->CheckTopology();
+	if ( NbDegenerate ) IceLog( "OPCODE WARNING: found %d degenerate faces in model! Collision might report wrong results!\n", NbDegenerate );
+	// We continue nonetheless....
+
+	Release(); // Make sure previous tree has been discarded [Opcode 1.3, thanks Adam]
+
+	// 1-1) Setup mesh interface automatically [Opcode 1.3]
+	SetMeshInterface( create.mIMesh );
+
+	// Special case for 1-triangle meshes [Opcode 1.3]
+	udword NbTris = create.mIMesh->GetNbTriangles();
+	if ( NbTris == 1 )
+	{
+		// We don't need to actually create a tree here, since we'll only have a single triangle to deal with anyway.
+		// It's a waste to use a "model" for this but at least it will work.
+		mModelCode |= OPC_SINGLE_NODE;
+		return true;
+	}
+
+	// 2) Create an optimized tree according to user-settings
+	if ( !CreateTreeDummy( create.mNoLeaf, create.mQuantized ) ) return false;
+
+	mTree = tree;
+
+	if ( !mTree ) return false;
+	mTreeShared = true;
 
 	return true;
 }

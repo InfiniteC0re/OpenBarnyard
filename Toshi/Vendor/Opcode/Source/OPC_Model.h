@@ -60,6 +60,9 @@
 #endif // __MESHMERIZER_H__
 		// Internal methods
 							void				Release();
+
+		virtual bool BuildGivenTree( const OPCODECREATE& create, AABBOptimizedTree* tree );
+
 	};
 
 #endif //__OPC_MODEL_H__

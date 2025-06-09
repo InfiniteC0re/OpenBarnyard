@@ -171,6 +171,7 @@
 		// Internal methods
 						void				ReleaseBase();
 						bool				CreateTree(bool no_leaf, bool quantized);
+						bool				CreateTreeDummy(bool no_leaf, bool quantized); // TOSHI Engine ONLY
 	};
 
 #endif //__OPC_BASEMODEL_H__

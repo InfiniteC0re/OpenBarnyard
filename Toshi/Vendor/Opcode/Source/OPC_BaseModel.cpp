@@ -116,6 +116,23 @@ bool BaseModel::CreateTree(bool no_leaf, bool quantized)
 	return true;
 }
 
+// TOSHI Engine ONLY
+bool BaseModel::CreateTreeDummy( bool no_leaf, bool quantized )
+{
+	DELETESINGLE( mTree );
+
+	// Setup model code
+	if ( no_leaf ) mModelCode |= OPC_NO_LEAF;
+	else mModelCode &= ~OPC_NO_LEAF;
+
+	if ( quantized ) mModelCode |= OPC_QUANTIZED;
+	else mModelCode &= ~OPC_QUANTIZED;
+
+	mTreeShared = true;
+
+	return true;
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /**
  *	Refits the collision model. This can be used to handle dynamic meshes. Usage is:
