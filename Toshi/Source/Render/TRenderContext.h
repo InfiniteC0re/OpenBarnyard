@@ -147,6 +147,7 @@ public:
 	TFLOAT GetShadeCoeff() const { return m_fShadeCoeff; }
 	void   SetShadeCoeff( TFLOAT val ) { m_fShadeCoeff = val; }
 
+	void            SetAmbientColour( const TVector4& a_rcColour ) { m_AmbientColor = a_rcColour; }
 	const TVector4& GetAmbientColour() const { return m_AmbientColor; }
 
 	static void ComputePerspectiveProjection( TMatrix44& a_rOutProjection, const VIEWPORTPARAMS& a_rViewportParams, const PROJECTIONPARAMS& a_rProjParams );

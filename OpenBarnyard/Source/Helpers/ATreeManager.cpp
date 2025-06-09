@@ -604,7 +604,7 @@ START_RENDERING:
 			{
 				TMatrix44 matFOBTransform;
 				matFOBTransform.Multiply( pInstanceRenderData->oMatrix, pTrunkModel->m_pFOBMatrices[ k ] );
-				
+
 				pRenderContext->SetModelViewMatrix( matFOBTransform );
 
 				TModel*    pModel = pFOBModel->m_pSceneObject->GetInstance()->GetModel();

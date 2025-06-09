@@ -124,10 +124,10 @@ public:
 		return m_LODs[ a_uiLOD ];
 	}
 
-	TSkeleton* GetSkeleton() const
-	{
-		return m_pSkeleton;
-	}
+	TSkeleton* GetSkeleton() const { return m_pSkeleton; }
+
+	TINT GetNumCollisionMeshes() const { return m_iNumCollisionMeshes; }
+	TModelCollisionMesh* GetCollisionMeshes() const { return m_pCollisionMeshes; }
 
 	template <class T>
 	T* CastSymbol( const TCHAR* a_szSymbolName ) { return TSTATICCAST( T, GetSymbol( a_szSymbolName ) ); }
