@@ -4,7 +4,7 @@
 #include "Assets/AAssetStreaming.h"
 #include "Assets/AMaterialLibraryManager.h"
 #include "Render/AWorldShader/AWorldMaterial.h"
-#include "Collision/ACollisionModelSet.h"
+#include "Physics/ACollisionModelSet.h"
 
 #include <Toshi/TScheduler.h>
 

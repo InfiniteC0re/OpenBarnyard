@@ -4,7 +4,7 @@
 #include "Assets/AMaterialLibrary.h"
 #include "Render/AWorldShader/AWorldMaterial.h"
 #include "World/AWorldVIS.h"
-#include "Collision/ACollisionModelInstance.h"
+#include "Physics/ACollisionModelInstance.h"
 
 #include <Render/TModelManager.h>
 #include <Toshi/T2SList.h>

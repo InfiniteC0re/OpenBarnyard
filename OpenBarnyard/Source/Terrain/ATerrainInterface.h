@@ -10,6 +10,7 @@
 class ATerrainInterface : public Toshi::TSingleton<ATerrainInterface>
 {
 public:
+	constexpr static TUINT NUM_LIGHT_MAGS                = 12;
 	constexpr static TUINT MAX_NUM_MODEL_LOADER_JOBS     = 128;
 	constexpr static TUINT MAX_NUM_MATLIB_LOADER_JOBS    = 10;
 	constexpr static TUINT MAX_NUM_KEYLIB_LOADER_JOBS    = 10;
@@ -30,6 +31,8 @@ public:
 
 	friend ATerrainVIS;
 	friend class ABYardTerrainManager;
+
+	friend void RenderCellMeshWin( CellMeshSphere* a_pMeshSphere, RenderData* a_pRenderData );
 
 	using t_GetCurrentVISGroup = TINT ( * )();
 	using t_OnVISGroupChanged  = void ( * )( ATerrainSection* a_pCurrent, ATerrainSection* a_pPrevious );
@@ -201,11 +204,13 @@ private:
 	Toshi::TTRB                                m_TRB2;
 	ATerrainVIS*                               m_pTerrainVIS;
 	ATerrainOrderDVIS*                         m_pOrderDVIS;
-	// ...
-	TINT                 m_iCurrentSection;
-	TINT                 m_iPreviousSection;
-	TINT                 m_iPreloadTerrainBlockSize;
-	t_GetCurrentVISGroup m_fnGetCurrentVISGroup;
+	Toshi::TMaterial*                          m_apLightMagMaterials[ NUM_LIGHT_MAGS ];
+	TFLOAT                                     m_afLightMags[ NUM_LIGHT_MAGS ];
+	TBOOL                                      m_bLightOverride;
+	TINT                                       m_iCurrentSection;
+	TINT                                       m_iPreviousSection;
+	TINT                                       m_iPreloadTerrainBlockSize;
+	t_GetCurrentVISGroup                       m_fnGetCurrentVISGroup;
 	// ...
 	TINT m_iNumChunks;
 };

@@ -1,5 +1,5 @@
 #pragma once
-#include "Collision/AObjectHashMain.h"
+#include "Physics/AObjectHashMain.h"
 
 #include <Toshi/T2DList.h>
 

@@ -1,6 +1,6 @@
 #pragma once
 #include "Render/ALockedMesh.h"
-#include "Collision/ACollisionObjectSimple.h"
+#include "Physics/ACollisionObjectSimple.h"
 #include "Terrain/ATerrainLocator.h"
 
 #include <Toshi/T2SList.h>

@@ -4,7 +4,8 @@
 #include "Assets/AAssetLoader.h"
 #include "Assets/AAssetStreaming.h"
 #include "ALoadScreen.h"
-#include "Collision/ACollisionModelSet.h"
+#include "Physics/ACollisionModelSet.h"
+#include "Physics/ATerrainPhysicsManager.h"
 
 #include <Toshi/T2String.h>
 
@@ -81,16 +82,22 @@ ATerrainInterface::ATerrainInterface( TINT a_iUnused1, TINT a_iUnused2, TINT a_i
 		pJobSlot++;
 	}
 
-	TTODO( "Call FUN_00619040() and initialise some other values" );
-	m_iCurrentSection  = a_iStartVISGroup;
-	m_iPreviousSection = -1;
-	m_bUnused4         = TFALSE;
-	// ...
+	g_pTerrainPhysicsManager->Create();
+	m_iCurrentSection          = a_iStartVISGroup;
+	m_iPreviousSection         = -1;
+	m_bUnused4                 = TFALSE;
+	m_bLightOverride           = TFALSE;
 	m_fUnused3                 = 0.0f;
 	m_cbOnCollisionModelLoaded = TNULL;
 	m_cbOnModelLoaded          = TNULL;
 	m_cbOnVISGroupChanged      = TNULL;
 	m_fnGetCurrentVISGroup     = GetCurrentSectionID;
+
+	for ( TUINT i = 0; i < NUM_LIGHT_MAGS; i++ )
+	{
+		m_apLightMagMaterials[ i ] = TNULL;
+		m_afLightMags[ i ] = 0.0f;
+	}
 }
 
 // $Barnyard: FUNCTION 005ec3e0
@@ -943,16 +950,30 @@ static void RenderCellMeshDefault( CellMeshSphere* a_pMeshSphere, RenderData* a_
 static void RenderCellMeshWin( CellMeshSphere* a_pMeshSphere, RenderData* a_pRenderData )
 {
 	TVALIDPTR( a_pMeshSphere );
-	TTODO( "Calculate real lighting colour" );
 
-	TVector4 colour;
-	colour.x = 0.3f;
-	colour.y = 0.3f;
-	colour.z = 0.1952941f;
-	colour.w = 1.0f;
+	ATerrainInterface* pTerrainInterface = ATerrainInterface::GetSingleton();
+	TMesh*             pMesh             = a_pMeshSphere->m_pCellMesh->pMesh;
 
-	TDYNAMICCAST( AWorldShaderHAL, AWorldShader::GetSingleton() )->SetColours( colour, colour );
-	a_pMeshSphere->m_pCellMesh->pMesh->Render();
+	// Get light mag
+	TFLOAT fLightMag = 0.6f;
+	for ( TUINT i = 0; i < ATerrainInterface::NUM_LIGHT_MAGS; i++ )
+	{
+		if ( pTerrainInterface->m_apLightMagMaterials[ i ] == pMesh->GetMaterial() )
+		{
+			fLightMag = pTerrainInterface->m_afLightMags[ i ];
+
+			if ( fLightMag <= 0.0f )
+				return;
+
+			break;
+		}
+	}
+
+	TVector4 vecColour{ 0.3f, 0.3f, 0.1952941f, 1.0f };
+	vecColour *= fLightMag;
+
+	TDYNAMICCAST( AWorldShaderHAL, AWorldShader::GetSingleton() )->SetColours( vecColour, vecColour );
+	pMesh->Render();
 }
 
 static void RenderWorldVisWin( TModelInstance* a_pModelInstance, void* a_pModelNode )
