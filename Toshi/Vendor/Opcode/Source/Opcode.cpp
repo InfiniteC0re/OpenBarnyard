@@ -37,15 +37,15 @@
 
 bool Opcode::InitOpcode()
 {
-	Log("// Initializing OPCODE\n\n");
-//	LogAPIInfo();
+	IceLog( "// Initializing OPCODE\n\n" );
+	//	LogAPIInfo();
 	return true;
 }
 
 void ReleasePruningSorters();
 bool Opcode::CloseOpcode()
 {
-	Log("// Closing OPCODE\n\n");
+	IceLog( "// Closing OPCODE\n\n" );
 
 	ReleasePruningSorters();
 

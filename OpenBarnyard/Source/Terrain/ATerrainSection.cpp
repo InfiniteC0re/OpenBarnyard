@@ -4,6 +4,7 @@
 #include "Assets/AAssetStreaming.h"
 #include "Assets/AMaterialLibraryManager.h"
 #include "Render/AWorldShader/AWorldMaterial.h"
+#include "Collision/ACollisionModelSet.h"
 
 #include <Toshi/TScheduler.h>
 
@@ -405,7 +406,10 @@ ATerrainSection::ModelNode::ModelNode()
 // $Barnyard: FUNCTION 005e8240
 ATerrainSection::ModelNode::~ModelNode()
 {
-	TIMPLEMENT_D( "Destroy collision data" );
+	if ( m_pCollisionModelSet )
+	{
+		delete m_pCollisionModelSet;
+	}
 
 	if ( m_pSceneObject )
 	{

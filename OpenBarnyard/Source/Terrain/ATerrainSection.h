@@ -4,9 +4,12 @@
 #include "Assets/AMaterialLibrary.h"
 #include "Render/AWorldShader/AWorldMaterial.h"
 #include "World/AWorldVIS.h"
+#include "Collision/ACollisionModelInstance.h"
 
 #include <Render/TModelManager.h>
 #include <Toshi/T2SList.h>
+
+class ACollisionModelSet;
 
 class ATerrainSection
 {
@@ -37,14 +40,15 @@ public:
 		AWorldMaterial* GetAnimatedMaterial() const { return m_pAnimatedMaterial; }
 
 	public:
-		Toshi::TManagedModel m_ModelRef;
-		Toshi::TSceneObject* m_pSceneObject;
-		AWorldVis            m_WorldVis;
-		AWorldMaterial*      m_pAnimatedMaterial;
-		// ...
-		char           m_szType[ TYPE_NAME_MAX_SIZE + 1 ];
-		ModelNodeFlags m_eFlags;
-		TBOOL          m_bCreated;
+		Toshi::TManagedModel    m_ModelRef;
+		Toshi::TSceneObject*    m_pSceneObject;
+		AWorldVis               m_WorldVis;
+		AWorldMaterial*         m_pAnimatedMaterial;
+		ACollisionModelSet*     m_pCollisionModelSet;
+		ACollisionModelInstance m_oCollisionInstance;
+		char                    m_szType[ TYPE_NAME_MAX_SIZE + 1 ];
+		ModelNodeFlags          m_eFlags;
+		TBOOL                   m_bCreated;
 	};
 
 	enum FLAGS : TUINT32

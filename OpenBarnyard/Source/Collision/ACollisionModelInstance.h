@@ -1,8 +1,9 @@
 #pragma once
-#include "ACollisionModelSet.h"
 
 #include <Toshi/TSceneObject.h>
 #include <Render/TTransformObject.h>
+
+class ACollisionModelSet;
 
 class ACollisionModelInstance
 {

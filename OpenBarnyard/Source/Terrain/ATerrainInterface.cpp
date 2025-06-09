@@ -4,6 +4,7 @@
 #include "Assets/AAssetLoader.h"
 #include "Assets/AAssetStreaming.h"
 #include "ALoadScreen.h"
+#include "Collision/ACollisionModelSet.h"
 
 #include <Toshi/T2String.h>
 
@@ -1016,8 +1017,8 @@ ATerrainSection::ModelNode* ATerrainInterface::CreateModelInstance( ATerrainSect
 		);
 	}
 
-	auto pInstance          = a_pModelNode->m_ModelRef.CreateSceneObject();
-	auto pInstanceTransform = &pInstance->GetTransform();
+	auto pSceneObject       = a_pModelNode->m_ModelRef.CreateSceneObject();
+	auto pInstanceTransform = &pSceneObject->GetTransform();
 
 	pInstanceTransform->SetEuler( TVector3( 1.570796f, 0.0f, 0.0f ) );
 	pInstanceTransform->SetTranslate( TVector3::VEC_ZERO );
@@ -1026,18 +1027,26 @@ ATerrainSection::ModelNode* ATerrainInterface::CreateModelInstance( ATerrainSect
 	pInstanceTransform->GetLocalMatrixImp( collisionLocalMatrix );
 	pInstanceTransform->SetMatrix( collisionLocalMatrix );
 
-	a_pModelNode->m_pSceneObject = pInstance;
+	a_pModelNode->m_pSceneObject = pSceneObject;
 
-	pInstance->GetSomeVector1().x = 1.0f;
-	pInstance->GetSomeVector1().y = 1.0f;
-	pInstance->GetSomeVector2().x = 10000000.0f;
-	pInstance->GetSomeVector2().y = 10000001.0f;
-	pInstance->EnableSkeletonUpdate();
-	pInstance->EnableUnknown1();
+	pSceneObject->GetSomeVector1().x = 1.0f;
+	pSceneObject->GetSomeVector1().y = 1.0f;
+	pSceneObject->GetSomeVector2().x = 10000000.0f;
+	pSceneObject->GetSomeVector2().y = 10000001.0f;
+	pSceneObject->EnableSkeletonUpdate();
+	pSceneObject->EnableUnknown1();
 
-	TTODO( "Create collision model set" );
+	// Create collision model instance
+	if ( pModel->GetNumCollisionMeshes() > 0 )
+	{
+		ACollisionModelSet* pCollisionSet = new ACollisionModelSet();
+		a_pModelNode->m_pCollisionModelSet = pCollisionSet;
 
-	auto pModelInstance = pInstance->GetInstance();
+		pCollisionSet->Create( pModel );
+		a_pModelNode->m_oCollisionInstance.Create( pCollisionSet, pSceneObject );
+	}
+
+	auto pModelInstance = pSceneObject->GetInstance();
 	pModel              = pModelInstance->GetModel();
 
 	auto pWorldDatabase = pModel->CastSymbol<WorldDatabase>( "Database" );

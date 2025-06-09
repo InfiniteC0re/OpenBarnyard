@@ -25,7 +25,7 @@
 	#endif
 	#define ICE_COMPILE_TIME_ASSERT(exp)	extern char ICE_Dummy[ (exp) ? 1 : -1 ]
 
-	#define	Log					{}
+	#define	IceLog				{}
 	#define	SetIceError(...)	false
 	#define	EC_OUTOFMEMORY		"Out of memory"
 

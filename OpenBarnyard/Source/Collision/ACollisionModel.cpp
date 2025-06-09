@@ -24,10 +24,10 @@ ACollisionModel::~ACollisionModel()
 // $Barnyard: FUNCTION 00618cb0
 TBOOL ACollisionModel::Create( TINT a_iMeshIndex, Toshi::TModel* a_pModel )
 {
+	TIMPLEMENT();
+
 	m_iMeshIndex = a_iMeshIndex;
 	m_pModel     = a_pModel;
-
-	TASSERT( !"Not implemented" );
 
 	return TTRUE;
 }

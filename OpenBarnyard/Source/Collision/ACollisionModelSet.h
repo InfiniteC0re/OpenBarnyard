@@ -2,7 +2,6 @@
 #include "ACollisionModel.h"
 
 #include <Toshi/T2Vector.h>
-#include <Render/TModel.h>
 
 class ACollisionModelSet
 {
