@@ -126,7 +126,7 @@ public:
 
 	TSkeleton* GetSkeleton() const { return m_pSkeleton; }
 
-	TINT GetNumCollisionMeshes() const { return m_iNumCollisionMeshes; }
+	TINT                 GetNumCollisionMeshes() const { return m_iNumCollisionMeshes; }
 	TModelCollisionMesh* GetCollisionMeshes() const { return m_pCollisionMeshes; }
 
 	template <class T>

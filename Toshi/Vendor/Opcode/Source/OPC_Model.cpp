@@ -209,7 +209,7 @@ bool Model::Build( const OPCODECREATE& create )
 	return true;
 }
 
-bool Model::BuildGivenTree( const OPCODECREATE& create, AABBOptimizedTree* tree )
+bool Model::BuildGivenTree( const OPCODECREATE& create, AABBNoLeafTree* tree )
 {
 	// 1) Checkings
 	if ( !create.mIMesh || !create.mIMesh->IsValid() ) return false;

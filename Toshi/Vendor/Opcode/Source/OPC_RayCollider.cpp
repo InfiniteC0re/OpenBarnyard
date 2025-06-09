@@ -271,15 +271,7 @@ bool RayCollider::Collide(const Ray& world_ray, const Model& model, const Matrix
 	{
 		if(model.IsQuantized())
 		{
-			const AABBQuantizedNoLeafTree* Tree = (const AABBQuantizedNoLeafTree*)model.GetTree();
-
-			// Setup dequantization coeffs
-			mCenterCoeff	= Tree->mCenterCoeff;
-			mExtentsCoeff	= Tree->mExtentsCoeff;
-
-			// Perform stabbing query
-			if(IR(mMaxDist)!=IEEE_MAX_FLOAT)	_SegmentStab(Tree->GetNodes());
-			else								_RayStab(Tree->GetNodes());
+			ASSERT( false && "Not supported by the Toshi Engine!" );
 		}
 		else
 		{
@@ -292,26 +284,7 @@ bool RayCollider::Collide(const Ray& world_ray, const Model& model, const Matrix
 	}
 	else
 	{
-		if(model.IsQuantized())
-		{
-			const AABBQuantizedTree* Tree = (const AABBQuantizedTree*)model.GetTree();
-
-			// Setup dequantization coeffs
-			mCenterCoeff	= Tree->mCenterCoeff;
-			mExtentsCoeff	= Tree->mExtentsCoeff;
-
-			// Perform stabbing query
-			if(IR(mMaxDist)!=IEEE_MAX_FLOAT)	_SegmentStab(Tree->GetNodes());
-			else								_RayStab(Tree->GetNodes());
-		}
-		else
-		{
-			const AABBCollisionTree* Tree = (const AABBCollisionTree*)model.GetTree();
-
-			// Perform stabbing query
-			if(IR(mMaxDist)!=IEEE_MAX_FLOAT)	_SegmentStab(Tree->GetNodes());
-			else								_RayStab(Tree->GetNodes());
-		}
+		ASSERT( false && "Not supported by the Toshi Engine!" );
 	}
 
 	// Update cache if needed

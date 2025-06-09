@@ -103,13 +103,22 @@ bool BaseModel::CreateTree(bool no_leaf, bool quantized)
 	// Create the correct class
 	if(mModelCode & OPC_NO_LEAF)
 	{
-		if(mModelCode & OPC_QUANTIZED)	mTree = new AABBQuantizedNoLeafTree;
+		if ( mModelCode & OPC_QUANTIZED )
+		{
+			ASSERT( false && "Not supported by the Toshi Engine!" );
+		}
 		else							mTree = new AABBNoLeafTree;
 	}
 	else
 	{
-		if(mModelCode & OPC_QUANTIZED)	mTree = new AABBQuantizedTree;
-		else							mTree = new AABBCollisionTree;
+		if ( mModelCode & OPC_QUANTIZED )
+		{
+			ASSERT( false && "Not supported by the Toshi Engine!" );
+		}
+		else
+		{
+			ASSERT( false && "Not supported by the Toshi Engine!" );
+		}
 	}
 	CHECKALLOC(mTree);
 

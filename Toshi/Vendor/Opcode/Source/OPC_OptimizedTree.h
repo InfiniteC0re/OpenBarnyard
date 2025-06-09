@@ -104,11 +104,6 @@
 		IMPLEMENT_NOLEAF_NODE(AABBNoLeafNode, CollisionAABB)
 	};
 
-	class OPCODE_API AABBTRBNoLeafNode
-	{
-	    IMPLEMENT_NOLEAF_NODE( AABBTRBNoLeafNode, CollisionAABB )
-	};
-
 	class OPCODE_API AABBQuantizedNoLeafNode
 	{
 		IMPLEMENT_NOLEAF_NODE(AABBQuantizedNoLeafNode, QuantizedAABB)
@@ -119,92 +114,36 @@
 		public:																										\
 		/* Constructor / Destructor */																				\
 													base_class();													\
-		virtual										~base_class();													\
+													~base_class();													\
 		/* Builds from a standard tree */																			\
-		override(AABBOptimizedTree)	bool			Build(AABBTree* tree);											\
+		bool			Build(AABBTree* tree);											\
 		/* Refits the tree */																						\
-		override(AABBOptimizedTree)	bool			Refit(const MeshInterface* mesh_interface);						\
+		bool			Refit(const MeshInterface* mesh_interface);						\
 		/* Walks the tree */																						\
-		override(AABBOptimizedTree)	bool			Walk(GenericWalkingCallback callback, void* user_data) const;	\
+		bool			Walk(GenericWalkingCallback callback, void* user_data) const;	\
 		/* Data access */																							\
 		inline_						const node*		GetNodes()		const	{ return mNodes;					}	\
 		/* Stats */																									\
-		override(AABBOptimizedTree)	udword			GetUsedBytes()	const	{ return mNbNodes*sizeof(node);		}	\
+		udword			GetNbNodes()	const	{ return mNbNodes;		}	\
+		udword			GetUsedBytes()	const	{ return mNbNodes*sizeof(node);		}	\
 		private:																									\
-									node*			mNodes;
+			node*			mNodes;
 
 	typedef		bool				(*GenericWalkingCallback)	(const void* current, void* user_data);
 
-	class OPCODE_API AABBOptimizedTree
+
+	class OPCODE_API AABBNoLeafTree
 	{
-		public:
-		// Constructor / Destructor
-											AABBOptimizedTree() :
-												mNbNodes	(0)
-																							{}
-		virtual								~AABBOptimizedTree()							{}
+	protected:
+	    udword mNbNodes;
 
-		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		/**
-		 *	Builds the collision tree from a generic AABB tree.
-		 *	\param		tree			[in] generic AABB tree
-		 *	\return		true if success
-		 */
-		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		virtual			bool				Build(AABBTree* tree)											= 0;
-
-		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		/**
-		 *	Refits the collision tree after vertices have been modified.
-		 *	\param		mesh_interface	[in] mesh interface for current model
-		 *	\return		true if success
-		 */
-		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		virtual			bool				Refit(const MeshInterface* mesh_interface)						= 0;
-
-		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		/**
-		 *	Walks the tree and call the user back for each node.
-		 *	\param		callback	[in] walking callback
-		 *	\param		user_data	[in] callback's user data
-		 *	\return		true if success
-		 */
-		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		virtual			bool				Walk(GenericWalkingCallback callback, void* user_data) const	= 0;
-
-		// Data access
-		virtual			udword				GetUsedBytes()		const										= 0;
-		inline_			udword				GetNbNodes()		const						{ return mNbNodes;	}
-
-		protected:
-						udword				mNbNodes;
-	};
-
-	class OPCODE_API AABBCollisionTree : public AABBOptimizedTree
-	{
-		IMPLEMENT_COLLISION_TREE(AABBCollisionTree, AABBCollisionNode)
-	};
-
-	class OPCODE_API AABBNoLeafTree : public AABBOptimizedTree
-	{
 		IMPLEMENT_COLLISION_TREE(AABBNoLeafTree, AABBNoLeafNode)
 	};
 
-	class OPCODE_API AABBTRBNoLeafTree : public AABBNoLeafTree
-	{
-	public:
-	    __forceinline const AABBTRBNoLeafNode* GetNodes() const
-	    {
-		    return &mNodes;
-	    }
-	    virtual udword GetUsedBytes() const
-	    {
-		    return mNbNodes * sizeof( AABBTRBNoLeafNode );
-	    }
-
-	private:
-	    AABBTRBNoLeafNode mNodes;
-	};
+	/*class OPCODE_API AABBCollisionTree : public AABBOptimizedTree
+    {
+	    IMPLEMENT_COLLISION_TREE( AABBCollisionTree, AABBCollisionNode )
+    };
 
 	class OPCODE_API AABBQuantizedTree : public AABBOptimizedTree
 	{
@@ -222,6 +161,6 @@
 		public:
 						Point				mCenterCoeff;
 						Point				mExtentsCoeff;
-	};
+	};*/
 
 #endif // __OPC_OPTIMIZEDTREE_H__

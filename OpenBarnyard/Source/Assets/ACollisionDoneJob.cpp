@@ -20,7 +20,7 @@ TBOOL ACollisionDoneJob::RunJob()
 	ATerrainInterface* pTerrainInterface = ATerrainInterface::GetSingleton();
 
 	m_pVISGroup->m_eFlags &= ~ATerrainSection::FLAGS_COLLISION_LOADING;
-	
+
 	ATerrainLODBlock* pLODBlock = ( pTerrainInterface->IsCollisionStreamed() ) ?
 	    m_pVISGroup->m_ppHighLODBlocks[ m_pVISGroup->m_iCollisionMemBlockID ] :
 	    pTerrainInterface->GetVIS()->GetPersistantBlock();
@@ -29,10 +29,10 @@ TBOOL ACollisionDoneJob::RunJob()
 	{
 		// Swap memory block
 		TMemory::MemBlock* pOldMemBlock = g_pMemory->SetGlobalBlock( pLODBlock->GetMemBlock() );
-		
+
 		// Create model instance
 		pTerrainInterface->CreateModelInstance( m_pVISGroup->m_pCollisionModelData, "", "collision" );
-		
+
 		// Set previous memory block back
 		g_pMemory->SetGlobalBlock( pOldMemBlock );
 

@@ -97,15 +97,7 @@ bool AABBCollider::Collide(AABBCache& cache, const CollisionAABB& box, const Mod
 	{
 		if(model.IsQuantized())
 		{
-			const AABBQuantizedNoLeafTree* Tree = (const AABBQuantizedNoLeafTree*)model.GetTree();
-
-			// Setup dequantization coeffs
-			mCenterCoeff	= Tree->mCenterCoeff;
-			mExtentsCoeff	= Tree->mExtentsCoeff;
-
-			// Perform collision query
-			if(SkipPrimitiveTests())	_CollideNoPrimitiveTest(Tree->GetNodes());
-			else						_Collide(Tree->GetNodes());
+			ASSERT( false && "Not supported by the Toshi Engine!" );
 		}
 		else
 		{
@@ -120,23 +112,11 @@ bool AABBCollider::Collide(AABBCache& cache, const CollisionAABB& box, const Mod
 	{
 		if(model.IsQuantized())
 		{
-			const AABBQuantizedTree* Tree = (const AABBQuantizedTree*)model.GetTree();
-
-			// Setup dequantization coeffs
-			mCenterCoeff	= Tree->mCenterCoeff;
-			mExtentsCoeff	= Tree->mExtentsCoeff;
-
-			// Perform collision query
-			if(SkipPrimitiveTests())	_CollideNoPrimitiveTest(Tree->GetNodes());
-			else						_Collide(Tree->GetNodes());
+			ASSERT( false && "Not supported by the Toshi Engine!" );
 		}
 		else
 		{
-			const AABBCollisionTree* Tree = (const AABBCollisionTree*)model.GetTree();
-
-			// Perform collision query
-			if(SkipPrimitiveTests())	_CollideNoPrimitiveTest(Tree->GetNodes());
-			else						_Collide(Tree->GetNodes());
+			ASSERT( false && "Not supported by the Toshi Engine!" );
 		}
 	}
 	return true;
@@ -604,14 +584,7 @@ bool HybridAABBCollider::Collide(AABBCache& cache, const CollisionAABB& box, con
 	{
 		if(model.IsQuantized())
 		{
-			const AABBQuantizedNoLeafTree* Tree = (const AABBQuantizedNoLeafTree*)model.GetTree();
-
-			// Setup dequantization coeffs
-			mCenterCoeff	= Tree->mCenterCoeff;
-			mExtentsCoeff	= Tree->mExtentsCoeff;
-
-			// Perform collision query - we don't want primitive tests here!
-			_CollideNoPrimitiveTest(Tree->GetNodes());
+			ASSERT( false && "Not supported by the Toshi Engine!" );
 		}
 		else
 		{
@@ -625,21 +598,11 @@ bool HybridAABBCollider::Collide(AABBCache& cache, const CollisionAABB& box, con
 	{
 		if(model.IsQuantized())
 		{
-			const AABBQuantizedTree* Tree = (const AABBQuantizedTree*)model.GetTree();
-
-			// Setup dequantization coeffs
-			mCenterCoeff	= Tree->mCenterCoeff;
-			mExtentsCoeff	= Tree->mExtentsCoeff;
-
-			// Perform collision query - we don't want primitive tests here!
-			_CollideNoPrimitiveTest(Tree->GetNodes());
+			ASSERT( false && "Not supported by the Toshi Engine!" );
 		}
 		else
 		{
-			const AABBCollisionTree* Tree = (const AABBCollisionTree*)model.GetTree();
-
-			// Perform collision query - we don't want primitive tests here!
-			_CollideNoPrimitiveTest(Tree->GetNodes());
+			ASSERT( false && "Not supported by the Toshi Engine!" );
 		}
 	}
 

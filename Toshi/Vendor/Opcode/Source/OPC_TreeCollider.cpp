@@ -176,9 +176,7 @@ bool AABBTreeCollider::Collide(BVTCache& cache, const Matrix4x4* world0, const M
 	{
 		if(cache.Model0->IsQuantized())
 		{
-			const AABBQuantizedNoLeafTree* T0 = (const AABBQuantizedNoLeafTree*)cache.Model0->GetTree();
-			const AABBQuantizedNoLeafTree* T1 = (const AABBQuantizedNoLeafTree*)cache.Model1->GetTree();
-			Status = Collide(T0, T1, world0, world1, &cache);
+			ASSERT( false && "Not supported by the Toshi Engine!" );
 		}
 		else
 		{
@@ -191,15 +189,11 @@ bool AABBTreeCollider::Collide(BVTCache& cache, const Matrix4x4* world0, const M
 	{
 		if(cache.Model0->IsQuantized())
 		{
-			const AABBQuantizedTree* T0 = (const AABBQuantizedTree*)cache.Model0->GetTree();
-			const AABBQuantizedTree* T1 = (const AABBQuantizedTree*)cache.Model1->GetTree();
-			Status = Collide(T0, T1, world0, world1, &cache);
+			ASSERT( false && "Not supported by the Toshi Engine!" );
 		}
 		else
 		{
-			const AABBCollisionTree* T0 = (const AABBCollisionTree*)cache.Model0->GetTree();
-			const AABBCollisionTree* T1 = (const AABBCollisionTree*)cache.Model1->GetTree();
-			Status = Collide(T0, T1, world0, world1, &cache);
+			ASSERT( false && "Not supported by the Toshi Engine!" );
 		}
 	}
 
@@ -297,34 +291,6 @@ bool AABBTreeCollider::CheckTemporalCoherence(Pair* cache)
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /**
- *	Collision query for normal AABB trees.
- *	\param		tree0			[in] AABB tree from first object
- *	\param		tree1			[in] AABB tree from second object
- *	\param		world0			[in] world matrix for first object
- *	\param		world1			[in] world matrix for second object
- *	\param		cache			[in/out] cache for a pair of previously colliding primitives
- *	\return		true if success
- *	\warning	SCALE NOT SUPPORTED. The matrices must contain rotation & translation parts only.
- */
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool AABBTreeCollider::Collide(const AABBCollisionTree* tree0, const AABBCollisionTree* tree1, const Matrix4x4* world0, const Matrix4x4* world1, Pair* cache)
-{
-	// Init collision query
-	InitQuery(world0, world1);
-
-	// Check previous state
-	if(CheckTemporalCoherence(cache))		return true;
-
-	// Perform collision query
-	_Collide(tree0->GetNodes(), tree1->GetNodes());
-
-	UPDATE_CACHE
-
-	return true;
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/**
  *	Collision query for no-leaf AABB trees.
  *	\param		tree0			[in] AABB tree from first object
  *	\param		tree1			[in] AABB tree from second object
@@ -342,83 +308,6 @@ bool AABBTreeCollider::Collide(const AABBNoLeafTree* tree0, const AABBNoLeafTree
 
 	// Check previous state
 	if(CheckTemporalCoherence(cache))		return true;
-
-	// Perform collision query
-	_Collide(tree0->GetNodes(), tree1->GetNodes());
-
-	UPDATE_CACHE
-
-	return true;
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/**
- *	Collision query for quantized AABB trees.
- *	\param		tree0			[in] AABB tree from first object
- *	\param		tree1			[in] AABB tree from second object
- *	\param		world0			[in] world matrix for first object
- *	\param		world1			[in] world matrix for second object
- *	\param		cache			[in/out] cache for a pair of previously colliding primitives
- *	\return		true if success
- *	\warning	SCALE NOT SUPPORTED. The matrices must contain rotation & translation parts only.
- */
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool AABBTreeCollider::Collide(const AABBQuantizedTree* tree0, const AABBQuantizedTree* tree1, const Matrix4x4* world0, const Matrix4x4* world1, Pair* cache)
-{
-	// Init collision query
-	InitQuery(world0, world1);
-
-	// Check previous state
-	if(CheckTemporalCoherence(cache))		return true;
-
-	// Setup dequantization coeffs
-	mCenterCoeff0	= tree0->mCenterCoeff;
-	mExtentsCoeff0	= tree0->mExtentsCoeff;
-	mCenterCoeff1	= tree1->mCenterCoeff;
-	mExtentsCoeff1	= tree1->mExtentsCoeff;
-
-	// Dequantize box A
-	const AABBQuantizedNode* N0 = tree0->GetNodes();
-	const Point a(float(N0->mAABB.mExtents[0]) * mExtentsCoeff0.x, float(N0->mAABB.mExtents[1]) * mExtentsCoeff0.y, float(N0->mAABB.mExtents[2]) * mExtentsCoeff0.z);
-	const Point Pa(float(N0->mAABB.mCenter[0]) * mCenterCoeff0.x, float(N0->mAABB.mCenter[1]) * mCenterCoeff0.y, float(N0->mAABB.mCenter[2]) * mCenterCoeff0.z);
-	// Dequantize box B
-	const AABBQuantizedNode* N1 = tree1->GetNodes();
-	const Point b(float(N1->mAABB.mExtents[0]) * mExtentsCoeff1.x, float(N1->mAABB.mExtents[1]) * mExtentsCoeff1.y, float(N1->mAABB.mExtents[2]) * mExtentsCoeff1.z);
-	const Point Pb(float(N1->mAABB.mCenter[0]) * mCenterCoeff1.x, float(N1->mAABB.mCenter[1]) * mCenterCoeff1.y, float(N1->mAABB.mCenter[2]) * mCenterCoeff1.z);
-
-	// Perform collision query
-	_Collide(N0, N1, a, Pa, b, Pb);
-
-	UPDATE_CACHE
-
-	return true;
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/**
- *	Collision query for quantized no-leaf AABB trees.
- *	\param		tree0			[in] AABB tree from first object
- *	\param		tree1			[in] AABB tree from second object
- *	\param		world0			[in] world matrix for first object
- *	\param		world1			[in] world matrix for second object
- *	\param		cache			[in/out] cache for a pair of previously colliding primitives
- *	\return		true if success
- *	\warning	SCALE NOT SUPPORTED. The matrices must contain rotation & translation parts only.
- */
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool AABBTreeCollider::Collide(const AABBQuantizedNoLeafTree* tree0, const AABBQuantizedNoLeafTree* tree1, const Matrix4x4* world0, const Matrix4x4* world1, Pair* cache)
-{
-	// Init collision query
-	InitQuery(world0, world1);
-
-	// Check previous state
-	if(CheckTemporalCoherence(cache))		return true;
-
-	// Setup dequantization coeffs
-	mCenterCoeff0	= tree0->mCenterCoeff;
-	mExtentsCoeff0	= tree0->mExtentsCoeff;
-	mCenterCoeff1	= tree1->mCenterCoeff;
-	mExtentsCoeff1	= tree1->mExtentsCoeff;
 
 	// Perform collision query
 	_Collide(tree0->GetNodes(), tree1->GetNodes());

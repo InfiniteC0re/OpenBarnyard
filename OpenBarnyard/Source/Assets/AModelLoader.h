@@ -17,8 +17,8 @@
 #endif
 
 class AModelLoader
-	: public Toshi::TObject
-	, public Toshi::TSingleton<AModelLoader>
+    : public Toshi::TObject
+    , public Toshi::TSingleton<AModelLoader>
 {
 public:
 	TDECLARE_CLASS( AModelLoader, Toshi::TObject );

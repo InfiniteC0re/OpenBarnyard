@@ -331,7 +331,7 @@ void ATreeManager::CreateInstances( ATerrainLocatorList* a_pLocatorList )
 	}
 }
 
-static constexpr TUINT MAX_RENDERED_INSTANCES = 240;
+static constexpr TUINT                      MAX_RENDERED_INSTANCES = 240;
 static ATreeManager::TreeInstanceRenderData s_aInstanceMatrices[ MAX_RENDERED_INSTANCES ];
 
 // $Barnyard: FUNCTION 005ef3a0
@@ -343,7 +343,7 @@ void ATreeManager::Render()
 
 	TMatrix44 matModelView = pRenderContext->GetModelViewMatrix();
 	TMatrix44 matLightDir  = pRenderInterface->GetLightDirection();
-	
+
 	TINT iNumLocatorsToRender = 0;
 
 	// Reset render data
@@ -351,17 +351,17 @@ void ATreeManager::Render()
 		m_pRenderData[ i ] = 0;
 
 	// Get terrain related objects
-	ATerrainInterface*   pTerrainInterface = ATerrainInterface::GetSingleton();
-	ATerrainVIS*         pTerrainVIS       = pTerrainInterface->GetVIS();
-	TINT                 iNumSections      = pTerrainVIS->GetNumSections();
-	ATerrainSection*     pCurrentSection   = &pTerrainVIS->GetSections()[ pTerrainInterface->GetSectionID() ];
-	
+	ATerrainInterface* pTerrainInterface = ATerrainInterface::GetSingleton();
+	ATerrainVIS*       pTerrainVIS       = pTerrainInterface->GetVIS();
+	TINT               iNumSections      = pTerrainVIS->GetNumSections();
+	ATerrainSection*   pCurrentSection   = &pTerrainVIS->GetSections()[ pTerrainInterface->GetSectionID() ];
+
 	ATerrainLocatorList* pLocatorList            = pTerrainInterface->GetLocatorList();
 	TINT                 iLocatorsNumVISSections = pLocatorList->GetNumVISSections();
 
 	// Collect info about the locators we should render
 	constexpr TUINT MAX_SECTIONS = 64;
-	
+
 	TUINT uiNumSectionsToRender = 0;
 	struct SectionRenderData
 	{
@@ -416,9 +416,9 @@ void ATreeManager::Render()
 	}
 
 	// Do culling
-	TFLOAT   fRenderDistanceSq    = m_fRenderDistance * m_fRenderDistance;
-	TFLOAT   fLODSwitchDistanceSq = m_fLODSwitchDistance * m_fLODSwitchDistance;
-	TFLOAT   fBlendingFactor      = 1.0f / ( m_fRenderDistance - m_fBlendingDistance );
+	TFLOAT fRenderDistanceSq    = m_fRenderDistance * m_fRenderDistance;
+	TFLOAT fLODSwitchDistanceSq = m_fLODSwitchDistance * m_fLODSwitchDistance;
+	TFLOAT fBlendingFactor      = 1.0f / ( m_fRenderDistance - m_fBlendingDistance );
 
 	TMatrix44 matGlobalTransform;
 	matGlobalTransform.m_f11 = 1.0f;
@@ -516,7 +516,7 @@ void ATreeManager::Render()
 							pInstanceRenderData->oMatrix.Multiply( matModelView, matTransform );
 							pInstanceRenderData->oMatrix.Scale( fScale );
 
-							pInstanceRenderData->pPrev = m_pRenderData[ iRenderDataIndex ];
+							pInstanceRenderData->pPrev        = m_pRenderData[ iRenderDataIndex ];
 							m_pRenderData[ iRenderDataIndex ] = pInstanceRenderData;
 						}
 					}

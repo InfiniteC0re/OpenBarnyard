@@ -114,15 +114,7 @@ bool PlanesCollider::Collide(PlanesCache& cache, const Plane* planes, udword nb_
 	{
 		if(model.IsQuantized())
 		{
-			const AABBQuantizedNoLeafTree* Tree = (const AABBQuantizedNoLeafTree*)model.GetTree();
-
-			// Setup dequantization coeffs
-			mCenterCoeff	= Tree->mCenterCoeff;
-			mExtentsCoeff	= Tree->mExtentsCoeff;
-
-			// Perform collision query
-			if(SkipPrimitiveTests())	_CollideNoPrimitiveTest(Tree->GetNodes(), PlaneMask);
-			else						_Collide(Tree->GetNodes(), PlaneMask);
+			ASSERT( false && "Not supported by the Toshi Engine!" );
 		}
 		else
 		{
@@ -135,26 +127,7 @@ bool PlanesCollider::Collide(PlanesCache& cache, const Plane* planes, udword nb_
 	}
 	else
 	{
-		if(model.IsQuantized())
-		{
-			const AABBQuantizedTree* Tree = (const AABBQuantizedTree*)model.GetTree();
-
-			// Setup dequantization coeffs
-			mCenterCoeff	= Tree->mCenterCoeff;
-			mExtentsCoeff	= Tree->mExtentsCoeff;
-
-			// Perform collision query
-			if(SkipPrimitiveTests())	_CollideNoPrimitiveTest(Tree->GetNodes(), PlaneMask);
-			else						_Collide(Tree->GetNodes(), PlaneMask);
-		}
-		else
-		{
-			const AABBCollisionTree* Tree = (const AABBCollisionTree*)model.GetTree();
-
-			// Perform collision query
-			if(SkipPrimitiveTests())	_CollideNoPrimitiveTest(Tree->GetNodes(), PlaneMask);
-			else						_Collide(Tree->GetNodes(), PlaneMask);
-		}
+		ASSERT( false && "Not supported by the Toshi Engine!" );
 	}
 	return true;
 }
@@ -560,14 +533,7 @@ bool HybridPlanesCollider::Collide(PlanesCache& cache, const Plane* planes, udwo
 	{
 		if(model.IsQuantized())
 		{
-			const AABBQuantizedNoLeafTree* Tree = (const AABBQuantizedNoLeafTree*)model.GetTree();
-
-			// Setup dequantization coeffs
-			mCenterCoeff	= Tree->mCenterCoeff;
-			mExtentsCoeff	= Tree->mExtentsCoeff;
-
-			// Perform collision query - we don't want primitive tests here!
-			_CollideNoPrimitiveTest(Tree->GetNodes(), PlaneMask);
+			ASSERT( false && "Not supported by the Toshi Engine!" );
 		}
 		else
 		{
@@ -579,24 +545,7 @@ bool HybridPlanesCollider::Collide(PlanesCache& cache, const Plane* planes, udwo
 	}
 	else
 	{
-		if(model.IsQuantized())
-		{
-			const AABBQuantizedTree* Tree = (const AABBQuantizedTree*)model.GetTree();
-
-			// Setup dequantization coeffs
-			mCenterCoeff	= Tree->mCenterCoeff;
-			mExtentsCoeff	= Tree->mExtentsCoeff;
-
-			// Perform collision query - we don't want primitive tests here!
-			_CollideNoPrimitiveTest(Tree->GetNodes(), PlaneMask);
-		}
-		else
-		{
-			const AABBCollisionTree* Tree = (const AABBCollisionTree*)model.GetTree();
-
-			// Perform collision query - we don't want primitive tests here!
-			_CollideNoPrimitiveTest(Tree->GetNodes(), PlaneMask);
-		}
+		ASSERT( false && "Not supported by the Toshi Engine!" );
 	}
 
 	// We only have a list of boxes so far
