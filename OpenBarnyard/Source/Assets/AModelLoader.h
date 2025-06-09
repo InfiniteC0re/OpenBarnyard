@@ -8,6 +8,7 @@
 #include <Render/TTMDBase.h>
 #include <Render/TModel.h>
 #include <Render/TTexture.h>
+#include <Render/TCollisionCommon.h>
 #include <File/TTRB.h>
 
 #ifdef TOSHI_SKU_WINDOWS
@@ -15,8 +16,9 @@
 #  include <Platform/DX8/T2Texture_DX8.h>
 #endif
 
-class AModelLoader : public Toshi::TObject
-    , public Toshi::TSingleton<AModelLoader>
+class AModelLoader
+	: public Toshi::TObject
+	, public Toshi::TSingleton<AModelLoader>
 {
 public:
 	TDECLARE_CLASS( AModelLoader, Toshi::TObject );
@@ -54,6 +56,8 @@ public:
 
 	static Toshi::TMaterial* CreateMaterial( Toshi::TShader* a_pShader, const TCHAR* a_szMaterialName );
 	static void              DestroyMaterial( Toshi::TMaterial* a_pMaterial );
+
+	static Toshi::TCollisionCommon::TOSHICGROUP GetCollisionGroup( const TCHAR* a_szCollGroupName );
 
 	static void InitialiseStatic();
 

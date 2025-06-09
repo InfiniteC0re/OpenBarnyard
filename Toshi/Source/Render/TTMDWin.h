@@ -37,9 +37,11 @@ struct SubMesh
 
 enum EShaderType : TUINT
 {
-	ST_SKIN  = 0,
-	ST_WORLD = 2,
-	ST_GRASS = 4,
+	ST_SKIN,
+	ST_UNKNOWN1,
+	ST_WORLD,
+	ST_UNKNOWN2,
+	ST_GRASS,
 };
 
 struct TRBLODHeader

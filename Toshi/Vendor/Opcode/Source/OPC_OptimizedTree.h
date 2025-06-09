@@ -104,6 +104,11 @@
 		IMPLEMENT_NOLEAF_NODE(AABBNoLeafNode, CollisionAABB)
 	};
 
+	class OPCODE_API AABBTRBNoLeafNode
+	{
+	    IMPLEMENT_NOLEAF_NODE( AABBTRBNoLeafNode, CollisionAABB )
+	};
+
 	class OPCODE_API AABBQuantizedNoLeafNode
 	{
 		IMPLEMENT_NOLEAF_NODE(AABBQuantizedNoLeafNode, QuantizedAABB)
@@ -183,6 +188,22 @@
 	class OPCODE_API AABBNoLeafTree : public AABBOptimizedTree
 	{
 		IMPLEMENT_COLLISION_TREE(AABBNoLeafTree, AABBNoLeafNode)
+	};
+
+	class OPCODE_API AABBTRBNoLeafTree : public AABBNoLeafTree
+	{
+	public:
+	    __forceinline const AABBTRBNoLeafNode* GetNodes() const
+	    {
+		    return &mNodes;
+	    }
+	    virtual udword GetUsedBytes() const
+	    {
+		    return mNbNodes * sizeof( AABBTRBNoLeafNode );
+	    }
+
+	private:
+	    AABBTRBNoLeafNode mNodes;
 	};
 
 	class OPCODE_API AABBQuantizedTree : public AABBOptimizedTree

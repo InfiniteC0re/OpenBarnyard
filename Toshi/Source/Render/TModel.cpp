@@ -94,7 +94,7 @@ TBOOL TModel::LoadTRB()
 			// TODO: figure out what it is
 			collisionMesh.m_vecCollTypes[ k ].vecS1.SetSize( collisionMeshHeader.m_pCollTypes[ k ].iSomeCount );
 			collisionMesh.m_vecCollTypes[ k ].uiUnk3 = 0;
-			collisionMesh.m_vecCollTypes[ k ].uiUnk4 = 0;
+			collisionMesh.m_vecCollTypes[ k ].eCollGroup = TCollisionCommon::TOSHICGROUP_SUPPORT;
 
 			for ( TINT j = 0; j < collisionMeshHeader.m_pCollTypes[ k ].iSomeCount; j++ )
 			{

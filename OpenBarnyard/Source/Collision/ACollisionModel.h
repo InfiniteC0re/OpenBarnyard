@@ -17,4 +17,6 @@ private:
 	TINT                  m_iMeshIndex;
 	Opcode::Model         m_OpcodeModel;
 	Opcode::MeshInterface m_MeshInterface;
+	TINT                  field7_0x48;
+	TINT                  field8_0x4c;
 };

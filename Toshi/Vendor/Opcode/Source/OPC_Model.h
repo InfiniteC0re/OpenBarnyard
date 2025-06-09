@@ -54,14 +54,15 @@
 		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		override(BaseModel)	udword				GetUsedBytes()	const;
 
-		private:
+		virtual bool BuildGivenTree( const OPCODECREATE& create, AABBOptimizedTree* tree );
+		
+	private:
 #ifdef __MESHMERIZER_H__
 							CollisionHull*		mHull;			//!< Possible convex hull
 #endif // __MESHMERIZER_H__
 		// Internal methods
 							void				Release();
 
-		virtual bool BuildGivenTree( const OPCODECREATE& create, AABBOptimizedTree* tree );
 
 	};
 

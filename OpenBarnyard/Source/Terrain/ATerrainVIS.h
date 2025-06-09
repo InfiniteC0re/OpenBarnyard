@@ -28,6 +28,7 @@ public:
 	ATerrainLocatorList* GetLocatorList() const { return m_pLocatorList; }
 	TINT32               GetNumSections() const { return m_iNumSections; }
 	ATerrainSection*     GetSections() const { return m_pSections; }
+	ATerrainLODBlock*    GetPersistantBlock() const { return m_pPersistantTerrainBlock; }
 
 private:
 	const TCHAR*         m_szKeyLibrary;

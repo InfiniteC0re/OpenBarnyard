@@ -86,11 +86,11 @@ ATerrainInterface::ATerrainInterface( TINT a_iUnused1, TINT a_iUnused2, TINT a_i
 	m_iPreviousSection = -1;
 	m_bUnused4         = TFALSE;
 	// ...
-	m_fUnused3                = 0.0f;
-	m_cbOnCollsionModelLoaded = TNULL;
-	m_cbOnModelLoaded         = TNULL;
-	m_cbOnVISGroupChanged     = TNULL;
-	m_fnGetCurrentVISGroup    = GetCurrentSectionID;
+	m_fUnused3                 = 0.0f;
+	m_cbOnCollisionModelLoaded = TNULL;
+	m_cbOnModelLoaded          = TNULL;
+	m_cbOnVISGroupChanged      = TNULL;
+	m_fnGetCurrentVISGroup     = GetCurrentSectionID;
 }
 
 // $Barnyard: FUNCTION 005ec3e0
@@ -1036,10 +1036,13 @@ ATerrainSection::ModelNode* ATerrainInterface::CreateModelInstance( ATerrainSect
 	pSceneObject->EnableSkeletonUpdate();
 	pSceneObject->EnableUnknown1();
 
+	// Update pointer to the model object
+	pModel = pSceneObject->GetInstance()->GetModel();
+
 	// Create collision model instance
 	if ( pModel->GetNumCollisionMeshes() > 0 )
 	{
-		ACollisionModelSet* pCollisionSet = new ACollisionModelSet();
+		ACollisionModelSet* pCollisionSet  = new ACollisionModelSet();
 		a_pModelNode->m_pCollisionModelSet = pCollisionSet;
 
 		pCollisionSet->Create( pModel );

@@ -13,5 +13,5 @@ public:
 
 private:
 	ATerrainSection* m_pVISGroup;
-	TBOOL            m_bFlag;
+	TBOOL            m_bNoModelInstance;
 };

@@ -352,6 +352,48 @@ void AModelLoader::DestroyMaterial( TMaterial* a_pMaterial )
 	}
 }
 
+static constexpr const TCHAR* TOSHICGROUP_NAMES[] = {
+	"coll_support",
+	"coll_player",
+	"coll_raccoons",
+	"coll_grass",
+	"coll_tin",
+	"coll_timber",
+	"coll_stone",
+	"coll_dirt",
+	"coll_water",
+	"coll_sand",
+	"coll_mud",
+	"coll_hay",
+	"coll_wood",
+	"coll",
+	"coll_nofriction",
+	"coll_liquid",
+	"coll_waterwall",
+	"coll_deepwater",
+	"water",
+	"collision_camera"
+};
+
+TSTATICASSERT( TARRAYSIZE( TOSHICGROUP_NAMES ) == TCollisionCommon::TOSHICGROUP_NUMOF );
+
+// $Barnyard: FUNCTION 00616150
+TCollisionCommon::TOSHICGROUP AModelLoader::GetCollisionGroup( const TCHAR* a_szCollGroupName )
+{
+	T2_FOREACH_ARRAY( TOSHICGROUP_NAMES, it )
+	{
+		if ( !TStringManager::String8Compare( a_szCollGroupName, TOSHICGROUP_NAMES[ it ] ) )
+			return TCollisionCommon::TOSHICGROUP( it );
+	}
+
+#ifdef TOSHI_DEBUG
+	if ( TStringManager::String8Compare( a_szCollGroupName, "default" ) != 0 )
+		TERROR( "AModelLoader::GetCollisionGroup: Asked for an unknown collision type '%s'\n", a_szCollGroupName );
+#endif
+
+	return TCollisionCommon::TOSHICGROUP_DEFAULT;
+}
+
 // $Barnyard: FUNCTION 00613270
 void AModelLoader::InitialiseStatic()
 {
@@ -462,7 +504,19 @@ TBOOL AModelLoader::AModelLoaderLoadTRBCallback( TModel* a_pModel )
 {
 	TPROFILER_SCOPE();
 
-	TTODO( "Load collision data" );
+	// Resolve all collision groups
+	for ( TINT i = 0; i < a_pModel->GetNumCollisionMeshes(); i++ )
+	{
+		TModelCollisionMesh* pCollMesh = &a_pModel->GetCollisionMeshes()[ i ];
+		TINT                 iNumCollTypes = pCollMesh->GetNumCollTypes();
+		
+		for ( TINT k = 0; k < iNumCollTypes; k++ )
+		{
+			TModelCollisionType& rCollType = pCollMesh->GetCollType( k );
+			
+			rCollType.eCollGroup = GetCollisionGroup( rCollType.strName );
+		}
+	}
 
 	TTMDWin::TRBWinHeader*     pHeader    = a_pModel->CastSymbol<TTMDWin::TRBWinHeader>( "Header" );
 	TTMDBase::MaterialsHeader* pMaterials = a_pModel->CastSymbol<TTMDBase::MaterialsHeader>( "Materials" );
@@ -482,24 +536,22 @@ TBOOL AModelLoader::AModelLoaderLoadTRBCallback( TModel* a_pModel )
 		a_pModel->m_LODs[ i ].ppMeshes       = new TMesh*[ a_pModel->m_LODs[ i ].iNumMeshes ];
 		a_pModel->m_LODs[ i ].BoundingSphere = pTRBLod->m_RenderVolume;
 
-		if ( pTRBLod->m_eShader == TTMDWin::ST_WORLD )
+		switch ( pTRBLod->m_eShader )
 		{
-			LoadWorldMeshTRB( a_pModel, i, &a_pModel->m_LODs[ i ], pTRBLod );
-			continue;
+			case TTMDWin::ST_WORLD:
+				LoadWorldMeshTRB( a_pModel, i, &a_pModel->m_LODs[ i ], pTRBLod );
+				break;
+			case TTMDWin::ST_SKIN:
+				LoadSkinLOD( a_pModel, i, &a_pModel->m_LODs[ i ], pTRBLod );
+				break;
+			case TTMDWin::ST_GRASS:
+				LoadGrassMeshTRB( a_pModel, i, &a_pModel->m_LODs[ i ], pTRBLod );
+				break;
+			default:
+				TASSERT( !"The model is using an unknown shader" );
+				return TFALSE;
+				break;
 		}
-		else if ( pTRBLod->m_eShader == TTMDWin::ST_SKIN )
-		{
-			LoadSkinLOD( a_pModel, i, &a_pModel->m_LODs[ i ], pTRBLod );
-			continue;
-		}
-		else if ( pTRBLod->m_eShader == TTMDWin::ST_GRASS )
-		{
-			LoadGrassMeshTRB( a_pModel, i, &a_pModel->m_LODs[ i ], pTRBLod );
-			continue;
-		}
-
-		TASSERT( !"The model is using an unknown shader" );
-		return TFALSE;
 	}
 
 	return TTRUE;

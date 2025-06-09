@@ -144,6 +144,7 @@ public:
 	const Toshi::TVector4& GetLitAmbientColor() const { return m_LitAmbientColor; }
 
 	t_OnModelNodeReady GetOnModelNodeReadyCallback() const { return m_cbOnModelLoaded; }
+	t_OnModelNodeReady GetOnCollisionModelReadyCallback() const { return m_cbOnCollisionModelLoaded; }
 
 private:
 	void UpdateNightMaterials();
@@ -167,7 +168,7 @@ private:
 	TFLOAT                                     m_fUnused3;
 	TBOOL                                      m_bUnused4;
 	Toshi::T2SList<ATerrainSection::ModelNode> m_llModelNodes;
-	t_OnModelNodeReady                         m_cbOnCollsionModelLoaded;
+	t_OnModelNodeReady                         m_cbOnCollisionModelLoaded;
 	t_OnModelNodeReady                         m_cbOnModelLoaded;
 	t_OnVISGroupChanged                        m_cbOnVISGroupChanged;
 	AModelLoaderJob                            m_aModelLoaderJobs[ MAX_NUM_MODEL_LOADER_JOBS ];
