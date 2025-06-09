@@ -40,7 +40,7 @@ void ACollisionModelInstance::Create( ACollisionModelSet* a_pModelSet, TSceneObj
 }
 
 // $Barnyard: FUNCTION 0061ace0
-void ACollisionModelInstance::GetTransform( TINT a_iBone, TMatrix44& a_rOutMatrix )
+void ACollisionModelInstance::GetTransformForBone( TINT a_iBone, TMatrix44& a_rOutMatrix )
 {
 	if ( a_iBone == TBONE_INVALID )
 	{
