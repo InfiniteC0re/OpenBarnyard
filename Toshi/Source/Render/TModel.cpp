@@ -75,7 +75,7 @@ TBOOL TModel::LoadTRB()
 		const auto& collisionMeshHeader = pCollisionHeader->m_pMeshes[ i ];
 
 		// Copy base info
-		collisionMesh.m_Unk1          = collisionMeshHeader.m_Unk1;
+		collisionMesh.m_iBoneID       = collisionMeshHeader.m_iBoneID;
 		collisionMesh.m_pVertices     = collisionMeshHeader.m_pVertices;
 		collisionMesh.m_uiNumVertices = collisionMeshHeader.m_uiNumVertices;
 		collisionMesh.m_pIndices      = collisionMeshHeader.m_pIndices;

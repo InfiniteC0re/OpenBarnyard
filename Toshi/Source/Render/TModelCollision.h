@@ -29,7 +29,7 @@ public:
 	~TModelCollisionMesh();
 
 private:
-	TUINT                                m_Unk1;
+	TINT                                 m_iBoneID;
 	TVector3*                            m_pVertices;
 	TUINT                                m_uiNumVertices;
 	TUINT16*                             m_pIndices;

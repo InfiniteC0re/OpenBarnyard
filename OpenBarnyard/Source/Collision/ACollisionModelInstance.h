@@ -12,6 +12,9 @@ public:
 	~ACollisionModelInstance();
 
 	void Create( ACollisionModelSet* a_pModelSet, Toshi::TSceneObject* a_pSceneObject );
+	void GetTransform( TINT a_iBone, Toshi::TMatrix44& a_rOutMatrix );
+
+	TFLOAT GetScale() const;
 
 private:
 	ACollisionModelSet*      m_pCollisionModelSet;

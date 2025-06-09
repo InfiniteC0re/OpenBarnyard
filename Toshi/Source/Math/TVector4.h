@@ -276,6 +276,7 @@ public:
 
 	TFLOAT           Magnitude() const { return TMath::Sqrt( x * x + y * y + z * z ); }
 	TFLOAT           Magnitude4() const { return TMath::Sqrt( w * w + x * x + y * y + z * z ); }
+	// $Barnyard: FUNCTION 006a7a60
 	constexpr TFLOAT MagnitudeSq() const { return x * x + y * y + z * z; }
 	constexpr TFLOAT MagnitudeSq4() const { return w * w + x * x + y * y + z * z; }
 	TFLOAT           MagnitudeXZ() const { return TMath::Sqrt( x * x + z * z ); }

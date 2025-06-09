@@ -64,7 +64,7 @@ struct CollisionType
 
 struct CollisionMesh
 {
-	TUINT32        m_Unk1;
+	TINT32         m_iBoneID;
 	TVector3*      m_pVertices;
 	TUINT32        m_uiNumVertices;
 	TUINT16*       m_pIndices;

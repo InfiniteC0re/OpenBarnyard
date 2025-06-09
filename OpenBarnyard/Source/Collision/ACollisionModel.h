@@ -11,9 +11,8 @@ public:
 	TBOOL Create( TINT a_iMeshIndex, Toshi::TModel* a_pModel );
 
 private:
-	// ...
-	TFLOAT                m_fUnk1;
-	TFLOAT                m_fUnk2;
+	Toshi::TVector4       m_vecTreeCenter;
+	TFLOAT                m_fAverageExtent;
 	Toshi::TModel*        m_pModel;
 	TINT                  m_iMeshIndex;
 	Opcode::Model         m_OpcodeModel;
