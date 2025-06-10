@@ -11,15 +11,14 @@ TOSHI_NAMESPACE_START
 namespace TMath
 {
 
-enum VSRESULT
-{
-	VSRESULT_OUTSIDE,
-	VSRESULT_HIT,
-	VSRESULT_INSIDE,
-};
+// Performs a cone-sphere intersection test and returns TTRUE if hit.
+TBOOL ConeVsSphere( const TVector4& a_rvConePosition, const TVector4& a_rvConeDirection, float a_fConeFOV, float a_fSphereRadius, const TVector4& a_rvSpherePosition );
 
-TBOOL    ConeVsSphere( const TVector4& a_rvConePosition, const TVector4& a_rvConeDirection, float a_fConeFOV, float a_fSphereRadius, const TVector4& a_rvSpherePosition );
-VSRESULT RayVsCircle3D( const TVector4& a_rcStartPos, const TVector4& a_rcDirection, const TVector4& a_rcCenter, TFLOAT a_fRadius, TFLOAT& a_rfRayDistance, TFLOAT& a_rfUnknown );
+// Performs a ray-sphere intersection test and returns number of intersections. Always returns 0 or 2 intersections.
+TINT RayVsCircle3D( const TVector4& a_rcRayOrigin, const TVector4& a_rcRayDir, const TVector4& a_rcCenter, TFLOAT a_fRadius, TFLOAT& a_rfNearIntersection, TFLOAT& a_rfFarIntersection );
+
+// Performs a ray-sphere intersection test and returns TTRUE if hit anything.
+TBOOL RayVsCircle3D( const TVector4& a_rcRayDir, TFLOAT a_fRadius, const TVector4& a_rcCenter, const TVector4& a_rcRayOrigin, TINT* a_pNumHits, TFLOAT* a_pNearIntersection, TFLOAT* a_pFarIntersection );
 
 } // namespace TMath
 
