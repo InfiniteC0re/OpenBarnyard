@@ -61,22 +61,22 @@ TINT TMath::RayVsCircle3D( const TVector4& a_rcRayOrigin, const TVector4& a_rcRa
 		return 0;
 
 	TFLOAT fRadius      = TMath::Sqrt( fRadiusSq );
-	a_pNearIntersection = ( -fDot - fRadiusSq ) * 0.5f;
-	a_pFarIntersection  = ( fRadiusSq - fDot ) * 0.5f;
+	a_pNearIntersection = ( -fDot - fRadius ) * 0.5f;
+	a_pFarIntersection  = ( fRadius - fDot ) * 0.5f;
 
 	return 2;
 }
 
 // $Barnyard: FUNCTION 006b7c40
-TBOOL TMath::RayVsCircle3D( const TVector4& a_rcRayDir, TFLOAT a_fRadius, const TVector4& a_rcCenter, const TVector4& a_rcRayOrigin, TINT* a_pNumHits, TFLOAT* a_pNearIntersection, TFLOAT* a_pFarIntersection )
+TBOOL TMath::SphereVsLine( const TVector4& a_rcCenter, TFLOAT a_fRadius, const TVector4& a_rcLineStart, const TVector4& a_rcLineEnd, TINT* a_pNumHits, TFLOAT* a_pNearIntersection, TFLOAT* a_pFarIntersection )
 {
-	TVector4 vecCenterToRay = a_rcRayOrigin - a_rcCenter;
+	TVector4 vecStartToEnd = a_rcLineEnd - a_rcLineStart;
 
-	TFLOAT a = vecCenterToRay.MagnitudeSq();
-	TFLOAT b = ( ( a_rcCenter.y - a_rcRayDir.y ) * vecCenterToRay.y + ( a_rcCenter.z - a_rcRayDir.z ) * vecCenterToRay.z + ( a_rcCenter.x - a_rcRayDir.x ) * vecCenterToRay.x ) * 2.0f;
+	TFLOAT a = vecStartToEnd.MagnitudeSq();
+	TFLOAT b = ( ( a_rcLineStart.y - a_rcCenter.y ) * vecStartToEnd.y + ( a_rcLineStart.z - a_rcCenter.z ) * vecStartToEnd.z + ( a_rcLineStart.x - a_rcCenter.x ) * vecStartToEnd.x ) * 2.0f;
 
-	TFLOAT fDot          = TVector4::DotProduct3( a_rcRayDir, a_rcCenter ) * 2.0f;
-	TFLOAT fDiscriminant = b * b - ( ( ( a_rcRayDir.MagnitudeSq() + a_rcCenter.MagnitudeSq() ) - fDot ) - a_fRadius * a_fRadius ) * a * 4.0f;
+	TFLOAT fDot          = TVector4::DotProduct3( a_rcCenter, a_rcLineStart );
+	TFLOAT fDiscriminant = b * b - ( ( ( a_rcCenter.MagnitudeSq() + a_rcLineStart.MagnitudeSq() ) - ( fDot * 2.0f ) ) - a_fRadius * a_fRadius ) * a * 4.0f;
 
 	if ( fDiscriminant < 0.0f )
 		return TFALSE;

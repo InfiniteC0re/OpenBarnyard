@@ -18,7 +18,7 @@ TBOOL ConeVsSphere( const TVector4& a_rvConePosition, const TVector4& a_rvConeDi
 TINT RayVsCircle3D( const TVector4& a_rcRayOrigin, const TVector4& a_rcRayDir, const TVector4& a_rcCenter, TFLOAT a_fRadius, TFLOAT& a_rfNearIntersection, TFLOAT& a_rfFarIntersection );
 
 // Performs a ray-sphere intersection test and returns TTRUE if hit anything.
-TBOOL RayVsCircle3D( const TVector4& a_rcRayDir, TFLOAT a_fRadius, const TVector4& a_rcCenter, const TVector4& a_rcRayOrigin, TINT* a_pNumHits, TFLOAT* a_pNearIntersection, TFLOAT* a_pFarIntersection );
+TBOOL SphereVsLine( const TVector4& a_rcCenter, TFLOAT a_fRadius, const TVector4& a_rcLineStart, const TVector4& a_rcLineEnd, TINT* a_pNumHits, TFLOAT* a_pNearIntersection, TFLOAT* a_pFarIntersection );
 
 } // namespace TMath
 
