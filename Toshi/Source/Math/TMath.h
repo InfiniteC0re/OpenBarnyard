@@ -17,8 +17,11 @@ TBOOL ConeVsSphere( const TVector4& a_rvConePosition, const TVector4& a_rvConeDi
 // Performs a ray-sphere intersection test and returns number of intersections. Always returns 0 or 2 intersections.
 TINT RayVsCircle3D( const TVector4& a_rcRayOrigin, const TVector4& a_rcRayDir, const TVector4& a_rcCenter, TFLOAT a_fRadius, TFLOAT& a_rfNearIntersection, TFLOAT& a_rfFarIntersection );
 
-// Performs a ray-sphere intersection test and returns TTRUE if hit anything.
+// Performs a sphere-line intersection test and returns TTRUE if hit anything.
 TBOOL SphereVsLine( const TVector4& a_rcCenter, TFLOAT a_fRadius, const TVector4& a_rcLineStart, const TVector4& a_rcLineEnd, TINT* a_pNumHits, TFLOAT* a_pNearIntersection, TFLOAT* a_pFarIntersection );
+
+// Calculates squared distance from a point to line. Outputs position of the closest point in a_rClosestPoint.
+TFLOAT DistancePointToLineSq( const TVector4& a_rcPoint, const TVector4& a_rcLineStart, const TVector4& a_rcLineEnd, TVector4& a_rClosestPoint );
 
 } // namespace TMath
 

@@ -104,4 +104,22 @@ TBOOL TMath::SphereVsLine( const TVector4& a_rcCenter, TFLOAT a_fRadius, const T
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 006b7dc0
+TFLOAT TMath::DistancePointToLineSq( const TVector4& a_rcPoint, const TVector4& a_rcLineStart, const TVector4& a_rcLineEnd, TVector4& a_rClosestPoint )
+{
+	TVector4 vecStartToPoint = a_rcPoint - a_rcLineStart;
+	TVector4 vecStartToEnd   = a_rcLineEnd - a_rcLineStart;
+
+	TFLOAT fLineLengthSq = vecStartToEnd.MagnitudeSq();
+	TFLOAT fDot          = TVector4::DotProduct3( vecStartToPoint, vecStartToEnd );
+	
+	TVector4 vecProjection;
+	vecProjection.Multiply( vecStartToEnd, fDot / fLineLengthSq );
+
+	a_rClosestPoint = vecProjection + a_rcLineStart;
+
+	TVector4 vecDiff = vecStartToPoint - vecProjection;
+	return vecDiff.MagnitudeSq();
+}
+
 TOSHI_NAMESPACE_END
