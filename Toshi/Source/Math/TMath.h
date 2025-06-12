@@ -23,6 +23,9 @@ TBOOL SphereVsLine( const TVector4& a_rcCenter, TFLOAT a_fRadius, const TVector4
 // Calculates squared distance from a point to line. Outputs position of the closest point in a_rClosestPoint.
 TFLOAT DistancePointToLineSq( const TVector4& a_rcPoint, const TVector4& a_rcLineStart, const TVector4& a_rcLineEnd, TVector4& a_rClosestPoint );
 
+// Calculates normal (counter clockwise) vector for a triangle.
+TFLOAT TriangleNormalCounterClockwise( TVector3& a_rNormal, const TVector3& a_rcVertex1, const TVector3& a_rcVertex2, const TVector3& a_rcVertex3 );
+
 } // namespace TMath
 
 TOSHI_NAMESPACE_END
