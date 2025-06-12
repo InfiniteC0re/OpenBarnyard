@@ -123,7 +123,7 @@ TFLOAT TMath::DistancePointToLineSq( const TVector4& a_rcPoint, const TVector4& 
 }
 
 // $Barnyard: FUNCTION 006b7770
-TFLOAT TMath::TriangleNormalCounterClockwise( TVector3& a_rNormal, const TVector3& a_rcVertex1, const TVector3& a_rcVertex2, const TVector3& a_rcVertex3 )
+void TMath::TriangleNormalCounterClockwise( TVector3& a_rNormal, const TVector3& a_rcVertex1, const TVector3& a_rcVertex2, const TVector3& a_rcVertex3 )
 {
 	TVector3 vecVertex1To2 = a_rcVertex2 - a_rcVertex1;
 	TVector3 vecVertex1To3 = a_rcVertex3 - a_rcVertex1;
