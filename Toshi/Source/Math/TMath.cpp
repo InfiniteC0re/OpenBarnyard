@@ -112,7 +112,7 @@ TFLOAT TMath::DistancePointToLineSq( const TVector4& a_rcPoint, const TVector4& 
 
 	TFLOAT fLineLengthSq = vecStartToEnd.MagnitudeSq();
 	TFLOAT fDot          = TVector4::DotProduct3( vecStartToPoint, vecStartToEnd );
-	
+
 	TVector4 vecProjection;
 	vecProjection.Multiply( vecStartToEnd, fDot / fLineLengthSq );
 

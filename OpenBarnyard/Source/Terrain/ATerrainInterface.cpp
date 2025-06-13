@@ -96,7 +96,7 @@ ATerrainInterface::ATerrainInterface( TINT a_iUnused1, TINT a_iUnused2, TINT a_i
 	for ( TUINT i = 0; i < NUM_LIGHT_MAGS; i++ )
 	{
 		m_apLightMagMaterials[ i ] = TNULL;
-		m_afLightMags[ i ] = 0.0f;
+		m_afLightMags[ i ]         = 0.0f;
 	}
 }
 

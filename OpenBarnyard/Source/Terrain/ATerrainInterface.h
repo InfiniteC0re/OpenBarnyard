@@ -31,6 +31,7 @@ public:
 
 	friend ATerrainVIS;
 	friend class ABYardTerrainManager;
+	friend class AGameTimeFX;
 
 	friend void RenderCellMeshWin( CellMeshSphere* a_pMeshSphere, RenderData* a_pRenderData );
 

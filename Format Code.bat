@@ -89,6 +89,8 @@
 .\Vendor\clang-format.exe -i .\OpenBarnyard\Source\Sound\*.h
 .\Vendor\clang-format.exe -i .\OpenBarnyard\Source\Tasks\*.cpp
 .\Vendor\clang-format.exe -i .\OpenBarnyard\Source\Tasks\*.h
+.\Vendor\clang-format.exe -i .\OpenBarnyard\Source\FX\*.cpp
+.\Vendor\clang-format.exe -i .\OpenBarnyard\Source\FX\*.h
 .\Vendor\clang-format.exe -i .\OpenBarnyard\Source\Terrain\*.cpp
 .\Vendor\clang-format.exe -i .\OpenBarnyard\Source\Terrain\*.h
 .\Vendor\clang-format.exe -i .\OpenBarnyard\Source\World\*.cpp

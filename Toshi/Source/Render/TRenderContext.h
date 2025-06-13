@@ -110,6 +110,7 @@ public:
 	void       SetCameraMode( CameraMode a_eCameraMode );
 
 	void EnableFog( TBOOL a_bEnable );
+	void SetFogColor( const TVector4& a_rcFogColor );
 	void SetFogDistance( TFLOAT a_fStart, TFLOAT a_fEnd );
 
 	TFLOAT GetX() const { return m_oViewportParams.fX; }

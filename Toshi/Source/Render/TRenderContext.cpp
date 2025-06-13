@@ -374,6 +374,11 @@ void TRenderContext::ComputeOrthographicFrustum( TFrustum& a_rcFrustum, const VI
 	a_rcFrustum[ WORLDPLANE_FAR ].Set( 0.0f, 0.0f, 1.0f, a_rProjParams.m_fFarClip );
 }
 
+void TRenderContext::SetFogColor( const TVector4& a_rcFogColor )
+{
+	m_FogColor = a_rcFogColor;
+}
+
 void TRenderContext::PROJECTIONPARAMS::SetFromFOV( TFLOAT a_fViewportWidth, TFLOAT a_fViewportHeight, TFLOAT a_fFOV, TFLOAT a_fNearPlane, TFLOAT a_fFarPlane )
 {
 	TFLOAT fHalfWidth  = a_fViewportWidth * 0.5f;
