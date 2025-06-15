@@ -62,18 +62,14 @@ TBOOL ASectionDoneJob::RunJob()
 
 		return TTRUE;
 	}
-	else
-	{
-		// Loading was canceled before it was done
-		m_pSection->SetLODLoading( m_eLODType, TFALSE );
-		m_pSection->SetLODQueued( m_eLODType, TFALSE );
-		m_pSection->SetLODEmpty( m_eLODType, TFALSE );
-		m_pSection->DestroyLOD( m_eLODType );
 
-		ATerrainInterface::GetSingleton()->QueueStreamingAssets();
-		return TTRUE;
-	}
+	// Loading was canceled before it was done
+	m_pSection->SetLODLoading( m_eLODType, TFALSE );
+	m_pSection->SetLODQueued( m_eLODType, TFALSE );
+	m_pSection->SetLODEmpty( m_eLODType, TFALSE );
+	m_pSection->DestroyLOD( m_eLODType );
 
+	ATerrainInterface::GetSingleton()->QueueStreamingAssets();
 	return TTRUE;
 }
 

@@ -56,6 +56,7 @@ public:
 
 	static Toshi::TMaterial* CreateMaterial( Toshi::TShader* a_pShader, const TCHAR* a_szMaterialName );
 	static void              DestroyMaterial( Toshi::TMaterial* a_pMaterial );
+	static void              ResolveTextures();
 
 	static Toshi::TCollisionCommon::TOSHICGROUP GetCollisionGroup( const TCHAR* a_szCollGroupName );
 

@@ -82,7 +82,7 @@ TBOOL TModel::LoadTRB()
 		collisionMesh.m_uiNumIndices  = collisionMeshHeader.m_uiNumIndices;
 
 		// Reserve space for collision types
-		collisionMesh.m_vecCollGroups.SetSize( collisionMeshHeader.m_uiNumCollTypes, TModelCollisionGroup{} );
+		collisionMesh.m_vecCollGroups.SetSize( collisionMeshHeader.m_uiNumCollTypes );
 
 		// Copy collision types
 		for ( TUINT k = 0; k < collisionMeshHeader.m_uiNumCollTypes; k++ )

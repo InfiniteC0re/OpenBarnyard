@@ -21,10 +21,10 @@ ACollisionModelSet::ACollisionModelSet()
 // $Barnyard: FUNCTION 0061ac50
 ACollisionModelSet::~ACollisionModelSet()
 {
-    T2_FOREACH( m_vecCollModels, it )
-    {
-		delete it;
-    }
+	T2_FOREACH( m_vecCollModels, it )
+	{
+		delete *it;
+	}
 
 	m_vecCollModels.Clear();
 }

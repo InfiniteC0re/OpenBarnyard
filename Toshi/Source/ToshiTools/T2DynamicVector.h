@@ -398,13 +398,8 @@ public:
 		return m_iNumElements;
 	}
 
-	void SetSize( TINT a_iNewSize )
-	{
-		Reserve( a_iNewSize );
-		m_iNumElements = a_iNewSize;
-	}
-
-	void SetSize( TINT a_iNewSize, const T& a_rcValue )
+	template <class... Args>
+	void SetSize( TINT a_iNewSize, Args&&... args )
 	{
 		Reserve( a_iNewSize );
 
@@ -412,7 +407,7 @@ public:
 		m_iNumElements       = a_iNewSize;
 
 		for ( TINT i = iOldNumElements; i < a_iNewSize; i++ )
-			new ( &AtUnsafe( i ) ) T( a_rcValue );
+			new ( &AtUnsafe( i ) ) T( std::forward<Args>( args )... );
 	}
 
 	TINT Capacity() const

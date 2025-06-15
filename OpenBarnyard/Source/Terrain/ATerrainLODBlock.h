@@ -13,7 +13,7 @@ enum ATerrainLODType_ : ATerrainLODType
 	ATerrainLODType_NUMOF,
 };
 
-class ATerrainLODBlock : public Toshi::T2SList<ATerrainLODBlock>::Node
+class ATerrainLODBlock
 {
 public:
 	friend class ATerrainInterface;
@@ -47,6 +47,7 @@ public:
 	Toshi::TMemory::MemBlock* GetMemBlock() { return m_pCreatedMemBlock; }
 
 private:
+	ATerrainLODBlock*         m_pNext;
 	TUINT32*                  m_pAllocatedSize;
 	TUINT                     m_Unk1;
 	TUINT*                    m_pUnk2;

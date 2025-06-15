@@ -139,9 +139,7 @@ void ATerrainInterface::Update()
 		TINT iCurrentGroup = m_fnGetCurrentVISGroup();
 
 		if ( iCurrentGroup != -1 )
-		{
 			m_iCurrentSection = iCurrentGroup;
-		}
 	}
 
 	if ( m_iCurrentSection >= 0 )
@@ -223,7 +221,8 @@ void ATerrainInterface::Update()
 								pGroups[ i ].LoadModels( ATerrainLODType_High );
 								break;
 							}
-							else if ( pGroups[ i ].IsLODQueued( ATerrainLODType_Low ) )
+							
+							if ( pGroups[ i ].IsLODQueued( ATerrainLODType_Low ) )
 							{
 								pGroups[ i ].LoadModels( ATerrainLODType_Low );
 								break;
@@ -308,32 +307,67 @@ void ATerrainInterface::Render()
 		m_fUnused3        = 1.0f;
 		m_bUnused4        = TTRUE;
 
-		auto pTerrainVIS = m_pTerrainVIS;
-
-		if ( TNULL != pTerrainVIS )
+		if ( m_pTerrainVIS )
 		{
 			// Reset current section if it is out of range
-			if ( pTerrainVIS->m_iNumSections <= m_iCurrentSection || m_iCurrentSection < 0 )
-			{
+			if ( m_pTerrainVIS->m_iNumSections <= m_iCurrentSection || m_iCurrentSection < 0 )
 				m_iCurrentSection = 0;
-			}
 
-			auto pSections       = pTerrainVIS->m_pSections;
+			auto pSections       = m_pTerrainVIS->m_pSections;
 			auto iCurrentSection = m_iCurrentSection;
 			auto pCurrentSection = &pSections[ iCurrentSection ];
 
-			if ( TNULL == m_pOrderDVIS )
+			if ( !m_pOrderDVIS )
 			{
-				pCurrentSection->Draw( ATerrainLODType_High );
+				if ( pCurrentSection->IsLODLoaded( ATerrainLODType_High ) )
+				{
+					// Draw models of the high LOD
+					for ( TINT i = 0; i < pCurrentSection->m_iNumHighModelFiles; i++ )
+					{
+						pCurrentSection->m_ppLODModelsData[ ATerrainLODType_High ][ i ]->Render();
+					}
+				}
+				else if ( pCurrentSection->IsLODLoaded( ATerrainLODType_Low ) )
+				{
+					// High LOD is still loading so let's render low LOD instead
+					for ( TINT i = 0; i < pCurrentSection->m_iNumLowModelFiles; i++ )
+					{
+						pCurrentSection->m_ppLODModelsData[ ATerrainLODType_Low ][ i ]->Render();
+					}
+				}
 			}
 
 			for ( TINT i = 0; i < m_pTerrainVIS->m_iNumSections; i++ )
 			{
-				ATerrainLODType eSectionVisibility = pCurrentSection->m_pVisibility[ i ];
+				ATerrainLODType eSectionVisibility = pSections[ iCurrentSection ].m_pVisibility[ i ];
 
 				if ( eSectionVisibility != ATerrainLODType_None )
 				{
-					pSections[ i ].Draw( eSectionVisibility );
+					TINT iTargetNumModels = ( eSectionVisibility == ATerrainLODType_High ) ? pSections[ i ].m_iNumHighModelFiles : pSections[ i ].m_iNumLowModelFiles;
+
+					if ( !pSections[ i ].IsLODLoaded( eSectionVisibility ) ||
+					     !pSections[ i ].IsLODEmpty( eSectionVisibility ) ||
+					     iTargetNumModels < 1 )
+					{
+						if ( pSections[ i ].IsLODLoaded( ATerrainLODType_Low )  )
+						{
+							// Target LOD is still loading, so let's see if we can render low LOD instead
+							for ( TINT k = 0; k < pSections[ i ].m_iNumLowModelFiles; k++ )
+							{
+								if ( !pSections[ i ].m_ppLODModelsData[ ATerrainLODType_Low ][ k ]->IsGlow() )
+									pSections[ i ].m_ppLODModelsData[ ATerrainLODType_Low ][ k ]->Render();
+							}
+						}
+					}
+					else
+					{
+						// Draw models of the target LOD, since it is loaded
+						for ( TINT k = 0; k < iTargetNumModels; k++ )
+						{
+							if ( !pSections[ i ].m_ppLODModelsData[ eSectionVisibility ][ k ]->IsGlow() )
+								pSections[ i ].m_ppLODModelsData[ eSectionVisibility ][ k ]->Render();
+						}
+					}
 				}
 			}
 		}
@@ -635,81 +669,85 @@ ATerrainLODBlock* ATerrainInterface::AllocateLODBlock( ATerrainLODType a_eLODTyp
 		ppBlocks   = m_pTerrainVIS->m_ppLowBlocks;
 	}
 
-	TFLOAT fMinAccessTime  = TMath::MAXFLOAT;
-	TINT   iPrevFoundIndex = -1;
-	TINT   iFoundIndex;
-
-	for ( TINT i = 0; i < iNumBlocks; i++ )
+	if ( iNumBlocks > 0 )
 	{
-		auto pBlock = ppBlocks[ i ];
-		iFoundIndex = iPrevFoundIndex;
+		TFLOAT fMinAccessTime  = TMath::MAXFLOAT;
+		TINT   iPrevFoundIndex = -1;
+		TINT   iFoundIndex     = -1;
 
-		if ( !pBlock->IsUsed() )
+		for ( TINT i = 0; i < iNumBlocks; i++ )
 		{
-			iFoundIndex = i;
-			if ( pBlock->m_pVISGroup == TNULL ) break;
-
+			auto pBlock = ppBlocks[ i ];
 			iFoundIndex = iPrevFoundIndex;
-			if ( !pBlock->m_pVISGroup->IsLODLoading( a_eLODType ) )
+
+			if ( !pBlock->IsUsed() )
 			{
 				iFoundIndex = i;
-				if ( pBlock->m_pVISGroup = TNULL ) break;
+				if ( pBlock->m_pVISGroup == TNULL ) break;
 
 				iFoundIndex = iPrevFoundIndex;
-				if ( pBlock->m_fLastAccessTime < fMinAccessTime )
+				if ( !pBlock->m_pVISGroup->IsLODLoading( a_eLODType ) )
 				{
-					fMinAccessTime = pBlock->m_fLastAccessTime;
-					iFoundIndex    = i;
+					iFoundIndex = i;
+					if ( pBlock->m_pVISGroup == TNULL ) break;
+
+					iFoundIndex = iPrevFoundIndex;
+					if ( pBlock->m_fLastAccessTime < fMinAccessTime )
+					{
+						fMinAccessTime = pBlock->m_fLastAccessTime;
+						iFoundIndex    = i;
+					}
 				}
 			}
+
+			iPrevFoundIndex = iFoundIndex;
 		}
 
-		iPrevFoundIndex = iFoundIndex;
-	}
-
-	if ( iFoundIndex >= 0 )
-	{
-		auto pBlock    = ppBlocks[ iFoundIndex ];
-		auto pVISGroup = pBlock->m_pVISGroup;
-
-		if ( pVISGroup )
+		if ( iFoundIndex >= 0 )
 		{
-			if ( pVISGroup->IsLODEmpty( pBlock->m_eLODType ) )
-			{
-				pVISGroup->SetLODEmpty( pBlock->m_eLODType, TFALSE );
-				return TNULL;
-			}
+			auto pBlock    = ppBlocks[ iFoundIndex ];
+			auto pVISGroup = pBlock->m_pVISGroup;
 
 			if ( pVISGroup )
 			{
-				if ( ( pVISGroup->m_eFlags & ( 21 << a_eLODType ) ) != 0 )
+				if ( pVISGroup->IsLODEmpty( pBlock->m_eLODType ) )
 				{
-					if ( pVISGroup->IsMatLibLoaded( pBlock->m_eLODType ) )
-					{
-						pVISGroup->SetLODEmpty( pBlock->m_eLODType, TFALSE );
-
-						if ( pBlock->m_pVISGroup )
-						{
-							pBlock->m_pVISGroup->UnloadMatlib( pBlock->m_eLODType );
-						}
-					}
-					else if ( pBlock->m_pVISGroup )
-					{
-						pBlock->m_pVISGroup->DestroyLOD( pBlock->m_eLODType );
-					}
-
+					pVISGroup->SetLODEmpty( pBlock->m_eLODType, TFALSE );
 					return TNULL;
 				}
 
 				if ( pVISGroup )
 				{
-					pVISGroup->DestroyLOD( pBlock->m_eLODType );
+					if ( ( pVISGroup->m_eFlags & ( 21 << a_eLODType ) ) != 0 )
+					{
+						if ( pVISGroup->IsMatLibLoaded( pBlock->m_eLODType ) )
+						{
+							pVISGroup->SetLODEmpty( pBlock->m_eLODType, TFALSE );
+
+							if ( pBlock->m_pVISGroup )
+							{
+								pBlock->m_pVISGroup->UnloadMatlib( pBlock->m_eLODType );
+								return TNULL;
+							}
+						}
+						else if ( pBlock->m_pVISGroup )
+						{
+							pBlock->m_pVISGroup->DestroyLOD( pBlock->m_eLODType );
+						}
+
+						return TNULL;
+					}
+
+					if ( pVISGroup )
+					{
+						pVISGroup->DestroyLOD( pBlock->m_eLODType );
+					}
 				}
 			}
-		}
 
-		pBlock->Assign( a_pVISGroup, a_eLODType );
-		return pBlock;
+			pBlock->Assign( a_pVISGroup, a_eLODType );
+			return pBlock;
+		}
 	}
 
 	return TNULL;
@@ -1135,7 +1173,7 @@ void ATerrainInterface::CancelUnrequiredJobs()
 			if ( pGroup->m_eFlags & ( ATerrainSection::FLAGS_HIGH_LOD_LOADING | ATerrainSection::FLAGS_LOW_LOD_LOADING ) )
 			{
 				if ( i < 0 ) return;
-				if ( pGroup->m_pVisibility[ i ] == ( ( pGroup->m_eFlags >> 2 ) - 1 ) % ATerrainLODType_NUMOF ) return;
+				if ( m_pTerrainVIS->m_pSections[ m_iCurrentSection ].m_pVisibility[ i ] == ( ( pGroup->m_eFlags >> 2 ) - 1 ) % ATerrainLODType_NUMOF ) return;
 				if ( i == m_iCurrentSection ) return;
 
 				AAssetStreaming::GetSingleton()->CancelAllJobs();

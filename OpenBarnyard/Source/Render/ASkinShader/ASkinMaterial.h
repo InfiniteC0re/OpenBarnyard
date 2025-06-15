@@ -18,6 +18,8 @@ public:
 
 	using BLENDMODE = TUINT;
 
+	friend class AModelLoader;
+
 public:
 	ASkinMaterial();
 	~ASkinMaterial();

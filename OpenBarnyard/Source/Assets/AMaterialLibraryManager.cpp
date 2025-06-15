@@ -7,6 +7,7 @@
 #include "AMaterialLibraryManager.h"
 #include "Locale/ALocaleManager.h"
 #include "ALoadScreen.h"
+#include "AModelLoader.h"
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
@@ -205,22 +206,22 @@ void AMaterialLibraryManager::UnloadTexturesOfLibrary( AMaterialLibrary* a_pMate
 
 		if ( it->GetLibrary() == a_pMaterialLibrary )
 		{
-			auto removedSlot = m_UsedTextures.Erase( it );
+			m_UsedTextures.Erase( it );
 			m_iNumUsedTextures -= 1;
 
-			removedSlot->GetTexture()->DestroyResource();
-			removedSlot->SetTexture( TNULL );
-			removedSlot->ResetName();
+			it->GetTexture()->DestroyResource();
+			it->SetTexture( TNULL );
+			it->ResetName();
 
-			m_FreeTextures.PushFront( removedSlot );
+			m_FreeTextures.PushFront( it );
 			m_iNumFreeTextures += 1;
 		}
 
-		it = it->Next();
+		it = pNextNode;
 	}
 
 	TRenderInterface::GetSingleton()->FlushDyingResources();
-	TTODO( "FUN_006120e0" );
+	AModelLoader::ResolveTextures();
 }
 
 // $Barnyard: FUNCTION 00613b50

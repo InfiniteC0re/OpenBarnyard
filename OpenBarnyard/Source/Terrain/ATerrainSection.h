@@ -37,6 +37,8 @@ public:
 		void SetGlow( TBOOL a_bIsGlow );
 
 		TBOOL           IsUsingLighting() const { return !ISZERO( m_eFlags & MNF_USE_LIGHTING ); }
+		TBOOL           IsGlow() const { return !ISZERO( m_eFlags & MNF_GLOW ); }
+
 		AWorldMaterial* GetAnimatedMaterial() const { return m_pAnimatedMaterial; }
 
 	public:
@@ -67,10 +69,6 @@ public:
 	friend class ACollisionDoneJob;
 
 public:
-	// Draws models of specified LOD
-	// Note: if trying to draw high LOD that is not loaded, low LOW will draw
-	void Draw( ATerrainLODType a_eLODType );
-
 	TBOOL IsPointInside( const Toshi::TVector4& a_rcPoint );
 
 	void LoadCollision();

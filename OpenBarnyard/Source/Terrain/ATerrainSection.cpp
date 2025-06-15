@@ -12,6 +12,7 @@
 #ifdef TOSHI_SKU_WINDOWS
 #  include "Platform/DX8/AWorldShader/AWorldMaterial_DX8.h"
 #  include "Platform/DX8/AWorldShader/AWorldShader_DX8.h"
+#  include "Platform/DX8/TRenderInterface_DX8.h"
 #endif // TOSHI_SKU_WINDOWS
 
 //-----------------------------------------------------------------------------
@@ -21,32 +22,6 @@
 #include <Core/TMemoryDebugOn.h>
 
 TOSHI_NAMESPACE_USING
-
-void ATerrainSection::Draw( ATerrainLODType a_eLODType )
-{
-	TASSERT( a_eLODType != ATerrainLODType_None );
-
-	if ( a_eLODType == ATerrainLODType_High && IsLODLoaded( ATerrainLODType_High ) )
-	{
-		// Draw models of the high LOD
-		for ( TINT i = 0; i < m_iNumHighModelFiles; i++ )
-		{
-			m_ppLODModelsData[ ATerrainLODType_High ][ i ]->Render();
-		}
-	}
-	else
-	{
-		// High LOD is still loading so let's check if we can render low LOD instead
-		if ( IsLODLoaded( ATerrainLODType_Low ) )
-		{
-			// Draw models of the low LOD
-			for ( TINT i = 0; i < m_iNumLowModelFiles; i++ )
-			{
-				m_ppLODModelsData[ ATerrainLODType_Low ][ i ]->Render();
-			}
-		}
-	}
-}
 
 // $Barnyard: FUNCTION 005ece30
 TBOOL ATerrainSection::IsPointInside( const Toshi::TVector4& a_rcPoint )
@@ -128,10 +103,7 @@ void ATerrainSection::LoadModels( ATerrainLODType a_eLODType )
 					ppLODBlocks[ i ] = pTerrain->AllocateLODBlock( a_eLODType, this );
 
 					if ( ppLODBlocks[ i ] == TNULL )
-					{
-						TASSERT( TFALSE, "Couldn't allocated new LOD block!" );
 						return;
-					}
 
 					ppLODBlocks[ i ]->m_bIsUnused = TFALSE;
 				}
@@ -178,6 +150,7 @@ void ATerrainSection::LoadModels( ATerrainLODType a_eLODType )
 	}
 }
 
+// $Barnyard: FUNCTION 005ed450
 void ATerrainSection::LoadMatlib( ATerrainLODType a_eLODType )
 {
 	TASSERT( a_eLODType == ATerrainLODType_High || a_eLODType == ATerrainLODType_Low );
@@ -219,8 +192,10 @@ void ATerrainSection::LoadMatlib( ATerrainLODType a_eLODType )
 	AAssetStreaming::GetSingleton()->AddMainThreadJob( pMatlibJob );
 }
 
+// $Barnyard: FUNCTION 005ed000
 void ATerrainSection::UnloadMatlib( ATerrainLODType a_eLODType )
 {
+	TINFO( "ATerrainSection: Unloading '%s' matlib\n", a_eLODType == ATerrainLODType_High ? m_szHighMatLibFilename : m_szLowMatLibFilename );
 	TASSERT( a_eLODType == ATerrainLODType_High || a_eLODType == ATerrainLODType_Low );
 
 	if ( a_eLODType == ATerrainLODType_High )
@@ -228,7 +203,7 @@ void ATerrainSection::UnloadMatlib( ATerrainLODType a_eLODType )
 		if ( m_pMatLibHigh )
 		{
 			AMaterialLibraryManager::GetSingleton()->UnloadTexturesOfLibrary( m_pMatLibHigh );
-			m_pMatLibHigh->Destroy();
+			AMaterialLibraryManager::List::GetSingleton()->DestroyLibrary( m_pMatLibHigh );
 			m_pMatLibHigh = TNULL;
 		}
 
@@ -243,7 +218,7 @@ void ATerrainSection::UnloadMatlib( ATerrainLODType a_eLODType )
 		if ( m_pMatLibLow )
 		{
 			AMaterialLibraryManager::GetSingleton()->UnloadTexturesOfLibrary( m_pMatLibLow );
-			m_pMatLibLow->Destroy();
+			AMaterialLibraryManager::List::GetSingleton()->DestroyLibrary( m_pMatLibLow );
 			m_pMatLibLow = TNULL;
 		}
 
@@ -286,9 +261,7 @@ void ATerrainSection::DestroyLOD( ATerrainLODType a_eLODType )
 
 		for ( TUINT i = 0; i < m_iNumHighMemBlocksUsed; i++ )
 		{
-			auto pBlock = m_ppHighLODBlocks[ i ];
-
-			if ( pBlock )
+			if ( ATerrainLODBlock* pBlock = m_ppHighLODBlocks[ i ] )
 			{
 				m_ppHighLODBlocks[ i ] = TNULL;
 				pBlock->Assign( TNULL, ATerrainLODType_None );
@@ -301,9 +274,7 @@ void ATerrainSection::DestroyLOD( ATerrainLODType a_eLODType )
 	{
 		for ( TUINT i = 0; i < m_iNumLowMemBlocksUsed; i++ )
 		{
-			auto pBlock = m_ppLowLODBlocks[ i ];
-
-			if ( pBlock )
+			if ( ATerrainLODBlock* pBlock = m_ppLowLODBlocks[ i ] )
 			{
 				m_ppLowLODBlocks[ i ] = TNULL;
 				pBlock->Assign( TNULL, ATerrainLODType_None );
@@ -330,7 +301,8 @@ void ATerrainSection::RemoveFromStreamingQueue()
 
 			for ( TINT k = 0; k < uiNumLODBlocks; k++ )
 			{
-				ppLODBlocks[ k ]->Assign( TNULL, ATerrainLODType_None );
+				if ( ppLODBlocks[ k ] )
+					ppLODBlocks[ k ]->Assign( TNULL, ATerrainLODType_None );
 			}
 
 			SetLODQueued( i, TFALSE );

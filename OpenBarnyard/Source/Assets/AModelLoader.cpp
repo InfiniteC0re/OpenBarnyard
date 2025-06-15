@@ -352,6 +352,27 @@ void AModelLoader::DestroyMaterial( TMaterial* a_pMaterial )
 	}
 }
 
+// $Barnyard: FUNCTION 006120e0
+void AModelLoader::ResolveTextures()
+{
+	T2_FOREACH( ms_oUsedMaterials, it )
+	{
+		TTexture* pTexture = AMaterialLibraryManager::GetSingleton()->FindTexture( it->szTextureName );
+
+		if ( !pTexture )
+			pTexture = TRenderInterface::GetSingleton()->GetInvalidTexture();
+
+		if ( ASkinMaterial* pSkinMaterial = TDynamicCast<ASkinMaterial>( it->pMaterial ) )
+			pSkinMaterial->m_pTexture = pTexture;
+		else if ( AWorldMaterial* pWorldMaterial = TDynamicCast<AWorldMaterial>( it->pMaterial ) )
+			pWorldMaterial->SetTexture( 0, pTexture );
+		else if ( AGrassMaterial* pGrassMaterial = TDynamicCast<AGrassMaterial>( it->pMaterial ) )
+			pGrassMaterial->SetTexture( 0, pTexture );
+		else
+			TASSERT( TFALSE && "Add other materials" );
+	}
+}
+
 static constexpr const TCHAR* TOSHICGROUP_NAMES[] = {
 	"coll_support",
 	"coll_player",
