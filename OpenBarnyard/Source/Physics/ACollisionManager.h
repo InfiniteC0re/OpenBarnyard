@@ -52,14 +52,20 @@ public:
 	//-----------------------------------------------------------------------------
 	AObjectHashMain* CreateObjectHashMain( HashType a_eHashType );
 
+	void UpdateVehicles( TFLOAT a_fDeltaTime );
+
 private:
 	void CreateStatic();
 	void DestroyStatic();
 
+	inline static TBOOL ms_bDebugDrawUsedBBox = TFALSE;
+
 private:
 	TINT field2_0x28;
 	// ...
-	TFLOAT field403_0x1bc;
-	TFLOAT field404_0x1c0;
-	TBOOL  field405_0x1c4;
+	TFLOAT m_fVehiclesUpdateTime;
+	TFLOAT m_fVehiclesUpdateRate;
+	TBOOL  m_bEnableVehiclesUpdate;
+
+
 };
