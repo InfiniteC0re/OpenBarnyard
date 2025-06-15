@@ -7,35 +7,40 @@
 
 TOSHI_NAMESPACE_START
 
-struct TModelCollisionType
+struct TModelCollisionGroup
 {
-	TModelCollisionType();
-	~TModelCollisionType();
+	TModelCollisionGroup();
+	~TModelCollisionGroup();
+
+	TCollisionCommon::TOSHICGROUPFLAG GetGroupFlag() const { return TCollisionCommon::TOSHICGROUPFLAG( 1 << ( eCollGroup % 32 ) ); }
 
 	TString8                                   strName;
-	TUINT                                      uiUnk1 = 0;
-	TUINT                                      uiUnk2 = 0;
+	TUINT                                      uiUnk1     = 0;
+	TUINT                                      uiNumFaces = 0;
 	T2DynamicVector<TTMDBase::CollisionTypeS1> vecS1;
 	TUINT                                      uiUnk3 = 0;
 	TCollisionCommon::TOSHICGROUP              eCollGroup;
 };
 
-class TModelCollisionMesh
+class TModelCollisionData
 {
 public:
 	friend class TModel;
 
 public:
-	TModelCollisionMesh();
-	~TModelCollisionMesh();
+	TModelCollisionData();
+	~TModelCollisionData();
+
+	void GetTriangleVertices( TUINT a_uiFaceId, Toshi::TVector3* a_rVertices[ 3 ] );
+	TINT GetGroupForTriangleImp( TUINT a_uiFaceId );
 
 	TINT                 GetBoneID() const { return m_iBoneID; }
 	TVector3*            GetVertices() const { return m_pVertices; }
 	TUINT                GetNumVertices() const { return m_uiNumVertices; }
 	TUINT16*             GetIndices() const { return m_pIndices; }
 	TUINT                GetNumIndices() const { return m_uiNumIndices; }
-	TINT                 GetNumCollTypes() const { return m_vecCollTypes.Size(); }
-	TModelCollisionType& GetCollType( TINT a_iIndex ) { return m_vecCollTypes[ a_iIndex ]; }
+	TINT                 GetNumCollGroups() const { return m_vecCollGroups.Size(); }
+	TModelCollisionGroup& GetCollGroup( TINT a_iIndex ) { return m_vecCollGroups[ a_iIndex ]; }
 
 protected:
 	TINT                                 m_iBoneID;
@@ -43,7 +48,7 @@ protected:
 	TUINT                                m_uiNumVertices;
 	TUINT16*                             m_pIndices;
 	TUINT                                m_uiNumIndices;
-	T2DynamicVector<TModelCollisionType> m_vecCollTypes;
+	T2DynamicVector<TModelCollisionGroup> m_vecCollGroups;
 };
 
 TOSHI_NAMESPACE_END

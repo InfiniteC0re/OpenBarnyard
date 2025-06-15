@@ -127,7 +127,7 @@ public:
 	TSkeleton* GetSkeleton() const { return m_pSkeleton; }
 
 	TINT                 GetNumCollisionMeshes() const { return m_iNumCollisionMeshes; }
-	TModelCollisionMesh* GetCollisionMeshes() const { return m_pCollisionMeshes; }
+	TModelCollisionData* GetCollisionMeshes() const { return m_pCollisionMeshes; }
 
 	template <class T>
 	T* CastSymbol( const TCHAR* a_szSymbolName ) { return TSTATICCAST( T, GetSymbol( a_szSymbolName ) ); }
@@ -151,7 +151,7 @@ public:
 	TModelLOD            m_LODs[ MAX_NUM_LODS ];
 	TFLOAT               m_aLODDistances[ 4 ];
 	TINT                 m_iNumCollisionMeshes;
-	TModelCollisionMesh* m_pCollisionMeshes;
+	TModelCollisionData* m_pCollisionMeshes;
 	TTRB*                m_pTRB;
 	const TCHAR*         m_szSymbolPrefix;
 	TUINT8               m_szSymbolPrefixLength;

@@ -52,11 +52,11 @@ struct CollisionTypeS1
 	TUINT16 uiUnk2;
 };
 
-struct CollisionType
+struct CollisionGroup
 {
 	const TCHAR*     pszName;
 	TUINT            iUnk1;
-	TUINT            iUnk2;
+	TUINT            uiNumFaces;
 	TUINT            iUnk3;
 	TINT             iSomeCount;
 	CollisionTypeS1* pS1;
@@ -70,7 +70,7 @@ struct CollisionMesh
 	TUINT16*       m_pIndices;
 	TUINT32        m_uiNumIndices;
 	TUINT32        m_uiNumCollTypes;
-	CollisionType* m_pCollTypes;
+	CollisionGroup* m_pCollGroups;
 };
 
 struct CollisionHeader

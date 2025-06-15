@@ -507,12 +507,12 @@ TBOOL AModelLoader::AModelLoaderLoadTRBCallback( TModel* a_pModel )
 	// Resolve all collision groups
 	for ( TINT i = 0; i < a_pModel->GetNumCollisionMeshes(); i++ )
 	{
-		TModelCollisionMesh* pCollMesh     = &a_pModel->GetCollisionMeshes()[ i ];
-		TINT                 iNumCollTypes = pCollMesh->GetNumCollTypes();
+		TModelCollisionData* pCollMesh     = &a_pModel->GetCollisionMeshes()[ i ];
+		TINT                 iNumCollTypes = pCollMesh->GetNumCollGroups();
 
 		for ( TINT k = 0; k < iNumCollTypes; k++ )
 		{
-			TModelCollisionType& rCollType = pCollMesh->GetCollType( k );
+			TModelCollisionGroup& rCollType = pCollMesh->GetCollGroup( k );
 
 			rCollType.eCollGroup = GetCollisionGroup( rCollType.strName );
 		}

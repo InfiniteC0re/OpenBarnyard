@@ -66,7 +66,7 @@ TBOOL TModel::LoadTRB()
 	TASSERT( TNULL != pCollisionHeader );
 
 	m_iNumCollisionMeshes = pCollisionHeader->m_iNumMeshes;
-	m_pCollisionMeshes    = new TModelCollisionMesh[ pCollisionHeader->m_iNumMeshes ];
+	m_pCollisionMeshes    = new TModelCollisionData[ pCollisionHeader->m_iNumMeshes ];
 
 	// Copy info about the collision meshes
 	for ( TINT i = 0; i < pCollisionHeader->m_iNumMeshes; i++ )
@@ -82,24 +82,24 @@ TBOOL TModel::LoadTRB()
 		collisionMesh.m_uiNumIndices  = collisionMeshHeader.m_uiNumIndices;
 
 		// Reserve space for collision types
-		collisionMesh.m_vecCollTypes.SetSize( collisionMeshHeader.m_uiNumCollTypes, TModelCollisionType{} );
+		collisionMesh.m_vecCollGroups.SetSize( collisionMeshHeader.m_uiNumCollTypes, TModelCollisionGroup{} );
 
 		// Copy collision types
 		for ( TUINT k = 0; k < collisionMeshHeader.m_uiNumCollTypes; k++ )
 		{
-			collisionMesh.m_vecCollTypes[ k ].strName = collisionMeshHeader.m_pCollTypes[ k ].pszName;
-			collisionMesh.m_vecCollTypes[ k ].uiUnk1  = collisionMeshHeader.m_pCollTypes[ k ].iUnk1;
-			collisionMesh.m_vecCollTypes[ k ].uiUnk2  = collisionMeshHeader.m_pCollTypes[ k ].iUnk2;
+			collisionMesh.m_vecCollGroups[ k ].strName    = collisionMeshHeader.m_pCollGroups[ k ].pszName;
+			collisionMesh.m_vecCollGroups[ k ].uiUnk1     = collisionMeshHeader.m_pCollGroups[ k ].iUnk1;
+			collisionMesh.m_vecCollGroups[ k ].uiNumFaces = collisionMeshHeader.m_pCollGroups[ k ].uiNumFaces;
 
 			// TODO: figure out what it is
-			collisionMesh.m_vecCollTypes[ k ].vecS1.SetSize( collisionMeshHeader.m_pCollTypes[ k ].iSomeCount );
-			collisionMesh.m_vecCollTypes[ k ].uiUnk3     = 0;
-			collisionMesh.m_vecCollTypes[ k ].eCollGroup = TCollisionCommon::TOSHICGROUP_SUPPORT;
+			collisionMesh.m_vecCollGroups[ k ].vecS1.SetSize( collisionMeshHeader.m_pCollGroups[ k ].iSomeCount );
+			collisionMesh.m_vecCollGroups[ k ].uiUnk3     = 0;
+			collisionMesh.m_vecCollGroups[ k ].eCollGroup = TCollisionCommon::TOSHICGROUP_SUPPORT;
 
-			for ( TINT j = 0; j < collisionMeshHeader.m_pCollTypes[ k ].iSomeCount; j++ )
+			for ( TINT j = 0; j < collisionMeshHeader.m_pCollGroups[ k ].iSomeCount; j++ )
 			{
-				collisionMesh.m_vecCollTypes[ k ].vecS1[ j ].uiUnk1 = collisionMeshHeader.m_pCollTypes[ k ].pS1[ j ].uiUnk1;
-				collisionMesh.m_vecCollTypes[ k ].vecS1[ j ].uiUnk2 = collisionMeshHeader.m_pCollTypes[ k ].pS1[ j ].uiUnk2;
+				collisionMesh.m_vecCollGroups[ k ].vecS1[ j ].uiUnk1 = collisionMeshHeader.m_pCollGroups[ k ].pS1[ j ].uiUnk1;
+				collisionMesh.m_vecCollGroups[ k ].vecS1[ j ].uiUnk2 = collisionMeshHeader.m_pCollGroups[ k ].pS1[ j ].uiUnk2;
 			}
 		}
 	}

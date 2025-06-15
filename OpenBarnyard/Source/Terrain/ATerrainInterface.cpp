@@ -5,7 +5,7 @@
 #include "Assets/AAssetStreaming.h"
 #include "ALoadScreen.h"
 #include "Physics/ACollisionModelSet.h"
-#include "Physics/ATerrainPhysicsManager.h"
+#include "Physics/AOpcodeCache.h"
 
 #include <Toshi/T2String.h>
 
@@ -82,7 +82,7 @@ ATerrainInterface::ATerrainInterface( TINT a_iUnused1, TINT a_iUnused2, TINT a_i
 		pJobSlot++;
 	}
 
-	g_pTerrainPhysicsManager->Create();
+	ACollisionModel::CreateStaticCache();
 	m_iCurrentSection          = a_iStartVISGroup;
 	m_iPreviousSection         = -1;
 	m_bUnused4                 = TFALSE;
@@ -104,7 +104,9 @@ ATerrainInterface::ATerrainInterface( TINT a_iUnused1, TINT a_iUnused2, TINT a_i
 ATerrainInterface::~ATerrainInterface()
 {
 	TIMPLEMENT();
+
 	m_bIsLoaded = TFALSE;
+	ACollisionModel::DestroyStaticCache();
 
 	m_UsedModelLoaderJobs.Clear();
 	m_FreeModelLoaderJobs.Clear();

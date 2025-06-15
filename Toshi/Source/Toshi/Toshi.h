@@ -35,3 +35,4 @@
 #include "Toshi/TStringManager.h"
 
 #include "Math/TMathInline.h"
+#include "Math/TMath.h"

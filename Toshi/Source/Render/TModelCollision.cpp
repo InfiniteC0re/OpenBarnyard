@@ -9,24 +9,51 @@
 
 TOSHI_NAMESPACE_START
 
-TModelCollisionMesh::TModelCollisionMesh()
-    : m_vecCollTypes( GetGlobalAllocator(), 64, 64 )
+TModelCollisionData::TModelCollisionData()
+    : m_vecCollGroups( GetGlobalAllocator(), 64, 64 )
     , m_pVertices( TNULL )
     , m_pIndices( TNULL )
     , m_uiNumIndices( 0 )
 {
 }
 
-TModelCollisionMesh::~TModelCollisionMesh()
+TModelCollisionData::~TModelCollisionData()
 {
 }
 
-TModelCollisionType::TModelCollisionType()
+// $Barnyard: FUNCTION 006cded0
+void TModelCollisionData::GetTriangleVertices( TUINT a_uiFaceId, Toshi::TVector3* a_rVertices[ 3 ] )
+{
+	TASSERT( a_uiFaceId * 3 < m_uiNumIndices );
+
+    TUINT16* pIndex  = m_pIndices + a_uiFaceId * 3;
+	a_rVertices[ 0 ] = &m_pVertices[ pIndex[ 0 ] ];
+	a_rVertices[ 1 ] = &m_pVertices[ pIndex[ 1 ] ];
+	a_rVertices[ 3 ] = &m_pVertices[ pIndex[ 2 ] ];
+}
+
+// $Barnyard: FUNCTION 006ce100
+TINT TModelCollisionData::GetGroupForTriangleImp( TUINT a_uiFaceId )
+{
+	TUINT uiFaceCounter = 0;
+
+    for ( TINT i = 0; i < m_vecCollGroups.Size(); i++ )
+    {
+		uiFaceCounter += m_vecCollGroups[ i ].uiNumFaces;
+
+        if ( a_uiFaceId < uiFaceCounter )
+			return i;
+    }
+
+    return 0;
+}
+
+TModelCollisionGroup::TModelCollisionGroup()
     : vecS1( GetGlobalAllocator(), 64, 64 )
 {
 }
 
-TModelCollisionType::~TModelCollisionType()
+TModelCollisionGroup::~TModelCollisionGroup()
 {
 }
 
