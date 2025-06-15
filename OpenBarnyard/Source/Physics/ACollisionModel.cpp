@@ -91,7 +91,7 @@ TBOOL ACollisionModel::Create( TINT a_iMeshIndex, Toshi::TModel* a_pModel )
 }
 
 // $Barnyard: FUNCTION 00619170
-TBOOL ACollisionModel::CollideRay( ACollisionModelInstance* a_pModelInstance, const Toshi::TVector4& a_rcRayOrigin, const Toshi::TVector4& a_rcRayDir, TFLOAT& a_rfMaxDistance, TCollisionCommon::TOSHICGROUPFLAG a_eCollisionGroups, TBOOL a_bCulling )
+TBOOL ACollisionModel::CollideRay( ACollisionModelInstance* a_pModelInstance, const Toshi::TVector4& a_rcRayOrigin, const Toshi::TVector4& a_rcRayDir, TFLOAT& a_rfMaxDistance, TCollisionCommon::TOSHICGROUPFLAG a_eCGroupsMask, TBOOL a_bCulling )
 {
 	// Get transform of the collision mesh attached to a bone
 	TMatrix44 matBoneTransform;
@@ -174,7 +174,7 @@ TBOOL ACollisionModel::CollideRay( ACollisionModelInstance* a_pModelInstance, co
 
 			if ( iGroup != m_aIgnoreGroups[ 1 ] &&
 				 iGroup != m_aIgnoreGroups[ 0 ] &&
-			     HASANYFLAG( a_eCollisionGroups, pCollData->GetCollGroup( i ).GetGroupFlag() ) )
+			     ( a_eCGroupsMask & pCollData->GetCollGroup( i ).GetGroupFlag() ) == 0 )
 			{
 				// This triangle is not ignored and matches the collision group
 				uiFaceIndex = uiFaceIndex;

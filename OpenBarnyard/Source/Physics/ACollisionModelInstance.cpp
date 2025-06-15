@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "ACollisionModelInstance.h"
+#include "ACollisionModelSet.h"
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
@@ -60,4 +61,20 @@ void ACollisionModelInstance::GetTransformForBone( TINT a_iBone, TMatrix44& a_rO
 TFLOAT ACollisionModelInstance::GetScale() const
 {
 	return ( m_pTransformObject ) ? m_pTransformObject->GetScale().x : 0.0f;
+}
+
+// $Barnyard: FUNCTION 0061ae40
+TBOOL ACollisionModelInstance::CollideRay( const TVector4& a_rcRayOrigin, const TVector4& a_rcRayDir, TFLOAT& a_rfMaxDistance, TCollisionCommon::TOSHICGROUPFLAG a_eCGroupsMask, TBOOL a_bCulling )
+{
+	TBOOL bCollided = TFALSE;
+
+	for ( TINT i = 0; i < m_pCollisionModelSet->m_iNumMeshes; i++ )
+	{
+		if ( m_pCollisionModelSet->m_vecCollModels[ i ]->CollideRay( this, a_rcRayOrigin, a_rcRayDir, a_rfMaxDistance, a_eCGroupsMask, a_bCulling ) )
+		{
+			bCollided = TTRUE;
+		}
+	}
+
+	return bCollided;
 }

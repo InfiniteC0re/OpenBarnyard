@@ -71,6 +71,8 @@ public:
 	// Note: if trying to draw high LOD that is not loaded, low LOW will draw
 	void Draw( ATerrainLODType a_eLODType );
 
+	TBOOL IsPointInside( const Toshi::TVector4& a_rcPoint );
+
 	void LoadCollision();
 	void LoadModels( ATerrainLODType a_eLODType );
 	void LoadMatlib( ATerrainLODType a_eLODType );

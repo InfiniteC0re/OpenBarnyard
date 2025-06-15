@@ -5,6 +5,7 @@
 #include "Assets/AMaterialLibraryManager.h"
 #include "Render/AWorldShader/AWorldMaterial.h"
 #include "Physics/ACollisionModelSet.h"
+#include "Physics/APhysics.h"
 
 #include <Toshi/TScheduler.h>
 
@@ -45,6 +46,19 @@ void ATerrainSection::Draw( ATerrainLODType a_eLODType )
 			}
 		}
 	}
+}
+
+// $Barnyard: FUNCTION 005ece30
+TBOOL ATerrainSection::IsPointInside( const Toshi::TVector4& a_rcPoint )
+{
+	if ( m_pCollisionModelData && m_pCollisionModelData->m_pCollisionModelSet )
+	{
+		TFLOAT fMaxDistance = 100.0f;
+
+		return m_pCollisionModelData->m_oCollisionInstance.CollideRay( a_rcPoint, APhysics::g_vecGravityDirection, fMaxDistance, TCollisionCommon::TOSHICGROUPFLAG_NONE, TFALSE );
+	}
+
+	return TFALSE;
 }
 
 // $Barnyard: FUNCTION 005ed310

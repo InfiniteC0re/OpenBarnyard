@@ -3,6 +3,8 @@
 namespace APhysics
 {
 
+extern Toshi::TVector4 g_vecGravityDirection;
+
 class ASweptSphere
 {
 

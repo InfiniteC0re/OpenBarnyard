@@ -9,5 +9,10 @@
 
 TOSHI_NAMESPACE_USING
 
+namespace APhysics
+{
 
+Toshi::TVector4 g_vecGravityDirection;
+
+}
 

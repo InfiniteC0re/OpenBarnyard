@@ -16,6 +16,17 @@ public:
 
 	TFLOAT GetScale() const;
 
+	//-----------------------------------------------------------------------------
+	// Collision Detection
+	//-----------------------------------------------------------------------------
+	TBOOL CollideRay(
+	    const Toshi::TVector4&                   a_rcRayOrigin,
+	    const Toshi::TVector4&                   a_rcRayDir,
+	    TFLOAT&                                  a_rfMaxDistance,
+	    Toshi::TCollisionCommon::TOSHICGROUPFLAG a_eCGroupsMask,
+	    TBOOL                                    a_bCulling
+	);
+
 private:
 	ACollisionModelSet*      m_pCollisionModelSet;
 	Toshi::TSceneObject*     m_pSceneObject;

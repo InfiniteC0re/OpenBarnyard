@@ -16,4 +16,6 @@ private:
 	Toshi::TModel*                        m_pModel;
 	TINT                                  m_iNumMeshes;
 	TINT                                  field5_0x90;
+
+	friend class ACollisionModelInstance;
 };
