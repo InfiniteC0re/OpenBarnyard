@@ -33,7 +33,7 @@ TFLOAT ACollisionObject::GetRadius()
 }
 
 // $Barnyard: FUNCTION 004130f0
-const TVector3& ACollisionObject::GetPosition()
+const TVector4& ACollisionObject::GetPosition()
 {
 	return GetObjectPosition();
 }

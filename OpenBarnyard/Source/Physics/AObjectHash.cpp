@@ -48,7 +48,7 @@ AObjectHash::CellObject* AObjectHash::AssignHash( AHashedObject* a_pObject )
 	// This will be the return value
 	AObjectHash::CellObject* pCellObject = TNULL;
 
-	const TVector3& rPosition = a_pObject->GetPosition();
+	const TVector4& rPosition = a_pObject->GetPosition();
 	TFLOAT          fRadius   = a_pObject->GetRadius();
 
 	// Calculate current position on the grid
@@ -124,6 +124,42 @@ void AObjectHash::RemoveHash( AHashedObject* a_pObject )
 
 	// Remove hash from the object
 	a_pObject->m_pHashNode = TNULL;
+}
+
+// $Barnyard: FUNCTION 0061f2f0
+void AObjectHash::Debug_DrawUsedBBox()
+{
+	TFLOAT fMaxX = -FLT_MAX;
+	TFLOAT fMaxZ = -FLT_MAX;
+	TFLOAT fMinX = FLT_MAX;
+	TFLOAT fMinZ = FLT_MAX;
+
+	for ( TUINT i = 0; i < GRID_SIZE; i++ )
+	{
+		for ( TUINT k = 0; k < GRID_SIZE; k++ )
+		{
+			TNodeList<CellObject>& rCellBucket = m_aCellBuckets[ i + k * GRID_SIZE ];
+
+			T2_FOREACH( rCellBucket, it )
+			{
+				AHashedObject* pHashedObject = it->pHashedObject;
+
+				TVector4 vecPos  = pHashedObject->GetPosition();
+				TFLOAT   fRadius = pHashedObject->GetRadius();
+
+				fMinX = TMath::Min( fMinX, vecPos.x - fRadius );
+				fMinZ = TMath::Min( fMinZ, vecPos.z - fRadius );
+				fMaxX = TMath::Max( fMaxX, vecPos.x + fRadius );
+				fMaxZ = TMath::Max( fMaxZ, vecPos.z + fRadius );
+			}
+		}
+	}
+
+#ifdef TOSHI_DEBUG
+
+	// [6/15/2025 InfiniteC0re] TODO: draw the bounding box
+
+#endif // TOSHI_DEBUG
 }
 
 // $Barnyard: FUNCTION 0061f040

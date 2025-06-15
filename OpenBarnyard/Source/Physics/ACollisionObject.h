@@ -27,7 +27,7 @@ public:
 	// AHashedObjectAuto
 	//-----------------------------------------------------------------------------
 	virtual TFLOAT                 GetRadius() OVERRIDE;
-	virtual const Toshi::TVector3& GetPosition() OVERRIDE;
+	virtual const Toshi::TVector4& GetPosition() OVERRIDE;
 
 	//-----------------------------------------------------------------------------
 	// Own methods
@@ -40,7 +40,7 @@ public:
 	virtual TBOOL                  VTable0x30( void*, void*, void*, void*, void*, void* );
 	virtual void                   VTable0x34();
 	virtual const Toshi::TSphere&  GetObjectSphere()                           = 0; // VTable: 0x38
-	virtual const Toshi::TVector3& GetObjectPosition()                         = 0; // VTable: 0x3C
+	virtual const Toshi::TVector4& GetObjectPosition()                         = 0; // VTable: 0x3C
 	virtual TFLOAT                 GetObjectRadius()                           = 0; // VTable: 0x40
 	virtual void                   VTable0x44( Toshi::TVector4& a_rOutVector ) = 0; // VTable: 0x44
 	virtual TFLOAT                 GetHeightScale()                            = 0; // VTable: 0x48

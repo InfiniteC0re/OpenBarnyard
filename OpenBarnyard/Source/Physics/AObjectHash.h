@@ -29,7 +29,10 @@ public:
 	void InitialiseCache( TFLOAT a_fMinX, TFLOAT a_fMinY, TFLOAT a_fMaxX, TFLOAT a_fMaxY, TINT a_iNumCellsX, TINT a_iNumCellsY );
 
 	CellObject* AssignHash( AHashedObject* a_pObject );
-	void RemoveHash( AHashedObject* a_pObject );
+	void        RemoveHash( AHashedObject* a_pObject );
+
+	// It's purpose probably was to draw something in debug mode, but the function wasn't completely removed, so it does nothing but calculates the BBox
+	void Debug_DrawUsedBBox();
 
 protected:
 	//...

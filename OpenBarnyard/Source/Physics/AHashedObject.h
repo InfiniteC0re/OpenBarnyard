@@ -11,7 +11,7 @@ public:
 	virtual ~AHashedObject();
 
 	virtual TFLOAT                 GetRadius()   = 0;
-	virtual const Toshi::TVector3& GetPosition() = 0;
+	virtual const Toshi::TVector4& GetPosition() = 0;
 	virtual TBOOL                  Unknown3();
 	virtual void                   SetUnk2( void* a_pUnk );
 	virtual void*                  GetUnk2();
