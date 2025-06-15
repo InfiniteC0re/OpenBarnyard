@@ -158,7 +158,7 @@ private:
 	void FlushJobs();
 
 private:
-	static TINT GetCurrentSectionID();
+	static TINT GetSectionPlayerIsIn();
 	static TINT GetPersistantSectionID();
 
 	inline static TINT  ms_iPersistantVISGroupIndex = -1;

@@ -6,6 +6,7 @@
 #include "ALoadScreen.h"
 #include "Physics/ACollisionModelSet.h"
 #include "Physics/AOpcodeCache.h"
+#include "Cameras/ACameraManager.h"
 
 #include <Toshi/T2String.h>
 
@@ -91,7 +92,7 @@ ATerrainInterface::ATerrainInterface( TINT a_iUnused1, TINT a_iUnused2, TINT a_i
 	m_cbOnCollisionModelLoaded = TNULL;
 	m_cbOnModelLoaded          = TNULL;
 	m_cbOnVISGroupChanged      = TNULL;
-	m_fnGetCurrentVISGroup     = GetCurrentSectionID;
+	m_fnGetCurrentVISGroup     = GetSectionPlayerIsIn;
 
 	for ( TUINT i = 0; i < NUM_LIGHT_MAGS; i++ )
 	{
@@ -1150,10 +1151,38 @@ void ATerrainInterface::UpdateNightMaterials()
 	TIMPLEMENT();
 }
 
-TINT ATerrainInterface::GetCurrentSectionID()
+// $Barnyard: FUNCTION 005e8de0
+TINT ATerrainInterface::GetSectionPlayerIsIn()
 {
-	TIMPLEMENT();
-	return 0;
+	TASSERT( TTRUE == IsSingletonCreated() );
+
+	if ( ACamera* pCurrentCamera = ACameraManager::GetSingleton()->GetCurrentCamera() )
+	{
+		TVector4& vecCameraPos = pCurrentCamera->GetMatrix().GetTranslation();
+
+		TINT         iCurrSection = ms_pSingleton->m_iCurrentSection;
+		ATerrainVIS* pVIS         = ms_pSingleton->m_pTerrainVIS;
+
+		// Check if we are still in that section
+		if ( iCurrSection > -1 && iCurrSection < pVIS->m_iNumSections )
+		{
+			if ( pVIS->m_pSections[ iCurrSection ].IsPointInside( vecCameraPos ) )
+			{
+				return iCurrSection;
+			}
+		}
+
+		// We are not in that section anymore, so look through all of them
+		for ( TINT i = 0; i < pVIS->m_iNumSections; i++ )
+		{
+			if ( pVIS->m_pSections[ i ].IsPointInside( vecCameraPos ) )
+			{
+				return i;
+			}
+		}
+	}
+
+	return -1;
 }
 
 TINT ATerrainInterface::GetPersistantSectionID()

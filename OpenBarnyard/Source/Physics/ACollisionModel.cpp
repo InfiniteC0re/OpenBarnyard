@@ -97,7 +97,7 @@ TBOOL ACollisionModel::CollideRay( ACollisionModelInstance* a_pModelInstance, co
 	TMatrix44 matBoneTransform;
 	a_pModelInstance->GetTransformForBone( m_pModel->GetCollisionMeshes()[ m_iMeshIndex ].GetBoneID(), matBoneTransform );
 
-	TFLOAT fScale = TMath::Min( 0.001f, a_pModelInstance->GetScale() );
+	TFLOAT fScale = TMath::Max( 0.001f, a_pModelInstance->GetScale() );
 
 	// Perform fast ray collision detection
 	if ( !CollideRayFast( a_rcRayOrigin, a_rcRayDir, a_rfMaxDistance, matBoneTransform, fScale ) )
@@ -177,14 +177,13 @@ TBOOL ACollisionModel::CollideRay( ACollisionModelInstance* a_pModelInstance, co
 			     ( a_eCGroupsMask & pCollData->GetCollGroup( i ).GetGroupFlag() ) == 0 )
 			{
 				// This triangle is not ignored and matches the collision group
-				uiFaceIndex = uiFaceIndex;
+				uiFaceIndex = pFace->mFaceID;
 				fDistance   = pFace->mDistance;
 			}
 		}
 
 		if ( uiFaceIndex != -1 )
 		{
-			// TODO: SET DISTANCE
 			a_rfMaxDistance = fDistance * fScale;
 			return TTRUE;
 		}

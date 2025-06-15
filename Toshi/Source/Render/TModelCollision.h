@@ -12,7 +12,7 @@ struct TModelCollisionGroup
 	TModelCollisionGroup();
 	~TModelCollisionGroup();
 
-	TCollisionCommon::TOSHICGROUPFLAG GetGroupFlag() const { return TCollisionCommon::TOSHICGROUPFLAG( 1 << ( eCollGroup % 32 ) ); }
+	TCollisionCommon::TOSHICGROUPFLAG GetGroupFlag() const { return TCollisionCommon::TOSHICGROUPFLAG( 1U << ( eCollGroup % 32U ) ); }
 
 	TString8                                   strName;
 	TUINT                                      uiUnk1     = 0;

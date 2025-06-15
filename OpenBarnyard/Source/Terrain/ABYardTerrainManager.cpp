@@ -86,6 +86,6 @@ void ABYardTerrainManager::StartLoading()
 
 	if ( ATerrainInterface::ms_bAutoVIS )
 	{
-		pTerrain->m_fnGetCurrentVISGroup = ATerrainInterface::GetCurrentSectionID;
+		pTerrain->m_fnGetCurrentVISGroup = ATerrainInterface::GetSectionPlayerIsIn;
 	}
 }

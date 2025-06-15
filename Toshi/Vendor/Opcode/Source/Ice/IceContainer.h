@@ -54,6 +54,16 @@
 									return *this;
 								}
 
+		inline_	Container&		Add(uword entry)
+								{
+									// Resize if needed
+									if(mCurNbEntries==mMaxNbEntries)	Resize();
+
+									// Add new entry
+									mEntries[mCurNbEntries++]	= entry;
+									return *this;
+								}
+
 		inline_	Container&		Add(const udword* entries, udword nb)
 								{
 									// Resize if needed
