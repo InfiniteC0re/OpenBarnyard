@@ -18,7 +18,7 @@ TFreeList::TFreeList( TUINT a_uiItemSize, TINT a_iInitialSize, TINT a_iGrowSize,
 	TASSERT( m_iGrowSize >= 0 );
 	TASSERT( a_iInitialSize >= 0 );
 	SetGrowSize( a_iGrowSize );
-	m_iCapacity = a_iInitialSize;
+	m_iCapacity  = a_iInitialSize;
 	m_pPrevList  = ms_pLastList;
 	ms_pLastList = this;
 }

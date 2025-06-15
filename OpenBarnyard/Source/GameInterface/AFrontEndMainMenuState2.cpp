@@ -11,6 +11,7 @@
 #include "Sound/AMusicManager.h"
 #include "Input/AInputHandler.h"
 #include "GameInterface/AMovieState.h"
+#include "GameInterface/ADebugFlyState.h"
 #include "AOptionsState.h"
 #include "Cameras/ACameraManager.h"
 #include "Cameras/ABoneAttachCameraHelper.h"
@@ -176,6 +177,9 @@ void AFrontEndMainMenuState2::OnInsertion()
 	{
 		const TWCHAR* wszText = ALocaleManager::GetSingleton()->GetString( FRONTENDBUTTON_TEXTS[ i ] );
 
+		if ( i == 0 )
+			wszText = L"DEBUG FLY";
+
 		m_aButtons[ i ].Create( pFont, pFont->GetTextWidth( wszText ), wszText, 5.0f );
 		m_aButtons[ i ].SetFocusedColour( AGUI2STYLE_COLOR_FOCUSED );
 		m_aButtons[ i ].SetEnabledColour( AGUI2STYLE_COLOR_PRIMARY );
@@ -293,6 +297,9 @@ void AFrontEndMainMenuState2::OnMenuClose()
 
 	switch ( m_iActivatedButtonID )
 	{
+		case FRONTENDBUTTON_NEWGAME:
+			pPushGameState = new ADebugFlyState();
+			break;
 		case FRONTENDBUTTON_OPTIONS:
 			pPushGameState = new AOptionsState();
 			break;

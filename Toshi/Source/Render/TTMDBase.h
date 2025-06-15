@@ -64,12 +64,12 @@ struct CollisionGroup
 
 struct CollisionMesh
 {
-	TINT32         m_iBoneID;
-	TVector3*      m_pVertices;
-	TUINT32        m_uiNumVertices;
-	TUINT16*       m_pIndices;
-	TUINT32        m_uiNumIndices;
-	TUINT32        m_uiNumCollTypes;
+	TINT32          m_iBoneID;
+	TVector3*       m_pVertices;
+	TUINT32         m_uiNumVertices;
+	TUINT16*        m_pIndices;
+	TUINT32         m_uiNumIndices;
+	TUINT32         m_uiNumCollTypes;
 	CollisionGroup* m_pCollGroups;
 };
 

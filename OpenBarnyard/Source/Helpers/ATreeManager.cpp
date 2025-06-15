@@ -445,7 +445,7 @@ void ATreeManager::Render()
 		TUINT8 uiFlags;
 		TUINT8 uiUnused;
 		TUINT8 uiLightId;
-	} aLocatorRenderData[ MAX_SECTIONS ];
+	} aLocatorRenderData[ MAX_RENDERED_INSTANCES ];
 
 	if ( !m_llUsedTreeInstances.IsEmpty() )
 	{

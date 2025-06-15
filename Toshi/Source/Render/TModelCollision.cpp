@@ -17,8 +17,17 @@ TModelCollisionData::TModelCollisionData()
 {
 }
 
+// $Barnyard: FUNCTION 006ce390
+// $Barnyard: FUNCTION 006ce6d0
 TModelCollisionData::~TModelCollisionData()
 {
+	delete[] m_pVertices;
+	m_pVertices     = TNULL;
+	m_uiNumVertices = 0;
+
+	delete[] m_pIndices;
+	m_pIndices     = TNULL;
+	m_uiNumIndices = 0;
 }
 
 // $Barnyard: FUNCTION 006cded0
@@ -26,7 +35,7 @@ void TModelCollisionData::GetTriangleVertices( TUINT a_uiFaceId, Toshi::TVector3
 {
 	TASSERT( a_uiFaceId * 3 < m_uiNumIndices );
 
-    TUINT16* pIndex  = m_pIndices + a_uiFaceId * 3;
+	TUINT16* pIndex  = m_pIndices + a_uiFaceId * 3;
 	a_rVertices[ 0 ] = &m_pVertices[ pIndex[ 0 ] ];
 	a_rVertices[ 1 ] = &m_pVertices[ pIndex[ 1 ] ];
 	a_rVertices[ 3 ] = &m_pVertices[ pIndex[ 2 ] ];
@@ -37,15 +46,15 @@ TINT TModelCollisionData::GetGroupForTriangleImp( TUINT a_uiFaceId )
 {
 	TUINT uiFaceCounter = 0;
 
-    for ( TINT i = 0; i < m_vecCollGroups.Size(); i++ )
-    {
+	for ( TINT i = 0; i < m_vecCollGroups.Size(); i++ )
+	{
 		uiFaceCounter += m_vecCollGroups[ i ].uiNumFaces;
 
-        if ( a_uiFaceId < uiFaceCounter )
+		if ( a_uiFaceId < uiFaceCounter )
 			return i;
-    }
+	}
 
-    return 0;
+	return 0;
 }
 
 TModelCollisionGroup::TModelCollisionGroup()

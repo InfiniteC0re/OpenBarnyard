@@ -413,9 +413,9 @@ void ATerrainSection::SetLODEmpty( ATerrainLODType a_eLODType, TBOOL a_bEmpty )
 // $Barnyard: FUNCTION 005ecf60
 ATerrainSection::ModelNode::ModelNode()
     : m_eFlags( MNF_NONE )
-	, m_bCreated( TFALSE )
+    , m_bCreated( TFALSE )
     , m_pSceneObject( TNULL )
-	, m_pAnimatedMaterial( TNULL )
+    , m_pAnimatedMaterial( TNULL )
     , m_pCollisionModelSet( TNULL )
 {
 	m_szType[ 0 ] = '\0';

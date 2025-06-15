@@ -155,7 +155,12 @@ void TModel::UnloadTRB()
 {
 	if ( m_pTRB )
 	{
-		// TODO: reset data for collisions
+		// Reset pointers in collision meshes, since we don't own the data and don't want to free it
+		for ( TINT i = 0; i < m_iNumCollisionMeshes; i++ )
+		{
+			m_pCollisionMeshes[ i ].m_pVertices = TNULL;
+			m_pCollisionMeshes[ i ].m_pIndices  = TNULL;
+		}
 
 		if ( !m_bIsAssetFile )
 		{
@@ -169,9 +174,7 @@ void TModel::UnloadTRB()
 	m_bIsAssetFile = TFALSE;
 
 	if ( m_pCollisionMeshes )
-	{
-		TASSERT( TFALSE, "Unload collision data" );
-	}
+		delete[] m_pCollisionMeshes;
 
 	m_pCollisionMeshes = TNULL;
 	m_eFlags &= Flags_Loaded;

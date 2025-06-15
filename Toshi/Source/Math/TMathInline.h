@@ -31,7 +31,7 @@ constexpr TFLOAT MAXFLOAT       = FLT_MAX;
 constexpr TFLOAT MINFLOAT       = FLT_MIN;
 constexpr TFLOAT TFLOAT_EPSILON = FLT_EPSILON; // Renamed according to de Blob
 constexpr TFLOAT FLOATEPSILON   = FLT_EPSILON; // Both exist for some reason
-constexpr TFLOAT FLOAT_NAN     = NAN;
+constexpr TFLOAT FLOAT_NAN      = NAN;
 
 constexpr TFLOAT PI               = 3.1415927f;
 constexpr TFLOAT TWO_PI           = PI * 2;
