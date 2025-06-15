@@ -492,7 +492,7 @@ void ASkinShaderHAL::Render( Toshi::TRenderPacket* a_pRenderPacket )
 
 			TVertexBlockResource::HALBuffer vertexHALBuffer;
 			pVertexPool->GetHALBuffer( &vertexHALBuffer );
-			pD3DDevice->SetStreamSource( 0, vertexHALBuffer.apVertexBuffers[ 0 ], 0x28 );
+			pD3DDevice->SetStreamSource( 0, vertexHALBuffer.apVertexBuffers[ 0 ], 40 );
 
 			for ( TINT i = 0; i < pMesh->GetNumSubMeshes(); i++ )
 			{
@@ -523,7 +523,7 @@ void ASkinShaderHAL::Render( Toshi::TRenderPacket* a_pRenderPacket )
 				    0,
 				    pVertexPool->GetNumVertices(),
 				    indexHALBuffer.uiIndexOffset,
-				    pIndexPool->GetNumIndices()
+				    pIndexPool->GetNumIndices() - 2
 				);
 			}
 		}
