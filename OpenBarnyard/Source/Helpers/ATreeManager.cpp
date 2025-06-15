@@ -608,7 +608,7 @@ START_RENDERING:
 				pRenderContext->SetModelViewMatrix( matFOBTransform );
 
 				TModel*    pModel = pFOBModel->m_pSceneObject->GetInstance()->GetModel();
-				TModelLOD& rLOD   = pModel->GetLOD( iLODIndex );
+				TModelLOD& rLOD   = pModel->GetLOD( 0 );
 
 				for ( TINT k = 0; k < rLOD.iNumMeshes; k++ )
 					rLOD.ppMeshes[ k ]->Render();
