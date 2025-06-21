@@ -289,16 +289,16 @@ public:
 		return TConstruct<T>( &AtUnsafe( m_iNumElements++ ), std::forward<Args>( args )... );
 	}
 
-	void PushBack( const T& item = T() )
+	T& PushBack( const T& item = T() )
 	{
 		Grow( 1, sizeof( T ) );
-		TConstruct<T>( &AtUnsafe( m_iNumElements++ ), item );
+		return *TConstruct<T>( &AtUnsafe( m_iNumElements++ ), item );
 	}
 
-	void PushBack( T&& item )
+	T& PushBack( T&& item )
 	{
 		Grow( 1, sizeof( T ) );
-		TConstruct<T>( &AtUnsafe( m_iNumElements++ ), item );
+		return *TConstruct<T>( &AtUnsafe( m_iNumElements++ ), item );
 	}
 
 	void PopBack()

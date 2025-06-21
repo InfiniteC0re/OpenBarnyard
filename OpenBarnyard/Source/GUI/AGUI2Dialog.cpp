@@ -64,7 +64,7 @@ void AGUI2Dialog::SetColour( TUINT32 a_uiColour )
 {
 	for ( TINT i = 0; i < AGUI2ATTACHMENT_NUMOF; i++ )
 	{
-		m_aRectangles->SetColour( a_uiColour );
+		m_aRectangles[ i ].SetColour( a_uiColour );
 	}
 
 	AGUI2Element::SetColour( a_uiColour );
@@ -75,7 +75,7 @@ void AGUI2Dialog::SetAlpha( TFLOAT a_fAlpha )
 {
 	for ( TINT i = 0; i < AGUI2ATTACHMENT_NUMOF; i++ )
 	{
-		m_aRectangles->SetAlpha( a_fAlpha );
+		m_aRectangles[ i ].SetAlpha( a_fAlpha );
 	}
 
 	AGUI2Element::SetAlpha( a_fAlpha );

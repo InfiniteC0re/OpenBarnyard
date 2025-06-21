@@ -40,6 +40,8 @@ project "OpenBarnyard"
 		"Source/Helpers/**.cpp",
 		"Source/GameInterface/**.h",
 		"Source/GameInterface/**.cpp",
+		"Source/MiniGame/**.h",
+		"Source/MiniGame/**.cpp",
 		"Source/GUI/**.h",
 		"Source/GUI/**.cpp",
 		"Source/Input/**.h",

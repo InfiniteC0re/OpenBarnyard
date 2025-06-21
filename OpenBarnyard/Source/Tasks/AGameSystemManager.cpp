@@ -10,6 +10,7 @@
 #include "Helpers/ASimAnimModelHelperManager.h"
 #include "Helpers/ASkinLightingManager.h"
 #include "Helpers/ATreeManager.h"
+#include "MiniGame/AMiniGameManager.h"
 #include "Physics/ACollisionManager.h"
 #include "Physics/ABarnyardCollision.h"
 
@@ -69,6 +70,7 @@ TBOOL AGameSystemManager::OnCreate()
 	pScheduler->CreateTask<ACollisionManager>( this )->Create();
 	//ABarnyardCollision::CreateSingleton();
 
+	pScheduler->CreateTask<AMiniGameManager>( this )->Create();
 	pScheduler->CreateTask<ASimAnimModelHelperManager>( this )->Create();
 
 	AAssetStreaming::CreateSingleton()->SetFlag( TFALSE );
