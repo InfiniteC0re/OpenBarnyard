@@ -8,6 +8,8 @@
 //-----------------------------------------------------------------------------
 #include <Core/TMemoryDebugOn.h>
 
+TOSHI_NAMESPACE_USING
+
 // $Barnyard: FUNCTION 00615cc0
 AMaterialLibrary::AMaterialLibrary()
 {
@@ -26,9 +28,9 @@ TBOOL AMaterialLibrary::LoadTTLData( void* a_pTTLData )
 
 	if ( ms_bSkipLoadedTextures )
 	{
-		for ( TINT i = 0; i < pTTL->m_iNumTextures; i++ )
+		for ( TINT i = 0; i < pTTL->iNumTextures; i++ )
 		{
-			if ( !pLibList->FindTexture( pTTL->m_pTextureInfos[ i ].m_szFileName, TNULL, TNULL ) )
+			if ( !pLibList->FindTexture( pTTL->pTextureInfos[ i ].szFileName, TNULL, TNULL ) )
 			{
 				iNumTextures++;
 			}
@@ -36,7 +38,7 @@ TBOOL AMaterialLibrary::LoadTTLData( void* a_pTTLData )
 	}
 	else
 	{
-		iNumTextures = pTTL->m_iNumTextures;
+		iNumTextures = pTTL->iNumTextures;
 	}
 
 	m_pTexturesArray = new ATexture[ iNumTextures ];
@@ -45,23 +47,23 @@ TBOOL AMaterialLibrary::LoadTTLData( void* a_pTTLData )
 
 	for ( TINT i = 0; i < iNumTextures; i++ )
 	{
-		auto pTexInfo = &pTTL->m_pTextureInfos[ i ];
+		auto pTexInfo = &pTTL->pTextureInfos[ i ];
 
-		if ( !ms_bSkipLoadedTextures || !pLibList->FindTexture( pTexInfo->m_szFileName, TNULL, TNULL ) )
+		if ( !ms_bSkipLoadedTextures || !pLibList->FindTexture( pTexInfo->szFileName, TNULL, TNULL ) )
 		{
-			TASSERT( pTexInfo->m_bIsT2Texture == TRUE, "No support of other texture types" );
-			m_pTextures[ i ].Name = pTexInfo->m_szFileName;
+			TASSERT( pTexInfo->eFormat == TTEX_FMT_WIN_DDS, "No support of other texture types" );
+			m_pTextures[ i ].Name = pTexInfo->szFileName;
 
-			if ( pTexInfo->m_bIsT2Texture == TRUE )
+			if ( pTexInfo->eFormat == TTEX_FMT_WIN_DDS )
 			{
 				auto pTexture = new Toshi::T2Texture;
 
 				if ( pTexture )
 				{
-					void* pData = TMalloc( pTexInfo->m_uiDataSize );
+					void* pData = TMalloc( pTexInfo->uiDataSize );
 
-					Toshi::TUtil::MemCopy( pData, pTexInfo->m_pData, pTexInfo->m_uiDataSize );
-					pTexture->SetData( pData, pTexInfo->m_uiDataSize );
+					Toshi::TUtil::MemCopy( pData, pTexInfo->pData, pTexInfo->uiDataSize );
+					pTexture->SetData( pData, pTexInfo->uiDataSize );
 					pTexture->Load();
 				}
 

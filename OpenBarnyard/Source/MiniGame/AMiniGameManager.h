@@ -28,11 +28,11 @@ public:
 	    TINT                    a_iUnk3,
 	    TINT                    a_iUnk4,
 	    TINT                    a_iUnk5,
-	    TINT                    a_iUnk6,
+	    TINT                    a_iOrderId,
 	    TINT                    a_iUnk7
 	);
 
-	AMiniGame& RegisterMiniGame(
+	AMiniGame& RegisterHiddenMiniGame(
 	    const TCHAR*            a_szMiniGameName,
 	    const TCHAR*            a_szClassStateName,
 	    const TCHAR*            a_szIconName,
@@ -44,12 +44,19 @@ public:
 	    TINT                    a_iUnk3
 	);
 
+	AMiniGame* GetMiniGame( TINT a_iIndex );
+	AMiniGame* GetVisibleMiniGame( TINT a_iIndex );
+	AMiniGame* GetHiddenMiniGame( TINT a_iIndex );
+
+	TINT GetNumVisibleMiniGames() const { return m_iNumVisibleMiniGames; }
+	TINT GetTotalNumMiniGames() const { return m_vecMiniGames.Size(); }
+
 private:
 	Toshi::T2DynamicVector<AMiniGame> m_vecMiniGames;
 	Toshi::TPString8                  m_strNextMiniGameName;
 	// ...
 	TINT m_iNextMiniGameVariant;
 	// ...
-	TINT        field611_0x27c;
+	TINT        m_iNumVisibleMiniGames;
 	Toshi::TTRB field612_0x280;
 };

@@ -13,6 +13,7 @@ public:
 
 	static constexpr TINT MAX_NUM_VARIANTS = 12;
 	friend class AMiniGameManager;
+	friend class AFrontEndMiniGameState2;
 
 public:
 	AMiniGame();
@@ -33,7 +34,7 @@ private:
 	const TCHAR*            m_szIconName;
 	const Toshi::TPString8* m_pLoadingScreenName;
 	TINT                    field13_0x28;
-	TINT                    field14_0x2c;
+	TINT                    m_iAvailabilityFlag;
 	TINT                    m_iNumUnknown2;
 	TINT                    m_iNumVariants;
 	Variant                 m_aVariants[ MAX_NUM_VARIANTS ];

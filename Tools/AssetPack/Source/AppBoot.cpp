@@ -24,7 +24,7 @@ int main( int argc, char** argv )
 
 	T2CommandLine commandLine( GetCommandLineA() );
 	auto          strPackPath   = commandLine.GetParameterValue( "-p" );
-	auto          strUnpackFile = commandLine.GetParameterValue( "-u", "D:\\Barnyard\\Barnyard - Shuyaku wa Ore, Ushi (Japan)\\Japan\\files\\Data\\Assets\\lib_barnday.trb" );
+	auto          strUnpackFile = commandLine.GetParameterValue( "-u", "D:\\Barnyard\\Barnyard - Shuyaku wa Ore, Ushi (Japan)\\Japan\\files\\Data\\Assets\\lib_barntender.trb" );
 	auto          strOutPath    = commandLine.GetParameterValue( "-o" );
 	auto          strAssetName  = commandLine.GetParameterValue( "-asset", "pack" );
 	auto          bIsBtec       = commandLine.HasParameter( "-btec" );

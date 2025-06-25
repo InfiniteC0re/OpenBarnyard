@@ -16,15 +16,15 @@ public:
 	{
 		struct TexInfo
 		{
-			BOOL         m_bIsT2Texture;
-			const TCHAR* m_szFileName;
-			TUINT        m_uiDataSize;
-			void*        m_pData;
+			Toshi::TTEXTURE_FORMAT eFormat;
+			const TCHAR*           szFileName;
+			TUINT                  uiDataSize;
+			void*                  pData;
 		};
 
-		TINT         m_iNumTextures;
-		TexInfo*     m_pTextureInfos;
-		const TCHAR* m_szPackName;
+		TINT         iNumTextures;
+		TexInfo*     pTextureInfos;
+		const TCHAR* szPackName;
 	};
 
 public:

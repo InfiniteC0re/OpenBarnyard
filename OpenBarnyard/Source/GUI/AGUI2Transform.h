@@ -39,6 +39,7 @@ public:
 		m_vecTranslation   = a_rcTranslation;
 	}
 
+	// $Barnyard: FUNCTION 004047f0
 	constexpr void SetIdentity()
 	{
 		m_aMatrixRows[ 0 ] = Toshi::TVector2( 1.0f, 0.0f );
