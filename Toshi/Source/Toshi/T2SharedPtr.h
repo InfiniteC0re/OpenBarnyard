@@ -18,8 +18,11 @@ private:
 		void*   pObjectRaw;
 #endif // TOSHI2_ENABLE_SHARED_PTR_VALIDATION
 
+		TUINT uiNumWeakRefs;
 		TUINT uiNumRefs;
 	};
+
+	template <typename T> friend class T2WeakPtr;
 
 #ifdef TOSHI2_ENABLE_SHARED_PTR_VALIDATION
 	static constexpr TUINT32 VALIDATION_MAGIC = 'T2SP';
@@ -30,6 +33,13 @@ public:
 	T2SharedPtr()
 	    : m_pRawPtr( TNULL )
 	{}
+
+	T2SharedPtr( T2WeakPtr<T>& a_rWeakPtr )
+	    : m_pRawPtr( TREINTERPRETCAST( TCHAR*, a_rWeakPtr.Get() ) )
+	{
+		if ( m_pRawPtr )
+			IncrementNumRefs();
+	}
 
 	// Copy constructor
 	T2SharedPtr( const T2SharedPtr& a_rOther )
@@ -54,10 +64,24 @@ public:
 			DecrementNumRefs();
 	}
 
-	// Returns TTRUE if not TNULL
+	// Returns TTRUE if set
 	TBOOL IsValid() const
 	{
 		return m_pRawPtr;
+	}
+
+	static TBOOL IsValid( TCHAR* a_pRawPtr )
+	{
+		return a_pRawPtr;
+	}
+
+	void Reset()
+	{
+		if ( m_pRawPtr )
+		{
+			DecrementNumRefs();
+			m_pRawPtr = TNULL;
+		}
 	}
 
 	T*       Get() { return TREINTERPRETCAST( T*, m_pRawPtr ); }
@@ -71,15 +95,20 @@ public:
 
 	T2SharedPtr& operator=( const T2SharedPtr& a_rOther )
 	{
-		DebugValidate();
+		if ( m_pRawPtr != a_rOther.m_pRawPtr )
+		{
+			DebugValidate();
 
-		if ( m_pRawPtr )
-			DecrementNumRefs();
+			if ( m_pRawPtr )
+				DecrementNumRefs();
 
-		m_pRawPtr = a_rOther.m_pRawPtr;
+			m_pRawPtr = a_rOther.m_pRawPtr;
 
-		if ( m_pRawPtr )
-			IncrementNumRefs();
+			if ( m_pRawPtr )
+				IncrementNumRefs();
+		}
+
+		return *this;
 	}
 
 	// Use this to create shared pointer objects
@@ -98,6 +127,7 @@ public:
 		SharedPtrData_t* pPtrData = sharedPointer.AccessPtrData();
 
 		pPtrData->uiNumRefs = 1;
+		pPtrData->uiNumWeakRefs = 0;
 
 #ifdef TOSHI2_ENABLE_SHARED_PTR_VALIDATION
 		// This can be used to make sure the object was actually created with T2SharedPtr::New
@@ -116,6 +146,12 @@ private:
 		return TREINTERPRETCAST( SharedPtrData_t*, m_pRawPtr - sizeof( SharedPtrData_t ) );
 	}
 
+	static SharedPtrData_t* AccessPtrData( TCHAR* a_pRawPtr )
+	{
+		TVALIDPTR( a_pRawPtr );
+		return TREINTERPRETCAST( SharedPtrData_t*, a_pRawPtr - sizeof( SharedPtrData_t ) );
+	}
+
 	void DebugValidate()
 	{
 #ifdef TOSHI2_ENABLE_SHARED_PTR_VALIDATION
@@ -123,6 +159,17 @@ private:
 		{
 			SharedPtrData_t* pPtrData = AccessPtrData();
 			TASSERT( pPtrData->uiMagic == VALIDATION_MAGIC && pPtrData->pObjectRaw == m_pRawPtr );
+		}
+#endif
+	}
+
+	static void DebugValidate( TCHAR* a_pRawPtr )
+	{
+#ifdef TOSHI2_ENABLE_SHARED_PTR_VALIDATION
+		if ( a_pRawPtr )
+		{
+			SharedPtrData_t* pPtrData = AccessPtrData( a_pRawPtr );
+			TASSERT( pPtrData->uiMagic == VALIDATION_MAGIC && pPtrData->pObjectRaw == a_pRawPtr );
 		}
 #endif
 	}
@@ -140,15 +187,148 @@ private:
 		TASSERT( TTRUE == IsValid() );
 		DebugValidate();
 
-		SharedPtrData_t* pPtrData     = AccessPtrData();
-		TUINT            uiOldNumRefs = pPtrData->uiNumRefs--;
+		SharedPtrData_t* pPtrData = AccessPtrData();
 
-		if ( uiOldNumRefs == 1 )
+		if ( --pPtrData->uiNumRefs == 0 )
 		{
-			// This was the only reference left, destroy the object and free memory
+			// This was the only reference left, destroy the object and free memory if possible
 			Get()->~T();
-			TFree( pPtrData );
+			m_pRawPtr = TNULL;
+
+			if ( pPtrData->uiNumWeakRefs == 0 )
+				TFree( pPtrData );
 		}
+	}
+
+	static void IncrementNumWeakRefs( TCHAR* a_pRawPtr )
+	{
+		TASSERT( TTRUE == IsValid( a_pRawPtr ) );
+		DebugValidate( a_pRawPtr );
+
+		AccessPtrData( a_pRawPtr )->uiNumWeakRefs++;
+	}
+
+	static void DecrementNumWeakRefs( TCHAR* a_pRawPtr )
+	{
+		TASSERT( TTRUE == IsValid( a_pRawPtr ) );
+		DebugValidate( a_pRawPtr );
+
+		SharedPtrData_t* pPtrData = AccessPtrData( a_pRawPtr );
+
+		if ( --pPtrData->uiNumWeakRefs == 0 )
+		{
+			if ( pPtrData->uiNumRefs == 0 )
+			{
+				TFree( pPtrData );
+			}
+		}
+	}
+
+private:
+	TCHAR* m_pRawPtr;
+};
+
+template <typename T>
+class T2WeakPtr
+{
+public:
+	template <typename T> friend class T2SharedPtr;
+
+public:
+	// Constructor
+	constexpr T2WeakPtr()
+	    : m_pRawPtr( TNULL )
+	{}
+
+	// Copy constructor
+	T2WeakPtr( const T2WeakPtr& a_rOther )
+	    : m_pRawPtr( a_rOther.m_pRawPtr )
+	{
+		if ( m_pRawPtr )
+			T2SharedPtr<T>::IncrementNumWeakRefs( m_pRawPtr );
+	}
+
+	// Move constructor
+	T2WeakPtr( T2WeakPtr&& a_rOther )
+	    : m_pRawPtr( a_rOther.m_pRawPtr )
+	{
+		a_rOther.m_pRawPtr = TNULL;
+	}
+
+	// Destructor
+	~T2WeakPtr()
+	{
+		if ( m_pRawPtr )
+			T2SharedPtr<T>::DecrementNumWeakRefs( m_pRawPtr );
+	}
+
+	// Returns TTRUE if set
+	TBOOL IsValid() const
+	{
+		return m_pRawPtr;
+	}
+
+	T* Get()
+	{
+		if ( m_pRawPtr )
+			return ( T2SharedPtr<T>::AccessPtrData( m_pRawPtr )->uiNumRefs > 0 ) ? TREINTERPRETCAST( T*, m_pRawPtr ) : TNULL;
+		
+		return TNULL;
+	}
+
+	const T* Get() const
+	{
+		if ( m_pRawPtr )
+			return ( T2SharedPtr<T>::AccessPtrData( m_pRawPtr )->uiNumRefs > 0 ) ? TREINTERPRETCAST( const T*, m_pRawPtr ) : TNULL;
+
+		return TNULL;
+	}
+
+	operator T*() { return Get(); }
+	operator const T*() const { return Get(); }
+
+	T*       operator->() { return Get(); }
+	const T* operator->() const { return Get(); }
+
+	void Reset()
+	{
+		if ( m_pRawPtr )
+		{
+			T2SharedPtr<T>::DecrementNumWeakRefs( m_pRawPtr );
+			m_pRawPtr = TNULL;
+		}
+	}
+
+	T2WeakPtr& operator=( const T2WeakPtr& a_rOther )
+	{
+		if ( m_pRawPtr != a_rOther.m_pRawPtr )
+		{
+			if ( m_pRawPtr )
+				T2SharedPtr<T>::DecrementNumWeakRefs( m_pRawPtr );
+
+			m_pRawPtr = a_rOther.m_pRawPtr;
+
+			if ( m_pRawPtr )
+				T2SharedPtr<T>::IncrementNumWeakRefs( m_pRawPtr );
+		}
+
+		return *this;
+	}
+
+	T2WeakPtr& operator=( const T2SharedPtr<T>& a_rOther )
+	{
+		if ( m_pRawPtr != a_rOther.m_pRawPtr )
+		{
+			if ( m_pRawPtr )
+				T2SharedPtr<T>::DecrementNumWeakRefs( m_pRawPtr );
+
+			m_pRawPtr = a_rOther.m_pRawPtr;
+
+			if ( m_pRawPtr )
+				T2SharedPtr<T>::IncrementNumWeakRefs( m_pRawPtr );
+		}
+
+		return *this;
 	}
 
 private:
