@@ -32,7 +32,7 @@ AAnimatableObject::~AAnimatableObject()
 		AModelInstance* pModelInstance = m_pModelInstance;
 		m_pModelInstance               = TNULL;
 
-		AModelRepos::GetSingleton()->DestroyModelInstance( pModelInstance );
+		g_pModelRepos->DestroyModelInstance( pModelInstance );
 	}
 
 	m_llAttachedObjects.Clear();
@@ -45,7 +45,7 @@ TBOOL AAnimatableObject::Create( AAnimatableObjectType* a_pObjectType, void* a_U
 	m_pObjectType = a_pObjectType;
 
 	// Instantiate a model
-	m_pModelInstance = AModelRepos::GetSingleton()->InstantiateModel( a_pObjectType->GetModel() );
+	m_pModelInstance = g_pModelRepos->InstantiateModel( a_pObjectType->GetModel() );
 
 	if ( m_pModelInstance )
 	{

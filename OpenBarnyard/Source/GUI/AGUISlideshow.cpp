@@ -38,7 +38,7 @@ Toshi::TPString8* AGUISlideshow::LocaliseBackgroundFileName( Toshi::TPString8& a
 void AGUISlideshow::LocaliseBackgroundFileName( Toshi::TPString8& a_rOutName, const TCHAR* a_szName )
 {
 	TCHAR szFormattedName[ 256 ];
-	auto  eLang = ALocaleManager::GetSingleton()->GetLanguage();
+	auto  eLang = g_pLocaleManager->GetLanguage();
 
 	if ( eLang != ALocaleManager::Lang_English && eLang != ALocaleManager::Lang_EnglishUK )
 	{
@@ -70,13 +70,13 @@ void AGUISlideshow::Activate()
 	{
 		if ( !m_bShouldLocalise )
 		{
-			AGUISystem::GetSingleton()->SetPicture( m_Images[ 0 ] );
+			g_pGUISystem->SetPicture( m_Images[ 0 ] );
 		}
 		else
 		{
 			Toshi::TPString8 pictureName;
 			LocaliseBackgroundFileName( pictureName, m_Images[ 0 ] );
-			AGUISystem::GetSingleton()->SetPicture( pictureName );
+			g_pGUISystem->SetPicture( pictureName );
 		}
 	}
 
@@ -120,7 +120,7 @@ void AGUISlideshow::UpdateFadeOverlay()
 		{
 			Toshi::TPString8 pictureName;
 			LocaliseBackgroundFileName( pictureName, *m_ImageIterator );
-			AGUISystem::GetSingleton()->SetPicture( pictureName );
+			g_pGUISystem->SetPicture( pictureName );
 
 			m_bIsAppearing      = TFALSE;
 			m_fCurrentSlideTime = 0.0f;
@@ -196,7 +196,7 @@ void AGUISlideshow::SwitchToNextSlide( TBOOL a_bUnused )
 
 	Toshi::TPString8 pictureName;
 	LocaliseBackgroundFileName( pictureName, *m_ImageIterator );
-	AGUISystem::GetSingleton()->SetPicture( pictureName );
+	g_pGUISystem->SetPicture( pictureName );
 }
 
 // $Barnyard: FUNCTION 0059d790
@@ -205,7 +205,7 @@ void AGUISlideshow::Deactivate()
 	TASSERT( TTRUE == m_bIsActive );
 
 	m_bIsActive = TFALSE;
-	AGUISystem::GetSingleton()->SetPicture( Toshi::TPString8() );
+	g_pGUISystem->SetPicture( Toshi::TPString8() );
 	m_eFlags |= Flags_Ended;
 }
 

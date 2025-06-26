@@ -44,7 +44,7 @@ void AMaterialLibraryManager::LoadLibrariesFromProperties( const PBPropertyValue
 		for ( TUINT i = 0; i < pArray->GetSize(); i++ )
 		{
 			auto matlibName = pArray->GetValue( i )->GetTPString8();
-			auto eLangId    = ALocaleManager::GetSingleton()->GetLanguage();
+			auto eLangId    = g_pLocaleManager->GetLanguage();
 
 			TBOOL bLocaliseAsset;
 
@@ -74,7 +74,7 @@ void AMaterialLibraryManager::LoadLibrariesFromProperties( const PBPropertyValue
 		TRenderInterface::GetSingleton()->FlushDyingResources();
 		TRenderInterface::GetSingleton()->FlushDyingResources();
 
-		if ( a_bUpdateGUIMaterials && AGUISystem::GetSingleton() )
+		if ( a_bUpdateGUIMaterials && g_pGUISystem )
 		{
 			AGUI2TextureSectionManager::UpdateMaterials();
 		}
@@ -135,7 +135,7 @@ void AMaterialLibraryManager::LoadLibrary( const TPString8& a_rLibName, TTRB* a_
 void AMaterialLibraryManager::UnloadLibrary( const TPString8& a_rLibName, TBOOL a_bUnused )
 {
 	TPString8 matlibName = a_rLibName;
-	auto      eLangId    = ALocaleManager::GetSingleton()->GetLanguage();
+	auto      eLangId    = g_pLocaleManager->GetLanguage();
 
 	TBOOL bLocaliseAsset;
 
@@ -191,7 +191,7 @@ void AMaterialLibraryManager::DestroyLibrary( LibrariesMap::Iterator& a_rcMateri
 	TRenderInterface::GetSingleton()->FlushDyingResources();
 	TRenderInterface::GetSingleton()->FlushDyingResources();
 
-	if ( a_bUpdateGUIMaterials && AGUISystem::GetSingleton() )
+	if ( a_bUpdateGUIMaterials && g_pGUISystem )
 	{
 		AGUI2TextureSectionManager::UpdateMaterials();
 	}
@@ -251,7 +251,7 @@ void AMaterialLibraryManager::OnLibraryLoaded( TBOOL a_bUpdateGUIMaterials )
 	TRenderInterface::GetSingleton()->FlushDyingResources();
 	TRenderInterface::GetSingleton()->FlushDyingResources();
 
-	if ( a_bUpdateGUIMaterials && AGUISystem::GetSingleton() )
+	if ( a_bUpdateGUIMaterials && g_pGUISystem )
 	{
 		AGUI2TextureSectionManager::UpdateMaterials();
 	}

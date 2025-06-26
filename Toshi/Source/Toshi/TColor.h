@@ -2,7 +2,8 @@
 #include "Toshi/Typedefs.h"
 
 #define TCOLOR( R, G, B )          ( ( ( ( R & 0xff ) << 8 | G & 0xff ) << 8 | B & 0xff ) | 0xFF000000 )
-#define TCOLOR_ALPHA( R, G, B, A ) ( ( ( ( R & 0xff ) << 8 | G & 0xff ) << 8 | B & 0xff ) | ( TUINT32( A ) << 24 ) )
+#define TCOLOR3( R, G, B )         ( TCOLOR( R, G, B ) )
+#define TCOLOR4( R, G, B, A )      ( ( ( ( R & 0xff ) << 8 | G & 0xff ) << 8 | B & 0xff ) | ( TUINT32( A ) << 24 ) )
 #define TCOLOR_GET_ALPHA( COLOR )  ( ( COLOR >> 24 ) & 0xff )
 #define TCOLOR_GET_RED( COLOR )    ( ( COLOR >> 16 ) & 0xff )
 #define TCOLOR_GET_GREEN( COLOR )  ( ( COLOR >> 8 ) & 0xff )

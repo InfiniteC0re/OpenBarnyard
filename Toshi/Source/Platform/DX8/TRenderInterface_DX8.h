@@ -493,4 +493,6 @@ private:
 	TPriList<TOrderTable>      m_OrderTables;                     // Order tables
 };
 
+TSINGLETON_DECLARE_INHERITED_ALIAS( TRenderInterface, TRenderD3DInterface, RenderD3D );
+
 TOSHI_NAMESPACE_END

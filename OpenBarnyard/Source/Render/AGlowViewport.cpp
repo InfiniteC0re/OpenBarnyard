@@ -107,7 +107,7 @@ void AGlowViewport::GetInfluencingLightIDs( const TSphere& a_rcSphere, TLightIDL
 	{
 		// Check if the object is enabled, visible and affects the sphere
 		if ( pGlowObject->IsEnabled() &&
-		     ( pGlowObject->IsNightLight() || AGameTimeManager::GetSingleton()->IsItNight() ) &&
+		     ( pGlowObject->IsNightLight() || g_pGameTimeMngr->IsItNight() ) &&
 		     TRenderContext::CullSphereToFrustumSimple( a_rcSphere, pGlowObject->m_oFrustum, WORLDPLANE_NUMOF ) )
 		{
 			// The object is influencing the specified sphere

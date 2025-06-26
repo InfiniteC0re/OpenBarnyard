@@ -31,7 +31,7 @@ public:
 
 		constexpr TUINT32 GetTColor32() const
 		{
-			return TCOLOR_ALPHA( R, G, B, A );
+			return TCOLOR4( R, G, B, A );
 		}
 	};
 

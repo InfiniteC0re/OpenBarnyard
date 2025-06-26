@@ -105,9 +105,9 @@ void ABoneAttachCameraHelper::OnDetach()
 	{
 		TPString8 strModelName = m_pAModelInstance->GetModelName();
 
-		AModelRepos::GetSingleton()->DestroyModelInstance( m_pAModelInstance );
-		AModelRepos::GetSingleton()->UnloadModel( strModelName, TFALSE );
-		AModelRepos::GetSingleton()->UnloadUnusedModels();
+		g_pModelRepos->DestroyModelInstance( m_pAModelInstance );
+		g_pModelRepos->UnloadModel( strModelName, TFALSE );
+		g_pModelRepos->UnloadUnusedModels();
 
 		m_pSceneObject      = TNULL;
 		m_pSkeletonInstance = TNULL;
@@ -122,15 +122,13 @@ void ABoneAttachCameraHelper::BoneHelper_Unknown()
 // $Barnyard: FUNCTION 0045fba0
 void ABoneAttachCameraHelper::SetModel( const Toshi::TPString8& a_strModelName, const TCHAR* a_szBoneName )
 {
-	AModelRepos* pModelRepos = AModelRepos::GetSingleton();
-
 	// Make sure the model is loaded
-	pModelRepos->LoadModel( a_strModelName, TNULL );
+	g_pModelRepos->LoadModel( a_strModelName, TNULL );
 
-	AModel* pModel = pModelRepos->GetModel( a_strModelName );
+	AModel* pModel = g_pModelRepos->GetModel( a_strModelName );
 	TASSERT( TNULL != pModel );
 
-	AModelInstance* pInstance = pModelRepos->InstantiateModel( pModel );
+	AModelInstance* pInstance = g_pModelRepos->InstantiateModel( pModel );
 	TASSERT( TNULL != pInstance );
 
 	m_pAModelInstance = pInstance;

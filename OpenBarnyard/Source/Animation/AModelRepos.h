@@ -45,3 +45,5 @@ protected:
 	ModelsMap              m_UsedModels;
 	ModelsMap              m_AllModels;
 };
+
+TSINGLETON_DECLARE_ALIAS( AModelRepos, ModelRepos );

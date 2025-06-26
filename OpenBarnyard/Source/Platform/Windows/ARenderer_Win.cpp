@@ -295,7 +295,7 @@ TRenderAdapter::Mode::Device* ARenderer::FindSuitableDevice( TRenderInterface::D
 void ARenderer::RenderGUI()
 {
 	auto pRender   = TSTATICCAST( TRenderD3DInterface, TRenderInterface::GetSingleton() );
-	auto pViewport = AGUISystem::GetSingleton()->GetRenderObject( 0 )->GetViewport();
+	auto pViewport = g_pGUISystem->GetRenderObject( 0 )->GetViewport();
 
 	auto pOldContext = pRender->SetCurrentRenderContext( pViewport->GetRenderContext() );
 
@@ -382,7 +382,7 @@ void ARenderer::RenderMainScene( TFLOAT a_fDeltaTime )
 			TBOOL bFlag1;
 			m_AnimationUpdateStartEmitter.Throw( &bFlag1 );
 
-			AModelRepos::GetSingleton()->Update( a_fDeltaTime );
+			g_pModelRepos->Update( a_fDeltaTime );
 			TTODO( "AAnimatableObjectManager::UpdateAttachedObjects" );
 
 			TBOOL bFlag2;
@@ -395,7 +395,7 @@ void ARenderer::RenderMainScene( TFLOAT a_fDeltaTime )
 		pRender->FlushShaders();
 		pViewportContext->EnableFog( TTRUE );
 
-		AModelRepos::GetSingleton()->RenderModels( 2 );
+		g_pModelRepos->RenderModels( 2 );
 
 		// Render terrain, trees, gates, instances and more...
 		if ( ATerrainInterface::GetSingleton() )

@@ -97,7 +97,7 @@ void AAudioOptionsState::OnInsertion()
 	for ( TINT i = 0; i < AUDIOOPTIONS_NUMOF; i++ )
 	{
 		// Initialise label
-		const TWCHAR* wszText = ALocaleManager::GetSingleton()->GetString( AUDIOOPTIONS_TEXTS[ i ] );
+		const TWCHAR* wszText = g_pLocaleManager->GetString( AUDIOOPTIONS_TEXTS[ i ] );
 
 		m_aTextItems[ i ].Create( pFont, pFont->GetTextWidth( wszText ), wszText, 10.0f );
 		m_aTextItems[ i ].SetFocusedColour( AGUI2STYLE_COLOR_FOCUSED );
@@ -145,7 +145,7 @@ void AAudioOptionsState::OnInsertion()
 	m_oDialog.AddChildTail( m_oGridMenu );
 	m_oGridMenu.SetFocusAt( &m_aTextItems[ 0 ] );
 
-	m_oDialogTitle.SetText( ALocaleManager::GetSingleton()->GetString( 302 ) );
+	m_oDialogTitle.SetText( g_pLocaleManager->GetString( 302 ) );
 	m_bFocusedElementBloated = TFALSE;
 
 	BaseClass::OnInsertion();

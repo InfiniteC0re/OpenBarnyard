@@ -48,3 +48,5 @@ private:
 	TUINT                                         m_Unk3;
 	PGUITRRenderObject*                           m_pRenderObjects[ NUM_RENDER_OBJECTS ];
 };
+
+TSINGLETON_DECLARE_ALIAS( AGUISystem, GUISystem );

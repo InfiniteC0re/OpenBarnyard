@@ -20,3 +20,6 @@ public:
 	DAYPHASE GetCurrentDayPhase() const;
 	TBOOL    IsItNight() const;
 };
+
+TSINGLETON_DECLARE_ALIAS( AGameTimeManager, GameTimeMngr );
+

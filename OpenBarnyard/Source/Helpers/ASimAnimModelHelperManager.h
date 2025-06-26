@@ -29,3 +29,5 @@ private:
 	TINT                 m_iNumHelpers;
 	ASimAnimModelHelper* m_apHelpers[ MAX_NUM_HELPERS ];
 };
+
+TSINGLETON_DECLARE_ALIAS( ASimAnimModelHelperManager, SimAnimModelHelper );

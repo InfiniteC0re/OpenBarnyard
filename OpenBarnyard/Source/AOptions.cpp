@@ -34,7 +34,7 @@ TBOOL AOptions::ApplySettings()
 
 	if ( m_eUpdatedSettings & UpdatedSettings_Language )
 	{
-		T2Locale::GetSingleton()->SetLanguage( ALocaleManager::Lang_EnglishUK );
+		g_pLocaleManager->SetLanguage( ALocaleManager::Lang_EnglishUK );
 		m_eLanguage = ALocaleManager::Lang_EnglishUK;
 	}
 

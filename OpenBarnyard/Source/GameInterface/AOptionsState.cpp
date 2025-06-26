@@ -51,7 +51,7 @@ void AOptionsState::OnInsertion()
 
 	for ( TINT i = 0; i < OPTIONSBUTTON_NUMOF; i++ )
 	{
-		const TWCHAR* wszText = ALocaleManager::GetSingleton()->GetString( OPTIONSBUTTON_TEXTS[ i ] );
+		const TWCHAR* wszText = g_pLocaleManager->GetString( OPTIONSBUTTON_TEXTS[ i ] );
 
 		m_aButtons[ i ].Create( pFont, pFont->GetTextWidth( wszText ), wszText, 10.0f );
 		m_aButtons[ i ].SetFocusedColour( AGUI2STYLE_COLOR_FOCUSED );
@@ -66,7 +66,7 @@ void AOptionsState::OnInsertion()
 	}
 
 	m_oMenu.SetFocusAt( m_aButtons[ 0 ] );
-	m_oDialogTitle.SetText( ALocaleManager::GetSingleton()->GetString( 284 ) );
+	m_oDialogTitle.SetText( g_pLocaleManager->GetString( 284 ) );
 
 	BaseClass::OnInsertion();
 }

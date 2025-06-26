@@ -48,10 +48,9 @@ TBOOL AAnimatableObjectType::CreateFromProperties( const PBProperties* a_pProper
 	TPString8 strPooledModelPath = TPString8( strModelPath.GetString() );
 
 	// Load model
-	AModelRepos* pModelRepos = AModelRepos::GetSingleton();
-	pModelRepos->LoadModel( strPooledModelPath, TNULL );
+	g_pModelRepos->LoadModel( strPooledModelPath, TNULL );
 
-	m_pAModel = pModelRepos->GetModel( strPooledModelPath );
+	m_pAModel = g_pModelRepos->GetModel( strPooledModelPath );
 	TVALIDPTR( m_pAModel );
 
 	TBOOL bLoadedAnimationSet = TFALSE;
@@ -94,10 +93,9 @@ TBOOL AAnimatableObjectType::Create( const Toshi::TPString8& a_rcName )
 	TPString8 strPooledModelPath = TPString8( strModelPath.GetString() );
 
 	// Load model
-	AModelRepos* pModelRepos = AModelRepos::GetSingleton();
-	pModelRepos->LoadModel( strPooledModelPath, TNULL );
+	g_pModelRepos->LoadModel( strPooledModelPath, TNULL );
 
-	m_pAModel = pModelRepos->GetModel( strPooledModelPath );
+	m_pAModel = g_pModelRepos->GetModel( strPooledModelPath );
 	TVALIDPTR( m_pAModel );
 
 	LoadAnimationSet( TNULL );
@@ -117,7 +115,7 @@ void AAnimatableObjectType::Destroy()
 
 	if ( m_pAModel )
 	{
-		AModelRepos::GetSingleton()->UnloadModel( m_pAModel->GetName(), TFALSE );
+		g_pModelRepos->UnloadModel( m_pAModel->GetName(), TFALSE );
 		m_pAModel = TNULL;
 	}
 
@@ -167,7 +165,7 @@ TINT AAnimatableObjectType::GetNumAnimationSets() const
 
 AModelInstance* AAnimatableObjectType::Instantiate()
 {
-	return AModelRepos::GetSingleton()->InstantiateModel( GetModel() );
+	return g_pModelRepos->InstantiateModel( GetModel() );
 }
 
 // $Barnyard: FUNCTION 0057f060

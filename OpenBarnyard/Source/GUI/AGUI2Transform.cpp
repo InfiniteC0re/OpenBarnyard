@@ -24,7 +24,7 @@ void AGUI2Transform::Rotate( TFLOAT a_fAngle )
 	m_aMatrixRows[ 1 ].y = vecRot1.y * fCos - vecRot0.y * fSin;
 }
 
-// $Barnyard: FUNCTION 00404810
+// $Barnyard: FUNCTION 006c2000
 void AGUI2Transform::PreMultiply( const AGUI2Transform& a_rTransform )
 {
 	TVector2 vecRot0 = m_aMatrixRows[ 0 ];
@@ -36,6 +36,7 @@ void AGUI2Transform::PreMultiply( const AGUI2Transform& a_rTransform )
 	m_aMatrixRows[ 1 ].y = a_rTransform.m_aMatrixRows[ 1 ].x * vecRot0.y + a_rTransform.m_aMatrixRows[ 1 ].y * vecRot1.y;
 }
 
+// $Barnyard: FUNCTION 00404810
 void AGUI2Transform::Scale( TFLOAT a_fScaleX, TFLOAT a_fScaleY )
 {
 	AGUI2Transform transform;

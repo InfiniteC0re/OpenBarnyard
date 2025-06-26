@@ -175,7 +175,7 @@ void AAnimatableObjectManager::DestroyType( const Toshi::TPString8& a_rcName )
 		pType->Remove();
 		delete pType;
 
-		AModelRepos::GetSingleton()->UnloadUnusedModels();
+		g_pModelRepos->UnloadUnusedModels();
 	}
 }
 

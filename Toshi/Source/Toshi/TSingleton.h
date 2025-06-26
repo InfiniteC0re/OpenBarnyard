@@ -3,6 +3,20 @@
 
 TOSHI_NAMESPACE_START
 
+#define TSINGLETON_DECLARE_ALIAS( CLASS, NAME )               \
+	inline static struct SingletonHelper_##NAME               \
+	{                                                         \
+		CLASS* operator->() { return CLASS::GetSingleton(); } \
+		operator CLASS*() { return CLASS::GetSingleton(); }   \
+	} g_p##NAME
+
+#define TSINGLETON_DECLARE_INHERITED_ALIAS( PARENT, CLASS, NAME )                    \
+	inline static struct SingletonHelper_##NAME                                      \
+	{                                                                                \
+		CLASS* operator->() { return TSTATICCAST( CLASS, PARENT::GetSingleton() ); } \
+		operator CLASS*() { return TSTATICCAST( CLASS, PARENT::GetSingleton() ); }   \
+	} g_p##NAME
+
 template <typename T>
 class TSingleton
 {

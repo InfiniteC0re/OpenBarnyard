@@ -180,8 +180,8 @@ void ALoadScreen::Reset()
 {
 	if ( m_bFlag )
 	{
-		AGUISystem::GetSingleton()->SetPicture( TPString8() );
-		AGUISystem::GetSingleton()->ResetPicture();
+		g_pGUISystem->SetPicture( TPString8() );
+		g_pGUISystem->ResetPicture();
 	}
 
 	m_bFlag = TFALSE;

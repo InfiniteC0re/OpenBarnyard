@@ -173,7 +173,7 @@ void AGameStateController::UpdateScreenOverlay()
 	if ( m_oStates.Size() > 1 && ( *m_oStates.Back() )->GetOverlay() != AGameState::OVERLAY_1 )
 	{
 		OverlayData* pOverlay = GetOverlayParams( ( *m_oStates.Back() )->GetOverlay() );
-		m_oOverlay.SetColour( TCOLOR_ALPHA( pOverlay->uiColorR, pOverlay->uiColorG, pOverlay->uiColorB, pOverlay->uiColorA ) );
+		m_oOverlay.SetColour( TCOLOR4( pOverlay->uiColorR, pOverlay->uiColorG, pOverlay->uiColorB, pOverlay->uiColorA ) );
 
 		bAddOverlay = TTRUE;
 	}

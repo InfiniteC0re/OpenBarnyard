@@ -47,3 +47,5 @@ public:
 
 	static ALocaleManager* Interface() { return TSTATICCAST( ALocaleManager, ms_pSingleton ); }
 };
+
+TSINGLETON_DECLARE_INHERITED_ALIAS( Toshi::T2Locale, ALocaleManager, LocaleManager );
