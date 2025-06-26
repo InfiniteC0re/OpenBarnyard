@@ -36,6 +36,8 @@ public:
 		TVector2 vecProj;
 		TFLOAT   fNearClip;
 		TFLOAT   fFarClip;
+
+		void SetFromFOV( TFLOAT a_fViewportWidth, TFLOAT a_fViewportHeight, TFLOAT a_fFOV, TFLOAT a_fNearPlane, TFLOAT a_fFarPlane );
 	};
 
 public:
@@ -45,6 +47,10 @@ public:
 	TMatrix44&       GetProjectionMatrix() { return m_matProjection; }
 	const TMatrix44& GetProjectionMatrix() const { return m_matProjection; }
 
+	TMatrix44&       GetModelViewMatrix() { return m_matModelView; }
+	const TMatrix44& GetModelViewMatrix() const { return m_matModelView; }
+
+	void  SetModelViewMatrix( const TMatrix44& a_rMatrix );
 	TBOOL SetShaderProgram( const T2Shader& a_rcShaderProgram );
 
 	GLuint GetTexture2D( TINT a_iTextureIndex );
@@ -67,6 +73,7 @@ public:
 
 private:
 	TMatrix44 m_matProjection;
+	TMatrix44 m_matModelView;
 	GLuint    m_uiCurrentShaderProgram = -1;
 	TINT      m_iCurrentTextureUnit    = 0;
 	GLuint    m_aCurrentTextures[ 8 ];

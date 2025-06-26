@@ -40,6 +40,9 @@ public:
 	void SetMinZ( TFLOAT a_fValue ) { m_fMinZ = a_fValue; }
 	void SetMaxZ( TFLOAT a_fValue ) { m_fMaxZ = a_fValue; }
 
+	void Begin();
+	void End();
+
 private:
 	TFLOAT m_fX;
 	TFLOAT m_fY;

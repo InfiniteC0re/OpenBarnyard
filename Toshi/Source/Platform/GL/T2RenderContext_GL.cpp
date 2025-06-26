@@ -258,4 +258,23 @@ void T2RenderContext::EnableBlend( TBOOL a_bEnable )
 	}
 }
 
+void T2RenderContext::SetModelViewMatrix( const TMatrix44& a_rMatrix )
+{
+	m_matModelView = a_rMatrix;
+}
+
+void T2RenderContext::Projection::SetFromFOV( TFLOAT a_fViewportWidth, TFLOAT a_fViewportHeight, TFLOAT a_fFOV, TFLOAT a_fNearPlane, TFLOAT a_fFarPlane )
+{
+	TFLOAT fHalfWidth  = a_fViewportWidth * 0.5f;
+	TFLOAT fHalfHeight = a_fViewportHeight * 0.5f;
+	TFLOAT fProj       = fHalfHeight / TMath::Tan( a_fFOV );
+
+	fNearClip   = a_fNearPlane;
+	fFarClip    = a_fFarPlane;
+	vecCenter.x = fHalfWidth;
+	vecCenter.y = fHalfHeight;
+	vecProj.x   = fProj;
+	vecProj.y   = fProj;
+}
+
 TOSHI_NAMESPACE_END

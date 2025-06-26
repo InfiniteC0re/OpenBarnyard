@@ -252,6 +252,9 @@ GLuint T2Render::CreateTexture( GLsizei a_iWidth, GLsizei a_iHeight, GLenum a_eI
 	glBindTexture( GL_TEXTURE_2D, uiTexture );
 	glTexImage2D( GL_TEXTURE_2D, 0, a_eInternalFormat, a_iWidth, a_iHeight, 0, a_eFormat, a_ePixelType, a_pData );
 
+	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+
 	if ( a_pData && a_bGenerateMipmap )
 	{
 		glGenerateMipmap( GL_TEXTURE_2D );
@@ -317,6 +320,21 @@ void T2Render::DestroyUniformBuffer( const T2IndirectBuffer& a_IndirectBuffer )
 {
 	GLuint uiId = a_IndirectBuffer.GetId();
 	glDeleteBuffers( 1, &uiId );
+}
+
+void T2Render::RegisterOrderTable( TOrderTable* a_pOrderTable )
+{
+	m_OrderTables.Insert( a_pOrderTable );
+}
+
+void T2Render::FlushOrderTables()
+{
+	TASSERT( TTRUE == m_bIsInScene );
+
+	for ( auto it = m_OrderTables.Begin(); it != m_OrderTables.End(); it++ )
+	{
+		it->Flush();
+	}
 }
 
 TOSHI_NAMESPACE_END

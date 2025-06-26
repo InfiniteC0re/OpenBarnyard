@@ -1,5 +1,6 @@
 #include "ToshiPCH.h"
-#include "T2Viewport_GL.h"
+#include "Render/TOrderTable.h"
+#include "Platform/GL/T2Render_GL.h"
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
@@ -9,14 +10,15 @@
 
 TOSHI_NAMESPACE_START
 
-void T2Viewport::Begin()
+TBOOL TOrderTable::Create( TShader* a_pShader, TINT a_iPriority )
 {
-	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-	glViewport( 0, 0, (GLsizei)m_fWidth, (GLsizei)m_fHeight );
-}
+	m_pLastRegMat = TNULL;
+	m_pShader     = a_pShader;
 
-void T2Viewport::End()
-{
+	TNode::SetPriority( a_iPriority );
+	g_pRenderGL->RegisterOrderTable( this );
+
+	return TTRUE;
 }
 
 TOSHI_NAMESPACE_END

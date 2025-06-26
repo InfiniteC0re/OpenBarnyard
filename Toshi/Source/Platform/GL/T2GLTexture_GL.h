@@ -247,4 +247,6 @@ private:
 	T2GLTexture* m_pWhiteTexture;
 };
 
+TSINGLETON_DECLARE_ALIAS( T2TextureManager, TextureManager );
+
 TOSHI_NAMESPACE_END

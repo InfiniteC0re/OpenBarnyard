@@ -2,6 +2,7 @@
 
 #ifdef TRENDERINTERFACE_GL
 #  include "Render/T2RenderCommon.h"
+#  include "Render/TOrderTable.h"
 #  include "T2RenderBuffer_GL.h"
 #  include "T2Shader_GL.h"
 #  include "T2RenderContext_GL.h"
@@ -62,6 +63,9 @@ public:
 	void BeginScene();
 	void EndScene();
 
+	void RegisterOrderTable( TOrderTable* a_pOrderTable );
+	void FlushOrderTables();
+	
 	T2Window*           GetWindow() const { return m_pWindow; }
 	const WindowParams& GetWindowParams() const { return m_oWindowParams; }
 	SDL_GLContext       GetGLContext() const { return m_pGLContext; }
@@ -104,8 +108,12 @@ private:
 	WindowParams    m_oWindowParams;
 	T2RenderContext m_oRenderContext;
 
+	TPriList<TOrderTable> m_OrderTables;
+
 	TBOOL m_bIsInScene = TFALSE;
 };
+
+TSINGLETON_DECLARE_ALIAS( T2Render, RenderGL );
 
 TOSHI_NAMESPACE_END
 
