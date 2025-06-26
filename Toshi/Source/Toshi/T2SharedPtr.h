@@ -35,7 +35,7 @@ public:
 	{}
 
 	T2SharedPtr( T2WeakPtr<T>& a_rWeakPtr )
-	    : m_pRawPtr( TREINTERPRETCAST( TCHAR*, a_rWeakPtr.Get() ) )
+	    : m_pRawPtr( a_rWeakPtr.Get() )
 	{
 		if ( m_pRawPtr )
 			IncrementNumRefs();
@@ -70,7 +70,7 @@ public:
 		return m_pRawPtr;
 	}
 
-	static TBOOL IsValid( TCHAR* a_pRawPtr )
+	static TBOOL IsValid( T* a_pRawPtr )
 	{
 		return a_pRawPtr;
 	}
@@ -84,8 +84,8 @@ public:
 		}
 	}
 
-	T*       Get() { return TREINTERPRETCAST( T*, m_pRawPtr ); }
-	const T* Get() const { return TREINTERPRETCAST( const T*, m_pRawPtr ); }
+	T*       Get() { return m_pRawPtr; }
+	const T* Get() const { return m_pRawPtr; }
 
 	operator T*() { return Get(); }
 	operator const T*() const { return Get(); }
@@ -121,7 +121,7 @@ public:
 
 		// Create shared pointer object
 		T2SharedPtr sharedPointer;
-		sharedPointer.m_pRawPtr = TREINTERPRETCAST( TCHAR*, pObject );
+		sharedPointer.m_pRawPtr = pObject;
 
 		// Set shared pointer data data
 		SharedPtrData_t* pPtrData = sharedPointer.AccessPtrData();
@@ -143,13 +143,13 @@ private:
 	SharedPtrData_t* AccessPtrData() const
 	{
 		TVALIDPTR( m_pRawPtr );
-		return TREINTERPRETCAST( SharedPtrData_t*, m_pRawPtr - sizeof( SharedPtrData_t ) );
+		return TREINTERPRETCAST( SharedPtrData_t*, TUINTPTR( m_pRawPtr ) - sizeof( SharedPtrData_t ) );
 	}
 
-	static SharedPtrData_t* AccessPtrData( TCHAR* a_pRawPtr )
+	static SharedPtrData_t* AccessPtrData( T* a_pRawPtr )
 	{
 		TVALIDPTR( a_pRawPtr );
-		return TREINTERPRETCAST( SharedPtrData_t*, a_pRawPtr - sizeof( SharedPtrData_t ) );
+		return TREINTERPRETCAST( SharedPtrData_t*, TUINTPTR( a_pRawPtr ) - sizeof( SharedPtrData_t ) );
 	}
 
 	void DebugValidate()
@@ -163,7 +163,7 @@ private:
 #endif
 	}
 
-	static void DebugValidate( TCHAR* a_pRawPtr )
+	static void DebugValidate( T* a_pRawPtr )
 	{
 #ifdef TOSHI2_ENABLE_SHARED_PTR_VALIDATION
 		if ( a_pRawPtr )
@@ -200,7 +200,7 @@ private:
 		}
 	}
 
-	static void IncrementNumWeakRefs( TCHAR* a_pRawPtr )
+	static void IncrementNumWeakRefs( T* a_pRawPtr )
 	{
 		TASSERT( TTRUE == IsValid( a_pRawPtr ) );
 		DebugValidate( a_pRawPtr );
@@ -208,7 +208,7 @@ private:
 		AccessPtrData( a_pRawPtr )->uiNumWeakRefs++;
 	}
 
-	static void DecrementNumWeakRefs( TCHAR* a_pRawPtr )
+	static void DecrementNumWeakRefs( T* a_pRawPtr )
 	{
 		TASSERT( TTRUE == IsValid( a_pRawPtr ) );
 		DebugValidate( a_pRawPtr );
@@ -225,7 +225,7 @@ private:
 	}
 
 private:
-	TCHAR* m_pRawPtr;
+	T* m_pRawPtr;
 };
 
 template <typename T>
@@ -271,7 +271,7 @@ public:
 	T* Get()
 	{
 		if ( m_pRawPtr )
-			return ( T2SharedPtr<T>::AccessPtrData( m_pRawPtr )->uiNumRefs > 0 ) ? TREINTERPRETCAST( T*, m_pRawPtr ) : TNULL;
+			return ( T2SharedPtr<T>::AccessPtrData( m_pRawPtr )->uiNumRefs > 0 ) ? m_pRawPtr : TNULL;
 		
 		return TNULL;
 	}
@@ -279,7 +279,7 @@ public:
 	const T* Get() const
 	{
 		if ( m_pRawPtr )
-			return ( T2SharedPtr<T>::AccessPtrData( m_pRawPtr )->uiNumRefs > 0 ) ? TREINTERPRETCAST( const T*, m_pRawPtr ) : TNULL;
+			return ( T2SharedPtr<T>::AccessPtrData( m_pRawPtr )->uiNumRefs > 0 ) ? m_pRawPtr : TNULL;
 
 		return TNULL;
 	}
@@ -332,7 +332,7 @@ public:
 	}
 
 private:
-	TCHAR* m_pRawPtr;
+	T* m_pRawPtr;
 };
 
 TOSHI_NAMESPACE_END
