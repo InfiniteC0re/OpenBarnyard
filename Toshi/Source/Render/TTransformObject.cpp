@@ -138,12 +138,12 @@ void TTransformObject::SetEulerOrder( TUINT8 x, TUINT8 y, TUINT8 z )
 }
 
 // $Barnyard: FUNCTION 006c8210
-void TTransformObject::SetTranslate( const TVector3& translation )
+void TTransformObject::SetTranslate( const TVector3& a_rTranslation )
 {
-	m_Translation = translation;
+	m_Translation = a_rTranslation;
 
 	if ( m_eMode == Mode::Matrix )
-		m_Matrix.SetTranslation( m_Translation );
+		m_Matrix.SetTranslation( a_rTranslation );
 }
 
 void TTransformObject::SetQuat( const TQuaternion& quaternion )

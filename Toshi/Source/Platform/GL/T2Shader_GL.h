@@ -84,6 +84,10 @@ public:
 	    : m_uiProgram( 0 ), m_VShader( 0 ), m_FShader( 0 )
 	{}
 
+	T2Shader( GLuint a_uiProgram )
+	    : m_uiProgram( a_uiProgram ), m_VShader( 0 ), m_FShader( 0 )
+	{}
+
 	T2Shader( const T2CompiledShader& a_VShader, const T2CompiledShader& a_FShader )
 	    : m_uiProgram( 0 ), m_VShader( a_VShader ), m_FShader( a_FShader )
 	{}

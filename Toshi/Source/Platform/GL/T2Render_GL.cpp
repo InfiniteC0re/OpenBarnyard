@@ -11,7 +11,10 @@
 
 TOSHI_NAMESPACE_START
 
+T2RenderContext g_oDefaultRenderContext;
+
 T2Render::T2Render()
+    : m_pRenderContext( &g_oDefaultRenderContext )
 {
 }
 
@@ -335,6 +338,11 @@ void T2Render::FlushOrderTables()
 	{
 		it->Flush();
 	}
+}
+
+void T2Render::SetDefaultRenderContext()
+{
+	g_pRenderGL->m_pRenderContext = &g_oDefaultRenderContext;
 }
 
 TOSHI_NAMESPACE_END

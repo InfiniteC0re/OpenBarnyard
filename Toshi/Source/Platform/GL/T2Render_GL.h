@@ -71,7 +71,9 @@ public:
 	SDL_GLContext       GetGLContext() const { return m_pGLContext; }
 
 public:
-	static T2RenderContext& GetRenderContext() { return GetSingleton()->m_oRenderContext; }
+	static T2RenderContext& GetRenderContext() { return *GetSingleton()->m_pRenderContext; }
+	static void             SetRenderContext( T2RenderContext& a_rRenderContext ) { GetSingleton()->m_pRenderContext = &a_rRenderContext; }
+	static void             SetDefaultRenderContext();
 	static TBOOL            SetShaderProgram( const T2Shader& a_rcShaderProgram ) { return GetRenderContext().SetShaderProgram( a_rcShaderProgram ); }
 	static GLuint           GetTexture2D( TINT a_iTextureIndex ) { return GetRenderContext().GetTexture2D( a_iTextureIndex ); }
 	static void             SetTexture2D( TINT a_iTextureIndex, const T2GLTexture& a_rcTexture ) { GetRenderContext().SetTexture2D( a_iTextureIndex, a_rcTexture ); }
@@ -103,10 +105,10 @@ private:
 	void OnDeviceReset();
 
 private:
-	T2Window*       m_pWindow    = TNULL;
-	SDL_GLContext   m_pGLContext = TNULL;
-	WindowParams    m_oWindowParams;
-	T2RenderContext m_oRenderContext;
+	T2Window*        m_pWindow    = TNULL;
+	SDL_GLContext    m_pGLContext = TNULL;
+	WindowParams     m_oWindowParams;
+	T2RenderContext* m_pRenderContext;
 
 	TPriList<TOrderTable> m_OrderTables;
 

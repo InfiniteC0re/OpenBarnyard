@@ -10,7 +10,13 @@
 
 TOSHI_NAMESPACE_START
 
+T2Camera g_oDefaultCamera;
+
 T2RenderContext::T2RenderContext()
+    : m_uiCurrentShaderProgram( -1 )
+    , m_iCurrentTextureUnit( 0 )
+    , m_bForceRefreshFeatures( TFALSE )
+    , m_pCamera( &g_oDefaultCamera )
 {
 	m_bDepthTest = TFALSE;
 	glDisable( GL_DEPTH_TEST );
@@ -184,7 +190,7 @@ TINT T2RenderContext::CullSphereToFrustum( const TSphere& a_rSphere, const TPlan
 
 TBOOL T2RenderContext::SetShaderProgram( const T2Shader& a_rcShaderProgram )
 {
-	if ( m_uiCurrentShaderProgram != a_rcShaderProgram.GetProgram() )
+	if ( m_bForceRefreshFeatures || m_uiCurrentShaderProgram != a_rcShaderProgram.GetProgram() )
 	{
 		a_rcShaderProgram.Use();
 		m_uiCurrentShaderProgram = a_rcShaderProgram.GetProgram();
@@ -202,9 +208,9 @@ GLuint T2RenderContext::GetTexture2D( TINT a_iTextureIndex )
 
 void T2RenderContext::SetTexture2D( TINT a_iTextureIndex, GLuint a_uiTexture )
 {
-	if ( m_aCurrentTextures[ a_iTextureIndex ] != a_uiTexture )
+	if ( m_bForceRefreshFeatures || m_aCurrentTextures[ a_iTextureIndex ] != a_uiTexture )
 	{
-		if ( m_iCurrentTextureUnit != a_iTextureIndex )
+		if ( m_bForceRefreshFeatures || m_iCurrentTextureUnit != a_iTextureIndex )
 		{
 			glActiveTexture( GL_TEXTURE0 + a_iTextureIndex );
 			m_iCurrentTextureUnit = a_iTextureIndex;
@@ -222,7 +228,7 @@ void T2RenderContext::SetTexture2D( TINT a_iTextureIndex, const T2GLTexture& a_r
 
 void T2RenderContext::ResetTexture2D( TINT a_iTextureIndex )
 {
-	if ( m_iCurrentTextureUnit != a_iTextureIndex )
+	if ( m_bForceRefreshFeatures || m_iCurrentTextureUnit != a_iTextureIndex )
 	{
 		glActiveTexture( GL_TEXTURE0 + a_iTextureIndex );
 		glBindTexture( GL_TEXTURE_2D, NULL );
@@ -234,7 +240,7 @@ void T2RenderContext::ResetTexture2D( TINT a_iTextureIndex )
 
 void T2RenderContext::EnableDepthTest( TBOOL a_bEnable )
 {
-	if ( m_bDepthTest != a_bEnable )
+	if ( m_bForceRefreshFeatures || m_bDepthTest != a_bEnable )
 	{
 		if ( a_bEnable )
 			glEnable( GL_DEPTH_TEST );
@@ -247,7 +253,7 @@ void T2RenderContext::EnableDepthTest( TBOOL a_bEnable )
 
 void T2RenderContext::EnableBlend( TBOOL a_bEnable )
 {
-	if ( m_bBlend != a_bEnable )
+	if ( m_bForceRefreshFeatures || m_bBlend != a_bEnable )
 	{
 		if ( a_bEnable )
 			glEnable( GL_BLEND );
@@ -258,9 +264,54 @@ void T2RenderContext::EnableBlend( TBOOL a_bEnable )
 	}
 }
 
-void T2RenderContext::SetModelViewMatrix( const TMatrix44& a_rMatrix )
+void T2RenderContext::SetViewMatrix( const TMatrix44& a_rMatrix )
 {
-	m_matModelView = a_rMatrix;
+	m_matViewMatrix = a_rMatrix;
+}
+
+void T2RenderContext::ForceRefreshFeatures()
+{
+	m_bForceRefreshFeatures = TTRUE;
+
+	SetShaderProgram( m_uiCurrentShaderProgram );
+	EnableBlend( m_bBlend );
+	EnableDepthTest( m_bDepthTest );
+
+	ResetTexture2D( 0 );
+	ResetTexture2D( 1 );
+	ResetTexture2D( 2 );
+	ResetTexture2D( 3 );
+	ResetTexture2D( 4 );
+	ResetTexture2D( 5 );
+	ResetTexture2D( 6 );
+	ResetTexture2D( 7 );
+
+	m_bForceRefreshFeatures = TFALSE;
+}
+
+void T2RenderContext::UpdateCamera()
+{
+	TVALIDPTR( m_pCamera );
+
+	m_oProjectionParams.vecCenter.x = m_oViewport.GetWidth() * 0.5f;
+	m_oProjectionParams.vecCenter.y = m_oViewport.GetHeight() * 0.5f;
+	m_oProjectionParams.vecProj.x   = m_oProjectionParams.vecCenter.x / TMath::Tan( m_pCamera->GetFOV() * 0.5f );
+	m_oProjectionParams.vecProj.y   = m_oProjectionParams.vecProj.x;
+	m_oProjectionParams.fNearClip   = m_pCamera->GetNearPlane();
+	m_oProjectionParams.fFarClip    = m_pCamera->GetFarPlane();
+
+	switch ( m_pCamera->GetCameraMode() )
+	{
+		case CM_PERSPECTIVE:
+			ComputePerspectiveProjection( m_matProjection, m_oViewport, m_oProjectionParams );
+			break;
+
+		case CM_ORTHOGRAPHIC:
+			ComputeOrthographicProjection( m_matProjection, m_oViewport, m_oProjectionParams );
+			break;
+	}
+
+	m_matViewMatrix = m_pCamera->GetViewMatrix();
 }
 
 void T2RenderContext::Projection::SetFromFOV( TFLOAT a_fViewportWidth, TFLOAT a_fViewportHeight, TFLOAT a_fFOV, TFLOAT a_fNearPlane, TFLOAT a_fFarPlane )

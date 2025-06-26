@@ -27,7 +27,7 @@ public:
 
 	void SetEuler( const TVector3& a_rEuler );
 	void SetEulerOrder( TUINT8 a_uiX, TUINT8 a_uiy, TUINT8 a_uiz );
-	void SetTranslate( const TVector3& a_rRranslation );
+	void SetTranslate( const TVector3& a_rTranslation );
 	void SetQuat( const TQuaternion& a_rQuaternion );
 	void SetMatrix( const TMatrix44& a_rMatrix );
 

@@ -12,8 +12,9 @@ TOSHI_NAMESPACE_START
 
 T2FrameBuffer::T2FrameBuffer()
 {
-	m_uiFBO = 0;
-
+	m_uiFBO          = 0;
+	m_uiDepthTexture = 0;
+	
 	for ( TINT i = 0; i < TARRAYSIZE( m_aAttachments ); i++ )
 	{
 		m_aAttachments[ i ] = 0;

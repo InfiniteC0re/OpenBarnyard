@@ -5,6 +5,7 @@
 #  include "T2Viewport_GL.h"
 #  include "T2GLTexture_GL.h"
 #  include "T2Shader_GL.h"
+#  include "T2Camera_GL.h"
 #  include "Math/TMatrix44.h"
 #  include "Math/TSphere.h"
 
@@ -44,19 +45,29 @@ public:
 	T2RenderContext();
 	~T2RenderContext();
 
+	void UpdateCamera();
+
+	void      SetCamera( T2Camera& a_rCamera ) { m_pCamera = &a_rCamera; }
+	T2Camera* GetCamera() const { return m_pCamera; }
+
+	T2Viewport& GetViewport() { return m_oViewport; }
+	const T2Viewport& GetViewport() const { return m_oViewport; }
+
 	TMatrix44&       GetProjectionMatrix() { return m_matProjection; }
 	const TMatrix44& GetProjectionMatrix() const { return m_matProjection; }
 
-	TMatrix44&       GetModelViewMatrix() { return m_matModelView; }
-	const TMatrix44& GetModelViewMatrix() const { return m_matModelView; }
+	TMatrix44&       GetViewMatrix() { return m_matViewMatrix; }
+	const TMatrix44& GetViewMatrix() const { return m_matViewMatrix; }
 
-	void  SetModelViewMatrix( const TMatrix44& a_rMatrix );
+	void  SetViewMatrix( const TMatrix44& a_rMatrix );
 	TBOOL SetShaderProgram( const T2Shader& a_rcShaderProgram );
 
 	GLuint GetTexture2D( TINT a_iTextureIndex );
 	void   SetTexture2D( TINT a_iTextureIndex, GLuint a_uiTexture );
 	void   SetTexture2D( TINT a_iTextureIndex, const T2GLTexture& a_rcTexture );
 	void   ResetTexture2D( TINT a_iTextureIndex );
+
+	void ForceRefreshFeatures();
 
 	void EnableDepthTest( TBOOL a_bEnable );
 	void EnableBlend( TBOOL a_bEnable );
@@ -73,11 +84,19 @@ public:
 
 private:
 	TMatrix44 m_matProjection;
-	TMatrix44 m_matModelView;
-	GLuint    m_uiCurrentShaderProgram = -1;
-	TINT      m_iCurrentTextureUnit    = 0;
+	TMatrix44 m_matViewMatrix;
+	GLuint    m_uiCurrentShaderProgram;
+
+	Projection m_oProjectionParams;
+
+	TINT      m_iCurrentTextureUnit;
 	GLuint    m_aCurrentTextures[ 8 ];
 
+	T2Viewport m_oViewport;
+	T2Camera* m_pCamera;
+
+	// Render parameters
+	TBOOL m_bForceRefreshFeatures : 1;
 	TBOOL m_bDepthTest : 1;
 	TBOOL m_bBlend : 1;
 };
