@@ -18,3 +18,11 @@
 #  include <WinSock2.h>
 #  include <Windows.h>
 #endif
+
+#ifdef TRENDERINTERFACE_GL
+#  include "Platform/GL/T2Render_GL.h"
+#  include "Platform/GL/T2GLTexture_GL.h"
+#  include "Platform/GL/T2FrameBuffer_GL.h"
+#  include "Platform/GL/T2RenderBuffer_GL.h"
+#  include "Platform/GL/T2RenderContext_GL.h"
+#endif
