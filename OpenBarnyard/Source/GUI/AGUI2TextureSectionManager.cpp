@@ -99,9 +99,7 @@ void AGUI2TextureSectionManager::CreateMaterials()
 
 		if ( pSection->GetMaterial() == TNULL )
 		{
-			auto pTexture = pRenderer->GetTexture( pSection->GetTextureFile() );
-
-			if ( pTexture )
+			if ( TTexture* pTexture = pRenderer->GetTexture( pSection->GetTextureFile() ) )
 			{
 				auto pMaterial = pRenderer->CreateMaterial( pTexture );
 				pSection->SetMaterial( pMaterial );
@@ -168,16 +166,16 @@ void AGUI2TextureSectionManager::UpdateMaterials()
 					auto iHeight = pRenderer->GetHeight( pMaterial );
 
 					auto& uv1 = pSection->GetUVPoint1();
-					uv1.x     = TFLOAT( pSection->GetPoint1X() ) * TFLOAT( iWidth );
-					uv1.y     = TFLOAT( pSection->GetPoint1Y() ) * ( 1.0f / TFLOAT( iHeight ) );
-					uv1.z     = TFLOAT( pSection->GetPoint2X() ) * TFLOAT( iWidth );
-					uv1.w     = TFLOAT( pSection->GetPoint1Y() ) * ( 1.0f / TFLOAT( iHeight ) );
+					uv1.x     = TFLOAT( pSection->GetPoint1X() ) / TFLOAT( iWidth );
+					uv1.y     = TFLOAT( pSection->GetPoint1Y() ) / TFLOAT( iHeight );
+					uv1.z     = TFLOAT( pSection->GetPoint2X() ) / TFLOAT( iWidth );
+					uv1.w     = TFLOAT( pSection->GetPoint1Y() ) / TFLOAT( iHeight );
 
 					auto& uv2 = pSection->GetUVPoint2();
-					uv2.x     = TFLOAT( pSection->GetPoint2X() ) * TFLOAT( iWidth );
-					uv2.y     = TFLOAT( pSection->GetPoint2Y() ) * ( 1.0f / TFLOAT( iHeight ) );
-					uv2.z     = TFLOAT( pSection->GetPoint1X() ) * TFLOAT( iWidth );
-					uv2.w     = TFLOAT( pSection->GetPoint2Y() ) * ( 1.0f / TFLOAT( iHeight ) );
+					uv2.x     = TFLOAT( pSection->GetPoint2X() ) / TFLOAT( iWidth );
+					uv2.y     = TFLOAT( pSection->GetPoint2Y() ) / TFLOAT( iHeight );
+					uv2.z     = TFLOAT( pSection->GetPoint1X() ) / TFLOAT( iWidth );
+					uv2.w     = TFLOAT( pSection->GetPoint2Y() ) / TFLOAT( iHeight );
 				}
 			}
 			else if ( pTexture == TNULL )

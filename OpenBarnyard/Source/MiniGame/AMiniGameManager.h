@@ -60,3 +60,5 @@ private:
 	TINT        m_iNumVisibleMiniGames;
 	Toshi::TTRB field612_0x280;
 };
+
+TSINGLETON_DECLARE_ALIAS( AMiniGameManager, MiniGameManager );

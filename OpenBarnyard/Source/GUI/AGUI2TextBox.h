@@ -23,6 +23,7 @@ public:
 	void SetTextAlign( AGUI2Font::TextAlign a_eTextAlign );
 
 	const TWCHAR* GetText() const { return m_wszText; }
+	TFLOAT        GetScale() const { return m_fScale; }
 	TFLOAT        GetShadowOffsetX() const { return m_fShadowOffsetX; }
 	TFLOAT        GetShadowOffsetY() const { return m_fShadowOffsetY; }
 

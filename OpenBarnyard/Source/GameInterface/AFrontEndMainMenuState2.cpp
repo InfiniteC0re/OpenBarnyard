@@ -12,6 +12,7 @@
 #include "Input/AInputHandler.h"
 #include "GameInterface/AMovieState.h"
 #include "GameInterface/ADebugFlyState.h"
+#include "GameInterface/AFrontEndMiniGameState2.h"
 #include "AOptionsState.h"
 #include "Cameras/ACameraManager.h"
 #include "Cameras/ABoneAttachCameraHelper.h"
@@ -166,7 +167,7 @@ void AFrontEndMainMenuState2::OnInsertion()
 	// Create windmill helper and a barn sign
 	{
 		m_pWindmillHelper = new AWindmillHelper();
-		ASimAnimModelHelperManager::GetSingleton()->AddModelHelper( m_pWindmillHelper );
+		g_pSimAnimModelHelper->AddModelHelper( m_pWindmillHelper );
 
 		m_pWindmillHelper->CreateBarnSign();
 	}
@@ -175,7 +176,7 @@ void AFrontEndMainMenuState2::OnInsertion()
 
 	for ( TINT i = 0; i < FRONTENDBUTTON_NUMOF; i++ )
 	{
-		const TWCHAR* wszText = ALocaleManager::GetSingleton()->GetString( FRONTENDBUTTON_TEXTS[ i ] );
+		const TWCHAR* wszText = g_pLocaleManager->GetString( FRONTENDBUTTON_TEXTS[ i ] );
 
 		if ( i == 0 )
 			wszText = L"DEBUG FLY";
@@ -302,6 +303,10 @@ void AFrontEndMainMenuState2::OnMenuClose()
 			break;
 		case FRONTENDBUTTON_OPTIONS:
 			pPushGameState = new AOptionsState();
+			break;
+		case FRONTENDBUTTON_ANTICS:
+			// TODO: replace with character select state
+			pPushGameState = new AFrontEndMiniGameState2();
 			break;
 	}
 
