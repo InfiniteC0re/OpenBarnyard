@@ -314,6 +314,11 @@ void T2RenderContext::UpdateCamera()
 	m_matViewMatrix = m_pCamera->GetViewMatrix();
 }
 
+void T2RenderContext::SetModelMatrix( const TMatrix44& a_rMatrix )
+{
+	m_matModelMatrix = a_rMatrix;
+}
+
 void T2RenderContext::Projection::SetFromFOV( TFLOAT a_fViewportWidth, TFLOAT a_fViewportHeight, TFLOAT a_fFOV, TFLOAT a_fNearPlane, TFLOAT a_fFarPlane )
 {
 	TFLOAT fHalfWidth  = a_fViewportWidth * 0.5f;

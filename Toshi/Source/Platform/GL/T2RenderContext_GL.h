@@ -59,7 +59,11 @@ public:
 	TMatrix44&       GetViewMatrix() { return m_matViewMatrix; }
 	const TMatrix44& GetViewMatrix() const { return m_matViewMatrix; }
 
+	TMatrix44&       GetModelMatrix() { return m_matModelMatrix; }
+	const TMatrix44& GetModelMatrix() const { return m_matModelMatrix; }
+
 	void  SetViewMatrix( const TMatrix44& a_rMatrix );
+	void  SetModelMatrix( const TMatrix44& a_rMatrix );
 	TBOOL SetShaderProgram( const T2Shader& a_rcShaderProgram );
 
 	GLuint GetTexture2D( TINT a_iTextureIndex );
@@ -85,6 +89,7 @@ public:
 private:
 	TMatrix44 m_matProjection;
 	TMatrix44 m_matViewMatrix;
+	TMatrix44 m_matModelMatrix;
 	GLuint    m_uiCurrentShaderProgram;
 
 	Projection m_oProjectionParams;
