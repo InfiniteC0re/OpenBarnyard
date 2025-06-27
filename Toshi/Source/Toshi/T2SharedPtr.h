@@ -240,6 +240,14 @@ public:
 	    : m_pRawPtr( TNULL )
 	{}
 
+	// Constructor
+	T2WeakPtr( const T2SharedPtr<T>& a_rOther )
+	    : m_pRawPtr( a_rOther.m_pRawPtr )
+	{
+		if ( m_pRawPtr )
+			T2SharedPtr<T>::IncrementNumWeakRefs( m_pRawPtr );
+	}
+
 	// Copy constructor
 	T2WeakPtr( const T2WeakPtr& a_rOther )
 	    : m_pRawPtr( a_rOther.m_pRawPtr )
@@ -265,7 +273,7 @@ public:
 	// Returns TTRUE if set
 	TBOOL IsValid() const
 	{
-		return m_pRawPtr;
+		return T2SharedPtr<T>::AccessPtrData( m_pRawPtr )->uiNumRefs > 0;
 	}
 
 	T* Get()

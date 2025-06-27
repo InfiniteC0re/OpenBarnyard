@@ -189,16 +189,12 @@ public:
 
 		TFORCEINLINE Iterator Next()
 		{
-			Iterator next = *this;
-			m_pNode       = TSTATICCAST( Node, T2RedBlackTree::GetSuccessorOf( m_pNode ) );
-			return next;
+			return TSTATICCAST( Node, T2RedBlackTree::GetSuccessorOf( m_pNode ) );
 		}
 
 		TFORCEINLINE Iterator Prev()
 		{
-			Iterator prev = *this;
-			m_pNode       = TSTATICCAST( Node, T2RedBlackTree::GetPredecessorOf( m_pNode ) );
-			return prev;
+			return TSTATICCAST( Node, T2RedBlackTree::GetPredecessorOf( m_pNode ) );
 		}
 
 		TFORCEINLINE Node* GetNode() const
@@ -233,7 +229,9 @@ public:
 
 		TFORCEINLINE Iterator operator++( TINT )
 		{
-			return Next();
+			Iterator curr = *this;
+			m_pNode       = TSTATICCAST( Node, T2RedBlackTree::GetSuccessorOf( m_pNode ) );
+			return curr;
 		}
 
 		TFORCEINLINE Iterator& operator++()
@@ -244,7 +242,9 @@ public:
 
 		TFORCEINLINE Iterator operator--( TINT )
 		{
-			return Prev();
+			Iterator curr = *this;
+			m_pNode       = TSTATICCAST( Node, T2RedBlackTree::GetPredecessorOf( m_pNode ) );
+			return curr;
 		}
 
 		TFORCEINLINE Iterator& operator--()
@@ -386,7 +386,7 @@ public:
 
 	void Delete( Node* a_pNode )
 	{
-		m_pAllocator->Delete( DeleteNode( a_pNode ) );
+		m_pAllocator->Delete( TSTATICCAST( Node, DeleteNode( a_pNode ) ) );
 	}
 
 	void Erase( Node* a_pFrom, Node* a_pTo )

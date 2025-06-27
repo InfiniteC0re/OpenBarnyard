@@ -14,6 +14,8 @@ void T2GLTexture::Destroy()
 {
 	T2TextureManager::GetSingleton()->RemoveTexture( this );
 	T2Render::DestroyTexture( m_pHandle );
+
+	m_pHandle = 0;
 }
 
 void T2GLTexture::Create( TEXTURE_FORMAT a_eFormat, UINT a_uiWidth, UINT a_uiHeight, const void* a_pData )
