@@ -17,6 +17,7 @@ T2RenderContext::T2RenderContext()
     , m_iCurrentTextureUnit( 0 )
     , m_bForceRefreshFeatures( TFALSE )
     , m_pCamera( &g_oDefaultCamera )
+    , m_pSkeletonInstance( TNULL )
 {
 	m_bDepthTest = TFALSE;
 	glDisable( GL_DEPTH_TEST );

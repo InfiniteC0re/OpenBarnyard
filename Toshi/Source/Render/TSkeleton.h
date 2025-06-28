@@ -25,9 +25,9 @@ public:
 		 */
 	TFLOAT GetKeyPair( TINT a_iCurrentAnimProgress, TUINT16& a_rCurrentKeyIndex, TUINT16& a_rLerpFromIndex, TUINT16& a_rLerpToIndex );
 
-	TFORCEINLINE uint16_t* GetKey( size_t a_iKeyIndex )
+	TFORCEINLINE TUINT16* GetKey( size_t a_iKeyIndex )
 	{
-		return TREINTERPRETCAST( uint16_t*, a_iKeyIndex * m_iKeySize + TREINTERPRETCAST( uintptr_t, m_pData ) );
+		return TREINTERPRETCAST( TUINT16*, a_iKeyIndex * m_iKeySize + TREINTERPRETCAST( TUINTPTR, m_pData ) );
 	}
 
 	TFORCEINLINE TUINT16 GetKeyCount() const
@@ -45,16 +45,16 @@ public:
 		return m_eFlags & 2;
 	}
 
-	TFORCEINLINE uint8_t GetFlags() const
+	TFORCEINLINE TUINT8 GetFlags() const
 	{
 		return m_eFlags;
 	}
 
-private:
-	uint8_t   m_eFlags;
-	uint8_t   m_iKeySize;
-	TUINT16   m_iNumKeys;
-	uint16_t* m_pData;
+public:
+	TUINT8   m_eFlags;
+	TUINT8   m_iKeySize;
+	TUINT16  m_iNumKeys;
+	TBYTE*   m_pData;
 };
 
 class TSkeletonSequence
@@ -77,7 +77,7 @@ public:
 	const TCHAR* GetName() const { return m_szName; }
 	TINT16       GetUnk2() const { return m_iUnk2; }
 
-private:
+public:
 	TUINT8                 m_iNameLength;
 	TCHAR                  m_szName[ 31 ];
 	Flag                   m_eFlags;
@@ -214,6 +214,10 @@ public:
 	TSkeleton*                   GetSkeleton() { return m_pSkeleton; }
 	const TSkeletonInstanceBone* GetBones() { return m_pBones; }
 	const TSkeletonInstanceBone& GetBone( TINT a_uiIndex );
+
+	TBOOL IsAnyBaseAnimationPlaying() const { return !m_BaseAnimations.IsEmpty(); }
+	TBOOL IsAnyOverlayAnimationPlaying() const { return !m_OverlayAnimations.IsEmpty(); }
+	TBOOL IsAnyAnimationPlaying() const { return !m_BaseAnimations.IsEmpty() || !m_OverlayAnimations.IsEmpty(); }
 
 public:
 	inline static TMatrix44 g_aForwardMatrices[ TANIMATION_MAXBONES ];

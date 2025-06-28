@@ -6,6 +6,7 @@
 #  include "T2GLTexture_GL.h"
 #  include "T2Shader_GL.h"
 #  include "T2Camera_GL.h"
+#  include "Render/TAnimation.h"
 #  include "Math/TMatrix44.h"
 #  include "Math/TSphere.h"
 
@@ -62,6 +63,9 @@ public:
 	TMatrix44&       GetModelMatrix() { return m_matModelMatrix; }
 	const TMatrix44& GetModelMatrix() const { return m_matModelMatrix; }
 
+	TSkeletonInstance* GetSkeletonInstance() const { return m_pSkeletonInstance; }
+	void               SetSkeletonInstance( TSkeletonInstance* a_pInstance ) { m_pSkeletonInstance = a_pInstance; }
+
 	void  SetViewMatrix( const TMatrix44& a_rMatrix );
 	void  SetModelMatrix( const TMatrix44& a_rMatrix );
 	TBOOL SetShaderProgram( const T2Shader& a_rcShaderProgram );
@@ -93,6 +97,8 @@ private:
 	GLuint    m_uiCurrentShaderProgram;
 
 	Projection m_oProjectionParams;
+
+	TSkeletonInstance* m_pSkeletonInstance;
 
 	TINT      m_iCurrentTextureUnit;
 	GLuint    m_aCurrentTextures[ 8 ];

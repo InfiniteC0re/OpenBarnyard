@@ -121,18 +121,26 @@ void TSkeletonInstance::UpdateTime( TFLOAT a_fDeltaTime )
 		m_fTotalWeight         = 0.0f;
 
 		// Update base animations
-		T2_FOREACH( m_BaseAnimations, pAnim )
+		for ( auto pAnim = m_BaseAnimations.Begin(); pAnim != m_BaseAnimations.End(); )
 		{
+			auto pNext = pAnim->Next();
+
 			if ( pAnim->UpdateTime( a_fDeltaTime ) )
 			{
 				m_fTotalWeight += pAnim->GetWeight();
 			}
+
+			pAnim = pNext;
 		}
 
 		// Update overlay animations
-		T2_FOREACH( m_OverlayAnimations, pAnim )
+		for ( auto pAnim = m_OverlayAnimations.Begin(); pAnim != m_OverlayAnimations.End(); )
 		{
+			auto pNext = pAnim->Next();
+
 			pAnim->UpdateTime( a_fDeltaTime );
+
+			pAnim = pNext;
 		}
 
 		if ( HASANYFLAG( m_eFlags, 1 ) )
