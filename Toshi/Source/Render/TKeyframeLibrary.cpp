@@ -45,24 +45,32 @@ TKeyframeLibrary* TKeyframeLibrary::CreateFromTRB( TTRB* a_pTRB, const TCHAR* a_
 	TVALIDPTR( a_pTRB );
 	TVALIDPTR( a_szSymbolName );
 
-	TKeyframeLibrary* pLibrary   = new TKeyframeLibrary;
-	TRBHeader*        pTRBHeader = TSTATICCAST( TRBHeader, a_pTRB->GetSymbolAddress( a_szSymbolName ) );
+	TRBHeader* pTRBHeader = TSTATICCAST( TRBHeader, a_pTRB->GetSymbolAddress( a_szSymbolName ) );
 
-	TSIZE iNameLen          = TStringManager::String8Length( pTRBHeader->m_szName );
+	return CreateFromData( pTRBHeader );
+}
+
+TKeyframeLibrary* TKeyframeLibrary::CreateFromData( TRBHeader* a_pTRBHeader )
+{
+	TVALIDPTR( a_pTRBHeader );
+
+	TKeyframeLibrary* pLibrary = new TKeyframeLibrary;
+
+	TSIZE iNameLen          = TStringManager::String8Length( a_pTRBHeader->m_szName );
 	pLibrary->m_iNameLength = TUINT8( iNameLen );
 
-	TStringManager::String8Copy( pLibrary->m_szName, pTRBHeader->m_szName, TMath::Min( iNameLen, sizeof( pLibrary->m_szName ) ) );
+	TStringManager::String8Copy( pLibrary->m_szName, a_pTRBHeader->m_szName, TMath::Min( iNameLen, sizeof( pLibrary->m_szName ) ) );
 	pLibrary->m_iReferenceCount  = 0;
-	pLibrary->m_SomeVector       = pTRBHeader->m_SomeVector;
-	pLibrary->m_iNumTranslations = pTRBHeader->m_iNumTranslations;
-	pLibrary->m_iNumQuaternions  = pTRBHeader->m_iNumQuaternions;
-	pLibrary->m_iNumScales       = pTRBHeader->m_iNumScales;
-	pLibrary->m_iTranslationSize = pTRBHeader->m_iTranslationSize;
-	pLibrary->m_iQuaternionSize  = pTRBHeader->m_iQuaternionSize;
-	pLibrary->m_iScaleSize       = pTRBHeader->m_iScaleSize;
-	pLibrary->m_pTranslations    = pTRBHeader->m_pTranslations;
-	pLibrary->m_pQuaternions     = pTRBHeader->m_pQuaternions;
-	pLibrary->m_pScales          = pTRBHeader->m_pScales;
+	pLibrary->m_SomeVector       = a_pTRBHeader->m_SomeVector;
+	pLibrary->m_iNumTranslations = a_pTRBHeader->m_iNumTranslations;
+	pLibrary->m_iNumQuaternions  = a_pTRBHeader->m_iNumQuaternions;
+	pLibrary->m_iNumScales       = a_pTRBHeader->m_iNumScales;
+	pLibrary->m_iTranslationSize = a_pTRBHeader->m_iTranslationSize;
+	pLibrary->m_iQuaternionSize  = a_pTRBHeader->m_iQuaternionSize;
+	pLibrary->m_iScaleSize       = a_pTRBHeader->m_iScaleSize;
+	pLibrary->m_pTranslations    = a_pTRBHeader->m_pTranslations;
+	pLibrary->m_pQuaternions     = a_pTRBHeader->m_pQuaternions;
+	pLibrary->m_pScales          = a_pTRBHeader->m_pScales;
 
 	return pLibrary;
 }

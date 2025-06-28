@@ -97,7 +97,7 @@ public:
 
 	struct TRBHeader
 	{
-		const TCHAR*     m_szName;
+		TCHAR*           m_szName;
 		TVector3         m_SomeVector;
 		TINT             m_iNumTranslations;
 		TINT             m_iNumQuaternions;
@@ -112,12 +112,17 @@ public:
 
 public:
 	static TKeyframeLibrary* CreateFromTRB( TTRB* a_pTRB, const TCHAR* a_szSymbolName );
+	static TKeyframeLibrary* CreateFromData( TRBHeader* a_pTRBHeader );
 
 	void Delete();
 	void SetTRB( TTRB* a_pTRB ) { m_pTRB = a_pTRB; }
 
 	TINT         GetNameLength() const { return m_iNameLength; }
 	const TCHAR* GetName() const { return m_szName; }
+
+	TINT GetNumTranslations() const { return m_iNumTranslations; }
+	TINT GetNumQuaternions() const { return m_iNumQuaternions; }
+	TINT GetNumScales() const { return m_iNumScales; }
 
 private:
 	TKeyframeLibrary();
@@ -153,6 +158,7 @@ class TKeyframeLibraryInstance
 {
 public:
 	TKeyframeLibraryInstance();
+	~TKeyframeLibraryInstance();
 
 	TKeyframeLibrary* Create( TKeyframeLibrary* a_pLibrary );
 	TKeyframeLibrary* CreateEx( TKeyframeLibrary* a_pLibrary, TINT a_iTKeyCount, TINT a_iQKeyCount, TINT a_iSKeyCount, TINT a_iTBaseIndex, TINT a_iQBaseIndex, TINT a_iSBaseIndex );
@@ -210,6 +216,7 @@ public:
 
 	TKeyframeLibrary* LoadLibrary( const TCHAR* a_szFilePath );
 	TKeyframeLibrary* LoadLibrary( TTRB* a_pTRB, const TCHAR* a_szSymbolName );
+	TKeyframeLibrary* LoadLibrary( TKeyframeLibrary::TRBHeader* a_pTRBHeader );
 
 	void UnloadLibrary( TKeyframeLibrary* a_pLibrary );
 

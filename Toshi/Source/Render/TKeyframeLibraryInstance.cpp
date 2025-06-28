@@ -23,6 +23,11 @@ TKeyframeLibraryInstance::TKeyframeLibraryInstance()
 	m_pScales       = TNULL;
 }
 
+TKeyframeLibraryInstance::~TKeyframeLibraryInstance()
+{
+	TASSERT( m_pLibrary == TNULL );
+}
+
 TKeyframeLibrary* TKeyframeLibraryInstance::Create( TKeyframeLibrary* a_pLibrary )
 {
 	return CreateEx( a_pLibrary, a_pLibrary->m_iNumTranslations, a_pLibrary->m_iNumQuaternions, a_pLibrary->m_iNumScales, 0, 0, 0 );

@@ -67,6 +67,16 @@ TKeyframeLibrary* TKeyframeLibraryManager::LoadLibrary( TTRB* a_pTRB, const TCHA
 	return pLibrary;
 }
 
+TKeyframeLibrary* TKeyframeLibraryManager::LoadLibrary( TKeyframeLibrary::TRBHeader* a_pTRBHeader )
+{
+	TKeyframeLibrary* pLibrary = TKeyframeLibrary::CreateFromData( a_pTRBHeader );
+
+	m_List.InsertHead( pLibrary );
+	m_iNumLibraries++;
+
+	return pLibrary;
+}
+
 // $Barnyard: FUNCTION 006ca3c0
 void TKeyframeLibraryManager::UnloadLibrary( TKeyframeLibrary* a_pLibrary )
 {
