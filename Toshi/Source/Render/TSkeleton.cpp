@@ -566,7 +566,7 @@ TFLOAT TSkeletonSequenceBone::GetKeyPair( TINT a_iCurrentAnimTime, TUINT16& a_rC
 {
 	auto pFirstKeyTime = *GetKey( 0 );
 
-	if ( a_iCurrentAnimTime < pFirstKeyTime || a_iCurrentAnimTime == pFirstKeyTime )
+	if ( a_iCurrentAnimTime <= pFirstKeyTime )
 	{
 		// Animation haven't reached it's first frame
 		a_rCurrentKeyIndex = 0;

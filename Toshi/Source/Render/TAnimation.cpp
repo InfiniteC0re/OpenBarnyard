@@ -45,7 +45,7 @@ TBOOL TAnimation::UpdateTime( TFLOAT a_fDeltaTime )
 		if ( m_fSeqTime < 0.0f && m_fSpeed < 0.0f )
 			m_fSeqTime = fSeqDuration;
 
-		if ( 0.0f <= m_fSeqTime )
+		if ( m_fSeqTime >= 0.0f )
 		{
 			if ( fSeqDuration < m_fSeqTime )
 			{

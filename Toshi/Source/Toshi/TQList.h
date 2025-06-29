@@ -78,8 +78,7 @@ public:
 
 public:
 	TQList() = default;
-
-	~TQList() { TASSERT( IsEmpty() ); }
+	~TQList() = default;
 
 	void PushFront( T* a_pNode )
 	{
