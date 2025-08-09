@@ -361,11 +361,10 @@ void ARenderer::RenderMainScene( TFLOAT a_fDeltaTime )
 {
 	if ( ARootTask::GetSingleton()->ShouldRenderMainScene() )
 	{
-		auto pViewport        = m_pViewport;
-		auto pViewportContext = pViewport->GetRenderContext();
+		auto pViewportContext = m_pViewport->GetRenderContext();
 		auto pCameraObject    = m_pCameraObject;
 
-		pViewport->AllowDepthClear( TTRUE );
+		m_pViewport->AllowDepthClear( TTRUE );
 
 		auto pRender     = TRenderD3DInterface::Interface();
 		auto pOldContext = pRender->SetCurrentRenderContext( pViewportContext );
@@ -374,7 +373,7 @@ void ARenderer::RenderMainScene( TFLOAT a_fDeltaTime )
 		rTransformStack.Reset();
 		rTransformStack.PushNull().Identity();
 
-		pViewport->Begin();
+		m_pViewport->Begin();
 		pCameraObject->Render();
 
 		if ( !ARootTask::GetSingleton()->IsPaused() )
@@ -408,13 +407,13 @@ void ARenderer::RenderMainScene( TFLOAT a_fDeltaTime )
 
 		pRender->FlushShaders();
 		rTransformStack.Pop();
-		pViewport->End();
+		m_pViewport->End();
 
 		//m_pHALViewport2->Begin();
 		//m_pHALViewport2->End();
 
-		pViewport->AllowBackgroundClear( TTRUE );
-		pViewport->AllowDepthClear( TTRUE );
+		m_pViewport->AllowBackgroundClear( TTRUE );
+		m_pViewport->AllowDepthClear( TTRUE );
 
 		pRender->SetCurrentRenderContext( pOldContext );
 	}

@@ -29,7 +29,10 @@ project "BYardSDK"
 	{
 		"Source",
 		"%{IncludeDir.toshi}",
-		"%{IncludeDir.detours}"
+		"%{IncludeDir.detours}",
+		"%{IncludeDir.glm}",
+		"%{IncludeDir.sdl2}",
+		"%{IncludeDir.glew}"
 	}
 	
 	externalincludedirs

@@ -35,6 +35,9 @@ project "BYModCore"
 		"%{IncludeDir.openbarnyard}",
 		"%{IncludeDir.byardsdk}",
 		"%{IncludeDir.detours}",
+		"%{IncludeDir.glm}",
+		"%{IncludeDir.sdl2}",
+		"%{IncludeDir.glew}"
 	}
 	
 	externalincludedirs

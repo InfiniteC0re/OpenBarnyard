@@ -25,12 +25,12 @@ AFrontEndMiniGameState2::AFrontEndMiniGameState2( TBOOL a_bHideVariantSelector )
     , m_iHidingMiniGame( 1 )
     , m_pRectangles( TNULL )
     , m_iNumMiniGames( 0 )
-    , m_eState( 0 )
+    , m_eSliderState( SLIDERSTATE_NONE )
     , m_bNoDebug( a_bHideVariantSelector )
     , m_bMouseDirty( TFALSE )
     , m_bMiniGameHovered( TFALSE )
     , m_bLeftArrowHovered( TFALSE )
-    , m_bRightArrowHowered( TFALSE )
+    , m_bRightArrowHovered( TFALSE )
 {
 }
 
@@ -179,6 +179,133 @@ void AFrontEndMiniGameState2::OnInsertion()
 	m_bFocusedElementBloated = TFALSE;
 
 	BaseClass::OnInsertion();
+}
+
+// $Barnyard: FUNCTION 0040aa00
+TBOOL AFrontEndMiniGameState2::OnUpdate( TFLOAT a_fDeltaTime )
+{
+	// Update mouse
+	if ( m_eMenuState == ABYardMenuState::MENUSTATE_MENU_VISIBLE && m_bMouseDirty )
+	{
+		AGUI2Transform oTransform;
+		TVector2       vecCursorPos = g_pGUI2->GetMouseCursor().GetCursorPos();
+		TVector2       vecTransformed;
+
+		// Is minigame hovered?
+		m_pRectangles[ m_iSelectedMiniGame ].GetInvScreenTransform( oTransform );
+		oTransform.Transform( vecTransformed, vecCursorPos );
+		m_bMiniGameHovered = m_pRectangles[ m_iSelectedMiniGame ].IsPointInside( vecTransformed.x, vecTransformed.y );
+
+		if ( !m_bMiniGameHovered )
+		{
+			m_aArrows[ 0 ].GetInvScreenTransform( oTransform );
+			oTransform.Transform( vecTransformed, vecCursorPos );
+			m_bLeftArrowHovered = m_aArrows[ 0 ].IsPointInside( vecTransformed.x, vecTransformed.y );
+		}
+
+		if ( !m_bMiniGameHovered && !m_bLeftArrowHovered )
+		{
+			m_aArrows[ 1 ].GetInvScreenTransform( oTransform );
+			oTransform.Transform( vecTransformed, vecCursorPos );
+			m_bRightArrowHovered = m_aArrows[ 1 ].IsPointInside( vecTransformed.x, vecTransformed.y );
+		}
+
+		m_bMouseDirty = TFALSE;
+	}
+
+	if ( m_eMenuState == ABYardMenuState::MENUSTATE_MENU_APPEAR || m_eMenuState == ABYardMenuState::MENUSTATE_MENU_DISAPPEAR )
+	{
+		m_oMiniGameTitle.SetAlpha( m_fMenuOpacity );
+		m_oMiniGameTitle.SetShadowAlpha( m_fMenuOpacity * 0.6f );
+		m_oMiniGameDescription.SetAlpha( m_fMenuOpacity );
+		m_oMiniGameDescription.SetShadowAlpha( m_fMenuOpacity * 0.6f );
+	}
+	else if ( m_eMenuState == ABYardMenuState::MENUSTATE_DIALOG_APPEAR || m_eMenuState == ABYardMenuState::MENUSTATE_DIALOG_DISAPPEAR )
+	{
+		m_oMiniGameTitle.SetAlpha( 0.0f );
+		m_oMiniGameTitle.SetShadowAlpha( 0.0f );
+		m_oMiniGameDescription.SetAlpha( 0.0f );
+		m_oMiniGameDescription.SetShadowAlpha( 0.0f );
+	}
+
+	if ( m_eMenuState != MENUSTATE_MENU_VISIBLE )
+		return BaseClass::OnUpdate( a_fDeltaTime );
+
+	// Update time
+	m_fTime += a_fDeltaTime;
+
+	// Animate arrows on hover
+	const TFLOAT fLerpSpeed       = a_fDeltaTime * 10.0f;
+	TFLOAT       fRightArrowScale = 1.0f;
+	TFLOAT       fLeftArrowScale  = 1.0f;
+
+	if ( m_bRightArrowHovered )
+		fRightArrowScale = 1.25;
+
+	if ( m_bLeftArrowHovered )
+		fLeftArrowScale = 1.25;
+	
+	m_aArrows[ 1 ].GetTransform().SetScale(
+	    TMath::LERPClamped( m_aArrows[ 1 ].GetTransform().GetScaleX(), fRightArrowScale, fLerpSpeed ),
+	    TMath::LERPClamped( m_aArrows[ 1 ].GetTransform().GetScaleX(), fRightArrowScale, fLerpSpeed )
+	);
+
+	m_aArrows[ 0 ].GetTransform().SetScale(
+	    TMath::LERPClamped( m_aArrows[ 0 ].GetTransform().GetScaleX(), fLeftArrowScale, fLerpSpeed ),
+	    TMath::LERPClamped( m_aArrows[ 0 ].GetTransform().GetScaleX(), fLeftArrowScale, fLerpSpeed )
+	);
+
+	// Animate minigame
+	if ( m_oMenu.IsFocused() && m_eSliderState == 0 )
+	{
+		TFLOAT fScale = TMath::Sin( TMath::TWO_PI * m_fTotalTime ) * 0.05f + 1.1f;
+		m_pRectangles[ m_iSelectedMiniGame ].GetTransform().SetScale( fScale, fScale );
+	}
+
+	switch ( m_eSliderState )
+	{
+		case SLIDERSTATE_SWITCH_TO_NEXT:
+		{
+			TINT iPrevHiding = m_iHidingMiniGame;
+
+			m_iHidingMiniGame   = m_iPrevMiniGame;
+			m_iPrevMiniGame     = m_iSelectedMiniGame;
+			m_iSelectedMiniGame = m_iNextMiniGame;
+
+			m_iNextMiniGame += 1;
+			if ( m_iNextMiniGame >= m_iNumMiniGames )
+				m_iNextMiniGame = 0;
+
+			if ( iPrevHiding != m_iNextMiniGame )
+			{
+				m_pRectangles[ m_iNextMiniGame ].SetColour( 0 );
+				m_pRectangles[ m_iNextMiniGame ].SetTransform( 100.0f + 100.0f, 0.0f );
+				m_pRectangles[ m_iNextMiniGame ].GetTransform().Scale( 0.5f, 0.5f );
+				m_pRectangles[ m_iNextMiniGame ].Show();
+
+				if ( iPrevHiding )
+				{
+					m_pRectangles[ iPrevHiding ].SetColour( 0 );
+					m_pRectangles[ iPrevHiding ].SetTransform( 0.0f, 0.0f );
+					m_pRectangles[ iPrevHiding ].GetTransform().Scale( 0.5f, 0.5f );
+					m_pRectangles[ iPrevHiding ].Hide();
+				}
+			}
+
+			m_pRectangles[ m_iSelectedMiniGame ].SetAlpha( 1.0f );
+			m_eSliderState = SLIDERSTATE_2;
+			UpdateText();
+
+			break;
+		}
+		case SLIDERSTATE_2:
+		{
+
+			break;
+		}
+	}
+
+	return BaseClass::OnUpdate( a_fDeltaTime );
 }
 
 // $Barnyard: FUNCTION 0040a0f0

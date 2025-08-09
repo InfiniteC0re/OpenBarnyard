@@ -25,7 +25,7 @@ public:
 	    TINT                    a_iUnk1,
 	    const Toshi::TPString8& a_strLoadingScreenName,
 	    TBOOL                   a_bUnk2,
-	    TINT                    a_iUnk3,
+	    TINT                    a_iMaxNumPlayers,
 	    TINT                    a_iUnk4,
 	    TINT                    a_iUnk5,
 	    TINT                    a_iOrderId,

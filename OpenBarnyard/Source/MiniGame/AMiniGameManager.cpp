@@ -66,14 +66,14 @@ AMiniGameManager::~AMiniGameManager()
 }
 
 // $Barnyard: FUNCTION 00469d30
-AMiniGame& AMiniGameManager::RegisterMiniGame( const TCHAR* a_szMiniGameName, const TCHAR* a_szClassStateName, const TCHAR* a_szIconName, TINT a_eLocaleTitle, TINT a_eLocaleDescription, TINT a_iUnk1, const Toshi::TPString8& a_strLoadingScreenName, TBOOL a_bUnk2, TINT a_iUnk3, TINT a_iUnk4, TINT a_iUnk5, TINT a_iOrderId, TINT a_iUnk7 )
+AMiniGame& AMiniGameManager::RegisterMiniGame( const TCHAR* a_szMiniGameName, const TCHAR* a_szClassStateName, const TCHAR* a_szIconName, TINT a_eLocaleTitle, TINT a_eLocaleDescription, TINT a_iUnk1, const Toshi::TPString8& a_strLoadingScreenName, TBOOL a_bUnk2, TINT a_iMaxNumPlayers, TINT a_iUnk4, TINT a_iUnk5, TINT a_iOrderId, TINT a_iUnk7 )
 {
 	AMiniGame& rMiniGame = m_vecMiniGames.PushBack();
 
 	rMiniGame.m_eLocaleTitle       = a_eLocaleTitle;
 	rMiniGame.m_eLocaleDescription = a_eLocaleDescription;
 	rMiniGame.m_pGameStateClass    = TClass::Find( a_szClassStateName, &TGetClass( AGameState ) );
-	rMiniGame.field4_0x10          = a_iUnk3;
+	rMiniGame.m_iMaxNumPlayers     = a_iMaxNumPlayers;
 	rMiniGame.field7_0x1c          = a_bUnk2;
 	rMiniGame.field5_0x14          = a_iUnk4;
 	rMiniGame.m_pLoadingScreenName = &a_strLoadingScreenName;
@@ -99,7 +99,7 @@ AMiniGame& AMiniGameManager::RegisterHiddenMiniGame( const TCHAR* a_szMiniGameNa
 	rMiniGame.m_eLocaleDescription = a_eLocaleDescription;
 	rMiniGame.m_pGameStateClass    = TClass::Find( a_szClassStateName, &TGetClass( AGameState ) );
 	rMiniGame.m_pLoadingScreenName = &a_strLoadingScreenName;
-	rMiniGame.field4_0x10          = 1;
+	rMiniGame.m_iMaxNumPlayers     = 1;
 	rMiniGame.field5_0x14          = 1;
 	rMiniGame.field6_0x18          = 1;
 	rMiniGame.m_szIconName         = a_szIconName;

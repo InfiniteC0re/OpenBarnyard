@@ -82,21 +82,16 @@ void TResource::OnDestroy()
 // $Barnyard: FUNCTION 006d82b0
 void TResource::SetParent( TResource* a_pParent )
 {
-	auto pTree = TNode::Tree();
+	TASSERT( ( TNULL == a_pParent ) || ( TTRUE == IsDying() ) || ( TFALSE == a_pParent->IsDying() ) );
+	TASSERT( TNULL != Tree() );
 
+	TNodeTree<TResource>* pTree = TNode::Tree();
 	pTree->Remove( this );
 
-	if ( !a_pParent )
-	{
-		if ( pTree )
-		{
-			pTree->InsertAtRoot( this );
-		}
-	}
+	if ( !a_pParent && pTree )
+		pTree->InsertAtRoot( this );
 	else
-	{
 		pTree->Insert( a_pParent, this );
-	}
 }
 
 // $Barnyard: FUNCTION 006d81a0

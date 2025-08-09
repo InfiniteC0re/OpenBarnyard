@@ -29,6 +29,9 @@ public:
 	// Sets scale preserving translation
 	void SetScale( TFLOAT a_fScaleX, TFLOAT a_fScaleY );
 
+	TFLOAT GetScaleX() const { return m_aMatrixRows[ 0 ].x; }
+	TFLOAT GetScaleY() const { return m_aMatrixRows[ 1 ].y; }
+
 	// Sets scale and resets translation
 	void SetFromScale( TFLOAT a_fScaleX, TFLOAT a_fScaleY );
 

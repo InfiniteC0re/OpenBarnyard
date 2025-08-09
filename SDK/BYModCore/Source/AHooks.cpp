@@ -908,6 +908,13 @@ MEMBER_HOOK( 0x006dce90, Toshi::TNativeFile, TNativeFile_FlushWriteBuffer, TINT 
 struct UnknownType
 {};
 
+MEMBER_HOOK( 0x00620c50, UnknownType, Unknown_RegisterPlayer, void*, TINT a_Unk1, TINT a_Unk2 )
+{
+	void* res = CallOriginal( 0, a_Unk2 );
+	CallOriginal( a_Unk1, a_Unk2 );
+	return res;
+}
+
 MEMBER_HOOK( 0x00497280, UnknownType, Unknown_CrashPoint1, void, TINT a_Unk1, BOOL a_Unk2 )
 {
 	TUINT* pSomeUIElement = (TUINT*)0x00782c10;
@@ -975,6 +982,7 @@ void AHooks::Initialise()
 	// Fixing crashes and memory stumps of the original game
 	InstallHook<CollObjectModel_DCTOR>();
 	InstallHook<Unknown_CrashPoint1>();
+	InstallHook<Unknown_RegisterPlayer>();
 
 	InstallHook<TModel_LoadTRB>();
 	InstallHook<TModel_UnloadTRB>();

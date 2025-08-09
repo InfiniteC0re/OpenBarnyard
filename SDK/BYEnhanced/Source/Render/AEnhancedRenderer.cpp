@@ -9,6 +9,7 @@
 #include <AHooks.h>
 
 #include <Math/TVector2.h>
+#include <Toshi/TScheduler.h>
 #include <Render/TCameraObject.h>
 #include <Render/TViewport.h>
 #include <Render/TShader.h>
@@ -163,9 +164,9 @@ void AEnhancedRenderer::ScenePreRender()
 	TMatrix44 oSunTransform = TMatrix44::IDENTITY;
 	enhRender::g_DirectionalLightDir.Normalize();
 	oSunTransform.SetTranslation( TVector3(
-		oCamTransform.m_f41 - enhRender::g_DirectionalLightDir.x * 40.0f,
-		oCamTransform.m_f42 - enhRender::g_DirectionalLightDir.y * 40.0f,
-	    oCamTransform.m_f43 - enhRender::g_DirectionalLightDir.z * 40.0f
+		0.0f - enhRender::g_DirectionalLightDir.x * 40.0f,
+		0.0f - enhRender::g_DirectionalLightDir.y * 40.0f,
+	    0.0f - enhRender::g_DirectionalLightDir.z * 40.0f
 	) );
 
 	oSunTransform.LookAtDirection( enhRender::g_DirectionalLightDir, s_vWorldUp );
@@ -173,7 +174,7 @@ void AEnhancedRenderer::ScenePreRender()
 	g_SunCameraObject.SetMode( TRenderContext::CameraMode_Orthographic );
 	g_SunCameraObject.SetProjectionCentreX( 0.5f );
 	g_SunCameraObject.SetProjectionCentreY( 0.5f );
-	g_SunCameraObject.SetFOV( TMath::DegToRad( 50.9f ) );
+	g_SunCameraObject.SetFOV( TMath::DegToRad( 90.9f ) );
 	g_SunCameraObject.GetTransformObject().SetMatrix( oSunTransform );
 	g_SunCameraObject.SetNear( 1.0f );
 	g_SunCameraObject.SetFar( 250.0f );
@@ -269,6 +270,8 @@ void AEnhancedRenderer::ScenePostRender()
 	static TPString8 s_CamPos                = TPS8D( "u_CamPos" );
 	static TPString8 s_SpecularColor         = TPS8D( "u_SpecularColor" );
 	static TPString8 s_View                  = TPS8D( "u_View" );
+	static TPString8 s_Time                  = TPS8D( "u_Time" );
+	static TPString8 s_Projection            = TPS8D( "u_Projection" );
 	enhRender::g_ShaderLighting.SetUniform( s_DirectionalLightDir, enhRender::g_DirectionalLightDir );
 	enhRender::g_ShaderLighting.SetUniform( s_FogColor, enhRender::g_FogColor );
 	enhRender::g_ShaderLighting.SetUniform( s_SpecularColor, enhRender::g_SpecularColor );
@@ -282,8 +285,12 @@ void AEnhancedRenderer::ScenePostRender()
 	enhRender::g_ShaderLighting.SetUniform( s_DiffuseColor, *(TVector4*)( ( *(TUINT*)0x0079a854 ) + 0xF0 ) );
 	enhRender::g_ShaderLighting.SetUniform( s_CamPos, oCamTransform.GetTranslation3() );
 	enhRender::g_ShaderLighting.SetUniform( s_View, oCamTransform );
+	enhRender::g_ShaderLighting.SetUniform( s_Projection, enhRender::g_Projection );
+	enhRender::g_ShaderLighting.SetUniform( s_Time, g_oSystemManager.GetScheduler()->GetTotalTime() );
 
+	//glEnable( GL_FRAMEBUFFER_SRGB );
 	RenderScreenQuad();
+	//glDisable( GL_FRAMEBUFFER_SRGB ); 
 
 	//// Apply HDR
 	//T2Render::SetShaderProgram( enhRender::g_ShaderHDR );

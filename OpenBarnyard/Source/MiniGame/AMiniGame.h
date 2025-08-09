@@ -27,7 +27,7 @@ private:
 	TINT                    m_eLocaleTitle;
 	TINT                    m_eLocaleDescription;
 	Toshi::TClass*          m_pGameStateClass;
-	TINT                    field4_0x10;
+	TINT                    m_iMaxNumPlayers;
 	TINT                    field5_0x14;
 	TINT                    field6_0x18;
 	TBOOL                   field7_0x1c;

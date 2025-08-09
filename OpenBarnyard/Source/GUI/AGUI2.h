@@ -55,3 +55,5 @@ private:
 	TBOOL            m_bShowPlayerInfo;
 	TBOOL            m_bShowTexturesInfo;
 };
+
+TSINGLETON_DECLARE_ALIAS( AGUI2, GUI2 );

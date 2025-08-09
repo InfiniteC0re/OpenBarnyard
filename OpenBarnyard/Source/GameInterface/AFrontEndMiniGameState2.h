@@ -7,12 +7,20 @@ class AFrontEndMiniGameState2
 public:
 	TDECLARE_CLASS( AFrontEndMiniGameState2, ABYardMenuState );
 
+	enum SLIDERSTATE
+	{
+		SLIDERSTATE_NONE,
+		SLIDERSTATE_SWITCH_TO_NEXT,
+		SLIDERSTATE_2,
+	};
+
 public:
 	AFrontEndMiniGameState2( TBOOL a_bHideVariantSelector = TFALSE );
 	~AFrontEndMiniGameState2();
 
 	// AGameState
-	virtual void OnInsertion() OVERRIDE;
+	virtual void  OnInsertion() OVERRIDE;
+	virtual TBOOL OnUpdate( TFLOAT a_fDeltaTime ) OVERRIDE;
 
 	// ABYardMenuState
 	virtual void OnMenuItemActivated( AGUI2MenuItem& a_rMenuItem ) OVERRIDE;
@@ -31,16 +39,16 @@ private:
 	TINT            m_iPrevMiniGame;
 	TINT            m_iNextMiniGame;
 	TINT            m_iHidingMiniGame;
-	TINT            m_eState;
+	SLIDERSTATE     m_eSliderState;
 	AGUI2Rectangle  m_aArrows[ 2 ];
 	AGUI2TextBox    m_oMiniGameTitle;
 	AGUI2TextBox    m_oMiniGameDescription;
 	TINT            field15_0xa9c;
 	TINT            field16_0xaa0;
 	TBOOL           m_bNoDebug;
-	TFLOAT          m_flTime;
+	TFLOAT          m_fTime;
 	TBOOL           m_bMouseDirty;
 	TBOOL           m_bMiniGameHovered;
 	TBOOL           m_bLeftArrowHovered;
-	TBOOL           m_bRightArrowHowered;
+	TBOOL           m_bRightArrowHovered;
 };
