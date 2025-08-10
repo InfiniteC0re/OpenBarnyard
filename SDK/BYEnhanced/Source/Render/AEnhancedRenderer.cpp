@@ -163,11 +163,11 @@ void AEnhancedRenderer::ScenePreRender()
 	// Make light space view matrix
 	TMatrix44 oSunTransform = TMatrix44::IDENTITY;
 	enhRender::g_DirectionalLightDir.Normalize();
-	oSunTransform.SetTranslation( TVector3(
-		0.0f - enhRender::g_DirectionalLightDir.x * 40.0f,
-		0.0f - enhRender::g_DirectionalLightDir.y * 40.0f,
-	    0.0f - enhRender::g_DirectionalLightDir.z * 40.0f
-	) );
+	/*oSunTransform.SetTranslation( TVector3(
+		0.0f,
+		0.0f,
+		0.0f
+	) );*/
 
 	oSunTransform.LookAtDirection( enhRender::g_DirectionalLightDir, s_vWorldUp );
 
@@ -369,7 +369,7 @@ void AEnhancedRenderer::CreateFrameBuffers()
 	    2,
 	    m_oWindowParams.uiWidth,
 	    m_oWindowParams.uiHeight,
-	    GL_RGB,
+	    GL_SRGB,
 	    GL_RGB,
 	    GL_UNSIGNED_BYTE
 	);

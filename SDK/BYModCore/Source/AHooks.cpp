@@ -982,7 +982,7 @@ void AHooks::Initialise()
 	// Fixing crashes and memory stumps of the original game
 	InstallHook<CollObjectModel_DCTOR>();
 	InstallHook<Unknown_CrashPoint1>();
-	InstallHook<Unknown_RegisterPlayer>();
+	//InstallHook<Unknown_RegisterPlayer>();
 
 	InstallHook<TModel_LoadTRB>();
 	InstallHook<TModel_UnloadTRB>();

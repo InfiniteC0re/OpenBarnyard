@@ -18,17 +18,17 @@ inline Toshi::T2FrameBuffer g_ShadowMap1;
 inline Toshi::T2Shader      g_ShaderLighting;
 //inline Toshi::TVector3      g_DirectionalLightDir( 0.653f, 0.757f, 0.0f );
 inline Toshi::TVector3      g_DirectionalLightDir( 0.260f, 0.238f, 0.936f );
-inline Toshi::TVector3      g_FogColor( 1.0f, 1.0f, 1.0f );
+inline Toshi::TVector3      g_FogColor( 0.478f, 0.678f, 1.0f );
 inline Toshi::TVector3      g_SpecularColor( 1.0f, 1.0f, 1.0f );
 inline Toshi::TMatrix44     g_Projection;
 inline Toshi::TMatrix44     g_LightViewMatrix;
 
 inline TFLOAT g_ShadowBiasMin = 0.00045f;
 inline TFLOAT g_ShadowBiasMax = 0.0000f;
-inline TFLOAT g_ShadowStrength = 0.2f;
+inline TFLOAT g_ShadowStrength = 0.3f;
 
-inline TFLOAT g_Exposure = 6.4f;
 inline TFLOAT g_Gamma = 2.2f;
+inline TFLOAT g_Exposure = 2.8f;
 
 inline TBOOL g_bIsShadowPass = TFALSE;
 

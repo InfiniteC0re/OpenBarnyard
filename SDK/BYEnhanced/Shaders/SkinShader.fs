@@ -20,6 +20,6 @@ void main() {
     gPosition = vec4(o_Position, 1.0f);
     gNormal = vec4(o_Normal, 1.0f);
     gColor = texColor;
-    gInfo.r = 4.0f;
+    gInfo.r = 9.0f;
     gInfo.g = u_Shininess;
 }
