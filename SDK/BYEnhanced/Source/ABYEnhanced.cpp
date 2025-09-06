@@ -107,6 +107,10 @@ public:
 
 	virtual void OnImGuiRender( AImGUI* a_pImGui ) override
 	{
+		ImGui::SliderFloat( "SSAO Strength", &enhRender::g_SSAOStrength, 0.0f, 10.0f );
+		ImGui::SliderFloat( "SSAO Radius", &enhRender::g_SSAORadius, 0.0f, 10.0f );
+		ImGui::SliderFloat( "SSAO Bias", &enhRender::g_SSAOBias, 0.0f, 10.0f );
+
 		ImGui::SliderFloat( "Shadow Bias (Min)", &enhRender::g_ShadowBiasMin, 0.0f, 1.0f, "%.8f" );
 		ImGui::SliderFloat( "Shadow Bias (Max)", &enhRender::g_ShadowBiasMax, 0.0f, 1.0f, "%.8f" );
 		ImGui::SliderFloat( "Shadow Strength", &enhRender::g_ShadowStrength, 0.0f, 1.0f, "%.3f" );

@@ -30,6 +30,10 @@ inline TFLOAT g_ShadowStrength = 0.3f;
 inline TFLOAT g_Gamma = 2.2f;
 inline TFLOAT g_Exposure = 2.8f;
 
+inline TFLOAT g_SSAOStrength = 2.5f;
+inline TFLOAT g_SSAORadius   = 0.5;
+inline TFLOAT g_SSAOBias     = 0.0f;
+
 inline TBOOL g_bIsShadowPass = TFALSE;
 
 } // namespace enhRender

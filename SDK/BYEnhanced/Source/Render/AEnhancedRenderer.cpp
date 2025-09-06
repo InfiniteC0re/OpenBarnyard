@@ -10,6 +10,7 @@
 
 #include <Math/TVector2.h>
 #include <Toshi/TScheduler.h>
+#include <Math/TRandom.h>
 #include <Render/TCameraObject.h>
 #include <Render/TViewport.h>
 #include <Render/TShader.h>
@@ -154,65 +155,65 @@ void AEnhancedRenderer::ScenePreRender()
 	enhRender::g_bIsShadowPass = TTRUE;
 	
 	// Setup viewport size
-	glViewport( 0, 0, SHADOW_MAP_SIZE, SHADOW_MAP_SIZE );
+	//glViewport( 0, 0, SHADOW_MAP_SIZE, SHADOW_MAP_SIZE );
 
-	// Bind shadow map frame buffer
-	enhRender::g_ShadowMap1.Bind();
-	glClear( GL_DEPTH_BUFFER_BIT );
+	//// Bind shadow map frame buffer
+	//enhRender::g_ShadowMap1.Bind();
+	//glClear( GL_DEPTH_BUFFER_BIT );
 
-	// Make light space view matrix
-	TMatrix44 oSunTransform = TMatrix44::IDENTITY;
-	enhRender::g_DirectionalLightDir.Normalize();
-	/*oSunTransform.SetTranslation( TVector3(
-		0.0f,
-		0.0f,
-		0.0f
-	) );*/
+	//// Make light space view matrix
+	//TMatrix44 oSunTransform = TMatrix44::IDENTITY;
+	//enhRender::g_DirectionalLightDir.Normalize();
+	///*oSunTransform.SetTranslation( TVector3(
+	//	0.0f,
+	//	0.0f,
+	//	0.0f
+	//) );*/
 
-	oSunTransform.LookAtDirection( enhRender::g_DirectionalLightDir, s_vWorldUp );
+	//oSunTransform.LookAtDirection( enhRender::g_DirectionalLightDir, s_vWorldUp );
 
-	g_SunCameraObject.SetMode( TRenderContext::CameraMode_Orthographic );
-	g_SunCameraObject.SetProjectionCentreX( 0.5f );
-	g_SunCameraObject.SetProjectionCentreY( 0.5f );
-	g_SunCameraObject.SetFOV( TMath::DegToRad( 90.9f ) );
-	g_SunCameraObject.GetTransformObject().SetMatrix( oSunTransform );
-	g_SunCameraObject.SetNear( 1.0f );
-	g_SunCameraObject.SetFar( 250.0f );
+	//g_SunCameraObject.SetMode( TRenderContext::CameraMode_Orthographic );
+	//g_SunCameraObject.SetProjectionCentreX( 0.5f );
+	//g_SunCameraObject.SetProjectionCentreY( 0.5f );
+	//g_SunCameraObject.SetFOV( TMath::DegToRad( 90.9f ) );
+	//g_SunCameraObject.GetTransformObject().SetMatrix( oSunTransform );
+	//g_SunCameraObject.SetNear( 1.0f );
+	//g_SunCameraObject.SetFar( 250.0f );
 
-	// Update game's render context
-	*(TCameraObject**)( TUINTPTR( pRenderContext ) + 0x3BC ) = &g_SunCameraObject;
-	CALL_THIS( 0x006cd0d0, Toshi::TCameraObject*, void, &g_SunCameraObject );
+	//// Update game's render context
+	//*(TCameraObject**)( TUINTPTR( pRenderContext ) + 0x3BC ) = &g_SunCameraObject;
+	//CALL_THIS( 0x006cd0d0, Toshi::TCameraObject*, void, &g_SunCameraObject );
 
-	// Add the light view matrix to the top of the transform stack to render the scene from it's POV
-	auto& rTransformStack = pRender->GetTransforms();
-	rTransformStack.Reset();
-	rTransformStack.PushNull().Identity();
-	rTransformStack.Push( pRenderContext->GetWorldViewMatrix() );
+	//// Add the light view matrix to the top of the transform stack to render the scene from it's POV
+	//auto& rTransformStack = pRender->GetTransforms();
+	//rTransformStack.Reset();
+	//rTransformStack.PushNull().Identity();
+	//rTransformStack.Push( pRenderContext->GetWorldViewMatrix() );
 
-	// Update light view matrix
-	enhRender::g_LightViewMatrix.Set( enhRender::g_Projection );
-	enhRender::g_LightViewMatrix.Multiply( pRenderContext->GetWorldViewMatrix() );
+	//// Update light view matrix
+	//enhRender::g_LightViewMatrix.Set( enhRender::g_Projection );
+	//enhRender::g_LightViewMatrix.Multiply( pRenderContext->GetWorldViewMatrix() );
 
-	CALL_THIS( 0x006125d0, void*, void, *(void**)0x007b45fc, TINT, 2 ); // AModelRepos::RenderModelsOfType
-	CALL_THIS( 0x006125d0, void*, void, *(void**)0x007b45fc, TINT, 1 ); // AModelRepos::RenderModelsOfType
+	//CALL_THIS( 0x006125d0, void*, void, *(void**)0x007b45fc, TINT, 2 ); // AModelRepos::RenderModelsOfType
+	//CALL_THIS( 0x006125d0, void*, void, *(void**)0x007b45fc, TINT, 1 ); // AModelRepos::RenderModelsOfType
 
-	// Render terrain
-	if ( *(TINT*)0x00796300 )
-	{
-		if ( *(TINT*)0x0078de44 )
-			CALL_THIS( 0x005dd5c0, void*, void, *(void**)0x0078de44 ); // AGateManager::Render
+	//// Render terrain
+	//if ( *(TINT*)0x00796300 )
+	//{
+	//	if ( *(TINT*)0x0078de44 )
+	//		CALL_THIS( 0x005dd5c0, void*, void, *(void**)0x0078de44 ); // AGateManager::Render
 
-		CALL_THIS( 0x005ea8b0, void*, void, *(void**)0x00796300 ); // ATerrain::Render
-		CALL_THIS( 0x005ef3a0, void*, void, *(void**)0x00796304 ); // ATreeManager::Render
-		CALL_THIS( 0x005e17a0, void*, void, *(void**)0x0078deb0 ); // AInstanceManager::Render
-		CALL_THIS( 0x005e3990, void*, void, *(void**)0x007922e0 ); // ARegrowthManager::Render
-	}
-	
-	CALL_THIS( 0x0053a320, void*, void, *(void**)0x00783c18, TBOOL, TFALSE ); // AAnimalPopulationManager::Render
-	CALL( 0x006be990, void );                                                 // TRenderD3DInterface::FlushShaders
+	//	CALL_THIS( 0x005ea8b0, void*, void, *(void**)0x00796300 ); // ATerrain::Render
+	//	CALL_THIS( 0x005ef3a0, void*, void, *(void**)0x00796304 ); // ATreeManager::Render
+	//	CALL_THIS( 0x005e17a0, void*, void, *(void**)0x0078deb0 ); // AInstanceManager::Render
+	//	CALL_THIS( 0x005e3990, void*, void, *(void**)0x007922e0 ); // ARegrowthManager::Render
+	//}
+	//
+	//CALL_THIS( 0x0053a320, void*, void, *(void**)0x00783c18, TBOOL, TFALSE ); // AAnimalPopulationManager::Render
+	//CALL( 0x006be990, void );                                                 // TRenderD3DInterface::FlushShaders
 
-	// Unbind shadow map after scene rendering is done
-	enhRender::g_ShadowMap1.Unbind();
+	//// Unbind shadow map after scene rendering is done
+	//enhRender::g_ShadowMap1.Unbind();
 
 	//-----------------------------------------------------------------------------
 	// Pass 2. Render the scene into 3 GBuffer's textures
@@ -287,6 +288,46 @@ void AEnhancedRenderer::ScenePostRender()
 	enhRender::g_ShaderLighting.SetUniform( s_View, oCamTransform );
 	enhRender::g_ShaderLighting.SetUniform( s_Projection, enhRender::g_Projection );
 	enhRender::g_ShaderLighting.SetUniform( s_Time, g_oSystemManager.GetScheduler()->GetTotalTime() );
+	enhRender::g_ShaderLighting.SetUniform( TPS8D( "u_SSAOBias" ), enhRender::g_SSAOBias );
+	enhRender::g_ShaderLighting.SetUniform( TPS8D( "u_SSAORadius" ), enhRender::g_SSAORadius );
+	enhRender::g_ShaderLighting.SetUniform( TPS8D( "u_SSAOStrength" ), enhRender::g_SSAOStrength );
+
+	static TVector3 s_aSSAOKernel[ 64 ];
+	static TVector3 s_aSSAONoise[ 16 ];
+	static TBOOL    s_bKernelsGenerated = TFALSE;
+	static GLuint   s_iSSAONoise = -1;
+
+	if (!s_bKernelsGenerated)
+	{
+		Toshi::TRandom random;
+
+		// Generate kernel
+		for ( TINT i = 0; i < 64; i++ )
+		{
+			s_aSSAOKernel[ i ] = TVector3( random.GetFloatMinMax( -1.0f, 1.0f ), random.GetFloatMinMax( -1.0f, 1.0f ), random.GetFloatMinMax( 0.0f, 1.0f ) );
+			s_aSSAOKernel[ i ].Normalize();
+
+			TFLOAT fScale = i / 64.0f;
+			s_aSSAOKernel[ i ].Multiply( TMath::LERP( 0.1f, 1.0f, fScale * fScale ) );
+		}
+
+		// Generate noise
+		for ( TINT i = 0; i < 16; i++ )
+		{
+			s_aSSAONoise[ i ] = TVector3( random.GetFloatMinMax( -1.0f, 1.0f ), random.GetFloatMinMax( -1.0f, 1.0f ), 0.0f );
+		}
+
+		s_iSSAONoise = T2Render::CreateTexture( 4, 4, GL_RGBA16F, GL_RGB, GL_FLOAT, TFALSE, &s_aSSAONoise[ 0 ] );
+		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
+		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
+		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
+		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
+
+		s_bKernelsGenerated = TTRUE;
+	}
+
+	T2Render::SetTexture2D( 6, s_iSSAONoise ); // noise
+	enhRender::g_ShaderLighting.SetUniform( TPS8D( "u_Kernel" ), s_aSSAOKernel, 64 );
 
 	//glEnable( GL_FRAMEBUFFER_SRGB );
 	RenderScreenQuad();
