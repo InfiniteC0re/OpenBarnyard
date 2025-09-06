@@ -531,6 +531,8 @@ public:
 				m_iSize = other.m_iSize;
 			}
 		}
+
+		return *this;
 	}
 
 	PBPropertyValueArray& operator=( PBPropertyValueArray&& other ) noexcept
@@ -544,6 +546,8 @@ public:
 			other.m_pValues = TNULL;
 			other.m_iSize   = 0;
 		}
+
+		return *this;
 	}
 
 private:

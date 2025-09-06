@@ -50,6 +50,7 @@ struct TColor
 	TFORCEINLINE TColor& operator=( TUINT32 a_uiColor )
 	{
 		Value32 = a_uiColor;
+		return *this;
 	}
 };
 

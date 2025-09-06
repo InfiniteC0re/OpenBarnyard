@@ -38,7 +38,7 @@ void TModelCollisionData::GetTriangleVertices( TUINT a_uiFaceId, Toshi::TVector3
 	TUINT16* pIndex  = m_pIndices + a_uiFaceId * 3;
 	a_rVertices[ 0 ] = &m_pVertices[ pIndex[ 0 ] ];
 	a_rVertices[ 1 ] = &m_pVertices[ pIndex[ 1 ] ];
-	a_rVertices[ 3 ] = &m_pVertices[ pIndex[ 2 ] ];
+	a_rVertices[ 2 ] = &m_pVertices[ pIndex[ 2 ] ];
 }
 
 // $Barnyard: FUNCTION 006ce100

@@ -304,12 +304,12 @@ void ATreeManager::CreateInstances( ATerrainLocatorList* a_pLocatorList )
 						{
 							if ( pchLocatorName[ iLocatorNameLength - 3 ] == 'b' &&
 							     pchLocatorName[ iLocatorNameLength - 2 ] == 'r' &&
-							     pchLocatorName[ iLocatorNameLength - 2 ] == 'n' )
+							     pchLocatorName[ iLocatorNameLength - 1 ] == 'n' )
 							// barn?
 							{
 								pTreeInstance->bFlag1 = TTRUE;
 							}
-							else if ( pchLocatorName[ iLocatorNameLength - 3 ] == 'd' && pchLocatorName[ iLocatorNameLength - 2 ] == 'k' && pchLocatorName[ iLocatorNameLength - 2 ] == 'g' )
+							else if ( pchLocatorName[ iLocatorNameLength - 3 ] == 'd' && pchLocatorName[ iLocatorNameLength - 2 ] == 'k' && pchLocatorName[ iLocatorNameLength - 1 ] == 'g' )
 							// dankweed pond and some 'g'?
 							{
 								pTreeInstance->bFlag2 = TTRUE;

@@ -53,6 +53,7 @@ public:
 			m_CRC32      = a_rOther.m_CRC32;
 			m_uiRefCount = a_rOther.m_uiRefCount;
 			m_pModel     = a_rOther.m_pModel;
+			return *this;
 		}
 
 	private:

@@ -127,7 +127,7 @@ public:
 	{
 		for ( Node* pCNode = m_oRoot.m_pNext; pCNode != &m_oRoot; pCNode = pCNode->m_pNext )
 		{
-			if ( pCNode == pCNode ) return TTRUE;
+			if ( pCNode == pNode ) return TTRUE;
 		}
 
 		return TFALSE;

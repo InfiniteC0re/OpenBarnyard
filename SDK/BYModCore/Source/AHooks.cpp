@@ -687,7 +687,7 @@ MEMBER_HOOK( 0x006355a0, AGUI2, AGUI2_OnCreate, TBOOL )
 {
 	CallOriginal();
 
-	if ( g_uiWindowWidth >= 1280 && g_uiWindowWidth >= 768 )
+	if ( g_uiWindowWidth >= 1280 && g_uiWindowHeight >= 768 )
 	{
 		AGUI2::GetContext()->GetRootElement()->SetDimensions( 936, 702 );
 	}
