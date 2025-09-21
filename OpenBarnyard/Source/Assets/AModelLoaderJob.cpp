@@ -12,7 +12,7 @@
 // $Barnyard: FUNCTION 00606850
 void AModelLoaderJob::BeginJob()
 {
-	m_pModel = Toshi::TRenderInterface::GetSingleton()->CreateModel( m_oStreamJob.GetFileName(), TFALSE );
+	m_pModel = Toshi::TRenderInterface::GetSingleton()->CreateModelTMDFile( m_oStreamJob.GetFileName(), TFALSE );
 	ATRBLoaderJob::BeginJob();
 }
 
