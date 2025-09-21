@@ -274,8 +274,8 @@ public:
 		AllocType_Unk2 = 2,
 	};
 
-	using t_MemoryFuncAlloc   = void* (*)( AllocType alloctype, TUINT32 size, TINT16 unk1, TUINT32 unk2, void* userData );
-	using t_MemoryFuncDealloc = void ( * )( AllocType alloctype, void* ptr, TINT16 unk1, TUINT32 unk2, void* userData );
+	using t_MemoryFuncAlloc   = void*(__stdcall*)( AllocType alloctype, TUINT32 size, TINT16 unk1, TUINT32 unk2, void* userData );
+	using t_MemoryFuncDealloc = void( __stdcall* )( AllocType alloctype, void* ptr, TINT16 unk1, TUINT32 unk2, void* userData );
 
 	struct SecInfo
 	{

@@ -44,8 +44,8 @@ public:
 protected:
 	T2Locale( TINT langCount, size_t bufferSize, void* buffer );
 
-	static void* TRBAllocator( TTRB::AllocType alloctype, size_t size, short unk, size_t unk2, void* userData );
-	static void  TRBDeallocator( TTRB::AllocType alloctype, void* ptr, short unk, size_t unk2, void* userData );
+	static void* __stdcall TRBAllocator( TTRB::AllocType alloctype, size_t size, short unk, size_t unk2, void* userData );
+	static void __stdcall TRBDeallocator( TTRB::AllocType alloctype, void* ptr, short unk, size_t unk2, void* userData );
 
 	void* TRBAlloc( size_t size )
 	{
