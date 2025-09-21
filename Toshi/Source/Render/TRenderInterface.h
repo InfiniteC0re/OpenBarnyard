@@ -61,8 +61,8 @@ public:
 	virtual ~TRenderInterface();
 
 	virtual TBOOL                         CreateDisplay( const DISPLAYPARAMS& a_rParams );
-	virtual TBOOL                         DestroyDisplay()             = 0;
-	virtual TBOOL                         Update( float a_fDeltaTime ) = 0;
+	virtual TBOOL                         DestroyDisplay()              = 0;
+	virtual TBOOL                         Update( TFLOAT a_fDeltaTime ) = 0;
 	virtual TBOOL                         BeginScene();
 	virtual TBOOL                         EndScene()                = 0;
 	virtual TRenderAdapter::Mode::Device* GetCurrentDevice()        = 0;
@@ -73,9 +73,9 @@ public:
 	virtual void                          DumpStats();
 	virtual void                          GetScreenOffset( TVector2& a_rVec );
 	virtual void                          SetScreenOffset( const TVector2& a_rVec );
-	virtual float                         GetScreenAspectRatio();
-	virtual float                         GetPixelAspectRatio();
-	virtual TBOOL                         SetPixelAspectRatio( float a_fPixelAspectRatio );
+	virtual TFLOAT                        GetScreenAspectRatio();
+	virtual TFLOAT                        GetPixelAspectRatio();
+	virtual TBOOL                         SetPixelAspectRatio( TFLOAT a_fPixelAspectRatio );
 	virtual void                          FlushOrderTables();
 	virtual TBOOL                         IsTextureFormatSupported( TINT a_eTextureFormat );
 	virtual TBOOL                         Supports32BitTextures();
@@ -85,10 +85,10 @@ public:
 	virtual void                          SetLightDirectionMatrix( const TMatrix44& a_rMatrix );
 	virtual void                          SetLightColourMatrix( const TMatrix44& a_rMatrix );
 	virtual void                          Unknown1( TViewport* a_pViewport );
-	virtual void*                         CreateUnknown( const TCHAR* a_szName, TINT a_iUnk1, TINT a_iUnk2, TINT a_iUnk3 )                    = 0;
-	virtual TModel*                       CreateModel( TTMD* a_pTMD, TBOOL a_bLoad )                                                          = 0;
-	virtual TModel*                       CreateModel( const TCHAR* a_szFilePath, TBOOL a_bLoad )                                             = 0;
-	virtual TModel*                       CreateModel( const TCHAR* a_szFilePath, TBOOL a_bLoad, TTRB* a_pAssetTRB, TUINT8 a_ui8FileNameLen ) = 0;
+	virtual void*                         CreateUnknown( const TCHAR* a_szName, TINT a_iUnk1, TINT a_iUnk2, TINT a_iUnk3 )                       = 0;
+	virtual TModel*                       CreateModelTMD( TTMD* a_pTMD, TBOOL a_bLoad )                                                          = 0;
+	virtual TModel*                       CreateModelTMDFile( const TCHAR* a_szFilePath, TBOOL a_bLoad )                                         = 0;
+	virtual TModel*                       CreateModelTRB( const TCHAR* a_szFilePath, TBOOL a_bLoad, TTRB* a_pAssetTRB, TUINT8 a_ui8FileNameLen ) = 0;
 	virtual void                          OnInitializationFailureDevice();
 	virtual void                          OnInitializationFailureDisplay();
 	virtual TDebugText*                   CreateDebugText()  = 0;

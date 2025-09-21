@@ -514,7 +514,7 @@ void* TRenderD3DInterface::CreateUnknown( const TCHAR* a_szName, TINT a_iUnk1, T
 }
 
 // $Barnyard: FUNCTION 006c6280
-TModel* TRenderD3DInterface::CreateModel( TTMD* a_pTMD, TBOOL a_bLoad )
+TModel* TRenderD3DInterface::CreateModelTMD( TTMD* a_pTMD, TBOOL a_bLoad )
 {
 	auto pModel = new TModelHAL();
 
@@ -531,7 +531,7 @@ TModel* TRenderD3DInterface::CreateModel( TTMD* a_pTMD, TBOOL a_bLoad )
 }
 
 // $Barnyard: FUNCTION 006c62d0
-TModel* TRenderD3DInterface::CreateModel( const TCHAR* a_szFilePath, TBOOL a_bLoad )
+TModel* TRenderD3DInterface::CreateModelTMDFile( const TCHAR* a_szFilePath, TBOOL a_bLoad )
 {
 	auto pModel = new TModelHAL();
 
@@ -548,7 +548,7 @@ TModel* TRenderD3DInterface::CreateModel( const TCHAR* a_szFilePath, TBOOL a_bLo
 }
 
 // $Barnyard: FUNCTION 006c6320
-TModel* TRenderD3DInterface::CreateModel( const TCHAR* a_szFilePath, TBOOL a_bLoad, TTRB* a_pAssetTRB, TUINT8 a_ui8FileNameLen )
+TModel* TRenderD3DInterface::CreateModelTRB( const TCHAR* a_szFilePath, TBOOL a_bLoad, TTRB* a_pAssetTRB, TUINT8 a_ui8FileNameLen )
 {
 	auto pModel = new TModelHAL();
 

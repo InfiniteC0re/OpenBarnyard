@@ -31,7 +31,7 @@ public:
 
 private:
 	TIndexBlockResource();
-	~TIndexBlockResource();
+	//~TIndexBlockResource();
 
 public:
 	virtual TBOOL Validate() override;

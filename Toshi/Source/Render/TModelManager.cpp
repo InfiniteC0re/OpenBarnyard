@@ -128,7 +128,7 @@ TModelManager::ModelNode* TModelManager::CreateModel( const TCHAR* a_szFileName,
 		ui8NameLen  = -1;
 	}
 
-	auto pModel = TRenderInterface::GetSingleton()->CreateModel( szFileName, TTRUE, a_pAssetTRB, ui8NameLen );
+	auto pModel = TRenderInterface::GetSingleton()->CreateModelTRB( szFileName, TTRUE, a_pAssetTRB, ui8NameLen );
 	pEntry->Create( crc32, pModel );
 	pEntry->IncRefCount();
 	a_rModelRef.m_pModel = pModel;

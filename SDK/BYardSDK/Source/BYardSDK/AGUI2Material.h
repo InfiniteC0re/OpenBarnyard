@@ -21,6 +21,8 @@ public:
 		m_eTextureAddress = a_eTextureAddress;
 	}
 
+	TBOOL Create_Hack() { return Create(); }
+
 public:
 	Toshi::TTexture* m_pTextureResource;
 	TUINT            m_eBlendState;

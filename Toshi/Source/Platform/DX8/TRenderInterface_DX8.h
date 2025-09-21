@@ -161,7 +161,7 @@ public:
 	 * @param a_bLoad Whether to load the model immediately
 	 * @return Pointer to the created model
 	 */
-	virtual TModel* CreateModel( TTMD* a_pTMD, TBOOL a_bLoad ) OVERRIDE;
+	virtual TModel* CreateModelTMD( TTMD* a_pTMD, TBOOL a_bLoad ) OVERRIDE;
 
 	/**
 	 * Creates a model from a file
@@ -169,7 +169,7 @@ public:
 	 * @param a_bLoad Whether to load the model immediately
 	 * @return Pointer to the created model
 	 */
-	virtual TModel* CreateModel( const TCHAR* a_szFilePath, TBOOL a_bLoad ) OVERRIDE;
+	virtual TModel* CreateModelTMDFile( const TCHAR* a_szFilePath, TBOOL a_bLoad ) OVERRIDE;
 
 	/**
 	 * Creates a model from a file with TRB asset
@@ -179,7 +179,7 @@ public:
 	 * @param a_ui8FileNameLen Length of the filename
 	 * @return Pointer to the created model
 	 */
-	virtual TModel* CreateModel( const TCHAR* a_szFilePath, TBOOL a_bLoad, TTRB* a_pAssetTRB, TUINT8 a_ui8FileNameLen ) OVERRIDE;
+	virtual TModel* CreateModelTRB( const TCHAR* a_szFilePath, TBOOL a_bLoad, TTRB* a_pAssetTRB, TUINT8 a_ui8FileNameLen ) OVERRIDE;
 
 	/**
 	 * Called when device initialization fails

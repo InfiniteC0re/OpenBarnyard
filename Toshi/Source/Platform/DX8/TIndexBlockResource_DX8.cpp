@@ -30,9 +30,9 @@ TIndexBlockResource::TIndexBlockResource()
 }
 
 // $Barnyard: FUNCTION 006c0250
-TIndexBlockResource::~TIndexBlockResource()
-{
-}
+//TIndexBlockResource::~TIndexBlockResource()
+//{
+//}
 
 TBOOL TIndexBlockResource::AttachPool( TIndexPoolResource* a_pPool )
 {
