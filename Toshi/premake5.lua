@@ -11,7 +11,6 @@ project "Toshi"
 	files
 	{
 		"Source/ToshiPCH.cpp",
-		"Source/Profiler/TracyClient.cpp",
 		"Source/Core/**.h",
 		"Source/Core/**.cpp",
 		"Source/Toshi/**.h",

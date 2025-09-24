@@ -31,7 +31,6 @@ project "BYTexturePacks"
 	{
 		"Source",
 		"Include",
-		"%{IncludeDir.toshi}",
 		"%{IncludeDir.byardsdk}",
 		"%{IncludeDir.modcore}",
 		"%{IncludeDir.detours}"

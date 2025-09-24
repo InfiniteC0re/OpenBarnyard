@@ -989,7 +989,7 @@ void AHooks::Initialise()
 	InstallHook<TModel_UnloadTRB>();
 
 	// This might be unstable until all the memory stomps are fixed :(
-	//InstallHook<AMaterialLibrary_LoadTTLData>();
+	InstallHook<AMaterialLibrary_LoadTTLData>();
 
 	InstallHook<TSystemManager_Update>();
 	InstallHook<TOrderTable_Flush>();

@@ -20,4 +20,27 @@ newoption
 	default = "DX8"
 }
 
+newoption
+{
+	trigger = "profiler",
+	description = "Enable or disable Tracy profiler support",
+	allowed = {
+		{ "no", "Disable Tracy"},
+		{ "perf", "Enable Tracy"},
+		{ "perfmem", "Enable Tracy with memory debugging"},
+	},
+	default = "no"
+}
+
+newoption
+{
+	trigger = "dlmalloc",
+	description = "Enable or disable dlmalloc instead of Toshi engine TMemory",
+	allowed = {
+		{ "no", "Use legacy Toshi memory allocator"},
+		{ "yes", "Use dlmalloc as a memory allocator"},
+	},
+	default = "no"
+}
+
 outputdir = ("%{cfg.buildcfg}_%{cfg.platform}_%{cfg.architecture}_" .. _OPTIONS["renderer"])

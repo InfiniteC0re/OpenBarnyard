@@ -16,7 +16,7 @@ TOSHI_NAMESPACE_USING
 
 extern TBOOL             g_bIsExperimentalMode;
 TMemory::MemBlock*       g_pCollMemBlock;
-T2Map<TModelLOD*, void*> g_mapModelLODToOldMeshes;
+T2Map<TModelLOD*, Toshi::TMesh**> g_mapModelLODToOldMeshes;
 
 MEMBER_HOOK( 0x006d9ed0, TModelHAL, TModelHAL_Unload, void )
 {

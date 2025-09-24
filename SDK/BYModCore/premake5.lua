@@ -31,7 +31,6 @@ project "BYModCore"
 	{
 		"Source",
 		"Include",
-		"%{IncludeDir.toshi}",
 		"%{IncludeDir.openbarnyard}",
 		"%{IncludeDir.byardsdk}",
 		"%{IncludeDir.detours}",

@@ -11,6 +11,8 @@
 
 // Define TRACY_ENABLE to enable profiler.
 
+#include <Toshi/Profiler.h>
+
 #include "common/TracySystem.cpp"
 
 #ifdef TRACY_ENABLE

@@ -24,14 +24,33 @@ workspace "OpenBarnyard"
 		"BAN_OPCODE_AUTOLINK",
 		"ICE_NO_DLL",
 		"BARNYARD_COMMUNITY_PATCH",
-	--	"TMEMORY_USE_DLMALLOC",
-	--	"TOSHI_PROFILER",
-	--	"TOSHI_PROFILER_MEMORY",
-	--	"TRACY_ENABLE"
+	}
+
+	-- Global settings for include dirs
+	includedirs
+	{
+		"%{IncludeDir.toshi}"
 	}
 	
 	filter "options:arch=x86"
 		architecture "x86"
+
+	filter { "options:profiler=perf or options:profiler=perfmem" }
+		defines
+		{
+			"TOSHI_PROFILER",
+			"TRACY_ENABLE"
+		}
+
+		links { "TracyProfiler" }
+
+		includedirs { "%{IncludeDir.tracy}" }
+
+	filter "options:profiler=perfmem"
+		defines { "TOSHI_PROFILER_MEMORY" }
+
+	filter "options:dlmalloc=yes"
+		defines { "TMEMORY_USE_DLMALLOC" }
 		
 	--filter "options:arch=x64"
 	--	architecture "x64"
@@ -66,11 +85,7 @@ workspace "OpenBarnyard"
 	filter "options:renderer=GL"
 		defines
 		{
-			"TRENDERINTERFACE_GL"
-		}
-		
-		defines
-		{
+			"TRENDERINTERFACE_GL",
 			"GLEW_STATIC",
 			"GLM_FORCE_LEFT_HANDED"
 		}
@@ -90,8 +105,9 @@ workspace "OpenBarnyard"
 		defines "TOSHI_FINAL"
 		optimize "On"
 
--- Include the projects
+filter {}
 
+-- Include the projects
 group "Engine"
 	include "Toshi"
 	include "OpenBarnyard"
@@ -104,7 +120,7 @@ group "Tools"
 	include "Tools/PPropertyCompiler"
 	include "Tools/QuestCompiler"
 	include "Tools/Sounds2Enum"
-		
+
 group "Third-Party"
 	include "Toshi/Vendor/Opcode"
 
@@ -114,4 +130,12 @@ group "SDK"
 	include "SDK/BYSpeedrunHelper"
 	include "SDK/BYTexturePacks"
 	include "SDK/BYWinterMod"
-	include "SDK/BYEnhanced"
+
+	if _OPTIONS["renderer"] == 'GL' then
+		include "SDK/BYEnhanced"
+	end
+
+if _OPTIONS["profiler"] == 'perf' or _OPTIONS["profiler"] == 'perfmem' then
+	group "Utils"
+		include "Utils/TracyProfiler"
+end

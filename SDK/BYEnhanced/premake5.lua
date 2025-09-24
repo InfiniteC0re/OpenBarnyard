@@ -1,14 +1,11 @@
 project "BYEnhanced"
-	kind "None"
+	kind "SharedLib"
 	language "C++"
 	staticruntime "off"
 	
 	pchheader "pch.h"
 	pchsource "Source/pch.cpp"
 	
-	filter "options:renderer=GL"
-		kind "SharedLib"
-
 	links
 	{
 		"Toshi",
@@ -40,7 +37,6 @@ project "BYEnhanced"
 	{
 		"Source",
 		"Include",
-		"%{IncludeDir.toshi}",
 		"%{IncludeDir.byardsdk}",
 		"%{IncludeDir.modcore}",
 		"%{IncludeDir.detours}",

@@ -28,7 +28,6 @@ project "BYardSDK"
 	includedirs
 	{
 		"Source",
-		"%{IncludeDir.toshi}",
 		"%{IncludeDir.detours}",
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.sdl2}",

@@ -31,7 +31,6 @@ project "BYWinterMod"
 	{
 		"Source",
 		"Include",
-		"%{IncludeDir.toshi}",
 		"%{IncludeDir.byardsdk}",
 		"%{IncludeDir.modcore}",
 		"%{wks.location}/SDK/BYTexturePacks/Include",

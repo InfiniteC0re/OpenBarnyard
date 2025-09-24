@@ -30,7 +30,6 @@ project "BYSpeedrunHelper"
 	includedirs
 	{
 		"Source",
-		"%{IncludeDir.toshi}",
 		"%{IncludeDir.byardsdk}",
 		"%{IncludeDir.modcore}",
 		"%{IncludeDir.detours}"

@@ -20,6 +20,7 @@ IncludeDir.toshi = "%{wks.location}/Toshi/Source"
 IncludeDir.byardsdk = "%{wks.location}/SDK/BYardSDK/Source"
 IncludeDir.modcore = "%{wks.location}/SDK/BYModCore/Include"
 IncludeDir.openbarnyard = "%{wks.location}/OpenBarnyard/Source"
+IncludeDir.tracy = "%{wks.location}/Utils/TracyProfiler/Source"
 IncludeDir.curl = "%{wks.location}/Toshi/Vendor/curl/include"
 
 LibDir = {}

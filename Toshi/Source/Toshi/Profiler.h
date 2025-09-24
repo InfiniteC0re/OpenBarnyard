@@ -2,6 +2,12 @@
 
 #if defined( TOSHI_PROFILER ) || defined( TOSHI_PROFILER_MEMORY )
 
+#  if defined( TRACY_PROFILER_EXPORTS )
+#	define TRACY_EXPORTS
+#  else
+#	define TRACY_IMPORTS
+#  endif // TRACY_PROFILER_EXPORTS
+
 #  include "Profiler/tracy/Tracy.hpp"
 
 #endif // defined(TOSHI_PROFILER) || defined(TOSHI_PROFILER_MEMORY)
