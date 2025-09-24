@@ -178,19 +178,27 @@ protected:
 	TMatrix44          m_oViewWorldMatrix;         // 0x010C
 	TVector4           m_AmbientColor;             // 0x014C
 	TVector4           m_FogColor;                 // 0x015C
-	// ...
+
+	TCHAR PADDING1[ 52 ];
+
 	TFLOAT   m_fFogDistanceStart; // 0x01A0
 	TFLOAT   m_fFogDistanceEnd;   // 0x01A4
 	TFrustum m_aFrustumPlanes1;   // 0x01A8
 	TFrustum m_aWorldPlanes;      // 0x0208
 	TFrustum m_aFrustumPlanes2;   // 0x0268
-	// ...
-	TMatrix44 m_oWorldModelMatrix; // 0x032C
+
+	TCHAR PADDING2[ 96 ];
+
+	TMatrix44 m_oWorldModelMatrix; // 0x0328
 	TMatrix44 m_oViewModelMatrix;  // 0x0368
 	TFLOAT    m_fAlphaBlend;       // 0x03A8
-	// ...
-	TFLOAT m_fShadeCoeff; // 0x03B0
-	// TBOOL
+	
+	TCHAR     PADDING3[ 4 ];
+	
+	TFLOAT    m_fShadeCoeff; // 0x03B0
+	
+	TBOOL     PADDING4;
+
 	TLightIDList   m_oLightIds;            // 0x03B5
 	TCameraObject* m_pCurrentCameraObject; // 0x03BC
 };

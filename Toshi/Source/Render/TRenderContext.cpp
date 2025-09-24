@@ -293,7 +293,7 @@ const TMatrix44& TRenderContext::GetWorldModelMatrix()
 {
 	if ( HASANYFLAG( m_eFlags, FLAG_DIRTY_WORLDMODELMATRIX ) )
 	{
-		m_oViewModelMatrix.Invert( m_oModelViewMatrix );
+		m_oWorldModelMatrix.Invert( GetModelWorldMatrix() );
 		m_eFlags &= ~FLAG_DIRTY_WORLDMODELMATRIX;
 	}
 

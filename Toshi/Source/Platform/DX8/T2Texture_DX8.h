@@ -30,7 +30,7 @@ public:
 	IDirect3DVolumeTexture8* GetD3DVolumeTexture() { return m_pD3DVolumeTexture; }
 	IDirect3DCubeTexture8*   GetD3DCubeTexture() { return m_pD3DCubeTexture; }
 
-private:
+protected:
 	TUINT          m_uiDataSize;
 	const void*    m_pData;
 	TUINT          m_Unk1;

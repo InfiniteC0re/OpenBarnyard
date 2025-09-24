@@ -58,7 +58,7 @@ public:
 public:
 	static TBOOL IsPPM( const TCHAR* a_szName );
 
-private:
+protected:
 	TINT                   m_iNumLocks;
 	TBOOL                  m_bLoadFromMemory;
 	TBOOL                  m_bIsToshi2;

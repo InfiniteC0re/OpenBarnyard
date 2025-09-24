@@ -57,7 +57,7 @@ public:
 	void SetBackgroundColor( TUINT8 r, TUINT8 g, TUINT8 b, TUINT8 a );
 	void GetBackgroundColor( TUINT8& r, TUINT8& g, TUINT8& b, TUINT8& a );
 
-private:
+protected:
 	TMemory::MemBlock* m_MemAllocatorBlock;     // 0x00
 	TRenderContext*    m_pRenderCtx;            // 0x04
 	TUINT8             m_ColorR;                // 0x08

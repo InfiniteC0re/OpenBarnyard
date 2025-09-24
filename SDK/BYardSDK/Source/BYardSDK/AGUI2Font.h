@@ -53,7 +53,7 @@ public:
 	TFLOAT GetTextWidth( const wchar_t* a_wszText, TFLOAT a_fScale );
 	TFLOAT GetTextWidth( const wchar_t* a_wszText, TINT a_iTextLength, TFLOAT a_fScale );
 
-private:
+protected:
 	AGUI2FontDef*   m_pFontDef    = TNULL;
 	AGUI2Material** m_ppMaterials = TNULL;
 	TBOOL           m_bFlag       = TFALSE;
