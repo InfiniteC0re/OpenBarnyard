@@ -564,7 +564,7 @@ MEMBER_HOOK( 0x0060c7c0, ARenderer, ARenderer_OnCreate, TBOOL )
 	if ( g_bUsingDXVK )
 		TINFO( "DXVK transition layer detected\n" );
 	
-	if (false && !g_pCommandLine->HasParameter("-noimgui"))
+	if (!g_pCommandLine->HasParameter("-noimgui"))
 		AImGUI::CreateSingleton();
 
 	return bResult;
