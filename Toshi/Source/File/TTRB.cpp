@@ -296,7 +296,7 @@ void TTRB::Close()
 
 			if ( sec->m_Data != TNULL )
 			{
-				m_MemDeallocator( AllocType_Unk1, 0, 0, sec->m_Unk2, m_MemUserData );
+				m_MemDeallocator( AllocType_Unk1, sec->m_Data, 0, sec->m_Unk2, m_MemUserData );
 			}
 		}
 
