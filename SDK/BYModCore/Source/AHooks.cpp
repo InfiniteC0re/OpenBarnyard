@@ -510,6 +510,7 @@ MEMBER_HOOK( 0x00409ce0, AFrontEndMiniGameState2, AFrontEndMiniGameState2_CTOR, 
 }
 
 TBOOL g_bUsingDXVK = TFALSE;
+TBOOL g_bUsingDX11 = TFALSE;
 
 MEMBER_HOOK( 0x006c6de0, TRenderD3DInterface, TRenderD3DInterface_OnD3DDeviceLost, void )
 {
@@ -561,10 +562,15 @@ MEMBER_HOOK( 0x0060c7c0, ARenderer, ARenderer_OnCreate, TBOOL )
 	// Find out whether DXVK is used or not
 	g_bUsingDXVK = ( GetModuleHandle( "vulkan-1.dll" ) != TNULL );
 
+	// Find out whether DXVK is used or not
+	g_bUsingDX11 = ( GetModuleHandle( "d3d11.dll" ) != TNULL );
+
 	if ( g_bUsingDXVK )
 		TINFO( "DXVK transition layer detected\n" );
+	else if ( g_bUsingDX11 )
+		TINFO( "D3D11 API detected\n" );
 	
-	if (!g_pCommandLine->HasParameter("-noimgui"))
+	if ( !g_pCommandLine->HasParameter( "-noimgui" ) )
 		AImGUI::CreateSingleton();
 
 	return bResult;

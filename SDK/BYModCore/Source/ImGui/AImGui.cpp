@@ -6,6 +6,7 @@
 #include "DXVK/d3d8/d3d8_device.h"
 #include "imgui_impl_dx8.h"
 #include "imgui_impl_dx9.h"
+#include "imgui_impl_dx11.h"
 #include "imgui_impl_win32.h"
 
 #include "AModLoaderTask.h"
@@ -55,6 +56,7 @@ void AImGUI_RenderCallback()
 }
 
 extern TBOOL g_bUsingDXVK;
+extern TBOOL g_bUsingDX11;
 
 AImGUI::AImGUI()
 {
@@ -143,6 +145,10 @@ AImGUI::AImGUI()
 		dxvk::D3D8Device* pDXVK8 = TSTATICCAST( dxvk::D3D8Device, pD3D8 );
 		ImGui_ImplDX9_Init( (IDirect3DDevice9*)pDXVK8->GetD3D9() );
 	}
+	else if ( g_bUsingDX11 )
+	{
+		ImGui_ImplDX11_Init( (ID3D11Device*)pRender->GetDirect3D(), (ID3D11DeviceContext*)pRender->GetDirect3DDevice() );
+	}
 	else
 	{
 		// Not using DXVK, fallback to the custom DX8 backend
@@ -159,6 +165,8 @@ void AImGUI::BeginScene()
 {
 	if ( g_bUsingDXVK )
 		ImGui_ImplDX9_NewFrame();
+	else if ( g_bUsingDX11 )
+		ImGui_ImplDX11_NewFrame();
 	else
 		ImGui_ImplDX8_NewFrame();
 
@@ -172,6 +180,8 @@ void AImGUI::EndScene()
 
 	if ( g_bUsingDXVK )
 		ImGui_ImplDX9_RenderDrawData( ImGui::GetDrawData() );
+	else if ( g_bUsingDX11 )
+		ImGui_ImplDX11_RenderDrawData( ImGui::GetDrawData() );
 	else
 		ImGui_ImplDX8_RenderDrawData( ImGui::GetDrawData() );
 }
@@ -383,6 +393,8 @@ void AImGUI::OnD3DDeviceLost()
 {
 	if ( g_bUsingDXVK )
 		ImGui_ImplDX9_InvalidateDeviceObjects();
+	else if ( g_bUsingDX11 )
+		ImGui_ImplDX11_InvalidateDeviceObjects();
 	else
 		ImGui_ImplDX8_InvalidateDeviceObjects();
 }
@@ -391,6 +403,8 @@ void AImGUI::OnD3DDeviceFound()
 {
 	if ( g_bUsingDXVK )
 		ImGui_ImplDX9_CreateDeviceObjects();
+	else if ( g_bUsingDX11 )
+		ImGui_ImplDX11_InvalidateDeviceObjects();
 	else
 		ImGui_ImplDX8_CreateDeviceObjects();
 }
