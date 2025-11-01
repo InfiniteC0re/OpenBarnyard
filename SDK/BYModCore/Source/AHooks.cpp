@@ -21,6 +21,7 @@
 #include <Render/TCameraObject.h>
 #include <Render/TModel.h>
 #include <Render/TShader.h>
+#include <T2Locale/T2Locale.h>
 #include <Platform/DX8/TMSWindow.h>
 #include <Platform/DX8/TRenderInterface_DX8.h>
 #include <Platform/DX8/TRenderAdapter_DX8.h>
@@ -947,6 +948,29 @@ MEMBER_HOOK( 0x00454950, AItemCountHudElement, AItemCountHudElement_SetVisible, 
 	}
 }
 
+MEMBER_HOOK( 0x00402860, Toshi::T2Locale, ALocaleManager_GetLanguageFilename, const TCHAR*, Toshi::T2Locale::Lang a_eLang )
+{
+	TString8 strLangOverride = g_pCommandLine->GetParameterValue( "-language", TNULL );
+
+	if ( !strLangOverride )
+		return CallOriginal( a_eLang );
+
+	static TCHAR s_Path[ MAX_PATH ];
+	T2String8::Format( s_Path, "Data/Locale/%s.trb", strLangOverride.GetString() );
+
+	// Check the locale file exists
+	if ( TFile* pFile = TFile::Create( s_Path, TFILEMODE_READ ) )
+	{
+		TERROR( "Overriding language... (%s)\n", s_Path );
+		pFile->Destroy();
+		return s_Path;
+	}
+	
+	TERROR( "Trying to override language, but the locale file is missing! (%s)\n", s_Path );
+	return CallOriginal( a_eLang );
+}
+
+
 void AHooks::Initialise()
 {
 	// Apply other hooks
@@ -999,6 +1023,7 @@ void AHooks::Initialise()
 
 	InstallHook<TSystemManager_Update>();
 	InstallHook<TOrderTable_Flush>();
+	InstallHook<ALocaleManager_GetLanguageFilename>();
 	//InstallHook<TNativeFile_FlushWriteBuffer>();
 }
 
