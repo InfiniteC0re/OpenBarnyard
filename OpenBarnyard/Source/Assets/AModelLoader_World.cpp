@@ -30,6 +30,7 @@ static TClass*    s_pWorldMaterialClass = TNULL;
 
 void AModelLoader::InitialiseGrassLayersTextures()
 {
+#ifndef E3_2006_COMPATIBILITY
 	g_pGrassLayersMatLib = AMaterialLibraryManager::List::GetSingleton()->CreateLibraryFromAsset(
 	    "Data\\MiscTextures\\GrasslayertexWin.ttl",
 	    AAssetLoader::GetAssetTRB( AAssetType_Startup )
@@ -43,6 +44,7 @@ void AModelLoader::InitialiseGrassLayersTextures()
 	g_aGrassLayers[ 4 ] = g_aGrassLayers[ 3 ];
 	g_aGrassLayers[ 5 ] = g_pGrassLayersMatLib->GetTexture( g_pGrassLayersMatLib->FindTextureIndex( "treeb1.tga" ) )->pTexture;
 	g_aGrassLayers[ 6 ] = g_aGrassLayers[ 5 ];
+#endif
 }
 
 static void LoadTreeIntersect( CellSphereTreeBranchNode* a_pRenderGroup, Cell*& a_ppModel, TModelLOD* a_pModelLOD )

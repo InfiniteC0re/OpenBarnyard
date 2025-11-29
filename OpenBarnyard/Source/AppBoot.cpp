@@ -160,7 +160,13 @@ TBOOL AApplication::OnCreate( int argc, TCHAR** argv )
 	TTODO( "Create some instances of some classes" );
 
 	TModelManager::Initialise();
-	pLocaleManager->SetLanguage( ALocaleManager::Lang_EnglishUK );
+	pLocaleManager->SetLanguage(
+#ifdef E3_2006_COMPATIBILITY
+		ALocaleManager::Lang_English
+#else
+		ALocaleManager::Lang_EnglishUK
+#endif
+	);
 
 	auto pScheduler = g_oSystemManager.GetScheduler();
 

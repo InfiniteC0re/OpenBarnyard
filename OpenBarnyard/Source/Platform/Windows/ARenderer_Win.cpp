@@ -187,7 +187,7 @@ TBOOL ARenderer::CreateTRenderResources()
 
 		TVertexFactoryFormat vertexFormat;
 		vertexFormat.m_uiNumStreams                       = 1;
-		vertexFormat.m_aStreamFormats[ 0 ].m_uiVertexSize = 44;
+		vertexFormat.m_aStreamFormats[ 0 ].m_uiVertexSize = sizeof( WorldVertex );
 		vertexFormat.m_aStreamFormats[ 0 ].m_Unk          = 0;
 		pResource->Create( &vertexFormat, 54050, 0 );
 	}

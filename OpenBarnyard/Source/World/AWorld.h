@@ -61,7 +61,9 @@ public:
 struct WorldVertex
 {
 	Toshi::TVector3 Position;
+#ifndef E3_2006_COMPATIBILITY
 	Toshi::TVector3 Normal;
+#endif
 	Toshi::TVector3 Color;
 	Toshi::TVector2 UV;
 };
