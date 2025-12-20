@@ -97,6 +97,7 @@ TFileSystem* TFileManager::FindFileSystem( TDList<TFileSystem>& a_rList, const T
 // $Barnyard: FUNCTION 006be4b0
 TFile* TFileManager::CreateFile( const TString8& a_sName, TFILEMODE flags )
 {
+	TPROFILER_SCOPE();
 	TASSERT( a_sName.Length() > 0, "Name can't be empty" );
 
 	ValidateSystemPath();

@@ -23,10 +23,7 @@ public:
 		Create( mutex );
 	}
 
-	TMutexLock( const TMutexLock& other )
-	{
-		m_Mutex = other.m_Mutex;
-	}
+	TMutexLock( const TMutexLock& other ) = delete;
 
 	// $Barnyard: FUNCTION 006d8a00
 	~TMutexLock()
@@ -52,11 +49,7 @@ public:
 	}
 
 public:
-	TMutexLock& operator=( const TMutexLock& mutexLock )
-	{
-		m_Mutex = mutexLock.m_Mutex;
-		return *this;
-	}
+	TMutexLock& operator=( const TMutexLock& mutexLock ) = delete;
 
 protected:
 	TMutex* m_Mutex;

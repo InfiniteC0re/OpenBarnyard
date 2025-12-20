@@ -28,10 +28,12 @@ TFile::~TFile()
 // $Barnyard: FUNCTION 006be700
 TFile* TFile::Create( const TString8& filename, TFILEMODE mode )
 {
+	TPROFILER_SCOPE();
 	TASSERT( filename.IsIndexValid( 0 ), "filename is empty" );
 
 	TFile* pFile = TFileManager::GetSingletonSafe()->CreateFile( filename, mode );
 
+#ifndef TOSHI_FINAL
 	if ( pFile != TNULL )
 	{
 		TTRACE( "TFile::Create - Created file %s with mode %hu\n", filename.GetString(), mode );
@@ -40,6 +42,7 @@ TFile* TFile::Create( const TString8& filename, TFILEMODE mode )
 	{
 		TTRACE( "TFile::Create - Failed to create file %s with mode %hu\n", filename.GetString(), mode );
 	}
+#endif
 
 	return pFile;
 }

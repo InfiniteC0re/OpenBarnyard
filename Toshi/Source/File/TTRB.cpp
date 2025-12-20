@@ -107,7 +107,7 @@ TBOOL TTRB::ProcessForm( TTSFI& ttsf )
 			{
 				TINT numsections = ( sectionSize - 4 ) / 0xC;
 
-				m_pHeader                = static_cast<Header*>( m_MemAllocator( AllocType_Unk0, sizeof( Header ) + sizeof( SecInfo ) * numsections, 0, 0, m_MemUserData ) );
+				m_pHeader                = static_cast<Header*>( m_MemAllocator( AllocType_Header, sizeof( Header ) + sizeof( SecInfo ) * numsections, 0, 0, m_MemUserData ) );
 				m_pHeader->m_ui32Version = { 0 };
 
 				ttsf.ReadRaw( &m_pHeader->m_i32SectionCount, sizeof( m_pHeader->m_i32SectionCount ) );
@@ -119,7 +119,7 @@ TBOOL TTRB::ProcessForm( TTSFI& ttsf )
 					SecInfo* pSect = GetSectionInfo( i );
 
 					ttsf.ReadRaw( pSect, 0xC );
-					pSect->m_Data = m_MemAllocator( AllocType_Unk1, pSect->m_Size, 0, 0, m_MemUserData );
+					pSect->m_Data = m_MemAllocator( AllocType_Data, pSect->m_Size, 0, 0, m_MemUserData );
 					pSect->m_Unk1 = ( pSect->m_Unk1 == 0 ) ? 16 : pSect->m_Unk1;
 					pSect->m_Unk2 = 0;
 				}
@@ -128,7 +128,7 @@ TBOOL TTRB::ProcessForm( TTSFI& ttsf )
 			}
 			else if ( sectionName == TFourCC( "SYMB" ) )
 			{
-				m_SYMB = static_cast<SYMB*>( m_MemAllocator( AllocType_Unk2, ttsf.m_CurrentHunk.Size, 0, 0, m_MemUserData ) );
+				m_SYMB = static_cast<SYMB*>( m_MemAllocator( AllocType_Symbols, ttsf.m_CurrentHunk.Size, 0, 0, m_MemUserData ) );
 				ttsf.ReadHunkData( m_SYMB );
 			}
 			else if ( sectionName == TFourCC( "SECC" ) )
@@ -218,14 +218,14 @@ TBOOL TTRB::ProcessForm( TTSFI& ttsf )
 			}
 			else if ( sectionName == TFourCC( "HDRX" ) )
 			{
-				m_pHeader = TSTATICCAST( Header, m_MemAllocator( AllocType_Unk0, sectionSize, 0, 0, m_MemUserData ) );
+				m_pHeader = TSTATICCAST( Header, m_MemAllocator( AllocType_Header, sectionSize, 0, 0, m_MemUserData ) );
 				ttsf.ReadHunkData( m_pHeader );
 
 				for ( TINT i = 0; i < m_pHeader->m_i32SectionCount; i++ )
 				{
 					SecInfo* pSect = GetSectionInfo( i );
 					pSect->m_Unk1  = ( pSect->m_Unk1 == 0 ) ? 16 : pSect->m_Unk1;
-					pSect->m_Data  = m_MemAllocator( AllocType_Unk1, pSect->m_Size, pSect->m_Unk1, pSect->m_Unk2, m_MemUserData );
+					pSect->m_Data  = m_MemAllocator( AllocType_Data, pSect->m_Size, pSect->m_Unk1, pSect->m_Unk2, m_MemUserData );
 				}
 			}
 			else
@@ -296,11 +296,11 @@ void TTRB::Close()
 
 			if ( sec->m_Data != TNULL )
 			{
-				m_MemDeallocator( AllocType_Unk1, sec->m_Data, 0, sec->m_Unk2, m_MemUserData );
+				m_MemDeallocator( AllocType_Data, sec->m_Data, 0, sec->m_Unk2, m_MemUserData );
 			}
 		}
 
-		m_MemDeallocator( AllocType_Unk0, m_pHeader, 0, 0, m_MemUserData );
+		m_MemDeallocator( AllocType_Header, m_pHeader, 0, 0, m_MemUserData );
 		m_pHeader = TNULL;
 	}
 
@@ -320,7 +320,7 @@ void TTRB::DeleteSymbolTable()
 {
 	if ( m_SYMB != TNULL )
 	{
-		m_MemDeallocator( AllocType_Unk2, m_SYMB, 0, 0, m_MemUserData );
+		m_MemDeallocator( AllocType_Symbols, m_SYMB, 0, 0, m_MemUserData );
 		m_SYMB = TNULL;
 	}
 }

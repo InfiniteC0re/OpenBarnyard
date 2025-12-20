@@ -247,10 +247,8 @@ TBOOL TModel::GetSkeletonAssetSymbolName( const TCHAR* a_szFileName, const TCHAR
 		a_rSymbolName = a_pTRB->GetSymbolName( pSymbol );
 		return TTRUE;
 	}
-	else
-	{
-		return TFALSE;
-	}
+	
+	return TFALSE;
 }
 
 TModelInstance::TModelInstance( TModel* a_pModel )

@@ -71,18 +71,16 @@ TryLocking:
 
 void T2AtomicMutex::Unlock()
 {
-	TASSERT( GetCurrentThreadId() == m_uiLockedThread );
-
 	if ( --m_uiThreadDepth == 0 )
 	{
 		constexpr TINT ONE_LOCK_FLAGS = STATEFLAG_LOCKED | GET_STATEFLAG_NUM_WAITS( 1 );
 
 		// Mark as unused and remove one wait from the total count
 		TINT iOldState = m_iState.Add( -ONE_LOCK_FLAGS );
+		m_uiLockedThread = 0;
 
 		// Signal only when there's some thread waiting for this mutex to be unlocked to avoid unnecessary kernel calls
 		if ( iOldState != ONE_LOCK_FLAGS ) m_iState.Signal();
-		m_uiLockedThread = 0;
 	}
 }
 

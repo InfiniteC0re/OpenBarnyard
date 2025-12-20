@@ -269,9 +269,9 @@ public:
 	typedef TUINT8 AllocType;
 	enum AllocType_ : AllocType
 	{
-		AllocType_Unk0 = 0,
-		AllocType_Unk1 = 1,
-		AllocType_Unk2 = 2,
+		AllocType_Header,
+		AllocType_Data,
+		AllocType_Symbols,
 	};
 
 	using t_MemoryFuncAlloc   = void*(__stdcall*)( AllocType alloctype, TUINT32 size, TINT16 unk1, TUINT32 unk2, void* userData );

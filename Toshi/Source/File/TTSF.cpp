@@ -12,6 +12,8 @@ TOSHI_NAMESPACE_START
 // $Barnyard: FUNCTION 006d8ca0
 TUINT32 TTSFI::Open( TFile* a_pFile )
 {
+	TPROFILER_SCOPE();
+
 	m_pFile         = a_pFile;
 	m_FileInfoCount = 0;
 	m_UNKFLAG       = TFALSE;
@@ -57,6 +59,8 @@ TUINT32 TTSFI::Open( TFile* a_pFile )
 // $Barnyard: FUNCTION 006d8e70
 TUINT32 TTSFI::Open( const TCHAR* a_szFilePath )
 {
+	TPROFILER_SCOPE();
+
 	TFile* pFile    = TFile::Create( a_szFilePath );
 	auto   uiResult = Open( pFile );
 	m_UNKFLAG       = TFALSE;
