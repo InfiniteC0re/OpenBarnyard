@@ -58,7 +58,7 @@ public:
 		return *this;
 	}
 
-private:
+protected:
 	TMutex* m_Mutex;
 };
 
