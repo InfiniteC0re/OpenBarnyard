@@ -1,9 +1,12 @@
 #pragma once
 #include "Thread/TSemaphore.h"
 
-#ifdef TOSHI_SKU_WINDOWS
+#if defined( TOSHI_SKU_WINDOWS ) && !defined( BARNYARD_COMMUNITY_PATCH )
+#  define USE_WIN32_CRITICAL_SECTION
 #  include <windows.h>
-#endif
+#else // TOSHI_SKU_WINDOWS && !BARNYARD_COMMUNITY_PATCH
+#  include "Thread/T2AtomicMutex.h"
+#endif // !TOSHI_SKU_WINDOWS || BARNYARD_COMMUNITY_PATCH
 
 TOSHI_NAMESPACE_START
 
@@ -20,6 +23,7 @@ protected:
 
 protected:
 	TGenericFifo() = default;
+	~TGenericFifo() = default;
 
 	TBOOL Create( TCHAR* a_pBuffer, TINT a_iMaxItems, TINT a_iItemSize );
 	TBOOL Destroy();
@@ -27,11 +31,14 @@ protected:
 	TBOOL Pop( void* a_pOut, Flags a_iFlags );
 
 private:
-#ifdef TOSHI_SKU_WINDOWS
+#if defined( USE_WIN32_CRITICAL_SECTION )
 	CRITICAL_SECTION m_CriticalSection;
-#endif
-	TSemaphore m_Semaphore1;
-	TSemaphore m_Semaphore2;
+#else // USE_WIN32_CRITICAL_SECTION
+	T2AtomicMutex m_Mutex;
+#endif // !USE_WIN32_CRITICAL_SECTION
+
+	TSemaphore m_semNumFreeItems;
+	TSemaphore m_semNumUsedItems;
 	TINT       m_iItemSize;
 	TINT       m_iMaxItems;
 	TCHAR*     m_pDataBegin;
