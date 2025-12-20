@@ -1,5 +1,11 @@
 #pragma once
+#include "T2AtomicMutex.h"
 
-#ifdef TOSHI_SKU_WINDOWS
-#  include "Platform/Windows/T2Mutex_Win.h"
-#endif // TOSHI_SKU_WINDOWS
+#define T2MUTEX_LOCK_SCOPE( mutex ) TANONYMOUSVAR( Toshi::T2MutexLock )( mutex )
+
+TOSHI_NAMESPACE_START
+
+using T2Mutex = T2AtomicMutex;
+using T2MutexLock = T2AtomicMutexLock;
+
+TOSHI_NAMESPACE_END

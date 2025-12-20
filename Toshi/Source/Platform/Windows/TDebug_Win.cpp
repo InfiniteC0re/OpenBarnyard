@@ -1,6 +1,6 @@
 #include "ToshiPCH.h"
 #include "Toshi/TDebug.h"
-#include "Thread/T2Mutex.h"
+#include "Thread/TMutex.h"
 
 #include <Windows.h>
 
@@ -14,7 +14,7 @@ TOSHI_NAMESPACE_USING
 
 TCHAR   TDebug_ScratchMem[ 4096 ];
 BOOL    TDebug_IsMutexCreated;
-T2Mutex TDebug_Mutex;
+TMutex  TDebug_Mutex;
 
 void TDebug_AcquireMutex()
 {

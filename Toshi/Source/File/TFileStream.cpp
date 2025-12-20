@@ -40,6 +40,7 @@ void TFileStream::Main()
 // $Barnyard: FUNCTION 006d7f70
 void TFileStream::AddStream( TFileStreamJob* job )
 {
+	TPROFILER_SCOPE();
 	job->m_bIsProcessed = TFALSE;
 	m_Jobs.Push( &job );
 }
@@ -68,6 +69,7 @@ void TTRBStreamJob::Init( TTRB* trb, const TCHAR* fileName )
 // $Barnyard: FUNCTION 006d7ee0
 void TTRBStreamJob::Process()
 {
+	TPROFILER_SCOPE();
 	m_trb->Load( m_fileName );
 }
 

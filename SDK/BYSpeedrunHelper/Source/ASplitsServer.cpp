@@ -39,9 +39,6 @@ ASplitsServer::ASplitsServer()
 
 	TASSERT( m_pMemBlock != TNULL );
 
-	TBOOL bCreatedMutex = m_EventsMutex.Create();
-	TASSERT( bCreatedMutex == TTRUE );
-
 	m_NamedPipe.SetUserData( this );
 	m_NamedPipe.SetMemoryStreamUpdateCallback( []( void*& a_rMemoryStream, TUINT& a_rDataSize, void* a_pUserData ) {
 		ASplitsServer* pSplits = (ASplitsServer*)a_pUserData;

@@ -1,5 +1,5 @@
 #include "ToshiPCH.h"
-#include "T2AtomicMutex_Win.h"
+#include "T2AtomicMutex.h"
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
@@ -10,7 +10,7 @@
 TOSHI_NAMESPACE_START
 
 #define FAST_PATH_ATTEMPTS                   200
-#define GET_STATEFLAG_NUM_WAITS( NUM_WAITS ) T2AtomicMutex::STATEFLAG_NUM_WAITS << ( NUM_WAITS - 1 )
+#define GET_STATEFLAG_NUM_WAITS( NUM_WAITS ) ( T2AtomicMutex::STATEFLAG_NUM_WAITS << ( NUM_WAITS - 1 ) )
 
 //-----------------------------------------------------------------------------
 // Note: T2AtomicMutex is a custom (isnt't in the original engine) class which
@@ -82,6 +82,7 @@ void T2AtomicMutex::Unlock()
 
 		// Signal only when there's some thread waiting for this mutex to be unlocked to avoid unnecessary kernel calls
 		if ( iOldState != ONE_LOCK_FLAGS ) m_iState.Signal();
+		m_uiLockedThread = 0;
 	}
 }
 

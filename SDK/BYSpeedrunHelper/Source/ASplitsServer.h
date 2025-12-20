@@ -1,7 +1,7 @@
 #pragma once
 #include <Toshi/TSingleton.h>
 #include <Toshi/T2Vector.h>
-#include <Thread/T2MutexLock.h>
+#include <Thread/T2Mutex.h>
 #include <ToshiTools/T2NamedPipeServer.h>
 
 class ASplitsServer : public Toshi::TSingleton<ASplitsServer>
