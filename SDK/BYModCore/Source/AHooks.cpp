@@ -21,6 +21,7 @@
 #include <Render/TCameraObject.h>
 #include <Render/TModel.h>
 #include <Render/TShader.h>
+#include <Thread/T2AtomicMutex.h>
 #include <T2Locale/T2Locale.h>
 #include <Platform/DX8/TMSWindow.h>
 #include <Platform/DX8/TRenderInterface_DX8.h>
@@ -970,6 +971,37 @@ MEMBER_HOOK( 0x00402860, Toshi::T2Locale, ALocaleManager_GetLanguageFilename, co
 	return CallOriginal( a_eLang );
 }
 
+//#undef USE_ATOMIC
+
+#ifdef USE_ATOMIC
+struct TMutex_Atomic
+{
+	Toshi::T2AtomicMutex* m_pAtomicMutex;
+};
+
+MEMBER_HOOK( 0x006bb660, TMutex_Atomic, TMutex_Create, TBOOL )
+{
+	m_pAtomicMutex = new Toshi::T2AtomicMutex();
+	return TTRUE;
+}
+
+MEMBER_HOOK( 0x006bb680, TMutex_Atomic, TMutex_Destroy, TBOOL )
+{
+	if ( m_pAtomicMutex ) delete m_pAtomicMutex;
+	return TTRUE;
+}
+
+MEMBER_HOOK( 0x006d89e0, Toshi::TMutexLock, TMutexLock_Constructor, void, TMutex_Atomic* a_pMutex )
+{
+	m_Mutex = (Toshi::TMutex*)a_pMutex;
+	a_pMutex->m_pAtomicMutex->Lock();
+}
+
+MEMBER_HOOK( 0x006d8a00, Toshi::TMutexLock, TMutexLock_Destructor, void )
+{
+	( (TMutex_Atomic*)m_Mutex )->m_pAtomicMutex->Unlock();
+}
+#endif
 
 void AHooks::Initialise()
 {
@@ -1025,6 +1057,13 @@ void AHooks::Initialise()
 	InstallHook<TOrderTable_Flush>();
 	InstallHook<ALocaleManager_GetLanguageFilename>();
 	//InstallHook<TNativeFile_FlushWriteBuffer>();
+
+#ifdef USE_ATOMIC
+	InstallHook<TMutex_Create>();
+	InstallHook<TMutex_Destroy>();
+	InstallHook<TMutexLock_Constructor>();
+	InstallHook<TMutexLock_Destructor>();
+#endif // USE_ATOMIC
 }
 
 TBOOL AHooks::AddHook( Hook a_eHook, HookType a_eHookType, void* a_pCallback )
