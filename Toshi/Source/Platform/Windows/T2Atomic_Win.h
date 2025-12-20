@@ -16,7 +16,7 @@ public:
 	};
 
 public:
-	constexpr T2Atomic32( TINT32 a_iValue )
+	constexpr T2Atomic32( TINT32 a_iValue = 0 )
 	    : m_iValue( a_iValue ) {}
 
 	~T2Atomic32() = default;
@@ -30,6 +30,10 @@ public:
 
 	// Returns value of the variable
 	TINT32 Load( MemoryOrders a_eOrder = MEMORY_ORDER_STRONG ) const;
+
+	void WaitForChange();
+	void WaitForChange( TINT32 a_iValue );
+	void Signal();
 
 	volatile TINT32* Address() { return &m_iValue; }
 	volatile const TINT32* Address() const { return &m_iValue; }
