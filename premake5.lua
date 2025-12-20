@@ -23,7 +23,8 @@ workspace "OpenBarnyard"
 		"NOMINMAX",
 		"BAN_OPCODE_AUTOLINK",
 		"ICE_NO_DLL",
-		"BARNYARD_COMMUNITY_PATCH",
+		"BARNYARD_COMMUNITY_PATCH", -- Optimize loading speed, fix bugs and more...
+		"USE_ATOMIC"                -- Utilize alternative TMutex, TSemaphore and TFifo implementation on Windows platform
 	}
 
 	-- Global settings for include dirs

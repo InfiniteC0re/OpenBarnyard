@@ -1,12 +1,12 @@
 #pragma once
 #include "Thread/TSemaphore.h"
 
-#if defined( TOSHI_SKU_WINDOWS ) && !defined( BARNYARD_COMMUNITY_PATCH )
+#if defined( TOSHI_SKU_WINDOWS ) && !defined( USE_ATOMIC )
 #  define USE_WIN32_CRITICAL_SECTION
 #  include <windows.h>
-#else // TOSHI_SKU_WINDOWS && !BARNYARD_COMMUNITY_PATCH
+#else // TOSHI_SKU_WINDOWS && !USE_ATOMIC
 #  include "Thread/T2AtomicMutex.h"
-#endif // !TOSHI_SKU_WINDOWS || BARNYARD_COMMUNITY_PATCH
+#endif // !TOSHI_SKU_WINDOWS || USE_ATOMIC
 
 TOSHI_NAMESPACE_START
 

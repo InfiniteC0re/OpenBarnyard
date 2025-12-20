@@ -1,8 +1,8 @@
 #pragma once
 
-#if defined( TOSHI_SKU_WINDOWS ) && !defined( BARNYARD_COMMUNITY_PATCH )
+#if defined( TOSHI_SKU_WINDOWS ) && !defined( USE_ATOMIC )
 #  define USE_WIN32_MUTEX
-#endif // TOSHI_SKU_WINDOWS && !BARNYARD_COMMUNITY_PATCH
+#endif // TOSHI_SKU_WINDOWS && !USE_ATOMIC
 
 #ifndef USE_WIN32_MUTEX
 #  include "Thread/T2AtomicMutex.h"
