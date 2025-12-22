@@ -22,7 +22,7 @@
 #else // defined(TOSHI_PROFILER)
 
 #  define TPROFILER_SCOPE()
-#  define TPROFILER_SCOPE_NAMED( NAME )
+#  define TPROFILER_NAMED( NAME )
 #  define TPROFILER_FRAME_START( NAME )
 #  define TPROFILER_FRAME_END( NAME )
 

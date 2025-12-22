@@ -33,7 +33,7 @@ private:
 	AMainThreadJob* m_apCurrentJobs[ 16 ];
 	TINT            m_iNumStartedJobs;
 #else // BARNYARD_COMMUNITY_PATCH
-	m_pCurrentJob = TNULL;                        // 0x8
+	AMainThreadJob* m_pCurrentJob;                // 0x8
 #endif // !BARNYARD_COMMUNITY_PATCH
 
 	Toshi::TFileStream             m_FileStream;  // 0x0C
