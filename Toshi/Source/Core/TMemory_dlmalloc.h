@@ -163,8 +163,8 @@ public:
 	void* GetMSpace() const { return m_MSpace; }
 
 private:
-	void CreateMutex() { m_Mutex.Create(); }
-	void DestroyMutex() { m_Mutex.Destroy(); }
+	void CreateMutex() {}
+	void DestroyMutex() {}
 
 	static void* AllocAsPile( TMemoryDLHeap* heap, TSIZE size, TSIZE alignment = 4 );
 

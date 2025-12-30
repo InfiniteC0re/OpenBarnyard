@@ -133,7 +133,6 @@ TMemoryDL::Error TMemoryDL::Init()
 
 	m_Context.m_pMemModule = this;
 	m_Context.s_Sysheap    = GetProcessHeap();
-	m_Mutex.Create();
 
 	if ( m_Context.s_Sysheap == NULL )
 	{
