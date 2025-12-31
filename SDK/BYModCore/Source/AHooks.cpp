@@ -1005,6 +1005,19 @@ MEMBER_HOOK( 0x006d8a00, Toshi::TMutexLock, TMutexLock_Destructor, void )
 
 void AHooks::Initialise()
 {
+	// Fix necessary regedit records missing
+	// TODO: move this away from here
+	HKEY    hKey;
+	LSTATUS nStatus = RegCreateKeyExA( HKEY_CURRENT_USER, "Software\\THQ\\Barnyard", NULL, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hKey, NULL );
+
+	if ( nStatus == ERROR_SUCCESS ) RegCloseKey( hKey );
+	else
+	{
+		// Need to create the key
+		nStatus = RegCreateKeyExA( HKEY_CURRENT_USER, "Software\\THQ\\Barnyard", NULL, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hKey, NULL );
+		if ( nStatus == ERROR_SUCCESS ) RegCloseKey( hKey );
+	}
+
 	// Apply other hooks
 	InstallHook<TMemory_UnkMethod>();
 	InstallHook<TMemory_Initialise>();
