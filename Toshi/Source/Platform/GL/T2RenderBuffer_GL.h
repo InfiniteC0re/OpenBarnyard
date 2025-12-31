@@ -40,10 +40,20 @@ public:
 		glNamedBufferSubData( m_uiId, offset, a_uiSize, a_pData );
 	}
 
+	void GetSubData( void* a_pBuffer, GLintptr offset, GLuint a_uiSize ) const
+	{
+		glGetNamedBufferSubData( m_uiId, offset, a_uiSize, a_pBuffer );
+	}
+
 	void SetAttribPointer( GLuint a_uiIndex, GLint a_iNumComponents, GLenum a_eType, GLsizei a_iStride, GLsizei a_pOffset, GLboolean a_bNormalized = GL_FALSE ) const
 	{
 		glVertexAttribPointer( a_uiIndex, a_iNumComponents, a_eType, a_bNormalized, a_iStride, (const void*)a_pOffset );
 		glEnableVertexAttribArray( a_uiIndex );
+	}
+
+	void GetParameter( GLenum a_eName, GLint& a_rOutValue )
+	{
+		glGetNamedBufferParameteriv( m_uiId, a_eName, &a_rOutValue );
 	}
 
 	void Bind() const { glBindBuffer( Type, m_uiId ); }
