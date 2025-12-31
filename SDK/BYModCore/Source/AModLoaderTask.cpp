@@ -147,6 +147,7 @@ void AModLoaderTask::LoadMods()
 
 void AModLoaderTask::UnloadMods()
 {
+	return;
 	for ( auto it = m_LoadedMods.Begin(); it != m_LoadedMods.End(); it++ )
 	{
 		it->OnUnload();
