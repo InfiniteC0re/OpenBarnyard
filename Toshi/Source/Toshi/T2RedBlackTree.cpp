@@ -201,8 +201,15 @@ T2GenericRedBlackTreeNode* T2GenericRedBlackTree::DeleteNode( T2GenericRedBlackT
 		pTVar3 = y->m_pRight;
 	}
 
-	pTVar1            = y->m_pParent;
+	pTVar1 = y->m_pParent;
+
+#ifdef BARNYARD_COMMUNITY_PATCH
+	// This bug persists in all versions of the engine, including de Blob on Steam
+	// Can cause softlock and other shit including memory stomps
+	if ( pTVar3 != &ms_oNil ) pTVar3->m_pParent = pTVar1;
+#else
 	pTVar3->m_pParent = pTVar1;
+#endif // BARNYARD_COMMUNITY_PATCH
 
 	if ( &m_oRoot == pTVar1 )
 	{
