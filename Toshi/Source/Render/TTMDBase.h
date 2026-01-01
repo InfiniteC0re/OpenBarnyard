@@ -6,6 +6,9 @@ TOSHI_NAMESPACE_START
 namespace TTMDBase
 {
 
+#define TTMD_VERSION_MAJOR 2
+#define TTMD_VERSION_MINOR 0
+
 struct FileHeader
 {
 	TUINT32 m_uiMagic;

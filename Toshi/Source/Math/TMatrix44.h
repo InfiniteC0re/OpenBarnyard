@@ -253,6 +253,61 @@ public:
 
 	void GetEulerXYZ( TVector3& a_rOutVec ) const;
 
+	static void MatToQuat( TQuaternion& a_rOutQuat, const TMatrix44& a_rMatrix )
+	{
+		TFLOAT fVar1;
+		TFLOAT fVar2;
+		TFLOAT fVar3;
+		TFLOAT fVar4;
+
+		fVar1 = a_rMatrix.m_f11;
+		fVar2 = a_rMatrix.m_f22;
+		fVar3 = a_rMatrix.m_f33;
+		fVar4 = fVar2 + fVar1 + fVar3;
+
+		if ( 0.0f < fVar4 )
+		{
+			fVar1 = TMath::Sqrt( 1.0f + fVar4 ) * 0.5f;
+			a_rOutQuat.w = fVar1;
+			fVar1 = 0.25f / fVar1;
+			a_rOutQuat.x = ( a_rMatrix.m_f23 - a_rMatrix.m_f32 ) * fVar1;
+			a_rOutQuat.y = ( a_rMatrix.m_f31 - a_rMatrix.m_f13 ) * fVar1;
+			a_rOutQuat.z = ( a_rMatrix.m_f12 - a_rMatrix.m_f21 ) * fVar1;
+			return;
+		}
+		if ( fVar2 <= fVar1 )
+		{
+			if ( fVar3 < fVar1 )
+			{
+				fVar1 = TMath::Sqrt( ( ( 1.0f + fVar1 ) - fVar2 ) - fVar3 ) * 0.5f;
+				a_rOutQuat.x = fVar1;
+				fVar1 = 0.25f / fVar1;
+				a_rOutQuat.w = ( a_rMatrix.m_f23 - a_rMatrix.m_f32 ) * fVar1;
+				a_rOutQuat.y = ( a_rMatrix.m_f12 + a_rMatrix.m_f21 ) * fVar1;
+				a_rOutQuat.z = ( a_rMatrix.m_f13 + a_rMatrix.m_f31 ) * fVar1;
+				return;
+			}
+		}
+		else if ( fVar3 <= fVar2 )
+		{
+			fVar1 = TMath::Sqrt( ( ( 1.0f + fVar2 ) - fVar3 ) - fVar1 ) * 0.5f;
+			a_rOutQuat.y = fVar1;
+			fVar1 = 0.25f / fVar1;
+			a_rOutQuat.w = ( a_rMatrix.m_f31 - a_rMatrix.m_f13 ) * fVar1;
+			a_rOutQuat.z = ( a_rMatrix.m_f23 + a_rMatrix.m_f32 ) * fVar1;
+			a_rOutQuat.x = ( a_rMatrix.m_f21 + a_rMatrix.m_f12 ) * fVar1;
+			return;
+		}
+
+		fVar1 = TMath::Sqrt( ( ( 1.0f + fVar3 ) - fVar1 ) - fVar2 ) * 0.5f;
+		a_rOutQuat.z = fVar1;
+
+		fVar1 = 0.25f / fVar1;
+		a_rOutQuat.w = ( a_rMatrix.m_f12 - a_rMatrix.m_f21 ) * fVar1;
+		a_rOutQuat.x = ( a_rMatrix.m_f31 + a_rMatrix.m_f13 ) * fVar1;
+		a_rOutQuat.y = ( a_rMatrix.m_f32 + a_rMatrix.m_f23 ) * fVar1;
+	}
+
 	// $Barnyard: FUNCTION 006c8bf0
 	static void TransformPlaneOrthogonal( TPlane& a_rOutPlane, const TMatrix44& a_rMatrix, const TPlane& a_rcSourcePlane )
 	{
