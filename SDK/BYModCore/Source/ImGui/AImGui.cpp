@@ -70,7 +70,7 @@ AImGUI::AImGUI()
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
 
-	io.Fonts->AddFontFromFileTTF( "Bahnschrift.ttf", 17.0f );
+	io.Fonts->AddFontFromFileTTF( "Resources/Fonts/Bahnschrift.ttf", 17.0f );
 
 	// TRV style
 	ImGuiStyle& style  = ImGui::GetStyle();
