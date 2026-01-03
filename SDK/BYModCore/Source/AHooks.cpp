@@ -257,7 +257,8 @@ MEMBER_HOOK( 0x00662d90, AOptions, AOptions_IsResolutionCompatible, TBOOL, TINT 
 	TINT*  pHeight     = (TINT*)( ( TUINT( this ) + 0x28 ) );
 
 	RECT windowRect;
-	BOOL bResult = GetWindowRect( GetDesktopWindow(), &windowRect );
+	GetClipBox( GetDC( NULL ), &windowRect );
+	//BOOL bResult = GetWindowRect( GetDesktopWindow(), &windowRect );
 
 	// Override width and height by a start parameter
 	TString8 strWidthParam        = g_pCommandLine->GetParameterValue( "-width", TNULL );
@@ -286,11 +287,11 @@ MEMBER_HOOK( 0x00662d90, AOptions, AOptions_IsResolutionCompatible, TBOOL, TINT 
 		TINFO( "User is asking for fullscreen mode.\n" );
 	}
 
-	if ( !bResult )
-	{
-		TERROR( "Unable to get window rect... Using resolution provided by the original game.\n" );
-		return TTRUE;
-	}
+// 	if ( !bResult )
+// 	{
+// 		TERROR( "Unable to get window rect... Using resolution provided by the original game.\n" );
+// 		return TTRUE;
+// 	}
 
 	if ( a_iWidth > windowRect.right || a_iHeight > windowRect.bottom )
 	{
