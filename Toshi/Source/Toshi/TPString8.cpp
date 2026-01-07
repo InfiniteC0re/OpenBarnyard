@@ -22,7 +22,7 @@ void TPString8Pool::Get( TPooledString8*& a_pOutString, const TCHAR* a_szString,
 
 		if ( iStrLen != 0 )
 		{
-			auto it = m_oMap.Find( a_szString );
+			auto it = m_oMap.FindLast( a_szString );
 
 			if ( m_oMap.IsValid( it ) )
 			{

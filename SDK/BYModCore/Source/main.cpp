@@ -120,6 +120,11 @@ DWORD APIENTRY DllMain( HMODULE hModule, DWORD reason, LPVOID reserved )
 			g_oSettings.Load();
 			g_CommandLine.Create( GetCommandLineA() );
 
+			// Fix necessary regedit records missing
+			HKEY    hKey;
+			LSTATUS nStatus = RegCreateKeyExA( HKEY_CURRENT_USER, "Software\\THQ\\Barnyard", NULL, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hKey, NULL );
+			if ( nStatus == ERROR_SUCCESS ) RegCloseKey( hKey );
+
 			// Initialise hooks
 			AHooks::Initialise();
 			InstallHook<TApplication_Create>();

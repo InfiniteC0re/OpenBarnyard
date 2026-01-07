@@ -391,35 +391,13 @@ using T2String16Parser = T2StringParser<T2StringTraits<TWCHAR>>;
 // Note: To support other encodings, pass your own StringTraits class.
 //-----------------------------------------------------------------------------
 template <class StringTraits = T2StringTraits<TCHAR>>
-class T2StringComparator
+struct T2StringComparator
 {
-public:
 	using CharType = typename StringTraits::CharType;
 
-public:
-	static TBOOL IsEqual( const CharType* a, const CharType* b )
+	TINT operator()( const CharType* a, const CharType* b )
 	{
-		return StringTraits::Compare( a, b ) == 0;
-	}
-
-	static TBOOL IsGreater( const CharType* a, const CharType* b )
-	{
-		return StringTraits::Compare( a, b ) > 0;
-	}
-
-	static TBOOL IsLess( const CharType* a, const CharType* b )
-	{
-		return StringTraits::Compare( a, b ) < 0;
-	}
-
-	static TBOOL IsLessOrEqual( const CharType* a, const CharType* b )
-	{
-		return StringTraits::Compare( a, b ) <= 0;
-	}
-
-	static TBOOL IsGreaterOrEqual( const CharType* a, const CharType* b )
-	{
-		return StringTraits::Compare( a, b ) >= 0;
+		return StringTraits::Compare( a, b );
 	}
 };
 

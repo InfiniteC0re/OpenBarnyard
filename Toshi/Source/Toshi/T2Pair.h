@@ -3,11 +3,19 @@
 
 TOSHI_NAMESPACE_START
 
-template <class First, class Second, class Comparator = TComparator<First>>
+template <class First, class Second, class C = TComparator<First>>
 struct T2Pair
 {
 	First  first;
 	Second second;
+
+	struct Comparator
+	{
+		TINT operator()( const T2Pair& a, const T2Pair& b )
+		{
+			return C()( a.first, b.first );
+		}
+	};
 
 	constexpr T2Pair()
 	    : first( First() )
@@ -42,7 +50,7 @@ struct T2Pair
 	constexpr First&  GetFirst() { return first; }
 	constexpr Second& GetSecond() { return second; }
 
-	constexpr T2Pair& operator=( const T2Pair<First, Second, Comparator>& a_rcOther )
+	constexpr T2Pair& operator=( const T2Pair<First, Second, C>& a_rcOther )
 	{
 		if ( this != &a_rcOther )
 		{
@@ -51,36 +59,6 @@ struct T2Pair
 		}
 
 		return *this;
-	}
-
-	constexpr TBOOL operator==( const T2Pair<First, Second, Comparator>& other ) const
-	{
-		return Comparator::IsEqual( first, other.first );
-	}
-
-	constexpr TBOOL operator!=( const T2Pair<First, Second, Comparator>& other ) const
-	{
-		return !Comparator::IsEqual( first, other.first );
-	}
-
-	constexpr TBOOL operator>( const T2Pair<First, Second, Comparator>& other ) const
-	{
-		return Comparator::IsGreater( first, other.first );
-	}
-
-	constexpr TBOOL operator>=( const T2Pair<First, Second, Comparator>& other ) const
-	{
-		return Comparator::IsGreaterOrEqual( first, other.first );
-	}
-
-	constexpr TBOOL operator<( const T2Pair<First, Second, Comparator>& other ) const
-	{
-		return Comparator::IsLess( first, other.first );
-	}
-
-	constexpr TBOOL operator<=( const T2Pair<First, Second, Comparator>& other ) const
-	{
-		return Comparator::IsLessOrEqual( first, other.first );
 	}
 };
 

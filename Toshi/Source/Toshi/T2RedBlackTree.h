@@ -20,7 +20,7 @@ class T2GenericRedBlackTreeNode
 public:
 	friend class T2GenericRedBlackTree;
 
-	template <class T>
+	template <class T, class C>
 	friend class T2RedBlackTree;
 
 protected:
@@ -103,7 +103,7 @@ template <class T>
 class T2RedBlackTreeNode : public T2GenericRedBlackTreeNode
 {
 public:
-	template <class T>
+	template <class T, class C>
 	friend class T2RedBlackTree;
 
 public:
@@ -122,64 +122,67 @@ public:
 		return &m_Value;
 	}
 
-	TBOOL IsLeftNodeNext( const T& value ) const
-	{
-		// Insert same values to the right side
-		if ( TComparator<T>::IsEqual( m_Value, value ) )
-			return TFALSE;
+	//TBOOL IsLeftNodeNext( const T& value ) const
+	//{
+	//	// Insert same values to the right side
+	//	if ( TComparator<T>::IsEqual( m_Value, value ) )
+	//		return TFALSE;
 
-		return TComparator<T>::IsLess( m_Value, value );
-	}
+	//	return TComparator<T>::IsLess( m_Value, value );
+	//}
 
-	TBOOL operator==( const T& other ) const
-	{
-		return TComparator<T>::IsEqual( m_Value, other );
-	}
+	//TBOOL operator==( const T& other ) const
+	//{
+	//	return TComparator<T>()( m_Value, other ) == 0;
+	//}
 
-	TBOOL operator==( const T2RedBlackTreeNode<T>& other ) const
-	{
-		return TComparator<T>::IsEqual( m_Value, other.m_Value );
-	}
+	//TBOOL operator==( const T2RedBlackTreeNode<T>& other ) const
+	//{
+	//	return TComparator<T>()( m_Value, other.m_Value ) == 0;
+	//}
 
-	TBOOL operator!=( const T& other ) const
-	{
-		return !TComparator<T>::IsEqual( m_Value, other );
-	}
+	//TBOOL operator!=( const T& other ) const
+	//{
+	//	return TComparator<T>()( m_Value, other ) != 0;
+	//}
 
-	TBOOL operator!=( const T2RedBlackTreeNode<T>& other ) const
-	{
-		return !TComparator<T>::IsEqual( m_Value, other.m_Value );
-	}
+	//TBOOL operator!=( const T2RedBlackTreeNode<T>& other ) const
+	//{
+	//	return TComparator<T>()( m_Value, other.m_Value ) != 0;
+	//}
 
-	TBOOL operator>( const T2RedBlackTreeNode<T>& other ) const
-	{
-		return TComparator<T>::IsGreater( m_Value, other.m_Value );
-	}
+	//TBOOL operator>( const T2RedBlackTreeNode<T>& other ) const
+	//{
+	//	return TComparator<T>()( m_Value, other.m_Value ) > 0;
+	//}
 
-	TBOOL operator<( const T2RedBlackTreeNode<T>& other ) const
-	{
-		return TComparator<T>::IsLess( m_Value, other.m_Value );
-	}
+	//TBOOL operator<( const T2RedBlackTreeNode<T>& other ) const
+	//{
+	//	return TComparator<T>()( m_Value, other.m_Value ) < 0;
+	//}
 
-	TBOOL operator<=( const T2RedBlackTreeNode<T>& other ) const
-	{
-		return TComparator<T>::IsLessOrEqual( m_Value, other.m_Value );
-	}
+	//TBOOL operator<=( const T2RedBlackTreeNode<T>& other ) const
+	//{
+	//	return TComparator<T>()( m_Value, other.m_Value ) <= 0;
+	//}
 
-	TBOOL operator>=( const T2RedBlackTreeNode<T>& other ) const
-	{
-		return TComparator<T>::IsGreaterOrEqual( m_Value, other.m_Value );
-	}
+	//TBOOL operator>=( const T2RedBlackTreeNode<T>& other ) const
+	//{
+	//	return TComparator<T>()( m_Value, other.m_Value ) >= 0;
+	//}
 
 private:
 	T m_Value;
 };
 
-template <class T>
+template <class T, class C = TComparator<T>>
 class T2RedBlackTree : public T2GenericRedBlackTree
 {
 public:
-	using Node = T2RedBlackTreeNode<T>;
+	using Type = T;
+	using Comparator = C;
+	using ComparatorHelper = TComparatorHelperT<Type, Comparator>;
+	using Node = T2RedBlackTreeNode<Type>;
 
 	class Iterator
 	{
@@ -202,7 +205,7 @@ public:
 			return m_pNode;
 		}
 
-		TFORCEINLINE T* GetValue()
+		TFORCEINLINE Type* GetValue()
 		{
 			return &m_pNode->m_Value;
 		}
@@ -212,17 +215,17 @@ public:
 			return m_pNode == other.m_pNode;
 		}
 
-		TFORCEINLINE T& operator*() const
+		TFORCEINLINE Type& operator*() const
 		{
 			return m_pNode->m_Value;
 		}
 
-		TFORCEINLINE T* operator->() const
+		TFORCEINLINE Type* operator->() const
 		{
 			return &m_pNode->m_Value;
 		}
 
-		TFORCEINLINE operator T*() const
+		TFORCEINLINE operator Type*() const
 		{
 			return &m_pNode->m_Value;
 		}
@@ -358,22 +361,22 @@ public:
 
 	Iterator Begin()
 	{
-		return Iterator( TREINTERPRETCAST( Node*, GetFirstNode() ) );
+		return Iterator( TSTATICCAST( Node, GetFirstNode() ) );
 	}
 
 	Iterator End()
 	{
-		return Iterator( TREINTERPRETCAST( Node*, &m_oRoot ) );
+		return Iterator( TSTATICCAST( Node, &m_oRoot ) );
 	}
 
 	const CIterator Begin() const
 	{
-		return CIterator( TREINTERPRETCAST( const Node*, GetFirstNode() ) );
+		return CIterator( TSTATICCAST( const Node, GetFirstNode() ) );
 	}
 
 	const CIterator End() const
 	{
-		return CIterator( TREINTERPRETCAST( const Node*, &m_oRoot ) );
+		return CIterator( TSTATICCAST( const Node, &m_oRoot ) );
 	}
 
 	void DeleteAll()
@@ -425,19 +428,39 @@ public:
 
 		while ( pCurrentNode != &ms_oNil )
 		{
-			if ( pCurrentNode->operator==( value ) )
+			TINT iCmpResult = Comparator()( *pCurrentNode->GetValue(), value );
+
+			if ( TComparatorHelper::IsEqual( iCmpResult ) )
+				return pCurrentNode;
+
+			pCurrentNode = TSTATICCAST( Node, ( TComparatorHelper::IsLessOrEqual( iCmpResult ) ? pCurrentNode->m_pRight : pCurrentNode->m_pLeft ) );
+		}
+
+		return TSTATICCAST( Node, &m_oRoot );
+	}
+
+	Iterator FindLast( const T& value ) const
+	{
+		Node* pCurrentNode = TSTATICCAST( Node, m_oRoot.m_pLeft );
+
+		while ( pCurrentNode != &ms_oNil )
+		{
+			TINT iCmpResult = Comparator()( *pCurrentNode->GetValue(), value );
+
+			if ( TComparatorHelper::IsEqual( iCmpResult ) )
 			{
+				// Find the last one
+				Node* pLeft = TSTATICCAST( Node, pCurrentNode->m_pLeft );
+				while ( pCurrentNode->m_pLeft != &ms_oNil && ComparatorHelper::IsEqual( *pLeft->GetValue(), value ) )
+				{
+					pCurrentNode = pLeft;
+					pLeft = TSTATICCAST( Node, pCurrentNode->m_pLeft );
+				}
+
 				return pCurrentNode;
 			}
 
-			if ( pCurrentNode->IsLeftNodeNext( value ) )
-			{
-				pCurrentNode = TSTATICCAST( Node, pCurrentNode->m_pLeft );
-			}
-			else
-			{
-				pCurrentNode = TSTATICCAST( Node, pCurrentNode->m_pRight );
-			}
+			pCurrentNode = TSTATICCAST( Node, ( TComparatorHelper::IsLessOrEqual( iCmpResult ) ? pCurrentNode->m_pRight : pCurrentNode->m_pLeft ) );
 		}
 
 		return TSTATICCAST( Node, &m_oRoot );
@@ -447,7 +470,7 @@ public:
 	{
 		Node* pNode = TSTATICCAST( Node, GetSuccessorOf( a_pNextAfter ) );
 
-		if ( pNode->operator==( value ) )
+		if ( ComparatorHelper::IsEqual( *pNode->GetValue(), value ) )
 		{
 			return pNode;
 		}
@@ -474,20 +497,11 @@ private:
 		while ( pCurrentNode != &ms_oNil )
 		{
 			pInsertTo = pCurrentNode;
-
-			if ( pCurrentNode->IsLeftNodeNext( *pNode->GetValue() ) )
-			{
-				pCurrentNode = TSTATICCAST( Node, pCurrentNode->m_pLeft );
-			}
-			else
-			{
-				pCurrentNode = TSTATICCAST( Node, pCurrentNode->m_pRight );
-			}
+			pCurrentNode = TSTATICCAST( Node, ( ComparatorHelper::IsLessOrEqual( *pCurrentNode->GetValue(), *pNode->GetValue() ) ? pCurrentNode->m_pRight : pCurrentNode->m_pLeft ) );
 		}
 
 		pNode->m_pParent = pInsertTo;
-
-		if ( pInsertTo == &m_oRoot || pInsertTo->IsLeftNodeNext( *pNode->GetValue() ) )
+		if ( pInsertTo == &m_oRoot || ComparatorHelper::IsGreater( *pInsertTo->GetValue(), *pNode->GetValue() ) )
 		{
 			pInsertTo->m_pLeft = pNode;
 		}

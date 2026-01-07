@@ -256,8 +256,12 @@ MEMBER_HOOK( 0x00662d90, AOptions, AOptions_IsResolutionCompatible, TBOOL, TINT 
 	TINT*  pWidth      = (TINT*)( ( TUINT( this ) + 0x24 ) );
 	TINT*  pHeight     = (TINT*)( ( TUINT( this ) + 0x28 ) );
 
+	HDC hDC = GetDC( NULL );
+
 	RECT windowRect;
-	GetClipBox( GetDC( NULL ), &windowRect );
+	GetClipBox( hDC, &windowRect );
+
+	ReleaseDC( NULL, hDC );
 	//BOOL bResult = GetWindowRect( GetDesktopWindow(), &windowRect );
 
 	// Override width and height by a start parameter
@@ -893,10 +897,10 @@ MEMBER_HOOK( 0x006bbb00, TSystemManager, TSystemManager_Update, void )
 		if ( g_oSettings.iMaxFPS < 5 )
 			g_oSettings.iMaxFPS = 5;
 
-		const TFLOAT fTargetDeltaTime = 1.0f / g_oSettings.iMaxFPS;
-		const TFLOAT fDelta           = s_oFPSTimer.GetDelta();
+		const TFLOAT flTargetDeltaTime = 1.0f / g_oSettings.iMaxFPS;
+		const TFLOAT flDelta           = s_oFPSTimer.GetDelta();
 
-		TFLOAT flSleepTime = fTargetDeltaTime - fDelta;
+		TFLOAT flSleepTime = flTargetDeltaTime - flDelta;
 
 		while ( flSleepTime > 0.0f )
 		{
@@ -1006,12 +1010,6 @@ MEMBER_HOOK( 0x006d8a00, Toshi::TMutexLock, TMutexLock_Destructor, void )
 
 void AHooks::Initialise()
 {
-	// Fix necessary regedit records missing
-	// TODO: move this away from here
-	HKEY    hKey;
-	LSTATUS nStatus = RegCreateKeyExA( HKEY_CURRENT_USER, "Software\\THQ\\Barnyard", NULL, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hKey, NULL );
-	if ( nStatus == ERROR_SUCCESS ) RegCloseKey( hKey );
-
 	// Apply other hooks
 	InstallHook<TMemory_UnkMethod>();
 	InstallHook<TMemory_Initialise>();

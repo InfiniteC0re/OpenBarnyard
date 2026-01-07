@@ -43,7 +43,7 @@ void AWaveBank::ResetWave( TINT a_iWaveIndex )
 // $Barnyard: FUNCTION 005dce30
 AWaveBank::~AWaveBank()
 {
-	ASoundManager::ms_WaveBanks.Remove( m_strBank );
+	ASoundManager::ms_WaveBanks.FindAndRemove( m_strBank );
 	delete[] m_pWaves;
 }
 

@@ -10,9 +10,10 @@ class T2Map
 {
 public:
 	using Pair      = T2Pair<KeyType, ValueType, Comparator>;
-	using Iterator  = T2RedBlackTree<Pair>::Iterator;
-	using CIterator = T2RedBlackTree<Pair>::CIterator;
-	using Node      = T2RedBlackTree<Pair>::Node;
+	using Tree      = T2RedBlackTree<Pair, typename Pair::Comparator>;
+	using Iterator  = Tree::Iterator;
+	using CIterator = Tree::CIterator;
+	using Node      = Tree::Node;
 
 public:
 	T2Map( T2Allocator* a_pAllocator = GetGlobalAllocator() )
@@ -57,9 +58,17 @@ public:
 		return &result.GetValue()->GetSecond();
 	}
 
-	void Remove( const KeyType& key )
+	void FindAndRemove( const KeyType& key )
 	{
 		Iterator result = m_RedBlackTree.Find( { key } );
+
+		TASSERT( result != End() );
+		m_RedBlackTree.Delete( result.GetNode() );
+	}
+
+	void FindLastAndRemove( const KeyType& key )
+	{
+		Iterator result = m_RedBlackTree.FindLast( { key } );
 
 		TASSERT( result != End() );
 		m_RedBlackTree.Delete( result.GetNode() );
@@ -87,6 +96,11 @@ public:
 	Iterator Find( const KeyType& key )
 	{
 		return m_RedBlackTree.Find( { key } );
+	}
+
+	Iterator FindLast( const KeyType& key )
+	{
+		return m_RedBlackTree.FindLast( { key } );
 	}
 
 	Iterator FindNext( Iterator a_oIterator, const KeyType& a_rKey )
@@ -135,7 +149,7 @@ public:
 	}
 
 private:
-	T2RedBlackTree<Pair> m_RedBlackTree;
+	Tree m_RedBlackTree;
 };
 
 TOSHI_NAMESPACE_END

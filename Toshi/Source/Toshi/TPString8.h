@@ -60,7 +60,7 @@ public:
 	void Remove( TPooledString8* a_pString )
 	{
 		TASSERT( a_pString->GetRefCount() == 0 );
-		m_oMap.Remove( a_pString->GetString8() );
+		m_oMap.FindLastAndRemove( a_pString->GetString8() );
 	}
 
 	// $Barnyard: FUNCTION 006c1a60
@@ -97,32 +97,11 @@ private:
 class TPString8
 {
 public:
-	class Comparator
+	struct Comparator
 	{
-	public:
-		static TBOOL IsEqual( const TPString8& a, const TPString8& b )
+		TINT operator()( const TPString8& a, const TPString8& b )
 		{
-			return a.GetPooledString() == b.GetPooledString();
-		}
-
-		static TBOOL IsGreater( const TPString8& a, const TPString8& b )
-		{
-			return a.GetPooledString() > b.GetPooledString();
-		}
-
-		static TBOOL IsLess( const TPString8& a, const TPString8& b )
-		{
-			return a.GetPooledString() < b.GetPooledString();
-		}
-
-		static TBOOL IsLessOrEqual( const TPString8& a, const TPString8& b )
-		{
-			return a.GetPooledString() <= b.GetPooledString();
-		}
-
-		static TBOOL IsGreaterOrEqual( const TPString8& a, const TPString8& b )
-		{
-			return a.GetPooledString() >= b.GetPooledString();
+			return a.GetPooledString() - b.GetPooledString();
 		}
 	};
 
