@@ -108,13 +108,17 @@ TFORCEINLINE T CONVERTENDIANESS( Endianess a_eEndianess, T a_numValue )
 	switch ( a_eEndianess )
 	{
 		case Endianess_Little:
-			if constexpr ( sizeof( T ) == 4 )
+			if constexpr ( std::is_same<T, TFLOAT>::value )
+				return PARSEFLOAT( a_numValue );
+			else if constexpr ( sizeof( T ) == 4 )
 				return (T)PARSEDWORD( *(TUINT32*)( TREINTERPRETCAST( void*, &a_numValue ) ) );
 			else if constexpr ( sizeof( T ) == 2 )
 				return (T)PARSEWORD( *(TUINT16*)( TREINTERPRETCAST( void*, &a_numValue ) ) );
 			break;
 		case Endianess_Big:
-			if constexpr ( sizeof( T ) == 4 )
+			if constexpr ( std::is_same<T, TFLOAT>::value )
+				return PARSEFLOAT_BIG( a_numValue );
+			else if constexpr ( sizeof( T ) == 4 )
 				return (T)PARSEDWORD_BIG( *(TUINT32*)( TREINTERPRETCAST( void*, &a_numValue ) ) );
 			else if constexpr ( sizeof( T ) == 2 )
 				return (T)PARSEWORD_BIG( *(TUINT16*)( TREINTERPRETCAST( void*, &a_numValue ) ) );
