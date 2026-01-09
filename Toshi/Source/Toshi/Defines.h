@@ -149,16 +149,16 @@
 	}
 
 #ifndef TOSHI_NO_LOGS
-#  define TLOGUP()         Toshi::TUtil::LogUp()
-#  define TLOGDOWN()       Toshi::TUtil::LogDown()
+#  define TLOGUP()         Toshi::TUtil::LogUp();
+#  define TLOGDOWN()       Toshi::TUtil::LogDown();
 #  define TINFO( ... )     Toshi::TUtil::Log( Toshi::TUtil::LogType_Info, __VA_ARGS__ )
 #  define TWARN( ... )     Toshi::TUtil::Log( Toshi::TUtil::LogType_Warning, __VA_ARGS__ )
 #  define TERROR( ... )    Toshi::TUtil::Log( Toshi::TUtil::LogType_Error, __VA_ARGS__ )
 #  define TCRITICAL( ... ) Toshi::TUtil::Log( Toshi::TUtil::LogType_Critical, __VA_ARGS__ )
 #  define TTRACE( ... )    TDebug_FinalPrintf( __VA_ARGS__ )
 #else // TOSHI_NO_LOGS
-#  define TLOGUP() do {} while( TFALSE )
-#  define TLOGDOWN() do {} while( TFALSE )
+#  define TLOGUP()
+#  define TLOGDOWN()
 #  define TINFO( ... ) do {} while( TFALSE )
 #  define TWARN( ... ) do {} while( TFALSE )
 #  define TERROR( ... ) do {} while( TFALSE )

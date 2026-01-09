@@ -122,55 +122,6 @@ public:
 		return &m_Value;
 	}
 
-	//TBOOL IsLeftNodeNext( const T& value ) const
-	//{
-	//	// Insert same values to the right side
-	//	if ( TComparator<T>::IsEqual( m_Value, value ) )
-	//		return TFALSE;
-
-	//	return TComparator<T>::IsLess( m_Value, value );
-	//}
-
-	//TBOOL operator==( const T& other ) const
-	//{
-	//	return TComparator<T>()( m_Value, other ) == 0;
-	//}
-
-	//TBOOL operator==( const T2RedBlackTreeNode<T>& other ) const
-	//{
-	//	return TComparator<T>()( m_Value, other.m_Value ) == 0;
-	//}
-
-	//TBOOL operator!=( const T& other ) const
-	//{
-	//	return TComparator<T>()( m_Value, other ) != 0;
-	//}
-
-	//TBOOL operator!=( const T2RedBlackTreeNode<T>& other ) const
-	//{
-	//	return TComparator<T>()( m_Value, other.m_Value ) != 0;
-	//}
-
-	//TBOOL operator>( const T2RedBlackTreeNode<T>& other ) const
-	//{
-	//	return TComparator<T>()( m_Value, other.m_Value ) > 0;
-	//}
-
-	//TBOOL operator<( const T2RedBlackTreeNode<T>& other ) const
-	//{
-	//	return TComparator<T>()( m_Value, other.m_Value ) < 0;
-	//}
-
-	//TBOOL operator<=( const T2RedBlackTreeNode<T>& other ) const
-	//{
-	//	return TComparator<T>()( m_Value, other.m_Value ) <= 0;
-	//}
-
-	//TBOOL operator>=( const T2RedBlackTreeNode<T>& other ) const
-	//{
-	//	return TComparator<T>()( m_Value, other.m_Value ) >= 0;
-	//}
-
 private:
 	T m_Value;
 };
