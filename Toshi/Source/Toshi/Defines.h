@@ -62,7 +62,7 @@
 #endif   // TOSHI_DEBUG
 
 #ifndef TBREAK
-#  define TBREAK()
+#  define TBREAK() do {} while( TFALSE )
 #endif // TBREAK
 
 #define TSTATICASSERT( ... )              static_assert( __VA_ARGS__, "Compile time assert failed: " #__VA_ARGS__ )
@@ -83,6 +83,8 @@
 #define TDEPRECATED_REASON( REASON ) [[deprecated( REASON )]]
 
 #define TDECLARE_POINTER_HANDLE( NAME ) typedef void* NAME
+
+#define TOSHI_ENABLE_ASSERTS
 
 #ifdef TOSHI_ENABLE_ASSERTS
 #  define TCALL_ONCE_IF( CONDITION ) \
@@ -131,13 +133,13 @@
 	  }
 #  define TVALIDPTR( PTR ) TASSERT( TDebug_IsValidAddress( PTR ) )
 #else // TOSHI_ENABLE_ASSERTS
-#  define TWIP()
-#  define TTODO( DESC )
-#  define TFIXME( DESC )
-#  define TIMPLEMENT()
-#  define TIMPLEMENT_D( DESC )
-#  define TASSERT( X, ... ) ( TFALSE )
-#  define TVALIDPTR( PTR )
+#  define TWIP() do {} while( TFALSE )
+#  define TTODO( DESC ) do {} while( TFALSE )
+#  define TFIXME( DESC ) do {} while( TFALSE )
+#  define TIMPLEMENT() do {} while( TFALSE )
+#  define TIMPLEMENT_D( DESC ) do {} while( TFALSE )
+#  define TASSERT( X, ... ) ( TFALSE ) do {} while( TFALSE )
+#  define TVALIDPTR( PTR ) do {} while( TFALSE )
 #endif // TOSHI_ENABLE_ASSERTS
 
 #define TUNREACHABLE()                                     \
@@ -147,21 +149,21 @@
 	}
 
 #ifndef TOSHI_NO_LOGS
-#  define TLOGUP()         Toshi::TUtil::LogUp();
-#  define TLOGDOWN()       Toshi::TUtil::LogDown();
+#  define TLOGUP()         Toshi::TUtil::LogUp()
+#  define TLOGDOWN()       Toshi::TUtil::LogDown()
 #  define TINFO( ... )     Toshi::TUtil::Log( Toshi::TUtil::LogType_Info, __VA_ARGS__ )
 #  define TWARN( ... )     Toshi::TUtil::Log( Toshi::TUtil::LogType_Warning, __VA_ARGS__ )
 #  define TERROR( ... )    Toshi::TUtil::Log( Toshi::TUtil::LogType_Error, __VA_ARGS__ )
 #  define TCRITICAL( ... ) Toshi::TUtil::Log( Toshi::TUtil::LogType_Critical, __VA_ARGS__ )
 #  define TTRACE( ... )    TDebug_FinalPrintf( __VA_ARGS__ )
 #else // TOSHI_NO_LOGS
-#  define TLOGUP()
-#  define TLOGDOWN()
-#  define TINFO( ... )
-#  define TWARN( ... )
-#  define TERROR( ... )
-#  define TCRITICAL( ... )
-#  define TTRACE( ... )
+#  define TLOGUP() do {} while( TFALSE )
+#  define TLOGDOWN() do {} while( TFALSE )
+#  define TINFO( ... ) do {} while( TFALSE )
+#  define TWARN( ... ) do {} while( TFALSE )
+#  define TERROR( ... ) do {} while( TFALSE )
+#  define TCRITICAL( ... ) do {} while( TFALSE )
+#  define TTRACE( ... ) do {} while( TFALSE )
 #endif // TOSHI_NO_LOGS
 
 #ifndef TOSHI_USER_ENGINE

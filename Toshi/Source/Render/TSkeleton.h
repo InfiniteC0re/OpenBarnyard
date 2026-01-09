@@ -60,14 +60,21 @@ public:
 class TSkeletonSequence
 {
 public:
+	enum MODE : TINT16
+	{
+		MODE_LOOPED,
+		MODE_CLAMPED
+	};
+
 	enum Flag : TUINT16
 	{
-		FLAG_Overlay = BITFLAG( 0 ),
+		FLAG_NONE    = 0,
+		FLAG_OVERLAY = BITFLAG( 0 ),
 	};
 
 public:
-	TBOOL IsBase() const { return !( m_eFlags & FLAG_Overlay ); }
-	TBOOL IsOverlay() const { return ( m_eFlags & FLAG_Overlay ); }
+	TBOOL IsBase() const { return !( m_eFlags & FLAG_OVERLAY ); }
+	TBOOL IsOverlay() const { return ( m_eFlags & FLAG_OVERLAY ); }
 
 	TSkeletonSequenceBone* GetBones() { return m_pSeqBones; }
 	TSkeletonSequenceBone* GetBone( TINT a_iIndex ) { return &m_pSeqBones[ a_iIndex ]; }
@@ -75,13 +82,13 @@ public:
 	TFLOAT       GetDuration() const { return m_fDuration; }
 	TUINT8       GetNameLength() const { return m_iNameLength; }
 	const TCHAR* GetName() const { return m_szName; }
-	TINT16       GetUnk2() const { return m_iUnk2; }
+	MODE         GetMode() const { return m_eMode; }
 
 public:
 	TUINT8                 m_iNameLength;
 	TCHAR                  m_szName[ 31 ];
 	Flag                   m_eFlags;
-	TINT16                 m_iUnk2;
+	MODE                   m_eMode;
 	TINT                   m_iNumUsedBones;
 	TFLOAT                 m_fDuration;
 	TSkeletonSequenceBone* m_pSeqBones;

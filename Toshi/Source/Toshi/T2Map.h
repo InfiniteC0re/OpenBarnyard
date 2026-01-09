@@ -140,7 +140,10 @@ public:
 
 	Iterator operator[]( const KeyType& key )
 	{
-		return m_RedBlackTree.Find( { key } );
+		auto it = m_RedBlackTree.Find( { key } );
+		TASSERT( it != End() );
+
+		return it;
 	}
 
 	T2Allocator* GetAllocator() const

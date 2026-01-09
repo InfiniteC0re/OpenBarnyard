@@ -21,7 +21,7 @@ TBOOL TAnimation::UpdateTime( TFLOAT a_fDeltaTime )
 	m_fTotalTime += m_fSpeed * a_fDeltaTime;
 	m_fSeqTime += m_fSpeed * a_fDeltaTime;
 
-	if ( pSeq->GetUnk2() == 0 && !HASANYFLAG( m_eFlags, Flags_Managed ) )
+	if ( pSeq->GetMode() == TSkeletonSequence::MODE_LOOPED && !HASANYFLAG( m_eFlags, Flags_Managed ) )
 	{
 		if ( 0.0f <= m_fSpeed || 0.0f <= m_fSeqTime )
 		{
