@@ -10,7 +10,7 @@
 
 TOSHI_NAMESPACE_START
 
-TBOOL T2Window::Create( T2Render* a_pRender, const TCHAR* a_szTitle )
+TBOOL T2Window::Create( T2Render* a_pRender, const TCHAR* a_szTitle, TBOOL a_bHeadless )
 {
 	m_pRender = a_pRender;
 	m_pWindow = SDL_CreateWindow(
@@ -19,14 +19,15 @@ TBOOL T2Window::Create( T2Render* a_pRender, const TCHAR* a_szTitle )
 	    SDL_WINDOWPOS_CENTERED,
 	    0,
 	    0,
-	    SDL_WINDOW_SHOWN
+	    SDL_WINDOW_SHOWN | ( a_bHeadless ? SDL_WINDOW_HIDDEN : 0 )
 #ifdef TRENDERINTERFACE_GL
 	        | SDL_WINDOW_OPENGL
 #endif
 	);
 
-	m_iWidth  = -1;
-	m_iHeight = -1;
+	m_iWidth    = -1;
+	m_iHeight   = -1;
+	m_bHeadless = a_bHeadless;
 
 	return m_pWindow != TNULL;
 }

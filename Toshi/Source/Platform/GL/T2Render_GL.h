@@ -47,6 +47,7 @@ public:
 		TUINT        uiWidth;
 		TUINT        uiHeight;
 		TBOOL        bIsWindowed;
+		TBOOL        bIsHeadless = TFALSE;
 	};
 
 public:

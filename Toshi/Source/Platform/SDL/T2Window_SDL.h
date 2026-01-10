@@ -25,7 +25,7 @@ public:
 	T2Window()  = default;
 	~T2Window() = default;
 
-	TBOOL Create( T2Render* a_pRender, const TCHAR* a_szTitle );
+	TBOOL Create( T2Render* a_pRender, const TCHAR* a_szTitle, TBOOL a_bHeadless = TFALSE );
 	void  Update();
 
 	void SetFullscreen( TBOOL a_bFullScreen );
@@ -41,6 +41,7 @@ private:
 	SDL_Window*    m_pWindow = TNULL;
 	EventListener* m_pListener;
 	T2Render*      m_pRender;
+	TBOOL          m_bHeadless;
 
 	TINT m_iWidth;
 	TINT m_iHeight;

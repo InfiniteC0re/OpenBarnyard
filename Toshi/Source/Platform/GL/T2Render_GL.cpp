@@ -50,7 +50,7 @@ TBOOL T2Render::Create( const WindowParams& a_rcWindowParams )
 		pchWindowTitle = "TOSHI : T2Render";
 
 	m_pWindow = new T2Window();
-	if ( m_pWindow->Create( this, pchWindowTitle ) )
+	if ( m_pWindow->Create( this, pchWindowTitle, a_rcWindowParams.bIsHeadless ) )
 	{
 		// Create SDL context
 		m_pGLContext = SDL_GL_CreateContext( m_pWindow->GetNativeWindow() );
