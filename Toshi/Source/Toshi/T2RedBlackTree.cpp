@@ -248,9 +248,17 @@ T2GenericRedBlackTreeNode* T2GenericRedBlackTree::DeleteNode( T2GenericRedBlackT
 	y->m_pLeft                 = pNode->m_pLeft;
 	y->m_pRight                = pNode->m_pRight;
 	y->m_pParent               = pNode->m_pParent;
+
+#ifdef BARNYARD_COMMUNITY_PATCH
+	// Same as above
+	if ( pNode->m_pRight != &ms_oNil ) pNode->m_pRight->m_pParent = y;
+	if ( pNode->m_pLeft != &ms_oNil ) pNode->m_pLeft->m_pParent = y;
+#else
 	pNode->m_pRight->m_pParent = y;
 	pNode->m_pLeft->m_pParent  = y;
-	pTVar1                     = pNode->m_pParent;
+#endif // BARNYARD_COMMUNITY_PATCH
+
+	pTVar1 = pNode->m_pParent;
 
 	if ( pNode == pTVar1->m_pLeft )
 	{
