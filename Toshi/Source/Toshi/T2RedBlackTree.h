@@ -379,7 +379,7 @@ public:
 
 		while ( pCurrentNode != &ms_oNil )
 		{
-			TINT iCmpResult = Comparator()( *pCurrentNode->GetValue(), value );
+			auto iCmpResult = Comparator()( *pCurrentNode->GetValue(), value );
 
 			if ( TComparatorHelper::IsEqual( iCmpResult ) )
 				return pCurrentNode;
@@ -396,7 +396,7 @@ public:
 
 		while ( pCurrentNode != &ms_oNil )
 		{
-			TINT iCmpResult = Comparator()( *pCurrentNode->GetValue(), value );
+			auto iCmpResult = Comparator()( *pCurrentNode->GetValue(), value );
 
 			if ( TComparatorHelper::IsEqual( iCmpResult ) )
 			{

@@ -17,7 +17,7 @@ struct TComparator
 	// Optimize comparison by passing values instead of references (pointers) when applicable
 	using ArgType = std::conditional_t<sizeof( Type ) == sizeof( void* ), Type, const Type&>;
 
-	TINT operator()( ArgType a, ArgType b ) const { return a - b; }
+	auto operator()( ArgType a, ArgType b ) const { return a - b; }
 };
 
 //-----------------------------------------------------------------------------
@@ -26,11 +26,11 @@ struct TComparator
 //-----------------------------------------------------------------------------
 struct TComparatorHelper
 {
-	static TBOOL IsEqual( TINT a_iResult ) { return a_iResult == 0; }
-	static TBOOL IsGreater( TINT a_iResult ) { return a_iResult > 0; }
-	static TBOOL IsLess( TINT a_iResult ) { return a_iResult < 0; }
-	static TBOOL IsLessOrEqual( TINT a_iResult ) { return a_iResult <= 0; }
-	static TBOOL IsGreaterOrEqual( TINT a_iResult ) { return a_iResult >= 0; }
+	template<typename T> static TBOOL IsEqual( T a_iResult ) { TSTATICASSERT( std::is_arithmetic_v<T> ); return a_iResult == 0; }
+	template<typename T> static TBOOL IsGreater( T a_iResult ) { TSTATICASSERT( std::is_arithmetic_v<T> ); return a_iResult > 0; }
+	template<typename T> static TBOOL IsLess( T a_iResult ) { TSTATICASSERT( std::is_arithmetic_v<T> ); return a_iResult < 0; }
+	template<typename T> static TBOOL IsLessOrEqual( T a_iResult ) { TSTATICASSERT( std::is_arithmetic_v<T> ); return a_iResult <= 0; }
+	template<typename T> static TBOOL IsGreaterOrEqual( T a_iResult ) { TSTATICASSERT( std::is_arithmetic_v<T> ); return a_iResult >= 0; }
 };
 
 //-----------------------------------------------------------------------------

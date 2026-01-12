@@ -11,7 +11,7 @@ struct T2Pair
 
 	struct Comparator
 	{
-		TINT operator()( const T2Pair& a, const T2Pair& b )
+		auto operator()( const T2Pair& a, const T2Pair& b )
 		{
 			return C()( a.first, b.first );
 		}
