@@ -17,7 +17,7 @@ public:
 		void assign( const Token& token );
 
 	public:
-		TFileLexer::TOKEN m_type    = TFileLexer::TOKEN_UNKNOWN;
+		TFileLexer::TOKEN m_type    = TFileLexer::TOKEN_EOF;
 		TINT              m_unknown = 0;
 		TString8          m_value;
 	};

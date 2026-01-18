@@ -68,6 +68,7 @@
 #define TSTATICASSERT( ... )              static_assert( __VA_ARGS__, "Compile time assert failed: " #__VA_ARGS__ )
 #define TREINTERPRETCAST( TYPE, VALUE )   ( reinterpret_cast<TYPE>( VALUE ) )
 #define TSTATICCAST( POINTERTYPE, VALUE ) ( static_cast<POINTERTYPE*>( VALUE ) )
+#define TCAST( TYPE, VALUE )              ( static_cast<TYPE>( VALUE ) )
 #define TARRAYSIZE( ARRAY )               ( sizeof( ARRAY ) / sizeof( *ARRAY ) )
 #define TOFFSETOF( CLASS, MEMBER )        offsetof( CLASS, MEMBER )
 #define TALIGNAS( VALUE )                 alignas( VALUE )
