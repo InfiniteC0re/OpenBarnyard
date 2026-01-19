@@ -13,25 +13,32 @@ public:
 	struct TRBMainHeader
 	{
 		TUINT32       uiCount1;
-		TUINT32       uiNumTokens;
-		TUINT8*       pTokenData;
-		const TCHAR** ppStrings;
-		TINT32        iNumTokens;
+		TUINT32       uiNumCustomTokens;
+		TUINT8*       pTokens;
+		TUINT32*      pTokenValues;
+		TINT32        iNumFileTokens;
 		const TCHAR** ppCustomTokens;
 	};
 
 	struct Token
 	{
-		TUINT        uiToken;
+		TUINT        uiTokenType;
 		TINT         iLineNumber;
-		const TCHAR* pString;
+
+		union
+		{
+			TUINT32      uiValue;
+			TINT32       iValue;
+			TFLOAT       flValue;
+			const TCHAR* pString;
+		};
 	};
 
 public:
 	PLexerTRB();
 	virtual ~PLexerTRB();
 
-	TBOOL Load( const TCHAR* a_pchFileName, const TCHAR* a_pchDebugInfoFileName );
+	TBOOL Load( const TCHAR* a_pchFileName, const TCHAR* a_pchDebugInfoFileName = TNULL );
 	void  Close();
 
 	TUINT8 PeekToken( TINT a_iTokenOffset );

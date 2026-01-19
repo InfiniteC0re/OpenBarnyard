@@ -80,8 +80,8 @@ TUINT8 PLexerTRB::PeekToken( TINT a_iTokenOffset )
 	TVALIDPTR( m_pMainHeader );
 
 	TINT iTokenIdx = m_iTokenCounter + a_iTokenOffset;
-	if ( iTokenIdx >= 0 && iTokenIdx < m_pMainHeader->iNumTokens )
-		return m_pMainHeader->pTokenData[ iTokenIdx ];
+	if ( iTokenIdx >= 0 && iTokenIdx < m_pMainHeader->iNumFileTokens )
+		return m_pMainHeader->pTokens[ iTokenIdx ];
 
 	return 0;
 }
@@ -95,20 +95,20 @@ TBOOL PLexerTRB::GetNextToken( Token& a_rOutToken )
 	a_rOutToken.pString     = TNULL;
 
 	// Check the file is not over
-	if ( m_pMainHeader->iNumTokens <= m_iTokenCounter )
+	if ( m_pMainHeader->iNumFileTokens <= m_iTokenCounter )
 	{
-		a_rOutToken.uiToken = TFileLexer::TOKEN_EOF;
+		a_rOutToken.uiTokenType = TFileLexer::TOKEN_EOF;
 		return TFALSE;
 	}
 
-	TUINT uiToken       = m_pMainHeader->pTokenData[ m_iTokenCounter ];
-	a_rOutToken.uiToken = uiToken;
+	TUINT uiToken       = m_pMainHeader->pTokens[ m_iTokenCounter ];
+	a_rOutToken.uiTokenType = uiToken;
 
 	// Read associated string
 	if ( uiToken >= TFileLexer::TOKEN_IDENT && uiToken < TFileLexer::TOKEN_NUMOF )
 	{
 		m_iStringCounter += 1;
-		a_rOutToken.pString = m_pMainHeader->ppStrings[ m_iStringCounter ];
+		a_rOutToken.uiValue = m_pMainHeader->pTokenValues[ m_iStringCounter ];
 	}
 
 	// Try obtaining line number
@@ -131,14 +131,14 @@ TBOOL PLexerTRB::GetPrevToken( Token& a_rOutToken )
 	const TINT iPrevTokenIdx = m_iTokenCounter - 1;
 
 	// Make sure it's not the end of the file
-	if ( iPrevTokenIdx < 0 || iPrevTokenIdx >= m_pMainHeader->iNumTokens )
+	if ( iPrevTokenIdx < 0 || iPrevTokenIdx >= m_pMainHeader->iNumFileTokens )
 	{
-		a_rOutToken.uiToken = TFileLexer::TOKEN_EOF;
+		a_rOutToken.uiTokenType = TFileLexer::TOKEN_EOF;
 		return TFALSE;
 	}
 
-	TUINT uiPrevToken   = m_pMainHeader->pTokenData[ iPrevTokenIdx ];
-	a_rOutToken.uiToken = uiPrevToken;
+	TUINT uiPrevToken   = m_pMainHeader->pTokens[ iPrevTokenIdx ];
+	a_rOutToken.uiTokenType = uiPrevToken;
 
 	// Get associated string
 	TINT iStringIdx = m_iStringCounter;
@@ -150,7 +150,7 @@ TBOOL PLexerTRB::GetPrevToken( Token& a_rOutToken )
 		if ( iCurrTokenIdx >= TFileLexer::TOKEN_IDENT && iCurrTokenIdx < TFileLexer::TOKEN_NUMOF )
 			iStringIdx -= 1;
 
-		a_rOutToken.pString = m_pMainHeader->ppStrings[ iStringIdx ];
+		a_rOutToken.uiValue = m_pMainHeader->pTokenValues[ iStringIdx ];
 	}
 
 	// Try obtaining line number
@@ -167,7 +167,7 @@ const TCHAR* PLexerTRB::GetTokenName( TUINT a_uiToken ) const
 	TVALIDPTR( m_pMainHeader );
 
 	// If one of defines tokens, get it from the file
-	if ( a_uiToken >= TFileLexer::TOKEN_NUMOF && m_pMainHeader->uiNumTokens + TFileLexer::TOKEN_NUMOF > a_uiToken )
+	if ( a_uiToken >= TFileLexer::TOKEN_NUMOF && m_pMainHeader->uiNumCustomTokens + TFileLexer::TOKEN_NUMOF > a_uiToken )
 		return GetCustomTokens()[ a_uiToken - TFileLexer::TOKEN_NUMOF ];
 
 	// Fallback to default tokens
