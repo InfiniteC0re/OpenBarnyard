@@ -63,12 +63,6 @@ public:
 		m_oMap.FindLastAndRemove( a_pString->GetString8() );
 	}
 
-	// $Barnyard: FUNCTION 006c1a60
-	void InitialiseStatic()
-	{
-		TIMPLEMENT();
-	}
-
 	T2Allocator* GetAllocator() const
 	{
 		return m_pAllocator;

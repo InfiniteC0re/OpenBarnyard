@@ -17,10 +17,11 @@
 #endif // TOSHI_SKU_WINDOWS
 
 #include "AppBoot.h"
-#include "AToshiClassReferenceHelper.h"
+#include "ClassLink.h"
 #include "Tasks/ADummyTask.h"
 #include "Locale/ALocaleManager.h"
 #include "GUI/AGUI2.h"
+#include "CVar/AVarType.h"
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
@@ -28,15 +29,21 @@
 //-----------------------------------------------------------------------------
 #include <Core/TMemoryDebugOn.h>
 
+// Very important objects!!!
+static Toshi::TMemoryInitialiser s_oMemoryInitialiser;
+
+// Handle to the BARNYARD mutex
+static HANDLE s_hBarnyardHandle;
+
 AApplication g_oTheApp;
 
 TOSHI_NAMESPACE_USING
 
-#ifndef TOSHI_FINAL
-#  define TOSHI_ENTRY int main( int argc, TCHAR** argv )
-#else
+#ifdef TOSHI_FINAL
 #  define TOSHI_ENTRY int WINAPI WinMain( HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, INT cmdShow )
-#endif
+#else // TOSHI_FINAL
+#  define TOSHI_ENTRY int main( int argc, TCHAR** argv )
+#endif // !TOSHI_FINAL
 
 static const TCHAR* GetOSName( OSVERSIONINFOEX& osVersionInfo )
 {
@@ -63,27 +70,22 @@ static const TCHAR* GetOSName( OSVERSIONINFOEX& osVersionInfo )
 	return "unknown";
 }
 
-TOSHI_ENTRY
+static void EngineQuitCallback();
+static void CreateEngine( const TCHAR* a_pchCommandLine )
 {
-	static AToshiClassReferenceHelper s_ToshiClassReferencer;
-	static TMemoryInitialiser         s_MemoryInitialiser;
-
-	TCHAR* szCommandLine = GetCommandLineA();
-
+	// Create core engine systems
+	// NOTE: this is not exactly how it works in the original, I changed it a bit for more customization
 	TUtil::TOSHIParams toshiParams;
-	toshiParams.szCommandLine = szCommandLine;
+	toshiParams.szCommandLine = a_pchCommandLine;
 	toshiParams.szLogFileName = "barnyard";
 
 	TUtil::ToshiCreate( toshiParams );
-
-	g_oSystemManager.SetQuitCallback( []() {
-		TUtil::ToshiDestroy();
-		exit( 0 );
-	} );
+	g_oSystemManager.SetQuitCallback( EngineQuitCallback );
 
 	AMemory::CreatePool( AMemory::POOL_StringPool );
 	TUtil::Log( "Build Version %s\n", "0.28" );
 
+#ifdef BARNYARD_COMMUNITY_PATCH
 	OSVERSIONINFOEX osVersionInfo = { sizeof( osVersionInfo ) };
 
 	const TCHAR* osName = "unknown";
@@ -101,11 +103,39 @@ TOSHI_ENTRY
 		}
 	}
 
-	TUtil::Log( "Command Line: %s\n", szCommandLine );
+	TUtil::Log( "Command Line: %s\n", a_pchCommandLine );
 	TUtil::Log( "OS Name: %s\n", osName );
 	TUtil::Log( "OS Version: %d.%d Build:%d %s\n", osVersionInfo.dwMajorVersion, osVersionInfo.dwMinorVersion, osVersionInfo.dwBuildNumber, osVersionInfo.szCSDVersion );
+#endif // BARNYARD_COMMUNITY_PATCH
+}
 
-	TUtil::GetGlobalMutex() = CreateMutexA( NULL, TTRUE, "BARNYARD" );
+// $Barnyard: FUNCTION 004042c0
+static void DestroyEngine()
+{
+	ReleaseMutex( s_hBarnyardHandle );
+
+	ALocaleManager::DestroySingleton();
+	AVarType::Destroy();
+
+	TUtil::ToshiDestroy();
+}
+
+// $Barnyard: FUNCTION 00404360
+static void EngineQuitCallback()
+{
+	DestroyEngine();
+	exit( 0 );
+}
+
+TOSHI_ENTRY
+{
+	const TCHAR* pchCommandLine = GetCommandLineA();
+
+	// Create core systems
+	CreateEngine( pchCommandLine );
+
+	// Create main handle to make sure the game is not running
+	s_hBarnyardHandle = CreateMutexA( NULL, TTRUE, "BARNYARD" );
 
 	if ( GetLastError() == ERROR_ALREADY_EXISTS )
 	{
@@ -113,23 +143,23 @@ TOSHI_ENTRY
 		return 0;
 	}
 
+	ClassLink_Win::ReferenceClasses();
 	if ( g_oTheApp.Create( "The Barnyard - (c) Blue Tongue Entertainment", 0, 0 ) )
-	{
 		g_oTheApp.Execute();
-	}
 
-	TUtil::ToshiDestroy();
-
+	DestroyEngine();
 	return 0;
 }
 
 // $Barnyard: FUNCTION 00404390
-static TBOOL CreateStringPool()
+static TBOOL CreateOptionalSystems()
 {
-	auto pStringPool = new TPString8Pool( 1024, 0, AMemory::GetAllocator( AMemory::POOL_StringPool ), TNULL );
-
+	// Create pool for strings
+	TPString8Pool* pStringPool = new TPString8Pool( 1024, 0, AMemory::GetAllocator( AMemory::POOL_StringPool ), TNULL );
 	TUtil::SetTPStringPool( pStringPool );
-	pStringPool->InitialiseStatic();
+	
+	// Initialise CVar system, it uses the string pool
+	AVarType::Create( pStringPool );
 
 	return TTRUE;
 }
@@ -145,8 +175,8 @@ TBOOL AApplication::OnCreate( int argc, TCHAR** argv )
 {
 	TINFO( "Starting Barnyard...\n" );
 
-	// Create string pool before anything else
-	if ( !CreateStringPool() )
+	// Initialise important systems
+	if ( !CreateOptionalSystems() )
 		return TFALSE;
 
 	ALocaleManager* pLocaleManager = T2Locale::CreateSingleton<ALocaleManager>();

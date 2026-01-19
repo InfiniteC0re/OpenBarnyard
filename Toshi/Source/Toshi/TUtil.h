@@ -118,8 +118,6 @@ public:
 	static TLogFile*                         GetCurrentLogFile() { return ms_pSingleton->m_pCurrentLogFile; }
 	static TEmitter<TUtil, TUtil::LogEvent>& GetLogEmitter() { return ms_pSingleton->m_LogEmitter; }
 
-	static TMutex& GetGlobalMutex() { return ms_oGlobalMutex; }
-
 	static TPString8Pool* SetTPStringPool( TPString8Pool* a_pStringPool ) { return std::exchange( *ms_poStringPool, a_pStringPool ); }
 
 	// $Barnyard: FUNCTION 006bb580
@@ -144,7 +142,6 @@ private:
 
 private:
 	inline static TPString8Pool** ms_poStringPool;
-	inline static TMutex          ms_oGlobalMutex;
 	inline static TOSHIParams     ms_oToshiParams;
 
 public:

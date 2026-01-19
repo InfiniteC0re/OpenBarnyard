@@ -19,4 +19,3 @@ TDEFINE_CLASS_NO_PARENT( PProperties::String16A, 0, 1 );
 TDEFINE_CLASS_NO_PARENT( PProperties::LocaleID, 0, 1 );
 TDEFINE_CLASS_NO_PARENT( PProperties::PPropertyName, 0, 1 );
 TDEFINE_CLASS_NO_PARENT( PProperties::PPropertyValueArray, 0, 1 );
-

@@ -172,8 +172,6 @@ void TUtil::CreateKernelInterface()
 void TUtil::ToshiDestroy()
 {
 	TIMPLEMENT();
-	ms_oGlobalMutex.Destroy();
-
 	TModelManager::Uninitialise();
 }
 
