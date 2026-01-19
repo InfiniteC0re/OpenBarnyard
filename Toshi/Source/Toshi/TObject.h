@@ -32,11 +32,37 @@ public:                                                                       \
 	static TFORCEINLINE Toshi::TClass* GetClassStatic() { return std::addressof( TClassObjectName ); }
 
 //-----------------------------------------------------------------------------
+// Declares default methods used to register class in the dynamic class system.
+// Note: Doesn't declare ms_oClass object (Use TDECLARE_CLASS to auto-declare).
+//-----------------------------------------------------------------------------
+#define TDECLARE_CLASS_BODY_NO_PARENT( THIS_CLASS )              \
+public:                                                          \
+	using ThisClass                             = THIS_CLASS;    \
+	static constexpr Toshi::TClass* PARENTCLASS = TNULL;         \
+                                                                 \
+	Toshi::TClass* GetClass();                                   \
+                                                                 \
+	static Toshi::TObject* CreateTObject();                      \
+	static Toshi::TObject* CreateTObjectInPlace( void* a_pPtr ); \
+	static void            InitialiseClass();                    \
+	static void            DeinitialiseClass();                  \
+                                                                 \
+	static TFORCEINLINE Toshi::TClass* GetClassStatic() { return std::addressof( TClassObjectName ); }
+
+//-----------------------------------------------------------------------------
 // Declares default methods to register derived class and ms_oClass object.
 // Note: Use one of the TDEFINE_CLASS macros in a cpp file to register class.
 //-----------------------------------------------------------------------------
 #define TDECLARE_CLASS( THIS_CLASS, PARENT_CLASS )   \
 	TDECLARE_CLASS_BODY( THIS_CLASS, PARENT_CLASS ); \
+	static Toshi::TClass TClassObjectName
+
+//-----------------------------------------------------------------------------
+// Declares default methods to register derived class and ms_oClass object.
+// Note: Use one of the TDEFINE_CLASS macros in a cpp file to register class.
+//-----------------------------------------------------------------------------
+#define TDECLARE_CLASS_NO_PARENT( THIS_CLASS )                 \
+	TDECLARE_CLASS_BODY_NO_PARENT( THIS_CLASS );               \
 	static Toshi::TClass TClassObjectName
 
 //-----------------------------------------------------------------------------
@@ -171,15 +197,18 @@ public:                                                                       \
 	TDEFINE_CLASS_FULL_COMPILETIME( CLASS )                      \
 	constinit Toshi::TClass CLASS::TClassObjectName = Toshi::TClass( #CLASS, CLASS::CreateTObject, CLASS::CreateTObjectInPlace, CLASS::InitialiseClass, CLASS::DeinitialiseClass, VER_MAJOR, VER_MINOR, sizeof( CLASS ), alignof( CLASS ) );
 
+//-----------------------------------------------------------------------------
+// Defines TClass for a class without parent
+//-----------------------------------------------------------------------------
+#define TDEFINE_CLASS_NO_PARENT( CLASS, VER_MAJOR, VER_MINOR ) \
+	constinit Toshi::TClass CLASS::TClassObjectName = Toshi::TClass( #CLASS, TNULL, TNULL, TNULL, TNULL, VER_MAJOR, VER_MINOR, sizeof( CLASS ), alignof( CLASS ) );
+
 TOSHI_NAMESPACE_START
 
 class TObject
 {
 public:
-	enum
-	{
-		IsTObject = TTRUE
-	};
+	enum { IsTObject = TTRUE };
 	static constexpr Toshi::TClass* PARENTCLASS = TNULL;
 
 public:

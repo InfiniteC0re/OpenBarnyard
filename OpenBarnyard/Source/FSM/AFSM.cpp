@@ -19,3 +19,10 @@ AFSM::~AFSM()
 {
     TIMPLEMENT();
 }
+
+// $Barnyard: FUNCTION 005fccc0
+void AFSM::SetupPPropertiesTypes()
+{
+	T2_FOREACH_ARRAY( m_apPropertiesClasses, it )
+		m_apPropertiesClasses[ it ] = s_pInvalidPropertiesClass;
+}

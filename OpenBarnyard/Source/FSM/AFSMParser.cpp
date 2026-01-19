@@ -9,17 +9,23 @@
 
 TOSHI_NAMESPACE_USING
 
-static TClass* s_pInvalidClass = TNULL;
-
 // $Barnyard: FUNCTION 005fde70
-AFSMParser::ClassRefs::ClassRefs()
+AFSMParser::PPropertiesClassRefs::PPropertiesClassRefs()
 {
-	T2_FOREACH_ARRAY( apClasses, it )
-		apClasses[ it ] = s_pInvalidClass;
+	Setup();
 }
 
-AFSMParser::ClassRefs::~ClassRefs()
+AFSMParser::PPropertiesClassRefs::~PPropertiesClassRefs()
 {
+}
+
+// $Barnyard: FUNCTION 005fddb0
+void AFSMParser::PPropertiesClassRefs::Setup()
+{
+	T2_FOREACH_ARRAY( apPropertiesClasses, it )
+	{
+		apPropertiesClasses[ it ] = AFSM::s_pInvalidPropertiesClass;
+	}
 }
 
 //-----------------------------------------------------------------------------
@@ -29,24 +35,24 @@ AFSMParser::ClassRefs::~ClassRefs()
 // $Barnyard: FUNCTION 00600930
 AFSMParser::AFSMParser()
 {
-	m_pClassRefs = new ClassRefs();
-	m_pFSMLexer  = new PLexerTRB();
+	m_pPPropertiesClassRefs = new PPropertiesClassRefs();
+	m_pFSMLexer             = new PLexerTRB();
 }
 
 // $Barnyard: FUNCTION 00602580
 // $Barnyard: FUNCTION 00601e60
 AFSMParser::~AFSMParser()
 {
-	delete m_pClassRefs;
+	delete m_pPPropertiesClassRefs;
 	delete m_pFSMLexer;
-	
+
 	// $Barnyard: FUNCTION 00601e30
 	m_llList1.DeleteAll();
 	m_llList2.DeleteAll();
 }
 
 // $Barnyard: FUNCTION 00602a50
-TBOOL AFSMParser::Read( AFSMManager* a_pFSMManager, TString8* a_pFSMFilePath, TString8* a_pFSMDebugFilePath, TINT a_iFSMFileIndex )
+TBOOL AFSMParser::LoadFSMFile( AFSMManager* a_pFSMManager, TString8* a_pFSMFilePath, TString8* a_pFSMDebugFilePath, TINT a_iFSMFileIndex )
 {
 	TVALIDPTR( a_pFSMFilePath );
 
@@ -115,16 +121,39 @@ TPString8 AFSMParser::GetIdent()
 	return TPString8( oToken.GetIdent( m_pFSMLexer->GetCustomIdents() ) );
 }
 
+// $Barnyard: FUNCTION 006029d0
 void AFSMParser::ParseStateMachine( AFSMManager* a_pFSMManager, TINT a_iFSMFileIndex, AFSM* a_pFSM )
 {
-	TIMPLEMENT();
+	a_iFSMFileIndex = a_iFSMFileIndex;
+	m_pFSMManager   = a_pFSMManager;
+	m_pFSM          = a_pFSM;
+
+	// Delete data from the lists
+	m_llList1.DeleteAll();
+	m_llList2.DeleteAll();
+
+	// Setup PProperties class (deprecated or unused in release build)
+	m_pPPropertiesClassRefs->Setup();
+	a_pFSM->SetupPPropertiesTypes();
+	
+	// Reset error state
+	AFSMParser::ResetError();
+	m_Unk = 0;
+
+	// Do the parse thing!
+	ParseStateMachineImpl();
+	if ( !m_bErrorOccured ) ResolveTransitionsImpl();
+
+	// Delete data from the lists again
+	m_llList1.DeleteAll();
+	m_llList2.DeleteAll();
 }
 
 // $Barnyard: FUNCTION 006000a0
 void AFSMParser::SkipTokenSafe( Toshi::TFileLexer::TOKEN a_eExpect )
 {
 	TUINT8 uiToken = m_pFSMLexer->PeekToken( 0 );
-	
+
 	// If we don't expect to see this token, raise error
 	if ( uiToken != a_eExpect )
 	{
@@ -142,4 +171,45 @@ void AFSMParser::SkipTokenSafe( Toshi::TFileLexer::TOKEN a_eExpect )
 	// No errors, go to the text token
 	PLexerTRB::Token oToken;
 	m_pFSMLexer->GetNextToken( oToken );
+}
+
+// $Barnyard: FUNCTION 00600810
+void AFSMParser::SkipCustomTokenSafe( TUINT8 a_uiExpect )
+{
+	TUINT8 uiToken = m_pFSMLexer->PeekToken( 0 );
+
+	// If we don't expect to see this token, raise error
+	if ( ( uiToken != TFileLexer::TOKEN_IDENT && uiToken < TFileLexer::TOKEN_NUMOF ) || uiToken != a_uiExpect )
+	{
+		TString8 strErrorText;
+		strErrorText.Format( "Expected %s", m_pFSMLexer->GetTokenName( a_uiExpect ) );
+
+		PLexerTRB::Token oPrevToken;
+		m_pFSMLexer->GetPrevToken( oPrevToken );
+		m_pFSMLexer->PrintError( &oPrevToken, strErrorText );
+
+		SetError();
+		return;
+	}
+
+	// No errors, go to the text token
+	PLexerTRB::Token oToken;
+	m_pFSMLexer->GetNextToken( oToken );
+}
+
+void AFSMParser::ParseStateMachineImpl()
+{
+	TIMPLEMENT();
+	SkipCustomTokenSafe( 26 ); // machine
+	TPString8 strMachineName = GetIdent();
+
+	TUINT8 uiToken = m_pFSMLexer->PeekToken( 0 );
+	if ( uiToken == TFileLexer::TOKEN_OPENPAREN )
+	{
+
+	}
+}
+
+void AFSMParser::ResolveTransitionsImpl()
+{
 }

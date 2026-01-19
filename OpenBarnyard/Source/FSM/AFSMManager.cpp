@@ -81,7 +81,7 @@ void AFSMManager::ParseFSMs( TINT a_iFSMFileIndex, const TCHAR* a_pchFileName )
 #endif
 
 	AFSMParser oParser;
-	oParser.Read(
+	oParser.LoadFSMFile(
 	    this,
 	    &strFSMsFilePath,
 #ifdef TOSHI_DEBUG
