@@ -83,7 +83,7 @@ TUINT8 PLexerTRB::PeekToken( TINT a_iTokenOffset )
 	if ( iTokenIdx >= 0 && iTokenIdx < m_pMainHeader->iNumFileTokens )
 		return m_pMainHeader->pTokens[ iTokenIdx ];
 
-	return 0;
+	return TFileLexer::TOKEN_EOF;
 }
 
 // $Barnyard: FUNCTION 006b4550
@@ -167,8 +167,8 @@ const TCHAR* PLexerTRB::GetTokenName( TUINT a_uiToken ) const
 	TVALIDPTR( m_pMainHeader );
 
 	// If one of defines tokens, get it from the file
-	if ( a_uiToken >= TFileLexer::TOKEN_NUMOF && m_pMainHeader->uiNumCustomTokens + TFileLexer::TOKEN_NUMOF > a_uiToken )
-		return GetCustomTokens()[ a_uiToken - TFileLexer::TOKEN_NUMOF ];
+	if ( a_uiToken >= TFileLexer::TOKEN_NUMOF && m_pMainHeader->uiNumCustomIdents + TFileLexer::TOKEN_NUMOF > a_uiToken )
+		return GetCustomIdents()[ a_uiToken - TFileLexer::TOKEN_NUMOF ];
 
 	// Fallback to default tokens
 	TASSERT( a_uiToken < TFileLexer::TOKEN_NUMOF );
@@ -176,10 +176,10 @@ const TCHAR* PLexerTRB::GetTokenName( TUINT a_uiToken ) const
 }
 
 // $Barnyard: FUNCTION 006b4680
-const TCHAR** PLexerTRB::GetCustomTokens() const
+const TCHAR** PLexerTRB::GetCustomIdents() const
 {
 	TVALIDPTR( m_pMainHeader );
-	return m_pMainHeader->ppCustomTokens;
+	return m_pMainHeader->ppCustomIdents;
 }
 
 // $Barnyard: FUNCTION 006b47f0
@@ -191,4 +191,16 @@ void PLexerTRB::PrintError( Token* a_pToken, const TCHAR* a_pchError )
 	strMessage.Format( "%s(%d) : error : %s\n", m_DataFilePath.GetString(), a_pchError, a_pToken->iLineNumber );
 
 	TERROR( strMessage );
+}
+
+// $Barnyard: FUNCTION 006b43e0
+const TCHAR* PLexerTRB::Token::GetIdent( const TCHAR** a_ppCustomTokens )
+{
+	TVALIDPTR( a_ppCustomTokens );
+	TASSERT( uiTokenType == TFileLexer::TOKEN_IDENT || uiTokenType >= TFileLexer::TOKEN_NUMOF );
+
+	if ( a_ppCustomTokens && uiTokenType >= TFileLexer::TOKEN_NUMOF )
+		return a_ppCustomTokens[ uiTokenType - TFileLexer::TOKEN_NUMOF ];
+
+	return pString;
 }

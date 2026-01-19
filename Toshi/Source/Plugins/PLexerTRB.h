@@ -13,11 +13,11 @@ public:
 	struct TRBMainHeader
 	{
 		TUINT32       uiCount1;
-		TUINT32       uiNumCustomTokens;
+		TUINT32       uiNumCustomIdents;
 		TUINT8*       pTokens;
 		TUINT32*      pTokenValues;
 		TINT32        iNumFileTokens;
-		const TCHAR** ppCustomTokens;
+		const TCHAR** ppCustomIdents;
 	};
 
 	struct Token
@@ -32,6 +32,8 @@ public:
 			TFLOAT       flValue;
 			const TCHAR* pString;
 		};
+
+		const TCHAR* GetIdent( const TCHAR** a_ppCustomTokens );
 	};
 
 public:
@@ -46,9 +48,8 @@ public:
 	TBOOL  GetPrevToken( Token& a_rOutToken );
 
 	const TCHAR*  GetTokenName( TUINT a_uiToken ) const;
-	const TCHAR** GetCustomTokens() const;
+	const TCHAR** GetCustomIdents() const;
 
-private:
 	void PrintError( Token* a_pToken, const TCHAR* a_pchError );
 
 private:

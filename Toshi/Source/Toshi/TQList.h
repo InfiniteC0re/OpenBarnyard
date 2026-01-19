@@ -120,9 +120,23 @@ public:
 		}
 	}
 
+	void DeleteAll()
+	{
+		while ( !IsEmpty() )
+		{
+			Delete( Begin() );
+		}
+	}
+
 	void Remove( T* a_pNode )
 	{
 		a_pNode->Remove();
+	}
+
+	void Delete( T* a_pNode )
+	{
+		a_pNode->Remove();
+		delete a_pNode;
 	}
 
 	TBOOL IsEmpty() const
