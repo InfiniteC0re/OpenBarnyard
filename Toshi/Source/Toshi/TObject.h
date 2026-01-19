@@ -22,14 +22,14 @@ public:                                                                       \
 	using BaseClass                             = PARENT_CLASS;               \
 	static constexpr Toshi::TClass* PARENTCLASS = &TGetClass( PARENT_CLASS ); \
                                                                               \
-	virtual Toshi::TClass* GetClass() override;                               \
+	virtual const Toshi::TClass* GetClass() const override;                   \
                                                                               \
 	static Toshi::TObject* CreateTObject();                                   \
 	static Toshi::TObject* CreateTObjectInPlace( void* a_pPtr );              \
 	static void            InitialiseClass();                                 \
 	static void            DeinitialiseClass();                               \
                                                                               \
-	static TFORCEINLINE Toshi::TClass* GetClassStatic() { return std::addressof( TClassObjectName ); }
+	static TFORCEINLINE const Toshi::TClass* GetClassStatic() { return std::addressof( TClassObjectName ); }
 
 //-----------------------------------------------------------------------------
 // Declares default methods used to register class in the dynamic class system.
@@ -40,14 +40,14 @@ public:                                                          \
 	using ThisClass                             = THIS_CLASS;    \
 	static constexpr Toshi::TClass* PARENTCLASS = TNULL;         \
                                                                  \
-	Toshi::TClass* GetClass();                                   \
+	const Toshi::TClass* GetClass() const;                       \
                                                                  \
 	static Toshi::TObject* CreateTObject();                      \
 	static Toshi::TObject* CreateTObjectInPlace( void* a_pPtr ); \
 	static void            InitialiseClass();                    \
 	static void            DeinitialiseClass();                  \
                                                                  \
-	static TFORCEINLINE Toshi::TClass* GetClassStatic() { return std::addressof( TClassObjectName ); }
+	static TFORCEINLINE const Toshi::TClass* GetClassStatic() { return std::addressof( TClassObjectName ); }
 
 //-----------------------------------------------------------------------------
 // Declares default methods to register derived class and ms_oClass object.
@@ -61,8 +61,8 @@ public:                                                          \
 // Declares default methods to register derived class and ms_oClass object.
 // Note: Use one of the TDEFINE_CLASS macros in a cpp file to register class.
 //-----------------------------------------------------------------------------
-#define TDECLARE_CLASS_NO_PARENT( THIS_CLASS )                 \
-	TDECLARE_CLASS_BODY_NO_PARENT( THIS_CLASS );               \
+#define TDECLARE_CLASS_NO_PARENT( THIS_CLASS )   \
+	TDECLARE_CLASS_BODY_NO_PARENT( THIS_CLASS ); \
 	static Toshi::TClass TClassObjectName
 
 //-----------------------------------------------------------------------------
@@ -79,9 +79,9 @@ public:                                                          \
 #define TDEFINE_CLASS_CORE( CLASS )                                                                                    \
 	TSTATICASSERT( CLASS::IsTObject );                                                                                 \
 	TSTATICASSERT( std::is_base_of<CLASS::BaseClass, CLASS>::value && !std::is_same<CLASS::BaseClass, CLASS>::value ); \
-	Toshi::TClass*  CLASS::GetClass() { return CLASS::GetClassStatic(); }                                              \
-	Toshi::TObject* CLASS::CreateTObject() { return new CLASS(); }                                                     \
-	Toshi::TObject* CLASS::CreateTObjectInPlace( void* a_pPtr ) { return new ( a_pPtr ) CLASS(); }
+	const Toshi::TClass* CLASS::GetClass() const { return CLASS::GetClassStatic(); }                                   \
+	Toshi::TObject*      CLASS::CreateTObject() { return new CLASS(); }                                                \
+	Toshi::TObject*      CLASS::CreateTObjectInPlace( void* a_pPtr ) { return new ( a_pPtr ) CLASS(); }
 
 //-----------------------------------------------------------------------------
 // Defines core methods of TObject and prohibits creating object at runtime.
@@ -89,8 +89,8 @@ public:                                                          \
 #define TDEFINE_CLASS_CORE_NORUNTIME( CLASS )                                                                          \
 	TSTATICASSERT( CLASS::IsTObject );                                                                                 \
 	TSTATICASSERT( std::is_base_of<CLASS::BaseClass, CLASS>::value && !std::is_same<CLASS::BaseClass, CLASS>::value ); \
-	Toshi::TClass*  CLASS::GetClass() { return CLASS::GetClassStatic(); }                                              \
-	Toshi::TObject* CLASS::CreateTObject()                                                                             \
+	const Toshi::TClass* CLASS::GetClass() const { return CLASS::GetClassStatic(); }                                   \
+	Toshi::TObject*      CLASS::CreateTObject()                                                                        \
 	{                                                                                                                  \
 		TASSERT( TFALSE, "This class cannot be created at runtime!" );                                                 \
 		return TNULL;                                                                                                  \
@@ -105,11 +105,11 @@ public:                                                          \
 // Defines core methods of TObject and allows creating object at runtime.
 // Note: Doesn't have type checks.
 //-----------------------------------------------------------------------------
-#define TDEFINE_CLASS_CORE_COMPILETIME( CLASS )                           \
-	TSTATICASSERT( CLASS::IsTObject );                                    \
-	Toshi::TClass*  CLASS::GetClass() { return CLASS::GetClassStatic(); } \
-	Toshi::TObject* CLASS::CreateTObject() { return new CLASS(); }        \
-	Toshi::TObject* CLASS::CreateTObjectInPlace( void* a_pPtr ) { return new ( a_pPtr ) CLASS(); }
+#define TDEFINE_CLASS_CORE_COMPILETIME( CLASS )                                      \
+	TSTATICASSERT( CLASS::IsTObject );                                               \
+	const Toshi::TClass* CLASS::GetClass() const { return CLASS::GetClassStatic(); } \
+	Toshi::TObject*      CLASS::CreateTObject() { return new CLASS(); }              \
+	Toshi::TObject*      CLASS::CreateTObjectInPlace( void* a_pPtr ) { return new ( a_pPtr ) CLASS(); }
 
 //-----------------------------------------------------------------------------
 // Defines core methods of TObject and allows creating object at runtime.
@@ -208,17 +208,20 @@ TOSHI_NAMESPACE_START
 class TObject
 {
 public:
-	enum { IsTObject = TTRUE };
+	enum
+	{
+		IsTObject = TTRUE
+	};
 	static constexpr Toshi::TClass* PARENTCLASS = TNULL;
 
 public:
-	virtual Toshi::TClass* GetClass();
-	virtual void           Delete();
+	virtual const Toshi::TClass* GetClass() const;
+	virtual void                 Delete();
 	virtual ~TObject();
 
 public:
-	TBOOL IsExactly( TClass* a_pClass ) { return GetClass() == a_pClass; }
-	TBOOL IsA( TClass* a_pClass ) { return GetClass()->IsA( a_pClass ); }
+	TBOOL IsExactly( const TClass* a_pClass ) const { return GetClass() == a_pClass; }
+	TBOOL IsA( const TClass* a_pClass ) const { return GetClass()->IsA( a_pClass ); }
 
 public:
 	static Toshi::TObject* CreateTObject();

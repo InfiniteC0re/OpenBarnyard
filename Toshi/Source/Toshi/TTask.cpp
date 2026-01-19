@@ -100,7 +100,7 @@ TBOOL TTask::OnChildDying( TTask* child )
 	return TTRUE;
 }
 
-void TTask::OnChildDied( TClass* pClass, TTask* deletedTask )
+void TTask::OnChildDied( const TClass* pClass, TTask* deletedTask )
 {
 }
 

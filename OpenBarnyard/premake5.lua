@@ -71,7 +71,9 @@ project "OpenBarnyard"
 		"Source/Physics/**.h",
 		"Source/Physics/**.cpp",
 		"Source/FSM/**.h",
-		"Source/FSM/**.cpp"
+		"Source/FSM/**.cpp",
+		"Source/CVar/**.h",
+		"Source/CVar/**.cpp"
 	}
 	
 	libdirs

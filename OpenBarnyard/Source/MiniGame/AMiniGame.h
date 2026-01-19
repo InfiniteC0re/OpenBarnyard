@@ -26,7 +26,7 @@ private:
 	Toshi::TPString8        m_strMiniGameName;
 	TINT                    m_eLocaleTitle;
 	TINT                    m_eLocaleDescription;
-	Toshi::TClass*          m_pGameStateClass;
+	const Toshi::TClass*    m_pGameStateClass;
 	TINT                    m_iMaxNumPlayers;
 	TINT                    field5_0x14;
 	TINT                    field6_0x18;

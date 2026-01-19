@@ -16,7 +16,7 @@ public:
 
 	virtual TBOOL OnCreate() override;
 	virtual TBOOL OnUpdate( TFLOAT a_fDeltaTime ) override;
-	virtual void  OnChildDied( Toshi::TClass* a_pClass, Toshi::TTask* a_pDeletedTask ) override;
+	virtual void  OnChildDied( const Toshi::TClass* a_pClass, Toshi::TTask* a_pDeletedTask ) override;
 	virtual void  OnActivate() override;
 	virtual void  OnDeactivate() override;
 

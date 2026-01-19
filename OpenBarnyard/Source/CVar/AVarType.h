@@ -11,6 +11,12 @@ public:
 	AVarType( const TCHAR* a_pchName );
 	~AVarType();
 
+	TBOOL operator==( const Toshi::TPString8& a_strName ) const { return strPooled == a_strName; }
+
+public:
+	//-----------------------------------------------------------------------------
+	// Static interface
+	//-----------------------------------------------------------------------------
 	static void Create( Toshi::TPString8Pool* a_pStringPool );
 	static void Destroy();
 

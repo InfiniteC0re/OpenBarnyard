@@ -175,7 +175,7 @@ void TRenderInterface::SetResourceExplicit( TResource* resource, SYSRESOURCE sys
 }
 
 // $Barnyard: FUNCTION 006bf240
-TResource* TRenderInterface::CreateResource( TClass* pClass, const TCHAR* name, TResource* parent )
+TResource* TRenderInterface::CreateResource( const TClass* pClass, const TCHAR* name, TResource* parent )
 {
 	TASSERT( pClass != TNULL, "TResource class is TNULL" );
 	TASSERT( pClass->IsA( &TGetClass( TResource ) ), "TResource class is TNULL" );

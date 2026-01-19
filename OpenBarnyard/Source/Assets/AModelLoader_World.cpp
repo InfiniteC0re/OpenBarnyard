@@ -22,11 +22,11 @@
 
 TOSHI_NAMESPACE_USING
 
-static TUINT      s_iMeshIndex      = 0;
-static TUINT      s_iGrassMeshIndex = 0;
-AMaterialLibrary* g_pGrassLayersMatLib;
-Toshi::T2Texture* g_aGrassLayers[ 7 ];
-static TClass*    s_pWorldMaterialClass = TNULL;
+static TUINT         s_iMeshIndex      = 0;
+static TUINT         s_iGrassMeshIndex = 0;
+AMaterialLibrary*    g_pGrassLayersMatLib;
+Toshi::T2Texture*    g_aGrassLayers[ 7 ];
+static const TClass* s_pWorldMaterialClass = TNULL;
 
 void AModelLoader::InitialiseGrassLayersTextures()
 {

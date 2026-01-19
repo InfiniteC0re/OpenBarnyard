@@ -35,8 +35,8 @@ static BOOL s_bInitialised;
 // $Barnyard: FUNCTION 006c1a60
 void AVarType::Create( Toshi::TPString8Pool* a_pStringPool )
 {
-	TASSERT( s_bInitialised != TTRUE );
-	s_bInitialised = TTRUE;
+	TASSERT( s_bInitialised != 1 );
+	s_bInitialised = 1;
 
 	for ( AVarType* it = ms_pHead; it != TNULL; it = it->pNext )
 	{
@@ -52,8 +52,8 @@ void AVarType::Create( Toshi::TPString8Pool* a_pStringPool )
 // $Barnyard: FUNCTION 006c19e0
 void AVarType::Destroy()
 {
-	TASSERT( s_bInitialised != TFALSE );
-	s_bInitialised = TFALSE;
+	TASSERT( s_bInitialised != 0 );
+	s_bInitialised = 0;
 
 	// Remove all references
 	for ( AVarType* it = ms_pHead; it != TNULL; it = it->pNext )

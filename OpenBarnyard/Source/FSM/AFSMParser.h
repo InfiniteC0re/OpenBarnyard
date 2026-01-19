@@ -20,7 +20,7 @@ public:
 
 		void Setup();
 
-		Toshi::TClass* apPropertiesClasses[ 8 ];
+		const Toshi::TClass* apPropertiesClasses[ 8 ];
 	};
 
 public:
@@ -40,6 +40,9 @@ public:
 private:
 	void ParseStateMachineImpl();
 	void ResolveTransitionsImpl();
+
+	// Returns detected TClass type of the variable string type specified in a_rName and then changes it value to be variable name
+	const Toshi::TClass* ParseVariableType( Toshi::TPString8& a_rName );
 
 private:
 	PPropertiesClassRefs*          m_pPPropertiesClassRefs; // 0x04

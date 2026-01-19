@@ -51,11 +51,11 @@ public:
 	void           RecurseTree2( RecurseTreeBaseBeginCb_t fBaseBegin, RecurseTreeBaseEndCb_t fBaseEnd, RecurseTreeCheck_t fCheck, void* custom );
 	class TObject* CreateObject() const;
 
-	TBOOL        IsA( TClass* pClass );
-	TBOOL        IsExactly( TClass* toCompare ) const { return this == toCompare; }
-	TBOOL        IsInitialized() const { return m_bInitialised; }
-	TClass*      GetParent() { return static_cast<TClass*>( m_pParent ); }
-	const TCHAR* GetName() const { return m_szName; }
+	TBOOL         IsA( const TClass* pClass ) const;
+	TBOOL         IsExactly( const TClass* toCompare ) const { return this == toCompare; }
+	TBOOL         IsInitialized() const { return m_bInitialised; }
+	const TClass* GetParent() { return static_cast<const TClass*>( m_pParent ); }
+	const TCHAR*  GetName() const { return m_szName; }
 	// $Barnyard: FUNCTION 006bbd50
 	TUINT16 GetVersionMajor() const { return m_uiVersionMajor; }
 	// $Barnyard: FUNCTION 006bbd40
@@ -67,8 +67,8 @@ public:
 	static TBOOL TryInitialize( TClass* tClass );
 
 	// Looks for a class in parent
-	static TClass* FindRecurse( const TCHAR* const& name, TClass* parent, TBOOL hasPrevious );
-	static TClass* Find( const TCHAR* name, TClass* parent = TNULL );
+	static const TClass* FindRecurse( const TCHAR* const& name, const TClass* parent, TBOOL hasPrevious );
+	static const TClass* Find( const TCHAR* name, const TClass* parent = TNULL );
 
 public:
 	inline TBOOL operator==( const TClass* other ) const { return this == other; }

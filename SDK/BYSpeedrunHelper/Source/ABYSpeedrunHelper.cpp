@@ -61,8 +61,8 @@ MEMBER_HOOK( 0x006be7b0, T2Locale, T2Locale_GetString, const TWCHAR*, TINT a_iNu
 	{
 		if ( ABYardTerrainManager::ms_eCurrentLevel != ABYardTerrainManager::Terrain_CowTipping )
 		{
-			static TClass* pCowTippingGameClass = TClass::Find( "ACowTippingMiniGameState", &TGetClass( THookedObject ) );
-			AGameState*    pCurrentGameState    = AGameStateController::GetSingleton()->GetCurrentState();
+			static const TClass* pCowTippingGameClass = TClass::Find( "ACowTippingMiniGameState", &TGetClass( THookedObject ) );
+			AGameState*          pCurrentGameState    = AGameStateController::GetSingleton()->GetCurrentState();
 
 			if ( pCurrentGameState->IsExactly( pCowTippingGameClass ) )
 			{
@@ -227,7 +227,7 @@ public:
 
 			if ( pGameStateController->GetNumStates() >= 1 && pCurrentState )
 			{
-				TClass* pCurrentStateClass = pCurrentState->GetClass();
+				const TClass* pCurrentStateClass = pCurrentState->GetClass();
 
 				// Golf minigame - change level
 				if ( g_oGolfMiniGameSettings.bChangeLevel && pCurrentStateClass == s_AGolfMiniGameState )
@@ -258,7 +258,7 @@ public:
 			if ( pGameStateController->GetNumStates() >= 1 )
 			{
 				TSystemManager* pSystemManager = (TSystemManager*)0x007ce640;
-				TClass*         pStateClass    = pGameStateController->GetCurrentState()->GetClass();
+				const TClass*   pStateClass    = pGameStateController->GetCurrentState()->GetClass();
 
 				if ( pStateClass == s_AChickenCoopDefender )
 				{
@@ -288,7 +288,7 @@ public:
 
 			if ( pInputInterface )
 			{
-				static TClass*        pKeyboardClass = TClass::Find( "TInputDeviceKeyboard", &TGetClass( THookedObject ) );
+				static const TClass*  pKeyboardClass = TClass::Find( "TInputDeviceKeyboard", &TGetClass( THookedObject ) );
 				TInputDeviceKeyboard* pKeyboard      = (TInputDeviceKeyboard*)pInputInterface->GetDeviceByIndex( pKeyboardClass, 0 );
 				TSystemManager*       pSystemManager = (TSystemManager*)0x007ce640;
 
@@ -383,8 +383,8 @@ public:
 
 			if ( pGameStateController->GetNumStates() >= 2 && pCurrentState )
 			{
-				TClass* pCurrentStateClass = pCurrentState->GetClass();
-				TBOOL   bDrawnUI           = TFALSE;
+				const TClass* pCurrentStateClass = pCurrentState->GetClass();
+				TBOOL         bDrawnUI           = TFALSE;
 
 				if ( pCurrentStateClass == s_AGolfMiniGameState )
 				{

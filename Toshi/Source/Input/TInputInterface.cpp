@@ -14,7 +14,7 @@ TOSHI_NAMESPACE_START
 TDEFINE_CLASS_NORUNTIME( TInputInterface );
 
 // $Barnyard: FUNCTION 006c3fd0
-TInputDevice* TInputInterface::GetDeviceByIndex( TClass* a_pClass, TUINT a_uiIndex )
+TInputDevice* TInputInterface::GetDeviceByIndex( const TClass* a_pClass, TUINT a_uiIndex )
 {
 	if ( m_DeviceList.Count() == 0 )
 	{

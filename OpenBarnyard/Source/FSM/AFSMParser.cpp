@@ -1,5 +1,8 @@
 #include "pch.h"
 #include "AFSMParser.h"
+#include "CVar/AVarType.h"
+
+#include <Plugins/PPropertyParser/PPropertyValue.h>
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
@@ -24,7 +27,7 @@ void AFSMParser::PPropertiesClassRefs::Setup()
 {
 	T2_FOREACH_ARRAY( apPropertiesClasses, it )
 	{
-		apPropertiesClasses[ it ] = AFSM::s_pInvalidPropertiesClass;
+		apPropertiesClasses[ it ] = PPropertyValue::TYPE_UNDEF;
 	}
 }
 
@@ -132,9 +135,9 @@ void AFSMParser::ParseStateMachine( AFSMManager* a_pFSMManager, TINT a_iFSMFileI
 	m_llList1.DeleteAll();
 	m_llList2.DeleteAll();
 
-	// Setup PProperties class (deprecated or unused in release build)
+	// Setup everything for parsing arguments
 	m_pPPropertiesClassRefs->Setup();
-	a_pFSM->SetupPPropertiesTypes();
+	a_pFSM->ResetArguments();
 	
 	// Reset error state
 	AFSMParser::ResetError();
@@ -150,7 +153,7 @@ void AFSMParser::ParseStateMachine( AFSMManager* a_pFSMManager, TINT a_iFSMFileI
 }
 
 // $Barnyard: FUNCTION 006000a0
-void AFSMParser::SkipTokenSafe( Toshi::TFileLexer::TOKEN a_eExpect )
+void AFSMParser::SkipTokenSafe( TFileLexer::TOKEN a_eExpect )
 {
 	TUINT8 uiToken = m_pFSMLexer->PeekToken( 0 );
 
@@ -212,4 +215,37 @@ void AFSMParser::ParseStateMachineImpl()
 
 void AFSMParser::ResolveTransitionsImpl()
 {
+}
+
+VARTYPE_DECLARE( bool );
+VARTYPE_DECLARE( int );
+VARTYPE_DECLARE( float );
+VARTYPE_DECLARE( string );
+VARTYPE_DECLARE( unit );
+
+// $Barnyard: FUNCTION 006016c0
+const TClass* AFSMParser::ParseVariableType( TPString8& a_rName )
+{
+	const TClass* pVarClass = PPropertyValue::TYPE_UNDEF;
+
+	if ( VARTYPE( bool ) == a_rName ) pVarClass = PPropertyValue::TYPE_BOOL;
+	else if ( VARTYPE( int ) == a_rName ) pVarClass = PPropertyValue::TYPE_INT;
+	else if ( VARTYPE( float ) == a_rName ) pVarClass = PPropertyValue::TYPE_FLOAT;
+	else if ( VARTYPE( string ) == a_rName ) pVarClass = PPropertyValue::TYPE_TPSTRING8;
+	else if ( VARTYPE( unit ) == a_rName ) TASSERT( TFALSE && "Not implemented!" )
+	else
+	{
+		// Try looking for TClass with such name
+		const TClass* pClass = TClass::Find( a_rName, TNULL );
+		if ( pClass != TNULL ) pVarClass = pClass;
+	}
+
+	TASSERT( pVarClass != PPropertyValue::TYPE_UNDEF );
+	if ( pVarClass != PPropertyValue::TYPE_UNDEF )
+	{
+		// Read variable name into the passed argument (this is awful)
+		a_rName = GetIdent();
+	}
+
+	return pVarClass;
 }

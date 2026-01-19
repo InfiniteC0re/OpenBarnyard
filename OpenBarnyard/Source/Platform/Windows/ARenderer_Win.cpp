@@ -55,7 +55,7 @@ TBOOL ARenderer::CreateTRender()
 
 	TKernelInterface::GetSingleton()->LoadInterface( strRenderInterfaceName );
 
-	TClass*              pRendererClass = TClass::Find( strRenderInterfaceName );
+	const TClass*        pRendererClass = TClass::Find( strRenderInterfaceName );
 	TRenderD3DInterface* pRenderer      = TSTATICCAST( TRenderD3DInterface, pRendererClass->CreateObject() );
 
 	pRenderer->SetAutoCreateSystemResources( TFALSE );

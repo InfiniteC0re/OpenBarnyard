@@ -1,10 +1,14 @@
 #pragma once
 #include <Toshi/TObject.h>
+#include <Toshi/TFreeList.h>
 
 class PProperties
     : public Toshi::TObject
 {
 public:
+	TDECLARE_CLASS( PProperties, Toshi::TObject );
+	TDECLARE_FREELIST_ALLOCATOR( PProperties );
+
 	struct UINT32
 	{
 		TDECLARE_CLASS_NO_PARENT( UINT32 );
@@ -37,7 +41,7 @@ public:
 
 	struct String16A
 	{
-		TDECLARE_CLASS_NO_PARENT( String16 );
+		TDECLARE_CLASS_NO_PARENT( String16A );
 	};
 
 	struct LocaleID

@@ -127,7 +127,7 @@ void TScheduler::DeleteTaskAtomic( TTask* task )
 			}
 		}
 
-		TClass* pClass = task->GetClass();
+		const TClass* pClass = task->GetClass();
 		task->OnDestroy();
 		m_TaskTree.Remove( task, TFALSE );
 		task->Delete();

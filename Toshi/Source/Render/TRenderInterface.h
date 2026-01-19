@@ -118,7 +118,7 @@ public:
 	void SetResourceExplicit( TResource* resource, SYSRESOURCE systemResource );
 
 	// Creates resource and returns it
-	TResource* CreateResource( TClass* pClass, const TCHAR* name, TResource* parent );
+	TResource* CreateResource( const TClass* pClass, const TCHAR* name, TResource* parent );
 
 	// $Barnyard: FUNCTION 006be980
 	// Sets new render context and returns the old one

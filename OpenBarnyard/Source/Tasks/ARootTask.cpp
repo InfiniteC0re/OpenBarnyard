@@ -163,7 +163,7 @@ TBOOL ARootTask::OnUpdate( TFLOAT a_fDeltaTime )
 }
 
 // $Barnyard: FUNCTION 00402b40
-void ARootTask::OnChildDied( TClass* a_pClass, TTask* a_pDeletedTask )
+void ARootTask::OnChildDied( const TClass* a_pClass, TTask* a_pDeletedTask )
 {
 	if ( a_pDeletedTask == m_pGUISystem ) m_pGUISystem = TNULL;
 	else if ( a_pDeletedTask == m_pGUI2 )

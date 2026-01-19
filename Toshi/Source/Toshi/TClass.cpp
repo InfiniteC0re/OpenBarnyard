@@ -84,11 +84,11 @@ void TClass::RecurseTree2( RecurseTreeBaseBeginCb_t fBaseBegin, RecurseTreeBaseE
 }
 
 // $Barnyard: FUNCTION 006bbdb0
-TClass* TClass::FindRecurse( const TCHAR* const& name, TClass* parent, TBOOL hasPrevious )
+const TClass* TClass::FindRecurse( const TCHAR* const& name, const TClass* parent, TBOOL hasPrevious )
 {
 	while ( parent )
 	{
-		TClass* previous   = hasPrevious ? parent->m_pPrevious : TNULL;
+		const TClass* previous   = hasPrevious ? parent->m_pPrevious : TNULL;
 		TINT    difference = Toshi::TStringManager::String8CompareNoCase( parent->m_szName, name, -1 );
 
 		if ( difference == 0 )
@@ -98,7 +98,7 @@ TClass* TClass::FindRecurse( const TCHAR* const& name, TClass* parent, TBOOL has
 
 		if ( parent->m_pLastChildren )
 		{
-			TClass* result = FindRecurse( name, parent->m_pLastChildren, TTRUE );
+			const TClass* result = FindRecurse( name, parent->m_pLastChildren, TTRUE );
 
 			if ( result )
 			{
@@ -113,7 +113,7 @@ TClass* TClass::FindRecurse( const TCHAR* const& name, TClass* parent, TBOOL has
 }
 
 // $Barnyard: FUNCTION 006bbfc0
-TClass* TClass::Find( const TCHAR* name, TClass* parent )
+const TClass* TClass::Find( const TCHAR* name, const TClass* parent )
 {
 	if ( parent == TNULL ) parent = &TObject::TClassObjectName;
 	return FindRecurse( name, parent, TFALSE );
@@ -131,7 +131,7 @@ TObject* TClass::CreateObject() const
 }
 
 // $Barnyard: FUNCTION 006bbd60
-TBOOL TClass::IsA( TClass* cmpClass )
+TBOOL TClass::IsA( const TClass* cmpClass ) const
 {
 	if ( cmpClass->m_pLastChildren == TNULL )
 	{
@@ -139,7 +139,7 @@ TBOOL TClass::IsA( TClass* cmpClass )
 	}
 	else
 	{
-		TClass* pClass = this;
+		const TClass* pClass = this;
 
 		while ( pClass != TNULL )
 		{

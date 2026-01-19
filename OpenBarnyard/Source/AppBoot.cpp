@@ -9,6 +9,7 @@
 #include <Render/TModelManager.h>
 
 #include <Input/TInputInterface.h>
+#include <Plugins/PPropertyParser/PProperties.h>
 
 #ifdef TOSHI_SKU_WINDOWS
 #  include <Platform/DX8/TTextureResourceHAL_DX8.h>
@@ -182,6 +183,7 @@ TBOOL AApplication::OnCreate( int argc, TCHAR** argv )
 	ALocaleManager* pLocaleManager = T2Locale::CreateSingleton<ALocaleManager>();
 
 	// Intialise free lists for rendering objects
+	PProperties::SetupFreeList( 100, 0 );
 	TPooledString8::SetupFreeList( 0, 0 ); // prevent the freelist from being used
 	TTextureResourceHAL::SetupFreeList( 690, 0 );
 	TVertexBlockResource::SetupFreeList( 500, 0 );

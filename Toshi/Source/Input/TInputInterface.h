@@ -92,7 +92,7 @@ public:
 
 	void ReleaseAllDevices();
 
-	TInputDevice* GetDeviceByIndex( TClass* a_pClass, TUINT a_uiIndex );
+	TInputDevice* GetDeviceByIndex( const TClass* a_pClass, TUINT a_uiIndex );
 
 	EventEmitter& GetInputEventEmitter() { return m_InputEventEmitter; }
 
