@@ -24,6 +24,7 @@
 #include "Terrain/ATerrainInterface.h"
 #include "Terrain/ABYardTerrainManager.h"
 #include "Physics/ACollisionManager.h"
+#include "Helpers/APlayerProgress.h"
 
 #include "SoundBank/music.h"
 #include "SoundBank/ui.h"
@@ -215,6 +216,9 @@ TPSTRING8_DECLARE( bkg_fmod );
 void ARootTask::CreateStartupGameStates()
 {
 	TIMPLEMENT();
+
+	// Create main object for storing info about the current story progress
+	APlayerProgress::CreateSingleton( 1, 4, 0, 0 );
 
 	auto attractMovie    = new AMovieState( "Attract", TFALSE, TNULL, TFALSE );
 	auto bluetongueMovie = new AMovieState( "BTE", TFALSE, attractMovie, TFALSE );

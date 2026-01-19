@@ -42,7 +42,7 @@ public:
 	// Own methods
 	//-----------------------------------------------------------------------------
 	virtual void OnMenuOpen();
-	virtual void OnMenuItemActivated( AGUI2MenuItem& a_rMenuItem ) = 0;
+	virtual void OnMenuItemActivated( AGUI2MenuItem* a_pMenuItem ) = 0;
 	virtual void OnMenuItemFocused( AGUI2MenuItem& a_rOldFocus, AGUI2MenuItem& a_rNewFocus );
 	virtual void OnMenuClose();
 

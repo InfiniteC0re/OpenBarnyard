@@ -35,7 +35,7 @@ public:
 	//-----------------------------------------------------------------------------
 	// ABYardMenuState
 	//-----------------------------------------------------------------------------
-	virtual void OnMenuItemActivated( AGUI2MenuItem& a_rMenuItem ) OVERRIDE;
+	virtual void OnMenuItemActivated( AGUI2MenuItem* a_pMenuItem ) OVERRIDE;
 	virtual void OnMenuClose() OVERRIDE;
 
 private:

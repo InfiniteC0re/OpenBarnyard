@@ -240,7 +240,7 @@ void ABYardMenuState::OnInsertion()
 	// Setup menu
 	m_oMenu.SetFocus( TTRUE );
 	m_oMenu.SetItemActivationCallback( []( void* a_pUserData, AGUI2MenuItem* a_pItem ) {
-		TSTATICCAST( ABYardMenuState, a_pUserData )->OnMenuItemActivated( *a_pItem );
+		TSTATICCAST( ABYardMenuState, a_pUserData )->OnMenuItemActivated( a_pItem );
 	} );
 	m_oMenu.SetItemFocusCallback( []( void* a_pUserData, AGUI2MenuItem* a_pOldFocus, AGUI2MenuItem* a_pNewFocus ) {
 		TSTATICCAST( ABYardMenuState, a_pUserData )->OnMenuItemFocused( *a_pOldFocus, *a_pNewFocus );

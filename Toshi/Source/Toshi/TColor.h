@@ -52,6 +52,15 @@ struct TColor
 		Value32 = a_uiColor;
 		return *this;
 	}
+
+	// $Barnyard: FUNCTION 00404870
+	static TFORCEINLINE void GetComponents( TUINT32 uiColor, TUINT& a_rAlpha, TUINT& a_rRed, TUINT& a_rGreen, TUINT& a_rBlue )
+	{
+		a_rBlue  = TCOLOR_GET_BLUE( uiColor );
+		a_rGreen = TCOLOR_GET_GREEN( uiColor );
+		a_rRed   = TCOLOR_GET_RED( uiColor );
+		a_rAlpha = TCOLOR_GET_ALPHA( uiColor );
+	}
 };
 
 TSTATICASSERT( sizeof( TColor ) == 4 );

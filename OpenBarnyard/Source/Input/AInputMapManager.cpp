@@ -116,7 +116,7 @@ void AInputMapManager::GetEventCommands( const Toshi::TInputInterface::InputEven
 	if ( m_pActiveInputMap )
 	{
 		auto pCommandMap      = &m_pActiveInputMap->GetCommandMap();
-		auto pCommandIndexRes = pCommandMap->Find( a_pEvent->GetDoodad() );
+		auto pCommandIndexRes = pCommandMap->FindLast( a_pEvent->GetDoodad() );
 
 		while ( pCommandMap->IsValid( pCommandIndexRes ) )
 		{

@@ -71,7 +71,7 @@ public:
 	//-----------------------------------------------------------------------------
 	// ABYardMenuState
 	//-----------------------------------------------------------------------------
-	virtual void OnMenuItemActivated( AGUI2MenuItem& a_rMenuItem ) OVERRIDE;
+	virtual void OnMenuItemActivated( AGUI2MenuItem* a_pMenuItem ) OVERRIDE;
 	virtual void OnMenuItemFocused( AGUI2MenuItem& a_rOldFocus, AGUI2MenuItem& a_rNewFocus ) OVERRIDE;
 	virtual void OnMenuClose() OVERRIDE;
 

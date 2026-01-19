@@ -276,9 +276,9 @@ void AFrontEndMainMenuState2::OnDeactivate()
 }
 
 // $Barnyard: FUNCTION 00408ec0
-void AFrontEndMainMenuState2::OnMenuItemActivated( AGUI2MenuItem& a_rMenuItem )
+void AFrontEndMainMenuState2::OnMenuItemActivated( AGUI2MenuItem* a_pMenuItem )
 {
-	AGUI2Button* pButton = TSTATICCAST( AGUI2Button, &a_rMenuItem );
+	AGUI2Button* pButton = TSTATICCAST( AGUI2Button, a_pMenuItem );
 
 	m_iActivatedButtonID = pButton->GetId();
 	OnButtonActivated( pButton );

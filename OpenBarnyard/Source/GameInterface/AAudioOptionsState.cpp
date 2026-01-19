@@ -167,10 +167,10 @@ void AAudioOptionsState::OnRemoval()
 }
 
 // $Barnyard: FUNCTION 00443630
-void AAudioOptionsState::OnMenuItemActivated( AGUI2MenuItem& a_rMenuItem )
+void AAudioOptionsState::OnMenuItemActivated( AGUI2MenuItem* a_pMenuItem )
 {
 	ASoundManager::GetSingleton()->PlayCue( soundbank::UI_MENUOK );
-	ABYardMenuState::OnButtonActivated( TSTATICCAST( AGUI2Button, &a_rMenuItem ) );
+	ABYardMenuState::OnButtonActivated( TSTATICCAST( AGUI2Button, a_pMenuItem ) );
 }
 
 // $Barnyard: FUNCTION 00443060

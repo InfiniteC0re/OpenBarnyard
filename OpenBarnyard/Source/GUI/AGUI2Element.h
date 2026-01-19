@@ -267,6 +267,8 @@ public:
 		a_rNewChildren.LinkBefore( a_rInsertAfter );
 	}
 
+	TUINT32 GetColour() const { return m_uiColour; }
+
 public:
 	inline static TUINT32 s_uiVisibilityMask = 0xFFFFFFFF;
 

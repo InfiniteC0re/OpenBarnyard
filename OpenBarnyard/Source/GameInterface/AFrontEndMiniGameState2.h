@@ -9,9 +9,11 @@ public:
 
 	enum SLIDERSTATE
 	{
-		SLIDERSTATE_NONE,
+		SLIDERSTATE_IDLE,
 		SLIDERSTATE_SWITCH_TO_NEXT,
-		SLIDERSTATE_2,
+		SLIDERSTATE_SWITCHING_TO_NEXT,
+		SLIDERSTATE_SWITCH_TO_PREV,
+		SLIDERSTATE_SWITCHING_TO_PREV,
 	};
 
 public:
@@ -19,14 +21,20 @@ public:
 	~AFrontEndMiniGameState2();
 
 	// AGameState
+	virtual TBOOL ProcessInput( const Toshi::TInputInterface::InputEvent* a_pInputEvent ) OVERRIDE;
+	virtual TBOOL ProcessCommand( AInputCommand a_eInputCommand, const Toshi::TInputInterface::InputEvent* a_pInputEvent, TBOOL& a_rStopEvents ) OVERRIDE;
 	virtual void  OnInsertion() OVERRIDE;
+	virtual void  OnRemoval() OVERRIDE;
 	virtual TBOOL OnUpdate( TFLOAT a_fDeltaTime ) OVERRIDE;
 
 	// ABYardMenuState
-	virtual void OnMenuItemActivated( AGUI2MenuItem& a_rMenuItem ) OVERRIDE;
+	virtual void OnMenuItemActivated( AGUI2MenuItem* a_pMenuItem ) OVERRIDE;
+	virtual void OnMenuClose() OVERRIDE;
 
 private:
 	void UpdateText();
+
+	TBOOL IsCurrentMiniGameAvailable() const;
 
 private:
 	AGUI2MenuItem   m_oRoot;

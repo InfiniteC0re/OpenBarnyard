@@ -120,6 +120,7 @@ group "Tools"
 	include "Tools/TLocaleCompiler"
 	include "Tools/PPropertyCompiler"
 	include "Tools/QuestCompiler"
+	include "Tools/FSMCompiler"
 	include "Tools/Sounds2Enum"
 
 group "Third-Party"

@@ -90,9 +90,9 @@ void AOptionsState::OnActivate()
 }
 
 // $Barnyard: FUNCTION 00445150
-void AOptionsState::OnMenuItemActivated( AGUI2MenuItem& a_rMenuItem )
+void AOptionsState::OnMenuItemActivated( AGUI2MenuItem* a_pMenuItem )
 {
-	AGUI2Button* pButton = TSTATICCAST( AGUI2Button, &a_rMenuItem );
+	AGUI2Button* pButton = TSTATICCAST( AGUI2Button, a_pMenuItem );
 	m_iActivatedButtonID = pButton->GetId();
 
 	ABYardMenuState::OnButtonActivated( pButton );

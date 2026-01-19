@@ -19,13 +19,13 @@ TDEFINE_CLASS( AFrontEndMiniGameState2 );
 
 // $Barnyard: FUNCTION 00409ce0
 AFrontEndMiniGameState2::AFrontEndMiniGameState2( TBOOL a_bHideVariantSelector )
-    : m_iSelectedMiniGame( 1 )
-	, m_iPrevMiniGame( 1 )
-	, m_iNextMiniGame( 1 )
-    , m_iHidingMiniGame( 1 )
+    : m_iSelectedMiniGame( -1 )
+    , m_iPrevMiniGame( -1 )
+    , m_iNextMiniGame( -1 )
+    , m_iHidingMiniGame( -1 )
     , m_pRectangles( TNULL )
     , m_iNumMiniGames( 0 )
-    , m_eSliderState( SLIDERSTATE_NONE )
+    , m_eSliderState( SLIDERSTATE_IDLE )
     , m_bNoDebug( a_bHideVariantSelector )
     , m_bMouseDirty( TFALSE )
     , m_bMiniGameHovered( TFALSE )
@@ -38,6 +38,132 @@ AFrontEndMiniGameState2::AFrontEndMiniGameState2( TBOOL a_bHideVariantSelector )
 // $Barnyard: FUNCTION 0040a070
 AFrontEndMiniGameState2::~AFrontEndMiniGameState2()
 {
+}
+
+// $Barnyard: FUNCTION 00409f40
+TBOOL AFrontEndMiniGameState2::ProcessInput( const TInputInterface::InputEvent* a_pInputEvent )
+{
+	if ( m_eMenuState != MENUSTATE_MENU_VISIBLE )
+		return BaseClass::ProcessInput( a_pInputEvent );
+
+	if ( a_pInputEvent->m_eEventType == TInputInterface::EVENT_TYPE_MOVED )
+	{
+		m_bMouseDirty = TTRUE;
+		return TTRUE;
+	}
+
+	// Filter out all events except LMB and any key down
+	if ( a_pInputEvent->m_eEventType != TInputInterface::EVENT_TYPE_GONE_DOWN || a_pInputEvent->m_iDoodad != TInputDeviceMouse::BUTTON_1 )
+		return BaseClass::ProcessInput( a_pInputEvent );
+
+	// Process click on minigame
+	if ( m_bMiniGameHovered )
+	{
+		OnMenuItemActivated( NULL );
+		return TTRUE;
+	}
+
+	// Process click on the left arrow
+	if ( m_bLeftArrowHovered )
+	{
+		TBOOL bStopEvents;
+		return ProcessCommand( AInputCommand_Left, a_pInputEvent, bStopEvents );
+	}
+
+	// Process click on the right arrow
+	if ( m_bRightArrowHovered )
+	{
+		TBOOL bStopEvents;
+		return ProcessCommand( AInputCommand_Right, a_pInputEvent, bStopEvents );
+	}
+
+	return TTRUE;
+}
+
+// $Barnyard: FUNCTION 0040bc40
+TBOOL AFrontEndMiniGameState2::ProcessCommand( AInputCommand a_eInputCommand, const TInputInterface::InputEvent* a_pInputEvent, TBOOL& a_rStopEvents )
+{
+	if ( m_eMenuState != MENUSTATE_MENU_VISIBLE )
+		return ABYardMenuState::ProcessCommand( a_eInputCommand, a_pInputEvent, a_rStopEvents );
+
+	// Go to the prev menu
+	if ( a_eInputCommand == AInputCommand_Cancel )
+	{
+		ASoundManager::GetSingleton()->PlayCue( soundbank::ui::UI_MENUBACK );
+
+		m_eMenuState        = MENUSTATE_MENU_DISAPPEAR;
+		m_iSelectedMiniGame = -1;
+		return TTRUE;
+	}
+
+	if ( m_oMenu.IsFocused() )
+	{
+		if ( a_eInputCommand == AInputCommand_OK )
+		{
+			// Skip mouse events
+			if ( a_pInputEvent->GetSource()->GetClass()->IsA( &TGetClass( TInputDeviceMouse ) ) ) return TFALSE;
+		}
+
+		if ( a_pInputEvent->m_eEventType == TInputInterface::EVENT_TYPE_GONE_DOWN || a_pInputEvent->m_eEventType == TInputInterface::EVENT_TYPE_REPEAT )
+		{
+			switch ( a_eInputCommand )
+			{
+				case AInputCommand_Left:
+				{
+					ASoundManager::GetSingleton()->PlayCue( soundbank::ui::UI_MENUCLICK );
+					m_aArrows[ 0 ].GetTransform().SetScale( 1.25f, 1.25f );
+
+					if ( m_eSliderState == SLIDERSTATE_SWITCHING_TO_NEXT )
+					{
+						const TINT iWasHiding = m_iHidingMiniGame;
+
+						m_iHidingMiniGame   = m_iNextMiniGame;
+						m_iNextMiniGame     = m_iSelectedMiniGame;
+						m_iSelectedMiniGame = m_iPrevMiniGame;
+						m_iPrevMiniGame     = iWasHiding;
+
+						UpdateText();
+						m_eSliderState = SLIDERSTATE_SWITCHING_TO_PREV;
+					}
+					else
+					{
+						m_eSliderState = SLIDERSTATE_SWITCH_TO_PREV;
+					}
+
+					a_pInputEvent->StartRepeat( 0.5f, 0.2f );
+					return TTRUE;
+				}
+				case AInputCommand_Right:
+				{
+					ASoundManager::GetSingleton()->PlayCue( soundbank::ui::UI_MENUCLICK );
+					m_aArrows[ 1 ].GetTransform().SetScale( 1.25f, 1.25f );
+
+					if ( m_eSliderState == SLIDERSTATE_SWITCHING_TO_PREV )
+					{
+						const TINT iWasHiding   = m_iHidingMiniGame;
+						const TINT iWasSelected = m_iSelectedMiniGame;
+
+						m_iHidingMiniGame   = m_iPrevMiniGame;
+						m_iSelectedMiniGame = m_iNextMiniGame;
+						m_iPrevMiniGame     = iWasSelected;
+						m_iNextMiniGame     = iWasHiding;
+
+						UpdateText();
+						m_eSliderState = SLIDERSTATE_SWITCHING_TO_NEXT;
+					}
+					else
+					{
+						m_eSliderState = SLIDERSTATE_SWITCH_TO_NEXT;
+					}
+
+					a_pInputEvent->StartRepeat( 0.5f, 0.2f );
+					return TTRUE;
+				}
+			}
+		}
+	}
+
+	return ABYardMenuState::ProcessCommand( a_eInputCommand, a_pInputEvent, a_rStopEvents );
 }
 
 // $Barnyard: FUNCTION 0040a270
@@ -64,7 +190,7 @@ void AFrontEndMiniGameState2::OnInsertion()
 		AGUI2TextureSection* pIcon = AGUI2TextureSectionManager::GetTextureSection( szIconName );
 		TVALIDPTR( pIcon );
 
-		TFLOAT fIconWidth = pIcon->GetWidth();
+		TFLOAT fIconWidth  = pIcon->GetWidth();
 		TFLOAT fIconHeight = pIcon->GetHeight();
 
 		// Update max size of an icon
@@ -181,6 +307,28 @@ void AFrontEndMiniGameState2::OnInsertion()
 	BaseClass::OnInsertion();
 }
 
+// $Barnyard: FUNCTION 00409e80
+void AFrontEndMiniGameState2::OnRemoval()
+{
+	for ( TINT i = 0; i < m_iNumMiniGames; i++ )
+		m_pRectangles[ i ].RemoveSelf();
+
+	m_oMiniGameTitle.RemoveSelf();
+	m_oMiniGameDescription.RemoveSelf();
+	m_oRoot.RemoveSelf();
+	m_aArrows[ 0 ].RemoveSelf();
+	m_aArrows[ 1 ].RemoveSelf();
+
+	if ( m_pRectangles )
+		delete[] m_pRectangles;
+
+#ifdef BARNYARD_COMMUNITY_PATCH
+	m_pRectangles = TNULL;
+#endif // BARNYARD_COMMUNITY_PATCH
+
+	BaseClass::OnRemoval();
+}
+
 // $Barnyard: FUNCTION 0040aa00
 TBOOL AFrontEndMiniGameState2::OnUpdate( TFLOAT a_fDeltaTime )
 {
@@ -240,11 +388,11 @@ TBOOL AFrontEndMiniGameState2::OnUpdate( TFLOAT a_fDeltaTime )
 	TFLOAT       fLeftArrowScale  = 1.0f;
 
 	if ( m_bRightArrowHovered )
-		fRightArrowScale = 1.25;
+		fRightArrowScale = 1.25f;
 
 	if ( m_bLeftArrowHovered )
-		fLeftArrowScale = 1.25;
-	
+		fLeftArrowScale = 1.25f;
+
 	m_aArrows[ 1 ].GetTransform().SetScale(
 	    TMath::LERPClamped( m_aArrows[ 1 ].GetTransform().GetScaleX(), fRightArrowScale, fLerpSpeed ),
 	    TMath::LERPClamped( m_aArrows[ 1 ].GetTransform().GetScaleX(), fRightArrowScale, fLerpSpeed )
@@ -279,11 +427,11 @@ TBOOL AFrontEndMiniGameState2::OnUpdate( TFLOAT a_fDeltaTime )
 			if ( iPrevHiding != m_iNextMiniGame )
 			{
 				m_pRectangles[ m_iNextMiniGame ].SetColour( 0 );
-				m_pRectangles[ m_iNextMiniGame ].SetTransform( 100.0f + 100.0f, 0.0f );
+				m_pRectangles[ m_iNextMiniGame ].SetTransform( 100.0f * 2.0f, 0.0f );
 				m_pRectangles[ m_iNextMiniGame ].GetTransform().Scale( 0.5f, 0.5f );
 				m_pRectangles[ m_iNextMiniGame ].Show();
 
-				if ( iPrevHiding )
+				if ( iPrevHiding != -1 )
 				{
 					m_pRectangles[ iPrevHiding ].SetColour( 0 );
 					m_pRectangles[ iPrevHiding ].SetTransform( 0.0f, 0.0f );
@@ -293,14 +441,169 @@ TBOOL AFrontEndMiniGameState2::OnUpdate( TFLOAT a_fDeltaTime )
 			}
 
 			m_pRectangles[ m_iSelectedMiniGame ].SetAlpha( 1.0f );
-			m_eSliderState = SLIDERSTATE_2;
+			m_eSliderState = SLIDERSTATE_SWITCHING_TO_NEXT;
 			UpdateText();
 
 			break;
 		}
-		case SLIDERSTATE_2:
+		case SLIDERSTATE_SWITCH_TO_PREV:
 		{
+			TINT iPrevHiding = m_iHidingMiniGame;
 
+			m_iHidingMiniGame   = m_iNextMiniGame;
+			m_iNextMiniGame     = m_iSelectedMiniGame;
+			m_iSelectedMiniGame = m_iPrevMiniGame;
+
+			m_iPrevMiniGame -= 1;
+			if ( m_iPrevMiniGame < 0 )
+				m_iPrevMiniGame = m_iNumMiniGames - 1;
+
+			if ( iPrevHiding != m_iPrevMiniGame )
+			{
+				m_pRectangles[ m_iPrevMiniGame ].SetColour( 0 );
+				m_pRectangles[ m_iPrevMiniGame ].SetTransform( 100.0f * -2.0f, 0.0f );
+				m_pRectangles[ m_iPrevMiniGame ].GetTransform().Scale( 0.5f, 0.5f );
+				m_pRectangles[ m_iPrevMiniGame ].Show();
+
+				if ( iPrevHiding != -1 )
+				{
+					m_pRectangles[ iPrevHiding ].SetColour( 0 );
+					m_pRectangles[ iPrevHiding ].SetTransform( 0.0f, 0.0f );
+					m_pRectangles[ iPrevHiding ].GetTransform().Scale( 0.5f, 0.5f );
+					m_pRectangles[ iPrevHiding ].Hide();
+				}
+			}
+
+			m_pRectangles[ m_iSelectedMiniGame ].SetAlpha( 1.0f );
+			m_eSliderState = SLIDERSTATE_SWITCHING_TO_PREV;
+			UpdateText();
+
+			break;
+		}
+		// [1/19/2026 InfiniteC0re]
+		// NOTE: this is depressing, but the original code had two duplicates of the code below for both SLIDERSTATE_SWITCHING_TO_PREV
+		// and SLIDERSTATE_SWITCHING_TO_NEXT just like switching and the only different was REALLY A SINGLE LINE OF CODE. Who was up to make it????
+		// I combined them, because it makes much more sense...
+		case SLIDERSTATE_SWITCHING_TO_PREV:
+		case SLIDERSTATE_SWITCHING_TO_NEXT:
+		{
+			TASSERT( m_iHidingMiniGame != -1 );
+			auto& rPrev = m_pRectangles[ m_iPrevMiniGame ];
+			auto& rNext = m_pRectangles[ m_iNextMiniGame ];
+			auto& rCurr = m_pRectangles[ m_iSelectedMiniGame ];
+			auto& rHide = m_pRectangles[ m_iHidingMiniGame ];
+
+			auto& rPrevTransform = rPrev.GetTransform();
+			auto& rNextTransform = rNext.GetTransform();
+			auto& rCurrTransform = rCurr.GetTransform();
+			auto& rHideTransform = rHide.GetTransform();
+
+			const TFLOAT flCurrX = rCurr.GetTransform().GetTranslation().x;
+			const TFLOAT flCurrY = rCurr.GetTransform().GetTranslation().y;
+
+			const TBOOL bAnimationOver = TMath::Abs( flCurrX ) <= 0.1f;
+			if ( bAnimationOver )
+			{
+				rPrevTransform.SetIdentity();
+				rPrevTransform.SetTranslation( -100.0f, flCurrY );
+				rPrevTransform.Scale( 0.5f, 0.5f );
+				rPrev.SetColour( COLOR_BLACK );
+
+				rNextTransform.SetIdentity();
+				rNextTransform.SetTranslation( 100.0f, flCurrY );
+				rNextTransform.Scale( 0.5f, 0.5f );
+				rNext.SetColour( COLOR_BLACK );
+
+				rCurrTransform.SetIdentity();
+				rCurrTransform.SetTranslation( 0.0f, flCurrY );
+				rCurrTransform.Scale( 1.1f, 1.1f );
+				rCurr.SetColour( IsCurrentMiniGameAvailable() ? COLOR_WHITE : COLOR_BLACK );
+
+				// Completely hide item that was previously hiding
+				if ( m_iHidingMiniGame != -1 )
+				{
+					m_pRectangles[ m_iHidingMiniGame ].SetColour( TCOLOR4( 0, 0, 0, 0 ) );
+					m_pRectangles[ m_iHidingMiniGame ].Hide();
+					m_iHidingMiniGame = -1;
+				}
+
+				m_fTotalTime   = 0.0f;
+				m_eSliderState = SLIDERSTATE_IDLE;
+			}
+			else
+			{
+				// Store current scale values
+				const TFLOAT flCurrScale = rCurrTransform.GetScaleX();
+				const TFLOAT flNextScale = rNextTransform.GetScaleX();
+				const TFLOAT flPrevScale = rPrevTransform.GetScaleX();
+
+				// Update previous element
+				const TFLOAT flPrevPosX = rPrevTransform.GetTranslation().x;
+				const TFLOAT flPrevPosY = rPrevTransform.GetTranslation().y;
+				rPrevTransform.SetIdentity();
+				rPrevTransform.SetTranslation( TMath::LERPClamped( flPrevPosX, -100.0f, 5.0f * a_fDeltaTime ), flPrevPosY );
+
+				// Update current element
+				const TFLOAT flCurrPosX = rCurrTransform.GetTranslation().x;
+				const TFLOAT flCurrPosY = rCurrTransform.GetTranslation().y;
+				rCurrTransform.SetIdentity();
+				rCurrTransform.SetTranslation( TMath::LERPClamped( flCurrPosX, 0.0f, 5.0f * a_fDeltaTime ), flCurrPosY );
+
+				// Update next element
+				const TFLOAT flNextPosX = rNextTransform.GetTranslation().x;
+				const TFLOAT flNextPosY = rNextTransform.GetTranslation().y;
+				rNextTransform.SetIdentity();
+				rNextTransform.SetTranslation( TMath::LERPClamped( flNextPosX, 100.0f, 5.0f * a_fDeltaTime ), flNextPosY );
+
+				// Update hiding element
+				const TFLOAT flHidePosX = rHideTransform.GetTranslation().x;
+				const TFLOAT flHidePosY = rHideTransform.GetTranslation().y;
+				rHideTransform.SetIdentity();
+
+				// Below is the line that was the reason someonde decided to copy this whole case for SLIDERSTATE_SWITCHING_TO_PREV
+				rHideTransform.SetTranslation( TMath::LERPClamped( flHidePosX, 100.0f * ( m_eSliderState == SLIDERSTATE_SWITCHING_TO_NEXT ? -1.0f : 1.0f ) * 2.0f, 5.0f * a_fDeltaTime ), flHidePosY );
+
+				// Update scales
+				const TFLOAT flPrevScaleNew = TMath::LERPClamped( flPrevScale, 0.5f, 5.0f * a_fDeltaTime );
+				const TFLOAT flCurrScaleNew = TMath::LERPClamped( flCurrScale, 1.1f, 5.0f * a_fDeltaTime );
+				const TFLOAT flNextScaleNew = TMath::LERPClamped( flNextScale, 0.5f, 5.0f * a_fDeltaTime );
+				rPrevTransform.Scale( flPrevScaleNew, flPrevScaleNew );
+				rCurrTransform.Scale( flCurrScaleNew, flCurrScaleNew );
+				rNextTransform.Scale( flNextScaleNew, flNextScaleNew );
+				rHideTransform.Scale( 0.5f, 0.5f );
+
+				// Interpolate color for the prev element
+				TUINT aColor[ 4 ];
+				TColor::GetComponents( rPrev.GetColour(), aColor[ 0 ], aColor[ 1 ], aColor[ 2 ], aColor[ 3 ] );
+				for ( TINT i = 1; i < 4; i++ ) // skip alpha
+					aColor[ i ] = TUINT( TMath::LERPClamped( TFLOAT( aColor[ i ] ), 0.0f, 5.0f * a_fDeltaTime ) );
+
+				// Update alpha and set the color
+				aColor[ 0 ] = TUINT( TMath::LERPClamped( TFLOAT( aColor[ 0 ] ), 255.0f, 5.0f * a_fDeltaTime ) );
+				rPrev.SetColour( TCOLOR4( aColor[ 1 ], aColor[ 2 ], aColor[ 3 ], aColor[ 0 ] ) );
+
+				// Interpolate color for the next element
+				TColor::GetComponents( rNext.GetColour(), aColor[ 0 ], aColor[ 1 ], aColor[ 2 ], aColor[ 3 ] );
+				for ( TINT i = 1; i < 4; i++ ) // skip alpha
+					aColor[ i ] = TUINT( TMath::LERPClamped( TFLOAT( aColor[ i ] ), 0.0f, 5.0f * a_fDeltaTime ) );
+
+				// Update alpha and set the color
+				aColor[ 0 ] = TUINT( TMath::LERPClamped( TFLOAT( aColor[ 0 ] ), 255.0f, 5.0f * a_fDeltaTime ) );
+				rNext.SetColour( TCOLOR4( aColor[ 1 ], aColor[ 2 ], aColor[ 3 ], aColor[ 0 ] ) );
+
+				// Interpolate color for the current element
+				if ( IsCurrentMiniGameAvailable() )
+				{
+					TColor::GetComponents( rCurr.GetColour(), aColor[ 0 ], aColor[ 1 ], aColor[ 2 ], aColor[ 3 ] );
+					for ( TINT i = 0; i < 4; i++ ) // don't skip alpha this time
+						aColor[ i ] = TUINT( TMath::LERPClamped( TFLOAT( aColor[ i ] ), 255.0f, 5.0f * a_fDeltaTime ) );
+
+					rCurr.SetColour( TCOLOR4( aColor[ 1 ], aColor[ 2 ], aColor[ 3 ], aColor[ 0 ] ) );
+				}
+
+				// Update hiding element
+				rHide.SetAlpha( TMath::LERPClamped( TFLOAT( TCOLOR_GET_ALPHA( rHide.GetColour() ) / 255.0f ), 0.0f, 5.0f * a_fDeltaTime ) );
+			}
 			break;
 		}
 	}
@@ -309,16 +612,39 @@ TBOOL AFrontEndMiniGameState2::OnUpdate( TFLOAT a_fDeltaTime )
 }
 
 // $Barnyard: FUNCTION 0040a0f0
-void AFrontEndMiniGameState2::OnMenuItemActivated( AGUI2MenuItem& a_rMenuItem )
+void AFrontEndMiniGameState2::OnMenuItemActivated( AGUI2MenuItem* a_pMenuItem )
 {
-	if ( m_bNoDebug && g_pPlayerProgress->IsMiniGameAvailable( m_iSelectedMiniGame ) )
+	if ( m_bNoDebug && !g_pPlayerProgress->IsMiniGameAvailable( m_iSelectedMiniGame ) )
 	{
 		ASoundManager::GetSingleton()->PlayCue( soundbank::UI_NEGATIVE );
 		return;
 	}
 
 	ASoundManager::GetSingleton()->PlayCue( soundbank::UI_MENUOK );
-	ABYardMenuState::OnButtonActivated( TSTATICCAST( AGUI2Button, &a_rMenuItem ) );
+	ABYardMenuState::OnButtonActivated( TSTATICCAST( AGUI2Button, a_pMenuItem ) );
+}
+
+// $Barnyard: FUNCTION 0040be80
+void AFrontEndMiniGameState2::OnMenuClose()
+{
+	// Immediately hide the hiding minigame
+	if ( m_iHidingMiniGame != -1 )
+	{
+		m_pRectangles[ m_iHidingMiniGame ].SetAlpha( 0.0f );
+		m_pRectangles[ m_iHidingMiniGame ].Hide();
+		m_iHidingMiniGame = -1;
+	}
+
+	// Temporarily disable booting minigame, since we don't have any
+	m_iSelectedMiniGame = -1;
+
+	if ( m_iSelectedMiniGame == -1 )
+	{
+		BaseClass::Remove();
+		return;
+	}
+
+	TASSERT( TFALSE && "TODO: boot up the chosen minigame" );
 }
 
 // $Barnyard: FUNCTION 0040a150
@@ -345,4 +671,12 @@ void AFrontEndMiniGameState2::UpdateText()
 
 	m_oMiniGameTitle.SetText( wcsTitle );
 	m_oMiniGameDescription.SetText( wcsDescription );
+}
+
+// $Barnyard: FUNCTION 0040a090
+TBOOL AFrontEndMiniGameState2::IsCurrentMiniGameAvailable() const
+{
+	TASSERT( m_iSelectedMiniGame >= 0 && m_iSelectedMiniGame < 32 );
+
+	return !m_bNoDebug || g_pPlayerProgress->IsMiniGameAvailable( m_iSelectedMiniGame % 32 );
 }
