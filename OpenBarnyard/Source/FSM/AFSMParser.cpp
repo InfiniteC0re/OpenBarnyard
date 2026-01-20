@@ -76,7 +76,7 @@ TBOOL AFSMParser::LoadFSMFile( AFSMManager* a_pFSMManager, TString8* a_pFSMFileP
 			if ( !pFSM )
 			{
 				TASSERT( TFALSE );
-				SetError();
+				m_bErrorOccured = TTRUE;
 				break;
 			}
 
@@ -110,11 +110,7 @@ TPString8 AFSMParser::GetIdent()
 		TString8 strErrorText;
 		strErrorText.Format( "Expected a string indentifier" );
 
-		PLexerTRB::Token oPrevToken;
-		m_pFSMLexer->GetPrevToken( oPrevToken );
-		m_pFSMLexer->PrintError( &oPrevToken, strErrorText );
-		SetError();
-
+		PrintError( strErrorText );
 		return TPString8();
 	}
 
@@ -153,21 +149,17 @@ void AFSMParser::ParseStateMachine( AFSMManager* a_pFSMManager, TINT a_iFSMFileI
 }
 
 // $Barnyard: FUNCTION 006000a0
-void AFSMParser::SkipTokenSafe( TFileLexer::TOKEN a_eExpect )
+void AFSMParser::SkipTokenSafe( TUINT8 a_uiExpect )
 {
 	TUINT8 uiToken = m_pFSMLexer->PeekToken( 0 );
 
 	// If we don't expect to see this token, raise error
-	if ( uiToken != a_eExpect )
+	if ( uiToken != a_uiExpect )
 	{
 		TString8 strErrorText;
-		strErrorText.Format( "Expected %s", m_pFSMLexer->GetTokenName( a_eExpect ) );
+		strErrorText.Format( "Expected %s", m_pFSMLexer->GetTokenName( a_uiExpect ) );
 
-		PLexerTRB::Token oPrevToken;
-		m_pFSMLexer->GetPrevToken( oPrevToken );
-		m_pFSMLexer->PrintError( &oPrevToken, strErrorText );
-
-		SetError();
+		PrintError( strErrorText );
 		return;
 	}
 
@@ -187,17 +179,23 @@ void AFSMParser::SkipCustomTokenSafe( TUINT8 a_uiExpect )
 		TString8 strErrorText;
 		strErrorText.Format( "Expected %s", m_pFSMLexer->GetTokenName( a_uiExpect ) );
 
-		PLexerTRB::Token oPrevToken;
-		m_pFSMLexer->GetPrevToken( oPrevToken );
-		m_pFSMLexer->PrintError( &oPrevToken, strErrorText );
-
-		SetError();
+		PrintError( strErrorText );
 		return;
 	}
 
 	// No errors, go to the text token
 	PLexerTRB::Token oToken;
 	m_pFSMLexer->GetNextToken( oToken );
+}
+
+// $Barnyard: FUNCTION 00600020
+void AFSMParser::PrintError( const TCHAR* a_pchErrorText )
+{
+	PLexerTRB::Token oPrevToken;
+	m_pFSMLexer->GetPrevToken( oPrevToken );
+	m_pFSMLexer->PrintError( &oPrevToken, a_pchErrorText );
+
+	m_bErrorOccured = TTRUE;
 }
 
 void AFSMParser::ParseStateMachineImpl()
@@ -215,6 +213,75 @@ void AFSMParser::ParseStateMachineImpl()
 
 void AFSMParser::ResolveTransitionsImpl()
 {
+}
+
+// $Barnyard: FUNCTION 006019e0
+AFSMInstruction* AFSMParser::ParseVariable( TBOOL a_bAllowAssignment )
+{
+	// This reads variable type, but ParseVariableType changes it to be variable name!!!
+	TPString8     strVarName = GetIdent();
+	const TClass* pTypeClass = ParseVariableType( strVarName );
+
+	// Find or create variable
+	TINT iVarIdx = m_pFSM->FindVariableNameIndex( strVarName );
+	if ( iVarIdx == -1 ) iVarIdx = m_pFSM->AddVariableName( strVarName );
+
+	// Setup type
+	m_pFSM->SetVariableType( iVarIdx, pTypeClass );
+
+	if ( GetOperator( TFALSE ) == OPERATOR_EQUAL_SET )
+	{
+		if ( m_pFSMLexer->PeekToken( 0 ) == TFileLexer::TOKEN_EQUAL )
+		{
+			if ( a_bAllowAssignment )
+				return AFSMParser::ParseValue( TFALSE, iVarIdx );
+
+			PrintError( "Assignment not allowed in this context" );
+		}
+	}
+	else
+	{
+		PrintError( "Cannot have global declaration in comparison expression" );
+	}
+
+	return TNULL;
+}
+
+// $Barnyard: FUNCTION 00600480
+AFSMInstruction* AFSMParser::ParseValue( TBOOL a_bAllowGlobalWithoutAssignment, TINT a_iVarIdx )
+{
+	if ( GetOperator( TFALSE ) == 6 )
+	{
+		if ( m_pFSMLexer->PeekToken( 0 ) == TFileLexer::TOKEN_EQUAL )
+		{
+			PLexerTRB::Token oToken;
+			m_pFSMLexer->GetNextToken( oToken );
+
+			TASSERT( TFALSE && "Implement FUN_00601ee0" );
+			//AFSMInstructionValue* pValue = FUN_00601ee0( TTRUE, TTRUE, TTRUE );
+			AFSMInstructionValue* pValue = TNULL;
+			if ( !m_bErrorOccured && pValue )
+			{
+				AFSMInstructionAssignment* pAssignment = new AFSMInstructionAssignment();
+				pAssignment->Setup( a_iVarIdx, pValue );
+				return pAssignment;
+			}
+
+			return TNULL;
+		}
+	}
+
+	if ( !a_bAllowGlobalWithoutAssignment )
+	{
+		PLexerTRB::Token oPrevToken;
+		m_pFSMLexer->GetPrevToken( oPrevToken );
+		m_pFSMLexer->PrintError( &oPrevToken, "Global without assignment found" );
+
+		m_bErrorOccured = TTRUE;
+		return TNULL;
+	}
+
+	return new AFSMInstructionValueGlobal( m_pFSM, a_iVarIdx );
 }
 
 VARTYPE_DECLARE( bool );
@@ -248,4 +315,40 @@ const TClass* AFSMParser::ParseVariableType( TPString8& a_rName )
 	}
 
 	return pVarClass;
+}
+
+// $Barnyard: FUNCTION 006002d0
+AFSMParser::OPERATOR AFSMParser::GetOperator( TBOOL a_bSkip )
+{
+	TINT i = 0;
+
+	for ( ; i < TARRAYSIZE( OPERATORS ); i++ )
+	{
+		// Compare the first token
+		if ( OPERATORS[ i ].eToken1 == m_pFSMLexer->PeekToken( 0 ) )
+		{
+			if ( OPERATORS[ i ].eToken2 == 0 )
+			{
+				if ( a_bSkip ) SkipTokenSafe( OPERATORS[ i ].eToken1 );
+
+				return TCAST( OPERATOR, i );
+			}
+
+			// If there is a second token, try comparing it too
+			if ( OPERATORS[ i ].eToken2 == m_pFSMLexer->PeekToken( 1 ) )
+			{
+				if ( a_bSkip )
+				{
+					SkipTokenSafe( OPERATORS[ i ].eToken1 );
+					SkipTokenSafe( OPERATORS[ i ].eToken2 );
+				}
+
+				return TCAST( OPERATOR, i );
+			}
+		}
+	}
+
+	// This is weird... Calling this function you must be sure there's an operator, I guess... Also, it's not taking a_bSkip into account
+	TASSERT( TFileLexer::TOKEN_EQUAL == m_pFSMLexer->PeekToken( 0 ) );
+	return OPERATOR_EQUAL_SET;
 }

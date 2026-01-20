@@ -181,6 +181,29 @@ public:
 	TBOOL    IsLinked() { return m_oRoot.IsLinked(); }
 	void     RemoveHead() { TGenericDList::RemoveHead(); }
 	void     RemoveTail() { TGenericDList::RemoveTail(); }
+	void     Remove( T* a_pNode ) { a_pNode->Remove(); }
+
+	void RemoveAll()
+	{
+		while ( !IsEmpty() )
+		{
+			Remove( Begin() );
+		}
+	}
+
+	void DeleteAll()
+	{
+		while ( !IsEmpty() )
+		{
+			Delete( Begin() );
+		}
+	}
+
+	void Delete( T* a_pNode )
+	{
+		a_pNode->Remove();
+		delete a_pNode;
+	}
 };
 
 TOSHI_NAMESPACE_END
