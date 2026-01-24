@@ -98,9 +98,9 @@ TBOOL TMesh::IsValidated() const
 	return m_State & State_Validated;
 }
 
-TBOOL TMesh::IsUnknownState1() const
+TBOOL TMesh::IsWater() const
 {
-	return m_State & State_Unknown1;
+	return m_State & State_IsWater;
 }
 
 TShader* TMesh::GetOwnerShader()

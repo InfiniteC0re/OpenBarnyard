@@ -17,7 +17,7 @@ public:
 		State_None      = 0,
 		State_Created   = BITFLAG( 0 ),
 		State_Validated = BITFLAG( 1 ),
-		State_Unknown1  = BITFLAG( 2 ),
+		State_IsWater   = BITFLAG( 2 ),
 		State_Glow      = BITFLAG( 3 )
 	};
 
@@ -52,7 +52,7 @@ public:
 
 	TBOOL IsCreated() const;
 	TBOOL IsValidated() const;
-	TBOOL IsUnknownState1() const;
+	TBOOL IsWater() const;
 
 protected:
 	~TMesh();

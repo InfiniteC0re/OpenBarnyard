@@ -305,7 +305,7 @@ void AWorldShaderHAL::Render( TRenderPacket* a_pRenderPacket )
 		vSomeConst.x = 0.0f;
 		vSomeConst.y = 1.0f;
 
-		if ( pMesh->IsUnknownState1() )
+		if ( pMesh->IsWater() )
 		{
 			vSomeConst.x = 1.0f;
 			vSomeConst.y = 0.0f;

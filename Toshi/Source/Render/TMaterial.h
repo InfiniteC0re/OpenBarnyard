@@ -58,15 +58,17 @@ public:
 	TUINT32 GetTextureNum() const;
 	void    SetTextureNum( TUINT32 a_iNumTextures );
 
-	void SetName( const TCHAR* a_szName );
-	void SetFlags( Flags a_eFlag, TBOOL a_bEnable );
+	const TCHAR* GetName() const { return m_szName; }
+	void         SetName( const TCHAR* a_szName );
+
+	Flags GetFlags() const { return m_Flags; }
+	void  SetFlags( Flags a_eFlag, TBOOL a_bEnable );
 
 	TRegMaterial* GetRegMaterial() const;
 	void          SetRegMaterial( TRegMaterial* a_pRegMaterial );
 
-	const TCHAR* GetName() const { return m_szName; }
-
 	TBOOL IsCreated() const;
+	TBOOL IsBlending() const;
 
 	TRenderPacket* AddRenderPacket( TMesh* a_pMesh );
 

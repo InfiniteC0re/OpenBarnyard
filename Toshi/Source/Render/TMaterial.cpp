@@ -146,4 +146,9 @@ TRegMaterial* TMaterial::GetRegMaterial() const
 	return m_pRegMaterial;
 }
 
+TBOOL TMaterial::IsBlending() const
+{
+	return m_Flags & FLAGS_BLENDING;
+}
+
 TOSHI_NAMESPACE_END
