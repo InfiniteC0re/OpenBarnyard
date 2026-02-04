@@ -54,10 +54,10 @@ project "Toshi"
 	}
 	
 	filter "files:**.c"
-		flags { "NoPCH" }
+		enablepch "Off"
 		
 	filter "files:Source/Profiler/**.*"
-		flags { "NoPCH" }
+		enablepch "Off"
 
 	filter "system:windows"
 		systemversion "latest"

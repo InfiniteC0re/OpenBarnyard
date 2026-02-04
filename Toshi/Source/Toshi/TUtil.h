@@ -4,6 +4,7 @@
 #include "Thread/TMutex.h"
 
 #include <utility>
+#include <cstring>
 
 TOSHI_NAMESPACE_START
 

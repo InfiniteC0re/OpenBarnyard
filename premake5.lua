@@ -5,8 +5,8 @@ workspace "OpenBarnyard"
 	cppdialect "C++20"
 	characterset "ASCII"
 
-	platforms "Windows"
 	configurations { "Debug", "Release", "Final" }
+	platforms "Win32"
 
 	disablewarnings { "4996" }
 	

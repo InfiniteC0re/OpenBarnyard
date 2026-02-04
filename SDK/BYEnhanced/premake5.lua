@@ -65,7 +65,7 @@ project "BYEnhanced"
 	}
 	
 	filter "files:**.c"
-		flags { "NoPCH" }
+		enablepch "Off"
 
 	filter "system:windows"
 		defines

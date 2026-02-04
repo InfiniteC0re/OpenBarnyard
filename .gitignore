@@ -11,6 +11,7 @@ APooledStrings.cpp
 
 # Project files and the solution (we're using premake now so they aren't required)
 *.sln
+*.slnx
 *.vcxitems
 *.vcxitems.*
 *.vcxproj
