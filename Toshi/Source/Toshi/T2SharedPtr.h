@@ -2,6 +2,9 @@
 
 TOSHI_NAMESPACE_START
 
+template <typename T>
+class T2WeakPtr;
+
 //-----------------------------------------------------------------------------
 // Purpose: custom shared pointer class that manages object's lifecycle
 // by monitoring for number of existing references.

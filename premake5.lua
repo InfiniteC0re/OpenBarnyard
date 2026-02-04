@@ -8,6 +8,9 @@ workspace "OpenBarnyard"
 	configurations { "Debug", "Release", "Final" }
 	platforms "Win32"
 
+	-- Enables fast builds
+	multiprocessorcompile "on"
+
 	disablewarnings { "4996" }
 	
 	debugdir ("%{wks.location}/bin/" .. outputdir .. "/%{prj.name}")
@@ -59,13 +62,10 @@ workspace "OpenBarnyard"
 	-- Global Windows parameters
 	filter "system:windows"
 		systemversion "latest"
-		
 		vectorextensions "SSE2"
 		
-		linkoptions
-		{
-			"/SAFESEH:NO"
-		}
+		exceptionhandling "Off"
+		linkoptions "/SAFESEH:NO"
 
 		defines
 		{

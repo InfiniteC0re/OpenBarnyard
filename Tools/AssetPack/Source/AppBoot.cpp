@@ -81,11 +81,11 @@ int main( int argc, char** argv )
 
 		if ( strOutPath )
 		{
-			outPath = TString8::VarArgs( "%s\\%s.trb", strOutPath, strAssetName );
+			outPath = TString8::VarArgs( "%s\\%s.trb", strOutPath.GetString(), strAssetName.GetString() );
 		}
 		else
 		{
-			outPath = TString8::VarArgs( "%s.trb", strAssetName );
+			outPath = TString8::VarArgs( "%s.trb", strAssetName.GetString() );
 		}
 
 		assetBuilder.Save( outPath, bIsBtec );

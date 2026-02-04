@@ -173,10 +173,10 @@ public:
 
 	Iterator GetNext( Iterator a_itNode ) { return a_itNode.Next(); }
 	Iterator GetPrev( Iterator a_itNode ) { return a_itNode.Prev(); }
-	T*       Head() { return TGenericDList::Head()->As<T>(); }
-	T*       Tail() { return TGenericDList::Tail()->As<T>(); }
-	Iterator Begin() { return TGenericDList::Begin()->As<T>(); }
-	Iterator End() { return TGenericDList::End()->As<T>(); }
+	T*       Head() { return TGenericDList::Head()->template As<T>(); }
+	T*       Tail() { return TGenericDList::Tail()->template As<T>(); }
+	Iterator Begin() { return TGenericDList::Begin()->template As<T>(); }
+	Iterator End() { return TGenericDList::End()->template As<T>(); }
 	TBOOL    IsEmpty() { return TGenericDList::IsEmpty(); }
 	TBOOL    IsLinked() { return m_oRoot.IsLinked(); }
 	void     RemoveHead() { TGenericDList::RemoveHead(); }

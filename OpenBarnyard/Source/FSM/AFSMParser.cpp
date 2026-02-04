@@ -59,7 +59,7 @@ TBOOL AFSMParser::LoadFSMFile( AFSMManager* a_pFSMManager, TString8* a_pFSMFileP
 {
 	TVALIDPTR( a_pFSMFilePath );
 
-	if ( m_pFSMLexer->Load( *a_pFSMFilePath, a_pFSMDebugFilePath ? *a_pFSMDebugFilePath : TNULL ) )
+	if ( m_pFSMLexer->Load( *a_pFSMFilePath, a_pFSMDebugFilePath ? *a_pFSMDebugFilePath : TPString8() ) )
 	{
 		// Parse all tokens
 		TUINT8 uiToken = m_pFSMLexer->PeekToken( 0 );
