@@ -25,8 +25,8 @@ jobs:
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v2
     
-    - name: Build the whole solution for debug
-      run: msbuild './OpenBarnyard.slnx' -property:Configuration=Debug
+    - name: Build the whole solution for Debug
+      run: msbuild './OpenBarnyard.slnx' /p:Configuration=Debug /p:PlatformToolset=v143
     
     - name: Publish Artifact
       uses: actions/upload-artifact@v4
