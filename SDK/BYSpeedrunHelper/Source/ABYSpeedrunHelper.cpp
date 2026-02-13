@@ -108,6 +108,7 @@ struct AGolfMinigameState : public AGameState
 AImGUI*     g_pImGui                   = TNULL;
 static auto s_AGolfMiniGameState       = TClass::Find( "AGolfMinigameState", &THookedObject::ms_oClass );
 static auto s_AVeggiePatchDefenderGame = TClass::Find( "AVeggiePatchDefenderGame", &THookedObject::ms_oClass );
+static auto s_AChasingChicksMiniGame   = TClass::Find( "AChasingChicksMiniGame", &THookedObject::ms_oClass );
 static auto s_AChickenCoopDefender     = TClass::Find( "AChickenCoopDefender", &THookedObject::ms_oClass );
 static auto s_ASleepCycleState         = TClass::Find( "ASleepCycleState", &THookedObject::ms_oClass );
 
@@ -203,6 +204,21 @@ MEMBER_HOOK( 0x00621d40, APlayerSimProfile, APlayerSimProfile_Update, void, TFLO
 	CallOriginal( a_flDeltaTime );
 }
 
+struct ABikeRaceMicroGame
+{
+	struct Variant
+	{
+		const TCHAR* pchLevelName;           // 0x00
+		const TCHAR* pchInteriorNetworkName; // 0x04
+		TINT         iNumLaps;               // 0x08
+		TINT         iNumAIPlayers;          // 0x0C
+		TCHAR        PADDING[ 24 ];
+	};
+
+	static constexpr TSIZE NUM_VARIANTS = 6;
+	inline static Variant* ms_aVariants = (Variant*)0x00722eb0;
+};
+
 class ABYSpeedrunHelper : public AModInstance
 {
 public:
@@ -220,7 +236,22 @@ public:
 			InstallHook<ALoadScreen_StopLoading>();
 			InstallHook<AAssetLoader_LoadPlayerCharacter>();
 			InstallHook<APlayerSimProfile_Unknown>();
-			if ( g_bIsFunCategory ) InstallHook<APlayerSimProfile_Update>();
+			
+			if ( g_bIsFunCategory )
+			{
+				// Change protection to make it possible to overwrite variants settings
+				DWORD dwOldProtection;
+				VirtualProtect( ABikeRaceMicroGame::ms_aVariants, sizeof( ABikeRaceMicroGame::Variant ) * ABikeRaceMicroGame::NUM_VARIANTS, PAGE_EXECUTE_READWRITE, &dwOldProtection );
+
+				// For Fun&% category reduce number of laps in the bike race mini game
+				for ( TSIZE i = 0; i < ABikeRaceMicroGame::NUM_VARIANTS; i++ )
+				{
+					ABikeRaceMicroGame::ms_aVariants[ i ].iNumLaps = 1;
+				}
+
+				// Don't waste stamina in main game
+				InstallHook<APlayerSimProfile_Update>();
+			}
 
 			ACollisionInspector::CreateSingleton();
 			ASplitsServer::CreateSingleton();
@@ -275,7 +306,7 @@ public:
 				TSystemManager* pSystemManager = (TSystemManager*)0x007ce640;
 				const TClass*   pStateClass    = pGameStateController->GetCurrentState()->GetClass();
 
-				if ( pStateClass == s_AChickenCoopDefender )
+				if ( pStateClass == s_AChickenCoopDefender || pStateClass == s_AChasingChicksMiniGame )
 				{
 					bSpeedUp = TTRUE;
 					fSpeed   = 2.0f;
