@@ -177,16 +177,30 @@ HOOK( 0x00424a20, AAssetLoader_LoadPlayerCharacter, void, void* a_pProperties )
 	CallOriginal( a_pProperties );
 }
 
-class ASimProfile
-{};
+struct APlayerSimProfile
+{
+	TCHAR  PADDING[ 0x24 ];
+	TFLOAT m_flStamina;           // 0x24
+	TFLOAT m_flMaxStamina;        // 0x28
+	TFLOAT m_flStaminaRaiseSpeed; // 0x2c
+	TFLOAT m_flStaminaWasteSpeed; // 0x30
+	TBOOL  m_bUpdateStamina;      // 0x34
+};
 
-MEMBER_HOOK( 0x0062e2e0, ASimProfile, ASimProfile_Unknown, void, TINT& a_rOut )
+MEMBER_HOOK( 0x0062e2e0, APlayerSimProfile, APlayerSimProfile_Unknown, void, TINT& a_rOut )
 {
 	CallOriginal( a_rOut );
 
 	void* pPlayerProfileManager = *(void**)0x007b493c;
 	if ( g_oSettings.bForceSkin && pPlayerProfileManager )
 		*(CowSkin*)( TUINTPTR( pPlayerProfileManager ) + 0x48 ) = g_oSettings.eCowSkin;
+}
+
+MEMBER_HOOK( 0x00621d40, APlayerSimProfile, APlayerSimProfile_Update, void, TFLOAT a_flDeltaTime )
+{
+	m_bUpdateStamina = TFALSE;
+	m_flStamina      = m_flMaxStamina;
+	CallOriginal( a_flDeltaTime );
 }
 
 class ABYSpeedrunHelper : public AModInstance
@@ -205,7 +219,8 @@ public:
 			InstallHook<ALoadScreen_SetLoadingState>();
 			InstallHook<ALoadScreen_StopLoading>();
 			InstallHook<AAssetLoader_LoadPlayerCharacter>();
-			InstallHook<ASimProfile_Unknown>();
+			InstallHook<APlayerSimProfile_Unknown>();
+			if ( g_bIsFunCategory ) InstallHook<APlayerSimProfile_Update>();
 
 			ACollisionInspector::CreateSingleton();
 			ASplitsServer::CreateSingleton();
