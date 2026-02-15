@@ -1,10 +1,10 @@
 #pragma once
-#include "AGUI2Rectangle.h"
-#include "AGUI2TextureSection.h"
+#include "SDK_T2GUIRectangle.h"
+#include <GUI/T2GUITextureSection.h>
 
 #include <Input/TInputDeviceMouse.h>
 
-class AGUI2MouseCursor : public AGUI2Rectangle
+class AGUI2MouseCursor : public SDK_T2GUIRectangle
 {
 public:
 	enum Acceleration : TUINT32
@@ -24,15 +24,15 @@ public:
 	void MoveCursor( TFLOAT a_fDeltaX, TFLOAT a_fDeltaY );
 
 public:
-	Toshi::TVector2           m_MousePos;
-	Toshi::TVector2           m_CursorCenter;
-	Toshi::TVector2           m_CursorPos;
-	Toshi::TInputDeviceMouse* m_pMouseDevice;
-	AGUI2TextureSection*      m_pPointerUpSection;
-	AGUI2TextureSection*      m_pPointerDownSection;
-	TFLOAT                    m_fCursorAccelerations[ Acceleration_NUMOF ];
-	Acceleration              m_eAccelerationType;
-	TBOOL                     m_bIsMouseDown;
-	Toshi::TVector2           m_RadialFieldPos;
-	TFLOAT                    m_fRadialRadius;
+	Toshi::TVector2             m_MousePos;
+	Toshi::TVector2             m_CursorCenter;
+	Toshi::TVector2             m_CursorPos;
+	Toshi::TInputDeviceMouse*   m_pMouseDevice;
+	Toshi::T2GUITextureSection* m_pPointerUpSection;
+	Toshi::T2GUITextureSection* m_pPointerDownSection;
+	TFLOAT                      m_fCursorAccelerations[ Acceleration_NUMOF ];
+	Acceleration                m_eAccelerationType;
+	TBOOL                       m_bIsMouseDown;
+	Toshi::TVector2             m_RadialFieldPos;
+	TFLOAT                      m_fRadialRadius;
 };

@@ -1,13 +1,14 @@
 #pragma once
 #include "AGameState.h"
 #include "AGameStateControllerEvent.h"
-#include "GUI/AGUI2Rectangle.h"
+#include "GUI/T2GUIRectangle.h"
 
 #include <Toshi/TTask.h>
 #include <Toshi/T2Vector.h>
 #include <ToshiTools/T2DynamicVector.h>
 
-class AGameStateController : public Toshi::TTask
+class AGameStateController
+	: public Toshi::TTask
     , public Toshi::TSingleton<AGameStateController>
 {
 public:
@@ -59,9 +60,9 @@ private:
 	void*                            m_VectorData[ 5 ];
 	Toshi::T2DynamicVector<void*>    m_UnkVector;
 	// ...
-	AGUI2Rectangle m_oOverlay;
-	TUINT16        m_eFlags;
-	TFLOAT         m_fOverlayAlpha;
-	TFLOAT         m_fSoundVolume;
-	TFLOAT         m_fOverlayGoal;
+	Toshi::T2GUIRectangle m_oOverlay;
+	TUINT16               m_eFlags;
+	TFLOAT                m_fOverlayAlpha;
+	TFLOAT                m_fSoundVolume;
+	TFLOAT                m_fOverlayGoal;
 };

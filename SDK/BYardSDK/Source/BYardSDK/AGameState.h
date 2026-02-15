@@ -1,5 +1,5 @@
 #pragma once
-#include "AGUI2Element.h"
+#include "SDK_T2GUIElement.h"
 #include "AInputMap.h"
 
 #include <Toshi/T2DList.h>
@@ -163,6 +163,6 @@ protected:
 	AGameState*                m_pOwnerState;
 	TBOOL                      m_bWasInserted;
 	TBOOL                      m_bIsActivated;
-	AGUI2Element               m_GUIElement;
+	SDK_T2GUIElement               m_GUIElement;
 	TFLOAT                     m_fFOV;
 };

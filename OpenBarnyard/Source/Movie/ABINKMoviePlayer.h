@@ -1,7 +1,7 @@
 #pragma once
 #include "AMoviePlayer.h"
 #include "GUI/AGUI2.h"
-#include "GUI/AGUI2Material.h"
+#include "GUI/T2GUIMaterial.h"
 
 #ifdef TOSHI_SKU_WINDOWS
 #  include "Platform/DX8/TRenderInterface_DX8.h"
@@ -17,17 +17,17 @@ public:
 private:
 	struct Rect
 	{
-		TINT             iPosX;
-		TINT             iPosY;
-		TINT             iWidth;
-		TINT             iHeight;
-		Toshi::TVector2  Pos1;
-		Toshi::TVector2  Pos2;
-		Toshi::TVector2  UV1;
-		Toshi::TVector2  UV2;
-		AGUI2Material*   pMaterial = TNULL;
-		Toshi::TTexture* pTexture  = TNULL;
-		TUINT8*          pData     = TNULL;
+		TINT                  iPosX;
+		TINT                  iPosY;
+		TINT                  iWidth;
+		TINT                  iHeight;
+		Toshi::TVector2       Pos1;
+		Toshi::TVector2       Pos2;
+		Toshi::TVector2       UV1;
+		Toshi::TVector2       UV2;
+		Toshi::T2GUIMaterial* pMaterial = TNULL;
+		Toshi::TTexture*      pTexture  = TNULL;
+		TUINT8*               pData     = TNULL;
 
 		~Rect();
 

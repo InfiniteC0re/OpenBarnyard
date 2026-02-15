@@ -1,10 +1,9 @@
 #pragma once
-#include "AGUI2Context.h"
-#include "AGUI2Element.h"
+#include "SDK_T2GUIContext.h"
+#include "SDK_T2GUIElement.h"
 #include "AGUI2Renderer.h"
 #include "AGUI2TextBox.h"
 #include "AGUI2MouseCursor.h"
-#include "AGUI2TextureSection.h"
 #include "THookedObject.h"
 #include "THookedSingleton.h"
 
@@ -25,15 +24,15 @@ public:
 	}
 
 public:
-	static AGUI2Element*  GetRootElement() { return GetSingletonSafe()->m_pRootElement; }
-	static AGUI2Context*  GetContext() { return *ms_ppCurrentContext; }
-	static AGUI2Renderer* GetRenderer();
+	static SDK_T2GUIElement*  GetRootElement() { return GetSingletonSafe()->m_pRootElement; }
+	static SDK_T2GUIContext*  GetContext() { return *ms_ppCurrentContext; }
+	static SDK_T2GUIRenderer* GetRenderer();
 
 private:
-	inline static AGUI2Context** ms_ppCurrentContext = (AGUI2Context**)0x007cef20;
+	inline static SDK_T2GUIContext** ms_ppCurrentContext = (SDK_T2GUIContext**)0x007cef20;
 
 public:
-	AGUI2Element*    m_pRootElement;
+	SDK_T2GUIElement*    m_pRootElement;
 	AGUI2MouseCursor m_oMouseCursor;
 	TBOOL            m_bShowMouseCursor;
 	AGUI2TextBox     m_oFPS;

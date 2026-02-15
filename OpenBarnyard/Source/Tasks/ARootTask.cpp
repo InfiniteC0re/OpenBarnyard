@@ -9,7 +9,7 @@
 #include "Input/AInputMapManager.h"
 #include "GUI/AGUI2.h"
 #include "GUI/AGUISystem.h"
-#include "GUI/AGUI2TextureSectionManager.h"
+#include "GUI/T2GUITextureSectionManager.h"
 #include "GUI/AFadeManager.h"
 #include "GUI/AGUIPicture.h"
 #include "GameInterface/AGameStateController.h"
@@ -290,7 +290,7 @@ void ARootTask::LoadStartupData()
 
 	TRenderInterface::GetSingleton()->FlushDyingResources();
 	TRenderInterface::GetSingleton()->FlushDyingResources();
-	AGUI2TextureSectionManager::UpdateMaterials();
+	T2GUITextureSectionManager::UpdateMaterials();
 
 	g_oSystemManager.GetScheduler()->CreateTask<AFadeManager>( this )->Create();
 }

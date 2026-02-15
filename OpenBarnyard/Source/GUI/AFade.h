@@ -1,11 +1,11 @@
 #pragma once
-#include "GUI/AGUI2Rectangle.h"
-
 #include <Toshi/TColor.h>
 #include <Toshi/TQList.h>
 #include <Toshi/T2ObjectPool.h>
+#include <GUI/T2GUIRectangle.h>
 
-class AFade : public Toshi::TQList<AFade>::TNode
+class AFade
+	: public Toshi::TQList<AFade>::TNode
 {
 public:
 	friend class AFadeManager;
@@ -51,7 +51,7 @@ public:
 	Color* GetCurrentColor( Color& a_rColor );
 	TBOOL  IsStillFading( TBOOL a_bThrowFadeOver );
 
-	AGUI2Rectangle& GetRectangleElement()
+	Toshi::T2GUIRectangle& GetRectangleElement()
 	{
 		return m_Overlay;
 	}
@@ -66,6 +66,6 @@ private:
 	Color                         m_FadeToColor;
 	TFLOAT                        m_fCurrentTime;
 	TFLOAT                        m_fFadeTime;
-	AGUI2Rectangle                m_Overlay;
+	Toshi::T2GUIRectangle         m_Overlay;
 	Toshi::TEmitter<AFade, TBOOL> m_FadeOverEmitter;
 };

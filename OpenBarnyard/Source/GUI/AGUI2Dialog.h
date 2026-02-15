@@ -1,9 +1,9 @@
 #pragma once
-#include "AGUI2Element.h"
-#include "AGUI2Rectangle.h"
-#include "AGUI2TextureSection.h"
+#include <GUI/T2GUIElement.h>
+#include <GUI/T2GUIRectangle.h>
+#include <GUI/T2GUITextureSection.h>
 
-class AGUI2Dialog : public AGUI2Element
+class AGUI2Dialog : public Toshi::T2GUIElement
 {
 public:
 	// constructors/destructor
@@ -11,7 +11,7 @@ public:
 	~AGUI2Dialog();
 
 	//-----------------------------------------------------------------------------
-	// AGUI2Element
+	// T2GUIElement
 	//-----------------------------------------------------------------------------
 	virtual void Render() OVERRIDE;
 	virtual void SetDimensions( TFLOAT a_fWidth, TFLOAT a_fHeight ) OVERRIDE;
@@ -26,8 +26,8 @@ public:
 	void SetDialogSize( TFLOAT a_fWidth, TFLOAT a_fHeight );
 
 private:
-	AGUI2Element*        m_pFocusElement;
-	AGUI2TextureSection* m_apTexTiles[ AGUI2ATTACHMENT_NUMOF ];
-	AGUI2Rectangle       m_aRectangles[ AGUI2ATTACHMENT_NUMOF ];
-	TBOOL                m_bUseScissor;
+	Toshi::T2GUIElement*        m_pFocusElement;
+	Toshi::T2GUITextureSection* m_apTexTiles[ Toshi::T2GUIATTACHMENT_NUMOF ];
+	Toshi::T2GUIRectangle       m_aRectangles[ Toshi::T2GUIATTACHMENT_NUMOF ];
+	TBOOL                       m_bUseScissor;
 };

@@ -1,9 +1,9 @@
 #pragma once
-#include "AGUI2Rectangle.h"
 #include "GameInterface/AGameState.h"
 
 #include <Toshi/TPString8.h>
 #include <ToshiTools/T2DynamicVector.h>
+#include <GUI/T2GUIRectangle.h>
 
 class AGUISlideshow : public Toshi::TObject
 {
@@ -81,7 +81,7 @@ protected:
 	TFLOAT                                             m_fFadeInTime;
 	TFLOAT                                             m_fFadeOutTime;
 	TFLOAT                                             m_fUnk4;
-	AGUI2Rectangle                                     m_FadeOverlay;
+	Toshi::T2GUIRectangle                              m_FadeOverlay;
 	TBOOL                                              m_bIsAppearing;
 	TBOOL                                              m_bShouldLocalise;
 };

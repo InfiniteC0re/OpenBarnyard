@@ -1,13 +1,14 @@
 #pragma once
-#include "GUI/AGUI2Element.h"
 #include "Input/AInputMapManager.h"
 #include "AGameStateControllerEvent.h"
 #include "Sound/ASound.h"
 
 #include <Toshi/T2DList.h>
 #include <Input/TInputInterface.h>
+#include <GUI/T2GUIElement.h>
 
-class AGameState : public Toshi::TObject
+class AGameState
+	: public Toshi::TObject
     , public Toshi::T2DList<AGameState>::Node
 {
 public:
@@ -140,6 +141,6 @@ protected:
 	AGameState*                m_pOwnerState;
 	TBOOL                      m_bWasInserted;
 	TBOOL                      m_bIsActivated;
-	AGUI2Element               m_GUIElement;
+	Toshi::T2GUIElement        m_GUIElement;
 	TFLOAT                     m_fFOV;
 };

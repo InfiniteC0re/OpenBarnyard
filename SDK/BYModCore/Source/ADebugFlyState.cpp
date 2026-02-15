@@ -4,7 +4,7 @@
 #include <BYardSDK/AGameStateController.h>
 #include <BYardSDK/ACamera.h>
 #include <BYardSDK/AGUI2.h>
-#include <BYardSDK/AGUI2FontManager.h>
+#include <BYardSDK/SDK_T2GUIFontManager.h>
 #include <Input/TInputDeviceKeyboard.h>
 #include <Input/TInputDeviceMouse.h>
 #include <Toshi/T2String16.h>
@@ -32,7 +32,7 @@ ADebugFlyState::ADebugFlyState()
 	TFLOAT fWidth, fHeight;
 	AGUI2::GetSingleton()->GetDimensions( fWidth, fHeight );
 
-	AGUI2Font* pFont = AGUI2FontManager::FindFont( "Rekord18" );
+	SDK_T2GUIFont* pFont = SDK_T2GUIFontManager::FindFont( "Rekord18" );
 	m_pInfoTextBox   = AGUI2TextBox::CreateFromEngine();
 
 	m_pInfoTextBox->Create( pFont, 600.0f );
@@ -40,9 +40,9 @@ ADebugFlyState::ADebugFlyState()
 	m_pInfoTextBox->SetColour( TCOLOR( 255, 255, 255 ) );
 	m_pInfoTextBox->SetTransform( 0.0f, fHeight / 2 - 32.0f );
 	m_pInfoTextBox->SetAlpha( 1.0f );
-	m_pInfoTextBox->SetTextAlign( AGUI2Font::TextAlign_Left );
+	m_pInfoTextBox->SetTextAlign( SDK_T2GUIFont::TextAlign_Left );
 	m_pInfoTextBox->SetInFront();
-	m_pInfoTextBox->SetAttachment( AGUI2Element::Anchor_MiddleLeft, AGUI2Element::Pivot_MiddleLeft );
+	m_pInfoTextBox->SetAttachment( SDK_T2GUIElement::Anchor_MiddleLeft, SDK_T2GUIElement::Pivot_MiddleLeft );
 
 	AGUI2::GetRootElement()->AddChildTail( *m_pInfoTextBox );
 }

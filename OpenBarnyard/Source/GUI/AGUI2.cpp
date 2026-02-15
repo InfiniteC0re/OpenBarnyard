@@ -3,10 +3,10 @@
 #include "Assets/AAssetLoader.h"
 #include "Assets/AMaterialLibraryManager.h"
 #include "Cameras/ACameraManager.h"
-#include "AGUI2FontManager.h"
-#include "AGUI2TextureSectionManager.h"
 
 #include <Toshi/TSystem.h>
+#include <GUI/T2GUIFontManager.h>
+#include <GUI/T2GUITextureSectionManager.h>
 
 #ifdef TOSHI_SKU_WINDOWS
 #  include "Platform/DX8/AGUI2Renderer_DX8.h"
@@ -34,27 +34,30 @@ AGUI2::AGUI2()
 	m_bShowTexturesInfo = TTRUE;
 }
 
+AGUI2::~AGUI2()
+{
+}
+
 // $Barnyard: FUNCTION 006355a0
 TBOOL AGUI2::OnCreate()
 {
-	CreateContext();
-	ms_pCurrentContext->SetRenderer( new AGUI2RendererDX8 );
+	T2GUI::CreateContext()->SetRenderer( new AGUI2RendererDX8 );
 
-	m_pRootElement = ms_pCurrentContext->GetRootElement();
+	m_pRootElement = T2GUI::GetContext()->GetRootElement();
 	m_pRootElement->SetDimensions( 800.0f, 600.0f );
 	m_pRootElement->SetPostRenderCallback( MainPostRenderCallback );
 
-	AGUI2FontManager::Open( "data/gui/fonts.trb" );
-	AGUI2TextureSectionManager::Open( "data/gui/texsec.trb", AAssetLoader::GetAssetTRB( AAssetType_Startup ) );
-	AGUI2TextureSectionManager::CreateMaterials();
+	T2GUIFontManager::Open( "data/gui/fonts.trb" );
+	T2GUITextureSectionManager::Open( "data/gui/texsec.trb", AAssetLoader::GetAssetTRB( AAssetType_Startup ) );
+	T2GUITextureSectionManager::CreateMaterials();
 
-	auto pDebugCanvas = ms_pCurrentContext->GetDebugCanvas();
-	auto pFont        = AGUI2FontManager::FindFont( "Rekord18" );
+	auto pDebugCanvas = T2GUI::GetContext()->GetDebugCanvas();
+	auto pFont        = T2GUIFontManager::FindFont( "Rekord18" );
 
 	// FPS stats
 	m_oFPS.Create( pFont, 600.0f );
-	m_oFPS.SetAttachment( AGUI2ATTACHMENT_TOPLEFT, AGUI2ATTACHMENT_TOPLEFT );
-	m_oFPS.SetTextAlign( AGUI2Font::TextAlign_Left );
+	m_oFPS.SetAttachment( T2GUIATTACHMENT_TOPLEFT, T2GUIATTACHMENT_TOPLEFT );
+	m_oFPS.SetTextAlign( T2GUIFont::TextAlign_Left );
 	m_oFPS.SetTransform( 0.0f, 0.0f );
 
 	if ( m_bShowFPSInfo ) m_oFPS.Show();
@@ -63,8 +66,8 @@ TBOOL AGUI2::OnCreate()
 
 	// Player stats
 	m_oPlayerInfo.Create( pFont, 600.0f );
-	m_oPlayerInfo.SetAttachment( AGUI2ATTACHMENT_TOPLEFT, AGUI2ATTACHMENT_TOPLEFT );
-	m_oPlayerInfo.SetTextAlign( AGUI2Font::TextAlign_Left );
+	m_oPlayerInfo.SetAttachment( T2GUIATTACHMENT_TOPLEFT, T2GUIATTACHMENT_TOPLEFT );
+	m_oPlayerInfo.SetTextAlign( T2GUIFont::TextAlign_Left );
 	m_oPlayerInfo.SetTransform( 0.0f, 24.0f );
 
 	if ( m_bShowPlayerInfo ) m_oPlayerInfo.Show();
@@ -73,8 +76,8 @@ TBOOL AGUI2::OnCreate()
 
 	// Textures stats
 	m_oTexturesInfo.Create( pFont, 600.0f );
-	m_oTexturesInfo.SetAttachment( AGUI2ATTACHMENT_TOPLEFT, AGUI2ATTACHMENT_TOPLEFT );
-	m_oTexturesInfo.SetTextAlign( AGUI2Font::TextAlign_Left );
+	m_oTexturesInfo.SetAttachment( T2GUIATTACHMENT_TOPLEFT, T2GUIATTACHMENT_TOPLEFT );
+	m_oTexturesInfo.SetTextAlign( T2GUIFont::TextAlign_Left );
 	m_oTexturesInfo.SetTransform( 0.0f, 48.0f );
 
 	if ( m_bShowTexturesInfo ) m_oTexturesInfo.Show();
@@ -83,8 +86,8 @@ TBOOL AGUI2::OnCreate()
 
 	// Memory stats
 	m_oMemStats.Create( pFont, 600.0f );
-	m_oMemStats.SetAttachment( AGUI2ATTACHMENT_TOPLEFT, AGUI2ATTACHMENT_TOPLEFT );
-	m_oMemStats.SetTextAlign( AGUI2Font::TextAlign_Left );
+	m_oMemStats.SetAttachment( T2GUIATTACHMENT_TOPLEFT, T2GUIATTACHMENT_TOPLEFT );
+	m_oMemStats.SetTextAlign( T2GUIFont::TextAlign_Left );
 	m_oMemStats.SetTransform( 0.0f, 72.0f );
 
 	if ( m_bShowMemStatsInfo ) m_oMemStats.Show();
@@ -224,7 +227,7 @@ TBOOL AGUI2::OnUpdate( TFLOAT a_fDeltaTime )
 	}
 
 	m_oMouseCursor.Update();
-	ms_pCurrentContext->Tick( a_fDeltaTime );
+	T2GUI::GetContext()->Tick( a_fDeltaTime );
 
 	return TTRUE;
 }
@@ -233,18 +236,6 @@ TBOOL AGUI2::OnUpdate( TFLOAT a_fDeltaTime )
 void AGUI2::GetDimensions( TFLOAT& a_rWidth, TFLOAT& a_rHeight )
 {
 	m_pRootElement->GetDimensions( a_rWidth, a_rHeight );
-}
-
-// $Barnyard: FUNCTION 006c47c0
-void AGUI2::CreateContext()
-{
-	ms_pCurrentContext = new AGUI2Context;
-}
-
-AGUI2Renderer* AGUI2::GetRenderer()
-{
-	TASSERT( ms_pCurrentContext != TNULL );
-	return ms_pCurrentContext->GetRenderer();
 }
 
 // $Barnyard: FUNCTION 00635410

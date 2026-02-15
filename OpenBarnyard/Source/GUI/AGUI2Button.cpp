@@ -1,12 +1,15 @@
 #include "pch.h"
 #include "AGUI2Button.h"
-#include "AGUI2TextureSectionManager.h"
+
+#include <GUI/T2GUITextureSectionManager.h>
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
 // Note: Should be the last include!
 //-----------------------------------------------------------------------------
 #include <Core/TMemoryDebugOn.h>
+
+TOSHI_NAMESPACE_USING
 
 // $Barnyard: FUNCTION 00640020
 AGUI2Button::AGUI2Button()
@@ -34,7 +37,7 @@ AGUI2Button::~AGUI2Button()
 }
 
 // $Barnyard: FUNCTION 00640490
-void AGUI2Button::Create( AGUI2Font* a_pFont, TFLOAT a_fWidth, const TWCHAR* a_wszText, TFLOAT a_fGap )
+void AGUI2Button::Create( T2GUIFont* a_pFont, TFLOAT a_fWidth, const TWCHAR* a_wszText, TFLOAT a_fGap )
 {
 	TVALIDPTR( a_pFont );
 	TVALIDPTR( a_wszText );
@@ -51,8 +54,8 @@ void AGUI2Button::Create( AGUI2Font* a_pFont, TFLOAT a_fWidth, const TWCHAR* a_w
 	m_oText.SetText( a_wszText );
 	AddChildTail( m_oText );
 
-	m_oText.SetAttachment( AGUI2ATTACHMENT_MIDDLECENTER, AGUI2ATTACHMENT_MIDDLECENTER );
-	m_oText.SetTextAlign( AGUI2Font::TextAlign_Center );
+	m_oText.SetAttachment( T2GUIATTACHMENT_MIDDLECENTER, T2GUIATTACHMENT_MIDDLECENTER );
+	m_oText.SetTextAlign( T2GUIFont::TextAlign_Center );
 }
 
 // $Barnyard: FUNCTION 00640380
@@ -60,14 +63,14 @@ void AGUI2Button::SetImage( const TCHAR* a_szTexSec, TFLOAT a_fScaleX, TFLOAT a_
 {
 	TVALIDPTR( a_szTexSec );
 
-	AGUI2TextureSection* pTexSec = AGUI2TextureSectionManager::GetTextureSection( a_szTexSec );
+	T2GUITextureSection* pTexSec = T2GUITextureSectionManager::GetTextureSection( a_szTexSec );
 	TVALIDPTR( pTexSec );
 
 	TFLOAT fHeight = m_oText.GetHeight() * a_fScaleY;
 	TFLOAT fWidth  = m_oText.GetWidth() * a_fScaleX;
 	m_oBackgroundRect.SetDimensions( fWidth, fHeight );
 	m_oBackgroundRect.SetTextureSection( pTexSec );
-	m_oBackgroundRect.SetAttachment( AGUI2ATTACHMENT_MIDDLECENTER, AGUI2ATTACHMENT_MIDDLECENTER );
+	m_oBackgroundRect.SetAttachment( T2GUIATTACHMENT_MIDDLECENTER, T2GUIATTACHMENT_MIDDLECENTER );
 	LinkChildBefore( m_oBackgroundRect, m_oText );
 }
 

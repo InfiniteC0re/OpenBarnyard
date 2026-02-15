@@ -2,7 +2,7 @@
 #include "AOptionsState.h"
 #include "Sound/ASoundManager.h"
 #include "SoundBank/ui.h"
-#include "GUI/AGUI2FontManager.h"
+#include "GUI/T2GUIFontManager.h"
 #include "Locale/ALocaleManager.h"
 #include "AGameStateController.h"
 #include "AAudioOptionsState.h"
@@ -47,7 +47,7 @@ TPSTRING8_DECLARE( DialogInputMap );
 void AOptionsState::OnInsertion()
 {
 	SetInputMap( TPS8( DialogInputMap ) );
-	AGUI2Font* pFont = AGUI2FontManager::FindFont( AGUI2STYLE_FONT_PRIMARY );
+	T2GUIFont* pFont = T2GUIFontManager::FindFont( AGUI2STYLE_FONT_PRIMARY );
 
 	for ( TINT i = 0; i < OPTIONSBUTTON_NUMOF; i++ )
 	{

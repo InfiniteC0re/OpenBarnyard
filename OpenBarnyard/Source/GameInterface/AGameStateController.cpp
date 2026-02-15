@@ -39,7 +39,7 @@ TBOOL AGameStateController::OnCreate()
 	AGUI2::GetSingleton()->GetDimensions( fWidth, fHeight );
 
 	m_oOverlay.SetDimensions( fWidth, fHeight );
-	m_oOverlay.SetAttachment( AGUI2ATTACHMENT_BOTTOMCENTER, AGUI2ATTACHMENT_BOTTOMCENTER );
+	m_oOverlay.SetAttachment( T2GUIATTACHMENT_BOTTOMCENTER, T2GUIATTACHMENT_BOTTOMCENTER );
 	m_oOverlay.SetInFront();
 	m_oOverlay.Hide();
 

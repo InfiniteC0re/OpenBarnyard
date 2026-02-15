@@ -1,7 +1,8 @@
 #pragma once
 #include "AGUI2MenuGrid.h"
-#include "AGUI2Rectangle.h"
 #include "AGUI2TextBox.h"
+
+#include <GUI/T2GUIRectangle.h>
 
 class AGUI2MenuGridTextItem : public AGUI2MenuGridItem
 {
@@ -9,7 +10,7 @@ public:
 	AGUI2MenuGridTextItem();
 	~AGUI2MenuGridTextItem();
 
-	void Create( AGUI2Font* a_pFont, TFLOAT a_fWidth, const TWCHAR* a_wszText, TFLOAT a_fGap );
+	void Create( Toshi::T2GUIFont* a_pFont, TFLOAT a_fWidth, const TWCHAR* a_wszText, TFLOAT a_fGap );
 
 	void SetId( TINT a_iID ) { m_iID = a_iID; }
 	TINT GetId() const { return m_iID; }
@@ -32,7 +33,7 @@ public:
 	AGUI2TextBox& GetTextBox() { return m_oTextBox; }
 
 	//-----------------------------------------------------------------------------
-	// AGUI2Element
+	// T2GUIElement
 	//-----------------------------------------------------------------------------
 	virtual void SetDimensions( TFLOAT a_fWidth, TFLOAT a_fHeight ) OVERRIDE;
 	virtual void SetAlpha( TFLOAT a_fAlpha ) OVERRIDE;
@@ -48,23 +49,23 @@ public:
 	virtual TFLOAT GetFlowOffset() OVERRIDE;
 
 private:
-	TINT           m_iID;
-	TBOOL          m_bScaleOnFocus;
-	TBOOL          m_bFocused;
-	TFLOAT         m_fRectangle1Width;
-	TFLOAT         m_fRectangle1Height;
-	TBOOL          m_bUseRectangle1;
-	TINT           m_Unk1;
-	AGUI2Rectangle m_oRectangle1;
-	TUINT          m_uiFocusedColour;
-	TUINT          m_uiEnabledColour;
-	TUINT          m_uiDisabledColour;
-	TFLOAT         m_fFocusedScale;
-	TFLOAT         m_fScale;
-	AGUI2Font*     m_pFont;
-	AGUI2TextBox   m_oTextBox;
-	TFLOAT         m_fGap;
-	TWCHAR*        m_wszText;
-	TFLOAT         m_fWidth;
-	AGUI2Rectangle m_oRectangle2;
+	TINT                  m_iID;
+	TBOOL                 m_bScaleOnFocus;
+	TBOOL                 m_bFocused;
+	TFLOAT                m_fRectangle1Width;
+	TFLOAT                m_fRectangle1Height;
+	TBOOL                 m_bUseRectangle1;
+	TINT                  m_Unk1;
+	Toshi::T2GUIRectangle m_oRectangle1;
+	TUINT                 m_uiFocusedColour;
+	TUINT                 m_uiEnabledColour;
+	TUINT                 m_uiDisabledColour;
+	TFLOAT                m_fFocusedScale;
+	TFLOAT                m_fScale;
+	Toshi::T2GUIFont*     m_pFont;
+	AGUI2TextBox          m_oTextBox;
+	TFLOAT                m_fGap;
+	TWCHAR*               m_wszText;
+	TFLOAT                m_fWidth;
+	Toshi::T2GUIRectangle m_oRectangle2;
 };

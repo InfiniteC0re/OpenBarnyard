@@ -213,6 +213,32 @@ AModelInstance* AModelRepos::InstantiateNewModel( const Toshi::TPString8& a_rNam
 // $Barnyard: FUNCTION 00612f50
 void AModelRepos::DestroyModelInstance( AModelInstance* a_pInstance )
 {
+#ifdef BARNYARD_COMMUNITY_PATCH
+	// Fixes use-after-free
+
+	AModel* pModel = a_pInstance->GetModel();
+
+	{
+		// Remove from the list of all models
+		auto it = m_AllModels.FindByValue( pModel );
+
+		if ( m_AllModels.IsValid( it ) )
+			pModel->DestroyInstance( a_pInstance );
+	}
+
+	{
+		// Remove from the list of used models
+		auto it = m_UsedModels.FindByValue( pModel );
+
+		if ( m_UsedModels.IsValid( it ) )
+		{
+			pModel->DestroyInstance( a_pInstance );
+
+			if ( pModel->GetNumInstances() <= 0 )
+				MarkModelUnused( pModel );
+		}
+	}
+#else
 	{
 		// Remove from the list of all models
 		auto it = m_AllModels.FindByValue( a_pInstance->GetModel() );
@@ -233,12 +259,12 @@ void AModelRepos::DestroyModelInstance( AModelInstance* a_pInstance )
 			AModel* pModel = it->GetSecond();
 			pModel->DestroyInstance( a_pInstance );
 
-			if ( pModel->GetNumInstances() < 1 )
-			{
+			if ( pModel->GetNumInstances() <= 0 )
 				MarkModelUnused( pModel );
-			}
 		}
 	}
+#endif
+	
 }
 
 // $Barnyard: FUNCTION 00612c90

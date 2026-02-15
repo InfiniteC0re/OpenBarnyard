@@ -1,9 +1,10 @@
 #include "pch.h"
 #include "AGUISystem.h"
-#include "AGUI2TextureSectionManager.h"
 #include "Render/ARenderer.h"
 #include "Memory/AMemory.h"
 #include "Terrain/ATerrainInterface.h"
+
+#include <GUI/T2GUITextureSectionManager.h>
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.

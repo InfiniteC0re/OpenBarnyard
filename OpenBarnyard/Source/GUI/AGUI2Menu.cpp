@@ -52,7 +52,7 @@ void AGUI2Menu::Update( TFLOAT a_fDeltaTime )
 {
 	if ( m_bMouseStateDirty )
 	{
-		AGUI2Transform oElementInvTransform;
+		T2GUITransform oElementInvTransform;
 
 		if ( m_pLastMenuItem != TNULL )
 		{
@@ -298,7 +298,7 @@ void AGUI2Menu::ReflowChildrenVertically()
 
 				TFLOAT fItemPosY = fItemHeight * 0.5f + pMenuItem->GetFlowVisualOffset() + fOffsetY;
 				pMenuItem->GetTransform().SetTranslation( 0.0f, fItemPosY );
-				pMenuItem->SetAttachment( AGUI2ATTACHMENT_TOPCENTER, AGUI2ATTACHMENT_MIDDLECENTER );
+				pMenuItem->SetAttachment( T2GUIATTACHMENT_TOPCENTER, T2GUIATTACHMENT_MIDDLECENTER );
 
 				m_fWidth = TMath::Max( m_fWidth, fItemWidth );
 				fOffsetY = fItemHeight * 0.5f + pMenuItem->GetFlowOffset() + fItemPosY + m_fItemSpacing;
@@ -357,7 +357,7 @@ void AGUI2Menu::SetMenuAlpha( TFLOAT a_fAlpha, TFLOAT a_fShadowAlpha /* = -1.0f*
 		}
 	}
 
-	AGUI2Element::SetAlpha( a_fAlpha );
+	T2GUIElement::SetAlpha( a_fAlpha );
 }
 
 void AGUI2Menu::ActivateFocusedButton()

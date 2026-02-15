@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "AGUI2MouseCursor.h"
-#include "AGUI2TextureSectionManager.h"
+#include "SDK_T2GUITextureSectionManager.h"
 #include "AGUI2.h"
 #include "SDKHooks.h"
 

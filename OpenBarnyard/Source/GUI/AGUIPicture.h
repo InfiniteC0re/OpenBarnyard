@@ -1,8 +1,8 @@
 #pragma once
-#include "AGUI2Material.h"
-
 #include <Math/TVector2.h>
 #include <Toshi/TPString8.h>
+
+#include <GUI/T2GUIMaterial.h>
 
 class AGUIPicture : public Toshi::TObject
 {
@@ -23,17 +23,17 @@ public:
 
 	struct Rectangle
 	{
-		Toshi::TVector2 Pos1;
-		Toshi::TVector2 Pos2;
-		Toshi::TVector2 UV1;
-		Toshi::TVector2 UV2;
-		AGUI2Material** ppMaterial;
+		Toshi::TVector2        Pos1;
+		Toshi::TVector2        Pos2;
+		Toshi::TVector2        UV1;
+		Toshi::TVector2        UV2;
+		Toshi::T2GUIMaterial** ppMaterial;
 	};
 
 	struct Image
 	{
-		AGUI2Material*   pMaterial;
-		Toshi::TTexture* pTexture;
+		Toshi::T2GUIMaterial* pMaterial;
+		Toshi::TTexture*      pTexture;
 	};
 
 public:

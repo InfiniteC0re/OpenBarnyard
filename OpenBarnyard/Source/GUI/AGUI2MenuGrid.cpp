@@ -74,7 +74,7 @@ void AGUI2MenuGrid::AddMenuGridItem( AGUI2MenuGridItem& a_rMenuItem )
 	if ( m_vecMaxItemDimensions.y < fItemHeight )
 		m_vecMaxItemDimensions.y = fItemHeight;
 
-	a_rMenuItem.SetAttachment( AGUI2ATTACHMENT_TOPLEFT, AGUI2ATTACHMENT_TOPLEFT );
+	a_rMenuItem.SetAttachment( T2GUIATTACHMENT_TOPLEFT, T2GUIATTACHMENT_TOPLEFT );
 }
 
 // $Barnyard: FUNCTION 0063f080
@@ -130,18 +130,18 @@ void AGUI2MenuGrid::ReflowChildren()
 	}
 
 	// Calculate menu dimensions
-	AGUI2Element::SetDimensions( 0.0f, 0.0f );
+	T2GUIElement::SetDimensions( 0.0f, 0.0f );
 
 	// Width
 	for ( TINT i = 0; i < m_iNumColumns; i++ )
-		AGUI2Element::SetWidth( fMaxItemWidth * m_pColumnsData[ i ] + AGUI2Element::GetWidth() + m_fColumnGap );
+		T2GUIElement::SetWidth( fMaxItemWidth * m_pColumnsData[ i ] + T2GUIElement::GetWidth() + m_fColumnGap );
 
 	// Height
 	for ( TINT i = 0; i < m_iNumRows; i++ )
-		AGUI2Element::SetHeight( fMaxItemHeight * m_pRowsData[ i ] + AGUI2Element::GetHeight() + m_fRowGap );
+		T2GUIElement::SetHeight( fMaxItemHeight * m_pRowsData[ i ] + T2GUIElement::GetHeight() + m_fRowGap );
 
-	AGUI2Element::SetWidth( AGUI2Element::GetWidth() - m_fColumnGap );
-	AGUI2Element::SetHeight( AGUI2Element::GetHeight() - m_fRowGap );
+	T2GUIElement::SetWidth( T2GUIElement::GetWidth() - m_fColumnGap );
+	T2GUIElement::SetHeight( T2GUIElement::GetHeight() - m_fRowGap );
 }
 
 TBOOL AGUI2MenuGrid::TriggerButtonPress( AGUI2MenuGridItem& a_rMenuItem )
@@ -191,7 +191,7 @@ void AGUI2MenuGrid::Update( TFLOAT a_fDeltaTime )
 {
 	if ( m_bMouseStateDirty )
 	{
-		AGUI2Transform oElementInvTransform;
+		T2GUITransform oElementInvTransform;
 
 		if ( m_pLastMenuItem != TNULL )
 		{
@@ -322,7 +322,7 @@ TBOOL AGUI2MenuGrid::ProcessInputCommand( AInputCommand a_eCommand, const Toshi:
 
 	if ( m_eActionFlags & ACTIONFLAGS_MOUSEUPDATED )
 	{
-		AGUI2Transform oElementInvTransform;
+		T2GUITransform oElementInvTransform;
 
 		AGUI2MenuGridItem* pItem = m_pLastMenuItem;
 		while ( TTRUE )

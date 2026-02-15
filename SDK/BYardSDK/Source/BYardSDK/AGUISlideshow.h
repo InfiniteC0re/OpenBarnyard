@@ -1,6 +1,6 @@
 #pragma once
 #include "AInputMap.h"
-#include "AGUI2Rectangle.h"
+#include "SDK_T2GUIRectangle.h"
 
 #include <Toshi/TPString8.h>
 #include <Input/TInputInterface.h>
@@ -58,7 +58,7 @@ public:
 	TFLOAT                                             m_fFadeInTime;
 	TFLOAT                                             m_fFadeOutTime;
 	TFLOAT                                             m_fUnk4;
-	AGUI2Rectangle                                     m_FadeOverlay;
+	SDK_T2GUIRectangle                                     m_FadeOverlay;
 	TBOOL                                              m_bIsAppearing;
 	TBOOL                                              m_bShouldLocalise;
 };

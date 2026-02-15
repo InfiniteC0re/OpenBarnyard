@@ -9,10 +9,10 @@
 #include "BYardSDK/SDKHooks.h"
 
 #include "BYardSDK/AGUI2.h"
-#include "BYardSDK/AGUI2Element.h"
-#include "BYardSDK/AGUI2Rectangle.h"
+#include "BYardSDK/SDK_T2GUIElement.h"
+#include "BYardSDK/SDK_T2GUIRectangle.h"
 #include "BYardSDK/AGUI2TextBox.h"
-#include "BYardSDK/AGUI2FontManager.h"
+#include "BYardSDK/SDK_T2GUIFontManager.h"
 #include "BYardSDK/AGUISlideshow.h"
 #include "BYardSDK/THookedRenderD3DInterface.h"
 

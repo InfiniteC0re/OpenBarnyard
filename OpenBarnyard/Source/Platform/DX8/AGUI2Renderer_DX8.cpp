@@ -3,6 +3,7 @@
 
 #include "Assets/AMaterialLibraryManager.h"
 #include "GUI/AGUI2.h"
+#include "GUI/AGUI2Material.h"
 
 #ifdef TOSHI_SKU_WINDOWS
 #  include "Platform/DX8/TTextureResourceHAL_DX8.h"
@@ -20,7 +21,7 @@ TOSHI_NAMESPACE_USING
 // $Barnyard: FUNCTION 0064e5c0
 AGUI2RendererDX8::AGUI2RendererDX8()
 {
-	m_pTransforms       = new AGUI2Transform[ MAX_NUM_TRANSFORMS ];
+	m_pTransforms       = new T2GUITransform[ MAX_NUM_TRANSFORMS ];
 	m_iTransformCount   = 0;
 	m_bIsTransformDirty = TFALSE;
 }
@@ -31,14 +32,14 @@ AGUI2RendererDX8::~AGUI2RendererDX8()
 	delete[] m_pTransforms;
 }
 
-AGUI2Material* AGUI2RendererDX8::CreateMaterial( const TCHAR* a_szTextureName )
+T2GUIMaterial* AGUI2RendererDX8::CreateMaterial( const TCHAR* a_szTextureName )
 {
 	return CreateMaterial(
 	    GetTexture( a_szTextureName )
 	);
 }
 
-AGUI2Material* AGUI2RendererDX8::CreateMaterial( Toshi::TTexture* a_pTexture )
+T2GUIMaterial* AGUI2RendererDX8::CreateMaterial( Toshi::TTexture* a_pTexture )
 {
 	auto pMaterial = new AGUI2Material;
 
@@ -49,11 +50,11 @@ AGUI2Material* AGUI2RendererDX8::CreateMaterial( Toshi::TTexture* a_pTexture )
 }
 
 // $Barnyard: FUNCTION 0064e720
-void AGUI2RendererDX8::DestroyMaterial( AGUI2Material* a_pMaterial )
+void AGUI2RendererDX8::DestroyMaterial( T2GUIMaterial* a_pMaterial )
 {
 	if ( a_pMaterial )
 	{
-		a_pMaterial->OnDestroy();
+		TSTATICCAST( AGUI2Material, a_pMaterial )->OnDestroy();
 		delete a_pMaterial;
 	}
 }
@@ -65,15 +66,15 @@ Toshi::TTexture* AGUI2RendererDX8::GetTexture( const TCHAR* a_szTextureName )
 }
 
 // $Barnyard: FUNCTION 0064e740
-TUINT AGUI2RendererDX8::GetWidth( AGUI2Material* a_pMaterial )
+TUINT AGUI2RendererDX8::GetWidth( T2GUIMaterial* a_pMaterial )
 {
-	return a_pMaterial->m_pTextureResource->GetWidth();
+	return TSTATICCAST( AGUI2Material, a_pMaterial )->m_pTextureResource->GetWidth();
 }
 
 // $Barnyard: FUNCTION 0064e750
-TUINT AGUI2RendererDX8::GetHeight( AGUI2Material* a_pMaterial )
+TUINT AGUI2RendererDX8::GetHeight( T2GUIMaterial* a_pMaterial )
 {
-	return a_pMaterial->m_pTextureResource->GetHeight();
+	return TSTATICCAST( AGUI2Material, a_pMaterial )->m_pTextureResource->GetHeight();
 }
 
 // $Barnyard: FUNCTION 0064f490
@@ -248,7 +249,7 @@ void AGUI2RendererDX8::PrepareRenderer()
 }
 
 // $Barnyard: FUNCTION 0064eb90
-void AGUI2RendererDX8::SetMaterial( AGUI2Material* a_pMaterial )
+void AGUI2RendererDX8::SetMaterial( T2GUIMaterial* a_pMaterial )
 {
 	auto pRender    = TSTATICCAST( TRenderD3DInterface, TRenderInterface::GetSingleton() );
 	auto pD3DDevice = pRender->GetDirect3DDevice();
@@ -281,13 +282,14 @@ void AGUI2RendererDX8::SetMaterial( AGUI2Material* a_pMaterial )
 	}
 	else
 	{
-		auto pTexture = TSTATICCAST( Toshi::TTextureResourceHAL, a_pMaterial->m_pTextureResource );
+		auto pMaterial = TSTATICCAST( AGUI2Material, a_pMaterial );
+		auto pTexture  = TSTATICCAST( Toshi::TTextureResourceHAL, pMaterial->m_pTextureResource );
 		pTexture->Validate();
 
 		pD3DDevice->SetTexture( 0, pTexture->GetD3DTexture() );
 		pRender->SetTextureAddress( 0, pTexture->GetAddressing(), TEXCOORD_UV );
 
-		switch ( a_pMaterial->m_eBlendState )
+		switch ( pMaterial->m_eBlendState )
 		{
 			case 0:
 				pD3DDevice->SetRenderState( D3DRS_ALPHABLENDENABLE, 0 );
@@ -384,12 +386,12 @@ void AGUI2RendererDX8::SetMaterial( AGUI2Material* a_pMaterial )
 				break;
 		}
 
-		if ( a_pMaterial->m_eTextureAddress == 1 )
+		if ( pMaterial->m_eTextureAddress == 1 )
 		{
 			pD3DDevice->SetTextureStageState( 0, D3DTSS_ADDRESSU, D3DTADDRESS_CLAMP );
 			pD3DDevice->SetTextureStageState( 0, D3DTSS_ADDRESSV, D3DTADDRESS_CLAMP );
 		}
-		else if ( a_pMaterial->m_eTextureAddress == 2 )
+		else if ( pMaterial->m_eTextureAddress == 2 )
 		{
 			pD3DDevice->SetTextureStageState( 0, D3DTSS_ADDRESSU, D3DTADDRESS_MIRROR );
 			pD3DDevice->SetTextureStageState( 0, D3DTSS_ADDRESSV, D3DTADDRESS_MIRROR );
@@ -409,21 +411,21 @@ void AGUI2RendererDX8::SetMaterial( AGUI2Material* a_pMaterial )
 		pD3DDevice->SetTextureStageState( 0, D3DTSS_ALPHAOP, 4 );
 		pD3DDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG1, 2 );
 		pD3DDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG2, 0 );
-		pD3DDevice->SetTextureStageState( 0, D3DTSS_MIPMAPLODBIAS, a_pMaterial->m_iMipMapLODBias );
+		pD3DDevice->SetTextureStageState( 0, D3DTSS_MIPMAPLODBIAS, pMaterial->m_iMipMapLODBias );
 		pD3DDevice->SetTextureStageState( 1, D3DTSS_COLOROP, 1 );
 		pD3DDevice->SetTextureStageState( 1, D3DTSS_ALPHAOP, 1 );
-		m_pMaterial = a_pMaterial;
+		m_pMaterial = pMaterial;
 	}
 }
 
 // $Barnyard: FUNCTION 0064f1a0
-void AGUI2RendererDX8::PushTransform( const AGUI2Transform& a_rTransform, const Toshi::TVector2& a_rVec1, const Toshi::TVector2& a_rVec2 )
+void AGUI2RendererDX8::PushTransform( const T2GUITransform& a_rTransform, const Toshi::TVector2& a_rVec1, const Toshi::TVector2& a_rVec2 )
 {
 	TASSERT( m_iTransformCount < MAX_NUM_TRANSFORMS );
 	auto pTransform = m_pTransforms + ( m_iTransformCount++ );
 
-	AGUI2Transform transform1 = *pTransform;
-	AGUI2Transform transform2 = a_rTransform;
+	T2GUITransform transform1 = *pTransform;
+	T2GUITransform transform2 = a_rTransform;
 
 	TVector2 vec;
 	transform1.Transform( vec, a_rVec1 );
@@ -432,7 +434,7 @@ void AGUI2RendererDX8::PushTransform( const AGUI2Transform& a_rTransform, const 
 	transform2.Transform( vec, a_rVec2 );
 	transform2.m_vecTranslation = { vec.x, vec.y };
 
-	AGUI2Transform::Multiply( m_pTransforms[ m_iTransformCount ], transform1, transform2 );
+	T2GUITransform::Multiply( m_pTransforms[ m_iTransformCount ], transform1, transform2 );
 	m_bIsTransformDirty = TTRUE;
 }
 
@@ -445,7 +447,7 @@ void AGUI2RendererDX8::PopTransform()
 }
 
 // $Barnyard: FUNCTION 0064f2a0
-void AGUI2RendererDX8::SetTransform( const AGUI2Transform& a_rTransform )
+void AGUI2RendererDX8::SetTransform( const T2GUITransform& a_rTransform )
 {
 	m_pTransforms[ m_iTransformCount ] = a_rTransform;
 	m_bIsTransformDirty                = TTRUE;
@@ -730,7 +732,7 @@ void AGUI2RendererDX8::ResetZCoordinate()
 void AGUI2RendererDX8::UpdateTransform()
 {
 	auto            pRender    = TSTATICCAST( TRenderD3DInterface, TRenderInterface::GetSingleton() );
-	AGUI2Transform* pTransform = m_pTransforms + m_iTransformCount;
+	T2GUITransform* pTransform = m_pTransforms + m_iTransformCount;
 
 	TMatrix44 worldMatrix;
 	worldMatrix.m_f11 = pTransform->m_aMatrixRows[ 0 ].x;

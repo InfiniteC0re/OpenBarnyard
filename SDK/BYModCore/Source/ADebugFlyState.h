@@ -1,6 +1,6 @@
 #pragma once
 #include <BYardSDK/AGameState.h>
-#include <BYardSDK/AGUI2Font.h>
+#include <BYardSDK/SDK_T2GUIFont.h>
 #include <BYardSDK/AGUI2TextBox.h>
 #include <Input/TInputInterface.h>
 

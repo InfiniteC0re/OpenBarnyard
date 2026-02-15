@@ -1,11 +1,12 @@
 #pragma once
-#include "AGUI2Element.h"
 #include "Input/AInputMap.h"
 #include "Sound/ASound.h"
 
+#include <GUI/T2GUIElement.h>
+
 class AGUI2MenuItem;
 
-class AGUI2Menu : public AGUI2Element
+class AGUI2Menu : public Toshi::T2GUIElement
 {
 public:
 	using ACTIONFLAGS = TUINT32;
@@ -84,7 +85,7 @@ private:
 	AGUI2MenuItem*   m_pHoveredMenuItem;
 };
 
-class AGUI2MenuItem : public AGUI2Element
+class AGUI2MenuItem : public Toshi::T2GUIElement
 {
 public:
 	friend class AGUI2Menu;
@@ -110,7 +111,7 @@ public:
 	AGUI2MenuItem* GetPrevMenuItem() const { return m_pPrevMenuItem; }
 
 	//-----------------------------------------------------------------------------
-	// AGUI2Element
+	// T2GUIElement
 	//-----------------------------------------------------------------------------
 	virtual void SetAlpha( TFLOAT a_fAlpha ) OVERRIDE;
 

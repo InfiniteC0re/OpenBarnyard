@@ -30,7 +30,9 @@ project "Toshi"
 		"Source/Thread/**.h",
 		"Source/Thread/**.cpp",
 		"Source/Plugins/**.h",
-		"Source/Plugins/**.cpp"
+		"Source/Plugins/**.cpp",
+		"Source/GUI/**.h",
+		"Source/GUI/**.cpp"
 	}
 
 	includedirs

@@ -28,13 +28,13 @@ private:
 	inline static TFLOAT ms_fBarScale = 0.5f;
 
 private:
-	TINT               m_iID;
-	AGUI2Rectangle     m_aArrows[ 2 ];
-	AGUI2Rectangle     m_aBars[ 5 ];
-	ArrowFocusCallback m_fnArrowFocusCallback;
-	void*              m_pCallbackUserData;
-	TBOOL              m_bMouseDirty;
-	TINT               m_iLastPressedArrowIndex;
+	TINT                  m_iID;
+	Toshi::T2GUIRectangle m_aArrows[ 2 ];
+	Toshi::T2GUIRectangle m_aBars[ 5 ];
+	ArrowFocusCallback    m_fnArrowFocusCallback;
+	void*                 m_pCallbackUserData;
+	TBOOL                 m_bMouseDirty;
+	TINT                  m_iLastPressedArrowIndex;
 };
 
 class AAudioOptionsState : public ABYardMenuState

@@ -37,7 +37,7 @@ AGUI2MenuGridTextItem::~AGUI2MenuGridTextItem()
 }
 
 // $Barnyard: FUNCTION 0063fa80
-void AGUI2MenuGridTextItem::Create( AGUI2Font* a_pFont, TFLOAT a_fWidth, const TWCHAR* a_wszText, TFLOAT a_fGap )
+void AGUI2MenuGridTextItem::Create( T2GUIFont* a_pFont, TFLOAT a_fWidth, const TWCHAR* a_wszText, TFLOAT a_fGap )
 {
 	m_fWidth = a_fWidth;
 	m_fGap   = a_fGap;
@@ -60,7 +60,7 @@ void AGUI2MenuGridTextItem::Create( AGUI2Font* a_pFont, TFLOAT a_fWidth, const T
 	m_oTextBox.SetText( m_wszText );
 	AddChildTail( m_oTextBox );
 
-	m_oTextBox.SetTextAlign( AGUI2Font::TextAlign_Center );
+	m_oTextBox.SetTextAlign( T2GUIFont::TextAlign_Center );
 	AGUI2MenuGridItem::SetDimensions( m_oTextBox.GetWidth(), m_oTextBox.GetHeight() );
 }
 

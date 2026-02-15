@@ -1,10 +1,10 @@
 #pragma once
-#include "AGUI2Element.h"
-#include "AGUI2Font.h"
+#include "SDK_T2GUIElement.h"
+#include "SDK_T2GUIFont.h"
 
 #include <Toshi/TColor.h>
 
-class AGUI2TextBox : public AGUI2Element
+class AGUI2TextBox : public SDK_T2GUIElement
 {
 public:
 	AGUI2TextBox();
@@ -16,7 +16,7 @@ public:
 	virtual void   SetWidth( TFLOAT a_fWidth ) override;
 	virtual void   SetShadowAlpha( TFLOAT a_fAlpha ) override;
 
-	void Create( AGUI2Font* a_pFont, TFLOAT a_fWidth );
+	void Create( SDK_T2GUIFont* a_pFont, TFLOAT a_fWidth );
 
 	void SetText( const wchar_t* a_wszText )
 	{
@@ -51,12 +51,12 @@ public:
 		m_uiShadowColour = a_uiColour;
 	}
 
-	void SetTextAlign( AGUI2Font::TextAlign a_eTextAlign )
+	void SetTextAlign( SDK_T2GUIFont::TextAlign a_eTextAlign )
 	{
 		m_eTextAlign = a_eTextAlign;
 	}
 
-	AGUI2Font* GetFont()
+	SDK_T2GUIFont* GetFont()
 	{
 		return m_pFont;
 	}
@@ -75,9 +75,9 @@ private:
 	TFLOAT               m_fShadowOffsetY;
 	TUINT32              m_uiShadowColour;
 	const wchar_t*       m_wszText;
-	AGUI2Font*           m_pFont;
+	SDK_T2GUIFont*           m_pFont;
 	TFLOAT               m_fScale;
-	AGUI2Font::TextAlign m_eTextAlign;
+	SDK_T2GUIFont::TextAlign m_eTextAlign;
 	TBOOL                m_bDimensionsDirty;
 	TBOOL                m_bUnkFlag2;
 };

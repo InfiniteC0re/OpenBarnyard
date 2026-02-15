@@ -2,8 +2,8 @@
 #include "ALoadScreen.h"
 #include "GUI/AGUISystem.h"
 #include "GUI/AGUI2.h"
-#include "GUI/AGUI2TextureSectionManager.h"
-#include "GUI/AGUI2FontManager.h"
+#include "GUI/T2GUITextureSectionManager.h"
+#include "GUI/T2GUIFontManager.h"
 #include "Locale/ALocaleManager.h"
 
 #include "Render/ARenderer.h"
@@ -41,7 +41,7 @@ void ALoadScreen::Create()
 	T2_FOREACH_ARRAY( ms_LoadTextures, i )
 	{
 		TASSERT( m_aTextureSections[ i ] == TNULL, "ALoadScreen is already created" );
-		m_aTextureSections[ i ] = AGUI2TextureSectionManager::GetTextureSection( ms_LoadTextures[ i ] );
+		m_aTextureSections[ i ] = T2GUITextureSectionManager::GetTextureSection( ms_LoadTextures[ i ] );
 		TASSERT( m_aTextureSections[ i ] != TNULL, "Unable to find texture section" );
 	}
 
@@ -66,7 +66,7 @@ void ALoadScreen::Create()
 
 		pRectangle->SetDimensions( pTexSection->GetWidth(), pTexSection->GetHeight() );
 		pRectangle->SetTextureSection( pTexSection );
-		pRectangle->SetAttachment( AGUI2ATTACHMENT_BOTTOMLEFT, AGUI2ATTACHMENT_BOTTOMLEFT );
+		pRectangle->SetAttachment( T2GUIATTACHMENT_BOTTOMLEFT, T2GUIATTACHMENT_BOTTOMLEFT );
 		pRectangle->SetTransform( fRectPosX, -fHeight * 0.075f );
 		pRectangle->Hide();
 
@@ -74,13 +74,13 @@ void ALoadScreen::Create()
 		fRectPosX += ( fWidth * 0.8f ) / NUM_LOAD_INDICATORS;
 	}
 
-	auto pFont          = AGUI2FontManager::FindFont( "Rekord26" );
+	auto pFont          = T2GUIFontManager::FindFont( "Rekord26" );
 	auto pLoadingString = ALocaleManager::Interface()->GetString( 1123 );
 
 	m_TextBox.Create( pFont, pFont->GetTextWidth( pLoadingString, 1.0f ) );
 	m_TextBox.SetScale( 1.0f );
 	m_TextBox.SetText( pLoadingString );
-	m_TextBox.SetAttachment( AGUI2ATTACHMENT_BOTTOMCENTER, AGUI2ATTACHMENT_BOTTOMCENTER );
+	m_TextBox.SetAttachment( T2GUIATTACHMENT_BOTTOMCENTER, T2GUIATTACHMENT_BOTTOMCENTER );
 	m_TextBox.SetTransform( 0.0f, -fHeight * 0.08f );
 	m_TextBox.Hide();
 

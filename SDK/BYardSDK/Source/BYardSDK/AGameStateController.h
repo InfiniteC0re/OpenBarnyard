@@ -1,7 +1,7 @@
 #pragma once
 #include "AGameState.h"
 #include "THookedSingleton.h"
-#include "AGUI2Rectangle.h"
+#include "SDK_T2GUIRectangle.h"
 
 #include <Toshi/TTask.h>
 #include <Toshi/T2Vector.h>
@@ -56,7 +56,7 @@ public:
 	Toshi::T2DynamicVector<void*>    m_UnkVector;
 	TUINT                            m_Unk2;
 	TUINT                            m_Unk3;
-	AGUI2Rectangle                   m_oOverlay;
+	SDK_T2GUIRectangle                   m_oOverlay;
 	TUINT16                          m_eFlags;
 	TFLOAT                           m_fOverlayAlpha;
 	TFLOAT                           m_fSoundVolume;

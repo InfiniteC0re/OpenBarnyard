@@ -3,7 +3,7 @@
 #include <File/TTRB.h>
 
 #include "GUI/AGUISystem.h"
-#include "GUI/AGUI2TextureSectionManager.h"
+#include "GUI/T2GUITextureSectionManager.h"
 #include "AMaterialLibraryManager.h"
 #include "Locale/ALocaleManager.h"
 #include "ALoadScreen.h"
@@ -76,7 +76,7 @@ void AMaterialLibraryManager::LoadLibrariesFromProperties( const PBPropertyValue
 
 		if ( a_bUpdateGUIMaterials && g_pGUISystem )
 		{
-			AGUI2TextureSectionManager::UpdateMaterials();
+			T2GUITextureSectionManager::UpdateMaterials();
 		}
 
 		g_oLoadScreen.Update( 1.0f, TTRUE );
@@ -193,7 +193,7 @@ void AMaterialLibraryManager::DestroyLibrary( LibrariesMap::Iterator& a_rcMateri
 
 	if ( a_bUpdateGUIMaterials && g_pGUISystem )
 	{
-		AGUI2TextureSectionManager::UpdateMaterials();
+		T2GUITextureSectionManager::UpdateMaterials();
 	}
 }
 
@@ -253,7 +253,7 @@ void AMaterialLibraryManager::OnLibraryLoaded( TBOOL a_bUpdateGUIMaterials )
 
 	if ( a_bUpdateGUIMaterials && g_pGUISystem )
 	{
-		AGUI2TextureSectionManager::UpdateMaterials();
+		T2GUITextureSectionManager::UpdateMaterials();
 	}
 }
 

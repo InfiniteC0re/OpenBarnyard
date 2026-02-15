@@ -78,6 +78,15 @@ MEMBER_HOOK( 0x006be7b0, T2Locale, T2Locale_GetString, const TWCHAR*, TINT a_iNu
 void NewGameStarted()
 {
 	AUIManager::GetSingleton()->GetTimer().Start();
+
+	if ( g_bIsFunCategory )
+	{
+		auto pARandom = *(TCHAR**)( 0x0077de10 );
+		auto pTRandom = (TRandom*)(pARandom + 4);
+
+		// Reset random seed
+		pTRandom->SetSeed( 999999 );
+	}
 }
 
 void AGUI2_MainPostRenderCallback()
@@ -111,6 +120,7 @@ static auto s_AVeggiePatchDefenderGame = TClass::Find( "AVeggiePatchDefenderGame
 static auto s_AChasingChicksMiniGame   = TClass::Find( "AChasingChicksMiniGame", &THookedObject::ms_oClass );
 static auto s_AChickenCoopDefender     = TClass::Find( "AChickenCoopDefender", &THookedObject::ms_oClass );
 static auto s_ASleepCycleState         = TClass::Find( "ASleepCycleState", &THookedObject::ms_oClass );
+static auto s_AAnticGameOverState      = TClass::Find( "AAnticGameOverState", &THookedObject::ms_oClass );
 
 static const char* COW_SKIN_LIST[] = {
 	"American",
@@ -251,6 +261,9 @@ public:
 
 				// Don't waste stamina in main game
 				InstallHook<APlayerSimProfile_Update>();
+
+				// Load overrides with minigames settings
+				m_oOverridesTRB.Load( TString8::VarArgs( "%s\\BYSpeedrunHelper\\Fun\\Overrides.trb", GetModsDirectory() ) );
 			}
 
 			ACollisionInspector::CreateSingleton();
@@ -316,10 +329,15 @@ public:
 					bSpeedUp = TTRUE;
 					fSpeed   = 2.0f;
 				}
+				else if ( pStateClass == s_AAnticGameOverState )
+				{
+					bSpeedUp = TTRUE;
+					fSpeed   = 4.0f;
+				}
 				else if ( pStateClass == s_ASleepCycleState )
 				{
 					bSpeedUp = TTRUE;
-					fSpeed   = 8.0f;
+					fSpeed   = 10.0f;
 				}
 
 				pSystemManager->GetScheduler()->SetDebugDeltaTimeMult( bSpeedUp, fSpeed );
@@ -374,7 +392,7 @@ public:
 			TFLOAT fWidth, fHeight;
 			AGUI2::GetSingleton()->GetDimensions( fWidth, fHeight );
 
-			auto pFont              = AGUI2FontManager::FindFont( "Rekord18" );
+			auto pFont              = SDK_T2GUIFontManager::FindFont( "Rekord18" );
 			g_pExperimentalModeText = AGUI2TextBox::CreateFromEngine();
 
 			g_pExperimentalModeText->Create( pFont, 400.0f );
@@ -382,9 +400,9 @@ public:
 			g_pExperimentalModeText->SetColour( TCOLOR( 255, 0, 0 ) );
 			g_pExperimentalModeText->SetTransform( 0.0f, -fHeight / 2 + 32.0f );
 			g_pExperimentalModeText->SetAlpha( 1.0f );
-			g_pExperimentalModeText->SetTextAlign( AGUI2Font::TextAlign_Center );
+			g_pExperimentalModeText->SetTextAlign( SDK_T2GUIFont::TextAlign_Center );
 			g_pExperimentalModeText->SetInFront();
-			g_pExperimentalModeText->SetAttachment( AGUI2Element::Anchor_MiddleCenter, AGUI2Element::Pivot_MiddleCenter );
+			g_pExperimentalModeText->SetAttachment( SDK_T2GUIElement::Anchor_MiddleCenter, SDK_T2GUIElement::Pivot_MiddleCenter );
 		}
 	}
 
@@ -497,6 +515,14 @@ public:
 	{
 		return TTRUE;
 	}
+
+	const PBProperties* GetFileOverrides() override
+	{
+		return g_bIsFunCategory ? PBProperties::LoadFromTRB( m_oOverridesTRB ) : NULL;
+	}
+
+private:
+	TTRB m_oOverridesTRB;
 };
 
 extern "C"

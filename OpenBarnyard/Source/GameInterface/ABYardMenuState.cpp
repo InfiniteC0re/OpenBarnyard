@@ -1,8 +1,8 @@
 #include "pch.h"
 #include "ABYardMenuState.h"
 #include "GUI/AGUI2.h"
-#include "GUI/AGUI2FontManager.h"
-#include "GUI/AGUI2TextureSectionManager.h"
+#include "GUI/T2GUIFontManager.h"
+#include "GUI/T2GUITextureSectionManager.h"
 #include "SoundBank/ui.h"
 
 //-----------------------------------------------------------------------------
@@ -209,8 +209,8 @@ void ABYardMenuState::OnInsertion()
 	}
 
 	SetInputMap( TPS8( DialogInputMap ) );
-	AGUI2Font*           pFont        = AGUI2FontManager::FindFont( AGUI2STYLE_FONT_PRIMARY );
-	AGUI2TextureSection* pPanelTexSec = AGUI2TextureSectionManager::GetTextureSection( "Panel_01" );
+	T2GUIFont*           pFont        = T2GUIFontManager::FindFont( AGUI2STYLE_FONT_PRIMARY );
+	T2GUITextureSection* pPanelTexSec = T2GUITextureSectionManager::GetTextureSection( "Panel_01" );
 
 	TVALIDPTR( pFont );
 	TVALIDPTR( pPanelTexSec );
@@ -221,7 +221,7 @@ void ABYardMenuState::OnInsertion()
 	m_oDialogTitle.SetColour( 0xfffff0af );
 	m_oDialogTitle.SetTransform( 0.0f, 2.0f, 0.0f );
 
-	AGUI2Transform oTransform;
+	T2GUITransform oTransform;
 	oTransform.m_aMatrixRows[ 0 ] = TVector2( 1.1f, 0.0f );
 	oTransform.m_aMatrixRows[ 1 ] = TVector2( 0.0f, 1.1f );
 	oTransform.m_vecTranslation.x = 0.0f;
@@ -234,7 +234,7 @@ void ABYardMenuState::OnInsertion()
 	// Setup textbox background
 	m_oDialogTitleBackground.SetTextureSection( pPanelTexSec );
 	m_oDialogTitleBackground.SetDimensions( TMath::Max( m_oDialogTitle.GetWidth() * 1.25f, pPanelTexSec->GetWidth() ), pPanelTexSec->GetHeight() );
-	m_oDialogTitleBackground.SetAttachment( AGUI2ATTACHMENT_TOPCENTER, AGUI2ATTACHMENT_TOPCENTER );
+	m_oDialogTitleBackground.SetAttachment( T2GUIATTACHMENT_TOPCENTER, T2GUIATTACHMENT_TOPCENTER );
 	m_oDialogTitleBackground.AddChildTail( m_oDialogTitle );
 
 	// Setup menu
@@ -265,7 +265,7 @@ void ABYardMenuState::OnInsertion()
 	m_oDialog.Create();
 	m_oDialog.SetDialogSize( fMenuWidth + 128.0f, fMenuHeight + 128.0f );
 
-	AGUI2Transform oDialogTransform;
+	T2GUITransform oDialogTransform;
 	oDialogTransform.SetZero();
 	m_oDialog.GetTransform().PreMultiply( oDialogTransform );
 
@@ -307,7 +307,7 @@ void ABYardMenuState::OnActivate()
 	m_oRootElement.Show();
 
 	// Apply additional transform to the dialog window (apparently, no transform is applied)
-	AGUI2Transform oDialogTransform( AGUI2Transform::Uninitialised );
+	T2GUITransform oDialogTransform( T2GUITransform::Uninitialised );
 	oDialogTransform.SetZero();
 
 	m_oDialog.GetTransform().PreMultiply( oDialogTransform );

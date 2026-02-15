@@ -1,7 +1,8 @@
 #pragma once
-#include "GUI/AGUI2Rectangle.h"
 #include "GUI/AGUI2TextBox.h"
-#include "GUI/AGUI2TextureSection.h"
+
+#include <GUI/T2GUIRectangle.h>
+#include <GUI/T2GUITextureSection.h>
 
 #include <Toshi/THPTimer.h>
 
@@ -34,13 +35,13 @@ private:
 
 private:
 	// ...
-	TBOOL                m_bIsLoadingScreen;
-	TBOOL                m_bFlag;
-	TINT                 m_iNumCowIcons;
-	TINT                 m_iCowPos;
-	AGUI2Rectangle       m_CanvasElement;
-	AGUI2Rectangle       m_aRectangles[ NUM_LOAD_INDICATORS ];
-	AGUI2TextureSection* m_aTextureSections[ NUM_LOAD_TEXTURES ];
+	TBOOL                       m_bIsLoadingScreen;
+	TBOOL                       m_bFlag;
+	TINT                        m_iNumCowIcons;
+	TINT                        m_iCowPos;
+	Toshi::T2GUIRectangle       m_CanvasElement;
+	Toshi::T2GUIRectangle       m_aRectangles[ NUM_LOAD_INDICATORS ];
+	Toshi::T2GUITextureSection* m_aTextureSections[ NUM_LOAD_TEXTURES ];
 	// ...
 	AGUI2TextBox    m_TextBox;
 	Toshi::THPTimer m_oTimer;

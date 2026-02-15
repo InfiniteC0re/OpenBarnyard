@@ -81,7 +81,7 @@ void AGUIPicture::Render()
 		TFLOAT fWidth, fHeight;
 		AGUI2::GetSingleton()->GetDimensions( fWidth, fHeight );
 
-		AGUI2Transform transform;
+		T2GUITransform transform;
 		transform.SetTranslation( 0.0f, 0.0f );
 		transform.Scale( fWidth / 638.0f, fHeight / 477.0f );
 

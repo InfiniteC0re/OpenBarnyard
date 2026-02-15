@@ -7,7 +7,7 @@
 #include "Terrain/ATerrainInterface.h"
 #include "GUI/AGUISystem.h"
 #include "GUI/AGUI2.h"
-#include "GUI/AGUI2TextureSectionManager.h"
+#include "GUI/T2GUITextureSectionManager.h"
 #include "Render/ARenderer.h"
 #include "Render/AGlowViewport.h"
 #include "Cameras/ACameraManager.h"

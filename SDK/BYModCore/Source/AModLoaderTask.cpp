@@ -4,7 +4,7 @@
 #include "AHTTPClient.h"
 
 #include <BYardSDK/THookedRenderD3DInterface.h>
-#include <BYardSDK/AGUI2FontManager.h>
+#include <BYardSDK/SDK_T2GUIFontManager.h>
 #include <BYardSDK/AGUI2.h>
 
 #include <filesystem>
@@ -161,9 +161,9 @@ void AModLoaderTask::OnAGUI2Ready()
 	TFLOAT fWidth, fHeight;
 	AGUI2::GetSingleton()->GetDimensions( fWidth, fHeight );
 
-	auto pFont = AGUI2FontManager::FindFont( "Rekord18" );
+	auto pFont = SDK_T2GUIFontManager::FindFont( "Rekord18" );
 	m_pTextBox = AGUI2TextBox::CreateFromEngine();
-	m_pTextBox->SetAttachment( AGUI2Element::Anchor_MiddleCenter, AGUI2Element::Pivot_TopCenter );
+	m_pTextBox->SetAttachment( SDK_T2GUIElement::Anchor_MiddleCenter, SDK_T2GUIElement::Pivot_TopCenter );
 	m_pTextBox->Create( pFont, 300.0f );
 	m_pTextBox->SetTransform( 0, -fHeight / 2 + 64.0f );
 	m_pTextBox->SetText( L"ModLoader works!" );

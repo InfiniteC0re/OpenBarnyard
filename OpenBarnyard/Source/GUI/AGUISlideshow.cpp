@@ -12,9 +12,11 @@
 
 TDEFINE_CLASS( AGUISlideshow );
 
+TOSHI_NAMESPACE_USING
+
 // $Barnyard: FUNCTION 0059dd30
 AGUISlideshow::AGUISlideshow()
-    : m_Images( Toshi::GetGlobalAllocator(), 64, 64 )
+    : m_Images( GetGlobalAllocator(), 64, 64 )
 {
 	m_pHUDParams        = TNULL;
 	m_eFlags            = Flags_None;
@@ -29,13 +31,13 @@ AGUISlideshow::AGUISlideshow()
 	m_bShouldLocalise   = TFALSE;
 }
 
-Toshi::TPString8* AGUISlideshow::LocaliseBackgroundFileName( Toshi::TPString8& a_rOutName, const Toshi::TPString8& a_rName )
+TPString8* AGUISlideshow::LocaliseBackgroundFileName( TPString8& a_rOutName, const TPString8& a_rName )
 {
 	LocaliseBackgroundFileName( a_rOutName, a_rName.GetString8().GetString() );
 	return &a_rOutName;
 }
 
-void AGUISlideshow::LocaliseBackgroundFileName( Toshi::TPString8& a_rOutName, const TCHAR* a_szName )
+void AGUISlideshow::LocaliseBackgroundFileName( TPString8& a_rOutName, const TCHAR* a_szName )
 {
 	TCHAR szFormattedName[ 256 ];
 	auto  eLang = g_pLocaleManager->GetLanguage();
@@ -43,18 +45,18 @@ void AGUISlideshow::LocaliseBackgroundFileName( Toshi::TPString8& a_rOutName, co
 	if ( eLang != ALocaleManager::Lang_English && eLang != ALocaleManager::Lang_EnglishUK )
 	{
 		TCHAR szLang[ 4 ];
-		Toshi::TStringManager::String8Copy(
+		TStringManager::String8Copy(
 		    szLang,
 		    ALocaleManager::Interface()->GetCurrentLanguageName(),
 		    sizeof( szLang )
 		);
 
 		szLang[ 1 ] = '\0';
-		Toshi::TStringManager::String8Format( szFormattedName, sizeof( szFormattedName ), "%s%s", a_szName, szLang );
+		TStringManager::String8Format( szFormattedName, sizeof( szFormattedName ), "%s%s", a_szName, szLang );
 		a_szName = szFormattedName;
 	}
 
-	a_rOutName = Toshi::TPString8( a_szName );
+	a_rOutName = TPString8( a_szName );
 }
 
 // $Barnyard: FUNCTION 0059db90
@@ -74,7 +76,7 @@ void AGUISlideshow::Activate()
 		}
 		else
 		{
-			Toshi::TPString8 pictureName;
+			TPString8 pictureName;
 			LocaliseBackgroundFileName( pictureName, m_Images[ 0 ] );
 			g_pGUISystem->SetPicture( pictureName );
 		}
@@ -118,7 +120,7 @@ void AGUISlideshow::UpdateFadeOverlay()
 
 		if ( fOpacity >= 1.0f )
 		{
-			Toshi::TPString8 pictureName;
+			TPString8 pictureName;
 			LocaliseBackgroundFileName( pictureName, *m_ImageIterator );
 			g_pGUISystem->SetPicture( pictureName );
 
@@ -194,7 +196,7 @@ void AGUISlideshow::SwitchToNextSlide( TBOOL a_bUnused )
 
 	m_fCurrentSlideTime = 0.0f;
 
-	Toshi::TPString8 pictureName;
+	TPString8 pictureName;
 	LocaliseBackgroundFileName( pictureName, *m_ImageIterator );
 	g_pGUISystem->SetPicture( pictureName );
 }
@@ -205,7 +207,7 @@ void AGUISlideshow::Deactivate()
 	TASSERT( TTRUE == m_bIsActive );
 
 	m_bIsActive = TFALSE;
-	g_pGUISystem->SetPicture( Toshi::TPString8() );
+	g_pGUISystem->SetPicture( TPString8() );
 	m_eFlags |= Flags_Ended;
 }
 
@@ -265,7 +267,7 @@ TBOOL AGUISlideshow::Setup( AGameState::HUDParams* a_pHUDParams, const Params& a
 	TFLOAT fWidth, fHeight;
 	AGUI2::GetSingleton()->GetDimensions( fWidth, fHeight );
 	m_FadeOverlay.SetDimensions( fWidth, fHeight );
-	m_FadeOverlay.SetAttachment( AGUI2ATTACHMENT_TOPCENTER, AGUI2ATTACHMENT_TOPCENTER );
+	m_FadeOverlay.SetAttachment( T2GUIATTACHMENT_TOPCENTER, T2GUIATTACHMENT_TOPCENTER );
 	m_FadeOverlay.Hide();
 
 	if ( a_rParams.bDelayAppear )
@@ -277,9 +279,9 @@ TBOOL AGUISlideshow::Setup( AGameState::HUDParams* a_pHUDParams, const Params& a
 }
 
 // $Barnyard: FUNCTION 0059dac0
-TBOOL AGUISlideshow::ProcessInput( const Toshi::TInputInterface::InputEvent* a_pEvent )
+TBOOL AGUISlideshow::ProcessInput( const TInputInterface::InputEvent* a_pEvent )
 {
-	if ( a_pEvent->GetEventType() == Toshi::TInputInterface::EVENT_TYPE_GONE_DOWN )
+	if ( a_pEvent->GetEventType() == TInputInterface::EVENT_TYPE_GONE_DOWN )
 	{
 		if ( m_eFlags & Flags_InstaSkippable )
 		{

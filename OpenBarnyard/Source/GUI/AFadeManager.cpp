@@ -11,6 +11,8 @@
 
 TDEFINE_CLASS( AFadeManager );
 
+TOSHI_NAMESPACE_USING
+
 // $Barnyard: FUNCTION 0045c840
 TBOOL AFadeManager::OnUpdate( TFLOAT a_fDeltaTime )
 {
@@ -88,7 +90,7 @@ AFade* AFadeManager::StartFade( const AFade::Color& a_rFadeFrom, const AFade::Co
 
 	auto& rRectangle = pFade->GetRectangleElement();
 	rRectangle.Create( fWidth, fHeight );
-	rRectangle.SetAttachment( AGUI2ATTACHMENT_TOPCENTER, AGUI2ATTACHMENT_TOPCENTER );
+	rRectangle.SetAttachment( T2GUIATTACHMENT_TOPCENTER, T2GUIATTACHMENT_TOPCENTER );
 	rRectangle.SetColour( a_rFadeFrom.GetTColor32() );
 	rRectangle.SetInFront();
 

@@ -1,11 +1,12 @@
 #pragma once
-#include "AGUI2Element.h"
 #include "Input/AInputMap.h"
 #include "Sound/ASound.h"
 
+#include <GUI/T2GUIElement.h>
+
 class AGUI2MenuGridItem;
 
-class AGUI2MenuGrid : public AGUI2Element
+class AGUI2MenuGrid : public Toshi::T2GUIElement
 {
 public:
 	using ACTIONFLAGS = TUINT32;
@@ -90,7 +91,7 @@ private:
 	AGUI2MenuGridItem* m_pHoveredMenuItem;
 };
 
-class AGUI2MenuGridItem : public AGUI2Element
+class AGUI2MenuGridItem : public Toshi::T2GUIElement
 {
 public:
 	friend class AGUI2MenuGrid;

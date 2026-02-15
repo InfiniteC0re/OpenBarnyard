@@ -5,7 +5,7 @@
 
 #include <HookHelpers.h>
 #include <BYardSDK/AGUI2Renderer.h>
-#include <BYardSDK/AGUI2Material.h>
+#include <BYardSDK/SDK_T2GUIMaterial.h>
 #include <Platform/DX8/TTextureResourceHAL_DX8.h>
 
 //-----------------------------------------------------------------------------
@@ -160,10 +160,10 @@ public:
 	TINT            m_iTransformCount;
 	TUINT32         m_uiColour;
 	TBOOL           m_bIsTransformDirty;
-	AGUI2Material*  m_pMaterial;
+	SDK_T2GUIMaterial*  m_pMaterial;
 };
 
-MEMBER_HOOK( 0x0064eb90, AGUI2RendererDX8, AGUI2Renderer_SetMaterial, void, AGUI2Material* a_pMaterial )
+MEMBER_HOOK( 0x0064eb90, AGUI2RendererDX8, AGUI2Renderer_SetMaterial, void, SDK_T2GUIMaterial* a_pMaterial )
 {
 	if ( m_pMaterial != a_pMaterial )
 	{

@@ -25,12 +25,12 @@ AGUI2MenuItem::~AGUI2MenuItem()
 // $Barnyard: FUNCTION 0063cb00
 void AGUI2MenuItem::SetAlpha( TFLOAT a_fAlpha )
 {
-	for ( AGUI2Element* it = ChildRBegin(); it != TNULL; it = GetPrevChild( it ) )
+	for ( T2GUIElement* it = ChildRBegin(); it != TNULL; it = GetPrevChild( it ) )
 	{
 		it->SetAlpha( a_fAlpha );
 	}
 
-	AGUI2Element::SetAlpha( a_fAlpha );
+	T2GUIElement::SetAlpha( a_fAlpha );
 }
 
 void AGUI2MenuItem::OnFocus()

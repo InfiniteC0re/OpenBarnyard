@@ -5,10 +5,10 @@ AGUI2TextBox::AGUI2TextBox()
 {
 }
 
-void AGUI2TextBox::Create( AGUI2Font* a_pFont, TFLOAT a_fWidth )
+void AGUI2TextBox::Create( SDK_T2GUIFont* a_pFont, TFLOAT a_fWidth )
 {
 	m_pFont                = a_pFont;
-	AGUI2Element::m_fWidth = a_fWidth;
+	SDK_T2GUIElement::m_fWidth = a_fWidth;
 	m_bDimensionsDirty     = TTRUE;
 	m_bUnkFlag2            = TFALSE;
 }
@@ -45,7 +45,7 @@ void AGUI2TextBox::RenderText( void* a_fnCallback )
 		    fPosY,
 		    fWidth,
 		    fHeight,
-		    AGUI2Element::m_uiColour,
+		    SDK_T2GUIElement::m_uiColour,
 		    m_fScale,
 		    m_eTextAlign,
 		    a_fnCallback
@@ -57,18 +57,18 @@ void AGUI2TextBox::Render()
 {
 	TASSERT( m_pFont != TNULL );
 
-	if ( AGUI2Element::HasFlags( 8 ) )
+	if ( SDK_T2GUIElement::HasFlags( 8 ) )
 	{
 		// Render children before text
-		AGUI2Element::Render();
+		SDK_T2GUIElement::Render();
 	}
 
 	RenderText( TNULL );
 
-	if ( !AGUI2Element::HasFlags( 8 ) )
+	if ( !SDK_T2GUIElement::HasFlags( 8 ) )
 	{
 		// Render children after text
-		AGUI2Element::Render();
+		SDK_T2GUIElement::Render();
 	}
 }
 
@@ -78,18 +78,18 @@ void AGUI2TextBox::GetDimensions( TFLOAT& a_rWidth, TFLOAT& a_rHeight )
 	{
 		if ( !m_wszText || !m_pFont )
 		{
-			AGUI2Element::m_fHeight = 0.0f;
+			SDK_T2GUIElement::m_fHeight = 0.0f;
 		}
 		else
 		{
-			AGUI2Element::m_fHeight = m_pFont->GetTextHeightWrapped( m_wszText, AGUI2Element::m_fWidth, m_fScale );
+			SDK_T2GUIElement::m_fHeight = m_pFont->GetTextHeightWrapped( m_wszText, SDK_T2GUIElement::m_fWidth, m_fScale );
 		}
 
 		m_bDimensionsDirty = TFALSE;
 	}
 
-	a_rWidth  = AGUI2Element::m_fWidth;
-	a_rHeight = AGUI2Element::m_fHeight;
+	a_rWidth  = SDK_T2GUIElement::m_fWidth;
+	a_rHeight = SDK_T2GUIElement::m_fHeight;
 }
 
 TFLOAT AGUI2TextBox::GetWidth()
@@ -112,7 +112,7 @@ TFLOAT AGUI2TextBox::GetHeight()
 
 void AGUI2TextBox::SetWidth( TFLOAT a_fWidth )
 {
-	AGUI2Element::m_fWidth = a_fWidth;
+	SDK_T2GUIElement::m_fWidth = a_fWidth;
 	m_bDimensionsDirty     = TTRUE;
 }
 

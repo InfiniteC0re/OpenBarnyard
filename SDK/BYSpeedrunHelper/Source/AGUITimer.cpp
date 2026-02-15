@@ -27,7 +27,7 @@ AGUITimer::~AGUITimer()
 
 void AGUITimer::Create()
 {
-	auto pFont = AGUI2FontManager::FindFont( "Rekord18" );
+	auto pFont = SDK_T2GUIFontManager::FindFont( "Rekord18" );
 	m_pTextBox = AGUI2TextBox::CreateFromEngine();
 	m_pTextBox->Create( pFont, 200.0f );
 	m_pTextBox->SetText( L"0.000" );
@@ -43,8 +43,8 @@ void AGUITimer::ApplyUIStyle()
 	m_pTextBox->SetColour( TCOLOR( TUINT( g_oSettings.vecHUDColor.x * 255.0f ), TUINT( g_oSettings.vecHUDColor.y * 255.0f ), TUINT( g_oSettings.vecHUDColor.z * 255.0f ) ) );
 	m_pTextBox->SetAlpha( g_oSettings.vecHUDColor.w );
 	m_pTextBox->SetInFront();
-	m_pTextBox->SetTextAlign( AGUI2Font::TextAlign_Left );
-	m_pTextBox->SetAttachment( AGUI2Element::Anchor_MiddleLeft, AGUI2Element::Pivot_MiddleLeft );
+	m_pTextBox->SetTextAlign( SDK_T2GUIFont::TextAlign_Left );
+	m_pTextBox->SetAttachment( SDK_T2GUIElement::Anchor_MiddleLeft, SDK_T2GUIElement::Pivot_MiddleLeft );
 }
 
 void AGUITimer::UpdateUIPosition( TFLOAT a_fY )

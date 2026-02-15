@@ -1,7 +1,8 @@
 #include "pch.h"
 #include "AGUI2MouseCursor.h"
-#include "AGUI2TextureSectionManager.h"
 #include "AGUI2.h"
+
+#include <GUI/T2GUITextureSectionManager.h>
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
@@ -38,23 +39,23 @@ TBOOL AGUI2MouseCursor::Create( const TCHAR* a_szPointerUpTexture, const TCHAR* 
 		return TFALSE;
 	}
 
-	m_pPointerUpSection  = AGUI2TextureSectionManager::GetTextureSection( a_szPointerUpTexture );
+	m_pPointerUpSection  = T2GUITextureSectionManager::GetTextureSection( a_szPointerUpTexture );
 	TFLOAT fCursorWidth  = m_pPointerUpSection->GetWidth();
 	TFLOAT fCursorHeight = m_pPointerUpSection->GetHeight();
 
-	AGUI2Rectangle::SetDimensions( fCursorWidth, fCursorHeight );
-	AGUI2Element::GetTransform().Scale( a_fScalar, a_fScalar );
-	AGUI2Rectangle::SetTextureSection( m_pPointerUpSection );
-	AGUI2Element::SetAttachment( AGUI2ATTACHMENT_MIDDLECENTER, AGUI2ATTACHMENT_TOPLEFT );
+	T2GUIRectangle::SetDimensions( fCursorWidth, fCursorHeight );
+	T2GUIElement::GetTransform().Scale( a_fScalar, a_fScalar );
+	T2GUIRectangle::SetTextureSection( m_pPointerUpSection );
+	T2GUIElement::SetAttachment( T2GUIATTACHMENT_MIDDLECENTER, T2GUIATTACHMENT_TOPLEFT );
 	m_CursorCenter = { -fCursorWidth / 2, -fCursorHeight / 2 };
 
 	if ( a_szPointerDownTexture )
 	{
-		m_pPointerDownSection = AGUI2TextureSectionManager::GetTextureSection( a_szPointerDownTexture );
+		m_pPointerDownSection = T2GUITextureSectionManager::GetTextureSection( a_szPointerDownTexture );
 	}
 
 	AGUI2::GetRootElement()->AddChildTail( *this );
-	AGUI2Element::Hide();
+	T2GUIElement::Hide();
 
 	return TTRUE;
 }
@@ -71,20 +72,20 @@ void AGUI2MouseCursor::Update()
 
 		if ( !m_pPointerDownSection || !m_pMouseDevice->IsDown( TInputDeviceMouse::BUTTON_1 ) )
 		{
-			AGUI2Rectangle::SetTextureSection( m_pPointerUpSection );
+			T2GUIRectangle::SetTextureSection( m_pPointerUpSection );
 			SetDimensions( m_pPointerUpSection->GetWidth(), m_pPointerUpSection->GetHeight() );
 			m_bIsMouseDown = TFALSE;
 		}
 		else
 		{
-			AGUI2Rectangle::SetTextureSection( m_pPointerDownSection );
+			T2GUIRectangle::SetTextureSection( m_pPointerDownSection );
 			SetDimensions( m_pPointerDownSection->GetWidth(), m_pPointerDownSection->GetHeight() );
 			m_bIsMouseDown = TTRUE;
 		}
 
-		AGUI2Element::GetTransform().SetTranslation( m_MousePos.x, m_MousePos.y );
+		T2GUIElement::GetTransform().SetTranslation( m_MousePos.x, m_MousePos.y );
 
-		AGUI2Transform oScreenTransform;
+		T2GUITransform oScreenTransform;
 		GetScreenTransform( oScreenTransform );
 		oScreenTransform.Transform( m_CursorPos, m_CursorCenter );
 	}

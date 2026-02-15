@@ -3,7 +3,7 @@
 #include "AGameStateController.h"
 #include "Locale/ALocaleManager.h"
 #include "Helpers/ASimAnimModelHelperManager.h"
-#include "GUI/AGUI2FontManager.h"
+#include "GUI/T2GUIFontManager.h"
 #include "GUI/AGUI2.h"
 #include "GUI/AFadeManager.h"
 #include "SoundBank/ui.h"
@@ -172,7 +172,7 @@ void AFrontEndMainMenuState2::OnInsertion()
 		m_pWindmillHelper->CreateBarnSign();
 	}
 
-	AGUI2Font* pFont = AGUI2FontManager::FindFont( AGUI2STYLE_FONT_PRIMARY );
+	T2GUIFont* pFont = T2GUIFontManager::FindFont( AGUI2STYLE_FONT_PRIMARY );
 
 	for ( TINT i = 0; i < FRONTENDBUTTON_NUMOF; i++ )
 	{
@@ -202,11 +202,11 @@ void AFrontEndMainMenuState2::OnInsertion()
 	} );
 
 	m_oDialogTitleBackground.Hide();
-	m_Rectangle1.SetAttachment( AGUI2ATTACHMENT_TOPCENTER, AGUI2ATTACHMENT_TOPCENTER );
+	m_Rectangle1.SetAttachment( T2GUIATTACHMENT_TOPCENTER, T2GUIATTACHMENT_TOPCENTER );
 	m_Rectangle1.SetTransform( 0.0f, 10.0f );
 	m_Rectangle1.Hide();
 
-	m_Rectangle2.SetAttachment( AGUI2ATTACHMENT_TOPCENTER, AGUI2ATTACHMENT_TOPCENTER );
+	m_Rectangle2.SetAttachment( T2GUIATTACHMENT_TOPCENTER, T2GUIATTACHMENT_TOPCENTER );
 	m_Rectangle2.SetTransform( 5.0f, 10.0f );
 	m_Rectangle2.SetColour( 0x64000000 );
 	m_Rectangle2.Hide();

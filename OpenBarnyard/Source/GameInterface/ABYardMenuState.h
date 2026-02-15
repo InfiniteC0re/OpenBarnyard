@@ -1,8 +1,8 @@
 #pragma once
 #include "AGameState.h"
-#include "GUI/AGUI2Element.h"
+#include "GUI/T2GUIElement.h"
 #include "GUI/AGUI2Dialog.h"
-#include "GUI/AGUI2Rectangle.h"
+#include "GUI/T2GUIRectangle.h"
 #include "GUI/AGUI2TextBox.h"
 #include "GUI/AGUI2Menu.h"
 #include "GUI/AGUI2Button.h"
@@ -59,18 +59,18 @@ protected:
 	inline static Toshi::TVector2 ms_vecActivatedButtonShadow;
 
 protected:
-	AGUI2Element   m_oRootElement;
-	AGUI2Dialog    m_oDialog;
-	AGUI2Menu      m_oMenu;
-	AGUI2Rectangle m_oDialogTitleBackground;
-	AGUI2TextBox   m_oDialogTitle;
-	MENUSTATE      m_eMenuState;
-	TFLOAT         m_fOscillatorOffset;
-	TFLOAT         m_fMenuOpacity;
-	TFLOAT         m_fTotalTime;
-	TBOOL          m_bFocusedElementBloated;
-	TBOOL          m_bIgnoreInputs;
-	TFLOAT*        m_pButtonRotations;
-	TBOOL          m_bHasRectangle2;
-	AGUI2Rectangle m_oRectangle2;
+	Toshi::T2GUIElement   m_oRootElement;
+	AGUI2Dialog           m_oDialog;
+	AGUI2Menu             m_oMenu;
+	Toshi::T2GUIRectangle m_oDialogTitleBackground;
+	AGUI2TextBox          m_oDialogTitle;
+	MENUSTATE             m_eMenuState;
+	TFLOAT                m_fOscillatorOffset;
+	TFLOAT                m_fMenuOpacity;
+	TFLOAT                m_fTotalTime;
+	TBOOL                 m_bFocusedElementBloated;
+	TBOOL                 m_bIgnoreInputs;
+	TFLOAT*               m_pButtonRotations;
+	TBOOL                 m_bHasRectangle2;
+	Toshi::T2GUIRectangle m_oRectangle2;
 };

@@ -1,8 +1,8 @@
 #include "pch.h"
 #include "AFrontEndMiniGameState2.h"
 #include "MiniGame/AMiniGameManager.h"
-#include "GUI/AGUI2TextureSectionManager.h"
-#include "GUI/AGUI2FontManager.h"
+#include "GUI/T2GUITextureSectionManager.h"
+#include "GUI/T2GUIFontManager.h"
 #include "Sound/ASoundManager.h"
 #include "SoundBank/ui.h"
 #include "Helpers/APlayerProgress.h"
@@ -175,7 +175,7 @@ void AFrontEndMiniGameState2::OnInsertion()
 	    g_pMiniGameManager->GetNumVisibleMiniGames() :
 	    g_pMiniGameManager->GetTotalNumMiniGames();
 
-	m_pRectangles = new AGUI2Rectangle[ m_iNumMiniGames ];
+	m_pRectangles = new T2GUIRectangle[ m_iNumMiniGames ];
 
 	TFLOAT fMaxIconWidth  = 0.0f;
 	TFLOAT fMaxIconHeight = 0.0f;
@@ -187,7 +187,7 @@ void AFrontEndMiniGameState2::OnInsertion()
 		    g_pMiniGameManager->GetVisibleMiniGame( i )->m_szIconName :
 		    g_pMiniGameManager->GetMiniGame( i )->m_szIconName;
 
-		AGUI2TextureSection* pIcon = AGUI2TextureSectionManager::GetTextureSection( szIconName );
+		T2GUITextureSection* pIcon = T2GUITextureSectionManager::GetTextureSection( szIconName );
 		TVALIDPTR( pIcon );
 
 		TFLOAT fIconWidth  = pIcon->GetWidth();
@@ -227,7 +227,7 @@ void AFrontEndMiniGameState2::OnInsertion()
 			// Setting up minigame element which is previous to selected
 			m_pRectangles[ i ].SetTransform( -100.0f, 0.0f, 0.0f );
 
-			AGUI2Transform scaleTransform;
+			T2GUITransform scaleTransform;
 			scaleTransform.SetScale( 0.5f, 0.5f );
 
 			m_pRectangles[ i ].GetTransform().PreMultiply( scaleTransform );
@@ -241,7 +241,7 @@ void AFrontEndMiniGameState2::OnInsertion()
 			// Setting up minigame element which is next to selected
 			m_pRectangles[ i ].SetTransform( 100.0f, 0.0f, 0.0f );
 
-			AGUI2Transform scaleTransform;
+			T2GUITransform scaleTransform;
 			scaleTransform.SetScale( 0.5f, 0.5f );
 
 			m_pRectangles[ i ].GetTransform().PreMultiply( scaleTransform );
@@ -255,12 +255,12 @@ void AFrontEndMiniGameState2::OnInsertion()
 	}
 
 	// Setup arrows
-	AGUI2TextureSection* pArrowLeft = AGUI2TextureSectionManager::GetTextureSection( "left_arrow" );
+	T2GUITextureSection* pArrowLeft = T2GUITextureSectionManager::GetTextureSection( "left_arrow" );
 	m_aArrows[ 0 ].SetDimensions( pArrowLeft->GetWidth(), pArrowLeft->GetHeight() );
 	m_aArrows[ 0 ].SetTextureSection( pArrowLeft );
 	m_aArrows[ 0 ].SetTransform( -150.0f, 0.0f, 0.0f );
 
-	AGUI2TextureSection* pArrowRight = AGUI2TextureSectionManager::GetTextureSection( "left_arrow2" );
+	T2GUITextureSection* pArrowRight = T2GUITextureSectionManager::GetTextureSection( "left_arrow2" );
 	m_aArrows[ 1 ].SetDimensions( pArrowRight->GetWidth(), pArrowRight->GetHeight() );
 	m_aArrows[ 1 ].SetTextureSection( pArrowRight );
 	m_aArrows[ 1 ].SetTransform( 150.0f, 0.0f, 0.0f );
@@ -273,8 +273,8 @@ void AFrontEndMiniGameState2::OnInsertion()
 	m_oMenu.AddMenuItem( m_oRoot );
 
 	// Setup title element
-	m_oMiniGameTitle.Create( AGUI2FontManager::FindFont( "Rekord26" ), 400.0f );
-	m_oMiniGameTitle.SetAttachment( AGUI2ATTACHMENT_BOTTOMCENTER, AGUI2ATTACHMENT_BOTTOMCENTER );
+	m_oMiniGameTitle.Create( T2GUIFontManager::FindFont( "Rekord26" ), 400.0f );
+	m_oMiniGameTitle.SetAttachment( T2GUIATTACHMENT_BOTTOMCENTER, T2GUIATTACHMENT_BOTTOMCENTER );
 	m_oMiniGameTitle.SetColour( COLOR_WHITE );
 	m_oMiniGameTitle.SetShadowEnabled( TTRUE );
 	m_oMiniGameTitle.SetShadowColour( TCOLOR4( 0, 0, 0, 160 ) );
@@ -284,8 +284,8 @@ void AFrontEndMiniGameState2::OnInsertion()
 	m_oRoot.AddChildTail( m_oMiniGameTitle );
 
 	// Setup description element
-	m_oMiniGameDescription.Create( AGUI2FontManager::FindFont( "Rekord18" ), 400.0f );
-	m_oMiniGameDescription.SetAttachment( AGUI2ATTACHMENT_TOPCENTER, AGUI2ATTACHMENT_TOPCENTER );
+	m_oMiniGameDescription.Create( T2GUIFontManager::FindFont( "Rekord18" ), 400.0f );
+	m_oMiniGameDescription.SetAttachment( T2GUIATTACHMENT_TOPCENTER, T2GUIATTACHMENT_TOPCENTER );
 	m_oMiniGameDescription.SetColour( AGUI2STYLE_COLOR_PRIMARY );
 	m_oMiniGameDescription.SetShadowEnabled( TTRUE );
 	m_oMiniGameDescription.SetShadowColour( TCOLOR4( 0, 0, 0, 160 ) );
@@ -335,7 +335,7 @@ TBOOL AFrontEndMiniGameState2::OnUpdate( TFLOAT a_fDeltaTime )
 	// Update mouse
 	if ( m_eMenuState == ABYardMenuState::MENUSTATE_MENU_VISIBLE && m_bMouseDirty )
 	{
-		AGUI2Transform oTransform;
+		T2GUITransform oTransform;
 		TVector2       vecCursorPos = g_pGUI2->GetMouseCursor().GetCursorPos();
 		TVector2       vecTransformed;
 

@@ -4,7 +4,7 @@
 #include "AGameStateController.h"
 #include "Cameras/ACameraManager.h"
 #include "GUI/AGUI2.h"
-#include "GUI/AGUI2FontManager.h"
+#include "GUI/T2GUIFontManager.h"
 
 #include <Input/TInputDeviceKeyboard.h>
 #include <Input/TInputDeviceMouse.h>
@@ -33,7 +33,7 @@ ADebugFlyState::ADebugFlyState()
 	TFLOAT fWidth, fHeight;
 	AGUI2::GetSingleton()->GetDimensions( fWidth, fHeight );
 
-	AGUI2Font* pFont = AGUI2FontManager::FindFont( "Rekord18" );
+	T2GUIFont* pFont = T2GUIFontManager::FindFont( "Rekord18" );
 	m_pInfoTextBox   = new AGUI2TextBox;
 
 	m_pInfoTextBox->Create( pFont, 600.0f );
@@ -41,9 +41,9 @@ ADebugFlyState::ADebugFlyState()
 	m_pInfoTextBox->SetColour( TCOLOR( 255, 255, 255 ) );
 	m_pInfoTextBox->SetTransform( 0.0f, fHeight / 2 - 32.0f );
 	m_pInfoTextBox->SetAlpha( 1.0f );
-	m_pInfoTextBox->SetTextAlign( AGUI2Font::TextAlign_Left );
+	m_pInfoTextBox->SetTextAlign( T2GUIFont::TextAlign_Left );
 	m_pInfoTextBox->SetInFront();
-	m_pInfoTextBox->SetAttachment( AGUI2ATTACHMENT_MIDDLELEFT, AGUI2ATTACHMENT_MIDDLELEFT );
+	m_pInfoTextBox->SetAttachment( T2GUIATTACHMENT_MIDDLELEFT, T2GUIATTACHMENT_MIDDLELEFT );
 
 	AGUI2::GetRootElement()->AddChildTail( *m_pInfoTextBox );
 }

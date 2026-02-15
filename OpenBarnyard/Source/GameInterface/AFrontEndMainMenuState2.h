@@ -66,8 +66,8 @@ public:
 private:
 	AGUI2Button                                             m_aButtons[ FRONTENDBUTTON_NUMOF ];
 	TINT                                                    m_iActivatedButtonID;
-	AGUI2Rectangle                                          m_Rectangle1;
-	AGUI2Rectangle                                          m_Rectangle2;
+	Toshi::T2GUIRectangle                                   m_Rectangle1;
+	Toshi::T2GUIRectangle                                   m_Rectangle2;
 	Toshi::TGenericListener                                 m_oUnkListener;
 	AWindmillHelper*                                        m_pWindmillHelper;
 	TBOOL                                                   m_bFlag;

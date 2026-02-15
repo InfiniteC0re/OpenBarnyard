@@ -1,17 +1,16 @@
 #pragma once
-#include "AGUI2Element.h"
-#include "AGUI2Font.h"
-
 #include <Toshi/TColor.h>
+#include <GUI/T2GUIElement.h>
+#include <GUI/T2GUIFont.h>
 
-class AGUI2TextBox : public AGUI2Element
+class AGUI2TextBox : public Toshi::T2GUIElement
 {
 public:
 	// constructors/destructor
 	AGUI2TextBox();
 	~AGUI2TextBox();
 
-	void Create( AGUI2Font* a_pFont, TFLOAT a_fWidth );
+	void Create( Toshi::T2GUIFont* a_pFont, TFLOAT a_fWidth );
 
 	void SetText( const TWCHAR* a_wszText );
 	void SetScale( TFLOAT a_fScale );
@@ -20,7 +19,7 @@ public:
 	void SetShadowColour( const Toshi::TColor& a_rColour );
 	void SetShadowColour( TUINT32 a_uiColour );
 	void SetShadowOffset( TFLOAT a_fOffsetX, TFLOAT a_fOffsetY );
-	void SetTextAlign( AGUI2Font::TextAlign a_eTextAlign );
+	void SetTextAlign( Toshi::T2GUIFont::TextAlign a_eTextAlign );
 
 	const TWCHAR* GetText() const { return m_wszText; }
 	TFLOAT        GetScale() const { return m_fScale; }
@@ -28,7 +27,7 @@ public:
 	TFLOAT        GetShadowOffsetY() const { return m_fShadowOffsetY; }
 
 	//-----------------------------------------------------------------------------
-	// AGUI2Element
+	// T2GUIElement
 	//-----------------------------------------------------------------------------
 	virtual void   Render() OVERRIDE;
 	virtual void   GetDimensions( TFLOAT& a_rWidth, TFLOAT& a_rHeight ) OVERRIDE;
@@ -41,14 +40,14 @@ private:
 	void RenderText( void* a_fnCallback );
 
 private:
-	TBOOL                m_bRenderShadow;
-	TFLOAT               m_fShadowOffsetX;
-	TFLOAT               m_fShadowOffsetY;
-	TUINT32              m_uiShadowColour;
-	const TWCHAR*        m_wszText;
-	AGUI2Font*           m_pFont;
-	TFLOAT               m_fScale;
-	AGUI2Font::TextAlign m_eTextAlign;
-	TBOOL                m_bDimensionsDirty;
-	TBOOL                m_bUnkFlag2;
+	TBOOL                       m_bRenderShadow;
+	TFLOAT                      m_fShadowOffsetX;
+	TFLOAT                      m_fShadowOffsetY;
+	TUINT32                     m_uiShadowColour;
+	const TWCHAR*               m_wszText;
+	Toshi::T2GUIFont*           m_pFont;
+	TFLOAT                      m_fScale;
+	Toshi::T2GUIFont::TextAlign m_eTextAlign;
+	TBOOL                       m_bDimensionsDirty;
+	TBOOL                       m_bUnkFlag2;
 };

@@ -7,6 +7,8 @@
 //-----------------------------------------------------------------------------
 #include <Core/TMemoryDebugOn.h>
 
+TOSHI_NAMESPACE_USING
+
 // $Barnyard: FUNCTION 006c3620
 AGUI2TextBox::AGUI2TextBox()
 {
@@ -18,7 +20,7 @@ AGUI2TextBox::AGUI2TextBox()
 	m_fShadowOffsetY = 5.0f;
 	m_uiShadowColour = 0x80000000;
 	m_fScale         = 1.0f;
-	m_eTextAlign     = AGUI2Font::TextAlign_Center;
+	m_eTextAlign     = T2GUIFont::TextAlign_Center;
 }
 
 // $Barnyard: FUNCTION 006c3660
@@ -27,10 +29,10 @@ AGUI2TextBox::~AGUI2TextBox()
 }
 
 // $Barnyard: FUNCTION 006c3670
-void AGUI2TextBox::Create( AGUI2Font* a_pFont, TFLOAT a_fWidth )
+void AGUI2TextBox::Create( T2GUIFont* a_pFont, TFLOAT a_fWidth )
 {
 	m_pFont                = a_pFont;
-	AGUI2Element::m_fWidth = a_fWidth;
+	T2GUIElement::m_fWidth = a_fWidth;
 	m_bDimensionsDirty     = TTRUE;
 	m_bUnkFlag2            = TFALSE;
 }
@@ -74,7 +76,7 @@ void AGUI2TextBox::RenderText( void* a_fnCallback )
 		    fPosY,
 		    fWidth,
 		    fHeight,
-		    AGUI2Element::m_uiColour,
+		    T2GUIElement::m_uiColour,
 		    m_fScale,
 		    m_eTextAlign,
 		    a_fnCallback
@@ -115,7 +117,7 @@ void AGUI2TextBox::SetShadowOffset( TFLOAT a_fOffsetX, TFLOAT a_fOffsetY )
 	m_fShadowOffsetY = m_fScale * a_fOffsetY;
 }
 
-void AGUI2TextBox::SetTextAlign( AGUI2Font::TextAlign a_eTextAlign )
+void AGUI2TextBox::SetTextAlign( T2GUIFont::TextAlign a_eTextAlign )
 {
 	m_eTextAlign = a_eTextAlign;
 }
@@ -125,18 +127,18 @@ void AGUI2TextBox::Render()
 {
 	TASSERT( m_pFont != TNULL );
 
-	if ( AGUI2Element::HasFlags( 8 ) )
+	if ( T2GUIElement::HasFlags( 8 ) )
 	{
 		// Render children before text
-		AGUI2Element::Render();
+		T2GUIElement::Render();
 	}
 
 	RenderText( TNULL );
 
-	if ( !AGUI2Element::HasFlags( 8 ) )
+	if ( !T2GUIElement::HasFlags( 8 ) )
 	{
 		// Render children after text
-		AGUI2Element::Render();
+		T2GUIElement::Render();
 	}
 }
 
@@ -147,18 +149,18 @@ void AGUI2TextBox::GetDimensions( TFLOAT& a_rWidth, TFLOAT& a_rHeight )
 	{
 		if ( !m_wszText || !m_pFont )
 		{
-			AGUI2Element::m_fHeight = 0.0f;
+			T2GUIElement::m_fHeight = 0.0f;
 		}
 		else
 		{
-			AGUI2Element::m_fHeight = m_pFont->GetTextHeightWrapped( m_wszText, AGUI2Element::m_fWidth, m_fScale );
+			T2GUIElement::m_fHeight = m_pFont->GetTextHeightWrapped( m_wszText, T2GUIElement::m_fWidth, m_fScale );
 		}
 
 		m_bDimensionsDirty = TFALSE;
 	}
 
-	a_rWidth  = AGUI2Element::m_fWidth;
-	a_rHeight = AGUI2Element::m_fHeight;
+	a_rWidth  = T2GUIElement::m_fWidth;
+	a_rHeight = T2GUIElement::m_fHeight;
 }
 
 // $Barnyard: FUNCTION 006c3720
@@ -184,7 +186,7 @@ TFLOAT AGUI2TextBox::GetHeight()
 // $Barnyard: FUNCTION 0063ad20
 void AGUI2TextBox::SetWidth( TFLOAT a_fWidth )
 {
-	AGUI2Element::m_fWidth = a_fWidth;
+	T2GUIElement::m_fWidth = a_fWidth;
 	m_bDimensionsDirty     = TTRUE;
 }
 

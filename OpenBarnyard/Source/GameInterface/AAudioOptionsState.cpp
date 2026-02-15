@@ -2,8 +2,8 @@
 #include "AAudioOptionsState.h"
 #include "Sound/ASoundManager.h"
 #include "SoundBank/ui.h"
-#include "GUI/AGUI2FontManager.h"
-#include "GUI/AGUI2TextureSectionManager.h"
+#include "GUI/T2GUIFontManager.h"
+#include "GUI/T2GUITextureSectionManager.h"
 #include "Locale/ALocaleManager.h"
 #include "GUI/AGUI2.h"
 
@@ -77,7 +77,7 @@ void AAudioOptionsState::OnInsertion()
 {
 	TIMPLEMENT();
 
-	AGUI2Font* pFont = AGUI2FontManager::FindFont( AGUI2STYLE_FONT_PRIMARY );
+	T2GUIFont* pFont = T2GUIFontManager::FindFont( AGUI2STYLE_FONT_PRIMARY );
 
 	m_oGridMenu.CreateGrid( AUDIOOPTIONS_NUMOF, 2, 40.0f, 20.0f );
 	m_oGridMenu.SetCallbackUserData( this );
@@ -138,7 +138,7 @@ void AAudioOptionsState::OnInsertion()
 		    m_aTextItems[ i ].GetTransform().GetTranslation().y
 		);
 
-		m_aTextItems[ i ].SetAttachment( AGUI2ATTACHMENT_TOPLEFT, AGUI2ATTACHMENT_TOPCENTER );
+		m_aTextItems[ i ].SetAttachment( T2GUIATTACHMENT_TOPLEFT, T2GUIATTACHMENT_TOPCENTER );
 	}
 
 	// ...
@@ -210,17 +210,17 @@ AVolumeSlider::~AVolumeSlider()
 TBOOL AVolumeSlider::Create( const TCHAR* a_szLeftArrow, const TCHAR* a_szRightArrow, const TCHAR* a_szBarIcon )
 {
 	// Setup left arrow
-	AGUI2TextureSection* pLeftArrow = AGUI2TextureSectionManager::GetTextureSection( a_szLeftArrow );
+	T2GUITextureSection* pLeftArrow = T2GUITextureSectionManager::GetTextureSection( a_szLeftArrow );
 	TVALIDPTR( pLeftArrow );
 
 	m_aArrows[ 0 ].SetDimensions( pLeftArrow->GetWidth(), pLeftArrow->GetHeight() );
 	m_aArrows[ 0 ].SetTextureSection( pLeftArrow );
 	m_aArrows[ 0 ].SetTransform( 0.0f, 0.0f );
-	m_aArrows[ 0 ].SetAttachment( AGUI2ATTACHMENT_MIDDLELEFT, AGUI2ATTACHMENT_MIDDLELEFT );
+	m_aArrows[ 0 ].SetAttachment( T2GUIATTACHMENT_MIDDLELEFT, T2GUIATTACHMENT_MIDDLELEFT );
 	AddChildTail( m_aArrows[ 0 ] );
 
 	// Setup bar icons
-	AGUI2TextureSection* pBarIcon = AGUI2TextureSectionManager::GetTextureSection( a_szBarIcon );
+	T2GUITextureSection* pBarIcon = T2GUITextureSectionManager::GetTextureSection( a_szBarIcon );
 	TVALIDPTR( pBarIcon );
 
 	TFLOAT fBarWidth  = pBarIcon->GetWidth();
@@ -233,20 +233,20 @@ TBOOL AVolumeSlider::Create( const TCHAR* a_szLeftArrow, const TCHAR* a_szRightA
 		m_aBars[ i ].SetTextureSection( pBarIcon );
 		m_aBars[ i ].SetTransform( fBarX, 0.0f );
 		m_aBars[ i ].GetTransform().Scale( ms_fBarScale, ms_fBarScale );
-		m_aBars[ i ].SetAttachment( AGUI2ATTACHMENT_MIDDLELEFT, AGUI2ATTACHMENT_MIDDLELEFT );
+		m_aBars[ i ].SetAttachment( T2GUIATTACHMENT_MIDDLELEFT, T2GUIATTACHMENT_MIDDLELEFT );
 		AddChildTail( m_aBars[ i ] );
 
 		fBarX += ms_fBarScale * fBarWidth;
 	}
 
 	// Setup right arrow
-	AGUI2TextureSection* pRightArrow = AGUI2TextureSectionManager::GetTextureSection( a_szRightArrow );
+	T2GUITextureSection* pRightArrow = T2GUITextureSectionManager::GetTextureSection( a_szRightArrow );
 	TVALIDPTR( pRightArrow );
 
 	m_aArrows[ 1 ].SetDimensions( pRightArrow->GetWidth(), pRightArrow->GetHeight() );
 	m_aArrows[ 1 ].SetTextureSection( pRightArrow );
 	m_aArrows[ 1 ].SetTransform( fBarX, 0.0f );
-	m_aArrows[ 1 ].SetAttachment( AGUI2ATTACHMENT_MIDDLELEFT, AGUI2ATTACHMENT_MIDDLELEFT );
+	m_aArrows[ 1 ].SetAttachment( T2GUIATTACHMENT_MIDDLELEFT, T2GUIATTACHMENT_MIDDLELEFT );
 	AddChildTail( m_aArrows[ 1 ] );
 
 	SetDimensions( fBarX + pRightArrow->GetWidth(), m_aBars[ 0 ].GetHeight() * ms_fBarScale );
@@ -260,7 +260,7 @@ void AVolumeSlider::OnUpdate( TFLOAT a_fDeltaTime )
 	{
 		// Check if any of the arrow rectangles was pressed
 		m_iLastPressedArrowIndex = -1;
-		AGUI2Transform oElementInvTransform;
+		T2GUITransform oElementInvTransform;
 
 		TVector2 vecCursorPos = AGUI2::GetMouseCursor().GetCursorPos();
 

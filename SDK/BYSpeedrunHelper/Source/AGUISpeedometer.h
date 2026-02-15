@@ -1,5 +1,5 @@
 #pragma once
-#include <BYardSDK/AGUI2FontManager.h>
+#include <BYardSDK/SDK_T2GUIFontManager.h>
 #include <BYardSDK/AGUI2TextBox.h>
 
 class AGUISpeedometer
