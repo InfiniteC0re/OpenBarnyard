@@ -12,6 +12,8 @@ public:
 		friend class T2Vector;
 
 	public:
+		constexpr Iterator()
+		    : m_iIndex( 0 ), m_pVector( TNULL ) {}
 		constexpr Iterator( T2Vector* a_pVector )
 		    : m_iIndex( 0 ), m_pVector( a_pVector ) {}
 		constexpr Iterator( TINT a_iIndex, T2Vector* a_pVector )
@@ -401,7 +403,6 @@ private:
 			if ( a_bUseMemMove )
 			{
 				// Unsafe way but suitable with simple types
-				// Note: Seems that in Barnyard there's no other way of adding a gap but in newer Toshi branches there is so I'm adding it here too anyways
 				TUtil::MemMove( &AtUnsafe( a_iGapAt + a_iGapSize ), &AtUnsafe( a_iGapAt ), ( m_iNumElements - a_iGapAt ) * sizeof( T ) );
 			}
 			else
