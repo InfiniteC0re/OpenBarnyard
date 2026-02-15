@@ -7,6 +7,14 @@
 
 #define MAX_NUM_PLAYERS SPLITSCREEN_MAX_NUM_PLAYERS
 
+using APLAYERTEAM = TUINT32;
+enum APLAYERTEAM_ : APLAYERTEAM
+{
+	APLAYERTEAM_TEAM1,
+	APLAYERTEAM_TEAM2,
+	APLAYERTEAM_NONE
+};
+
 class APlayerHumanSlot
 {
 public:
@@ -36,15 +44,14 @@ public:
 	TINT              AddAIPlayer();
 	APlayerHumanSlot* AddHumanPlayer( Toshi::TInputDeviceController* a_pController );
 
+	void MakeTeamsFair();
+
 	TBOOL IsPlayerSlotUsed( TINT a_iSlot ) const;
 
 private:
 	Toshi::TPString8                                   m_strUnk;
 	Toshi::T2Vector<APlayerHumanSlot, MAX_NUM_PLAYERS> m_vecHumanSlots;
-	TINT                                               m_iUnk1;
-	TINT                                               m_iUnk2;
-	TINT                                               m_iUnk3;
-	TINT                                               m_iUnk4;
+	APLAYERTEAM                                        m_aPlayerTeams[ MAX_NUM_PLAYERS ];
 	TINT                                               m_iNumAIPlayers;
 	TINT                                               m_iNumHumanPlayers;
 };

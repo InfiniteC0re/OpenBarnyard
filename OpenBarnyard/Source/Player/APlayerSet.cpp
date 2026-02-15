@@ -27,12 +27,12 @@ void APlayerSet::Reset()
 	m_strUnk.SetPooledString( TNULL );
 
 	m_vecHumanSlots.Clear();
-	m_iUnk1            = 2;
-	m_iUnk2            = 2;
-	m_iUnk3            = 2;
-	m_iUnk4            = 2;
-	m_iNumAIPlayers    = 0;
-	m_iNumHumanPlayers = 0;
+	m_aPlayerTeams[ 0 ] = 2;
+	m_aPlayerTeams[ 1 ] = 2;
+	m_aPlayerTeams[ 2 ] = 2;
+	m_aPlayerTeams[ 3 ] = 2;
+	m_iNumAIPlayers     = 0;
+	m_iNumHumanPlayers  = 0;
 }
 
 // $Barnyard: FUNCTION 00620310
@@ -69,8 +69,66 @@ APlayerHumanSlot* APlayerSet::AddHumanPlayer( Toshi::TInputDeviceController* a_p
 
 	APlayerHumanSlot oUsedSlot( a_pController, TTRUE );
 	m_vecHumanSlots.InsertBefore( itInsertBefore, oUsedSlot );
-	
+
 	return &m_vecHumanSlots[ itInsertBefore.Index() ];
+}
+
+// $Barnyard: FUNCTION 006205f0
+void APlayerSet::MakeTeamsFair()
+{
+	if ( m_aPlayerTeams[ 0 ] == APLAYERTEAM_NONE ) return;
+	
+	const TINT iTotalNumPlayers = m_iNumAIPlayers + m_iNumHumanPlayers;
+	if ( iTotalNumPlayers > 1 )
+	{
+		// Check if there's at least one player in different team
+		for ( TINT i = 1; i < iTotalNumPlayers; i++ )
+		{
+			if ( m_aPlayerTeams[ 0 ] != m_aPlayerTeams[ i ] ) break;
+
+			// Every player is in a single team
+			if ( i + 1 >= iTotalNumPlayers ) return;
+		}
+
+		if ( m_iNumHumanPlayers < iTotalNumPlayers )
+		{
+			// There are some AI players, so need to fill flags for them
+			for ( TINT i = m_iNumHumanPlayers; i < iTotalNumPlayers; i++ )
+				m_aPlayerTeams[ i ] = APLAYERTEAM_NONE;
+		}
+
+		// Count Team 1 players
+		TINT iNumTeam1 = 0;
+		for ( TINT i = 0; i < iTotalNumPlayers; i++ )
+		{
+			if ( m_aPlayerTeams[ i ] == APLAYERTEAM_TEAM1 ) iNumTeam1++;
+		}
+
+		// Count Team 2 players
+		TINT iNumTeam2 = 0;
+		for ( TINT i = 0; i < iTotalNumPlayers; i++ )
+		{
+			if ( m_aPlayerTeams[ i ] == APLAYERTEAM_TEAM2 ) iNumTeam2++;
+		}
+
+		// Balance teams
+		for ( TINT i = 0; i < iTotalNumPlayers; i++ )
+		{
+			if ( m_aPlayerTeams[ i ] == APLAYERTEAM_NONE )
+			{
+				if ( iNumTeam1 < iNumTeam2 )
+				{
+					m_aPlayerTeams[ i ] = APLAYERTEAM_TEAM1;
+					iNumTeam1 += 1;
+				}
+				else
+				{
+					m_aPlayerTeams[ i ] = APLAYERTEAM_TEAM2;
+					iNumTeam2 += 1;
+				}
+			}
+		}
+	}
 }
 
 // $Barnyard: FUNCTION 00620400
@@ -90,10 +148,10 @@ APlayerHumanSlot::APlayerHumanSlot( Toshi::TInputDeviceController* a_pController
 // $Barnyard: FUNCTION 006206e0
 APlayerHumanSlot::APlayerHumanSlot( const APlayerHumanSlot& a_rcOther )
 {
-	m_Unk1         = a_rcOther.m_Unk1;
-	m_pController  = a_rcOther.m_pController;
-	m_strUnk       = a_rcOther.m_strUnk;
-	m_bUsed = a_rcOther.m_bUsed;
+	m_Unk1        = a_rcOther.m_Unk1;
+	m_pController = a_rcOther.m_pController;
+	m_strUnk      = a_rcOther.m_strUnk;
+	m_bUsed       = a_rcOther.m_bUsed;
 }
 
 // $Barnyard: FUNCTION 00620740
@@ -107,10 +165,10 @@ APlayerHumanSlot& APlayerHumanSlot::operator=( const APlayerHumanSlot& a_rcOther
 {
 	Reset();
 
-	m_Unk1         = a_rcOther.m_Unk1;
-	m_pController  = a_rcOther.m_pController;
-	m_strUnk       = a_rcOther.m_strUnk;
-	m_bUsed = a_rcOther.m_bUsed;
+	m_Unk1        = a_rcOther.m_Unk1;
+	m_pController = a_rcOther.m_pController;
+	m_strUnk      = a_rcOther.m_strUnk;
+	m_bUsed       = a_rcOther.m_bUsed;
 
 	return *this;
 }
