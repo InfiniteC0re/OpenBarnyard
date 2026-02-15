@@ -26,8 +26,8 @@ public:
 public:
 	TDECLARE_CLASS( AGameState, Toshi::TObject );
 
-	template <class Result, class... Args>
-	using t_ExecuteForChildCb = Result ( AGameState::* )( Args... args );
+	template <class Result, class ObjType, class... Args>
+	using t_ExecuteForChildCb = Result ( ObjType::* )( Args... args );
 
 	struct HUDParams
 	{
@@ -70,8 +70,8 @@ public:
 	virtual ASoundId GetSound();
 	virtual TBOOL    Unknown7();
 	virtual void     Unknown8();
-	virtual void     OnStarted();
-	virtual void     Unknown10();
+	virtual void     OnStart();
+	virtual void     OnPause();
 	virtual void     Unknown11( void* a_pUnk1, void* a_pUnk2 );
 	virtual void     Unknown12( void* a_pUnk1, void* a_pUnk2 );
 	virtual TFLOAT   GetFOV();
@@ -98,40 +98,49 @@ public:
 	void    SetOverlay( OVERLAY a_eOverlay ) { m_eOverlayColorIndex = a_eOverlay; }
 	OVERLAY GetOverlay() const { return m_eOverlayColorIndex; }
 
-	template <class RetT, class... Args>
-	void ExecuteForAllChildStates( t_ExecuteForChildCb<RetT, Args...> a_fnCallback, TUINT32 a_uiOffset, Args... args )
+	AGameState* FindChildState( Toshi::TClass* a_pClass );
+
+	template <class RetT, typename... Args>
+	static TFORCEINLINE TNODISCARD auto Bind_CallForAllChild( AGameState* pRoot, t_ExecuteForChildCb<RetT, AGameState, Args...> a_fnCallback, TUINT32 a_uiOffset = 0 )
 	{
-		T2_FOREACH( m_ChildStates, it )
-		{
-			auto pGameState = TREINTERPRETCAST(
-			    AGameState*,
-			    TREINTERPRETCAST( uintptr_t, TSTATICCAST( AGameState, it ) ) + a_uiOffset
-			);
-
-			( pGameState->*a_fnCallback )( args... );
-		}
-	}
-
-	template <class... Args>
-	TBOOL ExecuteForOneChildState( t_ExecuteForChildCb<TBOOL, Args...> a_fnCallback, TUINT32 a_uiOffset, Args... args )
-	{
-		T2_FOREACH( m_ChildStates, it )
-		{
-			auto pGameState = TREINTERPRETCAST(
-			    AGameState*,
-			    TREINTERPRETCAST( uintptr_t, TSTATICCAST( AGameState, it ) ) + a_uiOffset
-			);
-
-			TBOOL bResult = ( pGameState->*a_fnCallback )( args... );
-
-			if ( bResult )
+		return [ pRoot, a_fnCallback, a_uiOffset ]( std::type_identity_t<Args>... args ) {
+			T2_FOREACH( pRoot->m_ChildStates, it )
 			{
-				return TTRUE;
-			}
-		}
+				auto pGameState = TREINTERPRETCAST(
+				    AGameState*,
+				    TREINTERPRETCAST( TUINTPTR, TSTATICCAST( AGameState, it ) ) + a_uiOffset
+				);
 
-		return TFALSE;
+				( pGameState->*a_fnCallback )( args... );
+			}
+		};
 	}
+
+	template <typename... Args>
+	static TFORCEINLINE TNODISCARD auto Bind_CallForOneChild( AGameState* pRoot, t_ExecuteForChildCb<TBOOL, AGameState, Args...> a_fnCallback, TUINT32 a_uiOffset = 0 )
+	{
+		return [ pRoot, a_fnCallback, a_uiOffset ]( std::type_identity_t<Args>... args ) -> bool {
+			T2_FOREACH( pRoot->m_ChildStates, it )
+			{
+				auto pGameState = TREINTERPRETCAST(
+				    AGameState*,
+				    TREINTERPRETCAST( TUINTPTR, TSTATICCAST( AGameState, it ) ) + a_uiOffset
+				);
+
+				TBOOL bResult = ( pGameState->*a_fnCallback )( args... );
+
+				if ( bResult )
+				{
+					return TTRUE;
+				}
+			}
+
+			return TFALSE;
+		};
+	}
+
+private:
+	TBOOL FindChildStateImpl( Toshi::TClass* a_pClass, AGameState*& a_rOutput );
 
 protected:
 	HUDParams                  m_HUDParams;

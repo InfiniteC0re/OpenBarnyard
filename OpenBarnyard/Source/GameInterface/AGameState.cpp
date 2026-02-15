@@ -44,7 +44,7 @@ AGameState::~AGameState()
 // $Barnyard: FUNCTION 00428700
 TBOOL AGameState::ProcessInput( const TInputInterface::InputEvent* a_pInputEvent )
 {
-	if ( ExecuteForOneChildState( &AGameState::ProcessInput, 0, a_pInputEvent ) )
+	if ( Bind_CallForOneChild( this, &AGameState::ProcessInput )( a_pInputEvent ) )
 	{
 		return TTRUE;
 	}
@@ -60,7 +60,7 @@ TBOOL AGameState::ProcessCommand( AInputCommand a_eInputCommand, const TInputInt
 // $Barnyard: FUNCTION 00428870
 TBOOL AGameState::Unknown1( void* a_pUnk1, void* a_pUnk2 )
 {
-	return ExecuteForOneChildState( &AGameState::Unknown1, 0, a_pUnk1, a_pUnk2 );
+	return Bind_CallForOneChild( this, &AGameState::Unknown1 )( a_pUnk1, a_pUnk2 );
 }
 
 void AGameState::Unknown2( void* a_pUnk1 )
@@ -99,11 +99,11 @@ void AGameState::Unknown8()
 {
 }
 
-void AGameState::OnStarted()
+void AGameState::OnStart()
 {
 }
 
-void AGameState::Unknown10()
+void AGameState::OnPause()
 {
 }
 
@@ -124,7 +124,7 @@ TFLOAT AGameState::GetFOV()
 // $Barnyard: FUNCTION 00428890
 TBOOL AGameState::OnUpdate( TFLOAT a_fDeltaTime )
 {
-	ExecuteForAllChildStates( &AGameState::OnUpdate, 0, a_fDeltaTime );
+	Bind_CallForAllChild( this, &AGameState::OnUpdate )( a_fDeltaTime );
 	return TTRUE;
 }
 
@@ -132,39 +132,39 @@ TBOOL AGameState::OnUpdate( TFLOAT a_fDeltaTime )
 void AGameState::OnInsertion()
 {
 	m_bWasInserted = TTRUE;
-	ExecuteForAllChildStates( &AGameState::OnInsertion, 0 );
+	Bind_CallForAllChild( this, &AGameState::OnInsertion )();
 }
 
 // $Barnyard: FUNCTION 004288d0
 void AGameState::OnRemoval()
 {
-	ExecuteForAllChildStates( &AGameState::OnRemoval, 0 );
+	Bind_CallForAllChild( this, &AGameState::OnRemoval )();
 }
 
 // $Barnyard: FUNCTION 00428920
 void AGameState::OnSuspend()
 {
-	ExecuteForAllChildStates( &AGameState::OnSuspend, 0 );
+	Bind_CallForAllChild( this, &AGameState::OnSuspend )();
 }
 
 // $Barnyard: FUNCTION 004288f0
 void AGameState::OnResume( AGameState* a_pPreviousState )
 {
-	ExecuteForAllChildStates( &AGameState::OnResume, 0, a_pPreviousState );
+	Bind_CallForAllChild( this, &AGameState::OnResume )( a_pPreviousState );
 }
 
 // $Barnyard: FUNCTION 004289c0
 void AGameState::OnActivate()
 {
 	m_bIsActivated = TTRUE;
-	ExecuteForAllChildStates( &AGameState::OnActivate, 0 );
+	Bind_CallForAllChild( this, &AGameState::OnActivate )();
 }
 
 // $Barnyard: FUNCTION 004289e0
 void AGameState::OnDeactivate()
 {
 	m_bIsActivated = TFALSE;
-	ExecuteForAllChildStates( &AGameState::OnDeactivate, 0 );
+	Bind_CallForAllChild( this, &AGameState::OnDeactivate )();
 }
 
 void AGameState::Destroy()
@@ -186,6 +186,32 @@ void AGameState::Destroy( TBOOL a_bDeactivate )
 
 	OnRemoval();
 	delete this;
+}
+
+// $Barnyard: FUNCTION 00428a00
+AGameState* AGameState::FindChildState( TClass* a_pClass )
+{
+	AGameState* pResult = TNULL;
+	Bind_CallForOneChild( this, &AGameState::FindChildStateImpl )( a_pClass, pResult );
+
+	return pResult;
+}
+
+// $Barnyard: FUNCTION 00428a30
+TBOOL AGameState::FindChildStateImpl( TClass* a_pClass, AGameState*& a_rOutput )
+{
+	if ( GetClass()->IsA( a_pClass ) )
+	{
+		a_rOutput = this;
+		return TTRUE;
+	}
+	
+	// Look through other children states
+	AGameState* pResult = TNULL;
+	Bind_CallForOneChild( this, &AGameState::FindChildStateImpl )( a_pClass, pResult );
+
+	// BUG?: shouldn't it move the result into a_rOutput?
+	return pResult != TNULL;
 }
 
 // $Barnyard: FUNCTION 00428730
@@ -237,7 +263,7 @@ TBOOL AGameState::SendInputCommands( const TInputInterface::InputEvent* a_pEvent
 
 		if ( !bProcessedCommand )
 		{
-			return ExecuteForOneChildState( &AGameState::SendInputCommands, 0, a_pEvent );
+			return Bind_CallForOneChild( this, &AGameState::SendInputCommands, 0 )( a_pEvent );
 		}
 	}
 

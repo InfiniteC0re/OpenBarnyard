@@ -1,3 +1,2 @@
 #pragma once
-
-#define SPLITSCREEN_MAX_NUM_PLAYERS 4
+#include "GameInterface/ASplitScreen.h"

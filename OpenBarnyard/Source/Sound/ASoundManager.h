@@ -17,7 +17,8 @@
 
 #define ASOUNDMANAGER_MAX_NUM_CUE 128
 
-class ASoundManager : public Toshi::TTask
+class ASoundManager
+	: public Toshi::TTask
     , public Toshi::TSingleton<ASoundManager>
 {
 public:

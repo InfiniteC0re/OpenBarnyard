@@ -50,7 +50,7 @@ public:
 	virtual TUINT32 GetSound() { return -1; }
 	virtual TBOOL   Unknown7() { return TTRUE; }
 	virtual void    Unknown8() {}
-	virtual void    OnStarted() {}
+	virtual void    OnStart() {}
 	virtual void    Unknown10() {}
 	virtual void    Unknown11( void* a_pUnk1, void* a_pUnk2 ) {}
 	virtual void    Unknown12( void* a_pUnk1, void* a_pUnk2 ) {}

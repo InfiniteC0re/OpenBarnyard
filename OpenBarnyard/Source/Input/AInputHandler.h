@@ -23,6 +23,8 @@ public:
 
 	TBOOL HadInputLastFrame() const { return m_bHadInputLastFrame; }
 
+	TBOOL IsValidDevice( Toshi::TInputDevice* a_pDevice ) const;
+
 private:
 	TBOOL ProcessInputEvent( Toshi::TInputInterface* a_pInputInterface, Toshi::TInputInterface::InputEvent* a_pEvent );
 

@@ -73,6 +73,12 @@ TBOOL AInputHandler::OnUpdate( TFLOAT a_fDeltaTime )
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 00595940
+TBOOL AInputHandler::IsValidDevice( Toshi::TInputDevice* a_pDevice ) const
+{
+	return a_pDevice && ( a_pDevice == m_pKeyboardDevice || a_pDevice == m_pMouseDevice || a_pDevice == m_pMainController );
+}
+
 // $Barnyard: FUNCTION 00595ec0
 TBOOL AInputHandler::ProcessInputEvent( Toshi::TInputInterface* a_pInputInterface, Toshi::TInputInterface::InputEvent* a_pEvent )
 {
