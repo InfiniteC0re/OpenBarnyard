@@ -73,7 +73,9 @@ project "OpenBarnyard"
 		"Source/FSM/**.h",
 		"Source/FSM/**.cpp",
 		"Source/CVar/**.h",
-		"Source/CVar/**.cpp"
+		"Source/CVar/**.cpp",
+		"Source/Player/**.h",
+		"Source/Player/**.cpp"
 	}
 	
 	libdirs
