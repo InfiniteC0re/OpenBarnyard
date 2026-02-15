@@ -26,7 +26,7 @@ void APlayerSet::Reset()
 {
 	m_strUnk.SetPooledString( TNULL );
 
-	m_vecHumanSlots.Clear();
+	m_vecPlayerSlots.Clear();
 	m_aPlayerTeams[ 0 ] = 2;
 	m_aPlayerTeams[ 1 ] = 2;
 	m_aPlayerTeams[ 2 ] = 2;
@@ -45,7 +45,7 @@ TINT APlayerSet::AddAIPlayer()
 }
 
 // $Barnyard: FUNCTION 006206d0
-APlayerHumanSlot* APlayerSet::AddHumanPlayer( Toshi::TInputDeviceController* a_pController )
+APlayerSlot* APlayerSet::AddHumanPlayer( Toshi::TInputDeviceController* a_pController )
 {
 	// Adjust number of AI players
 	if ( m_iNumHumanPlayers + m_iNumAIPlayers >= MAX_NUM_PLAYERS )
@@ -57,20 +57,20 @@ APlayerHumanSlot* APlayerSet::AddHumanPlayer( Toshi::TInputDeviceController* a_p
 	}
 
 	// Find free slot
-	decltype( m_vecHumanSlots )::Iterator itInsertBefore = m_vecHumanSlots.Begin();
-	T2_FOREACH( m_vecHumanSlots, it )
+	auto itInsertBefore = m_vecPlayerSlots.Begin();
+	T2_FOREACH( m_vecPlayerSlots, it )
 	{
-		if ( !it->m_bUsed )
+		if ( it->m_uiFlags == 0 )
 		{
 			itInsertBefore = it;
 			break;
 		}
 	}
 
-	APlayerHumanSlot oUsedSlot( a_pController, TTRUE );
-	m_vecHumanSlots.InsertBefore( itInsertBefore, oUsedSlot );
+	APlayerSlot oUsedSlot( a_pController, APlayerSlot::FLAGS_USED );
+	m_vecPlayerSlots.InsertBefore( itInsertBefore, oUsedSlot );
 
-	return &m_vecHumanSlots[ itInsertBefore.Index() ];
+	return &m_vecPlayerSlots[ itInsertBefore.Index() ];
 }
 
 // $Barnyard: FUNCTION 006205f0
@@ -131,49 +131,68 @@ void APlayerSet::MakeTeamsFair()
 	}
 }
 
+// $Barnyard: FUNCTION 00620820
+void APlayerSet::FinishUpAddingAIs()
+{
+	// Count all player slots without the AI flag
+	TINT iCurrentNumAIPlayers = 0;
+	for ( TINT i = 0; i < m_vecPlayerSlots.Size(); i++ )
+	{
+		if ( m_vecPlayerSlots[ i ].m_uiFlags & APlayerSlot::FLAGS_AI )
+			iCurrentNumAIPlayers += 1;
+	}
+
+	// Add missing AI players
+	while ( iCurrentNumAIPlayers < m_iNumAIPlayers )
+	{
+		m_vecPlayerSlots.PushBack( APlayerSlot( TNULL, APlayerSlot::FLAGS_AI ) );
+		iCurrentNumAIPlayers += 1;
+	}
+}
+
 // $Barnyard: FUNCTION 00620400
 TBOOL APlayerSet::IsPlayerSlotUsed( TINT a_iSlot ) const
 {
-	return m_vecHumanSlots[ a_iSlot ].m_bUsed & 1;
+	return m_vecPlayerSlots[ a_iSlot ].m_uiFlags & 1;
 }
 
 // $Barnyard: FUNCTION 006206d0
-APlayerHumanSlot::APlayerHumanSlot( Toshi::TInputDeviceController* a_pController, TBOOL a_bUsed )
+APlayerSlot::APlayerSlot( Toshi::TInputDeviceController* a_pController, FLAGS a_uiFlags )
     : m_Unk1( 0 )
     , m_pController( a_pController )
-    , m_bUsed( a_bUsed )
+    , m_uiFlags( a_uiFlags )
 {
 }
 
 // $Barnyard: FUNCTION 006206e0
-APlayerHumanSlot::APlayerHumanSlot( const APlayerHumanSlot& a_rcOther )
+APlayerSlot::APlayerSlot( const APlayerSlot& a_rcOther )
 {
 	m_Unk1        = a_rcOther.m_Unk1;
 	m_pController = a_rcOther.m_pController;
 	m_strUnk      = a_rcOther.m_strUnk;
-	m_bUsed       = a_rcOther.m_bUsed;
+	m_uiFlags     = a_rcOther.m_uiFlags;
 }
 
 // $Barnyard: FUNCTION 00620740
-APlayerHumanSlot::~APlayerHumanSlot()
+APlayerSlot::~APlayerSlot()
 {
 	Reset();
 }
 
 // $Barnyard: FUNCTION 006207c0
-APlayerHumanSlot& APlayerHumanSlot::operator=( const APlayerHumanSlot& a_rcOther )
+APlayerSlot& APlayerSlot::operator=( const APlayerSlot& a_rcOther )
 {
 	Reset();
 
 	m_Unk1        = a_rcOther.m_Unk1;
 	m_pController = a_rcOther.m_pController;
 	m_strUnk      = a_rcOther.m_strUnk;
-	m_bUsed       = a_rcOther.m_bUsed;
+	m_uiFlags     = a_rcOther.m_uiFlags;
 
 	return *this;
 }
 
-void APlayerHumanSlot::Reset()
+void APlayerSlot::Reset()
 {
 	TASSERT( TFALSE && "Destroy Unk1" );
 	m_strUnk.SetPooledString( TNULL );
