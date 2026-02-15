@@ -13,6 +13,7 @@
 #include "MiniGame/AMiniGameManager.h"
 #include "Physics/ACollisionManager.h"
 #include "Physics/ABarnyardCollision.h"
+#include "Player/APlayerManager.h"
 
 #include <Toshi/TScheduler.h>
 #include <Plugins/PPropertyParser/PBProperties.h>
@@ -69,6 +70,8 @@ TBOOL AGameSystemManager::OnCreate()
 	// Create collision and physics systems
 	pScheduler->CreateTask<ACollisionManager>( this )->Create();
 	//ABarnyardCollision::CreateSingleton();
+
+	APlayerManager::CreateSingleton();
 
 	pScheduler->CreateTask<AMiniGameManager>( this )->Create();
 	pScheduler->CreateTask<ASimAnimModelHelperManager>( this )->Create();

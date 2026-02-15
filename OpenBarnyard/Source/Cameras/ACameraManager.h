@@ -71,6 +71,8 @@ public:
 
 	void StopPositionLerp( TFLOAT a_flDeltaTime );
 
+	void FUN_0045c290() {}
+
 public:
 	ACameraHelper*  m_apCameraHelpers[ CAMERAHELPER_NUM_OF ];
 	ACameraHelper*  m_apSplitscreenCameraHelpers[ SPLITSCREEN_CAMERAHELPER_NUM_OF ];

@@ -48,6 +48,9 @@ public:
 	AGameState* GetCurrentState() { return *m_oStates.Back(); }
 	TBOOL       IsCurrentState( Toshi::TClass* a_pClass ) { return GetCurrentState()->IsA( a_pClass ); }
 
+public:
+	static void StartMiniGame( TINT a_iMiniGame, TBOOL a_bRightNow );
+
 private:
 	void InsertGameState( AGameState* a_pGameState );
 

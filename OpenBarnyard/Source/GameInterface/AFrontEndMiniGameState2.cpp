@@ -6,6 +6,8 @@
 #include "Sound/ASoundManager.h"
 #include "SoundBank/ui.h"
 #include "Helpers/APlayerProgress.h"
+#include "Player/APlayerManager.h"
+#include "Input/AInputHandler.h"
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
@@ -26,7 +28,7 @@ AFrontEndMiniGameState2::AFrontEndMiniGameState2( TBOOL a_bHideVariantSelector )
     , m_pRectangles( TNULL )
     , m_iNumMiniGames( 0 )
     , m_eSliderState( SLIDERSTATE_IDLE )
-    , m_bNoDebug( a_bHideVariantSelector )
+    , m_bIsRelease( a_bHideVariantSelector )
     , m_bMouseDirty( TFALSE )
     , m_bMiniGameHovered( TFALSE )
     , m_bLeftArrowHovered( TFALSE )
@@ -171,7 +173,7 @@ void AFrontEndMiniGameState2::OnInsertion()
 {
 	m_iSelectedMiniGame = 0;
 
-	m_iNumMiniGames = ( m_bNoDebug ) ?
+	m_iNumMiniGames = ( m_bIsRelease ) ?
 	    g_pMiniGameManager->GetNumVisibleMiniGames() :
 	    g_pMiniGameManager->GetTotalNumMiniGames();
 
@@ -183,7 +185,7 @@ void AFrontEndMiniGameState2::OnInsertion()
 	for ( TINT i = 0; i < m_iNumMiniGames; i++ )
 	{
 		// Get correct icon for this minigame
-		const TCHAR* szIconName = m_bNoDebug ?
+		const TCHAR* szIconName = m_bIsRelease ?
 		    g_pMiniGameManager->GetVisibleMiniGame( i )->m_szIconName :
 		    g_pMiniGameManager->GetMiniGame( i )->m_szIconName;
 
@@ -614,7 +616,7 @@ TBOOL AFrontEndMiniGameState2::OnUpdate( TFLOAT a_fDeltaTime )
 // $Barnyard: FUNCTION 0040a0f0
 void AFrontEndMiniGameState2::OnMenuItemActivated( AGUI2MenuItem* a_pMenuItem )
 {
-	if ( m_bNoDebug && !g_pPlayerProgress->IsMiniGameAvailable( m_iSelectedMiniGame ) )
+	if ( m_bIsRelease && !g_pPlayerProgress->IsMiniGameAvailable( m_iSelectedMiniGame ) )
 	{
 		ASoundManager::GetSingleton()->PlayCue( soundbank::UI_NEGATIVE );
 		return;
@@ -635,16 +637,54 @@ void AFrontEndMiniGameState2::OnMenuClose()
 		m_iHidingMiniGame = -1;
 	}
 
-	// Temporarily disable booting minigame, since we don't have any
-	m_iSelectedMiniGame = -1;
-
 	if ( m_iSelectedMiniGame == -1 )
 	{
 		BaseClass::Remove();
 		return;
 	}
 
-	TASSERT( TFALSE && "TODO: boot up the chosen minigame" );
+	// Fill player set
+	APlayerManager* pPlyrMgr = APlayerManager::GetSingleton();
+	APlayerSet*     pPlyrSet = pPlyrMgr->GetPlayerSet( 1 );
+
+	pPlyrSet->AddHumanPlayer( AInputHandler::GetSingleton()->GetMainController() );
+
+	const TINT      iMinNumPlayers  = AMiniGameManager::GetSingleton()->GetMiniGame( m_iSelectedMiniGame )->m_iMinNumPlayers;
+	const TPString8 strMiniGameName = AMiniGameManager::GetSingleton()->GetMiniGame( m_iSelectedMiniGame )->m_strMiniGameName;
+
+	// If mud jumpers, fill with AI players
+	if ( strMiniGameName == TPS8D( "AGateCrashMiniGameState" ) )
+	{
+		for ( TINT i = iMinNumPlayers - pPlyrSet->GetNumHumanPlayers(); i > 0; i-- )
+			pPlyrSet->AddAIPlayer();
+	}
+
+	// Balance teams
+	pPlyrSet->MakeTeamsFair();
+	AMiniGameManager::GetSingleton()->MakeValidMiniGamePlayerSet( m_iSelectedMiniGame );
+	pPlyrSet->FinishUpAddingAIs();
+
+	TINT iMiniGameId            = ( !m_bIsRelease ) ? m_iSelectedMiniGame : AMiniGameManager::GetSingleton()->GetHiddenMiniGameIndex( m_iSelectedMiniGame );
+	TINT iNumSelectableVariants = ( !m_bIsRelease ) ? AMiniGameManager::GetSingleton()->GetMiniGame( m_iSelectedMiniGame )->m_iNumSelectableVariants : 0;
+
+	if ( TTRUE || iNumSelectableVariants <= 1 )
+	{
+		// Hide UI elements
+		m_oDialogTitleBackground.Hide();
+		m_oDialog.Hide();
+
+		TTODO( "Set weather, game time and AGameStateController flags" );
+
+		AMiniGameManager::GetSingleton()->SetMiniGameVariant(
+		    m_bIsRelease ? AMiniGameManager::GetSingleton()->GetMiniGame( iMiniGameId )->m_iDefaultVariant : 0
+		);
+
+		AGameStateController::StartMiniGame( iMiniGameId, TFALSE );
+	}
+	else
+	{
+		TASSERT( TFALSE && "AFrontEndVariantSelectState" );
+	}
 }
 
 // $Barnyard: FUNCTION 0040a150
@@ -653,7 +693,7 @@ void AFrontEndMiniGameState2::UpdateText()
 	const TWCHAR* wcsTitle;
 	const TWCHAR* wcsDescription;
 
-	if ( !m_bNoDebug )
+	if ( !m_bIsRelease )
 	{
 		wcsTitle       = g_pLocaleManager->GetString( g_pMiniGameManager->GetMiniGame( m_iSelectedMiniGame )->m_eLocaleTitle );
 		wcsDescription = g_pLocaleManager->GetString( g_pMiniGameManager->GetMiniGame( m_iSelectedMiniGame )->m_eLocaleDescription );
@@ -678,5 +718,5 @@ TBOOL AFrontEndMiniGameState2::IsCurrentMiniGameAvailable() const
 {
 	TASSERT( m_iSelectedMiniGame >= 0 && m_iSelectedMiniGame < 32 );
 
-	return !m_bNoDebug || g_pPlayerProgress->IsMiniGameAvailable( m_iSelectedMiniGame % 32 );
+	return !m_bIsRelease || g_pPlayerProgress->IsMiniGameAvailable( m_iSelectedMiniGame % 32 );
 }

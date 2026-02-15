@@ -67,25 +67,26 @@ AMiniGameManager::~AMiniGameManager()
 }
 
 // $Barnyard: FUNCTION 00469d30
-AMiniGame& AMiniGameManager::RegisterMiniGame( const TCHAR* a_szMiniGameName, const TCHAR* a_szClassStateName, const TCHAR* a_szIconName, TINT a_eLocaleTitle, TINT a_eLocaleDescription, TINT a_iUnk1, const Toshi::TPString8& a_strLoadingScreenName, TBOOL a_bUnk2, TINT a_iMaxNumPlayers, TINT a_iUnk4, TINT a_iUnk5, TINT a_iOrderId, TINT a_iUnk7 )
+AMiniGame& AMiniGameManager::RegisterMiniGame( const TCHAR* a_szMiniGameName, const TCHAR* a_szClassStateName, const TCHAR* a_szIconName, TINT a_eLocaleTitle, TINT a_eLocaleDescription, TINT a_iUnk1, const Toshi::TPString8& a_strLoadingScreenName, TBOOL a_bUnk2, TINT a_iMinNumPlayers, TINT a_iMaxNumPlayers, TINT a_iUnk5, TINT a_iOrderId, TINT a_iUnk7 )
 {
 	AMiniGame& rMiniGame = m_vecMiniGames.PushBack();
 
-	rMiniGame.m_eLocaleTitle       = a_eLocaleTitle;
-	rMiniGame.m_eLocaleDescription = a_eLocaleDescription;
-	rMiniGame.m_pGameStateClass    = TClass::Find( a_szClassStateName, &TGetClass( AGameState ) );
-	rMiniGame.m_iMaxNumPlayers     = a_iMaxNumPlayers;
-	rMiniGame.field7_0x1c          = a_bUnk2;
-	rMiniGame.field5_0x14          = a_iUnk4;
-	rMiniGame.m_pLoadingScreenName = &a_strLoadingScreenName;
-	rMiniGame.m_szIconName         = a_szIconName;
-	rMiniGame.field13_0x28         = a_iUnk5;
-	rMiniGame.m_iAvailabilityFlag  = a_iOrderId - 1;
-	rMiniGame.m_iNumUnknown2       = 0;
-	rMiniGame.field20_0xfc         = a_iUnk1;
-	rMiniGame.field21_0x100        = a_iUnk7;
+	rMiniGame.m_strMiniGameName        = a_szMiniGameName;
+	rMiniGame.m_eLocaleTitle           = a_eLocaleTitle;
+	rMiniGame.m_eLocaleDescription     = a_eLocaleDescription;
+	rMiniGame.m_pGameStateClass        = TClass::Find( a_szClassStateName, &TGetClass( AGameState ) );
+	rMiniGame.m_iMinNumPlayers         = a_iMinNumPlayers;
+	rMiniGame.m_iMaxNumPlayers         = a_iMaxNumPlayers;
+	rMiniGame.field7_0x1c              = a_bUnk2;
+	rMiniGame.m_pLoadingScreenName     = &a_strLoadingScreenName;
+	rMiniGame.m_szIconName             = a_szIconName;
+	rMiniGame.field13_0x28             = a_iUnk5;
+	rMiniGame.m_iDefaultVariant        = a_iOrderId - 1;
+	rMiniGame.m_iNumSelectableVariants = 0;
+	rMiniGame.field20_0xfc             = a_iUnk1;
+	rMiniGame.field21_0x100            = a_iUnk7;
 
-	if ( rMiniGame.m_iAvailabilityFlag != -1 )
+	if ( rMiniGame.m_iDefaultVariant != -1 )
 		m_iNumVisibleMiniGames += 1;
 
 	return rMiniGame;
@@ -96,20 +97,21 @@ AMiniGame& AMiniGameManager::RegisterHiddenMiniGame( const TCHAR* a_szMiniGameNa
 {
 	AMiniGame& rMiniGame = m_vecMiniGames.PushBack();
 
-	rMiniGame.m_eLocaleTitle       = a_eLocaleTitle;
-	rMiniGame.m_eLocaleDescription = a_eLocaleDescription;
-	rMiniGame.m_pGameStateClass    = TClass::Find( a_szClassStateName, &TGetClass( AGameState ) );
-	rMiniGame.m_pLoadingScreenName = &a_strLoadingScreenName;
-	rMiniGame.m_iMaxNumPlayers     = 1;
-	rMiniGame.field5_0x14          = 1;
-	rMiniGame.field6_0x18          = 1;
-	rMiniGame.m_szIconName         = a_szIconName;
-	rMiniGame.m_iAvailabilityFlag  = -1;
-	rMiniGame.field21_0x100        = a_iUnk3;
-	rMiniGame.field13_0x28         = a_iUnk2;
-	rMiniGame.field7_0x1c          = TFALSE;
-	rMiniGame.m_iNumUnknown2       = 0;
-	rMiniGame.field20_0xfc         = a_iUnk1;
+	rMiniGame.m_strMiniGameName        = a_szMiniGameName;
+	rMiniGame.m_eLocaleTitle           = a_eLocaleTitle;
+	rMiniGame.m_eLocaleDescription     = a_eLocaleDescription;
+	rMiniGame.m_pGameStateClass        = TClass::Find( a_szClassStateName, &TGetClass( AGameState ) );
+	rMiniGame.m_pLoadingScreenName     = &a_strLoadingScreenName;
+	rMiniGame.m_iMinNumPlayers         = 1;
+	rMiniGame.m_iMaxNumPlayers         = 1;
+	rMiniGame.field6_0x18              = 1;
+	rMiniGame.m_szIconName             = a_szIconName;
+	rMiniGame.m_iDefaultVariant        = -1;
+	rMiniGame.field21_0x100            = a_iUnk3;
+	rMiniGame.field13_0x28             = a_iUnk2;
+	rMiniGame.field7_0x1c              = TFALSE;
+	rMiniGame.m_iNumSelectableVariants = 0;
+	rMiniGame.field20_0xfc             = a_iUnk1;
 
 	return rMiniGame;
 }
@@ -119,9 +121,9 @@ void AMiniGameManager::MakeValidMiniGamePlayerSet( TINT a_iMiniGame )
 {
 	APlayerManager* pPlyrMgr = APlayerManager::GetSingleton();
 	APlayerSet*     pPlyrSet = pPlyrMgr->GetPlayerSet( 1 );
-	
+
 	// Add AIs until it's enough players in the set
-	const TINT iMiniGameNumPlayers = m_vecMiniGames[ a_iMiniGame ].m_iMaxNumPlayers;
+	const TINT iMiniGameNumPlayers = m_vecMiniGames[ a_iMiniGame ].m_iMinNumPlayers;
 	while ( iMiniGameNumPlayers < pPlyrSet->GetTotalNumPlayers() )
 		pPlyrSet->AddAIPlayer();
 
@@ -142,7 +144,7 @@ AMiniGame* AMiniGameManager::GetVisibleMiniGame( TINT a_iIndex )
 
 	T2_FOREACH( m_vecMiniGames, it )
 	{
-		if ( it->m_iAvailabilityFlag != -1 )
+		if ( !it->IsPlaceholder() )
 		{
 			if ( iIndex == a_iIndex )
 				return it;
@@ -155,20 +157,20 @@ AMiniGame* AMiniGameManager::GetVisibleMiniGame( TINT a_iIndex )
 }
 
 // $Barnyard: FUNCTION 00469390
-AMiniGame* AMiniGameManager::GetHiddenMiniGame( TINT a_iIndex )
+TINT AMiniGameManager::GetHiddenMiniGameIndex( TINT a_iIndex )
 {
 	TINT iIndex = 0;
 
 	T2_FOREACH( m_vecMiniGames, it )
 	{
-		if ( it->m_iAvailabilityFlag == -1 )
+		if ( it->IsPlaceholder() )
 		{
 			if ( iIndex == a_iIndex )
-				return it;
+				return it.Index();
 
 			iIndex += 1;
 		}
 	}
 
-	return TNULL;
+	return 0;
 }

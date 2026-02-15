@@ -22,20 +22,22 @@ public:
 	const Variant& GetVariant( TINT a_iIndex );
 	AMiniGame&     AddVariant( TINT a_eLocaleTitle, TINT a_eLocaleHint, TINT a_eLocaleDescription );
 
+	TBOOL IsPlaceholder() const { return m_iDefaultVariant == -1; }
+
 private:
 	Toshi::TPString8        m_strMiniGameName;
 	TINT                    m_eLocaleTitle;
 	TINT                    m_eLocaleDescription;
 	const Toshi::TClass*    m_pGameStateClass;
+	TINT                    m_iMinNumPlayers;
 	TINT                    m_iMaxNumPlayers;
-	TINT                    field5_0x14;
 	TINT                    field6_0x18;
 	TBOOL                   field7_0x1c;
 	const TCHAR*            m_szIconName;
 	const Toshi::TPString8* m_pLoadingScreenName;
 	TINT                    field13_0x28;
-	TINT                    m_iAvailabilityFlag;
-	TINT                    m_iNumUnknown2;
+	TINT                    m_iDefaultVariant;
+	TINT                    m_iNumSelectableVariants;
 	TINT                    m_iNumVariants;
 	Variant                 m_aVariants[ MAX_NUM_VARIANTS ];
 	TINT                    m_iNumUnknown1;

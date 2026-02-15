@@ -5,7 +5,8 @@
 #include <Toshi/TTask.h>
 #include <Toshi/TString8.h>
 
-class ARootTask : public Toshi::TTask
+class ARootTask
+	: public Toshi::TTask
     , public Toshi::TSingleton<ARootTask>
 {
 public:
@@ -29,6 +30,7 @@ public:
 	void  SetRenderWorld( TBOOL a_bReady ) { m_bRenderWorld = a_bReady; }
 	TBOOL IsRenderWorld() { return m_bRenderWorld; }
 
+	void  StopRenderMainScene( TBOOL a_bRender ) { m_bStopRenderingScene = a_bRender; }
 	TBOOL ShouldRenderMainScene() const { return !m_bStopRenderingScene; }
 
 private:

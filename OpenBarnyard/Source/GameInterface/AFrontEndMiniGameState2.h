@@ -53,7 +53,7 @@ private:
 	AGUI2TextBox           m_oMiniGameDescription;
 	TINT                   field15_0xa9c;
 	TINT                   field16_0xaa0;
-	TBOOL                  m_bNoDebug;
+	TBOOL                  m_bIsRelease;
 	TFLOAT                 m_fTime;
 	TBOOL                  m_bMouseDirty;
 	TBOOL                  m_bMiniGameHovered;

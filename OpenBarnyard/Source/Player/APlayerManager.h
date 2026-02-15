@@ -17,6 +17,8 @@ public:
 		return &m_aPlayerSets[ a_eType ];
 	}
 
+	void ResetPlayerIterator() { m_iCurrentPlayerIt = 0; }
+
 private:
 	APlayerSet* m_pPlayerSets;
 	APlayerSet  m_aPlayerSets[ 2 ];

@@ -58,6 +58,8 @@ public:
 	TBOOL        IsPlayerSlotUsedByAI( TINT a_iSlot ) const;
 
 	TINT GetTotalNumPlayers() const { return m_iNumAIPlayers + m_iNumHumanPlayers; }
+	TINT GetNumAIPlayers() const { return m_iNumAIPlayers; }
+	TINT GetNumHumanPlayers() const { return m_iNumHumanPlayers; }
 
 	void MakeTeamsFair();
 	void FinishUpAddingAIs();

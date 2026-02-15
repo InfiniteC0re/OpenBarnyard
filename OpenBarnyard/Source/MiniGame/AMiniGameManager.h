@@ -25,8 +25,8 @@ public:
 	    TINT                    a_iUnk1,
 	    const Toshi::TPString8& a_strLoadingScreenName,
 	    TBOOL                   a_bUnk2,
+	    TINT                    a_iMinNumPlayers,
 	    TINT                    a_iMaxNumPlayers,
-	    TINT                    a_iUnk4,
 	    TINT                    a_iUnk5,
 	    TINT                    a_iOrderId,
 	    TINT                    a_iUnk7
@@ -48,16 +48,18 @@ public:
 
 	AMiniGame* GetMiniGame( TINT a_iIndex );
 	AMiniGame* GetVisibleMiniGame( TINT a_iIndex );
-	AMiniGame* GetHiddenMiniGame( TINT a_iIndex );
+	TINT       GetHiddenMiniGameIndex( TINT a_iIndex );
+	TINT       GetNumVisibleMiniGames() const { return m_iNumVisibleMiniGames; }
+	TINT       GetTotalNumMiniGames() const { return m_vecMiniGames.Size(); }
 
-	TINT GetNumVisibleMiniGames() const { return m_iNumVisibleMiniGames; }
-	TINT GetTotalNumMiniGames() const { return m_vecMiniGames.Size(); }
+	TINT GetMiniGameVariant() const { return m_iMiniGameVariant; }
+	void SetMiniGameVariant( TINT a_iVariant ) { m_iMiniGameVariant = a_iVariant; }
 
 private:
 	Toshi::T2DynamicVector<AMiniGame> m_vecMiniGames;
 	Toshi::TPString8                  m_strNextMiniGameName;
 	// ...
-	TINT m_iNextMiniGameVariant;
+	TINT m_iMiniGameVariant;
 	// ...
 	TINT        m_iNumVisibleMiniGames;
 	Toshi::TTRB field612_0x280;

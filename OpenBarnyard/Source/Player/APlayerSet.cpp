@@ -12,13 +12,14 @@ TOSHI_NAMESPACE_USING
 // $Barnyard: FUNCTION 00620bc0
 APlayerSet::APlayerSet()
 {
+	Reset();
 }
 
 // $Barnyard: FUNCTION 00620c30
 // $Barnyard: FUNCTION 00620a90
 APlayerSet::~APlayerSet()
 {
-	Reset();
+	
 }
 
 // $Barnyard: FUNCTION 00620b00
@@ -44,7 +45,7 @@ TINT APlayerSet::AddAIPlayer()
 	return m_iNumAIPlayers;
 }
 
-// $Barnyard: FUNCTION 006206d0
+// $Barnyard: FUNCTION 00620c50
 APlayerSlot* APlayerSet::AddHumanPlayer( Toshi::TInputDeviceController* a_pController )
 {
 	// Adjust number of AI players
@@ -71,10 +72,11 @@ APlayerSlot* APlayerSet::AddHumanPlayer( Toshi::TInputDeviceController* a_pContr
 	}
 
 	m_vecPlayerSlots.InsertBefore( itInsertBefore, APlayerSlot( a_pController, APlayerSlot::FLAGS_HUMAN ) );
+	m_iNumHumanPlayers += 1;
+
 	return &m_vecPlayerSlots[ itInsertBefore.Index() ];
 }
 
-// $Barnyard: FUNCTION 006205f0
 APlayerSlot* APlayerSet::GetPlayerSlot( TINT a_iSlot )
 {
 	TASSERT( a_iSlot < m_vecPlayerSlots.Size() );
@@ -207,7 +209,7 @@ APlayerSlot& APlayerSlot::operator=( const APlayerSlot& a_rcOther )
 
 void APlayerSlot::Reset()
 {
-	TASSERT( TFALSE && "Destroy Unk1" );
+	if ( m_Unk1 ) TASSERT( TFALSE && "Destroy Unk1" );
 	m_strUnk.SetPooledString( TNULL );
 }
 

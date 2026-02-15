@@ -18,11 +18,11 @@ public:
 	virtual TBOOL OnCreate() override;
 	virtual TBOOL OnUpdate( TFLOAT a_fDeltaTime ) override;
 
-	Toshi::TInputDeviceMouse*    GetMouseDevice() const { return m_pMouseDevice; }
-	Toshi::TInputDeviceKeyboard* GetKeyboardDevice() const { return m_pKeyboardDevice; }
+	Toshi::TInputDeviceMouse*      GetMouseDevice() const { return m_pMouseDevice; }
+	Toshi::TInputDeviceKeyboard*   GetKeyboardDevice() const { return m_pKeyboardDevice; }
+	Toshi::TInputDeviceController* GetMainController() const { return m_pMainController; }
 
 	TBOOL HadInputLastFrame() const { return m_bHadInputLastFrame; }
-
 	TBOOL IsValidDevice( Toshi::TInputDevice* a_pDevice ) const;
 
 private:
