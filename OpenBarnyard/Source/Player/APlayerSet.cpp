@@ -38,7 +38,7 @@ void APlayerSet::Reset()
 // $Barnyard: FUNCTION 00620310
 TINT APlayerSet::AddAIPlayer()
 {
-	if ( m_iNumHumanPlayers + m_iNumAIPlayers < MAX_NUM_PLAYERS )
+	if ( GetTotalNumPlayers() < MAX_NUM_PLAYERS )
 		m_iNumAIPlayers += 1;
 
 	return m_iNumAIPlayers;
@@ -48,29 +48,37 @@ TINT APlayerSet::AddAIPlayer()
 APlayerSlot* APlayerSet::AddHumanPlayer( Toshi::TInputDeviceController* a_pController )
 {
 	// Adjust number of AI players
-	if ( m_iNumHumanPlayers + m_iNumAIPlayers >= MAX_NUM_PLAYERS )
+	if ( GetTotalNumPlayers() >= MAX_NUM_PLAYERS )
 	{
 		m_iNumAIPlayers -= 1;
 
 		if ( m_iNumAIPlayers < 0 )
+		{
+			TASSERT( TFALSE );
 			m_iNumAIPlayers = 0;
+		}
 	}
 
 	// Find free slot
 	auto itInsertBefore = m_vecPlayerSlots.Begin();
 	T2_FOREACH( m_vecPlayerSlots, it )
 	{
-		if ( it->m_uiFlags == 0 )
+		if ( it->m_uiFlags == APlayerSlot::FLAGS_HUMAN )
 		{
 			itInsertBefore = it;
 			break;
 		}
 	}
 
-	APlayerSlot oUsedSlot( a_pController, APlayerSlot::FLAGS_USED );
-	m_vecPlayerSlots.InsertBefore( itInsertBefore, oUsedSlot );
-
+	m_vecPlayerSlots.InsertBefore( itInsertBefore, APlayerSlot( a_pController, APlayerSlot::FLAGS_HUMAN ) );
 	return &m_vecPlayerSlots[ itInsertBefore.Index() ];
+}
+
+// $Barnyard: FUNCTION 006205f0
+APlayerSlot* APlayerSet::GetPlayerSlot( TINT a_iSlot )
+{
+	TASSERT( a_iSlot < m_vecPlayerSlots.Size() );
+	return &m_vecPlayerSlots[ a_iSlot ];
 }
 
 // $Barnyard: FUNCTION 006205f0
@@ -78,7 +86,7 @@ void APlayerSet::MakeTeamsFair()
 {
 	if ( m_aPlayerTeams[ 0 ] == APLAYERTEAM_NONE ) return;
 	
-	const TINT iTotalNumPlayers = m_iNumAIPlayers + m_iNumHumanPlayers;
+	const TINT iTotalNumPlayers = GetTotalNumPlayers();
 	if ( iTotalNumPlayers > 1 )
 	{
 		// Check if there's at least one player in different team
@@ -151,9 +159,14 @@ void APlayerSet::FinishUpAddingAIs()
 }
 
 // $Barnyard: FUNCTION 00620400
-TBOOL APlayerSet::IsPlayerSlotUsed( TINT a_iSlot ) const
+TBOOL APlayerSet::IsPlayerSlotUsedByHuman( TINT a_iSlot ) const
 {
-	return m_vecPlayerSlots[ a_iSlot ].m_uiFlags & 1;
+	return m_vecPlayerSlots[ a_iSlot ].m_uiFlags & APlayerSlot::FLAGS_HUMAN;
+}
+
+TBOOL APlayerSet::IsPlayerSlotUsedByAI( TINT a_iSlot ) const
+{
+	return m_vecPlayerSlots[ a_iSlot ].m_uiFlags & APlayerSlot::FLAGS_AI;
 }
 
 // $Barnyard: FUNCTION 006206d0

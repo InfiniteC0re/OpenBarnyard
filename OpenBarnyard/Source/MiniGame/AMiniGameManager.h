@@ -44,6 +44,8 @@ public:
 	    TINT                    a_iUnk3
 	);
 
+	void MakeValidMiniGamePlayerSet( TINT a_iMiniGame );
+
 	AMiniGame* GetMiniGame( TINT a_iIndex );
 	AMiniGame* GetVisibleMiniGame( TINT a_iIndex );
 	AMiniGame* GetHiddenMiniGame( TINT a_iIndex );

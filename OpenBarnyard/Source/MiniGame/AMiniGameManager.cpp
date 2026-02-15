@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "AMiniGameManager.h"
+#include "Player/APlayerManager.h"
 #include "GameInterface/AGameState.h"
 
 #include <Toshi/TClass.h>
@@ -111,6 +112,20 @@ AMiniGame& AMiniGameManager::RegisterHiddenMiniGame( const TCHAR* a_szMiniGameNa
 	rMiniGame.field20_0xfc         = a_iUnk1;
 
 	return rMiniGame;
+}
+
+// $Barnyard: FUNCTION 00469340
+void AMiniGameManager::MakeValidMiniGamePlayerSet( TINT a_iMiniGame )
+{
+	APlayerManager* pPlyrMgr = APlayerManager::GetSingleton();
+	APlayerSet*     pPlyrSet = pPlyrMgr->GetPlayerSet( 1 );
+	
+	// Add AIs until it's enough players in the set
+	const TINT iMiniGameNumPlayers = m_vecMiniGames[ a_iMiniGame ].m_iMaxNumPlayers;
+	while ( iMiniGameNumPlayers < pPlyrSet->GetTotalNumPlayers() )
+		pPlyrSet->AddAIPlayer();
+
+	pPlyrSet->MakeTeamsFair();
 }
 
 // $Barnyard: FUNCTION 004692c0

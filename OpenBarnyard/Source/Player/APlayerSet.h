@@ -21,9 +21,9 @@ public:
 	using FLAGS = TUINT8;
 	enum FLAGS_ : FLAGS
 	{
-		FLAGS_NONE = 0,
-		FLAGS_USED = BITFLAG( 0 ),
-		FLAGS_AI   = BITFLAG( 1 ),
+		FLAGS_NONE  = 0,
+		FLAGS_HUMAN = BITFLAG( 0 ),
+		FLAGS_AI    = BITFLAG( 1 ),
 	};
 
 public:
@@ -48,20 +48,25 @@ public:
 	APlayerSet();
 	virtual ~APlayerSet();
 
-	void Reset();
-
+	// Add AI/Human players
 	TINT         AddAIPlayer();
 	APlayerSlot* AddHumanPlayer( Toshi::TInputDeviceController* a_pController );
 
+	// Get info about slots
+	APlayerSlot* GetPlayerSlot( TINT a_iSlot );
+	TBOOL        IsPlayerSlotUsedByHuman( TINT a_iSlot ) const;
+	TBOOL        IsPlayerSlotUsedByAI( TINT a_iSlot ) const;
+
+	TINT GetTotalNumPlayers() const { return m_iNumAIPlayers + m_iNumHumanPlayers; }
+
 	void MakeTeamsFair();
 	void FinishUpAddingAIs();
-
-	TBOOL IsPlayerSlotUsed( TINT a_iSlot ) const;
+	void Reset();
 
 private:
-	Toshi::TPString8                                   m_strUnk;
+	Toshi::TPString8                              m_strUnk;
 	Toshi::T2Vector<APlayerSlot, MAX_NUM_PLAYERS> m_vecPlayerSlots;
-	APLAYERTEAM                                        m_aPlayerTeams[ MAX_NUM_PLAYERS ];
-	TINT                                               m_iNumAIPlayers;
-	TINT                                               m_iNumHumanPlayers;
+	APLAYERTEAM                                   m_aPlayerTeams[ MAX_NUM_PLAYERS ];
+	TINT                                          m_iNumAIPlayers;
+	TINT                                          m_iNumHumanPlayers;
 };
