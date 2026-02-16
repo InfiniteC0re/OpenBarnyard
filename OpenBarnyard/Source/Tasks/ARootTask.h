@@ -6,7 +6,7 @@
 #include <Toshi/TString8.h>
 
 class ARootTask
-	: public Toshi::TTask
+    : public Toshi::TTask
     , public Toshi::TSingleton<ARootTask>
 {
 public:
@@ -30,8 +30,8 @@ public:
 	void  SetRenderWorld( TBOOL a_bReady ) { m_bRenderWorld = a_bReady; }
 	TBOOL IsRenderWorld() { return m_bRenderWorld; }
 
-	void  StopRenderMainScene( TBOOL a_bRender ) { m_bStopRenderingScene = a_bRender; }
-	TBOOL ShouldRenderMainScene() const { return !m_bStopRenderingScene; }
+	void  SetTransitioning( TBOOL a_bRender ) { m_bIsTransitioning = a_bRender; }
+	TBOOL IsTransitioning() const { return !m_bIsTransitioning; }
 
 private:
 	void        CreateGameSystem();
@@ -49,7 +49,7 @@ private:
 	TTask*     m_pSoundManager;        // 0x44
 	TBOOL      m_bRenderWorld;         // 0x54
 	TBOOL      m_bPaused;              // 0x55
-	TBOOL      m_bStopRenderingScene;  // 0x56
+	TBOOL      m_bIsTransitioning;     // 0x56
 	TBOOL      m_bGameSystemCreated;   // 0x57
 	TBOOL      m_bStartedGame;
 };

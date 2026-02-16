@@ -27,8 +27,14 @@ static const TClass* s_pPrevGameStateClass = TNULL;
 //-----------------------------------------------------------------------------
 static TINT                 s_iTerrainVISIndex = -1;
 static TBOOL                s_bChangingTerrain = TFALSE;
-static ATerrainInterface*   s_pCurrentTerrain;
-static AGameLoader::Terrain s_eCurrentLevel = AGameLoader::Terrain_EnvBeadyFarm;
+static ATerrainInterface*   s_pCurrentTerrain  = TNULL;
+static AGameLoader::Terrain s_eCurrentLevel    = AGameLoader::Terrain_EnvBeadyFarm;
+
+// $Barnyard: FUNCTION 00427e70
+TBOOL AGameLoader::UpdateTransitionTask()
+{
+	return TTRUE;
+}
 
 // $Barnyard: FUNCTION 004239d0
 void AGameLoader::SetTransitionToMiniGame( TINT a_iMiniGame, TBOOL a_bStartLoading )
@@ -43,7 +49,7 @@ void AGameLoader::SetTransitionToMiniGame( TINT a_iMiniGame, TBOOL a_bStartLoadi
 		ACameraManager::GetSingleton()->DetachCameraHelpers();
 		ACameraManager::GetSingleton()->FUN_0045c290();
 
-		ARootTask::GetSingleton()->StopRenderMainScene( TTRUE );
+		ARootTask::GetSingleton()->SetTransitioning( TTRUE );
 
 		s_bLoadingMiniGame = TTRUE;
 		s_iCurrMiniGame    = a_iMiniGame;
@@ -80,6 +86,58 @@ TBOOL AGameLoader::IsChangingTerrain()
 TINT AGameLoader::GetTerrainVIS()
 {
 	return s_iTerrainVISIndex;
+}
+
+// $Barnyard: FUNCTION 006c1e80
+void AGameLoader::Debug_VerifyModelsInAssetPack( Toshi::TTRB* a_pTRB )
+{
+	// This function does nothing, but it was doing something in debug build, I guess
+	if ( !a_pTRB ) return;
+
+	TCHAR      szBuffer[ 256 ];
+	const TINT iSkeletonStrLength = TStringManager::String8Length( "_Skeleton" );
+
+	for ( TINT i = 0; i < a_pTRB->GetNumSymbols(); i++ )
+	{
+		TTRB::TTRBSymbol* pSymbol           = a_pTRB->GetSymbol( i );
+		const TCHAR*      pchSymbolName     = a_pTRB->GetSymbolName( pSymbol );
+		const TINT        iSymbolNameLength = TStringManager::String8Length( a_pTRB->GetSymbolName( pSymbol ) );
+
+		// Check string postfix is _Skeleton
+		if ( iSymbolNameLength > iSkeletonStrLength )
+		{
+			const TINT iPostFixPosition = ( iSymbolNameLength - iSkeletonStrLength );
+
+			if ( 0 == Toshi::TStringManager::String8Compare( pchSymbolName + iPostFixPosition, "_Skeleton" ) )
+			{
+				const TINT iModelNameSize = iPostFixPosition + 1;
+				TStringManager::String8Copy( szBuffer, pchSymbolName, iModelNameSize );
+				szBuffer[ iModelNameSize ] = '\0';
+				
+				T2_FOREACH( TModelManager::ms_oUsedList, it )
+				{
+					TModel* pModel = it->GetModel();
+
+					if ( pModel->m_bIsAssetFile &&
+					     pModel->m_szSymbolPrefixLength == iModelNameSize &&
+					     TStringManager::String8Compare( pModel->m_szSymbolPrefix, szBuffer, iModelNameSize ) == 0 )
+					{
+						break;
+					}
+				}
+
+				// AND YES IT DOES NOTHING AFTER ALL
+			}
+		}
+	}
+
+	// This whole method is genius omg
+	T2_FOREACH( TModelManager::ms_oUsedList, it )
+	{
+#ifdef TOSHI_DEBUG
+		// something goes here...?
+#endif
+	}
 }
 
 // $Barnyard: FUNCTION 00423a80

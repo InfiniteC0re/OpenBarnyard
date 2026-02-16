@@ -47,12 +47,12 @@ ARootTask::ARootTask()
 {
 	TIMPLEMENT();
 
-	m_bStartedGame        = TFALSE;
-	m_bRenderWorld        = TFALSE;
-	m_bPaused             = TFALSE;
-	m_bStopRenderingScene = TFALSE;
-	m_bGameSystemCreated  = TFALSE;
-	m_pOptions            = AOptions::CreateSingleton();
+	m_bStartedGame       = TFALSE;
+	m_bRenderWorld       = TFALSE;
+	m_bPaused            = TFALSE;
+	m_bIsTransitioning   = TFALSE;
+	m_bGameSystemCreated = TFALSE;
+	m_pOptions           = AOptions::CreateSingleton();
 	AMemory::CreatePool( AMemory::POOL_Sound );
 
 	auto pScheduler = g_oSystemManager.GetScheduler();
@@ -155,8 +155,13 @@ TBOOL ARootTask::OnUpdate( TFLOAT a_fDeltaTime )
 		}
 	}
 
-	TTODO( "FUN_00427e70" );
-	g_oLoadScreen.Update( 1.0f, TTRUE );
+	// Update transition task
+	if ( IsTransitioning() )
+	{
+		SetTransitioning(
+		    AGameLoader::UpdateTransitionTask()
+		);
+	}
 
 	return TTRUE;
 }
@@ -363,6 +368,8 @@ void ARootTask::LoadFrontEnd()
 	pSoundManager->LoadSoundBank( TPS8( ui ), TFALSE, TTRUE );
 	pSoundManager->LoadSoundBank( TPS8( music ), TFALSE, TFALSE );
 
+	AGameLoader::Debug_VerifyModelsInAssetPack( AAssetLoader::GetAssetTRB( AAssetType_Startup ) );
+
 	AAssetLoader::LoadAssetPackFromLibrary( "lib_frontend", TTRUE );
 	ACollisionManager::GetSingleton()->CreateObjectHashMain( ACollisionManager::HashType_UNK2 );
 
@@ -389,6 +396,7 @@ void ARootTask::LoadFrontEnd()
 
 	// Push the state
 	AGameStateController::GetSingleton()->PushState( pFrontEndState );
+	AGameLoader::Debug_VerifyModelsInAssetPack( AAssetLoader::GetAssetTRB( AAssetType_AssetPack ) );
 
 	// Hide loading screen
 	g_oLoadScreen.Reset();

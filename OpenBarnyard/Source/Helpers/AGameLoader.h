@@ -135,6 +135,9 @@ public:
 	};
 
 public:
+	// Returns TTRUE if tasks are completed
+	static TBOOL UpdateTransitionTask();
+
 	//-----------------------------------------------------------------------------
 	// GameState
 	//-----------------------------------------------------------------------------
@@ -152,4 +155,9 @@ public:
 	static TINT  GetTerrainVIS();
 
 	static constexpr const TCHAR* GetTerrainName( Terrain a_eTerrain ) { return ms_aTerrains[ a_eTerrain ].szName; }
+
+	//-----------------------------------------------------------------------------
+	// Utils
+	//-----------------------------------------------------------------------------
+	static void Debug_VerifyModelsInAssetPack( Toshi::TTRB* a_pTRB );
 };

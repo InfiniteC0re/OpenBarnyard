@@ -359,7 +359,7 @@ void ARenderer::UpdateMainCamera( const Toshi::TMatrix44& a_rTransformMatrix, co
 // $Barnyard: FUNCTION 0060b370
 void ARenderer::RenderMainScene( TFLOAT a_fDeltaTime )
 {
-	if ( ARootTask::GetSingleton()->ShouldRenderMainScene() )
+	if ( !ARootTask::GetSingleton()->IsTransitioning() )
 	{
 		auto pViewportContext = m_pViewport->GetRenderContext();
 		auto pCameraObject    = m_pCameraObject;
