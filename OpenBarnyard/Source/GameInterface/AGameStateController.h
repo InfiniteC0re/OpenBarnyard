@@ -72,6 +72,10 @@ public:
 	// Controller
 	//-----------------------------------------------------------------------------
 	void SetFlags( TUINT16 a_eFlags );
+	void SetIgnoreInput( TBOOL a_bIgnore ) { m_eFlags.bIgnoreInput = a_bIgnore; }
+	void SetAwaitTransition( TBOOL a_bAwait ) { m_eFlags.bAwaitingTransition = a_bAwait; }
+	void SetTransitionToMiniGame( TBOOL a_bTransition ) { m_eFlags.bTransitionToMiniGame = a_bTransition; }
+	void SetMuting( TBOOL a_bMuting ) { m_eFlags.bMuting = a_bMuting; }
 
 	void         SetOverlayParams( AGameState::OVERLAY a_eOverlay, const OverlayData& a_rcParams );
 	OverlayData* GetOverlayParams( AGameState::OVERLAY a_eOverlay );
@@ -83,9 +87,6 @@ public:
 	// IO
 	//-----------------------------------------------------------------------------
 	TBOOL ProcessInput( const Toshi::TInputInterface::InputEvent* a_pEvent );
-
-public:
-	static void StartMiniGame( TINT a_iMiniGame, TBOOL a_bRightNow );
 
 private:
 	void InsertGameState( AGameState* a_pGameState );
@@ -109,7 +110,7 @@ private:
 		{
 			TUINT16 bIgnoreInput : 1;          // FLAGS_IGNORE_INPUT
 			TUINT16 bAwaitingTransition : 1;   // FLAGS_AWAITING_TRANSITION
-			TUINT16 bFadingIt : 1;             // FLAGS_FADING_IN
+			TUINT16 bFadingIn : 1;             // FLAGS_FADING_IN
 			TUINT16 UNK3 : 1;                  // FLAGS_UNK3
 			TUINT16 UNK4 : 1;                  // FLAGS_UNK4
 			TUINT16 UNK5 : 1;                  // FLAGS_UNK5
@@ -118,6 +119,9 @@ private:
 			TUINT16 UNK8 : 1;                  // FLAGS_UNK8
 			TUINT16 UNK9 : 1;                  // FLAGS_UNK9
 			TUINT16 UNK10 : 1;                 // FLAGS_UNK10
+			TUINT16 UNK11 : 1;                 // FLAGS_UNK11
+			TUINT16 UNK12 : 1;                 // FLAGS_UNK12
+			TUINT16 bMuting : 1;               // FLAGS_MUTING
 		} m_eFlags;
 	};
 

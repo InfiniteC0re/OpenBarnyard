@@ -22,7 +22,6 @@
 #include "Movie/ABINKMoviePlayer.h"
 #include "ALoadScreen.h"
 #include "Terrain/ATerrainInterface.h"
-#include "Terrain/ABYardTerrainManager.h"
 #include "Physics/ACollisionManager.h"
 #include "Helpers/APlayerProgress.h"
 
@@ -367,8 +366,8 @@ void ARootTask::LoadFrontEnd()
 	AAssetLoader::LoadAssetPackFromLibrary( "lib_frontend", TTRUE );
 	ACollisionManager::GetSingleton()->CreateObjectHashMain( ACollisionManager::HashType_UNK2 );
 
-	ABYardTerrainManager::SetTerrain( ABYardTerrainManager::Terrain_FrontEnd, TTRUE, TTRUE, 0, 0, 0, 0 );
-	ABYardTerrainManager::StartLoading();
+	AGameLoader::Terrain_Set( AGameLoader::Terrain_FrontEnd, TTRUE, TTRUE, 0, 0, 0, 0 );
+	AGameLoader::Terrain_Load();
 	AAssetLoader::CreateAssetsFromLibrary( "lib_frontend" );
 
 	// Load music wavebank samples
@@ -381,10 +380,10 @@ void ARootTask::LoadFrontEnd()
 
 	// Create front end state
 	AFrontEndMainMenuState2* pFrontEndState = new AFrontEndMainMenuState2();
-	ABYardTerrainManager::SetTerrain( ABYardTerrainManager::Terrain_FrontEnd, TFALSE, TTRUE, 0, 0, 0, 0 );
+	AGameLoader::Terrain_Set( AGameLoader::Terrain_FrontEnd, TFALSE, TTRUE, 0, 0, 0, 0 );
 	pFrontEndState->SetupCamera();
 
-	ABYardTerrainManager::StartLoading();
+	AGameLoader::Terrain_Load();
 
 	GetSingleton()->SetRenderWorld( TTRUE );
 

@@ -30,7 +30,7 @@ public:
 	using JobSlot = Toshi::T2SListNodeWrapper<AMainThreadJob>;
 
 	friend ATerrainVIS;
-	friend class ABYardTerrainManager;
+	friend class AGameLoader;
 	friend class AGameTimeFX;
 
 	friend void RenderCellMeshWin( CellMeshSphere* a_pMeshSphere, RenderData* a_pRenderData );
@@ -159,10 +159,6 @@ private:
 
 private:
 	static TINT GetSectionPlayerIsIn();
-	static TINT GetPersistantSectionID();
-
-	inline static TINT  ms_iPersistantVISGroupIndex = -1;
-	inline static TBOOL ms_bAutoVIS                 = TFALSE;
 
 private:
 	Toshi::TVector4                            m_LitShadowColor;

@@ -6,6 +6,7 @@
 #include "Sound/ASoundManager.h"
 #include "SoundBank/ui.h"
 #include "Helpers/APlayerProgress.h"
+#include "Helpers/AGameLoader.h"
 #include "Player/APlayerManager.h"
 #include "Input/AInputHandler.h"
 
@@ -673,13 +674,14 @@ void AFrontEndMiniGameState2::OnMenuClose()
 		m_oDialogTitleBackground.Hide();
 		m_oDialog.Hide();
 
-		TTODO( "Set weather, game time and AGameStateController flags" );
+		TTODO( "Set weather and game time" );
 
 		AMiniGameManager::GetSingleton()->SetMiniGameVariant(
 		    m_bIsRelease ? AMiniGameManager::GetSingleton()->GetMiniGame( iMiniGameId )->m_iDefaultVariant : 0
 		);
 
-		AGameStateController::StartMiniGame( iMiniGameId, TFALSE );
+		AGameLoader::SetTransitionToMiniGame( iMiniGameId, TFALSE );
+		AGameStateController::GetSingleton()->SetMuting( TTRUE );
 	}
 	else
 	{

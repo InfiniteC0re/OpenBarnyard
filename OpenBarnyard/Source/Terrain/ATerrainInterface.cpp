@@ -1222,8 +1222,3 @@ TINT ATerrainInterface::GetSectionPlayerIsIn()
 
 	return -1;
 }
-
-TINT ATerrainInterface::GetPersistantSectionID()
-{
-	return ms_iPersistantVISGroupIndex;
-}

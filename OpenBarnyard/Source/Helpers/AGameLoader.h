@@ -1,7 +1,9 @@
 #pragma once
-#include "ATerrainInterface.h"
 
-class ABYardTerrainManager
+//-----------------------------------------------------------------------------
+// Purpose: manages the whole game and it's state
+//-----------------------------------------------------------------------------
+class AGameLoader
 {
 public:
 	using Terrain = TUINT32;
@@ -133,12 +135,21 @@ public:
 	};
 
 public:
-	static void SetTerrain( TINT a_eTerrain, TBOOL a_bLoadLater, TBOOL a_bStreamModels, TINT a_iUnused1, TINT a_iUnused2, TINT a_iPreloadTerrainBlockSize, TINT a_iStartVISGroup );
-	static void StartLoading();
+	//-----------------------------------------------------------------------------
+	// GameState
+	//-----------------------------------------------------------------------------
+	static void SetTransitionToMiniGame( TINT a_iMiniGame, TBOOL a_bStartLoading );
+	static TINT GetCurrMiniGame();
+	static TINT GetNextMiniGame();
+
+	//-----------------------------------------------------------------------------
+	// Terrain
+	//-----------------------------------------------------------------------------
+	static void  Terrain_Set( TINT a_eTerrain, TBOOL a_bLoadLater, TBOOL a_bStreamModels, TINT a_iUnused1, TINT a_iUnused2, TINT a_iPreloadTerrainBlockSize, TINT a_iStartVISGroup );
+	static void  Terrain_Load();
+
+	static TBOOL IsChangingTerrain();
+	static TINT  GetTerrainVIS();
 
 	static constexpr const TCHAR* GetTerrainName( Terrain a_eTerrain ) { return ms_aTerrains[ a_eTerrain ].szName; }
-
-private:
-	inline static ATerrainInterface* ms_pCurrentTerrain;
-	inline static Terrain            ms_eCurrentLevel = Terrain_EnvBeadyFarm;
 };

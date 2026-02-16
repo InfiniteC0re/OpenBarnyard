@@ -6,7 +6,7 @@
 #include "ARandom.h"
 #include "GameInterface/AGameState.h"
 #include "GameInterface/AGameStateController.h"
-#include "Terrain/ABYardTerrainManager.h"
+#include "Helpers/AGameLoader.h"
 #include "Terrain/ATerrainInterface.h"
 #include "Terrain/ATerrainLocator.h"
 #include "Locale/ALocaleManager.h"

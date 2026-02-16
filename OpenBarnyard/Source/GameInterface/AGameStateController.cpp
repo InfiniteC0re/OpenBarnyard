@@ -8,6 +8,7 @@
 #include "Cameras/ACameraManager.h"
 #include "Player/APlayerManager.h"
 #include "Sound/ASoundManager.h"
+#include "Helpers/AGameLoader.h"
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
@@ -18,11 +19,6 @@
 TOSHI_NAMESPACE_USING
 
 TDEFINE_CLASS( AGameStateController );
-
-static TINT          s_iCurrMiniGame       = -1;
-static TINT          s_iNextMiniGame       = -1;
-static TBOOL         s_bLoadingMiniGame    = TFALSE;
-static const TClass* s_pPrevGameStateClass = TNULL;
 
 // $Barnyard: FUNCTION 00429250
 AGameStateController::AGameStateController()
@@ -307,7 +303,7 @@ TBOOL AGameStateController::UpdateTransition( TFLOAT a_flDeltaTime )
 				if ( m_eFlagsRaw & FLAGS_TRANSITION_TO_MINIGAME )
 				{
 					m_eFlagsRaw &= ~FLAGS_TRANSITION_TO_MINIGAME;
-					StartMiniGame( s_iNextMiniGame, TTRUE );
+					AGameLoader::SetTransitionToMiniGame( AGameLoader::GetNextMiniGame(), TTRUE );
 
 					m_eFlags.UNK10 = TFALSE;
 					return TTRUE;
@@ -439,35 +435,4 @@ TBOOL AGameStateController::ProcessInput( const TInputInterface::InputEvent* a_p
 	}
 
 	return pGameState->ProcessInput( a_pEvent );
-}
-
-// $Barnyard: FUNCTION 004239d0
-void AGameStateController::StartMiniGame( TINT a_iMiniGame, TBOOL a_bRightNow )
-{
-	AGameStateController* pController = AGameStateController::GetSingleton();
-
-	if ( a_bRightNow )
-	{
-		g_oLoadScreen.StartLoading( 100, TTRUE );
-
-		s_pPrevGameStateClass = pController->GetCurrentState()->GetClass();
-		ACameraManager::GetSingleton()->DetachCameraHelpers();
-		ACameraManager::GetSingleton()->FUN_0045c290();
-
-		ARootTask::GetSingleton()->StopRenderMainScene( TTRUE );
-
-		s_bLoadingMiniGame = TTRUE;
-		s_iCurrMiniGame    = a_iMiniGame;
-
-		AGUI2::GetSingleton()->SetCursorVisible( TFALSE );
-		APlayerManager::GetSingleton()->ResetPlayerIterator();
-	}
-	else
-	{
-		pController->m_eFlags.bIgnoreInput          = TTRUE;
-		pController->m_eFlags.bTransitionToMiniGame = TTRUE;
-		pController->SetFlags( AGameStateController::FLAGS_AWAITING_TRANSITION );
-
-		s_iNextMiniGame = a_iMiniGame;
-	}
 }
