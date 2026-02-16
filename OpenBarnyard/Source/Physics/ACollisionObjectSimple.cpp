@@ -29,6 +29,13 @@ void ACollisionObjectSimple::VTable0x1C( void* )
 {
 }
 
+// $Barnyard: FUNCTION 0052de80
+TBOOL ACollisionObjectSimple::VTable0x60( TINT a_Unk )
+{
+	field4_0x34 = a_Unk;
+	return TFALSE;
+}
+
 // $Barnyard: FUNCTION 0061c010
 TBOOL ACollisionObjectSimple::UpdateHash( TFLOAT a_fRadius, const Toshi::TVector3& a_rcPosition )
 {

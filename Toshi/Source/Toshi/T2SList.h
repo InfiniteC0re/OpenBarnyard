@@ -276,26 +276,32 @@ public:
 	// constructors/destructor
 	constexpr T2SListNodeWrapper() = default;
 
-	constexpr T2SListNodeWrapper( T* a_pValue )
-	    : m_pValue( a_pValue ) {}
+	constexpr T2SListNodeWrapper( T a_Value )
+	    : m_Value( a_Value ) {}
+
+	constexpr T2SListNodeWrapper( const T2SListNodeWrapper& a_Other )
+	    : m_Value( a_Other.m_Value ) {}
+
+	constexpr T2SListNodeWrapper( T2SListNodeWrapper&& a_Other )
+	    : m_Value( std::move( a_Other.m_Value ) ) {}
 
 	~T2SListNodeWrapper() = default;
 
-	constexpr T*       GetNodeValue() { return m_pValue; }
-	constexpr const T* GetNodeValue() const { return m_pValue; }
-	constexpr T*       operator->() { return m_pValue; }
-	constexpr const T* operator->() const { return m_pValue; }
+	constexpr T&       GetNodeValue() { return m_Value; }
+	constexpr const T& GetNodeValue() const { return m_Value; }
+	constexpr T&       operator->() { return m_Value; }
+	constexpr const T& operator->() const { return m_Value; }
 
-	constexpr void SetNodeValue( T* a_pValue ) { m_pValue = a_pValue; }
+	constexpr void SetNodeValue( T a_Value ) { m_Value = a_Value; }
 
-	constexpr T2SListNodeWrapper& operator=( T* a_pValue )
+	constexpr T2SListNodeWrapper& operator=( T a_Value )
 	{
-		SetNodeValue( a_pValue );
+		SetNodeValue( a_Value );
 		return *this;
 	}
 
 private:
-	T* m_pValue;
+	T m_Value;
 };
 
 TOSHI_NAMESPACE_END

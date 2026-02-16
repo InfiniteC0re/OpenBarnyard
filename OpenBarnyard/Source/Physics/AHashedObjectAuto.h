@@ -11,9 +11,10 @@ public:
 	AHashedObjectAuto();
 	~AHashedObjectAuto();
 
+protected:
 	//-----------------------------------------------------------------------------
 	// Own methods
 	//-----------------------------------------------------------------------------
-	virtual void Remove();
+	virtual void RemoveHash();
 
 };

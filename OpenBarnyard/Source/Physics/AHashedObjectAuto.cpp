@@ -19,11 +19,11 @@ AHashedObjectAuto::AHashedObjectAuto()
 // $Barnyard: FUNCTION 0061f710
 AHashedObjectAuto::~AHashedObjectAuto()
 {
-	AHashedObjectAuto::Remove();
+	AHashedObjectAuto::RemoveHash();
 }
 
 // $Barnyard: FUNCTION 0061f6e0
-void AHashedObjectAuto::Remove()
+void AHashedObjectAuto::RemoveHash()
 {
 	if ( AObjectHashMain::IsSingletonCreated() )
 	{

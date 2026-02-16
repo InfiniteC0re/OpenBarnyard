@@ -2,9 +2,12 @@
 #include "AObjectHash.h"
 #include "AHashedObjectAuto.h"
 
+#include <Toshi/T2DList.h>
+
 class ACollisionObject
     : public AHashedObjectAuto
     , public Toshi::TObject
+    , public Toshi::T2DList<ACollisionObject>::Node
 {
 public:
 	TDECLARE_CLASS( ACollisionObject, Toshi::TObject );
@@ -44,11 +47,14 @@ public:
 	virtual TFLOAT                 GetObjectRadius()                           = 0; // VTable: 0x40
 	virtual void                   VTable0x44( Toshi::TVector4& a_rOutVector ) = 0; // VTable: 0x44
 	virtual TFLOAT                 GetHeightScale()                            = 0; // VTable: 0x48
-	virtual TBOOL                  UpdateHash( TFLOAT a_fRadius );                  // VTable: 0x4Ñ
+	virtual TBOOL                  UpdateHash( TFLOAT a_fRadius );                  // VTable: 0x4C
 	virtual void*                  VTable0x50();
 	virtual void*                  VTable0x54( void*, void*, void*, void*, void*, void*, void* );            // return value is unknown
 	virtual void                   TranslateBy( const Toshi::TVector4& a_rDirection, TFLOAT a_fLength ) = 0; // VTable: 0x58
 	virtual void                   VTable0x5C( void* )                                                  = 0; // return value is unknown
+
+	TBOOL IsCollisionObjectLinked() const { return Node::IsLinked(); }
+	void  UnlinkCollisionObject();
 
 protected:
 	TINT field3_0x18;

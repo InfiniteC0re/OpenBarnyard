@@ -27,7 +27,7 @@ public:
 	    MAX_NUM_SKELETON_LOADER_JOBS +
 	    MAX_NUM_COLLISION_LOADER_JOBS;
 
-	using JobSlot = Toshi::T2SListNodeWrapper<AMainThreadJob>;
+	using JobSlot = Toshi::T2SListNodeWrapper<AMainThreadJob*>;
 
 	friend ATerrainVIS;
 	friend class AGameLoader;

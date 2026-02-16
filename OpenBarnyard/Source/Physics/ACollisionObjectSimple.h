@@ -20,6 +20,8 @@ public:
 	// Own methods
 	//-----------------------------------------------------------------------------
 
+	virtual TBOOL VTable0x60( TINT a_Unk );
+
 	// Checks if the position or the radius has changed and updates hash if needed
 	virtual TBOOL UpdateHash( TFLOAT a_fRadius, const Toshi::TVector3& a_rcPosition ); // VTable: 0x64
 

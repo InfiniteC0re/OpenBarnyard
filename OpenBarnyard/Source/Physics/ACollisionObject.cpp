@@ -66,6 +66,13 @@ void* ACollisionObject::VTable0x54( void*, void*, void*, void*, void*, void*, vo
 	return TNULL; // does it even have a return value?
 }
 
+// $Barnyard: FUNCTION 0061c590
+void ACollisionObject::UnlinkCollisionObject()
+{
+	AHashedObjectAuto::RemoveHash();
+	Node::Remove();
+}
+
 // $Barnyard: FUNCTION 0061f700
 AObjectHash::CellObject* ACollisionObject::CreateHash()
 {
