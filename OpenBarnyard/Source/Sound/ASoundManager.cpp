@@ -481,6 +481,40 @@ void ASoundManager::CancelCueEvents( Cue* a_pCue, SOUNDEVENT a_eEventType )
 	}
 }
 
+// $Barnyard: FUNCTION 005d73d0
+void ASoundManager::SetGlobalVolume( TFLOAT a_flVolume )
+{
+	for ( TINT i = 0; i < ASOUNDMANAGER_MAX_NUM_CUE; i++ )
+	{
+		Cue*         pCue           = &m_aCues[ i ];
+		const TFLOAT flCueStartTime = pCue->fStartTime;
+		const TBOOL  bIsPlaying     = flCueStartTime > 0.0f;
+
+		// Calculate volume for this exact Cue
+		TFLOAT flGlobalVolume = ( bIsPlaying ? pCue->fVolume : 0.0f ) * a_flVolume;
+
+		if ( bIsPlaying )
+		{
+			// Set volume for each channel
+			T2_FOREACH( pCue->oChannelRefs, channel )
+			{
+				// Skip invalid channels and sounds
+				if ( channel->iFMODChannelHandle == -1 || pCue->pSound == TNULL ) continue;
+
+				// Obtain volume for this category of sounds
+				const TFLOAT flCategoryVolume = m_aCategories[ pCue->pSound->m_uiCategoryIndex ].fVolumeMultiplier;
+				const TFLOAT flSampleVolume   = channel->pSample->fVolume;
+
+				// Calculate actual volume for this channel
+				TFLOAT flActualVolume   = flCategoryVolume * flSampleVolume * flGlobalVolume;
+				TMath::Clip( flActualVolume, 0.0f, 1.0f );
+
+				FSOUND_SetVolume( channel->iFMODChannelHandle, m_bMuted ? 0 : flActualVolume );
+			}
+		}
+	}
+}
+
 // $Barnyard: FUNCTION 005dc350
 AWaveBank* ASoundManager::FindWaveBank( const TPString8& a_rcName )
 {

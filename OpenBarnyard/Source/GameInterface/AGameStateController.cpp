@@ -7,6 +7,7 @@
 #include "ALoadScreen.h"
 #include "Cameras/ACameraManager.h"
 #include "Player/APlayerManager.h"
+#include "Sound/ASoundManager.h"
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
@@ -28,8 +29,8 @@ AGameStateController::AGameStateController()
     : m_UnkVector( m_VectorData, TARRAYSIZE( m_VectorData ), 0 )
 {
 	// Incomplete
-	m_eFlags       = 0;
-	m_fOverlayGoal = 0.0f;
+	m_eFlagsRaw     = 0;
+	m_flOverlayGoal = 0.0f;
 }
 
 // $Barnyard: FUNCTION 004292f0
@@ -57,32 +58,31 @@ TBOOL AGameStateController::OnCreate()
 // $Barnyard: FUNCTION 0042a770
 TBOOL AGameStateController::OnUpdate( TFLOAT a_fDeltaTime )
 {
-	auto eFlags = m_eFlags;
-
-	if ( eFlags & 0x10 )
+	if ( m_eFlagsRaw & FLAGS_UNK4 )
 	{
-		m_eFlags = eFlags & 0xffef;
+		m_eFlagsRaw &= ~FLAGS_UNK4;
 
-		if ( HASANYFLAG( eFlags, 0x1000 ) )
+		if ( HASANYFLAG( m_eFlagsRaw, FLAGS_UNK12 ) )
 		{
-			TTODO( "FUN_00424000(false)" );
+			TTODO( "FUN_00424000(TFALSE)" );
 			return TTRUE;
 		}
 		else
 		{
-			TTODO( "FUN_00423de0((TCHAR *)0x0,true,(TPooledString8 *)0x0)" );
+			TTODO( "FUN_00423de0((TCHAR *)0x0,TTRUE,(TPooledString8 *)0x0)" );
 			return TTRUE;
 		}
 	}
 
 	if ( m_oStates.Size() > 1 )
 	{
-		TTODO( "This section" );
+		// Update transition state first
+		if ( UpdateTransition( a_fDeltaTime ) )
+			return TTRUE;
 
-		if ( !HASANYFLAG( m_eFlags, 7 ) )
-		{
+		// If no transition and input is allowed, update gamestate
+		if ( !HASANYFLAG( m_eFlagsRaw, FLAGS_IGNORE_INPUT | FLAGS_AWAITING_TRANSITION | FLAGS_FADING_IN ) )
 			( *m_oStates.Back() )->OnUpdate( a_fDeltaTime );
-		}
 	}
 
 	UpdateScreenOverlay();
@@ -203,7 +203,7 @@ void AGameStateController::UpdateScreenOverlay()
 void AGameStateController::ResetStack()
 {
 	UpdateScreenOverlay();
-	m_eFlags = 0;
+	m_eFlagsRaw = 0;
 
 	TBOOL bIsFirst = TTRUE;
 
@@ -220,22 +220,22 @@ void AGameStateController::ResetStack()
 // $Barnyard: FUNCTION 00429580
 void AGameStateController::SetFlags( TUINT16 a_eFlags )
 {
-	m_eFlags |= a_eFlags;
-	m_fSoundVolume = 1.0f;
+	m_eFlagsRaw |= a_eFlags;
+	m_flSoundVolume = 1.0f;
 
-	if ( !( m_eFlags & 256 ) )
+	if ( m_eFlagsRaw & FLAGS_UNK8 )
 	{
-		m_fOverlayGoal  = 0.0f;
-		m_fOverlayAlpha = ( a_eFlags == 4 ) ? 1.0f : 0.0f;
+		m_eFlagsRaw &= ~FLAGS_UNK8;
+		m_flOverlayAlpha = m_flOverlayGoal;
 	}
 	else
 	{
-		m_fOverlayAlpha = m_fOverlayGoal;
-		m_eFlags &= 0xfeff;
+		m_flOverlayGoal  = 0.0f;
+		m_flOverlayAlpha = ( a_eFlags == 4 ) ? 1.0f : 0.0f;
 	}
 
 	OverlayData oData;
-	oData.uiColorA = TUINT8( m_fOverlayAlpha * 255.0f );
+	oData.uiColorA = TUINT8( m_flOverlayAlpha * 255.0f );
 	oData.uiColorR = 0;
 	oData.uiColorG = 0;
 	oData.uiColorB = 0;
@@ -259,13 +259,167 @@ AGameStateController::OverlayData* AGameStateController::GetOverlayParams( AGame
 	return &ms_aOverlays[ a_eOverlay ];
 }
 
+// $Barnyard: FUNCTION 0042a320
+TBOOL AGameStateController::UpdateTransition( TFLOAT a_flDeltaTime )
+{
+	TASSERT( m_oStates.Size() >= 1 );
+	AGameState* pCurrentState = *m_oStates.Back();
+
+	if ( m_eFlagsRaw & FLAGS_AWAITING_TRANSITION )
+	{
+		// Transition is planned
+		m_flOverlayAlpha = a_flDeltaTime + a_flDeltaTime + m_flOverlayAlpha;
+
+		// Update volume if needed
+		if ( m_eFlagsRaw & FLAGS_MUTING )
+		{
+			m_flSoundVolume = m_flSoundVolume - ( a_flDeltaTime + a_flDeltaTime );
+			ASoundManager::GetSingleton()->SetGlobalVolume( m_flSoundVolume );
+		}
+
+		// Check if the transition is over
+		if ( m_flOverlayAlpha > 1.0 )
+		{
+			// Screen is black, can change game state
+			m_eFlagsRaw &= ~( FLAGS_AWAITING_TRANSITION | FLAGS_MUTING );
+			m_flOverlayAlpha = 1.0;
+			UpdateScreenOverlay();
+			pCurrentState->m_eOverlayColorIndex = 0;
+
+			if ( m_eFlags.bIgnoreInput )
+			{
+				// Input is ignored
+				pCurrentState->m_HUDParams.SetFlags( 0 );
+				TTODO( "Update AHudManager?" );
+				//( **(code**)( *AHudManager::ms_pInstance + 0x1c ) )( a_flDeltaTime );
+
+				m_eFlags.bIgnoreInput = TFALSE;
+
+				if ( m_eFlagsRaw & FLAGS_UNK3 )
+				{
+					m_eFlagsRaw &= ~FLAGS_UNK3;
+					TASSERT( TFALSE && "FUN_00423de0" );
+
+					m_eFlags.UNK10 = TFALSE;
+					return TTRUE;
+				}
+
+				if ( m_eFlagsRaw & FLAGS_TRANSITION_TO_MINIGAME )
+				{
+					m_eFlagsRaw &= ~FLAGS_TRANSITION_TO_MINIGAME;
+					StartMiniGame( s_iNextMiniGame, TTRUE );
+
+					m_eFlags.UNK10 = TFALSE;
+					return TTRUE;
+				}
+
+				if ( m_eFlagsRaw & FLAGS_UNK7 )
+				{
+					m_eFlagsRaw &= ~FLAGS_UNK7;
+					TASSERT( TFALSE && "FUN_00425410" );
+
+					m_eFlags.UNK10 = TFALSE;
+					return TTRUE;
+				}
+
+				if ( m_eFlagsRaw & FLAGS_UNK9 )
+				{
+					m_eFlagsRaw &= ~FLAGS_UNK9;
+					TASSERT( TFALSE && "FUN_00423c70" );
+
+					m_eFlags.UNK10 = TFALSE;
+					return TTRUE;
+				}
+
+				if ( m_eFlagsRaw & FLAGS_UNK11 )
+				{
+					m_eFlagsRaw &= ~FLAGS_UNK11;
+					pCurrentState->Remove();
+					TASSERT( TFALSE && "FUN_00429c00" );
+
+					m_eFlags.UNK10 = TFALSE;
+					return TTRUE;
+				}
+
+				if ( m_eFlagsRaw & FLAGS_UNK12 )
+				{
+					m_eFlagsRaw &= ~FLAGS_UNK12;
+					(*m_oStates.Back())->m_GUIElement.Hide();
+
+					TASSERT( TFALSE && "FUN_00424000" );
+
+					m_eFlags.UNK10 = TFALSE;
+					return TTRUE;
+				}
+
+				pCurrentState->m_GUIElement.Hide();
+				TASSERT( TFALSE && "FUN_004257f0" );
+
+				m_eFlags.UNK10 = TFALSE;
+				return TTRUE;
+			}
+			else
+			{
+				// Input is not ignored
+				if ( m_eFlagsRaw & FLAGS_UNK5 )
+				{
+					m_eFlagsRaw &= ~FLAGS_UNK5;
+					TASSERT( TFALSE && "FUN_00423910" );
+
+					m_eFlags.UNK10 = TFALSE;
+					return TTRUE;
+				}
+			}
+		}
+	}
+	else
+	{
+		// No transition
+		if ( m_eFlagsRaw & FLAGS_FADING_IN )
+		{
+			m_flOverlayAlpha = m_flOverlayAlpha - ( a_flDeltaTime + a_flDeltaTime );
+
+			if ( m_flOverlayAlpha < 0.0 )
+			{
+				m_eFlagsRaw &= ~FLAGS_FADING_IN;
+				m_flOverlayAlpha = 0.0;
+				UpdateScreenOverlay();
+				pCurrentState->m_eOverlayColorIndex = 0;
+
+				TTODO( "Non critical AQuestManager things here" );
+
+				// 				if ( ( ( AQuestManager::ms_pSingleton != 0 ) &&
+				// 				       ( *(int*)( AQuestManager::ms_pSingleton + 0x1bc ) == 3 ) ) &&
+				// 				     ( *(int*)( AQuestManager::ms_pSingleton + 0x1b8 ) == 0x10 ) )
+				// 				{
+				// 					pTVar9 = &SaveLoadSKU::s_Class;
+				// 					pTVar6 = (TClass*)( *(code*)*pCurrentState->vftable )();
+				// 					bVar5  = Toshi::TClass::IsA( pTVar6, pTVar9 );
+				// 					if ( ( bVar5 ) &&
+				// 					     ( pCurrentState = FindGameStateOnStack( &ASimState ), pCurrentState != (AGameState*)0x0 ) )
+				// 					{
+				// 						pCurrentState->m_eOverlayColorIndex = 0;
+				// 					}
+				// 				}
+			}
+		}
+	}
+
+	// Update overlay color
+	OverlayData oData;
+	oData.uiColorA = TUINT8( m_flOverlayAlpha * 255.0f );
+	oData.uiColorR = 0;
+	oData.uiColorG = 0;
+	oData.uiColorB = 0;
+	SetOverlayParams( 2, oData );
+
+	return TFALSE;
+}
+
 // $Barnyard: FUNCTION 004293d0
 TBOOL AGameStateController::ProcessInput( const TInputInterface::InputEvent* a_pEvent )
 {
-	if ( m_eFlags & 1 )
-	{
-		return TTRUE;
-	}
+	if ( m_eFlags.bIgnoreInput ) return TTRUE;
 
 	if ( m_oStates.Size() <= 1 )
 	{
@@ -283,10 +437,8 @@ TBOOL AGameStateController::ProcessInput( const TInputInterface::InputEvent* a_p
 	{
 		return TTRUE;
 	}
-	else
-	{
-		return pGameState->ProcessInput( a_pEvent );
-	}
+
+	return pGameState->ProcessInput( a_pEvent );
 }
 
 // $Barnyard: FUNCTION 004239d0
@@ -297,7 +449,7 @@ void AGameStateController::StartMiniGame( TINT a_iMiniGame, TBOOL a_bRightNow )
 	if ( a_bRightNow )
 	{
 		g_oLoadScreen.StartLoading( 100, TTRUE );
-		
+
 		s_pPrevGameStateClass = pController->GetCurrentState()->GetClass();
 		ACameraManager::GetSingleton()->DetachCameraHelpers();
 		ACameraManager::GetSingleton()->FUN_0045c290();
@@ -312,8 +464,9 @@ void AGameStateController::StartMiniGame( TINT a_iMiniGame, TBOOL a_bRightNow )
 	}
 	else
 	{
-		pController->m_eFlags |= 0x41;
-		pController->SetFlags( 2 );
+		pController->m_eFlags.bIgnoreInput          = TTRUE;
+		pController->m_eFlags.bTransitionToMiniGame = TTRUE;
+		pController->SetFlags( AGameStateController::FLAGS_AWAITING_TRANSITION );
 
 		s_iNextMiniGame = a_iMiniGame;
 	}

@@ -56,9 +56,9 @@ public:
 	Toshi::T2DynamicVector<void*>    m_UnkVector;
 	TUINT                            m_Unk2;
 	TUINT                            m_Unk3;
-	SDK_T2GUIRectangle                   m_oOverlay;
+	SDK_T2GUIRectangle               m_oOverlay;
 	TUINT16                          m_eFlags;
-	TFLOAT                           m_fOverlayAlpha;
-	TFLOAT                           m_fSoundVolume;
+	TFLOAT                           m_flOverlayAlpha;
+	TFLOAT                           m_flSoundVolume;
 	void*                            m_Unk4;
 };

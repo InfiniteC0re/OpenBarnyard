@@ -288,6 +288,9 @@ public:
 	// Cancels all queued events of specified type
 	void CancelCueEvents( Cue* a_pCue, SOUNDEVENT a_eEventType );
 
+	// Sets global volume for all cues
+	void SetGlobalVolume( TFLOAT a_flVolume );
+
 	//-----------------------------------------------------------------------------
 	// Wavebanks
 	// ----------------------------------------------------------------------------
