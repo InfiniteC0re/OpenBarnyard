@@ -91,6 +91,17 @@ void AAnimatableObjectManager::LoadTypesFromLibrary( const TCHAR* a_szLibName )
 	g_oLoadScreen.Update();
 }
 
+// $Barnyard: FUNCTION 0057dba0
+void AAnimatableObjectManager::UnloadTypesFromProperties( const PBPropertyValue* a_pArray )
+{
+	auto pArray = a_pArray->GetArray();
+
+	for ( TUINT i = 0; i < pArray->GetSize(); i++ )
+	{
+		DestroyType( TPString8( pArray->GetValue( i )->GetString() ) );
+	}
+}
+
 // $Barnyard: FUNCTION 0057e550
 void AAnimatableObjectManager::LoadAnimObjType( const TPString8& a_rcName, const PBProperties* a_pProperties, TBOOL a_bNoBreakpoints )
 {

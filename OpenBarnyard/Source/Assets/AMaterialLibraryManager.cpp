@@ -83,6 +83,31 @@ void AMaterialLibraryManager::LoadLibrariesFromProperties( const PBPropertyValue
 	}
 }
 
+// $Barnyard: FUNCTION 00614580
+void AMaterialLibraryManager::UnloadLibrariesFromProperties( const PBPropertyValue* a_pProperty, TBOOL a_bUpdateGUIMaterials )
+{
+	if ( a_pProperty )
+	{
+		auto pArray = a_pProperty->GetArray();
+
+		for ( TUINT i = 0; i < pArray->GetSize(); i++ )
+		{
+			auto matlibName = pArray->GetValue( i )->GetTPString8();
+
+			UnloadLibrary( matlibName, TFALSE );
+			g_oLoadScreen.Update( 1.0f, TTRUE );
+		}
+
+		TRenderInterface::GetSingleton()->FlushDyingResources();
+		TRenderInterface::GetSingleton()->FlushDyingResources();
+
+		if ( a_bUpdateGUIMaterials && g_pGUISystem )
+		{
+			T2GUITextureSectionManager::UpdateMaterials();
+		}
+	}
+}
+
 // $Barnyard: FUNCTION 00614a00
 void AMaterialLibraryManager::LoadLibrary( const TPString8& a_rLibName, TTRB* a_pTRB, TBOOL a_bIsGUI )
 {

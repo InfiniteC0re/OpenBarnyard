@@ -20,6 +20,7 @@ public:
 
 	// Loads all libraries listed in the a_pArray
 	void LoadLibrariesFromProperties( const PBPropertyValue* a_pArray, Toshi::TTRB* a_pTRB );
+	void UnloadLibrariesFromProperties( const PBPropertyValue* a_pArray );
 
 	// Creates a reference to library if it exists or loads if from the file
 	TBOOL LoadLibrary( const Toshi::TPString8& a_rLibraryName, Toshi::TTRB* a_pTRB = TNULL );

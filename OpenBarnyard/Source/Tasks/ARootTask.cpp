@@ -370,7 +370,7 @@ void ARootTask::LoadFrontEnd()
 
 	AGameLoader::Debug_VerifyModelsInAssetPack( AAssetLoader::GetAssetTRB( AAssetType_Startup ) );
 
-	AAssetLoader::LoadAssetPackFromLibrary( "lib_frontend", TTRUE );
+	AAssetLoader::LoadAssetPackOfLibrary( "lib_frontend", TTRUE );
 	ACollisionManager::GetSingleton()->CreateObjectHashMain( ACollisionManager::HashType_UNK2 );
 
 	AGameLoader::Terrain_Set( AGameLoader::Terrain_FrontEnd, TTRUE, TTRUE, 0, 0, 0, 0 );

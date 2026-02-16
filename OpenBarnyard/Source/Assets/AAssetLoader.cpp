@@ -28,7 +28,7 @@ static void TranslateLibraryName( Toshi::TString8& a_rOutName, const TCHAR* a_sz
 }
 
 // $Barnyard: FUNCTION 00425600
-TBOOL AAssetLoader::LoadAssetPackFromLibrary( const TCHAR* a_szLibraryName, TBOOL a_bStream )
+TBOOL AAssetLoader::LoadAssetPackOfLibrary( const TCHAR* a_szLibraryName, TBOOL a_bStream )
 {
 	TPROFILER_SCOPE();
 
@@ -58,6 +58,51 @@ TBOOL AAssetLoader::LoadAssetPackFromLibrary( const TCHAR* a_szLibraryName, TBOO
 	return TFALSE;
 }
 
+// $Barnyard: FUNCTION 00424cf0 WIP
+TBOOL AAssetLoader::DestroyAssetPackOfLibrary( const TCHAR* a_szLibraryName )
+{
+	TPROFILER_SCOPE();
+
+	TTODO( "Unload some assets manually" );
+
+	TString8 libFileName;
+	TranslateLibraryName( libFileName, a_szLibraryName );
+
+	TTRB libTrb;
+	auto eResult = libTrb.Load( libFileName );
+
+	if ( eResult == TTRB::ERROR_OK )
+	{
+		auto pProperties = PBProperties::LoadFromTRB( libTrb );
+		TVALIDPTR( pProperties );
+
+		// Unload animatable object types
+		if ( auto pAnimObjTypes = pProperties->GetProperty( "AnimObjTypes" ) )
+		{
+			AAnimatableObjectManager::GetSingleton()->UnloadTypesFromProperties( pAnimObjTypes );
+			g_oLoadScreen.Update( 1.0f, TTRUE );
+		}
+
+		// Unload keyframe libraries
+		if ( auto pKeyframes = pProperties->GetProperty( "keylib" ) )
+		{
+			AKeyFrameLibraryManager::GetSingleton()->UnloadLibrariesFromProperties( pKeyframes );
+			g_oLoadScreen.Update( 1.0f, TTRUE );
+		}
+
+		// Unload material libraries
+		if ( auto pMatlibs = pProperties->GetProperty( "matlib" ) )
+		{
+			AMaterialLibraryManager::GetSingleton()->UnloadLibrariesFromProperties( pMatlibs, TTRUE );
+			g_oLoadScreen.Update( 1.0f, TTRUE );
+		}
+
+		return TTRUE;
+	}
+
+	return TFALSE;
+}
+
 // $Barnyard: FUNCTION 00425060 WIP
 TBOOL AAssetLoader::CreateAssetsFromLibrary( const TCHAR* a_szLibraryName )
 {
@@ -77,9 +122,7 @@ TBOOL AAssetLoader::CreateAssetsFromLibrary( const TCHAR* a_szLibraryName )
 		TFIXME( "Create other assets" );
 
 		// Load material libraries
-		auto pMatlibs = pProperties->GetProperty( "matlib" );
-
-		if ( pMatlibs )
+		if ( auto pMatlibs = pProperties->GetProperty( "matlib" ) )
 		{
 			AMaterialLibraryManager::GetSingleton()->LoadLibrariesFromProperties(
 			    pMatlibs,
@@ -91,9 +134,7 @@ TBOOL AAssetLoader::CreateAssetsFromLibrary( const TCHAR* a_szLibraryName )
 		}
 
 		// Load keyframe libraries
-		auto pKeyframes = pProperties->GetProperty( "keylib" );
-
-		if ( pKeyframes )
+		if ( auto pKeyframes = pProperties->GetProperty( "keylib" ) )
 		{
 			AKeyFrameLibraryManager::GetSingleton()->LoadLibrariesFromProperties(
 			    pKeyframes,
@@ -104,14 +145,17 @@ TBOOL AAssetLoader::CreateAssetsFromLibrary( const TCHAR* a_szLibraryName )
 		}
 
 		// Load animatable object types
-		auto pAnimObjTypes = pProperties->GetProperty( "AnimObjTypes" );
-
-		if ( pAnimObjTypes )
+		if ( auto pAnimObjTypes = pProperties->GetProperty( "AnimObjTypes" ) )
 		{
 			AAnimatableObjectManager::GetSingleton()->LoadTypesFromLibrary( a_szLibraryName );
 
 			g_oLoadScreen.Update( 1.0f, TTRUE );
 		}
+
+		// ...
+
+		Close( AAssetType_AssetPack );
+		g_oLoadScreen.Update( 1.0f, TTRUE );
 
 		return TTRUE;
 	}

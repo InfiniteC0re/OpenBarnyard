@@ -46,6 +46,11 @@ static TBOOL LoadMiniGameImpl()
 
 	// TODO: Unload assets...
 
+	// TODO: Need to track whether lib_frontend is even loaded or not
+	AAssetLoader::DestroyAssetPackOfLibrary( "lib_frontend" );
+	TRenderInterface::GetSingleton()->FlushDyingResources();
+	TRenderInterface::GetSingleton()->FlushDyingResources();
+
 	return TFALSE;
 }
 

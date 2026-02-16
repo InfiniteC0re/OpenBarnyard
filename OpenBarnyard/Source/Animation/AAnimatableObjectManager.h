@@ -36,7 +36,9 @@ public:
 	AAnimatableObject* CreateAnimatableObject( AAnimatableObjectType* a_pObjectType, void* a_Unk1 = TNULL, TUINT a_eFlags = 0 );
 
 	// Loads all types specified in the library
-	void  LoadTypesFromLibrary( const TCHAR* a_szLibName );
+	void LoadTypesFromLibrary( const TCHAR* a_szLibName );
+	void UnloadTypesFromProperties( const PBPropertyValue* a_pArray );
+
 	void  LoadAnimObjType( const TCHAR* a_szName, const PBProperties* a_pProperties, TBOOL a_bNoBreakpoints );
 	void  LoadAnimObjType( const Toshi::TPString8& a_rcName, const PBProperties* a_pProperties, TBOOL a_bNoBreakpoints );
 	TBOOL LoadAnimSoundBreakpoints( const TCHAR* a_szFilePath );

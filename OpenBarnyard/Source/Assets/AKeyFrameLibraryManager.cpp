@@ -45,6 +45,20 @@ void AKeyFrameLibraryManager::LoadLibrariesFromProperties( const PBPropertyValue
 	}
 }
 
+// $Barnyard: FUNCTION 006073a0
+void AKeyFrameLibraryManager::UnloadLibrariesFromProperties( const PBPropertyValue* a_pArray )
+{
+	if ( TNULL != a_pArray )
+	{
+		auto pArray = a_pArray->GetArray();
+
+		for ( TUINT i = 0; i < pArray->GetSize(); i++ )
+		{
+			UnrefLibrary( TPString8( pArray->GetValue( i )->GetString() ) );
+		}
+	}
+}
+
 // $Barnyard: FUNCTION 00607030
 TBOOL AKeyFrameLibraryManager::LoadLibrary( const Toshi::TPString8& a_rLibraryName, TTRB* a_pTRB )
 {

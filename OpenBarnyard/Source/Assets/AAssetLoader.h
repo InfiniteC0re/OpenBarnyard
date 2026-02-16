@@ -15,7 +15,8 @@ class AAssetLoader
 public:
 	AAssetLoader() = delete;
 
-	static TBOOL LoadAssetPackFromLibrary( const TCHAR* a_szLibraryName, TBOOL a_bStream );
+	static TBOOL LoadAssetPackOfLibrary( const TCHAR* a_szLibraryName, TBOOL a_bStream );
+	static TBOOL DestroyAssetPackOfLibrary( const TCHAR* a_szLibraryName );
 	static TBOOL CreateAssetsFromLibrary( const TCHAR* a_szLibraryName );
 
 	// Loads asset file as a specified asset
