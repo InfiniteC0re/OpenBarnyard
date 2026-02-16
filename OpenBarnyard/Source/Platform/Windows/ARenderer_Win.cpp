@@ -359,6 +359,8 @@ void ARenderer::UpdateMainCamera( const Toshi::TMatrix44& a_rTransformMatrix, co
 // $Barnyard: FUNCTION 0060b370
 void ARenderer::RenderMainScene( TFLOAT a_fDeltaTime )
 {
+	TIMPLEMENT();
+
 	if ( !ARootTask::GetSingleton()->IsTransitioning() )
 	{
 		auto pViewportContext = m_pViewport->GetRenderContext();
@@ -409,8 +411,8 @@ void ARenderer::RenderMainScene( TFLOAT a_fDeltaTime )
 		rTransformStack.Pop();
 		m_pViewport->End();
 
-		//m_pHALViewport2->Begin();
-		//m_pHALViewport2->End();
+		m_pHALViewport2->Begin();
+		m_pHALViewport2->End();
 
 		m_pViewport->AllowBackgroundClear( TTRUE );
 		m_pViewport->AllowDepthClear( TTRUE );

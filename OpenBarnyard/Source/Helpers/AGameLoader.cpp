@@ -30,10 +30,39 @@ static TBOOL                s_bChangingTerrain = TFALSE;
 static ATerrainInterface*   s_pCurrentTerrain  = TNULL;
 static AGameLoader::Terrain s_eCurrentLevel    = AGameLoader::Terrain_EnvBeadyFarm;
 
+static TBOOL s_bLastTransitionUpdateResult;
+
+
+// $Barnyard: FUNCTION 00426370
+static TBOOL LoadMiniGameImpl()
+{
+	TIMPLEMENT();
+
+	AGameStateController::GetSingleton()->ResetStack();
+	g_oLoadScreen.Update();
+
+	ASoundManager::GetSingleton()->Reset();
+	TRenderInterface::GetSingleton()->FlushDyingResources();
+
+	// TODO: Unload assets...
+
+	return TFALSE;
+}
+
 // $Barnyard: FUNCTION 00427e70
 TBOOL AGameLoader::UpdateTransitionTask()
 {
-	return TTRUE;
+	TIMPLEMENT();
+
+	if ( s_bLoadingMiniGame )
+	{
+		s_bLastTransitionUpdateResult = LoadMiniGameImpl();
+
+		if ( s_bLastTransitionUpdateResult )
+			s_bLoadingMiniGame = TFALSE;
+	}
+
+	return s_bLastTransitionUpdateResult;
 }
 
 // $Barnyard: FUNCTION 004239d0

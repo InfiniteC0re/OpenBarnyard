@@ -30,8 +30,8 @@ public:
 	void  SetRenderWorld( TBOOL a_bReady ) { m_bRenderWorld = a_bReady; }
 	TBOOL IsRenderWorld() { return m_bRenderWorld; }
 
-	void  SetTransitioning( TBOOL a_bRender ) { m_bIsTransitioning = a_bRender; }
-	TBOOL IsTransitioning() const { return !m_bIsTransitioning; }
+	void  SetTransitioning( TBOOL a_bTransitioning ) { m_bIsTransitioning = a_bTransitioning; }
+	TBOOL IsTransitioning() const { return m_bIsTransitioning; }
 
 private:
 	void        CreateGameSystem();
