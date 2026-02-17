@@ -253,6 +253,20 @@ public:
 				DWORD dwOldProtection;
 				VirtualProtect( ABikeRaceMicroGame::ms_aVariants, sizeof( ABikeRaceMicroGame::Variant ) * ABikeRaceMicroGame::NUM_VARIANTS, PAGE_EXECUTE_READWRITE, &dwOldProtection );
 
+				{
+					// Remove screen fade out
+					VirtualProtect( (void*)0x0042A3A0, 6, PAGE_EXECUTE_READWRITE, &dwOldProtection );
+					for ( TINT i = 0; i < 6; i++ ) *(TCHAR*)( 0x0042A3A0 + i ) = '\x90'; 
+
+					// Remove game state controller input ignore flag
+					VirtualProtect( (void*)0x004293E2, 7, PAGE_EXECUTE_READWRITE, &dwOldProtection );
+					for ( TINT i = 0; i < 7; i++ ) *(TCHAR*)( 0x004293E2 + i ) = '\x90'; 
+
+					// Rewrite flag check in game state controller update code
+					VirtualProtect( (void*)0x0042a7ca, 1, PAGE_EXECUTE_READWRITE, &dwOldProtection );
+					*(TCHAR*)( 0x0042a7ca ) = '\x02'; 
+				}
+
 				// For Fun&% category reduce number of laps in the bike race mini game
 				for ( TSIZE i = 0; i < ABikeRaceMicroGame::NUM_VARIANTS; i++ )
 				{
