@@ -10,6 +10,7 @@
 #include "Helpers/ASimAnimModelHelperManager.h"
 #include "Helpers/ASkinLightingManager.h"
 #include "Helpers/ATreeManager.h"
+#include "Helpers/AInstanceManager.h"
 #include "MiniGame/AMiniGameManager.h"
 #include "Physics/ACollisionManager.h"
 #include "Physics/ABarnyardCollision.h"
@@ -80,6 +81,7 @@ TBOOL AGameSystemManager::OnCreate()
 
 	// Instances, trees and other things...
 	ATreeManager::CreateSingleton()->Initialise();
+	AInstanceManager::CreateSingleton();
 
 	return TTRUE;
 }

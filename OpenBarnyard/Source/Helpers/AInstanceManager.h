@@ -15,6 +15,11 @@ class AInstanceManager
 public:
 	struct Model
 	{
+		Model() = default;
+		~Model();
+
+		void Reset();
+
 		Toshi::TManagedModel* pManagedModel = TNULL;
 		Toshi::TSceneObject*  pSceneObject  = TNULL;
 	};
@@ -37,12 +42,24 @@ public:
 		TINT                                        iUnknown = 0;
 	};
 
-	inline static constexpr TSIZE NUM_MODELS    = 137;
+	struct ModelDefinition
+	{
+		TINT         unk;
+		const TCHAR* pchName;
+		const TCHAR* pchPath;
+	};
+
+	#include "AInstanceManagerModelList.inl"
+
+	inline static constexpr TSIZE NUM_MODELS    = TARRAYSIZE( ms_aModelDefinitions );
 	inline static constexpr TSIZE MAX_INSTANCES = 5000;
 
 public:
 	AInstanceManager();
 	~AInstanceManager();
+
+	TBOOL LoadModels( TINT a_iInstanceLibIndex, TINT a_iNumModels, TUINT* a_pModelIndices, TBOOL a_bCreateCollisionModelNodes, TBOOL a_bCreateCollisionModelInstances, TINT a_iNumCollisionModelNodes );
+	void  Reset();
 
 private:
 	void DestroyCollisionSets();
@@ -72,7 +89,7 @@ private:
 
 	TINT                                             m_iInstanceLibIndex;
 	Toshi::T2Vector<ACollisionModelSet*, NUM_MODELS> m_vecCollisionSets;
-	ACollisionObjectModelNode**                      m_ppCollObjectModelNodes;
+	ACollisionObjectModelNode*                       m_pCollObjectModelNodes;
 	ACollisionModelInstanceNode*                     m_pCollisionModelInstances;
 	Toshi::T2SList<ACollisionObjectModelNode>        m_llFreeCollisionModelNodes;
 	Toshi::T2SList<ACollisionModelInstanceNode>      m_llFreeCollisionModelInstances;

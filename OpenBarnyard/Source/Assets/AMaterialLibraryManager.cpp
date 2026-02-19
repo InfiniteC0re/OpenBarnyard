@@ -94,7 +94,7 @@ void AMaterialLibraryManager::UnloadLibrariesFromProperties( const PBPropertyVal
 		{
 			auto matlibName = pArray->GetValue( i )->GetTPString8();
 
-			UnloadLibrary( matlibName, TFALSE );
+			UnrefLibrary( matlibName, TFALSE );
 			g_oLoadScreen.Update( 1.0f, TTRUE );
 		}
 
@@ -157,7 +157,7 @@ void AMaterialLibraryManager::LoadLibrary( const TPString8& a_rLibName, TTRB* a_
 }
 
 // $Barnyard: FUNCTION 006142c0
-void AMaterialLibraryManager::UnloadLibrary( const TPString8& a_rLibName, TBOOL a_bUnused )
+void AMaterialLibraryManager::UnrefLibrary( const TPString8& a_rLibName, TBOOL a_bUnused )
 {
 	TPString8 matlibName = a_rLibName;
 	auto      eLangId    = g_pLocaleManager->GetLanguage();

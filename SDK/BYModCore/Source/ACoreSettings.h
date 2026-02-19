@@ -13,6 +13,9 @@ struct ACoreSettingsProperties
 
 	// Version 2:
 	TBOOL bBetterGrass = TTRUE;
+
+	// Version 3:
+	TBOOL bLoadAnyLevel = TFALSE;
 };
 
 inline struct ACoreSettings

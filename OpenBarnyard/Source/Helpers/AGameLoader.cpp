@@ -5,6 +5,7 @@
 #include "Cameras/ACameraManager.h"
 #include "Player/APlayerManager.h"
 #include "Sound/ASoundManager.h"
+#include "Helpers/AInstanceManager.h"
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
@@ -39,6 +40,10 @@ static TBOOL LoadMiniGameImpl()
 	TIMPLEMENT();
 
 	AGameStateController::GetSingleton()->ResetStack();
+	g_oLoadScreen.Update();
+
+	// Remove old instances
+	AInstanceManager::GetSingleton()->Reset();
 	g_oLoadScreen.Update();
 
 	ASoundManager::GetSingleton()->Reset();

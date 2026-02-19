@@ -189,4 +189,65 @@ void ACoreSettings::Apply()
 		*(TUINT16*)( 0x005f851f ) = pValues[ 3 ];
 		*(TUINT16*)( 0x005f8539 ) = pValues[ 4 ];
 	}
+
+	{
+		//-----------------------------------------------------------------------------
+		// Let you load any level
+		//-----------------------------------------------------------------------------
+		// Note: Disables a lot of things just to make it possible to load any level
+		// instead of EnvMain (still need to spoof the name by any way)
+		//-----------------------------------------------------------------------------
+
+		static TUINT32 s_aPatchValues[ 2 ][ 10 ];
+		static TBOOL   s_bSetupValues = TTRUE;
+
+		if ( s_bSetupValues )
+		{
+			s_aPatchValues[ 0 ][ 0 ] = *(TUINT32*)( 0x0043F3BE );
+			s_aPatchValues[ 0 ][ 1 ] = *(TUINT32*)( 0x005de670 );
+			s_aPatchValues[ 0 ][ 2 ] = *(TUINT32*)( 0x005eafe1 );
+			s_aPatchValues[ 0 ][ 3 ] = *(TUINT32*)( 0x005eafe5 );
+			s_aPatchValues[ 0 ][ 4 ] = *(TUINT32*)( 0x005E8DE0 );
+			s_aPatchValues[ 0 ][ 5 ] = *(TUINT32*)( 0x005E8DE4 );
+			s_aPatchValues[ 0 ][ 6 ] = *(TUINT32*)( 0x0054d7c0 );
+			s_aPatchValues[ 0 ][ 7 ] = *(TUINT32*)( 0x0054D7E0 );
+			s_aPatchValues[ 0 ][ 8 ] = *(TUINT32*)( 0x0043F927 );
+			s_aPatchValues[ 0 ][ 9 ] = *(TUINT32*)( 0x0043E98E );
+			s_aPatchValues[ 1 ][ 0 ] = 0x00028AE9;
+			s_aPatchValues[ 1 ][ 1 ] = 0x900008C2;
+			s_aPatchValues[ 1 ][ 2 ] = 0x90909090;
+			s_aPatchValues[ 1 ][ 3 ] = 0x868B9090;
+			s_aPatchValues[ 1 ][ 4 ] = 0x000000B8;
+			s_aPatchValues[ 1 ][ 5 ] = 0x5390C300;
+			s_aPatchValues[ 1 ][ 6 ] = 0x508B90C3;
+			s_aPatchValues[ 1 ][ 7 ] = 0x8BF18BC3;
+			s_aPatchValues[ 1 ][ 8 ] = 0x0000A4E9;
+			s_aPatchValues[ 1 ][ 9 ] = 0x0000E0E9;
+			s_bSetupValues           = TFALSE;
+
+			DWORD dwOldProtection;
+			VirtualProtect( (void*)0x0043F3BE, 4, PAGE_EXECUTE_READWRITE, &dwOldProtection );
+			VirtualProtect( (void*)0x005de670, 4, PAGE_EXECUTE_READWRITE, &dwOldProtection );
+			VirtualProtect( (void*)0x005eafe1, 4, PAGE_EXECUTE_READWRITE, &dwOldProtection );
+			VirtualProtect( (void*)0x005eafe5, 4, PAGE_EXECUTE_READWRITE, &dwOldProtection );
+			VirtualProtect( (void*)0x005E8DE0, 4, PAGE_EXECUTE_READWRITE, &dwOldProtection );
+			VirtualProtect( (void*)0x005E8DE4, 4, PAGE_EXECUTE_READWRITE, &dwOldProtection );
+			VirtualProtect( (void*)0x0054d7c0, 4, PAGE_EXECUTE_READWRITE, &dwOldProtection );
+			VirtualProtect( (void*)0x0054D7E0, 4, PAGE_EXECUTE_READWRITE, &dwOldProtection );
+			VirtualProtect( (void*)0x0043F927, 4, PAGE_EXECUTE_READWRITE, &dwOldProtection );
+			VirtualProtect( (void*)0x0043E98E, 4, PAGE_EXECUTE_READWRITE, &dwOldProtection );
+		}
+
+		TUINT32* pValues          = s_aPatchValues[ bLoadAnyLevel ? 1 : 0 ];
+		*(TUINT32*)( 0x0043F3BE ) = pValues[ 0 ];
+		*(TUINT32*)( 0x005de670 ) = pValues[ 1 ];
+		*(TUINT32*)( 0x005eafe1 ) = pValues[ 2 ];
+		*(TUINT32*)( 0x005eafe5 ) = pValues[ 3 ];
+		*(TUINT32*)( 0x005E8DE0 ) = pValues[ 4 ];
+		*(TUINT32*)( 0x005E8DE4 ) = pValues[ 5 ];
+		*(TUINT32*)( 0x0054d7c0 ) = pValues[ 6 ];
+		*(TUINT32*)( 0x0054D7E0 ) = pValues[ 7 ];
+		*(TUINT32*)( 0x0043F927 ) = pValues[ 8 ];
+		*(TUINT32*)( 0x0043E98E ) = pValues[ 9 ];
+	}
 }

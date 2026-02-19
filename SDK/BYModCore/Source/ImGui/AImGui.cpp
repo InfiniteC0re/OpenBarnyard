@@ -271,16 +271,16 @@ void AImGUI::Render()
 				CALL( 0x00603210, void );
 			}
 
-			//if (ImGui::Button("Start New Game (Experimental)"))
-			//{
-			//	Toggle();
-			//	//AGameStateController::GetSingleton()->ReplaceState(new AGameState);
-			//	*(TUINT*)(0x007817ec) = 1;
-			//	CALL_THIS(0x00651a90, void*, void, *(void**)0x007b5ea8);
-			//	AGameStateController::GetSingleton()->m_eFlags |= 0x20;
-			//	CALL_THIS(0x00429580, AGameStateController*, void, AGameStateController::GetSingleton(), TINT, 0x2002);
-			//	//AGameStateController::GetSingleton()->GetCurrentState()->Remove();
-			//}
+			if (ImGui::Button("Start New Game (Experimental)"))
+			{
+				Toggle();
+				//AGameStateController::GetSingleton()->ReplaceState(new AGameState);
+				*(TUINT*)(0x007817ec) = 1;
+				CALL_THIS(0x00651a90, void*, void, *(void**)0x007b5ea8);
+				AGameStateController::GetSingleton()->m_eFlags |= 0x20;
+				CALL_THIS(0x00429580, AGameStateController*, void, AGameStateController::GetSingleton(), TINT, 0x2002);
+				//AGameStateController::GetSingleton()->GetCurrentState()->Remove();
+			}
 
 			//auto pPrevState = AGameStateController::GetSingleton()->GetPreviousState();
 
@@ -346,6 +346,7 @@ void AImGUI::Render()
 			TBOOL bChanged = TFALSE;
 			bChanged |= ImGui::Checkbox( "Reduce Load Times", &g_oSettings.bReduceLoadTimes );
 			bChanged |= ImGui::Checkbox( "Better Grass", &g_oSettings.bBetterGrass );
+			bChanged |= ImGui::Checkbox( "Load Any Level", &g_oSettings.bLoadAnyLevel );
 			bChanged |= ImGui::Checkbox( "Limit FPS", &g_oSettings.bLimitFPS );
 			bChanged |= ImGui::SliderInt( "Max FPS", &g_oSettings.iMaxFPS, 5, 500 );
 

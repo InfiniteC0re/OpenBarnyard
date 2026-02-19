@@ -16,7 +16,7 @@ void AMaterialLibraryManager::LoadLibrary( const Toshi::TPString8& a_rLibName, T
 	CALL_THIS( 0x00614a00, AMaterialLibraryManager*, void, this, const Toshi::TPString8&, a_rLibName, Toshi::TTRB*, a_pTRB, TBOOL, a_bIsGUI );
 }
 
-void AMaterialLibraryManager::UnloadLibrary( const TPString8& a_rLibName, TBOOL a_bUnused )
+void AMaterialLibraryManager::UnrefLibrary( const TPString8& a_rLibName, TBOOL a_bUnused )
 {
 	CALL_THIS( 0x006142c0, AMaterialLibraryManager*, void, this, const TPString8&, a_rLibName, TBOOL, a_bUnused );
 }
