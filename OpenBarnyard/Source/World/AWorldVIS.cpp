@@ -53,6 +53,7 @@ void AWorldVis::Reset()
 	m_iNumCellSettings = 0;
 }
 
+// $Barnyard: FUNCTION 006d5610
 void AWorldVis::Build( const Toshi::TMatrix44& a_rModelView, const Toshi::TMatrix44& a_rProjection, TINT a_iCellIndex )
 {
 	TPROFILER_SCOPE();
@@ -73,6 +74,7 @@ void AWorldVis::Build( const Toshi::TMatrix44& a_rModelView, const Toshi::TMatri
 // Seems to be unused in Barnyard and even de Blob
 static TUINT s_uiBuildFlags = 0;
 
+// $Barnyard: FUNCTION 006d4f90
 void AWorldVis::Build( const Toshi::TMatrix44& a_rModelView, const Toshi::TMatrix44& a_rProjection, TINT a_iCellIndex, const CullBox& a_rCullBox )
 {
 	TPROFILER_SCOPE();

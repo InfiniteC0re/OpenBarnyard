@@ -4,7 +4,7 @@
 
 struct ATerrainLocator
 {
-	void GetMatrix( Toshi::TMatrix44& a_rOutMatrix );
+	void GetMatrix( Toshi::TMatrix44& a_rOutMatrix ) const;
 
 	Toshi::TQuaternion quatRotation;
 	Toshi::TVector3    vecPosition;
@@ -57,6 +57,9 @@ public:
 	TINT32                       GetNumLocators() const { return m_pLocatorsHeader->iNumLocators; }
 	ATerrainLocatorTRBHeader*    GetHeader() const { return m_pLocatorsHeader; }
 	ATerrainLocatorVISTRBHeader* GetVISHeader() const { return m_pLocatorVISHeader; }
+
+	const ATerrainLocator* GetLocator( TUINT32 a_uiIndex ) const { return &m_pLocatorsHeader->pLocators[ a_uiIndex ]; }
+	const TCHAR*           GetLocatorName( TUINT32 a_uiIndex ) const { return m_pLocatorsHeader->ppNames[ m_pLocatorsHeader->pLocators[ a_uiIndex ].uiNameId ]; }
 
 private:
 	Toshi::TTRB*                 m_pTRB;

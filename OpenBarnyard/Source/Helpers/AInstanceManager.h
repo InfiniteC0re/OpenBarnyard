@@ -2,6 +2,7 @@
 #include "Physics/ACollisionModelSet.h"
 #include "Physics/ACollisionObjectModel.h"
 #include "Physics/ACollisionModelInstance.h"
+#include "Terrain/ATerrainLocator.h"
 
 #include <Toshi/T2SList.h>
 #include <Toshi/TSingleton.h>
@@ -24,6 +25,14 @@ public:
 		Toshi::TSceneObject*  pSceneObject  = TNULL;
 	};
 
+	struct InstanceEntry : Toshi::T2SList<InstanceEntry>::Node
+	{
+		ATerrainLocatorList* pLocatorList;
+		TUINT16              uiLocatorIndex;
+		TUINT8               uiModelIndex;
+		TUINT8               uiPackedScaleYaw;
+	};
+
 	struct CollObjectModel
 	{
 	};
@@ -39,7 +48,7 @@ public:
 	{
 		Toshi::T2SList<ACollisionObjectModelNode>   llCollModelNodes;
 		Toshi::T2SList<ACollisionModelInstanceNode> llCollModelInstances;
-		TINT                                        iUnknown = 0;
+		ATerrainLocatorList*                        pLocators = TNULL;
 	};
 
 	struct ModelDefinition
@@ -61,6 +70,8 @@ public:
 	TBOOL LoadModels( TINT a_iInstanceLibIndex, TINT a_iNumModels, TUINT* a_pModelIndices, TBOOL a_bCreateCollisionModelNodes, TBOOL a_bCreateCollisionModelInstances, TINT a_iNumCollisionModelNodes );
 	void  Reset();
 
+	void CreateInstances( ATerrainLocatorList* a_pLocatorList );
+
 private:
 	void DestroyCollisionSets();
 	void ClearList( List& a_rList );
@@ -74,10 +85,10 @@ private:
 	Model* m_pModels;
 
 	void*                     m_pSomeBuffer;
-	ACollisionObjectModelNode m_aS1[ MAX_INSTANCES ];
 
-	Toshi::T2SList<S1> m_llUnk1;
-	Toshi::T2SList<S1> m_llFreeS1;
+	InstanceEntry                 m_aInstances[ MAX_INSTANCES ];
+	Toshi::T2SList<InstanceEntry> m_llUsedInstances;
+	Toshi::T2SList<InstanceEntry> m_llFreeInstances;
 	
 	// ...
 
@@ -95,5 +106,5 @@ private:
 	Toshi::T2SList<ACollisionModelInstanceNode>      m_llFreeCollisionModelInstances;
 
 	List   m_aLists[ 3 ];
-	TUINT8 m_uiModelsFlags;
+	TUINT8 m_uiFlags;
 };

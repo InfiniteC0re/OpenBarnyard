@@ -34,8 +34,7 @@ public:
 	TBOOL IsTransitioning() const { return m_bIsTransitioning; }
 
 private:
-	void        CreateGameSystem();
-	static void LoadFrontEnd();
+	void CreateGameSystem();
 
 private:
 	AOptions*  m_pOptions;             // 0x20

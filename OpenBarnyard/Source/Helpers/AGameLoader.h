@@ -145,6 +145,8 @@ public:
 	static TINT GetCurrMiniGame();
 	static TINT GetNextMiniGame();
 
+	static void LoadFrontEnd();
+
 	//-----------------------------------------------------------------------------
 	// Terrain
 	//-----------------------------------------------------------------------------

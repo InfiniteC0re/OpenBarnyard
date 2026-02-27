@@ -160,4 +160,16 @@ void TTransformObject::SetMatrix( const TMatrix44& matrix )
 	m_Translation = matrix.GetTranslation3();
 }
 
+void TTransformObject::SetScale( TFLOAT a_flScaleX, TFLOAT a_flScaleY, TFLOAT a_flScaleZ )
+{
+	m_Scale.x = a_flScaleX;
+	m_Scale.y = a_flScaleY;
+	m_Scale.z = a_flScaleZ;
+}
+
+void TTransformObject::SetScale( const TVector3& a_rScale )
+{
+	m_Scale = a_rScale;
+}
+
 TOSHI_NAMESPACE_END

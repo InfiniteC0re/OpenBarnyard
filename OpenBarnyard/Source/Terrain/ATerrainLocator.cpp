@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "ATerrainLocator.h"
 #include "Helpers/ATreeManager.h"
+#include "Helpers/AInstanceManager.h"
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
@@ -105,7 +106,9 @@ void ATerrainLocatorList::LoadFromTRB( TTRB* a_pTRB )
 	TASSERT( m_pLocatorsHeader && m_pLocatorVISHeader );
 
 	ATreeManager::GetSingleton()->CreateInstances( this );
-	TTODO( "Create regrowths, instances and other things from locators" );
+	AInstanceManager::GetSingleton()->CreateInstances( this );
+
+	TTODO( "Create regrowths and other things from locators" );
 }
 
 // $Barnyard: FUNCTION 005eca20
@@ -115,7 +118,7 @@ TINT ATerrainLocatorList::GetNumVISSections() const
 }
 
 // $Barnyard: FUNCTION 005ec9f0
-void ATerrainLocator::GetMatrix( Toshi::TMatrix44& a_rOutMatrix )
+void ATerrainLocator::GetMatrix( Toshi::TMatrix44& a_rOutMatrix ) const
 {
 	a_rOutMatrix.SetFromQuaternion( quatRotation );
 	a_rOutMatrix.AsBasisVector3( BASISVECTOR_TRANSLATION ) = vecPosition;

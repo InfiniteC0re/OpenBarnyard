@@ -150,7 +150,8 @@ TBOOL ARootTask::OnUpdate( TFLOAT a_fDeltaTime )
 			{
 				g_oLoadScreen.Create();
 				CreateGameSystem();
-				LoadFrontEnd();
+
+				AGameLoader::LoadFrontEnd();
 				return TTRUE;
 			}
 		}
@@ -354,86 +355,4 @@ void ARootTask::CreateGameSystem()
 
 	m_bGameSystemCreated = TTRUE;
 	OnActivate();
-}
-
-TPSTRING8_DECLARE( ui );
-TPSTRING8_DECLARE( music );
-
-// TODO: move this away from here
-static TUINT s_aFrontEndInstanceModels[]  = {
-    0x13, 0x14, 0x15, 0x16,
-    0x4A, 0x4B, 0x84, 0x47,
-    0x38, 0x3F, 0x37, 0x46,
-    0x0, 0x1, 0x2, 0x3,
-    0x4, 0x5, 0x6, 0x7,
-    0x8, 0x9, 0xA, 0xB,
-    0xC, 0xD, 0xE, 0xF,
-    0x10, 0x11, 0x12, 0x18,
-    0x1D, 0x1E, 0x1F, 0x20,
-    0x24, 0x25, 0x26, 0x27,
-    0x28, 0x29, 0x2A, 0x2B,
-    0x2C, 0x2D, 0x2E, 0x2F,
-    0x30, 0x31, 0x34, 0x35,
-    0x36, 0x39, 0x3A, 0x3B,
-    0x3C, 0x3D, 0x3E, 0x41,
-    0x40, 0x42, 0x43, 0x44,
-    0x45, 0x48, 0x49, 0x4C,
-    0x4D, 0x75, 0x76, 0x4F,
-    0x5A, 0x59, 0x80, 0x81,
-    0x82, 0x83, 0x85, 0x86
-};
-static constexpr TINT s_iNumFrontEndInstanceModels = TARRAYSIZE( s_aFrontEndInstanceModels );
-static constexpr TINT s_iNumFrontEndCollModelNodes = 720;
-
-// $Barnyard: FUNCTION 00427c40
-void ARootTask::LoadFrontEnd()
-{
-	TIMPLEMENT();
-	ASoundManager* pSoundManager = ASoundManager::GetSingleton();
-
-	// Load ui & music soundbanks
-	pSoundManager->LoadSoundBank( TPS8( ui ), TFALSE, TTRUE );
-	pSoundManager->LoadSoundBank( TPS8( music ), TFALSE, TFALSE );
-
-	AGameLoader::Debug_VerifyModelsInAssetPack( AAssetLoader::GetAssetTRB( AAssetType_Startup ) );
-
-	AAssetLoader::LoadAssetPackOfLibrary( "lib_frontend", TTRUE );
-	ACollisionManager::GetSingleton()->CreateObjectHashMain( ACollisionManager::HashType_UNK2 );
-	AInstanceManager::GetSingleton()->LoadModels( 1, s_iNumFrontEndInstanceModels, s_aFrontEndInstanceModels, TFALSE, TFALSE, s_iNumFrontEndCollModelNodes );
-
-	AGameLoader::Terrain_Set( AGameLoader::Terrain_FrontEnd, TTRUE, TTRUE, 0, 0, 0, 0 );
-	AGameLoader::Terrain_Load();
-	AAssetLoader::CreateAssetsFromLibrary( "lib_frontend" );
-
-	// Load music wavebank samples
-	ASoundManager::ms_bShouldUpdateLoadingScreen = TTRUE;
-	pSoundManager->LoadWaveBankSamples( TPS8( music ), AWaveBank::LOADFLAGS_NONE, -1 );
-	ASoundManager::ms_bShouldUpdateLoadingScreen = TFALSE;
-
-	// Load music samples
-	pSoundManager->LoadSoundBankSamples( TPS8( music ) );
-
-	// Create front end state
-	AFrontEndMainMenuState2* pFrontEndState = new AFrontEndMainMenuState2();
-	AGameLoader::Terrain_Set( AGameLoader::Terrain_FrontEnd, TFALSE, TTRUE, 0, 0, 0, 0 );
-	pFrontEndState->SetupCamera();
-
-	AGameLoader::Terrain_Load();
-
-	GetSingleton()->SetRenderWorld( TTRUE );
-
-	// Push the state
-	AGameStateController::GetSingleton()->PushState( pFrontEndState );
-	AGameLoader::Debug_VerifyModelsInAssetPack( AAssetLoader::GetAssetTRB( AAssetType_AssetPack ) );
-
-	// Hide loading screen
-	g_oLoadScreen.Reset();
-	g_oLoadScreen.SetLoadingState( TFALSE, TTRUE );
-
-	// Fade screen from black
-	AFadeManager::GetSingleton()->StartFade(
-	    AFade::Color( 255, 0, 0, 0 ),
-	    AFade::Color( 0, 0, 0, 0 ),
-	    1.0f
-	);
 }

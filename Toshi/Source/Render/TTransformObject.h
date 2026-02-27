@@ -30,6 +30,8 @@ public:
 	void SetTranslate( const TVector3& a_rTranslation );
 	void SetQuat( const TQuaternion& a_rQuaternion );
 	void SetMatrix( const TMatrix44& a_rMatrix );
+	void SetScale( TFLOAT a_flScaleX, TFLOAT a_flScaleY, TFLOAT a_flScaleZ );
+	void SetScale( const TVector3& a_rScale );
 
 	void ResetChangedState()
 	{
