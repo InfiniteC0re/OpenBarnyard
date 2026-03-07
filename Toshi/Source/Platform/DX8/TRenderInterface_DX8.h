@@ -21,6 +21,9 @@ public:
 
 	friend TMSWindow;
 
+	using t_DeviceLostCallback  = TBOOL ( * )();
+	using t_DeviceFoundCallback = TBOOL ( * )();
+
 public:
 	TRenderD3DInterface();
 	~TRenderD3DInterface();
@@ -391,6 +394,9 @@ public:
 	 */
 	TFORCEINLINE IDirect3DDevice8* GetDirect3DDevice() const { return m_pDirectDevice; }
 
+	void SetDeviceFoundCallback( t_DeviceFoundCallback a_fnOnDeviceFoundCallback ) { m_fnOnDeviceFoundCallback = a_fnOnDeviceFoundCallback; }
+	void SetDeviceLostCallback( t_DeviceLostCallback a_fnOnDeviceLostCallback ) { m_fnOnDeviceLostCallback = a_fnOnDeviceLostCallback; }
+
 public:
 	/**
 	 * Flushes all order tables and shaders
@@ -488,8 +494,8 @@ private:
 	TBOOL                      m_bEnableColourCorrection;         // Color correction enabled flag
 	D3DGAMMARAMP               m_GammaRamp;                       // Gamma ramp
 	TBOOL                      m_bFailed;                         // Failure flag
-	void*                      m_Unk1;                            // Unknown 1
-	void*                      m_Unk2;                            // Unknown 2
+	t_DeviceLostCallback       m_fnOnDeviceLostCallback;          // Called on device lost
+	t_DeviceFoundCallback      m_fnOnDeviceFoundCallback;         // Called on device found
 	TPriList<TOrderTable>      m_OrderTables;                     // Order tables
 };
 

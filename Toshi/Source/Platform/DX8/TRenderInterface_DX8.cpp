@@ -57,8 +57,8 @@ TRenderD3DInterface::TRenderD3DInterface()
 	m_bCheckedCapableColourCorrection    = TFALSE;
 	m_bCapableColourCorrection           = TFALSE;
 	m_bFailed                            = TFALSE;
-	m_Unk1                               = TNULL;
-	m_Unk2                               = TNULL;
+	m_fnOnDeviceLostCallback             = TNULL;
+	m_fnOnDeviceFoundCallback            = TNULL;
 	m_fContrast                          = 0.583012f; // Default contrast
 	m_fGamma                             = 0.420849f; // Default gamma
 	m_bChangedColourSettings             = TTRUE;

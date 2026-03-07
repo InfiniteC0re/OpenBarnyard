@@ -318,13 +318,23 @@ void ARenderer::RenderGUI()
 	pRender->SetCurrentRenderContext( pOldContext );
 }
 
+static TBOOL OnRenderDeviceLost()
+{
+	return TTRUE;
+}
+
+static TBOOL OnRenderDeviceFound()
+{
+	return TTRUE;
+}
+
 // $Barnyard: FUNCTION 0060c7c0
 TBOOL ARenderer::OnCreate()
 {
 	TIMPLEMENT();
 
 	TOrderTable::CreateStaticData( 2000, 4000 );
-	TBOOL bCreatedTRender = CreateTRender();
+	const TBOOL bCreatedTRender = CreateTRender();
 
 	TASSERT( bCreatedTRender );
 
@@ -341,6 +351,25 @@ TBOOL ARenderer::OnCreate()
 		AKeyFrameLibraryManager::CreateSingleton();
 		AModelLoader::GetSingleton()->InitialiseStatic();
 		AGlowViewport::CreateSingleton( TLightIDList::MAX_NUM_LIGHTS * SPLITSCREEN_MAX_NUM_PLAYERS );
+		// ... AWeatherManager
+		// ... ASky
+		// ... ASunFlareEffect
+
+		// Set default fog settings
+		TRenderContext* pRenderContext = m_pViewport->GetRenderContext();
+		pRenderContext->SetFogColor(
+		    TVector4(
+		        0.5568628,
+		        0.64705884,
+		        0.7529412,
+		        0.0
+		    )
+		);
+		pRenderContext->SetFogDistance( 60.0f, 160.0f );
+		pRenderContext->EnableFog( TTRUE );
+		
+		g_pRenderD3D->SetDeviceLostCallback( OnRenderDeviceLost );
+		g_pRenderD3D->SetDeviceFoundCallback( OnRenderDeviceFound );
 	}
 
 	return bCreatedTRender;

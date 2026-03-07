@@ -101,9 +101,6 @@ TBOOL AInstanceManager2::Render()
 		RenderListEntry* pRenderList = m_pModelsRenderLists[ i ];
 		while ( pRenderList )
 		{
-			// Setup context
-			pRenderContext->SetAlphaBlend( 1.0f );
-
 			// Set blending or don't draw instance that is completely blend out
 			if ( pRenderList->matTransform.m_f43 >= flVisibilityDistanceBlendStart )
 			{
@@ -113,6 +110,15 @@ TBOOL AInstanceManager2::Render()
 				{
 					pRenderContext->SetAlphaBlend( 1.0f - fBlend );
 				}
+				else
+				{
+					pRenderList = pRenderList->pNext;
+					continue;
+				}
+			}
+			else
+			{
+				pRenderContext->SetAlphaBlend( 1.0f );
 			}
 
 			pRenderContext->SetClipFlags( s_aInstanceVisMasks[ pRenderList - s_aRenderList ] );
@@ -304,11 +310,11 @@ void AInstanceManager2::FillRenderList_Visible( const Toshi::T2SList<StaticInsta
 		{
 			const SectionRenderData& rSectionData = aSectionRenderData[ i ];
 
+			// Skip all other sections if rendered the required number
+			if ( uiNumRenderedSections >= uiNumSectionsToRender ) break;
+
 			if ( uiLocatorIndex >= rSectionData.uiStart && uiLocatorIndex < rSectionData.uiEnd )
 			{
-				// Skip all other sections if rendered the required number
-				if ( uiNumRenderedSections >= uiNumSectionsToRender ) break;
-
 				const TVector3* pInstancePosition = ( a_bDynamic ) ? (TVector3*)( (TCHAR*)it.Get() + 0x3C ) : &it->pLocatorList->m_pLocatorsHeader->pLocators[ it->uiLocatorIndex ].vecPosition;
 
 				// Check whether the instance is visible

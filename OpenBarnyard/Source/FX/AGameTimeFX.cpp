@@ -46,6 +46,8 @@ void AGameTimeFX::Apply()
 	TRenderInterface* pRenderInterface = TRenderInterface::GetSingleton();
 	TViewport*        pViewport        = ARenderer::GetSingleton()->GetMainViewport();
 
+	pWorldShader->SetColours( m_vecShadowColor, m_vecAmbientColor );
+
 	// Update viewport
 	TVector4 vecViewportColor;
 	vecViewportColor.Lerp4( m_vecShadowColor, m_vecAmbientColor, m_fShadowAmbientProgress );

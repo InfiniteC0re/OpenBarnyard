@@ -13,22 +13,19 @@ TOSHI_NAMESPACE_START
 void TRenderContext::SetDirty( TBOOL a_bDirty )
 {
 	if ( a_bDirty ) m_eFlags |= FLAG_DIRTY;
-	else
-		m_eFlags &= ~FLAG_DIRTY;
+	else m_eFlags &= ~FLAG_DIRTY;
 }
 
 void TRenderContext::SetFlag( FLAG a_eFlag, TBOOL a_bEnable )
 {
 	if ( a_bEnable ) m_eFlags |= a_eFlag;
-	else
-		m_eFlags &= ~a_eFlag;
+	else m_eFlags &= ~a_eFlag;
 }
 
 void TRenderContext::EnableFog( TBOOL a_bEnable )
 {
 	if ( a_bEnable ) m_eFlags |= FLAG_FOG;
-	else
-		m_eFlags &= ~FLAG_FOG;
+	else m_eFlags &= ~FLAG_FOG;
 }
 
 // $Barnyard: FUNCTION 006cef90

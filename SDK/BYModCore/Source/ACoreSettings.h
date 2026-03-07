@@ -18,11 +18,11 @@ struct ACoreSettingsProperties
 	TBOOL bLoadAnyLevel             = TFALSE;
 	TBOOL bForceAllInstances        = TFALSE;
 	TBOOL bDisableInstanceRendering = TFALSE;
-	TBOOL bDisableTreeRendering = TFALSE;
+	TBOOL bDisableTreeRendering     = TFALSE;
 	TBOOL bDisableInstanceLODs      = TTRUE;
 
 	TINT   iInstanceMaxRendered         = 1024;
-	TFLOAT flInstanceRenderDistance     = 150.0f;
+	TFLOAT flInstanceRenderDistance     = 220.0f;
 	TFLOAT flInstanceBoundingMultiplier = 1.2f;
 };
 

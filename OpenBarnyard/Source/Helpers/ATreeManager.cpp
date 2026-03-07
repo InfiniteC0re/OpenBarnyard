@@ -564,9 +564,6 @@ START_RENDERING:
 		TreeInstanceRenderData* pInstanceRenderData = m_pRenderData[ i ];
 		while ( pInstanceRenderData != TNULL )
 		{
-			// Setup context
-			pRenderContext->SetAlphaBlend( 1.0f );
-
 			// Set blending or don't draw instance that is completely blend out
 			if ( pInstanceRenderData->oMatrix.m_f43 >= m_fBlendingDistance )
 			{
@@ -576,6 +573,15 @@ START_RENDERING:
 				{
 					pRenderContext->SetAlphaBlend( 1.0f - fBlend );
 				}
+				else
+				{
+					pInstanceRenderData = pInstanceRenderData->pPrev;
+					continue;
+				}
+			}
+			else
+			{
+				pRenderContext->SetAlphaBlend( 1.0f );
 			}
 
 			// Setup lighting settings

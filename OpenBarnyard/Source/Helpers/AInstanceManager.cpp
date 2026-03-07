@@ -297,9 +297,6 @@ TBOOL AInstanceManager::Render()
 		RenderListEntry* pRenderList = m_pModelsRenderLists[ i ];
 		while ( pRenderList )
 		{
-			// Setup context
-			pRenderContext->SetAlphaBlend( 1.0f );
-
 			// Set blending or don't draw instance that is completely blend out
 			if ( pRenderList->matTransform.m_f43 >= flVisibilityDistanceBlendStart )
 			{
@@ -309,6 +306,15 @@ TBOOL AInstanceManager::Render()
 				{
 					pRenderContext->SetAlphaBlend( 1.0f - fBlend );
 				}
+				else
+				{
+					pRenderList = pRenderList->pNext;
+					continue;
+				}
+			}
+			else
+			{
+				pRenderContext->SetAlphaBlend( 1.0f );
 			}
 
 			pRenderContext->SetClipFlags( m_aInstanceVisMasks[ pRenderList - s_aRenderList ] );
