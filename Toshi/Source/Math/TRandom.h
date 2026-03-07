@@ -36,14 +36,14 @@ public:
 	void    SetSeed( TUINT a_uiSeed );
 	TUINT32 GetSeed() const { return m_uiSeed; }
 
-private:
+protected:
 	void Isaac();
 	void RandInit();
 
-private:
+protected:
 	TUINT32 m_uiSeed;              // 0x0
 	TUINT32 m_uiRndCnt;            // 0x4
-	TUINT32 m_pRandrsl[ RANDSIZ ]; //0x8
+	TUINT32 m_pRandrsl[ RANDSIZ ]; // 0x8
 
 	TUINT32 m_pRandmem[ RANDSIZ ]; // 0x48
 

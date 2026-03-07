@@ -75,18 +75,46 @@ MEMBER_HOOK( 0x006be7b0, T2Locale, T2Locale_GetString, const TWCHAR*, TINT a_iNu
 	return CallOriginal( a_iNumString );
 }
 
+// TBOOL g_bSpoofRandom = TFALSE;
+// 
+// MEMBER_HOOK( 0x006b5850, Toshi::TRandom, TRandom_Isaac, void )
+// {
+// 	if ( g_bSpoofRandom )
+// 	{
+// 		m_uiRndCnt = RANDSIZ - 1;
+// 
+// 		for (TINT i = 0; i < RANDSIZ; i++)
+// 		{
+// 			m_pRandrsl[ i ] = 0;
+// 		}
+// 	}
+// 	else CallOriginal();
+// }
+// 
+// MEMBER_HOOK( 0x00429b00, AGameStateController, AGameStateController_InsertGameState, void, AGameState* a_pGameState )
+// {
+// 	CallOriginal( a_pGameState );
+// 
+// 	if ( g_bIsFunCategory )
+// 	{
+// 		auto pARandom = *(TCHAR**)( 0x0077de10 );
+// 		auto pTRandom = (TRandom_Isaac::_hook_obj*)( pARandom + 4 );
+// 
+// 		g_bSpoofRandom = a_pGameState->GetClass()->IsA( (TClass*)0x007833b8 ); // Spoof if ACookingMiniGame
+// 
+// 		pTRandom->_hook_func(); // Call TRandom_Isaac hook
+// 	}
+// }
+
+HOOK( 0x004010d0, UNK_GetRandomFloat, TFLOAT, Toshi::TRandom*, TFLOAT a_flUpper )
+{
+	// Always drop items instead of coins when kicking destructible objects
+	return 0.0f;
+}
+
 void NewGameStarted()
 {
 	AUIManager::GetSingleton()->GetTimer().Start();
-
-	if ( g_bIsFunCategory )
-	{
-		auto pARandom = *(TCHAR**)( 0x0077de10 );
-		auto pTRandom = (TRandom*)(pARandom + 4);
-
-		// Reset random seed
-		pTRandom->SetSeed( 999999 );
-	}
 }
 
 void AGUI2_MainPostRenderCallback()
@@ -272,6 +300,11 @@ public:
 				{
 					ABikeRaceMicroGame::ms_aVariants[ i ].iNumLaps = 1;
 				}
+
+				// Derandomizer
+				//InstallHook<TRandom_Isaac>();
+				//InstallHook<AGameStateController_InsertGameState>();
+				InstallHook<UNK_GetRandomFloat>();
 
 				// Don't waste stamina in main game
 				InstallHook<APlayerSimProfile_Update>();
