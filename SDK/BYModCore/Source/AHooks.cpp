@@ -5,6 +5,9 @@
 #include "AModLoaderTask.h"
 #include "ACoreSettings.h"
 
+#include "Enhancements/AInstanceManager2.h"
+#include "Enhancements/ATreeManager2.h"
+
 #include <BYardSDK/AGameStateController.h>
 #include <BYardSDK/THookedRenderD3DInterface.h>
 #include <BYardSDK/AAssetLoader.h>
@@ -13,9 +16,10 @@
 #include <BYardSDK/ACamera.h>
 #include <BYardSDK/THookedSingleton.h>
 #include <BYardSDK/THookedMemory.h>
+#include <BYardSDK/AGlowViewport.h>
 
-#include <Animation/AModel.h>
-#include <Animation/AModelRepos.h>
+#include <BYardSDK/AModel.h>
+#include <BYardSDK/AModelRepos.h>
 
 #include <Input/TInputDeviceKeyboard.h>
 #include <Render/TCameraObject.h>
@@ -543,9 +547,7 @@ MEMBER_HOOK( 0x006154c0, ARenderer, ARenderer_CreateTRender, TBOOL )
 {
 	TBOOL bResult = CallOriginal();
 
-	TRenderInterface::SetSingletonExplicit(
-	    THookedRenderD3DInterface::GetSingleton()
-	);
+	TRenderInterface::SetSingletonExplicit(THookedRenderD3DInterface::GetSingleton());
 
 	AGlobalModLoaderTask::Get()->OnRenderInterfaceReady();
 
@@ -580,6 +582,7 @@ MEMBER_HOOK( 0x0060c7c0, ARenderer, ARenderer_OnCreate, TBOOL )
 	if ( !g_pCommandLine->HasParameter( "-noimgui" ) )
 		AImGUI::CreateSingleton();
 
+	AGlowViewport::SetSingletonExplicit( *TREINTERPRETCAST( AGlowViewport**, 0x0079b180 ) );
 	return bResult;
 }
 
@@ -791,7 +794,7 @@ MEMBER_HOOK( 0x006d5970, TOrderTable, TOrderTable_Flush, void )
 
 HOOK( 0x006114d0, AModelLoader_AModelLoaderLoadTRBCallback, TBOOL, TModel* a_pModel )
 {
-	TBOOL bRes;
+	TBOOL bRes = TFALSE;
 
 	for ( TINT i = 0; i < AHooks::ModelLoader::LoadTRBCallback[ HookType_Before ].Size(); i++ )
 	{
@@ -806,82 +809,6 @@ HOOK( 0x006114d0, AModelLoader_AModelLoaderLoadTRBCallback, TBOOL, TModel* a_pMo
 	}
 
 	return bRes;
-}
-
-TBOOL  g_bNoCullingInRadiusOfObject = TTRUE;
-TFLOAT g_fNoCullingAdditionalRadius = 50.0f;
-
-HOOK( 0x006cead0, TRenderContext_CullSphereToFrustumSimple, TBOOL, const TSphere& a_rSphere, const TPlane* a_pPlanes, int a_iNumPlane )
-{
-	if ( g_bNoCullingInRadiusOfObject && ACameraManager::IsSingletonCreated() )
-	{
-		auto  pCamera            = ACameraManager::GetSingleton()->GetCurrentCamera();
-		auto& vCameraTranslation = pCamera->m_Matrix.GetTranslation();
-
-		auto fDistance = TVector3::DistanceSq( a_rSphere.GetOrigin(), vCameraTranslation.AsVector3() );
-
-		if ( fDistance <= a_rSphere.GetRadius() + g_fNoCullingAdditionalRadius )
-		{
-			return TTRUE;
-		}
-	}
-
-	for ( TSIZE i = 0; i < 6; i++ )
-	{
-		TFLOAT fDist = TVector4::DotProduct3( a_rSphere.AsVector4(), a_pPlanes[ i ].AsVector4() );
-
-		if ( a_rSphere.GetRadius() < fDist - a_pPlanes[ i ].GetD() )
-			return TFALSE;
-	}
-
-	return TTRUE;
-}
-
-HOOK( 0x006cea40, TRenderContext_CullSphereToFrustum, TINT, const TSphere& a_rSphere, const TPlane* a_pPlanes, TINT a_iClipFlags, TINT a_iClipFlagsMask )
-{
-	if ( g_bNoCullingInRadiusOfObject && ACameraManager::IsSingletonCreated() )
-	{
-		auto  pCamera            = ACameraManager::GetSingleton()->GetCurrentCamera();
-		auto& vCameraTranslation = pCamera->m_Matrix.GetTranslation();
-
-		auto fDistance = TVector3::DistanceSq( a_rSphere.GetOrigin(), vCameraTranslation.AsVector3() );
-
-		if ( fDistance <= a_rSphere.GetRadius() + g_fNoCullingAdditionalRadius )
-		{
-			return a_iClipFlags;
-		}
-	}
-
-	TINT iLeftPlanes = a_iClipFlags & a_iClipFlagsMask;
-	TINT iPlaneFlag  = 1;
-
-	do {
-		if ( iLeftPlanes == 0 )
-		{
-			return a_iClipFlags;
-		}
-
-		if ( iLeftPlanes & iPlaneFlag )
-		{
-			TFLOAT fDist = TVector4::DotProduct3( a_rSphere.AsVector4(), a_pPlanes->AsVector4() ) - a_pPlanes->GetD();
-
-			if ( a_rSphere.GetRadius() < fDist )
-			{
-				return -1;
-			}
-
-			if ( fDist < -a_rSphere.GetRadius() )
-			{
-				a_iClipFlags &= ~iPlaneFlag;
-			}
-
-			iLeftPlanes &= ~iPlaneFlag;
-		}
-
-		iPlaneFlag = iPlaneFlag << 1;
-		a_pPlanes++;
-
-	} while ( TTRUE );
 }
 
 MEMBER_HOOK( 0x006bbb00, TSystemManager, TSystemManager_Update, void )
@@ -1008,12 +935,9 @@ MEMBER_HOOK( 0x006d8a00, Toshi::TMutexLock, TMutexLock_Destructor, void )
 }
 #endif
 
-struct AInstanceManager
-{};
-
 MEMBER_HOOK( 0x005e1e80, AInstanceManager, AInstanceManager_LoadModels, TBOOL, TINT a_iInstanceLibIndex, TINT a_iNumModels, TUINT* a_pModelIndices, TBOOL a_bCreateCollisionModelNodes, TBOOL a_bCreateCollisionModelInstances, TINT a_iNumCollisionModelNodes )
 {
-	if ( TTRUE || g_oSettings.bLoadAnyLevel )
+	if ( g_oSettings.bForceAllInstances )
 	{
 		TUINT aIndices[137];
 		for (TINT i = 0; i < 137; i++)
@@ -1025,6 +949,28 @@ MEMBER_HOOK( 0x005e1e80, AInstanceManager, AInstanceManager_LoadModels, TBOOL, T
 	}
 
 	return CallOriginal( a_iInstanceLibIndex, a_iNumModels, a_pModelIndices, a_bCreateCollisionModelNodes, a_bCreateCollisionModelInstances, a_iNumCollisionModelNodes );
+}
+
+MEMBER_HOOK( 0x005e14d0, AInstanceManager2, AInstanceManager_FillRenderList_All, void, const Toshi::T2SList<AInstanceManager::StaticInstanceEntry>& a_rcInstanceList, const Toshi::TMatrix44& a_rcWorldTransform, AInstanceManager::RenderListEntry* a_pOutRenderData, TINT& a_rNumInstances, TBOOL a_bDynamic )
+{
+	AInstanceManager2::FillRenderList_All( a_rcInstanceList, a_rcWorldTransform, a_pOutRenderData, a_rNumInstances, a_bDynamic );
+}
+
+MEMBER_HOOK( 0x005e10e0, AInstanceManager2, AInstanceManager_FillRenderList_Visible, void, const Toshi::T2SList<AInstanceManager::StaticInstanceEntry>& a_rcInstanceList, const Toshi::TMatrix44& a_rcWorldTransform, AInstanceManager::RenderListEntry* a_pOutRenderData, TINT& a_rNumInstances, TBOOL a_bDynamic )
+{
+	AInstanceManager2::FillRenderList_Visible( a_rcInstanceList, a_rcWorldTransform, a_pOutRenderData, a_rNumInstances, a_bDynamic );
+}
+
+MEMBER_HOOK( 0x005e17a0, AInstanceManager2, AInstanceManager_Render, TBOOL )
+{
+	return AInstanceManager2::Render();
+}
+
+MEMBER_HOOK( 0x005ef3a0, ATreeManager2, ATreeManager_Render, void )
+{
+	ATreeManager2::Render();
+
+	if ( !g_oSettings.bDisableTreeRendering ) CallOriginal();
 }
 
 void AHooks::Initialise()
@@ -1062,8 +1008,6 @@ void AHooks::Initialise()
 	InstallHook<ADisplayModes_Win_DoesModeExist>();
 	//InstallHook<TCameraObject_SetFOV>();
 	InstallHook<TRenderD3DInterface_UpdateColourSettings>();
-	//InstallHook<TRenderContext_CullSphereToFrustumSimple>();
-	//InstallHook<TRenderContext_CullSphereToFrustum>();
 	InstallHook<TTRB_Load>();
 
 	// Fixing crashes and memory stumps of the original game
@@ -1083,6 +1027,11 @@ void AHooks::Initialise()
 	//InstallHook<TNativeFile_FlushWriteBuffer>();
 
 	InstallHook<AInstanceManager_LoadModels>();
+	InstallHook<AInstanceManager_FillRenderList_All>();
+	InstallHook<AInstanceManager_FillRenderList_Visible>();
+	InstallHook<AInstanceManager_Render>();
+
+	InstallHook<ATreeManager_Render>();
 
 #ifdef USE_ATOMIC
 	InstallHook<TMutex_Create>();

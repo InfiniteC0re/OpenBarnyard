@@ -2,6 +2,8 @@
 #include "TTransformObject.h"
 #include "TRenderInterface.h"
 
+#include <Math/TMathInline.h>
+
 TOSHI_NAMESPACE_START
 
 class TCameraObject

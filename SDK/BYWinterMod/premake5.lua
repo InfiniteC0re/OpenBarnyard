@@ -36,6 +36,12 @@ project "BYWinterMod"
 		"%{wks.location}/SDK/BYTexturePacks/Include",
 		"%{IncludeDir.detours}"
 	}
+
+	defines
+	{
+		"TOSHI_SDK",
+		"TOSHI_MODLOADER_CLIENT"
+	}
 	
 	-- Modloader specific
 	debugdir ("%{wks.location}/../Game")
@@ -45,10 +51,3 @@ project "BYWinterMod"
 	{
 		"{COPYDIR} \"%{wks.location}bin/" .. outputdir .. "/%{prj.name}/\" %{wks.location}../Game/Mods/",
 	}
-
-	filter "system:windows"
-		defines
-		{
-			"TOSHI_SDK",
-			"TOSHI_MODLOADER_CLIENT"
-		}

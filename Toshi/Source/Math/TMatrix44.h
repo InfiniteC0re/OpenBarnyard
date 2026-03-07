@@ -201,7 +201,7 @@ public:
 	}
 
 	// $Barnyard: FUNCTION 006c86a0
-	constexpr void ScaleAll( const TMatrix44& a_rMatrix, TFLOAT a_fScalar )
+	void ScaleAll( const TMatrix44& a_rMatrix, TFLOAT a_fScalar )
 	{
 		for ( TINT i = 0; i < 4; i++ )
 		{

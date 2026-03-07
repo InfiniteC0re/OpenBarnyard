@@ -1,14 +1,15 @@
 #pragma once
-#include "Physics/ACollisionModelSet.h"
-#include "Physics/ACollisionObjectModel.h"
-#include "Physics/ACollisionModelInstance.h"
-#include "Terrain/ATerrainLocator.h"
+#include <BYardSDK/ATerrainLocator.h>
 
 #include <Toshi/T2SList.h>
 #include <Toshi/TSingleton.h>
 #include <Toshi/TSceneObject.h>
 #include <Toshi/T2Vector.h>
 #include <Render/TModel.h>
+
+class ACollisionModelSet;
+class ACollisionObjectModel;
+class ACollisionModelInstance;
 
 class AInstanceManager
     : public Toshi::TSingleton<AInstanceManager>

@@ -37,6 +37,7 @@ public:
 
 	using t_GetCurrentVISGroup = TINT ( * )();
 	using t_OnVISGroupChanged  = void ( * )( ATerrainSection* a_pCurrent, ATerrainSection* a_pPrevious );
+	using t_OnModelNodeReady   = void ( * )( ATerrainSection::ModelNode* a_pModelNode );
 
 public:
 	virtual ~ATerrainInterface() = default;
@@ -175,9 +176,11 @@ public:
 	Toshi::TVector4                            m_LitAmbientColor;
 	Toshi::TVector4                            m_DefaultShadowColor;
 	Toshi::TVector4                            m_DefaultAmbientColor;
-	char                                       PAD1[ 8 ];
-	Toshi::T2SList<ATerrainSection::ModelNode> m_ModelDatas;
-	char                                       PAD2[ 8 ];
+	TFLOAT                                     m_fUnused3;
+	TBOOL                                      m_bUnused4;
+	Toshi::T2SList<ATerrainSection::ModelNode> m_llModelNodes;
+	t_OnModelNodeReady                         m_cbOnCollisionModelLoaded;
+	t_OnModelNodeReady                         m_cbOnModelLoaded;
 	t_OnVISGroupChanged                        m_cbOnVISGroupChanged;
 	AModelLoaderJob                            m_aModelLoaderJobs[ MAX_NUM_MODEL_LOADER_JOBS ];
 	AMatLibLoaderJob                           m_aMatlibLoaderJobs[ MAX_NUM_MATLIB_LOADER_JOBS ];
@@ -209,9 +212,11 @@ public:
 	Toshi::TTRB                                m_TRB2;
 	ATerrainVIS*                               m_pTerrainVIS;
 	ATerrainOrderDVIS*                         m_pOrderDVIS;
-	char                                       PAD3[ 100 ];
-	TINT                                       m_iCurrentGroup;
-	TINT                                       m_iPreviousGroup;
+	Toshi::TMaterial*                          m_apLightMagMaterials[ 12 ];
+	TFLOAT                                     m_afLightMags[ 12 ];
+	TBOOL                                      m_bLightOverride;
+	TINT                                       m_iCurrentSection;
+	TINT                                       m_iPreviousSection;
 	TINT                                       m_iPreloadTerrainBlockSize;
 	t_GetCurrentVISGroup                       m_fnGetCurrentVISGroup;
 	char                                       PAD4[ 4 ];

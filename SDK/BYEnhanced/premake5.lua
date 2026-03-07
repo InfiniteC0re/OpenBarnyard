@@ -52,6 +52,8 @@ project "BYEnhanced"
 	
 	defines
 	{
+		"TOSHI_SDK",
+		"TOSHI_MODLOADER_CLIENT",
 		"GLEW_STATIC"
 	}
 	
@@ -67,9 +69,3 @@ project "BYEnhanced"
 	filter "files:**.c"
 		enablepch "Off"
 
-	filter "system:windows"
-		defines
-		{
-			"TOSHI_SDK",
-			"TOSHI_MODLOADER_CLIENT"
-		}

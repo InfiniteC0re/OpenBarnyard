@@ -19,8 +19,6 @@
 
 TOSHI_NAMESPACE_USING
 
-static constexpr TINT MAX_NUM_LODS = 2;
-
 static const TCHAR* s_ppszInstanceLibs[] = {
 	TNULL,
 	TNULL,

@@ -227,7 +227,7 @@ void ACollisionInspector::ATerrain_Render( ATerrainInterface* a_pTerrain )
 {
 	if ( ACollisionInspector::GetSingleton()->m_bCollisionVisible )
 	{
-		auto iCurrGroup = a_pTerrain->m_iCurrentGroup;
+		auto iCurrGroup = a_pTerrain->m_iCurrentSection;
 
 		if ( iCurrGroup != -1 )
 		{
@@ -236,7 +236,7 @@ void ACollisionInspector::ATerrain_Render( ATerrainInterface* a_pTerrain )
 
 			for ( TINT i = 0; i < a_pTerrain->m_pTerrainVIS->m_iNumSections; i++ )
 			{
-				if ( pCurrentGroup->m_pOtherGroupsLODs[ i ] != ATerrainLODType_None )
+				if ( pCurrentGroup->m_pVisibility[ i ] != ATerrainLODType_None )
 				{
 					auto pGroup     = &a_pTerrain->m_pTerrainVIS->m_pSections[ i ];
 					auto pModelData = pGroup->m_pCollisionModelData;

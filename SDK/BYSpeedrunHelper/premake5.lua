@@ -34,6 +34,12 @@ project "BYSpeedrunHelper"
 		"%{IncludeDir.modcore}",
 		"%{IncludeDir.detours}"
 	}
+
+	defines
+	{
+		"TOSHI_SDK",
+		"TOSHI_MODLOADER_CLIENT"
+	}
 	
 	-- Modloader specific
 	debugdir ("%{wks.location}/../Game")
@@ -43,10 +49,3 @@ project "BYSpeedrunHelper"
 	{
 		"{COPYDIR} \"%{wks.location}bin/" .. outputdir .. "/%{prj.name}/\" %{wks.location}../Game/Mods/",
 	}
-
-	filter "system:windows"
-		defines
-		{
-			"TOSHI_SDK",
-			"TOSHI_MODLOADER_CLIENT"
-		}

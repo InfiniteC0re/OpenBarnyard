@@ -31,9 +31,9 @@ project "BYModCore"
 	{
 		"Source",
 		"Include",
-		"%{IncludeDir.openbarnyard}",
 		"%{IncludeDir.byardsdk}",
 		"%{IncludeDir.detours}",
+		"%{IncludeDir.opcode}",
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.sdl2}",
 		"%{IncludeDir.glew}"
@@ -42,6 +42,12 @@ project "BYModCore"
 	externalincludedirs
 	{
 		"%{IncludeDir.dx8}"
+	}
+
+	defines
+	{
+		"TOSHI_SDK",
+		"TOSHI_MODLOADER"
 	}
 	
 	-- Modloader specific
@@ -52,10 +58,3 @@ project "BYModCore"
 	{
 		"{COPYDIR} \"%{wks.location}bin/" .. outputdir .. "/%{prj.name}/\" %{wks.location}../Game/",
 	}
-
-	filter "system:windows"
-		defines
-		{
-			"TOSHI_MODLOADER",
-			"TOSHI_SDK"
-		}

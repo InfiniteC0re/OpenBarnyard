@@ -1,4 +1,6 @@
 #pragma once
+#include "Memory/AMemoryPoolAllocator.h"
+
 #include <File/TTRB.h>
 #include <Toshi/T2SList.h>
 

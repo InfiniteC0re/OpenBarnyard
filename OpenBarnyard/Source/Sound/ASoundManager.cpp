@@ -509,7 +509,7 @@ void ASoundManager::SetGlobalVolume( TFLOAT a_flVolume )
 				TFLOAT flActualVolume   = flCategoryVolume * flSampleVolume * flGlobalVolume;
 				TMath::Clip( flActualVolume, 0.0f, 1.0f );
 
-				FSOUND_SetVolume( channel->iFMODChannelHandle, m_bMuted ? 0 : flActualVolume );
+				FSOUND_SetVolume( channel->iFMODChannelHandle, m_bMuted ? 0 : TINT( flActualVolume * 255.0f ) );
 			}
 		}
 	}

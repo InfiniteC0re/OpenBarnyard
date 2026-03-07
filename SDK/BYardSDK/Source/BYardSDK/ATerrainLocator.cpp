@@ -3,9 +3,9 @@
 
 void ATerrainLocatorList::LoadFromTRB( Toshi::TTRB* a_pTRB )
 {
-	m_pTRB        = a_pTRB;
-	m_pLocators   = a_pTRB->GetSymbolAddress( "Locators" );
-	m_pLocatorVIS = a_pTRB->GetSymbolAddress( "LocatorVIS" );
+	m_pTRB              = a_pTRB;
+	m_pLocatorsHeader   = a_pTRB->CastSymbol<ATerrainLocatorTRBHeader>( "Locators" );
+	m_pLocatorVISHeader = a_pTRB->CastSymbol<ATerrainLocatorVISTRBHeader>( "LocatorVIS" );
 
-	TASSERT( m_pLocators && m_pLocatorVIS );
+	TASSERT( m_pLocatorsHeader && m_pLocatorVISHeader );
 }

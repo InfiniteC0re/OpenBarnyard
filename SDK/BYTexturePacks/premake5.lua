@@ -36,6 +36,12 @@ project "BYTexturePacks"
 		"%{IncludeDir.detours}"
 	}
 	
+	defines
+	{
+		"TOSHI_SDK",
+		"TOSHI_MODLOADER_CLIENT"
+	}
+
 	-- Modloader specific
 	debugdir ("%{wks.location}/../Game")
 	debugcommand ("%{wks.location}/../Game/BYardModLoader.exe")
@@ -44,10 +50,3 @@ project "BYTexturePacks"
 	{
 		"{COPYDIR} \"%{wks.location}bin/" .. outputdir .. "/%{prj.name}/\" %{wks.location}../Game/Mods/",
 	}
-
-	filter "system:windows"
-		defines
-		{
-			"TOSHI_SDK",
-			"TOSHI_MODLOADER_CLIENT"
-		}

@@ -77,7 +77,7 @@ protected:
 	TFORCEINLINE TSingleton()
 	{
 		TASSERT( ms_pSingleton == TNULL, "Singleton instance is already created" );
-		ms_pSingleton = static_cast<T*>( this );
+		ms_pSingleton = TSTATICCAST( T, this );
 	}
 
 	TFORCEINLINE ~TSingleton() { ms_pSingleton = TNULL; }

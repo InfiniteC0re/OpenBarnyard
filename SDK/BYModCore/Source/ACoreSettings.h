@@ -14,8 +14,16 @@ struct ACoreSettingsProperties
 	// Version 2:
 	TBOOL bBetterGrass = TTRUE;
 
-	// Version 3:
-	TBOOL bLoadAnyLevel = TFALSE;
+	// Not saved:
+	TBOOL bLoadAnyLevel             = TFALSE;
+	TBOOL bForceAllInstances        = TFALSE;
+	TBOOL bDisableInstanceRendering = TFALSE;
+	TBOOL bDisableTreeRendering = TFALSE;
+	TBOOL bDisableInstanceLODs      = TTRUE;
+
+	TINT   iInstanceMaxRendered         = 1024;
+	TFLOAT flInstanceRenderDistance     = 150.0f;
+	TFLOAT flInstanceBoundingMultiplier = 1.2f;
 };
 
 inline struct ACoreSettings

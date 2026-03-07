@@ -57,6 +57,8 @@ public:
 	TBOOL IsLODEmpty( ATerrainLODType a_eLODType ) const { return ( m_eFlags & ( 64 << ( a_eLODType & 0x1f ) ) ); }
 	void  SetLODEmpty( ATerrainLODType a_eLODType, TBOOL a_bEmpty );
 
+	TBOOL IsOtherSectionVisible( TINT a_iSection ) const { return m_pVisibility[ a_iSection ] > ATerrainLODType_None; }
+
 public:
 	const char*        m_szName;
 	const char**       m_ppHighLODNames;
@@ -74,7 +76,7 @@ public:
 	const char*        m_szLowLODMatLibName;
 	Toshi::TTRB*       m_pMatLibLowTRB;
 	AMaterialLibrary*  m_pMatLibLow;
-	ATerrainLODType*   m_pOtherGroupsLODs;
+	ATerrainLODType*   m_pVisibility;
 	TUINT32            m_eFlags;
 	TUINT16            m_ui16NumHighLODBlocks;
 	TUINT16            m_ui16NumLowLODBlocks;

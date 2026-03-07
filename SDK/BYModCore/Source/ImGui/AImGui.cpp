@@ -341,17 +341,38 @@ void AImGUI::Render()
 			ImGui::EndTabItem();
 		}
 
-		if ( ImGui::BeginTabItem( "Game Settings" ) )
+		if ( ImGui::BeginTabItem( "Patches" ) )
 		{
 			TBOOL bChanged = TFALSE;
-			bChanged |= ImGui::Checkbox( "Reduce Load Times", &g_oSettings.bReduceLoadTimes );
-			bChanged |= ImGui::Checkbox( "Better Grass", &g_oSettings.bBetterGrass );
-			bChanged |= ImGui::Checkbox( "Load Any Level", &g_oSettings.bLoadAnyLevel );
+			bChanged |= ImGui::Checkbox( "Load Any Level (WIP)", &g_oSettings.bLoadAnyLevel );
 			bChanged |= ImGui::Checkbox( "Limit FPS", &g_oSettings.bLimitFPS );
 			bChanged |= ImGui::SliderInt( "Max FPS", &g_oSettings.iMaxFPS, 5, 500 );
 
 			if ( ImGui::Button( "Save" ) )
 				g_oSettings.Save();
+
+			if ( bChanged )
+				g_oSettings.Apply();
+
+			ImGui::EndTabItem();
+		}
+
+		if ( ImGui::BeginTabItem( "Enhancements" ) )
+		{
+			ImGui::TextColored( ImColor( 200, 200, 200, 255 ), "General" );
+
+			TBOOL bChanged = TFALSE;
+			bChanged |= ImGui::Checkbox( "Reduce Load Times", &g_oSettings.bReduceLoadTimes );
+			bChanged |= ImGui::Checkbox( "Better Grass", &g_oSettings.bBetterGrass );
+
+			ImGui::TextColored( ImColor( 200, 200, 200, 255 ), "AInstance/TreeManager" );
+			bChanged |= ImGui::Checkbox( "Hide instances", &g_oSettings.bDisableInstanceRendering );
+			bChanged |= ImGui::Checkbox( "Hide trees", &g_oSettings.bDisableTreeRendering );
+			bChanged |= ImGui::Checkbox( "Force load all", &g_oSettings.bForceAllInstances );
+			bChanged |= ImGui::Checkbox( "Force high quality LOD", &g_oSettings.bDisableInstanceLODs );
+			bChanged |= ImGui::SliderInt( "Max rendered (default: 240)", &g_oSettings.iInstanceMaxRendered, 0, 1024 );
+			bChanged |= ImGui::SliderFloat( "Max render distance (default: 75)", &g_oSettings.flInstanceRenderDistance, 0, 512.0f );
+			bChanged |= ImGui::SliderFloat( "Bounding multiplier (default: 1.2)", &g_oSettings.flInstanceBoundingMultiplier, 0.1f, 10.0f );
 
 			if ( bChanged )
 				g_oSettings.Apply();
