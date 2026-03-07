@@ -25,7 +25,7 @@ public:
 		Toshi::TSceneObject*  pSceneObject  = TNULL;
 	};
 
-	struct InstanceEntry : Toshi::T2SList<InstanceEntry>::Node
+	struct StaticInstanceEntry : Toshi::T2SList<StaticInstanceEntry>::Node
 	{
 		ATerrainLocatorList* pLocatorList;
 		TUINT16              uiLocatorIndex;
@@ -58,10 +58,17 @@ public:
 		const TCHAR* pchPath;
 	};
 
-	#include "AInstanceManagerModelList.inl"
+#include "AInstanceManagerModelList.inl"
 
-	inline static constexpr TSIZE NUM_MODELS    = TARRAYSIZE( ms_aModelDefinitions );
-	inline static constexpr TSIZE MAX_INSTANCES = 5000;
+	inline static constexpr TSIZE NUM_MODELS             = TARRAYSIZE( ms_aModelDefinitions );
+	inline static constexpr TSIZE MAX_INSTANCES          = 5000;
+	inline static constexpr TSIZE MAX_RENDERED_INSTANCES = 240;
+
+	struct RenderListEntry
+	{
+		Toshi::TMatrix44 matTransform;
+		RenderListEntry* pNext;
+	};
 
 public:
 	AInstanceManager();
@@ -70,7 +77,13 @@ public:
 	TBOOL LoadModels( TINT a_iInstanceLibIndex, TINT a_iNumModels, TUINT* a_pModelIndices, TBOOL a_bCreateCollisionModelNodes, TBOOL a_bCreateCollisionModelInstances, TINT a_iNumCollisionModelNodes );
 	void  Reset();
 
+	TBOOL Render();
+
 	void CreateInstances( ATerrainLocatorList* a_pLocatorList );
+
+private:
+	void FillRenderList_All( const Toshi::T2SList<StaticInstanceEntry>& a_rcInstanceList, const Toshi::TMatrix44& a_rcWorldTransform, RenderListEntry* a_pOutRenderData, TINT& a_rNumInstances, TBOOL a_bDynamic );
+	void FillRenderList_Visible( const Toshi::T2SList<StaticInstanceEntry>& a_rcInstanceList, const Toshi::TMatrix44& a_rcWorldTransform, RenderListEntry* a_pOutRenderData, TINT& a_rNumInstances, TBOOL a_bDynamic );
 
 private:
 	void DestroyCollisionSets();
@@ -84,19 +97,26 @@ private:
 	TINT   m_iNumModels;
 	Model* m_pModels;
 
-	void*                     m_pSomeBuffer;
+	RenderListEntry** m_pModelsRenderLists;
 
-	InstanceEntry                 m_aInstances[ MAX_INSTANCES ];
-	Toshi::T2SList<InstanceEntry> m_llUsedInstances;
-	Toshi::T2SList<InstanceEntry> m_llFreeInstances;
-	
-	// ...
+	StaticInstanceEntry                 m_aInstances[ MAX_INSTANCES ];
+	Toshi::T2SList<StaticInstanceEntry> m_llUsedInstances;
+	Toshi::T2SList<StaticInstanceEntry> m_llFreeInstances;
+	Toshi::T2SList<StaticInstanceEntry> m_llOtherInstances_Unused;
 
-	TFLOAT m_flUnk1;
-	TFLOAT m_flUnk2;
-	TFLOAT m_flUnk3;
+	// TODO: replace StaticInstanceEntry with other type
+	Toshi::T2SList<StaticInstanceEntry> m_llUsedDynamicInstances;
+	Toshi::T2SList<StaticInstanceEntry> m_llFreeDynamicInstances;
+	TINT                                m_iNumDynamicInstances;
+	void*                               m_pDynamicInstances;
 
-	// ...
+	TFLOAT m_flLOD0Distance;
+	TFLOAT m_flVisibilityDistanceBlendEnd;
+	TFLOAT m_flVisibilityDistanceBlendStart;
+
+	TBOOL  m_aInstanceVisMasks[ MAX_RENDERED_INSTANCES ];
+	TUINT8 m_aInstanceFlags[ MAX_RENDERED_INSTANCES ];
+	TUINT8 m_aInstanceLightIDs[ MAX_RENDERED_INSTANCES ];
 
 	TINT                                             m_iInstanceLibIndex;
 	Toshi::T2Vector<ACollisionModelSet*, NUM_MODELS> m_vecCollisionSets;

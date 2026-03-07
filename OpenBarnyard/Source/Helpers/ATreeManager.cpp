@@ -415,6 +415,8 @@ void ATreeManager::Render()
 		uiNumSectionsToRender += 1;
 	}
 
+	TASSERT( uiNumSectionsToRender < MAX_SECTIONS );
+
 	// Do culling
 	TFLOAT fRenderDistanceSq    = m_fRenderDistance * m_fRenderDistance;
 	TFLOAT fLODSwitchDistanceSq = m_fLODSwitchDistance * m_fLODSwitchDistance;
@@ -467,11 +469,11 @@ void ATreeManager::Render()
 					TFLOAT           fScale   = pLocator->GetScale();
 
 					TSphere boundingVolume( pLocator->vecPosition.x, -pLocator->vecPosition.z + pTrunk->m_fGroundOffset, pLocator->vecPosition.y, fScale * pTrunk->m_fRadius );
-					TFLOAT  fDistance = TVector4::DistanceSq( boundingVolume.AsVector4(), vecViewPos );
+					TFLOAT  fDistanceSq = TVector4::DistanceSq( boundingVolume.AsVector4(), vecViewPos );
 
-					if ( fDistance < fRenderDistanceSq )
+					if ( fDistanceSq < fRenderDistanceSq )
 					{
-						const TBOOL bIsLocatorFar = fLODSwitchDistanceSq <= fDistance;
+						const TBOOL bIsLocatorFar = fLODSwitchDistanceSq <= fDistanceSq;
 
 						if ( TRenderContext::CullSphereToFrustumSimple( boundingVolume, pRenderContext->GetWorldPlanes(), 6 ) &&
 						     ( !bIsLocatorFar || bIsLocatorFar ) // yeah, that's stupid, but it's probably a leftover from testing
@@ -562,22 +564,19 @@ START_RENDERING:
 		TreeInstanceRenderData* pInstanceRenderData = m_pRenderData[ i ];
 		while ( pInstanceRenderData != TNULL )
 		{
+			// Setup context
+			pRenderContext->SetAlphaBlend( 1.0f );
+
 			// Set blending or don't draw instance that is completely blend out
 			if ( pInstanceRenderData->oMatrix.m_f43 >= m_fBlendingDistance )
 			{
 				TFLOAT fBlend = ( pInstanceRenderData->oMatrix.m_f43 - m_fBlendingDistance ) * fBlendingFactor;
 
-				if ( fBlend >= 1.0f )
+				if ( fBlend < 1.0f )
 				{
 					pRenderContext->SetAlphaBlend( 1.0f - fBlend );
-
-					pInstanceRenderData = pInstanceRenderData->pPrev;
-					continue;
 				}
 			}
-
-			// Setup context
-			pRenderContext->SetAlphaBlend( 1.0f );
 
 			// Setup lighting settings
 			TINT iInstanceIndex = pInstanceRenderData - s_aInstanceMatrices;

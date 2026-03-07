@@ -112,15 +112,15 @@ public:
 
 	TTRB* GetTRB() const { return m_pTRB; }
 
-	TModelLOD& GetLOD( TUINT32 a_uiLOD )
+	TModelLOD& GetLOD( TINT32 a_uiLOD )
 	{
-		TASSERT( a_uiLOD < MAX_NUM_LODS );
+		TASSERT( a_uiLOD < MAX_NUM_LODS && a_uiLOD < m_iLODCount );
 		return m_LODs[ a_uiLOD ];
 	}
 
-	const TModelLOD& GetLOD( TUINT32 a_uiLOD ) const
+	const TModelLOD& GetLOD( TINT32 a_uiLOD ) const
 	{
-		TASSERT( a_uiLOD < MAX_NUM_LODS );
+		TASSERT( a_uiLOD < MAX_NUM_LODS && a_uiLOD < m_iLODCount );
 		return m_LODs[ a_uiLOD ];
 	}
 
@@ -128,6 +128,8 @@ public:
 
 	TINT                 GetNumCollisionMeshes() const { return m_iNumCollisionMeshes; }
 	TModelCollisionData* GetCollisionMeshes() const { return m_pCollisionMeshes; }
+
+	TFLOAT GetRenderDistance() const { return m_fRenderDistance; }
 
 	template <class T>
 	T* CastSymbol( const TCHAR* a_szSymbolName ) { return TSTATICCAST( T, GetSymbol( a_szSymbolName ) ); }
@@ -146,7 +148,7 @@ public:
 	Flags                m_eFlags;
 	TINT                 m_iNumInstances;
 	TINT                 m_iLODCount;
-	TFLOAT               m_fLODDistance; // ?
+	TFLOAT               m_fRenderDistance;
 	TSkeleton*           m_pSkeleton;
 	TModelLOD            m_LODs[ MAX_NUM_LODS ];
 	TFLOAT               m_aLODDistances[ 4 ];

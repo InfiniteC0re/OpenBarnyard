@@ -546,8 +546,8 @@ TBOOL AModelLoader::AModelLoaderLoadTRBCallback( TModel* a_pModel )
 	TUtil::MemCopy( ms_oCurrentModelMaterials, pMaterials + 1, pMaterials->uiSectionSize );
 	ms_oCurrentModelMaterialsHeader = *pMaterials;
 
-	a_pModel->m_iLODCount    = pHeader->m_iNumLODs;
-	a_pModel->m_fLODDistance = pHeader->m_fLODDistance;
+	a_pModel->m_iLODCount       = pHeader->m_iNumLODs;
+	a_pModel->m_fRenderDistance = pHeader->m_fLODDistance;
 
 	for ( TINT i = 0; i < pHeader->m_iNumLODs; i++ )
 	{

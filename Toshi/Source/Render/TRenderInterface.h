@@ -185,4 +185,6 @@ protected:
 	TStack<TMatrix44, 20>     m_Transforms;                           // 0x170
 };
 
+TSINGLETON_DECLARE_ALIAS( TRenderInterface, Render );
+
 TOSHI_NAMESPACE_END

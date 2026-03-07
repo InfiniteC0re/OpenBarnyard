@@ -3,6 +3,7 @@
 #include "Assets/AKeyFrameLibraryManager.h"
 #include "Assets/AMaterialLibraryManager.h"
 #include "ALoadScreen.h"
+#include "Render/AGlowViewport.h"
 
 #ifdef TRENDERINTERFACE_DX8
 #  include "Platform/DX8/ASkinShader/ASkinMaterial_DX8.h"
@@ -18,35 +19,7 @@
 
 TOSHI_NAMESPACE_USING
 
-// $Barnyard: FUNCTION 005dfd60
-AInstanceManager::AInstanceManager()
-    : m_ppKeyLibs( TNULL )
-    , m_pModels( TNULL )
-    , m_pSomeBuffer( TNULL )
-    , m_iInstanceLibIndex( -1 )
-    , m_pCollObjectModelNodes( TNULL )
-    , m_pCollisionModelInstances( TNULL )
-    , m_uiFlags( 0 )
-    , m_iNumKeyLibraries( 0 )
-    , m_flUnk1( 30.0f )
-    , m_flUnk2( 85.0f )
-    , m_flUnk3( 75.0f )
-{
-	m_iNumModels = NUM_MODELS;
-	m_pModels    = new Model[ NUM_MODELS ];
-
-	for ( TSIZE i = 0; i < TARRAYSIZE( m_aInstances ); i++ )
-		m_llFreeInstances.PushFront( &m_aInstances[ i ] );
-
-	m_pSomeBuffer = TMalloc( m_iNumModels << 3 );
-}
-
-// $Barnyard: FUNCTION 005e1d80
-AInstanceManager::~AInstanceManager()
-{
-	m_llUsedInstances.Clear();
-	Reset();
-}
+static constexpr TINT MAX_NUM_LODS = 2;
 
 static const TCHAR* s_ppszInstanceLibs[] = {
 	TNULL,
@@ -61,6 +34,47 @@ static const TCHAR* s_ppszInstanceLibs[] = {
 };
 
 static const TCHAR* s_pszMainLibraryName = "instancessh";
+
+static TMatrix44 s_mInstanceTransform = {
+	1.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 1.0f, 0.0f,
+	0.0f, -1.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 1.0f
+};
+
+static TINT DAT_00773a64 = 1;
+
+constexpr TFLOAT INSTANCE_RENDER_DISTANCE_MULTIPLIER = 1.2f;
+
+// $Barnyard: FUNCTION 005dfd60
+AInstanceManager::AInstanceManager()
+    : m_ppKeyLibs( TNULL )
+    , m_pModels( TNULL )
+    , m_pModelsRenderLists( TNULL )
+    , m_iInstanceLibIndex( -1 )
+    , m_pCollObjectModelNodes( TNULL )
+    , m_pCollisionModelInstances( TNULL )
+    , m_uiFlags( 0 )
+    , m_iNumKeyLibraries( 0 )
+    , m_flLOD0Distance( 30.0f )
+    , m_flVisibilityDistanceBlendEnd( 85.0f )
+    , m_flVisibilityDistanceBlendStart( 75.0f )
+{
+	m_iNumModels = NUM_MODELS;
+	m_pModels    = new Model[ NUM_MODELS ];
+
+	for ( TSIZE i = 0; i < TARRAYSIZE( m_aInstances ); i++ )
+		m_llFreeInstances.PushFront( &m_aInstances[ i ] );
+
+	m_pModelsRenderLists = new RenderListEntry*[ m_iNumModels * MAX_NUM_LODS ];
+}
+
+// $Barnyard: FUNCTION 005e1d80
+AInstanceManager::~AInstanceManager()
+{
+	m_llUsedInstances.Clear();
+	Reset();
+}
 
 // $Barnyard: FUNCTION 005e1e80
 TBOOL AInstanceManager::LoadModels( TINT a_iInstanceLibIndex, TINT a_iNumModels, TUINT* a_pModelIndices, TBOOL a_bCreateCollisionModelNodes, TBOOL a_bCreateCollisionModelInstances, TINT a_iNumCollisionModelNodes )
@@ -112,7 +126,7 @@ TBOOL AInstanceManager::LoadModels( TINT a_iInstanceLibIndex, TINT a_iNumModels,
 #endif // TOSHI_DEBUG
 
 		// Create scene object
-		TSceneObject* pSceneObject   = pManagedModel->CreateSceneObject();
+		TSceneObject* pSceneObject              = pManagedModel->CreateSceneObject();
 		m_pModels[ uiModelIndex ].pManagedModel = pManagedModel;
 		m_pModels[ uiModelIndex ].pSceneObject  = pSceneObject;
 
@@ -128,13 +142,13 @@ TBOOL AInstanceManager::LoadModels( TINT a_iInstanceLibIndex, TINT a_iNumModels,
 
 		// Disable HD lighting for instances
 		TModel* pModel = pManagedModel->GetModel();
-		for (TINT i = 0; i < pModel->GetNumLODs(); i++)
+		for ( TINT i = 0; i < pModel->GetNumLODs(); i++ )
 		{
 			TModelLOD* pLOD = &pModel->GetLOD( i );
 
 			for ( TINT k = 0; k < pLOD->iNumMeshes; k++ )
 			{
-				TMesh* pMesh = pLOD->ppMeshes[ k ];
+				TMesh*     pMesh     = pLOD->ppMeshes[ k ];
 				TMaterial* pMaterial = pMesh->GetMaterial();
 
 				TASSERT( pMaterial->IsA( &TGetClass( ASkinMaterial ) ) );
@@ -147,7 +161,7 @@ TBOOL AInstanceManager::LoadModels( TINT a_iInstanceLibIndex, TINT a_iNumModels,
 
 	// Initialise collision
 	SetupCollisions( a_bCreateCollisionModelInstances );
-	
+
 	// Make sure collision nodes are created if they are needed
 	if ( a_bCreateCollisionModelNodes && m_llFreeCollisionModelNodes.IsEmpty() )
 	{
@@ -179,18 +193,18 @@ void AInstanceManager::Reset()
 	m_llFreeCollisionModelInstances.Clear();
 
 	// Wait until GPU is done with the resources before models are destroyed
-	TRenderInterface::GetSingleton()->BeginEndSceneHAL();
+	g_pRender->BeginEndSceneHAL();
 
 	// Destroy models
 	for ( TINT i = 0; i < m_iNumModels; i++ )
-		m_pModels[i].Reset();
+		m_pModels[ i ].Reset();
 
 	// Destroy key libs
 	if ( m_ppKeyLibs )
 	{
-		for (TINT i = 0; i < m_iNumKeyLibraries; i++)
+		for ( TINT i = 0; i < m_iNumKeyLibraries; i++ )
 		{
-			TRenderInterface::GetSingleton()->GetKeyframeLibraryManager().UnloadLibrary( m_ppKeyLibs[ i ] );
+			g_pRender->GetKeyframeLibraryManager().UnloadLibrary( m_ppKeyLibs[ i ] );
 		}
 
 		delete[] m_ppKeyLibs;
@@ -215,12 +229,109 @@ void AInstanceManager::Reset()
 	DestroyCollisionSets();
 }
 
-static TMatrix44 s_mInstanceTransform = {
-	1.0f,  0.0f, 0.0f, 0.0f,
-	0.0f,  0.0f, 1.0f, 0.0f,
-	0.0f, -1.0f, 0.0f, 0.0f,
-	0.0f,  0.0f, 0.0f, 1.0f
-};
+static AInstanceManager::RenderListEntry s_aRenderList[ AInstanceManager::MAX_RENDERED_INSTANCES ];
+
+// $Barnyard: FUNCTION 005e17a0
+TBOOL AInstanceManager::Render()
+{
+	TRenderContext* pRenderContext = g_pRender->GetCurrentContext();
+	TMatrix44       matModelView   = pRenderContext->GetModelViewMatrix();
+
+	// Reset render lists
+	for ( TINT i = 0; i < m_iNumModels * MAX_NUM_LODS; i++ )
+		m_pModelsRenderLists[ i ] = TNULL;
+
+	const TFLOAT flVisibilityDistanceBlendStart = m_flVisibilityDistanceBlendStart;
+	const TFLOAT flBlendFactor                  = 1.0f / ( m_flVisibilityDistanceBlendEnd - flVisibilityDistanceBlendStart );
+
+	TINT iRenderListSize = 0;
+	if ( m_uiFlags & 16 )
+	{
+		// Don't check terrain section visibility
+
+		// Static instances
+		FillRenderList_All( m_llUsedInstances, matModelView, s_aRenderList, iRenderListSize, TFALSE );
+
+		// Dynamic instances
+		if ( m_pDynamicInstances ) FillRenderList_All( m_llUsedDynamicInstances, matModelView, s_aRenderList, iRenderListSize, TTRUE );
+	}
+	else
+	{
+		// Check terrain section visibility
+
+		// Static instances
+		FillRenderList_Visible( m_llUsedInstances, matModelView, s_aRenderList, iRenderListSize, TFALSE );
+
+		// Dynamic instances
+		if ( m_pDynamicInstances ) FillRenderList_Visible( m_llUsedDynamicInstances, matModelView, s_aRenderList, iRenderListSize, TTRUE );
+	}
+
+	const TUINT uiOldClipFlags = pRenderContext->GetClipFlags();
+
+	// Calculate light direction matrices
+	TMatrix44 matLightDir = g_pRender->GetLightDirection();
+
+	TMatrix44 aLightMatrices[ 16 ];
+	for ( TINT i = 0; i < TARRAYSIZE( aLightMatrices ); i++ )
+	{
+		aLightMatrices[ i ].ScaleAll( matLightDir, i * ( 1.0f / ( TARRAYSIZE( aLightMatrices ) - 1 ) ) );
+	}
+
+	const TFLOAT flOldShadeCoeff = pRenderContext->GetShadeCoeff();
+	
+	TTODO( "Use DAT_0079b14c and a value from it as shade coeff" );
+	pRenderContext->SetShadeCoeff( 0.0f );
+
+	// Render everything
+	for ( TINT i = 0; i < m_iNumModels * MAX_NUM_LODS; i++ )
+	{
+		if ( !m_pModelsRenderLists[ i ] ) continue;
+
+		TModelInstance* pModelInstance = m_pModels[ i / MAX_NUM_LODS ].pSceneObject->GetInstance();
+		TModel*         pModel         = pModelInstance->GetModel();
+
+		const TINT iLODId = TMath::Min( i % MAX_NUM_LODS, pModel->GetNumLODs() - 1 );
+		TModelLOD* pLOD   = &pModel->GetLOD( iLODId );
+
+		pRenderContext->SetSkeletonInstance( pModelInstance->GetSkeletonInstance() );
+
+		// Render every instance of this model
+		RenderListEntry* pRenderList = m_pModelsRenderLists[ i ];
+		while ( pRenderList )
+		{
+			// Setup context
+			pRenderContext->SetAlphaBlend( 1.0f );
+
+			// Set blending or don't draw instance that is completely blend out
+			if ( pRenderList->matTransform.m_f43 >= flVisibilityDistanceBlendStart )
+			{
+				TFLOAT fBlend = ( pRenderList->matTransform.m_f43 - flVisibilityDistanceBlendStart ) * flBlendFactor;
+
+				if ( fBlend < 1.0f )
+				{
+					pRenderContext->SetAlphaBlend( 1.0f - fBlend );
+				}
+			}
+
+			pRenderContext->SetClipFlags( m_aInstanceVisMasks[ pRenderList - s_aRenderList ] );
+			pRenderContext->SetModelViewMatrix( pRenderList->matTransform );
+
+			for (TINT k = 0; k < pLOD->iNumMeshes; k++)
+			{
+				pLOD->ppMeshes[ k ]->Render();
+			}
+
+			pRenderList = pRenderList->pNext;
+		}
+	}
+
+	// Restore context state
+	pRenderContext->SetShadeCoeff( flOldShadeCoeff );
+	pRenderContext->SetClipFlags( uiOldClipFlags );
+	pRenderContext->SetAlphaBlend( 1.0f );
+	pRenderContext->SetModelViewMatrix( matModelView );
+	return TTRUE;
+}
 
 // $Barnyard: FUNCTION 005e0300
 void AInstanceManager::CreateInstances( ATerrainLocatorList* a_pLocatorList )
@@ -268,8 +379,8 @@ void AInstanceManager::CreateInstances( ATerrainLocatorList* a_pLocatorList )
 	TCHAR aCollisionFlags[ MAX_INSTANCES ];
 
 	// Counts used in later phases
-	TINT iNumCollisionModels = 0; // unique model slots needing a collision instance
-	TINT iNumInstancesWithCollision     = 0; // total instances queued (early-out guard)
+	TINT iNumCollisionModels        = 0; // unique model slots needing a collision instance
+	TINT iNumInstancesWithCollision = 0; // total instances queued (early-out guard)
 
 	// Tracks which model slots have had their collision instance allocated this call.
 	TBOOL abCollInstAllocated[ NUM_MODELS ];
@@ -314,18 +425,18 @@ void AInstanceManager::CreateInstances( ATerrainLocatorList* a_pLocatorList )
 
 		TBOOL bIsRegrowthObject = TFALSE;
 		TTODO( "ARegrowthManager skip here" );
-// 		if ( ARegrowthManager::GetSingleton() != TNULL && ( ARegrowthManager::GetSingleton()->GetFlags() & 0x20 ) != 0 )
-// 		{
-// 			for ( TSIZE f = 0; f < TARRAYSIZE( s_apszRegrowthNames ); f++ )
-// 			{
-// 				TSIZE uLen = TStringManager::String8Length( s_apszRegrowthNames[ f ] );
-// 				if ( TStringManager::String8CompareNoCase( s_apszRegrowthNames[ f ], pszName, uLen ) == 0 )
-// 				{
-// 					bIsRegrowthObject = TTRUE;
-// 					break;
-// 				}
-// 			}
-// 		}
+		// 		if ( ARegrowthManager::GetSingleton() != TNULL && ( ARegrowthManager::GetSingleton()->GetFlags() & 0x20 ) != 0 )
+		// 		{
+		// 			for ( TSIZE f = 0; f < TARRAYSIZE( s_apszRegrowthNames ); f++ )
+		// 			{
+		// 				TSIZE uLen = TStringManager::String8Length( s_apszRegrowthNames[ f ] );
+		// 				if ( TStringManager::String8CompareNoCase( s_apszRegrowthNames[ f ], pszName, uLen ) == 0 )
+		// 				{
+		// 					bIsRegrowthObject = TTRUE;
+		// 					break;
+		// 				}
+		// 			}
+		// 		}
 
 		if ( bIsRegrowthObject ) continue;
 
@@ -360,7 +471,7 @@ void AInstanceManager::CreateInstances( ATerrainLocatorList* a_pLocatorList )
 			    ( T2String8::FindString( pszName, "car_treewall" ) == 0 );
 
 			// Check whether this instance is actually useful for rendering
-			if ((!bHasCollisionSet && iBoneRadius == -1 && !bIsInIgnoreList1) || (pLocator->iFlags2 < 0) || bIsInIgnoreList2)
+			if ( ( !bHasCollisionSet && iBoneRadius == -1 && !bIsInIgnoreList1 ) || ( pLocator->iFlags2 < 0 ) || bIsInIgnoreList2 )
 			{
 				*( pCollisionFlagCursor++ ) = InstanceFlags_None;
 				continue;
@@ -384,22 +495,22 @@ void AInstanceManager::CreateInstances( ATerrainLocatorList* a_pLocatorList )
 				// No collision for this instance
 				*( pCollisionFlagCursor++ ) = InstanceFlags_RenderOnly;
 			}
-			
+
 			iNumInstancesWithCollision++;
 		}
 
 		// Re encode scale and rotation???
-		const TUINT8 uiYawPacked   = (TUINT8)TMath::Round( ( pLocator->uiFlags1 & 0b1111 ) * 20.0f * 0.05f );
-		const TUINT8 uiScalePacked = (TUINT8)TMath::Round( ( pLocator->uiFlags1 >> 4 ) * 6.667f * 0.15f );
+		const TUINT8 uiScalePacked = (TUINT8)TMath::Round( ( pLocator->uiFlags1 & 0b1111 ) * 20.0f * 0.05f );
+		const TUINT8 uiYawPacked   = (TUINT8)TMath::Round( ( pLocator->uiFlags1 >> 4 ) * 6.667f * 0.15f );
 
 		// Pop a free instance node
-		InstanceEntry* pNode = m_llFreeInstances.PopFront();
+		StaticInstanceEntry* pNode = m_llFreeInstances.PopFront();
 
 		// Pack instance metadata into the node
 		pNode->pLocatorList     = a_pLocatorList;
 		pNode->uiLocatorIndex   = iLocIdx;
 		pNode->uiModelIndex     = iModelIndex;
-		pNode->uiPackedScaleYaw = ( uiScalePacked << 4 ) | ( uiYawPacked != 0 ? uiYawPacked : 5 );
+		pNode->uiPackedScaleYaw = ( uiYawPacked << 4 ) | ( uiScalePacked != 0 ? uiScalePacked : 5 );
 
 		m_llUsedInstances.PushBack( pNode );
 	}
@@ -409,7 +520,7 @@ void AInstanceManager::CreateInstances( ATerrainLocatorList* a_pLocatorList )
 	//-----------------------------------------------------------------------------
 	// NOTE: At this point aCollisionFlags is not filled with garbage!!!
 	//-----------------------------------------------------------------------------
-	
+
 	//-----------------------------------------------------------------------------
 	// Find a free List slot for this locator batch
 	//-----------------------------------------------------------------------------
@@ -550,9 +661,9 @@ void AInstanceManager::CreateInstances( ATerrainLocatorList* a_pLocatorList )
 		}
 
 		// ---- "radius" bone: compute capsule/sphere radius ----
-		TTransformObject             transformForNode;
-		TTransformObject*            pTransformForNode = TNULL;
-		ACollisionModelInstance*     pCollInstance     = TNULL;
+		TTransformObject         transformForNode;
+		TTransformObject*        pTransformForNode = TNULL;
+		ACollisionModelInstance* pCollInstance     = TNULL;
 
 		iBone = pSkel->GetBoneID( "radius", 0 );
 		if ( iBone != -1 && pSkel->GetBone( iBone ) != TNULL )
@@ -572,11 +683,11 @@ void AInstanceManager::CreateInstances( ATerrainLocatorList* a_pLocatorList )
 				if ( !vOrigin.IsEqual( vCapsuleEnd ) )
 				{
 					TFLOAT fDistSq = 0.0f;
-// 					TFLOAT fDistSq = TMath::DistancePointToSegmentSq(
-// 					    (TVector3*)&vRadiusPt,
-// 					    (TVector3*)&vOrigin,
-// 					    (TVector3*)&vCapsuleEnd
-// 					);
+					// 					TFLOAT fDistSq = TMath::DistancePointToSegmentSq(
+					// 					    (TVector3*)&vRadiusPt,
+					// 					    (TVector3*)&vOrigin,
+					// 					    (TVector3*)&vCapsuleEnd
+					// 					);
 
 					if ( fDistSq > 0.0001f )
 					{
@@ -656,15 +767,241 @@ void AInstanceManager::CreateInstances( ATerrainLocatorList* a_pLocatorList )
 
 				TTODO( "FUN_0061e730 = ACollisionObjectModel::Create?" );
 				// (origin, radius, length, direction, maxSubNodes, collInstHandle, transform)
-// 				pCollNode->GetNodeValue().Create(
-// 				    vOrigin,
-// 				    fCapsuleRadius,
-// 				    fCapsuleLength,
-// 				    vCapsuleDir,
-// 				    64,
-// 				    iCollInstHandle,
-// 				    pTransformForNode
-// 				);
+				// 				pCollNode->GetNodeValue().Create(
+				// 				    vOrigin,
+				// 				    fCapsuleRadius,
+				// 				    fCapsuleLength,
+				// 				    vCapsuleDir,
+				// 				    64,
+				// 				    iCollInstHandle,
+				// 				    pTransformForNode
+				// 				);
+			}
+		}
+	}
+}
+
+// $Barnyard: FUNCTION 005e14d0
+void AInstanceManager::FillRenderList_All( const Toshi::T2SList<StaticInstanceEntry>& a_rcInstanceList, const Toshi::TMatrix44& a_rcWorldTransform, RenderListEntry* a_pOutRenderData, TINT& a_rNumInstances, TBOOL a_bDynamic )
+{
+	const TFLOAT flLOD0DistanceSq      = m_flLOD0Distance * m_flLOD0Distance;
+	const TFLOAT flMaxRenderDistanceSq = m_flVisibilityDistanceBlendEnd * m_flVisibilityDistanceBlendEnd;
+
+	TRenderContext*  pRenderContext = g_pRender->GetCurrentContext();
+	const TMatrix44& matViewWorld   = pRenderContext->GetViewWorldMatrix();
+	TVector4         vecCameraPos   = matViewWorld.GetTranslation();
+
+	T2_FOREACH( a_rcInstanceList, it )
+	{
+		if ( a_bDynamic ) TASSERT( TFALSE && "Not supported" );
+		const TVector3* pInstancePosition = ( a_bDynamic ) ? TNULL : &it->pLocatorList->GetLocator( it->uiLocatorIndex )->vecPosition;
+
+		// Check whether the instance is visible
+		TSphere vecInstanceBounding(
+		    pInstancePosition->x,
+		    -pInstancePosition->z,
+		    pInstancePosition->y,
+		    INSTANCE_RENDER_DISTANCE_MULTIPLIER * m_pModels[ it->uiModelIndex ].pManagedModel->GetModel()->GetRenderDistance()
+		);
+
+		const TFLOAT flInstanceDistanceSq = TVector4::DistanceSq( vecInstanceBounding.AsVector4(), vecCameraPos );
+
+		// There's some odd hack I don't currently understand
+		if ( flInstanceDistanceSq < flMaxRenderDistanceSq &&
+		     ( vecInstanceBounding.GetOrigin().y <= 3.246f || DAT_00773a64 == 0 ) &&
+		     ( vecInstanceBounding.GetOrigin().y >= 3.246f || DAT_00773a64 == 1 || DAT_00773a64 == 2 ) )
+		{
+			TINT iLODIndex = flInstanceDistanceSq >= flLOD0DistanceSq ? 1 : 0;
+
+			const TBOOL bVisibleInFrustum = pRenderContext->CullSphereToFrustumSimple( vecInstanceBounding, pRenderContext->GetWorldPlanes(), 6 );
+			if ( bVisibleInFrustum )
+			{
+				if ( a_bDynamic ) TASSERT( TFALSE && "Not supported" );
+
+				TMatrix44 matLocatorLocalTransform;
+				it->pLocatorList->GetLocator( it->uiLocatorIndex )->GetMatrix( matLocatorLocalTransform );
+
+				if ( a_rNumInstances >= MAX_RENDERED_INSTANCES ) return;
+				
+				// Collect light sources
+				Toshi::TLightIDList oLightList;
+				AGlowViewport::GetSingleton()->GetInfluencingLightIDs( vecInstanceBounding, oLightList );
+
+				// Store data about the instance
+				m_aInstanceVisMasks[ a_rNumInstances ] = TTRUE;
+				m_aInstanceFlags[ a_rNumInstances ]    = it->uiPackedScaleYaw >> 4;
+				m_aInstanceLightIDs[ a_rNumInstances ] = oLightList[ 0 ];
+
+				const TINT   iModelSlot     = ( it->uiModelIndex * MAX_NUM_LODS ) + iLODIndex;
+				const TFLOAT flLocatorScale = ( it->uiPackedScaleYaw & 0b1111 ) * 0.2f;
+
+				// Scale and apply global transform
+				TMatrix44 matLocatorTransform;
+				matLocatorTransform.Multiply( s_mInstanceTransform, matLocatorLocalTransform );
+				matLocatorTransform.Scale( flLocatorScale, flLocatorScale, flLocatorScale );
+				
+				// Add to the render list, applying world transform
+				RenderListEntry* pRenderListEntry = &a_pOutRenderData[ a_rNumInstances++ ];
+				pRenderListEntry->matTransform.Multiply( a_rcWorldTransform, matLocatorTransform );
+				pRenderListEntry->pNext = m_pModelsRenderLists[ iModelSlot ];
+
+				m_pModelsRenderLists[ iModelSlot ] = pRenderListEntry;
+			}
+		}
+	}
+}
+
+// $Barnyard: FUNCTION 005e10e0
+void AInstanceManager::FillRenderList_Visible( const Toshi::T2SList<StaticInstanceEntry>& a_rcInstanceList, const Toshi::TMatrix44& a_rcWorldTransform, RenderListEntry* a_pOutRenderData, TINT& a_rNumInstances, TBOOL a_bDynamic )
+{
+	//-----------------------------------------------------------------------------
+	// 1. Gather visible sections
+	//-----------------------------------------------------------------------------
+
+	// Get terrain related objects
+	ATerrainInterface* pTerrainInterface = ATerrainInterface::GetSingleton();
+	ATerrainVIS*       pTerrainVIS       = pTerrainInterface->GetVIS();
+	TINT               iNumSections      = pTerrainVIS->GetNumSections();
+	ATerrainSection*   pCurrentSection   = &pTerrainVIS->GetSections()[ pTerrainInterface->GetSectionID() ];
+
+	ATerrainLocatorList* pLocatorList            = pTerrainInterface->GetLocatorList();
+	TINT                 iLocatorsNumVISSections = pLocatorList->GetNumVISSections();
+
+	// Collect info about the locators we should render
+	constexpr TUINT MAX_SECTIONS = 64;
+
+	TUINT uiNumSectionsToRender = 0;
+	struct SectionRenderData
+	{
+		TUINT uiStart;
+		TUINT uiEnd;
+	} aSectionRenderData[ MAX_SECTIONS ];
+
+	for ( TINT i = 0; i < iLocatorsNumVISSections; i++ )
+	{
+		ATerrainLocatorVISSection* pLocatorVISSection = &pLocatorList->GetVISHeader()->pSections[ i ];
+
+		if ( !TStringManager::String8CompareNoCase( "undefined", pLocatorVISSection->pName ) )
+		// undefined cell - always visible
+		{
+			TUINT uiFirstLocator = pLocatorVISSection->uiFirstLocator;
+			TUINT uiNumLocators  = pLocatorVISSection->uiNumLocators;
+
+			aSectionRenderData[ uiNumSectionsToRender ].uiStart = uiFirstLocator;
+			aSectionRenderData[ uiNumSectionsToRender ].uiEnd   = uiFirstLocator + uiNumLocators;
+
+			uiNumSectionsToRender++;
+		}
+		else
+		// some other cell - should check visibility
+		{
+			for ( TINT k = 0; k < iNumSections; k++ )
+			{
+				// If the section is visible from the current one and locator VIS name matches it, add to the draw list
+				if ( pCurrentSection->IsOtherSectionVisible( k ) &&
+				     !TStringManager::String8CompareNoCase( pTerrainVIS->GetSections()[ k ].GetName(), pLocatorVISSection->pName ) )
+				{
+					TUINT uiFirstLocator = pLocatorVISSection->uiFirstLocator;
+					TUINT uiNumLocators  = pLocatorVISSection->uiNumLocators;
+
+					aSectionRenderData[ uiNumSectionsToRender ].uiStart = uiFirstLocator;
+					aSectionRenderData[ uiNumSectionsToRender ].uiEnd   = uiFirstLocator + uiNumLocators;
+
+					uiNumSectionsToRender++;
+
+					break;
+				}
+			}
+		}
+	}
+
+	if ( iLocatorsNumVISSections == 0 )
+	{
+		// Compare against all locators if no VIS data is provided
+		aSectionRenderData[ uiNumSectionsToRender ].uiStart = 0;
+		aSectionRenderData[ uiNumSectionsToRender ].uiEnd   = 2147483647;
+		uiNumSectionsToRender += 1;
+	}
+
+	TASSERT( uiNumSectionsToRender < MAX_SECTIONS );
+
+	//-----------------------------------------------------------------------------
+	// 2. Fill the render list
+	//-----------------------------------------------------------------------------
+
+	const TFLOAT flLOD0DistanceSq      = m_flLOD0Distance * m_flLOD0Distance;
+	const TFLOAT flMaxRenderDistanceSq = m_flVisibilityDistanceBlendEnd * m_flVisibilityDistanceBlendEnd;
+
+	TRenderContext*  pRenderContext = g_pRender->GetCurrentContext();
+	const TMatrix44& matViewWorld   = pRenderContext->GetViewWorldMatrix();
+	TVector4         vecCameraPos   = matViewWorld.GetTranslation();
+
+	T2_FOREACH( a_rcInstanceList, it )
+	{
+		const TUINT uiLocatorIndex = it->uiLocatorIndex;
+
+		TUINT uiNumRenderedSections = 0;
+		for ( TUINT i = 0; i < uiNumSectionsToRender; i++ )
+		{
+			const SectionRenderData& rSectionData = aSectionRenderData[ i ];
+
+			if ( uiLocatorIndex >= rSectionData.uiStart && uiLocatorIndex < rSectionData.uiEnd )
+			{
+				// Skip all other sections if rendered the required number
+				if ( uiNumRenderedSections >= uiNumSectionsToRender ) break;
+
+				if ( a_bDynamic ) TASSERT( TFALSE && "Not supported" );
+				const TVector3* pInstancePosition = ( a_bDynamic ) ? TNULL : &it->pLocatorList->GetLocator( it->uiLocatorIndex )->vecPosition;
+
+				// Check whether the instance is visible
+				TSphere vecInstanceBounding(
+				    pInstancePosition->x,
+				    -pInstancePosition->z,
+				    pInstancePosition->y,
+				    INSTANCE_RENDER_DISTANCE_MULTIPLIER * m_pModels[ it->uiModelIndex ].pManagedModel->GetModel()->GetRenderDistance()
+				);
+
+				const TFLOAT flInstanceDistanceSq = TVector4::DistanceSq( vecInstanceBounding.AsVector4(), vecCameraPos );
+
+				if ( flInstanceDistanceSq < flMaxRenderDistanceSq )
+				{
+					TINT iLODIndex = flInstanceDistanceSq >= flLOD0DistanceSq ? 1 : 0;
+
+					const TBOOL bVisibleInFrustum = pRenderContext->CullSphereToFrustumSimple( vecInstanceBounding, pRenderContext->GetWorldPlanes(), 6 );
+					if ( bVisibleInFrustum )
+					{
+						if ( a_bDynamic ) TASSERT( TFALSE && "Not supported" );
+
+						TMatrix44 matLocatorLocalTransform;
+						it->pLocatorList->GetLocator( it->uiLocatorIndex )->GetMatrix( matLocatorLocalTransform );
+
+						if ( a_rNumInstances >= MAX_RENDERED_INSTANCES ) return;
+
+						// Collect light sources
+						Toshi::TLightIDList oLightList;
+						AGlowViewport::GetSingleton()->GetInfluencingLightIDs( vecInstanceBounding, oLightList );
+
+						// Store data about the instance
+						m_aInstanceVisMasks[ a_rNumInstances ] = TTRUE;
+						m_aInstanceFlags[ a_rNumInstances ]    = it->uiPackedScaleYaw >> 4;
+						m_aInstanceLightIDs[ a_rNumInstances ] = oLightList[ 0 ];
+
+						const TINT   iModelSlot     = ( it->uiModelIndex * MAX_NUM_LODS ) + iLODIndex;
+						const TFLOAT flLocatorScale = ( it->uiPackedScaleYaw & 0b1111 ) * 0.2f;
+
+						// Scale and apply global transform
+						TMatrix44 matLocatorTransform;
+						matLocatorTransform.Multiply( s_mInstanceTransform, matLocatorLocalTransform );
+						matLocatorTransform.Scale( flLocatorScale, flLocatorScale, flLocatorScale );
+
+						// Add to the render list, applying world transform
+						RenderListEntry* pRenderListEntry = &a_pOutRenderData[ a_rNumInstances++ ];
+						pRenderListEntry->matTransform.Multiply( a_rcWorldTransform, matLocatorTransform );
+						pRenderListEntry->pNext = m_pModelsRenderLists[ iModelSlot ];
+
+						m_pModelsRenderLists[ iModelSlot ] = pRenderListEntry;
+					}
+				}
 			}
 		}
 	}

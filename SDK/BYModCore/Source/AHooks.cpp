@@ -1008,6 +1008,25 @@ MEMBER_HOOK( 0x006d8a00, Toshi::TMutexLock, TMutexLock_Destructor, void )
 }
 #endif
 
+struct AInstanceManager
+{};
+
+MEMBER_HOOK( 0x005e1e80, AInstanceManager, AInstanceManager_LoadModels, TBOOL, TINT a_iInstanceLibIndex, TINT a_iNumModels, TUINT* a_pModelIndices, TBOOL a_bCreateCollisionModelNodes, TBOOL a_bCreateCollisionModelInstances, TINT a_iNumCollisionModelNodes )
+{
+	if ( TTRUE || g_oSettings.bLoadAnyLevel )
+	{
+		TUINT aIndices[137];
+		for (TINT i = 0; i < 137; i++)
+		{
+			aIndices[ i ] = i;
+		}
+
+		return CallOriginal( 3, 137, aIndices, a_bCreateCollisionModelNodes, a_bCreateCollisionModelInstances, a_iNumCollisionModelNodes );
+	}
+
+	return CallOriginal( a_iInstanceLibIndex, a_iNumModels, a_pModelIndices, a_bCreateCollisionModelNodes, a_bCreateCollisionModelInstances, a_iNumCollisionModelNodes );
+}
+
 void AHooks::Initialise()
 {
 	// Apply other hooks
@@ -1062,6 +1081,8 @@ void AHooks::Initialise()
 	InstallHook<TOrderTable_Flush>();
 	InstallHook<ALocaleManager_GetLanguageFilename>();
 	//InstallHook<TNativeFile_FlushWriteBuffer>();
+
+	InstallHook<AInstanceManager_LoadModels>();
 
 #ifdef USE_ATOMIC
 	InstallHook<TMutex_Create>();
