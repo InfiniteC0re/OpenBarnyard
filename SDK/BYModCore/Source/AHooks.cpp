@@ -973,6 +973,34 @@ MEMBER_HOOK( 0x005ef3a0, ATreeManager2, ATreeManager_Render, void )
 	if ( !g_oSettings.bDisableTreeRendering ) CallOriginal();
 }
 
+struct ARegrowthManager
+{
+	struct Object : public Toshi::T2SList<Object>::Node
+	{
+		Toshi::TQuaternion qRotation;
+		Toshi::TVector4    vPosition;
+		TFLOAT             flSpawnTime;
+		TUINT8             uiFlag;
+		TUINT8             uiUnknown;
+		TUINT8             uiScalePacked;
+	};
+};
+
+// The original implementation can cause problems on some hardware, because it is using RAW FLOAT COMPARISONS
+// Thanks to the author of this method and the entire ARegrowthManager thing for a day spent trying to fix bug
+HOOK( 0x005e4540, ARegrowthManager_FindObjectShittyWay, ARegrowthManager::Object*, TFLOAT a_flHash, void* unused, Toshi::T2SList<ARegrowthManager::Object>& a_llObjects )
+{
+	constexpr TFLOAT MAX_ERROR = 0.05f;
+
+	T2_FOREACH( a_llObjects, it )
+	{
+		if ( TMath::Abs( a_flHash - ( it->vPosition.x + it->vPosition.z * 1000.0f ) ) <= MAX_ERROR )
+			return it;
+	}
+
+	return TNULL;
+}
+
 void AHooks::Initialise()
 {
 	// Apply other hooks
@@ -1032,6 +1060,7 @@ void AHooks::Initialise()
 	InstallHook<AInstanceManager_Render>();
 
 	InstallHook<ATreeManager_Render>();
+	InstallHook<ARegrowthManager_FindObjectShittyWay>();
 
 #ifdef USE_ATOMIC
 	InstallHook<TMutex_Create>();
