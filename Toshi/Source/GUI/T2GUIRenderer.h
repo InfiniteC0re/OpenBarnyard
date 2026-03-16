@@ -10,8 +10,8 @@ public:
 	T2GUIRenderer()          = default;
 	virtual ~T2GUIRenderer() = default;
 
-	virtual T2GUIMaterial* CreateMaterial( const TCHAR* a_szTextureName )                                                        = 0;
 	virtual T2GUIMaterial* CreateMaterial( TTexture* a_pTexture )                                                                = 0;
+	virtual T2GUIMaterial* CreateMaterial( const TCHAR* a_szTextureName )                                                        = 0;
 	virtual void           DestroyMaterial( T2GUIMaterial* a_pMaterial )                                                         = 0;
 	virtual TTexture*      GetTexture( const TCHAR* a_szTextureName )                                                            = 0;
 	virtual TUINT          GetWidth( T2GUIMaterial* a_pMaterial )                                                                = 0;
