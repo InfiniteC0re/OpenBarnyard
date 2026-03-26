@@ -32,6 +32,14 @@ struct AModSettingsProperties
 	TBOOL   bRandomSkin = TFALSE;
 	TBOOL   bIsMale     = TTRUE;
 	CowSkin eCowSkin    = CowSkin_American;
+
+	// Not saved:
+	TBOOL bShowBikeRaceDebug            = TFALSE;
+	TBOOL bShowWaypoints                = TTRUE;
+	TBOOL bShowOnlyMaxReachableWaypoint = TTRUE;
+	TBOOL bShowReachedWaypoints         = TTRUE;
+	TBOOL bShowReachableWaypoints       = TTRUE;
+	TBOOL bShowUnreachableWaypoints     = TTRUE;
 };
 
 inline struct AModSettings

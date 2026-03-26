@@ -394,9 +394,6 @@ MEMBER_HOOK( 0x00662d90, AOptions, AOptions_IsResolutionCompatible, TBOOL, TINT 
 	return TFALSE;
 }
 
-class ADisplayModes_Win
-{};
-
 MEMBER_HOOK( 0x00614d70, ADisplayModes_Win, ADisplayModes_Win_DoesModeExist, TBOOL, TINT& a_rWidth, TINT& a_rHeight, TUINT& a_rColourDepth )
 {
 	return TTRUE;

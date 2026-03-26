@@ -15,6 +15,7 @@
 #include <BYardSDK/AGameStateController.h>
 #include <BYardSDK/THookedRenderD3DInterface.h>
 #include <BYardSDK/ATerrainInterface.h>
+#include <BYardSDK/ARenderer.h>
 
 #include <Toshi/THPTimer.h>
 #include <Toshi/TScheduler.h>
@@ -23,6 +24,8 @@
 #include <T2Locale/T2Locale.h>
 #include <File/TFile.h>
 #include <ToshiTools/T2CommandLine.h>
+
+#include <Platform/DX8/TRenderContext_DX8.h>
 
 TOSHI_NAMESPACE_USING
 
@@ -525,6 +528,16 @@ public:
 
 					bDrawnUI = TTRUE;
 				}
+				else if (m_bIsInBikeRace)
+				{
+					ImGui::Text( "Bike Race" );
+					ImGui::Checkbox( "Debug", &g_oSettings.bShowBikeRaceDebug );
+					ImGui::Checkbox( "Show waypoints", &g_oSettings.bShowWaypoints );
+					ImGui::Checkbox( "Hide all except max reachable", &g_oSettings.bShowOnlyMaxReachableWaypoint );
+					ImGui::Checkbox( "Show reachable waypoints", &g_oSettings.bShowReachableWaypoints );
+					ImGui::Checkbox( "Show unreachable waypoints", &g_oSettings.bShowUnreachableWaypoints );
+					ImGui::Checkbox( "Show reached waypoints", &g_oSettings.bShowReachedWaypoints );
+				}
 
 				if ( bDrawnUI )
 					ImGui::Separator();
@@ -558,6 +571,169 @@ public:
 			g_oSettings.Reset();
 	}
 
+	virtual TBOOL IsOverlayVisible()
+	{
+		m_bIsInBikeRace = TFALSE;
+
+		static const TClass* s_pBikeRaceGameClass = TClass::Find( "ABikeRaceMicroGame", &TGetClass( THookedObject ) );
+
+		auto fnCheckGameState = [&]( AGameState* a_pGameState ) -> bool {
+			m_bIsInBikeRace  = a_pGameState->GetClass() == s_pBikeRaceGameClass;
+			m_pMiniGameState = TREINTERPRETCAST( TBYTE*, a_pGameState );
+
+			return m_bIsInBikeRace;
+		};
+
+		AGameStateController* pGameStateController = AGameStateController::GetSingleton();
+
+		// Check both current and previous states
+		if ( !fnCheckGameState( pGameStateController->GetCurrentState() ) && pGameStateController->GetNumStates() > 1 )
+			fnCheckGameState( pGameStateController->GetPreviousState() );
+
+		return m_bIsInBikeRace;
+	}
+
+	virtual void OnImGuiRenderOverlay(AImGUI* a_pImGui)
+	{
+		if ( !m_bIsInBikeRace || !g_oSettings.bShowBikeRaceDebug ) return;
+
+		ImGui::SetNextWindowPos( ImVec2( 16.0f, 64.0f ) );
+		ImGui::Begin(
+		    "Bike Race Debug",
+		    TNULL,
+		    ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_AlwaysAutoResize
+		);
+		{
+			const TVector4* pWaypointPositions           = TREINTERPRETCAST( TVector4*, m_pMiniGameState + 0x0BAC );
+			const TINT      iCurrentWaypointControlIndex = *TREINTERPRETCAST( TINT*, m_pMiniGameState + 0x39F8 );
+			const TINT      iCurrentWaypointIndex        = *TREINTERPRETCAST( TINT*, m_pMiniGameState + 0x39FC );
+			const TINT      iNumWaypoints                = *TREINTERPRETCAST( TINT*, m_pMiniGameState + 0xE3F0 );
+
+			const TINT iMaxReachableWP = TMath::Min( ( iCurrentWaypointControlIndex + 1 ) * 10, iNumWaypoints );
+
+			// Print on screen info
+			ImGui::Text( "Waypoint: %d / %d", iCurrentWaypointIndex, iNumWaypoints );
+			ImGui::Text( "Reachable: %d", iMaxReachableWP );
+			ImGui::Text( "Control: %d", iCurrentWaypointControlIndex );
+
+			// Draw the reachable waypoint
+			ARenderer* pRenderer = ARenderer::GetSingleton();
+
+			if ( g_oSettings.bShowWaypoints && pRenderer && pRenderer->m_pViewport )
+			{
+				TRenderContextD3D* pRenderContext = TRenderContextD3D::Upcast( ARenderer::GetSingleton()->m_pViewport->GetRenderContext() );
+
+				const TMatrix44& matProj = pRenderContext->GetProjectionMatrix();
+				const TMatrix44& matWVM  = pRenderContext->GetWorldViewMatrix();
+
+				ImDrawList* draw_list = ImGui::GetBackgroundDrawList();
+				draw_list->PushClipRectFullScreen();
+
+				auto& viewportParams = pRenderContext->GetViewportParameters();
+
+				auto fnDrawWorldPoint = [ & ]( const TVector4& a_vWorldPoint, TFLOAT a_flMinRadius, TFLOAT a_flMaxRadius, TUINT32 a_uiColor, TUINT32 a_uiFillColor, const char* a_pchText ) {
+					TVector4 vReachableWP_View;
+					TMatrix44::TransformVector( vReachableWP_View, matWVM, a_vWorldPoint );
+
+					TVector4 vReachableWP_Screen;
+					TMatrix44::TransformVector( vReachableWP_Screen, matProj, vReachableWP_View );
+
+					if ( vReachableWP_Screen.w > 0.0f )
+					{
+						// Point is visible, can draw
+						vReachableWP_Screen.x /= vReachableWP_Screen.w;
+						vReachableWP_Screen.y /= vReachableWP_Screen.w;
+
+						// Normalize coords
+						vReachableWP_Screen.x = ( vReachableWP_Screen.x + 1.0f ) * 0.5f;
+						vReachableWP_Screen.y = 1.0f - ( vReachableWP_Screen.y + 1.0f ) * 0.5f;
+
+						TFLOAT flDistanceFactor = 1.0f - TMath::Min( vReachableWP_Screen.w, 100.0f ) / 100.0f;
+
+						const TFLOAT flRadius = TMath::Min( TMath::Max( a_flMaxRadius * flDistanceFactor, a_flMinRadius ), a_flMaxRadius );
+
+						ImVec2 vScreenPos( vReachableWP_Screen.x * viewportParams.fWidth, vReachableWP_Screen.y * viewportParams.fHeight );
+
+						if ( a_uiFillColor != 0 )
+						{
+							draw_list->AddCircleFilled(
+							    vScreenPos,
+							    flRadius,
+							    a_uiFillColor,
+							    0
+							);
+						}
+
+						// Draw an outlined circle
+						draw_list->AddCircle(
+						    vScreenPos,
+						    flRadius,
+						    a_uiColor,
+						    0,
+						    2.0f
+						);
+
+						if (a_pchText)
+						{
+							ImVec2 vTextSize = ImGui::CalcTextSize( a_pchText );
+
+							draw_list->AddText( ImVec2( vScreenPos.x - vTextSize.x * 0.5f, vScreenPos.y + flRadius ), a_uiColor, a_pchText );
+						}
+					}
+				};
+
+				auto fnGetReachableColor = []( TUINT8 a_uiAlpha ) {
+					return IM_COL32( 68, 180, 68, a_uiAlpha );
+				};
+
+				auto fnGetUnreachableColor = []( TUINT8 a_uiAlpha ) {
+					return IM_COL32( 180, 68, 68, a_uiAlpha );
+				};
+
+				auto fnGetReachedColor = []( TUINT8 a_uiAlpha ) {
+					return IM_COL32( 180, 180, 180, a_uiAlpha );
+				};
+
+				if ( g_oSettings.bShowOnlyMaxReachableWaypoint )
+				{
+					// Show the max reachable
+					T2String8::Format( T2String8::ms_aScratchMem, "wp_%.3i", iMaxReachableWP );
+
+					// Calculate terrain height for the point
+					TVector4 vecWorldPos = pWaypointPositions[ iMaxReachableWP - 1 ];
+					CALL_THIS( 0x005eaf80, ATerrainInterface*, void, ATerrainInterface::GetSingleton(), TVector4&, vecWorldPos, TUINT, 0 );
+
+					fnDrawWorldPoint( pWaypointPositions[ iMaxReachableWP - 1 ], 10.0f, 35.0f, IM_COL32( 255, 255, 255, 255 ), fnGetReachableColor( 255 ), T2String8::ms_aScratchMem );
+				}
+				else
+				{
+					for (TINT i = 0; i < iNumWaypoints; i++)
+					{
+						const TBOOL bIsReachable = ( i - iCurrentWaypointControlIndex * 10 ) < 10;
+						const TBOOL bIsReached   = i < iCurrentWaypointIndex;
+
+						if ( bIsReachable && !g_oSettings.bShowReachableWaypoints ) continue;
+						if ( !bIsReachable && !g_oSettings.bShowUnreachableWaypoints ) continue;
+						if ( bIsReached && !g_oSettings.bShowReachedWaypoints ) continue;
+
+						T2String8::Format( T2String8::ms_aScratchMem, "wp_%.3i", i + 1 );
+
+						// Calculate terrain height for the point
+						TVector4 vecWorldPos = pWaypointPositions[ i ];
+						CALL_THIS( 0x005eaf80, ATerrainInterface*, void, ATerrainInterface::GetSingleton(), TVector4&, vecWorldPos, TUINT, 0 );
+
+						fnDrawWorldPoint( vecWorldPos, 10.0f, 25.0f, IM_COL32( 255, 255, 255, 255 ), bIsReachable ? ( bIsReached ? fnGetReachedColor( 255 ) : fnGetReachableColor( 255 ) ) : fnGetUnreachableColor( 255 ), T2String8::ms_aScratchMem );
+					}
+				}
+
+				draw_list->PopClipRect();
+			}
+
+			ImGui::End();
+		}
+
+	}
+
 	TBOOL HasSettingsUI() override
 	{
 		return TTRUE;
@@ -570,6 +746,9 @@ public:
 
 private:
 	TTRB m_oOverridesTRB;
+
+	bool   m_bIsInBikeRace  = false;
+	TBYTE* m_pMiniGameState = TNULL;
 };
 
 extern "C"

@@ -229,8 +229,10 @@ void AInstanceManager2::FillRenderList_Visible( const Toshi::T2SList<StaticInsta
 	TINT               iNumSections      = pTerrainVIS->m_iNumSections;
 	ATerrainSection*   pCurrentSection   = &pTerrainVIS->m_pSections[ pTerrainInterface->m_iCurrentSection ];
 
-	ATerrainLocatorList* pLocatorList            = pTerrainInterface->m_pTerrainVIS->GetLocatorList();
-	TINT                 iLocatorsNumVISSections = pLocatorList->m_pLocatorVISHeader->iNumSections;
+	ATerrainLocatorList* pLocatorList = pTerrainInterface->m_pTerrainVIS->GetLocatorList();
+	if ( !pLocatorList->m_pLocatorVISHeader ) return;
+
+	TINT iLocatorsNumVISSections = pLocatorList->m_pLocatorVISHeader->iNumSections;
 
 	// Collect info about the locators we should render
 	constexpr TUINT MAX_SECTIONS = 64;
