@@ -9,6 +9,9 @@
 #include <File/TTSF.h>
 #include <Toshi/TString8.h>
 #include <Toshi/T2String8.h>
+#include <Math/TVector2.h>
+#include <Math/TVector3.h>
+#include <Math/TVector4.h>
 
 // TODO: replace STL classes with native TOSHI classes
 #include <vector>
@@ -714,6 +717,36 @@ public:
 	T ConvertEndianess( T a_numValue )
 	{
 		return CONVERTENDIANESS( m_eEndianess, a_numValue );
+	}
+
+	template <>
+	Toshi::TVector2 ConvertEndianess( Toshi::TVector2 a_vec )
+	{
+		return Toshi::TVector2(
+		    CONVERTENDIANESS( m_eEndianess, a_vec.x ),
+		    CONVERTENDIANESS( m_eEndianess, a_vec.y )
+		);
+	}
+
+	template <>
+	Toshi::TVector3 ConvertEndianess( Toshi::TVector3 a_vec )
+	{
+		return Toshi::TVector3(
+		    CONVERTENDIANESS( m_eEndianess, a_vec.x ),
+		    CONVERTENDIANESS( m_eEndianess, a_vec.y ),
+		    CONVERTENDIANESS( m_eEndianess, a_vec.z )
+		);
+	}
+
+	template <>
+	Toshi::TVector4 ConvertEndianess( Toshi::TVector4 a_vec )
+	{
+		return Toshi::TVector4(
+		    CONVERTENDIANESS( m_eEndianess, a_vec.x ),
+		    CONVERTENDIANESS( m_eEndianess, a_vec.y ),
+		    CONVERTENDIANESS( m_eEndianess, a_vec.z ),
+		    CONVERTENDIANESS( m_eEndianess, a_vec.w )
+		);
 	}
 
 	PTRBSymbols*  GetSymbols() { return &m_SYMB; }
