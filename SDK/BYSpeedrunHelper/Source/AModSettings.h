@@ -36,7 +36,7 @@ struct AModSettingsProperties
 	// Not saved:
 	TBOOL bShowBikeRaceDebug            = TFALSE;
 	TBOOL bShowWaypoints                = TTRUE;
-	TBOOL bShowOnlyMaxReachableWaypoint = TTRUE;
+	TBOOL bShowOnlyMaxReachableWaypoint = TFALSE;
 	TBOOL bShowReachedWaypoints         = TTRUE;
 	TBOOL bShowReachableWaypoints       = TTRUE;
 	TBOOL bShowUnreachableWaypoints     = TTRUE;

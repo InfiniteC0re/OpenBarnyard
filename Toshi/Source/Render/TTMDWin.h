@@ -42,6 +42,8 @@ enum EShaderType : TUINT
 	ST_WORLD,
 	ST_UNKNOWN2,
 	ST_GRASS,
+	ST_UNKNOWN3,
+	ST_FOB
 };
 
 struct TRBLODHeader

@@ -10,6 +10,8 @@ public:
 
 	struct SubMesh
 	{
+		~SubMesh();
+
 		TMesh*                              pAssociatedMesh = 0;
 		TUINT16                             uiUnk2          = 0;
 		TUINT16                             uiNumVertices   = 0;

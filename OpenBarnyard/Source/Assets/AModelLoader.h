@@ -79,8 +79,8 @@ private:
 	static void InitialiseGrassLayersTextures();
 
 private:
-	static TBOOL AModelLoaderLoadTMDCallback( Toshi::TModel* a_pModel );
-	static TBOOL AModelLoaderLoadTRBCallback( Toshi::TModel* a_pModel );
+	static TBOOL __stdcall AModelLoaderLoadTMDCallback( Toshi::TModel* a_pModel );
+	static TBOOL __stdcall AModelLoaderLoadTRBCallback( Toshi::TModel* a_pModel );
 
 	inline static MaterialNode                 ms_oNodesAlloc[ MAX_NUM_ALLOCATED_MATERIALS ];
 	inline static Toshi::T2DList<MaterialNode> ms_oFreeMaterials;

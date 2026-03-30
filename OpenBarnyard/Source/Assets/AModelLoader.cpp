@@ -515,13 +515,13 @@ TTMDBase::Material* AModelLoader::FindMaterialInModel( const TCHAR* a_szName )
 }
 
 // $Barnyard: FUNCTION 006528c0
-TBOOL AModelLoader::AModelLoaderLoadTMDCallback( TModel* a_pModel )
+TBOOL __stdcall AModelLoader::AModelLoaderLoadTMDCallback( TModel* a_pModel )
 {
 	return TFALSE;
 }
 
 // $Barnyard: FUNCTION 006114d0
-TBOOL AModelLoader::AModelLoaderLoadTRBCallback( TModel* a_pModel )
+TBOOL __stdcall AModelLoader::AModelLoaderLoadTRBCallback( TModel* a_pModel )
 {
 	TPROFILER_SCOPE();
 

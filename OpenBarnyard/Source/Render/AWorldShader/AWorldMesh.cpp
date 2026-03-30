@@ -123,3 +123,13 @@ void AWorldMesh::DestroyResource()
 	m_uiFlags       = 0;
 	m_uiMaxVertices = 0;
 }
+
+// $Barnyard: FUNCTION 005f8bd0
+AWorldMesh::SubMesh::~SubMesh()
+{
+	if ( pIndexPool )
+	{
+		TRenderInterface::GetSingleton()->DestroyResource( pIndexPool );
+		pIndexPool = TNULL;
+	}
+}

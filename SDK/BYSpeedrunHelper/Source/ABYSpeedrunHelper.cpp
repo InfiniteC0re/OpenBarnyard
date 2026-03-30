@@ -537,6 +537,8 @@ public:
 					ImGui::Checkbox( "Show reachable waypoints", &g_oSettings.bShowReachableWaypoints );
 					ImGui::Checkbox( "Show unreachable waypoints", &g_oSettings.bShowUnreachableWaypoints );
 					ImGui::Checkbox( "Show reached waypoints", &g_oSettings.bShowReachedWaypoints );
+
+					bDrawnUI = TTRUE;
 				}
 
 				if ( bDrawnUI )

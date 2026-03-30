@@ -359,10 +359,10 @@ TBOOL ARenderer::OnCreate()
 		TRenderContext* pRenderContext = m_pViewport->GetRenderContext();
 		pRenderContext->SetFogColor(
 		    TVector4(
-		        0.5568628,
-		        0.64705884,
-		        0.7529412,
-		        0.0
+		        0.5568628f,
+		        0.64705884f,
+		        0.7529412f,
+		        0.0f
 		    )
 		);
 		pRenderContext->SetFogDistance( 60.0f, 160.0f );
