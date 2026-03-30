@@ -18,6 +18,10 @@
 #  include "Profiler/tracy/Tracy.hpp"
 #endif // TOSHI_PROFILER_MEMORY
 
+#ifdef __SANITIZE_ADDRESS__
+#  include <sanitizer/asan_interface.h>
+#endif
+
 #include "TMemoryDebugOff.h"
 
 /**
@@ -160,39 +164,6 @@ TMemory::~TMemory()
 	g_pMemory = TNULL;
 }
 
-// General utility macro
-#  define PP_CAT( A, B )   A##B
-#  define PP_EXPAND( ... ) __VA_ARGS__
-
-// Macro overloading feature support
-#  define PP_VA_ARG_SIZE( ... ) PP_EXPAND( PP_APPLY_ARG_N( ( PP_ZERO_ARGS_DETECT( __VA_ARGS__ ), PP_RSEQ_N ) ) )
-
-#  define PP_ZERO_ARGS_DETECT( ... )                          PP_EXPAND( PP_ZERO_ARGS_DETECT_PREFIX_##__VA_ARGS__##_ZERO_ARGS_DETECT_SUFFIX )
-#  define PP_ZERO_ARGS_DETECT_PREFIX__ZERO_ARGS_DETECT_SUFFIX , , , , , , , , , , , 0
-
-#  define PP_APPLY_ARG_N( ARGS )                                                         PP_EXPAND( PP_ARG_N ARGS )
-#  define PP_ARG_N( _0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, N, ... ) N
-#  define PP_RSEQ_N                                                                      14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0
-
-#  define PP_OVERLOAD_SELECT( NAME, NUM ) PP_CAT( NAME##_, NUM )
-#  define PP_MACRO_OVERLOAD( NAME, ... )  PP_OVERLOAD_SELECT( NAME, PP_VA_ARG_SIZE( __VA_ARGS__ ) )( __VA_ARGS__ )
-
-#  define CALL_THIS_4( ADDR, TYPE, RET_TYPE, THIS )                                                                             ( ( RET_TYPE( __thiscall* )( TYPE pThis ) )( ADDR ) )( THIS )
-#  define CALL_THIS_6( ADDR, TYPE, RET_TYPE, THIS, TYPE1, VALUE1 )                                                              ( ( RET_TYPE( __thiscall* )( TYPE, TYPE1 ) )( ADDR ) )( THIS, VALUE1 )
-#  define CALL_THIS_8( ADDR, TYPE, RET_TYPE, THIS, TYPE1, VALUE1, TYPE2, VALUE2 )                                               ( ( RET_TYPE( __thiscall* )( TYPE, TYPE1, TYPE2 ) )( ADDR ) )( THIS, VALUE1, VALUE2 )
-#  define CALL_THIS_10( ADDR, TYPE, RET_TYPE, THIS, TYPE1, VALUE1, TYPE2, VALUE2, TYPE3, VALUE3 )                               ( ( RET_TYPE( __thiscall* )( TYPE, TYPE1, TYPE2, TYPE3 ) )( ADDR ) )( THIS, VALUE1, VALUE2, VALUE3 )
-#  define CALL_THIS_12( ADDR, TYPE, RET_TYPE, THIS, TYPE1, VALUE1, TYPE2, VALUE2, TYPE3, VALUE3, TYPE4, VALUE4 )                ( ( RET_TYPE( __thiscall* )( TYPE, TYPE1, TYPE2, TYPE3, TYPE4 ) )( ADDR ) )( THIS, VALUE1, VALUE2, VALUE3, VALUE4 )
-#  define CALL_THIS_14( ADDR, TYPE, RET_TYPE, THIS, TYPE1, VALUE1, TYPE2, VALUE2, TYPE3, VALUE3, TYPE4, VALUE4, TYPE5, VALUE5 ) ( ( RET_TYPE( __thiscall* )( TYPE, TYPE1, TYPE2, TYPE3, TYPE4, TYPE5 ) )( ADDR ) )( THIS, VALUE1, VALUE2, VALUE3, VALUE4, VALUE5 )
-#  define CALL_THIS( ... )                                                                                                      PP_MACRO_OVERLOAD( CALL_THIS, __VA_ARGS__ )
-
-#  define CALL_2( ADDR, RET_TYPE )                                                                             ( ( RET_TYPE( __stdcall* )() )( ADDR ) )()
-#  define CALL_4( ADDR, RET_TYPE, TYPE1, VALUE1 )                                                              ( ( RET_TYPE( __stdcall* )( TYPE1 ) )( ADDR ) )( VALUE1 )
-#  define CALL_6( ADDR, RET_TYPE, TYPE1, VALUE1, TYPE2, VALUE2 )                                               ( ( RET_TYPE( __stdcall* )( TYPE1, TYPE2 ) )( ADDR ) )( VALUE1, VALUE2 )
-#  define CALL_8( ADDR, RET_TYPE, TYPE1, VALUE1, TYPE2, VALUE2, TYPE3, VALUE3 )                                ( ( RET_TYPE( __stdcall* )( TYPE1, TYPE2, TYPE3 ) )( ADDR ) )( VALUE1, VALUE2, VALUE3 )
-#  define CALL_10( ADDR, RET_TYPE, TYPE1, VALUE1, TYPE2, VALUE2, TYPE3, VALUE3, TYPE4, VALUE4 )                ( ( RET_TYPE( __stdcall* )( TYPE1, TYPE2, TYPE3, TYPE4 ) )( ADDR ) )( VALUE1, VALUE2, VALUE3, VALUE4 )
-#  define CALL_12( ADDR, RET_TYPE, TYPE1, VALUE1, TYPE2, VALUE2, TYPE3, VALUE3, TYPE4, VALUE4, TYPE5, VALUE5 ) ( ( RET_TYPE( __stdcall* )( TYPE1, TYPE2, TYPE3, TYPE4, TYPE5 ) )( ADDR ) )( VALUE1, VALUE2, VALUE3, VALUE4, VALUE5 )
-#  define CALL( ... )                                                                                          PP_MACRO_OVERLOAD( CALL, __VA_ARGS__ )
-
 // $Barnyard: FUNCTION 006b5230
 /**
  * @brief Allocates memory with specified size and alignment
@@ -212,176 +183,141 @@ TMemory::~TMemory()
  */
 void* TMemory::Alloc( TSIZE a_uiSize, TSIZE a_uiAlignment, MemBlock* a_pMemBlock, const TCHAR* a_szFileName, TINT a_iLineNum )
 {
-	//return CALL_THIS( 0x006b5230, TMemory*, void*, this, TUINT, a_uiSize, TINT, a_uiAlignment, MemBlock*, a_pMemBlock, const TCHAR*, a_szFileName, TINT, a_iLineNum );
-
 	TMUTEX_LOCK_SCOPE( ms_pGlobalMutex );
 
-	volatile TSIZE uiSize      = a_uiSize;
-	volatile TSIZE uiAlignment = a_uiAlignment;
-	MemBlock*      pMemBlock   = a_pMemBlock;
-
+	TSIZE uiSize = a_uiSize;
 	if ( uiSize < 4 )
 		uiSize = 4;
 
+	TSIZE uiAlignment = a_uiAlignment;
 	if ( uiAlignment < 16 )
 		uiAlignment = 16;
+
+	MemBlock* pBlock = a_pMemBlock;
+	if ( !pBlock )
+		pBlock = this->m_pGlobalBlock;
 
 	if ( uiAlignment < TMEMORY_ROUNDUP )
 	{
 		TDebug_FinalPrintf( "MEMORY ERROR: CANT ALLOC Alignment(%d)<TMEMORY_ROUNDUP\n", uiAlignment );
-		DebugPrintHALMemInfo( "Out of Toshi Memory on block [%s]\n", pMemBlock->m_szName );
+		DebugPrintHALMemInfo( "Out of Toshi Memory on block [%s]\n", pBlock->m_szName );
 		TASSERT( TFALSE );
 		return TNULL;
 	}
 
-	if ( !pMemBlock )
+	// Align size up to the nearest 4 bytes boundary
+	TSIZE alignedSize = TAlignNumUp( uiSize );
+	TSIZE listIndex   = MapSizeToFreeList( alignedSize );
+
+	TSIZE    index         = listIndex;
+	MemNode* hole          = TNULL;
+	TSIZE    availableSize = 0;
+	void*    alignedStart  = TNULL;
+
+	// Find a suitable hole in the free lists
+	if ( index < TMEMORY_NUM_FREELISTS )
 	{
-		pMemBlock = m_pGlobalBlock;
-	}
-
-	volatile TSIZE uiAlignedSize  = TAlignNumUp( uiSize );
-	volatile TSIZE uiRequiredSize = uiAlignedSize + sizeof( MemNode );
-
-	MemNode* pMemNode = TNULL;
-
-	volatile void*    pAllocatedAddress;
-	volatile TUINTPTR uiDataRegionStart;
-	volatile TUINTPTR uiDataRegionEnd;
-	volatile TUINTPTR uiDataRegionSize;
-
-	volatile TUINT uiNodeId = MapSizeToFreeList( uiAlignedSize );
-
-	// Find a hole that can allocate the required number of bytes
-	for ( ; uiNodeId < TMEMORY_NUM_FREELISTS; uiNodeId++ )
-	{
-		pMemNode = pMemBlock->m_apHoles[ uiNodeId ];
-
-		while ( pMemNode != TNULL )
+		while ( index < TMEMORY_NUM_FREELISTS )
 		{
-			pAllocatedAddress = TAlignPointerUp( pMemNode->GetDataRegionStart(), uiAlignment );
-			uiDataRegionStart = TREINTERPRETCAST( TUINTPTR, pAllocatedAddress );
-			uiDataRegionEnd   = TREINTERPRETCAST( TUINTPTR, pMemNode->GetDataRegionEnd() );
-			uiDataRegionSize  = uiDataRegionEnd - uiDataRegionStart;
+			hole = pBlock->m_apHoles[ index ];
+			while ( hole )
+			{
+				// Align start address based on requested alignment
+				alignedStart = TAlignPointerUp( hole->GetDataRegionStart(), uiAlignment );
 
-			if ( uiDataRegionEnd > uiDataRegionStart && uiDataRegionSize >= uiAlignedSize )
-				break;
+				if ( (TUINTPTR)hole->GetDataRegionEnd() > (TUINTPTR)alignedStart )
+				{
+					availableSize = (TUINTPTR)hole->GetDataRegionEnd() - (TUINTPTR)alignedStart;
+					if ( availableSize >= alignedSize )
+						goto HOLE_FOUND;
+				}
 
-			// This freelist can't be used, let's check for the next
-			pMemNode = pMemNode->pNextHole;
+				hole = hole->pNextHole;
+			}
+			index++;
 		}
-
-		if ( pMemNode )
-			break;
 	}
 
-	if ( !pMemNode )
+	// Out of memory path
+	DebugPrintHALMemInfo( "Out of Toshi Memory on block [%s]\n", pBlock->m_szName );
+	DebugPrintHALMemInfo( "Requested memory block size: %d\n", alignedSize );
+	DumpMemInfo();
+
+	TASSERT( TFALSE );
+	return TNULL;
+
+HOLE_FOUND:
+	if ( hole->pOwner == TNULL )
 	{
-		DebugPrintHALMemInfo( "Out of Toshi Memory on block [%s]\n", pMemBlock->m_szName );
-		DebugPrintHALMemInfo( "Requested memory block size: %d\n", uiAlignedSize );
-		DumpMemInfo();
-
-		TASSERT( TFALSE );
-		return TNULL;
-	}
-
-#  ifdef TOSHI_PROFILER_MEMORY
-	// Create named zone to make it possible to know where the allocation occured
-	tracy::ScopedZone zone( TMemory__LINE__, TMemory__FILE__, T2String8::Length( TMemory__FILE__ ), "", 0, TMemory__FUNC__ ? TMemory__FUNC__ : "", TMemory__FUNC__ ? T2String8::Length( TMemory__FUNC__ ) : 0 );
-#  endif
-
-	MemNode* pAllocNode = MEM_TO_NODE( pAllocatedAddress );
-
-	if ( volatile MemNode* pOwner = pMemNode->pOwner )
-	{
-		pOwner->uiSize = ( uiDataRegionStart - (TUINTPTR)pOwner - 24 ) | pOwner->uiSize & TMEMORY_FLAGS_MASK;
-	}
-	else if ( pAllocNode != pMemNode )
-	{
-		// Seems that due to alignment we have a gap between start of the
-		// data region and the actual address we gonna return so let's
-		// make sure we don't lost this pointer
-		pMemBlock->m_pFirstHole = pAllocNode;
-	}
-
-	// Check if we can split the hole in two
-	if ( uiDataRegionSize > uiRequiredSize )
-	{
-		// We can split it!
-
-		// Unlink the hole from the linked list
-		if ( volatile MemNode* pPrev = pMemNode->pPrevHole )
-			pPrev->pNextHole = pMemNode->pNextHole;
-		else
-			pMemBlock->m_apHoles[ uiNodeId ] = pMemNode->pNextHole;
-
-		// Remove reference to this hole from the next one
-		if ( volatile MemNode* pNext = pMemNode->pNextHole )
-			pNext->pPrevHole = pMemNode->pPrevHole;
-
-		if ( pMemNode != pAllocNode )
+		MemNode* newNode = MEM_TO_NODE( alignedStart );
+		if ( newNode != hole )
 		{
-			TSIZE uiNodeSize                                                      = GetNodeSize( pMemNode );
-			pAllocNode->pOwner                                                    = pMemNode->pOwner;
-			*(MemNode**)( (TUINTPTR)pMemNode->GetDataRegionStart() + uiNodeSize ) = pAllocNode;
+			// If this is the root hole and it shifts due to alignment, update the block's tracker
+			pBlock->m_pFirstHole = newNode;
 		}
-
-		// Create a new hole right after the allocated data
-		MemNode* pNewNode = TREINTERPRETCAST( MemNode*, uiDataRegionStart + uiAlignedSize );
-
-		SetProcess( pMemBlock, pAllocNode, uiDataRegionSize );
-		SetHoleSize( pNewNode, (TUINTPTR)pAllocNode + GetNodeSize( pAllocNode ) - uiDataRegionStart - uiAlignedSize );
-		SetProcess( pMemBlock, pAllocNode, uiAlignedSize + uiDataRegionStart - (TUINTPTR)pAllocNode - TMEMORY_ALLOC_RESERVED_SIZE );
-		pNewNode->pOwner = pAllocNode;
-
-		// Place the new hole in the memblock's list
-
-		TUINT uiNewHoleId = MapSizeToFreeList( GetNodeSize( pNewNode ) );
-
-		MemNode* pOldNode   = pMemBlock->m_apHoles[ uiNewHoleId ];
-		pNewNode->pNextHole = pOldNode;
-
-		if ( pOldNode )
-			pOldNode->pPrevHole = pNewNode;
-
-		pNewNode->pPrevHole                 = TNULL;
-		pMemBlock->m_apHoles[ uiNewHoleId ] = pNewNode;
-
-		// Save pointer to the hole right at the end of the data region (probably for some validation)
-		*(MemNode* volatile*)pNewNode->GetDataRegionEnd() = pNewNode;
-
-#  ifdef TOSHI_PROFILER_MEMORY
-		TracyAlloc( (void*)pAllocatedAddress, uiAlignedSize );
-#  endif
-		return (void*)pAllocatedAddress;
 	}
 	else
 	{
-		// Damn, we can't split this one but it surely can fit the allocation
+		// Adjust the owner's size retaining its original flags (bottom 2 bits), extending it to absorb padding
+		hole->pOwner->uiSize = ( hole->pOwner->uiSize & TMEMORY_FLAGS_MASK ) | ( (TUINTPTR)alignedStart - (TUINTPTR)hole->pOwner - 24 );
+	}
 
-		// Unlink the hole from the linked list
-		if ( volatile MemNode* pPrev = pMemNode->pPrevHole )
-			pPrev->pNextHole = pMemNode->pNextHole;
-		else
-			pMemBlock->m_apHoles[ uiNodeId ] = pMemNode->pNextHole;
+	// Disconnect old hole from its free list
+	if ( hole->pPrevHole )
+		hole->pPrevHole->pNextHole = hole->pNextHole;
+	else
+		pBlock->m_apHoles[ index ] = hole->pNextHole;
 
-		// Remove reference to this hole from the next one
-		if ( volatile MemNode* pNext = pMemNode->pNextHole )
-			pNext->pPrevHole = pMemNode->pPrevHole;
+	if ( hole->pNextHole )
+		hole->pNextHole->pPrevHole = hole->pPrevHole;
 
-		if ( pMemNode != pAllocNode )
-		{
-			TSIZE uiNodeSize                                                               = GetNodeSize( pMemNode );
-			pAllocNode->pOwner                                                             = pMemNode->pOwner;
-			*(MemNode* volatile*)( (TUINTPTR)pMemNode->GetDataRegionStart() + uiNodeSize ) = pAllocNode;
-		}
+	MemNode* newNode = MEM_TO_NODE( alignedStart );
+	if ( newNode != hole )
+	{
+		MemNode** pBoundaryTag = (MemNode**)hole->GetDataRegionEnd();
+		MemNode*  pCachedOwner = hole->pOwner;
 
-		SetProcess( pMemBlock, pAllocNode, uiDataRegionSize );
+		newNode->pOwner = pCachedOwner;
+		*pBoundaryTag   = newNode;
+	}
+
+	if ( availableSize > alignedSize + sizeof( MemNode ) )
+	{
+		// Split Hole
+		MemNode* newHole       = (MemNode*)( (TUINTPTR)alignedStart + alignedSize );
+		TSIZE    remainingSize = availableSize - ( sizeof( MemNode ) - sizeof( void* ) ) - alignedSize;
+
+		newHole->uiSize = remainingSize;
+		newHole->pOwner = newNode;
+
+		newNode->pMemBlock = pBlock;
+		newNode->uiSize    = alignedSize | m_uiGlobalFlags | 1; // OR '1' flag sets allocation to true
+
+		// Insert new remainder hole into appropriate free list
+		TSIZE newIndex     = MapSizeToFreeList( remainingSize - 1 );
+		newHole->pNextHole = pBlock->m_apHoles[ newIndex ];
+
+		if ( newHole->pNextHole )
+			newHole->pNextHole->pPrevHole = newHole;
+
+		newHole->pPrevHole            = TNULL;
+		pBlock->m_apHoles[ newIndex ] = newHole;
+
+		*(MemNode**)newHole->GetDataRegionEnd() = newHole; // Apply boundary tag
+	}
+	else
+	{
+		// Consume Entire Hole
+		newNode->pMemBlock = pBlock;
+		newNode->uiSize    = availableSize | m_uiGlobalFlags | 1; // Mark node completely occupied
+
+	}
 
 #  ifdef TOSHI_PROFILER_MEMORY
-		TracyAlloc( (void*)pAllocatedAddress, uiAlignedSize );
+	TracyAlloc( alignedStart, alignedSize );
 #  endif
-		return (void*)pAllocatedAddress;
-	}
+
+	return alignedStart;
 }
 
 // $Barnyard: FUNCTION 006b4a20
@@ -398,8 +334,6 @@ void* TMemory::Alloc( TSIZE a_uiSize, TSIZE a_uiAlignment, MemBlock* a_pMemBlock
  */
 TBOOL TMemory::Free( const void* a_pAllocated )
 {
-	//return CALL_THIS( 0x006b4a20, TMemory*, TBOOL, this, const void*, a_pAllocated );
-
 	TMUTEX_LOCK_SCOPE( ms_pGlobalMutex );
 
 	if ( !a_pAllocated || !TIsPointerAligned( a_pAllocated ) )
@@ -416,6 +350,10 @@ TBOOL TMemory::Free( const void* a_pAllocated )
 
 	TSIZE     uiAllocationSize = GetNodeSize( pAllocationNode );
 	MemBlock* pMemBlock        = GetProcessMemBlock( pAllocationNode );
+
+#  ifdef __SANITIZE_ADDRESS__
+	__asan_unpoison_memory_region( a_pAllocated, uiAllocationSize );
+#  endif
 
 	SetHoleSize( pAllocationNode, uiAllocationSize );
 

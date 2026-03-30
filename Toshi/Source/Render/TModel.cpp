@@ -124,6 +124,12 @@ TBOOL TModel::LoadTRB( TTRB* a_pTRB )
 // $Barnyard: FUNCTION 006ce820
 TBOOL TModel::LoadTRB( const TCHAR* a_szFileName, TTRB* a_pAssetTRB, TUINT8 a_ui8FileNameLen )
 {
+#ifdef BARNYARD_COMMUNITY_PATCH
+
+	if ( m_bIsAssetFile && m_pTRB ) delete[] m_szSymbolPrefix;
+
+#endif // BARNYARD_COMMUNITY_PATCH
+
 	if ( !m_bIsAssetFile && m_pTRB )
 	{
 		delete m_pTRB;
@@ -147,12 +153,29 @@ TBOOL TModel::LoadTRB( const TCHAR* a_szFileName, TTRB* a_pAssetTRB, TUINT8 a_ui
 		}
 	}
 
+#ifdef BARNYARD_COMMUNITY_PATCH
+	if ( m_bIsAssetFile )
+	{
+		// Trying to fix careless memory handling that sometimes causes crashes in the original game
+		m_szSymbolPrefix = T2String8::CreateCopy( a_szFileName );
+	}
+#endif // BARNYARD_COMMUNITY_PATCH
+
 	return LoadTRB();
 }
 
 // $Barnyard: FUNCTION 006ce780
 void TModel::UnloadTRB()
 {
+#ifdef BARNYARD_COMMUNITY_PATCH
+	if ( m_bIsAssetFile )
+	{
+		// Patch creates a copy of the symbol string so need to deallocate it here
+		delete[] m_szSymbolPrefix;
+		m_szSymbolPrefix = TNULL;
+	}
+#endif // BARNYARD_COMMUNITY_PATCH
+
 	if ( m_pTRB )
 	{
 		// Reset pointers in collision meshes, since we don't own the data and don't want to free it

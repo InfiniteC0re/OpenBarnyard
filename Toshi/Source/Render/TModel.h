@@ -76,8 +76,8 @@ public:
 		Flags_Loaded  = BITFLAG( 1 ),
 	};
 
-	using t_ModelLoaderTRBCallback = TBOOL ( * )( TModel* a_pModel );
-	using t_ModelLoaderTMDCallback = TBOOL ( * )( TModel* a_pModel );
+	using t_ModelLoaderTRBCallback = TBOOL( __stdcall* )( TModel* a_pModel );
+	using t_ModelLoaderTMDCallback = TBOOL( __stdcall* )( TModel* a_pModel );
 
 	static constexpr TUINT MAX_NUM_LODS = 5;
 
