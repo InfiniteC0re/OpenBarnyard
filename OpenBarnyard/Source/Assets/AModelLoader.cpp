@@ -226,7 +226,8 @@ TMaterial* AModelLoader::CreateMaterial( TShader* a_pShader, const TCHAR* a_szMa
 
 		szTextureName = pTMDMaterial->szTextureFile;
 	}
-	else
+	
+	if ( !pTMDMaterial || !pTexture )
 	{
 		TTRACE( "Couldn't find texture for material '%s'", a_szMaterialName );
 		pTexture = TDYNAMICCAST(
@@ -559,13 +560,13 @@ TBOOL __stdcall AModelLoader::AModelLoaderLoadTRBCallback( TModel* a_pModel )
 
 		switch ( pTRBLod->m_eShader )
 		{
-			case TTMDWin::ST_WORLD:
+			case TTMDBase::SHADERTYPE_WORLD:
 				LoadWorldMeshTRB( a_pModel, i, &a_pModel->m_LODs[ i ], pTRBLod );
 				break;
-			case TTMDWin::ST_SKIN:
+			case TTMDBase::SHADERTYPE_SKIN:
 				LoadSkinLOD( a_pModel, i, &a_pModel->m_LODs[ i ], pTRBLod );
 				break;
-			case TTMDWin::ST_GRASS:
+			case TTMDBase::SHADERTYPE_GRASS:
 				LoadGrassMeshTRB( a_pModel, i, &a_pModel->m_LODs[ i ], pTRBLod );
 				break;
 			default:

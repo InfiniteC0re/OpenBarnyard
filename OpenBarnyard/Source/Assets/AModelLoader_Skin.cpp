@@ -34,7 +34,7 @@ void AModelLoader::LoadSkinLOD( Toshi::TModel* a_pModel, TINT a_iLODIndex, Toshi
 		T2FormatString128 symbolName;
 		symbolName.Format( "LOD%d_Mesh_%d", a_iLODIndex, i );
 
-		auto pTRBMesh = a_pModel->CastSymbol<TTMDWin::TRBLODMesh>( symbolName.Get() );
+		auto pTRBMesh = a_pModel->CastSymbol<TTMDWin::TRBMeshLODHeader>( symbolName.Get() );
 
 		auto pMesh = pShader->CreateMesh( TNULL );
 		pMesh->Create( 0, pTRBMesh->m_uiNumVertices, pTRBMesh->m_uiNumSubMeshes );

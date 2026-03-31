@@ -297,7 +297,7 @@ void AGameLoader::LoadFrontEnd()
 	ACollisionManager::GetSingleton()->CreateObjectHashMain( ACollisionManager::HashType_UNK2 );
 	AInstanceManager::GetSingleton()->LoadModels( 1, s_iNumFrontEndInstanceModels, s_aFrontEndInstanceModels, TFALSE, TFALSE, s_iNumFrontEndCollModelNodes );
 
-	AGameLoader::Terrain_Set( AGameLoader::Terrain_FrontEnd, TTRUE, TTRUE, 0, 0, 0, 0 );
+	AGameLoader::Terrain_Set( AGameLoader::Terrain_EnvMain, TTRUE, TTRUE, 0, 0, 0, 0 );
 	AGameLoader::Terrain_Load();
 	AAssetLoader::CreateAssetsFromLibrary( "lib_frontend" );
 
@@ -311,7 +311,7 @@ void AGameLoader::LoadFrontEnd()
 
 	// Create front end state
 	AFrontEndMainMenuState2* pFrontEndState = new AFrontEndMainMenuState2();
-	AGameLoader::Terrain_Set( AGameLoader::Terrain_FrontEnd, TFALSE, TTRUE, 0, 0, 0, 0 );
+	AGameLoader::Terrain_Set( AGameLoader::Terrain_EnvMain, TFALSE, TTRUE, 0, 0, 0, 0 );
 	pFrontEndState->SetupCamera();
 
 	AGameLoader::Terrain_Load();

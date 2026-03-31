@@ -202,7 +202,7 @@ int main( int argc, char** argv )
 					char szSymbolName[ 128 ];
 					TStringManager::String8Format( szSymbolName, sizeof( szSymbolName ), "LOD%d_Mesh_%d", i, k );
 
-					auto pInLODMesh = pInSYMB->Find<TTMDWin::TRBLODMesh>( pInSECT, szSymbolName );
+					auto pInLODMesh = pInSYMB->Find<TTMDWin::TRBMeshLODHeader>( pInSECT, szSymbolName );
 
 					TINFO( "    %s:\n", szSymbolName );
 					TINFO( "      Sub Mesh Count: %u\n", pInLODMesh->m_uiNumSubMeshes );
