@@ -14,6 +14,6 @@ public:
 
 	TBOOL IsFinished() const { return m_bIsFinished; }
 
-protected:
+public:
 	TBOOL m_bIsFinished = TFALSE;
 };

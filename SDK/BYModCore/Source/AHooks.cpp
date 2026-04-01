@@ -173,6 +173,37 @@ MEMBER_HOOK( 0x006b4a20, TMemory, TMemory_Free, TBOOL, void* a_pMem )
 #endif // !TMEMORY_USE_DLMALLOC
 }
 
+// Good for debugging memory leaks:
+// HOOK( 0x006b5540, TMalloc1, void*, TUINT a_uiSize, TMemory::MemBlock* a_pMemBlock, const char* a_szUnused1, TINT a_iUnused2 )
+// {
+// 	TPROFILER_SCOPE();
+// 
+// 	( TMemory__FUNC__ = __FUNCSIG__, TMemory__FILE__ = __FILE__, TMemory__LINE__ = (TINT)_ReturnAddress() );
+// 	return CallOriginal( a_uiSize, a_pMemBlock, a_szUnused1, a_iUnused2 );
+// }
+// 
+// HOOK( 0x006b5630, TMalloc2, void*, TUINT a_uiSize )
+// {
+// 	TPROFILER_SCOPE();
+// 
+// 	( TMemory__FUNC__ = __FUNCSIG__, TMemory__FILE__ = __FILE__, TMemory__LINE__ = (TINT)_ReturnAddress() );
+// 	return CallOriginal( a_uiSize );
+// }
+// 
+// HOOK( 0x006b5590, TMemAlign1, void*, TUINT a_uiAlignment, TUINT a_uiSize, TMemory::MemBlock* a_pMemBlock )
+// {
+// 	TPROFILER_SCOPE();
+// 
+// 	( TMemory__FUNC__ = __FUNCSIG__, TMemory__FILE__ = __FILE__, TMemory__LINE__ = (TINT)_ReturnAddress() );
+// 	return CallOriginal( a_uiAlignment, a_uiSize, a_pMemBlock );
+// }
+// 
+// HOOK( 0x006b5670, TMemAlign2, void*, TUINT a_uiSize, TUINT a_uiAlignment )
+// {
+// 	( TMemory__FUNC__ = __FUNCSIG__, TMemory__FILE__ = __FILE__, TMemory__LINE__ = (TINT)_ReturnAddress() );
+// 	return CallOriginal( a_uiSize, a_uiAlignment );
+// }
+
 MEMBER_HOOK( 0x006b5230, TMemory, TMemory_Alloc, void*, TUINT a_uiSize, TUINT a_uiAlignment, TMemory::MemBlock* a_pMemBlock, const char* a_szUnused1, TINT a_iUnused2 )
 {
 #ifdef TMEMORY_USE_DLMALLOC
@@ -430,7 +461,7 @@ MEMBER_HOOK( 0x006bb000, TTRB, TTRB_Load, TINT, const char* a_szFileName, TUINT 
 				filepath += pOrigFileName->GetString();
 				bFound = TTRUE;
 				break;
-			}
+}
 		}
 
 		if ( bFound ) break;
@@ -791,6 +822,8 @@ MEMBER_HOOK( 0x006d5970, TOrderTable, TOrderTable_Flush, void )
 
 HOOK( 0x006114d0, AModelLoader_AModelLoaderLoadTRBCallback, TBOOL, TModel* a_pModel )
 {
+	TPROFILER_SCOPE();
+
 	TBOOL bRes = TFALSE;
 
 	for ( TINT i = 0; i < AHooks::ModelLoader::LoadTRBCallback[ HookType_Before ].Size(); i++ )
@@ -1058,6 +1091,11 @@ void AHooks::Initialise()
 
 	InstallHook<ATreeManager_Render>();
 	InstallHook<ARegrowthManager_FindObjectShittyWay>();
+
+// 	InstallHook<TMalloc1>();
+// 	InstallHook<TMalloc2>();
+// 	InstallHook<TMemAlign1>();
+// 	InstallHook<TMemAlign2>();
 
 #ifdef USE_ATOMIC
 	InstallHook<TMutex_Create>();

@@ -13,6 +13,6 @@ public:
 
 	Toshi::TTRBStreamJob& GetStream() { return m_oStreamJob; }
 
-protected:
+public:
 	Toshi::TTRBStreamJob m_oStreamJob;
 };

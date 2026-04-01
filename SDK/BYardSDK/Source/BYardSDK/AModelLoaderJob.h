@@ -12,7 +12,7 @@ public:
 
 	void InitJob( Toshi::TManagedModel* a_pModelRef, Toshi::TTRB* a_pTRB, const char* a_szFileName, TBOOL a_bCanBeCanceled );
 
-private:
+public:
 	Toshi::TManagedModel* m_pModelRef = TNULL;
 	Toshi::TModel*        m_pModel    = TNULL;
 	TBOOL                 m_bCanBeCanceled;

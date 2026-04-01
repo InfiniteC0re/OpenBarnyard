@@ -3,6 +3,7 @@
 #include "AImGui.h"
 #include "AImGuiState.h"
 #include "ADebugFlyState.h"
+#include "AGameTimeFXEditor.h"
 #include "DXVK/d3d8/d3d8_device.h"
 #include "imgui_impl_dx8.h"
 #include "imgui_impl_dx9.h"
@@ -200,6 +201,8 @@ void AImGUI::Toggle()
 	}
 }
 
+static AGameTimeFXEditor* s_pFXEditor = TNULL;
+
 void AImGUI::Render()
 {
 	constexpr TFLOAT WINDOW_MAX_WIDTH  = 580;
@@ -271,16 +274,22 @@ void AImGUI::Render()
 				CALL( 0x00603210, void );
 			}
 
-			if (ImGui::Button("Start New Game (Experimental)"))
+			if ( ImGui::Button( "FX Editor" ) )
 			{
-				Toggle();
-				//AGameStateController::GetSingleton()->ReplaceState(new AGameState);
-				*(TUINT*)(0x007817ec) = 1;
-				CALL_THIS(0x00651a90, void*, void, *(void**)0x007b5ea8);
-				AGameStateController::GetSingleton()->m_eFlags |= 0x20;
-				CALL_THIS(0x00429580, AGameStateController*, void, AGameStateController::GetSingleton(), TINT, 0x2002);
-				//AGameStateController::GetSingleton()->GetCurrentState()->Remove();
+				if ( !s_pFXEditor ) s_pFXEditor = new AGameTimeFXEditor();
+				s_pFXEditor->SetVisible( TTRUE );
 			}
+
+// 			if (ImGui::Button("Start New Game (Experimental)"))
+// 			{
+// 				Toggle();
+// 				//AGameStateController::GetSingleton()->ReplaceState(new AGameState);
+// 				*(TUINT*)(0x007817ec) = 1;
+// 				CALL_THIS(0x00651a90, void*, void, *(void**)0x007b5ea8);
+// 				AGameStateController::GetSingleton()->m_eFlags |= 0x20;
+// 				CALL_THIS(0x00429580, AGameStateController*, void, AGameStateController::GetSingleton(), TINT, 0x2002);
+// 				//AGameStateController::GetSingleton()->GetCurrentState()->Remove();
+// 			}
 
 			//auto pPrevState = AGameStateController::GetSingleton()->GetPreviousState();
 
@@ -396,6 +405,9 @@ void AImGUI::Render()
 	}
 
 	ImGui::End();
+
+	// Various windows...
+	if ( s_pFXEditor ) s_pFXEditor->Render();
 }
 
 void AImGUI::RenderOverlay()
