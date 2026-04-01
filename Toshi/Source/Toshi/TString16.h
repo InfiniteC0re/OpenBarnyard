@@ -161,8 +161,8 @@ private:
 
 private:
 	TWCHAR*      m_pBuffer;        // 0x0
-	TUINT32      m_iExcessLen : 8; // 0x4
-	TINT32       m_iStrLen : 24;   // 0x5
+	TINT32       m_iStrLen : 24;   // 0x4
+	TUINT32      m_iExcessLen : 8; // 0x5
 	T2Allocator* m_pAllocator;     // 0x8
 };
 
