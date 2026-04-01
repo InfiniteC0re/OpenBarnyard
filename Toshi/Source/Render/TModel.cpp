@@ -88,7 +88,7 @@ TBOOL TModel::LoadTRB()
 		for ( TUINT k = 0; k < collisionMeshHeader.m_uiNumCollTypes; k++ )
 		{
 			collisionMesh.m_vecCollGroups[ k ].strName    = collisionMeshHeader.m_pCollGroups[ k ].pszName;
-			collisionMesh.m_vecCollGroups[ k ].uiUnk1     = collisionMeshHeader.m_pCollGroups[ k ].iUnk1;
+			collisionMesh.m_vecCollGroups[ k ].uiUnk1     = collisionMeshHeader.m_pCollGroups[ k ].iUnk3;
 			collisionMesh.m_vecCollGroups[ k ].uiNumFaces = collisionMeshHeader.m_pCollGroups[ k ].uiNumFaces;
 
 			// TODO: figure out what it is

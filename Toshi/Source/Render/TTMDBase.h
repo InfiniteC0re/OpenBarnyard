@@ -70,8 +70,8 @@ struct CollisionGroup
 {
 	const TCHAR*     pszName;
 	TUINT            iUnk1;
-	TUINT            uiNumFaces;
 	TUINT            iUnk3;
+	TUINT            uiNumFaces;
 	TINT             iSomeCount;
 	CollisionTypeS1* pS1;
 };
