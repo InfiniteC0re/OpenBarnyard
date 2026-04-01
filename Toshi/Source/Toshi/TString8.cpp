@@ -265,6 +265,7 @@ void TString8::Truncate( TINT length )
 	}
 
 	TCHAR* oldBuffer = m_pBuffer;
+	TINT   iOldLength = Length();
 
 	TBOOL allocated = AllocBuffer( length, TFALSE );
 	if ( allocated )
@@ -274,7 +275,7 @@ void TString8::Truncate( TINT length )
 
 	m_pBuffer[ length ] = 0;
 
-	if ( allocated && Length() != 0 )
+	if ( allocated && iOldLength > 0 )
 	{
 		m_pAllocator->Free( oldBuffer );
 	}
