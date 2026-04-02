@@ -205,16 +205,12 @@ public:
 	{
 		for ( TINT i = 0; i < 4; i++ )
 		{
-			TFLOAT* pBasis = AsBasisVector4( i ).AsArray();
+			TVector4& basis = AsBasisVector4( i );
 
-			for ( TINT k = 0; k < 4; k++ )
-			{
-				pBasis[ k ] =
-				    a_fScalar * a_rMatrix.AsBasisVector4( i ).w +
-				    a_fScalar * a_rMatrix.AsBasisVector4( i ).z +
-				    a_fScalar * a_rMatrix.AsBasisVector4( i ).y +
-				    a_fScalar * a_rMatrix.AsBasisVector4( i ).x;
-			}
+			basis.x = a_fScalar * a_rMatrix.AsBasisVector4( i ).x;
+			basis.y = a_fScalar * a_rMatrix.AsBasisVector4( i ).y;
+			basis.z = a_fScalar * a_rMatrix.AsBasisVector4( i ).z;
+			basis.w = a_fScalar * a_rMatrix.AsBasisVector4( i ).w;
 		}
 	}
 
