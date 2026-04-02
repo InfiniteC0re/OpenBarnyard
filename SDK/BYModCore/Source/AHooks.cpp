@@ -998,9 +998,7 @@ MEMBER_HOOK( 0x005e17a0, AInstanceManager2, AInstanceManager_Render, TBOOL )
 
 MEMBER_HOOK( 0x005ef3a0, ATreeManager2, ATreeManager_Render, void )
 {
-	ATreeManager2::Render();
-
-	if ( !g_oSettings.bDisableTreeRendering ) CallOriginal();
+	if ( !g_oSettings.bDisableTreeRendering ) ATreeManager2::Render();
 }
 
 struct ARegrowthManager
