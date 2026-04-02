@@ -292,8 +292,8 @@ void ATreeManager::CreateInstances( ATerrainLocatorList* a_pLocatorList )
 					if ( iIndex == 7 )
 					// force for "fob_pond"
 					{
-						pTreeInstance->bFlag1 = TTRUE;
-						pTreeInstance->bFlag2 = TTRUE;
+						pTreeInstance->iTrunkIndex = 7;
+						pTreeInstance->iColor      = 3;
 					}
 					else
 					// get flags based on the locator name
@@ -307,12 +307,12 @@ void ATreeManager::CreateInstances( ATerrainLocatorList* a_pLocatorList )
 							     pchLocatorName[ iLocatorNameLength - 1 ] == 'n' )
 							// barn?
 							{
-								pTreeInstance->bFlag1 = TTRUE;
+								pTreeInstance->iColor = 1;
 							}
 							else if ( pchLocatorName[ iLocatorNameLength - 3 ] == 'd' && pchLocatorName[ iLocatorNameLength - 2 ] == 'k' && pchLocatorName[ iLocatorNameLength - 1 ] == 'g' )
 							// dankweed pond and some 'g'?
 							{
-								pTreeInstance->bFlag2 = TTRUE;
+								pTreeInstance->iColor = 2;
 							}
 						}
 					}
@@ -500,7 +500,7 @@ void ATreeManager::Render()
 							TLightIDList oLightIdList;
 							pGlowViewport->GetInfluencingLightIDs( boundingVolume, oLightIdList );
 
-							aLocatorRenderData[ iNumLocatorsToRender ].uiFlags |= pTreeInstance->bFlag1 >> 4 | pTreeInstance->bFlag2 >> 5;
+							aLocatorRenderData[ iNumLocatorsToRender ].uiFlags |= pTreeInstance->iColor << 4;
 							aLocatorRenderData[ iNumLocatorsToRender ].uiLightId = oLightIdList[ 0 ];
 
 							iNumLocatorsToRender += 1;

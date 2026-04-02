@@ -412,7 +412,7 @@ void AInstanceManager::CreateInstances( ATerrainLocatorList* a_pLocatorList )
 			}
 		}
 
-		if ( iModelIndex == -1 ) continue;
+		if ( iModelIndex == TUINT8( -1 ) ) continue;
 
 		// ---- Regrowth check ----
 		// If the regrowth manager is active (flag 0x20 set), flower/plant locators

@@ -18,11 +18,10 @@ public:
 		union
 		{
 			TUINT8 iTrunkIndex : 6;
-			TUINT  bFlag1 : 1;
-			TUINT  bFlag2 : 1;
+			TUINT8 iColor : 2;
 		};
 
-		TUINT uiUnk3;
+		TUINT8 uiUnk3;
 
 		ACollisionObjectSimple* pSimpleCollisionObjects = TNULL;
 		void*                   unk                     = TNULL;
