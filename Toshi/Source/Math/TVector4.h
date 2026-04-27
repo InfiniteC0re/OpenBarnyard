@@ -174,6 +174,14 @@ public:
 		z *= vec.z;
 	}
 
+	constexpr void Multiply( const TVector4& vec1, const TVector4& vec2 )
+	{
+		x = vec1.x * vec2.x;
+		y = vec1.y * vec2.y;
+		z = vec1.z * vec2.z;
+		w = vec1.w;
+	}
+
 	// $Barnyard: FUNCTION 006c7450
 	constexpr void Multiply( TFLOAT scalar )
 	{
