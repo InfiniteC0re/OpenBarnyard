@@ -18,7 +18,7 @@ public:
 	template <class T, class... Args>
 	T* New( Args&&... args )
 	{
-		void* mem    = Malloc( sizeof( T ) );
+		void* mem    = Malloc( sizeof( T ), alignof( T ) );
 		T*    object = new ( mem ) T( std::forward<Args>( args )... );
 		return object;
 	}

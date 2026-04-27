@@ -1,6 +1,8 @@
 #pragma once
 #include "Thread/T2Mutex.h"
 
+#include <cstdlib>
+
 #undef CreateMutex
 #undef FillMemory
 
@@ -14,7 +16,7 @@ class TMemoryDLContext
 {
 private:
 	inline static auto MallocNative = []( TMemoryDL* pMemModule, TSIZE size ) -> void* {
-		return malloc( size );
+		return _aligned_malloc( size, 8 );
 	};
 	inline static auto CallocNative = []( TMemoryDL* pMemModule, TSIZE nitems, TSIZE size ) -> void* {
 		return calloc( nitems, size );
@@ -23,10 +25,10 @@ private:
 		return realloc( ptr, size );
 	};
 	inline static auto MemalignNative = []( TMemoryDL* pMemModule, TSIZE alignment, TSIZE size ) -> void* {
-		return malloc( size );
+		return _aligned_malloc( size, alignment );
 	};
 	inline static auto FreeNative = []( TMemoryDL* pMemModule, void* ptr ) -> void {
-		free( ptr );
+		_aligned_free( ptr );
 	};
 	inline static auto IdkNative = []( TMemoryDL* pMemModule, void* ptr, TSIZE size ) -> void {
 	};
