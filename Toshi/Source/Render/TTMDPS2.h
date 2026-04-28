@@ -42,15 +42,16 @@ static constexpr TFLOAT UV_SCALE           = 1.0f / 4096.0f;
 static constexpr TINT   POSITIONS_HDR_SIZE = 48; // TODO: VIF packet header bytes before position data
 static constexpr TINT   UV_HDR_SIZE        = 12; // TODO: header bytes before UV data
 static constexpr TINT   INDEX_HDR_SIZE     = 4;  // TODO: header bytes before index data
+static constexpr TINT   COLOR_HDR_SIZE     = 4;  // TODO: header bytes before color data
 
 struct SubMesh
 {
 	Toshi::TSphere m_BoundingSphere;
 	TINT16*        m_pPositions;
-	TUINT8*        m_pBoneIndices;
+	TUINT8*        m_pColors;
 	TINT16*        m_pUVs;
 	TUINT8*        m_pIndices;
-	void*          m_pUnk; // color?
+	void*          m_pUnk;
 	TUINT32        m_uiNumVertices;
 	TUINT32        m_uiNumIndices;
 	TUINT32        m_uiFlags;
