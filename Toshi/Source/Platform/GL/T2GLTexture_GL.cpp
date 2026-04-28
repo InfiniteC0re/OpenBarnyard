@@ -78,7 +78,7 @@ T2TextureManager::T2TextureManager()
 			*( pos )     = rand() % 256;
 			*( pos + 1 ) = rand() % 256;
 			*( pos + 2 ) = rand() % 256;
-			*( pos + 3 ) = rand() % 256;
+			*( pos + 3 ) = 255;
 		}
 
 		m_pInvalidTexture = new T2GLTexture;
