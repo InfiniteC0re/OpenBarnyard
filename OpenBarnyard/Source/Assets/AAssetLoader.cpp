@@ -154,9 +154,6 @@ TBOOL AAssetLoader::CreateAssetsFromLibrary( const TCHAR* a_szLibraryName )
 
 		// ...
 
-		Close( AAssetType_AssetPack );
-		g_oLoadScreen.Update( 1.0f, TTRUE );
-
 		return TTRUE;
 	}
 
