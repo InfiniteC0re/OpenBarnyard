@@ -202,14 +202,7 @@ T2GenericRedBlackTreeNode* T2GenericRedBlackTree::DeleteNode( T2GenericRedBlackT
 	}
 
 	pTVar1 = y->m_pParent;
-
-#ifdef BARNYARD_COMMUNITY_PATCH
-	// This bug persists in all versions of the engine, including de Blob on Steam
-	// Can cause softlock and other shit including memory stomps
-	if ( pTVar3 != &ms_oNil ) pTVar3->m_pParent = pTVar1;
-#else
 	pTVar3->m_pParent = pTVar1;
-#endif // BARNYARD_COMMUNITY_PATCH
 
 	if ( &m_oRoot == pTVar1 )
 	{
@@ -236,6 +229,15 @@ T2GenericRedBlackTreeNode* T2GenericRedBlackTree::DeleteNode( T2GenericRedBlackT
 			DeleteFixUp( pTVar3 );
 		}
 
+#ifdef BARNYARD_COMMUNITY_PATCH
+		// This bug persists in all versions of the engine, including de Blob on Steam
+		// Can cause softlock and other shit including memory stomps
+		// DeleteFixUp may temporarily mark ms_oNil red when pTVar3 == &ms_oNil
+		// (black leaf case). Reset to a clean state now that traversal is done.
+		ms_oNil.red       = 0;
+		ms_oNil.m_pParent = &ms_oNil;
+#endif
+
 		CheckValid();
 		TASSERT( 0 == ms_oNil.red );
 		m_iNumElements -= 1;
@@ -248,15 +250,8 @@ T2GenericRedBlackTreeNode* T2GenericRedBlackTree::DeleteNode( T2GenericRedBlackT
 	y->m_pLeft                 = pNode->m_pLeft;
 	y->m_pRight                = pNode->m_pRight;
 	y->m_pParent               = pNode->m_pParent;
-
-#ifdef BARNYARD_COMMUNITY_PATCH
-	// Same as above
-	if ( pNode->m_pRight != &ms_oNil ) pNode->m_pRight->m_pParent = y;
-	if ( pNode->m_pLeft != &ms_oNil ) pNode->m_pLeft->m_pParent = y;
-#else
 	pNode->m_pRight->m_pParent = y;
 	pNode->m_pLeft->m_pParent  = y;
-#endif // BARNYARD_COMMUNITY_PATCH
 
 	pTVar1 = pNode->m_pParent;
 
@@ -276,6 +271,15 @@ T2GenericRedBlackTreeNode* T2GenericRedBlackTree::DeleteNode( T2GenericRedBlackT
 	{
 		DeleteFixUp( pTVar3 );
 	}
+
+#ifdef BARNYARD_COMMUNITY_PATCH
+	// This bug persists in all versions of the engine, including de Blob on Steam
+	// Can cause softlock and other shit including memory stomps
+	// DeleteFixUp may temporarily mark ms_oNil red when pTVar3 == &ms_oNil
+	// (black leaf case). Reset to a clean state now that traversal is done.
+	ms_oNil.red       = 0;
+	ms_oNil.m_pParent = &ms_oNil;
+#endif
 
 	CheckValid();
 	TASSERT( 0 == ms_oNil.red );
