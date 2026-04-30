@@ -86,6 +86,23 @@
 
 #define TDECLARE_POINTER_HANDLE( NAME ) typedef void* NAME
 
+#define TENUM_TO_STRING_START( ENUM_NAME )                                               \
+	TFORCEINLINE const TCHAR* CONCATTOKEN( ENUM_NAME, _TO_STRING )( ENUM_NAME a_eValue ) \
+	{                                                                                    \
+		switch ( a_eValue )                                                              \
+		{
+
+#define TENUM_TO_STRING_ITEM( VALUE ) \
+	case VALUE: return #VALUE;
+
+#define TENUM_TO_STRING_ITEM_NAME( VALUE, NAME ) \
+	case VALUE: return #NAME;
+
+#define TENUM_TO_STRING_END() \
+	}                         \
+	return "UNKNOWN";         \
+	}
+
 #define TOSHI_ENABLE_ASSERTS
 
 #ifdef TOSHI_ENABLE_ASSERTS
