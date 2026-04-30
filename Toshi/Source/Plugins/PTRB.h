@@ -39,6 +39,7 @@ public:
 	void SetSectionCount( int32_t count );
 	void Write( Toshi::TTSFO& ttsfo, PTRBSections& sect, Endianess eEndianess );
 	void Read( Toshi::TTSFI& ttsfi, PTRBSections& sect, Endianess eEndianess );
+	void ReadLegacyHEAD( Toshi::TTSFI& ttsfi, PTRBSections& sect, Endianess eEndianess );
 
 private:
 	Toshi::TTRB::Header m_Header;
@@ -642,6 +643,9 @@ public:
 					case TFourCC( "HDRX" ):
 						m_HDRX.Read( ttsfi, m_SECT, m_eEndianess );
 						break;
+					case TFourCC( "HEAD" ):
+						m_HDRX.ReadLegacyHEAD( ttsfi, m_SECT, m_eEndianess );
+						break;
 					case TFourCC( "SECT" ):
 						m_SECT.Read( ttsfi, TFALSE, m_eEndianess );
 						break;
@@ -812,6 +816,31 @@ inline void PTRBHeader::Read( Toshi::TTSFI& ttsfi, PTRBSections& sect, Endianess
 
 		auto stack = sect.CreateStream();
 		stack->SetExpectedSize( sectionInfo.m_Size );
+	}
+}
+
+inline void PTRBHeader::ReadLegacyHEAD( Toshi::TTSFI& ttsfi, PTRBSections& sect, Endianess eEndianess )
+{
+	ttsfi.Read( &m_Header.m_i32SectionCount );
+	m_Header.m_i32SectionCount = CONVERTENDIANESS( eEndianess, m_Header.m_i32SectionCount );
+	m_Header.m_ui32Version     = 0;
+
+	const TINT numsections = ( ttsfi.GetCurrentHunk().Size - 4 ) / 12;
+	TASSERT( m_Header.m_i32SectionCount == numsections, "HEAD section has wrong num of sections" );
+
+	for ( TINT i = 0; i < m_Header.m_i32SectionCount; i++ )
+	{
+		struct LegacySecInfo
+		{
+			TINT16  Unused1;
+			TINT16  Alignment;
+			TUINT32 Size;
+			TUINT32 Unused2;
+		} sectionInfo;
+		ttsfi.Read( &sectionInfo );
+
+		auto stack = sect.CreateStream();
+		stack->SetExpectedSize( sectionInfo.Size );
 	}
 }
 
