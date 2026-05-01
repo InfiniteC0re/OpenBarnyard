@@ -14,10 +14,7 @@ public:
 	TBOOL GetPosition( Toshi::TVector4& a_rOutPosition );
 
 public:
-	TFLOAT            m_fForwardX;
-	TFLOAT            m_fForwardY;
-	TFLOAT            m_fForwardZ;
-	TFLOAT            m_fForwardW;
+	Toshi::TVector4   m_vForward;
 	TFLOAT            m_fPositionX;
 	TFLOAT            m_fPositionZ;
 	TINT              m_iUnk1;
