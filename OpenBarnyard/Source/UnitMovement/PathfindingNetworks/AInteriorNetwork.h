@@ -2,6 +2,7 @@
 
 #include "UnitMovement/PathfindingNetworks/AInteriorArea.h"
 #include "UnitMovement/PathfindingNetworks/AInteriorGoal.h"
+#include "UnitMovement/PathfindingNetworks/AGoalCollisionUpdateInterface.h"
 
 #include <File/TTRB.h>
 #include <Math/TVector4.h>
@@ -40,6 +41,8 @@ public:
 		operator TINT*() { return pIndices; }
 	};
 
+	static constexpr TUINT MAX_NUM_GROUPS = 70;
+
 public:
 	AInteriorNetwork();
 	~AInteriorNetwork();
@@ -59,6 +62,8 @@ public:
 	TBOOL BuildPathToArea( TINT a_iStartArea, TINT a_iTargetArea, void* a_pPath );
 	TBOOL BuildPathToAnyArea( TINT a_iStartArea, const TINT* a_pTargetAreas, TINT a_iNumTargetAreas, void* a_pPath, TINT* a_pOutArea );
 	
+	void PushGoalInterface( AGoalCollisionUpdateInterface* a_pGoalInterface, AInteriorGoal* a_pGoal );
+
 	const Toshi::TPString8& GetName() const { return m_strName; }
 
 private:
@@ -68,13 +73,17 @@ private:
 	void ClearAreaNameLookup();
 	void ClearGoalNameLookup();
 
+	TBOOL EraseGoalInterface( AGoalCollisionUpdateInterface* a_pGoalInterface );
+	TBOOL EraseGoalInterfaceFromGroup( AGoalCollisionUpdateInterface* a_pGoalInterface, TINT a_iGroupId );
+
 public:
 	Toshi::TTRB*      m_pTRB;
 	INetwork*         m_pINetwork;
 	Toshi::TPString8  m_strName;
 	TBOOL             m_bSetHeightFromEnv;
 
-	Toshi::T2Vector<Toshi::T2SList<Toshi::T2SListNodeWrapper<void*>>, 70> m_vecArray;
+	TINT                                          m_iMaxGroup;
+	Toshi::T2SList<AGoalCollisionUpdateInterface> m_vecGroups[ MAX_NUM_GROUPS ];
 
 	void* m_pUpdateGoalInterfaces;
 	TINT  m_Unk1;

@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "UnitMovement/PathfindingNetworks/AGoalCollisionUpdateInterface.h"
+#include "UnitMovement/PathfindingNetworks/AInteriorNetworkManager.h"
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
@@ -10,8 +11,7 @@
 TOSHI_NAMESPACE_USING
 
 // $Barnyard: FUNCTION 0054f640
-// $Barnyard: FUNCTION 00555640
 AGoalCollisionUpdateInterface::~AGoalCollisionUpdateInterface()
 {
-	TASSERT( TFALSE );
+	AInteriorNetworkManager::GetSingleton()->RemoveGoalInterface( this );
 }

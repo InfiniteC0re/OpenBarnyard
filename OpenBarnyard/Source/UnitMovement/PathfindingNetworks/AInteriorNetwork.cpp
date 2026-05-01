@@ -22,14 +22,22 @@ AInteriorNetwork::AInteriorNetwork()
 	m_Unk1 = 0;
 	m_Unk2 = TFALSE;
 
+	m_iMaxGroup = 0;
+
 	m_pAreaNameLookup = new Toshi::T2Map<Toshi::TPString8, LookupList, Toshi::TPString8::Comparator>();
 	m_pGoalNameLookup = new Toshi::T2Map<Toshi::TPString8, LookupList, Toshi::TPString8::Comparator>();
 }
 
 // $Barnyard: FUNCTION 005551f0
+// $Barnyard: FUNCTION 00554b70
 AInteriorNetwork::~AInteriorNetwork()
 {
-	m_vecArray.Clear();
+	TINT iNumGroups = m_iMaxGroup;
+	while ( iNumGroups > 0 )
+	{
+		m_vecGroups[ iNumGroups - 1 ].Clear();
+		iNumGroups -= 1;
+	}
 
 	ClearAreaNameLookup();
 	ClearGoalNameLookup();
@@ -154,6 +162,24 @@ AInteriorGoal* AInteriorNetwork::FindFarthestGoal( const Toshi::TPString8& a_rcN
 	return pBestGoal ? pBestGoal : FindRandomGoal( a_rcName );
 }
 
+
+// $Barnyard: FUNCTION 005544c0
+void AInteriorNetwork::PushGoalInterface( AGoalCollisionUpdateInterface* a_pGoalInterface, AInteriorGoal* a_pGoal )
+{
+	a_pGoalInterface->m_pGoal = a_pGoal;
+
+	const TINT iGroupId = a_pGoal->m_iGroupId;
+	if ( iGroupId >= 0 )
+	{
+		EraseGoalInterface( a_pGoalInterface );
+
+		if ( iGroupId + 1 > m_iMaxGroup )
+			m_iMaxGroup = iGroupId + 1;
+
+		m_vecGroups[ iGroupId ].PushBack( a_pGoalInterface );
+	}
+}
+
 TPSTRING8_DECLARE( AREA_NA );
 
 // $Barnyard: FUNCTION 005548c0
@@ -272,7 +298,44 @@ void AInteriorNetwork::ClearGoalNameLookup()
 	}
 }
 
+
+// $Barnyard: FUNCTION 00552df0
+TBOOL AInteriorNetwork::EraseGoalInterface( AGoalCollisionUpdateInterface* a_pGoalInterface )
+{
+	if ( a_pGoalInterface->IsLinked() )
+	{
+		for ( TINT i = m_iMaxGroup - 1; i >= 0; i-- )
+		{
+			if ( EraseGoalInterfaceFromGroup( a_pGoalInterface, i ) )
+				return TTRUE;
+		}
+	}
+
+	return TFALSE;
+}
+
+// $Barnyard: FUNCTION 00552d80
+TBOOL AInteriorNetwork::EraseGoalInterfaceFromGroup( AGoalCollisionUpdateInterface* a_pGoalInterface, TINT a_iGroupId )
+{
+	TASSERT( a_iGroupId < MAX_NUM_GROUPS );
+
+	auto& llGroup = m_vecGroups[ a_iGroupId ];
+	T2_FOREACH( llGroup, it )
+	{
+		if ( it == a_pGoalInterface )
+		{
+			m_vecGroups->Erase( a_pGoalInterface );
+			return TTRUE;
+		}
+	}
+
+	return TFALSE;
+}
+
 // T2Map methods:
 // $Barnyard: FUNCTION 00554680
 // $Barnyard: FUNCTION 005545c0
+// $Barnyard: FUNCTION 00553b50
+
+// T2SList methods:
 // $Barnyard: FUNCTION 00553b50

@@ -15,3 +15,9 @@ AInteriorNetwork* AInteriorNetworkManager::FindNetwork( const Toshi::TPString8& 
 	TASSERT( !"To be implemented" );
 	return TNULL;
 }
+
+// $Barnyard: FUNCTION 00555640
+void AInteriorNetworkManager::RemoveGoalInterface( AGoalCollisionUpdateInterface* a_pGoalInterface )
+{
+	TASSERT( !"To be implemented" );
+}
