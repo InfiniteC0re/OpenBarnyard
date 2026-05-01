@@ -60,6 +60,8 @@ project "OpenBarnyard"
 		"Source/SoundBank/**.cpp",
 		"Source/Tasks/**.h",
 		"Source/Tasks/**.cpp",
+		"Source/UnitMovement/**.h",
+		"Source/UnitMovement/**.cpp",
 		"Source/FX/**.h",
 		"Source/FX/**.cpp",
 		"Source/Terrain/**.h",
