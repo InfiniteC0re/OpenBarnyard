@@ -124,6 +124,38 @@ public:
 			return Iterator( m_iIndex - a_iValue, m_poArray );
 		}
 
+		// T2SortedVector compatibility
+		Iterator( TINT a_iIndex, Storage* a_poArray )
+		{
+			m_iIndex  = a_iIndex;
+			m_poArray = a_poArray;
+		}
+
+		T& Value()
+		{
+			return Get();
+		}
+
+		const T& Value() const
+		{
+			return Get();
+		}
+
+		TBOOL operator!=( const Iterator& a_rIt ) const
+		{
+			return !( *this == a_rIt );
+		}
+
+		T& operator*()
+		{
+			return Get();
+		}
+
+		const T& operator*() const
+		{
+			return Get();
+		}
+
 	private:
 		TINT     m_iIndex;  // 0x0
 		Storage* m_poArray; // 0x4
@@ -268,7 +300,155 @@ public:
 		return m_pData[ a_iIndex ];
 	}
 
+	// T2SortedVector compatibility
+	Iterator Front()
+	{
+		TASSERT( m_iNumElements > 0 );
+		return Iterator( 0, *this );
+	}
+
+	Iterator Back()
+	{
+		TASSERT( m_iNumElements > 0 );
+		return Iterator( m_iNumElements - 1, *this );
+	}
+
+	TINT Capacity() const
+	{
+		return m_iNumAllocElements;
+	}
+
+	TBOOL IsEmpty() const
+	{
+		return Size() == 0;
+	}
+
+	Iterator InsertBefore( Iterator a_itInsertBefore, const T& a_rcItem = T() )
+	{
+		TINT iIndex = a_itInsertBefore.Index();
+		TASSERT( iIndex >= 0 );
+		TASSERT( iIndex <= m_iNumElements );
+
+		InsertGap( iIndex, 1 );
+		TConstruct( &m_pData[ iIndex ], a_rcItem );
+
+		return Iterator( iIndex, *this );
+	}
+
+	Iterator InsertAfter( Iterator a_itInsertAfter, const T& a_rcItem = T() )
+	{
+		return InsertBefore( Iterator( a_itInsertAfter.Index() + 1, *this ), a_rcItem );
+	}
+
+	void PopBack()
+	{
+		TASSERT( m_iNumElements >= 1 );
+		m_pData[ --m_iNumElements ].~T();
+	}
+
+	void PopFront()
+	{
+		TASSERT( m_iNumElements >= 1 );
+		Erase( Begin() );
+	}
+
+	Iterator Find( const T& a_rcValue )
+	{
+		for ( auto it = Begin(); !it.IsOver(); it++ )
+		{
+			if ( it.Value() == a_rcValue )
+				return it;
+		}
+
+		return End();
+	}
+
+	void Erase( const Iterator& a_rIterator )
+	{
+		TINT iIndex = a_rIterator.Index();
+		TASSERT( iIndex >= 0 );
+		TASSERT( iIndex < m_iNumElements );
+
+		m_pData[ iIndex ].~T();
+
+		for ( TINT i = iIndex + 1; i < m_iNumElements; i++ )
+		{
+			TConstruct( &m_pData[ i - 1 ], std::move( m_pData[ i ] ) );
+			m_pData[ i ].~T();
+		}
+
+		m_iNumElements--;
+	}
+
+	void FindAndErase( const T& a_rcItem )
+	{
+		auto it = Find( a_rcItem );
+
+		if ( it != End() )
+			Erase( it );
+	}
+
+	void EraseFast( const Iterator& a_rIterator )
+	{
+		TINT iIndex = a_rIterator.Index();
+		TASSERT( iIndex >= 0 );
+		TASSERT( iIndex < m_iNumElements );
+
+		m_pData[ iIndex ].~T();
+
+		if ( iIndex != m_iNumElements - 1 )
+		{
+			TConstruct( &m_pData[ iIndex ], std::move( m_pData[ m_iNumElements - 1 ] ) );
+			m_pData[ m_iNumElements - 1 ].~T();
+		}
+
+		m_iNumElements--;
+	}
+
+	void FindAndEraseFast( const T& a_rcItem )
+	{
+		auto it = Find( a_rcItem );
+
+		if ( it != End() )
+			EraseFast( it );
+	}
+
+	T& At( TINT a_iIndex )
+	{
+		TASSERT( a_iIndex >= 0 );
+		TASSERT( a_iIndex < m_iNumElements );
+		return m_pData[ a_iIndex ];
+	}
+
+	const T& At( TINT a_iIndex ) const
+	{
+		TASSERT( a_iIndex >= 0 );
+		TASSERT( a_iIndex < m_iNumElements );
+		return m_pData[ a_iIndex ];
+	}
+
 private:
+	// T2SortedVector compatibility
+	void InsertGap( TINT a_iIndex, TINT a_iCount )
+	{
+		TASSERT( a_iIndex >= 0 );
+		TASSERT( a_iIndex <= m_iNumElements );
+		TASSERT( a_iCount >= 0 );
+
+		if ( a_iCount == 0 )
+			return;
+
+		GrowBy( a_iCount );
+
+		for ( TINT i = m_iNumElements - 1; i >= a_iIndex; i-- )
+		{
+			TConstruct( &m_pData[ i + a_iCount ], std::move( m_pData[ i ] ) );
+			m_pData[ i ].~T();
+		}
+
+		m_iNumElements += a_iCount;
+	}
+
 	void GrowBy( TINT a_iGrowBy )
 	{
 		if ( m_iNumAllocElements < m_iNumElements + a_iGrowBy )
