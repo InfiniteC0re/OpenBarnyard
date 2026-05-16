@@ -98,6 +98,12 @@ public:
 		m_fnQuitCallback = a_fnQuitCallback;
 	}
 
+	void Quit()
+	{
+		if ( m_fnQuitCallback )
+			m_fnQuitCallback();
+	}
+
 private:
 	TUINT        m_Unk1;
 	TScheduler*  m_Scheduler;
@@ -176,9 +182,13 @@ public:
 
 public:
 	static TBOOL Create();
+	static void  Destroy();
+
+	static TBOOL Quitted() { return ms_bQuitted; }
 
 private:
 	inline static TBOOL ms_bWasEverUpdated = TFALSE;
+	inline static TBOOL ms_bQuitted        = TFALSE;
 
 private:
 	TEmitter<TSystemManager, TBOOL> m_PauseEmitter;

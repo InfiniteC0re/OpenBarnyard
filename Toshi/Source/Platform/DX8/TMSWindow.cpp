@@ -265,7 +265,8 @@ LRESULT CALLBACK TMSWindow::WndProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM
 		{
 			TRenderD3DInterface* pRenderer = TREINTERPRETCAST( TRenderD3DInterface*, TRenderInterface::GetSingleton() );
 			pRenderer->Exit();
-			TTODO( "FUN_006bbb80" );
+
+			g_oSystemManager.Destroy();
 
 			return 0;
 		}

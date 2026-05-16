@@ -65,6 +65,7 @@ public:
 	};
 
 	friend class ATerrainInterface;
+	friend class ATerrainVIS;
 	friend class ASectionDoneJob;
 	friend class ACollisionDoneJob;
 

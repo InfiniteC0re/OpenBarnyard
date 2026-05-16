@@ -23,6 +23,11 @@
 
 TOSHI_NAMESPACE_USING
 
+static TINT GetNoOpVISGroup()
+{
+	return -1;
+}
+
 // $Barnyard: FUNCTION 005e94f0
 ATerrainInterface::ATerrainInterface( TINT a_iUnused1, TINT a_iUnused2, TINT a_iPreloadTerrainBlockSize, TINT a_iStartVISGroup )
 {
@@ -104,10 +109,48 @@ ATerrainInterface::ATerrainInterface( TINT a_iUnused1, TINT a_iUnused2, TINT a_i
 // $Barnyard: FUNCTION 005ec3e0
 ATerrainInterface::~ATerrainInterface()
 {
-	TIMPLEMENT();
-
 	m_bIsLoaded = TFALSE;
 	ACollisionModel::DestroyStaticCache();
+
+	TRenderInterface::GetSingleton()->BeginEndSceneHAL();
+
+	if ( m_pTerrainVIS && !TSystemManager::Quitted() )
+	{
+		UpdateUsedBlocks( ATerrainLODType_High );
+		UpdateUsedBlocks( ATerrainLODType_Low );
+
+		TINT iLoadScreenCounter = 0;
+
+		for ( TINT i = 0; i < m_pTerrainVIS->m_iNumSections; i++ )
+		{
+			UpdateUsedBlocks( ATerrainLODType_High );
+			UpdateUsedBlocks( ATerrainLODType_Low );
+
+			auto pSection = &m_pTerrainVIS->m_pSections[ i ];
+			pSection->SetLODQueued( ATerrainLODType_High, TFALSE );
+			pSection->SetLODQueued( ATerrainLODType_Low, TFALSE );
+
+			iLoadScreenCounter++;
+
+			if ( iLoadScreenCounter > 5 )
+			{
+				g_oLoadScreen.Update( 1.0f, TTRUE );
+				iLoadScreenCounter = 0;
+			}
+		}
+
+		m_fnGetCurrentVISGroup = GetNoOpVISGroup;
+		WaitUntilLoaded();
+	}
+
+	if ( m_pTerrainVIS )
+	{
+		m_pTerrainVIS->Destroy();
+		m_VISTRB.Close();
+		m_pTerrainVIS = TNULL;
+	}
+
+	TRenderInterface::GetSingleton()->FlushDyingResources();
 
 	m_UsedModelLoaderJobs.Clear();
 	m_FreeModelLoaderJobs.Clear();

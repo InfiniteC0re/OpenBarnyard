@@ -68,6 +68,13 @@ TBOOL TSystemManager::Create()
 	return TTRUE;
 }
 
+// $Barnyard: FUNCTION 006bbb80
+void TSystemManager::Destroy()
+{
+	ms_bQuitted = TTRUE;
+	g_oSystemManager.m_pSystemTimer->Quit();
+}
+
 // $Barnyard: FUNCTION 00713e20
 TSystemManager::~TSystemManager()
 {

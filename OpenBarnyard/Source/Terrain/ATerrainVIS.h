@@ -3,6 +3,7 @@
 #include "ATerrainLocator.h"
 #include "ATerrainLODBlock.h"
 #include "Assets/AMaterialLibrary.h"
+#include <Render/TAnimation.h>
 
 struct ATerrainOrderDVIS
 {
@@ -24,6 +25,7 @@ public:
 
 public:
 	void LoadSkeleton();
+	void Destroy();
 
 	ATerrainLocatorList* GetLocatorList() const { return m_pLocatorList; }
 	TINT32               GetNumSections() const { return m_iNumSections; }
@@ -31,21 +33,21 @@ public:
 	ATerrainLODBlock*    GetPersistantBlock() const { return m_pPersistantTerrainBlock; }
 
 private:
-	const TCHAR*         m_szKeyLibrary;
-	const TCHAR*         m_szMatLibrary;
-	const TCHAR*         m_szSkelFilePath;
-	TUINT32              m_uiUnknown;
-	AMaterialLibrary*    m_pMaterialLibrary;
-	Toshi::TTRB*         m_pMaterialLibraryTRB;
-	ATerrainLocatorList* m_pLocatorList;
-	TINT32               m_iNumSections;
-	ATerrainSection*     m_pSections;
-	TUINT32              m_uiHighBlockSize;
-	TINT32               m_iNumHighBlocks;
-	ATerrainLODBlock**   m_ppHighBlocks;
-	TUINT32              m_uiLowBlockSize;
-	TINT32               m_iNumLowBlocks;
-	ATerrainLODBlock**   m_ppLowBlocks;
-	TUINT32              m_uiPersistantTerrainBlockSize;
-	ATerrainLODBlock*    m_pPersistantTerrainBlock;
+	const TCHAR*             m_szKeyLibrary;
+	const TCHAR*             m_szMatLibrary;
+	const TCHAR*             m_szSkelFilePath;
+	Toshi::TKeyframeLibrary* m_pKeyframeLibrary;
+	AMaterialLibrary*        m_pMaterialLibrary;
+	Toshi::TTRB*             m_pMaterialLibraryTRB;
+	ATerrainLocatorList*     m_pLocatorList;
+	TINT32                   m_iNumSections;
+	ATerrainSection*         m_pSections;
+	TUINT32                  m_uiHighBlockSize;
+	TINT32                   m_iNumHighBlocks;
+	ATerrainLODBlock**       m_ppHighBlocks;
+	TUINT32                  m_uiLowBlockSize;
+	TINT32                   m_iNumLowBlocks;
+	ATerrainLODBlock**       m_ppLowBlocks;
+	TUINT32                  m_uiPersistantTerrainBlockSize;
+	ATerrainLODBlock*        m_pPersistantTerrainBlock;
 };
