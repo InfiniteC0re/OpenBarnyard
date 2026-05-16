@@ -20,7 +20,7 @@ public:
 	~AMiniGame();
 
 	const Variant& GetVariant( TINT a_iIndex );
-	AMiniGame&     AddVariant( TINT a_eLocaleTitle, TINT a_eLocaleHint, TINT a_eLocaleDescription );
+	AMiniGame&     AddVariant( TINT a_eLocaleTitle, TINT a_eLocaleHint, TINT a_eLocaleDescription, const TCHAR* a_szUnlockStateName = TNULL );
 
 	TBOOL IsPlaceholder() const { return m_iDefaultVariant == -1; }
 
@@ -35,13 +35,13 @@ private:
 	TBOOL                   field7_0x1c;
 	const TCHAR*            m_szIconName;
 	const Toshi::TPString8* m_pLoadingScreenName;
-	TINT                    field13_0x28;
+	TINT                    m_eInstancesType;
 	TINT                    m_iDefaultVariant;
 	TINT                    m_iNumSelectableVariants;
 	TINT                    m_iNumVariants;
 	Variant                 m_aVariants[ MAX_NUM_VARIANTS ];
-	TINT                    m_iNumUnknown1;
-	TINT                    m_aUnknown[ MAX_NUM_VARIANTS ];
+	TINT                    m_iNumStateNames;
+	const TCHAR*            m_aszAlternativeStateNames[ MAX_NUM_VARIANTS ];
 	TINT                    field20_0xfc;
 	TINT                    field21_0x100;
 };

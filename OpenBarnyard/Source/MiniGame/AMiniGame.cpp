@@ -12,7 +12,7 @@ TOSHI_NAMESPACE_USING
 // $Barnyard: FUNCTION 00469a00
 AMiniGame::AMiniGame()
     : m_iNumVariants( 0 )
-    , m_iNumUnknown1( 0 )
+    , m_iNumStateNames( 0 )
     , field21_0x100( 0 )
     , field6_0x18( 1 )
 {
@@ -28,7 +28,7 @@ const AMiniGame::Variant& AMiniGame::GetVariant( TINT a_iIndex )
 	return m_aVariants[ a_iIndex ];
 }
 
-AMiniGame& AMiniGame::AddVariant( TINT a_eLocaleTitle, TINT a_eLocaleHint, TINT a_eLocaleDescription )
+AMiniGame& AMiniGame::AddVariant( TINT a_eLocaleTitle, TINT a_eLocaleHint, TINT a_eLocaleDescription, const TCHAR* a_szAlternativeStateName )
 {
 	TASSERT( m_iNumVariants < MAX_NUM_VARIANTS );
 
@@ -37,8 +37,7 @@ AMiniGame& AMiniGame::AddVariant( TINT a_eLocaleTitle, TINT a_eLocaleHint, TINT 
 	rVariant.eLocaleHint        = a_eLocaleHint;
 	rVariant.eLocaleDescription = a_eLocaleDescription;
 
-	m_aUnknown[ m_iNumUnknown1 ] = 0;
-	m_iNumUnknown1++;
+	m_aszAlternativeStateNames[ m_iNumStateNames++ ] = a_szAlternativeStateName;
 	m_iNumSelectableVariants++;
 
 	return *this;
