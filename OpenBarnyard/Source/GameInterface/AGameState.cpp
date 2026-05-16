@@ -188,6 +188,18 @@ void AGameState::Destroy( TBOOL a_bDeactivate )
 	delete this;
 }
 
+// Bind_CallForAllChild for GetHUDMaskImpl:
+// $Barnyard: FUNCTION 00428500
+
+// $Barnyard: FUNCTION 00428990
+TUINT32 AGameState::GetHUDMask()
+{
+	TUINT32 uiMask = m_HUDParams.m_uiFlags;
+	Bind_CallForAllChild( this, &AGameState::GetHUDMaskImpl )( uiMask );
+
+	return uiMask;
+}
+
 // $Barnyard: FUNCTION 00428a00
 AGameState* AGameState::FindChildState( TClass* a_pClass )
 {
@@ -212,6 +224,16 @@ TBOOL AGameState::FindChildStateImpl( TClass* a_pClass, AGameState*& a_rOutput )
 
 	// BUG?: shouldn't it move the result into a_rOutput?
 	return pResult != TNULL;
+}
+
+// $Barnyard: FUNCTION 00428070
+void AGameState::GetHUDMaskImpl( TUINT32& a_rOutput )
+{
+	TUINT uiMask = m_HUDParams.m_uiFlags;
+
+	Bind_CallForAllChild( this, &AGameState::GetHUDMaskImpl )( a_rOutput );
+
+	a_rOutput |= uiMask;
 }
 
 // $Barnyard: FUNCTION 00428730

@@ -44,6 +44,8 @@ project "OpenBarnyard"
 		"Source/MiniGame/**.cpp",
 		"Source/GUI/**.h",
 		"Source/GUI/**.cpp",
+		"Source/HUD/**.h",
+		"Source/HUD/**.cpp",
 		"Source/Input/**.h",
 		"Source/Input/**.cpp",
 		"Source/Locale/**.h",

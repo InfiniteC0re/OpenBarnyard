@@ -98,6 +98,8 @@ public:
 	void    SetOverlay( OVERLAY a_eOverlay ) { m_eOverlayColorIndex = a_eOverlay; }
 	OVERLAY GetOverlay() const { return m_eOverlayColorIndex; }
 
+	TUINT32 GetHUDMask();
+
 	AGameState* FindChildState( Toshi::TClass* a_pClass );
 
 	template <class RetT, typename... Args>
@@ -141,6 +143,7 @@ public:
 
 private:
 	TBOOL FindChildStateImpl( Toshi::TClass* a_pClass, AGameState*& a_rOutput );
+	void  GetHUDMaskImpl( TUINT32& a_rOutput );
 
 protected:
 	HUDParams                  m_HUDParams;
