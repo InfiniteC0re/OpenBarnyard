@@ -85,10 +85,10 @@ void ASysMaterialHAL::SetBlendMode( BLENDMODE a_eBlendMode )
 		case BLENDMODE_7:
 			SetOrderTable( GetSysShaderHAL()->GetOrderTable( 1 ) );
 			break;
-		case BLENDMODE_8:
+		case BLENDMODE_UNTEXTURED_SKY:
 			SetOrderTable( GetSysShaderHAL()->GetOrderTable( 2 ) );
 			break;
-		case BLENDMODE_9:
+		case BLENDMODE_TEXTURED_SKY:
 			SetOrderTable( GetSysShaderHAL()->GetOrderTable( 3 ) );
 			break;
 		default:
@@ -133,8 +133,8 @@ void ASysMaterialHAL::PreRender()
 			pDevice->SetRenderState( D3DRS_ZWRITEENABLE, TRUE );
 			break;
 		case BLENDMODE_1:
-		case BLENDMODE_8:
-		case BLENDMODE_9:
+		case BLENDMODE_UNTEXTURED_SKY:
+		case BLENDMODE_TEXTURED_SKY:
 		case BLENDMODE_10:
 			pDevice->SetRenderState( D3DRS_SRCBLEND, 5 );
 			pDevice->SetRenderState( D3DRS_DESTBLEND, 6 );

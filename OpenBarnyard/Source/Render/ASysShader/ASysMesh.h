@@ -16,6 +16,13 @@ public:
 		Toshi::TIndexPoolResourceInterface::LockBuffer  IndexLock;
 	};
 
+	struct Vertex
+	{
+		Toshi::TVector3 vPosition;
+		TUINT32         uiColor;
+		Toshi::TVector2 vUV;
+	};
+
 public:
 	ASysMesh();
 

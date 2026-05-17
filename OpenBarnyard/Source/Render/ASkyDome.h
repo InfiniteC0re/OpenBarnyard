@@ -41,7 +41,8 @@ private:
 	void DestroyResources();
 	void CreateMesh1();
 	void CreateMesh2();
-	void UpdateMeshData( TINT a_iSkyIndex );
+	void DrawFancyDome( const Toshi::TVector4& a_rColour1, const Toshi::TVector4& a_rColour2, const Toshi::TVector4& a_rColour3, const Toshi::TVector4& a_rColour4, ASysMaterial* a_pMaterial, TFLOAT a_fOpacity, TINT a_iMode );
+	void UpdateCachedMeshData( TINT a_iSkyIndex );
 	void Render1_Impl();
 	void Render2_Impl();
 
@@ -60,13 +61,12 @@ private:
 	Toshi::TMatrix44  m_oTargetColorMatrix;
 	Toshi::TMatrix44  m_oTargetLightMatrix;
 	TFLOAT            m_fTargetBlend;
-	ASysMesh**        m_ppMesh2;
-	ASysMesh*         m_pMesh1;
+	ASysMesh**        m_ppDomeMeshes;
+	ASysMesh*         m_pFancyDome;
 	AMaterialLibrary* m_pSkyLibrary;
 	ASysMaterial*     m_pUntexturedSky;
 	ASysMaterial*     m_apTexturedSkyMaterials[ TEXTURE_NUMOF ];
-	Toshi::TTexture*  m_pSunnyTexture;
-	Toshi::TTexture*  m_pNightTexture;
+	Toshi::TTexture*  m_apSkyTextures[ TEXTURE_NUMOF ];
 	DomeVertex*       m_pVertexData;
 	TFLOAT            m_fTransitionDuration;
 	TFLOAT            m_fTransitionElapsed;
