@@ -15,6 +15,7 @@
 #include "Physics/ACollisionManager.h"
 #include "Physics/ABarnyardCollision.h"
 #include "Player/APlayerManager.h"
+#include "HUD/AHudManager.h"
 
 #include <Toshi/TScheduler.h>
 #include <Plugins/PPropertyParser/PBProperties.h>
@@ -67,6 +68,9 @@ TBOOL AGameSystemManager::OnCreate()
 
 	// Load models from the startup library
 	AAnimatableObjectManager::GetSingleton()->LoadTypesFromLibrary( "lib_startup" );
+
+	// Setup HUD
+	pScheduler->CreateTask<AHudManager>( this )->Create();
 
 	// Create collision and physics systems
 	pScheduler->CreateTask<ACollisionManager>( this )->Create();

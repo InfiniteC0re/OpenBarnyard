@@ -9,6 +9,7 @@
 #include "Player/APlayerManager.h"
 #include "Sound/ASoundManager.h"
 #include "Helpers/AGameLoader.h"
+#include "HUD/AHudManager.h"
 
 //-----------------------------------------------------------------------------
 // Enables memory debugging.
@@ -286,8 +287,8 @@ TBOOL AGameStateController::UpdateTransition( TFLOAT a_flDeltaTime )
 			{
 				// Input is ignored
 				pCurrentState->m_HUDParams.SetFlags( 0 );
-				TTODO( "Update AHudManager?" );
-				//( **(code**)( *AHudManager::ms_pInstance + 0x1c ) )( a_flDeltaTime );
+
+				AHudManager::GetSingleton()->OnUpdate( a_flDeltaTime );
 
 				m_eFlags.bIgnoreInput = TFALSE;
 
