@@ -11,6 +11,7 @@
 #include "Helpers/ASkinLightingManager.h"
 #include "Helpers/ATreeManager.h"
 #include "Helpers/AInstanceManager.h"
+#include "Helpers/AGameTimeManager.h"
 #include "MiniGame/AMiniGameManager.h"
 #include "Physics/ACollisionManager.h"
 #include "Physics/ABarnyardCollision.h"
@@ -65,6 +66,7 @@ TBOOL AGameSystemManager::OnCreate()
 	// Initialise some basic things like cameras, music and more
 	pScheduler->CreateTask<ACameraManager>( this )->Create();
 	pScheduler->CreateTask<AMusicManager>( this )->Create();
+	pScheduler->CreateTask<AGameTimeManager>( this )->Create();
 
 	// Load models from the startup library
 	AAnimatableObjectManager::GetSingleton()->LoadTypesFromLibrary( "lib_startup" );
