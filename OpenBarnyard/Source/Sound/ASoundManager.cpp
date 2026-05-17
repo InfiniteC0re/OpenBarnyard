@@ -932,7 +932,7 @@ TBOOL ASoundManager::LoadSoundBankImpl( const TCHAR* a_szName, TBOOL a_bSimpleSo
 
 								for ( TUINT i = 0; i < pTrackloop->GetSize(); i++ )
 								{
-									if ( pVarDelays->GetValue( i )->GetRaw() != 0 )
+									if ( pTrackloop->GetValue( i )->GetRaw() != 0 )
 									{
 										pSoundEx->m_TrackLoop.SetBit( i, 1 );
 									}
