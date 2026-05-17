@@ -21,6 +21,13 @@ public:
 	void CreateBuffers( TINT a_iNumVertices );
 
 	void InvalidateBounds();
+	void SetMaterial( T2GUIMaterial* a_pMaterial ) { m_pMaterial = a_pMaterial; }
+
+	TINT            GetNumVertices() const { return m_iNumVertices; }
+	TVector2*       GetVertices() { return m_pVertices; }
+	const TVector2* GetVertices() const { return m_pVertices; }
+	TVector2*       GetUVs() { return m_pUVs; }
+	const TVector2* GetUVs() const { return m_pUVs; }
 
 private:
 	T2GUIMaterial* m_pMaterial;    // 0x54

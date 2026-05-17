@@ -1062,6 +1062,63 @@ void ASoundManager::PauseAllCues( TBOOL a_bPause )
 	}
 }
 
+// $Barnyard: FUNCTION 005d7bb0
+void ASoundManager::PauseCue( TINT a_iCueIndex, TBOOL a_bPause )
+{
+	if ( a_iCueIndex == -1 )
+		return;
+
+	TASSERT( a_iCueIndex >= 0 && a_iCueIndex < ASOUNDMANAGER_MAX_NUM_CUE );
+
+	Cue* pCue = &m_aCues[ a_iCueIndex ];
+
+	if ( !pCue->IsUsed() )
+		return;
+
+	if ( a_bPause )
+	{
+		if ( pCue->fStartTime2 <= 0.0f )
+		{
+			pCue->fStartTime2 = m_fCurrentTime;
+
+			if ( pCue->oEventList.IsLinked() )
+			{
+				pCue->oEventList.Remove();
+			}
+
+			T2_FOREACH( pCue->oChannelRefs, channel )
+			{
+				channel->iFlags |= 1;
+
+				if ( channel->iFMODChannelHandle != -1 )
+				{
+					FSOUND_SetPaused( channel->iFMODChannelHandle, TTRUE );
+				}
+			}
+		}
+	}
+	else if ( pCue->fStartTime2 > 0.0f )
+	{
+		pCue->fStartTime += m_fCurrentTime - pCue->fStartTime2;
+		pCue->fStartTime2 = -1.0f;
+
+		if ( !pCue->oEventList.IsLinked() && !pCue->oEventList->IsEmpty() )
+		{
+			m_QueuedSortedEventLists.ReInsert( pCue->oEventList );
+		}
+
+		T2_FOREACH( pCue->oChannelRefs, channel )
+		{
+			channel->iFlags &= ~1;
+
+			if ( channel->iFMODChannelHandle != -1 )
+			{
+				FSOUND_SetPaused( channel->iFMODChannelHandle, TFALSE );
+			}
+		}
+	}
+}
+
 // $Barnyard: FUNCTION 005dbd40
 TBOOL ASoundManager::LoadWaveBanksInfo( const TCHAR* a_szFileName )
 {

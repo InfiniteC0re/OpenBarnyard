@@ -1,3 +1,5 @@
+#pragma once
+
 //-----------------------------------------------------------------------------
 // Contains indices of various sounds stored in nb soundbank.
 // Note: Automatically generated header file.

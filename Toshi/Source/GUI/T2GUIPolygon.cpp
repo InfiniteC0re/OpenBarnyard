@@ -67,6 +67,9 @@ void T2GUIPolygon::GetDimensions( TFLOAT& a_rWidth, TFLOAT& a_rHeight )
 // $Barnyard: FUNCTION 006d88e0
 void T2GUIPolygon::CreateBuffers( TINT a_iNumVertices )
 {
+	TASSERT( m_pVertices == TNULL );
+	TASSERT( m_pUVs == TNULL );
+
 	m_iNumVertices      = a_iNumVertices;
 	m_pVertices         = new TVector2[ a_iNumVertices ];
 	m_pUVs              = new TVector2[ a_iNumVertices ];

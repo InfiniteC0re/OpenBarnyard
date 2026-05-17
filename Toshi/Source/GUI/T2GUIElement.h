@@ -119,6 +119,12 @@ public:
 		m_eFlags &= ~1;
 	}
 
+	void SetVisible( TBOOL a_bVisible )
+	{
+		if ( a_bVisible ) Show();
+		else Hide();
+	}
+
 	// $Barnyard: FUNCTION 006c3ad0
 	void SetInFront()
 	{

@@ -1,3 +1,5 @@
+#pragma once
+
 //-----------------------------------------------------------------------------
 // Contains indices of various sounds stored in dagboss soundbank.
 // Note: Automatically generated header file.

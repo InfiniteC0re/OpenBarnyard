@@ -278,6 +278,7 @@ public:
 
 	// Allows to control pause state of sounds
 	void PauseAllCues( TBOOL a_bPause );
+	void PauseCue( TINT a_iCueIndex, TBOOL a_bPause );
 
 	// Returns index of an available cue that can be used to play sound
 	TINT GetAvailableCueIndex();

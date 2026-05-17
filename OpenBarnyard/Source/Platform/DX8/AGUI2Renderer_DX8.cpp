@@ -589,7 +589,20 @@ void AGUI2RendererDX8::RenderRectangle( const Toshi::TVector2& a, const Toshi::T
 // $Barnyard: FUNCTION 0064fb90
 void AGUI2RendererDX8::RenderTriStrip( Toshi::TVector2* vertices, Toshi::TVector2* UV, uint32_t numverts )
 {
-	TIMPLEMENT();
+	if ( m_bIsTransformDirty )
+	{
+		UpdateTransform();
+	}
+
+	for ( TUINT32 i = 0; i < numverts; i++ )
+	{
+		sm_Vertices[ i ].Position = { vertices[ i ].x, vertices[ i ].y, sm_fZCoordinate };
+		sm_Vertices[ i ].Colour   = m_uiColour;
+		sm_Vertices[ i ].UV       = { UV[ i ].x, UV[ i ].y };
+	}
+
+	auto pRender = TSTATICCAST( TRenderD3DInterface, TRenderInterface::GetSingleton() );
+	pRender->GetDirect3DDevice()->DrawPrimitiveUP( D3DPT_TRIANGLESTRIP, numverts - 2, sm_Vertices, sizeof( Vertex ) );
 }
 
 void AGUI2RendererDX8::RenderLine( const Toshi::TVector2& a, const Toshi::TVector2& b )
