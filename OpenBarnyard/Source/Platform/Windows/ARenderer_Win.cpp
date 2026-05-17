@@ -318,13 +318,27 @@ void ARenderer::RenderGUI()
 	pRender->SetCurrentRenderContext( pOldContext );
 }
 
+// $Barnyard: FUNCTION 0060aff0
 static TBOOL OnRenderDeviceLost()
 {
+	if ( ASkyDome* pSkyDome = ARenderer::GetSingleton()->GetSkyDome() )
+	{
+		return TTRUE;
+	}
+
+#ifdef BARNYARD_COMMUNITY_PATCH
 	return TTRUE;
+#endif
 }
 
+// $Barnyard: FUNCTION 0060b010
 static TBOOL OnRenderDeviceFound()
 {
+	if ( ASkyDome* pSkyDome = ARenderer::GetSingleton()->GetSkyDome() )
+	{
+		pSkyDome->SetDirty();
+	}
+
 	return TTRUE;
 }
 
@@ -352,6 +366,10 @@ TBOOL ARenderer::OnCreate()
 		AModelLoader::GetSingleton()->InitialiseStatic();
 		AGlowViewport::CreateSingleton( TLightIDList::MAX_NUM_LIGHTS * SPLITSCREEN_MAX_NUM_PLAYERS );
 		// ... AWeatherManager
+
+		m_pSkyDome = new ASkyDome();
+		m_pSkyDome->Create( 180.0f, 75.0, 14, 6 );
+
 		// ... ASky
 		// ... ASunFlareEffect
 
@@ -422,7 +440,12 @@ void ARenderer::RenderMainScene( TFLOAT a_fDeltaTime )
 
 		rTransformStack.Push( pViewportContext->GetWorldViewMatrix() );
 		pViewportContext->SetCameraObject( pCameraObject );
+		pRender->FlushShaders();
 
+		// Render sky
+		pViewportContext->EnableFog( TFALSE );
+		m_pSkyDome->Render1();
+		m_pSkyDome->Render2();
 		pRender->FlushShaders();
 		pViewportContext->EnableFog( TTRUE );
 

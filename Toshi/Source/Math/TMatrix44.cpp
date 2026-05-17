@@ -305,4 +305,13 @@ void TMatrix44::GetEulerXYZ( TVector3& a_rOutVec ) const
 	}
 }
 
+// $Barnyard: FUNCTION 0042c510
+void TMatrix44::Lerp( const TMatrix44& a_rFrom, const TMatrix44& a_rTo, TFLOAT a_flProgress )
+{
+	AsBasisVector4( 0 ).Lerp4( a_rFrom.AsBasisVector4( 0 ), a_rTo.AsBasisVector4( 0 ), a_flProgress );
+	AsBasisVector4( 1 ).Lerp4( a_rFrom.AsBasisVector4( 1 ), a_rTo.AsBasisVector4( 1 ), a_flProgress );
+	AsBasisVector4( 2 ).Lerp4( a_rFrom.AsBasisVector4( 2 ), a_rTo.AsBasisVector4( 2 ), a_flProgress );
+	AsBasisVector4( 3 ).Lerp4( a_rFrom.AsBasisVector4( 3 ), a_rTo.AsBasisVector4( 3 ), a_flProgress );
+}
+
 TOSHI_NAMESPACE_END

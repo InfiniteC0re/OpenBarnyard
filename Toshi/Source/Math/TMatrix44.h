@@ -172,6 +172,8 @@ public:
 	void LookAtTarget( const TVector4& a_rTarget, const TVector4& a_rUp );
 	void LookAtDirection( const TVector4& a_rVec, const TVector4& a_rVec2 );
 
+	void Lerp( const TMatrix44& a_rFrom, const TMatrix44& a_rTo, TFLOAT a_flProgress );
+
 	// $Barnyard: FUNCTION 006c86f0
 	constexpr void Scale( TFLOAT a_fScalar1, TFLOAT a_fScalar2, TFLOAT a_fScalar3 )
 	{

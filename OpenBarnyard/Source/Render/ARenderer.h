@@ -1,5 +1,6 @@
 #pragma once
 #include "Cameras/ACamera.h"
+#include "ASkyDome.h"
 
 #ifdef TOSHI_SKU_WINDOWS
 #  include "Platform/Windows/ADisplayModes_Win.h"
@@ -40,6 +41,8 @@ public:
 	Toshi::TEmitter<ARenderer, TINT>&       GetRenderGUIEmitter() { return m_RenderGUIEmitter; }
 	const Toshi::TEmitter<ARenderer, TINT>& GetRenderGUIEmitter() const { return m_RenderGUIEmitter; }
 
+	ASkyDome* GetSkyDome() { return m_pSkyDome; }
+
 private:
 	void CreateMainViewport();
 	void RenderGUI();
@@ -56,6 +59,7 @@ private:
 	Toshi::TEmitter<ARenderer, TBOOL*> m_AnimationUpdateStartEmitter;
 	Toshi::TEmitter<ARenderer, TBOOL*> m_AnimationUpdateEndEmitter;
 	Toshi::TEmitter<ARenderer, TINT>   m_RenderGUIEmitter;
+	ASkyDome*                          m_pSkyDome;
 	TBOOL                              m_bRenderGUI;
 	ADisplayModes_Win                  m_DisplayModes;
 };
