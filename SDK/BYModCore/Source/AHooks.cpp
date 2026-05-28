@@ -7,6 +7,7 @@
 
 #include "Enhancements/AInstanceManager2.h"
 #include "Enhancements/ATreeManager2.h"
+#include "Enhancements/ARegrowthManager2.h"
 
 #include <BYardSDK/AGameStateController.h>
 #include <BYardSDK/THookedRenderD3DInterface.h>
@@ -610,7 +611,6 @@ MEMBER_HOOK( 0x0060c7c0, ARenderer, ARenderer_OnCreate, TBOOL )
 	if ( !g_pCommandLine->HasParameter( "-noimgui" ) )
 		AImGUI::CreateSingleton();
 
-	AGlowViewport::SetSingletonExplicit( *TREINTERPRETCAST( AGlowViewport**, 0x0079b180 ) );
 	return bResult;
 }
 
@@ -764,13 +764,14 @@ MEMBER_HOOK( 0x004293d0, AGameStateController, AGameStateController_ProcessInput
 	{
 		Toshi::TInputDeviceKeyboard* pKeyboard = TSTATICCAST( Toshi::TInputDeviceKeyboard, a_pInputEvent->GetSource() );
 
-		if ( pKeyboard->IsAltDown() )
-			AImGUI::GetSingleton()->Toggle();
+		if ( pKeyboard->IsAltDown() ) g_pImGui->Toggle();
 	}
 	else if ( a_pInputEvent->GetEventType() == TInputInterface::EVENT_TYPE_GONE_DOWN && a_pInputEvent->GetDoodad() == TInputDeviceKeyboard::KEY_F5 )
 	{
 		*(TBOOL*)( ( *(TUINT*)( 0x0079b2ec ) + 0x88 ) ) = !( *(TBOOL*)( ( *(TUINT*)( 0x0079b2ec ) + 0x88 ) ) );
 	}
+
+	if ( g_pImGui->OnInputEvent( a_pInputEvent ) ) return TTRUE;
 
 	return CallOriginal( a_pInputEvent );
 }
@@ -1001,6 +1002,11 @@ MEMBER_HOOK( 0x005ef3a0, ATreeManager2, ATreeManager_Render, void )
 	if ( !g_oSettings.bDisableTreeRendering ) ATreeManager2::Render();
 }
 
+MEMBER_HOOK( 0x005e3990, ARegrowthManager2, ARegrowthManager2_Render, void )
+{
+	ARegrowthManager2::Render();
+}
+
 struct ARegrowthManager
 {
 	struct Object : public Toshi::T2SList<Object>::Node
@@ -1088,6 +1094,9 @@ void AHooks::Initialise()
 	InstallHook<AInstanceManager_Render>();
 
 	InstallHook<ATreeManager_Render>();
+
+	//InstallHook<ARegrowthManager2_Render>();
+
 	InstallHook<ARegrowthManager_FindObjectShittyWay>();
 
 // 	InstallHook<TMalloc1>();

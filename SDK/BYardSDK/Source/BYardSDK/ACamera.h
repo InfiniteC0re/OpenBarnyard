@@ -11,7 +11,7 @@ public:
 	static const Toshi::TVector4 sm_vWorldUp;
 
 public:
-	virtual ~ACamera();
+	virtual ~ACamera() = default;
 
 	Toshi::TVector4 GetOrientation() const;
 

@@ -22,10 +22,10 @@ static TMatrix44 s_mInstanceTransform = {
 	0.0f, 0.0f, 0.0f, 1.0f
 };
 
-static constexpr TUINT                   MAX_RENDERED_INSTANCES = 1024;
+static constexpr TUINT                   MAX_RENDERED_INSTANCES = 2048;
 static TBOOL                             s_aInstanceVisMasks[ MAX_RENDERED_INSTANCES ];
 static TUINT8                            s_aInstanceFlags[ MAX_RENDERED_INSTANCES ];
-static TUINT8                            s_aInstanceLightIDs[ MAX_RENDERED_INSTANCES ];
+static TUINT8                            s_aInstanceLightIDs[ MAX_RENDERED_INSTANCES ][ 4 ];
 static AInstanceManager::RenderListEntry s_aRenderList[ MAX_RENDERED_INSTANCES ];
 
 TBOOL AInstanceManager2::Render()
@@ -95,6 +95,7 @@ TBOOL AInstanceManager2::Render()
 		const TINT iLODId = g_oSettings.bDisableInstanceLODs ? 0 : TMath::Min( i % MAX_NUM_LODS, pModel->GetNumLODs() - 1 );
 		TModelLOD* pLOD   = &pModel->GetLOD( iLODId );
 
+		pRenderContext->ClearLightIDs();
 		pRenderContext->SetSkeletonInstance( pModelInstance->GetSkeletonInstance() );
 
 		// Render every instance of this model
@@ -121,7 +122,13 @@ TBOOL AInstanceManager2::Render()
 				pRenderContext->SetAlphaBlend( 1.0f );
 			}
 
-			pRenderContext->SetClipFlags( s_aInstanceVisMasks[ pRenderList - s_aRenderList ] );
+			TINT iInstanceID = pRenderList - s_aRenderList;
+			if ( s_aInstanceLightIDs[ iInstanceID ][ 0 ] >= 0 ) pRenderContext->AddLight( s_aInstanceLightIDs[ iInstanceID ][ 0 ] );
+			if ( s_aInstanceLightIDs[ iInstanceID ][ 1 ] >= 0 ) pRenderContext->AddLight( s_aInstanceLightIDs[ iInstanceID ][ 1 ] );
+			if ( s_aInstanceLightIDs[ iInstanceID ][ 2 ] >= 0 ) pRenderContext->AddLight( s_aInstanceLightIDs[ iInstanceID ][ 2 ] );
+			if ( s_aInstanceLightIDs[ iInstanceID ][ 3 ] >= 0 ) pRenderContext->AddLight( s_aInstanceLightIDs[ iInstanceID ][ 3 ] );
+			
+			pRenderContext->SetClipFlags( s_aInstanceVisMasks[ iInstanceID ] );
 			pRenderContext->SetModelViewMatrix( pRenderList->matTransform );
 
 			for ( TINT k = 0; k < pLOD->iNumMeshes; k++ )
@@ -138,15 +145,22 @@ TBOOL AInstanceManager2::Render()
 	pRenderContext->SetClipFlags( uiOldClipFlags );
 	pRenderContext->SetAlphaBlend( 1.0f );
 	pRenderContext->SetModelViewMatrix( matModelView );
+	pRenderContext->ClearLightIDs();
+
 	return TTRUE;
 }
 
 void AInstanceManager2::FillRenderList_All( const Toshi::T2SList<StaticInstanceEntry>& a_rcInstanceList, const Toshi::TMatrix44& a_rcWorldTransform, RenderListEntry* a_pOutRenderData, TINT& a_rNumInstances, TBOOL a_bDynamic )
 {
-	const TFLOAT flLOD0DistanceSq      = m_flLOD0Distance * m_flLOD0Distance;
-	const TFLOAT flMaxRenderDistanceSq = m_flVisibilityDistanceBlendEnd * m_flVisibilityDistanceBlendEnd;
+	TRenderContext*  pRenderContext    = g_pRender->GetCurrentContext();
+	// For perspective shadow passes (glow lights), clamp to the projection far clip = light radius.
+	// For orthographic passes (CSM), m_fFarClip is light-space Z extent, not world distance -- skip.
+	const TBOOL  bIsPerspective      = pRenderContext->GetCameraMode() == TRenderContext::CameraMode_Perspective;
+	const TFLOAT flFarClipLimit      = bIsPerspective ? pRenderContext->GetProjectionParams().m_fFarClip : FLT_MAX;
+	const TFLOAT flMaxRenderDist     = TMath::Min( m_flVisibilityDistanceBlendEnd, flFarClipLimit );
+	const TFLOAT flLOD0DistanceSq    = m_flLOD0Distance * m_flLOD0Distance;
+	const TFLOAT flMaxRenderDistanceSq = flMaxRenderDist * flMaxRenderDist;
 
-	TRenderContext*  pRenderContext = g_pRender->GetCurrentContext();
 	const TMatrix44& matViewWorld   = pRenderContext->GetViewWorldMatrix();
 	TVector4         vecCameraPos   = matViewWorld.GetTranslation();
 
@@ -196,7 +210,10 @@ void AInstanceManager2::FillRenderList_All( const Toshi::T2SList<StaticInstanceE
 				// Store data about the instance
 				s_aInstanceVisMasks[ a_rNumInstances ] = TTRUE;
 				s_aInstanceFlags[ a_rNumInstances ]    = it->uiPackedScaleYaw >> 4;
-				s_aInstanceLightIDs[ a_rNumInstances ] = oLightList[ 0 ];
+				s_aInstanceLightIDs[ a_rNumInstances ][ 0 ] = oLightList[ 0 ];
+				s_aInstanceLightIDs[ a_rNumInstances ][ 1 ] = oLightList[ 1 ];
+				s_aInstanceLightIDs[ a_rNumInstances ][ 2 ] = oLightList[ 2 ];
+				s_aInstanceLightIDs[ a_rNumInstances ][ 3 ] = oLightList[ 3 ];
 
 				const TINT   iModelSlot     = ( it->uiModelIndex * MAX_NUM_LODS ) + iLODIndex;
 				const TFLOAT flLocatorScale = ( it->uiPackedScaleYaw & 0b1111 ) * 0.2f;
@@ -296,10 +313,13 @@ void AInstanceManager2::FillRenderList_Visible( const Toshi::T2SList<StaticInsta
 	// 2. Fill the render list
 	//-----------------------------------------------------------------------------
 
-	const TFLOAT flLOD0DistanceSq      = m_flLOD0Distance * m_flLOD0Distance;
-	const TFLOAT flMaxRenderDistanceSq = m_flVisibilityDistanceBlendEnd * m_flVisibilityDistanceBlendEnd;
+	TRenderContext*  pRenderContext    = g_pRender->GetCurrentContext();
+	const TBOOL  bIsPerspective      = pRenderContext->GetCameraMode() == TRenderContext::CameraMode_Perspective;
+	const TFLOAT flFarClipLimit      = bIsPerspective ? pRenderContext->GetProjectionParams().m_fFarClip : FLT_MAX;
+	const TFLOAT flMaxRenderDist     = TMath::Min( m_flVisibilityDistanceBlendEnd, flFarClipLimit );
+	const TFLOAT flLOD0DistanceSq    = m_flLOD0Distance * m_flLOD0Distance;
+	const TFLOAT flMaxRenderDistanceSq = flMaxRenderDist * flMaxRenderDist;
 
-	TRenderContext*  pRenderContext = g_pRender->GetCurrentContext();
 	const TMatrix44& matViewWorld   = pRenderContext->GetViewWorldMatrix();
 	TVector4         vecCameraPos   = matViewWorld.GetTranslation();
 
@@ -356,7 +376,10 @@ void AInstanceManager2::FillRenderList_Visible( const Toshi::T2SList<StaticInsta
 						// Store data about the instance
 						s_aInstanceVisMasks[ a_rNumInstances ] = TTRUE;
 						s_aInstanceFlags[ a_rNumInstances ]    = it->uiPackedScaleYaw >> 4;
-						s_aInstanceLightIDs[ a_rNumInstances ] = oLightList[ 0 ];
+						s_aInstanceLightIDs[ a_rNumInstances ][ 0 ] = oLightList[ 0 ];
+						s_aInstanceLightIDs[ a_rNumInstances ][ 1 ] = oLightList[ 1 ];
+						s_aInstanceLightIDs[ a_rNumInstances ][ 2 ] = oLightList[ 2 ];
+						s_aInstanceLightIDs[ a_rNumInstances ][ 3 ] = oLightList[ 3 ];
 
 						const TINT   iModelSlot     = ( it->uiModelIndex * MAX_NUM_LODS ) + iLODIndex;
 						const TFLOAT flLocatorScale = ( it->uiPackedScaleYaw & 0b1111 ) * 0.2f;

@@ -15,7 +15,7 @@
 
 TOSHI_NAMESPACE_USING
 
-static constexpr TUINT                       MAX_RENDERED_INSTANCES = 240;
+static constexpr TUINT                       MAX_RENDERED_INSTANCES = 512;
 static ATreeManager2::TreeInstanceRenderData s_aInstanceMatrices[ MAX_RENDERED_INSTANCES ];
 
 void ATreeManager2::Render()
@@ -115,7 +115,10 @@ void ATreeManager2::Render()
 	TASSERT( uiNumSectionsToRender < MAX_SECTIONS );
 
 	// Do culling
-	TFLOAT fRenderDistanceSq    = m_fRenderDistance * m_fRenderDistance;
+	const TBOOL  bIsPerspective  = pRenderContext->GetCameraMode() == TRenderContext::CameraMode_Perspective;
+	const TFLOAT flFarClipLimit  = bIsPerspective ? pRenderContext->GetProjectionParams().m_fFarClip : FLT_MAX;
+	const TFLOAT flRenderDist    = TMath::Min( m_fRenderDistance, flFarClipLimit );
+	TFLOAT fRenderDistanceSq    = flRenderDist * flRenderDist;
 	TFLOAT fLODSwitchDistanceSq = m_fLODSwitchDistance * m_fLODSwitchDistance;
 	TFLOAT fBlendingFactor      = 1.0f / ( m_fRenderDistance - m_fBlendingDistance );
 
@@ -143,7 +146,7 @@ void ATreeManager2::Render()
 	{
 		TUINT8 uiFlags;
 		TUINT8 uiUnused;
-		TUINT8 uiLightId;
+		TINT8  uiLightIds[4];
 	} aLocatorRenderData[ MAX_RENDERED_INSTANCES ];
 
 	if ( !m_llUsedTreeInstances.IsEmpty() )
@@ -198,7 +201,10 @@ void ATreeManager2::Render()
 							pGlowViewport->GetInfluencingLightIDs( boundingVolume, oLightIdList );
 
 							aLocatorRenderData[ iNumLocatorsToRender ].uiFlags |= pTreeInstance->iColor << 4;
-							aLocatorRenderData[ iNumLocatorsToRender ].uiLightId = oLightIdList[ 0 ];
+							aLocatorRenderData[ iNumLocatorsToRender ].uiLightIds[ 0 ] = oLightIdList[ 0 ];
+							aLocatorRenderData[ iNumLocatorsToRender ].uiLightIds[ 1 ] = oLightIdList[ 1 ];
+							aLocatorRenderData[ iNumLocatorsToRender ].uiLightIds[ 2 ] = oLightIdList[ 2 ];
+							aLocatorRenderData[ iNumLocatorsToRender ].uiLightIds[ 3 ] = oLightIdList[ 3 ];
 
 							iNumLocatorsToRender += 1;
 							iInstanceIndex += 1;
@@ -285,6 +291,13 @@ START_RENDERING:
 			TINT iInstanceIndex = pInstanceRenderData - s_aInstanceMatrices;
 			pRenderInterface->SetLightDirectionMatrix( aLightMatrices[ aLocatorRenderData[ iInstanceIndex ].uiFlags % TARRAYSIZE( aLightMatrices ) ] );
 
+			pRenderContext->ClearLightIDs();
+			TINT8* pLightIds = aLocatorRenderData[ iInstanceIndex ].uiLightIds;
+			if ( pLightIds[ 0 ] != -1 ) pRenderContext->AddLight( pLightIds[ 0 ] );
+			if ( pLightIds[ 1 ] != -1 ) pRenderContext->AddLight( pLightIds[ 1 ] );
+			if ( pLightIds[ 2 ] != -1 ) pRenderContext->AddLight( pLightIds[ 2 ] );
+			if ( pLightIds[ 3 ] != -1 ) pRenderContext->AddLight( pLightIds[ 3 ] );
+
 			// Setup model view matrix
 			pRenderContext->SetModelViewMatrix( pInstanceRenderData->oMatrix );
 
@@ -316,6 +329,8 @@ START_RENDERING:
 					rLOD.ppMeshes[ k ]->Render();
 			}
 
+			pRenderContext->ClearLightIDs();
+
 			pInstanceRenderData = pInstanceRenderData->pPrev;
 		}
 	}
@@ -323,4 +338,5 @@ START_RENDERING:
 	pRenderInterface->SetLightDirectionMatrix( matLightDir );
 	pRenderContext->SetAlphaBlend( 1.0f );
 	pRenderContext->SetModelViewMatrix( matModelView );
+	pRenderContext->ClearLightIDs();
 }
