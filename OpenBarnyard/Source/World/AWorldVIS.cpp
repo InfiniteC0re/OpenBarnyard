@@ -301,7 +301,7 @@ void AWorldVis::RenderLeafNodeIntersect( CellSphereTreeBranchNode* a_pNode, Rend
 		CellMeshSphere* pMeshSphere      = a_pRenderData->pCell->ppCellMeshSpheres[ a_pNode->GetLeafNode()->GetMeshIndex( i ) ];
 		TINT            iIntersectResult = a_pRenderData->pFrustum->IntersectSphereReduce( pMeshSphere->m_BoundingSphere );
 
-		if ( iIntersectResult != -1 )
+		if ( iIntersectResult != 1 )
 		{
 			m_pfnRenderCallback( pMeshSphere, a_pRenderData );
 		}

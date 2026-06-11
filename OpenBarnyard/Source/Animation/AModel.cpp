@@ -305,6 +305,7 @@ void AModelInstance::RenderInstanceCallback( TModelInstance* a_pInstance, void* 
 	}
 
 	// Check if object can be affected by any light sources
+	pRenderContext->ClearLightIDs();
 	if ( pLOD->iNumMeshes > 0 && pGameModelInstance->ReceivesLight() )
 	{
 		TMatrix44 matTransform;
