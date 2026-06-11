@@ -5,6 +5,7 @@
 #include <BYardSDK/AGUI2.h>
 #include <BYardSDK/THookedSystemManager.h>
 #include <BYardSDK/THookedRenderD3DInterface.h>
+#include <BYardSDK/SDKHooks.h>
 
 #include <Toshi/TScheduler.h>
 
@@ -77,7 +78,7 @@ TBOOL MaterialLibrary_LoadTTLData( AMaterialLibrary* a_pMatLib, AMaterialLibrary
 						if ( pFile->Read( pFileData, uiFileSize ) == uiFileSize )
 						{
 							pTexture->SetData( pFileData, uiFileSize );
-							pTexture->Load();
+							CALL_THIS( 0x00615bc0, Toshi::T2Texture*, HRESULT, pTexture );
 							pTexture->SetData( TNULL, 0 );
 						}
 						else
@@ -91,7 +92,7 @@ TBOOL MaterialLibrary_LoadTTLData( AMaterialLibrary* a_pMatLib, AMaterialLibrary
 					else
 					{
 						pTexture->SetData( pTexInfo->m_pData, pTexInfo->m_uiDataSize );
-						pTexture->Load();
+						CALL_THIS( 0x00615bc0, Toshi::T2Texture*, HRESULT, pTexture );
 						pTexture->SetData( TNULL, 0 );
 
 						if ( g_bDumpTextures )
@@ -147,7 +148,7 @@ void ATextureUpdater::ReloadTexture( Toshi::T2Texture* a_pT2Texture, void* a_pDa
 	a_pT2Texture->Unload();
 
 	a_pT2Texture->SetData( a_pData, a_uiDataSize );
-	a_pT2Texture->Load();
+	CALL_THIS( 0x00615bc0, Toshi::T2Texture*, HRESULT, a_pT2Texture );
 
 	for ( TINT k = 0; k < TTextureFactory::NUM_LISTS; k++ )
 	{
