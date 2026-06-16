@@ -86,7 +86,7 @@ public:
 		{
 			// Check if the object is enabled, visible and affects the sphere
 			if ( pGlowObject->IsEnabled() &&
-			     ( pGlowObject->IsNightLight() || *(TINT*)( *(TCHAR**)( 0x00783d3c ) + 0x34 ) == 4 ) &&
+			     ( !pGlowObject->IsNightLight() || *(TINT*)( *(TCHAR**)( 0x00783d3c ) + 0x34 ) == 4 ) &&
 			     Toshi::TRenderContext::CullSphereToFrustumSimple( a_rcSphere, pGlowObject->m_oFrustum, 6 ) )
 			{
 				// The object is influencing the specified sphere
