@@ -1035,6 +1035,15 @@ HOOK( 0x005e4540, ARegrowthManager_FindObjectShittyWay, ARegrowthManager::Object
 	return TNULL;
 }
 
+extern TBOOL g_bGameExited;
+
+HOOK( 0x006bbb80, TSystemManager_Destroy, void )
+{
+	g_bGameExited = TTRUE;
+
+	CallOriginal();
+}
+
 void AHooks::Initialise()
 {
 	// Apply other hooks
@@ -1098,6 +1107,8 @@ void AHooks::Initialise()
 	//InstallHook<ARegrowthManager2_Render>();
 
 	InstallHook<ARegrowthManager_FindObjectShittyWay>();
+
+	InstallHook<TSystemManager_Destroy>();
 
 // 	InstallHook<TMalloc1>();
 // 	InstallHook<TMalloc2>();

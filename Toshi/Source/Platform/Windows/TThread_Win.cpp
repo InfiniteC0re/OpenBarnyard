@@ -114,6 +114,12 @@ void TThreadManager::Create()
 void TThreadManager::Delete()
 {
 	DeleteCriticalSection( &m_CriticalSection );
+	m_Threads.Clear();
+}
+
+TThreadManager::~TThreadManager()
+{
+	Delete();
 }
 
 TOSHI_NAMESPACE_END

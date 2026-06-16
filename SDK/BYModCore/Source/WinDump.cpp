@@ -4,6 +4,8 @@
 #include <Dbghelp.h>
 #include <tchar.h>
 
+TBOOL g_bGameExited = TFALSE;
+
 typedef BOOL( WINAPI* MINIDUMPWRITEDUMP )( HANDLE hProcess, DWORD dwPid, HANDLE hFile, MINIDUMP_TYPE DumpType, CONST PMINIDUMP_EXCEPTION_INFORMATION ExceptionParam, CONST PMINIDUMP_USER_STREAM_INFORMATION UserStreamParam, CONST PMINIDUMP_CALLBACK_INFORMATION CallbackParam );
 
 void create_minidump( struct _EXCEPTION_POINTERS* apExceptionInfo )
@@ -24,6 +26,12 @@ void create_minidump( struct _EXCEPTION_POINTERS* apExceptionInfo )
 
 LONG WINAPI unhandled_handler( struct _EXCEPTION_POINTERS* apExceptionInfo )
 {
+	if ( g_bGameExited )
+	{
+		TerminateProcess( GetCurrentProcess(), 0 );
+		return EXCEPTION_EXECUTE_HANDLER;
+	}
+
 	create_minidump( apExceptionInfo );
 
 	MessageBoxA( TNULL, "It looks like your game has unfortunately crashed!\n\nContact @infc0re on Discord attaching the crash.dmp file from your game directory.", "Barnyard Crashed", MB_OK );

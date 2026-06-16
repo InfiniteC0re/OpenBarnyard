@@ -54,6 +54,7 @@ class TThreadManager : public TSingleton<TThreadManager>
 {
 public:
 	TThreadManager() { Create(); }
+	~TThreadManager();
 
 	void Create();
 	void Delete();
