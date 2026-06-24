@@ -185,6 +185,8 @@ void AImGUI::BeginScene()
 	auto pRender        = THookedRenderD3DInterface::GetSingleton();
 	auto pDisplayParams = pRender->GetCurrentDisplayParams();
 
+	m_DisplayParams = *pDisplayParams;
+
 	Toshi::TVector2 transformedCursorPos = AGUI2::GetSingleton()->m_oMouseCursor.m_MousePos;
 
 	TFLOAT fRootWidth, fRootHeight;
@@ -306,6 +308,11 @@ void AImGUI::Render()
 				if ( !s_pFXEditor ) s_pFXEditor = new AGameTimeFXEditor();
 				s_pFXEditor->SetVisible( TTRUE );
 			}
+
+			ImGui::TextColored( ImColor( 255, 200, 200, 255 ), "Cheats" );
+			ImGui::SetCursorPosY( ImGui::GetCursorPosY() + 3 );
+
+			ImGui::Checkbox( "Make Duke lose in Pool", &g_oSettings.bPoolAiAimBlackBall );
 
 // 			if (ImGui::Button("Start New Game (Experimental)"))
 // 			{

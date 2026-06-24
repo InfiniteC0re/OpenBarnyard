@@ -21,6 +21,7 @@
 
 #include <BYardSDK/AModel.h>
 #include <BYardSDK/AModelRepos.h>
+#include <BYardSDK/AMaterialLibraryManager.h>
 
 #include <Input/TInputDeviceKeyboard.h>
 #include <Render/TCameraObject.h>
@@ -41,6 +42,79 @@ TUINT  g_uiWindowWidth  = 0;
 TUINT  g_uiWindowHeight = 0;
 TBOOL  g_bBikeFOVPatch  = TFALSE;
 TFLOAT g_fOriginalFOV   = 0.0f;
+
+void ApplyResolutionDependentPatches( TINT a_iWidth, TINT a_iHeight )
+{
+	g_uiWindowWidth  = a_iWidth;
+	g_uiWindowHeight = a_iHeight;
+
+	if ( a_iWidth <= 0 || a_iHeight <= 0 )
+		return;
+
+	constexpr TFLOAT ASPECT_RATIO_5_4   = 5.0f / 4.0f;
+	constexpr TFLOAT ASPECT_RATIO_25_16 = 25.0f / 16.0f;
+	constexpr TFLOAT ASPECT_RATIO_16_10 = 16.0f / 10.0f;
+	constexpr TFLOAT ASPECT_RATIO_15_9  = 15.0f / 9.0f;
+	constexpr TFLOAT ASPECT_RATIO_16_9  = 16.0f / 9.0f;
+
+	const TFLOAT fCurrentAspectRatio = TFLOAT( a_iWidth ) / TFLOAT( a_iHeight );
+	TFLOAT*      pFOV                = (TFLOAT*)0x007822ac;
+
+	// Capture the unpatched (4:3) FOV once so non-widescreen aspect ratios can restore it
+	// instead of keeping a previously-applied widescreen value across a resolution change.
+	static TBOOL s_bCapturedOriginalFOV = TFALSE;
+	if ( !s_bCapturedOriginalFOV )
+	{
+		g_fOriginalFOV         = *pFOV;
+		s_bCapturedOriginalFOV = TTRUE;
+	}
+
+	// To support resolutions like 1366x768 or 1360x768...
+	const TFLOAT MAX_ERROR = TMath::Max( TMath::Abs( ASPECT_RATIO_16_9 - ( 1366.0f / 768.0f ) ), TMath::Abs( ASPECT_RATIO_16_9 - ( 1360.0f / 768.0f ) ) );
+
+	// Default back to the original FOV; the widescreen buckets below override it.
+	*pFOV           = g_fOriginalFOV;
+	g_bBikeFOVPatch = TFALSE;
+
+	if ( TMath::Abs( fCurrentAspectRatio - ASPECT_RATIO_5_4 ) <= MAX_ERROR )
+	{
+		TINFO( "Detected aspect ratio: 5:4\n" );
+		*pFOV = 0.994199f;
+	}
+	else if ( TMath::Abs( fCurrentAspectRatio - ASPECT_RATIO_25_16 ) <= MAX_ERROR )
+	{
+		TINFO( "Detected aspect ratio: 25:16\n" );
+		*pFOV = 1.18425f;
+	}
+	else if ( TMath::Abs( fCurrentAspectRatio - ASPECT_RATIO_16_10 ) <= MAX_ERROR )
+	{
+		TINFO( "Detected aspect ratio: 16:10\n" );
+		*pFOV           = 1.2244f;
+		g_bBikeFOVPatch = TTRUE;
+	}
+	else if ( TMath::Abs( fCurrentAspectRatio - ASPECT_RATIO_15_9 ) <= MAX_ERROR )
+	{
+		TINFO( "Detected aspect ratio: 15:9\n" );
+		*pFOV           = 1.24655f;
+		g_bBikeFOVPatch = TTRUE;
+	}
+	else if ( TMath::Abs( fCurrentAspectRatio - ASPECT_RATIO_16_9 ) <= MAX_ERROR )
+	{
+		TINFO( "Detected aspect ratio: 16:9\n" );
+		*pFOV           = 1.313f;
+		g_bBikeFOVPatch = TTRUE;
+	}
+
+	if ( AGUI2::IsSingletonCreated() )
+	{
+		// Threshold 1.45 separates widescreen (16:9, 16:10, 15:9, 25:16) from 4:3 / 5:4.
+		const TBOOL bWidescreen = fCurrentAspectRatio >= 1.45f;
+		if ( bWidescreen )
+			AGUI2::GetContext()->GetRootElement()->SetDimensions( 936.0f, 702.0f );
+		else
+			AGUI2::GetContext()->GetRootElement()->SetDimensions( 800.0f, 600.0f );
+	}
+}
 
 #define PAGE_HEAP_VERIFICATION
 
@@ -87,7 +161,7 @@ HOOK( 0x006b5740, TMemory_Initialise, TBOOL, TUINT a_uiHeapSize, TUINT a_uiReser
 
 #else // TMEMORY_USE_DLMALLOC
 
-	return CallOriginal( a_uiHeapSize, a_uiReservedSize, a_uiUnused );
+	return CallOriginal( 512 * 1024 * 1024, a_uiReservedSize, a_uiUnused );
 
 #endif
 }
@@ -374,54 +448,10 @@ MEMBER_HOOK( 0x00662d90, AOptions, AOptions_IsResolutionCompatible, TBOOL, TINT 
 		}
 	}
 
-	constexpr TFLOAT ASPECT_RATIO_5_4   = 5.0f / 4.0f;
-	constexpr TFLOAT ASPECT_RATIO_25_16 = 25.0f / 16.0f;
-	constexpr TFLOAT ASPECT_RATIO_16_10 = 16.0f / 10.0f;
-	constexpr TFLOAT ASPECT_RATIO_15_9  = 15.0f / 9.0f;
-	constexpr TFLOAT ASPECT_RATIO_16_9  = 16.0f / 9.0f;
-
-	TFLOAT  fCurrentAspectRatio = TFLOAT( a_iWidth ) / TFLOAT( a_iHeight );
-	TFLOAT* pFOV                = (TFLOAT*)0x007822ac;
-
-	g_fOriginalFOV = *pFOV;
-
-	// To support resolutions like 1366x768 or 1360x768...
-	const TFLOAT MAX_ERROR = TMath::Max( TMath::Abs( ASPECT_RATIO_16_9 - ( 1366.0f / 768.0f ) ), TMath::Abs( ASPECT_RATIO_16_9 - ( 1360.0f / 768.0f ) ) );
-
-	if ( TMath::Abs( fCurrentAspectRatio - ASPECT_RATIO_5_4 ) <= MAX_ERROR )
-	{
-		TINFO( "Detected aspect ratio: 5:4\n" );
-		*pFOV = 0.994199f;
-	}
-	else if ( TMath::Abs( fCurrentAspectRatio - ASPECT_RATIO_25_16 ) <= MAX_ERROR )
-	{
-		TINFO( "Detected aspect ratio: 25:16\n" );
-		*pFOV = 1.18425f;
-	}
-	else if ( TMath::Abs( fCurrentAspectRatio - ASPECT_RATIO_16_10 ) <= MAX_ERROR )
-	{
-		TINFO( "Detected aspect ratio: 16:10\n" );
-		*pFOV           = 1.2244f;
-		g_bBikeFOVPatch = TTRUE;
-	}
-	else if ( TMath::Abs( fCurrentAspectRatio - ASPECT_RATIO_15_9 ) <= MAX_ERROR )
-	{
-		TINFO( "Detected aspect ratio: 15:9\n" );
-		*pFOV           = 1.24655f;
-		g_bBikeFOVPatch = TTRUE;
-	}
-	else if ( TMath::Abs( fCurrentAspectRatio - ASPECT_RATIO_16_9 ) <= MAX_ERROR )
-	{
-		TINFO( "Detected aspect ratio: 16:9\n" );
-		*pFOV           = 1.313f;
-		g_bBikeFOVPatch = TTRUE;
-	}
-
 	*pWidth  = a_iWidth;
 	*pHeight = a_iHeight;
 
-	g_uiWindowWidth  = a_iWidth;
-	g_uiWindowHeight = a_iHeight;
+	ApplyResolutionDependentPatches( a_iWidth, a_iHeight );
 
 	return TFALSE;
 }
@@ -732,10 +762,7 @@ MEMBER_HOOK( 0x006355a0, AGUI2, AGUI2_OnCreate, TBOOL )
 {
 	CallOriginal();
 
-	if ( g_uiWindowWidth >= 1280 && g_uiWindowHeight >= 768 )
-	{
-		AGUI2::GetContext()->GetRootElement()->SetDimensions( 936, 702 );
-	}
+	ApplyResolutionDependentPatches( g_uiWindowWidth, g_uiWindowHeight );
 
 	return TTRUE;
 }
@@ -789,6 +816,19 @@ MEMBER_HOOK( 0x005ea8b0, ATerrainInterface, ATerrain_Render, void )
 	{
 		AHooks::Terrain::Render[ HookType_After ][ i ]( this );
 	}
+}
+
+MEMBER_HOOK( 0x00613b50, AMaterialLibraryManager, AMatLibMgr_CreateTextures, void, AMaterialLibrary* a_pMatLibrary )
+{
+	TINT iNeeded = a_pMatLibrary->GetNumTextures();
+
+	while ( m_iNumFreeTextures < iNeeded )
+	{
+		m_FreeTextures.PushFront( new AMaterialLibraryManager::TextureSlot() );
+		m_iNumFreeTextures++;
+	}
+
+	CallOriginal( a_pMatLibrary );
 }
 
 MEMBER_HOOK( 0x006d5970, TOrderTable, TOrderTable_Flush, void )
@@ -1044,6 +1084,21 @@ HOOK( 0x006bbb80, TSystemManager_Destroy, void )
 	CallOriginal();
 }
 
+class APoolAi
+{
+};
+
+MEMBER_HOOK( 0x004d04a0, APoolAi, APoolAi_ComputeAimDirection, void*, void* a_pOutDir, TINT a_bNoError )
+{
+	if ( g_oSettings.bPoolAiAimBlackBall )
+	{
+		// m_iTargetGroup
+		*(TINT*)( TUINTPTR( this ) + 0x18 ) = 1;
+	}
+
+	return CallOriginal( a_pOutDir, a_bNoError );
+}
+
 void AHooks::Initialise()
 {
 	// Apply other hooks
@@ -1064,6 +1119,7 @@ void AHooks::Initialise()
 	InstallHook<AGUI2_OnUpdate>();
 	InstallHook<AGameStateController_ProcessInput>();
 	InstallHook<ATerrain_Render>();
+	InstallHook<AMatLibMgr_CreateTextures>();
 	InstallHook<AModelLoader_AModelLoaderLoadTRBCallback>();
 	InstallHook<AItemCountHudElement_SetVisible>();
 
@@ -1109,6 +1165,8 @@ void AHooks::Initialise()
 	InstallHook<ARegrowthManager_FindObjectShittyWay>();
 
 	InstallHook<TSystemManager_Destroy>();
+
+	InstallHook<APoolAi_ComputeAimDirection>();
 
 // 	InstallHook<TMalloc1>();
 // 	InstallHook<TMalloc2>();

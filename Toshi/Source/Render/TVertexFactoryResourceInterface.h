@@ -23,6 +23,15 @@ public:
 	const TVertexFactoryFormat& GetVertexFormat() const { return m_VertexFormat; }
 	TUINT16                     GetMaxStaticVertices() const { return m_uiMaxStaticVertices; }
 
+	void AddVertexStream( TUINT16 a_uiVertexSize )
+	{
+		TASSERT( m_VertexFormat.m_uiNumStreams < TVertexFactoryFormat::MAX_NUM_STREAMS );
+		auto& rStream         = m_VertexFormat.m_aStreamFormats[ m_VertexFormat.m_uiNumStreams ];
+		rStream.m_uiVertexSize = a_uiVertexSize;
+		rStream.m_Unk          = 0;
+		m_VertexFormat.m_uiNumStreams++;
+	}
+
 protected:
 	TVertexPoolResourceInterface* CreatePool( TUINT16 a_uiMaxStaticVertices, TUINT32 a_uiFlags );
 

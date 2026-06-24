@@ -82,3 +82,5 @@ public:
 	static void Initialise();
 	TBOOL static AddHook( Hook a_eHook, HookType a_eHookType, void* a_pCallback );
 };
+
+MODCORE_API void ApplyResolutionDependentPatches( TINT a_iWidth, TINT a_iHeight );
