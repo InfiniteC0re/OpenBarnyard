@@ -34,6 +34,8 @@ TFileLexerUTF8::TFileLexerUTF8()
 
 #if defined( TOSHI_SKU_WINDOWS )
 	Define( "TOSHI_SKU_WINDOWS" );
+#elif defined( TOSHI_SKU_WASM )
+	Define( "TOSHI_SKU_WASM" );
 #elif defined( TOSHI_SKU_PS2 )
 	Define( "TOSHI_SKU_PS2" );
 #elif defined( TOSHI_SKU_GC )
@@ -74,6 +76,8 @@ TFileLexerUTF8::TFileLexerUTF8( TFile* a_pInputStream, TINT a_iTokenLookaheadSiz
 
 #if defined( TOSHI_SKU_WINDOWS )
 	Define( "TOSHI_SKU_WINDOWS" );
+#elif defined( TOSHI_SKU_WASM )
+	Define( "TOSHI_SKU_WASM" );
 #elif defined( TOSHI_SKU_PS2 )
 	Define( "TOSHI_SKU_PS2" );
 #elif defined( TOSHI_SKU_GC )
