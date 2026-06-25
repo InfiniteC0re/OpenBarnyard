@@ -39,8 +39,11 @@ project "BYardSDK"
 		"%{IncludeDir.dx8}"
 	}
 	
-	filter "system:windows"
+	filter "options:platform=windows"
 		defines
 		{
 			"TOSHI_SDK"
 		}
+
+	filter "options:platform=wasm"
+		-- TODO 

@@ -1,7 +1,7 @@
 project "OpenBarnyard"
 	language "C++"
 	staticruntime "off"
-	
+
 	-- Set debug dir to the Game folder
 	debugdir ("%{wks.location}/../Game")
 
@@ -14,12 +14,12 @@ project "OpenBarnyard"
 		"OPCODE",
 		"binkw32.lib"
 	}
-	
+
 	linkoptions
 	{
 		"%{wks.location}/bin-int/" .. outputdir .. "/Toshi/Toshi.res",
 	}
-	
+
 	defines
 	{
 		
@@ -81,13 +81,13 @@ project "OpenBarnyard"
 		"Source/Player/**.h",
 		"Source/Player/**.cpp"
 	}
-	
+
 	libdirs
 	{
 		"%{LibDir.fmod}",
 		"%{LibDir.bink}"
 	}
-	
+
 	includedirs
 	{
 		"Source",
@@ -98,12 +98,12 @@ project "OpenBarnyard"
 		"%{IncludeDir.opcode}",
 		"%{IncludeDir.stb}"
 	}
-	
+
 	prebuildcommands
 	{
 		"\"%{wks.location}/DevTools/PooledStrings/PooledStrings.exe\" \"%{prj.location}Source\\APooledStrings.txt\" \"%{prj.location}Source\\APooledStrings.cpp\""
 	}
-	
+
 	postbuildcommands
 	{
 		"{COPYDIR} \"" .. ClientContentCommon  .. "\" \"%{wks.location}bin/" .. outputdir .. "/%{prj.name}/\"",
@@ -118,8 +118,8 @@ project "OpenBarnyard"
 
 	filter "configurations:Final"
 		kind "WindowedApp"
-	
-	filter "system:windows"
+
+	filter "options:platform=windows"
 		files
 		{
 			"Source/Platform/Windows/**.cpp",
@@ -151,3 +151,8 @@ project "OpenBarnyard"
 				"Source/Platform/SDL/**.cpp",
 				"Source/Platform/SDL/**.h"
 			}
+
+	filter "options:platform=wasm"
+		architecture "wasm32"		
+	
+		-- TODO

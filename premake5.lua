@@ -12,13 +12,13 @@ workspace "OpenBarnyard"
 	multiprocessorcompile "on"
 
 	disablewarnings { "4996" }
-	
+
 	debugdir ("%{wks.location}/bin/" .. outputdir .. "/%{prj.name}")
 	targetdir ("%{wks.location}/bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("%{wks.location}/bin-int/" .. outputdir .. "/%{prj.name}")
-	
+
 	editandcontinue "Off"
-	
+
 	-- Global defines
 	defines
 	{
@@ -35,7 +35,7 @@ workspace "OpenBarnyard"
 	{
 		"%{IncludeDir.toshi}"
 	}
-	
+
 	filter "options:arch=x86"
 		architecture "x86"
 
@@ -60,7 +60,7 @@ workspace "OpenBarnyard"
 	--	architecture "x64"
 
 	-- Global Windows parameters
-	filter "system:windows"
+	filter "options:platform=windows"
 		systemversion "latest"
 		vectorextensions "SSE2"
 		
@@ -72,23 +72,31 @@ workspace "OpenBarnyard"
 			"TOSHI_SKU_WINDOWS"
 		}
 		
-	filter "options:renderer=DX8"
-		externalincludedirs
-		{
-			"%{IncludeDir.dx8}"
-		}
-			
+		filter "options:renderer=DX8"
+			externalincludedirs
+			{
+				"%{IncludeDir.dx8}"
+			}
+
+			defines
+			{
+				"TRENDERINTERFACE_DX8"
+			}
+
+		filter "options:renderer=GL"
+			defines
+			{
+				"TRENDERINTERFACE_GL",
+				"GLEW_STATIC",
+				"GLM_FORCE_LEFT_HANDED"
+			}
+
+	filter "options:platform=wasm"
+		-- TODO
+
 		defines
 		{
-			"TRENDERINTERFACE_DX8"
-		}
-		
-	filter "options:renderer=GL"
-		defines
-		{
-			"TRENDERINTERFACE_GL",
-			"GLEW_STATIC",
-			"GLM_FORCE_LEFT_HANDED"
+			"TOSHI_SKU_WASM"
 		}
 
 	filter "configurations:Debug"
