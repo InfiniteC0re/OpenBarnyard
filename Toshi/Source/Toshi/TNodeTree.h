@@ -183,6 +183,7 @@ public:
 		return Remove( *node, flag );
 	}
 
+	// $Barnyard: FUNCTION 006bf3d0
 	void DeleteRecurse( T* node )
 	{
 		while ( node != TNULL )
@@ -194,34 +195,9 @@ public:
 				DeleteRecurse( node->Child() );
 			}
 
-			if ( node->Tree() == this )
-			{
-				m_Count -= 1;
-			}
-
-			if ( node->Tree() == TNULL || node->Tree() == this )
-			{
-				T* nodeParent = node->Parent();
-
-				if ( nodeParent != TNULL )
-				{
-					// If it's the first attached to the root node, set it to next or just remove
-					if ( nodeParent->Child() == node )
-					{
-						nodeParent->m_Child = ( node->Next() != node ) ? node->Next() : TNULL;
-					}
-
-					node->m_Parent = TNULL;
-				}
-
-				node->m_Prev->m_Parent = node->m_Next;
-				node->m_Next->m_Child  = node->m_Prev;
-				node->m_Next           = node;
-				node->m_Prev           = node;
-				node->m_Tree           = TNULL;
-			}
-
+			Remove( node, TFALSE );
 			delete node;
+
 			node = next;
 		}
 	}
