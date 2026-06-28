@@ -1,6 +1,7 @@
 #pragma once
 #include "THookedSingleton.h"
 
+#include "ASkyDome.h"
 #include <Render/TViewport.h>
 #include <Render/TCameraObject.h>
 
@@ -39,7 +40,8 @@ public:
 	Toshi::TEmitter<ARenderer, TBOOL*> m_AnimationUpdateEndEmitter;
 	Toshi::TEmitter<ARenderer, TINT>   m_RenderGUIEmitter;
 
-	void* PAD2;
+	ASkyDome* m_pSkyDome;
+
 	void* PAD3;
 	void* PAD4;
 

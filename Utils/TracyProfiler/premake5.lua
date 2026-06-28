@@ -12,7 +12,8 @@ project "TracyProfiler"
 	
 	defines
 	{
-		"TRACY_PROFILER_EXPORTS"
+		"TRACY_PROFILER_EXPORTS",
+		"TRACY_EXPORTS"
 	}
 
 	includedirs
