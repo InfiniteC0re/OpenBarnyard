@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "ARegrowthManager2.h"
+#include "StaticLights.h"
 
 #include <Toshi/TSceneObject.h>
 #include <Render/TRenderInterface.h>
@@ -20,6 +21,7 @@ struct RegrowthRenderEntry
 static_assert( sizeof( RegrowthRenderEntry ) == 0x44, "RegrowthRenderEntry must be 0x44 bytes" );
 
 static RegrowthRenderEntry s_aRenderEntries[ 240 ];
+static Toshi::TLightIDList s_aEntryStaticLights[ 240 ];
 
 // $Barnyard: FUNCTION 005e3270
 void ARegrowthManager2::FillRenderList()
@@ -106,6 +108,8 @@ void ARegrowthManager2::FillRenderList()
 			TINT iSlot              = ( fDistSq < fLODDist * fLODDist ) ? iBase - 2 : iBase - 1;
 			pEntry->pPrev           = (RegrowthRenderEntry*)pModelData[ iSlot ];
 			pModelData[ iSlot ]     = (TINT)pEntry;
+
+			GatherStaticLights( sphere, s_aEntryStaticLights[ pEntry - s_aRenderEntries ] );
 
 			pObj = (TUINT*)*pObj;
 		}
@@ -206,6 +210,8 @@ void ARegrowthManager2::FillRenderList_Visible()
 			pEntry->pPrev       = (RegrowthRenderEntry*)pModelData[ iSlot ];
 			pModelData[ iSlot ] = (TINT)pEntry;
 
+			GatherStaticLights( sphere, s_aEntryStaticLights[ pEntry - s_aRenderEntries ] );
+
 			pObj = (TUINT*)*pObj;
 		}
 		while ( pObj != pSentinel );
@@ -226,6 +232,7 @@ void ARegrowthManager2::Render()
 	rSavedMVP = pContext->GetModelViewMatrix();
 
 	pContext->ClearLightIDs();
+	ClearStaticLights( pContext );
 
 	// Clear render list heads
 	TINT  iNumModels = *(TINT*)( (TCHAR*)this + 0x04 );
@@ -289,6 +296,9 @@ void ARegrowthManager2::Render()
 				pContext->SetAlphaBlend( 1.0f );
 			}
 
+			ClearStaticLights( pContext );
+			AddStaticLights( pContext, s_aEntryStaticLights[ pEntry - s_aRenderEntries ] );
+
 			pContext->SetModelViewMatrix( pEntry->oMatrix );
 			for ( TINT k = 0; k < rLOD.iNumMeshes; k++ )
 				rLOD.ppMeshes[ k ]->Render();
@@ -299,4 +309,5 @@ void ARegrowthManager2::Render()
 	pContext->SetShadeCoeff( flOldShadeCoeff );
 	pContext->SetAlphaBlend( 1.0f );
 	pContext->SetModelViewMatrix( rSavedMVP );
+	ClearStaticLights( pContext );
 }

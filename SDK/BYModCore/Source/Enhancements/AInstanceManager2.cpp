@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "AInstanceManager2.h"
 #include "ACoreSettings.h"
+#include "StaticLights.h"
 
 #include <BYardSDK/AGlowViewport.h>
 #include <BYardSDK/ATerrainInterface.h>
@@ -26,6 +27,7 @@ static constexpr TUINT                   MAX_RENDERED_INSTANCES = 2048;
 static TBOOL                             s_aInstanceVisMasks[ MAX_RENDERED_INSTANCES ];
 static TUINT8                            s_aInstanceFlags[ MAX_RENDERED_INSTANCES ];
 static TUINT8                            s_aInstanceLightIDs[ MAX_RENDERED_INSTANCES ][ 4 ];
+static Toshi::TLightIDList               s_aInstanceStaticLightIDs[ MAX_RENDERED_INSTANCES ];
 static AInstanceManager::RenderListEntry s_aRenderList[ MAX_RENDERED_INSTANCES ];
 
 TBOOL AInstanceManager2::Render()
@@ -127,7 +129,10 @@ TBOOL AInstanceManager2::Render()
 			if ( s_aInstanceLightIDs[ iInstanceID ][ 1 ] >= 0 ) pRenderContext->AddLight( s_aInstanceLightIDs[ iInstanceID ][ 1 ] );
 			if ( s_aInstanceLightIDs[ iInstanceID ][ 2 ] >= 0 ) pRenderContext->AddLight( s_aInstanceLightIDs[ iInstanceID ][ 2 ] );
 			if ( s_aInstanceLightIDs[ iInstanceID ][ 3 ] >= 0 ) pRenderContext->AddLight( s_aInstanceLightIDs[ iInstanceID ][ 3 ] );
-			
+
+			ClearStaticLights( pRenderContext );
+			AddStaticLights( pRenderContext, s_aInstanceStaticLightIDs[ iInstanceID ] );
+
 			pRenderContext->SetClipFlags( s_aInstanceVisMasks[ iInstanceID ] );
 			pRenderContext->SetModelViewMatrix( pRenderList->matTransform );
 
@@ -146,6 +151,7 @@ TBOOL AInstanceManager2::Render()
 	pRenderContext->SetAlphaBlend( 1.0f );
 	pRenderContext->SetModelViewMatrix( matModelView );
 	pRenderContext->ClearLightIDs();
+	ClearStaticLights( pRenderContext );
 
 	return TTRUE;
 }
@@ -214,6 +220,8 @@ void AInstanceManager2::FillRenderList_All( const Toshi::T2SList<StaticInstanceE
 				s_aInstanceLightIDs[ a_rNumInstances ][ 1 ] = oLightList[ 1 ];
 				s_aInstanceLightIDs[ a_rNumInstances ][ 2 ] = oLightList[ 2 ];
 				s_aInstanceLightIDs[ a_rNumInstances ][ 3 ] = oLightList[ 3 ];
+
+				GatherStaticLights( vecInstanceBounding, s_aInstanceStaticLightIDs[ a_rNumInstances ] );
 
 				const TINT   iModelSlot     = ( it->uiModelIndex * MAX_NUM_LODS ) + iLODIndex;
 				const TFLOAT flLocatorScale = ( it->uiPackedScaleYaw & 0b1111 ) * 0.2f;
@@ -380,6 +388,8 @@ void AInstanceManager2::FillRenderList_Visible( const Toshi::T2SList<StaticInsta
 						s_aInstanceLightIDs[ a_rNumInstances ][ 1 ] = oLightList[ 1 ];
 						s_aInstanceLightIDs[ a_rNumInstances ][ 2 ] = oLightList[ 2 ];
 						s_aInstanceLightIDs[ a_rNumInstances ][ 3 ] = oLightList[ 3 ];
+
+						GatherStaticLights( vecInstanceBounding, s_aInstanceStaticLightIDs[ a_rNumInstances ] );
 
 						const TINT   iModelSlot     = ( it->uiModelIndex * MAX_NUM_LODS ) + iLODIndex;
 						const TFLOAT flLocatorScale = ( it->uiPackedScaleYaw & 0b1111 ) * 0.2f;

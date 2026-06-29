@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "ATreeManager2.h"
 #include "ACoreSettings.h"
+#include "StaticLights.h"
 
 #include <BYardSDK/AGlowViewport.h>
 #include <BYardSDK/ATerrainInterface.h>
@@ -144,9 +145,10 @@ void ATreeManager2::Render()
 
 	struct LocatorRenderData
 	{
-		TUINT8 uiFlags;
-		TUINT8 uiUnused;
-		TINT8  uiLightIds[4];
+		TUINT8              uiFlags;
+		TUINT8              uiUnused;
+		TINT8               uiLightIds[4];
+		Toshi::TLightIDList oStaticLightIds;
 	} aLocatorRenderData[ MAX_RENDERED_INSTANCES ];
 
 	if ( !m_llUsedTreeInstances.IsEmpty() )
@@ -205,6 +207,8 @@ void ATreeManager2::Render()
 							aLocatorRenderData[ iNumLocatorsToRender ].uiLightIds[ 1 ] = oLightIdList[ 1 ];
 							aLocatorRenderData[ iNumLocatorsToRender ].uiLightIds[ 2 ] = oLightIdList[ 2 ];
 							aLocatorRenderData[ iNumLocatorsToRender ].uiLightIds[ 3 ] = oLightIdList[ 3 ];
+
+							GatherStaticLights( boundingVolume, aLocatorRenderData[ iNumLocatorsToRender ].oStaticLightIds );
 
 							iNumLocatorsToRender += 1;
 							iInstanceIndex += 1;
@@ -298,6 +302,9 @@ START_RENDERING:
 			if ( pLightIds[ 2 ] != -1 ) pRenderContext->AddLight( pLightIds[ 2 ] );
 			if ( pLightIds[ 3 ] != -1 ) pRenderContext->AddLight( pLightIds[ 3 ] );
 
+			ClearStaticLights( pRenderContext );
+			AddStaticLights( pRenderContext, aLocatorRenderData[ iInstanceIndex ].oStaticLightIds );
+
 			// Setup model view matrix
 			pRenderContext->SetModelViewMatrix( pInstanceRenderData->oMatrix );
 
@@ -330,6 +337,7 @@ START_RENDERING:
 			}
 
 			pRenderContext->ClearLightIDs();
+			ClearStaticLights( pRenderContext );
 
 			pInstanceRenderData = pInstanceRenderData->pPrev;
 		}
@@ -339,4 +347,5 @@ START_RENDERING:
 	pRenderContext->SetAlphaBlend( 1.0f );
 	pRenderContext->SetModelViewMatrix( matModelView );
 	pRenderContext->ClearLightIDs();
+	ClearStaticLights( pRenderContext );
 }
