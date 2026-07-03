@@ -14,6 +14,11 @@ inline constexpr Endianess CURRENT_ENDIANESS =
     Endianess_Little;
 #endif
 
+
+#ifdef TOSHI_SKU_WASM
+	// TODO
+#endif // TOSHI_SKU_WASM
+
 TFORCEINLINE constexpr TUINT32 SWAP32( const TUINT8 bytes[ 4 ] )
 {
 	return ( bytes[ 3 ] << 0 ) | ( bytes[ 2 ] << 8 ) | ( bytes[ 1 ] << 16 ) | ( bytes[ 0 ] << 24 );
