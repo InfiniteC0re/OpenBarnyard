@@ -68,7 +68,7 @@ TINT TCompress::WriteOffset( TUINT32 length, TINT offset, TBYTE*& data, TFile* f
 		writtenSize += file->Write( &length, 2 );
 	}
 
-	if ( offset <= BTECOffsetFlag_BigOffset )
+	if ( offset <= BTECOffsetFlag_OffsetMask )
 	{
 		LOWBYTE( offset ) = offset;
 		writtenSize += file->Write( &offset, 1 );
