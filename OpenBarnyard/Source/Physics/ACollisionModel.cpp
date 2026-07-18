@@ -174,7 +174,7 @@ TBOOL ACollisionModel::CollideRay( ACollisionModelInstance* a_pModelInstance, co
 
 			if ( iGroup != m_aIgnoreGroups[ 1 ] &&
 				 iGroup != m_aIgnoreGroups[ 0 ] &&
-			     ( a_eCGroupsMask & pCollData->GetCollGroup( i ).GetGroupFlag() ) == 0 )
+			     ( a_eCGroupsMask & pCollData->GetCollGroup( iGroup ).GetGroupFlag() ) == 0 )
 			{
 				// This triangle is not ignored and matches the collision group
 				uiFaceIndex = pFace->mFaceID;
