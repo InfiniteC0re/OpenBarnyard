@@ -8,7 +8,6 @@
 #include "Enhancements/AInstanceManager2.h"
 #include "Enhancements/ATreeManager2.h"
 #include "Enhancements/ARegrowthManager2.h"
-#include "Enhancements/AMaterialLibraryManager2.h"
 
 #include <BYardSDK/AGameStateController.h>
 #include <BYardSDK/THookedRenderD3DInterface.h>
@@ -834,19 +833,25 @@ MEMBER_HOOK( 0x005ea8b0, ATerrainInterface, ATerrain_Render, void )
 	}
 }
 
+static constexpr TINT EXTRA_TEXTURE_SLOTS = 2000;
+static TCHAR          s_aExtraTextureSlots[ sizeof( AMaterialLibraryManager::TextureSlot ) * EXTRA_TEXTURE_SLOTS ];
+static TINT           s_iNumExtraSlotsUsed = 0;
+
 MEMBER_HOOK( 0x00613b50, AMaterialLibraryManager, AMaterialLibraryManager_CreateTextures, void, AMaterialLibrary* a_pMatLibrary )
 {
-	AMaterialLibraryManager2::GetSingleton()->CreateTextures( a_pMatLibrary );
-}
+	TINT iNeeded = a_pMatLibrary->GetNumTextures();
 
-MEMBER_HOOK( 0x00613d20, AMaterialLibraryManager, AMaterialLibraryManager_FindTexture, Toshi::TTexture*, const TCHAR* a_szTextureName )
-{
-	return AMaterialLibraryManager2::GetSingleton()->FindTexture( a_szTextureName );
-}
+	while ( m_iNumFreeTextures < iNeeded )
+	{
+		if ( s_iNumExtraSlotsUsed >= EXTRA_TEXTURE_SLOTS ) break;
+		AMaterialLibraryManager::TextureSlot* pSlot = ((AMaterialLibraryManager::TextureSlot*)&s_aExtraTextureSlots) + s_iNumExtraSlotsUsed++;
+		CALL_THIS( 0x00613b00, AMaterialLibraryManager::TextureSlot*, void, pSlot );
 
-MEMBER_HOOK( 0x00613d90, AMaterialLibraryManager, AMaterialLibraryManager_UnloadTextures, void, AMaterialLibrary* a_pMaterialLibrary )
-{
-	AMaterialLibraryManager2::GetSingleton()->UnloadTextures( a_pMaterialLibrary );
+		m_FreeTextures.PushFront( pSlot );
+		m_iNumFreeTextures++;
+	}
+
+	CallOriginal( a_pMatLibrary );
 }
 
 class AApplication
@@ -859,7 +864,7 @@ MEMBER_HOOK( 0x004045a0, AApplication, AApplication_OnCreate, TBOOL, TUINT32 a_u
 	if ( bResult )
 	{
 		// Increase engine texture limit
-		( (Toshi::TFreeList*)0x007cec00 )->SetCapacity( AMaterialLibraryManager2::MAX_NUM_TEXTURES + 90 );
+		( (Toshi::TFreeList*)0x007cec00 )->SetCapacity( EXTRA_TEXTURE_SLOTS );
 	}
 
 	return bResult;
@@ -1135,8 +1140,6 @@ MEMBER_HOOK( 0x004d04a0, APoolAi, APoolAi_ComputeAimDirection, void*, void* a_pO
 
 void AHooks::Initialise()
 {
-	AMaterialLibraryManager2::CreateSingleton();
-
 	// Apply other hooks
 	InstallHook<TMemory_UnkMethod>();
 	InstallHook<TMemory_Initialise>();
@@ -1156,8 +1159,6 @@ void AHooks::Initialise()
 	InstallHook<AGameStateController_ProcessInput>();
 	InstallHook<ATerrain_Render>();
 	InstallHook<AMaterialLibraryManager_CreateTextures>();
-	InstallHook<AMaterialLibraryManager_FindTexture>();
-	InstallHook<AMaterialLibraryManager_UnloadTextures>();
 	InstallHook<AApplication_OnCreate>();
 	InstallHook<AModelLoader_AModelLoaderLoadTRBCallback>();
 	InstallHook<AItemCountHudElement_SetVisible>();
