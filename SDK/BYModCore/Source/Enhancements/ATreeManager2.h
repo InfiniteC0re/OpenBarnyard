@@ -21,7 +21,7 @@ public:
 		ATerrainLocatorList* pLocatorList;
 		TUINT16              uiLocatorId;
 
-		union
+		struct
 		{
 			TUINT8 iTrunkIndex : 6;
 			TUINT8 iColor : 2;

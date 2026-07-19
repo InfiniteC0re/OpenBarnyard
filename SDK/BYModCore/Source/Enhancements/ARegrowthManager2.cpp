@@ -21,7 +21,7 @@ struct RegrowthRenderEntry
 static_assert( sizeof( RegrowthRenderEntry ) == 0x44, "RegrowthRenderEntry must be 0x44 bytes" );
 
 static RegrowthRenderEntry s_aRenderEntries[ 240 ];
-static Toshi::TLightIDList s_aEntryStaticLights[ 240 ];
+static TINT8 s_aEntryStaticLights[ 240 ][ MAX_CELL_STATIC_LIGHTS ];
 
 // $Barnyard: FUNCTION 005e3270
 void ARegrowthManager2::FillRenderList()

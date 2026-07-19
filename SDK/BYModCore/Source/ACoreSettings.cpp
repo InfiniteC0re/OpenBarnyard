@@ -19,7 +19,6 @@ ACoreSettings::~ACoreSettings()
 {
 }
 
-
 void ACoreSettings::Save()
 {
 	PTRB                        outFile;

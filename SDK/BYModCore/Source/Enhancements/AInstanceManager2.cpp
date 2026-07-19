@@ -27,7 +27,7 @@ static constexpr TUINT                   MAX_RENDERED_INSTANCES = 2048;
 static TBOOL                             s_aInstanceVisMasks[ MAX_RENDERED_INSTANCES ];
 static TUINT8                            s_aInstanceFlags[ MAX_RENDERED_INSTANCES ];
 static TUINT8                            s_aInstanceLightIDs[ MAX_RENDERED_INSTANCES ][ 4 ];
-static Toshi::TLightIDList               s_aInstanceStaticLightIDs[ MAX_RENDERED_INSTANCES ];
+static TINT8                             s_aInstanceStaticLightIDs[ MAX_RENDERED_INSTANCES ][ MAX_CELL_STATIC_LIGHTS ];
 static AInstanceManager::RenderListEntry s_aRenderList[ MAX_RENDERED_INSTANCES ];
 
 TBOOL AInstanceManager2::Render()

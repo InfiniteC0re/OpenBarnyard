@@ -18,18 +18,23 @@ void SetStaticLightCallbacks( GatherStaticLightsFn a_pfnGather, AddStaticLightsF
 	s_pfnClear  = a_pfnClear;
 }
 
-void GatherStaticLights( const Toshi::TSphere& a_rcBounds, Toshi::TLightIDList& a_rOutList )
+void GatherStaticLights( const Toshi::TSphere& a_rcBounds, TINT8* a_pOutIDs )
 {
 	if ( s_pfnGather )
-		s_pfnGather( a_rcBounds, a_rOutList );
+	{
+		s_pfnGather( a_rcBounds, a_pOutIDs );
+	}
 	else
-		a_rOutList.Reset();
+	{
+		for ( TINT i = 0; i < MAX_CELL_STATIC_LIGHTS; i++ )
+			a_pOutIDs[ i ] = -1;
+	}
 }
 
-void AddStaticLights( Toshi::TRenderContext* a_pContext, const Toshi::TLightIDList& a_rIDs )
+void AddStaticLights( Toshi::TRenderContext* a_pContext, const TINT8* a_pIDs )
 {
 	if ( s_pfnAdd )
-		s_pfnAdd( a_pContext, a_rIDs );
+		s_pfnAdd( a_pContext, a_pIDs );
 }
 
 void ClearStaticLights( Toshi::TRenderContext* a_pContext )

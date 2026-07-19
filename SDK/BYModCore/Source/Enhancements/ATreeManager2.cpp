@@ -19,6 +19,8 @@ TOSHI_NAMESPACE_USING
 static constexpr TUINT                       MAX_RENDERED_INSTANCES = 512;
 static ATreeManager2::TreeInstanceRenderData s_aInstanceMatrices[ MAX_RENDERED_INSTANCES ];
 
+extern TBOOL g_bUsingDX11;
+
 void ATreeManager2::Render()
 {
 	// NOTE: just a stub used to spoof settings
@@ -37,8 +39,9 @@ void ATreeManager2::Render()
 	TRenderInterface* pRenderInterface = TRenderInterface::GetSingleton();
 	TRenderContext*   pRenderContext   = pRenderInterface->GetCurrentContext();
 
-	TMatrix44 matModelView = pRenderContext->GetModelViewMatrix();
-	TMatrix44 matLightDir  = pRenderInterface->GetLightDirection();
+	TMatrix44 matModelView   = pRenderContext->GetModelViewMatrix();
+	TMatrix44 matLightDir    = pRenderInterface->GetLightDirection();
+	TMatrix44 matLightColour = pRenderInterface->GetLightColour();
 
 	TINT iNumLocatorsToRender = 0;
 
@@ -148,7 +151,7 @@ void ATreeManager2::Render()
 		TUINT8              uiFlags;
 		TUINT8              uiUnused;
 		TINT8               uiLightIds[4];
-		Toshi::TLightIDList oStaticLightIds;
+		TINT8               oStaticLightIds[ MAX_CELL_STATIC_LIGHTS ];
 	} aLocatorRenderData[ MAX_RENDERED_INSTANCES ];
 
 	if ( !m_llUsedTreeInstances.IsEmpty() )
@@ -235,10 +238,6 @@ void ATreeManager2::Render()
 	}
 
 START_RENDERING:
-	static TVector4 s_vecUnused1 = TVector4( 0.7372549f, 0.8156863f, 0.5254902f );
-	static TVector4 s_vecUnused2 = TVector4( 0.54509807f, 0.60784316f, 0.47058824f );
-	static TVector4 s_vecUnused3 = TVector4( 0.9529412f, 0.75686276f, 0.54509807f );
-
 	// Calculate light direction matrices
 	TMatrix44 aLightMatrices[ 16 ];
 	for ( TINT i = 0; i < TARRAYSIZE( aLightMatrices ); i++ )
@@ -322,6 +321,17 @@ START_RENDERING:
 			Model* pFOBModel = &m_pFOBs[ pTrunkModel->m_uiID * 2 ];
 			pRenderContext->SetSkeletonInstance( pFOBModel->m_pSceneObject->GetInstance()->GetSkeletonInstance() );
 
+			// DX11 Remaster supports coloured FOB, so pass data about the instance into colour light matrix
+			if ( g_bUsingDX11 )
+			{
+				TUINT8    uiInstanceFlags = aLocatorRenderData[ iInstanceIndex ].uiFlags;
+				TMatrix44 matFOBSelector  = matLightColour;
+				matFOBSelector.m_f11      = ( uiInstanceFlags & 0xF ) * ( 1.0f / 15.0f );
+				matFOBSelector.m_f12      = TFLOAT( ( uiInstanceFlags >> 4 ) & 3 );
+				matFOBSelector.m_f13      = -1.0f;
+				pRenderInterface->SetLightColourMatrix( matFOBSelector );
+			}
+
 			for ( TINT k = 0; k < pTrunkModel->m_iNumFOBs; k++ )
 			{
 				TMatrix44 matFOBTransform;
@@ -335,6 +345,8 @@ START_RENDERING:
 				for ( TINT k = 0; k < rLOD.iNumMeshes; k++ )
 					rLOD.ppMeshes[ k ]->Render();
 			}
+
+			if ( g_bUsingDX11 ) pRenderInterface->SetLightColourMatrix( matLightColour );
 
 			pRenderContext->ClearLightIDs();
 			ClearStaticLights( pRenderContext );

@@ -520,6 +520,10 @@ MEMBER_HOOK( 0x006c1d40, TModelManager, TModelRegistry_CreateModel, TModelManage
 {
 	TString8 filepath = a_szFileName;
 
+#ifdef BARNYARD_IGNORE_ASSET_PACKS
+	a_pAssetTRB = TNULL;
+#endif
+
 	for ( TINT i = 0; i < filepath.Length(); i++ )
 		if ( filepath[ i ] == '/' ) filepath[ i ] = '\\';
 
@@ -554,6 +558,17 @@ MEMBER_HOOK( 0x006c1d40, TModelManager, TModelRegistry_CreateModel, TModelManage
 	}
 
 	return CallOriginal( a_szFileName, a_rModelRef, ( pFoundAsset ) ? pFoundAsset : a_pAssetTRB );
+}
+
+class AKeyFrameLibraryManager {};
+
+MEMBER_HOOK( 0x00607030, AKeyFrameLibraryManager, AKeyFrameLibraryManager_LoadLibrary, TBOOL, void* a1, TTRB* a_pAssetTRB )
+{
+#ifdef BARNYARD_IGNORE_ASSET_PACKS
+	a_pAssetTRB = TNULL;
+#endif
+
+	return CallOriginal( a1, a_pAssetTRB );
 }
 
 MEMBER_HOOK( 0x006bf6b0, TRenderInterface, TRenderInterface_SetLightColourMatrix, void, TMatrix44* a_pLightColour )
@@ -1167,6 +1182,8 @@ void AHooks::Initialise()
 	InstallHook<TSystemManager_Destroy>();
 
 	InstallHook<APoolAi_ComputeAimDirection>();
+
+	InstallHook<AKeyFrameLibraryManager_LoadLibrary>();
 
 // 	InstallHook<TMalloc1>();
 // 	InstallHook<TMalloc2>();
