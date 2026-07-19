@@ -8,6 +8,7 @@
 #include "Enhancements/AInstanceManager2.h"
 #include "Enhancements/ATreeManager2.h"
 #include "Enhancements/ARegrowthManager2.h"
+#include "Enhancements/AMaterialLibraryManager2.h"
 
 #include <BYardSDK/AGameStateController.h>
 #include <BYardSDK/THookedRenderD3DInterface.h>
@@ -161,7 +162,7 @@ HOOK( 0x006b5740, TMemory_Initialise, TBOOL, TUINT a_uiHeapSize, TUINT a_uiReser
 
 #else // TMEMORY_USE_DLMALLOC
 
-	return CallOriginal( 512 * 1024 * 1024, a_uiReservedSize, a_uiUnused );
+	return CallOriginal( 256 * 1024 * 1024, a_uiReservedSize, a_uiUnused );
 
 #endif
 }
@@ -833,17 +834,35 @@ MEMBER_HOOK( 0x005ea8b0, ATerrainInterface, ATerrain_Render, void )
 	}
 }
 
-MEMBER_HOOK( 0x00613b50, AMaterialLibraryManager, AMatLibMgr_CreateTextures, void, AMaterialLibrary* a_pMatLibrary )
+MEMBER_HOOK( 0x00613b50, AMaterialLibraryManager, AMaterialLibraryManager_CreateTextures, void, AMaterialLibrary* a_pMatLibrary )
 {
-	TINT iNeeded = a_pMatLibrary->GetNumTextures();
+	AMaterialLibraryManager2::GetSingleton()->CreateTextures( a_pMatLibrary );
+}
 
-	while ( m_iNumFreeTextures < iNeeded )
+MEMBER_HOOK( 0x00613d20, AMaterialLibraryManager, AMaterialLibraryManager_FindTexture, Toshi::TTexture*, const TCHAR* a_szTextureName )
+{
+	return AMaterialLibraryManager2::GetSingleton()->FindTexture( a_szTextureName );
+}
+
+MEMBER_HOOK( 0x00613d90, AMaterialLibraryManager, AMaterialLibraryManager_UnloadTextures, void, AMaterialLibrary* a_pMaterialLibrary )
+{
+	AMaterialLibraryManager2::GetSingleton()->UnloadTextures( a_pMaterialLibrary );
+}
+
+class AApplication
+{};
+
+MEMBER_HOOK( 0x004045a0, AApplication, AApplication_OnCreate, TBOOL, TUINT32 a_uiArgC, const TCHAR** a_ppArgV )
+{
+	TBOOL bResult = CallOriginal( a_uiArgC, a_ppArgV );
+
+	if ( bResult )
 	{
-		m_FreeTextures.PushFront( new AMaterialLibraryManager::TextureSlot() );
-		m_iNumFreeTextures++;
+		// Increase engine texture limit
+		( (Toshi::TFreeList*)0x007cec00 )->SetCapacity( AMaterialLibraryManager2::MAX_NUM_TEXTURES + 90 );
 	}
 
-	CallOriginal( a_pMatLibrary );
+	return bResult;
 }
 
 MEMBER_HOOK( 0x006d5970, TOrderTable, TOrderTable_Flush, void )
@@ -1116,6 +1135,8 @@ MEMBER_HOOK( 0x004d04a0, APoolAi, APoolAi_ComputeAimDirection, void*, void* a_pO
 
 void AHooks::Initialise()
 {
+	AMaterialLibraryManager2::CreateSingleton();
+
 	// Apply other hooks
 	InstallHook<TMemory_UnkMethod>();
 	InstallHook<TMemory_Initialise>();
@@ -1134,7 +1155,10 @@ void AHooks::Initialise()
 	InstallHook<AGUI2_OnUpdate>();
 	InstallHook<AGameStateController_ProcessInput>();
 	InstallHook<ATerrain_Render>();
-	InstallHook<AMatLibMgr_CreateTextures>();
+	InstallHook<AMaterialLibraryManager_CreateTextures>();
+	InstallHook<AMaterialLibraryManager_FindTexture>();
+	InstallHook<AMaterialLibraryManager_UnloadTextures>();
+	InstallHook<AApplication_OnCreate>();
 	InstallHook<AModelLoader_AModelLoaderLoadTRBCallback>();
 	InstallHook<AItemCountHudElement_SetVisible>();
 
