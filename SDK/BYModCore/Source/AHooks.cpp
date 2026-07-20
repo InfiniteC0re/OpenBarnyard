@@ -1086,32 +1086,25 @@ MEMBER_HOOK( 0x005e3990, ARegrowthManager2, ARegrowthManager2_Render, void )
 	ARegrowthManager2::Render();
 }
 
-struct ARegrowthManager
-{
-	struct Object : public Toshi::T2SList<Object>::Node
-	{
-		Toshi::TQuaternion qRotation;
-		Toshi::TVector4    vPosition;
-		TFLOAT             flSpawnTime;
-		TUINT8             uiFlag;
-		TUINT8             uiUnknown;
-		TUINT8             uiScalePacked;
-	};
-};
-
 // The original implementation can cause problems on some hardware, because it is using RAW FLOAT COMPARISONS
 // Thanks to the author of this method and the entire ARegrowthManager thing for a day spent trying to fix bug
-HOOK( 0x005e4540, ARegrowthManager_FindObjectShittyWay, ARegrowthManager::Object*, TFLOAT a_flHash, void* unused, Toshi::T2SList<ARegrowthManager::Object>& a_llObjects )
+HOOK( 0x005e4540, ARegrowthManager_FindObjectShittyWay, ARegrowthManager2::Object*, TFLOAT a_flHash, void* unused, Toshi::T2SList<ARegrowthManager2::Object>& a_llObjects )
 {
-	constexpr TFLOAT MAX_ERROR = 0.05f;
+	ARegrowthManager2::Object* pBestMatch  = TNULL;
+	TFLOAT                     flBestError = 0.0f;
 
 	T2_FOREACH( a_llObjects, it )
 	{
-		if ( TMath::Abs( a_flHash - ( it->vPosition.x + it->vPosition.z * 1000.0f ) ) <= MAX_ERROR )
-			return it;
+		TFLOAT flError = TMath::Abs( a_flHash - ( it->vPosition.x + it->vPosition.z * 1000.0f ) );
+		if ( pBestMatch == TNULL || flError < flBestError )
+		{
+			pBestMatch  = it;
+			flBestError = flError;
+		}
 	}
 
-	return TNULL;
+	TFLOAT flTolerance = TMath::Max( 0.05f, TMath::Abs( a_flHash ) * 1e-6f );
+	return ( pBestMatch != TNULL && flBestError <= flTolerance ) ? pBestMatch : TNULL;
 }
 
 extern TBOOL g_bGameExited;
@@ -1200,7 +1193,7 @@ void AHooks::Initialise()
 
 	InstallHook<ATreeManager_Render>();
 
-	//InstallHook<ARegrowthManager2_Render>();
+	InstallHook<ARegrowthManager2_Render>();
 
 	InstallHook<ARegrowthManager_FindObjectShittyWay>();
 
