@@ -22,8 +22,8 @@ struct ACoreSettingsProperties
 	TBOOL bDisableInstanceLODs      = TTRUE;
 	TBOOL bPoolAiAimBlackBall       = TFALSE;
 
-	TINT   iInstanceMaxRendered         = 1024;
-	TFLOAT flInstanceRenderDistance     = 220.0f;
+	TINT   iInstanceMaxRendered         = 2000;
+	TFLOAT flInstanceRenderDistance     = 4000.0f;
 	TFLOAT flInstanceBoundingMultiplier = 1.2f;
 };
 
