@@ -448,6 +448,9 @@ ImageEntry* LoadSymbolsForModuleAndCache( const char* imagePath, uint32_t imageN
 
 static void CacheProcessDrivers()
 {
+#ifndef _WIN64
+    return;
+#else
     DWORD needed;
     LPVOID dev[4096];
     if( EnumDeviceDrivers( dev, sizeof(dev), &needed ) != 0 )
@@ -497,6 +500,7 @@ static void CacheProcessDrivers()
         }
         s_krnlCache->Sort();
     }
+#endif
 }
 
 static void CacheProcessModules()
