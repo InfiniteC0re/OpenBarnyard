@@ -67,10 +67,12 @@ private:
 	static void RenderInstanceCallback( Toshi::TModelInstance* a_pInstance, void* a_pUserData );
 
 private:
-	Toshi::TVector4 m_Scale;
-	AModel*         m_pModel;
-	TUINT           m_uiClipFlags;
-	// ...
+	Toshi::TVector4                              m_Scale;
+	AModel*                                      m_pModel;
+	TUINT                                        m_uiClipFlags;
+	TUINT                                        m_Unknown1;
+	TFLOAT                                       m_fUnknown2;
+	TINT                                         m_iUnknown3;
 	Toshi::TSceneObject*                         m_pSceneObject;
 	Toshi::TEmitter<AModelInstance, ChangeEvent> m_ChangeEmitter;
 	Flags                                        m_eFlags;
