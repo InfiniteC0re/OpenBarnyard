@@ -34,6 +34,8 @@
 #include <Platform/DX8/TRenderAdapter_DX8.h>
 #include <Platform/Windows/TNativeFile_Win.h>
 
+#include <intrin.h>
+
 TOSHI_NAMESPACE_USING
 
 extern const T2CommandLine* g_pCommandLine;
@@ -1131,6 +1133,35 @@ MEMBER_HOOK( 0x004d04a0, APoolAi, APoolAi_ComputeAimDirection, void*, void* a_pO
 	return CallOriginal( a_pOutDir, a_bNoError );
 }
 
+//-----------------------------------------------------------------------------
+// Fix milk squirting aiming bug
+//-----------------------------------------------------------------------------
+// The original code uses AGUI2 internal resolution instead of real screen size
+// causing the aiming go to the left side due to matrices mismatch
+//-----------------------------------------------------------------------------
+MEMBER_HOOK( 0x0060bf70, ARenderer, ARenderer_ScreenToRay, void, ACamera* a_pCamera, const TVector2& a_rcScreenPoint, TVector4& a_rOutOrigin, TVector4& a_rOutDir )
+{
+	if (_ReturnAddress() == (void*)0x00665d13) // AAimedSquirtProjectileLauncher::UpdateAiming
+	{
+		// Set real screen resolution rather than AGUI2 surface resolution
+		auto pRender        = THookedRenderD3DInterface::GetSingleton();
+		auto pDisplayParams = pRender->GetCurrentDisplayParams();
+
+		TFLOAT flGUIWidth, flGUIHeight;
+		AGUI2::GetSingleton()->GetDimensions( flGUIWidth, flGUIHeight );
+		
+		TVector2 vFixedScreenPoint = {
+			a_rcScreenPoint.x * ( pDisplayParams->uiWidth / flGUIWidth ),
+			a_rcScreenPoint.y * ( pDisplayParams->uiHeight / flGUIHeight ),
+		};
+
+		CallOriginal( a_pCamera, vFixedScreenPoint, a_rOutOrigin, a_rOutDir );
+		return;
+	}
+
+	CallOriginal( a_pCamera, a_rcScreenPoint, a_rOutOrigin, a_rOutDir );
+}
+
 void AHooks::Initialise()
 {
 	// Apply other hooks
@@ -1200,6 +1231,7 @@ void AHooks::Initialise()
 	InstallHook<TSystemManager_Destroy>();
 
 	InstallHook<APoolAi_ComputeAimDirection>();
+	InstallHook<ARenderer_ScreenToRay>();
 
 	InstallHook<AKeyFrameLibraryManager_LoadLibrary>();
 

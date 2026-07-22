@@ -129,6 +129,16 @@ public:
 		return m_eAddressing;
 	}
 
+	TUINT GetTextureFlags() const
+	{
+		return m_eTextureFlags;
+	}
+
+	void SetTextureFlags( TUINT a_eTextureFlags )
+	{
+		m_eTextureFlags = a_eTextureFlags;
+	}
+
 	TBOOL CreateResource( void* a_pData, TUINT a_uiDataSize, TUINT a_eTextureFlags, TUINT a_uiWidth, TUINT a_uiHeight )
 	{
 		return TResource::Create();
