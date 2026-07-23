@@ -56,3 +56,8 @@ TBOOL AGameStateController::ProcessInput( const Toshi::TInputInterface::InputEve
 {
 	return CALL_THIS( 0x004293d0, AGameStateController*, TBOOL, this, const Toshi::TInputInterface::InputEvent*, a_pEvent );
 }
+
+void AGameStateController::SaveCurrentGameState( TINT a_iUnused, TBOOL a_bFlag1, TBOOL a_bFlag2 )
+{
+	return CALL_THIS( 0x0042a230, AGameStateController*, void, this, TINT, a_iUnused, TBOOL, a_bFlag1, TBOOL, a_bFlag2 );
+}

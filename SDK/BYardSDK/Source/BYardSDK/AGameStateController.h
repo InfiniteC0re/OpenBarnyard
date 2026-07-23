@@ -24,6 +24,8 @@ public:
 	void PopCurrentGameState();
 	void UpdateScreenOverlay();
 
+	void SaveCurrentGameState( TINT a_iUnused, TBOOL a_bFlag1, TBOOL a_bFlag2 );
+
 	TBOOL ProcessInput( const Toshi::TInputInterface::InputEvent* a_pEvent );
 
 	AGameState* GetCurrentState()
