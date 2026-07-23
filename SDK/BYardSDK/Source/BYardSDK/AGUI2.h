@@ -18,10 +18,8 @@ public:
 
 	void GetDimensions( TFLOAT& a_rWidth, TFLOAT& a_rHeight );
 
-	TBOOL IsCursorVisible() const
-	{
-		return m_bShowMouseCursor;
-	}
+	TBOOL IsCursorVisible() const { return m_bShowMouseCursor; }
+	void  SetCursorVisible( TBOOL a_bVisible ) { m_bShowMouseCursor = a_bVisible; }
 
 public:
 	static SDK_T2GUIElement*  GetRootElement() { return GetSingletonSafe()->m_pRootElement; }
