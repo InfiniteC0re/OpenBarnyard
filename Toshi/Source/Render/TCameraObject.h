@@ -12,6 +12,12 @@ public:
 	inline static constexpr TFLOAT s_kMinFOV = ( 1.0f / 180.0f ) * TMath::PI;
 	inline static constexpr TFLOAT s_kMaxFOV = TMath::PI;
 
+	enum FOV_SCALING_TYPE : TINT
+	{
+		FOV_SCALING_TYPE_HORIZONTAL = 0,
+		FOV_SCALING_TYPE_VERTICAL = 1
+	};
+
 public:
 	TCameraObject();
 	~TCameraObject();
@@ -90,7 +96,7 @@ private:
 	TFLOAT                     m_fNear;
 	TFLOAT                     m_fFar;
 	TFLOAT                     m_fFOV;
-	TINT                       m_Unk1;
+	FOV_SCALING_TYPE           m_eScaling;
 	TRenderContext::CameraMode m_eMode;
 	TFLOAT                     m_fCentreX;
 	TFLOAT                     m_fCentreY;

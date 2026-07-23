@@ -12,7 +12,7 @@ TOSHI_NAMESPACE_START
 // $Barnyard: FUNCTION 006cd030
 TCameraObject::TCameraObject()
 {
-	m_Unk1     = 0;
+	m_eScaling = FOV_SCALING_TYPE_HORIZONTAL;
 	m_eMode    = TRenderContext::CameraMode_Perspective;
 	m_fNear    = 1.0f;
 	m_fFar     = 100.0f;
@@ -39,7 +39,7 @@ void TCameraObject::Render()
 
 		auto render = TRenderInterface::GetSingleton();
 
-		if ( m_Unk1 == 0 )
+		if ( m_eScaling == FOV_SCALING_TYPE_HORIZONTAL )
 		{
 			projParams.m_Proj.x = ( pRenderContext->GetWidth() * 0.5f ) / tan( m_fFOV * 0.5f );
 			projParams.m_Proj.y = projParams.m_Proj.x;
