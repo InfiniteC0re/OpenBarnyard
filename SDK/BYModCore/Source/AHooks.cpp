@@ -42,8 +42,6 @@ extern const T2CommandLine* g_pCommandLine;
 
 TUINT  g_uiWindowWidth  = 0;
 TUINT  g_uiWindowHeight = 0;
-TBOOL  g_bBikeFOVPatch  = TFALSE;
-TFLOAT g_fOriginalFOV   = 0.0f;
 
 void ApplyResolutionDependentPatches( TINT a_iWidth, TINT a_iHeight )
 {
@@ -53,59 +51,7 @@ void ApplyResolutionDependentPatches( TINT a_iWidth, TINT a_iHeight )
 	if ( a_iWidth <= 0 || a_iHeight <= 0 )
 		return;
 
-	constexpr TFLOAT ASPECT_RATIO_5_4   = 5.0f / 4.0f;
-	constexpr TFLOAT ASPECT_RATIO_25_16 = 25.0f / 16.0f;
-	constexpr TFLOAT ASPECT_RATIO_16_10 = 16.0f / 10.0f;
-	constexpr TFLOAT ASPECT_RATIO_15_9  = 15.0f / 9.0f;
-	constexpr TFLOAT ASPECT_RATIO_16_9  = 16.0f / 9.0f;
-
 	const TFLOAT fCurrentAspectRatio = TFLOAT( a_iWidth ) / TFLOAT( a_iHeight );
-	TFLOAT*      pFOV                = (TFLOAT*)0x007822ac;
-
-	// Capture the unpatched (4:3) FOV once so non-widescreen aspect ratios can restore it
-	// instead of keeping a previously-applied widescreen value across a resolution change.
-	static TBOOL s_bCapturedOriginalFOV = TFALSE;
-	if ( !s_bCapturedOriginalFOV )
-	{
-		g_fOriginalFOV         = *pFOV;
-		s_bCapturedOriginalFOV = TTRUE;
-	}
-
-	// To support resolutions like 1366x768 or 1360x768...
-	const TFLOAT MAX_ERROR = TMath::Max( TMath::Abs( ASPECT_RATIO_16_9 - ( 1366.0f / 768.0f ) ), TMath::Abs( ASPECT_RATIO_16_9 - ( 1360.0f / 768.0f ) ) );
-
-	// Default back to the original FOV; the widescreen buckets below override it.
-	*pFOV           = g_fOriginalFOV;
-	g_bBikeFOVPatch = TFALSE;
-
-	if ( TMath::Abs( fCurrentAspectRatio - ASPECT_RATIO_5_4 ) <= MAX_ERROR )
-	{
-		TINFO( "Detected aspect ratio: 5:4\n" );
-		*pFOV = 0.994199f;
-	}
-	else if ( TMath::Abs( fCurrentAspectRatio - ASPECT_RATIO_25_16 ) <= MAX_ERROR )
-	{
-		TINFO( "Detected aspect ratio: 25:16\n" );
-		*pFOV = 1.18425f;
-	}
-	else if ( TMath::Abs( fCurrentAspectRatio - ASPECT_RATIO_16_10 ) <= MAX_ERROR )
-	{
-		TINFO( "Detected aspect ratio: 16:10\n" );
-		*pFOV           = 1.2244f;
-		g_bBikeFOVPatch = TTRUE;
-	}
-	else if ( TMath::Abs( fCurrentAspectRatio - ASPECT_RATIO_15_9 ) <= MAX_ERROR )
-	{
-		TINFO( "Detected aspect ratio: 15:9\n" );
-		*pFOV           = 1.24655f;
-		g_bBikeFOVPatch = TTRUE;
-	}
-	else if ( TMath::Abs( fCurrentAspectRatio - ASPECT_RATIO_16_9 ) <= MAX_ERROR )
-	{
-		TINFO( "Detected aspect ratio: 16:9\n" );
-		*pFOV           = 1.313f;
-		g_bBikeFOVPatch = TTRUE;
-	}
 
 	if ( AGUI2::IsSingletonCreated() )
 	{
@@ -505,14 +451,13 @@ MEMBER_HOOK( 0x006bb000, TTRB, TTRB_Load, TINT, const char* a_szFileName, TUINT 
 
 MEMBER_HOOK( 0x006cd220, TCameraObject, TCameraObject_SetFOV, TFLOAT, TFLOAT a_fFOV )
 {
-	if ( g_bBikeFOVPatch )
-	{
-		if ( a_fFOV != g_fOriginalFOV )
-		{
-			//a_fFOV *= 1.04f;
-		}
+	constexpr TFLOAT REF_ASPECT = 4.0f / 3.0f;
 
-		//a_fFOV = g_fOriginalFOV;
+	if ( GetMode() == TRenderContext::CameraMode_Perspective && g_uiWindowWidth > 0 && g_uiWindowHeight > 0 )
+	{
+		const TFLOAT fAspect  = TFLOAT( g_uiWindowWidth ) / TFLOAT( g_uiWindowHeight );
+		const TFLOAT fHalfTan = TMath::Tan( a_fFOV * 0.5f ) * ( fAspect / REF_ASPECT );
+		a_fFOV                = 2.0f * TMath::ATan( fHalfTan );
 	}
 
 	return CallOriginal( a_fFOV );
@@ -1197,7 +1142,7 @@ void AHooks::Initialise()
 	InstallHook<TRenderInterface_SetLightColourMatrix>();
 	InstallHook<AOptions_IsResolutionCompatible>();
 	InstallHook<ADisplayModes_Win_DoesModeExist>();
-	//InstallHook<TCameraObject_SetFOV>();
+	InstallHook<TCameraObject_SetFOV>();
 	InstallHook<TRenderD3DInterface_UpdateColourSettings>();
 	InstallHook<TTRB_Load>();
 
