@@ -4,7 +4,7 @@ class ASaveSlot
 {
 public:
 	TBOOL         IsOccupied() const { return m_uiOccupied == 1; }
-	const TWCHAR* GetName() const { return m_wcsName; }
+	const TWCHAR* GetName() const { return TREINTERPRETCAST( const TWCHAR*, m_wcsName ); }
 
 	TINT GetGender() const { return *TREINTERPRETCAST( const TINT*, m_aGender ); }
 	TINT GetSkinIndex() const { return *TREINTERPRETCAST( const TINT*, m_aSkin ); }
@@ -20,7 +20,7 @@ private:
 	TUINT8 m_aUnk1[ 0x6818 ]; // 0x01
 	TUINT8 m_aGender[ 4 ];    // 0x6819
 	TUINT8 m_aSkin[ 4 ];      // 0x681d
-	TWCHAR m_wcsName[ 32 ];   // 0x6821
+	TUINT8 m_wcsName[ 64 ];   // 0x6821
 	TUINT8 m_aUnk2[ 0x6907 ]; // 0x6861
 	TUINT8 m_uiDay;           // 0xd168
 	TUINT8 m_uiMonth;         // 0xd169
