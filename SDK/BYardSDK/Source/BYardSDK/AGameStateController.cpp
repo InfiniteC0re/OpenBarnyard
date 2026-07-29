@@ -61,3 +61,8 @@ void AGameStateController::SaveCurrentGameState( TINT a_iUnused, TBOOL a_bFlag1,
 {
 	return CALL_THIS( 0x0042a230, AGameStateController*, void, this, TINT, a_iUnused, TBOOL, a_bFlag1, TBOOL, a_bFlag2 );
 }
+
+void AGameStateController::SetFlags( TUINT a_eFlags )
+{
+	CALL_THIS( 0x00429580, AGameStateController*, void, this, TUINT, a_eFlags );
+}

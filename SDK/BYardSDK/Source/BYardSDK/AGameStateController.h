@@ -26,6 +26,10 @@ public:
 
 	void SaveCurrentGameState( TINT a_iUnused, TBOOL a_bFlag1, TBOOL a_bFlag2 );
 
+	// ORs the given flags into the controller and kicks the matching transition
+	// (0x2002 boots gameplay, 0x2 loads a save, ...)
+	void SetFlags( TUINT a_eFlags );
+
 	TBOOL ProcessInput( const Toshi::TInputInterface::InputEvent* a_pEvent );
 
 	AGameState* GetCurrentState()
